@@ -334,9 +334,10 @@ RB.battleStage = (function () {
   }
 
   // ---- actions (set by the sequencer; times on the presentation clock) --------------------------
-  function pose(who, p, gesture, d, now) {
+  // k: a held pose's fixed progress (a Harmony technique's held signature; reduced motion's held poses)
+  function pose(who, p, gesture, d, now, k) {
     if (!S) return;
-    S.actors[who] = p ? { pose: p, gesture: gesture || null, t0: now, d: Math.max(1, d) } : null;
+    S.actors[who] = p ? { pose: p, gesture: gesture || null, t0: now, d: Math.max(1, d), k: k == null ? null : k } : null;
   }
   // o: { family, dir, hold, foe (which creature; the lead by default) }
   function foe(act, d, now, o) {
@@ -457,7 +458,7 @@ RB.battleStage = (function () {
       let p = null, g = null, k = 1;
       if (a) {
         k = cl((fr.pt - a.t0) / a.d);
-        if (k >= 1 && !a.hold) S.actors[who] = null; else { p = a.pose; g = a.gesture; }
+        if (k >= 1 && !a.hold) S.actors[who] = null; else { p = a.pose; g = a.gesture; if (a.k != null) k = a.k; }
       }
       const down = (who === 'pc' ? v.pc : v.comp) <= 0;
       // party art (battle addendum §7.3): an adventurer a creature is winding up at braces a little

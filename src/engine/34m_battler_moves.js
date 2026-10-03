@@ -51,6 +51,9 @@ RB.battlerMoves = (function () {
       handR: [10.6, 25.5, 2.5], handL: [-10.4, 25.5, 1.2], elbowR: [1, -0.3, -1], elbowL: [-1, -0.3, -1],
       palmR: [-1, -0.2, 0.15], palmL: [1, -0.2, 0.15], handShapeR: 'fist', handShapeL: 'fist',
       hairLag: 0, hairSway: 0, clothSway: 0, act: 'R', leftFree: 0,
+      // turn: the whole body turned about the foot anchor (degrees, Suzu's twirl: real side, front and
+      // back views of the rig, never a mirrored costume); clothFlare: a skirt's hem flaring out as it turns
+      turn: 0, clothFlare: 0,
       prop: {},
     };
   }
@@ -359,6 +362,23 @@ RB.battlerMoves = (function () {
   // Hand targets in the body's ground frame; values replace the stance's.
   const path = (pts, k) => { const f = clamp01(k) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)); return lerp(pts[i], pts[i + 1], f - i); };
   const FWD = [0.35, 0, 1], UP = [0, 1, 0], DOWN = [0, -1, 0.2];
+  const seg = (k, a, b) => clamp01((k - a) / (b - a));
+  // a track through authored keys [[k, values], …] (each key names the same moving values; numbers and
+  // [x, y, z] eased between keys, a hand shape switching half way): the Harmony performances are written
+  // as their key silhouettes and the in-betweens follow from them
+  function track(k, keys) {
+    if (k <= keys[0][0]) return clone(keys[0][1]);
+    for (let i = 0; i < keys.length - 1; i++) {
+      const [ka, A] = keys[i], [kb, B] = keys[i + 1];
+      if (k <= kb) return blend(A, B, ease((k - ka) / (kb - ka)));
+    }
+    return clone(keys[keys.length - 1][1]);
+  }
+  const W2 = (...os) => Object.assign({}, ...os);
+  // the player's shared rally: weight settled low, the writing hand gathered before the chest, the eyes on it;
+  // reached through a breath in (the chest lifts, the hand comes in) — Harmony addendum §9.2
+  const RALLY_A = { pelvis: [-0.8, -3.0, -0.4], pelvisRoll: 1.4, spineRoll: -1, spinePitch: 13, spineYaw: -2, headYaw: 6, headPitch: 4, handR: [7.2, 41.4, 6.4], elbowR: [1, -0.8, -0.2], handShapeR: 'pinch', palmR: [-0.6, 0, 0.6] };
+  const RALLY_BREATH = [{ at: 0.4, o: { pelvis: [-0.6, -1.3, 0], spinePitch: 6, headPitch: -9, hairLag: -0.6, handR: [7.4, 34, 6.6] } }];
   const GEST = {
     // a paper strip drawn back to the shoulder, then sent up-right at the foe with the whole arm
     direct: {
@@ -461,6 +481,57 @@ RB.battlerMoves = (function () {
       x: (k) => ({ pelvis: [1.2, -6 + 4 * ease(k), 1.4], spinePitch: 26 - 16 * ease(k), spineYaw: 16, headYaw: 24, headPitch: 14 - 12 * ease(k), handR: lerp([15.4, 22, 7.4], [11.6, 38, 5.2], ease(k)), elbowR: [1, -0.6, -0.8], handShapeR: 'fist', footR: [9.2, 0, 4.6] }),
       snap: 0, release: 0.5,
     },
+    // ---- the player's part in a Harmony technique (Harmony addendum §9.2): one shared rally — a grounded
+    // breath, the writing hand gathered at the chest — and a terminal gesture that does what the technique
+    // does: direct a thread (Nao), support a restorative release (Mio), complete a ward seal (Ren), seize
+    // Suzu's opening (Suzu). Each starts and ends in the rear-three-quarter ready stance.
+    // Nao: the thread sent out along the line his hand drew, released, then drawn back taut on the second knot
+    rally_thread: {
+      a: W2(RALLY_A, { prop: { strip: 0.6 } }), ant: RALLY_BREATH,
+      x: (k) => {
+        const out = ease(seg(k, 0, 0.42)), pull = ease(seg(k, 0.52, 0.9));
+        const h = out < 1 ? path([[7.2, 41.4, 6.4], [8.6, 47.4, 11.8], [14.6, 45.6, 17.2]], out) : lerp([14.6, 45.6, 17.2], [12.6, 41.2, 5.8], pull);
+        return { handR: h, elbowR: [1, -0.5 + pull * 0.3, -0.4 - pull * 0.5], handShapeR: 'pinch', palmR: [-0.4, 0, 1], spineYaw: -2 + 18 * out - 8 * pull, spinePitch: 11, headYaw: 12, headPitch: -8, pelvis: [-0.8 + 1.4 * out - pull, -2.8, -0.4 + 1.8 * out - 1.4 * pull], prop: { strip: 0.6 + 0.4 * out - 0.4 * pull }, hairSway: -1.2 * out + 1.4 * pull, clothSway: -0.8 * out + pull };
+      },
+      qk: 16, snap: 0, release: 0.42,
+    },
+    // Mio: the folio held open to receive the pour, then the hand rises and opens out over the two of you
+    rally_release: {
+      a: W2(RALLY_A, { handR: [2.6, 41, 9.2], handShapeR: 'cup', palmR: DOWN, headPitch: 12, handL: [-4.6, 37.8, 6.8], elbowL: [-1, -0.9, -0.2], handShapeL: 'cup', prop: { bookOpen: 0.85, bookTilt: -30, bookYaw: -10, bookAt: [1.2, 1.4, 0.8] } }), ant: RALLY_BREATH,
+      x: (k) => W2(track(k, [
+        [0, { handR: [2.6, 41, 9.2], palmR: DOWN, spinePitch: 13, headPitch: 12, headYaw: 6, pelvis: [-0.8, -3, -0.4] }],
+        [0.45, { handR: [10.4, 47.6, 9.6], palmR: [0, 1, 0.4], spinePitch: 6, headPitch: -2, headYaw: 10, pelvis: [-0.4, -1.6, 0] }],
+        [0.8, { handR: [15.2, 49.4, 4.4], palmR: [0, 1, 0.4], spinePitch: 3, headPitch: -8, headYaw: 8, pelvis: [0, -1, 0] }],
+        [1, { handR: [15.2, 49.4, 4.4], palmR: [0, 1, 0.4], spinePitch: 3, headPitch: -8, headYaw: 8, pelvis: [0, -1, 0] }],
+      ]), { handShapeR: k < 0.3 ? 'cup' : k < 0.6 ? 'open' : 'spread', elbowR: [1, -0.5, -0.8], handL: [-4.6, 37.8, 6.8], elbowL: [-1, -0.9, -0.2], handShapeL: 'cup', hairLag: -0.8 * seg(k, 0.4, 0.8), prop: { bookOpen: 1, bookTilt: -30, bookYaw: -10, bookAt: [1.2, 1.4, 0.8] } }),
+      qk: 16, snap: 0, release: 0.45,
+    },
+    // Ren: the brush traces the level line of his plane from its other end, then closes it with a short
+    // vertical stroke (not the forearm-across stroke of the ordinary Protect)
+    rally_seal: {
+      a: W2(RALLY_A, { prop: { brush: 1 } }), ant: RALLY_BREATH,
+      x: (k) => W2(track(k, [
+        [0, { handR: [7.2, 41.4, 6.4], spineYaw: -2, headYaw: 6, headPitch: 4 }],
+        [0.24, { handR: [15.6, 43.4, 13], spineYaw: 14, headYaw: 16, headPitch: -4 }],
+        [0.62, { handR: [3.4, 43.4, 13], spineYaw: -2, headYaw: 2, headPitch: -2 }],
+        [0.8, { handR: [3.4, 35.4, 12.6], spineYaw: -2, headYaw: 2, headPitch: 4 }],
+        [1, { handR: [3.4, 35.4, 12.6], spineYaw: -2, headYaw: 2, headPitch: 4 }],
+      ]), { elbowR: [1, -0.7, -0.5], handShapeR: 'pinch', palmR: [0, -0.4, 1], spinePitch: 11, pelvis: [-0.4, -2.8, 0.4], prop: { brush: 1 }, clothSway: -0.6 * bump(k, 0.2, 0.7) }),
+      qk: 16, snap: 0, release: 0.78,
+    },
+    // Suzu: the thread lifted high on her cue, swept out as a curtain's arc that catches the opening, and
+    // hooked back — the creature's own move swung round
+    rally_catch: {
+      a: W2(RALLY_A, { prop: { strip: 0.6 } }), ant: RALLY_BREATH,
+      x: (k) => W2(track(k, [
+        [0, { handR: [7.2, 41.4, 6.4], spineYaw: -2, spinePitch: 13, headPitch: 4, pelvis: [-0.8, -3, -0.4], prop: { strip: 0.6 } }],
+        [0.28, { handR: [6.4, 55, 9.8], spineYaw: -6, spinePitch: 4, headPitch: -12, pelvis: [-0.6, -1.4, -0.4], prop: { strip: 0.9 } }],
+        [0.54, { handR: [16.4, 46.4, 15.8], spineYaw: 18, spinePitch: 9, headPitch: -6, pelvis: [0.8, -2.2, 1.2], prop: { strip: 1 } }],
+        [0.84, { handR: [12.2, 39.2, 8.8], spineYaw: 6, spinePitch: 11, headPitch: -2, pelvis: [0.2, -2.6, 0.4], prop: { strip: 0.7 } }],
+        [1, { handR: [12.2, 39.2, 8.8], spineYaw: 6, spinePitch: 11, headPitch: -2, pelvis: [0.2, -2.6, 0.4], prop: { strip: 0.7 } }],
+      ]), { elbowR: [1, -0.4, -0.4], handShapeR: 'pinch', palmR: [-0.3, 0.2, 1], headYaw: 12, hairSway: -1.6 * bump(k, 0.3, 0.7) + 0.8 * bump(k, 0.6, 1), clothSway: -1.2 * bump(k, 0.3, 0.7) }),
+      qk: 16, snap: 0, release: 0.52,
+    },
     // getting up after being helped (the revive): from the knee to the stance
     rise: {
       a: null, // (the recover stage starts from 'down')
@@ -470,6 +541,52 @@ RB.battlerMoves = (function () {
   };
   // the pose 'down' (resolve spent): on the left knee, a hand on the ground, the head bowed
   const DOWN_POSE = { pelvis: [0.2, -11.6, -1.2], spinePitch: 28, spineYaw: 2, spineRoll: -4, headPitch: 22, headYaw: 4, footR: [6.4, 0, 6.6], footRYaw: 16, footL: [-4.6, -1.8, -9.4], footLYaw: 4, handR: [7.4, 14.6, 8.2], handL: [-9.6, 2.4, 3.4], elbowL: [-1, -0.2, -1], hairLag: 1.5, handShapeR: 'relaxed', handShapeL: 'flat', palmL: [0, -1, 0] };
+
+  // ---- the four Harmony performances (Harmony addendum §9.3–§9.7) -----------------------------------------
+  // Each: an anticipation (a), a signature action (x, written as key silhouettes on a track) and a recovery
+  // through its own key (rec) back to exactly the stance. They differ in body mechanics, not colour:
+  // Nao drops his weight, steps and cuts; Mio measures, uncorks and pours; Ren plants, raises the lamp and
+  // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
+  // back views — `turn` — never a mirrored costume), plants and opens her arm.
+  // Nao — Read the Opening: the centre of balance lowered, head and shoulders on the creature, a hand on
+  // the satchel; a short step in (the foot lifted), the flat hand cutting across the opening, edge first,
+  // finishing in a precise point at the knot; then the hand lowers and he turns to you with a nod.
+  const NAO_A = { pelvis: [0.4, -5.6, 0.2], spinePitch: 22, spineYaw: 12, headYaw: 14, headPitch: -14, headRoll: -2, handR: [6.4, 36.4, 9.4], elbowR: [1, -0.8, -0.4], handShapeR: 'flat', palmR: [-0.4, -0.6, 0.6], handL: [-9.4, 27.4, -5.6], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6 };
+  const NAO_K = {
+    a: W2(NAO_A, { footR: [6.6, 0, 5.4], footRYaw: 20 }),
+    step: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.4, -5.0, 2.8], spinePitch: 24, spineYaw: 10, headYaw: 12, headPitch: -12, headRoll: -2, handR: [4.4, 47.2, 11.2], elbowR: [1, -0.6, -0.2], handShapeR: 'flat', palmR: [-0.2, -1, 0.3], handL: [-9.4, 27.4, -5.6], hairLag: 0.2 },
+    cut: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.8, -4.8, 3.2], spinePitch: 22, spineYaw: 22, headYaw: 10, headPitch: -9, headRoll: 0, handR: [15.4, 40.4, 19.2], elbowR: [1, -0.4, -0.2], handShapeR: 'flat', palmR: [-0.3, -0.8, 0.4], handL: [-9.4, 27.4, -5.6], hairLag: 0 },
+  };
+  NAO_K.point = W2(NAO_K.cut, { handR: [15.8, 41.8, 19.8], handShapeR: 'point', palmR: [-1, 0, 0], headPitch: -8 });
+  // Mio — Clearwater Draught: the vial from the bottles at her hip raised to eye level, the other hand
+  // cupped under it (a check of the measure); steadied, uncorked with the thumb, tipped into your rising ink
+  // with the cupping hand guiding the stream; then a glance to you, the cork back, the vial to her hip.
+  const MIO_A = { handR: [6.2, 52, 10.4], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', palmR: [-0.8, 0, 0.4], handL: [4.6, 47.4, 10.8], elbowL: [-1, -0.9, -0.3], handShapeL: 'cup', palmL: [0, 1, 0.2], headYaw: 6, headPitch: -8, spinePitch: 4, spineYaw: 6, pelvis: [0, -1.4, 0.2], prop: { vial: 1, cork: 0, vialTilt: 0 } };
+  const MIO_POUR = { handR: [13.6, 45.6, 12.8], elbowR: [1, -0.7, -0.4], palmR: [-0.6, 0, 0.6], handL: [11.0, 41.6, 13.8], elbowL: [-1, -0.8, -0.1], palmL: [0, 1, 0.2], headYaw: 24, headPitch: 2, spinePitch: 9, spineYaw: 20, pelvis: [0.6, -1.8, 0.8], prop: { vial: 1, cork: 1, vialTilt: 100 } };
+  // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before his chest; raised high at his side
+  // and shaded (its shutter turned to the creatures, the light thrown back over the pair); the flat right
+  // hand drawing a level line at chest height — the plane; then the lamp lowered and a check to either side.
+  // (The lamp stays out at his left side throughout, where the rear view can see it: before his chest it
+  // would be hidden behind him.)
+  const REN_A = { leftFree: 1, act: 'L', pelvis: [0.2, -4.0, -0.2], spinePitch: 11, spineYaw: -2, spineRoll: 0, headYaw: -6, headPitch: 8, handL: [-11.6, 40.6, 4.4], elbowL: [-1, -0.6, -0.4], handR: [4.6, 42.4, 10.2], elbowR: [1, -0.9, -0.2], handShapeR: 'flat', palmR: [-1, 0, 0.2], prop: { flare: 0, lampShade: 0 } };
+  const REN_RAISE = { handL: [-17.4, 54.6, -1.6], elbowL: [-1, 0.2, -0.8], handR: [-0.8, 43, 13], elbowR: [1, -0.9, -0.2], palmR: [0, -1, 0.25], spineYaw: -8, spinePitch: 6, spineRoll: 3, headYaw: -10, headPitch: -8, pelvis: [0.2, -4.2, -0.2], prop: { flare: 1, lampShade: 1 } };
+  const REN_PLANE = W2(REN_RAISE, { handR: [16.4, 43, 13], elbowR: [1, -0.4, -0.5], spineYaw: 14, spinePitch: 7, spineRoll: 2, headYaw: 14, headPitch: -2, pelvis: [0.4, -4.2, 0.2] });
+  // Suzu — Curtain Call: a preparation step back onto the left foot, the arm drawn across; gathered up onto
+  // the spot, one compact twirl (dress and hair a beat behind), planted with the right foot forward, the arm
+  // opened toward the shared action — the cue — and held; then a half-bow, a hand to her hip, the stance.
+  const SUZU_A = { footL: [-5.0, 0, -6.4], footLYaw: 12, pelvis: [-1.8, -3.0, -1.8], pelvisRoll: 3, spinePitch: 4, spineRoll: -3, spineYaw: -18, headYaw: 4, headPitch: -6, headRoll: 2, handR: [-1.2, 41.4, 7.8], elbowR: [1, -0.6, 0.2], handShapeR: 'relaxed', palmR: [-1, 0, 0.3], hairSway: 0.8, clothSway: 0.6 };
+  const SUZU_K = {
+    a: W2(SUZU_A, { footR: [7.4, 0, 5.6], footRYaw: 34, handL: [-9.4, 32.4, -1.8], elbowL: [-1, 0.2, -0.5], handShapeL: 'flat', palmL: [1, 0, 0.2] }),
+    // up on the spot for the turn: feet together under her, upright, both hands drawn in before the chest
+    spin: { footL: [-2.6, 0, -1.4], footLYaw: 4, footR: [2.8, 0, 1.6], footRYaw: 10, pelvis: [0, -0.8, 0], pelvisRoll: 0, spinePitch: 2, spineRoll: 0, spineYaw: 0, headYaw: 0, headPitch: -4, headRoll: 0, handR: [4.6, 40.4, 6.6], elbowR: [1, -0.8, -0.3], handShapeR: 'relaxed', palmR: [-0.6, 0, 0.6], handL: [-4.4, 40, 6.2], elbowL: [-1, -0.8, -0.3], handShapeL: 'relaxed', palmL: [0.6, 0, 0.6] },
+    // planted: the right foot forward toward the action, the hip set, the chin up, the arm open — the cue
+    cue: { footL: [-4.6, 0, -2.8], footLYaw: 4, footR: [8.4, 0, 7.6], footRYaw: 30, pelvis: [-1.0, -1.8, 0.8], pelvisRoll: 4, spinePitch: 4, spineRoll: -5, spineYaw: 14, headYaw: 16, headPitch: -10, headRoll: 5, handR: [16.6, 48.6, 9.6], elbowR: [1, -0.2, -0.5], handShapeR: 'spread', palmR: [0.3, 0.6, 1], handL: [-9.4, 32.4, -1.8], elbowL: [-1, 0.2, -0.5], handShapeL: 'flat', palmL: [1, 0, 0.2] },
+  };
+  SUZU_K.out = W2(SUZU_K.spin, { footR: [5.2, 0, 4.2], footRYaw: 20, pelvis: [-0.6, -1.2, 0.4], handR: [7.6, 44, 8.6], spineYaw: 6, headYaw: 8, headPitch: -6 });
+  SUZU_K.open = W2(SUZU_K.cue, { handR: [11.2, 49.4, 12.2], elbowR: [1, -0.5, -0.4], handShapeR: 'open', palmR: [0, 0.4, 1], headPitch: -8 });
+  // where the twirl is at progress u (0..1): the turn itself eased in and out, a full circle that comes back
+  // to 0 (360 is drawn as 0: the recovery never spins back round)
+  const twirlTurn = (u) => { const t = 360 * ease(seg(u, 0.08, 0.96)); return t >= 359.5 ? 0 : Math.round(t * 10) / 10; };
 
   // Each companion's own gestures (and their own way of doing a shared one).
   const BY = {
@@ -512,6 +629,15 @@ RB.battlerMoves = (function () {
         x: () => ({ footR: [9.8, 0, 4.4], footRYaw: 30, pelvis: [1.8, -3.6, 0.6], spinePitch: 12, spineYaw: 12, headYaw: 22, headPitch: -2, handR: [15.6, 44, 5.6], elbowR: [1, -0.6, -0.6], handShapeR: 'open', palmR: [1, 0, 0.2], hairSway: -0.6 }),
         snap: 0.3, release: 0.35,
       },
+      // Read the Opening (the technique; see NAO_K)
+      opening: {
+        a: NAO_A,
+        x: (k) => W2(track(k, [[0, NAO_K.a], [0.3, NAO_K.step], [0.58, NAO_K.cut], [0.7, NAO_K.point], [1, NAO_K.point]]), {
+          footRLift: 2.6 * bump(k, 0, 0.3), hairSway: -1.2 * bump(k, 0.3, 0.75), clothSway: -0.8 * bump(k, 0.25, 0.7),
+        }),
+        rec: [{ at: 0.5, o: { footR: [7.6, 0, 7.4], footRYaw: 18, pelvis: [0.8, -3.4, 1.4], spinePitch: 16, spineYaw: 14, handR: [10.8, 33.4, 9.2], elbowR: [1, -0.8, -0.4], handShapeR: 'relaxed', palmR: [-0.8, -0.4, 0.3], headYaw: 44, headPitch: 4, headRoll: 3 } }],
+        qk: 16, snap: 0, release: 0.62,
+      },
     },
     mio: {
       // Warm draught: the vial out from her hip, the cork drawn, then poured toward the one it is for
@@ -546,7 +672,20 @@ RB.battlerMoves = (function () {
         x: (k) => ({ footR: [9.8, 0, 4.6], footRYaw: 26, pelvis: [1.8, -1.6, 0.4], spineYaw: 14, spinePitch: 8, headYaw: 26, headPitch: 2, handR: [15.2, 40, 7.6], elbowR: [1, -0.6, -0.6], handShapeR: 'cup', handL: [6.4, 44.6, 6.2], handShapeL: 'open', palmL: [1, 0, 0.2], elbowL: [-1, -0.8, 0], prop: { vial: 1, cork: 1, vialTilt: 55 * ease(k) } }),
         snap: 0.3, release: 0.45,
       },
-      // (the technique, and her own way of 'restore': the draught poured)
+      // Clearwater Draught (the technique; see MIO_A, MIO_POUR)
+      draught: {
+        a: MIO_A,
+        ant: [{ at: 0.42, o: { handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', headPitch: 12, headYaw: 16, prop: { vial: 1 } } }],
+        x: (k) => W2(track(k, [[0, MIO_A], [0.16, W2(MIO_A, { handR: [6.2, 51.2, 10.8], prop: { vial: 1, cork: 1, vialTilt: 0 } })], [0.62, W2(MIO_A, MIO_POUR)], [1, W2(MIO_A, MIO_POUR)]]), {
+          handShapeR: 'cup', handShapeL: k < 0.4 ? 'cup' : 'flat', hairLag: 0.4 * bump(k, 0.2, 0.7),
+        }),
+        rec: [
+          { at: 0.32, o: { handR: [9.4, 43, 10.2], handShapeR: 'cup', handL: [2.4, 38.6, 9.4], handShapeL: 'relaxed', headYaw: 38, headPitch: 4, spineYaw: 14, prop: { vial: 1, cork: 1, vialTilt: 0 } } },
+          { at: 0.64, o: { handR: [8.6, 27.4, 3.6], handShapeR: 'cup', headYaw: 6, headPitch: 6, spineYaw: 8, prop: { vial: 1, cork: 0, vialTilt: 0 } } },
+        ],
+        qk: 16, snap: 0, release: 0.45,
+      },
+      // (her own way of 'restore': the draught poured)
       restore: null,
       // settle: (her cheer is in CHEER)
     },
@@ -589,6 +728,16 @@ RB.battlerMoves = (function () {
         x: () => ({ footR: [9.6, 0, 8.4], footRYaw: 26, pelvis: [1.8, -2.4, 2.4], spinePitch: 6, spineYaw: 16, leftFree: 1, handL: [5.4, 46, 15.4], elbowL: [-1, -0.4, -0.4], handR: [17, 42, 4.4], elbowR: [1, -0.6, -0.6], handShapeR: 'flat', palmR: [1, 0, 0.3], headPitch: -6, headYaw: 14, act: 'L', prop: { flare: 1 }, clothSway: -0.8 }),
         snap: 0.3, release: 0.45,
       },
+      // Lantern Ward (the technique; see REN_A, REN_RAISE, REN_PLANE)
+      ward_plane: {
+        a: REN_A,
+        x: (k) => W2(track(k, [[0, REN_A], [0.34, W2(REN_A, REN_RAISE)], [0.8, W2(REN_A, REN_PLANE)], [1, W2(REN_A, REN_PLANE)]]), { leftFree: 1, act: 'L', handShapeR: 'flat', clothSway: -0.5 * bump(k, 0.34, 0.8) }),
+        rec: [
+          { at: 0.36, o: { handL: [-11.0, 34.4, 2.6], elbowL: [-1, -0.5, -0.6], handR: [9.6, 40, 8.2], elbowR: [1, -1, -0.4], spineYaw: 6, spineRoll: 0, headYaw: 34, headPitch: 4, prop: { flare: 1, lampShade: 0 } } },
+          { at: 0.66, o: { handL: [-12.2, 31.4, 1.8], headYaw: -12, headPitch: 3, spineYaw: 0, prop: { flare: 0, lampShade: 0 } } },
+        ],
+        qk: 16, snap: 0, release: 0.6,
+      },
     },
     suzu: {
       // a flourish: the arm drawn in across, a turn, then the unwinding sweep out and up, fingers spread
@@ -625,6 +774,30 @@ RB.battlerMoves = (function () {
           : { footR: [8.6, 0, 9.4], footRYaw: 20, pelvis: [0.4, -2.6, 1.6], spinePitch: 12, spineYaw: 4, handR: [12.4, 46, 10], handShapeR: 'spread', palmR: [0.2, 1, 0.2], headPitch: -10, headRoll: 4, hairSway: 0.8 }),
         snap: 0.2, release: 0.3,
       },
+      // Curtain Call (the technique; see SUZU_K): 0–0.48 the twirl, 0.48–0.66 planted and the arm opening
+      // (the cue at 0.62), then held while her hair and hem settle a beat late
+      curtain: {
+        a: SUZU_A,
+        x: (k) => {
+          if (k < 0.48) {
+            const u = seg(k, 0, 0.48), th = twirlTurn(u) * Math.PI / 180;
+            const P = track(u, [[0, SUZU_K.a], [0.16, SUZU_K.spin], [0.84, SUZU_K.spin], [1, SUZU_K.out]]);
+            // the left foot steps in under her as she rises; the turn on the ball of it, the right foot light
+            return W2(P, { turn: twirlTurn(u), footLLift: 1.6 * bump(u, 0, 0.16), footRLift: 1.2 * bump(u, 0.12, 0.9),
+              // hem and hair a beat behind the turn: they flare out as it gathers speed and swing past at its end
+              clothFlare: Math.round(10 * bump(u, 0.12, 1.25)) / 10, hairLag: -1.1 * bump(u, 0.1, 1.1),
+              hairSway: 0.8 * (1 - seg(u, 0, 0.16)) - 2.2 * Math.sin(th) * seg(u, 0.1, 0.3), clothSway: 0.6 * (1 - seg(u, 0, 0.16)) - 1.4 * Math.sin(th) * seg(u, 0.1, 0.3) });
+          }
+          const P = track(k, [[0.48, SUZU_K.out], [0.56, SUZU_K.open], [0.66, SUZU_K.cue], [1, SUZU_K.cue]]);
+          const s = seg(k, 0.48, 0.95);
+          return W2(P, { turn: 0, footRLift: 2 * bump(k, 0.48, 0.6),
+            // the follow-through: the hem still out as she plants, the hair swinging past, then at rest
+            clothFlare: Math.round(10 * 0.55 * (1 - ease(seg(k, 0.48, 0.78)))) / 10, hairLag: 0.9 * bump(k, 0.48, 0.8),
+            hairSway: 1.5 * Math.sin(Math.PI * seg(s, 0, 0.3)) * (1 - s) - 0.5 * bump(s, 0.3, 0.8), clothSway: 0.9 * Math.sin(Math.PI * seg(s, 0, 0.3)) * (1 - s) });
+        },
+        rec: [{ at: 0.5, o: { headPitch: 18, headYaw: 8, headRoll: 2, spinePitch: 14, spineYaw: 6, spineRoll: -3, handR: [11.2, 33.4, 6.2], elbowR: [1, -0.6, -0.6], handShapeR: 'open', palmR: [-0.6, -0.4, 0.4], handL: [-9.4, 32.4, -1.8], handShapeL: 'flat', pelvis: [-1.2, -2.4, 0.2], footR: [7.6, 0, 6.2], hairLag: 0.8, clothSway: 0.4 } }],
+        qk: 32, snap: 0, release: 0.62,
+      },
       // Grand gesture: gathered low, then both arms flung wide and high, chin up — and held
       grand: {
         a: { handR: [3.4, 32, 6.4], handL: [-3, 32, 6.4], elbowL: [-1, -0.8, -0.2], handShapeR: 'relaxed', handShapeL: 'relaxed', spinePitch: 16, headPitch: 14, pelvis: [-0.6, -3, 0] },
@@ -640,6 +813,19 @@ RB.battlerMoves = (function () {
   const GESTURES = [...new Set(Object.keys(GEST).concat(...Object.keys(BY).map((k) => Object.keys(BY[k]).filter((g) => BY[k][g]))))];
   function gestureOf(id, g) { return (BY[id] && BY[id][g]) || GEST[g] || null; }
   function hasGesture(g, id) { return !!(g && gestureOf(id, g)); }
+  // A path through authored keys: P0 at 0, each key { at, o } (o: the values that key changes, laid over the
+  // straight blend at that moment), P1 at 1; eased within each segment, a moving foot lifted (the Harmony
+  // performances' anticipations and recoveries: a hand to the bottles at the hip before the vial rises, a
+  // nod to the player, a half-bow — each still ends exactly where it must).
+  function keyed(P0, keys, P1, k) {
+    const pts = [{ at: 0, P: P0 }].concat(keys.map((q) => ({ at: q.at, P: over(blend(P0, P1, q.at), q.o) })), [{ at: 1, P: P1 }]);
+    if (k <= 0) return clone(P0);
+    if (k >= 1) return clone(P1);
+    let i = 0;
+    while (i < pts.length - 2 && k >= pts[i + 1].at) i++;
+    const a = pts[i], b = pts[i + 1];
+    return blendStep(a.P, b.P, ease((k - a.at) / (b.at - a.at)));
+  }
   function gesturePose(look, id, gesture, stage, k) {
     const R = readyOf(look, id), G = gestureOf(id, gesture) || GEST.direct;
     if (gesture === 'rise') {
@@ -649,12 +835,13 @@ RB.battlerMoves = (function () {
     }
     const A = over(R, G.a || {});
     const X = (q) => over(A, G.x(q, R));
-    if (stage === 'anticipate') return blendStep(R, A, ease(k));
+    if (stage === 'anticipate') return G.ant ? keyed(R, G.ant, A, k) : blendStep(R, A, ease(k));
     if (stage === 'act') {
       if (G.snap) { const t = clamp01(k / G.snap); return k < G.snap ? blendStep(A, X(k), ease(t)) : X(k); }
+      if (G.direct) return X(k); // (a path that starts at its own anticipation key: no settling blend)
       return blendStep(A, X(k), clamp01(k / 0.12));
     }
-    return blendStep(X(1), R, ease(k)); // recover
+    return G.rec ? keyed(X(1), G.rec, R, k) : blendStep(X(1), R, ease(k)); // recover
   }
 
   // ---- reactions (§7.5, §10) ----------------------------------------------------------------------------
@@ -737,24 +924,28 @@ RB.battlerMoves = (function () {
 
   // ---- the coverage record (§7.5): each required state → the pose that serves it, per actor ---------------
   // (tests/unit/battle_party.test.mjs draws every entry for every actor)
-  const OWN = { pc: ['thread', 'direct', 'trace', 'crystal', 'book', 'lens', 'ward', 'restore', 'flow', 'sweep', 'plant', 'open', 'raise', 'ring', 'call'],
-    nao: ['point', 'spot', 'call', 'reach', 'lunge', 'shoulder', 'help'], mio: ['pour', 'dab', 'waft', 'salts', 'tonic', 'help'],
-    ren: ['ward', 'shade', 'flare', 'vigil', 'lanterns', 'front', 'help'], suzu: ['flourish', 'heckle', 'beckon', 'clap', 'feint', 'grand', 'help'] };
-  const TECH_PARTNER = { nao: 'point', mio: 'pour', ren: 'ward', suzu: 'flourish' };
+  const OWN = { pc: ['thread', 'direct', 'trace', 'crystal', 'book', 'lens', 'ward', 'restore', 'flow', 'sweep', 'plant', 'open', 'raise', 'ring', 'call', 'rally_thread', 'rally_release', 'rally_seal', 'rally_catch'],
+    nao: ['point', 'spot', 'call', 'reach', 'lunge', 'shoulder', 'help', 'opening'], mio: ['pour', 'dab', 'waft', 'salts', 'tonic', 'help', 'draught'],
+    ren: ['ward', 'shade', 'flare', 'vigil', 'lanterns', 'front', 'help', 'ward_plane'], suzu: ['flourish', 'heckle', 'beckon', 'clap', 'feint', 'grand', 'help', 'curtain'] };
+  // the Harmony techniques (Harmony addendum §9): the companion's own performance and the player's terminal
+  const TECH_PARTNER = { nao: 'opening', mio: 'draught', ren: 'ward_plane', suzu: 'curtain' };
+  const TECH_LEAD = { nao: 'rally_thread', mio: 'rally_release', ren: 'rally_seal', suzu: 'rally_catch' };
   function coverage(id) {
     const g0 = (OWN[id] || OWN.pc)[0];
     return {
       quietReady: ['calm', null], anticipate: ['anticipate', g0], express: ['act', g0, 0.2], release: ['act', g0, 1],
       protect: ['guard', null], receiveHealing: ['soothed', null], directHit: ['hit', null], softenedHit: ['hit', 'soft'], blockedHit: ['brace', null],
       condition: ['afflict', 'hush'], recover: ['recover', g0], incapacitated: ['down', null], revive: id === 'pc' ? ['recover', 'rise'] : ['act', 'help'],
-      technique: id === 'pc' ? ['act', 'thread'] : ['act', TECH_PARTNER[id]], settle: ['cheer', null], idle: ['ready', null],
+      technique: id === 'pc' ? ['act', 'rally_thread'] : ['act', TECH_PARTNER[id]], settle: ['cheer', null], idle: ['ready', null],
     };
   }
 
   return {
-    ACTORS, GESTURES, VARIANTS, LOOP, OWN, TECH_PARTNER, STANCE, IDLE,
+    ACTORS, GESTURES, VARIANTS, LOOP, OWN, TECH_PARTNER, TECH_LEAD, STANCE, IDLE,
     poseAt, idleKey, idleTimes, hasGesture, hasVariant, gestureOf, coverage, readyOf,
     release: (id, g) => { const G = gestureOf(id, g); return G ? G.release : 0.3; },
+    // how finely a gesture's progress is drawn (frames per stage; a twirl needs more than a point)
+    qkOf: (id, g) => { const G = gestureOf(id, g); return (G && G.qk) || 0; },
     actHand: (id, g) => { const G = gestureOf(id, g); return G && G.a && G.a.act === 'L' ? 'L' : 'R'; },
     PULSE, _: { over, plus, blend, restPose, idlePose, loopOf },
   };

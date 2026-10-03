@@ -22,6 +22,9 @@ RB.game = (function () {
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
       battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive',
+      // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
+      // only — Off suppresses that layer alone (older records lack it: On)
+      harmonyFlourish: true,
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,

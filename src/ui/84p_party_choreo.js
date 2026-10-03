@@ -62,15 +62,28 @@ RB.partyChoreo = (function () {
     answer: { g: 'book', motif: 'note', ant: 240, act: 560, word: W(160, 520, 200, 120, 440, 1200, 1380), contact: 840, rec: 1160, recD: 380, end: 1560 },
     truth: { g: 'lens', motif: 'split', ant: 220, act: 520, word: W(140, 320, 200, 120, 440, 1160, 1340), contact: 760, rec: 1100, recD: 380, end: 1500 },
   };
-  // Coordinated techniques (§8.5): one named action, two real participants with complementary phases
-  // (not the same gesture at the same time): the partner's own move (`p`, starting at pAt), the
-  // player's (`g`, starting at gAt), one culmination (contact).
+  // Coordinated techniques (§8.5; Harmony addendum §7.2, §9): one named action, two real participants with
+  // complementary phases, one culmination. Times are presentation ms from the technique's own start:
+  //   0–780      the paired portrait (RB.harmonyCutin: in 0–180, hold 180–560, fade 560–780 at Normal) —
+  //              the `cutin` cue; meanwhile your rally begins (a breath, the writing hand gathered: gAnt)
+  //   pAt…       the companion's anticipation (pAnt), then the signature (pAct), its cue at the gesture's
+  //              release; held until the recovery
+  //   gAt…       your terminal gesture (gAct), released on the companion's cue
+  //   contact    the first result (never before the portrait is gone), the rest 150 ms apart
+  //   rec…       both back to the ready stance (the companion 60 ms later; recD), the technique's end
+  // Fast runs the same table on the ×1.43 clock (1.6–1.7 s); the portrait has its own Fast timing.
+  // g / p: your gesture and the companion's (RB.battlerMoves: rally_*, and opening, draught, ward_plane,
+  // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
+  // companion's object or garment) — nothing is said, and muted play loses nothing.
   const TECH = {
-    nao: { g: 'thread', gAt: 260, p: 'point', pAt: 0, motif: 'join', word: W(320, 300, 220, 120, 440, 1260, 1440), contact: 980, rec: 1360, recD: 380, end: 1820, note: 'Nao points out where it will move; you send the thread exactly there: two knots.' },
-    mio: { g: 'restore', gAt: 0, p: 'pour', pAt: 220, motif: 'join', word: W(160, 260, 220, 120, 440, 1260, 1440), contact: 980, rec: 1360, recD: 380, end: 1820, note: 'You write; Mio pours the draught into the ink as it is released: both restored, lingering effects washed off.' },
-    ren: { g: 'ward', gAt: 200, p: 'ward', pAt: 0, motif: 'join', word: W(240, 0, 240, 140, 420, 1260, 1440), contact: 920, rec: 1360, recD: 380, end: 1800, note: 'Ren raises the lamp; your seal forms in its light before you both.' },
-    suzu: { g: 'thread', gAt: 300, p: 'flourish', pAt: 0, motif: 'join', word: W(340, 300, 220, 120, 440, 1260, 1440), contact: 1000, rec: 1380, recD: 380, end: 1840, note: 'Suzu turns its move back on it with a flourish; your thread lands in the opening she makes.' },
+    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 520, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1240, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [1090, 'pen_up']], note: 'Nao drops his weight, steps in and cuts a hand across the opening; your thread follows his line: two knots, on that one creature only.' },
+    mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1200, rec: 1800, recD: 400, end: 2350, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio measures the draught at eye level, uncorks it and pours it into your rising ink; you release it over you both: the knot, then the restoring, then what it washes off — each where it really happens.' },
+    ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants his feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
+    suzu: { g: 'rally_catch', gAnt: 500, gAt: 850, gAct: 560, p: 'curtain', pAt: 350, pAnt: 400, pAct: 550, motif: 'join', word: W(840, 300, 220, 120, 440, 1100, 1280), contact: 1280, rec: 1850, recD: 500, end: 2450, sfx: [[0, 'pen_stroke'], [760, 'wind']], note: 'Suzu steps back, twirls, plants and opens her arm — the cue; your thread swings round the opening like a curtain and turns its move back on it.' },
   };
+  // reduced motion (§7.4, §9.6): three held poses each, no travel — the anticipation key, the signature
+  // (yours at its release, the companion's at its end), and the recovery's own key (Suzu's half-bow)
+  const RD_K = { pc: 0.5, comp: 1 };
 
   // ---- companion support actions (src/content/02_companions.js), every one mapped ---------------------------
   // g: the companion's gesture; ant/act/rel: timing; contact: when its result arrives; travel: the visual
@@ -168,6 +181,37 @@ RB.partyChoreo = (function () {
     return { target, gesture, actors, family: fam.family, mapped: fam.mapped, motif, spec, wordTo, travel: motif, tech: card.kind === 'tech' ? card.tech : null };
   }
 
+  // A technique's two performances as pose cues (TECH): each pose segment overlaps the next by 20 ms so no
+  // frame falls back to the idle between them; a held segment carries a fixed progress (k). Reduced motion:
+  // three held poses each, cut, never travelled. Returns when each performer releases (for the carriers).
+  function techPoses(Q, t, F, rd, ctx) {
+    const pose = (who, p, g, at, d, k) => Q.push(Object.assign({ at: t + at, type: 'pose', who, pose: p, gesture: g, d }, k != null ? { k } : {}));
+    const sigC = F.pAt + F.pAnt, recC = F.rec + 60;
+    if (rd) {
+      if (ctx.comp) {
+        pose('comp', 'anticipate', F.p, F.pAt, sigC - F.pAt + 20, 1);
+        pose('comp', 'act', F.p, sigC, recC - sigC + 20, RD_K.comp);
+        pose('comp', 'recover', F.p, recC, F.recD, 0.5);
+      }
+      pose('pc', 'anticipate', F.g, 0, F.gAt + 20, 1);
+      pose('pc', 'act', F.g, F.gAt, F.rec - F.gAt + 20, RD_K.pc);
+      pose('pc', 'recover', F.g, F.rec, F.recD, 0.5);
+    } else {
+      if (ctx.comp) {
+        pose('comp', 'anticipate', F.p, F.pAt, F.pAnt + 20);
+        pose('comp', 'act', F.p, sigC, F.pAct + 20);
+        pose('comp', 'act', F.p, sigC + F.pAct, recC - sigC - F.pAct + 20, 1); // the signature held
+        pose('comp', 'recover', F.p, recC, F.recD);
+      }
+      pose('pc', 'anticipate', F.g, 0, F.gAnt + 20);
+      pose('pc', 'anticipate', F.g, F.gAnt, F.gAt - F.gAnt + 20, 1); // the gathered hand waits for the cue
+      pose('pc', 'act', F.g, F.gAt, F.gAct + 20);
+      pose('pc', 'act', F.g, F.gAt + F.gAct, F.rec - F.gAt - F.gAct + 20, 1);
+      pose('pc', 'recover', F.g, F.rec, F.recD);
+    }
+    return { comp: t + sigC + Math.round(F.pAct * MV().release(ctx.comp || 'comp', F.p)), pc: t + F.gAt + Math.round(F.gAct * MV().release('pc', F.g)) };
+  }
+
   // ---- the player's response (or a coordinated technique) -------------------------------------------------
   function player(card, fx, ctx, H) {
     const Q = [], rd = !!ctx.reduce;
@@ -185,10 +229,15 @@ RB.partyChoreo = (function () {
     const tech = plan.family === 'technique';
     const rel = (g, who) => (who === 'comp' ? MV().release(ctx.comp, g) : MV().release('pc', g));
     // gestures: anticipation → express/release → recovery (a technique: two complementary performances)
-    const perf = tech
-      ? [{ who: 'comp', g: F.p, at: F.pAt, ant: 200, act: 520 }, { who: 'pc', g: F.g, at: F.gAt, ant: 220, act: 540 }]
-      : [{ who: 'pc', g: F.g, at: 0, ant: F.ant, act: F.act }];
-    const releaseAt = {};
+    const perf = tech ? [] : [{ who: 'pc', g: F.g, at: 0, ant: F.ant, act: F.act }];
+    const releaseAt = tech ? techPoses(Q, t, F, rd, ctx) : {};
+    if (tech) {
+      // the paired portrait (Harmony addendum §5, §7): one cue at the technique's own start, whatever the
+      // number of targets; only with a committed companion. RB.harmonyCutin decides whether it shows (the
+      // setting, Instant, a reading layer, the space available) — the stage below is the same either way.
+      if (ctx.comp) Q.push({ at: t, type: 'cutin', comp: ctx.comp, tech: plan.tech, d: 780 });
+      for (const [at, name] of F.sfx || []) Q.push({ at: t + at, type: 'sfx', name });
+    }
     for (const p of perf) {
       if (rd) Q.push({ at: t + p.at, type: 'pose', who: p.who, pose: 'act', gesture: p.g, d: F.rec + F.recD - p.at });
       else {
@@ -295,17 +344,33 @@ RB.partyChoreo = (function () {
         Q.push({ at: r - 40, type: 'fx', name: 'lens', d: 720, p: { foe: T } });
         break;
       case 'technique': {
-        const who = plan.tech;
+        const who = plan.tech, rc = rel.comp != null ? rel.comp : rel.pc;
         // the two performances meet: a braided thread from both release points to the target
-        Q.push({ at: Math.min(rel.pc, rel.comp) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rel.comp) + 300, p: { to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who } });
-        if (who === 'nao' || who === 'suzu') {
-          const i = Math.max(0, H.fview(ctx, T).knots - 1);
-          Q.push({ at: rel.pc, type: 'fx', name: 'pThread', d: c - rel.pc + 260, p: { from: 'pc', to: H.knotId(ctx, T, i), foe: T, pull: 1 } });
+        Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: { to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who } });
+        const top = Math.max(0, H.fview(ctx, T).knots - 1);
+        // Nao: his cut marks the opening; your thread runs to that knot (and, when two really come loose,
+        // a short route links the two contacts — on that creature only, never a splash on the others)
+        if (who === 'nao') {
+          Q.push({ at: rc, type: 'fx', name: 'pSpot', d: c - rc + 200, p: { from: 'comp', foe: T } });
+          Q.push({ at: rel.pc, type: 'fx', name: 'pThread', d: c - rel.pc + 260, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, pull: 1 } });
+          const u = fx.find((f) => f.t === 'unravel' && H.fid(ctx, f.foe) === T);
+          if (u && Math.min(u.n || 1, H.fview(ctx, T).knots) >= 2) Q.push({ at: c + 40, type: 'fx', name: 'pRoute', d: 560, p: { from: H.knotId(ctx, T, top), to: H.knotId(ctx, T, top - 1), foe: T } });
         }
-        if (who === 'nao') Q.push({ at: rel.comp, type: 'fx', name: 'pSpot', d: c - rel.comp + 200, p: { from: 'comp', foe: T } });
-        if (who === 'mio') Q.push({ at: rel.comp, type: 'fx', name: 'pPour', d: c - rel.comp + 120, p: { from: 'comp', who: ['pc'], into: 'pc' } });
-        if (who === 'ren') Q.push({ at: rel.comp, type: 'fx', name: 'pLamp', d: c - rel.comp + 300, p: { from: 'comp', who: both } });
-        if (who === 'suzu') Q.push({ at: rel.comp, type: 'fx', name: 'pAttention', d: c - rel.comp + 300, p: { to: 'comp', foes: plan.target === 'foes' ? ctx.reach.foes : [T] } });
+        // Mio: the draught poured into your ink (the restoring and the washing are their own beats: react)
+        if (who === 'mio') Q.push({ at: rc, type: 'fx', name: 'pPour', d: Math.max(160, rel.pc - rc + 160), p: { from: 'comp', who: ['pc'], into: 'pc' } });
+        // Ren: the shaded lamp's light thrown back over the pair; the level plane his hand draws, set before
+        // each of you (the wards form on it at the result); the knot is the creature's own, at contact
+        if (who === 'ren') {
+          Q.push({ at: rc - 180, type: 'fx', name: 'pLamp', d: c - rc + 480, p: { from: 'comp', who: both } });
+          Q.push({ at: rc - 60, type: 'fx', name: 'pPlane', d: c - rc + 560, p: { from: 'comp', who: both } });
+        }
+        // Suzu: on her cue every eye turns to her; your thread swings round the opening like a curtain and
+        // turns the move back (round each creature whose move it really turns)
+        if (who === 'suzu') {
+          const foes = plan.target === 'foes' ? ctx.reach.foes : [T];
+          Q.push({ at: rc, type: 'fx', name: 'pAttention', d: c - rc + 300, p: { to: 'comp', foes } });
+          foes.forEach((i, k) => Q.push({ at: rel.pc + k * 90, type: 'fx', name: 'pCurtain', d: c - rel.pc + 520, p: { from: 'pc', to: H.foeId(ctx, i), foe: i, lead: i === T } }));
+        }
         Q.push({ at: c - 200, type: 'fx', name: 'link', d: 600, p: {} });
         break;
       }
@@ -421,7 +486,21 @@ RB.partyChoreo = (function () {
       case 'reveal': foeCue('recoil', 360, { dir: 'party' }); Q.push({ at, type: 'fx', name: 'pSplit', d: 640, p: { foe: i } }); return true;
       case 'tech': {
         const w = f.who || comp;
-        if (w === 'mio') { Q.push({ at, type: 'fx', name: 'motes', d: 820, p: { who: both } }); for (const x of both) pose(x, 'soothed', null, 700, 40); for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + 60, type: 'fx', name: 'pSteam', d: 700, p: { foe: k, wash: 1 } }); }
+        if (w === 'mio') {
+          // Clearwater Draught, truthfully (Harmony addendum §9.4): the restoring reaches only one of you who
+          // was below full (the numbers come from the applied change); then the washing reaches only the
+          // creatures that had Heat, mist or Gathering — each condition its own way of leaving
+          const v = ctx.view || {}, max = v.max || 0;
+          const low = both.filter((x) => max && v[x] != null && v[x] < max);
+          if (low.length) { Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: low } }); for (const x of low) pose(x, 'soothed', null, 700, 40); }
+          const fs = v.foes ? (f.all && ctx.reach ? ctx.reach.foes : [i]) : [i];
+          fs.forEach((k, n) => {
+            const fv = H.fview(ctx, k) || {}, d0 = at + 150 + n * 70;
+            if (fv.heat) Q.push({ at: d0, type: 'fx', name: 'pSteam', d: 700, p: { foe: k, wash: 1 } });
+            if (fv.shroud) { Q.push({ at: d0, type: 'fx', name: 'pShroudClear', d: 820, p: { foe: k, by: 'water' } }); Q.push({ at: d0 + 40, type: 'fx', name: 'mistPart', d: 620, p: { foe: k } }); }
+            if (fv.charged) Q.push({ at: d0 + 30, type: 'fx', name: 'scatter', d: 520, p: { foe: k } });
+          });
+        }
         if (w === 'ren') for (const x of both) Q.push({ at: at + (x === 'comp' ? 80 : 0), type: 'fx', name: 'sealForm', d: 520, p: { to: x } });
         if (w === 'suzu') for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + (k === i ? 0 : 90), type: 'fx', name: 'fizzle', d: 520, p: { foe: k } });
         if (w === 'nao') Q.push({ at, type: 'fx', name: 'pSpot', d: 400, p: { from: 'comp', foe: i, done: 1 } });

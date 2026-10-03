@@ -38,6 +38,9 @@ RB.battleSeq = (function () {
     foePrep: 320, foeExec: 380, contact: 560, foeRecover: 300, secondTarget: 120, react: 420,
     finishHold: 1000, speed: { normal: 1, fast: 1.43 }, hurry: 4,
     bannerOut: { normal: 120, fast: 80 }, // the banner leaves inside the action's last ms (§14.3)
+    // Harmony portrait (Harmony addendum §7.2, §7.4; src/ui/82d_harmony_cutin.js): in / hold / fade, presentation
+    // ms — Fast's clock runs ×1.43, so its values are 100 / 220 / 160 ms of wall time (480 ms)
+    cutin: { normal: { in: 180, hold: 380, out: 220 }, fast: { in: 143, hold: 315, out: 229 } },
   };
   let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
   const trace = [];
@@ -66,6 +69,7 @@ RB.battleSeq = (function () {
   }
   function detach() {
     if (cur) settle('exit');
+    if (RB.harmonyCutin) RB.harmonyCutin.dispose('exit'); // (Harmony portrait: never outlives the encounter)
     skipping = false;
     if (RB.battleBanner) RB.battleBanner.clear();
     if (onVis) document.removeEventListener('visibilitychange', onVis);
@@ -79,6 +83,7 @@ RB.battleSeq = (function () {
     lastT = t;
     pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
+    if (RB.harmonyCutin) RB.harmonyCutin.frame(pt); // (Harmony portrait: on this clock, hurried with it)
     return pt;
   }
   function now() { return pt; }
@@ -139,7 +144,8 @@ RB.battleSeq = (function () {
       case 'sfx': if (!instant) RB.audio && RB.audio.sfx(c.name); break;
       default:
         if (instant) break;
-        if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at);
+        if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at, c.k); // (k: a held pose's fixed progress)
+        else if (c.type === 'cutin') { if (RB.harmonyCutin) RB.harmonyCutin.start(c, at, cur.rec); } // Harmony portrait
         else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0, travel: c.travel });
         else if (c.type === 'fx') S.effect(c.name, c.d, at, c.p);
         else if (c.type === 'strip') S.strip(c.word, c.from, c.to, at, c.tm);
@@ -150,6 +156,7 @@ RB.battleSeq = (function () {
   function settle(why) {
     if (!cur) return;
     while (cur.i < cur.cues.length) fire(cur.cues[cur.i++], true);
+    if (RB.harmonyCutin) RB.harmonyCutin.dispose(why || 'skip'); // (Harmony portrait: settled with the rest)
     stage().clearTransient();
     counters.settled++;
     finish(why || 'skip');
@@ -174,6 +181,7 @@ RB.battleSeq = (function () {
     cur = null;
     // the banner belongs to this action's interval: gone by its end, on every path
     if (c.banner && RB.battleBanner) { RB.battleBanner.hide(c.banner, true); c.banner = null; }
+    if (RB.harmonyCutin) RB.harmonyCutin.dispose('end'); // (gone long before; a safety on every path)
     if (c.watch) { clearTimeout(c.watch); timers.delete(c.watch); }
     unhook();
     c.rec.settled = settled;

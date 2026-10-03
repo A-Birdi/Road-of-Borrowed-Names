@@ -89,7 +89,11 @@ RB.battlers = (function () {
   const TOWARD = [0, spn, cp];                  // toward the viewer
   const LIGHT = norm([-0.72, 0.64, 0.36]);      // toward the light: upper left, a little in front
   // body local -> world: right -> (cos, 0, sin) (right and toward the viewer), forward -> (sin, 0, -cos)
-  const BODY = [[Math.cos(YAW), 0, Math.sin(YAW)], [0, 1, 0], [Math.sin(YAW), 0, -Math.cos(YAW)]];
+  const BODY0 = [[Math.cos(YAW), 0, Math.sin(YAW)], [0, 1, 0], [Math.sin(YAW), 0, -Math.cos(YAW)]];
+  // (a pose's `turn` — Suzu's twirl — turns the whole body about its foot anchor: the frame is set for the
+  // one figure being built, so its side, front and back are the rig's own, never a mirrored costume)
+  let BODY = BODY0;
+  const bodyFor = (ps) => (ps && ps.turn ? mm(BODY0, rotY(ps.turn * DEG)) : BODY0);
   // ZS (above, per grid): art px per body unit: the figure is authored in body units and drawn a little larger.
   // world point -> [screen x from the anchor, screen y from the anchor (down +), depth toward viewer]
   const proj = (w) => [w[0] * ZS, -(w[1] * cp - w[2] * spn) * ZS, w[1] * spn + w[2] * cp];
@@ -598,6 +602,8 @@ RB.battlers = (function () {
     // the lashes of the near eye, showing at the cheek's edge when the head turns toward the foe,
     // and a touch of colour on the cheek
     E(add(headC, mv(Mh, [hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.84])), Mh, [1.2, 0.7, 0.9], Mt.lash, GRP.ear);
+    // turned toward us (a twirl's front view) the far eye shows too (only then: the usual view is unchanged)
+    if (ps.turn && Math.cos((ps.turn + 36) * DEG) < 0.2) E(add(headC, mv(Mh, [-hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.84])), Mh, [1.2, 0.7, 0.9], Mt.lash, GRP.ear);
     E(add(headC, mv(Mh, [hr[0] * 0.72, -hr[1] * 0.3, hr[2] * 0.62])), Mh, [1.4, 0.8, 1.2], Mt.blush, GRP.head, (l) => true);
     hair(K);
     return { calls, J, K };
@@ -666,15 +672,16 @@ RB.battlers = (function () {
   // ---- garments -------------------------------------------------------------------------------------------
   function garment(K, look, B, p, Mt, pel, waist, Mp, Ms) {
     const g = B.girth, k = B.k, sh = ['tunic', 'apron', 'coat', 'robe', 'dress'].includes(look.shape) ? look.shape : 'tunic';
-    const sway = K.ps.clothSway || 0;
-    const hemY = { tunic: 19, apron: 19, coat: 10.5, robe: 2.4, dress: 12.5 }[sh] * (sh === 'robe' ? 1 : k);
+    const sway = K.ps.clothSway || 0, flare = Math.max(0, K.ps.clothFlare || 0);
+    // (a turning skirt flares out and its hem lifts a little — Suzu's twirl; 0 otherwise)
+    const hemY = { tunic: 19, apron: 19, coat: 10.5, robe: 2.4, dress: 12.5 }[sh] * (sh === 'robe' ? 1 : k) + flare * 1.6;
     const prof = {
       tunic: [[0, 9.4, 7.8], [0.5, 8.7, 6.9], [1, 7.6, 6.0]],
       apron: [[0, 9.4, 7.8], [0.5, 8.7, 6.9], [1, 7.6, 6.0]],
       coat: [[0, 11.2, 9.6], [0.55, 9.6, 7.8], [1, 7.7, 6.1]],
       robe: [[0, 10.8, 9.4], [0.18, 9.8, 8.4], [0.7, 8.6, 7.0], [1, 7.7, 6.1]],
       dress: [[0, 12.4, 10.6], [0.5, 10.2, 8.4], [1, 7.6, 6.0]],
-    }[sh].map(([h, rx, rz]) => [h, rx * g, rz * g]);
+    }[sh].map(([h, rx, rz]) => [h, rx * g * (1 + flare * 0.3 * (1 - h)), rz * g * (1 + flare * 0.3 * (1 - h))]);
     const top = add(waist, mv(Ms, [0, 0.8, 0]));
     const hem = [pel[0] + sway, hemY, pel[2] - sway * 0.4];
     K.Lf(hem, top, Mp, prof, Mt.skirt, GRP.skirt);
@@ -908,6 +915,9 @@ RB.battlers = (function () {
       K.Bx(at(-2.6), Ms, [2.2 * q, 0.6 * q, 2.2 * q], Mt.iron, GRP.prop);
       K.E(at(-5.4), Ms, [2.3 * q, 2.6 * q, 2.3 * q], lit, GRP.prop);
       K.Bx(at(-8.2), Ms, [2 * q, 0.5 * q, 2 * q], Mt.iron, GRP.prop);
+      // Lantern Ward: the lamp's shutter turned to the creatures (its iron plate on the glass's far side), so
+      // the light falls back over the pair
+      if (own && ps.prop && ps.prop.lampShade > 0.5) K.Bx(add(at(-5.4), mv(Ms, [0.4 * q, 0, 2.1 * q])), mm(Ms, rotY(-20 * DEG)), [2.2 * q, 2.4 * q, 0.35 * q], Mt.iron, GRP.prop);
       if (own) K.J.lamp = at(-5.4);
     };
     for (const a of acc) {
@@ -1086,7 +1096,8 @@ RB.battlers = (function () {
   const DBG = {}; // (development switches for the passes: noCast, noEdge, noRim, noClean)
   function render(look, ps, grid) {
     useGrid(grid);
-    try { return render1(look, ps); } finally { useGrid(GRIDS.std); }
+    BODY = bodyFor(ps);
+    try { return render1(look, ps); } finally { useGrid(GRIDS.std); BODY = BODY0; }
   }
   function render1(look, ps) {
     const as = assemble(look, ps);
@@ -1249,7 +1260,9 @@ RB.battlers = (function () {
     const reduce = !!o.reduce;
     const idleP = pose === 'ready' || pose === 'calm';
     let k = Math.max(0, Math.min(1, o.k == null ? 0 : +o.k || 0));
-    k = reduce ? Math.round(k * 2) / 2 : Math.round(k * QK) / QK;
+    // (a gesture may draw its progress more finely than QK steps — Suzu's twirl — still a bounded set)
+    const qk = (usesG && Mv.qkOf && Mv.qkOf(id, gesture)) || QK;
+    k = reduce ? Math.round(k * 2) / 2 : Math.round(k * qk) / qk;
     const ik = idleP ? Mv.idleKey(id, pose, o.t || 0, reduce) : '';
     const left = o.facing === 'upleft';
     const grid = o.grid && GRIDS[o.grid] ? GRIDS[o.grid] : GRIDS.std;
@@ -1260,7 +1273,8 @@ RB.battlers = (function () {
   function build(look, r) {
     const ps = M().poseAt(look, r.pose, r.gesture || r.variant, r.k, r.t, r.who, r.reduce, r.id, r.ik);
     useGrid(r.grid);
-    try { const { b, J } = render1(look, ps); return { b, J, ps, pts: pointsOf(J, ps, r.pose, r.gesture) }; } finally { useGrid(GRIDS.std); }
+    BODY = bodyFor(ps);
+    try { const { b, J } = render1(look, ps); return { b, J, ps, pts: pointsOf(J, ps, r.pose, r.gesture) }; } finally { useGrid(GRIDS.std); BODY = BODY0; }
   }
   function frameFor(look, o) {
     look = look || {};

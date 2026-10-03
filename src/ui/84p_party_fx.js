@@ -380,6 +380,55 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (let i = 0; i < 5; i++) { const an = -Math.PI / 2 + (i - 2) * 0.5, r = ease(k) * (6 + hs(i, 1) * 6) * u; R(c, o.x + Math.cos(an) * r, o.y + Math.sin(an) * r, u, u, i % 2 ? P.paper : P.verm, 1 - k); }
       }
     },
+    // ---- the Harmony techniques (Harmony addendum §9) --------------------------------------------------
+    // Read the Opening: two knots freed together — a short ochre route links the two contacts (Nao's courier
+    // line), drawn from the first to the second; only on that creature
+    pRoute(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from, 'core'), b = A.pt(e.p.to, 'core'), L = dist(a, b);
+      const fade = 1 - seg(k, 0.72, 1), s = still ? 1 : ease(seg(k, 0, 0.4));
+      const fn = (q) => qpt(a, b, -0.35 * L, q);
+      path(c, fn, L, 0, s, u, '#6a4a1c', 0.9 * fade, 1.1, 2 * u);
+      path(c, (q) => { const p = fn(q); return { x: p.x, y: p.y - u }; }, L, 0, s, u, '#e0b050', fade, 1.1, u);
+      if (!still) { const h = seg(k, 0.4, 0.75); if (h > 0) for (const p of [a, b]) sparkle(c, p.x, p.y, Math.round((2 + 2 * bell(h)) * u), u, '#fff0c0', bell(h) * fade); }
+    },
+    // Curtain Call: the thread swung round the opening like a stage curtain — a band of cloth (vermilion,
+    // its folds in stripes, a gold hem) leaving your hand, sweeping over and past the creature, then hooking
+    // back down onto it: its own move turned round. Lead: the target (the others in a group a step behind).
+    pCurtain(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), o = A.pt('foe', 'core'), top = A.pt('foe', 'top');
+      const over = { x: o.x + A.foeR * 0.9, y: Math.min(top.y, o.y - A.foeR) - 6 * u };
+      const L1 = dist(a, over), L2 = dist(over, o);
+      const fade = 1 - seg(k, 0.78, 1);
+      const out = still ? 1 : ease(seg(k, 0, 0.5)), back = still ? 1 : ease(seg(k, 0.45, 0.78));
+      // the band: the way out (a high arc) and the hook back onto it
+      const p1 = (q) => qpt(a, over, -0.32 * L1, q), p2 = (q) => qpt(over, o, 0.45 * L2, q);
+      const band = (fn, L, s0, s1) => {
+        if (s1 <= s0) return;
+        const n = Math.max(4, Math.round((L * (s1 - s0)) / (1.5 * u)));
+        for (let i = 0; i <= n; i++) {
+          const q = s0 + ((s1 - s0) * i) / n, p = fn(q), fold = Math.floor((q * L) / (4 * u)) % 2;
+          R(c, p.x - u, p.y - 2 * u, 3 * u, 3 * u, fold ? '#a8322a' : '#d0503c', fade * (e.p.lead === false ? 0.75 : 1));
+          R(c, p.x - u, p.y + u, 3 * u, u, '#e8c060', fade * 0.9);
+        }
+      };
+      band(p1, L1, 0, out);
+      if (out >= 1) band(p2, L2, 0, back);
+      if (!still && back > 0.85) { const h = seg(k, 0.7, 0.9); sparkle(c, o.x, o.y, Math.round((2 + 3 * bell(h)) * u), u, '#fff0e0', bell(h) * fade); }
+    },
+    // Lantern Ward: the level plane Ren's hand draws, set before each of you at the chest — a few thin lines
+    // of lamplight laid flat in perspective, growing from his side; restrained, it holds and is gone (the
+    // ward itself is the seal tag at the result, its real amount, used up by blows like any ward)
+    pPlane(c, e, k, A, t, still) {
+      const u = A.u, fade = 1 - seg(k, 0.8, 1), s = still ? 1 : ease(seg(k, 0, 0.45));
+      for (const w of e.p.who || []) {
+        const o = A.pt(w, 'chest'), x0 = o.x - 9 * u, y0 = o.y + 3 * u;
+        for (let r = 0; r < 3; r++) {
+          const len = 24 * u * s, dx = r * 3 * u, dy = -r * 2 * u;
+          path(c, (q) => ({ x: x0 + dx + q * len, y: y0 + dy - q * len * 0.32 }), len, 0, 1, u, r === 1 ? '#fff6d8' : '#ffe8b0', (r === 1 ? 0.75 : 0.4) * fade, 1, u);
+        }
+        if (s >= 1 && !still) R(c, x0 + 24 * u + 3 * u, y0 - 24 * u * 0.32 - 2 * u, u, u, '#ffffff', fade);
+      }
+    },
     // a support that found nothing to do (no opening; the knot held; not in step): a small grey puff
     pNone(c, e, k, A, t, still) {
       const u = A.u, o = A.pt(e.p.from || 'comp', 'release');

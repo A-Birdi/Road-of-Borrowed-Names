@@ -3160,6 +3160,20 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
   box-shadow: 0 0 calc(var(--glow, 0) * 10px) rgba(255, 216, 138, calc(var(--glow, 0) * 0.6)), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge), 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
+/* ==== src/styles/61h_harmony_cutin.css ==== */
+/* The Harmony portrait flourish (src/ui/82d_harmony_cutin.js; Harmony addendum §5, §7): a decorative layer
+ * over the scene, above the effects (z 1) and below Skip (5), the action banner (6), the menus and every
+ * reading layer (they live outside the battle overlay). Not focusable, takes no pointer input, dims nothing.
+ * Placed in viewport px by the script (position: fixed, so a scrolled overlay at large text does not carry
+ * it), drawn nearest-neighbour; its opacity and slide come from the battle's presentation clock — never a
+ * CSS transition, so Skip, a hidden tab or the end of the action remove it at once. */
+.combat-ui > .cb-cutin {
+  position: fixed; left: 0; top: 0; z-index: 3; margin: 0; padding: 0; border: 0;
+  pointer-events: none !important; user-select: none; -webkit-user-select: none;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  transform-origin: 0 0; will-change: transform, opacity; transition: none; opacity: 0;
+}
+
 /* ==== src/styles/66_words.css ==== */
 /* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
  * (src/ui/66_words_pages.js). */
@@ -27192,7 +27206,11 @@ RB.battlers = (function () {
   const TOWARD = [0, spn, cp];                  // toward the viewer
   const LIGHT = norm([-0.72, 0.64, 0.36]);      // toward the light: upper left, a little in front
   // body local -> world: right -> (cos, 0, sin) (right and toward the viewer), forward -> (sin, 0, -cos)
-  const BODY = [[Math.cos(YAW), 0, Math.sin(YAW)], [0, 1, 0], [Math.sin(YAW), 0, -Math.cos(YAW)]];
+  const BODY0 = [[Math.cos(YAW), 0, Math.sin(YAW)], [0, 1, 0], [Math.sin(YAW), 0, -Math.cos(YAW)]];
+  // (a pose's `turn` — Suzu's twirl — turns the whole body about its foot anchor: the frame is set for the
+  // one figure being built, so its side, front and back are the rig's own, never a mirrored costume)
+  let BODY = BODY0;
+  const bodyFor = (ps) => (ps && ps.turn ? mm(BODY0, rotY(ps.turn * DEG)) : BODY0);
   // ZS (above, per grid): art px per body unit: the figure is authored in body units and drawn a little larger.
   // world point -> [screen x from the anchor, screen y from the anchor (down +), depth toward viewer]
   const proj = (w) => [w[0] * ZS, -(w[1] * cp - w[2] * spn) * ZS, w[1] * spn + w[2] * cp];
@@ -27701,6 +27719,8 @@ RB.battlers = (function () {
     // the lashes of the near eye, showing at the cheek's edge when the head turns toward the foe,
     // and a touch of colour on the cheek
     E(add(headC, mv(Mh, [hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.84])), Mh, [1.2, 0.7, 0.9], Mt.lash, GRP.ear);
+    // turned toward us (a twirl's front view) the far eye shows too (only then: the usual view is unchanged)
+    if (ps.turn && Math.cos((ps.turn + 36) * DEG) < 0.2) E(add(headC, mv(Mh, [-hr[0] * 0.56, -hr[1] * 0.02, hr[2] * 0.84])), Mh, [1.2, 0.7, 0.9], Mt.lash, GRP.ear);
     E(add(headC, mv(Mh, [hr[0] * 0.72, -hr[1] * 0.3, hr[2] * 0.62])), Mh, [1.4, 0.8, 1.2], Mt.blush, GRP.head, (l) => true);
     hair(K);
     return { calls, J, K };
@@ -27769,15 +27789,16 @@ RB.battlers = (function () {
   // ---- garments -------------------------------------------------------------------------------------------
   function garment(K, look, B, p, Mt, pel, waist, Mp, Ms) {
     const g = B.girth, k = B.k, sh = ['tunic', 'apron', 'coat', 'robe', 'dress'].includes(look.shape) ? look.shape : 'tunic';
-    const sway = K.ps.clothSway || 0;
-    const hemY = { tunic: 19, apron: 19, coat: 10.5, robe: 2.4, dress: 12.5 }[sh] * (sh === 'robe' ? 1 : k);
+    const sway = K.ps.clothSway || 0, flare = Math.max(0, K.ps.clothFlare || 0);
+    // (a turning skirt flares out and its hem lifts a little — Suzu's twirl; 0 otherwise)
+    const hemY = { tunic: 19, apron: 19, coat: 10.5, robe: 2.4, dress: 12.5 }[sh] * (sh === 'robe' ? 1 : k) + flare * 1.6;
     const prof = {
       tunic: [[0, 9.4, 7.8], [0.5, 8.7, 6.9], [1, 7.6, 6.0]],
       apron: [[0, 9.4, 7.8], [0.5, 8.7, 6.9], [1, 7.6, 6.0]],
       coat: [[0, 11.2, 9.6], [0.55, 9.6, 7.8], [1, 7.7, 6.1]],
       robe: [[0, 10.8, 9.4], [0.18, 9.8, 8.4], [0.7, 8.6, 7.0], [1, 7.7, 6.1]],
       dress: [[0, 12.4, 10.6], [0.5, 10.2, 8.4], [1, 7.6, 6.0]],
-    }[sh].map(([h, rx, rz]) => [h, rx * g, rz * g]);
+    }[sh].map(([h, rx, rz]) => [h, rx * g * (1 + flare * 0.3 * (1 - h)), rz * g * (1 + flare * 0.3 * (1 - h))]);
     const top = add(waist, mv(Ms, [0, 0.8, 0]));
     const hem = [pel[0] + sway, hemY, pel[2] - sway * 0.4];
     K.Lf(hem, top, Mp, prof, Mt.skirt, GRP.skirt);
@@ -28011,6 +28032,9 @@ RB.battlers = (function () {
       K.Bx(at(-2.6), Ms, [2.2 * q, 0.6 * q, 2.2 * q], Mt.iron, GRP.prop);
       K.E(at(-5.4), Ms, [2.3 * q, 2.6 * q, 2.3 * q], lit, GRP.prop);
       K.Bx(at(-8.2), Ms, [2 * q, 0.5 * q, 2 * q], Mt.iron, GRP.prop);
+      // Lantern Ward: the lamp's shutter turned to the creatures (its iron plate on the glass's far side), so
+      // the light falls back over the pair
+      if (own && ps.prop && ps.prop.lampShade > 0.5) K.Bx(add(at(-5.4), mv(Ms, [0.4 * q, 0, 2.1 * q])), mm(Ms, rotY(-20 * DEG)), [2.2 * q, 2.4 * q, 0.35 * q], Mt.iron, GRP.prop);
       if (own) K.J.lamp = at(-5.4);
     };
     for (const a of acc) {
@@ -28189,7 +28213,8 @@ RB.battlers = (function () {
   const DBG = {}; // (development switches for the passes: noCast, noEdge, noRim, noClean)
   function render(look, ps, grid) {
     useGrid(grid);
-    try { return render1(look, ps); } finally { useGrid(GRIDS.std); }
+    BODY = bodyFor(ps);
+    try { return render1(look, ps); } finally { useGrid(GRIDS.std); BODY = BODY0; }
   }
   function render1(look, ps) {
     const as = assemble(look, ps);
@@ -28352,7 +28377,9 @@ RB.battlers = (function () {
     const reduce = !!o.reduce;
     const idleP = pose === 'ready' || pose === 'calm';
     let k = Math.max(0, Math.min(1, o.k == null ? 0 : +o.k || 0));
-    k = reduce ? Math.round(k * 2) / 2 : Math.round(k * QK) / QK;
+    // (a gesture may draw its progress more finely than QK steps — Suzu's twirl — still a bounded set)
+    const qk = (usesG && Mv.qkOf && Mv.qkOf(id, gesture)) || QK;
+    k = reduce ? Math.round(k * 2) / 2 : Math.round(k * qk) / qk;
     const ik = idleP ? Mv.idleKey(id, pose, o.t || 0, reduce) : '';
     const left = o.facing === 'upleft';
     const grid = o.grid && GRIDS[o.grid] ? GRIDS[o.grid] : GRIDS.std;
@@ -28363,7 +28390,8 @@ RB.battlers = (function () {
   function build(look, r) {
     const ps = M().poseAt(look, r.pose, r.gesture || r.variant, r.k, r.t, r.who, r.reduce, r.id, r.ik);
     useGrid(r.grid);
-    try { const { b, J } = render1(look, ps); return { b, J, ps, pts: pointsOf(J, ps, r.pose, r.gesture) }; } finally { useGrid(GRIDS.std); }
+    BODY = bodyFor(ps);
+    try { const { b, J } = render1(look, ps); return { b, J, ps, pts: pointsOf(J, ps, r.pose, r.gesture) }; } finally { useGrid(GRIDS.std); BODY = BODY0; }
   }
   function frameFor(look, o) {
     look = look || {};
@@ -28534,6 +28562,9 @@ RB.battlerMoves = (function () {
       handR: [10.6, 25.5, 2.5], handL: [-10.4, 25.5, 1.2], elbowR: [1, -0.3, -1], elbowL: [-1, -0.3, -1],
       palmR: [-1, -0.2, 0.15], palmL: [1, -0.2, 0.15], handShapeR: 'fist', handShapeL: 'fist',
       hairLag: 0, hairSway: 0, clothSway: 0, act: 'R', leftFree: 0,
+      // turn: the whole body turned about the foot anchor (degrees, Suzu's twirl: real side, front and
+      // back views of the rig, never a mirrored costume); clothFlare: a skirt's hem flaring out as it turns
+      turn: 0, clothFlare: 0,
       prop: {},
     };
   }
@@ -28842,6 +28873,23 @@ RB.battlerMoves = (function () {
   // Hand targets in the body's ground frame; values replace the stance's.
   const path = (pts, k) => { const f = clamp01(k) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)); return lerp(pts[i], pts[i + 1], f - i); };
   const FWD = [0.35, 0, 1], UP = [0, 1, 0], DOWN = [0, -1, 0.2];
+  const seg = (k, a, b) => clamp01((k - a) / (b - a));
+  // a track through authored keys [[k, values], …] (each key names the same moving values; numbers and
+  // [x, y, z] eased between keys, a hand shape switching half way): the Harmony performances are written
+  // as their key silhouettes and the in-betweens follow from them
+  function track(k, keys) {
+    if (k <= keys[0][0]) return clone(keys[0][1]);
+    for (let i = 0; i < keys.length - 1; i++) {
+      const [ka, A] = keys[i], [kb, B] = keys[i + 1];
+      if (k <= kb) return blend(A, B, ease((k - ka) / (kb - ka)));
+    }
+    return clone(keys[keys.length - 1][1]);
+  }
+  const W2 = (...os) => Object.assign({}, ...os);
+  // the player's shared rally: weight settled low, the writing hand gathered before the chest, the eyes on it;
+  // reached through a breath in (the chest lifts, the hand comes in) — Harmony addendum §9.2
+  const RALLY_A = { pelvis: [-0.8, -3.0, -0.4], pelvisRoll: 1.4, spineRoll: -1, spinePitch: 13, spineYaw: -2, headYaw: 6, headPitch: 4, handR: [7.2, 41.4, 6.4], elbowR: [1, -0.8, -0.2], handShapeR: 'pinch', palmR: [-0.6, 0, 0.6] };
+  const RALLY_BREATH = [{ at: 0.4, o: { pelvis: [-0.6, -1.3, 0], spinePitch: 6, headPitch: -9, hairLag: -0.6, handR: [7.4, 34, 6.6] } }];
   const GEST = {
     // a paper strip drawn back to the shoulder, then sent up-right at the foe with the whole arm
     direct: {
@@ -28944,6 +28992,57 @@ RB.battlerMoves = (function () {
       x: (k) => ({ pelvis: [1.2, -6 + 4 * ease(k), 1.4], spinePitch: 26 - 16 * ease(k), spineYaw: 16, headYaw: 24, headPitch: 14 - 12 * ease(k), handR: lerp([15.4, 22, 7.4], [11.6, 38, 5.2], ease(k)), elbowR: [1, -0.6, -0.8], handShapeR: 'fist', footR: [9.2, 0, 4.6] }),
       snap: 0, release: 0.5,
     },
+    // ---- the player's part in a Harmony technique (Harmony addendum §9.2): one shared rally — a grounded
+    // breath, the writing hand gathered at the chest — and a terminal gesture that does what the technique
+    // does: direct a thread (Nao), support a restorative release (Mio), complete a ward seal (Ren), seize
+    // Suzu's opening (Suzu). Each starts and ends in the rear-three-quarter ready stance.
+    // Nao: the thread sent out along the line his hand drew, released, then drawn back taut on the second knot
+    rally_thread: {
+      a: W2(RALLY_A, { prop: { strip: 0.6 } }), ant: RALLY_BREATH,
+      x: (k) => {
+        const out = ease(seg(k, 0, 0.42)), pull = ease(seg(k, 0.52, 0.9));
+        const h = out < 1 ? path([[7.2, 41.4, 6.4], [8.6, 47.4, 11.8], [14.6, 45.6, 17.2]], out) : lerp([14.6, 45.6, 17.2], [12.6, 41.2, 5.8], pull);
+        return { handR: h, elbowR: [1, -0.5 + pull * 0.3, -0.4 - pull * 0.5], handShapeR: 'pinch', palmR: [-0.4, 0, 1], spineYaw: -2 + 18 * out - 8 * pull, spinePitch: 11, headYaw: 12, headPitch: -8, pelvis: [-0.8 + 1.4 * out - pull, -2.8, -0.4 + 1.8 * out - 1.4 * pull], prop: { strip: 0.6 + 0.4 * out - 0.4 * pull }, hairSway: -1.2 * out + 1.4 * pull, clothSway: -0.8 * out + pull };
+      },
+      qk: 16, snap: 0, release: 0.42,
+    },
+    // Mio: the folio held open to receive the pour, then the hand rises and opens out over the two of you
+    rally_release: {
+      a: W2(RALLY_A, { handR: [2.6, 41, 9.2], handShapeR: 'cup', palmR: DOWN, headPitch: 12, handL: [-4.6, 37.8, 6.8], elbowL: [-1, -0.9, -0.2], handShapeL: 'cup', prop: { bookOpen: 0.85, bookTilt: -30, bookYaw: -10, bookAt: [1.2, 1.4, 0.8] } }), ant: RALLY_BREATH,
+      x: (k) => W2(track(k, [
+        [0, { handR: [2.6, 41, 9.2], palmR: DOWN, spinePitch: 13, headPitch: 12, headYaw: 6, pelvis: [-0.8, -3, -0.4] }],
+        [0.45, { handR: [10.4, 47.6, 9.6], palmR: [0, 1, 0.4], spinePitch: 6, headPitch: -2, headYaw: 10, pelvis: [-0.4, -1.6, 0] }],
+        [0.8, { handR: [15.2, 49.4, 4.4], palmR: [0, 1, 0.4], spinePitch: 3, headPitch: -8, headYaw: 8, pelvis: [0, -1, 0] }],
+        [1, { handR: [15.2, 49.4, 4.4], palmR: [0, 1, 0.4], spinePitch: 3, headPitch: -8, headYaw: 8, pelvis: [0, -1, 0] }],
+      ]), { handShapeR: k < 0.3 ? 'cup' : k < 0.6 ? 'open' : 'spread', elbowR: [1, -0.5, -0.8], handL: [-4.6, 37.8, 6.8], elbowL: [-1, -0.9, -0.2], handShapeL: 'cup', hairLag: -0.8 * seg(k, 0.4, 0.8), prop: { bookOpen: 1, bookTilt: -30, bookYaw: -10, bookAt: [1.2, 1.4, 0.8] } }),
+      qk: 16, snap: 0, release: 0.45,
+    },
+    // Ren: the brush traces the level line of his plane from its other end, then closes it with a short
+    // vertical stroke (not the forearm-across stroke of the ordinary Protect)
+    rally_seal: {
+      a: W2(RALLY_A, { prop: { brush: 1 } }), ant: RALLY_BREATH,
+      x: (k) => W2(track(k, [
+        [0, { handR: [7.2, 41.4, 6.4], spineYaw: -2, headYaw: 6, headPitch: 4 }],
+        [0.24, { handR: [15.6, 43.4, 13], spineYaw: 14, headYaw: 16, headPitch: -4 }],
+        [0.62, { handR: [3.4, 43.4, 13], spineYaw: -2, headYaw: 2, headPitch: -2 }],
+        [0.8, { handR: [3.4, 35.4, 12.6], spineYaw: -2, headYaw: 2, headPitch: 4 }],
+        [1, { handR: [3.4, 35.4, 12.6], spineYaw: -2, headYaw: 2, headPitch: 4 }],
+      ]), { elbowR: [1, -0.7, -0.5], handShapeR: 'pinch', palmR: [0, -0.4, 1], spinePitch: 11, pelvis: [-0.4, -2.8, 0.4], prop: { brush: 1 }, clothSway: -0.6 * bump(k, 0.2, 0.7) }),
+      qk: 16, snap: 0, release: 0.78,
+    },
+    // Suzu: the thread lifted high on her cue, swept out as a curtain's arc that catches the opening, and
+    // hooked back — the creature's own move swung round
+    rally_catch: {
+      a: W2(RALLY_A, { prop: { strip: 0.6 } }), ant: RALLY_BREATH,
+      x: (k) => W2(track(k, [
+        [0, { handR: [7.2, 41.4, 6.4], spineYaw: -2, spinePitch: 13, headPitch: 4, pelvis: [-0.8, -3, -0.4], prop: { strip: 0.6 } }],
+        [0.28, { handR: [6.4, 55, 9.8], spineYaw: -6, spinePitch: 4, headPitch: -12, pelvis: [-0.6, -1.4, -0.4], prop: { strip: 0.9 } }],
+        [0.54, { handR: [16.4, 46.4, 15.8], spineYaw: 18, spinePitch: 9, headPitch: -6, pelvis: [0.8, -2.2, 1.2], prop: { strip: 1 } }],
+        [0.84, { handR: [12.2, 39.2, 8.8], spineYaw: 6, spinePitch: 11, headPitch: -2, pelvis: [0.2, -2.6, 0.4], prop: { strip: 0.7 } }],
+        [1, { handR: [12.2, 39.2, 8.8], spineYaw: 6, spinePitch: 11, headPitch: -2, pelvis: [0.2, -2.6, 0.4], prop: { strip: 0.7 } }],
+      ]), { elbowR: [1, -0.4, -0.4], handShapeR: 'pinch', palmR: [-0.3, 0.2, 1], headYaw: 12, hairSway: -1.6 * bump(k, 0.3, 0.7) + 0.8 * bump(k, 0.6, 1), clothSway: -1.2 * bump(k, 0.3, 0.7) }),
+      qk: 16, snap: 0, release: 0.52,
+    },
     // getting up after being helped (the revive): from the knee to the stance
     rise: {
       a: null, // (the recover stage starts from 'down')
@@ -28953,6 +29052,52 @@ RB.battlerMoves = (function () {
   };
   // the pose 'down' (resolve spent): on the left knee, a hand on the ground, the head bowed
   const DOWN_POSE = { pelvis: [0.2, -11.6, -1.2], spinePitch: 28, spineYaw: 2, spineRoll: -4, headPitch: 22, headYaw: 4, footR: [6.4, 0, 6.6], footRYaw: 16, footL: [-4.6, -1.8, -9.4], footLYaw: 4, handR: [7.4, 14.6, 8.2], handL: [-9.6, 2.4, 3.4], elbowL: [-1, -0.2, -1], hairLag: 1.5, handShapeR: 'relaxed', handShapeL: 'flat', palmL: [0, -1, 0] };
+
+  // ---- the four Harmony performances (Harmony addendum §9.3–§9.7) -----------------------------------------
+  // Each: an anticipation (a), a signature action (x, written as key silhouettes on a track) and a recovery
+  // through its own key (rec) back to exactly the stance. They differ in body mechanics, not colour:
+  // Nao drops his weight, steps and cuts; Mio measures, uncorks and pours; Ren plants, raises the lamp and
+  // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
+  // back views — `turn` — never a mirrored costume), plants and opens her arm.
+  // Nao — Read the Opening: the centre of balance lowered, head and shoulders on the creature, a hand on
+  // the satchel; a short step in (the foot lifted), the flat hand cutting across the opening, edge first,
+  // finishing in a precise point at the knot; then the hand lowers and he turns to you with a nod.
+  const NAO_A = { pelvis: [0.4, -5.6, 0.2], spinePitch: 22, spineYaw: 12, headYaw: 14, headPitch: -14, headRoll: -2, handR: [6.4, 36.4, 9.4], elbowR: [1, -0.8, -0.4], handShapeR: 'flat', palmR: [-0.4, -0.6, 0.6], handL: [-9.4, 27.4, -5.6], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6 };
+  const NAO_K = {
+    a: W2(NAO_A, { footR: [6.6, 0, 5.4], footRYaw: 20 }),
+    step: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.4, -5.0, 2.8], spinePitch: 24, spineYaw: 10, headYaw: 12, headPitch: -12, headRoll: -2, handR: [4.4, 47.2, 11.2], elbowR: [1, -0.6, -0.2], handShapeR: 'flat', palmR: [-0.2, -1, 0.3], handL: [-9.4, 27.4, -5.6], hairLag: 0.2 },
+    cut: { footR: [8.8, 0, 9.8], footRYaw: 16, pelvis: [1.8, -4.8, 3.2], spinePitch: 22, spineYaw: 22, headYaw: 10, headPitch: -9, headRoll: 0, handR: [15.4, 40.4, 19.2], elbowR: [1, -0.4, -0.2], handShapeR: 'flat', palmR: [-0.3, -0.8, 0.4], handL: [-9.4, 27.4, -5.6], hairLag: 0 },
+  };
+  NAO_K.point = W2(NAO_K.cut, { handR: [15.8, 41.8, 19.8], handShapeR: 'point', palmR: [-1, 0, 0], headPitch: -8 });
+  // Mio — Clearwater Draught: the vial from the bottles at her hip raised to eye level, the other hand
+  // cupped under it (a check of the measure); steadied, uncorked with the thumb, tipped into your rising ink
+  // with the cupping hand guiding the stream; then a glance to you, the cork back, the vial to her hip.
+  const MIO_A = { handR: [6.2, 52, 10.4], elbowR: [1, -0.9, -0.4], handShapeR: 'cup', palmR: [-0.8, 0, 0.4], handL: [4.6, 47.4, 10.8], elbowL: [-1, -0.9, -0.3], handShapeL: 'cup', palmL: [0, 1, 0.2], headYaw: 6, headPitch: -8, spinePitch: 4, spineYaw: 6, pelvis: [0, -1.4, 0.2], prop: { vial: 1, cork: 0, vialTilt: 0 } };
+  const MIO_POUR = { handR: [13.6, 45.6, 12.8], elbowR: [1, -0.7, -0.4], palmR: [-0.6, 0, 0.6], handL: [11.0, 41.6, 13.8], elbowL: [-1, -0.8, -0.1], palmL: [0, 1, 0.2], headYaw: 24, headPitch: 2, spinePitch: 9, spineYaw: 20, pelvis: [0.6, -1.8, 0.8], prop: { vial: 1, cork: 1, vialTilt: 100 } };
+  // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before his chest; raised high at his side
+  // and shaded (its shutter turned to the creatures, the light thrown back over the pair); the flat right
+  // hand drawing a level line at chest height — the plane; then the lamp lowered and a check to either side.
+  // (The lamp stays out at his left side throughout, where the rear view can see it: before his chest it
+  // would be hidden behind him.)
+  const REN_A = { leftFree: 1, act: 'L', pelvis: [0.2, -4.0, -0.2], spinePitch: 11, spineYaw: -2, spineRoll: 0, headYaw: -6, headPitch: 8, handL: [-11.6, 40.6, 4.4], elbowL: [-1, -0.6, -0.4], handR: [4.6, 42.4, 10.2], elbowR: [1, -0.9, -0.2], handShapeR: 'flat', palmR: [-1, 0, 0.2], prop: { flare: 0, lampShade: 0 } };
+  const REN_RAISE = { handL: [-17.4, 54.6, -1.6], elbowL: [-1, 0.2, -0.8], handR: [-0.8, 43, 13], elbowR: [1, -0.9, -0.2], palmR: [0, -1, 0.25], spineYaw: -8, spinePitch: 6, spineRoll: 3, headYaw: -10, headPitch: -8, pelvis: [0.2, -4.2, -0.2], prop: { flare: 1, lampShade: 1 } };
+  const REN_PLANE = W2(REN_RAISE, { handR: [16.4, 43, 13], elbowR: [1, -0.4, -0.5], spineYaw: 14, spinePitch: 7, spineRoll: 2, headYaw: 14, headPitch: -2, pelvis: [0.4, -4.2, 0.2] });
+  // Suzu — Curtain Call: a preparation step back onto the left foot, the arm drawn across; gathered up onto
+  // the spot, one compact twirl (dress and hair a beat behind), planted with the right foot forward, the arm
+  // opened toward the shared action — the cue — and held; then a half-bow, a hand to her hip, the stance.
+  const SUZU_A = { footL: [-5.0, 0, -6.4], footLYaw: 12, pelvis: [-1.8, -3.0, -1.8], pelvisRoll: 3, spinePitch: 4, spineRoll: -3, spineYaw: -18, headYaw: 4, headPitch: -6, headRoll: 2, handR: [-1.2, 41.4, 7.8], elbowR: [1, -0.6, 0.2], handShapeR: 'relaxed', palmR: [-1, 0, 0.3], hairSway: 0.8, clothSway: 0.6 };
+  const SUZU_K = {
+    a: W2(SUZU_A, { footR: [7.4, 0, 5.6], footRYaw: 34, handL: [-9.4, 32.4, -1.8], elbowL: [-1, 0.2, -0.5], handShapeL: 'flat', palmL: [1, 0, 0.2] }),
+    // up on the spot for the turn: feet together under her, upright, both hands drawn in before the chest
+    spin: { footL: [-2.6, 0, -1.4], footLYaw: 4, footR: [2.8, 0, 1.6], footRYaw: 10, pelvis: [0, -0.8, 0], pelvisRoll: 0, spinePitch: 2, spineRoll: 0, spineYaw: 0, headYaw: 0, headPitch: -4, headRoll: 0, handR: [4.6, 40.4, 6.6], elbowR: [1, -0.8, -0.3], handShapeR: 'relaxed', palmR: [-0.6, 0, 0.6], handL: [-4.4, 40, 6.2], elbowL: [-1, -0.8, -0.3], handShapeL: 'relaxed', palmL: [0.6, 0, 0.6] },
+    // planted: the right foot forward toward the action, the hip set, the chin up, the arm open — the cue
+    cue: { footL: [-4.6, 0, -2.8], footLYaw: 4, footR: [8.4, 0, 7.6], footRYaw: 30, pelvis: [-1.0, -1.8, 0.8], pelvisRoll: 4, spinePitch: 4, spineRoll: -5, spineYaw: 14, headYaw: 16, headPitch: -10, headRoll: 5, handR: [16.6, 48.6, 9.6], elbowR: [1, -0.2, -0.5], handShapeR: 'spread', palmR: [0.3, 0.6, 1], handL: [-9.4, 32.4, -1.8], elbowL: [-1, 0.2, -0.5], handShapeL: 'flat', palmL: [1, 0, 0.2] },
+  };
+  SUZU_K.out = W2(SUZU_K.spin, { footR: [5.2, 0, 4.2], footRYaw: 20, pelvis: [-0.6, -1.2, 0.4], handR: [7.6, 44, 8.6], spineYaw: 6, headYaw: 8, headPitch: -6 });
+  SUZU_K.open = W2(SUZU_K.cue, { handR: [11.2, 49.4, 12.2], elbowR: [1, -0.5, -0.4], handShapeR: 'open', palmR: [0, 0.4, 1], headPitch: -8 });
+  // where the twirl is at progress u (0..1): the turn itself eased in and out, a full circle that comes back
+  // to 0 (360 is drawn as 0: the recovery never spins back round)
+  const twirlTurn = (u) => { const t = 360 * ease(seg(u, 0.08, 0.96)); return t >= 359.5 ? 0 : Math.round(t * 10) / 10; };
 
   // Each companion's own gestures (and their own way of doing a shared one).
   const BY = {
@@ -28995,6 +29140,15 @@ RB.battlerMoves = (function () {
         x: () => ({ footR: [9.8, 0, 4.4], footRYaw: 30, pelvis: [1.8, -3.6, 0.6], spinePitch: 12, spineYaw: 12, headYaw: 22, headPitch: -2, handR: [15.6, 44, 5.6], elbowR: [1, -0.6, -0.6], handShapeR: 'open', palmR: [1, 0, 0.2], hairSway: -0.6 }),
         snap: 0.3, release: 0.35,
       },
+      // Read the Opening (the technique; see NAO_K)
+      opening: {
+        a: NAO_A,
+        x: (k) => W2(track(k, [[0, NAO_K.a], [0.3, NAO_K.step], [0.58, NAO_K.cut], [0.7, NAO_K.point], [1, NAO_K.point]]), {
+          footRLift: 2.6 * bump(k, 0, 0.3), hairSway: -1.2 * bump(k, 0.3, 0.75), clothSway: -0.8 * bump(k, 0.25, 0.7),
+        }),
+        rec: [{ at: 0.5, o: { footR: [7.6, 0, 7.4], footRYaw: 18, pelvis: [0.8, -3.4, 1.4], spinePitch: 16, spineYaw: 14, handR: [10.8, 33.4, 9.2], elbowR: [1, -0.8, -0.4], handShapeR: 'relaxed', palmR: [-0.8, -0.4, 0.3], headYaw: 44, headPitch: 4, headRoll: 3 } }],
+        qk: 16, snap: 0, release: 0.62,
+      },
     },
     mio: {
       // Warm draught: the vial out from her hip, the cork drawn, then poured toward the one it is for
@@ -29029,7 +29183,20 @@ RB.battlerMoves = (function () {
         x: (k) => ({ footR: [9.8, 0, 4.6], footRYaw: 26, pelvis: [1.8, -1.6, 0.4], spineYaw: 14, spinePitch: 8, headYaw: 26, headPitch: 2, handR: [15.2, 40, 7.6], elbowR: [1, -0.6, -0.6], handShapeR: 'cup', handL: [6.4, 44.6, 6.2], handShapeL: 'open', palmL: [1, 0, 0.2], elbowL: [-1, -0.8, 0], prop: { vial: 1, cork: 1, vialTilt: 55 * ease(k) } }),
         snap: 0.3, release: 0.45,
       },
-      // (the technique, and her own way of 'restore': the draught poured)
+      // Clearwater Draught (the technique; see MIO_A, MIO_POUR)
+      draught: {
+        a: MIO_A,
+        ant: [{ at: 0.42, o: { handR: [8.6, 27.4, 3.6], elbowR: [1, -0.6, -0.4], handShapeR: 'cup', headPitch: 12, headYaw: 16, prop: { vial: 1 } } }],
+        x: (k) => W2(track(k, [[0, MIO_A], [0.16, W2(MIO_A, { handR: [6.2, 51.2, 10.8], prop: { vial: 1, cork: 1, vialTilt: 0 } })], [0.62, W2(MIO_A, MIO_POUR)], [1, W2(MIO_A, MIO_POUR)]]), {
+          handShapeR: 'cup', handShapeL: k < 0.4 ? 'cup' : 'flat', hairLag: 0.4 * bump(k, 0.2, 0.7),
+        }),
+        rec: [
+          { at: 0.32, o: { handR: [9.4, 43, 10.2], handShapeR: 'cup', handL: [2.4, 38.6, 9.4], handShapeL: 'relaxed', headYaw: 38, headPitch: 4, spineYaw: 14, prop: { vial: 1, cork: 1, vialTilt: 0 } } },
+          { at: 0.64, o: { handR: [8.6, 27.4, 3.6], handShapeR: 'cup', headYaw: 6, headPitch: 6, spineYaw: 8, prop: { vial: 1, cork: 0, vialTilt: 0 } } },
+        ],
+        qk: 16, snap: 0, release: 0.45,
+      },
+      // (her own way of 'restore': the draught poured)
       restore: null,
       // settle: (her cheer is in CHEER)
     },
@@ -29072,6 +29239,16 @@ RB.battlerMoves = (function () {
         x: () => ({ footR: [9.6, 0, 8.4], footRYaw: 26, pelvis: [1.8, -2.4, 2.4], spinePitch: 6, spineYaw: 16, leftFree: 1, handL: [5.4, 46, 15.4], elbowL: [-1, -0.4, -0.4], handR: [17, 42, 4.4], elbowR: [1, -0.6, -0.6], handShapeR: 'flat', palmR: [1, 0, 0.3], headPitch: -6, headYaw: 14, act: 'L', prop: { flare: 1 }, clothSway: -0.8 }),
         snap: 0.3, release: 0.45,
       },
+      // Lantern Ward (the technique; see REN_A, REN_RAISE, REN_PLANE)
+      ward_plane: {
+        a: REN_A,
+        x: (k) => W2(track(k, [[0, REN_A], [0.34, W2(REN_A, REN_RAISE)], [0.8, W2(REN_A, REN_PLANE)], [1, W2(REN_A, REN_PLANE)]]), { leftFree: 1, act: 'L', handShapeR: 'flat', clothSway: -0.5 * bump(k, 0.34, 0.8) }),
+        rec: [
+          { at: 0.36, o: { handL: [-11.0, 34.4, 2.6], elbowL: [-1, -0.5, -0.6], handR: [9.6, 40, 8.2], elbowR: [1, -1, -0.4], spineYaw: 6, spineRoll: 0, headYaw: 34, headPitch: 4, prop: { flare: 1, lampShade: 0 } } },
+          { at: 0.66, o: { handL: [-12.2, 31.4, 1.8], headYaw: -12, headPitch: 3, spineYaw: 0, prop: { flare: 0, lampShade: 0 } } },
+        ],
+        qk: 16, snap: 0, release: 0.6,
+      },
     },
     suzu: {
       // a flourish: the arm drawn in across, a turn, then the unwinding sweep out and up, fingers spread
@@ -29108,6 +29285,30 @@ RB.battlerMoves = (function () {
           : { footR: [8.6, 0, 9.4], footRYaw: 20, pelvis: [0.4, -2.6, 1.6], spinePitch: 12, spineYaw: 4, handR: [12.4, 46, 10], handShapeR: 'spread', palmR: [0.2, 1, 0.2], headPitch: -10, headRoll: 4, hairSway: 0.8 }),
         snap: 0.2, release: 0.3,
       },
+      // Curtain Call (the technique; see SUZU_K): 0–0.48 the twirl, 0.48–0.66 planted and the arm opening
+      // (the cue at 0.62), then held while her hair and hem settle a beat late
+      curtain: {
+        a: SUZU_A,
+        x: (k) => {
+          if (k < 0.48) {
+            const u = seg(k, 0, 0.48), th = twirlTurn(u) * Math.PI / 180;
+            const P = track(u, [[0, SUZU_K.a], [0.16, SUZU_K.spin], [0.84, SUZU_K.spin], [1, SUZU_K.out]]);
+            // the left foot steps in under her as she rises; the turn on the ball of it, the right foot light
+            return W2(P, { turn: twirlTurn(u), footLLift: 1.6 * bump(u, 0, 0.16), footRLift: 1.2 * bump(u, 0.12, 0.9),
+              // hem and hair a beat behind the turn: they flare out as it gathers speed and swing past at its end
+              clothFlare: Math.round(10 * bump(u, 0.12, 1.25)) / 10, hairLag: -1.1 * bump(u, 0.1, 1.1),
+              hairSway: 0.8 * (1 - seg(u, 0, 0.16)) - 2.2 * Math.sin(th) * seg(u, 0.1, 0.3), clothSway: 0.6 * (1 - seg(u, 0, 0.16)) - 1.4 * Math.sin(th) * seg(u, 0.1, 0.3) });
+          }
+          const P = track(k, [[0.48, SUZU_K.out], [0.56, SUZU_K.open], [0.66, SUZU_K.cue], [1, SUZU_K.cue]]);
+          const s = seg(k, 0.48, 0.95);
+          return W2(P, { turn: 0, footRLift: 2 * bump(k, 0.48, 0.6),
+            // the follow-through: the hem still out as she plants, the hair swinging past, then at rest
+            clothFlare: Math.round(10 * 0.55 * (1 - ease(seg(k, 0.48, 0.78)))) / 10, hairLag: 0.9 * bump(k, 0.48, 0.8),
+            hairSway: 1.5 * Math.sin(Math.PI * seg(s, 0, 0.3)) * (1 - s) - 0.5 * bump(s, 0.3, 0.8), clothSway: 0.9 * Math.sin(Math.PI * seg(s, 0, 0.3)) * (1 - s) });
+        },
+        rec: [{ at: 0.5, o: { headPitch: 18, headYaw: 8, headRoll: 2, spinePitch: 14, spineYaw: 6, spineRoll: -3, handR: [11.2, 33.4, 6.2], elbowR: [1, -0.6, -0.6], handShapeR: 'open', palmR: [-0.6, -0.4, 0.4], handL: [-9.4, 32.4, -1.8], handShapeL: 'flat', pelvis: [-1.2, -2.4, 0.2], footR: [7.6, 0, 6.2], hairLag: 0.8, clothSway: 0.4 } }],
+        qk: 32, snap: 0, release: 0.62,
+      },
       // Grand gesture: gathered low, then both arms flung wide and high, chin up — and held
       grand: {
         a: { handR: [3.4, 32, 6.4], handL: [-3, 32, 6.4], elbowL: [-1, -0.8, -0.2], handShapeR: 'relaxed', handShapeL: 'relaxed', spinePitch: 16, headPitch: 14, pelvis: [-0.6, -3, 0] },
@@ -29123,6 +29324,19 @@ RB.battlerMoves = (function () {
   const GESTURES = [...new Set(Object.keys(GEST).concat(...Object.keys(BY).map((k) => Object.keys(BY[k]).filter((g) => BY[k][g]))))];
   function gestureOf(id, g) { return (BY[id] && BY[id][g]) || GEST[g] || null; }
   function hasGesture(g, id) { return !!(g && gestureOf(id, g)); }
+  // A path through authored keys: P0 at 0, each key { at, o } (o: the values that key changes, laid over the
+  // straight blend at that moment), P1 at 1; eased within each segment, a moving foot lifted (the Harmony
+  // performances' anticipations and recoveries: a hand to the bottles at the hip before the vial rises, a
+  // nod to the player, a half-bow — each still ends exactly where it must).
+  function keyed(P0, keys, P1, k) {
+    const pts = [{ at: 0, P: P0 }].concat(keys.map((q) => ({ at: q.at, P: over(blend(P0, P1, q.at), q.o) })), [{ at: 1, P: P1 }]);
+    if (k <= 0) return clone(P0);
+    if (k >= 1) return clone(P1);
+    let i = 0;
+    while (i < pts.length - 2 && k >= pts[i + 1].at) i++;
+    const a = pts[i], b = pts[i + 1];
+    return blendStep(a.P, b.P, ease((k - a.at) / (b.at - a.at)));
+  }
   function gesturePose(look, id, gesture, stage, k) {
     const R = readyOf(look, id), G = gestureOf(id, gesture) || GEST.direct;
     if (gesture === 'rise') {
@@ -29132,12 +29346,13 @@ RB.battlerMoves = (function () {
     }
     const A = over(R, G.a || {});
     const X = (q) => over(A, G.x(q, R));
-    if (stage === 'anticipate') return blendStep(R, A, ease(k));
+    if (stage === 'anticipate') return G.ant ? keyed(R, G.ant, A, k) : blendStep(R, A, ease(k));
     if (stage === 'act') {
       if (G.snap) { const t = clamp01(k / G.snap); return k < G.snap ? blendStep(A, X(k), ease(t)) : X(k); }
+      if (G.direct) return X(k); // (a path that starts at its own anticipation key: no settling blend)
       return blendStep(A, X(k), clamp01(k / 0.12));
     }
-    return blendStep(X(1), R, ease(k)); // recover
+    return G.rec ? keyed(X(1), G.rec, R, k) : blendStep(X(1), R, ease(k)); // recover
   }
 
   // ---- reactions (§7.5, §10) ----------------------------------------------------------------------------
@@ -29220,24 +29435,28 @@ RB.battlerMoves = (function () {
 
   // ---- the coverage record (§7.5): each required state → the pose that serves it, per actor ---------------
   // (tests/unit/battle_party.test.mjs draws every entry for every actor)
-  const OWN = { pc: ['thread', 'direct', 'trace', 'crystal', 'book', 'lens', 'ward', 'restore', 'flow', 'sweep', 'plant', 'open', 'raise', 'ring', 'call'],
-    nao: ['point', 'spot', 'call', 'reach', 'lunge', 'shoulder', 'help'], mio: ['pour', 'dab', 'waft', 'salts', 'tonic', 'help'],
-    ren: ['ward', 'shade', 'flare', 'vigil', 'lanterns', 'front', 'help'], suzu: ['flourish', 'heckle', 'beckon', 'clap', 'feint', 'grand', 'help'] };
-  const TECH_PARTNER = { nao: 'point', mio: 'pour', ren: 'ward', suzu: 'flourish' };
+  const OWN = { pc: ['thread', 'direct', 'trace', 'crystal', 'book', 'lens', 'ward', 'restore', 'flow', 'sweep', 'plant', 'open', 'raise', 'ring', 'call', 'rally_thread', 'rally_release', 'rally_seal', 'rally_catch'],
+    nao: ['point', 'spot', 'call', 'reach', 'lunge', 'shoulder', 'help', 'opening'], mio: ['pour', 'dab', 'waft', 'salts', 'tonic', 'help', 'draught'],
+    ren: ['ward', 'shade', 'flare', 'vigil', 'lanterns', 'front', 'help', 'ward_plane'], suzu: ['flourish', 'heckle', 'beckon', 'clap', 'feint', 'grand', 'help', 'curtain'] };
+  // the Harmony techniques (Harmony addendum §9): the companion's own performance and the player's terminal
+  const TECH_PARTNER = { nao: 'opening', mio: 'draught', ren: 'ward_plane', suzu: 'curtain' };
+  const TECH_LEAD = { nao: 'rally_thread', mio: 'rally_release', ren: 'rally_seal', suzu: 'rally_catch' };
   function coverage(id) {
     const g0 = (OWN[id] || OWN.pc)[0];
     return {
       quietReady: ['calm', null], anticipate: ['anticipate', g0], express: ['act', g0, 0.2], release: ['act', g0, 1],
       protect: ['guard', null], receiveHealing: ['soothed', null], directHit: ['hit', null], softenedHit: ['hit', 'soft'], blockedHit: ['brace', null],
       condition: ['afflict', 'hush'], recover: ['recover', g0], incapacitated: ['down', null], revive: id === 'pc' ? ['recover', 'rise'] : ['act', 'help'],
-      technique: id === 'pc' ? ['act', 'thread'] : ['act', TECH_PARTNER[id]], settle: ['cheer', null], idle: ['ready', null],
+      technique: id === 'pc' ? ['act', 'rally_thread'] : ['act', TECH_PARTNER[id]], settle: ['cheer', null], idle: ['ready', null],
     };
   }
 
   return {
-    ACTORS, GESTURES, VARIANTS, LOOP, OWN, TECH_PARTNER, STANCE, IDLE,
+    ACTORS, GESTURES, VARIANTS, LOOP, OWN, TECH_PARTNER, TECH_LEAD, STANCE, IDLE,
     poseAt, idleKey, idleTimes, hasGesture, hasVariant, gestureOf, coverage, readyOf,
     release: (id, g) => { const G = gestureOf(id, g); return G ? G.release : 0.3; },
+    // how finely a gesture's progress is drawn (frames per stage; a twirl needs more than a point)
+    qkOf: (id, g) => { const G = gestureOf(id, g); return (G && G.qk) || 0; },
     actHand: (id, g) => { const G = gestureOf(id, g); return G && G.a && G.a.act === 'L' ? 'L' : 'R'; },
     PULSE, _: { over, plus, blend, restPose, idlePose, loopOf },
   };
@@ -43109,6 +43328,9 @@ RB.game = (function () {
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
       battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive',
+      // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
+      // only — Off suppresses that layer alone (older records lack it: On)
+      harmonyFlourish: true,
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
@@ -51320,6 +51542,8 @@ RB.ui.settings = (function () {
         radios('battleAnim', 'Battle animations', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'How long each action takes to play. Separate from Text speed. Instant shows the results at once, with a summary of the last exchange.') +
         radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice.') +
         radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
+        // (Harmony addendum §7.4: the portrait layer only — the technique, its stage performance and the banner stay)
+        sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.') +
         radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,
           'Markers point to where the followed quest’s next step happens. Hints are nudges you open in the Journey page. Asking for them is free and never counts as a mistake.');
     } else if (g === 'controls') {
@@ -71173,6 +71397,9 @@ RB.battleSeq = (function () {
     foePrep: 320, foeExec: 380, contact: 560, foeRecover: 300, secondTarget: 120, react: 420,
     finishHold: 1000, speed: { normal: 1, fast: 1.43 }, hurry: 4,
     bannerOut: { normal: 120, fast: 80 }, // the banner leaves inside the action's last ms (§14.3)
+    // Harmony portrait (Harmony addendum §7.2, §7.4; src/ui/82d_harmony_cutin.js): in / hold / fade, presentation
+    // ms — Fast's clock runs ×1.43, so its values are 100 / 220 / 160 ms of wall time (480 ms)
+    cutin: { normal: { in: 180, hold: 380, out: 220 }, fast: { in: 143, hold: 315, out: 229 } },
   };
   let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
   const trace = [];
@@ -71201,6 +71428,7 @@ RB.battleSeq = (function () {
   }
   function detach() {
     if (cur) settle('exit');
+    if (RB.harmonyCutin) RB.harmonyCutin.dispose('exit'); // (Harmony portrait: never outlives the encounter)
     skipping = false;
     if (RB.battleBanner) RB.battleBanner.clear();
     if (onVis) document.removeEventListener('visibilitychange', onVis);
@@ -71214,6 +71442,7 @@ RB.battleSeq = (function () {
     lastT = t;
     pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
     if (cur) step();
+    if (RB.harmonyCutin) RB.harmonyCutin.frame(pt); // (Harmony portrait: on this clock, hurried with it)
     return pt;
   }
   function now() { return pt; }
@@ -71274,7 +71503,8 @@ RB.battleSeq = (function () {
       case 'sfx': if (!instant) RB.audio && RB.audio.sfx(c.name); break;
       default:
         if (instant) break;
-        if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at);
+        if (c.type === 'pose') S.pose(c.who, c.pose, c.gesture, c.d, at, c.k); // (k: a held pose's fixed progress)
+        else if (c.type === 'cutin') { if (RB.harmonyCutin) RB.harmonyCutin.start(c, at, cur.rec); } // Harmony portrait
         else if (c.type === 'foe') S.foe(c.act, c.d, at, { family: c.family, dir: c.dir, hold: c.hold, foe: c.foe || 0, travel: c.travel });
         else if (c.type === 'fx') S.effect(c.name, c.d, at, c.p);
         else if (c.type === 'strip') S.strip(c.word, c.from, c.to, at, c.tm);
@@ -71285,6 +71515,7 @@ RB.battleSeq = (function () {
   function settle(why) {
     if (!cur) return;
     while (cur.i < cur.cues.length) fire(cur.cues[cur.i++], true);
+    if (RB.harmonyCutin) RB.harmonyCutin.dispose(why || 'skip'); // (Harmony portrait: settled with the rest)
     stage().clearTransient();
     counters.settled++;
     finish(why || 'skip');
@@ -71309,6 +71540,7 @@ RB.battleSeq = (function () {
     cur = null;
     // the banner belongs to this action's interval: gone by its end, on every path
     if (c.banner && RB.battleBanner) { RB.battleBanner.hide(c.banner, true); c.banner = null; }
+    if (RB.harmonyCutin) RB.harmonyCutin.dispose('end'); // (gone long before; a safety on every path)
     if (c.watch) { clearTimeout(c.watch); timers.delete(c.watch); }
     unhook();
     c.rec.settled = settled;
@@ -72001,6 +72233,408 @@ RB.battleIntents = (function () {
 })();
 
 
+/* ==== src/ui/82d_harmony_cutin.js ==== */
+/* Harmony portrait flourish — the paired cut-in (Harmony addendum §5, §7, §8, §20.2–§20.3).
+ *
+ * When a real, legal, committed Harmony technique reaches its own animation interval, the choreography
+ * (src/ui/84p_party_choreo.js) places ONE `cutin` cue at the technique's start — one per technique, whatever
+ * the number of targets, and only with a committed companion. The battle sequencer (src/ui/82_battle_seq.js)
+ * fires it on its presentation clock (never in Instant playback, never while an exchange is being skipped),
+ * advances it every frame on that same clock, and disposes it whenever it settles a sequence (Skip, a hidden
+ * tab, the watchdog, an overlap, the scene's exit). Nothing here reads or changes a rule: the cue carries the
+ * companion and the action; the stage performance below it is identical with the portrait shown or not.
+ * It is never started by meter fill, hover, selection, preview, recognition or a menu — there is no other
+ * entry point.
+ *
+ * Lifecycle (one instance at a time, each with its own token):
+ *   inactive → entering → holding → fading → disposed
+ *   Normal: slides in from beyond the left edge 0–180 ms (ease-out), holds 180–560 (the art's 'enter' drawing
+ *   resolves into its 'hold' gesture once), fades in place 560–780, and the layer is removed at zero —
+ *   before every principal impact (the first result comes at ≥ 1,200 ms). Fast: 100 / 220 / 160 ms of wall
+ *   time (RB.battleSeq.T.cutin). Reduced motion: a short fade in where it stands (no travel), the held
+ *   drawing, the same smooth fade out. Instant, or the setting "Harmony portrait flourish" Off: nothing.
+ *   Hurried playback (×4) runs the same ramps faster. An older instance's callbacks can never touch a newer
+ *   one (every path checks the token).
+ *
+ * Placement (§5.2–§5.4), measured every time from the live layout (CSS px):
+ *   protected: the Resolve/Harmony dock (.cb-party), the action banner, the telegraph and the response dock
+ *   unless Adaptive has withdrawn them (Keep visible: they count as occupied), the creatures' plates and
+ *   badges, each creature's silhouette with its knots (the impact destination), the on-field party, Skip,
+ *   an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
+ *   transparent corners are not footprint; its hands, glow and backing are). A dialogue, the language task,
+ *   word help or another reading layer means no cut-in starts (and an open one is removed at once).
+ *   Fit order: 1. the standard pair in the left-middle space (at RB.harmonyArt.fitScale); 2. the same moved
+ *   up or down on the left; 3. the authored compact pair (with its backing, then without backing and
+ *   effects, then at smaller scales while faces stay ≥ 24 px); 4. no portrait for this action — recorded in
+ *   stats().fallbacks. (Where the standard's faces would be under 48 px while the compact's are larger — a
+ *   tall tablet — the compact is tried first: §5.4's narrow-screen case.) The composition always enters
+ *   from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
+ *   On resize or orientation change the same instance is placed again (no replay, nothing spent again); if
+ *   no placement remains it fades out quickly and the stage action continues.
+ *
+ * Sizes come only from RB.harmonyArt (NATIVE, fitScale, the composed canvas's own width and height) and the
+ * art's phase list is data (PHASES): the busts may be replaced by other art behind the same API.
+ *
+ * API
+ *   RB.harmonyCutin.start(cue, atPt, rec) → token | null      (the sequencer only)
+ *   RB.harmonyCutin.frame(pt)                                 (the sequencer's clock, every frame)
+ *   RB.harmonyCutin.dispose(why) → boolean
+ *   RB.harmonyCutin.enabled(), place(o), state(), stats(), last(), reset()   (tests, the dev viewer) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyCutin = (function () {
+  'use strict';
+  const SEP = 12;
+  const COMPS = ['nao', 'mio', 'ren', 'suzu'];
+  const LOG_CAP = 24, TRACE_CAP = 160, FALLBACK_CAP = 24;
+  const clamp01 = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+  const easeOut = (k) => 1 - Math.pow(1 - clamp01(k), 3);
+  const smooth = (k) => { k = clamp01(k); return k * k * (3 - 2 * k); };
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  const A = () => RB.harmonyArt;
+  let cur = null, N = 0, onResize = null;
+  const S = { started: 0, shown: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0 };
+
+  // ---- the setting and the moments it must not start -------------------------------------------------
+  // "Harmony portrait flourish" (default On): presentation only; older settings records lack it (= On).
+  const enabled = () => !(RB.game && RB.game.settings && RB.game.settings.harmonyFlourish === false);
+  function readingOpen() {
+    try {
+      if (RB.ui && RB.ui.dialogue && RB.ui.dialogue.isOpen && RB.ui.dialogue.isOpen()) return 'dialogue';
+      if (RB.ui && RB.ui.help && RB.ui.help.isOpen && RB.ui.help.isOpen()) return 'help';
+      if (RB.combatHelp && RB.combatHelp.isOpen && RB.combatHelp.isOpen()) return 'help';
+      if (RB.ui && RB.ui.settings && RB.ui.settings.isOpen && RB.ui.settings.isOpen()) return 'settings';
+      if (typeof document !== 'undefined') {
+        // the language task, a confirmation, the folio or any other modal sheet on screen
+        for (const e of document.querySelectorAll('.chal, .confirm-scrim, [aria-modal="true"]')) if (visRect(e)) return 'sheet';
+      }
+    } catch (e) { return 'unknown'; }
+    return null;
+  }
+  // the art's phases over an instance's life (data: a third 'flourish' drawing may appear between them)
+  function phases() { const P = A() && A().PHASES; return Array.isArray(P) && P.length ? P.slice() : ['enter', 'hold']; }
+
+  // ---- measuring ------------------------------------------------------------------------------------
+  function visRect(el) {
+    if (!el || !el.getBoundingClientRect) return null;
+    const r = el.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1) return null;
+    const cs = getComputedStyle(el);
+    if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity < 0.05) return null;
+    return { x: r.left, y: r.top, w: r.width, h: r.height };
+  }
+  // Every rectangle the portrait must keep clear of (CSS px, viewport), with what it is.
+  function protectedRects() {
+    const out = [];
+    const root = document.querySelector('.combat-ui');
+    const add = (id, r) => { if (r && r.w > 0 && r.h > 0) out.push(Object.assign({ id }, r)); };
+    if (!root) return out;
+    const withdrawn = root.classList.contains('cb-acting') && !root.classList.contains('cb-keep');
+    add('status', visRect(root.querySelector('.cb-party')));
+    for (const b of root.querySelectorAll('.cb-banner')) if (b.classList.contains('on') || b.classList.contains('off')) add('banner', visRect(b));
+    // the telegraph and the responses: occupied unless Adaptive has withdrawn them for the exchange
+    if (!withdrawn) { add('intent', visRect(root.querySelector('.intent'))); add('responses', visRect(root.querySelector('.cb-dock'))); }
+    add('skip', visRect(root.querySelector('.cb-skip')));
+    for (const e of root.querySelectorAll('.cb-foe [data-foe], .cb-foe')) add('plate', visRect(e));
+    for (const e of root.querySelectorAll('.cb-ib')) add('badge', visRect(e));
+    add('intentCard', visRect(root.querySelector('.cb-icard')));
+    // the stage: each creature's silhouette and its knots (where the technique lands), the party performing
+    const St = RB.battleStage;
+    const lay = St && St.lay && St.lay();
+    if (lay) {
+      const cp = St.cssPerArt ? St.cssPerArt() : 1;
+      for (const f of lay.foes || []) {
+        const e = f.ext, sc = lay.scale;
+        const top = f.ey + e.top * sc, bottom = Math.max(f.ey + e.bottom * sc, (f.ky || 0) + 12 * sc);
+        const half = Math.max((e.right - e.left) * sc / 2, (f.knotSpan || 0) * 0.6);
+        add('creature', { x: Math.min(f.ex + e.left * sc, f.ex - half) * cp, y: top * cp, w: (Math.max(f.ex + e.right * sc, f.ex + half) - Math.min(f.ex + e.left * sc, f.ex - half)) * cp, h: (bottom - top) * cp });
+      }
+      if (lay.party) add('party', { x: lay.party.x * cp, y: lay.party.y * cp, w: lay.party.w * cp, h: lay.party.h * cp });
+    }
+    // a touch control or a HUD left on screen (normally hidden in battle)
+    for (const e of document.querySelectorAll('.touchpad, .hud')) add('control', visRect(e));
+    return out;
+  }
+  // The rows of a composition that are drawn (art px): for each row, its leftmost and rightmost opaque pixel —
+  // the union over the phases shown, so a hand that moves between drawings is footprint in both.
+  const spanCache = new Map();
+  function spansOf(spec) {
+    const ph = spec.still ? ['hold'] : phases();
+    const comps = ph.map((p) => A().compose(Object.assign({}, spec, { phase: p })));
+    const key = comps.map((c) => c.key).join('#');
+    let sp = spanCache.get(key);
+    if (sp) return { sp, comp: comps[comps.length - 1], all: comps };
+    const w = comps[0].w, h = comps[0].h;
+    sp = new Array(h).fill(null);
+    for (const c of comps) {
+      let data = null;
+      try { data = c.cv.getContext('2d').getImageData(0, 0, c.w, c.h).data; } catch (e) { data = null; }
+      for (let y = 0; y < h; y++) {
+        let x0 = -1, x1 = -1;
+        if (data) {
+          for (let x = 0; x < w; x++) if (data[(y * w + x) * 4 + 3] > 8) { if (x0 < 0) x0 = x; x1 = x; }
+        } else if (y >= c.bounds.y && y < c.bounds.y + c.bounds.h) { x0 = c.bounds.x; x1 = c.bounds.x + c.bounds.w - 1; } // (no pixels to read: its bounds)
+        if (x0 < 0) continue;
+        const o = sp[y];
+        sp[y] = o ? [Math.min(o[0], x0), Math.max(o[1], x1)] : [x0, x1];
+      }
+    }
+    spanCache.set(key, sp);
+    while (spanCache.size > 8) spanCache.delete(spanCache.keys().next().value);
+    return { sp, comp: comps[comps.length - 1], all: comps };
+  }
+  // does the composition at (x, y, s) draw anything inside one of the rects (each inflated by SEP)?
+  function hits(sp, x, y, s, rects) {
+    for (const R of rects) {
+      const rx0 = R.x - SEP, rx1 = R.x + R.w + SEP, ry0 = R.y - SEP, ry1 = R.y + R.h + SEP;
+      for (let r = 0; r < sp.length; r++) {
+        const q = sp[r];
+        if (!q) continue;
+        const y0 = y + r * s, y1 = y0 + s;
+        if (y1 <= ry0 || y0 >= ry1) continue;
+        if (x + (q[1] + 1) * s <= rx0 || x + q[0] * s >= rx1) continue;
+        return R.id;
+      }
+    }
+    return null;
+  }
+  // The placement for a companion's pair in the current layout, by the fixed fitting order (see the header).
+  // o: { comp, look, view?: {w, h} } → { ok, variant, scale, x, y, w, h, fit, footprint, faceH, backing, fx,
+  //      tried: [...], reason }
+  function place(o) {
+    const vw = (o.view && o.view.w) || window.innerWidth, vh = (o.view && o.view.h) || window.innerHeight;
+    const rects = o.rects || protectedRects();
+    const stage = visRect(document.querySelector('.combat-ui .cb-stage'));
+    const party = rects.find((r) => r.id === 'party');
+    const top = stage ? stage.y : 0, bottom = party ? party.y : stage ? stage.y + stage.h : vh;
+    const midY = (top + bottom) / 2;
+    const N = A().NATIVE, still = !!o.still;
+    const faceOf = (spec, s) => { const c = A().compose(Object.assign({}, spec, { phase: 'hold' })); return Math.min(...c.faces.map((f) => f.h)) * s; };
+    const base = { comp: o.comp, look: o.look, still };
+    const sStd = A().fitScale(vw, vh, 'standard'), sCmp = A().fitScale(vw, vh, 'compact');
+    const std = [], cmp = [];
+    if (sStd > 0) { std.push({ variant: 'standard', scale: sStd, fit: 'standard', at: 'mid' }); std.push({ variant: 'standard', scale: sStd, fit: 'standard-moved', at: 'scan' }); }
+    if (sCmp > 0) {
+      cmp.push({ variant: 'compact', scale: sCmp, fit: 'compact', at: 'scan' });
+      cmp.push({ variant: 'compact', scale: sCmp, fit: 'compact-bare', at: 'scan', backing: false, fx: false });
+      for (let s = Math.ceil(sCmp) - 1; s >= 1; s--) cmp.push({ variant: 'compact', scale: s, fit: 'compact-small', at: 'scan' });
+    }
+    let order = std.concat(cmp);
+    // a tall, narrow view (a tablet held upright): the standard pair would be small while the compact is not
+    if (sStd > 0 && sCmp > 0 && faceOf(Object.assign({ variant: 'standard' }, base), sStd) < 48 && faceOf(Object.assign({ variant: 'compact' }, base), sCmp) > faceOf(Object.assign({ variant: 'standard' }, base), sStd)) order = cmp.concat(std);
+    const tried = [];
+    for (const st of order) {
+      const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
+      const { sp, comp } = spansOf(spec);
+      const s = st.scale, b = comp.bounds;
+      const faceH = Math.min(...comp.faces.map((f) => f.h)) * s;
+      if (faceH < 24) { tried.push({ fit: st.fit, scale: s, why: 'faces too small' }); continue; }
+      const x = 0, w = comp.w * s, h = comp.h * s;
+      if (x + (b.x + b.w) * s > vw) { tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
+      const yMin = Math.ceil(-b.y * s), yMax = Math.floor(vh - (b.y + b.h) * s);
+      if (yMax < yMin) { tried.push({ fit: st.fit, scale: s, why: 'too tall' }); continue; }
+      const pref = Math.round(midY - (b.y + b.h / 2) * s);
+      const cand = [];
+      if (st.at === 'mid') cand.push(Math.max(yMin, Math.min(yMax, pref)));
+      else {
+        const step = Math.max(1, Math.round(s));
+        for (let y = yMin; y <= yMax; y += step) cand.push(y);
+        cand.sort((p, q) => Math.abs(p - pref) - Math.abs(q - pref) || p - q);
+      }
+      let blocked = null;
+      for (const y of cand) {
+        const hit = hits(sp, x, y, s, rects);
+        if (hit) { blocked = blocked || hit; continue; }
+        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
+      }
+      tried.push({ fit: st.fit, scale: s, why: 'overlaps ' + blocked });
+    }
+    return { ok: false, fit: 'omitted', reason: tried.length ? tried[tried.length - 1].why : 'no variant fits the view', tried, view: { w: vw, h: vh }, rects: rects.map((r) => ({ id: r.id, x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.w), h: Math.round(r.h) })) };
+  }
+
+  // ---- the instance ---------------------------------------------------------------------------------
+  function note(why) { S.suppressed[why] = (S.suppressed[why] || 0) + 1; }
+  function mark(c, state, pt) { c.marks.push({ state, at: Math.round((pt - c.t0) * 10) / 10, wall: Math.round(now() - c.wall0) }); }
+  function start(cue, at, rec) {
+    if (cur) { S.replaced++; dispose('replaced'); }
+    const comp = cue && cue.comp;
+    const why = !enabled() ? 'off' : COMPS.indexOf(comp) < 0 ? 'nocomp' : !A() ? 'noart' : RB.battleSeq && RB.battleSeq.mode() === 'instant' ? 'instant'
+      : typeof document === 'undefined' || document.hidden ? 'hidden' : !document.querySelector('.combat-ui') ? 'noroot' : readingOpen();
+    if (why) { note(why); return null; }
+    // the player's worn look, as it is now (snapshot: a change later in the action never reaches this one)
+    let look = {};
+    try { look = JSON.parse(JSON.stringify(RB.equip.look(RB.game.s) || {})); } catch (e) { look = {}; }
+    const mode = RB.battleSeq.mode();
+    const T = (RB.battleSeq.T.cutin || {})[mode] || { in: 180, hold: 380, out: 220 };
+    const reduce = !!(RB.game.reducedMotion && RB.game.reducedMotion());
+    const action = rec && rec.meta && rec.meta.action ? rec.meta.action.id : null;
+    let pl;
+    try { pl = place({ comp, look, still: reduce }); } catch (e) { pl = { ok: false, fit: 'omitted', reason: 'error: ' + (e && e.message), tried: [] }; }
+    if (!pl.ok) {
+      note('fallback');
+      S.fallbacks.push({ action, comp, view: pl.view, reason: pl.reason, tried: pl.tried, rects: pl.rects, at: new Date().toISOString() });
+      while (S.fallbacks.length > FALLBACK_CAP) S.fallbacks.shift();
+      return null;
+    }
+    const el = document.createElement('canvas');
+    el.className = 'cb-cutin';
+    el.setAttribute('aria-hidden', 'true');
+    el.setAttribute('role', 'presentation');
+    el.inert = true;
+    el.tabIndex = -1;
+    el.dataset.comp = comp;
+    const root = document.querySelector('.combat-ui');
+    root.insertBefore(el, root.querySelector('.cb-banner'));
+    N++;
+    cur = { n: N, state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null };
+    mark(cur, 'inactive', at);
+    S.started++; S.shown++;
+    S.maxLive = Math.max(S.maxLive, document.querySelectorAll('.cb-cutin').length);
+    onResize = () => { if (cur) cur.dirty = true; };
+    window.addEventListener('resize', onResize);
+    window.addEventListener('orientationchange', onResize);
+    frame(RB.battleSeq.now());
+    return cur ? cur.n : null;
+  }
+  function layout(c) {
+    const p = c.pl, el = c.el;
+    el.style.left = p.x + 'px';
+    el.style.top = p.y + 'px';
+    el.style.width = p.w + 'px';
+    el.style.height = p.h + 'px';
+  }
+  function draw(c, ph) {
+    const spec = { comp: c.comp, look: c.look, variant: c.pl.variant, phase: ph, still: c.reduce, backing: c.pl.backing, fx: c.pl.fx };
+    const comp = A().compose(spec);
+    if (c.el.width !== comp.w || c.el.height !== comp.h) { c.el.width = comp.w; c.el.height = comp.h; }
+    const g = c.el.getContext('2d');
+    g.imageSmoothingEnabled = false;
+    g.clearRect(0, 0, comp.w, comp.h);
+    g.drawImage(comp.cv, 0, 0);
+    c.phase = ph;
+    c.drawn = comp.key;
+    layout(c);
+  }
+  // which drawing shows at elapsed el (presentation ms): the arrival, then (shortly after it has arrived) the
+  // one gesture resolved into the hold; a 'flourish' drawing, where the art has one, between them
+  function phaseAt(c, el) {
+    if (c.reduce) return 'hold';
+    const P = phases(), resolveAt = c.d.in + Math.min(60, c.d.hold / 4);
+    if (el < resolveAt && P.indexOf('enter') >= 0) return 'enter';
+    if (P.indexOf('flourish') >= 0 && el < c.d.in + c.d.hold * 0.5) return 'flourish';
+    return 'hold';
+  }
+  function frame(pt) {
+    const c = cur;
+    if (!c) return;
+    const lay = readingOpen();
+    if (lay) { dispose('layer:' + lay); return; }
+    if (c.dirty) {
+      c.dirty = false;
+      S.relaid++;
+      let pl;
+      try { pl = place({ comp: c.comp, look: c.look, still: c.reduce }); } catch (e) { pl = { ok: false }; }
+      if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) c.phase = null; layout(c); }
+      else if (!c.cut) c.cut = { pt, d: Math.min(120, c.d.out), op: c.opacity, why: 'resize-invalid' };
+    }
+    const el = pt - c.t0, d = c.d, total = d.in + d.hold + d.out;
+    let state, op, dx = 0;
+    if (c.cut) {
+      const k = (pt - c.cut.pt) / c.cut.d;
+      if (k >= 1) { dispose(c.cut.why); return; }
+      state = 'fading'; op = c.cut.op * (1 - smooth(k));
+    } else if (el < d.in) {
+      state = 'entering';
+      const k = Math.max(0, el) / d.in;
+      if (c.reduce) op = smooth(k);
+      else {
+        op = 1;
+        // from beyond the left edge, eased out; moved in whole art pixels (the grid stays stable)
+        const s = c.pl.scale, travel = c.pl.footprint.x + c.pl.footprint.w + 4;
+        dx = -Math.round(((1 - easeOut(k)) * travel) / s) * s;
+      }
+    } else if (el < d.in + d.hold) { state = 'holding'; op = 1; }
+    else if (el < total) { state = 'fading'; op = 1 - smooth((el - d.in - d.hold) / d.out); }
+    else { dispose('done'); return; }
+    if (state !== c.state) { c.state = state; mark(c, state, pt); }
+    const ph = phaseAt(c, el);
+    if (ph !== c.phase) draw(c, ph);
+    c.opacity = op; c.dx = dx;
+    c.el.style.opacity = String(Math.round(op * 1000) / 1000);
+    c.el.style.transform = dx ? 'translate3d(' + dx + 'px,0,0)' : '';
+    if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph[0]]);
+  }
+  function dispose(why) {
+    const c = cur;
+    if (!c) return false;
+    cur = null;
+    if (onResize) { window.removeEventListener('resize', onResize); window.removeEventListener('orientationchange', onResize); onResize = null; }
+    if (c.el && c.el.parentNode) c.el.parentNode.removeChild(c.el);
+    const pt = RB.battleSeq ? RB.battleSeq.now() : c.t0;
+    c.state = 'disposed';
+    mark(c, 'disposed', pt);
+    S.disposed++;
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    while (S.log.length > LOG_CAP) S.log.shift();
+    return true;
+  }
+  const roundRect = (r) => (r ? { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.w), h: Math.round(r.h) } : null);
+
+  function state() {
+    const c = cur;
+    if (!c) return { state: 'inactive', token: null };
+    const r = c.el.getBoundingClientRect();
+    return { state: c.state, token: c.n, action: c.action, comp: c.comp, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, opacity: c.opacity, dx: c.dx, phase: c.phase, rect: { x: r.left, y: r.top, w: r.width, h: r.height }, footprint: roundRect({ x: c.pl.footprint.x + c.dx, y: c.pl.footprint.y, w: c.pl.footprint.w, h: c.pl.footprint.h }), t: Math.round((RB.battleSeq.now() - c.t0) * 10) / 10 };
+  }
+  function stats() {
+    let cache = null;
+    try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
+    return { started: S.started, shown: S.shown, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+  }
+  const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
+  function reset() { dispose('reset'); S.started = S.shown = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; }
+
+  // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
+  // At an encounter's start the committed companion's pair is built in idle slices (both variants, every
+  // phase), and the technique's battle-figure frames are drawn ahead too — never when the technique fires.
+  let prepTok = 0;
+  function prepare(comp) {
+    if (!A() || COMPS.indexOf(comp) < 0 || !RB.game || !RB.game.s) return;
+    const tok = ++prepTok;
+    let look = null;
+    try { look = RB.equip.look(RB.game.s); } catch (e) { return; }
+    const still = !!(RB.game.reducedMotion && RB.game.reducedMotion());
+    try { A().prepare([{ comp, look, variant: 'standard', still }, { comp, look, variant: 'compact', still }], { async: true }); } catch (e) { /* presentation only */ }
+    // the battle figures' frames for this technique (the cache keeps only this encounter's actors)
+    const B = RB.battlers, MV = RB.battlerMoves, TC = RB.partyChoreo && RB.partyChoreo.TECH[comp];
+    if (!B || !MV || !TC || !B.preview) return;
+    const list = [];
+    const add = (lk, who, id, g) => { const q = MV.qkOf(id, g) || B.QK || 12; for (const p of ['anticipate', 'act', 'recover']) for (let i = 0; i <= q; i++) list.push([lk, p, g, i / q, { who, id, reduce: still }]); };
+    add(look, 'pc', 'pc', TC.g);
+    if (RB.content.chars[comp]) add(RB.content.chars[comp].look, 'comp', comp, TC.p);
+    let i = 0;
+    const step = () => {
+      if (tok !== prepTok || !RB.battleStage || !RB.battleStage.active()) return;
+      const t0 = now();
+      while (i < list.length && now() - t0 < 4) { const [lk, p, g, k, o] = list[i++]; try { B.preview(lk, p, g, k, o); } catch (e) { i = list.length; } }
+      if (i < list.length) (typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout)(step);
+    };
+    (typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout)(step);
+  }
+  if (RB.bus && RB.bus.on) {
+    RB.bus.on('present:scene', (e) => {
+      if (!e) return;
+      if (e.phase === 'enter' && e.comp) prepare(e.comp);
+      if (e.phase === 'exit' || e.phase === 'defeat') { prepTok++; dispose(e.phase); }
+    });
+    // a campaign changing (new, loaded, back to the title): nothing of the last one's portrait stays
+    RB.bus.on('campaign:changing', () => { prepTok++; dispose('campaign'); spanCache.clear(); });
+  }
+
+  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen } };
+})();
+
+
 /* ==== src/ui/83_battle_stage.js ==== */
 /* The battle stage: where everyone stands and how they are drawn, at art
  * resolution, from the DISPLAYED battle state (src/ui/80_combat.js keeps it
@@ -72338,9 +72972,10 @@ RB.battleStage = (function () {
   }
 
   // ---- actions (set by the sequencer; times on the presentation clock) --------------------------
-  function pose(who, p, gesture, d, now) {
+  // k: a held pose's fixed progress (a Harmony technique's held signature; reduced motion's held poses)
+  function pose(who, p, gesture, d, now, k) {
     if (!S) return;
-    S.actors[who] = p ? { pose: p, gesture: gesture || null, t0: now, d: Math.max(1, d) } : null;
+    S.actors[who] = p ? { pose: p, gesture: gesture || null, t0: now, d: Math.max(1, d), k: k == null ? null : k } : null;
   }
   // o: { family, dir, hold, foe (which creature; the lead by default) }
   function foe(act, d, now, o) {
@@ -72461,7 +73096,7 @@ RB.battleStage = (function () {
       let p = null, g = null, k = 1;
       if (a) {
         k = cl((fr.pt - a.t0) / a.d);
-        if (k >= 1 && !a.hold) S.actors[who] = null; else { p = a.pose; g = a.gesture; }
+        if (k >= 1 && !a.hold) S.actors[who] = null; else { p = a.pose; g = a.gesture; if (a.k != null) k = a.k; }
       }
       const down = (who === 'pc' ? v.pc : v.comp) <= 0;
       // party art (battle addendum §7.3): an adventurer a creature is winding up at braces a little
@@ -74617,15 +75252,28 @@ RB.partyChoreo = (function () {
     answer: { g: 'book', motif: 'note', ant: 240, act: 560, word: W(160, 520, 200, 120, 440, 1200, 1380), contact: 840, rec: 1160, recD: 380, end: 1560 },
     truth: { g: 'lens', motif: 'split', ant: 220, act: 520, word: W(140, 320, 200, 120, 440, 1160, 1340), contact: 760, rec: 1100, recD: 380, end: 1500 },
   };
-  // Coordinated techniques (§8.5): one named action, two real participants with complementary phases
-  // (not the same gesture at the same time): the partner's own move (`p`, starting at pAt), the
-  // player's (`g`, starting at gAt), one culmination (contact).
+  // Coordinated techniques (§8.5; Harmony addendum §7.2, §9): one named action, two real participants with
+  // complementary phases, one culmination. Times are presentation ms from the technique's own start:
+  //   0–780      the paired portrait (RB.harmonyCutin: in 0–180, hold 180–560, fade 560–780 at Normal) —
+  //              the `cutin` cue; meanwhile your rally begins (a breath, the writing hand gathered: gAnt)
+  //   pAt…       the companion's anticipation (pAnt), then the signature (pAct), its cue at the gesture's
+  //              release; held until the recovery
+  //   gAt…       your terminal gesture (gAct), released on the companion's cue
+  //   contact    the first result (never before the portrait is gone), the rest 150 ms apart
+  //   rec…       both back to the ready stance (the companion 60 ms later; recD), the technique's end
+  // Fast runs the same table on the ×1.43 clock (1.6–1.7 s); the portrait has its own Fast timing.
+  // g / p: your gesture and the companion's (RB.battlerMoves: rally_*, and opening, draught, ward_plane,
+  // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
+  // companion's object or garment) — nothing is said, and muted play loses nothing.
   const TECH = {
-    nao: { g: 'thread', gAt: 260, p: 'point', pAt: 0, motif: 'join', word: W(320, 300, 220, 120, 440, 1260, 1440), contact: 980, rec: 1360, recD: 380, end: 1820, note: 'Nao points out where it will move; you send the thread exactly there: two knots.' },
-    mio: { g: 'restore', gAt: 0, p: 'pour', pAt: 220, motif: 'join', word: W(160, 260, 220, 120, 440, 1260, 1440), contact: 980, rec: 1360, recD: 380, end: 1820, note: 'You write; Mio pours the draught into the ink as it is released: both restored, lingering effects washed off.' },
-    ren: { g: 'ward', gAt: 200, p: 'ward', pAt: 0, motif: 'join', word: W(240, 0, 240, 140, 420, 1260, 1440), contact: 920, rec: 1360, recD: 380, end: 1800, note: 'Ren raises the lamp; your seal forms in its light before you both.' },
-    suzu: { g: 'thread', gAt: 300, p: 'flourish', pAt: 0, motif: 'join', word: W(340, 300, 220, 120, 440, 1260, 1440), contact: 1000, rec: 1380, recD: 380, end: 1840, note: 'Suzu turns its move back on it with a flourish; your thread lands in the opening she makes.' },
+    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 520, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1240, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [1090, 'pen_up']], note: 'Nao drops his weight, steps in and cuts a hand across the opening; your thread follows his line: two knots, on that one creature only.' },
+    mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1200, rec: 1800, recD: 400, end: 2350, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio measures the draught at eye level, uncorks it and pours it into your rising ink; you release it over you both: the knot, then the restoring, then what it washes off — each where it really happens.' },
+    ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants his feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
+    suzu: { g: 'rally_catch', gAnt: 500, gAt: 850, gAct: 560, p: 'curtain', pAt: 350, pAnt: 400, pAct: 550, motif: 'join', word: W(840, 300, 220, 120, 440, 1100, 1280), contact: 1280, rec: 1850, recD: 500, end: 2450, sfx: [[0, 'pen_stroke'], [760, 'wind']], note: 'Suzu steps back, twirls, plants and opens her arm — the cue; your thread swings round the opening like a curtain and turns its move back on it.' },
   };
+  // reduced motion (§7.4, §9.6): three held poses each, no travel — the anticipation key, the signature
+  // (yours at its release, the companion's at its end), and the recovery's own key (Suzu's half-bow)
+  const RD_K = { pc: 0.5, comp: 1 };
 
   // ---- companion support actions (src/content/02_companions.js), every one mapped ---------------------------
   // g: the companion's gesture; ant/act/rel: timing; contact: when its result arrives; travel: the visual
@@ -74723,6 +75371,37 @@ RB.partyChoreo = (function () {
     return { target, gesture, actors, family: fam.family, mapped: fam.mapped, motif, spec, wordTo, travel: motif, tech: card.kind === 'tech' ? card.tech : null };
   }
 
+  // A technique's two performances as pose cues (TECH): each pose segment overlaps the next by 20 ms so no
+  // frame falls back to the idle between them; a held segment carries a fixed progress (k). Reduced motion:
+  // three held poses each, cut, never travelled. Returns when each performer releases (for the carriers).
+  function techPoses(Q, t, F, rd, ctx) {
+    const pose = (who, p, g, at, d, k) => Q.push(Object.assign({ at: t + at, type: 'pose', who, pose: p, gesture: g, d }, k != null ? { k } : {}));
+    const sigC = F.pAt + F.pAnt, recC = F.rec + 60;
+    if (rd) {
+      if (ctx.comp) {
+        pose('comp', 'anticipate', F.p, F.pAt, sigC - F.pAt + 20, 1);
+        pose('comp', 'act', F.p, sigC, recC - sigC + 20, RD_K.comp);
+        pose('comp', 'recover', F.p, recC, F.recD, 0.5);
+      }
+      pose('pc', 'anticipate', F.g, 0, F.gAt + 20, 1);
+      pose('pc', 'act', F.g, F.gAt, F.rec - F.gAt + 20, RD_K.pc);
+      pose('pc', 'recover', F.g, F.rec, F.recD, 0.5);
+    } else {
+      if (ctx.comp) {
+        pose('comp', 'anticipate', F.p, F.pAt, F.pAnt + 20);
+        pose('comp', 'act', F.p, sigC, F.pAct + 20);
+        pose('comp', 'act', F.p, sigC + F.pAct, recC - sigC - F.pAct + 20, 1); // the signature held
+        pose('comp', 'recover', F.p, recC, F.recD);
+      }
+      pose('pc', 'anticipate', F.g, 0, F.gAnt + 20);
+      pose('pc', 'anticipate', F.g, F.gAnt, F.gAt - F.gAnt + 20, 1); // the gathered hand waits for the cue
+      pose('pc', 'act', F.g, F.gAt, F.gAct + 20);
+      pose('pc', 'act', F.g, F.gAt + F.gAct, F.rec - F.gAt - F.gAct + 20, 1);
+      pose('pc', 'recover', F.g, F.rec, F.recD);
+    }
+    return { comp: t + sigC + Math.round(F.pAct * MV().release(ctx.comp || 'comp', F.p)), pc: t + F.gAt + Math.round(F.gAct * MV().release('pc', F.g)) };
+  }
+
   // ---- the player's response (or a coordinated technique) -------------------------------------------------
   function player(card, fx, ctx, H) {
     const Q = [], rd = !!ctx.reduce;
@@ -74740,10 +75419,15 @@ RB.partyChoreo = (function () {
     const tech = plan.family === 'technique';
     const rel = (g, who) => (who === 'comp' ? MV().release(ctx.comp, g) : MV().release('pc', g));
     // gestures: anticipation → express/release → recovery (a technique: two complementary performances)
-    const perf = tech
-      ? [{ who: 'comp', g: F.p, at: F.pAt, ant: 200, act: 520 }, { who: 'pc', g: F.g, at: F.gAt, ant: 220, act: 540 }]
-      : [{ who: 'pc', g: F.g, at: 0, ant: F.ant, act: F.act }];
-    const releaseAt = {};
+    const perf = tech ? [] : [{ who: 'pc', g: F.g, at: 0, ant: F.ant, act: F.act }];
+    const releaseAt = tech ? techPoses(Q, t, F, rd, ctx) : {};
+    if (tech) {
+      // the paired portrait (Harmony addendum §5, §7): one cue at the technique's own start, whatever the
+      // number of targets; only with a committed companion. RB.harmonyCutin decides whether it shows (the
+      // setting, Instant, a reading layer, the space available) — the stage below is the same either way.
+      if (ctx.comp) Q.push({ at: t, type: 'cutin', comp: ctx.comp, tech: plan.tech, d: 780 });
+      for (const [at, name] of F.sfx || []) Q.push({ at: t + at, type: 'sfx', name });
+    }
     for (const p of perf) {
       if (rd) Q.push({ at: t + p.at, type: 'pose', who: p.who, pose: 'act', gesture: p.g, d: F.rec + F.recD - p.at });
       else {
@@ -74850,17 +75534,33 @@ RB.partyChoreo = (function () {
         Q.push({ at: r - 40, type: 'fx', name: 'lens', d: 720, p: { foe: T } });
         break;
       case 'technique': {
-        const who = plan.tech;
+        const who = plan.tech, rc = rel.comp != null ? rel.comp : rel.pc;
         // the two performances meet: a braided thread from both release points to the target
-        Q.push({ at: Math.min(rel.pc, rel.comp) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rel.comp) + 300, p: { to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who } });
-        if (who === 'nao' || who === 'suzu') {
-          const i = Math.max(0, H.fview(ctx, T).knots - 1);
-          Q.push({ at: rel.pc, type: 'fx', name: 'pThread', d: c - rel.pc + 260, p: { from: 'pc', to: H.knotId(ctx, T, i), foe: T, pull: 1 } });
+        Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: { to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who } });
+        const top = Math.max(0, H.fview(ctx, T).knots - 1);
+        // Nao: his cut marks the opening; your thread runs to that knot (and, when two really come loose,
+        // a short route links the two contacts — on that creature only, never a splash on the others)
+        if (who === 'nao') {
+          Q.push({ at: rc, type: 'fx', name: 'pSpot', d: c - rc + 200, p: { from: 'comp', foe: T } });
+          Q.push({ at: rel.pc, type: 'fx', name: 'pThread', d: c - rel.pc + 260, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, pull: 1 } });
+          const u = fx.find((f) => f.t === 'unravel' && H.fid(ctx, f.foe) === T);
+          if (u && Math.min(u.n || 1, H.fview(ctx, T).knots) >= 2) Q.push({ at: c + 40, type: 'fx', name: 'pRoute', d: 560, p: { from: H.knotId(ctx, T, top), to: H.knotId(ctx, T, top - 1), foe: T } });
         }
-        if (who === 'nao') Q.push({ at: rel.comp, type: 'fx', name: 'pSpot', d: c - rel.comp + 200, p: { from: 'comp', foe: T } });
-        if (who === 'mio') Q.push({ at: rel.comp, type: 'fx', name: 'pPour', d: c - rel.comp + 120, p: { from: 'comp', who: ['pc'], into: 'pc' } });
-        if (who === 'ren') Q.push({ at: rel.comp, type: 'fx', name: 'pLamp', d: c - rel.comp + 300, p: { from: 'comp', who: both } });
-        if (who === 'suzu') Q.push({ at: rel.comp, type: 'fx', name: 'pAttention', d: c - rel.comp + 300, p: { to: 'comp', foes: plan.target === 'foes' ? ctx.reach.foes : [T] } });
+        // Mio: the draught poured into your ink (the restoring and the washing are their own beats: react)
+        if (who === 'mio') Q.push({ at: rc, type: 'fx', name: 'pPour', d: Math.max(160, rel.pc - rc + 160), p: { from: 'comp', who: ['pc'], into: 'pc' } });
+        // Ren: the shaded lamp's light thrown back over the pair; the level plane his hand draws, set before
+        // each of you (the wards form on it at the result); the knot is the creature's own, at contact
+        if (who === 'ren') {
+          Q.push({ at: rc - 180, type: 'fx', name: 'pLamp', d: c - rc + 480, p: { from: 'comp', who: both } });
+          Q.push({ at: rc - 60, type: 'fx', name: 'pPlane', d: c - rc + 560, p: { from: 'comp', who: both } });
+        }
+        // Suzu: on her cue every eye turns to her; your thread swings round the opening like a curtain and
+        // turns the move back (round each creature whose move it really turns)
+        if (who === 'suzu') {
+          const foes = plan.target === 'foes' ? ctx.reach.foes : [T];
+          Q.push({ at: rc, type: 'fx', name: 'pAttention', d: c - rc + 300, p: { to: 'comp', foes } });
+          foes.forEach((i, k) => Q.push({ at: rel.pc + k * 90, type: 'fx', name: 'pCurtain', d: c - rel.pc + 520, p: { from: 'pc', to: H.foeId(ctx, i), foe: i, lead: i === T } }));
+        }
         Q.push({ at: c - 200, type: 'fx', name: 'link', d: 600, p: {} });
         break;
       }
@@ -74976,7 +75676,21 @@ RB.partyChoreo = (function () {
       case 'reveal': foeCue('recoil', 360, { dir: 'party' }); Q.push({ at, type: 'fx', name: 'pSplit', d: 640, p: { foe: i } }); return true;
       case 'tech': {
         const w = f.who || comp;
-        if (w === 'mio') { Q.push({ at, type: 'fx', name: 'motes', d: 820, p: { who: both } }); for (const x of both) pose(x, 'soothed', null, 700, 40); for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + 60, type: 'fx', name: 'pSteam', d: 700, p: { foe: k, wash: 1 } }); }
+        if (w === 'mio') {
+          // Clearwater Draught, truthfully (Harmony addendum §9.4): the restoring reaches only one of you who
+          // was below full (the numbers come from the applied change); then the washing reaches only the
+          // creatures that had Heat, mist or Gathering — each condition its own way of leaving
+          const v = ctx.view || {}, max = v.max || 0;
+          const low = both.filter((x) => max && v[x] != null && v[x] < max);
+          if (low.length) { Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: low } }); for (const x of low) pose(x, 'soothed', null, 700, 40); }
+          const fs = v.foes ? (f.all && ctx.reach ? ctx.reach.foes : [i]) : [i];
+          fs.forEach((k, n) => {
+            const fv = H.fview(ctx, k) || {}, d0 = at + 150 + n * 70;
+            if (fv.heat) Q.push({ at: d0, type: 'fx', name: 'pSteam', d: 700, p: { foe: k, wash: 1 } });
+            if (fv.shroud) { Q.push({ at: d0, type: 'fx', name: 'pShroudClear', d: 820, p: { foe: k, by: 'water' } }); Q.push({ at: d0 + 40, type: 'fx', name: 'mistPart', d: 620, p: { foe: k } }); }
+            if (fv.charged) Q.push({ at: d0 + 30, type: 'fx', name: 'scatter', d: 520, p: { foe: k } });
+          });
+        }
         if (w === 'ren') for (const x of both) Q.push({ at: at + (x === 'comp' ? 80 : 0), type: 'fx', name: 'sealForm', d: 520, p: { to: x } });
         if (w === 'suzu') for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + (k === i ? 0 : 90), type: 'fx', name: 'fizzle', d: 520, p: { foe: k } });
         if (w === 'nao') Q.push({ at, type: 'fx', name: 'pSpot', d: 400, p: { from: 'comp', foe: i, done: 1 } });
@@ -75453,6 +76167,55 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (const part of ['handR', 'handL']) {
         const o = A.pt(e.p.from || 'comp', part);
         for (let i = 0; i < 5; i++) { const an = -Math.PI / 2 + (i - 2) * 0.5, r = ease(k) * (6 + hs(i, 1) * 6) * u; R(c, o.x + Math.cos(an) * r, o.y + Math.sin(an) * r, u, u, i % 2 ? P.paper : P.verm, 1 - k); }
+      }
+    },
+    // ---- the Harmony techniques (Harmony addendum §9) --------------------------------------------------
+    // Read the Opening: two knots freed together — a short ochre route links the two contacts (Nao's courier
+    // line), drawn from the first to the second; only on that creature
+    pRoute(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from, 'core'), b = A.pt(e.p.to, 'core'), L = dist(a, b);
+      const fade = 1 - seg(k, 0.72, 1), s = still ? 1 : ease(seg(k, 0, 0.4));
+      const fn = (q) => qpt(a, b, -0.35 * L, q);
+      path(c, fn, L, 0, s, u, '#6a4a1c', 0.9 * fade, 1.1, 2 * u);
+      path(c, (q) => { const p = fn(q); return { x: p.x, y: p.y - u }; }, L, 0, s, u, '#e0b050', fade, 1.1, u);
+      if (!still) { const h = seg(k, 0.4, 0.75); if (h > 0) for (const p of [a, b]) sparkle(c, p.x, p.y, Math.round((2 + 2 * bell(h)) * u), u, '#fff0c0', bell(h) * fade); }
+    },
+    // Curtain Call: the thread swung round the opening like a stage curtain — a band of cloth (vermilion,
+    // its folds in stripes, a gold hem) leaving your hand, sweeping over and past the creature, then hooking
+    // back down onto it: its own move turned round. Lead: the target (the others in a group a step behind).
+    pCurtain(c, e, k, A, t, still) {
+      const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), o = A.pt('foe', 'core'), top = A.pt('foe', 'top');
+      const over = { x: o.x + A.foeR * 0.9, y: Math.min(top.y, o.y - A.foeR) - 6 * u };
+      const L1 = dist(a, over), L2 = dist(over, o);
+      const fade = 1 - seg(k, 0.78, 1);
+      const out = still ? 1 : ease(seg(k, 0, 0.5)), back = still ? 1 : ease(seg(k, 0.45, 0.78));
+      // the band: the way out (a high arc) and the hook back onto it
+      const p1 = (q) => qpt(a, over, -0.32 * L1, q), p2 = (q) => qpt(over, o, 0.45 * L2, q);
+      const band = (fn, L, s0, s1) => {
+        if (s1 <= s0) return;
+        const n = Math.max(4, Math.round((L * (s1 - s0)) / (1.5 * u)));
+        for (let i = 0; i <= n; i++) {
+          const q = s0 + ((s1 - s0) * i) / n, p = fn(q), fold = Math.floor((q * L) / (4 * u)) % 2;
+          R(c, p.x - u, p.y - 2 * u, 3 * u, 3 * u, fold ? '#a8322a' : '#d0503c', fade * (e.p.lead === false ? 0.75 : 1));
+          R(c, p.x - u, p.y + u, 3 * u, u, '#e8c060', fade * 0.9);
+        }
+      };
+      band(p1, L1, 0, out);
+      if (out >= 1) band(p2, L2, 0, back);
+      if (!still && back > 0.85) { const h = seg(k, 0.7, 0.9); sparkle(c, o.x, o.y, Math.round((2 + 3 * bell(h)) * u), u, '#fff0e0', bell(h) * fade); }
+    },
+    // Lantern Ward: the level plane Ren's hand draws, set before each of you at the chest — a few thin lines
+    // of lamplight laid flat in perspective, growing from his side; restrained, it holds and is gone (the
+    // ward itself is the seal tag at the result, its real amount, used up by blows like any ward)
+    pPlane(c, e, k, A, t, still) {
+      const u = A.u, fade = 1 - seg(k, 0.8, 1), s = still ? 1 : ease(seg(k, 0, 0.45));
+      for (const w of e.p.who || []) {
+        const o = A.pt(w, 'chest'), x0 = o.x - 9 * u, y0 = o.y + 3 * u;
+        for (let r = 0; r < 3; r++) {
+          const len = 24 * u * s, dx = r * 3 * u, dy = -r * 2 * u;
+          path(c, (q) => ({ x: x0 + dx + q * len, y: y0 + dy - q * len * 0.32 }), len, 0, 1, u, r === 1 ? '#fff6d8' : '#ffe8b0', (r === 1 ? 0.75 : 0.4) * fade, 1, u);
+        }
+        if (s >= 1 && !still) R(c, x0 + 24 * u + 3 * u, y0 - 24 * u * 0.32 - 2 * u, u, u, '#ffffff', fade);
       }
     },
     // a support that found nothing to do (no opening; the knot held; not in step): a small grey puff
