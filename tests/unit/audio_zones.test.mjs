@@ -25,6 +25,7 @@ export default async (t) => {
   }
   for (const id of _.SHARED_MUSIC) t.ok(!!songs[id], 'shared mood exists: ' + id);
   t.ok(Z.reedwake.battle === 'battle' && Z.reedwake.boss === 'boss' && Z.reedwake.route === 'road', 'Chapter 1 keeps battle, boss and road');
+  t.ok(Z.atlas.battle === 'battle_atlas' && Z.atlas.boss === 'boss_atlas' && songs.battle_atlas.kind === 'battle' && songs.boss_atlas.kind === 'boss', 'the Atlas has its own battle and boss themes');
 
   // ---- maps
   const cands = (m) => (m.music == null ? [] : typeof m.music === 'string' ? [m.music] : Array.isArray(m.music) ? m.music.map((x) => x.id) : ['<function>']);

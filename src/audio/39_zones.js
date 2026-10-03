@@ -27,6 +27,7 @@ RB.audio = RB.audio || {};
       battle: 'battle', boss: 'boss', route: 'road',
       songs: ['reedwake', 'reedwake_night', 'road', 'mill'],
     },
+    // Chapters 2–6 (31_… 35_songs_ch*.js) and the Atlas (36_songs_atlas.js)
     saltglass: {
       chapter: 2, regions: ['saltglass', 'archive'], prefixes: ['sg.'],
       battle: 'battle_saltglass', boss: 'boss_saltglass', route: 'sg_road',
@@ -57,9 +58,9 @@ RB.audio = RB.audio || {};
       songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories'],
       cues: ['sa_kasane', 'sa_toya'],
     },
-    atlas: {
+    atlas: { // the post-game Unwritten Atlas
       chapter: 7, regions: ['atlas'], prefixes: ['atlas'],
-      battle: 'battle', boss: 'boss',
+      battle: 'battle_atlas', boss: 'boss_atlas',
       songs: ['atlas'],
     },
   };

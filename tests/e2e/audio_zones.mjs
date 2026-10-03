@@ -19,7 +19,7 @@ const plan = await p0.evaluate(() => {
   const C = RB.content, A = RB.audio;
   const out = [];
   for (const [zid, z] of Object.entries(A.zones())) {
-    if (z.chapter > 6) continue;
+    if (z.chapter > 7) continue;
     const route = Object.keys(C.maps).find((m) => z.prefixes.some((pf) => m === pf + 'road')) || null;
     let foe = null;
     for (const [mid, m] of Object.entries(C.maps)) {
@@ -27,6 +27,12 @@ const plan = await p0.evaluate(() => {
         const e = C.enemies[f.enemy];
         if (!foe && e && !e.boss && A.zoneOf(e, m, mid) === zid) foe = { enemy: f.enemy, map: mid };
       }
+    }
+    // zones whose creatures are not placed on a map (the Atlas generates its
+    // rooms): fight one of them on the first Reedwake route instead
+    if (!foe) {
+      const id = Object.keys(C.enemies).find((id) => !C.enemies[id].boss && A.zoneOf(C.enemies[id], null, id) === zid);
+      if (id) foe = { enemy: id, map: 'rw.millroad' };
     }
     const boss = Object.keys(C.enemies).find((id) => C.enemies[id].boss && A.zoneOf(C.enemies[id], null, id) === zid);
     out.push({ zid, chapter: z.chapter, route, routeSong: z.route, battle: z.battle, boss: z.boss, foe, bossId: boss });
@@ -79,7 +85,7 @@ for (const z of plan) {
     ok(!after.err, `${z.zid}: audio engine error: ${after.err}`);
     if (z.route) {
       const rt = await p.evaluate((route) => { RB.world.enter(route); return RB.audio.currentSong(); }, z.route);
-      ok(rt === z.routeSong || z.zid === 'still', `${z.zid}: ${z.route} plays ${z.routeSong} (got ${rt})`);
+      ok(rt === z.routeSong, `${z.zid}: ${z.route} plays ${z.routeSong} (got ${rt})`);
     }
     ok(!errors.length, `${z.zid}: page errors: ${errors.slice(0, 3).join(' | ')}`);
     await p.close();

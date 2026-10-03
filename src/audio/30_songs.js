@@ -1,8 +1,9 @@
 /* Song data — original music for The Road of Borrowed Names.
  * This file: the shared motifs, Chapter 1 and the songs used across the
  * game. Zone music from Chapter 2 on (overworld, battle, boss and story
- * cues, with the Japanese instruments) is in 31_songs_ch2.js … 36_songs_ch6.js;
- * which battle/boss theme plays where is in 39_zones.js.
+ * cues, with the Japanese instruments) is in 31_songs_ch2.js … 35_songs_ch6.js,
+ * the Atlas's battle and boss themes in 36_songs_atlas.js; which battle/boss
+ * theme plays where is in 39_zones.js.
  *
  * ============================== NOTATION ==================================
  * A song is { title, key, mode, bpm, meter, tracks, all, sections, form }.
@@ -1181,7 +1182,7 @@ RB.audio = RB.audio || {};
     CIN_A, CIN_A_CH, CIN_A_CM, CIN_B, CIN_B_CH, CIN_C, CIN_C_CH, KILN_A, KILN_A_CH, KILN_B, KILN_B_CH,
     SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, SNOW_C, SNOW_C_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
     LF_A, LF_A_CH, BT_A, BT_A_CH, SA_A, SA_A_CH, SA_B, SA_B_CH, FIN_A, FIN_A_CH,
-    BOSS_HUSH, HUSH_A, HUSH_A_CH, FIN_C_GLASS, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
+    BOSS_HUSH, HUSH_A, HUSH_A_CH, FIN_C_GLASS, ATL_A, ATL_A_CH, ATL_C, ATL_C_CH, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
   });
 
   _.REQUIRED_SONGS = [
