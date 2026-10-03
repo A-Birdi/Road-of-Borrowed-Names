@@ -372,6 +372,13 @@ RB.sprites = (function () {
     if (cv) return cv;
     cv = makeCanvas(W, H);
     const c = cv.getContext('2d', { willReadFrequently: true });
+    // an animal drawn with the pets' rig (look.pet): its art frame at half size (the 16×24 standard)
+    if (look.pet) {
+      const art = RB.sprites.getArt && RB.sprites.getArt(look, dir, frame);
+      if (art) { c.imageSmoothingEnabled = false; c.drawImage(art, 0, 0, art.width, art.height, 0, 0, W, H); }
+      cache.set(k, cv);
+      return cv;
+    }
     const col = colorsOf(look);
     const side = dir === 'left' || dir === 'right';
     const d = side ? 'side' : dir;

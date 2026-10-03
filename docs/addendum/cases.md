@@ -13,7 +13,7 @@ run, named in *Tests* below. Nothing here was played by a person.
 | Case records (engine) | `src/engine/59_cases.js` | `RB.cases`: `observe`, `open`, `bookmark`, `evidence`, `loose`, `sufficient`, `hyps`, `choose`, `setSupport`, `setNote`, `rule`, `askHint`, `hintLevel`, `langHelp`, `markAt`, `methodOf`, `resolve`, `reaction`, `recap`, `discussable`, `topics`, `show`, `clean`, `graphemes`, `migrate`. Conditions `case.<id>`, `case.<id>=open\|done`, `case.<id>.hyp=<h>`, `case.<id>.tried=<h>`, `case.<id>.hint>=N`, `clue.<id>`. Scene hooks `case_clue`, `case_open`, `case_page`, `case_rule`, `case_resolve`, `case_react`, `case_ack`, `case_bookmark`. |
 | Journey › Cases (UI) | `src/ui/59_casebook.js`, `src/styles/35_cases.css` | `RB.ui.menu.addPage('journey', { id: 'cases' })`; `RB.ui.casebook.select(id)`. Registers `RB.cases.migrate` with `RB.save.addMigration`. |
 | Guidance boundaries | `src/engine/56_questguide.js` (small edit) | per-stage `mark: 'now' \| 'afterHypothesis' \| 'onRequest'` and `markAt(st)`; `how: 'concealed'` and its nudge; the cache signature includes case records and hints. |
-| Case A, Case B | `src/content/cases/` (`00_lex`, `05_art`, `10_data`, `20_parcel`, `30_view`, `50_react`) | `RB.content.cases`, `RB.content.clues`, `RB.content.caseView` (the Star Stair geometry), `RB.content.caseArt` (evidence pictures), quests `cs_parcel`, `cs_view`, people `cs_hama`, `cs_seto`, items `cs_parcel`, `cs_sketch`, 24 companion reactions + 16 for Case B. |
+| Case A, Case B | `src/content/cases/` (`00_lex`, `05_art`, `06_art2`, `10_data`, `20_parcel`, `30_view`, `50_react`) | `RB.content.cases`, `RB.content.clues`, `RB.content.caseView` (the Star Stair geometry), `RB.content.caseArt` (evidence pictures), quests `cs_parcel`, `cs_view`, people `cs_hama`, `cs_seto`, items `cs_parcel`, `cs_sketch`, 24 companion reactions + 16 for Case B. |
 | Placement on existing maps | `src/content/zz_cases.js` | adds props/people/one cottage façade; wraps two existing prop scenes (the stone seat, the tide board); gives one silent prop a scene; prepends three guarded talk options. Everything added carries `cs: 1`. |
 | Refined sequences + 4 keepsakes | `src/content/cases/40_refine.js`, one line each in four chapter scenes | hook `cs_keepsake`; prop `cs_tidechalk`. |
 | Keepsakes (6) | `src/content/cases/10_data.js`, art in `05_art.js` | `RB.content.keepsakes[id] = { id, name, desc, region, source:{kind,id}, art(ctx), artSize: 32, hint:{broad,specific} }`; awarded with `RB.discovery.keepsake`. |
@@ -251,6 +251,27 @@ that depend on timing are marked below and compared against the base build `aa82
   - The tide-board chalk had been drawn under the board.
   - Known Details marks were too small on a large map on a phone.
 - This review does not show whether the Japanese reads naturally or whether the cases are fun to play.
+
+### The props, at art resolution (2026-10-03, the owner's report)
+Hama's workbench and the ferry's call bell on the Saltglass quay stood out as crude: the case props were
+drawn in the first pass's style (flat 16-px rectangles, scaled up). `06_art2.js` gives all seven case props
+an art-resolution `draw2` in the world's prop style (`src/engine/27_propart.js`):
+- light from the upper left, hue-shifted ramps and region wood or stone;
+- an ink outline (each is something you look at) and a soft contact shadow;
+- cached sprites.
+
+The props:
+- **The workbench:** thick planks; the clue notches evenly spaced along its front; a rope coil, a cracked
+  glass float in its net, a mallet, a saw, chisels and a vise; a toolbox and a sack on the low shelf. The
+  label after delivery is pinned to a stake at its left end, clear of Hama.
+- **The call bell:** bronze with cast bands, swinging a pixel (held with reduced motion), the notch in its
+  right shoulder. It hangs from a braced post on a stone footing with its pull rope, and is polished once
+  the case is done.
+- **The others:** the warehouse shelf and its parcels; the old landing's footing and the post with its
+  empty bracket; the lighthouse window and its sketch; the framed sketch on its post; the view stone.
+
+The old drawings in `05_art.js` remain as the fallback. Before and after:
+`docs/screenshots/cases_props/quay_before.webp`, `quay_after.webp`.
 
 ## 12. Limitations and remainder
 

@@ -803,8 +803,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (dir === 'left') b = b.mirror();
     return b.toCanvas();
   }
+  // An animal drawn with the pets' rig (look.pet, e.g. Mochi; the world draws it through RB.petWorld):
+  // here its world frame sitting, on the standard frame with its feet on the anchor, so anything that
+  // asks for a character's art by look gets the same animal.
+  const petArts = new Map();
+  function petOnFrame(look, dir, frame) {
+    if (!RB.petArt) return null;
+    const blink = typeof frame === 'string' ? frame.endsWith('b') : frame === 3;
+    const key = look.pet + '|' + look.look + '|' + dir + '|' + (blink ? 1 : 0);
+    let cv = petArts.get(key);
+    if (cv) return cv;
+    const f = RB.petArt.frame(look.pet, look.look, { kind: 'world', dir: dir || 'down' }, blink ? { sit: 1, blink: 1 } : { sit: 1 });
+    if (!f) return null;
+    cv = SP.makeCanvas(W, H);
+    const c = cv.getContext('2d');
+    c.imageSmoothingEnabled = false;
+    c.drawImage(f.cv, AX - f.ax, AY + TOP - f.ay - 1); // (its paws' outline on the sole row, as for people)
+    petArts.set(key, cv);
+    return cv;
+  }
   SP.getArt = function (look, dir, frame) {
     if (!look) return null;
+    if (look.pet) return petOnFrame(look, dir, frame);
     frame = frame == null ? 0 : frame;
     const small = SP.get(look, dir, frame === 3 ? 3 : typeof frame === 'number' ? frame : 0);
     let m = art.get(small);

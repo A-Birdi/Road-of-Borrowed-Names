@@ -307,6 +307,10 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   `src/engine/50_world.js`.
 - **Her line at home:** it follows the hour (`rw_night`).
 - **Test:** `tests/e2e/town_animals.mjs`, in the default suite.
+- **Case props:** the props of the two cases (Hama's workbench and the call bell on the Saltglass quay, among
+  others) are redrawn at art resolution (`src/content/cases/06_art2.js`).
+- **Pet looks in the sprite functions:** `RB.sprites.getArt` and `get` accept a pet look (Mochi's) and return
+  the rig's animal on the standard frame, so anything that asks for a character by look gets the same cat.
 
 ## Commands
 - Build: `node tools/build.mjs`

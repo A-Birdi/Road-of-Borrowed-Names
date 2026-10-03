@@ -94,10 +94,11 @@ const helpers = (p) => p.evaluate(() => {
         frames++;
         if (!cv || cv.width !== F.w || cv.height !== F.h) { bad.push(e.name + ' ' + d + ' ' + f + ': size ' + (cv && cv.width + '×' + cv.height)); continue; }
         const bx = CH.box(cv);
-        if (bx.n < 250) bad.push(e.name + ' ' + d + ' ' + f + ': nearly blank (' + bx.n + ' px)');
+        if (bx.n < (e.look.pet ? 150 : 250)) bad.push(e.name + ' ' + d + ' ' + f + ': nearly blank (' + bx.n + ' px)'); // (an animal on the pets' rig is cat-sized)
         // people stand on the anchor: the lowest row is the sole's outline, one below the anchor row
         // (creatures that float — wisps, echoes, spirits — hover over it and are left out of this)
-        if (!e.look.custom) {
+        // (an animal drawn with the pets' rig — look.pet, Mochi — is a creature here too)
+        if (!e.look.custom && !e.look.pet) {
           if (bx.y1 !== A.y + 1) bad.push(e.name + ' ' + d + ' ' + f + ': lowest row ' + bx.y1 + ', expected ' + (A.y + 1));
           // …and whatever stands on that row (both feet, or the planted one mid-stride) is under the figure
           const feet = CH.row(cv, A.y);
@@ -105,7 +106,7 @@ const helpers = (p) => p.evaluate(() => {
         } else if (bx.y1 > A.y + 1) bad.push(e.name + ' ' + d + ' ' + f + ': creature below the anchor (' + bx.y1 + ')');
         // nothing clipped: no opaque pixel on the frame's edges
         if (bx.x0 <= 0 || bx.x1 >= F.w - 1 || bx.y0 <= 0) bad.push(e.name + ' ' + d + ' ' + f + ': touches the frame edge ' + JSON.stringify(bx));
-        if (!e.look.custom && f === 0) humans++;
+        if (!e.look.custom && !e.look.pet && f === 0) humans++;
       }
     }
     return { frames, n: CH.L.length, bad, F, A, comps: CH.comps.length, npcs: CH.npcs.length };
