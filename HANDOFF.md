@@ -321,8 +321,9 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   map while the lines go on. It is cleared at the scene's end, and the validator and quest guide know the op.
 - **The tide wait (`src/ui/42b_interlude_tide.js`, `sg.tide_wait`):** the view from Shiori's window as the tide
   goes out. The sand road comes up, then the fog sits on it; the room comes back for her worry.
-- **Genzō's climb** says its line in the dark and then needs the top of the lighthouse: a separate piece of work,
-  merged on its own (see below when it lands).
+- **Genzō's climb** now arrives on its own map, `sg.lighthouse_top` (see "The top of the lighthouse" below).
+- **Faded passages still to fill** where darkness is a shortcut, not the intent: docs/expressive/SHOTS.md §7b
+  (ledger HX71).
 - **Test:** `tests/e2e/interludes.mjs`, in the default suite. Evidence: `tests/e2e/interlude_shots.mjs` →
   docs/screenshots/interludes/.
 
@@ -351,6 +352,21 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     calm; `refreshActors` keeps creatures in place.
   - The frame loop survives errors.
 - **Test:** `tests/e2e/battle_overlap.mjs`, in the default suite.
+
+## The top of the lighthouse and the view from height (owner's reports of 2026-10-03) — REQUIREMENTS.md LH1–LH3
+- **The map:** `sg.lighthouse_top` (src/content/ch2/10_maps.js; props in 01_art.js; scenes in 22_scenes_tide.js).
+  Genzō is moved by `sg_genzo_up` while the screen is dark.
+- **The view from height:** `src/engine/61_below.js` (`RB.below`) draws the real ground map small under an
+  elevated deck: `surround: { below, at, hide, scale, drop, shaft, … }`. It is used by the lighthouse top and
+  `co.lookout`. Views are cached (at most 2) and released on leaving.
+- **Test:** `tests/e2e/lighthouse_top.mjs` (default suite; `--slow` runs it with a slowed game clock).
+
+## Zone music (owner's requests of 2026-10-03) — REQUIREMENTS.md ZM1–ZM3, docs/AUDIO.md
+- **The score:** each chapter's songs are in `src/audio/31_songs_ch2.js` … `36_songs_atlas.js`, and the zone map in
+  `39_zones.js`. `RB.audio.battleSong` picks a fight's theme by zone; the instruments are in `10_synth.js`.
+- **Tests:** `tests/unit/audio_zones.test.mjs` (intensity rises), `tests/e2e/audio_instruments.mjs`,
+  `audio_zones.mjs`, `audio.check.mjs`.
+- **Open:** nobody has listened. If a phone struggles, thin the Chapter 5–6 battle and boss themes first.
 
 ## Commands
 - Build: `node tools/build.mjs`
