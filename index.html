@@ -43525,6 +43525,18 @@ RB.ui.title = (function () {
     drawScene(c, w, h, t);
   }
   drawBackdrop.art = true;
+  // The road as buildScene lays it out for a buffer of w × h art px, for a
+  // figure walking it (the prologue's traveller): the horizon row, the road's
+  // centre and half-width at a row, and how tall a lantern post standing at
+  // that row is drawn (ground to cap), so a figure can be scaled against it.
+  function roadGuide(w, h) {
+    const P = h > w * 1.15 ? PLAN.tall : PLAN.wide, hz = Math.round(h * P.hz);
+    return {
+      hz, tall: P === PLAN.tall,
+      at: (y) => { const [x, hw] = along(P.road, y / h); return [x * w, hw * w]; },
+      post: (y) => { const d = (y - hz) / (h - hz), s = Math.max(2, Math.round(2 + d * (P === PLAN.tall ? 10 : 8))); return Math.round(6 + s * 3.2) + Math.round(s * 1.6) + 2; },
+    };
+  }
 
   // ---- title --------------------------------------------------------------------------
   function keysGuide() {
@@ -43930,7 +43942,7 @@ RB.ui.title = (function () {
   // for the browser tests: what the sky is doing, and a way to hurry it along
   const sky = () => ({ layout: scene.L ? (scene.L.tall ? 'tall' : 'wide') + (scene.L.side ? '/' + scene.L.side : '/centred') : null, noren: !!(scene.L && scene.L.norenBottom), door: scene.L ? (scene.L.post + scene.L.shoji) / scene.L.w : 0, moon: scene.L && scene.L.moon ? [scene.L.moon[0] / scene.L.w, scene.L.moon[1] / scene.L.h, scene.L.moon[2] / scene.L.w] : null, stars: scene.L ? scene.L.stars.length : 0, meteor: !!(scene.fx && scene.fx.m), comet: !!(scene.fx && scene.fx.cm), live: !!scene.fx });
   sky.soon = () => { if (scene.fx) { scene.fx.next = 0; scene.fx.nextComet = 0; } };
-  return { show, hide, slots, drawBackdrop, sky };
+  return { show, hide, slots, drawBackdrop, roadGuide, sky };
 })();
 
 
@@ -43975,6 +43987,9 @@ RB.ui.create = (function () {
   }
 
   // ---- prologue ----------------------------------------------------------------
+  // Six shots, each drawn at art resolution by RB.prologueArt (src/ui/41*_prologue_*.js):
+  // the title's lantern road, Hana's teahouse twice, the riverbank lantern, the bridge,
+  // and the traveller walking up the road into the distance.
   const SHOTS = [
     { d: 7500, jp: '{灯|ひ} の {道|みち} は 、 {通|とお}った {場所|ばしょ} の {名前|なまえ} を {覚|おぼ}えている 。', en: 'The lantern roads remember the name of every place they pass through.', draw: 'road' },
     { d: 7000, jp: '{夜明|よあ}け 、 {茶屋|ちゃや} の ハナ は お{茶|ちゃ} を ふたつ いれた 。', en: 'At dawn, Hana at the teahouse poured two cups of tea.', draw: 'tea' },
@@ -43983,76 +43998,6 @@ RB.ui.create = (function () {
     { d: 8000, jp: '{朝|あさ} に なって も {橋|はし} は あった 。 ただ 、 {向|む}こう{岸|ぎし} に は もう {届|とど}かない 。', en: 'By morning the bridge was still there. It just no longer reached the other bank.', draw: 'bridge' },
     { d: 8000, jp: 'そして 、 {古|ふる}い {文字|もじ} を {読|よ}める {旅人|たびびと} が ひとり 、 {葦|あし}ノ{瀬|せ} へ {歩|ある}いていた 。', en: 'And a traveller who could still read the old letters was walking toward Reedwake.', draw: 'walker' },
   ];
-  function drawShot(kind, c, w, h, t, k) {
-    const R = (x, y, ww, hh, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), ww, hh); };
-    const reduced = RB.game.reducedMotion();
-    c.fillStyle = '#0b0d18'; c.fillRect(0, 0, w, h);
-    const cx = w / 2, cy = h / 2;
-    if (kind === 'road' || kind === 'walker') {
-      RB.ui.title.drawBackdrop(c, w, h, t);
-      if (kind === 'walker') {
-        const look = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf'], scarfCol: '#6a6a7a' };
-        const f = reduced ? 0 : Math.floor(t / 180) % 3;
-        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', reduced ? 0 : 'w' + (Math.floor(t / 90) % 8));
-        const y = h * 0.95 - k * h * 0.2;
-        // logical size (half the art size): drawn at art resolution by the ×2 transform, feet on y
-        if (art) c.drawImage(art, Math.round(cx) - RB.sprites.ANCHOR.x / 2, Math.round(y) - RB.sprites.ANCHOR.y / 2, art.width / 2, art.height / 2);
-        else c.drawImage(RB.sprites.get(look, 'up', f === 2 ? 2 : f), Math.round(cx - 8), Math.round(y - 24));
-        const gl = c.createRadialGradient(cx + 6, y - 10, 0, cx + 6, y - 10, 18);
-        gl.addColorStop(0, 'rgba(255,210,120,0.5)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
-        c.fillStyle = gl; c.fillRect(cx - 14, y - 30, 40, 40);
-      }
-    } else if (kind === 'tea' || kind === 'cup') {
-      const g = c.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, '#3a2c2a'); g.addColorStop(1, '#1a1414');
-      c.fillStyle = g; c.fillRect(0, 0, w, h);
-      // window with dawn
-      R(cx - 60, cy - 60, 50, 40, '#e8b08a'); R(cx - 36, cy - 60, 2, 40, '#3a2c2a'); R(cx - 60, cy - 41, 50, 2, '#3a2c2a');
-      // table
-      R(cx - 90, cy + 10, 180, 10, '#6e4428'); R(cx - 90, cy + 10, 180, 2, '#a06c42');
-      const cups = kind === 'tea' ? [cx - 30, cx + 20] : [cx + 20];
-      if (kind === 'cup') { R(cx - 30, cy - 2, 14, 12, '#e8e4d8'); R(cx - 28, cy, 10, 2, '#7a9a5a'); }
-      cups.forEach((x, i) => {
-        R(x, cy - 2, 14, 12, '#e8e4d8'); R(x + 2, cy, 10, 2, '#7a9a5a');
-        if (!reduced) for (let s = 0; s < 3; s++) {
-          const ph = ((t / 1200) + s / 3 + i * 0.2) % 1;
-          c.fillStyle = `rgba(240,240,240,${0.35 * (1 - ph)})`;
-          c.fillRect(x + 5 + Math.sin(ph * 6 + s) * 3, cy - 6 - ph * 22, 2, 3);
-        }
-      });
-      if (kind === 'cup') {
-        // the second cup, highlighted, with a question
-        const a = 0.4 + Math.sin(t / 500) * 0.2;
-        c.strokeStyle = `rgba(231,196,110,${a})`; c.lineWidth = 1;
-        c.strokeRect(cx + 16.5, cy - 6.5, 22, 20);
-      }
-    } else if (kind === 'lantern') {
-      RB.ui.title.drawBackdrop(c, w, h, t);
-      c.fillStyle = 'rgba(8,10,20,0.6)'; c.fillRect(0, 0, w, h);
-      R(cx - 1, cy - 10, 3, 70, '#2a2430');
-      R(cx - 16, cy - 44, 32, 40, '#f4ead0');
-      const gl = c.createRadialGradient(cx, cy - 24, 0, cx, cy - 24, 50);
-      gl.addColorStop(0, 'rgba(255,210,120,0.45)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
-      c.fillStyle = gl; c.fillRect(cx - 50, cy - 74, 100, 100);
-      // a name in brush strokes vanishing stroke by stroke (abstract marks, not real letters)
-      const marks = [[-8, -38, 12, 2], [-3, -36, 2, 12], [-8, -30, 10, 2], [-7, -24, 2, 10], [2, -26, 6, 2], [4, -22, 2, 10], [-9, -14, 16, 2]];
-      const shown = Math.max(0, marks.length - Math.floor(k * (marks.length + 1)));
-      marks.slice(0, shown).forEach((m) => R(cx + m[0], cy + m[1], m[2], m[3], '#2a2024'));
-    } else if (kind === 'bridge') {
-      const g = c.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, '#9ab8d0'); g.addColorStop(1, '#e0ecf0');
-      c.fillStyle = g; c.fillRect(0, 0, w, h);
-      R(0, cy + 10, w, h, '#4f93b3');
-      for (let i = 0; i < 30; i++) R((i * 37 + t / 40) % w, cy + 16 + (i * 13) % (h / 2), 6, 1, '#6fb0c8');
-      R(0, cy - 4, w * 0.25, 20, '#5f9a4a'); R(w * 0.75, cy - 4, w * 0.25, 20, '#5f9a4a');
-      // bridge that stops short
-      R(w * 0.22, cy, w * 0.38, 6, '#a06c42');
-      for (let x = w * 0.22; x < w * 0.6; x += 10) R(x, cy + 6, 2, 12, '#6e4428');
-      c.fillStyle = 'rgba(255,255,255,0.5)';
-      for (let i = 0; i < 6; i++) R(w * 0.6 + i * 4, cy + (i % 2) * 2, 2, 2, `rgba(160,108,66,${0.8 - i * 0.14})`);
-    }
-  }
-
   // Captions are a paper slip over the scene; Next and Skip stay in one place.
   function prologue() {
     return new Promise((resolve) => {
@@ -44069,6 +44014,7 @@ RB.ui.create = (function () {
         if (done) return;
         done = true;
         RB.render.setOverride(null);
+        RB.prologueArt.release();
         RB.ui.popLayer(layer);
         resolve();
       };
@@ -44094,16 +44040,27 @@ RB.ui.create = (function () {
         t0 = performance.now();
         if (i >= SHOTS.length) finish(); else caption();
       }
-      RB.render.setOverride((c, w, h, t) => {
+      // the lowest buffer row the caption slip leaves in view (the shots keep what matters above it)
+      function visBottom(h) {
+        const cv = document.getElementById('world'), sl = cap.querySelector('.slip');
+        if (!cv || !sl) return h;
+        const a = cv.getBoundingClientRect(), b = sl.getBoundingClientRect();
+        if (!a.height || !b.height) return h;
+        return ((b.top - a.top) * h) / a.height;
+      }
+      // drawn at art resolution (RB.prologueArt), like the title scene
+      const scene = (c, w, h, t) => {
         if (done) return;
         const s = SHOTS[i];
         const k = Math.min(1, (performance.now() - t0) / s.d);
-        drawShot(s.draw, c, w, h, t, k);
+        RB.prologueArt.draw(s.draw, c, w, h, t, k, { vb: visBottom(h), still: RB.game.reducedMotion() });
         const fadeK = Math.min(k * 8, (1 - k) * 8, 1);
         c.fillStyle = `rgba(0,0,0,${1 - Math.max(0, fadeK)})`;
         c.fillRect(0, 0, w, h);
         if (k >= 1) next();
-      });
+      };
+      scene.art = true;
+      RB.render.setOverride(scene);
       caption();
       RB.ui.pushLayer(layer);
     });
@@ -44801,6 +44758,1094 @@ RB.ui.create = (function () {
   }
 
   return { begin, prologue, creation, setup, placement, romajiToKata, PROFILES, BACKGROUNDS, carry, wizard };
+})();
+
+
+/* ==== src/ui/41_prologue_art.js ==== */
+/* The prologue's shots, drawn at art resolution on the title scene's grid
+ * (2 art px per logical px; about 640 × 360 on a desktop, 390 × 844 on a
+ * phone) and in its manner: banded skies with a narrow ordered-dither seam,
+ * hue-shifted ramps (shadows cool, highlights warm), light from the upper
+ * left, selective outlines in each material's own dark tone, glows as
+ * stepped rings of falling alpha (never a blurred gradient).
+ *
+ * Each shot is a static layer built once per buffer size (and per height of
+ * the view left above the caption slip) with RB.pxkit, plus a few live
+ * things drawn per frame on top: steam, glints, a flickering lantern, the
+ * name fading from it, motes leaving the broken bridge, the traveller.
+ * Reduced motion holds one drawing per shot.
+ *
+ *   RB.prologueArt.draw(kind, c, w, h, t, k, o)  kind: road | tea | cup | lantern | bridge | walker
+ *     c: the art-resolution buffer (w × h); t: ms; k: 0..1 through the shot;
+ *     o: { vb: the lowest buffer row not under the caption slip, still: reduced motion }
+ *   RB.prologueArt.release()                     drop the cached layers (the prologue is over)
+ *   RB.prologueArt.walkerAt(w, h, k, vb, still)  where the traveller is (tests, evidence)
+ *   RB.prologueArt.stats()                       cached layers and traveller frames */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.prologueArt = (function () {
+  'use strict';
+  const K = () => RB.pxkit;
+  const R = (c, x, y, w, h, col) => { if (w <= 0 || h <= 0) return; if (col) c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+  const mk = (w, h) => RB.sprites.makeCanvas(Math.max(1, w), Math.max(1, h));
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+
+  // ---- the traveller ------------------------------------------------------------------------
+  // The look the prologue has always used, now carrying the hand lantern the
+  // character standard draws (it swings with the arm in every walk frame).
+  const LOOK = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf', 'lamp'], scarfCol: '#6a6a7a' };
+  const FIG = 50;        // an adult's height in the character standard (art px)
+  const NEAR = 0.75;     // a person against a roadside lantern post at the same depth
+  const FAR = 0.36;      // the walk ends this far from the horizon, relative to where it starts
+  const lit = (r, g, b) => r > 215 && g > 150 && b < 175 && r - b > 70; // the lantern's lit paper
+
+  // Shrink a frame (anchor ax, ay) by sc onto the same pixel grid: each new
+  // pixel takes one of the colours it covers (never a blend, so the palette
+  // stays the drawing's own), the dark outline wins along the silhouette and
+  // the lantern's light wins wherever it falls, so a small figure still
+  // reads as the same person with the same lamp.
+  function shrink(cv, ax, ay, sc) {
+    const sw = cv.width, sh = cv.height;
+    const d = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sw, sh).data;
+    const dw = Math.ceil(sw * sc) + 2, dh = Math.ceil(sh * sc) + 2;
+    const dax = Math.round(ax * sc) + 1, day = Math.round(ay * sc) + 1;
+    const out = new Uint8ClampedArray(dw * dh * 4);
+    const lum = (o) => d[o] * 0.3 + d[o + 1] * 0.59 + d[o + 2] * 0.11;
+    for (let Y = 0; Y < dh; Y++) for (let X = 0; X < dw; X++) {
+      const x0 = (X - dax) / sc + ax, x1 = (X + 1 - dax) / sc + ax, y0 = (Y - day) / sc + ay, y1 = (Y + 1 - day) / sc + ay;
+      let cov = 0, area = 0, r = 0, g = 0, b = 0, glow = 0, dark = -1, lamp = -1;
+      const cand = [];
+      for (let y = Math.floor(y0); y < Math.ceil(y1); y++) {
+        const wy = Math.min(y + 1, y1) - Math.max(y, y0);
+        if (wy <= 0) continue;
+        for (let x = Math.floor(x0); x < Math.ceil(x1); x++) {
+          const wx = Math.min(x + 1, x1) - Math.max(x, x0);
+          if (wx <= 0) continue;
+          const wt = wx * wy;
+          area += wt;
+          if (x < 0 || y < 0 || x >= sw || y >= sh) continue;
+          const o = (y * sw + x) * 4;
+          if (d[o + 3] < 128) continue;
+          cov += wt; r += d[o] * wt; g += d[o + 1] * wt; b += d[o + 2] * wt;
+          cand.push(o);
+          if (dark < 0 || lum(o) < lum(dark)) dark = o;
+          if (lit(d[o], d[o + 1], d[o + 2])) { glow += wt; if (lamp < 0 || lum(o) > lum(lamp)) lamp = o; }
+        }
+      }
+      if (!area || cov / area < 0.42) continue;
+      let pick;
+      if (lamp >= 0 && glow >= cov * 0.22) pick = lamp;
+      else if (cov / area < 0.8) pick = dark;
+      else {
+        r /= cov; g /= cov; b /= cov;
+        let bd = 1e9;
+        for (const o of cand) { const e = (d[o] - r) ** 2 + (d[o + 1] - g) ** 2 + (d[o + 2] - b) ** 2; if (e < bd) { bd = e; pick = o; } }
+      }
+      const q = (Y * dw + X) * 4;
+      out[q] = d[pick]; out[q + 1] = d[pick + 1]; out[q + 2] = d[pick + 2]; out[q + 3] = 255;
+    }
+    return { px: out, w: dw, h: dh, ax: dax, ay: day };
+  }
+
+  // Night grade for a shrunk figure: cooled and darkened like everything
+  // under the moon, warmed in steps near its own lantern, a cool moonlit
+  // line along the top of the head and shoulders. Returns the canvas and
+  // where the lantern hangs (relative to the feet).
+  function nightGrade(s, H) {
+    const { px, w, h } = s;
+    let lx = 0, ly = 0, n = 0;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { const o = (y * w + x) * 4; if (px[o + 3] && lit(px[o], px[o + 1], px[o + 2])) { lx += x; ly += y; n++; } }
+    if (n) { lx /= n; ly /= n; } else { lx = s.ax - H * 0.3; ly = s.ay - H * 0.42; }
+    const out = new Uint8ClampedArray(px.length);
+    const op = (x, y) => x >= 0 && y >= 0 && x < w && y < h && px[(y * w + x) * 4 + 3] > 0;
+    const reach = Math.max(4, H * 0.62);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const o = (y * w + x) * 4;
+      if (!px[o + 3]) continue;
+      let r = px[o], g = px[o + 1], b = px[o + 2];
+      if (!lit(r, g, b)) {
+        const warm = clamp(1 - Math.hypot(x - lx, (y - ly) * 1.3) / reach, 0, 1);
+        const step = warm > 0.62 ? 0.62 : warm > 0.3 ? 0.36 : warm > 0.08 ? 0.16 : 0;
+        const nr = r * 0.66 + 16, ng = g * 0.68 + 18, nb = b * 0.84 + 36;
+        const wr = r * 1.0 + 44, wg = g * 0.82 + 22, wb = b * 0.5 + 8;
+        r = nr + (wr - nr) * step; g = ng + (wg - ng) * step; b = nb + (wb - nb) * step;
+        // moonlight from the upper right: a cool line along the top and the right-hand edge
+        const rim = !op(x, y - 1) ? 0.42 : !op(x + 1, y) && y < s.ay - H * 0.25 ? 0.3 : 0;
+        if (rim && step < 0.3) { r += (170 - r) * rim; g += (178 - g) * rim; b += (228 - b) * rim; }
+      }
+      out[o] = r; out[o + 1] = g; out[o + 2] = b; out[o + 3] = 255;
+    }
+    const cv = mk(w, h);
+    const g2 = cv.getContext('2d');
+    const img = g2.createImageData(w, h);
+    img.data.set(out);
+    g2.putImageData(img, 0, 0);
+    return { cv, w, h, ax: s.ax, ay: s.ay, lx: lx - s.ax, ly: ly - s.ay };
+  }
+
+  const figs = new Map();
+  // The traveller at figure height H (art px), walk phase f (0..7; -1 stands).
+  function figure(H, f) {
+    const key = H + '|' + f;
+    let s = figs.get(key);
+    if (s) return s;
+    const art = RB.sprites.getArt(LOOK, 'up', f < 0 ? 0 : 'w' + f);
+    if (!art) return null;
+    const A = RB.sprites.ANCHOR;
+    s = nightGrade(shrink(art, A.x, A.y, Math.min(1, H / FIG)), H);
+    figs.set(key, s);
+    if (figs.size > 400) figs.delete(figs.keys().next().value);
+    return s;
+  }
+
+  // Where the traveller is: the walk starts on the road just above the
+  // caption slip and goes up it at a steady pace, so the figure slows on
+  // screen and shrinks as it recedes (size ∝ distance below the horizon,
+  // matched to the lantern posts beside it at the start).
+  function walkerAt(w, h, k, vb, still) {
+    const G = RB.ui.title.roadGuide(w, h);
+    const yA = Math.min(h - 3, Math.round(vb) - 4);
+    const dA = Math.max(8, yA - G.hz), dB = dA * FAR;
+    const e = still ? 0.3 : clamp(k, 0, 1);
+    const y = G.hz + 1 / ((1 - e) / dA + e / dB);
+    const [x, hw] = G.at(y);
+    const H0 = Math.min(FIG, G.post(yA) * NEAR);
+    return { x: Math.round(x), y: Math.round(y), H: Math.max(5, Math.round((H0 * (y - G.hz)) / dA)), road: [Math.round(x - hw), Math.round(x + hw)], hz: G.hz };
+  }
+
+  function walker(c, w, h, t, k, o) {
+    const W = walkerAt(w, h, k, o.vb, o.still);
+    const f = o.still ? -1 : Math.floor(t / 105) % 8;
+    const s = figure(W.H, f);
+    if (!s) return W;
+    const fl = o.still ? 0.85 : 0.8 + 0.1 * Math.sin(t / 290) + 0.05 * Math.sin(t / 83);
+    const lx = W.x + Math.round(s.lx), ly = W.y + Math.round(s.ly);
+    // the lantern's light pooled on the road round the feet, two flat steps
+    const rx = Math.max(4, Math.round(W.H * 0.85)), ry = Math.max(2, Math.round(W.H * 0.2));
+    c.fillStyle = 'rgba(255,190,110,' + (0.08 * fl).toFixed(3) + ')';
+    K().disc(c, lx, W.y, rx, ry);
+    K().disc(c, lx, W.y, Math.round(rx * 0.55), Math.max(1, Math.round(ry * 0.55)));
+    // a short shadow cast away from the lamp
+    c.fillStyle = 'rgba(8,8,20,0.42)';
+    K().disc(c, W.x + Math.round(W.H * 0.12), W.y, Math.max(2, Math.round(W.H * 0.22)), Math.max(1, Math.round(W.H * 0.05)));
+    c.drawImage(s.cv, W.x - s.ax, W.y - s.ay);
+    K().halo(c, lx, ly, Math.round(3 + W.H * 0.5), '255,200,110', 0.26 * fl, 3);
+    return W;
+  }
+
+  // ---- shared by the shots (41b–41d) -----------------------------------------------------------
+  // Static layers: one per shot, buffer size and view height; a handful at most.
+  const layers = new Map();
+  function cached(key, build) {
+    let s = layers.get(key);
+    if (!s) { s = build(); layers.set(key, s); if (layers.size > 6) layers.delete(layers.keys().next().value); }
+    return s;
+  }
+  // The focal props' scale: 1 wherever a 380 × 230 stage fits above the slip
+  // (desktops, phones upright); smaller only on a short landscape phone.
+  // Zx narrows horizontal spacing on narrow screens.
+  function stage(w, h, vb) {
+    const Z = clamp(Math.min(w / 380, vb / 230), 0.5, 1);
+    return { cx: Math.round(w / 2), Z, Zx: Z * clamp((w - 16) / 440, 0.7, 1), s: (n) => Math.round(n * Z) };
+  }
+  // Flat bands with a narrow ordered-dither seam, into a region of a canvas.
+  function bandsIn(g, x, y, w, h, cols, seam) {
+    x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
+    if (w <= 0 || h <= 0) return;
+    const img = g.createImageData(w, h);
+    K().bands(img, w, 0, h, cols, seam);
+    g.putImageData(img, x, y);
+  }
+  // A chōchin: a ribbed paper barrel between two lacquered caps, lit from
+  // inside (brightest a little left of centre, the paper deepening toward its
+  // edges) or dark. R0: half-width at the belly; H0: the paper's height.
+  // Returns the canvas and the paper's geometry (centre x, top, bottom, half-width at a row).
+  const PAPER_LIT = ['#6e3418', '#a85a26', '#d8863a', '#eeaa56', '#f9cf86', '#fff0c8'];
+  const PAPER_DARK = ['#2a2230', '#3a3040', '#4a3e4c', '#5a4e58', '#6a5e64', '#7a6e70'];
+  function chochin(R0, H0, lit, rib) {
+    const P = K(), cap = Math.max(2, Math.round(H0 * 0.09)), W = Math.ceil(R0 * 2) + 4, H = H0 + cap * 2 + 4;
+    const L = P.layer(W, H), cx = W / 2, y0 = cap + 2, y1 = y0 + H0;
+    const paper = P.mat(null, { cols: lit ? PAPER_LIT : PAPER_DARK, at: 3, lineCol: '#2a1410' });
+    const hw = (y) => R0 * (0.74 + 0.26 * Math.sin(Math.PI * clamp((y - y0) / H0, 0, 1)));
+    const lum = (x, y, dk) => { const n = (x - cx + R0 * 0.2) / hw(y); return clamp(0.98 - n * n * 0.72 - (n > 0 ? n * 0.14 : 0) - dk, 0, 0.999); };
+    L.fill(cx - R0, y0, cx + R0, y1, (x, y) => Math.abs(x - cx) <= hw(y), paper, (x, y) => lum(x, y, 0));
+    for (let y = y0 + 3; y < y1 - 1; y += rib || 4) L.recolor((x, yy) => yy >= y && yy < y + 1, paper, paper, (x, yy) => lum(x, yy, 0.2));
+    const lac = P.mat('#2c1e26', { n: 4, at: 1 });
+    L.rect(cx - R0 * 0.8, y0 - cap, R0 * 1.6, cap, lac, (x) => (x < cx - R0 * 0.3 ? 0.9 : 0.4));
+    L.rect(cx - R0 * 0.8, y1, R0 * 1.6, cap, lac, (x) => (x < cx - R0 * 0.3 ? 0.65 : 0.25));
+    L.outline();
+    return { cv: L.canvas(), W, H, cx, y0, y1, hw };
+  }
+  const kit = { R, mk, clamp, cached, stage, bandsIn, chochin };
+
+  // ---- shots ---------------------------------------------------------------------------------
+  function draw(kind, c, w, h, t, k, o) {
+    o = o || {};
+    const vb = clamp(o.vb == null ? h : o.vb, h * 0.3, h);
+    const oo = { vb, still: !!o.still };
+    c.imageSmoothingEnabled = false;
+    if (kind === 'road' || kind === 'walker') {
+      RB.ui.title.drawBackdrop(c, w, h, t);
+      if (kind === 'walker') walker(c, w, h, t, k, oo);
+      return;
+    }
+    const fn = SHOTS[kind];
+    if (fn) fn(c, w, h, t, k, oo);
+  }
+  const SHOTS = {};
+
+  function release() { figs.clear(); layers.clear(); }
+
+  // cached static layers and traveller frames (tests: the prologue releases them when it ends)
+  const stats = () => ({ layers: layers.size, figures: figs.size });
+
+  return { draw, release, walkerAt, stats, SHOTS, kit, shrink, _figure: figure };
+})();
+
+
+/* ==== src/ui/41b_prologue_room.js ==== */
+/* The prologue's teahouse at dawn (shots 2 and 3): Hana behind her counter
+ * with two cups of tea poured, the window's dawn and its light falling
+ * across the counter; then the same room a little later, Hana unable to
+ * remember who the second cup was for (it is ringed in light, its steam
+ * thinning into motes). Hana is her own dialogue portrait, graded into the
+ * room's light. Drawn with RB.pxkit at art resolution in the title scene's
+ * manner (see 41_prologue_art.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const A = RB.prologueArt, { R, mk, clamp, cached, stage, bandsIn } = A.kit;
+  const K = () => RB.pxkit;
+  const rampC = (base, n, o) => K().ramp(base, n, o).map((c) => K().css(c));
+
+  // Where everything stands, from the buffer size and the height left above the slip.
+  function geom(w, h, vb) {
+    const S = stage(w, h, vb), { cx, Zx, s } = S;
+    const x = (n) => Math.round(cx + n * Zx);
+    const yC = Math.round(vb - s(24));               // the counter's front edge
+    const top = s(14);                                // the counter top's depth
+    const beamY = Math.max(s(34), Math.round(yC - Math.max(s(176), yC * 0.6)));
+    const win = { x0: x(-222), x1: x(-78), y0: beamY + s(20), y1: yC - top - s(30) };
+    return Object.assign(S, {
+      x, yC, top, beamY, win, w, h, vb,
+      hana: { x: x(66), y: yC - top + s(4) },         // the portrait's bottom centre; its lowest rows are behind the counter
+      pot: { x: x(-116), y: yC - s(5) },
+      cups: [{ x: x(-52), y: yC - s(6) }, { x: x(-14), y: yC - s(4) }],
+      posts: [x(-252), x(146)],
+    });
+  }
+
+  // ---- props (small pxkit sprites; anchor = the base's centre on the counter) ------------------
+  const sprites = new Map();
+  const sprite = (key, build) => { let s = sprites.get(key); if (!s) { s = build(); sprites.set(key, s); } return s; };
+  function scaled(sp, Z) {
+    if (Z >= 0.999) return sp;
+    const s = A.shrink(sp.cv, sp.ax, sp.ay, Z), cv = mk(s.w, s.h), g = cv.getContext('2d'), img = g.createImageData(s.w, s.h);
+    img.data.set(s.px); g.putImageData(img, 0, 0);
+    return { cv, ax: s.ax, ay: s.ay, w: s.w, h: s.h, top: Math.round(sp.top * Z) };
+  }
+  // A yunomi: tapered body in a cream glaze with an indigo line, an unglazed
+  // foot, green tea at the mouth catching the window's light.
+  function cupSprite() {
+    return sprite('cup', () => {
+      const P = K(), W = 26, H = 28, L = P.layer(W, H);
+      const glaze = P.mat('#e2d8c2', { n: 6, at: 3, step: 0.09 }), foot = P.mat('#a07452', { n: 4 }), band = P.mat('#34467a', { n: 4, at: 2 });
+      const tea = P.mat('#7c9a34', { n: 5, at: 2, step: 0.08 });
+      const cx = 13, yt = 7, yb = 24, rt = 8.5, rb = 6.5;
+      const inBody = (x, y) => { const t = (y - yt) / (yb - yt); return y >= yt && y <= yb && Math.abs(x - cx) <= rt + (rb - rt) * t; };
+      L.fill(cx - rt, yt, cx + rt, yb, inBody, glaze, P.cyl(cx - 1, rt, { amb: 0.22, rim: 0.12 }));
+      L.recolor((x, y) => y >= yt + 3 && y < yt + 4 && inBody(x, y), glaze, band, (x) => (x < cx - 3 ? 0.9 : x < cx + 3 ? 0.6 : 0.3));
+      L.rect(cx - rb + 1, yb - 1, rb * 2 - 2, 3, foot, (x) => (x < cx - 2 ? 0.8 : x < cx + 2 ? 0.5 : 0.2));
+      // the mouth: a lit rim round the tea, darker toward the far wall of the cup
+      L.ell(cx, yt, rt, 3, glaze, (x, y) => (y < yt ? 0.7 : 0.95));
+      L.ell(cx, yt + 0.5, rt - 1.6, 1.8, tea, (x, y) => (y < yt ? 0.25 : x < cx ? 0.85 : 0.55));
+      L.dot(cx - 4, yt, tea, 4);
+      L.outline();
+      // a crisp glint on the glaze, upper left
+      L.dot(cx - 6, yt + 5, P.solid('#fffaf0')); L.dot(cx - 6, yt + 6, P.solid('#f4ecd8'));
+      return { cv: L.canvas(), ax: cx, ay: yb + 1, w: W, h: H, top: yb + 1 - yt };
+    });
+  }
+  // a ring one pixel outside a sprite's silhouette (the second cup, remembered)
+  function ringOf(sp, col) {
+    const W = sp.cv.width + 2, H = sp.cv.height + 2, d = sp.cv.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, sp.cv.width, sp.cv.height).data;
+    const on = (x, y) => x >= 0 && y >= 0 && x < sp.cv.width && y < sp.cv.height && d[(y * sp.cv.width + x) * 4 + 3] > 100;
+    const cv = mk(W, H), g = cv.getContext('2d');
+    g.fillStyle = col;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const X = x - 1, Y = y - 1;
+      if (on(X, Y)) continue;
+      if (on(X - 1, Y) || on(X + 1, Y) || on(X, Y - 1) || on(X, Y + 1)) g.fillRect(x, y, 1, 1);
+    }
+    return cv;
+  }
+  // A side-handled kyūsu in red-brown clay: squat body, low lid and knob, the
+  // spout toward the cups, the handle out to the back left.
+  function potSprite() {
+    return sprite('pot', () => {
+      const P = K(), W = 66, H = 46, L = P.layer(W, H);
+      const clay = P.mat('#a85a38', { n: 6, at: 3, step: 0.095 });
+      const bx = 32, by = 28;
+      L.seg(bx - 10, by - 3, bx - 28, by - 11, 6, clay, P.lin(bx - 20, by - 14, bx - 20, by - 4, 0.8, 0.3));
+      L.ell(bx - 28, by - 11, 3, 3, clay, 1);
+      L.dot(bx - 28, by - 11, clay, 0);
+      L.ell(bx, by, 17, 13, clay, P.sphere(bx - 2, by - 1, 17, 13, { amb: 0.1, rim: 0.14 }));
+      L.rect(bx - 10, by + 11, 20, 3, clay, (x) => (x < bx - 4 ? 0.45 : 0.2));
+      L.path([[bx + 13, by + 1, 7], [bx + 21, by - 3, 5], [bx + 27, by - 9, 3]], 4, clay, P.lin(bx + 14, by - 12, bx + 18, by + 2, 0.75, 0.3));
+      L.dot(bx + 28, by - 10, clay, 0);
+      L.ell(bx, by - 12, 10, 3.2, clay, P.sphere(bx - 2, by - 13, 10, 4, { amb: 0.2 }));
+      L.ell(bx, by - 15.5, 2.6, 2, clay, (x) => (x < bx ? 0.8 : 0.45));
+      L.line(bx - 10, by - 10, bx + 9, by - 10, clay, 0);
+      L.outline();
+      L.rect(bx - 10, by - 7, 3, 1, P.solid('#fff0d8')); L.dot(bx - 11, by - 6, P.solid('#ffe0b8')); L.dot(bx - 11, by - 5, P.solid('#f0b890'));
+      L.dot(bx + 22, by - 5, P.solid('#f8c8a0'));
+      return { cv: L.canvas(), ax: bx, ay: by + 14, w: W, h: H, top: 30 };
+    });
+  }
+  // a lacquered tray under the cups: dark red, a lit far edge
+  function traySprite() {
+    return sprite('tray', () => {
+      const P = K(), W = 74, H = 12, L = P.layer(W, H);
+      const lac = P.mat('#6a1e1c', { n: 5, at: 2 });
+      L.fill(1, 2, W - 1, 9, (x, y) => { const e = Math.min(x - 1, W - 1 - x); return e + (y - 2) * 1.6 > 2 || y > 4; }, lac, (x, y) => (y < 4 ? 0.95 : y < 6 ? 0.55 : 0.3));
+      L.rect(3, 8, W - 6, 2, lac, 0);
+      L.outline();
+      return { cv: L.canvas(), ax: W >> 1, ay: 9, w: W, h: H, top: 7 };
+    });
+  }
+
+  // Hana in the room's light: dimmer and cooler, the window's warm dawn
+  // along the edges that face it (her left, our left).
+  function hanaSprite(expr, Z) {
+    return sprite('hana|' + expr + '|' + Z, () => {
+      const src = RB.portraits && RB.portraits.image('hana', expr);
+      if (!src) return null;
+      const S = src.width, d = src.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, S, S);
+      const px = d.data, op = (x, y) => x >= 0 && y >= 0 && x < S && y < S && px[(y * S + x) * 4 + 3] > 100;
+      const out = new Uint8ClampedArray(px);
+      for (let y = 0; y < S; y++) {
+        let edge = -1;
+        for (let x = 0; x < S; x++) {
+          const o = (y * S + x) * 4;
+          if (!px[o + 3]) continue;
+          if (edge < 0 && op(x, y)) edge = x;
+          let r = px[o] * 0.8 + 4, g = px[o + 1] * 0.74 + 4, b = px[o + 2] * 0.76 + 12;
+          const e = x - edge;
+          if (edge >= 0 && e >= 1 && e <= 2 && y < S * 0.8) { const k = e === 1 ? 0.42 : 0.2; r += (255 - r) * k; g += (206 - g) * k; b += (160 - b) * k; }
+          out[o] = r; out[o + 1] = g; out[o + 2] = b;
+        }
+      }
+      const cv = mk(S, S);
+      d.data.set(out);
+      cv.getContext('2d').putImageData(d, 0, 0);
+      return scaled({ cv, ax: S >> 1, ay: S, w: S, h: S, top: S }, Z);
+    });
+  }
+
+  // ---- the room (static) --------------------------------------------------------------------------
+  function room(w, h, vb, later) {
+    return cached('room|' + w + 'x' + h + '|' + Math.round(vb) + '|' + (later ? 1 : 0), () => {
+      const G = geom(w, h, vb), { yC, top, beamY, win, s, Z } = G;
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      const P = K();
+      const WOOD = rampC('#6a4028', 6, { at: 3, step: 0.1 });       // posts, beam, frames
+      const PALE = rampC('#9a6a42', 6, { at: 3, step: 0.09 });      // the counter (hinoki, oiled)
+      // back wall: plaster in the half-light, a little lighter toward the counter
+      bandsIn(g, 0, 0, w, yC - top, ['#16111a', '#1b151e', '#211a23', '#281f28', '#2f242c', '#362a30'], 0.4);
+      // ceiling planks above the transom
+      const ceil = beamY - s(30);
+      if (ceil > 0) {
+        R(g, 0, 0, w, ceil, '#100c13');
+        for (let y = ceil - 1; y > 0; y -= s(8)) { R(g, 0, y, w, 1, '#1a141c'); R(g, 0, y - 1, w, 1, '#0a080c'); }
+      }
+      // the transom: slats with the dawn showing faintly between them
+      bandsIn(g, 0, ceil, w, beamY - ceil, later ? ['#3a2c3c', '#4e3844', '#5e4248'] : ['#2c2234', '#3a2a3a', '#4a3240'], 0.5);
+      for (let x0 = 0; x0 < w; x0 += s(7)) { R(g, x0, ceil, s(4), beamY - ceil, WOOD[0]); R(g, x0, ceil, 1, beamY - ceil, WOOD[1]); }
+      R(g, 0, ceil, w, 2, WOOD[1]); R(g, 0, ceil, w, 1, WOOD[2]);
+      // the beam
+      R(g, 0, beamY, w, s(10), WOOD[2]); R(g, 0, beamY, w, 1, WOOD[4]); R(g, 0, beamY + 1, w, 1, WOOD[3]); R(g, 0, beamY + s(10) - 1, w, 1, WOOD[0]);
+      R(g, 0, beamY + s(10), w, 2, 'rgba(6,4,8,0.45)');
+      // the window: the dawn over the reeds, behind a lattice; the right half a lit shōji
+      const { x0, x1, y0, y1 } = win, ww = x1 - x0, wh = y1 - y0;
+      const hz = y0 + Math.round(wh * 0.68);
+      const SKY = later
+        ? ['#3a3a68', '#4c4472', '#6a4e76', '#8e5c74', '#b86e72', '#da8a76', '#f0ac80', '#f8cc96']
+        : ['#262648', '#30304f', '#463a5c', '#643f62', '#8a4a66', '#b45e6a', '#da7e70', '#f0a47e'];
+      bandsIn(g, x0, y0, ww, hz - y0, SKY, 0.5);
+      // far hills, then the river's far bank with reeds; the water holds the dawn
+      for (let x = x0; x < x1; x++) {
+        const v = Math.sin(x * 0.045 + 1.3) * 0.6 + Math.sin(x * 0.13 + 0.4) * 0.4;
+        const t1 = hz - Math.round(s(7) + v * s(4)), t2 = hz - Math.round(s(3) + Math.sin(x * 0.09 + 2) * s(2));
+        R(g, x, t1, 1, hz - t1, later ? '#5a4060' : '#44304e'); R(g, x, t1, 1, 1, later ? '#7a5470' : '#5a3c5a');
+        R(g, x, t2, 1, hz - t2 + 1, later ? '#3c2c44' : '#2e2238');
+      }
+      bandsIn(g, x0, hz + 1, ww, y1 - hz - 1, later ? ['#6a5070', '#4a3a58', '#3a2e48'] : ['#563e5e', '#3e3050', '#2e2440'], 0.5);
+      for (let i = 0; i < 9; i++) { const yy = hz + 2 + ((i * 5) % Math.max(2, y1 - hz - 4)), xx = x0 + ((i * 37) % Math.max(4, ww - 20)); R(g, xx, yy, s(8) + (i % 3) * 3, 1, later ? '#f8c896' : '#e8a07a'); }
+      for (let x = x0 + 2; x < x1 - 1; x += 3 + ((x * 7) % 4)) { const rh = s(5) + ((x * 13) % 6); R(g, x, y1 - rh, 1, rh, '#1e1622'); if ((x * 5) % 3 === 0) R(g, x - 1, y1 - rh, 1, 2, '#1e1622'); }
+      if (!later) { R(g, x0 + Math.round(ww * 0.22), y0 + s(10), 1, 1, '#fff6dc'); R(g, x0 + Math.round(ww * 0.22) - 1, y0 + s(10), 3, 1, 'rgba(255,246,220,0.45)'); }
+      // shōji over the right half: paper glowing with the dawn behind it, kumiko grid
+      const sx0 = x0 + Math.round(ww * 0.52);
+      bandsIn(g, sx0, y0, x1 - sx0, wh, later ? ['#e8cdb0', '#eed4b4', '#f2dab8'] : ['#c8a690', '#d2ae94', '#dab698'], 0.5);
+      for (let y = y0 + s(9); y < y1; y += s(10)) R(g, sx0, y, x1 - sx0, 1, '#8a6a58');
+      for (let x = sx0 + s(8); x < x1; x += s(9)) R(g, x, y0, 1, wh, '#8a6a58');
+      R(g, sx0, y0, s(3), wh, WOOD[2]); R(g, sx0, y0, 1, wh, WOOD[4]);
+      // lattice over the open half
+      for (let x = x0 + s(6); x < sx0; x += s(8)) { R(g, x, y0, s(2), wh, WOOD[0]); R(g, x, y0, 1, wh, WOOD[2]); }
+      R(g, x0, y0 + Math.round(wh * 0.38), sx0 - x0, s(2), WOOD[0]); R(g, x0, y0 + Math.round(wh * 0.38), sx0 - x0, 1, WOOD[2]);
+      // frame
+      const fw = s(5);
+      R(g, x0 - fw, y0 - fw, ww + fw * 2, fw, WOOD[2]); R(g, x0 - fw, y1, ww + fw * 2, fw + s(2), WOOD[2]);
+      R(g, x0 - fw, y0 - fw, fw, wh + fw * 2, WOOD[2]); R(g, x1, y0 - fw, fw, wh + fw * 2, WOOD[1]);
+      R(g, x0 - fw, y0 - fw, ww + fw * 2, 1, WOOD[4]); R(g, x0 - fw, y1, ww + fw * 2, 1, WOOD[5]); R(g, x0 - fw, y0 - fw, 1, wh + fw * 2, WOOD[3]);
+      R(g, x0, y0, ww, 1, WOOD[0]); R(g, x1 - 1, y0, 1, wh, WOOD[0]);
+      R(g, x0 - fw - 1, y1 + fw + s(2), ww + fw * 2 + 2, 2, 'rgba(6,4,8,0.5)');
+      // posts
+      for (const px of G.posts) {
+        const pw = s(12);
+        R(g, px, 0, pw, yC - top, WOOD[2]); R(g, px, 0, 1, yC - top, WOOD[4]); R(g, px + 1, 0, 1, yC - top, WOOD[3]); R(g, px + pw - 2, 0, 2, yC - top, WOOD[0]);
+        for (let y = s(14); y < yC - top; y += s(23)) R(g, px + 3 + ((y * 3) % 4), y, 1, s(6), WOOD[1]);
+      }
+      // a shelf on the right wall: caddies, a stack of bowls, a folded cloth
+      const shY = yC - top - s(84), shx0 = G.posts[1] + s(18), shx1 = Math.min(w + 4, shx0 + s(150));
+      if (shx0 < w - 10) {
+        const L = P.layer(w, h);
+        const tin = P.mat('#7a7a84', { n: 5 }), red = P.mat('#8a2c22', { n: 5 }), grn = P.mat('#3e5e3a', { n: 5 }), bowl = P.mat('#c8bca2', { n: 5 }), cloth = P.mat('#4a5a8a', { n: 4 });
+        const can = (cx, rw, hh, M) => { L.rect(cx - rw, shY - hh, rw * 2, hh, M, P.cyl(cx - 1, rw, { amb: 0.2 })); L.rect(cx - rw, shY - hh, rw * 2, 2, M, (x) => (x < cx ? 0.95 : 0.7)); L.line(cx - rw, shY - hh + 4, cx + rw - 1, shY - hh + 4, M, 1); };
+        can(shx0 + s(12), s(6), s(15), red); can(shx0 + s(28), s(5), s(12), tin); can(shx0 + s(42), s(6), s(16), grn);
+        for (let i = 0; i < 3; i++) L.ell(shx0 + s(66), shY - s(3) - i * s(4), s(9) - i, s(2.5), bowl, (x) => (x < shx0 + s(64) ? 0.85 : 0.5));
+        L.rect(shx0 + s(84), shY - s(5), s(20), s(5), cloth, (x, y) => (y < shY - s(4) ? 0.9 : 0.5));
+        L.rect(shx0 - s(4), shY, shx1 - shx0 + s(8), s(4), P.mat('#6a4028', { n: 6, at: 3 }), (x, y) => (y < shY + 1 ? 0.9 : 0.45));
+        L.rect(shx0 + s(6), shY + s(4), s(3), s(8), P.mat('#6a4028', { n: 6, at: 3 }), 1);
+        L.outline();
+        g.drawImage(L.canvas(), 0, 0);
+        R(g, shx0 - s(4), shY + s(4), shx1 - shx0 + s(8), 2, 'rgba(6,4,8,0.4)');
+      }
+      // the noren at the doorway (right): indigo, split, the title's lantern crest
+      {
+        const nx0 = Math.max(G.x(264), w - s(70)), ny0 = beamY + s(10), nh = s(66);
+        if (nx0 < w - 6) {
+          const IND = rampC('#2e3a6a', 5, { at: 2 });
+          const panels = [[nx0, Math.round((w - nx0) / 2) - 1], [nx0 + Math.round((w - nx0) / 2) + 1, w - nx0]];
+          for (const [px0, pw] of panels) {
+            for (let x = px0; x < px0 + pw && x < w; x++) {
+              const fold = ((x - px0) % s(7)) < 2 ? 1 : ((x - px0) % s(7)) > s(5) ? 3 : 2;
+              const hh = nh - (x === px0 || x === px0 + pw - 1 ? 2 : 0) + ((x * 7) % 3 === 0 ? 1 : 0);
+              R(g, x, ny0, 1, hh, IND[fold]);
+            }
+            R(g, px0, ny0 + nh - 1, pw, 1, IND[0]);
+          }
+          const crx = nx0 + Math.round((w - nx0) / 2), cry = ny0 + Math.round(nh * 0.48), cr = s(9);
+          g.fillStyle = '#d8d0bc'; P.ring(g, crx, cry, cr, 1);
+          g.fillStyle = '#d8d0bc'; P.disc(g, crx, cry, s(3), s(4));
+          R(g, crx - s(2), cry - s(5), s(4) + 1, 1, '#d8d0bc'); R(g, crx - s(2), cry + s(5), s(4) + 1, 1, '#d8d0bc');
+          R(g, crx - s(2), cry - 1, s(4) + 1, 1, IND[1]); R(g, crx - s(2), cry + s(2), s(4) + 1, 1, IND[1]);
+          R(g, crx - 1, cry - Math.round(nh * 0.48), 2, Math.round(nh * 0.48) - cr, IND[1]);
+          R(g, nx0, ny0, w - nx0, s(2), WOOD[1]);
+        }
+      }
+      // dawn light from the window, down across the wall and the counter: two flat steps
+      {
+        const L = P.layer(w, h);
+        const dx = Math.round((yC - win.y1) * 0.9);
+        const a = P.solid(later ? '#ffd2a01e' : '#ffc89614'), b2 = P.solid(later ? '#ffdcb01a' : '#ffd0a012');
+        L.poly([[win.x0 + s(4), win.y1], [win.x1, win.y1], [win.x1 + dx, yC], [win.x0 + s(4) + dx, yC]], a);
+        g.drawImage(L.canvas(), 0, 0);
+        const L2 = P.layer(w, h);
+        L2.poly([[win.x0 + s(30), win.y1], [win.x1 - s(24), win.y1], [win.x1 - s(24) + dx, yC], [win.x0 + s(30) + dx, yC]], b2);
+        g.drawImage(L2.canvas(), 0, 0);
+      }
+      // on a tall screen, a paper lantern hangs from the beam above the counter (still lit from the night)
+      const hanaTop = G.hana.y - Math.round(96 * Z);
+      if (hanaTop - beamY > s(120)) {
+        const lan = A.kit.chochin(s(9), s(22), true), lx = G.x(-4), ly = beamY + s(10) + Math.round((hanaTop - beamY - s(10)) * 0.35);
+        R(g, lx, beamY + s(10), 1, ly - beamY - s(10), '#0e0a0c');
+        K().halo(g, lx, ly + lan.H / 2, s(44), '255,196,120', 0.2, 3);
+        g.drawImage(lan.cv, Math.round(lx - lan.cx), ly);
+      }
+      // Hana, behind the counter
+      const hs = hanaSprite(later ? 'think2' : 'smile', Z);
+      if (hs) g.drawImage(hs.cv, G.hana.x - hs.ax, G.hana.y - hs.ay);
+      // the counter: an oiled top with grain, a lit nosing, the front in shadow
+      R(g, 0, yC - top, w, top, PALE[3]);
+      const rnd = K().rnd(911);
+      for (let i = 0; i < w * top * 0.05; i++) {
+        const gx = Math.round(rnd() * w), gy = yC - top + 1 + Math.floor(rnd() * (top - 2)), gl = s(6) + Math.round(rnd() * s(26));
+        R(g, gx, gy, gl, 1, rnd() < 0.6 ? PALE[2] : PALE[4]);
+      }
+      R(g, 0, yC - top, w, 1, PALE[1]); R(g, 0, yC - 2, w, 1, PALE[4]); R(g, 0, yC - 1, w, 1, PALE[5]);
+      // the counter's front: a rail under the nosing, then upright boards in shadow
+      const FRONT = rampC('#5a3622', 5, { at: 3, step: 0.08 });
+      bandsIn(g, 0, yC, w, h - yC, [FRONT[3], FRONT[2], FRONT[1]], 0.4);
+      R(g, 0, yC, w, s(4), FRONT[4]); R(g, 0, yC + s(4), w, 1, FRONT[0]); R(g, 0, yC + s(5), w, 2, 'rgba(10,4,4,0.45)');
+      for (let x = (w % s(30)) >> 1; x < w; x += s(30)) { R(g, x, yC + s(5), 1, h - yC, FRONT[0]); R(g, x + 1, yC + s(5), 1, h - yC, FRONT[4]); }
+      // the tray, the pot and the cups on the counter, each with a contact shadow away from the window
+      const put = (sp, x, y) => {
+        g.fillStyle = 'rgba(30,14,10,0.45)';
+        K().disc(g, x + Math.round(sp.w * 0.12), y, Math.round(sp.w * 0.38), Math.max(1, Math.round(s(2))));
+        g.drawImage(sp.cv, x - sp.ax, y - sp.ay);
+      };
+      const tray = scaled(traySprite(), Z), pot = scaled(potSprite(), Z), cup = scaled(cupSprite(), Z);
+      put(tray, Math.round((G.cups[0].x + G.cups[1].x) / 2), yC - s(3));
+      put(pot, G.pot.x, G.pot.y);
+      G.cups.forEach((c, i) => { if (!(later && i === 1)) put(cup, c.x, c.y); });
+      if (later) {
+        // the second cup sits on its own sprite layer so the ring can show where it is
+        g.fillStyle = 'rgba(30,14,10,0.45)';
+        K().disc(g, G.cups[1].x + Math.round(cup.w * 0.12), G.cups[1].y, Math.round(cup.w * 0.38), Math.max(1, s(2)));
+      }
+      return { cv, G, cup, ring: later ? ringOf(cup, '#ffe2a0') : null };
+    });
+  }
+
+  // ---- live ------------------------------------------------------------------------------------------
+  function steam(c, x, yTop, t, i, n, a0, s) {
+    for (let j = 0; j < n; j++) {
+      const ph0 = (t / 1900 + j / n + i * 0.37) % 1;
+      for (let q = 0; q < 3; q++) {
+        const ph = ph0 - q * 0.045;
+        if (ph < 0) continue;
+        const y = Math.round(yTop - 2 - ph * s(30)), x2 = x + Math.round(Math.sin(ph * 6.2 + j * 2.1 + i) * (0.6 + ph * 3.4));
+        const a = (ph < 0.3 ? 0.34 : ph < 0.62 ? 0.22 : 0.1) * a0 * (1 - q * 0.25);
+        c.fillStyle = 'rgba(240,236,226,' + a.toFixed(3) + ')';
+        c.fillRect(x2, y, ph < 0.25 ? 2 : 1, 1);
+      }
+    }
+  }
+  function motes(c, G, t, later) {
+    const { win, yC } = G, dx = (yC - win.y1) * 0.9, rnd = K().rnd(77);
+    for (let i = 0; i < 18; i++) {
+      const u = rnd(), v0 = rnd(), sp = 0.5 + rnd();
+      const v = (v0 + t / (30000 / sp)) % 1, uu = u + Math.sin(t / 2600 + i) * 0.04;
+      const x = win.x0 + (win.x1 - win.x0) * uu + dx * v, y = win.y1 + (yC - win.y1) * v;
+      const a = 0.25 + 0.3 * ((Math.sin(t / 700 + i * 1.7) + 1) / 2);
+      c.fillStyle = 'rgba(255,232,196,' + (a * (later ? 1 : 0.8)).toFixed(3) + ')';
+      c.fillRect(Math.round(x), Math.round(y), 1, 1);
+    }
+  }
+  function shot(later) {
+    return (c, w, h, t, k, o) => {
+      const S = room(w, h, o.vb, later), G = S.G, s = G.s;
+      c.drawImage(S.cv, 0, 0);
+      const still = o.still;
+      if (!still) motes(c, G, t, later);
+      const top = S.cup.top;
+      if (!later) {
+        G.cups.forEach((cp, i) => { if (!still) steam(c, cp.x - s(1), cp.y - top, t, i, 4, 1, s); });
+        if (!still) steam(c, G.pot.x + s(26), G.pot.y - s(22), t, 2, 2, 0.6, s);
+        return;
+      }
+      // the first cup has gone cool; the second still steams, ringed in light, its steam rising as motes
+      const c2 = G.cups[1], pulse = still ? 0.6 : 0.45 + 0.3 * Math.sin(t / 520);
+      c.save(); c.beginPath(); c.rect(0, 0, w, G.yC); c.clip();
+      K().halo(c, c2.x, c2.y - Math.round(top / 2), Math.round(top * 1.25), '255,214,140', 0.16 * (still ? 1 : 0.8 + 0.2 * Math.sin(t / 520)), 3);
+      c.restore();
+      c.drawImage(S.cup.cv, c2.x - S.cup.ax, c2.y - S.cup.ay);
+      c.globalAlpha = clamp(pulse, 0, 1);
+      c.drawImage(S.ring, c2.x - S.cup.ax - 1, c2.y - S.cup.ay - 1);
+      c.globalAlpha = 1;
+      if (still) return;
+      steam(c, G.cups[0].x - s(1), G.cups[0].y - top, t, 0, 2, 0.45, s);
+      steam(c, c2.x - s(1), c2.y - top, t, 1, 4, 1, s);
+      for (let j = 0; j < 4; j++) {
+        const ph = (t / 2300 + j / 4) % 1, y = c2.y - top - s(6) - ph * s(40), x = c2.x + Math.round(Math.sin(ph * 4 + j * 1.9) * s(7));
+        const a = ph < 0.7 ? 0.7 : (1 - ph) * 2.3;
+        c.fillStyle = 'rgba(250,232,176,' + a.toFixed(3) + ')';
+        c.fillRect(x, Math.round(y), 1, 1);
+        if (ph > 0.3 && ph < 0.5) { c.fillStyle = 'rgba(250,232,176,' + (a * 0.4).toFixed(3) + ')'; c.fillRect(x - 1, Math.round(y), 3, 1); c.fillRect(x, Math.round(y) - 1, 1, 3); }
+      }
+    };
+  }
+  A.SHOTS.tea = shot(false);
+  A.SHOTS.cup = shot(true);
+  A.room = { geom };
+})();
+
+
+/* ==== src/ui/41c_prologue_lantern.js ==== */
+/* The prologue's riverbank lantern at night (shot 4): a chōchin hanging from
+ * a post's arm out over the river, a name brushed down its paper. Through the
+ * shot the name leaves it one stroke at a time — each stroke paling in steps,
+ * then gone, a few motes rising from where it was — and the lamp's light
+ * lowers with it. Behind: the far bank with its own lantern road, the night
+ * sky in the title's bands. The name is abstract brush marks, not letters
+ * (nothing here is text to read). Drawn with RB.pxkit at art resolution in
+ * the title scene's manner (see 41_prologue_art.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const A = RB.prologueArt, { R, mk, clamp, cached, stage, bandsIn, chochin } = A.kit;
+  const K = () => RB.pxkit;
+
+  function geom(w, h, vb) {
+    const S = stage(w, h, vb), { cx, Zx, s } = S;
+    const yH = Math.round(vb * 0.36);                       // the far bank
+    const yN = Math.round(vb * 0.78);                       // the near bank's far edge
+    const px = Math.round(cx - 70 * Zx);                    // the post
+    const base = { x: px, y: yN + s(16) };                  // the post's foot, on the bank
+    const lamp = { x: Math.round(px + 70 * Zx), y: Math.round(vb * 0.5) }; // the lantern's centre, out over the water
+    // the near bank: a riverside path in the lower left, its water edge running down and out toward us
+    const edge = (y) => (y < yN ? -1 : Math.round(px + s(28) + (y - yN) * 0.8));
+    return Object.assign(S, { yH, yN, base, lamp, edge, w, h, vb });
+  }
+
+  // The name: three cursive marks, each a few brush strokes through points in
+  // a unit box ([x, y, width]); eleven strokes in all. Calligraphy, not letters.
+  const NAME = [
+    [[[0.62, 0.06, 2.2], [0.5, 0.3, 2.2], [0.56, 0.55, 1.8], [0.4, 0.86, 1]], [[0.18, 0.36, 2], [0.3, 0.44, 1.4]], [[0.72, 0.52, 2], [0.86, 0.7, 1.2], [0.8, 0.82, 0.8]]],
+    [[[0.2, 0.18, 2.2], [0.5, 0.08, 2], [0.78, 0.2, 1.8], [0.62, 0.42, 1.6], [0.32, 0.5, 1.2]], [[0.36, 0.6, 2], [0.6, 0.66, 1.8], [0.82, 0.9, 1]], [[0.2, 0.78, 1.8], [0.26, 0.86, 1.2]], [[0.82, 0.3, 1.6], [0.9, 0.44, 1]]],
+    [[[0.5, 0.04, 2], [0.46, 0.22, 1.6]], [[0.16, 0.36, 2.2], [0.5, 0.3, 1.8], [0.84, 0.4, 1.4], [0.66, 0.56, 1.2]], [[0.56, 0.5, 2.2], [0.42, 0.72, 1.8], [0.5, 0.94, 1]], [[0.22, 0.66, 1.6], [0.3, 0.74, 1.2]]],
+  ];
+  const STROKES = [];
+  NAME.forEach((m, gi) => m.forEach((st) => STROKES.push({ g: gi, st })));
+  const FADE0 = 0.12, FADE1 = 0.86;                         // the name goes between these points of the shot
+  const fadeOf = (j, k) => { const a = FADE0 + ((FADE1 - FADE0) * j) / STROKES.length, d = (FADE1 - FADE0) / STROKES.length; return clamp((k - a) / d, 0, 1); };
+
+  function lampSprite(Z) {
+    return cached('lamp|' + Z, () => {
+      const L = chochin(Math.round(17 * Z), Math.round(40 * Z), true, Math.max(3, Math.round(4 * Z)));
+      // each stroke as its own sprite on the lantern's grid, so it can pale and go
+      const ink = K().mat('#2a1418', { n: 3, at: 1, line: false });
+      const box = Math.round(13 * Z), gap = Math.round(1 * Z), top = L.y0 + Math.round((L.y1 - L.y0 - box * 3 - gap * 2) / 2);
+      const strokes = STROKES.map(({ g, st }) => {
+        const Ls = K().layer(L.W, L.H), ox = L.cx - box / 2 - 0.5, oy = top + g * (box + gap);
+        let sx = 0, sy = 0;
+        for (let i = 1; i < st.length; i++) {
+          const a = st[i - 1], b = st[i];
+          for (let q = 0; q < 3; q++) {
+            const u = q / 3, v = (q + 1) / 3;
+            Ls.seg(ox + (a[0] + (b[0] - a[0]) * u) * box, oy + (a[1] + (b[1] - a[1]) * u) * box, ox + (a[0] + (b[0] - a[0]) * v) * box, oy + (a[1] + (b[1] - a[1]) * v) * box, Math.max(1, (a[2] + (b[2] - a[2]) * u) * Z), ink, (x) => (x < L.cx ? 0.2 : 0.6));
+          }
+        }
+        for (const p of st) { sx += p[0] / st.length; sy += p[1] / st.length; }
+        return { cv: Ls.canvas(), x: ox + sx * box, y: oy + sy * box };
+      });
+      return Object.assign(L, { strokes });
+    });
+  }
+
+  function scene(w, h, vb) {
+    return cached('lantern|' + w + 'x' + h + '|' + Math.round(vb), () => {
+      const G = geom(w, h, vb), { yH, base, lamp, edge, s, Z } = G;
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      const P = K(), rnd = P.rnd(3301);
+      // sky: the title's dusk bands, darkest at the top
+      bandsIn(g, 0, 0, w, yH, ['#0b0f22', '#0f1429', '#131a33', '#18203f', '#1f2749', '#292e55', '#373358', '#4a3c5c'], 0.45);
+      const stars = [];
+      for (let i = 0; i < Math.round(w * yH / 2200); i++) {
+        const x = Math.round(rnd() * w), y = Math.round(rnd() * yH * 0.8), b = rnd();
+        R(g, x, y, 1, 1, b < 0.2 ? '#c8d0ee' : b < 0.6 ? '#6a7098' : '#464c74');
+        if (b < 0.12) stars.push([x, y, rnd() * 6.28, 900 + Math.round(rnd() * 2000)]);
+      }
+      // a thin moon high on the right, and its light broken on the water below (drawn live)
+      const moon = [Math.round(w * 0.8), Math.round(yH * 0.3), Math.max(4, s(6))];
+      {
+        const [mx, my, mr] = moon;
+        P.halo(g, mx, my, mr * 5, '200,210,240', 0.16, 4);
+        for (let y = -mr; y <= mr; y++) for (let x = -mr; x <= mr; x++) {
+          if (x * x + y * y > mr * mr + mr * 0.6) continue;
+          if ((x + mr * 0.55) * (x + mr * 0.55) + (y - mr * 0.3) * (y - mr * 0.3) <= mr * mr * 0.85) continue;
+          R(g, mx + x, my + y, 1, 1, x * x + y * y > (mr - 1.5) * (mr - 1.5) && x > 0 ? '#c9c0a2' : x > mr * 0.35 ? '#dcd4b8' : '#f1e9cc');
+        }
+      }
+      // two low cloud streaks catching the last light
+      for (let i = 0; i < 2; i++) { const cy = Math.round(yH * (0.62 + i * 0.12)), cx2 = Math.round(w * (0.68 - i * 0.4)), len = Math.round(w * 0.2); R(g, cx2 - len / 2, cy, len, 2, '#2c2d52'); R(g, cx2 - len / 2 + 6, cy - 1, len - 16, 1, '#3e3c62'); }
+      // far hills, then the far bank's wood and reeds
+      for (let x = 0; x < w; x++) {
+        const v = Math.sin(x / (w * 0.11) + 1.7) * 0.6 + Math.sin(x / (w * 0.04) + 0.3) * 0.4;
+        const t1 = Math.round(yH - s(12) - v * s(7)), t2 = Math.round(yH - s(5) - Math.abs(Math.sin(x * 0.21 + 1)) * s(3) - ((x * 7) % 5 === 0 ? s(2) : 0));
+        R(g, x, t1, 1, yH - t1, '#1a2044'); R(g, x, t1, 1, 1, '#262c56');
+        R(g, x, t2, 1, yH - t2 + 2, '#111733');
+      }
+      // far houses with a lit window or two, and the far bank's lantern road (lit live)
+      const far = [];
+      for (let x = s(20); x < w - s(20); x += s(26) + Math.round(rnd() * s(40))) {
+        if (rnd() < 0.45) {
+          const hw = s(8) + Math.round(rnd() * s(5)), hh = s(5) + Math.round(rnd() * s(3));
+          R(g, x, yH - hh, hw, hh + 1, '#0c1122');
+          for (let j = 0; j < 3; j++) R(g, x - 2 + j, yH - hh - 1 - j, hw + 4 - j * 2, 1, j === 2 ? '#1a2038' : '#0a0e1c');
+          if (rnd() < 0.7) R(g, x + 2 + Math.round(rnd() * (hw - 5)), yH - hh + 2, 2, 2, rnd() < 0.6 ? '#e8b860' : '#9a7446');
+        } else far.push([x, yH - s(4) - Math.round(rnd() * s(2))]);
+      }
+      far.forEach(([x, y]) => R(g, x, y, 1, s(4), '#1a1418'));
+      // the river: sky-lit near the far bank, deepening toward us
+      bandsIn(g, 0, yH + 1, w, h - yH - 1, ['#343f6e', '#2c3866', '#26315c', '#202b52', '#1b264a', '#172142', '#141d3a'], 0.4);
+      R(g, 0, yH + 1, w, 1, '#0c1222');
+      const water = [];
+      for (let i = 0; i < Math.round(w * (h - yH) / 900); i++) {
+        const y = yH + 3 + Math.round(Math.pow(rnd(), 1.3) * (h - yH - 4)), d = (y - yH) / (h - yH);
+        const x = Math.round(rnd() * w), len = 2 + Math.round(d * 10);
+        if (x > edge(y) + 4 && x + len > 0) water.push([x, y, len, rnd() * 6.28]);
+      }
+      // the near bank: a riverside path of packed earth with grass at its back, a lit lip at the water
+      const { yN } = G;
+      for (let y = yN; y < h; y++) {
+        const x1 = edge(y), d = (y - yN) / Math.max(1, h - yN);
+        R(g, 0, y, x1, 1, d < 0.15 ? '#171d30' : '#131a2b');
+        const pa = Math.round(x1 * 0.2 + Math.sin(y * 0.37) * 2), pb = Math.round(x1 * 0.78 + Math.sin(y * 0.23 + 1) * 3);
+        if (d > 0.1) { R(g, pa, y, pb - pa, 1, '#1d2034'); if (((y * 7) % 5) === 0) R(g, pa + Math.round(((y * 31) % 97) / 97 * (pb - pa)), y, 3, 1, '#2a2c42'); R(g, pa, y, 1, 1, '#171b2c'); R(g, pb - 1, y, 1, 1, '#171b2c'); }
+        R(g, x1 - 2, y, 2, 1, '#2a3458'); R(g, x1, y, 2, 1, '#0c1222');
+      }
+      // the bank's far edge: grass in tufts against the water, moonlit tips
+      for (let x = 0; x < edge(yN) + 2; x++) {
+        const t2 = Math.round(Math.abs(Math.sin(x * 0.31 + 0.5)) * s(3) + ((x * 7) % 5 === 0 ? s(2) : 0));
+        R(g, x, yN - t2, 1, t2 + 1, '#131a2b');
+        if (t2 > s(2) && x % 2) R(g, x, yN - t2, 1, 1, '#2a3458');
+      }
+      for (let n = 0; n < w * 0.35; n++) {
+        const y = Math.round(yN + 2 + rnd() * (h - yN - 2)), x = Math.round(rnd() * edge(y));
+        const pa = edge(y) * 0.2, pb = edge(y) * 0.78;
+        if (x < 1 || (x > pa && x < pb && rnd() < 0.8)) continue;
+        const d = (y - yN) / (h - yN), sz = 1 + Math.round(d * 3);
+        R(g, x, y - sz * 2, 1, sz * 2, '#1f2a44'); R(g, x - sz, y - sz, 1, sz, '#1a2238'); R(g, x + sz, y - sz - 1, 1, sz + 1, '#1a2238');
+      }
+      // a band of mist low over the far water
+      for (let y = yH + s(4); y < yH + s(12); y++) for (let x = (y * 3) % 4; x < w; x += 4) if (((x >> 4) + y) % 3) R(g, x, y, 2, 1, 'rgba(120,130,170,0.14)');
+      const stone = P.mat('#4a4c62', { n: 5, at: 2 });
+      const SL = P.layer(w, h);
+      for (const [fx, fy, r] of [[0.92, 0.84, 6], [0.97, 0.95, 8], [0.84, 1.04, 7], [0.1, 0.9, 5]]) {
+        const sy = Math.round(G.yN + (vb - G.yN) * (fy - 0.78) / 0.22), sx = Math.round(edge(sy) * fx);
+        if (sx > s(6)) SL.ell(sx, sy, s(r), s(r) * 0.55, stone, P.sphere(sx - s(2), sy - s(2), s(r), s(r) * 0.55, { amb: 0.08 }));
+      }
+      // the post: a weathered square post, an arm out over the water with a brace, a hook
+      const wood = P.mat('#4a3628', { n: 6, at: 2, step: 0.08 });
+      const pw = s(7), topY = lamp.y - s(46), armX = lamp.x + s(10);
+      SL.rect(base.x - pw / 2, topY - s(4), pw, base.y - topY + s(4), wood, (x) => (x < base.x - pw / 2 + 2 ? 0.55 : x > base.x + pw / 2 - 3 ? 0.75 : 0.3));
+      SL.rect(base.x - pw / 2 - s(4), topY, armX - base.x + pw / 2 + s(4), s(5), wood, (x, y) => (y < topY + 1 ? 0.8 : y > topY + s(4) - 1 ? 0.15 : 0.45));
+      SL.seg(base.x + pw / 2, topY + s(22), base.x + s(26), topY + s(5), s(3), wood, 0.3);
+      SL.rect(base.x - pw / 2 - s(2), topY - s(6), pw + s(4), s(3), wood, (x) => (x < base.x ? 0.7 : 0.35));
+      for (let y = topY + s(10); y < base.y - s(6); y += s(17)) SL.line(base.x - 1, y, base.x - 1, y + s(5), wood, 0);
+      SL.rect(base.x - pw / 2 - s(3), base.y - s(3), pw + s(6), s(4), stone, (x) => (x < base.x ? 0.6 : 0.25));
+      SL.outline();
+      g.drawImage(SL.canvas(), 0, 0);
+      R(g, lamp.x, topY + s(5), 1, lamp.y - topY - s(5) - Math.round(lampSprite(Z).H / 2) + 1, '#0e0a0c');
+      // light from the lantern on the post's near face and the ground below it, two flat steps
+      g.fillStyle = 'rgba(255,190,110,0.06)';
+      P.disc(g, lamp.x - s(20), base.y, s(60), s(12)); P.disc(g, lamp.x - s(24), base.y, s(34), s(7));
+      R(g, base.x + pw / 2 - 2, topY + s(5), 1, base.y - topY - s(8), 'rgba(255,190,110,0.35)');
+      // foreground reeds (lower right) are drawn live so they can sway
+      const reeds = [];
+      for (let y = G.yN + 2; y < h; y += 3 + Math.floor(rnd() * 4)) { const x = edge(y) - 1; if (rnd() < 0.7) reeds.push([x - Math.floor(rnd() * 5), y, s(6) + Math.round(rnd() * s(12)), rnd() * 6.28]); }
+      for (let x = w - 2; x > Math.max(edge(h) + s(30), w * 0.72); x -= 2 + Math.floor(rnd() * 5)) reeds.push([x, h - 1 - Math.floor(rnd() * s(6)), s(16) + Math.round(rnd() * s(30)), rnd() * 6.28]);
+      return { cv, G, stars, far, water, reeds, moon };
+    });
+  }
+
+  A.SHOTS.lantern = (c, w, h, t, k, o) => {
+    const S = scene(w, h, o.vb), G = S.G, { lamp, s, Z, yH } = G, still = o.still, P = K();
+    c.drawImage(S.cv, 0, 0);
+    if (!still) for (const [x, y, ph, beat] of S.stars) { const a = 0.4 + 0.6 * Math.max(0, Math.sin(t / beat + ph)); c.fillStyle = 'rgba(220,226,255,' + a.toFixed(2) + ')'; c.fillRect(x, y, 1, 1); if (a > 0.92) { c.fillStyle = 'rgba(220,226,255,0.3)'; c.fillRect(x - 1, y, 3, 1); c.fillRect(x, y - 1, 1, 3); } }
+    // the far lantern road
+    S.far.forEach(([x, y], i) => {
+      const fl = still ? 0.8 : 0.72 + 0.14 * Math.sin(t / 340 + i * 1.7);
+      c.globalAlpha = fl; P.halo(c, x, y - 1, s(6), '255,200,110', 0.3, 2); c.globalAlpha = 1;
+      c.fillStyle = '#ffd27a'; c.fillRect(x, y - 2, 1, 2);
+      c.fillStyle = 'rgba(255,200,110,0.3)'; c.fillRect(x - 1, yH + 3 + (i % 3), 3, 1);
+    });
+    // water glints drifting
+    for (const [x, y, len, ph] of S.water) {
+      const kk = still ? 0.5 : (Math.sin(t / 1400 + ph) + 1) / 2;
+      if (kk < 0.55) continue;
+      const dx = still ? 0 : Math.round(Math.sin(t / 2600 + ph) * 3);
+      c.fillStyle = 'rgba(120,150,200,' + (0.22 + (kk - 0.55) * 0.8).toFixed(2) + ')';
+      c.fillRect(Math.round(x + dx), y, len, 1);
+    }
+    // the moon's path on the water: short pale dashes, wider toward us
+    {
+      const [mx] = S.moon;
+      for (let y = yH + 3, i = 0; y < G.h; y += 2 + (i % 3), i++) {
+        const d = (y - yH) / (G.h - yH), on = still ? i % 3 !== 1 : Math.sin(t / 700 + i * 1.9) > -0.2;
+        if (!on) continue;
+        const wd = Math.max(1, Math.round((2 + d * 18) * (0.5 + 0.5 * Math.abs(Math.sin(i * 2.3)))));
+        const dx = still ? 0 : Math.round(Math.sin(t / 1300 + i) * (1 + d * 2));
+        c.fillStyle = 'rgba(200,206,236,' + (0.32 - d * 0.18).toFixed(3) + ')';
+        const x0 = Math.max(G.edge(y) + 3, mx - (wd >> 1) + dx);
+        c.fillRect(x0, y, mx + (wd >> 1) + dx - x0, 1);
+      }
+    }
+    // the lantern: dimmer as its name goes
+    const L = lampSprite(Z);
+    let gone = 0;
+    for (let j = 0; j < STROKES.length; j++) gone += fadeOf(j, k);
+    const dim = 1 - 0.38 * (gone / STROKES.length);
+    const fl = (still ? 0.86 : 0.8 + 0.1 * Math.sin(t / 310) + 0.05 * Math.sin(t / 97)) * dim;
+    // its reflection: warm streaks under it on the water, broken by the ripples
+    const foot = G.base.y + s(4), refl = foot - lamp.y;
+    for (let y = foot; y < Math.min(G.h, foot + refl); y += 3) {
+      const d = (y - foot) / refl, wob = still ? 0 : Math.round(Math.sin(t / 420 + y * 0.7) * (1 + d * 3));
+      const wd = Math.max(1, Math.round(s(10) * (1 - d * 0.6) * (0.6 + 0.4 * Math.abs(Math.sin(y * 1.3)))));
+      c.fillStyle = 'rgba(255,200,110,' + ((0.42 - d * 0.32) * fl).toFixed(3) + ')';
+      c.fillRect(lamp.x - (wd >> 1) + wob, y, wd, 1);
+    }
+    c.globalAlpha = clamp(fl, 0, 1);
+    P.halo(c, lamp.x, lamp.y, s(70), '255,200,110', 0.22, 5);
+    c.globalAlpha = 1;
+    const lx = Math.round(lamp.x - L.cx), ly = Math.round(lamp.y - L.H / 2);
+    c.drawImage(L.cv, lx, ly);
+    if (dim < 0.999) { c.globalAlpha = (1 - dim) * 0.5; c.globalCompositeOperation = 'multiply'; c.drawImage(L.cv, lx, ly); c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1; }
+    // the name, stroke by stroke
+    L.strokes.forEach((st, j) => {
+      const f = fadeOf(j, k);
+      if (f < 1) {
+        c.globalAlpha = f < 0.25 ? 1 : f < 0.5 ? 0.66 : f < 0.75 ? 0.36 : 0.14;
+        c.drawImage(st.cv, lx, ly);
+        c.globalAlpha = 1;
+      }
+      if (still || f <= 0) return;
+      // a few motes rise from where the stroke was, for a second and a half after it starts to go
+      const el = (k - (FADE0 + ((FADE1 - FADE0) * j) / STROKES.length)) * 8000;
+      if (el > 1500) return;
+      for (let m = 0; m < 3; m++) {
+        const ph = clamp(el / 1500 - m * 0.12, 0, 1);
+        if (ph <= 0) continue;
+        const x = lx + st.x + Math.round(Math.sin(ph * 5 + m * 2 + j) * s(4)), y = ly + st.y - ph * s(30);
+        c.fillStyle = 'rgba(255,236,190,' + (0.85 * (1 - ph)).toFixed(3) + ')';
+        c.fillRect(Math.round(x), Math.round(y), 1, 1);
+      }
+    });
+    // reeds in front, swaying
+    for (const [x, y, hh, ph] of S.reeds) {
+      const sway = still ? 0 : Math.round(Math.sin(t / 1100 + ph) * 2);
+      const lean = Math.round(hh / 3);
+      c.fillStyle = '#0c1120';
+      c.fillRect(x, y - hh + 3, 1, hh - 3);
+      c.fillRect(x - 2, y - lean - 1, 1, lean);
+      if (hh > 8) c.fillRect(x + 2, y - lean, 1, lean);
+      c.fillStyle = '#1d2438'; c.fillRect(x + sway, y - hh, 1, 4);
+      c.fillStyle = '#3a3448'; c.fillRect(x + sway, y - hh, 1, 1);
+    }
+  };
+})();
+
+
+/* ==== src/ui/41d_prologue_bridge.js ==== */
+/* The prologue's bridge in the morning (shot 5): an arched wooden bridge
+ * across a river that widens toward us between grassy banks. It is still
+ * there, railings, capped posts and braced piers, but it stops short: past
+ * three fifths of its span its planks end ragged, one hangs, and motes drift
+ * up from the break as if the rest had been unwritten. On the far bank only
+ * its landing and end post wait, and a lone pier stands in the water between.
+ * Morning sky in bands, hazy ridges, a far shore wood. Drawn with RB.pxkit at
+ * art resolution in the title scene's manner (see 41_prologue_art.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const A = RB.prologueArt, { R, mk, clamp, cached, stage, bandsIn } = A.kit;
+  const K = () => RB.pxkit;
+  const rampC = (base, n, o) => K().ramp(base, n, o).map((c) => K().css(c));
+  const BREAK = 0.6;
+
+  function geom(w, h, vb) {
+    const S = stage(w, h, vb), { cx, s } = S;
+    const yH = Math.round(vb * 0.42);                         // the far shore
+    const hw = (y) => w * (0.2 + 0.3 * clamp((y - yH) / Math.max(1, h - yH), 0, 1)); // the river's half-width
+    // the river's centre, meandering a little, and its banks' small irregularities
+    const mid = (y) => cx + Math.sin((y - yH) * 0.011) * s(16) * (0.4 + clamp((y - yH) / Math.max(1, h - yH), 0, 1));
+    const wob = (y, side) => Math.round(Math.sin(y * 0.23 + side * 2) * 1.2 + Math.sin(y * 0.061 + side * 5) * s(3) * clamp((y - yH) / 60, 0, 1));
+    const yBr = Math.round(yH + (vb - yH) * 0.36);           // where the bridge meets the banks
+    const yW = yBr + s(6);                                     // the water under it
+    const bx0 = Math.round(mid(yBr) - hw(yBr) - s(16)), bx1 = Math.round(mid(yBr) + hw(yBr) + s(16));
+    const ah = Math.max(s(10), Math.round((bx1 - bx0) * 0.11));
+    const top = (x) => yBr - Math.round(ah * Math.sin((Math.PI * (x - bx0)) / (bx1 - bx0)));
+    const xb = Math.round(bx0 + (bx1 - bx0) * BREAK);
+    return Object.assign(S, { yH, hw, mid, wob, yBr, yW, bx0, bx1, ah, top, xb, w, h, vb });
+  }
+
+  function scene(w, h, vb) {
+    return cached('bridge|' + w + 'x' + h + '|' + Math.round(vb), () => {
+      const G = geom(w, h, vb), { yH, hw, mid, wob, yBr, yW, bx0, bx1, top, xb, s } = G;
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      const P = K(), rnd = P.rnd(5521);
+      // sky: morning, deep blue above warming to cream at the horizon
+      bandsIn(g, 0, 0, w, yH, ['#6c8fbe', '#7a9cc6', '#8aa9ce', '#9cb6d4', '#b0c3d8', '#c4d0da', '#d8dad6', '#eae0ca'], 0.45);
+      // the sun, low on the left behind a stepped halo
+      const sx = Math.round(w * 0.2), sy = Math.round(yH * 0.58), sr = Math.max(4, s(7));
+      P.halo(g, sx, sy, sr * 6, '255,240,210', 0.26, 5);
+      g.fillStyle = '#fff4dc'; P.disc(g, sx, sy, sr); g.fillStyle = '#fffaf0'; P.disc(g, sx - 1, sy - 1, Math.max(1, sr - 2));
+      // clouds: flat banks with a lit top and a cooler underside
+      const CL = P.layer(w, h);
+      const cloud = P.mat('#d6dce8', { n: 5, at: 2, step: 0.07 });
+      for (const [fx, fy, cw] of [[0.62, 0.3, 0.22], [0.86, 0.5, 0.16], [0.38, 0.62, 0.12]]) {
+        const ccx = Math.round(w * fx), ccy = Math.round(yH * fy), W2 = Math.round(w * cw / 2);
+        for (let i = 0; i < 6; i++) {
+          const ex = ccx - W2 + Math.round((W2 * 2 * (i + 0.5)) / 6), er = Math.round(W2 * (0.24 + 0.12 * Math.sin(i * 2.3 + fx * 9))), ery = Math.max(2, Math.round(er * 0.45));
+          CL.ell(ex, ccy - Math.round(ery * 0.4), er, ery, cloud, (x, y) => (y < ccy - ery * 0.6 ? 0.95 : y < ccy ? 0.62 : 0.3));
+        }
+        CL.rect(ccx - W2, ccy, W2 * 2, s(2), cloud, 0.3);
+      }
+      g.drawImage(CL.canvas(), 0, 0);
+      // ridges in haze, far to near
+      const ridge = (base, amp, f1, f2, ph, col, crest) => {
+        for (let x = 0; x < w; x++) {
+          const v = Math.sin(x / (w * f1) + ph) * 0.6 + Math.sin(x / (w * f2) + ph * 2.3) * 0.4;
+          const t1 = Math.round(base - amp * (0.55 + v * 0.45));
+          R(g, x, t1, 1, yH - t1 + 1, col);
+          if (crest) R(g, x, t1, 1, 1, crest);
+        }
+      };
+      ridge(yH, s(34), 0.14, 0.05, 1.1, '#a4b4cc', '#b8c6d6');
+      ridge(yH, s(20), 0.09, 0.03, 2.7, '#8a9cbc', '#9cacc6');
+      for (let y = yH - s(8); y < yH; y++) for (let x = (y & 1) * 2; x < w; x += 4) R(g, x, y, 2, 1, 'rgba(232,226,210,0.35)');
+      // the far shore: a wood in clumps with sunlit crowns, a temple roof among them
+      for (let x = -s(4); x < w + s(4); x += s(5) + Math.floor(rnd() * s(4))) {
+        const r = s(4) + Math.floor(rnd() * s(4)), cy = yH - Math.round(r * 0.6);
+        g.fillStyle = '#4a6466'; P.disc(g, x, cy, r, Math.round(r * 0.8));
+        g.fillStyle = '#62807a'; P.disc(g, x - 1, cy - Math.round(r * 0.35), Math.max(1, r - 2), Math.max(1, Math.round(r * 0.4)));
+      }
+      {
+        const tx = Math.round(w * 0.68), tw = s(26), ty = yH - s(14);
+        R(g, tx - tw / 2 + s(2), ty + s(5), tw - s(4), s(9), '#55596a');
+        for (let j = 0; j < s(6); j++) { const ww = tw + s(12) - Math.round(j * j * 0.9) - j * 2; R(g, tx - ww / 2, ty + s(5) - j, ww, 1, j === 0 ? '#3a3e4c' : j === s(6) - 1 ? '#6a7084' : '#4a4e5e'); }
+        R(g, tx - tw / 2 - s(6), ty + s(5), s(2), 1, '#3a3e4c'); R(g, tx + tw / 2 + s(4), ty + s(5), s(2), 1, '#3a3e4c');
+        R(g, tx - s(1), ty - s(3), s(2), s(3), '#3a3e4c');
+      }
+      R(g, 0, yH, w, 1, '#5e6e58'); R(g, 0, yH + 1, w, 1, '#7a8a66');
+      // the river: the sky's light near the far shore, deepening toward us
+      bandsIn(g, 0, yH + 2, w, h - yH - 2, ['#b2c4d2', '#9eb4c8', '#88a6bf', '#7298b6', '#6088aa', '#52799c', '#466c8e'], 0.45);
+      // the banks, left and right: meadow in strips that widen toward us, a sandy lip, a darker wet edge
+      const GR = rampC('#5e8a42', 6, { at: 3, step: 0.08 });
+      const GRr = K().ramp('#5e8a42', 6, { at: 3, step: 0.08 }), GM = K().css(K().mix(GRr[2], GRr[3], 0.5));
+      for (let y = yH + 2; y < h; y++) {
+        const d = (y - yH) / (h - yH), m = mid(y), half = hw(y);
+        const l = Math.round(m - half + wob(y, 0)), r = Math.round(m + half + wob(y, 1));
+        // field strips that widen toward us, soft dithered seams between them
+        const f = Math.sqrt(Math.max(0, y - yH)) * 1.3, band = Math.floor(f) % 2, fr = f - Math.floor(f);
+        for (const [x0, x1] of [[0, l], [r, w]]) {
+          if (x1 <= x0) continue;
+          R(g, x0, y, x1 - x0, 1, band ? GM : GR[3]);
+          if (fr > 0.75 && d > 0.05) for (let x = x0 + ((y * 3) & 3); x < x1; x += 4) if (K().bayer(x, y) < (fr - 0.75) * 4) R(g, x, y, 1, 1, band ? GR[3] : GM);
+        }
+        const lip = Math.max(1, Math.round(1 + d * 3));
+        R(g, l - lip, y, lip, 1, '#c8b88a'); R(g, l, y, 1, 1, '#5a6a6a');
+        R(g, r, y, lip, 1, '#a8986e'); R(g, r - 1, y, 1, 1, '#3e5a6a');
+      }
+      // tufts and flowers in the meadow, larger toward us
+      for (let n = 0; n < w * 0.9; n++) {
+        const y = Math.round(yH + 4 + Math.pow(rnd(), 0.75) * (h - yH - 6)), m = mid(y), half = hw(y);
+        const x = Math.round(rnd() * w);
+        if (x > m - half - 3 && x < m + half + 3) continue;
+        const d = (y - yH) / (h - yH), sz = 1 + Math.round(d * 4);
+        R(g, x, y - sz * 2, 1, sz * 2, GR[1]); R(g, x - sz, y - sz, 1, sz, GR[1]); R(g, x + sz, y - sz - 1, 1, sz + 1, GR[1]);
+        R(g, x, y - sz * 2, 1, 1, GR[5]);
+        if (rnd() < 0.05) R(g, x + 2, y - sz, 2, 2, rnd() < 0.5 ? '#f0e6c0' : '#e8a8b8');
+      }
+      // ripple lines on the open water
+      const glints = [];
+      for (let n = 0; n < w * (h - yH) / 700; n++) {
+        const y = Math.round(yH + 3 + Math.pow(rnd(), 1.2) * (h - yH - 4)), m = mid(y), half = hw(y) - 4;
+        const x = Math.round(m - half + rnd() * half * 2), d = (y - yH) / (h - yH), len = 2 + Math.round(d * 12);
+        if (x + len > m + half) continue;
+        R(g, x, y, len, 1, d < 0.3 ? '#c4d4de' : '#7aa0bc');
+        if (rnd() < 0.5) glints.push([x, y, len, rnd() * 6.28]);
+      }
+      // the bridge, the reflection first
+      const wood = P.mat('#8a5a36', { n: 6, at: 3, step: 0.09 });
+      const bronze = P.mat('#7a6a3a', { n: 5, at: 2 }), stone = P.mat('#8a8a8e', { n: 5, at: 2, step: 0.1 });
+      const B = P.layer(w, h);
+      const dk = s(6), rail = s(13), seg = (x) => x <= xb || x >= Math.round(bx0 + (bx1 - bx0) * 0.93);
+      // the abutments: dressed stone where the bridge meets each bank
+      for (const ax of [bx0 - s(6), bx1 - s(8)]) B.stone([[ax, yBr - s(2)], [ax + s(14), yBr - s(2)], [ax + s(16), yW + s(6)], [ax - s(2), yW + s(6)]], stone, { face: 2, bevel: 2 });
+      // piers with cross bracing, and the lone pier left standing past the break
+      for (const u of [0.18, 0.4, 0.82]) {
+        const x = Math.round(bx0 + (bx1 - bx0) * u), y0 = top(x) + dk - 1, lone = u > BREAK;
+        const bot = yW + s(lone ? 2 : 4);
+        B.rect(x - s(4), lone ? y0 + s(10) : y0, s(3), bot - (lone ? y0 + s(10) : y0), wood, (xx) => (xx < x - s(3) ? 0.7 : 0.3));
+        B.rect(x + s(2), lone ? y0 + s(14) : y0, s(3), bot - (lone ? y0 + s(14) : y0), wood, (xx) => (xx < x + s(3) ? 0.6 : 0.25));
+        if (!lone) { B.seg(x - s(3), y0 + s(2), x + s(4), bot - s(2), Math.max(1, s(1.4)), wood, 0.2); B.seg(x + s(4), y0 + s(2), x - s(3), bot - s(2), Math.max(1, s(1.4)), wood, 0.25); }
+      }
+      // the deck's side beam, following the arch, with plank ends and a lit top edge; ragged at the break
+      for (let x = bx0; x <= bx1; x++) {
+        if (!seg(x)) continue;
+        const t0 = top(x);
+        let d2 = dk;
+        if (x > xb - s(8) && x <= xb) { const k2 = (x - (xb - s(8))) / s(8); d2 = Math.max(1, Math.round(dk * (1 - k2 * 0.7) + ((x * 7) % 3) - 1)); }
+        B.rect(x, t0, 1, d2, wood, (xx, yy) => (yy < t0 + 1 ? 0.95 : yy < t0 + 2 ? 0.7 : yy > t0 + d2 - 2 ? 0.15 : 0.45));
+        if ((x - bx0) % s(4) === 0) B.line(x, t0 + 2, x, t0 + d2 - 1, wood, 1);
+      }
+      // a plank hanging from the break
+      B.seg(xb - s(2), top(xb) + s(2), xb + s(5), top(xb) + s(16), Math.max(2, s(2.5)), wood, (xx) => (xx < xb + s(1) ? 0.6 : 0.3));
+      // railing: posts, a top rail and a middle rail; the post at the break snapped short
+      const postAt = [];
+      for (let x = bx0 + s(2); x <= bx1 - s(2); x += s(16)) if (seg(x)) postAt.push(x);
+      if (postAt[postAt.length - 1] !== bx1 - s(4)) postAt.push(bx1 - s(4));
+      for (let i = 0; i < postAt.length; i++) {
+        const x = postAt[i], t0 = top(x), snapped = x <= xb && x > xb - s(16);
+        const ph = snapped ? s(6) : rail;
+        B.rect(x - 1, t0 - ph, s(3), ph, wood, (xx) => (xx < x ? 0.85 : 0.35));
+        if (snapped) { B.dot(x - 1, t0 - ph - 1, wood, 2); B.dot(x + 1, t0 - ph, wood, 4); }
+        const end = i === 0 || x >= bx1 - s(6) || (x <= xb && postAt[i + 1] > xb);
+        if (end && !snapped) { B.ell(x + 0.5, t0 - ph - s(2), s(2.6), s(2.6), bronze, P.sphere(x - 0.5, t0 - ph - s(3), s(2.6), s(2.6))); B.rect(x, t0 - ph - s(6), 1, s(2), bronze, 3); }
+      }
+      for (let x = bx0 + s(2); x <= bx1 - s(2); x++) {
+        if (!seg(x)) continue;
+        const brk = x > xb - s(12) && x <= xb;
+        if (!brk || x < xb - s(9)) { B.rect(x, top(x) - rail, 1, s(2), wood, (xx, yy) => (yy < top(x) - rail + 1 ? 0.9 : 0.4)); }
+        if (!brk) B.dot(x, top(x) - Math.round(rail * 0.5), wood, 2);
+      }
+      B.outline();
+      const bc = B.canvas();
+      // reflection: the bridge mirrored about the water under it, dim and broken by ripples
+      {
+        const rc = mk(w, h), rg = rc.getContext('2d');
+        rg.save(); rg.translate(0, yW * 2); rg.scale(1, -1); rg.drawImage(bc, 0, 0); rg.restore();
+        rg.globalCompositeOperation = 'source-atop'; rg.fillStyle = 'rgba(40,70,100,0.55)'; rg.fillRect(0, 0, w, h);
+        rg.globalCompositeOperation = 'destination-out';
+        for (let y = yW; y < h; y += 3) rg.fillRect(0, y, w, 1);
+        rg.fillRect(0, 0, w, yW + 1);
+        g.globalAlpha = 0.6; g.drawImage(rc, 0, 0); g.globalAlpha = 1;
+      }
+      // the bridge's shadow on the water, then the bridge
+      g.fillStyle = 'rgba(30,50,80,0.25)';
+      for (let x = bx0; x <= bx1; x++) if (seg(x)) g.fillRect(x + s(3), yW, 1, s(3));
+      g.drawImage(bc, 0, 0);
+      // reeds at the waterline on both banks
+      for (let y = yH + s(10); y < h; y += 3 + Math.floor(rnd() * 5)) {
+        const d = (y - yH) / (h - yH), m = mid(y), half = hw(y), hh = Math.round(s(4) + d * s(16) * (0.6 + rnd() * 0.6));
+        for (const x of [Math.round(m - half + wob(y, 0)) - 2 - Math.floor(rnd() * 4), Math.round(m + half + wob(y, 1)) + 2 + Math.floor(rnd() * 4)]) {
+          if (rnd() < 0.45) continue;
+          if (Math.abs(y - yBr) < s(14) && x > bx0 - s(10) && x < bx1 + s(10)) continue;
+          R(g, x, y - hh, 1, hh, '#46683a'); R(g, x - 1, y - Math.round(hh * 0.4), 1, Math.round(hh * 0.4), '#3a5a32');
+          R(g, x, y - hh, 1, 2, '#9a7a4a');
+        }
+      }
+      return { cv, G, glints };
+    });
+  }
+
+  A.SHOTS.bridge = (c, w, h, t, k, o) => {
+    const S = scene(w, h, o.vb), G = S.G, { s, xb, top, yH } = G, still = o.still;
+    c.drawImage(S.cv, 0, 0);
+    // glints drifting on the water
+    for (const [x, y, len, ph] of S.glints) {
+      const kk = still ? 0.5 : (Math.sin(t / 1300 + ph) + 1) / 2;
+      if (kk < 0.6) continue;
+      const dx = still ? 0 : Math.round(Math.sin(t / 2400 + ph) * 3);
+      c.fillStyle = 'rgba(246,250,252,' + (0.3 + (kk - 0.6) * 1.2).toFixed(2) + ')';
+      c.fillRect(Math.round(x + dx), y, len, 1);
+    }
+    // a band of mist drifting low over the far water
+    if (!still) {
+      const off = Math.round(t / 160) % 8;
+      c.fillStyle = 'rgba(240,242,240,0.16)';
+      for (let y = yH + s(3); y < yH + s(11); y++) for (let x = ((y * 3 + off) % 8) - 8; x < w; x += 8) if (((x + off) >> 5) % 3) c.fillRect(x, y, 4, 1);
+    }
+    // the break: motes leaving it, wood colours paling to light as they rise
+    if (still) return;
+    const bx = xb, by = top(xb) + s(2);
+    for (let i = 0; i < 9; i++) {
+      const ph = (t / 3200 + i / 9) % 1;
+      const x = bx + s(2) + ph * s(36) + Math.sin(ph * 6 + i * 1.7) * s(3), y = by - ph * s(26) + ((i * 5) % 7) - 3;
+      const col = ph < 0.35 ? '138,90,54' : ph < 0.65 ? '200,160,110' : '250,240,214';
+      c.fillStyle = 'rgba(' + col + ',' + (ph < 0.6 ? 0.9 : (1 - ph) * 2.2).toFixed(2) + ')';
+      const sz = ph < 0.3 ? 2 : 1;
+      c.fillRect(Math.round(x), Math.round(y), sz, sz);
+    }
+  };
 })();
 
 

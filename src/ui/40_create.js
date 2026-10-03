@@ -38,6 +38,9 @@ RB.ui.create = (function () {
   }
 
   // ---- prologue ----------------------------------------------------------------
+  // Six shots, each drawn at art resolution by RB.prologueArt (src/ui/41*_prologue_*.js):
+  // the title's lantern road, Hana's teahouse twice, the riverbank lantern, the bridge,
+  // and the traveller walking up the road into the distance.
   const SHOTS = [
     { d: 7500, jp: '{灯|ひ} の {道|みち} は 、 {通|とお}った {場所|ばしょ} の {名前|なまえ} を {覚|おぼ}えている 。', en: 'The lantern roads remember the name of every place they pass through.', draw: 'road' },
     { d: 7000, jp: '{夜明|よあ}け 、 {茶屋|ちゃや} の ハナ は お{茶|ちゃ} を ふたつ いれた 。', en: 'At dawn, Hana at the teahouse poured two cups of tea.', draw: 'tea' },
@@ -46,76 +49,6 @@ RB.ui.create = (function () {
     { d: 8000, jp: '{朝|あさ} に なって も {橋|はし} は あった 。 ただ 、 {向|む}こう{岸|ぎし} に は もう {届|とど}かない 。', en: 'By morning the bridge was still there. It just no longer reached the other bank.', draw: 'bridge' },
     { d: 8000, jp: 'そして 、 {古|ふる}い {文字|もじ} を {読|よ}める {旅人|たびびと} が ひとり 、 {葦|あし}ノ{瀬|せ} へ {歩|ある}いていた 。', en: 'And a traveller who could still read the old letters was walking toward Reedwake.', draw: 'walker' },
   ];
-  function drawShot(kind, c, w, h, t, k) {
-    const R = (x, y, ww, hh, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), ww, hh); };
-    const reduced = RB.game.reducedMotion();
-    c.fillStyle = '#0b0d18'; c.fillRect(0, 0, w, h);
-    const cx = w / 2, cy = h / 2;
-    if (kind === 'road' || kind === 'walker') {
-      RB.ui.title.drawBackdrop(c, w, h, t);
-      if (kind === 'walker') {
-        const look = { skin: 3, hair: 'short', hairColor: 1, outfit: 5, acc: ['scarf'], scarfCol: '#6a6a7a' };
-        const f = reduced ? 0 : Math.floor(t / 180) % 3;
-        const art = RB.sprites.getArt && RB.sprites.getArt(look, 'up', reduced ? 0 : 'w' + (Math.floor(t / 90) % 8));
-        const y = h * 0.95 - k * h * 0.2;
-        // logical size (half the art size): drawn at art resolution by the ×2 transform, feet on y
-        if (art) c.drawImage(art, Math.round(cx) - RB.sprites.ANCHOR.x / 2, Math.round(y) - RB.sprites.ANCHOR.y / 2, art.width / 2, art.height / 2);
-        else c.drawImage(RB.sprites.get(look, 'up', f === 2 ? 2 : f), Math.round(cx - 8), Math.round(y - 24));
-        const gl = c.createRadialGradient(cx + 6, y - 10, 0, cx + 6, y - 10, 18);
-        gl.addColorStop(0, 'rgba(255,210,120,0.5)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
-        c.fillStyle = gl; c.fillRect(cx - 14, y - 30, 40, 40);
-      }
-    } else if (kind === 'tea' || kind === 'cup') {
-      const g = c.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, '#3a2c2a'); g.addColorStop(1, '#1a1414');
-      c.fillStyle = g; c.fillRect(0, 0, w, h);
-      // window with dawn
-      R(cx - 60, cy - 60, 50, 40, '#e8b08a'); R(cx - 36, cy - 60, 2, 40, '#3a2c2a'); R(cx - 60, cy - 41, 50, 2, '#3a2c2a');
-      // table
-      R(cx - 90, cy + 10, 180, 10, '#6e4428'); R(cx - 90, cy + 10, 180, 2, '#a06c42');
-      const cups = kind === 'tea' ? [cx - 30, cx + 20] : [cx + 20];
-      if (kind === 'cup') { R(cx - 30, cy - 2, 14, 12, '#e8e4d8'); R(cx - 28, cy, 10, 2, '#7a9a5a'); }
-      cups.forEach((x, i) => {
-        R(x, cy - 2, 14, 12, '#e8e4d8'); R(x + 2, cy, 10, 2, '#7a9a5a');
-        if (!reduced) for (let s = 0; s < 3; s++) {
-          const ph = ((t / 1200) + s / 3 + i * 0.2) % 1;
-          c.fillStyle = `rgba(240,240,240,${0.35 * (1 - ph)})`;
-          c.fillRect(x + 5 + Math.sin(ph * 6 + s) * 3, cy - 6 - ph * 22, 2, 3);
-        }
-      });
-      if (kind === 'cup') {
-        // the second cup, highlighted, with a question
-        const a = 0.4 + Math.sin(t / 500) * 0.2;
-        c.strokeStyle = `rgba(231,196,110,${a})`; c.lineWidth = 1;
-        c.strokeRect(cx + 16.5, cy - 6.5, 22, 20);
-      }
-    } else if (kind === 'lantern') {
-      RB.ui.title.drawBackdrop(c, w, h, t);
-      c.fillStyle = 'rgba(8,10,20,0.6)'; c.fillRect(0, 0, w, h);
-      R(cx - 1, cy - 10, 3, 70, '#2a2430');
-      R(cx - 16, cy - 44, 32, 40, '#f4ead0');
-      const gl = c.createRadialGradient(cx, cy - 24, 0, cx, cy - 24, 50);
-      gl.addColorStop(0, 'rgba(255,210,120,0.45)'); gl.addColorStop(1, 'rgba(255,210,120,0)');
-      c.fillStyle = gl; c.fillRect(cx - 50, cy - 74, 100, 100);
-      // a name in brush strokes vanishing stroke by stroke (abstract marks, not real letters)
-      const marks = [[-8, -38, 12, 2], [-3, -36, 2, 12], [-8, -30, 10, 2], [-7, -24, 2, 10], [2, -26, 6, 2], [4, -22, 2, 10], [-9, -14, 16, 2]];
-      const shown = Math.max(0, marks.length - Math.floor(k * (marks.length + 1)));
-      marks.slice(0, shown).forEach((m) => R(cx + m[0], cy + m[1], m[2], m[3], '#2a2024'));
-    } else if (kind === 'bridge') {
-      const g = c.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, '#9ab8d0'); g.addColorStop(1, '#e0ecf0');
-      c.fillStyle = g; c.fillRect(0, 0, w, h);
-      R(0, cy + 10, w, h, '#4f93b3');
-      for (let i = 0; i < 30; i++) R((i * 37 + t / 40) % w, cy + 16 + (i * 13) % (h / 2), 6, 1, '#6fb0c8');
-      R(0, cy - 4, w * 0.25, 20, '#5f9a4a'); R(w * 0.75, cy - 4, w * 0.25, 20, '#5f9a4a');
-      // bridge that stops short
-      R(w * 0.22, cy, w * 0.38, 6, '#a06c42');
-      for (let x = w * 0.22; x < w * 0.6; x += 10) R(x, cy + 6, 2, 12, '#6e4428');
-      c.fillStyle = 'rgba(255,255,255,0.5)';
-      for (let i = 0; i < 6; i++) R(w * 0.6 + i * 4, cy + (i % 2) * 2, 2, 2, `rgba(160,108,66,${0.8 - i * 0.14})`);
-    }
-  }
-
   // Captions are a paper slip over the scene; Next and Skip stay in one place.
   function prologue() {
     return new Promise((resolve) => {
@@ -132,6 +65,7 @@ RB.ui.create = (function () {
         if (done) return;
         done = true;
         RB.render.setOverride(null);
+        RB.prologueArt.release();
         RB.ui.popLayer(layer);
         resolve();
       };
@@ -157,16 +91,27 @@ RB.ui.create = (function () {
         t0 = performance.now();
         if (i >= SHOTS.length) finish(); else caption();
       }
-      RB.render.setOverride((c, w, h, t) => {
+      // the lowest buffer row the caption slip leaves in view (the shots keep what matters above it)
+      function visBottom(h) {
+        const cv = document.getElementById('world'), sl = cap.querySelector('.slip');
+        if (!cv || !sl) return h;
+        const a = cv.getBoundingClientRect(), b = sl.getBoundingClientRect();
+        if (!a.height || !b.height) return h;
+        return ((b.top - a.top) * h) / a.height;
+      }
+      // drawn at art resolution (RB.prologueArt), like the title scene
+      const scene = (c, w, h, t) => {
         if (done) return;
         const s = SHOTS[i];
         const k = Math.min(1, (performance.now() - t0) / s.d);
-        drawShot(s.draw, c, w, h, t, k);
+        RB.prologueArt.draw(s.draw, c, w, h, t, k, { vb: visBottom(h), still: RB.game.reducedMotion() });
         const fadeK = Math.min(k * 8, (1 - k) * 8, 1);
         c.fillStyle = `rgba(0,0,0,${1 - Math.max(0, fadeK)})`;
         c.fillRect(0, 0, w, h);
         if (k >= 1) next();
-      });
+      };
+      scene.art = true;
+      RB.render.setOverride(scene);
       caption();
       RB.ui.pushLayer(layer);
     });

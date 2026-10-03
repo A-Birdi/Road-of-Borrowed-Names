@@ -593,6 +593,18 @@ RB.ui.title = (function () {
     drawScene(c, w, h, t);
   }
   drawBackdrop.art = true;
+  // The road as buildScene lays it out for a buffer of w × h art px, for a
+  // figure walking it (the prologue's traveller): the horizon row, the road's
+  // centre and half-width at a row, and how tall a lantern post standing at
+  // that row is drawn (ground to cap), so a figure can be scaled against it.
+  function roadGuide(w, h) {
+    const P = h > w * 1.15 ? PLAN.tall : PLAN.wide, hz = Math.round(h * P.hz);
+    return {
+      hz, tall: P === PLAN.tall,
+      at: (y) => { const [x, hw] = along(P.road, y / h); return [x * w, hw * w]; },
+      post: (y) => { const d = (y - hz) / (h - hz), s = Math.max(2, Math.round(2 + d * (P === PLAN.tall ? 10 : 8))); return Math.round(6 + s * 3.2) + Math.round(s * 1.6) + 2; },
+    };
+  }
 
   // ---- title --------------------------------------------------------------------------
   function keysGuide() {
@@ -998,5 +1010,5 @@ RB.ui.title = (function () {
   // for the browser tests: what the sky is doing, and a way to hurry it along
   const sky = () => ({ layout: scene.L ? (scene.L.tall ? 'tall' : 'wide') + (scene.L.side ? '/' + scene.L.side : '/centred') : null, noren: !!(scene.L && scene.L.norenBottom), door: scene.L ? (scene.L.post + scene.L.shoji) / scene.L.w : 0, moon: scene.L && scene.L.moon ? [scene.L.moon[0] / scene.L.w, scene.L.moon[1] / scene.L.h, scene.L.moon[2] / scene.L.w] : null, stars: scene.L ? scene.L.stars.length : 0, meteor: !!(scene.fx && scene.fx.m), comet: !!(scene.fx && scene.fx.cm), live: !!scene.fx });
   sky.soon = () => { if (scene.fx) { scene.fx.next = 0; scene.fx.nextComet = 0; } };
-  return { show, hide, slots, drawBackdrop, sky };
+  return { show, hide, slots, drawBackdrop, roadGuide, sky };
 })();
