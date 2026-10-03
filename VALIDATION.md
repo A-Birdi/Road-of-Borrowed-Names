@@ -1552,3 +1552,74 @@ by the model; **no native speaker has reviewed it.**
 - **Not verified:** a native Kansai speaker's review (the style sheet and review priorities are in
   docs/dialect/suzu_kansai.md); the device voice reads Kansai lines with a standard accent; Firefox; the
   foldable.
+
+## Battles one at a time — the owner's reports of 2026-10-03 (Saltglass: a second battle over the map after a win and after a step back)
+The owner played in Firefox at about 2000×1090. After beating a Label Crab, and separately after stepping back
+from a Harbour Fog, a battle screen came up over the map with nothing queued. Winning it said the crab was
+defeated again, and the screen went black. A save and load in the same page did not recover it; a page reload
+did. The fix was made in a worker branch (6fa0f72) and merged (886556d). Every run below was in headless
+Chromium on Linux (Playwright) with synthetic campaigns in fresh profiles; no player save was used; nothing was
+checked in Firefox.
+- **Causes, reproduced on 12a9757:**
+  - **A second battle while the first closed.** The creature you had beaten or stepped back from still touched
+    you during the closing fade, with the mode already back to exploration, so it started a second battle.
+    - The first battle's teardown cleared the second's creature list. The second's drawing then threw every frame
+      (`reading 'left'`), and the exception ended the frame loop for good.
+    - The battle UI sat over a frozen map: 2 battles started, 0 frames in 600 ms, and the crab's settle line
+      played twice.
+    - A window resize blacked the canvas. A same-page load left it black with 0 frames drawn; a page reload
+      recovered.
+  - **Contact checked against a stale mode** (the mode from before the frame's step). A tap on a crab started 2
+    battles at once; a tap on the plaque beside a crab started a battle under the plaque's lines; a tap on the way
+    out beside a crab started a battle during the map change.
+  - **Scene ends** put every creature back on its starting tile, onto the player.
+- **Fix:**
+  - One battle at a time: `RB.game.startBattle` refuses while a battle is open or closing.
+  - Creatures engage only in free exploration, never during a battle or its closing, and not for 1 s after one.
+    Contact uses the current mode.
+  - While the closing screen is dark, a beaten creature is gone. One you stepped back from backs off a step and
+    stays calm for 5 s, and for as long as you touch it.
+  - Creatures stay where they are when a scene ends.
+  - The frame loop survives an error in any part of a frame, and a campaign change removes an orphaned battle
+    overlay.
+- **B `tests/e2e/battle_overlap.mjs`** (new, in the default suite) at 1280×800 and 390×844, with real keys, mouse
+  and taps: **30 ok / 66 FAIL on 12a9757; 96/96 on 6fa0f72** (the worker's runs).
+- **The worker's other runs on 6fa0f72:**
+  - unit 15,388/0; validator no errors;
+  - encounters 19/19, world_fixes 15/15, departures 20/20 (19/20 once while unit tests ran alongside: a Tsuru
+    walk-in timed against world time);
+  - battle_cycle stable (listeners 101 → 101, nodes 247 → 245);
+  - combat_ui 7/7, combat_small 9/9, playtest_repairs 7/7, battle_pets_overworld --battles-only 3/3,
+    shift_load_regression 18/18, town_animals 41/41, battle_group 6/6, companion_turn 4/4.
+- **The lead's runs on the merged build (886556d):** unit 21,732/0; battle_overlap all ok; encounters all ok; combat_ui 7/7; playtest_repairs 7/7; interludes 76/76; departures all ok (one sequential run while other workers loaded the machine). On 96b60fd (with the travel rules): battle_overlap all ok again.
+- **Not verified:** Firefox, where the black screen was seen; the whole-game drivers' timing with the new 1 s pause.
+
+## Quick travel rules — the owner's report of 2026-10-03 (the Travel list on the Fishers' Cove)
+The owner, on the Fishers' Cove (an outdoor beach), opened the Map to travel to Reedwake and was told "You can't
+travel quickly from here. Step outside first." The cove carried `noTravel: true`, and one generic message,
+written for buildings, served every map with the flag. Asked whether travel should be limited to towns, the lead
+recommended "anywhere out in the open" and implemented that. The work was done in a worker branch (089f2b2) and
+merged (c9cbee2). Every run below was in headless Chromium on Linux (Playwright) with synthetic campaigns in
+fresh profiles; no player save was used; nothing was checked in Firefox.
+- **Change:**
+  - Travel works from anywhere out in the open when nothing is under way.
+  - Inside a building, inside a dungeon or on a story-locked map, the Travel list says why in the place's own
+    terms and where the way out leads (found through the exits usable now).
+  - Every `noTravel` map is classified (`src/engine/52_travel.js`; docs/CONTENT.md "Quick travel: where it
+    works"): 39 interiors, 26 dungeon rooms in 7 places, 2 story locks, and the Atlas rooms. The validator rejects
+    an unclassified map.
+  - Five open-air maps were opened: `sg.cove`, `co.upper`, `co.oldworks`, `co.lookout`, `sb.obs_path`.
+  - At the merge the new lighthouse top was classified with the lighthouse ("You're in the lighthouse…").
+- **Found and fixed on the way:** the folio opened over a conversation (History, then Map) offered Travel. A click
+  moved the player to another town with the scene still running (modes `world>dialogue>menu`, 2 buttons on the
+  unfixed build).
+- **B `tests/e2e/travel_rules.mjs`** (new, in the default suite; real clicks at 1280×800 and 390×844): **0/10 on the
+  unfixed build (6e6f079), 10/10 on 089f2b2** (the worker's runs, twice). It covers:
+  - the cove travelling to Reedwake with the companion, the pet, the checkpoint and an autosave request;
+  - the building, dungeon and story-lock messages;
+  - no travel over a conversation, restored after it.
+- **The worker's other runs on 089f2b2:** unit 15,720/0 (`travel_rules.test.mjs` adds 332: every map classified,
+  exact messages, the validator rule including a kanji without furigana); validator no errors; systems 4/4, folio
+  151 ok, ui 14/14, world_fixes 15 ok, departures 20 ok, quest_guide 55 ok, known 22 ok, atlas.check 15 ok.
+- **The lead's runs on the merged build:** on 96b60fd: validator no errors; unit 22,067/0; travel_rules 10/10; systems 4/4; folio all ok; lighthouse_top 76/76; battle_overlap all ok.
+- **Not verified:** the Atlas message in a browser; Firefox, Safari or a real phone.
