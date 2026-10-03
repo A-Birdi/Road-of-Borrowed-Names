@@ -76,8 +76,8 @@ RB.partyChoreo = (function () {
   // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
   // companion's object or garment) — nothing is said, and muted play loses nothing.
   const TECH = {
-    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 520, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1240, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [1090, 'pen_up']], note: 'Nao drops his weight, steps in and cuts a hand across the opening; your thread follows his line: two knots, on that one creature only.' },
-    mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1200, rec: 1800, recD: 400, end: 2350, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio measures the draught at eye level, uncorks it and pours it into your rising ink; you release it over you both: the knot, then the restoring, then what it washes off — each where it really happens.' },
+    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 600, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1300, rec: 1790, recD: 500, end: 2350, sfx: [[0, 'pen_stroke'], [600, 'pen_down'], [890, 'pen_stroke'], [1320, 'pen_up']], note: 'Nao takes the pencil from behind his ear, turns side-on, steps in and sketches a courier\'s route out to it in the air, a tick on each knot that will come loose; your thread follows the route and the two knots go together, on that one creature only.' },
+    mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1250, rec: 1860, recD: 440, end: 2400, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio raises the draught at eye level, uncorks it, lifts it high and pours: a clear stream arcs over you both and falls in drops, rippling at your feet; your ink carries one drop to the knot; then the restoring, only on one of you below full, and the washing, only on what had Heat, mist or Gathering.' },
     ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants his feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
     suzu: { g: 'rally_catch', gAnt: 500, gAt: 850, gAct: 560, p: 'curtain', pAt: 350, pAnt: 400, pAct: 550, motif: 'join', word: W(840, 300, 220, 120, 440, 1100, 1280), contact: 1280, rec: 1850, recD: 500, end: 2450, sfx: [[0, 'pen_stroke'], [760, 'wind']], note: 'Suzu steps back, twirls, plants and opens her arm — the cue; your thread swings round the opening like a curtain and turns its move back on it.' },
   };
@@ -346,18 +346,30 @@ RB.partyChoreo = (function () {
       case 'technique': {
         const who = plan.tech, rc = rel.comp != null ? rel.comp : rel.pc;
         // the two performances meet: a braided thread from both release points to the target
-        Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: { to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who } });
+        // (a fine braid under Nao's route and Mio's pour, which carry those two techniques themselves)
+        Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: Object.assign({ to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who }, who === 'nao' || who === 'mio' ? { soft: 1 } : {}) });
         const top = Math.max(0, H.fview(ctx, T).knots - 1);
-        // Nao: his cut marks the opening; your thread runs to that knot (and, when two really come loose,
-        // a short route links the two contacts — on that creature only, never a splash on the others)
+        // Nao: his pencil sketches a courier's route in the air, at the pencil's pace — out over the party, a
+        // waypoint tick on each knot that really comes loose (two; or the one, when one is left), then up to the
+        // creature; your thread follows the route to those knots, and when two really come loose they go
+        // together in one shared burst. On that creature only, never a splash on the others.
         if (who === 'nao') {
-          Q.push({ at: rc, type: 'fx', name: 'pSpot', d: c - rc + 200, p: { from: 'comp', foe: T } });
-          Q.push({ at: rel.pc, type: 'fx', name: 'pThread', d: c - rel.pc + 260, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, pull: 1 } });
           const u = fx.find((f) => f.t === 'unravel' && H.fid(ctx, f.foe) === T);
-          if (u && Math.min(u.n || 1, H.fview(ctx, T).knots) >= 2) Q.push({ at: c + 40, type: 'fx', name: 'pRoute', d: 560, p: { from: H.knotId(ctx, T, top), to: H.knotId(ctx, T, top - 1), foe: T } });
+          const two = !!u && Math.min(u.n || 1, H.fview(ctx, T).knots) >= 2;
+          const way = (two ? [top - 1, top] : [top]).map((j) => H.knotId(ctx, T, j));
+          const sig = t + F.pAt + F.pAnt, s0 = sig + Math.round(F.pAct * 0.18), s1 = sig + Math.round(F.pAct * 0.9), d = c + 640 - s0;
+          Q.push({ at: s0, type: 'fx', name: 'pCourier', d, p: { from: 'comp', foe: T, way, draw: (s1 - s0) / d, out: (c + 360 - s0) / d } });
+          const dt = c - rel.pc + 300;
+          Q.push({ at: rel.pc, type: 'fx', name: 'pThreadRoute', d: dt, p: { from: 'pc', foe: T, way, arrive: (c - 30 - rel.pc) / dt } });
+          if (two) Q.push({ at: c - 30, type: 'fx', name: 'pKnotPair', d: 720, p: { a: way[0], b: way[1], foe: T } });
         }
-        // Mio: the draught poured into your ink (the restoring and the washing are their own beats: react)
-        if (who === 'mio') Q.push({ at: rc, type: 'fx', name: 'pPour', d: Math.max(160, rel.pc - rc + 160), p: { from: 'comp', who: ['pc'], into: 'pc' } });
+        // Mio: the pour, to you both — the stream over the party, the fall of drops, ripples at your feet; your
+        // ink carries one drop of it to the knot (the restoring and the washing are their own beats: react)
+        if (who === 'mio') {
+          Q.push({ at: rc, type: 'fx', name: 'pCascade', d: 900, p: { from: 'comp', who: both } });
+          const d0 = rel.pc + 40, d = c - d0 + 300;
+          Q.push({ at: d0, type: 'fx', name: 'pDrop', d, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, land: (c - d0) / d } });
+        }
         // Ren: the shaded lamp's light thrown back over the pair; the level plane his hand draws, set before
         // each of you (the wards form on it at the result); the knot is the creature's own, at contact
         if (who === 'ren') {
@@ -451,7 +463,9 @@ RB.partyChoreo = (function () {
         const n = f.n || 1;
         ctx.kb = ctx.kb || {};
         const top = ctx.kb[i] != null ? ctx.kb[i] : H.fview(ctx, i).knots;
-        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * 90, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j, foe: i } });
+        // (Read the Opening frees its two at once: they go together, in one shared burst — pKnotPair)
+        const gap = plan && plan.tech === 'nao' ? 0 : 90;
+        for (let j = 0; j < n && top - 1 - j >= 0; j++) Q.push({ at: at + j * gap, type: 'fx', name: 'knotRelease', d: 560, p: { i: top - 1 - j, foe: i } });
         Q.push({ at, type: 'fx', name: 'loosen', d: 600, p: { foe: i } });
         foeCue('release', 420);
         ctx.kb[i] = Math.max(0, top - n);
@@ -492,10 +506,16 @@ RB.partyChoreo = (function () {
           // creatures that had Heat, mist or Gathering — each condition its own way of leaving
           const v = ctx.view || {}, max = v.max || 0;
           const low = both.filter((x) => max && v[x] != null && v[x] < max);
-          if (low.length) { Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: low } }); for (const x of low) pose(x, 'soothed', null, 700, 40); }
+          if (low.length) {
+            Q.push({ at: at - 120, type: 'fx', name: 'motes', d: 820, p: { who: low } });
+            Q.push({ at: at - 80, type: 'fx', name: 'pRefill', d: 760, p: { who: low } });
+            for (const x of low) pose(x, 'soothed', null, 700, 40);
+          }
           const fs = v.foes ? (f.all && ctx.reach ? ctx.reach.foes : [i]) : [i];
           fs.forEach((k, n) => {
             const fv = H.fview(ctx, k) || {}, d0 = at + 150 + n * 70;
+            // the rinse over it (its own beat), then each condition leaving its own way
+            if (fv.heat || fv.shroud || fv.charged) Q.push({ at: d0 - 60, type: 'fx', name: 'pWash', d: 860, p: { foe: k, heat: !!fv.heat, mist: !!fv.shroud, gather: !!fv.charged } });
             if (fv.heat) Q.push({ at: d0, type: 'fx', name: 'pSteam', d: 700, p: { foe: k, wash: 1 } });
             if (fv.shroud) { Q.push({ at: d0, type: 'fx', name: 'pShroudClear', d: 820, p: { foe: k, by: 'water' } }); Q.push({ at: d0 + 40, type: 'fx', name: 'mistPart', d: 620, p: { foe: k } }); }
             if (fv.charged) Q.push({ at: d0 + 30, type: 'fx', name: 'scatter', d: 520, p: { foe: k } });
@@ -503,7 +523,8 @@ RB.partyChoreo = (function () {
         }
         if (w === 'ren') for (const x of both) Q.push({ at: at + (x === 'comp' ? 80 : 0), type: 'fx', name: 'sealForm', d: 520, p: { to: x } });
         if (w === 'suzu') for (const k of f.all && ctx.reach ? ctx.reach.foes : [i]) Q.push({ at: at + (k === i ? 0 : 90), type: 'fx', name: 'fizzle', d: 520, p: { foe: k } });
-        if (w === 'nao') Q.push({ at, type: 'fx', name: 'pSpot', d: 400, p: { from: 'comp', foe: i, done: 1 } });
+        // Nao: the opening read — the route's ring pulled tight round it, its move answered
+        if (w === 'nao') Q.push({ at, type: 'fx', name: 'pRead', d: 560, p: { foe: i } });
         return true;
       }
       case 'comp': {

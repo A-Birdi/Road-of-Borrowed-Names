@@ -1,0 +1,108 @@
+{
+ "html": "tests/e2e/out/perf_v2/before.html",
+ "tag": "before",
+ "made": [
+  {
+   "file": "docs/screenshots/harmony/cutin/perf_v2/nao_before_1280x720.webp",
+   "bytes": 291374,
+   "times": [
+    0,
+    300,
+    590,
+    780,
+    884,
+    988,
+    1092,
+    1240,
+    1300,
+    1360,
+    1540,
+    1720,
+    2010,
+    2280
+   ],
+   "box": {
+    "x": 16,
+    "y": 132,
+    "width": 720,
+    "height": 438
+   }
+  },
+  {
+   "file": "docs/screenshots/harmony/cutin/perf_v2/nao_before_390x844.webp",
+   "bytes": 298286,
+   "times": [
+    0,
+    300,
+    590,
+    780,
+    884,
+    988,
+    1092,
+    1240,
+    1300,
+    1360,
+    1540,
+    1720,
+    2010,
+    2280
+   ],
+   "box": {
+    "x": 0,
+    "y": 78,
+    "width": 361,
+    "height": 267
+   }
+  },
+  {
+   "file": "docs/screenshots/harmony/cutin/perf_v2/mio_before_1280x720.webp",
+   "bytes": 290528,
+   "times": [
+    0,
+    300,
+    550,
+    750,
+    870,
+    990,
+    1110,
+    1200,
+    1320,
+    1500,
+    1680,
+    2060,
+    2330
+   ],
+   "box": {
+    "x": 16,
+    "y": 132,
+    "width": 720,
+    "height": 438
+   }
+  },
+  {
+   "file": "docs/screenshots/harmony/cutin/perf_v2/mio_before_390x844.webp",
+   "bytes": 265814,
+   "times": [
+    0,
+    300,
+    550,
+    750,
+    870,
+    990,
+    1110,
+    1200,
+    1320,
+    1500,
+    1680,
+    2060,
+    2330
+   ],
+   "box": {
+    "x": 0,
+    "y": 78,
+    "width": 361,
+    "height": 267
+   }
+  }
+ ]
+}

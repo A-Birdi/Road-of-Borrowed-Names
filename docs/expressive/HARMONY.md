@@ -244,9 +244,10 @@ proposals for `34m_battler_moves.js`.
 Files: `src/ui/82d_harmony_cutin.js` (`RB.harmonyCutin`), `src/styles/61h_harmony_cutin.css`, the `cutin` cue
 in `src/ui/82_battle_seq.js` (fired in `fire1()`'s visual branch, advanced in `tick()`, disposed in `settle()`,
 `finish()` and `detach()`; `T.cutin`), fixed-progress pose cues in `src/ui/83_battle_stage.js`, the timeline
-and carriers in `src/ui/84p_party_choreo.js`, effects `pRoute`, `pCurtain`, `pPlane` in `src/ui/84p_party_fx.js`,
-gestures in `src/engine/34m_battler_moves.js`, the rig's `turn` / `clothFlare` and the lamp's shutter in
-`src/engine/34_battlers.js`, the setting (`harmonyFlourish`, default On) in `src/engine/90_game.js` and
+and carriers in `src/ui/84p_party_choreo.js`, effects `pCourier`, `pThreadRoute`, `pKnotPair`, `pRead` (Nao), `pCascade`,
+`pDrop`, `pRefill`, `pWash` (Mio), `pCurtain`, `pPlane` in `src/ui/84p_party_fx.js`,
+gestures in `src/engine/34m_battler_moves.js`, the rig's `turn` / `clothFlare`, the lamp's shutter, Nao's pencil
+(`prop.pencil`) and Mio's larger vial (`prop.vialBig`) in `src/engine/34_battlers.js`, the setting (`harmonyFlourish`, default On) in `src/engine/90_game.js` and
 `src/ui/55_settings.js` (the folio's Battles rows and the battle's own settings sheet), the development viewer
 `src/ui/82e_harmony_dev.js` (`?dev=harmony`).
 
@@ -259,22 +260,22 @@ whether it shows: setting Off, Instant (never fired), a reading layer open (dial
 language task, a confirmation, any `aria-modal` sheet), a hidden tab, or no safe placement — each counted in
 `stats().suppressed`, a placement failure recorded in `stats().fallbacks` with every fit step tried.
 
-Measured (headless Chromium, 2026-10-03; presentation ms from the cue, frame resolution; Fast runs the presentation clock ×1.43, so 143 / 315 / 229 presentation ms are 100 / 220 / 160 ms of wall time):
+Measured (headless Chromium, 2026-10-03; presentation ms from the cue, frame resolution; Fast runs the presentation clock ×1.43, so 143 / 315 / 229 presentation ms are 100 / 220 / 160 ms of wall time; the Nao and Mio rows re-measured after their v2 performances, §7.3, by `node tests/e2e/harmony_cutin.mjs --docs` on a loaded shared machine):
 
 | Pairing | Speed | entering | holding | fading | disposed | first result | sequence end | wall time |
 |---|---|---|---|---|---|---|---|---|
-| Nao | normal | 0 | 183.3 | 566.7 | 783.3 | 1250 | 2300 | 2302 ms |
-| Nao | normal (reduced motion) | 0 | 183.3 | 566.6 | 783.2 | 1250 | 2300 | 2306 ms |
-| Nao | fast | 0 | 143 | 476.6 | 691.1 | 1263 | 2300 | 1607 ms |
-| Nao | fast (reduced motion) | 0 | 166.7 | 476.6 | 691.1 | 1263 | 2300 | 1608 ms |
-| Nao | instant | — | — | — | — (no portrait) | 0 | 2300 | 4 ms |
-| Nao | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2300 | 5 ms |
-| Mio | normal | 0 | 183.3 | 566.6 | 783.3 | 1217 | 2350 | 2357 ms |
-| Mio | normal (reduced motion) | 0 | 183.4 | 566.6 | 783.3 | 1217 | 2350 | 2356 ms |
-| Mio | fast | 0 | 143 | 476.6 | 691.1 | 1216 | 2350 | 1640 ms |
-| Mio | fast (reduced motion) | 0 | 143.1 | 476.8 | 691.3 | 1216 | 2350 | 1641 ms |
-| Mio | instant | — | — | — | — (no portrait) | 0 | 2350 | 5 ms |
-| Mio | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2350 | 4 ms |
+| Nao | normal | 0 | 183.4 | 566.7 | 783.4 | 1317 | 2350 | 2354 ms |
+| Nao | normal (reduced motion) | 0 | 183.3 | 566.6 | 783.3 | 1300 | 2350 | 2357 ms |
+| Nao | fast | 0 | 143 | 476.6 | 691.3 | 1311 | 2350 | 1634 ms |
+| Nao | fast (reduced motion) | 0 | 166.7 | 476.6 | 691.1 | 1311 | 2350 | 1628 ms |
+| Nao | instant | — | — | — | — (no portrait) | 0 | 2350 | 4 ms |
+| Nao | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2350 | 4 ms |
+| Mio | normal | 0 | 183.4 | 566.7 | 800 | 1250 | 2400 | 2403 ms |
+| Mio | normal (reduced motion) | 0 | 183.4 | 566.7 | 783.3 | 1250 | 2400 | 2383 ms |
+| Mio | fast | 0 | 143 | 476.8 | 691.3 | 1263 | 2400 | 1663 ms |
+| Mio | fast (reduced motion) | 0 | 166.7 | 476.6 | 691.1 | 1263 | 2400 | 1666 ms |
+| Mio | instant | — | — | — | — (no portrait) | 0 | 2400 | 11 ms |
+| Mio | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2400 | 6 ms |
 | Ren | normal | 0 | 183.3 | 566.7 | 783.3 | 1217 | 2300 | 2294 ms |
 | Ren | normal (reduced motion) | 0 | 183.3 | 566.6 | 783.3 | 1217 | 2300 | 2306 ms |
 | Ren | fast | 0 | 143.1 | 476.6 | 691.3 | 1216 | 2300 | 1607 ms |
@@ -361,13 +362,29 @@ anticipation key, the signature, the recovery's own key) — cut, never travelle
 
 | | Companion: anticipation → signature (cue) → held → recovery | You (rally) | Results |
 |---|---|---|---|
-| Nao — `opening` | 400–780 weight dropped (pelvis −2.8 → −5.6 units), head and shoulders on the creature, a hand on the satchel → 780–1,300 a short step in (the foot lifted), the flat hand cutting across, edge first, finishing in a point (cue 1,102) → held → 1,810–2,210 the hand lowers, he turns to you and nods | 0–500 a breath and the writing hand gathered; held to 900; `rally_thread` 900–1,420 (release 1,118: the thread sent along his line, then drawn back taut) | knots 1,240 and 1,330 joined by a short ochre route only when two really come loose; nothing on any other creature; end 2,300 |
-| Mio — `draught` | 350–750 the hand to the bottles at her hip, the vial raised to eye level, the other hand cupped under it → 750–1,350 steadied, uncorked, tipped into your ink (cue 1,020) → held → 1,860–2,260 a glance to you, the cork back, the vial to her hip | `rally_release` 800–1,360 (the folio open to receive the pour, the hand rising and opening over you both; release 1,052) | the knot 1,200; the restoring 1,230–1,350 only on one of you below full (numbers from the applied change); the washing from 1,500 only on creatures that had Heat (steam), mist (parting) or Gathering (scatter); end 2,350 |
+| Nao — `opening` (v2) | 400–780: his right hand up to his ear, the courier pencil taken from behind it (560–613; the pencil is a prop of the battle rig, as in his portrait), brought out before his shoulder as he starts to turn (turn 26°), the weight dropped (pelvis −2.8 → −5.8 units) → 780–888 turned sharply side-on (turn 54°, the rig's own side view, read from behind), a step in with the right foot while the back foot stays planted through the turn, the pencil arm raised, the left arm swung back for balance → 888–1,320 the pencil sketches the route out to the creature, ticking twice (1,032 — the cue — and 1,176) → held at the route's end to 1,850 → 1,850–2,350 the pencil back behind his ear with a glance to you (2,050–2,100), a short nod (2,230), the stance | 0–500 a breath and the writing hand gathered; held to 900; `rally_thread` 900–1,420 (release 1,118: the thread sent out along his route, then drawn back taut); recovery 1,790–2,290 | `pCourier` from 888: a dashed gold route sketched at the pencil's pace over the party, a waypoint pin landing on each knot that really comes loose (1,032 and 1,176; when only one is left, the one, at 1,104), then up to the creature, where a ring closes round the opening (1,320); `pThreadRoute` 1,118: your thread follows the route to those knots; knots 1,300 together, in one shared burst (`pKnotPair`, a ring round both, the hop between them flaring) only when two really come loose; `pRead` 1,450 (its move answered: the ring pulled tight round the opening); the braid (`pJoin`) drawn fine under the route; nothing on any other creature; end 2,350 |
+| Mio — `draught` (v2) | 350–750: a hand to the bottles at her hip (518), the vial — drawn larger in this technique (`vialBig`, about 1.5 art px wider and 3 longer) — raised to eye level and cupped as she turns (turn 26°) → 750–1,350 uncorked (834), lifted high over her head, side-on (978, turn 40°), tipped from there (the cue 1,020, as the stream leaves) and poured (1,110), her free hand spread over you both → held, still tipping, to 1,920 → 1,920–2,360 the cork back before her chest (2,052), the vial at her hip and a small satisfied nod (2,140), her head up (2,237), the stance | `rally_release` 800–1,360 (the folio open to receive the pour, the hand rising and opening over you both; release 1,052); recovery 1,860–2,300 | `pCascade` 1,020–1,920, the pour to you both (also when both are full: the pour is the act): a clear stream arcs from the vial's lip high over the party (its head over you by about 1,240), breaks into a shimmering fall of drops and streaks over each of you (about 1,200–1,740), ripples at both pairs of feet (from about 1,330); `pDrop` 1,092: your ink carries one drop of it to the knot, landing at 1,250; the knot 1,250; the restoring at 1,400 (`motes` from 1,280, `pRefill` — clear water rising round you — from 1,320, the `soothed` pose) only on one of you below full (numbers from the applied change); the washing: a rinse (`pWash`) from 1,490 over each creature that had Heat, mist or Gathering, then steam (Heat), the mist parting, the gathered motes scattering from 1,550 (+70 for each further creature) — only what was there; the braid drawn fine; end 2,400 |
 | Ren — `ward_plane` | 380–780 knees down, the lamp drawn in at his left → 780–1,330 the lamp raised high at his side and shaded (its shutter toward the creatures), the flat right hand drawing a level line at chest height (cue 1,110) → held → 1,810–2,210 the lamp lowered, a check to you and to the other side | `rally_seal` 760–1,320 (the brush along the plane from its other end, closed with a short vertical stroke; release 1,197) | the knot on the creature 1,200; the plane before each of you from 1,050, a ward at each 1,350 (+80); end 2,300 |
 | Suzu — `curtain` | 350–750 a step back onto the left foot, the arm drawn across → 750–1,014 one twirl on the spot (the rig's own side, front, other side and back; hem and hair flaring a beat late) → 1,014–1,113 planted, the arm opened toward the action (cue 1,091) → held → 1,910–2,410 a half-bow, a hand to her hip | `rally_catch` 850–1,410 (lifted high, swept out as a curtain's arc round the opening, hooked back; release 1,141) | knots 1,280 and 1,370; turned back 1,430 (+90 for each other creature); in a group each other creature's knot 1,580, 1,730, the curtain round each; end 2,450 |
 
-Short local accents (no voice): a brush stroke as the rally starts; Nao `pen_up` at his point, Mio `splash` at
-the pour, Ren `lantern` as the lamp rises, Suzu `wind` with the twirl; the existing `technique` chime at the result.
+Short local accents (no voice): a brush stroke as the rally starts; Nao `pen_down` as his pencil comes out (600), a
+`pen_stroke` as the sketch starts (890) and `pen_up` at the route's end (1,320), Mio `splash` at the pour, Ren `lantern`
+as the lamp rises, Suzu `wind` with the twirl; the existing `technique` chime at the result.
+
+Nao and Mio, v2 (the owner's review of 2026-10-03: "Suzu and Ren's animations look great in battle — Nao and Mio's
+feel a tad lacking in comparison"). The first build gave Nao an `opening` that barely differed from his ordinary point
+and lunge from behind, an ink circle and threads that read like a plain Unravel, and a short ochre line after contact
+for "two knots at once"; Mio's vial was tiny at play scale, her eye-level and pouring keys hardly differed, the pour went
+only to you as a few drops, and the payoff read as a number on one of you. v2 keeps each one's character and matches
+Suzu's and Ren's readability: three purposeful silhouettes each with in-betweens (Nao: the pencil from behind his ear,
+side-on sketching, the pencil back and a nod; Mio: the vial at eye level, high over her head pouring, the satisfied nod),
+an effect that is clearly that companion's (the courier's route; the fountain of clear water over both of you), and the
+technique's defining rule given its own moment (the two knots going together; the pour reaching both of you, the
+restoring only where it restores, the rinse only where it washes something off). Before and after frame sheets at
+1280 × 720 and 390 × 844: docs/screenshots/harmony/cutin/perf_v2/ (`node tests/e2e/harmony_perf_sheets.mjs`).
+Reduced motion: Nao — the pencil out before his shoulder, the route's end, the pencil back behind his ear with a glance
+to you; Mio — the vial at eye level, the vial high and tipped, the nod with the vial at her hip; their effects drawn
+as still marks (the whole route with its pins and ring; the arc, a few drops and a ripple at each of your feet).
 
 ### 7.4 Evidence and measurements
 

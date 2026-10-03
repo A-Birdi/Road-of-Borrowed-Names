@@ -1,23 +1,23 @@
 {
- "when": "2026-10-03T10:52:34.194Z",
+ "when": "2026-10-03T19:38:36.409Z",
  "browser": "Chromium (Playwright, headless), software canvas, device pixel ratio 1, shared 4-core Linux machine — not a physical device",
  "cost": {
   "nao": {
    "cutin": {
     "startMs": [
      11.4,
-     5.4,
-     2.6,
-     2.5
+     7.3,
+     3.6,
+     2.7
     ],
-    "frameMaxMs": 1.9,
-    "frameMeanMs": 0.158,
-    "frames": 155
+    "frameMaxMs": 2.2,
+    "frameMeanMs": 0.252,
+    "frames": 152
    },
    "artBuild": {
-    "last": 19.5,
-    "mean": 24.8,
-    "max": 48.7
+    "last": 23.5,
+    "mean": 28.3,
+    "max": 52.2
    },
    "artCache": {
     "busts": 8,
@@ -25,20 +25,20 @@
     "MiB": 1.18
    },
    "figures": {
-    "frames": 248,
-    "bytes": 8253440,
-    "mib": 7.871,
+    "frames": 271,
+    "bytes": 9018880,
+    "mib": 8.601,
     "perActor": {
      "pc": 124,
-     "nao": 124
+     "nao": 147
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 248,
-    "meanBuildMs": 7.22,
-    "maxBuildMs": 54.1,
-    "hits": 4308,
+    "built": 271,
+    "meanBuildMs": 8.91,
+    "maxBuildMs": 90.7,
+    "hits": 4541,
     "evicted": 0,
     "released": 0
    }
@@ -46,21 +46,21 @@
   "mio": {
    "cutin": {
     "startMs": [
-     8.5,
-     4.3,
-     3.6,
-     2.4,
-     2.5,
-     3.1
+     8.6,
+     5,
+     6.4,
+     5.6,
+     2.6,
+     5.2
     ],
-    "frameMaxMs": 1.7,
-    "frameMeanMs": 0.167,
-    "frames": 251
+    "frameMaxMs": 8,
+    "frameMeanMs": 0.436,
+    "frames": 227
    },
    "artBuild": {
-    "last": 17.8,
-    "mean": 22.2,
-    "max": 63.7
+    "last": 21.1,
+    "mean": 35.2,
+    "max": 77.3
    },
    "artCache": {
     "busts": 8,
@@ -68,20 +68,20 @@
     "MiB": 1.18
    },
    "figures": {
-    "frames": 257,
-    "bytes": 8552960,
-    "mib": 8.157,
+    "frames": 281,
+    "bytes": 9351680,
+    "mib": 8.918,
     "perActor": {
      "pc": 137,
-     "mio": 120
+     "mio": 144
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 260,
-    "meanBuildMs": 6.5,
-    "maxBuildMs": 52.4,
-    "hits": 5876,
+    "built": 284,
+    "meanBuildMs": 11.42,
+    "maxBuildMs": 110.1,
+    "hits": 6133,
     "evicted": 0,
     "released": 3
    }
@@ -89,19 +89,19 @@
   "ren": {
    "cutin": {
     "startMs": [
-     7.9,
-     4.6,
-     4.6,
-     3.9
+     11.8,
+     12.3,
+     6.5,
+     5
     ],
-    "frameMaxMs": 2.4,
-    "frameMeanMs": 0.166,
-    "frames": 154
+    "frameMaxMs": 6.4,
+    "frameMeanMs": 0.443,
+    "frames": 136
    },
    "artBuild": {
-    "last": 19.1,
-    "mean": 21.5,
-    "max": 45.5
+    "last": 22.5,
+    "mean": 40,
+    "max": 89.5
    },
    "artCache": {
     "busts": 8,
@@ -109,20 +109,20 @@
     "MiB": 1.18
    },
    "figures": {
-    "frames": 244,
-    "bytes": 8120320,
-    "mib": 7.744,
+    "frames": 246,
+    "bytes": 8186880,
+    "mib": 7.808,
     "perActor": {
      "ren": 120,
-     "pc": 124
+     "pc": 126
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 244,
-    "meanBuildMs": 8.11,
-    "maxBuildMs": 64.7,
-    "hits": 4290,
+    "built": 246,
+    "meanBuildMs": 13.45,
+    "maxBuildMs": 133.7,
+    "hits": 4315,
     "evicted": 0,
     "released": 0
    }
@@ -130,19 +130,19 @@
   "suzu": {
    "cutin": {
     "startMs": [
-     9.5,
-     4.7,
-     4.7,
-     4
+     13.8,
+     10.2,
+     5.2,
+     4.8
     ],
-    "frameMaxMs": 1.3,
-    "frameMeanMs": 0.163,
-    "frames": 153
+    "frameMaxMs": 4.1,
+    "frameMeanMs": 0.414,
+    "frames": 142
    },
    "artBuild": {
-    "last": 17.7,
-    "mean": 24.5,
-    "max": 71.5
+    "last": 29.5,
+    "mean": 30.7,
+    "max": 74.8
    },
    "artCache": {
     "busts": 8,
@@ -150,20 +150,20 @@
     "MiB": 1.18
    },
    "figures": {
-    "frames": 293,
-    "bytes": 9751040,
-    "mib": 9.299,
+    "frames": 290,
+    "bytes": 9651200,
+    "mib": 9.204,
     "perActor": {
-     "pc": 125,
-     "suzu": 168
+     "pc": 123,
+     "suzu": 167
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 293,
-    "meanBuildMs": 9.43,
-    "maxBuildMs": 64.5,
-    "hits": 4635,
+    "built": 290,
+    "meanBuildMs": 13.25,
+    "maxBuildMs": 135.2,
+    "hits": 4629,
     "evicted": 0,
     "released": 0
    }
@@ -203,13 +203,13 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
+    "holding@183.4",
     "fading@566.7",
-    "disposed@783.3"
+    "disposed@783.4"
    ],
-   "firstResult": 1250,
-   "techMs": 2302,
-   "end": 2300,
+   "firstResult": 1317,
+   "techMs": 2354,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -227,11 +227,11 @@
     "entering@0",
     "holding@183.3",
     "fading@566.6",
-    "disposed@783.2"
+    "disposed@783.3"
    ],
-   "firstResult": 1250,
-   "techMs": 2306,
-   "end": 2300,
+   "firstResult": 1300,
+   "techMs": 2357,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -249,11 +249,11 @@
     "entering@0",
     "holding@143",
     "fading@476.6",
-    "disposed@691.1"
+    "disposed@691.3"
    ],
-   "firstResult": 1263,
-   "techMs": 1607,
-   "end": 2300,
+   "firstResult": 1311,
+   "techMs": 1634,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -273,9 +273,9 @@
     "fading@476.6",
     "disposed@691.1"
    ],
-   "firstResult": 1263,
-   "techMs": 1608,
-   "end": 2300,
+   "firstResult": 1311,
+   "techMs": 1628,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -291,7 +291,7 @@
    "marks": [],
    "firstResult": 0,
    "techMs": 4,
-   "end": 2300,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -306,8 +306,8 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 5,
-   "end": 2300,
+   "techMs": 4,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -321,9 +321,9 @@
    "variant": null,
    "scale": null,
    "marks": [],
-   "firstResult": 1250,
-   "techMs": 2306,
-   "end": 2300,
+   "firstResult": 1300,
+   "techMs": 2337,
+   "end": 2350,
    "kind": "player"
   },
   {
@@ -339,13 +339,13 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.6",
-    "disposed@783.3"
+    "holding@183.4",
+    "fading@566.7",
+    "disposed@800"
    ],
-   "firstResult": 1217,
-   "techMs": 2357,
-   "end": 2350,
+   "firstResult": 1250,
+   "techMs": 2403,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -362,12 +362,12 @@
     "inactive@0",
     "entering@0",
     "holding@183.4",
-    "fading@566.6",
+    "fading@566.7",
     "disposed@783.3"
    ],
-   "firstResult": 1217,
-   "techMs": 2356,
-   "end": 2350,
+   "firstResult": 1250,
+   "techMs": 2383,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -384,12 +384,12 @@
     "inactive@0",
     "entering@0",
     "holding@143",
-    "fading@476.6",
-    "disposed@691.1"
+    "fading@476.8",
+    "disposed@691.3"
    ],
-   "firstResult": 1216,
-   "techMs": 1640,
-   "end": 2350,
+   "firstResult": 1263,
+   "techMs": 1663,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -405,13 +405,13 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@143.1",
-    "fading@476.8",
-    "disposed@691.3"
+    "holding@166.7",
+    "fading@476.6",
+    "disposed@691.1"
    ],
-   "firstResult": 1216,
-   "techMs": 1641,
-   "end": 2350,
+   "firstResult": 1263,
+   "techMs": 1666,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -426,8 +426,8 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 5,
-   "end": 2350,
+   "techMs": 11,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -442,8 +442,8 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 4,
-   "end": 2350,
+   "techMs": 6,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -457,9 +457,9 @@
    "variant": null,
    "scale": null,
    "marks": [],
-   "firstResult": 1217,
-   "techMs": 2357,
-   "end": 2350,
+   "firstResult": 1267,
+   "techMs": 2392,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -479,9 +479,9 @@
     "fading@566.7",
     "disposed@783.3"
    ],
-   "firstResult": 1200,
-   "techMs": 2356,
-   "end": 2350,
+   "firstResult": 1267,
+   "techMs": 2402,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -497,13 +497,13 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.7",
-    "disposed@783.3"
+    "holding@183.4",
+    "fading@566.6",
+    "disposed@783.4"
    ],
-   "firstResult": 1217,
-   "techMs": 2356,
-   "end": 2350,
+   "firstResult": 1250,
+   "techMs": 2381,
+   "end": 2400,
    "kind": "player"
   },
   {
@@ -519,12 +519,12 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.7",
+    "holding@199.9",
+    "fading@566.6",
     "disposed@783.3"
    ],
    "firstResult": 1217,
-   "techMs": 2294,
+   "techMs": 2303,
    "end": 2300,
    "kind": "player"
   },
@@ -543,10 +543,10 @@
     "entering@0",
     "holding@183.3",
     "fading@566.6",
-    "disposed@783.3"
+    "disposed@783.2"
    ],
    "firstResult": 1217,
-   "techMs": 2306,
+   "techMs": 2298,
    "end": 2300,
    "kind": "player"
   },
@@ -563,12 +563,12 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@143.1",
-    "fading@476.6",
-    "disposed@691.3"
+    "holding@166.7",
+    "fading@476.5",
+    "disposed@691.1"
    ],
-   "firstResult": 1216,
-   "techMs": 1607,
+   "firstResult": 1215,
+   "techMs": 1600,
    "end": 2300,
    "kind": "player"
   },
@@ -585,12 +585,12 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.9",
-    "fading@476.6",
-    "disposed@691.3"
+    "holding@143",
+    "fading@476.8",
+    "disposed@691.1"
    ],
-   "firstResult": 1215,
-   "techMs": 1606,
+   "firstResult": 1216,
+   "techMs": 1597,
    "end": 2300,
    "kind": "player"
   },
@@ -606,7 +606,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 6,
+   "techMs": 5,
    "end": 2300,
    "kind": "player"
   },
@@ -637,8 +637,8 @@
    "variant": null,
    "scale": null,
    "marks": [],
-   "firstResult": 1200,
-   "techMs": 2300,
+   "firstResult": 1217,
+   "techMs": 2296,
    "end": 2300,
    "kind": "player"
   },
@@ -657,10 +657,10 @@
     "entering@0",
     "holding@183.3",
     "fading@566.6",
-    "disposed@783.3"
+    "disposed@783.2"
    ],
    "firstResult": 1283,
-   "techMs": 2443,
+   "techMs": 2454,
    "end": 2450,
    "kind": "player"
   },
@@ -682,7 +682,7 @@
     "disposed@783.4"
    ],
    "firstResult": 1283,
-   "techMs": 2454,
+   "techMs": 2439,
    "end": 2450,
    "kind": "player"
   },
@@ -699,12 +699,12 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@143",
+    "holding@166.7",
     "fading@476.6",
     "disposed@691.1"
    ],
    "firstResult": 1287,
-   "techMs": 1706,
+   "techMs": 1685,
    "end": 2450,
    "kind": "player"
   },
@@ -721,12 +721,12 @@
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.7",
+    "holding@166.9",
     "fading@476.6",
     "disposed@691.1"
    ],
    "firstResult": 1287,
-   "techMs": 1707,
+   "techMs": 1711,
    "end": 2450,
    "kind": "player"
   },
@@ -742,7 +742,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 4,
+   "techMs": 5,
    "end": 2450,
    "kind": "player"
   },
@@ -774,7 +774,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 1283,
-   "techMs": 2456,
+   "techMs": 2458,
    "end": 2450,
    "kind": "player"
   }
@@ -806,13 +806,13 @@
     "h": 23.3,
     "area": 6.3
    },
-   "checkedFrames": 35,
+   "checkedFrames": 29,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1250,
+   "disposedAt": 800,
+   "firstResult": 1300,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -841,13 +841,13 @@
     "h": 23.3,
     "area": 6.3
    },
-   "checkedFrames": 36,
+   "checkedFrames": 30,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
    "disposedAt": 783.2,
-   "firstResult": 1216
+   "firstResult": 1267
   },
   {
    "name": "1440x900",
@@ -909,12 +909,12 @@
     "h": 17.3,
     "area": 3.8
    },
-   "checkedFrames": 35,
+   "checkedFrames": 31,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
-   "disposedAt": 783.4,
+   "disposedAt": 800,
    "firstResult": 1283
   },
   {
@@ -943,13 +943,13 @@
     "h": 23.1,
     "area": 5.7
    },
-   "checkedFrames": 35,
+   "checkedFrames": 34,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1250,
+   "disposedAt": 783.4,
+   "firstResult": 1317,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -978,13 +978,13 @@
     "h": 11.5,
     "area": 1.4
    },
-   "checkedFrames": 34,
+   "checkedFrames": 28,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
    "disposedAt": 783.3,
-   "firstResult": 1217,
+   "firstResult": 1267,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -1013,13 +1013,13 @@
     "h": 22,
     "area": 13.5
    },
-   "checkedFrames": 36,
+   "checkedFrames": 32,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
    "disposedAt": 783.3,
-   "firstResult": 1217
+   "firstResult": 1200
   },
   {
    "name": "768x1024 200%",
@@ -1047,13 +1047,13 @@
     "h": 22.9,
     "area": 14
    },
-   "checkedFrames": 34,
+   "checkedFrames": 27,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
-   "disposedAt": 783.3,
-   "firstResult": 1283
+   "disposedAt": 783.2,
+   "firstResult": 1317
   },
   {
    "name": "390x844",
@@ -1081,13 +1081,13 @@
     "h": 19.7,
     "area": 15.8
    },
-   "checkedFrames": 36,
+   "checkedFrames": 27,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
    "disposedAt": 783.3,
-   "firstResult": 1250,
+   "firstResult": 1300,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -1140,8 +1140,8 @@
    },
    "layouts": 2,
    "relaid": 1,
-   "disposedAt": 183.4,
-   "firstResult": 1217,
+   "disposedAt": 150,
+   "firstResult": 1267,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -1170,13 +1170,13 @@
     "h": 23.4,
     "area": 23
    },
-   "checkedFrames": 36,
+   "checkedFrames": 35,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
    "disposedAt": 783.3,
-   "firstResult": 1200
+   "firstResult": 1217
   },
   {
    "name": "320x640 200%",
@@ -1248,13 +1248,13 @@
     "h": 21,
     "area": 3.4
    },
-   "checkedFrames": 36,
+   "checkedFrames": 33,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.4,
-   "firstResult": 1250
+   "disposedAt": 783.2,
+   "firstResult": 1317
   },
   {
    "name": "844x390 200%",
@@ -1303,7 +1303,7 @@
    "layouts": 1,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1217
+   "firstResult": 1267
   }
  ],
  "plan": [
@@ -1333,13 +1333,13 @@
     "h": 10.4,
     "area": 1.3
    },
-   "checkedFrames": 35,
+   "checkedFrames": 32,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.4,
-   "firstResult": 1200
+   "disposedAt": 783.3,
+   "firstResult": 1217
   },
   {
    "name": "Keep visible + Expanded, 1648×840, Suzu",
@@ -1427,7 +1427,7 @@
    "layouts": 1,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1283
+   "firstResult": 1300
   },
   {
    "name": "group of three, 1648×840, Mio",
@@ -1455,13 +1455,13 @@
     "h": 9.9,
     "area": 0.9
    },
-   "checkedFrames": 35,
+   "checkedFrames": 28,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.4,
-   "firstResult": 1200
+   "disposedAt": 783.3,
+   "firstResult": 1267
   },
   {
    "name": "group of two, 1920×1080, Nao",
@@ -1489,13 +1489,13 @@
     "h": 7.7,
     "area": 0.6
    },
-   "checkedFrames": 34,
+   "checkedFrames": 28,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.2,
-   "firstResult": 1250
+   "disposedAt": 816.7,
+   "firstResult": 1300
   },
   {
    "name": "finishing technique, 1280×720, Nao",
@@ -1523,13 +1523,13 @@
     "h": 23.1,
     "area": 5.7
    },
-   "checkedFrames": 36,
+   "checkedFrames": 32,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
    "disposedAt": 783.3,
-   "firstResult": 1250
+   "firstResult": 1300
   },
   {
    "name": "Adaptive + Expanded, 390×844, Mio",
@@ -1557,13 +1557,13 @@
     "h": 19.7,
     "area": 15.8
    },
-   "checkedFrames": 35,
+   "checkedFrames": 27,
    "overlaps": 0,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1217
+   "disposedAt": 783.2,
+   "firstResult": 1267
   },
   {
    "name": "Keep visible, 390×844, Mio",
@@ -1607,7 +1607,7 @@
    "layouts": 1,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1216
+   "firstResult": 1267
   }
  ],
  "frozen": [
@@ -1761,9 +1761,9 @@
    "k": 1,
    "comp": "nao",
    "shown": 1,
-   "listeners": 148,
-   "nodes": 463,
-   "heapMB": 23.7,
+   "listeners": 134,
+   "nodes": 264,
+   "heapMB": 24,
    "left": {
     "combat": 0,
     "chal": 0,
@@ -1781,22 +1781,22 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 210
+   "frames": 153
   },
   {
    "k": 2,
    "comp": "mio",
    "shown": 1,
-   "listeners": 160,
-   "nodes": 684,
-   "heapMB": 24.9,
+   "listeners": 137,
+   "nodes": 264,
+   "heapMB": 25.1,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -1807,22 +1807,22 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 236
+   "frames": 255
   },
   {
    "k": 3,
    "comp": "ren",
    "shown": 1,
-   "listeners": 178,
-   "nodes": 902,
-   "heapMB": 25.5,
+   "listeners": 143,
+   "nodes": 264,
+   "heapMB": 25.7,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -1833,15 +1833,15 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 285
+   "frames": 276
   },
   {
    "k": 4,
    "comp": "suzu",
    "shown": 1,
-   "listeners": 193,
-   "nodes": 1154,
-   "heapMB": 25.8,
+   "listeners": 138,
+   "nodes": 266,
+   "heapMB": 26,
    "left": {
     "combat": 0,
     "chal": 0,
@@ -1859,40 +1859,14 @@
    "comps": 2,
    "artMiB": 0.66,
    "timers": 0,
-   "frames": 235
+   "frames": 225
   },
   {
    "k": 5,
    "comp": "nao",
    "shown": 1,
-   "listeners": 204,
-   "nodes": 1372,
-   "heapMB": 26.2,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 299
-  },
-  {
-   "k": 6,
-   "comp": "mio",
-   "shown": 1,
-   "listeners": 214,
-   "nodes": 1590,
+   "listeners": 137,
+   "nodes": 266,
    "heapMB": 26.5,
    "left": {
     "combat": 0,
@@ -1911,14 +1885,14 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 296
+   "frames": 326
   },
   {
-   "k": 7,
-   "comp": "ren",
+   "k": 6,
+   "comp": "mio",
    "shown": 1,
-   "listeners": 235,
-   "nodes": 1850,
+   "listeners": 134,
+   "nodes": 266,
    "heapMB": 26.6,
    "left": {
     "combat": 0,
@@ -1926,7 +1900,7 @@
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -1937,22 +1911,48 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 298
+   "frames": 323
+  },
+  {
+   "k": 7,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 144,
+   "nodes": 264,
+   "heapMB": 26.9,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 303
   },
   {
    "k": 8,
    "comp": "suzu",
    "shown": 1,
-   "listeners": 248,
-   "nodes": 2069,
-   "heapMB": 26.9,
+   "listeners": 140,
+   "nodes": 264,
+   "heapMB": 28,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -1963,22 +1963,22 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 395
+   "frames": 368
   },
   {
    "k": 9,
    "comp": "nao",
    "shown": 1,
-   "listeners": 268,
-   "nodes": 2348,
-   "heapMB": 27,
+   "listeners": 141,
+   "nodes": 264,
+   "heapMB": 27.2,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -1989,92 +1989,14 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 353
+   "frames": 386
   },
   {
    "k": 10,
    "comp": "mio",
    "shown": 1,
-   "listeners": 281,
-   "nodes": 2567,
-   "heapMB": 26.9,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 346
-  },
-  {
-   "k": 11,
-   "comp": "ren",
-   "shown": 1,
-   "listeners": 295,
-   "nodes": 2819,
-   "heapMB": 26.9,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 4,
-   "comps": 2,
-   "artMiB": 0.66,
-   "timers": 0,
-   "frames": 299
-  },
-  {
-   "k": 12,
-   "comp": "suzu",
-   "shown": 1,
-   "listeners": 309,
-   "nodes": 3037,
-   "heapMB": 27,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 412
-  },
-  {
-   "k": 13,
-   "comp": "nao",
-   "shown": 1,
-   "listeners": 321,
-   "nodes": 3255,
+   "listeners": 137,
+   "nodes": 266,
    "heapMB": 27.1,
    "left": {
     "combat": 0,
@@ -2093,14 +2015,66 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 361
+   "frames": 373
   },
   {
-   "k": 14,
-   "comp": "mio",
+   "k": 11,
+   "comp": "ren",
    "shown": 1,
-   "listeners": 339,
-   "nodes": 3534,
+   "listeners": 145,
+   "nodes": 266,
+   "heapMB": 27.1,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 4,
+   "comps": 2,
+   "artMiB": 0.66,
+   "timers": 0,
+   "frames": 299
+  },
+  {
+   "k": 12,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 141,
+   "nodes": 264,
+   "heapMB": 27.2,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 418
+  },
+  {
+   "k": 13,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 141,
+   "nodes": 264,
    "heapMB": 27.3,
    "left": {
     "combat": 0,
@@ -2108,7 +2082,7 @@
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -2119,66 +2093,14 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 360
+   "frames": 391
   },
   {
-   "k": 15,
-   "comp": "ren",
+   "k": 14,
+   "comp": "mio",
    "shown": 1,
-   "listeners": 353,
-   "nodes": 3752,
-   "heapMB": 27.4,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 355
-  },
-  {
-   "k": 16,
-   "comp": "suzu",
-   "shown": 1,
-   "listeners": 366,
-   "nodes": 3971,
-   "heapMB": 27.4,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 411
-  },
-  {
-   "k": 17,
-   "comp": "nao",
-   "shown": 1,
-   "listeners": 378,
-   "nodes": 4190,
+   "listeners": 140,
+   "nodes": 264,
    "heapMB": 27.5,
    "left": {
     "combat": 0,
@@ -2186,7 +2108,7 @@
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -2197,14 +2119,92 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 365
+   "frames": 384
+  },
+  {
+   "k": 15,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 142,
+   "nodes": 264,
+   "heapMB": 27.2,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 364
+  },
+  {
+   "k": 16,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 140,
+   "nodes": 264,
+   "heapMB": 27.6,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 403
+  },
+  {
+   "k": 17,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 141,
+   "nodes": 264,
+   "heapMB": 27.5,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 393
   },
   {
    "k": 18,
    "comp": "mio",
    "shown": 1,
-   "listeners": 390,
-   "nodes": 4408,
+   "listeners": 144,
+   "nodes": 266,
    "heapMB": 27.4,
    "left": {
     "combat": 0,
@@ -2212,7 +2212,7 @@
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -2229,34 +2229,8 @@
    "k": 19,
    "comp": "ren",
    "shown": 1,
-   "listeners": 405,
-   "nodes": 4626,
-   "heapMB": 27.4,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 366
-  },
-  {
-   "k": 20,
-   "comp": "suzu",
-   "shown": 1,
-   "listeners": 418,
-   "nodes": 4844,
+   "listeners": 144,
+   "nodes": 264,
    "heapMB": 27.6,
    "left": {
     "combat": 0,
@@ -2264,7 +2238,7 @@
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 148
+    "all": 147
    },
    "mode": "world",
    "layers": 0,
@@ -2275,7 +2249,33 @@
    "comps": 4,
    "artMiB": 1.18,
    "timers": 0,
-   "frames": 418
+   "frames": 367
+  },
+  {
+   "k": 20,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 143,
+   "nodes": 264,
+   "heapMB": 27.7,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 147
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 2,
+   "busts": 8,
+   "comps": 4,
+   "artMiB": 1.18,
+   "timers": 0,
+   "frames": 397
   }
  ],
  "devViewer": [
@@ -2412,7 +2412,7 @@
     ],
     "overlaps": 0,
     "checkedFrames": 30,
-    "disposedAt": 783.4,
+    "disposedAt": 783.3,
     "firstResult": 1283
    },
    {
@@ -2434,7 +2434,7 @@
      "scale": 1,
      "variant": "standard",
      "fit": "standard-moved",
-     "phase": "cue",
+     "phase": "peak",
      "rect": {
       "x": 0,
       "y": 23,
@@ -2503,8 +2503,8 @@
      }
     ],
     "overlaps": 0,
-    "checkedFrames": 22,
-    "disposedAt": 691,
+    "checkedFrames": 11,
+    "disposedAt": 714.9,
     "firstResult": 1287
    },
    {
@@ -2575,8 +2575,8 @@
      }
     ],
     "overlaps": 0,
-    "checkedFrames": 36,
-    "disposedAt": 783.3,
+    "checkedFrames": 32,
+    "disposedAt": 783.2,
     "firstResult": 1283
    },
    {
@@ -2667,9 +2667,9 @@
      }
     ],
     "overlaps": 0,
-    "checkedFrames": 34,
-    "disposedAt": 800,
-    "firstResult": 1283
+    "checkedFrames": 20,
+    "disposedAt": 783.4,
+    "firstResult": 1300
    }
   ]
  },
@@ -2682,25 +2682,25 @@
  "videos": {
   "nao": {
    "file": "docs/screenshots/harmony/cutin/technique_nao_normal_1280x720.webm",
-   "bytes": 1385144,
+   "bytes": 1665576,
    "shown": 1,
    "fit": "compact"
   },
   "mio": {
    "file": "docs/screenshots/harmony/cutin/technique_mio_normal_1280x720.webm",
-   "bytes": 1287734,
+   "bytes": 1719168,
    "shown": 1,
    "fit": "compact"
   },
   "ren": {
    "file": "docs/screenshots/harmony/cutin/technique_ren_normal_1280x720.webm",
-   "bytes": 1310067,
+   "bytes": 1783424,
    "shown": 1,
    "fit": "compact"
   },
   "suzu": {
    "file": "docs/screenshots/harmony/cutin/technique_suzu_normal_1280x720.webm",
-   "bytes": 1339232,
+   "bytes": 1677143,
    "shown": 1,
    "fit": "compact"
   }
@@ -2708,25 +2708,25 @@
  "sheets": {
   "nao": {
    "file": "docs/screenshots/harmony/cutin/stage_nao_portrait_off.webp",
-   "bytes": 193784,
+   "bytes": 199388,
    "times": [
     0,
     300,
     628,
     780,
-    884,
-    962,
-    1040,
-    1102,
-    1300,
-    1340,
-    2010,
-    2280
+    900,
+    990,
+    1080,
+    1152,
+    1380,
+    1400,
+    2100,
+    2330
    ]
   },
   "mio": {
    "file": "docs/screenshots/harmony/cutin/stage_mio_portrait_off.webp",
-   "bytes": 187316,
+   "bytes": 193924,
    "times": [
     0,
     300,
@@ -2737,14 +2737,14 @@
     1050,
     1122,
     1350,
-    1300,
-    2060,
-    2330
+    1350,
+    2140,
+    2380
    ]
   },
   "ren": {
    "file": "docs/screenshots/harmony/cutin/stage_ren_portrait_off.webp",
-   "bytes": 203948,
+   "bytes": 204078,
    "times": [
     0,
     300,
@@ -2762,7 +2762,7 @@
   },
   "suzu": {
    "file": "docs/screenshots/harmony/cutin/stage_suzu_portrait_off.webp",
-   "bytes": 193618,
+   "bytes": 194380,
    "times": [
     0,
     300,
@@ -2795,21 +2795,21 @@
     },
     {
      "state": "holding",
-     "at": 183.3,
-     "wall": 157
+     "at": 183.4,
+     "wall": 147
     },
     {
      "state": "fading",
      "at": 566.7,
-     "wall": 543
+     "wall": 528
     },
     {
      "state": "disposed",
-     "at": 783.3,
-     "wall": 757
+     "at": 783.4,
+     "wall": 750
     }
    ],
-   "frames": 46,
+   "frames": 43,
    "trace": [
     [
      0,
@@ -2826,14 +2826,7 @@
      "enter"
     ],
     [
-     33.3,
-     "e",
-     1,
-     -172,
-     "enter"
-    ],
-    [
-     50,
+     50.1,
      "e",
      1,
      -120,
@@ -2847,28 +2840,21 @@
      "enter"
     ],
     [
-     83.3,
+     83.4,
      "e",
      1,
      -50,
      "enter"
     ],
     [
-     100,
-     "e",
-     1,
-     -28,
-     "enter"
-    ],
-    [
-     116.6,
+     116.7,
      "e",
      1,
      -14,
      "enter"
     ],
     [
-     133.4,
+     133.3,
      "e",
      1,
      -6,
@@ -2889,7 +2875,7 @@
      "enter"
     ],
     [
-     183.3,
+     183.4,
      "h",
      1,
      0,
@@ -2903,7 +2889,7 @@
      "enter"
     ],
     [
-     216.6,
+     216.7,
      "h",
      1,
      0,
@@ -2945,7 +2931,7 @@
      "hold"
     ],
     [
-     316.6,
+     316.7,
      "h",
      1,
      0,
@@ -2960,418 +2946,6 @@
     ],
     [
      350,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     366.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     383.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     400,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     433.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     450,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     466.6,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     483.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     500,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     516.6,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     533.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     549.9,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     566.7,
-     "f",
-     0.997,
-     0,
-     "hold"
-    ],
-    [
-     583.3,
-     "f",
-     0.969,
-     0,
-     "hold"
-    ],
-    [
-     600,
-     "f",
-     0.913,
-     0,
-     "hold"
-    ],
-    [
-     616.7,
-     "f",
-     0.835,
-     0,
-     "hold"
-    ],
-    [
-     633.3,
-     "f",
-     0.741,
-     0,
-     "hold"
-    ],
-    [
-     650,
-     "f",
-     0.635,
-     0,
-     "hold"
-    ],
-    [
-     666.6,
-     "f",
-     0.523,
-     0,
-     "hold"
-    ],
-    [
-     683.3,
-     "f",
-     0.41,
-     0,
-     "hold"
-    ],
-    [
-     700,
-     "f",
-     0.301,
-     0,
-     "hold"
-    ],
-    [
-     716.6,
-     "f",
-     0.201,
-     0,
-     "hold"
-    ],
-    [
-     733.3,
-     "f",
-     0.116,
-     0,
-     "hold"
-    ],
-    [
-     749.9,
-     "f",
-     0.051,
-     0,
-     "hold"
-    ],
-    [
-     766.6,
-     "f",
-     0.011,
-     0,
-     "hold"
-    ]
-   ],
-   "results": [
-    {
-     "t": "unravel",
-     "at": 1250,
-     "who": null
-    },
-    {
-     "t": "tech",
-     "at": 1400,
-     "who": "nao"
-    }
-   ],
-   "fired": [
-    "pose:pc=anticipate",
-    "cutin",
-    "sfx:pen_stroke",
-    "pose:comp=anticipate",
-    "pose:pc=anticipate",
-    "pose:comp=act",
-    "strip",
-    "pose:pc=act",
-    "fx:link",
-    "sfx:pen_up",
-    "fx:pSpot",
-    "fx:pThread",
-    "fx:pJoin",
-    "fx:knotRelease",
-    "fx:loosen",
-    "foe:release",
-    "beat",
-    "fx:pRoute",
-    "pose:comp=act",
-    "fx:knotRelease",
-    "fx:pSpot",
-    "beat",
-    "pose:pc=act",
-    "pose:pc=recover",
-    "pose:comp=recover"
-   ],
-   "sequenceEnd": 2300,
-   "wallMs": 2302,
-   "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
-    "footprint": {
-     "x": 0,
-     "y": 90,
-     "w": 314,
-     "h": 166
-    },
-    "faceH": 66,
-    "view": {
-     "w": 1280,
-     "h": 720
-    }
-   }
-  },
-  "mio": {
-   "cue": "cutin @0",
-   "marks": [
-    {
-     "state": "inactive",
-     "at": 0,
-     "wall": 0
-    },
-    {
-     "state": "entering",
-     "at": 0,
-     "wall": 1
-    },
-    {
-     "state": "holding",
-     "at": 183.3,
-     "wall": 163
-    },
-    {
-     "state": "fading",
-     "at": 566.6,
-     "wall": 551
-    },
-    {
-     "state": "disposed",
-     "at": 783.3,
-     "wall": 762
-    }
-   ],
-   "frames": 46,
-   "trace": [
-    [
-     0,
-     "e",
-     1,
-     -318,
-     "enter"
-    ],
-    [
-     16.7,
-     "e",
-     1,
-     -238,
-     "enter"
-    ],
-    [
-     33.3,
-     "e",
-     1,
-     -172,
-     "enter"
-    ],
-    [
-     50,
-     "e",
-     1,
-     -120,
-     "enter"
-    ],
-    [
-     66.7,
-     "e",
-     1,
-     -80,
-     "enter"
-    ],
-    [
-     83.3,
-     "e",
-     1,
-     -50,
-     "enter"
-    ],
-    [
-     100,
-     "e",
-     1,
-     -28,
-     "enter"
-    ],
-    [
-     116.6,
-     "e",
-     1,
-     -14,
-     "enter"
-    ],
-    [
-     133.3,
-     "e",
-     1,
-     -6,
-     "enter"
-    ],
-    [
-     150,
-     "e",
-     1,
-     -2,
-     "enter"
-    ],
-    [
-     166.7,
-     "e",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     183.3,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     199.9,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     216.7,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     233.3,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     250,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     266.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     283.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     300,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     316.6,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     333.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     349.9,
      "h",
      1,
      0,
@@ -3392,821 +2966,7 @@
      "hold"
     ],
     [
-     400,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
      416.6,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     433.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     450,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     483.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     500,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     516.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     533.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     549.9,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     566.6,
-     "f",
-     0.997,
-     0,
-     "hold"
-    ],
-    [
-     583.3,
-     "f",
-     0.969,
-     0,
-     "hold"
-    ],
-    [
-     600,
-     "f",
-     0.913,
-     0,
-     "hold"
-    ],
-    [
-     616.6,
-     "f",
-     0.835,
-     0,
-     "hold"
-    ],
-    [
-     633.3,
-     "f",
-     0.741,
-     0,
-     "hold"
-    ],
-    [
-     650,
-     "f",
-     0.635,
-     0,
-     "hold"
-    ],
-    [
-     666.6,
-     "f",
-     0.523,
-     0,
-     "hold"
-    ],
-    [
-     683.3,
-     "f",
-     0.41,
-     0,
-     "hold"
-    ],
-    [
-     700,
-     "f",
-     0.301,
-     0,
-     "hold"
-    ],
-    [
-     716.6,
-     "f",
-     0.201,
-     0,
-     "hold"
-    ],
-    [
-     733.3,
-     "f",
-     0.116,
-     0,
-     "hold"
-    ],
-    [
-     750,
-     "f",
-     0.051,
-     0,
-     "hold"
-    ],
-    [
-     766.6,
-     "f",
-     0.011,
-     0,
-     "hold"
-    ]
-   ],
-   "results": [
-    {
-     "t": "unravel",
-     "at": 1217,
-     "who": null
-    },
-    {
-     "t": "tech",
-     "at": 1367,
-     "who": "mio"
-    }
-   ],
-   "fired": [
-    "pose:pc=anticipate",
-    "cutin",
-    "sfx:pen_stroke",
-    "pose:comp=anticipate",
-    "pose:pc=anticipate",
-    "pose:comp=act",
-    "pose:pc=act",
-    "strip",
-    "fx:link",
-    "sfx:splash",
-    "fx:pPour",
-    "fx:pJoin",
-    "fx:knotRelease",
-    "fx:loosen",
-    "foe:release",
-    "beat",
-    "fx:motes",
-    "pose:comp=act",
-    "beat",
-    "pose:pc=act",
-    "pose:pc=soothed",
-    "pose:pc=recover",
-    "pose:comp=recover"
-   ],
-   "sequenceEnd": 2350,
-   "wallMs": 2357,
-   "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
-    "footprint": {
-     "x": 0,
-     "y": 90,
-     "w": 314,
-     "h": 166
-    },
-    "faceH": 66,
-    "view": {
-     "w": 1280,
-     "h": 720
-    }
-   }
-  },
-  "ren": {
-   "cue": "cutin @0",
-   "marks": [
-    {
-     "state": "inactive",
-     "at": 0,
-     "wall": 0
-    },
-    {
-     "state": "entering",
-     "at": 0,
-     "wall": 1
-    },
-    {
-     "state": "holding",
-     "at": 183.3,
-     "wall": 154
-    },
-    {
-     "state": "fading",
-     "at": 566.7,
-     "wall": 537
-    },
-    {
-     "state": "disposed",
-     "at": 783.3,
-     "wall": 756
-    }
-   ],
-   "frames": 45,
-   "trace": [
-    [
-     0,
-     "e",
-     1,
-     -318,
-     "enter"
-    ],
-    [
-     16.7,
-     "e",
-     1,
-     -238,
-     "enter"
-    ],
-    [
-     33.3,
-     "e",
-     1,
-     -172,
-     "enter"
-    ],
-    [
-     50,
-     "e",
-     1,
-     -120,
-     "enter"
-    ],
-    [
-     66.7,
-     "e",
-     1,
-     -80,
-     "enter"
-    ],
-    [
-     83.3,
-     "e",
-     1,
-     -50,
-     "enter"
-    ],
-    [
-     100,
-     "e",
-     1,
-     -28,
-     "enter"
-    ],
-    [
-     116.7,
-     "e",
-     1,
-     -14,
-     "enter"
-    ],
-    [
-     133.3,
-     "e",
-     1,
-     -6,
-     "enter"
-    ],
-    [
-     150,
-     "e",
-     1,
-     -2,
-     "enter"
-    ],
-    [
-     166.7,
-     "e",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     183.3,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     200,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     216.6,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     233.3,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     266.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     283.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     300,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     316.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     333.4,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     350,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     366.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     383.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     399.9,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     416.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     433.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     449.9,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     466.6,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     483.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     500,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     516.6,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     533.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     549.9,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     566.7,
-     "f",
-     0.997,
-     0,
-     "hold"
-    ],
-    [
-     583.3,
-     "f",
-     0.969,
-     0,
-     "hold"
-    ],
-    [
-     616.7,
-     "f",
-     0.835,
-     0,
-     "hold"
-    ],
-    [
-     633.3,
-     "f",
-     0.741,
-     0,
-     "hold"
-    ],
-    [
-     650,
-     "f",
-     0.635,
-     0,
-     "hold"
-    ],
-    [
-     666.7,
-     "f",
-     0.522,
-     0,
-     "hold"
-    ],
-    [
-     683.3,
-     "f",
-     0.41,
-     0,
-     "hold"
-    ],
-    [
-     700,
-     "f",
-     0.301,
-     0,
-     "hold"
-    ],
-    [
-     716.7,
-     "f",
-     0.201,
-     0,
-     "hold"
-    ],
-    [
-     733.3,
-     "f",
-     0.116,
-     0,
-     "hold"
-    ],
-    [
-     749.9,
-     "f",
-     0.051,
-     0,
-     "hold"
-    ],
-    [
-     766.6,
-     "f",
-     0.011,
-     0,
-     "hold"
-    ]
-   ],
-   "results": [
-    {
-     "t": "unravel",
-     "at": 1217,
-     "who": null
-    },
-    {
-     "t": "tech",
-     "at": 1350,
-     "who": "ren"
-    }
-   ],
-   "fired": [
-    "pose:pc=anticipate",
-    "cutin",
-    "sfx:pen_stroke",
-    "pose:comp=anticipate",
-    "pose:pc=anticipate",
-    "pose:pc=act",
-    "pose:comp=act",
-    "strip",
-    "sfx:lantern",
-    "fx:pLamp",
-    "fx:link",
-    "fx:pPlane",
-    "fx:pJoin",
-    "fx:knotRelease",
-    "fx:loosen",
-    "foe:release",
-    "beat",
-    "pose:pc=act",
-    "pose:comp=act",
-    "fx:sealForm",
-    "beat",
-    "fx:sealForm",
-    "pose:pc=recover",
-    "pose:comp=recover"
-   ],
-   "sequenceEnd": 2300,
-   "wallMs": 2294,
-   "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
-    "footprint": {
-     "x": 0,
-     "y": 98,
-     "w": 314,
-     "h": 150
-    },
-    "faceH": 66,
-    "view": {
-     "w": 1280,
-     "h": 720
-    }
-   }
-  },
-  "suzu": {
-   "cue": "cutin @0",
-   "marks": [
-    {
-     "state": "inactive",
-     "at": 0,
-     "wall": 0
-    },
-    {
-     "state": "entering",
-     "at": 0,
-     "wall": 1
-    },
-    {
-     "state": "holding",
-     "at": 183.3,
-     "wall": 147
-    },
-    {
-     "state": "fading",
-     "at": 566.6,
-     "wall": 540
-    },
-    {
-     "state": "disposed",
-     "at": 783.3,
-     "wall": 773
-    }
-   ],
-   "frames": 44,
-   "trace": [
-    [
-     0,
-     "e",
-     1,
-     -318,
-     "enter"
-    ],
-    [
-     16.7,
-     "e",
-     1,
-     -238,
-     "enter"
-    ],
-    [
-     50.1,
-     "e",
-     1,
-     -120,
-     "enter"
-    ],
-    [
-     66.7,
-     "e",
-     1,
-     -80,
-     "enter"
-    ],
-    [
-     83.4,
-     "e",
-     1,
-     -50,
-     "enter"
-    ],
-    [
-     100,
-     "e",
-     1,
-     -28,
-     "enter"
-    ],
-    [
-     116.7,
-     "e",
-     1,
-     -14,
-     "enter"
-    ],
-    [
-     133.3,
-     "e",
-     1,
-     -6,
-     "enter"
-    ],
-    [
-     150,
-     "e",
-     1,
-     -2,
-     "enter"
-    ],
-    [
-     166.7,
-     "e",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     183.3,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     200,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     216.7,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     233.3,
-     "h",
-     1,
-     0,
-     "enter"
-    ],
-    [
-     250,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     266.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     283.4,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     300.1,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     316.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     333.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     350,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     366.7,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     383.3,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     400,
-     "h",
-     1,
-     0,
-     "hold"
-    ],
-    [
-     416.7,
      "h",
      1,
      0,
@@ -4241,7 +3001,14 @@
      "hold"
     ],
     [
-     516.7,
+     500,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     516.6,
      "h",
      1,
      0,
@@ -4262,7 +3029,7 @@
      "hold"
     ],
     [
-     566.6,
+     566.7,
      "f",
      0.997,
      0,
@@ -4283,9 +3050,9 @@
      "hold"
     ],
     [
-     616.7,
+     633.4,
      "f",
-     0.835,
+     0.74,
      0,
      "hold"
     ],
@@ -4293,6 +3060,336 @@
      650,
      "f",
      0.635,
+     0,
+     "hold"
+    ],
+    [
+     666.6,
+     "f",
+     0.523,
+     0,
+     "hold"
+    ],
+    [
+     683.4,
+     "f",
+     0.409,
+     0,
+     "hold"
+    ],
+    [
+     700,
+     "f",
+     0.301,
+     0,
+     "hold"
+    ],
+    [
+     716.7,
+     "f",
+     0.201,
+     0,
+     "hold"
+    ],
+    [
+     733.3,
+     "f",
+     0.116,
+     0,
+     "hold"
+    ],
+    [
+     750,
+     "f",
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.7,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1317,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1483,
+     "who": "nao"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "sfx:pen_down",
+    "pose:comp=act",
+    "strip",
+    "fx:pCourier",
+    "sfx:pen_stroke",
+    "pose:pc=act",
+    "fx:pJoin",
+    "fx:link",
+    "fx:pThreadRoute",
+    "fx:pKnotPair",
+    "fx:knotRelease",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "sfx:pen_up",
+    "pose:comp=act",
+    "pose:pc=act",
+    "fx:pRead",
+    "beat",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2350,
+   "wallMs": 2354,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 90,
+     "w": 314,
+     "h": 166
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  },
+  "mio": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 1
+    },
+    {
+     "state": "holding",
+     "at": 183.4,
+     "wall": 153
+    },
+    {
+     "state": "fading",
+     "at": 566.7,
+     "wall": 542
+    },
+    {
+     "state": "disposed",
+     "at": 800,
+     "wall": 770
+    }
+   ],
+   "frames": 32,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.7,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     33.4,
+     "e",
+     1,
+     -172,
+     "enter"
+    ],
+    [
+     50.1,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     83.4,
+     "e",
+     1,
+     -50,
+     "enter"
+    ],
+    [
+     100.1,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.7,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     133.4,
+     "e",
+     1,
+     -6,
+     "enter"
+    ],
+    [
+     150.1,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.7,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     183.4,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.7,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.4,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     316.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     350,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     416.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     433.4,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     466.7,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     500.1,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     550,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.7,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     583.4,
+     "f",
+     0.968,
+     0,
+     "hold"
+    ],
+    [
+     616.7,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     633.3,
+     "f",
+     0.741,
      0,
      "hold"
     ],
@@ -4318,9 +3415,678 @@
      "hold"
     ],
     [
-     716.6,
+     750,
      "f",
-     0.201,
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.7,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1250,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1417,
+     "who": "mio"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "pose:comp=act",
+    "pose:pc=act",
+    "strip",
+    "sfx:splash",
+    "fx:pCascade",
+    "fx:link",
+    "fx:pJoin",
+    "fx:pDrop",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "fx:motes",
+    "fx:pRefill",
+    "pose:comp=act",
+    "pose:pc=act",
+    "beat",
+    "pose:pc=soothed",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2400,
+   "wallMs": 2403,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 90,
+     "w": 314,
+     "h": 166
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  },
+  "ren": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 3
+    },
+    {
+     "state": "holding",
+     "at": 199.9,
+     "wall": 158
+    },
+    {
+     "state": "fading",
+     "at": 566.6,
+     "wall": 542
+    },
+    {
+     "state": "disposed",
+     "at": 783.3,
+     "wall": 740
+    }
+   ],
+   "frames": 34,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.6,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     49.9,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     66.6,
+     "e",
+     1,
+     -80,
+     "enter"
+    ],
+    [
+     100,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.6,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     150,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.5,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     199.9,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.6,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.2,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     250,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     283.2,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     299.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     316.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.2,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     349.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     416.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     449.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     483.2,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     533.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.6,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     599.9,
+     "f",
+     0.913,
+     0,
+     "hold"
+    ],
+    [
+     616.6,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     649.9,
+     "f",
+     0.636,
+     0,
+     "hold"
+    ],
+    [
+     666.6,
+     "f",
+     0.523,
+     0,
+     "hold"
+    ],
+    [
+     683.2,
+     "f",
+     0.41,
+     0,
+     "hold"
+    ],
+    [
+     699.9,
+     "f",
+     0.301,
+     0,
+     "hold"
+    ],
+    [
+     716.5,
+     "f",
+     0.202,
+     0,
+     "hold"
+    ],
+    [
+     733.2,
+     "f",
+     0.117,
+     0,
+     "hold"
+    ],
+    [
+     749.9,
+     "f",
+     0.051,
+     0,
+     "hold"
+    ],
+    [
+     766.5,
+     "f",
+     0.011,
+     0,
+     "hold"
+    ]
+   ],
+   "results": [
+    {
+     "t": "unravel",
+     "at": 1217,
+     "who": null
+    },
+    {
+     "t": "tech",
+     "at": 1400,
+     "who": "ren"
+    }
+   ],
+   "fired": [
+    "pose:pc=anticipate",
+    "cutin",
+    "sfx:pen_stroke",
+    "pose:comp=anticipate",
+    "pose:pc=anticipate",
+    "pose:pc=act",
+    "pose:comp=act",
+    "strip",
+    "sfx:lantern",
+    "fx:pLamp",
+    "fx:link",
+    "fx:pPlane",
+    "fx:pJoin",
+    "fx:knotRelease",
+    "fx:loosen",
+    "foe:release",
+    "beat",
+    "pose:pc=act",
+    "pose:comp=act",
+    "fx:sealForm",
+    "beat",
+    "fx:sealForm",
+    "pose:pc=recover",
+    "pose:comp=recover"
+   ],
+   "sequenceEnd": 2300,
+   "wallMs": 2303,
+   "placement": {
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "footprint": {
+     "x": 0,
+     "y": 98,
+     "w": 314,
+     "h": 150
+    },
+    "faceH": 66,
+    "view": {
+     "w": 1280,
+     "h": 720
+    }
+   }
+  },
+  "suzu": {
+   "cue": "cutin @0",
+   "marks": [
+    {
+     "state": "inactive",
+     "at": 0,
+     "wall": 0
+    },
+    {
+     "state": "entering",
+     "at": 0,
+     "wall": 1
+    },
+    {
+     "state": "holding",
+     "at": 183.3,
+     "wall": 143
+    },
+    {
+     "state": "fading",
+     "at": 566.6,
+     "wall": 532
+    },
+    {
+     "state": "disposed",
+     "at": 783.2,
+     "wall": 760
+    }
+   ],
+   "frames": 37,
+   "trace": [
+    [
+     0,
+     "e",
+     1,
+     -318,
+     "enter"
+    ],
+    [
+     16.6,
+     "e",
+     1,
+     -238,
+     "enter"
+    ],
+    [
+     49.9,
+     "e",
+     1,
+     -120,
+     "enter"
+    ],
+    [
+     66.6,
+     "e",
+     1,
+     -80,
+     "enter"
+    ],
+    [
+     83.3,
+     "e",
+     1,
+     -50,
+     "enter"
+    ],
+    [
+     100,
+     "e",
+     1,
+     -28,
+     "enter"
+    ],
+    [
+     116.7,
+     "e",
+     1,
+     -14,
+     "enter"
+    ],
+    [
+     133.3,
+     "e",
+     1,
+     -6,
+     "enter"
+    ],
+    [
+     149.9,
+     "e",
+     1,
+     -2,
+     "enter"
+    ],
+    [
+     166.6,
+     "e",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     183.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     200,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     216.6,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     233.3,
+     "h",
+     1,
+     0,
+     "enter"
+    ],
+    [
+     249.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     266.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     283.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     299.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     316.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     333.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     349.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     366.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     400,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     416.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     433.3,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     450,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     466.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     483.2,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     516.6,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     549.9,
+     "h",
+     1,
+     0,
+     "hold"
+    ],
+    [
+     566.6,
+     "f",
+     0.997,
+     0,
+     "hold"
+    ],
+    [
+     599.9,
+     "f",
+     0.913,
+     0,
+     "hold"
+    ],
+    [
+     616.6,
+     "f",
+     0.835,
+     0,
+     "hold"
+    ],
+    [
+     633.3,
+     "f",
+     0.741,
+     0,
+     "hold"
+    ],
+    [
+     700,
+     "f",
+     0.301,
      0,
      "hold"
     ],
@@ -4328,13 +4094,6 @@
      733.3,
      "f",
      0.116,
-     0,
-     "hold"
-    ],
-    [
-     750,
-     "f",
-     0.051,
      0,
      "hold"
     ],
@@ -4385,7 +4144,7 @@
     "pose:comp=recover"
    ],
    "sequenceEnd": 2450,
-   "wallMs": 2443,
+   "wallMs": 2454,
    "placement": {
     "fit": "compact",
     "variant": "compact",

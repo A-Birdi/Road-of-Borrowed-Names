@@ -2216,3 +2216,46 @@ byte-identical to a fresh build; registry.json regenerated for this branch):
 - Real devices.
 - Whether the dialogue box covers a listener (checked only on the lighthouse roof).
 - Oral-history fragments carry no gestures.
+
+## Nao's and Mio's Harmony stage performances, v2 (merged 2026-10-03; HX22, HX23, HX26, HX27; the owner's note "Nao and Mio's feel a tad lacking")
+
+**What** (worker branch, final 97bd57a; record in docs/expressive/reports/harmony_nao_mio.md; HARMONY.md §7.1, §7.3):
+- **Nao, Read the Opening:**
+  - the courier pencil drawn from behind the ear (a new prop in the battle rig);
+  - a side-on turn and step;
+  - a dotted gold route sketched in the air, with waypoint ticks on the knots;
+  - your thread runs along it, and both knots come loose at the same moment in one shared burst. That happens only when
+    two really come loose; otherwise the route lands on the one.
+  - the pencil goes back, a nod.
+- **Mio, Clearwater Draught:**
+  - the vial is drawn larger, uncorked and lifted high side-on;
+  - a stream arcs over both of you, with ripples at both your feet;
+  - the restoring glow shows only on whoever was below full;
+  - a visible rinse only on creatures that really had Heat, mist or Gathering;
+  - one drop to the knot; the cork back, a nod.
+- **Timings:** Normal 2.35 s / 2.40 s, Fast 1.63 / 1.66 s; the first result at 1.25–1.32 s. The portrait is gone
+  before the contact.
+- **Rules unchanged.**
+- Before/after frame sheets: docs/screenshots/harmony/cutin/perf_v2/.
+
+**The worker's runs:**
+- unit 24,322/0;
+- battle_invariance --tech: 96 configurations, all identical (twice);
+- harmony_cutin --docs 11/11 (two earlier runs under load had timing-only failures that passed alone);
+- battle_party 14/14, battle_anim 16/16, battle_presentation 13/13, combat_ui 7/7, playtest_repairs 7/7;
+- battle_overlap all ok; battle_cycle stable;
+- harmony_perf_sheets --check: ward marks and anchors held in every frame; the pet reacted.
+
+**The lead's runs:**
+- The same merge on the contract v3 build, in a scratch checkout: unit 24,408/0; battle_anim 16/16;
+  battle_invariance --tech all identical; harmony_cutin all passed; battle_party 14/14.
+- On the task branch with everything merged: unit 24,973/0; the merged index.html is byte-identical to a fresh build.
+- The lead looked at the 1280 × 720 sheets.
+  - Nao's route, the shared burst and the turn read clearly.
+  - Mio's lifted vial, the ripples at both feet and the rinse read. Her stream is a thin clean line that may want more
+    weight: the owner's call.
+
+**Not verified:** a person's judgement at play speed; Firefox; phones; the new sound accents were not listened to.
+
+**Open:** docs and code comments from this merge call Nao "he"; the specification and the story use they/them. To be
+tidied.

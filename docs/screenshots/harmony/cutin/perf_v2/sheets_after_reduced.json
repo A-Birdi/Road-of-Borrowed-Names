@@ -1,0 +1,57 @@
+{
+ "html": "index.html",
+ "tag": "after_reduced",
+ "made": [
+  {
+   "file": "docs/screenshots/harmony/cutin/perf_v2/nao_after_reduced_1280x720.webp",
+   "bytes": 300384,
+   "times": [
+    0,
+    300,
+    590,
+    780,
+    900,
+    1020,
+    1140,
+    1300,
+    1380,
+    1420,
+    1600,
+    1780,
+    2100,
+    2330
+   ],
+   "box": {
+    "x": 16,
+    "y": 132,
+    "width": 720,
+    "height": 438
+   }
+  },
+  {
+   "file": "docs/screenshots/harmony/cutin/perf_v2/mio_after_reduced_1280x720.webp",
+   "bytes": 294248,
+   "times": [
+    0,
+    300,
+    550,
+    750,
+    870,
+    990,
+    1110,
+    1250,
+    1350,
+    1550,
+    1730,
+    2140,
+    2380
+   ],
+   "box": {
+    "x": 16,
+    "y": 132,
+    "width": 720,
+    "height": 438
+   }
+  }
+ ]
+}
