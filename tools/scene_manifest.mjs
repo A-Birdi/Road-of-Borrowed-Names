@@ -36,13 +36,13 @@ const COMPS = ['nao', 'mio', 'ren', 'suzu'];
 const MAIN_QUESTS = ['rw_labels', 'rw_mill', 'rw_depart', 'sg_main', 'co_main', 'sb_lamp', 'lf_main', 'sa_main'];
 
 // ---- decided by reading the scene (not heuristic) ------------------------------------------------
-// [class, reason]. 'Illustrated sequence' entries are the §17.2 selections (SHOTS.md); the
+// [class, reason, evidence?]. 'Illustrated sequence' entries are the §17.2 selections (SHOTS.md); the
 // prologue and the tide wait are the existing pictures.
 const P = CLASSES[0], IL = CLASSES[1], Q = CLASSES[2], SYS = CLASSES[3];
 export const CURATED = {
   // §17.2 chapter selections (SHOTS.md): one illustrated section each, the rest staged in the world
   'rw.bridge_scene': [IL, 'Ch1 selection (SHOTS.md): the bridge reaches the far bank and Kōji crosses with his own cup; Hana\'s apology; the prologue\'s teahouse and bridge answered. Tsuru\'s lines return to the world.'],
-  'sg.omi_wataru': [IL, 'Ch2 selection and §14 showcase (SHOTS.md, CONTRACT.md): both confession routes staged in the office; the pivotal exchange (Omi separates the company\'s fault from his, "not dismissing me?", the notice handed back and opened) as an illustrated close-up; Wataru leaves in the world.'],
+  'sg.omi_wataru': [IL, 'Ch2 selection and §14 showcase (SHOTS.md, CONTRACT.md): both confession routes staged in the office (done: Wataru leads on his own route, you open on the party\'s, he steps up into his admission; Omi\'s working hand stops, she listens, separates the two faults, acknowledges only on his route, goes back to her desk; the notice passes hand to hand; each companion\'s own reaction); the pivotal exchange between the beats omi.pivot.begin/end is left for the illustrated close-up (not yet drawn); Wataru leaves in the world.', 'tests/e2e/staging_wataru.mjs (8 route × companion runs, staged = unstaged state); docs/screenshots/actors/wataru_*.png'],
   'co.assembly': [IL, 'Ch3 selection (SHOTS.md): the assembly at dusk, three choice branches, Tokiwa adds the line to the chronicle and the village remembers; the square and the brush cannot be read from the tile view.'],
   'sb.lamp_name': [IL, 'Ch4 selection (SHOTS.md): the shade\'s name "Akari" holds, the flame turns from blue to orange, Hoshino\'s question (three branches), the lamp lit and its light poured toward Lanternfall.'],
   'sb.lamp_reply': [IL, 'Ch4 sequence, last shot (SHOTS.md): Hoshino seals the reply with the address left blank; returns to the world for sb.eve_start.'],
@@ -56,7 +56,12 @@ export const CURATED = {
   'sg.wataru_confront': [P, 'Wataru\'s admission after the lie challenge and the choice of who speaks to Omi (sets sg_wataru_self); staged in the warehouse; leads into sg.omi_wataru.'],
   'sb.eve_start': [P, 'Return to the world after the Ch4 sequence: Snowbell gathers in the square and looks up at the lamp; listeners turn upward, Yae counts, Sōsuke shows the envelopes.'],
   'lf.nao_deliver': [P, 'Personal quest lf_nao: Nao asks Umi rather than deciding for her; the envelope held out, the seal broken, the one-line reply written and the old label peeled off into the satchel (a document insert is optional; SHOTS.md audit).'],
-  'lf.mio_refuse': [P, 'Personal quest lf_mio: the player\'s hand on Mio\'s back, her out-loud refusal, Tadashi\'s stamp stopping in mid-air; a staging scene, not a picture.'],
+  'lf.mio_refuse': [P, 'Ch5 performed interaction (staged): Mio steps up to the counter herself, your hand on her back, her refusal with a flat hand and a shake of the head, Tadashi\'s stamp raised and stopped, then she turns to you, hands shaking; both branches (before and after the bell).', 'tests/e2e/staging_chapters.mjs; docs/screenshots/actors/ch5_lf.mio_refuse_*.png'],
+  'rw.hana_first': [P, 'Ch1 performed interaction (staged): Hana stops at the two cups on the table and you turn with her; a thought, a guarded hand, a glance aside, the way to the bridge pointed, the cup held out.', 'tests/e2e/staging_chapters.mjs; docs/screenshots/actors/ch1_rw.hana_first_*.png'],
+  'co.suzu_night': [P, 'Ch3 performed interaction (staged; the faded passage of SHOTS.md §7b): the fade covers only the time changing; Suzu is found sitting on the edge of the inn\'s raised floor at night and tells it from there, her account book in her hands; she stands when she decides to help.', 'tests/e2e/staging_chapters.mjs; docs/screenshots/actors/ch3_co.suzu_night_*.png'],
+  'sb.yae': [P, 'Ch4 performed interaction (staged): Yae\'s welcome, her worry, counting the lost years on her fingers and losing count, the way north pointed out; the companion\'s aside with their own gesture.', 'tests/e2e/staging_chapters.mjs; docs/screenshots/actors/ch4_sb.yae_*.png'],
+  'sa.isamu_return': [P, 'Ch6 performed interaction (staged): the folio handed over at the fire (the !take stays where it is), held, opened; the laugh that comes back; the companion\'s own small response (Mio holds out a cloth).', 'tests/e2e/staging_chapters.mjs; docs/screenshots/actors/ch6_sa.isamu_return_*.png'],
+  'co.hiro_first': [P, 'The world review WR-03 (staged): Hiro keeps the blowpipe turning through his first lines (he cannot let go) and holds the gather still to cool when he says he will listen; the companion answers in kind.', 'tests/e2e/actor_workplaces.mjs; docs/screenshots/actors/workplace_glass*.png'],
   'sa.end_comp': [P, 'The companion\'s ending at the bridge (four branches by comp): Nao\'s label with only your name, Mio\'s empty bottle with your name on it, Ren polishing two lamps, Suzu tying her faded ribbon round your wrist (no item is given: the handovers are staging only).'],
 };
 // Dynamic scene ids (built in code); used to explain an entry point the static scan cannot see.
@@ -195,7 +200,7 @@ function sceneFacts(C, sc) {
   }
   const actors = new Set();
   for (const c of sc.cmds) {
-    if (['move', 'face', 'faceplayer', 'emote'].includes(c.op) && c.args && c.args[0]) actors.add(c.args[0]);
+    if (['move', 'face', 'faceplayer', 'emote', 'gesture', 'look', 'pose', 'walkto', 'prop'].includes(c.op) && c.args && c.args[0]) actors.add(c.args[0]);
   }
   const branches = {
     labels: Object.keys(sc.labels),
@@ -345,8 +350,10 @@ export function buildManifest(RB) {
       lines: f.says.length, speakers: f.speakers, participants: [...participants].sort(), comps: [...f.comps].sort(), compLines: f.compLines,
       exprs: f.exprs, branches: f.branches, calls: f.calls, prereq, maps,
       objects: { items: f.items, notes: f.notes, interludes: f.interludes, props },
-      quests: f.quests, music: f.music, hooks: f.hooks, staging: { move: f.ops.move || 0, face: (f.ops.face || 0) + (f.ops.faceplayer || 0), emote: f.ops.emote || 0, fadeOut: f.fadeOut, interlude: f.ops.interlude || 0, shake: f.ops.shake || 0 },
-      class: cls, reason, heuristic: !cur,
+      quests: f.quests, music: f.music, hooks: f.hooks, staging: { move: f.ops.move || 0, face: (f.ops.face || 0) + (f.ops.faceplayer || 0), emote: f.ops.emote || 0, fadeOut: f.fadeOut, interlude: f.ops.interlude || 0, shake: f.ops.shake || 0,
+        // scene direction (src/engine/52_staging.js): the authored cues
+        gesture: f.ops.gesture || 0, look: f.ops.look || 0, pose: f.ops.pose || 0, walkto: f.ops.walkto || 0, prop: f.ops.prop || 0, beat: f.ops.beat || 0, ambience: f.ops.ambience || 0 },
+      class: cls, reason, heuristic: !cur, evidence: cur && cur[2] ? cur[2] : null,
     });
   }
   // ---- dialogue outside scene files ----------------------------------------------------------------------

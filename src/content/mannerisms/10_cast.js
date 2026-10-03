@@ -42,7 +42,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { idle: 'very slow blinks, chin up', cues: { think: 'eyes narrow further' } } });
   M('co_tokiwa', 'scholar', B, { every: [14, 24], idle: [['readidle', 3], ['glasses', 2], ['tidy', 1, { at: 'surface' }]], tells: { worry: 'aside', sad: 'lowered', think: 'glasses' }, props: ['book', 'brush'], talk: [7, 16, 24], strong: [{ beat: 'co.tokiwa_confront', gesture: 'lowered' }, { beat: 'co.assembly', gesture: 'read' }],
     portrait: { idle: 'a glint on the glasses', cues: { sad: 'gaze down and held' } } });
-  M('omi', 'official', B, { every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
+  M('omi', 'official', B, { rest: null, every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'emphatic' }, { beat: 'sg.omi_wataru', gesture: 'size' }, { beat: 'sg.omi_wataru', gesture: 'point' }], avoid: ['shouting', 'a desk slam'], social: 0.3,
     portrait: { idle: 'slow blinks under the brim, almost no tilt', cues: { angry: 'a narrowing and one exhale; no shake' } } });
   // Hiro "can't let go" of the work (co.hiro_first): at the workshop the blowpipe never leaves his hands and
@@ -87,7 +87,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('sa_clerk', 'nonhuman', O, { every: [16, 28], idle: [['stiff', 1]], talk: [2, 13] });
   M('fuku', 'elder', O, { every: [16, 28], idle: [['lookroad', 2], ['shadeeyes', 1]], talk: [2, 3] });
   M('lf_kohei', 'craft', O, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 2], ['stretch', 1]], talk: [11, 17] });
-  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [1, 29] });
+  // Isamu waits by the fire: warms his hands, and now and then a hand goes to his ear, as if he heard something
+  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [12, 22], idle: [['rubhands', 3], ['cupear', 2], ['sitidle', 1], ['glance', 1]], talk: [1, 29] });
   M('tetsuji', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['countidle', 2], ['lookroad', 1]], talk: [12, 23] });
   M('denji', 'elder', O, { rest: 'sitlap', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [11, 2] });
   M('co_kotaro', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 2], ['glance', 1]], talk: [10, 18] });
@@ -96,6 +97,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('lf_tsuya', 'elder', O, { every: [14, 24], idle: [['lookroad', 3], ['glance', 1]], talk: [1, 32] });
   M('co_shino', 'traveller', O, { every: [9, 16], idle: [['sort', 2, { prop: 'letter' }], ['lookroad', 2], ['strap', 1]], talk: [14, 2] });
   M('tomo', 'host', O, { every: [9, 16], idle: [['hangwash', 2, { at: 'laundry' }], ['lookroad', 2], ['glance', 1]], talk: [13, 32] });
+  // TODO (lead, after the bakery props merge): Masaru's kneading needs a work surface within a tile of where he
+  // stands (lf.bakery 3,4); if the new prep surface's prop name does not match RB.mannerisms' station list
+  // (/table|counter|stall|desk|…/ → 'surface'), add it there. Until then he counts orders and wipes his brow.
   M('lf_masaru', 'host', O, { every: [8, 14], idle: [['knead', 3, { at: 'surface' }], ['countidle', 1], ['brow', 1]], talk: [12, 31] });
   M('co_heita', 'craft', O, { every: [12, 22], idle: [['doze', 3], ['stretch', 2], ['yawn', 1]], talk: [17] });
   M('lf_ritsu', 'host', O, { rest: 'clasp', every: [9, 16], idle: [['polish', 3], ['tidy', 1, { at: 'surface' }]], talk: [19, 26] });

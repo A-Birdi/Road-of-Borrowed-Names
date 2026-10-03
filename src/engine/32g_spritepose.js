@@ -14,7 +14,7 @@
  * so, a pointing arm is long and level, a held object is bigger than life by a pixel. Poses are named
  * key poses (POSES), not free parameters, so the frame keys stay few and the cache stays bounded.
  *
- * Frame keys: 'p:<pose>[.<R|L>][/<prop>][~<gaze>][:<breath 0|1>][b]'
+ * Frame keys: 'p:<pose>[+<seat>][.<R|L>][/<prop>][~<gaze>][:<breath 0|1>][*]' (* = a blink)
  *   pose   a name in POSES ('chin', 'point', 'folded', 'bow2' …)
  *   R|L    the hand that gestures (the person's own right or left); default: the free hand
  *          (a cane, lamp, book or basket is held in its own hand, which stays put)
@@ -175,7 +175,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sit: { legs: 'sit', drop: 7 }, sitlap: { G: 'low', O: 'low', legs: 'sit', drop: 7 }, sitlow: { G: 'low', O: 'low', legs: 'sit', drop: 7, hy: 2, eyes: 'd' },
     sitlook: { G: 'low', O: 'low', legs: 'sit', drop: 7, eyes: 'u' }, sitbook: { G: 'forward', O: 'forward', legs: 'sit', drop: 7, hy: 1, eyes: 'd', prop: 'both' },
     crouch: { G: 'low', O: 'low', legs: 'kneel', drop: 6, eyes: 'd' }, peek: { lean: 2, hx: 2, eyes: 'u' }, bounce: { drop: -1 },
-    stiff: {}, tilt: { hx: 1 },
+    stiff: {}, tilt: { hx: 1 }, cupear: { G: 'hair', hx: 1, fhx: 1 },
     // glassblowing (Hiro): turning the pipe, a breath into it, the gather held still to cool
     pipe1: { G: 'forward', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe2: { G: 'rub', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe3: { G: 'forward', O: 'low', hy: 1, eyes: 'd', prop: 'G' },
     blow: { G: 'mouth', O: 'forward', eyes: 'd', prop: 'G' }, pipehold: { G: 'forward', O: 'low', prop: 'G' },
@@ -224,7 +224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- parsing frame keys -------------------------------------------------------------------------
   // 'p:<pose>[+<seat>]…': a gesture made sitting or kneeling takes the legs and the lowered body of
   // the seat pose (+sit, +kneel) and the arms, head and eyes of the gesture
-  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([a-z_]+))?(?:~([lrudcb]))?(?::([01]))?(b)?$/;
+  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([a-z_]+))?(?:~([lrudcb]))?(?::([01]))?(\*)?$/;
   const combos = new Map();
   function combine(name, seat) {
     const k = name + '+' + seat;
@@ -602,7 +602,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     hasProp: (name) => !!PROPS[name],
     key(name, o) {
       o = o || {};
-      return 'p:' + name + (o.seat && o.seat !== name ? '+' + o.seat : '') + (o.hand ? '.' + o.hand : '') + (o.prop ? '/' + o.prop : '') + (o.gaze ? '~' + o.gaze : '') + (o.breath ? ':1' : '') + (o.blink ? 'b' : '');
+      return 'p:' + name + (o.seat && o.seat !== name ? '+' + o.seat : '') + (o.hand ? '.' + o.hand : '') + (o.prop ? '/' + o.prop : '') + (o.gaze ? '~' + o.gaze : '') + (o.breath ? ':1' : '') + (o.blink ? '*' : '');
     },
     stats: () => Object.assign({ entries: LRU.size, cap: CAP }, stats),
     setCap(n) { CAP = Math.max(50, n | 0); while (LRU.size > CAP) { LRU.delete(LRU.keys().next().value); stats.evicted++; } },

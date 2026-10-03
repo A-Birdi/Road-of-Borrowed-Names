@@ -126,6 +126,7 @@ RB.gestures = (function () {
   def('handsbehind', { label: 'hands behind the back a while', entry: [K('behind', 2600)], peak: K('behind', 600), recover: [K(null, 160)], needs: 'two' });
   // a supporting hand: a half-step to someone beside you and a hand laid on their back (held)
   def('touchback', { label: 'a hand laid on someone\'s back', entry: [K('half', 220, { turn: 1, dx: 4 })], peak: K('reach', 420, { dx: 10 }), recover: [K('half', 220, { dx: 5 }), K(null, 180, { dx: 0 })], hold: true, still: 'reach', needs: 'free' });
+  def('cupear', { label: 'a hand to the ear (listening for something)', entry: [K('half', 260)], peak: K('cupear', 1200, { gaze: 'u' }), recover: [K('half', 200), K(null, 160)], needs: 'free' });
   def('sitidle', { label: 'sitting a while', entry: [K('sit', 400)], peak: K('sitlook', 1800, { gaze: 'u' }), recover: [K('sit', 300)] });
 
   // ---- queries ------------------------------------------------------------------------------------------

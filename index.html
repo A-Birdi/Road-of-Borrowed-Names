@@ -26031,7 +26031,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * so, a pointing arm is long and level, a held object is bigger than life by a pixel. Poses are named
  * key poses (POSES), not free parameters, so the frame keys stay few and the cache stays bounded.
  *
- * Frame keys: 'p:<pose>[.<R|L>][/<prop>][~<gaze>][:<breath 0|1>][b]'
+ * Frame keys: 'p:<pose>[+<seat>][.<R|L>][/<prop>][~<gaze>][:<breath 0|1>][*]' (* = a blink)
  *   pose   a name in POSES ('chin', 'point', 'folded', 'bow2' …)
  *   R|L    the hand that gestures (the person's own right or left); default: the free hand
  *          (a cane, lamp, book or basket is held in its own hand, which stays put)
@@ -26192,7 +26192,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sit: { legs: 'sit', drop: 7 }, sitlap: { G: 'low', O: 'low', legs: 'sit', drop: 7 }, sitlow: { G: 'low', O: 'low', legs: 'sit', drop: 7, hy: 2, eyes: 'd' },
     sitlook: { G: 'low', O: 'low', legs: 'sit', drop: 7, eyes: 'u' }, sitbook: { G: 'forward', O: 'forward', legs: 'sit', drop: 7, hy: 1, eyes: 'd', prop: 'both' },
     crouch: { G: 'low', O: 'low', legs: 'kneel', drop: 6, eyes: 'd' }, peek: { lean: 2, hx: 2, eyes: 'u' }, bounce: { drop: -1 },
-    stiff: {}, tilt: { hx: 1 },
+    stiff: {}, tilt: { hx: 1 }, cupear: { G: 'hair', hx: 1, fhx: 1 },
     // glassblowing (Hiro): turning the pipe, a breath into it, the gather held still to cool
     pipe1: { G: 'forward', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe2: { G: 'rub', O: 'in', hy: 1, eyes: 'd', prop: 'G' }, pipe3: { G: 'forward', O: 'low', hy: 1, eyes: 'd', prop: 'G' },
     blow: { G: 'mouth', O: 'forward', eyes: 'd', prop: 'G' }, pipehold: { G: 'forward', O: 'low', prop: 'G' },
@@ -26241,7 +26241,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- parsing frame keys -------------------------------------------------------------------------
   // 'p:<pose>[+<seat>]…': a gesture made sitting or kneeling takes the legs and the lowered body of
   // the seat pose (+sit, +kneel) and the arms, head and eyes of the gesture
-  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([a-z_]+))?(?:~([lrudcb]))?(?::([01]))?(b)?$/;
+  const RE = /^p:([a-z_0-9]+)(?:\+([a-z_0-9]+))?(?:\.([RL]))?(?:\/([a-z_]+))?(?:~([lrudcb]))?(?::([01]))?(\*)?$/;
   const combos = new Map();
   function combine(name, seat) {
     const k = name + '+' + seat;
@@ -26619,7 +26619,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     hasProp: (name) => !!PROPS[name],
     key(name, o) {
       o = o || {};
-      return 'p:' + name + (o.seat && o.seat !== name ? '+' + o.seat : '') + (o.hand ? '.' + o.hand : '') + (o.prop ? '/' + o.prop : '') + (o.gaze ? '~' + o.gaze : '') + (o.breath ? ':1' : '') + (o.blink ? 'b' : '');
+      return 'p:' + name + (o.seat && o.seat !== name ? '+' + o.seat : '') + (o.hand ? '.' + o.hand : '') + (o.prop ? '/' + o.prop : '') + (o.gaze ? '~' + o.gaze : '') + (o.breath ? ':1' : '') + (o.blink ? '*' : '');
     },
     stats: () => Object.assign({ entries: LRU.size, cap: CAP }, stats),
     setCap(n) { CAP = Math.max(50, n | 0); while (LRU.size > CAP) { LRU.delete(LRU.keys().next().value); stats.evicted++; } },
@@ -33808,6 +33808,7 @@ RB.gestures = (function () {
   def('handsbehind', { label: 'hands behind the back a while', entry: [K('behind', 2600)], peak: K('behind', 600), recover: [K(null, 160)], needs: 'two' });
   // a supporting hand: a half-step to someone beside you and a hand laid on their back (held)
   def('touchback', { label: 'a hand laid on someone\'s back', entry: [K('half', 220, { turn: 1, dx: 4 })], peak: K('reach', 420, { dx: 10 }), recover: [K('half', 220, { dx: 5 }), K(null, 180, { dx: 0 })], hold: true, still: 'reach', needs: 'free' });
+  def('cupear', { label: 'a hand to the ear (listening for something)', entry: [K('half', 260)], peak: K('cupear', 1200, { gaze: 'u' }), recover: [K('half', 200), K(null, 160)], needs: 'free' });
   def('sitidle', { label: 'sitting a while', entry: [K('sit', 400)], peak: K('sitlook', 1800, { gaze: 'u' }), recover: [K('sit', 300)] });
 
   // ---- queries ------------------------------------------------------------------------------------------
@@ -34058,6 +34059,8 @@ RB.staging = (function () {
   const MOODS = [
     { map: /^lf\./, if: '!lf_bell_rung', pace: 1.4, social: 0.4, talk: ['nod', 'palm'] },
     { map: /^(sa|sv)\./, pace: 1.6, social: 0.3, talk: ['nod'] },
+    // the inn full of people sheltering from the storm: tending, listening, resting — nobody bouncing
+    { map: /^sb\.inn$/, if: 'sb_storm&!sb_morning', pace: 1.3, social: 0.6, talk: ['nod', 'palm'], avoid: ['bounce', 'heeltap', 'hum', 'stretch', 'peek'] },
   ];
   function moodOf(m) {
     const s = RB.game.s;
@@ -34069,7 +34072,7 @@ RB.staging = (function () {
     if (!s.prof || s.map !== (m && m.id)) {
       const r = RB.mannerisms ? RB.mannerisms.forActor(a) : { prof: { class: 'town', idle: [], every: [12, 24], talk: [] }, stations: new Set() };
       const md = m && moodOf(m);
-      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk });
+      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk, moodAvoid: md.avoid || null });
       s.prof = r.prof; s.stations = r.stations; s.map = m && m.id;
       s.rest = restFor(a, r.prof);
       s.next = null; s.n = {};
@@ -34252,6 +34255,9 @@ RB.staging = (function () {
       if (pose && pose === (s.rest || '').split('.')[0] && !prop && s.prof && s.prof.restProp) prop = s.prof.restProp;
     }
     if (s.look && s.look.target && !gaze && !run) gaze = gazeTo(a, s.look.target, dir || a.dir);
+    // a held object needs a hand to hold it: a stance that hides the hands (behind the back, folded, in
+    // the sleeves) gives way to holding it
+    if (prop && (!pose || /^(behind|folded|sleeves|hips)$/.test(pose)) && !(run && !run.done)) { pose = 'hold'; hand = hand || (s.held && s.held.hand) || null; }
     if (!pose && !gaze && !prop && !dir && !ox && !oy) return null;
     if (a.look.custom) return dir || ox || oy ? { dir: dir || a.dir, key: null, ox, oy } : null;
     const fr = typeof base === 'string' ? base : '';
@@ -34323,6 +34329,8 @@ RB.staging = (function () {
       st.stats.released++;
     }
     // people moved for the scene go back where they belong (unless the scene left them where it put them)
+    // you were moved for the scene: your companion comes back to your side (no jump on your next step)
+    if (sc.moved.has(w.player) && w.comp && !sc.moved.has(w.comp)) sc.moved.set(w.comp, { from: [w.comp.x, w.comp.y, w.comp.dir], stay: false });
     for (const [a, m] of sc.moved) {
       if (m.stay) continue;
       if (a === w.player) continue;
@@ -34577,7 +34585,7 @@ RB.staging = (function () {
     return true;
   }
   function pickHabit(a, prof, list) {
-    let pool = (list || []).filter((h) => eligible(a, prof, h));
+    let pool = (list || []).filter((h) => eligible(a, prof, h) && !(prof.moodAvoid && prof.moodAvoid.includes(h[0])));
     // the weather a person stands in (snow: hands rubbed against the cold)
     const amb = (W().map.def.ambient || {}).weather;
     if (amb === 'snow' && RB.gestures.can('rubhands', a.look)) pool = pool.concat([['rubhands', 1]]);
@@ -34847,7 +34855,7 @@ RB.staging = (function () {
     resetStats() { st.stats = fresh(); if (RB.sprites._pose) { /* the frame cache keeps its own counts */ } },
     state() {
       const w = W(), sc = st.scene;
-      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag, ev: r.ev } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
+      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag, ev: r.ev, still: !!r.still } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
       return { scene: sc ? { id: sc.id, token: sc.token, owned: [...sc.owned].map(idOf), beats: sc.beats.slice(), ambience: !!sc.ambience } : null,
         actors: w.map ? w.npcs.concat(w.extras || []).map(one).concat(w.comp ? [one(w.comp)] : [], [one(w.player)]) : [] };
     },
@@ -117395,7 +117403,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { idle: 'very slow blinks, chin up', cues: { think: 'eyes narrow further' } } });
   M('co_tokiwa', 'scholar', B, { every: [14, 24], idle: [['readidle', 3], ['glasses', 2], ['tidy', 1, { at: 'surface' }]], tells: { worry: 'aside', sad: 'lowered', think: 'glasses' }, props: ['book', 'brush'], talk: [7, 16, 24], strong: [{ beat: 'co.tokiwa_confront', gesture: 'lowered' }, { beat: 'co.assembly', gesture: 'read' }],
     portrait: { idle: 'a glint on the glasses', cues: { sad: 'gaze down and held' } } });
-  M('omi', 'official', B, { every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
+  M('omi', 'official', B, { rest: null, every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'emphatic' }, { beat: 'sg.omi_wataru', gesture: 'size' }, { beat: 'sg.omi_wataru', gesture: 'point' }], avoid: ['shouting', 'a desk slam'], social: 0.3,
     portrait: { idle: 'slow blinks under the brim, almost no tilt', cues: { angry: 'a narrowing and one exhale; no shake' } } });
   // Hiro "can't let go" of the work (co.hiro_first): at the workshop the blowpipe never leaves his hands and
@@ -117440,7 +117448,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('sa_clerk', 'nonhuman', O, { every: [16, 28], idle: [['stiff', 1]], talk: [2, 13] });
   M('fuku', 'elder', O, { every: [16, 28], idle: [['lookroad', 2], ['shadeeyes', 1]], talk: [2, 3] });
   M('lf_kohei', 'craft', O, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 2], ['stretch', 1]], talk: [11, 17] });
-  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [1, 29] });
+  // Isamu waits by the fire: warms his hands, and now and then a hand goes to his ear, as if he heard something
+  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [12, 22], idle: [['rubhands', 3], ['cupear', 2], ['sitidle', 1], ['glance', 1]], talk: [1, 29] });
   M('tetsuji', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['countidle', 2], ['lookroad', 1]], talk: [12, 23] });
   M('denji', 'elder', O, { rest: 'sitlap', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [11, 2] });
   M('co_kotaro', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 2], ['glance', 1]], talk: [10, 18] });
@@ -117449,6 +117458,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('lf_tsuya', 'elder', O, { every: [14, 24], idle: [['lookroad', 3], ['glance', 1]], talk: [1, 32] });
   M('co_shino', 'traveller', O, { every: [9, 16], idle: [['sort', 2, { prop: 'letter' }], ['lookroad', 2], ['strap', 1]], talk: [14, 2] });
   M('tomo', 'host', O, { every: [9, 16], idle: [['hangwash', 2, { at: 'laundry' }], ['lookroad', 2], ['glance', 1]], talk: [13, 32] });
+  // TODO (lead, after the bakery props merge): Masaru's kneading needs a work surface within a tile of where he
+  // stands (lf.bakery 3,4); if the new prep surface's prop name does not match RB.mannerisms' station list
+  // (/table|counter|stall|desk|…/ → 'surface'), add it there. Until then he counts orders and wipes his brow.
   M('lf_masaru', 'host', O, { every: [8, 14], idle: [['knead', 3, { at: 'surface' }], ['countidle', 1], ['brow', 1]], talk: [12, 31] });
   M('co_heita', 'craft', O, { every: [12, 22], idle: [['doze', 3], ['stretch', 2], ['yawn', 1]], talk: [17] });
   M('lf_ritsu', 'host', O, { rest: 'clasp', every: [9, 16], idle: [['polish', 3], ['tidy', 1, { at: 'surface' }]], talk: [19, 26] });

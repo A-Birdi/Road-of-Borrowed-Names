@@ -66,6 +66,8 @@ RB.staging = (function () {
   const MOODS = [
     { map: /^lf\./, if: '!lf_bell_rung', pace: 1.4, social: 0.4, talk: ['nod', 'palm'] },
     { map: /^(sa|sv)\./, pace: 1.6, social: 0.3, talk: ['nod'] },
+    // the inn full of people sheltering from the storm: tending, listening, resting — nobody bouncing
+    { map: /^sb\.inn$/, if: 'sb_storm&!sb_morning', pace: 1.3, social: 0.6, talk: ['nod', 'palm'], avoid: ['bounce', 'heeltap', 'hum', 'stretch', 'peek'] },
   ];
   function moodOf(m) {
     const s = RB.game.s;
@@ -77,7 +79,7 @@ RB.staging = (function () {
     if (!s.prof || s.map !== (m && m.id)) {
       const r = RB.mannerisms ? RB.mannerisms.forActor(a) : { prof: { class: 'town', idle: [], every: [12, 24], talk: [] }, stations: new Set() };
       const md = m && moodOf(m);
-      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk });
+      if (md) r.prof = Object.assign({}, r.prof, { every: (r.prof.every || [12, 24]).map((v) => v * md.pace), social: (r.prof.social || 0) * md.social, moodTalk: md.talk, moodAvoid: md.avoid || null });
       s.prof = r.prof; s.stations = r.stations; s.map = m && m.id;
       s.rest = restFor(a, r.prof);
       s.next = null; s.n = {};
@@ -260,6 +262,9 @@ RB.staging = (function () {
       if (pose && pose === (s.rest || '').split('.')[0] && !prop && s.prof && s.prof.restProp) prop = s.prof.restProp;
     }
     if (s.look && s.look.target && !gaze && !run) gaze = gazeTo(a, s.look.target, dir || a.dir);
+    // a held object needs a hand to hold it: a stance that hides the hands (behind the back, folded, in
+    // the sleeves) gives way to holding it
+    if (prop && (!pose || /^(behind|folded|sleeves|hips)$/.test(pose)) && !(run && !run.done)) { pose = 'hold'; hand = hand || (s.held && s.held.hand) || null; }
     if (!pose && !gaze && !prop && !dir && !ox && !oy) return null;
     if (a.look.custom) return dir || ox || oy ? { dir: dir || a.dir, key: null, ox, oy } : null;
     const fr = typeof base === 'string' ? base : '';
@@ -331,6 +336,8 @@ RB.staging = (function () {
       st.stats.released++;
     }
     // people moved for the scene go back where they belong (unless the scene left them where it put them)
+    // you were moved for the scene: your companion comes back to your side (no jump on your next step)
+    if (sc.moved.has(w.player) && w.comp && !sc.moved.has(w.comp)) sc.moved.set(w.comp, { from: [w.comp.x, w.comp.y, w.comp.dir], stay: false });
     for (const [a, m] of sc.moved) {
       if (m.stay) continue;
       if (a === w.player) continue;
@@ -585,7 +592,7 @@ RB.staging = (function () {
     return true;
   }
   function pickHabit(a, prof, list) {
-    let pool = (list || []).filter((h) => eligible(a, prof, h));
+    let pool = (list || []).filter((h) => eligible(a, prof, h) && !(prof.moodAvoid && prof.moodAvoid.includes(h[0])));
     // the weather a person stands in (snow: hands rubbed against the cold)
     const amb = (W().map.def.ambient || {}).weather;
     if (amb === 'snow' && RB.gestures.can('rubhands', a.look)) pool = pool.concat([['rubhands', 1]]);
@@ -855,7 +862,7 @@ RB.staging = (function () {
     resetStats() { st.stats = fresh(); if (RB.sprites._pose) { /* the frame cache keeps its own counts */ } },
     state() {
       const w = W(), sc = st.scene;
-      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag, ev: r.ev } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
+      const one = (a) => { const s = a.stg || {}; const r = s.run; return { id: idOf(a), x: a.x, y: a.y, dir: a.dir, run: r ? { id: r.id, owner: r.owner, holding: r.holding, tag: r.tag, ev: r.ev, still: !!r.still } : null, pose: s.pose || null, rest: s.rest || null, look: s.look ? s.look.dir : null, held: s.held ? s.held.kind : null, owned: owned(a), cls: s.prof ? s.prof.class : null, tier: s.prof ? s.prof.tier : null, hist: (s.hist || []).slice() }; };
       return { scene: sc ? { id: sc.id, token: sc.token, owned: [...sc.owned].map(idOf), beats: sc.beats.slice(), ambience: !!sc.ambience } : null,
         actors: w.map ? w.npcs.concat(w.extras || []).map(one).concat(w.comp ? [one(w.comp)] : [], [one(w.player)]) : [] };
     },

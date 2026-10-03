@@ -92,9 +92,11 @@ export default async (t) => {
   const tr = PZ.resolve(C.chars.tsuru.look, PZ.parse('p:size_out').P);
   t.ok(tr.arms.L === null && tr.arms.R === 'out', 'a cane hand never leaves the cane');
   // keys
-  const pp = PZ.parse('p:chin+sit.L/cup~u:1b');
+  const pp = PZ.parse('p:chin+sit.L/cup~u:1*');
   t.ok(pp.P.name === 'chin' && pp.P.S.legs === 'sit' && pp.P.hand === 'L' && pp.P.prop === 'cup' && pp.P.eyes === 'u' && pp.bob === 8 && pp.blink, 'a frame key parses into pose, seat, hand, prop, gaze, breath and blink');
   t.eq(PZ.parse('p:nonsense').P.name, 'stiff', 'an unknown pose falls back to standing');
+  const pb = PZ.parse(PZ.key('stiff', { prop: 'brush', blink: true }));
+  t.ok(pb.P.prop === 'brush' && pb.blink, 'a blink after a prop name is not read as part of it (' + PZ.key('stiff', { prop: 'brush', blink: true }) + ')');
   t.ok(PZ.stats().cap > 0 && PZ.stats().cap <= 2000, 'the posed-frame cache is bounded (' + PZ.stats().cap + ')');
 
   // ---- mannerism profiles ---------------------------------------------------------------------------------
