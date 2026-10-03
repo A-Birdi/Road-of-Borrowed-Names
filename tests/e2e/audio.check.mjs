@@ -101,6 +101,7 @@ console.log(`\n## Songs (offline render, ${SONG_SECONDS}s from start${quick ? ''
 console.log(row(['id', 'length', 'window', 'rms', 'rms dB', 'peak', 'raw pk', 'bright', 'gap s', 'ms'], W));
 const rmsList = [];
 const brightList = [];
+const peakList = [];
 for (const s of api.songs) {
   const windows = [[0, SONG_SECONDS]];
   if (!quick && s.seconds > 20) windows.push([Math.floor(s.seconds / 2), 6]);
@@ -120,6 +121,7 @@ for (const s of api.songs) {
     ok(r.peak <= 1.0, `${s.id}@${off}: peak ${r.peak} > 1`);
     ok(r.clipped === 0, `${s.id}@${off}: ${r.clipped} samples at full scale`);
     if (off === 0) rmsList.push([s.id, r.rms]);
+    peakList.push([s.id, r.peak]);
   }
 }
 const sorted = rmsList.map((x) => x[1]).sort((a, b) => a - b);
@@ -130,6 +132,20 @@ console.log(`  brightness (effective Hz): min ${bs[0]}, median ${bs[Math.floor(b
 for (const [id, b] of brightList) if (b > 4000) console.log(`  note: ${id} is bright (${b} Hz effective) — check for harshness`);
 for (const [id, r] of rmsList) {
   if (r > median * 2.5 || r < median / 4) console.log(`  note: ${id} is ${db(r / median)} dB from the median`);
+}
+// Zone music (Chapter 2 on: new or re-orchestrated, songList().chapter >= 2)
+// must stay within the loudness of the original songs: opening-window RMS
+// within their range ±1 dB, peaks no higher than theirs + 0.05.
+{
+  const zone = new Set(api.songs.filter((s) => s.chapter >= 2).map((s) => s.id));
+  const ref = rmsList.filter(([id]) => !zone.has(id)).map((x) => x[1]);
+  const refPeak = Math.max(...peakList.filter(([id]) => !zone.has(id)).map((x) => x[1]));
+  const lo = Math.min(...ref) / Math.pow(10, 1 / 20), hi = Math.max(...ref) * Math.pow(10, 1 / 20);
+  const zr = rmsList.filter(([id]) => zone.has(id));
+  const zp = peakList.filter(([id]) => zone.has(id));
+  console.log(`  zone music: ${zone.size} songs, opening RMS ${db(Math.min(...zr.map((x) => x[1])))} to ${db(Math.max(...zr.map((x) => x[1])))} dB (original songs ${db(Math.min(...ref))} to ${db(Math.max(...ref))} dB); peak max ${Math.max(...zp.map((x) => x[1])).toFixed(3)} (original ${refPeak.toFixed(3)})`);
+  for (const [id, r] of zr) ok(r >= lo && r <= hi, `${id}: opening RMS ${db(r)} dB outside the original songs' range ±1 dB`);
+  for (const [id, p] of zp) ok(p <= refPeak + 0.05, `${id}: peak ${p.toFixed(3)} above the original songs' ${refPeak.toFixed(3)} + 0.05`);
 }
 
 console.log('\n## Effects (offline render)');

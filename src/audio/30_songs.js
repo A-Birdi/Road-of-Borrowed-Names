@@ -1,4 +1,8 @@
 /* Song data — original music for The Road of Borrowed Names.
+ * This file: the shared motifs, Chapter 1 and the songs used across the
+ * game. Zone music from Chapter 2 on (overworld, battle, boss and story
+ * cues, with the Japanese instruments) is in 31_songs_ch2.js … 36_songs_ch6.js;
+ * which battle/boss theme plays where is in 39_zones.js.
  *
  * ============================== NOTATION ==================================
  * A song is { title, key, mode, bpm, meter, tracks, all, sections, form }.
@@ -17,6 +21,8 @@
  *                 rv: reverb send, dl: echo send, u: beats per step (0.5) }
  *   instruments: pluck harp bell celesta toll glass flute bowed bass pad keys
  *                mallet choir
+ *   Japanese:    shamisen biwa koto koto_oshi (plucked a whole tone low and
+ *                pressed up to the written note) shakuhachi shinobue sho rin
  *   Kinds of track:
  *   - melody (default): scale DEGREES.
  *   - pat: true   — chord-tone PATTERN that follows the section's chords.
@@ -55,6 +61,9 @@
  *   w woodblock   h high woodblock   r rim   x clock tick   g glass tick
  *   d water drop  c wooden creak   j small bells   o big drum (bosses)
  *   n frame-drum snap   . rest   | bar check
+ *   Japanese:  z ōdaiko (don)   e shime-daiko (ten)   f taiko rim (ka)
+ *              m kotsuzumi (pon)   q ōtsuzumi (kan)   y hyōshigi clappers
+ *              a atarigane hand gong   v chappa cymbals   i rin bowl bell
  *
  * FORM entries: 'A' or { s:'A', i:{track:inst}, o:{track:+1}, m:[muted],
  *   tr: semitones, dyn, key, mode, bpm }. Sections may use from:'A' to
@@ -135,6 +144,8 @@ RB.audio = RB.audio || {};
   const DEP_MIO = '.:8 | .:8 | 3 2 3 5 3 2 3 - | 1 - - - . . . . | .:8 | .:8 | .:8 | .:8';
   const DEP_REN = ".:8 | .:8 | .:8 | .:8 | 5, - 1 - 4 - 5 - | 1' - 7 1' - - - - | .:8 | .:8";
   const DEP_SUZU = ".:8 | .:8 | .:8 | .:8 | .:8 | .:8 | 1 1' 7 b7 6 - 5 - | 3 - - - 2 - 1 -";
+  // shared with the zone files (31_… 36_)
+  _.mat = { ARP4, ARP3, BASS4, BASS3, TRI, ROAD_A, ROAD_A_CH, ROAD_B, ROAD_B_CH, MINOR_B_CH, ROAD_C, ROAD_C_CH };
   const COMPANION_TRACKS = () => ({
     nao: { i: 'pluck', o: 4, v: 0.75, rv: 0.25, pan: -0.2 },
     mio: { i: 'mallet', o: 5, v: 0.75, rv: 0.25, pan: 0.2 },
@@ -436,29 +447,30 @@ RB.audio = RB.audio || {};
   S('saltglass', {
     title: 'Saltglass Harbour',
     kind: 'area',
+    chapter: 2,
     motifs: ['road'],
-    notes: 'Working harbour in F with a lilting swing (104): a bouncing root–fifth bass, plucked chords on 2 and 4 like rigging slapping a mast, woodblock and shaker. B leans mixolydian (E-flat) for the cargo-label muddle; C is quieter and echoing — the road motif over D minor, pointing toward the drowned archive.',
+    notes: 'Working harbour in F with a lilting swing (104), re-orchestrated for Chapter 2 as a min’yō band — same melody, form and motifs as before: shakuhachi lead, shamisen chords slapping on 2 and 4 like rigging against a mast, a bouncing root–fifth bass, woodblock, shaker and shime-daiko, a hyōshigi clap to start. B leans mixolydian (E-flat) for the cargo-label muddle on a bright shinobue; A2 puts the tune on koto with a second koto answering; C is quieter and echoing — the road motif on shakuhachi over D minor, pointing toward the drowned archive; B2 hands the tune to the shamisen.',
     key: 'F', bpm: 104, swing: 0.24,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.8, rv: 0.25 },
-      mal: { i: 'mallet', o: 5, v: 0.6, rv: 0.2, pan: 0.2 },
-      bell: { i: 'bell', o: 5, v: 0.45, rv: 0.4, dl: 0.35, pan: -0.2 },
-      gtr: { i: 'pluck', o: 4, pat: true, fold: 'all', win: -3, v: 0.4, rv: 0.15, pan: -0.3 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.3 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.25 },
+      mal: { i: 'koto', o: 5, v: 0.5, rv: 0.2, pan: 0.2 },
+      bell: { i: 'koto', o: 5, v: 0.42, rv: 0.4, dl: 0.35, pan: -0.2 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.32, rv: 0.15, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.65 },
       perc: { perc: true, v: 0.45 },
     },
     echo: { beats: 0.75, fb: 0.3, mix: 0.3 },
-    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: '0 - 2, - 0 - 2, 0', pad: TRI, perc: 'w.s.p.s.|w.s.p.ss' },
+    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: '0 - 2, - 0 - 2, 0', pad: TRI, perc: 'w.s.e.s.|w.s.e.ss' },
     sections: {
-      intro: { bars: 2, ch: '1 5', perc: 'w.......' },
+      intro: { bars: 2, ch: '1 5', perc: 'y.......' },
       A: { bars: 8, ch: SALT_A_CH, lead: SALT_A },
       B: { bars: 8, ch: SALT_B_CH, lead: SALT_B },
       A2: { bars: 8, ch: SALT_A_CH, mal: SALT_A, bell: '.:8 | .:8 | .:8 | 6 - - - 5 - - - | .:8 | .:8 | .:8 | 5 - - - - - . .' },
       C: { bars: 8, ch: SALT_C_CH, bell: SALT_C, gtr: null, perc: '....s...', dyn: 0.85 },
       B2: { bars: 8, ch: SALT_B_CH, mal: SALT_B },
     },
-    form: ['intro', 'A', 'B', 'A2', 'C', 'B2'],
+    form: ['intro', 'A', { s: 'B', i: { lead: 'shinobue' } }, 'A2', { s: 'C', i: { bell: 'shakuhachi' } }, { s: 'B2', i: { mal: 'shamisen' }, o: { mal: -1 } }],
   });
 
   // ====================================================== DROWNED ARCHIVE
@@ -473,16 +485,18 @@ RB.audio = RB.audio || {};
   S('drowned_archive', {
     title: 'The Drowned Archive',
     kind: 'area',
+    chapter: 2,
     motifs: ['road', 'hush'],
-    notes: 'Tidal ruin in E minor at a slow 66: pads that swell like tides, water drops, a bell through a long echo. In B the Hush motif rises from below on glass (a lydian glint over C) and the road motif answers from above.',
+    notes: 'Tidal ruin in E minor at a slow 66, re-orchestrated for Chapter 2 — same melody, form and motifs: the lead is now a rin bowl through a long echo, the arpeggio a koto, the pads still swell like tides and water still drips. In B the Hush motif rises from below on glass (a lydian glint over C) over a held shō, and the road motif answers from above; the repeat of A is on shakuhachi; C adds a slow ōdaiko heartbeat under the koto.',
     key: 'E', mode: 'aeolian', bpm: 66,
     tracks: {
-      bell: { i: 'bell', o: 5, v: 0.6, rv: 0.5, dl: 0.4, pan: 0.15 },
+      bell: { i: 'rin', o: 5, v: 0.95, rv: 0.5, dl: 0.4, pan: 0.15 },
       glass: { i: 'glass', o: 4, v: 0.9, rv: 0.5, pan: -0.2 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.4, rv: 0.45, dl: 0.2, pan: -0.3 },
-      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.55, rv: 0.5 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.45, dl: 0.2, pan: -0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.5, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.5 },
       drip: { perc: true, v: 0.55, rv: 0.6, pan: 0.3 },
+      heart: { perc: true, v: 0.4, rv: 0.4 },
     },
     echo: { beats: 1.5, fb: 0.4, mix: 0.35 },
     all: {
@@ -492,9 +506,9 @@ RB.audio = RB.audio || {};
     sections: {
       A: { bars: 8, ch: DROWN_A_CH, bell: DROWN_A },
       B: { bars: 8, ch: DROWN_B_CH, glass: DROWN_B_GLASS, bell: DROWN_B_BELL, arp: '0 . 2 . 4 . 2 .' },
-      C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, dyn: 0.9 },
+      C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, heart: 'z.......|........', dyn: 0.9 },
     },
-    form: ['A', 'B', { s: 'A', i: { bell: 'celesta' } }, 'C'],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { bell: 'shakuhachi' } }, { s: 'C', i: { bell: 'koto' } }],
   });
 
   // =============================================================== CINDER
@@ -1151,6 +1165,14 @@ RB.audio = RB.audio || {};
       B: { bars: 8, ch: WON_B_CH, glass: WON_B },
     },
     form: ['A', 'B', { s: 'A', i: { lead: 'celesta' } }],
+  });
+
+  Object.assign(_.mat, {
+    REED_A, REED_A_CH, SALT_A, SALT_A_CH, SALT_B, SALT_B_CH, SALT_C, SALT_C_CH,
+    CIN_A, CIN_A_CH, CIN_A_CM, CIN_B, CIN_B_CH, CIN_C, CIN_C_CH, KILN_A, KILN_A_CH, KILN_B, KILN_B_CH,
+    SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
+    LF_A, LF_A_CH, BT_A, BT_A_CH, SA_A, SA_A_CH, SA_B, SA_B_CH, FIN_A, FIN_A_CH,
+    BOSS_HUSH, HUSH_A, HUSH_A_CH, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
   });
 
   _.REQUIRED_SONGS = [

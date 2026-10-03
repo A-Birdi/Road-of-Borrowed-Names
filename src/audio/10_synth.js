@@ -504,10 +504,364 @@ RB.audio = RB.audio || {};
     run(c, [s1, s2, lfo], [s1, s2, lfo, lg, mix, b1, b2, b3, g1, g2, g3, lp, a], t, off + 1.8);
   };
 
+  // ------------------------------------------- Japanese instruments (wagakki)
+  // Same rules as the voices above — envelopes on the audio clock, the shared
+  // deterministic noise buffer, nothing created at load time except a small
+  // Float32Array curve — with one difference that keeps them light enough for
+  // phones: their filters are FIXED and SHARED. A note never automates a
+  // filter (a biquad whose frequency moves recomputes its coefficients every
+  // sample); brightness that changes over a note is made with gains instead
+  // (a bright path that fades fast beside a duller one). And a fixed filter
+  // is created once per track strip and reused by every note on that track:
+  // filtering is linear, so filtering the sum of the notes is the same as
+  // filtering each note. A note itself owns only oscillators and gains
+  // (at most 12 nodes), and its short parts (plectrum click, body thump,
+  // pick "ting") stop as soon as they are inaudible. Everything works the
+  // same in the live and the offline context (the cache lives on the graph).
+
+  // A node chain built once per (graph, track strip, key) and reused.
+  function shared(g, out, key, make) {
+    if (!g.shared) g.shared = new WeakMap();
+    let m = g.shared.get(out);
+    if (!m) {
+      m = new Map();
+      g.shared.set(out, m);
+    }
+    let n = m.get(key);
+    if (!n) {
+      n = make();
+      m.set(key, n);
+    }
+    return n;
+  }
+  // frequencies of shared filters snap to quarter-octave steps, so a track
+  // owns at most a few dozen of them
+  const snap = (f) => Math.pow(2, Math.round(Math.log2(Math.max(20, f)) * 4) / 4);
+  function sbq(g, out, type, f, q) {
+    const fs = snap(f);
+    return shared(g, out, type + fs + ':' + q, () => {
+      const b = bq(g.ctx, type, fs, q);
+      b.connect(out);
+      return b;
+    });
+  }
+  _.shared = { shared, sbq, snap };
+
+  // Sawari: on the shamisen and the biwa the lowest string touches a raised
+  // spot near the nut, so every vibration is clipped unevenly — a bright,
+  // buzzing "zing" that keeps ringing after the plucked tone has dulled. An
+  // asymmetric clipping curve turns the string's periodic wave into that
+  // buzz (harmonics of the note, not noise), band-passed into the region
+  // where the ear hears the zing. The clipper is shared by a track's notes
+  // (overlapping strings buzz against each other, as on the instrument).
+  let SAWARI = null;
+  function sawariCurve() {
+    if (SAWARI) return SAWARI;
+    const n = 1024;
+    SAWARI = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const x = (i / (n - 1)) * 2 - 1;
+      SAWARI[i] = x > 0 ? Math.tanh(5 * x) : -0.3 * Math.tanh(-2 * x) + 0.12 * x * x;
+    }
+    return SAWARI;
+  }
+  // Pitch helper: every oscillator in `list` starts at f*r0 and settles at f.
+  function glide(list, f, t, r0, hold, secs) {
+    for (const o of list) {
+      o.frequency.setValueAtTime(f * r0, t);
+      if (hold > 0) o.frequency.setValueAtTime(f * r0, t + hold);
+      o.frequency.exponentialRampToValueAtTime(f, t + hold + secs);
+    }
+  }
+  // a gain with a plucked envelope (instant rise, exponential fall, damped at `off`)
+  function plk(c, t, pk, tau, off, rel) {
+    const a = amp(c, 0);
+    a.gain.setValueAtTime(0, t);
+    a.gain.linearRampToValueAtTime(pk, t + 0.0015);
+    a.gain.setTargetAtTime(0, t + 0.0015, tau);
+    if (off != null) a.gain.setTargetAtTime(0, off, rel);
+    return a;
+  }
+
+  // Plucked lute shared by the shamisen and the biwa. The string (a saw,
+  // plus an optional second wave for body) is heard three ways: raw with a
+  // very fast decay (the strike), through the track's fixed low-pass with
+  // the note's own decay (the tone), and through the track's sawari clipper
+  // (the buzz, which rings longer than the strike's brightness). Then the
+  // plectrum (bachi) clicks on string and skin, and the skin-covered body
+  // answers with a short low "tsun". The string starts sharp — the tension
+  // of the strike — and drops into tune.
+  function lute(g, out, t, f, d, v, o) {
+    const c = g.ctx;
+    const o1 = osc(c, 'sawtooth', f, t);
+    const srcs = [o1];
+    const nodes = [o1];
+    let src = o1;
+    if (o.mix2) {
+      const o2 = osc(c, o.wave2, f, t);
+      const m2 = amp(c, o.mix2);
+      src = amp(c, 1);
+      o1.connect(src);
+      o2.connect(m2);
+      m2.connect(src);
+      srcs.push(o2);
+      nodes.push(o2, m2, src);
+    }
+    glide(srcs, f, t, o.drop, 0, o.dropT);
+    const off = t + Math.max(d, 0.04);
+    const dec = clamp(o.dec - f / 2600, o.dec * 0.35, o.dec);
+    const aB = plk(c, t, o.pk * o.strike * v, o.close);
+    const a = plk(c, t, o.pk * v, dec, off, 0.05);
+    const sg = plk(c, t, v, dec * o.buzzLen, off, 0.07);
+    const buzz = shared(g, out, 'sawari' + o.buzzF, () => {
+      const drive = amp(c, o.drive);
+      const ws = c.createWaveShaper();
+      ws.curve = sawariCurve();
+      const bp = bq(c, 'bandpass', o.buzzF, o.buzzQ);
+      const lvl = amp(c, o.buzz);
+      drive.connect(ws);
+      ws.connect(bp);
+      bp.connect(lvl);
+      lvl.connect(out);
+      return drive;
+    });
+    src.connect(aB);
+    aB.connect(out);
+    src.connect(a);
+    a.connect(sbq(g, out, 'lowpass', Math.min(Math.max(f * o.settle, o.floor), 8000), o.q));
+    src.connect(sg);
+    sg.connect(buzz);
+    nodes.push(aB, a, sg);
+    run(c, srcs, nodes, t, Math.min(off + 0.32, t + dec * Math.max(4.5, o.buzzLen * 4)));
+    // bachi: a click of the plectrum on string and skin
+    const n = noise(g);
+    const ng = plk(c, t, o.click * v, o.clickT);
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', o.clickF, 0.9));
+    run(c, [n], [n, ng], t, t + o.clickT * 8);
+    // the body's "tsun"
+    const sk = osc(c, 'sine', o.body, t);
+    sk.frequency.exponentialRampToValueAtTime(o.body * 0.72, t + 0.05);
+    const skg = plk(c, t, o.thump * v, 0.03);
+    sk.connect(skg);
+    skg.connect(out);
+    run(c, [sk], [sk, skg], t, t + 0.24);
+  }
+  // Shamisen: bright and dry, a short body decay, the sawari ringing on.
+  I.shamisen = (g, o, t, f, d, v) => lute(g, o, t, f, d, v, {
+    mix2: 0, drop: 1.02, dropT: 0.045, q: 1.2, strike: 0.6, settle: 5, floor: 900, close: 0.035,
+    dec: 0.3, pk: 0.2, drive: 2, buzz: 0.34, buzzQ: 0.9, buzzF: 2900, buzzLen: 2.6,
+    click: 0.2, clickF: 2600, clickT: 0.008, body: 200, thump: 0.1,
+  });
+  // Biwa: lower, rounder strings, a heavier bachi on the body, a longer and
+  // stronger buzz (the biwa's frets are built for sawari).
+  I.biwa = (g, o, t, f, d, v) => lute(g, o, t, f, d, v, {
+    wave2: 'triangle', mix2: 0.5, drop: 1.032, dropT: 0.07, q: 1, strike: 0.55, settle: 3.5, floor: 500, close: 0.05,
+    dec: 0.7, pk: 0.24, drive: 2.4, buzz: 0.5, buzzQ: 0.9, buzzF: 1800, buzzLen: 2.8,
+    click: 0.28, clickF: 1200, clickT: 0.012, body: 140, thump: 0.16,
+  });
+
+  // Koto: thirteen plucked silk strings over a long wooden body. A rounded
+  // core (triangle + octave) that rings long, a saw that is loud only at the
+  // strike (the ivory pick's brightness), an inharmonic "ting" from the pick
+  // (tsume) and a click. `press` > 0 is ato-oshi (oshide): the string is
+  // plucked a whole tone low and pressed up to the written note behind the
+  // bridge.
+  function koto(g, out, t, f, d, v, press) {
+    const c = g.ctx;
+    const o1 = osc(c, 'triangle', f, t);
+    const o2 = osc(c, 'sine', f * 2, t);
+    const m2 = amp(c, 0.22);
+    const o3 = osc(c, 'sawtooth', f, t);
+    const tg = osc(c, 'sine', f * 3.01, t);
+    if (press) glide([o1, o2, o3, tg], f, t, Math.pow(2, -press / 12), 0.06, 0.13);
+    else glide([o1, o2, o3, tg], f, t, 1.006, 0, 0.03);
+    const ring = clamp(3.2 - f / 450, 0.9, 3.2);
+    const off = t + Math.max(d, 0.05) + 0.25;
+    const a = plk(c, t, 0.27 * v, ring / 3, off, 0.15);
+    const m3 = plk(c, t, 0.3 * v, 0.07);
+    o1.connect(a);
+    o2.connect(m2);
+    m2.connect(a);
+    a.connect(out);
+    o3.connect(m3);
+    m3.connect(out);
+    run(c, [o1, o2], [o1, o2, m2, a], t, Math.min(off + 0.65, t + ring * 2.4));
+    run(c, [o3], [o3, m3], t, t + 0.45);
+    const tgg = plk(c, t, 0.12 * v, 0.08);
+    tg.connect(tgg);
+    tgg.connect(out);
+    run(c, [tg], [tg, tgg], t, t + 0.6);
+    const n = noise(g);
+    const ng = plk(c, t, 0.1 * v, 0.006);
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', 3600, 1.2));
+    run(c, [n], [n, ng], t, t + 0.05);
+  }
+  I.koto = (g, o, t, f, d, v) => koto(g, o, t, f, d, v, 0);
+  I.koto_oshi = (g, o, t, f, d, v) => koto(g, o, t, f, d, v, 2);
+
+  // Shakuhachi: end-blown bamboo. Far more breath than the flute — a pitched
+  // edge-tone hiss around the note plus a wide band of air — a meri scoop
+  // (the note starts nearly a semitone flat and is lifted into tune), a
+  // slow, wide, late vibrato, and on accented notes a burst of breath
+  // (muraiki).
+  I.shakuhachi = function (g, out, t, f, d, v) {
+    const c = g.ctx;
+    const s = osc(c, 'sine', f, t);
+    const tr = osc(c, 'triangle', f, t);
+    const scoop = Math.min(0.24, Math.max(0.09, d * 0.35));
+    glide([s, tr], f, t, Math.pow(2, -0.85 / 12), 0.025, scoop);
+    const lfo = osc(c, 'sine', 4.3, t);
+    const lg = amp(c, 0);
+    if (d > 0.5) {
+      lg.gain.setValueAtTime(0, t + 0.35);
+      lg.gain.linearRampToValueAtTime(f * 0.009, t + Math.min(d, 1.5));
+    }
+    lfo.connect(lg);
+    lg.connect(s.frequency);
+    lg.connect(tr.frequency);
+    const off = t + Math.max(d, 0.08);
+    const n = noise(g);
+    const ng = amp(c, 0);
+    const muraiki = clamp((v - 0.85) * 2.5, 0, 0.6);
+    ng.gain.setValueAtTime(0, t);
+    ng.gain.linearRampToValueAtTime((0.9 + muraiki * 2) * v, t + 0.03);
+    ng.gain.setTargetAtTime(0.33 * v, t + 0.035, 0.12 + muraiki * 0.2);
+    ng.gain.setTargetAtTime(0, off, 0.05);
+    const hg = amp(c, 0);
+    hg.gain.setValueAtTime(0, t);
+    hg.gain.linearRampToValueAtTime(0.05 * v, t + 0.04);
+    hg.gain.setTargetAtTime(0.025 * v, t + 0.05, 0.15);
+    hg.gain.setTargetAtTime(0, off, 0.05);
+    const att = clamp(d * 0.25, 0.06, 0.18);
+    const a = amp(c, 0);
+    env(a.gain, t, att, 0.25 * v, 0.5, 0.85, off, 0.09);
+    const at = amp(c, 0);
+    env(at.gain, t, att, 0.06 * v, 0.5, 0.85, off, 0.09);
+    s.connect(a);
+    a.connect(out);
+    tr.connect(at);
+    at.connect(sbq(g, out, 'lowpass', Math.min(f * 3, 5000), 0.6));
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', Math.min(f * 1.6, 7000), 2.2));
+    n.connect(hg);
+    hg.connect(sbq(g, out, 'highpass', 3200, 0.7));
+    run(c, [s, tr, lfo, n], [s, tr, lfo, lg, n, ng, hg, a, at], t, off + 0.45);
+  };
+
+  // Shinobue: the high bamboo festival flute — bright (some square in the
+  // tone), a little breath, a quick grace from a whole tone above (a finger
+  // "hit", uchi) on notes long enough to carry it, a fast shallow vibrato.
+  I.shinobue = function (g, out, t, f, d, v) {
+    const c = g.ctx;
+    const s = osc(c, 'sine', f, t);
+    const tr = osc(c, 'triangle', f, t);
+    const trg = amp(c, 0.45);
+    const sq = osc(c, 'square', f, t);
+    const sqg = amp(c, 0.16);
+    if (d >= 0.22) glide([s, tr, sq], f, t, Math.pow(2, 2 / 12), 0.022, 0.012);
+    else glide([s, tr, sq], f, t, Math.pow(2, -0.25 / 12), 0, 0.03);
+    const lfo = osc(c, 'sine', 5.9, t);
+    const lg = amp(c, 0);
+    if (d > 0.3) {
+      lg.gain.setValueAtTime(0, t + 0.18);
+      lg.gain.linearRampToValueAtTime(f * 0.0045, t + Math.min(d, 0.7));
+    }
+    lfo.connect(lg);
+    lg.connect(s.frequency);
+    lg.connect(tr.frequency);
+    lg.connect(sq.frequency);
+    const off = t + Math.max(d, 0.06);
+    const n = noise(g);
+    const ng = amp(c, 0);
+    ng.gain.setValueAtTime(0, t);
+    ng.gain.linearRampToValueAtTime(0.25 * v, t + 0.015);
+    ng.gain.setTargetAtTime(0.09 * v, t + 0.02, 0.06);
+    ng.gain.setTargetAtTime(0, off, 0.04);
+    const a = amp(c, 0);
+    env(a.gain, t, 0.02, 0.2 * v, 0.35, 0.8, off, 0.05);
+    const ab = amp(c, 0);
+    env(ab.gain, t, 0.02, 0.2 * v, 0.35, 0.8, off, 0.05);
+    s.connect(a);
+    a.connect(out);
+    tr.connect(trg);
+    trg.connect(ab);
+    sq.connect(sqg);
+    sqg.connect(ab);
+    ab.connect(sbq(g, out, 'lowpass', Math.min(f * 7, 10000), 0.7));
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', Math.min(f * 2.5, 9000), 1.5));
+    run(c, [s, tr, sq, lfo, n], [s, tr, trg, sq, sqg, lfo, lg, n, ng, a, ab], t, off + 0.35);
+  };
+
+  // Shō: the free-reed mouth organ of gagaku. A reedy periodic wave (all
+  // harmonics, odd ones a little stronger) on two slightly detuned
+  // oscillators, a slow swell and a slow release; meant for held clusters.
+  function shoWave(g) {
+    if (g.shoWave) return g.shoWave;
+    const H = 14;
+    const re = new Float32Array(H);
+    const im = new Float32Array(H);
+    for (let k = 1; k < H; k++) im[k] = (k % 2 ? 1 : 0.6) / Math.pow(k, 0.7);
+    g.shoWave = g.ctx.createPeriodicWave(re, im);
+    return g.shoWave;
+  }
+  I.sho = function (g, out, t, f, d, v) {
+    const c = g.ctx;
+    const w = shoWave(g);
+    const o1 = c.createOscillator();
+    const o2 = c.createOscillator();
+    o1.setPeriodicWave(w);
+    o2.setPeriodicWave(w);
+    o1.frequency.setValueAtTime(f * 0.9985, t);
+    o2.frequency.setValueAtTime(f * 1.0015, t);
+    const a = amp(c, 0);
+    const off = t + Math.max(d, 0.2);
+    env(a.gain, t, clamp(d * 0.4, 0.25, 0.9), 0.05 * v, 0, 1, off, 0.5);
+    o1.connect(a);
+    o2.connect(a);
+    a.connect(sbq(g, out, 'lowpass', Math.min(f * 8, 7000), 0.5));
+    run(c, [o1, o2], [o1, o2, a], t, off + 2.6);
+  };
+
+  // Rin: a struck bowl bell. Bowl modes at about 1 : 2.76 : 5.2, the lower
+  // two as slightly mistuned pairs so they beat slowly, and a long ring
+  // (faded out at about -30 dB so a voice does not live for ten seconds).
+  function rin(g, out, t, f, v, len) {
+    const c = g.ctx;
+    const parts = [[1, 0.055, 1.6 * len, 0.7], [2.76, 0.03, 0.8 * len, 1.6], [5.2, 0.026, 0.32 * len, 0]];
+    const srcs = [];
+    const nodes = [];
+    const end = t + 1.6 * len * 3.4;
+    const a = amp(c, 1);
+    a.gain.setValueAtTime(1, end - 0.5);
+    a.gain.linearRampToValueAtTime(0, end - 0.02);
+    for (const [r, pk, tau, beat] of parts) {
+      for (const dt of beat ? [0, beat] : [0]) {
+        const s = osc(c, 'sine', f * r + dt, t);
+        const sg = amp(c, 0);
+        sg.gain.setValueAtTime(0, t);
+        sg.gain.linearRampToValueAtTime(pk * v, t + 0.002);
+        sg.gain.setTargetAtTime(0, t + 0.002, tau);
+        s.connect(sg);
+        sg.connect(a);
+        srcs.push(s);
+        nodes.push(s, sg);
+      }
+    }
+    a.connect(out);
+    nodes.push(a);
+    run(c, srcs, nodes, t, end);
+  }
+  I.rin = (g, o, t, f, d, v) => rin(g, o, t, f, v, 1);
+
   // ---------------------------------------------------------- percussion
   // Signature: fn(g, out, t, vel, seed) — seed in [0,1) varies small details.
   const P = (_.perc = {});
-  function thump(g, out, t, v, f0, f1, sweep, tau, pk) {
+  // `k` (optional): how many time constants a stroke lives (default 7, about
+  // -60 dB); the Japanese percussion uses 4.5 (about -40 dB) to save voices.
+  function thump(g, out, t, v, f0, f1, sweep, tau, pk, k) {
     const c = g.ctx;
     const s = osc(c, 'sine', f0, t);
     s.frequency.exponentialRampToValueAtTime(f1, t + sweep);
@@ -517,9 +871,9 @@ RB.audio = RB.audio || {};
     a.gain.setTargetAtTime(0, t + 0.003, tau);
     s.connect(a);
     a.connect(out);
-    run(c, [s], [s, a], t, t + tau * 7);
+    run(c, [s], [s, a], t, t + tau * (k || 7));
   }
-  function hiss(g, out, t, v, type, f, q, att, tau, pk) {
+  function hiss(g, out, t, v, type, f, q, att, tau, pk, k) {
     const c = g.ctx;
     const n = noise(g);
     const fl = bq(c, type, f, q);
@@ -530,9 +884,22 @@ RB.audio = RB.audio || {};
     n.connect(fl);
     fl.connect(a);
     a.connect(out);
-    run(c, [n], [n, fl, a], t, t + att + tau * 7);
+    run(c, [n], [n, fl, a], t, t + att + tau * (k || 7));
   }
-  function ping(g, out, t, v, f, tau, pk) {
+  // hiss through the track's shared fixed filter (the Japanese percussion:
+  // see the note on shared filters above the wagakki)
+  function hissS(g, out, t, v, type, f, q, att, tau, pk, k) {
+    const c = g.ctx;
+    const n = noise(g);
+    const a = amp(c, 0);
+    a.gain.setValueAtTime(0, t);
+    a.gain.linearRampToValueAtTime(pk * v, t + att);
+    a.gain.setTargetAtTime(0, t + att, tau);
+    n.connect(a);
+    a.connect(sbq(g, out, type, f, q));
+    run(c, [n], [n, a], t, t + att + tau * (k || 7));
+  }
+  function ping(g, out, t, v, f, tau, pk, k) {
     const c = g.ctx;
     const s = osc(c, 'sine', f, t);
     const a = amp(c, 0);
@@ -541,9 +908,9 @@ RB.audio = RB.audio || {};
     a.gain.setTargetAtTime(0, t + 0.001, tau);
     s.connect(a);
     a.connect(out);
-    run(c, [s], [s, a], t, t + tau * 7 + 0.01);
+    run(c, [s], [s, a], t, t + tau * (k || 7) + 0.01);
   }
-  _.voice = { thump, hiss, ping };
+  _.voice = { thump, hiss, ping, rin };
 
   P.k = (g, o, t, v) => { // soft kick
     thump(g, o, t, v, 110, 46, 0.11, 0.11, 0.42);
@@ -636,6 +1003,55 @@ RB.audio = RB.audio || {};
       }
     }
   };
+
+  // ------------------------------------------ Japanese percussion (wadaiko …)
+  P.z = (g, o, t, v) => { // ōdaiko "don": deep membrane, a higher mode, rumble, skin slap
+    thump(g, o, t, v, 104, 58, 0.2, 0.34, 0.5, 4.5);
+    thump(g, o, t, v, 168, 128, 0.12, 0.09, 0.14, 4.5);
+    hissS(g, o, t, v, 'lowpass', 240, 0.7, 0.003, 0.16, 0.22, 4.5);
+    hissS(g, o, t, v, 'bandpass', 950, 1, 0.001, 0.016, 0.24, 4.5);
+  };
+  P.e = (g, o, t, v) => { // shime-daiko "ten": tight, high, dry
+    thump(g, o, t, v, 360, 300, 0.035, 0.05, 0.3, 4.5);
+    thump(g, o, t, v, 560, 520, 0.02, 0.025, 0.08, 4.5);
+    hissS(g, o, t, v, 'bandpass', 2900, 1.3, 0.001, 0.018, 0.2, 4.5);
+  };
+  P.f = (g, o, t, v) => { // taiko rim "ka" (fuchi): wood on wood
+    ping(g, o, t, v, 1450, 0.018, 0.16, 4.5);
+    ping(g, o, t, v, 2650, 0.01, 0.07, 4.5);
+    hissS(g, o, t, v, 'bandpass', 3300, 2, 0.001, 0.006, 0.12, 4.5);
+  };
+  P.m = (g, o, t, v) => { // kotsuzumi "pon": a hollow pitched tone that sags as the ropes relax
+    thump(g, o, t, v, 470, 396, 0.12, 0.15, 0.28, 4.5);
+    ping(g, o, t, v, 1090, 0.045, 0.05, 4.5);
+    hissS(g, o, t, v, 'bandpass', 1800, 1.5, 0.001, 0.01, 0.1, 4.5);
+  };
+  P.q = (g, o, t, v) => { // ōtsuzumi "kan": hard dry skin, a sharp crack, almost no ring
+    hissS(g, o, t, v, 'bandpass', 3300, 2.2, 0.001, 0.028, 0.4, 4.5);
+    ping(g, o, t, v, 1250, 0.024, 0.17, 4.5);
+    ping(g, o, t, v, 2900, 0.012, 0.07, 4.5);
+  };
+  P.y = (g, o, t, v) => { // hyōshigi: two hardwood clappers
+    ping(g, o, t, v, 2300, 0.034, 0.15, 4.5);
+    ping(g, o, t, v, 3550, 0.022, 0.065, 4.5);
+    ping(g, o, t, v, 5200, 0.01, 0.03, 4.5);
+    hissS(g, o, t, v, 'bandpass', 4200, 1.5, 0.001, 0.004, 0.12, 4.5);
+  };
+  P.a = (g, o, t, v, seed) => { // atarigane: small festival hand gong (plate modes)
+    const f = 1150 * (1 + ((seed || 0.5) - 0.5) * 0.02);
+    ping(g, o, t, v, f, 0.22, 0.07, 4.5);
+    ping(g, o, t, v, f * 2.72, 0.12, 0.05, 4.5);
+    ping(g, o, t, v, f * 4.98, 0.06, 0.035, 4.5);
+    ping(g, o, t, v, f * 7.6, 0.035, 0.02, 4.5);
+    hissS(g, o, t, v, 'bandpass', 6000, 1, 0.001, 0.004, 0.1, 4.5);
+  };
+  P.v = (g, o, t, v) => { // chappa: small cymbals
+    hissS(g, o, t, v, 'bandpass', 5200, 2.5, 0.001, 0.14, 0.17, 4.5);
+    hissS(g, o, t, v, 'highpass', 8000, 0.7, 0.001, 0.08, 0.1, 4.5);
+    ping(g, o, t, v, 3810, 0.09, 0.025, 4.5);
+    ping(g, o, t, v, 3870, 0.09, 0.025, 4.5);
+  };
+  P.i = (g, o, t, v, seed) => rin(g, o, t, 1180 * (1 + ((seed || 0.5) - 0.5) * 0.004), v * 0.9, 0.85); // rin bowl bell
 
   // ------------------------------------------------------ public: context
   A.supported = () => !!_.AC();

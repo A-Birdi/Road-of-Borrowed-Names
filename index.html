@@ -13108,10 +13108,364 @@ RB.audio = RB.audio || {};
     run(c, [s1, s2, lfo], [s1, s2, lfo, lg, mix, b1, b2, b3, g1, g2, g3, lp, a], t, off + 1.8);
   };
 
+  // ------------------------------------------- Japanese instruments (wagakki)
+  // Same rules as the voices above — envelopes on the audio clock, the shared
+  // deterministic noise buffer, nothing created at load time except a small
+  // Float32Array curve — with one difference that keeps them light enough for
+  // phones: their filters are FIXED and SHARED. A note never automates a
+  // filter (a biquad whose frequency moves recomputes its coefficients every
+  // sample); brightness that changes over a note is made with gains instead
+  // (a bright path that fades fast beside a duller one). And a fixed filter
+  // is created once per track strip and reused by every note on that track:
+  // filtering is linear, so filtering the sum of the notes is the same as
+  // filtering each note. A note itself owns only oscillators and gains
+  // (at most 12 nodes), and its short parts (plectrum click, body thump,
+  // pick "ting") stop as soon as they are inaudible. Everything works the
+  // same in the live and the offline context (the cache lives on the graph).
+
+  // A node chain built once per (graph, track strip, key) and reused.
+  function shared(g, out, key, make) {
+    if (!g.shared) g.shared = new WeakMap();
+    let m = g.shared.get(out);
+    if (!m) {
+      m = new Map();
+      g.shared.set(out, m);
+    }
+    let n = m.get(key);
+    if (!n) {
+      n = make();
+      m.set(key, n);
+    }
+    return n;
+  }
+  // frequencies of shared filters snap to quarter-octave steps, so a track
+  // owns at most a few dozen of them
+  const snap = (f) => Math.pow(2, Math.round(Math.log2(Math.max(20, f)) * 4) / 4);
+  function sbq(g, out, type, f, q) {
+    const fs = snap(f);
+    return shared(g, out, type + fs + ':' + q, () => {
+      const b = bq(g.ctx, type, fs, q);
+      b.connect(out);
+      return b;
+    });
+  }
+  _.shared = { shared, sbq, snap };
+
+  // Sawari: on the shamisen and the biwa the lowest string touches a raised
+  // spot near the nut, so every vibration is clipped unevenly — a bright,
+  // buzzing "zing" that keeps ringing after the plucked tone has dulled. An
+  // asymmetric clipping curve turns the string's periodic wave into that
+  // buzz (harmonics of the note, not noise), band-passed into the region
+  // where the ear hears the zing. The clipper is shared by a track's notes
+  // (overlapping strings buzz against each other, as on the instrument).
+  let SAWARI = null;
+  function sawariCurve() {
+    if (SAWARI) return SAWARI;
+    const n = 1024;
+    SAWARI = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const x = (i / (n - 1)) * 2 - 1;
+      SAWARI[i] = x > 0 ? Math.tanh(5 * x) : -0.3 * Math.tanh(-2 * x) + 0.12 * x * x;
+    }
+    return SAWARI;
+  }
+  // Pitch helper: every oscillator in `list` starts at f*r0 and settles at f.
+  function glide(list, f, t, r0, hold, secs) {
+    for (const o of list) {
+      o.frequency.setValueAtTime(f * r0, t);
+      if (hold > 0) o.frequency.setValueAtTime(f * r0, t + hold);
+      o.frequency.exponentialRampToValueAtTime(f, t + hold + secs);
+    }
+  }
+  // a gain with a plucked envelope (instant rise, exponential fall, damped at `off`)
+  function plk(c, t, pk, tau, off, rel) {
+    const a = amp(c, 0);
+    a.gain.setValueAtTime(0, t);
+    a.gain.linearRampToValueAtTime(pk, t + 0.0015);
+    a.gain.setTargetAtTime(0, t + 0.0015, tau);
+    if (off != null) a.gain.setTargetAtTime(0, off, rel);
+    return a;
+  }
+
+  // Plucked lute shared by the shamisen and the biwa. The string (a saw,
+  // plus an optional second wave for body) is heard three ways: raw with a
+  // very fast decay (the strike), through the track's fixed low-pass with
+  // the note's own decay (the tone), and through the track's sawari clipper
+  // (the buzz, which rings longer than the strike's brightness). Then the
+  // plectrum (bachi) clicks on string and skin, and the skin-covered body
+  // answers with a short low "tsun". The string starts sharp — the tension
+  // of the strike — and drops into tune.
+  function lute(g, out, t, f, d, v, o) {
+    const c = g.ctx;
+    const o1 = osc(c, 'sawtooth', f, t);
+    const srcs = [o1];
+    const nodes = [o1];
+    let src = o1;
+    if (o.mix2) {
+      const o2 = osc(c, o.wave2, f, t);
+      const m2 = amp(c, o.mix2);
+      src = amp(c, 1);
+      o1.connect(src);
+      o2.connect(m2);
+      m2.connect(src);
+      srcs.push(o2);
+      nodes.push(o2, m2, src);
+    }
+    glide(srcs, f, t, o.drop, 0, o.dropT);
+    const off = t + Math.max(d, 0.04);
+    const dec = clamp(o.dec - f / 2600, o.dec * 0.35, o.dec);
+    const aB = plk(c, t, o.pk * o.strike * v, o.close);
+    const a = plk(c, t, o.pk * v, dec, off, 0.05);
+    const sg = plk(c, t, v, dec * o.buzzLen, off, 0.07);
+    const buzz = shared(g, out, 'sawari' + o.buzzF, () => {
+      const drive = amp(c, o.drive);
+      const ws = c.createWaveShaper();
+      ws.curve = sawariCurve();
+      const bp = bq(c, 'bandpass', o.buzzF, o.buzzQ);
+      const lvl = amp(c, o.buzz);
+      drive.connect(ws);
+      ws.connect(bp);
+      bp.connect(lvl);
+      lvl.connect(out);
+      return drive;
+    });
+    src.connect(aB);
+    aB.connect(out);
+    src.connect(a);
+    a.connect(sbq(g, out, 'lowpass', Math.min(Math.max(f * o.settle, o.floor), 8000), o.q));
+    src.connect(sg);
+    sg.connect(buzz);
+    nodes.push(aB, a, sg);
+    run(c, srcs, nodes, t, Math.min(off + 0.32, t + dec * Math.max(4.5, o.buzzLen * 4)));
+    // bachi: a click of the plectrum on string and skin
+    const n = noise(g);
+    const ng = plk(c, t, o.click * v, o.clickT);
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', o.clickF, 0.9));
+    run(c, [n], [n, ng], t, t + o.clickT * 8);
+    // the body's "tsun"
+    const sk = osc(c, 'sine', o.body, t);
+    sk.frequency.exponentialRampToValueAtTime(o.body * 0.72, t + 0.05);
+    const skg = plk(c, t, o.thump * v, 0.03);
+    sk.connect(skg);
+    skg.connect(out);
+    run(c, [sk], [sk, skg], t, t + 0.24);
+  }
+  // Shamisen: bright and dry, a short body decay, the sawari ringing on.
+  I.shamisen = (g, o, t, f, d, v) => lute(g, o, t, f, d, v, {
+    mix2: 0, drop: 1.02, dropT: 0.045, q: 1.2, strike: 0.6, settle: 5, floor: 900, close: 0.035,
+    dec: 0.3, pk: 0.2, drive: 2, buzz: 0.34, buzzQ: 0.9, buzzF: 2900, buzzLen: 2.6,
+    click: 0.2, clickF: 2600, clickT: 0.008, body: 200, thump: 0.1,
+  });
+  // Biwa: lower, rounder strings, a heavier bachi on the body, a longer and
+  // stronger buzz (the biwa's frets are built for sawari).
+  I.biwa = (g, o, t, f, d, v) => lute(g, o, t, f, d, v, {
+    wave2: 'triangle', mix2: 0.5, drop: 1.032, dropT: 0.07, q: 1, strike: 0.55, settle: 3.5, floor: 500, close: 0.05,
+    dec: 0.7, pk: 0.24, drive: 2.4, buzz: 0.5, buzzQ: 0.9, buzzF: 1800, buzzLen: 2.8,
+    click: 0.28, clickF: 1200, clickT: 0.012, body: 140, thump: 0.16,
+  });
+
+  // Koto: thirteen plucked silk strings over a long wooden body. A rounded
+  // core (triangle + octave) that rings long, a saw that is loud only at the
+  // strike (the ivory pick's brightness), an inharmonic "ting" from the pick
+  // (tsume) and a click. `press` > 0 is ato-oshi (oshide): the string is
+  // plucked a whole tone low and pressed up to the written note behind the
+  // bridge.
+  function koto(g, out, t, f, d, v, press) {
+    const c = g.ctx;
+    const o1 = osc(c, 'triangle', f, t);
+    const o2 = osc(c, 'sine', f * 2, t);
+    const m2 = amp(c, 0.22);
+    const o3 = osc(c, 'sawtooth', f, t);
+    const tg = osc(c, 'sine', f * 3.01, t);
+    if (press) glide([o1, o2, o3, tg], f, t, Math.pow(2, -press / 12), 0.06, 0.13);
+    else glide([o1, o2, o3, tg], f, t, 1.006, 0, 0.03);
+    const ring = clamp(3.2 - f / 450, 0.9, 3.2);
+    const off = t + Math.max(d, 0.05) + 0.25;
+    const a = plk(c, t, 0.27 * v, ring / 3, off, 0.15);
+    const m3 = plk(c, t, 0.3 * v, 0.07);
+    o1.connect(a);
+    o2.connect(m2);
+    m2.connect(a);
+    a.connect(out);
+    o3.connect(m3);
+    m3.connect(out);
+    run(c, [o1, o2], [o1, o2, m2, a], t, Math.min(off + 0.65, t + ring * 2.4));
+    run(c, [o3], [o3, m3], t, t + 0.45);
+    const tgg = plk(c, t, 0.12 * v, 0.08);
+    tg.connect(tgg);
+    tgg.connect(out);
+    run(c, [tg], [tg, tgg], t, t + 0.6);
+    const n = noise(g);
+    const ng = plk(c, t, 0.1 * v, 0.006);
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', 3600, 1.2));
+    run(c, [n], [n, ng], t, t + 0.05);
+  }
+  I.koto = (g, o, t, f, d, v) => koto(g, o, t, f, d, v, 0);
+  I.koto_oshi = (g, o, t, f, d, v) => koto(g, o, t, f, d, v, 2);
+
+  // Shakuhachi: end-blown bamboo. Far more breath than the flute — a pitched
+  // edge-tone hiss around the note plus a wide band of air — a meri scoop
+  // (the note starts nearly a semitone flat and is lifted into tune), a
+  // slow, wide, late vibrato, and on accented notes a burst of breath
+  // (muraiki).
+  I.shakuhachi = function (g, out, t, f, d, v) {
+    const c = g.ctx;
+    const s = osc(c, 'sine', f, t);
+    const tr = osc(c, 'triangle', f, t);
+    const scoop = Math.min(0.24, Math.max(0.09, d * 0.35));
+    glide([s, tr], f, t, Math.pow(2, -0.85 / 12), 0.025, scoop);
+    const lfo = osc(c, 'sine', 4.3, t);
+    const lg = amp(c, 0);
+    if (d > 0.5) {
+      lg.gain.setValueAtTime(0, t + 0.35);
+      lg.gain.linearRampToValueAtTime(f * 0.009, t + Math.min(d, 1.5));
+    }
+    lfo.connect(lg);
+    lg.connect(s.frequency);
+    lg.connect(tr.frequency);
+    const off = t + Math.max(d, 0.08);
+    const n = noise(g);
+    const ng = amp(c, 0);
+    const muraiki = clamp((v - 0.85) * 2.5, 0, 0.6);
+    ng.gain.setValueAtTime(0, t);
+    ng.gain.linearRampToValueAtTime((0.9 + muraiki * 2) * v, t + 0.03);
+    ng.gain.setTargetAtTime(0.33 * v, t + 0.035, 0.12 + muraiki * 0.2);
+    ng.gain.setTargetAtTime(0, off, 0.05);
+    const hg = amp(c, 0);
+    hg.gain.setValueAtTime(0, t);
+    hg.gain.linearRampToValueAtTime(0.05 * v, t + 0.04);
+    hg.gain.setTargetAtTime(0.025 * v, t + 0.05, 0.15);
+    hg.gain.setTargetAtTime(0, off, 0.05);
+    const att = clamp(d * 0.25, 0.06, 0.18);
+    const a = amp(c, 0);
+    env(a.gain, t, att, 0.25 * v, 0.5, 0.85, off, 0.09);
+    const at = amp(c, 0);
+    env(at.gain, t, att, 0.06 * v, 0.5, 0.85, off, 0.09);
+    s.connect(a);
+    a.connect(out);
+    tr.connect(at);
+    at.connect(sbq(g, out, 'lowpass', Math.min(f * 3, 5000), 0.6));
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', Math.min(f * 1.6, 7000), 2.2));
+    n.connect(hg);
+    hg.connect(sbq(g, out, 'highpass', 3200, 0.7));
+    run(c, [s, tr, lfo, n], [s, tr, lfo, lg, n, ng, hg, a, at], t, off + 0.45);
+  };
+
+  // Shinobue: the high bamboo festival flute — bright (some square in the
+  // tone), a little breath, a quick grace from a whole tone above (a finger
+  // "hit", uchi) on notes long enough to carry it, a fast shallow vibrato.
+  I.shinobue = function (g, out, t, f, d, v) {
+    const c = g.ctx;
+    const s = osc(c, 'sine', f, t);
+    const tr = osc(c, 'triangle', f, t);
+    const trg = amp(c, 0.45);
+    const sq = osc(c, 'square', f, t);
+    const sqg = amp(c, 0.16);
+    if (d >= 0.22) glide([s, tr, sq], f, t, Math.pow(2, 2 / 12), 0.022, 0.012);
+    else glide([s, tr, sq], f, t, Math.pow(2, -0.25 / 12), 0, 0.03);
+    const lfo = osc(c, 'sine', 5.9, t);
+    const lg = amp(c, 0);
+    if (d > 0.3) {
+      lg.gain.setValueAtTime(0, t + 0.18);
+      lg.gain.linearRampToValueAtTime(f * 0.0045, t + Math.min(d, 0.7));
+    }
+    lfo.connect(lg);
+    lg.connect(s.frequency);
+    lg.connect(tr.frequency);
+    lg.connect(sq.frequency);
+    const off = t + Math.max(d, 0.06);
+    const n = noise(g);
+    const ng = amp(c, 0);
+    ng.gain.setValueAtTime(0, t);
+    ng.gain.linearRampToValueAtTime(0.25 * v, t + 0.015);
+    ng.gain.setTargetAtTime(0.09 * v, t + 0.02, 0.06);
+    ng.gain.setTargetAtTime(0, off, 0.04);
+    const a = amp(c, 0);
+    env(a.gain, t, 0.02, 0.2 * v, 0.35, 0.8, off, 0.05);
+    const ab = amp(c, 0);
+    env(ab.gain, t, 0.02, 0.2 * v, 0.35, 0.8, off, 0.05);
+    s.connect(a);
+    a.connect(out);
+    tr.connect(trg);
+    trg.connect(ab);
+    sq.connect(sqg);
+    sqg.connect(ab);
+    ab.connect(sbq(g, out, 'lowpass', Math.min(f * 7, 10000), 0.7));
+    n.connect(ng);
+    ng.connect(sbq(g, out, 'bandpass', Math.min(f * 2.5, 9000), 1.5));
+    run(c, [s, tr, sq, lfo, n], [s, tr, trg, sq, sqg, lfo, lg, n, ng, a, ab], t, off + 0.35);
+  };
+
+  // Shō: the free-reed mouth organ of gagaku. A reedy periodic wave (all
+  // harmonics, odd ones a little stronger) on two slightly detuned
+  // oscillators, a slow swell and a slow release; meant for held clusters.
+  function shoWave(g) {
+    if (g.shoWave) return g.shoWave;
+    const H = 14;
+    const re = new Float32Array(H);
+    const im = new Float32Array(H);
+    for (let k = 1; k < H; k++) im[k] = (k % 2 ? 1 : 0.6) / Math.pow(k, 0.7);
+    g.shoWave = g.ctx.createPeriodicWave(re, im);
+    return g.shoWave;
+  }
+  I.sho = function (g, out, t, f, d, v) {
+    const c = g.ctx;
+    const w = shoWave(g);
+    const o1 = c.createOscillator();
+    const o2 = c.createOscillator();
+    o1.setPeriodicWave(w);
+    o2.setPeriodicWave(w);
+    o1.frequency.setValueAtTime(f * 0.9985, t);
+    o2.frequency.setValueAtTime(f * 1.0015, t);
+    const a = amp(c, 0);
+    const off = t + Math.max(d, 0.2);
+    env(a.gain, t, clamp(d * 0.4, 0.25, 0.9), 0.05 * v, 0, 1, off, 0.5);
+    o1.connect(a);
+    o2.connect(a);
+    a.connect(sbq(g, out, 'lowpass', Math.min(f * 8, 7000), 0.5));
+    run(c, [o1, o2], [o1, o2, a], t, off + 2.6);
+  };
+
+  // Rin: a struck bowl bell. Bowl modes at about 1 : 2.76 : 5.2, the lower
+  // two as slightly mistuned pairs so they beat slowly, and a long ring
+  // (faded out at about -30 dB so a voice does not live for ten seconds).
+  function rin(g, out, t, f, v, len) {
+    const c = g.ctx;
+    const parts = [[1, 0.055, 1.6 * len, 0.7], [2.76, 0.03, 0.8 * len, 1.6], [5.2, 0.026, 0.32 * len, 0]];
+    const srcs = [];
+    const nodes = [];
+    const end = t + 1.6 * len * 3.4;
+    const a = amp(c, 1);
+    a.gain.setValueAtTime(1, end - 0.5);
+    a.gain.linearRampToValueAtTime(0, end - 0.02);
+    for (const [r, pk, tau, beat] of parts) {
+      for (const dt of beat ? [0, beat] : [0]) {
+        const s = osc(c, 'sine', f * r + dt, t);
+        const sg = amp(c, 0);
+        sg.gain.setValueAtTime(0, t);
+        sg.gain.linearRampToValueAtTime(pk * v, t + 0.002);
+        sg.gain.setTargetAtTime(0, t + 0.002, tau);
+        s.connect(sg);
+        sg.connect(a);
+        srcs.push(s);
+        nodes.push(s, sg);
+      }
+    }
+    a.connect(out);
+    nodes.push(a);
+    run(c, srcs, nodes, t, end);
+  }
+  I.rin = (g, o, t, f, d, v) => rin(g, o, t, f, v, 1);
+
   // ---------------------------------------------------------- percussion
   // Signature: fn(g, out, t, vel, seed) — seed in [0,1) varies small details.
   const P = (_.perc = {});
-  function thump(g, out, t, v, f0, f1, sweep, tau, pk) {
+  // `k` (optional): how many time constants a stroke lives (default 7, about
+  // -60 dB); the Japanese percussion uses 4.5 (about -40 dB) to save voices.
+  function thump(g, out, t, v, f0, f1, sweep, tau, pk, k) {
     const c = g.ctx;
     const s = osc(c, 'sine', f0, t);
     s.frequency.exponentialRampToValueAtTime(f1, t + sweep);
@@ -13121,9 +13475,9 @@ RB.audio = RB.audio || {};
     a.gain.setTargetAtTime(0, t + 0.003, tau);
     s.connect(a);
     a.connect(out);
-    run(c, [s], [s, a], t, t + tau * 7);
+    run(c, [s], [s, a], t, t + tau * (k || 7));
   }
-  function hiss(g, out, t, v, type, f, q, att, tau, pk) {
+  function hiss(g, out, t, v, type, f, q, att, tau, pk, k) {
     const c = g.ctx;
     const n = noise(g);
     const fl = bq(c, type, f, q);
@@ -13134,9 +13488,22 @@ RB.audio = RB.audio || {};
     n.connect(fl);
     fl.connect(a);
     a.connect(out);
-    run(c, [n], [n, fl, a], t, t + att + tau * 7);
+    run(c, [n], [n, fl, a], t, t + att + tau * (k || 7));
   }
-  function ping(g, out, t, v, f, tau, pk) {
+  // hiss through the track's shared fixed filter (the Japanese percussion:
+  // see the note on shared filters above the wagakki)
+  function hissS(g, out, t, v, type, f, q, att, tau, pk, k) {
+    const c = g.ctx;
+    const n = noise(g);
+    const a = amp(c, 0);
+    a.gain.setValueAtTime(0, t);
+    a.gain.linearRampToValueAtTime(pk * v, t + att);
+    a.gain.setTargetAtTime(0, t + att, tau);
+    n.connect(a);
+    a.connect(sbq(g, out, type, f, q));
+    run(c, [n], [n, a], t, t + att + tau * (k || 7));
+  }
+  function ping(g, out, t, v, f, tau, pk, k) {
     const c = g.ctx;
     const s = osc(c, 'sine', f, t);
     const a = amp(c, 0);
@@ -13145,9 +13512,9 @@ RB.audio = RB.audio || {};
     a.gain.setTargetAtTime(0, t + 0.001, tau);
     s.connect(a);
     a.connect(out);
-    run(c, [s], [s, a], t, t + tau * 7 + 0.01);
+    run(c, [s], [s, a], t, t + tau * (k || 7) + 0.01);
   }
-  _.voice = { thump, hiss, ping };
+  _.voice = { thump, hiss, ping, rin };
 
   P.k = (g, o, t, v) => { // soft kick
     thump(g, o, t, v, 110, 46, 0.11, 0.11, 0.42);
@@ -13240,6 +13607,55 @@ RB.audio = RB.audio || {};
       }
     }
   };
+
+  // ------------------------------------------ Japanese percussion (wadaiko …)
+  P.z = (g, o, t, v) => { // ōdaiko "don": deep membrane, a higher mode, rumble, skin slap
+    thump(g, o, t, v, 104, 58, 0.2, 0.34, 0.5, 4.5);
+    thump(g, o, t, v, 168, 128, 0.12, 0.09, 0.14, 4.5);
+    hissS(g, o, t, v, 'lowpass', 240, 0.7, 0.003, 0.16, 0.22, 4.5);
+    hissS(g, o, t, v, 'bandpass', 950, 1, 0.001, 0.016, 0.24, 4.5);
+  };
+  P.e = (g, o, t, v) => { // shime-daiko "ten": tight, high, dry
+    thump(g, o, t, v, 360, 300, 0.035, 0.05, 0.3, 4.5);
+    thump(g, o, t, v, 560, 520, 0.02, 0.025, 0.08, 4.5);
+    hissS(g, o, t, v, 'bandpass', 2900, 1.3, 0.001, 0.018, 0.2, 4.5);
+  };
+  P.f = (g, o, t, v) => { // taiko rim "ka" (fuchi): wood on wood
+    ping(g, o, t, v, 1450, 0.018, 0.16, 4.5);
+    ping(g, o, t, v, 2650, 0.01, 0.07, 4.5);
+    hissS(g, o, t, v, 'bandpass', 3300, 2, 0.001, 0.006, 0.12, 4.5);
+  };
+  P.m = (g, o, t, v) => { // kotsuzumi "pon": a hollow pitched tone that sags as the ropes relax
+    thump(g, o, t, v, 470, 396, 0.12, 0.15, 0.28, 4.5);
+    ping(g, o, t, v, 1090, 0.045, 0.05, 4.5);
+    hissS(g, o, t, v, 'bandpass', 1800, 1.5, 0.001, 0.01, 0.1, 4.5);
+  };
+  P.q = (g, o, t, v) => { // ōtsuzumi "kan": hard dry skin, a sharp crack, almost no ring
+    hissS(g, o, t, v, 'bandpass', 3300, 2.2, 0.001, 0.028, 0.4, 4.5);
+    ping(g, o, t, v, 1250, 0.024, 0.17, 4.5);
+    ping(g, o, t, v, 2900, 0.012, 0.07, 4.5);
+  };
+  P.y = (g, o, t, v) => { // hyōshigi: two hardwood clappers
+    ping(g, o, t, v, 2300, 0.034, 0.15, 4.5);
+    ping(g, o, t, v, 3550, 0.022, 0.065, 4.5);
+    ping(g, o, t, v, 5200, 0.01, 0.03, 4.5);
+    hissS(g, o, t, v, 'bandpass', 4200, 1.5, 0.001, 0.004, 0.12, 4.5);
+  };
+  P.a = (g, o, t, v, seed) => { // atarigane: small festival hand gong (plate modes)
+    const f = 1150 * (1 + ((seed || 0.5) - 0.5) * 0.02);
+    ping(g, o, t, v, f, 0.22, 0.07, 4.5);
+    ping(g, o, t, v, f * 2.72, 0.12, 0.05, 4.5);
+    ping(g, o, t, v, f * 4.98, 0.06, 0.035, 4.5);
+    ping(g, o, t, v, f * 7.6, 0.035, 0.02, 4.5);
+    hissS(g, o, t, v, 'bandpass', 6000, 1, 0.001, 0.004, 0.1, 4.5);
+  };
+  P.v = (g, o, t, v) => { // chappa: small cymbals
+    hissS(g, o, t, v, 'bandpass', 5200, 2.5, 0.001, 0.14, 0.17, 4.5);
+    hissS(g, o, t, v, 'highpass', 8000, 0.7, 0.001, 0.08, 0.1, 4.5);
+    ping(g, o, t, v, 3810, 0.09, 0.025, 4.5);
+    ping(g, o, t, v, 3870, 0.09, 0.025, 4.5);
+  };
+  P.i = (g, o, t, v, seed) => rin(g, o, t, 1180 * (1 + ((seed || 0.5) - 0.5) * 0.004), v * 0.9, 0.85); // rin bowl bell
 
   // ------------------------------------------------------ public: context
   A.supported = () => !!_.AC();
@@ -14030,7 +14446,7 @@ RB.audio = RB.audio || {};
         seconds = Math.round(s.length * 10) / 10;
         loopSeconds = s.loop ? Math.round((s.length - s.loopStart) * 10) / 10 : null;
       } catch (e) { /* reported by tests */ }
-      return { id, title: d.title, motifs: (d.motifs || []).slice(), notes: d.notes || '', seconds, loopSeconds, loop: d.loop !== false };
+      return { id, title: d.title, kind: d.kind || null, chapter: d.chapter || null, motifs: (d.motifs || []).slice(), notes: d.notes || '', seconds, loopSeconds, loop: d.loop !== false };
     });
   };
 
@@ -14135,6 +14551,10 @@ RB.audio = RB.audio || {};
 
 /* ==== src/audio/30_songs.js ==== */
 /* Song data — original music for The Road of Borrowed Names.
+ * This file: the shared motifs, Chapter 1 and the songs used across the
+ * game. Zone music from Chapter 2 on (overworld, battle, boss and story
+ * cues, with the Japanese instruments) is in 31_songs_ch2.js … 36_songs_ch6.js;
+ * which battle/boss theme plays where is in 39_zones.js.
  *
  * ============================== NOTATION ==================================
  * A song is { title, key, mode, bpm, meter, tracks, all, sections, form }.
@@ -14153,6 +14573,8 @@ RB.audio = RB.audio || {};
  *                 rv: reverb send, dl: echo send, u: beats per step (0.5) }
  *   instruments: pluck harp bell celesta toll glass flute bowed bass pad keys
  *                mallet choir
+ *   Japanese:    shamisen biwa koto koto_oshi (plucked a whole tone low and
+ *                pressed up to the written note) shakuhachi shinobue sho rin
  *   Kinds of track:
  *   - melody (default): scale DEGREES.
  *   - pat: true   — chord-tone PATTERN that follows the section's chords.
@@ -14191,6 +14613,9 @@ RB.audio = RB.audio || {};
  *   w woodblock   h high woodblock   r rim   x clock tick   g glass tick
  *   d water drop  c wooden creak   j small bells   o big drum (bosses)
  *   n frame-drum snap   . rest   | bar check
+ *   Japanese:  z ōdaiko (don)   e shime-daiko (ten)   f taiko rim (ka)
+ *              m kotsuzumi (pon)   q ōtsuzumi (kan)   y hyōshigi clappers
+ *              a atarigane hand gong   v chappa cymbals   i rin bowl bell
  *
  * FORM entries: 'A' or { s:'A', i:{track:inst}, o:{track:+1}, m:[muted],
  *   tr: semitones, dyn, key, mode, bpm }. Sections may use from:'A' to
@@ -14271,6 +14696,8 @@ RB.audio = RB.audio || {};
   const DEP_MIO = '.:8 | .:8 | 3 2 3 5 3 2 3 - | 1 - - - . . . . | .:8 | .:8 | .:8 | .:8';
   const DEP_REN = ".:8 | .:8 | .:8 | .:8 | 5, - 1 - 4 - 5 - | 1' - 7 1' - - - - | .:8 | .:8";
   const DEP_SUZU = ".:8 | .:8 | .:8 | .:8 | .:8 | .:8 | 1 1' 7 b7 6 - 5 - | 3 - - - 2 - 1 -";
+  // shared with the zone files (31_… 36_)
+  _.mat = { ARP4, ARP3, BASS4, BASS3, TRI, ROAD_A, ROAD_A_CH, ROAD_B, ROAD_B_CH, MINOR_B_CH, ROAD_C, ROAD_C_CH };
   const COMPANION_TRACKS = () => ({
     nao: { i: 'pluck', o: 4, v: 0.75, rv: 0.25, pan: -0.2 },
     mio: { i: 'mallet', o: 5, v: 0.75, rv: 0.25, pan: 0.2 },
@@ -14572,29 +14999,30 @@ RB.audio = RB.audio || {};
   S('saltglass', {
     title: 'Saltglass Harbour',
     kind: 'area',
+    chapter: 2,
     motifs: ['road'],
-    notes: 'Working harbour in F with a lilting swing (104): a bouncing root–fifth bass, plucked chords on 2 and 4 like rigging slapping a mast, woodblock and shaker. B leans mixolydian (E-flat) for the cargo-label muddle; C is quieter and echoing — the road motif over D minor, pointing toward the drowned archive.',
+    notes: 'Working harbour in F with a lilting swing (104), re-orchestrated for Chapter 2 as a min’yō band — same melody, form and motifs as before: shakuhachi lead, shamisen chords slapping on 2 and 4 like rigging against a mast, a bouncing root–fifth bass, woodblock, shaker and shime-daiko, a hyōshigi clap to start. B leans mixolydian (E-flat) for the cargo-label muddle on a bright shinobue; A2 puts the tune on koto with a second koto answering; C is quieter and echoing — the road motif on shakuhachi over D minor, pointing toward the drowned archive; B2 hands the tune to the shamisen.',
     key: 'F', bpm: 104, swing: 0.24,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.8, rv: 0.25 },
-      mal: { i: 'mallet', o: 5, v: 0.6, rv: 0.2, pan: 0.2 },
-      bell: { i: 'bell', o: 5, v: 0.45, rv: 0.4, dl: 0.35, pan: -0.2 },
-      gtr: { i: 'pluck', o: 4, pat: true, fold: 'all', win: -3, v: 0.4, rv: 0.15, pan: -0.3 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.3 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.25 },
+      mal: { i: 'koto', o: 5, v: 0.5, rv: 0.2, pan: 0.2 },
+      bell: { i: 'koto', o: 5, v: 0.42, rv: 0.4, dl: 0.35, pan: -0.2 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.32, rv: 0.15, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.65 },
       perc: { perc: true, v: 0.45 },
     },
     echo: { beats: 0.75, fb: 0.3, mix: 0.3 },
-    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: '0 - 2, - 0 - 2, 0', pad: TRI, perc: 'w.s.p.s.|w.s.p.ss' },
+    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: '0 - 2, - 0 - 2, 0', pad: TRI, perc: 'w.s.e.s.|w.s.e.ss' },
     sections: {
-      intro: { bars: 2, ch: '1 5', perc: 'w.......' },
+      intro: { bars: 2, ch: '1 5', perc: 'y.......' },
       A: { bars: 8, ch: SALT_A_CH, lead: SALT_A },
       B: { bars: 8, ch: SALT_B_CH, lead: SALT_B },
       A2: { bars: 8, ch: SALT_A_CH, mal: SALT_A, bell: '.:8 | .:8 | .:8 | 6 - - - 5 - - - | .:8 | .:8 | .:8 | 5 - - - - - . .' },
       C: { bars: 8, ch: SALT_C_CH, bell: SALT_C, gtr: null, perc: '....s...', dyn: 0.85 },
       B2: { bars: 8, ch: SALT_B_CH, mal: SALT_B },
     },
-    form: ['intro', 'A', 'B', 'A2', 'C', 'B2'],
+    form: ['intro', 'A', { s: 'B', i: { lead: 'shinobue' } }, 'A2', { s: 'C', i: { bell: 'shakuhachi' } }, { s: 'B2', i: { mal: 'shamisen' }, o: { mal: -1 } }],
   });
 
   // ====================================================== DROWNED ARCHIVE
@@ -14609,16 +15037,18 @@ RB.audio = RB.audio || {};
   S('drowned_archive', {
     title: 'The Drowned Archive',
     kind: 'area',
+    chapter: 2,
     motifs: ['road', 'hush'],
-    notes: 'Tidal ruin in E minor at a slow 66: pads that swell like tides, water drops, a bell through a long echo. In B the Hush motif rises from below on glass (a lydian glint over C) and the road motif answers from above.',
+    notes: 'Tidal ruin in E minor at a slow 66, re-orchestrated for Chapter 2 — same melody, form and motifs: the lead is now a rin bowl through a long echo, the arpeggio a koto, the pads still swell like tides and water still drips. In B the Hush motif rises from below on glass (a lydian glint over C) over a held shō, and the road motif answers from above; the repeat of A is on shakuhachi; C adds a slow ōdaiko heartbeat under the koto.',
     key: 'E', mode: 'aeolian', bpm: 66,
     tracks: {
-      bell: { i: 'bell', o: 5, v: 0.6, rv: 0.5, dl: 0.4, pan: 0.15 },
+      bell: { i: 'rin', o: 5, v: 0.95, rv: 0.5, dl: 0.4, pan: 0.15 },
       glass: { i: 'glass', o: 4, v: 0.9, rv: 0.5, pan: -0.2 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.4, rv: 0.45, dl: 0.2, pan: -0.3 },
-      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.55, rv: 0.5 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.45, dl: 0.2, pan: -0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.5, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.5 },
       drip: { perc: true, v: 0.55, rv: 0.6, pan: 0.3 },
+      heart: { perc: true, v: 0.4, rv: 0.4 },
     },
     echo: { beats: 1.5, fb: 0.4, mix: 0.35 },
     all: {
@@ -14628,9 +15058,9 @@ RB.audio = RB.audio || {};
     sections: {
       A: { bars: 8, ch: DROWN_A_CH, bell: DROWN_A },
       B: { bars: 8, ch: DROWN_B_CH, glass: DROWN_B_GLASS, bell: DROWN_B_BELL, arp: '0 . 2 . 4 . 2 .' },
-      C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, dyn: 0.9 },
+      C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, heart: 'z.......|........', dyn: 0.9 },
     },
-    form: ['A', 'B', { s: 'A', i: { bell: 'celesta' } }, 'C'],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { bell: 'shakuhachi' } }, { s: 'C', i: { bell: 'koto' } }],
   });
 
   // =============================================================== CINDER
@@ -15289,6 +15719,14 @@ RB.audio = RB.audio || {};
     form: ['A', 'B', { s: 'A', i: { lead: 'celesta' } }],
   });
 
+  Object.assign(_.mat, {
+    REED_A, REED_A_CH, SALT_A, SALT_A_CH, SALT_B, SALT_B_CH, SALT_C, SALT_C_CH,
+    CIN_A, CIN_A_CH, CIN_A_CM, CIN_B, CIN_B_CH, CIN_C, CIN_C_CH, KILN_A, KILN_A_CH, KILN_B, KILN_B_CH,
+    SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
+    LF_A, LF_A_CH, BT_A, BT_A_CH, SA_A, SA_A_CH, SA_B, SA_B_CH, FIN_A, FIN_A_CH,
+    BOSS_HUSH, HUSH_A, HUSH_A_CH, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
+  });
+
   _.REQUIRED_SONGS = [
     'title', 'prologue', 'reedwake', 'reedwake_night', 'road', 'mill', 'battle', 'boss', 'victory',
     'saltglass', 'drowned_archive', 'cinder', 'kiln', 'snowbell', 'observatory', 'quiet_road',
@@ -15296,6 +15734,361 @@ RB.audio = RB.audio || {};
     'departure', 'inn', 'mystery', 'companion_nao', 'companion_mio', 'companion_ren',
     'companion_suzu', 'sorrow', 'wonder',
   ];
+})(RB.audio);
+
+
+/* ==== src/audio/31_songs_ch2.js ==== */
+/* Chapter 2 — Saltglass. The coast road, the chapter's battle and boss
+ * themes and its story cues, scored for the Japanese instruments in
+ * 10_synth.js (shakuhachi, koto, shamisen, biwa, shinobue, shō, rin and the
+ * wadaiko kit). The harbour and Drowned Archive themes themselves are
+ * re-orchestrated in place in 30_songs.js. Notation: see 30_songs.js.
+ *
+ * Intensity, one step up from Chapter 1: a few more beats per minute, a
+ * denser accompaniment (shamisen eighths instead of plucked quarter-ish
+ * figures), the wadaiko in place of the soft low drum — still a small
+ * ensemble, and the battle keeps the game's patient 3+3+2 pulse. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  const M = _.mat;
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 2;
+    _.songDefs[id] = def;
+  }
+  // koto "wave": up an octave and back like a breaker running up the sand
+  const KOTO_WAVE = "0 2 0' 1' 2' 1' 0' 2";
+
+  // ============================================================ COAST ROAD
+  const SGR_A = '5, - 3 - - 2 1 - | 2 - - - 6, - 1 - | 2 - 3 - 5 - 6 - | 5 - - - - - . . | 6 - 5 - 3 - 2 - | 3 - 5 - 2 - 1 - | 6, - 1 - 2 - 3 - | 2 - - - - - . .';
+  const SGR_A_CH = '1 2 4 5s4 6 4 2 5s4';
+  const SGR_A_CTR = "1' - - - - - - - | 2' - - - 1' - - - | 6 - - - - - - - | 5 - - - - - - - | 1' - - - - - - - | 6 - - - - - - - | 5 - - - 4 - - - | 5 - - - - - - -";
+  const SGR_C = "6 - - - - - 5 - | 3 - - - 2 - - - | 1 - - - 2 - 3 - | 5 - - - - - . . | 6 - - - 1' - 6 - | 5 - - - 3 - - - | 2 - - - 3 - 2 - | 2 - - - - - . .";
+  const SGR_C_CH = '6 3 4 1 6 4 5s4 5';
+
+  S('sg_road', {
+    title: 'The Coast Road',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'Chapter 2 route (B-flat, 88): the cliff road above the sea. The road motif opens a new pentatonic tune on shakuhachi over a koto "wave" that runs up an octave and back; A2 gives the tune to the koto with a second shakuhachi holding long notes; B moves to F and the shamisen plays the head of the Saltglass harbour tune — the town is in sight; C turns to G minor with a rin bowl like a buoy bell. Hand pats, shime-daiko and kotsuzumi keep a walking pace.',
+    key: 'Bb', bpm: 88, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.72, rv: 0.32 },
+      ctr: { i: 'shakuhachi', o: 4, v: 0.5, rv: 0.42, pan: 0.25 },
+      koto: { i: 'koto', o: 4, v: 0.58, rv: 0.3, pan: -0.15 },
+      sham: { i: 'shamisen', o: 4, v: 0.55, rv: 0.2, pan: 0.15 },
+      wave: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.35, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.4 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.6 },
+      perc: { perc: true, v: 0.45 },
+      buoy: { perc: true, v: 0.4, rv: 0.6, pan: 0.35 },
+    },
+    all: { wave: KOTO_WAVE, pad: M.TRI, bass: '0 - - - 2 - - -', perc: 'p...e..p|..p.e...' },
+    sections: {
+      intro: { bars: 4, ch: '1 2 1 5s4', lead: '.:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - - - . .', perc: null, bass: null },
+      A: { bars: 8, ch: SGR_A_CH, lead: SGR_A },
+      A2: { bars: 8, ch: SGR_A_CH, koto: SGR_A, ctr: SGR_A_CTR, perc: 'p...m...|p...m.p.' },
+      B: { bars: 8, key: 'F', ch: M.SALT_A_CH, sham: M.SALT_A, wave: '0 . 2 . 0 . 2 .', bass: '0 - 2, - 0 - 2, -', perc: 'y...e..p|..p.e...' },
+      C: { bars: 8, ch: SGR_C_CH, lead: SGR_C, wave: "0 2 4 2 1' 2 4 2", perc: null, buoy: 'i.......|........|........|........', dyn: 0.85 },
+      A3: { bars: 8, ch: SGR_A_CH, lead: SGR_A, ctr: SGR_A_CTR, perc: 'p...e..p|..p.e.p.' },
+    },
+    form: ['intro', 'A', 'A2', 'B', 'C', 'A3'],
+  });
+
+  // ================================================================ BATTLE
+  const BSG_A_LEAD = '5, - 3 - - 2 1 - | 2 - - - - - . . | .:8 | .:8 | 5, - 3 - - 2 1 - | 7, - - - - - . . | .:8 | .:8';
+  const BSG_A_KOTO = '.:8 | .:8 | 3 - 2 - 1 - 7, - | 1 - - - 4 - 5 - | .:8 | .:8 | 3 - 2 - 7, - 5, - | 5, - - - - - . .';
+  const BSG_A_CH = '1 1 7 4 1 1 7 5';
+  const BSG_B = '3 - - 4 5 - 3 - | 2 - - - 1 - - - | 3 - - 4 5 - 7 - | 5 - - - - - . . | 7 - 5 - 4 - 3 - | 4 - 3 - 1 - - - | 2 - - 3 4 - 5 - | 5 - - - - - . .';
+  const BSG_B_CH = '3 7 1 5 7 4 1 5M';
+  const BSG_B_LOW = '5 - - - - - - - | 4 - - - - - - - | 3 - - - - - - - | 2 - - - - - - - | 2 - - - - - - - | 1 - - - - - - - | 1 - - - - - - - | #7, - - - - - - -';
+  const BSG_C_LOW = '1 - - - - - - - | 2 - - - - - - - | 4 - - - - - - - | 3 - - - - - - - | 4 - - - - - - - | 6 - - - 5 - - - | 4 - - - 5 - - - | 2 - - - - - - -';
+  const BSG_C_HI = '.:8 | .:8 | .:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - - - . . | 2 - 1 - #7, - 5, - | 5, - - - - - . .';
+  const BSG_C_CH = '1 1 b6 b6 4 4 5M 5M';
+
+  S('battle_saltglass', {
+    title: 'Inkweaving — Salt Wind',
+    kind: 'battle',
+    motifs: ['road'],
+    notes: 'Chapter 2 battle (D dorian, 104 — Chapter 1 is 100). The game’s patient 3+3+2 pulse, now on shime-daiko with an ōdaiko on the downbeat, under a shamisen ostinato in eighths that rings out on the octave. A: the road motif on shakuhachi, answered by koto; B: a min’yō-coloured shakuhachi line; C: a rising bowed line and koto sixteenths over B-flat and A major, the road motif on shinobue; B2 gives the line to the shamisen over a falling bowed bass.',
+    key: 'D', mode: 'dorian', bpm: 104, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.68, rv: 0.25 },
+      koto: { i: 'koto', o: 5, v: 0.55, rv: 0.25, pan: 0.2 },
+      hi: { i: 'shinobue', o: 5, v: 0.48, rv: 0.25, pan: 0.15 },
+      low: { i: 'bowed', o: 3, v: 0.6, rv: 0.25, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.4, rv: 0.12, pan: -0.25 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.26, rv: 0.25, pan: 0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.35, rv: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.68 },
+      taiko: { perc: true, v: 0.55 },
+      shime: { perc: true, v: 0.42, pan: 0.2 },
+    },
+    all: { ost: "0 0' 2 0 0' 2 4 2", bass: '0 - - 0 - - 0 -', pad: '0+1+2+4', taiko: 'z.......|z.....z.', shime: 'e..e..e.|e..e.ee.' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', pad: null, shime: 'e..e..e.|e..e.eee' },
+      A: { bars: 8, ch: BSG_A_CH, lead: BSG_A_LEAD, koto: BSG_A_KOTO },
+      B: { bars: 8, ch: BSG_B_CH, lead: BSG_B, arp: "0 2 1' 2" },
+      C: { bars: 8, ch: BSG_C_CH, low: BSG_C_LOW, hi: BSG_C_HI, arp: { n: "0 2 1' 2", u: 0.25 }, taiko: 'z.......|z...z.z.', shime: 'e..e..e.|e.ee.ee.' },
+      B2: { bars: 8, ch: BSG_B_CH, lead: BSG_B, low: BSG_B_LOW },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { lead: 'shamisen' }, o: { lead: -1 } }],
+  });
+
+  // ================================================================== BOSS
+  const BOS2_RIFF = '1 1 2 1 5, 1 2 1 | 1 1 2 1 4 2 1 5,';
+  const BOS2_A_CH = '1 2 1 2 6 4 2 2';
+  const BOS2_HUSH = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 1 - - - - - - - | .:8 | .:8 | .:8 | .:8';
+  const BOS2_A_KOTO = '.:8 | .:8 | .:8 | .:8 | 3 - - - 1 - - - | 4 - - - 3 - - - | 2 - - - - - - - | .:8';
+  const BOS2_B = '5, - 3 - - 2 1 - | 2 - - - - - - - | 5, - 3 - - 2 1 - | 7, - - - - - - - | 1 - 3 - 5 - 6 - | 5 - 4 - 3 - 2 - | 3 - - - 1 - - - | 2 - - - - - - -';
+  const BOS2_B_CH = '1 2 1 7 6 4 1 2';
+  const BOS2_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
+  const BOS2_C_TOLL = '.:8 | .:8 | 2 - - - - - - - | .:8 | .:8 | .:8 | 5, - - - - - - - | .:8';
+
+  S('boss_saltglass', {
+    title: 'Low Tide Reckoning',
+    kind: 'boss',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 2 boss (E phrygian — the in-scale’s dark half-step — 140). A low biwa riff in eighths with its sawari buzz, a shamisen chord ostinato, ōdaiko on 3+3+2, shime-daiko sixteenths and an ōtsuzumi "kan" on the backbeat like a stamp coming down. The Hush motif climbs on glass in even notes over a held shō; the road motif falls against it on shakuhachi (and on shinobue in B2, both at once). C drops to half time: the stamps go even, the bell tolls, before the riff returns on shamisen.',
+    key: 'E', mode: 'phrygian', bpm: 140, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.75, rv: 0.22 },
+      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.4, pan: 0.2 },
+      koto: { i: 'koto', o: 5, v: 0.55, rv: 0.3, pan: -0.2 },
+      toll: { i: 'toll', o: 3, v: 0.6, rv: 0.45 },
+      riff: { i: 'biwa', o: 3, v: 0.55, rv: 0.12, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.34, rv: 0.1, pan: 0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: -2, v: 0.55, rv: 0.35 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.7 },
+      taiko: { perc: true, v: 0.6 },
+      shime: { perc: true, v: 0.32, pan: 0.15, u: 0.25 },
+      kan: { perc: true, v: 0.45, pan: -0.1 },
+      crash: { perc: true, v: 0.4, rv: 0.3, pan: 0.3 },
+    },
+    all: {
+      riff: BOS2_RIFF, ost: "0 . 2 . 1' . 2 .", bass: "0 0 0' 0 0 0 0' 0", sho: M.TRI,
+      taiko: 'Z..z..Z.|Z..z..Zz', shime: 'e.e.E.e.e.e.E.e.', kan: '....q...|....q..q',
+      crash: 'v.......|........|........|........|........|........|........|........',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1 1', sho: null, ost: null, kan: null, shime: null, crash: null, taiko: 'Z..z..Z.|Z.z.ZzZZ' },
+      A: { bars: 8, ch: BOS2_A_CH, glass: BOS2_HUSH, koto: BOS2_A_KOTO },
+      B: { bars: 8, ch: BOS2_B_CH, lead: BOS2_B },
+      C: { bars: 8, ch: '6 6 2 2 6 6 5P 5P', glass: BOS2_C_GLASS, toll: BOS2_C_TOLL, riff: null, taiko: 'Z.......|Z...z...', shime: 'e...e...e...e...', kan: 'q.q.q.q.', ost: "0 2 1' 2", dyn: 0.9 },
+      B2: { bars: 8, ch: BOS2_B_CH, lead: BOS2_B, glass: BOS2_HUSH, taiko: 'Z..z..Z.|Z..z.zZZ' },
+      A2: { bars: 8, ch: BOS2_A_CH, glass: BOS2_HUSH, koto: BOS2_A_KOTO },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { lead: 'shinobue' } }, { s: 'A2', i: { riff: 'shamisen' }, o: { riff: 1 } }],
+  });
+
+  // ============================================================ STORY CUES
+  // Wataru's confession and the harbourmaster's judgement.
+  const SGC_A = '5 - - - 4 - 3 - | 2 - - - - - . . | 3 - - - 2 - 1 - | 7, - - - - - . . | 1 - - - 3 - 4 - | 5 - - - 4 - 3 - | 2 - - - 1 - 7, - | 1 - - - - - . .';
+  const SGC_A_CH = '1 7 6 5 6 3 4 1';
+  const SGC_B = "3 - - - 5 - 6 - | 5 - - - 4 - - - | 4 - - - 3 - 2 - | 3 - - - - - . . | 3 - - - 5 - 1' - | 7 - - - 6 - 5 - | 4 - - - 2 - 5 - | 1 - - - - - . .";
+  const SGC_B_CH = '3 7 6 3 3 7 4 1';
+
+  S('sg_confession', {
+    title: 'The Unopened Notice',
+    kind: 'scene',
+    motifs: [],
+    notes: 'Cue (D minor, 63) for a confession at the warehouse and the judgement in the harbour office. A lone shakuhachi line in the low register over sparse koto and a held bowed note — something said with difficulty; B warms toward F major on koto with the bowed voice beneath, strict and kind at once; the shakuhachi returns with the koto answering.',
+    key: 'D', mode: 'aeolian', bpm: 63,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.72, rv: 0.4 },
+      koto: { i: 'koto', o: 4, v: 0.55, rv: 0.4, pan: 0.15 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.4, pan: -0.25 },
+      low: { i: 'bowed', o: 3, pat: true, bass: true, v: 0.42, rv: 0.4, pan: -0.1 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.38, rv: 0.45 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
+      bowl: { perc: true, v: 0.35, rv: 0.6, pan: 0.3 },
+    },
+    all: { arp: "0 . 2 . 1' . . .", low: '0 - - - - - - -', pad: M.TRI, bass: '0 - - - - - - -', bowl: 'i.......|........|........|........|........|........|........|........' },
+    sections: {
+      A: { bars: 8, ch: SGC_A_CH, lead: SGC_A, low: null },
+      B: { bars: 8, ch: SGC_B_CH, koto: SGC_B },
+      A2: { bars: 8, ch: SGC_A_CH, lead: SGC_A, koto: '.:8 | . . . . 3 - 2 - | .:8 | . . . . 3 - 2 - | .:8 | . . . . 5 - 6 - | .:8 | .:8' },
+    },
+    form: ['A', 'B', 'A2'],
+  });
+
+  // Before the boss: the stamp coming down behind the counter.
+  S('sg_counter', {
+    title: 'The Returns Counter',
+    kind: 'scene',
+    motifs: ['hush'],
+    notes: 'Cue (E phrygian, 60) before the chapter’s boss. Three hollow kotsuzumi strokes and a rest in every bar — a stamp coming down, again and again — under a held shō cluster and a low biwa. The Hush motif climbs on glass in even notes; water drips in the stacks.',
+    key: 'E', mode: 'phrygian', bpm: 60,
+    tracks: {
+      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.5 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: -2, v: 0.6, rv: 0.45 },
+      low: { i: 'biwa', o: 2, v: 0.5, rv: 0.4, pan: -0.15 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.42 },
+      stamp: { perc: true, v: 0.6, rv: 0.25 },
+      drip: { perc: true, v: 0.45, rv: 0.6, pan: 0.3 },
+    },
+    all: { sho: '0+2+4', bass: '0 - - - - - - -', stamp: 'm.m.m...', drip: 'd.......|........|....d...|........|........|..d.....' },
+    sections: {
+      A: { bars: 4, ch: '1P 1P 2P 1P', glass: '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8' },
+      B: { bars: 4, ch: '1P 2P 1P 2P', low: '1 - - - - - - - | 2 - - - - - - - | 1 - - - - - - - | 2 - - - - - - -', stamp: 'm.m.m...|m.m.m..q' },
+      A2: { bars: 4, ch: '1P 1P 2P 1P', glass: '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 4 - - - - - - -', low: '1 - - - - - - - | .:8 | .:8 | .:8' },
+    },
+    form: ['A', 'B', 'A2'],
+  });
+
+  // After the boss: the letters lift off the shelves and stream home.
+  S('sg_letters', {
+    title: 'Letters on the Tide',
+    kind: 'scene',
+    motifs: ['road'],
+    notes: 'Cue (F, 80) as the shelved letters rise and stream back to the harbour. Koto sixteenths climbing through each chord like paper lifting, rin strokes, the main theme on shakuhachi; B lifts the theme’s answering phrase onto shinobue over a shō, the koto still climbing.',
+    key: 'F', bpm: 80,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.7, rv: 0.4 },
+      hi: { i: 'shinobue', o: 5, v: 0.5, rv: 0.4, pan: 0.15 },
+      rise: { i: 'koto', o: 3, pat: true, u: 0.25, v: 0.28, rv: 0.4, pan: -0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: -3, v: 0.5, rv: 0.45 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.5 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
+      bowl: { perc: true, v: 0.35, rv: 0.6, pan: 0.3 },
+    },
+    all: { rise: "0 1 2 0' 1' 2' 0'' -", pad: M.TRI, bass: '0 - - - - - - -', bowl: 'i.......|........' },
+    sections: {
+      A: { bars: 8, ch: M.ROAD_A_CH, lead: M.ROAD_A },
+      B: { bars: 8, ch: M.ROAD_B_CH, hi: M.ROAD_B, sho: M.TRI, pad: null },
+    },
+    form: ['A', 'B'],
+  });
+
+  // The chapter's last night: the lighthouse beam, the companion's confidence.
+  const SGH_A = '5, - 1 - 2 - | 3 - - - 2 1 | 2 - - - 6, - | 1 - - - - - | 5, - 1 - 2 - | 3 - - - 5 - | 6 - 5 - 3 2 | 2 - - - - -';
+  const SGH_A_CH = '1 1 6 4 1 6 4 5';
+  const SGH_B = '5, - 3 - 2 1 | 2 - - - - - | 5, - 3 - 2 1 | 6, - - - 5, - | 4 - 3 - 2 - | 1 - - - 6, - | 2 - - - 7, - | 1 - - - - -';
+  const SGH_B_CH = '1 5 1 6 4 6 5 1';
+
+  S('sg_lighthouse', {
+    title: 'The Lighthouse Beam',
+    kind: 'scene',
+    motifs: ['road'],
+    notes: 'Cue (B-flat, 3/4, 66) for the chapter’s last night on the pier. A koto figure turns over every bar like the beam going round; a rin bowl sounds every other bar. The shakuhachi tune opens with the Saltglass harbour tune’s rising fourth; B carries the road motif in the same slow 3/4, then the koto takes the tune while a second koto answers each phrase with a pressed (ato-oshi) note bending up into place.',
+    key: 'Bb', bpm: 66, meter: 3,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.72, rv: 0.45 },
+      koto: { i: 'koto', o: 4, v: 0.55, rv: 0.45, pan: 0.15 },
+      press: { i: 'koto_oshi', o: 5, v: 0.4, rv: 0.5, pan: 0.3 },
+      beam: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.45, pan: -0.25 },
+      low: { i: 'bowed', o: 3, pat: true, bass: true, v: 0.38, rv: 0.45, pan: -0.1 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.32, rv: 0.5 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.42 },
+      bowl: { perc: true, v: 0.32, rv: 0.6, pan: 0.3 },
+    },
+    all: { beam: "0 2 0' 1' 0' 2", low: '0 - - - - -', pad: M.TRI, bass: '0 - - - - -', bowl: 'i.....|......' },
+    sections: {
+      A: { bars: 8, ch: SGH_A_CH, lead: SGH_A, low: null },
+      B: { bars: 8, ch: SGH_B_CH, lead: SGH_B },
+      A2: { bars: 8, ch: SGH_A_CH, koto: SGH_A, press: '.:6 | .:6 | .:6 | 1 - - - - - | .:6 | .:6 | .:6 | 2 - - - - -' },
+    },
+    form: ['A', 'B', 'A2', 'B'],
+  });
+
+  _.REQUIRED_SONGS.push('sg_road', 'battle_saltglass', 'boss_saltglass', 'sg_confession', 'sg_counter', 'sg_letters', 'sg_lighthouse');
+})(RB.audio);
+
+
+/* ==== src/audio/39_zones.js ==== */
+/* Zone music: which battle and boss theme plays where.
+ *
+ * Every enemy carries a `region` (src/content/**); so does every map. A zone
+ * groups the regions of one chapter's area and names its battle and boss
+ * themes, its route theme and the overworld songs that belong to it (the
+ * unit tests check every map against this table). Chapter 1 / Reedwake keeps
+ * the original `battle` and `boss`.
+ *
+ * RB.audio.battleSong(enemy, mapDef, mapId) picks the song for a fight:
+ *   1. enemy.music, when it names a real song other than the generic
+ *      placeholders 'battle' / 'boss' — an explicit override wins;
+ *   2. otherwise the zone of enemy.region, else of the map's region, else of
+ *      the map id's prefix (sg. co. sb. lf. sa. …) — its boss theme for a boss
+ *      (enemy.boss), its battle theme for anything else;
+ *   3. otherwise Chapter 1's `boss` / `battle`.
+ * 'battle' and 'boss' in content therefore mean "this zone's theme". */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+
+  _.zones = {
+    reedwake: {
+      chapter: 1, regions: ['reedwake'], prefixes: ['rw.', 'lq.'],
+      battle: 'battle', boss: 'boss', route: 'road',
+      songs: ['reedwake', 'reedwake_night', 'road', 'mill'],
+    },
+    saltglass: {
+      chapter: 2, regions: ['saltglass', 'archive'], prefixes: ['sg.'],
+      battle: 'battle_saltglass', boss: 'boss_saltglass', route: 'sg_road',
+      songs: ['sg_road', 'saltglass', 'drowned_archive'],
+      cues: ['sg_confession', 'sg_counter', 'sg_letters', 'sg_lighthouse'],
+    },
+    cinder: {
+      chapter: 3, regions: ['cinder'], prefixes: ['co.'],
+      battle: 'battle', boss: 'boss', route: 'road',
+      songs: ['cinder', 'kiln', 'road'],
+    },
+    snowbell: {
+      chapter: 4, regions: ['snowbell'], prefixes: ['sb.'],
+      battle: 'battle', boss: 'boss', route: 'road',
+      songs: ['snowbell', 'observatory', 'road'],
+    },
+    lanternfall: {
+      chapter: 5, regions: ['lanternfall'], prefixes: ['lf.'],
+      battle: 'battle', boss: 'boss', route: 'road',
+      songs: ['lanternfall', 'belltower', 'road'],
+    },
+    still: {
+      chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],
+      battle: 'battle', boss: 'boss', route: 'quiet_road',
+      songs: ['still_archive', 'road'],
+    },
+    atlas: {
+      chapter: 7, regions: ['atlas'], prefixes: ['atlas'],
+      battle: 'battle', boss: 'boss',
+      songs: ['atlas'],
+    },
+  };
+  // Moods shared by every zone (investigation, rest, wonder, grief, the Hush,
+  // the companions' own themes, the ending): allowed on any map.
+  _.SHARED_MUSIC = ['mystery', 'inn', 'quiet_road', 'wonder', 'sorrow', 'hush', 'finale', 'ending', 'departure',
+    'companion_nao', 'companion_mio', 'companion_ren', 'companion_suzu'];
+
+  function zoneBy(key, val) {
+    if (!val) return null;
+    for (const id in _.zones) {
+      const z = _.zones[id];
+      if (key === 'region' ? z.regions.includes(val) : z.prefixes.some((p) => String(val).startsWith(p))) return id;
+    }
+    return null;
+  }
+  // zone id for an enemy and/or a map (null when nothing matches)
+  A.zoneOf = function (enemy, mapDef, mapId) {
+    return zoneBy('region', enemy && enemy.region) || zoneBy('region', mapDef && mapDef.region) || zoneBy('prefix', mapId) || null;
+  };
+  A.zones = () => JSON.parse(JSON.stringify(_.zones));
+
+  A.battleSong = function (enemy, mapDef, mapId) {
+    enemy = enemy || {};
+    const want = enemy.music;
+    if (want && want !== 'battle' && want !== 'boss' && _.songDefs && _.songDefs[want]) return want;
+    const z = _.zones[A.zoneOf(enemy, mapDef, mapId)];
+    const id = z ? (enemy.boss ? z.boss : z.battle) : null;
+    if (id && _.songDefs && _.songDefs[id]) return id;
+    return enemy.boss ? 'boss' : 'battle';
+  };
 })(RB.audio);
 
 
@@ -29692,7 +30485,7 @@ RB.world = (function () {
     refreshActors();
     placeCompanion();
     unstick(W.player);
-    if (m.def.music && RB.audio) RB.audio.playSong(typeof m.def.music === 'function' ? m.def.music(st) : pickMusic(m.def.music, st));
+    if (m.def.music && RB.audio) RB.audio.playSong(musicFor(m.def, st));
     RB.render.invalidate();
     RB.bus.emit('map:enter', { id: mapId });
   }
@@ -29700,6 +30493,11 @@ RB.world = (function () {
     if (typeof music === 'string') return music;
     for (const m of music) if (!m.if || RB.state.test(st, m.if)) return m.id;
     return null;
+  }
+  // the song a map plays now (null for maps that keep whatever is playing)
+  function musicFor(def, st) {
+    if (!def || !def.music) return null;
+    return typeof def.music === 'function' ? def.music(st) : pickMusic(def.music, st);
   }
   function playerLook() {
     return RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
@@ -30564,6 +31362,7 @@ RB.world = (function () {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
+    musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
   };
 })();
 
@@ -66652,7 +67451,9 @@ RB.combat = (function () {
     members = [enemy].concat(ids.slice(1).map((id) => Object.assign({ id }, RB.content.enemies[id])));
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
-    RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
+    // the zone's battle or boss theme (src/audio/39_zones.js); enemy.music still overrides
+    const here = RB.world.W.map;
+    RB.audio && RB.audio.playSong(RB.audio.battleSong ? RB.audio.battleSong(enemy, here && here.def, s.map) : (enemy.music || (enemy.boss ? 'boss' : 'battle')));
     await RB.ui.fade(true, 200);
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
@@ -66852,7 +67653,8 @@ RB.combat = (function () {
       RB.game.popMode('combat');
       await RB.ui.fade(false, 200);
       const m = RB.world.W.map;
-      if (m && m.def.music) RB.audio && RB.audio.playSong(typeof m.def.music === 'string' ? m.def.music : (m.def.music.find((x) => !x.if || RB.state.test(s, x.if)) || {}).id);
+      const back = m && RB.world.musicFor(m.def, s);
+      if (back) RB.audio && RB.audio.playSong(back);
       else if (prevSong) RB.audio && RB.audio.playSong(prevSong);
       st = null; members = [];
     }
@@ -82784,7 +83586,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The coast road ------------------------------------------------------------------
   C.maps['sg.road'] = {
-    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}い の {道|みち}' }, region: 'saltglass', music: 'road',
+    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}い の {道|みち}' }, region: 'saltglass', music: 'sg_road',
     ambient: { weather: null },
     terrain: K.build(40, 22, '.', (k) => {
       k.ragged('top', 'T', 3, 41);
@@ -83288,7 +84090,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   C.maps['sg.da_vault'] = Object.assign({}, DA, {
     name: { en: 'Drowned Archive — Returns Counter', jp: '{沈|しず}んだ{書庫|しょこ}・{返送|へんそう}{窓口|まどぐち}' },
-    music: [{ if: 'sg_boss_done', id: 'wonder' }, { id: 'drowned_archive' }],
+    music: [{ if: 'sg_boss_done', id: 'sg_letters' }, { id: 'drowned_archive' }],
     ambient: { weather: 'pages', dark: 0.38, playerLight: 56, tint: 'rgba(30,60,110,0.14)' },
     terrain: K.build(20, 16, '#', (k) => {
       k.rect(1, 2, 18, 13, '+');
@@ -83427,6 +84229,7 @@ pc: オウミ さん に {報告|ほうこく} しよう 。 || Let's report to 
 
 @scene sg.ch2_end
 !warp sg.harbor 19 35 down
+!music sg_lighthouse
 narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {灯台|とうだい} の {光|ひかり} が {海|うみ} を {撫|な}でて いく の を {見|み}て いた 。 || That night, at the end of the pier, you watch the lighthouse beam stroke the sea.
 ?(comp=nao) comp: …… {今日|きょう} 、 ワタル の {督促状|とくそくじょう} を {見|み}て 、 ちょっと {嫌|いや} な {気分|きぶん} に なった 。 || …Seeing Wataru's final notice today put me in a bit of a mood.
 ?(comp=nao) pc: {嫌|いや} な {気分|きぶん} ？ || A mood?
@@ -83461,6 +84264,7 @@ narr: {灯台|とうだい} の {光|ひかり} が {港|みなと} を {一周|
 !unset sg_evening
 !set ch2_done sg_ferry_running
 !warp sg.inn 6 7 down
+!music saltglass
 narr: {翌朝|よくあさ} 。 {港|みなと} は {朝|あさ} から うるさかった 。 {正|ただ}しい うるささ だった 。 || Next morning, the harbour is loud from dawn. The right kind of loud.
 !heal
 !journal {北|きた} の {道|みち} を {通|とお}って 、 {灰実|はいみ} の {里|さと} へ 。 || Take the north road out of the coast road fork to Cinder Orchard.
@@ -83758,6 +84562,7 @@ wataru[sad]: {僕|ぼく} が やりました 。 || I did it.
 wataru: {母|はは} の {船|ふね} を {直|なお}す ため に 、 {灯落|ひおち} で お{金|かね} を {借|か}りました 。 {会社|かいしゃ} から の {給料|きゅうりょう} は 、 {春|はる} から ずっと {遅|おく}れて いて …… 。 || I borrowed money in Lanternfall to repair my mother's boat. Our wages from the company have been late since spring…
 wataru: そしたら {嵐|あらし} で 、 {船|ふね} が また {壊|こわ}れて 。 {督促状|とくそくじょう} が {来|き}て 。 {開|あ}ける の が {怖|こわ}くて 、 まだ {開|あ}けて いません 。 || Then the storm wrecked the boat again. And the final notice came. I was too scared to open it. I still haven't.
 wataru: {荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。 || I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.
+!music sg_confession
 wataru[sad]: {灯台|とうだい} の {灯|ひ} が {細|ほそ}く なった {夜|よる} の こと 、 {聞|き}きました 。 ソウタ さん が …… 。 {僕|ぼく} の せい です 。 || I heard about the night the lighthouse burned low. Sōta… That was my fault.
 ?(comp=nao) comp: …… {言|い}えた じゃん 。 {一番|いちばん} {重|おも}い {荷物|にもつ} は 、 {下|お}ろす {直前|ちょくぜん} が {一番|いちばん} {重|おも}い ん だ よ 。 || …You said it. The heaviest load's always heaviest right before you put it down.
 ?(comp=mio) comp[sad]: {言|い}って くれて 、 ありがとう 。 …… でも 、 {優|やさ}しく する の と 、 {許|ゆる}す の は {違|ちが}う 。 {港長|こうちょう} さん に も 、 {灯台|とうだい} に も 、 ちゃんと {言|い}わなきゃ 。 || Thank you for telling us. …But being kind isn't the same as letting it go. You have to tell the harbourmaster, and the lighthouse, properly.
@@ -83809,6 +84614,7 @@ narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も 
 ?(comp=suzu) comp: （…… {開|あ}けた わ ね 。 {一番|いちばん} {難|むずか}しい ところ よ 。） || (…He opened it. That's the hardest part.)
 wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を {書|か}かない と 。 …… よければ 、 {後|あと} で {寄|よ}って ください 。 || I'll go back to the warehouse. I have a reply to write. …Please stop by later, if you would.
 !autosave
+!music saltglass
 
 @scene sg.wataru_letter
 wataru: {黒部|くろべ}{商会|しょうかい} へ の {返事|へんじ} です 。 …… {待|ま}って ほしい 、 と {書|か}きたい ん です が 、 {言葉|ことば} が {決|き}まらなくて 。 || My reply to Kurobe & Co. …I want to ask them to wait, but I can't settle on the words.
@@ -84191,6 +84997,7 @@ narr: {長|なが}い {窓口|まどぐち} 。 {返送|へんそう} を {待|�
 narr: {窓口|まどぐち} は {空|から} だ 。 {割|わ}れた {判子|はんこ} の {欠片|かけら} が 、 {小|ちい}さく {光|ひか}って いる 。 || The counter is empty. A fragment of the broken stamp glints faintly.
 
 @scene sg.da_boss
+!music sg_counter
 narr: {長|なが}い {窓口|まどぐち} の {向|む}こう で 、 {誰|だれ} か が {判子|はんこ} を {押|お}して いる 。 とん 。 とん 。 とん 。 || Behind the long counter, someone is stamping. Thump. Thump. Thump.
 sg_clerk: {次|つぎ} 。 || Next.
 sg_clerk: {宛名|あてな} {判読|はんどく} {不能|ふのう} 。 {返送|へんそう} 。 {次|つぎ} 。 || Addressee illegible. Returned. Next.
@@ -84217,7 +85024,7 @@ sg_clerk: {書庫|しょこ} の {守|も}り{人|びと} 。 {山|やま} の {
 narr: {書記|しょき} の {姿|すがた} が 、 {水|みず} に {溶|と}ける {墨|すみ} の よう に {薄|うす}れて いく 。 || The Clerk's shape fades like ink dissolving in water.
 sg_clerk: {手紙|てがみ} を {持|も}って いけ 。 {返送|へんそう} は …… {取|と}り{消|け}す 。 || Take the letters. The return… is cancelled.
 !sfx reveal
-!music wonder
+!music sg_letters
 narr: {棚|たな} から 、 {手紙|てがみ} が いっせい に {浮|う}かび{上|あ}がった 。 {紙|かみ} の {鶴|つる} が ほどけ 、 {封筒|ふうとう} に {戻|もど}って 、 {出口|でぐち} の ほう へ {流|なが}れて いく 。 || Letters lift off the shelves all at once. Paper cranes unfold into envelopes again and drift towards the way out.
 !give sg_stamp
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {港|みなと} に {帰|かえ}る 。 …… {配達|はいたつ} {完了|かんりょう} 、 だ な 。 || They're all going home to the harbour. …Delivery complete.

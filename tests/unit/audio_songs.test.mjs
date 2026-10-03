@@ -9,6 +9,9 @@ const RANGE = {
   bass: [28, 64], pad: [40, 86], choir: [45, 84], bowed: [36, 90], flute: [55, 96],
   pluck: [36, 100], harp: [38, 100], mallet: [45, 98], keys: [45, 90],
   bell: [36, 98], celesta: [48, 100], toll: [30, 70], glass: [40, 96],
+  // the Japanese instruments (src/audio/10_synth.js), roughly their real compass
+  shamisen: [45, 88], biwa: [36, 72], koto: [40, 93], koto_oshi: [40, 93], shakuhachi: [60, 91],
+  shinobue: [69, 100], sho: [60, 93], rin: [64, 100],
 };
 
 export default async (t) => {
@@ -63,7 +66,8 @@ export default async (t) => {
     s.tracks.forEach((tk, i) => t.ok(used.has(i), `${id}: track "${tk.name}" is used`));
     // durations by kind
     const loopLen = s.loop ? s.length - s.loopStart : null;
-    if (def.kind === 'area') t.ok(s.loop && loopLen >= 60, `${id}: area theme loops for >= 60 s (got ${loopLen && loopLen.toFixed(1)})`);
+    if (def.kind === 'area' || def.kind === 'battle' || def.kind === 'boss') t.ok(s.loop && loopLen >= 60, `${id}: ${def.kind} theme loops for >= 60 s (got ${loopLen && loopLen.toFixed(1)})`);
+    t.ok(['area', 'battle', 'boss', 'scene', 'companion', 'cutscene', 'sting'].includes(def.kind), `${id}: has a known kind (${def.kind})`);
     if (def.kind === 'companion' || def.kind === 'scene') t.ok(s.loop && loopLen >= 40, `${id}: scene loop >= 40 s`);
     if (id === 'prologue') t.ok(!s.loop && s.length >= 30 && s.length <= 60, 'prologue is a 30–60 s non-looping cue');
     if (id === 'victory') t.ok(!s.loop && s.length <= 10, 'victory is a short non-looping sting');
@@ -156,7 +160,7 @@ export default async (t) => {
   throws((d) => { d.form = ['B']; }, 'missing section');
   throws((d) => { d.key = 'H'; }, 'unknown key');
   throws((d) => { d.tracks.lead.o = 9; }, 'notes beyond MIDI range');
-  throws((d) => { d.tracks.p = { perc: true }; d.sections.A.p = 'kz..'; }, 'unknown percussion letter');
+  throws((d) => { d.tracks.p = { perc: true }; d.sections.A.p = 'ku..'; }, 'unknown percussion letter (u is unassigned; z is now the ōdaiko)');
   throws((d) => { d.tracks.p = { perc: true }; d.sections.A.p = 'k...|k..'; }, 'percussion bar length');
   throws((d) => { delete d.sections.A.ch; }, 'pattern track without chords');
   throws((d) => { d.sections.A.lead = '1:0 - 2 - 3 - 4 - | 5 - - - - - - -'; }, 'zero-length token');

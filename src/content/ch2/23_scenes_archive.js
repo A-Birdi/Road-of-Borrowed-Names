@@ -192,6 +192,7 @@ narr: {長|なが}い {窓口|まどぐち} 。 {返送|へんそう} を {待|�
 narr: {窓口|まどぐち} は {空|から} だ 。 {割|わ}れた {判子|はんこ} の {欠片|かけら} が 、 {小|ちい}さく {光|ひか}って いる 。 || The counter is empty. A fragment of the broken stamp glints faintly.
 
 @scene sg.da_boss
+!music sg_counter
 narr: {長|なが}い {窓口|まどぐち} の {向|む}こう で 、 {誰|だれ} か が {判子|はんこ} を {押|お}して いる 。 とん 。 とん 。 とん 。 || Behind the long counter, someone is stamping. Thump. Thump. Thump.
 sg_clerk: {次|つぎ} 。 || Next.
 sg_clerk: {宛名|あてな} {判読|はんどく} {不能|ふのう} 。 {返送|へんそう} 。 {次|つぎ} 。 || Addressee illegible. Returned. Next.
@@ -218,7 +219,7 @@ sg_clerk: {書庫|しょこ} の {守|も}り{人|びと} 。 {山|やま} の {
 narr: {書記|しょき} の {姿|すがた} が 、 {水|みず} に {溶|と}ける {墨|すみ} の よう に {薄|うす}れて いく 。 || The Clerk's shape fades like ink dissolving in water.
 sg_clerk: {手紙|てがみ} を {持|も}って いけ 。 {返送|へんそう} は …… {取|と}り{消|け}す 。 || Take the letters. The return… is cancelled.
 !sfx reveal
-!music wonder
+!music sg_letters
 narr: {棚|たな} から 、 {手紙|てがみ} が いっせい に {浮|う}かび{上|あ}がった 。 {紙|かみ} の {鶴|つる} が ほどけ 、 {封筒|ふうとう} に {戻|もど}って 、 {出口|でぐち} の ほう へ {流|なが}れて いく 。 || Letters lift off the shelves all at once. Paper cranes unfold into envelopes again and drift towards the way out.
 !give sg_stamp
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {港|みなと} に {帰|かえ}る 。 …… {配達|はいたつ} {完了|かんりょう} 、 だ な 。 || They're all going home to the harbour. …Delivery complete.

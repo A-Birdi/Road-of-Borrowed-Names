@@ -112,6 +112,7 @@ pc: オウミ さん に {報告|ほうこく} しよう 。 || Let's report to 
 
 @scene sg.ch2_end
 !warp sg.harbor 19 35 down
+!music sg_lighthouse
 narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {灯台|とうだい} の {光|ひかり} が {海|うみ} を {撫|な}でて いく の を {見|み}て いた 。 || That night, at the end of the pier, you watch the lighthouse beam stroke the sea.
 ?(comp=nao) comp: …… {今日|きょう} 、 ワタル の {督促状|とくそくじょう} を {見|み}て 、 ちょっと {嫌|いや} な {気分|きぶん} に なった 。 || …Seeing Wataru's final notice today put me in a bit of a mood.
 ?(comp=nao) pc: {嫌|いや} な {気分|きぶん} ？ || A mood?
@@ -146,6 +147,7 @@ narr: {灯台|とうだい} の {光|ひかり} が {港|みなと} を {一周|
 !unset sg_evening
 !set ch2_done sg_ferry_running
 !warp sg.inn 6 7 down
+!music saltglass
 narr: {翌朝|よくあさ} 。 {港|みなと} は {朝|あさ} から うるさかった 。 {正|ただ}しい うるささ だった 。 || Next morning, the harbour is loud from dawn. The right kind of loud.
 !heal
 !journal {北|きた} の {道|みち} を {通|とお}って 、 {灰実|はいみ} の {里|さと} へ 。 || Take the north road out of the coast road fork to Cinder Orchard.
