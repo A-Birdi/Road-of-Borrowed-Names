@@ -413,6 +413,9 @@ await test('reduced motion; 320×640 and 200 % text; the Next after the battle t
     await helpers(p);
     await battle(p, Object.assign({ map: 'sa.conduits', foe: 'g1', diff: 'hard', words: ALLW, comp: 'suzu' }, o));
     const tag = vp.viewport.width + '×' + vp.viewport.height + (o.text ? ' 200%' : '') + (o.reduce ? ' reduced' : '');
+    // the dock slides in from the side when it fills (by design): measure once nothing is mid-transition, or a
+    // loaded machine catches it half way in and it reads as running off the side
+    await p.waitForFunction(() => !document.getAnimations().some((a) => a.playState === 'running' && a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('.combat-ui') && !a.effect.target.closest('.cb-stage, .cb-fx')), null, { timeout: 5000 }).catch(() => {});
     const lay = await p.evaluate(() => {
       const vw = innerWidth, ov = [];
       for (const e of document.querySelectorAll('.combat-ui *')) { if (e.closest('.cb-fx') || e.closest('.cb-stage')) continue; const r = e.getBoundingClientRect(); if (r.width && (r.right > vw + 1 || r.left < -1)) ov.push(e.tagName + '.' + e.className + ' ' + Math.round(r.left) + '..' + Math.round(r.right)); }
