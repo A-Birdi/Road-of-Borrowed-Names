@@ -2307,7 +2307,12 @@ tidied.
 **The lead's runs on the merge** (the task branch with everything above; the merged index.html is byte-identical to a
 fresh build; scenes.json and SCENES.md regenerated):
 - unit 25,051/0; validator clean;
-- the browser runs are recorded on the next line.
+- browser, one at a time, on the fully merged build (ab5a23b):
+  - sequence_manual (full) 64/0;
+  - prologue 100/0; create 382/0; interludes 76/0;
+  - staging_wataru 112/0;
+  - story_ch1: 8/8 PASS (profiles A and F × four companions);
+  - harmony_cutin 11/0.
 
 **Not verified:**
 - A person's review of the art and pacing.
