@@ -2069,3 +2069,48 @@ walking in or off.
 
 **Not verified:** Firefox; a real phone; the staging worker's runner (on its branch, not merged yet). Its `world()`
 classification still lists these overlaps as non-failures; it is to be tightened after the merge.
+
+## Props balance, the review ledger, conversation continuity, portraits — the paired addendum's WI18, WI19, WI25–WI28 (merged 2026-10-03)
+
+**What** (worker branch, final aa27e1a; the full record is docs/expressive/reports/props_review.md; the ledger is
+docs/expressive/REVIEW.md):
+- Props now follow their own text:
+  - three kilns (a glassworks furnace cold until its story flag, a kiln with only embers, a kiln choked with ash and
+    without a false seal mark);
+  - the lighthouse lens, dim until its flag.
+- 12 decorative glints no longer look like pickups.
+- Every kind of lamp flickers more calmly (115+ placements); the great lamp keeps the lively flicker.
+- Pools of light breathe on their own phases, so a map's lamps no longer pulse in unison.
+- The campfire and Hiro's furnace are slower.
+- 27 tables and desks show what their scene describes, with dashes for writing and never letters.
+- The potter's wheel reads against the floor.
+- People's share of on-screen motion rose at every measured place (e.g. the lighthouse 55 → 91 %, Snowbell square
+  70 → 86 %). This depends on timing, so it is reported, not asserted.
+- **New tests:**
+  - `tests/e2e/props_balance.mjs`, now in the default suite: 48 checks. 13 of them fail on c2a799d, one per change.
+  - Unit `conversation_continuity.test.mjs`: every staged gesture is inside the person's mannerism profile, or a
+    documented escalation. 7 open findings are listed as KNOWN.
+  - Unit `portrait_speakers.test.mjs`: all 88 scripted speakers have a portrait; the 45 major ones animate.
+- **Open, not changed:**
+  - two look-alike pairs (Tamae/Yae, Ōmi/Umi): an owner decision;
+  - Asahi's heat habit beside her now-cold furnace;
+  - idles that don't yet change with the story;
+  - phone portrait scaling at DPR 1, 2 and 2.625.
+
+**The worker's runs** (headless Chromium, shared machine):
+- Unit 24,351/0; validator no errors.
+- props_balance --places 48/48 (35/13 on c2a799d).
+- landmarks 54/54; portrait_anim all passed; world_view all ok; town_animals 41/41; practice_a_desk 45/45;
+  lighthouse_top 106/106; staging_wataru 112/112; staging_chapters 66/66; actor_workplaces 30/30.
+- actor_life 37/39 inside the shared sequence. Its two timing checks passed 39/39 twice when run alone.
+- The overworld geometry fixture is unchanged: only placement options changed. Geometry 3/3.
+
+**The lead's runs on the merge** (task branch with the walk-round fix; the merged index.html is byte-identical to a
+fresh build):
+- unit 24,351/0;
+- props_balance 48/48;
+- walk_round all passed.
+
+**Not verified:** Firefox, Safari, phones; a person's eye on the art (the contrast measure stands in for it); Atlas rooms
+from the same seed differ by a few props between page loads (269–271 kind/option combinations), which was not
+investigated.

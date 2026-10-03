@@ -119,10 +119,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'table', x: 25, y: 17, scene: 'co.glass_table' }, { p: 'chair', x: 24, y: 17 }, { p: 'chair', x: 27, y: 17 },
     { p: 'co_seat', x: 26, y: 18, scene: 'co.seat', if: '!co_hiro_seat_named' },
     { p: 'co_seat', x: 26, y: 18, scene: 'co.seat', o: { named: true }, if: 'co_hiro_seat_named' },
-    { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table' },
+    { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table', o: { on: 'paper' } },
     { p: 'well', x: 15, y: 15 },
     { p: 'lantern', x: 13, y: 17 }, { p: 'lantern', x: 32, y: 17 }, { p: 'lantern', x: 36, y: 20 },
-    { p: 'kiln', x: 47, y: 21, o: {} , text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
+    { p: 'kiln', x: 47, y: 21, o: { embers: true }, text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
     { p: 'crate', x: 33, y: 24, scene: 'co.tamotsu_shed' }, { p: 'barrel', x: 32, y: 25 },
     { p: 'co_hoshigaki', x: 4, y: 16 }, { p: 'co_hoshigaki', x: 27, y: 31 },
     { p: 'flowerpot', x: 12, y: 16 }, { p: 'flowerpot', x: 36, y: 12 },
@@ -306,7 +306,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'co_wheel', x: 3, y: 4, text: { jp: 'ろくろ 。 {粘土|ねんど} が まだ {湿|しめ}って いる 。', en: 'The potter\'s wheel. The clay on it is still damp.' } },
       { p: 'co_flasks', x: 6, y: 2, scene: 'co.flasks' },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 9, y: 2 },
-      { p: 'smalltable', x: 8, y: 5, scene: 'co.pottery_slip' },
+      { p: 'smalltable', x: 8, y: 5, scene: 'co.pottery_slip', o: { on: 'paper' } },
       { p: 'pot', x: 1, y: 6 }, { p: 'pot', x: 9, y: 6 },
     ],
     npcs: [
@@ -317,7 +317,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('co.post', T("Shino's Post House", 'シノ の {郵便所|ゆうびんじょ}'), 9, 8, 4, [6, 25], {
     props: [
       { p: 'exitmat', x: 4, y: 6 },
-      { p: 'desk', x: 1, y: 3, scene: 'co.post_desk' },
+      { p: 'desk', x: 1, y: 3, scene: 'co.post_desk', o: { on: 'heap' } },
       { p: 'shelf', x: 6, y: 2 }, { p: 'shelf', x: 7, y: 2, text: { jp: '{仕分|しわ}け{棚|だな} 。 {里|さと} の {家|いえ} の {数|かず} だけ {区切|くぎ}り が ある 。 {空|から} の {区切|くぎ}り が {五|いつ}つ 。', en: 'A sorting rack with one slot per household. Five slots at the end are empty and unlabelled.' } },
       { p: 'mailbox', x: 7, y: 5 },
     ],
@@ -497,7 +497,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
-      { p: 'kiln', x: 11, y: 3, o: { sealed: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
+      { p: 'kiln', x: 11, y: 3, o: { ash: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
       { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },
       { p: 'co_beam', x: 11, y: 21 }, { p: 'co_beam', x: 27, y: 9 },
@@ -603,8 +603,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'fence', x: 5, y: 3, block: false }, { p: 'fence', x: 6, y: 3, block: false }, { p: 'fence', x: 9, y: 3, block: false }, { p: 'fence', x: 10, y: 3, block: false },
       { p: 'bell', x: 7, y: 3, scene: 'co.lookout_bell' },
-      { p: 'sparkle', x: 1, y: 9 }, { p: 'sparkle', x: 3, y: 10 }, { p: 'sparkle', x: 12, y: 9 }, { p: 'sparkle', x: 14, y: 10 },
-      { p: 'sparkle', x: 2, y: 1 }, { p: 'sparkle', x: 13, y: 2 }, { p: 'sparkle', x: 7, y: 10 }, { p: 'sparkle', x: 9, y: 11 },
+      // far lights glinting round the platform: faint, and no light pools (not something to find)
+      { p: 'sparkle', x: 1, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 3, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 12, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 10, o: { faint: true, lit: false } },
+      { p: 'sparkle', x: 2, y: 1, o: { faint: true, lit: false } }, { p: 'sparkle', x: 13, y: 2, o: { faint: true, lit: false } }, { p: 'sparkle', x: 7, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 9, y: 11, o: { faint: true, lit: false } },
       { p: 'fence', x: 5, y: 8, block: false }, { p: 'fence', x: 6, y: 8, block: false }, { p: 'fence', x: 7, y: 8, block: false }, { p: 'fence', x: 8, y: 8, block: false }, { p: 'fence', x: 9, y: 8, block: false },
       { p: 'hole', x: 10, y: 7 },
     ],

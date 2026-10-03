@@ -374,7 +374,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // Glass furnace: a brick body and chimney, a glowing mouth.
     A('co_furnace', {
       box: [-4, -40, 72, 108],
-      f: (t, o) => K.frame(t, 150, 4, o.still),
+      // the mouth's glow throbs slowly (230 ms a step, was 150), under Hiro's work rather than over it
+      f: (t, o) => K.frame(t, 230, 4, o.still),
       draw(g, M, v, f) {
         bricks(g, 4, -12, 56, 72, BRICK, 3);
         for (let i = 0; i < 56; i++) if (i < 3 || i > 52) R(g, 4 + i, -12, 1, 72, i < 3 ? 'rgba(255,240,200,0.12)' : 'rgba(22,16,40,0.25)');
@@ -388,15 +389,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
       over(g, M, v, f) { K.halo(g, 32, 32, 22, '#ff9a40', 0.12 + (f % 2) * 0.04); },
       shadow: () => [32, 60, 30, 4, 0.34],
     });
-    // Potter's wheel with a pot half thrown on it.
+    // Potter's wheel with a pot half thrown on it. Its text says the clay is still damp: the wheel head is
+    // smeared grey with wet slip and the pot is darker, cooler damp clay with a wet sheen, so the potter's
+    // one key prop reads against the warm wood floor instead of melting into it (the props balance pass).
+    // It stays still: nobody is at the wheel.
+    const SLIP = ['#3e3430', '#5e524c', '#7a6e66', '#958a80', '#b4aaa0'];
+    const DAMP = ['#3c2822', '#5a3c30', '#7a5442', '#9a6e58', '#cdb5a0'];
     A('co_wheel', {
       box: [0, -6, 32, 40],
       draw(g, M) {
         const w5 = M.wood;
-        cyl(g, 12, 16, 8, 14, w5); R(g, 8, 27, 16, 3, w5[2]);
-        ell(g, 16, 14, 14, 5, w5[1]); ell(g, 16, 13, 13, 4, w5[3]); R(g, 6, 11, 12, 1, w5[4]);
-        for (let y = 2; y < 13; y++) { const w = 8 + Math.round(Math.sin(((y - 2) / 11) * Math.PI) * 3); for (let i = 0; i < w; i++) R(g, 16 - w / 2 + i, y, 1, 1, cylCol(i, w, CL)); }
-        ell(g, 16, 2, 4, 1.5, CL[0]); R(g, 13, 1, 6, 1, CL[4]);
+        cyl(g, 12, 16, 8, 14, w5); R(g, 8, 27, 16, 3, w5[1]); R(g, 8, 27, 16, 1, w5[2]);
+        ell(g, 16, 14, 14, 5, w5[0]); ell(g, 16, 13, 13, 4, SLIP[1]); ell(g, 16, 12.5, 10, 2.6, SLIP[2]);
+        R(g, 5, 12, 6, 1, SLIP[3]); R(g, 22, 15, 6, 1, w5[1]);
+        for (let y = 2; y < 13; y++) { const w = 8 + Math.round(Math.sin(((y - 2) / 11) * Math.PI) * 3); for (let i = 0; i < w; i++) R(g, 16 - w / 2 + i, y, 1, 1, cylCol(i, w, DAMP)); }
+        ell(g, 16, 2, 4, 1.5, DAMP[0]); R(g, 13, 1, 6, 1, DAMP[3]);
+        R(g, 13, 4, 1, 6, DAMP[4]); R(g, 13, 5, 1, 2, '#efe4d4');
+        R(g, 11, 12, 10, 1, SLIP[3]);
       },
       shadow: () => [16, 29, 13, 3, 0.3],
     });

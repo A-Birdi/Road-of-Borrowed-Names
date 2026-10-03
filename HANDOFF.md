@@ -436,6 +436,14 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Left for later:** game-wide per-scene staging of the manifest's other "Performed overworld" scenes; Masaru's
   kneading waits on the bakery props (TODO in his profile); the portrait worker reads `RB.mannerisms.of(id).portrait`.
 
+## Props balance and the look-and-feel ledger (paired addendum WI18, WI19, WI25–WI28; merged 2026-10-03) — VALIDATION.md "Props balance…"
+- Prop options live in src/engine/28_propwork.js (kiln `glass`/`litIf`/`embers`/`ash`, sparkle `faint`, lamp `flick` vs `flickLively`,
+  table/desk `on`); map files set them. Light pools breathe per position (60_render.js drawLighting).
+- docs/expressive/REVIEW.md is the current ledger; docs/expressive/reports/props_review.md is the record.
+- tests: e2e props_balance.mjs (default suite), unit conversation_continuity (fails on a staged gesture outside the person's
+  profile: add it to the profile or to KNOWN with a reason) and portrait_speakers.
+- Open: look-alike pairs (Tamae/Yae, Ōmi/Umi; owner decision), Asahi's heat habit by a cold furnace, story-state idles.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`

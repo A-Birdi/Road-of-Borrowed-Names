@@ -202,12 +202,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       shadow: () => [32, 30, 28, 2.5, 0.3],
     });
     // Lighthouse lens on its stand: stacked prism rings round a bright core.
+    // o.fullIf: the flame is small and rationed until that condition holds in the campaign (sg.lh_lens: "The
+    // flame is small. Oil is being rationed."), then full; either way a slow pulse (240–300 ms a step, was 160)
+    // so the lens glows rather than blinks (the props balance pass).
+    const lensFull = (o) => { if (!o.fullIf) return true; const s = RB.game && RB.game.s; return !!(s && RB.state && RB.state.test(s, o.fullIf)); };
     A('sg_lens', {
       box: [-4, -26, 40, 60],
-      f: (t, o) => K.frame(t, 160, 6, o.still),
+      v: (o) => (lensFull(o) ? 1 : 0),
+      f: (t, o) => K.frame(t, lensFull(o) ? 240 : 300, 6, o.still),
       draw(g, M, v, f) {
         cyl(g, 10, 16, 12, 12, IR); R(g, 7, 27, 18, 3, IR[2]); R(g, 7, 27, 18, 1, IR[4]);
-        const L = [0.72, 0.8, 0.9, 1, 0.9, 0.8][f];
+        const L = v ? [0.72, 0.8, 0.9, 1, 0.9, 0.8][f] : [0.3, 0.34, 0.38, 0.4, 0.38, 0.34][f];
         K.shade(g, 4, -14, 24, 32, ['#a88a4a', '#e0c070', '#ffe6a0', '#fff4c8', '#ffffff'], (fx, fy) => {
           const nx = (fx - 16) / 11, ny = (fy - 2) / 15, d = nx * nx + ny * ny;
           if (d > 1) return null;
@@ -217,7 +222,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (const x of [8, 16, 24]) R(g, x, -12, 1, 28, BR[x === 16 ? 3 : 1]);
         R(g, 6, -14, 20, 2, BR[2]); R(g, 6, 16, 20, 2, BR[1]);
       },
-      over(g, M, v, f) { K.halo(g, 16, 2, 18, '#ffe6a0', [0.12, 0.16, 0.2, 0.24, 0.2, 0.16][f]); },
+      over(g, M, v, f) { K.halo(g, 16, 2, v ? 18 : 11, '#ffe6a0', v ? [0.12, 0.16, 0.2, 0.24, 0.2, 0.16][f] : [0.06, 0.07, 0.08, 0.09, 0.08, 0.07][f]); },
       shadow: () => [16, 30, 10, 2.5, 0.3],
     });
     // Fog bank: soft stepped veils drifting a little (not outlined).

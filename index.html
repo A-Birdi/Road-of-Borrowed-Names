@@ -22745,8 +22745,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R(g, x + 1, y + 1, w - 2, h - 2, GL[4 - (k === 1 ? 1 : 0)]);
     R(g, x, y + h - 1, w, 1, GL[2]);
   }
-  const flick = (t, o, ms) => K.frame(t, ms || 150, 4, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21);
-  RB.propArt.kit = { plank, nail, post, top, board, signFace, lamp, flick, glyph };
+  // Lamp flicker. Every lamp maps the frame through [0, 1, 0, 2] (steady, inner dip, steady, outer dip).
+  // flick: a candle behind paper or glass, mostly steady: in each turn of eight slots (1.4 × ms each) the
+  // light dips once a little and once a little more, then holds — about two changes a second instead of
+  // the seven of a dip every 150 ms (the props balance pass: a street of lanterns twinkled like a sign).
+  // flickLively keeps the old quick cycle for a flame that is the subject (the great lamp of Snowbell).
+  const FLICK = [0, 0, 0, 1, 0, 0, 2, 3];
+  const flick = (t, o, ms) => FLICK[K.frame(t, (ms || 150) * 1.4, 8, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21)];
+  const flickLively = (t, o, ms) => K.frame(t, ms || 150, 4, o.still, (o.cx | 0) * 0.37 + (o.cy | 0) * 0.21);
+  RB.propArt.kit = { plank, nail, post, top, board, signFace, lamp, flick, flickLively, glyph };
 
   // ---- fences, shelves, lamps ------------------------------------------------------------------
   // Rail fence: squared posts with chamfered caps and two nailed rails that
@@ -23005,22 +23012,53 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- furniture --------------------------------------------------------------------------------
   function legs(g, xs, y0, y1, r5) { for (const x of xs) post(g, x, y0, 3, y1 - y0, r5); }
+  // What lies on a table whose scene describes it (o.on; the props balance pass): a bare wooden top on a wooden
+  // floor gave no sign that there was something to read or look at. Paper is suggested with dashes, never
+  // letters. (cx, y): the middle of the top's upper edge.
+  const CER = K.FIX.ceramic, LQ = K.FIX.lacquer;
+  function teacup(g, x, y, down) {
+    R(g, x, y, 4, 4, CER[3]); R(g, x, y, 1, 4, CER[4]); R(g, x + 3, y, 1, 4, CER[1]);
+    if (down) R(g, x + 1, y - 1, 2, 1, CER[2]); // its foot ring on top: upside down
+    else { R(g, x, y, 4, 1, '#7a9a5a'); R(g, x, y + 3, 4, 1, CER[1]); }
+  }
+  function sheet(g, x, y, w, h, lines) {
+    R(g, x, y, w, h, PP[3]); R(g, x, y, w, 1, PP[4]); R(g, x + w - 1, y + 1, 1, h - 1, PP[1]); R(g, x, y + h - 1, w, 1, PP[1]);
+    for (let k = 0; k < lines; k++) R(g, x + 2, y + 2 + k * 2, Math.max(2, w - 4 - (k % 2) * 2), 1, INK[3]);
+  }
+  function onTable(g, on, cx, y) {
+    if (on === 'paper') sheet(g, cx - 5, y + 2, 10, 7, 2);
+    else if (on === 'papers') { sheet(g, cx - 9, y + 3, 9, 7, 2); sheet(g, cx - 2, y + 1, 10, 7, 2); sheet(g, cx + 4, y + 4, 8, 6, 1); }
+    else if (on === 'letters') for (let i = 0; i < 3; i++) { const x = cx - 6 + i * 2, yy = y + 6 - i * 2; R(g, x, yy, 10, 5, PP[i === 2 ? 4 : 3]); R(g, x, yy + 4, 10, 1, PP[1]); R(g, x + 1, yy + 1, 4, 1, PP[1]); R(g, x + 5, yy + 1, 4, 1, PP[1]); R(g, x + 4, yy + 2, 2, 1, PP[1]); }
+    else if (on === 'book') { R(g, cx - 8, y + 2, 16, 8, LQ[1]); R(g, cx - 7, y + 2, 7, 7, PP[3]); R(g, cx, y + 2, 7, 7, PP[4]); R(g, cx, y + 2, 1, 7, PP[1]); for (let k = 0; k < 3; k++) { R(g, cx - 6, y + 4 + k * 2, 5, 1, INK[3]); R(g, cx + 2, y + 4 + k * 2, 4, 1, INK[3]); } }
+    else if (on === 'ink') { sheet(g, cx - 8, y + 2, 9, 7, 2); R(g, cx + 3, y + 3, 6, 5, INK[1]); R(g, cx + 4, y + 4, 4, 2, INK[3]); line(g, cx + 2, y + 9, cx + 9, y + 9, '#c8a870', 1); R(g, cx + 1, y + 9, 2, 1, INK[2]); }
+    else if (on === 'cup') teacup(g, cx - 2, y + 3);
+    else if (on === 'cups') { teacup(g, cx - 6, y + 3); teacup(g, cx + 2, y + 4); }
+    else if (on === 'cupdown') { teacup(g, cx - 6, y + 3); teacup(g, cx + 2, y + 4, true); }
+    else if (on === 'tray') { R(g, cx - 9, y + 3, 18, 7, LQ[2]); R(g, cx - 9, y + 3, 18, 1, LQ[4]); R(g, cx - 9, y + 9, 18, 1, LQ[0]); teacup(g, cx - 7, y + 4); teacup(g, cx - 2, y + 4); R(g, cx + 3, y + 5, 3, 3, '#e07a2a'); R(g, cx + 3, y + 5, 1, 1, '#ffb060'); R(g, cx + 6, y + 6, 2, 2, '#c0601c'); }
+    else if (on === 'board') { R(g, cx - 7, y + 1, 14, 9, '#c89a58'); R(g, cx - 7, y + 1, 14, 1, '#e4c078'); R(g, cx - 7, y + 9, 14, 1, '#8a6434'); for (let k = 1; k < 4; k++) { R(g, cx - 7 + k * 3 + 1, y + 2, 1, 7, '#9a7440'); R(g, cx - 6, y + 2 + k * 2, 12, 1, '#9a7440'); } for (const [px, py] of [[-5, 3], [-1, 5], [3, 3], [1, 7]]) R(g, cx + px, y + py, 2, 2, '#f0dcae'); R(g, cx + 9, y + 7, 2, 2, '#f0dcae'); }
+    else if (on === 'plate') { ell(g, cx, y + 6, 6, 2.5, CER[3]); ell(g, cx, y + 5.5, 4, 1.5, CER[4]); R(g, cx - 1, y + 3, 3, 3, '#4a2e1c'); R(g, cx - 1, y + 3, 1, 1, '#6e4a30'); R(g, cx + 2, y + 5, 3, 1, '#c8a870'); }
+  }
+  const ON = ['paper', 'papers', 'letters', 'book', 'ink', 'cup', 'cups', 'cupdown', 'tray', 'board', 'plate'];
   art('table', {
     box: [-2, -4, 68, 40],
-    draw(g, M) {
+    v: (o) => (ON.includes(o.on) ? o.on : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
       legs(g, [5, 56], 19, 30, w5);
       R(g, 8, 25, 48, 2, w5[1]);
       top(g, 2, 4, 60, 14, 3, w5, 3);
+      if (v) onTable(g, v, 32, 4);
     },
     shadow: () => [32, 29, 30, 3.5, 0.3],
   });
   art('smalltable', {
     box: [-2, -4, 36, 40],
-    draw(g, M) {
+    v: (o) => (ON.includes(o.on) ? o.on : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
       legs(g, [4, 25], 19, 30, w5);
       top(g, 2, 6, 28, 12, 3, w5, 5);
+      if (v) onTable(g, v, 16, 6);
     },
     shadow: () => [16, 29, 14, 3, 0.3],
   });
@@ -23222,9 +23260,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     shadow: () => [16, 28, 12, 3, 0.3],
   });
   // Writing desk: paper, inkstone and brush, a drawer pedestal.
+  // o.on: 'heap' — records piled at the desk's left end, where its scene says the desk is stacked or piled;
+  // 'heapcups' — the same with three cups of cold tea on them (the harbourmaster's desk) (props balance pass).
   art('desk', {
     box: [-2, -6, 68, 40],
-    draw(g, M) {
+    v: (o) => (o.on === 'heap' || o.on === 'heapcups' ? o.on : 0),
+    draw(g, M, v) {
       const w5 = M.wood;
       R(g, 4, 18, 18, 12, w5[2]); R(g, 4, 18, 2, 12, w5[3]);
       for (const y of [19, 24]) { R(g, 6, y, 14, 4, w5[3]); R(g, 6, y, 14, 1, w5[4]); R(g, 12, y + 2, 3, 1, BR[3]); }
@@ -23234,6 +23275,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let k = 0; k < 3; k++) R(g, 14, 6 + k * 2, 11 - k * 2, 1, INK[3]);
       R(g, 38, 5, 7, 6, INK[1]); R(g, 39, 6, 5, 3, INK[3]); R(g, 39, 6, 2, 1, '#6a6a8a');
       line(g, 47, 11, 55, 5, '#c8a870', 1); R(g, 46, 11, 2, 2, INK[2]);
+      if (v) {
+        // a pile of ledgers and loose sheets, its edges offset, the top one lit
+        const cov = [LQ[1], '#4a5a6e', LQ[2], '#5a4a3a'];
+        for (let i = 0; i < 4; i++) { const y = 10 - i * 3, x = 2 + (i % 2); R(g, x, y, 10, 3, cov[i]); R(g, x + 1, y, 8, 1, PP[3 + (i === 3 ? 1 : 0)]); R(g, x, y + 2, 10, 1, '#2a2226'); }
+        R(g, 3, -1, 9, 2, PP[4]); R(g, 3, 0, 9, 1, PP[1]); R(g, 5, -1, 4, 1, INK[3]);
+        if (v === 'heapcups') for (const [x, y] of [[31, 7], [34, 9], [31, 11]]) teacup(g, x, y);
+      }
     },
     shadow: () => [32, 29, 30, 3, 0.3],
   });
@@ -23428,10 +23476,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   // Pottery kiln: a domed brick kiln with a vent; the mouth glows unless
   // o.sealed, when it is plastered shut and marked with a glass seal.
+  // Each placement can match what its own text says (the props balance pass):
+  //   o.ash     the mouth choked with grey ash, cold, no seal mark (a disused kiln is not the Great
+  //             Kiln's glass seal, which is a puzzle);
+  //   o.embers  "still faintly warm": a low bed of embers, no open fire, no halo;
+  //   o.glass   a glassworks furnace: cold and ashen until o.litIf holds in the campaign (the scene says
+  //             "The fire is out"), then lit, with the orange gather turning slowly inside
+  //             ("Orange glass turns slowly inside the furnace").
   const KILN = ramp('#7a5a4a', 0.5, 0.4);
+  const kilnLit = (o) => { if (!o.litIf) return true; const s = RB.game && RB.game.s; return !!(s && RB.state && RB.state.test(s, o.litIf)); };
+  // 0 lit, 1 sealed, 2 ash (cold), 3 embers, 4 glass furnace lit
+  const kilnV = (o) => (o.sealed ? 1 : o.ash ? 2 : o.embers ? 3 : o.glass ? (kilnLit(o) ? 4 : 2) : 0);
+  // the furnace's gather on its slow turn: 8 places round a small ellipse in the mouth (art px)
+  const GATHER = [[0, 0], [2, -1], [4, -1], [5, 0], [4, 1], [2, 2], [0, 2], [-1, 1]];
   art('kiln', {
     box: [-6, -52, 108, 116],
-    v: (o) => (o.sealed ? 1 : 0),
+    v: kilnV,
+    f: (t, o) => (kilnV(o) === 4 ? K.frame(t, 340, 8, o.still, (o.cx | 0) * 0.3) : 0),
     draw(g, M, v, f, info) {
       const k5 = KILN;
       const inside = (fx, fy) => { if (fy > 60 || fy < -40) return false; const t = (fy + 40) / 100, hw = 44 * Math.sqrt(Math.min(1, t / 0.55)) + (t > 0.55 ? (t - 0.55) * 8 : 0); return Math.abs(fx - 48) <= hw; };
@@ -23450,9 +23511,34 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // mouth arch
       R(g, 34, 26, 28, 34, k5[0]);
       ell(g, 48, 28, 14, 6, k5[0]);
-      if (!v) {
+      if (v === 0) {
         R(g, 37, 30, 22, 30, '#2a1410'); ell(g, 48, 30, 11, 4, '#2a1410');
         R(g, 40, 42, 16, 16, '#f08a3a'); R(g, 42, 44, 12, 12, '#ffb45a'); R(g, 45, 47, 6, 6, '#ffe39c');
+        R(g, 38, 56, 20, 4, K.FIX.char[3]);
+      } else if (v === 2 || v === 3) {
+        // cold (choked with ash) or faintly warm (a low bed of embers under the ash)
+        const A = ['#2e2826', '#48403c', '#645a54', '#80766e', '#9c9288'];
+        R(g, 37, 30, 22, 30, v === 3 ? '#24140f' : '#221c1a'); ell(g, 48, 30, 11, 4, v === 3 ? '#24140f' : '#221c1a');
+        const top = v === 2 ? 40 : 50; // ash heaped to the arch, or a low bed
+        for (let y = top; y < 60; y++) {
+          const k = (y - top) / Math.max(1, 60 - top), hw = Math.round(5 + k * 6);
+          R(g, 48 - hw, y, hw * 2, 1, A[y < top + 2 ? 3 : y < top + 5 ? 2 : 1]);
+        }
+        R(g, 44, top, 7, 1, A[4]); R(g, 41, top + 3, 3, 1, A[3]); R(g, 52, top + 4, 3, 1, A[3]);
+        for (let i = 0; i < 5; i++) { const r = hh(i, 7, 41); R(g, 40 + (r % 16), top + 4 + ((r >>> 4) % Math.max(1, 56 - top)), 2, 1, K.FIX.char[1]); }
+        if (v === 3) {
+          const E = K.FIX.ember;
+          R(g, 42, 55, 3, 1, E[1]); R(g, 46, 54, 4, 1, E[1]); R(g, 51, 55, 3, 1, E[1]);
+          R(g, 47, 54, 2, 1, E[2]); R(g, 43, 56, 1, 1, E[2]); R(g, 48, 55, 1, 1, E[3]);
+        }
+        R(g, 38, 56, 20, 4, K.FIX.char[2]);
+      } else if (v === 4) {
+        // the glassworks furnace, lit: a fierce glow and the gather turning slowly in it
+        R(g, 37, 30, 22, 30, '#2a1410'); ell(g, 48, 30, 11, 4, '#2a1410');
+        R(g, 40, 42, 16, 16, '#f08a3a'); R(g, 42, 44, 12, 12, '#ffb45a');
+        const [gx, gy] = GATHER[f % 8];
+        R(g, 44 + gx, 48 + gy, 5, 4, '#ffd27a'); R(g, 45 + gx, 47 + gy, 3, 6, '#ffd27a');
+        R(g, 45 + gx, 48 + gy, 3, 3, '#ffe9b0'); R(g, 45 + gx, 48 + gy, 1, 1, '#fff8e4');
         R(g, 38, 56, 20, 4, K.FIX.char[3]);
       } else {
         R(g, 37, 30, 22, 30, '#5a4a42'); ell(g, 48, 30, 11, 4, '#5a4a42');
@@ -23461,7 +23547,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       if (info.snow) K.snowTops(g, -6, -52, 108, 80, M.snow, 2, 3);
     },
-    over(g, M, v) { if (!v) K.halo(g, 48, 48, 18, '#ff9a40', 0.12); },
+    over(g, M, v, f) { if (v === 0) K.halo(g, 48, 48, 18, '#ff9a40', 0.12); else if (v === 4) K.halo(g, 48, 48, 19, '#ff9a40', 0.13 + (f % 4 === 1 ? 0.02 : 0)); },
     shadow: () => [48, 61, 46, 4, 0.34],
   });
 
@@ -23619,7 +23705,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Campfire: a ring of stones, crossed logs, a lively fire and sparks.
   art('campfire', {
     box: [-2, -20, 36, 54],
-    f: (t, o) => K.frame(t, 90, 6, o.still),
+    // 125 ms a frame (was 90): still a lively fire, but the people warming their hands at it (the Archive
+    // road's camp, the Snowbell road) are no longer outpaced by it (the props balance pass)
+    f: (t, o) => K.frame(t, 125, 6, o.still, (o.cx | 0) * 0.43),
     draw(g, M, v, f) {
       const s5 = M.stone, w5 = M.wood;
       for (let i = 0; i < 10; i++) { const a = (i / 10) * PI * 2, x = 16 + Math.cos(a) * 12, y = 24 + Math.sin(a) * 5; if (Math.sin(a) < 0) { ell(g, x, y, 3, 2.2, s5[2]); R(g, Math.round(x - 2), Math.round(y - 2), 2, 1, s5[4]); } }
@@ -23796,10 +23884,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- glints and marks (animated, not outlined) -----------------------------------------------------------
   // Sparkle: something to find — a four-point star that swells and fades.
+  // o.faint: not something to find but a glint in the scenery (light on dark water, a far light seen from a
+  // height): a small point that brightens now and then, slower, and (with o.lit === false on the placement)
+  // no pool of light of its own, so it never reads as a pickup (the props balance pass).
   art('sparkle', {
     box: [0, -8, 32, 40], outline: false,
-    f: (t, o) => K.frame(t, 120, 8, o.still, (o.cx | 0) * 0.5),
+    v: (o) => (o.faint ? 1 : 0),
+    f: (t, o) => (o.faint ? K.frame(t, 230, 12, o.still, (o.cx | 0) * 0.71 + (o.cy | 0) * 0.37) : K.frame(t, 120, 8, o.still, (o.cx | 0) * 0.5)),
     draw(g, M, v, f) {
+      if (v) {
+        // mostly a dim point; one brief brightening (with a short cross) in each 2.8 s turn
+        const a = [0.3, 0.3, 0.3, 0.3, 0.3, 0.6, 0.9, 0.6, 0.3, 0.3, 0.3, 0.3][f];
+        const c = (al) => 'rgba(255,240,190,' + al.toFixed(2) + ')';
+        R(g, 15, 10, 2, 2, c(a));
+        if (a > 0.5) { const L = a > 0.8 ? 3 : 2; R(g, 15, 10 - L, 2, L * 2 + 2, c(a * 0.55)); R(g, 15 - L, 10, L * 2 + 2, 2, c(a * 0.55)); R(g, 15, 10, 2, 2, c(a)); }
+        return;
+      }
       const a = [0.55, 0.75, 0.95, 1, 0.9, 0.7, 0.5, 0.4][f], L = Math.round(4 + a * 6);
       const c = (al) => 'rgba(255,240,180,' + al.toFixed(2) + ')';
       R(g, 15, 12 - L, 2, L * 2, c(a * 0.9));
@@ -39048,17 +39148,20 @@ RB.render = (function () {
       lctx.arc(x, y, R, 0, Math.PI * 2);
       lctx.fill();
     };
-    const flick = RB.game.reducedMotion() ? 0 : Math.sin(t / 180) * 1.5;
+    // each pool of light breathes on its own phase (by where it is), slowly: a map's lamps no longer pulse
+    // together like one heartbeat (the props balance pass)
+    const still = RB.game.reducedMotion();
+    const flick = (ph) => (still ? 0 : Math.sin(t / 300 + ph) * 1.2);
     const pr = amb.playerLight == null ? 44 : amb.playerLight;
-    if (pr) hole(W.player.fx * TS + 8, W.player.fy * TS + 4, pr + flick);
-    if (W.comp && W.comp.id === 'ren') hole(W.comp.fx * TS + 8, W.comp.fy * TS + 6, 34 + flick);
+    if (pr) hole(W.player.fx * TS + 8, W.player.fy * TS + 4, pr + flick(0));
+    if (W.comp && W.comp.id === 'ren') hole(W.comp.fx * TS + 8, W.comp.fy * TS + 6, 34 + flick(2.1));
     const s = RB.game.s;
     for (const p of m.props) {
       const pd = RB.props.P[p.p];
       if (!pd || !(pd.light || p.light)) continue;
       if (p.if && !RB.state.test(s, p.if)) continue;
       if (p.o && p.o.lit === false) continue;
-      hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick);
+      hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick(p.x * 1.7 + p.y * 2.3));
     }
     for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
     lctx.globalCompositeOperation = 'source-over';
@@ -91196,7 +91299,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shrine', x: 4, y: 2, scene: 'rw.hall_shrine' },
       { p: 'shelf', x: 1, y: 3 }, { p: 'shelf', x: 9, y: 3 },
       { p: 'lantern', x: 1, y: 6 }, { p: 'lantern', x: 9, y: 6 },
-      { p: 'bookpile', x: 1, y: 7 }, { p: 'desk', x: 7, y: 7, scene: 'rw.hall_desk' },
+      { p: 'bookpile', x: 1, y: 7 }, { p: 'desk', x: 7, y: 7, scene: 'rw.hall_desk', o: { on: 'heap' } },
     ],
     ambient: { dark: 0.35, playerLight: 40 },
   });
@@ -91217,7 +91320,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bottles', x: 2, y: 2, o: { labels: false }, if: '!rw_bottles_done', scene: 'rw.bottles_look' },
       { p: 'bottles', x: 2, y: 2, if: 'rw_bottles_done' },
       { p: 'bottles', x: 6, y: 2 }, { p: 'shelf', x: 7, y: 2 },
-      { p: 'table', x: 3, y: 4, scene: 'rw.apoth_table' }, { p: 'pot', x: 7, y: 6 }, { p: 'glassware', x: 1, y: 5 },
+      { p: 'table', x: 3, y: 4, scene: 'rw.apoth_table', o: { on: 'book' } }, { p: 'pot', x: 7, y: 6 }, { p: 'glassware', x: 1, y: 5 },
     ],
   });
   interior('rw.warehouse', T('River Warehouse', '{川|かわ}の{倉庫|そうこ}'), 11, 9, 5, 'rw.village', [29, 26], {
@@ -91240,7 +91343,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [{ p: 'exitmat', x: 4, y: 6 }, { p: 'bed', x: 7, y: 2 }, { p: 'table', x: 1, y: 3 }, { p: 'loom', x: 4, y: 2 }, { p: 'crate', x: 1, y: 5, scene: 'rw.kiku_plane' }],
   });
   interior('rw.ferry', T("Kōji's Ferry House", 'コウジ の {渡|わた}し{小屋|ごや}'), 8, 8, 3, 'rw.village', [45, 16], {
-    props: [{ p: 'exitmat', x: 3, y: 6 }, { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'rw.ferry_cup' }, { p: 'net', x: 4, y: 2 }],
+    props: [{ p: 'exitmat', x: 3, y: 6 }, { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'rw.ferry_cup', o: { on: 'cup' } }, { p: 'net', x: 4, y: 2 }],
   });
 
   // ---- arrival road -------------------------------------------------------------------
@@ -94254,12 +94357,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       shadow: () => [32, 30, 28, 2.5, 0.3],
     });
     // Lighthouse lens on its stand: stacked prism rings round a bright core.
+    // o.fullIf: the flame is small and rationed until that condition holds in the campaign (sg.lh_lens: "The
+    // flame is small. Oil is being rationed."), then full; either way a slow pulse (240–300 ms a step, was 160)
+    // so the lens glows rather than blinks (the props balance pass).
+    const lensFull = (o) => { if (!o.fullIf) return true; const s = RB.game && RB.game.s; return !!(s && RB.state && RB.state.test(s, o.fullIf)); };
     A('sg_lens', {
       box: [-4, -26, 40, 60],
-      f: (t, o) => K.frame(t, 160, 6, o.still),
+      v: (o) => (lensFull(o) ? 1 : 0),
+      f: (t, o) => K.frame(t, lensFull(o) ? 240 : 300, 6, o.still),
       draw(g, M, v, f) {
         cyl(g, 10, 16, 12, 12, IR); R(g, 7, 27, 18, 3, IR[2]); R(g, 7, 27, 18, 1, IR[4]);
-        const L = [0.72, 0.8, 0.9, 1, 0.9, 0.8][f];
+        const L = v ? [0.72, 0.8, 0.9, 1, 0.9, 0.8][f] : [0.3, 0.34, 0.38, 0.4, 0.38, 0.34][f];
         K.shade(g, 4, -14, 24, 32, ['#a88a4a', '#e0c070', '#ffe6a0', '#fff4c8', '#ffffff'], (fx, fy) => {
           const nx = (fx - 16) / 11, ny = (fy - 2) / 15, d = nx * nx + ny * ny;
           if (d > 1) return null;
@@ -94269,7 +94377,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (const x of [8, 16, 24]) R(g, x, -12, 1, 28, BR[x === 16 ? 3 : 1]);
         R(g, 6, -14, 20, 2, BR[2]); R(g, 6, 16, 20, 2, BR[1]);
       },
-      over(g, M, v, f) { K.halo(g, 16, 2, 18, '#ffe6a0', [0.12, 0.16, 0.2, 0.24, 0.2, 0.16][f]); },
+      over(g, M, v, f) { K.halo(g, 16, 2, v ? 18 : 11, '#ffe6a0', v ? [0.12, 0.16, 0.2, 0.24, 0.2, 0.16][f] : [0.06, 0.07, 0.08, 0.09, 0.08, 0.07][f]); },
       shadow: () => [16, 30, 10, 2.5, 0.3],
     });
     // Fog bank: soft stepped veils drifting a little (not outlined).
@@ -95089,7 +95197,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('sg.office', T('Harbour Office', '{港|みなと}の{事務所|じむしょ}'), 11, 9, 5, [16, 11], {
     props: [
       { p: 'exitmat', x: 5, y: 7 },
-      { p: 'desk', x: 4, y: 4, across: true, scene: 'sg.office_desk' },
+      { p: 'desk', x: 4, y: 4, across: true, scene: 'sg.office_desk', o: { on: 'heapcups' } },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 2, y: 2 },
       { p: 'sign', x: 8, y: 2, scene: 'sg.office_chart' },
       { p: 'bookpile', x: 9, y: 6 }, { p: 'flowerpot', x: 9, y: 2 },
@@ -95114,7 +95222,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 8, y: 4, across: true }, { p: 'stove', x: 9, y: 2 }, { p: 'pot', x: 10, y: 2 }, { p: 'shelf', x: 11, y: 2 },
       { p: 'table', x: 2, y: 3, scene: 'sg.inn_table' }, { p: 'chair', x: 1, y: 3 }, { p: 'chair', x: 4, y: 3 },
       { p: 'table', x: 2, y: 6 }, { p: 'chair', x: 1, y: 6 }, { p: 'chair', x: 4, y: 6 },
-      { p: 'smalltable', x: 9, y: 7 }, { p: 'chair', x: 10, y: 7 },
+      { p: 'smalltable', x: 9, y: 7, o: { on: 'ink' } }, { p: 'chair', x: 10, y: 7 },
       { p: 'stairs', x: 11, y: 5, scene: 'sg.inn_stairs' },
       { p: 'sign', x: 7, y: 2, scene: 'sg.inn_menu' },
     ],
@@ -95151,9 +95259,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('sg.glass', T("Asahi's Glassworks", 'アサヒ の ガラス{工房|こうぼう}'), 10, 9, 5, [48, 20], {
     props: [
       { p: 'exitmat', x: 5, y: 7 },
-      { p: 'kiln', x: 1, y: 2, scene: 'sg.glass_kiln' },
+      { p: 'kiln', x: 1, y: 2, o: { glass: true, litIf: 'sg_boss_done' }, scene: 'sg.glass_kiln' }, // cold until the ash arrives (sg.glass_kiln)
       { p: 'glassware', x: 6, y: 2 }, { p: 'glassware', x: 7, y: 2 }, { p: 'shelf', x: 8, y: 2 },
-      { p: 'table', x: 6, y: 5, scene: 'sg.glass_table' },
+      { p: 'table', x: 6, y: 5, scene: 'sg.glass_table', o: { on: 'papers' } },
       { p: 'crate', x: 1, y: 6 }, { p: 'barrel', x: 8, y: 6 },
     ],
     npcs: [{ id: 'asahi', x: 4, y: 4, dir: 'down', talk: [
@@ -95172,9 +95280,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(9, 10, '#', (k) => { k.rect(1, 2, 7, 7, '+'); k.set(4, 9, '+'); k.rect(3, 3, 3, 3, 'k'); }),
     props: [
       { p: 'exitmat', x: 4, y: 8 },
-      { p: 'sg_lens', x: 4, y: 2, scene: 'sg.lh_lens' },
+      { p: 'sg_lens', x: 4, y: 2, o: { fullIf: 'sg_boss_done' }, scene: 'sg.lh_lens' }, // a small, rationed flame until the oil arrives (sg.lh_lens)
       { p: 'stairs', x: 1, y: 2, scene: 'sg.lh_stairs' },
-      { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter' },
+      { p: 'smalltable', x: 1, y: 6, scene: 'sg.lh_letter', o: { on: 'paper' } },
       { p: 'bed', x: 7, y: 5 }, { p: 'barrel', x: 7, y: 2, scene: 'sg.lh_oil' },
     ],
     // the stairs go up to the top once Genzō has shown you the vane (before that they are only looked at)
@@ -95258,7 +95366,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 4, y: 6 },
       { p: 'sg_tideboard', x: 1, y: 2, scene: 'sg.tideboard' },
-      { p: 'desk', x: 5, y: 2, scene: 'sg.tide_desk' },
+      { p: 'desk', x: 5, y: 2, scene: 'sg.tide_desk', o: { on: 'heap' } },
       { p: 'bed', x: 7, y: 4 }, { p: 'bookpile', x: 1, y: 5 }, { p: 'telescope', x: 7, y: 2, scene: 'sg.tide_scope' },
     ],
     npcs: [{ id: 'shiori', x: 4, y: 3, dir: 'down', if: '!sg_fog_cleared|sg_boss_done', talk: [
@@ -95273,7 +95381,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 3, y: 6 },
       { p: 'chair', x: 5, y: 3, scene: 'sg.isamu_chair' },
-      { p: 'smalltable', x: 2, y: 3, scene: 'sg.isamu_desk' },
+      { p: 'smalltable', x: 2, y: 3, scene: 'sg.isamu_desk', o: { on: 'ink' } },
       { p: 'bed', x: 1, y: 5 }, { p: 'crate', x: 6, y: 5 }, { p: 'flowerpot', x: 6, y: 2, scene: 'sg.isamu_plant' },
     ],
     onEnter: [{ scene: 'sg.isamu_nao', if: 'comp=nao' }],
@@ -95457,7 +95565,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 5, y: 5, across: true, scene: 'sg.da_counter' }, { p: 'counter', x: 12, y: 5, across: true, scene: 'sg.da_counter' },
       { p: 'bookpile', x: 3, y: 3 }, { p: 'bookpile', x: 16, y: 3 }, { p: 'bookpile', x: 4, y: 7 }, { p: 'bookpile', x: 15, y: 7 },
       { p: 'lantern', x: 2, y: 2 }, { p: 'lantern', x: 17, y: 2 },
-      { p: 'sparkle', x: 9, y: 4, if: 'sg_boss_done' },
+      { p: 'sparkle', x: 9, y: 4, o: { faint: true, lit: false }, if: 'sg_boss_done' }, // where the clerk stood: a faint glint, not a pickup
     ],
     npcs: [{ id: 'sg_clerk', x: 9, y: 4, dir: 'down', if: '!sg_boss_done', talk: 'sg.da_boss', look: { custom: 'sg_clerk' } }],
     triggers: [{ x: 4, y: 9, w: 12, h: 1, scene: 'sg.da_boss', if: '!sg_boss_done' }],
@@ -99045,7 +99153,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // Glass furnace: a brick body and chimney, a glowing mouth.
     A('co_furnace', {
       box: [-4, -40, 72, 108],
-      f: (t, o) => K.frame(t, 150, 4, o.still),
+      // the mouth's glow throbs slowly (230 ms a step, was 150), under Hiro's work rather than over it
+      f: (t, o) => K.frame(t, 230, 4, o.still),
       draw(g, M, v, f) {
         bricks(g, 4, -12, 56, 72, BRICK, 3);
         for (let i = 0; i < 56; i++) if (i < 3 || i > 52) R(g, 4 + i, -12, 1, 72, i < 3 ? 'rgba(255,240,200,0.12)' : 'rgba(22,16,40,0.25)');
@@ -99059,15 +99168,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
       over(g, M, v, f) { K.halo(g, 32, 32, 22, '#ff9a40', 0.12 + (f % 2) * 0.04); },
       shadow: () => [32, 60, 30, 4, 0.34],
     });
-    // Potter's wheel with a pot half thrown on it.
+    // Potter's wheel with a pot half thrown on it. Its text says the clay is still damp: the wheel head is
+    // smeared grey with wet slip and the pot is darker, cooler damp clay with a wet sheen, so the potter's
+    // one key prop reads against the warm wood floor instead of melting into it (the props balance pass).
+    // It stays still: nobody is at the wheel.
+    const SLIP = ['#3e3430', '#5e524c', '#7a6e66', '#958a80', '#b4aaa0'];
+    const DAMP = ['#3c2822', '#5a3c30', '#7a5442', '#9a6e58', '#cdb5a0'];
     A('co_wheel', {
       box: [0, -6, 32, 40],
       draw(g, M) {
         const w5 = M.wood;
-        cyl(g, 12, 16, 8, 14, w5); R(g, 8, 27, 16, 3, w5[2]);
-        ell(g, 16, 14, 14, 5, w5[1]); ell(g, 16, 13, 13, 4, w5[3]); R(g, 6, 11, 12, 1, w5[4]);
-        for (let y = 2; y < 13; y++) { const w = 8 + Math.round(Math.sin(((y - 2) / 11) * Math.PI) * 3); for (let i = 0; i < w; i++) R(g, 16 - w / 2 + i, y, 1, 1, cylCol(i, w, CL)); }
-        ell(g, 16, 2, 4, 1.5, CL[0]); R(g, 13, 1, 6, 1, CL[4]);
+        cyl(g, 12, 16, 8, 14, w5); R(g, 8, 27, 16, 3, w5[1]); R(g, 8, 27, 16, 1, w5[2]);
+        ell(g, 16, 14, 14, 5, w5[0]); ell(g, 16, 13, 13, 4, SLIP[1]); ell(g, 16, 12.5, 10, 2.6, SLIP[2]);
+        R(g, 5, 12, 6, 1, SLIP[3]); R(g, 22, 15, 6, 1, w5[1]);
+        for (let y = 2; y < 13; y++) { const w = 8 + Math.round(Math.sin(((y - 2) / 11) * Math.PI) * 3); for (let i = 0; i < w; i++) R(g, 16 - w / 2 + i, y, 1, 1, cylCol(i, w, DAMP)); }
+        ell(g, 16, 2, 4, 1.5, DAMP[0]); R(g, 13, 1, 6, 1, DAMP[3]);
+        R(g, 13, 4, 1, 6, DAMP[4]); R(g, 13, 5, 1, 2, '#efe4d4');
+        R(g, 11, 12, 10, 1, SLIP[3]);
       },
       shadow: () => [16, 29, 13, 3, 0.3],
     });
@@ -99535,10 +99652,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { p: 'table', x: 25, y: 17, scene: 'co.glass_table' }, { p: 'chair', x: 24, y: 17 }, { p: 'chair', x: 27, y: 17 },
     { p: 'co_seat', x: 26, y: 18, scene: 'co.seat', if: '!co_hiro_seat_named' },
     { p: 'co_seat', x: 26, y: 18, scene: 'co.seat', o: { named: true }, if: 'co_hiro_seat_named' },
-    { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table' },
+    { p: 'smalltable', x: 29, y: 21, scene: 'co.sayo_table', o: { on: 'paper' } },
     { p: 'well', x: 15, y: 15 },
     { p: 'lantern', x: 13, y: 17 }, { p: 'lantern', x: 32, y: 17 }, { p: 'lantern', x: 36, y: 20 },
-    { p: 'kiln', x: 47, y: 21, o: {} , text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
+    { p: 'kiln', x: 47, y: 21, o: { embers: true }, text: { jp: 'ノブ の {小|ちい}さな {窯|かま} 。 まだ {少|すこ}し {温|あたた}かい 。', en: 'Nobu\'s small pottery kiln. Still faintly warm from yesterday.' } },
     { p: 'crate', x: 33, y: 24, scene: 'co.tamotsu_shed' }, { p: 'barrel', x: 32, y: 25 },
     { p: 'co_hoshigaki', x: 4, y: 16 }, { p: 'co_hoshigaki', x: 27, y: 31 },
     { p: 'flowerpot', x: 12, y: 16 }, { p: 'flowerpot', x: 36, y: 12 },
@@ -99722,7 +99839,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'co_wheel', x: 3, y: 4, text: { jp: 'ろくろ 。 {粘土|ねんど} が まだ {湿|しめ}って いる 。', en: 'The potter\'s wheel. The clay on it is still damp.' } },
       { p: 'co_flasks', x: 6, y: 2, scene: 'co.flasks' },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 9, y: 2 },
-      { p: 'smalltable', x: 8, y: 5, scene: 'co.pottery_slip' },
+      { p: 'smalltable', x: 8, y: 5, scene: 'co.pottery_slip', o: { on: 'paper' } },
       { p: 'pot', x: 1, y: 6 }, { p: 'pot', x: 9, y: 6 },
     ],
     npcs: [
@@ -99733,7 +99850,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('co.post', T("Shino's Post House", 'シノ の {郵便所|ゆうびんじょ}'), 9, 8, 4, [6, 25], {
     props: [
       { p: 'exitmat', x: 4, y: 6 },
-      { p: 'desk', x: 1, y: 3, scene: 'co.post_desk' },
+      { p: 'desk', x: 1, y: 3, scene: 'co.post_desk', o: { on: 'heap' } },
       { p: 'shelf', x: 6, y: 2 }, { p: 'shelf', x: 7, y: 2, text: { jp: '{仕分|しわ}け{棚|だな} 。 {里|さと} の {家|いえ} の {数|かず} だけ {区切|くぎ}り が ある 。 {空|から} の {区切|くぎ}り が {五|いつ}つ 。', en: 'A sorting rack with one slot per household. Five slots at the end are empty and unlabelled.' } },
       { p: 'mailbox', x: 7, y: 5 },
     ],
@@ -99913,7 +100030,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [
       { p: 'co_seal', x: 20, y: 5, if: '!co_seal_broken', scene: 'co.kiln_seal' },
-      { p: 'kiln', x: 11, y: 3, o: { sealed: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
+      { p: 'kiln', x: 11, y: 3, o: { ash: true }, text: { jp: '{小|ちい}さな {素焼|すや}き の {窯|かま} 。 {中|なか} は {灰|はい} で いっぱい だ 。', en: 'A small bisque kiln, its mouth choked with ash.' } },
       { p: 'sign', x: 5, y: 13, scene: 'co.works_sign' },
       { p: 'signblank', x: 29, y: 13, scene: 'co.works_sign2' },
       { p: 'co_beam', x: 11, y: 21 }, { p: 'co_beam', x: 27, y: 9 },
@@ -100019,8 +100136,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'fence', x: 5, y: 3, block: false }, { p: 'fence', x: 6, y: 3, block: false }, { p: 'fence', x: 9, y: 3, block: false }, { p: 'fence', x: 10, y: 3, block: false },
       { p: 'bell', x: 7, y: 3, scene: 'co.lookout_bell' },
-      { p: 'sparkle', x: 1, y: 9 }, { p: 'sparkle', x: 3, y: 10 }, { p: 'sparkle', x: 12, y: 9 }, { p: 'sparkle', x: 14, y: 10 },
-      { p: 'sparkle', x: 2, y: 1 }, { p: 'sparkle', x: 13, y: 2 }, { p: 'sparkle', x: 7, y: 10 }, { p: 'sparkle', x: 9, y: 11 },
+      // far lights glinting round the platform: faint, and no light pools (not something to find)
+      { p: 'sparkle', x: 1, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 3, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 12, y: 9, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 10, o: { faint: true, lit: false } },
+      { p: 'sparkle', x: 2, y: 1, o: { faint: true, lit: false } }, { p: 'sparkle', x: 13, y: 2, o: { faint: true, lit: false } }, { p: 'sparkle', x: 7, y: 10, o: { faint: true, lit: false } }, { p: 'sparkle', x: 9, y: 11, o: { faint: true, lit: false } },
       { p: 'fence', x: 5, y: 8, block: false }, { p: 'fence', x: 6, y: 8, block: false }, { p: 'fence', x: 7, y: 8, block: false }, { p: 'fence', x: 8, y: 8, block: false }, { p: 'fence', x: 9, y: 8, block: false },
       { p: 'hole', x: 10, y: 7 },
     ],
@@ -103766,7 +103884,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A('sb_greatlamp', {
       box: [-4, -56, 72, 124], ink: true,
       v: (o) => (o.lit ? 'l' : o.frozen ? 'z' : 'd'),
-      f: (t, o) => (o.lit ? kit.flick(t, o, 140) : 0),
+      f: (t, o) => (o.lit ? kit.flickLively(t, o, 140) : 0), // the chapter's flame: lively (props balance pass)
       draw(g, M, v, f) {
         const s5 = ramp('#3a3440', 0.4, 0.45);
         R(g, 10, 48, 44, 12, s5[2]); R(g, 10, 48, 44, 2, s5[4]);
@@ -104235,7 +104353,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'counter', x: 12, y: 3, scene: 'sb.inn_counter' }, { p: 'shelf', x: 15, y: 2 }, { p: 'bottles', x: 14, y: 2 }, { p: 'pot', x: 12, y: 2 },
       { p: 'stairs', x: 1, y: 2 },
       { p: 'table', x: 2, y: 8 }, { p: 'chair', x: 1, y: 8 }, { p: 'chair', x: 4, y: 8 },
-      { p: 'smalltable', x: 13, y: 8, scene: 'sb.inn_table' }, { p: 'chair', x: 14, y: 8 },
+      { p: 'smalltable', x: 13, y: 8, scene: 'sb.inn_table', o: { on: 'board' } }, { p: 'chair', x: 14, y: 8 },
       { p: 'sb_woodpile', x: 1, y: 5, o: { indoor: true } },
       { p: 'noticeboard', x: 10, y: 2, scene: 'sb.inn_menu' },
       { p: 'lantern', x: 4, y: 2 },
@@ -104279,7 +104397,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sb_futon', x: 2, y: 2, o: { col: '#6a7aa8' }, scene: 'sb.room_futon' },
       { p: 'sb_futon', x: 4, y: 2, o: { col: '#a86a6a' }, scene: 'sb.room_futon' },
       { p: 'lantern', x: 7, y: 2, o: { lit: true } },
-      { p: 'smalltable', x: 2, y: 5, scene: 'sb.room_table' },
+      { p: 'smalltable', x: 2, y: 5, scene: 'sb.room_table', o: { on: 'tray' } },
       { p: 'stairs', x: 7, y: 6 },
     ],
     npcs: [],
@@ -104308,7 +104426,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'telescope', x: 9, y: 2, scene: 'sb.hoshino_window' },
       { p: 'bookpile', x: 1, y: 6 }, { p: 'shelf', x: 3, y: 2 }, { p: 'shelf', x: 4, y: 2, scene: 'sb.hoshino_shelf' },
       { p: 'stove', x: 7, y: 2 }, { p: 'bed', x: 9, y: 5 },
-      { p: 'smalltable', x: 6, y: 5, scene: 'sb.hoshino_letters_box' }, { p: 'chair', x: 7, y: 5 },
+      { p: 'smalltable', x: 6, y: 5, scene: 'sb.hoshino_letters_box', o: { on: 'letters' } }, { p: 'chair', x: 7, y: 5 },
     ],
     npcs: [
       { id: 'hoshino', x: 4, y: 4, dir: 'down', if: '!sb_storm|sb_obs_open&!sb_evening&!post', talk: [{ if: 'post', scene: 'sb.hoshino_home_post' }, { if: 'sb_lamp_lit', scene: 'sb.hoshino_after' }, { scene: 'sb.hoshino' }] },
@@ -104347,7 +104465,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 3, y: 5 },
       { p: 'bed', x: 1, y: 2 }, { p: 'stove', x: 6, y: 2 },
       { p: 'bookpile', x: 5, y: 4, scene: 'sb.fuki_notebook' },
-      { p: 'smalltable', x: 3, y: 2, scene: 'sb.fuki_tea' },
+      { p: 'smalltable', x: 3, y: 2, scene: 'sb.fuki_tea', o: { on: 'tray' } },
     ],
     npcs: [
       { id: 'fuki', x: 2, y: 3, dir: 'right', if: '!sb_storm&!sb_evening|sb_morning&!ch4_done', talk: 'sb.fuki' },
@@ -108058,7 +108176,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(4, 3, 7, 4, 'k'); k.set(7, 9, '_'); }),
     props: [
       { p: 'exitmat', x: 7, y: 8 },
-      { p: 'table', x: 6, y: 4, across: true, scene: 'lf.council_table' }, { p: 'chair', x: 5, y: 4 }, { p: 'chair', x: 8, y: 4 },
+      { p: 'table', x: 6, y: 4, across: true, scene: 'lf.council_table', o: { on: 'book' } }, { p: 'chair', x: 5, y: 4 }, { p: 'chair', x: 8, y: 4 },
       { p: 'bench', x: 2, y: 6 }, { p: 'bench', x: 11, y: 6 },
       { p: 'shelf', x: 1, y: 2 }, { p: 'shelf', x: 13, y: 2 },
       { p: 'desk', x: 11, y: 2, scene: 'lf.council_stamp' },
@@ -108073,11 +108191,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('lf.clerks', T("Clerks' Office", '{事務所|じむしょ}'), 13, 9, 6, [39, 10], {
     props: [
       { p: 'exitmat', x: 6, y: 7 },
-      { p: 'desk', x: 1, y: 3, scene: 'lf.clerk_desk' }, { p: 'desk', x: 4, y: 3 }, { p: 'desk', x: 8, y: 3 },
+      { p: 'desk', x: 1, y: 3, scene: 'lf.clerk_desk', o: { on: 'heap' } }, { p: 'desk', x: 4, y: 3 }, { p: 'desk', x: 8, y: 3 },
       { p: 'chair', x: 2, y: 4 }, { p: 'chair', x: 9, y: 4 },
       { p: 'shelf', x: 11, y: 2 }, { p: 'bookpile', x: 11, y: 5 }, { p: 'bookpile', x: 1, y: 6 },
       { p: 'mailbox', x: 10, y: 6, scene: 'lf.returned_letters' },
-      { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note' },
+      { p: 'smalltable', x: 7, y: 6, if: 'lf_akari_leave&!post', scene: 'lf.akari_note', o: { on: 'paper' } },
     ],
     npcs: [
       { id: 'akari', x: 5, y: 4, dir: 'down', if: '!lf_akari_leave|post', talk: [{ if: 'quest.lf_akari>=1&!quest.lf_akari=done', scene: 'lf.akari_letter' }, { if: 'post', scene: 'lf.akari_post' }, { if: 'quest.lf_akari=done', scene: 'lf.akari_done' }, { if: 'lf_bell_rung', scene: 'lf.akari_after' }, { if: 'lf_akari_key', scene: 'lf.akari_again' }, { if: 'quest.lf_main>=2', scene: 'lf.akari_hint' }, { scene: 'lf.akari' }] },
@@ -108090,7 +108208,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 6, y: 8 },
       { p: 'counter', x: 1, y: 4, across: true }, { p: 'shelf', x: 1, y: 2 }, { p: 'stove', x: 4, y: 2 },
       { p: 'bed', x: 10, y: 2, scene: 'lf.inn_bed' }, { p: 'bed', x: 11, y: 2, scene: 'lf.inn_bed' },
-      { p: 'table', x: 7, y: 5, scene: 'lf.inn_table' }, { p: 'chair', x: 6, y: 5 }, { p: 'chair', x: 9, y: 5 },
+      { p: 'table', x: 7, y: 5, scene: 'lf.inn_table', o: { on: 'cup' } }, { p: 'chair', x: 6, y: 5 }, { p: 'chair', x: 9, y: 5 },
       { p: 'smalltable', x: 2, y: 7 }, { p: 'chair', x: 1, y: 7 },
       { p: 'mat', x: 10, y: 6, scene: 'lf.inn_hall' }, { p: 'mat', x: 11, y: 6, scene: 'lf.inn_hall' },
     ],
@@ -108106,7 +108224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'counter', x: 1, y: 3, across: true }, { p: 'teaset', x: 1, y: 2 }, { p: 'shelf', x: 3, y: 2 }, { p: 'stove', x: 4, y: 2 },
-      { p: 'smalltable', x: 7, y: 3, scene: 'lf.cafe_table' }, { p: 'chair', x: 8, y: 3 },
+      { p: 'smalltable', x: 7, y: 3, scene: 'lf.cafe_table', o: { on: 'plate' } }, { p: 'chair', x: 8, y: 3 },
       { p: 'smalltable', x: 7, y: 6 }, { p: 'chair', x: 8, y: 6 },
       { p: 'flowerpot', x: 9, y: 2 },
       { p: 'noticeboard', x: 6, y: 2, scene: 'lf.cafe_menu' },
@@ -108123,7 +108241,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // a bakery at a glance (World review WR-05; art in 11_bakery.js): the bread oven where two
       // stoves stood, the day's bread where a bookcase stood, flour where a crate stood, and the
       // bench Masaru kneads at (his place is in front of its right end, at 3,4)
-      { p: 'lf_oven', x: 1, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders' },
+      { p: 'lf_oven', x: 1, y: 2 }, { p: 'table', x: 5, y: 3, scene: 'lf.bakery_orders', o: { on: 'papers' } },
       { p: 'crate', x: 7, y: 2 }, { p: 'lf_floursacks', x: 7, y: 3 }, { p: 'barrel', x: 1, y: 5 },
       { p: 'lf_breadrack', x: 4, y: 2 }, { p: 'lf_kneadbench', x: 2, y: 3 },
     ],
@@ -108149,7 +108267,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   interior('lf.tokuji', T("Tokuji's Hut", 'トクジ の {小屋|こや}'), 8, 8, 3, [23, 8], {
     props: [
       { p: 'exitmat', x: 3, y: 6 },
-      { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'lf.tokuji_table' }, { p: 'net', x: 4, y: 2 },
+      { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'lf.tokuji_table', o: { on: 'cupdown' } }, { p: 'net', x: 4, y: 2 },
       { p: 'shelf', x: 6, y: 2, scene: 'lf.tokuji_shelf' }, { p: 'pot', x: 6, y: 5 },
     ],
     exits: [{ x: 3, y: 7, to: 'lf.sluice', tx: 23, ty: 8, dir: 'down' }],
@@ -112203,7 +112321,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 5, y: 7 },
       { p: 'stove', x: 1, y: 2 }, { p: 'pot', x: 2, y: 2 },
       { p: 'bed', x: 9, y: 2 }, { p: 'bed', x: 8, y: 2 },
-      { p: 'table', x: 4, y: 4, scene: 'sa.hut_register' }, { p: 'chair', x: 3, y: 4 },
+      { p: 'table', x: 4, y: 4, scene: 'sa.hut_register', o: { on: 'book' } }, { p: 'chair', x: 3, y: 4 },
       { p: 'shelf', x: 6, y: 2, scene: 'sa.hut_shelf' },
       { p: 'teaset', x: 1, y: 5, scene: 'sa.hut_tea' },
     ],
@@ -112385,7 +112503,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [
       { p: 'sa_pipe', x: 7, y: 2 }, { p: 'sa_pipe', x: 14, y: 2 }, { p: 'sa_pipe', x: 21, y: 2 },
-      { p: 'sparkle', x: 12, y: 13 }, { p: 'sparkle', x: 16, y: 12 }, { p: 'sparkle', x: 14, y: 14 },
+      // light on the basin's dark water: faint glints, no light pools (not something to find)
+      { p: 'sparkle', x: 12, y: 13, o: { faint: true, lit: false } }, { p: 'sparkle', x: 16, y: 12, o: { faint: true, lit: false } }, { p: 'sparkle', x: 14, y: 14, o: { faint: true, lit: false } },
       { p: 'desk', x: 2, y: 4, scene: 'sa.notice_desk' },
       { p: 'sign', x: 4, y: 13, scene: 'sa.charter_gate' },
       { p: 'water', x: 3, y: 14, if: '!sa_promise_done', scene: 'sa.charter_gate' },
@@ -112420,7 +112539,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.set(11, 1, 'p').set(11, 0, 'p');
     }),
     props: [
-      { p: 'table', x: 10, y: 8, scene: 'sa.mem_table' }, { p: 'chair', x: 12, y: 8 },
+      { p: 'table', x: 10, y: 8, scene: 'sa.mem_table', o: { on: 'cup' } }, { p: 'chair', x: 12, y: 8 },
       { p: 'crystal', x: 1, y: 9 }, { p: 'crystal', x: 22, y: 5 }, { p: 'crystal', x: 22, y: 13 },
       { p: 'sa_cabinet', x: 9, y: 13, scene: 'sa.mem_requests' },
       // readable shelves (the rest are simply shelves)
@@ -112467,7 +112586,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bed', x: 12, y: 2, scene: 'sa.study_bed' },
       { p: 'shelf', x: 1, y: 2, scene: 'sa.study_objections' }, { p: 'shelf', x: 2, y: 2, scene: 'sa.study_objections' },
       { p: 'bookpile', x: 3, y: 2, scene: 'sa.study_notebook' },
-      { p: 'smalltable', x: 12, y: 8, scene: 'sa.study_cups' },
+      { p: 'smalltable', x: 12, y: 8, scene: 'sa.study_cups', o: { on: 'cups' } },
       { p: 'bookpile', x: 1, y: 9 }, { p: 'crate', x: 13, y: 9 },
       { p: 'stairs', x: 7, y: 1 },
       { p: 'sa_door', x: 0, y: 6, if: '!sa_shortcut', scene: 'sa.shortcut_open' },
@@ -123404,7 +123523,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.room(9, 8, '_', 4),
     props: [
       { p: 'exitmat', x: 4, y: 6 },
-      { p: 'table', x: 1, y: 3, scene: 'lq.kh_book' },
+      { p: 'table', x: 1, y: 3, scene: 'lq.kh_book', o: { on: 'book' } },
       { p: 'chest', x: 6, y: 2, scene: 'lq.kh_chest', if: '!lq_kh_chest' },
       { p: 'chest', x: 6, y: 2, o: { open: true }, if: 'lq_kh_chest', text: T('The chest is empty now, apart from the smell of old persimmons.', '{箱|はこ} は もう {空|から} だ 。 {古|ふる}い {柿|かき} の {匂|にお}い だけ が {残|のこ}って いる 。') },
       { p: 'bottles', x: 7, y: 2, text: T('Rows of empty jars, and a string of persimmons dried to leather long ago.', '{空|から} の {瓶|びん} が {並|なら}んで いる 。 ずっと {昔|むかし} に {干|ほ}された {柿|かき} が 、 {革|かわ} の よう に なって {下|さ}がって いる 。') },

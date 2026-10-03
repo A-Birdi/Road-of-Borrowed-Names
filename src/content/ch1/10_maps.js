@@ -114,7 +114,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'shrine', x: 4, y: 2, scene: 'rw.hall_shrine' },
       { p: 'shelf', x: 1, y: 3 }, { p: 'shelf', x: 9, y: 3 },
       { p: 'lantern', x: 1, y: 6 }, { p: 'lantern', x: 9, y: 6 },
-      { p: 'bookpile', x: 1, y: 7 }, { p: 'desk', x: 7, y: 7, scene: 'rw.hall_desk' },
+      { p: 'bookpile', x: 1, y: 7 }, { p: 'desk', x: 7, y: 7, scene: 'rw.hall_desk', o: { on: 'heap' } },
     ],
     ambient: { dark: 0.35, playerLight: 40 },
   });
@@ -135,7 +135,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bottles', x: 2, y: 2, o: { labels: false }, if: '!rw_bottles_done', scene: 'rw.bottles_look' },
       { p: 'bottles', x: 2, y: 2, if: 'rw_bottles_done' },
       { p: 'bottles', x: 6, y: 2 }, { p: 'shelf', x: 7, y: 2 },
-      { p: 'table', x: 3, y: 4, scene: 'rw.apoth_table' }, { p: 'pot', x: 7, y: 6 }, { p: 'glassware', x: 1, y: 5 },
+      { p: 'table', x: 3, y: 4, scene: 'rw.apoth_table', o: { on: 'book' } }, { p: 'pot', x: 7, y: 6 }, { p: 'glassware', x: 1, y: 5 },
     ],
   });
   interior('rw.warehouse', T('River Warehouse', '{川|かわ}の{倉庫|そうこ}'), 11, 9, 5, 'rw.village', [29, 26], {
@@ -158,7 +158,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [{ p: 'exitmat', x: 4, y: 6 }, { p: 'bed', x: 7, y: 2 }, { p: 'table', x: 1, y: 3 }, { p: 'loom', x: 4, y: 2 }, { p: 'crate', x: 1, y: 5, scene: 'rw.kiku_plane' }],
   });
   interior('rw.ferry', T("Kōji's Ferry House", 'コウジ の {渡|わた}し{小屋|ごや}'), 8, 8, 3, 'rw.village', [45, 16], {
-    props: [{ p: 'exitmat', x: 3, y: 6 }, { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'rw.ferry_cup' }, { p: 'net', x: 4, y: 2 }],
+    props: [{ p: 'exitmat', x: 3, y: 6 }, { p: 'bed', x: 1, y: 2 }, { p: 'smalltable', x: 5, y: 3, scene: 'rw.ferry_cup', o: { on: 'cup' } }, { p: 'net', x: 4, y: 2 }],
   });
 
   // ---- arrival road -------------------------------------------------------------------
