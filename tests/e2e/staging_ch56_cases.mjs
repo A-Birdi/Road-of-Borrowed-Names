@@ -15,6 +15,9 @@ const LA = F(L0, { lf_arrived: true }); // on the Lantern Road
 const LT = F(LA, { lf_town_intro: true }); // in town, before the bell
 const LB = F(LT, { lf_ledger_seen: true, lf_akari_key: true, lf_yae_told: true, lf_tokuji_told: true, lf_tokuji_boat: true, lf_tower_entered: true, lf_gate_a: true, lf_gate_b: true, lf_gate_c: true, lf_koe: true, lf_boss_done: true, lf_bell_rung: true }); // after the bell
 const LD = F(LB, { lf_after_town: true, ch5_done: true }); // the chapter done
+const LW = F(LT, { lf_yae_told: true, lf_tokuji_told: true, lf_tokuji_boat: true, lf_tower_entered: true }); // in the bell tower
+const LM = F(LW, { lf_up_closed: true, lf_gate_a: true, lf_mid_seen: true, lf_shortcut: true }); // the gate works
+const LL = F(LM, { lf_gate_b: true, lf_low_seen: true }); // the drowned stair
 const LP = F(LD, { sa_arrived: true, ch6_done: true, sa_done: true, post: true, postgame: true }); // after the ending
 const CH5 = [
   // 20_town.js
@@ -87,6 +90,34 @@ const CH5 = [
   { ch: 5, scene: 'lf.yae_after', map: 'lf.council', at: [7, 3, 'left'], talk: 'lf_yae', flags: F(LB, { lf_after_town: true }), quests: { lf_main: 7 },
     variants: [{ name: 'the council back', comps: ALL4, minLines: 14, expect: { lf_yae: ['emphatic', 'celebrate', 'present'], lf_tadashi: ['glasses', 'emphatic'], lf_masaru: ['celebrate'] } }, { name: 'later', comp: 'mio', flags: LD, expect: { lf_yae: ['laugh'] } }] },
   { ch: 5, scene: 'lf.after_town', map: 'lf.town', at: [39, 38, 'up'], flags: LB, comps: ALL4, minLines: 8, expect: { pc: ['lookroad', 'cupear'], lf_masaru: ['flinch'], lf_kohei: ['listen'] } },
+  // 24_tower.js
+  { ch: 5, scene: 'lf.tower_arrive', map: 'lf.tower_top', at: [7, 9, 'up'], flags: F(LT, { lf_yae_told: true, lf_tokuji_told: true, lf_tokuji_boat: true }), quests: { lf_main: 6 }, comps: ALL4, expect: { pc: ['observe', 'cupear'] } },
+  { ch: 5, scene: 'lf.roster', map: 'lf.tower_top', at: [2, 3, 'up'], flags: LW, comps: ALL4, expect: { pc: ['observe', 'bend'] } },
+  { ch: 5, scene: 'lf.wheel_upper', map: 'lf.tower_upper', at: [3, 5, 'left'], flags: LW, comp: 'nao',
+    variants: [{ name: 'turn it', picks: [0], expect: { pc: ['observe', 'bend'] } }, { name: 'leave it', picks: [1] }, { name: 'closed already', flags: F(LW, { lf_up_closed: true }) }] },
+  { ch: 5, scene: 'lf.wheel_lower', map: 'lf.tower_upper', at: [16, 9, 'right'], flags: F(LW, { lf_up_closed: true }),
+    variants: [{ name: 'turned', picks: [0], comps: ALL4, expect: { pc: ['observe', 'bend', 'lookroad'] } }, { name: 'left', picks: [1], comp: 'mio', expect: { pc: ['observe'] } },
+      { name: 'stuck · plate unread', picks: [0], comp: 'nao', flags: LW }, { name: 'stuck · plate read', picks: [0], comps: ALL4, flags: F(LW, { lf_plate_a_read: true }) }, { name: 'open already', comp: 'ren', flags: F(LW, { lf_up_closed: true, lf_gate_a: true }), expect: { pc: ['lookroad'] } }] },
+  { ch: 5, scene: 'lf.mid_enter', map: 'lf.tower_mid', at: [10, 2, 'down'], flags: F(LW, { lf_up_closed: true, lf_gate_a: true }), comps: ALL4, expect: { pc: ['observe', 'lookroad', 'bend'] } },
+  { ch: 5, scene: 'lf.east_door', map: 'lf.tower_mid', at: [19, 8, 'right'], flags: LM, expect: { pc: ['observe'] },
+    variants: [{ name: 'open it', picks: [0], comp: 'nao', expect: { pc: ['bend'] } }, { name: 'leave it shut', picks: [1], comp: 'mio' },
+      { name: 'shut it again', picks: [0], comp: 'ren', flags: F(LM, { lf_east_open: true }) }, { name: 'drained · seal it', picks: [0], comps: ALL4, flags: F(LM, { lf_east_open: true, lf_mid_drained: true }) },
+      { name: 'drained · leave it open', picks: [1], comp: 'suzu', flags: F(LM, { lf_east_open: true, lf_mid_drained: true }) }, { name: 'barred', comp: 'nao', flags: F(LM, { lf_gate_b: true }) }] },
+  { ch: 5, scene: 'lf.west_plug', map: 'lf.tower_mid', at: [2, 8, 'left'], flags: LM, expect: { pc: ['observe'] },
+    variants: [{ name: 'pulled', picks: [0], comp: 'mio', flags: F(LM, { lf_east_open: true }), expect: { pc: ['bend', 'lookroad'] } }, { name: 'stuck · plate unread', picks: [0], comp: 'nao' },
+      { name: 'stuck · plate read', picks: [0], comp: 'ren', flags: F(LM, { lf_plate_b_read: true }) }, { name: 'leave it', picks: [1], comp: 'suzu' }, { name: 'out already', comp: 'nao', flags: F(LM, { lf_east_open: true, lf_mid_drained: true }) }] },
+  { ch: 5, scene: 'lf.water_returns', map: 'lf.tower_mid', at: [10, 10, 'down'], flags: F(LM, { lf_east_open: true, lf_mid_drained: true }), comps: ALL4, expect: { pc: ['flinch', 'lookroad'] } },
+  { ch: 5, scene: 'lf.junction', map: 'lf.tower_mid', at: [18, 4, 'right'], flags: LM, expect: { pc: ['cupear'] },
+    variants: [{ name: 'first', comps: ALL4, expect: { pc: ['observe', 'lookroad', 'receive'] } }, { name: 'again', comp: 'mio', flags: F(LM, { lf_koe: true }) }] },
+  { ch: 5, scene: 'lf.low_enter', map: 'lf.tower_low', at: [10, 2, 'down'], flags: LL, comps: ALL4, expect: { pc: ['lookroad', 'listen'] } },
+  { ch: 5, scene: 'lf.south_plug', map: 'lf.tower_low', at: [3, 14, 'left'], flags: LL, comp: 'nao', expect: { pc: ['observe'] },
+    variants: [{ name: 'pulled', picks: [0], expect: { pc: ['bend', 'lookroad'] } }, { name: 'leave it', picks: [1] }, { name: 'out already', flags: F(LL, { lf_south_pulled: true }) }] },
+  { ch: 5, scene: 'lf.north_plug', map: 'lf.tower_low', at: [15, 3, 'right'], flags: LL, expect: { pc: ['observe'] },
+    variants: [{ name: 'pulled', picks: [0], comps: ALL4, flags: F(LL, { lf_south_pulled: true }), expect: { pc: ['bend', 'lookroad'] } }, { name: 'too soon', picks: [0], comps: ALL4, expect: { pc: ['flinch', 'brow'] } },
+      { name: 'leave it', picks: [1], comp: 'mio' }, { name: 'out already', comp: 'ren', flags: F(LL, { lf_south_pulled: true, lf_gate_c: true }) }] },
+  { ch: 5, scene: 'lf.waterline', map: 'lf.tower_low', at: [14, 6, 'up'], flags: LL, comps: ALL4, expect: { pc: ['observe'] } },
+  { ch: 5, scene: 'lf.boss_intro', map: 'lf.bellhall', at: [8, 5, 'down'], flags: F(LL, { lf_south_pulled: true, lf_gate_c: true }), quests: { lf_main: 7 }, comps: ALL4, minLines: 4, expect: { pc: ['flinch', 'observe'] } },
+  { ch: 5, scene: 'lf.tower_key', map: 'lf.bellhall', at: [9, 3, 'up'], flags: F(LL, { lf_south_pulled: true, lf_gate_c: true, lf_boss_done: true }), comps: ALL4, expect: { pc: ['observe', 'bend'] } },
 ];
 
 export const CH56 = [...CH5];
