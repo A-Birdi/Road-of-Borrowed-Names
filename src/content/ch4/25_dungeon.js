@@ -179,7 +179,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   C.maps['sb.obs_dome'] = {
     name: T('The Lamp Room', '{灯|ひ} の {間|ま}'), region: 'snowbell', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Observatory' },
-    music: [{ if: 'sb_lamp_lit', id: 'wonder' }, { id: 'observatory' }],
+    music: [{ if: 'sb_lamp_lit', id: 'sb_lamp' }, { id: 'observatory' }],
     ambient: { get dark() { return lampLit() ? 0.15 : 0.5; }, playerLight: 40, get tint() { return lampLit() ? 'rgba(255,200,120,0.08)' : 'rgba(150,190,240,0.12)'; } },
     terrain: K.build(14, 12, '#', (k) => {
       k.rect(1, 2, 12, 9, '+');

@@ -7,7 +7,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sb.quiet_begin
-!music quiet_road
+!music sb_snowlight
 narr: {二階|にかい} の {部屋|へや} は 、 {囲炉裏|いろり} の {熱|ねつ} で ほんのり {温|あたた}かい 。 {窓|まど} の {外|そと} は {真|ま}っ{白|しろ} で 、 {風|かぜ} の {音|おと} しか しない 。 || The upstairs room is faintly warm from the hearth below. Outside the window everything is white, and there is nothing but the sound of the wind.
 narr: {布団|ふとん} が {二|ふた}つ 、 {並|なら}べて {敷|し}いて ある 。 {灯|あか}り を {消|け}す と 、 {部屋|へや} は {雪明|ゆきあ}かり だけ に なった 。 || Two futons lie side by side. When you put out the lamp, only the snow-light is left.
 !var sb_tone = 2

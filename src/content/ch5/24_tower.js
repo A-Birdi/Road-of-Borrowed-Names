@@ -359,7 +359,7 @@ narr: {誰|だれ} の {声|こえ} か 、わからない 。{振|ふ}り{返|�
 ?(quest.lf_akari&!quest.lf_akari=done) !quest lf_akari 1
 ?(quest.lf_fence>=2&!quest.lf_fence=done) !quest lf_fence 3
 ?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) !quest lf_nao 2
-!music wonder
+!music lf_bell
 !autosave
 narr: {湖|みずうみ} の {水|みず} が 、{少|すこ}し ずつ {引|ひ}いて いく 。{舟|ふね} へ {戻|もど}ろう 。|| The lake is slowly drawing back. Time to get back to the boat.
 !fade out

@@ -1,4 +1,9 @@
 /* Song data — original music for The Road of Borrowed Names.
+ * This file: the shared motifs, Chapter 1 and the songs used across the
+ * game. Zone music from Chapter 2 on (overworld, battle, boss and story
+ * cues, with the Japanese instruments) is in 31_songs_ch2.js … 35_songs_ch6.js,
+ * the Atlas's battle and boss themes in 36_songs_atlas.js; which battle/boss
+ * theme plays where is in 39_zones.js.
  *
  * ============================== NOTATION ==================================
  * A song is { title, key, mode, bpm, meter, tracks, all, sections, form }.
@@ -17,6 +22,8 @@
  *                 rv: reverb send, dl: echo send, u: beats per step (0.5) }
  *   instruments: pluck harp bell celesta toll glass flute bowed bass pad keys
  *                mallet choir
+ *   Japanese:    shamisen biwa koto koto_oshi (plucked a whole tone low and
+ *                pressed up to the written note) shakuhachi shinobue sho rin
  *   Kinds of track:
  *   - melody (default): scale DEGREES.
  *   - pat: true   — chord-tone PATTERN that follows the section's chords.
@@ -55,6 +62,9 @@
  *   w woodblock   h high woodblock   r rim   x clock tick   g glass tick
  *   d water drop  c wooden creak   j small bells   o big drum (bosses)
  *   n frame-drum snap   . rest   | bar check
+ *   Japanese:  z ōdaiko (don)   e shime-daiko (ten)   f taiko rim (ka)
+ *              m kotsuzumi (pon)   q ōtsuzumi (kan)   y hyōshigi clappers
+ *              a atarigane hand gong   v chappa cymbals   i rin bowl bell
  *
  * FORM entries: 'A' or { s:'A', i:{track:inst}, o:{track:+1}, m:[muted],
  *   tr: semitones, dyn, key, mode, bpm }. Sections may use from:'A' to
@@ -135,6 +145,8 @@ RB.audio = RB.audio || {};
   const DEP_MIO = '.:8 | .:8 | 3 2 3 5 3 2 3 - | 1 - - - . . . . | .:8 | .:8 | .:8 | .:8';
   const DEP_REN = ".:8 | .:8 | .:8 | .:8 | 5, - 1 - 4 - 5 - | 1' - 7 1' - - - - | .:8 | .:8";
   const DEP_SUZU = ".:8 | .:8 | .:8 | .:8 | .:8 | .:8 | 1 1' 7 b7 6 - 5 - | 3 - - - 2 - 1 -";
+  // shared with the zone files (31_… 36_)
+  _.mat = { ARP4, ARP3, BASS4, BASS3, TRI, ROAD_A, ROAD_A_CH, ROAD_B, ROAD_B_CH, MINOR_B_CH, ROAD_C, ROAD_C_CH };
   const COMPANION_TRACKS = () => ({
     nao: { i: 'pluck', o: 4, v: 0.75, rv: 0.25, pan: -0.2 },
     mio: { i: 'mallet', o: 5, v: 0.75, rv: 0.25, pan: 0.2 },
@@ -436,29 +448,30 @@ RB.audio = RB.audio || {};
   S('saltglass', {
     title: 'Saltglass Harbour',
     kind: 'area',
+    chapter: 2,
     motifs: ['road'],
-    notes: 'Working harbour in F with a lilting swing (104): a bouncing root–fifth bass, plucked chords on 2 and 4 like rigging slapping a mast, woodblock and shaker. B leans mixolydian (E-flat) for the cargo-label muddle; C is quieter and echoing — the road motif over D minor, pointing toward the drowned archive.',
+    notes: 'Working harbour in F with a lilting swing (104), re-orchestrated for Chapter 2 as a min’yō band — same melody, form and motifs as before: shakuhachi lead, shamisen chords slapping on 2 and 4 like rigging against a mast, a bouncing root–fifth bass, woodblock, shaker and shime-daiko, a hyōshigi clap to start. B leans mixolydian (E-flat) for the cargo-label muddle on a bright shinobue; A2 puts the tune on koto with a second koto answering; C is quieter and echoing — the road motif on shakuhachi over D minor, pointing toward the drowned archive; B2 hands the tune to the shamisen.',
     key: 'F', bpm: 104, swing: 0.24,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.8, rv: 0.25 },
-      mal: { i: 'mallet', o: 5, v: 0.6, rv: 0.2, pan: 0.2 },
-      bell: { i: 'bell', o: 5, v: 0.45, rv: 0.4, dl: 0.35, pan: -0.2 },
-      gtr: { i: 'pluck', o: 4, pat: true, fold: 'all', win: -3, v: 0.4, rv: 0.15, pan: -0.3 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.3 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.25 },
+      mal: { i: 'koto', o: 5, v: 0.5, rv: 0.2, pan: 0.2 },
+      bell: { i: 'koto', o: 5, v: 0.42, rv: 0.4, dl: 0.35, pan: -0.2 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.32, rv: 0.15, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.65 },
       perc: { perc: true, v: 0.45 },
     },
     echo: { beats: 0.75, fb: 0.3, mix: 0.3 },
-    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: '0 - 2, - 0 - 2, 0', pad: TRI, perc: 'w.s.p.s.|w.s.p.ss' },
+    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: '0 - 2, - 0 - 2, 0', pad: TRI, perc: 'w.s.e.s.|w.s.e.ss' },
     sections: {
-      intro: { bars: 2, ch: '1 5', perc: 'w.......' },
+      intro: { bars: 2, ch: '1 5', perc: 'y.......' },
       A: { bars: 8, ch: SALT_A_CH, lead: SALT_A },
       B: { bars: 8, ch: SALT_B_CH, lead: SALT_B },
       A2: { bars: 8, ch: SALT_A_CH, mal: SALT_A, bell: '.:8 | .:8 | .:8 | 6 - - - 5 - - - | .:8 | .:8 | .:8 | 5 - - - - - . .' },
       C: { bars: 8, ch: SALT_C_CH, bell: SALT_C, gtr: null, perc: '....s...', dyn: 0.85 },
       B2: { bars: 8, ch: SALT_B_CH, mal: SALT_B },
     },
-    form: ['intro', 'A', 'B', 'A2', 'C', 'B2'],
+    form: ['intro', 'A', { s: 'B', i: { lead: 'shinobue' } }, 'A2', { s: 'C', i: { bell: 'shakuhachi' } }, { s: 'B2', i: { mal: 'shamisen' }, o: { mal: -1 } }],
   });
 
   // ====================================================== DROWNED ARCHIVE
@@ -473,16 +486,18 @@ RB.audio = RB.audio || {};
   S('drowned_archive', {
     title: 'The Drowned Archive',
     kind: 'area',
+    chapter: 2,
     motifs: ['road', 'hush'],
-    notes: 'Tidal ruin in E minor at a slow 66: pads that swell like tides, water drops, a bell through a long echo. In B the Hush motif rises from below on glass (a lydian glint over C) and the road motif answers from above.',
+    notes: 'Tidal ruin in E minor at a slow 66, re-orchestrated for Chapter 2 — same melody, form and motifs: the lead is now a rin bowl through a long echo, the arpeggio a koto, the pads still swell like tides and water still drips. In B the Hush motif rises from below on glass (a lydian glint over C) over a held shō, and the road motif answers from above; the repeat of A is on shakuhachi; C adds a slow ōdaiko heartbeat under the koto.',
     key: 'E', mode: 'aeolian', bpm: 66,
     tracks: {
-      bell: { i: 'bell', o: 5, v: 0.6, rv: 0.5, dl: 0.4, pan: 0.15 },
+      bell: { i: 'rin', o: 5, v: 0.95, rv: 0.5, dl: 0.4, pan: 0.15 },
       glass: { i: 'glass', o: 4, v: 0.9, rv: 0.5, pan: -0.2 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.4, rv: 0.45, dl: 0.2, pan: -0.3 },
-      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.55, rv: 0.5 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.45, dl: 0.2, pan: -0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.5, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.5 },
       drip: { perc: true, v: 0.55, rv: 0.6, pan: 0.3 },
+      heart: { perc: true, v: 0.4, rv: 0.4 },
     },
     echo: { beats: 1.5, fb: 0.4, mix: 0.35 },
     all: {
@@ -492,9 +507,9 @@ RB.audio = RB.audio || {};
     sections: {
       A: { bars: 8, ch: DROWN_A_CH, bell: DROWN_A },
       B: { bars: 8, ch: DROWN_B_CH, glass: DROWN_B_GLASS, bell: DROWN_B_BELL, arp: '0 . 2 . 4 . 2 .' },
-      C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, dyn: 0.9 },
+      C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, heart: 'z.......|........', dyn: 0.9 },
     },
-    form: ['A', 'B', { s: 'A', i: { bell: 'celesta' } }, 'C'],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { bell: 'shakuhachi' } }, { s: 'C', i: { bell: 'koto' } }],
   });
 
   // =============================================================== CINDER
@@ -509,28 +524,29 @@ RB.audio = RB.audio || {};
   S('cinder', {
     title: 'Cinder Orchard Festival',
     kind: 'area',
+    chapter: 3,
     motifs: ['road'],
-    notes: 'Festival town in A mixolydian (112): hand drums, woodblock and a steady shaker, flute over strummed pluck with little answering figures. B slips into A minor with the road motif — the festival history that does not match what people remember. C is a call-and-response dance on mallet.',
+    notes: 'Festival town in A mixolydian (112), re-orchestrated for Chapter 3 as a festival band — same melody, form and motifs as before: shinobue over strummed shamisen with koto answering figures, a small hayashi of ōdaiko, shime-daiko and rim clicks, the atarigane’s chan-chiki where the shaker was. B slips into A minor with the road motif on koto — the festival history that does not match what people remember. C is a call-and-response dance on shamisen; the last A2 is on koto.',
     key: 'A', mode: 'mixolydian', bpm: 112,
     tracks: {
-      lead: { i: 'flute', o: 4, v: 0.8, rv: 0.2 },
-      mal: { i: 'mallet', o: 4, v: 0.75, rv: 0.2, pan: 0.2 },
-      pl: { i: 'pluck', o: 4, v: 0.45, rv: 0.2, pan: -0.2 },
-      gtr: { i: 'pluck', o: 4, pat: true, fold: 'all', win: -4, v: 0.4, rv: 0.1, pan: -0.3 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.3, rv: 0.3 },
+      lead: { i: 'shinobue', o: 4, v: 0.52, rv: 0.2 },
+      mal: { i: 'koto', o: 4, v: 0.6, rv: 0.2, pan: 0.2 },
+      pl: { i: 'koto', o: 4, v: 0.38, rv: 0.2, pan: -0.2 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -4, v: 0.3, rv: 0.1, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.65 },
-      drum: { perc: true, v: 0.55 },
-      shk: { perc: true, v: 0.35, pan: 0.3 },
+      drum: { perc: true, v: 0.5 },
+      shk: { perc: true, v: 0.28, pan: 0.3 },
     },
-    all: { gtr: '0+1+2 . . 0+1+2 . . 0+1+2 .', bass: '0 . 0 2 . 0 2 .', pad: TRI, drum: 't..t..w.|t..t.tw.', shk: 'ssSsssSs' },
+    all: { gtr: '0+1+2 . . 0+1+2 . . 0+1+2 .', bass: '0 . 0 2 . 0 2 .', pad: TRI, drum: 'z..e..f.|z..e.ef.', shk: 'a..aa..a' },
     sections: {
-      intro: { bars: 1, ch: '1', gtr: null, pad: null, bass: null },
+      intro: { bars: 1, ch: '1', gtr: null, pad: null, bass: null, shk: 'y.y.y...' },
       A: { bars: 8, ch: CIN_A_CH, lead: CIN_A },
       A2: { bars: 8, ch: CIN_A_CH, lead: CIN_A, pl: CIN_A_CM },
-      B: { bars: 8, mode: 'aeolian', ch: CIN_B_CH, mal: CIN_B, drum: 't.......|....t...', shk: '..s...s.', gtr: null, dyn: 0.9 },
-      C: { bars: 8, ch: CIN_C_CH, mal: CIN_C, drum: 't..t..w.|t..t.tw.|t..t..w.|tt.t.tww' },
+      B: { bars: 8, mode: 'aeolian', ch: CIN_B_CH, mal: CIN_B, drum: 'z.......|....e...', shk: '..a...a.', gtr: null, dyn: 0.9 },
+      C: { bars: 8, ch: CIN_C_CH, mal: CIN_C, drum: 'z..e..f.|z..e.ef.|z..e..f.|zz.e.eff' },
     },
-    form: ['intro', 'A', 'A2', 'B', 'C', { s: 'A2', i: { lead: 'mallet' } }],
+    form: ['intro', 'A', 'A2', 'B', { s: 'C', i: { mal: 'shamisen' } }, { s: 'A2', i: { lead: 'koto' } }],
   });
 
   // ================================================================= KILN
@@ -544,26 +560,28 @@ RB.audio = RB.audio || {};
   S('kiln', {
     title: 'The Sealed Kiln',
     kind: 'area',
+    chapter: 3,
     motifs: ['hush'],
-    notes: 'E phrygian heat (84): a slow heartbeat drum, celesta shimmer in sixteenths, a bowed line leaning on the flat second. B opens into E lydian — the beauty of the glass itself. C strips back to the heartbeat while the Hush motif circles on glass.',
+    notes: 'E phrygian heat (84), re-orchestrated for Chapter 3 — same melody, form and motifs: an ōdaiko heartbeat, a low biwa buzzing on the root like heat in the walls, rim clicks, celesta shimmer in sixteenths, the bowed line leaning on the flat second. B opens into E lydian — the beauty of the glass itself — on koto over a held shō. C strips back to the heartbeat while the Hush motif circles on glass; the last A is on shakuhachi.',
     key: 'E', mode: 'phrygian', bpm: 84,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.7, rv: 0.35 },
-      cel: { i: 'celesta', o: 5, v: 0.55, rv: 0.45, pan: 0.2 },
+      cel: { i: 'koto', o: 5, v: 0.5, rv: 0.45, pan: 0.2 },
       glass: { i: 'glass', o: 5, v: 0.9, rv: 0.5, pan: -0.15 },
       shim: { i: 'celesta', o: 4, pat: true, u: 0.25, v: 0.3, rv: 0.4, pan: 0.3 },
+      drone: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.32, rv: 0.35, pan: -0.2 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.45, rv: 0.4 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.55 },
-      beat: { perc: true, v: 0.6, rv: 0.2 },
-      tick: { perc: true, v: 0.35, pan: -0.3 },
+      beat: { perc: true, v: 0.55, rv: 0.2 },
+      tick: { perc: true, v: 0.3, pan: -0.3 },
     },
-    all: { shim: "0 2 1' 2 4 2 1' 2", pad: '0+2', bass: '0 - - - - - - -', beat: 'l.l.....|........', tick: '..x...x.' },
+    all: { shim: "0 2 1' 2 4 2 1' 2", drone: '0 - - - - - - -', pad: '0+2', bass: '0 - - - - - - -', beat: 'z.z.....|........', tick: '..f...f.' },
     sections: {
       A: { bars: 8, ch: KILN_A_CH, lead: KILN_A },
-      B: { bars: 8, mode: 'lydian', ch: KILN_B_CH, cel: KILN_B, pad: TRI, tick: null },
+      B: { bars: 8, mode: 'lydian', ch: KILN_B_CH, cel: KILN_B, pad: TRI, tick: null, drone: null },
       C: { bars: 8, ch: KILN_C_CH, glass: KILN_C, shim: null },
     },
-    form: ['A', 'B', 'C', { s: 'A', i: { lead: 'flute' } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'A', i: { lead: 'shakuhachi' } }],
   });
 
   // ============================================================= SNOWBELL
@@ -578,14 +596,15 @@ RB.audio = RB.audio || {};
   S('snowbell', {
     title: 'Snowbell',
     kind: 'area',
+    chapter: 4,
     motifs: ['road'],
-    notes: 'Mountain-hamlet waltz in F (80): music-box celesta, harp, a faint shake of small bells every few bars. B is the family-correspondence strain in D minor on flute; C carries the road motif in 3/4 like footprints in fresh snow.',
+    notes: 'Mountain-hamlet waltz in F (80), re-orchestrated for Chapter 4 — same melody, form and motifs: the music-box line now on koto over a second, lower koto, the small bells shaking every few bars and a rin now and then. B is the family-correspondence strain in D minor on shakuhachi; C carries the road motif in 3/4 like footprints in fresh snow.',
     key: 'F', bpm: 80, meter: 3,
     tracks: {
-      lead: { i: 'celesta', o: 5, v: 0.65, rv: 0.45 },
-      fl: { i: 'flute', o: 5, v: 0.7, rv: 0.4 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.45, rv: 0.4, pan: -0.25 },
-      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.45, rv: 0.45 },
+      lead: { i: 'koto', o: 5, v: 0.5, rv: 0.45 },
+      fl: { i: 'shakuhachi', o: 4, v: 0.66, rv: 0.4 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.26, rv: 0.4, pan: -0.25 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.42, rv: 0.45 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.5 },
       bells: { perc: true, v: 0.4, rv: 0.5, pan: 0.35 },
     },
@@ -595,7 +614,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: SNOW_A_CH, lead: SNOW_A },
       B: { bars: 8, ch: SNOW_B_CH, fl: SNOW_B },
       A2: { bars: 8, ch: SNOW_A_CH, fl: SNOW_A, lead: SNOW_A_CM },
-      C: { bars: 8, ch: SNOW_C_CH, lead: SNOW_C, arp: "0 2 4 2 1' 2" },
+      C: { bars: 8, ch: SNOW_C_CH, lead: SNOW_C, arp: "0 2 4 2 1' 2", bells: 'j.....|......|i.....|......' },
       B2: { bars: 8, ch: SNOW_B_CH, lead: SNOW_B, dyn: 0.9 },
     },
     form: ['intro', 'A', 'B', 'A2', 'C', 'B2'],
@@ -611,14 +630,15 @@ RB.audio = RB.audio || {};
   S('observatory', {
     title: 'The Observatory',
     kind: 'area',
+    chapter: 4,
     motifs: ['road'],
-    notes: 'C lydian at 72: wheeling celesta sixteenths through a dotted echo, the tick of the old mechanism, flute and glass above. B lifts the road motif into lydian — the view from the top of the world — with a slow glass line falling beneath it on the repeat.',
+    notes: 'C lydian at 72, re-orchestrated for Chapter 4 — same melody, form and motifs: wheeling koto sixteenths through a dotted echo, the tick of the old mechanism, shakuhachi and glass above. B lifts the road motif into lydian on koto — the view from the top of the world — over a held shō; on the repeat a slow glass line falls beneath it.',
     key: 'C', mode: 'lydian', bpm: 72,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.75, rv: 0.4 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.66, rv: 0.4 },
       glass: { i: 'glass', o: 5, v: 0.8, rv: 0.5, pan: -0.15 },
-      cel: { i: 'celesta', o: 5, v: 0.55, rv: 0.45, pan: 0.15 },
-      arp: { i: 'celesta', o: 4, pat: true, u: 0.25, v: 0.3, rv: 0.35, dl: 0.35, pan: 0.3 },
+      cel: { i: 'koto', o: 5, v: 0.48, rv: 0.45, pan: 0.15 },
+      arp: { i: 'koto', o: 4, pat: true, u: 0.25, v: 0.22, rv: 0.35, dl: 0.35, pan: 0.3 },
       pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.45, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
       clock: { perc: true, v: 0.35, pan: -0.35 },
@@ -631,7 +651,7 @@ RB.audio = RB.audio || {};
       A2: { bars: 8, ch: OBS_A_CH, glass: OBS_A },
       B2: { bars: 8, ch: OBS_B_CH, lead: OBS_B, glass: OBS_B_LINE },
     },
-    form: ['A', 'B', 'A2', 'B2'],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'A2', { s: 'B2', i: { pad: 'sho' }, o: { pad: 1 } }],
   });
 
   // ============================================================ QUIET ROAD
@@ -673,15 +693,16 @@ RB.audio = RB.audio || {};
   S('lanternfall', {
     title: 'Lanternfall',
     kind: 'area',
+    chapter: 5,
     motifs: ['road', 'hush'],
-    notes: 'A beautiful, too-orderly town (C major, 96): square four-bar phrases in even quarter notes, sequences that answer themselves, Alberti-style harp, a tick on every beat. In B the thirds drain away into open fifths and the Hush motif appears on glass; in C the road motif keeps interrupting off the beat — the last disagreement in town.',
+    notes: 'A beautiful, too-orderly town (C major, 96), re-orchestrated for Chapter 5 — same melody, form and motifs: square four-bar phrases in even quarter notes on koto, sequences that answer themselves, an Alberti koto figure, a tick on every beat, the shamisen doubling in A2. In B the thirds drain away into open fifths under a held shō and the Hush motif appears on glass; in C the road motif keeps interrupting off the beat on shakuhachi — the last disagreement in town.',
     key: 'C', bpm: 96,
     tracks: {
-      lead: { i: 'celesta', o: 5, v: 0.65, rv: 0.35 },
-      pl: { i: 'pluck', o: 4, v: 0.55, rv: 0.25, pan: -0.15 },
-      fl: { i: 'flute', o: 5, v: 0.8, rv: 0.3, pan: 0.2 },
+      lead: { i: 'koto', o: 5, v: 0.5, rv: 0.35 },
+      pl: { i: 'shamisen', o: 4, v: 0.42, rv: 0.25, pan: -0.15 },
+      fl: { i: 'shakuhachi', o: 5, v: 0.66, rv: 0.3, pan: 0.2 },
       glass: { i: 'glass', o: 5, v: 0.9, rv: 0.5 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.4, rv: 0.3, pan: -0.3 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.28, rv: 0.3, pan: -0.3 },
       pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.4, rv: 0.35 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.55 },
       tick: { perc: true, v: 0.4, pan: 0.3 },
@@ -693,7 +714,7 @@ RB.audio = RB.audio || {};
       B: { bars: 8, mode: 'lydian', ch: LF_B_CH, glass: LF_B, arp: '0 . 1 . 0 . 1 .', pad: '0+1', tick: 'g...g...' },
       C: { bars: 8, ch: LF_A_CH, lead: LF_A, fl: LF_C_FL },
     },
-    form: ['A', 'A2', 'B', 'C', 'B'],
+    form: ['A', 'A2', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }],
   });
 
   // ============================================================ BELL TOWER
@@ -706,14 +727,15 @@ RB.audio = RB.audio || {};
   S('belltower', {
     title: 'The Submerged Bell Tower',
     kind: 'area',
+    chapter: 5,
     motifs: ['road', 'hush'],
-    notes: 'D dorian at 60, as if heard under water: a deep FM toll every other bar, drops, dark pads and a bowed line through a long echo. In B the Hush motif and the road motif take turns, phrase by phrase.',
+    notes: 'D dorian at 60, as if heard under water, re-orchestrated for Chapter 5 — same melody, form and motifs: a deep temple-bell toll every other bar, drops, a koto arpeggio and a bowed line through a long echo. In B the Hush motif and the road motif take turns, phrase by phrase, over a held shō; the repeat of A is on shakuhachi.',
     key: 'D', mode: 'dorian', bpm: 60,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.7, rv: 0.45, dl: 0.3 },
       glass: { i: 'glass', o: 5, v: 0.85, rv: 0.55, pan: 0.2 },
       toll: { i: 'toll', o: 2, v: 0.6, rv: 0.55 },
-      arp: { i: 'harp', o: 3, pat: true, v: 0.35, rv: 0.5, dl: 0.2, pan: -0.3 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.5, dl: 0.2, pan: -0.3 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.5, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
       drip: { perc: true, v: 0.45, rv: 0.6, pan: -0.3 },
@@ -724,7 +746,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: BT_A_CH, lead: BT_A },
       B: { bars: 8, ch: BT_B_CH, glass: BT_B_GLASS, lead: BT_B_LEAD },
     },
-    form: ['A', 'B', { s: 'A', i: { lead: 'flute' }, o: { lead: 1 } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { lead: 'shakuhachi' }, o: { lead: 1 } }],
   });
 
   // ================================================================= HUSH
@@ -769,27 +791,28 @@ RB.audio = RB.audio || {};
   S('still_archive', {
     title: 'The Still Archive',
     kind: 'area',
+    chapter: 6,
     motifs: ['road', 'hush'],
-    notes: 'Final dungeon in B minor (80): a low-drum heartbeat and pluck ostinato under a bowed road motif. B is the archive’s own order — B lydian, open fifths, the Hush motif alone on glass, the pulse gone. C drives the road theme’s climbing phrase back in minor over the ostinato.',
+    notes: 'Final dungeon in B minor (80), re-orchestrated for Chapter 6 — same melody, form and motifs: an ōdaiko heartbeat and a koto ostinato under a bowed road motif. B is the archive’s own order — B lydian, open fifths, a held shō, the Hush motif alone on glass, the pulse gone. C drives the road theme’s climbing phrase back in minor on shakuhachi over the ostinato; the last A is on shakuhachi too.',
     key: 'B', mode: 'aeolian', bpm: 80,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.75, rv: 0.35, dl: 0.2 },
-      fl: { i: 'flute', o: 4, v: 0.8, rv: 0.3 },
+      fl: { i: 'shakuhachi', o: 4, v: 0.7, rv: 0.3 },
       glass: { i: 'glass', o: 4, v: 1, rv: 0.55, pan: 0.15 },
-      ost: { i: 'pluck', o: 3, pat: true, v: 0.5, rv: 0.15, pan: -0.25 },
+      ost: { i: 'koto', o: 3, pat: true, v: 0.32, rv: 0.15, pan: -0.25 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: -2, v: 0.45, rv: 0.45 },
       bass: { i: 'bass', o: 1, pat: true, bass: true, v: 0.7 },
-      drum: { perc: true, v: 0.55, rv: 0.2 },
+      drum: { perc: true, v: 0.5, rv: 0.2 },
       tick: { perc: true, v: 0.35, pan: 0.3 },
     },
     echo: { beats: 0.75, fb: 0.3, mix: 0.25 },
-    all: { ost: "0 2 1' 2 0 2 1' 2", pad: TRI, bass: '0 - - 0 - - 0 -', drum: 'l.l.....|........', tick: '....x...' },
+    all: { ost: "0 2 1' 2 0 2 1' 2", pad: TRI, bass: '0 - - 0 - - 0 -', drum: 'z.z.....|........', tick: '....x...' },
     sections: {
       A: { bars: 8, ch: SA_A_CH, lead: SA_A },
       B: { bars: 8, mode: 'lydian', ch: SA_B_CH, glass: SA_B, ost: null, drum: null, pad: '0+1', tick: 'g...g...' },
-      C: { bars: 8, ch: MINOR_B_CH, fl: ROAD_B, drum: 'l..l..l.' },
+      C: { bars: 8, ch: MINOR_B_CH, fl: ROAD_B, drum: 'z..z..z.' },
     },
-    form: ['A', 'B', 'C', { s: 'A', i: { lead: 'flute' } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'A', i: { lead: 'shakuhachi' }, o: { lead: 1 } }],
   });
 
   // =============================================================== FINALE
@@ -801,28 +824,29 @@ RB.audio = RB.audio || {};
   S('finale', {
     title: 'Which Promises We Keep',
     kind: 'area',
+    chapter: 6,
     motifs: ['road', 'hush'],
-    notes: 'Final confrontation (92). A: the road motif in D minor over a 3+3+2 drum while the Hush motif crawls in the bass. B: the theme’s climbing phrase, still in minor, with choir. C/D: the theme breaks into D major — and the Hush motif returns beneath it with a natural fourth, resolved instead of erased.',
+    notes: 'Final confrontation (92), re-orchestrated for Chapter 6 — same melody, form and motifs. A: the road motif in D minor on shakuhachi over a 3+3+2 ōdaiko and shime pulse and a shamisen ostinato, while the Hush motif crawls in the bowed bass. B: the theme’s climbing phrase, still in minor, with choir. C/D: the theme breaks into D major over koto arpeggios — and the Hush motif returns beneath it on glass with a natural fourth, resolved instead of erased.',
     key: 'D', mode: 'aeolian', bpm: 92,
     tracks: {
-      lead: { i: 'flute', o: 5, v: 0.85, rv: 0.3 },
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.3 },
       low: { i: 'bowed', o: 3, v: 0.75, rv: 0.3, pan: -0.15 },
       glass: { i: 'glass', o: 4, v: 0.9, rv: 0.5, pan: 0.2 },
-      bell: { i: 'bell', o: 5, v: 0.45, rv: 0.4, pan: 0.25 },
+      bell: { i: 'koto', o: 5, v: 0.42, rv: 0.4, pan: 0.25 },
       choir: { i: 'choir', o: 4, hold: true, fold: 'all', win: -3, v: 0.55, rv: 0.45 },
-      ost: { i: 'pluck', o: 4, pat: true, v: 0.45, rv: 0.15, pan: -0.25 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.45, rv: 0.35, pan: -0.3 },
+      ost: { i: 'shamisen', o: 4, pat: true, v: 0.34, rv: 0.15, pan: -0.25 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.35, pan: -0.3 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.4, rv: 0.4 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.7 },
-      drum: { perc: true, v: 0.6 },
-      shk: { perc: true, v: 0.35, pan: 0.3 },
+      drum: { perc: true, v: 0.55 },
+      shk: { perc: true, v: 0.28, pan: 0.3 },
     },
-    all: { ost: "0 2 1' 0 2 1' 0 2", pad: TRI, bass: '0 . . 0 . . 0 .', drum: 'l..l..t.|l..l..tt', shk: '..s...s.' },
+    all: { ost: "0 2 1' 0 2 1' 0 2", pad: TRI, bass: '0 . . 0 . . 0 .', drum: 'z..z..e.|z..z..ee', shk: '..a.....' },
     sections: {
       A: { bars: 8, ch: FIN_A_CH, lead: FIN_A, low: FIN_A_LOW },
       B: { bars: 8, ch: MINOR_B_CH, lead: ROAD_B, choir: TRI },
-      C: { bars: 8, mode: 'ionian', ch: ROAD_A_CH, lead: ROAD_A, glass: FIN_C_GLASS, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'l.......' },
-      D: { bars: 8, mode: 'ionian', ch: ROAD_B_CH, lead: ROAD_B, bell: ROAD_B, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'l...l...' },
+      C: { bars: 8, mode: 'ionian', ch: ROAD_A_CH, lead: ROAD_A, glass: FIN_C_GLASS, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'z.......' },
+      D: { bars: 8, mode: 'ionian', ch: ROAD_B_CH, lead: ROAD_B, bell: ROAD_B, choir: TRI, arp: ARP4, ost: null, bass: BASS4, drum: 'z...z...' },
     },
     form: ['A', 'B', { s: 'A', i: { lead: 'bowed' }, o: { lead: -1 } }, 'C', 'D'],
   });
@@ -1151,6 +1175,14 @@ RB.audio = RB.audio || {};
       B: { bars: 8, ch: WON_B_CH, glass: WON_B },
     },
     form: ['A', 'B', { s: 'A', i: { lead: 'celesta' } }],
+  });
+
+  Object.assign(_.mat, {
+    REED_A, REED_A_CH, SALT_A, SALT_A_CH, SALT_B, SALT_B_CH, SALT_C, SALT_C_CH,
+    CIN_A, CIN_A_CH, CIN_A_CM, CIN_B, CIN_B_CH, CIN_C, CIN_C_CH, KILN_A, KILN_A_CH, KILN_B, KILN_B_CH,
+    SNOW_A, SNOW_A_CH, SNOW_B, SNOW_B_CH, SNOW_C, SNOW_C_CH, OBS_A, OBS_A_CH, OBS_B, OBS_B_CH, QR_B1, QR_B2, QR_B_CH,
+    LF_A, LF_A_CH, BT_A, BT_A_CH, SA_A, SA_A_CH, SA_B, SA_B_CH, FIN_A, FIN_A_CH,
+    BOSS_HUSH, HUSH_A, HUSH_A_CH, FIN_C_GLASS, ATL_A, ATL_A_CH, ATL_C, ATL_C_CH, SOR_A, SOR_A_CH, WON_A, WON_A_CH,
   });
 
   _.REQUIRED_SONGS = [

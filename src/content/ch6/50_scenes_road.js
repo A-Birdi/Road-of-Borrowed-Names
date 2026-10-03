@@ -6,7 +6,7 @@ RB.script.add(`
 @scene sa.arrive
 !set sa_arrived
 !chapter 6
-!music quiet_road
+!music sa_road
 !card {第六章|だいろくしょう} 　 {静寂|しじま} の {書庫|しょこ} || Chapter Six — The Still Archive
 narr: {灯落|ひおち} の {上|うえ} で 、 {道|みち} は {急|きゅう} に {静|しず}か に なる 。 || Above Lanternfall, the road goes suddenly quiet.
 narr: {鳥|とり} の {声|こえ} も 、 {風|かぜ} の {音|おと} も 、 {少|すこ}し ずつ {遠|とお}く なって いく 。 || Birdsong and wind both drop away, a little at a time.

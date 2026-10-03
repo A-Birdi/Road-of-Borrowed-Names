@@ -282,6 +282,7 @@ narr: タミ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|
 ?(comp=suzu) comp: {台詞|せりふ} を {忘|わす}れた {役者|やくしゃ} の {顔|かお} ね 。{誰|だれ} か が {台本|だいほん} を {見|み}せて あげない と 。|| That's the face of an actor who's forgotten her line. Someone needs to show her the script.
 
 @scene lf.yae_minutes
+!music lf_flood
 lf_yae: それ は …… {議事録|ぎじろく} ？ {見|み}せて ください 。|| Are those… minutes? Let me see.
 narr: タミ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Tami puts on her spectacles and begins, slowly, to read.
 lf_yae: 「{高瀬|たかせ} より {返答|へんとう} 。{必要|ひつよう} なら {開|あ}ける 。」|| "Reply from Takase: we'll open it if it's needed."
@@ -309,6 +310,7 @@ lf_yae[smile]: …… {変|へん} です ね 。{読|よ}んで いたら 、{�
 !set lf_yae_told
 !quest lf_main 5
 !autosave
+!music lf_records
 
 @scene lf.yae_again
 lf_yae: {水門|すいもん} の トクジ の ところ へ {行|い}きなさい 。{町|まち} の {南|みなみ} 、{湖|みずうみ} の {岸|きし} です 。|| Go and see Tokuji at the sluice. South of town, on the lake shore.
@@ -326,6 +328,7 @@ narr: トクジ は {答|こた}えた が 、{少|すこ}し も {動|うご}�
 ?(comp=suzu) comp: {返事|へんじ} は 「はい」 、{体|からだ} は 「いいえ」 。{正直|しょうじき} な {人|ひと} ね 。|| His answer says yes, his body says no. An honest man.
 
 @scene lf.tokuji_story
+!music lf_flood
 lf_tokuji: …… {議事録|ぎじろく} か 。{懐|なつ}かしい {字|じ} だ 。|| …The minutes, eh. There's handwriting I haven't seen in a long while.
 lf_tokuji: あの {夜|よる} 、{俺|おれ} は {水門|すいもん} の {番|ばん} だった 。|| That night, I was keeping the gate.
 lf_tokuji: トウヤ が {走|はし}って きた 。「トクジ さん 、{下|した} の {水門|すいもん} を {開|あ}けて 。{高瀬|たかせ} が {上|うえ} を {開|あ}ける ！」|| Tōya came running. "Tokuji, open the lower gate! Takase's opening the upper one!"
@@ -351,6 +354,7 @@ lf_tokuji: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{塔|�
 !set lf_tokuji_told lf_tokuji_boat
 !quest lf_main 6
 !autosave
+!music lf_records
 
 @scene lf.tokuji_again
 lf_tokuji: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{札|ふだ} は 、よく {読|よ}め 。|| The boat's at the end of the pier. Read the plates carefully.

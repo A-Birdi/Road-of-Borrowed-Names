@@ -20,7 +20,7 @@ narr: ページ は {床|ゆか} に {落|お}ちて 、 {静|しず}か に {�
 
 @scene sa.heart_kasane
 !if seen.sa.heart_kasane -> again
-!music hush
+!music sa_kasane
 kasane: {来|き}ました ね 。 || You've come.
 kasane: {十分|じゅうぶん} {読|よ}みました か 。 わたし が {間違|まちが}って いる と {言|い}う に は 。 || Have you read enough — to tell me I'm wrong?
 !choice
@@ -111,6 +111,7 @@ kasane: …… {持|も}って {来|き}て くれた の です ね 。 || …Y
 !call sa.toya_read
 
 @scene sa.toya_read
+!music sa_toya
 narr: $name は 、 {綴|つづ}り を カサネ に {渡|わた}した 。 {雨|あめ} の {音|おと} 。 {石|いし} の {廊下|ろうか} 。 {若|わか}い {二人|ふたり} の {声|こえ} 。 || You hand Kasane the folio. The sound of rain. A stone corridor. Two young voices.
 kasane[closed]: …… 「 {誰|だれ} も {開|あ}けない 」 。 わたし が 、 そう {言|い}った 。 || …"No one is opening it." I said that.
 narr: $name は 、 {鍵|かぎ} の {控|ひか}え と {議会|ぎかい} の {貼|は}り{紙|がみ} を 、 {床|ゆか} に {並|なら}べた 。 || You lay the key slip and the council notice out on the floor beside it.

@@ -463,7 +463,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   C.maps['lf.bellhall'] = Object.assign({}, TOWER, {
     name: T('Bell Chamber', '{鐘|かね} の {間|ま}'),
-    music: [{ if: 'lf_bell_rung', id: 'wonder' }, { id: 'hush' }],
+    music: [{ if: 'lf_bell_rung', id: 'lf_bell' }, { id: 'hush' }],
     ambient: { dark: 0.5, playerLight: 50, tint: 'rgba(30,50,110,0.16)' },
     terrain: K.build(16, 14, '#', (k) => {
       k.rect(1, 2, 14, 11, 'w');

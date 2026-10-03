@@ -6,7 +6,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 @scene sa.kasane_meet
 !set sa_met_kasane
-!music hush
+!music sa_kasane
 !move pc up 4
 narr: {長|なが}い {机|つくえ} の {列|れつ} の {向|む}こう に 、 {誰|だれ}か が {立|た}って いる 。 || Beyond the long rows of desks, someone is standing.
 narr: {白|しろ}い {上着|うわぎ} 。 {袖|そで} に {墨|すみ} の しみ 。 {眠|ねむ}って いない {人|ひと} の {目|め} 。 || A pale coat. Ink stains on the cuffs. The eyes of someone who has not slept.
@@ -52,6 +52,7 @@ narr: カサネ は {棚|たな} の {間|あいだ} に {消|き}えた 。 {�
 ?(comp=suzu) suzu[think]: {丁寧|ていねい} な {悪役|あくやく} って 、 {一番|いちばん} {困|こま}る んだ よ ね 。 {嫌|きら}い に なりにくい から 。 || Polite villains are the worst. They're so hard to hate.
 !quest sa_main 1
 !journal {閲覧室|えつらんしつ} で カサネ に {会|あ}った 。 {目録|もくろく} を {読|よ}めば 、 {書架|しょか} へ の {扉|とびら} が {開|ひら}く と いう 。 || Met Kasane in the Reading Room. Reading the catalogue should open the door to the Stacks.
+!music still_archive
 
 @scene sa.clerk_first
 sa_clerk: {閲覧|えつらん} の お{客様|きゃくさま} です か 。 {整理|せいり}{番号|ばんごう} を どうぞ 。 || A reader? Your call number, please.

@@ -5,7 +5,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene co.arrive
-!music road
+!music co_road
 !chapter 3
 !card {第三章|だいさんしょう} ・ {灰実|はいみ}の{里|さと} || Chapter Three — Cinder Orchard
 narr: {坂道|さかみち} の {両側|りょうがわ} に 、 {実|み} を つけた {柿|かき} の {木|き} が {並|なら}んで いる 。 || The road climbs between persimmon trees heavy with fruit.

@@ -99,7 +99,7 @@ hoshino: …… さあ 、 {火|ひ} を {入|い}れよう 。 || …Now, let's
 narr: ホシノ が {古|ふる}い {火打|ひう}ち{石|いし} を {打|う}つ 。 {小|ちい}さな {火花|ひばな} に 、 あなた は {昨夜|ゆうべ} の {字|じ} を {添|そ}えた 。 {炎|ほのお} が 、 {芯|しん} を {抱|だ}く よう に {立|た}ち{上|あ}がる 。 || Hoshino strikes his old flint. To the tiny spark, you add last night's word. The flame rises as if embracing the wick.
 !sfx light
 !set sb_lamp_lit
-!music wonder
+!music sb_lamp
 narr: {丸屋根|まるやね} の {窓|まど} から 、 {光|ひかり} が {夜|よる} の {山|やま} へ {流|なが}れ{出|だ}した 。 {谷|たに} を {越|こ}え 、 {南東|なんとう} へ 、 {灯落|ひおち} の ほう へ 。 || Light pours from the dome's window out into the mountain night — across the valley, southeast, toward Lanternfall.
 ?(comp=nao) comp[smile]: …… {届|とど}いた な 。 {宛名|あてな} なし でも 、 {届|とど}く もの が ある 。 || …It got there. Some things arrive even without an address.
 ?(comp=mio) comp[smile]: {温|あたた}かい 。 …… ちゃんと 、 {温|あたた}かい {灯|あか}り です 。 || Warm. …A properly warm light.
@@ -132,7 +132,7 @@ RB.script.add(`
 @scene sb.eve_start
 !set sb_evening_seen
 !set sb_evening
-!music wonder
+!music sb_lamp
 narr: {日|ひ} が {暮|く}れる と 、 {雪鈴|ゆきすず} の {人|ひと} たち は {広場|ひろば} に {集|あつ}まって 、 {北|きた} の {空|そら} を {見上|みあ}げた 。 || As night falls, the people of Snowbell gather in the square and look up at the northern sky.
 narr: {山|やま} の {上|うえ} に 、 {灯|あか}り が ともって いる 。 {十日|とおか} {前|まえ} と {同|おな}じ {場所|ばしょ} に 、 {同|おな}じ {色|いろ} で 。 {石段|いしだん} の {灯|あか}り も 、 {一|ひと}つ {残|のこ}らず ついて いた 。 || On the mountain, the lamp is burning — in the same place as ten days ago, the same colour. Every lantern on the stair is lit too, every last one.
 yae[laugh]: {十一日|じゅういちにち} ぶり ！ …… {数|かず} 、 ちゃんと {思|おも}い{出|だ}せる よ 。 {今|いま} なら 、 {何年|なんねん} {目|め} か も わかる 。 {十二年|じゅうにねん} よ 。 || Eleven days! …And I can remember the numbers properly now. I even know how many years it's been. Twelve.

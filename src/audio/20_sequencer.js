@@ -654,7 +654,7 @@ RB.audio = RB.audio || {};
         seconds = Math.round(s.length * 10) / 10;
         loopSeconds = s.loop ? Math.round((s.length - s.loopStart) * 10) / 10 : null;
       } catch (e) { /* reported by tests */ }
-      return { id, title: d.title, motifs: (d.motifs || []).slice(), notes: d.notes || '', seconds, loopSeconds, loop: d.loop !== false };
+      return { id, title: d.title, kind: d.kind || null, chapter: d.chapter || null, motifs: (d.motifs || []).slice(), notes: d.notes || '', seconds, loopSeconds, loop: d.loop !== false };
     });
   };
 

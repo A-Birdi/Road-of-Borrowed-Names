@@ -287,6 +287,7 @@ wataru[sad]: {僕|ぼく} が やりました 。 || I did it.
 wataru: {母|はは} の {船|ふね} を {直|なお}す ため に 、 {灯落|ひおち} で お{金|かね} を {借|か}りました 。 {会社|かいしゃ} から の {給料|きゅうりょう} は 、 {春|はる} から ずっと {遅|おく}れて いて …… 。 || I borrowed money in Lanternfall to repair my mother's boat. Our wages from the company have been late since spring…
 wataru: そしたら {嵐|あらし} で 、 {船|ふね} が また {壊|こわ}れて 。 {督促状|とくそくじょう} が {来|き}て 。 {開|あ}ける の が {怖|こわ}くて 、 まだ {開|あ}けて いません 。 || Then the storm wrecked the boat again. And the final notice came. I was too scared to open it. I still haven't.
 wataru: {荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。 || I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.
+!music sg_confession
 wataru[sad]: {灯台|とうだい} の {灯|ひ} が {細|ほそ}く なった {夜|よる} の こと 、 {聞|き}きました 。 ソウタ さん が …… 。 {僕|ぼく} の せい です 。 || I heard about the night the lighthouse burned low. Sōta… That was my fault.
 ?(comp=nao) comp: …… {言|い}えた じゃん 。 {一番|いちばん} {重|おも}い {荷物|にもつ} は 、 {下|お}ろす {直前|ちょくぜん} が {一番|いちばん} {重|おも}い ん だ よ 。 || …You said it. The heaviest load's always heaviest right before you put it down.
 ?(comp=mio) comp[sad]: {言|い}って くれて 、 ありがとう 。 …… でも 、 {優|やさ}しく する の と 、 {許|ゆる}す の は {違|ちが}う 。 {港長|こうちょう} さん に も 、 {灯台|とうだい} に も 、 ちゃんと {言|い}わなきゃ 。 || Thank you for telling us. …But being kind isn't the same as letting it go. You have to tell the harbourmaster, and the lighthouse, properly.
@@ -338,6 +339,7 @@ narr: {封|ふう} が {切|き}られた 。 {誰|だれ} も {何|なに} も 
 ?(comp=suzu) comp: （…… {開|あ}けた わ ね 。 {一番|いちばん} {難|むずか}しい ところ よ 。） || (…He opened it. That's the hardest part.)
 wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を {書|か}かない と 。 …… よければ 、 {後|あと} で {寄|よ}って ください 。 || I'll go back to the warehouse. I have a reply to write. …Please stop by later, if you would.
 !autosave
+!music saltglass
 
 @scene sg.wataru_letter
 wataru: {黒部|くろべ}{商会|しょうかい} へ の {返事|へんじ} です 。 …… {待|ま}って ほしい 、 と {書|か}きたい ん です が 、 {言葉|ことば} が {決|き}まらなくて 。 || My reply to Kurobe & Co. …I want to ask them to wait, but I can't settle on the words.

@@ -60,7 +60,7 @@ RB.world = (function () {
     refreshActors();
     placeCompanion();
     unstick(W.player);
-    if (m.def.music && RB.audio) RB.audio.playSong(typeof m.def.music === 'function' ? m.def.music(st) : pickMusic(m.def.music, st));
+    if (m.def.music && RB.audio) RB.audio.playSong(musicFor(m.def, st));
     RB.render.invalidate();
     RB.bus.emit('map:enter', { id: mapId });
   }
@@ -68,6 +68,11 @@ RB.world = (function () {
     if (typeof music === 'string') return music;
     for (const m of music) if (!m.if || RB.state.test(st, m.if)) return m.id;
     return null;
+  }
+  // the song a map plays now (null for maps that keep whatever is playing)
+  function musicFor(def, st) {
+    if (!def || !def.music) return null;
+    return typeof def.music === 'function' ? def.music(st) : pickMusic(def.music, st);
   }
   function playerLook() {
     return RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
@@ -988,5 +993,6 @@ RB.world = (function () {
     W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
+    musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
   };
 })();

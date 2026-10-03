@@ -9,7 +9,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- The coast road ------------------------------------------------------------------
   C.maps['sg.road'] = {
-    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}い の {道|みち}' }, region: 'saltglass', music: 'road',
+    name: { en: 'The Coast Road', jp: '{海沿|うみぞ}い の {道|みち}' }, region: 'saltglass', music: 'sg_road',
     ambient: { weather: null },
     terrain: K.build(40, 22, '.', (k) => {
       k.ragged('top', 'T', 3, 41);
@@ -575,7 +575,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   C.maps['sg.da_vault'] = Object.assign({}, DA, {
     name: { en: 'Drowned Archive — Returns Counter', jp: '{沈|しず}んだ{書庫|しょこ}・{返送|へんそう}{窓口|まどぐち}' },
-    music: [{ if: 'sg_boss_done', id: 'wonder' }, { id: 'drowned_archive' }],
+    music: [{ if: 'sg_boss_done', id: 'sg_letters' }, { id: 'drowned_archive' }],
     ambient: { weather: 'pages', dark: 0.38, playerLight: 56, tint: 'rgba(30,60,110,0.14)' },
     terrain: K.build(20, 16, '#', (k) => {
       k.rect(1, 2, 18, 13, '+');

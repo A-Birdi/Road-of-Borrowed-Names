@@ -1235,7 +1235,9 @@ RB.combat = (function () {
     members = [enemy].concat(ids.slice(1).map((id) => Object.assign({ id }, RB.content.enemies[id])));
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
-    RB.audio && RB.audio.playSong(enemy.music || (enemy.boss ? 'boss' : 'battle'));
+    // the zone's battle or boss theme (src/audio/39_zones.js); enemy.music still overrides
+    const here = RB.world.W.map;
+    RB.audio && RB.audio.playSong(RB.audio.battleSong ? RB.audio.battleSong(enemy, here && here.def, s.map) : (enemy.music || (enemy.boss ? 'boss' : 'battle')));
     await RB.ui.fade(true, 200);
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
@@ -1439,7 +1441,8 @@ RB.combat = (function () {
       RB.game.popMode('combat');
       await RB.ui.fade(false, 200);
       const m = RB.world.W.map;
-      if (m && m.def.music) RB.audio && RB.audio.playSong(typeof m.def.music === 'string' ? m.def.music : (m.def.music.find((x) => !x.if || RB.state.test(s, x.if)) || {}).id);
+      const back = m && RB.world.musicFor(m.def, s);
+      if (back) RB.audio && RB.audio.playSong(back);
       else if (prevSong) RB.audio && RB.audio.playSong(prevSong);
       st = null; members = [];
     }
