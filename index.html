@@ -15264,15 +15264,16 @@ RB.audio = RB.audio || {};
   S('lanternfall', {
     title: 'Lanternfall',
     kind: 'area',
+    chapter: 5,
     motifs: ['road', 'hush'],
-    notes: 'A beautiful, too-orderly town (C major, 96): square four-bar phrases in even quarter notes, sequences that answer themselves, Alberti-style harp, a tick on every beat. In B the thirds drain away into open fifths and the Hush motif appears on glass; in C the road motif keeps interrupting off the beat — the last disagreement in town.',
+    notes: 'A beautiful, too-orderly town (C major, 96), re-orchestrated for Chapter 5 — same melody, form and motifs: square four-bar phrases in even quarter notes on koto, sequences that answer themselves, an Alberti koto figure, a tick on every beat, the shamisen doubling in A2. In B the thirds drain away into open fifths under a held shō and the Hush motif appears on glass; in C the road motif keeps interrupting off the beat on shakuhachi — the last disagreement in town.',
     key: 'C', bpm: 96,
     tracks: {
-      lead: { i: 'celesta', o: 5, v: 0.65, rv: 0.35 },
-      pl: { i: 'pluck', o: 4, v: 0.55, rv: 0.25, pan: -0.15 },
-      fl: { i: 'flute', o: 5, v: 0.8, rv: 0.3, pan: 0.2 },
+      lead: { i: 'koto', o: 5, v: 0.5, rv: 0.35 },
+      pl: { i: 'shamisen', o: 4, v: 0.42, rv: 0.25, pan: -0.15 },
+      fl: { i: 'shakuhachi', o: 5, v: 0.66, rv: 0.3, pan: 0.2 },
       glass: { i: 'glass', o: 5, v: 0.9, rv: 0.5 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.4, rv: 0.3, pan: -0.3 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.28, rv: 0.3, pan: -0.3 },
       pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.4, rv: 0.35 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.55 },
       tick: { perc: true, v: 0.4, pan: 0.3 },
@@ -15284,7 +15285,7 @@ RB.audio = RB.audio || {};
       B: { bars: 8, mode: 'lydian', ch: LF_B_CH, glass: LF_B, arp: '0 . 1 . 0 . 1 .', pad: '0+1', tick: 'g...g...' },
       C: { bars: 8, ch: LF_A_CH, lead: LF_A, fl: LF_C_FL },
     },
-    form: ['A', 'A2', 'B', 'C', 'B'],
+    form: ['A', 'A2', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }],
   });
 
   // ============================================================ BELL TOWER
@@ -15297,14 +15298,15 @@ RB.audio = RB.audio || {};
   S('belltower', {
     title: 'The Submerged Bell Tower',
     kind: 'area',
+    chapter: 5,
     motifs: ['road', 'hush'],
-    notes: 'D dorian at 60, as if heard under water: a deep FM toll every other bar, drops, dark pads and a bowed line through a long echo. In B the Hush motif and the road motif take turns, phrase by phrase.',
+    notes: 'D dorian at 60, as if heard under water, re-orchestrated for Chapter 5 — same melody, form and motifs: a deep temple-bell toll every other bar, drops, a koto arpeggio and a bowed line through a long echo. In B the Hush motif and the road motif take turns, phrase by phrase, over a held shō; the repeat of A is on shakuhachi.',
     key: 'D', mode: 'dorian', bpm: 60,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.7, rv: 0.45, dl: 0.3 },
       glass: { i: 'glass', o: 5, v: 0.85, rv: 0.55, pan: 0.2 },
       toll: { i: 'toll', o: 2, v: 0.6, rv: 0.55 },
-      arp: { i: 'harp', o: 3, pat: true, v: 0.35, rv: 0.5, dl: 0.2, pan: -0.3 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.5, dl: 0.2, pan: -0.3 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.5, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
       drip: { perc: true, v: 0.45, rv: 0.6, pan: -0.3 },
@@ -15315,7 +15317,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: BT_A_CH, lead: BT_A },
       B: { bars: 8, ch: BT_B_CH, glass: BT_B_GLASS, lead: BT_B_LEAD },
     },
-    form: ['A', 'B', { s: 'A', i: { lead: 'flute' }, o: { lead: 1 } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { lead: 'shakuhachi' }, o: { lead: 1 } }],
   });
 
   // ================================================================= HUSH
@@ -16538,6 +16540,272 @@ RB.audio = RB.audio || {};
 })(RB.audio);
 
 
+/* ==== src/audio/34_songs_ch5.js ==== */
+/* Chapter 5 — Lanternfall. The lantern road down to the town, the records
+ * and council chambers, the town after the bell, the battle and boss
+ * themes, and the cues for the story of the flood and the drowned bell
+ * ringing. The town and bell-tower themes are re-orchestrated in place in
+ * 30_songs.js. Notation: see 30_songs.js.
+ *
+ * Intensity, one step up from Chapter 4: the battle is faster and busier,
+ * with the Hush's colour (the raised fourth over open fifths) breaking into
+ * it; the boss rings a bell under everything. After the bell, the town's
+ * own tune comes back noisy, swung and arguing with itself. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  const M = _.mat;
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 5;
+    _.songDefs[id] = def;
+  }
+
+  // ========================================================= LANTERN ROAD
+  const LFR_A = "5, - 3 - - 2 1 - | 2 - - - 4 - 5 - | 6 - - - 5 - 4 - | 5 - - - - - . . | 1' - 7 - 5 - 4 - | 5 - 3 - 2 - 1 - | 2 - 4 - 5 - 7 - | 5 - - - - - . .";
+  const LFR_A_CH = '1 7 4 5 3 1 7 5';
+  const LFR_C = '1 - - - 3 - 2 - | 1 - - - 7, - - - | 6, - - - 7, - 1 - | 2 - - - - - . . | 3 - - - 4 - 5 - | 3 - - - 2 - 1 - | 7, - 1 - 2 - 7, - | 1 - - - - - . .';
+  const LFR_C_CH = '1 6 4 5 3 4 5 1';
+
+  S('lf_road', {
+    title: 'The Lantern Road Down',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'Chapter 5 route (E dorian, 100): the lantern road down to the lake town. The road motif opens a shakuhachi tune over koto and a shime-daiko walk; B moves to C and the shamisen plays the Lanternfall tune in its square, even steps, a clock ticking under it — the orderly town ahead; C turns to E minor on koto with a bowed line and a rin, the lake and what it covered.',
+    key: 'E', mode: 'dorian', bpm: 100, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.66, rv: 0.32 },
+      sham: { i: 'shamisen', o: 4, v: 0.48, rv: 0.2, pan: 0.15 },
+      koto: { i: 'koto', o: 4, v: 0.55, rv: 0.35, pan: -0.1 },
+      low: { i: 'bowed', o: 3, pat: true, bass: true, v: 0.38, rv: 0.4, pan: -0.15 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.28, rv: 0.3, pan: -0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.3, rv: 0.4 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.6 },
+      perc: { perc: true, v: 0.42 },
+      tick: { perc: true, v: 0.3, pan: 0.3 },
+    },
+    all: { arp: "0 2 1' 2 0 2 1' 2", pad: M.TRI, bass: '0 - - 0 2 - - -', perc: 'p...e..p|..p.e...' },
+    sections: {
+      intro: { bars: 2, ch: '1 7', lead: '5 - - - - - - - | 4 - - - - - . .', perc: null, bass: null },
+      A: { bars: 8, ch: LFR_A_CH, lead: LFR_A },
+      B: { bars: 8, key: 'C', mode: 'ionian', ch: M.LF_A_CH, sham: M.LF_A, arp: '0 2 1 2 0 2 1 2', tick: 'x.x.x.x.', perc: 'w.......|w.......' },
+      C: { bars: 8, mode: 'aeolian', ch: LFR_C_CH, koto: LFR_C, low: '0 - - - - - - -', perc: 'i.......|........|........|........', dyn: 0.85 },
+      A2: { bars: 8, ch: LFR_A_CH, lead: LFR_A, sham: LFR_A, perc: 'p...e..p|..p.e.p.' },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'A2', o: { sham: 0 } }],
+  });
+
+  // ================================================= RECORDS AND COUNCIL
+  const LFC_A = '1 . 2 . 3 . 5 . | 4 - 3 - . . . . | 2 . 3 . 4 . 6 . | 5 - - - . . . . | 1 . 2 . 3 . 5 . | 6 - 5 - 4 - 3 - | 2 - 3 - 7, - . . | 1 - - - . . . .';
+  const LFC_A_CH = '1 4 7 5 1 6 5 1';
+  const LFC_B_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - - - - - | .:8';
+  const LFC_B_KOTO = '.:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - . . . . | .:8 | .:8 | .:8 | .:8';
+  const LFC_B_CH = '1P 1P 2P 2P 1P 1P 2P 1P';
+
+  S('lf_records', {
+    title: 'Public Records',
+    kind: 'area',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 5 records hall, council chamber, basement stacks and the sluice shore before the bell (A minor, 92): staccato koto questions over a shamisen walking figure, a clock and a hyōshigi keeping office hours. B is what the records were made to forget: A lydian over open fifths and a held shō, the Hush motif on glass in even notes, the road motif slipping through on koto. The questions return on shamisen.',
+    key: 'A', mode: 'aeolian', bpm: 92,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.58, rv: 0.25, pan: 0.1 },
+      frag: { i: 'koto', o: 4, v: 0.45, rv: 0.45, dl: 0.3, pan: 0.3 },
+      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.5, pan: -0.15 },
+      walk: { i: 'shamisen', o: 3, pat: true, bass: true, v: 0.38, rv: 0.1, pan: -0.2 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.34, rv: 0.4 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.52 },
+      tick: { perc: true, v: 0.35, pan: -0.25 },
+    },
+    echo: { beats: 0.75, fb: 0.3, mix: 0.25 },
+    all: { walk: "0 . 2 . 1' . 2 .", pad: '0+1+3', bass: '0 - - - - - - -', tick: 'y...x.x.|....x...' },
+    sections: {
+      A: { bars: 8, ch: LFC_A_CH, koto: LFC_A },
+      B: { bars: 8, mode: 'lydian', ch: LFC_B_CH, glass: LFC_B_GLASS, frag: LFC_B_KOTO, walk: null, pad: '0+1', tick: 'g...g...', dyn: 0.9 },
+    },
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { koto: 'shamisen' } }, { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }],
+  });
+
+  // ==================================================== THE TOWN, AFTER
+  const LFT_ANS = ".:8 | . . . . 1' - 7 - | .:8 | . . . . 5 - 6 - | .:8 | . . . . 3' - 2' - | .:8 | . . . . 1' - . .";
+  const LFT_CANON = ". . . . 5 - 3 - | 4 - 2 - 3 - 1 - | 2 - 7, - 1 - 3 - | 5 - 1' - 7 - - - | 5 - - - 6 - 4 - | 5 - 3 - 4 - 2 - | 3 - 1 - 2 - 5 - | 4 - 2 - 1 - - -";
+
+  S('lf_town_after', {
+    title: 'Lanternfall, Talking Back',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'Lanternfall after the bell (C, 104, swung): the same town tune, no longer square. The shamisen plays it with a lilt and the shinobue heckles between phrases; in B the koto and the shakuhachi play it as a canon two beats apart — two people saying the same thing differently, and both allowed to; C is the road motif, warm, on shakuhachi and shinobue. Woodblock, shime, hand pats, a hyōshigi, the atarigane.',
+    key: 'C', bpm: 104, swing: 0.28,
+    tracks: {
+      sham: { i: 'shamisen', o: 4, v: 0.5, rv: 0.2, pan: -0.1 },
+      fue: { i: 'shinobue', o: 5, v: 0.44, rv: 0.25, pan: 0.25 },
+      koto: { i: 'koto', o: 5, v: 0.5, rv: 0.25, pan: 0.2 },
+      shaku: { i: 'shakuhachi', o: 5, v: 0.62, rv: 0.3, pan: -0.2 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.28, rv: 0.12, pan: -0.3 },
+      pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.26, rv: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.6 },
+      perc: { perc: true, v: 0.42 },
+      kane: { perc: true, v: 0.28, pan: 0.3 },
+    },
+    all: { gtr: '. . 0+1+2 . . . 0+1+2 .', bass: "0 - 2 - 1' - 2 -", pad: M.TRI, perc: 'w.e.p.ey|w.e.p.e.', kane: '........|......a.' },
+    sections: {
+      A: { bars: 8, ch: M.LF_A_CH, sham: M.LF_A, fue: LFT_ANS },
+      B: { bars: 8, ch: M.LF_A_CH, koto: M.LF_A, shaku: LFT_CANON, perc: 'w.e.p.e.|w.eep.e.' },
+      C: { bars: 8, ch: M.ROAD_A_CH, shaku: M.ROAD_A, fue: M.ROAD_A, kane: null, perc: 'p...e..p|..p.e...', dyn: 0.9 },
+      A2: { bars: 8, ch: M.LF_A_CH, sham: M.LF_A, koto: LFT_ANS },
+    },
+    form: ['A', 'B', { s: 'C', o: { fue: 1 } }, 'A2'],
+  });
+
+  // ================================================================ BATTLE
+  const BLF_A = '1 - 2 - 4 - 5 - | 4 - 2 - 1 - - - | 7, - 1 - 2 - 4 - | 2 - - - 1 - 7, - | 5, - 3 - - 2 1 - | 2 - 4 - 5 - 4 - | 2 - 1 - 7, - 5, - | 1 - - - - - . .';
+  const BLF_A_CH = '1 4 7 5 1 7 4 1';
+  const BLF_B = '3 - - - 2 - 1 - | 7, - - - 5, - - - | 6, - - - 7, - 1 - | 2 - - - - - . . | 3 - - - 4 - 5 - | 4 - - - 3 - 2 - | 1 - - - 2 - 7, - | 1 - - - - - . .';
+  const BLF_B_CH = '3 7 4 5 3 7 4 1';
+  const BLF_C_LOW = '1 - - - - - - - | 2 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | 5 - - - - - - - | 2 - - - - - - - | 5 - - - - - - - | 5 - - - - - - -';
+  const BLF_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
+  const BLF_C_CH = '1P 1P 2P 2P 1P 2P 5P 5P';
+
+  S('battle_lanternfall', {
+    title: 'Inkweaving — Certainly Not',
+    kind: 'battle',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 5 battle (G dorian, 116). The 3+3+2 pulse on ōdaiko, a shime-daiko in steady eighths, kotsuzumi and ōtsuzumi calling, hyōshigi on the turn of the bar; shamisen and koto ostinati. A: the shamisen leads, the road motif in the middle of its tune; B: a lyrical shakuhachi line over seventh chords that never quite settle; C is the Hush breaking in — G lydian over open fifths with the raised fourth held inside them, the Hush motif on glass in even notes against a climbing bowed line and koto sixteenths; B2 hands the line to the koto.',
+    key: 'G', mode: 'dorian', bpm: 116, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shamisen', o: 4, v: 0.5, rv: 0.2 },
+      shaku: { i: 'shakuhachi', o: 4, v: 0.66, rv: 0.25, pan: 0.1 },
+      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.4, pan: 0.2 },
+      low: { i: 'bowed', o: 3, v: 0.55, rv: 0.25, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.36, rv: 0.12, pan: -0.25 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.26, rv: 0.25, pan: 0.3 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.32, rv: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.66 },
+      taiko: { perc: true, v: 0.56 },
+      shime: { perc: true, v: 0.4, pan: 0.2 },
+      noh: { perc: true, v: 0.42, pan: -0.25 },
+      clap: { perc: true, v: 0.3, pan: 0.3 },
+    },
+    all: {
+      ost: "0 0' 2 0' 1' 0' 2 0'", arp: "0 2 1' 2 0 2 1' 2", bass: '0 - - 0 - - 0 -', pad: '0+1+2+4',
+      taiko: 'Z..z..Z.|Z..zZzZz', shime: 'eeEeeEee|eeEeeEee', noh: 'm..q..m.|q..m.q..', clap: '.......y|.......y',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1 1', pad: null, arp: null, taiko: 'Z..z..Z.|Z.z.ZzZZ', noh: 'q.q.q...|q.q.q.q.' },
+      A: { bars: 8, ch: BLF_A_CH, lead: BLF_A },
+      B: { bars: 8, ch: BLF_B_CH, shaku: BLF_B, pad: '0+1+2+3', low: '3 - - - - - - - | 2 - - - - - - - | 4 - - - - - - - | 5 - - - - - - - | 3 - - - - - - - | 2 - - - - - - - | 4 - - - - - - - | 1 - - - - - - -' },
+      C: { bars: 8, mode: 'lydian', ch: BLF_C_CH, low: BLF_C_LOW, glass: BLF_C_GLASS, arp: { n: "0 2 1' 2", u: 0.25 }, pad: '0+b2+2', taiko: 'Z..z..Z.|Z.zzZzZz' },
+      B2: { bars: 8, ch: BLF_B_CH, shaku: BLF_B, pad: '0+1+2+3', arp: { n: "0 2 1' 2", u: 0.25 } },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { shaku: 'koto' }, o: { shaku: 1 } }],
+  });
+
+  // ================================================================== BOSS
+  const BOS5_RIFF = '1 1 5, 1 2 1 5, 1 | 1 1 5, 1 4 3 2 1';
+  const BOS5_A_CH = '1 2 1 2 6 7 2 2';
+  const BOS5_HUSH = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 1 - - - - - - - | .:8 | .:8 | .:8 | .:8';
+  const BOS5_A_NO = '.:8 | .:8 | .:8 | .:8 | 5 - 4 - 3 - 2 - | 1 - - - - - - - | 5 - 4 - 3 - 2 - | 2 - - - - - - -';
+  const BOS5_B = '5, - 3 - - 2 1 - | 2 - - - - - - - | 5, - 3 - - 2 1 - | 7, - - - - - - - | 1 - 3 - 5 - 6 - | 5 - 4 - 3 - 2 - | 3 - - - 1 - - - | 2 - - - - - - -';
+  const BOS5_B_CH = '1 2 1 7 6 4 1 2';
+  const BOS5_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8';
+
+  S('boss_lanternfall', {
+    title: 'The Bell Under the Water',
+    kind: 'boss',
+    motifs: ['road', 'hush'],
+    notes: 'Chapter 5 boss (C phrygian, 148): a keeper that says "you must not" and "please do" in the same breath. A low biwa riff, shamisen chords, ōdaiko and shime-daiko on 3+3+2, the ōtsuzumi "kan", chappa and a bell tolling under everything — slow at first, then on every half bar in C. The Hush motif climbs on glass and the koto answers by walking the same steps back down, contradicting it; the road motif falls on shakuhachi in B and on shinobue with the Hush in B2.',
+    key: 'C', mode: 'phrygian', bpm: 148, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.22 },
+      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.4, pan: 0.2 },
+      koto: { i: 'koto', o: 5, v: 0.52, rv: 0.3, pan: -0.2 },
+      toll: { i: 'toll', o: 3, v: 0.62, rv: 0.45 },
+      riff: { i: 'biwa', o: 3, v: 0.52, rv: 0.12, pan: -0.15 },
+      ost: { i: 'shamisen', o: 3, pat: true, v: 0.3, rv: 0.1, pan: 0.25 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.55, rv: 0.35 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.7 },
+      taiko: { perc: true, v: 0.6 },
+      shime: { perc: true, v: 0.36, pan: 0.15 },
+      kan: { perc: true, v: 0.45, pan: -0.1 },
+      crash: { perc: true, v: 0.36, rv: 0.3, pan: 0.3 },
+    },
+    all: {
+      riff: BOS5_RIFF, ost: '. 0+2 . . . 0+2 . 0+1', bass: "0 0 0' 0 0 0 0' 0", sho: M.TRI,
+      toll: '1 - - - - - - - | .:8',
+      taiko: 'Z..z..Z.|Z.zzZzZz', shime: 'eeEeeEee', kan: '....q...|....q.qq', crash: 'v.......|........|v.......|........',
+    },
+    sections: {
+      intro: { bars: 2, ch: '1 1', sho: null, ost: null, kan: null, crash: null, taiko: 'Z..z..Z.|ZzZzZZZZ' },
+      A: { bars: 8, ch: BOS5_A_CH, glass: BOS5_HUSH, koto: BOS5_A_NO },
+      B: { bars: 8, ch: BOS5_B_CH, lead: BOS5_B },
+      C: { bars: 8, ch: '6 6 2 2 6 6 5P 5P', glass: BOS5_C_GLASS, toll: '1 - - - 1 - - -', riff: null, taiko: 'Z.......|Z...z.z.', shime: 'e.e.e.e.', kan: 'q.q.q.q.', ost: "0 2 1' 2", dyn: 0.9 },
+      B2: { bars: 8, ch: BOS5_B_CH, lead: BOS5_B, glass: BOS5_HUSH, taiko: 'Z..z..Z.|Z.zzZzZZ' },
+      A2: { bars: 8, ch: BOS5_A_CH, glass: BOS5_HUSH, koto: BOS5_A_NO },
+    },
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { lead: 'shinobue' }, o: { lead: 1 } }, { s: 'A2', i: { riff: 'shamisen' }, o: { riff: 1 } }],
+  });
+
+  // ============================================================ STORY CUES
+  // The minutes of the flood council, and the night of the flood itself.
+  const LFF_A = '5 - - - 4 - 3 - | 2 - - - 1 - - - | 7, - - - 1 - 2 - | 3 - - - - - . . | 4 - - - 3 - 2 - | 1 - - - 7, - 6, - | #7, - 1 - 2 - #7, - | 1 - - - - - . .';
+  const LFF_A_CH = '1 7 7 3 4 1 5M 1';
+  const LFF_B = '5, - 3 - - 2 1 - | 2 - - - - - . . | 5, - 3 - - 2 1 - | 7, - - - - - . . | 6, - 1 - 3 - 4 - | 5 - - - 4 - 3 - | 2 - - - #7, - - - | 1 - - - - - . .';
+  const LFF_B_CH = '1 7 1 7 6 1 5M 1';
+
+  S('lf_flood', {
+    title: 'The Minutes of the Flood',
+    kind: 'scene',
+    motifs: ['road'],
+    notes: 'Cue (D minor, 63) for the council minutes read aloud and the gatekeeper’s account of the flood night: a quarrel over a vague promise, a messenger running in the rain, a bell that rang too late. Koto rain in soft sixteenths, a low shakuhachi line, a biwa striking the bass, and a temple bell far off at the end of each phrase; B carries the road motif, as someone running.',
+    key: 'D', mode: 'aeolian', bpm: 63,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 5, v: 0.7, rv: 0.45 },
+      rain: { i: 'koto', o: 4, pat: true, u: 0.25, v: 0.2, rv: 0.45, pan: 0.25 },
+      biwa: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.4, rv: 0.4, pan: -0.2 },
+      low: { i: 'bowed', o: 3, pat: true, bass: true, v: 0.38, rv: 0.45 },
+      pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.36, rv: 0.5 },
+      bell: { i: 'toll', o: 3, v: 0.45, rv: 0.6 },
+    },
+    all: { rain: '0 2 1 2', biwa: '0 . . . . . . .', low: '0 - - - - - - -', pad: M.TRI, bell: '.:8 | .:8 | .:8 | 1 - - - - - - - | .:8 | .:8 | .:8 | 1 - - - - - - -' },
+    sections: {
+      A: { bars: 8, ch: LFF_A_CH, lead: LFF_A, low: null },
+      B: { bars: 8, ch: LFF_B_CH, lead: LFF_B, rain: '0 1 2 1' },
+    },
+    form: ['A', 'B', { s: 'A', i: { lead: 'bowed' }, o: { lead: -2 } }],
+  });
+
+  // The drowned bell rings; the voices in the pipes turn and run home.
+  S('lf_bell', {
+    title: 'Thirty Years Late',
+    kind: 'scene',
+    motifs: ['road'],
+    notes: 'Cue (B-flat, 72) after the drowned bell is rung: the bell itself on every other downbeat, koto running up through each chord like the voices turning back down the pipes, the main theme on shakuhachi and shinobue an octave apart, ōdaiko rolls swelling, a shō underneath. B is the theme’s answering phrase, quieter, with the rin.',
+    key: 'Bb', bpm: 72,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.66, rv: 0.4 },
+      hi: { i: 'shinobue', o: 5, v: 0.42, rv: 0.4, pan: 0.2 },
+      rise: { i: 'koto', o: 3, pat: true, u: 0.25, v: 0.24, rv: 0.4, pan: -0.25 },
+      bell: { i: 'toll', o: 3, v: 0.5, rv: 0.6 },
+      sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.42, rv: 0.45 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
+      roll: { perc: true, v: 0.35, rv: 0.35 },
+      bowl: { perc: true, v: 0.3, rv: 0.6, pan: 0.3 },
+    },
+    all: { rise: "0 1 2 0' 1' 2' 0'' -", sho: M.TRI, bass: '0 - - - - - - -', bell: '1 - - - - - - - | .:8' },
+    sections: {
+      A: { bars: 8, ch: M.ROAD_A_CH, lead: M.ROAD_A, hi: M.ROAD_A, roll: 'z.......|........|z...z...|zzzzZ...' },
+      B: { bars: 8, ch: M.ROAD_B_CH, lead: M.ROAD_B, bell: null, bowl: 'i.......|........', dyn: 0.9 },
+    },
+    form: ['A', 'B'],
+  });
+
+  _.REQUIRED_SONGS.push('lf_road', 'lf_records', 'lf_town_after', 'battle_lanternfall', 'boss_lanternfall', 'lf_flood', 'lf_bell');
+})(RB.audio);
+
+
 /* ==== src/audio/39_zones.js ==== */
 /* Zone music: which battle and boss theme plays where.
  *
@@ -16588,8 +16856,9 @@ RB.audio = RB.audio || {};
     },
     lanternfall: {
       chapter: 5, regions: ['lanternfall'], prefixes: ['lf.'],
-      battle: 'battle', boss: 'boss', route: 'road',
-      songs: ['lanternfall', 'belltower', 'road'],
+      battle: 'battle_lanternfall', boss: 'boss_lanternfall', route: 'lf_road',
+      songs: ['lf_road', 'lanternfall', 'lf_town_after', 'lf_records', 'belltower'],
+      cues: ['lf_flood', 'lf_bell'],
     },
     still: {
       chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],
@@ -96798,11 +97067,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C, K) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
-  const TOWN_MUSIC = [{ if: 'lf_bell_rung', id: 'lanternfall' }, { id: 'lanternfall' }];
+  const TOWN_MUSIC = [{ if: 'lf_bell_rung', id: 'lf_town_after' }, { id: 'lanternfall' }];
 
   // ---- the road down from the mountains -----------------------------------------------
   C.maps['lf.road'] = {
-    name: T('The Lantern Road above Lanternfall', '{灯|ひ} の {道|みち} ・ {灯落|ひおち}{坂|ざか}'), region: 'lanternfall', music: 'road',
+    name: T('The Lantern Road above Lanternfall', '{灯|ひ} の {道|みち} ・ {灯落|ひおち}{坂|ざか}'), region: 'lanternfall', music: 'lf_road',
     ambient: { weather: 'leaves' },
     terrain: K.build(36, 22, '.', (k) => {
       k.ragged('top', '^', 3, 51).ragged('bottom', 'T', 3, 52);
@@ -96993,7 +97262,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the sluice shore and the drowned quarter -------------------------------------------------------
   C.maps['lf.sluice'] = {
     name: T('The Sluice Shore', '{水門|すいもん} の {岸|きし}'), region: 'lanternfall',
-    music: [{ if: 'lf_bell_rung', id: 'lanternfall' }, { id: 'mystery' }],
+    music: [{ if: 'lf_bell_rung', id: 'lf_town_after' }, { id: 'lf_records' }],
     ambient: { weather: null, tint: 'rgba(40,60,120,0.08)' },
     terrain: K.build(34, 28, '.', (k) => {
       k.ragged('top', 'T', 2, 81).ragged('left', 'T', 2, 82);
@@ -97052,7 +97321,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   interior('lf.records', T('Public Records Hall', '{記録館|きろくかん}'), 17, 12, 8, [11, 11], {
-    music: 'mystery',
+    music: 'lf_records',
     terrain: K.build(17, 12, '#', (k) => {
       k.rect(1, 2, 15, 9, 'p');
       k.rect(5, 6, 7, 5, 'k');
@@ -97084,7 +97353,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   interior('lf.council', T('Council Chamber', '{議会|ぎかい}{堂|どう}'), 15, 10, 7, [26, 9], {
-    music: 'mystery',
+    music: 'lf_records',
     terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(4, 3, 7, 4, 'k'); k.set(7, 9, '_'); }),
     props: [
       { p: 'exitmat', x: 7, y: 8 },
@@ -97184,7 +97453,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the basement stacks (a short, dim search) -------------------------------------------------
   C.maps['lf.stacks'] = {
-    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'mystery', noTravel: true,
+    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'lf_records', noTravel: true,
     ambient: { dark: 0.55, playerLight: 46, weather: 'pages' },
     terrain: K.build(24, 16, '#', (k) => {
       k.rect(1, 2, 22, 13, '+');
@@ -97681,7 +97950,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   C.maps['lf.bellhall'] = Object.assign({}, TOWER, {
     name: T('Bell Chamber', '{鐘|かね} の {間|ま}'),
-    music: [{ if: 'lf_bell_rung', id: 'wonder' }, { id: 'hush' }],
+    music: [{ if: 'lf_bell_rung', id: 'lf_bell' }, { id: 'hush' }],
     ambient: { dark: 0.5, playerLight: 50, tint: 'rgba(30,50,110,0.16)' },
     terrain: K.build(16, 14, '#', (k) => {
       k.rect(1, 2, 14, 11, 'w');
@@ -98422,6 +98691,7 @@ narr: タミ は {微笑|ほほえ}んだ まま 、{少|すこ}し だけ {眉|
 ?(comp=suzu) comp: {台詞|せりふ} を {忘|わす}れた {役者|やくしゃ} の {顔|かお} ね 。{誰|だれ} か が {台本|だいほん} を {見|み}せて あげない と 。|| That's the face of an actor who's forgotten her line. Someone needs to show her the script.
 
 @scene lf.yae_minutes
+!music lf_flood
 lf_yae: それ は …… {議事録|ぎじろく} ？ {見|み}せて ください 。|| Are those… minutes? Let me see.
 narr: タミ は {眼鏡|めがね} を かけて 、ゆっくり と {読|よ}み{始|はじ}めた 。|| Tami puts on her spectacles and begins, slowly, to read.
 lf_yae: 「{高瀬|たかせ} より {返答|へんとう} 。{必要|ひつよう} なら {開|あ}ける 。」|| "Reply from Takase: we'll open it if it's needed."
@@ -98449,6 +98719,7 @@ lf_yae[smile]: …… {変|へん} です ね 。{読|よ}んで いたら 、{�
 !set lf_yae_told
 !quest lf_main 5
 !autosave
+!music lf_records
 
 @scene lf.yae_again
 lf_yae: {水門|すいもん} の トクジ の ところ へ {行|い}きなさい 。{町|まち} の {南|みなみ} 、{湖|みずうみ} の {岸|きし} です 。|| Go and see Tokuji at the sluice. South of town, on the lake shore.
@@ -98466,6 +98737,7 @@ narr: トクジ は {答|こた}えた が 、{少|すこ}し も {動|うご}�
 ?(comp=suzu) comp: {返事|へんじ} は 「はい」 、{体|からだ} は 「いいえ」 。{正直|しょうじき} な {人|ひと} ね 。|| His answer says yes, his body says no. An honest man.
 
 @scene lf.tokuji_story
+!music lf_flood
 lf_tokuji: …… {議事録|ぎじろく} か 。{懐|なつ}かしい {字|じ} だ 。|| …The minutes, eh. There's handwriting I haven't seen in a long while.
 lf_tokuji: あの {夜|よる} 、{俺|おれ} は {水門|すいもん} の {番|ばん} だった 。|| That night, I was keeping the gate.
 lf_tokuji: トウヤ が {走|はし}って きた 。「トクジ さん 、{下|した} の {水門|すいもん} を {開|あ}けて 。{高瀬|たかせ} が {上|うえ} を {開|あ}ける ！」|| Tōya came running. "Tokuji, open the lower gate! Takase's opening the upper one!"
@@ -98491,6 +98763,7 @@ lf_tokuji: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{塔|�
 !set lf_tokuji_told lf_tokuji_boat
 !quest lf_main 6
 !autosave
+!music lf_records
 
 @scene lf.tokuji_again
 lf_tokuji: {舟|ふね} は {桟橋|さんばし} の {先|さき} だ 。{札|ふだ} は 、よく {読|よ}め 。|| The boat's at the end of the pier. Read the plates carefully.
@@ -98943,7 +99216,7 @@ narr: {誰|だれ} の {声|こえ} か 、わからない 。{振|ふ}り{返|�
 ?(quest.lf_akari&!quest.lf_akari=done) !quest lf_akari 1
 ?(quest.lf_fence>=2&!quest.lf_fence=done) !quest lf_fence 3
 ?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) !quest lf_nao 2
-!music wonder
+!music lf_bell
 !autosave
 narr: {湖|みずうみ} の {水|みず} が 、{少|すこ}し ずつ {引|ひ}いて いく 。{舟|ふね} へ {戻|もど}ろう 。|| The lake is slowly drawing back. Time to get back to the boat.
 !fade out

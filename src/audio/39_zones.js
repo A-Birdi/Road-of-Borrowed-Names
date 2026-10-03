@@ -47,8 +47,9 @@ RB.audio = RB.audio || {};
     },
     lanternfall: {
       chapter: 5, regions: ['lanternfall'], prefixes: ['lf.'],
-      battle: 'battle', boss: 'boss', route: 'road',
-      songs: ['lanternfall', 'belltower', 'road'],
+      battle: 'battle_lanternfall', boss: 'boss_lanternfall', route: 'lf_road',
+      songs: ['lf_road', 'lanternfall', 'lf_town_after', 'lf_records', 'belltower'],
+      cues: ['lf_flood', 'lf_bell'],
     },
     still: {
       chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],

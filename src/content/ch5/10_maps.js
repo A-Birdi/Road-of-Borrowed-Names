@@ -6,11 +6,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C, K) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
-  const TOWN_MUSIC = [{ if: 'lf_bell_rung', id: 'lanternfall' }, { id: 'lanternfall' }];
+  const TOWN_MUSIC = [{ if: 'lf_bell_rung', id: 'lf_town_after' }, { id: 'lanternfall' }];
 
   // ---- the road down from the mountains -----------------------------------------------
   C.maps['lf.road'] = {
-    name: T('The Lantern Road above Lanternfall', '{灯|ひ} の {道|みち} ・ {灯落|ひおち}{坂|ざか}'), region: 'lanternfall', music: 'road',
+    name: T('The Lantern Road above Lanternfall', '{灯|ひ} の {道|みち} ・ {灯落|ひおち}{坂|ざか}'), region: 'lanternfall', music: 'lf_road',
     ambient: { weather: 'leaves' },
     terrain: K.build(36, 22, '.', (k) => {
       k.ragged('top', '^', 3, 51).ragged('bottom', 'T', 3, 52);
@@ -201,7 +201,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the sluice shore and the drowned quarter -------------------------------------------------------
   C.maps['lf.sluice'] = {
     name: T('The Sluice Shore', '{水門|すいもん} の {岸|きし}'), region: 'lanternfall',
-    music: [{ if: 'lf_bell_rung', id: 'lanternfall' }, { id: 'mystery' }],
+    music: [{ if: 'lf_bell_rung', id: 'lf_town_after' }, { id: 'lf_records' }],
     ambient: { weather: null, tint: 'rgba(40,60,120,0.08)' },
     terrain: K.build(34, 28, '.', (k) => {
       k.ragged('top', 'T', 2, 81).ragged('left', 'T', 2, 82);
@@ -260,7 +260,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
 
   interior('lf.records', T('Public Records Hall', '{記録館|きろくかん}'), 17, 12, 8, [11, 11], {
-    music: 'mystery',
+    music: 'lf_records',
     terrain: K.build(17, 12, '#', (k) => {
       k.rect(1, 2, 15, 9, 'p');
       k.rect(5, 6, 7, 5, 'k');
@@ -292,7 +292,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   interior('lf.council', T('Council Chamber', '{議会|ぎかい}{堂|どう}'), 15, 10, 7, [26, 9], {
-    music: 'mystery',
+    music: 'lf_records',
     terrain: K.build(15, 10, '#', (k) => { k.rect(1, 2, 13, 7, '_'); k.rect(4, 3, 7, 4, 'k'); k.set(7, 9, '_'); }),
     props: [
       { p: 'exitmat', x: 7, y: 8 },
@@ -392,7 +392,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the basement stacks (a short, dim search) -------------------------------------------------
   C.maps['lf.stacks'] = {
-    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'mystery', noTravel: true,
+    name: T('Basement Stacks', '{地下|ちか}{書庫|しょこ}'), region: 'lanternfall', music: 'lf_records', noTravel: true,
     ambient: { dark: 0.55, playerLight: 46, weather: 'pages' },
     terrain: K.build(24, 16, '#', (k) => {
       k.rect(1, 2, 22, 13, '+');

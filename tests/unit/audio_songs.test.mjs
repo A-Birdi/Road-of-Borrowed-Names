@@ -127,7 +127,9 @@ export default async (t) => {
       const semi = ch.tones.some((ct) => (pc - ct + 12) % 12 === 1);
       const trit = (pc - ch.tones[0] + 12) % 12 === 6;
       if (!semi && !trit) continue;
-      const hushFourth = trit && /P/.test(ch.src) && ['hush', 'lanternfall', 'still_archive'].includes(id);
+      // the Hush's raised fourth over open fifths: in the original Hush-touched
+      // songs, and in any later song that claims the hush motif
+      const hushFourth = trit && /P/.test(ch.src) && (['hush', 'lanternfall', 'still_archive'].includes(id) || (_.songDefs[id].motifs || []).includes('hush'));
       const sigh = id === 'sorrow' && sec.s === 'B';
       if (!hushFourth && !sigh) clashes.push(`${id}:${sec.s} ${tk.name} midi ${e.m} over ${ch.src} at ${e.t.toFixed(2)}s`);
     }

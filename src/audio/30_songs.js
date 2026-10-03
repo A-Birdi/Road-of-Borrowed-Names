@@ -692,15 +692,16 @@ RB.audio = RB.audio || {};
   S('lanternfall', {
     title: 'Lanternfall',
     kind: 'area',
+    chapter: 5,
     motifs: ['road', 'hush'],
-    notes: 'A beautiful, too-orderly town (C major, 96): square four-bar phrases in even quarter notes, sequences that answer themselves, Alberti-style harp, a tick on every beat. In B the thirds drain away into open fifths and the Hush motif appears on glass; in C the road motif keeps interrupting off the beat — the last disagreement in town.',
+    notes: 'A beautiful, too-orderly town (C major, 96), re-orchestrated for Chapter 5 — same melody, form and motifs: square four-bar phrases in even quarter notes on koto, sequences that answer themselves, an Alberti koto figure, a tick on every beat, the shamisen doubling in A2. In B the thirds drain away into open fifths under a held shō and the Hush motif appears on glass; in C the road motif keeps interrupting off the beat on shakuhachi — the last disagreement in town.',
     key: 'C', bpm: 96,
     tracks: {
-      lead: { i: 'celesta', o: 5, v: 0.65, rv: 0.35 },
-      pl: { i: 'pluck', o: 4, v: 0.55, rv: 0.25, pan: -0.15 },
-      fl: { i: 'flute', o: 5, v: 0.8, rv: 0.3, pan: 0.2 },
+      lead: { i: 'koto', o: 5, v: 0.5, rv: 0.35 },
+      pl: { i: 'shamisen', o: 4, v: 0.42, rv: 0.25, pan: -0.15 },
+      fl: { i: 'shakuhachi', o: 5, v: 0.66, rv: 0.3, pan: 0.2 },
       glass: { i: 'glass', o: 5, v: 0.9, rv: 0.5 },
-      arp: { i: 'harp', o: 4, pat: true, v: 0.4, rv: 0.3, pan: -0.3 },
+      arp: { i: 'koto', o: 4, pat: true, v: 0.28, rv: 0.3, pan: -0.3 },
       pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.4, rv: 0.35 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.55 },
       tick: { perc: true, v: 0.4, pan: 0.3 },
@@ -712,7 +713,7 @@ RB.audio = RB.audio || {};
       B: { bars: 8, mode: 'lydian', ch: LF_B_CH, glass: LF_B, arp: '0 . 1 . 0 . 1 .', pad: '0+1', tick: 'g...g...' },
       C: { bars: 8, ch: LF_A_CH, lead: LF_A, fl: LF_C_FL },
     },
-    form: ['A', 'A2', 'B', 'C', 'B'],
+    form: ['A', 'A2', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, 'C', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }],
   });
 
   // ============================================================ BELL TOWER
@@ -725,14 +726,15 @@ RB.audio = RB.audio || {};
   S('belltower', {
     title: 'The Submerged Bell Tower',
     kind: 'area',
+    chapter: 5,
     motifs: ['road', 'hush'],
-    notes: 'D dorian at 60, as if heard under water: a deep FM toll every other bar, drops, dark pads and a bowed line through a long echo. In B the Hush motif and the road motif take turns, phrase by phrase.',
+    notes: 'D dorian at 60, as if heard under water, re-orchestrated for Chapter 5 — same melody, form and motifs: a deep temple-bell toll every other bar, drops, a koto arpeggio and a bowed line through a long echo. In B the Hush motif and the road motif take turns, phrase by phrase, over a held shō; the repeat of A is on shakuhachi.',
     key: 'D', mode: 'dorian', bpm: 60,
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.7, rv: 0.45, dl: 0.3 },
       glass: { i: 'glass', o: 5, v: 0.85, rv: 0.55, pan: 0.2 },
       toll: { i: 'toll', o: 2, v: 0.6, rv: 0.55 },
-      arp: { i: 'harp', o: 3, pat: true, v: 0.35, rv: 0.5, dl: 0.2, pan: -0.3 },
+      arp: { i: 'koto', o: 3, pat: true, v: 0.3, rv: 0.5, dl: 0.2, pan: -0.3 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.5, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.45 },
       drip: { perc: true, v: 0.45, rv: 0.6, pan: -0.3 },
@@ -743,7 +745,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: BT_A_CH, lead: BT_A },
       B: { bars: 8, ch: BT_B_CH, glass: BT_B_GLASS, lead: BT_B_LEAD },
     },
-    form: ['A', 'B', { s: 'A', i: { lead: 'flute' }, o: { lead: 1 } }],
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { lead: 'shakuhachi' }, o: { lead: 1 } }],
   });
 
   // ================================================================= HUSH
