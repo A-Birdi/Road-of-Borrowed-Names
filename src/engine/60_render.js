@@ -92,11 +92,15 @@ RB.render = (function () {
     }
     return (m.enclosed = e);
   }
+  // A map that brings its own surround (map.surround: 'sea' — the top of the
+  // lighthouse, with the sea far below) is framed like a room: no apron, no
+  // fade, the soft edge shadow (it reads as the drop). It is not indoors.
+  const framed = (m) => enclosed(m) || !!(m.def && m.def.surround);
   const clampI = (v, n) => (v < 0 ? 0 : v >= n ? n - 1 : v);
   // Margin (tiles) the current view can show past each edge: half the room a
   // small map leaves, plus the touch-controls reserve below.
   function marginFor(m) {
-    if (enclosed(m)) return { x: 0, y: 0 };
+    if (framed(m)) return { x: 0, y: 0 };
     const vwT = bw / ATS, vhT = bh / ATS, rT = reserveLogical() / TS;
     return { x: Math.max(1, Math.ceil((vwT - m.w) / 2) + 1), y: Math.max(1, Math.ceil((vhT - m.h) / 2) + 1) + Math.ceil(rT) };
   }
@@ -150,7 +154,7 @@ RB.render = (function () {
     const c = cv.getContext('2d');
     c.imageSmoothingEnabled = false;
     const pal = palOf(m);
-    const ext = !enclosed(m);
+    const ext = !framed(m);
     for (let y = -g.y; y < m.h + g.y; y++)
       for (let x = -g.x; x < m.w + g.x; x++) {
         const t = m.tiles[clampI(y, m.h) * m.w + clampI(x, m.w)];
@@ -212,9 +216,10 @@ RB.render = (function () {
   const ay = (ly) => Math.round((ly - cam.y) * ART);
 
   // Outside a small map: a quiet surround in the region's darkest colour —
-  // timber for interiors, a faint weave outdoors — and a soft edge shadow, so
-  // the map reads as a lit room or stage rather than an empty band. Nothing
-  // here looks walkable. Patterns are cached per palette.
+  // timber for interiors, a faint weave outdoors, or what the map names as
+  // its own surround (the sea far below) — and a soft edge shadow, so the map
+  // reads as a lit room or stage rather than an empty band. Nothing here
+  // looks walkable. Patterns are cached per palette (the sea per state/frame).
   const surroundCache = new Map();
   function mix(hex, to, a) {
     const n = parseInt(hex.slice(1), 16), m2 = parseInt(to.slice(1), 16);
@@ -253,7 +258,66 @@ RB.render = (function () {
     surroundCache.set(key, pat);
     return pat;
   }
-  function drawSurround(c, m, pal) {
+  // The sea far below (map.surround: 'sea'): deep water seen from high up, at
+  // a small scale. Calm (the map's ambient.sea 'calm'): glassy, with long faint
+  // swells, a soft sheen and the odd glint; windy ('wind'): broken ripples and
+  // small whitecaps. Four frames each so the glints and caps come and go (the
+  // first frame only, with reduced motion). 64×64 art px, cached like the rest.
+  function seaPattern(c, windy, f) {
+    const key = 'sea' + (windy ? 'w' : 'c') + f;
+    let pat = surroundCache.get(key);
+    if (pat) return pat;
+    const cv = RB.sprites.makeCanvas(64, 64);
+    const g = cv.getContext('2d');
+    const h = (i, k) => RB.tiles.hh(i, k, windy ? 71 : 37);
+    // a horizontal dash that wraps round the tile edges (so the pattern has no seams)
+    const dash = (x, y, w, col) => { g.fillStyle = col; for (let i = 0; i < w; i++) g.fillRect((x + i) & 63, y & 63, 1, 1); };
+    // positions are hashed over the whole tile (no rows), so the repeat does not read as a grid
+    const at = (i, k) => { const r = h(i, k); return [r & 63, (r >>> 6) & 63, r >>> 12]; };
+    if (!windy) {
+      g.fillStyle = '#1f5268';
+      g.fillRect(0, 0, 64, 64);
+      // broad, faint patches of sheen (the sky in the glassy water)
+      for (let i = 0; i < 3; i++) {
+        const [x, y, r] = at(i, 2), w = 10 + (r % 9);
+        dash(x + 2, y, w - 4, '#225870'); dash(x, y + 1, w, '#225870'); dash(x + 3, y + 2, w - 6, '#225870');
+      }
+      // long, low swells: a faintly lit crest over a darker trough, drifting a pixel to and fro
+      const drift = [0, 1, 2, 1][f];
+      for (let i = 0; i < 5; i++) {
+        const [x, y, r] = at(i, 1), w = 7 + (r % 9);
+        dash(x + drift, y, w, '#265f76');
+        dash(x + drift + 2, y + 1, w - 3, '#1b4a5f');
+      }
+      // glints: one or two at a time, each lit in two of the four frames
+      for (let i = 0; i < 3; i++) {
+        if ((i + f) % 4 > 1) continue;
+        const [x, y] = at(i, 3);
+        dash(x, y, 2, '#78b0c0'); dash(x, y, 1, '#d4eef2');
+      }
+    } else {
+      g.fillStyle = '#1d4d62';
+      g.fillRect(0, 0, 64, 64);
+      // short ripples scattered all over, lit and shadowed, shifting a pixel with the frames
+      for (let i = 0; i < 26; i++) {
+        const [x, y, r] = at(i, 4), w = 2 + (r % 3);
+        dash(x + ((i + f) & 1), y, w, i % 3 ? '#183f53' : '#2b687e');
+      }
+      // small whitecaps: a white dash with a pale tail, each breaking in three
+      // of the four frames (longest in the middle one)
+      for (let i = 0; i < 5; i++) {
+        const ph = (i + f) % 4;
+        if (ph === 3) continue;
+        const [x, y] = at(i, 5), w = ph === 1 ? 3 : 2;
+        dash(x + 1, y + 1, w, '#5f97a8');
+        dash(x, y, w, '#e8f6f6');
+      }
+    }
+    pat = c.createPattern(cv, 'repeat');
+    surroundCache.set(key, pat);
+    return pat;
+  }
+  function drawSurround(c, m, pal, t) {
     const g = m.margin || { x: 0, y: 0 };
     const mx = ax(-g.x * TS), my = ay(-g.y * TS), mw = (m.w + 2 * g.x) * ATS, mh = (m.h + 2 * g.y) * ATS;
     c.fillStyle = pal.dark;
@@ -262,12 +326,16 @@ RB.render = (function () {
     // strips around it (painting the whole buffer twice a frame cost about
     // a third of a small interior's frame time)
     c.fillRect(mx, my, mw, mh);
-    const indoor = enclosed(m);
+    const indoor = framed(m);
     // rooms get dark timber, larger walled places (archives, towers) the weave
     const timber = m.region === 'interior' || (m.def && m.def.indoor) || (m.w <= 17 && m.h <= 12);
+    const sea = m.def && m.def.surround === 'sea';
     c.save();
     c.translate(mx & 63, my & 63); // the pattern stays put relative to the map
-    c.fillStyle = surroundPattern(c, pal, timber);
+    if (sea) {
+      const windy = (ambientOf(m).ambient || {}).sea === 'wind';
+      c.fillStyle = seaPattern(c, windy, RB.game.reducedMotion() ? 0 : Math.floor((t || 0) / (windy ? 420 : 650)) % 4);
+    } else c.fillStyle = surroundPattern(c, pal, timber);
     const ox = mx & 63, oy = my & 63, top = Math.max(0, my), bot = Math.min(bh, my + mh);
     if (my > 0) c.fillRect(-ox, -oy, bw, my);
     if (my + mh < bh) c.fillRect(-ox, my + mh - oy, bw, bh - my - mh);
@@ -402,7 +470,7 @@ RB.render = (function () {
   // colour over three tiles, from nothing at the edge itself, so the boundary
   // reads without a line. Corners take both bands and so fall off further.
   function drawFade(c, m, pal) {
-    if (enclosed(m)) return;
+    if (framed(m)) return;
     const X0 = ax(0), Y0 = ay(0), X1 = ax(m.w * TS), Y1 = ay(m.h * TS);
     if (X0 <= 0 && Y0 <= 0 && X1 >= bw && Y1 >= bh) return;
     const n = parseInt(pal.dark.slice(1), 16), rgb = (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255);
@@ -430,7 +498,7 @@ RB.render = (function () {
     const c = bctx;
     const pal = palOf(m);
     const g = m.margin;
-    drawSurround(c, m, pal);
+    drawSurround(c, m, pal, t);
     c.drawImage(m.staticLayer, ax(-g.x * TS), ay(-g.y * TS));
     // animated water (past the edge too: the river keeps flowing)
     const x0 = Math.max(-g.x, Math.floor(cam.x / TS)), y0 = Math.max(-g.y, Math.floor(cam.y / TS));

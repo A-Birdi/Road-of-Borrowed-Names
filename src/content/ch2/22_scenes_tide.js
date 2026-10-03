@@ -113,11 +113,14 @@ narr: {真|ま}っすぐ {歩|ある}いた 。 {確|たし}か に {真|ま}っ
 ?(quest.sg_main=6) narr: {灯台|とうだい} の ゲンゾウ に 、 {風|かぜ} の こと を {聞|き}こう 。 || Ask Genzō at the lighthouse about the wind.
 
 @scene sg.genzo_wind
+!if sg_genzo_up -> ask
 genzo: {風|かぜ} ？ …… {止|や}んでる な 。 {嵐|あらし} の {晩|ばん} から 、 ぴたり と だ 。 || The wind? …It's dropped. Dead since the night of the storm.
 genzo: {五十年|ごじゅうねん} 、 {岬|みさき} で {風|かぜ} が {止|や}んだ こと は ない 。 {凪|なぎ} の {日|ひ} でも 、 {上|うえ} の {風見|かざみ} は {回|まわ}ってた 。 || Fifty years, and the wind's never stopped on this point. Even on a calm day, the vane up top would turn.
 genzo[think]: {来|き}な 。 {上|うえ} を {見|み}せて やる 。 || Come on. I'll show you the top.
 !fade out
+!set sg_genzo_up
 narr: {螺旋|らせん} {階段|かいだん} を {上|のぼ}る 。 ゲンゾウ は {膝|ひざ} を {叩|たた}きながら 、 {一段|いちだん} ずつ {上|のぼ}った 。 || You climb the spiral stairs. Genzō goes up one step at a time, slapping his knee.
+!warp sg.lighthouse_top 8 5 up
 !fade in
 narr: {灯台|とうだい} の {上|うえ} 。 {鉄|てつ} の {風見|かざみ} が 、 {錆|さ}び{付|つ}いた よう に {止|と}まって いる 。 {風見|かざみ} の {羽|はね} に 、 {文字|もじ} が {彫|ほ}って ある 。 || The top of the lighthouse. The iron weather vane stands still, as if rusted solid. Letters are cut into its fin.
 narr: …… いや 、 {彫|ほ}って あった 。 {溝|みぞ} は ある のに 、 {字|じ} の {形|かたち} が {分|わ}からない 。 || …Or rather, were cut. The grooves are there, but you can't make out the shape of the letters.
@@ -126,15 +129,16 @@ genzo: {親父|おやじ} が {彫|ほ}った ん だ 。 「{風|かぜ}」 っ
 ?(comp=nao) comp: {宛名|あてな} と {同|おな}じ だ 。 {名前|なまえ} が {消|き}えたら 、 {届|とど}く もの も {届|とど}かない 。 || Same as an address. When the name goes, nothing arrives.
 ?(comp=mio) comp: {葦|あし}ノ{瀬|せ} の {灯籠|とうろう} と {同|おな}じ ね 。 {名前|なまえ} が {消|き}えたら 、 {繋|つな}がり も {消|き}える 。 || Like the lanterns in Reedwake. When the name fades, the connection fades too.
 ?(comp=suzu) comp: {役|やく} の {名前|なまえ} を {忘|わす}れた {役者|やくしゃ} は 、 {舞台|ぶたい} に {出|で}られない もの ね 。 || An actor who forgets the name of their part can't go on stage.
+:ask
 genzo: {書|か}ける の か 。 お{前|まえ} さん 。 || Can you write it? You?
 !challenge sg.c_kaze
 !if var._res=0 -> later
 narr: {溝|みぞ} を なぞる よう に 、 {筆|ふで} を {動|うご}かす 。 「{風|かぜ}」 。 || You move the brush as if tracing the grooves. Kaze — wind.
 !sfx wind
+!set sg_fog_cleared
 narr: {風見|かざみ} が 、 きい 、 と {鳴|な}った 。 || The vane creaks.
 narr: {沖|おき} から 、 {冷|つめ}たい {風|かぜ} が {吹|ふ}いて きた 。 {岬|みさき} の {霧|きり} が 、 {端|はし} から ほどけて いく 。 || A cold wind comes in off the sea. The fog on the causeway begins to unravel from its edges.
 !word kaze
-!set sg_fog_cleared
 genzo[surprise]: …… {回|まわ}った 。 || …It turned.
 genzo[smile]: ふん 。 {迷信|めいしん} も 、 {馬鹿|ばか} に できん な 。 || Hmph. Can't sneer at superstition, it seems.
 ?(comp=nao) comp[smile]: {字|じ} で {風|かぜ} が {吹|ふ}く の か 。 …… {今|いま} の 、 {手帳|てちょう} に {書|か}いとこ 。 || Writing that makes the wind blow. …I'm putting that in my notebook.
@@ -147,6 +151,35 @@ genzo[smile]: ふん 。 {迷信|めいしん} も 、 {馬鹿|ばか} に で�
 !end
 :later
 genzo: {気|き} が {向|む}いたら {言|い}え 。 {階段|かいだん} は {逃|に}げん 。 || Tell me when you're ready. The stairs aren't going anywhere.
+
+@scene sg.genzo_top
+genzo: {風見|かざみ} が {回|まわ}って いる と 、 {落|お}ち{着|つ}く 。 || It settles me, seeing the vane turn.
+genzo: {下|お}りる とき は 、 {一緒|いっしょ} に {行|い}く 。 {膝|ひざ} が {文句|もんく} を {言|い}う が な 。 || When you go down, I'll come with you. My knees will grumble, mind.
+
+@scene sg.lt_vane
+!if sg_fog_cleared -> free
+narr: {鉄|てつ} の {風見|かざみ} 。 {錆|さ}び{付|つ}いた よう に 、 {少|すこ}し も {動|うご}かない 。 || The iron weather vane. It doesn't move at all, as if rusted solid.
+narr: {羽|はね} に {溝|みぞ} が {彫|ほ}って ある 。 でも 、 {字|じ} の {形|かたち} が {分|わ}からない 。 || Grooves are cut into its fin, but you can't make out the shape of the letter.
+!end
+:free
+narr: {風見|かざみ} が 、 {海|うみ} から の {風|かぜ} に {揺|ゆ}れて いる 。 || The vane swings in the wind off the sea.
+narr: {羽|はね} の {溝|みぞ} は 、 はっきり 「{風|かぜ}」 と {読|よ}める 。 || The grooves in its fin read clearly: 「風」, kaze, wind.
+
+@scene sg.lt_view
+narr: {手摺|てす}り の {向|む}こう 、 ずっと {下|した} に 、 {岬|みさき} と {港|みなと} が {見|み}える 。 || Beyond the railing, far below, you can see the point and the harbour.
+?(!sg_fog_cleared) narr: {岬|みさき} から {島|しま} へ {続|つづ}く {砂|すな} の {道|みち} 。 その {上|うえ} に だけ 、 {白|しろ}い {霧|きり} が {座|すわ}って いる 。 || The sand road from the point to the island. Over it, and only there, sits a white fog.
+?(!sg_fog_cleared) narr: {風|かぜ} が ない 。 {海|うみ} も {霧|きり} も 、 {少|すこ}し も {動|うご}かない 。 || There is no wind. Neither the sea nor the fog moves at all.
+?(sg_fog_cleared) narr: {霧|きり} は もう ない 。 {砂|すな} の {道|みち} が 、 {島|しま} まで まっすぐ に {見|み}える 。 || The fog is gone. You can see the sand road running straight to the island.
+?(sg_fog_cleared) narr: {海|うみ} の {上|うえ} に 、 {白|しろ}い {波|なみ} が {小|ちい}さく {立|た}って いる 。 || Small white waves are breaking out on the sea.
+
+@scene sg.lt_rail
+narr: {手摺|てす}り の {塗|ぬ}り が 、 ここ だけ {剥|は}げて いる 。 {鉄|てつ} が {光|ひか}る ほど 、 {擦|す}り{減|へ}って いる 。 || The paint on the railing has worn away here, and only here. The iron is rubbed so smooth it shines.
+narr: {五十年|ごじゅうねん} 、 {毎晩|まいばん} 、 {同|おな}じ {所|ところ} を {握|にぎ}って {上|のぼ}って きた {手|て} の {跡|あと} だ 。 || The mark of a hand that has gripped this same spot, coming up every night for fifty years.
+?(sg_genzo_up) genzo: …… {手摺|てす}り なんか {見|み}る な 。 || …Don't go looking at the railing.
+
+@scene sg.lt_lamp
+narr: {灯室|とうしつ} 。 ガラス の {中|なか} に 、 {人|ひと} より {大|おお}きな レンズ が ある 。 || The lamp room. Inside the glass stands a lens taller than a person.
+narr: {昼間|ひるま} は {灯|ひ} を {消|け}して いる 。 レンズ は 、 {日|ひ} の {光|ひかり} だけ を {集|あつ}めて {光|ひか}って いた 。 || By day the lamp is out. The lens shines with nothing but the sunlight it gathers.
 
 @scene sg.causeway_walk
 narr: {濡|ぬ}れた {砂|すな} の {道|みち} が 、 {島|しま} へ {続|つづ}いて いる 。 {両側|りょうがわ} で 、 {引|ひ}いた {海|うみ} が {静|しず}か に {光|ひか}って いた 。 || The wet sand road runs on to the island. On either side, the drawn-back sea glints quietly.
