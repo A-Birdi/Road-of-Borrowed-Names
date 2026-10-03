@@ -2149,7 +2149,7 @@ investigated.
 **The lead's runs on the merge** (task branch with the walk-round fix and the props merge; the merged index.html is
 byte-identical to a fresh build; registry.json regenerated for this branch):
 - unit 24,401/0;
-- browser: harmony_raster, harmony_art and harmony_cutin are still running at this commit; recorded below.
+- browser, one at a time: harmony_raster 26/26; harmony_art 39/39; harmony_cutin 11/11, including the painted geometry at 2048 × 1046 and 1920 × 1080, and painted reduced motion as two held poses.
 
 **Not verified:**
 - Real art: every number is synthetic, and the calibration must be rerun on Batch 1a.
