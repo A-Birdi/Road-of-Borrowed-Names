@@ -72678,7 +72678,8 @@ RB.harmonyCutin = (function () {
   // phase), and the technique's battle-figure frames are drawn ahead too — never when the technique fires.
   let prepTok = 0;
   function prepare(comp) {
-    if (!A() || COMPS.indexOf(comp) < 0 || !RB.game || !RB.game.s) return;
+    // (in a page only: node tests that play an encounter's events have no canvas to draw into)
+    if (typeof document === 'undefined' || !A() || COMPS.indexOf(comp) < 0 || !RB.game || !RB.game.s) return;
     const tok = ++prepTok;
     let look = null;
     try { look = RB.equip.look(RB.game.s); } catch (e) { return; }
