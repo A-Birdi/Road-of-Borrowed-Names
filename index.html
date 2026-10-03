@@ -26659,6 +26659,38 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })();
 
 
+/* ==== src/engine/32h_props_ch12.js ==== */
+/* Held objects added for the staging of Chapters 1 and 2 (docs/expressive/reports/staging_ch1_ch2.md): the
+ * things that change hands in those scenes and have no drawing in the pose layer's table yet
+ * (src/engine/32g_spritepose.js PROPS). Same contract: fn(buf, x, y) draws at the hand that holds it (x, y the
+ * hand's anchor, the object above it), a pixel larger than life so it reads at play scale; no letters or
+ * kanji are drawn (a nameplate is a blank blue glass plate). Drawing only: the inventory stays with
+ * !give/!take.
+ *   charm    Mame's reed charm (a small woven knot on a red cord)
+ *   plane    Bunta's woodworking plane
+ *   shuttle  Kiku's loom shuttle
+ *   seaglass a piece of blue sea glass
+ *   plate    the sea-glass nameplate for Fuku's boat
+ *   rope     a coil of rope (Tetsu's)
+ *   nets     a bundle of fishing net (Sōta's)
+ */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const PZ = RB.sprites && RB.sprites._pose;
+  if (!PZ || !PZ.PROPS) return;
+  const add = (name, fn) => { if (!PZ.PROPS[name]) { PZ.PROPS[name] = fn; if (PZ.PROP_NAMES && !PZ.PROP_NAMES.includes(name)) PZ.PROP_NAMES.push(name); } };
+  add('charm', (b, x, y) => { b.rect(x - 1, y - 4, 3, 3, '#8a9a4a'); b.px(x, y - 4, '#c8d880'); b.px(x - 1, y - 2, '#5a6a2a'); b.px(x + 1, y - 3, '#5a6a2a'); b.rect(x, y - 1, 1, 2, '#c84a3a'); });
+  add('plane', (b, x, y) => { b.rect(x - 3, y - 3, 7, 3, '#a87a48'); b.rect(x - 3, y - 3, 7, 1, '#c89a60'); b.rect(x, y - 5, 2, 2, '#6a4a2a'); b.rect(x - 2, y, 5, 1, '#5a3e24'); b.px(x + 1, y, '#c8c8d0'); });
+  add('shuttle', (b, x, y) => { b.rect(x - 3, y - 3, 7, 2, '#b88a50'); b.px(x - 4, y - 2, '#8a6438'); b.px(x + 4, y - 2, '#8a6438'); b.rect(x - 1, y - 3, 3, 1, '#ecdcb4'); b.rect(x - 3, y - 1, 7, 1, '#7a5430'); });
+  add('seaglass', (b, x, y) => { b.rect(x - 1, y - 3, 3, 3, '#4a90c8'); b.px(x - 1, y - 3, '#a8d8f8'); b.px(x, y - 3, '#78b8e8'); b.px(x + 1, y - 1, '#2a6aa0'); });
+  add('plate', (b, x, y) => { b.rect(x - 4, y - 4, 9, 4, '#3a78b8'); b.rect(x - 4, y - 4, 9, 1, '#88c0ec'); b.rect(x - 3, y - 2, 7, 1, '#5a98d0'); b.rect(x - 4, y, 9, 1, '#1e4a78'); b.px(x + 4, y - 3, '#a8d8f8'); });
+  add('rope', (b, x, y) => { b.rect(x - 2, y - 4, 5, 4, '#c8a868'); b.rect(x - 1, y - 3, 3, 2, '#8a6a3a'); b.px(x, y - 2, '#c8a868'); b.px(x + 2, y, '#c8a868'); b.px(x + 3, y + 1, '#a88848'); });
+  add('nets', (b, x, y) => { b.rect(x - 3, y - 4, 7, 5, '#5a7a6a'); for (let i = 0; i < 7; i += 2) b.px(x - 3 + i, y - 3, '#a8c8b8'); for (let i = 1; i < 7; i += 2) b.px(x - 3 + i, y - 1, '#a8c8b8'); b.px(x + 3, y - 4, '#c8a868'); b.px(x - 3, y + 1, '#c8a868'); });
+})();
+
+
 /* ==== src/engine/32h_spritehair.js ==== */
 /* Hair for the overworld figures (40×56; see 32_spriteart.js). Masks are authored for an
  * adult head (face rows 8-24, x 11-28, the figure's centre line between x 19 and 20) and
@@ -34500,6 +34532,30 @@ RB.mannerisms = (function () {
 })();
 
 
+/* ==== src/engine/51e_gestures_ch12.js ==== */
+/* Gestures added for the staging of Chapters 1 and 2 (docs/expressive/reports/staging_ch1_ch2.md), in the
+ * same shape as the library's own (src/engine/51_gestures.js def(): entry → readable peak → recovery, keys
+ * [pose | null, ms, extra]) and drawn only from the pose layer's existing key poses (32g_spritepose.js).
+ *
+ *   wave   a raised hand moved twice, hello or goodbye (the 'wave' key pose: the arm up, a smile). Written
+ *          for lines that say someone waves or sees someone off (Mame waving from the square when the
+ *          signpost is mended, the see-off on the lantern road). A scene gesture: no profile lists it, so the
+ *          idle scheduler never picks it on its own; it is kind 'habit' (no primitive number) so the
+ *          development viewer (?dev=actors, the habits sheet) shows it with the others.
+ */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const G = RB.gestures && RB.gestures.G;
+  if (!G) return;
+  const K = (p, ms, x) => [p, ms, x || null];
+  const def = (id, o) => { if (!G[id]) G[id] = Object.assign({ id, kind: o.n ? 'primitive' : 'habit' }, o); };
+  def('wave', { label: 'a wave, hello or goodbye (scenes only)', entry: [K('half', 160, { turn: 1, gaze: 'target' })], peak: K('wave', 280, { gaze: 'target' }),
+    recover: [K('half', 150, { gaze: 'target' }), K('wave', 240, { gaze: 'target' }), K('half', 140), K(null, 100)], still: 'wave', needs: 'free', legible: 'full' });
+})();
+
+
 /* ==== src/engine/52_staging.js ==== */
 /* Staging: one owner for how people move between their steps (docs/expressive/CONTRACT.md §3.4, §3.8).
  *
@@ -34858,7 +34914,8 @@ RB.staging = (function () {
     if (Math.abs(c.x - p.x) + Math.abs(c.y - p.y) <= 1) return;
     const back = DIRS[{ up: 'down', down: 'up', left: 'right', right: 'left' }[p.dir]];
     const goal = [p.x + back[0], p.y + back[1]];
-    const path = free(goal[0], goal[1], c) ? bfs(c, goal[0], goal[1]) : bfs(c, p.x, p.y, { adjacent: true });
+    // (behind you, if that place is free and can be reached; else any free place beside you)
+    const path = (free(goal[0], goal[1], c) && bfs(c, goal[0], goal[1])) || bfs(c, p.x, p.y, { adjacent: true });
     if (path && path.length) walkPath(c, path, null, 4000);
   }
   // an early advance (the reader moved on): every cue of this scene settles at its hold or its end
@@ -91903,12 +91960,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene rw.arrive
+# Staged: you stop on the wet road and look along it; what your background notices, you do (the courier
+# points out the dark lantern, the craftsperson looks down at the mud, the student checks the letter);
+# then you face east, the way you walk.
 !music road
+!gesture pc lookroad right
 narr: {嵐|あらし} の {次|つぎ} の {朝|あさ} 。 {道|みち} は まだ ぬれて いる 。 || The morning after the storm. The road is still wet.
 narr: {折|お}れた {枝|えだ} 、 {泥|どろ} の {水|みず}たまり 、 どこか で {鳴|な}く {鳥|とり} 。 || Broken branches, muddy puddles, a bird calling somewhere.
+?(bg=courier) !gesture pc point 14,8
 ?(bg=courier) narr: {配達|はいたつ} の {癖|くせ} で 、 {道|みち} の {先|さき} の {灯|あか}り を {数|かぞ}える 。 ひとつ 、 ふたつ …… みっつ{目|め} が {消|き}えて いる 。 || Out of courier's habit, you count the lanterns ahead. One, two… the third is dark.
+?(bg=craft) !gesture pc bend
 ?(bg=craft) narr: {靴|くつ} の {底|そこ} に {泥|どろ} が {入|はい}って きた 。 {着|つ}いたら まず {直|なお}さなきゃ 。 || Mud is getting into your boots. First thing when you arrive: fix them.
+?(bg=student) !prop pc letter
+?(bg=student) !gesture pc check prop=letter
 ?(bg=student) narr: {紹介状|しょうかいじょう} は {無事|ぶじ} だ 。 {字|じ} も にじんで いない 。 {少|すこ}し {安心|あんしん} する 。 || The letter of introduction survived. The ink hasn't even run. That's a small relief.
+?(bg=student) !prop pc -
+!look pc right
 narr: {葦|あし}ノ{瀬|せ} の {灯守|ひもり} 、 ツル さん へ の {紹介状|しょうかいじょう} を {持|も}って 、 {東|ひがし} へ {歩|ある}く 。 || You walk east, carrying a letter of introduction for Tsuru, the lantern keeper of Reedwake.
 !give rw_letter quiet
 !note rw_roads
@@ -91957,45 +92024,77 @@ tsuru: そこ の {旅|たび} の {人|ひと} 。 {泥|どろ} だらけ だ�
 !emote tsuru ?
 
 @scene rw.tsuru_first
+# Staged: Tsuru points back down the road to the lantern that went out; you step up beside her to hand
+# over the letter (side-on, so the hands show) and she reads it; she shows you a dark lantern of her own,
+# shakes her head over the night's damage; she sends you round the square with a point to Mio's shop (you
+# look where she points), a glance to the performer by the well.
 !faceplayer tsuru
+!gesture tsuru point 1,30
 tsuru: {道|みち} の {三|みっ}つ{目|め} の {灯|あか}り 、 ともって いた かい 。 ゆうべ {消|き}えた はず なんだ けど ね 。 || The third lantern on the road — was it lit? It went out last night, I'd have sworn.
 !choice
 * {紹介状|しょうかいじょう} を {渡|わた}す || Hand over the letter. -> letter
 * {灯|あか}り に {名前|なまえ} を {書|か}きました || I wrote its name back. -> wrote
 :wrote
+!look tsuru pc
+!gesture tsuru observe pc
 tsuru[surprise]: {書|か}いた ？ あんた が ？ || You wrote it? You?
 :letter
+!walkto pc 22 15 left
+!look tsuru pc
+!prop pc letter
+!gesture pc handover tsuru
+!gesture tsuru receive pc then=read
 narr: {紹介状|しょうかいじょう} を {渡|わた}す と 、 ツル は {目|め} を {細|ほそ}めて {読|よ}んだ 。 || You hand over the letter. Tsuru narrows her eyes and reads.
 !take rw_letter
+!gesture tsuru nod pc
 tsuru[think]: …… なるほど 。 {古|ふる}い {字|じ} が {読|よ}める {人|ひと} か 。 {今時|いまどき} めずらしい 。 || …I see. Someone who can read the old letters. You don't meet many these days.
+!prop tsuru -
+!gesture tsuru point 20,22
 tsuru: わたし は ツル 。 この {村|むら} の {灯守|ひもり} だ 。 {灯|あか}り の {名前|なまえ} を {書|か}き{直|なお}す の が {仕事|しごと} …… だった 。 || I'm Tsuru, keeper of this village's lanterns. My job is rewriting their names… was, anyway.
+!look tsuru pc
+!gesture tsuru shake
 tsuru[worry]: ゆうべ の {嵐|あらし} で 、 {村|むら} じゅう の {字|じ} が {消|き}えた 。 {薬|くすり} の ラベル 、 {手紙|てがみ} の {宛名|あてな} 、 {灯|あか}り の {名前|なまえ} まで 。 || In last night's storm, writing vanished all over the village. Medicine labels, the addresses on letters, even the lanterns' names.
 tsuru: わたし が {書|か}き{直|なお}して も 、 すぐ に {滑|すべ}り{落|お}ちる 。 {年|とし} の せい だ と {言|い}われれば それまで だ けど ね 。 || When I rewrite them, they slide right off. You could call it old age and leave it at that.
+!gesture tsuru nod pc
 tsuru[smile]: でも 、 あんた の {字|じ} は {残|のこ}った 。 {手|て} を {貸|か}して おくれ 。 {宿|やど} と {飯|めし} くらい は {出|だ}す よ 。 || But your writing held. Lend me a hand. I can at least give you a bed and meals.
 !choice
 * {手伝|てつだ}います || I'll help. -> yes
 * {何|なに} が {起|お}きた ん です か || What happened here? -> what
 :what
+!gesture tsuru chin
 tsuru: それ が わかれば {苦労|くろう} しない 。 {嵐|あらし} で {水|みず} が {入|はい}った なら 、 {墨|すみ} が にじむ はず だろう 。 でも 、 どの {紙|かみ} も {真|ま}っ{白|しろ} なんだ 。 まるで {誰|だれ} か が {丁寧|ていねい} に はがして いった みたい に ね 。 || If I knew, I wouldn't be worrying. If water got in, the ink would have run. But every sheet is perfectly white — as if someone had peeled it off, very carefully.
 :yes
 tsuru: よし 。 まず は {広場|ひろば} の {周|まわ}り の {人|ひと} に {話|はなし} を {聞|き}いて おくれ 。 || Good. Start by asking around the square.
+!gesture tsuru point 11,15
+!gesture pc listen 11,15
 tsuru: {薬屋|くすりや} の ミオ 、 {川|かわ} の {倉庫|そうこ} に いる {配達|はいたつ} の {子|こ} 、 {橋|はし} の {所|ところ} の {若|わか}い {灯守|ひもり} 。 それと 、 {茶屋|ちゃや} の ハナ も {様子|ようす} が おかしい 。 || Mio at the apothecary, the courier down at the river warehouse, the young lantern keeper by the bridge. And Hana at the teahouse hasn't been herself either.
+!look pc tsuru
+!look tsuru 18,19
 tsuru: {広場|ひろば} で {騒|さわ}いで いる {旅芸人|たびげいにん} も 、 {何|なに} か {見|み}た らしい よ 。 {話|はなし} は {長|なが}い けど 。 || The travelling performer making a racket in the square apparently saw something too. Long-winded, though.
+!look tsuru pc
 tsuru: それから 、 これ を {持|も}って いき な 。 {灯守|ひもり} が {最初|さいしょ} に {覚|おぼ}える {言葉|ことば} だ 。 || And take this with you. It's the first word a keeper learns.
 !word mamoru
 !note rw_himori
+!gesture tsuru nod pc
 tsuru: 「 まもる 」 。 {意味|いみ} は {誰|だれ} でも {知|し}って いる 。 {大事|だいじ} なの は 、 {本気|ほんき} で {書|か}く こと だ 。 || "Mamoru" — to protect. Everyone knows what it means. What matters is writing it like you mean it.
 !set rw_met_tsuru
 !quest rw_labels 0
 !autosave
 
 @scene rw.tsuru_hint
+# Staged: each place Tsuru still sends you to, she points at as she names it (Mio's door, the warehouse,
+# the bridge, the well, the teahouse chimney); each line names a different place, so the points differ.
 !faceplayer tsuru
 tsuru: {調子|ちょうし} は どう だい 。 || How's it going?
+?(!rw_bottles_done) !gesture tsuru point 11,15
 ?(!rw_bottles_done) tsuru: ミオ の {店|みせ} は {広場|ひろば} の {西|にし} 。 {瓶|びん} だらけ で {困|こま}ってる はず だ 。 || Mio's shop is west of the square. She'll be drowning in bottles.
+?(!rw_letters_done) !gesture tsuru point 29,25
 ?(!rw_letters_done) tsuru: {配達|はいたつ} の {子|こ} は {南|みなみ} の {倉庫|そうこ} 。 {川|かわ} の {近|ちか}く だ よ 。 || The courier is at the warehouse to the south, near the river.
+?(!rw_lanterns_done) !gesture tsuru point 32,18
 ?(!rw_lanterns_done) tsuru: {橋|はし} の {灯守|ひもり} は 、 {東|ひがし} の {橋|はし} の {手前|てまえ} に いる 。 || The young keeper is just before the bridge, to the east.
+?(!rw_suzu_told) !gesture tsuru point 20,17
 ?(!rw_suzu_told) tsuru: {旅芸人|たびげいにん} は {井戸|いど} の {近|ちか}く で {歌|うた}ってる 。 {聞|き}こえる だろう 。 || The performer is singing by the well. You can hear her, surely.
+?(!rw_hana_cups) !gesture tsuru point 30,13
 ?(!rw_hana_cups) tsuru: ハナ の {茶屋|ちゃや} は {橋|はし} の {近|ちか}く 。 {煙突|えんとつ} から {煙|けむり} が {出|で}て いる {家|いえ} だ 。 || Hana's teahouse is near the bridge — the one with smoke coming from the chimney.
 !if rw_bottles_done&rw_letters_done&rw_lanterns_done&rw_suzu_told&rw_hana_cups -> all
 !quest rw_labels 1 quiet
@@ -92004,14 +92103,23 @@ tsuru: {調子|ちょうし} は どう だい 。 || How's it going?
 !call rw.tsuru_report
 
 @scene rw.tsuru_report
+# Staged: you tell her what you found with an open hand and she listens, still; she thinks over the old
+# word, points north to the mill, and her head shakes at the voices; a nod to send you.
 !faceplayer tsuru
 tsuru: …… {全部|ぜんぶ} {聞|き}いて きた かい 。 || …You've heard it all, then?
+!gesture pc palm tsuru
+!gesture tsuru listen pc hold
 narr: {聞|き}いた こと を ツル に {話|はな}す 。 {白|しろ}すぎる ラベル 。 {宛名|あてな} だけ が {消|き}えた {手紙|てがみ} 。 {滑|すべ}り{落|お}ちる {灯|あか}り の {名前|なまえ} 。 {嵐|あらし} の {夜|よる} 、 {足音|あしおと} の ない {人影|ひとかげ} 。 そして 、 ふたつ の お{茶|ちゃ} 。 || You tell Tsuru everything. Labels too white. Letters with only the addresses gone. Lantern names that slide off. A figure without footsteps on the night of the storm. And two cups of tea.
+!gesture tsuru chin
 tsuru[think]: ふん 。 {雨|あめ} の せい じゃ ない 。 {昔|むかし} の {灯守|ひもり} は こういう の を 「 しじま 」 と {呼|よ}んだ 。 || Hm. That's no rain. The old keepers had a word for this: shijima. The hush.
 !note rw_hush
 tsuru: {名前|なまえ} を {静|しず}か に {持|も}って いく もの さ 。 わたし の {師匠|ししょう} の {頃|ころ} に は 、 もう {誰|だれ} も {本気|ほんき} に して いなかった けど ね 。 || Something that quietly carries names away. Even in my teacher's day, nobody took it seriously.
+!gesture tsuru point 22,0
 tsuru[worry]: それ から 、 {北|きた} の {水車|すいしゃ}{小屋|ごや} だ 。 {嵐|あらし} の {夜|よる} から 、 {誰|だれ} も いない のに {声|こえ} が {聞|き}こえる って 。 {粉屋|こなや} の {娘|むすめ} が {逃|に}げて きた 。 || And then there's the water mill to the north. Since the storm, people hear voices there though no one's inside. The miller's daughter ran away from it.
+!look tsuru pc
+!gesture tsuru shake
 tsuru: {呼|よ}んで も いない のに 、 {呼|よ}び{返|かえ}して くる んだ と さ 。 {昔|むかし} の {声|こえ} で 。 || It calls back, she says, though nobody called it. In voices from years ago.
+!gesture tsuru nod pc
 tsuru: {北|きた} の {道|みち} を {開|あ}けて おく 。 あんた ひとり で {行|い}け と は {言|い}わない よ 。 {心配|しんぱい} {性|しょう} の {連中|れんちゅう} が 、 どうせ ついて {行|い}く だろう から ね 。 || I'll open the north path. I won't tell you to go alone — the worriers around here will tag along anyway.
 !quest rw_labels done
 !quest rw_mill 0
@@ -92033,21 +92141,41 @@ narr: {西|にし} の {灯|ひ} の {道|みち} 。 {今|いま} は まだ �
 !move pc right 1
 
 @scene rw.mio_first
+# Staged: Mio's worried welcome with a hand at her chest; you both look at the blank labels; as she talks
+# she goes to the shelf and lines the bottles up (the line says so) and speaks to you from there; once the
+# labels hold she leans in to them, comes round to your side to thank you with open hands, a hand to her
+# heart for her teacher's word, and covers "forget it" by handing you a salve.
 !faceplayer mio
+!gesture mio guard
 mio[worry]: いらっしゃいませ …… あ 、 すみません 。 {今|いま} 、 {店|みせ} は ちょっと …… 。 || Welcome… oh, I'm sorry. The shop is a bit… right now.
+!gesture pc observe 2,2
 narr: {棚|たな} の {瓶|びん} は きちんと {並|なら}んで いる 。 ただ 、 どの ラベル も {真|ま}っ{白|しろ} だ 。 || The bottles on the shelves are neatly lined up. But every label is blank.
+!look pc mio
 mio: {嵐|あらし} の あと 、 ラベル が {全部|ぜんぶ} {白|しろ}く なって しまって 。 {似|に}た {色|いろ} の {薬|くすり} が {多|おお}い ので 、 {間違|まちが}える と {危|あぶ}ない ん です 。 || After the storm, all the labels went white. So many medicines look alike — a mix-up could be dangerous.
+!walkto mio 3 2 left
+!look pc mio
+!gesture mio tidy 2,2
 narr: {話|はな}し ながら 、 ミオ は {瓶|びん} を {一本|いっぽん} ずつ ほんの {少|すこ}し {回|まわ}して 、 {向|む}き を そろえて いる 。 || As she talks, Mio turns each bottle a fraction, lining them all up to face the same way.
+!look mio pc
+!look pc mio
 mio: でも 、 {変|へん} なん です 。 {水|みず} に ぬれた なら 、 {紙|かみ} が ふやける はず でしょう 。 これ 、 ぜんぜん ぬれて いない ん です よ 。 || But it's strange. If they'd got wet, the paper would be warped, wouldn't it? These aren't wet at all.
 mio: {字|じ} だけ 、 きれい に なく なって いる 。 …… {気味|きみ} が {悪|わる}い です 。 || Only the writing is gone, perfectly. …It gives me the creeps.
 mio: ツル さん の お{客|きゃく}さま です か ？ {字|じ} が {書|か}ける なら 、 {手伝|てつだ}って いただけません か 。 {帳面|ちょうめん} に {中身|なかみ} は {全部|ぜんぶ} {書|か}いて あります から 。 || Are you Tsuru's guest? If you can write, would you help me? What's in each bottle is all written in my notebook.
 !lesson kana
 !challenge rw.c_bottles
 !if var._res=0 -> later
+!gesture mio observe 2,2
 mio[smile]: …… {字|じ} が 、 {落|お}ちない 。 すごい 。 わたし が {書|か}いた の は 、 {朝|あさ} の うち に {全部|ぜんぶ} {滑|すべ}って しまった のに 。 || …The writing isn't coming off. Amazing. Everything I wrote this morning slid right off.
+!walkto mio 6 4 left
+!look pc mio
+!gesture mio thanks pc
 mio: ありがとう ございます 。 お{礼|れい} に 、 これ を 。 {薬|くすり} じゃ なくて 、 {言葉|ことば} です けど 。 || Thank you. Please take this as thanks. It's not medicine — it's a word.
 !word iyasu
+!gesture mio guard
 mio: 「 いやす 」 。 {傷|きず} を {治|なお}す とき の 「 {癒|いや}す 」 です 。 わたし の {先生|せんせい} は 、 {薬|くすり} を {渡|わた}す とき 、 いつも {心|こころ} の {中|なか} で そう {書|か}いて いた そう です 。 || Iyasu — to heal, to soothe. My teacher used to write it in her heart every time she handed over medicine, apparently.
+!prop mio bottle
+!gesture mio handover pc
+!gesture pc receive mio
 mio[think]: …… {変|へん} な こと を {言|い}いました ね 。 {忘|わす}れて ください 。 || …I said something strange, didn't I. Forget it.
 !give rw_salve
 !set rw_bottles_done
@@ -92055,6 +92183,8 @@ mio[think]: …… {変|へん} な こと を {言|い}いました ね 。 {�
 !autosave
 !end
 :later
+!look mio pc
+!gesture mio nod pc
 mio: {急|いそ}ぎません 。 {間違|まちが}える より 、 {時間|じかん} を かける {方|ほう} が ずっと いい ので 。 || There's no rush. Taking time is far better than making a mistake.
 
 @scene rw.mio_again
@@ -92071,19 +92201,36 @@ narr: {帳面|ちょうめん} が {開|ひら}いて いる 。 {細|こま}か
 ?(rw_bottles_done) narr: {余白|よはく} に 、 {小|ちい}さく 「 {休|やす}む 」 と {書|か}いて ある 。 {誰|だれ} に {向|む}けた {言葉|ことば} だろう 。 || In the margin, small: "rest". You wonder who that was meant for.
 
 @scene rw.nao_first
+# Staged: Nao points straight down at the missing board, eyes the way out, holds up one of the damp letters
+# and you lean in to it; after the sorting, a nod, a point to the chalked crates (you look), and on a
+# courier's background Nao looks you over.
 !faceplayer nao
+!gesture nao point 5,5
 nao: …… {入口|いりぐち} から {来|き}た なら 、 {足元|あしもと} {気|き}を つけて 。 {三|みっ}つ{目|め} の {床板|ゆかいた} 、 {抜|ぬ}けてる から 。 || …If you came in the front, watch your step. The third floorboard is gone.
+!gesture nao aside
 narr: {帽子|ぼうし} の {下|した} から 、 {黄土色|おうどいろ} の スカーフ 。 {膨|ふく}らんだ {鞄|かばん} 。 {話|はな}し ながら 、 {目|め} だけ が {裏口|うらぐち} の {方|ほう} を {確|たし}かめて いる 。 || An ochre scarf; a bulging satchel. While talking, their eyes check the back door.
+!prop nao letter
+!gesture nao present pc hold
 nao: {配達人|はいたつにん} の ナオ 。 {嵐|あらし} で {足止|あしど}め 。 で 、 これ 。 || Nao, courier. Stuck here by the storm. And — this.
+!gesture pc observe nao
 narr: {机|つくえ} の {上|うえ} に 、 {湿|しめ}った {手紙|てがみ} の {山|やま} 。 {宛名|あてな} の ところ だけ 、 {真|ま}っ{白|しろ} だ 。 || A pile of damp letters on the desk. Only the addresses are blank.
 nao: {中身|なかみ} は {読|よ}める 。 {宛名|あてな} だけ {消|き}えた 。 {雨|あめ} って 、 そんな {器用|きよう} な こと する か ？ || The contents are readable. Only the addresses are gone. Does rain do anything that neat?
+!look pc nao
+!gesture nao aside
 nao[smirk]: {他人|たにん} の {手紙|てがみ} を {読|よ}む の は {好|す}き じゃ ない 。 でも 、 {届|とど}かない {手紙|てがみ} は もっと {嫌|きら}い だ 。 {手伝|てつだ}って くれる ？ || I don't like reading other people's letters. But I hate letters that never arrive even more. Help me?
+!prop nao -
 !lesson kana
 !activity rw.a_letters
 !if var._res=0 -> later
+!gesture nao nod pc
 nao: …… {全部|ぜんぶ} {当|あ}たり 。 {字|じ} の {癖|くせ} まで {見|み}てた ？ いい {目|め} してる 。 || …Every one right. Were you reading the handwriting too? You've got a good eye.
+!gesture nao point 8,5
+!gesture pc listen 8,5
 nao: {倉庫|そうこ} の {木箱|きばこ} も {同|おな}じ だった 。 {紙|かみ} の {札|ふだ} は {白|しろ} 。 でも 、 {下|した} に チョーク で {書|か}いた {印|しるし} は {残|のこ}ってた 。 || The crates in the warehouse are the same. The paper tags went white. But the chalk marks underneath survived.
+!look pc nao
+!look nao pc
 nao[think]: {紙|かみ} に {書|か}いた {名前|なまえ} だけ 、 {狙|ねら}われた みたい だ 。 …… {変|へん} な {話|はなし} だろ 。 || As if only names written on paper were targeted. …Weird, right?
+?(bg=courier) !gesture nao observe pc
 ?(bg=courier) nao: …… あんた も {配達|はいたつ} やってた ？ {封|ふう} の {持|も}ち{方|かた} で わかる 。 || …You've done deliveries too? I can tell from how you hold an envelope.
 !set rw_letters_done rw_met_nao
 !quest rw_labels 1 quiet
@@ -92102,12 +92249,26 @@ nao: {広場|ひろば} から だと 、 {出口|でぐち} が {四|よっ}つ
 narr: {木箱|きばこ} の {紙|かみ} の {札|ふだ} は {白|しろ} 。 でも 、 {木|き} に {直接|ちょくせつ} チョーク で 「 こめ 」 「 しお 」 と {書|か}いて ある 。 || The paper tags on the crates are blank. But written straight on the wood in chalk: "rice", "salt".
 
 @scene rw.ren_first
+# Staged: caught talking to a lantern, Ren pushes his glasses up; you look him over (the patched coat, the
+# mud); he explains with an open hand, turns to the lantern whose name won't take root, catches himself
+# on his teacher (a hand to the chin, a small shake); you step to his side and he hands you the record.
 !faceplayer ren
+!gesture ren glasses
 ren: ── {失礼|しつれい} 。 {今|いま} 、 {灯|あか}り と {話|はな}して いた ところ でして 。 || — Excuse me. I was just in the middle of talking with the lantern.
+!gesture pc observe ren
 narr: {継|つ}ぎ{当|あ}て だらけ の {儀式用|ぎしきよう} の {上着|うわぎ} 。 {鏡|かがみ} の よう に {磨|みが}かれた ランプ 。 そして 、 {泥|どろ} だらけ の {靴|くつ} 。 || A ceremonial coat covered in patches. A lamp polished like a mirror. And boots caked in mud.
+!gesture ren palm pc
 ren: レン と {申|もう}します 。 {川上|かわかみ} から 、 {嵐|あらし} の あと の {灯|あか}り を {直|なお}し に {来|き}ました 。 {灯守|ひもり} です 。 {一応|いちおう} 。 || I'm Ren. I came down from upriver to mend the lanterns after the storm. A keeper. Nominally.
+!gesture ren observe 32,18
 ren: {記録|きろく} は {完璧|かんぺき} です 。 {名前|なまえ} も {距離|きょり} も {全部|ぜんぶ} {写|うつ}して ある 。 ただ …… {書|か}いて も {書|か}いて も 、 {名前|なまえ} が {根|ね} を {張|は}らない 。 || My records are perfect. Every name and distance, copied out. Only… however many times I write them, the names won't take root.
+!look ren pc
+!gesture ren chin then=shake
 ren[think]: {先生|せんせい} なら 、 どう した でしょう 。 {教|おし}え は {全部|ぜんぶ} {覚|おぼ}えて いる のに 、 {顔|かお} が …… いえ 、 {関係|かんけい} ない {話|はなし} です 。 || What would my teacher have done? I remember every lesson, and yet the face… No. That's beside the point.
+!walkto pc 32 19 left
+!look ren pc
+!prop ren ledger
+!gesture ren handover pc
+!gesture pc receive ren
 ren: ツル さん が {言|い}って いた {方|かた} です ね 。 {字|じ} が {残|のこ}る と 。 {南|みなみ} の {灯|あか}り と 、 {橋|はし} の {灯|あか}り 。 {記録|きろく} を {読|よ}み{上|あ}げます から 、 {書|か}いて いただけます か 。 || You're the one Tsuru mentioned — whose writing stays. The south lantern and the bridge lantern. I'll read from the records if you'll write.
 !give rw_record
 !set rw_met_ren
@@ -92150,11 +92311,19 @@ narr: {灯|あか}り は ともった 。 でも 、 {字|じ} の {端|はし}
 narr: {橋|はし} の {灯|あか}り 。 {紙|かみ} は {白|しろ}い 。 すぐ {近|ちか}く に 、 {記録|きろく} を めくって いる {灯守|ひもり} が いる 。 || The bridge lantern. The paper is blank. There's a keeper leafing through records right nearby.
 
 @scene rw.ren_lanterns_done
+# Staged: Ren leans to the bridge lantern beside him, points across to the far bank (the second name),
+# thinks with a hand to his chin; then turns to you with a nod for the word, and looks down at his boots.
+!gesture ren observe 32,18
 ren[surprise]: …… {根|ね} を {張|は}った 。 {本当|ほんとう} に 。 || …They took root. They really did.
+!gesture ren point 42,17
 ren: {橋|はし} の {方|ほう} は 、 {記録|きろく} に よれば {名前|なまえ} が {二|ふた}つ {必要|ひつよう} な はず です 。 {向|む}こう{岸|ぎし} と 、 {渡|わた}し{守|もり} の {名前|なまえ} 。 {二|ふた}つ{目|め} の {欄|らん} が 、 {記録|きろく} から も {消|き}えて いる 。 || According to the records, the bridge needs two names: the far bank, and the ferryman's. The second entry has vanished from the records too.
+!gesture ren chin
 ren[think]: {記録|きろく} から まで …… 。 {紙|かみ} の {上|うえ} の {名前|なまえ} だけ を {持|も}って いく {何|なに} か が いる 。 {先生|せんせい} が {昔|むかし} 、 そんな {話|はなし} を して いた {気|き} が します 。 || Even from the records… Something is taking only the names written on paper. My teacher once told me a story like that, I think.
+!look ren pc
+!gesture ren nod pc
 ren[smile]: ありがとう ございます 。 これ を 。 {灯守|ひもり} の {言葉|ことば} です 。 {私|わたし} より 、 あなた の {手|て} で {書|か}く {方|ほう} が {明|あか}るい でしょう 。 || Thank you. Take this — a keeper's word. It'll shine brighter written in your hand than in mine.
 !word hikari
+!gesture ren observe
 ren: 「 ひかり 」 。 {隠|かく}れた もの を {照|て}らす {言葉|ことば} です 。 …… {私|わたし} の {靴|くつ} の {汚|よご}れ も {照|て}らして しまう ので 、 {使|つか}い{方|かた} に は {注意|ちゅうい} を 。 || Hikari — light. It shows what's hidden. …It also shows up the mud on my boots, so use it with care.
 !set rw_lanterns_done
 !quest rw_labels 1 quiet
@@ -92166,14 +92335,26 @@ ren: {灯|あか}り の {名前|なまえ} は 、 {今|いま} の ところ {
 ?(!quest.rw_boots) ren: …… {靴|くつ} です か ？ {気|き}づいて いました 。 {直|なお}す {時間|じかん} が ない だけ です 。 {本当|ほんとう} です 。 || …My boots? I'm aware. I simply haven't had time to mend them. Truly.
 
 @scene rw.suzu_first
+# Staged: Suzu's showman's welcome with both hands; Mame points her out and Suzu answers her; when she
+# lowers her voice she looks away and back to you; the lanterns closing like books in her hands; a laugh;
+# and the far bank her troupe reached, pointed at.
 !faceplayer suzu
+!gesture suzu size pc
 suzu[laugh]: さあさあ 、 {旅|たび} の お{方|かた} ！ {嵐|あらし} の {夜|よる} の {不思議|ふしぎ} な {話|はなし} 、 {聞|き}いて いかない ？ お{代|だい} は {笑顔|えがお} ひとつ ！ || Roll up, traveller! Care to hear a strange tale of the storm night? The price — one smile!
+!gesture mame point suzu
 mame: スズ の {話|はなし} 、 {三回|さんかい} {目|め} だ よ ！ {毎回|まいかい} ちがう けど ！ || This is the third time Suzu's told it! It's different every time!
+!look suzu mame
+!gesture suzu palm mame
 suzu[smirk]: {語|かた}り{部|べ} は {話|はなし} を {育|そだ}てる もの な の 。 || A storyteller helps her stories grow.
+!look suzu pc
 narr: {色褪|いろあ}せた {舞台用|ぶたいよう} の リボン 。 {大|おお}きな {身振|みぶ}り 。 でも 、 {声|こえ} を {落|お}とした とき 、 {目|め} は {笑|わら}って いない 。 || A faded stage ribbon. Big gestures. But when she lowers her voice, her eyes aren't smiling.
+!gesture suzu avert pc
 suzu: …… {本当|ほんとう} の ところ を {言|い}う と ね 。 {嵐|あらし} の {夜|よる} 、 {道|みち} を {誰|だれ} か が {歩|ある}いて いた 。 {足音|あしおと} が しない の 。 {水|みず}たまり を {踏|ふ}んで も 、 {音|おと} が しない 。 || …If I'm honest. On the storm night, someone was walking the road. No footsteps. Even stepping in puddles, no sound.
+!gesture suzu size
 suzu: その {人|ひと} が {通|とお}った あと 、 {灯|あか}り が ひとつ ずつ {消|き}えた 。 {本|ほん} を {閉|と}じる みたい に 、 {丁寧|ていねい} に 。 || After that person passed, the lanterns went out one by one. Carefully, like someone closing books.
+!gesture suzu laugh
 suzu[smile]: …… ほら ね 。 {三回|さんかい} {目|め} で やっと {本当|ほんとう} の {話|はなし} に なった 。 {話|はなし} は {育|そだ}つ の 。 || …See? Third time round, it finally became the true version. Stories grow.
+!gesture suzu point 42,17
 suzu: {一座|いちざ} は {先|さき} に {向|む}こう{岸|ぎし} へ {渡|わた}った の 。 {私|わたし} は {荷物|にもつ} の {番|ばん} で {残|のこ}ってたら 、 {橋|はし} が …… ね 。 {見|み}て の とおり 。 || My troupe crossed to the far bank ahead of me. I stayed behind to mind the luggage, and then the bridge… well. You've seen it.
 !set rw_suzu_told rw_met_suzu
 !quest rw_labels 1 quiet
@@ -92255,9 +92436,16 @@ narr: {誰|だれ} も 「 {一緒|いっしょ} に {行|い}こう 」 と は
 !autosave
 
 @scene rw.mr_sae
+# Staged: Sae starts back from you (a voice?), then holds herself; when she can say no more, her head
+# goes down, and Mio, beside her, kneels to her box of medicines (you look round at her).
 !faceplayer sae
+!gesture sae recoil pc
 sae[worry]: {来|こ}ないで …… あ 、 ごめんなさい 。 {人|ひと} だ 。 {声|こえ} じゃ ない 。 || Don't come… oh, sorry. You're a person. Not a voice.
+!gesture sae guard hold
 sae: {粉屋|こなや} の サエ です 。 {父|ちち} の {水車|すいしゃ}{小屋|ごや} …… {嵐|あらし} の {夜|よる} から 、 {誰|だれ} も いない のに 、 {昔|むかし} の {声|こえ} が {呼|よ}ぶ ん です 。 {死|し}んだ {父|ちち} の {声|こえ} も 。 || I'm Sae, the miller's daughter. My father's mill… since the storm night, with nobody inside, old voices keep calling. Even my late father's.
+!gesture sae lowered hold
+!gesture mio kneel hold
+!gesture pc listen mio
 narr: サエ は {震|ふる}えて いて 、 それ {以上|いじょう} {話|はな}せない 。 {隣|となり} で ミオ が {薬|くすり} の {箱|はこ} を {開|ひら}いて いる 。 || Sae is shaking and can't say more. Next to her, Mio is opening a box of medicines.
 
 @scene rw.mr_sae2
@@ -92266,14 +92454,24 @@ sae: {歯車|はぐるま} の {軸|じく} 、 {使|つか}って ください 
 ?(rw_echo_done) sae[smile]: {水車|すいしゃ} が {回|まわ}る {音|おと} 、 {久|ひさ}しぶり に {聞|き}きました 。 ありがとう 。 || I haven't heard the wheel turning in so long. Thank you.
 
 @scene rw.mr_mio
+# Staged: Mio holds the warm cup she has brewed, puts it in Sae's hands and turns to her; Sae's head goes
+# down over her confession; Mio's nod; Sae looks away, then at you, and gives up the pin; Mio's nod to her.
 !faceplayer mio
+!prop mio cup
 mio: {落|お}ち{着|つ}く お{茶|ちゃ} を {煎|せん}じて います 。 {薬|くすり} と いう より 、 {温|あたた}かい もの を {持|も}って いる と 、 {人|ひと} は {少|すこ}し {楽|らく} に なる ので 。 || I'm brewing a calming tea. It's less the medicine than holding something warm — people feel a little better.
+!gesture mio handover sae
+!gesture sae receive mio hold
 narr: ミオ は サエ に {茶碗|ちゃわん} を {握|にぎ}らせ 、 {目|め} を {見|み}て {話|はな}す 。 || Mio puts a cup in Sae's hands and speaks to her, meeting her eyes.
+!gesture mio palm sae
 mio: 「 {気|き} の せい 」 と は {言|い}いません 。 {何|なに} か が {起|お}きて いる の は {本当|ほんとう} です 。 でも 、 それ は あなた の せい じゃ ない 。 || I won't tell you it's your imagination. Something really is happening. But it isn't your fault.
+!gesture sae lowered hold
 sae[think]: …… {父|ちち} の {声|こえ} が 、 「 {軸|じく} を {抜|ぬ}いて おけ 」 って {言|い}った ん です 。 {嵐|あらし} の {夜|よる} に 。 {怖|こわ}くて 、 {歯車|はぐるま} の {軸|じく} を {抜|ぬ}いて {逃|に}げた 。 だから {水車|すいしゃ} が {止|と}まった ん です 。 || …My father's voice said "pull the pin out". On the storm night. I was scared, so I pulled the gear pin and ran. That's why the wheel stopped.
+!gesture mio nod sae
 mio: {持|も}って いる の ね 。 …… {返|かえ}しても いい と {思|おも}える まで 、 {待|ま}つ から 。 || You still have it. …I'll wait until you feel you can give it back.
+!gesture sae avert pc hold
 sae: …… いいえ 。 あなた たち に {渡|わた}します 。 {止|と}まった ままの {父|ちち} の {水車|すいしゃ} なんて 、 {嫌|いや} です 。 || …No. I'll give it to you. I don't want my father's wheel standing still.
 !give rw_wheel_pin
+!gesture mio nod sae
 mio[smile]: よく {言|い}えました 。 …… {私|わたし} は ここ で サエ さん と いる 。 {気|き}を つけて ね 。 || Well said. …I'll stay here with Sae. Be careful.
 !set rw_mr_mio
 !quest rw_mill 1 quiet
@@ -92306,6 +92504,9 @@ ren[smile]: …… ありがとう 。 {灯|あか}り が {一|ひと}つ と�
 ren: {私|わたし} は ここ で {灯|あか}り を {見|み}て います 。 {消|き}えそう に なったら 、 {大声|おおごえ} で {歌|うた}います 。 {音痴|おんち} です が 、 {効果|こうか} は ある はず です 。 || I'll keep watch on the lantern here. If it starts to go out, I'll sing loudly. I'm tone-deaf, but it should be effective.
 
 @scene rw.mr_nao
+# Staged: Nao points out the narrows and turns to the reeds as they name the other way (you look); when
+# you have read the reeds yourself, a nod and a look between the two ways; if they clear them they go to
+# the reeds and kneel to part them (side-on); if you take the narrows they point you to the way out.
 !faceplayer nao
 !if !rw_mr_obs_reeds -> tell
 nao: {葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？ || You've been looking at the reeds. What did you make of them?
@@ -92313,23 +92514,35 @@ nao: {葦|あし} 、 {見|み}て きた な 。 どう {思|おも}った ？ 
 * {下|した} に {細|ほそ}い {道|みち} が ある 。 {茎|くき} は {曲|ま}がってる だけ || There's a track underneath. The stalks are only bent aside. -> read
 * ただ の {葦|あし} に {見|み}えた || They looked like plain reeds to me. -> tell
 :read
+!gesture nao nod pc
 nao[smirk]: よく {見|み}てる 。 {獣道|けものみち} だ 。 {毎晩|まいばん} {何|なに} か が {通|とお}ってる 。 {折|お}らず に {分|わ}ければ 、 {人|ひと} も {通|とお}れる 。 || Sharp eyes. It's an animal track; something uses it every night. Part the reeds without breaking them and people can use it too.
+!gesture nao lookbetween 6,15 and=12,16
 nao: {崖|がけ} の {方|ほう} は 、 {声|こえ} に {押|お}し{戻|もど}される 。 どっち に する ？ || The narrows push you back with voices. Which way do you want?
 !goto choose
 :tell
+!gesture nao point 6,15
 nao: {先|さき} に {見|み}て きた 。 {狭|せま}い {崖|がけ} の {間|あいだ} で 、 {声|こえ} が {全部|ぜんぶ} {跳|は}ね{返|かえ}って くる 。 {通|とお}ろう と する と 、 {押|お}し{戻|もど}される 。 || I went ahead. In the narrows between the cliffs, every voice bounces back at you. Try to go through and you get pushed back.
+!look nao 12,16
+!gesture pc listen 12,16
 nao: {別|べつ} の {道|みち} も ある 。 {小屋|こや} の {裏|うら} 、 {背|せ} の {高|たか}い {葦|あし} の {向|む}こう 。 {獣道|けものみち} が {上|うえ} まで {続|つづ}いてる 。 || There's another way. Behind the shed, past the tall reeds — an animal track that goes all the way up.
 :choose
 !choice
 * {葦|あし} を {分|わ}けて もらう || Ask Nao to clear the reeds. -> clear
 * {崖|がけ} の {道|みち} を {行|い}く || I'll try the narrows. -> narrows
 :clear
+!look pc nao
+!look nao 12,16
 nao: {了解|りょうかい} 。 …… {葦|あし} を {折|お}る の は {悪|わる}い けど 、 {春|はる} に は また {生|は}える 。 {道|みち} は {生|は}えない 。 || Got it. …Feels bad breaking reeds, but they grow back in spring. Paths don't.
 !set rw_mr_nao
 !sfx wind
+!walkto nao 11 17 right
+!gesture nao kneel 12,17 hold
 narr: ナオ が {葦|あし} を {押|お}し{倒|たお}して 、 {細|ほそ}い {道|みち} を {作|つく}った 。 || Nao flattens the reeds, making a narrow path.
 !end
 :narrows
+!look pc nao
+!look nao pc
+!gesture nao point 10,25
 nao[smirk]: {正面|しょうめん} から か 。 {嫌|きら}い じゃ ない 。 {無理|むり} だったら {戻|もど}って きな 。 {出口|でぐち} は ここ に ある 。 || Straight through the front, huh. I don't hate it. If it's no good, come back. The exit's right here.
 
 @scene rw.mr_nao2
@@ -92359,6 +92572,9 @@ narr: {何|なに} か {小|ちい}さな もの が 、 {毎晩|まいばん} �
 !set rw_mr_obs_reeds
 
 @scene rw.mr_suzu_talk
+# Staged: Suzu shows off the cliffs like a theatre and gives the idea of a round with both hands; if
+# you sing, you both turn to the narrows and she conducts the cliff with an open hand; then she turns
+# back to you, pleased with herself.
 !faceplayer suzu
 !if !rw_mr_obs_echo -> intro
 suzu: {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう だった ？ || You went into the narrows? What were the voices like?
@@ -92366,20 +92582,31 @@ suzu: {崖|がけ} に {入|はい}って みた の ？ {声|こえ} は どう
 * {最後|さいご} の {音|おと} を {一|ひと}つ ずつ {返|かえ}して くる || They throw back the last sound they caught, one at a time. -> read
 * ただ {押|お}し{返|かえ}された || They just pushed me back. -> intro
 :read
+!gesture suzu size
 suzu[laugh]: {一|ひと}つ ずつ ！ それ なら {話|はなし} は {早|はや}い 。 {二|ふた}つ {同時|どうじ} に {聞|き}かせれば いい の 。 {同|おな}じ {歌|うた} を {少|すこ}し ずらして 、 {輪唱|りんしょう} で 。 || One at a time! Then it's easy. We give it two at once: the same song, slightly staggered, as a round.
 !goto choose
 :intro
+!gesture suzu point 6,14
 suzu: この {崖|がけ} 、 いい {響|ひび}き ！ {劇場|げきじょう} に したい くらい 。 …… ただ 、 {客|きゃく} が {悪|わる}い 。 {同|おな}じ セリフ しか {言|い}わない 。 || These cliffs have wonderful acoustics! I'd love to make it a theatre. …Only, the audience is terrible. They only have one line.
+!look suzu pc
+!gesture suzu size
 suzu: {繰|く}り{返|かえ}す {相手|あいて} に は 、 {輪唱|りんしょう} を ぶつける の 。 {同|おな}じ {歌|うた} を 、 {少|すこ}し ずらして 。 そう する と 、 どっち が どっち か わからなく なって 、 {黙|だま}る 。 || Against something that repeats, you throw a round at it. The same song, slightly staggered. It loses track of which is which and goes quiet.
 :choose
 !choice
 * {一緒|いっしょ} に {歌|うた}う || Sing with her. -> sing
 * {本当|ほんとう} に {効|き}く の ？ || Does that really work? -> ask
 :ask
+!gesture suzu laugh
 suzu[laugh]: {知|し}らない ！ {初|はじ}めて やる もの 。 …… でも 、 {怖|こわ}い とき に {歌|うた}う の は 、 {昔|むかし} から {効|き}く の よ 。 {少|すく}なくとも 、 {歌|うた}って いる {方|ほう} に は 。 || No idea! I've never tried it. …But singing when you're scared has always worked — for the singer, at least.
 :sing
+!look pc 6,15
+!look suzu 6,15
+!gesture suzu palm
 narr: スズ が {歌|うた}い{出|だ}し 、 {少|すこ}し {遅|おく}れて あなた も {歌|うた}う 。 {崖|がけ} の {声|こえ} は {二|ふた}つ の {歌|うた} を {追|お}いかけ 、 やがて {追|お}いつけなく なって 、 {静|しず}か に なった 。 || Suzu starts to sing, and a beat later you join in. The cliff-voices chase both songs, fall behind, and finally go quiet.
 !music companion_suzu
+!look pc suzu
+!look suzu pc
+!gesture suzu celebrate
 suzu[smile]: …… ほら 。 {拍手|はくしゅ} は {後|あと} で まとめて ちょうだい 。 || …There. Save the applause for later.
 !set rw_mr_suzu
 !music mystery
@@ -92406,23 +92633,30 @@ narr: 「 …… あした も きて ね …… 」 「 …… おかえり …
 !autosave
 
 @scene rw.m1_gears
+# Staged: you lean in to the jammed gears; you reach in and set the pin; at the faint heat you turn to the
+# millstone, and the bang of the trapdoor makes you look up at the ladder.
 !if !item.rw_wheel_pin -> nopin
+!gesture pc observe 10,2 hold
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} に 、 {軸|じく} を {通|とお}す {穴|あな} が ある 。 {板|いた} に は {番号|ばんごう} の ような {字|じ} が {刻|きざ}まれて いる 。 || There's a hole in the middle of the gears for a pin. Plates carved with something like numbers.
 !lesson kana
 !challenge rw.c_mill_gears
 !if var._res=0 -> end
 !take rw_wheel_pin
 !sfx chest
+!gesture pc handover 10,2
 narr: {軸|じく} が はまり 、 {歯車|はぐるま} が {重|おも}たげ に {回|まわ}り{出|だ}した 。 {外|そと} で 、 {水車|すいしゃ} の きしむ {音|おと} が {変|か}わる 。 || The pin slots in, and the gears begin to turn, heavily. Outside, the creak of the waterwheel changes.
 narr: {床|ゆか} の {下|した} の {水路|すいろ} に 、 {冷|つめ}たい {水|みず} が {戻|もど}って きた 。 {歯車|はぐるま} の {板|いた} の {字|じ} の {中|なか} に 、 {一|ひと}つ だけ {数字|すうじ} で は ない {字|じ} が ある 。 「 {水|みず} 」 。 || Cold water runs back into the millrace under the floor. Among the characters on the gear plates, one isn't a number: the character for water, mizu.
 !word mizu
+!gesture pc listen 6,4
 narr: 「 みず 」 。 {熱|あつ}く なった もの を {冷|ひ}やす {言葉|ことば} だ 。 {部屋|へや} の {真|ま}ん{中|なか} の {石臼|いしうす} から 、 かすか に {熱|ねつ} を {感|かん}じる 。 || Mizu — water: a word that cools whatever has grown hot. From the millstone in the middle of the room, you feel a faint heat.
+!gesture pc flinch 2,2
 narr: {梯子|はしご} の {上|うえ} の {扉|とびら} が 、 がたん と {開|ひら}いた 。 || The trapdoor above the ladder bangs open.
 !set rw_gears
 !quest rw_mill 2
 !autosave
 !end
 :nopin
+!gesture pc observe 10,2
 narr: {歯車|はぐるま} の {真|ま}ん{中|なか} の {軸|じく} が {抜|ぬ}けて いる 。 これ では {回|まわ}らない 。 {誰|だれ} か が {持|も}って いった の だろう か 。 || The pin through the middle of the gears is missing. They won't turn like this. Did someone take it?
 
 @scene rw.m1_ladder
@@ -92482,16 +92716,24 @@ narr: {灯|あか}り に 「 {葦|あし}ノ{瀬|せ} 」 が ともる 。 {�
 narr: {灯|あか}り は {静|しず}か に ともって いる 。 || The lantern burns quietly.
 
 @scene rw.m0_chest
+# Staged: you kneel at the old box to take out the charm.
+!gesture pc kneel 13,3
 narr: {古|ふる}い {箱|はこ} の {中|なか} に 、 {丸|まる}い {石|いし} の {守|まも}り が {入|はい}って いた 。 {粉屋|こなや} が {水車|すいしゃ} の {無事|ぶじ} を {祈|いの}った もの らしい 。 || Inside an old box is a round stone charm. It seems the miller used to pray for the wheel's safety with it.
 !give rw_mill_charm
 !set rw_m0_chest
 
 @scene rw.m1_boss
+# Staged: you face the millstone where the voices swirl, start at the echo's words, and stand still to
+# understand them (no gesture on that line); remembering the word on the gear plate, a hand to your chin;
+# after the battle you look up at the voices leaving, and round towards the wheel outside.
 !music hush
+!gesture pc listen 6,4 hold
 narr: {石臼|いしうす} の {上|うえ} に 、 {声|こえ} が {渦|うず} を {巻|ま}いて いる 。 {聞|き}いた こと の ある {声|こえ} 、 {知|し}らない {声|こえ} 、 {名前|なまえ} の ない {呼|よ}び{声|ごえ} 。 || Above the millstone, voices swirl. Voices you know, voices you don't, calls with no names in them.
+!gesture pc flinch 6,4
 echo: …… おかえり 。 …… あした も 。 …… まって 。 || …Welcome back. …Tomorrow too. …Wait.
 narr: この {声|こえ} たち は {怒|おこ}って いる の では ない 。 {行|い}き{場|ば} を なくして いる だけ だ 。 || These voices aren't angry. They've just lost their way home.
 !if word.mizu -> fight
+!gesture pc chin
 narr: {石臼|いしうす} が {熱|あつ}く なって いく 。 {床|ゆか} の {下|した} で は 、 {水路|すいろ} の {水|みず} が {鳴|な}って いる 。 {歯車|はぐるま} の {板|いた} に あった {字|じ} を {思|おも}い{出|だ}す 。 「 {水|みず} 」 。 || The millstone is growing hot. Under the floor, the millrace is running. You remember the character on the gear plate: mizu, water.
 !word mizu
 :fight
@@ -92500,7 +92742,9 @@ narr: {石臼|いしうす} が {熱|あつ}く なって いく 。 {床|ゆか
 !set rw_echo_done bridge_fixed
 !quest rw_mill 4
 !music wonder
+!gesture pc lookroad up
 narr: {声|こえ} が ほどけて いく 。 {梁|はり} から 、 {屋根裏|やねうら} から 、 {外|そと} の {川|かわ} へ 。 || The voices come untied — from the beams, from the loft, out to the river.
+!gesture pc listen 10,2
 narr: {外|そと} で 、 {水車|すいしゃ} が {大|おお}きく {一|ひと}つ {回|まわ}った 。 || Outside, the waterwheel makes one great turn.
 !note rw_mill
 !lesson kana
@@ -92581,88 +92825,131 @@ narr: {出発|しゅっぱつ} は {朝|あさ} だ 。 {誰|だれ} と {行|�
 !end
 
 @scene rw.hall_gather
+# Staged: you walk in to the middle of the four; Tsuru points west down the road, counts the two names on
+# her fingers and points to the threshold; Nao looks from Tsuru to you ("only one of us"), and Tsuru turns
+# to her for her answer, then back to you.
 !music departure
 !set rw_hall_gather
 !refresh
+!walkto pc 5 6 up
 narr: {灯|あか}り{堂|どう} に 、 {四人|よにん} が {集|あつ}まって いた 。 {壁|かべ} の {棚|たな} に は {古|ふる}い {記録|きろく} 。 {奥|おく} に は 、 {旅|たび} の {灯|あか}り が {一|ひと}つ 。 || The four have gathered in the Lantern Hall. Old records line the shelves; at the back hangs a single travelling lantern.
+!gesture tsuru point left
 tsuru: {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {灯|ひ} の {道|みち} を {西|にし} へ {下|くだ}った 。 {潮硝子|しおがらす} に は 、 {海|うみ} に {沈|しず}んだ {書庫|しょこ} が ある と いう {噂|うわさ} が ある 。 {追|お}う なら 、 そこ から だろう ね 。 || Whatever took the names went down the lantern road, west. In Saltglass there's a rumour of an archive sunk under the sea. If you're going after it, that's where to start.
+!look tsuru pc
 tsuru: {旅|たび} の {灯|あか}り を {貸|か}す 。 ただし 、 {昔|むかし} から の {決|き}まり が ある 。 || I'll lend you the travelling lantern. But there's an old rule.
+!gesture tsuru count
 tsuru: {灯|あか}り が {運|はこ}べる {名前|なまえ} は 、 {二|ふた}つ まで 。 あんた の {名前|なまえ} と 、 もう {一人|ひとり} 。 {三|みっ}つ{目|め} は 、 {乗|の}らない 。 || The lantern can carry two names, no more. Yours, and one other. It won't take a third.
+!gesture tsuru point 5,9
 tsuru: ここ で は {好|す}きな だけ {時間|じかん} を かけて いい 。 {話|はな}して 、 {迷|まよ}って 、 {決|き}め{直|なお}して いい 。 でも 、 あの {灯|あか}り が {敷居|しきい} を {越|こ}えたら 、 {旅|たび} の {終|お}わり まで 、 その {二|ふた}つ の {名前|なまえ} を {運|はこ}ぶ 。 {三|みっ}つ{目|め} は {取|と}らない 。 || Take as long as you like in here. Talk, waver, change your mind. But once that lantern crosses the threshold, it carries those two names to the end of the journey. It won't take a third.
+!look tsuru pc
+!gesture nao lookbetween tsuru and=pc
 nao: …… {要|よう} する に 、 {一人|ひとり} しか {連|つ}れて いけない って こと だろ 。 {回|まわ}りくどい 。 || …In short: you can only take one of us. Why not just say so.
+!look tsuru nao
 tsuru[smirk]: {年寄|としよ}り は {回|まわ}りくどい もの さ 。 || Old people are allowed to be roundabout.
+!look tsuru pc
 narr: {四人|よにん} と {話|はな}して 、 {一緒|いっしょ} に {来|き}て ほしい {人|ひと} に {声|こえ} を かけよう 。 {決|き}まったら 、 {奥|おく} の {灯|あか}り の {前|まえ} へ 。 || Talk with the four and ask the one you want to come with you. When you've decided, go to the lantern at the back.
 !quest rw_depart 0 quiet
 !autosave
 
 @scene rw.hall_nao
+# Staged: Nao's case for themself with a point to the door (the escape routes); a hand to the satchel where
+# the undelivered letter is; your ask answered with a nod; unsure, a shrug; reconsidered, a nod.
 !faceplayer nao
 !if prov=nao -> chosen
+!gesture nao point 5,9
 nao: {俺|おれ} を {連|つ}れて いく {理由|りゆう} ？ {道|みち} を {知|し}ってる 。 {逃|に}げ{道|みち} も 。 {相手|あいて} が {次|つぎ} に {何|なに} を する か 、 だいたい {読|よ}める 。 || Reasons to take me? I know the roads. The escape routes too. And I can usually read what someone's going to do next.
+!look nao pc
+!gesture nao strap
 nao[think]: …… {鞄|かばん} の {底|そこ} に 、 {届|とど}けてない {手紙|てがみ} が {一通|いっつう} ある 。 {届|とど}けない って {決|き}めた {手紙|てがみ} だ 。 {西|にし} へ {行|い}けば 、 いつか その {話|はなし} を する こと に なる かも な 。 || …At the bottom of my satchel there's one letter I haven't delivered. One I decided not to. Go west, and maybe someday I'll tell you about it.
 !choice
 * ナオ 、 {一緒|いっしょ} に {来|き}て ほしい || Nao, I want you to come with me. -> ask
 * もう {少|すこ}し {考|かんが}える || I need to think a bit more. -> end
 :ask
 !recruit nao
+!gesture nao nod pc
 nao[smirk]: …… {了解|りょうかい} 。 {最初|さいしょ} に {言|い}って おく 。 {俺|おれ} は {道|みち} を {選|えら}ぶ 。 あんた は {行|い}き{先|さき} を {選|えら}ぶ 。 {途中|とちゅう} で {降|お}りる {気|き} は ない から 、 {本気|ほんき} で {決|き}めて くれ 。 || …Got it. Let me say this up front: I pick the road, you pick the destination. I'm not getting off halfway, so decide like you mean it.
 !end
 :chosen
+!gesture nao shrug
 nao: まだ {迷|まよ}ってる なら 、 {迷|まよ}え 。 {扉|とびら} を {出|で}る まで は 、 {誰|だれ} も {文句|もんく} は {言|い}わない 。 || If you're still unsure, be unsure. Until you're out the door, nobody's going to complain.
 !choice
 * やっぱり {考|かんが}え{直|なお}す || Actually, let me reconsider. -> undo
 * {一緒|いっしょ} に {行|い}こう || Let's go together. -> end
 :undo
 !recruit none
+!gesture nao nod pc
 nao: ん 。 {正直|しょうじき} で いい 。 || Mm. Good, you're honest.
 
 @scene rw.hall_mio
+# Staged: Mio's hands busy at her waist as she lists what she can do; her half-hidden laugh at wanting
+# the village to struggle; asked, a nod and then the flat hand of a boundary ("don't take me home");
+# unsure, she measures with both hands; turned down, a small shake of the head.
 !faceplayer mio
 !if prov=mio -> chosen
+!gesture mio fidget
 mio: {私|わたし} に できる の は 、 {傷|きず} の {手当|てあ}て と 、 {薬|くすり} の {調合|ちょうごう} と …… {人|ひと} の {話|はなし} を {聞|き}く こと くらい です 。 || What I can do is tend wounds, mix medicines, and… listen to people, I suppose.
+!gesture mio laugh
 mio[think]: {村|むら} の {人|ひと} は 、 {私|わたし} が いなく なったら {困|こま}る と {思|おも}います 。 …… でも 、 {困|こま}らせて みたい 、 と {少|すこ}し {思|おも}う {私|わたし} も います 。 {変|へん} です よね 。 || The village would struggle without me, I think. …But part of me wants to let them struggle, just a little. Strange, isn't it.
 !choice
 * ミオ 、 {一緒|いっしょ} に {来|き}て ほしい || Mio, I want you to come with me. -> ask
 * もう {少|すこ}し {考|かんが}える || I need to think a bit more. -> end
 :ask
 !recruit mio
+!gesture mio nod pc then=emphatic
 mio[shy]: …… はい 。 {行|い}きます 。 {店|みせ} は ツル さん に {鍵|かぎ} を {預|あず}けます 。 {扉|とびら} を {出|で}たら 、 もう {戻|もど}りません 。 {途中|とちゅう} で {迷|まよ}っても 、 {連|つ}れて {帰|かえ}ろう と は しないで ください ね 。 || …Yes. I'll come. I'll leave the shop key with Tsuru. Once I'm through that door, I'm not turning back. Even if I waver on the way, please don't try to take me home.
 !end
 :chosen
+!gesture mio size
 mio: {迷|まよ}う の は {当然|とうぜん} です 。 {薬|くすり} も 、 {決|き}める {前|まえ} に {何度|なんど} も {量|はか}ります から 。 || It's natural to hesitate. Even with medicine, I measure many times before deciding.
 !choice
 * やっぱり {考|かんが}え{直|なお}す || Actually, let me reconsider. -> undo
 * {一緒|いっしょ} に {行|い}こう || Let's go together. -> end
 :undo
 !recruit none
+!gesture mio shake
 mio[smile]: {大丈夫|だいじょうぶ} です 。 {気|き} に しないで 。 …… {本当|ほんとう} に 。 || It's fine. Don't worry about it. …Really.
 
 @scene rw.hall_ren
+# Staged: Ren counts his reasons (the second is his teacher), pushes his glasses up over the face he
+# cannot recall; asked, a small formal bow; unsure, he points to the door where it is decided; revised,
+# a nod.
 !faceplayer ren
 !if prov=ren -> chosen
+!gesture ren count
 ren: {灯守|ひもり} と して 、 {西|にし} の {灯|あか}り を {確|たし}かめたい 。 それ が {第一|だいいち} の {理由|りゆう} です 。 {第二|だいに} の {理由|りゆう} は …… {先生|せんせい} が 、 {昔|むかし} 、 {西|にし} へ {行|い}った きり {戻|もど}らなかった 。 || As a keeper, I want to check the western lanterns. That's my first reason. The second… my teacher went west long ago and never came back.
+!gesture ren glasses
 ren[think]: {教|おし}え は {一言|ひとこと} も {忘|わす}れて いない のに 、 {顔|かお} だけ が {思|おも}い{出|だ}せない 。 {西|にし} に {行|い}けば 、 {理由|りゆう} が わかる かも しれません 。 || I haven't forgotten a single word of what they taught me, and yet I can't recall their face. If I go west, I might find out why.
 !choice
 * レン 、 {一緒|いっしょ} に {来|き}て ほしい || Ren, I want you to come with me. -> ask
 * もう {少|すこ}し {考|かんが}える || I need to think a bit more. -> end
 :ask
 !recruit ren
+!gesture ren bow
 ren[smile]: {光栄|こうえい} です 。 {一|ひと}つ {約束|やくそく} を 。 {灯|あか}り が {扉|とびら} を {越|こ}えたら 、 {私|わたし} は {旅|たび} の {終|お}わり まで あなた の {隣|となり} に います 。 {道|みち} に {迷|まよ}う の も 、 {隣|となり} で 。 || An honour. One promise: once the lantern crosses the door, I'll be at your side to the end of the journey. Getting lost included — at your side.
 !end
 :chosen
+!gesture ren point 5,9
 ren: {決|き}める の は {扉|とびら} の {前|まえ} で 。 それまで は 、 {下書|したが}き です 。 || You decide at the door. Until then, it's a draft.
 !choice
 * やっぱり {考|かんが}え{直|なお}す || Actually, let me reconsider. -> undo
 * {一緒|いっしょ} に {行|い}こう || Let's go together. -> end
 :undo
 !recruit none
+!look ren pc
+!gesture ren nod pc
 ren: {下書|したが}き は 、 {直|なお}す ため に ある もの です 。 || Drafts exist to be revised.
 
 @scene rw.hall_suzu
+# Staged: Suzu sells herself with both hands, then drops the act to explain with an open palm; the lie she
+# never finished makes her look away and back; asked, a plain nod (no flourish on the serious line);
+# unsure, an open hand; turned down, her laugh.
 !faceplayer suzu
 !if prov=suzu -> chosen
+!gesture suzu size
 suzu[laugh]: {私|わたし} を {選|えら}ぶ と 、 {道中|どうちゅう} ずっと {退屈|たいくつ} しない ！ {歌|うた} も {芝居|しばい} も {手品|てじな} も つく よ 。 || Choose me and you'll never be bored on the road! Songs, plays and conjuring tricks included.
+!gesture suzu palm pc
 suzu: …… {冗談|じょうだん} は {置|お}いて おいて 。 {嘘|うそ} を つく の は 、 わりと {得意|とくい} なの 。 だから 、 {嘘|うそ} を {見抜|みぬ}く の も 、 たぶん {得意|とくい} 。 {西|にし} で は きっと {役|やく} に {立|た}つ 。 || …Jokes aside. I'm rather good at lying. Which means I'm probably good at seeing through lies too. That'll come in handy out west.
+!gesture suzu avert pc
 suzu[think]: {昔|むかし} 、 {一|ひと}つ だけ 、 {終|お}わらせて いない {嘘|うそ} が ある の 。 {灰実|はいみ} の {方|ほう} で ね 。 || There's one lie I told long ago that I never finished. Over Cinder Orchard way.
 !choice
 * スズ 、 {一緒|いっしょ} に {来|き}て ほしい || Suzu, I want you to come with me. -> ask
@@ -92670,15 +92957,18 @@ suzu[think]: {昔|むかし} 、 {一|ひと}つ だけ 、 {終|お}わらせ�
 :ask
 !recruit suzu
 ?(!seen.rw.suzu_speech) !call rw.suzu_speech
+!gesture suzu nod pc
 suzu[smile]: {喜|よろこ}んで 。 …… {真面目|まじめ} に {言|い}う ね 。 {扉|とびら} を {出|で}たら 、 {私|わたし} は {幕|まく} が {下|お}りる まで {降|お}りない 。 {途中|とちゅう} で {逃|に}げ{出|だ}す {役|やく} は 、 もう {演|えん}じない って {決|き}めた の 。 || Gladly. …I'll say this seriously. Once we're out the door, I won't leave the stage until the curtain falls. I've decided I'm done playing the one who runs away halfway.
 !end
 :chosen
+!gesture suzu palm pc
 suzu: {迷|まよ}って いい の よ 。 {幕|まく} が {上|あ}がる まで は 、 {配役|はいやく} は {変|か}えられる 。 || You're allowed to waver. Until the curtain rises, the casting can change.
 !choice
 * やっぱり {考|かんが}え{直|なお}す || Actually, let me reconsider. -> undo
 * {一緒|いっしょ} に {行|い}こう || Let's go together. -> end
 :undo
 !recruit none
+!gesture suzu laugh
 suzu[laugh]: {配役|はいやく} {変更|へんこう} ！ …… {平気|へいき} よ 。 {役者|やくしゃ} は {慣|な}れっこ だから 。 || A casting change! …I'm fine. Actors are used to it.
 
 @scene rw.hall_tsuru
@@ -92694,11 +92984,19 @@ tsuru: …… {決|き}まった みたい だ ね 。 {心|こころ} が {決|
 tsuru: {灯|あか}り は もう {二|ふた}つ の {名前|なまえ} を {運|はこ}んで いる 。 {三|みっ}つ{目|め} は {乗|の}らない よ 。 {気|き}を つけて {行|い}き な 。 || The lantern already carries two names. There's no room for a third. Go carefully.
 
 @scene rw.hall_shrine
+# Staged: you look closely at the lantern; Tsuru, behind you, points to the door it will cross; the one who
+# chose to come answers from where they stand, in their own way (a nod, a nod, a small bow, an open hand).
 !if departed -> after
 !if !rw_hall_gather -> early
 !if !prov -> noone
+!gesture pc observe 4,2
 narr: {旅|たび} の {灯|あか}り が 、 {静|しず}か に {揺|ゆ}れて いる 。 || The travelling lantern sways quietly.
+!gesture tsuru point 5,9
 tsuru: その {灯|あか}り を {持|も}って {扉|とびら} を {出|で}たら 、 もう {後戻|あともど}り は できない 。 {旅|たび} の {終|お}わり まで 、 あんた と $comp の {二人|ふたり} だ 。 || Once you carry that lantern out the door, there's no going back. You and $comp, the two of you, to the journey's end.
+?(prov=nao) !gesture nao nod pc
+?(prov=mio) !gesture mio nod pc
+?(prov=ren) !gesture ren bow
+?(prov=suzu) !gesture suzu palm pc
 ?(prov=nao) nao: {俺|おれ} は {決|き}めた 。 あと は あんた だ 。 || I've decided. The rest is up to you.
 ?(prov=mio) mio: {私|わたし} は {決|き}めました 。 あなた が {決|き}めて ください 。 || I've made up my mind. Now you decide.
 ?(prov=ren) ren: {私|わたし} の {名前|なまえ} を {書|か}く {準備|じゅんび} は できて います 。 || I'm ready for my name to be written.
@@ -92710,23 +93008,40 @@ tsuru: その {灯|あか}り を {持|も}って {扉|とびら} を {出|で}�
 !call rw.depart
 !end
 :noone
+!look tsuru pc
 tsuru: {灯|あか}り は {二|ふた}つ {目|め} の {名前|なまえ} を {待|ま}って いる 。 {誰|だれ} に {声|こえ} を かける か 、 {先|さき} に {決|き}め な 。 || The lantern is waiting for a second name. Decide who you'll ask first.
 !end
 :early
+!gesture pc observe 4,2
 narr: {古|ふる}い {旅|たび} の {灯|あか}り 。 {紙|かみ} に は {何|なに} も {書|か}かれて いない 。 || An old travelling lantern. Nothing is written on its paper.
 !end
 :after
+!gesture pc listen 4,2
 narr: {灯|あか}り は もう {運|はこ}ばれて いった 。 {吊|つ}るして あった {場所|ばしょ} に 、 {丸|まる}い {跡|あと} が {残|のこ}って いる 。 || The lantern has already been carried away. A round mark remains where it hung.
 
 @scene rw.depart
+# Staged: you step to the side of the lantern and write the two names on its paper (seen side-on, so the
+# brush shows); the new companion steps in behind you and you turn to them for their first words as a pair:
+# Nao points to the door (the road), Mio's hand goes to her chest, Ren tends his lamp, Suzu's small
+# celebration; Tsuru's nod sends you to bed.
+!walkto pc 3 2 right
+!gesture pc write
 narr: {灯|あか}り の {紙|かみ} に 、 {二|ふた}つ の {名前|なまえ} を {書|か}く 。 $name 。 そして 、 $comp 。 || You write two names on the lantern's paper. $name. And $comp.
 !sfx lantern
 !depart
+!gesture pc listen 4,2
 narr: {字|じ} は {紙|かみ} に {染|し}み{込|こ}み 、 {灯|あか}り が {柔|やわ}らか く ともった 。 || The ink sinks into the paper, and the lantern glows softly.
+!look pc comp
+?(comp=nao) !gesture comp point 5,9
+?(comp=mio) !gesture comp guard
+?(comp=ren) !gesture comp tendlamp
+?(comp=suzu) !gesture comp celebrate
 ?(comp=nao) nao[smirk]: よし 。 {道|みち} は {俺|おれ} に {任|まか}せろ 。 {行|い}き{先|さき} は 、 あんた が {決|き}めろ 。 || Right. Leave the road to me. You decide where we're going.
 ?(comp=mio) mio[smile]: {店|みせ} の {鍵|かぎ} 、 ツル さん に {渡|わた}して きます 。 …… {不思議|ふしぎ} です 。 {怖|こわ}い のに 、 {少|すこ}し {楽|たの}しい 。 || I'll give the shop key to Tsuru. …How strange. I'm scared, and yet a little excited.
 ?(comp=ren) ren: {灯|あか}り の {持|も}ち{手|て} は 、 {私|わたし} が {磨|みが}いて おきます 。 {靴|くつ} より {先|さき} に 。 {当然|とうぜん} です 。 || I'll polish the lantern's handle. Before my boots, naturally.
 ?(comp=suzu) suzu[laugh]: {開幕|かいまく} ！ …… ふふ 、 {一度|いちど} {言|い}って みたかった の 。 || Curtain up! …Heh. I always wanted to say that.
+!look tsuru pc
+!gesture tsuru nod pc
 tsuru: {他|ほか} の {三人|さんにん} も 、 {村|むら} で それぞれ の {仕事|しごと} が ある 。 {見送|みおく}り は {朝|あさ} に しよう 。 {今夜|こんや} は よく {寝|ね}る んだ よ 。 || The other three have their own work in the village. We'll see you off in the morning. Sleep well tonight.
 !fade out
 !unset rw_night
@@ -92737,7 +93052,11 @@ tsuru: {他|ほか} の {三人|さんにん} も 、 {村|むら} で それぞ
 !call rw.seeoff
 
 @scene rw.seeoff
+# Staged: you look back east along the road to those who came to see you off. They walk up as each one
+# speaks (the walk-in of speakers who are not on the road), so their own lines carry no gesture; at the end,
+# when your companion speaks of looking back, you look back to Tsuru once and Mame waves you off.
 !music road
+!gesture pc lookroad right
 narr: {朝|あさ} 。 {灯|ひ} の {道|みち} の {入口|いりぐち} まで 、 {何人|なんにん} か が {見送|みおく}り に {来|き}て くれた 。 || Morning. A few people have come to see you off at the start of the lantern road.
 ?(comp!=nao) nao: {潮硝子|しおがらす} の {港|みなと} で は 、 {右|みぎ} の {桟橋|さんばし} に {気|き}を つけろ 。 {板|いた} が {腐|くさ}ってる 。 …… それ だけ 。 || At the Saltglass docks, watch the right-hand pier. The boards are rotten. …That's all.
 ?(comp!=mio) mio: {傷薬|きずぐすり} です 。 ラベル は {三回|さんかい} {確|たし}かめました 。 …… {気|き}を つけて 。 || Wound salve. I checked the label three times. …Take care.
@@ -92745,6 +93064,8 @@ narr: {朝|あさ} 。 {灯|ひ} の {道|みち} の {入口|いりぐち} ま�
 ?(comp!=suzu) suzu: {次|つぎ} に {会|あ}う とき は 、 {新作|しんさく} を {見|み}せて あげる 。 {題名|だいめい} は まだ ない けど 、 {主役|しゅやく} は {決|き}まってる 。 || Next time we meet, I'll show you my new piece. No title yet, but I've already cast the lead.
 mame: {帰|かえ}って きたら 、 {西|にし} の {話|はなし} 、 {聞|き}かせて ね ！ || When you come back, tell me all about the west!
 tsuru: {行|い}って おいで 。 {名前|なまえ} を {取|と}り{戻|もど}して おいで 。 || Off you go. Bring the names back.
+!look pc tsuru
+!gesture mame wave pc
 ?(comp=nao) nao: …… {振|ふ}り{返|かえ}る と {歩|ある}きにくい ぞ 。 {一回|いっかい} だけ に しとけ 。 || …Looking back makes it hard to walk. Just once, okay?
 ?(comp=mio) mio: {一回|いっかい} だけ 、 {振|ふ}り{返|かえ}って も いい です か 。 …… はい 。 {行|い}きましょう 。 || May I look back, just once? …Right. Let's go.
 ?(comp=ren) ren: {葦|あし}ノ{瀬|せ} の {灯|あか}り は 、 {全部|ぜんぶ} ともって います 。 {見送|みおく}り と して は 、 {上等|じょうとう} です 。 || Every lantern in Reedwake is lit. As send-offs go, that's first rate.
@@ -92795,7 +93116,10 @@ narr: 「 {井戸|いど} の {水|みず} は {沸|わ}かして から {飲|�
 narr: {道標|みちしるべ} 。 「 {北|きた} ： {水車|すいしゃ}{小屋|ごや} 　 {東|ひがし} ： {橋|はし} 　 {南|みなみ} ： {川|かわ} の {倉庫|そうこ} 」 。 {焼|や}き{印|いん} で {書|か}いて ある ので 、 {消|き}えて いない 。 || A signpost: "North: water mill · East: bridge · South: river warehouse." It's branded into the wood, so it survived.
 
 @scene rw.sign_road
+# Staged: you lean in to the blank signpost; once its arms are mended, if Mame still has her charm to
+# give, she waves from the square and you turn to see her.
 !if quest.rw_crossroads=done -> fixed
+!gesture pc observe 2,29
 narr: {村|むら} の {西|にし} の {辻|つじ} の {道標|みちしるべ} 。 {腕|うで} は {三|みっ}つ ある が 、 どれ も {真|ま}っ{白|しろ} だ 。 {旅人|たびびと} が {迷|まよ}って しまう 。 || The signpost at the crossroads west of the village. It has three arms, all blank. Travellers will get lost.
 !quest rw_crossroads start
 !choice
@@ -92807,6 +93131,8 @@ narr: {村|むら} の {西|にし} の {辻|つじ} の {道標|みちしるべ
 !set rw_sign_fixed
 !quest rw_crossroads done
 narr: {三|みっ}つ の {腕|うで} に 、 {行|い}き{先|さき} が {戻|もど}った 。 || The three arms have their destinations back.
+?(!rw_charm_given) !gesture mame wave pc
+?(!rw_charm_given) !look pc mame
 ?(!rw_charm_given) narr: {遠|とお}く で マメ が {手|て} を {振|ふ}って いる 。 {何|なに} か {渡|わた}したい もの が ある らしい 。 || In the distance, Mame is waving. It looks like she has something to give you.
 !end
 :fixed
@@ -92853,8 +93179,14 @@ oto: {父|ちち} の {代|だい} の {看板|かんばん} が 、 どこか �
 oto: {看板|かんばん} は {奥|おく} の {木箱|きばこ} の どこか 。 {革|かわ} の {下|した} かも ね 。 || The sign's somewhere in the crate at the back. Maybe under the leather.
 
 @scene rw.oto_sign
+# Staged: you step to Oto's side and she leans in to the old sign you show her; then she hands you the boots she made.
 !faceplayer oto
+!walkto pc 4 4 left
+!look oto pc
+!gesture oto observe pc
 oto[surprise]: {父|ちち} の {看板|かんばん} ！ …… そう 、 そう {書|か}いて あった 。 {子|こ}ども の {頃|ころ} 、 {毎日|まいにち} {見上|みあ}げてた のに 、 {忘|わす}れてた 。 || My father's sign! …Yes, that's what it said. I looked up at it every day as a kid, and I'd forgotten.
+!gesture oto handover pc
+!gesture pc receive oto
 oto: {描|か}き{直|なお}す よ 。 あんた の {字|じ} を {手本|てほん} に して ね 。 …… お{礼|れい} に 、 これ 。 {雨|あめ} でも {滑|すべ}らない 。 {灯守|ひもり} の {分|ぶん} も {作|つく}って あげたい ところ だ けど 、 {本人|ほんにん} が {来|こ}ない から ね 。 || I'll repaint it, using your writing as the model. …Here, as thanks. They won't slip even in the rain. I'd make a pair for the lantern keeper too, but they never come in.
 !give rw_boots_good
 !quest rw_boots done
@@ -92891,12 +93223,15 @@ kiku: それ より 、 {私|わたし} の {杼|ひ} を まだ {返|かえ}し
 !quest rw_tools 1
 
 @scene rw.bench_tools
+# Staged: you kneel to look under the workbench, and reach in for the plane that glints there.
 !if !quest.rw_tools -> plain
 !if rw_tally_read -> read
+!gesture pc kneel 1,3 hold
 narr: {作業台|さぎょうだい} の {裏|うら} を のぞく と 、 {小刀|こがたな} で {彫|ほ}った {字|じ} が {並|なら}んで いた 。 {彫|ほ}った {字|じ} は {消|き}えて いない 。 || Peering under the workbench, you find rows of letters cut with a knife. Carved letters don't fade.
 !challenge rw.c_tools
 !if var._res=0 -> end
 !set rw_tally_read
+!gesture pc receive 1,3 prop=plane hold
 narr: {作業台|さぎょうだい} の {下|した} の {暗|くら}がり に 、 {何|なに} か が {光|ひか}った 。 {埃|ほこり} を かぶった かんな だ 。 || Something glints in the dark under the bench: a dusty plane.
 !give rw_plane
 !quest rw_tools 2
@@ -92908,10 +93243,22 @@ narr: {作業台|さぎょうだい} の {裏|うら} の {記録|きろく} 。
 narr: よく {使|つか}い{込|こ}まれた {作業台|さぎょうだい} 。 {削|けず}り{屑|くず} の いい {匂|にお}い が する 。 || A well-used workbench. It smells pleasantly of wood shavings.
 
 @scene rw.bunta_tally
+# Staged: you step to Bunta's side and hold up the plane, and he rubs his forehead; he takes it from you as he owns up, then
+# holds out Kiku's shuttle for you to take to her.
 !faceplayer bunta
 !if !item.rw_plane -> gone
+!walkto pc 4 4 right
+!look bunta pc
+!prop pc plane
+!gesture pc present bunta hold
+!gesture bunta forehead
 narr: かんな を {見|み}せる と 、 ブンタ は {黙|だま}って {頭|あたま} を かいた 。 || You show him the plane. Bunta scratches his head in silence.
+!gesture pc handover bunta
+!gesture bunta receive pc
 bunta[shy]: …… {俺|おれ} の {作業台|さぎょうだい} の {下|した} に あった の か 。 {返|かえ}して もらってた の を 、 {忘|わす}れてた 。 {婆|ばあ}さん に {怒鳴|どな}り{込|こ}む {前|まえ} で よかった 。 || …It was under my own bench. She'd given it back and I forgot. Good thing I didn't go shouting at her.
+!prop bunta shuttle
+!gesture bunta handover pc
+!gesture pc receive bunta
 bunta: {杼|ひ} も {返|かえ}さねえ と な 。 {悪|わる}い が 、 {届|とど}けて くれる か 。 {顔|かお} を {合|あ}わせる の が 、 ちょっと な 。 || I'd better return her shuttle too. Sorry, but would you take it to her? Facing her right now is a bit…
 !take rw_plane
 !give rw_shuttle
@@ -92920,9 +93267,19 @@ bunta: {杼|ひ} も {返|かえ}さねえ と な 。 {悪|わる}い が 、 {
 bunta: {杼|ひ} を キク に {届|とど}けて くれた か ？ || Did you take the shuttle to Kiku?
 
 @scene rw.kiku_tally
+# Staged: you step to Kiku's side and hand her the shuttle; she holds it and smiles over Bunta; then she gives you the faded
+# ribbon from her hand to yours.
 !faceplayer kiku
 !if !item.rw_shuttle -> wait
+!walkto pc 4 5 left
+!look kiku pc
+!prop pc shuttle
+!gesture pc handover kiku
+!gesture kiku receive pc hold
 kiku[smile]: まあ 、 {私|わたし} の {杼|ひ} 。 …… ブンタ さん 、 {自分|じぶん} で {来|こ}られない の ね 。 {照|て}れ{屋|や} だ こと 。 || Oh, my shuttle. …Bunta couldn't bring it himself, I see. Such a shy man.
+!prop kiku ribbon
+!gesture kiku handover pc
+!gesture pc receive kiku
 kiku: お{礼|れい} に 、 これ を どうぞ 。 {昔|むかし} {織|お}った リボン の {残|のこ}り です 。 {色|いろ} は {褪|あ}せた けれど 、 {糸|いと} は まだ {丈夫|じょうぶ} よ 。 || Please take this as thanks. It's what's left of a ribbon I wove long ago. The colour has faded, but the thread is still strong.
 !take rw_shuttle
 !give rw_ribbon
@@ -92952,7 +93309,9 @@ kiku: {旅|たび} の お{話|はなし} 、 {聞|き}かせて ちょうだい
 narr: {糸|いと} の {入|はい}った {籠|かご} 。 {色|いろ} ごと に きちんと {分|わ}けて ある 。 || A basket of thread, neatly sorted by colour.
 
 @scene rw.yasu_first
+# Staged: Old Yasu points to his boat, idle on the high river; after the story, a nod to a good listener.
 !faceplayer yasu
+!gesture yasu point 35,26
 yasu: {川|かわ} が {高|たか}い うち は {舟|ふね} を {出|だ}せん 。 {暇|ひま} な {年寄|としよ}り の {話|はなし} でも {聞|き}いて いく か ？ || Can't take the boat out while the river's high. Want to hear an idle old man's story?
 !quest rw_founding start
 !choice
@@ -92962,6 +93321,8 @@ yasu: {川|かわ} が {高|たか}い うち は {舟|ふね} を {出|だ}せ�
 !activity rw.a_history
 !if var._res=0 -> end
 !quest rw_founding done
+!look yasu pc
+!gesture yasu nod pc
 yasu: {聞|き}き{上手|じょうず} だ な 。 …… {今|いま} の {話|はなし} 、 どこか に {書|か}いて おいて くれ 。 {紙|かみ} じゃ なくて も いい 。 {誰|だれ} か の {頭|あたま} の {中|なか} でも いい 。 || You're a good listener. …Write that story down somewhere. Doesn't have to be paper. Somebody's head will do.
 
 @scene rw.yasu_after
@@ -92974,15 +93335,20 @@ yasu: {川|かわ} は {正直|しょうじき} だ 。 {増|ふ}えれば {増|
 yasu: {孫|まご} に あんた の {話|はなし} を して やった 。 {少|すこ}し {盛|も}った が な 。 {年寄|としよ}り の {特権|とっけん} だ 。 || I told my grandchild about you. Embellished it a bit. An old man's privilege.
 
 @scene rw.mame_first
+# Staged: Mame's hands twist together over her name; told it won't vanish, a little celebration; told you
+# don't know, she points at you (you won't forget).
 !faceplayer mame
+!gesture mame fidget
 mame: ねえ ねえ ！ {字|じ} が {消|き}えた の 、 {見|み}た ？ マメ の {名前|なまえ} も {消|き}える ？ || Hey, hey! Did you see the writing disappear? Will Mame's name disappear too?
 !choice
 * {消|き}えない よ || It won't. -> no
 * わからない || I don't know. -> idk
 :no
+!gesture mame celebrate
 mame[smile]: ほんと ？ じゃあ 、 マメ も {字|じ} を {練習|れんしゅう} する ！ {自分|じぶん} で {書|か}けば 、 {消|き}えない よね ！ || Really? Then Mame will practise writing too! If I write it myself, it won't disappear, right?
 !end
 :idk
+!gesture mame point pc
 mame[think]: …… じゃあ 、 {大|おお}きい {声|こえ} で {言|い}う 。 マメ ！ マメ ！ これ で {忘|わす}れない でしょ ！ || …Then I'll say it loud. Mame! Mame! Now you won't forget!
 
 @scene rw.mame_after
@@ -92991,10 +93357,15 @@ mame: {橋|はし} 、 {向|む}こう まで {走|はし}った ！ {十回|じ
 ?(!quest.rw_crossroads=done) mame: {西|にし} の {辻|つじ} の {看板|かんばん} 、 {真|ま}っ{白|しろ} なの 。 {直|なお}せる ？ || The sign at the west crossroads is all white. Can you fix it?
 
 @scene rw.mame_charm
+# Staged: Mame holds out the reed charm she made and it passes into your hand; her laugh at "probably".
 !faceplayer mame
+!prop mame charm
+!gesture mame handover pc
+!gesture pc receive mame
 mame: {看板|かんばん} 、 {直|なお}して くれた ！ これ 、 あげる 。 {葦|あし} で {編|あ}んだ お{守|まも}り 。 マメ が {作|つく}った ！ || You fixed the sign! This is for you — a charm woven from reeds. Mame made it!
 !give rw_reed_charm
 !set rw_charm_given
+!gesture mame laugh
 mame: {持|も}って いる と 、 {悪|わる}い もの が ちょっと だけ よけて いく 。 …… たぶん ！ || If you carry it, bad things will step aside a little. …Probably!
 
 @scene rw.mame_post
@@ -93027,7 +93398,10 @@ koji: {姉|ねえ}さん の {茶|ちゃ} は {薄|うす}い 。 でも 、 こ
 koji: {橋|はし} と {舟|ふね} 、 {両方|りょうほう} ある の が {葦|あし}ノ{瀬|せ} だ 。 {急|いそ}ぐ {奴|やつ} は {橋|はし} 、 {話|はな}したい {奴|やつ} は {舟|ふね} 。 {最近|さいきん} は {舟|ふね} の {客|きゃく} の {方|ほう} が {多|おお}い 。 || Reedwake has both a bridge and a boat. In a hurry, take the bridge; want to talk, take the boat. These days the boat gets more customers.
 
 @scene rw.hana_rush
+# Staged: Hana is pouring as she greets you in the rush; after the orders, she hands you a pouch of her
+# morning tea leaves across the counter.
 !faceplayer hana
+!gesture hana pour
 hana[smile]: いらっしゃい ！ …… ごめん なさい 、 {今|いま} {朝|あさ} の {混|こ}む {時間|じかん} で 。 コウジ が {戻|もど}った って {聞|き}いて 、 みんな {見|み}に {来|く}る の よ 。 {手伝|てつだ}って くれる ？ || Welcome! …Sorry, it's the morning rush. Everyone heard Kōji's back and came to look. Would you help?
 !quest rw_teahouse start
 !choice
@@ -93037,6 +93411,9 @@ hana[smile]: いらっしゃい ！ …… ごめん なさい 、 {今|いま} 
 !activity rw.a_orders
 !if var._res=0 -> end
 !quest rw_teahouse done
+!prop hana seeds
+!gesture hana handover pc
+!gesture pc receive hana
 hana: {助|たす}かった ！ はい 、 お{礼|れい} 。 {朝|あさ} の お{茶|ちゃ} の {葉|は} 。 {旅|たび} の {途中|とちゅう} で 、 {誰|だれ} か と {飲|の}んで ね 。 {二杯|にはい} ずつ 。 || You saved me! Here, as thanks — my morning tea leaves. Drink them with someone on your travels. Two cups at a time.
 !give rw_tea_leaves
 
@@ -93050,10 +93427,14 @@ hana: お{帰|かえ}り なさい 。 {今日|きょう} は お{茶|ちゃ} �
 ?(end_mem_choose) hana: {山|やま} の {書庫|しょこ} に {預|あず}けた {記憶|きおく} を 、 {取|と}り に {行|い}く {人|ひと} も いる そう よ 。 {私|わたし} は …… {今|いま} の {朝|あさ} が あれば 、 いい かな 。 || I hear some people are going to the mountain archive to take back memories they left there. Me… I think my mornings as they are now are enough.
 
 @scene rw.tsuru_post
+# Staged: Tsuru thinks over the news of the Archive's keeper with a hand to her chin, and points to the new
+# ledger on the desk.
 !faceplayer tsuru
 tsuru: {帰|かえ}った かい 。 {灯|あか}り の {名前|なまえ} は 、 もう {滑|すべ}り{落|お}ちない 。 {年寄|としよ}り の {手|て} でも ね 。 || Back, are you? The lanterns' names don't slide off anymore. Not even in an old woman's hand.
+?(end_kasane_trial|end_kasane_keeper) !gesture tsuru chin
 ?(end_kasane_trial) tsuru[think]: {灯落|ひおち} で 、 あの {書庫|しょこ} の {番人|ばんにん} が {町|まち} の {人|ひと} と {話|はな}して いる そう だ 。 {許|ゆる}す {者|もの} も 、 {許|ゆる}さない {者|もの} も いる 。 それ で いい 。 {黙|だま}らせる より は ずっと いい 。 || I hear the Archive's keeper is talking with the people of Lanternfall. Some forgive, some don't. That's as it should be. Far better than silencing them.
 ?(end_kasane_keeper) tsuru[think]: あの {番人|ばんにん} は 、 {山|やま} で {書庫|しょこ} を {開|ひら}いて いる と さ 。 {見張|みは}り が ついて いる と は いえ 、 {変|か}われる もの か どう か 。 …… {見届|みとど}ける しか ない ね 。 || They say the keeper is still up in the mountains, keeping the Archive open. Watched, of course. Whether someone like that can change… all we can do is see.
+!gesture tsuru point 7,7
 tsuru: {机|つくえ} の {上|うえ} の {新|あたら}しい {帳面|ちょうめん} 、 {見|み}た かい 。 「 {書|か}かれて いない {地図|ちず} 」 。 {話|はな}して {欲|ほ}しけりゃ 、 また {声|こえ} を かけ な 。 || Did you see the new ledger on the desk? "The Unwritten Atlas". If you want me to explain, just ask again.
 !choice
 * {地図|ちず} の {話|はなし} を {聞|き}く || Ask about the Atlas. -> atlas
@@ -93160,9 +93541,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene rw.tomo_lost
+# Staged: Tomo points to the notice on the board, a hand at her chest over the blank name tag, and a point
+# across the bridge to where Kōji saw a white cat.
 !faceplayer tomo
+!gesture tomo point 24,14
 tomo[worry]: {掲示板|けいじばん} の {貼|は}り{紙|がみ} 、 {見|み}た ？ うち の モチ が 、 {嵐|あらし} の {夜|よる} から {帰|かえ}って こない の 。 || Did you see the notice on the board? Our Mochi hasn't come home since the storm.
+!look tomo pc
+!gesture tomo guard
 tomo: {首輪|くびわ} の {名札|なふだ} も 、 きっと {白|しろ}く なってる 。 {誰|だれ} か に {拾|ひろ}われて も 、 {名前|なまえ} が わからない わ 。 || Her name tag's probably gone blank too. Even if someone found her, they wouldn't know her name.
+!gesture tomo point 44,20
 tomo: {橋|はし} の {向|む}こう で {白|しろ}い {猫|ねこ} を {見|み}た って 、 コウジ さん が {言|い}ってた けど …… 。 || Kōji said he saw a white cat across the bridge, but…
 !quest rw_mochi 0
 
@@ -93175,12 +93562,18 @@ narr: {抱|かか}え{上|あ}げる と 、 {意外|いがい} と {重|おも}
 !refresh
 
 @scene rw.tomo_mochi
+# Staged: Tomo's breath goes out in relief at the sight of Mochi; after the tag, a nod over the name, and
+# she hands you Mochi's old bell.
 !faceplayer tomo
+!gesture tomo exhale
 tomo[surprise]: モチ ！ …… よかった 。 {本当|ほんとう} に よかった 。 || Mochi! …Oh, thank goodness. Thank goodness.
 tomo: {名札|なふだ} 、 {書|か}き{直|なお}して もらえる ？ あなた の {字|じ} なら 、 {落|お}ちない って {聞|き}いた の 。 || Could you rewrite her tag? I heard your writing doesn't come off.
 !challenge rw.c_mochi
 !if var._res=0 -> later
+!gesture tomo nod pc
 tomo[smile]: モチ 。 …… {名前|なまえ} が ある って 、 いい ね 。 {呼|よ}べる から 。 || Mochi. …It's good to have a name. It means someone can call you.
+!gesture tomo handover pc
+!gesture pc receive tomo
 tomo: これ 、 {昔|むかし} モチ が つけて いた {鈴|すず} 。 うるさい って {嫌|いや}がる から 、 もう {使|つか}わない の 。 よかったら どうぞ 。 || This is the bell Mochi used to wear. She hated the noise, so we don't use it anymore. Take it, if you like.
 !give rw_catbell
 !unset rw_mochi_carried
@@ -93188,6 +93581,7 @@ tomo: これ 、 {昔|むかし} モチ が つけて いた {鈴|すず} 。 �
 !refresh
 !end
 :later
+!gesture tomo nod pc
 tomo: {急|いそ}がない で 。 モチ は もう {逃|に}げない から 。 …… たぶん 。 || No hurry. Mochi won't run off again. …Probably.
 
 @scene rw.mochi_home
@@ -95440,45 +95834,80 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sg.arrive
+# Staged: you turn to the sea at the smell of it and lean to look down at the town below the cliffs; you and
+# your companion turn to each other for your exchange, each in their own way (Nao points out the bad pier
+# and looks away over the undelivered letter; Mio's delight and a hand to her ear for the missing noise; Ren
+# straightens his glasses over the schedule; Suzu announces the town with both hands and listens for the
+# market); you point the way down, and look between the two roads at the fork.
 !set sg_arrived
 !quest rw_depart done quiet
 !chapter 2
+!gesture pc lookroad down
 narr: {潮|しお} の {匂|にお}い が 、 {風|かぜ} に {混|ま}じって きた 。 || The smell of the sea has crept into the air.
 !card {第二章|だいにしょう} ・ {潮硝子|しおがらす} || Chapter 2 — Saltglass
+!gesture pc observe down
 narr: {崖|がけ} の {下|した} に 、 {赤|あか}い {屋根|やね} と {桟橋|さんばし} が {並|なら}んで いる 。 {港町|みなとまち} 、 {潮硝子|しおがらす} だ 。 || Below the cliffs, red roofs and piers line the water: the harbour town of Saltglass.
+!look comp pc
 ?(comp=nao) comp[smirk]: {着|つ}いた 。 {予定|よてい} より {半日|はんにち} {早|はや}い 。 {誰|だれ} か さん が {寄|よ}り{道|みち} しなかった おかげ だ 。 || Here. Half a day ahead of schedule. Thanks to someone not taking detours.
+?(comp=nao) !look pc comp
 ?(comp=nao) pc: それ 、 {褒|ほ}めてる ？ || Is that a compliment?
+?(comp=nao) !gesture comp point down
 ?(comp=nao) comp: {事実|じじつ} を {言|い}った だけ 。 …… {右|みぎ} の {桟橋|さんばし} は {歩|ある}く な よ 。 {板|いた} が {腐|くさ}ってる 。 || Just stating a fact. …Stay off the right-hand pier. The boards are rotten.
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp[think]: {手紙|てがみ} を {届|とど}けに 、 {何度|なんど} も {来|き}た {町|まち} だ 。 …… {届|とど}けなかった の も 、 {一通|いっつう} ある けど 。 || I've come here with letters more times than I can count. …There's one I didn't deliver, too.
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp[closed]: {今|いま} の は {聞|き}かなかった こと に しろ 。 || Forget I said that.
+?(comp=mio) !gesture comp lookroad down
 ?(comp=mio) comp[smile]: わあ 、 {海|うみ} ！ …… {薬草|やくそう} の {匂|にお}い が しない {空気|くうき} 、 {久|ひさ}しぶり 。 || Oh — the sea! …It's been ages since I breathed air that didn't smell of herbs.
+?(comp=mio) !look pc comp
+?(comp=mio) !look comp pc
 ?(comp=mio) pc: {楽|たの}しそう だ ね 。 || You sound happy.
+?(comp=mio) !gesture comp fidget
 ?(comp=mio) comp[shy]: {少|すこ}し だけ ね 。 {母|はは} が {潮硝子|しおがらす} の {干物|ひもの} を {好|す}き だった の 。 …… {仕事|しごと} で {来|き}た の は 、 {分|わ}かってる よ 。 || Just a little. My mother loved Saltglass dried fish. …I know we're here for work.
+?(comp=mio) !gesture comp cupear
 ?(comp=mio) comp[think]: でも 、 {変|へん} ね 。 {港|みなと} なのに 、 {鳥|とり} の {声|こえ} しか {聞|き}こえない 。 || Strange, though. It's a harbour, and all I can hear are the birds.
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: {潮硝子|しおがらす} 。 {灯|ひ} の {道|みち} の {記録|きろく} に よれば 、 {葦|あし}ノ{瀬|せ} から {二日|ふつか} 。 {予定|よてい} どおり です 。 || Saltglass. According to the lantern road records, two days from Reedwake. Right on schedule.
+?(comp=ren) !look pc comp
 ?(comp=ren) pc: {一回|いっかい} 、 {道|みち} を {間違|まちが}えた けど ね 。 || We did take one wrong turn.
+?(comp=ren) !gesture comp aside
 ?(comp=ren) comp[shy]: あれ は {景色|けしき} の いい {遠回|とおまわ}り です 。 …… {記録|きろく} に は {書|か}きません 。 || That was a scenic detour. …I won't be writing it in the records.
+?(comp=ren) !gesture comp observe down
 ?(comp=ren) comp[think]: {港|みなと} の {灯|あか}り が {少|すく}ない 。 {昼|ひる} だ から …… なら 、 いい の です が 。 || Few lights down in the harbour. I hope that's only because it's daytime.
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp[laugh]: さあさあ 、 お{立|た}ち{会|あ}い ！ {潮|しお} と ガラス の {町|まち} 、 {潮硝子|しおがらす} に ご{到着|とうちゃく} ！ || Roll up, roll up! Now arriving: the town of tide and glass, Saltglass!
+?(comp=suzu) !look pc comp
 ?(comp=suzu) pc: {誰|だれ} に {言|い}ってる の ？ || Who are you announcing to?
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[smirk]: カモメ に よ 。 {客|きゃく} は {選|えら}べない の 。 …… {前|まえ} に {来|き}た とき 、 {宿代|やどだい} が {銅貨|どうか} {三枚|さんまい} {足|た}りなくて ね 。 {今度|こんど} は ちゃんと {払|はら}う わ 。 || To the gulls. You can't choose your audience. …Last time I was here I was three coppers short on the inn bill. I'll pay properly this time.
+?(comp=suzu) !gesture comp cupear
 ?(comp=suzu) comp[think]: …… {変|へん} ね 。 {市場|いちば} の {声|こえ} が {聞|き}こえない 。 {港|みなと} は 、 もっと うるさい はず よ 。 || …Odd. I can't hear the market. A harbour ought to be noisier than this.
+!gesture pc point 18,21
 pc: {沈|しず}んだ {書庫|しょこ} の こと 、 {港|みなと} の {人|ひと} に {聞|き}いて みよう 。 || Let's ask the people in the harbour about the sunken archive.
+!gesture pc lookbetween 18,21 and=15,0
 narr: {道|みち} は ここ で {分|わ}かれて いる 。 {下|くだ}り{坂|ざか} は {港|みなと} へ 、 {北|きた} の {道|みち} は {内陸|ないりく} へ 。 || The road forks here: downhill to the harbour, and north, inland.
 !quest sg_main start
 !journal {沈|しず}んだ {書庫|しょこ} の {噂|うわさ} を {追|お}って 、 {潮硝子|しおがらす} へ 。 || Following the rumour of a sunken archive, down to Saltglass.
 !autosave
 
 @scene sg.road_forklantern
+# Staged: you lean in to the shade whose name keeps changing; your companion answers it in kind (Ren leans
+# in too, Nao looks between it and you, Mio looks away from it, Suzu shrugs); once lit, you look up at it.
 !if ch2_done -> fixed
+!gesture pc observe 17,8 hold
 narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} だ 。 {火|ひ} は {消|き}えて いる 。 {笠|かさ} の {字|じ} が 、 {見|み}る たび に {変|か}わる 。 || The lantern at the fork. Its flame is out, and the name on the shade changes every time you look.
 narr: 「{灰実|はいみ} の {里|さと}」 …… と {思|おも}えば 「{潮硝子|しおがらす}」 。 また 「{灰実|はいみ} の {里|さと}」 。 || "Cinder Orchard"… then "Saltglass". Then "Cinder Orchard" again.
+?(comp=ren) !gesture comp observe 17,8
+?(comp=nao) !gesture comp lookbetween 17,8 and=pc
+?(comp=mio) !gesture comp aside
+?(comp=suzu) !gesture comp shrug
 ?(comp=ren) comp[worry]: {一|ひと}つ の {笠|かさ} に 、 {二|ふた}つ の {名前|なまえ} 。 これ では 、 {道|みち} は どちら へ {続|つづ}く か {決|き}められません 。 || Two names on one shade. The road can't decide which way it leads.
 ?(comp=nao) comp: {宛先|あてさき} が {二|ふた}つ ある {荷物|にもつ} みたい だ 。 どっち に も {届|とど}かない やつ 。 || Like a parcel with two addresses. The kind that never reaches either.
 ?(comp=mio) comp[worry]: {目|め} が {回|まわ}り そう 。 …… あまり {見|み}ない ほう が いい かも 。 || It makes me dizzy. …Maybe better not to stare.
 ?(comp=suzu) comp[smirk]: {早変|はやが}わり の {芸|げい} なら {負|ま}けない けど 、 この {灯籠|とうろう} に は {負|ま}ける わ 。 || I'm good at quick changes, but I concede to this lantern.
 !end
 :fixed
+!gesture pc listen 17,8
 narr: {灯籠|とうろう} に {火|ひ} が {入|はい}って いる 。 {笠|かさ} に は 、 {落|お}ち{着|つ}いた {字|じ} で 「{灰実|はいみ} の {里|さと}」 。 || The lantern is lit. Its shade reads, in steady letters, "Cinder Orchard".
 
 @scene sg.road_sign
@@ -95494,25 +95923,51 @@ narr: {苔|こけ}むした {石|いし} の {道標|みちしるべ} 。 「{�
 ?(comp=ren) comp: {古|ふる}い {形|かたち} の {道標|みちしるべ} です 。 {石|いし} に {彫|ほ}った {字|じ} は 、 {紙|かみ} より ずっと {長|なが}く {残|のこ}ります 。 || An old-style marker. Letters cut in stone last far longer than paper.
 
 @scene sg.road_bench
+# Staged: you look out over the harbour from the bench and lean to the darker water round the island; your
+# companion answers in their own way (Mio's laugh, Nao's glance away, Ren's open hand to the view, Suzu's
+# long breath out).
+!gesture pc lookroad down
 narr: {崖|がけ} の {上|うえ} の {古|ふる}い ベンチ 。 {港|みなと} と 、 {沖|おき} の {小島|こじま} が よく {見|み}える 。 || An old bench at the cliff edge. From here you can see the whole harbour, and the little island offshore.
+!gesture pc observe down
 narr: {島|しま} の {周|まわ}り だけ 、 {海|うみ} の {色|いろ} が {少|すこ}し {暗|くら}い 。 || Only around the island is the sea a shade darker.
+?(comp=mio) !gesture comp laugh
+?(comp=nao) !gesture comp aside
+?(comp=ren) !gesture comp palm down
+?(comp=suzu) !gesture comp exhale
 ?(comp=mio) comp[smile]: ここ で お{弁当|べんとう} を {食|た}べたら 、 おいしい だろう ね 。 || Lunch would taste good up here.
 ?(comp=nao) comp: {配達|はいたつ} の {帰|かえ}り に 、 よく ここ で {休|やす}んだ 。 {誰|だれ} に も {言|い}って ない けど 。 || I used to rest here on the way back from deliveries. Never told anyone.
 ?(comp=ren) comp: {灯|ひ} の {道|みち} の ベンチ は 、 {昔|むかし} の {灯守|ひもり} が {置|お}いた もの が {多|おお}い そう です 。 {旅人|たびびと} に {景色|けしき} を {見|み}せる ため に 。 || They say many benches on the lantern roads were placed by keepers long ago — to show travellers the view.
 ?(comp=suzu) comp[closed]: …… {少|すこ}し だけ 、 {座|すわ}って いこう か 。 {幕|まく} が {上|あ}がる {前|まえ} の 、 {深呼吸|しんこきゅう} 。 || …Let's sit a moment. A deep breath before the curtain goes up.
 
 @scene sg.road_inland_closed
+# Staged: back at the fork, your companion reacts as the road has fooled you (Nao points up the road you
+# took, Mio looks between the road and the lantern, Ren pushes his glasses up, Suzu laughs it off and shakes
+# her head); you point down to the harbour.
 narr: {北|きた} の {道|みち} を {歩|ある}き{出|だ}す 。 …… {気|き} が つく と 、 また {分|わ}かれ{道|みち} の {灯籠|とうろう} の {前|まえ} に {立|た}って いた 。 || You set off along the north road. …And find yourself standing in front of the fork lantern again.
 !warp sg.road 16 9 right
+?(comp=nao) !gesture comp point 15,0
+?(comp=mio) !gesture comp lookbetween 15,0 and=17,8
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp laugh then=shake
 ?(comp=nao) comp[angry]: は ？ {一本道|いっぽんみち} だった ぞ 。 …… {道|みち} が 、 {自分|じぶん} の {行|い}き{先|さき} を {忘|わす}れてる 。 || What? That was one straight road. …The road's forgotten where it goes.
 ?(comp=mio) comp[surprise]: {今|いま} 、 {確|たし}か に {北|きた} へ {歩|ある}いた よ ね ？ …… {灯籠|とうろう} の {名前|なまえ} が {決|き}まらない から かな 。 || We did walk north just now, didn't we? …Is it because the lantern can't settle on a name?
 ?(comp=ren) comp[think]: {灯籠|とうろう} が {二|ふた}つ の {名|な} の {間|あいだ} で {揺|ゆ}れて いる かぎり 、 この {道|みち} は どこ に も {着|つ}きません 。 …… {今回|こんかい} は 、 {私|わたし} が {迷|まよ}った わけ では ありません よ 。 || As long as the lantern wavers between two names, this road arrives nowhere. …And this time it wasn't me getting lost.
 ?(comp=suzu) comp[laugh]: あら 、 {出口|でぐち} が {入口|いりぐち} に なる {手品|てじな} ね 。 …… {笑|わら}えない わ 。 || Oh, the trick where the exit turns into the entrance. …Not funny.
+!gesture pc point 18,21
 pc: {先|さき} に 、 {潮硝子|しおがらす} で {何|なに} が {起|お}きて いる の か {調|しら}べよう 。 || Let's find out what's happening in Saltglass first.
 
 @scene sg.road_open
+# Staged: your companion steps up off the harbour steps beside you; you look up the road to the lit fork
+# lantern; your companion's own answer (Ren a nod to the lettering, Nao a point up the north road, Mio's
+# laugh, Suzu a glance away at the name of the town).
 !set sg_road_open_seen
+!walkto comp 19 20 up
+!look pc 17,8
 narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} に 、 {火|ひ} が {灯|とも}って いる 。 {笠|かさ} の {名前|なまえ} は 、 もう {揺|ゆ}れない 。 || The fork lantern is burning. The name on its shade no longer wavers.
+?(comp=ren) !gesture comp nod 17,8
+?(comp=nao) !gesture comp point 15,0
+?(comp=mio) !gesture comp laugh
+?(comp=suzu) !gesture comp aside
 ?(comp=ren) comp[smile]: 「{灰実|はいみ} の {里|さと}」 。 …… よい {字|じ} です 。 {道|みち} が 、 {行|い}き{先|さき} を {思|おも}い{出|だ}しました 。 || "Cinder Orchard." …Good lettering. The road has remembered where it goes.
 ?(comp=nao) comp: {北|きた} の {道|みち} 、 {通|とお}れる よう に なった な 。 {灰実|はいみ} の {里|さと} まで 、 {三日|みっか} って とこ だ 。 || The north road's open. Three days to Cinder Orchard, give or take.
 ?(comp=mio) comp[smile]: {北|きた} の {道|みち} が {戻|もど}ってる 。 {灰実|はいみ} の {里|さと} …… {果物|くだもの} の {町|まち} だ よ ね 。 || The north road's back. Cinder Orchard… that's the fruit town, isn't it?
@@ -95520,12 +95975,24 @@ narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} に 、 {火|ひ} �
 !journal {北|きた} の {道|みち} が {開|ひら}いた 。 {灰実|はいみ} の {里|さと} へ 。 || The north road is open. On to Cinder Orchard.
 
 @scene sg.harbor_first
+# Staged: you look down into the harbour; you bend to the label that lands at your feet and pick it up, and
+# turn towards Daigo calling from below (he is down on the quay, so he is heard before he is near); your
+# companion's own reaction to the blank tag (Nao shakes their head, Mio's hand to her chest, Ren leans in to the
+# label, Suzu looks away).
 !set sg_harbor_seen
+!gesture pc lookroad down
 narr: {坂|さか} を {下|くだ}る と 、 {潮|しお} と {魚|さかな} と タール の {匂|にお}い が した 。 || At the bottom of the slope, the air smells of salt, fish and tar.
+!gesture pc bend
 narr: {一枚|いちまい} の ラベル が {風|かぜ} に {飛|と}ばされて 、 {足元|あしもと} に {落|お}ちた 。 {字|じ} が {書|か}いて ある …… と {思|おも}った {瞬間|しゅんかん} 、 {白|しろ}く {消|き}えた 。 || A label skitters along the ground and lands at your feet. There's writing on it — and the moment you look, it fades to white.
+!prop pc paper
+!look pc daigo
 daigo: おーい ！ その ラベル 、 {誰|だれ} の {荷物|にもつ} の だ ？ …… って 、 {白紙|はくし} か 。 また か よ 。 || Hey! Whose cargo is that label off? …Oh, it's blank. Not again.
 daigo: {嵐|あらし} の {後|あと} から 、 ずっと こう だ 。 {荷札|にふだ} も {手紙|てがみ} も {道案内|みちあんない} も 、 みんな {言|い}う こと が {違|ちが}う 。 || Ever since the storm it's been like this. Cargo tags, letters, directions — they all say something different.
 daigo: {困|こま}った こと が あったら 、 {港長|こうちょう} の オウミ さん に {言|い}いな 。 {事務所|じむしょ} は {大通|おおどお}り の {西|にし} だ 。 || If you've got a problem, tell the harbourmaster, Ōmi. The office is on the west side of the main street.
+?(comp=nao) !gesture comp shake
+?(comp=mio) !gesture comp guard
+?(comp=ren) !gesture comp observe pc
+?(comp=suzu) !gesture comp aside
 ?(comp=nao) comp: …… {白紙|はくし} の {荷札|にふだ} 。 {配達人|はいたつにん} に とって は {悪夢|あくむ} だ な 。 || …Blank tags. A courier's nightmare.
 ?(comp=mio) comp[worry]: {葦|あし}ノ{瀬|せ} の {瓶|びん} の ラベル と {同|おな}じ …… 。 ここ でも 。 || Just like the labels on my bottles back in Reedwake… here too.
 ?(comp=ren) comp[think]: {字|じ} が {消|き}える {瞬間|しゅんかん} を 、 {初|はじ}めて {見|み}ました 。 {嵐|あらし} の {夜|よる} だけ の こと では ない 。 {今|いま} も {続|つづ}いて いる 。 || I've never seen the moment a word disappears. It didn't just happen on the night of the storm. It's still happening.
@@ -95533,55 +96000,104 @@ daigo: {困|こま}った こと が あったら 、 {港長|こうちょう} �
 !journal {港長|こうちょう} の オウミ を {訪|たず}ねよう 。 {事務所|じむしょ} は {大通|おおどお}り の {西|にし} 。 || Visit Harbourmaster Ōmi. The office is on the west side of the main street.
 
 @scene sg.return_harbor
+# Staged: you shade your eyes to watch the letters wheel down over the harbour; your companion's own response
+# (Nao's nod, Mio points to Kiyo crying over her letter, Ren's long breath out, Suzu's small celebration);
+# you point the way to the harbour office.
 !set sg_returned
+!gesture pc shadeeyes up
 narr: {手紙|てがみ} が 、 カモメ の よう に {港|みなと} の {空|そら} を {舞|ま}って いた 。 {一通|いっつう} 、 また {一通|いっつう} と 、 {家々|いえいえ} の {戸口|とぐち} に {降|お}りて いく 。 || Letters wheel over the harbour like gulls. One by one, they drift down to doorsteps.
 shiori[surprise]: {手紙|てがみ} が …… {空|そら} から 。 || Letters… falling from the sky.
 narr: {渡|わた}し{場|ば} の {時刻表|じこくひょう} で {揺|ゆ}れて いた {字|じ} が 、 {落|お}ち{着|つ}いた 。 {倉庫|そうこ} の ラベル も 、 もう {動|うご}かない 。 || The flickering times on the ferry board settle. The warehouse labels stop moving.
 narr: {岬|みさき} の {風見|かざみ} が 、 {気持|きも}ち よさそう に {回|まわ}って いる 。 || The weather vane on the point turns contentedly.
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp point 31,17
+?(comp=ren) !gesture comp exhale
+?(comp=suzu) !gesture comp celebrate
 ?(comp=nao) comp: {配達|はいたつ} {完了|かんりょう} 。 …… {空|そら} から 、 って の は {初|はじ}めて {見|み}た けど な 。 || Delivery complete. …Though I've never seen it done from the sky.
 ?(comp=mio) comp[smile]: {見|み}て 、 キヨ さん が {手紙|てがみ} を {拾|ひろ}って {泣|な}いてる 。 …… よかった 。 || Look, Kiyo's picked up a letter and she's crying. …I'm glad.
 ?(comp=ren) comp[smile]: {返送|へんそう} {取|と}り{消|け}し 。 …… {記録|きろく} に {残|のこ}したい {言葉|ことば} です 。 || "Return cancelled." …Words I'd like to put on record.
 ?(comp=suzu) comp[laugh]: {紙吹雪|かみふぶき} ！ {最高|さいこう} の {終幕|しゅうまく} ね ！ || Confetti! What a finale!
+!gesture pc point 16,10
 pc: オウミ さん に {報告|ほうこく} しよう 。 || Let's report to Ōmi.
 !journal {港長|こうちょう} の {事務所|じむしょ} へ 。 || To the harbour office.
 !autosave
 
 @scene sg.ch2_end
+# Staged: night at the end of the pier (the scene's night ambience, set while the screen is dark: the line
+# says "that night"; and dark again for the morning, so the fades cover only the time changing); your
+# companion comes to stand beside you and you both look out to sea; you turn to each other as the talk turns
+# to you, and each tells it in their own way — Nao looks away, lowers their head and puts a hand to the satchel
+# with the letter; Mio's head goes down, her hands twist, a hand at her chest, and she practises Ōmi's flat
+# hand before laughing at herself; Ren lowers his head over his master's face, nods at the thought of a
+# return, looks to the lighthouse and fixes his glasses at his own joke; Suzu laughs off the ledger, lowers
+# her head over the kind lie and looks away before facing you. At the end you both look out to sea again.
+!fade out
+!ambience night
 !warp sg.harbor 19 35 down
 !music sg_lighthouse
+!walkto comp 18 35 down
 narr: その {夜|よる} 。 {桟橋|さんばし} の {先|さき} で 、 {灯台|とうだい} の {光|ひかり} が {海|うみ} を {撫|な}でて いく の を {見|み}て いた 。 || That night, at the end of the pier, you watch the lighthouse beam stroke the sea.
 ?(comp=nao) comp: …… {今日|きょう} 、 ワタル の {督促状|とくそくじょう} を {見|み}て 、 ちょっと {嫌|いや} な {気分|きぶん} に なった 。 || …Seeing Wataru's final notice today put me in a bit of a mood.
+?(comp=nao) !look pc comp
 ?(comp=nao) pc: {嫌|いや} な {気分|きぶん} ？ || A mood?
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {宛名|あてな} の {読|よ}める {手紙|てがみ} を 、 {読|よ}めない {箱|はこ} に {入|い}れる 。 …… {同|おな}じ こと を した こと が ある 。 {一回|いっかい} だけ 。 || Putting a letter with a readable address in the unreadable box. …I've done the same thing. Once.
 ?(comp=nao&!sg_nao_isamu) comp: {丘|おか} の {上|うえ} に 、 {空|から} の {家|いえ} が ある だろ 。 あそこ に {住|す}んでた {爺|じい}さん の {手紙|てがみ} だ 。 {灯落|ひおち} の {娘|むすめ} {宛|あて} の 。 || There's an empty house up the hill. The old man who lived there wrote it. To his daughter in Lanternfall.
 ?(comp=nao&sg_nao_isamu) comp: イサム の {手紙|てがみ} の こと だ よ 。 {分|わ}かってる だろ 。 || I mean Isamu's letter. You know that.
+?(comp=nao) !gesture comp lowered hold
 ?(comp=nao) comp[closed]: {届|とど}ける べき じゃ ない と {思|おも}った 。 {今|いま} も 、 {半分|はんぶん} は そう {思|おも}ってる 。 || I didn't think it should be delivered. Half of me still thinks so.
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: {鞄|かばん} の {一番|いちばん} {底|そこ} に ある 。 {捨|す}てられない まま 。 …… あの {書記|しょき} の こと 、 {笑|わら}え ない よ な 。 || It's at the very bottom of my bag. Couldn't throw it away. …Can't exactly laugh at that clerk, can I.
+?(comp=nao) !gesture comp avert pc
 ?(comp=nao) comp[smirk]: {今|いま} の 、 {忘|わす}れて いい から 。 {明日|あした} は {北|きた} だ 。 {早|はや}く {寝|ね}ろ 。 || You can forget I said that. North tomorrow. Get some sleep.
 ?(comp=mio) comp: ワタル さん の こと 、 ずっと {考|かんが}えてた の 。 || I've been thinking about Wataru all evening.
+?(comp=mio) !gesture comp lowered hold
 ?(comp=mio) comp[sad]: わたし 、 {頼|たの}まれたら {断|ことわ}れない でしょう 。 {薬|くすり} の {代金|だいきん} も 、 「{後|あと} で いい よ 」 って 、 {何人|なんにん} に も {言|い}ってる 。 || You know I can't say no when someone asks. I've told so many people "pay for the medicine later".
+?(comp=mio) !gesture comp fidget
 ?(comp=mio) comp: それ で {店|みせ} が {苦|くる}しく なって も 、 {誰|だれ} に も {言|い}わない 。 …… ワタル さん と {少|すこ}し {似|に}てる 。 {黙|だま}って {帳尻|ちょうじり} を {合|あ}わせる ところ が 。 || And when the shop struggles because of it, I don't tell anyone. …A bit like Wataru. Quietly balancing the books.
+?(comp=mio) !look pc comp
+?(comp=mio) !look comp pc
 ?(comp=mio) pc: ミオ は {誰|だれ} に も {嘘|うそ} を ついて ない よ 。 || You haven't lied to anyone, Mio.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[smile]: うん 。 でも 、 {自分|じぶん} に は ついてた かも 。 「{大丈夫|だいじょうぶ}」 って 。 || No. But maybe to myself. "I'm fine."
+?(comp=mio) !gesture comp emphatic
 ?(comp=mio) comp: オウミ さん みたい に 、 {優|やさ}しくて {厳|きび}しい の って 、 {難|むずか}しい ね 。 …… {明日|あした} から 、 {練習|れんしゅう} して みる 。 || Being kind and strict at once, like Ōmi — it's hard. …I'll start practising tomorrow.
+?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[laugh]: まず は 、 {干物|ひもの} の お{土産|みやげ} を {断|ことわ}る {練習|れんしゅう} から 。 …… {無理|むり} かも 。 || Starting with refusing all the dried fish people keep giving us. …That might be impossible.
 ?(comp=ren) comp: {書記|しょき} の {言|い}った 「{主|あるじ}」 の こと を 、 {考|かんが}えて いました 。 || I was thinking about the "master" the Clerk mentioned.
 ?(comp=ren) comp: {私|わたし} の {師匠|ししょう} は 、 {何年|なんねん} も {前|まえ} に 、 {山|やま} の {書庫|しょこ} へ {話|はなし} を しに {行|い}きました 。 そして 、 {帰|かえ}って きません でした 。 || My master went to the archive in the mountains years ago, to talk. And never came back.
+?(comp=ren) !gesture comp lowered hold
 ?(comp=ren) comp[sad]: {師匠|ししょう} の {教|おし}え は 、 {一字一句|いちじいっく} {覚|おぼ}えて います 。 でも 、 {顔|かお} が …… {思|おも}い{出|だ}せない の です 。 {今夜|こんや} 、 {初|はじ}めて それ が {怖|こわ}く なりました 。 || I remember every word my master taught me. But the face… I can't recall it. Tonight, for the first time, that frightens me.
+?(comp=ren) !look pc comp
+?(comp=ren) !look comp pc
 ?(comp=ren) pc: {棚|たな} に {上|あ}げられた の かも しれない ね 。 || Maybe it's been shelved.
+?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: …… ええ 。 だと すれば 、 {取|と}り{戻|もど}せる かも しれません 。 {返送|へんそう} は {取|と}り{消|け}せる と 、 {今日|きょう} {分|わ}かりました から 。 || …Yes. And if so, it might be retrieved. Today we learned that a return can be cancelled.
+?(comp=ren) !look comp 2,29
 ?(comp=ren) comp[smile]: {暗|くら}い {話|はなし} を して しまいました 。 {灯台|とうだい} の {前|まえ} では 、 {暗|くら}い {話|はなし} も {少|すこ}し {明|あか}るく {聞|き}こえる ので 、 {許|ゆる}して ください 。 || I've said something gloomy. Forgive me — in front of a lighthouse, even gloomy talk sounds a little brighter.
+?(comp=ren) !look comp pc
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp[shy]: …… {今|いま} の は 、 {冗談|じょうだん} の つもり でした 。 || …That was meant as a joke.
 ?(comp=suzu) comp: ねぇ 。 ワタル くん の {帳簿|ちょうぼ} 、 {最初|さいしょ} に {見|み}た とき から 、 {嘘|うそ} だって {分|わ}かってた の 。 || Hey. I knew Wataru's books were lying the first time I saw them.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[smirk]: {数字|すうじ} の {嘘|うそ} は {得意|とくい} なの 。 {昔|むかし} 、 {一座|いちざ} の {帳簿|ちょうぼ} を ごまかした こと が ある から 。 {三日|みっか} で バレた けど 。 || I'm good at spotting lies in numbers. I once fudged the troupe's accounts myself. Found out in three days.
+?(comp=suzu) !look pc comp
+?(comp=suzu) !look comp pc
 ?(comp=suzu) pc: {今夜|こんや} は {冗談|じょうだん} から {入|はい}らない ね 。 || No joke to start with tonight.
 ?(comp=suzu) comp[closed]: …… {入|はい}った わ よ 。 {今|いま} の が {冗談|じょうだん} 。 {本当|ほんとう} の {話|はなし} は 、 ここ から 。 || …I did. That was the joke. The real story starts here.
+?(comp=suzu) !gesture comp lowered hold
 ?(comp=suzu) comp[sad]: {嘘|うそ} に は 、 {帳簿|ちょうぼ} に {書|か}けない {嘘|うそ} も ある の 。 {人|ひと} を {慰|なぐさ}める ため の やつ 。 {利子|りし} が {見|み}えない から 、 {返|かえ}す {日|ひ} が {分|わ}からない 。 || Some lies can't go in a ledger. The ones you tell to comfort someone. You can't see the interest, so you never know when it falls due.
+?(comp=suzu) !gesture comp avert pc
 ?(comp=suzu) comp: {灰実|はいみ} の {里|さと} に は 、 {一|ひと}つ …… {返|かえ}さなきゃ いけない もの が ある の 。 || In Cinder Orchard there's something… I have to pay back.
+?(comp=suzu) !gesture comp nod pc
 ?(comp=suzu) comp[smile]: さ 、 {今夜|こんや} は ここ まで ！ {幕|まく} ！ || Right — that's all for tonight! Curtain!
+!look pc down
+!look comp down
 narr: {灯台|とうだい} の {光|ひかり} が {港|みなと} を {一周|いっしゅう} して 、 また {戻|もど}って きた 。 || The lighthouse beam sweeps once around the harbour and comes back again.
 !unset sg_evening
 !set ch2_done sg_ferry_running
+!fade out
+!ambience -
 !warp sg.inn 6 7 down
 !music saltglass
 narr: {翌朝|よくあさ} 。 {港|みなと} は {朝|あさ} から うるさかった 。 {正|ただ}しい うるささ だった 。 || Next morning, the harbour is loud from dawn. The right kind of loud.
@@ -95598,21 +96114,41 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sg.omi_intro
+# Staged: Ōmi keeps writing through her first words; at "Reedwake too?" her working hand stops and she looks
+# up at you; she separates the three troubles with both hands and makes her point with a flat downward hand;
+# she looks over at your companion as they speak (each answers in their own way) and back; she counts the
+# three troubles, and shakes her head at the ghost story.
+!pose omi write1
+!prop omi brush
 omi: {客|きゃく} か 。 {悪|わる}い が 、 {船|ふね} の {予定|よてい} なら {答|こた}えられない よ 。 {予定表|よていひょう} が {毎日|まいにち} {勝手|かって} に {書|か}き{変|か}わる ん で ね 。 || Visitors? Sorry — if it's about sailings, I can't tell you. The schedule rewrites itself every day.
+!gesture pc palm omi
 pc: {葦|あし}ノ{瀬|せ} から {来|き}ました 。 {嵐|あらし} の {後|あと} 、 {名前|なまえ} や ラベル が {消|き}えて いる {件|けん} で 。 || We've come from Reedwake — about the names and labels vanishing since the storm.
+!pose omi -
+!prop omi -
+!gesture omi listen pc
 omi[surprise]: …… {葦|あし}ノ{瀬|せ} でも か 。 まあ 、 {座|すわ}りな 。 || …Reedwake too? Well, sit down.
 omi: {港長|こうちょう} の オウミ だ 。 {三十年|さんじゅうねん} この {港|みなと} を {回|まわ}して きた が 、 こんな の は {初|はじ}めて だ よ 。 || I'm Ōmi, harbourmaster. Thirty years running this port, and I've never seen the like.
+!gesture omi size
 omi: {荷札|にふだ} が {白|しろ}く なる 。 {手紙|てがみ} の {宛名|あてな} が {消|き}える 。 {渡|わた}し{場|ば} の {時刻表|じこくひょう} は 、 {朝|あさ} と {昼|ひる} で {言|い}う こと が {違|ちが}う 。 || Cargo tags go blank. Addresses vanish from letters. The ferry board says one thing in the morning and another at noon.
+!gesture omi emphatic
 omi[think]: {港|みなと} って の は 、 {字|じ} で {動|うご}いてる ん だ 。 {字|じ} が {嘘|うそ} を {言|い}い{出|だ}したら 、 {何|なに} も {動|うご}かない 。 || A harbour runs on writing. When the writing starts lying, nothing moves.
+!look omi comp
+?(comp=nao) !gesture comp nod omi
+?(comp=mio) !gesture comp guard
+?(comp=ren) !gesture comp palm omi
+?(comp=suzu) !gesture comp shrug
 ?(comp=nao) comp: {配達人|はいたつにん} も {同|おな}じ だ 。 {宛名|あてな} が {読|よ}めなきゃ 、 ただ の {紙|かみ} を {運|はこ}んでる だけ 。 || Same for couriers. If you can't read the address, you're just carrying paper around.
 ?(comp=mio) comp: お{察|さっ}し します 。 わたし の {店|みせ} でも 、 {薬|くすり} の ラベル が {消|き}えて {大変|たいへん} でした 。 || I understand. At my shop the medicine labels vanished too. It was awful.
 ?(comp=ren) comp: {灯|ひ} の {道|みち} の {名前|なまえ} も 、 {同|おな}じ よう に {消|き}えて います 。 {無関係|むかんけい} と は {思|おも}えません 。 || The names on the lantern roads are fading the same way. I can't believe it's unrelated.
 ?(comp=suzu) comp: {字|じ} が {嘘|うそ} を つく 、 か 。 …… {役者|やくしゃ} より {質|たち} が {悪|わる}い わ ね 。 || Writing that lies. …Worse than actors.
+!look omi pc
+!gesture omi count
 omi: {手|て} を {貸|か}して くれる なら 、 {助|たす}かる 。 {特|とく}に {困|こま}ってる の は {三|みっ}つ だ 。 || If you'll lend a hand, I'd be grateful. Three things are giving me the most grief.
 omi: {一|ひと}つ 、 {二番|にばん}{倉庫|そうこ} の {荷|に} 。 {係|かかり} の ワタル が 、 {数|かず} が {合|あ}わない と {言|い}ってる 。 || One: the cargo in No. 2 warehouse. The clerk, Wataru, says the counts don't add up.
 omi: {二|ふた}つ 、 かもめ{亭|てい} に {溜|た}まった {郵便|ゆうびん} 。 {宛名|あてな} の {消|き}えた {手紙|てがみ} が {山|やま} ほど ある 。 || Two: the post piling up at the Gull. Heaps of letters with the addresses gone.
 omi: {三|みっ}つ 、 {渡|わた}し{場|ば} の {時刻表|じこくひょう} 。 テツ の {爺|じい}さん に {聞|き}いて くれ 。 || Three: the ferry board at the landing. Ask old Tetsu.
 pc: {沈|しず}んだ {書庫|しょこ} の {噂|うわさ} を {聞|き}いて {来|き}た の です が 。 || We also came because of a rumour about a sunken archive.
+!gesture omi shake
 omi: …… {沈|しず}んだ {書庫|しょこ} ？ ああ 、 {岬|みさき} の {沖|おき} の やつ か 。 {子|こ}ども の {怪談|かいだん} だ よ 。 まず は {港|みなと} を {片付|かたづ}けて から に しな 。 || …The sunken archive? Oh, the one off the point. That's a children's ghost story. Sort out the harbour first.
 !quest sg_main 1
 !journal {倉庫|そうこ} 、 {郵便|ゆうびん} 、 {時刻表|じこくひょう} 。 {三|みっ}つ を {調|しら}べる 。 || The warehouse, the post, the ferry board: look into all three.
@@ -95632,11 +96168,22 @@ narr: {壁|かべ} に {港|みなと} の {海図|かいず} 。 {岬|みさき
 narr: {島|しま} の {名前|なまえ} の {所|ところ} だけ 、 {紙|かみ} が {白|しろ}い 。 || Only where the island's name should be is the paper blank.
 
 @scene sg.wataru_first
+# Staged: Wataru starts up from his counting; an open hand at the mess; his hands twist over the storm; he
+# turns away to his ledger as he says he will check it; your companion's aside is their own look at him (Nao
+# and Mio lean in to watch him, Suzu looks between him and you, Ren straightens his glasses).
 !set sg_wataru_met
+!gesture wataru flinch pc
 wataru[surprise]: あっ 、 すみません 、 {今|いま} {数|かぞ}えて いて …… 。 {港長|こうちょう} の お{使|つか}い の {方|かた} です か 。 || Oh — sorry, I was in the middle of counting… Are you the people the harbourmaster sent?
+!gesture wataru palm
 wataru: {倉庫|そうこ} {係|がかり} の ワタル です 。 {見|み}て の とおり 、 {荷札|にふだ} が めちゃくちゃ で …… 。 || I'm Wataru, the warehouse clerk. As you can see, the tags are a complete mess…
+!gesture wataru fidget
 wataru[worry]: {嵐|あらし} の {夜|よる} に 、 ラベル が {全部|ぜんぶ} {剥|は}がれて しまった ん です 。 {貼|は}り{直|なお}した ん です が 、 {朝|あさ} に なる と また {字|じ} が {変|か}わって いて 。 || On the night of the storm, the labels all came off. I stuck them back on, but by morning the writing had changed again.
+!look wataru 1,6
 wataru: よかったら 、 {箱|はこ} を {見|み}て みて ください 。 {僕|ぼく} は …… {帳簿|ちょうぼ} を {確認|かくにん} します ので 。 || Please, look at the crates if you like. I'll… check the ledger.
+?(comp=nao) !gesture comp observe wataru
+?(comp=suzu) !gesture comp lookbetween wataru and=pc
+?(comp=mio) !gesture comp observe wataru
+?(comp=ren) !gesture comp glasses
 ?(comp=nao) comp: （{字|じ} の {綺麗|きれい} な {人|ひと} だ 。 {帳簿|ちょうぼ} を {持|も}つ {手|て} が 、 {少|すこ}し {震|ふる}えてる けど 。） || (Neat handwriting, this one. His hands are shaking a bit on that ledger, though.)
 ?(comp=suzu) comp: （{帳簿|ちょうぼ} を {閉|と}じる の が 、 ちょっと {早|はや}かった わ ね 。） || (He shut that ledger a little too quickly.)
 ?(comp=mio) comp: （{顔色|かおいろ} が {悪|わる}い 。 {寝|ね}て ない の かな 。） || (He looks pale. Isn't he sleeping?)
@@ -95647,9 +96194,16 @@ wataru: {箱|はこ} は {自由|じゆう} に {見|み}て ください 。 {�
 ?(sg_wataru_confessed&!sg_wataru_resolved) wataru[sad]: …… {港長|こうちょう} に 、 {全部|ぜんぶ} {話|はな}します 。 || …I'll tell the harbourmaster everything.
 
 @scene sg.crate_blank
+# Staged: you lean in to the label that will not keep still; your companion's own reaction (Ren leans in
+# too, Nao looks between it and you, Mio's hand to her chest, Suzu looks away).
 !set sg_crate_blank
+!gesture pc observe 4,3 hold
 narr: {木箱|きばこ} の ラベル を {見|み}る 。 {字|じ} が {薄|うす}く なり 、 また {浮|う}かび 、 また {消|き}える 。 || You look at the crate's label. The writing fades, surfaces again, fades again.
 narr: {紙|かみ} は {古|ふる}く 、 {糊|のり} も {乾|かわ}いて いる 。 {誰|だれ} も {触|さわ}って いない 。 {字|じ} だけ が 、 {勝手|かって} に {動|うご}いて いる 。 || The paper is old and the paste is dry. No one has touched it. Only the writing moves, by itself.
+?(comp=ren) !gesture comp observe 4,3
+?(comp=nao) !gesture comp lookbetween 4,3 and=pc
+?(comp=mio) !gesture comp guard
+?(comp=suzu) !gesture comp aside
 ?(comp=ren) comp[think]: {灯籠|とうろう} の {名前|なまえ} が {消|き}える とき と 、 {同|おな}じ {揺|ゆ}れ{方|かた} です 。 {静寂|しじま} の しわざ でしょう 。 || It wavers just the way lantern names do when they fade. This is the Hush's doing.
 ?(comp=nao) comp: {誰|だれ} も {触|さわ}って ない のに 、 {字|じ} が {動|うご}いてる 。 …… {気味|きみ} が {悪|わる}い な 。 || No one's touched it, and the writing's moving. …Creepy.
 ?(comp=mio) comp[worry]: {誰|だれ} も {触|さわ}って ない のに 、 {字|じ} が {動|うご}いてる 。 {葦|あし}ノ{瀬|せ} と {同|おな}じ …… 。 || No one's touched it and the writing moves. Just like in Reedwake…
@@ -95658,14 +96212,24 @@ narr: {紙|かみ} は {古|ふる}く 、 {糊|のり} も {乾|かわ}いて �
 !call sg.crates_check
 
 @scene sg.crate_glued
+# Staged: you lean in to the new label and reach to lift its corner; your companion's own reaction (Nao and
+# Mio lean in to the hand and the paste, Ren pushes his glasses up, Suzu an open hand: an old trick); at
+# "someone's hand" you turn to look at Wataru.
 !set sg_crate_glued
+!gesture pc observe 8,3 hold
 narr: この {箱|はこ} の ラベル は {新|あたら}しい 。 {糊|のり} が まだ {柔|やわ}らかい 。 {字|じ} は {動|うご}かない 。 || This crate's label is new. The paste is still soft. The writing doesn't move.
+!gesture pc handover 8,3
 narr: 「{嵐|あらし} で {破損|はそん} ・ {廃棄|はいき}」 。 {端|はし} を めくる と 、 {下|した} に {古|ふる}い ラベル が ある 。 「{灯台|とうだい} {行|ゆ}き ・ {灯油|とうゆ} {四缶|よんかん}」 。 || "Damaged in storm — for disposal." Lift the corner, and there's an older label underneath: "To the lighthouse — lamp oil, four cans."
 narr: {箱|はこ} を {揺|ゆ}らす と 、 {中|なか} で {油|あぶら} が ちゃぷん と {鳴|な}った 。 {壊|こわ}れて など いない 。 || You tip the crate. Oil sloshes inside. Nothing is damaged.
+?(comp=nao) !gesture comp observe 8,3
+?(comp=mio) !gesture comp observe 8,3
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp palm pc
 ?(comp=nao) comp[think]: …… この {字|じ} 、 {知|し}ってる 。 {跳|は}ね の {癖|くせ} が 、 {倉庫|そうこ} の {他|ほか} の {札|ふだ} と {同|おな}じ だ 。 {同|おな}じ {人|ひと} の {手|て} だ よ 。 || …I know this hand. Same flick at the end of the strokes as the other tags in here. Same person wrote it.
 ?(comp=mio) comp[think]: {糊|のり} の {匂|にお}い 、 {嗅|か}いで みて 。 {米|こめ} の {糊|のり} で 、 {炊|た}いた ばかり 。 {嵐|あらし} は {二週間|にしゅうかん} {前|まえ} よ 。 || Smell the paste. Rice paste, freshly cooked. The storm was two weeks ago.
 ?(comp=ren) comp[think]: {灯台|とうだい} の {油|あぶら} を 「{廃棄|はいき}」 に ？ …… {灯守|ひもり} と して 、 {見過|みす}ごせません 。 {灯|あか}り の {油|あぶら} は {命綱|いのちづな} です 。 || The lighthouse oil marked "for disposal"? …As a lantern keeper, I can't let that pass. Lamp oil is a lifeline.
 ?(comp=suzu) comp[smirk]: {壊|こわ}れて ない {荷|に} に 「{破損|はそん}」 の {札|ふだ} 。 {帳簿|ちょうぼ} の {上|うえ} では 、 {消|き}えて {無|な}くなる {荷物|にもつ} ね 。 よく ある {手|て} よ 。 || An undamaged crate tagged "damaged". On the books, it simply disappears. An old trick.
+!look pc wataru
 narr: これ は {静寂|しじま} では ない 。 {誰|だれ} か の {手|て} だ 。 || This isn't the Hush. It's someone's hand.
 !call sg.crates_check
 
@@ -95687,23 +96251,35 @@ narr: {嵐|あらし} の {三日後|みっかご} の {欄|らん} に 、 {直
 !if sg_crate_blank&sg_crate_glued -> ready
 !end
 :ready
+# Staged: you look from one label to the other; Wataru turns to you and starts at the question; your
+# companion's aside names what he does (Nao: he glances at the door; Mio: he will not meet your eyes) or is
+# their own (Ren's glasses, Suzu looks between him and you); unasked, his hands twist.
+!gesture pc lookbetween 4,3 and=8,3
 narr: {二|ふた}つ の ラベル を {比|くら}べて みる 。 {片方|かたほう} は {勝手|かって} に {変|か}わる 。 {片方|かたほう} は 、 {誰|だれ} か が {貼|は}り{替|か}えた 。 || You compare the two labels. One changes by itself. The other, someone changed.
 !lesson kana
 !challenge sg.c_crates
 !if var._res=0 -> later
 !set sg_crates_done
+!look wataru pc
+!look pc wataru
 wataru[worry]: …… {何|なに} か 、 {分|わ}かりました か 。 || …Did you find anything?
 !choice
 * この ラベル 、 {新|あたら}しい です ね 。 || This label is new, isn't it? -> ask
 * まだ {何|なに} とも 。 || Nothing definite yet. -> quiet
 :ask
+!gesture wataru flinch pc
 wataru[surprise]: え 、 ええ 。 {嵐|あらし} の {後|あと} に {貼|は}り{直|なお}した もの です 。 {壊|こわ}れた {荷|に} は {分|わ}けて おかない と …… 。 {港長|こうちょう} も ご{存|ぞん}じ です よ 。 || Y-yes. I put those on after the storm. Damaged goods have to be kept separate… The harbourmaster knows all about it.
+?(comp=mio) !gesture wataru aside
+?(comp=nao) !gesture wataru glance 6,9
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp lookbetween wataru and=pc
 ?(comp=mio) comp: （…… {目|め} を {合|あ}わせない ね 。） || (…He won't meet our eyes.)
 ?(comp=nao) comp: （{出口|でぐち} を {見|み}た 。 {今|いま} 、 {出口|でぐち} を {見|み}た ぞ 。） || (He glanced at the door. Just now, he glanced at the door.)
 ?(comp=ren) comp: （{答|こた}え が {早|はや}すぎます 。 {用意|ようい} して いた {答|こた}え です 。） || (That answer came too fast. It was prepared.)
 ?(comp=suzu) comp: （{台詞|せりふ} の {練習|れんしゅう} を した {顔|かお} ね 。） || (That's the face of someone who rehearsed his lines.)
 !goto after
 :quiet
+!gesture wataru fidget
 wataru: そう です か …… 。 {何|なに} か {分|わ}かったら 、 {教|おし}えて ください 。 || I see… Please tell me if you find anything.
 :after
 narr: {倉庫|そうこ} の こと は 、 {他|ほか} の {二|ふた}つ を {見|み}て から 、 {港長|こうちょう} に {話|はな}そう 。 || Tell the harbourmaster about the warehouse — once you've seen the other two.
@@ -95721,23 +96297,37 @@ narr: {三|みっ}つ とも {見|み}た 。 {港長|こうちょう} の {事�
 !autosave
 
 @scene sg.tamae_first
+# Staged: Tamae wipes the counter as she greets you, an open hand at the rush, then points at you: help;
+# a small celebration for yes and a count of the regulars' habits; her laugh when it is done; your
+# companion's own answer (Mio's nod, Suzu's showman's hands, Nao wipes their brow, Ren's breath out).
+!gesture tamae tidy
 tamae: いらっしゃい ！ …… って 、 {今|いま} は {座|すわ}って もらう {席|せき} も ない よ 。 もう すぐ {昼|ひる} の {波|なみ} が {来|く}る ん だ 。 || Welcome! …Though I've no seat to give you right now. The lunch wave's about to hit.
 pc: {港長|こうちょう} に {言|い}われて 、 {郵便|ゆうびん} の こと で {来|き}ました 。 || The harbourmaster sent us about the post.
+!gesture tamae palm pc
 tamae: ああ 、 あの {袋|ふくろ} ！ {見|み}て ほしい けど 、 {昼|ひる} が {終|お}わる まで {手|て} が {離|はな}せない ん だ よ 。 || Oh, that bag! I'd love you to look at it, but I can't spare a hand until lunch is done.
+!gesture tamae point pc
 tamae[think]: …… そう だ 。 {手伝|てつだ}って くれたら 、 {早|はや}く {終|お}わる 。 {注文|ちゅうもん} を {聞|き}いて 、 {盆|ぼん} に {載|の}せる だけ 。 どう ？ || …I know. If you help, it'll be over sooner. Just listen to the orders and load the trays. What do you say?
 !choice
 * {手伝|てつだ}います 。 || We'll help. -> help
 * {後|あと} で {来|き}ます 。 || We'll come back later. -> later
 :later
+!gesture tamae laugh
 tamae: はいよ 。 {昼|ひる} は {逃|に}げない から ね 。 || Right you are. Lunch isn't going anywhere.
 !end
 :help
+!gesture tamae celebrate
 tamae[laugh]: {助|たす}かる ！ {常連|じょうれん} の {好|この}み を {教|おし}えとく よ 。 ダイゴ の 「いつも の 」 は 、 {焼|や}き{魚|ざかな} と ご{飯|はん} と {味噌汁|みそしる} 。 || Lifesaver! Let me tell you the regulars' habits. Daigo's "the usual" is grilled fish, rice and miso soup.
+!gesture tamae count
 tamae: テツ さん は お{茶|ちゃ} ばかり 。 キヨ さん は {魚|さかな} を {頼|たの}まない 。 {朝|あさ} から {晩|ばん} まで {見|み}てる から ね 。 || Tetsu only ever has tea. Kiyo never orders fish — she looks at it from dawn to dusk.
 !activity sg.a_lunch
 !if var._res=0 -> stopped
 !set sg_lunch_done
+!gesture tamae laugh
 tamae[laugh]: {終|お}わった ！ {今日|きょう} は {早|はや}かった よ 。 あんた たち 、 {宿屋|やどや} {向|む}き だ ね 。 || Done! Fastest lunch this year. You two are made for innkeeping.
+?(comp=mio) !gesture comp nod pc
+?(comp=suzu) !gesture comp size
+?(comp=nao) !gesture comp brow
+?(comp=ren) !gesture comp exhale
 ?(comp=mio) comp[smile]: {薬|くすり} の {調合|ちょうごう} と {似|に}てる ね 。 {分量|ぶんりょう} を {間違|まちが}えない こと 。 || It's like mixing medicines. Don't get the quantities wrong.
 ?(comp=suzu) comp[laugh]: {満員|まんいん} {御礼|おんれい} ！ …… {皿|さら} {洗|あら}い は {別料金|べつりょうきん} よ 。 || Full house, thank you! …Washing up costs extra.
 ?(comp=nao) comp[tired]: {配達|はいたつ} より {忙|いそが}しかった 。 {誰|だれ} に も {言|い}う な よ 。 || Busier than couriering. Don't tell anyone I said that.
@@ -95745,23 +96335,45 @@ tamae[laugh]: {終|お}わった ！ {今日|きょう} は {早|はや}かっ�
 !call sg.tamae_postbag
 !end
 :stopped
+!gesture tamae nod pc
 tamae: {休憩|きゅうけい} かい ？ また {頼|たの}む よ 。 || Taking a break? I'll need you again.
 
 @scene sg.tamae_postbag
+# Staged: Tamae hands the bundle of post across the counter and you read the blank envelopes; when the last
+# letter turns up she holds it up, and its red stamp is what you lean in to; she hands it over; your
+# companion's own reaction (Suzu lowers her head, Mio's hand to her chest, Nao shakes their head, Ren's hand
+# to his chin).
+!prop tamae envelopes
+!gesture tamae handover pc
+!gesture pc receive tamae
 tamae: さて 、 {郵便|ゆうびん} {袋|ぶくろ} だ 。 {嵐|あらし} の {夜|よる} の {便|びん} で {来|き}た ん だ けど 、 {半分|はんぶん} が この {通|とお}り 。 || Now, the post bag. It came on the storm-night run, and half of it looks like this.
 !give sg_postbag
+!gesture pc read prop=envelopes hold
 narr: {封筒|ふうとう} の {宛名|あてな} が {真|ま}っ{白|しろ} だ 。 でも 、 {中|なか} の {手紙|てがみ} の {字|じ} は {読|よ}める 。 || The addresses on the envelopes are blank white. But the letters inside can still be read.
+?(comp=nao) !gesture comp observe pc
+?(comp!=nao) !gesture tamae shrug
 ?(comp=nao) comp: {中身|なかみ} を {読|よ}んで {宛先|あてさき} を {当|あ}てる 。 {配達人|はいたつにん} の {奥|おく}の{手|て} だ 。 {本当|ほんとう} は やっちゃ いけない けど な 。 || Read the letter to work out who it's for. A courier's last resort. Not something you're really supposed to do.
 ?(comp!=nao) tamae: {中身|なかみ} を {読|よ}めば 、 {誰|だれ} {宛|あて} か {分|わ}かる かも ね 。 {悪|わる}い けど 、 {非常時|ひじょうじ} だ 。 || If you read them, you might tell who they're for. Not nice, but it's an emergency.
 !activity sg.a_post
 !if var._res=0 -> stopped
 !set sg_post_done
 !take sg_postbag
+!gesture pc -
+!prop pc -
+!prop tamae notice
+!gesture tamae present pc hold
 tamae: {全部|ぜんぶ} {届|とど}いた ？ …… {待|ま}って 。 {一通|いっつう} だけ 、 {袋|ふくろ} の {底|そこ} に {残|のこ}ってた 。 || All delivered? …Wait. There's one left at the bottom of the bag.
+!gesture pc observe tamae
 narr: {宛名|あてな} は はっきり {読|よ}める 。 「{潮硝子|しおがらす} {二番|にばん}{倉庫|そうこ} ワタル {様|さま}」 。 {差出人|さしだしにん} は 「{灯落|ひおち} ・ {黒部|くろべ}{商会|しょうかい}」 。 || The address is perfectly legible: "Mr Wataru, No. 2 Warehouse, Saltglass". From "Kurobe & Co., Lanternfall".
 narr: {封筒|ふうとう} に 、 {赤|あか}い {判|はん} 。 「{督促|とくそく}」 。 || A red stamp on the envelope: "PAYMENT DEMANDED".
+!gesture tamae handover pc
+!gesture pc receive tamae
 tamae[worry]: ワタル は これ を {取|と}りに {来|こ}ない ん だ よ 。 「{届|とど}かない {手紙|てがみ} の {箱|はこ} に {入|い}れといて 」 って 。 {宛名|あてな} は ちゃんと {読|よ}める のに ね 。 || Wataru never comes for that one. He told me to put it in the undeliverable box. Even though the address is perfectly readable.
 !give sg_notice
+?(comp=suzu) !gesture comp lowered
+?(comp=mio) !gesture comp guard
+?(comp=nao) !gesture comp shake
+?(comp=ren) !gesture comp chin
 ?(comp=suzu) comp[closed]: …… {借金|しゃっきん} の {手紙|てがみ} は 、 {開|あ}けなければ {無|な}い こと に なる 。 そう {思|おも}いたい {気持|きも}ち は 、 {分|わ}かる わ 。 || …A debt letter stays unreal as long as you don't open it. I understand wanting to believe that.
 ?(comp=mio) comp[worry]: {開|あ}けて いない …… 。 {怖|こわ}い ん だ ね 。 || He hasn't opened it… He's frightened.
 ?(comp=nao) comp: {宛名|あてな} の {読|よ}める {手紙|てがみ} を 、 {読|よ}めない {箱|はこ} に 。 …… {嫌|いや} な {手|て} だ 。 {気持|きも}ち は {分|わ}かる けど 。 || A letter with a readable address, filed in the unreadable box. …Nasty trick. I get the feeling, though.
@@ -95772,18 +96384,35 @@ tamae[worry]: ワタル は これ を {取|と}りに {来|こ}ない ん だ �
 tamae: {残|のこ}り は 、 また {後|あと} で いい よ 。 || The rest can wait.
 
 @scene sg.tetsu_first
+# Staged: Tetsu points you to the board and you look at it; his arms fold over "boards lie"; he points the
+# way to Shiori's hut; you step to his side and he hands you a coil of rope; your companion's own answer
+# (Nao's nod, Suzu's laugh, Mio's open hands, Ren lifts his lamp).
 tetsu: …… {時刻表|じこくひょう} か 。 || …The board, is it.
+!gesture tetsu point 36,24
+!gesture pc listen 36,24
 tetsu: {見|み}て みろ 。 || Go on, look.
 !call sg.ferryboard
+!look pc tetsu
+!gesture tetsu folded hold
 tetsu: {板|いた} は {嘘|うそ} を つく 。 {潮|しお} は つかない 。 || Boards lie. Tides don't.
 tetsu: {渡|わた}し{船|ぶね} は {満|み}ち{潮|しお} で {出|で}る 。 {四十年|よんじゅうねん} {変|か}わらん 。 {今|いま} は 、 {港長|こうちょう} が {船|ふね} を {止|と}めてる が な 。 || The ferry goes out on the high tide. Forty years, same. Just now the harbourmaster's stopped the boat, mind.
 pc: {止|と}めて いる ん です か 。 || She's stopped it?
 tetsu: {客|きゃく} が {時刻表|じこくひょう} を {信|しん}じて 、 {違|ちが}う {時間|じかん} に {来|く}る 。 {誰|だれ} も {乗|の}らない {船|ふね} を {出|だ}して も {仕方|しかた} ない 。 || Passengers trust the board and turn up at the wrong time. No sense sailing an empty boat.
+!gesture tetsu point 7,26
 tetsu: {潮|しお} の {時間|じかん} なら 、 {岬|みさき} の シオリ が {書|か}いてる 。 {板|いた} じゃ なく 、 {帳面|ちょうめん} に な 。 {帳面|ちょうめん} の {字|じ} は 、 まだ {変|か}わって ない そう だ 。 || If you want tide times, Shiori on the point writes them down. In her notebooks, not on a board. They say the writing in her books hasn't changed yet.
 tetsu: …… それ と 。 || …And.
+!walkto pc 35 29 left
+!look tetsu pc
+!prop tetsu rope
+!gesture tetsu handover pc
+!gesture pc receive tetsu
 !give sg_rope
 tetsu: {水辺|みずべ} を {嗅|か}ぎ{回|まわ}る なら 、 {縄|なわ} を {持|も}って いけ 。 {縄|なわ} なし で {水|みず} に {近|ちか}づく の は 、 {馬鹿|ばか} だけ だ 。 || If you're going to nose around the waterfront, take a rope. Only fools go near water without one.
 !set sg_ferry_done
+?(comp=nao) !gesture comp nod tetsu
+?(comp=suzu) !gesture comp laugh
+?(comp=mio) !gesture comp thanks tetsu
+?(comp=ren) !gesture comp tendlamp
 ?(comp=nao) comp: …… {嫌|きら}い じゃ ない 、 この {爺|じい}さん 。 || …I don't mind this old man.
 ?(comp=suzu) comp[smile]: {台詞|せりふ} が {短|みじか}い ほど 、 {役者|やくしゃ} は {上手|うま}い の よ 。 || The fewer the lines, the better the actor.
 ?(comp=mio) comp[smile]: ありがとう ございます 。 {大事|だいじ} に {使|つか}います 。 || Thank you. We'll take good care of it.
@@ -95799,20 +96428,37 @@ narr: {瞬|まばた}き を する と 、 「{午後|ごご} {九時|くじ}�
 narr: {時刻表|じこくひょう} の {横|よこ} に 、 シオリ の {潮|しお} の {表|ひょう} が {釘|くぎ} で {留|と}めて ある 。 {手書|てが}き の {字|じ} は 、 もう {動|うご}かない 。 || Shiori's tide table is nailed up beside the board. Handwritten — and the writing stays put now.
 
 @scene sg.omi_report
+# Staged: Ōmi asks without looking up from her writing, and stops to listen when you say the causes differ;
+# a nod; then her point made with a flat hand, the two kinds of fault held apart in her two hands, a breath
+# out over Sōta's boat, a shake of the head at accusing on a guess, an open hand: follow the cargo. If your
+# thoughts are not in order she goes back to her writing.
+!pose omi write1
+!prop omi brush
 omi: どう だった 。 || Well?
+!pose omi -
+!prop omi -
+!gesture omi listen pc hold
 pc: {三|みっ}つ とも {見|み}ました 。 でも …… {全部|ぜんぶ} が {同|おな}じ {原因|げんいん} では ない と {思|おも}います 。 || We've seen all three. But… I don't think they all have the same cause.
+!gesture omi nod pc
 omi[think]: {聞|き}こう 。 || Let's hear it.
 !challenge sg.c_sort
 !if var._res=0 -> later
+!gesture omi emphatic
 omi[angry]: …… {糊|のり} の {乾|かわ}いて ない {札|ふだ} 、 か 。 || …A tag with the paste still wet.
+!gesture omi size
 omi: {静寂|しじま} だ か {何|なん} だ か {知|し}らない が 、 {字|じ} が {勝手|かって} に {変|か}わる の は {仕方|しかた} ない 。 だが 、 {手|て} で {貼|は}った {嘘|うそ} は {別|べつ} だ 。 || Hush or whatever it is — writing that changes by itself, that I can't help. But a lie stuck on by hand is another matter.
+!gesture omi exhale
 omi[sad]: {灯台|とうだい} の {油|あぶら} が 「{廃棄|はいき}」 だ と ？ {三日前|みっかまえ} の {晩|ばん} 、 {灯台|とうだい} の {灯|ひ} が {細|ほそ}く なって 、 ソウタ の {船|ふね} が {岬|みさき} の {岩|いわ} に {擦|す}った 。 {無事|ぶじ} だった の は 、 {運|うん} だ よ 。 || The lighthouse oil marked "for disposal"? Three nights ago the light burned low and Sōta's boat scraped the rocks off the point. It was luck he came home.
+!gesture omi shake
 omi: {誰|だれ} が やった か 、 {見当|けんとう} は つく 。 だが 、 {見当|けんとう} で {人|ひと} を {責|せ}める わけ に は いかない 。 || I can guess who did it. But I won't accuse someone on a guess.
+!gesture omi palm pc
 omi: {荷|に} の {行|ゆ}き{先|さき} を {追|お}って くれ 。 {油|あぶら} を {待|ま}って いた {灯台|とうだい} 、 {灰|はい} が {届|とど}かない ガラス{工房|こうぼう} 。 それ と {市場|いちば} の キヨ だ 。 キヨ は {最近|さいきん} 、 やけに {安|やす}い {塩|しお} を {仕入|しい}れた らしい 。 || Follow the cargo. The lighthouse that was waiting for oil. The glassworks that never got its ash. And Kiyo at the market — she's been buying suspiciously cheap salt lately.
 !quest sg_main 3
 !autosave
 !end
 :later
+!pose omi write1
+!prop omi brush
 omi: {考|かんが}え が まとまったら 、 また {来|き}な 。 || Come back when you've got your thoughts in order.
 
 @scene sg.omi_ask
@@ -95838,9 +96484,19 @@ asahi: {灰|はい} が ない と 、 {新|あたら}しい ガラス は {作|
 !call sg.check_clues
 
 @scene sg.genzo_clue
+# Staged: Genzō points to the oil barrel, folds his arms over "washed away", and turns aside over Sōta's
+# boat; your companion's own answer (Ren's head lowered, Mio's shake of the head, Nao's nod, Suzu counts).
+!gesture genzo point 7,2
 genzo: {油|あぶら} ？ {来|き}た よ 。 {四缶|よんかん} な 。 {頼|たの}んだ の は {八缶|はちかん} だ 。 || Oil? It came. Four cans. I ordered eight.
+!look genzo pc
+!gesture genzo folded hold
 genzo[angry]: {倉庫|そうこ} の {若|わか}いの が {言|い}う に は 、 「{嵐|あらし} で {半分|はんぶん} {流|なが}された 」 だ と さ 。 {流|なが}された なら {仕方|しかた} ない 。 {灯|ひ} を {細|ほそ}く して 、 {節約|せつやく} した 。 || The young fellow at the warehouse says half of it "washed away in the storm". If it washed away, it washed away. So I turned the flame down to save oil.
+!gesture genzo aside
 genzo[sad]: その {晩|ばん} だ 。 ソウタ の {船|ふね} が {岬|みさき} の {岩|いわ} に {擦|す}った の は 。 …… {灯|ひ} が {明|あか}るければ 、 {見|み}えた はず だ 。 || That was the night Sōta's boat scraped the rocks on the point. …With a brighter light, he'd have seen them.
+?(comp=ren) !gesture comp lowered
+?(comp=mio) !gesture comp shake
+?(comp=nao) !gesture comp nod pc
+?(comp=suzu) !gesture comp count
 ?(comp=ren) comp[sad]: {灯|ひ} を {細|ほそ}く する しか なかった 。 …… その お{気持|きも}ち 、 {分|わ}かります 。 || You had no choice but to turn it down. …I understand how that feels.
 ?(comp=mio) comp[worry]: ゲンゾウ さん の せい じゃ ありません 。 {油|あぶら} が {足|た}りなかった ん です から 。 || That's not your fault, Genzō. You didn't have enough oil.
 ?(comp=nao) comp: {四缶|よんかん} 、 か 。 {帳簿|ちょうぼ} の 「{八|はち}」 と 「{四|よん}」 と 、 {合|あ}う な 。 || Four cans. That matches the eight and the four in the ledger.
@@ -95849,10 +96505,20 @@ genzo[sad]: その {晩|ばん} だ 。 ソウタ の {船|ふね} が {岬|み�
 !call sg.check_clues
 
 @scene sg.kiyo_clue
+# Staged: Kiyo's guarded hand at "who told you?", a look away over the cheap salt, a shrug; she points to
+# the barrels by the stall and you look; her head goes down as she takes her share of the blame.
+!gesture kiyo guard
 kiyo: {塩|しお} ？ …… {誰|だれ} から {聞|き}いた の さ 。 || Salt? …Who told you that?
+!gesture kiyo aside
 kiyo[worry]: {安|やす}かった ん だ よ 。 {嵐|あらし} の {後|あと} の {晩|ばん} に 、 {見|み}ない {顔|かお} の {商人|しょうにん} が {樽|たる} を {二|ふた}つ {持|も}って {来|き}て さ 。 || It was cheap. The night after the storm, a trader I didn't know came round with two barrels.
+!gesture kiyo shrug
 kiyo: {樽|たる} の {焼|や}き{印|いん} が {削|けず}って あった 。 {変|へん} だ と は {思|おも}った よ 。 でも 、 {魚|さかな} を {干|ほ}す に は {塩|しお} が {要|い}る ん だ 。 || The brand on the barrels had been scraped off. I thought it was odd. But you need salt to dry fish.
+!gesture kiyo point 29,21
+!gesture pc listen 29,21
 kiyo: …… {削|けず}り{残|のこ}し が ある よ 。 {見|み}る かい ？ 「{潮硝子|しおがらす} {二番|にばん}」 。 {港|みなと} の {倉庫|そうこ} の {印|しるし} だ 。 || …There's a bit they missed. Want to see? "Saltglass No. 2". The harbour warehouse's own mark.
+!look pc kiyo
+!look kiyo pc
+!gesture kiyo lowered
 kiyo[sad]: {買|か}った あたし も {悪|わる}い ね 。 {樽|たる} は {返|かえ}す よ 。 || I'm to blame too, for buying it. I'll give the barrels back.
 !set sg_clue_kiyo
 !call sg.check_clues
@@ -95861,7 +96527,16 @@ kiyo[sad]: {買|か}った あたし も {悪|わる}い ね 。 {樽|たる} �
 !if sg_clue_asahi&sg_clue_genzo&sg_clue_kiyo -> all
 !end
 :all
+# Staged: you put the three together with a hand to your chin; your companion turns to you to say it, each
+# their own way (Nao's nod, Mio's hand to her chest, Ren's open hand, Suzu's lowered head).
+!gesture pc chin
 narr: {油|あぶら} 、 ソーダ{灰|ばい} 、 {塩|しお} 。 どれ も {二番|にばん}{倉庫|そうこ} から {消|き}えて 、 「{嵐|あらし} の せい 」 に なって いる 。 || Oil, soda ash, salt. All of it vanished from No. 2 warehouse, and all of it blamed on "the storm".
+!look comp pc
+!look pc comp
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp guard
+?(comp=ren) !gesture comp palm pc
+?(comp=suzu) !gesture comp lowered
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {同|おな}じ {字|じ} の {札|ふだ} だ 。 {会|あ}いに {行|い}こう 。 {逃|に}げ{道|みち} が ある うち に 、 {本人|ほんにん} の {口|くち} から {聞|き}きたい 。 || Every tag in the same hand. Let's go and see him. I'd rather hear it from him while he still has a way out.
 ?(comp=mio) comp[worry]: ワタル さん に {会|あ}いに {行|い}こう 。 …… {責|せ}める ため じゃ なくて 、 {本当|ほんとう} の こと を {聞|き}く ため に 。 || Let's go and see Wataru. …Not to blame him. To hear the truth.
 ?(comp=ren) comp: ワタル さん の {所|ところ} へ {行|い}きましょう 。 {記録|きろく} を {書|か}き{換|か}える の は 、 {記録|きろく} を {守|まも}る {者|もの} の {罪|つみ} です 。 {理由|りゆう} を {聞|き}かなければ 。 || Let's go to Wataru. Altering records is a sin for someone who keeps them. We need to hear why.
@@ -95870,19 +96545,37 @@ narr: {油|あぶら} 、 ソーダ{灰|ばい} 、 {塩|しお} 。 どれ も 
 !autosave
 
 @scene sg.wataru_confront
+# Staged in the warehouse: Wataru's hands twist; you count off the three things; he looks away as the lie
+# holds; when it breaks his head goes down, then he faces you to say "I did it" (a fidget resolving into a
+# lowered but direct posture); a hand half raised over the boat, hands twisting over the unopened notice,
+# head down over Sōta; your companion's own answer (Nao's nod, Mio's flat hand: be kind but not let it go,
+# Ren's open hand, Suzu's lowered head); his own way of saying he will go (a nod; or, for your route, the
+# same resolve to face it).
+!gesture wataru fidget
 wataru: あ …… また {来|き}て くれた ん です ね 。 {数|かず} は 、 まだ {合|あ}わなくて 。 {嵐|あらし} の せい で …… 。 || Oh… you came back. The numbers still don't add up. Because of the storm…
+!gesture pc count
 pc: {灯台|とうだい} の {油|あぶら} 、 ガラス{工房|こうぼう} の ソーダ{灰|ばい} 、 {市場|いちば} の {塩|しお} の こと で {来|き}ました 。 || We're here about the lighthouse oil, the glassworks' soda ash, and the salt at the market.
+!gesture wataru aside
 wataru[worry]: …… それ は 、 {嵐|あらし} の {夜|よる} に 、 {全部|ぜんぶ} …… 。 ラベル が {貼|は}り{替|か}えられて いた ん です 。 {誰|だれ} か に 。 || …That was all, on the night of the storm… The labels had been switched. By someone.
 !teach passive
 !challenge sg.c_lie
 !if var._res=0 -> later
+!gesture wataru lowered hold
 wataru[sad]: …… 。 || ……
+!gesture wataru resolve pc hold
 wataru[sad]: {僕|ぼく} が やりました 。 || I did it.
+!gesture wataru halfraise
 wataru: {母|はは} の {船|ふね} を {直|なお}す ため に 、 {灯落|ひおち} で お{金|かね} を {借|か}りました 。 {会社|かいしゃ} から の {給料|きゅうりょう} は 、 {春|はる} から ずっと {遅|おく}れて いて …… 。 || I borrowed money in Lanternfall to repair my mother's boat. Our wages from the company have been late since spring…
+!gesture wataru fidget
 wataru: そしたら {嵐|あらし} で 、 {船|ふね} が また {壊|こわ}れて 。 {督促状|とくそくじょう} が {来|き}て 。 {開|あ}ける の が {怖|こわ}くて 、 まだ {開|あ}けて いません 。 || Then the storm wrecked the boat again. And the final notice came. I was too scared to open it. I still haven't.
 wataru: {荷|に} を {少|すこ}し ずつ {売|う}って 、 {払|はら}う つもり でした 。 {給料|きゅうりょう} が {出|で}たら 、 {全部|ぜんぶ} {戻|もど}す つもり で 。 ラベル が {勝手|かって} に {変|か}わり{始|はじ}めた とき …… {嵐|あらし} の せい に できる 、 と {思|おも}って しまった ん です 。 || I meant to sell a little cargo at a time and pay it off. To put it all back once the wages came. When the labels started changing by themselves… I thought, I can blame the storm.
 !music sg_confession
+!gesture wataru lowered hold
 wataru[sad]: {灯台|とうだい} の {灯|ひ} が {細|ほそ}く なった {夜|よる} の こと 、 {聞|き}きました 。 ソウタ さん が …… 。 {僕|ぼく} の せい です 。 || I heard about the night the lighthouse burned low. Sōta… That was my fault.
+?(comp=nao) !gesture comp nod wataru
+?(comp=mio) !gesture comp emphatic wataru
+?(comp=ren) !gesture comp palm wataru
+?(comp=suzu) !gesture comp lowered
 ?(comp=nao) comp: …… {言|い}えた じゃん 。 {一番|いちばん} {重|おも}い {荷物|にもつ} は 、 {下|お}ろす {直前|ちょくぜん} が {一番|いちばん} {重|おも}い ん だ よ 。 || …You said it. The heaviest load's always heaviest right before you put it down.
 ?(comp=mio) comp[sad]: {言|い}って くれて 、 ありがとう 。 …… でも 、 {優|やさ}しく する の と 、 {許|ゆる}す の は {違|ちが}う 。 {港長|こうちょう} さん に も 、 {灯台|とうだい} に も 、 ちゃんと {言|い}わなきゃ 。 || Thank you for telling us. …But being kind isn't the same as letting it go. You have to tell the harbourmaster, and the lighthouse, properly.
 ?(comp=ren) comp: {記録|きろく} を {正|ただ}す {手|て} は 、 {記録|きろく} を {歪|ゆが}めた {手|て} と {同|おな}じ で いい 。 あなた の {字|じ} は 、 {綺麗|きれい} です 。 || The hand that sets a record right can be the same one that bent it. Your writing is beautiful.
@@ -95892,9 +96585,11 @@ wataru[sad]: {灯台|とうだい} の {灯|ひ} が {細|ほそ}く なった {
 * {港長|こうちょう} に は 、 わたし たち から {伝|つた}えます 。 || We'll tell the harbourmaster ourselves. -> us
 :self
 !set sg_wataru_self
+!gesture wataru nod pc
 wataru: …… はい 。 {自分|じぶん} の {口|くち} で {言|い}います 。 || …Yes. I'll say it myself.
 !goto go
 :us
+!gesture wataru resolve pc
 wataru[sad]: …… {分|わ}かりました 。 {僕|ぼく} も {行|い}きます 。 {黙|だま}って {待|ま}つ の は 、 もう {嫌|いや} です 。 || …Understood. I'll come too. I'm done waiting in silence.
 :go
 !set sg_wataru_confessed
@@ -95902,6 +96597,7 @@ wataru[sad]: …… {分|わ}かりました 。 {僕|ぼく} も {行|い}き�
 !call sg.omi_wataru
 !end
 :later
+!look wataru 1,6
 wataru: …… {帳簿|ちょうぼ} の {整理|せいり} が あります ので 。 || …I have the ledger to sort out.
 
 @scene sg.omi_wataru
@@ -95990,19 +96686,41 @@ wataru: {倉庫|そうこ} に {戻|もど}ります 。 {返事|へんじ} を 
 !music saltglass
 
 @scene sg.wataru_letter
+# Staged: Wataru reads over his unfinished reply and holds it out to you; relief breathed out when it is done;
+# you step to his side and he hands you his notebook of labels, his hands twisting over the reason; you read
+# its last page; he points west to the point and the tide-watcher; your companion's own answer (Ren's and
+# Suzu's hand to the chin, Nao looks between you and him, Mio's hand to her chest).
+!prop wataru paper
+!gesture wataru read hold
 wataru: {黒部|くろべ}{商会|しょうかい} へ の {返事|へんじ} です 。 …… {待|ま}って ほしい 、 と {書|か}きたい ん です が 、 {言葉|ことば} が {決|き}まらなくて 。 || My reply to Kurobe & Co. …I want to ask them to wait, but I can't settle on the words.
+!gesture wataru present pc hold
 wataru: {手伝|てつだ}って もらえません か 。 || Would you help me?
 !teach keigo_kenjo
 !challenge sg.c_extension
 !if var._res=0 -> later
+!prop wataru -
+!gesture wataru exhale
 wataru[smile]: …… これ なら 、 {出|だ}せます 。 ありがとう ございます 。 || …This one I can send. Thank you.
 !set sg_extension_done
+!walkto pc 4 5 right
+!look wataru pc
+!prop wataru book
+!gesture wataru handover pc
+!gesture pc receive wataru
 wataru[think]: それ と 、 お{礼|れい} に なる か {分|わ}かりません が …… 。 これ を 。 || And — I don't know if this counts as thanks, but… here.
 !give sg_labelbook
+!gesture wataru fidget
 wataru: {嵐|あらし} の {後|あと} 、 {勝手|かって} に {変|か}わった ラベル を 、 {全部|ぜんぶ} {書|か}き{写|うつ}して いた ん です 。 {自分|じぶん} で {貼|は}り{替|か}えた もの と 、 {区別|くべつ} する ため に 。 …… {情|なさ}けない {理由|りゆう} です が 。 || After the storm, I copied down every label that changed by itself. To keep them apart from the ones I'd changed. …A pathetic reason, I know.
+!gesture wataru palm pc
 wataru[think]: でも 、 {並|なら}べて みる と {変|へん} なんです 。 {変|か}わった ラベル は 、 {最後|さいご} に は みんな {同|おな}じ {字|じ} に なる 。 || But when you line them up, it's strange. The labels that changed all end up saying the same thing.
+!gesture pc read prop=book hold
 narr: {手帳|てちょう} の {最後|さいご} の ページ 。 {同|おな}じ {文字|もじ} が 、 {何十回|なんじっかい} も {並|なら}んで いる 。 「{差出人|さしだしにん} に {返送|へんそう} ・ {沖|おき} の {分室|ぶんしつ}」 。 || The last page of the notebook. The same words, dozens of times: "Return to sender — offshore branch."
+!gesture wataru point left
 wataru: {沖|おき} の {分室|ぶんしつ} 。 {岬|みさき} の {沖|おき} に は 、 {昔|むかし} 、 {書庫|しょこ} が あった そう です 。 {潮見|しおみ} の シオリ さん なら 、 {詳|くわ}しい はず です 。 || The offshore branch. They say there used to be an archive out past the point. Shiori the tide-watcher would know more.
+?(comp=ren) !gesture comp chin
+?(comp=nao) !gesture comp lookbetween pc and=wataru
+?(comp=mio) !gesture comp guard
+?(comp=suzu) !gesture comp chin
 ?(comp=ren) comp[surprise]: {分室|ぶんしつ} …… 。 {本庁|ほんちょう} が ある から こそ 、 {分室|ぶんしつ} と {呼|よ}ぶ 。 どこ か に 、 {本体|ほんたい} が ある 。 || A branch… You only call something a branch if there's a head office. Somewhere, there's the main archive.
 ?(comp=nao) comp: {返送|へんそう} 、 ね 。 {誰|だれ} も {頼|たの}んで ない のに 、 {勝手|かって} に {送|おく}り{返|かえ}してる {奴|やつ} が いる 。 || "Return to sender", huh. Someone's sending things back that nobody asked to have returned.
 ?(comp=mio) comp[worry]: {名前|なまえ} が {消|き}えた ん じゃ なくて 、 どこ か へ {送|おく}られてる …… ？ || The names didn't vanish — they're being sent somewhere…?
@@ -96012,6 +96730,8 @@ wataru: {沖|おき} の {分室|ぶんしつ} 。 {岬|みさき} の {沖|お�
 !autosave
 !end
 :later
+!prop wataru -
+!gesture wataru fidget
 wataru: {急|いそ}ぎ では ありません 。 …… {本当|ほんとう} は {急|いそ}ぎ です けど 。 || It's not urgent. …Well, it is, really.
 
 @scene sg.wataru_after
@@ -96037,12 +96757,21 @@ shiori: {港|みなと} の {騒|さわ}ぎ 、 {聞|き}いて います 。 {�
 ?(quest.sg_main=4) shiori: ワタル さん は 、 {毎朝|まいあさ} {潮|しお} の {時間|じかん} を {聞|き}きに {来|き}ます 。 {真面目|まじめ} な {人|ひと} です よ 。 {真面目|まじめ} すぎて 、 {困|こま}る {人|ひと} です 。 || Wataru comes every morning to ask the tide times. He's a conscientious man. Too conscientious for his own good.
 
 @scene sg.shiori_tide
+# Staged: Shiori looks up at "the branch"; she points to the telescope that looks out to the island, opens
+# a hand for the sand road, and points to the tide table on the wall (you look at it); a nod when you read
+# it right; an open hand for "it goes out again tomorrow", and the table pointed out again if you need it.
 !if sg_tide_read -> askwait
 shiori: いらっしゃいませ 。 {今日|きょう} の {潮|しお} を {聞|き}きに いらっしゃった の です か 。 || Welcome. Have you come to ask about today's tide?
 pc: {沖|おき} の {分室|ぶんしつ} の こと を {聞|き}きたくて 。 || We wanted to ask about the offshore branch.
+!gesture shiori listen pc
 shiori[surprise]: …… {沈|しず}んだ {書庫|しょこ} を 「{分室|ぶんしつ}」 と {呼|よ}ぶ {人|ひと} に は 、 {初|はじ}めて {会|あ}いました 。 || …I've never met anyone who calls the drowned archive "the branch".
+!gesture shiori point 7,2
 shiori: {岬|みさき} の {沖|おき} の {小島|こじま} です 。 {八十年|はちじゅうねん} {前|まえ} の {高潮|たかしお} で {沈|しず}んで 、 それ から は {誰|だれ} も {近|ちか}づきません 。 || It's the little island off the point. It sank in a storm surge eighty years ago, and no one has gone near it since.
+!look shiori pc
+!gesture shiori palm pc
 shiori: でも 、 {大潮|おおしお} の {引|ひ}き{潮|しお} の {日|ひ} だけ 、 {岬|みさき} から {島|しま} まで {砂|すな} の {道|みち} が {現|あらわ}れます 。 {今日|きょう} が その {日|ひ} です 。 || But on the lowest tides of the month, a sand road appears from the point to the island. Today is one of those days.
+!gesture shiori point 1,2
+!gesture pc listen 1,2
 shiori: {表|ひょう} を {見|み}て みましょう か 。 {時間|じかん} を {間違|まちが}える と 、 {帰|かえ}り の {道|みち} が {海|うみ} の {下|した} です よ 。 || Shall we look at the table? Get the time wrong and your road home will be under the sea.
 !note sg_tide_words
 !teach mae_ato
@@ -96050,6 +96779,9 @@ shiori: {表|ひょう} を {見|み}て みましょう か 。 {時間|じか�
 !challenge sg.c_tidetable
 !if var._res=0 -> later
 !set sg_tide_read
+!look pc shiori
+!look shiori pc
+!gesture shiori nod pc
 shiori[smile]: {正確|せいかく} です 。 {引|ひ}き{潮|しお} まで 、 あと {二時間|にじかん} ほど 。 ここ で お{待|ま}ち に なります か 。 {港|みなと} で {用事|ようじ} を {済|す}ませて きて も {構|かま}いません よ 。 || Exactly right. About two hours until low tide. Will you wait here? You're welcome to finish your business in the harbour and come back.
 :askwait
 !choice
@@ -96059,9 +96791,12 @@ shiori[smile]: {正確|せいかく} です 。 {引|ひ}き{潮|しお} まで 
 !call sg.tide_wait
 !end
 :laterwait
+!gesture shiori palm pc
 shiori: {岬|みさき} の {道|みち} は {逃|に}げません 。 {潮|しお} は {待|ま}って くれません が 、 {明日|あした} も また {引|ひ}きます から 。 || The causeway won't run away. The tide won't wait for you — but it goes out again tomorrow.
 !end
 :later
+!look pc shiori
+!gesture shiori point 1,2
 shiori: {表|ひょう} は 、 いつでも ここ に あります 。 || The table's always here.
 shiori: {急|いそ}がなくて いい です よ 。 {知|し}らない {言葉|ことば} は 、 {言葉|ことば} の {手助|てだす}け で {読|よ}み{方|かた} と {意味|いみ} が {分|わ}かります 。 || There's no hurry. If a word is new, word help will give you its reading and meaning.
 
@@ -96091,8 +96826,14 @@ shiori[think]: {風|かぜ} の こと なら 、 {灯台|とうだい} の ゲ�
 !autosave
 
 @scene sg.shiori_fog
+# Staged: Shiori points out towards the lighthouse; with Ren, he looks from one wall to the other for the tip
+# of the point, and she points him out of the window to the tallest building.
+!gesture shiori point left
 shiori: {霧|きり} は まだ {座|すわ}って います 。 {風|かぜ} の こと は 、 ゲンゾウ さん に 。 || The fog is still sitting there. Ask Genzō about the wind.
+?(comp=ren) !gesture comp lookbetween left and=right
 ?(comp=ren) comp: {灯台|とうだい} は {岬|みさき} の {先|さき} です 。 …… {岬|みさき} の {先|さき} は 、 どちら でしょう 。 || The lighthouse is at the tip of the point. …Which way is the tip of the point?
+?(comp=ren) !look shiori comp
+?(comp=ren) !gesture shiori point 7,2
 ?(comp=ren) shiori[smile]: {窓|まど} の {外|そと} の 、 {一番|いちばん} {高|たか}い {建物|たてもの} です よ 。 || The tallest building outside the window.
 
 @scene sg.shiori_causeway
@@ -96127,44 +96868,81 @@ narr: {石|いし} の {道標|みちしるべ} 。 「{満|み}ち{潮|しお} 
 ?(comp=suzu) comp[smirk]: {大人|おとな} で よかった わ 。 || Lucky we're grown-ups.
 
 @scene sg.causeway_fog
+# Staged: in the fog you look down at the sand at your feet; back at the marker, your companion's own
+# reaction (Nao looks back down at the causeway, Mio looks between the ways, Ren pushes his glasses up, Suzu
+# shrugs); you look to the lighthouse when the way to the wind is Genzō.
+!gesture pc observe down
 narr: {霧|きり} の {中|なか} へ {踏|ふ}み{込|こ}む 。 {足元|あしもと} の {砂|すな} しか {見|み}えない 。 || You step into the fog. You can see nothing but the sand at your feet.
 narr: {真|ま}っすぐ {歩|ある}いた 。 {確|たし}か に {真|ま}っすぐ 。 …… {霧|きり} が {途切|とぎ}れる と 、 {岬|みさき} の {石|いし} の {道標|みちしるべ} が {目|め} の {前|まえ} に あった 。 || You walk straight ahead. Definitely straight. …When the fog parts, the stone marker on the point is right in front of you.
 !warp sg.harbor 9 33 up
+?(comp=nao) !gesture comp lookroad down
+?(comp=mio) !gesture comp lookbetween down and=up
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp shrug
 ?(comp=nao) comp[angry]: …… {道|みち} に {嘘|うそ} を つかれる の は 、 これ で {二度目|にどめ} だ 。 || …Second time a road's lied to me.
 ?(comp=mio) comp[worry]: {方角|ほうがく} が 、 {分|わ}からなく なる 。 {風|かぜ} さえ {吹|ふ}けば …… 。 || You lose all sense of direction. If only the wind would blow…
 ?(comp=ren) comp[shy]: {私|わたし} の せい では ありません 。 …… {念|ねん}のため 、 {言|い}って おきます 。 || That wasn't my fault. …Just so it's on record.
 ?(comp=suzu) comp: {舞台|ぶたい} に {上|あ}がった つもり が 、 {楽屋|がくや} に {戻|もど}されてた わ 。 || I thought I was stepping on stage and found myself back in the dressing room.
+?(quest.sg_main=6) !look pc 2,31
 ?(quest.sg_main=6) narr: {灯台|とうだい} の ゲンゾウ に 、 {風|かぜ} の こと を {聞|き}こう 。 || Ask Genzō at the lighthouse about the wind.
 
 @scene sg.genzo_wind
+# Staged: Genzō shakes his head over the dead wind and points to the stairs up to the vane, a nod: come on;
+# at the top you lean in to the still vane, and he points to the letters his father cut; your companion's
+# own answer (Ren's and Suzu's open hand, Nao's nod, Mio's hand to her chest); he looks you over: can you
+# write it? You step to the vane's side to write the word on its fin (side-on, so the brush shows); you look
+# out at the fog coming apart; he turns to the vane as it moves, and his small celebration; your companion's
+# own delight (Mio's hand to her blown hair, Suzu's celebration, Nao's and Ren's nods).
 !if sg_genzo_up -> ask
+!gesture genzo shake
 genzo: {風|かぜ} ？ …… {止|や}んでる な 。 {嵐|あらし} の {晩|ばん} から 、 ぴたり と だ 。 || The wind? …It's dropped. Dead since the night of the storm.
+!gesture genzo point 1,2
 genzo: {五十年|ごじゅうねん} 、 {岬|みさき} で {風|かぜ} が {止|や}んだ こと は ない 。 {凪|なぎ} の {日|ひ} でも 、 {上|うえ} の {風見|かざみ} は {回|まわ}ってた 。 || Fifty years, and the wind's never stopped on this point. Even on a calm day, the vane up top would turn.
+!look genzo pc
+!gesture genzo nod pc
 genzo[think]: {来|き}な 。 {上|うえ} を {見|み}せて やる 。 || Come on. I'll show you the top.
 !fade out
 !set sg_genzo_up
 narr: {螺旋|らせん} {階段|かいだん} を {上|のぼ}る 。 ゲンゾウ は {膝|ひざ} を {叩|たた}きながら 、 {一段|いちだん} ずつ {上|のぼ}った 。 || You climb the spiral stairs. Genzō goes up one step at a time, slapping his knee.
 !warp sg.lighthouse_top 8 5 up
 !fade in
+!gesture pc observe 8,4 hold
 narr: {灯台|とうだい} の {上|うえ} 。 {鉄|てつ} の {風見|かざみ} が 、 {錆|さ}び{付|つ}いた よう に {止|と}まって いる 。 {風見|かざみ} の {羽|はね} に 、 {文字|もじ} が {彫|ほ}って ある 。 || The top of the lighthouse. The iron weather vane stands still, as if rusted solid. Letters are cut into its fin.
 narr: …… いや 、 {彫|ほ}って あった 。 {溝|みぞ} は ある のに 、 {字|じ} の {形|かたち} が {分|わ}からない 。 || …Or rather, were cut. The grooves are there, but you can't make out the shape of the letters.
+!look pc genzo
+!gesture genzo point 8,4
 genzo: {親父|おやじ} が {彫|ほ}った ん だ 。 「{風|かぜ}」 って {字|じ} を な 。 {風|かぜ} の {名前|なまえ} を {書|か}いて おけば 、 {風|かぜ} は {岬|みさき} を {忘|わす}れない 、 って な 。 …… {迷信|めいしん} だ よ 。 || My father carved it. The word "wind". Write the wind's name, he said, and the wind won't forget the point. …Superstition.
+?(comp=ren) !gesture comp palm genzo
+?(comp=nao) !gesture comp nod genzo
+?(comp=mio) !gesture comp guard
+?(comp=suzu) !gesture comp palm genzo
 ?(comp=ren) comp: {迷信|めいしん} …… かも しれません 。 でも 、 {灯|ひ} の {道|みち} の {灯籠|とうろう} も 、 {同|おな}じ {理屈|りくつ} で {立|た}って います 。 || Superstition… perhaps. But the lanterns on the lantern roads stand on the same reasoning.
 ?(comp=nao) comp: {宛名|あてな} と {同|おな}じ だ 。 {名前|なまえ} が {消|き}えたら 、 {届|とど}く もの も {届|とど}かない 。 || Same as an address. When the name goes, nothing arrives.
 ?(comp=mio) comp: {葦|あし}ノ{瀬|せ} の {灯籠|とうろう} と {同|おな}じ ね 。 {名前|なまえ} が {消|き}えたら 、 {繋|つな}がり も {消|き}える 。 || Like the lanterns in Reedwake. When the name fades, the connection fades too.
 ?(comp=suzu) comp: {役|やく} の {名前|なまえ} を {忘|わす}れた {役者|やくしゃ} は 、 {舞台|ぶたい} に {出|で}られない もの ね 。 || An actor who forgets the name of their part can't go on stage.
 :ask
+!look genzo pc
+!gesture genzo observe pc
 genzo: {書|か}ける の か 。 お{前|まえ} さん 。 || Can you write it? You?
 !challenge sg.c_kaze
 !if var._res=0 -> later
+!walkto pc 7 4 right
+!gesture pc write
 narr: {溝|みぞ} を なぞる よう に 、 {筆|ふで} を {動|うご}かす 。 「{風|かぜ}」 。 || You move the brush as if tracing the grooves. Kaze — wind.
 !sfx wind
 !set sg_fog_cleared
 narr: {風見|かざみ} が 、 きい 、 と {鳴|な}った 。 || The vane creaks.
+!gesture pc lookroad down
 narr: {沖|おき} から 、 {冷|つめ}たい {風|かぜ} が {吹|ふ}いて きた 。 {岬|みさき} の {霧|きり} が 、 {端|はし} から ほどけて いく 。 || A cold wind comes in off the sea. The fog on the causeway begins to unravel from its edges.
 !word kaze
+!gesture genzo listen 8,4
 genzo[surprise]: …… {回|まわ}った 。 || …It turned.
+!gesture genzo celebrate
 genzo[smile]: ふん 。 {迷信|めいしん} も 、 {馬鹿|ばか} に できん な 。 || Hmph. Can't sneer at superstition, it seems.
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp touchhair
+?(comp=ren) !gesture comp nod genzo
+?(comp=suzu) !gesture comp celebrate
 ?(comp=nao) comp[smile]: {字|じ} で {風|かぜ} が {吹|ふ}く の か 。 …… {今|いま} の 、 {手帳|てちょう} に {書|か}いとこ 。 || Writing that makes the wind blow. …I'm putting that in my notebook.
 ?(comp=mio) comp[laugh]: {髪|かみ} が ぐちゃぐちゃ ！ …… でも 、 いい {風|かぜ} ！ || My hair's a mess! …But what a lovely wind!
 ?(comp=ren) comp[smile]: {名|な} を {書|か}けば 、 {風|かぜ} は {岬|みさき} を {思|おも}い{出|だ}す 。 …… {灯守|ひもり} の {教|おし}え と {同|おな}じ です 。 || Write its name, and the wind remembers the point. …It's what keepers are taught, too.
@@ -96174,6 +96952,7 @@ genzo[smile]: ふん 。 {迷信|めいしん} も 、 {馬鹿|ばか} に で�
 !autosave
 !end
 :later
+!gesture genzo nod pc
 genzo: {気|き} が {向|む}いたら {言|い}え 。 {階段|かいだん} は {逃|に}げん 。 || Tell me when you're ready. The stairs aren't going anywhere.
 
 @scene sg.genzo_top
@@ -96206,11 +96985,20 @@ narr: {灯室|とうしつ} 。 ガラス の {中|なか} に 、 {人|ひと} 
 narr: {昼間|ひるま} は {灯|ひ} を {消|け}して いる 。 レンズ は 、 {日|ひ} の {光|ひかり} だけ を {集|あつ}めて {光|ひか}って いた 。 || By day the lamp is out. The lens shines with nothing but the sunlight it gathers.
 
 @scene sg.causeway_walk
+# Staged: you look out along the sand road; your companion's own answer (Nao looks back up to the harbour
+# for the time, Mio bends to the shells, Ren looks along the road, Suzu's showman's hands); you look ahead to
+# the doorway in the cliff.
+!gesture pc lookroad down
 narr: {濡|ぬ}れた {砂|すな} の {道|みち} が 、 {島|しま} へ {続|つづ}いて いる 。 {両側|りょうがわ} で 、 {引|ひ}いた {海|うみ} が {静|しず}か に {光|ひか}って いた 。 || The wet sand road runs on to the island. On either side, the drawn-back sea glints quietly.
+?(comp=nao) !gesture comp lookroad up
+?(comp=mio) !gesture comp bend
+?(comp=ren) !gesture comp lookroad down
+?(comp=suzu) !gesture comp size
 ?(comp=nao) comp: {帰|かえ}り の {時間|じかん} 、 {覚|おぼ}えてる ？ {満|み}ち{潮|しお} に {追|お}いつかれたら 、 {泳|およ}ぐ こと に なる ぞ 。 || You remember when we have to be back? If the tide catches us, we'll be swimming.
 ?(comp=mio) comp: {貝|かい} が いっぱい 。 …… {拾|ひろ}う の は 、 {帰|かえ}り に しよう ね 。 || So many shells. …We'll pick them up on the way back.
 ?(comp=ren) comp: {海|うみ} の {真|ま}ん{中|なか} を {歩|ある}く {道|みち} 。 {記録|きろく} で は {読|よ}んで いました が 、 {本当|ほんとう} に ある の です ね 。 || A road through the middle of the sea. I'd read about them in the records, but they really exist.
 ?(comp=suzu) comp: {花道|はなみち} ね 。 {客|きゃく} は カモメ と カニ だけ だ けど 。 || A runway to the stage. Though the audience is only gulls and crabs.
+!look pc 8,41
 narr: {島|しま} の {崖|がけ} に 、 {石|いし} の {門|もん} が {口|くち} を {開|あ}けて いる 。 || In the island's cliff, a stone doorway gapes open.
 `, 'ch2/22_scenes_tide');
 
@@ -96223,11 +97011,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sg.da_arrive
+# Staged: you look up into the cold hall and lean to the wet letters on the shelves; your companion's own
+# reaction (Nao holds out an envelope with a Reedwake postmark, Mio's hand to her chest at the lit lamps, Ren
+# looks up at them, Suzu looks away).
 !set sg_da_seen
 !quest sg_main 8
+!gesture pc lookroad up
 narr: {中|なか} は {冷|つめ}たく 、 {湿|しめ}った {紙|かみ} の {匂|にお}い が した 。 || Inside it is cold and smells of damp paper.
+!gesture pc observe up
 narr: {床|ゆか} に は {水|みず}たまり 。 {壁|かべ} に は {棚|たな} 。 {棚|たな} に は 、 {濡|ぬ}れた {手紙|てがみ} が {整然|せいぜん} と {並|なら}んで いる 。 || Puddles on the floor. Shelves on the walls. On the shelves, wet letters stand in neat rows.
 narr: {八十年|はちじゅうねん} {前|まえ} に {沈|しず}んだ {場所|ばしょ} に して は 、 {手紙|てがみ} が {新|あたら}しすぎる 。 || For a place that sank eighty years ago, the letters are far too new.
+?(comp=nao) !prop comp letter
+?(comp=nao) !gesture comp present pc hold
+?(comp=mio) !gesture comp guard
+?(comp=ren) !gesture comp lookroad up
+?(comp=suzu) !gesture comp aside
 ?(comp=nao) comp[think]: …… {見|み}ろ 。 この {封筒|ふうとう} 、 {葦|あし}ノ{瀬|せ} の {消印|けしいん} だ 。 {先月|せんげつ} の 。 || …Look. This envelope's got a Reedwake postmark. From last month.
 ?(comp=mio) comp[worry]: {灯|あか}り が …… ついてる 。 {誰|だれ} も いない のに 。 || The lamps are… lit. And there's no one here.
 ?(comp=ren) comp: {灯|ひ} が {入|はい}って います 。 {誰|だれ} か が 、 {今|いま} も ここ を {使|つか}って いる 。 || The lamps are lit. Someone is still using this place.
@@ -96246,9 +97044,18 @@ narr: {扉|とびら} の {上|うえ} の {札|ふだ} 。 「{書架|しょか
 ?(comp=suzu) comp[smirk]: {関係者|かんけいしゃ} よ 。 {今|いま} から ね 。 || We're staff. As of now.
 
 @scene sg.da_catalog
+# Staged: you lean in to the jumbled drawers and follow the cord to the inner door; your companion's own way
+# of explaining the order (Ren counts the kana off, Nao's open hand, Mio's laugh at herself, Suzu's shrug);
+# when the lock clicks you look up at the door.
 !if sg_da_catalog -> done
+!gesture pc observe 11,3 hold
 narr: {目録|もくろく} の {引|ひ}き{出|だ}し が {並|なら}んで いる 。 {引|ひ}き{出|だ}し の {札|ふだ} が 、 ばらばら に {差|さ}し{替|か}えられて いる 。 || A cabinet of catalogue drawers. Their labels have been pulled out and put back all jumbled.
+!gesture pc lookbetween 11,3 and=11,1
 narr: {奥|おく} の {扉|とびら} の {錠|じょう} は 、 {目録|もくろく} と {同|おな}じ {紐|ひも} で {繋|つな}がって いる 。 {目録|もくろく} が {正|ただ}しく {並|なら}べば 、 {開|ひら}く の だろう か 。 || The lock on the inner door is tied to the cabinet by a cord. Put the catalogue in order, and perhaps it opens.
+?(comp=ren) !gesture comp count
+?(comp=nao) !gesture comp palm pc
+?(comp=mio) !gesture comp laugh
+?(comp=suzu) !gesture comp shrug
 ?(comp=ren) comp: {目録|もくろく} は 、 {五十音|ごじゅうおん} {順|じゅん} が {基本|きほん} です 。 あいうえお 、 かきくけこ …… 。 || Catalogues are normally in gojūon order. A, i, u, e, o. Ka, ki, ku…
 ?(comp=nao) comp: {配達|はいたつ} の {箱|はこ} と {同|おな}じ だ 。 あ から {順|じゅん} に 、 {五十音|ごじゅうおん} で {並|なら}べる 。 || Like a courier's sorting box. Start from あ and go in gojūon order.
 ?(comp=mio) comp: {薬棚|くすりだな} も 、 あいうえお {順|じゅん} に {並|なら}べてる の 。 {任|まか}せて 。 …… {並|なら}べる の は あなた だ けど 。 || My medicine shelves are in a-i-u-e-o order too. Leave it to me. …Well, you do the sorting.
@@ -96259,12 +97066,14 @@ narr: {奥|おく} の {扉|とびら} の {錠|じょう} は 、 {目録|も�
 !if var._res=0 -> later
 !set sg_da_catalog
 !sfx discover
+!gesture pc listen 11,1
 narr: {最後|さいご} の {札|ふだ} を {差|さ}し{込|こ}む と 、 {紐|ひも} が {引|ひ}かれ 、 {奥|おく} で {錠|じょう} の {外|はず}れる {音|おと} が した 。 || As you slot in the last label, the cord pulls taut, and somewhere further in a lock clicks open.
 !end
 :later
 narr: {札|ふだ} は 、 その まま に して おいた 。 || You leave the labels as they are for now.
 !end
 :done
+!gesture pc observe 11,3
 narr: {目録|もくろく} は {正|ただ}しい {順|じゅん} に {並|なら}んで いる 。 {引|ひ}き{出|だ}し を {開|あ}ける と 、 どれ も {空|から} だった 。 || The catalogue is in order. You open a drawer: every one of them is empty.
 
 @scene sg.da_innerdoor
@@ -96274,8 +97083,16 @@ narr: {奥|おく} へ の {扉|とびら} は {閉|し}まって いる 。 {�
 narr: {横|よこ} の {扉|とびら} 。 {向|む}こう {側|がわ} から 、 {閂|かんぬき} が {掛|か}かって いる 。 || A side door, barred from the other side.
 
 @scene sg.da_stacks_first
+# Staged: you look up along the channel where the paper cranes drift; your companion's own reaction (Mio's
+# hand to her chest, Nao shakes their head, Ren points to the shelf labels, Suzu looks between the cranes and
+# you).
 !set sg_da_stacks_seen
+!gesture pc lookroad up
 narr: {書架|しょか} の {間|あいだ} を 、 {細|ほそ}い {水路|すいろ} が {流|なが}れて いる 。 {紙|かみ} の {鶴|つる} が 、 {水|みず} の {上|うえ} を ゆっくり {飛|と}んで いた 。 || A narrow channel runs between the stacks. Paper cranes drift slowly above the water.
+?(comp=mio) !gesture comp guard
+?(comp=nao) !gesture comp shake
+?(comp=ren) !gesture comp point 16,14
+?(comp=suzu) !gesture comp lookbetween up and=pc
 ?(comp=mio) comp[worry]: あの {鶴|つる} …… {全部|ぜんぶ} 、 {手紙|てがみ} を {折|お}った もの だ よ 。 || Those cranes… they're all folded from letters.
 ?(comp=nao) comp[angry]: {人|ひと} の {手紙|てがみ} で {鶴|つる} を {折|お}る な よ 。 || Don't fold people's letters into cranes.
 ?(comp=ren) comp: {棚|たな} の {札|ふだ} を {見|み}て ください 。 {五十音|ごじゅうおん} {順|じゅん} です 。 ここ は 、 {名前|なまえ} の {図書館|としょかん} だった の でしょう 。 || Look at the shelf labels. Gojūon order. This must have been a library of names.
@@ -96301,10 +97118,20 @@ narr: 「ち」 の {所|ところ} だけ 、 {一枚|いちまい} {抜|ぬ}�
 narr: {水|みず} を {吸|す}って {膨|ふく}らんだ {本|ほん} 。 {開|ひら}く と 、 {誰|だれ} か の {日記|にっき} だった 。 {名前|なまえ} の {所|ところ} だけ が 、 {全部|ぜんぶ} {白|しろ}い 。 || A book swollen with water. You open it: someone's diary. Everywhere a name should be, the page is blank.
 
 @scene sg.da_reading_first
+# Staged: your companion steps in from the doorway beside you; a breath out in the warm, dry room; your
+# companion's own way of resting (Nao looks from one exit to the next, Mio hands you a ginger sweet, Ren leans
+# to the lamp, Suzu stretches).
 !set sg_da_reading_seen
+!walkto comp 1 7 right
 narr: {乾|かわ}いた {部屋|へや} だ 。 {床|ゆか} が {高|たか}く 、 {水|みず} が {入|はい}って いない 。 {絨毯|じゅうたん} の {上|うえ} に 、 {机|つくえ} と {椅子|いす} 。 || A dry room. The floor is raised; the water hasn't got in. Desks and chairs on a carpet.
+!gesture pc exhale
 narr: {灯|あか}り が {暖|あたた}かい 。 {少|すこ}し {休|やす}んで いこう 。 || The lamplight is warm. You rest for a while.
 !heal
+?(comp=nao) !gesture comp lookbetween 0,6 and=8,0
+?(comp=mio) !gesture comp handover pc
+?(comp=mio) !gesture pc receive comp
+?(comp=ren) !gesture comp observe 2,4
+?(comp=suzu) !gesture comp stretch
 ?(comp=nao) comp: {出口|でぐち} は {三|みっ}つ 。 {西|にし} 、 {北|きた} 、 {下|した} の {階段|かいだん} 。 …… {癖|くせ} だ よ 。 {気|き} に する な 。 || Three exits. West, north, the stairs down. …Habit. Don't mind me.
 ?(comp=mio) comp[smile]: {少|すこ}し {休|やす}もう 。 {生姜|しょうが} の {飴|あめ} 、 あげる 。 {体|からだ} が {温|あたた}まる よ 。 || Let's rest a little. Have a ginger sweet — it'll warm you up.
 ?(comp=ren) comp: ここ の {灯|あか}り は 、 {灯守|ひもり} の {灯|ひ} と {同|おな}じ {色|いろ} です 。 …… {誰|だれ} が {灯|とも}した の でしょう 。 || The lamps here burn the same colour as a keeper's flame. …I wonder who lit them.
@@ -96316,7 +97143,11 @@ narr: {壁|かべ} の {札|ふだ} 。 「{閲覧室|えつらんしつ} ・ {�
 ?(comp=suzu) comp[smirk]: {私語|しご} を {慎|つつし}め 、 ね 。 {書庫|しょこ} って 、 {昔|むかし} から {静|しず}か な の が {好|す}き なの よ 。 || "Silence, please." Archives have always loved quiet.
 
 @scene sg.da_ledger
+# Staged: you lean in to the open register; your companion's own reaction to the head office's seal (Ren
+# starts, then looks away from his master; Nao's flat hand; Mio's hand to her chest; Suzu's hand to her
+# chin); you turn to your companion to say where the names go.
 !if sg_da_ledger -> again
+!gesture pc observe 5,5 hold
 narr: {分厚|ぶあつ}い {台帳|だいちょう} が 、 {開|ひら}いた まま に なって いる 。 {最後|さいご} の {書|か}き{込|こ}み は …… {昨日|きのう} の {日付|ひづけ} だ 。 || A thick register lies open. The last entry is dated… yesterday.
 narr: 「{潮硝子|しおがらす} {分|ぶん} 、 {宛名|あてな} {判読|はんどく} {不能|ふのう} {四十二通|よんじゅうにつう} 。 {返送|へんそう} {処理|しょり} {済|ず}み 。 {本庁|ほんちょう} {移管|いかん} {待|ま}ち 。」 || "Saltglass: forty-two items, addressee illegible. Processed as returned. Awaiting transfer to head office."
 narr: {表紙|ひょうし} の {裏|うら} に 、 {古|ふる}い {規則|きそく} が {貼|は}って ある 。 || The old rules are pasted inside the front cover.
@@ -96325,11 +97156,17 @@ narr: {表紙|ひょうし} の {裏|うら} に 、 {古|ふる}い {規則|き
 !set sg_da_ledger
 narr: {規則|きそく} の {最後|さいご} に 、 {印|いん} が {押|お}して ある 。 「{静寂|しじま} の {書庫|しょこ} ・ {本庁|ほんちょう}」 。 || At the foot of the rules is a seal: "The Still Archive — Head Office".
 !note sg_drowned_archive sg_still_archive
+?(comp=ren) !gesture comp listen pc
+?(comp=nao) !gesture comp emphatic
+?(comp=mio) !gesture comp guard
+?(comp=suzu) !gesture comp chin
 ?(comp=ren) comp[surprise]: {静寂|しじま} の {書庫|しょこ} …… 。 {灯守|ひもり} の {古|ふる}い {本|ほん} に {出|で}て くる {名|な} です 。 {名|な} と {約束|やくそく} の {写|うつ}し を {守|まも}る ため の {書庫|しょこ} 。 {山|やま} の {上|うえ} に ある と 。 || The Still Archive… The name appears in the keepers' old books. An archive built to protect copies of names and promises. They say it's in the mountains.
+?(comp=ren) !gesture comp aside
 ?(comp=ren) comp[worry]: {師匠|ししょう} は …… いえ 。 {何|なん} でも ありません 。 || My master once… No. It's nothing.
 ?(comp=nao) comp[angry]: {昨日|きのう} の {日付|ひづけ} 。 {四十二通|よんじゅうにつう} 。 …… {誰|だれ} か が 、 {今|いま} も {手紙|てがみ} を {集|あつ}めて {仕舞|しま}い{込|こ}んでる 。 {配達|はいたつ} の {逆|ぎゃく} だ 。 || Yesterday's date. Forty-two letters. …Someone is still collecting letters and locking them away. Delivery in reverse.
 ?(comp=mio) comp[worry]: {守|まも}る ため の {書庫|しょこ} が 、 {名前|なまえ} を {取|と}り{上|あ}げてる …… 。 {薬|くすり} が {毒|どく} に なる の と 、 {同|おな}じ かも 。 {量|りょう} を {間違|まちが}えた だけ で 。 || An archive meant to protect is taking names away… Maybe it's like medicine turning to poison. Just the wrong dose.
 ?(comp=suzu) comp[think]: 「{本庁|ほんちょう} {移管|いかん} {待|ま}ち」 。 この {舞台|ぶたい} の {奥|おく} に 、 もう {一|ひと}つ {舞台|ぶたい} が ある って こと ね 。 || "Awaiting transfer to head office." So there's another stage behind this one.
+!look pc comp
 pc: {名前|なまえ} は 、 ここ で {終|お}わり じゃ ない 。 もっと {先|さき} へ {送|おく}られて いる 。 || The names don't end here. They're being sent further on.
 !journal {静寂|しじま} の {書庫|しょこ} が 、 {今|いま} も {名前|なまえ} を {集|あつ}めて いる 。 || The Still Archive is still collecting names.
 !autosave
@@ -96338,11 +97175,16 @@ pc: {名前|なまえ} は 、 ここ で {終|お}わり じゃ ない 。 も�
 narr: {台帳|だいちょう} は {逃|に}げない 。 {後|あと} で また {読|よ}もう 。 || The register isn't going anywhere. Read it later.
 !end
 :again
+!gesture pc observe 5,5
 narr: {台帳|だいちょう} 。 「{本庁|ほんちょう} {移管|いかん} {待|ま}ち」 の {文字|もじ} が 、 {何度|なんど} も {並|なら}んで いる 。 || The register. "Awaiting transfer to head office", over and over again.
 
 @scene sg.da_registry
+# Staged: you lean to the card on the desk, then pick it up and read it.
 !if sg_registry_taken -> none
+!gesture pc observe 11,5
 narr: {机|つくえ} の {上|うえ} に 、 {船|ふね} の {登録|とうろく} カード が {一枚|いちまい} 。 「{返送|へんそう}」 の {判|はん} が {押|お}して ある 。 || A single ship registry card lies on the desk, stamped "RETURNED".
+!prop pc paper
+!gesture pc read hold
 narr: 「{船名|せんめい} ： {千鳥丸|ちどりまる} 。 {船主|ふなぬし} ： ヘイキチ 。 {潮硝子|しおがらす}」 。 || "Vessel: Chidori-maru. Owner: Heikichi. Saltglass."
 !give sg_registry
 !set sg_registry_taken
@@ -96376,20 +97218,37 @@ narr: {深|ふか}くて {流|なが}れ が {速|はや}い 。 {跳|と}び{�
 narr: {錆|さ}びた {札|ふだ} 。 「{満潮|まんちょう} {時|じ} {閉門|へいもん}」 。 {今|いま} は {閉|し}まって いない 。 || A rusted sign: "Closed at high tide". It isn't closed now.
 
 @scene sg.da_raft
+# Staged: you look across the channel at the floating cabinet; with the rope in hand you reach to throw it,
+# and it falls short; your companion's own way of suggesting the word (Nao's and Mio's open hand, Ren's
+# glasses, Suzu's laugh); once the rope holds, their own pleasure (Nao's and Ren's nod, Mio's and Suzu's small
+# celebration).
 !if sg_da_raft -> done
+!gesture pc observe 13,7 hold
 narr: {水路|すいろ} の {向|む}こう に 、 {大|おお}きな {目録|もくろく} の {棚|たな} が {浮|う}かんで いる 。 {筏|いかだ} に なり そう だ が 、 {流|なが}れ に {揺|ゆ}られて 、 {近|ちか}づいて は {離|はな}れる 。 || Across the channel a large catalogue cabinet is floating. It would make a raft — but the current keeps nudging it closer and pulling it away.
+!prop pc rope
+!gesture pc handover 13,7
 narr: テツ に もらった {縄|なわ} を 、 {係船柱|けいせんちゅう} に {結|むす}ぶ 。 でも 、 {投|な}げて も {棚|たな} まで は {届|とど}かない 。 || You tie Tetsu's rope to the bollard. But however you throw it, it won't reach the cabinet.
+?(comp=nao) !gesture comp palm pc
+?(comp=mio) !gesture comp palm pc
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp laugh
 ?(comp=nao) comp: {投|な}げて {届|とど}かない なら 、 {縄|なわ} の ほう に {届|とど}いて もらう しか ない 。 …… {書|か}ける か ？ || If throwing won't reach, the rope'll have to reach by itself. …Can you write it?
 ?(comp=mio) comp: {縄|なわ} の {字|じ} 、 {書|か}いて みたら ？ {風|かぜ} の とき みたい に 。 || What if you wrote the word for rope? Like you did with the wind.
 ?(comp=ren) comp: {物|もの} の {名|な} を {書|か}けば 、 {物|もの} は その {名|な} を {思|おも}い{出|だ}す 。 {縄|なわ} なら …… {繋|つな}ぐ こと を 。 || Write a thing's name, and it remembers what it is. A rope would remember… how to hold.
 ?(comp=suzu) comp[smirk]: {縄|なわ}{抜|ぬ}け の {逆|ぎゃく} を やる の よ 。 {縄|なわ} で {捕|つか}まえる 、 ね 。 || We do the rope escape in reverse. The rope catches, for once.
 !challenge sg.c_nawa
 !if var._res=0 -> later
+!prop pc -
+!look pc 13,7
 narr: 「{縄|なわ}」 。 {書|か}いた {字|じ} が {縄|なわ} に {染|し}み{込|こ}む と 、 {縄|なわ} は {蛇|へび} の よう に {水|みず} の {上|うえ} を {伸|の}びて 、 {棚|たな} に {巻|ま}き{付|つ}いた 。 || Nawa — rope. As the word soaks into it, the rope snakes out across the water and wraps itself around the cabinet.
 !word nawa
 !set sg_da_raft
 !sfx ward
 narr: {棚|たな} が {引|ひ}き{寄|よ}せられ 、 {水路|すいろ} に {橋|はし} の よう に {収|おさ}まった 。 || The cabinet is hauled in and settles across the channel like a bridge.
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp celebrate
+?(comp=ren) !gesture comp nod pc
+?(comp=suzu) !gesture comp celebrate
 ?(comp=nao) comp[smile]: {縄|なわ} なし で {水|みず} に {近|ちか}づく の は {馬鹿|ばか} だけ 、 か 。 あの {爺|じい}さん 、 {正|ただ}しかった な 。 || "Only fools go near water without a rope." The old man was right.
 ?(comp=mio) comp[smile]: {繋|つな}がった ！ …… テツ さん に 、 お{礼|れい} を {言|い}わなきゃ 。 || It's holding! …We'll have to thank Tetsu.
 ?(comp=ren) comp[smile]: {繋|つな}ぐ {字|じ} です ね 。 {灯|ひ} の {道|みち} に も 、 {縄|なわ} は {欠|か}かせません 。 {灯籠|とうろう} を {吊|つ}る の に 。 || A word that joins things. The lantern roads couldn't do without rope either — for hanging the lanterns.
@@ -96410,36 +97269,59 @@ narr: {長|なが}い {窓口|まどぐち} 。 {返送|へんそう} を {待|�
 narr: {窓口|まどぐち} は {空|から} だ 。 {割|わ}れた {判子|はんこ} の {欠片|かけら} が 、 {小|ちい}さく {光|ひか}って いる 。 || The counter is empty. A fragment of the broken stamp glints faintly.
 
 @scene sg.da_boss
+# Staged: you walk up to the long counter towards the stamping; the Clerk (a figure that only turns and
+# tilts) tilts to you at "Next"; you answer with an open hand; your companion's own reply (Nao's and Mio's
+# flat hand, Ren's open hand, Suzu points at the Clerk); "Next" again.
 !music sg_counter
+!walkto pc 9 6 up
 narr: {長|なが}い {窓口|まどぐち} の {向|む}こう で 、 {誰|だれ} か が {判子|はんこ} を {押|お}して いる 。 とん 。 とん 。 とん 。 || Behind the long counter, someone is stamping. Thump. Thump. Thump.
+!gesture sg_clerk stiff pc
 sg_clerk: {次|つぎ} 。 || Next.
 sg_clerk: {宛名|あてな} {判読|はんどく} {不能|ふのう} 。 {返送|へんそう} 。 {次|つぎ} 。 || Addressee illegible. Returned. Next.
+!gesture pc palm sg_clerk
 pc: その {手紙|てがみ} は 、 {港|みなと} の {人|ひと} たち の もの です 。 || Those letters belong to the people of the harbour.
 sg_clerk: {宛名|あてな} の ない {手紙|てがみ} は 、 {誰|だれ} の もの でも ない 。 {迷|まよ}う {手紙|てがみ} は 、 {人|ひと} を {迷|まよ}わせる 。 {返送|へんそう} し 、 {棚|たな} に {上|あ}げ 、 {静|しず}か に する 。 それ が {規定|きてい} だ 。 || A letter without an address belongs to no one. Stray letters lead people astray. Return it, shelve it, make it quiet. Those are the regulations.
 sg_clerk: {宛名|あてな} を {消|け}した の は {私|わたし} では ない 。 {潮|しお} が {消|け}す 。 {静寂|しじま} が {消|け}す 。 {私|わたし} は 、 {片付|かたづ}ける だけ だ 。 || It was not I who erased the addresses. The tide erases them. The Hush erases them. I only tidy up.
+?(comp=nao) !gesture comp emphatic sg_clerk
+?(comp=mio) !gesture comp emphatic sg_clerk
+?(comp=ren) !gesture comp palm sg_clerk
+?(comp=suzu) !gesture comp point sg_clerk
 ?(comp=nao) comp[angry]: {片付|かたづ}ける 、 ね 。 {届|とど}ける の が {仕事|しごと} の {人間|にんげん} から {言|い}わせて もらう と 、 それ は {捨|す}てる って {言|い}う ん だ よ 。 || "Tidy up." Speaking as someone whose job is delivering: that's called throwing away.
 ?(comp=mio) comp[angry]: {片付|かたづ}ける ？ {人|ひと} の {手紙|てがみ} を ？ …… {失礼|しつれい} です が 、 あなた の {規定|きてい} 、 {間違|まちが}って います 。 || Tidy up? Other people's letters? …Excuse me, but your regulations are wrong.
 ?(comp=ren) comp: {記録|きろく} を {守|まも}る {者|もの} が 、 {記録|きろく} を {閉|と}じ{込|こ}める 。 …… それ は 、 {灯|ひ} を {守|まも}る と {言|い}って 、 {灯|ひ} を {消|け}す の と {同|おな}じ です 。 || A keeper of records locking records away. …It's like claiming to protect a flame by putting it out.
 ?(comp=suzu) comp[smirk]: その {規定|きてい} の {台本|だいほん} 、 ちょっと {古|ふる}い ん じゃ ない ？ {書|か}き{直|なお}して あげる わ よ 。 || That script of regulations is a bit dated, isn't it? We'll rewrite it for you.
+!gesture sg_clerk stiff pc
 sg_clerk: {窓口|まどぐち} は {一|ひと}つ 。 {順番|じゅんばん} を {守|まも}れ 。 {次|つぎ} 。 || One counter. Wait your turn. Next.
 !battle sg.tideclerk
 !set sg_boss_done
 !call sg.da_boss_after
 
 @scene sg.da_boss_after
+# Staged: you look down at the broken stamp; the Clerk tilts to you; you explain with an open hand and ask
+# after "the master"; you look up at the letters lifting off the shelves; your companion's own reaction (Nao's
+# nod, Mio's and Suzu's lowered head, Ren's hand to his chin).
+!gesture pc observe 9,5
 narr: {割|わ}れた {判子|はんこ} が 、 {窓口|まどぐち} に {転|ころ}がった 。 || The broken stamp rolls across the counter.
+!gesture sg_clerk stiff pc
 sg_clerk: …… {読|よ}めない {宛名|あてな} を 、 {読|よ}める {人|ひと} が いる の か 。 || …There are people who can read an unreadable address?
+!gesture pc palm sg_clerk
 pc: {全部|ぜんぶ} では ない 。 でも 、 {中身|なかみ} を {読|よ}めば 、 {誰|だれ} の もの か {分|わ}かる {手紙|てがみ} も ある 。 || Not all of them. But some letters, if you read them, tell you whose they are.
 sg_clerk: {規定|きてい} に は ない {方法|ほうほう} だ 。 || That method is not in the regulations.
 sg_clerk: …… {本庁|ほんちょう} は 、 {納得|なっとく} しない だろう 。 {名|な} は {増|ふ}える ほど {争|あらそ}い を {生|う}む 、 と {本庁|ほんちょう} の {主|あるじ} は {言|い}う 。 {静|しず}か な ほう が 、 {人|ひと} は {傷|きず}つかない 、 と 。 || …Head office will not agree. The more names there are, the more quarrels they breed — so says the master of head office. People are hurt less when it is quiet.
+!gesture pc listen sg_clerk
 pc: {主|あるじ} ？ || The master?
 sg_clerk: {書庫|しょこ} の {守|も}り{人|びと} 。 {山|やま} の {上|うえ} の 、 {静寂|しじま} の {書庫|しょこ} に いる 。 {名|な} は …… {棚|たな} に {上|あ}げて ある 。 || The keeper of the archive. In the Still Archive, up in the mountains. The name… has been shelved.
 narr: {書記|しょき} の {姿|すがた} が 、 {水|みず} に {溶|と}ける {墨|すみ} の よう に {薄|うす}れて いく 。 || The Clerk's shape fades like ink dissolving in water.
 sg_clerk: {手紙|てがみ} を {持|も}って いけ 。 {返送|へんそう} は …… {取|と}り{消|け}す 。 || Take the letters. The return… is cancelled.
 !sfx reveal
 !music sg_letters
+!gesture pc lookroad up
 narr: {棚|たな} から 、 {手紙|てがみ} が いっせい に {浮|う}かび{上|あ}がった 。 {紙|かみ} の {鶴|つる} が ほどけ 、 {封筒|ふうとう} に {戻|もど}って 、 {出口|でぐち} の ほう へ {流|なが}れて いく 。 || Letters lift off the shelves all at once. Paper cranes unfold into envelopes again and drift towards the way out.
 !give sg_stamp
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp lowered
+?(comp=ren) !gesture comp chin
+?(comp=suzu) !gesture comp lowered
 ?(comp=nao) comp: {全部|ぜんぶ} 、 {港|みなと} に {帰|かえ}る 。 …… {配達|はいたつ} {完了|かんりょう} 、 だ な 。 || They're all going home to the harbour. …Delivery complete.
 ?(comp=mio) comp[sad]: {静|しず}か な ほう が {傷|きず}つかない …… 。 その {気持|きも}ち が {少|すこ}し {分|わ}かる の が 、 {嫌|いや} 。 || "People are hurt less when it's quiet"… I hate that I understand that a little.
 ?(comp=ren) comp[think]: {書庫|しょこ} の {守|も}り{人|びと} 。 {山|やま} の {上|うえ} 。 …… いつか 、 {行|い}かなければ なりません ね 。 || The keeper of the archive. Up in the mountains. …Someday, we'll have to go.
@@ -96458,13 +97340,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sg.omi_final
+# Staged: Ōmi looks up to the window as she remembers the rain of letters, then listens, still, to your
+# account; a nod for her thanks; an open hand or a shrug for Wataru, depending on how he came to her; and a
+# point east to the Gull, where the harbour pays for your bed.
+!gesture omi lookroad up
 omi: {窓|まど} から {見|み}てた よ 。 {手紙|てがみ} の {雨|あめ} だ 。 {三十年|さんじゅうねん} {港|みなと} に いて 、 {初|はじ}めて {見|み}た 。 || I watched from the window. A rain of letters. Thirty years in this port and I'd never seen that.
+!gesture omi listen pc hold
+!gesture pc palm omi
 pc: {沈|しず}んだ {書庫|しょこ} で 、 {名前|なまえ} が {集|あつ}められて いました 。 {静寂|しじま} の {書庫|しょこ} と いう {所|ところ} へ {送|おく}られる ため に 。 || In the drowned archive, names were being collected — to be sent on to a place called the Still Archive.
 omi[think]: {静寂|しじま} の {書庫|しょこ} 、 か 。 {灯落|ひおち} の {上|うえ} の {山|やま} に 、 {古|ふる}い {書庫|しょこ} が ある と は {聞|き}く 。 {子|こ}ども の {怪談|かいだん} だ と {思|おも}ってた が …… 。 || The Still Archive, eh. I've heard there's an old archive in the mountains above Lanternfall. I took it for a children's ghost story too…
 omi: {怪談|かいだん} に しちゃ 、 {字|じ} が {綺麗|きれい} すぎる な 。 || Awfully neat handwriting, for a ghost story.
+!gesture omi nod pc
 omi: {港|みなと} は {動|うご}き{出|だ}した 。 {渡|わた}し{船|ぶね} も 、 {明日|あした} から {出|だ}す 。 {礼|れい} を {言|い}う よ 。 {本当|ほんとう} に 。 || The port's moving again. The ferry sails from tomorrow. Thank you. Truly.
+?(sg_wataru_self) !gesture omi palm pc
+?(!sg_wataru_self) !gesture omi shrug
 ?(sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {鼻歌|はなうた} {混|ま}じり で な 。 あいつ の {鼻歌|はなうた} なんか 、 {初|はじ}めて {聞|き}いた よ 。 || Wataru's writing labels from dawn to dusk. Humming, if you please. First time I've ever heard that man hum.
 ?(!sg_wataru_self) omi: ワタル は {朝|あさ} から {晩|ばん} まで ラベル を {書|か}いてる 。 {罰|ばつ} の つもり で やらせた ん だ が 、 {楽|たの}しそう で {困|こま}る 。 || Wataru's writing labels from dawn to dusk. I meant it as punishment, and the man looks happy. Annoying.
+!gesture omi point right
 omi: {北|きた} の {道|みち} も 、 {通|とお}れる よう に なった そう だ 。 {灰実|はいみ} の {里|さと} へ {行|い}く なら 、 {今夜|こんや} は かもめ{亭|てい} に {泊|と}まって いきな 。 {宿代|やどだい} は {港|みなと} が {持|も}つ 。 || They say the north road's open again. If you're heading for Cinder Orchard, stay the night at the Gull. The harbour's paying.
 !quest sg_main done
 !note sg_three_kinds
@@ -96490,7 +97382,12 @@ tamae: いらっしゃい ！ {休|やす}んで く かい ？ あんた たち
 tamae: よく {寝|ね}た かい ？ {朝|あさ} ご{飯|はん} は {焼|や}き{魚|ざかな} だ よ 。 {他|ほか} に {何|なに} が ある って ん だ 。 || Sleep well? Breakfast is grilled fish. What else would it be?
 
 @scene sg.tamae_after
+# Staged: Tamae holds up the letter from her sister that came down on her window, and laughs at the length
+# of the reply.
+!prop tamae letter
+!gesture tamae present pc hold
 tamae: {手紙|てがみ} が {空|そら} から {降|ふ}って きた ん だ よ ！ うち の {窓|まど} に も {一通|いっつう} 。 {二十年|にじゅうねん} {前|まえ} の {姉|あね} から の {手紙|てがみ} さ 。 || Letters came down from the sky! One landed on my window — from my sister, twenty years ago.
+!gesture tamae laugh
 tamae[laugh]: {返事|へんじ} 、 {今|いま} {書|か}いてる ところ 。 {二十年|にじゅうねん} {分|ぶん} だ から 、 {長|なが}く なる よ 。 || I'm writing a reply now. Twenty years' worth. It's going to be long.
 !choice
 * {休|やす}んで いきます 。 || We'd like to rest. -> rest
@@ -96499,7 +97396,11 @@ tamae[laugh]: {返事|へんじ} 、 {今|いま} {書|か}いてる ところ �
 !inn
 
 @scene sg.tamae_post
+# Staged: Tamae laughs at her own joke, and holds up her sister's reply.
+!gesture tamae laugh
 tamae: {昼|ひる} の {波|なみ} は {相変|あいか}わらず だ よ 。 {手伝|てつだ}い に {来|き}た の かい ？ …… {冗談|じょうだん} 。 {座|すわ}りな 。 || The lunch wave's as fierce as ever. Come to help? …Joking. Sit down.
+!prop tamae letter
+!gesture tamae present pc
 tamae: {姉|あね} から {返事|へんじ} が {来|き}た よ 。 {来年|らいねん} 、 {遊|あそ}びに {来|く}る って さ 。 {部屋|へや} を {一|ひと}つ 、 {空|あ}けて おかない と 。 || My sister wrote back. She's coming to visit next year. I'll have to keep a room free.
 !choice
 * {休|やす}みます 。 || We'll rest. -> rest
@@ -96518,11 +97419,18 @@ narr: {壁|かべ} の {品書|しなが}き 。 「{焼|や}き{魚|ざかな} 
 ?(!sg_boss_done) narr: {値段|ねだん} の {字|じ} が 、 {時々|ときどき} {揺|ゆ}れて いる 。 || The prices waver now and then.
 
 @scene sg.nao_cameo
+# Staged: Nao settles the satchel strap, points to Tamae's bag at the counter, turns to your companion for a
+# word of their own, and glances at the door before heading off.
+!gesture nao strap
 nao: よう 。 {葦|あし}ノ{瀬|せ} から の {郵便|ゆうびん} 、 {届|とど}けた とこ だ 。 {宛名|あてな} の {読|よ}める {分|ぶん} は な 。 || Hey. Just dropped off the post from Reedwake. The ones with readable addresses, anyway.
+!gesture nao point 9,3
 nao: {残|のこ}り は タマエ さん の {袋|ふくろ} の {中|なか} 。 {読|よ}めない {宛名|あてな} を {当|あ}てる の は 、 {配達人|はいたつにん} の {仕事|しごと} じゃ ない 。 …… そっち の {仕事|しごと} だろ 。 || The rest are in Tamae's bag. Guessing unreadable addresses isn't a courier's job. …That's your line of work, isn't it.
+!look nao comp
 ?(comp=mio) nao: ミオ 、 {干物|ひもの} を {買|か}い{込|こ}む な よ 。 {鞄|かばん} が {魚|さかな} {臭|くさ}く なる 。 || Mio, don't stock up on dried fish. Your bag'll reek.
 ?(comp=ren) nao: レン 、 {港|みなと} で {迷|まよ}う な よ 。 {海|うみ} が {見|み}える {方|ほう} が {南|みなみ} だ 。 || Ren, don't get lost in the harbour. The side where you can see the sea is south.
 ?(comp=suzu) nao: スズ 、 {宿代|やどだい} は {先|さき} に {払|はら}え よ 。 {前|まえ} の {分|ぶん} 、 まだ {噂|うわさ} に なってる ぞ 。 || Suzu, pay for your room up front. People are still talking about last time.
+!look nao pc
+!gesture nao lookroad 6,9
 nao[closed]: …… じゃ 、 {次|つぎ} の {便|びん} が ある から 。 {右|みぎ} の {桟橋|さんばし} は {歩|ある}く な よ 。 || …Right. Got the next run. Stay off the right-hand pier.
 
 @scene sg.wataru_post
@@ -96537,7 +97445,10 @@ tetsu: …… {潮|しお} が {変|か}わる 。 || …Tide's turning.
 ?(sg_fog_cleared) tetsu: {岬|みさき} の {風見|かざみ} が {回|まわ}ってる 。 …… {久|ひさ}しぶり に 、 {背中|せなか} で {風|かぜ} を {感|かん}じた 。 || The vane on the point is turning. …First time in a while I've felt the wind on my back.
 
 @scene sg.tetsu_history
+# Staged: Tetsu looks out towards the island as he remembers, then back at you; his head goes down at his
+# father taking off his hat.
 tetsu: {沈|しず}んだ {書庫|しょこ} へ {行|い}く の か 。 || Going to the drowned archive, are you.
+!gesture tetsu lookroad left
 tetsu: …… {子|こ}ども の {頃|ころ} 、 {親父|おやじ} の {船|ふね} で {島|しま} の {近|ちか}く を {通|とお}った 。 {聞|き}きたい か 。 || …When I was a boy, I passed near the island on my father's boat. Want to hear it?
 !choice
 * {聞|き}かせて ください 。 || Please tell us. -> tell
@@ -96545,6 +97456,8 @@ tetsu: …… {子|こ}ども の {頃|ころ} 、 {親父|おやじ} の {船|�
 :tell
 !activity sg.a_history
 !if var._res=0 -> end
+!look tetsu pc
+!gesture tetsu lowered hold
 tetsu: …… {鐘|かね} が {鳴|な}る と 、 {親父|おやじ} は {必|かなら}ず {船|ふね} を {止|と}めて 、 {帽子|ぼうし} を {取|と}った 。 {理由|りゆう} は {聞|き}かなかった 。 || …Whenever the bell rang, my father always stopped the boat and took off his hat. I never asked why.
 tetsu: {今|いま} に なって {思|おも}う 。 {手紙|てがみ} を {送|おく}る {音|おと} に 、 {頭|あたま} を {下|さ}げて いた ん だろう な 。 || I think now he was bowing to the sound of letters being sent on.
 
@@ -96600,16 +97513,30 @@ kiyo[worry]: …… {行|い}く なら 、 {網|あみ} を {持|も}って {�
 ?(var.sg_dirs=2) narr: {言|い}う こと が {違|ちが}う 。 もう {一人|ひとり} に {聞|き}いて みよう 。 || They don't agree. Ask one more person.
 !end
 :think
+# Staged: Ren looks left and right and gives up (you turn to tease him; he looks away); you point to the sea
+# for Daigo, hold the two facings apart in your hands for Tobi, and point east for Kiyo; your companion's own
+# answer (Nao's nod, Mio's laugh, Suzu's showman's hands, Ren's glasses); you point to the signpost.
+?(comp=ren) !gesture comp lookbetween left and=right
 ?(comp=ren) comp[think]: {左|ひだり} 、 {右|みぎ} 、 {日|ひ} の {昇|のぼ}る ほう 。 …… {正直|しょうじき} に {言|い}う と 、 {私|わたし} に は {全部|ぜんぶ} {同|おな}じ に {聞|き}こえます 。 || Left, right, towards the sunrise. …To be honest, they all sound the same to me.
+?(comp=ren) !look pc comp
 ?(comp=ren) pc: レン は {方向|ほうこう} {音痴|おんち} だ もん ね 。 || You're hopeless with directions, Ren.
+?(comp=ren) !gesture comp aside
 ?(comp=ren) comp[shy]: {灯守|ひもり} に {地図|ちず} は {要|い}りません 。 {道|みち} に {灯|ひ} が ある ので 。 …… {今|いま} は 、 ありません ね 。 || A lantern keeper doesn't need a map. The road has lights. …Which, at the moment, it doesn't.
+!gesture pc point down
 pc: ダイゴ さん は {船乗|ふなの}り だ 。 {海|うみ} から {港|みなと} を {見|み}て {話|はな}して いる 。 || Daigo's a sailor. He's describing it as if looking at the harbour from the sea.
+!gesture pc size
 pc: トビ は {海|うみ} の ほう を {向|む}いて {話|はな}して いた 。 {向|む}き が {逆|ぎゃく} だ から 、 {右|みぎ} と {左|ひだり} も {逆|ぎゃく} に なる 。 || Tobi was facing the sea. They're facing opposite ways, so their right and left are swapped.
+!gesture pc point right
 pc: キヨ さん の 「{日|ひ} の {昇|のぼ}る ほう 」 は {東|ひがし} 。 {三人|さんにん} とも 、 {同|おな}じ {場所|ばしょ} を {指|さ}して いた ん だ 。 || And Kiyo's "where the sun comes up" is east. All three were pointing at the same place.
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp laugh
+?(comp=suzu) !gesture comp size
 ?(comp=nao) comp[smirk]: {嘘|うそ} でも {静寂|しじま} でも ない 。 ただ の {勘違|かんちが}い 。 …… これ で {三種類|さんしゅるい} {揃|そろ}った な 。 || Not a lie, not the Hush. Just a plain mix-up. …That's all three kinds collected.
 ?(comp=mio) comp[smile]: {誰|だれ} も {間違|まちが}って なかった ん だ ね 。 {見|み}て いる ほう が {違|ちが}った だけ 。 || None of them was wrong. They were just looking different ways.
 ?(comp=suzu) comp[laugh]: {舞台|ぶたい} の {上手|かみて} と {下手|しもて} と {同|おな}じ ね ！ {客席|きゃくせき} から と {舞台|ぶたい} から じゃ 、 {右|みぎ} と {左|ひだり} が {逆|ぎゃく} 。 || Like stage left and stage right! From the audience or from the stage, left and right swap.
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: …… なるほど 。 {正|ただ}しい {言葉|ことば} でも 、 {立|た}つ {場所|ばしょ} が {違|ちが}えば {食|く}い{違|ちが}う 。 {覚|おぼ}えて おきます 。 {迷子|まいご} の {言|い}い{訳|わけ} に 。 || …I see. Correct words can still disagree if people stand in different places. I'll remember that — as an excuse for getting lost.
+!gesture pc point 52,12
 pc: {道標|みちしるべ} を {直|なお}そう 。 {大通|おおどお}り の {東|ひがし} の {端|はし} 、 {崖|がけ} の {道|みち} の {入|い}り{口|ぐち} だ 。 || Let's put the signpost right. East end of the main street, where the cliff path starts.
 !quest sg_cove 1
 
@@ -96644,9 +97571,15 @@ narr: {積|つ}み{上|あ}げた {木箱|きばこ} 。 {新|あたら}しい �
 sota: {網|あみ} が {入|い}り{江|え} に {置|お}きっぱなし で …… 。 あ 、 すみません 、 {独|ひと}り{言|ごと} です 。 || My nets are stuck out at the cove… Oh — sorry, just talking to myself.
 
 @scene sg.sota_start
+# Staged: Sōta points east to the cove he cannot reach, looks away over the blank signpost, and rubs his
+# forehead over his mother's worry.
 sota: あ 、 {港長|こうちょう} の {手伝|てつだ}い の {人|ひと} ？ {頼|たの}み が ある ん です けど 。 || Oh — you're helping the harbourmaster? I've got a favour to ask.
+!gesture sota point right
 sota: {嵐|あらし} の {前|まえ} に 、 {網|あみ} を {入|い}り{江|え} に {干|ほ}して きた ん です 。 {取|と}りに {行|い}きたい のに 、 {崖|がけ} の {道|みち} が おかしくて 。 {歩|ある}いて も {歩|ある}いて も 、 {港|みなと} に {戻|もど}って くる 。 || Before the storm I left my nets drying at the cove. I want to fetch them, but the cliff path's gone wrong. However far you walk, you end up back at the harbour.
+!look sota pc
+!gesture sota aside
 sota[worry]: {道標|みちしるべ} は {字|じ} が {消|き}えてる し 、 {人|ひと} に {聞|き}いたら 、 みんな {言|い}う こと が {違|ちが}う ん です よ 。 || The signpost's lost its writing, and when you ask people, everyone tells you something different.
+!gesture sota forehead
 sota: {岩|いわ} に {船|ふね} を {擦|す}った {晩|ばん} から 、 {母|かあ}さん が 「{沖|おき} に {出|で}る な 」 って うるさくて 。 せめて {網|あみ} だけ でも 。 || Ever since I scraped the boat on the rocks, Mum's been on at me not to go out. At least let me have my nets back.
 !quest sg_cove start
 narr: {入|い}り{江|え} へ の {道|みち} を 、 {港|みなと} の {人|ひと} に {聞|き}いて みよう 。 ダイゴ 、 トビ 、 キヨ …… 。 || Ask around the harbour for the way to the cove. Daigo, Tobi, Kiyo…
@@ -96658,11 +97591,27 @@ sota: {入|い}り{江|え} へ の {道|みち} 、 {分|わ}かりました �
 ?(quest.sg_cove=2) sota: {網|あみ} は {入|い}り{江|え} の {奥|おく} 、 {崖|がけ} の {下|した} の {岩|いわ} に {掛|か}けて あります 。 || The nets are hung on the rocks under the cliff, at the back of the cove.
 
 @scene sg.sota_nets
+# Staged: you step to Sōta's side and hand him his nets; he looks away over his own part in the scrape; then
+# he hands you the glass float; your companion's own answer (Nao's nod, Mio leans in to the float, Ren's
+# glasses, Suzu's open-handed thanks).
+!walkto pc 19 28 left
+!look sota pc
+!prop pc nets
+!gesture pc handover sota
+!gesture sota receive pc hold
 sota[laugh]: {網|あみ} ！ ありがとう ！ これ で {明日|あした} から {沖|おき} に …… じゃ なくて 、 {岸|きし} から {釣|つ}り が できる ！ || My nets! Thank you! Now from tomorrow I can go out to s— I mean, fish from the shore!
+?(sg_wataru_resolved) !gesture sota aside
 ?(sg_wataru_resolved) sota: ワタル さん が {謝|あやま}りに {来|き}ました よ 。 {油|あぶら} の こと 。 …… {岩|いわ} に {擦|す}った の は 、 {僕|ぼく} が {急|いそ}いだ から でも ある ん です けど ね 。 || Wataru came to apologise. About the oil. …Though I scraped the rocks partly because I was in a hurry.
+!prop sota seaglass
+!gesture sota handover pc
+!gesture pc receive sota
 sota: {母|かあ}さん と {相談|そうだん} して 、 これ を 。 ガラス の {浮|う}き{玉|だま} です 。 {沈|しず}まない から 、 {縁起物|えんぎもの} なん です 。 || Mum and I talked it over — here. A glass float. It never sinks, so it's good luck.
 !take sg_nets
 !quest sg_cove done
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !gesture comp observe pc
+?(comp=ren) !gesture comp glasses
+?(comp=suzu) !gesture comp thanks sota
 ?(comp=nao) comp: {網|あみ} の {配達|はいたつ} 、 {完了|かんりょう} 。 {重|おも}かった ぞ 。 || Net delivery, complete. It was heavy.
 ?(comp=mio) comp[smile]: {浮|う}き{玉|だま} 、 きれい 。 {光|ひかり} に {透|す}かす と 、 {海|うみ} の {色|いろ} が する 。 || The float's beautiful. Hold it to the light and it's the colour of the sea.
 ?(comp=ren) comp: {沈|しず}まない {縁起物|えんぎもの} 。 …… {私|わたし} の {方向|ほうこう} {感覚|かんかく} も 、 {沈|しず}まなければ いい の です が 。 || A charm that never sinks. …If only my sense of direction would stay afloat too.
@@ -96687,35 +97636,64 @@ tobi: {一|ひと}つ {見|み}つけたら 、 {一|ひと}つ {僕|ぼく} に
 tobi: {大|おお}きく なったら 、 {配達人|はいたつにん} に なる ！ {右|みぎ} と {左|ひだり} を {間違|まちが}えない {配達人|はいたつにん} ！ || When I grow up I'm going to be a courier! A courier who never mixes up right and left!
 
 @scene sg.fuku_idle
+# Staged: Fuku points to the bench where she played shōgi with Isamu and shakes her head over his letter;
+# with Nao, she peers at them (didn't you collect his letters?), and Nao looks away and shakes their head.
 fuku: いい お{天気|てんき} ね 。 {風|かぜ} が ない の が 、 ちょっと {寂|さび}しい けど 。 || Lovely weather. It's a little lonely without the wind, though.
 ?(sg_fog_cleared) fuku: {風|かぜ} が {戻|もど}った わ ね 。 {洗濯物|せんたくもの} が よく {乾|かわ}く 。 || The wind's back. The washing dries nicely.
+!gesture fuku point 40,8
 fuku: {西|にし} の {坂|さか} の イサム さん が いた {頃|ころ} は 、 この ベンチ で よく {将棋|しょうぎ} を {指|さ}した の 。 || When Isamu from up the west lane was still here, we'd play shōgi on this bench.
+!look fuku pc
+!gesture fuku shake
 fuku[worry]: {春|はる} に 、 {具合|ぐあい} が {悪|わる}い のに {荷物|にもつ} を まとめて 、 {灯|ひ} の {道|みち} を {上|のぼ}って いって しまった 。 {手紙|てがみ} は {届|とど}いた か 、 と {何度|なんど} も {聞|き}かれた わ 。 {誰|だれ} に {出|だ}した {手紙|てがみ} か は 、 {言|い}わなかった けど 。 || In spring, sick as he was, he packed a bag and walked off up the lantern road. He kept asking me whether his letter had arrived. He never said who it was to.
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp[closed]: …… 。 || ……
+?(comp=nao) !gesture fuku observe comp
 ?(comp=nao) fuku: あら 、 あなた …… {前|まえ} に イサム さん の {手紙|てがみ} を {取|と}りに {来|き}た {人|ひと} じゃ ない ？ || Oh — aren't you the one who came to collect Isamu's letters once?
+?(comp=nao) !gesture comp shake
 ?(comp=nao) comp: …… {人違|ひとちが}い だ よ 。 || …Wrong person.
 
 @scene sg.bench_fuku
 narr: {古|ふる}い ベンチ 。 {端|はし} に 、 {将棋|しょうぎ} の {駒|こま} が {一|ひと}つ {置|お}き{忘|わす}れられて いる 。 「{歩|ふ}」 。 || An old bench. A single shōgi piece has been left at one end: a pawn.
 
 @scene sg.fuku_boat
+# Staged: Fuku looks out to sea, where the boat went every morning, and shakes her head over the lost name.
 fuku: アサヒ ちゃん に 、 {名札|なふだ} を {頼|たの}んだ の 。 {夫|おっと} の {船|ふね} の 。 || I asked little Asahi to make a nameplate. For my husband's boat.
+!gesture fuku lookroad down
 fuku[worry]: {船|ふね} の {名前|なまえ} ？ …… それ が ね 、 {思|おも}い{出|だ}せない の よ 。 {四十年|よんじゅうねん} 、 {毎朝|まいあさ} {見送|みおく}った のに 。 {鳥|とり} の {名前|なまえ} だった と {思|おも}う ん だ けど 。 || The boat's name? …Well, you see, I can't remember it. Forty years I saw it off every morning. I think it was a bird's name.
+!look fuku pc
+!gesture fuku shake
 fuku: {名前|なまえ} だけ が 、 すっぽり {抜|ぬ}けて いる の 。 {顔|かお} も {声|こえ} も {覚|おぼ}えて いる のに 。 {変|へん} ね 。 || Only the name has gone, cleanly. I remember his face, his voice. Isn't it strange.
 
 @scene sg.fuku_plate
+# Staged: you step to Fuku's side and hand her the nameplate; she reads the name on it; her head goes down
+# over the quarrel; your companion's own answer (Mio's apologetic bow, Nao's, Ren's and Suzu's lowered heads);
+# her quiet "No" with a shake of the head, the plate held to her; a nod for tomorrow.
+!walkto pc 46 9 right
+!look fuku pc
 fuku: まあ 。 {何|なん} です か 、 {改|あらた}まって 。 || My. What's all this, so formal?
+!prop pc plate
+!gesture pc handover fuku
+!gesture fuku receive pc hold
 narr: {名札|なふだ} を {渡|わた}した 。 {青|あお}い ガラス で 、 「{千鳥丸|ちどりまる}」 。 || You hand her the nameplate. In blue glass: Chidori-maru.
+!gesture fuku read prop=plate hold
 fuku[surprise]: ちどり …… まる 。 || Chidori… maru.
 fuku: …… ああ 。 ああ 、 そう 。 そう でした 。 || …Oh. Oh, yes. That's right.
+!gesture fuku lowered hold
 fuku[sad]: {千鳥丸|ちどりまる} 。 あの {人|ひと} が {最後|さいご} に {乗|の}った {朝|あさ} 、 わたし 、 {喧嘩|けんか} を した ん です よ 。 {鍋|なべ} の {蓋|ふた} の こと で 。 つまらない こと で 。 || Chidori-maru. The morning he last sailed on her, we quarrelled. About a pot lid. Such a silly thing.
 fuku[sad]: 「いってらっしゃい 」 も {言|い}わなかった 。 {名前|なまえ} と {一緒|いっしょ} に 、 それ も {忘|わす}れて いた の ね 。 {忘|わす}れて いた から 、 {楽|らく} だった の ね 。 || I didn't even say "take care". I'd forgotten that too, along with the name. And because I'd forgotten, it was easier.
+?(comp=mio) !gesture comp bow
+?(comp=nao) !gesture comp lowered
+?(comp=ren) !gesture comp lowered
+?(comp=suzu) !gesture comp lowered
 ?(comp=mio) comp[worry]: …… ごめんなさい 。 {辛|つら}い こと を {思|おも}い{出|だ}させて しまって 。 || …I'm sorry. We've made you remember something painful.
 ?(comp=nao) comp: …… {届|とど}け{物|もの} が 、 {重|おも}すぎた か 。 || …Was that delivery too heavy?
 ?(comp=ren) comp[sad]: {名|な} を {返|かえ}せば 、 {名|な} に {付|つ}いて いた もの も {戻|もど}る 。 …… {分|わ}かって いた はず なのに 。 || Give back a name, and everything attached to it comes back too. …I should have known.
 ?(comp=suzu) comp[closed]: …… {忘|わす}れた まま の ほう が 、 よかった ？ || …Would you rather have gone on forgetting?
+!gesture fuku shake
 fuku[closed]: いいえ 。 || No.
+!gesture fuku -
 fuku: {喧嘩|けんか} も 、 あの {人|ひと} の {顔|かお} も 、 {鍋|なべ} の {蓋|ふた} も 、 {全部|ぜんぶ} わたし の もの です 。 {痛|いた}くて も 、 {人|ひと} に {預|あず}けて おく もの じゃ ない わ 。 || The quarrel, his face, the pot lid — all of it is mine. Even if it hurts, it's not something to leave in someone else's keeping.
+!gesture fuku nod pc
 fuku[smile]: {明日|あした} 、 {祠|ほこら} に {飾|かざ}って 、 {言|い}って きます 。 {四十年|よんじゅうねん} {遅|おく}れ の 「いってらっしゃい 」 を 。 || Tomorrow I'll put it up at the shrine and go and say it. Forty years late: "Take care."
 fuku: それ と 、 これ 。 アサヒ ちゃん が 、 わたし が {泣|な}いたら {渡|わた}して って 。 …… {泣|な}きました から ね 。 || And these. Asahi said to give them to you if I cried. …Well, I did.
 !take sg_plate
@@ -96760,22 +97738,30 @@ narr: {郵便|ゆうびん} {受|う}け 。 {投函口|とうかんぐち} に 
 narr: {砂|すな} に {引|ひ}き{上|あ}げられた {古|ふる}い {小舟|こぶね} 。 {子|こ}ども の {隠|かく}れ{家|が} に なって いる らしい 。 {中|なか} に {貝殻|かいがら} の {山|やま} 。 || An old dinghy hauled up on the sand. It seems to have become a children's hideout: there's a heap of shells inside.
 
 @scene sg.glass_pick1
+# Staged: you kneel to the glint and pick up the sea glass.
 !set sg_glass1
+!gesture pc kneel 52,26 then=receive prop=seaglass
 !give sg_seaglass
 narr: {波打|なみう}ち{際|ぎわ} で 、 {青|あお}い {欠片|かけら} が {光|ひか}って いた 。 {角|かど} の {丸|まる}い 、 {海|うみ} ガラス だ 。 || Something blue glints at the water's edge: a piece of sea glass, its edges worn round.
 
 @scene sg.glass_pick2
+# Staged: you kneel to the glint and pick up the sea glass.
 !set sg_glass2
+!gesture pc kneel 45,28 then=receive prop=seaglass
 !give sg_seaglass
 narr: {古|ふる}い {小舟|こぶね} の {陰|かげ} に 、 {青|あお}い {海|うみ} ガラス 。 {誰|だれ} か が {見|み}つけて 、 {隠|かく}して おいた の かも しれない 。 || In the shadow of the old dinghy: a piece of blue sea glass. Maybe someone found it and hid it here.
 
 @scene sg.glass_pick3
+# Staged: you kneel to the glint and pick up the sea glass.
 !set sg_glass3
+!gesture pc kneel 6,12 then=receive prop=seaglass
 !give sg_seaglass
 narr: {入|い}り{江|え} の {砂|すな} の {中|なか} に 、 {青|あお}い {光|ひかり} 。 {海|うみ} ガラス だ 。 || A blue gleam in the cove's sand. Sea glass.
 
 @scene sg.glass_pick4
+# Staged: you kneel to the glint and pick up the sea glass.
 !set sg_glass4
+!gesture pc kneel 27,11 then=receive prop=seaglass
 !give sg_seaglass
 narr: {潮|しお} だまり の {底|そこ} に 、 {青|あお}い {海|うみ} ガラス が {沈|しず}んで いた 。 || At the bottom of a rock pool lies a piece of blue sea glass.
 
@@ -96784,10 +97770,13 @@ asahi: いらっしゃい ！ …… って {言|い}いたい ところ だ け
 asahi: {嵐|あらし} の せい だ って 。 …… {嵐|あらし} って 、 {便利|べんり} な {言葉|ことば} だ よ ね 。 || The storm's fault, apparently. …"The storm" is a handy word, isn't it.
 
 @scene sg.asahi_order
+# Staged: Asahi counts off her two problems and, putting the second off, points at you: glass first.
 asahi: ねぇ 、 {今|いま} {暇|ひま} ？ …… {暇|ひま} じゃ ない よ ね 。 でも {聞|き}いて 。 || Hey, got a minute? …You don't, do you. Listen anyway.
 asahi: フク さん から {注文|ちゅうもん} が {入|はい}った の 。 {亡|な}くなった {旦那|だんな} さん の {船|ふね} の {名札|なふだ} を 、 {海|うみ} ガラス で {作|つく}って ほしい って 。 {浜|はま} の {祠|ほこら} に {飾|かざ}る ん だ って 。 || I got an order from Fuku. She wants a nameplate for her late husband's boat, made of sea glass, to put up at the little shrine on the beach.
+!gesture asahi count
 asahi: {海|うみ} ガラス なら 、 {炉|ろ} が {冷|つめ}たくて も {削|けず}って {並|なら}べる だけ だ から 、 できる 。 {問題|もんだい} は {二|ふた}つ 。 || With sea glass I just cut it and set it — I can do that even with the furnace cold. There are two problems.
 asahi: {一|ひと}つ 、 {青|あお}い {海|うみ} ガラス が {三|みっ}つ {要|い}る 。 {浜|はま} で {拾|ひろ}える ん だ けど 、 {店番|みせばん} が いない から {離|はな}れられなくて 。 || One: I need three pieces of blue sea glass. You can pick them up on the shore, but there's no one to mind the shop, so I can't leave.
+!gesture asahi point pc
 asahi: {二|ふた}つ 、 …… これ は {後|あと} で {話|はな}す 。 まず は ガラス ！ || Two… I'll tell you later. Glass first!
 !quest sg_seaglass start
 
@@ -96797,11 +97786,21 @@ asahi: {青|あお}い の を {三|みっ}つ ね 。 {浜|はま} と 、 {入
 ?(item.sg_seaglass=2) asahi: {二|ふた}つ ！ あと {一|ひと}つ ！ || Two! One more!
 
 @scene sg.asahi_glass
+# Staged: you step to Asahi's side and hand her the sea glass; a hand to her chin over the boat's name and a
+# look away at the strangeness of it; with Ren, his glasses at "shelved".
+!walkto pc 5 4 left
+!look asahi pc
+!prop pc seaglass
+!gesture pc handover asahi
+!gesture asahi receive pc hold
 asahi: {青|あお} ！ {三|みっ}つ ！ しかも {角|かど} が {丸|まる}い 。 いい {目|め} してる ね 。 || Blue! Three! And the edges are nicely rounded. You've got a good eye.
 !take sg_seaglass 3
+!gesture asahi chin
 asahi[worry]: で 、 {二|ふた}つ {目|め} の {問題|もんだい} 。 {船|ふね} の {名前|なまえ} が {分|わ}からない の 。 || Now, problem number two. I don't know the boat's name.
 asahi: フク さん {本人|ほんにん} が {思|おも}い{出|だ}せない ん だ って 。 {四十年|よんじゅうねん} {毎朝|まいあさ} {見送|みおく}った {船|ふね} なのに 。 {港|みなと} の {誰|だれ} に {聞|き}いて も 、 {思|おも}い{出|だ}せない 。 || Fuku herself can't remember. A boat she saw off every morning for forty years. And nobody else in the harbour can remember either.
+!gesture asahi aside
 asahi[think]: {変|へん} だ よ ね 。 {名前|なまえ} だけ が 、 すっぽり {抜|ぬ}けてる 。 || Strange, isn't it? Only the name's gone, cleanly.
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: …… {棚|たな} に {上|あ}げられた の かも しれません 。 || …Perhaps it's been shelved.
 !if item.sg_registry -> have
 !quest sg_seaglass 1
@@ -96852,12 +97851,26 @@ genzo: {灯台|とうだい} に {用|よう} か 。 {階段|かいだん} は 
 ?(sg_boss_done) genzo: {油|あぶら} が {全部|ぜんぶ} {届|とど}いた 。 {灯|ひ} は {太|ふと}い 。 {沖|おき} の {船|ふね} も 、 もう {迷|まよ}わん 。 || All the oil's arrived. The flame's good and fat. No boat out there'll lose its way now.
 
 @scene sg.genzo_grump
+# Staged: Genzō's arms fold; with Mio, he eyes her and she answers with a flat hand, and he turns to her
+# with new respect; he points to his daughter's letter on the table and turns away over it; your companion's
+# aside is their own (Nao looks between him and the letter, Mio's and Ren's hand to the chin, Suzu's open hand).
+!gesture genzo folded hold
 genzo: {何|なん} だ 。 {灯台|とうだい} は {見世物|みせもの} じゃ ない ぞ 。 || What is it? The lighthouse isn't a sideshow.
+?(comp=mio) !gesture genzo observe comp
 ?(comp=mio) genzo: {薬屋|くすりや} か 。 {飴|あめ} でも {売|う}りに {来|き}た の か 。 || An apothecary, eh? Come to sell me sweeties?
+?(comp=mio) !gesture comp emphatic genzo
 ?(comp=mio) comp[angry]: {飴|あめ} では ありません 。 {薬|くすり} です 。 {膝|ひざ} が {痛|いた}い のに {平気|へいき} な {顔|かお} で {階段|かいだん} を {上|のぼ}る {意地|いじ}っ{張|ぱ}り に 、 よく {効|き}く の も あります けど 。 || Not sweeties. Medicine. I also have something that works very well on stubborn old men who climb stairs on bad knees and pretend they're fine.
+?(comp=mio) !gesture genzo listen comp
 ?(comp=mio) genzo[surprise]: …… ふん 。 {言|い}う じゃ ない か 。 || …Hmph. You've got a tongue on you.
+!look genzo pc
+!gesture genzo point 1,6
 genzo: {機嫌|きげん} が {悪|わる}い の は 、 {娘|むすめ} の せい だ 。 {手紙|てがみ} を {寄越|よこ}した と {思|おも}ったら 、 「{迎|むか}え に {来|こ}なくて いい 」 だ と さ 。 || If I'm in a mood, blame my daughter. Finally sends a letter, and it says: "You don't have to come and meet me."
+!gesture genzo aside
 genzo[sad]: {十年|じゅうねん} {帰|かえ}って こない {娘|むすめ} が 、 {来|く}る な と {言|い}う 。 {分|わ}かり{易|やす}い {話|はなし} だ 。 || A daughter who hasn't been home in ten years tells me not to come. Plain enough.
+?(comp=nao) !gesture comp lookbetween genzo and=1,6
+?(comp=mio) !gesture comp chin
+?(comp=ren) !gesture comp chin
+?(comp=suzu) !gesture comp palm pc
 ?(comp=nao) comp: （…… {本当|ほんとう} に そう {書|か}いて ある の か ？ {読|よ}み{違|ちが}い は 、 {配達|はいたつ} の {間違|まちが}い より {多|おお}い ぞ 。） || (…Does it really say that? Misreadings happen more often than misdeliveries.)
 ?(comp=mio) comp: （「{来|こ}なくて いい 」 と 「{来|こ}ないで 」 って 、 {同|おな}じ かな 。） || (Is "you don't have to come" really the same as "don't come"?)
 ?(comp=ren) comp: （「{来|こ}なくて いい 」 と 「{来|く}る な 」 は 、 {同|おな}じ {意味|いみ} でしょう か 。） || (Do "you needn't come" and "don't come" really mean the same?)
@@ -96865,15 +97878,31 @@ genzo[sad]: {十年|じゅうねん} {帰|かえ}って こない {娘|むすめ
 !quest sg_lighthouse start
 
 @scene sg.genzo_truth
+# Staged: Genzō's arms fold; you read him the blurred line from the letter; he turns to you, arms down; you
+# explain with an open hand; his head goes down over his knees; your companion's own word (Nao's shrug, Suzu's
+# laugh); a breath out at "wait at the lighthouse", and his arms fold again for "I'm not going down there".
+!gesture genzo folded hold
 genzo: {何|なん} だ 。 また {手紙|てがみ} の {話|はなし} か 。 || What? The letter again?
+!gesture pc palm genzo
 pc: {続|つづ}き が あります 。 {潮|しお} で {滲|にじ}んで いた {所|ところ} です 。 || There's more. The part the salt blurred.
+!prop pc letter
+!gesture pc read hold
 pc: 「{港|みなと} まで は 、 {自分|じぶん} で {行|い}ける から 。 {膝|ひざ} 、 {大事|だいじ} に して 。 {灯台|とうだい} で {待|ま}って て 。」 || "I can make it to the harbour on my own. Look after your knees. Wait for me at the lighthouse."
+!gesture genzo listen pc hold
 genzo[surprise]: …… 。 || ……
+!gesture pc -
+!prop pc -
+!gesture pc palm genzo
 pc: 「{来|こ}なくて いい 」 は 、 「{来|く}る な 」 では ありません 。 {膝|ひざ} が {悪|わる}い から 、 {坂|さか} を {下|お}りて {来|こ}なくて いい 、 と いう {意味|いみ} です 。 || "You don't have to come" isn't "don't come". It means: your knees are bad, so you needn't come down the hill.
+!gesture genzo lowered hold
 genzo[sad]: …… {十年|じゅうねん} 、 {膝|ひざ} の こと なんか {書|か}いて きた こと は なかった 。 {俺|おれ} の {膝|ひざ} が {悪|わる}い の を 、 {誰|だれ} に {聞|き}いた ん だ 。 || …Ten years, and she never once wrote about my knees. Who told her my knees were bad?
+?(comp=nao) !gesture comp shrug
+?(comp=suzu) !gesture comp laugh
 ?(comp=nao) comp: {手紙|てがみ} を {運|はこ}ぶ {人間|にんげん} は 、 {口|くち} が {軽|かる}い ん だ よ 。 {悪|わる}い ね 。 || People who carry letters talk. Sorry.
 ?(comp=suzu) comp[smile]: {港|みなと} の {噂|うわさ} は 、 {船|ふね} より {速|はや}い の よ 。 || Harbour gossip travels faster than boats.
+!gesture genzo exhale
 genzo[smile]: ふん 。 …… 「{灯台|とうだい} で {待|ま}って て 」 か 。 {五十年|ごじゅうねん} ずっと {待|ま}ってる {場所|ばしょ} だ 。 {慣|な}れた もん だ 。 || Hmph. …"Wait at the lighthouse," is it. It's where I've waited for fifty years. I'm used to it.
+!gesture genzo folded hold
 genzo: {渡|わた}し{船|ぶね} が {動|うご}いたら 、 {来|く}る だろう 。 …… {下|した} まで は {行|い}かん ぞ 。 {膝|ひざ} を {大事|だいじ} に しろ と {言|い}われた から な 。 || She'll come once the ferry's running. …I'm not going down there, mind. I've been told to look after my knees.
 !quest sg_lighthouse 2
 
@@ -96900,19 +97929,42 @@ nagisa: {灯落|ひおち} の {役所|やくしょ} で {働|はたら}いて �
 @scene sg.ferry_arrives
 !set sg_ferry_seen sg_ferry_scene
 narr: {渡|わた}し{場|ば} の ほう で 、 テツ の {怒鳴|どな}り{声|ごえ} が した 。 {船|ふね} が {着|つ}いた らしい 。 || From the landing comes Tetsu's bellow. The ferry is in.
+# Staged: Nagisa turns to her father at the landing; he looks away (knees are knees), she laughs; his head
+# goes down at "welcome home" and she nods; she gives you a small polite bow for her father, and thanks him
+# with both hands; your companion's own answer (Nao's nod, Mio hands Genzō medicine for his knees, Ren looks
+# to the lighthouse, Suzu's nod); Genzō hands you the chip of lens.
 !warp sg.harbor 33 27 right
+!gesture nagisa listen genzo
 nagisa: …… お{父|とう}さん ？ なんで {下|した} に いる の 。 {膝|ひざ} は ？ || …Dad? What are you doing down here? What about your knees?
+!look genzo nagisa
+!gesture genzo aside
 genzo: {膝|ひざ} は {膝|ひざ} だ 。 {足|あし} は {別|べつ} だ 。 || Knees are knees. Legs are another matter.
+!gesture nagisa laugh
 nagisa[laugh]: {意味|いみ} {分|わ}かんない 。 || That makes no sense.
+!gesture genzo lowered hold
 genzo[closed]: …… おかえり 。 || …Welcome home.
+!gesture nagisa nod genzo
 nagisa[smile]: ただいま 。 || I'm home.
+!look nagisa pc
+!gesture nagisa bow
 nagisa: あの 、 {父|ちち} が お{世話|せわ} に なった みたい で 。 {私|わたし} の {手紙|てがみ} を {読|よ}んで くれた {方|かた} です よ ね 。 || Um — I hear my father's been a bother. You're the one who read my letter?
+!gesture genzo folded hold
 genzo: {読|よ}み{違|ちが}えた の は {俺|おれ} だ 。 {余計|よけい} な こと は {言|い}う な 。 || I'm the one who misread it. Don't go saying unnecessary things.
+!look nagisa genzo
+!gesture nagisa thanks genzo
 nagisa: {来|こ}なくて いい って {書|か}いた のに 、 {来|く}る ん だ から 。 …… {来|き}て くれて 、 ありがとう 。 || I wrote you didn't have to come, and you came anyway. …Thanks for coming.
+?(comp=nao) !gesture comp nod pc
+?(comp=mio) !prop comp bottle
+?(comp=mio) !gesture comp handover genzo
+?(comp=ren) !gesture comp lookroad left
+?(comp=suzu) !gesture comp nod pc
 ?(comp=nao) comp: …… {届|とど}いた な 。 {手紙|てがみ} より {先|さき} に 、 {本人|ほんにん} が 。 || …It got there. The person, before the letter.
 ?(comp=mio) comp[smile]: よかった 。 …… {膝|ひざ} の {薬|くすり} 、 {置|お}いて いきます ね 。 || I'm so glad. …I'll leave some medicine for those knees.
 ?(comp=ren) comp[smile]: {灯台|とうだい} の {灯|ひ} は 、 {帰|かえ}って くる {人|ひと} の ため に ある 。 {今日|きょう} は 、 それ が よく {分|わ}かります 。 || A lighthouse burns for the people coming home. Today that's very clear.
 ?(comp=suzu) comp[smile]: {再会|さいかい} の {場面|ばめん} は 、 {台詞|せりふ} が {少|すく}ない ほど いい の 。 {満点|まんてん} ね 。 || Reunion scenes are best with as few lines as possible. Full marks.
+!look genzo pc
+!gesture genzo handover pc
+!gesture pc receive genzo
 genzo: お{前|まえ} さん に は 、 これ を やる 。 {古|ふる}い レンズ の かけら だ 。 {光|ひかり} を {集|あつ}める 。 {人|ひと} も な 。 || This is for you. A chip of the old lens. It gathers light. People too.
 !quest sg_lighthouse done
 !set sg_nagisa_met
@@ -96959,23 +98011,41 @@ shiori: {潮|しお} は {今日|きょう} も {表|ひょう} どおり です
 ?(end_archive_closed) shiori: {沈|しず}んだ {書庫|しょこ} は 、 もう {誰|だれ} も {使|つか}いません 。 {引|ひ}き{潮|しお} の {日|ひ} に 、 {子|こ}ども たち が {貝|かい} を {拾|ひろ}いに {行|い}く だけ です 。 {平和|へいわ} です よ 。 || No one uses the drowned archive any more. On low-tide days the children just go and collect shells there. It's peaceful.
 
 @scene sg.isamu_nao
+# Staged (Nao's personal thread): Nao steps in beside you; you lean to the chair at the window, and Nao
+# looks at it and away; you turn to them; they look to the old man's desk as they remember his hand, their
+# head goes down over the undelivered letter and a hand goes to the satchel where it still is; asked, a
+# shake of the head; silent, you both look out of the window together; then they glance at the door.
+!walkto comp 4 6 left
+!gesture pc observe 5,3
 narr: {空|から} の {家|いえ} だ 。 {窓|まど} の {前|まえ} に 、 {椅子|いす} が {一脚|いっきゃく} 。 {海|うみ} の ほう を {向|む}いて いる 。 || An empty house. A single chair by the window, facing the sea.
+!look comp 5,3
 comp: …… 。 || ……
+!gesture comp aside
 comp: {入|はい}る つもり は なかった 。 || I didn't mean to come in.
+!look pc comp
 pc: ここ 、 {知|し}ってる の ？ || You know this place?
+!look comp 2,3
 comp[closed]: イサム って {爺|じい}さん の {家|いえ} だ 。 {手紙|てがみ} を {何度|なんど} か {預|あず}かった 。 {字|じ} が {震|ふる}えて て 、 でも {丁寧|ていねい} で …… 。 || An old man called Isamu lived here. I carried letters for him a few times. His hand shook, but his writing was careful…
 comp: {最後|さいご} の {一通|いっつう} は 、 {灯落|ひおち} の {娘|むすめ} {宛|あて} だった 。 {十年|じゅうねん} {以上|いじょう} {口|くち} を {聞|き}いて ない {娘|むすめ} に 、 {許|ゆる}して くれ って 。 || The last one was to his daughter in Lanternfall. A daughter he hadn't spoken to in over ten years. Asking her to forgive him.
+!look comp pc
+!gesture comp lowered hold
 comp[sad]: {届|とど}けなかった 。 {死|し}に{際|ぎわ} に {許|ゆる}し を {頼|たの}む の は 、 {受|う}け{取|と}る {側|がわ} に {重|おも}すぎる と {思|おも}った 。 {断|ことわ}る {自由|じゆう} の ない {手紙|てがみ} だ 。 || I didn't deliver it. Asking forgiveness on your deathbed puts too much on the one who receives it, I thought. It's a letter she'd have no freedom to refuse.
+!gesture comp strap
 comp: …… {今|いま} も {鞄|かばん} の {底|そこ} に ある 。 {本人|ほんにん} は もう いない 。 {春|はる} に 、 {灯|ひ} の {道|みち} を {上|のぼ}って いった って 。 || …It's still at the bottom of my bag. And he's gone. Walked off up the lantern road in the spring, they say.
 !choice
 * {届|とど}ける べき だった と {思|おも}う ？ || Do you think you should have delivered it? -> should
 * {何|なに} も {言|い}わない || Say nothing -> quiet
 :should
+!gesture comp shake
 comp[think]: {分|わ}からない 。 それ が {分|わ}からない から 、 {捨|す}てられない ん だ よ 。 || I don't know. That's exactly why I can't throw it away.
 !goto after
 :quiet
+!look pc 5,2
+!look comp 5,2
 narr: {二人|ふたり} で しばらく 、 {窓|まど} の {外|そと} の {海|うみ} を {見|み}て いた 。 || For a while, the two of you look at the sea through the window.
 :after
+!look comp pc
+!gesture comp lookroad 3,7
 comp[smirk]: …… {行|い}こう 。 {空|から} の {家|いえ} に {長居|ながい} する と 、 {返事|へんじ} を {待|ま}ってる {気分|きぶん} に なる 。 || …Let's go. Stay too long in an empty house and you start feeling like you're waiting for a reply.
 !set sg_nao_isamu
 
@@ -96991,9 +98061,15 @@ narr: {鉢植|はちう}え 。 {土|つち} が {湿|しめ}って いる 。 {
 ?(comp=mio) comp[smile]: フク さん かな 。 …… {優|やさ}しい お{隣|となり} さん だ ね 。 || Fuku, perhaps. …A kind neighbour.
 
 @scene sg.suzu_cameo
+# Staged: Suzu works the thin crowd with both hands, nods to you, makes her joke with an open hand, and turns
+# serious, looking away and back, for the warning.
+!gesture suzu size
 suzu: さあさあ 、 お{立|た}ち{会|あ}い ！ …… {今日|きょう} は {客|きゃく} が {少|すく}ない わ ね 。 {港|みなと} が {静|しず}か すぎる の よ 。 || Roll up, roll up! …Thin crowd today. The harbour's too quiet.
+!gesture suzu nod pc
 suzu: あら 、 $name ！ {葦|あし}ノ{瀬|せ} {以来|いらい} ね 。 {元気|げんき} そう で {何|なに} より 。 || Oh, $name! Not since Reedwake. Good to see you looking well.
+!gesture suzu palm pc
 suzu[smirk]: {港|みなと} の {字|じ} が {嘘|うそ} を つく って {噂|うわさ} 、 {聞|き}いた ？ {嘘|うそ} の {専門家|せんもんか} と して は 、 {商売|しょうばい} {敵|がたき} が {増|ふ}えて {困|こま}る わ 。 || Heard the rumour that the harbour's writing tells lies? As a professional, I don't need the competition.
+!gesture suzu avert pc
 suzu[closed]: …… {冗談|じょうだん} よ 。 {気|き}を つけて ね 。 {嘘|うそ} は 、 {本当|ほんとう} の {顔|かお} を して {来|く}る から 。 || …Joking. Be careful. Lies come wearing the face of the truth.
 
 @scene sg.suzu_cameo2
@@ -97001,8 +98077,17 @@ suzu: {港|みなと} が うるさく なった わ ！ {投|な}げ{銭|せん
 suzu[smile]: {前|まえ} に {来|き}た とき の {宿代|やどだい} 、 {利子|りし} を つけて {返|かえ}して きた の 。 タマエ さん 、 {目|め} を {丸|まる}く してた わ 。 {帳尻|ちょうじり} は {合|あ}わせる {主義|しゅぎ} なの 。 || I paid back the inn bill from last time — with interest. Tamae's eyes went round. I believe in balancing the books.
 
 @scene sg.cove_arrive
+# Staged: your companion steps down off the cliff path beside you; you look along the little beach; your
+# companion's own answer (Nao looks back at the only way out, Mio's breath out, Ren looks away, Suzu's
+# showman's hands).
 !set sg_cove_seen
+!walkto comp 1 9 right
+!gesture pc lookroad right
 narr: {崖|がけ} に {囲|かこ}まれた 、 {三日月|みかづき} の {形|かたち} の {小|ちい}さな {浜|はま} 。 {波|なみ} の {音|おと} が 、 {岩|いわ} に {反響|はんきょう} して いる 。 || A small crescent of sand, walled in by cliffs. The sound of the waves echoes off the rock.
+?(comp=nao) !gesture comp lookroad left
+?(comp=mio) !gesture comp exhale
+?(comp=ren) !gesture comp aside
+?(comp=suzu) !gesture comp size
 ?(comp=nao) comp: …… いい {所|ところ} だ な 。 {出口|でぐち} が {一|ひと}つ しか ない の は 、 {気|き} に {入|い}らない けど 。 || …Nice spot. Don't like that there's only one way out, though.
 ?(comp=mio) comp[smile]: {静|しず}か …… 。 {嫌|いや} な {静|しず}か さ じゃ なくて 、 いい {方|ほう} の 。 || Quiet… Not the bad kind of quiet. The good kind.
 ?(comp=ren) comp[smile]: {着|つ}きました 。 {道標|みちしるべ} の おかげ です 。 …… {私|わたし} の おかげ では なく 。 || We're here. Thanks to the signpost. …Not to me.
@@ -97035,9 +98120,16 @@ narr: {道標|みちしるべ} 。 「→ {入|い}り{江|え}」 「↑ {街�
 narr: {古|ふる}い {立|た}て{札|ふだ} 。 「{漁師|りょうし} の {入|い}り{江|え} ・ {満|み}ち{潮|しお} に {注意|ちゅうい}」 。 || An old notice board: "Fishers' Cove — beware the rising tide."
 
 @scene sg.cove_nets
+# Staged: you lift the nets down off the rocks; your companion's own answer (Nao's shrug, Mio leans in to the
+# neat drying, Ren counts the knots, Suzu bends to let the crab go).
+!gesture pc receive 24,6 prop=nets hold
 narr: {岩|いわ} に {網|あみ} が {掛|か}けて ある 。 {嵐|あらし} に も {飛|と}ばされず 、 {待|ま}って いた らしい 。 || The nets are hung on the rocks. They seem to have waited out the storm without blowing away.
 !give sg_nets
 !quest sg_cove 3
+?(comp=nao) !gesture comp shrug
+?(comp=mio) !gesture comp observe 24,6
+?(comp=ren) !gesture comp count
+?(comp=suzu) !gesture comp bend 24,6
 ?(comp=nao) comp: {重|おも}い な 。 …… {配達料|はいたつりょう} 、 {魚|さかな} で {払|はら}って もらう か 。 || Heavy. …Maybe we'll take our delivery fee in fish.
 ?(comp=mio) comp[smile]: {丁寧|ていねい} に {干|ほ}して ある 。 ソウタ さん 、 {几帳面|きちょうめん} な {人|ひと} だ ね 。 || Hung up so neatly. Sōta's a careful one.
 ?(comp=ren) comp: {網|あみ} も {縄|なわ} の {仲間|なかま} です ね 。 {結|むす}び{目|め} の {数|かず} を {数|かぞ}え{始|はじ}める と 、 {日|ひ} が {暮|く}れます 。 || Nets are relatives of rope. If I start counting the knots, we'll be here till dark.
