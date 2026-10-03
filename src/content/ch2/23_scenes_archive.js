@@ -138,7 +138,7 @@ narr: {壁|かべ} の {札|ふだ} 。 「{閲覧室|えつらんしつ} ・ {�
 
 @scene sg.da_ledger
 # Staged: you lean in to the open register; your companion's own reaction to the head office's seal (Ren
-# starts, then looks away from his master; Nao's flat hand; Mio's hand to her chest; Suzu's hand to her
+# starts, then looks away from their master; Nao's flat hand; Mio's hand to her chest; Suzu's hand to her
 # chin); you turn to your companion to say where the names go.
 !if sg_da_ledger -> again
 !gesture pc observe 5,5 hold
@@ -293,7 +293,7 @@ sg_clerk: {窓口|まどぐち} は {一|ひと}つ 。 {順番|じゅんばん}
 @scene sg.da_boss_after
 # Staged: you look down at the broken stamp; the Clerk tilts to you; you explain with an open hand and ask
 # after "the master"; you look up at the letters lifting off the shelves; your companion's own reaction (Nao's
-# nod, Mio's and Suzu's lowered head, Ren's hand to his chin).
+# nod, Mio's and Suzu's lowered head, Ren's hand to their chin).
 !gesture pc observe 9,5
 narr: {割|わ}れた {判子|はんこ} が 、 {窓口|まどぐち} に {転|ころ}がった 。 || The broken stamp rolls across the counter.
 !gesture sg_clerk stiff pc

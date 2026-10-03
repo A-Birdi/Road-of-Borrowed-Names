@@ -293,9 +293,9 @@ nao: {広場|ひろば} から だと 、 {出口|でぐち} が {四|よっ}つ
 narr: {木箱|きばこ} の {紙|かみ} の {札|ふだ} は {白|しろ} 。 でも 、 {木|き} に {直接|ちょくせつ} チョーク で 「 こめ 」 「 しお 」 と {書|か}いて ある 。 || The paper tags on the crates are blank. But written straight on the wood in chalk: "rice", "salt".
 
 @scene rw.ren_first
-# Staged: caught talking to a lantern, Ren pushes his glasses up; you look him over (the patched coat, the
-# mud); he explains with an open hand, turns to the lantern whose name won't take root, catches himself
-# on his teacher (a hand to the chin, a small shake); you step to his side and he hands you the record.
+# Staged: caught talking to a lantern, Ren pushes their glasses up; you look them over (the patched coat,
+# the mud); they explain with an open hand, turn to the lantern whose name won't take root, catch themself
+# on their teacher (a hand to the chin, a small shake); you step to their side and they hand you the record.
 !faceplayer ren
 !gesture ren glasses
 ren: ── {失礼|しつれい} 。 {今|いま} 、 {灯|あか}り と {話|はな}して いた ところ でして 。 || — Excuse me. I was just in the middle of talking with the lantern.
@@ -355,8 +355,8 @@ narr: {灯|あか}り は ともった 。 でも 、 {字|じ} の {端|はし}
 narr: {橋|はし} の {灯|あか}り 。 {紙|かみ} は {白|しろ}い 。 すぐ {近|ちか}く に 、 {記録|きろく} を めくって いる {灯守|ひもり} が いる 。 || The bridge lantern. The paper is blank. There's a keeper leafing through records right nearby.
 
 @scene rw.ren_lanterns_done
-# Staged: Ren leans to the bridge lantern beside him, points across to the far bank (the second name),
-# thinks with a hand to his chin; then turns to you with a nod for the word, and looks down at his boots.
+# Staged: Ren leans to the bridge lantern beside them, points across to the far bank (the second name),
+# thinks with a hand to their chin; then turns to you with a nod for the word, and looks down at their boots.
 !gesture ren observe 32,18
 ren[surprise]: …… {根|ね} を {張|は}った 。 {本当|ほんとう} に 。 || …They took root. They really did.
 !gesture ren point 42,17

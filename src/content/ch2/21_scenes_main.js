@@ -60,7 +60,7 @@ narr: {島|しま} の {名前|なまえ} の {所|ところ} だけ 、 {紙|�
 @scene sg.wataru_first
 # Staged: Wataru starts up from his counting; an open hand at the mess; his hands twist over the storm; he
 # turns away to his ledger as he says he will check it; your companion's aside is their own look at him (Nao
-# and Mio lean in to watch him, Suzu looks between him and you, Ren straightens his glasses).
+# and Mio lean in to watch him, Suzu looks between him and you, Ren straightens their glasses).
 !set sg_wataru_met
 !gesture wataru flinch pc
 wataru[surprise]: あっ 、 すみません 、 {今|いま} {数|かぞ}えて いて …… 。 {港長|こうちょう} の お{使|つか}い の {方|かた} です か 。 || Oh — sorry, I was in the middle of counting… Are you the people the harbourmaster sent?
@@ -103,7 +103,7 @@ narr: {紙|かみ} は {古|ふる}く 、 {糊|のり} も {乾|かわ}いて �
 
 @scene sg.crate_glued
 # Staged: you lean in to the new label and reach to lift its corner; your companion's own reaction (Nao and
-# Mio lean in to the hand and the paste, Ren pushes his glasses up, Suzu an open hand: an old trick); at
+# Mio lean in to the hand and the paste, Ren pushes their glasses up, Suzu an open hand: an old trick); at
 # "someone's hand" you turn to look at Wataru.
 !set sg_crate_glued
 !gesture pc observe 8,3 hold
@@ -232,7 +232,7 @@ tamae: {休憩|きゅうけい} かい ？ また {頼|たの}む よ 。 || Tak
 # Staged: Tamae hands the bundle of post across the counter and you read the blank envelopes; when the last
 # letter turns up she holds it up, and its red stamp is what you lean in to; she hands it over; your
 # companion's own reaction (Suzu lowers her head, Mio's hand to her chest, Nao shakes their head, Ren's hand
-# to his chin).
+# to their chin).
 !prop tamae envelopes
 !gesture tamae handover pc
 !gesture pc receive tamae
@@ -276,7 +276,7 @@ tamae: {残|のこ}り は 、 また {後|あと} で いい よ 。 || The res
 @scene sg.tetsu_first
 # Staged: Tetsu points you to the board and you look at it; his arms fold over "boards lie"; he points the
 # way to Shiori's hut; you step to his side and he hands you a coil of rope; your companion's own answer
-# (Nao's nod, Suzu's laugh, Mio's open hands, Ren lifts his lamp).
+# (Nao's nod, Suzu's laugh, Mio's open hands, Ren lifts their lamp).
 tetsu: …… {時刻表|じこくひょう} か 。 || …The board, is it.
 !gesture tetsu point 36,24
 !gesture pc listen 36,24

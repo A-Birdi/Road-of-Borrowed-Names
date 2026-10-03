@@ -121,8 +121,8 @@ mio: {迷|まよ}う の は {当然|とうぜん} です 。 {薬|くすり} �
 mio[smile]: {大丈夫|だいじょうぶ} です 。 {気|き} に しないで 。 …… {本当|ほんとう} に 。 || It's fine. Don't worry about it. …Really.
 
 @scene rw.hall_ren
-# Staged: Ren counts his reasons (the second is his teacher), pushes his glasses up over the face he
-# cannot recall; asked, a small formal bow; unsure, he points to the door where it is decided; revised,
+# Staged: Ren counts their reasons (the second is their teacher), pushes their glasses up over the face
+# they cannot recall; asked, a small formal bow; unsure, they point to the door where it is decided; revised,
 # a nod.
 !faceplayer ren
 !if prov=ren -> chosen
@@ -233,7 +233,7 @@ narr: {灯|あか}り は もう {運|はこ}ばれて いった 。 {吊|つ}�
 @scene rw.depart
 # Staged: you step to the side of the lantern and write the two names on its paper (seen side-on, so the
 # brush shows); the new companion steps in behind you and you turn to them for their first words as a pair:
-# Nao points to the door (the road), Mio's hand goes to her chest, Ren tends his lamp, Suzu's small
+# Nao points to the door (the road), Mio's hand goes to her chest, Ren tends their lamp, Suzu's small
 # celebration; Tsuru's nod sends you to bed.
 !walkto pc 3 2 right
 !gesture pc write

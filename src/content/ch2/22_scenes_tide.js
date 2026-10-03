@@ -82,8 +82,8 @@ shiori[think]: {風|かぜ} の こと なら 、 {灯台|とうだい} の ゲ�
 !autosave
 
 @scene sg.shiori_fog
-# Staged: Shiori points out towards the lighthouse; with Ren, he looks from one wall to the other for the tip
-# of the point, and she points him out of the window to the tallest building.
+# Staged: Shiori points out towards the lighthouse; with Ren, they look from one wall to the other for the tip
+# of the point, and she points them out of the window to the tallest building.
 !gesture shiori point left
 shiori: {霧|きり} は まだ {座|すわ}って います 。 {風|かぜ} の こと は 、 ゲンゾウ さん に 。 || The fog is still sitting there. Ask Genzō about the wind.
 ?(comp=ren) !gesture comp lookbetween left and=right
@@ -125,7 +125,7 @@ narr: {石|いし} の {道標|みちしるべ} 。 「{満|み}ち{潮|しお} 
 
 @scene sg.causeway_fog
 # Staged: in the fog you look down at the sand at your feet; back at the marker, your companion's own
-# reaction (Nao looks back down at the causeway, Mio looks between the ways, Ren pushes his glasses up, Suzu
+# reaction (Nao looks back down at the causeway, Mio looks between the ways, Ren pushes their glasses up, Suzu
 # shrugs); you look to the lighthouse when the way to the wind is Genzō.
 !gesture pc observe down
 narr: {霧|きり} の {中|なか} へ {踏|ふ}み{込|こ}む 。 {足元|あしもと} の {砂|すな} しか {見|み}えない 。 || You step into the fog. You can see nothing but the sand at your feet.

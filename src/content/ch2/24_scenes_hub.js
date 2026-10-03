@@ -178,7 +178,7 @@ kiyo[worry]: …… {行|い}く なら 、 {網|あみ} を {持|も}って {�
 ?(var.sg_dirs=2) narr: {言|い}う こと が {違|ちが}う 。 もう {一人|ひとり} に {聞|き}いて みよう 。 || They don't agree. Ask one more person.
 !end
 :think
-# Staged: Ren looks left and right and gives up (you turn to tease him; he looks away); you point to the sea
+# Staged: Ren looks left and right and gives up (you turn to tease them; they look away); you point to the sea
 # for Daigo, hold the two facings apart in your hands for Tobi, and point east for Kiyo; your companion's own
 # answer (Nao's nod, Mio's laugh, Suzu's showman's hands, Ren's glasses); you point to the signpost.
 ?(comp=ren) !gesture comp lookbetween left and=right
@@ -452,7 +452,7 @@ asahi: {青|あお}い の を {三|みっ}つ ね 。 {浜|はま} と 、 {入
 
 @scene sg.asahi_glass
 # Staged: you step to Asahi's side and hand her the sea glass; a hand to her chin over the boat's name and a
-# look away at the strangeness of it; with Ren, his glasses at "shelved".
+# look away at the strangeness of it; with Ren, their glasses at "shelved".
 !walkto pc 5 4 left
 !look asahi pc
 !prop pc seaglass

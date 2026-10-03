@@ -7,7 +7,7 @@ RB.script.add(`
 # Staged: you turn to the sea at the smell of it and lean to look down at the town below the cliffs; you and
 # your companion turn to each other for your exchange, each in their own way (Nao points out the bad pier
 # and looks away over the undelivered letter; Mio's delight and a hand to her ear for the missing noise; Ren
-# straightens his glasses over the schedule; Suzu announces the town with both hands and listens for the
+# straightens their glasses over the schedule; Suzu announces the town with both hands and listens for the
 # market); you point the way down, and look between the two roads at the fork.
 !set sg_arrived
 !quest rw_depart done quiet
@@ -111,7 +111,7 @@ narr: {島|しま} の {周|まわ}り だけ 、 {海|うみ} の {色|いろ} 
 
 @scene sg.road_inland_closed
 # Staged: back at the fork, your companion reacts as the road has fooled you (Nao points up the road you
-# took, Mio looks between the road and the lantern, Ren pushes his glasses up, Suzu laughs it off and shakes
+# took, Mio looks between the road and the lantern, Ren pushes their glasses up, Suzu laughs it off and shakes
 # her head); you point down to the harbour.
 narr: {北|きた} の {道|みち} を {歩|ある}き{出|だ}す 。 …… {気|き} が つく と 、 また {分|わ}かれ{道|みち} の {灯籠|とうろう} の {前|まえ} に {立|た}って いた 。 || You set off along the north road. …And find yourself standing in front of the fork lantern again.
 !warp sg.road 16 9 right
@@ -198,8 +198,8 @@ pc: オウミ さん に {報告|ほうこく} しよう 。 || Let's report to 
 # companion comes to stand beside you and you both look out to sea; you turn to each other as the talk turns
 # to you, and each tells it in their own way — Nao looks away, lowers their head and puts a hand to the satchel
 # with the letter; Mio's head goes down, her hands twist, a hand at her chest, and she practises Ōmi's flat
-# hand before laughing at herself; Ren lowers his head over his master's face, nods at the thought of a
-# return, looks to the lighthouse and fixes his glasses at his own joke; Suzu laughs off the ledger, lowers
+# hand before laughing at herself; Ren lowers their head over their master's face, nods at the thought
+# of a return, looks to the lighthouse and fixes their glasses at their own joke; Suzu laughs off the ledger, lowers
 # her head over the kind lie and looks away before facing you. At the end you both look out to sea again.
 !fade out
 !ambience night
