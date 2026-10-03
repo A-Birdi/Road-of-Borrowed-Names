@@ -772,8 +772,9 @@ RB.sequence = (function () {
   }, 0);
 
   // ---- a sequence outside a scene: its own caption slip (the prologue, a replay, the dev viewer) ---------------
-  // o: { seq, beats: [{ shot, phase?, line: { jp, en, who? } }], label, name, cast, music, seen() → bool,
+  // o: { seq, beats: [{ shot, phase?, line: { jp, en, who? } }], label, tag, name, cast, music, seen() → bool,
   //      onSeen(), skip: { label, confirm, yes, no }, speakers: bool, onExit } → Promise resolving { how }
+  // (tag: a visible note above the caption, e.g. the dev viewer's "synthetic preview"; English only, no kanji)
   // Next: the entrance completes if still dissolving; otherwise the next beat (a new shot dissolves in, a
   // phase starts its action); the last Next leaves once. Previous / Replay shot / Hide text as in scenes;
   // Skip (and Escape) asks first unless the whole was seen before.
@@ -791,7 +792,7 @@ RB.sequence = (function () {
       cap.setAttribute('role', 'dialog');
       cap.setAttribute('aria-label', o.label || 'Scene');
       const gid = 'seq-vg' + p.tok;
-      cap.innerHTML = '<div class="slip"><div class="pg" aria-hidden="true"></div><div class="seq-rv" aria-live="polite"></div><div class="txt" aria-live="polite"></div></div>' +
+      cap.innerHTML = '<div class="slip">' + (o.tag ? '<div class="seq-tag">' + esc(o.tag) + '</div>' : '') + '<div class="pg" aria-hidden="true"></div><div class="seq-rv" aria-live="polite"></div><div class="txt" aria-live="polite"></div></div>' +
         '<div class="acts"><button class="cbtn seq-more" type="button" aria-expanded="false" aria-controls="' + gid + '">' + I('sq-scene') + '<span>Scene</span></button>' +
         '<div class="seq-g" id="' + gid + '" role="group" aria-label="Scene controls">' +
         '<button class="cbtn" type="button" data-a="prev" title="The previous caption again (' + (keyOf('prev') || 'P') + ' or ←)">' + I('sq-prev') + '<span>Previous</span></button>' +

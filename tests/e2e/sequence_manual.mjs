@@ -10,7 +10,7 @@
 //    completes it; a click on a word opens help and never advances;
 //  - touch: taps on Next reveal then advance; a tap on the picture never advances (it brings hidden text back);
 //  - keys: Enter, P / ←, R, I, Escape (opens the skip control; never skips), and Escape on that control keeps
-//    watching;
+//    watching; remapped keys (Previous on B, Next on N) work and the keys they replaced do nothing;
 //  - Previous is read-only: looking back, replaying the shot and hiding the text change no campaign state and
 //    resolve no line; Next rejoins the live line without moving on;
 //  - Skip scene: asked first when part of the scene is new; "Keep watching" keeps the beat; confirmed, it runs the
@@ -208,6 +208,21 @@ async function reach(p, re, max) {
   await p.keyboard.press('Escape'); await wait(p, 120);
   const e2 = await S(p);
   ok(!e2.confirm && e2.n === live.n && e2.seq && e2.seq.id === 'ch1.bridge', 'Escape on the control keeps watching, on the same line');
+  // remapped keys (as Settings › Controls stores them): Previous on B, Next on N; the old keys then do nothing.
+  // Keyboard focus is taken off the buttons first: Enter on a focused button activates it natively (as anywhere
+  // in the game), which is not the binding under test.
+  const focused = await p.evaluate(() => { const a = document.activeElement; const d = a && a !== document.body ? (a.className || a.tagName) : ''; if (a && a.blur) a.blur(); return d; });
+  await p.evaluate(() => RB.input.setBinds(Object.assign({}, RB.input.getBinds(), { prev: ['KeyB'], ok: ['KeyN'] })));
+  await p.keyboard.press('KeyP'); await wait(p, 60);
+  const m0 = await S(p);
+  await p.keyboard.press('KeyB'); await wait(p, 60);
+  const m1 = await S(p);
+  await p.keyboard.press('Enter'); await wait(p, 60);
+  const m2 = await S(p);
+  await p.keyboard.press('KeyN'); await wait(p, 60);
+  const m3 = await S(p);
+  await p.evaluate(() => RB.input.setBinds(RB.game.settings.binds || {}));
+  ok(!m0.reviewing && m1.reviewing && m2.reviewing && !m3.reviewing && m3.n === live.n && m3.en === live.en, 'remapped keys: B looks back, N comes back to the live line without moving on; P and Enter, no longer bound, do nothing (' + [m0.reviewing, m1.reviewing, m2.reviewing, m3.reviewing].join(' ') + '; focus was on ' + (focused || 'the page') + ')');
   ok(!errors.length, 'no page errors ' + errors.slice(0, 2).join(' | '));
   await ctx.close();
 }

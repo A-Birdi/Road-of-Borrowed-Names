@@ -59,7 +59,10 @@ RB.seqDev = (function () {
   function play(seqId, flags) {
     if (!allowed()) return null;
     close();
-    return RB.sequence.view({ seq: seqId, beats: beatsOf(seqId, flags), cast: cast(), label: 'Synthetic preview: ' + seqId, name: 'seq-dev', seen: () => true, skip: { label: 'Close' }, replay: true, speakers: true });
+    // whatever page it was opened over (the title, a menu) is hidden while the preview plays
+    document.body.classList.add('seq-dev-play');
+    const done = (r) => { document.body.classList.remove('seq-dev-play'); return r; };
+    return RB.sequence.view({ seq: seqId, beats: beatsOf(seqId, flags), cast: cast(), label: 'Synthetic preview: ' + seqId, tag: 'Synthetic preview (dev) — fixture branch ' + JSON.stringify(flags || FIX.flags) + ', read-only; not gameplay, not a saved branch', name: 'seq-dev', seen: () => true, skip: { label: 'Close' }, replay: true, speakers: true }).then(done, done);
   }
   let root = null;
   function close() { if (root) { root.remove(); root = null; } }
