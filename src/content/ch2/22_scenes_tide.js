@@ -42,17 +42,24 @@ shiori: {表|ひょう} は 、 いつでも ここ に あります 。 || The 
 shiori: {急|いそ}がなくて いい です よ 。 {知|し}らない {言葉|ことば} は 、 {言葉|ことば} の {手助|てだす}け で {読|よ}み{方|かた} と {意味|いみ} が {分|わ}かります 。 || There's no hurry. If a word is new, word help will give you its reading and meaning.
 
 @scene sg.tide_wait
+# the wait is seen from Shiori's window: the tide goes out over the lines (src/ui/42b_interlude_tide.js)
 !fade out
+!interlude tide_wait wait
+!fade in 600
 narr: シオリ の {淹|い}れた {薄|うす}い お{茶|ちゃ} を {飲|の}みながら 、 {潮|しお} が {引|ひ}く の を {待|ま}った 。 || You wait for the tide to go out, drinking the weak tea Shiori makes.
 ?(comp=mio) narr: ミオ は 、 シオリ の {棚|たな} の {貝殻|かいがら} を {大|おお}きさ の {順|じゅん} に {並|なら}べ{直|なお}して いた 。 || Mio rearranges the shells on Shiori's shelf in order of size.
 ?(comp=ren) narr: レン は シオリ と 、 {潮|しお} の {記録|きろく} の {付|つ}け{方|かた} に ついて {熱心|ねっしん} に {話|はな}し{込|こ}んで いた 。 || Ren and Shiori talk earnestly about how to keep tide records.
 ?(comp=nao) narr: ナオ は {窓|まど} の {外|そと} を {見|み}て いた 。 {時々|ときどき} 、 {丘|おか} の {上|うえ} の {家|いえ} の ほう を 。 || Nao watches out of the window. Now and then, towards a house on the hill.
 ?(comp=suzu) narr: スズ は シオリ に カード の {手品|てじな} を {見|み}せて 、 {三回|さんかい} {種|たね} を {見破|みやぶ}られた 。 || Suzu shows Shiori a card trick and has it seen through three times.
 !set sg_tide_low
-!fade in
+!interlude tide_wait road
 shiori: {時間|じかん} です 。 {窓|まど} を ご{覧|らん} ください 。 || It's time. Look out of the window.
 narr: {岬|みさき} の {先|さき} から 、 {白|しろ}い {砂|すな} の {道|みち} が {海|うみ} に {伸|の}びて いる 。 {島|しま} まで 、 まっすぐ に 。 || From the tip of the point, a white sand road runs out across the sea, straight to the island.
+!interlude tide_wait fog
 narr: …… その {道|みち} の {上|うえ} に だけ 、 {真|ま}っ{白|しろ} な {霧|きり} が {座|すわ}って いた 。 || …And over that road, and only there, sits a thick white fog.
+!fade out
+!interlude -
+!fade in
 shiori[worry]: {霧|きり} …… 。 {嵐|あらし} の {後|あと} 、 ずっと {風|かぜ} が {止|や}んで いる の です 。 {風|かぜ} の ない {霧|きり} は 、 {晴|は}れません 。 || Fog… Ever since the storm the wind has dropped. Windless fog doesn't lift.
 shiori: {霧|きり} の {中|なか} を {歩|ある}いた {人|ひと} は 、 みんな {岬|みさき} に {戻|もど}って きます 。 {前|まえ} に {進|すす}んだ はず なのに 、 と {言|い}って 。 || Everyone who walks into that fog comes back to the point — saying they were sure they'd walked forward.
 shiori[think]: {風|かぜ} の こと なら 、 {灯台|とうだい} の ゲンゾウ さん です 。 {岬|みさき} の {風|かぜ} を 、 {五十年|ごじゅうねん} {見|み}て きた {人|ひと} です から 。 || If it's the wind you need, ask Genzō at the lighthouse. He's watched the winds on this point for fifty years.

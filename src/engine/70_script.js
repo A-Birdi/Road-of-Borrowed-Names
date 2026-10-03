@@ -153,6 +153,7 @@ RB.script = (function () {
       // running a scene inside a scene) so no stray dialogue mode is left
       RB.game.popMode('dialogue');
       if (running === 0) {
+        if (RB.interlude) RB.interlude.clear(); // a picture left showing ends with its scene
         RB.ui.dialogue.hide();
         RB.world.dismissExtras();
         RB.world.refreshActors();
@@ -306,6 +307,8 @@ RB.script = (function () {
         case 'faceplayer': { const act = RB.world.actorById(resolveId(a[0] || ctx.npc)); if (act) RB.world.faceTo(act, RB.world.W.player.x, RB.world.W.player.y); break; }
         case 'wait': await wait(+a[0] || 400); break;
         case 'fade': await RB.ui.fade(a[0] === 'out', a[1] ? +a[1] : 400); break;
+        // a picture in place of the map while the lines go on (src/ui/42_interlude.js)
+        case 'interlude': if (RB.interlude) { if (a[0] === '-') RB.interlude.clear(); else RB.interlude.show(a[0], a[1] || null); } break;
         case 'shake': RB.ui.shake(); break;
         case 'autosave': s.checkpoint = { map: s.map, x: s.x, y: s.y, dir: s.dir }; await RB.save.autosave(a[0] || 'progress'); break;
         case 'checkpoint': s.checkpoint = { map: a[0] || s.map, x: a[1] ? +a[1] : s.x, y: a[2] ? +a[2] : s.y, dir: a[3] || s.dir }; break;

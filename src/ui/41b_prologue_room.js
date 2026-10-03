@@ -352,6 +352,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     };
   }
+  // the interludes (src/ui/42*_interlude_*.js) set a table with the same cups and pot
+  Object.assign(A.kit, { cupSprite, potSprite, traySprite, scaled, steam });
   A.SHOTS.tea = shot(false);
   A.SHOTS.cup = shot(true);
   A.room = { geom };

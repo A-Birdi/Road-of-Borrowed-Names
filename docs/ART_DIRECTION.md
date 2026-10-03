@@ -1009,3 +1009,76 @@ middle of the screen as if into the river. Files: `src/ui/41_prologue_art.js`
   large against the cups.
 - Not checked in Firefox, Safari or on a real phone.
 
+## 13. Interludes: a scene's moment as a picture (2026-10-03)
+
+The owner's report: choosing to wait with Shiori faded the screen to black,
+and the lines said while it was dark could be advanced but not read; "if it
+is meant to be a cutscene, it should be animated as one, and at minimum show
+the whole dialogue box".
+
+### Lines said in the dark (every scene)
+`RB.ui.fade` marks the page `body.veiled` from the moment the screen darkens
+until it has fully cleared. While it is set, the dialogue sheet, its replies,
+History and the other dialogs stay above the black (`50_play.css`). Nine
+scenes in the game speak in the dark (a climb, a night passing, a boat
+crossing); all of them are now readable. The HUD stays hidden under the black.
+
+### Interludes (`src/ui/42_interlude.js`)
+A scene can show a picture in place of the map while its lines go on:
+`!interlude <id> [stage]` starts one or moves it to a stage, `!interlude -`
+ends it (between `!fade out` and `!fade in`). One left showing is cleared
+when its scene ends. The picture is a render override drawn at art
+resolution with the prologue's kit and manner (§12): banded skies, pxkit
+materials lit from the upper left, selective outlines, stepped glows. It
+keeps what matters above the dialogue sheet: `vb` is the highest the sheet
+has reached during the interlude, in steps, so the layout changes once or
+twice and not on every line. Reduced motion holds each stage still.
+
+### The wait at the tide-watcher's window (`42b_interlude_tide.js`)
+- **The view from Shiori's hut**, through a timber frame with a kumiko
+  transom and a glazed pane slid to the right. The point runs out from the
+  left as a grassy headland: a worn path, bushes, two wind-bent pines and
+  rocks at the waterline. The lighthouse stands at its tip, with the
+  keeper's house at its foot. Offshore is the island: a cliff, pines and the
+  stone gateway. On the sill are her salt-whitened notebooks and the weak
+  tea (the prologue's cups and kyūsu, smaller), steaming.
+- **The tide** is a height field laid out in the picture: the sand road from
+  the tip to the gateway, flats round the tip and the island, the shelf
+  under the point, the beach below the window, rocks. Each tide level
+  colours it once:
+  - water by depth: a foam line, aqua shallows, then the sky-lit rows;
+  - sand by how lately it was uncovered: wet edge, wet, then dry white sand;
+  - rocks, with weed near the water.
+  The road is highest at its two ends, so it comes up from the point and the
+  island before its middle.
+- **Stages:**
+  - `wait`: the sea falls away over the first lines, most of the way in
+    12 s, then slowly.
+  - `road`: Shiori says it is time, and the rest drains off in 2.2 s. The
+    road lies dry and white.
+  - `fog`: a fog gathers on the road from the island end and sits there. It
+    is one bank, drawn in passes (soft edge, shadow, body, lit tops) so the
+    puffs merge, flat underneath and heaped on top.
+  There is no wind (it has dropped since the storm): the clouds and the fog
+  do not drift and the sea is glassy, with glints and two gulls.
+- **Cost:** the first frame builds the floor, view and room layers (about
+  250 ms headless); later frames take about 1 ms. A tide level that has
+  moved on is coloured once (one sea layer is kept). The interlude keeps its
+  own small cache and drops it, with the prologue's, when it ends.
+
+### Tests and evidence
+`tests/e2e/interludes.mjs` (default suite):
+- the dark lines at 1280 × 800 and 390 × 844: the sheet is on top, Next
+  takes a real click, History opens on top, nothing is left raised;
+- the tide wait from Shiori's real question at 1280 × 800, 2000 × 1090,
+  390 × 844 and 844 × 390: the picture and not the map, the layout above the
+  sheet, the tide going out, the dry road, the fog on the road and only
+  there, then the room and the quest as before;
+- reduced motion; clearing at the scene's end; the cost of a frame.
+Captures: `docs/screenshots/interludes/`.
+
+### Limitations
+- The other dark passages show their lines over black and are not pictures.
+  Each could have its own interlude.
+- The judgement of the art is the author's, from captures.
+- Not checked in Firefox or on a real phone.

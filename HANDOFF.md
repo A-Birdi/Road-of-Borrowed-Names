@@ -312,6 +312,20 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Pet looks in the sprite functions:** `RB.sprites.getArt` and `get` accept a pet look (Mochi's) and return
   the rig's animal on the standard frame, so anything that asks for a character by look gets the same cat.
 
+## Lines in the dark; the tide-watcher's window (owner's reports of 2026-10-03) — REQUIREMENTS.md IN1–IN4, VALIDATION.md "Interludes", docs/ART_DIRECTION.md §13
+- **The report:** choosing to wait with Shiori faded to black. Its lines could be advanced but not read: the fade
+  covered the dialogue sheet, and it does so in every scene that speaks in the dark (nine).
+- **The fix in the fade (`src/ui/10_ui.js`, `50_play.css`):** `body.veiled` from the moment the screen darkens until
+  it has cleared. The sheet, its replies, History and dialogs stay above the black.
+- **Interludes (`src/ui/42_interlude.js`):** `!interlude <id> [stage]` / `!interlude -` puts a picture in place of the
+  map while the lines go on. It is cleared at the scene's end, and the validator and quest guide know the op.
+- **The tide wait (`src/ui/42b_interlude_tide.js`, `sg.tide_wait`):** the view from Shiori's window as the tide
+  goes out. The sand road comes up, then the fog sits on it; the room comes back for her worry.
+- **Genzō's climb** says its line in the dark and then needs the top of the lighthouse: a separate piece of work,
+  merged on its own (see below when it lands).
+- **Test:** `tests/e2e/interludes.mjs`, in the default suite. Evidence: `tests/e2e/interlude_shots.mjs` →
+  docs/screenshots/interludes/.
+
 ## Commands
 - Build: `node tools/build.mjs`
 - Content validation: `node tools/validate.mjs [--filter sg] [--unknown]`
@@ -392,6 +406,9 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 12. The town animals (2026-10-03), by hand in Firefox: stand by your pet and by Mochi for a while (they
    should breathe and move their tails, then sit and curl up); pick Mochi up (A Cat Called Mochi) and give
    her back to Tomo by day and at night.
+13. The tide wait (2026-10-03), in Firefox and on the foldable: talk to Shiori at the tide table in Saltglass and
+   choose to wait. Watch the tide go out over the lines, the road come up, the fog settle; then a scene that speaks
+   in the dark (Genzō's climb) shows its line over the black.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

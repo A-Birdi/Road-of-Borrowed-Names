@@ -184,11 +184,19 @@ RB.ui = (function () {
       setTimeout(res, RB.game.fastForward() ? 50 : 350);
     });
   }
+  // While the screen is dark (a scene's time passing, a climb, a night), what
+  // is said over it stays in view above the black: the dialogue, its replies
+  // and the history (body.veiled, from the moment it darkens until it has
+  // fully cleared; see 50_play.css).
   function fade(out, ms) {
     return new Promise((res) => {
       fadeEl.style.transitionDuration = (ms || 220) + 'ms';
       fadeEl.classList.toggle('on', !!out);
-      setTimeout(res, ms || 220);
+      if (out) document.body.classList.add('veiled');
+      setTimeout(() => {
+        if (!fadeEl.classList.contains('on')) document.body.classList.remove('veiled');
+        res();
+      }, ms || 220);
     });
   }
   // Chapter openings and endings, and time passing ("The next morning"): a

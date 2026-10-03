@@ -43,6 +43,8 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
   display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "por tab" "por sheet";
   column-gap: 12px; align-items: end; color: var(--ink);
 }
+/* over a dark screen (RB.ui.fade) the words said in the dark stay above it */
+body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scrim, body.veiled #ui > .scrim { z-index: 20; }
 .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
 .dlg .portrait {
   grid-area: por; width: 116px; height: 116px; image-rendering: pixelated; align-self: end; margin-bottom: 10px;

@@ -294,7 +294,7 @@ RB.questGuide = (function () {
         const c = f.sc.cmds[f.pc++];
         const op = c.op, a = c.args || [];
         if (op === 'say' || op === 'emote' || op === 'move' || op === 'face' || op === 'faceplayer' || op === 'wait' || op === 'fade' ||
-          op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless') continue;
+          op === 'shake' || op === 'music' || op === 'sfx' || op === 'card' || op === 'toast' || op === 'journal' || op === 'speakerless' || op === 'interlude') continue;
         if (c.if && !p.forceNext) {
           const v = tv(ctx, st, c.if);
           const control = op === 'end' || op === 'goto';
