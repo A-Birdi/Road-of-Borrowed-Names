@@ -29750,7 +29750,8 @@ RB.battlerMoves = (function () {
   // ---- the four Harmony performances (Harmony addendum §9.3–§9.7) -----------------------------------------
   // Each: an anticipation (a), a signature action (x, written as key silhouettes on a track) and a recovery
   // through its own key (rec) back to exactly the stance. They differ in body mechanics, not colour:
-  // Nao drops his weight, steps and cuts; Mio measures, uncorks and pours; Ren plants, raises the lamp and
+  // Nao takes his pencil from behind his ear, turns side-on, steps in and sketches a route in the air; Mio
+  // measures at eye level, uncorks and pours from high over her head, side-on; Ren plants, raises the lamp and
   // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
   // back views — `turn` — never a mirrored costume), plants and opens her arm.
   // Nao — Read the Opening: a courier who reads routes. His pencil drawn from behind his ear (the elbow up, the
@@ -79075,7 +79076,8 @@ RB.partyChoreo = (function () {
           const way = (two ? [top - 1, top] : [top]).map((j) => H.knotId(ctx, T, j));
           const sig = t + F.pAt + F.pAnt, s0 = sig + Math.round(F.pAct * 0.18), s1 = sig + Math.round(F.pAct * 0.9), d = c + 640 - s0;
           Q.push({ at: s0, type: 'fx', name: 'pCourier', d, p: { from: 'comp', foe: T, way, draw: (s1 - s0) / d, out: (c + 360 - s0) / d } });
-          Q.push({ at: rel.pc, type: 'fx', name: 'pThreadRoute', d: c - rel.pc + 300, p: { from: 'pc', foe: T, way } });
+          const dt = c - rel.pc + 300;
+          Q.push({ at: rel.pc, type: 'fx', name: 'pThreadRoute', d: dt, p: { from: 'pc', foe: T, way, arrive: (c - 30 - rel.pc) / dt } });
           if (two) Q.push({ at: c - 30, type: 'fx', name: 'pKnotPair', d: 720, p: { a: way[0], b: way[1], foe: T } });
         }
         // Mio: the pour, to you both — the stream over the party, the fall of drops, ripples at your feet; your
@@ -79785,13 +79787,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
     // …your thread follows the route: out from your strip to the first knot it marked, along the route's own
-    // hops to the next, then drawn taut
+    // hops to the next (reached at p.arrive, the share of k just before the knots go), then drawn taut
     pThreadRoute(c, e, k, A, t, still) {
       const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), ws = (e.p.way || []).map((id) => A.pt(id, 'core'));
       if (!ws.length) return;
       const fade = 1 - seg(k, 0.82, 1), pts = [a].concat(ws);
       const L0 = dist(a, ws[0]), legs = pts.length - 1;
-      const head = still ? legs : ease(seg(k, 0, 0.6)) * legs, pull = still ? 1 : ease(seg(k, 0.55, 0.8));
+      const ar = e.p.arrive || 0.5, head = still ? legs : ease(seg(k, 0, ar)) * legs, pull = still ? 1 : ease(seg(k, ar - 0.04, ar + 0.22));
       for (let i = 0; i < legs; i++) {
         const to = cl(head - i);
         if (to <= 0) break;

@@ -359,7 +359,8 @@ RB.partyChoreo = (function () {
           const way = (two ? [top - 1, top] : [top]).map((j) => H.knotId(ctx, T, j));
           const sig = t + F.pAt + F.pAnt, s0 = sig + Math.round(F.pAct * 0.18), s1 = sig + Math.round(F.pAct * 0.9), d = c + 640 - s0;
           Q.push({ at: s0, type: 'fx', name: 'pCourier', d, p: { from: 'comp', foe: T, way, draw: (s1 - s0) / d, out: (c + 360 - s0) / d } });
-          Q.push({ at: rel.pc, type: 'fx', name: 'pThreadRoute', d: c - rel.pc + 300, p: { from: 'pc', foe: T, way } });
+          const dt = c - rel.pc + 300;
+          Q.push({ at: rel.pc, type: 'fx', name: 'pThreadRoute', d: dt, p: { from: 'pc', foe: T, way, arrive: (c - 30 - rel.pc) / dt } });
           if (two) Q.push({ at: c - 30, type: 'fx', name: 'pKnotPair', d: 720, p: { a: way[0], b: way[1], foe: T } });
         }
         // Mio: the pour, to you both — the stream over the party, the fall of drops, ripples at your feet; your

@@ -5,7 +5,7 @@
 // labelled sheet. Mio's fixture puts you below full and gives the creature Heat, mist and Gathering, so each
 // of her beats has something real to show.
 // Usage: node tests/e2e/harmony_perf_sheets.mjs [--html path/relative/to/root.html] [--tag after]
-//        [--vp 1280x720,390x844] [--comps nao,mio] [--out dir]
+//        [--vp 1280x720,390x844] [--comps nao,mio] [--out dir] [--reduce] (reduced motion)
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -17,6 +17,7 @@ const tag = opt('tag', 'after');
 const vps = opt('vp', '1280x720,390x844').split(',').map((s) => s.split('x').map(Number));
 const comps = opt('comps', 'nao,mio').split(',');
 const out = path.resolve(root, opt('out', 'docs/screenshots/harmony/cutin/perf_v2'));
+const reduce = args.includes('--reduce');
 fs.mkdirSync(out, { recursive: true });
 const NAME = { nao: 'Nao', mio: 'Mio', ren: 'Ren', suzu: 'Suzu' };
 const wait = (p, ms) => p.waitForTimeout(ms);
@@ -98,7 +99,7 @@ const made = [];
 for (const comp of comps) {
   for (const [W, H] of vps) {
     const { p, errors, ctx } = await page(b, url + html, { viewport: { width: W, height: H } });
-    await setup(p, comp === 'mio' ? { comp, pc: 7, cond: { heat: 2, shroud: true, charged: true } } : { comp });
+    await setup(p, Object.assign(comp === 'mio' ? { comp, pc: 7, cond: { heat: 2, shroud: true, charged: true } } : { comp }, { reduce }));
     await commit(p, comp);
     // the stage: the party and the creature (with its knots), in CSS px
     const box = await p.evaluate(() => {
@@ -130,7 +131,7 @@ for (const comp of comps) {
         g.fillStyle = '#efe4c8'; g.font = '600 13px system-ui, sans-serif'; g.fillText(title, gap + 2, 15);
         imgs.forEach((im, i) => { const x = gap + (i % cols) * (w + gap), y = head + Math.floor(i / cols) * (h + lab + gap); g.drawImage(im, x, y); g.fillStyle = '#efe4c8'; g.font = '600 12px system-ui, sans-serif'; g.fillText(labels[i], x + 4, y + h + 13); });
         return cv.toDataURL('image/webp', q);
-      }, [shots.map((s) => 'data:image/png;base64,' + s.png.toString('base64')), shots.map((s) => s.label), cols, q, NAME[comp] + ' — ' + tag + ' — ' + W + '×' + H + ' — portrait Off, presentation ms']);
+      }, [shots.map((s) => 'data:image/png;base64,' + s.png.toString('base64')), shots.map((s) => s.label), cols, q, NAME[comp] + ' — ' + tag + ' — ' + W + '×' + H + (reduce ? ' — reduced motion' : '') + ' — portrait Off, presentation ms']);
       bytes = Buffer.from(data.split(',')[1], 'base64').length;
       if (bytes < 300 * 1024) break;
     }

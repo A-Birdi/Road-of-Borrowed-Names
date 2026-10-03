@@ -450,13 +450,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
     },
     // …your thread follows the route: out from your strip to the first knot it marked, along the route's own
-    // hops to the next, then drawn taut
+    // hops to the next (reached at p.arrive, the share of k just before the knots go), then drawn taut
     pThreadRoute(c, e, k, A, t, still) {
       const u = A.u, a = A.pt(e.p.from || 'pc', 'release'), ws = (e.p.way || []).map((id) => A.pt(id, 'core'));
       if (!ws.length) return;
       const fade = 1 - seg(k, 0.82, 1), pts = [a].concat(ws);
       const L0 = dist(a, ws[0]), legs = pts.length - 1;
-      const head = still ? legs : ease(seg(k, 0, 0.6)) * legs, pull = still ? 1 : ease(seg(k, 0.55, 0.8));
+      const ar = e.p.arrive || 0.5, head = still ? legs : ease(seg(k, 0, ar)) * legs, pull = still ? 1 : ease(seg(k, ar - 0.04, ar + 0.22));
       for (let i = 0; i < legs; i++) {
         const to = cl(head - i);
         if (to <= 0) break;

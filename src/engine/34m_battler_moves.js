@@ -549,7 +549,8 @@ RB.battlerMoves = (function () {
   // ---- the four Harmony performances (Harmony addendum §9.3–§9.7) -----------------------------------------
   // Each: an anticipation (a), a signature action (x, written as key silhouettes on a track) and a recovery
   // through its own key (rec) back to exactly the stance. They differ in body mechanics, not colour:
-  // Nao drops his weight, steps and cuts; Mio measures, uncorks and pours; Ren plants, raises the lamp and
+  // Nao takes his pencil from behind his ear, turns side-on, steps in and sketches a route in the air; Mio
+  // measures at eye level, uncorks and pours from high over her head, side-on; Ren plants, raises the lamp and
   // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
   // back views — `turn` — never a mirrored costume), plants and opens her arm.
   // Nao — Read the Opening: a courier who reads routes. His pencil drawn from behind his ear (the elbow up, the
