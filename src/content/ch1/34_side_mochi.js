@@ -3,7 +3,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
-  C.chars.mochi = { name: { en: 'Mochi', jp: 'モチ' }, voice: { pitch: 1.4 }, look: { custom: 'cat', col: '#e8d8c0' },
+  C.chars.mochi = { name: { en: 'Mochi', jp: 'モチ' }, voice: { pitch: 1.4 }, look: { pet: 'cat', look: 'mochi', rest: [1500, 6000] },
     portrait: { kind: 'cat', skin: ['#e8d8c0', '#c8b8a0'], hair: ['#e8d8c0', '#d8c8b0', '#fff8ec'], cloth: ['#c86a5a', '#a85a4a', '#e8c060'], style: 'short', eyes: 'round', bg: '#2e3a2a' } };
   C.quests.rw_mochi = { chapter: 1, title: { jp: 'モチ と いう {猫|ねこ}', en: 'A Cat Called Mochi' },
     stages: [
@@ -25,8 +25,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'write', item: 'v:モチ', prompt: { en: 'Write the name on the tag (katakana).' }, answer: 'モチ', accept: ['モチ'], mode: 'kana', script: 'kata' }],
     } };
   C.maps['rw.village'].npcs.push(
-    { id: 'mochi', x: 46, y: 20, dir: 'left', wander: 1, if: 'rw_echo_done&!rw_mochi_carried&!quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_find' }] },
-    { id: 'mochi_home', char: 'mochi', x: 8, y: 25, dir: 'down', wander: 1, if: 'quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_home' }] }
+    // she stays where she is curled up (the scenes say so); picked up, she is in your arms (gone
+    // where she was, not off through the nearest door); given back, she is set down beside Tomo
+    // (appears there, not from a door)
+    { id: 'mochi', x: 46, y: 20, dir: 'left', leave: 'here', if: 'rw_echo_done&!rw_mochi_carried&!quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_find' }] },
+    { id: 'mochi_home', char: 'mochi', x: 8, y: 25, dir: 'down', arrive: 'here', if: 'quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_home' }] }
   );
   // Tomo's lines: the cat thread starts once the bridge is back
   const tomo = C.maps['rw.village'].npcs.find((n) => n.id === 'tomo');
@@ -79,6 +82,11 @@ tomo: これ 、 {昔|むかし} モチ が つけて いた {鈴|すず} 。 �
 tomo: {急|いそ}がない で 。 モチ は もう {逃|に}げない から 。 …… たぶん 。 || No hurry. Mochi won't run off again. …Probably.
 
 @scene rw.mochi_home
+!if rw_night -> night
 narr: モチ が {日向|ひなた} で {伸|の}びて いる 。 {名札|なふだ} に は 、 ちゃんと {名前|なまえ} が ある 。 || Mochi is stretched out in the sun. Her tag has her name on it again.
+!goto meow
+:night
+narr: モチ が トモ の {足元|あしもと} で {丸|まる}く なって いる 。 {名札|なふだ} に は 、 ちゃんと {名前|なまえ} が ある 。 || Mochi is curled up at Tomo's feet. Her tag has her name on it again.
+:meow
 mochi: ニャー 。 || Meow.
 `, 'ch1/34_mochi');

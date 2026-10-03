@@ -212,7 +212,9 @@ RB.prologueArt = (function () {
     L.outline();
     return { cv: L.canvas(), W, H, cx, y0, y1, hw };
   }
-  const kit = { R, mk, clamp, cached, stage, bandsIn, chochin };
+  // shots with caches of their own register them here, to be dropped with the rest
+  const releasers = [];
+  const kit = { R, mk, clamp, cached, stage, bandsIn, chochin, onRelease: (fn) => releasers.push(fn) };
 
   // ---- shots ---------------------------------------------------------------------------------
   function draw(kind, c, w, h, t, k, o) {
@@ -230,7 +232,7 @@ RB.prologueArt = (function () {
   }
   const SHOTS = {};
 
-  function release() { figs.clear(); layers.clear(); }
+  function release() { figs.clear(); layers.clear(); releasers.forEach((fn) => fn()); }
 
   // cached static layers and traveller frames (tests: the prologue releases them when it ends)
   const stats = () => ({ layers: layers.size, figures: figs.size });

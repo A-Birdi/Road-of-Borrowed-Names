@@ -316,11 +316,19 @@ RB.render = (function () {
     const fx = x + ATS / 2, fy = y + ATS - 2; // the foot anchor on this tile
     const alpha = a.alpha == null ? 1 : Math.max(0, Math.min(1, a.alpha));
     if (alpha < 1) c.globalAlpha = alpha;
-    // contact shadow
-    c.fillStyle = 'rgba(0,0,0,0.25)';
+    // contact shadow (an animal's is the pets' smaller one)
+    const animal = !!(a.look && a.look.pet);
+    c.fillStyle = animal ? 'rgba(0,0,0,0.22)' : 'rgba(0,0,0,0.25)';
     c.beginPath();
-    c.ellipse(fx, fy - 2, 11, 4, 0, 0, Math.PI * 2);
+    c.ellipse(fx, fy - 2, animal ? 8 : 11, animal ? 2.5 : 4, 0, 0, Math.PI * 2);
     c.fill();
+    // an animal among the people (Mochi) is drawn with the pets' rig, like every other animal (57_petworld.js)
+    const pf = a.look && a.look.pet && RB.petWorld && RB.petWorld.actorFrame && RB.petWorld.actorFrame(a, t);
+    if (pf) {
+      c.drawImage(pf.cv, Math.round(fx - pf.ax), Math.round(fy - pf.ay + (a.dy || 0)));
+      if (alpha < 1) c.globalAlpha = 1;
+      return;
+    }
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)

@@ -33,6 +33,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- props (small pxkit sprites; anchor = the base's centre on the counter) ------------------
   const sprites = new Map();
   const sprite = (key, build) => { let s = sprites.get(key); if (!s) { s = build(); sprites.set(key, s); } return s; };
+  A.kit.onRelease(() => sprites.clear());
   function scaled(sp, Z) {
     if (Z >= 0.999) return sp;
     const s = A.shrink(sp.cv, sp.ax, sp.ay, Z), cv = mk(s.w, s.h), g = cv.getContext('2d'), img = g.createImageData(s.w, s.h);

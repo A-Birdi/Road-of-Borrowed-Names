@@ -196,6 +196,9 @@ RB.world = (function () {
   // between exits that serve that journey. An authored npc.leaveTo (a map id)
   // says it outright. With no known destination they go through the nearest
   // way out, and test runs list those (RB.test.departures) for review.
+  // Someone who neither walks off nor walks in — picked up and carried, set
+  // down beside someone — says so with npc.leave: 'here' / npc.arrive: 'here':
+  // they fade out (or in) where they are.
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
   // the maps where `person` appears now (any: where the story ever puts them)
   function mapsWith(person, except, any) {
@@ -305,6 +308,11 @@ RB.world = (function () {
   // i: the order of people leaving at once (each sets off a moment after the last)
   function leave(a, i) {
     if (!onScreen(a)) return;
+    if (a.def && a.def.leave === 'here') {
+      noteDeparture(a, { goals: new Set(), to: null, reason: 'authored: gone where they were' }, [], false);
+      W.leavers.push(Object.assign({}, a, { mv: null, route: [], goals: null, alpha: 1, fading: true, wait: 0 }));
+      return;
+    }
     const way = wayFor(a, false);
     // already standing in the doorway they need: they just go
     const there = way.goals && way.goals.has(a.x + ',' + a.y);
@@ -314,6 +322,11 @@ RB.world = (function () {
   }
   function arriveOnFoot(a) {
     if (!onScreen(a)) return;
+    if (a.def && a.def.arrive === 'here') {
+      noteDeparture(a, { goals: new Set(), to: W.map.id, reason: 'authored: appears where they are' }, [], true);
+      a.alpha = 0; a.fadeIn = true;
+      return;
+    }
     const way = wayFor(a, true);
     const route = (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18);
     noteDeparture(a, route && way.goals ? way : Object.assign({}, way, { goals: null }), route, true);

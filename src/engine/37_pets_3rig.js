@@ -36,6 +36,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ginger: { en: 'Ginger', pattern: 'tabby', base: '#d9893f', stripe: '#a95d2c', under: '#f3ddb8', eye: '#9aa83a', nose: '#d98a86', pad: '#c9787a', inner: '#e0a49a' },
       gray: { en: 'Gray', pattern: 'tabby', base: '#8f929b', stripe: '#565962', under: '#e2e0dc', eye: '#c9a53c', nose: '#b87c80', pad: '#a8707a', inner: '#d7a6a6', bib: true },
       calico: { en: 'Calico', pattern: 'calico', base: '#f1ebdf', patchA: '#d6843c', patchB: '#3b3334', under: '#f6f1e8', eye: '#b5943a', nose: '#e2a2a2', pad: '#d99a9a', inner: '#e8b0aa' },
+      // Mochi, Tomo's cat in Reedwake (an npc, never a pet's look: not in LOOK_ORDER): white, red collar
+      mochi: { en: 'White', pattern: 'plain', base: '#ece4d6', under: '#faf6ee', eye: '#aab83e', nose: '#e2a0a0', pad: '#d99a9a', inner: '#eab0aa', collar: '#c8463c' },
     },
     dog: {
       cream: { en: 'Cream', pattern: 'urajiro', base: '#e3c690', under: '#f7eedc', ear: '#c69a5c', eye: '#3a2618', nose: '#2e2628', inner: '#e8b8a0' },
@@ -69,7 +71,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const th = [0.72, 0.34, -0.06, -0.45];
     M = { L };
     if (sp === 'cat') {
-      const S = ramp(L.stripe || L.base), PA = ramp(L.patchA || L.base), PB = ramp(L.patchB || L.base);
+      const S = ramp(L.stripe || L.base), PA = ramp(L.patchA || L.base), PB = ramp(L.patchB || L.base), CO = L.collar ? ramp(L.collar) : null;
       const tabby = L.pattern === 'tabby', calico = L.pattern === 'calico';
       // underside and chin/bib in the lighter coat
       const under = (info) => {
@@ -87,6 +89,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       M.fur = {
         R, th, pat(info, v) {
           const l = info.l, p = info.part;
+          if (CO && p === 'neck' && info.u != null && info.u > 0.28 && info.u < 0.6) return { R: CO };
           if (!l) return 0;
           if (calico) {
             // patches placed on each part (stable in every view): orange on the head, back and tail, dark over them

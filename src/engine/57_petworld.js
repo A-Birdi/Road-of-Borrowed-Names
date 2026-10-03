@@ -14,7 +14,8 @@
  * - when you stop it settles near you on a free tile (not a door, exit,
  *   trigger, person or the tile in front of you), sits, and after a while lies
  *   down; small idle movements are timed from its own random stream, never
- *   the game's;
+ *   the game's; at rest it breathes and its tail keeps moving, on its own beat
+ *   (so do the animals not yet met, between the moments their scenes author);
  * - hidden before it has joined you, when "Show pet in exploration" is off,
  *   on maps that hide the companion, and in scenes that ask (!hook pet_hide /
  *   pet_show; restored when the scene ends).
@@ -264,6 +265,57 @@ RB.petWorld = (function () {
     if (P.idle && P.t >= P.idle.at && !P.idle.kind) P.idle.kind = P.idle.next;
     void dt;
   }
+  // ---- life: a resting animal breathes and its tail keeps moving -------------------------------------------------
+  // Like the people, each on its own beat: a breath with their shape (settle, a beat, rise, a beat) and, all
+  // the while, the tail — the cat's slow swish (the tip a beat behind; sitting, it lifts as it sweeps), the
+  // dog's gentle wag, the tanuki's sway, the bird's flick now and then. One cycle per species (ms, phases):
+  // breath and tail step through it together, so a posture has only a handful of frames (the art caches by
+  // pose); lying, the cycle is slower. Only at rest (never walking, flying or acting), never over a tail
+  // movement a scene authored, and never with reduced motion.
+  const LIFE = {
+    cat: { cycle: 2800, n: 8, side: [26, 20, 14] },  // side: standing, sitting, lying (degrees)
+    tanuki: { cycle: 3000, n: 6, side: [14, 12, 8] },
+    dog: { cycle: 1200, n: 6, amp: [0.35, 0.35, 0.2] },
+    bird: { cycle: 2200, n: 8 },
+  };
+  const BREATH = { 6: [0, 0, 0.5, 1, 1, 0.5], 8: [0, 0, 0, 0.5, 1, 1, 1, 0.5] };   // settle, a beat, rise, a beat
+  function life(sp, po, t, off) {
+    const L = LIFE[sp];
+    if (!L || RB.game.reducedMotion() || po.gait || po.hopping || po.flap || (po.wing || 0) > 0.5) return po;
+    const lie = (po.lie || 0) > 0.5, sit = !lie && (po.sit || 0) > 0.5, ix = lie ? 2 : sit ? 1 : 0;
+    const per = L.cycle * (lie ? 1.4 : 1), q = Math.floor((((t + off) % per) / per) * L.n), a = (2 * Math.PI * q) / L.n;
+    if (po.breath == null) po.breath = BREATH[L.n][q];
+    if (po.tSide || po.tFlick || po.wag || po.tUp) return po;
+    if (sp === 'dog') po.wag = Math.round(L.amp[ix] * Math.sin(a) * 100) / 100;
+    else if (sp === 'bird') po.tUp = q === 0 ? 14 : q === 2 ? 10 : 0;
+    else {
+      po.tSide = Math.round(L.side[ix] * Math.sin(a));
+      po.tFlick = Math.round((lie ? 6 : 12) * Math.sin(a - 0.9));
+      if (sit) po.tUp = Math.round(6 + 6 * Math.sin(a));
+    }
+    return po;
+  }
+  const lifeOff = (id) => { let h = 7; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 5000; };
+  // ---- an animal among the people ---------------------------------------------------------------------------
+  // An npc whose look is { pet: species, look, rest: [sit ms, lie ms] } (Mochi) is drawn with the pets' rig,
+  // the same animal as every other: walking when it moves, and at rest standing, then sitting, then lying
+  // (found lying), breathing and moving its tail (life, above); it blinks when the world's blink says so.
+  function actorFrame(a, t) {
+    const L = a.look, sp = L && L.pet;
+    if (!sp || !RB.petArt || !RB.petArt.LOOKS[sp]) return null;
+    let po;
+    if (a.mv) { po = { gait: 'walk', ph: RB.game.reducedMotion() ? 0 : (t / 380) % 1 }; a.restAt = null; a.walked = true; }
+    else {
+      // found already at rest (as you arrive, it is lying where it was); after a walk it settles again
+      if (a.restAt == null) a.restAt = a.walked ? t : -1e9;
+      const r = t - a.restAt, [sitAt, lieAt] = L.rest || [2500, 14000];
+      po = r >= lieAt ? { lie: 1 } : r >= sitAt ? { sit: 1 } : {};
+      if (a.blinkT != null && a.blinkT < 0) po.blink = 1;
+      po = life(sp, po, t, lifeOff(a.id));
+    }
+    a.pose = po;
+    return RB.petArt.frame(sp, L.look, { kind: 'world', dir: a.dir || 'down' }, po);
+  }
   // ---- the pose for this moment ------------------------------------------------------------------------------
   function poseNow() {
     const po = {};
@@ -300,7 +352,7 @@ RB.petWorld = (function () {
       if (I.kind === 'tilt') po.hr = 18 * I.side;
       if (I.kind === 'ruffle') po.fluff = 1;
     }
-    return po;
+    return life(sp, po, P.t, 1300);
   }
   // ---- animals not yet met (the pet vignettes, src/content/pets/) ------------------------------------------------
   // def: { id, species, look, map, show(s) -> bool, place(s, t, reduce) -> { x, y (tiles, may be fractional),
@@ -316,7 +368,8 @@ RB.petWorld = (function () {
       let q;
       try { if (!d.show(st)) continue; q = d.place(st, t, reduce); } catch (e) { continue; }
       if (!q) continue;
-      const f = RB.petArt.frame(d.species, d.look || RB.petArt.LOOK_ORDER[d.species][0], { kind: 'world', dir: q.dir || 'down' }, q.po || {});
+      const po = life(d.species, Object.assign({}, q.po || {}), t, lifeOff(d.id));
+      const f = RB.petArt.frame(d.species, d.look || RB.petArt.LOOK_ORDER[d.species][0], { kind: 'world', dir: q.dir || 'down' }, po);
       if (!f) continue;
       const up = q.up || 0, a = q.alpha == null ? 1 : q.alpha;
       list.push({
@@ -329,7 +382,7 @@ RB.petWorld = (function () {
           c.drawImage(f.cv, Math.round(x - f.ax), Math.round(y - f.ay - up));
           if (a < 1) c.globalAlpha = 1;
           d.drawn = (d.drawn || 0) + 1;
-          d.last = { x: q.x, y: q.y, dir: q.dir, po: q.po };
+          d.last = { x: q.x, y: q.y, dir: q.dir, po };
         },
       });
     }
@@ -479,5 +532,5 @@ RB.petWorld = (function () {
       } catch (err) { /* cosmetic */ }
     });
   }
-  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, WILD, _P: P };
+  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, actorFrame, WILD, _P: P };
 })();

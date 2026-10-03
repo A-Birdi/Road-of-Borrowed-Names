@@ -28567,6 +28567,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ginger: { en: 'Ginger', pattern: 'tabby', base: '#d9893f', stripe: '#a95d2c', under: '#f3ddb8', eye: '#9aa83a', nose: '#d98a86', pad: '#c9787a', inner: '#e0a49a' },
       gray: { en: 'Gray', pattern: 'tabby', base: '#8f929b', stripe: '#565962', under: '#e2e0dc', eye: '#c9a53c', nose: '#b87c80', pad: '#a8707a', inner: '#d7a6a6', bib: true },
       calico: { en: 'Calico', pattern: 'calico', base: '#f1ebdf', patchA: '#d6843c', patchB: '#3b3334', under: '#f6f1e8', eye: '#b5943a', nose: '#e2a2a2', pad: '#d99a9a', inner: '#e8b0aa' },
+      // Mochi, Tomo's cat in Reedwake (an npc, never a pet's look: not in LOOK_ORDER): white, red collar
+      mochi: { en: 'White', pattern: 'plain', base: '#ece4d6', under: '#faf6ee', eye: '#aab83e', nose: '#e2a0a0', pad: '#d99a9a', inner: '#eab0aa', collar: '#c8463c' },
     },
     dog: {
       cream: { en: 'Cream', pattern: 'urajiro', base: '#e3c690', under: '#f7eedc', ear: '#c69a5c', eye: '#3a2618', nose: '#2e2628', inner: '#e8b8a0' },
@@ -28600,7 +28602,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const th = [0.72, 0.34, -0.06, -0.45];
     M = { L };
     if (sp === 'cat') {
-      const S = ramp(L.stripe || L.base), PA = ramp(L.patchA || L.base), PB = ramp(L.patchB || L.base);
+      const S = ramp(L.stripe || L.base), PA = ramp(L.patchA || L.base), PB = ramp(L.patchB || L.base), CO = L.collar ? ramp(L.collar) : null;
       const tabby = L.pattern === 'tabby', calico = L.pattern === 'calico';
       // underside and chin/bib in the lighter coat
       const under = (info) => {
@@ -28618,6 +28620,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       M.fur = {
         R, th, pat(info, v) {
           const l = info.l, p = info.part;
+          if (CO && p === 'neck' && info.u != null && info.u > 0.28 && info.u < 0.6) return { R: CO };
           if (!l) return 0;
           if (calico) {
             // patches placed on each part (stable in every view): orange on the head, back and tail, dark over them
@@ -29829,6 +29832,9 @@ RB.world = (function () {
   // between exits that serve that journey. An authored npc.leaveTo (a map id)
   // says it outright. With no known destination they go through the nearest
   // way out, and test runs list those (RB.test.departures) for review.
+  // Someone who neither walks off nor walks in — picked up and carried, set
+  // down beside someone — says so with npc.leave: 'here' / npc.arrive: 'here':
+  // they fade out (or in) where they are.
   const personOf = (n) => (n.def && (n.def.char || n.def.id)) || n.id;
   // the maps where `person` appears now (any: where the story ever puts them)
   function mapsWith(person, except, any) {
@@ -29938,6 +29944,11 @@ RB.world = (function () {
   // i: the order of people leaving at once (each sets off a moment after the last)
   function leave(a, i) {
     if (!onScreen(a)) return;
+    if (a.def && a.def.leave === 'here') {
+      noteDeparture(a, { goals: new Set(), to: null, reason: 'authored: gone where they were' }, [], false);
+      W.leavers.push(Object.assign({}, a, { mv: null, route: [], goals: null, alpha: 1, fading: true, wait: 0 }));
+      return;
+    }
     const way = wayFor(a, false);
     // already standing in the doorway they need: they just go
     const there = way.goals && way.goals.has(a.x + ',' + a.y);
@@ -29947,6 +29958,11 @@ RB.world = (function () {
   }
   function arriveOnFoot(a) {
     if (!onScreen(a)) return;
+    if (a.def && a.def.arrive === 'here') {
+      noteDeparture(a, { goals: new Set(), to: W.map.id, reason: 'authored: appears where they are' }, [], true);
+      a.alpha = 0; a.fadeIn = true;
+      return;
+    }
     const way = wayFor(a, true);
     const route = (way.goals && routeOut(a.x, a.y, 160, way.goals)) || routeOut(a.x, a.y, 18);
     noteDeparture(a, route && way.goals ? way : Object.assign({}, way, { goals: null }), route, true);
@@ -31876,7 +31892,8 @@ RB.questGuide = (function () {
  * - when you stop it settles near you on a free tile (not a door, exit,
  *   trigger, person or the tile in front of you), sits, and after a while lies
  *   down; small idle movements are timed from its own random stream, never
- *   the game's;
+ *   the game's; at rest it breathes and its tail keeps moving, on its own beat
+ *   (so do the animals not yet met, between the moments their scenes author);
  * - hidden before it has joined you, when "Show pet in exploration" is off,
  *   on maps that hide the companion, and in scenes that ask (!hook pet_hide /
  *   pet_show; restored when the scene ends).
@@ -32126,6 +32143,57 @@ RB.petWorld = (function () {
     if (P.idle && P.t >= P.idle.at && !P.idle.kind) P.idle.kind = P.idle.next;
     void dt;
   }
+  // ---- life: a resting animal breathes and its tail keeps moving -------------------------------------------------
+  // Like the people, each on its own beat: a breath with their shape (settle, a beat, rise, a beat) and, all
+  // the while, the tail — the cat's slow swish (the tip a beat behind; sitting, it lifts as it sweeps), the
+  // dog's gentle wag, the tanuki's sway, the bird's flick now and then. One cycle per species (ms, phases):
+  // breath and tail step through it together, so a posture has only a handful of frames (the art caches by
+  // pose); lying, the cycle is slower. Only at rest (never walking, flying or acting), never over a tail
+  // movement a scene authored, and never with reduced motion.
+  const LIFE = {
+    cat: { cycle: 2800, n: 8, side: [26, 20, 14] },  // side: standing, sitting, lying (degrees)
+    tanuki: { cycle: 3000, n: 6, side: [14, 12, 8] },
+    dog: { cycle: 1200, n: 6, amp: [0.35, 0.35, 0.2] },
+    bird: { cycle: 2200, n: 8 },
+  };
+  const BREATH = { 6: [0, 0, 0.5, 1, 1, 0.5], 8: [0, 0, 0, 0.5, 1, 1, 1, 0.5] };   // settle, a beat, rise, a beat
+  function life(sp, po, t, off) {
+    const L = LIFE[sp];
+    if (!L || RB.game.reducedMotion() || po.gait || po.hopping || po.flap || (po.wing || 0) > 0.5) return po;
+    const lie = (po.lie || 0) > 0.5, sit = !lie && (po.sit || 0) > 0.5, ix = lie ? 2 : sit ? 1 : 0;
+    const per = L.cycle * (lie ? 1.4 : 1), q = Math.floor((((t + off) % per) / per) * L.n), a = (2 * Math.PI * q) / L.n;
+    if (po.breath == null) po.breath = BREATH[L.n][q];
+    if (po.tSide || po.tFlick || po.wag || po.tUp) return po;
+    if (sp === 'dog') po.wag = Math.round(L.amp[ix] * Math.sin(a) * 100) / 100;
+    else if (sp === 'bird') po.tUp = q === 0 ? 14 : q === 2 ? 10 : 0;
+    else {
+      po.tSide = Math.round(L.side[ix] * Math.sin(a));
+      po.tFlick = Math.round((lie ? 6 : 12) * Math.sin(a - 0.9));
+      if (sit) po.tUp = Math.round(6 + 6 * Math.sin(a));
+    }
+    return po;
+  }
+  const lifeOff = (id) => { let h = 7; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h % 5000; };
+  // ---- an animal among the people ---------------------------------------------------------------------------
+  // An npc whose look is { pet: species, look, rest: [sit ms, lie ms] } (Mochi) is drawn with the pets' rig,
+  // the same animal as every other: walking when it moves, and at rest standing, then sitting, then lying
+  // (found lying), breathing and moving its tail (life, above); it blinks when the world's blink says so.
+  function actorFrame(a, t) {
+    const L = a.look, sp = L && L.pet;
+    if (!sp || !RB.petArt || !RB.petArt.LOOKS[sp]) return null;
+    let po;
+    if (a.mv) { po = { gait: 'walk', ph: RB.game.reducedMotion() ? 0 : (t / 380) % 1 }; a.restAt = null; a.walked = true; }
+    else {
+      // found already at rest (as you arrive, it is lying where it was); after a walk it settles again
+      if (a.restAt == null) a.restAt = a.walked ? t : -1e9;
+      const r = t - a.restAt, [sitAt, lieAt] = L.rest || [2500, 14000];
+      po = r >= lieAt ? { lie: 1 } : r >= sitAt ? { sit: 1 } : {};
+      if (a.blinkT != null && a.blinkT < 0) po.blink = 1;
+      po = life(sp, po, t, lifeOff(a.id));
+    }
+    a.pose = po;
+    return RB.petArt.frame(sp, L.look, { kind: 'world', dir: a.dir || 'down' }, po);
+  }
   // ---- the pose for this moment ------------------------------------------------------------------------------
   function poseNow() {
     const po = {};
@@ -32162,7 +32230,7 @@ RB.petWorld = (function () {
       if (I.kind === 'tilt') po.hr = 18 * I.side;
       if (I.kind === 'ruffle') po.fluff = 1;
     }
-    return po;
+    return life(sp, po, P.t, 1300);
   }
   // ---- animals not yet met (the pet vignettes, src/content/pets/) ------------------------------------------------
   // def: { id, species, look, map, show(s) -> bool, place(s, t, reduce) -> { x, y (tiles, may be fractional),
@@ -32178,7 +32246,8 @@ RB.petWorld = (function () {
       let q;
       try { if (!d.show(st)) continue; q = d.place(st, t, reduce); } catch (e) { continue; }
       if (!q) continue;
-      const f = RB.petArt.frame(d.species, d.look || RB.petArt.LOOK_ORDER[d.species][0], { kind: 'world', dir: q.dir || 'down' }, q.po || {});
+      const po = life(d.species, Object.assign({}, q.po || {}), t, lifeOff(d.id));
+      const f = RB.petArt.frame(d.species, d.look || RB.petArt.LOOK_ORDER[d.species][0], { kind: 'world', dir: q.dir || 'down' }, po);
       if (!f) continue;
       const up = q.up || 0, a = q.alpha == null ? 1 : q.alpha;
       list.push({
@@ -32191,7 +32260,7 @@ RB.petWorld = (function () {
           c.drawImage(f.cv, Math.round(x - f.ax), Math.round(y - f.ay - up));
           if (a < 1) c.globalAlpha = 1;
           d.drawn = (d.drawn || 0) + 1;
-          d.last = { x: q.x, y: q.y, dir: q.dir, po: q.po };
+          d.last = { x: q.x, y: q.y, dir: q.dir, po };
         },
       });
     }
@@ -32341,7 +32410,7 @@ RB.petWorld = (function () {
       } catch (err) { /* cosmetic */ }
     });
   }
-  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, WILD, _P: P };
+  return { update, push, state, act, come, face: (who) => { const a = RB.world.actorById(who); if (a) face(a); }, place: () => { P.placed = false; }, addWild, wild, nearTile, faceFrom, actorFrame, WILD, _P: P };
 })();
 
 
@@ -33744,11 +33813,19 @@ RB.render = (function () {
     const fx = x + ATS / 2, fy = y + ATS - 2; // the foot anchor on this tile
     const alpha = a.alpha == null ? 1 : Math.max(0, Math.min(1, a.alpha));
     if (alpha < 1) c.globalAlpha = alpha;
-    // contact shadow
-    c.fillStyle = 'rgba(0,0,0,0.25)';
+    // contact shadow (an animal's is the pets' smaller one)
+    const animal = !!(a.look && a.look.pet);
+    c.fillStyle = animal ? 'rgba(0,0,0,0.22)' : 'rgba(0,0,0,0.25)';
     c.beginPath();
-    c.ellipse(fx, fy - 2, 11, 4, 0, 0, Math.PI * 2);
+    c.ellipse(fx, fy - 2, animal ? 8 : 11, animal ? 2.5 : 4, 0, 0, Math.PI * 2);
     c.fill();
+    // an animal among the people (Mochi) is drawn with the pets' rig, like every other animal (57_petworld.js)
+    const pf = a.look && a.look.pet && RB.petWorld && RB.petWorld.actorFrame && RB.petWorld.actorFrame(a, t);
+    if (pf) {
+      c.drawImage(pf.cv, Math.round(fx - pf.ax), Math.round(fy - pf.ay + (a.dy || 0)));
+      if (alpha < 1) c.globalAlpha = 1;
+      return;
+    }
     const still = RB.game.reducedMotion();
     const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
     // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
@@ -44976,7 +45053,9 @@ RB.prologueArt = (function () {
     L.outline();
     return { cv: L.canvas(), W, H, cx, y0, y1, hw };
   }
-  const kit = { R, mk, clamp, cached, stage, bandsIn, chochin };
+  // shots with caches of their own register them here, to be dropped with the rest
+  const releasers = [];
+  const kit = { R, mk, clamp, cached, stage, bandsIn, chochin, onRelease: (fn) => releasers.push(fn) };
 
   // ---- shots ---------------------------------------------------------------------------------
   function draw(kind, c, w, h, t, k, o) {
@@ -44994,7 +45073,7 @@ RB.prologueArt = (function () {
   }
   const SHOTS = {};
 
-  function release() { figs.clear(); layers.clear(); }
+  function release() { figs.clear(); layers.clear(); releasers.forEach((fn) => fn()); }
 
   // cached static layers and traveller frames (tests: the prologue releases them when it ends)
   const stats = () => ({ layers: layers.size, figures: figs.size });
@@ -45039,6 +45118,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- props (small pxkit sprites; anchor = the base's centre on the counter) ------------------
   const sprites = new Map();
   const sprite = (key, build) => { let s = sprites.get(key); if (!s) { s = build(); sprites.set(key, s); } return s; };
+  A.kit.onRelease(() => sprites.clear());
   function scaled(sp, Z) {
     if (Z >= 0.999) return sp;
     const s = A.shrink(sp.cv, sp.ax, sp.ay, Z), cv = mk(s.w, s.h), g = cv.getContext('2d'), img = g.createImageData(s.w, s.h);
@@ -81248,7 +81328,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
-  C.chars.mochi = { name: { en: 'Mochi', jp: 'モチ' }, voice: { pitch: 1.4 }, look: { custom: 'cat', col: '#e8d8c0' },
+  C.chars.mochi = { name: { en: 'Mochi', jp: 'モチ' }, voice: { pitch: 1.4 }, look: { pet: 'cat', look: 'mochi', rest: [1500, 6000] },
     portrait: { kind: 'cat', skin: ['#e8d8c0', '#c8b8a0'], hair: ['#e8d8c0', '#d8c8b0', '#fff8ec'], cloth: ['#c86a5a', '#a85a4a', '#e8c060'], style: 'short', eyes: 'round', bg: '#2e3a2a' } };
   C.quests.rw_mochi = { chapter: 1, title: { jp: 'モチ と いう {猫|ねこ}', en: 'A Cat Called Mochi' },
     stages: [
@@ -81270,8 +81350,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { kind: 'write', item: 'v:モチ', prompt: { en: 'Write the name on the tag (katakana).' }, answer: 'モチ', accept: ['モチ'], mode: 'kana', script: 'kata' }],
     } };
   C.maps['rw.village'].npcs.push(
-    { id: 'mochi', x: 46, y: 20, dir: 'left', wander: 1, if: 'rw_echo_done&!rw_mochi_carried&!quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_find' }] },
-    { id: 'mochi_home', char: 'mochi', x: 8, y: 25, dir: 'down', wander: 1, if: 'quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_home' }] }
+    // she stays where she is curled up (the scenes say so); picked up, she is in your arms (gone
+    // where she was, not off through the nearest door); given back, she is set down beside Tomo
+    // (appears there, not from a door)
+    { id: 'mochi', x: 46, y: 20, dir: 'left', leave: 'here', if: 'rw_echo_done&!rw_mochi_carried&!quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_find' }] },
+    { id: 'mochi_home', char: 'mochi', x: 8, y: 25, dir: 'down', arrive: 'here', if: 'quest.rw_mochi=done', talk: [{ scene: 'rw.mochi_home' }] }
   );
   // Tomo's lines: the cat thread starts once the bridge is back
   const tomo = C.maps['rw.village'].npcs.find((n) => n.id === 'tomo');
@@ -81324,7 +81407,12 @@ tomo: これ 、 {昔|むかし} モチ が つけて いた {鈴|すず} 。 �
 tomo: {急|いそ}がない で 。 モチ は もう {逃|に}げない から 。 …… たぶん 。 || No hurry. Mochi won't run off again. …Probably.
 
 @scene rw.mochi_home
+!if rw_night -> night
 narr: モチ が {日向|ひなた} で {伸|の}びて いる 。 {名札|なふだ} に は 、 ちゃんと {名前|なまえ} が ある 。 || Mochi is stretched out in the sun. Her tag has her name on it again.
+!goto meow
+:night
+narr: モチ が トモ の {足元|あしもと} で {丸|まる}く なって いる 。 {名札|なふだ} に は 、 ちゃんと {名前|なまえ} が ある 。 || Mochi is curled up at Tomo's feet. Her tag has her name on it again.
+:meow
 mochi: ニャー 。 || Meow.
 `, 'ch1/34_mochi');
 
