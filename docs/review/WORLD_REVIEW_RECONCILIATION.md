@@ -18,7 +18,8 @@ below so the evidence can be matched.
 | Merged since | Animated dialogue portraits (`1be42bd`, pushed with `fe75862`) |
 | Also merged | Harmony art contract v2 (`996d195`); landmarks, bakery, floorboard and headroom (`089ade7`, plus `7b4ae3c`) |
 | Also merged | Overworld actor system (`4a9c357`) and Masaru's kneading |
-| Unmerged worker branches this ledger refers to | Harmony cut-in overlay (`18cf5ea`; the worker is still running) |
+| Also merged | Harmony cut-in overlay and the four stage performances (fast-forward to `95f4708`) |
+| Unmerged worker branches | none |
 
 **Status words** follow the packet:
 - still observed;
@@ -190,10 +191,36 @@ This is a safeguard, not a defect.
 
 ## Harmony cut-in: two separate gates
 
-| Gate | Status |
-|---|---|
-| **Technical integration** | **Contract v2 merged in `996d195`:** `RB.harmonyContract`, a registry export (`docs/harmony/contract/registry.json`: 86 required and 33 optional asset keys), a dependency-free importer with explicit material masks, the raster path with whole-bust fallback to the code busts, build embedding, and a synthetic sample that assembles two materially different player looks with Suzu across six states (`docs/screenshots/harmony/raster_sample/`, labelled SYNTHETIC SAMPLE — not art). The cut-in overlay, with its art-timeline support, is still on its worker branch. |
-| **Robin's visual approval** | **Not approved.** The code busts are a provisional fallback. The artist brief is rewritten to contract v2 (`docs/harmony/ASSET_BRIEF.md`; the published page is updated). Batch 1 (26 files) is the proof: Suzu and two player looks. |
+### Technical integration: merged
+
+- **Contract v2** (`996d195`):
+  - `RB.harmonyContract`;
+  - the registry export, with 86 required and 33 optional asset keys;
+  - the importer with explicit material masks;
+  - the raster path with whole-bust fallback;
+  - build embedding;
+  - a synthetic sample.
+- **The cut-in overlay and the four stage performances** (`95f4708`):
+  - **When it plays:** only on a committed technique's own animation.
+  - **Timing:** Normal enters at 0, holds at 183 and fades from 567 ms, gone by 783 ms. Fast is gone by 691 ms. Instant shows no portrait.
+  - **Setting:** "Harmony portrait flourish", On by default.
+  - **States:** the art's timeline plays prep_a → … → settle_b; reduced motion shows settle_b only.
+  - **Stage performances:** Nao `opening`, Mio `draught`, Ren `ward_plane`, Suzu `curtain` (a full turned twirl), and the player's rally terminals.
+  - **Totals:** 2.29–2.45 s at Normal; groups under 3.0 s.
+  - **Rules unchanged:** identical with the portrait On or Off across 96 configurations.
+  - **Tests:** harmony_cutin 11/11, plus the battle suites. VALIDATION.md has the lead's runs.
+
+### Robin's visual approval: not approved
+
+- The code busts remain a provisional fallback.
+- The artist brief is at contract v2; the published page is updated.
+- Batch 1 (26 files) is the proof.
+
+### To check on Batch 1's real art
+
+- **Face sizes against the 64-CSS-px target.** The overlay measured the sample's faces, which are code faces of 33 art px. Real faces fill the template's 52-px box, so they should come out at 52 CSS px at 1× and 69 at the phone's ×4/3.
+- **Your ~2048 × 1046 view getting the 2× pair.**
+- **Creature protection.** Creatures are protected by their box, not their silhouette, so with three creatures at 1280×720 the portrait is left out.
 
 ## How this ledger is updated
 
