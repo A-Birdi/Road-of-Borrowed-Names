@@ -51,14 +51,21 @@ hoshino[smile]: もう {少|すこ}し 、 ここ で {灯|あか}り を {見|�
 !lesson kana
 !challenge sb.c_name
 !if var._res=0 -> later
+# Illustrated (src/ui/43d_seq_ch4.js; docs/expressive/SHOTS.md §4): from the moment the name holds to the light over the valley; the world again for the reply.
+!sequence ch4.lamp begin
+!shot akari
 !set sb_name_done
 !sfx lantern
 narr: {笠|かさ} に {書|か}いた {字|じ} が 、 {滲|にじ}まず に {残|のこ}った 。 「 あかり 」 。 || The letters you wrote on the shade stay, without running: "Akari".
+!shot akari voice
 sb_lampvoice: …… あかり 。 そう 、 あかり 。 {待|ま}って いた の は 、 あかり 。 || …Akari. Yes. Akari. It was Akari I was waiting for.
+!shot akari warm
 narr: {青|あお}い {炎|ほのお} が 、 ゆっくり と {色|いろ} を {変|か}えて いく 。 {黄色|きいろ} に 、 {橙|だいだい} に 。 || The blue flame slowly changes colour — to yellow, then orange.
 hoshino: …… ありがとう 。 || …Thank you.
+!shot ask
 hoshino: {火|ひ} を {入|い}れる {前|まえ} に 、 {一|ひと}つ {聞|き}いて も いい かな 。 || Before I light it — may I ask you one thing?
 hoshino: この {灯|あか}り が {言|い}って いた こと が 、 {耳|みみ} に {残|のこ}って いる 。 「 {誰|だれ} も {見|み}て いない {夜|よる} は 、 もっと {寒|さむ}い 」 。 || What the lamp said stays in my ears. "Nights when no one is watching are colder still."
+!shot ask look
 hoshino[think]: わたし は {何年|なんねん} も 、 あの {子|こ} が {見|み}て いる と {信|しん}じて 、 {灯|あか}り を ともして きた 。 {本当|ほんとう} に {見|み}て いた んだ と 、 {手紙|てがみ} で わかった 。 || For years I lit this lamp believing she was watching. The letters told me she truly was.
 hoshino: でも …… あの {子|こ} が {待|ま}って いる の は 、 {灯|あか}り だろう か 。 {灯|あか}り の {向|む}こう の {誰|だれ} か だろう か 。 || But… is it the lamp she's waiting for? Or someone on the other side of it?
 hoshino: わたし は ここ で {灯|あか}り を {守|まも}る べき か 。 それとも {山|やま} を {下|くだ}って 、 {会|あ}い に {行|い}く べき か 。 {君|きみ} なら 、 どう {言|い}う ？ || Should I stay here and keep the lamp? Or go down the mountain and see her? What would you say?
@@ -68,8 +75,11 @@ hoshino: わたし は ここ で {灯|あか}り を {守|まも}る べき か
 * {灯|あか}り を {人|ひと} に {預|あず}けて も 、 {約束|やくそく} は {消|き}えません || You could leave the lamp in someone's hands, and the promise wouldn't go out. -> both
 :stay
 !set sb_hoshino_stays
+!shot stay
 hoshino: …… そう だ ね 。 {見|み}られる ため に 、 ともして きた わけ じゃ なかった 。 あの {子|こ} が {帰|かえ}る {道|みち} を 、 {明|あか}るく して おきたかった だけ だ 。 || …Yes. I never lit it to be seen. I only wanted the road she'd come home by to be bright.
+!shot stay settle
 hoshino[smile]: ここ に {残|のこ}ろう 。 {毎晩|まいばん} 、 {上|のぼ}る よ 。 {膝|ひざ} が {文句|もんく} を {言|い}って も ね 。 そして {手紙|てがみ} を {書|か}く 。 {灯|あか}り は ここ に ある 、 {急|いそ}がなくて いい 、 と 。 || I'll stay. I'll climb up every night, however my knees complain. And I'll write to her: the lamp is here; there's no need to hurry.
+!shot stay comp
 ?(comp=nao) comp: {急|いそ}がなくて いい 、 か 。 …… {配達人|はいたつにん} が {一番|いちばん} {言|い}われたい {言葉|ことば} だ な 。 || "No need to hurry." …The words a courier most wants to hear.
 ?(comp=mio) comp[smile]: {膝|ひざ} の {薬|くすり} 、 {置|お}いて いきます ね 。 {毎晩|まいばん} {上|のぼ}る なら 、 {必要|ひつよう} です から 。 || I'll leave you something for your knees. If you're climbing every night, you'll need it.
 ?(comp=ren) comp: {誰|だれ} も {見|み}て いない {夜|よる} に ともす {灯|あか}り こそ 、 {灯守|ひもり} の {灯|あか}り です 。 …… {師匠|ししょう} の {受|う}け{売|う}り です が 。 || A lamp lit on the nights no one is watching — that is a keeper's lamp. …My teacher's words, not mine.
@@ -77,9 +87,12 @@ hoshino[smile]: ここ に {残|のこ}ろう 。 {毎晩|まいばん} 、 {上
 !goto light
 :go
 !set sb_hoshino_goes
+!shot go
 hoshino[surprise]: …… わたし {本人|ほんにん} 、 か 。 || …Me, myself.
 hoshino: そう かも しれない 。 {灯|あか}り の {陰|かげ} に 、 わたし は {隠|かく}れて いた の かも しれない な 。 {灯|あか}り を ともして いれば 、 {会|あ}い に {行|い}かなくて も いい 。 そう {思|おも}って いた 。 || Perhaps. Perhaps I've been hiding behind the lamp. As long as I kept it lit, I didn't have to go and see her. That's what I told myself.
+!shot go turn
 hoshino[smile]: {雪|ゆき} が {許|ゆる}したら 、 {下|くだ}ろう 。 {灯|あか}り は …… カンタ と フキ さん に {頼|たの}む 。 {約束|やくそく} を {人|ひと} に {預|あず}ける の は {怖|こわ}い が 、 {怖|こわ}い の は わたし だけ だ 。 || When the snow allows, I'll go down. The lamp… I'll ask Kanta and Fuki. Handing a promise to others frightens me, but I'm the only one it frightens.
+!shot go comp
 ?(comp=nao) comp: {自分|じぶん} で {届|とど}ける の が 、 {一番|いちばん} {確|たし}か だ 。 …… {耳|みみ} が {痛|いた}い な 、 {自分|じぶん} で {言|い}って て 。 || Delivering it yourself is the surest way. …Stings a bit, saying that.
 ?(comp=mio) comp[smile]: {灯落|ひおち} の {坂|さか} は {長|なが}い です 。 {靴|くつ} と {膝|ひざ} の {薬|くすり} 、 {用意|ようい} して おきます ね 。 || The road down to Lanternfall is long. I'll get your boots and something for your knees ready.
 ?(comp=ren) comp: {約束|やくそく} は {灯|あか}り に {宿|やど}り 、 {灯|あか}り は {人|ひと} から {人|ひと} へ {渡|わた}る 。 {名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 。 …… {正|ただ}しい {形|かたち} です 。 || A promise lives in a lamp, and a lamp passes from hand to hand. A name to the lamp, the lamp to people. …That's the proper shape of it.
@@ -87,24 +100,31 @@ hoshino[smile]: {雪|ゆき} が {許|ゆる}したら 、 {下|くだ}ろう �
 !goto light
 :both
 !set sb_hoshino_both
+!shot both
 hoshino[think]: {預|あず}けて も 、 {消|き}えない …… 。 || Leave it with someone, and it won't go out…
+!shot both smile
 hoshino[smile]: そう か 。 {灯|あか}り を {守|まも}る こと と 、 {会|あ}い に {行|い}く こと は 、 {片方|かたほう} を {選|えら}ぶ もの じゃ ない の か 。 || I see. Keeping the lamp and going to see her aren't a matter of choosing one.
 hoshino: {春|はる} まで は 、 わたし が ともす 。 {春|はる} に なったら 、 カンタ と フキ さん に {頼|たの}んで 、 {会|あ}い に {行|い}く 。 そして 、 また {帰|かえ}って くる 。 {欲張|よくば}り だ ね 。 || Until spring, I'll light it. Come spring, I'll ask Kanta and Fuki to keep it and go to see her. And then I'll come back. Greedy of me.
+!shot both comp
 ?(comp=nao) comp[smirk]: {欲張|よくば}り で いい 。 {往復|おうふく} の {配達|はいたつ} は 、 {一番|いちばん} {割|わり} が いい んだ 。 || Greedy's fine. A round-trip delivery pays best.
 ?(comp=mio) comp[laugh]: {欲張|よくば}り な {人|ひと} の ほう が 、 {長生|ながい}き します よ 。 {薬師|くすし} の {経験|けいけん} {上|じょう} です 。 || Greedy people live longer. Speaking from an apothecary's experience.
 ?(comp=ren) comp: {灯|あか}り を {人|ひと} に {預|あず}ける {時間|じかん} も 、 {灯守|ひもり} の {仕事|しごと} の {一部|いちぶ} です 。 {休|やす}む こと も 、 {守|まも}る こと の {一部|いちぶ} 。 || Leaving the lamp in others' care for a while is part of a keeper's work too. Resting is part of keeping.
 ?(comp=suzu) comp: {巡業|じゅんぎょう} と {同|おな}じ だ ね 。 {行|い}って 、 {帰|かえ}って 、 また {行|い}く 。 {幕|まく} は {何度|なんど} でも {上|あ}がる 。 || Same as touring. You go, you come back, you go again. The curtain can rise as many times as you like.
 :light
+!shot flint
 hoshino: …… さあ 、 {火|ひ} を {入|い}れよう 。 || …Now, let's light it.
+!shot flint strike
 narr: ホシノ が {古|ふる}い {火打|ひう}ち{石|いし} を {打|う}つ 。 {小|ちい}さな {火花|ひばな} に 、 あなた は {昨夜|ゆうべ} の {字|じ} を {添|そ}えた 。 {炎|ほのお} が 、 {芯|しん} を {抱|だ}く よう に {立|た}ち{上|あ}がる 。 || Hoshino strikes his old flint. To the tiny spark, you add last night's word. The flame rises as if embracing the wick.
 !sfx light
 !set sb_lamp_lit
 !music sb_lamp
+!shot valley
 narr: {丸屋根|まるやね} の {窓|まど} から 、 {光|ひかり} が {夜|よる} の {山|やま} へ {流|なが}れ{出|だ}した 。 {谷|たに} を {越|こ}え 、 {南東|なんとう} へ 、 {灯落|ひおち} の ほう へ 。 || Light pours from the dome's window out into the mountain night — across the valley, southeast, toward Lanternfall.
 ?(comp=nao) comp[smile]: …… {届|とど}いた な 。 {宛名|あてな} なし でも 、 {届|とど}く もの が ある 。 || …It got there. Some things arrive even without an address.
 ?(comp=mio) comp[smile]: {温|あたた}かい 。 …… ちゃんと 、 {温|あたた}かい {灯|あか}り です 。 || Warm. …A properly warm light.
 ?(comp=ren) comp[smile]: 「 あかり 」 が 、 あかり を ともして いる 。 …… {今|いま} の は {駄洒落|だじゃれ} では ありません 。 {事実|じじつ} です 。 || "Akari" is making light. …That wasn't a pun. It's a fact.
 ?(comp=suzu) comp[laugh]: {照明|しょうめい} 、 よし ！ …… {拍手|はくしゅ} は 、 {下|した} の {村|むら} から {聞|き}こえて くる はず だ よ 。 || Lights — go! …The applause should come up from the village below.
+!sequence ch4.lamp end
 !call sb.lamp_reply
 !end
 :later
@@ -114,10 +134,16 @@ hoshino: …… {急|いそ}がなくて いい 。 {灯|あか}り は 、 も�
 hoshino: {手紙|てがみ} を {書|か}こう 。 {灯|あか}り の {下|した} で 。 …… {言葉|ことば} を {選|えら}ぶ の を 、 {手伝|てつだ}って くれる かい 。 || I'll write the letter. Here, under the lamp. …Will you help me choose the words?
 !challenge sb.c_reply
 !if var._res=0 -> later
+# Illustrated (src/ui/43d_seq_ch4.js; SHOTS.md §4, the last shots): the envelope sealed with the address left blank, then given; the world again before the fade.
+!sequence ch4.reply begin
+!shot seal
 narr: ホシノ は {最後|さいご} の {一行|いちぎょう} を {書|か}き 、 {丁寧|ていねい} に {封|ふう} を した 。 {宛名|あてな} の {欄|らん} は 、 {空|あ}けた まま だ 。 || Hoshino writes the last line and seals the envelope with care. He leaves the address blank.
+!shot give
 hoshino: {宛名|あてな} は 、 {君|きみ} たち が {灯落|ひおち} で あの {子|こ} を {見|み}つけた とき に {書|か}いて おくれ 。 {君|きみ} たち の {字|じ} なら 、 {消|き}えない だろう 。 || Write the address when you find her in Lanternfall. Your writing won't fade.
+!shot give take
 !give sb_reply_letter
 ?(sb_hoshino_goes) hoshino: わたし が {着|つ}く より 、 きっと {君|きみ} たち の ほう が {早|はや}い 。 {父|ちち} が {行|い}く 、 と {伝|つた}えて おくれ 。 || You'll surely get there before I do. Tell her that her father is coming.
+!sequence ch4.reply end
 !set sb_evening
 !fade out
 !warp sb.hamlet 22 20 up
@@ -162,7 +188,11 @@ narr: {雪見屋|ゆきみや} で {一晩|ひとばん} {休|やす}み 、 {�
 !unset sb_evening
 !set sb_after
 !fade out
+# The faded passage filled (SHOTS.md §7b; src/ui/43d_seq_ch4.js): one shot of the window and the lamp on the mountain; the dark comes back for the morning.
+!sequence ch4.inn begin
+!shot night
 narr: その {夜|よる} は 、 {雪見屋|ゆきみや} の {二階|にかい} で {休|やす}んだ 。 {窓|まど} の {外|そと} で は 、 {山|やま} の {上|うえ} の {灯|あか}り が 、 {朝|あさ} まで {消|き}えなかった 。 || That night you rest upstairs at Yukimiya. Outside the window, the lamp on the mountain stays lit until morning.
+!sequence ch4.inn end
 !heal
 !fade in
 narr: {朝|あさ} に なった 。 {坂|さか} の {下|した} の ほう から 、 シャベル の {音|おと} が {聞|き}こえる 。 ハヤテ が {灯落|ひおち} へ の {道|みち} を {開|あ}けて いる らしい 。 || Morning. From down the slope comes the sound of a shovel: Hayate is clearing the road to Lanternfall.
