@@ -6,6 +6,7 @@
 // of her beats has something real to show.
 // Usage: node tests/e2e/harmony_perf_sheets.mjs [--html path/relative/to/root.html] [--tag after]
 //        [--vp 1280x720,390x844] [--comps nao,mio] [--out dir] [--reduce] (reduced motion)
+//        [--check] (no sheets: the status marks through the performance and the pet's reaction, see below)
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -42,15 +43,17 @@ async function setup(p, o) {
     s.tips = { harmony: 1, harmonyFull: 1, cturn: 1, group: 1 };
     for (const k of ['strike', 'sweep', 'shroud', 'rest', 'heat', 'charge', 'lie', 'mirror', 'plea']) s.tips['intent:' + k] = 1;
     for (const w of s.words) s.tips['word:' + w] = 1;
-    Object.assign(RB.game.settings, { input: 'choice', textSpeed: 'normal', battleAnim: 'normal', reducedMotion: !!o.reduce, battleControls: 'adaptive', intentDisplay: 'adaptive', harmonyFlourish: false, petBattle: true, textScale: 1 });
+    if (o.pet) { RB.pets.meet(s, o.pet); RB.pets.select(s, o.pet); }
+    Object.assign(RB.game.settings, { input: 'choice', textSpeed: 'normal', battleAnim: 'normal', reducedMotion: !!o.reduce, battleControls: 'adaptive', intentDisplay: 'adaptive', harmonyFlourish: !!o.flourish, petBattle: true, textScale: 1 });
     RB.game.applySettings();
-    RB.battleSeq.setTimeScale(0.25);
+    RB.battleSeq.setTimeScale(o.timeScale || 0.25);
     window.__onInit = (st) => {
       st.harmony = st.harmonyMax;
       for (const f of st.foes) { f.knots = f.maxKnots = 6; if (o.cond) Object.assign(f, o.cond); }
       st.knots = st.maxKnots = 6;
       if (o.cond) Object.assign(st, o.cond);
       if (o.pc != null) st.pc = o.pc;
+      if (o.ward) st.ward = Object.assign({}, st.ward, o.ward);
     };
     const place = RB.content.maps['rw.mill1'].foes.find((f) => f.id === 'm1a');
     window.__result = null;
@@ -95,6 +98,39 @@ async function commit(p, comp) {
 
 const { srv, url } = await serve();
 const b = await launch();
+// --check: no sheets — the technique played once per companion at Normal in real time (portrait On, a pet in
+// battle, a ward before each of you so the status marks are drawn throughout), every animation frame recorded:
+// the status marks drawn through every pose of the performance and anchored on the figure (the chest between
+// the head and the feet, near the figure's own foot point), and the pet's reaction to the technique
+if (args.includes('--check')) {
+  const res = {};
+  let bad = 0;
+  for (const comp of comps) {
+    const { p, errors, ctx } = await page(b, url + html, { viewport: { width: 1280, height: 720 } });
+    await setup(p, Object.assign(comp === 'mio' ? { comp, pc: 7, cond: { heat: 2, shroud: true, charged: true } } : { comp }, { reduce, flourish: true, timeScale: 1, pet: 'cat', ward: { pc: 2, comp: 2 } }));
+    await p.evaluate(() => {
+      const R = (window.__CK = { rows: [], pet0: JSON.stringify((((RB.battlePets.stats().stats || {}).families) || {})) });
+      const tick = () => { const st = RB.combat.debug().stage, f = st && st.frame, cur = RB.battleSeq.current(); if (f && cur && cur.kind === 'player') R.rows.push({ pt: cur.t, poses: Object.assign({}, f.poses), marks: (f.marks || []).slice(), a: { comp: st.anchors.comp && { head: st.anchors.comp.head, chest: st.anchors.comp.chest, feet: st.anchors.comp.feet }, pc: st.anchors.pc && { head: st.anchors.pc.head, chest: st.anchors.pc.chest, feet: st.anchors.pc.feet } } }); requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    });
+    await commit(p, comp);
+    for (let i = 0; i < 400 && (await p.evaluate(() => RB.battleSeq.busy())); i++) await wait(p, 25);
+    const r = await p.evaluate(() => ({ rows: window.__CK.rows, pet0: JSON.parse(window.__CK.pet0), pet1: ((RB.battlePets.stats().stats || {}).families) || {} }));
+    const perf = r.rows.filter((x) => /^(anticipate|act|recover):/.test(x.poses.comp || ''));
+    const withWards = perf.filter((x) => x.marks.includes('ward:comp:2') && x.marks.includes('ward:pc:2'));
+    const off = perf.filter((x) => { const A = x.a.comp; return !A || !(A.head.y < A.chest.y && A.chest.y < A.feet.y) || Math.abs(A.chest.x - A.feet.x) > 40; });
+    const poses = [...new Set(perf.map((x) => x.poses.comp))];
+    const tech = (r.pet1.technique || 0) - (r.pet0.technique || 0);
+    res[comp] = { frames: r.rows.length, performanceFrames: perf.length, wardsDrawn: withWards.length, anchorsOff: off.length, poses, petTechniqueReactions: tech, errors };
+    const ok = perf.length > 20 && withWards.length === perf.length && !off.length && tech >= 1 && !errors.length;
+    if (!ok) bad++;
+    console.log((ok ? 'ok ' : 'NOT OK ') + comp + ': ' + JSON.stringify(res[comp]));
+    await ctx.close();
+  }
+  await b.close(); srv.close();
+  fs.writeFileSync(path.join(root, 'tests', 'e2e', 'out', 'harmony_perf_check.json'), JSON.stringify(res, null, 1));
+  process.exit(bad ? 1 : 0);
+}
 const made = [];
 for (const comp of comps) {
   for (const [W, H] of vps) {
