@@ -361,7 +361,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function geomConf(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const tx = Math.round(w * (lay === 'narrow' ? 0.48 : 0.44)), ty = Math.max(Math.round(vb - s(16)), 98);
+    // (an upright phone: higher in the tall frame, the backdrop rising with him)
+    const tx = Math.round(w * (lay === 'narrow' ? 0.48 : 0.44)), ty = lay === 'narrow' ? Math.round(vb - s(150)) : Math.max(Math.round(vb - s(16)), 98);
     return Object.assign(S, { tx, ty });
   }
   const confess = {
@@ -541,7 +542,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== living: Heita and his sickle ===========================================================================
   function geomLiving(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const hx = Math.round(w * (lay === 'narrow' ? 0.4 : 0.36)), hy = Math.max(Math.round(vb + s(8)), 98);
+    const hx = Math.round(w * (lay === 'narrow' ? 0.4 : 0.36)), hy = lay === 'narrow' ? Math.round(vb - s(90)) : Math.max(Math.round(vb + s(8)), 98);
     return Object.assign(S, { hx, hy });
   }
   // a sickle in a fist: the wooden handle, the steel's inner edge catching the light
@@ -602,7 +603,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== ume: close on Ume under the eaves ======================================================================
   function geomUme(w, h, vb) {
     const S = stage(w, h, vb), { s, lay } = S;
-    const ux = Math.round(w * (lay === 'narrow' ? 0.5 : 0.46)), uy = Math.max(Math.round(vb + s(8)), 98);
+    const ux = Math.round(w * (lay === 'narrow' ? 0.5 : 0.46)), uy = lay === 'narrow' ? Math.round(vb - s(170)) : Math.max(Math.round(vb + s(8)), 98);
     return Object.assign(S, { ux, uy });
   }
   function eavesStatic(G) {

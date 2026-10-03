@@ -224,6 +224,17 @@ branch actually taken. Skip: confirm, then stops at the challenge (line 31) and 
 answers either. Return: `!sequence co.assembly end` after 66; state lines 67–70; `co.festival_begin` begins
 with its own `!fade out` and `!card`, so the world returns through that transition.
 
+**As built** (`src/ui/43c_seq_ch3.js`, sequence `ch3.assembly`, wave 2): shots `dusk` (phases `murmur` on 14,
+`fire` on 15), `confess` (`lower`, `ask` on 22), `voices` (`fusa`, `nobu`, `ume`, `goro`, `bell` only on
+`?(co_bell_rung)`, `eyes` on 29), the branch shots `names` (`names`, `goro` on 40), `living` (`tamotsu`, `sickle`
+on 45), `ume` (`ume`, `up` on 50), then `hands` (`two`, `fusa` on 54, `all` on 55), `ink` (`write`, `sink` on 58)
+and `night` (from 61; `comp` before the companion's aside). Shot 6 is two compositions: the insert (`ink`) and the
+cut back to the square (`night`, the dusk view again after dark: the lanterns lit — all five on the names
+branch — people holding one another). The warp's own transition fades back in, so `!sequence … begin` sits after
+the scene's `!fade in` (line 10) and shot 1 dissolves in from the square, as in Chapter 1; at the end the square
+shows for the dissolve and `co.festival_begin`'s `!fade out`. The `!shake` at line 59 is now a `#` comment: the
+ink sinking into the paper is the `ink` shot's own action (the validator rejects a shake inside a sequence).
+
 ---
 
 ## 4. Chapter 4 — the lamp's name holds (`sb.lamp_name`, `sb.lamp_reply`)
@@ -258,6 +269,18 @@ choice (65) and at `sb.lamp_reply`'s challenge (115). Return: `!sequence ch4.lam
 107 when the reply is postponed: its challenge failing returns to the dome map); then `!fade out`, `!warp
 sb.hamlet 22 20 up`, `!fade in` and `sb.eve_start` performed in the world (the square looks up at the lamp;
 CURATED as Performed overworld in the manifest).
+
+**As built** (`src/ui/43d_seq_ch4.js`, wave 2): two sequences, because a sequence begins and ends in one scene
+(the validator's rule) and `sb.lamp_reply` is also reached on its own from `sb.dome_hoshino`. `ch4.lamp` in
+`sb.lamp_name` (begun after the name challenge's `!if`, ended before `!call sb.lamp_reply`): `akari` (phases
+`ink`, `voice` on 57, `warm` on 58), `ask` (`look` on 62; the choice over it), one of `stay` / `go` / `both`
+(`settle` on 72 / `turn` on 82 / `smile` on 91; each with a `comp` phase before the companion's aside), `flint`
+(`strike` on 99) and `valley` (from 103). `ch4.reply` in `sb.lamp_reply` (begun after its challenge's `!if`,
+ended after line 120, before `!set sb_evening` and the fade): `seal` (117) and a second composition, `give`
+(118: Hoshino holds the envelope out; its `take` phase starts on `!give sb_reply_letter`, so what is handed over
+is seen once, in one place). Between the two, line 114 and the reply challenge play over the dome map. The name
+on the shade and the word on the slip are brush marks (rounded dabs and slanted strokes that never cross), not
+characters; the address panel is a ruled box left empty.
 
 ---
 
@@ -360,11 +383,11 @@ or with performed overworld movement (the actor system). Decide each with the sa
 | `sg.genzo_wind` (ch2) | the climb up the spiral stairs | **Filled** by the real map (`sg.lighthouse_top`). The one climbing line over the dark could become a short stairwell shot: candidate. |
 | `sg.asahi_name` (ch2) | Asahi carving and polishing the nameplate, gulls outside | **Filled**: the sequence `ch2.plate` (`src/ui/43b_seq_ch2.js`) — the registry card on the glassworks counter, the hands at work as the plate takes shape, Asahi holding it up; the scene's fades are inside the sequence and left to the pictures. |
 | `co.suzu_night` (ch3) | the cut to that night, Suzu alone on the inn veranda | Darkness as a scene change: **performed** on the veranda (her sitting, the night ambience) instead of a line over black. |
-| `co.festival_begin` (ch3) | a whole morning of village labour (four lines) | **Gap**: an illustrated sequence (the terraces, the water gate, the cut firebreaks, the new rope on the tower). Candidate for joining Chapter 3's sequence. |
-| `sb.quiet_morning` (ch4) | the storm night ending ("at some point the wind stopped") | **Darkness intended** (sleep and the storm's end); keep the black, possibly a single quiet window shot as the light returns. |
-| `sb.next_day_inn` (ch4) | a night at the inn, lights on the mountain | Mostly time passing; a **single shot** of the window and the mountain lights would carry it better than black. |
+| `co.festival_begin` (ch3) | a whole morning of village labour (four lines) | **Filled**: its own short sequence `ch3.firebreaks` (`src/ui/43c_seq_ch3.js`; it cannot join `ch3.assembly`, which must end in its own scene): the climb up the terraces at dawn with sickles, Heita first; the top water gate opened, the water falling terrace to terrace; three bands of yellow stubble across the hill by early afternoon; the new rope on Gorō's lookout, everyone looking up. Begun after the first `!card`, in the dark, so the dark lifts over the first picture and returns at the end for the second card. |
+| `sb.quiet_morning` (ch4) | the storm night ending ("at some point the wind stopped") | **Darkness intended**: line 294 stays over the black. After the scene's `!fade in`, one quiet shot, `ch4.morning` (`src/ui/43d_seq_ch4.js`): the upstairs window at Yukimiya, the world white under a cloudless sky (the glare settles as the eyes adjust); the lamp on the mountain still dark, since it is lit only later. Line 297 only; the companion's morning lines are in the room. |
+| `sb.next_day_inn` (ch4) | a night at the inn, lights on the mountain | **Filled**: one shot, `ch4.inn` (`src/ui/43d_seq_ch4.js`): the same window at night, the lamp lit on the mountain; the candle on the sill is put out and the mountain's light stays. Begun in the dark after the `!fade out`; the dark returns at its end and the scene's own `!fade in` brings the morning. |
 | `lf.boat_to_tower` (ch5) | rowing across the still lake to the bell tower | **Gap**: an illustrated crossing shot (the boat, the oar, the drowned town below the surface, the tower ahead). |
-| *(and any later `!fade out` added with lines in the dark)* | — | The sequence worker re-runs this audit from source and keeps the table current. |
+| *(and any later `!fade out` added with lines in the dark)* | — | The sequence worker re-runs this audit from source and keeps the table current. **Re-run by sequences wave 2** (every `!fade out` followed by a line before a `!fade in`, counting a `!warp` as lifting the dark, since its transition fades back in): the passages above and `lf.boat_to_tower`; none new. |
 
 ## 8. Audit: personal questlines, long questlines, endings, The Pages We Keep (§17.2 last paragraph)
 

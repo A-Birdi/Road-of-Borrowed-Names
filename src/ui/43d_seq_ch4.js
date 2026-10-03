@@ -40,8 +40,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- light ----------------------------------------------------------------------------------------------
   // the lamp room: moonlight from the slit (cool, on our left), and the lamp (warm, w 0..1) once its flame turns
   const COLD = { mul: [0.74, 0.8, 0.96], add: [4, 8, 22], rim: { side: 'l', col: '#b8d0f0', k: [0.4, 0.16], below: 0.85 } };
-  const WARM = { mul: [0.96, 0.86, 0.76], add: [22, 10, 0], rim: { side: 'r', col: '#ffc070', k: [0.45, 0.2], below: 0.85 } };
-  const WARM_L = { mul: [0.96, 0.86, 0.76], add: [22, 10, 0], rim: { side: 'l', col: '#ffc070', k: [0.45, 0.2], below: 0.85 } };
+  const WARM = { mul: [0.92, 0.84, 0.78], add: [12, 4, 0], rim: { side: 'r', col: '#ffc070', k: [0.42, 0.18], below: 0.85 } };
+  const WARM_L = { mul: [0.92, 0.84, 0.78], add: [12, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.42, 0.18], below: 0.85 } };
   const BACKLIT = { mul: [0.62, 0.58, 0.66], add: [10, 6, 12], rim: { side: 't', col: '#ffc070', k: [0.4, 0.16] } };
   // the flame's colour as it turns: blue → yellow → orange (u 0..1)
   function flameCols(u) {
@@ -226,8 +226,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function geomAsk(w, h, vb, close) {
     const S = stage(w, h, vb), { s, lay } = S;
     const narrow = lay === 'narrow';
-    // (an upright phone, the wider shot: he stands higher in the frame and you two are below him, nearer)
-    const hx = Math.round(w * (narrow ? 0.48 : close ? 0.44 : 0.5)), hy = narrow && !close ? Math.round(vb - s(130)) : Math.max(Math.round(vb + s(close ? 6 : 10)), 98);
+    // (an upright phone: he stands higher in the frame, the lamp beside him; in the wider shot you two are below
+    // him, nearer)
+    const hx = Math.round(w * (narrow ? 0.48 : close ? 0.44 : 0.5)), hy = narrow ? Math.round(vb - s(close ? 110 : 130)) : Math.max(Math.round(vb + s(close ? 6 : 10)), 98);
     const lk = clamp(S.Z * (close ? 1.25 : 0.9), 0.6, 1.4);
     const lampX = Math.round(hx + (narrow ? s(110) : s(close ? 120 : 132))), lampY = Math.round(Math.min(vb + s(30), hy + s(20)));
     return Object.assign(S, { hx, hy, lk, Lg: lampGeom(lampX, lampY, lk), floor: Math.round(hy - 96 * 0.15), narrow, close: !!close });
@@ -264,7 +265,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const bx = Math.round(G.narrow ? w * 0.26 : w * 0.16), by = Math.round(G.vb + s(G.narrow ? 90 : 80));
       if (cb) c.drawImage(cb.cv, Math.round(bx + W * 0.85 - cb.ax), Math.round(by + s(10) - cb.ay));
       if (pb) c.drawImage(pb.cv, bx - pb.ax, by - pb.ay);
-      c.fillStyle = 'rgba(16,18,40,0.28)'; c.fillRect(0, Math.round(by - W * 1.05), Math.round(bx + W * 1.4), Math.round(W * 1.2));
     },
     focus(w, h, vb) { const G = geomAsk(w, h, vb, false); return { x: G.hx - 34, y: G.hy - 92, w: 68, h: 60 }; },
   };
