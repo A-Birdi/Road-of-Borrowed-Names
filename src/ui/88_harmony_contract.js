@@ -189,12 +189,15 @@ RB.harmonyContract = (function () {
   // Skin is a deliberately unnatural orange key (contract v2): brief v1's natural skin key was skin palette 2's own
   // ramp (a recoloured skin-2 player would contain key colours) and lay within 40 of 28 of the code's face colours
   // (the default iris 15.6 away, a mouth 11.1, a blush 10.3). KEY_SKIN_V1 keeps it for the record.
+  // The darkest hair and trim shades are also more saturated than brief v1's (#2a0a3a, #0a3a44), which sat
+  // within 40 of the near-blacks every kit file holds (outline ink, lashes, brush lacquer): measured on the sample.
   const KEY_SKIN_V1 = ['#6e3e2a', '#9a5e40', '#c28e64', '#dcae84', '#f2d0a8'];
+  const KEY_V1 = { hair0: '#2a0a3a', clothTrim0: '#0a3a44' };
   const KEY_RAMPS = {
     skin: ['#601c00', '#943c08', '#d06018', '#f48c40', '#ffc0a0'],
-    hair: ['#2a0a3a', '#5a1470', '#8a24a0', '#b848c8', '#e088ec'],
+    hair: ['#3c0a5c', '#5a1470', '#8a24a0', '#b848c8', '#e088ec'],
     clothMain: ['#0c3a14', '#1a6428', '#2e8c3c', '#52b45a', '#8ad88a'],
-    clothTrim: ['#0a3a44', '#12687a', '#22a0b4', '#5ccce0', '#a8f0f8'],
+    clothTrim: ['#004e60', '#12687a', '#22a0b4', '#5ccce0', '#a8f0f8'],
     accessory: ['#10164a', '#222e8a', '#3a4cc8', '#6a80ec', '#a8b8ff'],
   };
   const OUTLINE = '#140c18';
@@ -205,7 +208,7 @@ RB.harmonyContract = (function () {
   // What each kind of file may contain besides fixed pixels (the importer only snaps to these ramps).
   const ALLOWED = {
     comp: [], head: ['skin', 'hair'], torso: ['clothMain', 'clothTrim', 'skin'], arm: ['skin', 'clothMain', 'clothTrim'],
-    hair: ['hair'], hair_wrap: ['hair', 'clothTrim'], acc: ['accessory'],
+    hair: ['hair', 'clothTrim'], hair_wrap: ['hair', 'clothTrim'], acc: ['accessory'],
   };
   // Importer thresholds (Euclidean distance in sRGB 0–255): a pixel within `snap` of a key shade of an allowed
   // material takes that shade; farther than `ambiguous` from every allowed key shade it is fixed (keeps its
@@ -328,7 +331,7 @@ RB.harmonyContract = (function () {
       exprs: EXPRS, exprOf: EXPR_OF, armShared: ARM_SHARED, armRequiredShared: ARM_REQUIRED_SHARED, sleeves: SLEEVES, sleeveOf: SLEEVE_OF,
       hairParts: HAIR_PARTS, frontOnly: FRONT_ONLY, swingStates: SWING_STATES,
       pcSlots: PC_SLOTS, groupOf: GROUP_OF, armSlot: Object.keys(ARM_SLOT), slotOrder: SLOT_ORDER,
-      accessories: ACC, notShown: NOT_SHOWN, materials: MATERIALS, mask: MASK, keyRamps: KEY_RAMPS, keySkinV1: KEY_SKIN_V1, outline: OUTLINE, pick: PICK, allowed: ALLOWED, import: IMPORT,
+      accessories: ACC, notShown: NOT_SHOWN, materials: MATERIALS, mask: MASK, keyRamps: KEY_RAMPS, keySkinV1: KEY_SKIN_V1, keyV1: KEY_V1, outline: OUTLINE, pick: PICK, allowed: ALLOWED, import: IMPORT,
     };
   }
   // the reference sheet generator (tests/e2e/harmony_asset_refs.mjs) draws the key ramps from here
@@ -337,7 +340,7 @@ RB.harmonyContract = (function () {
   return {
     VERSION, BUST, ANCHORS, COMPACT_SAFE, PAIR, DISPLAY, STATES, REQUIRED, OPTIONAL, REDUCED, TIMELINE, SEGMENTS, CODE_PHASE,
     EXPRS, EXPR_OF, ARM_SHARED, ARM_REQUIRED_SHARED, SLEEVES, SLEEVE_OF, HAIR_PARTS, FRONT_ONLY, SWING_STATES, PC_SLOTS, GROUP_OF, ARM_SLOT,
-    ACC, SLOT_ORDER, NOT_SHOWN, MATERIALS, MASK, KEY_RAMPS, KEY_SKIN_V1, OUTLINE, PICK, ALLOWED, IMPORT,
+    ACC, SLOT_ORDER, NOT_SHOWN, MATERIALS, MASK, KEY_RAMPS, KEY_SKIN_V1, KEY_V1, OUTLINE, PICK, ALLOWED, IMPORT,
     timeline, validTimeline, stateFor, armOf, armPoses, sleeveOf, accFiles, parse, allowedOf, assetKeys, validateManifest, describe,
   };
 })();

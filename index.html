@@ -79834,10 +79834,18 @@ RB.harmonyArt = (function () {
     compact: { comp: [45, 72], pc: [108, 73] },
   };
   const CAP = { busts: 24, comps: 16 };
-  const S = { hits: 0, misses: 0, builds: 0, evictions: 0, buildMs: [], invalidations: 0 };
+  const S = { hits: 0, misses: 0, builds: 0, evictions: 0, buildMs: [], invalidations: 0, paintMs: [], decodeMs: [] };
   const busts = new Map(), comps = new Map();
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+  // Painted art (88_harmony_raster.js; docs/harmony/contract/CONTRACT.md): while a set is installed the pair has the
+  // contract's size, its phases are the performance states and each bust is painted when all its files are there
+  // and decoded (else that whole bust is drawn in code). With nothing installed, everything below is as before.
+  const R = () => RB.harmonyRaster, HC = () => RB.harmonyContract;
+  const painted = () => !!(R() && R().active());
+  let NATIVE_P = null;
+  const nativeP = () => NATIVE_P || (NATIVE_P = { standard: { w: HC().PAIR.standard.w, h: HC().PAIR.standard.h }, compact: { w: HC().PAIR.compact.w, h: HC().PAIR.compact.h } });
+  const keepMs = (a, v) => { a.push(v); if (a.length > 64) a.shift(); };
 
   function lru(map, key) {
     const v = map.get(key);
@@ -79857,15 +79865,26 @@ RB.harmonyArt = (function () {
   function norm(o) {
     o = o || {};
     const variant = o.variant === 'compact' ? 'compact' : 'standard';
-    const phase = o.still ? 'hold' : o.phase === 'enter' ? 'enter' : 'hold';
     const comp = COMPANIONS.includes(o.comp) ? o.comp : null;
+    if (painted()) {
+      // a state; still (reduced motion) → settle_b; the code phases map to the first and the settled state
+      const H = HC(), phase = o.still ? H.REDUCED : H.STATES.indexOf(o.phase) >= 0 ? o.phase : o.phase === 'enter' ? 'prep_a' : H.REDUCED;
+      return { comp, variant, phase, painted: true, look: effectiveLook(o.look), backing: o.backing !== false, fx: o.fx !== false, omit: o.omit || null, view: o.view || null };
+    }
+    const phase = o.still ? 'hold' : o.phase === 'enter' ? 'enter' : 'hold';
     return { comp, variant, phase, look: effectiveLook(o.look), backing: o.backing !== false, fx: o.fx !== false, omit: o.omit || null, view: o.view || null };
   }
   function bustKey(who, look, pose, phase, variant, fx) {
     return ['v' + ART_VERSION, who, pose, phase, variant, fx === false ? 'nofx' : 'fx', who === 'pc' ? HK().lookKey(look) : '-'].join('|');
   }
+  // which source a bust of a painted pair is drawn from now: P painted (all files decoded) or C code
+  const srcOf = (who, n) => (R().ready(R().plan(who, who === 'pc' ? n.look : null, n.phase, n.comp)) ? 'P' : 'C');
   function keyOf(o) {
     const n = norm(o);
+    if (n.painted) {
+      const fl = n.comp ? (n.omit === 'comp' ? '-' : srcOf(n.comp, n)) + (n.omit === 'pc' ? '-' : srcOf('pc', n)) : '--';
+      return ['v' + ART_VERSION, 'c' + HC().VERSION, 'a' + R().artVersion(), n.comp, n.variant, n.phase, n.backing ? 'b' : 'nb', n.fx ? 'fx' : 'nofx', n.omit || '-', fl, HK().lookKey(n.look)].join('|');
+    }
     return ['v' + ART_VERSION, n.comp, n.variant, n.phase, n.backing ? 'b' : 'nb', n.fx ? 'fx' : 'nofx', n.omit || '-', HK().lookKey(n.look)].join('|');
   }
 
@@ -79884,8 +79903,38 @@ RB.harmonyArt = (function () {
     store(busts, key, b, CAP.busts);
     return b;
   }
+  // A painted bust (cached with the code busts). Returns { pl (its plan), b (null: not paintable now) }.
+  function paintedBust(who, n) {
+    const pl = R().plan(who, who === 'pc' ? n.look : null, n.phase, n.comp);
+    if (!R().ready(pl)) return { pl, b: null };
+    const key = ['v' + ART_VERSION, who, 'c' + HC().VERSION, 'a' + R().artVersion(), who === 'pc' ? n.comp : '-', pl.state, n.fx ? 'fx' : 'nofx', who === 'pc' ? HK().lookKey(n.look) : '-'].join('|');
+    let b = lru(busts, key);
+    if (b) { S.hits++; return { pl, b }; }
+    S.misses++;
+    const t0 = now();
+    const r = R().paint(pl, n.look, n.fx);
+    if (!r) return { pl, b: null };
+    b = { layer: { w: r.w, h: r.h, px: r.px, mt: r.mt }, w: r.w, h: r.h, face: r.face, hands: r.hands, anchor: r.anchor, key, painted: true };
+    b.layer.canvas = function () { return RB.pxkit.Layer.prototype.canvas.call(this); };
+    S.builds++;
+    keepMs(S.paintMs, now() - t0);
+    store(busts, key, b, CAP.busts);
+    return { pl, b };
+  }
+  // bust(who, look, pose, phase[, variant]); while painted art is installed, phase may be a state and, for the
+  // player, `pose` names the companion of the pairing (the brush arm's terminal poses depend on it)
   function bust(who, look, pose, phase, variant) {
     who = who || 'pc';
+    if (painted() && HC().STATES.indexOf(phase) >= 0) {
+      const comp = who === 'pc' ? (COMPANIONS.includes(pose) ? pose : null) : who;
+      const { b } = paintedBust(who, { look: effectiveLook(look), phase, comp, fx: true });
+      if (b) {
+        if (!b.cv) b.cv = b.layer.canvas();
+        return { cv: b.cv, w: b.w, h: b.h, face: Object.assign({}, b.face), hands: b.hands.map((r) => Object.assign({}, r)), anchor: Object.assign({}, b.anchor), key: b.key, painted: true };
+      }
+      phase = HC().CODE_PHASE[phase];
+      if (COMPANIONS.includes(pose)) pose = null;
+    }
     const b = bustLayer(who, effectiveLook(look), pose || POSE_OF[who] || 'rally', phase === 'enter' ? 'enter' : 'hold', variant === 'compact' ? 'compact' : 'standard', true);
     if (!b.cv) b.cv = b.layer.canvas();
     return { cv: b.cv, w: b.w, h: b.h, face: Object.assign({}, b.face), hands: b.hands.map((r) => Object.assign({}, r)), anchor: Object.assign({}, b.anchor), key: b.key };
@@ -79895,22 +79944,30 @@ RB.harmonyArt = (function () {
   // Deterministic shape and strokes per variant (a hash of the column and row, never Math.random).
   const hh = (x, y, k) => { let h = (x * 374761393 + y * 668265263 + (k || 0) * 2246822519) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return (h ^ (h >>> 16)) >>> 0; };
   // The band: its top edge a brush's edge (a slow wave with a few nicks), its lower edge a straight cut rising
-  // gently to the right, its right end a handful of brush tails of different lengths.
-  function edges(variant) {
+  // gently to the right, its right end a handful of brush tails of different lengths. The geometry per size:
+  // the code-drawn pairs' own, or the painted pair's from the contract (RB.harmonyContract.PAIR).
+  const TAILS = { compact: [[0.1, 30], [0.32, 10], [0.55, 0], [0.78, 16], [0.95, 34]], standard: [[0.06, 40], [0.22, 18], [0.4, 4], [0.58, 0], [0.74, 12], [0.9, 28], [1, 44]] };
+  function geoOf(variant) {
+    if (variant.indexOf('p:') === 0) {
+      const v = variant.slice(2), P = RB.harmonyContract.PAIR[v], b = P.band, a = b.bottom[0], z = b.bottom[1];
+      return { w: P.w, h: P.h, top0: b.top0, rise: b.rise, bot: (x) => a[1] + ((z[1] - a[1]) * (x - a[0])) / (z[0] - a[0]), end: b.end, tails: TAILS[v], nS: v === 'compact' ? 11 : 16, flecks: v === 'compact' ? 5 : 8 };
+    }
     const N = NATIVE[variant];
     const cmp = variant === 'compact';
-    const top0 = cmp ? 24 : 26, rise = cmp ? 0.03 : 0.045;
-    const top = (x) => top0 - x * rise + Math.sin(x / 23) * 1.2 + Math.sin(x / 7.3 + 1) * 0.5 + ((hh(x >> 3, 1) % 7) === 0 ? 1 : 0);
-    const bot = (x) => N.h - (cmp ? 3 : 4) - x * (cmp ? 0.04 : 0.075);
-    return { top, bot, end: N.w - (cmp ? 4 : 6) };
+    return { w: N.w, h: N.h, top0: cmp ? 24 : 26, rise: cmp ? 0.03 : 0.045, bot: (x) => N.h - (cmp ? 3 : 4) - x * (cmp ? 0.04 : 0.075), end: N.w - (cmp ? 4 : 6), tails: TAILS[variant], nS: cmp ? 9 : 13, flecks: cmp ? 4 : 6 };
+  }
+  function edges(variant) {
+    const G = geoOf(variant);
+    const top = (x) => G.top0 - x * G.rise + Math.sin(x / 23) * 1.2 + Math.sin(x / 7.3 + 1) * 0.5 + ((hh(x >> 3, 1) % 7) === 0 ? 1 : 0);
+    return { top, bot: G.bot, end: G.end };
   }
   function backing(variant) {
-    const K = RB.pxkit, N = NATIVE[variant], cmp = variant === 'compact';
+    const K = RB.pxkit, G = geoOf(variant), N = G;
     const L = K.layer(N.w, N.h);
     const ink = HK().M('backing', '#222a52', { cols: ['#11152e', '#191f42', '#212a52', '#2b3562', '#384476'], at: 2, line: false });
     const E = edges(variant);
     // brush tails at the right: [row from the band's top (0..1), length back from the end]
-    const tails = cmp ? [[0.1, 30], [0.32, 10], [0.55, 0], [0.78, 16], [0.95, 34]] : [[0.06, 40], [0.22, 18], [0.4, 4], [0.58, 0], [0.74, 12], [0.9, 28], [1, 44]];
+    const tails = G.tails;
     const span = (x) => Math.max(1, E.bot(x) - E.top(x));
     const endAt = (x, y) => {
       const t = (y - E.top(x)) / span(x);
@@ -79920,7 +79977,7 @@ RB.harmonyArt = (function () {
     };
     // long horizontal strokes laid along the band, each a few rows deep, tapered at both ends
     const strokes = [];
-    const nS = cmp ? 9 : 13;
+    const nS = G.nS;
     for (let i = 0; i < nS; i++) {
       const t = (i + 0.5) / nS;
       const x0 = (hh(i, 51) % 60) - 30, len = 70 + (hh(i, 53) % 110);
@@ -79964,7 +80021,7 @@ RB.harmonyArt = (function () {
       if (hh(seg, 31) % 2 || x % 15 > 9) continue;
       HK().put(L, x, Math.ceil(E.bot(x)) + 1, paper, x % 15 === 4 ? 2 : 1);
     }
-    for (let i = 0; i < (cmp ? 4 : 6); i++) {
+    for (let i = 0; i < G.flecks; i++) {
       const tt = 0.15 + (hh(i, 41) % 70) / 100;
       const x = Math.round(E.end - 6 - (hh(i, 43) % 26));
       const y = Math.round(E.top(x) + span(x) * tt);
@@ -80037,6 +80094,63 @@ RB.harmonyArt = (function () {
     res.anchor = { x: 0, y: Math.round((E.top(0) + E.bot(0)) / 2) };
     return res;
   }
+  // The painted pair (contract v2): each bust canvas at its place in the pair (plus the manifest's offset); a bust
+  // that cannot be painted now is drawn whole in code with its neck pit on the template's (and its files start
+  // decoding). Faces never overlap: the busts are placed so (tests compare each face with the other bust omitted).
+  function buildPainted(n) {
+    const K = RB.pxkit, H = HC(), PV = H.PAIR[n.variant], man = R().manifest();
+    const out = K.layer(PV.w, PV.h);
+    const B = backingOf('p:' + n.variant);
+    if (n.backing) out.over(B.L);
+    const E = B.E;
+    const clip = (X, Y) => Y <= E.bot(X) + 0.5;
+    const res = { faces: [], hands: [], src: {} };
+    const overlays = [];
+    const one = (who) => {
+      const at = who === 'pc' ? PV.pc : PV.comp;
+      const offs = (who === 'pc' ? man.pc && man.pc.offset : man.companions && man.companions[who] && man.companions[who].offset) || {};
+      const off = offs[n.variant] || [0, 0];
+      const ox = at[0] + off[0], oy = at[1] + off[1];
+      const { pl, b } = paintedBust(who, n);
+      if (b) {
+        blit(out, b.layer, ox, oy, clip);
+        res.faces.push({ who, x: b.face.x + ox, y: b.face.y + oy, w: b.face.w, h: b.face.h });
+        for (const h of b.hands) res.hands.push({ who, x: h.x + ox, y: h.y + oy, w: h.w, h: h.h });
+        res.src[who] = 'painted';
+        return;
+      }
+      if (pl.ok) R().load(pl.files);
+      R().note({ who, comp: n.comp, state: n.phase, variant: n.variant, reason: pl.ok ? 'decoding' : pl.reason || 'missing files', missing: pl.missing.slice(0, 12) });
+      const cb = bustLayer(who, who === 'pc' ? n.look : null, POSE_OF[who] || 'rally', H.CODE_PHASE[n.phase], n.variant, n.fx);
+      const nk = H.ANCHORS[who === 'pc' ? 'pc' : 'comp'].neck;
+      const dx = ox + nk[0] - cb.anchor.x, dy = oy + nk[1] - cb.anchor.y;
+      blit(out, cb.layer, dx, dy, clip);
+      res.faces.push({ who, x: cb.face.x + dx, y: cb.face.y + dy, w: cb.face.w, h: cb.face.h });
+      for (const h of cb.hands) res.hands.push({ who, x: h.x + dx, y: h.y + dy, w: h.w, h: h.h });
+      if (cb.overlay) overlays.push({ o: cb.overlay, dx, dy });
+      res.src[who] = pl.ok ? 'code (decoding)' : 'code (' + (pl.missing.length ? 'missing ' + pl.missing.slice(0, 3).join(', ') : pl.reason) + ')';
+    };
+    if (n.comp && n.omit !== 'comp') one(n.comp);
+    if (n.omit !== 'pc') one('pc');
+    for (const { o, dx, dy } of overlays) {
+      const t = K.layer(PV.w, PV.h);
+      if (o.kind === 'route') HK().route(t, o.pts.map((p) => [p[0] + dx, p[1] + dy]));
+      t.outline();
+      out.over(t);
+    }
+    if (n.backing) {
+      for (let x = 0; x < PV.w; x++) {
+        const y = Math.ceil(E.bot(x)) + 1, i = y * PV.w + x;
+        if (y < PV.h && B.L.px[i]) { out.px[i] = B.L.px[i]; out.mt[i] = B.L.mt[i]; }
+      }
+    }
+    let x0 = PV.w, y0 = PV.h, x1 = -1, y1 = -1;
+    for (let y = 0; y < PV.h; y++) for (let x = 0; x < PV.w; x++) if (out.px[y * PV.w + x] >>> 24) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+    res.bounds = x1 < 0 ? { x: 0, y: 0, w: 0, h: 0 } : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+    res.layer = out;
+    res.anchor = { x: 0, y: Math.round((E.top(0) + E.bot(0)) / 2) };
+    return res;
+  }
   function compose(o) {
     const n = norm(o);
     if (!n.comp) throw new Error('harmonyArt.compose: comp must be one of ' + COMPANIONS.join(', '));
@@ -80046,11 +80160,22 @@ RB.harmonyArt = (function () {
     else {
       S.misses++;
       const t0 = now();
-      c = build(n);
+      c = n.painted ? buildPainted(n) : build(n);
       c.cv = c.layer.canvas();
       c.key = key;
       c.ms = now() - t0;
       store(comps, key, c, CAP.comps);
+    }
+    if (n.painted) {
+      const N = nativeP()[n.variant];
+      const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
+      return {
+        cv: c.cv, w: N.w, h: N.h,
+        faces: c.faces.map((r) => Object.assign({}, r)), hands: c.hands.map((r) => Object.assign({}, r)),
+        anchor: Object.assign({}, c.anchor), bounds: Object.assign({}, c.bounds),
+        scale: view ? fitScale(view.w, view.h, n.variant) : null,
+        bleed: { left: true }, key, phase: n.phase, variant: n.variant, painted: Object.assign({}, c.src),
+      };
     }
     const N = NATIVE[n.variant];
     const view = n.view || (typeof window !== 'undefined' && window.innerWidth ? { w: window.innerWidth, h: window.innerHeight } : null);
@@ -80065,7 +80190,19 @@ RB.harmonyArt = (function () {
 
   // The largest integer CSS scale at which the variant's visible footprint stays inside §5.2's limits
   // (standard: 42 % width, 30 % height, 12 % area; compact: up to the view's width, 27 % of its height).
-  function fitScale(vw, vh, variant) {
+  // Painted art: standard at an integer scale inside the same limits; compact at a DPR-aware scale (CSS px per art
+  // px whose product with the device pixel ratio is whole, so every art pixel is whole device pixels).
+  function fitScale(vw, vh, variant, dpr) {
+    if (painted()) {
+      const H = HC(), v = variant === 'compact' ? 'compact' : 'standard', P = H.PAIR[v], D = H.DISPLAY;
+      if (v === 'compact') {
+        const r = dpr || (typeof devicePixelRatio === 'number' && devicePixelRatio > 0 ? devicePixelRatio : 1);
+        for (let k = Math.floor(D.maxScale * r); k >= 1; k--) { const s = k / r; if (P.w * s <= vw * D.compact.maxW && P.h * s <= vh * D.compact.maxH) return s; }
+        return 0;
+      }
+      for (let s = D.maxScale; s >= 1; s--) { const w = P.w * s, h = P.h * s; if (w <= vw * D.standard.maxW && h <= vh * D.standard.maxH && w * h <= vw * vh * D.standard.maxArea) return s; }
+      return 0;
+    }
     const N = NATIVE[variant === 'compact' ? 'compact' : 'standard'];
     for (let s = 6; s >= 1; s--) {
       const w = N.w * s, h = N.h * s;
@@ -80081,16 +80218,33 @@ RB.harmonyArt = (function () {
     const out = [];
     for (const o of list) {
       const comps2 = o.comp === 'all' || !o.comp ? COMPANIONS : [o.comp];
-      const phases = o.phase ? [o.phase] : ['enter', 'hold'];
       const variants = o.variant ? [o.variant] : ['standard'];
-      for (const c of comps2) for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }));
+      for (const c of comps2) {
+        // painted: the states of the companion's timeline (reduced motion: the last alone)
+        const T = painted() && !o.phase ? timeline(c) : null;
+        const phases = o.phase ? [o.phase] : T ? (o.still ? [T[T.length - 1].phase] : [...new Set(T.map((e) => e.phase))]) : ['enter', 'hold'];
+        for (const ph of phases) for (const v of variants) out.push(Object.assign({}, o, { comp: c, phase: ph, variant: v }));
+      }
     }
     return out;
   }
+  // the painted files the specs need (only for busts whose whole set exists)
+  function filesFor(todo) {
+    const out = new Set();
+    for (const o of todo) {
+      const n = norm(o);
+      if (!n.painted || !n.comp) continue;
+      for (const who of [n.comp, 'pc']) { const pl = R().plan(who, who === 'pc' ? n.look : null, n.phase, n.comp); if (pl.ok) for (const f of pl.files) out.add(f); }
+    }
+    return [...out];
+  }
   function prepare(list, opt) {
     const todo = specs(list);
+    const files = painted() ? filesFor(todo) : [];
     if (opt && opt.async) {
-      return new Promise((resolve) => {
+      const t0 = now();
+      const pre = files.length ? R().load(files).then(() => keepMs(S.decodeMs, now() - t0)) : Promise.resolve();
+      return pre.then(() => new Promise((resolve) => {
         let i = 0;
         const step = (dl) => {
           const t0 = now();
@@ -80098,11 +80252,15 @@ RB.harmonyArt = (function () {
           if (i < todo.length) schedule(step); else resolve(todo.length);
         };
         schedule(step);
-      });
+      }));
     }
+    // (synchronous: decoding starts, and what is not decoded yet is drawn in code this time)
+    if (files.length) { const t0 = now(); R().load(files).then(() => keepMs(S.decodeMs, now() - t0)); }
     for (const o of todo) compose(o);
     return todo.length;
   }
+  // The painted performance's timeline for a pairing (only while painted art is installed: see the getter below).
+  function timeline(comp) { return painted() ? R().timeline(comp) : null; }
   function schedule(fn) {
     if (typeof requestIdleCallback === 'function') requestIdleCallback(fn, { timeout: 200 });
     else setTimeout(fn, 16);
@@ -80113,12 +80271,16 @@ RB.harmonyArt = (function () {
     for (const c of comps.values()) bytes += c.layer.w * c.layer.h * 4 * 2;
     for (const b of backs.values()) bytes += b.L.w * b.L.h * 4;
     const ms = S.buildMs;
-    return {
+    const sum = (a) => (a.length ? { last: +a[a.length - 1].toFixed(1), mean: +(a.reduce((p, q) => p + q, 0) / a.length).toFixed(1), max: +Math.max(...a).toFixed(1) } : null);
+    const out = {
       artVersion: ART_VERSION, busts: busts.size, compositions: comps.size, backings: backs.size, cap: Object.assign({}, CAP),
       bytes, hits: S.hits, misses: S.misses, builds: S.builds, evictions: S.evictions, invalidations: S.invalidations,
-      bustBuildMs: ms.length ? { last: +ms[ms.length - 1].toFixed(1), mean: +(ms.reduce((a, b) => a + b, 0) / ms.length).toFixed(1), max: +Math.max(...ms).toFixed(1) } : null,
+      bustBuildMs: sum(ms),
       keys: { busts: [...busts.keys()], compositions: [...comps.keys()] },
     };
+    // painted art: the set, decoded files and their bytes, fallbacks (whole busts drawn in code, with why)
+    if (R()) out.raster = Object.assign(R().stats(), { paintMs: sum(S.paintMs), decodeMs: sum(S.decodeMs) });
+    return out;
   }
   function clear() { busts.clear(); comps.clear(); backs.clear(); S.invalidations++; }
   // drop the player's entries that do not belong to the look now worn
@@ -80133,7 +80295,13 @@ RB.harmonyArt = (function () {
     RB.bus.on('campaign:changing', clear);
   }
 
-  return { ART_VERSION, NATIVE, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, stats, clear, invalidate, keyOf, _: { build, backingOf, norm, PLACE } };
+  const api = { ART_VERSION, COMPANIONS, POSE_OF, compose, bust, prepare, fitScale, stats, clear, invalidate, keyOf, _: { build, buildPainted, backingOf, norm, PLACE, painted } };
+  // While painted art is installed: NATIVE is the contract's pair, PHASES its states and timeline(comp) exists.
+  // Otherwise exactly as before: the code-drawn sizes, ['enter', 'hold'] and no timeline.
+  Object.defineProperty(api, 'NATIVE', { enumerable: true, get: () => (painted() ? nativeP() : NATIVE) });
+  Object.defineProperty(api, 'PHASES', { enumerable: true, get: () => (painted() ? HC().STATES.slice() : ['enter', 'hold']) });
+  Object.defineProperty(api, 'timeline', { enumerable: true, get: () => (painted() ? timeline : undefined) });
+  return api;
 })();
 
 
@@ -81397,12 +81565,15 @@ RB.harmonyContract = (function () {
   // Skin is a deliberately unnatural orange key (contract v2): brief v1's natural skin key was skin palette 2's own
   // ramp (a recoloured skin-2 player would contain key colours) and lay within 40 of 28 of the code's face colours
   // (the default iris 15.6 away, a mouth 11.1, a blush 10.3). KEY_SKIN_V1 keeps it for the record.
+  // The darkest hair and trim shades are also more saturated than brief v1's (#2a0a3a, #0a3a44), which sat
+  // within 40 of the near-blacks every kit file holds (outline ink, lashes, brush lacquer): measured on the sample.
   const KEY_SKIN_V1 = ['#6e3e2a', '#9a5e40', '#c28e64', '#dcae84', '#f2d0a8'];
+  const KEY_V1 = { hair0: '#2a0a3a', clothTrim0: '#0a3a44' };
   const KEY_RAMPS = {
     skin: ['#601c00', '#943c08', '#d06018', '#f48c40', '#ffc0a0'],
-    hair: ['#2a0a3a', '#5a1470', '#8a24a0', '#b848c8', '#e088ec'],
+    hair: ['#3c0a5c', '#5a1470', '#8a24a0', '#b848c8', '#e088ec'],
     clothMain: ['#0c3a14', '#1a6428', '#2e8c3c', '#52b45a', '#8ad88a'],
-    clothTrim: ['#0a3a44', '#12687a', '#22a0b4', '#5ccce0', '#a8f0f8'],
+    clothTrim: ['#004e60', '#12687a', '#22a0b4', '#5ccce0', '#a8f0f8'],
     accessory: ['#10164a', '#222e8a', '#3a4cc8', '#6a80ec', '#a8b8ff'],
   };
   const OUTLINE = '#140c18';
@@ -81413,7 +81584,7 @@ RB.harmonyContract = (function () {
   // What each kind of file may contain besides fixed pixels (the importer only snaps to these ramps).
   const ALLOWED = {
     comp: [], head: ['skin', 'hair'], torso: ['clothMain', 'clothTrim', 'skin'], arm: ['skin', 'clothMain', 'clothTrim'],
-    hair: ['hair'], hair_wrap: ['hair', 'clothTrim'], acc: ['accessory'],
+    hair: ['hair', 'clothTrim'], hair_wrap: ['hair', 'clothTrim'], acc: ['accessory'],
   };
   // Importer thresholds (Euclidean distance in sRGB 0–255): a pixel within `snap` of a key shade of an allowed
   // material takes that shade; farther than `ambiguous` from every allowed key shade it is fixed (keeps its
@@ -81536,7 +81707,7 @@ RB.harmonyContract = (function () {
       exprs: EXPRS, exprOf: EXPR_OF, armShared: ARM_SHARED, armRequiredShared: ARM_REQUIRED_SHARED, sleeves: SLEEVES, sleeveOf: SLEEVE_OF,
       hairParts: HAIR_PARTS, frontOnly: FRONT_ONLY, swingStates: SWING_STATES,
       pcSlots: PC_SLOTS, groupOf: GROUP_OF, armSlot: Object.keys(ARM_SLOT), slotOrder: SLOT_ORDER,
-      accessories: ACC, notShown: NOT_SHOWN, materials: MATERIALS, mask: MASK, keyRamps: KEY_RAMPS, keySkinV1: KEY_SKIN_V1, outline: OUTLINE, pick: PICK, allowed: ALLOWED, import: IMPORT,
+      accessories: ACC, notShown: NOT_SHOWN, materials: MATERIALS, mask: MASK, keyRamps: KEY_RAMPS, keySkinV1: KEY_SKIN_V1, keyV1: KEY_V1, outline: OUTLINE, pick: PICK, allowed: ALLOWED, import: IMPORT,
     };
   }
   // the reference sheet generator (tests/e2e/harmony_asset_refs.mjs) draws the key ramps from here
@@ -81545,7 +81716,7 @@ RB.harmonyContract = (function () {
   return {
     VERSION, BUST, ANCHORS, COMPACT_SAFE, PAIR, DISPLAY, STATES, REQUIRED, OPTIONAL, REDUCED, TIMELINE, SEGMENTS, CODE_PHASE,
     EXPRS, EXPR_OF, ARM_SHARED, ARM_REQUIRED_SHARED, SLEEVES, SLEEVE_OF, HAIR_PARTS, FRONT_ONLY, SWING_STATES, PC_SLOTS, GROUP_OF, ARM_SLOT,
-    ACC, SLOT_ORDER, NOT_SHOWN, MATERIALS, MASK, KEY_RAMPS, KEY_SKIN_V1, OUTLINE, PICK, ALLOWED, IMPORT,
+    ACC, SLOT_ORDER, NOT_SHOWN, MATERIALS, MASK, KEY_RAMPS, KEY_SKIN_V1, KEY_V1, OUTLINE, PICK, ALLOWED, IMPORT,
     timeline, validTimeline, stateFor, armOf, armPoses, sleeveOf, accFiles, parse, allowedOf, assetKeys, validateManifest, describe,
   };
 })();
@@ -82369,6 +82540,311 @@ RB.harmonyKit = RB.harmonyKit || {};
   HK.hairPart = hairPart;
   HK.hairCoversEar = (style) => (S[style] || S.short).ear === false;
 })(RB.harmonyKit);
+
+
+/* ==== src/ui/88_harmony_raster.js ==== */
+/* Harmony painted busts — the raster path (docs/harmony/contract/CONTRACT.md §5–§7).
+ *
+ * Holds an installed set of painted art (the build embeds assets/harmony/ as RB.harmonyAssets; tests install
+ * a set themselves), decodes only the files a pairing and a look need, and assembles a bust from them: a
+ * companion's frame as delivered (never recoloured), or the player's kit — head, torso, brush arm, hair and
+ * every worn accessory — in the contract's layer order, with whole-pixel group and attachment offsets, the hair
+ * hidden above a hat's band, and each recolourable pixel replaced by its shade of the look's own ramp (built as
+ * the code-drawn busts build their materials, so painted and code art share colour logic). Outline ink, near-white
+ * highlights and fixed pixels are never recoloured, whatever a mask says.
+ *
+ * A bust is painted only when every file it needs exists and is decoded; otherwise the caller draws the WHOLE
+ * bust in code (88_harmony_art.js). Nothing here fetches, waits on a learning task or times itself (the API
+ * module measures); decoding is asynchronous (createImageBitmap, else an Image from a data URL).
+ *
+ * API (RB.harmonyRaster)
+ *   install({ manifest, files: { 'name.png': base64 | data URL } }, { decode }) → { ok, errors }
+ *   uninstall(), active(), manifest(), artVersion()
+ *   plan(who, look, state, comp) → { ok, files, missing, state, ... }  (who: 'pc' or a companion)
+ *   ready(plan) → every file decoded;  load(names) → Promise (decodes what is missing)
+ *   paint(plan, look, fx) → { w, h, px, mt, face, hands, anchor } | null
+ *   timeline(comp) → [{ phase, seg, from, to }]
+ *   stats(), note(fallback) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.harmonyRaster = (function () {
+  'use strict';
+  const C = () => RB.harmonyContract;
+  const HK = () => RB.harmonyKit;
+  const CAP = 48;
+  let man = null, src = null, decodeFn = null, err = null;
+  const dec = new Map(), pend = new Map();
+  const S = { installs: 0, decodes: 0, decodeErrors: [], evictions: 0, paints: 0, fallbacks: 0, log: [] };
+  const ramps = new Map();
+
+  // ---- install ---------------------------------------------------------------------------------------------------
+  function install(assets, opt) {
+    opt = opt || {};
+    const m = assets && assets.manifest, files = (assets && assets.files) || {};
+    const errors = C().validateManifest(m, Object.keys(files));
+    uninstall();
+    if (errors.length) { err = errors; return { ok: false, errors }; }
+    man = m; src = files; decodeFn = opt.decode || null; err = null; S.installs++;
+    return { ok: true, errors: [] };
+  }
+  function uninstall() { man = null; src = null; dec.clear(); pend.clear(); ramps.clear(); err = null; }
+  const active = () => !!man;
+  const artVersion = () => (man ? man.artVersion : 0);
+
+  // ---- decoding --------------------------------------------------------------------------------------------------------
+  const b64of = (s) => (s.indexOf('base64,') >= 0 ? s.slice(s.indexOf('base64,') + 7) : s);
+  function canvasOf(w, h) {
+    if (typeof OffscreenCanvas !== 'undefined') return new OffscreenCanvas(w, h);
+    const c = document.createElement('canvas'); c.width = w; c.height = h; return c;
+  }
+  async function browserDecode(s) {
+    const b64 = b64of(s);
+    let img;
+    if (typeof createImageBitmap === 'function' && typeof Blob !== 'undefined' && typeof atob === 'function') {
+      const bin = atob(b64), u8 = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      img = await createImageBitmap(new Blob([u8], { type: 'image/png' }), { premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
+    } else {
+      img = new Image();
+      img.src = 'data:image/png;base64,' + b64;
+      await img.decode();
+    }
+    const w = img.width, h = img.height, cv = canvasOf(w, h), g = cv.getContext('2d', { willReadFrequently: true });
+    g.drawImage(img, 0, 0);
+    const data = g.getImageData(0, 0, w, h).data;
+    if (img.close) img.close();
+    return { w, h, data };
+  }
+  // pixel codes from a mask: 0 transparent, 1 fixed, 2 + material × 5 + shade (shade from the exact key colour,
+  // else the nearest key luminance); outline ink and near-white pixels are fixed whatever the mask says
+  let keyIdx = null;
+  function keys() {
+    if (keyIdx) return keyIdx;
+    const P = RB.pxkit, H = C(), exact = new Map(), lum = [];
+    H.MATERIALS.forEach((m, mi) => { lum[mi] = []; H.KEY_RAMPS[m].forEach((hx, s) => { const c = P.parse(hx); exact.set((c[0] << 16) | (c[1] << 8) | c[2], mi * 5 + s); lum[mi][s] = 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]; }); });
+    const mask = H.MATERIALS.map((m) => { const c = P.parse(H.MASK[m]); return (c[0] << 16) | (c[1] << 8) | c[2]; });
+    const prot = H.IMPORT.protect.map((hx) => P.parse(hx));
+    keyIdx = { exact, lum, mask, prot };
+    return keyIdx;
+  }
+  function protectedPx(r, g, b) {
+    const K = keys(), I = C().IMPORT;
+    for (let i = 0; i < K.prot.length; i++) {
+      const p = K.prot[i], d = Math.hypot(r - p[0], g - p[1], b - p[2]);
+      if (d <= (i === 0 ? I.outline : I.white)) return true;
+    }
+    return false;
+  }
+  function codesOf(art, mask) {
+    const n = art.w * art.h, code = new Uint8Array(n), K = keys(), a = art.data, m = mask.data;
+    for (let i = 0; i < n; i++) {
+      const o = 4 * i;
+      if (!a[o + 3]) continue;
+      code[i] = 1;
+      if (!m[o + 3]) continue;
+      const mi = K.mask.indexOf((m[o] << 16) | (m[o + 1] << 8) | m[o + 2]);
+      if (mi < 0 || protectedPx(a[o], a[o + 1], a[o + 2])) continue;
+      const ex = K.exact.get((a[o] << 16) | (a[o + 1] << 8) | a[o + 2]);
+      let s;
+      if (ex != null && Math.floor(ex / 5) === mi) s = ex % 5;
+      else { const L = 0.299 * a[o] + 0.587 * a[o + 1] + 0.114 * a[o + 2]; let bd = 1e9; s = 0; K.lum[mi].forEach((v, k) => { if (Math.abs(v - L) < bd) { bd = Math.abs(v - L); s = k; } }); }
+      code[i] = 2 + mi * 5 + s;
+    }
+    return code;
+  }
+  function decodeOne(name) {
+    if (dec.has(name)) { const v = dec.get(name); dec.delete(name); dec.set(name, v); return Promise.resolve(v); }
+    if (pend.has(name)) return pend.get(name);
+    const f = man && man.files[name];
+    if (!f || !src[f.png]) return Promise.reject(new Error('no file ' + name));
+    const fn = decodeFn || browserDecode, mine = man;
+    const p = Promise.all([fn(src[f.png]), f.mask ? fn(src[f.mask]) : null]).then(([art, mk]) => {
+      if (man !== mine) return null; // uninstalled or replaced meanwhile
+      if (art.w !== C().BUST.w || art.h !== C().BUST.h) throw new Error(name + ': decoded ' + art.w + ' × ' + art.h);
+      const px = new Uint32Array(art.data.buffer.slice(art.data.byteOffset, art.data.byteOffset + art.data.byteLength));
+      const v = { w: art.w, h: art.h, px, code: mk ? codesOf(art, mk) : null };
+      dec.set(name, v); S.decodes++;
+      while (dec.size > CAP) { dec.delete(dec.keys().next().value); S.evictions++; }
+      return v;
+    }).catch((e) => { S.decodeErrors.push(name + ': ' + (e && e.message)); if (S.decodeErrors.length > 24) S.decodeErrors.shift(); return null; })
+      .finally(() => pend.delete(name));
+    pend.set(name, p);
+    return p;
+  }
+  function load(names) { return Promise.all([...new Set(names || [])].map(decodeOne)).then((r) => r.filter(Boolean).length); }
+
+  // ---- what a bust needs ----------------------------------------------------------------------------------------------
+  const has = (n) => !!(man && man.files[n]);
+  function plan(who, look, state, comp) {
+    const H = C();
+    if (!man) return { ok: false, files: [], missing: [], reason: 'no painted art installed' };
+    if (H.STATES.indexOf(state) < 0) return { ok: false, files: [], missing: [], reason: 'not a state: ' + state };
+    if (who !== 'pc') {
+      const set = man.companions && man.companions[who];
+      if (!set) return { ok: false, files: [], missing: [who + '_*'], reason: 'no painted ' + who };
+      const lack = H.REQUIRED.filter((s) => set.states.indexOf(s) < 0);
+      if (lack.length) return { ok: false, files: [], missing: lack.map((s) => who + '_' + s), reason: who + ': required states missing' };
+      const st = H.stateFor(state, set.states);
+      const files = [], layers = [];
+      if (set.mode === 'layered') { for (const l of set.layers) if (has(who + '_' + st + '_' + l)) { files.push(who + '_' + st + '_' + l); layers.push(l); } }
+      else files.push(who + '_' + st);
+      const fx = set.mode !== 'layered' && has(who + '_' + st + '_fx') ? who + '_' + st + '_fx' : null;
+      return { ok: true, who, state: st, asked: state, files: fx ? files.concat([fx]) : files, fx, layers, missing: [], face: (set.face && set.face[st]) || H.ANCHORS.comp.face };
+    }
+    // the player's kit
+    look = look || {};
+    const SP = RB.sprites, P = man.pc || {};
+    const style = SP.HAIRSTYLES.indexOf(look.hair) >= 0 ? look.hair : 'short';
+    const shape = look.shape || 'tunic', sleeve = H.sleeveOf(shape), expr = H.EXPR_OF[state];
+    let pose = H.armOf(state, comp), arm = 'pc_arm_' + pose + '_' + sleeve;
+    if (pose === 'prep_b' && !has(arm)) { pose = 'prep_a'; arm = 'pc_arm_prep_a_' + sleeve; }
+    const swing = H.SWING_STATES.indexOf(state) >= 0;
+    const hairOf = (part) => { const n = 'pc_hair_' + style + '_' + part; return swing && has(n + '_swing') ? n + '_swing' : n; };
+    const parts = [{ slot: 'head', file: 'pc_head_' + expr }, { slot: 'torso', file: 'pc_torso_' + shape }, { slot: 'arm', file: arm }, { slot: 'hair_front', file: hairOf('front') }];
+    if (H.FRONT_ONLY.indexOf(style) < 0) parts.push({ slot: 'hair_back', file: hairOf('back') });
+    const af = H.accFiles(look);
+    for (const f of af.files) parts.push({ slot: f.slot, file: f.file, acc: f.acc });
+    const missing = parts.filter((q) => !has(q.file)).map((q) => q.file).concat(af.unknown.map((a) => 'acc ' + a + ' (unknown)'));
+    const g = (P.groups && P.groups[state]) || {};
+    const face = ((P.face && P.face[expr]) || H.ANCHORS.pc.face).slice();
+    const hd = g.head || [0, 0];
+    return { ok: !missing.length, who: 'pc', state, comp, style, shape, sleeve, expr, pose, parts, files: parts.map((q) => q.file), missing, groups: { head: hd, torso: g.torso || [0, 0] }, face: [face[0] + hd[0], face[1] + hd[1], face[2] + hd[0], face[3] + hd[1]] };
+  }
+  const ready = (pl) => !!(pl && pl.ok && pl.files.every((n) => dec.has(n)));
+
+  // ---- the look's ramps (as the code busts build their materials) ---------------------------------------------------------
+  function pick(M, idx) { return idx.map((i) => M.c[Math.min(i, M.c.length - 1)]); }
+  const pickOf = (M) => (M.n >= 6 ? C().PICK.n6 : M.n === 5 ? C().PICK.n5 : C().PICK.n4);
+  function rampsOf(look) {
+    const k = HK().lookKey(look);
+    let r = ramps.get(k);
+    if (r) return r;
+    const col = RB.sprites.colorsOf(look), H = HK(), PK = C().PICK;
+    r = {
+      skin: pick(H.skinMat(col.skin), PK.skin), hair: pick(H.hairMat(col.hair), PK.n6),
+      clothMain: pick(H.clothMat(col.cloth[0]), PK.n6), clothTrim: pick(H.clothMat(col.cloth[2], { step: 0.09 }), PK.n6),
+      wrap: pick(H.clothMat(look.wrapCol || col.cloth[2]), PK.n6), acc: {}, cloth: col.cloth,
+    };
+    ramps.set(k, r);
+    while (ramps.size > 16) ramps.delete(ramps.keys().next().value);
+    return r;
+  }
+  function accRamp(r, look, a) {
+    if (r.acc[a]) return r.acc[a];
+    const ch = C().ACC[a] && C().ACC[a].channel;
+    if (!ch) return null;
+    let M;
+    const v = look[ch.field];
+    if (v) M = HK().M('acc_' + a, v, ch.opts);
+    else if (ch.def === 'metal') M = HK().metalMat('#e0b850');
+    else M = HK().M('acc_' + a, ch.def === 'cloth.2' ? r.cloth[2] : ch.def, ch.opts);
+    r.acc[a] = pick(M, pickOf(M));
+    return r.acc[a];
+  }
+
+  // ---- assembling ------------------------------------------------------------------------------------------------------
+  // draw a decoded file into out at (dx, dy); recolour with `tab` (material → 5 packed colours); skip(x, y) hides
+  function draw(out, f, dx, dy, tab, skip) {
+    const W = f.w, H = f.h, px = f.px, code = f.code;
+    for (let y = 0; y < H; y++) {
+      const Y = y + dy;
+      if (Y < 0 || Y >= H) continue;
+      for (let x = 0; x < W; x++) {
+        const i = y * W + x, p = px[i];
+        if (!(p >>> 24)) continue;
+        const X = x + dx;
+        if (X < 0 || X >= W) continue;
+        if (skip && skip(X, Y)) continue;
+        let q = p;
+        if (code && code[i] >= 2 && tab) { const c = code[i] - 2, row = tab[Math.floor(c / 5)]; if (row) q = row[c % 5]; }
+        out[Y * W + X] = q;
+      }
+    }
+  }
+  function paint(pl, look, fx) {
+    if (!ready(pl)) return null;
+    const H = C(), W = H.BUST.w, Hh = H.BUST.h, out = new Uint32Array(W * Hh);
+    const res = { w: W, h: Hh, px: out, mt: new Uint16Array(W * Hh), anchor: null, face: null, hands: [] };
+    const box = (b) => ({ x: b[0], y: b[1], w: b[2] - b[0], h: b[3] - b[1] });
+    if (pl.who !== 'pc') {
+      for (const n of pl.files) if (n !== pl.fx) draw(out, dec.get(n), 0, 0, null);
+      if (pl.fx && fx !== false) draw(out, dec.get(pl.fx), 0, 0, null);
+      const nk = H.ANCHORS.comp.neck;
+      res.anchor = { x: nk[0], y: nk[1] }; res.face = box(pl.face);
+      S.paints++;
+      return res;
+    }
+    const r = rampsOf(look), P = man.pc || {};
+    const base = [r.skin, r.hair, r.clothMain, r.clothTrim, null];
+    // slot order, with the pose's arm slot and glasses over a listed fringe
+    let order = H.PC_SLOTS.slice();
+    const armAt = P.armSlot && P.armSlot[pl.pose];
+    if (armAt && H.ARM_SLOT[armAt]) { order = order.filter((s) => s !== 'arm'); order.splice(order.indexOf(H.ARM_SLOT[armAt]), 0, 'arm'); }
+    if ((P.glassesOver || []).indexOf(pl.style) >= 0) { order = order.filter((s) => s !== 'glasses'); order.splice(order.indexOf('hair_front') + 1, 0, 'glasses'); }
+    // a hat or cap hides the hair above its band (its row plus the style's attachment offset and the head group's)
+    let band = null;
+    for (const q of pl.parts) if (q.acc && H.ACC[q.acc].hides && P.hatBand && P.hatBand[q.acc] != null) {
+      const at = (P.attach && P.attach[pl.style] && P.attach[pl.style][q.acc]) || [0, 0];
+      const y = P.hatBand[q.acc] + at[1] + pl.groups.head[1];
+      band = band == null ? y : Math.max(band, y);
+    }
+    const hide = band == null ? null : (x, y) => y < band;
+    const rank = (q) => { const L = H.SLOT_ORDER[q.slot]; return L ? L.indexOf(q.acc) : 0; };
+    let armBox = null;
+    for (const slot of order) {
+      const qs = pl.parts.filter((q) => q.slot === slot).sort((a, b) => rank(a) - rank(b));
+      for (const q of qs) {
+        const f = dec.get(q.file), g = pl.groups[H.GROUP_OF[slot]] || [0, 0];
+        let dx = g[0], dy = g[1];
+        if (q.acc && H.ACC[q.acc].hair && P.attach && P.attach[pl.style] && P.attach[pl.style][q.acc]) { dx += P.attach[pl.style][q.acc][0]; dy += P.attach[pl.style][q.acc][1]; }
+        let tab = base;
+        if (q.acc) { tab = base.slice(); tab[4] = accRamp(r, look, q.acc); }
+        else if (/^pc_hair_wrap_/.test(q.file)) { tab = base.slice(); tab[3] = r.wrap; }
+        draw(out, f, dx, dy, tab, slot === 'hair_back' || slot === 'hair_front' ? hide : null);
+        if (slot === 'arm') armBox = bbox(f.px, f.w, f.h, dx, dy);
+      }
+    }
+    const nk = H.ANCHORS.pc.neck;
+    res.anchor = { x: nk[0], y: nk[1] }; res.face = box(pl.face);
+    if (armBox) res.hands.push(Object.assign({ side: 'near' }, armBox));
+    S.paints++;
+    return res;
+  }
+  function bbox(px, w, h, dx, dy) {
+    let x0 = w, y0 = h, x1 = -1, y1 = -1;
+    for (let i = 0; i < px.length; i++) if (px[i] >>> 24) { const x = i % w, y = (i / w) | 0; if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    if (x1 < 0) return null;
+    const X0 = Math.max(0, x0 + dx), Y0 = Math.max(0, y0 + dy), X1 = Math.min(w - 1, x1 + dx), Y1 = Math.min(h - 1, y1 + dy);
+    return { x: X0, y: Y0, w: X1 - X0 + 1, h: Y1 - Y0 + 1 };
+  }
+
+  // ---- timing ------------------------------------------------------------------------------------------------------------
+  // a companion with a complete painted set: its states (and the manifest's overrides); otherwise the default
+  // timeline (its code bust maps each state to enter or hold)
+  function timeline(comp) {
+    if (!man) return null;
+    const set = man.companions && man.companions[comp];
+    const done = set && C().REQUIRED.every((s) => set.states.indexOf(s) >= 0);
+    return done ? C().timeline(set.states, set.timeline) : C().timeline();
+  }
+
+  // ---- diagnostics -------------------------------------------------------------------------------------------------------
+  function note(f) { S.fallbacks++; S.log.push(f); while (S.log.length > 24) S.log.shift(); }
+  function stats() {
+    let bytes = 0;
+    for (const v of dec.values()) bytes += v.px.byteLength + (v.code ? v.code.byteLength : 0);
+    return {
+      active: !!man, error: err, set: man ? man.set : null, synthetic: man ? !!man.synthetic : null, artVersion: artVersion(), contractVersion: C().VERSION,
+      files: man ? Object.keys(man.files).length : 0, decoded: dec.size, pending: pend.size, decodedBytes: bytes, cap: CAP,
+      decodes: S.decodes, evictions: S.evictions, decodeErrors: S.decodeErrors.slice(), paints: S.paints, fallbacks: S.fallbacks, fallbackLog: S.log.slice(), looksCached: ramps.size,
+    };
+  }
+
+  // the build's embedded set (assets/harmony/), when there is one
+  if (RB.harmonyAssets && RB.harmonyAssets.manifest) { try { install(RB.harmonyAssets); } catch (e) { err = [String(e && e.message)]; } }
+
+  return { install, uninstall, active, manifest: () => man, artVersion, plan, ready, load, paint, timeline, stats, note, _: { codesOf, rampsOf, accRamp, decoded: dec } };
+})();
 
 
 /* ==== src/ui/88_lanterns.js ==== */
