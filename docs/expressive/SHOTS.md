@@ -276,6 +276,26 @@ Rework (Phase E; HX44, HX46, HX50):
 
 ---
 
+## 7b. Faded passages: fill the gap where darkness is a shortcut (the owner's note of 2026-10-03)
+The owner's note: lines readable over a black screen are good only "if darkness is truly the intent; otherwise
+a cutscene should be played to fill in gaps where movement in the overworld/interior/exterior may feel
+inadequate". Every `!fade out` that speaks in the dark (nine, found by code review; all readable since
+6e6f079) is audited here. Each is either **darkness intended** (time truly passing at night, where the black
+is the beat) or **a gap to fill** with an interlude/illustrated shot (`!interlude`, later the sequence player)
+or with performed overworld movement (the actor system). Decide each with the same criteria as §0.
+
+| Scene | What the dark covers | Status / plan |
+|---|---|---|
+| `sg.tide_wait` (ch2) | two hours' wait at Shiori's window | **Filled**: the tide interlude (`42b_interlude_tide.js`) |
+| `sg.genzo_wind` (ch2) | the climb up the spiral stairs | **Filled** by the real map (`sg.lighthouse_top`). The one climbing line over the dark could become a short stairwell shot: candidate. |
+| `sg.asahi_name` (ch2) | Asahi carving and polishing the nameplate, gulls outside | **Gap**: an illustrated close-up of the hands at work, the plate taking shape. |
+| `co.suzu_night` (ch3) | the cut to that night, Suzu alone on the inn veranda | Darkness as a scene change: **performed** on the veranda (her sitting, the night ambience) instead of a line over black. |
+| `co.festival_begin` (ch3) | a whole morning of village labour (four lines) | **Gap**: an illustrated sequence (the terraces, the water gate, the cut firebreaks, the new rope on the tower). Candidate for joining Chapter 3's sequence. |
+| `sb.quiet_morning` (ch4) | the storm night ending ("at some point the wind stopped") | **Darkness intended** (sleep and the storm's end); keep the black, possibly a single quiet window shot as the light returns. |
+| `sb.next_day_inn` (ch4) | a night at the inn, lights on the mountain | Mostly time passing; a **single shot** of the window and the mountain lights would carry it better than black. |
+| `lf.boat_to_tower` (ch5) | rowing across the still lake to the bell tower | **Gap**: an illustrated crossing shot (the boat, the oar, the drowned town below the surface, the tower ahead). |
+| *(and any later `!fade out` added with lines in the dark)* | — | The sequence worker re-runs this audit from source and keeps the table current. |
+
 ## 8. Audit: personal questlines, long questlines, endings, The Pages We Keep (§17.2 last paragraph)
 
 From the manifest (`storyline` personal:*, longquest:*, ending, pages). For each major beat: what happens

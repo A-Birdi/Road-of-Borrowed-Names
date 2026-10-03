@@ -187,6 +187,7 @@ is ticked here: existing evidence (e.g. BA3) was not re-run in this phase.
 ### §21 Performance and assets
 - [ ] HX58 Code-driven art in the self-contained build; busts prepared at safe moments (battle start prewarm, `'equip:change'`), bounded precomputation and caches with invalidation for appearance, art version and scene departure; shot surfaces released at sequence end; no growth over repeated entries. — *partial (precedents: `RB.battlers` LRU CAP 720 and `prewarm`; `RB.prologueArt.release()`).*
 - [ ] HX59 Measured cold preparation, warm playback, frame-time distribution, cache size and cleanup for all four pairings with heavy appearances and groups; environment recorded; no phone claims from desktop runs. — *missing (precedent: `tests/e2e/battle_budget.mjs`, docs/battle/GEOMETRY.md).*
+- [ ] HX71 (the owner's note of 2026-10-03) Faded passages: no gap in the story is carried by a black screen where movement or an action could be shown; each `!fade out` with lines in the dark is either darkness by intent (recorded with the reason) or filled with an interlude/illustrated shot or performed movement. Audit and plan: SHOTS.md §7b. — *2 of 9 filled (tide wait, Genzō's climb); 7 to do.*
 - [ ] HX60 Third-party notices kept; no borrowed characters, logos or UI from the references; reference images never committed. — *satisfied baseline; preserve.*
 
 ### §1–§2 boundaries (cross-cutting)
