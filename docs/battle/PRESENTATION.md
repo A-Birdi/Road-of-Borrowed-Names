@@ -80,7 +80,7 @@ plates return to a row of slips that also carry the moves.
   close it. A press on a badge never targets, chooses or hurries anything.
 - The card shows what the telegraph reveals: symbol, name, stated strength, the creature's
   Japanese line (with readings), the English when it is already shown or a Translate (assisted) button
-  when it is not, what the move does, and — with Nao — his foresight of what comes after.
+  when it is not, what the move does, and — with Nao — their foresight of what comes after.
   How to answer it is a note the player opens. Reading-critical moves (lie, mirror, plea; an authored
   table, `READING` in `80_combat.js`) say only "It is telling you something. Read what it says." /
   "It is asking you something."

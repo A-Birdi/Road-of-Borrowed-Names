@@ -61,7 +61,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function puff(c, x, y, r, u, col, a) { disc(c, x, y, Math.max(u, r), Math.max(u, r * 0.55), col, a); }
   // Nao's courier route (pCourier, pThreadRoute): where it starts — the pencil's point when the sketch began,
-  // kept relative to his feet in art px so it stays put while the pencil moves on and follows the stage through
+  // kept relative to their feet in art px so it stays put while the pencil moves on and follows the stage through
   // a resize — and the shape of each leg: a high arc out over the party, a hump hopping from knot to knot, a
   // rise up to the creature
   function courierStart(e, A) {
@@ -324,7 +324,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const m = seg(k, 0.55, 0.85);
       if (m > 0) { halo(c, d.x, d.y, A.foeR * (0.4 + 0.4 * m), '255,226,160', 0.45 * bell(m)); sparkle(c, d.x, d.y, Math.round((3 + 4 * bell(m)) * u), u, '#ffffff', bell(m)); }
     },
-    // Nao: the opening marked — an ink circle drawn round the place, a short leader line from his finger
+    // Nao: the opening marked — an ink circle drawn round the place, a short leader line from their finger
     pSpot(c, e, k, A, t, still) {
       const u = A.u, o = A.pt('foe', 'core'), x = o.x - A.foeR * 0.25, y = o.y + A.foeR * 0.15, r = 7 * u;
       const fade = 1 - seg(k, 0.8, 1), s = still ? 1 : ease(seg(k, 0, 0.45));
@@ -645,7 +645,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (!still && back > 0.85) { const h = seg(k, 0.7, 0.9); sparkle(c, o.x, o.y, Math.round((2 + 3 * bell(h)) * u), u, '#fff0e0', bell(h) * fade); }
     },
     // Lantern Ward: the level plane Ren's hand draws, set before each of you at the chest — a few thin lines
-    // of lamplight laid flat in perspective, growing from his side; restrained, it holds and is gone (the
+    // of lamplight laid flat in perspective, growing from their side; restrained, it holds and is gone (the
     // ward itself is the seal tag at the result, its real amount, used up by blows like any ward)
     pPlane(c, e, k, A, t, still) {
       const u = A.u, fade = 1 - seg(k, 0.8, 1), s = still ? 1 : ease(seg(k, 0, 0.45));

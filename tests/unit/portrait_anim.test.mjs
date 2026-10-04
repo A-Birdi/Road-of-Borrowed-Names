@@ -107,10 +107,72 @@ export default async (t) => {
   t.eq(A.timeline('nao', null, { ms: 2000 }).cueEnd, 0, 'no tag, no cue');
   t.eq(A.timeline('nao', 'neutral', { ms: 2000 }).cueEnd, 0, 'neutral has no cue');
   t.ok(A.timeline('suzu', 'laugh', { ms: 1000 }).frames[0].fr.wink, 'Suzu\'s laugh opens with a wink');
-  t.ok(A.timeline('ren', 'think', { ms: 1000 }).frames.some((f) => f.fr.glassDy === -1), 'Ren adjusts his glasses on a think line');
+  t.ok(A.timeline('ren', 'think', { ms: 1000 }).frames.some((f) => f.fr.glassDy === -1), 'Ren adjusts their glasses on a think line');
   t.ok(!A.timeline('ren', 'think', { ms: 1000, used: ['ren:adjust'] }).frames.some((f) => f.fr.glassDy === -1), 'but only once a scene (a glint instead)');
-  t.ok(A.timeline('nao', 'smirk', { ms: 1000 }).frames.some((f) => f.fr.head && f.fr.head[0] === -1), 'Nao turns his head a little away on a smirk');
+  t.ok(A.timeline('nao', 'smirk', { ms: 1000 }).frames.some((f) => f.fr.head && f.fr.head[0] === -1), 'Nao turns their head a little away on a smirk');
   t.ok(A.timeline('wataru', 'sad', { ms: 1000 }).frames.some((f) => f.fr.look && f.fr.look[0] === -1), 'Wataru\'s sadness looks aside');
+
+  // ---- the shared profile: the actor system's mannerism profile is the one the portrait reads (WI13) ---------
+  // Everyone with an authored profile (the player, the companions, the recurring cast) and portrait art: the
+  // portrait's class overlay is their actor class (or the block's own `class`), every rate the block gives is
+  // the one played, each cue variant it names (and each tell with a portrait counterpart) reaches the cue;
+  // the portrait player's own table is the fallback, and a person with no profile at all gets the default loop.
+  const M = RB.mannerisms, MP = M.profiles();
+  const authored = Object.keys(MP).filter((id) => PT.subject(id));
+  const expectOf = (k, w, pr) => {
+    if (k === 'glint') return pr.glasses ? w || { every: [10000, 16000] } : null; // only glasses catch the light
+    if (k === 'sway') return pr.swings ? w || { every: [7000, 12000] } : null; // only hair or things that hang sway
+    if (k === 'habit' && w && /^glasses/.test(w.kind) && !pr.glasses) return null;
+    return w;
+  };
+  const notShared = [], wrongCls = [], wrongVal = [], wrongCue = [];
+  let blocks = 0, checked = 0;
+  for (const id of authored) {
+    const sj = PT.subject(id), pr = A.profileOf(sj.who, sj.p), prof = M.of(id), pb = prof.portrait || {};
+    if (prof.portrait) blocks++;
+    if (pr.from !== 'shared') notShared.push(id + ' ' + pr.from);
+    const cls = pb.class || prof.class;
+    if (pr.cls !== cls) wrongCls.push(id + ' ' + pr.cls + ' (want ' + cls + ')');
+    for (const k of A.SHARED_KEYS) if (k in pb) { checked++; if (JSON.stringify(pr[k]) !== JSON.stringify(expectOf(k, pb[k], pr))) wrongVal.push(id + '.' + k + ' ' + JSON.stringify(pr[k])); }
+    const c = pb.cues || {}, tells = prof.tells || {};
+    if (c.smirk && c.smirk.turn && JSON.stringify(pr.hold && pr.hold.smirk && pr.hold.smirk.head) !== JSON.stringify(c.smirk.turn)) wrongCue.push(id + ' smirk.turn');
+    if (((c.smirk && c.smirk.wink) || (c.laugh && c.laugh.wink)) && !pr.wink) wrongCue.push(id + ' wink');
+    if (c.laugh && c.laugh.hidden && pr.laugh !== 'hidden') wrongCue.push(id + ' laugh.hidden');
+    if (c.worry && c.worry.nod && !pr.nod) wrongCue.push(id + ' worry.nod');
+    if (c.think && c.think.lids && !pr.thinkLids) wrongCue.push(id + ' think.lids');
+    if (((c.think && c.think.adjust) || tells.think === 'glasses') && pr.glasses && !pr.adjust) wrongCue.push(id + ' think.adjust');
+    if (c.closed && c.closed.slow && pr.slowClose !== c.closed.slow) wrongCue.push(id + ' closed.slow');
+    const sadWant = c.sad && c.sad.look ? c.sad.look : tells.sad === 'aside' || tells.sad === 'avert' ? [-1, 1] : null;
+    if (sadWant && JSON.stringify(pr.sadLook) !== JSON.stringify(sadWant)) wrongCue.push(id + ' sad.look ' + JSON.stringify(pr.sadLook));
+    if (pb.serious && pb.serious.some((e) => !(pr.serious && pr.serious[e]))) wrongCue.push(id + ' serious');
+  }
+  t.ok(authored.length >= 75 && blocks >= 25, `profiles with portrait art: ${authored.length}; with a portrait block: ${blocks}`);
+  t.eq(notShared, [], 'every speaking person with an actor profile takes their portrait from it (from: shared)');
+  t.eq(wrongCls, [], 'the portrait\'s class overlay is the actor class (or the block\'s own class)');
+  t.ok(checked >= 40, `the portrait blocks' rates (${checked}) are the ones in the played profile`);
+  t.eq(wrongVal, [], 'every rate a portrait block gives is the one played (glints only with glasses, sway only with hair that hangs)');
+  t.eq(wrongCue, [], 'every cue variant a block names, and each tell with a portrait counterpart, reaches the profile');
+  // the same profile, as played: by id
+  const look = (id, tag, ms) => A.timeline(id, tag, { ms: ms || 1200 }).frames;
+  t.eq(A.timeline('pc', null, { ms: 100 }).profile.cls, 'base', 'the player keeps the plain loop (their actor class is traveller; the block says base)');
+  t.eq(A.timeline('ren', null, { ms: 100 }).profile.cls, 'keeper', 'Ren\'s portrait has the keeper\'s overlay, as on the road');
+  t.ok(look('nao', 'sad').some((f) => f.fr.look && f.fr.look[0] === -1 && f.fr.look[1] === 1), 'Nao\'s sadness looks away (tells.sad \'aside\')');
+  t.ok(look('akari', 'sad').some((f) => f.fr.look && f.fr.look[0] === -1), 'Akari\'s sadness averts (tells.sad \'avert\')');
+  t.ok(look('hana', 'sad').some((f) => f.fr.look && f.fr.look[0] === 1 && f.fr.look[1] === 1), 'Hana\'s sadness looks to the cups (her block over her tell)');
+  t.ok(look('co_tokiwa', 'think').some((f) => f.fr.glassDy === -1), 'Tokiwa adjusts the glasses on a think line (tells.think \'glasses\')');
+  const glances = (id) => [...new Set(A.timeline(id, null, { ms: 90000, seed: 3 }).frames.filter((f) => f.fr.look).map((f) => JSON.stringify(f.fr.look)))].sort();
+  t.eq(glances('tamae'), ['[1,0]'], 'Tamae\'s glances go one way, toward the kitchen (her block)');
+  t.eq(glances('lf_tokuji'), ['[1,0]'], 'Tokuji stares one way, at the lake (his block)');
+  // the fallback and the default
+  const seto = A.profileOf('cs_seto', PT.subject('cs_seto').p);
+  t.ok(!MP.cs_seto && seto.from === 'portrait' && seto.cls === 'elder', 'a person without an actor profile keeps the portrait player\'s own row (Seto: elder)');
+  const nobody = A.profileOf('zz_nobody', { acc: [], style: 'short' });
+  t.ok(nobody.from === 'default' && nobody.cls === 'base' && JSON.stringify(nobody.blink) === JSON.stringify(A.CLASS.base.blink) && JSON.stringify(nobody.glance) === JSON.stringify(A.CLASS.base.glance) && !nobody.habit && !nobody.tilt, 'a person with no profile anywhere gets the default loop');
+  const saved = RB.mannerisms;
+  RB.mannerisms = undefined;
+  const bare = A.profileOf('nao', PT.subject('nao').p);
+  RB.mannerisms = saved;
+  t.ok(bare.from === 'portrait' && JSON.stringify(bare.blink) === JSON.stringify([4400, 7400]) && !bare.sadLook, 'without the actor system the bespoke row is the whole profile (the fallback)');
 
   // ---- the player: cues once per tag, Reduce motion still -------------------------------------------------------------
   RB.game.G.settings = { reducedMotion: false, textSpeed: 'normal' };

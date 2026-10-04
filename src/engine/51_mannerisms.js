@@ -2,8 +2,8 @@
  * addendum's §4–§5 and §11 reuse policy).
  *
  * One profile per person is the single source that the overworld idle scheduler (RB.staging), the
- * scene cues and, later, the dialogue portraits read, so a person moves like the same person idle in
- * town, in conversation and in a staged scene. Three tiers:
+ * scene cues and the dialogue portraits (src/ui/21_portrait_anim.js) read, so a person moves like the
+ * same person idle in town, in conversation, in a staged scene and in the portrait. Three tiers:
  *   core library   the gestures and habits of RB.gestures, shared by everyone;
  *   class overlay  rates, resting stance, preferred habits and conversation gestures for a kind of
  *                  person (CLASSES: official, scholar, clerk, host, craft, elder, child, keeper,
@@ -17,7 +17,9 @@
  *   { class, tier, rest: pose, every: [minS, maxS], idle: [[habit, weight, { at, prop, gaze }]],
  *     route: [[habit, weight]], tells: { surprise, worry, sad, angry, shy, happy, think }: gesture ids,
  *     props: [...], talk: [primitive numbers], strong: [{ beat, gesture }], avoid: [...],
- *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1,
+ *     portrait: { note, class?, blink, glance, habit … (rates), cues: { tag: { variant } }, serious }
+ *       (the dialogue portrait; the fields are listed in the header of src/content/mannerisms/10_cast.js),
+ *     states: [{ if, rest, idle, every }], social: 0..1,
  *     maps: { mapId: { rest, restProp, idle } } (their own workplace: the glassblower at his bench) }
  * API: RB.mannerisms.add(id, profile), .of(id), .forActor(actor), .classOf(look, stations), .CLASSES,
  *      .profiles(), .BESPOKE (the ids authored as bespoke), .stationsAt(map, x, y) */

@@ -194,7 +194,7 @@ The cue is then classed against that person's mannerism profile:
 It fails on:
 - a gesture outside the vocabulary;
 - a stronger reaction written for a staged scene and not shown there;
-- Ren adjusting his glasses more than once a scene;
+- Ren adjusting their glasses more than once a scene;
 - Suzu's hand-on-hip stance in a scene;
 - a tense opener (recoil, folded arms, hand to forehead, the emphatic hand) that is not the person's tell;
 - a laugh or celebration before that person's line tagged sad, cry, angry or worry, or a lowered head, bow or
@@ -209,7 +209,7 @@ Cases found when it was written are listed in the test with a reason; an entry t
   People staged in two or more scenes: Mio, Nao, the player, Ren, Suzu. Each keeps to their vocabulary in
   every scene, apart from the documented cases.
 - **Documented escalations (accepted):**
-  - Ren's bow in `co.hiro_first` ("As a lantern keeper, I'm in your debt": his thanks, 30, made formal);
+  - Ren's bow in `co.hiro_first` ("As a lantern keeper, I'm in your debt": their thanks, 30, made formal);
   - Mio's half-raised hand in `lf.mio_refuse` (narrated: her mouth starts to shape a yes and stops);
   - the player's hand on her back (narrated).
 - **Open findings (for the profiles' or the scenes' owner):**

@@ -119,7 +119,7 @@ by the tests in `src/engine/96_combat_sim.js` (`RB.combatSim`), the screen in
   "stand with you"): each one shares or takes what comes for you.
 - **Overlaps worth knowing:** Suzu's `lq_ally2` gesture is her `ch2_done`
   "Draw its eye" for every creature at once; Nao's `lq_ally1` "Seize the
-  opening" shares its theme with his first action "Spot the opening" (that
+  opening" shares its theme with their first action "Spot the opening" (that
   one readies a stronger Unravel; this one cancels a move).
 - **Traits that stay passive:** Nao reads each creature's next two moves;
   Ren starts each encounter behind a small ward; once per encounter Suzu

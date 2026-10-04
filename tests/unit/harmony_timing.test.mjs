@@ -11,7 +11,7 @@
 //   Heat, mist or Gathering (each rinse naming what was there); Mio's pour over you both; Nao's route ticking
 //   each knot that really comes loose, the two going together in one shared burst only when two do, never on
 //   another creature; Suzu's curtain round each creature whose move it turns; Ren's plane before each of you;
-// - distinct body mechanics (§9.7): Nao takes his pencil from behind his ear, turns side-on, steps and sketches
+// - distinct body mechanics (§9.7): Nao takes their pencil from behind their ear, turns side-on, steps and sketches
 //   the route (two ticks), Mio raises the (larger) vial high over her head and tips it, Ren raises
 //   the lamp high and draws a level line, Suzu turns a full circle through side, front and back views (the
 //   rig's own, not a mirrored costume) and plants; the player's four terminal gestures differ.
@@ -97,7 +97,7 @@ export default async (t) => {
     const F = PC.TECH.nao, ticksBy = (cr) => cr.at + cr.d * cr.p.draw * (cr.p.way.length / (cr.p.way.length + 1));
     t.ok(cr2 && cr2.p.way.join() === 'knot:1,knot:2' && kp && kp.p.a === 'knot:1' && kp.p.b === 'knot:2' && kr2.length === 2 && kr2[0].at === kr2[1].at && Math.abs(kp.at - kr2[0].at) <= 60 && th2 && th2.p.way.join() === cr2.p.way.join() && th2.at + th2.d * th2.p.arrive <= kr2[0].at && th2.at + th2.d * th2.p.arrive > kr2[0].at - 80, 'Nao, two knots come loose: the route ticks both (' + cr2.p.way.join() + '), your thread follows it to them just before they go (' + Math.round(th2.at + th2.d * th2.p.arrive) + '), and they go together (' + kr2.map((c) => c.at).join(' = ') + ') in one shared burst');
     t.ok(cr1 && cr1.p.way.join() === 'knot:0' && th1 && th1.p.way.join() === 'knot:0' && !fxn(one).includes('pKnotPair') && kr1.length === 1, 'Nao, only one knot left: the route lands on that one, one contact, no shared burst');
-    t.ok(ticksBy(cr2) < F.contact && ticksBy(cr1) < F.contact && cr2.at > F.pAt + F.pAnt && !fxn(two).includes('pSpot'), 'Nao: the route is sketched during his signature and its ticks land before the knots go (' + Math.round(ticksBy(cr2)) + ' < ' + F.contact + '); it is his own route, not the plain Unravel\'s spot');
+    t.ok(ticksBy(cr2) < F.contact && ticksBy(cr1) < F.contact && cr2.at > F.pAt + F.pAnt && !fxn(two).includes('pSpot'), 'Nao: the route is sketched during their signature and its ticks land before the knots go (' + Math.round(ticksBy(cr2)) + ' < ' + F.contact + '); it is their own route, not the plain Unravel\'s spot');
   }
   // Mio: three beats, truthful
   {
@@ -128,13 +128,13 @@ export default async (t) => {
   const range = (who, f, n) => { const v = []; for (let i = 0; i <= (n || 32); i++) v.push(f(P(who, 'act', i / (n || 32)))); return [Math.min(...v), Math.max(...v)]; };
   {
     const R = R0('nao'), st = P('nao', 'act', 0.3), a = P('nao', 'anticipate', 1), ear = P('nao', 'anticipate', 0.5), end = P('nao', 'act', 1);
-    t.ok(ear.handR[1] > 55 && ear.prop.pencil > 0.5 && !(R.prop.pencil > 0.5) && a.prop.pencil > 0.5, 'Nao: his pencil taken from behind his ear (the hand up at ' + ear.handR[1] + ')');
+    t.ok(ear.handR[1] > 55 && ear.prop.pencil > 0.5 && !(R.prop.pencil > 0.5) && a.prop.pencil > 0.5, 'Nao: their pencil taken from behind their ear (the hand up at ' + ear.handR[1] + ')');
     t.ok(a.pelvis[1] < R.pelvis[1] - 2 && st.footR[2] > R.footR[2] + 3 && st.turn >= 45 && end.turn >= 45 && end.prop.pencil > 0.5 && end.handR[1] > R.handR[1] + 20 && end.handR[2] > R.handR[2] + 12, 'Nao: the weight dropped (' + a.pelvis[1].toFixed(1) + ' vs ' + R.pelvis[1] + '), turned side-on (' + end.turn + '°) with a step in, the pencil out high at the route\'s end');
     const ys = []; for (let i = 0; i <= 48; i++) ys.push(P('nao', 'act', i / 48).handR[1]);
     let dips = 0; for (let i = 1; i < ys.length - 1; i++) if (ys[i] < ys[i - 1] && ys[i] <= ys[i + 1] && ys[i] < Math.max(...ys.slice(0, i)) - 2) dips++;
     t.ok(dips >= 2, 'Nao: the pencil ticks twice as it sketches the route (' + dips + ' dips)');
     const nod = P('nao', 'recover', 0.5), back = P('nao', 'recover', 0.4);
-    t.ok(nod.headYaw > R.headYaw + 20 && back.prop.pencil > 0.5 && back.handR[1] > 55 && !(nod.prop.pencil > 0.5) && P('nao', 'recover', 0.76).headPitch > R.headPitch + 12, 'Nao: his recovery puts the pencil back behind his ear with a glance to you, then a short nod');
+    t.ok(nod.headYaw > R.headYaw + 20 && back.prop.pencil > 0.5 && back.handR[1] > 55 && !(nod.prop.pencil > 0.5) && P('nao', 'recover', 0.76).headPitch > R.headPitch + 12, 'Nao: their recovery puts the pencil back behind their ear with a glance to you, then a short nod');
   }
   {
     const tilt = range('mio', (p) => p.prop.vialTilt || 0), A = P('mio', 'anticipate', 1);

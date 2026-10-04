@@ -11,7 +11,8 @@
 //   plan      Keep visible + Expanded, a group of three, a finishing technique, Adaptive + Expanded on a phone
 //   geometry  1648×840, 1440×900, 1280×720, 768×1024, 390×844, 320×640, 844×390 at 100 % and 200 % text: the
 //             fit mode and footprint; no drawn pixel of the portrait within 12 px of any protected rectangle
-//             (measured here, independently of the overlay); the menus, feet, creatures and camera unmoved
+//             (measured here, independently of the overlay) — and, even during its entrance, none shown over a
+//             withdrawn menu still visibly leaving; the menus, feet, creatures and camera unmoved
 //   frozen    the frame with the overlay shown and hidden, everything frozen: identical outside the overlay
 //   life      Skip, a hidden tab, a campaign change, word help opening, a resize mid-action
 //   cycles    20 techniques in one page: listeners, layers, timers and caches bounded
@@ -21,7 +22,9 @@
 //             held, then settle_b held, one cross-fade of at most 120 ms, no travel
 //   painted geometry (contract v3 §3.3) the sample, and the rich fixture over it, at every geometry viewport and at
 //             2048×1046 and 1920×1080: the scale fitted on the visible footprint (and what the full canvas gave),
-//             the faces' size in CSS px, nothing within 12 px of a protected rectangle; 2× at 2048×1046 and 1920×1080
+//             the faces' size in CSS px, nothing within 12 px of a protected rectangle; 2× at 2048×1046 and 1920×1080;
+//             and the sample with the template's face boxes (real art's 50 × 52) at 1366, 1440, 1600 and 2048 wide:
+//             the pair whose faces come out larger is the one shown
 // With --docs: real-time WebM captures of each pairing at Normal (1280×720), frame sheets of each stage
 // performance with the portrait Off, and the 390×844 compact cut-in, in docs/screenshots/harmony/cutin/.
 // With --painted-docs: the painted rows (scales, face sizes, footprints) in docs/screenshots/harmony/cutin/painted_v3.json.
@@ -227,7 +230,7 @@ async function settle(p) {
 // one committed technique with real clicks; returns what was recorded
 async function technique(p, comp, o) {
   o = o || {};
-  await p.evaluate((every) => { const HC = window.__HC; HC.frames = []; HC.every = every || 3; HC.checkEntering = false; HC.on = true; HC.s0 = RB.harmonyCutin.stats(); HC.trace0 = RB.battleSeq.trace().length; HC.look0 = JSON.stringify(RB.equip.look(RB.game.s)); HC.target0 = RB.combat.state().cur; }, o.every);
+  await p.evaluate(([every, entering]) => { const HC = window.__HC; HC.frames = []; HC.every = every || 3; HC.checkEntering = !!entering; HC.on = true; HC.s0 = RB.harmonyCutin.stats(); HC.trace0 = RB.battleSeq.trace().length; HC.look0 = JSON.stringify(RB.equip.look(RB.game.s)); HC.target0 = RB.combat.state().cur; }, [o.every, o.entering]);
   await clickCard(p, 'With ' + NAME[comp]);
   await answerRight(p);
   await companionPick(p, 'Join');
@@ -260,6 +263,10 @@ async function leave(p) {
 }
 const firstResult = (r) => Math.min(...r.tech.beats.filter((x) => x.t !== 'cost').map((x) => x.at));
 const markAt = (last, st) => { const m = last.marks.find((x) => x.state === st); return m ? m.at : null; };
+// a recorded frame where the portrait's drawn pixels come within 12 px of something protected: after its entrance,
+// anything; during the entrance (it slides in from the left edge), a withdrawn menu still visibly leaving — the
+// response dock or the telegraph (V3_REPORT.md open question 3)
+const overlapping = (f) => !!f.ov && ((f.state !== 'entering' && f.ov.length > 0) || (f.op > 0 && f.ov.some((h) => h.id === 'responses' || h.id === 'intent')));
 
 // ---------------------------------------------------------------------------------------------------------
 const core = [];
@@ -374,15 +381,15 @@ const geo = [];
 async function scene(sc) {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: sc.w, height: sc.h } });
   await setup(p, Object.assign({ knots: sc.knots || 6, pc: 8 }, sc));
-  const r = await technique(p, sc.comp, { every: 1 });
+  const r = await technique(p, sc.comp, { every: 1, entering: true });
   const during = r.frames.filter((f) => f.ov);
-  const hitsAfterEntry = during.filter((f) => f.state !== 'entering' && f.ov.length);
+  const hitsAfterEntry = during.filter(overlapping);
   // the layouts the technique passed through (feet, creatures, scale, the status dock), in order: compared
   // with the same scene played with the portrait Off — the overlay must not move any of them
   const lays = [];
   for (const f of r.frames) if ((f.kind === 'player' || f.kind === 'finish') && f.lay && lays[lays.length - 1] !== f.lay) lays.push(f.lay);
   const L = r.started ? r.last : null;
-  const row = { name: sc.name, view: sc.w + '×' + sc.h, text: (sc.text || 1) * 100 + '%', comp: sc.comp, controls: sc.controls || 'adaptive', intents: sc.intents || 'adaptive', foes: sc.foes || 1, shown: r.started, displayed: L ? L.displayed : false, why: L ? L.why : null, fit: L ? L.fit : 'omitted', variant: L && L.variant, scale: L && L.scale, faceH: L && L.faceH, faceW: L && L.faceW, footprint: L && L.footprint, footprintShare: L ? { w: +(L.footprint.w / sc.w * 100).toFixed(1), h: +(L.footprint.h / sc.h * 100).toFixed(1), area: +(L.footprint.w * L.footprint.h / (sc.w * sc.h) * 100).toFixed(1) } : null, checkedFrames: during.length, overlaps: hitsAfterEntry.length, fallback: r.fallback ? { reason: r.fallback.reason, tried: r.fallback.tried } : null, layouts: lays.length, relaid: r.relaid, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r) };
+  const row = { name: sc.name, view: sc.w + '×' + sc.h, text: (sc.text || 1) * 100 + '%', comp: sc.comp, controls: sc.controls || 'adaptive', intents: sc.intents || 'adaptive', foes: sc.foes || 1, shown: r.started, displayed: L ? L.displayed : false, why: L ? L.why : null, fit: L ? L.fit : 'omitted', variant: L && L.variant, scale: L && L.scale, faceH: L && L.faceH, faceW: L && L.faceW, footprint: L && L.footprint, footprintShare: L ? { w: +(L.footprint.w / sc.w * 100).toFixed(1), h: +(L.footprint.h / sc.h * 100).toFixed(1), area: +(L.footprint.w * L.footprint.h / (sc.w * sc.h) * 100).toFixed(1) } : null, checkedFrames: during.length, overlaps: hitsAfterEntry.length, waitedForMenus: L ? L.waitedForMenus : null, fallback: r.fallback ? { reason: r.fallback.reason, tried: r.fallback.tried } : null, layouts: lays.length, relaid: r.relaid, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r) };
   if (!sc.flourishOffRun) geo.push(row);
   await ctx.close();
   return { row, r, errors, hitsAfterEntry, lays };
@@ -397,13 +404,13 @@ await test('geometry: seven viewports at 100 % and 200 % text — the fit mode a
     try { sc = await scene({ name: w + 'x' + h + (text > 1 ? ' 200%' : ''), w, h, text, comp }); } catch (e) { bad.push(w + 'x' + h + ' ' + text * 100 + '%: ' + String(e && e.message || e).slice(0, 400)); continue; }
     const { row, errors, hitsAfterEntry } = sc;
     if (hitsAfterEntry.length) console.log('    overlap: ' + JSON.stringify(hitsAfterEntry[0].ov) + ' visible ' + JSON.stringify(hitsAfterEntry[0].vis));
-    console.log('  ' + row.view + ' ' + row.text + ' ' + comp + ': ' + (row.shown && row.displayed ? row.fit + ' ' + row.variant + ' ×' + row.scale + ' faces ' + row.faceH + ' px, footprint ' + JSON.stringify(row.footprint) + ' (' + JSON.stringify(row.footprintShare) + ')' : 'omitted — ' + (row.fallback && row.fallback.reason)) + '; frames checked ' + row.checkedFrames + ', overlaps ' + row.overlaps + ', layouts ' + row.layouts + ', placed again ' + row.relaid);
+    console.log('  ' + row.view + ' ' + row.text + ' ' + comp + ': ' + (row.shown && row.displayed ? row.fit + ' ' + row.variant + ' ×' + row.scale + ' faces ' + row.faceH + ' px, footprint ' + JSON.stringify(row.footprint) + ' (' + JSON.stringify(row.footprintShare) + ')' : 'omitted — ' + (row.fallback && row.fallback.reason)) + '; frames checked ' + row.checkedFrames + ', overlaps ' + row.overlaps + ', layouts ' + row.layouts + ', placed again ' + row.relaid + (row.waitedForMenus != null ? ', waited for the withdrawn menus until ' + row.waitedForMenus + ' ms' : ''));
     if (hitsAfterEntry.length) bad.push(row.name + ': ' + JSON.stringify(hitsAfterEntry[0].ov));
     if ((w === 1280 || w === 390 || (w === 1648 && text === 1))) {
       // the same scene with the portrait Off: the very same layouts, in the same order
       const off = await scene({ name: row.name + ' (portrait off)', w, h, text, comp, flourish: false, flourishOffRun: true });
       row.sameLayoutAsPortraitOff = JSON.stringify(off.lays) === JSON.stringify(sc.lays);
-      if (!row.sameLayoutAsPortraitOff) bad.push(row.name + ': the layout differs from the same scene with the portrait Off ' + JSON.stringify({ on: sc.lays.length, off: off.lays.length }));
+      if (!row.sameLayoutAsPortraitOff) bad.push(row.name + ': the layout differs from the same scene with the portrait Off ' + JSON.stringify({ on: sc.lays.length, off: off.lays.length, layoutsOn: sc.lays, layoutsOff: off.lays }));
     }
     if (row.shown && !(row.disposedAt < row.firstResult)) bad.push(row.name + ': not gone before the first result');
     if (errors.length) bad.push(row.name + ': ' + errors.join('; '));
@@ -750,6 +757,15 @@ const LOOK_A = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coa
 const paintedAssets = {};
 async function assetsOf(which) {
   if (paintedAssets[which]) return paintedAssets[which];
+  if (which === 'template') {
+    // the sample's drawings with the template's face boxes (50 × 52 art px: the size real art is drawn to) — what the
+    // overlay decides for real art's faces; the sample's own face boxes are its code-drawn faces' 36 × 33
+    const s = await assetsOf('sample');
+    const m = JSON.parse(JSON.stringify(s.manifest));
+    for (const c of Object.values(m.companions || {})) delete c.face;
+    if (m.pc) delete m.pc.face;
+    return (paintedAssets.template = { manifest: m, files: s.files });
+  }
   const { importSets } = await import('../../tools/harmony/importer.mjs');
   const dir = path.join(outDir, which + '_assets');
   const dirs = ['tests/fixtures/harmony_sample/incoming'].concat(which === 'rich' ? ['tests/fixtures/harmony_rich/incoming'] : []).map((d) => path.join(root, d));
@@ -762,7 +778,7 @@ async function assetsOf(which) {
 // one Suzu technique with the painted set installed: the overlay's record, what was shown, and the checks' failures
 async function paintedScene(v, which) {
   const assets = await assetsOf(which || 'sample');
-  const tag = v.w + '×' + v.h + (v.dpr ? ' @' + v.dpr + 'x' : '') + ' ' + v.anim + (v.reduce ? ' reduced' : '') + (which === 'rich' ? ' (rich)' : '');
+  const tag = v.w + '×' + v.h + (v.dpr ? ' @' + v.dpr + 'x' : '') + ' ' + v.anim + (v.reduce ? ' reduced' : '') + (which === 'rich' ? ' (rich)' : which === 'template' ? ' (template faces)' : '');
   const bad = [];
   const { p, errors, ctx } = await page(b, url, { viewport: { width: v.w, height: v.h }, dpr: v.dpr || 1 });
   try {
@@ -775,11 +791,13 @@ async function paintedScene(v, which) {
       // what contract v2 gave: the same views fitted on the full pair canvas
       const v2 = { standard: RB.harmonyArt.fitScale(innerWidth, innerHeight, 'standard'), compact: RB.harmonyArt.fitScale(innerWidth, innerHeight, 'compact') };
       const v3 = { standard: RB.harmonyArt.fitScale(innerWidth, innerHeight, 'standard', undefined, fs2), compact: RB.harmonyArt.fitScale(innerWidth, innerHeight, 'compact', undefined, fc) };
-      return { ok: r.ok, errors: r.errors, active: RB.harmonyRaster.active(), timeline: RB.harmonyArt.timeline ? RB.harmonyArt.timeline('suzu') : null, native: RB.harmonyArt.NATIVE, dpr: devicePixelRatio, footprint: { standard: fs2, compact: fc }, v2, v3, approval: RB.harmonyArt.approval() };
+      // the faces each pair would show at its fitted scale (the smaller face's width, CSS px): the overlay takes the larger
+      const fw = (variant, s) => (s > 0 ? Math.min(...RB.harmonyArt.compose({ comp: 'suzu', look, variant, phase: 'settle_b' }).faces.map((f) => f.w)) * s : 0);
+      return { faceCandidates: { standard: fw('standard', v3.standard), compact: fw('compact', v3.compact) }, ok: r.ok, errors: r.errors, active: RB.harmonyRaster.active(), timeline: RB.harmonyArt.timeline ? RB.harmonyArt.timeline('suzu') : null, native: RB.harmonyArt.NATIVE, dpr: devicePixelRatio, footprint: { standard: fs2, compact: fc }, v2, v3, approval: RB.harmonyArt.approval() };
     }, assets);
     if (!(inst.ok && inst.active && Array.isArray(inst.timeline) && inst.timeline.length >= 3)) { bad.push(tag + ': not installed ' + JSON.stringify(inst).slice(0, 300)); return { row: { view: tag }, bad }; }
     let held = null;
-    const r = await technique(p, 'suzu', { every: 1, during: async () => {
+    const r = await technique(p, 'suzu', { every: 1, entering: true, during: async () => {
       // (holding — or the fit order's recorded omission: no portrait for this action in this layout)
       const st = await p.waitForFunction(() => (RB.harmonyCutin.state().state === 'holding' ? 'holding' : RB.harmonyCutin.stats().fallbacks.length > window.__HC.s0.fallbacks.length ? 'omitted' : null), null, { timeout: 8000, polling: 'raf' }).then((h) => h.jsonValue()).catch(() => 'timeout');
       if (st !== 'holding') return;
@@ -795,7 +813,7 @@ async function paintedScene(v, which) {
     const src = await p.evaluate(([look, phs, variant]) => phs.map((ph) => RB.harmonyArt.compose({ comp: 'suzu', look: JSON.parse(look), phase: ph, variant }).painted), [r.look0, shown, L ? L.variant : 'standard']);
     const mixes = L ? L.trace.filter((x) => x[5] != null) : [];
     const mixSpan = mixes.length ? Math.round((mixes[mixes.length - 1][0] - mixes[0][0]) * 10) / 10 : 0;
-    const row = { view: tag, which: which || 'sample', started: r.started, why: L && L.why, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, scaleV2: inst.v2, scaleV3: inst.v3, faceH: L && L.faceH, faceW: L && L.faceW, footprintArt: inst.footprint, footprintCss: L && L.footprint, footprintShare: L ? { w: +(L.footprint.w / v.w * 100).toFixed(1), h: +(L.footprint.h / v.h * 100).toFixed(1) } : null, held, states: seq, timeline: order, painted: src, reducedPlan: L && L.reducedPlan, crossFadeMs: mixSpan, travel: L ? Math.max(0, ...L.trace.map((x) => Math.abs(x[3]))) : null, overlaps: r.frames.filter((f) => f.ov && f.state !== 'entering' && f.ov.length).length, checkedFrames: r.frames.filter((f) => f.ov).length, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r), approval: inst.approval };
+    const row = { view: tag, which: which || 'sample', faceCandidates: inst.faceCandidates, tried: L ? L.tried : null, started: r.started, why: L && L.why, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, scaleV2: inst.v2, scaleV3: inst.v3, faceH: L && L.faceH, faceW: L && L.faceW, footprintArt: inst.footprint, footprintCss: L && L.footprint, footprintShare: L ? { w: +(L.footprint.w / v.w * 100).toFixed(1), h: +(L.footprint.h / v.h * 100).toFixed(1) } : null, held, states: seq, timeline: order, painted: src, reducedPlan: L && L.reducedPlan, crossFadeMs: mixSpan, travel: L ? Math.max(0, ...L.trace.map((x) => Math.abs(x[3]))) : null, overlaps: r.frames.filter(overlapping).length, waitedForMenus: L ? L.waitedForMenus : null, checkedFrames: r.frames.filter((f) => f.ov).length, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r), approval: inst.approval };
     console.log('  ' + tag + ': ' + (L ? L.fit + ' ' + L.variant + ' ×' + +(+L.scale).toFixed(4) + ' (v2 ' + +(+inst.v2[L.variant]).toFixed(4) + '), faces ' + +(+L.faceW).toFixed(1) + ' × ' + +(+L.faceH).toFixed(1) + ' CSS px; states ' + seq.join(' → ') : 'none'));
     if (!r.started && v.mayOmit && r.fallback) { Object.assign(row, { fit: 'omitted', fallback: { reason: r.fallback.reason, tried: r.fallback.tried } }); console.log('    omitted: ' + r.fallback.reason + ' ' + JSON.stringify(r.fallback.tried)); return { row, bad }; }
     if (r.started !== 1 || !L || L.why !== 'done') { bad.push(tag + ': one cut-in, done ' + JSON.stringify({ started: r.started, why: L && L.why, fb: r.fallback && r.fallback.reason })); return { row, bad }; }
@@ -813,7 +831,7 @@ async function paintedScene(v, which) {
     if (!held || held.cw !== inst.native[held.variant].w || held.ch !== inst.native[held.variant].h || Math.abs(held.css[0] - held.cw * held.scale) > 0.51 || Math.abs(held.css[1] - held.ch * held.scale) > 0.51) bad.push(tag + ': the canvas at the art\'s native size, shown at the placement\'s scale ' + JSON.stringify({ held, native: inst.native }));
     if (held && held.variant === 'standard' && held.scale !== inst.v3.standard) bad.push(tag + ': the standard pair at the footprint\'s scale ' + JSON.stringify({ held: held.scale, v3: inst.v3 }));
     if (v.dpr && v.dpr > 1 && held && held.variant === 'compact' && Math.abs(held.scale * v.dpr - Math.round(held.scale * v.dpr)) > 1e-6) bad.push(tag + ': the compact pair at whole device pixels per art pixel ' + JSON.stringify(held));
-    if (row.overlaps) { const f = r.frames.find((f) => f.ov && f.state !== 'entering' && f.ov.length); bad.push(tag + ': ' + row.overlaps + ' frames within 12 px of a protected rectangle, e.g. ' + JSON.stringify({ ov: f.ov, vis: f.vis, pl: L.footprint, state: f.state, op: f.op, seqT: f.seqT, kind: f.kind, banner: f.banner })); }
+    if (row.overlaps) { const f = r.frames.find(overlapping); bad.push(tag + ': ' + row.overlaps + ' frames within 12 px of a protected rectangle, e.g. ' + JSON.stringify({ ov: f.ov, vis: f.vis, pl: L.footprint, state: f.state, op: f.op, seqT: f.seqT, kind: f.kind, banner: f.banner })); }
     if (!(row.disposedAt < row.firstResult)) bad.push(tag + ': gone before the first result ' + JSON.stringify({ disposedAt: row.disposedAt, firstResult: row.firstResult }));
     if (errors.length) bad.push(tag + ': ' + errors.join('; '));
     return { row, bad };
@@ -838,6 +856,22 @@ await test('painted geometry (synthetic sample, and the rich fixture over it): e
     const { row, bad: b2 } = await paintedScene({ w, h, dpr, anim: 'normal', order: false, mayOmit: w < 1920 }, which);
     rows.push(row); bad.push(...b2);
     if ((w === 2048 || w === 1920) && !(row.variant === 'standard' && row.scale === 2)) bad.push(row.view + ': the standard pair at 2× ' + JSON.stringify({ variant: row.variant, scale: row.scale, v3: row.scaleV3, v2: row.scaleV2, fit: row.fit }));
+  }
+  // V3_REPORT.md open question 2: with real art's face size (the template's 50 × 52 box) the overlay takes the pair whose
+  // faces come out larger — at 1366–1600 wide the compact pair at 2× (~100 CSS px) over the standard at 1× (~50); at
+  // 2048 × 1046 both give 100 and the standard pair stays
+  const TV = [[1366, 768, 1], [1440, 900, 1], [1600, 900, 1], [2048, 1046, 1]].filter((v) => !process.env.HC_VIEW || process.env.HC_VIEW === v[0] + 'x' + v[1]);
+  for (const [w, h, dpr] of TV) {
+    const { row, bad: b2 } = await paintedScene({ w, h, dpr, anim: 'normal', order: false, mayOmit: false }, 'template');
+    rows.push(row); bad.push(...b2);
+    const fc = row.faceCandidates || {}, best = Math.max(fc.standard || 0, fc.compact || 0);
+    // a pair with larger faces is passed over only when it was tried first and could not be placed (it would come
+    // within 12 px of something protected), as the overlay records it
+    const larger = fc.compact > fc.standard ? 'compact' : fc.standard > fc.compact ? 'standard' : null;
+    const refused = (row.tried || []).filter((t) => larger && t.fit.startsWith(larger) && t.scale === row.scaleV3[larger]);
+    console.log('    faces by pair at the fitted scale (CSS px wide): standard ' + fc.standard + ', compact ' + fc.compact + '; shown ' + row.faceW + (refused.length ? ' — the ' + larger + ' pair refused: ' + refused.map((t) => t.fit + ' ×' + t.scale + ' ' + t.why).join('; ') : ''));
+    if (!(row.faceW >= best - 0.01) && !(larger && refused.length && refused.every((t) => /overlaps|too/.test(t.why)))) bad.push(row.view + ': the pair with the larger faces ' + JSON.stringify({ shown: [row.variant, row.scale, row.faceW], candidates: fc, fit: row.fit, tried: row.tried }));
+    if (w === 2048 && !(row.variant === 'standard' && row.scale === 2)) bad.push(row.view + ': equal faces — the standard pair at 2× ' + JSON.stringify({ variant: row.variant, scale: row.scale }));
   }
   report.paintedGeometry = { note: 'SYNTHETIC sample (tests/fixtures/harmony_sample) and rich fixture (tests/fixtures/harmony_rich), not the game\'s art. The sample\'s face boxes are the code busts\' (36 × 33 art px); real art uses the template\'s 50 × 52.', rows };
   if (paintedDocs) {

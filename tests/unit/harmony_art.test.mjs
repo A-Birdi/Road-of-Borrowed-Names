@@ -87,7 +87,7 @@ export default async (t) => {
   const rib = sideOf('suzu', 'curtain', 'ribbon');
   t.ok(rib.right > rib.left * 3, "Suzu's ribbon sits toward her left (the far side, screen right) as in her portrait (" + JSON.stringify(rib) + ')');
   const pen = sideOf('nao', 'route', 'pencil');
-  t.ok(pen.right > 0 && pen.left === 0, "Nao's pencil is tucked on his left (screen right) (" + JSON.stringify(pen) + ')');
+  t.ok(pen.right > 0 && pen.left === 0, "Nao's pencil is tucked on their left (screen right) (" + JSON.stringify(pen) + ')');
   const suzu = HK.drawBust('suzu', null, 'curtain', 'hold', 'standard');
   t.ok(suzu.mole && suzu.mole.x > suzu.head.x, "Suzu's mole is on her left cheek (the far cheek), as in her portrait");
   const ren = HK.drawBust('ren', null, 'ward', 'hold', 'standard');

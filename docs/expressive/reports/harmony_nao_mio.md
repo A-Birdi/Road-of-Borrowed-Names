@@ -2,7 +2,7 @@
 
 The owner: "Suzu and Ren's animations look great in battle — Nao and Mio's feel a tad lacking in comparison."
 The lead's diagnosis (from the frame crops of the first build's recordings): Nao's `opening` barely differed
-from his ordinary point and lunge from behind, his ink circle and threads read like a plain Unravel, and "two
+from their ordinary point and lunge from behind, their ink circle and threads read like a plain Unravel, and "two
 knots at once" had no moment of its own (a short ochre line after contact); Mio's vial was tiny at play scale,
 her eye-level and pouring keys hardly differed, the pour went only to you as a few 2-px drops, and the payoff
 read only as a number on one of you.
@@ -18,13 +18,13 @@ are as before; the only shared code touched is `pJoin`, whose new fine variant i
 `pSteam`'s `wash` branch, which only Mio's technique passes).
 
 **Nao — Read the Opening** (`BY.nao.opening`, `TECH.nao`; Normal, presentation ms from the technique's start):
-- 400–780: his right hand up to his ear and the courier pencil taken from behind it (his portrait keeps a pencil
-  there; the battle rig now draws one in his hand, `prop.pencil`, in the prop layer — only while he holds it);
-  brought out before his shoulder as he begins to turn, the weight dropped.
+- 400–780: their right hand up to their ear and the courier pencil taken from behind it (their portrait keeps a pencil
+  there; the battle rig now draws one in their hand, `prop.pencil`, in the prop layer — only while they hold it);
+  brought out before their shoulder as they begin to turn, the weight dropped.
 - 780–888: turned sharply side-on (`turn` 54°, the rig's own side view, read from behind), a step in with the right
   foot, the back foot kept where it stood through the turn, the pencil arm high, the other arm swung back.
 - 888–1,320: the pencil sketches the route, ticking twice (1,032 — the cue — and 1,176); held at the route's end.
-- 1,850–2,350: the pencil back behind his ear with a glance to you, a short nod, the ready stance.
+- 1,850–2,350: the pencil back behind their ear with a glance to you, a short nod, the ready stance.
 - Effects: `pCourier` — a dashed gold route sketched at the pencil's pace from where the pencil started, out over
   the party, a waypoint pin landing on each knot that really comes loose (two; when only one is left, the one), then
   up to the creature, where a ring closes round the opening; `pThreadRoute` — your thread follows the route to
@@ -32,7 +32,7 @@ are as before; the only shared code touched is `pJoin`, whose new fine variant i
   `pKnotPair` (both `knotRelease` cues at the same moment), only when two really come loose (the existing truth
   check: the unravel fx's `n` and the knots shown ≥ 2); `pRead` at the technique's beat (1,450): the ring pulled
   tight round the opening. The plain Unravel's `pSpot`/`pThread` and the old `pRoute` are no longer used here
-  (`pSpot` stays for his support action). Sounds from the existing set: `pen_down` 600, `pen_stroke` 890,
+  (`pSpot` stays for their support action). Sounds from the existing set: `pen_down` 600, `pen_stroke` 890,
   `pen_up` 1,320.
 
 **Mio — Clearwater Draught** (`BY.mio.draught`, `TECH.mio`):
@@ -53,7 +53,7 @@ are as before; the only shared code touched is `pJoin`, whose new fine variant i
 
 **Both:** the shared braid (`pJoin`) is drawn fine (`soft`) under these two techniques so their own carrier leads.
 Totals: Nao 2,350 ms (Fast 1,643 ms of wall time), Mio 2,400 ms (Fast 1,678); Instant none. Reduced motion: three
-held, distinct keys each (Nao: the pencil out before his shoulder / the route's end / the pencil back behind his ear
+held, distinct keys each (Nao: the pencil out before their shoulder / the route's end / the pencil back behind their ear
 with a glance to you; Mio: the vial at eye level / high and tipped / the nod with the vial at her hip), the effects
 as still marks (the whole route with its pins and ring; the arc, a few drops and a ripple at each of your feet; the
 rinse as a few still drops). The paired portrait (0–780 ms) and the rule that the contact never comes before it is
@@ -76,7 +76,7 @@ other workers ran their own browser tests — load averages between about 4 and 
 
 - **Unit / content:** `node tests/run-unit.mjs` 24,322 passed, 0 failed (final sources); `harmony_timing` 89 checks,
   updated (below). An earlier full run, before a fix, had 1 failure: battle_party's "planted on the anchor" — Nao's
-  signature frame's lowest row was 103, two art px below the anchor once he turned side-on. The turned feet now sit
+  signature frame's lowest row was 103, two art px below the anchor once they turned side-on. The turned feet now sit
   along the line of the turn, the back foot kept where it stood; every frame of both gestures re-measured in node:
   lowest row 100–102, inside the frame. `node tools/validate.mjs`: no errors.
 - **`node tests/e2e/battle_invariance.mjs --tech`:** 96 configurations (4 pairings × 1 / 3 creatures × Normal / Fast /
@@ -105,9 +105,9 @@ other workers ran their own browser tests — load averages between about 4 and 
   **`playtest_repairs.mjs`:** 7/7. **`battle_overlap.mjs`:** all ok (96 checks). **`battle_cycle.mjs`:** stable — from
   battle 5 to 20 listeners 104 → 104, nodes 247 → 245.
 - **`node tests/e2e/harmony_perf_sheets.mjs --check`** (new diagnostic; Normal, real time, the portrait On, a pet (the
-  cat) in battle, a ward before each of you): Nao — 56 frames of his performance (anticipate / act / recover of
-  `opening`), the ward marks of both of you drawn in all 56, his chest anchor between his head and feet and within
-  40 px of his foot point in all 56, the pet's technique reaction recorded once; Mio — 67 frames, the same results.
+  cat) in battle, a ward before each of you): Nao — 56 frames of their performance (anticipate / act / recover of
+  `opening`), the ward marks of both of you drawn in all 56, their chest anchor between their head and feet and within
+  40 px of their foot point in all 56, the pet's technique reaction recorded once; Mio — 67 frames, the same results.
   (Frame counts are what the loaded machine drew in 2.35–2.4 s.)
 
 `tests/unit/harmony_timing.test.mjs`, what changed (nothing loosened; the old checks named the retired `pRoute` and
@@ -116,9 +116,9 @@ Nao's final `point`):
   most 80 ms before they go; both `knotRelease` cues at the same moment; one `pKnotPair` on that pair at that moment.
   One knot left: one waypoint, one contact, no shared burst. The route's ticks land before the knots go; no `pSpot`
   in the technique.
-- Nao's body: the pencil taken at his ear (the hand above 55 units, the pencil in hand; none in the stance); weight
+- Nao's body: the pencil taken at their ear (the hand above 55 units, the pencil in hand; none in the stance); weight
   dropped, turned side-on (≥ 45°) with a step in, the pencil out high and forward at the route's end; the pencil ticks
-  twice; the recovery puts it back behind his ear with a glance to you, then a nod. (Replaces "a precise point at the
+  twice; the recovery puts it back behind their ear with a glance to you, then a nod. (Replaces "a precise point at the
   end".)
 - Mio: the pour (`pCascade`) goes to you both also when both are full; your ink's drop (`pDrop`) lands on the knot at
   the contact; no `pPour`. `pRefill` joins `motes`/`soothed` in "only on one of you below full"; `pWash` joins the
@@ -147,7 +147,7 @@ Nao's final `point`):
 
 - **HX20** (rules unchanged): preserved and re-checked — invariance `--tech` 96/96 identical on the final build; each
   result still one beat in the rules' order (harmony_timing). Status: still satisfied.
-- **HX22** (Nao — Read the Opening): advanced — the pencil from behind his ear, a side-on turn with a step, the route
+- **HX22** (Nao — Read the Opening): advanced — the pencil from behind their ear, a side-on turn with a step, the route
   sketched with a tick on each knot that really comes loose, your thread along it, the two knots together in one
   shared burst only when two do, a short confident recovery; targeted in groups (unit: every effect on the one
   creature). Status: built and machine-tested; **not judged by a person**.

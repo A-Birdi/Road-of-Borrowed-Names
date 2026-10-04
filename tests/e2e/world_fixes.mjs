@@ -82,7 +82,7 @@ const arriving = await p.evaluate(async () => {
   r.at = n ? [n.x, n.y].join() : null;
   return r;
 });
-assert(arriving.routed && arriving.at === '5,4', `Nao walks in from ${arriving.from} to his place (${arriving.at})`);
+assert(arriving.routed && arriving.at === '5,4', `Nao walks in from ${arriving.from} to their place (${arriving.at})`);
 
 // the Lantern Hall: the four are there when they speak
 await start('rw.village', 21, 10, { rw_arrived: true, rw_road_lit: true, rw_mill_open: true, rw_echo_done: true, rw_koji_back: true, rw_night: true, rw_evening: true });

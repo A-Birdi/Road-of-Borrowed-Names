@@ -34,8 +34,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         jp: 'ありがとう ございます 。 これ を 。 {灯守|ひもり} の {言葉|ことば} です 。 {私|わたし} より 、 あなた の {手|て} で {書|か}く {方|ほう} が {明|あか}るい でしょう 。', en: 'Thank you. Take this — a keeper\'s word. It\'ll shine brighter written in your hand than in mine.', reading: 'ありがとうございます。これを。ひもりのことばです。わたしより、あなたのてでかくほうがあかるいでしょう。', h: '1ql4edx' },
       q: {
         F: choose(T('Both lines use これ ("this"). What does it point to in each?', '{二|ふた}つ の 「 これ 」 は 、 それぞれ {何|なに} を {指|さ}す ？'), [
-          opt('Mio: the labels she holds · Ren: the keeper\'s word he hands over', true),
-          opt('Both: the labels', false, 'Ren\'s これ is something he gives you: "a keeper\'s word".'),
+          opt('Mio: the labels she holds · Ren: the keeper\'s word they hand over', true),
+          opt('Both: the labels', false, 'Ren\'s これ is something they give you: "a keeper\'s word".'),
           opt('Mio: the medicine · Ren: the lantern', false, 'Mio is talking about paper that should have warped: the labels.'),
         ], { showEn: true }),
         E: choose(T('What does これ point to in each line?', 'それぞれ の 「 これ 」 は {何|なに} ？'), [
@@ -43,17 +43,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
           opt('Mio: the water · Ren: the bridge', false, 'Mio says これ isn\'t wet at all: the paper labels.'),
           opt('The same thing in both', false, 'これ points to whatever is at hand — different things in the two moments.'),
         ]),
-        I: write(T('In Ren\'s line, これ is something he hands you. Write what it is, in his words.', 'レン の 「 これ 」 は {何|なん} です か 。 レン の {言葉|ことば} で {書|か}きましょう 。'), [
+        I: write(T('In Ren\'s line, これ is something they hand you. Write what it is, in their words.', 'レン の 「 これ 」 は {何|なん} です か 。 レン の {言葉|ことば} で {書|か}きましょう 。'), [
           ok(['{灯守|ひもり} の {言葉|ことば}'], 'a keeper\'s word'), ok(['{言葉|ことば}'], 'a word'),
           { ok: false, parts: ['ラベル'], en: 'the labels', why: { en: 'That is Mio\'s これ. Ren\'s is "{灯守|ひもり}の{言葉|ことば}".' } },
         ]),
         A: choose(T('Which statement about the two これ is accurate?', '{二|ふた}つ の 「 これ 」 に ついて 、 {正|ただ}しい の は どれ ？'), [
           opt('Both point to something in the speaker\'s hands, but to different things', true, null, 'どちら も {話|はな}し{手|て} の {手元|てもと} の もの を {指|さ}す が 、 {指|さ}す もの は {違|ちが}う'),
-          opt('Ren\'s これ refers back to his previous sentence', false, 'He follows これを。 with what it is: a keeper\'s word he is handing over.', 'レン の 「 これ 」 は {前|まえ} の {文|ぶん} を {指|さ}す'),
+          opt('Ren\'s これ refers back to their previous sentence', false, 'They follow これを。 with what it is: a keeper\'s word they are handing over.', 'レン の 「 これ 」 は {前|まえ} の {文|ぶん} を {指|さ}す'),
           opt('Both point to the labels', false, 'Only Mio\'s does.', 'どちら も ラベル を {指|さ}す'),
         ]),
       },
-      explain: { en: 'これ ("this") has no fixed meaning: it points to whatever is near the speaker at that moment. In Mio\'s hand it is the labels; in Ren\'s, the keeper\'s word he gives you. The context does the work.' },
+      explain: { en: 'これ ("this") has no fixed meaning: it points to whatever is near the speaker at that moment. In Mio\'s hand it is the labels; in Ren\'s, the keeper\'s word they give you. The context does the work.' },
     },
     {
       id: 'C02', cat: 'literal-contextual', catLabel: T('Literal or figurative', '{文字|もじ} どおり か 、 たとえ か'), word: T('{重|おも}い (omoi), "heavy"', '{重|おも}い'),
@@ -138,7 +138,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           opt('Tokiwa\'s', true), opt('Ren\'s', false, 'Ren asks a polite question; Tokiwa tells them to do it, now.'), opt('They are the same', false, 'One is a question, one is a command-like request.'),
         ], { showEn: true }),
         E: choose(T('{書|か}いていただけますか — what is Ren doing?', '「 {書|か}いて いただけます か 」 で レン は {何|なに} を して いる ？'), [
-          opt('Politely asking you to write', true), opt('Saying that he will write', false, 'He will read; he asks you to write.'), opt('Asking whether you can read', false, 'It is about writing for him.'),
+          opt('Politely asking you to write', true), opt('Saying that they will write', false, 'They will read; they ask you to write.'), opt('Asking whether you can read', false, 'It is about writing for them.'),
         ]),
         I: write(T('Make Tokiwa\'s request indirect, like Ren\'s: rope … ～ていただけますか.', 'トキワ の {頼|たの}み を 、 レン の よう に 「 ～て いただけます か 」 に しましょう 。'), [
           ok(['{綱|つな} を', '{外|はず}して いただけます か'], 'Could you take the rope down?'), ok(['{外|はず}して いただけます か'], 'Could you take it down?'),
