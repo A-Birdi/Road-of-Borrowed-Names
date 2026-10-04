@@ -6,8 +6,8 @@ Records what this pass changed, what was run and what was observed. Categories a
 
 Scope: the scenes of Chapter 5 (72) and Chapter 6 (62) that `docs/expressive/SCENES.md` drafted as "Performed
 overworld" by heuristic `(H)` (plus `lf.nao_deliver` and `sa.end_comp`, decided Performed earlier but not staged).
-Not in this pass: `lf.boat_to_tower` (being illustrated by another worker), `lf.bell_touch` and `sa.toya_read` (the
-illustrated selections, not drafts), `lf.mio_refuse` and `sa.isamu_return` (staged earlier; their entries stay in
+Not in this pass: `lf.boat_to_tower` (its faded crossing is now the illustrated `ch5.boat`, another worker's),
+`lf.bell_touch` and `sa.toya_read` (the illustrated selections, not drafts), `lf.mio_refuse` and `sa.isamu_return` (staged earlier; their entries stay in
 `CURATED`), and the files of other workers (`src/content/lq`, `cases`, `pages`, `pets`). This is direction only:
 no line, branch, quest step, item or outcome was added, removed or reworded (below: every scene's story commands
 are identical to the base commit, and with staging off every staged branch ends in exactly the state the staged
@@ -15,8 +15,9 @@ run ends in).
 
 ## Outcome
 
-All 134 drafts were reviewed by reading and are now decided `(C)` except the three not in this pass (130 decisions
-in `tools/scene_curated_ch56.mjs`, merged into the manifest's `CURATED` / `CURATED_INLINE`).
+All 134 drafts were reviewed by reading and are now decided `(C)` except the three not in this pass (131 decisions
+in `tools/scene_curated_ch56.mjs` — 130 scenes and one inline fragment — merged into the manifest's `CURATED` /
+`CURATED_INLINE`).
 
 | | Ch5 | Ch6 | total |
 |---|---|---|---|
@@ -28,7 +29,9 @@ in `tools/scene_curated_ch56.mjs`, merged into the manifest's `CURATED` / `CURAT
 
 Every scene in `src/content/ch5/**` and `src/content/ch6/**` that the manifest lists as "Performed overworld" is now
 staged (except `lf.boat_to_tower`, the other pass's). After this pass the manifest has one heuristic Performed entry
-left in these two chapters (`lf.boat_to_tower`).
+left in these two chapters (`lf.boat_to_tower`: after the merge below it holds the illustrated crossing `ch5.boat`
+between its fade-out and the warp, but no decision for the scene was recorded, so it still reads "Performed
+overworld (H)"; its owner should record it).
 
 On "quiet by design": every draft was read for whether something is there to perform — an object handled or read, a
 turn of feeling written into a line or the narration, a companion answering something in front of them, a mechanism
@@ -98,16 +101,54 @@ The same runner as Chapters 1–2 (`tests/e2e/staging_runner.mjs`; described in 
 checked"): each case is a synthetic fixture of the moment the scene plays; every branch is played to its end with
 its cues; per branch, every cue names somebody who is there and can make it, every `!walkto` is reached, nobody
 shares a tile or stands on furniture at any frame (the world's walkers included; only a walker forced through after
-waiting is recorded apart, and none was), nobody idles, afterwards everyone is where the world expects them and your
+waiting is recorded apart — in this pass only in `sa.epi_lf`, see Findings), nobody idles, afterwards everyone is where the world expects them and your
 companion is within two tiles, and the gestures the case expects are cued; per case (every branch with `--branches`),
 reduced motion keeps the cues, their order and the outcome, and staging off ends in exactly the same state.
 
 ## Validation log
 
 Run on the shared 4-core box (other workers' tests running at the same time), headless Chromium via the installed
-Playwright, on the built `index.html`, browser test files one at a time.
+Playwright, on the built `index.html`, browser test files one at a time. No assertion was weakened.
 
-PENDING
+**On this pass's own branch** (before the merge below; the build of that commit):
+
+- **U** `node tests/run-unit.mjs` — 25843 passed, 0 failed (`conversation_continuity` 860 / 0, `scene_manifest`
+  579 / 0, `practice_b` 96 / 0).
+- **U** `node tools/validate.mjs` — no errors; 15 warnings, all there before this pass (13 lexicon conflicts, 2 map
+  exits not reachable from the default spawn: `co.oldworks`, `sb.obs_path`).
+- **U** story unchanged (a scratch script, not committed): every scene's story commands — everything but the
+  `gesture`/`look`/`pose`/`walkto`/`prop`/`beat`/`ambience` ops, labels resolved to the command they point at —
+  compared with the base commit `da9751c`: 1250 scenes the same, 0 differ.
+- **B** `node tests/e2e/staging_chapters.mjs --ch=5` — 2174 passed, 0 failed (66 scenes, 908 s); no walker forced
+  through.
+- **B** `… --ch=6` — 2042 passed, 0 failed (60 scenes, 885 s); six world's-fallback records, all in `sa.epi_lf`
+  (Findings). Then the epilogue fixtures were corrected (Kasane staying no longer also carried the flags of Kasane
+  coming down) and `… --ch=6 --only=sa.epi_lf,sa.epi_sb --branches` — 116 passed, 0 failed (275 s; the same six
+  records, Tae instead of Kasane in the branch where Kasane stayed).
+- **B** `… --ch=showcase` — 66 passed, 0 failed. `tests/e2e/actor_life.mjs` — 39 passed, 0 failed.
+  `tests/e2e/walk_round.mjs` — all passed. `tests/e2e/story_ch5.mjs` — 8 / 8 PASS (profiles F and I with each
+  companion, 44–46 steps, `lf.keeper` won). `tests/e2e/story_ch6.mjs` — all ok (ren/A 37/37, nao/F 36/36, mio/E 36/36,
+  suzu/I 36/36, ren/F 37/37). `tests/e2e/pages_ending.mjs` — all ok. `tests/e2e/staging_ch56_sheets.mjs` — 5 sheets
+  written. (The screenshots the other suites rewrite as a side effect — `docs/screenshots/actors/`,
+  `docs/screenshots/pages/` — were restored, not committed.)
+
+**After merging the task branch** (`91eb61f`: the Chapter 3–4 staging pass and the Chapter 5–6 illustrated
+sequences; merge commit below): conflicts in `tests/e2e/staging_runner.mjs` (both passes had added `seen` and
+`compAt`: kept as one, with the optional direction of the 3–4 side and the cleared step of this side; the 3–4 side's
+reset of every NPC to their map place before each branch now applies to these cases too), `tests/e2e/staging_chapters.mjs`
+(runs CH12, CH34 and CH56; `--ch=1 … 6`), `tools/scene_manifest.mjs` (both decision files), `index.html` (rebuilt) and
+`SCENES.md` / `scenes.json` (regenerated, not hand-merged). `10_cast.js` needed no union (the 3–4 pass changed no
+`talk` list). On the merged build:
+
+- **U** `node tests/run-unit.mjs` — 26538 passed, 0 failed; alone: `conversation_continuity` 1291 / 0,
+  `scene_manifest` 803 / 0, `practice_b` 96 / 0. `node tools/validate.mjs` — no errors, the same 15 warnings.
+- **B** `… --ch=5` — 2174 passed, 0 failed (66 scenes, 875 s); no walker forced through.
+- **B** `… --ch=6` — 2042 passed, 0 failed (60 scenes, 862 s); the same six `sa.epi_lf` records.
+- **B** `… --ch=showcase` — 66 passed, 0 failed. `tests/e2e/story_ch5.mjs` — 8 / 8 PASS (as before).
+  `tests/e2e/story_ch6.mjs` — all ok (ren/A 37/37, nao/F 36/36, mio/E 36/36, suzu/I 36/36, ren/F 37/37).
+  `tests/e2e/sequence_chapters_56.mjs` (the sequence pass's test, run because its sequences sit in three of this
+  pass's scene files) — 144 passed, 0 failed. (Showcase screenshots restored, not committed.)
+- Not rerun after the merge: `actor_life.mjs`, `walk_round.mjs`, `pages_ending.mjs`, the frame sheets.
 
 ## Contract rows advanced (docs/expressive/CONTRACT.md; boxes not ticked here)
 
@@ -118,7 +159,8 @@ PENDING
 - **HX35** (authored reachable positions, usable sides, no furniture or stacking, plausible end positions, consistent
   state) — *verified for the 126 scenes, every listed branch* (**B**).
 - **HX39** (manifest 100 % classified, decided) — *Chapters 5–6: 131 of 134 drafts decided by reading* (**R**; **U**
-  `scene_manifest.test.mjs`); `lf.boat_to_tower` waits for the illustrated-sequence pass.
+  `scene_manifest.test.mjs`); `lf.boat_to_tower` (now holding the illustrated crossing) still needs its decision
+  recorded by the sequence pass.
 - **HX40** (every selected item implemented or reported blocked; all meaningful branches inspected) — *Chapters 5–6:
   the 126 staged scenes are played on every listed branch (537)* (**B**); the four long-quest scenes in
   `src/content/lq` are **reported, not implemented** (ownership). Branch selection per scene is a reading judgement
@@ -145,6 +187,12 @@ PENDING
     companion steps up beside you first and all four find room. In `lf.mio_start`, Hayato walked out of the Records
     Hall door you stood in front of; staged, you now walk down to the avenue first (the narration). Approaching
     these scenes from another side gives the walk-ins another geometry (not tested).
+  - `sa.epi_lf` (the Lanternfall epilogue, you at (2,17) by the west gate): in all six branches one walker is forced
+    through after waiting — Kasane walking in (or Tae, in the branch where Kasane stayed) passes through Yae at (3,17),
+    having no way round her. Recorded by the runner as the world's fallback, not a failure; the scene has no
+    `!walkto`, the walk-ins are the world's. A staged step-in for you (`!walkto pc 6 17`, then
+    `3 17`) was tried and reverted: the world's path search avoids the town's trigger column (x = 2) whatever its
+    condition, so your companion took a long detour. Left for the world's walk-in placement.
   - The epilogue: people who live far across a hub map speak from where they stand (in `sa.epi_co` Hiro is 22 tiles
     from you, off screen); they are not cued.
 - **Viewpoint**: at counters (the ferry office, the Records Hall, the clerks' office) you and your companion face up
@@ -161,13 +209,14 @@ PENDING
   (`src/content/lq`), decided Performed by reading with the direction they need in the reason.
 - **Not verified**: how the scenes look at play speed to a person (**H**); the frame sheets are single frames from
   the headless browser at 960×640 (the motion of a gesture is not captured); real devices, Firefox and Safari; the
-  owner's view on the restraint of the short scenes listed under "Outcome"; the other worker's Chapter 3–4 pass may
-  add to the same companions' `talk` lists (to be unioned by the lead).
+  owner's view on the restraint of the short scenes listed under "Outcome". (The Chapter 3–4 pass changed no `talk`
+  list, so nothing in `10_cast.js` needed a union at the merge.)
 
 ## Evidence
 
 Frame sheets (four frames each, staged, normal motion, 960×640 headless Chromium, cropped round the people near
-you; `node tests/e2e/staging_ch56_sheets.mjs`) in `docs/screenshots/staging/ch5_ch6/`:
+you; `node tests/e2e/staging_ch56_sheets.mjs`; made on this pass's branch before the merge, not retaken after it) in
+`docs/screenshots/staging/ch5_ch6/`:
 
 - `ch5_lf.tokuji_story_nao.png` — you hold out the minutes and Tokuji leans in; his head down at the water coming;
   the messenger's bell passes from his hand to yours; you raise it and ring it towards the tower.
@@ -200,7 +249,7 @@ reading, not staged in this pass. The full reason of each decision is in `tools/
 | `lf.arrive` | Performed (C), staged | where the road comes out of the pines you look down the valley, and shade your eyes at the tower out in the lake; your companion's first look at the town in their own way (Nao points it out and settles the satchel strap over the … | 4 (nao; mio; ren; suzu) |
 | `lf.bench_canal` | Performed (C), staged | in the little park you listen towards the canal, where the water sounds like water; your companion's own answer (Nao stretches a tired head, Mio breathes out at the sound, Ren opens a hand to the canal, Suzu hums). | 4 (nao; mio; ren; suzu) |
 | `lf.board` | Performed (C), staged | you lean in to the council noticeboard and look from item one to item two; your companion's own answer (Nao's shrug, Mio's guarded hand, Ren's two hands for round and square, Suzu's laugh). After the bell: you lean in to the board … | 5 (before the bell · nao; before the bell · mio; before the bell · ren; before the bell · suzu; after the bell) |
-| `lf.boat_to_tower` | not in this pass (illustrated by another worker) | — | — |
+| `lf.boat_to_tower` | not in this pass (the crossing illustrated by another worker, `ch5.boat`; no decision recorded) | — | — |
 | `lf.boss_intro` | Performed (C), staged | you start as the water before the bell heaves up; your companion faces the keeper in their own way (Nao points to it, one move at a time; Mio's guarded hand; Ren holds the lamp forward; Suzu points it out). After the battle: you … | 4 (nao; mio; ren; suzu) |
 | `lf.conduit` | Performed (C), staged | you look over the thick pipe, put your ear to it (the narration), and bend to the brass tag at its joint; your companion's own answer (Nao's flat hand of anger at the delivery route, Mio's guarded hand, Ren looks up along the … | 5 (first · nao; first · mio; first · ren; first · suzu; again) |
 | `lf.east_door` | Performed (C), staged | you look over the handle of the east door and haul on it, open or shut; once the room has drained, you haul it shut and the bar drops; your companion's own answer (Nao's nod, Mio points to the stairs, Ren counts condition, timing, … | 9 (open it; leave it shut; shut it again; drained · seal it · nao; drained · seal it · mio; drained · seal it · ren; drained · seal it · suzu; drained · leave it open; barred) |
