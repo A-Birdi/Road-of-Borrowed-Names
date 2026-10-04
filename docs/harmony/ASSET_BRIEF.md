@@ -348,11 +348,27 @@ states when they are present.
    - The player's performance is energetic but less flamboyant than Suzu's: an open, excited smile, no wink.
    - The pair feels coordinated, one shared moment. They are not two unrelated busts.
    - **Robin approves A1 before anything else is painted.**
+   - **Approved 2026-10-04** as the style proof and the `peak` keyframe. It is not the first frame of the cut-in.
+     Approved in it:
+     - Suzu's hand flourish, wink and sparkles;
+     - the player's ink sweep;
+     - green coat with gold trim (in battle, look A is the game's own outfit 2);
+     - glasses, sakura flower, satchel strap and bag, the large brush with its tassel.
+     A2's earlier states are dialled back from it.
 2. **A2, the other states as paired masters** in the same style and lighting: Suzu's six states and the player's
    four (focus, cue, peak, settle). These are the reference the layers are cut from.
+   - Each matches the approved A1 exactly: the same characters, palette, light, scale, framing and the player's
+     head angle. Only poses and expressions change.
+   - The energy builds toward the peak. `prep_a` is composed, with the brush held low and no effects; `prep_b`
+     gathers; `cue` begins the flourish.
+   - Sparkles appear only at the peak and, fading, in `settle_a`. The ink sweep belongs to the peak; the game
+     draws the ink effects in battle.
 3. **A3, the Batch 1a files, painted from the approved masters** on the template: the companion frames
    flattened, and the player kit as separate layers in **look A's real colours**. The painter no longer has to
-   paint in the key colours (Track B converts them). What the conversion needs:
+   paint in the key colours (Track B converts them). One exception: **the coat's trim, toggles, cuff bands and hair
+   ties are painted deep teal in the layer files**, although the master shows them gold. The game recolours them to
+   gold in battle. A gold painting colour runs into the auburn hair, the brass and the light skin, and the
+   conversion cannot tell them apart. What the conversion needs:
    - **One palette per material:** skin, hair, coat, trim and flower use exactly the masters' colours in every
      layer.
    - **The full range:** each material's darkest shadow and brightest highlight appear as painted in the masters.
