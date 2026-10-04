@@ -57,7 +57,8 @@ and passages go in `43c_…`, `43d_…` (loaded after the core and its kit by fi
   dissolve. Phases only go forward; earlier ones stay at their end state. `?(cond)` works on these ops, so a
   branch-only shot or phase is written like a branch-only line (e.g. `?(sg_wataru_self) !shot face soften`).
 - Inside a sequence the world is behind the picture: `!move` and `!walkto` finish at once (the shots show the
-  movement; positions still change, so the world matches on return), `!emote` does not wait, `!shake` never
+  movement; positions still change, so the world matches on return), a `!refresh` places the people who come or
+  go at once (no walking in or out behind the picture), `!emote` does not wait, `!shake` never
   fires (the validator rejects one inside), and `!fade` is left to the shots. A sequence begun in the dark
   (after a `!fade out`) lifts the dark over its first shot and puts it back at `end`, so the scene's own
   `!fade in` shows the world as written. Put `!sequence … end` before a fade that should go to black.
@@ -143,6 +144,10 @@ changes on lines 274, 276, 279, 282. Review: Previous within 272–282. Skip: co
 (no choices inside). Return: `!sequence ch1.bridge end` after line 282, the state lines 283–285, then a dissolve
 to the world at (31, 17) with Kōji and Hana indoors and Tsuru arriving for line 286. Music: `!music wonder`
 (line 271) stays as authored (worker (c) owns music).
+**2026-10-04 (HX52):** as built, the state lines ran after the end, so the world came back with Kōji and Hana still
+outside, and they then walked in a second time. `!set rw_koji_back` and `!refresh` now run just before
+`!sequence ch1.bridge end`, behind the picture (where a refresh places people at once, as `!move` and `!walkto` do);
+`!quest rw_mill done` stays after it. Checked by tests/e2e/sequence_world.mjs.
 
 ---
 

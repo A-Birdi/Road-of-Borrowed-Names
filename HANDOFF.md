@@ -450,6 +450,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   advancement and sequences for every chapter (43a–43f) plus Ren's §8 insert; all eight faded passages handled. Tests:
   sequence_manual (--quick in the default suite), sequence_chapters (Ch3–4), sequence_chapters_56 (Ch5–6), sequence_dev.
   Nobody has reviewed the art yet: that is the owner's.
+- **The sequences against the world, and scenes under the conditions of play (2026-10-04; HX52, HX68):**
+  `tests/e2e/sequence_world.mjs` checks every registered sequence by name against the world (who is drawn, who stays
+  or left, hand-overs, the ways on, branches, what each shot depicts); `tests/e2e/staging_variants.mjs` starts staged
+  scenes through the world (other sides, taken tiles, absent versions, interrupted, a held key, repeat, revisit). Both
+  `--quick` in run.mjs. Fixes they found: behind a sequence a `!refresh` places people at once (50_world.js; the
+  bridge scene's Kōji and Hana); your following companion makes way for your own staged walk (52_staging.js makeWay).
 - **Left for later:** game-wide per-scene staging of the manifest's other "Performed overworld" scenes; Masaru's
   kneading waits on the bakery props (TODO in his profile); the portrait worker reads `RB.mannerisms.of(id).portrait`.
 

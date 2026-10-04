@@ -67,6 +67,7 @@ const SEQ = {
     // the bridge's end settles on the far bank; Kōji crosses with his cup; he and Hana go into the teahouse and the
     // door closes: on return neither is outside, the far bank is reachable over the bridge, Tsuru is in the square
     gone: ['koji', 'hana_out'], stay: ['tsuru_out'], reach: [{ tile: [43, 17], why: 'the far bank, over the bridge' }, { to: 'rw.road' }],
+    hidden: [{ who: 'koji', shot: 'reach', phases: ['reach'], why: 'he comes out of the hut only on the line that says so' }],
     facts: [{ shot: 'reach', cond: 'bridge_fixed&rw_echo_done', why: 'the bridge reaches the far bank' }, { shot: 'door', cond: 'rw_koji_back', when: 'end', why: 'Kōji is home: the world has him in the teahouse' }],
     // nobody travels with you before the departure; the cat of the village is not met yet (it is there, unmet)
     runs: [{ name: 'no companion yet (Chapter 1); the unmet cat on the map', comp: null, shots: ['reach', 'cup', 'hana', 'close', 'door'] }],
@@ -142,7 +143,7 @@ const SEQ = {
   },
   'ch5.bell': {
     scene: 'lf.bell_touch', at: ['lf.bellhall', 8, 5, 'down'], flags: F(C5, { lf_tower_entered: true, lf_gate_a: true, lf_gate_b: true, lf_gate_c: true, lf_boss_done: true, lf_tokuji_boat: true }), quests: { lf_main: 8 }, settle: 9000,
-    stay: [], drawsComp: true,
+    stay: [], drawsComp: true, hidden: [{ who: 'lf_toya', why: '"there is no one on the water": a voice, never a figure' }],
     facts: [{ shot: 'bell', cond: '!lf_bell_rung', why: 'the bell green, not yet rung' }, { shot: 'hall', cond: 'lf_bell_rung', when: 'end', why: 'rung: gold in the hall as the world shows it once rung' }],
     runs: [
       { name: 'ring · Nao · the cat with you', comp: 'nao', pet: 'cat', choose: [/Ring the bell/], shots: ['bell', 'gong', 'town', 'hall'], flagsAfter: { lf_bell_rung: true }, reach: [{ to: 'lf.town' }], quick: true },
@@ -161,6 +162,7 @@ const SEQ = {
   'ch6.toya': {
     scene: 'sa.toya_read', at: ['sa.heart', 12, 9, 'up'], flags: F(C6, { sa_hush_down: true }), give: ['sa_letter_kasane', 'sa_toya_reply', 'sa_notice'], quests: { sa_main: 5 },
     // Kasane holds the folio from the first shot; the inventory step after the sequence shows nothing new
+    hidden: [{ who: 'lf_toya', why: 'Tōya is long gone: words on paper and a bell, no figure' }],
     stay: ['kasane'], invAfter: { sa_letter_kasane: -1 }, reach: [{ to: 'sa.study', why: 'the way down to the Room of Set-Down Memories' }], drawsComp: true,
     facts: [{ shot: 'folio', cond: 'item.sa_letter_kasane', why: 'the folio you carry' }, { shot: 'bell', cond: 'item.lf_toya_bell', why: 'the bell you carry' }],
     runs: [
@@ -173,6 +175,7 @@ const SEQ = {
   'ch6.ren': {
     scene: 'sa.shelf_ren', at: ['sa.memories', 4, 7, 'up'], flags: F(C6, { sa_promise_done: true }), quests: { sa_main: 4, ren_ushio: 1 }, stay: [], reach: [{ to: 'sa.study' }, { to: 'sa.conduits' }], drawsComp: true,
     facts: [{ shot: 'open', cond: 'sa_ren_took&comp=ren', why: 'Ren chose to open it' }],
+    hidden: [{ who: 'sa_ushio', shot: 'open', why: 'the face surfaces on the paper only on its line' }],
     runs: [
       { name: 'Ren · "Take it back" · the dog with you', comp: 'ren', pet: 'dog', choose: [/Take it back/], shots: ['open', 'face', 'ren'], branch: 'sa_ren_took', quick: true },
       { name: 'Ren · "You decide"', comp: 'ren', choose: [/You decide/], shots: ['open', 'face', 'ren'], branch: 'sa_ren_took' },
@@ -387,6 +390,11 @@ function check(id, D, R, r) {
     }
     ok(bad.length === 0, pre + sq + ': everyone drawn is here (you' + (comp ? ', ' + comp : '') + ', the people of ' + E.map + ') — ' + ([...drawn.keys()].filter((w) => w !== '?').join(' ') || 'nobody identified') + (bad.length ? ' — NOT HERE: ' + bad.join('; ') : ''));
     if (!comp) ok(!ALL4.some((c) => drawn.has(c) && !onMap.has(c)), pre + sq + ': no companion drawn (none travels with you yet)');
+    // nobody drawn before the line that reveals them (or ever, for a voice with no body)
+    for (const hd of DS.hidden || []) {
+      const hits = r.drawn.filter((k) => { const [sid, shot, ph, who] = k.split('|'); return sid === sq && who === hd.who && (!hd.shot || hd.shot === shot) && (!hd.phases || hd.phases.includes(ph)); });
+      ok(hits.length === 0, pre + sq + ': ' + hd.who + ' not drawn ' + (hd.shot ? 'in ' + hd.shot + (hd.phases ? '/' + hd.phases.join(',') : '') : 'in any shot') + ' (' + hd.why + ')' + (hits.length ? ' — drawn: ' + hits.join(' ') : ''));
+    }
     if (comp && DS.drawsComp) ok(drawn.has(comp), pre + sq + ': your companion (' + comp + ') is drawn with you');
     if (comp) ok(ALL4.filter((c) => c !== comp && drawn.has(c)).every((c) => onMap.has(c)), pre + sq + ': no other companion drawn as yours');
     for (const n of R.drawsNpc || []) if (sq === id) ok(drawn.has(n) && onMap.has(n), pre + sq + ': ' + n + ' drawn as a person of the place (on the map at entry)');

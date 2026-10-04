@@ -2570,3 +2570,70 @@ Evidence:
 **Not verified:** how it sounds; that is the owner's ear. The "droning drum" is not identified for certain: the
 shamisen chord strokes are the likeliest, and the bass is the other candidate. The parts file lets the owner name it.
 
+
+## HX52 and HX68: the sequences against the world, and staged scenes under the conditions of play (2026-10-04)
+
+**What:**
+- `tests/e2e/sequence_world.mjs` (HX52) plays every registered sequence by name; a sequence with no run fails. Each
+  run starts from a fixture of the scene's moment, on the listed branches and companions, with pets the story allows.
+  - It records the world on entry (`sequence:begin`), on return (`sequence:end`) and after the scene: who is on the
+    map and where, the companion, the pet, what each person holds, flags, inventory and quests.
+  - Checks: who is drawn (figures, busts, backs and the portraits the shots ask for, matched to the cast by look);
+    who stays and who left; hand-overs on the shot that shows them; the inventory total; the ways on foot; the
+    branch's shots, phases and flags; what each shot depicts holding in the campaign when shown; nobody drawn
+    before the line that reveals them; no animal ever drawn.
+  - The prologue: no companion or animal drawn, and no campaign written.
+- `tests/e2e/staging_variants.mjs` (HX68) starts staged scenes through the world. You walk up with the world's own
+  movement (`RB.world._tryMove`, companion and pet following) and talk or look with `RB.world.interact`.
+  - Scenes: rw.tsuru_first, rw.mio_first, sg.tetsu_first, co.bell_ring, sb.hoshino, lf.timetable, sa.ushio_grave;
+    the lamp (Ch4) and the bell (Ch5) sequences; co.suzu_truth, lf.nao_deliver, lf.mio_refuse, sa.shelf_ren.
+  - Variants: other sides (beside, across a counter, another way in); tiles taken (your companion, your pet, or you
+    on an NPC's spot); absent versions (no companion in Ch1, the cameo versions, the grave without Ren, no or hidden
+    pet, "Not yet"); interrupted (the pet still catching up, or a person on their round mid-step); a key held across
+    the start; repeat; revisit (out by the nearest way and back).
+  - Checks: the scene ran through the world to its end; cues name somebody there; walks arrive (one whose target
+    is already taken stops where it is, by design, reported apart); no shared tile or furniture at any frame
+    (`b.forced` apart); afterwards exactly the story's people, at their places, nobody walking, the companion beside
+    you, the pet shown and on nobody's tile; no page errors; no stuck input (a real key press turns or moves you,
+    and nothing moves on its own after).
+- Both are in `tests/e2e/run.mjs` with `--quick` (all variants and branches with `--full`).
+
+**Found and fixed:**
+- `ch1.bridge` (HX52): the pictures show Kōji and Hana go into the teahouse and the door close. On return both were
+  still outside (koji, hana_out), and they then walked in a second time.
+  - src/engine/50_world.js: behind a sequence's picture a `!refresh` places people at once, as `!move` and `!walkto`
+    already do there.
+  - src/content/ch1/31_scenes_mill.js: `!set rw_koji_back` and `!refresh` now run just before
+    `!sequence ch1.bridge end`; `!quest rw_mill done` stays after it. Validator: no errors.
+- Staging (HX68): approached from another side, a staged `!walkto pc` gave up when your following companion stood on
+  the only way round: behind Umi's counter (lf.nao_deliver) and round Gorō (co.bell_ring, from his left).
+  src/engine/52_staging.js `makeWay`: the companion goes ahead along your way and steps off it, as they make way in
+  free walking; it runs only when your walk had no way at all.
+
+**Runs (B, headless Chromium, the built index.html):**
+- sequence_world full 777/0 (40 runs + the prologue, 360 s); `--quick` 240/0 (102 s), and again 240/0 on the final build
+  (whose index.html differs only by a comment).
+- staging_variants full 962/0 (99 runs over 13 scenes, with 13 repeats and 13 revisits; 869 s); `--quick` 701/0
+  (72 runs, 632 s). Earlier runs, before these test-side fixes, gave full 968/3 and `--quick` 700/1:
+  - The held-key sample was taken mid-way along the scene's own walk.
+  - A repeat looked for the bell on the map the scene had moved you to.
+  - A 3-line scene had a 4-line minimum.
+  - The wait for a wanderer to be mid-step was too short.
+- Existing tests on the changed build:
+  - departures all ok; sequence_manual (full) 64/0; sequence_shots all 315 stills; sequence_chapters 121/0;
+    sequence_chapters_56 196/0;
+  - story_ch1 F/mio 31 checks; staging_wataru 112/0; walk_round all ok; world_fixes all ok; actor_life 39/0;
+  - staging_chapters on the changed engine: Chapters 1–6 with the showcase 10,151 checks, 0 failed (the all-chapter
+    run was stopped by the 2-hour limit inside the misc group); then `--ch=misc` 3,586/0 (116 scenes).
+  - The stills and captures these re-wrote under docs/screenshots/ were restored (not part of the change).
+- U: unit 27,093/0 on the final tree (and before the staging fix); validator no errors.
+
+**Not covered / not verified:**
+- Your companion is never mid-step at the moment you can talk: it steps with you and lands as you do. "Interrupted"
+  is therefore the pet catching up, a person on their round mid-step, or a key held across the start.
+- Companion-absent sequence runs exist only for Chapter 1. After the departure the story always has a companion.
+- Designed fallbacks, reported, not changed:
+  - A walk whose target someone already stands on stops where it is. Standing on Umi's spot at the ferry office,
+    she hands the log over a one-tile gap.
+  - A person may stand over a settled pet for a fraction of a second before it steps aside.
+- The "facts" are a written spec of what each shot depicts, not every pixel; the art's review is still the owner's.

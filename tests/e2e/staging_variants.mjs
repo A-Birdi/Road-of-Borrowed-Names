@@ -76,6 +76,16 @@ const CASES = [
     absent: [{ name: 'no pet (none chosen)', pet: null }] },
   { label: 'Ch6 Ushio\'s grave (sa.ushio_grave)', fx: fixture('sa.ushio_grave', 'Ren', { prop: [22, 18] }), comps: ['ren'], pet: 'cat',
     absent: [{ name: 'without Ren (Nao with you: the scene\'s version without them)', comp: 'nao', fx: fixture('sa.ushio_grave', 'without Ren', { prop: [22, 18] }) }] },
+  // two chapters' illustrated sequences, started through the world (the sequence plays over the world; the world is
+  // checked when it returns: tests/e2e/sequence_world.mjs checks the pictures against it)
+  { label: 'Ch4 sequence: the lamp in the dome (sb.dome_hoshino → ch4.lamp, ch4.reply)', seq: true,
+    fx: { scene: 'sb.lamp_name', map: 'sb.obs_dome', at: [5, 8, 'left'], talk: 'hoshino', flags: { rw_arrived: true, rw_road_lit: true, departed: true, ch1_done: true, ch2_done: true, ch3_done: true, sb_storm: true, sb_morning: true, sb_quiet_done: true, sb_obs_open: true, sb_boss_done: true }, quests: { sb_lamp: 6 }, items: {}, vars: {}, player: {}, words: [], seen: [], picks: [], choose: ['even when no one'], fail: false, minLines: 20, settle: 9000 },
+    comps: ALL4, pet: 'cat' },
+  { label: 'Ch5 sequence: the drowned bell (lf.bell_touch → ch5.bell)', seq: true,
+    fx: { scene: 'lf.bell_touch', map: 'lf.bellhall', at: [7, 8, 'up'], prop: [7, 7], flags: Object.assign({ lf_tower_entered: true, lf_gate_a: true, lf_gate_b: true, lf_gate_c: true, lf_boss_done: true, lf_tokuji_boat: true, sb_hoshino_goes: true }, C5), quests: { lf_main: 8 }, items: {}, vars: {}, player: {}, words: [], seen: [], picks: [], choose: ['Ring the bell'], fail: false, minLines: 15, settle: 6000 },
+    comps: ALL4, pet: 'dog',
+    absent: [{ name: '"Not yet": the bell not rung (the chamber again)', choose: ['Not yet'],
+      fx: { scene: 'lf.bell_touch', map: 'lf.bellhall', at: [7, 8, 'up'], prop: [7, 7], flags: Object.assign({ lf_tower_entered: true, lf_gate_a: true, lf_gate_b: true, lf_gate_c: true, lf_boss_done: true, lf_tokuji_boat: true, sb_hoshino_goes: true }, C5), quests: { lf_main: 8 }, items: {}, vars: {}, player: {}, words: [], seen: [], picks: [], choose: ['Not yet'], fail: false, minLines: 3, settle: 5000 } }] },
   // the personal questlines' major beats
   { label: 'Suzu\'s questline: the truth at the glassworks (co.suzu_truth)', personal: 'co_suzu',
     fx: { scene: 'co.suzu_truth', map: 'co.glass', at: [5, 5, 'left'], talk: 'hiro', flags: CO_SUZU, quests: { co_main: 7, co_suzu: 3 }, items: { co_globe: 1 }, vars: {}, player: {}, words: [], seen: [], picks: [1], fail: false, minLines: 20, settle: 5000 },
@@ -174,7 +184,7 @@ async function prep(p, fx, v) {
     const walktos = [];
     const scan = (id, d) => { const sc = RB.content.scenes[id]; if (!sc || d > 3) return; for (const c of sc.cmds) { if (c.op === 'walkto') walktos.push([c.args[0], +c.args[1], +c.args[2]]); if (c.op === 'call') scan(c.args[0], d + 1); } };
     scan(fx.scene, 0);
-    window.__V = { targetId, tiles, stands };
+    window.__V = { targetId, tiles, stands, map: m.id };
     return { map: m.id, targetId, tiles, stands, walktos, at: fx.at, wanderers: W.npcs.filter((n) => n.def && n.def.wander).map((n) => n.id), seen0: !!s.seen[fx.scene] };
   }, [fx, v]);
 }
@@ -253,6 +263,7 @@ async function go(p, fx, v, o) {
     const W = RB.world.W, s = RB.game.s;
     const name = (ref) => (typeof ref === 'string' ? ref : ref === W.player ? 'pc' : ref === W.comp ? 'comp' : ref && ref.id);
     const lost = [], walks = [], unfit = [];
+    window.__pcWalking = 0;
     const wrap = (fn, kind) => {
       const f0 = RB.staging[fn];
       RB.staging[fn] = function (ref, a1) {
@@ -268,7 +279,8 @@ async function go(p, fx, v, o) {
           const ps = RB.petWorld.state && RB.petWorld.state();
           const rec = { who: name(ref), to: tx + ',' + ty, taken: holder ? name(holder) : ps && ps.shown && Math.round(ps.x) === tx && Math.round(ps.y) === ty ? 'pet' : null };
           walks.push(rec);
-          return Promise.resolve(r).then((ok) => { rec.ok = ok; if (!ok && A) { rec.at = A.x + ',' + A.y; rec.near = W.npcs.concat(W.extras || [], W.comp ? [W.comp] : [], [W.player]).filter((q) => q !== A && Math.abs(q.x - tx) + Math.abs(q.y - ty) <= 1).map((q) => name(q) + '@' + q.x + ',' + q.y); } return ok; });
+          if (A === W.player) window.__pcWalking = (window.__pcWalking || 0) + 1;
+          return Promise.resolve(r).then((ok) => { if (A === W.player) window.__pcWalking--; rec.ok = ok; if (!ok && A) { rec.at = A.x + ',' + A.y; rec.near = W.npcs.concat(W.extras || [], W.comp ? [W.comp] : [], [W.player]).filter((q) => q !== A && Math.abs(q.x - tx) + Math.abs(q.y - ty) <= 1).map((q) => name(q) + '@' + q.x + ',' + q.y); } return ok; });
         }
         return r;
       };
@@ -301,9 +313,10 @@ async function go(p, fx, v, o) {
     const run0 = RB.script.run;
     let done = false, err = null, started = false;
     RB.script.run = function (id) { ran.push(id); const pr = run0.apply(this, arguments); if (!started) { started = true; pr.then(() => { done = true; }, (e) => { err = String(e); done = true; }); } return pr; };
-    const before = { x: W.player.x, y: W.player.y, compMv: !!(W.comp && (W.comp.mv || W.comp.route)), petMoving: !!(RB.petWorld.state && RB.petWorld.state() && RB.petWorld.state().moving) };
+    const ps0 = RB.petWorld.state && RB.petWorld.state();
+    const before = { x: W.player.x, y: W.player.y, compMv: !!(W.comp && (W.comp.mv || W.comp.route)), petMoving: !!(ps0 && ps0.shown && ps0.moving) };
     // (with nobody following: start while a person on their round is mid-step, when there is one)
-    if (v.interrupt && !W.comp && o.wanderers && o.wanderers.length) { const t0 = performance.now(); while (performance.now() - t0 < 4000 && !W.npcs.some((n) => n.def && n.def.wander && n.mv)) await sleep(10); before.wanderMv = W.npcs.filter((n) => n.def && n.def.wander && n.mv).map((n) => n.id); }
+    if (v.interrupt && !v.pet && o.wanderers && o.wanderers.length) { const t0 = performance.now(); while (performance.now() - t0 < 15000 && !W.npcs.some((n) => n.def && n.def.wander && n.mv)) await sleep(10); before.wanderMv = W.npcs.filter((n) => n.def && n.def.wander && n.mv).map((n) => n.id); }
     let seenLines = s.backlog.length;
     RB.world.interact();
     await sleep(30);
@@ -469,7 +482,10 @@ for (const C of CASES) {
     const tile = wantTiles.find((w) => !(w[0] === A.x && w[1] === A.y)) || null;
     V.push({ name: 'occupied: the pet settled on ' + (tile ? 'the tile the scene walks ' + tile[2] + ' to (' + tile[0] + ',' + tile[1] + ')' : 'the tile beside you'), st: A, from: back(A), comp: nextComp(), pet: C.pet, petTile: tile ? [tile[0], tile[1]] : 'beside', quick: !compOcc });
   }
-  V.push({ name: 'interrupted: the scene starts as you arrive' + (comps[0] ? ', your companion' + (C.pet ? ' and pet' : '') + ' still stepping' : ', a person on their round mid-step'), st: A, from: back(A), comp: nextComp(), pet: C.pet, interrupt: true, quick: true });
+  // (your companion steps with you and lands as you do, so it is never mid-step when you can talk: what can still
+  // be moving is the pet catching up, or a person on their round)
+  if (C.pet || probe.wanderers.length) V.push({ name: 'interrupted: the scene starts the moment you arrive, ' + (C.pet ? 'the pet still catching up' : 'a person on their round mid-step'), st: A, from: back(A), comp: nextComp(), pet: C.pet, interrupt: true, quick: true });
+  else ok(true, C.label + ': interrupted — nothing here moves on its own as you arrive (no pet yet, nobody on a round): not applicable');
   V.push({ name: 'held key: a direction held as the scene starts, let go during it', st: A, from: back(A), comp: nextComp(), pet: C.pet, held: true });
   for (const ab of C.absent || []) V.push(Object.assign({ name: 'absent: ' + ab.name, st: null, from: null, comp: ab.comp !== undefined ? ab.comp : nextComp(), pet: ab.pet !== undefined ? ab.pet : C.pet, quick: true, absent: true }, ab));
   if (C.absentWhy) ok(true, C.label + ': absent — ' + C.absentWhy);
@@ -498,21 +514,21 @@ for (const C of CASES) {
       const pos0 = await p.evaluate(() => [RB.world.W.player.x, RB.world.W.player.y]);
       const run = go(p, fx, v, o);
       await wait(p, 60); await p.keyboard.down(pk); await wait(p, 900);
-      const mid = await p.evaluate(() => ({ x: RB.world.W.player.x, y: RB.world.W.player.y, running: RB.script.isRunning() }));
+      const mid = await p.evaluate(() => ({ x: RB.world.W.player.x, y: RB.world.W.player.y, running: RB.script.isRunning(), sceneWalk: (window.__pcWalking || 0) > 0 }));
       await p.keyboard.up(pk);
       r = await run;
       // (you stay where you stood, or where the scene itself walks you)
       const mine = [pos0].concat(pr.walktos.filter((w) => w[0] === 'pc').map((w) => [w[1], w[2]]));
-      ok(mid.running && mine.some((t) => t[0] === mid.x && t[1] === mid.y), tag + ': the held key does not walk you anywhere during the scene (at ' + mid.x + ',' + mid.y + '; yours: ' + mine.map((t) => t.join(',')).join(' ') + ')');
+      ok(mid.running && (mid.sceneWalk || mine.some((t) => t[0] === mid.x && t[1] === mid.y)), tag + ': the held key does not walk you anywhere during the scene (at ' + mid.x + ',' + mid.y + (mid.sceneWalk ? ', on the scene\'s own walk' : '') + '; yours: ' + mine.map((t) => t.join(',')).join(' ') + ')');
     } else r = await go(p, fx, v, o);
-    if (v.interrupt) ok(r.before && (r.before.compMv || r.before.petMoving || (r.before.wanderMv && r.before.wanderMv.length) || (!pr.wanderers.length && !v.comp)), tag + ': it started while someone was still moving (' + JSON.stringify(r.before || {}) + ')');
+    if (v.interrupt) ok(r.before && (r.before.compMv || r.before.petMoving || (r.before.wanderMv && r.before.wanderMv.length)), tag + ': it started while someone was still moving (' + JSON.stringify(r.before || {}) + ')');
     checks(tag, fx, r, { pet: v.pet !== undefined ? v.pet : undefined });
     const ic = await inputCheck(p);
     ok(ic.ok, tag + ': no stuck input (' + ic.why + ')');
     if (v.chain && !r.err) {
       // repeat: walk up and talk (or look) again — whatever the story gives now
-      const pr2 = await p.evaluate((fx) => { const V2 = window.__V, W = RB.world.W, s = RB.game.s; if (fx.talk) { const a = W.npcs.find((n) => n.id === V2.targetId); if (!a) return { err: V2.targetId + ' has left' }; V2.tiles = [[a.x, a.y]]; } return { ok: true, seen: Object.keys(s.seen).length }; }, fx);
-      if (pr2.err) ok(true, tag + ' · repeat: ' + pr2.err + ' (the story moved them on; nothing to repeat here)');
+      const pr2 = await p.evaluate((fx) => { const V2 = window.__V, W = RB.world.W, s = RB.game.s; if (W.map.id !== V2.map) return { err: 'the scene took you on to ' + W.map.id }; if (fx.talk) { const a = W.npcs.find((n) => n.id === V2.targetId); if (!a) return { err: V2.targetId + ' has left' }; V2.tiles = [[a.x, a.y]]; } return { ok: true, seen: Object.keys(s.seen).length }; }, fx);
+      if (pr2.err) ok(true, tag + ' · repeat: ' + pr2.err + ' (the story moved on; nothing to repeat here)');
       else {
         const stands2 = await p.evaluate(() => { const V2 = window.__V, W = RB.world.W, m = W.map; const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' }; const out = []; for (const [tx, ty] of V2.tiles) for (const [dir, dx, dy] of [['up', 0, -1], ['down', 0, 1], ['left', -1, 0], ['right', 1, 0]]) { let x = tx + dx, y = ty + dy; const pr = m.props.find((q) => { const pd = RB.props.P[q.p] || {}, w = q.w || pd.w || 1, h = q.h || pd.h || 1; return (q.p === 'counter' || q.across) && x >= q.x && y >= q.y && x < q.x + w && y < q.y + h; }); if (pr) { x += dx; y += dy; } if (RB.maps.blockedStatic(m, x, y) || RB.maps.exitAt(m, x, y) || W.npcs.some((a) => a.x === x && a.y === y)) continue; const froms = [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([ex, ey]) => [x + ex, y + ey]).filter(([a, b2]) => !RB.maps.blockedStatic(m, a, b2) && !RB.maps.exitAt(m, a, b2) && !W.npcs.some((n) => n.x === a && n.y === b2) && !V2.tiles.some((t) => t[0] === a && t[1] === b2)); if (froms.length) out.push({ x, y, face: OPP[dir], froms, d: Math.abs(x - W.player.x) + Math.abs(y - W.player.y) }); } return out.sort((a, b2) => a.d - b2.d); });
         const s2 = stands2[0];

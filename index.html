@@ -53499,7 +53499,8 @@ RB.seqKit = (function () {
  * State commands (!set !give !take !quest !note !refresh …) stay where they are and run once; review and
  * replay never run them. `?(cond)` prefixes work on these ops as on any, so a branch-only shot or phase is
  * written like a branch-only line. Inside a sequence the world is behind the picture: !move and !walkto
- * finish at once (the shots show the movement), !emote does not wait, !shake never fires, and !fade is left
+ * finish at once (the shots show the movement), a !refresh places those who come or go at once (50_world.js),
+ * !emote does not wait, !shake never fires, and !fade is left
  * to the shots (a scene begun in the dark — after a !fade out — has the dark lifted over its first shot and
  * put back at `end`, so the scene's own !fade in shows the world as written).
  *
