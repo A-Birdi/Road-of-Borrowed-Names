@@ -5,12 +5,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sb.path_enter
+# Staged: your companion steps up off the stair beside you; you shade your eyes up the zigzag stair to the
+# small round roof, and look along the snow where the fox moved; your companion's own answer (Nao's shrug at
+# "don't run", Mio's guarded hand, Ren looks up the dark lanterns, Suzu's open hand).
 !set sb_path_seen
+!walkto comp 15 38 up
+!gesture pc shadeeyes up
 narr: {石段|いしだん} は 、 {山|やま} の {斜面|しゃめん} を {折|お}り{返|かえ}し ながら {上|のぼ}って いく 。 {上|うえ} の ほう に 、 {丸|まる}い {屋根|やね} が {小|ちい}さく {見|み}えた 。 || The stair zigzags up the face of the mountain. Far above, the round roof looks small.
+!gesture pc lookroad right
 narr: {雪|ゆき} の {上|うえ} に 、 {白|しろ}い {影|かげ} が {動|うご}いた 。 {雪|ゆき}ギツネ だ 。 {目|め} が 、 {青|あお}く {光|ひか}って いる 。 || A white shape moves across the snow. A snow fox. Its eyes glow blue.
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {走|はし}る な 、 だった な 。 …… {配達人|はいたつにん} に {走|はし}る な って 、 {無茶|むちゃ} を {言|い}う ぜ 。 || "Don't run," was it. …Telling a courier not to run. Unreasonable.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: あの {目|め} …… {熱|ねつ} の ある {子|こ} の {目|め} に {似|に}て います 。 {苦|くる}しい の かも しれない 。 || Those eyes… they look like a feverish child's. Maybe it's suffering.
+?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp: {石段|いしだん} の {灯|あか}り が {消|き}えて います 。 {上|うえ} の {灯|あか}り と {一緒|いっしょ} に 。 {灯|あか}り は 、 {道|みち} の {背骨|せぼね} です から 。 || The lanterns on the stair are out. Along with the one above. Lanterns are the backbone of a road.
+?(comp=suzu) !gesture comp palm
 ?(comp=suzu) comp: {白|しろ}い キツネ 。 {舞台|ぶたい} なら 、 {化|ば}かす {役|やく} だ ね 。 {騙|だま}されない よう に しよう 。 || A white fox. On stage, that's the trickster role. Let's not be fooled.
 
 @scene sb.path_lantern
@@ -18,10 +28,17 @@ narr: {石段|いしだん} の {灯|あか}り 。 {笠|かさ} の {字|じ} �
 ?(comp=ren) comp: {上|うえ} の {大|おお}きな {灯|あか}り が {戻|もど}れば 、 これら も {戻|もど}る でしょう 。 {灯|あか}り は 、 {互|たが}い の {名前|なまえ} を {呼|よ}び{合|あ}って いる もの です 。 || If the great lamp above comes back, these will too. Lamps call each other's names.
 
 @scene sb.path_bench
+# Staged: you lean in to the height notches on the post by the stone seat; your companion's own answer (Mio
+# leans in to them too, Nao glances away at fifteen, Suzu checks her own account book, Ren's nod).
+!gesture pc observe 9,36
 narr: {石|いし} の {腰掛|こしか}け 。 {脇|わき} の {柱|はしら} に 、 {刻|きざ}み{目|め} が {縦|たて} に {並|なら}んで いる 。 {一|ひと}つ {一|ひと}つ に {小|ちい}さく 、 「 アカリ {四|よっ}つ 」 「 アカリ {五|いつ}つ 」 …… 「 アカリ {十五|じゅうご} 」 。 || A stone seat. On the post beside it, notches run upward, each labelled small: "Akari, 4", "Akari, 5"… "Akari, 15".
+?(comp=mio) !gesture comp observe 9,36
 ?(comp=mio) comp[smile]: {毎年|まいとし} 、 ここ で {背|せ} を {測|はか}って いた んです ね 。 {天文台|てんもんだい} へ {上|のぼ}る {途中|とちゅう} に 。 || He measured her height here every year. On the way up to the observatory.
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {十五|じゅうご} で {止|と}まってる 。 {町|まち} へ {出|で}た {年|とし} か 。 || Stops at fifteen. The year she went down to the town, I guess.
+?(comp=suzu) !gesture comp check prop=accountbook
 ?(comp=suzu) comp: {柱|はしら} の {傷|きず} は 、 {帳簿|ちょうぼ} より {正直|しょうじき} だ ね 。 || Notches on a post are more honest than any account book.
+?(comp=ren) !gesture comp nod
 ?(comp=ren) comp: {記録|きろく} です ね 。 {一番|いちばん} {美|うつく}しい {種類|しゅるい} の 。 || A record. The most beautiful kind.
 
 @scene sb.path_foxsign
@@ -41,12 +58,22 @@ narr: {小|ちい}さな {石|いし} の {小屋|こや} の {扉|とびら} �
 ?(comp!=nao) comp: デンジ さん の {言|い}って いた 、 {裏|うら} の {階段|かいだん} でしょう か 。 {中|なか} から {開|あ}けられる はず です 。 || That must be the back stair Denji mentioned. It should open from inside.
 
 @scene sb.hall_enter
+# Staged: your companion steps in off the doorway beside you; you look up at the icicles and lean towards the
+# iced door and its dial; your companion's own answer (Nao's shrug, Mio rubs her hands to show you how — her
+# line says so, Ren's hand to the chin, Suzu's showman's hands).
 !set sb_hall_seen
+!walkto comp 11 14 up
+!gesture pc lookroad up
 narr: {天文台|てんもんだい} の {中|なか} は 、 {外|そと} より {寒|さむ}かった 。 {床|ゆか} に は {氷|こおり} が {張|は}り 、 {天井|てんじょう} から つらら が {下|さ}がって いる 。 || Inside, the observatory is colder than outside. Ice skins the floor, and icicles hang from the ceiling.
+!gesture pc observe 10,1
 narr: {奥|おく} の {扉|とびら} は 、 {分厚|ぶあつ}い {氷|こおり} で {塞|ふさ}がれて いた 。 {扉|とびら} の {横|よこ} に 、 {真鍮|しんちゅう} の {丸|まる}い {盤|ばん} が ある 。 || The door at the back is blocked by thick ice. Beside it is a round brass dial.
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {息|いき} が {白|しろ}い 。 …… {中|なか} の ほう が {寒|さむ}い って 、 {建物|たてもの} と して {失格|しっかく} だろ 。 || My breath's white. …A building that's colder inside than out has failed at being a building.
+?(comp=mio) !gesture comp rubhands
 ?(comp=mio) comp[worry]: {長|なが}く いる と 、 {指|ゆび} を {悪|わる}く します 。 {手|て} を {擦|こす}り{合|あ}わせて 。 こう 。 || Stay too long and you'll damage your fingers. Rub your hands together. Like this.
+?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: {星|ほし} を {見|み}る {建物|たてもの} が 、 {目|め} を {閉|と}じて いる よう です 。 || It's as if a building for watching stars has closed its eyes.
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp: {氷|こおり} の {宮殿|きゅうでん} だ ね 。 {衣装|いしょう} {代|だい}=(cost) が かからない {舞台|ぶたい} 。 …… {薪|まき} {代|だい}=(cost) は かかる けど 。 || An ice palace. A set that costs nothing in costumes. …Plenty in firewood, though.
 
 @scene sb.hall_rules
@@ -58,23 +85,34 @@ narr: 「 {一|いち} 、 {星|ほし} を {見|み}る {前|まえ} に 、 {�
 narr: {扉|とびら} は {氷|こおり} に {閉|と}じられて いる 。 {横|よこ} の {丸|まる}い {盤|ばん} に は 、 {方角|ほうがく} の {字|じ} が {刻|きざ}まれて いる 。 || The door is sealed in ice. The round dial beside it is engraved with the compass directions.
 
 @scene sb.hall_dial
+# Staged: you lean in to the frosted dial; when the needle rests on south you turn to the click and look to
+# the door as the ice falls; your companion's own answer (Nao's shrug, Mio's laugh, Ren's open hand, Suzu's
+# laugh); later, you look at the needle again.
 !if sb_dial1 -> done
+!gesture pc observe 12,3
 narr: {真鍮|しんちゅう} の {盤|ばん} 。 {針|はり} が {一本|いっぽん} 、 {霜|しも} に {覆|おお}われて いる 。 {盤|ばん} の {縁|ふち} に 、 {北|きた} ・ {東|ひがし} ・ {南|みなみ} ・ {西|にし} の {字|じ} 。 || A brass dial. A single needle, coated in frost. Around the rim: north, east, south, west.
 !challenge sb.c_dial
 !if var._res=0 -> end
 !sfx reveal
 !shake
+!gesture pc listen 12,3
 narr: {針|はり} が {南|みなみ} を {指|さ}した とき 、 {盤|ばん} の {奥|おく} で {何|なに} か が かちり と {鳴|な}った 。 {扉|とびら} の {氷|こおり} に 、 {大|おお}きな {罅|ひび} が {走|はし}る 。 || As the needle comes to rest on south, something clicks deep inside the dial. A great crack runs through the ice on the door.
 !sfx fire_out
+!gesture pc lookroad 10,1
 narr: {氷|こおり} は {崩|くず}れ 、 {扉|とびら} が {開|ひら}いた 。 || The ice collapses, and the door opens.
 !set sb_dial1
 !quest sb_lamp 7
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: 「 {見|み}る べき {方角|ほうがく} 」 、 か 。 {気取|きど}った {扉|とびら} だ 。 {嫌|きら}い じゃ ない 。 || "Which way to look." A pretentious door. I don't hate it.
+?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[smile]: ホシノ さん らしい {鍵|かぎ} です ね 。 {星|ほし} を {知|し}って いる {人|ひと} だけ が {入|はい}れる 。 || A very Hoshino sort of lock. Only people who know the stars can enter.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {冬|ふゆ} の {鼓星|つづみぼし} は {南|みなみ} 。 …… {方角|ほうがく} だけ は 、 {得意|とくい} な んです 。 {空|そら} の {方角|ほうがく} は 。 || The winter Drum Stars: south. …Directions are my strong point. In the sky, that is.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {開|ひら}け ゴマ 、 じゃ なくて 、 {開|ひら}け {南|みなみ} ！ || Not "open sesame" — "open south"!
 !end
 :done
+!gesture pc observe 12,3
 narr: {針|はり} は {南|みなみ} を {指|さ}した まま だ 。 || The needle still points south.
 
 @scene sb.hall_scope
@@ -98,31 +136,48 @@ narr: {部屋|へや} の {隅|すみ} に 、 {冷|つめ}たく なった {鉄
 !autosave
 
 @scene sb.charts_stove
+# Staged: you bend to the cold stove; you reach to trace the flame word and the wood flares; you breathe out
+# warming your hands; your companion's own answer (Nao's nod, Mio looks at your pink hands, Ren's open hand,
+# Suzu's breath out).
 !if sb_stove_lit -> lit
+!gesture pc bend 13,2
 narr: {冷|つめ}たい ストーブ 。 {中|なか} に {薪|まき} が {残|のこ}って いる 。 {炎|ほのお} の {字|じ} を {書|か}けば 、 {火|ひ} が {入|はい}り そう だ 。 || A cold stove with some wood left inside. Write the flame word and it would probably light.
 !choice
 * {火|ひ} を {入|い}れる || Light it. -> light
 * やめて おく || Leave it. -> end
 :light
 !sfx light
+!gesture pc handover 13,2
 narr: {指|ゆび} で 「 ほのお 」 と {書|か}く と 、 {薪|まき} が {赤|あか}く {燃|も}え{上|あ}がった 。 {部屋|へや} が 、 ゆっくり {温|あたた}まって いく 。 || You trace "honoo" with a finger and the wood flares red. The room slowly warms.
 !set sb_stove_lit
 :lit
+!gesture pc exhale
 narr: ストーブ の {前|まえ} で {手|て} を {温|あたた}める 。 {疲|つか}れ が {少|すこ}し {抜|ぬ}けて いく 。 || You warm your hands at the stove. A little of the tiredness drains away.
 !heal
 !checkpoint sb.obs_charts 12 3 down
 !autosave
+?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {温|あった}まった 。 …… {次|つぎ} の {部屋|へや} も 、 これ ぐらい {親切|しんせつ} だと いい な 。 || Warm now. …Hope the next room's this friendly.
+?(comp=mio) !gesture comp observe pc
 ?(comp=mio) comp[smile]: {手|て} 、 {赤|あか}く なって きました ね 。 よかった 。 || Your hands are going pink. Good.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {火|ひ} の {前|まえ} で は 、 {道|みち} を {間違|まちが}えません 。 {動|うご}かない から です 。 || I never take a wrong turn in front of a fire. Because I'm not moving.
+?(comp=suzu) !gesture comp exhale
 ?(comp=suzu) comp: {幕間|まくあい} の {休憩|きゅうけい} だ ね 。 {客|きゃく} も {役者|やくしゃ} も 、 {温|あたた}まって から {後半|こうはん} へ 。 || Intermission. Audience and players alike warm up before the second half.
 
 @scene sb.charts_desk
+# Staged: you read Hoshino's note to Denji; your companion's own answer (Nao's nod at how friends write,
+# Suzu's laugh); then they look from the log on the big table to you.
+!gesture pc read prop=paper hold
 narr: {机|つくえ} の {上|うえ} に 、 デンジ {宛|あ}て の {書|か}き{置|お}き 。 ホシノ の {字|じ} だ 。 || On the desk, a note addressed to Denji, in Hoshino's handwriting.
 narr: 「 デンジ へ 。 {上|うえ} の {階|かい} へ の {格子|こうし} の {鍵|かぎ} は 、 {星|ほし} で ない {光|ひかり} の {方角|ほうがく} の {引|ひ}き{出|だ}し に {入|い}れて ある 。 {日誌|にっし} を {読|よ}めば わかる 。 {読|よ}まない お{前|まえ} が {悪|わる}い 。 ── ホシノ 」 || "Denji — the key to the grille for the upper floor is in the drawer for the direction of the light that isn't a star. Read the log and you'll know. If you don't read it, that's your own fault. — Hoshino"
+?(comp=nao) !gesture comp nod
 ?(comp=nao) comp[smirk]: {最後|さいご} の {一行|いちぎょう} 、 {友達|ともだち} {同士|どうし} の {字|じ} だ な 。 || That last line. That's how friends write to each other.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: 「 {読|よ}まない お{前|まえ} が {悪|わる}い 」 ！ {最高|さいこう} 。 {台本|だいほん} の {表紙|ひょうし} に {書|か}きたい 。 || "If you don't read it, that's your own fault"! Wonderful. I want that on the cover of every script.
 !if sb_log_solved -> end
+!gesture pc -
+?(comp) !gesture comp lookbetween 4,5 and=pc
 ?(comp) comp: {日誌|にっし} は 、 あの {大|おお}きな {机|つくえ} の {上|うえ} だ ね 。 || The log is on that big table.
 
 @scene sb.charts_cabinet
@@ -152,6 +207,13 @@ narr: {日誌|にっし} は {机|つくえ} の {上|うえ} に {開|ひら}�
 narr: {日誌|にっし} の {頁|ページ} 。 「 {南東|なんとう} 、 {高|たか}さ {五度|ごど} 。 {白|しろ}い {光|ひかり} 。 {動|うご}かず 。 {星|ほし} に {非|あら}ず 。 」 || The log page: "Southeast, altitude five degrees. White light. Does not move. Not a star."
 
 @scene sb.charts_sketch
+# Staged: you unfold the sketch and read it. With Ren: you hand it to them, they read the words they know,
+# hold it further away and close again over the face they do not (the narration says so), their head goes
+# down; then they hand it back (keep it / the lamp first) and look south-east to the light, or nod. With the
+# others: they lean in to it in your hands (Nao and Mio), a nod or a hand to the chin (Mio, Suzu). You put it
+# away at the top of your pack.
+!prop pc paper
+!gesture pc read prop=paper hold
 narr: {紙|かみ} を {広|ひろ}げる と 、 {鉛筆|えんぴつ} の {似顔絵|にがおえ} だった 。 {重|おも}そう な {灯|あか}り を {提|さ}げた {旅人|たびびと} 。 {外套|がいとう} は {継|つ}ぎ{接|は}ぎ だらけ だ 。 || Unfolded, it's a pencil portrait: a traveller carrying a heavy lantern, in a coat covered in patches.
 narr: {下|した} に ホシノ の {字|じ} 。 「 {灯守|ひもり} ウシオ 。 {南東|なんとう} の {光|ひかり} を {見|み}に {来|き}た 。 {三晩|みばん} {泊|と}まり 、 {山|やま} へ {向|む}かう 。 {帰|かえ}らず 。 」 || Beneath it, in Hoshino's hand: "Ushio, a lantern keeper. Came to see the light in the southeast. Stayed three nights, then set out for the mountain. Did not return."
 narr: {余白|よはく} に 、 {別|べつ} の {手|て} で 。 「 {名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人|ひと} は {名|な} に 。 」 || In the margin, in a different hand: "A name to the lamp, the lamp to people, people to the name."
@@ -159,35 +221,53 @@ narr: {余白|よはく} に 、 {別|べつ} の {手|て} で 。 「 {名|な
 !set sb_ushio_sketch
 !note sb_ushio
 !if comp=ren -> ren
+?(comp=nao) !gesture comp observe pc
 ?(comp=nao) comp[think]: ウシオ …… レン の {師匠|ししょう} の {名前|なまえ} だ 。 {葦|あし}ノ{瀬|せ} で {聞|き}いた こと が ある 。 {山|やま} の {上|うえ} へ {行|い}って 、 {戻|もど}らなかった って 。 || Ushio… That's Ren's teacher's name. I heard it in Reedwake. Went up the mountain and never came back.
+?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: …… これ は {預|あず}かって おこう 。 {届|とど}け{先|さき} は 、 はっきり してる 。 || …Let's hang on to this. The address it needs to go to is obvious.
+?(comp=mio) !gesture comp observe pc
 ?(comp=mio) comp[worry]: ウシオ さん 。 レン さん の {先生|せんせい} の …… 。 レン さん 、 {先生|せんせい} の {話|はなし} を する とき 、 いつも {少|すこ}し {寂|さび}しそう だった 。 || Ushio. Ren's teacher… Whenever Ren talked about their teacher, they always looked a little lonely.
+?(comp=mio) !gesture comp chin
 ?(comp=mio) comp: {葦|あし}ノ{瀬|せ} に {帰|かえ}ったら 、 {見|み}せて あげましょう 。 …… {見|み}せて いい もの か 、 {少|すこ}し {考|かんが}えて から 。 || When we get back to Reedwake, let's show Ren. …After thinking a bit about whether we should.
+?(comp=suzu) !gesture comp chin
 ?(comp=suzu) comp[think]: ウシオ 。 {聞|き}いた こと ある 。 レン の {師匠|ししょう} だ よ ね 。 {似顔絵|にがおえ} って 、 {残|のこ}された {方|ほう} に は {重|おも}い {荷物|にもつ} だ よ 。 {渡|わた}し{方|かた} を {間違|まちが}え ない よう に しない と 。 || Ushio. I've heard that name. Ren's teacher, right? A portrait is a heavy thing to hand to the one left behind. We'll have to be careful how we give it.
 !goto after
 :ren
+!gesture pc handover comp
+?(comp=ren) !gesture comp receive pc
 comp[surprise]: …… 。 || ……
+?(comp=ren) !gesture comp read prop=paper hold
 comp: 「 {名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人|ひと} は {名|な} に 」 。 {師匠|ししょう} の {言葉|ことば} です 。 {一字|いちじ} {一句|いっく} 、 {間違|まちが}い なく 。 || "A name to the lamp, the lamp to people, people to the name." My teacher's words. Every character, exactly.
 comp: {続|つづ}き も {言|い}えます 。 「 だから 、 {名|な} を {一人|ひとり} で {守|まも}る {者|もの} は いない 」 。 …… この {字|じ} も 、 {師匠|ししょう} の {字|じ} です 。 {覚|おぼ}えて います 。 || I can say the rest too. "And so no one keeps a name alone." …And this handwriting is my teacher's. I remember it.
 comp[sad]: でも ── この {顔|かお} は 。 || But — this face.
 comp: {知|し}らない {人|ひと} です 。 || I don't know this person.
+?(comp=ren) !gesture comp present prop=paper
 narr: レン は {似顔絵|にがおえ} を 、 {長|なが}い あいだ {見|み}つめて いた 。 {目|め} を {細|ほそ}め 、 {少|すこ}し {離|はな}し 、 また {近|ちか}づけて 。 || Ren looks at the portrait for a long time. Narrowing their eyes, holding it further away, bringing it close again.
+?(comp=ren) !gesture comp lowered hold
 comp: {言葉|ことば} は {全部|ぜんぶ} ここ に ある のに 、 {顔|かお} だけ が 、 {他人|たにん} の よう です 。 …… {昨夜|ゆうべ} {話|はな}した とおり です 。 {驚|おどろ}く こと では ありません 。 || Every word is right here, and only the face looks like a stranger's. …Just as I told you last night. Nothing to be surprised about.
 !choice
 * {持|も}って いて いい よ || You should keep it. -> keep
 * {今|いま} は 、 {先|さき} へ {進|すす}もう || Let's keep going, for now. -> onward
 :keep
+?(comp=ren) !gesture comp handover pc
+?(comp=ren) !gesture pc receive comp
 comp: …… いいえ 。 あなた が {持|も}って いて ください 。 {今|いま} の わたし が {持|も}つ と 、 {見|み}る たび に {他人|たにん} に なって しまう {気|き} が する 。 || …No. Please keep it. If I carry it now, I think it'll become more of a stranger every time I look.
+?(comp=ren) !gesture comp lookroad right
 comp: {南東|なんとう} の {光|ひかり} 。 {師匠|ししょう} は 、 そこ へ {行|い}った 。 {顔|かお} の {残|のこ}り も 、 たぶん そこ に ある 。 || The light in the southeast. My teacher went there. Whatever is left of the face is probably there too.
 !set sb_ren_ushio1
 !quest ren_ushio 0
 !goto after
 :onward
+?(comp=ren) !gesture comp nod pc
 comp: …… はい 。 {灯|あか}り が {先|さき} です 。 ホシノ さん の {約束|やくそく} が 、 {先|さき} です 。 || …Yes. The lamp comes first. Hoshino's promise comes first.
+?(comp=ren) !gesture comp handover pc
+?(comp=ren) !gesture pc receive comp
 comp[smile]: {似顔絵|にがおえ} は 、 あなた が {持|も}って いて ください 。 わたし は …… {言葉|ことば} の ほう を {持|も}って います から 。 || Please keep the sketch. I'll… carry the words instead.
 !set sb_ren_ushio1
 !quest ren_ushio 0
 :after
+!gesture pc strap
+!prop pc -
 narr: {似顔絵|にがおえ} を {丁寧|ていねい} に {畳|たた}み 、 {荷物|にもつ} の いちばん {上|うえ} に しまった 。 {格子|こうし} の {鍵|かぎ} を {手|て} に 、 {階段|かいだん} へ 。 || You fold the sketch carefully and put it at the very top of your pack. Key in hand, you head for the stairs.
 !autosave
 
@@ -196,12 +276,22 @@ narr: {上|うえ} へ の {階段|かいだん} は 、 {鉄|てつ} の {格�
 ?(!sb_log_solved) comp: {鍵|かぎ} が {要|い}る 。 {机|つくえ} の {上|うえ} の {書|か}き{置|お}き に 、 {何|なに} か {書|か}いて ない ？ || We need a key. Doesn't the note on the desk say something?
 
 @scene sb.gallery_enter
+# Staged: your companion steps off the doorway beside you; you look up round the ring of the gallery and lean
+# towards the frozen hatch; your companion's own answer (Ren looks up at the cold coming down, Nao looks from
+# it to you, Mio's guarded hand, Suzu points up at the rafters).
 !set sb_gallery_seen
+!walkto comp 1 11 right
+!gesture pc lookroad up
 narr: {上|うえ} の {回廊|かいろう} は 、 {丸屋根|まるやね} の {真下|ました} を {一周|いっしゅう} して いる 。 {細|ほそ}い {窓|まど} から 、 {雪|ゆき} の {山々|やまやま} が {見|み}える 。 || The upper gallery runs in a ring right under the dome. Through narrow windows you can see snowy peaks.
+!gesture pc observe 10,4
 narr: {中央|ちゅうおう} の {壁|かべ} に {梯子|はしご} が かかり 、 {天井|てんじょう} の {蓋|ふた} に {続|つづ}いて いる 。 {蓋|ふた} は {凍|こお}りついて いた 。 || A ladder against the central wall leads up to a hatch in the ceiling. The hatch is frozen shut.
+?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[think]: {上|うえ} から 、 {冷|つめ}たい {気配|けはい} が {降|お}りて きます 。 {灯|あか}り は 、 {待|ま}って いる の では なく …… {待|ま}ち{疲|つか}れて いる 。 || Something cold is coming down from above. The lamp isn't waiting… it's worn out from waiting.
+?(comp=nao) !gesture comp lookbetween up and=pc
 ?(comp=nao) comp: {上|うえ} に {何|なに} か いる な 。 {荷物|にもつ} の {気配|けはい} じゃ ない 。 || Something's up there. And it doesn't feel like a parcel.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {寒|さむ}さ が 、 {上|うえ} から {流|なが}れて くる …… 。 {火|ひ} の {元|もと} が {逆|ぎゃく} に なった みたい 。 || The cold is flowing down from above… As if the source of a fire had turned inside out.
+?(comp=suzu) !gesture comp point up
 ?(comp=suzu) comp: {天井|てんじょう} {裏|うら} の {主役|しゅやく} が 、 {出番|でばん} を {待|ま}ってる ね 。 || Whoever's in the rafters is waiting for their cue.
 
 @scene sb.gallery_note
@@ -226,16 +316,22 @@ narr: ハンドル は {回|まわ}り{切|き}って いる 。 {蓋|ふた} �
 narr: {天井|てんじょう} の {蓋|ふた} は {凍|こお}りついて いて 、 {押|お}して も {動|うご}かない 。 {壁|かべ} に ハンドル が ある 。 || The ceiling hatch is frozen shut and won't move when you push. There's a handle on the wall.
 
 @scene sb.service_bolt
+# Staged: you look at the barred back door and bend to lift the bar; your companion's own answer (Nao's nod,
+# Ren's open hand).
+!gesture pc observe 19,11
 narr: {外|そと} へ {出|で}る {裏|うら} の {扉|とびら} 。 {内側|うちがわ} に 、 {太|ふと}い {閂|かんぬき} が {渡|わた}して ある 。 || The back door leading outside. A thick bar runs across it on this side.
 !choice
 * {閂|かんぬき} を {外|はず}す || Lift the bar. -> open
 * そのまま に する || Leave it. -> end
 :open
 !sfx door
+!gesture pc bend 19,11
 narr: {閂|かんぬき} を {外|はず}す と 、 {扉|とびら} の {向|む}こう に {石段|いしだん} の {上|うえ} の {景色|けしき} が {見|み}えた 。 これ で 、 {天文台|てんもんだい} の {中|なか} を {通|とお}らず に {上|のぼ}り{下|お}り できる 。 || With the bar lifted, the view from the top of the stair appears beyond the door. Now you can come and go without passing through the building.
 !set sb_shortcut
 !toast {近道|ちかみち} が {開|ひら}いた || A shortcut is open.
+?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp[smirk]: {近道|ちかみち} は {配達人|はいたつにん} の {宝|たから} だ 。 デンジ の じいさん に は 、 {後|あと} で {礼|れい} を {言|い}おう 。 || Shortcuts are a courier's treasure. We'll have to thank old Denji later.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: これ で ホシノ さん も {上|のぼ}って {来|こ}られます 。 {中|なか} の {扉|とびら} を {通|とお}らず に 。 || Now Hoshino can come up too, without going through the inner doors.
 
 @scene sb.gallery_scope
@@ -248,12 +344,22 @@ narr: {南東|なんとう} {向|む}き の {望遠鏡|ぼうえんきょう} �
 ?(sb_archive_found&comp=ren) comp: {静寂|しじま} の {書庫|しょこ} 。 {師匠|ししょう} の {向|む}かった {場所|ばしょ} 。 || The Still Archive. Where my teacher went.
 
 @scene sb.dome_enter
+# Staged: your companion steps off the hatch beside you; you look up at the great lamp wrapped in ice and lean
+# towards its blank shade; your companion's own answer (Nao looks from it to you, Mio's guarded hand, Ren
+# leans in, Suzu points out the forgetful lead).
 !set sb_dome_seen
+!walkto comp 8 10 up
+!gesture pc lookroad 6,4
 narr: {丸屋根|まるやね} の {下|した} 。 {部屋|へや} の {真|ま}ん{中|なか} に 、 {人|ひと} の {背|せ} ほど も ある {大|おお}きな {灯|あか}り が {立|た}って いる 。 {笠|かさ} も {台|だい} も 、 {透|す}き{通|とお}った {氷|こおり} に {包|つつ}まれて いた 。 || Under the dome. In the middle of the room stands a great lamp as tall as a person. Shade and stand alike are wrapped in clear ice.
+!gesture pc observe 6,4
 narr: {笠|かさ} に は 、 {何|なに} も {書|か}いて ない 。 || Nothing is written on the shade.
+?(comp=nao) !gesture comp lookbetween 6,4 and=pc
 ?(comp=nao) comp: {宛名|あてな} の ない {手紙|てがみ} と {同|おな}じ だ 。 {白|しろ}い 。 || Same as the letters with no address. White.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {寒|さむ}い …… 。 {灯|あか}り が {冷|つめ}たい なんて 、 {変|へん} です 。 || So cold… A lamp shouldn't be cold.
+?(comp=ren) !gesture comp observe 6,4
 ?(comp=ren) comp: {名|な} を {失|うしな}った {灯|ひ} です 。 {近|ちか}づけば 、 {向|む}こう から {話|はな}しかけて くる でしょう 。 || A lamp that has lost its name. If we go closer, it will speak to us.
+?(comp=suzu) !gesture comp point 6,4
 ?(comp=suzu) comp: {主役|しゅやく} の {登場|とうじょう} だ 。 …… {台詞|せりふ} を {忘|わす}れた {主役|しゅやく} 。 || Enter the lead. …A lead who's forgotten their lines.
 
 @scene sb.dome_scope

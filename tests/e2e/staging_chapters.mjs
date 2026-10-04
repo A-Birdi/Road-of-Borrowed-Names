@@ -20,18 +20,18 @@
 //   Ch6 sa.isamu_return: the folio passes from your hand to Isamu's, seated at the fire, and he reads it.
 // Evidence: docs/screenshots/actors/ch<N>_<scene>_<line>.png
 //
-// Then every staged overworld scene of Chapters 1 and 2 (docs/expressive/reports/staging_ch1_ch2.md), data-driven:
-// tests/e2e/staging_ch12_cases.mjs holds each scene's fixture and the branches that matter (choice picks, the
+// Then every staged overworld scene of Chapters 1 to 4 (docs/expressive/reports/staging_ch1_ch2.md,
+// staging_ch3_ch4.md), data-driven: tests/e2e/staging_ch12_cases.mjs and staging_ch34_cases.mjs hold each scene's fixture and the branches that matter (choice picks, the
 // four companions, the flags that change what is said), tests/e2e/staging_runner.mjs plays them (what it checks
 // per branch is listed at its top: the scene ends, every cue names somebody there who can make it, every
 // authored position is reached, nobody shares a tile or stands on furniture, no idle life, everyone where the
 // world expects them afterwards, the expected gestures; and per scene, reduced motion keeps the cues, their
 // order and the outcome, and staged and unstaged end in the same state). About 8 minutes per chapter.
-// Evidence: docs/screenshots/staging/ch1_ch2/
+// Evidence: docs/screenshots/staging/ch1_ch2/, docs/screenshots/staging/ch3_ch4/
 // Chapters 5 and 6 the same way (docs/expressive/reports/staging_ch5_ch6.md): tests/e2e/staging_ch56_cases.mjs.
 // Evidence: docs/screenshots/staging/ch5_ch6/
-// Usage: node tests/e2e/staging_chapters.mjs [--ch=1|2|5|6|showcase] [--only=<scene prefix>,…] [--branches]
-//   --ch=1 / 2 / 5 / 6: only that chapter's data-driven cases (no showcase); --ch=showcase: only the showcase above
+// Usage: node tests/e2e/staging_chapters.mjs [--ch=1|2|3|4|5|6|showcase] [--only=<scene prefix>,…] [--branches]
+//   --ch=1 … --ch=6: only that chapter's data-driven cases (no showcase); --ch=showcase: only the showcase above
 //   --only: only the cases whose scene id starts with one of the prefixes
 //   --branches: compare every branch (not only each scene's first) with reduced motion and unstaged
 import fs from 'node:fs';
@@ -39,6 +39,7 @@ import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
 import { runCases } from './staging_runner.mjs';
 import { CH12 } from './staging_ch12_cases.mjs';
+import { CH34 } from './staging_ch34_cases.mjs';
 import { CH56 } from './staging_ch56_cases.mjs';
 
 const ARGS = process.argv.slice(2);
@@ -174,9 +175,9 @@ for (const c of (CH && CH !== 'showcase') || ONLY.length ? [] : CASES) {
     await p.context().close();
   }
 }
-// ---- Chapters 1 and 2, every staged overworld scene ----------------------------------------------------------
+// ---- Chapters 1 to 6, every staged overworld scene ------------------------------------------------------------
 if (CH !== 'showcase') {
-  const cases = CH12.concat(CH56).filter((c) => (!CH || String(c.ch) === CH) && (!ONLY.length || ONLY.some((f) => c.scene.startsWith(f))));
+  const cases = CH12.concat(CH34, CH56).filter((c) => (!CH || String(c.ch) === CH) && (!ONLY.length || ONLY.some((f) => c.scene.startsWith(f))));
   const t0 = Date.now();
   let cur = null, runs = 0, from = '';
   // a fresh page every 20 branches (and its page errors checked when it is let go)

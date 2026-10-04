@@ -108,7 +108,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'v_temo_ii' }, item: 'g:v_temo_ii',
       a: { scene: 'rw.hall_gather', line: 12, who: 'tsuru', ctx: T('Keeper Tsuru, in the Lantern Hall, before you choose a companion', '{旅|たび} の {連|つ}れ を {選|えら}ぶ {前|まえ} 、 {灯|あか}り{堂|どう} の ツル'),
         jp: 'ここ で は {好|す}きな だけ {時間|じかん} を かけて いい 。 {話|はな}して 、 {迷|まよ}って 、 {決|き}め{直|なお}して いい 。 でも 、 あの {灯|あか}り が {敷居|しきい} を {越|こ}えたら 、 {旅|たび} の {終|お}わり まで 、 その {二|ふた}つ の {名前|なまえ} を {運|はこ}ぶ 。 {三|みっ}つ{目|め} は {取|と}らない 。', en: 'Take as long as you like in here. Talk, waver, change your mind. But once that lantern crosses the threshold, it carries those two names to the end of the journey. It won\'t take a third.', reading: 'ここではすきなだけじかんをかけていい。はなして、まよって、きめなおしていい。でも、あのあかりがしきいをこえたら、たびのおわりまで、そのふたつのなまえをはこぶ。みっつめはとらない。', h: '3plw8i' },
-      b: { scene: 'co.sayo_seats', line: 3, who: 'co_sayo', ctx: T('Sayo, laying out the festival seats', '{祭|まつ}り の {席|せき} を {並|なら}べる サヨ'),
+      b: { scene: 'co.sayo_seats', line: 8, who: 'co_sayo', ctx: T('Sayo, laying out the festival seats', '{祭|まつ}り の {席|せき} を {並|なら}べる サヨ'),
         jp: 'さあ …… {聞|き}いた こと が ない わ 。 {聞|き}いちゃ いけない よう な {気|き} が して 。 {変|へん} よ ね 。', en: 'Hmm… I\'ve never asked. It always felt like something I shouldn\'t. Strange, isn\'t it.', reading: 'さあ……きいたことがないわ。きいちゃいけないようなきがして。へんよね。', h: '1n1ng2e' },
       q: {
         F: choose(T('Which speaker gives permission?', '「 いい 」 と {許|ゆる}して いる の は {誰|だれ} ？'), [
@@ -131,7 +131,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'te_giving' }, item: 'g:te_giving',
       a: { scene: 'rw.ren_first', line: 17, who: 'ren', ctx: T('Ren, meeting you by the bridge', '{橋|はし} で {初|はじ}めて {会|あ}う レン'),
         jp: 'ツル さん が {言|い}って いた {方|かた} です ね 。 {字|じ} が {残|のこ}る と 。 {南|みなみ} の {灯|あか}り と 、 {橋|はし} の {灯|あか}り 。 {記録|きろく} を {読|よ}み{上|あ}げます から 、 {書|か}いて いただけます か 。', en: 'You\'re the one Tsuru mentioned — whose writing stays. The south lantern and the bridge lantern. I\'ll read from the records if you\'ll write.', reading: 'ツルさんがいっていたかたですね。じがのこると。みなみのあかりと、はしのあかり。きろくをよみあげますから、かいていただけますか。', h: '1m6k9nr' },
-      b: { scene: 'co.bell_ring', line: 13, who: 'co_tokiwa', ctx: T('Tokiwa, when the old bell suddenly rings', '{古|ふる}い {鐘|かね} が {急|きゅう} に {鳴|な}った {時|とき} の トキワ'),
+      b: { scene: 'co.bell_ring', line: 25, who: 'co_tokiwa', ctx: T('Tokiwa, when the old bell suddenly rings', '{古|ふる}い {鐘|かね} が {急|きゅう} に {鳴|な}った {時|とき} の トキワ'),
         jp: '{誰|だれ} が {鳴|な}らした の です か ！ {綱|つな} を {外|はず}して ください 。 {今|いま} すぐ に ！', en: 'Who rang that?! Take that rope down. At once!', reading: 'だれがならしたのですか！つなをはずしてください。いますぐに！', h: '8q057i' },
       q: {
         F: choose(T('Which request is more direct?', 'より まっすぐ な {頼|たの}み は どちら ？'), [
@@ -153,7 +153,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     {
       id: 'C06', cat: 'certainty', catLabel: T('Certain or uncertain', '{確|たし}か か 、 {不確|ふたし}か か'), word: T('かもしれない / {間違|まちが}い ない', 'かもしれない ・ {間違|まちが}い ない'),
       ref: { grammar: 'kamo' }, item: 'g:kamo',
-      a: { scene: 'co.tokiwa_confront', line: 4, who: 'co_tokiwa', ctx: T('Tokiwa, weighing the evidence in the Chronicle Hall', '{記録堂|きろくどう} で {証拠|しょうこ} を {量|はか}る トキワ'),
+      a: { scene: 'co.tokiwa_confront', line: 10, who: 'co_tokiwa', ctx: T('Tokiwa, weighing the evidence in the Chronicle Hall', '{記録堂|きろくどう} で {証拠|しょうこ} を {量|はか}る トキワ'),
         jp: '{苗木|なえぎ} は {病気|びょうき} で {植|う}え{替|か}えた の かも しれない 。 {窯|かま} は {古|ふる}く なった の かも しれない 。 {帳面|ちょうめん} の {空白|くうはく} は 、 {誰|だれ} か が {書|か}き{忘|わす}れた の かも しれない 。', en: 'The saplings may have been replaced for blight. The kiln may simply have grown old. The gap in the ledger may be someone\'s forgetfulness.', reading: 'なえぎはびょうきでうえかえたのかもしれない。かまはふるくなったのかもしれない。ちょうめんのくうはくは、だれかがかきわすれたのかもしれない。', h: 'vskyv' },
       b: { scene: 'rw.ren_after', line: 1, who: 'ren', ctx: T('Ren, back in Reedwake once the lanterns hold', '{灯|あか}り が {落|お}ち{着|つ}いた {後|あと} の {葦|あし}ノ{瀬|せ} の レン'),
         jp: '{村|むら} の {灯|あか}り は {全部|ぜんぶ} ともって います 。 {毎晩|まいばん} {確|たし}かめて いる ので 、 {間違|まちが}い ありません 。', en: 'Every lantern in the village is lit. I check each night, so there\'s no doubt.', reading: 'むらのあかりはぜんぶともっています。まいばんたしかめているので、まちがいありません。', h: '19gyz5e' },
@@ -226,7 +226,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ref: { grammar: 'prt_dake_shika' }, item: 'g:prt_dake_shika',
       a: { scene: 'rw.tsuru_first', line: 24, who: 'tsuru', ctx: T('Keeper Tsuru, after seeing that your writing holds', 'あなた の {字|じ} が {残|のこ}る の を {見|み}た ツル'),
         jp: 'でも 、 あんた の {字|じ} は {残|のこ}った 。 {手|て} を {貸|か}して おくれ 。 {宿|やど} と {飯|めし} くらい は {出|だ}す よ 。', en: 'But your writing held. Lend me a hand. I can at least give you a bed and meals.', reading: 'でも、あんたのじはのこった。てをかしておくれ。やどとめしくらいはだすよ。', h: 'q303s4' },
-      b: { scene: 'co.fusa_first', line: 2, who: 'co_fusa', ctx: T('Fusa, welcoming you to her inn', '{宿|やど} に {迎|むか}えて くれる フサ'),
+      b: { scene: 'co.fusa_first', line: 5, who: 'co_fusa', ctx: T('Fusa, welcoming you to her inn', '{宿|やど} に {迎|むか}えて くれる フサ'),
         jp: '{休|やす}みたく なったら {声|こえ} を かけて 。 {布団|ふとん} は {干|ほ}した ばかり よ 。 {柿|かき} の {匂|にお}い が する かも しれない けど 。', en: 'Just ask when you want to rest. The futons were aired today. They might smell of persimmon.', reading: 'やすみたくなったらこえをかけて。ふとんはほしたばかりよ。かきのにおいがするかもしれないけど。', h: '1xt33ha' },
       q: {
         F: choose(T('Whose offer has a limit?', '{限|かぎ}り の ある {申|もう}し{出|で} は どちら ？'), [

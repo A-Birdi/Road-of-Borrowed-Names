@@ -582,7 +582,11 @@ narr: トクジ の {舟|ふね} 。{古|ふる}い が 、よく {手入|てい
 * まだ {行|い}かない || Not yet -> end
 :go
 !fade out
+# The faded passage filled (SHOTS.md §7b; src/ui/43e_seq_ch5.js): begun in the dark of the fade, the crossing lifts out of it; the dark comes back before the warp.
+!sequence ch5.boat begin
+!shot cross
 narr: {静|しず}か な {湖|みずうみ} を {漕|こ}いで いく 。{櫂|かい} の {音|おと} さえ 、{水|みず} に {吸|す}い{込|こ}まれて いく 。|| You row out across the still lake. Even the sound of the oars is swallowed by the water.
+!sequence ch5.boat end
 !warp lf.tower_top 7 9 up
 !fade in
 !end
