@@ -465,16 +465,26 @@ ren: …… はい 。 {師匠|ししょう} も 、 たぶん そう {言|い}�
 !set sa_ren_took sa_ren_decided
 !quest ren_ushio done
 !music companion_ren
+# Illustrated, the open branch only (src/ui/43f_seq_ch6.js; docs/expressive/SHOTS.md §8.4): the folio opening, the face surfacing on its paper, Ren with their glasses off; the state lines above run once, as before.
+!sequence ch6.ren begin
+!shot open
 narr: レン は {綴|つづ}り を {開|ひら}いた 。 || Ren opens the folio.
+!shot face
 narr: {紙|かみ} の {上|うえ} に 、 {誰|だれ}か の {顔|かお} が {浮|う}かぶ 。 {太|ふと}い {眉|まゆ} 。 {笑|わら}う と 、 {目|め} が {消|き}える 。 {左|ひだり} の {頬|ほお} に 、 {墨|すみ} の {跡|あと} 。 || On the paper, a face surfaces. Heavy eyebrows. Eyes that vanish when it smiles. An ink smudge on the left cheek.
 ren: 「 {勝手|かって} に しろ 。 {二度|にど} と {帰|かえ}って くるな 。 」 || "Do what you like. Don't ever come back."
+!shot face smile
 sa_ushio[smile]: {分|わ}かった 。 {灯|ひ} は {頼|たの}んだ 。 || All right. I'm counting on you for the lamps.
+!shot face fade
 narr: {声|こえ} が {消|き}える 。 {顔|かお} は 、 {消|き}えなかった 。 || The voice fades. The face does not.
 !challenge sa.ren_reply
+!shot ren
 ren[sad]: …… {笑|わら}って いた 。 あの {時|とき} 、 {師匠|ししょう} は {笑|わら}って いた 。 || …Smiling. My teacher was smiling, then.
 ren: 「 {分|わ}かった 」 は 、 「 {帰|かえ}らない 」 じゃ なかった 。 「 {灯|ひ} を {頼|たの}む 」 だった 。 {七年|ななねん} 、 {逆|ぎゃく} に {読|よ}んで いた 。 || "All right" didn't mean "I won't come back." It meant "look after the lamps." For seven years I read it the wrong way round.
+!shot ren smirk
 ren[smirk]: …… {眉|まゆ} が 、 {思|おも}って いた より {太|ふと}い 。 || …The eyebrows are thicker than I imagined.
+!shot ren glasses
 narr: レン は {眼鏡|めがね} を {外|はず}して 、 {長|なが}い こと {拭|ふ}いて いた 。 {拭|ふ}く {必要|ひつよう} が ない くらい {長|なが}く 。 || Ren takes off their glasses and cleans them for a long time. Much longer than they need cleaning.
+!sequence ch6.ren end
 !music sorrow
 !end
 :rleave
