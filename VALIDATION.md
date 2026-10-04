@@ -2817,3 +2817,86 @@ another. Then every chapter's staging ran on its own.
 Tests re-capture tracked screenshots; they were restored, and the untracked ones the runs left were removed. Not
 run: `run.mjs --full` (matrix.mjs and every story configuration). It waits for a frozen candidate with the painted
 Harmony art.
+
+## 2026-10-04 — Harmony keyify: the player kit delivered in look A's real colours
+
+**What changed.** Image tools paint the key families badly, so the player kit may now be painted in look A's real
+colours and converted by tooling (CONTRACT.md §5.5).
+
+- `tools/harmony_keyify.mjs` (core in `tools/harmony/keyify.mjs`, validation in `tools/harmony/keyify_report.mjs`, the
+  default look `tools/harmony/lookA.json`) turns the layers into key-family layers and `<name>.mask.png` for
+  `tools/harmony_import.mjs`.
+- `tools/harmony_keyify_proof.mjs` writes the evidence to `docs/screenshots/harmony/keyify/`.
+- `tests/unit/harmony_keyify.test.mjs` is new.
+- `tools/harmony/importer.mjs`: `normaliseImage` and `placeMask` were split out of `normaliseFile` with no change in
+  behaviour, so keyify reads files exactly as the importer does.
+- Docs: CONTRACT.md §5.5 (and its source and test tables), `docs/harmony/contract/KEYIFY_REPORT.md`, a pointer in
+  V3_REPORT.md.
+- Dev tools only: nothing in `src/` or `index.html` changed, and ASSET_BRIEF.md is untouched.
+
+Everything was run on SYNTHETIC kits, none of it art. U is node unit tests, T a node tool, B headless Chromium 141 on
+the built index.html.
+
+**Unit and browser tests:**
+- U `node tests/run-unit.mjs harmony_keyify`: 54 passed, 0 failed. Covered:
+  - the default look file is the game's own ramps;
+  - the sample and the rich fixture are recoloured into look A by the runtime;
+  - the delivery is converted (4×, 3× on #ff00ff and 1024-square layers, partial masks), imported and `--verify`'d;
+  - the result is recoloured into 8 looks and compared with the original key kits;
+  - `range` is compared with `reference`;
+  - materials are checked against the ground truth;
+  - a layer with pink ties is reported and not written; a 4× mask settles it;
+  - fixed colours colliding with key families are reported;
+  - a painted checkerboard is refused;
+  - key-coloured layers pass through, and the whole key-coloured sample imports byte for byte as without keyify
+    (50/50 layers and masks);
+  - `--sample`;
+  - output is deterministic.
+- U whole suite `node tests/run-unit.mjs`: **27,164 passed, 0 failed** on the final code. An earlier whole run, before the last keyify changes, gave
+  27,158/0.
+- U harmony subset (art, import, keyify, png, raster, timing) on the first keyify commit: 379/0. harmony_import stayed
+  78/78 after the importer split.
+- B `node tests/e2e/harmony_raster.mjs` (it imports the sample through the refactored importer): 26 passed, 0 failed.
+  It was run without `--sheets`, and no tracked file changed.
+
+**Tool runs:**
+- T `node tools/harmony_keyify_proof.mjs`: OK, all 9 checks. Two runs wrote identical bytes (sha256 of files.png,
+  looks.png, report.json and proof.json). Busts in 8 looks against the original key kits, ΔE in OKLab over 38,232
+  pixels:
+
+  | Run | mean | p95 | max | > 0.02 |
+  |---|---|---|---|---|
+  | sample, `reference` | 0.0002 | 0.0031 | 0.0062 | 0 |
+  | sample, `range` (default) | 0.0013 | 0.0033 | 0.0973 | 792 |
+  | rich, `reference` | 0.0008 | 0.0032 | 0.518 | 8 |
+  | sample, `range`, `--sample` look | 0.0028 | 0.0059 | 0.488 | 1,089 |
+
+  - Sample, `range`: the 792 are the trim and headband, which the sample paints without their lightest shade; `range`
+    stretches them, and the stretch is reported.
+  - Rich: 19 pixels reported, settled by masks over 25 pixels after re-runs; 510 decided by neighbours; materials match
+    the ground truth on 20,117/20,117 pixels; 333 residuals clamped. The 8 are one trim value per look within 24 of
+    the outline ink.
+  - `--sample`: 7 pixels reported; 43 trim pixels hidden in the master.
+  - Round trip (sample, `range`, runtime `recolourPx`): skin, hair, cloth main and the flower are exact. Trim mean
+    0.0517, max 0.0875; headband mean 0.0397.
+  - Value floor: no pair of painted values falls under ΔE 0.02 on any target.
+- T `node tools/harmony_keyify_proof.mjs --delivery=<scratch>`, then CLI runs on that delivery:
+  - `node tools/harmony_keyify.mjs <scratch>/in <out> --look=<scratch>/look.json --masks=<scratch>/masks --report`:
+    exit 0, 31 files written. Import OK (31/31), verify OK, busts 8/8. Game look against the assembled input: ΔE mean
+    0.0013, max 0.0875.
+  - `--values=reference`: exit 0.
+  - Without `--masks`: exit 1, pc_head_cue and pc_head_peak not written. Each has 4 unresolved #4a1a24 pixels (the
+    mouth, 0.0096 from auburn's darkest value); the rest of the mouth was decided by neighbours.
+- T `node tools/harmony_import.mjs <out> --check --suggest`: OK. Batch 1a 18/18, 1b 9/9.
+- T the keyify CLI on the key-coloured sample itself: every kit layer passed through, then imported OK.
+- T the keyify CLI into a folder holding a PNG it did not write: refused, exit 2.
+
+**Not verified:**
+- **Painted art.** All of it is synthetic. The thresholds (near 0.09, margin 0.015, neighbours 3) and `lookA.json`'s
+  fixed colours are set on the code-drawn kit or are generic. Batch 1a's real-colour layers with their style master are
+  the first real test.
+- **How the converted art looks** in other palettes. That is the owner's judgement.
+- **The neighbour rule on real boundaries.** It was 0 wrong on the rich fixture.
+- **The browser.** Keyify is a node tool, so no browser test was added.
+- **Open questions** (KEYIFY_REPORT.md): lips fixed (this task) or skin (the brief); look A's teal trim is not a
+  shipped outfit; whether the importer should run keyify itself for real-colour source batches.

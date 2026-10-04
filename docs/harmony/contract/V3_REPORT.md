@@ -9,6 +9,9 @@ shades per family) and the new rich fixture (`tests/fixtures/harmony_rich/`, the
 per family, ±4° hue and ±6 % chroma jitter, rim lights 8° cooler and 10 % paler, warm highlights 8° warmer, with ground
 truth). Neither is art or a style reference.
 
+*Added 2026-10-04:* the player kit may now be delivered in look A's real colours and converted to the key families by
+`tools/harmony_keyify.mjs` (CONTRACT.md §5.5). Its measurements and limits are in `KEYIFY_REPORT.md` beside this file.
+
 ## What changed (by part of the brief)
 
 - **A. Key families, free values.** The shared colour model lives in `src/ui/88_harmony_contract.js` (`colour`: OKLab,
