@@ -2799,3 +2799,21 @@ fixed, then checked by a committed test that fails on the old sources.
 - B staging_chapters: --ch=1 698/0, --ch=2 1623/0, --ch=5 2199/0, --ch=6 2057/0, --ch=misc 3593/0;
 - Chapters 3–4 were not re-run after the merge. The staging-fixes worker ran them on its branch (2267/0 and
   1350/0), and the scene-variations worker ran Ch1–6 on its own (10,151/0).
+
+## The default browser suite on the merged wave 3 (2026-10-04)
+
+Run with `node tests/e2e/run.mjs --skip=staging_chapters.mjs --part=k/3` (the runner's new options), one part after
+another. Then every chapter's staging ran on its own.
+- **Part 1:** 28/28.
+- **Part 2:** 25/28. All three failures were tests behind intended changes. Each failed the same way on the build
+  before wave 3 (7cc138e), and each is fixed in the test (0f284a0):
+  - `shift_load_regression` (both modes) did not confirm the prologue's new skip question; now 18/18 and 18/18.
+  - `lighthouse_top` expected the vane scene's old end tile; now 106/0.
+- **Part 3:** 26/26, including `pursue.mjs E mio` (a new campaign through all six chapters and an Atlas expedition,
+  1044 s).
+- **staging_chapters on the merged build:** --ch=1 698/0, --ch=2 1623/0, --ch=3 2267/0, --ch=4 1350/0,
+  --ch=5 2199/0, --ch=6 2057/0, --ch=misc 3593/0.
+
+Tests re-capture tracked screenshots; they were restored, and the untracked ones the runs left were removed. Not
+run: `run.mjs --full` (matrix.mjs and every story configuration). It waits for a frozen candidate with the painted
+Harmony art.
