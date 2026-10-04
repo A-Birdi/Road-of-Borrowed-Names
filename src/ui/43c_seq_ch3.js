@@ -214,7 +214,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (tx > s(8)) lookout(L, tx, tt, tb, s(14), s, night, false);
       const wins = roofs(L, w, yG - s(30), s, rnd, { night, wallTo: yG - s(10) });
       const earth = p.mat(night ? '#3a3036' : '#7a6450', { n: 6, at: 3, step: 0.07 });
-      L.rect(0, yG - s(12), w, h - yG + s(12), earth, (x, y) => clamp(0.55 - Math.abs(x - cx) / w * 0.3 + (((x * 7 + y * 13) % 23) === 0 ? 0.1 : 0) - (y < yG - s(6) ? 0.15 : 0), 0, 0.999));
+      L.rect(0, yG - s(12), w, h - yG + s(12), earth, (x, y) => clamp(0.55 - Math.abs(x - cx) / w * 0.3 + (p.bayer(x, y) - 0.5) * 0.16 + (((x * 7 + y * 13) % 23) === 0 ? 0.1 : 0) - (y < yG - s(6) ? 0.15 : 0), 0, 0.999));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
       if (!night) fruit(g, w, yH, s, hl.top, rnd);
@@ -421,7 +421,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       hills(L, w, yH + s(10), s, rnd, { col: '#3a3436', cx: w * 0.75, rise: 18, step: 6, trees: 14 });
       const wins = roofs(L, w, y0 - s(28), s, rnd, { wallTo: y0 - s(10) });
       const earth = p.mat('#6e5a4a', { n: 6, at: 3, step: 0.07 });
-      L.rect(0, y0 - s(12), w, h - y0 + s(12), earth, (x, y) => clamp(0.48 + (x / w) * 0.12 + (((x * 5 + y * 11) % 29) === 0 ? 0.1 : 0) - (y < y0 - s(8) ? 0.12 : 0), 0, 0.999));
+      // (the light falls off toward the east; an ordered dither keeps the steps from making seams)
+      L.rect(0, y0 - s(12), w, h - y0 + s(12), earth, (x, y) => clamp(0.48 + (x / w) * 0.12 + (p.bayer(x, y) - 0.5) * 0.16 + (((x * 5 + y * 11) % 29) === 0 ? 0.1 : 0) - (y < y0 - s(8) ? 0.12 : 0), 0, 0.999));
       // the well at the far side
       const stone = p.mat('#7a7470', { n: 5, at: 2 }), wood = p.mat('#6e4a2e', { n: 5, at: 2 });
       const wx = Math.round(w * 0.86), wy = y0 - s(4);
@@ -430,8 +431,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
       windows(g, wins, s, 0.5);
-      // the last of the sunset from the west, on the right
-      g.fillStyle = 'rgba(255,150,90,0.07)'; g.fillRect(Math.round(w * 0.6), 0, Math.round(w * 0.4), h);
       return { cv };
     });
   }

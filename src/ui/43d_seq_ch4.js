@@ -87,7 +87,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.rect(0, 0, w, floor, plate, (x, y) => {
         let k = 0;
         for (let i = 0; i < 12; i++) { const yy = course(x, i); if (Math.abs(y - yy) < 1) { k = 0.22; break; } if (Math.abs(y - yy - 1) < 1) { k = -0.14; break; } }
-        return clamp(0.4 - Math.abs(x - ax) / w * 0.32 + k + (((x * 3 + y * 5) % 23) === 0 ? 0.05 : 0), 0, 0.999);
+        return clamp(0.4 - Math.abs(x - ax) / w * 0.32 + (p.bayer(x, y) - 0.5) * 0.14 + k + (((x * 3 + y * 5) % 23) === 0 ? 0.05 : 0), 0, 0.999);
       });
       for (let i = -4; i <= 4; i++) {
         const bx = ax + i * s(112), pts = [];
@@ -374,7 +374,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const p = P();
         // inside the shade, close: the paper walls glowing faintly round us, the oil dish on its stand
         const paper = p.mat('#c8bca4', { n: 6, at: 3, step: 0.06 }), L = p.layer(w, h);
-        L.rect(0, 0, w, h, paper, (x, y) => clamp(0.4 + (((Math.round(y) % Math.max(3, Math.round(7 * k))) === 0) ? -0.12 : 0) - Math.abs(x - wx) / w * 0.3, 0, 0.999));
+        L.rect(0, 0, w, h, paper, (x, y) => clamp(0.4 + (((Math.round(y) % Math.max(3, Math.round(7 * k))) === 0) ? -0.12 : 0) - Math.abs(x - wx) / w * 0.3 + (p.bayer(x, y) - 0.5) * 0.14, 0, 0.999));
         for (const fx of [Math.round(wx - 70 * k), Math.round(wx + 66 * k)]) L.rect(fx, 0, Math.round(4 * k), h, p.mat('#3a2e30', { n: 4, at: 2 }), 0.5);
         const clay = p.mat('#7a5a44', { n: 6, at: 3, step: 0.08 }), lac = p.mat('#2e2834', { n: 5, at: 2 });
         L.rect(wx - Math.round(6 * k), wy + Math.round(8 * k), Math.round(12 * k), h, lac, p.cyl(wx - 2, Math.round(6 * k)));
@@ -621,7 +621,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       g.drawImage(L.canvas(), 0, 0);
       // the room around the window: a dim plaster wall, the frame and the shōji slid back, the sill
       const W2 = p.layer(w, h), wall = p.mat(morning ? '#9a8a78' : '#3a3440', { n: 6, at: 3, step: 0.07 }), wood = p.mat('#5a4030', { n: 5, at: 2, step: 0.08 });
-      W2.rect(0, 0, w, h, wall, (x, y) => clamp(0.48 + (((x * 3 + y * 7) % 19) === 0 ? 0.06 : 0) - Math.abs(x - w / 2) / w * 0.2, 0, 0.999));
+      W2.rect(0, 0, w, h, wall, (x, y) => clamp(0.48 + (((x * 3 + y * 7) % 19) === 0 ? 0.06 : 0) - Math.abs(x - w / 2) / w * 0.2 + (p.bayer(x, y) - 0.5) * 0.14, 0, 0.999));
       W2.erase(x0, y0, x1, y1, () => true);
       W2.rect(x0 - s(8), y0 - s(8), x1 - x0 + s(16), s(8), wood, 0.7); W2.rect(x0 - s(8), y1, x1 - x0 + s(16), s(12), wood, (x, y) => (y < y1 + 2 ? 0.9 : 0.45));
       W2.rect(x0 - s(8), y0, s(8), y1 - y0, wood, 0.6); W2.rect(x1, y0, s(8), y1 - y0, wood, 0.3);

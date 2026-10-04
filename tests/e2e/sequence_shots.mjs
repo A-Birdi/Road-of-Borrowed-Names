@@ -26,7 +26,7 @@ const RUNS = [
   { seq: 'ch3.assembly', scene: 'co.assembly', at: ['co.village', 23, 17], comp: 'nao', flags: CH3, pick: 'firebreaks', shots: ['living'] },
   { seq: 'ch3.assembly', scene: 'co.assembly', at: ['co.village', 23, 17], comp: 'suzu', flags: CH3, pick: 'Grandma Ume', shots: ['ume'] },
   { seq: 'ch4.lamp', also: ['ch4.reply'], scene: 'sb.lamp_name', at: ['sb.obs_dome', 7, 9], comp: 'ren', flags: CH4, pick: 'even when no one' },
-  { seq: 'ch4.lamp', scene: 'sb.lamp_name', at: ['sb.obs_dome', 7, 9], comp: 'mio', flags: CH4, pick: 'waiting for, not the lamp', shots: ['go'] },
+  { seq: 'ch4.lamp', also: ['ch4.reply'], scene: 'sb.lamp_name', at: ['sb.obs_dome', 7, 9], comp: 'mio', flags: CH4, pick: 'waiting for, not the lamp', shots: ['go', 'give'] }, // (line 120, only on this branch, holds the handover)
   { seq: 'ch4.lamp', scene: 'sb.lamp_name', at: ['sb.obs_dome', 7, 9], comp: 'suzu', flags: CH4, pick: 'leave the lamp', shots: ['both'] },
   { seq: 'ch4.inn', scene: 'sb.next_day_inn', at: ['sb.inn', 8, 9], comp: 'nao', flags: Object.assign({ sb_evening: true, sb_lamp_lit: true, ch4_done: true }, CH4) },
   { seq: 'ch4.morning', scene: 'sb.quiet_morning', at: ['sb.inn_room', 6, 5], comp: 'mio', flags: Object.assign({}, BASE, { ch2_done: true, ch3_done: true, sb_storm: true, sb_hearth_done: true }) },
