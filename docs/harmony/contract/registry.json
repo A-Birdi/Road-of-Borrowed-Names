@@ -1032,9 +1032,9 @@
    "bottles": "companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames",
    "cane": "not carried by any party member",
    "hood": "not a player option",
-   "lamp": "companion-only (Ren); held in his painted frames",
-   "patches": "companion-only (Ren); part of his painted coat",
-   "pencil": "companion-only (Nao); part of his painted frames",
+   "lamp": "companion-only (Ren); held in their painted frames",
+   "patches": "companion-only (Ren); part of their painted coat",
+   "pencil": "companion-only (Nao); part of their painted frames",
    "toolbelt": "not carried"
   },
   "optional": [
@@ -1646,7 +1646,7 @@
    "dress"
   ],
   "companionOnly": {
-   "high": "Ren's high collar (portrait.collar), drawn over his coat: his frames are painted, not a kit option"
+   "high": "Ren's high collar (portrait.collar), drawn over their coat: their frames are painted, not a kit option"
   },
   "creationCuts": [
    {

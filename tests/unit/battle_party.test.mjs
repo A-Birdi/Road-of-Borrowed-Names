@@ -89,7 +89,7 @@ export default async (t) => {
     t.eq(same, [], 'the five stances are all different');
     t.ok(MV.gestureOf('nao', 'direct') !== MV.gestureOf('pc', 'direct') && MV.gestureOf('mio', 'restore') !== MV.gestureOf('pc', 'restore') && MV.gestureOf('suzu', 'flow') !== MV.gestureOf('pc', 'flow') && MV.gestureOf('ren', 'ward') !== MV.gestureOf('pc', 'ward'), 'a companion does a shared gesture in their own way (Nao points, Mio pours, Suzu flourishes, Ren raises the lamp)');
     t.ok(MV.OWN.mio.filter((g) => g !== 'help').every((g) => { const p = MV.poseAt(C.chars.mio.look, 'act', g, 0.6, 0, 'comp', true, 'mio'); return p.prop.vial > 0.5; }), 'every one of Mio\'s gestures uses her vial (the bottles at her hip): no invented prop');
-    t.ok(MV.OWN.ren.filter((g) => g !== 'help').every((g) => MV.actHand('ren', g) === 'L'), 'Ren\'s actions are done with his lamp hand');
+    t.ok(MV.OWN.ren.filter((g) => g !== 'help').every((g) => MV.actHand('ren', g) === 'L'), 'Ren\'s actions are done with their lamp hand');
   }
 
   // ---- idle (§7.3) --------------------------------------------------------------------------------------

@@ -25,7 +25,7 @@
 //      an authored profile is checked against the profile derived from their look, RB.mannerisms.of);
 //   2. nothing is `outside` a person's vocabulary;
 //   3. a profile's stronger reaction written for a staged scene is shown in that scene (or a variant of it);
-//   4. the machine-checkable `avoid` rules: Ren adjusts his glasses at most `glassesPerScene` times a scene;
+//   4. the machine-checkable `avoid` rules: Ren adjusts their glasses at most `glassesPerScene` times a scene;
 //      Suzu's hand-on-hip stance (`restScene: false`) never shows in a scene;
 //   5. escalation: a person's first cue in a scene is not a tense one (recoil, arms folded, hand to forehead,
 //      the emphatic downward hand) unless it is their tell or stronger reaction; no celebration or laugh cued

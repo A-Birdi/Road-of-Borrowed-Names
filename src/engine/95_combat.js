@@ -615,7 +615,7 @@ RB.combatLogic = (function () {
         fx.push({ t: 'comp', who: 'suzu', en: 'Suzu steps into the blow with a flourish — it meets empty air.', missAt: who });
         return;
       }
-      // Nao's "take half": a blow that would land on you is shared, the larger half his
+      // Nao's "take half": a blow that would land on you is shared, the larger half theirs
       if (who === 'pc' && st.share && st.compId && st.comp > 0 && power > 1) {
         const half = Math.ceil(power / 2);
         fx.push({ t: 'comp', who: st.compId, en: 'Nao takes half of it.', share: half });

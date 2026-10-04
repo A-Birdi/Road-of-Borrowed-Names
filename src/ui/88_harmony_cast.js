@@ -11,7 +11,7 @@
  *   arm, what it holds, near hand · lamp glow · held in front · ink · effects
  *
  * A raised arm comes after the head, so a hand may cross the face (the far
- * hand at Ren's glasses as he arrives): it covers part of a lens while the
+ * hand at Ren's glasses as they arrive): it covers part of a lens while the
  * frame, drawn beneath, stays whole and attached. Held things sit between
  * the sleeve and the fingers (a brush shaft, a vial) or hang in front (the
  * lamp).
@@ -236,7 +236,7 @@ RB.harmonyKit = RB.harmonyKit || {};
         '...3333......',
       ],
     },
-    // Ren: the left hand at the bridge of his glasses, its back toward us, the index straight up
+    // Ren: the left hand at the bridge of their glasses, its back toward us, the index straight up
     pointUp: {
       wrist: [5, 16], tip: [6, 0],
       rows: [
@@ -469,8 +469,8 @@ RB.harmonyKit = RB.harmonyKit || {};
     return p;
   };
 
-  // Nao — Read the Opening: a focused three-quarter gaze and a slight, sure smile; his far hand comes up past
-  // his shoulder and points the way, precisely, toward the action; a short route-like ink stroke runs on from
+  // Nao — Read the Opening: a focused three-quarter gaze and a slight, sure smile; their far hand comes up past
+  // their shoulder and points the way, precisely, toward the action; a short route-like ink stroke runs on from
   // the fingertip at the hold.
   POSES.route = function (ph, v) {
     const hold = ph === 'hold', cmp = v === 'compact';
@@ -509,9 +509,9 @@ RB.harmonyKit = RB.harmonyKit || {};
     return p;
   };
 
-  // Ren — Lantern Ward: an intent gaze behind his glasses; as he arrives his far hand settles the glasses at
+  // Ren — Lantern Ward: an intent gaze behind their glasses; as they arrive their far hand settles the glasses at
   // the far rim (crossing the face; the frame stays on, drawn under the fingers); at the hold the lamp is
-  // raised beside his face, its light framed.
+  // raised beside their face, its light framed.
   POSES.ward = function (ph, v) {
     const hold = ph === 'hold', cmp = v === 'compact';
     const p = {

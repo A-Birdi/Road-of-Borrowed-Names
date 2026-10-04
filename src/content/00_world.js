@@ -12,7 +12,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'spiky', hairColor: 1, cloth: ['#5a6a4a', '#46543a', '#c8962e'], pants: '#3a3440', shape: 'tunic', acc: ['scarf', 'satchel'], scarfCol: '#c8962e', bigSatchel: true },
     portrait: { eyes: 'sharp', style: 'spiky', acc: ['scarf', 'satchel', 'pencil'], scarfCol: '#c8962e', bg: '#3a3a2a' },
     role: { en: 'Courier', jp: '{配達人|はいたつにん}' },
-    support: { en: 'Reads what a creature intends two moves ahead; on his turn in battle he spots openings and calls out where blows will land.' },
+    support: { en: 'Reads what a creature intends two moves ahead; on their turn in battle they spot openings and call out where blows will land.' },
   });
   ch('mio', {
     name: { en: 'Mio', jp: 'ミオ' }, companion: true, voice: { pitch: 1.05 },
@@ -26,7 +26,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 2, hair: 'ponytail', hairColor: 7, cloth: ['#3a3e6a', '#2a2c50', '#d8b060'], pants: '#2a2a3a', boots: '#5a4636', shape: 'coat', acc: ['lamp', 'patches', 'glasses'] },
     portrait: { eyes: 'narrow', style: 'ponytail', parted: true, collar: 'high', acc: ['glasses', 'lamp', 'patches'], bg: '#262a44' },
     role: { en: 'Lantern keeper', jp: '{灯守|ひもり}' },
-    support: { en: 'Begins each encounter behind a small ward; on his turn in battle his lamp wards you and burns off mist and gathering force.' },
+    support: { en: 'Begins each encounter behind a small ward; on their turn in battle their lamp wards you and burns off mist and gathering force.' },
   });
   ch('suzu', {
     name: { en: 'Suzu', jp: 'スズ' }, companion: true, voice: { pitch: 1.12 },

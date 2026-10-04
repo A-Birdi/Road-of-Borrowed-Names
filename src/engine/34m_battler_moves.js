@@ -11,12 +11,12 @@
  * Actors and their language (§7.4; presentation only — no new equipment or backstory):
  *   pc   attentive and balanced; the folio in the left hand, the right hand free for strip and brush;
  *        a response visibly leaves their gesture and they recover with readable confidence.
- *   nao  compact weight shifts, quick looks, practical positioning (a hand on his satchel); short,
+ *   nao  compact weight shifts, quick looks, practical positioning (a hand on their satchel); short,
  *        decisive pointing and handing motions; an economical recovery.
  *   mio  composed, hands ready before her apron, attention on the ally; measure / uncork / pour / apply
  *        with the vial from the bottles at her hip; a firm, controlled return.
- *   ren  grounded, wide; the lamp out at his left side, the right hand held precise; he raises, thrusts
- *        or swings the lamp to ward and to reveal, and traces with the free hand.
+ *   ren  grounded, wide; the lamp out at their left side, the right hand held precise; they raise, thrust
+ *        or swing the lamp to ward and to reveal, and trace with the free hand.
  *   suzu weight on one leg, a hand on her hip, a restrained rhythm (a heel tap); a clear preparatory
  *        beat, then a purposeful flourish, a beckon, a feint, a bow — never every action a dance.
  *   comp any other figure drawn in the battle style (an NPC): the plain companion stance.
@@ -130,7 +130,7 @@ RB.battlerMoves = (function () {
       handL: [-10.4, 29.4, -1.2], elbowL: [-1, -0.2, -0.6],
     },
     // compact and forward: weight on the front foot, a lean, the head up to read the foe; the right hand
-    // loose and ready to point, the left resting on the flap of the satchel at his hip
+    // loose and ready to point, the left resting on the flap of the satchel at their hip
     nao: {
       pelvis: [0.6, -2.8, 0.8], spinePitch: 15, spineYaw: 6, headYaw: 10, headPitch: -9,
       footR: [6.6, 0, 5.4], footRYaw: 20, footL: [-5.4, 0, -3.6], footLYaw: 6,
@@ -489,7 +489,7 @@ RB.battlerMoves = (function () {
     // breath, the writing hand gathered at the chest — and a terminal gesture that does what the technique
     // does: direct a thread (Nao), support a restorative release (Mio), complete a ward seal (Ren), seize
     // Suzu's opening (Suzu). Each starts and ends in the rear-three-quarter ready stance.
-    // Nao: the thread sent out along the line his hand drew, released, then drawn back taut on the second knot
+    // Nao: the thread sent out along the line their hand drew, released, then drawn back taut on the second knot
     rally_thread: {
       a: W2(RALLY_A, { prop: { strip: 0.6 } }), ant: RALLY_BREATH,
       x: (k) => {
@@ -510,7 +510,7 @@ RB.battlerMoves = (function () {
       ]), { handShapeR: k < 0.3 ? 'cup' : k < 0.6 ? 'open' : 'spread', elbowR: [1, -0.5, -0.8], handL: [-4.6, 37.8, 6.8], elbowL: [-1, -0.9, -0.2], handShapeL: 'cup', hairLag: -0.8 * seg(k, 0.4, 0.8), prop: { bookOpen: 1, bookTilt: -30, bookYaw: -10, bookAt: [1.2, 1.4, 0.8] } }),
       qk: 16, snap: 0, release: 0.45,
     },
-    // Ren: the brush traces the level line of his plane from its other end, then closes it with a short
+    // Ren: the brush traces the level line of their plane from its other end, then closes it with a short
     // vertical stroke (not the forearm-across stroke of the ordinary Protect)
     rally_seal: {
       a: W2(RALLY_A, { prop: { brush: 1 } }), ant: RALLY_BREATH,
@@ -549,15 +549,15 @@ RB.battlerMoves = (function () {
   // ---- the four Harmony performances (Harmony addendum §9.3–§9.7) -----------------------------------------
   // Each: an anticipation (a), a signature action (x, written as key silhouettes on a track) and a recovery
   // through its own key (rec) back to exactly the stance. They differ in body mechanics, not colour:
-  // Nao takes his pencil from behind his ear, turns side-on, steps in and sketches a route in the air; Mio
+  // Nao takes their pencil from behind their ear, turns side-on, steps in and sketches a route in the air; Mio
   // measures at eye level, uncorks and pours from high over her head, side-on; Ren plants, raises the lamp and
   // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
   // back views — `turn` — never a mirrored costume), plants and opens her arm.
-  // Nao — Read the Opening: a courier who reads routes. His pencil drawn from behind his ear (the elbow up, the
+  // Nao — Read the Opening: a courier who reads routes. Their pencil drawn from behind their ear (the elbow up, the
   // weight dropped); turned sharply side-on to the creature (`turn`: the rig's own side view, read from behind),
   // a step in, the pencil arm out high, the other back for balance — the pencil sketches the route out to it in
   // the air, two small ticks where its two knots will come loose, and stays at its end; then the pencil goes
-  // back behind his ear with a glance to you, a short nod, and the stance.
+  // back behind their ear with a glance to you, a short nod, and the stance.
   const NAO_EAR = { turn: 8, pelvis: [0.2, -4.4, 0], spinePitch: 14, spineYaw: 2, spineRoll: 2, headYaw: 4, headPitch: -6, headRoll: -7, handR: [11.6, 60.4, -2.4], elbowR: [1, 0.2, -0.3], handShapeR: 'pinch', palmR: [-1, 0, 0.1], handL: [-9.2, 27.6, -5.4], handShapeL: 'open', palmL: [0.3, -0.5, -1] };
   const NAO_A = { turn: 26, pelvis: [0.2, -5.8, 0], spinePitch: 20, spineYaw: 6, spineRoll: 0, headYaw: 6, headPitch: -12, headRoll: -2, handR: [9.8, 54.8, 12.6], elbowR: [1, -0.2, -0.6], handShapeR: 'pinch', palmR: [-0.6, 0, 0.8], handL: [-9.4, 27.4, -5.6], elbowL: [-1, 0.3, 0.3], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6, prop: { pencil: 1 } };
   const NAO_K = {
@@ -584,11 +584,11 @@ RB.battlerMoves = (function () {
   };
   // tipped: the pour — the vial over, the free hand spread out over you both
   MIO_K.pour = W2(MIO_K.high, { handR: [11.2, 65.2, 10.4], elbowR: [1, 0.3, -0.5], handL: [9.4, 50.6, 15.6], elbowL: [-1, -0.6, -0.1], handShapeL: 'spread', palmL: [0.2, -0.8, 0.6], headYaw: 12, headPitch: -12, spineYaw: 10, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 112 } });
-  // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before his chest; raised high at his side
+  // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before their chest; raised high at their side
   // and shaded (its shutter turned to the creatures, the light thrown back over the pair); the flat right
   // hand drawing a level line at chest height — the plane; then the lamp lowered and a check to either side.
-  // (The lamp stays out at his left side throughout, where the rear view can see it: before his chest it
-  // would be hidden behind him.)
+  // (The lamp stays out at their left side throughout, where the rear view can see it: before their chest it
+  // would be hidden behind them.)
   const REN_A = { leftFree: 1, act: 'L', pelvis: [0.2, -4.0, -0.2], spinePitch: 11, spineYaw: -2, spineRoll: 0, headYaw: -6, headPitch: 8, handL: [-11.6, 40.6, 4.4], elbowL: [-1, -0.6, -0.4], handR: [4.6, 42.4, 10.2], elbowR: [1, -0.9, -0.2], handShapeR: 'flat', palmR: [-1, 0, 0.2], prop: { flare: 0, lampShade: 0 } };
   const REN_RAISE = { handL: [-17.4, 54.6, -1.6], elbowL: [-1, 0.2, -0.8], handR: [-0.8, 43, 13], elbowR: [1, -0.9, -0.2], palmR: [0, -1, 0.25], spineYaw: -8, spinePitch: 6, spineRoll: 3, headYaw: -10, headPitch: -8, pelvis: [0.2, -4.2, -0.2], prop: { flare: 1, lampShade: 1 } };
   const REN_PLANE = W2(REN_RAISE, { handR: [16.4, 43, 13], elbowR: [1, -0.4, -0.5], spineYaw: 14, spinePitch: 7, spineRoll: 2, headYaw: 14, headPitch: -2, pelvis: [0.4, -4.2, 0.2] });
@@ -626,7 +626,7 @@ RB.battlerMoves = (function () {
           : { handR: [12.6, 37.6, 15.6], elbowR: [1, -0.6, -0.2], handShapeR: 'point', palmR: [-1, 0, 0], spinePitch: 20, spineYaw: 10, headPitch: 2, headYaw: 12, pelvis: [1, -3.6, 1.6] }),
         snap: 0, release: 0.55,
       },
-      // Call out its aim: a hand at his mouth, the other still on the satchel, leaning into the shout
+      // Call out its aim: a hand at their mouth, the other still on the satchel, leaning into the shout
       call: {
         a: { handR: [4.6, 55.4, 9], elbowR: [1, -1, -0.2], handShapeR: 'cup', palmR: [-1, 0, 0.2], spinePitch: 10, headPitch: -6, pelvis: [0.2, -2.6, 0.2] },
         x: (k) => ({ handR: [5, 55.6, 9.6], elbowR: [1, -1, -0.2], handShapeR: 'cup', palmR: [-1, 0, 0.2], spinePitch: 18 + bump(k, 0, 0.5) * 3, headPitch: -12, pelvis: [0.8, -3, 1.4], hairLag: -0.5 }),
@@ -638,7 +638,7 @@ RB.battlerMoves = (function () {
         x: (k) => ({ footR: [7.6, 0, 8.4], pelvis: [1, -4.4, 2.6], spinePitch: 24, headPitch: 4, handR: k < 0.55 ? lerp([10, 34, 10], [13.2, 34, 19.4], ease(k / 0.55)) : lerp([13.2, 34, 19.4], [11.6, 37, 13], ease((k - 0.55) / 0.45)), elbowR: [1, -0.4, -0.2], handShapeR: k < 0.55 ? 'open' : 'pinch', palmR: DOWN }),
         snap: 0, release: 0.6,
       },
-      // Seize the opening: a crouch, then a quick lunge step, the arm out — he moves before the signal
+      // Seize the opening: a crouch, then a quick lunge step, the arm out — they move before the signal
       lunge: {
         a: { pelvis: [-0.4, -4.4, -1.2], spinePitch: 16, handR: [6.4, 38, -2], elbowR: [1, -0.8, -0.4], handShapeR: 'fist', headPitch: -10 },
         x: (k) => ({ footR: [8.2, 0, 10.6], footRYaw: 14, pelvis: [1.4, -4.2, 3.4], spinePitch: 22, spineYaw: 10, handR: [13.6, 43.6, 21], elbowR: [1, -0.3, -0.2], handShapeR: 'point', palmR: [-1, 0, 0], headPitch: -10, hairSway: -1.4, clothSway: -1.2, hairLag: 1 * bump(k, 0, 0.5) }),
@@ -651,10 +651,10 @@ RB.battlerMoves = (function () {
         snap: 0.3, release: 0.35,
       },
       // Read the Opening (the technique; see NAO_EAR, NAO_A, NAO_K, NAO_SKETCH). Anticipation: the hand up to
-      // his ear, the pencil taken (0.42–0.56), brought out before his shoulder as he turns. Signature: 0–0.18
+      // their ear, the pencil taken (0.42–0.56), brought out before their shoulder as they turn. Signature: 0–0.18
       // side-on and stepped in, the pencil at the route's start; 0.18–0.9 the sketch out along the route (the
       // ticks at 0.42 and 0.66 — the cue at the first); 0.9–1 at its end, held. Recovery: the pencil back behind
-      // his ear with a glance to you (0.4–0.5), a short nod (0.76), the stance.
+      // their ear with a glance to you (0.4–0.5), a short nod (0.76), the stance.
       opening: {
         a: NAO_A,
         ant: [{ at: 0.42, o: NAO_EAR }, { at: 0.56, o: W2(NAO_EAR, { prop: { pencil: 1 } }) }],
@@ -729,9 +729,9 @@ RB.battlerMoves = (function () {
       // settle: (her cheer is in CHEER)
     },
     ren: {
-      // Lamp ward / the technique's ward: the lamp brought round before him and held out toward it, the
-      // free hand tracing the seal closed above it in its light. (The lamp hangs from his left hand: held
-      // out forward-right or up at his left side it stands clear of his body, where it can be seen.)
+      // Lamp ward / the technique's ward: the lamp brought round before them and held out toward it, the
+      // free hand tracing the seal closed above it in its light. (The lamp hangs from their left hand: held
+      // out forward-right or up at their left side it stands clear of their body, where it can be seen.)
       ward: {
         a: { leftFree: 1, handL: [-4.4, 38, 9.4], elbowL: [-1, -0.8, -0.2], handR: [6, 42, 8], handShapeR: 'flat', palmR: [-0.6, 0, 0.8], spinePitch: 10, headPitch: 6, headYaw: -2, pelvis: [0, -3, 0], act: 'L' },
         x: (k) => ({ leftFree: 1, handL: [7, 45, 14.6], elbowL: [-1, -0.6, -0.4], handR: path([[10.6, 53, 10.4], [15.4, 49, 9.6], [12.6, 45, 11.6]], k / 0.7), handShapeR: 'point', palmR: [-1, 0, 0], spinePitch: 8, spineYaw: 14, headPitch: -4, headYaw: 8, pelvis: [0.4, -2.6, 0.8], act: 'L', prop: { flare: k > 0.35 ? 1 : 0 }, clothSway: -0.6 }),
@@ -749,13 +749,13 @@ RB.battlerMoves = (function () {
         x: (k) => ({ leftFree: 1, handL: [4.2, 52.4, 14.8], elbowL: [-1, 0.2, -0.4], pelvis: [0.8, -1.8, 1.2], spinePitch: 4, spineYaw: 16, headPitch: -12, headYaw: 8, handR: [11.6, 36, 5], handShapeR: 'fist', act: 'L', prop: { flare: k > 0.25 ? 1 : 0 }, hairLag: 1, clothSway: -0.8 }),
         snap: 0.25, release: 0.3,
       },
-      // Keep watch: the lamp held up high at his side, over the two of you
+      // Keep watch: the lamp held up high at their side, over the two of you
       vigil: {
         a: { leftFree: 1, handL: [-10, 38, 3], elbowL: [-1, -0.8, -0.4], spinePitch: 8, act: 'L' },
         x: () => ({ leftFree: 1, handL: [-18.4, 50, -6.2], elbowL: [-1, 0.2, -0.8], handR: [8.4, 40, 8.4], handShapeR: 'flat', palmR: [-0.6, 0, 0.8], spinePitch: 2, spineRoll: 3, headPitch: -12, headYaw: -4, pelvis: [-0.4, -1.4, 0], act: 'L', prop: { flare: 1 } }),
         snap: 0.35, release: 0.4,
       },
-      // Raise the lamps: the lamp raised high at his side and swung across, over every one of them
+      // Raise the lamps: the lamp raised high at their side and swung across, over every one of them
       lanterns: {
         a: { leftFree: 1, handL: [-12, 44, 2], elbowL: [-1, -0.4, -0.6], spinePitch: 6, spineYaw: -10, headYaw: -4, act: 'L' },
         x: (k) => ({ leftFree: 1, handL: path([[-18, 51, -4.6], [-6, 58, 11], [4.6, 51, 15]], ease(k / 0.75)), elbowL: [-1, 0.3, -0.4], spinePitch: 3, spineYaw: -10 + 26 * ease(k / 0.75), headPitch: -12, headYaw: 6, handR: [10.4, 38, 6], handShapeR: 'flat', act: 'L', prop: { flare: 1 }, clothSway: -1 * ease(k), hairSway: -0.8 * ease(k) }),

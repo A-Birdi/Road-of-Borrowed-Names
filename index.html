@@ -28145,7 +28145,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
  * strip, a brush, Mio's vial (from the bottles at her hip; larger in her Harmony technique, `vialBig`), Nao's
- * courier pencil (`pencil`, his Harmony technique), Ren's lamp (raised when a gesture frees his left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
+ * courier pencil (`pencil`, their Harmony technique), Ren's lamp (raised when a gesture frees their left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
  * src/engine/34m_battler_moves.js (RB.battlerMoves); this file draws whatever pose it is given.
  *
  * Battle addendum §6.2 (native frame standard): the frame stays 80×104 art px, anchor (36, 100),
@@ -28949,7 +28949,7 @@ RB.battlers = (function () {
   }
 
   const COVER = mk(hramp('#9a4a3c', { sat: 1.1, warm: 40 }), { min: 1, kind: 'leather' });
-  // Nao's courier pencil (the one his portrait keeps behind his ear): a yellow body, a pink eraser, the
+  // Nao's courier pencil (the one their portrait keeps behind their ear): a yellow body, a pink eraser, the
   // sharpened wood and its lead
   const PENCIL = mk(hramp('#e0b040', { sat: 1.1, warm: 50 }), { min: 2, kind: 'wood' });
   const ERASER = mk(hramp('#e8a0a0', { sat: 1.05 }), { min: 2 });
@@ -29049,7 +29049,7 @@ RB.battlers = (function () {
     };
     const lantern = (top, own) => {
       // (the lamp a gesture raises flares: its glass runs lighter — ps.prop.flare; Ren's own lamp, the
-      // object of his every action, is drawn a size up, as hands are)
+      // object of their every action, is drawn a size up, as hands are)
       const lit = own && ps.prop && ps.prop.flare > 0.5 ? Mt.glowHi : Mt.glow, q = own ? 1.3 : 1;
       const at = (y) => add(top, [0, y * q, 0]);
       K.C(top, at(-2.2), 0.35 * q, 0.35 * q, Mt.iron, GRP.prop);
@@ -29547,12 +29547,12 @@ RB.battlers = (function () {
  * Actors and their language (§7.4; presentation only — no new equipment or backstory):
  *   pc   attentive and balanced; the folio in the left hand, the right hand free for strip and brush;
  *        a response visibly leaves their gesture and they recover with readable confidence.
- *   nao  compact weight shifts, quick looks, practical positioning (a hand on his satchel); short,
+ *   nao  compact weight shifts, quick looks, practical positioning (a hand on their satchel); short,
  *        decisive pointing and handing motions; an economical recovery.
  *   mio  composed, hands ready before her apron, attention on the ally; measure / uncork / pour / apply
  *        with the vial from the bottles at her hip; a firm, controlled return.
- *   ren  grounded, wide; the lamp out at his left side, the right hand held precise; he raises, thrusts
- *        or swings the lamp to ward and to reveal, and traces with the free hand.
+ *   ren  grounded, wide; the lamp out at their left side, the right hand held precise; they raise, thrust
+ *        or swing the lamp to ward and to reveal, and trace with the free hand.
  *   suzu weight on one leg, a hand on her hip, a restrained rhythm (a heel tap); a clear preparatory
  *        beat, then a purposeful flourish, a beckon, a feint, a bow — never every action a dance.
  *   comp any other figure drawn in the battle style (an NPC): the plain companion stance.
@@ -29666,7 +29666,7 @@ RB.battlerMoves = (function () {
       handL: [-10.4, 29.4, -1.2], elbowL: [-1, -0.2, -0.6],
     },
     // compact and forward: weight on the front foot, a lean, the head up to read the foe; the right hand
-    // loose and ready to point, the left resting on the flap of the satchel at his hip
+    // loose and ready to point, the left resting on the flap of the satchel at their hip
     nao: {
       pelvis: [0.6, -2.8, 0.8], spinePitch: 15, spineYaw: 6, headYaw: 10, headPitch: -9,
       footR: [6.6, 0, 5.4], footRYaw: 20, footL: [-5.4, 0, -3.6], footLYaw: 6,
@@ -30025,7 +30025,7 @@ RB.battlerMoves = (function () {
     // breath, the writing hand gathered at the chest — and a terminal gesture that does what the technique
     // does: direct a thread (Nao), support a restorative release (Mio), complete a ward seal (Ren), seize
     // Suzu's opening (Suzu). Each starts and ends in the rear-three-quarter ready stance.
-    // Nao: the thread sent out along the line his hand drew, released, then drawn back taut on the second knot
+    // Nao: the thread sent out along the line their hand drew, released, then drawn back taut on the second knot
     rally_thread: {
       a: W2(RALLY_A, { prop: { strip: 0.6 } }), ant: RALLY_BREATH,
       x: (k) => {
@@ -30046,7 +30046,7 @@ RB.battlerMoves = (function () {
       ]), { handShapeR: k < 0.3 ? 'cup' : k < 0.6 ? 'open' : 'spread', elbowR: [1, -0.5, -0.8], handL: [-4.6, 37.8, 6.8], elbowL: [-1, -0.9, -0.2], handShapeL: 'cup', hairLag: -0.8 * seg(k, 0.4, 0.8), prop: { bookOpen: 1, bookTilt: -30, bookYaw: -10, bookAt: [1.2, 1.4, 0.8] } }),
       qk: 16, snap: 0, release: 0.45,
     },
-    // Ren: the brush traces the level line of his plane from its other end, then closes it with a short
+    // Ren: the brush traces the level line of their plane from its other end, then closes it with a short
     // vertical stroke (not the forearm-across stroke of the ordinary Protect)
     rally_seal: {
       a: W2(RALLY_A, { prop: { brush: 1 } }), ant: RALLY_BREATH,
@@ -30085,15 +30085,15 @@ RB.battlerMoves = (function () {
   // ---- the four Harmony performances (Harmony addendum §9.3–§9.7) -----------------------------------------
   // Each: an anticipation (a), a signature action (x, written as key silhouettes on a track) and a recovery
   // through its own key (rec) back to exactly the stance. They differ in body mechanics, not colour:
-  // Nao takes his pencil from behind his ear, turns side-on, steps in and sketches a route in the air; Mio
+  // Nao takes their pencil from behind their ear, turns side-on, steps in and sketches a route in the air; Mio
   // measures at eye level, uncorks and pours from high over her head, side-on; Ren plants, raises the lamp and
   // draws a level plane; Suzu steps back and turns a full twirl on the spot (the rig's own side, front and
   // back views — `turn` — never a mirrored costume), plants and opens her arm.
-  // Nao — Read the Opening: a courier who reads routes. His pencil drawn from behind his ear (the elbow up, the
+  // Nao — Read the Opening: a courier who reads routes. Their pencil drawn from behind their ear (the elbow up, the
   // weight dropped); turned sharply side-on to the creature (`turn`: the rig's own side view, read from behind),
   // a step in, the pencil arm out high, the other back for balance — the pencil sketches the route out to it in
   // the air, two small ticks where its two knots will come loose, and stays at its end; then the pencil goes
-  // back behind his ear with a glance to you, a short nod, and the stance.
+  // back behind their ear with a glance to you, a short nod, and the stance.
   const NAO_EAR = { turn: 8, pelvis: [0.2, -4.4, 0], spinePitch: 14, spineYaw: 2, spineRoll: 2, headYaw: 4, headPitch: -6, headRoll: -7, handR: [11.6, 60.4, -2.4], elbowR: [1, 0.2, -0.3], handShapeR: 'pinch', palmR: [-1, 0, 0.1], handL: [-9.2, 27.6, -5.4], handShapeL: 'open', palmL: [0.3, -0.5, -1] };
   const NAO_A = { turn: 26, pelvis: [0.2, -5.8, 0], spinePitch: 20, spineYaw: 6, spineRoll: 0, headYaw: 6, headPitch: -12, headRoll: -2, handR: [9.8, 54.8, 12.6], elbowR: [1, -0.2, -0.6], handShapeR: 'pinch', palmR: [-0.6, 0, 0.8], handL: [-9.4, 27.4, -5.6], elbowL: [-1, 0.3, 0.3], handShapeL: 'open', palmL: [0.3, -0.5, -1], hairLag: 0.6, prop: { pencil: 1 } };
   const NAO_K = {
@@ -30120,11 +30120,11 @@ RB.battlerMoves = (function () {
   };
   // tipped: the pour — the vial over, the free hand spread out over you both
   MIO_K.pour = W2(MIO_K.high, { handR: [11.2, 65.2, 10.4], elbowR: [1, 0.3, -0.5], handL: [9.4, 50.6, 15.6], elbowL: [-1, -0.6, -0.1], handShapeL: 'spread', palmL: [0.2, -0.8, 0.6], headYaw: 12, headPitch: -12, spineYaw: 10, prop: { vial: 1, vialBig: 1, cork: 1, vialTilt: 112 } });
-  // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before his chest; raised high at his side
+  // Ren — Lantern Ward: feet planted, knees down, the lamp drawn in before their chest; raised high at their side
   // and shaded (its shutter turned to the creatures, the light thrown back over the pair); the flat right
   // hand drawing a level line at chest height — the plane; then the lamp lowered and a check to either side.
-  // (The lamp stays out at his left side throughout, where the rear view can see it: before his chest it
-  // would be hidden behind him.)
+  // (The lamp stays out at their left side throughout, where the rear view can see it: before their chest it
+  // would be hidden behind them.)
   const REN_A = { leftFree: 1, act: 'L', pelvis: [0.2, -4.0, -0.2], spinePitch: 11, spineYaw: -2, spineRoll: 0, headYaw: -6, headPitch: 8, handL: [-11.6, 40.6, 4.4], elbowL: [-1, -0.6, -0.4], handR: [4.6, 42.4, 10.2], elbowR: [1, -0.9, -0.2], handShapeR: 'flat', palmR: [-1, 0, 0.2], prop: { flare: 0, lampShade: 0 } };
   const REN_RAISE = { handL: [-17.4, 54.6, -1.6], elbowL: [-1, 0.2, -0.8], handR: [-0.8, 43, 13], elbowR: [1, -0.9, -0.2], palmR: [0, -1, 0.25], spineYaw: -8, spinePitch: 6, spineRoll: 3, headYaw: -10, headPitch: -8, pelvis: [0.2, -4.2, -0.2], prop: { flare: 1, lampShade: 1 } };
   const REN_PLANE = W2(REN_RAISE, { handR: [16.4, 43, 13], elbowR: [1, -0.4, -0.5], spineYaw: 14, spinePitch: 7, spineRoll: 2, headYaw: 14, headPitch: -2, pelvis: [0.4, -4.2, 0.2] });
@@ -30162,7 +30162,7 @@ RB.battlerMoves = (function () {
           : { handR: [12.6, 37.6, 15.6], elbowR: [1, -0.6, -0.2], handShapeR: 'point', palmR: [-1, 0, 0], spinePitch: 20, spineYaw: 10, headPitch: 2, headYaw: 12, pelvis: [1, -3.6, 1.6] }),
         snap: 0, release: 0.55,
       },
-      // Call out its aim: a hand at his mouth, the other still on the satchel, leaning into the shout
+      // Call out its aim: a hand at their mouth, the other still on the satchel, leaning into the shout
       call: {
         a: { handR: [4.6, 55.4, 9], elbowR: [1, -1, -0.2], handShapeR: 'cup', palmR: [-1, 0, 0.2], spinePitch: 10, headPitch: -6, pelvis: [0.2, -2.6, 0.2] },
         x: (k) => ({ handR: [5, 55.6, 9.6], elbowR: [1, -1, -0.2], handShapeR: 'cup', palmR: [-1, 0, 0.2], spinePitch: 18 + bump(k, 0, 0.5) * 3, headPitch: -12, pelvis: [0.8, -3, 1.4], hairLag: -0.5 }),
@@ -30174,7 +30174,7 @@ RB.battlerMoves = (function () {
         x: (k) => ({ footR: [7.6, 0, 8.4], pelvis: [1, -4.4, 2.6], spinePitch: 24, headPitch: 4, handR: k < 0.55 ? lerp([10, 34, 10], [13.2, 34, 19.4], ease(k / 0.55)) : lerp([13.2, 34, 19.4], [11.6, 37, 13], ease((k - 0.55) / 0.45)), elbowR: [1, -0.4, -0.2], handShapeR: k < 0.55 ? 'open' : 'pinch', palmR: DOWN }),
         snap: 0, release: 0.6,
       },
-      // Seize the opening: a crouch, then a quick lunge step, the arm out — he moves before the signal
+      // Seize the opening: a crouch, then a quick lunge step, the arm out — they move before the signal
       lunge: {
         a: { pelvis: [-0.4, -4.4, -1.2], spinePitch: 16, handR: [6.4, 38, -2], elbowR: [1, -0.8, -0.4], handShapeR: 'fist', headPitch: -10 },
         x: (k) => ({ footR: [8.2, 0, 10.6], footRYaw: 14, pelvis: [1.4, -4.2, 3.4], spinePitch: 22, spineYaw: 10, handR: [13.6, 43.6, 21], elbowR: [1, -0.3, -0.2], handShapeR: 'point', palmR: [-1, 0, 0], headPitch: -10, hairSway: -1.4, clothSway: -1.2, hairLag: 1 * bump(k, 0, 0.5) }),
@@ -30187,10 +30187,10 @@ RB.battlerMoves = (function () {
         snap: 0.3, release: 0.35,
       },
       // Read the Opening (the technique; see NAO_EAR, NAO_A, NAO_K, NAO_SKETCH). Anticipation: the hand up to
-      // his ear, the pencil taken (0.42–0.56), brought out before his shoulder as he turns. Signature: 0–0.18
+      // their ear, the pencil taken (0.42–0.56), brought out before their shoulder as they turn. Signature: 0–0.18
       // side-on and stepped in, the pencil at the route's start; 0.18–0.9 the sketch out along the route (the
       // ticks at 0.42 and 0.66 — the cue at the first); 0.9–1 at its end, held. Recovery: the pencil back behind
-      // his ear with a glance to you (0.4–0.5), a short nod (0.76), the stance.
+      // their ear with a glance to you (0.4–0.5), a short nod (0.76), the stance.
       opening: {
         a: NAO_A,
         ant: [{ at: 0.42, o: NAO_EAR }, { at: 0.56, o: W2(NAO_EAR, { prop: { pencil: 1 } }) }],
@@ -30265,9 +30265,9 @@ RB.battlerMoves = (function () {
       // settle: (her cheer is in CHEER)
     },
     ren: {
-      // Lamp ward / the technique's ward: the lamp brought round before him and held out toward it, the
-      // free hand tracing the seal closed above it in its light. (The lamp hangs from his left hand: held
-      // out forward-right or up at his left side it stands clear of his body, where it can be seen.)
+      // Lamp ward / the technique's ward: the lamp brought round before them and held out toward it, the
+      // free hand tracing the seal closed above it in its light. (The lamp hangs from their left hand: held
+      // out forward-right or up at their left side it stands clear of their body, where it can be seen.)
       ward: {
         a: { leftFree: 1, handL: [-4.4, 38, 9.4], elbowL: [-1, -0.8, -0.2], handR: [6, 42, 8], handShapeR: 'flat', palmR: [-0.6, 0, 0.8], spinePitch: 10, headPitch: 6, headYaw: -2, pelvis: [0, -3, 0], act: 'L' },
         x: (k) => ({ leftFree: 1, handL: [7, 45, 14.6], elbowL: [-1, -0.6, -0.4], handR: path([[10.6, 53, 10.4], [15.4, 49, 9.6], [12.6, 45, 11.6]], k / 0.7), handShapeR: 'point', palmR: [-1, 0, 0], spinePitch: 8, spineYaw: 14, headPitch: -4, headYaw: 8, pelvis: [0.4, -2.6, 0.8], act: 'L', prop: { flare: k > 0.35 ? 1 : 0 }, clothSway: -0.6 }),
@@ -30285,13 +30285,13 @@ RB.battlerMoves = (function () {
         x: (k) => ({ leftFree: 1, handL: [4.2, 52.4, 14.8], elbowL: [-1, 0.2, -0.4], pelvis: [0.8, -1.8, 1.2], spinePitch: 4, spineYaw: 16, headPitch: -12, headYaw: 8, handR: [11.6, 36, 5], handShapeR: 'fist', act: 'L', prop: { flare: k > 0.25 ? 1 : 0 }, hairLag: 1, clothSway: -0.8 }),
         snap: 0.25, release: 0.3,
       },
-      // Keep watch: the lamp held up high at his side, over the two of you
+      // Keep watch: the lamp held up high at their side, over the two of you
       vigil: {
         a: { leftFree: 1, handL: [-10, 38, 3], elbowL: [-1, -0.8, -0.4], spinePitch: 8, act: 'L' },
         x: () => ({ leftFree: 1, handL: [-18.4, 50, -6.2], elbowL: [-1, 0.2, -0.8], handR: [8.4, 40, 8.4], handShapeR: 'flat', palmR: [-0.6, 0, 0.8], spinePitch: 2, spineRoll: 3, headPitch: -12, headYaw: -4, pelvis: [-0.4, -1.4, 0], act: 'L', prop: { flare: 1 } }),
         snap: 0.35, release: 0.4,
       },
-      // Raise the lamps: the lamp raised high at his side and swung across, over every one of them
+      // Raise the lamps: the lamp raised high at their side and swung across, over every one of them
       lanterns: {
         a: { leftFree: 1, handL: [-12, 44, 2], elbowL: [-1, -0.4, -0.6], spinePitch: 6, spineYaw: -10, headYaw: -4, act: 'L' },
         x: (k) => ({ leftFree: 1, handL: path([[-18, 51, -4.6], [-6, 58, 11], [4.6, 51, 15]], ease(k / 0.75)), elbowL: [-1, 0.3, -0.4], spinePitch: 3, spineYaw: -10 + 26 * ease(k / 0.75), headPitch: -12, headYaw: 6, handR: [10.4, 38, 6], handShapeR: 'flat', act: 'L', prop: { flare: 1 }, clothSway: -1 * ease(k), hairSway: -0.8 * ease(k) }),
@@ -34806,8 +34806,8 @@ RB.gestures = (function () {
  * addendum's §4–§5 and §11 reuse policy).
  *
  * One profile per person is the single source that the overworld idle scheduler (RB.staging), the
- * scene cues and, later, the dialogue portraits read, so a person moves like the same person idle in
- * town, in conversation and in a staged scene. Three tiers:
+ * scene cues and the dialogue portraits (src/ui/21_portrait_anim.js) read, so a person moves like the
+ * same person idle in town, in conversation, in a staged scene and in the portrait. Three tiers:
  *   core library   the gestures and habits of RB.gestures, shared by everyone;
  *   class overlay  rates, resting stance, preferred habits and conversation gestures for a kind of
  *                  person (CLASSES: official, scholar, clerk, host, craft, elder, child, keeper,
@@ -34821,7 +34821,9 @@ RB.gestures = (function () {
  *   { class, tier, rest: pose, every: [minS, maxS], idle: [[habit, weight, { at, prop, gaze }]],
  *     route: [[habit, weight]], tells: { surprise, worry, sad, angry, shy, happy, think }: gesture ids,
  *     props: [...], talk: [primitive numbers], strong: [{ beat, gesture }], avoid: [...],
- *     portrait: { idle: [...], cues: { tag: cue } }, states: [{ if, rest, idle, every }], social: 0..1,
+ *     portrait: { note, class?, blink, glance, habit … (rates), cues: { tag: { variant } }, serious }
+ *       (the dialogue portrait; the fields are listed in the header of src/content/mannerisms/10_cast.js),
+ *     states: [{ if, rest, idle, every }], social: 0..1,
  *     maps: { mapId: { rest, restProp, idle } } (their own workplace: the glassblower at his bench) }
  * API: RB.mannerisms.add(id, profile), .of(id), .forActor(actor), .classOf(look, stations), .CLASSES,
  *      .profiles(), .BESPOKE (the ids authored as bespoke), .stationsAt(map, x, y) */
@@ -47093,7 +47095,7 @@ RB.combatLogic = (function () {
         fx.push({ t: 'comp', who: 'suzu', en: 'Suzu steps into the blow with a flourish — it meets empty air.', missAt: who });
         return;
       }
-      // Nao's "take half": a blow that would land on you is shared, the larger half his
+      // Nao's "take half": a blow that would land on you is shared, the larger half theirs
       if (who === 'pc' && st.share && st.compId && st.comp > 0 && power > 1) {
         const half = Math.ceil(power / 2);
         fx.push({ t: 'comp', who: st.compId, en: 'Nao takes half of it.', share: half });
@@ -49187,7 +49189,8 @@ RB.ui.dialogue = (function () {
  * loop — a blink on an irregular seeded cadence, a one-pixel breath (shoulders first, the head a beat
  * later), hair and hanging accessories a beat behind the head, glasses catching the light, and the
  * person's own small habit (Ren's glasses, Suzu's poise, Mio's careful look, Nao's eye on the
- * exits; the NPCs' habits from their mannerism profiles, docs/expressive/GESTURES.md §5–§7). A line
+ * exits; everyone's from their mannerism profile, the one the actor system reads too: shared() below,
+ * docs/expressive/GESTURES.md §3, §5–§7). A line
  * tagged with an expression (`speaker[surprise]: …`) opens with a one-off lead-in cue (a shock's
  * widen-and-hold, a laugh's two shoulder bobs, a sad slow blink …) and then settles into that
  * expression's stable loop.
@@ -49229,6 +49232,9 @@ RB.portraitAnim = (function () {
   };
   // Every character with a portrait. Class from GESTURES.md §7 (the recurring NPCs), §6 (the
   // companions and the player); bespoke habits for the people PORTRAITS.md §4 and GESTURES.md §5 name.
+  // These rows are the fallback: a person with a mannerism profile of their own (the actor system,
+  // src/content/mannerisms) takes the class and the portrait block from that profile (shared() below),
+  // and a row here fills only what the profile leaves out.
   const glassesPush = (every) => ({ kind: 'glassesPush', every, hold: [0, 0] });
   const PEOPLE = {
     pc: ['base', { glance: { every: [12000, 20000], hold: [700, 1100], dirs: [[1, 0], [0, 1]] } }],
@@ -49274,14 +49280,56 @@ RB.portraitAnim = (function () {
     sa_reader: 'scholar', // the Archive's reader (by role)
   };
   const SWAY_STYLES = { long: 1, wavy: 1, ponytail: 1, twintails: 1 };
+
+  // ---- the shared profile: the actor system's mannerism profile (RB.mannerisms, src/content/mannerisms) -----
+  // One profile per person is read by the overworld idles, the scene cues and this player (GESTURES.md §3), so a
+  // person with an authored profile (the player, the companions, the recurring cast) gets their portrait from it:
+  //   class    the portrait overlay is their actor class (`portrait.class` where the two differ: the player
+  //            keeps the plain loop, nothing that implies a feeling);
+  //   rates    `portrait.blink`, `shut`, `dbl`, `breath`, `glance`, `tilt`, `sway`, `glint`, `habit`, `big`
+  //            (the shapes of CLASS and PEOPLE above; null removes a motion);
+  //   cues     `portrait.cues`: the variant of the cue each emotion uses — smirk { turn: [dx, dy], wink },
+  //            laugh { hidden, wink }, worry { nod }, think { adjust (glasses, once a scene), lids (narrower) },
+  //            closed { slow: factor }, sad { look: [dx, dy] }; `portrait.serious`: expressions held without
+  //            a tilt or weight shift;
+  //   tells    a tell with a portrait counterpart shapes the cue where the block does not: a sadness that looks
+  //            aside or averts (tells.sad 'aside' | 'avert') ends its sad cue looking down and aside; a think
+  //            that reaches for the glasses (tells.think 'glasses') adjusts them, once a scene.
+  // PEOPLE fills whatever the shared profile leaves out, and is the whole profile for people without one (voices,
+  // creatures, people in fewer than three scenes). A profile the actor system derives from a look and a station
+  // is not read: no personality is inferred from how someone looks (world review WR-01).
+  const SHARED_KEYS = ['blink', 'shut', 'dbl', 'breath', 'glance', 'tilt', 'sway', 'glint', 'habit', 'big'];
+  const CUE_OPTS = {
+    smirk: (o, out) => { if (o.turn) out.hold = Object.assign({}, out.hold, { smirk: { head: o.turn.slice() } }); if (o.wink) out.wink = true; },
+    laugh: (o, out) => { if (o.hidden) out.laugh = 'hidden'; if (o.wink) out.wink = true; },
+    worry: (o, out) => { if (o.nod) out.nod = true; },
+    think: (o, out) => { if (o.adjust) out.adjust = true; if (o.lids) out.thinkLids = true; },
+    closed: (o, out) => { if (o.slow > 0) out.slowClose = o.slow; },
+    sad: (o, out) => { if (o.look) out.sadLook = o.look.slice(); },
+  };
+  function shared(who) {
+    const M = RB.mannerisms;
+    if (!M || typeof M.of !== 'function' || typeof M.profiles !== 'function' || !M.profiles()[who]) return null;
+    const prof = M.of(who), pb = prof.portrait && typeof prof.portrait === 'object' ? prof.portrait : {};
+    const out = {}, tells = prof.tells || {};
+    if (tells.sad === 'aside' || tells.sad === 'avert') out.sadLook = [-1, 1];
+    if (tells.think === 'glasses') out.adjust = true;
+    for (const k of SHARED_KEYS) if (k in pb) out[k] = pb[k];
+    const cues = pb.cues && typeof pb.cues === 'object' ? pb.cues : {};
+    for (const tag in cues) if (CUE_OPTS[tag] && cues[tag] && typeof cues[tag] === 'object') CUE_OPTS[tag](cues[tag], out);
+    if (Array.isArray(pb.serious)) { out.serious = {}; for (const e of pb.serious) out.serious[e] = 1; }
+    const cls = pb.class && CLASS[pb.class] ? pb.class : CLASS[prof.class] ? prof.class : null;
+    return { cls, out };
+  }
   function profileOf(who, p) {
     // an unlisted speaker gets the plain loop: no personality is inferred from glasses, age or dress (world review WR-01)
     const row = PEOPLE[who] || 'base';
-    const [cls, own] = typeof row === 'string' ? [row, {}] : row;
-    const pr = Object.assign({ id: who, cls }, CLASS.base, CLASS[cls] || {}, own);
-    // the mannerism profiles of the actor system, when present (src/content/mannerisms), may add a portrait block
-    const ext = RB.mannerisms && RB.mannerisms.of && RB.mannerisms.of(who);
-    if (ext && ext.portrait && typeof ext.portrait === 'object') Object.assign(pr, ext.portrait);
+    const [cls0, own] = typeof row === 'string' ? [row, {}] : row;
+    const sh = shared(who);
+    const cls = (sh && sh.cls) || cls0;
+    // the class overlay, then the fallback row, then the shared profile over both
+    const pr = Object.assign({ id: who, cls }, CLASS.base, CLASS[cls] || {}, own, sh ? sh.out : {});
+    pr.from = sh ? 'shared' : PEOPLE[who] ? 'portrait' : 'default';
     const acc = (p && p.acc) || [];
     pr.glasses = acc.includes('glasses');
     if (pr.glasses && !pr.glint) pr.glint = { every: [10000, 16000] };
@@ -49326,7 +49374,7 @@ RB.portraitAnim = (function () {
     },
     // a smile: the cheeks lift a beat after the mouth
     smile: () => [[110, { eyes: { cheek: false } }], [130, { head: [0, -1] }]],
-    // teasing: one lid lowers and the corner of the mouth lifts (Nao turns his head a little away; Suzu
+    // teasing: one lid lowers and the corner of the mouth lifts (Nao turns their head a little away; Suzu
     // winks on her first smirk of a scene)
     smirk: (pr, c) => {
       const turn = (pr.hold && pr.hold.smirk) || {};
@@ -49744,8 +49792,9 @@ RB.portraitAnim = (function () {
   }
 
   return {
-    play, stop, refresh, timeline, profileOf, fitSize, CUES, LOOP, PEOPLE, CLASS,
-    state: () => (cur ? { who: cur.who, subj: cur.sj.key, expr: cur.expr, key: cur.key, fr: cur.fr || null, animating: !!cur.st, scheduled: !!cur.timer, cue: cur.st && cur.st.cue ? { tag: cur.st.cue.tag, end: cur.st.cue.end, t: now() - cur.t0 } : null, onScreen: onScreenOf(cur.cv) } : null),
+    play, stop, refresh, timeline, profileOf, fitSize, CUES, LOOP, PEOPLE, CLASS, SHARED_KEYS,
+    // (profile: a copy of the profile the playing loop was built from, for the tests and the dev viewer)
+    state: () => (cur ? { who: cur.who, subj: cur.sj.key, expr: cur.expr, key: cur.key, fr: cur.fr || null, animating: !!cur.st, scheduled: !!cur.timer, cue: cur.st && cur.st.cue ? { tag: cur.st.cue.tag, end: cur.st.cue.end, t: now() - cur.t0 } : null, onScreen: onScreenOf(cur.cv), profile: cur.st ? JSON.parse(JSON.stringify(cur.st.pr)) : null } : null),
     stats: () => Object.assign({}, stats, { log: stats.log.slice(), cache: RB.portraits.cacheStats() }),
     resetStats: () => { stats.plays = stats.cues = stats.paints = stats.ticks = 0; stats.paintMs = stats.maxPaintMs = 0; stats.log.length = 0; },
   };
@@ -82475,17 +82524,21 @@ RB.battleIntents = (function () {
  *
  * Placement (§5.2–§5.4), measured every time from the live layout (CSS px):
  *   protected: the Resolve/Harmony dock (.cb-party), the action banner, the telegraph and the response dock
- *   unless Adaptive has withdrawn them (Keep visible: they count as occupied), the creatures' plates and
+ *   unless Adaptive has withdrawn them (Keep visible: they count as occupied; withdrawn, their region is free,
+ *   but the portrait stays unseen until they have actually left it — they leave on a 200 ms CSS transition of
+ *   wall time, the entrance runs on the presentation clock — then fades in where it stands), the creatures' plates and
  *   badges, each creature's silhouette with its knots (the impact destination), the on-field party, Skip,
  *   the battle's Settings button, an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
  *   transparent corners are not footprint; its hands, glow and backing are). A dialogue, the language task,
  *   word help or another reading layer means no cut-in starts (and an open one is removed at once).
- *   Fit order: 1. the standard pair in the left-middle space (at RB.harmonyArt.fitScale); 2. the same moved
- *   up or down on the left; 3. the authored compact pair (with its backing, then without backing and
- *   effects, then at smaller scales while faces stay ≥ 24 px); 4. no portrait for this action — recorded in
- *   stats().fallbacks. (Where the standard's faces would be under 48 px while the compact's are larger — a
- *   tall tablet — the compact is tried first: §5.4's narrow-screen case.) The composition always enters
- *   from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
+ *   Candidates: the standard pair in the left-middle space (at RB.harmonyArt.fitScale); the same moved
+ *   up or down on the left; the authored compact pair (with its backing, then without backing and
+ *   effects, then at smaller scales while faces stay ≥ 24 px). They are tried in the order of the face size
+ *   each gives at its own fitted scale (each variant inside its own footprint limits), larger first, that list's
+ *   order breaking ties — so 1366–1600 px desktops get the compact pair at 2× (faces ~100 CSS px) rather than the
+ *   standard at 1×, a tall tablet the compact pair (§5.4's narrow-screen case), and views where both give the
+ *   same faces the standard pair. If none can be placed: no portrait for this action — recorded in
+ *   stats().fallbacks. The composition always enters from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
  *   On resize or orientation change the same instance is placed again (no replay, nothing spent again); if
  *   no placement remains it fades out quickly and the stage action continues.
  *
@@ -82512,7 +82565,7 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
   const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
   // ---- the setting and the moments it must not start -------------------------------------------------
@@ -82648,7 +82701,8 @@ RB.harmonyCutin = (function () {
     return { sp, comp: comps[comps.length - 1], all: comps };
   }
   // does the composition at (x, y, s) draw anything inside one of the rects (each inflated by SEP)?
-  function hits(sp, x, y, s, rects) {
+  // (path: each drawn row also covers everything to its left — the way the composition slides in from the left edge)
+  function hits(sp, x, y, s, rects, path) {
     for (const R of rects) {
       const rx0 = R.x - SEP, rx1 = R.x + R.w + SEP, ry0 = R.y - SEP, ry1 = R.y + R.h + SEP;
       for (let r = 0; r < sp.length; r++) {
@@ -82656,13 +82710,23 @@ RB.harmonyCutin = (function () {
         if (!q) continue;
         const y0 = y + r * s, y1 = y0 + s;
         if (y1 <= ry0 || y0 >= ry1) continue;
-        if (x + (q[1] + 1) * s <= rx0 || x + q[0] * s >= rx1) continue;
+        if (x + (q[1] + 1) * s <= rx0 || (!path && x + q[0] * s >= rx1)) continue;
         return R.id;
       }
     }
     return null;
   }
-  // The placement for a companion's pair in the current layout, by the fixed fitting order (see the header).
+  // The menus Adaptive has withdrawn that are still on screen: the response dock and the telegraph leave through
+  // their edge on a CSS transition (200 ms of wall time), measured as drawn (the rectangle moves with the slide;
+  // gone once hidden or under 5 % opacity — the same test as visRect).
+  function withdrawing() {
+    const root = document.querySelector('.combat-ui');
+    if (!root || !root.classList.contains('cb-acting') || root.classList.contains('cb-keep')) return [];
+    const out = [];
+    for (const e of root.querySelectorAll('.intent, .cb-dock')) { const r = visRect(e); if (r) out.push(Object.assign({ id: e.classList.contains('cb-dock') ? 'responses' : 'intent' }, r)); }
+    return out;
+  }
+  // The placement for a companion's pair in the current layout, the candidates tried larger faces first (see the header).
   // o: { comp, look, view?: {w, h} } → { ok, variant, scale, x, y, w, h, fit, footprint, faceH, backing, fx,
   //      tried: [...], reason }
   function place(o) {
@@ -82686,9 +82750,15 @@ RB.harmonyCutin = (function () {
       cmp.push({ variant: 'compact', scale: sCmp, fit: 'compact-bare', at: 'scan', backing: false, fx: false });
       for (let s = Math.ceil(sCmp) - 1; s >= 1; s--) cmp.push({ variant: 'compact', scale: s, fit: 'compact-small', at: 'scan' });
     }
-    let order = std.concat(cmp);
-    // a tall, narrow view (a tablet held upright): the standard pair would be small while the compact is not
-    if (sStd > 0 && sCmp > 0 && faceOf(Object.assign({ variant: 'standard' }, base), sStd) < 48 && faceOf(Object.assign({ variant: 'compact' }, base), sCmp) > faceOf(Object.assign({ variant: 'standard' }, base), sStd)) order = cmp.concat(std);
+    // The larger faces first: each candidate at its own fitted scale (inside its variant's footprint limits) is tried
+    // in the order of the face size it gives, the fixed order above breaking ties (the standard pair, mid, first). So a
+    // desktop between about 1366 and 1600 px wide shows the compact pair at 2× (faces ~100 CSS px, the mockup's size)
+    // rather than the standard at 1× (~52 px), a tall tablet the compact pair, and a view where both give the same
+    // faces (2048 × 1046, 1920 × 1080; the code busts at 1648 × 840) the standard pair. One that cannot be placed
+    // gives way to the next.
+    const faceAt = {};
+    const fz = (st) => { const k = st.variant + '@' + st.scale; if (faceAt[k] == null) faceAt[k] = faceOf(Object.assign({ variant: st.variant }, base), st.scale); return faceAt[k]; };
+    const order = std.concat(cmp).map((st, i) => ({ st, i, f: fz(st) })).sort((a, b) => b.f - a.f || a.i - b.i).map((x) => x.st);
     const tried = [];
     for (const st of order) {
       const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
@@ -82758,7 +82828,10 @@ RB.harmonyCutin = (function () {
       // with large text (or an overlay that scrolls) the layout may still reflow as the menus withdraw: the
       // portrait waits, unseen, until it has held still for a few frames (within its entrance), then takes its
       // place — or, if none is left, is not shown at all (never a flash over what then moves under it)
-      settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null };
+      settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null,
+      // the menus withdrawn for the exchange may still be leaving (frame1): until they are gone from where the portrait
+      // will be, it stays unseen
+      menus: root.classList.contains('cb-acting') && !root.classList.contains('cb-keep') ? { waited: false } : null };
     cur.rm = reducedPlan(cur);
     mark(cur, 'inactive', at);
     S.started++; S.shown++;
@@ -82892,6 +82965,32 @@ RB.harmonyCutin = (function () {
         if (!c.cut) c.cut = { pt, d: Math.min(120, c.d.out), op: c.opacity, why: 'resize-invalid' };
       }
     }
+    // The withdrawn menus' region is free for the placement, but they leave on a CSS transition of wall time (200 ms)
+    // while the entrance runs on the presentation clock (180 ms; Fast 100 ms of wall time): under load one frame could
+    // show the portrait over a dock that is still visibly leaving. So the portrait claims that region only once every
+    // withdrawn menu its rows (and the path it slides in along) reach is gone — measured each frame, as drawn; until
+    // then it stays unseen and its state does not advance. It then comes in with a short fade where it stands (no
+    // slide); if the middle of the hold passes first it is not shown at all (recorded). Reduced motion has no such
+    // transition (the menus go at once), so it never waits.
+    if (c.menus) {
+      const el0 = pt - c.t0, wr = withdrawing();
+      let over = null;
+      if (wr.length) { try { over = hits(spansOf({ comp: c.comp, look: c.look, still: c.reduce, variant: c.pl.variant, backing: c.pl.backing, fx: c.pl.fx }).sp, c.pl.x, c.pl.y, c.pl.scale, wr, true); } catch (e) { over = 'unknown'; } }
+      if (over) {
+        if (el0 >= c.d.in + c.d.hold / 2) {
+          note('menus');
+          S.fallbacks.push({ action: c.action, comp: c.comp, view: c.pl.view, reason: 'the withdrawn ' + over + ' stayed on screen', at: new Date().toISOString() });
+          while (S.fallbacks.length > FALLBACK_CAP) S.fallbacks.shift();
+          dispose('menus');
+          return;
+        }
+        if (!c.menus.waited) { c.menus.waited = true; S.menuWaits++; }
+        c.el.style.opacity = '0';
+        return;
+      }
+      if (c.menus.waited) { c.waited = Math.round(el0 * 10) / 10; if (c.lateAt == null && el0 > 0) c.lateAt = el0; }
+      c.menus = null;
+    }
     const el = pt - c.t0, d = c.d, total = d.in + d.hold + d.out;
     let state, op, dx = 0;
     if (c.cut) {
@@ -82932,7 +83031,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
@@ -82948,10 +83047,10 @@ RB.harmonyCutin = (function () {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
     const cost = { startMs: S.cost.start.slice(), frameMaxMs: Math.round(S.cost.frameMax * 100) / 100, frameMeanMs: S.cost.frames ? Math.round((S.cost.frameSum / S.cost.frames) * 1000) / 1000 : 0, frames: S.cost.frames };
-    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, menuWaits: S.menuWaits, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = S.menuWaits = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every
@@ -85775,9 +85874,9 @@ RB.partyChoreo = (function () {
   // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
   // companion's object or garment) — nothing is said, and muted play loses nothing.
   const TECH = {
-    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 600, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1300, rec: 1790, recD: 500, end: 2350, sfx: [[0, 'pen_stroke'], [600, 'pen_down'], [890, 'pen_stroke'], [1320, 'pen_up']], note: 'Nao takes the pencil from behind his ear, turns side-on, steps in and sketches a courier\'s route out to it in the air, a tick on each knot that will come loose; your thread follows the route and the two knots go together, on that one creature only.' },
+    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 600, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1300, rec: 1790, recD: 500, end: 2350, sfx: [[0, 'pen_stroke'], [600, 'pen_down'], [890, 'pen_stroke'], [1320, 'pen_up']], note: 'Nao takes the pencil from behind their ear, turns side-on, steps in and sketches a courier\'s route out to it in the air, a tick on each knot that will come loose; your thread follows the route and the two knots go together, on that one creature only.' },
     mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1250, rec: 1860, recD: 440, end: 2400, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio raises the draught at eye level, uncorks it, lifts it high and pours: a clear stream arcs over you both and falls in drops, rippling at your feet; your ink carries one drop to the knot; then the restoring, only on one of you below full, and the washing, only on what had Heat, mist or Gathering.' },
-    ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants his feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
+    ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants their feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
     suzu: { g: 'rally_catch', gAnt: 500, gAt: 850, gAct: 560, p: 'curtain', pAt: 350, pAnt: 400, pAct: 550, motif: 'join', word: W(840, 300, 220, 120, 440, 1100, 1280), contact: 1280, rec: 1850, recD: 500, end: 2450, sfx: [[0, 'pen_stroke'], [760, 'wind']], note: 'Suzu steps back, twirls, plants and opens her arm — the cue; your thread swings round the opening like a curtain and turns its move back on it.' },
   };
   // reduced motion (§7.4, §9.6): three held poses each, no travel — the anticipation key, the signature
@@ -85790,7 +85889,7 @@ RB.partyChoreo = (function () {
   // 'clap', 'headoff'); to: where it goes ('foe', 'foes', 'allies', 'aimed', 'lower', 'pc', 'none').
   const S = (g, travel, to, ant, act, contact, end, note) => ({ g, travel, to, ant, act, contact, end, note });
   const SUPPORT = {
-    nao_opening: S('spot', 'spot', 'foe', 180, 520, 620, 1240, 'A hand shading his eyes, a sweep of the look, a finger to the place — the opening marked on it only when there is one.'),
+    nao_opening: S('spot', 'spot', 'foe', 180, 520, 620, 1240, 'A hand shading their eyes, a sweep of the look, a finger to the place — the opening marked on it only when there is one.'),
     nao_warn: S('call', 'voice', 'foe', 160, 420, 560, 1160, 'A shout with a cupped hand: the call carries to it, its blow marked softer.'),
     nao_hand: S('reach', 'thread', 'foe', 200, 560, 700, 1300, 'A step in, a low reach, the fingers closing on the knot and pulling — a thread to the very knot when it gives.'),
     nao_route: S('lunge', 'headoff', 'foe', 180, 420, 520, 1180, 'A crouch and a lunge on the opening: its move is crossed out before it starts.'),
@@ -85802,9 +85901,9 @@ RB.partyChoreo = (function () {
     mio_tonic: S('tonic', 'pour', 'allies', 220, 600, 760, 1400, 'A step to your side, the tonic held out, a hand to your shoulder.'),
     ren_shade: S('shade', 'lamp', 'aimed', 180, 440, 600, 1220, 'The lamp lifted toward the one it aims at; the ward forms in its light.'),
     ren_flare: S('flare', 'lamp', 'foe', 200, 440, 580, 1240, 'Drawn back low, thrust up at it: the lamp flares and burns off what it holds.'),
-    ren_vigil: S('vigil', 'lamp', 'allies', 220, 520, 680, 1300, 'The lamp held high at his side over you both; a ward before each.'),
+    ren_vigil: S('vigil', 'lamp', 'allies', 220, 520, 680, 1300, 'The lamp held high at their side over you both; a ward before each.'),
     ren_lanterns: S('lanterns', 'lamp', 'foes', 220, 620, 760, 1420, 'The lamp raised and swung across over every one of them.'),
-    ren_chime: S('front', 'lamp', 'pc', 200, 520, 660, 1300, 'A step in front of you, the lamp held out, his free arm across you.'),
+    ren_chime: S('front', 'lamp', 'pc', 200, 520, 660, 1300, 'A step in front of you, the lamp held out, their free arm across you.'),
     suzu_heckle: S('heckle', 'voice', 'foe', 160, 420, 540, 1160, 'A hand at her mouth, the other on her hip: the heckle carries to it.'),
     suzu_eye: S('beckon', 'attention', 'foe', 180, 520, 600, 1240, 'A step into the light, a wave: its attention turns to her (a line from it to her).'),
     suzu_encore: S('clap', 'clap', 'none', 160, 440, 520, 1140, 'A clap, then the hands flung open — and the thread between you brightens if Harmony rises.'),
@@ -86048,7 +86147,7 @@ RB.partyChoreo = (function () {
         // (a fine braid under Nao's route and Mio's pour, which carry those two techniques themselves)
         Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: Object.assign({ to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who }, who === 'nao' || who === 'mio' ? { soft: 1 } : {}) });
         const top = Math.max(0, H.fview(ctx, T).knots - 1);
-        // Nao: his pencil sketches a courier's route in the air, at the pencil's pace — out over the party, a
+        // Nao: their pencil sketches a courier's route in the air, at the pencil's pace — out over the party, a
         // waypoint tick on each knot that really comes loose (two; or the one, when one is left), then up to the
         // creature; your thread follows the route to those knots, and when two really come loose they go
         // together in one shared burst. On that creature only, never a splash on the others.
@@ -86069,7 +86168,7 @@ RB.partyChoreo = (function () {
           const d0 = rel.pc + 40, d = c - d0 + 300;
           Q.push({ at: d0, type: 'fx', name: 'pDrop', d, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, land: (c - d0) / d } });
         }
-        // Ren: the shaded lamp's light thrown back over the pair; the level plane his hand draws, set before
+        // Ren: the shaded lamp's light thrown back over the pair; the level plane their hand draws, set before
         // each of you (the wards form on it at the result); the knot is the creature's own, at contact
         if (who === 'ren') {
           Q.push({ at: rc - 180, type: 'fx', name: 'pLamp', d: c - rc + 480, p: { from: 'comp', who: both } });
@@ -86230,7 +86329,7 @@ RB.partyChoreo = (function () {
         const w = f.who;
         // Suzu turns aside a blow that would leave one of you at 2 or less: it meets empty air
         if (w === 'suzu' && side === 'enemy') { Q.push({ at, type: 'fx', name: 'miss', d: 560, p: { to: f.missAt || ctx.missAt || 'pc' } }); if (comp === 'suzu') pose('comp', 'act', 'flourish', 460, -160); return true; }
-        // Nao takes half of a blow meant for you: he steps to your shoulder and braces
+        // Nao takes half of a blow meant for you: they step to your shoulder and brace
         if (f.share != null && comp) { pose('comp', 'guard', null, 520, -120); Q.push({ at: at - 120, type: 'fx', name: 'pShare', d: 520, p: {} }); return true; }
         if (comp && w === comp) pose('comp', 'act', PASSIVE[w] || 'raise', 420, -120);
         if (w === 'nao' && side === 'player') Q.push({ at: at - 60, type: 'fx', name: 'pSpot', d: 520, p: { from: 'comp', foe: i } });
@@ -86380,7 +86479,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   function puff(c, x, y, r, u, col, a) { disc(c, x, y, Math.max(u, r), Math.max(u, r * 0.55), col, a); }
   // Nao's courier route (pCourier, pThreadRoute): where it starts — the pencil's point when the sketch began,
-  // kept relative to his feet in art px so it stays put while the pencil moves on and follows the stage through
+  // kept relative to their feet in art px so it stays put while the pencil moves on and follows the stage through
   // a resize — and the shape of each leg: a high arc out over the party, a hump hopping from knot to knot, a
   // rise up to the creature
   function courierStart(e, A) {
@@ -86643,7 +86742,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const m = seg(k, 0.55, 0.85);
       if (m > 0) { halo(c, d.x, d.y, A.foeR * (0.4 + 0.4 * m), '255,226,160', 0.45 * bell(m)); sparkle(c, d.x, d.y, Math.round((3 + 4 * bell(m)) * u), u, '#ffffff', bell(m)); }
     },
-    // Nao: the opening marked — an ink circle drawn round the place, a short leader line from his finger
+    // Nao: the opening marked — an ink circle drawn round the place, a short leader line from their finger
     pSpot(c, e, k, A, t, still) {
       const u = A.u, o = A.pt('foe', 'core'), x = o.x - A.foeR * 0.25, y = o.y + A.foeR * 0.15, r = 7 * u;
       const fade = 1 - seg(k, 0.8, 1), s = still ? 1 : ease(seg(k, 0, 0.45));
@@ -86964,7 +87063,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (!still && back > 0.85) { const h = seg(k, 0.7, 0.9); sparkle(c, o.x, o.y, Math.round((2 + 3 * bell(h)) * u), u, '#fff0e0', bell(h) * fade); }
     },
     // Lantern Ward: the level plane Ren's hand draws, set before each of you at the chest — a few thin lines
-    // of lamplight laid flat in perspective, growing from his side; restrained, it holds and is gone (the
+    // of lamplight laid flat in perspective, growing from their side; restrained, it holds and is gone (the
     // ward itself is the seal tag at the result, its real amount, used up by blows like any ward)
     pPlane(c, e, k, A, t, still) {
       const u = A.u, fade = 1 - seg(k, 0.8, 1), s = still ? 1 : ease(seg(k, 0, 0.45));
@@ -91976,7 +92075,7 @@ RB.harmonyKit = RB.harmonyKit || {};
  *   arm, what it holds, near hand · lamp glow · held in front · ink · effects
  *
  * A raised arm comes after the head, so a hand may cross the face (the far
- * hand at Ren's glasses as he arrives): it covers part of a lens while the
+ * hand at Ren's glasses as they arrive): it covers part of a lens while the
  * frame, drawn beneath, stays whole and attached. Held things sit between
  * the sleeve and the fingers (a brush shaft, a vial) or hang in front (the
  * lamp).
@@ -92201,7 +92300,7 @@ RB.harmonyKit = RB.harmonyKit || {};
         '...3333......',
       ],
     },
-    // Ren: the left hand at the bridge of his glasses, its back toward us, the index straight up
+    // Ren: the left hand at the bridge of their glasses, its back toward us, the index straight up
     pointUp: {
       wrist: [5, 16], tip: [6, 0],
       rows: [
@@ -92434,8 +92533,8 @@ RB.harmonyKit = RB.harmonyKit || {};
     return p;
   };
 
-  // Nao — Read the Opening: a focused three-quarter gaze and a slight, sure smile; his far hand comes up past
-  // his shoulder and points the way, precisely, toward the action; a short route-like ink stroke runs on from
+  // Nao — Read the Opening: a focused three-quarter gaze and a slight, sure smile; their far hand comes up past
+  // their shoulder and points the way, precisely, toward the action; a short route-like ink stroke runs on from
   // the fingertip at the hold.
   POSES.route = function (ph, v) {
     const hold = ph === 'hold', cmp = v === 'compact';
@@ -92474,9 +92573,9 @@ RB.harmonyKit = RB.harmonyKit || {};
     return p;
   };
 
-  // Ren — Lantern Ward: an intent gaze behind his glasses; as he arrives his far hand settles the glasses at
+  // Ren — Lantern Ward: an intent gaze behind their glasses; as they arrive their far hand settles the glasses at
   // the far rim (crossing the face; the frame stays on, drawn under the fingers); at the hold the lamp is
-  // raised beside his face, its light framed.
+  // raised beside their face, its light framed.
   POSES.ward = function (ph, v) {
     const hold = ph === 'hold', cmp = v === 'compact';
     const p = {
@@ -92782,9 +92881,9 @@ RB.harmonyContract = (function () {
   const NOT_SHOWN = {
     atlas_lamplet: 'hangs at the hip, below the ink band crop',
     bottles: 'companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames',
-    lamp: 'companion-only (Ren); held in his painted frames',
-    patches: 'companion-only (Ren); part of his painted coat',
-    pencil: 'companion-only (Nao); part of his painted frames',
+    lamp: 'companion-only (Ren); held in their painted frames',
+    patches: 'companion-only (Ren); part of their painted coat',
+    pencil: 'companion-only (Nao); part of their painted frames',
     beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron',
   };
   // The accessory files a look needs: [{ acc, file, slot }] in no particular order; unknown → { missing }.
@@ -96529,7 +96628,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'spiky', hairColor: 1, cloth: ['#5a6a4a', '#46543a', '#c8962e'], pants: '#3a3440', shape: 'tunic', acc: ['scarf', 'satchel'], scarfCol: '#c8962e', bigSatchel: true },
     portrait: { eyes: 'sharp', style: 'spiky', acc: ['scarf', 'satchel', 'pencil'], scarfCol: '#c8962e', bg: '#3a3a2a' },
     role: { en: 'Courier', jp: '{配達人|はいたつにん}' },
-    support: { en: 'Reads what a creature intends two moves ahead; on his turn in battle he spots openings and calls out where blows will land.' },
+    support: { en: 'Reads what a creature intends two moves ahead; on their turn in battle they spot openings and call out where blows will land.' },
   });
   ch('mio', {
     name: { en: 'Mio', jp: 'ミオ' }, companion: true, voice: { pitch: 1.05 },
@@ -96543,7 +96642,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 2, hair: 'ponytail', hairColor: 7, cloth: ['#3a3e6a', '#2a2c50', '#d8b060'], pants: '#2a2a3a', boots: '#5a4636', shape: 'coat', acc: ['lamp', 'patches', 'glasses'] },
     portrait: { eyes: 'narrow', style: 'ponytail', parted: true, collar: 'high', acc: ['glasses', 'lamp', 'patches'], bg: '#262a44' },
     role: { en: 'Lantern keeper', jp: '{灯守|ひもり}' },
-    support: { en: 'Begins each encounter behind a small ward; on his turn in battle his lamp wards you and burns off mist and gathering force.' },
+    support: { en: 'Begins each encounter behind a small ward; on their turn in battle their lamp wards you and burns off mist and gathering force.' },
   });
   ch('suzu', {
     name: { en: 'Suzu', jp: 'スズ' }, companion: true, voice: { pitch: 1.12 },
@@ -136850,10 +136949,19 @@ comp: {柿|かき} って ね 、 {渋|しぶ}い うち に {採|と}って {�
 /* ==== src/content/mannerisms/10_cast.js ==== */
 /* Mannerism profiles: the player, the four companions and the recurring cast (docs/expressive/GESTURES.md
  * §6–§7, written from each person's look, role, station and own lines). Read by the idle scheduler
- * (RB.staging), the scene cues and the dialogue portraits (`portrait`: the portrait animation's idle and
- * signature cue, PORTRAITS.md §4). Everyone else on a map gets a profile derived from their look and the
- * station they stand at (RB.mannerisms.classOf). Habits name RB.gestures ids; talk lists primitive numbers.
- * `tier: 'bespoke'` marks the 26 characters with authored treatment beyond their class overlay. */
+ * (RB.staging), the scene cues and the dialogue portraits. Everyone else on a map gets a profile derived from
+ * their look and the station they stand at (RB.mannerisms.classOf). Habits name RB.gestures ids; talk lists
+ * primitive numbers. `tier: 'bespoke'` marks the 26 characters with authored treatment beyond their class overlay.
+ *
+ * The dialogue portrait (src/ui/21_portrait_anim.js, PORTRAITS.md §4–§5) takes its class overlay from `class`
+ * and reads `portrait` — `note` (what it should read as), `class` (only where the portrait's overlay is not the
+ * actor class), rates in ms (`blink`, `shut`, `dbl`, `breath`, `glance: { every, hold, dirs }`, `tilt`, `sway`,
+ * `glint`, `habit: { kind, every, hold }`, `big`; null removes a motion), `cues` (the variant of the cue each
+ * emotion uses: smirk { turn, wink }, laugh { hidden, wink }, worry { nod }, think { adjust, lids },
+ * closed { slow }, sad { look }) and `serious` (expressions held without a tilt or weight shift). Two tells
+ * shape the cue without a block: tells.sad 'aside' or 'avert' (the sad cue ends looking down and aside) and
+ * tells.think 'glasses' (a glasses adjustment, once a scene). Whatever is not given here comes from the
+ * portrait player's own table, then the class overlay. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -136865,58 +136973,87 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the player: only what implies no feeling (the strap, a look at what is in front, a shift of weight);
   // tells and conversation come only from the line the player chose
   M('pc', 'traveller', B, { every: [9, 16], idle: [['strap', 2], ['glance', 2], ['shift', 2], ['shiftR', 1]], talk: [9, 1, 2, 10, 11, 12, 15, 16, 21, 29], avoid: ['any gesture that implies a feeling the chosen line does not'],
-    portrait: { idle: 'neutral loop', cues: {} } });
+    portrait: { note: 'the plain loop: nothing that implies a feeling (the player\'s lines carry no tags); a look at what is in front', class: 'base',
+      glance: { every: [12000, 20000], hold: [700, 1100], dirs: [[1, 0], [0, 1]] } } });
   M('nao', 'traveller', B, { rest: 'strap', every: [7, 14], idle: [['lookroad', 4], ['check', 2, { prop: 'letter' }], ['strap', 1], ['glance', 2]], route: [['lookroad', 2]],
     tells: { surprise: 'listen', worry: 'aside', sad: 'aside', happy: 'nod', think: 'lookbetween', shy: 'aside' , angry: 'emphatic' }, props: ['satchel', 'letter', 'tags'], talk: [10, 3, 2, 14, 4, 9, 17, 20, 24, 27],
     strong: [{ beat: 'lf.nao_deliver', gesture: 'handover' }], avoid: ['impatience on every line', 'sprinting'],
-    portrait: { idle: 'glances toward the frame edge (the exits), sparse blinks', cues: { smirk: 'smirk with the head turned a little away' } } });
+    // (the sad cue ends looking aside: tells.sad 'aside', "a smirk and a look away")
+    portrait: { note: 'glances toward the frame\'s edges (the exits), sparse blinks; smirk with the head turned a little away, held; sadness looks away',
+      blink: [4400, 7400], dbl: 0.05, glance: { every: [6000, 10000], hold: [900, 1400], dirs: [[-1, 0], [1, 0]] }, cues: { smirk: { turn: [-1, 0] } } } });
   M('mio', 'host', B, { rest: 'clasp', every: [8, 15], idle: [['check', 3, { prop: 'bottle' }], ['glance', 3], ['touchhair', 1], ['shift', 1]], route: [['glance', 1]],
     tells: { surprise: 'recoil', worry: 'guard', sad: 'lowered', happy: 'laugh', think: 'chin', angry: 'emphatic', shy: 'fidget' }, props: ['bottles', 'bottle'], talk: [4, 15, 13, 30, 24, 20, 32, 6, 10, 11, 28, 29],
     strong: [{ beat: 'lf.mio_refuse', gesture: 'emphatic' }, { beat: 'lf.mio_refuse', gesture: 'shake' }, { beat: 'lf.mio_refuse', gesture: 'fidget' }], avoid: ['perpetual shyness', 'bowing on every line'],
-    portrait: { idle: 'soft tilt, steady blinks; a pin in the bun catches the light', cues: { worry: 'brows up and a small nod', laugh: 'laugh hidden: shoulders, closed eyes' } } });
+    portrait: { note: 'steady blinks, a soft tilt, a careful look down at you; worry: brows up and a small nod; a hidden laugh (closed eyes, one shoulder lift)',
+      blink: [3400, 5000], dbl: 0.04, tilt: { every: [9000, 15000], hold: [2200, 3600], dx: [1] }, glance: { every: [10000, 16000], hold: [600, 900], dirs: [[0, 1], [-1, 1]] },
+      cues: { worry: { nod: true }, laugh: { hidden: true } } } });
   M('ren', 'keeper', B, { every: [9, 16], idle: [['tendlamp', 4], ['glasses', 1], ['lookroad', 2], ['glance', 1]], route: [['lookroad', 1]],
     tells: { surprise: 'listen', worry: 'aside', sad: 'lowered', think: 'chin', happy: 'nod' }, props: ['lamp', 'glasses'], talk: [1, 9, 11, 7, 30, 12, 20, 28, 29], glassesPerScene: 1,
     strong: [{ beat: 'sa.shelf_ren', gesture: 'glasses' }], avoid: ['the glasses as the answer to every feeling'],
-    portrait: { idle: 'ponytail sway; a glint over the lenses', cues: { think: 'one glasses adjustment (at most once per scene)', closed: 'a held close before hard truths' } } });
+    // (a keeper's overlay, as on the road: the slower breath and longer lids of someone whose tell is stillness)
+    portrait: { note: 'ponytail sway; a glint over the lenses; stillness; think: one glasses adjustment (at most once a scene); closed: a held, slower close before hard truths',
+      blink: [3800, 6000], glint: { every: [8000, 14000] }, sway: { every: [6000, 10000] }, glance: { every: [12000, 18000], hold: [900, 1300], dirs: [[1, 0], [-1, 0]] },
+      cues: { think: { adjust: true }, closed: { slow: 1.4 } } } });
   M('suzu', 'performer', B, { rest: 'hip', restScene: false, every: [7, 13], idle: [['hum', 3], ['heeltap', 2], ['touchhair', 2], ['check', 1, { prop: 'accountbook' }]], route: [['hum', 1]],
     tells: { surprise: 'recoil', worry: 'aside', sad: 'lowered', happy: 'laugh', think: 'chin', shy: 'avert' }, props: ['ribbon', 'accountbook'], talk: [9, 11, 31, 32, 10, 12, 17, 20, 29, 30], serious: [25, 27, 28],
     strong: [{ beat: 'co.suzu_truth', gesture: 'present' }, { beat: 'sa.end_comp', gesture: 'handover' }], avoid: ['a twirl or a wink in any apology, loss or confession'],
-    portrait: { idle: 'ribbon and earring sway; a light weight shift', cues: { laugh: 'shoulders bob and a wink', serious: 'no flourish, a straighter head' } } });
+    portrait: { note: 'ribbon and earring sway; a light weight shift (shoulders, then the head, the hair behind); the laugh and her first smirk of a scene wink; serious lines: no flourish, a straighter head',
+      sway: { every: [4000, 7000] }, tilt: null, habit: { kind: 'weight', every: [10000, 16000], hold: [3000, 5000] },
+      cues: { laugh: { wink: true }, smirk: { wink: true } }, serious: ['sad', 'worry', 'closed', 'sad2'] } });
 
   // ---- bespoke recurring characters (§7) ---------------------------------------------------------------------
   M('kasane', 'keeper', B, { rest: 'sleeves', every: [20, 34], idle: [['glance', 2], ['lookroad', 1], ['check', 1, { prop: 'folio' }]], tells: { worry: 'aside', sad: 'lowered', surprise: 'recoil', think: 'chin' }, props: ['folio'], talk: [9, 16, 27], strong: [{ beat: 'sa.toya_read', gesture: 'bow' }, { beat: 'sa.choose_kasane', gesture: 'lowered' }], social: 0.1,
-    portrait: { idle: 'long still holds, the hood edge stirs', cues: { closed: 'eyes close slowly before an admission' } } });
+    portrait: { note: 'long still holds (rare, slow glances over the shelves), the hood edge stirs; closed: the eyes close slowly before an admission',
+      blink: [5000, 8000], glance: { every: [18000, 28000], hold: [1200, 1800], dirs: [[1, 0], [0, 1]] }, sway: { every: [7000, 12000] }, cues: { closed: { slow: 1.6 } } } });
   M('hoshino', 'scholar', B, { rest: 'heart', every: [14, 26], idle: [['lookroad', 3], ['glasses', 2], ['rubhands', 1]], tells: { surprise: 'listen', sad: 'lowered', happy: 'exhale', think: 'chin' }, props: ['letter', 'flint'], talk: [3, 5, 7, 13], strong: [{ beat: 'sb.lamp_name', gesture: 'exhale' }],
-    portrait: { idle: 'a glint on the glasses, the beard still', cues: { surprise: 'brows high over the frames' } } });
+    portrait: { note: 'a glint on the glasses, the beard still; looks up the hill to the dark lamp now and then; surprise reads through the glasses (the brows over the frames)',
+      glint: { every: [7000, 12000] }, habit: { kind: 'lookUp', every: [14000, 22000], hold: [1200, 1800] } } });
   M('tsuru', 'elder', B, { every: [16, 28], idle: [['lookroad', 3], ['glance', 2], ['tendlight', 1, { at: 'light' }]], tells: { think: 'chin', worry: 'shake', sad: 'lowered', surprise: 'listen' }, props: ['cane'], talk: [2, 4, 10, 12], strong: [{ beat: 'rw.bridge_scene', gesture: 'thanks' }, { beat: 'rw.seeoff', gesture: 'lowered' }],
-    portrait: { idle: 'very slow blinks, chin up', cues: { think: 'eyes narrow further' } } });
+    portrait: { note: 'very slow blinks, the chin lifted now and then; think: the brows draw in and the eyes narrow further',
+      blink: [6000, 9000], habit: { kind: 'chinUp', every: [12000, 20000], hold: [2000, 3000] }, cues: { think: { lids: true } } } });
   M('co_tokiwa', 'scholar', B, { every: [14, 24], idle: [['readidle', 3], ['glasses', 2], ['tidy', 1, { at: 'surface' }]], tells: { worry: 'aside', sad: 'lowered', think: 'glasses' }, props: ['book', 'brush'], talk: [7, 16, 24], strong: [{ beat: 'co.tokiwa_confront', gesture: 'lowered' }, { beat: 'co.assembly', gesture: 'read' }],
-    portrait: { idle: 'a glint on the glasses', cues: { sad: 'gaze down and held' } } });
+    // (think: a glasses adjustment once a scene, from tells.think 'glasses')
+    portrait: { note: 'the glasses pushed up now and then; an evasive glance aside; think: a glasses adjustment (once a scene); sad: the gaze down and held',
+      habit: { kind: 'glassesPush', every: [14000, 22000], hold: [0, 0] }, glance: { every: [10000, 16000], hold: [700, 1100], dirs: [[-1, 0], [-1, 1]] } } });
   M('omi', 'official', B, { rest: null, every: [12, 22], idle: [['write', 4, { at: 'desk' }], ['sort', 2, { at: 'surface' }], ['lookroad', 1], ['shift', 1]], tells: { think: 'listen', angry: 'emphatic', surprise: 'listen', sad: 'exhale' }, props: ['ledger', 'tags', 'brush'], talk: [1, 11, 24, 14, 12, 17, 20],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'emphatic' }, { beat: 'sg.omi_wataru', gesture: 'size' }, { beat: 'sg.omi_wataru', gesture: 'point' }], avoid: ['shouting', 'a desk slam'], social: 0.3,
-    portrait: { idle: 'slow blinks under the brim, almost no tilt', cues: { angry: 'a narrowing and one exhale; no shake' } } });
+    portrait: { note: 'slow blinks under the brim, no double blinks, almost no tilt, a rare look to the harbour window; angry: a narrowing and one exhale, no shake',
+      blink: [5200, 8000], dbl: 0, glance: { every: [16000, 26000], hold: [1000, 1500], dirs: [[1, 0]] } } });
   // Hiro "can't let go" of the work (co.hiro_first): at the workshop the blowpipe never leaves his hands and
   // keeps turning; elsewhere (the eve, the festival) he sits and wipes his brow under the head cloth
   M('hiro', 'craft', B, { every: [9, 16], idle: [['brow', 3], ['stretch', 1], ['glance', 1]], tells: { sad: 'forehead', think: 'aside', worry: 'aside' }, props: ['blowpipe', 'head cloth'], talk: [1, 20, 2], strong: [{ beat: 'co.hiro_first', gesture: 'glasswork' }, { beat: 'co.suzu_truth', gesture: 'forehead' }],
-    maps: { 'co.glass': { rest: 'pipehold', restProp: 'pipeA', every: [3, 7], idle: [['glasswork', 6], ['glance', 1]] } } });
+    maps: { 'co.glass': { rest: 'pipehold', restProp: 'pipeA', every: [3, 7], idle: [['glasswork', 6], ['glance', 1]] } },
+    portrait: { note: 'looks down at the glow; keeps working while hurt (a pause of the hands is the tell)', glance: { every: [9000, 14000], hold: [900, 1300], dirs: [[0, 1], [1, 1]] } } });
   M('wataru', 'clerk', B, { rest: 'heart.R', every: [8, 15], idle: [['countidle', 3], ['glasses', 2], ['glance', 2], ['sort', 1, { at: 'surface' }]], tells: { sad: 'lowered', worry: 'fidget', surprise: 'recoil', happy: 'exhale', shy: 'avert' }, props: ['book', 'tags', 'notice'], talk: [8, 26, 27, 9, 6, 10, 16],
     strong: [{ beat: 'sg.omi_wataru', gesture: 'halfraise' }, { beat: 'sg.omi_wataru', gesture: 'recoil' }, { beat: 'sg.omi_wataru', gesture: 'exhale' }],
-    portrait: { idle: 'glasses slip a pixel and are pushed back', cues: { sad: 'gaze down, then (on a later line) up' } } });
-  M('genzo', 'elder', B, { rest: 'behind', every: [14, 24], idle: [['lookroad', 3], ['shadeeyes', 2], ['shift', 1]], tells: { sad: 'aside', happy: 'celebrate', surprise: 'listen' , angry: 'folded' }, talk: [4, 10, 2, 22, 29], strong: [{ beat: 'sg.genzo_wind', gesture: 'celebrate' }, { beat: 'sg.ferry_arrives', gesture: 'lowered' }] });
-  M('akari', 'clerk', B, { rest: 'clasp', every: [10, 18], idle: [['stamp', 3, { at: 'surface' }], ['tidy', 2, { at: 'surface' }], ['lookroad', 1]], tells: { worry: 'guard', happy: 'thanks', sad: 'avert' }, props: ['letter', 'stamp'], talk: [19, 13, 27], strong: [{ beat: 'lf.akari_letter', gesture: 'avert' }, { beat: 'lf.akari_letter', gesture: 'thanks' }] });
-  M('lf_yae', 'official', B, { every: [14, 26], idle: [['glance', 2], ['nod', 2], ['readidle', 1]], tells: { think: 'chin', sad: 'lowered', happy: 'celebrate' }, props: ['cane', 'book'], talk: [2, 9, 32], strong: [{ beat: 'lf.yae_after', gesture: 'celebrate' }] });
-  M('lq_chigusa', 'host', B, { every: [9, 16], idle: [['pour', 3, { at: 'tea' }], ['feedfire', 2, { at: 'fire' }], ['lookroad', 2], ['stir', 1, { at: 'hearth' }]], tells: { happy: 'laugh', sad: 'bow', surprise: 'recoil' }, props: ['teapot', 'cup'], talk: [13, 14, 28], strong: [{ beat: 'lq.fare_chigusa', gesture: 'bow' }, { beat: 'lq.fare_gull', gesture: 'celebrate' }] });
+    portrait: { note: 'the glasses slip a pixel and are pushed back; looks down at the tags, and aside at the door; sad: the gaze goes down and aside',
+      habit: { kind: 'glassesSlip', every: [9000, 15000], hold: [2600, 4000] }, glance: { every: [8000, 14000], hold: [800, 1300], dirs: [[0, 1], [1, 0]] }, cues: { sad: { look: [-1, 1] } } } });
+  M('genzo', 'elder', B, { rest: 'behind', every: [14, 24], idle: [['lookroad', 3], ['shadeeyes', 2], ['shift', 1]], tells: { sad: 'aside', happy: 'celebrate', surprise: 'listen' , angry: 'folded' }, talk: [4, 10, 2, 22, 29], strong: [{ beat: 'sg.genzo_wind', gesture: 'celebrate' }, { beat: 'sg.ferry_arrives', gesture: 'lowered' }],
+    // (the sad cue looks aside: tells.sad 'aside', "turns away to hide feeling")
+    portrait: { note: 'squints at the vane (the lids half for about a second); turns aside to hide a feeling', habit: { kind: 'squint', every: [10000, 16000], hold: [900, 1300] } } });
+  M('akari', 'clerk', B, { rest: 'clasp', every: [10, 18], idle: [['stamp', 3, { at: 'surface' }], ['tidy', 2, { at: 'surface' }], ['lookroad', 1]], tells: { worry: 'guard', happy: 'thanks', sad: 'avert' }, props: ['letter', 'stamp'], talk: [19, 13, 27], strong: [{ beat: 'lf.akari_letter', gesture: 'avert' }, { beat: 'lf.akari_letter', gesture: 'thanks' }],
+    portrait: { note: 'looks to the window toward the mountains, and down at the forms; sadness averts (tells.sad)', glance: { every: [9000, 15000], hold: [900, 1400], dirs: [[-1, -1], [0, 1]] } } });
+  M('lf_yae', 'official', B, { every: [14, 26], idle: [['glance', 2], ['nod', 2], ['readidle', 1]], tells: { think: 'chin', sad: 'lowered', happy: 'celebrate' }, props: ['cane', 'book'], talk: [2, 9, 32], strong: [{ beat: 'lf.yae_after', gesture: 'celebrate' }],
+    portrait: { note: 'a small nod now and then (the unanimous agreement)', habit: { kind: 'nod', every: [9000, 15000], hold: [180, 220] } } });
+  M('lq_chigusa', 'host', B, { every: [9, 16], idle: [['pour', 3, { at: 'tea' }], ['feedfire', 2, { at: 'fire' }], ['lookroad', 2], ['stir', 1, { at: 'hearth' }]], tells: { happy: 'laugh', sad: 'bow', surprise: 'recoil' }, props: ['teapot', 'cup'], talk: [13, 14, 28], strong: [{ beat: 'lq.fare_chigusa', gesture: 'bow' }, { beat: 'lq.fare_gull', gesture: 'celebrate' }],
+    portrait: { note: 'looks down the road', glance: { every: [8000, 13000], hold: [900, 1300], dirs: [[-1, 0]] } } });
   M('umi', 'clerk', B, { every: [9, 16], idle: [['write', 2, { at: 'desk' }], ['tidy', 2, { at: 'surface' }], ['glance', 1]], tells: { angry: 'emphatic', happy: 'laugh', sad: 'lowered' }, props: ['brush', 'letter'], talk: [24, 3, 16], strong: [{ beat: 'lf.nao_deliver', gesture: 'read' }] });
-  M('tamae', 'host', B, { every: [7, 13], idle: [['tidy', 3, { at: 'surface' }], ['stir', 2, { at: 'hearth' }], ['glance', 2], ['polish', 1]], tells: { happy: 'laugh', surprise: 'recoil', sad: 'lowered' }, props: ['teapot', 'cup'], talk: [9, 31, 32, 10, 12, 17], strong: [{ beat: 'lq.fare_gull', gesture: 'celebrate' }] });
+  M('tamae', 'host', B, { every: [7, 13], idle: [['tidy', 3, { at: 'surface' }], ['stir', 2, { at: 'hearth' }], ['glance', 2], ['polish', 1]], tells: { happy: 'laugh', surprise: 'recoil', sad: 'lowered' }, props: ['teapot', 'cup'], talk: [9, 31, 32, 10, 12, 17], strong: [{ beat: 'lq.fare_gull', gesture: 'celebrate' }],
+    portrait: { note: 'laughs big (her cues a frame larger); always half-turned toward the kitchen', big: true, glance: { every: [10000, 16000], hold: [700, 1100], dirs: [[1, 0]] } } });
   M('yae', 'host', B, { every: [8, 14], idle: [['stir', 3, { at: 'hearth' }], ['countidle', 2], ['tidy', 2, { at: 'surface' }], ['glance', 1]], tells: { happy: 'laugh', worry: 'countidle', surprise: 'recoil', think: 'chin' }, props: ['cup', 'teapot'], talk: [12, 9, 31, 10], strong: [{ beat: 'sb.yae', gesture: 'count' }, { beat: 'sb.eve_start', gesture: 'celebrate' }] });
-  M('lf_tadashi', 'official', B, { every: [12, 20], idle: [['stamp', 4, { at: 'surface' }], ['tidy', 1, { at: 'surface' }], ['glasses', 2]], tells: { think: 'chin', surprise: 'halfraise', happy: 'exhale' }, props: ['stamp'], talk: [13, 7, 8], strong: [{ beat: 'lf.mio_refuse', gesture: 'halfraise' }, { beat: 'lf.mio_refuse', gesture: 'exhale' }] });
-  M('shiori', 'scholar', B, { every: [10, 18], idle: [['readidle', 3], ['lookroad', 2], ['write', 2, { at: 'desk' }]], tells: { think: 'chin', surprise: 'listen', worry: 'lowered' }, props: ['book', 'brush'], talk: [10, 16, 3, 9], strong: [{ beat: 'sg.shiori_tide', gesture: 'point' }] });
-  M('yasu', 'elder', B, { every: [16, 28], idle: [['lookroad', 3], ['glance', 2], ['doze', 1]], tells: { happy: 'laugh', sad: 'lowered', think: 'chin' }, props: ['cane'], talk: [12, 3, 32, 10], strong: [{ beat: 'lq.road_write', gesture: 'read' }] });
-  M('lf_tokuji', 'elder', B, { rest: 'folded', every: [16, 30], idle: [['lookroad', 3], ['glance', 1]], tells: { angry: 'folded', sad: 'lowered' }, talk: [22, 14], strong: [{ beat: 'lf.tokuji_story', gesture: 'lowered' }], social: 0.2 });
-  M('lq_kayo', 'traveller', B, { every: [9, 16], idle: [['lookroad', 3], ['observe', 2], ['check', 1, { prop: 'seeds' }]], tells: { happy: 'laugh', surprise: 'recoil', think: 'chin' }, props: ['basket', 'seeds'], talk: [13, 4, 31], strong: [{ beat: 'lq.road_home', gesture: 'pointup' }] });
+  M('lf_tadashi', 'official', B, { every: [12, 20], idle: [['stamp', 4, { at: 'surface' }], ['tidy', 1, { at: 'surface' }], ['glasses', 2]], tells: { think: 'chin', surprise: 'halfraise', happy: 'exhale' }, props: ['stamp'], talk: [13, 7, 8], strong: [{ beat: 'lf.mio_refuse', gesture: 'halfraise' }, { beat: 'lf.mio_refuse', gesture: 'exhale' }],
+    portrait: { note: 'a glint on the glasses, pushed up now and then', glint: { every: [9000, 15000] }, habit: { kind: 'glassesPush', every: [16000, 26000], hold: [0, 0] } } });
+  M('shiori', 'scholar', B, { every: [10, 18], idle: [['readidle', 3], ['lookroad', 2], ['write', 2, { at: 'desk' }]], tells: { think: 'chin', surprise: 'listen', worry: 'lowered' }, props: ['book', 'brush'], talk: [10, 16, 3, 9], strong: [{ beat: 'sg.shiori_tide', gesture: 'point' }],
+    portrait: { note: 'looks out of the window to the sea', glance: { every: [9000, 14000], hold: [1000, 1500], dirs: [[1, 0], [1, -1]] } } });
+  M('yasu', 'elder', B, { every: [16, 28], idle: [['lookroad', 3], ['glance', 2], ['doze', 1]], tells: { happy: 'laugh', sad: 'lowered', think: 'chin' }, props: ['cane'], talk: [12, 3, 32, 10], strong: [{ beat: 'lq.road_write', gesture: 'read' }],
+    portrait: { note: 'a small nod in the telling', habit: { kind: 'nod', every: [12000, 20000], hold: [180, 220] } } });
+  M('lf_tokuji', 'elder', B, { rest: 'folded', every: [16, 30], idle: [['lookroad', 3], ['glance', 1]], tells: { angry: 'folded', sad: 'lowered' }, talk: [22, 14], strong: [{ beat: 'lf.tokuji_story', gesture: 'lowered' }], social: 0.2,
+    portrait: { note: 'stares at the lake: rare, long looks to one side', glance: { every: [16000, 26000], hold: [1400, 2200], dirs: [[1, 0]] } } });
+  M('lq_kayo', 'traveller', B, { every: [9, 16], idle: [['lookroad', 3], ['observe', 2], ['check', 1, { prop: 'seeds' }]], tells: { happy: 'laugh', surprise: 'recoil', think: 'chin' }, props: ['basket', 'seeds'], talk: [13, 4, 31], strong: [{ beat: 'lq.road_home', gesture: 'pointup' }],
+    portrait: { note: 'looks up at the tree', glance: { every: [8000, 12000], hold: [900, 1300], dirs: [[0, -1], [1, -1]] } } });
   M('koji', 'craft', B, { rest: 'cuphold', restProp: 'cup', every: [10, 18], idle: [['sip', 3], ['lookroad', 2], ['shift', 1]], tells: { happy: 'nod', think: 'aside' }, props: ['cup'], talk: [14, 1], strong: [{ beat: 'rw.bridge_scene', gesture: 'thanks' }] });
   M('hana', 'host', B, { every: [8, 15], idle: [['pour', 3, { at: 'tea' }], ['tidy', 2, { at: 'surface' }], ['lookroad', 2]], tells: { sad: 'aside', worry: 'guard', happy: 'nod', think: 'chin' }, props: ['teapot', 'cup'], talk: [13, 9], strong: [{ beat: 'rw.bridge_scene', gesture: 'bow' }],
-    portrait: { idle: 'warm tilt', cues: { sad: 'gaze to the side (the cups)' } } });
+    portrait: { note: 'a warm tilt; sad: the gaze to the side (the cups)', tilt: { every: [8000, 14000], hold: [2400, 3600], dx: [1] }, cues: { sad: { look: [1, 1] } } } });
 
   // ---- recurring cast on their class overlays, with their own habits (§7) ----------------------------------
   M('co_ume', 'elder', O, { every: [16, 28], idle: [['glance', 2], ['lookroad', 1], ['doze', 1]], talk: [5, 20, 25] });
@@ -136932,13 +137069,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('co_fusa', 'host', O, { every: [9, 16], idle: [['polish', 3], ['stir', 2, { at: 'hearth' }], ['glance', 1]], talk: [19, 9] });
   M('sousuke', 'traveller', O, { every: [9, 16], idle: [['sort', 3, { prop: 'envelopes' }], ['check', 2, { prop: 'letter' }], ['glasses', 1]], talk: [13, 12, 16] });
   M('co_nobu', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['brow', 2], ['knead', 2, { at: 'bench' }]], talk: [22, 24], social: 0.3 });
-  M('co_isao', 'craft', O, { every: [14, 24], idle: [['observe', 2], ['brow', 1], ['doze', 1]], talk: [4, 20] });
+  M('co_isao', 'craft', O, { every: [14, 24], idle: [['observe', 2], ['brow', 1], ['doze', 1]], talk: [4, 20],
+    portrait: { note: 'squints at a flame now and then', habit: { kind: 'squint', every: [12000, 20000], hold: [900, 1300] } } });
   M('lf_kinu', 'host', O, { rest: 'hips', every: [9, 16], idle: [['glance', 2], ['tidy', 1, { at: 'surface' }]], talk: [24, 10] });
   M('sa_clerk', 'nonhuman', O, { every: [16, 28], idle: [['stiff', 1]], talk: [2, 13] });
   M('fuku', 'elder', O, { every: [16, 28], idle: [['lookroad', 2], ['shadeeyes', 1]], talk: [2, 3, 10] });
   M('lf_kohei', 'craft', O, { every: [9, 16], idle: [['hammer', 2, { at: 'bench' }], ['brow', 2], ['stretch', 1]], talk: [11, 17] });
   // Isamu waits by the fire: warms his hands, and now and then a hand goes to his ear, as if he heard something
-  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [12, 22], idle: [['rubhands', 3], ['cupear', 2], ['sitidle', 1], ['glance', 1]], talk: [1, 29] });
+  M('sa_isamu', 'traveller', O, { rest: 'sit', every: [12, 22], idle: [['rubhands', 3], ['cupear', 2], ['sitidle', 1], ['glance', 1]], talk: [1, 29],
+    portrait: { note: 'listens for something no one else hears: a held look aside', glance: { every: [10000, 16000], hold: [1400, 2000], dirs: [[-1, 0]] } } });
   M('tetsuji', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['countidle', 2], ['lookroad', 1]], talk: [12, 23] });
   M('denji', 'elder', O, { rest: 'sitlap', every: [14, 24], idle: [['sitidle', 2], ['glance', 1]], talk: [11, 2] });
   M('co_kotaro', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 2], ['glance', 1]], talk: [10, 18] });
@@ -142489,8 +142628,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         jp: 'ありがとう ございます 。 これ を 。 {灯守|ひもり} の {言葉|ことば} です 。 {私|わたし} より 、 あなた の {手|て} で {書|か}く {方|ほう} が {明|あか}るい でしょう 。', en: 'Thank you. Take this — a keeper\'s word. It\'ll shine brighter written in your hand than in mine.', reading: 'ありがとうございます。これを。ひもりのことばです。わたしより、あなたのてでかくほうがあかるいでしょう。', h: '1ql4edx' },
       q: {
         F: choose(T('Both lines use これ ("this"). What does it point to in each?', '{二|ふた}つ の 「 これ 」 は 、 それぞれ {何|なに} を {指|さ}す ？'), [
-          opt('Mio: the labels she holds · Ren: the keeper\'s word he hands over', true),
-          opt('Both: the labels', false, 'Ren\'s これ is something he gives you: "a keeper\'s word".'),
+          opt('Mio: the labels she holds · Ren: the keeper\'s word they hand over', true),
+          opt('Both: the labels', false, 'Ren\'s これ is something they give you: "a keeper\'s word".'),
           opt('Mio: the medicine · Ren: the lantern', false, 'Mio is talking about paper that should have warped: the labels.'),
         ], { showEn: true }),
         E: choose(T('What does これ point to in each line?', 'それぞれ の 「 これ 」 は {何|なに} ？'), [
@@ -142498,17 +142637,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
           opt('Mio: the water · Ren: the bridge', false, 'Mio says これ isn\'t wet at all: the paper labels.'),
           opt('The same thing in both', false, 'これ points to whatever is at hand — different things in the two moments.'),
         ]),
-        I: write(T('In Ren\'s line, これ is something he hands you. Write what it is, in his words.', 'レン の 「 これ 」 は {何|なん} です か 。 レン の {言葉|ことば} で {書|か}きましょう 。'), [
+        I: write(T('In Ren\'s line, これ is something they hand you. Write what it is, in their words.', 'レン の 「 これ 」 は {何|なん} です か 。 レン の {言葉|ことば} で {書|か}きましょう 。'), [
           ok(['{灯守|ひもり} の {言葉|ことば}'], 'a keeper\'s word'), ok(['{言葉|ことば}'], 'a word'),
           { ok: false, parts: ['ラベル'], en: 'the labels', why: { en: 'That is Mio\'s これ. Ren\'s is "{灯守|ひもり}の{言葉|ことば}".' } },
         ]),
         A: choose(T('Which statement about the two これ is accurate?', '{二|ふた}つ の 「 これ 」 に ついて 、 {正|ただ}しい の は どれ ？'), [
           opt('Both point to something in the speaker\'s hands, but to different things', true, null, 'どちら も {話|はな}し{手|て} の {手元|てもと} の もの を {指|さ}す が 、 {指|さ}す もの は {違|ちが}う'),
-          opt('Ren\'s これ refers back to his previous sentence', false, 'He follows これを。 with what it is: a keeper\'s word he is handing over.', 'レン の 「 これ 」 は {前|まえ} の {文|ぶん} を {指|さ}す'),
+          opt('Ren\'s これ refers back to their previous sentence', false, 'They follow これを。 with what it is: a keeper\'s word they are handing over.', 'レン の 「 これ 」 は {前|まえ} の {文|ぶん} を {指|さ}す'),
           opt('Both point to the labels', false, 'Only Mio\'s does.', 'どちら も ラベル を {指|さ}す'),
         ]),
       },
-      explain: { en: 'これ ("this") has no fixed meaning: it points to whatever is near the speaker at that moment. In Mio\'s hand it is the labels; in Ren\'s, the keeper\'s word he gives you. The context does the work.' },
+      explain: { en: 'これ ("this") has no fixed meaning: it points to whatever is near the speaker at that moment. In Mio\'s hand it is the labels; in Ren\'s, the keeper\'s word they give you. The context does the work.' },
     },
     {
       id: 'C02', cat: 'literal-contextual', catLabel: T('Literal or figurative', '{文字|もじ} どおり か 、 たとえ か'), word: T('{重|おも}い (omoi), "heavy"', '{重|おも}い'),
@@ -142593,7 +142732,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           opt('Tokiwa\'s', true), opt('Ren\'s', false, 'Ren asks a polite question; Tokiwa tells them to do it, now.'), opt('They are the same', false, 'One is a question, one is a command-like request.'),
         ], { showEn: true }),
         E: choose(T('{書|か}いていただけますか — what is Ren doing?', '「 {書|か}いて いただけます か 」 で レン は {何|なに} を して いる ？'), [
-          opt('Politely asking you to write', true), opt('Saying that he will write', false, 'He will read; he asks you to write.'), opt('Asking whether you can read', false, 'It is about writing for him.'),
+          opt('Politely asking you to write', true), opt('Saying that they will write', false, 'They will read; they ask you to write.'), opt('Asking whether you can read', false, 'It is about writing for them.'),
         ]),
         I: write(T('Make Tokiwa\'s request indirect, like Ren\'s: rope … ～ていただけますか.', 'トキワ の {頼|たの}み を 、 レン の よう に 「 ～て いただけます か 」 に しましょう 。'), [
           ok(['{綱|つな} を', '{外|はず}して いただけます か'], 'Could you take the rope down?'), ok(['{外|はず}して いただけます か'], 'Could you take it down?'),

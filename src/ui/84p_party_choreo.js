@@ -76,9 +76,9 @@ RB.partyChoreo = (function () {
   // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
   // companion's object or garment) — nothing is said, and muted play loses nothing.
   const TECH = {
-    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 600, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1300, rec: 1790, recD: 500, end: 2350, sfx: [[0, 'pen_stroke'], [600, 'pen_down'], [890, 'pen_stroke'], [1320, 'pen_up']], note: 'Nao takes the pencil from behind his ear, turns side-on, steps in and sketches a courier\'s route out to it in the air, a tick on each knot that will come loose; your thread follows the route and the two knots go together, on that one creature only.' },
+    nao: { g: 'rally_thread', gAnt: 500, gAt: 900, gAct: 520, p: 'opening', pAt: 400, pAnt: 380, pAct: 600, motif: 'join', word: W(820, 300, 220, 120, 440, 1100, 1280), contact: 1300, rec: 1790, recD: 500, end: 2350, sfx: [[0, 'pen_stroke'], [600, 'pen_down'], [890, 'pen_stroke'], [1320, 'pen_up']], note: 'Nao takes the pencil from behind their ear, turns side-on, steps in and sketches a courier\'s route out to it in the air, a tick on each knot that will come loose; your thread follows the route and the two knots go together, on that one creature only.' },
     mio: { g: 'rally_release', gAnt: 500, gAt: 800, gAct: 560, p: 'draught', pAt: 350, pAnt: 400, pAct: 600, motif: 'join', word: W(820, 260, 220, 120, 440, 1100, 1280), contact: 1250, rec: 1860, recD: 440, end: 2400, sfx: [[0, 'pen_stroke'], [1010, 'splash']], note: 'Mio raises the draught at eye level, uncorks it, lifts it high and pours: a clear stream arcs over you both and falls in drops, rippling at your feet; your ink carries one drop to the knot; then the restoring, only on one of you below full, and the washing, only on what had Heat, mist or Gathering.' },
-    ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants his feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
+    ren: { g: 'rally_seal', gAnt: 500, gAt: 760, gAct: 560, p: 'ward_plane', pAt: 380, pAnt: 400, pAct: 550, motif: 'join', word: W(820, 0, 240, 140, 420, 1100, 1280), contact: 1200, rec: 1750, recD: 400, end: 2300, sfx: [[0, 'pen_stroke'], [900, 'lantern']], note: 'Ren plants their feet, raises and shades the lamp and draws a level plane; your brush closes it: the knot on the creature, a ward before each of you.' },
     suzu: { g: 'rally_catch', gAnt: 500, gAt: 850, gAct: 560, p: 'curtain', pAt: 350, pAnt: 400, pAct: 550, motif: 'join', word: W(840, 300, 220, 120, 440, 1100, 1280), contact: 1280, rec: 1850, recD: 500, end: 2450, sfx: [[0, 'pen_stroke'], [760, 'wind']], note: 'Suzu steps back, twirls, plants and opens her arm — the cue; your thread swings round the opening like a curtain and turns its move back on it.' },
   };
   // reduced motion (§7.4, §9.6): three held poses each, no travel — the anticipation key, the signature
@@ -91,7 +91,7 @@ RB.partyChoreo = (function () {
   // 'clap', 'headoff'); to: where it goes ('foe', 'foes', 'allies', 'aimed', 'lower', 'pc', 'none').
   const S = (g, travel, to, ant, act, contact, end, note) => ({ g, travel, to, ant, act, contact, end, note });
   const SUPPORT = {
-    nao_opening: S('spot', 'spot', 'foe', 180, 520, 620, 1240, 'A hand shading his eyes, a sweep of the look, a finger to the place — the opening marked on it only when there is one.'),
+    nao_opening: S('spot', 'spot', 'foe', 180, 520, 620, 1240, 'A hand shading their eyes, a sweep of the look, a finger to the place — the opening marked on it only when there is one.'),
     nao_warn: S('call', 'voice', 'foe', 160, 420, 560, 1160, 'A shout with a cupped hand: the call carries to it, its blow marked softer.'),
     nao_hand: S('reach', 'thread', 'foe', 200, 560, 700, 1300, 'A step in, a low reach, the fingers closing on the knot and pulling — a thread to the very knot when it gives.'),
     nao_route: S('lunge', 'headoff', 'foe', 180, 420, 520, 1180, 'A crouch and a lunge on the opening: its move is crossed out before it starts.'),
@@ -103,9 +103,9 @@ RB.partyChoreo = (function () {
     mio_tonic: S('tonic', 'pour', 'allies', 220, 600, 760, 1400, 'A step to your side, the tonic held out, a hand to your shoulder.'),
     ren_shade: S('shade', 'lamp', 'aimed', 180, 440, 600, 1220, 'The lamp lifted toward the one it aims at; the ward forms in its light.'),
     ren_flare: S('flare', 'lamp', 'foe', 200, 440, 580, 1240, 'Drawn back low, thrust up at it: the lamp flares and burns off what it holds.'),
-    ren_vigil: S('vigil', 'lamp', 'allies', 220, 520, 680, 1300, 'The lamp held high at his side over you both; a ward before each.'),
+    ren_vigil: S('vigil', 'lamp', 'allies', 220, 520, 680, 1300, 'The lamp held high at their side over you both; a ward before each.'),
     ren_lanterns: S('lanterns', 'lamp', 'foes', 220, 620, 760, 1420, 'The lamp raised and swung across over every one of them.'),
-    ren_chime: S('front', 'lamp', 'pc', 200, 520, 660, 1300, 'A step in front of you, the lamp held out, his free arm across you.'),
+    ren_chime: S('front', 'lamp', 'pc', 200, 520, 660, 1300, 'A step in front of you, the lamp held out, their free arm across you.'),
     suzu_heckle: S('heckle', 'voice', 'foe', 160, 420, 540, 1160, 'A hand at her mouth, the other on her hip: the heckle carries to it.'),
     suzu_eye: S('beckon', 'attention', 'foe', 180, 520, 600, 1240, 'A step into the light, a wave: its attention turns to her (a line from it to her).'),
     suzu_encore: S('clap', 'clap', 'none', 160, 440, 520, 1140, 'A clap, then the hands flung open — and the thread between you brightens if Harmony rises.'),
@@ -349,7 +349,7 @@ RB.partyChoreo = (function () {
         // (a fine braid under Nao's route and Mio's pour, which carry those two techniques themselves)
         Q.push({ at: Math.min(rel.pc, rc) + 40, type: 'fx', name: 'pJoin', d: c - Math.min(rel.pc, rc) + 300, p: Object.assign({ to: plan.target === 'foes' ? 'foes' : H.foeId(ctx), foe: T, who }, who === 'nao' || who === 'mio' ? { soft: 1 } : {}) });
         const top = Math.max(0, H.fview(ctx, T).knots - 1);
-        // Nao: his pencil sketches a courier's route in the air, at the pencil's pace — out over the party, a
+        // Nao: their pencil sketches a courier's route in the air, at the pencil's pace — out over the party, a
         // waypoint tick on each knot that really comes loose (two; or the one, when one is left), then up to the
         // creature; your thread follows the route to those knots, and when two really come loose they go
         // together in one shared burst. On that creature only, never a splash on the others.
@@ -370,7 +370,7 @@ RB.partyChoreo = (function () {
           const d0 = rel.pc + 40, d = c - d0 + 300;
           Q.push({ at: d0, type: 'fx', name: 'pDrop', d, p: { from: 'pc', to: H.knotId(ctx, T, top), foe: T, land: (c - d0) / d } });
         }
-        // Ren: the shaded lamp's light thrown back over the pair; the level plane his hand draws, set before
+        // Ren: the shaded lamp's light thrown back over the pair; the level plane their hand draws, set before
         // each of you (the wards form on it at the result); the knot is the creature's own, at contact
         if (who === 'ren') {
           Q.push({ at: rc - 180, type: 'fx', name: 'pLamp', d: c - rc + 480, p: { from: 'comp', who: both } });
@@ -531,7 +531,7 @@ RB.partyChoreo = (function () {
         const w = f.who;
         // Suzu turns aside a blow that would leave one of you at 2 or less: it meets empty air
         if (w === 'suzu' && side === 'enemy') { Q.push({ at, type: 'fx', name: 'miss', d: 560, p: { to: f.missAt || ctx.missAt || 'pc' } }); if (comp === 'suzu') pose('comp', 'act', 'flourish', 460, -160); return true; }
-        // Nao takes half of a blow meant for you: he steps to your shoulder and braces
+        // Nao takes half of a blow meant for you: they step to your shoulder and brace
         if (f.share != null && comp) { pose('comp', 'guard', null, 520, -120); Q.push({ at: at - 120, type: 'fx', name: 'pShare', d: 520, p: {} }); return true; }
         if (comp && w === comp) pose('comp', 'act', PASSIVE[w] || 'raise', 420, -120);
         if (w === 'nao' && side === 'player') Q.push({ at: at - 60, type: 'fx', name: 'pSpot', d: 520, p: { from: 'comp', foe: i } });

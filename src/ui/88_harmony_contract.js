@@ -175,9 +175,9 @@ RB.harmonyContract = (function () {
   const NOT_SHOWN = {
     atlas_lamplet: 'hangs at the hip, below the ink band crop',
     bottles: 'companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames',
-    lamp: 'companion-only (Ren); held in his painted frames',
-    patches: 'companion-only (Ren); part of his painted coat',
-    pencil: 'companion-only (Nao); part of his painted frames',
+    lamp: 'companion-only (Ren); held in their painted frames',
+    patches: 'companion-only (Ren); part of their painted coat',
+    pencil: 'companion-only (Nao); part of their painted frames',
     beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron',
   };
   // The accessory files a look needs: [{ acc, file, slot }] in no particular order; unknown → { missing }.

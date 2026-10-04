@@ -101,7 +101,7 @@ have to share 26 % of the view's height.
 
 * Companion on the left, the player on the right and a little in front (the player's near shoulder and back
   hair may overlap the companion's far side, never a face). Anchors (the pit of the neck) — standard:
-  companion (70, 72), Nao (62, 72) to leave room for his pointing hand, player (136, 74); compact: companion
+  companion (70, 72), Nao (62, 72) to leave room for their pointing hand, player (136, 74); compact: companion
   (45, 72), player (108, 73).
 * The backing: a band of indigo ink laid in long horizontal brush strokes (five tones, tapered stroke ends),
   a slow brush-edge top with a few nicks, a straight lower edge rising gently to the right, and a right end
@@ -126,8 +126,8 @@ side locks) · brows (over the fringe, the dialogue portraits' convention) · he
 ribbon, flower, leaf, quill, pencil) · earN (near earring) · farArm · farHeld · farHand · nearArm · nearHeld
 · nearHand · glow · held · ink · fx`
 
-Pose-aware cases: a raised far arm is drawn after the head, so Ren's far hand at the rim of his glasses (as
-he arrives) covers part of the lens while the frame, drawn beneath, stays continuous and attached; the
+Pose-aware cases: a raised far arm is drawn after the head, so Ren's far hand at the rim of their glasses (as
+they arrive) covers part of the lens while the frame, drawn beneath, stays continuous and attached; the
 brush shaft and the vial sit between the sleeve and the fingers; the lamp hangs in front; the satchel strap
 and sash are clipped to the torso so they follow it; a hat or cap removes hair above its band (no spike or
 bun pokes through) while side locks show below the brim; long hair covers the near ear, short and tied hair
@@ -147,7 +147,7 @@ the head in this view). The braid falls over the far (left) shoulder, as in the 
 | Player (rally) | the writing hand gathered across the chest, the brush up beside the near jaw (the crossing drawing) | swept out toward the action, the brush raised, an ink bead and four motes gathering on the tip | grounded and determined: firm brows, a set, calm mouth |
 | Nao (route) | far hand rising past the shoulder, the finger half out | pointing, precisely, toward the action; a short gold route-like stroke runs on from the fingertip | focused three-quarter gaze, a slight sure smile |
 | Mio (draught) | the vial low, tilted | the vial raised beside her face, upright, catching the light | composed and reassuring: eyes softened, a quiet smile, a flush |
-| Ren (ward) | the lamp low; the far hand settles his glasses at the far rim (crossing the face) | the lamp raised beside his face, its glow framed | intent: lowered lids behind the glasses, level brows |
+| Ren (ward) | the lamp low; the far hand settles their glasses at the far rim (crossing the face) | the lamp raised beside their face, its glow framed | intent: lowered lids behind the glasses, level brows |
 | Suzu (curtain) | the hand opening, eyes wide, an open smile | the hand opened to the viewer in welcome; a single wink with one glint beside it | animated: the wink, a grin, a raised brow, a flush |
 
 Loose ends settle between the drawings: in `enter` tails, long locks, the ribbon's tails, the headband's
@@ -232,7 +232,7 @@ appears), the creation default and the owner's acceptance look (green coat, aubu
 | Accessory categories | `RB.sprites.ACCESSORIES` | 8 / 8 |
 | Wearable keepsakes | `RB.content.items`, slot `cosmetic` | 15 / 15 (the lamplet is not drawn: below the crop) |
 | Stress | glasses + blunt fringe, glasses + long fringe, glasses + wrap, hat + curls, hat + waves, hat + spikes, scarf + strap, cape + strap, headband + twintails, braid + scarf, shaved + glasses + cape, bun + headband | 12 |
-| Crossing pose | every fixture's `enter` drawing (the hand across the body); Ren's far hand across his face | all |
+| Crossing pose | every fixture's `enter` drawing (the hand across the body); Ren's far hand across their face | all |
 
 Every fixture × 4 pairings × 2 phases × 2 variants is composed in the browser test (656 compositions).
 

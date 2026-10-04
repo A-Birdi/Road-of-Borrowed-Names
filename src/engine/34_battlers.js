@@ -25,7 +25,7 @@
  * Hands are articulated (palm, the fingers as one or more pieces and a thumb, by shape: fist, relaxed,
  * open, flat, point, pinch, cup, spread), and what a hand holds is drawn by it: the folio, a paper
  * strip, a brush, Mio's vial (from the bottles at her hip; larger in her Harmony technique, `vialBig`), Nao's
- * courier pencil (`pencil`, his Harmony technique), Ren's lamp (raised when a gesture frees his left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
+ * courier pencil (`pencil`, their Harmony technique), Ren's lamp (raised when a gesture frees their left hand). The pose library — every actor's stance, idle key poses, gestures and reactions — is
  * src/engine/34m_battler_moves.js (RB.battlerMoves); this file draws whatever pose it is given.
  *
  * Battle addendum §6.2 (native frame standard): the frame stays 80×104 art px, anchor (36, 100),
@@ -829,7 +829,7 @@ RB.battlers = (function () {
   }
 
   const COVER = mk(hramp('#9a4a3c', { sat: 1.1, warm: 40 }), { min: 1, kind: 'leather' });
-  // Nao's courier pencil (the one his portrait keeps behind his ear): a yellow body, a pink eraser, the
+  // Nao's courier pencil (the one their portrait keeps behind their ear): a yellow body, a pink eraser, the
   // sharpened wood and its lead
   const PENCIL = mk(hramp('#e0b040', { sat: 1.1, warm: 50 }), { min: 2, kind: 'wood' });
   const ERASER = mk(hramp('#e8a0a0', { sat: 1.05 }), { min: 2 });
@@ -929,7 +929,7 @@ RB.battlers = (function () {
     };
     const lantern = (top, own) => {
       // (the lamp a gesture raises flares: its glass runs lighter — ps.prop.flare; Ren's own lamp, the
-      // object of his every action, is drawn a size up, as hands are)
+      // object of their every action, is drawn a size up, as hands are)
       const lit = own && ps.prop && ps.prop.flare > 0.5 ? Mt.glowHi : Mt.glow, q = own ? 1.3 : 1;
       const at = (y) => add(top, [0, y * q, 0]);
       K.C(top, at(-2.2), 0.35 * q, 0.35 * q, Mt.iron, GRP.prop);

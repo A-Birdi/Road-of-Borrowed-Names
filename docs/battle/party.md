@@ -163,7 +163,7 @@ Scores per point: 0 missing, 1 present but weak, 2 clearly there, 3 matches the 
 | Player (owner's look) | 2 | 3 | 3 | 2 | 2 | 2 | 2 | The weight shift and lock tips help; the coat is still a bell from behind, with no overlapping cloth forms like the reference's plates. |
 | Mio | 2 | 3 | 3 | 2 | 2 | 2 | 2 | The apron bow is clean but small; at 1× it reads as a pale accent at the waist. |
 | Nao | 2 | 3 | 3 | 2 | 2 | 2 | 2 | Spikes read; spike highlights are a little busy at 3×. |
-| Ren | 2 | 3 | 3 | 2 | 2 | 2 | 2 | Bluer navy than round 1 (which leaned violet); the lamp carries his light. |
+| Ren | 2 | 3 | 3 | 2 | 2 | 2 | 2 | Bluer navy than round 1 (which leaned violet); the lamp carries their light. |
 | Suzu | 2 | 3 | 3 | 2 | 2 | 2 | 2 | The long fall is one mass; its strands are quiet by design. |
 | Player looks (all options) | 2 | 3 | 3 | 2 | 2 | 2 | 2 | No option keeps the old rendering (one renderer); a few combinations (white hair on cream cloth) have lower separation. |
 
@@ -273,7 +273,7 @@ The round-1 sheets in `docs/screenshots/battle/party/` show the art before this 
   shapes: fist, relaxed, open, flat, point, pinch, cup, spread), drawn a size up like the head so a gesture
   reads from the hand; held objects that exist in each person's vocabulary (the player's folio, strip and
   brush; Mio's vial, taken from the bottles at her hip — the hip bottle is gone while it is in her hand —
-  uncorked and tipped to pour; Ren's lamp, raised, thrust or swung when a gesture frees his left hand, its
+  uncorked and tipped to pour; Ren's lamp, raised, thrust or swung when a gesture frees their left hand, its
   glass flaring); a layered cuff; separate anchors; hair under a hat or cap tucked under it (no spikes or
   bun through the crown; curls round the sides) and head things sized to curly hair.
 - **The pose library** (`src/engine/34m_battler_moves.js`, new): a stance, 7–8 idle key poses, a quieter
@@ -385,9 +385,9 @@ a time; one-sided things keep their side.
 | Actor | Stance | Idle keys (ready / calm) | Loop (ms) | Phase offset (ms) | Own gestures |
 |---|---|---|---|---|---|
 | pc | attentive, balanced; folio at the left hip, right hand half open | 8 / 4 | 7020 | 0 | thread, direct, trace, crystal, book, lens, ward, restore, flow, sweep, plant, open, raise, ring, call |
-| nao | compact, forward, low; a hand on his satchel | 8 / 4 | 5630 | 2300 | point, spot, call, reach, lunge, shoulder, help |
+| nao | compact, forward, low; a hand on their satchel | 8 / 4 | 5630 | 2300 | point, spot, call, reach, lunge, shoulder, help |
 | mio | upright, feet closer, hands ready before the apron, turned to you | 7 / 4 | 7180 | 1700 | pour, dab, waft, salts, tonic, help |
-| ren | wide and grounded; lamp out at his left; right hand raised, flat | 7 / 4 | 7420 | 3100 | ward (lamp), shade, flare, vigil, lanterns, front, help |
+| ren | wide and grounded; lamp out at their left; right hand raised, flat | 7 / 4 | 7420 | 3100 | ward (lamp), shade, flare, vigil, lanterns, front, help |
 | suzu | weight on the left leg, hand on hip, free foot turned out | 8 / 4 | 5740 | 900 | flourish, heckle, beckon, clap, feint, grand, help |
 
 - **Idle (§7.3):** each key is held (300–1,800 ms; round 2: the hold carries the battle-ready pulse) and reached through two in-betweens, then one
@@ -400,9 +400,9 @@ a time; one-sided things keep their side.
 - **Bracing:** while a creature prepares a move aimed at one of you (or at both), that adventurer braces a
   little (`guard:wary`), from the creature's own preparation cue.
 - **Language (§7.4):** the player's response leaves their gesture (strip, brush, folio, open hand) and
-  they recover through a real recovery pose; Nao points, shades his eyes, lunges, reaches — short and
+  they recover through a real recovery pose; Nao points, shades their eyes, lunges, reaches — short and
   decisive; Mio measures, uncorks, pours, dabs, wafts — firm and controlled; Ren raises, thrusts, swings and
-  holds up the lamp and traces with his free hand; Suzu flourishes, beckons, claps, feints, flings her arms
+  holds up the lamp and traces with their free hand; Suzu flourishes, beckons, claps, feints, flings her arms
   wide, bows. No object was invented: the folio, strip and brush are the player's; the vial is from Mio's
   bottles; the lamp is Ren's; Nao and Suzu use only their hands and bodies.
 
@@ -472,7 +472,7 @@ One word (with both ribbons), one braided thread (`pJoin`) from both release poi
 
 | Support action | Companion | Effect kind | Gesture | Carried by | To | Normal: contact / end (ms) | What it looks like |
 |---|---|---|---|---|---|---|---|
-| `nao_opening` Spot the opening | nao | opening | spot | spot | foe | 620 / 1240 | A hand shading his eyes, a sweep of the look, a finger to the place — the opening marked on it only when there is one. |
+| `nao_opening` Spot the opening | nao | opening | spot | spot | foe | 620 / 1240 | A hand shading their eyes, a sweep of the look, a finger to the place — the opening marked on it only when there is one. |
 | `nao_warn` Call out its aim | nao | soften | call | voice | foe | 560 / 1160 | A shout with a cupped hand: the call carries to it, its blow marked softer. |
 | `nao_hand` Lend a hand | nao | knot | reach | thread | foe | 700 / 1300 | A step in, a low reach, the fingers closing on the knot and pulling — a thread to the very knot when it gives. |
 | `nao_route` Seize the opening | nao | stun | lunge | headoff | foe | 520 / 1180 | A crouch and a lunge on the opening: its move is crossed out before it starts. |
@@ -484,9 +484,9 @@ One word (with both ribbons), one braided thread (`pJoin`) from both release poi
 | `mio_tonic` Right beside you | mio | heal | tonic | pour | allies | 760 / 1400 | A step to your side, the tonic held out, a hand to your shoulder. |
 | `ren_shade` Lamp ward | ren | ward | shade | lamp | aimed | 600 / 1220 | The lamp lifted toward the one it aims at; the ward forms in its light. |
 | `ren_flare` Flare the lamp | ren | clear | flare | lamp | foe | 580 / 1240 | Drawn back low, thrust up at it: the lamp flares and burns off what it holds. |
-| `ren_vigil` Keep watch | ren | ward | vigil | lamp | allies | 680 / 1300 | The lamp held high at his side over you both; a ward before each. |
+| `ren_vigil` Keep watch | ren | ward | vigil | lamp | allies | 680 / 1300 | The lamp held high at their side over you both; a ward before each. |
 | `ren_lanterns` Raise the lamps | ren | clear | lanterns | lamp | foes | 760 / 1420 | The lamp raised and swung across over every one of them. |
-| `ren_chime` Stand in front | ren | ward | front | lamp | pc | 660 / 1300 | A step in front of you, the lamp held out, his free arm across you. |
+| `ren_chime` Stand in front | ren | ward | front | lamp | pc | 660 / 1300 | A step in front of you, the lamp held out, their free arm across you. |
 | `suzu_heckle` Heckle | suzu | heckle | heckle | voice | foe | 540 / 1160 | A hand at her mouth, the other on her hip: the heckle carries to it. |
 | `suzu_eye` Draw its eye | suzu | draw | beckon | attention | foe | 600 / 1240 | A step into the light, a wave: its attention turns to her (a line from it to her). |
 | `suzu_encore` Encore | suzu | harmony | clap | clap | none | 520 / 1140 | A clap, then the hands flung open — and the thread between you brightens if Harmony rises. |
@@ -497,8 +497,8 @@ One word (with both ribbons), one braided thread (`pJoin`) from both release poi
 the head-off mark but not the gesture). A support that finds nothing to do (no opening this time, the knot
 holds, not in step) shows its gesture and a small grey puff — never its success mark. The companion's own
 moves inside an exchange (fx `comp`): Suzu turning a blow aside (her flourish, the blow meets air), Nao
-taking half (he braces at your shoulder, a cord), Mio's vial at the end of an Atlas exchange (motes), Nao's
-second thread (his point); the existing revive: the companion's `help` (crouch, reach, haul up) and your
+taking half (they brace at your shoulder, a cord), Mio's vial at the end of an Atlas exchange (motes), Nao's
+second thread (their point); the existing revive: the companion's `help` (crouch, reach, haul up) and your
 `recover:rise`.
 
 ### Reactions to what the rules did (party side, §10)
