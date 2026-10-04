@@ -1,5 +1,5 @@
 // Runs the browser test scripts against the built index.html, one after another,
-// and prints a summary. Usage: node tests/e2e/run.mjs [--full]
+// and prints a summary. Usage: node tests/e2e/run.mjs [--full] [--skip=a.mjs,…] [--part=k/n]
 //   default: UI, systems, audio, per-chapter story tests (one or two
 //            configurations each), an Atlas expedition, and one whole-game run
 //   --full:  per-chapter story tests in all their configurations and the
@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const full = process.argv.includes('--full');
-const suites = [
+let suites = [
   ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['equipment.mjs'], ['characters.mjs'], ['play_ui.mjs'], ['world_view.mjs'], ['world_fixes.mjs'], ['encounters.mjs'], ['departures.mjs'], ['walk_round.mjs'], ['props_balance.mjs'], ['sequence_manual.mjs', '--quick'], ['quest_guide.mjs'], ['fieldweave.mjs'], ['mill_road.mjs'], ['keepsakes.mjs'], ['backdrops.mjs'], ['title_ledger.mjs'], ['create.mjs'], ['prologue.mjs'], ['interludes.mjs'], ['learning_ui.mjs'], ['pad_kanji.mjs'], ['kanji_chart.mjs'], ['combat_ui.mjs'], ['combat_small.mjs'], ['battle_anim.mjs'], ['battle_group.mjs'], ['companion_turn.mjs'], ['playtest_repairs.mjs'], ['battle_presentation.mjs'], ['battle_party.mjs'], ['battle_creatures_b.mjs'], ['battle_backdrops.mjs'], ['battle_pets_overworld.mjs', '--battles-only'], ['battle_cycle.mjs'], ['battle_overlap.mjs'], ['battle_settings.mjs'], ['bookmarks.mjs'], ['pets.mjs'], ['town_animals.mjs'], ['lighthouse_top.mjs'], ['pets_greet.mjs'], ['pets_weave.mjs'], ['pets_gallery.mjs'], ['audio.check.mjs'],
   ['shift_load_regression.mjs', '--origin'], ['shift_load_regression.mjs'], // hotfix regressions (http origin, file://)
   ['travel_rules.mjs'], // quick travel: open air yes; buildings, dungeons, story locks and conversations say why not
@@ -54,6 +54,16 @@ const suites = [
   ['harmony_raster.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
+// --skip=a.mjs,b.mjs leaves those scripts out; --part=k/n runs the k-th of n equal slices of what is left (a long
+// suite split across several runs, e.g. under a time limit per run)
+const skip = ((process.argv.find((a) => a.startsWith('--skip=')) || '').slice(7)).split(',').filter(Boolean);
+if (skip.length) suites = suites.filter(([file]) => !skip.includes(file));
+const part = (process.argv.find((a) => a.startsWith('--part=')) || '').slice(7);
+if (part) {
+  const [k, n] = part.split('/').map(Number);
+  const size = Math.ceil(suites.length / n);
+  suites = suites.slice((k - 1) * size, k * size);
+}
 const results = [];
 for (const [file, ...args] of suites) {
   const t0 = Date.now();
