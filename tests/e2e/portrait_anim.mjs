@@ -18,6 +18,9 @@
 //      then a calm loop; the cue ending never advances the line; furigana, word help, history and translation
 //      keep working and do not restart the cue; losing focus or the tab and 15 s more of reading add no gesture;
 //      a quick advance to another speaker leaves no stale cue or frame; a line shown again cues once per showing
+//   J. the shared profile (WI13): the companions, the player and recurring NPCs play the profile merged from their
+//      actor-system mannerism profile (class, portrait block, tells), by id; a person without one keeps the portrait
+//      table's row, a person with no profile anywhere the default loop; the loop limits hold
 // Usage: node tests/e2e/portrait_anim.mjs
 import { serve, launch, page } from './lib.mjs';
 

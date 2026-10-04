@@ -223,27 +223,47 @@ glances down-aside at the work · `elder` blinks 5.2–8.2 s with longer-closed 
 2.6–4.2 s, quick glances, quicker breath, cues a frame bigger · `keeper` long holds, glances up · `traveller` looks
 along the road · `performer` tilt and sway · `nonhuman` blink and breath only.
 
-**Character portrait mannerisms** (bespoke rows of `PEOPLE` in `21_portrait_anim.js`):
+**Character portrait mannerisms — from the shared profile** (2026-10-04, WI13). The portrait reads the same
+mannerism profile as the overworld idles and the scene cues (`RB.mannerisms`, `src/content/mannerisms/10_cast.js`;
+`shared()` in `21_portrait_anim.js`). For everyone with an authored profile (the player, the four companions and 71
+recurring NPCs; 75 of them have portrait art): the class overlay is their **actor class** (or the profile's
+`portrait.class` where the two differ — the player keeps the plain `base` loop, nothing that implies a feeling); the
+profile's `portrait` block sets the rates and habits (`blink`, `shut`, `dbl`, `breath`, `glance`, `tilt`, `sway`,
+`glint`, `habit`, `big`) and names the **cue each emotion uses** (`cues`: smirk `{ turn, wink }`, laugh
+`{ hidden, wink }`, worry `{ nod }`, think `{ adjust, lids }`, closed `{ slow }`, sad `{ look }`; `serious`: the
+expressions held without a tilt or weight shift); and two **tells** with a portrait counterpart shape the cue where the
+block does not — a sadness that looks aside or averts (`tells.sad` `aside` / `avert`: the sad cue ends looking down and
+aside; Nao, Genzō, Akari) and a think that reaches for the glasses (`tells.think` `glasses`: one adjustment a scene;
+Tokiwa). The `PEOPLE` rows of `21_portrait_anim.js` are the **fallback**: they fill whatever a profile leaves out, and
+are the whole profile for the 13 speakers without an actor profile (voices, creatures, people in fewer than three
+scenes). A person with no profile anywhere gets the default loop. A profile the actor system derives from a look and a
+station is not read (WR-01). `RB.portraitAnim.state().profile` is the profile the playing loop was built from.
+
+25 profiles carry a `portrait` block (the player, the companions, 18 of the other 21 bespoke characters — Umi, Yae
+and Kōji play their class — and two overlay characters, Isao and Isamu); the rest play their class overlay, which is
+now always their actor class:
 
 | Who | Idle | Cue variants |
 |---|---|---|
-| Nao | sparse blinks (4.4–7.4 s); looks to the frame's edges (the exits) every 6–10 s | smirk: the head turned a pixel away, held through the loop |
+| Nao | sparse blinks (4.4–7.4 s); looks to the frame's edges (the exits) every 6–10 s | smirk: the head turned a pixel away, held through the loop; sad: the look goes down and away (their tell) |
 | Mio | steady blinks, a soft tilt, a careful look down at you | worry: a small nod; laugh: quiet (closed-eye smile, one shoulder lift) |
-| Ren | ponytail sway; a glint over the lenses every 8–14 s | think: one glasses adjustment a scene (then glints); closed: slower (×1.4) |
+| Ren | the keeper's overlay (breath 4.2 s, lids 120 ms: stillness); ponytail sway; a glint over the lenses every 8–14 s | think: one glasses adjustment a scene (then glints); closed: slower (×1.4) |
 | Suzu | ribbon and earrings sway every 4–7 s; a weight shift (shoulders, then head, hair behind) every 10–16 s | laugh opens with a wink; her first smirk of a scene winks; sad, worry, closed: no tilt or weight shift |
 | Ōmi | slow blinks (5.2–8 s), no double blinks, a rare look to the window | angry: one exhale and the narrowing, no shake |
-| Wataru | the glasses slip a pixel for 2.6–4 s, then are pushed back (a glint) | sad: the gaze goes down and aside |
+| Wataru | the glasses slip a pixel for 2.6–4 s, then are pushed back (a glint); looks down at the tags and aside at the door | sad: the gaze goes down and aside |
 | Tsuru | very slow blinks (6–9 s); the chin lifted a pixel now and then | think: the lids lower further |
 | Kasane | long still holds (glances every 18–28 s); the hood's edge stirs | closed: slow (×1.6) |
 | Hoshino | a glint every 7–12 s; looks up (the hill) now and then | — |
 | Hana | a warm tilt | sad: the gaze to the side (the cups) |
 | Tokiwa, Tadashi | glasses pushed up now and then | Tokiwa: a glasses adjustment on think (once a scene) |
-| Genzō | squints at the vane (lids half for about a second) | — |
+| Genzō | squints at the vane (lids half for about a second) | sad: looks aside (their tell: turns away to hide a feeling) |
+| Akari | glances to the window and down at the forms | sad: averts (her tell) |
 | Councillor Tami, Old Yasu | a small nod now and then | — |
-| Akari, Chigusa, Shiori, Hiro | glances to the window, down the road, to the sea, down at the glow | — |
-
-A `portrait: {...}` block in the actor system's profiles (`RB.mannerisms.of(id)`, when that data lands) is merged
-over these, so both systems can read one profile.
+| Chigusa, Shiori, Hiro | glances down the road, to the sea, down at the glow | — |
+| Tamae | glances one way, toward the kitchen; cues a frame bigger (she laughs big) | — |
+| Tokuji | stares at the lake: rare, long looks (1.4–2.2 s) to one side | — |
+| Kayo | looks up at the tree | — |
+| Isao, Isamu | Isao squints at a flame; Isamu listens for what no one else hears (a held look aside) | — |
 
 **Lead-in cues** (one-off, started with the line and never delaying it; the beats are frames over the line's own
 expression; then 400 ms of stillness while the face settles, then the loop):
@@ -306,12 +326,12 @@ companion's and the player's portraits are drawn ahead in idle time (`requestIdl
 started.
 
 **Tests and evidence.** `tests/unit/portrait_anim.test.mjs` (frame keys; rest frame = still; blink and breath
-bounds; eye-fix invariants on 85 faces; every cue's shape; no replay; scene-once cues; Reduce motion; cadence and
-density for all 89 portraits; cache cap; display scale) and `tests/e2e/portrait_anim.mjs` (sections A–I in its
+bounds; eye-fix invariants on 85 faces; every cue's shape; no replay; scene-once cues; Reduce motion; the shared profile: every authored person's merged profile, their portrait block's rates and cue variants, the fallback and the default; cadence and
+density for all 89 portraits; cache cap; display scale) and `tests/e2e/portrait_anim.mjs` (sections A–J in its
 header; I is a real scene, `sa.kasane_meet`, advanced only by real clicks on Next: one cue then a calm loop, the cue
 ending never advances the line, furigana / word help / history keep working without restarting the cue, a lost
 focus or tab and 15 s more of reading add nothing, a quick advance from Nao [angry] to Kasane [tired] leaves no
-stale frame, a line shown again cues once per showing). `tests/e2e/portrait_shots.mjs` writes
+stale frame, a line shown again cues once per showing; J: the profile played, by id, through the real dialogue). `tests/e2e/portrait_shots.mjs` writes
 `docs/screenshots/portraits/`: `eyes_zoom.png`, `eyes_real_size.png`, `sizes.png`, `stills_desktop.png` and
 `stills_phone.png` (held still at actual size, 1440×900 and 390×844 at ratio 1 — the world review's WR-02 setup — six
 characters × the 12 expressions in use, before / after), `cues_nao.png`, `cues_mio.png`, `cues_ren.png`,
@@ -323,5 +343,7 @@ invariants on all 85 human faces — not reviewed one by one for all 87 (CONTRAC
 116 px at ratio 1, 1.21× the art, so some art rows are doubled: the owner preferred the size to whole pixels (96 px
 was tried and read as too small; `--por-target` and `fitSize` are the knobs). On a phone at ratio 1 or 2 the 64-px portrait is still an uneven downscale (rows dropped at ratio 1):
 the drawing fixes help there, the scale cannot without a larger box or a phone-sized art set. Portraits on
-other screens stay still by choice. No mouth motion (there is no voice acting). The actor system's profile data is
-not read yet (the hook is in `profileOf`).
+other screens stay still by choice. No mouth motion (there is no voice acting). Since 2026-10-04 the portrait reads
+the actor system's profile (above); the new and changed habits (Nao's and Genzō's sadness looking aside, Akari's
+averting, Wataru's look at the door, Tamae's toward the kitchen, Tokuji's stare, Kayo's look up, Isao's squint, Isamu's
+listening look, Ren on the keeper's overlay) were checked by tests, not yet watched by a person.

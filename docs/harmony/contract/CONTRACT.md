@@ -214,9 +214,15 @@ canvas's top rows and right end are empty. Real art will differ: a hairstyle rea
 Computed from the rule; the browser test measures the same scales in the game at the geometry viewports
 (`docs/screenshots/harmony/cutin/painted_v3.json`). On the sample's footprint 2× needs at least 1634 CSS px of
 width, 880 of height and 1,509,200 px² of area (e.g. 1634 × 924, 1680 × 899); a 150-row footprint needs 1000 of
-height. **Which pair the overlay shows is its decision** (src/ui/82d_harmony_cutin.js): it tries the standard pair
-first unless its faces would be under 48 CSS px, so at 1366–1600 wide a real 52-px face shows standard at 1× even
-though the compact pair would fit at 2× (open question in V3_REPORT.md).
+height. **Which pair the overlay shows is its decision** (src/ui/82d_harmony_cutin.js): since 2026-10-04 it tries its
+candidates (standard at mid height, standard moved, compact, compact bare, compact smaller) in the order of the face size
+each gives at its own fitted scale — each variant inside its own limits above — larger first, ties to the standard pair.
+So at 1440 × 900 and 1600 × 900 real art's faces (the template's 50 × 52 box) show the compact pair at 2× (100 CSS px)
+rather than the standard at 1× (50), and at 2048 × 1046, where both give 100, the standard pair; at 1366 × 768 the
+compact pair at 2× is tried first but comes within 12 px of the creature's plate at every height in the measured
+encounter, so the standard at 1× stays (measured with the sample carrying the template's face boxes: V3_REPORT.md, open
+question 2). Before, it tried the standard pair first
+unless its faces were under 48 CSS px.
 
 ### 3.4 Accessories: files, slots, sides
 
@@ -628,7 +634,7 @@ re-measure on Batch 1a. **Budget policy:** no new hard limit; decoding never run
 | `node tools/harmony_calibrate.mjs` | the thresholds against both fixtures: 0 errors and the stated headroom |
 | `node tools/harmony_recolour_proof.mjs` | value floor on 63 targets, exact anchors, the residual sweep; writes the proof sheets |
 | `node tests/e2e/harmony_raster.mjs [--sheets]` | the painted path in the built game (both fixtures), the footprint scale, approval, the embedded build, no network; `--sheets` writes the evidence and the budgets |
-| `node tests/e2e/harmony_cutin.mjs painted [--painted-docs]` | the painted overlay: timeline, reduced motion (held poses, cross-fade, no travel), and every geometry viewport plus 2048 × 1046 and 1920 × 1080 with the sample and the rich fixture (scale, faces in CSS px, nothing within 12 px of a protected rectangle) |
+| `node tests/e2e/harmony_cutin.mjs painted [--painted-docs]` | the painted overlay: timeline, reduced motion (held poses, cross-fade, no travel), and every geometry viewport plus 2048 × 1046 and 1920 × 1080 with the sample and the rich fixture (scale, faces in CSS px, nothing within 12 px of a protected rectangle, nothing shown over a withdrawn menu still leaving); the sample with the template's face boxes at 1366, 1440, 1600 and 2048 wide (the pair with the larger faces is shown) |
 | `node tests/run-unit.mjs harmony_art`, `node tests/e2e/harmony_art.mjs` | the code-drawn busts, unchanged |
 
 Evidence (every image labelled SYNTHETIC SAMPLE — not art): `docs/screenshots/harmony/recolour_v3/` (the rich

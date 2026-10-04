@@ -107,7 +107,9 @@ that already exists (`src/engine/34m_battler_moves.js` "Actors and their languag
   props:  [prop types or held accessories the habits use]
   talk:   [primitive numbers in order of preference]                            conversation gestures
   strong: [{ beat: scene id, gesture }]                                          the stronger reactions already written
-  portrait: { idle: [...], cues: { tag: cue } }                                 PORTRAITS.md §4
+  portrait: { idle: [...], cues: { tag: cue } }                                 PORTRAITS.md §4 (as built, 2026-10-04: rates,
+                                                                                habits and cue variants the portrait plays;
+                                                                                PORTRAITS.md §5)
   avoid:  [what this person never does] }
 ```
 

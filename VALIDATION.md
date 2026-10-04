@@ -2570,3 +2570,61 @@ Evidence:
 **Not verified:** how it sounds; that is the owner's ear. The "droning drum" is not identified for certain: the
 shamisen chord strokes are the likeliest, and the bass is the other candidate. The parts file lets the owner name it.
 
+
+## 2026-10-04 — Shared portrait profiles (WI13), the cut-in's dock race and fit order, Nao and Ren as they/them
+
+A worker's branch from `claude/stoic-sagan-n3jvgk` at 7cc138e. Headless Chromium (Playwright) and node on a shared
+4-core Linux machine while other workers ran browser tests; nothing on a device, in Firefox or Safari. B = browser test
+of the built `index.html`, U = unit test, C = code review only.
+
+What changed:
+- **WI13.** The dialogue portrait reads the actor system's mannerism profile (`shared()` in
+  `src/ui/21_portrait_anim.js`): the class overlay is the actor class (the player's block keeps `base`); 25 structured
+  `portrait` blocks in `src/content/mannerisms/10_cast.js` set rates, habits and the cue variant each emotion uses;
+  tells with a portrait counterpart shape the cue (sad aside/avert; think → glasses). The portrait table (`PEOPLE`) is
+  the fallback, and the whole profile for the 13 speakers without an actor profile; no profile anywhere → the default
+  loop. Loop limits unchanged (PORTRAITS.md §5).
+- **Dock race** (docs/harmony/contract/V3_REPORT.md, open question 3). The cut-in stays unseen, its state not advancing,
+  until the withdrawn response dock and telegraph have left its rows and slide path (measured each frame, as drawn);
+  then its whole entrance plays (its clock starts late by the wait). Omitted and recorded if the wait would run past
+  the middle of the hold or past 1,140 presentation ms. Reduced motion never waits; the dock's CSS is unchanged.
+- **Fit order** (open question 2). Candidates are tried larger faces first (each at its own fitted scale, inside its own
+  limits), ties to the old order, instead of standard-first with a 48-px threshold.
+- **Pronouns.** Nao and Ren are they/them in docs, code comments, test messages and the Harmony registry's reasons;
+  two player-visible English texts fixed (C): the companions' support descriptions (`src/content/00_world.js`) and the
+  これ / いただけますか practice explanations about Ren (`src/content/practice_b/30_compare.js`). No Japanese changed.
+
+Commands and results (final build unless stated; a last comment-only edit in `82d_harmony_cutin.js` changed two
+comment lines of `index.html` after these runs):
+- U `node tests/run-unit.mjs`: **27,110 passed, 0 failed** (after the pronoun edits, and again on the final sources).
+  `node tests/run-unit.mjs portrait`: 70/0 (was 53; the new checks: every authored speaker's merged profile by id,
+  each block's rates and cue variants, the fallback, the default, and the bespoke row alone without the actor system).
+  `node tests/run-unit.mjs harmony`: 331/0. `node tools/validate.mjs`: no errors.
+- B `node tests/e2e/portrait_anim.mjs`: **all passed (77 checks)**, twice (before and after the cut-in revision). New
+  section J: the companions, the player and 9 recurring NPCs play their actor profile through the real dialogue, by id
+  (`state().profile` equals the merged profile; class and block rates as authored; glances only in the profile's
+  directions; ≤ 8 frame changes a second); Seto (no actor profile) keeps the portrait table's row; a one-off character
+  with no profile gets the default loop; Nao's sad cue ends looking away and that frame is painted.
+- B `node tests/e2e/harmony_cutin.mjs geometry` (the code busts' geometry and the painted geometry): on the final build
+  **4 runs, 2/2 each** — three alone, one while the full unit suite ran alongside (load average ~7.9 on 4 cores) —
+  plus the geometry inside the full run below: 5 geometry passes, 0 overlaps at every view, entrance frames now
+  checked against the withdrawn menus. Waits for the menus: 768 × 1024 83–100 ms, 390 × 844 67–100 ms, 320 × 640 83 ms
+  of presentation time; none on desktop views. One earlier run, on an intermediate build (the portrait faded in after
+  the wait), failed twice: 390 × 844 at 200 % text recorded one layout where the portrait-off run recorded two (the
+  intermittent already noted in V3_REPORT.md; the portrait was omitted in that scene), and the template-face check's
+  first form at 1366 × 768 (the compact pair refused there by the 12-px rule; the check now accepts a smaller face only
+  when the larger was tried and refused).
+- B `node tests/e2e/harmony_cutin.mjs` (all): **11 passed, 0 failed** (core 24 configurations incl. reduced motion and
+  Fast, never, geometry, plan, frozen frame, life, cycles, setting, dev viewer, painted sample, painted geometry).
+- B fit order, faces in CSS px with the sample carrying the template's 50 × 52 face boxes (`painted geometry`), before
+  (the earlier `82d_harmony_cutin.js` rebuilt in) → after: 1366 × 768 standard ×1 50 × 52 → the same (compact ×2
+  refused: within 12 px of the creature's plate at every height); 1440 × 900 standard ×1 50 × 52 → **compact ×2
+  100 × 104**; 1600 × 900 the same → **compact ×2 100 × 104**; 2048 × 1046 standard ×2 100 × 104 → the same. The code
+  busts and the sample's own faces choose as before at every geometry view.
+- B `node tests/e2e/battle_presentation.mjs`: 13 passed, 0 failed.
+- C the pronoun edits (≈110 lines in 25 files), reviewed line by line; "he/him" referring to other people left alone.
+- No tracked evidence file was rewritten (no `--docs` runs).
+
+**Not verified:** the new portrait habits and the tablet/phone entrance after the wait, by eye; real painted art (the
+face sizes use the synthetic sample with template face boxes); the 1366 × 768 result in other encounters (one creature
+in the Mill here); phones, Firefox, Safari.

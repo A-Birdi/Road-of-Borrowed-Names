@@ -35,7 +35,7 @@
  *   up or down on the left; the authored compact pair (with its backing, then without backing and
  *   effects, then at smaller scales while faces stay ≥ 24 px). They are tried in the order of the face size
  *   each gives at its own fitted scale (each variant inside its own footprint limits), larger first, that list's
- *   order breaking ties — so 1366–1600 px desktops get the compact pair at 2× (faces ~100 CSS px) rather than the
+ *   order breaking ties — so 1366–1600 px desktops get the compact pair at 2× where it fits (faces ~100 CSS px) rather than the
  *   standard at 1×, a tall tablet the compact pair (§5.4's narrow-screen case), and views where both give the
  *   same faces the standard pair. If none can be placed: no portrait for this action — recorded in
  *   stats().fallbacks. The composition always enters from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
@@ -252,7 +252,7 @@ RB.harmonyCutin = (function () {
     }
     // The larger faces first: each candidate at its own fitted scale (inside its variant's footprint limits) is tried
     // in the order of the face size it gives, the fixed order above breaking ties (the standard pair, mid, first). So a
-    // desktop between about 1366 and 1600 px wide shows the compact pair at 2× (faces ~100 CSS px, the mockup's size)
+    // desktop between about 1366 and 1600 px wide shows the compact pair at 2× where it fits (faces ~100 CSS px)
     // rather than the standard at 1× (~52 px), a tall tablet the compact pair, and a view where both give the same
     // faces (2048 × 1046, 1920 × 1080; the code busts at 1648 × 840) the standard pair. One that cannot be placed
     // gives way to the next.

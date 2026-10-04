@@ -159,7 +159,7 @@ with this report). Browser tests one at a time, Playwright with the preinstalled
   in lightness) than v2 gave them; whether that reads as "white" is a visual question.
 - **Faces at 1366–1600 wide.** The overlay keeps its order (standard first unless its faces are under 48 CSS px), so a
   real 52-px face shows the standard pair at 1× there although the compact pair fits at 2× (100-px faces). Not changed:
-  it is a placement rule; see Open questions.
+  it is a placement rule; see Open questions. — *Resolved 2026-10-04 (open question 2 below): larger faces first.*
 - **Firefox and Safari**, the owner's 2048 × 1046 Firefox view itself, any phone, any DPR not emulated.
 - **Real-device performance** of the recolour memo and the footprint (measured only in headless Chromium).
 - The approval states' workflow (who sets `approved` and `verified`, and when) — the fields and their display exist.
@@ -172,6 +172,27 @@ with this report). Browser tests one at a time, Playwright with the preinstalled
    the game's material ramps themselves (skinMat, hairMat, the accessory ramps), which the code busts share.
 2. **Fit order at 1366–1600 wide** (above): should the overlay try the compact pair first whenever its faces are
    larger (e.g. raise the 48-px threshold toward the mockup's ~100 px)?
+   **Resolved 2026-10-04.** The overlay (`place` in src/ui/82d_harmony_cutin.js) now tries its candidates in the
+   order of the face size each gives at its own fitted scale — each variant inside its own limits (standard 42 % /
+   30 % / 12 %, integer scales; compact the view's width and 27 % of its height) — larger first, the old order breaking
+   ties; a candidate that cannot be placed gives way to the next, as before. Measured in Chromium with the synthetic
+   sample carrying the template's face boxes (50 × 52 art px, real art's size; `harmony_cutin.mjs painted geometry`,
+   one Suzu technique per view, the Flour Moth alone), faces in CSS px (width × height):
+
+   | View | Before (fixed order, 48-px threshold) | After (larger faces first) |
+   |---|---|---|
+   | 1366 × 768 | standard ×1, 50 × 52 | standard ×1, 50 × 52 — the compact pair at 2× (100 × 104) was tried first and comes within 12 px of the creature's plate at every height, so it gives way |
+   | 1440 × 900 | standard ×1, 50 × 52 | **compact ×2, 100 × 104** |
+   | 1600 × 900 | standard ×1, 50 × 52 | **compact ×2, 100 × 104** |
+   | 2048 × 1046 | standard ×2, 100 × 104 | standard ×2, 100 × 104 (equal faces: the standard pair) |
+
+   No measured constraint broke: every geometry viewport kept nothing within 12 px of a protected rectangle, and the
+   code busts and the sample (36 × 33 faces) chose what they chose before at every view (1648 × 840 still the standard
+   pair: both pairs give 66 px there). The one view that keeps the smaller face, 1366 × 768, does so because of the
+   12-px rule against the creature's plate — a placement constraint, not the order (the check now accepts a smaller
+   face only when the overlay tried the larger one first and recorded why it could not place it). "Before" was measured
+   with the same rows and the earlier `82d_harmony_cutin.js` rebuilt in; it failed the check's first form (the larger
+   face, outright) at 1366, 1440 and 1600 and passed at 2048.
 3. **The response dock's withdrawal** (CSS, 200 ms of wall time) outlasts the portrait's entrance (180 ms of
    presentation time): under load one frame can catch the dock still visible while the portrait already holds over its
    region (the overlay treats withdrawn menus as free space). Seen three times today, each one frame, each passing on
@@ -180,6 +201,24 @@ with this report). Browser tests one at a time, Playwright with the preinstalled
    larger compact scale on a tablet reaches the dock's region more often. Aligning the two durations, or keeping the
    portrait unseen until the dock's transition has ended, would close it (src/ui/82d_harmony_cutin.js or the dock's
    CSS; I left the placement rules as they are).
+   **Resolved 2026-10-04.** The overlay keeps the portrait unseen until the menus have actually left (frame1 in
+   src/ui/82d_harmony_cutin.js; the dock's CSS is unchanged). Each frame it measures the withdrawn response dock and
+   telegraph as drawn — their rectangles move with their slide, and they count as gone once hidden or under 5 %
+   opacity, the test's own criterion — and while any of them is within 12 px of the portrait's rows or of the path it
+   slides in along, the portrait stays at opacity 0 and its state does not advance. Then its whole entrance plays from
+   that moment (its own clock starts late by the wait), so it still slides in; after a late placement at large text it
+   fades in where it stands, as before. If the wait would leave less than the middle of the hold, or the performance not
+   over by 1,140 presentation ms (the first result comes at ≥ 1,200), it is omitted and recorded
+   (`stats().suppressed.menus`, `fallbacks`). Reduced motion: the menus have no transition, so it never waits. Fast:
+   the same measurement (the menus' transition is wall time in both speeds). Desktop views, where the dock leaves to
+   the right clear of the portrait's rows, never wait: the core test at 1280 × 720 still sees the slide from 0 and the
+   disposal at 780 / 687 ms. Measured waits (code busts, 100 % text, the final build, 4 runs): 768 × 1024 83–100 ms,
+   390 × 844 67–100 ms, 320 × 640 83 ms of presentation time; the disposal then comes about that much later, still
+   before the first result (the geometry test checks it at every view). `harmony_cutin.mjs` now also checks the entrance frames against the
+   withdrawn menus (any portrait pixel shown within 12 px of a still-visible dock or telegraph fails). Runs on the final
+   build: see VALIDATION.md, "2026-10-04 — Shared portrait profiles (WI13), the cut-in's dock race and fit order …". (A first
+   version faded the portrait in where it stood after the wait; it was replaced so that tablets and phones keep the
+   slide.)
 4. **The registry's `source.git.branch`** records the worktree branch it was generated on; regenerate after merging
    if that matters.
 5. The other asset-brief sheets (`ref_companion_*`, `ref_player_*`) differ from the game now (its dialogue portraits
