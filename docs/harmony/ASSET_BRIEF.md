@@ -335,6 +335,24 @@ hides the hair above a hat or cap band, so a hat must cover the scalp above its 
   `settle_b`. Then derive the layers from them. Keep style masters in a separate `refs/` folder: the importer
   accepts only contract names.
 
+**Robin's quality examples (2026-10-04).** While the image tool worked, it produced single-sheet examples:
+Suzu in four states, four bald heads, four brush arms, a torso, ponytail back and front, and the three
+accessories. They are not the delivery, and they are not committed. Robin judged them the right level of detail.
+- **Suzu's performance, approved as shown:** a hand to her chest with a soft smile (`prep_a`); reaching out
+  with an open smile (`cue`); the reach with a wink and a burst of sparkles (`peak`); ending eyes-closed in a
+  happy smile with her hands clasped below her chin (`settle_b`). The in-betweens (`suzu_prep_b`,
+  `suzu_settle_a`) are worth having for a smoother flourish.
+- **For the real files, compared with the examples:**
+  - every layer is painted in place on the template, at the head's tilted angle and scale; the example
+    glasses are drawn flat-on and alone;
+  - skin is painted in the orange key, hair in the purple key and hair ties in the teal trim key; the
+    examples use a real brown skin and pink ties;
+  - the sparkles and ink splash go in `suzu_peak_fx` or are left to the game, so the cut-in works with
+    particles off;
+  - Batch 1a's arms have fitted coat sleeves; the example arms have wide sleeves, which belong to 1b.
+  - The flower in the blue accessory key, and the glasses, satchel and brush in final colours, are already
+    right.
+
 **What I return for 1a** (labelled *visual candidate awaiting approval*):
 1. The principal held pose (`peak`) at **in-battle size** and at **native authoring size**, beside the
    mockup at the same footprint. The mockup comparison is shown privately, never committed.
