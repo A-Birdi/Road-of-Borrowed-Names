@@ -195,7 +195,11 @@ try {
   });
   await test('New Game through real UI still enters a visible controllable world', async () => {
     await page.locator('.title [data-a="new"]').click(); await page.locator('[data-slot="2"] [data-a="start"]').click();
-    await page.locator('[data-a="skip"]').click(); await page.locator('#nm').fill('Regression hero');
+    await page.locator('[data-a="skip"]').click();
+    // an unseen prologue asks before skipping (src/ui/40_create.js, src/ui/43_sequence.js)
+    const sure = page.locator('.csheet button:has-text("Skip the prologue")');
+    if (await sure.count()) await sure.click();
+    await page.locator('#nm').fill('Regression hero');
     for (let i = 0; i < 3; i++) await page.locator('[data-a="next"]').click(); // four creation steps
     await page.locator('[data-k="profile"][data-v="E"]').click();
     await page.locator('[data-k="input"][data-v="choice"]').click(); await page.locator('[data-a="go"]').click();

@@ -134,7 +134,7 @@ const where = (p) => p.evaluate(() => {
     map: W.map.id, x: W.player.x, y: W.player.y, dir: W.player.dir, front: front ? front.p : null,
     genzo: g ? { id: g.id, x: g.x, y: g.y, alpha: g.alpha == null ? 1 : +(+g.alpha).toFixed(2) } : null,
     leavers: W.leavers.map((a) => a.id), stage: (s.quests.sg_main || {}).stage, up: !!s.flags.sg_genzo_up, cleared: !!s.flags.sg_fog_cleared,
-    comp: W.comp ? { id: W.comp.id, d: Math.abs(W.comp.x - W.player.x) + Math.abs(W.comp.y - W.player.y) } : null,
+    comp: W.comp ? { id: W.comp.id, d: Math.abs(W.comp.x - W.player.x) + Math.abs(W.comp.y - W.player.y), near: Math.max(Math.abs(W.comp.x - W.player.x), Math.abs(W.comp.y - W.player.y)) } : null,
     pet: RB.petWorld ? (({ shown, map, x, y }) => ({ shown, map, d: Math.abs(x - W.player.x) + Math.abs(y - W.player.y) }))(RB.petWorld.state()) : null,
   };
 });
@@ -267,12 +267,14 @@ for (const V of VIEWS) {
     }
     await talking;
     const after = await where(p);
-    ok(after.map === 'sg.lighthouse_top' && after.x === 8 && after.y === 5 && after.dir === 'up' && /^sg_vane/.test(after.front || ''), tag + 'the scene ends on the top, beside the vane and facing it (' + [after.map, after.x, after.y, after.dir, after.front].join(' ') + ')');
+    // (staged in the Ch1–2 pass: you write at the vane's side, at 7,4 facing right; before that, 8,5 facing up)
+    ok(after.map === 'sg.lighthouse_top' && /^sg_vane/.test(after.front || ''), tag + 'the scene ends on the top, beside the vane and facing it (' + [after.map, after.x, after.y, after.dir, after.front].join(' ') + ')');
     ok(after.stage === 7 && after.cleared && after.up, tag + 'the quest moved on, the fog is cleared, Genzō is up there (' + JSON.stringify({ stage: after.stage, cleared: after.cleared, up: after.up }) + ')');
     ok(after.genzo && after.genzo.id === 'genzo_top' && after.genzo.x === 9 && after.genzo.y === 5 && after.genzo.alpha === 1, tag + 'Genzō is beside you at the top (' + JSON.stringify(after.genzo) + ')');
     await p.waitForTimeout(700);
     const pet = (await where(p)).pet;
-    ok(after.comp && after.comp.id === 'mio' && after.comp.d <= 1, tag + 'your companion came up with you (' + JSON.stringify(after.comp) + ')');
+    // (beside you, a diagonal included: the staging puts them out from under the dialogue box on this small roof)
+    ok(after.comp && after.comp.id === 'mio' && after.comp.near <= 1, tag + 'your companion came up with you (' + JSON.stringify(after.comp) + ')');
     ok(pet && pet.shown && pet.map === 'sg.lighthouse_top' && pet.d <= 3, tag + 'your pet came up with you (' + JSON.stringify(pet) + ')');
     const L = await linesSince(p, 0);
     const climb = has(L, /^You climb the spiral stairs/), topLine = has(L, /^The top of the lighthouse\./), ask = has(L, /^Can you write it\?/), turned = has(L, /^…It turned\./), first = has(L, /^The wind\?/);
