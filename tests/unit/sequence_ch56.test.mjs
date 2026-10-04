@@ -1,12 +1,15 @@
 // The illustrated sequences of Chapters 5 and 6 (src/ui/43e_seq_ch5.js, 43f_seq_ch6.js; docs/expressive/SHOTS.md §5,
-// §6, §7b), in node:
-// - the registry: ch5.bell and ch6.toya with 3–6 compositions each, ch5.boat (the one-line faded passage) with one;
+// §6, §7b, §8.4), in node:
+// - the registry: ch5.bell and ch6.toya with 3–6 compositions each, ch5.boat (the one-line faded passage) with one,
+//   ch6.ren (the personal questline's insert) with three;
 //   every shot draws, names its phases (each one-time action short) and reports its focal area;
 // - the scripts: each sequence begun and ended in its scene, every !shot a shot (and phase) of it, every composition
 //   used, no !shake inside; the Chapter 6 bell shot and its phases only where Tōya's bell is carried; the crossing
-//   begun after the scene's own fade (so the dark lifts over it) and ended before the warp;
-// - the scenes' lines and state commands are those of the scenes before the sequences (the counts as at da9751c:
-//   only presentation ops were added, and the bell scene's !shake became the gong shot's own swing).
+//   begun after the scene's own fade (so the dark lifts over it) and ended before the warp; Ren's folio only on the
+//   open branch (after its state lines, both ways in reaching it), never on "Leave it" or the companion-not-Ren path;
+// - the scenes' lines and state commands are those of the scenes before the sequences (the counts as at da9751c, and
+//   sa.shelf_ren's as at b07c492: only presentation ops were added, and the bell scene's !shake became the gong
+//   shot's own swing).
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -15,7 +18,7 @@ export default async (t) => {
   const SQ = RB.sequence, C = RB.content;
 
   // ---- the registry ------------------------------------------------------------------------------------------
-  for (const [id, lo, hi, scene] of [['ch5.bell', 3, 6, 'lf.bell_touch'], ['ch6.toya', 3, 6, 'sa.toya_read'], ['ch5.boat', 1, 1, 'lf.boat_to_tower']]) {
+  for (const [id, lo, hi, scene] of [['ch5.bell', 3, 6, 'lf.bell_touch'], ['ch6.toya', 3, 6, 'sa.toya_read'], ['ch5.boat', 1, 1, 'lf.boat_to_tower'], ['ch6.ren', 3, 3, 'sa.shelf_ren']]) {
     const d = SQ.get(id);
     t.ok(!!d, id + ' is defined');
     if (!d) continue;
@@ -28,7 +31,7 @@ export default async (t) => {
 
   // ---- the scripts --------------------------------------------------------------------------------------------
   const inside = {};
-  for (const [sid, seq] of [['lf.bell_touch', 'ch5.bell'], ['sa.toya_read', 'ch6.toya'], ['lf.boat_to_tower', 'ch5.boat']]) {
+  for (const [sid, seq] of [['lf.bell_touch', 'ch5.bell'], ['sa.toya_read', 'ch6.toya'], ['lf.boat_to_tower', 'ch5.boat'], ['sa.shelf_ren', 'ch6.ren']]) {
     const cmds = C.scenes[sid].cmds;
     const b = cmds.findIndex((c) => c.op === 'sequence' && c.args[0] === seq && (c.args[1] || 'begin') === 'begin');
     const e = cmds.findIndex((c) => c.op === 'sequence' && c.args[0] === seq && c.args[1] === 'end');
@@ -67,6 +70,15 @@ export default async (t) => {
   const bo = C.scenes['lf.boat_to_tower'].cmds, sb = bo.findIndex((c) => c.op === 'sequence' && c.args[1] === 'begin'), se = bo.findIndex((c) => c.op === 'sequence' && c.args[1] === 'end');
   t.ok(bo[sb - 1].op === 'fade' && bo[sb - 1].args[0] === 'out' && bo[se + 1].op === 'warp', 'lf.boat_to_tower: the crossing begins in the fade\'s dark and ends before the warp to the tower');
   t.ok(bo.findIndex((c) => c.op === 'label' || (c.op === 'choice')) < sb, 'lf.boat_to_tower: "Not yet" never starts it (the sequence is inside the "Row out" branch)');
+  // Ren's folio: inside the open branch only, after its state lines; both answers that open it reach it
+  const sr = C.scenes['sa.shelf_ren'], rc = sr.cmds, L = sr.labels;
+  const rb = rc.findIndex((c) => c.op === 'sequence' && c.args[0] === 'ch6.ren' && c.args[1] === 'begin'), re = rc.findIndex((c) => c.op === 'sequence' && c.args[0] === 'ch6.ren' && c.args[1] === 'end');
+  t.ok(L.ropen >= 0 && L.rleave > L.ropen && rb > L.ropen && re > rb && re < L.rleave && rc.slice(re + 1, L.rleave).every((c) => c.op !== 'say'), 'sa.shelf_ren: ch6.ren begins and ends inside the open branch (:ropen), its last line the glasses');
+  t.ok(rc.slice(L.ropen, rb).every((c) => c.op !== 'say') && ['set', 'quest'].every((op) => rc.slice(L.ropen, rb).some((c) => c.op === op)), 'sa.shelf_ren: the branch\'s flag and quest lines run before the sequence begins (once, as before)');
+  t.ok(rb > L.ropen && L.rtake < L.ropen && rc.slice(L.rtake, L.ropen).every((c) => !['goto', 'end', 'choice'].includes(c.op)) && rc.slice(L.ryours, L.rtake).some((c) => c.op === 'goto' && c.args[0] === 'ropen'), 'sa.shelf_ren: "Take it back" falls through to it and "You decide" goes to it');
+  t.ok(rc.every((c, i) => !(c.op === 'sequence' || c.op === 'shot') || (i >= rb && i <= re)), 'sa.shelf_ren: no sequence or shot op outside the open branch (never on "Leave it", Mio\'s or anyone\'s carried-home path)');
+  t.ok(inside['ch6.ren'].some((c) => c.op === 'challenge' && c.args[0] === 'sa.ren_reply'), 'sa.shelf_ren: Ren\'s reply challenge is met inside the sequence');
+  t.ok(SQ.get('ch6.ren').memory === true && SQ.get('ch6.ren').memo && /Ren/.test(SQ.get('ch6.ren').memo.en), 'ch6.ren: kept as a memory, with its line in the album');
 
   // ---- the scenes' lines and state commands as they were -----------------------------------------------------------
   const count = (sid) => { const o = {}; for (const c of C.scenes[sid].cmds) o[c.op] = (o[c.op] || 0) + 1; return o; };
@@ -76,4 +88,6 @@ export default async (t) => {
   t.eq(count('lf.bell_touch').shake || 0, 0, 'lf.bell_touch: its one !shake is now the shot\'s own action');
   t.eq(pick(count('lf.boat_to_tower'), K), [3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 0, 0], 'lf.boat_to_tower keeps its lines, its fades and its warp');
   t.eq(pick(count('sa.toya_read'), K), [23, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0], 'sa.toya_read keeps its lines, the folio taken once, its flag, note, quest and journal');
+  t.eq(pick(count('sa.shelf_ren'), K), [31, 4, 0, 2, 0, 1, 0, 1, 0, 2, 2, 0, 0, 0, 0, 0, 0], 'sa.shelf_ren keeps its lines, flags, quest lines, the folio given, its challenge, choices and music');
+  t.eq([count('sa.shelf_ren').sequence, count('sa.shelf_ren').shot, count('sa.shelf_ren').shake || 0], [2, 7, 0], 'sa.shelf_ren: only the two sequence ops and seven shot ops were added');
 };
