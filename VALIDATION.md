@@ -2388,3 +2388,46 @@ build; the manifest regenerates unchanged):
 - Whole-story pursue.mjs runs through Chapters 3–4.
 - Some speakers are heard before they are near (the world's placements).
 - In the quiet nights the room brightens for a few frames during the morning fade.
+
+## Illustrated sequences, wave 2: Chapters 3 and 4, three faded passages, and Ren's insert (merged 2026-10-04; HX41–HX53, HX45, HX71)
+
+**What:**
+- **Chapters 3–4** (worker branch, final f53c231; record in docs/expressive/reports/sequences_wave2_ch34.md):
+  - `ch3.assembly`: 9 shots, kept as a memory, with a bell phase when the bell was rung;
+  - `ch3.firebreaks`: fills the faded passage `co.festival_begin`;
+  - `ch4.lamp`: three branches, kept as a memory;
+  - `ch4.reply`: the hand-over, with a blank envelope;
+  - `ch4.inn`: fills `sb.next_day_inn`;
+  - `ch4.morning`: `sb.quiet_morning` keeps its line over the dark, then one window shot as the light returns.
+  - The assembly's `!shake` became a comment: a shake can't fire inside a sequence, so the ink shot carries that beat.
+  - Name marks are abstract dabs and strokes, never letters.
+- **Ren's insert, `ch6.ren`** (the Chapter 5–6 worker, final f29408b; SHOTS.md §8.4): three shots on `sa.shelf_ren`'s
+  open branch only. The folio opens; the teacher's face surfaces in ink; Ren takes off their glasses. It is kept as a
+  memory, and no writing is drawn.
+- Faded passages filled: **8 of 9**. `sb.quiet_morning` keeps its intended dark line.
+
+**The workers' runs:**
+- Chapters 3–4, final build:
+  - unit 25,051/0;
+  - sequence_chapters 121/0: every branch played by hand; idle; Escape and Skip ask first; Previous is read-only;
+    Skip stops at a choice; reduced motion; focal areas at three sizes and several sheet heights;
+  - sequence_manual --quick 64/0; interludes 76/0;
+  - story_ch3 F/ren PASS (39 checks); story_ch4 A/mio 52/52 (earlier commit: 16/16 and 8/8).
+- Ren's insert, final build:
+  - unit 25,109/0;
+  - sequence_chapters_56 196/0, four runs of `sa.shelf_ren`. One timing failure at load 8 passed alone. One real
+    framing fault at 844 × 390 was fixed;
+  - story_ch6 all ok; sequence_manual --quick 64/0; sequence_dev 9/0.
+
+**The lead's runs on the merge** (the task branch with the Chapter 3–4 staging):
+- SHOTS.md §7b conflict resolved: the Chapter 3–4 rows, plus the Chapter 5 crossing row;
+- the merged index.html is byte-identical to a fresh build;
+- unit 25,762/0; validator clean;
+- browser: recorded on the next line.
+
+**Not verified:**
+- A person's review of the art and pacing.
+- Phones, Firefox and Safari; a 60 s idle; large text; TTS.
+- On a 390 × 844 screen Ren is drawn small, and the glasses are a few pixels.
+- The "Quest complete" notice shows over the first `ch6.ren` shot at 844 × 390 until it fades.
+- The dusk square shows for about 300 ms as the assembly closes.

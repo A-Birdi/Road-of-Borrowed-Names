@@ -3,7 +3,8 @@
 Scope: the Chapter 5 sequence `ch5.bell` (the drowned bell rings, `lf.bell_touch`; SHOTS.md §5), the faded passage
 `lf.boat_to_tower` filled by `ch5.boat` (SHOTS.md §7b), and the Chapter 6 sequence `ch6.toya` (Tōya's four words
 read in context, `sa.toya_read`; SHOTS.md §6), on the existing player `RB.sequence` (no change to the core, its kit,
-or the Chapter 1–2 files).
+or the Chapter 1–2 files). **Addendum** (after the lead's answers to the open questions): `ch6.ren`, the §8 insert
+in `sa.shelf_ren`'s open branch (`:ropen`; SHOTS.md §8.4) — see "Addendum: `ch6.ren`" at the end.
 
 Base: task branch `claude/stoic-sagan-n3jvgk` at `da9751c`. Work branch: `worktree-agent-af9f99b3ea940f299`.
 Environment: headless Chromium through the repository's Playwright; Linux; a shared 4-core machine (load average
@@ -22,7 +23,14 @@ browser), **stills** (images to look at, not assertions), **code review** (read,
 | `fe68694` | `tests/unit/sequence_ch56.test.mjs`; SHOTS.md §7b row and "As built" notes under §5 and §6 |
 | `d5ff4b8` | evidence stills (30 WebP, 0.83 MB); Kasane's hands in the light of their face |
 | `30f4a8f` | the test replays the kept memories read-only |
-| (this commit) | this report |
+| `2ad4915` | this report (wave 2 as merged in `b07c492`) |
+| `46ee8e7` | addendum: `ch6.ren` in `src/ui/43f_seq_ch6.js`; the ops in `sa.shelf_ren` (`:ropen` only) |
+| `aebe046` | addendum: `tests/e2e/sequence_chapters_56.mjs` — four `sa.shelf_ren` runs and the per-sequence checks for `ch6.ren` |
+| `d147cbf` | addendum: `tests/unit/sequence_ch56.test.mjs` — `ch6.ren` in the registry and the scene |
+| `038a0b6` | addendum: `ch6.ren` framing on a phone held upright and on its side |
+| `cd3ef1a` | addendum: 9 stills of `ch6.ren` (0.30 MB) |
+| `e7e3036` | addendum: SHOTS.md §8.4 "As built" |
+| (this commit) | addendum: this report's `ch6.ren` rows |
 
 ## What was built
 
@@ -105,15 +113,15 @@ own test solver through the real checker, except where noted):
 
 | Row | Status after this work | Evidence |
 |---|---|---|
-| HX40 | **Advanced** (branches of the three new sequences played: 11 runs). Other chapters' scenes not covered here. | browser test |
-| HX41 | **Advanced**: Chapter 5 (`ch5.bell`, 4 compositions) and Chapter 6 (`ch6.toya`, 5) now have integrated sequences. Chapters 3–4 belong to another worker. `ch5.boat` (the faded passage) has **one** composition: the passage has one line, and a second picture would have no line to open it — below the 3–6 asked of a sequence. | browser test, unit test, stills |
-| HX42 | **Done for the three sequences built**, as SHOTS.md §5, §6 and §7b plan them, with the deviations written down under "As built" (the hall framing and its four phases; the slip turned on the line that reveals its front; Kasane kneeling; the bell shot's three phases; the decide shot's `aside`). | code review against SHOTS.md; focal areas (browser test) |
-| HX43 | **Self-reviewed only.** Drawn in code in the game's pixel style; the changed states are held (the green flaked off, the bell gold, the windows lit, the water drawn back, the slip turned). No person has reviewed the art. Known weak points: Kasane's hands are small and plain; the pooled robe is a simple shape; the gong close-up's reflection is heavy; the wall stone is regular. | stills |
-| HX45 | **Not built.** The §8 audit's strongest candidate in these chapters is `sa.shelf_ren` on its open branch (`:ropen`): the teacher's face surfacing on the folio's paper is unreadable at tile scale. Recommended as a three-shot insert in `43f` (the folio opening; the face surfacing on its narration line; Ren with the glasses off). Not started, as asked: reported first. | code review |
-| HX46–HX50 | **Hold for the new sequences**: manual only (8 s idle, not 60 s), controls by click and key, Previous read-only, Skip asked and stopping at the challenge, Escape never skipping. | browser test |
-| HX51 | **Partial for the new sequences**: reduced motion holds each action's end at once; no `!shake` inside (validator, unit, browser). Sound-off, large text and a viewport change mid-shot were not tested. | browser test, unit test |
-| HX52 | **Done for the three sequences, checked by name**: the flags, items, quests and place after every branch; the bell gold in the last shot as the world draws it once rung; nobody drawn for Tōya; only the companion who is here. | browser test |
-| HX53 | **Done for the two kept sequences** (`ch5.bell`, `ch6.toya`; `ch5.boat` keeps none): compact beats, read-only replay with the same shots. | browser test |
+| HX40 | **Advanced** (branches of the four new sequences played: 11 runs, and 4 more for `sa.shelf_ren` in the addendum). Other chapters' scenes not covered here. | browser test |
+| HX41 | **Advanced**: Chapter 5 (`ch5.bell`, 4 compositions) and Chapter 6 (`ch6.toya`, 5; the addendum's `ch6.ren`, 3) now have integrated sequences. Chapters 3–4 belong to another worker. `ch5.boat` (the faded passage) has **one** composition: the passage has one line, and a second picture would have no line to open it — below the 3–6 asked of a sequence. | browser test, unit test, stills |
+| HX42 | **Done for the four sequences built**, as SHOTS.md §5, §6, §7b and §8.4 plan them, with the deviations written down under "As built" (the hall framing and its four phases; the slip turned on the line that reveals its front; Kasane kneeling; the bell shot's three phases; the decide shot's `aside`; for `ch6.ren`, the phases of the face and close shots). | code review against SHOTS.md; focal areas (browser test) |
+| HX43 | **Self-reviewed only.** Drawn in code in the game's pixel style; the changed states are held (the green flaked off, the bell gold, the windows lit, the water drawn back, the slip turned). No person has reviewed the art. Known weak points: Kasane's hands are small and plain; the pooled robe is a simple shape; the gong close-up's reflection is heavy; the wall stone is regular. `ch6.ren`: Ren's figure is small on a phone held upright (the portrait's own 96 px, as in Chapter 1); the glasses in the hands are a few pixels; the filing slip's marks are the same abstract blots as `ch6.toya`'s pages. | stills |
+| HX45 | **Built for `sa.shelf_ren`** (addendum, after the lead's go-ahead): `ch6.ren`, three shots on the open branch only (the folio opening; the face surfacing on its narration line, held through the challenge; Ren with the glasses off); "Leave it" and the path without Ren stay in the world. Other §8 candidates (§8.1–§8.3, §8.5–§8.8) not built. | browser test, unit test, stills |
+| HX46–HX50 | **Hold for the new sequences** (`ch6.ren` included): manual only (8 s idle, not 60 s), controls by click and key, Previous read-only, Skip asked and stopping at the challenge, Escape never skipping. | browser test |
+| HX51 | **Partial for the new sequences** (`ch6.ren` included): reduced motion holds each action's end at once; no `!shake` inside (validator, unit, browser). Sound-off, large text and a viewport change mid-shot were not tested. | browser test, unit test |
+| HX52 | **Done for the four sequences, checked by name**: the flags, items, quests and place after every branch (for `sa.shelf_ren`: `sa_ren_took` and the quest done on the open branch, `sa_ren_left` on "Leave it", `sa_ren_carried` and the folio carried without Ren); the bell gold in the last shot as the world draws it once rung; nobody drawn for Tōya; only the companion who is here. | browser test |
+| HX53 | **Done for the three kept sequences** (`ch5.bell`, `ch6.toya`, `ch6.ren`; `ch5.boat` keeps none): compact beats (9 of 9 for `ch6.ren`), read-only replay with the same shots. | browser test |
 | HX71 | **Advanced**: `lf.boat_to_tower` filled by `ch5.boat` — 5 of the 9 faded passages filled. Re-run from source on this build: lines still said in the dark only in `sg.genzo_wind` (1), `co.festival_begin` (4), `sb.quiet_morning` (1), `sb.next_day_inn` (1) — all already in the §7b table; none new. | browser test, unit test, stills; a node scan of every scene's `!fade out … !fade in` |
 
 ## Evidence
@@ -151,5 +159,73 @@ Suzu on the crossing, Ren with the bell for Chapter 6). Regenerate: `node tests/
    crossing; not done.
 4. `docs/expressive/scenes.json` / `tools/scene_manifest.mjs` were not touched: `lf.bell_touch` and `sa.toya_read`
    are already classed as illustrated; `lf.boat_to_tower` is not yet marked "faded passage filled".
-5. **§8 candidate**: `sa.shelf_ren` (`:ropen`) as above — say whether to build it.
+5. **§8 candidate**: `sa.shelf_ren` (`:ropen`) as above — say whether to build it. *(Answered: build it — done, see the addendum. Q1 accepted, Q2 one composition is fine, Q3 stays open with no API change.)*
 6. Kasane is written "they" in comments and here (the story's "their folio").
+
+## Addendum: `ch6.ren` — Ren's folio on the open branch (SHOTS.md §8.4, HX45)
+
+Built after the lead's answers. Base: the task branch at `b07c492` (wave 2 merged; this work branch was brought up to it
+with `git merge b07c492`, a fast-forward). Same environment as above (load average 6–9 during these runs).
+
+**What was built.**
+- `src/ui/43f_seq_ch6.js` (appended; nothing above it changed): `ch6.ren`, title {師|し} の {顔|かお} / "The teacher's
+  face", kept as a memory. Three compositions: `open` (one phase: Ren's bust before the Room of Set-Down Memories'
+  shelves, the folio's cover swinging open at their chest, one hand on the spine and one turning the cover); `face`
+  (`surface`, `smile`, `fade`: the open spread close, the cover's inside with Ushio's filing slip as abstract marks and a
+  red seal square; on the right-hand page the teacher's face — `sa_ushio`'s portrait turned to ink — surfaces on
+  "On the paper, a face surfaces", changes to the smile on Ushio's own line, and the voice's light goes out on "The voice
+  fades" while the face stays; held through the challenge `sa.ren_reply`); `ren` (`sad`, `smirk`, `glasses`: close on
+  Ren, sad, the smirk at the eyebrows, then the glasses lifted off to their hands — the portrait drawn without its
+  glasses, eyes half-lidded and down — and a cloth going round one lens, longer than it needs). No letters, kana or
+  kanji are drawn: the slip's marks are blots, the glasses two rims. Ren is "they" in comments, the memo and here.
+- `src/content/ch6/51_scenes_archive.js` (`sa.shelf_ren`): one `#` comment, `!sequence ch6.ren begin|end` and seven
+  `!shot` ops, all between `:ropen` and `:rleave`, after the branch's `!set`, `!quest` and `!music` (they run once, as
+  before); the sequence ends on the glasses line, before `!music sorrow`. "Take it back" falls through to `:ropen` and
+  "You decide" reaches it by its `!goto`; "Leave it" and the path without Ren ("Don't open it" / "Leave it here") never
+  start it. No line, branch or outcome changed: the unit test pins the scene's lines and state commands to their
+  counts at `b07c492` and the only additions to 2 `sequence` and 7 `shot` ops.
+- Framing (`038a0b6`): on a phone held upright Ren's bust sits low with the shoulders meeting the sheet, as Chapter 1
+  frames Hana (the first build floated it mid-screen over a long column of robe); on a phone on its side with the
+  challenge's tall sheet up, the face page rises only until the face's brow meets the top (the first test run caught
+  the face's focal area at y = −8 there; see Runs).
+- `docs/expressive/SHOTS.md` §8.4: "As built". `docs/expressive/scenes.json` already classes `sa.shelf_ren` as an
+  Illustrated sequence; not touched.
+
+**Runs** (on the build of `e7e3036`, whose `index.html` is that of `038a0b6`; browser tests one at a time):
+
+| Check | Kind | Result |
+|---|---|---|
+| `node tools/build.mjs` | build | 359 source files; the committed `index.html` is current |
+| `node tools/validate.mjs` | content validator | no errors (15 warnings, the same as before; none from this work) |
+| `node tests/run-unit.mjs` | unit | **25,109 passed, 0 failed** (25,091 before + 18 new in `sequence_ch56.test.mjs`, now 58) |
+| `tests/e2e/sequence_chapters_56.mjs` (all four sequences) | browser | **196 passed, 0 failed** (6 m 7 s; 144 as before + 52 for `ch6.ren`) |
+| `tests/e2e/sequence_chapters_56.mjs --only ch6.ren` | browser | first run (before `038a0b6`): 51 passed, **1 failed** — 844×390, the `face` shot's focal area at y = −8 under the challenge's tall sheet; fixed in `038a0b6`. After it: 52 passed, 0 failed. One later run failed the 8 s idle check with the runner stuck before the sequence's first line (a 30 s `page.click` timeout; load average 8); rerun alone: **52 passed, 0 failed**; no assertion changed |
+| `tests/e2e/sequence_chapters_56.mjs --shots-only --only ch6.ren` | browser + stills | 6 passed, 0 failed; wrote the 9 stills |
+| `tests/e2e/story_ch6.mjs` (five runs; `ren/A` answers "Take it back", so plays `ch6.ren` in auto mode; `ren/F` answers "Leave it"; Mio and Suzu carry the folio home; Nao leaves it) | browser | all ok (37/37, 36/36, 36/36, 36/36, 37/37) |
+| `tests/e2e/sequence_manual.mjs --quick` | browser | 64 passed, 0 failed |
+| `tests/e2e/sequence_dev.mjs` | browser | 9 passed, 0 failed (contact sheet: 58 pictures in 8 sequences, no drawing errors at three sizes) |
+
+**What the browser test adds for `ch6.ren`** (synthetic start in `sa.memories` with the chapter's flags, `sa_main` 4
+and `ren_ushio` 1; real clicks; the challenge answered by the game's test solver through the real checker):
+- Ren, "Take it back": shots `open → face → ren`, every phase reached on its line, the challenge met once inside the
+  sequence, `sa_ren_took` and `ren_ushio` done, still in `sa.memories` with the world back; the Shared memory kept (9 of
+  9 beats, no picture) and replayed read-only with the same shots and no campaign change; no shake; nothing of the
+  player left; no page error.
+- Ren, "You decide" (Ren's own line, then the `!goto ropen`): the same shots, phases, challenge and state.
+- Ren, "Leave it. You already have the lessons." and Mio, "Don't open it. Take it home to Ren.": no shot, no challenge,
+  `sa_ren_left` / `sa_ren_carried` with the folio in the bag.
+- 8 s idle (same line, same shot, holding); Previous (P), Replay and Next read-only; Escape asks; Keep watching keeps the
+  line; Skip asks first and a confirmed skip stops at the challenge, then runs to the end with the state lines once and
+  the sequence counted once; reduced motion (each line's shot at its end state at once; no shake).
+- 1280×720, 390×844 and 844×390: every line's focal area above the sheet's live top.
+
+**Evidence.** `docs/screenshots/sequences/ch6.ren_{open,face,ren}_{1280x720,390x844,844x390}.webp` (9 files,
+0.30 MB; 39 stills in this wave, 1.13 MB): each shot at its hold in the built game with Ren, the sheet and the controls
+on screen. In `open` the game's own "Quest complete" notice (from the branch's `!quest`, just before the sequence)
+is still on screen; at 844×390 it covers Ren's face until it fades. Regenerate: `node
+tests/e2e/sequence_chapters_56.mjs --shots-only --only ch6.ren`.
+
+**Not verified** (in addition to the list above): a person's review of the three shots; the "You decide" branch's
+memory replay (replayed for "Take it back" only); the Foundations profile on this scene (every run used the test
+solver); `sa.shelf_ren` reached from `sa.memories_enter` in a played campaign other than `story_ch6.mjs`'s auto mode;
+a 60-second idle; sound off, large text, a viewport change mid-shot.
