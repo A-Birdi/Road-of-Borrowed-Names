@@ -4,12 +4,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene atlas.intro.first
+# Staged (in the Lantern Hall, talking to Tsuru): you and your companion turn to Tsuru. She looks off down the road
+# (the unwritten roads and their lost names), counts the changes on her fingers, and points down: the road itself
+# sets you back down here. The companion's one answer in their own way (Nao's hand to the satchel, Mio's nod to
+# Tsuru, Ren's glasses, Suzu's laugh).
+!look pc tsuru
+?(comp) !look comp tsuru
+!gesture tsuru lookroad
 tsuru: {書|か}かれて いない {道|みち} に は 、 {迷子|まいご} の {名前|なまえ} が まだ いる 。 {帰|かえ}り{道|みち} が {分|わ}からない の さ 。 || Out on the unwritten roads there are still lost names. They can't find their way home.
+!gesture tsuru count
 tsuru: {道|みち} は {歩|ある}く たび に {形|かたち} が {変|か}わる 。 {霧|きり} の {日|ひ} も あれば 、 {潮|しお} の {引|ひ}いた {日|ひ} も ある 。 {好|す}きな {道|みち} を {選|えら}び な 。 || They change every time you walk them. Some days there's fog, some days the tide's out. Pick whichever road you like.
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp[smirk]: {届|とど}け{損|そこ}ねた {名前|なまえ} か 。 {私|わたし} の {仕事|しごと} だ な 。 || Undelivered names. Sounds like my line of work.
+?(comp=mio) !gesture comp nod tsuru
 ?(comp=mio) comp: {迷|まよ}って いる なら 、 {迎|むか}え に {行|い}かない と ね 。 || If they're lost, someone should go and fetch them.
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: {道|みち} を {照|て}らす の は {灯守|ひもり} の {仕事|しごと} です 。 {方角|ほうがく} は …… お{任|まか}せ します 。 || Lighting roads is a lantern keeper's job. The direction, I'll… leave to you.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {毎回|まいかい} {筋書|すじが}き が {違|ちが}う {舞台|ぶたい} ？ {最高|さいこう} じゃない 。 || A stage where the script changes every night? That's the best kind.
+!gesture tsuru point down
 tsuru: {無理|むり} は しない こと 。 {危|あぶ}なく なったら 、 {道|みち} の {方|ほう} が あんた たち を ここ へ {返|かえ}して くれる 。 || Don't overdo it. If it turns dangerous, the road itself will set you back down here.
 tsuru: {途中|とちゅう} の {野営地|やえいち} から {引|ひ}き{返|かえ}す こと も できる 。 {拾|ひろ}った もの は 、 {持|も}って {帰|かえ}って いい よ 。 || You can turn back at a camp along the way. Whatever you find, you may bring home.
 !note atlas_about atlas_unmoored
@@ -152,7 +165,14 @@ narr: {道|みち} の {先|さき} に 、 {灯|ひ} の ついた {灯籠|と�
 narr: {道|みち} を ふさいで いた もの が {退|しりぞ}き 、 {白紙|はくし} の {幕|まく} が {上|あ}がった 。 || What was blocking the way withdraws, and the blank curtain lifts.
 
 @scene atlas.camp
+# Staged (at the camp, by the fire: no position is assumed): you both sit down where you stand and turn to each
+# other; the companion's camp thought is their own line, with no gesture over it (the talks at the fire are
+# pages.camp and the road talk); heading home, or going on, you both get up.
 !hook atlas_camp rest
+!pose pc sit
+?(comp) !pose comp sit
+?(comp) !look pc comp
+?(comp) !look comp pc
 narr: {焚|た}き{火|び} に {火|ひ} を {入|い}れて 、 {二人|ふたり} で {腰|こし} を {下|お}ろした 。 || You get the fire going again, and the two of you sit down.
 ?(var.atlas_esc=1) narr: {小|ちい}さな {灯|あか}り も 、 {火|ひ} を {分|わ}けて もらって {明|あか}るく なった 。 || The little lantern takes a light from the fire and brightens.
 ?(comp=nao&var.atlas_camp_i=0) comp: {前|まえ} は 、 {宛先|あてさき} の ない {手紙|てがみ} が {一番|いちばん} {怖|こわ}かった 。 {今|いま} は 、 {宛先|あてさき} を {探|さが}す の が {楽|たの}しい 。 || I used to be most afraid of letters with no address. Now finding the address is the fun part.
@@ -180,10 +200,14 @@ narr: {焚|た}き{火|び} に {火|ひ} を {入|い}れて 、 {二人|ふた
 !call pages.road.camp
 !goto menu
 :home
+!pose pc -
+?(comp) !pose comp -
 ?(comp) comp: {引|ひ}き{返|かえ}す の も 、 {旅|たび} の うち だ よ 。 || Turning back is part of travelling too.
 !hook atlas_extract early
 !end
 :go
+!pose pc -
+?(comp) !pose comp -
 narr: {焚|た}き{火|び} を {消|け}して 、 {立|た}ち{上|あ}がった 。 {道|みち} は 、 また {二|ふた}つ に {分|わ}かれて いる 。 || You put out the fire and stand. The road divides again.
 
 @scene atlas.climax
@@ -243,13 +267,26 @@ narr: {小|ちい}さな {灯|あか}り は 、 {最後|さいご} まで {消|
 narr: {灯|あか}り は あなた の {腰|こし} に {収|おさ}まって 、 {動|うご}かなく なった 。 {一緒|いっしょ}に {帰|かえ}る つもり らしい 。 || It settles at your hip and stays there. It seems to mean to come home with you.
 
 @scene atlas.home
+# Staged (home in the Lantern Hall, where the road set you down): you and your companion turn to each other. Sent
+# back (a defeat), you find yourself sitting on the floor: Nao's hand to the satchel (the parcel's safe), Mio bends
+# to you (are you all right?), Ren tends the lamp (the light didn't go out), Suzu's two showman's hands (tonight's
+# show is cancelled); you get up as the name caught on the way down comes back. Walked to the end: Nao's and Mio's
+# nod, Ren writes the road on the map, Suzu's small celebration; turned back, a nod. (Then pages.home.)
+?(comp) !look pc comp
+?(comp) !look comp pc
 ?(var.atlas_kind=1) narr: {気|き}が つく と 、 {灯|あか}り{堂|どう} の {中|なか} に {立|た}って いた 。 {手|て} の {中|なか} の {物|もの} の {重|おも}さ だけ が 、 {旅|たび} が {本当|ほんとう} だった と {教|おし}えて くれる 。 || You find yourselves standing in the Lantern Hall. Only the weight of what you're holding says the journey was real.
 ?(var.atlas_kind=2) narr: {焚|た}き{火|び} の {煙|けむり} の {匂|にお}い を まとった まま 、 {灯|あか}り{堂|どう} に {戻|もど}った 。 || You come back into the Lantern Hall still smelling of campfire smoke.
+?(var.atlas_kind=3) !pose pc sit
 ?(var.atlas_kind=3) narr: {道|みち} が {折|お}り{畳|たた}まれ 、 {気|き}が つく と {灯|あか}り{堂|どう} の {床|ゆか} に {座|すわ}り{込|こ}んで いた 。 || The road folded up under you. You find yourself sitting on the floor of the Lantern Hall.
+?(var.atlas_kind=3&comp=nao) !gesture comp strap
 ?(var.atlas_kind=3&comp=nao) comp: …… {配達|はいたつ} {失敗|しっぱい} だ 。 でも 、 {荷物|にもつ} は {無事|ぶじ} だ よ 。 {覚|おぼ}えた こと は 、 {全部|ぜんぶ} ここ に ある 。 || …Delivery failed. But the parcel's safe. Everything you learned is still here.
+?(var.atlas_kind=3&comp=mio) !gesture comp bend pc
 ?(var.atlas_kind=3&comp=mio) comp: {大丈夫|だいじょうぶ} ？ …… {少|すこ}し {休|やす}もう 。 {道|みち} は また {開|ひら}く から 。 || Are you all right? …Let's rest a while. The road will open again.
+?(var.atlas_kind=3&comp=ren) !gesture comp tendlamp
 ?(var.atlas_kind=3&comp=ren) comp: {灯|ひ} は {消|き}えて いません 。 {私|わたし} たち も です 。 || The light didn't go out. Nor did we.
+?(var.atlas_kind=3&comp=suzu) !gesture comp size
 ?(var.atlas_kind=3&comp=suzu) comp: {今日|きょう} の {公演|こうえん} は {中止|ちゅうし} ！ {明日|あした} また {幕|まく} を {上|あ}げよう 。 || Tonight's show is cancelled! We'll raise the curtain again tomorrow.
+?(var.atlas_kind=3) !pose pc -
 ?(var.atlas_kind=3) narr: {落|お}ちて いく {途中|とちゅう} で 、 {誰|だれ}か の {名前|なまえ} が {耳|みみ} に {残|のこ}った 。 {手帳|てちょう} に {書|か}いて おこう 。 || On the way down, someone's name stayed in your ear. Better write it in the notebook.
 ?(var.atlas_names>=1) narr: {帰|かえ}した {名前|なまえ} は 、 {手帳|てちょう} に {書|か}き{留|と}めて ある 。 || The names you sent home are written in your notebook.
 ?(var.atlas_relics>=1) narr: {道|みち} で {拾|ひろ}った {物|もの} は 、 いつの{間|ま}に か {手|て} から {消|き}えて いた 。 {持|も}ち{主|ぬし} の {所|ところ} へ {帰|かえ}った の だろう 。 || The things you picked up on the road have gone from your hands. Home to their owners, presumably.
@@ -262,10 +299,15 @@ narr: {灯|あか}り は あなた の {腰|こし} に {収|おさ}まって �
 ?(var.atlas_unlock=1) narr: {灯|あか}り{堂|どう} の {灯籠|とうろう} に 、 {新|あたら}しい {道|みち} の {名前|なまえ} が {浮|う}かんで いる 。 {道|みち} の {終|お}わり で {待|ま}つ {者|もの} も 、 {変|か}わる かも しれない 。 || A new road-name glows on the Lantern Hall's lanterns. Whoever waits at the end of the road may be different next time.
 ?(var.atlas_unlock=2) narr: {道|みち} の {上|うえ} の {者|もの} たち が 、 {組|く}み{合|あ}わさって {現|あらわ}れる よう に なった らしい 。 || The things on the roads have begun to turn up in new combinations.
 ?(var.atlas_unlock=3) narr: これ から は 、 {道|みち} の {条件|じょうけん} を {二|ふた}つ {重|かさ}ねて {歩|ある}く こと も できる 。 || From now on you can walk a road with two conditions at once.
+?(var.atlas_kind=1&comp=nao) !gesture comp nod pc
 ?(var.atlas_kind=1&comp=nao) comp: {配達|はいたつ} {完了|かんりょう} 。 …… {悪|わる}くない {一日|いちにち} だった 。 || Delivered. …Not a bad day.
+?(var.atlas_kind=1&comp=mio) !gesture comp nod pc
 ?(var.atlas_kind=1&comp=mio) comp[smile]: お{茶|ちゃ} 、 {淹|い}れる ね 。 {今日|きょう} は {砂糖|さとう} も {入|い}れよう 。 || I'll make tea. Sugar in it today.
+?(var.atlas_kind=1&comp=ren) !gesture comp write
 ?(var.atlas_kind=1&comp=ren) comp: {地図|ちず} に {道|みち} を {一本|いっぽん} {書|か}き{足|た}しました 。 {方角|ほうがく} は 、 {後|あと} で {確|たし}かめて ください 。 || I've added a road to the map. Please check the directions later.
+?(var.atlas_kind=1&comp=suzu) !gesture comp celebrate
 ?(var.atlas_kind=1&comp=suzu) comp[laugh]: {本日|ほんじつ} の {公演|こうえん} 、 これ に て {終幕|しゅうまく} ！ || And that concludes today's performance!
+?(var.atlas_kind=2&comp) !gesture comp nod pc
 ?(var.atlas_kind=2&comp) comp: {引|ひ}き{返|かえ}す {勇気|ゆうき} も 、 {大事|だいじ} だ よ 。 || It takes nerve to turn back, too.
 !call pages.home
 

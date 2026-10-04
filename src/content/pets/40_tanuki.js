@@ -202,29 +202,45 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: {見|み}て {見|み}て 、 たぬき ! {木|き} の {下|した} で 、 {出|で}たり {入|はい}ったり 。 || Look, look — a tanuki! In and out under the trees.
 
 @scene pets.tanuki.tanuki
+# Staged: you lean in to watch the tanuki try to get back into its hollow; your companion's own answer (Nao's
+# glance aside, Mio points to the papers before its bed, Ren points to the gap in the trees, Suzu laughs at the
+# confetti). Once it is settled: you look at it, and waiting, you sit down at the edge of the path and stay still
+# while it comes out to sit beside you; then Nao's nod, Mio's laugh behind her hand, Ren's nod, Suzu's small
+# celebration; not now, you get up and look at its hollow.
 !if var.pet_tanuki>=2 -> settled
+!gesture pc observe 6,3 hold
 narr: たぬき が 、 {大|おお}きな {木|き} の {根元|ねもと} の くぼみ に {戻|もど}ろう と する 。 {風|かぜ} が {吹|ふ}く と 、 {草|くさ} の {上|うえ} の {紙|かみ} が {舞|ま}い{上|あ}がって 、 たぬき は {後|うし}ろ に {下|さ}がって しまう 。 || A tanuki keeps trying to get back to the hollow at the foot of the big tree. When the wind blows, the papers in the grass fly up, and it backs away.
+?(party=nao) !gesture nao aside
 ?(party=nao) nao: {紙|かみ} が {苦手|にがて} な たぬき 、 か 。 {俺|おれ} と は {気|き} が {合|あ}わない な 。 || A tanuki that can't stand paper. We wouldn't get on.
+?(party=mio) !gesture mio point 5,4
 ?(party=mio) mio: {寝床|ねどこ} の {前|まえ} が 、 {散|ち}らかって いる の ね 。 || The front of its bed is all cluttered.
+?(party=ren) !gesture ren point 5,2
 ?(party=ren) ren: {風|かぜ} は どこ から {入|はい}って くる の でしょう 。 {木|き} の {間|あいだ} か な 。 || Where is the wind getting in? Between the trees, perhaps.
+?(party=suzu) !gesture suzu laugh
 ?(party=suzu) suzu: {出番|でばん} の たびに {紙吹雪|かみふぶき} 。 {本人|ほんにん} は {嬉|うれ}しくない みたい 。 || Confetti at every entrance. It doesn't seem pleased.
 !var pet_tanuki = 1
 !end
 :settled
+!gesture pc observe 6,3
 narr: たぬき は くぼみ の {中|なか} で {丸|まる}く なって いる 。 {目|め} だけ が こちら を {見|み}て いる 。 || The tanuki is curled up in the hollow. Only its eyes are on you.
 !choice
 * {道|みち} の {端|はし} に {座|すわ}って 、 {静|しず}か に {待|ま}つ || Sit at the edge of the path and wait quietly. -> wait
 * そっと して おく || Leave it be. -> end
 :wait
+!pose pc sit
 narr: {道|みち} の {端|はし} に {腰|こし} を {下|お}ろす 。 {葉|は} が {一枚|いちまい} 、 {落|お}ちて くる 。 || You sit down at the edge of the path. A leaf drifts down.
 narr: もう {一枚|いちまい} 。 {遠|とお}く で 、 {鳥|とり} が {鳴|な}いた 。 || Then another. Far off, a bird calls.
 !hook pet_vig tanuki peek
 narr: くぼみ から 、 {黒|くろ}い {鼻|はな} が {少|すこ}し だけ {出|で}て きた 。 {鼻|はな} が ぴくぴく {動|うご}く 。 || A black nose edges out of the hollow. It twitches.
 narr: たぬき は ゆっくり {出|で}て きて 、 あなた の {靴|くつ} の {匂|にお}い を かいで 、 {隣|となり} に {座|すわ}った 。 {座|すわ}り{方|かた} が 、 あなた と そっくり だ 。 || The tanuki comes out slowly, sniffs your boots, and sits down beside you. It sits exactly the way you do.
 !hook pet_vig tanuki near
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao[smirk]: まね が {上手|うま}い な 。 || Good at copying, isn't it.
+?(party=mio) !gesture mio laugh
 ?(party=mio) mio[smile]: {前足|まえあし} を そろえて いる 。 お{行儀|ぎょうぎ} が いい の ね 。 || Front paws together. Very well-mannered.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {待|ま}つ こと が 、 {一番|いちばん} の {言葉|ことば} でした ね 。 || Waiting said more than anything we could have.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {新人|しんじん} {役者|やくしゃ} 、 {入団|にゅうだん} {希望|きぼう} ! || A new player, hoping to join the company!
 narr: たぬき は あなた を {見上|みあ}げて 、 {首|くび} を かしげた 。 {一緒|いっしょ} に {来|く}る {気|き} が ある よう だ 。 || The tanuki looks up at you and tilts its head. It seems willing to come along.
 !choice
@@ -235,6 +251,8 @@ narr: たぬき は あなた を {見上|みあ}げて 、 {首|くび} を か
 !end
 :notnow
 !hook pet_vig tanuki back
+!pose pc -
+!gesture pc observe 6,3
 narr: たぬき は くぼみ に {戻|もど}って 、 また {丸|まる}く なった 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The tanuki goes back into its hollow and curls up again. It will be here whenever you come by.
 
 @scene pets.tanuki.empty
@@ -246,8 +264,13 @@ narr: {木|き} と {木|き} の {間|あいだ} に 、 {隙間|すきま} が
 ?(var.pet_tanuki<1) !var pet_tanuki = 1
 
 @scene pets.tanuki.papers
+# Staged: you lean in to the loose papers by the hollow; stacking them under a flat stone, you crouch to them (a
+# kneel); tucking them into the rock's lee, you bend to it. Your companion's own answer (Nao's nod at a bundle
+# ready for delivery, Mio points to the clear way into the hollow, Ren's open hand for someone's writing kept,
+# Suzu's small celebration), and you turn to watch the tanuki curl up. Tidied already, you look at them.
 !if var.pet_tanuki>=2&!pet.tanuki -> tanuki
 !if var.pet_tanuki>=2 -> fixed
+!gesture pc observe 5,4 hold
 narr: {古|ふる}い {祭|まつ}り の {貼|は}り{紙|がみ} が 、 {何枚|なんまい} か {草|くさ} の {上|うえ} に {落|お}ちて いる 。 {雨|あめ} で やわらかく なって いて 、 {風|かぜ} が {来|く}る たびに {浮|う}き{上|あ}がる 。 || A few old festival notices lie in the grass, soft with rain. Every time the wind comes, they lift.
 !var pet_tanuki = 1
 !choice
@@ -255,25 +278,33 @@ narr: {古|ふる}い {祭|まつ}り の {貼|は}り{紙|がみ} が 、 {何�
 * {紙|かみ} を まとめて 、 {岩|いわ} の {陰|かげ} に {入|い}れる || Gather them up and tuck them into the rock's lee. -> lee
 * そのまま に して おく || Leave them for now. -> end
 :stone
+!gesture pc kneel 5,4
 narr: {紙|かみ} を {一枚|いちまい} ずつ {拾|ひろ}って {重|かさ}ね 、 {平|たい}らな {石|いし} を {上|うえ} に {置|お}く 。 {風|かぜ} が {来|き}て も 、 もう {動|うご}かない 。 || You pick up the sheets one by one, stack them, and set a flat stone on top. The wind comes, and they no longer move.
 !var pet_tanuki = 2
 !set pet_tanuki_by_stone
 !goto after
 :lee
+!gesture pc bend 5,4
 narr: {紙|かみ} を まとめて 、 {岩|いわ} の {陰|かげ} に {差|さ}し{込|こ}む 。 {風|かぜ} は {岩|いわ} の {上|うえ} を {通|とお}り{過|す}ぎて いく 。 || You gather the sheets and slip them into the lee of the rock. The wind passes over the top of it.
 !var pet_tanuki = 2
 !set pet_tanuki_by_lee
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: {配達|はいたつ} {前|まえ} の {手紙|てがみ} みたい に なった な 。 || Looks like a bundle ready for delivery.
+?(party=mio) !gesture mio point 6,3
 ?(party=mio) mio: {片付|かたづ}いた ね 。 {入|はい}り{口|ぐち} が すっきり した 。 || That's tidy. The way in is clear now.
+?(party=ren) !gesture ren palm
 ?(party=ren) ren: {紙|かみ} は {飛|と}ばさず に 、 {残|のこ}して おきましょう 。 {誰|だれ} か の {字|じ} です から 。 || Better to keep the papers than let them blow away. Someone wrote them.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {紙吹雪|かみふぶき} 、 {片付|かたづ}け {完了|かんりょう} ! || Confetti cleared!
+!look pc 6,3
 narr: {風|かぜ} が {吹|ふ}いて も 、 もう {何|なに} も {舞|ま}わない 。 たぬき が くぼみ に {入|はい}って 、 {丸|まる}く なった 。 || The wind blows and nothing flies any more. The tanuki slips into its hollow and curls up.
 !end
 :tanuki
 !call pets.tanuki.tanuki
 !end
 :fixed
+!gesture pc observe 5,4
 ?(pet_tanuki_by_lee) narr: {紙|かみ} は {岩|いわ} の {陰|かげ} に まとまって いる 。 || The papers are gathered in the rock's lee.
 ?(!pet_tanuki_by_lee) narr: {紙|かみ} は {石|いし} の {下|した} に きちんと {重|かさ}なって いる 。 || The papers lie neatly stacked under the stone.
 `, 'pets/tanuki');

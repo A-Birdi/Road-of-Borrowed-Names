@@ -38,25 +38,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene cs.view_window
+# Staged: you lean in to the sketch pinned in the window; Genzō points up at it as he tells of the artist and
+# you turn to him; he shakes his head: it matches nowhere. Lent, he steps up beside you and hands you the
+# sketch, then holds up the white chart paper. Your companion's own answer (Nao looks between you and the
+# window, Mio leans in to the thin paper, Ren's open hand, Suzu presents the stage with both hands). Once lent,
+# you look at the pinholes; after the case, Genzō's nod.
 !if case.view -> lent
+!gesture pc observe 6,2 hold
 narr: {窓|まど} に 、 {薄|うす}い {紙|かみ} の {絵|え} が {留|と}めて ある 。 {外|そと} の {光|ひかり} が {透|す}けて 、 {鉛筆|えんぴつ} の {線|せん} が {浮|う}かんで {見|み}える 。 || A sketch on thin paper is pinned in the window. The light outside shines through it and the pencil lines seem to float.
 narr: {左|ひだり} から 、 {枯|か}れ{木|き} 、 {小|ちい}さな {祠|ほこら} 、 {柱|はしら} の {上|うえ} の {灯|あか}り 。 {雪|ゆき} の {斜面|しゃめん} らしい 。 || From left to right: a bare tree, a little shrine, a lamp on a post. A snowy slope, by the look of it.
 !hook case_clue view.sketch
+!look pc genzo
+!gesture genzo point 6,2
 genzo: {旅|たび} の {絵描|えか}き が {置|お}いて いった ん だ 。 {北|きた} の {道|みち} の 、 {座|すわ}って {休|やす}む {場所|ばしょ} から {描|か}いた …… と {言|い}って いた か な 。 || A travelling artist left it. Drew it from somewhere on the road north where you sit and rest… or so I think she said.
+!look genzo pc
+!gesture genzo shake
 genzo[think]: だが 、 どこ の {景色|けしき} とも {合|あ}わん 。 {俺|おれ} は {北|きた} の {道|みち} を {何度|なんど} も {歩|ある}いた が な 。 || Doesn't match anywhere, though. And I've walked the road north plenty of times.
 !hook case_clue view.genzo
 !choice
 * {貸|か}して ください || May I borrow it? -> lend
 * {見|み}る だけ に する || Just look -> end
 :lend
+!walkto genzo 5 3 right
+!prop genzo paper
+!gesture genzo handover pc
+!gesture pc receive genzo
 genzo: {持|も}って いけ 。 {描|か}かれた {場所|ばしょ} が {分|わ}かったら 、 そこ に {返|かえ}して やれ 。 {絵|え} の ほう が {喜|よろこ}ぶ 。 || Take it. If you find where it was drawn, give it back to the place. The picture'll like that better.
+!gesture genzo present prop=paper
 genzo: それ と 、 これ 。 {海図|かいず} の {白|しろ}い {紙|かみ} だ 。 {下|した} に {敷|し}けば 、 よく {見|み}える 。 || And this: white chart paper. Lay it underneath and you'll see it better.
 !give cs_sketch
 !set cs_view_backing
 !hook case_open view
+?(comp=nao) !gesture comp lookbetween pc and=6,2
 ?(comp=nao) comp: {描|か}いた {人|ひと} の {名前|なまえ} も {場所|ばしょ} も ない {絵|え} か 。 {宛名|あてな} の ない {手紙|てがみ} みたい だ な 。 || No name, no place. Like a letter with no address.
+?(comp=mio) !gesture comp observe pc
 ?(comp=mio) comp: {紙|かみ} が とても {薄|うす}い です ね 。 {破|やぶ}らない よう に 、 {気|き} を つけます 。 || The paper's so thin. I'll be careful not to tear it.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {景色|けしき} は 、 {見|み}る {場所|ばしょ} で {変|か}わります 。 {灯|ひ} の {道|みち} も 、 {上|のぼ}り と {下|くだ}り で は {別|べつ} の {道|みち} です から 。 || A view changes with where you stand. Even a lantern road is a different road going up than coming down.
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp: {舞台|ぶたい} も ね 、 {客席|きゃくせき} から と {袖|そで} から じゃ 、 {全然|ぜんぜん} {違|ちが}って {見|み}える の よ 。 || A stage looks completely different from the seats than from the wings, you know.
 !choice
 * {記録|きろく} を {見|み}る || Look at the case record -> page
@@ -65,14 +84,22 @@ genzo: それ と 、 これ 。 {海図|かいず} の {白|しろ}い {紙|か
 !hook case_page view
 !end
 :lent
+!gesture pc observe 6,2
 narr: {窓|まど} に は 、 {絵|え} を {留|と}めて いた {小|ちい}さな {穴|あな} だけ が {残|のこ}って いる 。 || Only the pinholes where the sketch hung are left in the window.
+?(case.view=done) !gesture genzo nod pc
 ?(case.view=done) genzo[smile]: {星|ほし} の {石段|いしだん} か 。 {上|のぼ}った こと は なかった な 。 {膝|ひざ} が {許|ゆる}せば 、 {一度|いちど} {座|すわ}って みる か 。 || The Star Stair, eh. Never been up it. If my knees allow, maybe I'll go and sit there once.
 
 @scene cs.view_note
+# Staged (at the inn's book pile; the Chapter 3–4 pass's proposal): you bend to the pile and take up the
+# guestbook, and read the old page with it in your hands (thin paper, the leaf mark, the axis seen from the back);
+# Suzu, if with you, leans in to look at the leaf drawn instead of a name.
+!gesture pc bend 5,2
 narr: {宿|やど} の {客|きゃく} が {書|か}き{残|のこ}す {帳面|ちょうめん} 。 {古|ふる}い {頁|ページ} に 、 {丁寧|ていねい} な {字|じ} で {書|か}いた もの が ある 。 || The inn's guestbook, where travellers leave a few lines. On an old page, something in a careful hand.
+!gesture pc read prop=book hold
 narr: 「 {薄|うす}い {紙|かみ} に {描|か}いて います 。 {表|おもて} の {隅|すみ} に 、 {葉|は} の {印|しるし} を {押|お}します 。 {軸|じく} は {左|ひだり} 。 」 || "I draw on thin paper. In a front corner I press my leaf mark, stem to the left."
 narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ} を {向|む}いて 、 へこんで {見|み}えます 。 」 {名前|なまえ} の {代|か}わり に 、 {小|ちい}さな {葉|は} の {絵|え} 。 || "From the back, the stem points right, and the mark looks sunken." Instead of a name, a little drawing of a leaf.
 !hook case_clue view.note
+?(comp=suzu) !gesture comp observe 5,2
 ?(comp=suzu) comp[smile]: {名前|なまえ} の {代|か}わり に {葉|は}っぱ 。 {粋|いき} な {署名|しょめい} ね 。 || A leaf instead of a name. A stylish signature.
 !if !case.view -> end
 !choice
@@ -82,6 +109,9 @@ narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ}
 !hook case_page view
 
 @scene cs.view_seat
+# Staged: sitting a while, you look up the stair (north) as the view is described; holding up the sketch as it hung
+# in the window, you hold it up before you; turned over, you turn it in your hands to look; leaving it here, you
+# reach to set it on the post beside the seat, and your companion nods.
 !call sb.path_bench
 !choice
 * しばらく {座|すわ}って {眺|なが}める || Sit and look out a while -> look
@@ -90,14 +120,19 @@ narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ}
 * [item.cs_sketch&case.view=done&!cs_view_framed] {絵|え} を ここ に {残|のこ}す || Leave the sketch here, where it was drawn -> frame
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad up
 !hook cs_look seat
 !end
 :back
+!prop pc paper
+!gesture pc present prop=paper
 !hook cs_holdup seat back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!gesture pc check prop=paper
 !hook cs_holdup seat front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -109,10 +144,15 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !take cs_sketch
 !set cs_view_framed
 !sfx discover
+!prop pc paper
+!gesture pc handover 11,36
 narr: {腰掛|こしか}け の {横|よこ} の {柱|はしら} に 、 {小|ちい}さな {額|がく} を {作|つく}って {絵|え} を {納|おさ}めた 。 {表|おもて} を {景色|けしき} の ほう へ {向|む}けて 。 || On the post beside the seat you set the sketch in a small frame, its face turned towards the view.
+?(comp) !gesture comp nod pc
 ?(comp) comp[smile]: {絵|え} も 、 やっと {帰|かえ}って きた ね 。 || The picture's finally come home.
 
 @scene cs.view_west
+# Staged: looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before
+# you, facing the view; turned over, you turn it in your hands to look.
 narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {誰|だれ} か が ここ に {立|た}って 、 {景色|けしき} を {見|み}る らしい 。 || A flat stone, swept clear of snow. Someone seems to stand here to look at the view.
 !choice
 * {景色|けしき} を {見|み}る || Look out -> look
@@ -120,14 +160,21 @@ narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {�
 * [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad right
 !hook cs_look west
 !end
 :back
+!prop pc paper
+!look pc right
+!gesture pc present prop=paper
 !hook cs_holdup west back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!look pc right
+!gesture pc check prop=paper
 !hook cs_holdup west front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
@@ -136,6 +183,8 @@ narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯
 !call cs.view_solved
 
 @scene cs.view_east
+# Staged: looking out, you turn back west along the slope; holding up the sketch as it hung, you hold it up
+# before you, facing the view; turned over, you turn it in your hands to look.
 narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {下|した} の {道|みち} が よく {見|み}える 。 || A flat stone, swept clear of snow. You can see the lower path well from here.
 !choice
 * {景色|けしき} を {見|み}る || Look out -> look
@@ -143,14 +192,21 @@ narr: {雪|ゆき} を {払|はら}った {平|たい}らな {石|いし} 。 {�
 * [item.cs_sketch&case.view=open] {絵|え} を {裏返|うらがえ}して かざす || Hold up the sketch turned over -> front
 * {先|さき} へ {進|すす}む || Move on -> end
 :look
+!gesture pc lookroad left
 !hook cs_look east
 !end
 :back
+!prop pc paper
+!look pc left
+!gesture pc present prop=paper
 !hook cs_holdup east back
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.
 !end
 :front
+!prop pc paper
+!look pc left
+!gesture pc check prop=paper
 !hook cs_holdup east front
 !if var._res=1 -> match
 narr: {絵|え} と {景色|けしき} は 、 {重|かさ}ならない 。 {灯|あか}り と {祠|ほこら} と {枯|か}れ{木|き} の {並|なら}び が {違|ちが}う 。 || The sketch and the view don't line up: the lantern, the shrine and the bare tree are in a different order.

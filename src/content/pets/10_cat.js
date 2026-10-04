@@ -164,32 +164,49 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: ね 、 {大工|だいく} さん の {家|いえ} の {横|よこ} 。 {猫|ねこ} が {出|で}たり {入|はい}ったり してる 。 || Look, by the carpenter's house. A cat, in and out, in and out.
 
 @scene pets.cat.cat
+# Staged: you lean in to watch the cat creep in and back off; your companion's own answer (Nao points at the
+# knocking screen, Mio leans in to the cat, Ren points at the screen, Suzu laughs: in, out, in, out). Once it is
+# settled: you look at it; offering a hand, you get down low to it (a kneel held); waiting, you sit down a little
+# way off. Then Nao's nod, Mio's laugh behind her hand, Ren's glasses (envious of a cat's sense of direction),
+# Suzu's small celebration; not now, you get up and look at its corner.
 !if var.pet_cat>=2 -> settled
+!gesture pc observe 15,23 hold
 narr: {茶|ちゃ}トラ の {猫|ねこ} が 、 {大工|だいく} の {家|いえ} の {軒下|のきした} に {近|ちか}づいて は 、 また {離|はな}れる 。 || A ginger cat keeps creeping in under the carpenter's eaves, then backing out again.
 narr: {立|た}てかけた すだれ が {風|かぜ} で {揺|ゆ}れて 、 {壁|かべ} に コトン と {当|あ}たる 。 その たびに 、 {猫|ねこ} は {身|み} を {縮|ちぢ}める 。 || A reed screen leaning there swings in the draught and knocks against the wall. Each time, the cat flinches away.
+?(party=nao) !gesture nao point 14,23
 ?(party=nao) nao: あの すだれ だな 。 {鳴|な}る たびに {逃|に}げてる 。 || It's that screen. Every time it knocks, off it goes.
+?(party=mio) !gesture mio observe 15,23
 ?(party=mio) mio: {乾|かわ}いた {場所|ばしょ} が ほしい だけ なのに ね 。 || All it wants is somewhere dry.
+?(party=ren) !gesture ren point 14,23
 ?(party=ren) ren: {風|かぜ} の {通|とお}り{道|みち} に 、 {落|お}ち{着|つ}かない {物|もの} が {一|ひと}つ 。 あれ です ね 。 || One restless thing in the draught's path. That's it, isn't it.
+?(party=suzu) !gesture suzu laugh
 ?(party=suzu) suzu: {入|はい}って は {出|で}て 、 {入|はい}って は {出|で}て 。 {舞台|ぶたい} の {袖|そで} で {待|ま}ってる みたい 。 || In, out, in, out. Like waiting in the wings.
 !var pet_cat = 1
 !end
 :settled
+!gesture pc observe 15,23
 narr: {猫|ねこ} は {乾|かわ}いた {隅|すみ} で {丸|まる}く なって 、 {目|め} を {細|ほそ}めて こちら を {見|み}て いる 。 || The cat is curled up in the dry corner, watching you through half-closed eyes.
 !choice
 * そっと {手|て} を {低|ひく}く {出|だ}す || Offer a hand, slowly and low. -> hand
 * {近|ちか}く に {座|すわ}って {待|ま}つ || Sit down nearby and wait. -> sit
 * そっと して おく || Leave it be. -> end
 :hand
+!gesture pc kneel 15,23 hold
 narr: {急|いそ}がず に {手|て} を {出|だ}す 。 {猫|ねこ} は しばらく {匂|にお}い を かいで から 、 {頭|あたま} を {手|て} に {押|お}しつけた 。 || You hold out a hand and don't hurry. After a while the cat sniffs it, then pushes its head into your palm.
 !goto met
 :sit
+!pose pc sit
 narr: {少|すこ}し {離|はな}れて 、 {腰|こし} を {下|お}ろす 。 {風|かぜ} の {音|おと} だけ が する 。 || You sit down a little way off. There is only the sound of the wind.
 narr: やがて {猫|ねこ} は {起|お}き{上|あ}がって 、 あなた の {横|よこ} に {来|き}て {座|すわ}った 。 || In time the cat gets up, comes over, and sits down beside you.
 :met
 !hook pet_vig cat near
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao[smirk]: {気|き} に {入|い}られた な 。 || It likes you.
+?(party=mio) !gesture mio laugh
 ?(party=mio) mio[smile]: {怖|こわ}くない って 、 わかった みたい 。 || I think it knows you're not frightening.
+?(party=ren) !gesture ren glasses
 ?(party=ren) ren: {猫|ねこ} は {道|みち} に {迷|まよ}わない そう です 。 {少|すこ}し うらやましい 。 || They say cats never lose their way. I'm a little envious.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {客席|きゃくせき} が {一|ひと}つ 、 {埋|う}まった ! || One seat in the house, taken!
 narr: {猫|ねこ} は あなた を {見上|みあ}げて 、 {動|うご}かない 。 {一緒|いっしょ} に {来|く}る {気|き} が ある よう だ 。 || The cat looks up at you and doesn't move off. It seems willing to come along.
 !choice
@@ -200,10 +217,17 @@ narr: {猫|ねこ} は あなた を {見上|みあ}げて 、 {動|うご}か�
 !end
 :notnow
 !hook pet_vig cat back
+!pose pc -
+!gesture pc observe 15,23
 narr: {猫|ねこ} は {隅|すみ} に {戻|もど}って 、 また {丸|まる}く なった 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The cat goes back to its corner and curls up again. It will be here whenever you come by.
 
 @scene pets.cat.screen
+# Staged: you lean in to the loose reed screen and stay looking at its foot and the cord; set back on its stone,
+# you bend to its foot (a kneel); tied to the nail, you reach up to it. Your companion's own answer (Nao's nod,
+# Mio points to the cat coming in, Ren's nod for the small jobs, Suzu's small celebration), and you turn to
+# watch the cat curl up in its corner. Steady already, you look at it.
 !if var.pet_cat>=2 -> fixed
+!gesture pc observe 14,23 hold
 narr: {古|ふる}い すだれ が 、 {大工|だいく} の {家|いえ} の {壁|かべ} に {立|た}てかけて ある 。 {下|した} の {端|はし} が {石|いし} から {外|はず}れて いて 、 {風|かぜ} が {吹|ふ}く と {揺|ゆ}れる 。 || An old reed screen leans against the carpenter's wall. Its foot has slipped off the stone it stood on, so it swings whenever the wind blows.
 narr: {軒|のき} に は {古|ふる}い {釘|くぎ} が あって 、 すだれ の {上|うえ} から {紐|ひも} が {垂|た}れて いる 。 || There's an old nail under the eaves, and a cord hangs loose from the top of the screen.
 !var pet_cat = 1
@@ -212,22 +236,30 @@ narr: {軒|のき} に は {古|ふる}い {釘|くぎ} が あって 、 すだ
 * {紐|ひも} を {釘|くぎ} に {結|むす}ぶ || Tie the cord to the nail. -> tie
 * そのまま に して おく || Leave it for now. -> end
 :stone
+!gesture pc kneel 14,23
 narr: すだれ の {下|した} を {平|たい}らな {石|いし} の {上|うえ} に {戻|もど}す 。 もう {揺|ゆ}れない 。 || You set the foot of the screen back on the flat stone. It stops swinging.
 !var pet_cat = 2
 !set pet_cat_by_stone
 !goto after
 :tie
+!gesture pc stretch
 narr: {紐|ひも} を {釘|くぎ} に しっかり {結|むす}ぶ 。 すだれ は {壁|かべ} に {沿|そ}って {静|しず}か に なった 。 || You tie the cord firmly to the nail. The screen lies quiet against the wall.
 !var pet_cat = 2
 !set pet_cat_by_cord
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: よし 。 これで {音|おと} は しない 。 || There. No more knocking.
+?(party=mio) !gesture mio point 15,23
 ?(party=mio) mio: {静|しず}か に なった ね 。 {見|み}て 、 {来|く}る よ 。 || It's quiet now. Look — here it comes.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {小|ちい}さな {仕事|しごと} ほど 、 {大事|だいじ} です 。 || The small jobs matter most.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {舞台|ぶたい} {装置|そうち} 、 {固定|こてい} {完了|かんりょう} ! || Set piece secured!
+!look pc 15,23
 narr: {猫|ねこ} が {少|すこ}し ずつ {軒下|のきした} に {入|はい}って きて 、 {乾|かわ}いた {隅|すみ} で {丸|まる}く なる 。 || Bit by bit the cat comes in under the eaves and curls up in the dry corner.
 !end
 :fixed
+!gesture pc observe 14,23
 ?(pet_cat_by_cord) narr: すだれ は {釘|くぎ} に {結|むす}ばれて 、 {静|しず}か に {立|た}って いる 。 || The screen stands quietly, tied to the nail.
 ?(!pet_cat_by_cord) narr: すだれ は {石|いし} の {上|うえ} に {戻|もど}って 、 {静|しず}か に {立|た}って いる 。 || The screen stands quietly, back on its stone.
 `, 'pets/cat');

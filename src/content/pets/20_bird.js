@@ -156,32 +156,49 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(party=suzu) suzu: {岸壁|がんぺき} の {端|はし} 、 {小鳥|ことり} が {着地|ちゃくち} に {失敗|しっぱい} してる 。 {何回目|なんかいめ} かな 。 || End of the quay — a little bird fluffing its landing. How many tries is that?
 
 @scene pets.bird.bird
+# Staged: you lean in to watch the bird miss its landing; your companion's own answer (Nao points at its post,
+# Mio's hand to her chest, Ren's hand to the chin, Suzu laughs at the actor who trips on the same board). Once it
+# is settled: you look at it; standing still beside the post, you only listen to the waves; or you hold out an
+# open palm, low. Then Nao's open hand (one letter's weight), Mio's nod, Ren's glance aside (birds read the road
+# better), Suzu's small celebration; not now, you look at its post.
 !if var.pet_bird>=2 -> settled
+!gesture pc observe 43,26 hold
 narr: {茶色|ちゃいろ} の {小鳥|ことり} が 、 {古|ふる}い {杭|くい} の {上|うえ} に {止|と}まろう と する 。 {風|かぜ} が {吹|ふ}く と 、 {杭|くい} の リボン が {跳|は}ねて 、 {鳥|とり} は {砂|すな} の {上|うえ} に {逃|に}げる 。 || A small brown bird tries to land on top of the old post. When the wind gusts, the ribbon on the post jumps and the bird flees to the sand.
+?(party=nao) !gesture nao point 43,26
 ?(party=nao) nao: {好|す}きな {場所|ばしょ} が ある ん だな 。 {他|ほか} の {杭|くい} じゃ だめ らしい 。 || It's got a favourite spot. No other post will do, apparently.
+?(party=mio) !gesture mio guard
 ?(party=mio) mio: あの リボン が {怖|こわ}い の ね 。 || It's the ribbon it's afraid of.
+?(party=ren) !gesture ren chin
 ?(party=ren) ren: {帰|かえ}る {場所|ばしょ} が 、 {落|お}ち{着|つ}かない 。 {困|こま}り ます ね 。 || The place it comes back to won't keep still. That's hard.
+?(party=suzu) !gesture suzu laugh
 ?(party=suzu) suzu: {毎回|まいかい} {同|おな}じ {所|ところ} で {転|ころ}ぶ {役者|やくしゃ} みたい 。 || Like an actor who trips on the same board every night.
 !var pet_bird = 1
 !end
 :settled
+!gesture pc observe 43,26
 narr: {小鳥|ことり} は {杭|くい} の {上|うえ} で {羽|はね} を ふくらませて 、 こちら を {見|み}て いる 。 || The bird sits on top of the post with its feathers fluffed, watching you.
 !choice
 * {杭|くい} の {横|よこ} で じっと {待|ま}つ || Stand still beside the post and wait. -> still
 * {手|て}のひら を {上|うえ} に {向|む}けて {出|だ}す || Hold out an open palm. -> palm
 * そっと して おく || Leave it be. -> end
 :still
+!gesture pc -
 narr: {波|なみ} の {音|おと} を {聞|き}きながら 、 しばらく {動|うご}かず に いる 。 || You stay still a while, listening to the waves.
 narr: {小鳥|ことり} は {首|くび} を かしげて 、 ぴょん と {近|ちか}く に {降|お}りて きた 。 || The bird tilts its head, then hops down close to you.
 !goto met
 :palm
+!gesture pc palm 43,26
 narr: {手|て}のひら を {上|うえ} に {向|む}けて 、 {低|ひく}く {出|だ}す 。 {何|なに} も {持|も}って いない こと が 、 {鳥|とり} に も {見|み}える 。 || You hold out an open palm, low. The bird can see there is nothing in it.
 narr: {小鳥|ことり} は {少|すこ}し {迷|まよ}って から 、 {指|ゆび} の {先|さき} に {一度|いちど} だけ {止|と}まって 、 {横|よこ} に {降|お}りた 。 || After a moment's doubt it perches once on your fingertip, then drops down beside you.
 :met
 !hook pet_vig bird near
+?(party=nao) !gesture nao palm
 ?(party=nao) nao: {軽|かる}い な 。 {手紙|てがみ} {一通|いっつう} ぐらい だ 。 || Light thing. About one letter's worth.
+?(party=mio) !gesture mio nod pc
 ?(party=mio) mio[smile]: {落|お}ち{着|つ}いた {顔|かお} を してる 。 || It looks settled now.
+?(party=ren) !gesture ren aside
 ?(party=ren) ren: {鳥|とり} は {道|みち} を {空|そら} から {見|み}ます 。 {私|わたし} より ずっと {確|たし}か です 。 || Birds see the road from the sky. Far more reliably than I do.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu[laugh]: {最前列|さいぜんれつ} の {席|せき} 、 {確保|かくほ} ! || Front-row seat, secured!
 narr: {小鳥|ことり} は {一|ひと}つ {鳴|な}いて 、 あなた の {肩|かた} の {高|たか}さ まで {飛|と}んで 、 また {降|お}りた 。 ついて {来|く}る つもり の よう だ 。 || The bird gives one chirp — you see its beak open — flies up to your shoulder's height and settles again. It seems to mean to come along.
 !choice
@@ -192,11 +209,17 @@ narr: {小鳥|ことり} は {一|ひと}つ {鳴|な}いて 、 あなた の {
 !end
 :notnow
 !hook pet_vig bird back
+!gesture pc observe 43,26
 narr: {小鳥|ことり} は {杭|くい} の {上|うえ} に {戻|もど}った 。 ここ に {来|く}れば 、 また {会|あ}える 。 || The bird goes back to its post. It will be here whenever you come by.
 
 @scene pets.bird.post
+# Staged: you lean in to the low mooring post and the flapping ribbon; working the knot loose, you crouch to it
+# (a kneel); winding the ribbon round, you stoop over the post to tuck it in. Your companion's own answer (Nao's nod, Mio points to
+# the post the bird can land on now, Ren's nod, Suzu's small celebration), and you look up as the bird lands.
+# Steady already, you look at the post.
 !if var.pet_bird>=2&!pet.bird -> bird
 !if var.pet_bird>=2 -> fixed
+!gesture pc observe 43,26 hold
 narr: {岸壁|がんぺき} の {端|はし} に 、 {古|ふる}い {杭|くい} が {立|た}って いる 。 {杭|くい} の {釘|くぎ} に 、 {色|いろ} の あせた リボン が {結|むす}ばれた まま に なって いる 。 || An old mooring post stands at the end of the quay. A faded ribbon is still knotted to a nail on it.
 narr: {風|かぜ} が {吹|ふ}く たびに 、 リボン の {端|はし} が {跳|は}ねて 、 {杭|くい} の {上|うえ} を {払|はら}う 。 {結|むす}び{目|め} は {潮|しお} で {固|かた}く なって いる 。 || Each gust flips the ribbon's end up across the top of the post. The knot has gone stiff with salt.
 !var pet_bird = 1
@@ -205,25 +228,33 @@ narr: {風|かぜ} が {吹|ふ}く たびに 、 リボン の {端|はし} が
 * リボン を {杭|くい} に {巻|ま}きつけて 、 {端|はし} を {挟|はさ}む || Wind the ribbon round the post and tuck the end in. -> tuck
 * そのまま に して おく || Leave it for now. -> end
 :untie
+!gesture pc kneel 43,26
 narr: {固|かた}い {結|むす}び{目|め} を 、 {少|すこ}し ずつ ゆるめる 。 やがて ほどけて 、 リボン は あなた の {手|て} の {中|なか} に {残|のこ}った 。 || Bit by bit you ease the stiff knot. At last it gives, and the ribbon is left in your hand.
 !var pet_bird = 2
 !set pet_bird_untied
 !goto after
 :tuck
+!gesture pc bend 43,26
 narr: リボン を {杭|くい} に {二回|にかい} {巻|ま}いて 、 {端|はし} を {巻|ま}いた {下|した} に {挟|はさ}む 。 もう {跳|は}ねない 。 || You wind the ribbon twice round the post and tuck the end under the turns. It can't flap now.
 !var pet_bird = 2
 !set pet_bird_tucked
 :after
+?(party=nao) !gesture nao nod pc
 ?(party=nao) nao: よし 。 {着陸|ちゃくりく} {許可|きょか} {出|で}た ぞ 。 || Right. Cleared to land.
+?(party=mio) !gesture mio point 43,26
 ?(party=mio) mio: これで {止|と}まれる ね 。 || Now it can land.
+?(party=ren) !gesture ren nod pc
 ?(party=ren) ren: {杭|くい} が 、 {杭|くい} に {戻|もど}りました 。 || The post is a post again.
+?(party=suzu) !gesture suzu celebrate
 ?(party=suzu) suzu: {舞台|ぶたい} の {片付|かたづ}け 、 {完了|かんりょう} ! || Stage cleared!
+!look pc 43,26
 narr: {小鳥|ことり} が {杭|くい} の {上|うえ} に {降|お}りて 、 {今度|こんど} は {逃|に}げない 。 {羽|はね} を ふくらませて 、 {落|お}ち{着|つ}いた 。 || The bird drops onto the post, and this time it stays. It fluffs its feathers and settles.
 !end
 :bird
 !call pets.bird.bird
 !end
 :fixed
+!gesture pc observe 43,26
 ?(pet_bird_tucked) narr: リボン は {杭|くい} に {巻|ま}きついて 、 もう {跳|は}ねない 。 || The ribbon is wound round the post and doesn't flap any more.
 ?(!pet_bird_tucked) narr: {杭|くい} の {釘|くぎ} に は 、 もう {何|なに} も {結|むす}ばれて いない 。 || Nothing is tied to the nail any more.
 `, 'pets/bird');

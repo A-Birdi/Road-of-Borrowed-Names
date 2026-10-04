@@ -52,20 +52,42 @@ narr: 「 {満潮|まんちょう} {午前|ごぜん} {九時|くじ} ・ {干�
 !call sg.tidepost
 
 @scene cs.shell_shiori
+# Staged: Shiori's nod for the tide read right; you step up beside her desk and she gives you a shell button
+# from her hand to yours; Mio's nod at the jar she sorted; you look at the button in your hand.
+!gesture shiori nod pc
 shiori: {潮|しお} の {表|ひょう} 、 {正|ただ}しく {読|よ}んで くれました ね 。 {時間|じかん} が かかって も 、 {正|ただ}しければ それ で いい の です 。 || You read the tide table right. However long it takes, right is what matters.
+!walkto pc 5 3 left
+!look shiori pc
+!prop shiori shell
+!gesture shiori handover pc
+!gesture pc receive shiori
 shiori: {棚|たな} の {瓶|びん} から 、 {貝|かい} の ボタン を {一|ひと}つ どうぞ 。 {浜|はま} の {貝|かい} で {作|つく}った もの です 。 {潮|しお} を {読|よ}めた {人|ひと} に は 、 {渡|わた}す こと に して います 。 || Take a shell button from the jar on the shelf. I cut them from shells on the beach. I give one to everyone who has read the tide.
+?(comp=mio) !gesture comp nod
 ?(comp=mio) comp[smile]: {大|おお}きさ の {順|じゅん} に {並|なら}べた {貝殻|かいがら} の 、 {隣|となり} の {瓶|びん} です ね 。 || The jar next to the shells I sorted by size.
 !hook cs_keepsake shell_button
+!gesture pc check prop=shell
 narr: {貝|かい} の ボタン を もらった 。 || You receive a shell button.
 
 @scene cs.swallow_nobu
+# Staged: Nobu, arms folded as ever, gives one nod for Tomoe's hand read properly; you step to his side and he
+# hands you the clay swallow; you look at it in your hand.
 co_nobu: {大窯|おおがま} の {札|ふだ} を 、 {順番|じゅんばん} {通|どお}り に {読|よ}んだ の は お{前|まえ} さん だって な 。 || So you're the one who read the Great Kiln's tiles in the right order.
+!gesture co_nobu nod pc
 co_nobu: トモエ の {字|じ} を 、 {誰|だれ} か が ちゃんと {読|よ}んだ 。 それ で {十分|じゅうぶん} だ 。 || Someone read Tomoe's hand properly. That's enough.
+!walkto pc 5 5 left
+!look co_nobu pc
+!prop co_nobu swallow
+!gesture co_nobu handover pc
+!gesture pc receive co_nobu
 co_nobu: ほら 、 その {週|しゅう} に うち の {窯|かま} で {焼|や}いた {燕|つばめ} だ 。 {持|も}って いけ 。 {割|わ}る な よ 。 || Here. A swallow I fired in my own kiln that week. Take it. Don't break it.
 !hook cs_keepsake clay_swallow
+!gesture pc check prop=swallow
 narr: {土|つち} の {燕|つばめ} を もらった 。 || You receive a clay swallow.
 
 @scene cs.rosette_box
+# Staged: you bend to the little box of paper stars and read its lid; you take one and look at it in your hand
+# (Ren pushes their glasses up: a star does not point the way). With one already, you look at the box.
+!gesture pc bend 5,2 hold
 narr: {低|ひく}い {棚|たな} に {小|ちい}さな {箱|はこ} 。 {折|お}り{紙|がみ} の {星|ほし} が たくさん {入|はい}って いる 。 || A small box on a low shelf, full of folded paper stars.
 narr: {蓋|ふた} に ホシノ の {字|じ} 。 「 {日誌|にっし} を {読|よ}んで くれた {人|ひと} へ 。 {一|ひと}つ {持|も}って いって ください 。 アカリ が {子|こ}ども の {頃|ころ} に {折|お}った もの です 。 」 || On the lid, in Hoshino's hand: "To whoever read the log. Please take one. Akari folded these as a child."
 !if keepsake.star_rosette -> have
@@ -74,16 +96,27 @@ narr: {蓋|ふた} に ホシノ の {字|じ} 。 「 {日誌|にっし} を {�
 * そのまま に する || Leave them -> end
 :take
 !hook cs_keepsake star_rosette
+!prop pc star
+!gesture pc check prop=star
 narr: {星|ほし} の {飾|かざ}り を {一|ひと}つ もらった 。 || You take one of the paper stars.
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: {星|ほし} の {形|かたち} は {方角|ほうがく} を {教|おし}えて くれません が …… {持|も}って いる と 、 {迷|まよ}わない {気|き} が します 。 || A star-shape won't tell you which way is which… but holding one, I feel less lost.
 !end
 :have
+!gesture pc observe 5,2
 narr: {星|ほし} は まだ たくさん ある 。 {一|ひと}つ で {十分|じゅうぶん} だ 。 || There are still plenty of stars. One is enough.
 
 @scene cs.spool_tokuji
+# Staged: Tokuji's nod for the plates worked as they read; he holds out the spool of mending thread from his
+# hand to yours, beside him on the shore; you look at it in your hand.
+!gesture lf_tokuji nod pc
 lf_tokuji: {塔|とう} の {札|ふだ} を {三枚|さんまい} とも 、 {読|よ}んだ {通|とお}り に {動|うご}かした そう だ な 。 || I hear you worked all three of the tower's plates exactly as they read.
+!prop lf_tokuji spool
+!gesture lf_tokuji handover pc
+!gesture pc receive lf_tokuji
 lf_tokuji: {縄|なわ}ばしご を {繕|つくろ}った {糸|いと} の {余|あま}り だ 。 {小|ちい}さく {巻|ま}いて おいた 。 {持|も}って いけ 。 || Thread left over from mending the rope ladder. I wound it small. Take it.
 lf_tokuji: {古|ふる}い もの も 、 {丁寧|ていねい} に {繕|つくろ}えば まだ {使|つか}える 。 {水門|すいもん} も 、 {町|まち} も な 。 || Old things still work if you mend them carefully. Gates. Towns.
 !hook cs_keepsake thread_spool
+!gesture pc check prop=spool
 narr: {糸巻|いとま}き を もらった 。 || You receive a thread spool.
 `, 'cases/40_refine');

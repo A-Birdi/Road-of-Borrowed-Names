@@ -33,6 +33,13 @@ export async function runBranch(p, c, v, o) {
     for (const [k, n] of Object.entries(Object.assign({}, c.items || {}, v.items || {}))) RB.state.give(s, k, n);
     for (const [k, st] of Object.entries(Object.assign({}, c.quests || {}, v.quests || {}))) RB.state.setQuest(s, k, st);
     Object.assign(s.vars, c.vars || {}, v.vars || {});
+    // deduction cases already open, or solved, at the moment the scene plays (src/engine/59_cases.js)
+    for (const [id, st] of Object.entries(Object.assign({}, c.cases || {}, v.cases || {}))) { const r = RB.cases.open(s, id); if (r && st === 'done') r.stage = 'done'; }
+    // the companion's bond at that moment (src/engine/06_company.js: 3 rhythm, 6 trusted, 10 lasting)
+    const bond = v.bond != null ? v.bond : c.bond;
+    if (bond != null && s.company) s.company.bond = { fixture: bond };
+    // records the company keeps at that moment, e.g. The Pages We Keep's project (src/content/pages/10_pages.js)
+    for (const [k, val] of Object.entries(Object.assign({}, c.company || {}, v.company || {}))) if (s.company) s.company[k] = JSON.parse(JSON.stringify(val));
     Object.assign(s.player, c.player || {}, v.player || {});
     for (const w of (c.words || []).concat(v.words || [])) if (!s.words.includes(w)) s.words.push(w);
     // scenes already seen (a scene's `seen.<id>` conditions: a second visit, a reply already heard, a person's
@@ -120,9 +127,11 @@ export async function runBranch(p, c, v, o) {
     // talked to: the person you talk to turns to you (50_world.js talkTo) and the scene knows who they are
     const talk = v.talk !== undefined ? v.talk : c.talk;
     if (talk) { const n = RB.staging.actor(talk); if (n) RB.world.faceTo(n, W.player.x, W.player.y); }
+    // (the history length is taken before the scene starts: a hook's narration can be its first line, shown in the
+    // same tick as the run begins)
+    let seenLines = s.backlog.length;
     RB.script.run(c.scene, talk ? { npc: (RB.staging.actor(talk) || {}).id || talk } : undefined).then(() => { done = true; }, (e) => { err = String(e); done = true; });
     const picks = (v.picks || c.picks || []).slice();
-    let seenLines = s.backlog.length;
     const lines = [], chose = [];
     const t0 = performance.now();
     while (!done && performance.now() - t0 < 60000) {
@@ -150,7 +159,10 @@ export async function runBranch(p, c, v, o) {
     const busy = () => W.npcs.concat(W.extras || [], W.comp ? [W.comp] : []).some(walking);
     // (still for a moment: a walk of several steps is briefly between steps, neither moving nor routed)
     await sleep(120);
-    for (let calm = 0; calm < 5 && performance.now() - t1 < 5000; await sleep(60)) calm = busy() ? 0 : calm + 1;
+    // (bounded at 5 s; a case whose story moves someone across the map — the world walks them there, 50_world.js
+    // shiftTo — names a longer bound, `settle`, with the reason in its fixture; they must still arrive)
+    const bound = v.settle || c.settle || 5000;
+    for (let calm = 0; calm < 5 && performance.now() - t1 < bound; await sleep(60)) calm = busy() ? 0 : calm + 1;
     await sleep(150);
     watching = false;
     unwrap.forEach((u) => u());
