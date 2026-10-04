@@ -56417,7 +56417,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function brushHand(k, sk, sl) {
     return Q.small('ch3.brush|' + k + '|' + sk.join(',') + '|' + sl, () => {
       const p = P(), S = Math.round(110 * k), L = p.layer(S, S), ox = Math.round(S * 0.12), oy = Math.round(S * 0.86);
-      const skinM = p.mat(sk[0], { n: 6, at: 3, step: 0.075, lineCol: '#2a1410' }), cloth = p.mat(sl, { n: 5, at: 2, step: 0.09 });
+      // (the skin from the character's own two tones, a darker and a lighter one beside them: no hue drift)
+      const skinM = p.mat(null, { cols: [p.hex(p.mix(sk[1], '#3a2a26', 0.45)), sk[1], sk[0], p.hex(p.mix(sk[0], '#fff4e8', 0.3))], at: 2, lineCol: '#3a2a26' }), cloth = p.mat(sl, { n: 5, at: 2, step: 0.09 });
       const bam = p.mat('#a88450', { n: 5, at: 3, step: 0.09 }), hair = p.mat('#2a2024', { n: 3, at: 1 }), fer = p.mat('#c8b080', { n: 4, at: 2 });
       L.translate(ox, oy); L.rotate(-1.05);
       L.poly([[40 * k, -9 * k], [40 * k, 15 * k], [120 * k, 30 * k], [120 * k, -30 * k]], cloth, (x, y) => clamp(0.62 - (y + 30 * k) / (60 * k) * 0.45, 0, 0.999));
@@ -56426,9 +56427,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.seg(5 * k, 0, 7.5 * k, 0, Math.max(2, 2.8 * k), fer, 2);
       L.seg(0.5 * k, 0, 5 * k, 0, Math.max(1, 2.2 * k), hair, 1); L.seg(0, 0, 2 * k, 0, Math.max(1, 1.2 * k), hair, 0);
       L.ell(31 * k, 8 * k, 10 * k, 6.5 * k, skinM, (x, y) => clamp(0.8 - (y - 2 * k) / (12 * k) * 0.45, 0, 0.999));
-      L.seg(28 * k, -6 * k, 21 * k, -1.6 * k, Math.max(2, 3.4 * k), skinM, (x, y) => (y < -3 * k ? 0.85 : 0.6));
-      L.seg(32 * k, 5 * k, 22 * k, 2.2 * k, Math.max(2, 3.1 * k), skinM, 0.6);
-      L.seg(31 * k, 9.5 * k, 21 * k, 5 * k, Math.max(2, 3.1 * k), skinM, 0.45);
+      L.seg(28 * k, -6 * k, 21 * k, -1.6 * k, Math.max(2, 3.4 * k), skinM, (x, y) => (y < -3 * k ? 0.9 : 0.78));
+      L.seg(32 * k, 5 * k, 22 * k, 2.2 * k, Math.max(2, 3.1 * k), skinM, 0.74);
+      L.seg(31 * k, 9.5 * k, 21 * k, 5 * k, Math.max(2, 3.1 * k), skinM, 0.66);
       L.outline();
       return { cv: L.canvas(), ax: ox, ay: oy };
     });
