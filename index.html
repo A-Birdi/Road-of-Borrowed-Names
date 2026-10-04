@@ -33701,13 +33701,19 @@ RB.world = (function () {
     // new place on this map (one placement ends as another begins), or
     // someone who walked in to speak (or was walking away) now has a place
     // here, that same figure walks to the new place.
+    // Behind an illustrated sequence's picture (src/ui/43_sequence.js) the shots show the comings and goings, as
+    // they show a !move or a !walkto there: people are at once where the story now puts them, so the world the
+    // picture dissolves back into already matches it (nobody seen going in twice; docs/expressive/CONTRACT.md HX52).
+    const behind = !!(RB.sequence && RB.sequence.hidesWorld && RB.sequence.hidesWorld());
     if (W.time - W.enteredAt > 900) {
       const arriving = W.npcs.filter((a) => !before.has(a.id) && !keep.has(a.id));
+      const atOnce = (a, arr) => noteDeparture(a, { goals: new Set(), to: arr ? m.id : null, reason: 'behind an illustrated sequence: at once' }, [], arr);
       let k = 0;
       for (const [id, a] of keep) {
         if (W.npcs.some((n) => n.id === id) || id === st.comp || a.map !== m.id || renamed.has(id)) continue;
         const b = arriving.find((n) => !n.shifted && personOf(n) === personOf(a));
-        if (b) shiftTo(b, a);
+        if (b && behind) { b.shifted = true; atOnce(b, true); } else if (b) shiftTo(b, a);
+        else if (behind) atOnce(a, false);
         else leave(a, k++);
       }
       for (const b of arriving) {
@@ -33716,8 +33722,9 @@ RB.world = (function () {
         if (here) {
           W.extras = W.extras.filter((e) => e !== here);
           W.leavers = W.leavers.filter((e) => e !== here);
-          shiftTo(b, here);
-        } else arriveOnFoot(b);
+          if (behind) atOnce(b, true); else shiftTo(b, here);
+        } else if (behind) atOnce(b, true);
+        else arriveOnFoot(b);
       }
     }
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
@@ -35489,6 +35496,40 @@ RB.staging = (function () {
     while (cur && !(cur[0] === a.x && cur[1] === a.y)) { path.unshift(cur); cur = prev.get(cur[0] + ',' + cur[1]); }
     return path;
   }
+  // Your way blocked only by your companion, who followed you in (behind a counter, the one tile round someone):
+  // in free walking they make way (50_world.js: they take your old tile), so here too — unless the scene has put
+  // them somewhere of their own. They go on ahead along your way and step off it at the first free tile beside it;
+  // returns that walk for them, or null (docs/expressive/CONTRACT.md HX68: approached from another side).
+  function makeWay(a, tx, ty) {
+    const w = W(), c = w.comp, sc = st.scene;
+    if (a !== w.player || !c || c.mv || c.route || (sc && sc.reserved.has(c))) return null;
+    const m = w.map, prev = new Map([[a.x + ',' + a.y, null]]), q = [[a.x, a.y]];
+    let found = null;
+    while (q.length && !found) {
+      const [x, y] = q.shift();
+      for (const d in DIRS) {
+        const nx = x + DIRS[d][0], ny = y + DIRS[d][1], k = nx + ',' + ny;
+        if (prev.has(k)) continue;
+        if (!free(nx, ny, a) && !(nx === c.x && ny === c.y && !RB.maps.blockedStatic(m, nx, ny))) continue;
+        prev.set(k, [x, y]); q.push([nx, ny]);
+        if (nx === tx && ny === ty) { found = [nx, ny]; break; }
+      }
+      if (prev.size > 3000) break;
+    }
+    if (!found) return null;
+    const path = [];
+    for (let cur = found; cur && !(cur[0] === a.x && cur[1] === a.y); cur = prev.get(cur[0] + ',' + cur[1])) path.unshift(cur);
+    const i = path.findIndex((t) => t[0] === c.x && t[1] === c.y);
+    if (i < 0) return null;
+    const on = new Set(path.map((t) => t.join(',')).concat([a.x + ',' + a.y]));
+    for (let j = i; j < path.length; j++) {
+      for (const d in DIRS) {
+        const nx = path[j][0] + DIRS[d][0], ny = path[j][1] + DIRS[d][1];
+        if (!on.has(nx + ',' + ny) && free(nx, ny, c)) return path.slice(i + 1, j + 1).concat([[nx, ny]]);
+      }
+    }
+    return null;
+  }
   function walkPath(a, path, token, max) {
     const id = idOf(a), t0 = now();
     const step = (i) => {
@@ -35523,7 +35564,12 @@ RB.staging = (function () {
       // in the dark of a fade (or skipping a seen scene): set them there, if the place is free
       if (free(x, y, a)) { a.x = x; a.y = y; a.fx = x; a.fy = y; a.mv = null; if (a === W().player) syncPlayer(); ok = true; }
     } else {
-      const path = bfs(a, x, y);
+      let path = bfs(a, x, y);
+      if (!path) {
+        // (only your following companion in the way: they make way first)
+        const way = makeWay(a, x, y);
+        if (way) { own(W().comp); if (await walkPath(W().comp, way, sc ? sc.token : 0, 3000)) path = bfs(a, x, y); }
+      }
       if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000);
     }
     if (!ok) st.stats.walkFallbacks++;
@@ -100511,10 +100557,11 @@ koji[think]: …… そう か 。 {俺|おれ} も {向|む}こう で 、 {誰
 hana[smile]: {入|はい}って 。 お{茶|ちゃ} 、 いれる から 。 {今度|こんど} は ちゃんと 、 あんた の {分|ぶん} 。 || Come in. I'll pour the tea. Properly, this time — yours.
 !shot door
 narr: ふたり が {茶屋|ちゃや} に {入|はい}って いく 。 {戸|と} が {閉|し}まる {前|まえ} に 、 コウジ が {振|ふ}り{返|かえ}って {手|て} を {振|ふ}った 。 || The two of them go into the teahouse. Before the door closes, Kōji turns and waves.
-!sequence ch1.bridge end
+# (the two are indoors before the picture dissolves back: the refresh behind it takes them in at once, HX52)
 !set rw_koji_back
-!quest rw_mill done
 !refresh
+!sequence ch1.bridge end
+!quest rw_mill done
 tsuru: …… {橋|はし} は {手|て} を {振|ふ}らない 。 {渡|わた}し {守|もり} は {振|ふ}る 。 ヤス の {口癖|くちぐせ} だ よ 。 || …A bridge doesn't wave. A ferryman does. That's Yasu's old saying.
 !faceplayer tsuru
 tsuru: よく やった 。 でも 、 {終|お}わり じゃ ない 。 {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {川|かわ} の {下|しも} へ 、 {西|にし} へ {向|む}かった 。 {灯|ひ} の {道|みち} に {沿|そ}って ね 。 || Well done. But it isn't over. Whatever carried the names away went downriver — west, along the lantern road.
