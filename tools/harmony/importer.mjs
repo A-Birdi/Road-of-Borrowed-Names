@@ -51,13 +51,18 @@ export function suggestOffset(img, ref, box, radius) {
   return { dx: best.dx, dy: best.dy, iou: r4(best.iou) };
 }
 
-// Normalise one delivered file. Returns { name, parsed, img, codes, maskSource, rep } (img null on a fatal error).
-export function normaliseFile(buf, name, opt) {
+// Read, check and normalise one delivered image onto the native canvas (contract §2; §9 steps 1–3 and the offset of
+// step 6): decode, a painted checkerboard refused, a flat #ff00ff background keyed out, transparency required, the
+// grid found (or import.json's cell/origin), each cell's centre downsampled, alpha binarised, the result placed at the
+// file's offset (default: centred). No masks and no palette work: shared by normaliseFile below and by the keyify step
+// (tools/harmony/keyify.mjs), which reads real-colour layers exactly as the importer reads key-colour ones.
+// Returns { name, parsed, src, grid, off, img, rep } — img null on a fatal error (rep.errors says why).
+export function normaliseImage(buf, name, opt) {
   const HC = opt.HC || loadContract();
   const W = HC.BUST.w, H = HC.BUST.h;
   const p = HC.parse(name);
   const rep = { source: name + '.png', errors: [], warnings: [] };
-  const fail = (m) => { rep.errors.push(m); return { name, parsed: p, img: null, codes: null, rep }; };
+  const fail = (m) => { rep.errors.push(m); return { name, parsed: p, img: null, rep }; };
   if (!p || p.isMask) return fail('not a contract file name (docs/harmony/contract/CONTRACT.md §1)');
   if (p.unknown) return fail('unknown accessory file: ' + name);
   rep.kind = p.kind;
@@ -83,6 +88,28 @@ export function normaliseFile(buf, name, opt) {
   if (placed.outside) rep.errors.push(placed.outside + ' opaque pixels fall outside the ' + W + ' × ' + H + ' canvas');
   const img = placed.img;
   if (!bboxOf(img)) rep.errors.push('the file is empty');
+  return { name, parsed: p, src, grid, off, img, rep };
+}
+// A supplied mask on the canvas of the art it belongs to: at the art's enlargement (read on the art's grid and placed
+// at its offset), native 192 × 160 (taken as is), or any other size (its own grid, placed at the art's offset).
+// Throws on a PNG that cannot be decoded.
+export function placeMask(maskBuf, src, grid, off, HC) {
+  const W = HC.BUST.w, H = HC.BUST.h;
+  const mk = decodePNG(maskBuf);
+  let mn;
+  if (mk.w === src.w && mk.h === src.h && (src.w !== W || src.h !== H)) mn = binarize(downsample(mk, grid));
+  else if (mk.w === W && mk.h === H) mn = binarize(mk);
+  else mn = binarize(downsample(mk, detectGrid(mk, null, HC.BUST)));
+  return mk.w === W && mk.h === H ? mn : place(mn, W, H, off[0], off[1]).img;
+}
+
+// Normalise one delivered file. Returns { name, parsed, img, codes, maskSource, rep } (img null on a fatal error).
+export function normaliseFile(buf, name, opt) {
+  const HC = opt.HC || loadContract();
+  const W = HC.BUST.w, H = HC.BUST.h;
+  const n = normaliseImage(buf, name, Object.assign({}, opt, { HC }));
+  const { parsed: p, src, grid, off, img, rep } = n;
+  if (!img) return { name, parsed: p, img: null, codes: null, rep };
   // masks
   const allowed = HC.allowedOf(p);
   let codes, maskSource = 'none';
@@ -90,14 +117,9 @@ export function normaliseFile(buf, name, opt) {
     if (opt.maskBuf) {
       maskSource = 'supplied';
       let mk;
-      try { mk = decodePNG(opt.maskBuf); } catch (e) { rep.errors.push('mask: ' + e.message); }
+      try { mk = placeMask(opt.maskBuf, src, grid, off, HC); } catch (e) { rep.errors.push('mask: ' + e.message); }
       if (mk) {
-        let mn;
-        if (mk.w === src.w && mk.h === src.h && (src.w !== W || src.h !== H)) mn = binarize(downsample(mk, grid));
-        else if (mk.w === W && mk.h === H) mn = binarize(mk);
-        else mn = binarize(downsample(mk, detectGrid(mk, null, HC.BUST)));
-        const mp = mk.w === W && mk.h === H ? { img: mn } : place(mn, W, H, off[0], off[1]);
-        const r = readMask(img, mp.img, allowed, HC);
+        const r = readMask(img, mk, allowed, HC);
         codes = r.codes;
         rep.values = r.values;
         for (const e of r.errors.slice(0, 40)) rep.errors.push('mask ' + e.x + ',' + e.y + ': ' + e.why);

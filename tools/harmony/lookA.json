@@ -1,0 +1,39 @@
+{
+ "schema": "rbn-harmony-keyify-look",
+ "name": "look A",
+ "note": "The reference colours of the player's look A (docs/harmony/ASSET_BRIEF.md §8: light skin, auburn ponytail, green coat with a darker teal trim and collar, a pink flower, round brown-framed glasses, a brown leather satchel strap, a black-lacquer brush) for tools/harmony_keyify.mjs (docs/harmony/contract/CONTRACT.md §5.5). The material ramps are the game's own ramps for the game look below (skin 1, auburn hair, cloth #4e7a4a / #3c5e38 with the trim #2e6a6e — no shipped outfit has this trim — and the flower channel's default), built as src/ui/88_harmony_raster.js builds them; tones dark to light, pick = the tones the key shades s0..s4 take. The fixed colours are generic starting points, not measured from any art: derive the delivery's own with --sample (a style master and a rough mask) or edit them.",
+ "game": { "skin": 1, "hair": "ponytail", "hairColor": 3, "cloth": ["#4e7a4a", "#3c5e38", "#2e6a6e"], "shape": "coat", "acc": ["glasses", "flower", "satchel"] },
+ "materials": {
+  "skin": { "tones": ["#815c4d", "#b3846a", "#d8a882", "#e3b792", "#eec8a4", "#f3d6b9"], "pick": [0, 1, 2, 4, 5] },
+  "hair": { "tones": ["#42161d", "#632021", "#863528", "#aa5230", "#c2713d", "#c6925d"], "pick": [1, 2, 3, 4, 5] },
+  "clothMain": { "tones": ["#18251c", "#29412e", "#3a5d3c", "#4e7a4a", "#67945d", "#85a677"], "pick": [1, 2, 3, 4, 5] },
+  "clothTrim": { "tones": ["#06090c", "#14242c", "#21444d", "#2e6a6e", "#3e8b89", "#50a89c"], "pick": [1, 2, 3, 4, 5] },
+  "accessory": {
+   "flower": { "tones": ["#df4a7b", "#e7667f", "#ee8289", "#f4a6a0", "#f6cbc2", "#f9e8e2"], "pick": [1, 2, 3, 4, 5] }
+  }
+ },
+ "fixed": {
+  "eyes": ["#2e1c16", "#3e261c", "#4e3224", "#5e3e2a", "#6e4a32"],
+  "eyeWhites": ["#cfc8c4", "#ddd6d2", "#e8e2de"],
+  "lips": ["#9a5a52", "#b46a60", "#c87c70"],
+  "mouth": ["#4a1c22", "#6a2a30", "#8a3a3e"],
+  "innerCollar": ["#a89e8c", "#c4b8a4", "#ddd2be", "#ece4d4"],
+  "lacquer": ["#1c1820", "#2a2630", "#3a3640", "#4a4652"],
+  "brass": ["#6a4a18", "#8a6424", "#b08a34", "#d4b050", "#ecd488"],
+  "bristles": ["#a08a64", "#c4ae84", "#e0d0aa", "#f0e6cc"],
+  "leaves": ["#1e3a1c", "#2c5428", "#3e6e34", "#548a44", "#70a658"],
+  "flowerCentre": ["#b8862a", "#d8a83c", "#ecc858", "#f4dc88"]
+ },
+ "files": {
+  "head": ["skin", "hair", "eyes", "eyeWhites", "lips", "mouth"],
+  "torso": ["clothMain", "clothTrim", "skin", "innerCollar"],
+  "arm": ["clothMain", "clothTrim", "skin", "lacquer", "brass", "bristles"],
+  "hair": ["hair", "clothTrim"],
+  "hair_wrap": ["hair", "clothTrim"],
+  "acc": ["accessory", "brass"],
+  "acc_flower": ["accessory", "leaves", "flowerCentre"],
+  "acc_glasses": "fixed",
+  "acc_satchel": "fixed"
+ },
+ "as": { "innerCollar": "fixed" }
+}
