@@ -262,7 +262,7 @@ RB.audio = RB.audio || {};
         }
         const barUnits = meter / unit;
         const tri = tIndex[name];
-        const vScale = (tdef.vel || 1) * dyn;
+        const vScale = (tdef.vel || 1) * dyn * ((fe.v && fe.v[name]) || 1); // fe.v: a part played softer in this pass
 
         if (tdef.perc) {
           const raw = String(str).replace(/\s+/g, '');

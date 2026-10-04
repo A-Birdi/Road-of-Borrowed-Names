@@ -560,8 +560,7 @@ RB.audio = RB.audio || {};
   // buzzing "zing" that keeps ringing after the plucked tone has dulled. An
   // asymmetric clipping curve turns the string's periodic wave into that
   // buzz (harmonics of the note, not noise), band-passed into the region
-  // where the ear hears the zing. The clipper is shared by a track's notes
-  // (overlapping strings buzz against each other, as on the instrument).
+  // where the ear hears the zing. Each note has its own clipper (see lute()).
   let SAWARI = null;
   function sawariCurve() {
     if (SAWARI) return SAWARI;
@@ -630,31 +629,33 @@ RB.audio = RB.audio || {};
     const dec = clamp(o.dec - f / 2600, o.dec * 0.35, o.dec);
     const aB = plk(c, t, o.pk * o.strike * v, o.close);
     const a = plk(c, t, o.pk * v, dec, off, 0.05);
-    const sg = plk(c, t, v, dec * o.buzzLen, off, 0.07);
+    // Each string buzzes on its own clipper. (A clipper shared by the
+    // track's notes made a chord's three strings clip together, and their
+    // difference tones turned every chord stroke into a harsh, noisy crash:
+    // the owner heard it in the Saltglass harbour theme.) The band-pass and
+    // high-pass after it are linear, so they stay shared.
+    const sg = plk(c, t, v * o.drive, dec * o.buzzLen, off, 0.07);
+    const ws = c.createWaveShaper();
+    ws.curve = sawariCurve();
     const buzz = shared(g, out, 'sawari' + o.buzzF, () => {
-      const drive = amp(c, o.drive);
-      const ws = c.createWaveShaper();
-      ws.curve = sawariCurve();
       const bp = bq(c, 'bandpass', o.buzzF, o.buzzQ);
-      // the asymmetric clip also makes a slow offset and low difference tones
-      // (worst under chords); they came through the band-pass's skirt as a
-      // dark smear after every stroke, so they are cut here
+      // the asymmetric clip also makes a slow offset; it came through the
+      // band-pass's skirt as a dark smear after every stroke, so it is cut
       const hp = bq(c, 'highpass', o.buzzF * 0.35, 0.7);
       const lvl = amp(c, o.buzz);
-      drive.connect(ws);
-      ws.connect(bp);
       bp.connect(hp);
       hp.connect(lvl);
       lvl.connect(out);
-      return drive;
+      return bp;
     });
     src.connect(aB);
     aB.connect(out);
     src.connect(a);
     a.connect(sbq(g, out, 'lowpass', Math.min(Math.max(f * o.settle, o.floor), 8000), o.q));
     src.connect(sg);
-    sg.connect(buzz);
-    nodes.push(aB, a, sg);
+    sg.connect(ws);
+    ws.connect(buzz);
+    nodes.push(aB, a, sg, ws);
     run(c, srcs, nodes, t, Math.min(off + 0.32, t + dec * Math.max(4.5, o.buzzLen * 4)));
     // bachi: a click of the plectrum on string and skin
     const n = noise(g);
@@ -673,7 +674,7 @@ RB.audio = RB.audio || {};
   // Shamisen: bright and dry, a short body decay, the sawari ringing on.
   I.shamisen = (g, o, t, f, d, v) => lute(g, o, t, f, d, v, {
     mix2: 0, drop: 1.02, dropT: 0.045, q: 1.2, strike: 0.6, settle: 5, floor: 900, close: 0.035,
-    dec: 0.3, pk: 0.2, drive: 2, buzz: 0.34, buzzQ: 0.9, buzzF: 2900, buzzLen: 2.6,
+    dec: 0.3, pk: 0.2, drive: 2, buzz: 0.24, buzzQ: 0.9, buzzF: 2900, buzzLen: 2.6,
     click: 0.2, clickF: 2600, clickT: 0.008, body: 200, thump: 0.1,
   });
   // Biwa: lower, rounder strings, a heavier bachi on the body, a longer and
@@ -734,11 +735,13 @@ RB.audio = RB.audio || {};
   I.koto = (g, o, t, f, d, v) => koto(g, o, t, f, d, v, 0);
   I.koto_oshi = (g, o, t, f, d, v) => koto(g, o, t, f, d, v, 2);
 
-  // Shakuhachi: end-blown bamboo. Far more breath than the flute — a pitched
-  // edge-tone hiss around the note plus a wide band of air — a meri scoop
-  // (the note starts nearly a semitone flat and is lifted into tune), a
-  // slow, wide, late vibrato, and on accented notes a burst of breath
-  // (muraiki).
+  // Shakuhachi: end-blown bamboo, played clean: a round, hollow tone, a meri
+  // scoop (the note starts nearly a semitone flat and is lifted into tune)
+  // and a slow, wide, late vibrato. Its breath is kept below the flute's.
+  // (It first had far more breath than the flute — a puff on every note, a
+  // burst on accents (muraiki) and a band of air above 3.2 kHz. The owner
+  // heard that as a hissing, steamy puff under the tune, in the town, on the
+  // coast road, in battle and in the Drowned Archive, so it is gone.)
   // the shakuhachi's breath band: a high-pass a little under the note into a
   // band-pass above it, both fixed and shared by the track's notes
   function breathBand(g, out, f) {
@@ -768,23 +771,13 @@ RB.audio = RB.audio || {};
     lg.connect(s.frequency);
     lg.connect(tr.frequency);
     const off = t + Math.max(d, 0.08);
-    // The breath: a short puff at the start of the note settling to a thin
-    // stream, band-passed around the note with everything below the note
-    // taken off first. (It was louder and reached down to the bass, and
-    // through the long reverb every note left a deep rush behind it like a
-    // wave breaking: the owner heard it as a crashing instrument of its own.)
+    // only the edge of the breath as the note speaks (about 40 ms, a third of
+    // the flute's onset breath and none after it), band-passed above the note
     const n = noise(g);
     const ng = amp(c, 0);
-    const muraiki = clamp((v - 0.85) * 2.5, 0, 0.6);
     ng.gain.setValueAtTime(0, t);
-    ng.gain.linearRampToValueAtTime((0.4 + muraiki) * v, t + 0.03);
-    ng.gain.setTargetAtTime(0.1 * v, t + 0.035, 0.08 + muraiki * 0.12);
-    ng.gain.setTargetAtTime(0, off, 0.05);
-    const hg = amp(c, 0);
-    hg.gain.setValueAtTime(0, t);
-    hg.gain.linearRampToValueAtTime(0.035 * v, t + 0.04);
-    hg.gain.setTargetAtTime(0.015 * v, t + 0.05, 0.15);
-    hg.gain.setTargetAtTime(0, off, 0.05);
+    ng.gain.linearRampToValueAtTime(0.03 * v, t + 0.02);
+    ng.gain.setTargetAtTime(0, t + 0.025, 0.015);
     const att = clamp(d * 0.25, 0.06, 0.18);
     const a = amp(c, 0);
     env(a.gain, t, att, 0.25 * v, 0.5, 0.85, off, 0.09);
@@ -796,9 +789,8 @@ RB.audio = RB.audio || {};
     at.connect(sbq(g, out, 'lowpass', Math.min(f * 3, 5000), 0.6));
     n.connect(ng);
     ng.connect(breathBand(g, out, f));
-    n.connect(hg);
-    hg.connect(sbq(g, out, 'highpass', 3200, 0.7));
-    run(c, [s, tr, lfo, n], [s, tr, lfo, lg, n, ng, hg, a, at], t, off + 0.45);
+    run(c, [s, tr, lfo], [s, tr, lfo, lg, a, at], t, off + 0.45);
+    run(c, [n], [n, ng], t, t + 0.15);
   };
 
   // Shinobue: the high bamboo festival flute — bright (some square in the
@@ -826,9 +818,11 @@ RB.audio = RB.audio || {};
     const off = t + Math.max(d, 0.06);
     const n = noise(g);
     const ng = amp(c, 0);
+    // breath at about the flute's level (it was 0.25 → 0.09: the owner heard
+    // the shakuhachi's breath as a steamy puff, and this was the same idea)
     ng.gain.setValueAtTime(0, t);
-    ng.gain.linearRampToValueAtTime(0.25 * v, t + 0.015);
-    ng.gain.setTargetAtTime(0.09 * v, t + 0.02, 0.06);
+    ng.gain.linearRampToValueAtTime(0.08 * v, t + 0.015);
+    ng.gain.setTargetAtTime(0.02 * v, t + 0.02, 0.06);
     ng.gain.setTargetAtTime(0, off, 0.04);
     const a = amp(c, 0);
     env(a.gain, t, 0.02, 0.2 * v, 0.35, 0.8, off, 0.05);

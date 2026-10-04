@@ -9,8 +9,9 @@ const RANGE = {
   bass: [28, 64], pad: [40, 86], choir: [45, 84], bowed: [36, 90], flute: [55, 96],
   pluck: [36, 100], harp: [38, 100], mallet: [45, 98], keys: [45, 90],
   bell: [36, 98], celesta: [48, 100], toll: [30, 70], glass: [40, 96],
-  // the Japanese instruments (src/audio/10_synth.js), roughly their real compass
-  shamisen: [45, 88], biwa: [36, 72], koto: [40, 93], koto_oshi: [40, 93], shakuhachi: [60, 91],
+  // the Japanese instruments (src/audio/10_synth.js), roughly their real compass (the shakuhachi down to A3,
+  // a long 2.4-shaku instrument, for the Drowned Archive's low pass)
+  shamisen: [45, 88], biwa: [36, 72], koto: [40, 93], koto_oshi: [40, 93], shakuhachi: [57, 91],
   shinobue: [69, 100], sho: [60, 93], rin: [64, 100],
 };
 

@@ -67,7 +67,8 @@
  *              a atarigane hand gong   v chappa cymbals   i rin bowl bell
  *
  * FORM entries: 'A' or { s:'A', i:{track:inst}, o:{track:+1}, m:[muted],
- *   tr: semitones, dyn, key, mode, bpm }. Sections may use from:'A' to
+ *   v:{track:0.8} (that part softer in this pass), tr: semitones, dyn, key,
+ *   mode, bpm }. Sections may use from:'A' to
  *   inherit another section's lines and override some.
  * ========================================================================== */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -453,12 +454,14 @@ RB.audio = RB.audio || {};
     notes: 'Working harbour in F with a lilting swing (104), re-orchestrated for Chapter 2 as a min’yō band — same melody, form and motifs as before: shakuhachi lead, shamisen chords slapping on 2 and 4 like rigging against a mast, a bouncing root–fifth bass, woodblock, shaker and shime-daiko, a hyōshigi clap to start. B leans mixolydian (E-flat) for the cargo-label muddle on a bright shinobue; A2 puts the tune on koto with a second koto answering; C is quieter and echoing — the road motif on shakuhachi over D minor, pointing toward the drowned archive; B2 hands the tune to the shamisen.',
     key: 'F', bpm: 104, swing: 0.24,
     tracks: {
-      lead: { i: 'shakuhachi', o: 5, v: 0.72, rv: 0.25 },
+      // the owner, 2026-10-04: the flute a little loud in A and B (the shakuhachi
+      // at 0.72 sat about 17 dB over the band), lovely at the level of C below
+      lead: { i: 'shakuhachi', o: 5, v: 0.58, rv: 0.25 },
       mal: { i: 'koto', o: 5, v: 0.5, rv: 0.2, pan: 0.2 },
       bell: { i: 'koto', o: 5, v: 0.42, rv: 0.4, dl: 0.35, pan: -0.2 },
-      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.32, rv: 0.15, pan: -0.3 },
+      gtr: { i: 'shamisen', o: 4, pat: true, fold: 'all', win: -3, v: 0.28, rv: 0.15, pan: -0.3 },
       pad: { i: 'pad', o: 4, hold: true, fold: 'all', win: -5, v: 0.28, rv: 0.3 },
-      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.65 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.58 },
       perc: { perc: true, v: 0.45 },
     },
     echo: { beats: 0.75, fb: 0.3, mix: 0.3 },
@@ -471,7 +474,7 @@ RB.audio = RB.audio || {};
       C: { bars: 8, ch: SALT_C_CH, bell: SALT_C, gtr: null, perc: '....s...', dyn: 0.85 },
       B2: { bars: 8, ch: SALT_B_CH, mal: SALT_B },
     },
-    form: ['intro', 'A', { s: 'B', i: { lead: 'shinobue' } }, 'A2', { s: 'C', i: { bell: 'shakuhachi' } }, { s: 'B2', i: { mal: 'shamisen' }, o: { mal: -1 } }],
+    form: ['intro', 'A', { s: 'B', i: { lead: 'shinobue' }, v: { lead: 0.8 } }, 'A2', { s: 'C', i: { bell: 'shakuhachi' } }, { s: 'B2', i: { mal: 'shamisen' }, o: { mal: -1 } }],
   });
 
   // ====================================================== DROWNED ARCHIVE
@@ -509,7 +512,9 @@ RB.audio = RB.audio || {};
       B: { bars: 8, ch: DROWN_B_CH, glass: DROWN_B_GLASS, bell: DROWN_B_BELL, arp: '0 . 2 . 4 . 2 .' },
       C: { bars: 8, ch: DROWN_C_CH, bell: DROWN_C, heart: 'z.......|........', dyn: 0.9 },
     },
-    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { bell: 'shakuhachi' } }, { s: 'C', i: { bell: 'koto' } }],
+    // the repeat of A on the shakuhachi: an octave down and softer, so it sits in
+    // the room with the quiet voices before it rather than over them (the owner, 2026-10-04)
+    form: ['A', { s: 'B', i: { pad: 'sho' }, o: { pad: 1 } }, { s: 'A', i: { bell: 'shakuhachi' }, o: { bell: -1 }, v: { bell: 0.7 } }, { s: 'C', i: { bell: 'koto' } }],
   });
 
   // =============================================================== CINDER

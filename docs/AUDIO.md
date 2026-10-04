@@ -70,12 +70,12 @@ context. What each models:
 
 | voice | model |
 |---|---|
-| `shamisen` | A sawtooth string heard three ways: raw with a ~35 ms decay (the bright strike of the bachi), through a fixed low-pass with the note's own decay (the tone), and through the track's **sawari** clipper — an asymmetric clipping curve that turns the string's periodic wave into a buzz of its own harmonics, band-passed around 2.9 kHz and ringing 2.6× longer than the tone (the "zing" of the first string touching the neck). A plectrum click (band-passed noise, 8 ms) and a short low body "tsun" from the skin. The pitch starts 2 % sharp — string tension at the strike — and drops into tune in 45 ms. |
+| `shamisen` | A sawtooth string heard three ways: raw with a ~35 ms decay (the bright strike of the bachi), through a fixed low-pass with the note's own decay (the tone), and through its own **sawari** clipper (one per note, so a chord's strings never clip together) — an asymmetric clipping curve that turns the string's periodic wave into a buzz of its own harmonics, band-passed around 2.9 kHz and ringing 2.6× longer than the tone (the "zing" of the first string touching the neck). A plectrum click (band-passed noise, 8 ms) and a short low body "tsun" from the skin. The pitch starts 2 % sharp — string tension at the strike — and drops into tune in 45 ms. |
 | `biwa` | The same lute, lower and rounder: saw + half a triangle in one periodic wave, a heavier bachi click, a longer note and a stronger, lower (1.8 kHz) and longer buzz (the biwa's frets are built for sawari), a pitch drop of about 55 cents over 70 ms. |
 | `koto` | A rounded sustaining core (triangle with its octave partial, one periodic-wave oscillator) that rings 0.9–3.2 s depending on pitch, a sawtooth that is loud only at the strike (the ivory pick, tsume), an inharmonic "ting" at 3.01× the note (80 ms) and a noise click. |
 | `koto_oshi` | The koto with **ato-oshi** (oshide): plucked a whole tone low and pressed up to the written note behind the bridge after 60 ms (130 ms glide). The written note is the one that sounds. |
-| `shakuhachi` | Sine + triangle with more breath than the flute: an edge-tone hiss band-passed at 1.6× the note (after a high-pass a little under the note, so the breath never reaches down into the bass) and a thin band of air above 3.2 kHz — a short puff at the start of each note settling to a thin stream; a **meri** scoop (the note starts 85 cents flat and is lifted into tune over 90–240 ms); a slow (4.3 Hz), wide, late vibrato; accented notes get a burst of breath (**muraiki**). |
-| `shinobue` | The high festival flute: sine + triangle + some square through a bright low-pass, a little breath, a finger "hit" (uchi) from a whole tone above on notes long enough to carry it, a fast (5.9 Hz) shallow vibrato. |
+| `shakuhachi` | Sine + triangle, played clean: a round, hollow tone with only the edge of a breath as each note speaks (about 40 ms, a third of the flute's onset breath, band-passed above the note); a **meri** scoop (the note starts 85 cents flat and is lifted into tune over 90–240 ms); a slow (4.3 Hz), wide, late vibrato. (It began with far more breath than the flute and a burst of breath on accents, *muraiki*; the owner heard that as a hissing, steamy puff under the tune, so it is gone: see the last two sections.) |
+| `shinobue` | The high festival flute: sine + triangle + some square through a bright low-pass, a little breath (at the flute's level since 2026-10-04), a finger "hit" (uchi) from a whole tone above on notes long enough to carry it, a fast (5.9 Hz) shallow vibrato. |
 | `sho` | The gagaku mouth organ: a reedy periodic wave (all harmonics, odd ones stronger) on two oscillators 0.3 % apart so they beat, a slow swell and release; written as held chords (aitake-like clusters). |
 | `rin` | A struck bowl bell: modes at 1 : 2.76 : 5.2, the lower two as slightly mistuned pairs so they beat, faded out at about −30 dB. Also a percussion letter. |
 
@@ -106,12 +106,12 @@ settled):
 |---|---|---|---|---|---|---|---|---|
 | pluck (reference) | 5 | 0.26 | 5 ms | 0.66 s | 2276 → 450 Hz | 0.000 | 0.000 | 2 / 3 |
 | flute (reference) | 10 | 0.26 | 50 ms | 1.26 s | 2515 → 1485 Hz | 0.000 | 0.001 | −14 / 2 |
-| shamisen | 8 (+7) | 0.27 | < 5 ms | 0.70 s | 3483 → 3946 Hz | **0.478** | 0.000 | **+15** / 0 |
-| biwa | 8 (+7) | 0.51 | < 5 ms | 1.02 s | 2076 → 1935 Hz | **0.123** | 0.000 | **+36** / 0 |
+| shamisen | 9 (+5) | 0.27 | < 5 ms | 0.68 s | 3202 → 3777 Hz | **0.334** | 0.000 | **+15** / 0 |
+| biwa | 9 (+5) | 0.51 | < 5 ms | 1.02 s | 2076 → 1935 Hz | **0.123** | 0.000 | **+36** / 0 |
 | koto | 8 (+1) | 0.46 | 5 ms | 1.27 s | 3210 → 928 Hz | 0.001 | 0.000 | 3 / 1 |
 | koto_oshi | 8 (+1) | 0.45 | < 5 ms | 1.27 s | 2991 → 1445 Hz | 0.001 | 0.000 | **−198** / 2 |
-| shakuhachi | 9 (+4) | 0.27 | 160 ms | 1.21 s | 7329 → 6443 Hz | 0.003 | **0.009** | **−82** / 0 |
-| shinobue | 11 (+2) | 0.33 | 20 ms | 1.08 s | 3997 → 4147 Hz | 0.001 | 0.008 | **+197** / 0 |
+| shakuhachi | 8 (+3) | 0.24 | 165 ms | 1.21 s | 1242 → 618 Hz | 0.000 | 0.005 | **−75** / 0 |
+| shinobue | 11 (+2) | 0.27 | 20 ms | 1.08 s | 2937 → 2684 Hz | 0.000 | 0.000 | **+196** / 0 |
 | sho | 3 (+1) | 0.09 | 745 ms | 1.14 s | 2167 → 2060 Hz | 0.121 | 0.000 | −2 / 0 |
 | rin (A5) | 11 | 0.15 | 5 ms | 1.97 s | 2047 → 1596 Hz | — | 0.083 | (inharmonic) |
 
@@ -146,9 +146,10 @@ fast beside a duller one), and every fixed filter is created once per track
 strip and shared by all its notes (filtering is linear, so filtering the sum
 equals the sum of the filtered notes; frequencies snap to quarter-octave steps,
 so a track holds at most a few dozen; the cache lives on the graph and goes
-with it). The sawari clipper is shared per track too (overlapping strings buzz
-against each other, as on the instrument). A note owns only oscillators and
-gains, and its short parts (click, thump, ting) stop as soon as they are
+with it). The sawari clipper is the exception: each note has its own (a shared
+one made a chord's strings clip together into a harsh, noisy crash; the owner
+heard it in the harbour theme), and only the filters after it are shared. A note
+otherwise owns only oscillators and gains, and its short parts (click, thump, ting) stop as soon as they are
 inaudible. The koto core and the biwa string are single periodic-wave
 oscillators. New percussion strokes live 4.5 time constants (about −40 dB)
 instead of 7. No AudioWorklet is used. Render cost of a 10 s passage at
@@ -583,4 +584,51 @@ of "brightness" (`title`, `reedwake`, `road`, `mill`, `battle`, `boss`);
 418 → 380, `boss_saltglass` 406 → 390, `snowbell` 498 → 472, levels within
 0.5 dB. The figures say the noise went down. They do not say the music now sounds
 good: as before, only the owner has listened.
+
+## Owner feedback, 2026-10-04, second listen
+
+After the first pass the owner played Saltglass, the coast road, a battle and
+the Drowned Archive again:
+- The shakuhachi's breath was still a hissing, steamy puff, worst in the
+  town, at the start of the coast road's melody, in the battle theme, and
+  in the Archive, where the shakuhachi takes the tune's repeat. The flute
+  itself "sounds pretty good when it's not accompanied by that".
+- In the town, the flute was a little loud in the second section (B, the
+  shinobue), and fantastic in the quiet echoing section after the koto one
+  (C, the shakuhachi at a low level).
+- "A rhythmic droning... drum?", heard from the first beat and through
+  almost the whole town theme, still harsh.
+- The road east of Saltglass (the Fishers' Cove, `quiet_road`, on the
+  Chapter 1 flute) is pleasant. The Archive's atmosphere is "fantastic"
+  apart from the shakuhachi.
+
+Changes:
+- **Shakuhachi:** played clean. Only the edge of a breath remains: about
+  40 ms as the note speaks, a third of the flute's onset breath, band-passed
+  above the note. There is no stream after it, no accent burst (muraiki)
+  and no air band. Its late spectral centroid fell from 6.4 kHz (the
+  hiss) to 0.6 kHz (the tone).
+- **Shinobue:** the breath is at the flute's level (puff 0.25 → 0.08,
+  stream 0.09 → 0.02).
+- **Shamisen and biwa:** each string now buzzes through its own sawari
+  clipper. The shared clipper clipped a chord's three strings together, and
+  their difference tones made each chord stroke on beats 2 and 4 of the
+  harbour theme a noisy crash. The spectrogram shows clean harmonic lines
+  now instead of a noise cloud. The shamisen's buzz is also lower
+  (0.34 → 0.24). These strokes are the likeliest "droning drum": a
+  drum-like stroke on the beat, a buzz that rings on, and silent only in C.
+  The bass is the other candidate, so it is 1 dB lower in the town.
+- **Town (`saltglass`):** the lead is 0.72 → 0.58 (about −1.9 dB), and B's
+  shinobue is played at 0.8 velocity on top of that (−3.8 dB together); the
+  shamisen strip is 0.32 → 0.28 and the bass 0.65 → 0.58.
+- **Drowned Archive:** the shakuhachi's pass is an octave lower and at 0.7
+  velocity, so it sits among the quiet voices before it.
+- **Notation:** a form entry may carry `v: { track: scale }`, which plays
+  that part softer in that pass.
+
+Listening files for the owner, made from offline renders (scratch, not
+committed): a before/after clip for the town, the coast road, the battle
+and the Archive; the town's parts one at a time (bass, shamisen, drums, pad,
+flute), so the "drum" can be named if it is still there; and the boss
+theme, which the owner has not reached yet.
 

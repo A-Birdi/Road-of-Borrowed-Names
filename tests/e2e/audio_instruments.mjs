@@ -15,7 +15,7 @@
 //   render cost of a 10 s passage (CPU).
 // Each voice must be non-silent, finite, with a peak below 1, and show the
 // features its model claims (checked against a related plain voice where
-// that makes sense, e.g. shamisen against pluck, shakuhachi against flute).
+// that makes sense, e.g. shamisen against pluck, shinobue against shakuhachi).
 // These are signal measurements. They say a voice has the claimed
 // features; they do not say it sounds good — nobody has listened here.
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
@@ -295,10 +295,12 @@ ok(B.centroidLate < S.centroidLate, `biwa: darker than the shamisen (centroid ${
 ok(K.attackMs <= 10 && K.decay20 > 0.5, `koto: plucked attack and a long ring (attack ${K.attackMs} ms, -20 dB ${K.decay20}s)`);
 ok(K.centroidEarly > K.centroidLate * 1.3, `koto: bright attack that mellows (centroid ${K.centroidEarly} -> ${K.centroidLate} Hz)`);
 ok(KO.centsEarly <= -150 && Math.abs(KO.centsLate) <= 10, `koto_oshi: plucked a whole tone low and pressed up (early ${KO.centsEarly}, settled ${KO.centsLate} cents)`);
-ok(SH.offHarm > FL.offHarm * 2, `shakuhachi: far breathier than the flute (off-harmonic energy ${SH.offHarm.toFixed(3)} vs ${FL.offHarm.toFixed(3)})`);
+// The owner (2026-10-04) heard the shakuhachi's breath as a hissing, steamy puff under every note: it is played
+// clean now, its breath a trace (it used to be checked as "far breathier than the flute").
+ok(SH.offHarm < 0.01 && SH.centroidLate < SH.f * 2, `shakuhachi: clean, the breath only a trace (off-harmonic energy ${SH.offHarm.toFixed(3)}, late centroid ${SH.centroidLate} Hz for ${Math.round(SH.f)} Hz)`);
 ok(SH.centsEarly <= -40 && Math.abs(SH.centsLate) <= 12, `shakuhachi: meri scoop from below (early ${SH.centsEarly}, settled ${SH.centsLate} cents)`);
 ok(SH.attackMs >= FL.attackMs, `shakuhachi: swells in no faster than the flute (${SH.attackMs} vs ${FL.attackMs} ms)`);
-ok(SN.centroidLate / SN.f > (FL.centroidLate / FL.f) * 1.3, `shinobue: brighter than the flute relative to its pitch (centroid/f ${(SN.centroidLate / SN.f).toFixed(2)} vs ${(FL.centroidLate / FL.f).toFixed(2)})`);
+ok(SN.centroidLate / SN.f > (SH.centroidLate / SH.f) * 1.3, `shinobue: brighter than the shakuhachi relative to its pitch (centroid/f ${(SN.centroidLate / SN.f).toFixed(2)} vs ${(SH.centroidLate / SH.f).toFixed(2)}; its breath is at the flute's level since 2026-10-04)`);
 ok(SN.centsEarly >= 100 && Math.abs(SN.centsLate) <= 12, `shinobue: grace from above (early ${SN.centsEarly}, settled ${SN.centsLate} cents)`);
 ok(by.sho.attackMs >= 150 && by.sho.centroidLate > by.sho.f * 2.2, `sho: slow swell and a reedy spectrum (attack ${by.sho.attackMs} ms, centroid ${by.sho.centroidLate} Hz for ${by.sho.f} Hz)`);
 ok(by.rin.decay20 > 1.5, 'rin: long ring (-20 dB after ' + by.rin.decay20 + ' s)');

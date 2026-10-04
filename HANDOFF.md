@@ -382,7 +382,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Owner's ear (2026-10-04):** Saltglass, its coast road and its battle theme had a harsh, deep "crashing wave" in
   them. The cause was the shakuhachi's breath (down to 50 Hz) and the 3 s reverb's dark tail after hard attacks.
   Fixed in the instruments and the room, so every chapter's music changes (Chapter 1 within 0.15 dB): see
-  docs/AUDIO.md, last section. The owner will report anything else that sounds off in music not yet heard.
+  docs/AUDIO.md. The owner will report anything else that sounds off in music not yet heard.
+- **Second listen (2026-10-04):** the shakuhachi's breath was still a "hissy, steamy puff", so the instrument is now
+  played clean. The town's flute was a little loud. A harsh "rhythmic droning drum" ran through the town theme,
+  most likely the shamisen chord strokes (each string now has its own sawari clipper); the bass is the other
+  candidate. The owner has a parts-by-part file to name it if it remains. The owner allows "only a handful more"
+  attempts at this music, so keep changes targeted and send before/after clips each time.
 - **Open:** if a phone struggles, thin the Chapter 5–6 battle and boss themes first.
 
 ## Settings in battle (owner's request of 2026-10-03) — REQUIREMENTS.md BS1–BS4, VALIDATION.md "Settings in battle"

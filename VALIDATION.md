@@ -2530,3 +2530,43 @@ Evidence:
 **Not verified:** how it sounds. Nobody here can listen; the owner's ear decides. Firefox renders biquads slightly
 differently.
 
+## The owner's second listen (2026-10-04): a clean shakuhachi, the town's levels, the chord strokes, the Archive's low pass
+
+The owner's notes, the causes and the changes are in docs/AUDIO.md, "Owner feedback, 2026-10-04, second listen".
+In short:
+- the shakuhachi is played clean (no breath stream, no accent burst, no air band);
+- the shinobue's breath is at the flute's level;
+- each shamisen or biwa string has its own sawari clipper (a chord no longer clips into a noisy crash);
+- in the town, the flute is lower (and lower still in the shinobue's section), and the shamisen and bass are lower;
+- the Archive's shakuhachi pass is an octave lower and softer;
+- the notation gained `v: { track: scale }` on form entries.
+
+Evidence:
+- (A) Spectrograms per track, round 1 against round 2 (scratch renders):
+  - `saltglass` and `sg_road`: the shakuhachi shows harmonic lines with no noise band. Its late centroid is 0.6 kHz
+    (the tone), where before it was 6.4 kHz (the hiss).
+  - The shamisen chord strokes show discrete harmonics instead of a noise cloud.
+  - `drowned_archive` 52–72 s: the pass that sat in a breath wash from 50 Hz to 5 kHz is a clean low line.
+- (A) A-weighted levels, 44 s from the start, round 1 → round 2:
+  - `saltglass` flute 39.7 → 36.8 dB (Reedwake's flute: 36.6); shamisen 20.8 → 17.4; bass 23.3 → 22.4; mix 41.0 → 38.4;
+  - `sg_road`, `battle_saltglass` and the first 44 s of `drowned_archive` within 1.5 dB per track (the breath is a
+    small part of the level).
+- B audio_suite --quick 3/3, on the built index.html:
+  - audio_zones;
+  - audio_instruments: the shakuhachi claim is now "clean, the breath only a trace" (off-harmonic 0.005, late
+    centroid 618 Hz for 560 Hz); the shinobue is checked as brighter than the shakuhachi rather than the flute, since
+    its brightness had come from its breath;
+  - audio.check.
+- U:
+  - audio_songs, audio_voice, audio_zones 2663/0;
+  - the full run 27,092/1 before the shakuhachi's range in the test was widened to A3 (a 2.4-shaku instrument;
+    the Archive's low pass reaches B3); the only failure was that range.
+- Listening files for the owner:
+  - before/after for the town, the coast road, the battle and the Archive;
+  - the town's parts one at a time;
+  - the boss theme (76 s).
+  These are offline renders, recorded through Chromium's MediaRecorder and checked for dropouts (none).
+
+**Not verified:** how it sounds; that is the owner's ear. The "droning drum" is not identified for certain: the
+shamisen chord strokes are the likeliest, and the bass is the other candidate. The parts file lets the owner name it.
+
