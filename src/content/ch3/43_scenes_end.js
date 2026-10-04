@@ -8,24 +8,37 @@ RB.script.add(`
 !warp co.eve 23 18 up
 !music co_assembly
 !fade in
+# Illustrated (src/ui/43c_seq_ch3.js; docs/expressive/SHOTS.md §3): the pictures carry lines 11–66; the state lines after the end run once, as before.
+!sequence ch3.assembly begin
+!shot dusk
 narr: {夕暮|ゆうぐ}れ の {広場|ひろば} に 、 {里|さと} の {人|ひと} が {集|あつ}まった 。 {飾|かざ}り {付|つ}け の {途中|とちゅう} の {舞台|ぶたい} に 、 トキワ が {立|た}って いる 。 || At dusk the village gathers in the square. Tokiwa stands on the half-decorated stage.
 co_tokiwa: {皆|みな} さん 。 {祭|まつ}り の {前|まえ} に 、 {聞|き}いて いただきたい こと が あります 。 || Everyone. Before the festival, there is something I must ask you to hear.
 co_tokiwa: {二十年前|にじゅうねんまえ} の {十月|じゅうがつ} {十四日|じゅうよっか} 。 {今夜|こんや} と {同|おな}じ {日|ひ} の {夜|よる} 。 この {里|さと} で は 、 {火事|かじ} が ありました 。 || Twenty years ago, on the fourteenth of the tenth month — this very night — there was a fire in this village.
+!shot dusk murmur
 narr: {広場|ひろば} が ざわめいた 。 {誰|だれ} か が {笑|わら}い かけて 、 {途中|とちゅう} で やめた 。 || A murmur runs through the square. Someone starts to laugh and stops halfway.
+!shot dusk fire
 co_sayo[surprise]: …… {火事|かじ} ？ でも 、 {年代記|ねんだいき} に は …… || …A fire? But the chronicle…
+!shot confess
 co_tokiwa: {年代記|ねんだいき} を {書|か}き{直|なお}した の は 、 {私|わたし} です 。 || I am the one who rewrote the chronicle.
 co_tokiwa: あの {夜|よる} 、 {窯|かま} の {火|ひ} を {見|み}て いた {見習|みなら}い は 、 {私|わたし} でした 。 {火|ひ} が {白|しろ}く なった ので 、 {上|うえ} の {窓|まど} を {開|あ}けました 。 {風|かぜ} の {強|つよ}い {夜|よる} は {開|あ}ける な と 、 トモエ さん に {言|い}われて いた のに 。 || That night, the apprentice watching the kiln fire was me. The flame turned white, so I opened the upper vent — though Tomoe had told me never to open it on a windy night.
 co_tokiwa: {火|ひ} の {粉|こ} が {上|うえ} の {段|だん} へ {飛|と}びました 。 トモエ さん は {私|わたし} に {子|こ}ども たち を {連|つ}れて {逃|に}げろ と {言|い}い 、 {自分|じぶん} は {水門|すいもん} へ {上|のぼ}って {行|い}きました 。 || Sparks flew onto the upper terraces. Tomoe told me to take the children and run, and climbed to the water gate herself.
 co_tokiwa: {五人|ごにん} が {亡|な}くなり 、 {工房|こうぼう} {通|どお}り の {五軒|ごけん} が {焼|や}けました 。 {冬|ふゆ} に 、 {白|しろ}い {服|ふく} の {旅人|たびびと} が {来|き}て 、 {悲|かな}しみ を {預|あず}かる と {言|い}いました 。 {私|わたし} は {頼|たの}みました 。 {頼|たの}んだ {人|ひと} は 、 {他|ほか} に も いました 。 || Five people died, and the five houses of the workshop row burned. That winter a traveller in white came and offered to keep our grief. I asked. I was not the only one.
 co_tokiwa[sad]: {悲|かな}しみ だけ を {預|あず}けた つもり でした 。 でも {静寂|しじま} は 、 {火事|かじ} ごと {持|も}って {行|い}った 。 {記録|きろく} も 、 {火除|ひよ}け{道|みち} の {草刈|くさか}り も 。 || I thought we were handing over only the grief. But the Hush took the whole fire — the record, and the cutting of the firebreaks with it.
 co_tamotsu: …… {雨|あめ} は {四十日|よんじゅうにち} {降|ふ}って ない 。 {水路|すいろ} は {三分|さんぶ} の {一|いち} 。 {火除|ひよ}け{道|みち} は {草|くさ} だらけ だ 。 {今|いま} {火|ひ} が {出|で}たら 、 {下|した} の {里|さと} まで {来|く}る 。 || …No rain for forty days. The channel's at a third. The firebreaks are weeds. If fire broke out now, it would reach the lower village.
+!shot confess ask
 co_tokiwa: {今夜|こんや} 、 {決|き}めて ください 。 この {火事|かじ} を 、 {年代記|ねんだいき} に {書|か}き{戻|もど}す か どう か 。 || Tonight I ask you to decide: do we write this fire back into the chronicle, or not?
 co_tokiwa: {書|か}き{戻|もど}せば 、 {皆|みな} {思|おも}い{出|だ}します 。 {亡|な}くした {人|ひと} の こと も 、 {痛|いた}み も 。 {書|か}かなければ 、 {明日|あした} の {祭|まつ}り は 、 {例年|れいねん} どおり {楽|たの}しい まま です 。 || Write it back, and everyone will remember — the people we lost, and the pain. Leave it out, and tomorrow's festival will be as happy as every year.
+!shot voices
 co_fusa[worry]: …… {楽|たの}しい まま で 、 いい じゃ ない 。 {今|いま} {誰|だれ} も {泣|な}いて ない の よ 。 {今|いま} から {泣|な}かせる の ？ || …Why not leave it happy? Nobody is crying now. You'd make them cry?
+!shot voices nobu
 co_nobu: {泣|な}く の が {嫌|いや} で {草|くさ} を {刈|か}らず 、 それ で {燃|も}える の か 。 {俺|おれ} は {御免|ごめん} だ 。 || So we won't cut the grass because we'd rather not cry, and then we burn? Not me.
+!shot voices ume
 co_ume: …… わたし は {頼|たの}まなかった よ 。 {預|あず}けなかった 。 それ でも {取|と}られた 。 {煙|けむり} の におい だけ {残|のこ}して ね 。 || …I never asked. Never handed anything over. They took it anyway — and left me the smell of smoke.
+!shot voices goro
 co_goro: わし の {腕|うで} は 、 {鐘|かね} の {打|う}ち{方|かた} を {覚|おぼ}えて おった 。 {頭|あたま} が {忘|わす}れて も な 。 || My arms remembered how to ring that bell, even when my head forgot.
+?(co_bell_rung) !shot voices bell
 ?(co_bell_rung) co_goro: {鐘|かね} が {鳴|な}った {日|ひ} 、 みんな {桶|おけ} を {持|も}って {水路|すいろ} へ {走|はし}った だろう 。 {体|からだ} は {忘|わす}れて なかった ん だ 。 || The day the bell rang, you all ran to the channel with buckets, didn't you? Your bodies hadn't forgotten.
+!shot voices eyes
 narr: {皆|みな} の {目|め} が 、 {旅|たび} の {者|もの} に {向|む}いた 。 || Everyone's eyes turn to the travellers.
 co_tokiwa: {旅|たび} の お{方|かた} 。 {頁|ページ} を {見|み}つけた の は 、 あなた です 。 {最初|さいしょ} の {一行|いちぎょう} を 、 {一緒|いっしょ} に {考|かんが}えて いただけません か 。 || Traveller. You found the page. Would you help us decide the first line?
 !challenge co.c_assembly
@@ -35,35 +48,49 @@ co_tokiwa: {旅|たび} の お{方|かた} 。 {頁|ページ} を {見|み}つ
 * ウメ さん に {話|はな}して もらいましょう 。 {覚|おぼ}えて いた {人|ひと} です から 。 || Let Grandma Ume speak. She's the one who kept remembering. -> ume
 :names
 !set co_asm_names
+!shot names
 co_tokiwa: …… はい 。 トモエ 。 ミツ 。 ハチロウ 。 ヨシノ 。 ケイスケ 。 || …Yes. Tomoe. Mitsu. Hachirō. Yoshino. Keisuke.
 narr: {名前|なまえ} が {一|ひと}つ {読|よ}まれる たび に 、 {広場|ひろば} の どこか で 、 {誰|だれ} か が {息|いき} を {呑|の}んだ 。 || Each time a name is read, somewhere in the square, someone catches their breath.
+!shot names goro
 co_goro[sad]: …… ミツ 。 わし の …… || …Mitsu. My…
 !goto decide
 :living
 !set co_asm_living
+!shot living
 co_tamotsu: {明日|あした} の {朝|あさ} 、 {草刈|くさか}り だ 。 {祭|まつ}り の {前|まえ} に 、 {三本|さんぼん} {全部|ぜんぶ} 。 {文句|もんく} の ある {奴|やつ} は 、 {鎌|かま} を {持|も}って から {言|い}え 。 || Tomorrow morning, we cut the grass — all three firebreaks, before the festival. Anyone who objects can say so holding a sickle.
+!shot living sickle
 co_heita: …… {鎌|かま} なら 、 {俺|おれ} 、 {持|も}って ます 。 {一応|いちおう} 。 || …I've got a sickle. Technically.
 !goto decide
 :ume
 !set co_asm_ume
+!shot ume
 co_ume: …… わたし は ね 、 {毎年|まいとし} この {季節|きせつ} に なる と 、 {梁|はり} の におい で {眠|ねむ}れなかった 。 {理由|りゆう} も {分|わ}からず に ね 。 || …Every year around this time, the smell of my roof beams kept me awake. I never knew why.
+!shot ume up
 co_ume: {理由|りゆう} が {分|わ}かって {泣|な}く ほう が 、 {分|わ}からず に {眠|ねむ}れない より 、 ずっと いい よ 。 || Crying because you know why is far better than lying awake without knowing.
 !goto decide
 :decide
+!shot hands
 narr: {長|なが}い {沈黙|ちんもく} の {後|あと} 、 {一人|ひとり} 、 また {一人|ひとり} と {手|て} が {挙|あ}がった 。 || After a long silence, one hand goes up, then another.
+!shot hands fusa
 co_fusa[sad]: …… {妹|いもうと} の {名前|なまえ} 、 ヨシノ って いう の 。 {今|いま} 、 {思|おも}い{出|だ}した 。 {書|か}いて 。 {書|か}いて ちょうだい 。 || …My sister's name was Yoshino. I just remembered. Write it. Please, write it.
+!shot hands all
 narr: {最後|さいご} に は 、 {広場|ひろば} {中|じゅう} の {手|て} が {挙|あ}がって いた 。 || In the end, every hand in the square is raised.
 co_tokiwa: …… ありがとう ございます 。 || …Thank you.
+!shot ink
 narr: トキワ は {年代記|ねんだいき} を {開|ひら}き 、 {震|ふる}える {筆|ふで} で 、 {二十年前|にじゅうねんまえ} の {頁|ページ} に {一行|いちぎょう} を {書|か}き{足|た}した 。 || Tokiwa opens the chronicle and, with a trembling brush, adds a line to the page from twenty years ago.
+!shot ink sink
 narr: {墨|すみ} は {消|き}えなかった 。 {紙|かみ} の {奥|おく} へ 、 {深|ふか}く {沈|しず}んで いった 。 || The ink does not fade. It sinks deep into the paper.
-!shake
+# (the screen shake once here is now the ink shot's own action, the ink sinking into the paper: a sequence never shakes the screen, SHOTS.md §0)
 !sfx reveal
+!shot night
 narr: その {瞬間|しゅんかん} 、 {里|さと} {中|じゅう} の {人|ひと} が 、 {同|おな}じ {夜|よる} を {思|おも}い{出|だ}した 。 || In that moment, the whole village remembers the same night.
 narr: {泣|な}き{声|ごえ} が 、 {広場|ひろば} の あちこち で {上|あ}がった 。 それ は {長|なが}く {続|つづ}いた が 、 {誰|だれ} も {止|と}め なかった 。 || Weeping rises all over the square. It goes on a long time, and nobody tries to stop it.
+!shot night comp
 ?(comp=nao) comp: …… {宛先|あてさき} が {戻|もど}った な 。 {重|おも}い {荷物|にもつ} だ けど 、 {届|とど}いた 。 || …The address came back. Heavy parcel. But it arrived.
 ?(comp=mio) comp[sad]: {皆|みな} さん 、 {泣|な}いて います 。 …… {薬|くすり} で {止|と}めて は いけない {涙|なみだ} です ね 。 || Everyone's crying. …These are tears no medicine should stop.
 ?(comp=ren) comp: {名|な} が {灯|とも}りました 。 …… {師匠|ししょう} は 、 {言|い}わない {名|な} は {薄|うす}く なる 、 と {言|い}って いました 。 {今夜|こんや} 、 {五|いつ}つ の {名|な} が {濃|こ}く なった 。 || The names are lit. …My master used to say that a name nobody speaks grows thin. Tonight, five names grew dark again.
 ?(comp=suzu) comp: …… {拍手|はくしゅ} は 、 しない で おく わ 。 これ は {舞台|ぶたい} じゃ ない から 。 || …I won't applaud. This isn't a stage.
+!sequence ch3.assembly end
 !set co_restored
 !note co_fire co_hush_fire co_firebreak
 !quest co_main 9
@@ -73,10 +100,17 @@ narr: {泣|な}き{声|ごえ} が 、 {広場|ひろば} の あちこち で {
 @scene co.festival_begin
 !fade out
 !card {翌朝|よくあさ} || The next morning
+# The faded passage filled (SHOTS.md §7b; src/ui/43c_seq_ch3.js): the morning's work in four pictures; begun in the dark, the dark comes back at the end for the next card.
+!sequence ch3.firebreaks begin
+!shot climb
 narr: {夜明|よあ}け と {同時|どうじ} に 、 {里|さと} {中|じゅう} の {人|ひと} が {鎌|かま} を {持|も}って {段々畑|だんだんばたけ} を {上|のぼ}った 。 {先頭|せんとう} は ヘイタ だった 。 || At dawn, the whole village climbed the terraces with sickles. Heita led the way.
+!shot gate
 narr: タモツ が {上|うえ} の {水門|すいもん} を {開|あ}ける と 、 {水|みず} が {段|だん} から {段|だん} へ {落|お}ちて いった 。 {二十年前|にじゅうねんまえ} の あの {夜|よる} と 、 {同|おな}じ よう に 。 || Tamotsu opened the top water gate, and water fell from terrace to terrace, just as it had twenty years before.
+!shot breaks
 narr: {昼過|ひるす}ぎ に は 、 {三本|さんぼん} の {火除|ひよ}け{道|みち} が 、 {黄色|きいろ}い {刈|か}り{株|かぶ} の {帯|おび} に なって いた 。 || By early afternoon, the three firebreaks were bands of yellow stubble across the hill.
+!shot rope
 narr: ゴロウ の {櫓|やぐら} に は 、 {新|あたら}しい {綱|つな} が {下|さ}がった 。 {誰|だれ} も {何|なに} も {言|い}わなかった が 、 {皆|みな} が それ を {見上|みあ}げた 。 || A new rope hung from Gorō's lookout. Nobody said anything, but everyone looked up at it.
+!sequence ch3.firebreaks end
 !set co_firebreak_cut co_hiro_seat_named
 !card {秋祭|あきまつ}り || The autumn festival
 !warp co.festival 23 17 down

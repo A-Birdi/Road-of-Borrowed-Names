@@ -439,8 +439,12 @@ RB.script.add(`
 !music -
 narr: いつ の {間|ま} に か 、 {風|かぜ} の {音|おと} は やんで いた 。 || At some point, the wind stopped.
 !fade in
+# The night's end stays black (darkness intended, SHOTS.md §7b); one quiet window shot as the light returns (src/ui/43d_seq_ch4.js).
+!sequence ch4.morning begin
+!shot snow
 !music snowbell
 narr: {朝|あさ} 。 {窓|まど} の {外|そと} は 、 {目|め} が {痛|いた}い ほど {白|しろ}い 。 {空|そら} に は {雲|くも} {一|ひと}つ ない 。 || Morning. Outside the window, the world is so white it hurts to look at. There isn't a cloud in the sky.
+!sequence ch4.morning end
 ?(comp=nao&var.sb_tone=1) comp[smirk]: ヤギ の {夢|ゆめ} を {見|み}た 。 {十三頭|じゅうさんとう} いた 。 …… {誰|だれ} の せい だ 。 || I dreamed about goats. There were thirteen. …Whose fault is that.
 ?(comp=nao&var.sb_tone>=2) comp: …… {昨夜|ゆうべ} は 、 どうも 。 {行|い}こう 。 {灯|あか}り が {待|ま}ってる 。 || …Thanks for last night. Let's go. The lamp's waiting.
 ?(comp=mio&var.sb_tone=1) comp[laugh]: おはよう 。 {主義|しゅぎ} {第一条|だいいちじょう} 、 「 {朝|あさ} ごはん は {抜|ぬ}かない 」 。 {下|した} に {行|い}きましょう 。 || Morning. Rule number one: never skip breakfast. Let's go down.
