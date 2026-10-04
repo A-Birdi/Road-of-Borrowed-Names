@@ -168,7 +168,9 @@ const ST = F(SB, { sa_toya_read: true }); // Tōya's note read: the three decisi
 const SD = F(ST, { sa_choice_mem: true, sa_choice_archive: true, sa_choice_kasane: true, sa_descent: true }); // the way down
 const SDT = F(SD, { end_mem_return: true, end_archive_library: true, end_kasane_trial: true }); // one set of decisions
 const SDK = F(SD, { end_mem_choose: true, end_archive_closed: true, end_kasane_keeper: true }); // the other
-const SE = F(SDT, { sa_epilogue: true, sb_evening: true, co_restored: true, co_bell_done: true, rw_echo_done: true, rw_koji_back: true }); // the epilogue
+const EPI = { sa_epilogue: true, sb_evening: true, co_restored: true, co_bell_done: true, rw_echo_done: true, rw_koji_back: true };
+const SE = F(SDT, EPI); // the epilogue (one set of decisions)
+const SEK = F(SDK, EPI); // the epilogue (the other)
 const SP = F(SDT, { sa_done: true, ch6_done: true, post: true, postgame: true }); // after the ending
 const SPK = F(SDK, { sa_done: true, ch6_done: true, post: true, postgame: true });
 const CH6 = [
@@ -256,13 +258,13 @@ const CH6 = [
   { ch: 6, scene: 'sa.kasane_walk', map: 'sa.camp', at: [15, 15, 'right'], talk: 'kasane', flags: SDT, comps: ['mio', 'nao'], expect: { kasane: ['lookroad'] } },
   { ch: 6, scene: 'sa.epi_lf', map: 'lf.town', at: [2, 17, 'right'], minLines: 8, expect: { pc: ['lookroad', 'cupear', 'palm'], sa_tae: ['cupear', 'lowered', 'listen'] },
     variants: [{ name: 'Kasane came down · Mio', comp: 'mio', flags: F(SE, { sb_hoshino_goes: true }), expect: { kasane: ['bow'], lf_yae: ['laugh'], comp: ['bow', 'laugh'], akari: ['lookroad'] } },
-      { name: 'Kasane stayed · Nao delivered', comp: 'nao', flags: F(SE, SDK, { lf_nao_cameo_done: true }), quests: { lf_nao: 'done' }, expect: { umi: ['palm'], comp: ['nod'] } },
+      { name: 'Kasane stayed · Nao delivered', comp: 'nao', flags: F(SEK, { lf_nao_cameo_done: true }), quests: { lf_nao: 'done' }, expect: { umi: ['palm'], comp: ['nod'] } },
       { name: 'Nao came back too soon', comp: 'nao', flags: F(SE, { lf_nao_cameo_done: true }), quests: { lf_nao: 1 }, expect: { comp: ['strap'] } },
       { name: 'Nao\'s letter undelivered', comp: 'nao', flags: F(SE, { lf_nao_cameo_done: true }), expect: { comp: ['strap'] } },
       { name: 'Ren', comp: 'ren', flags: SE }, { name: 'Suzu', comp: 'suzu', flags: SE }] },
   { ch: 6, scene: 'sa.epi_sb', map: 'sb.hamlet', at: [22, 33, 'up'], expect: { pc: ['lookroad'] },
     variants: [{ name: 'the lamp lit early · Ren took the face', comp: 'ren', flags: F(SE, { sa_ren_took: true }), expect: { hoshino: ['lookroad'], pc: ['shadeeyes'] } }, { name: 'Hoshino went down · Ren left it', comp: 'ren', flags: F(SE, { sb_hoshino_goes: true }), expect: { kanta: ['nod'] } },
-      { name: 'nao', comp: 'nao', flags: SE }, { name: 'mio', comp: 'mio', flags: F(SE, SDK) }, { name: 'suzu', comp: 'suzu', flags: SE }] },
+      { name: 'nao', comp: 'nao', flags: SE }, { name: 'mio', comp: 'mio', flags: SEK }, { name: 'suzu', comp: 'suzu', flags: SE }] },
   { ch: 6, scene: 'sa.epi_co', map: 'co.village', at: [3, 18, 'right'], flags: F(SE, { co_chronicle_read: true }), expect: { pc: ['lookroad'] },
     variants: [{ name: 'suzu', comp: 'suzu', expect: { comp: ['lowered', 'nod'] } }, { name: 'nao', comp: 'nao' }, { name: 'mio · the seat named', comp: 'mio', flags: F(SE, { co_chronicle_read: true, co_hiro_seat_named: true }) }, { name: 'ren · no bell yet', comp: 'ren', flags: F(SE, { co_chronicle_read: true, co_bell_done: false }) }] },
   { ch: 6, scene: 'sa.epi_sg', map: 'sg.harbor', at: [27, 3, 'down'], flags: SE, expect: { pc: ['lookroad'], wataru: ['exhale'] },
