@@ -431,6 +431,17 @@ above). Decided inserts are CURATED in the manifest; the others are Phase D's to
 | `sa.shelf_ren` (`ch6/51_scenes_archive.js` line 423) | the folio labelled in Ushio's hand; Ren chooses; on the open branch Ushio's face surfaces on the paper and the voice fades but the face does not; glasses cleaned for a long time | Ren 16, 25, then bespoke glasses cleaning (the one use of 7 this scene) | **yes — insert (CURATED Illustrated), open branch only (`:ropen`):** (1) the folio opening; (2) the face surfacing on the paper (heavy eyebrows, eyes that vanish when it smiles, an ink smudge) on that narration line; (3) Ren with the glasses off. Other branches stay in the world |
 | `sa.epi_ren_home` (`ch6/53_scenes_ending.js` line 160) | news of the teacher; the folio handed over unopened (when carried) | 14 handover, Ren 25 → 30 | no |
 
+**As built** (`ch6.ren` in `src/ui/43f_seq_ch6.js`; the scene now begins at line 424): begun under `:ropen` after the
+branch's `!set`, `!quest` and `!music` (they run once, as before), so "Take it back" falls through to it and "You
+decide" reaches it by its `!goto ropen`; "Leave it" and the path without Ren never start it. Ended on the glasses line,
+before `!music sorrow`. `open` (one phase): Ren's bust before the shelves, the folio's cover swinging open at their
+chest. `face` (`surface`, `smile`, `fade`): the spread close; on the inside of the cover Ushio's filing slip as marks
+and a red seal square (no writing); on the right-hand page the teacher's face (`sa_ushio`'s portrait turned to ink,
+thresholded and fading below the chin) surfaces, smiles on Ushio's own line and keeps its smile while the voice's
+light goes out on "The voice fades"; held through the challenge (`sa.ren_reply`). `ren` (`sad`, `smirk`, `glasses`):
+close on Ren, sad, then the smirk at the eyebrows, then the glasses lifted off to their hands (the portrait drawn
+without its glasses, eyes half-lidded and down) and the cloth going round one lens. Kept as a memory.
+
 ### 8.5 Long questline — A Fare Thirty Years Owed (`lq_fare`, `src/content/lq/30_fare.js`)
 
 | Scene | Beat | Overworld direction | Viewpoint limit? |
