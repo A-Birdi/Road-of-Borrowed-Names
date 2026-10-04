@@ -438,10 +438,10 @@ const WHO = { surprise: 'kanta', laugh: 'suzu', smile: 'mio', smirk: 'nao', thin
 
 // ---- H. integer display scale ------------------------------------------------------------------------------------
 for (const v of [
-  { name: 'desktop 1280×800 @1', viewport: { width: 1280, height: 800 }, dpr: 1, want: 96 },
-  { name: 'desktop 1280×800 @2', viewport: { width: 1280, height: 800 }, dpr: 2, want: 96 },
+  { name: 'desktop 1280×800 @1 (kept: the owner chose 116 over 96)', viewport: { width: 1280, height: 800 }, dpr: 1, want: 116 },
+  { name: 'desktop 1280×800 @2 (kept)', viewport: { width: 1280, height: 800 }, dpr: 2, want: 116 },
   { name: 'desktop 1280×800 @1.5', viewport: { width: 1280, height: 800 }, dpr: 1.5, want: 128 },
-  { name: 'desktop 1280×800 @1.25 (no whole multiple near: kept)', viewport: { width: 1280, height: 800 }, dpr: 1.25, want: 116 },
+  { name: 'desktop 1280×800 @1.25 (kept)', viewport: { width: 1280, height: 800 }, dpr: 1.25, want: 116 },
   { name: 'short landscape 844×390 @3', viewport: { width: 844, height: 390 }, dpr: 3, want: 96 },
   { name: 'phone 390×844 @3', viewport: { width: 390, height: 844 }, dpr: 3, want: 64 },
   { name: 'phone 390×844 @2 (kept)', viewport: { width: 390, height: 844 }, dpr: 2, want: 64 },

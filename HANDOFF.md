@@ -379,7 +379,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   `39_zones.js`. `RB.audio.battleSong` picks a fight's theme by zone; the instruments are in `10_synth.js`.
 - **Tests:** `tests/unit/audio_zones.test.mjs` (intensity rises), `tests/e2e/audio_instruments.mjs`,
   `audio_zones.mjs`, `audio.check.mjs`.
-- **Open:** nobody has listened. If a phone struggles, thin the Chapter 5–6 battle and boss themes first.
+- **Owner's ear (2026-10-04):** Saltglass, its coast road and its battle theme had a harsh, deep "crashing wave" in
+  them. The cause was the shakuhachi's breath (down to 50 Hz) and the 3 s reverb's dark tail after hard attacks.
+  Fixed in the instruments and the room, so every chapter's music changes (Chapter 1 within 0.15 dB): see
+  docs/AUDIO.md, last section. The owner will report anything else that sounds off in music not yet heard.
+- **Open:** if a phone struggles, thin the Chapter 5–6 battle and boss themes first.
 
 ## Settings in battle (owner's request of 2026-10-03) — REQUIREMENTS.md BS1–BS4, VALIDATION.md "Settings in battle"
 - **The sheet:** `src/ui/55_settings.js` opens the folio's Settings in a battle mode, with an allow-list of
@@ -546,6 +550,14 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    report lists (masks, offsets in import.json), import, build, then show it as a visual candidate: the peak at in-battle and native
    size, the animation, a real battle at Normal, Fast and reduced motion, particles on and off. Only after the owner approves: Batch 1b,
    then 2–4. Re-measure the budgets on real art (CONTRACT.md §10). Open points for the owner: ASSET_BRIEF.md §11.
+17. The owner's notes of 2026-10-04 (VALIDATION.md "The owner's notes of 2026-10-04"):
+   - The four Harmony stage performances, Nao's and Mio's v2 included, are approved as they are: "keep steady". Mio's
+     stream keeps its weight.
+   - The desktop dialogue portrait is back to 116 px. That was the owner's choice, made after trying 96.
+   - The Saltglass "crashing wave" is reduced at its source. That source was the shakuhachi's breath and the reverb's
+     low tail. The owner will say if other zones' music sounds off.
+   - The Chapter 2 reworked scenes and illustrated moments need no wait for the owner. They will replay from the start
+     once the Harmony and World Idle Life passes are done, so the lead's judgment stands until then.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).

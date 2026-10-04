@@ -196,7 +196,15 @@ RB.audio = RB.audio || {};
     g.rev.buffer = impulse(ctx, 3.0, 0.62, 77);
     g.revIn = amp(ctx, 1);
     const revOut = amp(ctx, 0.8);
-    g.revIn.connect(g.rev);
+    // Nothing below the low mids goes into the hall: its tail darkens as it
+    // decays, so the low end of every hard attack (a shamisen stroke, a
+    // shakuhachi puff, a drum) came back as a long deep rush, like surf
+    // breaking under the music. The dry sound keeps its low end.
+    const revHp = bq(ctx, 'highpass', 300, 0.54);
+    const revHp2 = bq(ctx, 'highpass', 300, 1.31); // with the first: a steep (4th-order Butterworth) cut
+    g.revIn.connect(revHp);
+    revHp.connect(revHp2);
+    revHp2.connect(g.rev);
     g.rev.connect(revOut);
     revOut.connect(g.music);
 
@@ -628,10 +636,15 @@ RB.audio = RB.audio || {};
       const ws = c.createWaveShaper();
       ws.curve = sawariCurve();
       const bp = bq(c, 'bandpass', o.buzzF, o.buzzQ);
+      // the asymmetric clip also makes a slow offset and low difference tones
+      // (worst under chords); they came through the band-pass's skirt as a
+      // dark smear after every stroke, so they are cut here
+      const hp = bq(c, 'highpass', o.buzzF * 0.35, 0.7);
       const lvl = amp(c, o.buzz);
       drive.connect(ws);
       ws.connect(bp);
-      bp.connect(lvl);
+      bp.connect(hp);
+      hp.connect(lvl);
       lvl.connect(out);
       return drive;
     });
@@ -726,6 +739,19 @@ RB.audio = RB.audio || {};
   // (the note starts nearly a semitone flat and is lifted into tune), a
   // slow, wide, late vibrato, and on accented notes a burst of breath
   // (muraiki).
+  // the shakuhachi's breath band: a high-pass a little under the note into a
+  // band-pass above it, both fixed and shared by the track's notes
+  function breathBand(g, out, f) {
+    const hp = snap(f * 0.85);
+    const bp = snap(Math.min(f * 1.6, 7000));
+    return shared(g, out, 'breath' + hp + ':' + bp, () => {
+      const h = bq(g.ctx, 'highpass', hp, 0.7);
+      const b = bq(g.ctx, 'bandpass', bp, 3);
+      h.connect(b);
+      b.connect(out);
+      return h;
+    });
+  }
   I.shakuhachi = function (g, out, t, f, d, v) {
     const c = g.ctx;
     const s = osc(c, 'sine', f, t);
@@ -742,17 +768,22 @@ RB.audio = RB.audio || {};
     lg.connect(s.frequency);
     lg.connect(tr.frequency);
     const off = t + Math.max(d, 0.08);
+    // The breath: a short puff at the start of the note settling to a thin
+    // stream, band-passed around the note with everything below the note
+    // taken off first. (It was louder and reached down to the bass, and
+    // through the long reverb every note left a deep rush behind it like a
+    // wave breaking: the owner heard it as a crashing instrument of its own.)
     const n = noise(g);
     const ng = amp(c, 0);
     const muraiki = clamp((v - 0.85) * 2.5, 0, 0.6);
     ng.gain.setValueAtTime(0, t);
-    ng.gain.linearRampToValueAtTime((0.9 + muraiki * 2) * v, t + 0.03);
-    ng.gain.setTargetAtTime(0.33 * v, t + 0.035, 0.12 + muraiki * 0.2);
+    ng.gain.linearRampToValueAtTime((0.4 + muraiki) * v, t + 0.03);
+    ng.gain.setTargetAtTime(0.1 * v, t + 0.035, 0.08 + muraiki * 0.12);
     ng.gain.setTargetAtTime(0, off, 0.05);
     const hg = amp(c, 0);
     hg.gain.setValueAtTime(0, t);
-    hg.gain.linearRampToValueAtTime(0.05 * v, t + 0.04);
-    hg.gain.setTargetAtTime(0.025 * v, t + 0.05, 0.15);
+    hg.gain.linearRampToValueAtTime(0.035 * v, t + 0.04);
+    hg.gain.setTargetAtTime(0.015 * v, t + 0.05, 0.15);
     hg.gain.setTargetAtTime(0, off, 0.05);
     const att = clamp(d * 0.25, 0.06, 0.18);
     const a = amp(c, 0);
@@ -764,7 +795,7 @@ RB.audio = RB.audio || {};
     tr.connect(at);
     at.connect(sbq(g, out, 'lowpass', Math.min(f * 3, 5000), 0.6));
     n.connect(ng);
-    ng.connect(sbq(g, out, 'bandpass', Math.min(f * 1.6, 7000), 2.2));
+    ng.connect(breathBand(g, out, f));
     n.connect(hg);
     hg.connect(sbq(g, out, 'highpass', 3200, 0.7));
     run(c, [s, tr, lfo, n], [s, tr, lfo, lg, n, ng, hg, a, at], t, off + 0.45);
@@ -1028,7 +1059,8 @@ RB.audio = RB.audio || {};
   P.z = (g, o, t, v) => { // ōdaiko "don": deep membrane, a higher mode, rumble, skin slap
     thump(g, o, t, v, 104, 58, 0.2, 0.34, 0.5, 4.5);
     thump(g, o, t, v, 168, 128, 0.12, 0.09, 0.14, 4.5);
-    hissS(g, o, t, v, 'lowpass', 240, 0.7, 0.003, 0.16, 0.22, 4.5);
+    // the rumble is a short shiver under the boom, not a wash (it was 0.22 for 0.16 s)
+    hissS(g, o, t, v, 'lowpass', 240, 0.7, 0.003, 0.09, 0.12, 4.5);
     hissS(g, o, t, v, 'bandpass', 950, 1, 0.001, 0.016, 0.24, 4.5);
   };
   P.e = (g, o, t, v) => { // shime-daiko "ten": tight, high, dry

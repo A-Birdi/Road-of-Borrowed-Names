@@ -286,12 +286,12 @@ nothing else moves, and a still face loses nothing the text needs.
 | 5 glasses | the frames are drawn before the brows, the top rim a row lower and tinted toward the skin; no crease under the rim |
 | 6 light brows | a brow close in value to the skin (white-haired elders, grey and gold hair) keeps its colour and gets a darker underside |
 | 7 fringes | the front hair never covers the eyes (cut from the lash line down, inner columns only, so side locks keep their edge) and is cut from one row above each brow down to the eye, so a dark brow on a dark fringe and a light one on a light fringe both read; not for head wraps, shaved heads or bald ones |
-| 8 display scale | the portrait's CSS size is a whole number of device pixels per art pixel where one lies within −20 %/+30 % of the layout size: desktop 96 px at ratio 1 and 2 (was 116), 128 at 1.5 and 3; short landscape 96 (was 84). In the phone layout the portrait has a row of its own above the sheet, so it **never grows there** (`--por-grow: 0`): 64 px as before at every ratio (2× at ratio 3, 1× at 1.5; uneven at 1, 2 and 2.625, as before). Ratio-1.25 desktops keep 116 |
+| 8 display scale | the portrait's CSS size is a whole number of device pixels per art pixel where one lies within 15 % either side of the layout size, else the layout size: desktop keeps 116 px at ratio 1, 1.25 and 2 (the owner's call, 2026-10-04: the 96 px of an earlier version, whole pixels at ratio 1, read as too small), 128 at 1.5 and 3; short landscape 96 (was 84). In the phone layout the portrait has a row of its own above the sheet, so it **never grows there** (`--por-grow: 0`): 64 px as before at every ratio (2× at ratio 3, 1× at 1.5; uneven at 1, 2 and 2.625, as before) |
 
 **The dialogue box is unchanged** (measured before/after with the same two lines, a short and a long one): 920×210 at
 1440×900 and 1280×800; 390×233 / 390×295 at 390×844 (ratios 1, 2 and 3: 27.6 % / 34.9 % of the screen); 820×206 at
-844×390; 360×233 / 360×329 at 360×640. Only the portrait inside it changed size on desktop (116 → 96) and short
-landscape (84 → 96). (An earlier version gave the phone layout 96 px at ratio 1 — a narrow desktop window or a phone
+844×390; 360×233 / 360×329 at 360×640. Only the portrait inside it changed size: short landscape 84 → 96 (desktop went 116 → 96 and, at the owner's
+request, back to 116). (An earlier version gave the phone layout 96 px at ratio 1 — a narrow desktop window or a phone
 emulated at ratio 1 — which made the box 32 px taller there, 31.4 % of the screen instead of 27.6 %; the world review's
 probe (WR-02) caught it and the phone layout no longer grows.)
 
@@ -320,8 +320,8 @@ characters × the 12 expressions in use, before / after), `cues_nao.png`, `cues_
 
 **Open.** The eye fixes were compared by eye on the 12 characters of the sheets plus a few elders, and checked by
 invariants on all 85 human faces — not reviewed one by one for all 87 (CONTRACT.md risk 10). The desktop portrait is
-96 px at ratio 1 instead of 116 (crisp, but 17 % smaller; the box is the same size; `--por-target` and `fitSize`
-are the knobs). On a phone at ratio 1 or 2 the 64-px portrait is still an uneven downscale (rows dropped at ratio 1):
+116 px at ratio 1, 1.21× the art, so some art rows are doubled: the owner preferred the size to whole pixels (96 px
+was tried and read as too small; `--por-target` and `fitSize` are the knobs). On a phone at ratio 1 or 2 the 64-px portrait is still an uneven downscale (rows dropped at ratio 1):
 the drawing fixes help there, the scale cannot without a larger box or a phone-sized art set. Portraits on
 other screens stay still by choice. No mouth motion (there is no voice acting). The actor system's profile data is
 not read yet (the hook is in `profileOf`).

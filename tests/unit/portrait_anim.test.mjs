@@ -175,6 +175,6 @@ export default async (t) => {
 
   // ---- integer display scale ------------------------------------------------------------------------------------------------
   t.eq([[116, 1], [116, 2], [116, 1.5], [116, 3], [116, 1.25], [84, 1], [84, 2], [84, 3], [64, 1], [64, 2], [64, 3]].map(([s, r]) => A.fitSize(s, r)),
-    [96, 96, 128, 128, 116, 96, 96, 96, 96, 64, 64], 'the portrait\'s CSS size: a whole number of device pixels per art pixel near the layout size, else the layout size');
+    [116, 116, 128, 128, 116, 96, 96, 96, 64, 64, 64], 'the portrait\'s CSS size: a whole number of device pixels per art pixel within 15% of the layout size, else the layout size (desktop keeps 116 at ratio 1 and 2: the owner chose it over 96)');
   t.eq([1, 1.5, 2, 2.625, 3, 3.5].map((r) => A.fitSize(64, r, false)), [64, 64, 64, 64, 64, 54.86], 'the phone layout never grows the portrait (it has a row of its own above the sheet); it may shrink to a whole multiple (3.5: 2×)');
 };

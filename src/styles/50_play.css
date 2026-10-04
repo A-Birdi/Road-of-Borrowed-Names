@@ -47,8 +47,8 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scrim, body.veiled #ui > .scrim { z-index: 20; }
 .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
 .dlg .portrait {
-  /* --por-target: the layout's size; --por-size: the nearest size that is a whole number of device pixels per
-   * art pixel, set by src/ui/21_portrait_anim.js (96 CSS px at device-pixel-ratio 1, not 116 = 1.21×) */
+  /* --por-target: the layout's size; --por-size: a nearby size that is a whole number of device pixels per
+   * art pixel where one is close, set by src/ui/21_portrait_anim.js (116 is kept at device-pixel-ratio 1 and 2) */
   grid-area: por; --por-target: 116px; width: var(--por-size, 116px); height: var(--por-size, 116px); image-rendering: pixelated; align-self: end; margin-bottom: 10px;
   background: var(--paper-3); border: 4px solid var(--paper); outline: 1px solid var(--paper-edge);
   box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-radius: 2px;

@@ -1561,8 +1561,8 @@ body.bulb-on .place .jline .jt, body.bulb-on .card-slip .jline .jt, body.bulb-on
 body.veiled #ui > .dlg, body.veiled #ui > .choices, body.veiled #ui > .folio-scrim, body.veiled #ui > .scrim { z-index: 20; }
 .dlg.noportrait, .dlg.narration { grid-template-columns: minmax(0, 1fr); grid-template-areas: "tab" "sheet"; }
 .dlg .portrait {
-  /* --por-target: the layout's size; --por-size: the nearest size that is a whole number of device pixels per
-   * art pixel, set by src/ui/21_portrait_anim.js (96 CSS px at device-pixel-ratio 1, not 116 = 1.21×) */
+  /* --por-target: the layout's size; --por-size: a nearby size that is a whole number of device pixels per
+   * art pixel where one is close, set by src/ui/21_portrait_anim.js (116 is kept at device-pixel-ratio 1 and 2) */
   grid-area: por; --por-target: 116px; width: var(--por-size, 116px); height: var(--por-size, 116px); image-rendering: pixelated; align-self: end; margin-bottom: 10px;
   background: var(--paper-3); border: 4px solid var(--paper); outline: 1px solid var(--paper-edge);
   box-shadow: 0 8px 20px rgba(0,0,0,0.45); border-radius: 2px;
@@ -13273,7 +13273,15 @@ RB.audio = RB.audio || {};
     g.rev.buffer = impulse(ctx, 3.0, 0.62, 77);
     g.revIn = amp(ctx, 1);
     const revOut = amp(ctx, 0.8);
-    g.revIn.connect(g.rev);
+    // Nothing below the low mids goes into the hall: its tail darkens as it
+    // decays, so the low end of every hard attack (a shamisen stroke, a
+    // shakuhachi puff, a drum) came back as a long deep rush, like surf
+    // breaking under the music. The dry sound keeps its low end.
+    const revHp = bq(ctx, 'highpass', 300, 0.54);
+    const revHp2 = bq(ctx, 'highpass', 300, 1.31); // with the first: a steep (4th-order Butterworth) cut
+    g.revIn.connect(revHp);
+    revHp.connect(revHp2);
+    revHp2.connect(g.rev);
     g.rev.connect(revOut);
     revOut.connect(g.music);
 
@@ -13705,10 +13713,15 @@ RB.audio = RB.audio || {};
       const ws = c.createWaveShaper();
       ws.curve = sawariCurve();
       const bp = bq(c, 'bandpass', o.buzzF, o.buzzQ);
+      // the asymmetric clip also makes a slow offset and low difference tones
+      // (worst under chords); they came through the band-pass's skirt as a
+      // dark smear after every stroke, so they are cut here
+      const hp = bq(c, 'highpass', o.buzzF * 0.35, 0.7);
       const lvl = amp(c, o.buzz);
       drive.connect(ws);
       ws.connect(bp);
-      bp.connect(lvl);
+      bp.connect(hp);
+      hp.connect(lvl);
       lvl.connect(out);
       return drive;
     });
@@ -13803,6 +13816,19 @@ RB.audio = RB.audio || {};
   // (the note starts nearly a semitone flat and is lifted into tune), a
   // slow, wide, late vibrato, and on accented notes a burst of breath
   // (muraiki).
+  // the shakuhachi's breath band: a high-pass a little under the note into a
+  // band-pass above it, both fixed and shared by the track's notes
+  function breathBand(g, out, f) {
+    const hp = snap(f * 0.85);
+    const bp = snap(Math.min(f * 1.6, 7000));
+    return shared(g, out, 'breath' + hp + ':' + bp, () => {
+      const h = bq(g.ctx, 'highpass', hp, 0.7);
+      const b = bq(g.ctx, 'bandpass', bp, 3);
+      h.connect(b);
+      b.connect(out);
+      return h;
+    });
+  }
   I.shakuhachi = function (g, out, t, f, d, v) {
     const c = g.ctx;
     const s = osc(c, 'sine', f, t);
@@ -13819,17 +13845,22 @@ RB.audio = RB.audio || {};
     lg.connect(s.frequency);
     lg.connect(tr.frequency);
     const off = t + Math.max(d, 0.08);
+    // The breath: a short puff at the start of the note settling to a thin
+    // stream, band-passed around the note with everything below the note
+    // taken off first. (It was louder and reached down to the bass, and
+    // through the long reverb every note left a deep rush behind it like a
+    // wave breaking: the owner heard it as a crashing instrument of its own.)
     const n = noise(g);
     const ng = amp(c, 0);
     const muraiki = clamp((v - 0.85) * 2.5, 0, 0.6);
     ng.gain.setValueAtTime(0, t);
-    ng.gain.linearRampToValueAtTime((0.9 + muraiki * 2) * v, t + 0.03);
-    ng.gain.setTargetAtTime(0.33 * v, t + 0.035, 0.12 + muraiki * 0.2);
+    ng.gain.linearRampToValueAtTime((0.4 + muraiki) * v, t + 0.03);
+    ng.gain.setTargetAtTime(0.1 * v, t + 0.035, 0.08 + muraiki * 0.12);
     ng.gain.setTargetAtTime(0, off, 0.05);
     const hg = amp(c, 0);
     hg.gain.setValueAtTime(0, t);
-    hg.gain.linearRampToValueAtTime(0.05 * v, t + 0.04);
-    hg.gain.setTargetAtTime(0.025 * v, t + 0.05, 0.15);
+    hg.gain.linearRampToValueAtTime(0.035 * v, t + 0.04);
+    hg.gain.setTargetAtTime(0.015 * v, t + 0.05, 0.15);
     hg.gain.setTargetAtTime(0, off, 0.05);
     const att = clamp(d * 0.25, 0.06, 0.18);
     const a = amp(c, 0);
@@ -13841,7 +13872,7 @@ RB.audio = RB.audio || {};
     tr.connect(at);
     at.connect(sbq(g, out, 'lowpass', Math.min(f * 3, 5000), 0.6));
     n.connect(ng);
-    ng.connect(sbq(g, out, 'bandpass', Math.min(f * 1.6, 7000), 2.2));
+    ng.connect(breathBand(g, out, f));
     n.connect(hg);
     hg.connect(sbq(g, out, 'highpass', 3200, 0.7));
     run(c, [s, tr, lfo, n], [s, tr, lfo, lg, n, ng, hg, a, at], t, off + 0.45);
@@ -14105,7 +14136,8 @@ RB.audio = RB.audio || {};
   P.z = (g, o, t, v) => { // ōdaiko "don": deep membrane, a higher mode, rumble, skin slap
     thump(g, o, t, v, 104, 58, 0.2, 0.34, 0.5, 4.5);
     thump(g, o, t, v, 168, 128, 0.12, 0.09, 0.14, 4.5);
-    hissS(g, o, t, v, 'lowpass', 240, 0.7, 0.003, 0.16, 0.22, 4.5);
+    // the rumble is a short shiver under the boom, not a wash (it was 0.22 for 0.16 s)
+    hissS(g, o, t, v, 'lowpass', 240, 0.7, 0.003, 0.09, 0.12, 4.5);
     hissS(g, o, t, v, 'bandpass', 950, 1, 0.001, 0.016, 0.24, 4.5);
   };
   P.e = (g, o, t, v) => { // shime-daiko "ten": tight, high, dry
@@ -49651,18 +49683,17 @@ RB.portraitAnim = (function () {
   }
 
   // ---- integer display scale (PORTRAITS.md §3 item 8) ------------------------------------------------------
-  // The 96-px art at a size that maps to a whole number of device pixels per art pixel where that stays near
-  // the layout's size (--por-target in 50_play.css): 96 CSS px on desktop at device-pixel-ratio 1 and 2 (it was
-  // 116, a 1.21× scale that doubled some rows and not others), 128 at ratio 1.5 and 3; 96 on short landscape
-  // (84); 64 on phones at ratio 3 (2×) and 1.5 (1×). Where no whole multiple is within reach (ratio 1.25
-  // desktops, ratio-2 phones) the layout's size is kept. In the phone layout the portrait has a row of its own
-  // above the sheet, so it never grows there (--por-grow: 0): a larger portrait would make the sheet taller
-  // and cover more of the scene (a 390×844 window at ratio 1 keeps 64, uneven, as before).
+  // The 96-px art at a size that maps to a whole number of device pixels per art pixel where one lies close to
+  // the layout's size (--por-target in 50_play.css: within 15% either side of it); otherwise the layout's
+  // size is kept. Desktop keeps 116 CSS px at device-pixel-ratio 1, 1.25 and 2 (the owner's choice: 96 read as
+  // too small, so the 1.21× scale stays) and gets 128 at ratio 1.5 and 3; short landscape (84) gets 96; phones
+  // get 64 at ratio 3 (2×) and 1.5 (1×). In the phone layout the portrait has a row of its own above the sheet,
+  // so it never grows there (--por-grow: 0): a larger portrait would make the sheet taller and cover more of
+  // the scene (a 390×844 window at ratio 1 keeps 64, uneven, as before).
   function fitSize(target, dpr, grow) {
-    let k = Math.max(1, Math.round((target * dpr) / 96));
+    const k = Math.max(1, Math.round((target * dpr) / 96));
     let css = (k * 96) / dpr;
-    if (css < target * 0.8) { k++; css = (k * 96) / dpr; }
-    if (css > target * 1.3) css = Math.max(target, 96 / dpr);
+    if (css < target * 0.85 || css > target * 1.15) css = target;
     if (grow === false && css > target) css = target;
     return Math.round(css * 100) / 100;
   }

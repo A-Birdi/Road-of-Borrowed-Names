@@ -498,18 +498,17 @@ RB.portraitAnim = (function () {
   }
 
   // ---- integer display scale (PORTRAITS.md §3 item 8) ------------------------------------------------------
-  // The 96-px art at a size that maps to a whole number of device pixels per art pixel where that stays near
-  // the layout's size (--por-target in 50_play.css): 96 CSS px on desktop at device-pixel-ratio 1 and 2 (it was
-  // 116, a 1.21× scale that doubled some rows and not others), 128 at ratio 1.5 and 3; 96 on short landscape
-  // (84); 64 on phones at ratio 3 (2×) and 1.5 (1×). Where no whole multiple is within reach (ratio 1.25
-  // desktops, ratio-2 phones) the layout's size is kept. In the phone layout the portrait has a row of its own
-  // above the sheet, so it never grows there (--por-grow: 0): a larger portrait would make the sheet taller
-  // and cover more of the scene (a 390×844 window at ratio 1 keeps 64, uneven, as before).
+  // The 96-px art at a size that maps to a whole number of device pixels per art pixel where one lies close to
+  // the layout's size (--por-target in 50_play.css: within 15% either side of it); otherwise the layout's
+  // size is kept. Desktop keeps 116 CSS px at device-pixel-ratio 1, 1.25 and 2 (the owner's choice: 96 read as
+  // too small, so the 1.21× scale stays) and gets 128 at ratio 1.5 and 3; short landscape (84) gets 96; phones
+  // get 64 at ratio 3 (2×) and 1.5 (1×). In the phone layout the portrait has a row of its own above the sheet,
+  // so it never grows there (--por-grow: 0): a larger portrait would make the sheet taller and cover more of
+  // the scene (a 390×844 window at ratio 1 keeps 64, uneven, as before).
   function fitSize(target, dpr, grow) {
-    let k = Math.max(1, Math.round((target * dpr) / 96));
+    const k = Math.max(1, Math.round((target * dpr) / 96));
     let css = (k * 96) / dpr;
-    if (css < target * 0.8) { k++; css = (k * 96) / dpr; }
-    if (css > target * 1.3) css = Math.max(target, 96 / dpr);
+    if (css < target * 0.85 || css > target * 1.15) css = target;
     if (grow === false && css > target) css = target;
     return Math.round(css * 100) / 100;
   }

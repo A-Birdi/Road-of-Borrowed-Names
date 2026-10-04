@@ -20,7 +20,7 @@ network, no libraries. Source: `src/audio/`. Spec: SPECIFICATION.txt §17.
 
 ```
 per-song strips (gain → pan) → song fade gains ─┬─→ music bus → duck ─┐
-                         └→ reverb send ─→ 3 s room ─┘                 ├→ master → HP 28 Hz → shelf −4 dB @ 6.5 kHz
+                         └→ reverb send → HP 300 Hz (24 dB/oct) → 3 s room ─┘ ├→ master → HP 28 Hz → shelf −4 dB @ 6.5 kHz
 effects → sfx bus (+ 1.5 s room) ─────────────────────────────────────┤   → glue compressor → trim → limiter
 voice bus (reserved) ─────────────────────────────────────────────────┘   → soft-clip shaper (max 0.99) → out
 ```
@@ -74,7 +74,7 @@ context. What each models:
 | `biwa` | The same lute, lower and rounder: saw + half a triangle in one periodic wave, a heavier bachi click, a longer note and a stronger, lower (1.8 kHz) and longer buzz (the biwa's frets are built for sawari), a pitch drop of about 55 cents over 70 ms. |
 | `koto` | A rounded sustaining core (triangle with its octave partial, one periodic-wave oscillator) that rings 0.9–3.2 s depending on pitch, a sawtooth that is loud only at the strike (the ivory pick, tsume), an inharmonic "ting" at 3.01× the note (80 ms) and a noise click. |
 | `koto_oshi` | The koto with **ato-oshi** (oshide): plucked a whole tone low and pressed up to the written note behind the bridge after 60 ms (130 ms glide). The written note is the one that sounds. |
-| `shakuhachi` | Sine + triangle with far more breath than the flute: an edge-tone hiss band-passed at 1.6× the note and a band of air above 3.2 kHz; a **meri** scoop (the note starts 85 cents flat and is lifted into tune over 90–240 ms); a slow (4.3 Hz), wide, late vibrato; accented notes get a burst of breath (**muraiki**). |
+| `shakuhachi` | Sine + triangle with more breath than the flute: an edge-tone hiss band-passed at 1.6× the note (after a high-pass a little under the note, so the breath never reaches down into the bass) and a thin band of air above 3.2 kHz — a short puff at the start of each note settling to a thin stream; a **meri** scoop (the note starts 85 cents flat and is lifted into tune over 90–240 ms); a slow (4.3 Hz), wide, late vibrato; accented notes get a burst of breath (**muraiki**). |
 | `shinobue` | The high festival flute: sine + triangle + some square through a bright low-pass, a little breath, a finger "hit" (uchi) from a whole tone above on notes long enough to carry it, a fast (5.9 Hz) shallow vibrato. |
 | `sho` | The gagaku mouth organ: a reedy periodic wave (all harmonics, odd ones stronger) on two oscillators 0.3 % apart so they beat, a slow swell and release; written as held chords (aitake-like clusters). |
 | `rin` | A struck bowl bell: modes at 1 : 2.76 : 5.2, the lower two as slightly mistuned pairs so they beat, faded out at about −30 dB. Also a percussion letter. |
@@ -83,7 +83,7 @@ New percussion letters (documented in the notation header of `30_songs.js`):
 
 | letter | voice | model |
 |---|---|---|
-| `z` | ōdaiko "don" | a deep membrane (104 → 58 Hz), a higher mode, a low rumble, a skin slap |
+| `z` | ōdaiko "don" | a deep membrane (104 → 58 Hz), a higher mode, a short low shiver, a skin slap |
 | `e` | shime-daiko "ten" | tight, high (about 300 Hz), dry |
 | `f` | taiko rim "ka" (fuchi) | wood on wood: two short partials and a click |
 | `m` | kotsuzumi "pon" | a hollow pitched tone (470 → 396 Hz) that sags as the ropes relax |
@@ -106,11 +106,11 @@ settled):
 |---|---|---|---|---|---|---|---|---|
 | pluck (reference) | 5 | 0.26 | 5 ms | 0.66 s | 2276 → 450 Hz | 0.000 | 0.000 | 2 / 3 |
 | flute (reference) | 10 | 0.26 | 50 ms | 1.26 s | 2515 → 1485 Hz | 0.000 | 0.001 | −14 / 2 |
-| shamisen | 8 (+6) | 0.30 | < 5 ms | 0.70 s | 3274 → 3788 Hz | **0.325** | 0.000 | **+15** / 0 |
-| biwa | 8 (+6) | 0.48 | < 5 ms | 1.04 s | 2045 → 2051 Hz | **0.107** | 0.000 | **+36** / 0 |
+| shamisen | 8 (+7) | 0.27 | < 5 ms | 0.70 s | 3483 → 3946 Hz | **0.478** | 0.000 | **+15** / 0 |
+| biwa | 8 (+7) | 0.51 | < 5 ms | 1.02 s | 2076 → 1935 Hz | **0.123** | 0.000 | **+36** / 0 |
 | koto | 8 (+1) | 0.46 | 5 ms | 1.27 s | 3210 → 928 Hz | 0.001 | 0.000 | 3 / 1 |
 | koto_oshi | 8 (+1) | 0.45 | < 5 ms | 1.27 s | 2991 → 1445 Hz | 0.001 | 0.000 | **−198** / 2 |
-| shakuhachi | 9 (+3) | 0.34 | 180 ms | 1.16 s | 6233 → 6062 Hz | 0.008 | **0.045** | **−92** / 0 |
+| shakuhachi | 9 (+4) | 0.27 | 160 ms | 1.21 s | 7329 → 6443 Hz | 0.003 | **0.009** | **−82** / 0 |
 | shinobue | 11 (+2) | 0.33 | 20 ms | 1.08 s | 3997 → 4147 Hz | 0.001 | 0.008 | **+197** / 0 |
 | sho | 3 (+1) | 0.09 | 745 ms | 1.14 s | 2167 → 2060 Hz | 0.121 | 0.000 | −2 / 0 |
 | rin (A5) | 11 | 0.15 | 5 ms | 1.97 s | 2047 → 1596 Hz | — | 0.083 | (inharmonic) |
@@ -536,7 +536,7 @@ test of the built `index.html`, **(A)** = analysis by the author of the music
 - **`node tests/e2e/audio_zones.mjs` (B, new):** for every zone of Chapters 1–6 and the Atlas, in the real game with audio initialised: the creature's map plays its own music on entry; a real battle with one of the zone's creatures plays the zone's battle theme; after stepping back from the fight the map's music returns; the zone's route map plays its route theme; the zone's boss plays its boss theme; no audio-engine error and no page error. The Atlas generates its rooms, so its creature is fought on the first Reedwake route (its theme follows the creature, not the map). Result: 69 passed, 0 failed.
 - **`node tests/e2e/audio_instruments.mjs` (B, new):** the instrument analysis in "Japanese instruments" above. All checks pass.
 - **`node tests/e2e/audio_suite.mjs [--story] [--quick] [file.mjs:args …]` (B, new):** runs the audio browser scripts above, `combat_ui.mjs` and `battle_presentation.mjs` (the battle screen whose music wiring changed), and optionally story tests, one after another, with a summary. Final run, all passed: `audio_zones` (69 passed, 0 failed), `audio_instruments` (all instrument checks passed), `audio.check` (all audio checks passed), `combat_ui` (7 passed, 0 failed), `battle_presentation` (13 passed, 0 failed), `story_ch1 F mio` (31 checks), `story_ch3 E nao` (38 checks), `story_ch4 I ren go` (53/53), `story_ch5 A suzu` (44 steps), `story_ch6 2` (36/36). The whole-game run `node tests/e2e/pursue.mjs E mio` (a new campaign through all six chapters and one Atlas expedition, with the music wiring live) was run on its own after the battery: every chapter reached, 10 battles, no problems, no page errors (1035 s).
-- **(A) Unchanged songs:** every song not listed as new or re-orchestrated compiles to exactly the same event list as before the zone music (`title`, `prologue`, `reedwake`, `reedwake_night`, `road`, `mill`, `battle`, `boss`, `victory`, the shared moods and companion themes, `hush`, `ending`, `credits`, `atlas`, …). Rendered through the full graph with the old and the new audio code (8 s at the start and mid-song of 20 of them, and five effects), they give the same RMS, peak and brightness to within 2e-5 — the same spread as rendering the old code twice (Chromium's offline render varies that much from run to run). For the ten re-orchestrated songs every original melodic and harmonic track keeps the same pitch classes, onset times and lengths; only percussion patterns changed and two tracks were added.
+- **(A) Unchanged songs:** every song not listed as new or re-orchestrated compiles to exactly the same event list as before the zone music (`title`, `prologue`, `reedwake`, `reedwake_night`, `road`, `mill`, `battle`, `boss`, `victory`, the shared moods and companion themes, `hush`, `ending`, `credits`, `atlas`, …). Rendered through the full graph with the old and the new audio code (8 s at the start and mid-song of 20 of them, and five effects), they give the same RMS, peak and brightness to within 2e-5 — the same spread as rendering the old code twice (Chromium's offline render varies that much from run to run). For the ten re-orchestrated songs every original melodic and harmonic track keeps the same pitch classes, onset times and lengths; only percussion patterns changed and two tracks were added. (Since 2026-10-04 the reverb send is high-passed, so these songs are no longer bit-identical to before the zone music: within 0.15 dB, see the last section.)
 - **Mix balance:** measured with `renderOffline(id, s, {solo:[track]})`. Leads sit 5–10 dB above pads, and the bass is loud in RMS but well below the lead once A-weighted.
 
 **What these tests do not show.**
@@ -544,3 +544,43 @@ test of the built `index.html`, **(A)** = analysis by the author of the music
 - Only headless Chromium was exercised. **Firefox** (the owner's desktop browser) and Android Chrome were not; Firefox's Web Audio differs in biquad, WaveShaper and PeriodicWave details, so timbres may differ slightly there, and its CPU cost is unmeasured. Safari (including iOS `interrupted` handling) and real output-device switching were **not** tested.
 - Real-time CPU on phones (the owner's Android foldable) is not measured; the figures above are offline renders on a shared, busy test machine, accurate to perhaps ±20 %.
 - No real Japanese TTS voice was available, so actual speech playback in a browser is untested beyond the mock.
+
+## Owner feedback, 2026-10-04: the "crashing wave" in Saltglass
+
+The owner heard the Saltglass harbour, the coast road north of it and the
+Saltglass battle theme as harsh, with "deep crashing wave-like sounds from an
+unknown instrument mixed in". Nothing in the scores is a wave; it came from
+three things in the instruments and the room, found by rendering each track
+alone (`renderOffline(id, s, {solo:[track]})`) and drawing spectrograms of the
+mix and every track, old arrangement (flute, mallet, pluck) against new:
+
+1. **The shakuhachi's breath** was a dense band of noise from about 50 Hz to
+   past 3 kHz under every note (an attack puff at 0.9 and a stream at 0.33,
+   through a band-pass whose skirts reach far below the note). On the coast
+   road, where the shakuhachi plays low, it covered the top half of the mix.
+   Now: a puff of 0.4 settling to 0.1, a high-pass a little under the note
+   before the band-pass (Q 3 instead of 2.2), and the air band above 3.2 kHz
+   at 0.035/0.015 instead of 0.05/0.025. It is still breathier than the
+   flute (off-harmonic share 0.009 against 0.001).
+2. **The music reverb** is a 3 s room whose tail darkens as it decays, so the
+   low end of every hard attack (each shamisen stroke, each breath puff, each
+   drum) came back as a long, deep rush after it, like surf. Rendered without
+   the reverb, the smear under the shamisen chords disappears. Now the
+   reverb send is high-passed at 300 Hz (24 dB/octave); the dry sound keeps
+   its low end.
+3. **The ōdaiko's rumble** (low-passed noise under the boom) lasted 0.16 s at
+   0.22; it is now a 0.09 s shiver at 0.12. The boom itself is unchanged.
+   The shamisen and biwa sawari buzz also gets a high-pass after its
+   band-pass (at 0.35× the buzz frequency): the asymmetric clipper makes a
+   slow offset and low difference tones under chords.
+
+These are instrument and room changes, so they reach every song that uses
+the shakuhachi, shamisen, biwa or ōdaiko (Chapters 2–6 and the Atlas), and
+the reverb change reaches every song. Measured over 24 s from the start
+(`renderOffline`, before → after): Chapter 1 songs within 0.15 dB and 6 Hz
+of "brightness" (`title`, `reedwake`, `road`, `mill`, `battle`, `boss`);
+`saltglass` brightness 662 → 574 Hz, `sg_road` 630 → 530, `battle_saltglass`
+418 → 380, `boss_saltglass` 406 → 390, `snowbell` 498 → 472, levels within
+0.5 dB. The figures say the noise went down. They do not say the music now sounds
+good: as before, only the owner has listened.
+

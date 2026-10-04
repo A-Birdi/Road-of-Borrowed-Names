@@ -2258,7 +2258,8 @@ byte-identical to a fresh build; registry.json regenerated for this branch):
 - The lead looked at the 1280 × 720 sheets.
   - Nao's route, the shared burst and the turn read clearly.
   - Mio's lifted vial, the ripples at both feet and the rinse read. Her stream is a thin clean line that may want more
-    weight: the owner's call.
+    weight: the owner's call. **Settled 2026-10-04:** the owner watched the four technique videos and found the
+    reworked performances "pretty good": keep them as they are, the stream included.
 
 **Not verified:** a person's judgement at play speed; Firefox; phones; the new sound accents were not listened to.
 
@@ -2480,7 +2481,8 @@ build; the manifest regenerates unchanged):
   - scene_manifest.mjs merges the ch56 decisions, then misc;
   - the manifest and index.html regenerated.
 - unit 27,093/0; validator clean.
-- browser: recorded on the next line.
+- browser, on the merged build (fc860b6 sources, run one after another): walk_round all passed;
+  sequence_chapters_56 196/0; staging_chapters --ch=5 2174/0, --ch=6 2042/0, --ch=misc 3586/0; story_ch6 all ok.
 
 **Not verified:**
 - Play speed with a person watching; real devices; Firefox and Safari.
@@ -2488,3 +2490,43 @@ build; the manifest regenerates unchanged):
 - In `sa.epi_lf`, Kasane's walk-in is forced past Yae after waiting: the world's fallback.
 - In `lf.water_returns` with staging off you stand on a tile that floods again.
 - `sa.kasane_meet`'s `!move pc up 4` leaves a scene-owned companion behind.
+
+## The owner's notes of 2026-10-04: the dialogue portrait back to 116 px; the "crashing wave" in the Saltglass music
+
+**The portrait.** The owner found the 96-px desktop portrait "a little small" and chose 116 px. `fitSize`
+(`src/ui/21_portrait_anim.js`) now keeps the layout's size unless a whole number of device pixels per art pixel lies
+within 15 % of it:
+- desktop: 116 at ratio 1, 1.25 and 2 (1.21× the art, uneven rows, as before the integer pass); 128 at 1.5 and 3;
+- short landscape: 96; phones: 64, unchanged.
+- U portrait_anim (fitSize table, in the full unit run 27,093/0).
+- B portrait_anim all passed, including the display-scale table: desktop 1280×800 at ratio 1 → 116 CSS px, the dialogue
+  box 210 px tall; ratio 2 → 116; 1.5 → 128; 1.25 → 116; 844×390 at 3 → 96; the phone rows 64.
+
+**The music.** The owner heard Saltglass, the coast road and the Saltglass battle theme as harsh, with deep
+crashing-wave sounds from an unknown instrument. Found by rendering each track alone and drawing spectrograms, new
+arrangement against old (docs/AUDIO.md, last section):
+- the shakuhachi's breath reached from about 50 Hz to past 3 kHz under every note;
+- the dark tail of the 3 s music reverb turned the low end of each hard attack into a long deep rush. Rendered
+  without the reverb, the smear under the shamisen chords is gone;
+- the ōdaiko's noise rumble was long.
+
+Changed in `src/audio/10_synth.js`:
+- the shakuhachi's breath is quieter and high-passed under the note;
+- the reverb send is high-passed at 300 Hz, 24 dB per octave;
+- the ōdaiko's rumble is shorter and lower;
+- the sawari buzz is high-passed.
+
+Evidence:
+- (A) Spectrograms of `saltglass`, `sg_road` and `battle_saltglass`, per track, before and after (scratch renders,
+  not committed). The breath now sits above the note, and the low smear after each shamisen stroke is gone.
+- (A) `renderOffline`, 24 s, before → after:
+  - Chapter 1 songs within 0.15 dB and 6 Hz brightness;
+  - `saltglass` brightness 662 → 574 Hz; `sg_road` 630 → 530; `battle_saltglass` 418 → 380; `boss_saltglass`
+    406 → 390;
+  - levels within 0.5 dB.
+- B audio_suite --quick: audio_zones, audio_instruments (shakuhachi still breathier than the flute: off-harmonic
+  0.009 vs 0.001), audio.check — 3/3 passed. U full run 27,093/0.
+
+**Not verified:** how it sounds. Nobody here can listen; the owner's ear decides. Firefox renders biquads slightly
+differently.
+
