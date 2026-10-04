@@ -180,8 +180,13 @@ reset of every NPC to their map place before each branch now applies to these ca
   - `lf.water_returns`: with staging off the scene leaves you standing on the row that floods again (the scene has no
     move; the flood props then block the tile you stand on). Staged, you step back north out of it — to a fixed tile
     (10,9), with your companion at (11,8): from another column of the trigger row that walk is longer.
+    *Fixed 2026-10-04 (VALIDATION.md, last section):* the scene now steps you back with its own `!move pc up 1`, one
+    tile from wherever you stepped onto the row, and your companion makes room beside you; the same with staging off.
   - `sa.kasane_meet`: the scene's `!move pc up 4` does not bring a scene-owned companion along, and nothing walks
     them back afterwards (five tiles behind you); staged, your companion now walks up behind you first.
+    *Fixed 2026-10-04:* a scene's `!move pc` now brings your companion along (they follow a step behind, or make room
+    if they stand where you are going), with staging on or off; one the scene is directing is walked back to your
+    side at its end (50_world.js `scriptMove`, 52_staging.js `playerMoved`).
   - Walk-ins: in the small council room (`lf.yae_after`) four townspeople walk in near you; with your companion behind
     you the last walker had no way round and was forced through after waiting (the world's fallback). Staged, your
     companion steps up beside you first and all four find room. In `lf.mio_start`, Hayato walked out of the Records
@@ -193,6 +198,9 @@ reset of every NPC to their map place before each branch now applies to these ca
     `!walkto`, the walk-ins are the world's. A staged step-in for you (`!walkto pc 6 17`, then
     `3 17`) was tried and reverted: the world's path search avoids the town's trigger column (x = 2) whatever its
     condition, so your companion took a long detour. Left for the world's walk-in placement.
+    *Fixed 2026-10-04:* the cause was the world's choice of place: Yae was still on her long walk in when Kasane (or
+    Tae) was called, and both were given the place in front of you; the later one, arriving first, stood on it.
+    50_world.js `spotNear` no longer gives out a place someone is still walking to; no walker is forced in any branch.
   - The epilogue: people who live far across a hub map speak from where they stand (in `sa.epi_co` Hiro is 22 tiles
     from you, off screen); they are not cued.
 - **Viewpoint**: at counters (the ferry office, the Records Hall, the clerks' office) you and your companion face up

@@ -420,7 +420,7 @@ for (const sp of SPECIES) {
 const VIG = {
   cat: { map: 'rw.village', flags: { rw_echo_done: true }, comp: 'mio', start: [17, 24], steps: [{ at: [17, 23], dir: 'left', say: /creeping/ }, { at: [14, 24], dir: 'up', pick: /Tie the cord/ }, { at: [15, 24], dir: 'up', pick: /Offer a hand/ }], invite: /Invite/ },
   bird: { map: 'sg.harbor', chapter: 2, quests: { sg_main: 1 }, comp: 'ren', start: [45, 28], steps: [{ at: [44, 28], dir: 'up', say: /flees to the sand/ }, { at: [42, 26], dir: 'right', pick: /Wind the ribbon/ }, { at: [44, 28], dir: 'up', pick: /open palm/ }], invite: /Invite/ },
-  dog: { map: 'co.village', chapter: 3, flags: { co_arrived: true, co_met_sayo: true }, comp: 'nao', start: [30, 25], steps: [{ at: [33, 25], dir: 'down', say: /fawn dog/ }, { at: [31, 25], dir: 'down', pick: /latch loop/ }, { at: [33, 25], dir: 'down', pick: /Crouch/ }], invite: /Invite/, permission: /take him/ },
+  dog: { map: 'co.village', chapter: 3, flags: { co_arrived: true, co_met_sayo: true }, comp: 'nao', start: [30, 25], steps: [{ at: [32, 27], dir: 'up', say: /fawn dog/ }, { at: [31, 25], dir: 'down', pick: /latch loop/ }, { at: [32, 27], dir: 'up', pick: /Crouch/ }], invite: /Invite/, permission: /take him/ },
   tanuki: { map: 'co.road', chapter: 3, flags: { co_arrived: true }, comp: 'suzu', start: [10, 5], steps: [{ at: [7, 3], dir: 'left', say: /hollow at the foot/ }, { at: [6, 4], dir: 'left', pick: /flat stone/ }, { at: [7, 3], dir: 'left', pick: /Sit at the edge/ }], invite: /Invite/ },
 };
 for (const sp of SPECIES) {
@@ -462,6 +462,18 @@ for (const sp of SPECIES) {
     await drain(); // the companion's one-time notice on arrival
     await shot(p, sp + '_vignette_cause');
     for (const st of V.steps) {
+      // each place you stand to interact can be reached on foot from where you start (the dog's corner could not be
+      // faced on foot until the gap in the reeds below it, 2026-10-04): a walk over open ground, ways out excepted
+      const foot = await p.evaluate(([sx, sy, tx, ty]) => {
+        const m = RB.world.W.map, seen = new Set([sx + ',' + sy]), q = [[sx, sy]];
+        while (q.length) {
+          const [x, y] = q.shift();
+          if (x === tx && y === ty) return true;
+          for (const [dx, dy] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) { const nx = x + dx, ny = y + dy, k = nx + ',' + ny; if (seen.has(k) || RB.maps.blockedStatic(m, nx, ny) || RB.maps.exitAt(m, nx, ny)) continue; seen.add(k); q.push([nx, ny]); }
+        }
+        return false;
+      }, [V.start[0], V.start[1], st.at[0], st.at[1]]);
+      assert(foot, 'the place ' + st.at.join(',') + ' can be reached on foot from ' + V.start.join(','));
       await p.evaluate(([x, y, dir]) => { const W = RB.world.W; Object.assign(W.player, { x, y, fx: x, fy: y, dir, mv: null }); RB.game.s.x = x; RB.game.s.y = y; RB.petWorld.place(); }, [st.at[0], st.at[1], st.dir]);
       await idleWorld();
       await wait(p, 200);

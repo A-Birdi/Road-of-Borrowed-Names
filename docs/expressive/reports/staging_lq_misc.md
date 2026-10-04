@@ -335,6 +335,8 @@ The merge also brought the runner's reset of every NPC to their map place before
 - **The dog's corner cannot be faced on foot** (`co.village` 32–33,26: the barrel, the crate and the wall close
   off 33,25). `pets.dog.dog` is reached from the gate (31,26), which calls it once the gate stays shut, so it is
   played from the gate's side. A map question for whoever owns `co.village`, not changed here.
+  *Fixed 2026-10-04:* a gap in the reeds below the corner (32,27, now grass; src/content/ch3/20_maps.js) lets you
+  face the dog on foot, where his first look (restless) can be had; the settled branches still also play from the gate.
 - **Yasu's move across the village** (`lq.road_yasu2` → `lq.road_write`, `lq.road_yasu_bank`): the story moves
   him from the pier to the far bank (`quest.lq_road=4`, `!refresh`) and the world walks the same figure there
   after the scene (`50_world.js shiftTo`: about 35 tiles round by the bridge, some 9 s). The pier is a dead end:

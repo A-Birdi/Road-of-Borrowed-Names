@@ -8,7 +8,12 @@
 //    old, people-blind route crossed someone;
 // 3. someone leaving steps round another villager who steps onto their way after they set off;
 // 4. when there is no way round (you stand in the one doorway they need) they wait for you, then go
-//    on anyway: nothing stalls.
+//    on anyway: nothing stalls;
+// 5. two people called to speak one after the other, the first still on the way, are given places of their own
+//    (2026-10-04; the Lanternfall epilogue gave both the place in front of you);
+// 6. a scene's own walk of you (!move pc) brings your companion along, with staging on or off: they follow a step
+//    behind, or step aside when you walk back onto them; one the scene directs is walked back to your side after it
+//    (2026-10-04; sa.kasane_meet, lf.water_returns).
 // In every case the walk ends where it should and only on open ground.
 // Usage: node tests/e2e/walk_round.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -159,6 +164,89 @@ else {
   const firstHit = door.hits.length ? +door.hits[0].split(' t')[1] : null;
   assert(door.gone && door.exit === '30,15', 'Hana still goes in through the door you stand in (' + door.ms + ' ms, exit ' + door.exit + ')');
   assert(door.waited >= 1500 && (firstHit == null || firstHit >= 1500), 'she waits for you first (' + door.waited + ' ms waiting; first shared tile at ' + firstHit + ' ms)');
+}
+
+// ---- 5. two speakers called while the first is still walking in get places of their own (2026-10-04) ----------
+// (the place in front of you was given to both — the first still on the way — and the later one, arriving first,
+// stood on it, so the first had no way round and went on through them after waiting: sa.epi_lf in Lanternfall)
+await start('rw.village', 21, 16, { comp: 'nao', dir: 'up', flags: { rw_arrived: true } });
+const two = await run(`
+  const W = RB.world.W;
+  const who = Object.keys(RB.content.chars).filter((id) => { const c = RB.content.chars[id]; return c.look && !c.bodiless && !W.npcs.some((n) => (n.def && (n.def.char || n.def.id)) === id || n.id === id) && id !== 'nao' && id !== W.comp.id; });
+  const out = [];
+  for (const id of who) {
+    if (out.length >= 2) break;
+    RB.world.ensureSpeaker(id, 'walk_round');
+    const a = W.extras.find((n) => n.id === id);
+    if (!a) continue;
+    // (the first must still be on the way when the second is called; one who appeared in place is let go)
+    if (!out.length && (!a.route || a.route.length < 3)) { W.extras = W.extras.filter((n) => n !== a); continue; }
+    out.push({ id, spot: (a.route && a.route.length ? a.route[a.route.length - 1] : [a.x, a.y]).join(','), walking: !!(a.route && a.route.length) });
+  }
+  if (out.length < 2) return { skipped: 'two walk-ins not found: ' + JSON.stringify(out) };
+  // (both watched at once, from the moment the second is called)
+  const rs = await Promise.all(out.map((o) => watch(() => W.extras.find((n) => n.id === o.id), 30000)));
+  return { out, rs };
+`);
+if (two.skipped) assert(false, 'two walk-ins set up: ' + two.skipped);
+else {
+  assert(two.out[0].walking && two.out[0].spot !== two.out[1].spot, 'the second speaker (' + two.out[1].id + ' → ' + two.out[1].spot + ') is not given the place the first is still walking to (' + two.out[0].id + ' → ' + two.out[0].spot + ')');
+  for (let i = 0; i < 2; i++) assert(!two.rs[i].hits.length && two.rs[i].end && two.rs[i].end.join(',') === two.out[i].spot, two.out[i].id + ' reaches their own place without passing through anyone (' + two.rs[i].steps.join(' ') + (two.rs[i].hits.length ? '; hits ' + two.rs[i].hits.join(' ') : '') + ')');
+}
+
+// ---- 6. a scene's own walk of you (!move pc) brings your companion along, staging on or off (2026-10-04) --------
+// (sa.kasane_meet's `!move pc up 4` left them five tiles behind; lf.water_returns stepped you back onto them)
+await start('rw.village', 21, 16, { comp: 'nao', dir: 'up', flags: { rw_arrived: true } });
+const party = await run(`
+  const W = RB.world.W, m = W.map, sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  RB.game.settings.textSpeed = 'instant';
+  // (no map's arrival scene runs on its own after these little scenes end)
+  for (const id in RB.content.maps) for (const ev of RB.content.maps[id].onEnter || []) RB.game.s.flags['enter:' + id + ':' + ev.scene] = true;
+  // a column of open ground: you, and five free tiles above you, with your companion below
+  const open = (x, y) => !RB.maps.blockedStatic(m, x, y) && !RB.maps.exitAt(m, x, y) && !W.map.triggers.some((t) => x >= t.x && x < t.x + t.w && y >= t.y && y < t.y + t.h) && !RB.world.personAt(x, y, null);
+  let at = null;
+  for (let y = 24; y >= 12 && !at; y--) for (let x = 12; x <= 32 && !at; x++) { let k = -1; while (k <= 5 && open(x, y - k) && open(x - 1, y - k) && open(x + 1, y - k)) k++; if (k > 5) at = [x, y]; }
+  if (!at) return { skipped: 'no open column' };
+  const place = (px, py, cx, cy) => { Object.assign(W.player, { x: px, y: py, fx: px, fy: py, mv: null, dir: 'up' }); Object.assign(W.comp, { x: cx, y: cy, fx: cx, fy: cy, mv: null, dir: 'up' }); W.trail = []; };
+  const play = async (src, staged) => {
+    RB.staging.enabled(staged);
+    delete RB.content.scenes['wr.move']; RB.script.add('@scene wr.move\\n' + src, 'walk_round');
+    const shared = [];
+    let on = true;
+    const look = () => { if (!on) return; const p = W.player, c = W.comp; const pt = [[p.x, p.y]].concat(p.mv ? [[p.mv.tx, p.mv.ty]] : []), ct = [[c.x, c.y]].concat(c.mv ? [[c.mv.tx, c.mv.ty]] : []); if (pt.some(([a, b]) => ct.some(([d, e]) => a === d && b === e))) shared.push(p.x + ',' + p.y + '/' + c.x + ',' + c.y); requestAnimationFrame(look); };
+    requestAnimationFrame(look);
+    let done = false;
+    RB.script.run('wr.move').then(() => { done = true; });
+    for (let i = 0; i < 400 && !done; i++) { await sleep(25); if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }
+    // (still for a moment: a walk back to your side is briefly between steps)
+    for (let calm = 0, i = 0; calm < 6 && i < 100; i++, await sleep(60)) calm = W.comp.mv || W.comp.route ? 0 : calm + 1;
+    on = false;
+    return { done, pc: [W.player.x, W.player.y], comp: [W.comp.x, W.comp.y], gap: Math.abs(W.comp.x - W.player.x) + Math.abs(W.comp.y - W.player.y), shared: [...new Set(shared)] };
+  };
+  const [x, y] = at, out = { at: at.join(',') };
+  for (const staged of [true, false]) {
+    place(x, y, x, y + 1);
+    out['up4' + (staged ? 'On' : 'Off')] = await play('!move pc up 4\\nnarr: {四歩|よんほ} || Four steps.\\n', staged);
+    place(x, y - 1, x, y);
+    out['back' + (staged ? 'On' : 'Off')] = await play('!move pc down 1\\nnarr: {一歩|いっぽ} || One step back.\\n', staged);
+  }
+  // staged, with the companion given a gesture first (the scene directs them): left behind by your walk, then
+  // walked back to your side when the scene ends
+  place(x, y, x, y + 1);
+  out.ownedOn = await play('!gesture comp nod pc\\nnarr: {頷|うなず}く || A nod.\\n!move pc up 4\\nnarr: {四歩|よんほ} || Four steps.\\n', true);
+  RB.staging.enabled(true);
+  return out;
+`);
+if (party.skipped) assert(false, 'scripted-walk case set up: ' + party.skipped);
+else {
+  const [x, y] = party.at.split(',').map(Number);
+  for (const k of ['On', 'Off']) {
+    const u = party['up4' + k], bk = party['back' + k], tag = 'staging ' + k.toLowerCase();
+    assert(u.done && u.pc.join(',') === x + ',' + (y - 4) && u.comp.join(',') === x + ',' + (y - 3) && !u.shared.length, tag + ': a scene\'s !move pc up 4 — your companion follows a step behind (you ' + u.pc + ', companion ' + u.comp + (u.shared.length ? '; shared ' + u.shared.join(' ') : '') + ')');
+    assert(bk.done && bk.pc.join(',') === x + ',' + y && bk.gap === 1 && bk.comp[1] === y && !bk.shared.length, tag + ': !move pc down 1 onto your companion — they step aside first, and you never share a tile (you ' + bk.pc + ', companion ' + bk.comp + (bk.shared.length ? '; shared ' + bk.shared.join(' ') : '') + ')');
+  }
+  const o = party.ownedOn;
+  assert(o.done && o.gap <= 1 && !o.shared.length, 'staging on, your companion directed by the scene: left where the scene had them, then walked back to your side at its end (you ' + o.pc + ', companion ' + o.comp + ')');
 }
 
 assert(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));

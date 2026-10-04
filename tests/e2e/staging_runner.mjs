@@ -18,6 +18,12 @@
 // Per case (its first branch, unless --branches): the same branch with reduced motion cues the same people with the
 // same gestures in the same order and ends in the same state; and with staging switched off it ends in exactly the
 // same state (flags, inventory, quests, variables, notes, seen scenes): direction changes nothing.
+// Opt-in checks a case (or one of its variants) can name, for what a scene moves itself (2026-10-04):
+// - checkOff: every branch is also played with staging off, and there too nobody shares a tile or stands on
+//   furniture at any frame and afterwards your companion is beside you (a scene's own !move pc and the world's
+//   walk-ins are not staging: they must hold without it; sa.kasane_meet, lf.water_returns);
+// - noForced: no walker of the world's goes on through anyone after waiting (the world's fallback, otherwise
+//   only recorded apart; sa.epi_lf).
 // the in-page run of one branch of one case
 export async function runBranch(p, c, v, o) {
   return p.evaluate(async ([c, v, o]) => {
@@ -204,6 +210,7 @@ export async function runCases(cases, o) {
       const bad = r.walks.filter((w) => !w.ok);
       ok(bad.length === 0, pre + 'every authored position is reached (' + r.walks.length + ' walks' + (bad.length ? '; not reached: ' + bad.map((w) => w.who + '→' + w.to).join(' ') : '') + ')');
       ok(r.clash.length === 0 && r.furn.length === 0, pre + 'nobody shares a tile or stands on furniture' + (r.clash.length + r.furn.length ? ' (' + r.clash.concat(r.furn).slice(0, 3).join(' ') + ')' : '') + (r.walkin.length ? ' [the world\'s fallback, no way round so it went on through after waiting: ' + r.walkin.slice(0, 2).join(' ') + ']' : ''));
+      if (v.noForced || c.noForced) ok(r.walkin.length === 0, pre + 'no walker goes on through anyone after waiting (every walk-in finds its own place and a way round)' + (r.walkin.length ? ' (' + r.walkin.slice(0, 3).join(' ') + ')' : ''));
       ok(r.idle.length === 0, pre + 'no idle life during the scene' + (r.idle.length ? ' (' + r.idle.join(' ') + ')' : ''));
       ok(r.away.length === 0 && r.stuck.length === 0 && r.compGap <= 2, pre + 'afterwards everyone is where the world expects them (' + (r.away.concat(r.stuck).join(' ') || 'at their places') + '; companion ' + r.compGap + ' tiles away)');
       const exp = Object.assign({}, c.expect || {}, v.expect || {});
@@ -211,11 +218,15 @@ export async function runCases(cases, o) {
         const got = r.log.filter((x) => x.startsWith(who + ':') || (who === 'comp' && v.comp && x.startsWith(v.comp + ':'))).map((x) => x.split(':')[1]);
         ok(gs.every((g) => got.includes(g)), pre + who + ' performs ' + gs.join(', ') + ' (cued: ' + ([...new Set(got)].join(', ') || 'nothing') + ')');
       }
+      const off = !!(v.checkOff || c.checkOff);
       if (i === 0 || o.branches) {
         const rm = await runBranch(p, c, v, { staged: true, reduced: true, dwell: o.dwell });
         ok(rm.done && rm.log.join(' ') === r.log.join(' ') && rm.state === r.state, pre + 'reduced motion keeps the cues and their order, and the outcome' + (rm.log.join(' ') === r.log.join(' ') ? '' : '\n      normal  ' + r.log.join(' ') + '\n      reduced ' + rm.log.join(' ')));
+      }
+      if (i === 0 || o.branches || off) {
         const u = await runBranch(p, c, v, { staged: false, dwell: 15 });
         ok(u.done && u.state === r.state, pre + 'staged and unstaged end in the same state' + (u.state === r.state ? '' : '\n      staged   ' + r.state + '\n      unstaged ' + u.state));
+        if (off) ok(u.clash.length === 0 && u.furn.length === 0 && u.compGap <= 2, pre + 'with staging off too, nobody shares a tile or stands on furniture, and afterwards your companion is beside you (' + (u.clash.concat(u.furn).slice(0, 3).join(' ') || 'no clash') + '; companion ' + u.compGap + ' tiles away)');
       }
       if (o.after) await o.after(p, c, v, r);
     }

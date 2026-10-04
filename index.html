@@ -34046,11 +34046,16 @@ RB.world = (function () {
     arriveOnFoot(a);
     if (!a.route) faceTo(a, W.player.x, W.player.y);
   }
-  // A free tile near x,y to stand on: facing the player first, then the nearest.
+  // A free tile near x,y to stand on: facing the player first, then the nearest. Not a tile someone still
+  // walking here is going to stand on (an earlier speaker on their way in, someone the story moves): two
+  // speakers given the same place met there, and the later one went through the first (sa.epi_lf).
   function spotNear(x, y) {
     const p = W.player, [fx, fy] = frontTile(), st = s();
+    const bound = new Set();
+    for (const n of W.npcs.concat(W.extras)) if (n.route && n.route.length) bound.add(n.route[n.route.length - 1].join(','));
     const ok = (tx, ty) => tx >= 0 && ty >= 0 && tx < W.map.w && ty < W.map.h && !RB.maps.blockedStatic(W.map, tx, ty) && !actorAt(tx, ty) &&
-      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) && st;
+      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) &&
+      !bound.has(tx + ',' + ty) && st;
     if (ok(fx, fy)) return [fx, fy];
     for (let r = 1; r <= 4; r++) {
       const ring = [];
@@ -34586,22 +34591,79 @@ RB.world = (function () {
     return W.npcs.find((n) => n.id === id) || W.extras.find((n) => n.id === id) || null;
   }
   // Scripted walking (cutscenes): moves an actor tile by tile, ignoring NPC blocking.
-  function scriptMove(id, dir, n, dur) {
+  // o.party (a scene's own `!move pc`, 70_script.js): your companion comes along, as on any walk of yours,
+  // with staging on or off. If they stand where you are going, they first step aside onto open ground (across
+  // the way you walk); then they follow a step behind over the tiles you leave. A companion the scene is
+  // directing (staging owns them) stays where the scene put them; the scene's end walks them back to your side
+  // (52_staging.js playerMoved). Staging's own walks (!walkto) call this without o.party.
+  function scriptMove(id, dir, n, dur, o) {
     const a = actorById(id);
     if (!a) return Promise.resolve();
     // a scripted move takes over from a walk-in: finish it where it was going
     if (a.route) { const end = a.route[a.route.length - 1] || [a.x, a.y]; a.x = end[0]; a.y = end[1]; a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.alpha = 1; a.fadeIn = false; }
-    return new Promise((res) => {
-      let left = n;
+    const you = !!(o && o.party && a === W.player);
+    if (you && RB.staging && RB.staging.playerMoved) RB.staging.playerMoved();
+    const c = you && W.comp && !W.comp.route && DIRS[dir] && !(RB.staging && RB.staging.owned(W.comp)) ? W.comp : null;
+    const trail = []; // the tiles you have left, in order (your companion follows over them)
+    return (c ? makeRoom(c, a, dir, n, dur) : Promise.resolve(false)).then((aside) => new Promise((res) => {
+      let left = n, followed = false;
       const go = () => {
-        if (left <= 0) { res(); return; }
+        if (c && follow(c, a, trail, dur)) followed = true;
+        if (left <= 0) {
+          if (!c) { res(); return; }
+          catchUp(c, a, trail, dur).then((m) => { if (aside && !followed && !m) faceTo(c, a.x, a.y); res(); });
+          return;
+        }
         left--;
+        trail.push([a.x, a.y]);
         startMove(a, dir, dur || 220);
         const wait = () => (a.mv ? setTimeout(wait, 16) : go());
         setTimeout(wait, 16);
       };
       go();
+    }));
+  }
+  // (scriptMove, o.party) until the companion's step in progress ends (bounded)
+  function stepDone(c) {
+    const t0 = performance.now();
+    return new Promise((res) => { const w = () => (c.mv && performance.now() - t0 < 2000 ? setTimeout(w, 16) : res()); w(); });
+  }
+  // (scriptMove, o.party) your companion stands on a tile you are about to walk onto: they step aside first,
+  // across the way you walk (above or below a walk left or right, right or left of a walk up or down), onto open
+  // ground that is not a way out, a trigger or anyone's place; true if they did. With no room they stay (as before).
+  function makeRoom(c, a, dir, n, dur) {
+    const [dx, dy] = DIRS[dir];
+    const onPath = (x, y) => { for (let i = 1; i <= n; i++) if (a.x + dx * i === x && a.y + dy * i === y) return true; return false; };
+    return stepDone(c).then(() => {
+      if (!onPath(c.x, c.y)) return false;
+      for (const [sx, sy] of dx ? [[0, -1], [0, 1]] : [[1, 0], [-1, 0]]) {
+        const tx = c.x + sx, ty = c.y + sy;
+        if (tx < 0 || ty < 0 || tx >= W.map.w || ty >= W.map.h || RB.maps.blockedStatic(W.map, tx, ty) || RB.maps.exitAt(W.map, tx, ty) || triggerAt(tx, ty) || personAt(tx, ty, c)) continue;
+        startMove(c, sx > 0 ? 'right' : sx < 0 ? 'left' : sy > 0 ? 'down' : 'up', dur || 220);
+        return stepDone(c).then(() => true);
+      }
+      return false;
     });
+  }
+  // (scriptMove, o.party) your companion steps onto the furthest tile you have left that is next to them (one
+  // step; never one you stand on or are stepping onto); true if they set off
+  function follow(c, a, trail, dur) {
+    if (c.mv) return false;
+    for (let i = trail.length - 1; i >= 0; i--) {
+      const [tx, ty] = trail[i];
+      if (Math.abs(tx - c.x) + Math.abs(ty - c.y) > 1) continue;
+      trail.splice(0, i + 1);
+      if ((tx === c.x && ty === c.y) || (tx === a.x && ty === a.y) || (a.mv && a.mv.tx === tx && a.mv.ty === ty)) return false;
+      startMove(c, tx > c.x ? 'right' : tx < c.x ? 'left' : ty > c.y ? 'down' : 'up', dur || 220);
+      return true;
+    }
+    return false;
+  }
+  // (scriptMove, o.party) after your last step: your companion finishes following you (true if they stepped)
+  function catchUp(c, a, trail, dur) {
+    let moved = false;
+    const step = () => stepDone(c).then(() => (follow(c, a, trail, dur) ? ((moved = true), step()) : moved));
+    return step();
   }
 
   return {
@@ -35001,7 +35063,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *
  * API (scene side): begin(sceneId) → token, end(token), cue(ref, gesture, o), look(ref, target),
  *   pose(ref, name), walkTo(ref, x, y, dir, o), prop(ref, kind, o), beat(id), ambience(preset),
- *   settle(why), owned(actor), actor(ref, ctx)
+ *   settle(why), owned(actor), actor(ref, ctx), playerMoved() (a scene's !move pc, from 50_world.js)
  * API (world side): tick(dt), frameOf(actor, t, still, frame), wanderPause(n), stepped(n), rand(a, k),
  *   examined(x, y), ambienceNow()
  * Tests and tools: state(), stats(), trace(), seed(n), enabled(v), release() */
@@ -35328,6 +35390,13 @@ RB.staging = (function () {
       if (path && path.length) { a.route = path; a.routeT = 0; }
     }
     sc.ambience = null;
+  }
+  // the scene's own walk moved you (!move pc; 50_world.js scriptMove): as after a staged walk of yours, the scene's
+  // end brings your companion back to your side if they are not there (one the scene was directing stayed behind)
+  function playerMoved() {
+    const sc = st.scene, p = W().player;
+    if (!st.on || !sc || !p || sc.moved.has(p)) return;
+    sc.moved.set(p, { from: [p.x, p.y, p.dir], stay: false });
   }
   // the companion walks back to your side after a scene moved them
   function rejoin(c) {
@@ -35833,7 +35902,7 @@ RB.staging = (function () {
   }
 
   return {
-    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own,
+    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
     tick, frameOf, wanderPause, stepped, rand, examined, profileOf,
     get AMBIENCE() { return AMBIENCE; },
     enabled(v) { if (v != null) { st.on = !!v; if (!st.on) yieldIdle('off'); } return st.on; },
@@ -41210,7 +41279,8 @@ RB.script = (function () {
         case 'music': RB.audio && (a[0] === '-' ? RB.audio.stopSong({ fade: 800 }) : RB.audio.playSong(a[0])); break;
         case 'sfx': RB.audio && RB.audio.sfx(a[0]); break;
         case 'emote': RB.world.emote(a[0] === 'npc' ? ctx.npc : resolveId(a[0]), a[1] || '!', a[2] ? +a[2] : 1400); RB.audio && RB.audio.sfx('cursor'); if (!hidden()) await wait(500); break;
-        case 'move': await RB.world.scriptMove(resolveId(a[0]), a[1], +(a[2] || 1), hidden() ? 1 : a[3] ? +a[3] : 220); break;
+        // (your own walk brings your companion along: they make room and follow; 50_world.js scriptMove)
+        case 'move': await RB.world.scriptMove(resolveId(a[0]), a[1], +(a[2] || 1), hidden() ? 1 : a[3] ? +a[3] : 220, { party: true }); break;
         case 'face': { const act = RB.world.actorById(resolveId(a[0])); if (act) act.dir = a[1]; break; }
         case 'faceplayer': { const act = RB.world.actorById(resolveId(a[0] || ctx.npc)); if (act) RB.world.faceTo(act, RB.world.W.player.x, RB.world.W.player.y); break; }
         case 'wait': await wait(+a[0] || 400); break;
@@ -108345,6 +108415,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter(',', 24, 315, [2, 26, 30, 12], '.');
       k.scatter('O', 5, 316, [2, 27, 12, 6], '.');
       k.scatter('"', 6, 317, [32, 27, 2, 6], '.');
+      // a gap in the reeds below the dog's corner in the channel keeper's yard (src/content/pets/30_dog.js,
+      // 32–33,26): the barrel, the crate, the gate and the reeds closed it in, so it could not be faced on foot
+      k.set(32, 27, '.');
       k.scatter('"', 5, 318, [36, 26, 1, 12], '.:');
     });
   }
@@ -120843,15 +120916,15 @@ narr: {西|にし} の {栓|せん} は 、{抜|ぬ}けて いる 。|| The west
 
 @scene lf.water_returns
 # Staged: you start as the lake pours in through the open east door; your companion makes room and you step back
-# north out of it (with staging off the scene leaves you standing on the flooded row); you look to the silted drain;
-# your companion's own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the door left
-# open, Suzu's laugh).
+# north out of it, one tile, from whichever column of the row you stepped onto (the scene's own move, so the same
+# with staging off: nobody is left on the row that floods again); you look to the silted drain; your companion's
+# own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the door left open, Suzu's
+# laugh).
 !sfx water
 !shake
 !gesture pc flinch 20,8
 narr: {南|みなみ} へ {踏|ふ}み{出|だ}した とたん 、{開|あ}いた まま の {東|ひがし} の {扉|とびら} から 、{湖|みずうみ} の {水|みず} が どっと {流|なが}れ{込|こ}んで きた 。|| The moment you step south, lake water comes pouring in through the east door you left open.
-!walkto comp 11 8 down
-!walkto pc 10 9 up
+!move pc up 1
 !gesture pc lookroad 1,8
 narr: {栓|せん} の {穴|あな} に {泥|どろ} が {詰|つ}まり 、{部屋|へや} は また {水|みず} の {下|した} に {沈|しず}んだ 。|| Silt clogs the drain, and the room sinks back under water.
 !unset lf_mid_drained
@@ -139726,7 +139799,8 @@ narr: {小鳥|ことり} が {杭|くい} の {上|うえ} に {降|お}りて �
  *
  * Where: the channel keeper's yard by the water (co.village): the little gate at 31,26 and the corner
  * behind it (32–33, 26), between Tamotsu's barrel and the reeds — clear of the square, the paths, the
- * bridge and every person's place.
+ * bridge and every person's place. You face the corner from the gap in the reeds below it (32,27; the map
+ * opens it, src/content/ch3/20_maps.js), the gate from 31,25, 30,26 or 31,27.
  * Cause (visible, inspectable): a sociable dog, used to travellers, keeps lying down in the corner, and
  * the yard's gate — its latch loop slipped off, its stop peg lying in the grass — swings across the
  * corner in each gust down the channel, and he has to get up again.

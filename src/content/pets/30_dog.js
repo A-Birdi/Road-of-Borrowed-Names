@@ -3,7 +3,8 @@
  *
  * Where: the channel keeper's yard by the water (co.village): the little gate at 31,26 and the corner
  * behind it (32–33, 26), between Tamotsu's barrel and the reeds — clear of the square, the paths, the
- * bridge and every person's place.
+ * bridge and every person's place. You face the corner from the gap in the reeds below it (32,27; the map
+ * opens it, src/content/ch3/20_maps.js), the gate from 31,25, 30,26 or 31,27.
  * Cause (visible, inspectable): a sociable dog, used to travellers, keeps lying down in the corner, and
  * the yard's gate — its latch loop slipped off, its stop peg lying in the grass — swings across the
  * corner in each gust down the channel, and he has to get up again.

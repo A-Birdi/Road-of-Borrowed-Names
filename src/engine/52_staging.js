@@ -21,7 +21,7 @@
  *
  * API (scene side): begin(sceneId) → token, end(token), cue(ref, gesture, o), look(ref, target),
  *   pose(ref, name), walkTo(ref, x, y, dir, o), prop(ref, kind, o), beat(id), ambience(preset),
- *   settle(why), owned(actor), actor(ref, ctx)
+ *   settle(why), owned(actor), actor(ref, ctx), playerMoved() (a scene's !move pc, from 50_world.js)
  * API (world side): tick(dt), frameOf(actor, t, still, frame), wanderPause(n), stepped(n), rand(a, k),
  *   examined(x, y), ambienceNow()
  * Tests and tools: state(), stats(), trace(), seed(n), enabled(v), release() */
@@ -348,6 +348,13 @@ RB.staging = (function () {
       if (path && path.length) { a.route = path; a.routeT = 0; }
     }
     sc.ambience = null;
+  }
+  // the scene's own walk moved you (!move pc; 50_world.js scriptMove): as after a staged walk of yours, the scene's
+  // end brings your companion back to your side if they are not there (one the scene was directing stayed behind)
+  function playerMoved() {
+    const sc = st.scene, p = W().player;
+    if (!st.on || !sc || !p || sc.moved.has(p)) return;
+    sc.moved.set(p, { from: [p.x, p.y, p.dir], stay: false });
   }
   // the companion walks back to your side after a scene moved them
   function rejoin(c) {
@@ -853,7 +860,7 @@ RB.staging = (function () {
   }
 
   return {
-    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own,
+    begin, end, cue, look, pose, prop, beat, walkTo, settle, ambience, ambienceNow, owned, actor, own, playerMoved,
     tick, frameOf, wanderPause, stepped, rand, examined, profileOf,
     get AMBIENCE() { return AMBIENCE; },
     enabled(v) { if (v != null) { st.on = !!v; if (!st.on) yieldIdle('off'); } return st.on; },

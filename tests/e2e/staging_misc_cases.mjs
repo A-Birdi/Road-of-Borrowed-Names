@@ -139,11 +139,13 @@ const PETS = [
   M({ scene: 'pets.bird.bird', map: 'sg.harbor', at: [45, 27, 'left'], flags: S0, quests: { sg_main: 1 },
     variants: [{ name: 'restless', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · still · not now', vars: { pet_bird: 2 }, picks: [0, 1], comps: ALL4 },
       { name: 'settled · an open palm · not now', vars: { pet_bird: 2 }, picks: [1, 1], comp: 'mio', expect: { pc: ['palm'] } }, { name: 'settled · left be', vars: { pet_bird: 2 }, picks: [2], comp: 'nao' }] }),
-  // the dog's corner (co.village 32–33,26) cannot be faced on foot (the barrel, the crate and the wall close off
-  // 33,25): its scene is reached from the gate (31,26), which calls it once the gate stays shut, so it is played
-  // from the gate's side here (a finding of this pass, in the report)
+  // the dog's corner (co.village 32–33,26) is faced on foot from the gap in the reeds below it (32,27; opened
+  // 2026-10-04: the barrel, the crate, the gate and the reeds had closed it in), where the first look (restless)
+  // can only be had; once the gate stays shut the gate (31,26) calls the scene too, so the settled branches are
+  // also played from the gate's side
   M({ scene: 'pets.dog.dog', map: 'co.village', at: [31, 25, 'down'], flags: F(C3, { co_met_sayo: true }),
-    variants: [{ name: 'restless', comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · a hand · not now', vars: { pet_dog: 2 }, picks: [0, 1], comps: ALL4, expect: { pc: ['kneel'] } },
+    variants: [{ name: 'restless · from the gap in the reeds', at: [32, 27, 'up'], comps: ALL4, expect: { pc: ['observe'] } }, { name: 'settled · a hand · from the gap · not now', at: [32, 27, 'up'], vars: { pet_dog: 2 }, picks: [0, 1], comp: 'nao', expect: { pc: ['kneel'] } },
+      { name: 'settled · a hand · not now', vars: { pet_dog: 2 }, picks: [0, 1], comps: ALL4, expect: { pc: ['kneel'] } },
       { name: 'settled · sat down · not now', vars: { pet_dog: 2 }, picks: [1, 1], comp: 'ren' }, { name: 'settled · left be', vars: { pet_dog: 2 }, picks: [2], comp: 'mio' }] }),
   M({ scene: 'pets.dog.gate', map: 'co.village', at: [31, 25, 'down'], flags: F(C3, { co_met_sayo: true }),
     variants: [{ name: 'the latch loop', picks: [0], comps: ALL4, expect: { pc: ['observe', 'bend'] } }, { name: 'the stop peg', picks: [1], comp: 'nao', at: [30, 26, 'right'], expect: { pc: ['kneel'] } },

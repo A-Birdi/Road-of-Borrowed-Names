@@ -259,15 +259,15 @@ narr: {西|にし} の {栓|せん} は 、{抜|ぬ}けて いる 。|| The west
 
 @scene lf.water_returns
 # Staged: you start as the lake pours in through the open east door; your companion makes room and you step back
-# north out of it (with staging off the scene leaves you standing on the flooded row); you look to the silted drain;
-# your companion's own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the door left
-# open, Suzu's laugh).
+# north out of it, one tile, from whichever column of the row you stepped onto (the scene's own move, so the same
+# with staging off: nobody is left on the row that floods again); you look to the silted drain; your companion's
+# own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the door left open, Suzu's
+# laugh).
 !sfx water
 !shake
 !gesture pc flinch 20,8
 narr: {南|みなみ} へ {踏|ふ}み{出|だ}した とたん 、{開|あ}いた まま の {東|ひがし} の {扉|とびら} から 、{湖|みずうみ} の {水|みず} が どっと {流|なが}れ{込|こ}んで きた 。|| The moment you step south, lake water comes pouring in through the east door you left open.
-!walkto comp 11 8 down
-!walkto pc 10 9 up
+!move pc up 1
 !gesture pc lookroad 1,8
 narr: {栓|せん} の {穴|あな} に {泥|どろ} が {詰|つ}まり 、{部屋|へや} は また {水|みず} の {下|した} に {沈|しず}んだ 。|| Silt clogs the drain, and the room sinks back under water.
 !unset lf_mid_drained
