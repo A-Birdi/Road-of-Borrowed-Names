@@ -502,7 +502,7 @@ co_ume: {急|いそ}がなくて いい よ 。 {婆|ばあ} の {話|はなし}
 
 @scene co.ume_first
 # Staged: Ume's nod of welcome; she looks across to her house over the beams that smell of smoke, then back
-# with a shake of the head; your companion's own answer (Nao points to her house and her hand goes to her
+# with a shake of the head; your companion's own answer (Nao points to her house and Ume's hand goes to her
 # chin, Mio leans in to her, Ren's nod, Suzu's head goes down).
 !gesture co_ume nod pc
 co_ume: おや 、 {旅|たび} の {人|ひと} 。 {段々畑|だんだんばたけ} は {初|はじ}めて かい 。 {坂|さか} が {急|きゅう} だ から 、 {足元|あしもと} に {気|き} を お{付|つ}け 。 || Well now, travellers. First time on the terraces? The slopes are steep — mind your feet.
