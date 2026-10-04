@@ -355,6 +355,14 @@ states when they are present.
      - green coat with gold trim (in battle, look A is the game's own outfit 2);
      - glasses, sakura flower, satchel strap and bag, the large brush with its tassel.
      A2's earlier states are dialled back from it.
+   - **Robin's animation test (2026-10-04, a video tool; not committed).** The tool animated the approved master.
+     - Kept as reference: Suzu composed with a hand to her chest, then the reach, wink and sparkle arc.
+     - Kept as reference: the arc travelling across to the player's brush and meeting it in a burst of light, an
+       idea for the pairing's shared moment. It would be drawn by the game as hard-edged pixel particles at the
+       painted hand and brush positions, once the art is in.
+     - Off the mark, and not part of the plan: the camera zooms; there is a painted torn-paper frame; the brush
+       passes across the player's face; the player's mouth is a surprised "o" at the end; Suzu never settles (still
+       winking at the last frame); the glow is soft.
 2. **A2, the other states as paired masters** in the same style and lighting: Suzu's six states and the player's
    four (focus, cue, peak, settle). These are the reference the layers are cut from.
    - Each matches the approved A1 exactly: the same characters, palette, light, scale, framing and the player's
