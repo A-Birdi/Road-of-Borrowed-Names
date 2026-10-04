@@ -129,8 +129,8 @@ comp[smirk]: {宛名|あてな} の {紙|かみ} 、{一枚|いちまい} {増|�
 
 # ---- Nao cameo (comp != nao) ----------------------------------------------------------------------------------------------------------------
 @scene lf.naoc
-# Staged (Nao's cameo when travelling with someone else): Nao's nod; a point to the ferry office for Umi's letter;
-# a look between it and you over a town that cannot say no; the hand on the satchel strap: "I'll wait"; your
+# Staged (Nao's cameo when travelling with someone else): Nao's nod; a point to the ferry office for Umi's letter; a
+# look between it and you over a town that cannot say no; the hand on the satchel strap: "I'll wait"; your
 # companion's own answer (Mio's laugh, Ren's hand to the chin, Suzu's laugh); Nao's smirk and glance away; a point
 # down to the sluice and the tower.
 !gesture nao nod pc
@@ -183,11 +183,11 @@ nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right,
 # ---- Mio: a no, out loud (comp = mio) ----------------------------------------------------------------------------------------------------------
 @scene lf.mio_start
 # Staged (Mio's personal quest begins): you walk down to the avenue with Mio (the narration) and turn to her; the
-# townspeople walk up to her one after another and she nods to each "of course", her hands fidget at the third,
-# and she writes the requests in her notebook (the narration); a guarded hand at "I'm used to it"; Hayato hands her
-# the Registrar's envelope; she starts back from her own "Yes, of cour—" (the narration: a hand over her mouth);
-# she holds the recipe out for you to read with her; a shake of the head at what it does, her head goes down; she
-# looks towards the Records Hall, and her hands fidget as she asks you to come.
+# townspeople walk up to her one after another and she nods to each "of course", her hands fidget at the third, and
+# she writes the requests in her notebook (the narration); a guarded hand at "I'm used to it"; Hayato hands her the
+# Registrar's envelope; she starts back from her own "Yes, of cour—" (the narration: a hand over her mouth); she
+# holds the recipe out for you to read with her; a shake of the head at what it does, her head goes down; she looks
+# towards the Records Hall, and her hands fidget as she asks you to come.
 !walkto pc 11 15 right
 !walkto comp 12 15 left
 narr: {通|とお}り を {歩|ある}いて いる と 、{町|まち} の {人|ひと} が {次々|つぎつぎ} に ミオ に {声|こえ} を かけて くる 。|| As you walk down the avenue, townsfolk come up to Mio one after another.
@@ -296,9 +296,9 @@ comp[laugh]: …… ふふ 。{町|まち} の {頼|たの}まれ{事|ごと} �
 
 # ---- Mio cameo (comp != mio) -----------------------------------------------------------------------------------------------------------------
 @scene lf.mioc
-# Staged (Mio's cameo when travelling with someone else): Mio's tired nod, an open hand at three days of requests,
-# a guarded hand when "of course" slips out; your companion's own answer (Nao looks her over, Ren's open hand,
-# Suzu writes her a sign in the air); Mio's laugh behind her hand.
+# Staged (Mio's cameo when travelling with someone else): Mio's tired nod, an open hand at three days of requests, a
+# guarded hand when "of course" slips out; your companion's own answer (Nao looks her over, Ren's open hand, Suzu
+# writes her a sign in the air); Mio's laugh behind her hand.
 !gesture mio nod pc
 mio[tired]: あ 、$name さん 。…… {久|ひさ}しぶり 。|| Oh, $name. …It's been a while.
 !gesture mio palm pc

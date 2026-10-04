@@ -7,8 +7,8 @@ RB.script.add(`
 # Staged: where the road comes out of the pines you look down the valley, and shade your eyes at the tower out in
 # the lake; your companion's first look at the town in their own way (Nao points it out and settles the satchel
 # strap over the undelivered letter, Mio leans in to the straight streets and checks her bottles, Ren presents the
-# view with an open hand and glances away at "probably", Suzu's showman's welcome and her glance away at the
-# quiet); you point the way down.
+# view with an open hand and glances away at "probably", Suzu's showman's welcome and her glance away at the quiet);
+# you point the way down.
 !set lf_arrived
 !chapter 5
 !gesture pc lookroad right
@@ -52,8 +52,8 @@ narr: {苔|こけ}むした {道|みち}しるべ 。「{灯落|ひおち} ま�
 
 @scene lf.road_bench
 # Staged: you look out from the bench over the valley to the town; your companion answers in their own way (Nao
-# points out the lamps lighting at their exact interval, Mio looks you over for sore feet, Ren counts the
-# interval, Suzu presents the view like a stage).
+# points out the lamps lighting at their exact interval, Mio looks you over for sore feet, Ren counts the interval,
+# Suzu presents the view like a stage).
 !gesture pc lookroad right
 narr: {谷|たに} を {見下|みお}ろす {古|ふる}い {腰掛|こしか}け 。{座|すわ}る と 、{町|まち} の {灯|あか}り が {一|ひと}つ ずつ {点|つ}いて いく の が {見|み}える 。|| An old bench looking down over the valley. Sit, and you can watch the town's lamps come on one by one.
 ?(comp=nao) !gesture comp point right
@@ -66,8 +66,8 @@ narr: {谷|たに} を {見下|みお}ろす {古|ふる}い {腰掛|こしか}�
 ?(comp=suzu) comp: いい {眺|なが}め 。{幕|まく} が {上|あ}がる {前|まえ} の {客席|きゃくせき} みたい 。|| Nice view. Like the house just before the curtain goes up.
 
 @scene lf.road_lantern
-# Staged: you lean in to the blank shade at the fork; Ren leans in too, to the name that will not take a flame.
-# Once the chapter is done: you lean in to the fine brushwork that names the Still Archive.
+# Staged: you lean in to the blank shade at the fork; Ren leans in too, to the name that will not take a flame. Once
+# the chapter is done: you lean in to the fine brushwork that names the Still Archive.
 !if ch5_done -> lit
 !gesture pc observe prop:deadlantern
 narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} 。{笠|かさ} に は 、{何|なに} も {書|か}いて いない 。|| The lantern at the fork. Its shade is blank.
@@ -82,9 +82,9 @@ narr: {誰|だれ} の {字|じ} か は わからない 。ただ 、とても 
 
 @scene lf.road_north_locked
 # Staged: you look up the mountain road into the mist; your companion answers it in kind (Nao points you back down
-# to the town, Mio's guarded hand at her spinning head, Ren points to the nameless lantern at the fork, Suzu
-# shrugs at the lost-traveller scene), and you step back (your companion first steps back off the path below you,
-# so the step back is free).
+# to the town, Mio's guarded hand at her spinning head, Ren points to the nameless lantern at the fork, Suzu shrugs
+# at the lost-traveller scene), and you step back (your companion first steps back off the path below you, so the
+# step back is free).
 !walkto comp 24 3 up
 !gesture pc lookroad up
 narr: {山|やま} へ {登|のぼ}る {道|みち} は 、{数歩|すうほ} {先|さき} で {霧|きり} に {溶|と}けて いる 。|| The road up the mountain melts into mist a few steps ahead.
@@ -100,11 +100,11 @@ narr: {進|すす}もう と して も 、{気|き} が つく と {同|おな}
 !move pc down 1
 
 @scene lf.town_intro
-# Staged: Hayato's open-handed welcome at the west gate; he holds out the form and you lean in to read it (every
-# box already "approved"); his pleasant nod, your open hand for the question he cannot answer, and the stamp
-# (the narration says he stamps it); your companion's own answer (Nao looks between him and you, Mio's guarded
-# hand, Ren's glasses, Suzu's question and her look up at the clear sky); he hands you the visitor's pass and you
-# take it; you point out to the lake, he thinks, and opens a hand towards the Records Hall up the avenue.
+# Staged: Hayato's open-handed welcome at the west gate; he holds out the form and you lean in to read it (every box
+# already "approved"); his pleasant nod, your open hand for the question he cannot answer, and the stamp (the
+# narration says he stamps it); your companion's own answer (Nao looks between him and you, Mio's guarded hand,
+# Ren's glasses, Suzu's question and her look up at the clear sky); he hands you the visitor's pass and you take it;
+# you point out to the lake, he thinks, and opens a hand towards the Records Hall up the avenue.
 !set lf_town_intro
 !faceplayer lf_hayato
 !gesture lf_hayato palm pc
@@ -154,8 +154,8 @@ narr: 「{灯落|ひおち} 。{静|しず}か で {穏|おだ}やか な {町|�
 
 @scene lf.board
 # Staged: you lean in to the council noticeboard and look from item one to item two; your companion's own answer
-# (Nao's shrug, Mio's guarded hand, Ren's two hands for round and square, Suzu's laugh). After the bell: you lean
-# in to the board covered in objections.
+# (Nao's shrug, Mio's guarded hand, Ren's two hands for round and square, Suzu's laugh). After the bell: you lean in
+# to the board covered in objections.
 !if lf_bell_rung -> after
 !gesture pc observe prop:noticeboard
 narr: {議会|ぎかい} の {掲示板|けいじばん} 。|| The council noticeboard.
@@ -382,8 +382,8 @@ narr: {廊下|ろうか} は {片付|かたづ}いて いる 。{床|ゆか} に
 @scene lf.ritsu
 # Staged: Ritsu's hands fidget at the counter as she owns up to orders she cannot refuse; an open hand at the
 # rainbow tea and the flying dango; Suzu's hand to the chin and Ritsu's head down at "I threw them"; her open hand
-# asking for help. After the orders: her laugh at the empty tray, and a cup held out to you; Suzu checks her
-# account book.
+# asking for help. After the orders: her laugh at the empty tray, and a cup held out to you; Suzu checks her account
+# book.
 lf_ritsu[smile]: いらっしゃいませ 。リツ の {喫茶|きっさ} へ ようこそ 。|| Welcome to Ritsu's café.
 !if seen.lf.ritsu -> menu
 !gesture lf_ritsu fidget
@@ -447,9 +447,9 @@ narr: 「お{品書|しなが}き ： お{茶|ちゃ} 、ほうじ{茶|ちゃ} �
 # ---- the baker who cannot refuse an order ----------------------------------------------------------------------------------
 @scene lf.masaru
 # Staged: Masaru's floury welcome with a laugh; you look him over (flour, rings under his eyes); he counts the
-# orders off; at "Of course!" he turns back to the kneading bench (the narration); your companion's own answer
-# (Nao looks between him and you, Mio holds out ointment for his burns, Ren tends the lamp that cannot turn back
-# time, Suzu counts the prices he never set).
+# orders off; at "Of course!" he turns back to the kneading bench (the narration); your companion's own answer (Nao
+# looks between him and you, Mio holds out ointment for his burns, Ren tends the lamp that cannot turn back time,
+# Suzu counts the prices he never set).
 !gesture lf_masaru laugh
 lf_masaru[laugh]: いらっしゃい ！ パン {屋|や} の マサル だ よ ！|| Welcome! Masaru the baker, that's me!
 !gesture pc observe lf_masaru

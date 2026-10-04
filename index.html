@@ -113770,8 +113770,8 @@ RB.script.add(`
 # Staged: where the road comes out of the pines you look down the valley, and shade your eyes at the tower out in
 # the lake; your companion's first look at the town in their own way (Nao points it out and settles the satchel
 # strap over the undelivered letter, Mio leans in to the straight streets and checks her bottles, Ren presents the
-# view with an open hand and glances away at "probably", Suzu's showman's welcome and her glance away at the
-# quiet); you point the way down.
+# view with an open hand and glances away at "probably", Suzu's showman's welcome and her glance away at the quiet);
+# you point the way down.
 !set lf_arrived
 !chapter 5
 !gesture pc lookroad right
@@ -113815,8 +113815,8 @@ narr: {苔|こけ}むした {道|みち}しるべ 。「{灯落|ひおち} ま�
 
 @scene lf.road_bench
 # Staged: you look out from the bench over the valley to the town; your companion answers in their own way (Nao
-# points out the lamps lighting at their exact interval, Mio looks you over for sore feet, Ren counts the
-# interval, Suzu presents the view like a stage).
+# points out the lamps lighting at their exact interval, Mio looks you over for sore feet, Ren counts the interval,
+# Suzu presents the view like a stage).
 !gesture pc lookroad right
 narr: {谷|たに} を {見下|みお}ろす {古|ふる}い {腰掛|こしか}け 。{座|すわ}る と 、{町|まち} の {灯|あか}り が {一|ひと}つ ずつ {点|つ}いて いく の が {見|み}える 。|| An old bench looking down over the valley. Sit, and you can watch the town's lamps come on one by one.
 ?(comp=nao) !gesture comp point right
@@ -113829,8 +113829,8 @@ narr: {谷|たに} を {見下|みお}ろす {古|ふる}い {腰掛|こしか}�
 ?(comp=suzu) comp: いい {眺|なが}め 。{幕|まく} が {上|あ}がる {前|まえ} の {客席|きゃくせき} みたい 。|| Nice view. Like the house just before the curtain goes up.
 
 @scene lf.road_lantern
-# Staged: you lean in to the blank shade at the fork; Ren leans in too, to the name that will not take a flame.
-# Once the chapter is done: you lean in to the fine brushwork that names the Still Archive.
+# Staged: you lean in to the blank shade at the fork; Ren leans in too, to the name that will not take a flame. Once
+# the chapter is done: you lean in to the fine brushwork that names the Still Archive.
 !if ch5_done -> lit
 !gesture pc observe prop:deadlantern
 narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} 。{笠|かさ} に は 、{何|なに} も {書|か}いて いない 。|| The lantern at the fork. Its shade is blank.
@@ -113845,9 +113845,9 @@ narr: {誰|だれ} の {字|じ} か は わからない 。ただ 、とても 
 
 @scene lf.road_north_locked
 # Staged: you look up the mountain road into the mist; your companion answers it in kind (Nao points you back down
-# to the town, Mio's guarded hand at her spinning head, Ren points to the nameless lantern at the fork, Suzu
-# shrugs at the lost-traveller scene), and you step back (your companion first steps back off the path below you,
-# so the step back is free).
+# to the town, Mio's guarded hand at her spinning head, Ren points to the nameless lantern at the fork, Suzu shrugs
+# at the lost-traveller scene), and you step back (your companion first steps back off the path below you, so the
+# step back is free).
 !walkto comp 24 3 up
 !gesture pc lookroad up
 narr: {山|やま} へ {登|のぼ}る {道|みち} は 、{数歩|すうほ} {先|さき} で {霧|きり} に {溶|と}けて いる 。|| The road up the mountain melts into mist a few steps ahead.
@@ -113863,11 +113863,11 @@ narr: {進|すす}もう と して も 、{気|き} が つく と {同|おな}
 !move pc down 1
 
 @scene lf.town_intro
-# Staged: Hayato's open-handed welcome at the west gate; he holds out the form and you lean in to read it (every
-# box already "approved"); his pleasant nod, your open hand for the question he cannot answer, and the stamp
-# (the narration says he stamps it); your companion's own answer (Nao looks between him and you, Mio's guarded
-# hand, Ren's glasses, Suzu's question and her look up at the clear sky); he hands you the visitor's pass and you
-# take it; you point out to the lake, he thinks, and opens a hand towards the Records Hall up the avenue.
+# Staged: Hayato's open-handed welcome at the west gate; he holds out the form and you lean in to read it (every box
+# already "approved"); his pleasant nod, your open hand for the question he cannot answer, and the stamp (the
+# narration says he stamps it); your companion's own answer (Nao looks between him and you, Mio's guarded hand,
+# Ren's glasses, Suzu's question and her look up at the clear sky); he hands you the visitor's pass and you take it;
+# you point out to the lake, he thinks, and opens a hand towards the Records Hall up the avenue.
 !set lf_town_intro
 !faceplayer lf_hayato
 !gesture lf_hayato palm pc
@@ -113917,8 +113917,8 @@ narr: 「{灯落|ひおち} 。{静|しず}か で {穏|おだ}やか な {町|�
 
 @scene lf.board
 # Staged: you lean in to the council noticeboard and look from item one to item two; your companion's own answer
-# (Nao's shrug, Mio's guarded hand, Ren's two hands for round and square, Suzu's laugh). After the bell: you lean
-# in to the board covered in objections.
+# (Nao's shrug, Mio's guarded hand, Ren's two hands for round and square, Suzu's laugh). After the bell: you lean in
+# to the board covered in objections.
 !if lf_bell_rung -> after
 !gesture pc observe prop:noticeboard
 narr: {議会|ぎかい} の {掲示板|けいじばん} 。|| The council noticeboard.
@@ -114145,8 +114145,8 @@ narr: {廊下|ろうか} は {片付|かたづ}いて いる 。{床|ゆか} に
 @scene lf.ritsu
 # Staged: Ritsu's hands fidget at the counter as she owns up to orders she cannot refuse; an open hand at the
 # rainbow tea and the flying dango; Suzu's hand to the chin and Ritsu's head down at "I threw them"; her open hand
-# asking for help. After the orders: her laugh at the empty tray, and a cup held out to you; Suzu checks her
-# account book.
+# asking for help. After the orders: her laugh at the empty tray, and a cup held out to you; Suzu checks her account
+# book.
 lf_ritsu[smile]: いらっしゃいませ 。リツ の {喫茶|きっさ} へ ようこそ 。|| Welcome to Ritsu's café.
 !if seen.lf.ritsu -> menu
 !gesture lf_ritsu fidget
@@ -114210,9 +114210,9 @@ narr: 「お{品書|しなが}き ： お{茶|ちゃ} 、ほうじ{茶|ちゃ} �
 # ---- the baker who cannot refuse an order ----------------------------------------------------------------------------------
 @scene lf.masaru
 # Staged: Masaru's floury welcome with a laugh; you look him over (flour, rings under his eyes); he counts the
-# orders off; at "Of course!" he turns back to the kneading bench (the narration); your companion's own answer
-# (Nao looks between him and you, Mio holds out ointment for his burns, Ren tends the lamp that cannot turn back
-# time, Suzu counts the prices he never set).
+# orders off; at "Of course!" he turns back to the kneading bench (the narration); your companion's own answer (Nao
+# looks between him and you, Mio holds out ointment for his burns, Ren tends the lamp that cannot turn back time,
+# Suzu counts the prices he never set).
 !gesture lf_masaru laugh
 lf_masaru[laugh]: いらっしゃい ！ パン {屋|や} の マサル だ よ ！|| Welcome! Masaru the baker, that's me!
 !gesture pc observe lf_masaru
@@ -114369,12 +114369,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 # ---- the Registrar ------------------------------------------------------------------------------------------------------------
 @scene lf.tadashi
-# Staged: Tadashi greets you with a small nod and holds out the request form; you lean in to the ruled
-# handwriting on the counter; once it is filled in he stamps it, and opens a hand to the ledger desk on your left;
-# your companion's own aside (Nao glances away, Mio leans in to the double stamp, Ren's glasses, Suzu's shrug).
-# With the ledger read: your open hand at "nothing of note", and his eyes waver (a glance aside). Later, the
-# stamp held half-raised in his sweating hand. After Mio's refusal: a hand to his chin, and a paper read before
-# stamping.
+# Staged: Tadashi greets you with a small nod and holds out the request form; you lean in to the ruled handwriting
+# on the counter; once it is filled in he stamps it, and opens a hand to the ledger desk on your left; your
+# companion's own aside (Nao glances away, Mio leans in to the double stamp, Ren's glasses, Suzu's shrug). With the
+# ledger read: your open hand at "nothing of note", and his eyes waver (a glance aside). Later, the stamp held
+# half-raised in his sweating hand. After Mio's refusal: a hand to his chin, and a paper read before stamping.
 !if lf_mio_done -> mio
 !if quest.lf_main>=4 -> late
 !if quest.lf_main>=2 -> ledger
@@ -114432,8 +114431,8 @@ lf_tadashi: あれ {以来|いらい} 、{判子|はんこ} を {押|お}す {�
 @scene lf.tadashi_after
 # Staged: after the bell Tadashi breathes out over the words he had not said in thirty years, and stamps his own
 # approval; your companion's own answer (Nao's open hand, Mio's nod, Ren tends the lamp for "relighting", Suzu
-# counts the paper). Later: an open hand to the basement where the pipes were, and a breath out over the
-# objections on his desk.
+# counts the paper). Later: an open hand to the basement where the pipes were, and a breath out over the objections
+# on his desk.
 !if seen.lf.tadashi_after -> again
 lf_tadashi: …… {鐘|かね} の {音|おと} を {聞|き}いた とき 、{最初|さいしょ} に {出|で}た {言葉|ことば} は 「{困|こま}ります」 で ございました 。|| …When I heard the bell, the first words out of my mouth were "This is most inconvenient."
 !gesture lf_tadashi exhale
@@ -114464,9 +114463,9 @@ lf_tadashi: いらっしゃいませ 。{閲覧|えつらん} で ございま�
 # ---- the recopied ledger ------------------------------------------------------------------------------------------------------
 @scene lf.records_ledger
 # Staged: you hold the flood-year ledger open at the desk and read down the pages of "nothing of note"; your
-# companion's own reaction (Nao's flat hand of anger, Mio leans in to the new paper edges, Ren's hand to the
-# chin over the new ink, Suzu's open hand); you lean in to the small print at the foot of the page. Without a
-# permit: you lean in to the card on the ledger.
+# companion's own reaction (Nao's flat hand of anger, Mio leans in to the new paper edges, Ren's hand to the chin
+# over the new ink, Suzu's open hand); you lean in to the small print at the foot of the page. Without a permit: you
+# lean in to the card on the ledger.
 !if !item.lf_request_slip -> nopermit
 !gesture pc read prop:desk prop=book hold
 narr: {三十年前|さんじゅうねんまえ} の {台帳|だいちょう} 。{六月|ろくがつ} の {頁|ページ} を {開|ひら}く 。|| The ledger from thirty years ago. You open it to June.
@@ -114499,10 +114498,10 @@ akari[tired]: {今日|きょう} も {残業|ざんぎょう} を {頼|たの}�
 
 @scene lf.akari_letters
 # Staged: you notice the snow-coloured scarf folded on her desk and turn back to her; Akari's small start at her
-# father's name (or a look up towards the mountain where he watches the stars); her head goes down over the
-# letters that come back, a guarded hand over the overtime she cannot refuse; your companion's own answer (Nao's
-# flat hand, Mio's laugh at herself, Ren's two hands for the two ends of one road, Suzu's glance away); her hands
-# fidget at telling a visitor all this.
+# father's name (or a look up towards the mountain where he watches the stars); her head goes down over the letters
+# that come back, a guarded hand over the overtime she cannot refuse; your companion's own answer (Nao's flat hand,
+# Mio's laugh at herself, Ren's two hands for the two ends of one road, Suzu's glance away); her hands fidget at
+# telling a visitor all this.
 !if quest.lf_akari -> end
 !gesture pc observe 4,3
 narr: {机|つくえ} の {端|はし} に 、{雪|ゆき} の {色|いろ} を した {襟巻|えりまき} が {畳|たた}んで ある 。{雪鈴|ゆきすず} の {織|お}り{方|かた} だ 。|| Folded at the edge of her desk is a scarf the colour of snow, woven the Snowbell way.
@@ -114535,11 +114534,11 @@ akari[smile]: …… ごめんなさい 。お{客|きゃく}さま に こん�
 !call lf.akari_reply
 
 @scene lf.akari_reply
-# Staged: you hold out Hoshino's letter; Akari's small start, and she leans in to the blank address line; once
-# you have written it, the envelope passes from your hand to hers and she reads it; she holds it in both hands at
-# "Keep warm when you sleep", and a guarded hand over the leave she cannot ask for; your companion's own answer
-# (Nao's nod, Mio breathes out, Ren's two hands for the letter that weighs as much as the lamp, Suzu's open hand
-# to her face).
+# Staged: you hold out Hoshino's letter; Akari's small start, and she leans in to the blank address line; once you
+# have written it, the envelope passes from your hand to hers and she reads it; she holds it in both hands at "Keep
+# warm when you sleep", and a guarded hand over the leave she cannot ask for; your companion's own answer (Nao's
+# nod, Mio breathes out, Ren's two hands for the letter that weighs as much as the lamp, Suzu's open hand to her
+# face).
 !gesture pc present akari prop=letter hold
 pc: お{父|とう}さん から 、{手紙|てがみ} を {預|あず}かって います 。{宛名|あてな} は 、あなた を {見|み}つけたら {書|か}く よう に 、と 。|| I've brought a letter from your father. He asked me to write the address once I found you.
 !gesture akari flinch pc
@@ -114576,10 +114575,10 @@ akari[smile]: 「{温|あたた}かく して {寝|ね}る んだ よ 」 。…
 !autosave
 
 @scene lf.akari_hint
-# Staged: Akari's guarded hand as she owns up to the recopying; she looks away and back over what the original
-# said; as she tells you not to go down she holds out the brass key; your companion reads the gap between her
-# words and her hands (Nao's shrug, Mio points to her hands, Ren's appreciative open hands, Suzu's two hands for
-# the line and the prop); "I haven't said a thing", and the key passes into your hand.
+# Staged: Akari's guarded hand as she owns up to the recopying; she looks away and back over what the original said;
+# as she tells you not to go down she holds out the brass key; your companion reads the gap between her words and
+# her hands (Nao's shrug, Mio points to her hands, Ren's appreciative open hands, Suzu's two hands for the line and
+# the prop); "I haven't said a thing", and the key passes into your hand.
 !if !quest.lf_akari -> letters
 :hint
 pc: {洪水|こうずい} の {年|とし} の {台帳|だいちょう} を {写|うつ}した の は 、あなた です か 。|| Was it you who copied the ledger for the flood year?
@@ -114628,10 +114627,10 @@ akari: …… {階段|かいだん} は 、{窓口|まどぐち} の {奥|おく
 !call lf.akari_letter
 
 @scene lf.akari_letter
-# Staged: after the bell Akari tells you of her refusal with an open hand and looks up towards Snowbell; shy of
-# the address that kept coming back, she looks away before she asks (her stronger reaction, avert); once it holds,
-# her open thanks to you; with Nao, the letter passes to the courier's hand; otherwise an open hand for the
-# ferry's route.
+# Staged: after the bell Akari tells you of her refusal with an open hand and looks up towards Snowbell; shy of the
+# address that kept coming back, she looks away before she asks (her stronger reaction, avert); once it holds, her
+# open thanks to you; with Nao, the letter passes to the courier's hand; otherwise an open hand for the ferry's
+# route.
 !gesture akari palm pc
 akari[laugh]: {聞|き}いて ください ！ {今朝|けさ} 、{残業|ざんぎょう} を {断|ことわ}りました ！ 「お{断|ことわ}り します」 って ！|| Listen! This morning I turned down overtime! I said "I refuse"!
 !gesture akari lookroad up
@@ -114683,8 +114682,8 @@ narr: {真鍮|しんちゅう} の {鍵|かぎ} が 、かちり と {回|まわ
 
 @scene lf.stacks_enter
 # Staged: at the foot of the stairs you look along the shelves into the dark and listen for the thump of a stamp;
-# your companion's own answer (Nao points back up the one way out, Mio's guarded hand at the bad air, Ren holds
-# the lamp up high, Suzu presents the backstage shelves with an open hand).
+# your companion's own answer (Nao points back up the one way out, Mio's guarded hand at the bad air, Ren holds the
+# lamp up high, Suzu presents the backstage shelves with an open hand).
 !gesture pc lookroad right
 narr: {紙|かみ} と {黴|かび} の {匂|にお}い 。{棚|たな} が 、{暗|くら}がり の {奥|おく} まで {並|なら}んで いる 。|| The smell of paper and mould. Shelves stretch away into the dark.
 !gesture pc cupear right
@@ -114699,9 +114698,9 @@ narr: どこ か で 、{判子|はんこ} を {押|お}す {音|おと} が す
 ?(comp=suzu) comp: {舞台|ぶたい} {裏|うら} みたい 。{古|ふる}い {小道具|こどうぐ} と 、{忘|わす}れられた {台本|だいほん} 。|| Like backstage. Old props and forgotten scripts.
 
 @scene lf.minutes_chest
-# Staged: you kneel at the chest and, kneeling, read the old minutes bound with string; your companion leans in
-# to the angry margins over your shoulder (Nao and Mio lean in, Ren's nod to carry it carefully, Suzu's laugh at
-# the heckles).
+# Staged: you kneel at the chest and, kneeling, read the old minutes bound with string; your companion leans in to
+# the angry margins over your shoulder (Nao and Mio lean in, Ren's nod to carry it carefully, Suzu's laugh at the
+# heckles).
 !gesture pc kneel prop:chest hold
 narr: {箱|はこ} の {中|なか} に 、{紐|ひも} で {綴|と}じた {古|ふる}い {帳面|ちょうめん} が ある 。|| In the chest is an old notebook, bound with string.
 !pose pc kneel
@@ -114721,9 +114720,9 @@ narr: この {町|まち} で 、{久|ひさ}しぶり に {見|み}る {言葉|
 !call lf.stacks_check
 
 @scene lf.conduit
-# Staged: you look over the thick pipe, put your ear to it (the narration), and bend to the brass tag at its
-# joint; your companion's own answer (Nao's flat hand of anger at the delivery route, Mio's guarded hand, Ren
-# looks up along the pipe, Suzu points up the mountain to the director). Again: you lean in to the pipe.
+# Staged: you look over the thick pipe, put your ear to it (the narration), and bend to the brass tag at its joint;
+# your companion's own answer (Nao's flat hand of anger at the delivery route, Mio's guarded hand, Ren looks up
+# along the pipe, Suzu points up the mountain to the director). Again: you lean in to the pipe.
 !if lf_conduit_seen -> again
 !gesture pc observe prop:lf_conduit
 narr: {壁|かべ} に {沿|そ}って 、{太|ふと}い {管|くだ} が {天井|てんじょう} へ {伸|の}びて いる 。|| A thick pipe runs up the wall and through the ceiling.
@@ -114773,9 +114772,9 @@ narr: {字|じ} は とても {丁寧|ていねい} だ 。{定規|じょうぎ}
 
 # ---- Councillor Tami ------------------------------------------------------------------------------------------------------------------
 @scene lf.yae
-# Staged: Councillor Tami's open hand for the early finish, a hand to her chin for the old midnight sessions, a
-# nod for "no particular problem"; her brow creases and she glances away and back (the narration); your
-# companion's own answer (Mio's guarded hand, Suzu's open hand towards her).
+# Staged: Councillor Tami's open hand for the early finish, a hand to her chin for the old midnight sessions, a nod
+# for "no particular problem"; her brow creases and she glances away and back (the narration); your companion's own
+# answer (Mio's guarded hand, Suzu's open hand towards her).
 !gesture lf_yae palm pc
 lf_yae: {議員|ぎいん} の タミ です よ 。{今日|きょう} も {議会|ぎかい} は {全員|ぜんいん} {賛成|さんせい} 。{早|はや}く {終|お}わって 、{結構|けっこう} な こと です 。|| I'm Councillor Tami. The council was unanimous again today. Finished early. Very nice.
 !gesture lf_yae chin
@@ -114866,10 +114865,10 @@ narr: トクジ は {答|こた}えた が 、{少|すこ}し も {動|うご}�
 @scene lf.tokuji_story
 # Staged: you hold out the minutes and Tokuji leans in to the handwriting; he looks over to the gate he kept that
 # night, and his head goes down at the water coming (his stronger reaction); he turns to you, takes the messenger's
-# small brass bell from his coat and holds it out, then hands it to you; you ring it towards the tower; his nod
-# at "It rang"; he looks out at the tower, his arms fold over his order, and he is startled at himself (the
-# narration); your companion's own answer (Nao's nod, Mio breathes out, Ren's nod, Suzu looks away and back); he
-# looks to the boat at the pier.
+# small brass bell from his coat and holds it out, then hands it to you; you ring it towards the tower; his nod at
+# "It rang"; he looks out at the tower, his arms fold over his order, and he is startled at himself (the narration);
+# your companion's own answer (Nao's nod, Mio breathes out, Ren's nod, Suzu looks away and back); he looks to the
+# boat at the pier.
 !music lf_flood
 !gesture pc present lf_tokuji prop=book
 !gesture lf_tokuji observe pc
@@ -114988,12 +114987,12 @@ narr: {議会堂|ぎかいどう} の ほう から 、{鈴|すず} の {音|お
 @scene lf.yae_after
 # Staged: the chair calls "Order!" with a flat hand (her line); the townspeople who walk in to argue carry their own
 # lines; Tami waves Kinu's fence off to next week; Tadashi's glasses over the instructions with no sender, and his
-# firm flat hand for "I am unable to comply"; Tami looks up towards the mountain; Masaru's small celebration for
-# "In favour!"; Tami's own celebration at one for and one against (her stronger reaction); she turns to you with an
-# open hand, and holds out the minutes that kept both sides; your companion's own answer (Nao's nod and a point up
-# the mountain, Mio's flat hand and a nod, Ren looks up the mountain, Suzu points up and checks her account book).
-# Your companion steps up beside you first, so the room has space for everyone who comes in. Later: her laugh at
-# day three.
+# firm flat hand for "I am unable to comply"; Tami looks up towards the mountain; Masaru's small celebration for "In
+# favour!"; Tami's own celebration at one for and one against (her stronger reaction); she turns to you with an open
+# hand, and holds out the minutes that kept both sides; your companion's own answer (Nao's nod and a point up the
+# mountain, Mio's flat hand and a nod, Ren looks up the mountain, Suzu points up and checks her account book). Your
+# companion steps up beside you first, so the room has space for everyone who comes in. Later: her laugh at day
+# three.
 !if ch5_done -> later
 !walkto comp 8 2 down
 !gesture lf_yae emphatic
@@ -115063,8 +115062,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 @scene lf.tower_arrive
 # Staged: in the belfry loft you look down at the soft, wet floorboards and listen towards the water and the
-# whispering below; your companion's own answer (Nao points back down to the one window, Mio checks the lids of
-# her bottles, Ren looks between the stairs and the ladder, Suzu's two hands for the acoustics).
+# whispering below; your companion's own answer (Nao points back down to the one window, Mio checks the lids of her
+# bottles, Ren looks between the stairs and the ladder, Suzu's two hands for the acoustics).
 !set lf_tower_entered
 !gesture pc observe down
 narr: {窓|まど} を {越|こ}えて 、{鐘楼|しょうろう} の {屋根裏|やねうら} に {下|お}りる 。{床|ゆか} の {板|いた} が 、{水|みず} を {吸|す}って {柔|やわ}らかい 。|| You climb in through the window and down into the belfry loft. The floorboards are soft with water.
@@ -115120,8 +115119,8 @@ narr: 「{上|うえ} の {水門|すいもん} を {閉|し}めない と 、{�
 narr: {車輪|しゃりん} は {二|ふた}つ 。{西|にし} の {壁|かべ} に 「{上|うえ}」 、{東|ひがし} の {壁|かべ} に 「{下|した}」 。|| Two wheels: "upper" on the west wall, "lower" on the east wall.
 
 @scene lf.wheel_upper
-# Staged: you look over the wheel of the upper gate; turning it, you lean into it as it groans shut. Already
-# closed: you look it over.
+# Staged: you look over the wheel of the upper gate; turning it, you lean into it as it groans shut. Already closed:
+# you look it over.
 !if lf_up_closed -> already
 !gesture pc observe prop:lf_wheel
 narr: 「{上|うえ} の {水門|すいもん}」 と {書|か}かれた {車輪|しゃりん} 。{今|いま} は {開|あ}いて いる 。|| A wheel marked "upper gate". It's open at the moment.
@@ -115284,8 +115283,8 @@ narr: {扉|とびら} を {閉|し}める と 、{重|おも}い {閂|かんぬ�
 narr: {東|ひがし} の {扉|とびら} は 、{閂|かんぬき} で しっかり {閉|し}まって いる 。|| The east door is barred fast.
 
 @scene lf.west_plug
-# Staged: you look over the handle of the west plug and haul on it; as the room drains you look down to the
-# stairs appearing. Stuck: you haul in vain, and look over to the plate on the north wall.
+# Staged: you look over the handle of the west plug and haul on it; as the room drains you look down to the stairs
+# appearing. Stuck: you haul in vain, and look over to the plate on the north wall.
 !if lf_mid_drained -> pulled
 !gesture pc observe prop:lf_lever
 narr: {西|にし} の {栓|せん} の {取|と}っ{手|て} 。{部屋|へや} の {水|みず} を {抜|ぬ}く {栓|せん} だ 。|| The handle of the west plug: the drain for this room.
@@ -115315,9 +115314,9 @@ narr: {西|にし} の {栓|せん} は 、{抜|ぬ}けて いる 。|| The west
 
 @scene lf.water_returns
 # Staged: you start as the lake pours in through the open east door; your companion makes room and you step back
-# north out of it (with staging off the scene leaves you standing on the flooded row); you look to the silted
-# drain; your companion's own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the
-# door left open, Suzu's laugh).
+# north out of it (with staging off the scene leaves you standing on the flooded row); you look to the silted drain;
+# your companion's own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the door left
+# open, Suzu's laugh).
 !sfx water
 !shake
 !gesture pc flinch 20,8
@@ -115337,10 +115336,10 @@ narr: {栓|せん} の {穴|あな} に {泥|どろ} が {詰|つ}まり 、{部
 ?(comp=suzu) comp[laugh]: {大波|おおなみ} の {演出|えんしゅつ} 、{見事|みごと} ！ …… {二度目|にどめ} は いらない けど 。|| What a spectacular wave effect! …Don't need an encore.
 
 @scene lf.junction
-# Staged: you look over the pipes gathering into one, listen to the voices inside, look up the way they are
-# carried, and lay a hand on the pipe (the narration); your companion's own answer (Nao's flat hand of anger, Mio's
-# head goes down, Ren looks up the pipes for their teacher's voice, Suzu's open hand to the voices). Again: you
-# listen at the pipe.
+# Staged: you look over the pipes gathering into one, listen to the voices inside, look up the way they are carried,
+# and lay a hand on the pipe (the narration); your companion's own answer (Nao's flat hand of anger, Mio's head goes
+# down, Ren looks up the pipes for their teacher's voice, Suzu's open hand to the voices). Again: you listen at the
+# pipe.
 !if lf_koe -> again
 !gesture pc observe prop:lf_conduit
 narr: {何本|なんぼん} も の {管|くだ} が 、ここ で {一本|いっぽん} に まとまって いる 。|| Here, many pipes gather into one.
@@ -115372,9 +115371,9 @@ narr: {管|くだ} の {中|なか} で 、{声|こえ} が {出番|でばん} �
 
 # ---- the drowned stair: plate C ---------------------------------------------------------------------------------------------------------
 @scene lf.low_enter
-# Staged: at the top of the drowned stair you look down the flooded walkway and stand still, feeling for the
-# weight of the bell; your companion's own answer (Nao looks down the way, Mio looks you over in the cold, Ren tends
-# the flickering lamp, Suzu touches her wet hair). (Your companion first steps off the stairhead beside you.)
+# Staged: at the top of the drowned stair you look down the flooded walkway and stand still, feeling for the weight
+# of the bell; your companion's own answer (Nao looks down the way, Mio looks you over in the cold, Ren tends the
+# flickering lamp, Suzu touches her wet hair). (Your companion first steps off the stairhead beside you.)
 !set lf_low_seen
 !walkto comp 11 2 down
 !gesture pc lookroad down
@@ -115610,14 +115609,14 @@ RB.script.add(`
 # ---- the fence that moves every morning ---------------------------------------------------------------------------------------
 @scene lf.fence_talk
 # Staged: Kōhei and Kinu, either side of the fence, talk across it: he points out his neighbour, they point to the
-# persimmon in turn and nod each other an "of course"; you lean in to the row of pulled-up post holes; Kōhei's
-# tired shrug, Kinu stretches her aching back; your companion's own answer (Nao looks between them, Mio leans in
-# towards Kinu's back, Ren's hand to the chin, Suzu's two hands for back and forth); "of course", "of course".
-# After the bell they argue properly (Kinu's flat hand, Kōhei's folded arms, her laugh, his shrug). With the
-# record: you hold it up, each points to their own side of the tree and nods the other's "of course", and you look
-# between them. Settling it after the bell: the argument again; your two hands for half and half; both think it
-# over; Kinu points to the sweeter branch, Kōhei shrugs, she laughs, he nods; both bend to tie the rope round the
-# trunk; your companion's own answer; Kinu holds out the dried persimmons.
+# persimmon in turn and nod each other an "of course"; you lean in to the row of pulled-up post holes; Kōhei's tired
+# shrug, Kinu stretches her aching back; your companion's own answer (Nao looks between them, Mio leans in towards
+# Kinu's back, Ren's hand to the chin, Suzu's two hands for back and forth); "of course", "of course". After the
+# bell they argue properly (Kinu's flat hand, Kōhei's folded arms, her laugh, his shrug). With the record: you hold
+# it up, each points to their own side of the tree and nods the other's "of course", and you look between them.
+# Settling it after the bell: the argument again; your two hands for half and half; both think it over; Kinu points
+# to the sweeter branch, Kōhei shrugs, she laughs, he nods; both bend to tie the rope round the trunk; your
+# companion's own answer; Kinu holds out the dried persimmons.
 !if quest.lf_fence>=1 -> record
 !if quest.lf_fence -> waiting
 !if lf_bell_rung -> loud
@@ -115789,11 +115788,11 @@ narr: {柿|かき} の {木|き} の {頁|ページ} に 、{新|あたら}し�
 
 # ---- the form that says two things ---------------------------------------------------------------------------------------------------------
 @scene lf.hayato
-# Staged: Hayato's nod, and he holds out the form with his worried question; his head goes down at a form nobody
-# can read; your companion's own answer (Nao and Ren lean in to the form, Mio's hand to her chin, Suzu counts the
-# five writers). Before the bell he looks away, unable to cross out anyone's request, and hands you his red pen;
-# you strike the line; his nod. After the bell: his firm flat hand, and he strikes it out himself; he gives you the
-# pen to keep. Later: an open hand for his senior's saying.
+# Staged: Hayato's nod, and he holds out the form with his worried question; his head goes down at a form nobody can
+# read; your companion's own answer (Nao and Ren lean in to the form, Mio's hand to her chin, Suzu counts the five
+# writers). Before the bell he looks away, unable to cross out anyone's request, and hands you his red pen; you
+# strike the line; his nod. After the bell: his firm flat hand, and he strikes it out himself; he gives you the pen
+# to keep. Later: an open hand for his senior's saying.
 !if quest.lf_form -> again
 !gesture lf_hayato nod pc
 lf_hayato: あ 、{先|さき} ほど の 。{記録館|きろくかん} へ ようこそ 。|| Ah, it's you from earlier. Welcome to the Records Hall.
@@ -115857,9 +115856,9 @@ lf_hayato: いらっしゃいませ 。{申請書|しんせいしょ} は 、{�
 @scene lf.tsuya
 # Staged: Tsuya looks out over the water for the three o'clock boat, thinks over the timetable with a hand to her
 # chin and laughs it off; your companion's own answer (Nao shakes their head, Mio looks her over against the chill,
-# Ren's open hand for the broken promise, Suzu looks away); you point to the ferry office. With the truth: your
-# open hand; her attention, then a nod; after the bell, she looks over to the ferry office crossly and laughs at
-# herself; your companion's own answer (Nao offers to write on her basket, Mio's and Ren's nods, Suzu notes it).
+# Ren's open hand for the broken promise, Suzu looks away); you point to the ferry office. With the truth: your open
+# hand; her attention, then a nod; after the bell, she looks over to the ferry office crossly and laughs at herself;
+# your companion's own answer (Nao offers to write on her basket, Mio's and Ren's nods, Suzu notes it).
 !if quest.lf_timetable>=1 -> tell
 !if quest.lf_timetable -> waiting
 !gesture lf_tsuya lookroad right
@@ -115927,9 +115926,9 @@ lf_tsuya: {今日|きょう} は {妹|いもうと} が こっち へ {来|く}�
 
 @scene lf.timetable
 # Staged: you lean in to the ferry timetable and bend to the last character in its different ink; asking for the
-# log, you turn to Umi, who brings it over from behind the counter and hands it to you; you notice the draft slip
-# in her drawer; her hands fidget over her own handwriting and her head goes down. After the bell: you lean in to
-# the new notice and bend to the old one still pinned underneath; Umi holds up the log.
+# log, you turn to Umi, who brings it over from behind the counter and hands it to you; you notice the draft slip in
+# her drawer; her hands fidget over her own handwriting and her head goes down. After the bell: you lean in to the
+# new notice and bend to the old one still pinned underneath; Umi holds up the log.
 !if lf_bell_rung -> fixed
 !gesture pc observe prop:noticeboard
 narr: {渡|わた}し{場|ば} の {時刻表|じこくひょう} 。「{東岸|ひがしぎし} {行|ゆ}き ： {九時|くじ} 、{十二時|じゅうにじ} 、{十五時|じゅうごじ} 」 。|| The ferry timetable. "To the east shore: 9:00, 12:00, 15:00."
@@ -116143,8 +116142,8 @@ comp[smirk]: {宛名|あてな} の {紙|かみ} 、{一枚|いちまい} {増|�
 
 # ---- Nao cameo (comp != nao) ----------------------------------------------------------------------------------------------------------------
 @scene lf.naoc
-# Staged (Nao's cameo when travelling with someone else): Nao's nod; a point to the ferry office for Umi's letter;
-# a look between it and you over a town that cannot say no; the hand on the satchel strap: "I'll wait"; your
+# Staged (Nao's cameo when travelling with someone else): Nao's nod; a point to the ferry office for Umi's letter; a
+# look between it and you over a town that cannot say no; the hand on the satchel strap: "I'll wait"; your
 # companion's own answer (Mio's laugh, Ren's hand to the chin, Suzu's laugh); Nao's smirk and glance away; a point
 # down to the sluice and the tower.
 !gesture nao nod pc
@@ -116197,11 +116196,11 @@ nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right,
 # ---- Mio: a no, out loud (comp = mio) ----------------------------------------------------------------------------------------------------------
 @scene lf.mio_start
 # Staged (Mio's personal quest begins): you walk down to the avenue with Mio (the narration) and turn to her; the
-# townspeople walk up to her one after another and she nods to each "of course", her hands fidget at the third,
-# and she writes the requests in her notebook (the narration); a guarded hand at "I'm used to it"; Hayato hands her
-# the Registrar's envelope; she starts back from her own "Yes, of cour—" (the narration: a hand over her mouth);
-# she holds the recipe out for you to read with her; a shake of the head at what it does, her head goes down; she
-# looks towards the Records Hall, and her hands fidget as she asks you to come.
+# townspeople walk up to her one after another and she nods to each "of course", her hands fidget at the third, and
+# she writes the requests in her notebook (the narration); a guarded hand at "I'm used to it"; Hayato hands her the
+# Registrar's envelope; she starts back from her own "Yes, of cour—" (the narration: a hand over her mouth); she
+# holds the recipe out for you to read with her; a shake of the head at what it does, her head goes down; she looks
+# towards the Records Hall, and her hands fidget as she asks you to come.
 !walkto pc 11 15 right
 !walkto comp 12 15 left
 narr: {通|とお}り を {歩|ある}いて いる と 、{町|まち} の {人|ひと} が {次々|つぎつぎ} に ミオ に {声|こえ} を かけて くる 。|| As you walk down the avenue, townsfolk come up to Mio one after another.
@@ -116310,9 +116309,9 @@ comp[laugh]: …… ふふ 。{町|まち} の {頼|たの}まれ{事|ごと} �
 
 # ---- Mio cameo (comp != mio) -----------------------------------------------------------------------------------------------------------------
 @scene lf.mioc
-# Staged (Mio's cameo when travelling with someone else): Mio's tired nod, an open hand at three days of requests,
-# a guarded hand when "of course" slips out; your companion's own answer (Nao looks her over, Ren's open hand,
-# Suzu writes her a sign in the air); Mio's laugh behind her hand.
+# Staged (Mio's cameo when travelling with someone else): Mio's tired nod, an open hand at three days of requests, a
+# guarded hand when "of course" slips out; your companion's own answer (Nao looks her over, Ren's open hand, Suzu
+# writes her a sign in the air); Mio's laugh behind her hand.
 !gesture mio nod pc
 mio[tired]: あ 、$name さん 。…… {久|ひさ}しぶり 。|| Oh, $name. …It's been a while.
 !gesture mio palm pc
@@ -119187,8 +119186,8 @@ narr: {何|なに} も {書|か}かれて いない 。 {紙|かみ} が {新|�
 narr: {笠|かさ} に {字|じ} が ある 。 {少|すこ}し {下手|へた} な {字|じ} だ 。 「 {上|うえ} は {書庫|しょこ} 。 {下|した} は {灯落|ひおち} 。 どちら も {開|ひら}いて いる 。 」 || There's writing on the shade, in a slightly clumsy hand: "Up: the Archive. Down: Lanternfall. Both are open."
 
 @scene sa.road_marker
-# Staged: you lean in to the mossy waymarker and bend to its carving; your companion's own answer (Nao's hand on
-# the satchel strap, Mio glances aside, Ren leans in to the keepers' carving, Suzu checks her account book for the
+# Staged: you lean in to the mossy waymarker and bend to its carving; your companion's own answer (Nao's hand on the
+# satchel strap, Mio glances aside, Ren leans in to the keepers' carving, Suzu checks her account book for the
 # receipt).
 !gesture pc observe prop:stone_marker
 narr: {苔|こけ} の {生|は}えた {道標|みちしるべ} 。 || A mossy stone waymarker.
@@ -119229,8 +119228,8 @@ narr: 「 {下|くだ}り の {方|かた} へ 。 {履|は}き{替|か}え に 
 
 @scene sa.camp_first
 # Staged: your companion steps off the path beside you; you look over to the hut with smoke rising and lean in to
-# the one lantern burning brightly; your companion's own answer (Nao points to the fire, Mio's open hand to the
-# hut, Ren leans in to the living lamp, Suzu points out the dressing room).
+# the one lantern burning brightly; your companion's own answer (Nao points to the fire, Mio's open hand to the hut,
+# Ren leans in to the living lamp, Suzu points out the dressing room).
 !walkto comp 14 17 up
 !gesture pc lookroad 6,9
 narr: {雪|ゆき} の {積|つ}もった {小|ちい}さな {平地|へいち} に 、 {小屋|こや} が {一軒|いっけん} 。 {煙突|えんとつ} から {煙|けむり} が {出|で}て いる 。 || On a small snowy shelf of land stands a single hut. Smoke rises from its chimney.
@@ -119253,8 +119252,8 @@ narr: {上手|じょうず} な {字|じ} で は ない 。 でも 、 {消|き
 
 @scene sa.camp_board
 # Staged: you lean in to the notes pinned to the board; your companion's own answer (Nao points to the third note,
-# Mio breathes out at the one who went home, Ren looks up the mountain to the Archive that no longer answers,
-# Suzu counts the way up and the way back).
+# Mio breathes out at the one who went home, Ren looks up the mountain to the Archive that no longer answers, Suzu
+# counts the way up and the way back).
 !gesture pc observe prop:noticeboard
 narr: {掲示板|けいじばん} に 、 {紙|かみ} が {何枚|なんまい} も {留|と}めて ある 。 || Several notes are pinned to the board.
 narr: 「 {夫|おっと} の {咳|せき} の {音|おと} を 、 {置|お}いて いきます 。 {最後|さいご} の {冬|ふゆ} の 。 」 || "I'm leaving my husband's cough here. The one from his last winter."
@@ -119361,9 +119360,9 @@ sa_oyone: そう かい 。 {無理|むり} は しない ことだ よ 。 || S
 
 @scene sa.ushio_grave
 # Staged: you lean in to the small stone and bend to its careful letters; your companion's own answer (Nao looks
-# between the stone and you, Mio's and Suzu's heads go down). With Ren: you step aside and Ren comes to the stone;
-# their head goes down; kneeling, Ren sets the lamp down and polishes it (the narration), leans in to the
-# respectful letters, then stands and nods to you: "Let's go."
+# between the stone and you, Mio's and Suzu's heads go down). With Ren: you stand before the stone and Ren comes to
+# its side (seen side-on); their head goes down; kneeling, Ren sets the lamp down and polishes it (the narration),
+# leans in to the respectful letters, then stands and nods to you: "Let's go."
 !gesture pc observe prop:sa_grave
 narr: {小|ちい}さな {石|いし} 。 {丁寧|ていねい} に {彫|ほ}られた {字|じ} 。 || A small stone. The letters are carefully cut.
 !gesture pc bend prop:sa_grave
@@ -119381,8 +119380,8 @@ narr: 「 ウシオ 、 ここ に {眠|ねむ}る 。 {灯守|ひもり} 。 {�
 !end
 :ren
 !music sorrow
-?(comp=ren) !walkto pc 21 19 up
-?(comp=ren) !walkto comp 22 19 up
+?(comp=ren) !walkto pc 22 19 up
+?(comp=ren) !walkto comp 21 18 right
 ?(comp=ren) !gesture comp observe prop:sa_grave hold
 ren: …… || …
 ?(comp=ren) !gesture comp lowered hold
@@ -119445,17 +119444,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sa.kasane_meet
-# Staged (the Archive is still; little moves): you walk in and look up the room to the one standing beyond the
-# desks; Kasane's open hand of welcome and a nod for "I keep this archive"; each companion meets them in their own
-# way (Nao's flat hand of anger and Kasane looks away; Mio looks them over and Kasane starts a little at the
-# kindness; Ren points back to the stone at the gate, Kasane's head goes down, and Ren stays still; Suzu's open
-# hand, and her head down at "That, I know"); Kasane opens a hand to the shelves, their head goes down over why
-# (either answer), an open hand to read whatever you like, and points you to the Stacks; you look after them as
-# they go; your companion's own answer (Nao looks between where they went and you, Mio's flat hand, Ren breathes
-# out, Suzu's hand to her chin).
+# Staged (the Archive is still; little moves): you walk in, your companion behind you, and look up the room to the
+# one standing beyond the desks; Kasane's open hand of welcome and a nod for "I keep this archive"; each companion
+# meets them in their own way (Nao's flat hand of anger and Kasane looks away; Mio looks them over and Kasane starts
+# a little at the kindness; Ren points back to the stone at the gate, Kasane's head goes down, and Ren stays still;
+# Suzu's open hand, and her head down at "That, I know"); Kasane opens a hand to the shelves, their head goes down
+# over why (either answer), an open hand to read whatever you like, and points you to the Stacks; you look after
+# them as they go; your companion's own answer (Nao looks between where they went and you, Mio's flat hand, Ren
+# breathes out, Suzu's hand to her chin).
 !set sa_met_kasane
 !music sa_kasane
 !move pc up 4
+!walkto comp 14 14 up
 !gesture pc lookroad kasane
 narr: {長|なが}い {机|つくえ} の {列|れつ} の {向|む}こう に 、 {誰|だれ}か が {立|た}って いる 。 || Beyond the long rows of desks, someone is standing.
 narr: {白|しろ}い {上着|うわぎ} 。 {袖|そで} に {墨|すみ} の しみ 。 {眠|ねむ}って いない {人|ひと} の {目|め} 。 || A pale coat. Ink stains on the cuffs. The eyes of someone who has not slept.
@@ -119526,10 +119526,10 @@ narr: カサネ は {棚|たな} の {間|あいだ} に {消|き}えた 。 {�
 !music still_archive
 
 @scene sa.clerk_first
-# Staged: the Catalogue Clerk (a figure of stacked paper: only a fixed tilt and a turn of its head) tilts at you
-# for a call number; you lean in to its blank name tag; it looks over at the white catalogue labels and turns back;
-# your companion's own answer (Nao's smirk away, Mio leans in to the blank tag, Ren turns to it at "Ushio" and it
-# tilts, Suzu's laugh); it looks to the study at the back for Ushio's notebook, and back to you.
+# Staged: the Catalogue Clerk (a figure of stacked paper: only a fixed tilt and a turn of its head) tilts at you for
+# a call number; you lean in to its blank name tag; it looks over at the white catalogue labels and turns back; your
+# companion's own answer (Nao's smirk away, Mio leans in to the blank tag, Ren turns to it at "Ushio" and it tilts,
+# Suzu's laugh); it looks to the study at the back for Ushio's notebook, and back to you.
 !gesture sa_clerk stiff pc
 sa_clerk: {閲覧|えつらん} の お{客様|きゃくさま} です か 。 {整理|せいり}{番号|ばんごう} を どうぞ 。 || A reader? Your call number, please.
 pc: {番号|ばんごう} は ない けど …… 。 || I don't have a number…
@@ -119618,8 +119618,8 @@ sa_tsuzuri[smile]: ツヅリ です 。 {名乗|なの}る の は 、 {何度|�
 
 @scene sa.cabinet
 # Staged: you lean in to the blank drawer labels; when the last card goes in you look to the west door as its grille
-# lifts; the clerk's tilt; your companion's own answer (Nao's shrug, Mio glances aside at kind vagueness, Ren's
-# open hand, Suzu's laugh). Not yet: you look over the heap of cards.
+# lifts; the clerk's tilt; your companion's own answer (Nao's shrug, Mio glances aside at kind vagueness, Ren's open
+# hand, Suzu's laugh). Not yet: you look over the heap of cards.
 !gesture pc observe prop:sa_cabinet
 narr: {引|ひ}き{出|だ}し の ラベル が 、 {全部|ぜんぶ} {白|しろ}い 。 {床|ゆか} に は カード が {散|ち}らばって いる 。 || Every drawer label is blank. Cards are scattered across the floor.
 !challenge sa.catalogue
@@ -119651,8 +119651,8 @@ narr: 「 {曖昧|あいまい} 」 の {引|ひ}き{出|だ}し は 、 {半分
 ?(sa_hush_down) narr: 「 {反対|はんたい} 」 の {引|ひ}き{出|だ}し の {札|ふだ} に 、 {誰|だれ}か が {小|ちい}さく {書|か}き{足|た}して いる 。 「 ウシオ {専用|せんよう} 」 。 || On the label of the "Objections" drawer, someone has added in small writing: "Reserved for Ushio".
 
 @scene sa.reading_desk
-# Staged: you lean in to the open ledger and bend to the day's accessions; your companion's own answer (Suzu's
-# shake of the head at the honest count, Nao's nod, Mio's shake of the head, Ren's head goes down for twelve roads).
+# Staged: you lean in to the open ledger and bend to the day's accessions; your companion's own answer (Suzu's shake
+# of the head at the honest count, Nao's nod, Mio's shake of the head, Ren's head goes down for twelve roads).
 !gesture pc observe prop:desk
 narr: {開|ひら}いた まま の {帳簿|ちょうぼ} 。 {細|こま}かい {字|じ} で 、 {毎日|まいにち} の {記録|きろく} 。 || A ledger left open. Daily entries, in small, careful writing.
 !gesture pc bend prop:desk
@@ -119769,9 +119769,10 @@ narr: 「 {葦|あし}ノ{瀬|せ} の {渡|わた}し 」 。 {上|うえ} か�
 narr: {下|した} の {札|ふだ} に も 、 {同|おな}じ {判|はん} 。 {潮硝子|しおがらす} の {積|つ}み{荷|に} 、 {雪鈴|ゆきすず} の {宛先|あてさき} 。 {旅|たび} の {途中|とちゅう} で {直|なお}した もの が 、 ここ に {返却|へんきゃく}{済|ず}み で {積|つ}まれて いる 。 || The slips beneath carry the same stamp: Saltglass cargo, Snowbell addresses. Things you mended along the way, piled here, marked "returned".
 
 @scene sa.conduits_enter
-# Staged: you look over to the basin where the faint characters sink, and listen to water that makes no sound; your
-# companion's own answer (Nao points to the end of the delivery route, Mio's head goes down, Ren points to the pipes
-# stamped "uphill", Suzu looks away).
+# Staged: your companion steps off the stairfoot beside you; you look over to the basin where the faint characters
+# sink, and listen to water that makes no sound; your companion's own answer (Nao points to the end of the delivery
+# route, Mio's head goes down, Ren points to the pipes stamped "uphill", Suzu looks away).
+!walkto comp 28 4 down
 !gesture pc lookroad 14,12
 narr: {静|しず}かな {水路|すいろ} の {終|お}わり 。 {壁|かべ} の {管|くだ} から 、 {淡|あわ}い {字|じ} が {流|なが}れ{出|だ}して 、 {真|ま}ん{中|なか} の {溜|た}まり に {沈|しず}んで いく 。 || The end of the Quiet Conduits. Faint characters drift out of the pipes in the walls and sink into the basin in the middle.
 !gesture pc cupear 14,12
@@ -119811,10 +119812,10 @@ narr: {水路|すいろ} が {運|はこ}んで きた の だろう 。 {町|�
 narr: {空|から} の {机|つくえ} 。 {水|みず} の {跡|あと} が 、 {貼|は}り{紙|がみ} の {形|かたち} に {残|のこ}って いる 。 || An empty desk. A watermark in the shape of the notice remains.
 
 @scene sa.charter_gate
-# Staged: you look at the gate of water, bend to Kasane's note beneath the plaque, and lean in to the charter on
-# the wall; once you read it rightly you look down the plank bridge; your companion's own answer (Nao points to
-# the charter, Mio's open hand, Ren leans in to it, Suzu's laugh). Not yet: you look at the water still over the
-# bridge. Done: you lean in to the plaque.
+# Staged: you look at the gate of water, bend to Kasane's note beneath the plaque, and lean in to the charter on the
+# wall; once you read it rightly you look down the plank bridge; your companion's own answer (Nao points to the
+# charter, Mio's open hand, Ren leans in to it, Suzu's laugh). Not yet: you look at the water still over the bridge.
+# Done: you lean in to the plaque.
 !if sa_promise_done -> done
 !gesture pc observe prop:water
 narr: {板|いた} の {橋|はし} の {手前|てまえ} に 、 {水|みず} の {門|もん} 。 {札|ふだ} が {下|さ}がって いる 。 || Before the plank bridge stands a gate of water. A plaque hangs from it.
@@ -120218,8 +120219,9 @@ narr: {静寂|しじま} は 、 この {箱|はこ} に だけ は {触|ふ}れ
 ?(comp=suzu) suzu: {批評|ひひょう} を {全部|ぜんぶ} {取|と}って おく {役者|やくしゃ} は 、 {伸|の}びる よ 。 …… {遅|おそ}すぎた けど 。 || Actors who keep every review get better. …Too late, in this case.
 
 @scene sa.study_notebook
-# Staged: you bend to the battered notebook and read it; with Ren, they trim their lamp's wick the way it is written;
-# otherwise you look to the west door, the short way to the Reading Room. Taken: you lean in to the gap in the dust.
+# Staged: you bend to the battered notebook and read it; with Ren, they trim their lamp's wick the way it is
+# written; otherwise you look to the west door, the short way to the Reading Room. Taken: you lean in to the gap in
+# the dust.
 !if item.sa_ushio_notes -> have
 !gesture pc bend prop:bookpile
 narr: {本|ほん} の {山|やま} の {上|うえ} に 、 {擦|す}り{切|き}れた {手帳|てちょう} 。 {表紙|ひょうし} に 「 ウシオ 」 。 || On top of the book pile, a battered notebook. On the cover: "Ushio".
@@ -120306,8 +120308,8 @@ narr: ページ は {床|ゆか} に {落|お}ちて 、 {静|しず}か に {�
 @scene sa.heart_kasane
 # Staged: Kasane's nod and an open hand: have you read enough? Their head goes down over deciding for everyone (or
 # they look away, then down, over Tōya's four words); as the spiral quickens you look to it and Kasane turns to it
-# and starts back; they look away at the Hush that no longer listens, and turn to you with an open hand: stand
-# back; your companion's own answer (Nao's shake of the head, Mio's flat hand of refusal, Ren raises the lamp, Suzu's
+# and starts back; they look away at the Hush that no longer listens, and turn to you with an open hand: stand back;
+# your companion's own answer (Nao's shake of the head, Mio's flat hand of refusal, Ren raises the lamp, Suzu's
 # showman's hands). Again: Kasane looks you over, and points you down to rest.
 !if seen.sa.heart_kasane -> again
 !music sa_kasane
@@ -120480,12 +120482,13 @@ kasane: {下|した} の {記憶|きおく} の {部屋|へや} で 、 {待|ま
 
 @scene sa.choose_mem
 # Staged: among the shelves Kasane opens a hand to the memories kept there, their head goes down over the requests
-# they read and did not answer; they point east to the conduits that could carry everything back and open a hand
-# the other way for keeping them here, then nod to you: the choice is yours; your companion's own answer (Nao looks
-# between the two ways, Mio's guarded hand, Ren's two hands weighing names against memories, Suzu checks her ledger).
-# Returned: Kasane looks down the mountain and their head goes down; your companion answers (Nao's nod, Mio checks
-# her bottles, Ren's nod, Suzu counts the interest). Kept: Kasane's nod; your companion answers (Nao's hand to the
-# strap, Mio's shake of the head, Ren breathes out or glances away, Suzu's open hand); Kasane points up to the study.
+# they read and did not answer; they point east to the conduits that could carry everything back and open a hand the
+# other way for keeping them here, then nod to you: the choice is yours; your companion's own answer (Nao looks
+# between the two ways, Mio's guarded hand, Ren's two hands weighing names against memories, Suzu checks her
+# ledger). Returned: Kasane looks down the mountain and their head goes down; your companion answers (Nao's nod, Mio
+# checks her bottles, Ren's nod, Suzu counts the interest). Kept: Kasane's nod; your companion answers (Nao's hand
+# to the strap, Mio's shake of the head, Ren breathes out or glances away, Suzu's open hand); Kasane points up to
+# the study.
 !gesture kasane palm left
 kasane: ここ に ある の は 、 {自分|じぶん} から {頼|たの}んで {置|お}いて いった {人|ひと} たち の {記憶|きおく} です 。 {悲|かな}しみ の {重|おも}さ に 、 {耐|た}えられなかった {人|ひと} たち 。 || These are the memories of people who asked me to keep them. People who couldn't bear the weight of their grief.
 !gesture kasane lowered
@@ -120615,13 +120618,13 @@ kasane: {最後|さいご} は 、 わたし の こと です 。 {門|もん} 
 !autosave
 
 @scene sa.choose_kasane
-# Staged: at the gate Kasane looks down the road to Lanternfall, then back to the Archive behind them; their head goes
-# down and stays down as they own their fear of going down (their stronger reaction); if you saw the empty shelf,
-# your open hand, and they look away and then at you for the promise that isn't vague; your companion's own answer
-# (Nao looks between the road down and the Archive, Mio's flat hand of a prescription, Ren's open hand, Suzu's two
-# hands for the ways to repay). Going down: Kasane's nod; your companion answers (Nao points down the road, Mio's
-# nod, Ren's open hand, Suzu's open hand). Staying: their nod and a look back to the Archive; your companion answers
-# (Nao points at them, Mio's nod, Ren tends the lamp, Suzu checks her ledger).
+# Staged: at the gate Kasane looks down the road to Lanternfall, then back to the Archive behind them; their head
+# goes down and stays down as they own their fear of going down (their stronger reaction); if you saw the empty
+# shelf, your open hand, and they look away and then at you for the promise that isn't vague; your companion's own
+# answer (Nao looks between the road down and the Archive, Mio's flat hand of a prescription, Ren's open hand,
+# Suzu's two hands for the ways to repay). Going down: Kasane's nod; your companion answers (Nao points down the
+# road, Mio's nod, Ren's open hand, Suzu's open hand). Staying: their nod and a look back to the Archive; your
+# companion answers (Nao points at them, Mio's nod, Ren tends the lamp, Suzu checks her ledger).
 kasane: {最後|さいご} は 、 わたし です 。 || Last of all, me.
 !gesture kasane lookroad down
 kasane: {灯落|ひおち} へ {降|お}りて 、 {傷|きず}つけた {人|ひと} たち の {前|まえ} に {立|た}つ こと も できます 。 {何|なに} を {言|い}われて も 、 {聞|き}きます 。 || I can go down to Lanternfall and stand before the people I hurt. Whatever they say, I'll listen.
@@ -120873,8 +120876,8 @@ narr: {星図|せいず} に は 、 まだ {書庫|しょこ} の {場所|ば�
 ?(comp=suzu) suzu: {雪鈴|ゆきすず} の {鐘|かね} 、 {音|おと} が {戻|もど}った ね 。 {迷子|まいご} の {合図|あいず} を {鳴|な}らさない で {済|す}む よう に 、 {祈|いの}ろう 。 || Snowbell's bell has its voice back. Here's hoping no one ever needs to ring the lost-traveller signal.
 
 @scene sa.epi_co
-# Staged (Cinder Orchard): you look across the terraces at the sound of scything, and listen at dusk for Gorō's bell;
-# with Suzu, her head goes down and she nods to Hiro; otherwise the companions answer (Nao looks out over the
+# Staged (Cinder Orchard): you look across the terraces at the sound of scything, and listen at dusk for Gorō's
+# bell; with Suzu, her head goes down and she nods to Hiro; otherwise the companions answer (Nao looks out over the
 # terraces, Mio checks her ointment, Ren points to the new lantern post).
 !gesture pc lookroad right
 narr: {灰実|はいみ}の{里|さと} 。 {防火帯|ぼうかたい} の {草|くさ} を {刈|か}る {音|おと} が 、 {段々畑|だんだんばたけ} に {響|ひび}いて いる 。 || Cinder Orchard. The sound of scythes clearing the firebreaks rings across the terraces.
@@ -120923,8 +120926,8 @@ wataru[smile]: でも 、 {夜|よる} は {眠|ねむ}れる よう に なり�
 ?(comp=suzu) suzu: ワタル の {帳簿|ちょうぼ} 、 {後|あと} で {見|み}せて もらおう 。 {正直|しょうじき} な {帳簿|ちょうぼ} は 、 {読|よ}んで いて {気持|きも}ち が いい から 。 || I'll ask to see Wataru's ledgers later. An honest ledger is a pleasure to read.
 
 @scene sa.epi_rw
-# Staged (Reedwake): you look out to the bridge that reaches the far bank; Hana, coming up with the tea, holds out
-# a cup; Tsuru points you to the Lantern Hall.
+# Staged (Reedwake): you look out to the bridge that reaches the far bank; Hana, coming up with the tea, holds out a
+# cup; Tsuru points you to the Lantern Hall.
 !gesture pc lookroad right
 narr: {葦|あし}ノ{瀬|せ} 。 {橋|はし} は 、 ちゃんと {向|む}こう {岸|ぎし} に {届|とど}いて いる 。 || Reedwake. The bridge reaches the far bank, as a bridge should.
 hana[smile]: {帰|かえ}って きた ！ ほら 、 お{茶|ちゃ} 。 …… {三|みっ}つ いれた の 。 {間違|まちが}えた わけ じゃ ない よ 。 || You're back! Here — tea. …I poured three. Not by mistake.
@@ -120977,15 +120980,16 @@ ren: …… {自分|じぶん} で {取|と}り に {行|い}きます 。 {道|
 ren[smile]: {灯|ひ} の {道|みち} が 、 {全部|ぜんぶ} {繋|つな}がりました 。 {書|か}き{直|なお}す {名前|なまえ} は 、 まだ {山|やま} ほど あります が 。 || The lantern roads are all joined up again. There are still mountains of names to rewrite, mind.
 
 @scene sa.end_comp
-# Staged (the companion's ending at the bridge; no item is given, the handovers are staging only): alone, you listen
-# to the river. Nao bends to set down the satchel, points up the mountain to the next delivery, holds out the bundle
-# of labels, looks away shyly, hands you the one with only your name (Nao's stronger reaction) and you read it; a
-# look between the exits and entrances, and a nod. Mio points up to her new sign, laughs at her shaking hand, holds
-# out the empty bottle and hands it to you, a playful shake of the head for the "no"s to come, and her laugh. Ren
-# polishes the two lamps and holds up their teacher's, their head goes down over the quarrel (or a glance away at the
-# face left behind), an open hand for the names to rewrite, a hand to the chin for the new lesson, and a nod. Suzu
-# closes her account book, points to you as the lead, thinks over the last line and breathes out, holds out the faded
-# ribbon and ties it to your wrist (her stronger reaction), and you take it.
+# Staged (the companion's ending at the bridge; no item is given, the handovers are staging only; your companion
+# steps to your side and you turn to them, so the hands read side-on): alone, you listen to the river. Nao bends to
+# set down the satchel, points up the mountain to the next delivery, holds out the bundle of labels, looks away
+# shyly, hands you the one with only your name (Nao's stronger reaction) and you read it; a look between the exits
+# and entrances, and a nod. Mio points up to her new sign, laughs at her shaking hand, holds out the empty bottle
+# and hands it to you, a playful shake of the head for the "no"s to come, and her laugh. Ren polishes the two lamps
+# and holds up their teacher's, their head goes down over the quarrel (or a glance away at the face left behind), an
+# open hand for the names to rewrite, a hand to the chin for the new lesson, and a nod. Suzu closes her account
+# book, points to you as the lead, thinks over the last line and breathes out, holds out the faded ribbon and ties
+# it to your wrist (her stronger reaction), and you take it.
 !music departure
 !if comp=nao -> nao
 !if comp=mio -> mio
@@ -120996,6 +121000,8 @@ narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 {�
 !end
 :nao
 !music companion_nao
+?(comp=nao) !walkto comp 23 30 left
+?(comp=nao) !look pc comp
 ?(comp=nao) !gesture comp bend down
 narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 ナオ が {鞄|かばん} を {下|お}ろした 。 || The sun goes down. On the bridge, Nao sets down the satchel.
 ?(comp=nao) !gesture comp point up
@@ -121022,6 +121028,8 @@ nao[smile]: …… {一緒|いっしょ} に {歩|ある}けて 、 よかった
 !end
 :mio
 !music companion_mio
+?(comp=mio) !walkto comp 23 30 left
+?(comp=mio) !look pc comp
 narr: {薬屋|くすりや} の {棚|たな} に 、 {新|あたら}しい ラベル が {並|なら}んで いる 。 {全部|ぜんぶ} 、 まっすぐ だ 。 || On the apothecary's shelves stands a row of new labels. Every one of them perfectly straight.
 ?(comp=mio) !gesture comp point up
 mio: {見|み}て 。 {新|あたら}しい {札|ふだ} 。 || Look. A new sign.
@@ -121045,6 +121053,8 @@ mio[laugh]: {嬉|うれ}しそう な {顔|かお} 、 しない で よ 。 || 
 !end
 :ren
 !music companion_ren
+?(comp=ren) !walkto comp 23 30 left
+?(comp=ren) !look pc comp
 ?(comp=ren) !gesture comp tendlamp
 narr: {灯|あか}り{堂|どう} の {前|まえ} で 、 レン が {灯|ひ} を {磨|みが}いて いる 。 {二|ふた}つ 。 || Outside the Lantern Hall, Ren is polishing lamps. Two of them.
 ?(comp=ren) !gesture comp present pc prop=lantern
@@ -121068,6 +121078,8 @@ ren[smile]: {次|つぎ} も 、 {一緒|いっしょ} に {迷|まよ}って �
 !end
 :suzu
 !music companion_suzu
+?(comp=suzu) !walkto comp 23 30 left
+?(comp=suzu) !look pc comp
 narr: {葦|あし}ノ{瀬|せ} の {広場|ひろば} に 、 {小|ちい}さな {舞台|ぶたい} が {組|く}まれて いる 。 || A little stage has been put up in Reedwake's square.
 ?(comp=suzu) !gesture comp check prop=accountbook
 suzu: {帳簿|ちょうぼ} 、 {閉|と}じた よ 。 {借|か}り は {全部|ぜんぶ} {返|かえ}した 。 {貸|か}し は …… {半分|はんぶん} 、 {棒引|ぼうび}き に した 。 {珍|めずら}しい でしょ 。 || I've closed my ledger. Every debt I owed, repaid. What I'm owed… I let half of it go. Rare for me, right?
@@ -121097,8 +121109,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sa.isamu_first
-# Staged: you look at the sunburnt man by the fire; Isamu (sitting) looks up the slope to the Archive, puts a hand to
-# his ear for his wife's laugh, his head goes down, and he rubs his cold hands over three days of waiting; your
+# Staged: you look at the sunburnt man by the fire; Isamu (sitting) looks up the slope to the Archive, puts a hand
+# to his ear for his wife's laugh, his head goes down, and he rubs his cold hands over three days of waiting; your
 # companion's own answer (Nao's nod, Mio bends to his cold hands, Ren's open hand, Suzu's shrug); his nod, and a
 # breath out over the kettle about to boil.
 !gesture pc observe sa_isamu

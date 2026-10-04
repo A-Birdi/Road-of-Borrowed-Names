@@ -8,14 +8,14 @@ RB.script.add(`
 # ---- the fence that moves every morning ---------------------------------------------------------------------------------------
 @scene lf.fence_talk
 # Staged: Kōhei and Kinu, either side of the fence, talk across it: he points out his neighbour, they point to the
-# persimmon in turn and nod each other an "of course"; you lean in to the row of pulled-up post holes; Kōhei's
-# tired shrug, Kinu stretches her aching back; your companion's own answer (Nao looks between them, Mio leans in
-# towards Kinu's back, Ren's hand to the chin, Suzu's two hands for back and forth); "of course", "of course".
-# After the bell they argue properly (Kinu's flat hand, Kōhei's folded arms, her laugh, his shrug). With the
-# record: you hold it up, each points to their own side of the tree and nods the other's "of course", and you look
-# between them. Settling it after the bell: the argument again; your two hands for half and half; both think it
-# over; Kinu points to the sweeter branch, Kōhei shrugs, she laughs, he nods; both bend to tie the rope round the
-# trunk; your companion's own answer; Kinu holds out the dried persimmons.
+# persimmon in turn and nod each other an "of course"; you lean in to the row of pulled-up post holes; Kōhei's tired
+# shrug, Kinu stretches her aching back; your companion's own answer (Nao looks between them, Mio leans in towards
+# Kinu's back, Ren's hand to the chin, Suzu's two hands for back and forth); "of course", "of course". After the
+# bell they argue properly (Kinu's flat hand, Kōhei's folded arms, her laugh, his shrug). With the record: you hold
+# it up, each points to their own side of the tree and nods the other's "of course", and you look between them.
+# Settling it after the bell: the argument again; your two hands for half and half; both think it over; Kinu points
+# to the sweeter branch, Kōhei shrugs, she laughs, he nods; both bend to tie the rope round the trunk; your
+# companion's own answer; Kinu holds out the dried persimmons.
 !if quest.lf_fence>=1 -> record
 !if quest.lf_fence -> waiting
 !if lf_bell_rung -> loud
@@ -187,11 +187,11 @@ narr: {柿|かき} の {木|き} の {頁|ページ} に 、{新|あたら}し�
 
 # ---- the form that says two things ---------------------------------------------------------------------------------------------------------
 @scene lf.hayato
-# Staged: Hayato's nod, and he holds out the form with his worried question; his head goes down at a form nobody
-# can read; your companion's own answer (Nao and Ren lean in to the form, Mio's hand to her chin, Suzu counts the
-# five writers). Before the bell he looks away, unable to cross out anyone's request, and hands you his red pen;
-# you strike the line; his nod. After the bell: his firm flat hand, and he strikes it out himself; he gives you the
-# pen to keep. Later: an open hand for his senior's saying.
+# Staged: Hayato's nod, and he holds out the form with his worried question; his head goes down at a form nobody can
+# read; your companion's own answer (Nao and Ren lean in to the form, Mio's hand to her chin, Suzu counts the five
+# writers). Before the bell he looks away, unable to cross out anyone's request, and hands you his red pen; you
+# strike the line; his nod. After the bell: his firm flat hand, and he strikes it out himself; he gives you the pen
+# to keep. Later: an open hand for his senior's saying.
 !if quest.lf_form -> again
 !gesture lf_hayato nod pc
 lf_hayato: あ 、{先|さき} ほど の 。{記録館|きろくかん} へ ようこそ 。|| Ah, it's you from earlier. Welcome to the Records Hall.
@@ -255,9 +255,9 @@ lf_hayato: いらっしゃいませ 。{申請書|しんせいしょ} は 、{�
 @scene lf.tsuya
 # Staged: Tsuya looks out over the water for the three o'clock boat, thinks over the timetable with a hand to her
 # chin and laughs it off; your companion's own answer (Nao shakes their head, Mio looks her over against the chill,
-# Ren's open hand for the broken promise, Suzu looks away); you point to the ferry office. With the truth: your
-# open hand; her attention, then a nod; after the bell, she looks over to the ferry office crossly and laughs at
-# herself; your companion's own answer (Nao offers to write on her basket, Mio's and Ren's nods, Suzu notes it).
+# Ren's open hand for the broken promise, Suzu looks away); you point to the ferry office. With the truth: your open
+# hand; her attention, then a nod; after the bell, she looks over to the ferry office crossly and laughs at herself;
+# your companion's own answer (Nao offers to write on her basket, Mio's and Ren's nods, Suzu notes it).
 !if quest.lf_timetable>=1 -> tell
 !if quest.lf_timetable -> waiting
 !gesture lf_tsuya lookroad right
@@ -325,9 +325,9 @@ lf_tsuya: {今日|きょう} は {妹|いもうと} が こっち へ {来|く}�
 
 @scene lf.timetable
 # Staged: you lean in to the ferry timetable and bend to the last character in its different ink; asking for the
-# log, you turn to Umi, who brings it over from behind the counter and hands it to you; you notice the draft slip
-# in her drawer; her hands fidget over her own handwriting and her head goes down. After the bell: you lean in to
-# the new notice and bend to the old one still pinned underneath; Umi holds up the log.
+# log, you turn to Umi, who brings it over from behind the counter and hands it to you; you notice the draft slip in
+# her drawer; her hands fidget over her own handwriting and her head goes down. After the bell: you lean in to the
+# new notice and bend to the old one still pinned underneath; Umi holds up the log.
 !if lf_bell_rung -> fixed
 !gesture pc observe prop:noticeboard
 narr: {渡|わた}し{場|ば} の {時刻表|じこくひょう} 。「{東岸|ひがしぎし} {行|ゆ}き ： {九時|くじ} 、{十二時|じゅうにじ} 、{十五時|じゅうごじ} 」 。|| The ferry timetable. "To the east shore: 9:00, 12:00, 15:00."

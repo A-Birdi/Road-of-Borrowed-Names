@@ -104,8 +104,8 @@ narr: {何|なに} も {書|か}かれて いない 。 {紙|かみ} が {新|�
 narr: {笠|かさ} に {字|じ} が ある 。 {少|すこ}し {下手|へた} な {字|じ} だ 。 「 {上|うえ} は {書庫|しょこ} 。 {下|した} は {灯落|ひおち} 。 どちら も {開|ひら}いて いる 。 」 || There's writing on the shade, in a slightly clumsy hand: "Up: the Archive. Down: Lanternfall. Both are open."
 
 @scene sa.road_marker
-# Staged: you lean in to the mossy waymarker and bend to its carving; your companion's own answer (Nao's hand on
-# the satchel strap, Mio glances aside, Ren leans in to the keepers' carving, Suzu checks her account book for the
+# Staged: you lean in to the mossy waymarker and bend to its carving; your companion's own answer (Nao's hand on the
+# satchel strap, Mio glances aside, Ren leans in to the keepers' carving, Suzu checks her account book for the
 # receipt).
 !gesture pc observe prop:stone_marker
 narr: {苔|こけ} の {生|は}えた {道標|みちしるべ} 。 || A mossy stone waymarker.
@@ -146,8 +146,8 @@ narr: 「 {下|くだ}り の {方|かた} へ 。 {履|は}き{替|か}え に 
 
 @scene sa.camp_first
 # Staged: your companion steps off the path beside you; you look over to the hut with smoke rising and lean in to
-# the one lantern burning brightly; your companion's own answer (Nao points to the fire, Mio's open hand to the
-# hut, Ren leans in to the living lamp, Suzu points out the dressing room).
+# the one lantern burning brightly; your companion's own answer (Nao points to the fire, Mio's open hand to the hut,
+# Ren leans in to the living lamp, Suzu points out the dressing room).
 !walkto comp 14 17 up
 !gesture pc lookroad 6,9
 narr: {雪|ゆき} の {積|つ}もった {小|ちい}さな {平地|へいち} に 、 {小屋|こや} が {一軒|いっけん} 。 {煙突|えんとつ} から {煙|けむり} が {出|で}て いる 。 || On a small snowy shelf of land stands a single hut. Smoke rises from its chimney.
@@ -170,8 +170,8 @@ narr: {上手|じょうず} な {字|じ} で は ない 。 でも 、 {消|き
 
 @scene sa.camp_board
 # Staged: you lean in to the notes pinned to the board; your companion's own answer (Nao points to the third note,
-# Mio breathes out at the one who went home, Ren looks up the mountain to the Archive that no longer answers,
-# Suzu counts the way up and the way back).
+# Mio breathes out at the one who went home, Ren looks up the mountain to the Archive that no longer answers, Suzu
+# counts the way up and the way back).
 !gesture pc observe prop:noticeboard
 narr: {掲示板|けいじばん} に 、 {紙|かみ} が {何枚|なんまい} も {留|と}めて ある 。 || Several notes are pinned to the board.
 narr: 「 {夫|おっと} の {咳|せき} の {音|おと} を 、 {置|お}いて いきます 。 {最後|さいご} の {冬|ふゆ} の 。 」 || "I'm leaving my husband's cough here. The one from his last winter."
@@ -278,9 +278,9 @@ sa_oyone: そう かい 。 {無理|むり} は しない ことだ よ 。 || S
 
 @scene sa.ushio_grave
 # Staged: you lean in to the small stone and bend to its careful letters; your companion's own answer (Nao looks
-# between the stone and you, Mio's and Suzu's heads go down). With Ren: you step aside and Ren comes to the stone;
-# their head goes down; kneeling, Ren sets the lamp down and polishes it (the narration), leans in to the
-# respectful letters, then stands and nods to you: "Let's go."
+# between the stone and you, Mio's and Suzu's heads go down). With Ren: you stand before the stone and Ren comes to
+# its side (seen side-on); their head goes down; kneeling, Ren sets the lamp down and polishes it (the narration),
+# leans in to the respectful letters, then stands and nods to you: "Let's go."
 !gesture pc observe prop:sa_grave
 narr: {小|ちい}さな {石|いし} 。 {丁寧|ていねい} に {彫|ほ}られた {字|じ} 。 || A small stone. The letters are carefully cut.
 !gesture pc bend prop:sa_grave
@@ -298,8 +298,8 @@ narr: 「 ウシオ 、 ここ に {眠|ねむ}る 。 {灯守|ひもり} 。 {�
 !end
 :ren
 !music sorrow
-?(comp=ren) !walkto pc 21 19 up
-?(comp=ren) !walkto comp 22 19 up
+?(comp=ren) !walkto pc 22 19 up
+?(comp=ren) !walkto comp 21 18 right
 ?(comp=ren) !gesture comp observe prop:sa_grave hold
 ren: …… || …
 ?(comp=ren) !gesture comp lowered hold

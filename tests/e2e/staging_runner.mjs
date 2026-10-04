@@ -44,6 +44,10 @@ export async function runBranch(p, c, v, o) {
     if (c.prov || v.prov) s.provisional = v.prov || c.prov;
     RB.world.refreshActors();
     if (comp) RB.world.placeCompanion();
+    // where your companion really stands when the place you talk from has no room behind you (they came along the
+    // row with you): the follow rule alone would put them on your own tile
+    const compAt = v.compAt || c.compAt;
+    if (comp && compAt && RB.world.W.comp) { const k = RB.world.W.comp; k.x = k.fx = compAt[0]; k.y = k.fy = compAt[1]; k.mv = null; }
     // stand-ins for what a scene hands over to other screens (the same in every run)
     const pass = !(v.fail || c.fail);
     RB.challenge.run = async () => ({ ok: pass });

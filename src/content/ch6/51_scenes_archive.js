@@ -5,17 +5,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sa.kasane_meet
-# Staged (the Archive is still; little moves): you walk in and look up the room to the one standing beyond the
-# desks; Kasane's open hand of welcome and a nod for "I keep this archive"; each companion meets them in their own
-# way (Nao's flat hand of anger and Kasane looks away; Mio looks them over and Kasane starts a little at the
-# kindness; Ren points back to the stone at the gate, Kasane's head goes down, and Ren stays still; Suzu's open
-# hand, and her head down at "That, I know"); Kasane opens a hand to the shelves, their head goes down over why
-# (either answer), an open hand to read whatever you like, and points you to the Stacks; you look after them as
-# they go; your companion's own answer (Nao looks between where they went and you, Mio's flat hand, Ren breathes
-# out, Suzu's hand to her chin).
+# Staged (the Archive is still; little moves): you walk in, your companion behind you, and look up the room to the
+# one standing beyond the desks; Kasane's open hand of welcome and a nod for "I keep this archive"; each companion
+# meets them in their own way (Nao's flat hand of anger and Kasane looks away; Mio looks them over and Kasane starts
+# a little at the kindness; Ren points back to the stone at the gate, Kasane's head goes down, and Ren stays still;
+# Suzu's open hand, and her head down at "That, I know"); Kasane opens a hand to the shelves, their head goes down
+# over why (either answer), an open hand to read whatever you like, and points you to the Stacks; you look after
+# them as they go; your companion's own answer (Nao looks between where they went and you, Mio's flat hand, Ren
+# breathes out, Suzu's hand to her chin).
 !set sa_met_kasane
 !music sa_kasane
 !move pc up 4
+!walkto comp 14 14 up
 !gesture pc lookroad kasane
 narr: {長|なが}い {机|つくえ} の {列|れつ} の {向|む}こう に 、 {誰|だれ}か が {立|た}って いる 。 || Beyond the long rows of desks, someone is standing.
 narr: {白|しろ}い {上着|うわぎ} 。 {袖|そで} に {墨|すみ} の しみ 。 {眠|ねむ}って いない {人|ひと} の {目|め} 。 || A pale coat. Ink stains on the cuffs. The eyes of someone who has not slept.
@@ -86,10 +87,10 @@ narr: カサネ は {棚|たな} の {間|あいだ} に {消|き}えた 。 {�
 !music still_archive
 
 @scene sa.clerk_first
-# Staged: the Catalogue Clerk (a figure of stacked paper: only a fixed tilt and a turn of its head) tilts at you
-# for a call number; you lean in to its blank name tag; it looks over at the white catalogue labels and turns back;
-# your companion's own answer (Nao's smirk away, Mio leans in to the blank tag, Ren turns to it at "Ushio" and it
-# tilts, Suzu's laugh); it looks to the study at the back for Ushio's notebook, and back to you.
+# Staged: the Catalogue Clerk (a figure of stacked paper: only a fixed tilt and a turn of its head) tilts at you for
+# a call number; you lean in to its blank name tag; it looks over at the white catalogue labels and turns back; your
+# companion's own answer (Nao's smirk away, Mio leans in to the blank tag, Ren turns to it at "Ushio" and it tilts,
+# Suzu's laugh); it looks to the study at the back for Ushio's notebook, and back to you.
 !gesture sa_clerk stiff pc
 sa_clerk: {閲覧|えつらん} の お{客様|きゃくさま} です か 。 {整理|せいり}{番号|ばんごう} を どうぞ 。 || A reader? Your call number, please.
 pc: {番号|ばんごう} は ない けど …… 。 || I don't have a number…
@@ -178,8 +179,8 @@ sa_tsuzuri[smile]: ツヅリ です 。 {名乗|なの}る の は 、 {何度|�
 
 @scene sa.cabinet
 # Staged: you lean in to the blank drawer labels; when the last card goes in you look to the west door as its grille
-# lifts; the clerk's tilt; your companion's own answer (Nao's shrug, Mio glances aside at kind vagueness, Ren's
-# open hand, Suzu's laugh). Not yet: you look over the heap of cards.
+# lifts; the clerk's tilt; your companion's own answer (Nao's shrug, Mio glances aside at kind vagueness, Ren's open
+# hand, Suzu's laugh). Not yet: you look over the heap of cards.
 !gesture pc observe prop:sa_cabinet
 narr: {引|ひ}き{出|だ}し の ラベル が 、 {全部|ぜんぶ} {白|しろ}い 。 {床|ゆか} に は カード が {散|ち}らばって いる 。 || Every drawer label is blank. Cards are scattered across the floor.
 !challenge sa.catalogue
@@ -211,8 +212,8 @@ narr: 「 {曖昧|あいまい} 」 の {引|ひ}き{出|だ}し は 、 {半分
 ?(sa_hush_down) narr: 「 {反対|はんたい} 」 の {引|ひ}き{出|だ}し の {札|ふだ} に 、 {誰|だれ}か が {小|ちい}さく {書|か}き{足|た}して いる 。 「 ウシオ {専用|せんよう} 」 。 || On the label of the "Objections" drawer, someone has added in small writing: "Reserved for Ushio".
 
 @scene sa.reading_desk
-# Staged: you lean in to the open ledger and bend to the day's accessions; your companion's own answer (Suzu's
-# shake of the head at the honest count, Nao's nod, Mio's shake of the head, Ren's head goes down for twelve roads).
+# Staged: you lean in to the open ledger and bend to the day's accessions; your companion's own answer (Suzu's shake
+# of the head at the honest count, Nao's nod, Mio's shake of the head, Ren's head goes down for twelve roads).
 !gesture pc observe prop:desk
 narr: {開|ひら}いた まま の {帳簿|ちょうぼ} 。 {細|こま}かい {字|じ} で 、 {毎日|まいにち} の {記録|きろく} 。 || A ledger left open. Daily entries, in small, careful writing.
 !gesture pc bend prop:desk
@@ -329,9 +330,10 @@ narr: 「 {葦|あし}ノ{瀬|せ} の {渡|わた}し 」 。 {上|うえ} か�
 narr: {下|した} の {札|ふだ} に も 、 {同|おな}じ {判|はん} 。 {潮硝子|しおがらす} の {積|つ}み{荷|に} 、 {雪鈴|ゆきすず} の {宛先|あてさき} 。 {旅|たび} の {途中|とちゅう} で {直|なお}した もの が 、 ここ に {返却|へんきゃく}{済|ず}み で {積|つ}まれて いる 。 || The slips beneath carry the same stamp: Saltglass cargo, Snowbell addresses. Things you mended along the way, piled here, marked "returned".
 
 @scene sa.conduits_enter
-# Staged: you look over to the basin where the faint characters sink, and listen to water that makes no sound; your
-# companion's own answer (Nao points to the end of the delivery route, Mio's head goes down, Ren points to the pipes
-# stamped "uphill", Suzu looks away).
+# Staged: your companion steps off the stairfoot beside you; you look over to the basin where the faint characters
+# sink, and listen to water that makes no sound; your companion's own answer (Nao points to the end of the delivery
+# route, Mio's head goes down, Ren points to the pipes stamped "uphill", Suzu looks away).
+!walkto comp 28 4 down
 !gesture pc lookroad 14,12
 narr: {静|しず}かな {水路|すいろ} の {終|お}わり 。 {壁|かべ} の {管|くだ} から 、 {淡|あわ}い {字|じ} が {流|なが}れ{出|だ}して 、 {真|ま}ん{中|なか} の {溜|た}まり に {沈|しず}んで いく 。 || The end of the Quiet Conduits. Faint characters drift out of the pipes in the walls and sink into the basin in the middle.
 !gesture pc cupear 14,12
@@ -371,10 +373,10 @@ narr: {水路|すいろ} が {運|はこ}んで きた の だろう 。 {町|�
 narr: {空|から} の {机|つくえ} 。 {水|みず} の {跡|あと} が 、 {貼|は}り{紙|がみ} の {形|かたち} に {残|のこ}って いる 。 || An empty desk. A watermark in the shape of the notice remains.
 
 @scene sa.charter_gate
-# Staged: you look at the gate of water, bend to Kasane's note beneath the plaque, and lean in to the charter on
-# the wall; once you read it rightly you look down the plank bridge; your companion's own answer (Nao points to
-# the charter, Mio's open hand, Ren leans in to it, Suzu's laugh). Not yet: you look at the water still over the
-# bridge. Done: you lean in to the plaque.
+# Staged: you look at the gate of water, bend to Kasane's note beneath the plaque, and lean in to the charter on the
+# wall; once you read it rightly you look down the plank bridge; your companion's own answer (Nao points to the
+# charter, Mio's open hand, Ren leans in to it, Suzu's laugh). Not yet: you look at the water still over the bridge.
+# Done: you lean in to the plaque.
 !if sa_promise_done -> done
 !gesture pc observe prop:water
 narr: {板|いた} の {橋|はし} の {手前|てまえ} に 、 {水|みず} の {門|もん} 。 {札|ふだ} が {下|さ}がって いる 。 || Before the plank bridge stands a gate of water. A plaque hangs from it.
@@ -778,8 +780,9 @@ narr: {静寂|しじま} は 、 この {箱|はこ} に だけ は {触|ふ}れ
 ?(comp=suzu) suzu: {批評|ひひょう} を {全部|ぜんぶ} {取|と}って おく {役者|やくしゃ} は 、 {伸|の}びる よ 。 …… {遅|おそ}すぎた けど 。 || Actors who keep every review get better. …Too late, in this case.
 
 @scene sa.study_notebook
-# Staged: you bend to the battered notebook and read it; with Ren, they trim their lamp's wick the way it is written;
-# otherwise you look to the west door, the short way to the Reading Room. Taken: you lean in to the gap in the dust.
+# Staged: you bend to the battered notebook and read it; with Ren, they trim their lamp's wick the way it is
+# written; otherwise you look to the west door, the short way to the Reading Room. Taken: you lean in to the gap in
+# the dust.
 !if item.sa_ushio_notes -> have
 !gesture pc bend prop:bookpile
 narr: {本|ほん} の {山|やま} の {上|うえ} に 、 {擦|す}り{切|き}れた {手帳|てちょう} 。 {表紙|ひょうし} に 「 ウシオ 」 。 || On top of the book pile, a battered notebook. On the cover: "Ushio".

@@ -184,8 +184,8 @@ narr: {星図|せいず} に は 、 まだ {書庫|しょこ} の {場所|ば�
 ?(comp=suzu) suzu: {雪鈴|ゆきすず} の {鐘|かね} 、 {音|おと} が {戻|もど}った ね 。 {迷子|まいご} の {合図|あいず} を {鳴|な}らさない で {済|す}む よう に 、 {祈|いの}ろう 。 || Snowbell's bell has its voice back. Here's hoping no one ever needs to ring the lost-traveller signal.
 
 @scene sa.epi_co
-# Staged (Cinder Orchard): you look across the terraces at the sound of scything, and listen at dusk for Gorō's bell;
-# with Suzu, her head goes down and she nods to Hiro; otherwise the companions answer (Nao looks out over the
+# Staged (Cinder Orchard): you look across the terraces at the sound of scything, and listen at dusk for Gorō's
+# bell; with Suzu, her head goes down and she nods to Hiro; otherwise the companions answer (Nao looks out over the
 # terraces, Mio checks her ointment, Ren points to the new lantern post).
 !gesture pc lookroad right
 narr: {灰実|はいみ}の{里|さと} 。 {防火帯|ぼうかたい} の {草|くさ} を {刈|か}る {音|おと} が 、 {段々畑|だんだんばたけ} に {響|ひび}いて いる 。 || Cinder Orchard. The sound of scythes clearing the firebreaks rings across the terraces.
@@ -234,8 +234,8 @@ wataru[smile]: でも 、 {夜|よる} は {眠|ねむ}れる よう に なり�
 ?(comp=suzu) suzu: ワタル の {帳簿|ちょうぼ} 、 {後|あと} で {見|み}せて もらおう 。 {正直|しょうじき} な {帳簿|ちょうぼ} は 、 {読|よ}んで いて {気持|きも}ち が いい から 。 || I'll ask to see Wataru's ledgers later. An honest ledger is a pleasure to read.
 
 @scene sa.epi_rw
-# Staged (Reedwake): you look out to the bridge that reaches the far bank; Hana, coming up with the tea, holds out
-# a cup; Tsuru points you to the Lantern Hall.
+# Staged (Reedwake): you look out to the bridge that reaches the far bank; Hana, coming up with the tea, holds out a
+# cup; Tsuru points you to the Lantern Hall.
 !gesture pc lookroad right
 narr: {葦|あし}ノ{瀬|せ} 。 {橋|はし} は 、 ちゃんと {向|む}こう {岸|ぎし} に {届|とど}いて いる 。 || Reedwake. The bridge reaches the far bank, as a bridge should.
 hana[smile]: {帰|かえ}って きた ！ ほら 、 お{茶|ちゃ} 。 …… {三|みっ}つ いれた の 。 {間違|まちが}えた わけ じゃ ない よ 。 || You're back! Here — tea. …I poured three. Not by mistake.
@@ -288,15 +288,16 @@ ren: …… {自分|じぶん} で {取|と}り に {行|い}きます 。 {道|
 ren[smile]: {灯|ひ} の {道|みち} が 、 {全部|ぜんぶ} {繋|つな}がりました 。 {書|か}き{直|なお}す {名前|なまえ} は 、 まだ {山|やま} ほど あります が 。 || The lantern roads are all joined up again. There are still mountains of names to rewrite, mind.
 
 @scene sa.end_comp
-# Staged (the companion's ending at the bridge; no item is given, the handovers are staging only): alone, you listen
-# to the river. Nao bends to set down the satchel, points up the mountain to the next delivery, holds out the bundle
-# of labels, looks away shyly, hands you the one with only your name (Nao's stronger reaction) and you read it; a
-# look between the exits and entrances, and a nod. Mio points up to her new sign, laughs at her shaking hand, holds
-# out the empty bottle and hands it to you, a playful shake of the head for the "no"s to come, and her laugh. Ren
-# polishes the two lamps and holds up their teacher's, their head goes down over the quarrel (or a glance away at the
-# face left behind), an open hand for the names to rewrite, a hand to the chin for the new lesson, and a nod. Suzu
-# closes her account book, points to you as the lead, thinks over the last line and breathes out, holds out the faded
-# ribbon and ties it to your wrist (her stronger reaction), and you take it.
+# Staged (the companion's ending at the bridge; no item is given, the handovers are staging only; your companion
+# steps to your side and you turn to them, so the hands read side-on): alone, you listen to the river. Nao bends to
+# set down the satchel, points up the mountain to the next delivery, holds out the bundle of labels, looks away
+# shyly, hands you the one with only your name (Nao's stronger reaction) and you read it; a look between the exits
+# and entrances, and a nod. Mio points up to her new sign, laughs at her shaking hand, holds out the empty bottle
+# and hands it to you, a playful shake of the head for the "no"s to come, and her laugh. Ren polishes the two lamps
+# and holds up their teacher's, their head goes down over the quarrel (or a glance away at the face left behind), an
+# open hand for the names to rewrite, a hand to the chin for the new lesson, and a nod. Suzu closes her account
+# book, points to you as the lead, thinks over the last line and breathes out, holds out the faded ribbon and ties
+# it to your wrist (her stronger reaction), and you take it.
 !music departure
 !if comp=nao -> nao
 !if comp=mio -> mio
@@ -307,6 +308,8 @@ narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 {�
 !end
 :nao
 !music companion_nao
+?(comp=nao) !walkto comp 23 30 left
+?(comp=nao) !look pc comp
 ?(comp=nao) !gesture comp bend down
 narr: {日|ひ} が {暮|く}れる 。 {橋|はし} の {上|うえ} で 、 ナオ が {鞄|かばん} を {下|お}ろした 。 || The sun goes down. On the bridge, Nao sets down the satchel.
 ?(comp=nao) !gesture comp point up
@@ -333,6 +336,8 @@ nao[smile]: …… {一緒|いっしょ} に {歩|ある}けて 、 よかった
 !end
 :mio
 !music companion_mio
+?(comp=mio) !walkto comp 23 30 left
+?(comp=mio) !look pc comp
 narr: {薬屋|くすりや} の {棚|たな} に 、 {新|あたら}しい ラベル が {並|なら}んで いる 。 {全部|ぜんぶ} 、 まっすぐ だ 。 || On the apothecary's shelves stands a row of new labels. Every one of them perfectly straight.
 ?(comp=mio) !gesture comp point up
 mio: {見|み}て 。 {新|あたら}しい {札|ふだ} 。 || Look. A new sign.
@@ -356,6 +361,8 @@ mio[laugh]: {嬉|うれ}しそう な {顔|かお} 、 しない で よ 。 || 
 !end
 :ren
 !music companion_ren
+?(comp=ren) !walkto comp 23 30 left
+?(comp=ren) !look pc comp
 ?(comp=ren) !gesture comp tendlamp
 narr: {灯|あか}り{堂|どう} の {前|まえ} で 、 レン が {灯|ひ} を {磨|みが}いて いる 。 {二|ふた}つ 。 || Outside the Lantern Hall, Ren is polishing lamps. Two of them.
 ?(comp=ren) !gesture comp present pc prop=lantern
@@ -379,6 +386,8 @@ ren[smile]: {次|つぎ} も 、 {一緒|いっしょ} に {迷|まよ}って �
 !end
 :suzu
 !music companion_suzu
+?(comp=suzu) !walkto comp 23 30 left
+?(comp=suzu) !look pc comp
 narr: {葦|あし}ノ{瀬|せ} の {広場|ひろば} に 、 {小|ちい}さな {舞台|ぶたい} が {組|く}まれて いる 。 || A little stage has been put up in Reedwake's square.
 ?(comp=suzu) !gesture comp check prop=accountbook
 suzu: {帳簿|ちょうぼ} 、 {閉|と}じた よ 。 {借|か}り は {全部|ぜんぶ} {返|かえ}した 。 {貸|か}し は …… {半分|はんぶん} 、 {棒引|ぼうび}き に した 。 {珍|めずら}しい でしょ 。 || I've closed my ledger. Every debt I owed, repaid. What I'm owed… I let half of it go. Rare for me, right?

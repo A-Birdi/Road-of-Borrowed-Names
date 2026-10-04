@@ -30,8 +30,8 @@ narr: ページ は {床|ゆか} に {落|お}ちて 、 {静|しず}か に {�
 @scene sa.heart_kasane
 # Staged: Kasane's nod and an open hand: have you read enough? Their head goes down over deciding for everyone (or
 # they look away, then down, over Tōya's four words); as the spiral quickens you look to it and Kasane turns to it
-# and starts back; they look away at the Hush that no longer listens, and turn to you with an open hand: stand
-# back; your companion's own answer (Nao's shake of the head, Mio's flat hand of refusal, Ren raises the lamp, Suzu's
+# and starts back; they look away at the Hush that no longer listens, and turn to you with an open hand: stand back;
+# your companion's own answer (Nao's shake of the head, Mio's flat hand of refusal, Ren raises the lamp, Suzu's
 # showman's hands). Again: Kasane looks you over, and points you down to rest.
 !if seen.sa.heart_kasane -> again
 !music sa_kasane
@@ -204,12 +204,13 @@ kasane: {下|した} の {記憶|きおく} の {部屋|へや} で 、 {待|ま
 
 @scene sa.choose_mem
 # Staged: among the shelves Kasane opens a hand to the memories kept there, their head goes down over the requests
-# they read and did not answer; they point east to the conduits that could carry everything back and open a hand
-# the other way for keeping them here, then nod to you: the choice is yours; your companion's own answer (Nao looks
-# between the two ways, Mio's guarded hand, Ren's two hands weighing names against memories, Suzu checks her ledger).
-# Returned: Kasane looks down the mountain and their head goes down; your companion answers (Nao's nod, Mio checks
-# her bottles, Ren's nod, Suzu counts the interest). Kept: Kasane's nod; your companion answers (Nao's hand to the
-# strap, Mio's shake of the head, Ren breathes out or glances away, Suzu's open hand); Kasane points up to the study.
+# they read and did not answer; they point east to the conduits that could carry everything back and open a hand the
+# other way for keeping them here, then nod to you: the choice is yours; your companion's own answer (Nao looks
+# between the two ways, Mio's guarded hand, Ren's two hands weighing names against memories, Suzu checks her
+# ledger). Returned: Kasane looks down the mountain and their head goes down; your companion answers (Nao's nod, Mio
+# checks her bottles, Ren's nod, Suzu counts the interest). Kept: Kasane's nod; your companion answers (Nao's hand
+# to the strap, Mio's shake of the head, Ren breathes out or glances away, Suzu's open hand); Kasane points up to
+# the study.
 !gesture kasane palm left
 kasane: ここ に ある の は 、 {自分|じぶん} から {頼|たの}んで {置|お}いて いった {人|ひと} たち の {記憶|きおく} です 。 {悲|かな}しみ の {重|おも}さ に 、 {耐|た}えられなかった {人|ひと} たち 。 || These are the memories of people who asked me to keep them. People who couldn't bear the weight of their grief.
 !gesture kasane lowered
@@ -339,13 +340,13 @@ kasane: {最後|さいご} は 、 わたし の こと です 。 {門|もん} 
 !autosave
 
 @scene sa.choose_kasane
-# Staged: at the gate Kasane looks down the road to Lanternfall, then back to the Archive behind them; their head goes
-# down and stays down as they own their fear of going down (their stronger reaction); if you saw the empty shelf,
-# your open hand, and they look away and then at you for the promise that isn't vague; your companion's own answer
-# (Nao looks between the road down and the Archive, Mio's flat hand of a prescription, Ren's open hand, Suzu's two
-# hands for the ways to repay). Going down: Kasane's nod; your companion answers (Nao points down the road, Mio's
-# nod, Ren's open hand, Suzu's open hand). Staying: their nod and a look back to the Archive; your companion answers
-# (Nao points at them, Mio's nod, Ren tends the lamp, Suzu checks her ledger).
+# Staged: at the gate Kasane looks down the road to Lanternfall, then back to the Archive behind them; their head
+# goes down and stays down as they own their fear of going down (their stronger reaction); if you saw the empty
+# shelf, your open hand, and they look away and then at you for the promise that isn't vague; your companion's own
+# answer (Nao looks between the road down and the Archive, Mio's flat hand of a prescription, Ren's open hand,
+# Suzu's two hands for the ways to repay). Going down: Kasane's nod; your companion answers (Nao points down the
+# road, Mio's nod, Ren's open hand, Suzu's open hand). Staying: their nod and a look back to the Archive; your
+# companion answers (Nao points at them, Mio's nod, Ren tends the lamp, Suzu checks her ledger).
 kasane: {最後|さいご} は 、 わたし です 。 || Last of all, me.
 !gesture kasane lookroad down
 kasane: {灯落|ひおち} へ {降|お}りて 、 {傷|きず}つけた {人|ひと} たち の {前|まえ} に {立|た}つ こと も できます 。 {何|なに} を {言|い}われて も 、 {聞|き}きます 。 || I can go down to Lanternfall and stand before the people I hurt. Whatever they say, I'll listen.

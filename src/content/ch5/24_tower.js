@@ -7,8 +7,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 @scene lf.tower_arrive
 # Staged: in the belfry loft you look down at the soft, wet floorboards and listen towards the water and the
-# whispering below; your companion's own answer (Nao points back down to the one window, Mio checks the lids of
-# her bottles, Ren looks between the stairs and the ladder, Suzu's two hands for the acoustics).
+# whispering below; your companion's own answer (Nao points back down to the one window, Mio checks the lids of her
+# bottles, Ren looks between the stairs and the ladder, Suzu's two hands for the acoustics).
 !set lf_tower_entered
 !gesture pc observe down
 narr: {窓|まど} を {越|こ}えて 、{鐘楼|しょうろう} の {屋根裏|やねうら} に {下|お}りる 。{床|ゆか} の {板|いた} が 、{水|みず} を {吸|す}って {柔|やわ}らかい 。|| You climb in through the window and down into the belfry loft. The floorboards are soft with water.
@@ -64,8 +64,8 @@ narr: 「{上|うえ} の {水門|すいもん} を {閉|し}めない と 、{�
 narr: {車輪|しゃりん} は {二|ふた}つ 。{西|にし} の {壁|かべ} に 「{上|うえ}」 、{東|ひがし} の {壁|かべ} に 「{下|した}」 。|| Two wheels: "upper" on the west wall, "lower" on the east wall.
 
 @scene lf.wheel_upper
-# Staged: you look over the wheel of the upper gate; turning it, you lean into it as it groans shut. Already
-# closed: you look it over.
+# Staged: you look over the wheel of the upper gate; turning it, you lean into it as it groans shut. Already closed:
+# you look it over.
 !if lf_up_closed -> already
 !gesture pc observe prop:lf_wheel
 narr: 「{上|うえ} の {水門|すいもん}」 と {書|か}かれた {車輪|しゃりん} 。{今|いま} は {開|あ}いて いる 。|| A wheel marked "upper gate". It's open at the moment.
@@ -228,8 +228,8 @@ narr: {扉|とびら} を {閉|し}める と 、{重|おも}い {閂|かんぬ�
 narr: {東|ひがし} の {扉|とびら} は 、{閂|かんぬき} で しっかり {閉|し}まって いる 。|| The east door is barred fast.
 
 @scene lf.west_plug
-# Staged: you look over the handle of the west plug and haul on it; as the room drains you look down to the
-# stairs appearing. Stuck: you haul in vain, and look over to the plate on the north wall.
+# Staged: you look over the handle of the west plug and haul on it; as the room drains you look down to the stairs
+# appearing. Stuck: you haul in vain, and look over to the plate on the north wall.
 !if lf_mid_drained -> pulled
 !gesture pc observe prop:lf_lever
 narr: {西|にし} の {栓|せん} の {取|と}っ{手|て} 。{部屋|へや} の {水|みず} を {抜|ぬ}く {栓|せん} だ 。|| The handle of the west plug: the drain for this room.
@@ -259,9 +259,9 @@ narr: {西|にし} の {栓|せん} は 、{抜|ぬ}けて いる 。|| The west
 
 @scene lf.water_returns
 # Staged: you start as the lake pours in through the open east door; your companion makes room and you step back
-# north out of it (with staging off the scene leaves you standing on the flooded row); you look to the silted
-# drain; your companion's own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the
-# door left open, Suzu's laugh).
+# north out of it (with staging off the scene leaves you standing on the flooded row); you look to the silted drain;
+# your companion's own answer (Nao shakes their head, Mio looks you over for a soaking, Ren points to the door left
+# open, Suzu's laugh).
 !sfx water
 !shake
 !gesture pc flinch 20,8
@@ -281,10 +281,10 @@ narr: {栓|せん} の {穴|あな} に {泥|どろ} が {詰|つ}まり 、{部
 ?(comp=suzu) comp[laugh]: {大波|おおなみ} の {演出|えんしゅつ} 、{見事|みごと} ！ …… {二度目|にどめ} は いらない けど 。|| What a spectacular wave effect! …Don't need an encore.
 
 @scene lf.junction
-# Staged: you look over the pipes gathering into one, listen to the voices inside, look up the way they are
-# carried, and lay a hand on the pipe (the narration); your companion's own answer (Nao's flat hand of anger, Mio's
-# head goes down, Ren looks up the pipes for their teacher's voice, Suzu's open hand to the voices). Again: you
-# listen at the pipe.
+# Staged: you look over the pipes gathering into one, listen to the voices inside, look up the way they are carried,
+# and lay a hand on the pipe (the narration); your companion's own answer (Nao's flat hand of anger, Mio's head goes
+# down, Ren looks up the pipes for their teacher's voice, Suzu's open hand to the voices). Again: you listen at the
+# pipe.
 !if lf_koe -> again
 !gesture pc observe prop:lf_conduit
 narr: {何本|なんぼん} も の {管|くだ} が 、ここ で {一本|いっぽん} に まとまって いる 。|| Here, many pipes gather into one.
@@ -316,9 +316,9 @@ narr: {管|くだ} の {中|なか} で 、{声|こえ} が {出番|でばん} �
 
 # ---- the drowned stair: plate C ---------------------------------------------------------------------------------------------------------
 @scene lf.low_enter
-# Staged: at the top of the drowned stair you look down the flooded walkway and stand still, feeling for the
-# weight of the bell; your companion's own answer (Nao looks down the way, Mio looks you over in the cold, Ren tends
-# the flickering lamp, Suzu touches her wet hair). (Your companion first steps off the stairhead beside you.)
+# Staged: at the top of the drowned stair you look down the flooded walkway and stand still, feeling for the weight
+# of the bell; your companion's own answer (Nao looks down the way, Mio looks you over in the cold, Ren tends the
+# flickering lamp, Suzu touches her wet hair). (Your companion first steps off the stairhead beside you.)
 !set lf_low_seen
 !walkto comp 11 2 down
 !gesture pc lookroad down

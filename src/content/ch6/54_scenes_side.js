@@ -4,8 +4,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sa.isamu_first
-# Staged: you look at the sunburnt man by the fire; Isamu (sitting) looks up the slope to the Archive, puts a hand to
-# his ear for his wife's laugh, his head goes down, and he rubs his cold hands over three days of waiting; your
+# Staged: you look at the sunburnt man by the fire; Isamu (sitting) looks up the slope to the Archive, puts a hand
+# to his ear for his wife's laugh, his head goes down, and he rubs his cold hands over three days of waiting; your
 # companion's own answer (Nao's nod, Mio bends to his cold hands, Ren's open hand, Suzu's shrug); his nod, and a
 # breath out over the kettle about to boil.
 !gesture pc observe sa_isamu
