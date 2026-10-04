@@ -27,6 +27,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Kasane in the warm light that came back when the Hush let go (from the front and to the left)
   const WARM = { mul: [1, 0.96, 0.91], add: [8, 4, 0], rim: { side: 'l', col: '#ffe4b4', k: [0.42, 0.18], below: 0.85 } };
   const EYE = 54; // a portrait's eye line above its bottom (the horizon of a floor seen standing)
+  // Kasane's hands in the same warm light as their face (their portrait is graded by WARM; a hand is not)
+  const KSKIN = ['#f2cfb0', '#d8aa88'];
 
   // ---- the Heart: the dark above the floor, the paper floor, the settled pages, the air ------------------------
   function voidBack(g, w, horizon, s, seed) {
@@ -282,7 +284,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       kasaneKneeling(c, kx, ky, kc > 0.3 ? 'closed' : 'neutral', kc > 0.3 ? { head: [0, 1] } : { look: [-1, 1] }, WARM);
       // the folio: from your hands into theirs, then held in their lap
       const pc = st.cast.pc || {}, pskin = Q.skinOf(pc), psl = Q.clothOf(pc)[0];
-      const kskin = Q.skinOf(look('kasane')), ksl = '#b8b4a8';
+      const kskin = KSKIN, ksl = '#b8b4a8';
       const e = ease(kh);
       const fx0 = G.bx + Math.round(G.bw * 0.48), fy0 = Math.min(G.vb - s(14), ky + s(34));
       const fx1 = kx - s(2), fy1 = ky + s(16) + Math.round(ease(kc) * s(2));
@@ -390,7 +392,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const flip = kf <= 0 || kf >= 1 ? 1 : Math.cos(Math.PI * ease(kf));
       const side = kf >= 0.5 ? 'front' : 'back';
       slip(c, sx, sy - lift, k, side, G.land ? 0 : -0.04, flip, 'down');
-      const kskin = Q.skinOf(look('kasane')), ksl = '#b8b4a8';
+      const kskin = KSKIN, ksl = '#b8b4a8';
       for (const [sd, dx, ang] of [['L', -1, Math.PI * 0.08], ['R', 1, Math.PI * 0.92]]) {
         const hd = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: sd, angle: ang, skin: kskin, sleeve: ksl });
         if (hd) c.drawImage(hd.cv, Math.round(sx + dx * (Math.max(0.2, Math.abs(flip)) * 9 + 4) * k - hd.ax), Math.round(sy - lift + 14 * k - hd.ay));
@@ -449,7 +451,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       airLife(c, w, h, t, still, 24, 81, 1);
       const pc = st.cast.pc || {}, pskin = Q.skinOf(pc), psl = Q.clothOf(pc)[0];
-      const kskin = Q.skinOf(look('kasane')), ksl = '#c8c4b8';
+      const kskin = KSKIN, ksl = '#c8c4b8';
       const r = Math.max(3, Math.round(6 * k));
       // your open hand rising into the picture with the bell lying in it (your sleeve from the lower left)
       const palm = [cx - Math.round(20 * k), Math.round(lerp(G.vb + 30 * k, cy + 20 * k, ease(ks)))];
