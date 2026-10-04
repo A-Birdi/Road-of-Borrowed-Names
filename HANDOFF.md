@@ -433,7 +433,14 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
 - **Tests:** unit `tests/unit/actors.test.mjs`; browser `tests/e2e/actor_life.mjs`, `actor_workplaces.mjs`,
   `staging_wataru.mjs`, `staging_chapters.mjs` (all but actor_workplaces in run.mjs; that one watches five
   workplaces 45 s each and runs on its own). `--video` on actor_life / staging_wataru writes clips.
-- **Chapters 1–2 staged (2026-10-03):** all 96 performed scenes in src/content/ch1, ch2 (tests/e2e/staging_chapters.mjs --ch=1|2|showcase; decisions in tools/scene_curated_ch12.mjs). Next: the 30 performed scenes in lq/cases/pages/pets (long quests first), then Chapters 3–6.
+- **Every performed scene staged (2026-10-03/04):** Chapters 1–2 (96), 3–4 (113), 5–6 (126) and the misc folders (112: long quests,
+  cases, Pages, pets, Company, the Atlas, shiritori). Decisions in tools/scene_curated_{ch12,ch34,ch56,misc}.mjs; play them with
+  `node tests/e2e/staging_chapters.mjs --ch=1…6|misc|showcase [--only=<scene>] [--branches]` (the runner fails on any shared tile).
+  Every staged gesture is checked against the mannerism profiles by unit conversation_continuity.
+- **Illustrated sequences (2026-10-03/04):** RB.sequence (src/ui/43_sequence.js; API in SHOTS.md §0.1) with the prologue on manual
+  advancement and sequences for every chapter (43a–43f) plus Ren's §8 insert; all eight faded passages handled. Tests:
+  sequence_manual (--quick in the default suite), sequence_chapters (Ch3–4), sequence_chapters_56 (Ch5–6), sequence_dev.
+  Nobody has reviewed the art yet: that is the owner's.
 - **Left for later:** game-wide per-scene staging of the manifest's other "Performed overworld" scenes; Masaru's
   kneading waits on the bakery props (TODO in his profile); the portrait worker reads `RB.mannerisms.of(id).portrait`.
 
