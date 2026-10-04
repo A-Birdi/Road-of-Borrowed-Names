@@ -554,13 +554,15 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    put it in art/harmony/incoming/batch1a/, run `node tools/harmony_import.mjs art/harmony/incoming/batch1a --suggest`, fix what the
    report lists (masks, offsets in import.json), import, build, then show it as a visual candidate: the peak at in-battle and native
    size, the animation, a real battle at Normal, Fast and reduced motion, particles on and off. Only after the owner approves: Batch 1b,
-   then 2–4. Re-measure the budgets on real art (CONTRACT.md §10). Open points for the owner: ASSET_BRIEF.md §11.
+   then 2–4. Re-measure the budgets on real art (CONTRACT.md §10). Open points for the owner: ASSET_BRIEF.md §11 (point 1 settled: the ponytail is the owner's character's hairstyle).
+   The owner took the two folders as ZIPs on 2026-10-04 and is making Batch 1a.
 17. The owner's notes of 2026-10-04 (VALIDATION.md "The owner's notes of 2026-10-04"):
    - The four Harmony stage performances, Nao's and Mio's v2 included, are approved as they are: "keep steady". Mio's
      stream keeps its weight.
    - The desktop dialogue portrait is back to 116 px. That was the owner's choice, made after trying 96.
    - The Saltglass "crashing wave" is reduced at its source. That source was the shakuhachi's breath and the reverb's
      low tail. The owner will say if other zones' music sounds off.
+   - The music's second round (a clean shakuhachi, the town rebalanced) was "a marked improvement - 10/10".
    - The Chapter 2 reworked scenes and illustrated moments need no wait for the owner. They will replay from the start
      once the Harmony and World Idle Life passes are done, so the lead's judgment stands until then.
 

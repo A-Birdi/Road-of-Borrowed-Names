@@ -112,9 +112,9 @@ Measured on the owner's resupplied capture (2000 × 1087 px). The capture is not
 
 ## 6. Open points for the owner
 
-1. **Look A's hairstyle.** v2 chose the ponytail. In the mockup the player's hair reads as shorter, layered
-   and wavy, with no ponytail visible. Which of the game's 12 hairstyles is the acceptance look? The choices
-   are short, bob, long, ponytail, bun, curly, spiky, braid, shaved, twintails, wavy and wrap.
+1. **Look A's hairstyle. Settled 2026-10-04: the ponytail.** The owner's character wears a ponytail. The
+   mockup came from an image tool that made several renditions, so its player look is the tool's, not the
+   character's. Match the mockup's style, not its exact appearance.
 2. **The wink.** The mockup's player winks. The player's four head states are shared by all four pairings,
    so a wink would play with Nao, Mio and Ren too. The proposal: no wink on the shared player head; the wink
    stays Suzu's. Say if you want a Suzu-only player peak head instead (one extra file).

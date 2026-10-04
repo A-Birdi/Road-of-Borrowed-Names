@@ -325,11 +325,12 @@ hides the hair above a hat or cap band, so a hat must cover the scalp above its 
 | Heads | `pc_head_focus`, `pc_head_cue`, `pc_head_peak`, `pc_head_settle` |
 | Torso | `pc_torso_coat` |
 | Arms | `pc_arm_prep_a_fitted`, `pc_arm_cue_fitted`, `pc_arm_peak_suzu_fitted`, `pc_arm_settle_suzu_fitted`; optional `pc_arm_prep_b_fitted` |
-| Hair | look A's hairstyle, back and front (`pc_hair_ponytail_*` unless Robin names another: open point 1) |
+| Hair | look A's hairstyle, back and front: `pc_hair_ponytail_back`, `pc_hair_ponytail_front` (Robin's character's; settled) |
 | Accessories | `acc_glasses`, `acc_flower`, `acc_satchel` |
 
-- **Look A** is Robin's acceptance look: auburn hair, a green coat, glasses, a flower and the satchel strap,
-  as in the mockup.
+- **Look A** is Robin's acceptance look: an auburn ponytail, a green coat, glasses, a flower and the satchel
+  strap. The mockup sets the style; its player's exact look came from the image tool, not from Robin's
+  character.
 - **Style masters (recommended):** first paint look A + Suzu complete, in real colours, at `peak` and
   `settle_b`. Then derive the layers from them. Keep style masters in a separate `refs/` folder: the importer
   accepts only contract names.
@@ -391,9 +392,8 @@ The published brief page has a checklist.
 
 ## 11. Open points for Robin
 
-1. **Look A's hairstyle.** v2 chose the ponytail. In the mockup the hair reads as shorter, layered and wavy.
-   Which of the 12 is your character's: short, bob, long, ponytail, bun, curly, spiky, braid, shaved,
-   twintails, wavy or wrap?
+1. **Look A's hairstyle. Settled 2026-10-04: the ponytail,** your character's. The mockup's player look
+   came from the image tool's renditions, so match its style, not its exact appearance.
 2. **The wink.** The player's four head states are shared by all four pairings. The proposal: no wink on the
    shared head, so the wink stays Suzu's. Alternatively, one extra Suzu-only player peak head.
 3. **A second head angle at `peak`.** It would need every hairstyle and hair-mounted accessory in that angle
