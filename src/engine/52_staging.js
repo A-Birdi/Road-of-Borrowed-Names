@@ -516,6 +516,40 @@ RB.staging = (function () {
     while (cur && !(cur[0] === a.x && cur[1] === a.y)) { path.unshift(cur); cur = prev.get(cur[0] + ',' + cur[1]); }
     return path;
   }
+  // Your way blocked only by your companion, who followed you in (behind a counter, the one tile round someone):
+  // in free walking they make way (50_world.js: they take your old tile), so here too — unless the scene has put
+  // them somewhere of their own. They go on ahead along your way and step off it at the first free tile beside it;
+  // returns that walk for them, or null (docs/expressive/CONTRACT.md HX68: approached from another side).
+  function makeWay(a, tx, ty) {
+    const w = W(), c = w.comp, sc = st.scene;
+    if (a !== w.player || !c || c.mv || c.route || (sc && sc.reserved.has(c))) return null;
+    const m = w.map, prev = new Map([[a.x + ',' + a.y, null]]), q = [[a.x, a.y]];
+    let found = null;
+    while (q.length && !found) {
+      const [x, y] = q.shift();
+      for (const d in DIRS) {
+        const nx = x + DIRS[d][0], ny = y + DIRS[d][1], k = nx + ',' + ny;
+        if (prev.has(k)) continue;
+        if (!free(nx, ny, a) && !(nx === c.x && ny === c.y && !RB.maps.blockedStatic(m, nx, ny))) continue;
+        prev.set(k, [x, y]); q.push([nx, ny]);
+        if (nx === tx && ny === ty) { found = [nx, ny]; break; }
+      }
+      if (prev.size > 3000) break;
+    }
+    if (!found) return null;
+    const path = [];
+    for (let cur = found; cur && !(cur[0] === a.x && cur[1] === a.y); cur = prev.get(cur[0] + ',' + cur[1])) path.unshift(cur);
+    const i = path.findIndex((t) => t[0] === c.x && t[1] === c.y);
+    if (i < 0) return null;
+    const on = new Set(path.map((t) => t.join(',')).concat([a.x + ',' + a.y]));
+    for (let j = i; j < path.length; j++) {
+      for (const d in DIRS) {
+        const nx = path[j][0] + DIRS[d][0], ny = path[j][1] + DIRS[d][1];
+        if (!on.has(nx + ',' + ny) && free(nx, ny, c)) return path.slice(i + 1, j + 1).concat([[nx, ny]]);
+      }
+    }
+    return null;
+  }
   function walkPath(a, path, token, max) {
     const id = idOf(a), t0 = now();
     const step = (i) => {
@@ -550,7 +584,12 @@ RB.staging = (function () {
       // in the dark of a fade (or skipping a seen scene): set them there, if the place is free
       if (free(x, y, a)) { a.x = x; a.y = y; a.fx = x; a.fy = y; a.mv = null; if (a === W().player) syncPlayer(); ok = true; }
     } else {
-      const path = bfs(a, x, y);
+      let path = bfs(a, x, y);
+      if (!path) {
+        // (only your following companion in the way: they make way first)
+        const way = makeWay(a, x, y);
+        if (way) { own(W().comp); if (await walkPath(W().comp, way, sc ? sc.token : 0, 3000)) path = bfs(a, x, y); }
+      }
       if (path) ok = await walkPath(a, path, sc ? sc.token : 0, o.max || 4000);
     }
     if (!ok) st.stats.walkFallbacks++;

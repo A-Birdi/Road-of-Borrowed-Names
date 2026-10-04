@@ -353,10 +353,11 @@ koji[think]: …… そう か 。 {俺|おれ} も {向|む}こう で 、 {誰
 hana[smile]: {入|はい}って 。 お{茶|ちゃ} 、 いれる から 。 {今度|こんど} は ちゃんと 、 あんた の {分|ぶん} 。 || Come in. I'll pour the tea. Properly, this time — yours.
 !shot door
 narr: ふたり が {茶屋|ちゃや} に {入|はい}って いく 。 {戸|と} が {閉|し}まる {前|まえ} に 、 コウジ が {振|ふ}り{返|かえ}って {手|て} を {振|ふ}った 。 || The two of them go into the teahouse. Before the door closes, Kōji turns and waves.
-!sequence ch1.bridge end
+# (the two are indoors before the picture dissolves back: the refresh behind it takes them in at once, HX52)
 !set rw_koji_back
-!quest rw_mill done
 !refresh
+!sequence ch1.bridge end
+!quest rw_mill done
 tsuru: …… {橋|はし} は {手|て} を {振|ふ}らない 。 {渡|わた}し {守|もり} は {振|ふ}る 。 ヤス の {口癖|くちぐせ} だ よ 。 || …A bridge doesn't wave. A ferryman does. That's Yasu's old saying.
 !faceplayer tsuru
 tsuru: よく やった 。 でも 、 {終|お}わり じゃ ない 。 {名前|なまえ} を {持|も}って いった {何|なに} か は 、 {川|かわ} の {下|しも} へ 、 {西|にし} へ {向|む}かった 。 {灯|ひ} の {道|みち} に {沿|そ}って ね 。 || Well done. But it isn't over. Whatever carried the names away went downriver — west, along the lantern road.

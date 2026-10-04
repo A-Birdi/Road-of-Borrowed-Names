@@ -126,13 +126,19 @@ RB.world = (function () {
     // new place on this map (one placement ends as another begins), or
     // someone who walked in to speak (or was walking away) now has a place
     // here, that same figure walks to the new place.
+    // Behind an illustrated sequence's picture (src/ui/43_sequence.js) the shots show the comings and goings, as
+    // they show a !move or a !walkto there: people are at once where the story now puts them, so the world the
+    // picture dissolves back into already matches it (nobody seen going in twice; docs/expressive/CONTRACT.md HX52).
+    const behind = !!(RB.sequence && RB.sequence.hidesWorld && RB.sequence.hidesWorld());
     if (W.time - W.enteredAt > 900) {
       const arriving = W.npcs.filter((a) => !before.has(a.id) && !keep.has(a.id));
+      const atOnce = (a, arr) => noteDeparture(a, { goals: new Set(), to: arr ? m.id : null, reason: 'behind an illustrated sequence: at once' }, [], arr);
       let k = 0;
       for (const [id, a] of keep) {
         if (W.npcs.some((n) => n.id === id) || id === st.comp || a.map !== m.id || renamed.has(id)) continue;
         const b = arriving.find((n) => !n.shifted && personOf(n) === personOf(a));
-        if (b) shiftTo(b, a);
+        if (b && behind) { b.shifted = true; atOnce(b, true); } else if (b) shiftTo(b, a);
+        else if (behind) atOnce(a, false);
         else leave(a, k++);
       }
       for (const b of arriving) {
@@ -141,8 +147,9 @@ RB.world = (function () {
         if (here) {
           W.extras = W.extras.filter((e) => e !== here);
           W.leavers = W.leavers.filter((e) => e !== here);
-          shiftTo(b, here);
-        } else arriveOnFoot(b);
+          if (behind) atOnce(b, true); else shiftTo(b, here);
+        } else if (behind) atOnce(b, true);
+        else arriveOnFoot(b);
       }
     }
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
