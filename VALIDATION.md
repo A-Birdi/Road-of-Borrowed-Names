@@ -2792,3 +2792,10 @@ fixed, then checked by a committed test that fails on the old sources.
     she hands the log over a one-tile gap.
   - A person may stand over a settled pet for a fraction of a second before it steps aside.
 - The "facts" are a written spec of what each shot depicts, not every pixel; the art's review is still the owner's.
+
+**The lead's full regression run on the task branch with all three wave-3 merges (7fa81e6), one after another:**
+- unit 27,110 passed, 0 failed; content validator no errors;
+- B sequence_world 777/0; B staging_variants --quick 701/0; B walk_round all passed; B pets 20/0;
+- B staging_chapters: --ch=1 698/0, --ch=2 1623/0, --ch=5 2199/0, --ch=6 2057/0, --ch=misc 3593/0;
+- Chapters 3–4 were not re-run after the merge. The staging-fixes worker ran them on its branch (2267/0 and
+  1350/0), and the scene-variations worker ran Ch1–6 on its own (10,151/0).
