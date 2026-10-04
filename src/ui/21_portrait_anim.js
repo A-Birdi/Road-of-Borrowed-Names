@@ -3,7 +3,8 @@
  * loop — a blink on an irregular seeded cadence, a one-pixel breath (shoulders first, the head a beat
  * later), hair and hanging accessories a beat behind the head, glasses catching the light, and the
  * person's own small habit (Ren's glasses, Suzu's poise, Mio's careful look, Nao's eye on the
- * exits; the NPCs' habits from their mannerism profiles, docs/expressive/GESTURES.md §5–§7). A line
+ * exits; everyone's from their mannerism profile, the one the actor system reads too: shared() below,
+ * docs/expressive/GESTURES.md §3, §5–§7). A line
  * tagged with an expression (`speaker[surprise]: …`) opens with a one-off lead-in cue (a shock's
  * widen-and-hold, a laugh's two shoulder bobs, a sad slow blink …) and then settles into that
  * expression's stable loop.
@@ -45,6 +46,9 @@ RB.portraitAnim = (function () {
   };
   // Every character with a portrait. Class from GESTURES.md §7 (the recurring NPCs), §6 (the
   // companions and the player); bespoke habits for the people PORTRAITS.md §4 and GESTURES.md §5 name.
+  // These rows are the fallback: a person with a mannerism profile of their own (the actor system,
+  // src/content/mannerisms) takes the class and the portrait block from that profile (shared() below),
+  // and a row here fills only what the profile leaves out.
   const glassesPush = (every) => ({ kind: 'glassesPush', every, hold: [0, 0] });
   const PEOPLE = {
     pc: ['base', { glance: { every: [12000, 20000], hold: [700, 1100], dirs: [[1, 0], [0, 1]] } }],
@@ -90,14 +94,56 @@ RB.portraitAnim = (function () {
     sa_reader: 'scholar', // the Archive's reader (by role)
   };
   const SWAY_STYLES = { long: 1, wavy: 1, ponytail: 1, twintails: 1 };
+
+  // ---- the shared profile: the actor system's mannerism profile (RB.mannerisms, src/content/mannerisms) -----
+  // One profile per person is read by the overworld idles, the scene cues and this player (GESTURES.md §3), so a
+  // person with an authored profile (the player, the companions, the recurring cast) gets their portrait from it:
+  //   class    the portrait overlay is their actor class (`portrait.class` where the two differ: the player
+  //            keeps the plain loop, nothing that implies a feeling);
+  //   rates    `portrait.blink`, `shut`, `dbl`, `breath`, `glance`, `tilt`, `sway`, `glint`, `habit`, `big`
+  //            (the shapes of CLASS and PEOPLE above; null removes a motion);
+  //   cues     `portrait.cues`: the variant of the cue each emotion uses — smirk { turn: [dx, dy], wink },
+  //            laugh { hidden, wink }, worry { nod }, think { adjust (glasses, once a scene), lids (narrower) },
+  //            closed { slow: factor }, sad { look: [dx, dy] }; `portrait.serious`: expressions held without
+  //            a tilt or weight shift;
+  //   tells    a tell with a portrait counterpart shapes the cue where the block does not: a sadness that looks
+  //            aside or averts (tells.sad 'aside' | 'avert') ends its sad cue looking down and aside; a think
+  //            that reaches for the glasses (tells.think 'glasses') adjusts them, once a scene.
+  // PEOPLE fills whatever the shared profile leaves out, and is the whole profile for people without one (voices,
+  // creatures, people in fewer than three scenes). A profile the actor system derives from a look and a station
+  // is not read: no personality is inferred from how someone looks (world review WR-01).
+  const SHARED_KEYS = ['blink', 'shut', 'dbl', 'breath', 'glance', 'tilt', 'sway', 'glint', 'habit', 'big'];
+  const CUE_OPTS = {
+    smirk: (o, out) => { if (o.turn) out.hold = Object.assign({}, out.hold, { smirk: { head: o.turn.slice() } }); if (o.wink) out.wink = true; },
+    laugh: (o, out) => { if (o.hidden) out.laugh = 'hidden'; if (o.wink) out.wink = true; },
+    worry: (o, out) => { if (o.nod) out.nod = true; },
+    think: (o, out) => { if (o.adjust) out.adjust = true; if (o.lids) out.thinkLids = true; },
+    closed: (o, out) => { if (o.slow > 0) out.slowClose = o.slow; },
+    sad: (o, out) => { if (o.look) out.sadLook = o.look.slice(); },
+  };
+  function shared(who) {
+    const M = RB.mannerisms;
+    if (!M || typeof M.of !== 'function' || typeof M.profiles !== 'function' || !M.profiles()[who]) return null;
+    const prof = M.of(who), pb = prof.portrait && typeof prof.portrait === 'object' ? prof.portrait : {};
+    const out = {}, tells = prof.tells || {};
+    if (tells.sad === 'aside' || tells.sad === 'avert') out.sadLook = [-1, 1];
+    if (tells.think === 'glasses') out.adjust = true;
+    for (const k of SHARED_KEYS) if (k in pb) out[k] = pb[k];
+    const cues = pb.cues && typeof pb.cues === 'object' ? pb.cues : {};
+    for (const tag in cues) if (CUE_OPTS[tag] && cues[tag] && typeof cues[tag] === 'object') CUE_OPTS[tag](cues[tag], out);
+    if (Array.isArray(pb.serious)) { out.serious = {}; for (const e of pb.serious) out.serious[e] = 1; }
+    const cls = pb.class && CLASS[pb.class] ? pb.class : CLASS[prof.class] ? prof.class : null;
+    return { cls, out };
+  }
   function profileOf(who, p) {
     // an unlisted speaker gets the plain loop: no personality is inferred from glasses, age or dress (world review WR-01)
     const row = PEOPLE[who] || 'base';
-    const [cls, own] = typeof row === 'string' ? [row, {}] : row;
-    const pr = Object.assign({ id: who, cls }, CLASS.base, CLASS[cls] || {}, own);
-    // the mannerism profiles of the actor system, when present (src/content/mannerisms), may add a portrait block
-    const ext = RB.mannerisms && RB.mannerisms.of && RB.mannerisms.of(who);
-    if (ext && ext.portrait && typeof ext.portrait === 'object') Object.assign(pr, ext.portrait);
+    const [cls0, own] = typeof row === 'string' ? [row, {}] : row;
+    const sh = shared(who);
+    const cls = (sh && sh.cls) || cls0;
+    // the class overlay, then the fallback row, then the shared profile over both
+    const pr = Object.assign({ id: who, cls }, CLASS.base, CLASS[cls] || {}, own, sh ? sh.out : {});
+    pr.from = sh ? 'shared' : PEOPLE[who] ? 'portrait' : 'default';
     const acc = (p && p.acc) || [];
     pr.glasses = acc.includes('glasses');
     if (pr.glasses && !pr.glint) pr.glint = { every: [10000, 16000] };
@@ -142,7 +188,7 @@ RB.portraitAnim = (function () {
     },
     // a smile: the cheeks lift a beat after the mouth
     smile: () => [[110, { eyes: { cheek: false } }], [130, { head: [0, -1] }]],
-    // teasing: one lid lowers and the corner of the mouth lifts (Nao turns his head a little away; Suzu
+    // teasing: one lid lowers and the corner of the mouth lifts (Nao turns their head a little away; Suzu
     // winks on her first smirk of a scene)
     smirk: (pr, c) => {
       const turn = (pr.hold && pr.hold.smirk) || {};
@@ -560,8 +606,9 @@ RB.portraitAnim = (function () {
   }
 
   return {
-    play, stop, refresh, timeline, profileOf, fitSize, CUES, LOOP, PEOPLE, CLASS,
-    state: () => (cur ? { who: cur.who, subj: cur.sj.key, expr: cur.expr, key: cur.key, fr: cur.fr || null, animating: !!cur.st, scheduled: !!cur.timer, cue: cur.st && cur.st.cue ? { tag: cur.st.cue.tag, end: cur.st.cue.end, t: now() - cur.t0 } : null, onScreen: onScreenOf(cur.cv) } : null),
+    play, stop, refresh, timeline, profileOf, fitSize, CUES, LOOP, PEOPLE, CLASS, SHARED_KEYS,
+    // (profile: a copy of the profile the playing loop was built from, for the tests and the dev viewer)
+    state: () => (cur ? { who: cur.who, subj: cur.sj.key, expr: cur.expr, key: cur.key, fr: cur.fr || null, animating: !!cur.st, scheduled: !!cur.timer, cue: cur.st && cur.st.cue ? { tag: cur.st.cue.tag, end: cur.st.cue.end, t: now() - cur.t0 } : null, onScreen: onScreenOf(cur.cv), profile: cur.st ? JSON.parse(JSON.stringify(cur.st.pr)) : null } : null),
     stats: () => Object.assign({}, stats, { log: stats.log.slice(), cache: RB.portraits.cacheStats() }),
     resetStats: () => { stats.plays = stats.cues = stats.paints = stats.ticks = 0; stats.paintMs = stats.maxPaintMs = 0; stats.log.length = 0; },
   };

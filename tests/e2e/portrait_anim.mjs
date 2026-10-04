@@ -459,6 +459,69 @@ for (const v of [
   await p.context().close();
 }
 
+// ---- J. the shared profile is the one played (WI13) ----------------------------------------------------------------
+// Through the real dialogue: the companions, the player and recurring NPCs speak; the profile the playing loop was
+// built from (state().profile) is the merged one — the class of their actor profile (or its portrait block's own),
+// the block's rates and cue variants — while a person without an actor profile keeps the portrait table's row and a
+// person with no profile anywhere (a one-off test character) the default loop. Then each one's loop as played: its
+// glances only in the profile's directions, never more than 8 frame changes in a second, and on the canvas itself
+// the frames the timeline gives.
+{
+  const { p, errors, requests } = await page(b, url);
+  await setup(p, 'nao');
+  const r = await p.evaluate(() => {
+    const A = RB.portraitAnim, M = RB.mannerisms, base = A.CLASS.base;
+    RB.content.chars.zz_portrait_test = { name: { en: 'Test', jp: 'テスト' }, look: { skin: 2, hair: 'short', hairColor: 2, cloth: ['#5a6a7a', '#44505e', '#a0b8c8'], shape: 'coat', acc: [] } };
+    const out = [];
+    for (const id of ['nao', 'mio', 'ren', 'suzu', 'pc', 'omi', 'wataru', 'hana', 'kasane', 'genzo', 'tamae', 'lf_tokuji', 'sa_isamu', 'kanta', 'cs_seto', 'zz_portrait_test']) {
+      window.__say('narr', null);
+      window.__say(id, null);
+      const st = A.state(), pr = st && st.profile;
+      const sj = id === 'pc' ? RB.portraits.subject('pc', RB.equip.look(RB.game.s)) : RB.portraits.subject(id);
+      const want = JSON.parse(JSON.stringify(A.profileOf(sj.who, sj.p)));
+      const authored = !!M.profiles()[id], prof = authored ? M.of(id) : null, pb = (prof && prof.portrait) || {};
+      // the block's own values, where the face can show them (glints need glasses, sway hair that hangs)
+      const fromBlock = Object.keys(pb).filter((k) => A.SHARED_KEYS.includes(k) && !(k === 'glint' && !pr.glasses) && !(k === 'sway' && !pr.swings) && !(k === 'habit' && pb.habit && /^glasses/.test(pb.habit.kind) && !pr.glasses));
+      const blockOk = fromBlock.every((k) => JSON.stringify(pr[k]) === JSON.stringify(pb[k]));
+      const tl = A.timeline(id, null, { ms: 20000 }).frames;
+      const looks = [...new Set(tl.filter((f) => f.fr.look).map((f) => JSON.stringify(f.fr.look)))];
+      const dirs = (pr.glance && pr.glance.dirs || []).map((d) => JSON.stringify(d)).concat(pr.habit && pr.habit.kind === 'lookUp' ? ['[0,-1]'] : []);
+      let dense = 0;
+      for (let i = 0; i < tl.length; i++) { let n = 0; for (let j = i; j < tl.length && tl[j].t < tl[i].t + 1000; j++) n++; dense = Math.max(dense, n); }
+      out.push({ id, playing: !!(st && st.animating && st.who === sj.who), from: pr && pr.from, cls: pr && pr.cls, wantCls: authored ? pb.class || prof.class : (A.PEOPLE[id] ? (typeof A.PEOPLE[id] === 'string' ? A.PEOPLE[id] : A.PEOPLE[id][0]) : 'base'),
+        same: JSON.stringify(pr) === JSON.stringify(want), authored, fromBlock: fromBlock.length, blockOk, looks, lookOk: looks.every((l) => dirs.includes(l)), dense,
+        isDefault: pr && JSON.stringify(pr.blink) === JSON.stringify(base.blink) && JSON.stringify(pr.glance) === JSON.stringify(base.glance) && !pr.habit && !pr.tilt });
+    }
+    return out;
+  });
+  const by = (id) => r.find((x) => x.id === id);
+  const bad = (f) => r.filter(f).map((x) => x.id);
+  assert(!bad((x) => !x.playing || !x.same).length, 'the loop playing for each speaker is built from the merged profile' + (bad((x) => !x.playing || !x.same).length ? ': not ' + bad((x) => !x.playing || !x.same) : ''));
+  const authored = r.filter((x) => x.authored);
+  assert(authored.length === 14 && authored.every((x) => x.from === 'shared' && x.cls === x.wantCls), 'the companions, the player and 9 recurring NPCs play their actor profile (from: shared), on its class: ' + authored.map((x) => x.id + ' ' + x.cls).join(', '));
+  assert(authored.every((x) => x.blockOk) && authored.filter((x) => x.fromBlock).length >= 12, 'every rate their portrait block gives is the one played (' + authored.map((x) => x.id + ' ' + x.fromBlock).join(', ') + ')' + (bad((x) => x.authored && !x.blockOk).length ? ': not ' + bad((x) => x.authored && !x.blockOk) : ''));
+  assert(by('pc').cls === 'base' && by('ren').cls === 'keeper', 'the player keeps the plain loop (the block\'s class), Ren the keeper\'s (the actor class)');
+  assert(!bad((x) => !x.lookOk).length, 'glances only in the played profile\'s directions (Tamae toward the kitchen ' + by('tamae').looks.join(' ') + ', Tokuji at the lake ' + by('lf_tokuji').looks.join(' ') + ')' + (bad((x) => !x.lookOk).length ? ': not ' + bad((x) => !x.lookOk).map((id) => id + ' ' + by(id).looks.join(' ')) : ''));
+  assert(Math.max(...r.map((x) => x.dense)) <= 8, 'the loop limits hold: at most ' + Math.max(...r.map((x) => x.dense)) + ' frame changes in any second');
+  assert(by('cs_seto').from === 'portrait' && by('cs_seto').cls === 'elder', 'a person without an actor profile (Seto) keeps the portrait table\'s row (elder)');
+  assert(by('zz_portrait_test').from === 'default' && by('zz_portrait_test').cls === 'base' && by('zz_portrait_test').isDefault, 'a person with no profile anywhere gets the default loop');
+  // the canvas shows what that profile gives: Nao's sad cue ends looking away (their tell), in real time
+  const sad = await p.evaluate(async () => {
+    window.__say('narr', null);
+    window.__scene = 'test.shared.sad';
+    const tl = RB.portraitAnim.timeline('nao', 'sad', { ms: 2000, scene: window.__scene });
+    const last = tl.frames.filter((f) => f.t < tl.cueEnd).pop();
+    RB.portraitAnim.resetStats();
+    window.__say('nao', 'sad');
+    await new Promise((res) => setTimeout(res, tl.cueEnd + 60));
+    const keys = RB.portraitAnim.stats().log.map((l) => l.k);
+    return { look: last && last.fr.look, k: last && last.k, painted: keys.includes(last && last.k) };
+  });
+  assert(sad.look && sad.look[0] === -1 && sad.look[1] === 1 && sad.painted, 'Nao\'s sad cue ends looking away (tells.sad \'aside\') and that frame is painted on the dialogue canvas ' + JSON.stringify(sad));
+  assert(!errors.length && !requests.length, 'no page errors or network requests' + (errors.length ? ': ' + errors.slice(0, 3) : ''));
+  await p.context().close();
+}
+
 await b.close();
 srv.close();
 console.log(fail ? `\n${fail} FAILED` : '\nall passed');
