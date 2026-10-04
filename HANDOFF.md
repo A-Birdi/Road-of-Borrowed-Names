@@ -577,6 +577,21 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    to. `lf.water_returns` steps you back off the flooding row itself. The dog's corner in Cinder Orchard is faced from
    a gap in the reeds below it (32,27). By hand, in Firefox: the dog's yard (does the gap read naturally?), and the
    Lanternfall epilogue's townspeople gathering round you.
+19. Wave 3 (2026-10-04, while the owner's image tool paints Batch 1a), merged:
+   - **Portraits** play each person's shared actor profile (WI13).
+   - **The cut-in** waits for withdrawn menus on phones and tablets. It tries the layout with the larger faces first:
+     100-px faces at 1440 and 1600 wide.
+   - **Pronouns:** Nao and Ren are they/them in docs and comments, and in two player texts.
+   - **The staging fixes** of item 18.
+   - **HX52:** every sequence is checked against the world by name (`sequence_world.mjs`).
+   - **HX68:** staged scenes are started from other sides, with taken tiles, absences, interruptions, repeats and
+     revisits (`staging_variants.mjs`). A companion blocking your only way round now makes way. Kōji and Hana are
+     placed at once when the bridge sequence returns to the world.
+   - **HX66 is paused at the owner's request** until the painted busts arrive.
+   - **Two small rules kept, by the lead's judgment:**
+     - when you stand on Umi's place at the ferry office, she stays put and hands the log across a one-tile gap,
+       which is the general rule for a taken place;
+     - a person can stand over a pet for a split second before it steps aside.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).
