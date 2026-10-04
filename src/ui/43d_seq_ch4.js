@@ -440,7 +440,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // observatory on it at the left
       const snow = p.mat('#7a8cac', { n: 6, at: 3, step: 0.07 }), near = p.mat('#a8b8d0', { n: 6, at: 3, step: 0.07 });
       const ridge = (x) => Math.round(ty - s(26) - Math.abs(Math.sin(x / s(53) + 1)) * s(18) - (1 - x / w) * s(10));
-      L.fill(0, 0, w, h, (x, y) => y >= ridge(x), snow, (x, y) => clamp(0.4 + (Math.sin(x / s(53) + 1) > 0 ? 0.12 : -0.05) - (y - ridge(x)) / h * 0.4, 0, 0.999));
+      // (lit where the ridge faces up-left, falling off with depth below it; dithered, so no vertical seams)
+      L.fill(0, 0, w, h, (x, y) => y >= ridge(x), snow, (x, y) => clamp(0.42 + (y - ridge(x) < s(10) && ridge(x + 2) > ridge(x - 2) ? 0.12 : 0) - (y - ridge(x)) / h * 0.4 + (p.bayer(x, y) - 0.5) * 0.12, 0, 0.999));
       const sh = (x) => Math.round(oy + s(20) + Math.pow(Math.max(0, x - ox) / (w * 0.6), 1.4) * (h - oy) * 1.1 - (x < ox ? (ox - x) * 0.15 : 0));
       L.fill(0, 0, w, h, (x, y) => y >= sh(x), near, (x, y) => clamp(0.62 - (y - sh(x)) / h * 0.3 + (((x * 5 + y * 3) % 19) === 0 ? 0.08 : 0), 0, 0.999));
       // the observatory: the stone drum, the white dome, the slit (the window the light comes from)

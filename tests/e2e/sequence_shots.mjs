@@ -66,8 +66,10 @@ for (const [tag, vp, dpr] of VPS) {
     }, R);
     const shot = {};
     const mine = [R.seq].concat(R.also || []);
-    for (let i = 0; i < 400; i++) {
-      const st = await p.evaluate(() => ({ done: window.__done, s: RB.sequence.state(), choice: !!document.querySelector('.choices:not(.hidden) .choice'), card: !!document.querySelector('.banner-layer') }));
+    // Next is pressed once per line shown (a second press in the gap before a fade could carry the next line on unseen)
+    let lastN = -1;
+    for (let i = 0; i < 600; i++) {
+      const st = await p.evaluate(() => ({ done: window.__done, s: RB.sequence.state(), n: RB.game.s.backlog.length, open: RB.ui.dialogue.isOpen(), choice: !!document.querySelector('.choices:not(.hidden) .choice'), card: !!document.querySelector('.banner-layer') }));
       if (st.done) break;
       if (st.choice) {
         const k = await p.evaluate((t) => [...document.querySelectorAll('.choices:not(.hidden) .choice')].findIndex((c) => c.textContent.includes(t)), R.pick || '');
@@ -82,7 +84,7 @@ for (const [tag, vp, dpr] of VPS) {
         const s = await p.evaluate(() => RB.sequence.state());
         if (s) { await save(p, s.id + '_' + s.shot + '_' + tag + '.webp'); shot[s.id + '/' + s.shot] = s.phase; }
       }
-      await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance(true));
+      if (st.open && st.n !== lastN) { lastN = st.n; await p.evaluate(() => RB.ui.dialogue.isOpen() && RB.ui.dialogue.advance(true)); }
       await p.waitForTimeout(st.s ? 60 : 30);
     }
     console.log(tag + ' ' + R.seq + (R.shots ? ' (' + R.shots.join(',') + ')' : '') + ': ' + Object.entries(shot).map(([k, v]) => k + '@' + v).join(', '));

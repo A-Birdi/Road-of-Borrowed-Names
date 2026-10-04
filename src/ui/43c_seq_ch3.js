@@ -506,8 +506,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const kn = st.at('names'), xs = [];
       for (let i = 0; i < 5; i++) xs.push(Math.round(lerp(B.bx0 + s(36), B.bx1 - s(26), i / 4)));
       lanterns(c, xs, B.by + s(4), s, kn * 5, t, still, 1.6);
-      // the lantern light warming the stage as they come on
-      if (kn > 0) { c.fillStyle = 'rgba(255,180,100,' + (0.08 * step4(kn)).toFixed(3) + ')'; c.fillRect(0, B.by, w, ty - B.by); }
       const tb = Q.bust('co_tokiwa', 'think2', { look: [0, 1], head: [0, 1] }, FACE_L, false, 200);
       if (tb) c.drawImage(tb.cv, tx - tb.ax, ty - tb.ay);
       // the chronicle open in his hands, low at the frame's edge
@@ -645,9 +643,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = s(6); x < w; x += s(24)) L.rect(x, yE + s(7), s(5), s(6), timber, (xx) => (xx < x + 2 ? 0.7 : 0.35));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
-      // the dusk on the plaster from the west, a little warm light from the window
-      g.fillStyle = 'rgba(255,160,100,0.08)'; g.fillRect(0, beamY, Math.round(w * 0.4), h - beamY);
-      g.fillStyle = 'rgba(255,190,110,0.1)'; g.fillRect(wx - s(36), beamY + beamH, ww + s(72), skirt - beamY - beamH);
+      // a little warm light round the lit window (stepped, never a hard-edged patch)
+      if (wh > s(12)) p.halo(g, wx + Math.round(ww / 2), wy + Math.round(wh / 2), Math.round(ww * 1.1), '255,190,110', 0.12, 3);
       // persimmons drying on strings from the beam (hoshigaki), in a row at the left
       for (let i = 0; i < 5; i++) {
         const sx = Math.round(w * 0.04 + i * s(17)), n = 6 + (i % 2), sy0 = beamY + beamH;
@@ -970,8 +967,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (let x = 0; x < w; x += 2) { const hh = Math.max(2, s(4)) + ((x * 7 + i * 13) % 3); g.fillStyle = (x % 6) ? 'rgba(52,62,30,0.75)' : 'rgba(104,98,50,0.7)'; g.fillRect(x, yy(x) - hh, 2, hh); }
       }
       for (const [x, y] of fr) R(g, x, y, Math.max(1, s(1.5)), Math.max(1, s(1.5)), '#e88a34');
-      // the dawn on everything: warm from the right, the dew's glint on the flats
-      g.fillStyle = 'rgba(255,190,140,0.08)'; g.fillRect(Math.round(w * 0.5), 0, Math.round(w * 0.5), h);
       return { cv };
     });
   }
@@ -1049,7 +1044,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.fill(cx - rw[0] - s(4), gate.y + s(4), cx + rw[0] + s(4), rows[0].lip(cx) + 1, (x, y) => Math.abs(x - cx) <= lerp(gw / 2, rw[0], (y - gate.y) / Math.max(1, rows[0].lip(cx) - gate.y)) + s(2), lining, (x, y) => (Math.abs(x - cx) > lerp(gw / 2, rw[0], (y - gate.y) / Math.max(1, rows[0].lip(cx) - gate.y)) ? 0.85 : 0.18));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
-      g.fillStyle = 'rgba(255,240,200,0.06)'; g.fillRect(0, 0, Math.round(w * 0.5), h);
       return { cv };
     });
   }
