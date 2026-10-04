@@ -112,30 +112,68 @@ narr: {席|せき} に {立|た}て{掛|か}けた {札|ふだ} に 、 {丁寧|
 ?(co_hiro_globe) narr: {底|そこ} に {同|おな}じ {名前|なまえ} が {刻|きざ}まれた 、 {窯|かま} の {奥|おく} から {来|き}た {火屋|ほや} だ 。 || It's the globe from the back of the kiln, with the same name scratched into its base.
 
 @scene co.reflection
+# Staged: your companion steps up beside you at the lookout rail and you both look out over the lit village;
+# then each says what the night brought, in their own way (Nao scans the exits, a hand to the satchel strap
+# over the letter, a glance away, a shrug; Mio shows how many she said yes to, breathes out, laughs; Ren looks
+# down at the square, a hand to the chin, a nod, an open hand; Suzu points down to Hiro's seat, holds out her
+# account book and laughs, then her thanks); you think on the traveller in white, your companion answers
+# (Nao's flat hand, Mio's shake of the head, Ren looks to the northern mountains, Suzu's open hand), and you
+# look north to the snow.
 !music quiet_road
+!walkto comp 8 6 down
+!look pc down
 narr: {櫓|やぐら} の {上|うえ} から は 、 {里|さと} {全体|ぜんたい} が {見|み}えた 。 {灯籠|とうろう} の {灯|ひ} が 、 {段々畑|だんだんばたけ} の {下|した} で {揺|ゆ}れて いる 。 || From the top of the lookout you can see the whole village. The lantern lights sway below the terraces.
 narr: {刈|か}った ばかり の {火除|ひよ}け{道|みち} が 、 {月|つき} の {光|ひかり} で {白|しろ}く {浮|う}かんで いる 。 || The freshly cut firebreaks lie pale in the moonlight.
+?(comp=nao) !gesture comp lookbetween left and=right
 ?(comp=nao) comp: …… いい {眺|なが}め だ 。 {出口|でぐち} も {全部|ぜんぶ} {見|み}える 。 {水路|すいろ} 、 {街道|かいどう} 、 {北|きた} の {道|みち} 。 || …Good view. You can see every exit. The channel, the road, the north path.
+?(comp=nao) !look comp pc
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: スズ が {二十年|にじゅうねん} {抱|かか}えてた {借|か}り 、 {聞|き}いた か 。 …… {俺|おれ} の {鞄|かばん} に も 、 {一通|いっつう} ある 。 {届|とど}けない って {決|き}めた {手紙|てがみ} が 。 || You heard about the debt Suzu carried for twenty years? …There's one in my bag too. A letter I decided not to deliver.
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {相手|あいて} を {守|まも}る つもり だった 。 {今夜|こんや} {見|み}て て 、 {分|わ}から なく なった 。 {守|まも}ってた の は 、 {誰|だれ} だった ん だろう な 。 || I thought I was protecting her. Watching tonight, I'm not so sure. Who was I really protecting?
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: …… {灯落|ひおち} まで 、 {考|かんが}える {時間|じかん} は ある 。 {急|いそ}ぐ {配達|はいたつ} じゃ ない 。 たぶん 。 || …There's time to think before Lanternfall. It's not an urgent delivery. Probably.
+?(comp=mio) !look comp pc
+?(comp=mio) !gesture comp size
 ?(comp=mio) comp: {今日|きょう} 、 {火傷|やけど} の {薬|くすり} を {十四軒|じゅうよんけん} {分|ぶん} {作|つく}りました 。 {皆|みな} さん に {頼|たの}まれて 、 {全部|ぜんぶ} 「 はい 」 って {言|い}って 。 || Today I made burn salve for fourteen households. Everyone asked, and I said yes to all of them.
+?(comp=mio) !gesture comp exhale
 ?(comp=mio) comp[think]: …… {今|いま} に なって 、 {疲|つか}れて いる こと に {気|き}づきました 。 {変|へん} です よ ね 。 {頼|たの}まれる の は 、 {嬉|うれ}しい はず なのに 。 || …Only now do I notice I'm tired. Strange, isn't it. Being asked is supposed to make me happy.
+?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[smile]: {今夜|こんや} は 、 {誰|だれ} の {頼|たの}み も {聞|き}きません 。 …… $name さん の {頼|たの}み も です よ 。 {冗談|じょうだん} です 。 {半分|はんぶん} は 。 || Tonight I'm not taking anyone's requests. …Not even yours. That's a joke. Half a joke.
+?(comp=ren) !gesture comp lookroad down
 ?(comp=ren) comp: トキワ さん は 、 {自分|じぶん} から {預|あず}けた 、 と {言|い}いました ね 。 {痛|いた}み を 。 || Tokiwa said he handed it over himself. The pain.
+?(comp=ren) !look comp pc
+?(comp=ren) !gesture comp chin hold
 ?(comp=ren) comp[think]: {私|わたし} は 、 {師匠|ししょう} の {教|おし}え を {全部|ぜんぶ} {覚|おぼ}えて いる のに 、 {顔|かお} だけ {思|おも}い{出|だ}せない 。 …… まさか {私|わたし} も 、 {誰|だれ} か に {頼|たの}んだ の でしょう か 。 || I remember every one of my master's teachings, but not his face. …Could I have asked someone too?
+?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: …… {分|わ}かりません 。 でも 、 {分|わ}からない まま に は しない 。 {今夜|こんや} 、 そう {決|き}めました 。 || …I don't know. But I won't leave it unknown. I decided that tonight.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp[smirk]: ところで 、 {下|お}りる {時|とき} は {先|さき} に {行|い}って ください 。 {梯子|はしご} で も {迷|まよ}う {自信|じしん} が あります 。 || By the way, please go first on the way down. I'm confident I can get lost even on a ladder.
+?(comp=suzu) !gesture comp point down
 ?(comp=suzu) comp: …… ここ から だと 、 ヒロ の {席|せき} が よく {見|み}える わ 。 {火屋|ほや} が {一|ひと}つ 、 {灯|とも}ってる 。 || …You can see Hiro's seat from here. One globe, lit.
+?(comp=suzu) !look comp pc
+?(comp=suzu) !prop comp accountbook
+?(comp=suzu) !gesture comp present pc prop=accountbook hold
 ?(comp=suzu) comp: {帳簿|ちょうぼ} 、 {見|み}る ？ 「 {一部|いちぶ} {返済|へんさい} 」 。 …… {線|せん} を {引|ひ}かない {借|か}り も ある の ね 。 {初|はじ}めて {知|し}った 。 || Want to see my book? "Paid in part." …Some debts you don't cross out. I didn't know that.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: ちなみに 、 {次|つぎ} の {頁|ページ} に は あなた の {名前|なまえ} も ある の よ 。 「 $name ── {観客|かんきゃく} {一名|いちめい} 。 {最後|さいご} まで {席|せき} を {立|た}たず 」 。 || By the way, your name's on the next page. "$name — audience of one. Stayed in their seat to the end."
+?(comp=suzu) !prop comp -
+?(comp=suzu) !gesture comp thanks
 ?(comp=suzu) comp[smile]: …… ありがとう 。 これ は {冗談|じょうだん} じゃ ない わ 。 || …Thank you. That one isn't a joke.
+?(comp!=suzu) !gesture pc lookroad down
 ?(comp!=suzu) narr: {下|した} の {舞台|ぶたい} で 、 スズ が {踊|おど}って いる 。 {二十年前|にじゅうねんまえ} に {踊|おど}る はず だった {演目|えんもく} だ と 、 {後|あと} で {聞|き}いた 。 || Down on the stage, Suzu is dancing. Later you'll hear it was the piece she was meant to dance twenty years ago.
+!look pc comp
+!gesture pc chin
 pc: {白|しろ}い {服|ふく} の {旅人|たびびと} …… {静寂|しじま} の {書庫|しょこ} の {番人|ばんにん} かも しれない 。 || A traveller in white… it might be the keeper of the Still Archive.
+?(comp=nao) !gesture comp emphatic
 ?(comp=nao) comp: {悲|かな}しみ を {預|あず}かる 、 か 。 {頼|たの}まれて も いない {荷物|にもつ} まで {運|はこ}んで いった ん だ 。 {配達人|はいたつにん} と して は 、 {許|ゆる}せない な 。 || Keeping people's grief. And carrying off parcels nobody asked it to take. As a courier, I can't forgive that.
+?(comp=mio) !gesture comp shake
 ?(comp=mio) comp: {最初|さいしょ} は 、 {優|やさ}しさ だった の かも しれません 。 …… {優|やさ}しさ も 、 {量|りょう} を {間違|まちが}えれば {毒|どく} です 。 || Maybe it began as kindness. …But even kindness is poison in the wrong dose.
+?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp: {北|きた} の {山|やま} の {上|うえ} です ね 。 {記録|きろく} に よれば 。 …… {道|みち} は 、 {私|わたし} が {案内|あんない} しない ほう が いい でしょう 。 || Up in the northern mountains, according to the records. …It's probably best if I don't lead.
+?(comp=suzu) !gesture comp palm
 ?(comp=suzu) comp: {預|あず}かる って 、 {返|かえ}す {約束|やくそく} の {言葉|ことば} の はず な のに ね 。 {返|かえ}して もらい に {行|い}こう 。 {全部|ぜんぶ} 。 || "Keeping" something is supposed to mean you'll give it back. Let's go and get it all back.
+!gesture pc lookroad up
 narr: {北|きた} の {峰|みね} に は 、 もう {雪|ゆき} が {光|ひか}って いた 。 || Snow was already gleaming on the northern peaks.
 !set ch3_done
 !quest co_main done
@@ -169,22 +207,32 @@ narr: {澄|す}んだ {音|おと} が 、 {段々畑|だんだんばたけ} に
 !fade in
 
 @scene co.lookout_base
+# Staged: you look up at the ropeless bell on the lookout; your companion's own answer (Nao looks from the
+# bell to Gorō, Mio's hand to the chin, Ren's nod, Suzu's head goes down: it rang once, all night); later you
+# look up at it again.
 !if ch3_done -> climb
 !if co_clue_bell -> plain
 !set co_clue_bell
+!gesture pc lookroad 11,11
 narr: {火|ひ} の {見|み} {櫓|やぐら} 。 {上|うえ} に {鐘|かね} が {下|さ}がって いる が 、 {綱|つな} が ない 。 {鐘|かね} だけ が 、 {毎朝|まいあさ} {磨|みが}かれた よう に {光|ひか}って いる 。 || The fire lookout. There's a bell up top, but no rope. Only the bell gleams, as if polished every morning.
+?(comp=nao) !gesture comp lookbetween 11,11 and=co_goro
 ?(comp=nao) comp: {火|ひ} の {見|み} {櫓|やぐら} に {綱|つな} が ない 。 {鳴|な}らさない {鐘|かね} を 、 {毎朝|まいあさ} {磨|みが}く 。 {変|へん} な {村|むら} だ 。 || A fire lookout with no rope. A bell nobody rings, polished every morning. Odd place.
+?(comp=mio) !gesture comp chin
 ?(comp=mio) comp: {火|ひ} の {見|み} {櫓|やぐら} …… {火事|かじ} の ない {里|さと} に 、 なぜ ？ || A fire lookout… in a village that's never had a fire?
+?(comp=ren) !gesture comp nod 11,11
 ?(comp=ren) comp: {火|ひ} の {見|み} {櫓|やぐら} は 、 {火|ひ} を {知|し}って いる {里|さと} に しか {建|た}ちません 。 || Fire lookouts are only built by villages that know fire.
+?(comp=suzu) !gesture comp lowered hold
 ?(comp=suzu) comp[closed]: …… {鳴|な}った の よ 。 {昔|むかし} 。 {一晩中|ひとばんじゅう} 。 || …It rang, once. Long ago. All night.
 !var co_clues + 1
 !call co.clue_check
 !end
 :plain
+!gesture pc lookroad 11,11
 narr: {綱|つな} の ない {鐘|かね} が 、 {櫓|やぐら} の {上|うえ} で {光|ひか}って いる 。 || The ropeless bell gleams at the top of the lookout.
 ?(co_bell_done|co_restored) narr: {今|いま} は {綱|つな} が {下|さ}がって いる 。 {先|さき} に {赤|あか}い {布|ぬの} 。 || A rope hangs from it now, with a red cloth tied to the end.
 !end
 :climb
+!gesture pc lookroad 11,11
 narr: {火|ひ} の {見|み} {櫓|やぐら} 。 {梯子|はしご} の {下|した} に 、 ゴロウ の {字|じ} で 「 {登|のぼ}って よし 」 と {書|か}いた {札|ふだ} 。 || The fire lookout. At the foot of the ladder, a sign in Gorō's hand: "You may climb."
 !choice
 * {上|のぼ}る || Climb up -> up

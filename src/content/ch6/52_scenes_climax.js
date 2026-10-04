@@ -112,30 +112,45 @@ kasane: …… {持|も}って {来|き}て くれた の です ね 。 || …Y
 
 @scene sa.toya_read
 !music sa_toya
+# Illustrated (src/ui/43f_seq_ch6.js; docs/expressive/SHOTS.md §6): the papers read close on the floor of the Heart, held through the challenge; the bell's shot only when it is carried; the state lines run once after the end, as before.
+!sequence ch6.toya begin
+!shot folio
 narr: $name は 、 {綴|つづ}り を カサネ に {渡|わた}した 。 {雨|あめ} の {音|おと} 。 {石|いし} の {廊下|ろうか} 。 {若|わか}い {二人|ふたり} の {声|こえ} 。 || You hand Kasane the folio. The sound of rain. A stone corridor. Two young voices.
+!shot folio close
 kasane[closed]: …… 「 {誰|だれ} も {開|あ}けない 」 。 わたし が 、 そう {言|い}った 。 || …"No one is opening it." I said that.
+!shot floor
 narr: $name は 、 {鍵|かぎ} の {控|ひか}え と {議会|ぎかい} の {貼|は}り{紙|がみ} を 、 {床|ゆか} に {並|なら}べた 。 || You lay the key slip and the council notice out on the floor beside it.
 !challenge sa.toya
+!shot turned
 kasane[surprise]: …… {高瀬|たかせ} の {言葉|ことば} を {写|うつ}した ん じゃ なかった 。 わたし に {返事|へんじ} を した の です ね 。 {同|おな}じ {四語|よんご} で 。 || …He wasn't copying Takase's words. He was answering me. In the same four words.
 kasane: 「 {誰|だれ} も {開|あ}けない 」 と {言|い}った わたし に 、 「 {必要|ひつよう}なら 、 {僕|ぼく} が {開|あ}ける 」 と 。 …… {曖昧|あいまい} な ところ なんて 、 {一|ひと}つ も ない 。 || To me, who said "no one is opening it", he said: "If it's needed, I'll open it." …There isn't one vague thing in it.
+!shot turned front
 kasane[sad]: {三十年|さんじゅうねん} 、 {裏|うら} ばかり {見|み}て いた 。 {表|おもて} に は 、 わたし の {字|じ} で 、 {鍵|かぎ} を {持|も}って いった の は トウヤ だ と {書|か}いて ある のに 。 || For thirty years I only looked at the back. The front says, in my own hand, that Tōya was the one who took the key.
 kasane: {鐘|かね} を {鳴|な}らした の は 、 あの {子|こ} だった 。 {鍵|かぎ} の かかった {塔|とう} を 、 {自分|じぶん} で {開|あ}けて 。 {約束|やくそく} を {守|まも}った の です 。 {四語|よんご} {残|のこ}らず 。 || It was him who rang the bell. He opened the locked tower himself. He kept his promise. All four words of it.
+!shot turned close
 kasane[closed]: わたし は 、 {自分|じぶん} の {言葉|ことば} を {棚|たな} に {上|あ}げて 、 あの {子|こ} の {言葉|ことば} だけ を {責|せ}めて きた 。 || I put my own words up on a shelf, and blamed his.
 ?(comp=ren) ren: {棚|たな} に {上|あ}げる 。 …… {文字通|もじどお}り に 。 || Put up on a shelf. …Literally.
 ?(comp=ren) ren[shy]: {失礼|しつれい} しました 。 {今|いま} の は 、 {解説|かいせつ} の {要|い}らない ほう の {駄洒落|だじゃれ} です 。 || Forgive me. That one doesn't need explaining.
 kasane: {言葉|ことば} を {一|ひと}つ の {意味|いみ} に {縛|しば}れば 、 {誰|だれ} も {読|よ}み{違|ちが}えない と {思|おも}った 。 でも {間違|まちが}えた の は 、 {言葉|ことば} じゃ ない 。 {前後|ぜんご} を {切|き}り{落|お}とした 、 わたし です 。 || I thought if I tied every word to a single meaning, no one could misread. But it wasn't the words that went wrong. It was me, cutting away everything around them.
 kasane: そして {世界|せかい} じゅう の {言葉|ことば} に 、 {同|おな}じ こと を した 。 || And then I did the same to every word in the world.
+?(item.lf_toya_bell) !shot bell
 ?(item.lf_toya_bell) narr: $name は 、 トクジ から {預|あず}かった {小|ちい}さな {鈴|すず} を {出|だ}した 。 || You take out the little bell Tokuji gave you.
 ?(item.lf_toya_bell) kasane[surprise]: {使|つか}い の {鈴|すず} 。 …… トウヤ の 。 || A messenger's bell. …Tōya's.
+?(item.lf_toya_bell) !shot bell ring
 ?(item.lf_toya_bell) narr: カサネ は {鈴|すず} を {一度|いちど} だけ {振|ふ}った 。 ちりん 。 {三十年|さんじゅうねん} {遅|おく}れ の {音|おと} が 、 {芯|しん} の {中|なか} に {広|ひろ}がった 。 || Kasane rings it once. Ting. A sound thirty years late spreads through the Heart.
+?(item.lf_toya_bell) !shot bell offer
 ?(item.lf_toya_bell) kasane: …… {持|も}って いて ください 。 あの {子|こ} は 、 {走|はし}る の が {仕事|しごと} でした から 。 {旅|たび} を {続|つづ}けさせて あげて 。 || …Please keep it. Running was his work. Let it go on travelling.
+!shot decide
 kasane[tired]: {許|ゆる}して ほしい と は 、 {言|い}いません 。 {言|い}える {立場|たちば} で は ない 。 || I won't ask you to forgive me. I'm in no position to.
+!shot decide lift
 kasane: でも 、 {決|き}めて ほしい 。 わたし が {預|あず}かって いる もの を 、 どう する か 。 わたし を 、 どう する か 。 || But I would like you to decide. What to do with what I've been keeping. What to do with me.
+!shot decide aside
 ?(comp=nao) nao: また {人|ひと} に {決|き}めさせる の か 。 …… いや 、 {今度|こんど} は {頼|たの}んでる の か 。 {違|ちが}い は {大|おお}きい な 。 || Making someone else decide again? …No — this time you're asking. That's a big difference.
 ?(comp=mio) mio: {決|き}める の は 、 {一人|ひとり} じゃ ない 。 あなた も 、 {一緒|いっしょ} に {来|き}て ください 。 {断|ことわ}らせません 。 || Deciding isn't a one-person job. You're coming with us. I won't take no for an answer.
 ?(comp=ren) ren: 「 {名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人|ひと} は {名|な} に 。 だから 、 {名|な} を {一人|ひとり} で {守|まも}る {者|もの} は いない 」 。 {師匠|ししょう} の {教|おし}え です 。 あなた も 、 {一人|ひとり} で {守|まも}る {必要|ひつよう} は ない 。 || "A name to the lamp, the lamp to people, people to the name. And so no one keeps a name alone." My teacher's teaching. You don't have to keep them alone either.
 ?(comp=suzu) suzu: {貸|か}し {借|か}り を {整理|せいり} しよう 。 {帳簿|ちょうぼ} は {三冊|さんさつ} 。 {順番|じゅんばん} に 、 {片付|かたづ}けて いこう 。 || Let's settle the accounts. Three ledgers. One at a time.
 kasane: {下|した} の {記憶|きおく} の {部屋|へや} で 、 {待|ま}って います 。 {預|あず}けられた もの から 、 {始|はじ}めましょう 。 || I'll wait in the Room of Set-Down Memories below. Let's begin with what was given into my keeping.
+!sequence ch6.toya end
 !take sa_letter_kasane
 !set sa_toya_read
 !note sa_toya

@@ -54,6 +54,8 @@ const KNOWN = {
   'lf.mio_refuse|pc|touchback': ['escalation', 'narrated: "You lay a hand gently on her back."'],
   'rw.bunta_tally|bunta|open:forehead': ['escalation', 'narrated: "Bunta scratches his head in silence." (caught out over the plane)'],
   'rw.mr_sae|sae|open:recoil': ['escalation', 'her line: "Don\'t come… oh, sorry. You\'re a person. Not a voice." (startled in the dark mill)'],
+  'co.isao|co_isao|palm': ['escalation', 'narrated: "Isao opens his right hand and looks at the palm. An old burn scar puckers white across it." (the open hand shows the burn)'],
+  'sb.hall_enter|mio|rubhands': ['escalation', 'her line: "Stay too long and you\'ll damage your fingers. Rub your hands together. Like this." (she shows you how)'],
   'lf.mio_refuse|lf_tadashi|flinch': ['finding', 'his profile\'s surprise tell is halfraise (8) and halfraise is the stronger reaction it writes for this scene, but the scene gives him a startled look up (flinch, 21) and the halfraise to Mio'],
   'lf.mio_refuse|lf_tadashi|strong:halfraise': ['finding', 'the same disagreement seen from the profile: the stronger reaction written for him here is not in the scene'],
   'rw.hana_first|hana|point': ['finding', 'pointing the way the cup came from ("from the bridge, I think"); point (10) is in neither her talk (13, 9) nor the host overlay'],

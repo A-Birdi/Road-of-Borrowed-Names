@@ -3,22 +3,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sb.goat_note
+# Staged: you lean in to the note pinned to the post; once read, your companion's own answer (Nao looks
+# between the two kids, Mio bends to the mother goat, Ren's nod, Suzu's laugh); later you read it again.
 !if quest.sb_goats>=2 -> read
 !if quest.sb_goats -> note
+!gesture pc observe 6,2
 narr: {柱|はしら} に 、 {紙|かみ} が {一枚|いちまい} {留|と}めて ある 。 {若|わか}い {人|ひと} の {丸|まる}い {字|じ} だ 。 「 テツジ {伯父|おじ} さん へ 」 。 || A sheet of paper is pinned to the post, in a young person's round handwriting: "To Uncle Tetsuji".
 narr: {人|ひと} {宛|あ}て の {書|か}き{置|お}き だ 。 {今|いま} は {読|よ}まない で おこう 。 || It's a note for someone else. You leave it be for now.
 !end
 :note
+!gesture pc observe 6,2
 narr: {柱|はしら} の {書|か}き{置|お}き 。 「 テツジ {伯父|おじ} さん へ 」 。 テツジ に {頼|たの}まれた の だ から 、 {読|よ}んで も いい だろう 。 || The note on the post: "To Uncle Tetsuji". Tetsuji asked you to look into it, so reading it should be all right.
 !challenge sb.c_goat_note
 !if var._res=0 -> end
 !quest sb_goats 2
+?(comp=nao) !gesture comp lookbetween 6,4 and=7,4
 ?(comp=nao) comp[smirk]: {増|ふ}えた {二頭|にとう} は 、 {迷子|まいご} じゃ なくて {新入|しんい}り だった わけ だ 。 || So the extra two weren't strays. They were newcomers.
+?(comp=mio) !gesture comp bend 6,3
 ?(comp=mio) comp[smile]: {生|う}まれた ばかり …… ！ {母|はは} ヤギ の {具合|ぐあい} も {見|み}て おきたい です ね 。 || Newborns…! I'd like to check on the mother too.
+?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: {数|かず} の {合|あ}わない {記録|きろく} に は 、 {必|かなら}ず {理由|りゆう} が あります 。 {今回|こんかい} は 、 {良|よ}い {理由|りゆう} でした 。 || When the numbers in a record don't add up, there's always a reason. This time, a good one.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {帳簿|ちょうぼ} の {誤差|ごさ} が 、 {出産|しゅっさん} ！ {最高|さいこう} の {決算|けっさん} だ よ 。 || The discrepancy in the books is a birth! Best balance sheet ever.
 !end
 :read
+!gesture pc observe 6,2
 narr: 「 {夜中|よなか} に モモ が {子|こ}ヤギ を {二匹|にひき} {産|う}みました 。 {二匹|にひき} とも {元気|げんき} です 。 」 {何度|なんど} {読|よ}んで も 、 いい {知|し}らせ だ 。 || "In the night Momo gave birth to two kids. Both are healthy." However many times you read it, it's good news.
 
 @scene sb.sculpt_goat

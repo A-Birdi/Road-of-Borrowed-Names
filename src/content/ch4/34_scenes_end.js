@@ -5,32 +5,55 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sb.boss_pre
+# Staged: you turn to the blue flame rising in the ice; your companion's own answer before the fight (Nao's
+# hand to the satchel strap: a delivery; Mio's guarded hand; Ren tends their lamp; Suzu's open hand).
+!gesture pc listen 6,4
 narr: {灯|あか}り に {近|ちか}づく と 、 {氷|こおり} の {中|なか} で 、 {青|あお}い {炎|ほのお} が ゆらり と {立|た}ち{上|あ}がった 。 || As you draw near the lamp, a blue flame rises and sways inside the ice.
 sb_lampvoice: …… {誰|だれ} ？ {誰|だれ} か 、 {来|き}た の ？ || …Who's there? Has someone come?
 sb_lampvoice: {違|ちが}う 。 あの {子|こ} じゃ ない 。 あの {子|こ} の {名前|なまえ} …… {思|おも}い{出|だ}せない 。 {思|おも}い{出|だ}せない のに 、 まだ {待|ま}って いる 。 || No. It isn't her. Her name… I can't remember it. I can't remember, and still I'm waiting.
 sb_lampvoice: {待|ま}つ の は 、 {寒|さむ}い 。 {誰|だれ} も {見|み}て いない {夜|よる} は 、 もっと {寒|さむ}い 。 {帰|かえ}って 。 {寒|さむ}さ を {分|わ}けて あげる から 。 || Waiting is cold. Nights when no one is watching are colder still. Go away. Or I'll share the cold with you.
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: {待|ま}ち{疲|つか}れた {灯|あか}り 、 か 。 …… {悪|わる}い が 、 {帰|かえ}る {気|き} は ない 。 {届|とど}け{物|もの} が ある んで な 。 || A lamp worn out from waiting. …Sorry, but we're not leaving. We've got a delivery.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {冷|つめ}たい …… でも 、 {怒|おこ}って いる ん じゃ ない 。 {寂|さび}しい んです 。 {傷|きず}つけず に 、 {温|あたた}めましょう 。 || So cold… but it isn't angry. It's lonely. Let's warm it without hurting it.
+?(comp=ren) !gesture comp tendlamp
 ?(comp=ren) comp: {名|な} を {失|うしな}って も 、 {約束|やくそく} だけ は {覚|おぼ}えて いる 。 …… {灯|ひ} と は 、 {健気|けなげ} な もの です 。 {行|い}きましょう 。 || It lost the name and still remembers the promise. …Lamps are loyal things. Let's go.
+?(comp=suzu) !gesture comp palm
 ?(comp=suzu) comp: {最終幕|さいしゅうまく} だ よ 、 $name 。 {相手|あいて} は {悪役|あくやく} じゃ ない 。 {待|ま}ち{続|つづ}けた {役|やく} だ 。 {丁寧|ていねい} に {演|えん}じよう 。 || Final act, $name. It's not a villain. It's the one who kept on waiting. Let's play it with care.
 !battle sb.boss noflee
 !set sb_boss_done
 !call sb.boss_after
 
 @scene sb.boss_after
+# Staged: you breathe out as the ice melts and lean in to the trembling flame; you turn to the hatch at the
+# feet on the ladder; Hoshino (who climbed up after you) catches his breath on the back stair's line, leans in
+# to the blank shade and his head goes down over the writing that ran; your companion's own answer (Ren's open
+# hand, Nao points to the shade, Mio's nod, Suzu points to you); Hoshino turns to you and holds out his brush.
+!gesture pc exhale
 narr: {氷|こおり} が {溶|と}け 、 {青|あお}い {炎|ほのお} は {小|ちい}さく なって 、 {芯|しん} の {上|うえ} で {震|ふる}えて いる 。 || The ice melts away. The blue flame, grown small, trembles on the wick.
+!gesture pc observe 6,4
 sb_lampvoice: …… {名前|なまえ} を 、 {呼|よ}んで 。 {書|か}いて 。 あの {子|こ} の {名前|なまえ} を 。 || …Call her name. Write it. Her name.
+!gesture pc listen down
 narr: {下|した} から 、 {梯子|はしご} を {上|のぼ}る {足音|あしおと} が {聞|き}こえた 。 {息|いき} を {切|き}らした ホシノ が {顔|かお} を {出|だ}す 。 {後|うし}ろ で デンジ が {支|ささ}えて いる 。 || From below comes the sound of feet on the ladder. Hoshino's head appears, out of breath, with Denji steadying him from behind.
 ?(sb_shortcut) hoshino: …… {裏|うら} の {階段|かいだん} が {開|あ}いて いた 。 デンジ の {自慢|じまん} の 、 {無駄|むだ} な {階段|かいだん} が ね 。 || …The back stair was open. Denji's pride and joy, that useless stair.
+?(sb_shortcut) !gesture hoshino exhale
 ?(sb_shortcut) denji[smirk]: {無駄|むだ} じゃ なかった だろう が 。 || Wasn't so useless, was it.
 ?(!sb_shortcut) hoshino: …… {扉|とびら} が {全部|ぜんぶ} 、 {開|あ}いて いた 。 {一段|いちだん} ずつ 、 {君|きみ} たち の {足跡|あしあと} を {辿|たど}って きた よ 。 || …Every door was open. I followed your footprints one step at a time.
 ?(!sb_shortcut) denji: {裏|うら} の {階段|かいだん} を {開|あ}けて おけば 、 {半分|はんぶん} で {済|す}んだ んだ が な 。 || If you'd opened the back stair, it'd have been half the climb.
+!gesture hoshino observe 6,4
 hoshino[sad]: …… ああ 。 {名前|なまえ} が 、 {消|き}えて いる 。 || …Ah. The name is gone.
+!gesture hoshino lowered hold
 hoshino: {書|か}こう と した んだ 。 {何度|なんど} も 。 {消|き}えた {晩|ばん} に 。 でも わたし の {字|じ} は {滲|にじ}んで 、 {笠|かさ} から {流|なが}れ{落|お}ちて しまった 。 || I tried to write it. Again and again, the night it went out. But my writing blurred and ran right off the shade.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp: {静寂|しじま} に {取|と}られた {名|な} は 、 {取|と}られた {側|がわ} の {手|て} で は {戻|もど}りにくい 。 {外|そと} から {来|き}た {手|て} が {要|い}ります 。 …… $name 、 あなた の {字|じ} は {残|のこ}ります 。 {葦|あし}ノ{瀬|せ} で も そう だった 。 || A name taken by the Hush is hard to restore from the side it was taken from. It needs a hand from outside. …$name, your writing holds. It did in Reedwake too.
+?(comp=nao) !gesture comp point 6,4
 ?(comp=nao) comp: $name の {字|じ} は {消|き}えない 。 {葦|あし}ノ{瀬|せ} から ずっと {見|み}てる 。 {書|か}いて やれ 。 || $name's writing doesn't fade. I've watched it since Reedwake. Write it for him.
+?(comp=mio) !gesture comp nod pc
 ?(comp=mio) comp[smile]: $name の {字|じ} なら 、 きっと {残|のこ}ります 。 わたし 、 {灯|あか}り を {持|も}って います から 。 ゆっくり で いい 。 || Your writing will stay, $name, I'm sure. I'll hold the light. Take your time.
+?(comp=suzu) !gesture comp point pc
 ?(comp=suzu) comp: {主役|しゅやく} の {名前|なまえ} を {呼|よ}ぶ {役|やく} は 、 $name に {譲|ゆず}る よ 。 {一番|いちばん} いい {台詞|せりふ} だ 。 || The part where the lead's name is called — that's yours, $name. It's the best line in the play.
+!look hoshino pc
+!gesture hoshino present pc prop=brush hold
 hoshino: $name さん 。 …… {頼|たの}む 。 あの {子|こ} の {名前|なまえ} を 、 {書|か}いて くれ 。 || $name. …Please. Write her name.
 !call sb.lamp_name
 
@@ -130,20 +153,42 @@ hoshino: …… {年寄|としよ}り の {手紙|てがみ} は 、 {時間|じ
 
 RB.script.add(`
 @scene sb.eve_start
+# Staged: the square stands looking up at the lamp on the mountain (Snowbell is placed facing north, its backs
+# to you); you look up with them; Yae turns to celebrate the eleven days and count the twelve years; Sōsuke
+# turns and holds up the envelopes with their addresses back; your companion's own answer (Nao's nod, then to
+# you with a hand on the satchel strap; Mio looks from Yae to Sōsuke and a hand to her chin; Ren looks up to
+# the stair lanterns, then turns to you with a nod; Suzu's laugh at the packed house, a hand to her chin over
+# the next script).
 !set sb_evening_seen
 !set sb_evening
 !music sb_lamp
+!gesture pc lookroad up
 narr: {日|ひ} が {暮|く}れる と 、 {雪鈴|ゆきすず} の {人|ひと} たち は {広場|ひろば} に {集|あつ}まって 、 {北|きた} の {空|そら} を {見上|みあ}げた 。 || As night falls, the people of Snowbell gather in the square and look up at the northern sky.
 narr: {山|やま} の {上|うえ} に 、 {灯|あか}り が ともって いる 。 {十日|とおか} {前|まえ} と {同|おな}じ {場所|ばしょ} に 、 {同|おな}じ {色|いろ} で 。 {石段|いしだん} の {灯|あか}り も 、 {一|ひと}つ {残|のこ}らず ついて いた 。 || On the mountain, the lamp is burning — in the same place as ten days ago, the same colour. Every lantern on the stair is lit too, every last one.
+!look yae pc
+!gesture yae celebrate then=count
 yae[laugh]: {十一日|じゅういちにち} ぶり ！ …… {数|かず} 、 ちゃんと {思|おも}い{出|だ}せる よ 。 {今|いま} なら 、 {何年|なんねん} {目|め} か も わかる 。 {十二年|じゅうにねん} よ 。 || Eleven days! …And I can remember the numbers properly now. I even know how many years it's been. Twelve.
+!look sousuke pc
+!prop sousuke envelopes
+!gesture sousuke present pc prop=envelopes
 sousuke[smile]: {袋|ふくろ} の {封筒|ふうとう} に 、 {宛名|あてな} が {戻|もど}って きました 。 {全部|ぜんぶ} です 。 {春|はる} に は 、 {全部|ぜんぶ} {届|とど}けられる 。 || The addresses have come back on the envelopes in the sack. All of them. Come spring, every one can be delivered.
+?(comp=nao) !gesture comp nod sousuke
 ?(comp=nao) comp: …… {宛名|あてな} が {戻|もど}った 、 か 。 {今日|きょう} {一番|いちばん} の {知|し}らせ だ 。 || …The addresses are back. Best news of the day.
+?(comp=nao) !look comp pc
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp[smile]: $name 。 {灯落|ひおち} に {着|つ}いたら 、 {話|はな}す こと が ある 。 {鞄|かばん} の {底|そこ} の {手紙|てがみ} の こと だ 。 || $name. When we get to Lanternfall, there's something I'll tell you. About the letter at the bottom of my bag.
+?(comp=mio) !gesture comp lookbetween yae and=sousuke
 ?(comp=mio) comp[smile]: みんな の {顔|かお} 、 {明|あか}るい です ね 。 {灯|あか}り の せい だけ じゃ なくて 。 || Everyone looks so bright. And not only because of the lamp.
+?(comp=mio) !gesture comp chin
 ?(comp=mio) comp[think]: {灯落|ひおち} の {人|ひと} たち は 、 「 かしこまりました 」 しか {言|い}えない …… 。 アカリ さん の {手紙|てがみ} が 、 {気|き}に なります 。 {次|つぎ} は 、 わたし たち が {下|くだ}る {番|ばん} です ね 。 || The people in Lanternfall can only say "certainly"… I keep thinking about Akari's letter. Next it's our turn to go down.
+?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[smile]: {石段|いしだん} の {灯|あか}り が 、 {上|うえ} の {灯|あか}り の {名前|なまえ} を {呼|よ}んで いる 。 {正|ただ}しい {夜|よる} です 。 || The stair lanterns are calling the name of the lamp above. A proper night.
+?(comp=ren) !look comp pc
+?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: …… {南東|なんとう} の {光|ひかり} も 、 {見|み}えて います 。 {灯落|ひおち} の {上|うえ} 。 {師匠|ししょう} の {顔|かお} の {残|のこ}り が ある {場所|ばしょ} 。 {急|いそ}ぎません 。 でも 、 {行|い}きます 。 || …The light in the southeast is visible too. Above Lanternfall. Where the rest of my teacher's face is. I won't rush. But I will go.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {満員|まんいん} の {客席|きゃくせき} が 、 {舞台|ぶたい} を {見上|みあ}げてる 。 {役者|やくしゃ} {冥利|みょうり} に {尽|つ}きる ね 。 {灯|あか}り の ほう が 。 || A packed house, all looking up at the stage. What an honour for the performer. The lamp, I mean.
+?(comp=suzu) !gesture comp chin
 ?(comp=suzu) comp: {次|つぎ} の {町|まち} は {灯落|ひおち} 。 「 いいえ 」 が {言|い}えない {町|まち} 、 だった っけ 。 …… {台本|だいほん} を {読|よ}み{直|なお}して おこう 。 || Next town's Lanternfall. The town where nobody can say "no", wasn't it. …I'd better reread the script.
 !quest sb_lamp done
 !set ch4_done
