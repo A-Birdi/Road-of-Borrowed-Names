@@ -473,6 +473,7 @@ owner approves it); the conversion, alignment, recolouring checks and import pro
      | arm | cloth main (sleeve), cloth trim (cuff), skin (hand), lacquer, brass, bristles |
      | hair | hair, cloth trim (ties, the wrap) |
      | acc_flower | accessory, leaves, the flower's centre |
+     | other accessories with a channel (§3.4) | accessory, brass (clasps, bells, badges) |
      | acc_glasses, acc_satchel, other accessories without a channel | everything fixed |
 
    Matching works in absolute OKLab. A ramp is matched by the chroma-plane distance at the pixel's own lightness, plus
@@ -522,7 +523,10 @@ node tools/harmony_import.mjs <out> --suggest
 ```
 
 A committed source batch delivered in real colours stays in `art/harmony/source/<batch>/` exactly as delivered, and
-regeneration runs both steps: keyify into a scratch folder, then the importer from it.
+regeneration runs both steps: keyify into a scratch folder, then the importer from it. The output folder must be empty
+or an earlier keyify output; keyify never writes over other PNGs. To try it,
+`node tools/harmony_keyify_proof.mjs --delivery=<empty folder>` writes the synthetic delivery: the layers, the masks
+and the look file to use.
 
 **The report** (`--report`, `<outDir>/keyify_report/`):
 

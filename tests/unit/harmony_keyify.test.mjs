@@ -7,6 +7,7 @@
 // Also: the default look file is the game's own ramps; range vs reference value mapping; a layer whose material
 // cannot be classified is reported and not written; a supplied mask settles it; a painted checkerboard is refused;
 // --sample (reference ramps from a style master and its mask); the output is deterministic.
+// KEYIFY_KEEP=1 keeps the scratch folder (the delivery, the look, the master) for inspection.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';

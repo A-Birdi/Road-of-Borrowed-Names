@@ -21,6 +21,16 @@ import { loadRuntime, importToMemory, bustsOf, diffImages, proofLooks, stats, va
 
 const OUT = path.join(root, 'docs/screenshots/harmony/keyify');
 const RB = loadRuntime(), HC = RB.harmonyContract, C = HC.colour, W = HC.BUST.w, H = HC.BUST.h;
+// --delivery=<dir>: only write the synthetic delivery (<dir>/in, <dir>/masks, <dir>/look.json) for trying the CLI on
+const dArg = process.argv.slice(2).find((a) => a.startsWith('--delivery='));
+if (dArg) {
+  const dir = path.resolve(dArg.slice('--delivery='.length));
+  if (fs.existsSync(dir) && fs.readdirSync(dir).length) { console.error(dir + ' is not empty'); process.exit(2); }
+  const D = await syntheticDelivery(RB, dir);
+  const rp = (p) => path.relative(process.cwd(), p) || '.';
+  console.log('wrote the synthetic delivery (' + D.kitNames.length + ' kit layers in look A\'s colours, Suzu\'s frames) to ' + rp(dir) + '; try:\n  node tools/harmony_keyify.mjs ' + rp(D.inDir) + ' <out> --look=' + rp(D.lookFile) + ' --masks=' + rp(D.maskDir) + ' --report');
+  process.exit(0);
+}
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-keyify-proof-'));
 const fails = [];
 const check = (ok, what) => { if (!ok) fails.push(what); console.log(ok ? 'ok  ' : 'FAIL', what); };
