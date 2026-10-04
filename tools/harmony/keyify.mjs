@@ -239,7 +239,7 @@ function readFile(inDir, name, ctx) {
   const cands = [masksDir && path.join(masksDir, name + '.mask.png'), path.join(inDir, name + '.mask.png')].filter(Boolean);
   const mp = cands.find((q) => fs.existsSync(q));
   if (mp) {
-    try { f.mask = placeMask(fs.readFileSync(mp), n.src, n.grid, n.off, HC); f.maskFrom = path.relative(root, mp).split(path.sep).join('/'); }
+    try { f.mask = placeMask(fs.readFileSync(mp), n.src, n.grid, n.off, HC); f.maskFrom = (masksDir && mp.startsWith(masksDir) ? '--masks/' : '') + path.basename(mp); }
     catch (e) { f.rep.errors.push('mask ' + path.basename(mp) + ': ' + e.message); }
   }
   return f;

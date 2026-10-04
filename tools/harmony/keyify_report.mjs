@@ -19,7 +19,8 @@ import { load } from '../../tests/lib/load.mjs';
 import { decodePNG, encodePNG } from './png.mjs';
 import { importSet, verifySet, SYNTHETIC_LABEL } from './importer.mjs';
 import { blank, blit, text, rect } from './image.mjs';
-import { FLAG, refKeyOf } from './keyify.mjs';
+import { root } from './contract.mjs';
+import { FLAG, refKeyOf, readLook, keyifyKit } from './keyify.mjs';
 
 export const JND = 0.02;
 const r4 = (v) => Math.round(v * 1e4) / 1e4;
@@ -98,6 +99,97 @@ export async function paintLayers(RB, look, names) {
     out[n] = img;
   }
   return out;
+}
+// ---- the synthetic delivery (tests and evidence; SYNTHETIC SAMPLE — not art) ------------------------------------------------
+const nearest = (img, f, CW, CH, oy, bg) => {
+  const out = blank(CW, CH, bg || null), W = img.w, H = img.h;
+  for (let y = 0; y < CH; y++) for (let x = 0; x < CW; x++) { const sx = Math.floor((x + 0.5) / f), sy = Math.floor((y + 0.5 - oy) / f); if (sx < 0 || sy < 0 || sx >= W || sy >= H) continue; const o = (sy * W + sx) * 4; if (img.data[o + 3]) out.data.set(img.data.subarray(o, o + 4), (y * CW + x) * 4); }
+  return out;
+};
+export const enlargeImg = (img, f, bg) => nearest(img, f, img.w * f, img.h * f, 0, bg);
+export const square1024 = (img) => nearest(img, 1024 / img.w, 1024, 1024, (1024 - (img.h * 1024) / img.w) / 2);
+const hexAt = (d, o) => '#' + [d[o], d[o + 1], d[o + 2]].map((v) => v.toString(16).padStart(2, '0')).join('');
+// The synthetic kit (the sample, or the rich fixture imported over it) recoloured by the runtime into the look file's game
+// look — "real-colour" layers — written as a delivery under dir/in (the torso at 4×, a head at 3× on #ff00ff, the flower in
+// the 1024 square; Suzu's sample frames as delivered), with dir/look.json: the look file with the sample's own fixed colours
+// per kind of file as its fixed parts (the code busts' eyes, mouth, brush, metal, leaves), and dir/masks: partial masks
+// marking the code mouth's #4a1a24 fixed (0.0096 from auburn hair's darkest value: ambiguous in real colours).
+export async function syntheticDelivery(RB, dir, opt = {}) {
+  const HC = RB.harmonyContract, W = HC.BUST.w, H = HC.BUST.h;
+  const sampleDir = path.join(root, 'tests/fixtures/harmony_sample/incoming');
+  const look = opt.look || readLook();
+  const sample = importToMemory(sampleDir);
+  if (!sample.report.ok) throw new Error('the synthetic sample does not import');
+  let set = sample;
+  if (opt.fixture === 'rich') {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-keyify-rich-'));
+    try {
+      importSet(sampleDir, { out: tmp, replace: true });
+      const r = importSet(path.join(root, 'tests/fixtures/harmony_rich/incoming'), { out: tmp });
+      if (!r.report.ok) throw new Error('the rich fixture does not import');
+      set = { manifest: r.manifest, files: Object.fromEntries(fs.readdirSync(tmp).filter((f) => f.endsWith('.png')).map((f) => [f, fs.readFileSync(path.join(tmp, f)).toString('base64')])), report: r.report };
+    } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
+  }
+  const kitNames = Object.keys(set.manifest.files).filter((n) => HC.parse(n).kind !== 'comp');
+  install(RB, set.manifest, set.files);
+  const layers = await paintLayers(RB, look.game, kitNames);
+  RB.harmonyRaster.uninstall();
+  const kindKey = (p) => (p.kind === 'acc' ? 'acc_' + p.acc : p.kind), perKind = {};
+  for (const n of kitNames) {
+    const img = decodePNG(Buffer.from(sample.files[n + '.png'], 'base64')), mf = sample.manifest.files[n].mask, mk = mf ? decodePNG(Buffer.from(sample.files[mf], 'base64')) : null;
+    const s = (perKind[kindKey(HC.parse(n))] = perKind[kindKey(HC.parse(n))] || new Set());
+    for (let i = 0; i < W * H; i++) { const o = 4 * i; if (img.data[o + 3] && !(mk && (mk.data[o] || mk.data[o + 1] || mk.data[o + 2]))) s.add(hexAt(img.data, o)); }
+  }
+  const lk = JSON.parse(JSON.stringify(look));
+  lk.name = look.name + ' (synthetic ' + (opt.fixture || 'sample') + ')';
+  lk.note = 'SYNTHETIC SAMPLE — not art. ' + (look.note || '');
+  lk.fixed = {}; lk.files = {}; lk.as = {};
+  for (const [kk, s] of Object.entries(perKind)) {
+    lk.fixed['sample_' + kk] = [...s].sort();
+    const base = look.files[kk] !== undefined ? look.files[kk] : look.files[kk.startsWith('acc_') ? 'acc' : kk];
+    lk.files[kk] = base === 'fixed' ? 'fixed' : base.filter((q) => HC.MATERIALS.includes(q)).concat(['sample_' + kk]);
+  }
+  const inDir = path.join(dir, 'in'), maskDir = path.join(dir, 'masks'), lookFile = path.join(dir, 'look.json');
+  fs.mkdirSync(inDir, { recursive: true }); fs.mkdirSync(maskDir, { recursive: true });
+  fs.writeFileSync(lookFile, JSON.stringify(lk, null, 1) + '\n');
+  const TEXT = { Comment: SYNTHETIC_LABEL }, big = opt.enlarge !== false;
+  for (const n of kitNames) {
+    const img = layers[n];
+    const out = big && n === 'pc_torso_coat' ? enlargeImg(img, 4) : big && n === 'pc_head_focus' ? enlargeImg(img, 3, '#ff00ff') : big && n === 'acc_flower' ? square1024(img) : img;
+    fs.writeFileSync(path.join(inDir, n + '.png'), encodePNG(out, { text: TEXT }));
+  }
+  if (opt.companions !== false) for (const f of fs.readdirSync(sampleDir).filter((f) => /^suzu_.*\.png$/.test(f))) fs.copyFileSync(path.join(sampleDir, f), path.join(inDir, f));
+  const cfg = JSON.parse(fs.readFileSync(path.join(sampleDir, 'import.json'), 'utf8'));
+  cfg.files = big ? { pc_head_focus: { background: 'magenta' } } : {};
+  cfg.note = SYNTHETIC_LABEL + '. The synthetic ' + (opt.fixture || 'sample') + ' kit recoloured into look A\'s real colours by the game (tools/harmony/keyify_report.mjs syntheticDelivery).';
+  fs.writeFileSync(path.join(inDir, 'import.json'), JSON.stringify(cfg, null, 1) + '\n');
+  for (const n of ['pc_head_cue', 'pc_head_peak']) {
+    const img = layers[n], mk = blank(W, H);
+    let k = 0;
+    for (let i = 0; i < W * H; i++) if (img.data[4 * i + 3] && hexAt(img.data, 4 * i) === '#4a1a24') { mk.data.set([0, 0, 0, 255], 4 * i); k++; }
+    if (k) fs.writeFileSync(path.join(maskDir, n + '.mask.png'), encodePNG(mk, { text: TEXT }));
+  }
+  return { inDir, maskDir, lookFile, look: lk, set, sample, kitNames, layers, perKind };
+}
+
+// The report's workflow for reported pixels, automated for the synthetic kits: a mask over just those pixels (painted from
+// a ground truth: truthOf(name) → its mask image), then keyify again — repeated while pixels are reported (a neighbour's
+// vote can change once a mask decides the pixel next to it). baseMasks: masks to start from (copied into mdir).
+export async function settleMasks(RB, dir, baseMasks, mdir, first, truthOf, opt) {
+  const W = RB.harmonyContract.BUST.w, H = RB.harmonyContract.BUST.h;
+  fs.mkdirSync(mdir, { recursive: true });
+  if (baseMasks) for (const f of fs.readdirSync(baseMasks)) fs.copyFileSync(path.join(baseMasks, f), path.join(mdir, f));
+  let res = first, rounds = 0, painted = 0;
+  while (res.report.unresolved && rounds < 4) {
+    for (const [n, f] of Object.entries(res.report.files).filter(([, q]) => q.unresolvedCount)) {
+      const truth = truthOf(n), mp = path.join(mdir, n + '.mask.png'), prev = fs.existsSync(mp) ? decodePNG(fs.readFileSync(mp)) : blank(W, H);
+      for (const u of res.files.find((q) => q.name === n).unresolved) { const i = u.y * W + u.x; prev.data.set(truth.data.subarray(4 * i, 4 * i + 4), 4 * i); painted++; }
+      fs.writeFileSync(mp, encodePNG(prev));
+    }
+    res = keyifyKit(dir, Object.assign({ RB, masksDir: mdir }, opt));
+    rounds++;
+  }
+  return { res, rounds, painted };
 }
 // The player bust of an imported set ({ manifest, files }) in each look, painted by the runtime (then uninstalled).
 export async function bustsOf(RB, set, looks, prefer) {
@@ -268,15 +360,15 @@ const FLAG_COL = [[FLAG.unresolved, [255, 32, 32]], [FLAG.foreign, [255, 64, 255
 function writeFilesSheet(file, kitFiles, rt, HC, label) {
   const W = HC.BUST.w, H = HC.BUST.h, N = W * H, s = 2;
   const box = unionBox(kitFiles.map((f) => f.img), W, H), pw = (box[2] - box[0]) * s, ph = (box[3] - box[1]) * s;
-  const cols = ['INPUT (REAL COLOURS)', 'KEY LAYER', 'MASK OVER INPUT', 'ROUND TRIP (LOOK A)', 'DELTA E (0 GREY, .02 YELLOW, .05 RED)', 'FLAGGED'];
-  const head = label ? 96 : 72, rowH = ph + 22;
-  const img = blank(12 + cols.length * (pw + 10), head + kitFiles.length * rowH + 40, BG);
+  const cols = ['INPUT (REAL COLOURS)', 'KEY LAYER', 'MASK OVER INPUT', 'ROUND TRIP (LOOK A)', 'DELTA E (.02 YELLOW, .05 RED)', 'FLAGGED'];
+  const head = label ? 96 : 72, rowH = ph + 24;
+  const img = blank(12 + cols.length * (pw + 10), head + kitFiles.length * rowH + 50, BG);
   text(img, 'HARMONY KEYIFY — ' + kitFiles.length + ' KIT FILES — 2X, CROPPED TO THE KIT', 10, 10, INK, 2);
   if (label) text(img, label, 10, 36, WARN, 2);
-  cols.forEach((c, i) => text(img, c, 10 + i * (pw + 10), head - 16, DIM));
+  cols.forEach((c, i) => text(img, c, 10 + i * (pw + 10), head - 26, DIM));
   const T = { mask: HC.MATERIALS.map((m) => { const n = parseInt(HC.MASK[m].slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }) };
   kitFiles.forEach((f, r) => {
-    const y = head + r * rowH, R = rt.get(f.name);
+    const y = head + r * rowH + 14, R = rt.get(f.name);
     const panels = [f.img, f.key, blank(W, H), R ? R.back : blank(W, H), blank(W, H), blank(W, H)];
     for (let i = 0; i < N; i++) {
       const o = 4 * i;
@@ -292,7 +384,7 @@ function writeFilesSheet(file, kitFiles, rt, HC, label) {
       panels[5].data.set([...(fc || mix([grey, grey, grey], [34, 37, 46], 0.6)), 255], o);
     }
     panels.forEach((p, i) => { const x = 10 + i * (pw + 10); rect(img, x, y, x + pw, y + ph, '#2e323e', true); blit(img, crop(p, box), x, y, s); });
-    text(img, f.name + (f.mode && f.mode !== 'real' ? ' (' + f.mode.toUpperCase() + ')' : '') + (f.unresolved && f.unresolved.length ? ' — ' + f.unresolved.length + ' UNRESOLVED' : ''), 10, y + ph + 6, f.unresolved && f.unresolved.length ? '#ff7070' : INK);
+    text(img, f.name + (f.mode && f.mode !== 'real' ? ' (' + f.mode.toUpperCase() + ')' : '') + (f.unresolved && f.unresolved.length ? ' — ' + f.unresolved.length + ' UNRESOLVED' : ''), 10, y - 11, f.unresolved && f.unresolved.length ? '#ff7070' : INK);
   });
   let lx = 10;
   const ly = img.h - 30;

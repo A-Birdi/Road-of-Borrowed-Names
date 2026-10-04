@@ -1,0 +1,1793 @@
+{
+ "label": "SYNTHETIC SAMPLE — not art",
+ "looks": [
+  {
+   "label": "LOOK A (THE GAME LOOK)",
+   "look": {
+    "skin": 1,
+    "hair": "ponytail",
+    "hairColor": 3,
+    "cloth": [
+     "#4e7a4a",
+     "#3c5e38",
+     "#2e6a6e"
+    ],
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ]
+   }
+  },
+  {
+   "label": "SKIN 0, WHITE HAIR, CLOTH 6",
+   "look": {
+    "skin": 0,
+    "hair": "ponytail",
+    "hairColor": 6,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 6,
+    "flowerCol": "#8a7ab8",
+    "scarfCol": "#2c4468",
+    "bandCol": "#c8452a"
+   }
+  },
+  {
+   "label": "SKIN 6, BLACK HAIR, CLOTH 5",
+   "look": {
+    "skin": 6,
+    "hair": "ponytail",
+    "hairColor": 0,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 5,
+    "flowerCol": "#f4f0e8",
+    "scarfCol": "#d8c89a",
+    "bandCol": "#f4f0e8"
+   }
+  },
+  {
+   "label": "SKIN 4, TEAL HAIR, CLOTH 0",
+   "look": {
+    "skin": 4,
+    "hair": "ponytail",
+    "hairColor": 8,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 0,
+    "flowerCol": "#c8962e",
+    "scarfCol": "#6a3a4a",
+    "bandCol": "#c8962e"
+   }
+  },
+  {
+   "label": "SKIN 2, GOLD HAIR, CLOTH 3",
+   "look": {
+    "skin": 2,
+    "hair": "ponytail",
+    "hairColor": 4,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 3,
+    "flowerCol": "#2c4468",
+    "scarfCol": "#c8452a",
+    "bandCol": "#2c4468"
+   }
+  },
+  {
+   "label": "SKIN 5, PLUM HAIR, CLOTH 7",
+   "look": {
+    "skin": 5,
+    "hair": "ponytail",
+    "hairColor": 9,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 7,
+    "flowerCol": "#c8452a",
+    "scarfCol": "#f4f0e8",
+    "bandCol": "#3a7a5a"
+   }
+  },
+  {
+   "label": "SKIN 3, DARK BROWN HAIR, CLOTH 1",
+   "look": {
+    "skin": 3,
+    "hair": "ponytail",
+    "hairColor": 1,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 1,
+    "flowerCol": "#3a7a5a",
+    "scarfCol": "#8a7ab8",
+    "bandCol": "#d8c89a"
+   }
+  },
+  {
+   "label": "SKIN 1, GREY HAIR, CLOTH 4",
+   "look": {
+    "skin": 1,
+    "hair": "ponytail",
+    "hairColor": 5,
+    "shape": "coat",
+    "acc": [
+     "glasses",
+     "flower",
+     "satchel"
+    ],
+    "outfit": 4,
+    "flowerCol": "#d8c89a",
+    "scarfCol": "#3a7a5a",
+    "bandCol": "#6a3a4a"
+   }
+  }
+ ],
+ "runs": {
+  "sample_reference": {
+   "values": "reference",
+   "kit": {
+    "accessory:flower": {
+     "material": "accessory",
+     "accessory": "flower",
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#df4a7b",
+       "#e7667f",
+       "#ee8289",
+       "#f4a6a0",
+       "#f6cbc2",
+       "#f9e8e2"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 63,
+     "lightness": [
+      0.6748,
+      0.9429
+     ],
+     "tReference": [
+      -0.0007,
+      4
+     ],
+     "t": [
+      -0.0007,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "accessory:headband": {
+     "material": "accessory",
+     "accessory": "headband",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#0b1117",
+       "#172a33",
+       "#234750",
+       "#2e6a6e",
+       "#3d8885",
+       "#4da195"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 185,
+     "lightness": [
+      0.273,
+      0.5787
+     ],
+     "tReference": [
+      0,
+      3
+     ],
+     "t": [
+      0,
+      3
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "accessory:scarf": {
+     "material": "accessory",
+     "accessory": "scarf",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#66311d",
+       "#864c24",
+       "#a66d29",
+       "#c8962e",
+       "#d0b24c",
+       "#d4c66f"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 450,
+     "lightness": [
+      0.4775,
+      0.8196
+     ],
+     "tReference": [
+      0,
+      3.9915
+     ],
+     "t": [
+      0,
+      3.9915
+     ],
+     "minNeighbourStep": 0.9829,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "clothMain": {
+     "material": "clothMain",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#18251c",
+       "#29412e",
+       "#3a5d3c",
+       "#4e7a4a",
+       "#67945d",
+       "#85a677"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 6163,
+     "lightness": [
+      0.3493,
+      0.6879
+     ],
+     "tReference": [
+      0,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "clothTrim": {
+     "material": "clothTrim",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#06090c",
+       "#14242c",
+       "#21444d",
+       "#2e6a6e",
+       "#3e8b89",
+       "#50a89c"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 751,
+     "lightness": [
+      0.2499,
+      0.5882
+     ],
+     "tReference": [
+      0,
+      3
+     ],
+     "t": [
+      0,
+      3
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "hair": {
+     "material": "hair",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#42161d",
+       "#632021",
+       "#863528",
+       "#aa5230",
+       "#c2713d",
+       "#c6925d"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 6496,
+     "lightness": [
+      0.3478,
+      0.6985
+     ],
+     "tReference": [
+      0,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "skin": {
+     "material": "skin",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#815c4d",
+       "#b3846a",
+       "#d8a882",
+       "#e3b792",
+       "#eec8a4",
+       "#f3d6b9"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 4969,
+     "lightness": [
+      0.5096,
+      0.8989
+     ],
+     "tReference": [
+      0,
+      3.9855
+     ],
+     "t": [
+      0,
+      3.9855
+     ],
+     "minNeighbourStep": 0.9691,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    }
+   },
+   "warnings": [],
+   "busts": {
+    "n": 38232,
+    "mean": 0.0002,
+    "p95": 0.0031,
+    "max": 0.0062,
+    "over": 0,
+    "alpha": 0,
+    "looks": [
+     {
+      "look": "LOOK A (THE GAME LOOK)",
+      "n": 4779,
+      "mean": 0,
+      "p95": 0,
+      "max": 0,
+      "over": 0
+     },
+     {
+      "look": "SKIN 0, WHITE HAIR, CLOTH 6",
+      "n": 4779,
+      "mean": 0.0003,
+      "p95": 0.0031,
+      "max": 0.0031,
+      "over": 0
+     },
+     {
+      "look": "SKIN 6, BLACK HAIR, CLOTH 5",
+      "n": 4779,
+      "mean": 0.0006,
+      "p95": 0.0062,
+      "max": 0.0062,
+      "over": 0
+     },
+     {
+      "look": "SKIN 4, TEAL HAIR, CLOTH 0",
+      "n": 4779,
+      "mean": 0.0003,
+      "p95": 0.0033,
+      "max": 0.0033,
+      "over": 0
+     },
+     {
+      "look": "SKIN 2, GOLD HAIR, CLOTH 3",
+      "n": 4779,
+      "mean": 0.0002,
+      "p95": 0.0016,
+      "max": 0.0026,
+      "over": 0
+     },
+     {
+      "look": "SKIN 5, PLUM HAIR, CLOTH 7",
+      "n": 4779,
+      "mean": 0.0003,
+      "p95": 0.0035,
+      "max": 0.0035,
+      "over": 0
+     },
+     {
+      "look": "SKIN 3, DARK BROWN HAIR, CLOTH 1",
+      "n": 4779,
+      "mean": 0.0003,
+      "p95": 0.0033,
+      "max": 0.0033,
+      "over": 0
+     },
+     {
+      "look": "SKIN 1, GREY HAIR, CLOTH 4",
+      "n": 4779,
+      "mean": 0,
+      "p95": 0,
+      "max": 0,
+      "over": 0
+     }
+    ]
+   }
+  },
+  "sample_range": {
+   "values": "range",
+   "kit": {
+    "accessory:flower": {
+     "material": "accessory",
+     "accessory": "flower",
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#df4a7b",
+       "#e7667f",
+       "#ee8289",
+       "#f4a6a0",
+       "#f6cbc2",
+       "#f9e8e2"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 63,
+     "lightness": [
+      0.6748,
+      0.9429
+     ],
+     "tReference": [
+      -0.0007,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 0.9999,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "accessory:headband": {
+     "material": "accessory",
+     "accessory": "headband",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#0b1117",
+       "#172a33",
+       "#234750",
+       "#2e6a6e",
+       "#3d8885",
+       "#4da195"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 185,
+     "lightness": [
+      0.273,
+      0.5787
+     ],
+     "tReference": [
+      0,
+      3
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1.2229,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "accessory:scarf": {
+     "material": "accessory",
+     "accessory": "scarf",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#66311d",
+       "#864c24",
+       "#a66d29",
+       "#c8962e",
+       "#d0b24c",
+       "#d4c66f"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 450,
+     "lightness": [
+      0.4775,
+      0.8196
+     ],
+     "tReference": [
+      0,
+      3.9915
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 0.9841,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "clothMain": {
+     "material": "clothMain",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#18251c",
+       "#29412e",
+       "#3a5d3c",
+       "#4e7a4a",
+       "#67945d",
+       "#85a677"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 6163,
+     "lightness": [
+      0.3493,
+      0.6879
+     ],
+     "tReference": [
+      0,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "clothTrim": {
+     "material": "clothTrim",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#06090c",
+       "#14242c",
+       "#21444d",
+       "#2e6a6e",
+       "#3e8b89",
+       "#50a89c"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 751,
+     "lightness": [
+      0.2499,
+      0.5882
+     ],
+     "tReference": [
+      0,
+      3
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1.2376,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "hair": {
+     "material": "hair",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#42161d",
+       "#632021",
+       "#863528",
+       "#aa5230",
+       "#c2713d",
+       "#c6925d"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 6496,
+     "lightness": [
+      0.3478,
+      0.6985
+     ],
+     "tReference": [
+      0,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "skin": {
+     "material": "skin",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#815c4d",
+       "#b3846a",
+       "#d8a882",
+       "#e3b792",
+       "#eec8a4",
+       "#f3d6b9"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 4969,
+     "lightness": [
+      0.5096,
+      0.8989
+     ],
+     "tReference": [
+      0,
+      3.9855
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 0.9709,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    }
+   },
+   "warnings": [
+    "accessory:headband: range mapping stretches the painted values (reference t 0…3) to s0…s4: if the darkest or lightest painted value is not meant as the material's deepest shadow or highlight, use --values=reference",
+    "clothTrim: range mapping stretches the painted values (reference t 0…3) to s0…s4: if the darkest or lightest painted value is not meant as the material's deepest shadow or highlight, use --values=reference"
+   ],
+   "busts": {
+    "n": 38232,
+    "mean": 0.0013,
+    "p95": 0.0033,
+    "max": 0.0973,
+    "over": 792,
+    "alpha": 0,
+    "looks": [
+     {
+      "look": "LOOK A (THE GAME LOOK)",
+      "n": 4779,
+      "mean": 0.0013,
+      "p95": 0,
+      "max": 0.0875,
+      "over": 111
+     },
+     {
+      "look": "SKIN 0, WHITE HAIR, CLOTH 6",
+      "n": 4779,
+      "mean": 0.0014,
+      "p95": 0.003,
+      "max": 0.0815,
+      "over": 111
+     },
+     {
+      "look": "SKIN 6, BLACK HAIR, CLOTH 5",
+      "n": 4779,
+      "mean": 0.0015,
+      "p95": 0.0062,
+      "max": 0.0664,
+      "over": 111
+     },
+     {
+      "look": "SKIN 4, TEAL HAIR, CLOTH 0",
+      "n": 4779,
+      "mean": 0.0012,
+      "p95": 0.0033,
+      "max": 0.0585,
+      "over": 111
+     },
+     {
+      "look": "SKIN 2, GOLD HAIR, CLOTH 3",
+      "n": 4779,
+      "mean": 0.0011,
+      "p95": 0.0021,
+      "max": 0.0606,
+      "over": 63
+     },
+     {
+      "look": "SKIN 5, PLUM HAIR, CLOTH 7",
+      "n": 4779,
+      "mean": 0.0014,
+      "p95": 0.0039,
+      "max": 0.0658,
+      "over": 111
+     },
+     {
+      "look": "SKIN 3, DARK BROWN HAIR, CLOTH 1",
+      "n": 4779,
+      "mean": 0.0011,
+      "p95": 0.0032,
+      "max": 0.0546,
+      "over": 63
+     },
+     {
+      "look": "SKIN 1, GREY HAIR, CLOTH 4",
+      "n": 4779,
+      "mean": 0.0013,
+      "p95": 0,
+      "max": 0.0973,
+      "over": 111
+     }
+    ]
+   },
+   "validation": {
+    "roundTrip": {
+     "accessory:flower": {
+      "n": 63,
+      "mean": 0,
+      "p95": 0,
+      "max": 0,
+      "changed": 0,
+      "overJnd": 0
+     },
+     "accessory:headband": {
+      "n": 185,
+      "mean": 0.0397,
+      "p95": 0.076,
+      "max": 0.076,
+      "changed": 135,
+      "overJnd": 135
+     },
+     "accessory:scarf": {
+      "n": 450,
+      "mean": 0.0003,
+      "p95": 0.0009,
+      "max": 0.0009,
+      "changed": 135,
+      "overJnd": 0
+     },
+     "clothMain": {
+      "n": 6163,
+      "mean": 0,
+      "p95": 0,
+      "max": 0,
+      "changed": 0,
+      "overJnd": 0
+     },
+     "clothTrim": {
+      "n": 751,
+      "mean": 0.0517,
+      "p95": 0.0875,
+      "max": 0.0875,
+      "changed": 708,
+      "overJnd": 708
+     },
+     "hair": {
+      "n": 6496,
+      "mean": 0,
+      "p95": 0,
+      "max": 0,
+      "changed": 0,
+      "overJnd": 0
+     },
+     "skin": {
+      "n": 4969,
+      "mean": 0,
+      "p95": 0,
+      "max": 0,
+      "changed": 0,
+      "overJnd": 0
+     }
+    },
+    "gameLookVsInput": {
+     "n": 4779,
+     "mean": 0.0013,
+     "p95": 0,
+     "max": 0.0875,
+     "changed": 111,
+     "overJnd": 111,
+     "alphaDiffers": 0,
+     "state": "peak",
+     "note": "the converted kit assembled and recoloured in the game look vs the input layers assembled unrecoloured; equal to the per-file round trip when the look's reference ramps are the game look's own"
+    },
+    "floor": {
+     "accessory:flower": {
+      "values": 5,
+      "targets": 10,
+      "minNeighbourDE": 0.0485,
+      "worst": {
+       "target": "flower #f4f0e8",
+       "between": [
+        2.0002,
+        3.0001
+       ]
+      },
+      "pairsApartWhenPainted": 4,
+      "pairsUnderJndOnSomeTarget": 0
+     },
+     "accessory:headband": {
+      "values": 4,
+      "targets": 10,
+      "minNeighbourDE": 0.0637,
+      "worst": {
+       "target": "headband #f4f0e8",
+       "between": [
+        0,
+        1.2229
+       ]
+      },
+      "pairsApartWhenPainted": 3,
+      "pairsUnderJndOnSomeTarget": 0
+     },
+     "accessory:scarf": {
+      "values": 5,
+      "targets": 10,
+      "minNeighbourDE": 0.0482,
+      "worst": {
+       "target": "scarf #f4f0e8",
+       "between": [
+        3.0159,
+        4
+       ]
+      },
+      "pairsApartWhenPainted": 4,
+      "pairsUnderJndOnSomeTarget": 0
+     },
+     "clothMain": {
+      "values": 5,
+      "targets": 8,
+      "minNeighbourDE": 0.0506,
+      "worst": {
+       "target": "cloth 6 main",
+       "between": [
+        3,
+        4
+       ]
+      },
+      "pairsApartWhenPainted": 4,
+      "pairsUnderJndOnSomeTarget": 0
+     },
+     "clothTrim": {
+      "values": 4,
+      "targets": 8,
+      "minNeighbourDE": 0.0768,
+      "worst": {
+       "target": "cloth 1 trim",
+       "between": [
+        2.5908,
+        4
+       ]
+      },
+      "pairsApartWhenPainted": 3,
+      "pairsUnderJndOnSomeTarget": 0
+     },
+     "hair": {
+      "values": 5,
+      "targets": 10,
+      "minNeighbourDE": 0.0488,
+      "worst": {
+       "target": "hair white",
+       "between": [
+        2,
+        3
+       ]
+      },
+      "pairsApartWhenPainted": 4,
+      "pairsUnderJndOnSomeTarget": 0
+     },
+     "skin": {
+      "values": 4,
+      "targets": 7,
+      "minNeighbourDE": 0.0492,
+      "worst": {
+       "target": "skin 0",
+       "between": [
+        3.0291,
+        4
+       ]
+      },
+      "pairsApartWhenPainted": 3,
+      "pairsUnderJndOnSomeTarget": 0
+     }
+    }
+   }
+  },
+  "rich_reference": {
+   "values": "reference",
+   "reportedFirst": 19,
+   "maskRounds": 3,
+   "maskedPixels": 25,
+   "neighbours": 510,
+   "clamped": 333,
+   "kit": {
+    "accessory:flower": {
+     "material": "accessory",
+     "accessory": "flower",
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#df4a7b",
+       "#e7667f",
+       "#ee8289",
+       "#f4a6a0",
+       "#f6cbc2",
+       "#f9e8e2"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 38,
+     "keyValues": 38,
+     "merged": [],
+     "pixels": 63,
+     "lightness": [
+      0.6748,
+      0.9754
+     ],
+     "tReference": [
+      -0.0007,
+      4.4915
+     ],
+     "t": [
+      -0.0007,
+      4.4915
+     ],
+     "minNeighbourStep": 0.0001,
+     "clamped": {
+      "colours": 3,
+      "pixels": 5
+     },
+     "gamutClipped": {
+      "colours": 2,
+      "pixels": 2
+     }
+    },
+    "accessory:headband": {
+     "material": "accessory",
+     "accessory": "headband",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#0b1117",
+       "#172a33",
+       "#234750",
+       "#2e6a6e",
+       "#3d8885",
+       "#4da195"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 81,
+     "keyValues": 81,
+     "merged": [],
+     "pixels": 172,
+     "lightness": [
+      0.2717,
+      0.6914
+     ],
+     "tReference": [
+      -0.0126,
+      4.5127
+     ],
+     "t": [
+      -0.0126,
+      4.5127
+     ],
+     "minNeighbourStep": 0,
+     "clamped": {
+      "colours": 4,
+      "pixels": 8
+     },
+     "gamutClipped": {
+      "colours": 1,
+      "pixels": 2
+     }
+    },
+    "accessory:scarf": {
+     "material": "accessory",
+     "accessory": "scarf",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#66311d",
+       "#864c24",
+       "#a66d29",
+       "#c8962e",
+       "#d0b24c",
+       "#d4c66f"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 128,
+     "keyValues": 128,
+     "merged": [],
+     "pixels": 450,
+     "lightness": [
+      0.43,
+      0.8458
+     ],
+     "tReference": [
+      -0.4848,
+      4.5155
+     ],
+     "t": [
+      -0.4848,
+      4.5155
+     ],
+     "minNeighbourStep": 0,
+     "clamped": {
+      "colours": 5,
+      "pixels": 7
+     },
+     "gamutClipped": {
+      "colours": 1,
+      "pixels": 4
+     }
+    },
+    "clothMain": {
+     "material": "clothMain",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#18251c",
+       "#29412e",
+       "#3a5d3c",
+       "#4e7a4a",
+       "#67945d",
+       "#85a677"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 218,
+     "keyValues": 218,
+     "merged": [],
+     "pixels": 6163,
+     "lightness": [
+      0.2973,
+      0.7236
+     ],
+     "tReference": [
+      -0.5198,
+      4.5212
+     ],
+     "t": [
+      -0.5198,
+      4.5212
+     ],
+     "minNeighbourStep": 0,
+     "clamped": {
+      "colours": 14,
+      "pixels": 79
+     },
+     "gamutClipped": {
+      "colours": 2,
+      "pixels": 81
+     }
+    },
+    "clothTrim": {
+     "material": "clothTrim",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#06090c",
+       "#14242c",
+       "#21444d",
+       "#2e6a6e",
+       "#3e8b89",
+       "#50a89c"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 111,
+     "keyValues": 111,
+     "merged": [],
+     "pixels": 735,
+     "lightness": [
+      0.2472,
+      0.7177
+     ],
+     "tReference": [
+      -0.0243,
+      4.5101
+     ],
+     "t": [
+      -0.0243,
+      4.5101
+     ],
+     "minNeighbourStep": 0,
+     "clamped": {
+      "colours": 8,
+      "pixels": 25
+     },
+     "gamutClipped": {
+      "colours": 5,
+      "pixels": 31
+     }
+    },
+    "hair": {
+     "material": "hair",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#42161d",
+       "#632021",
+       "#863528",
+       "#aa5230",
+       "#c2713d",
+       "#c6925d"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 294,
+     "keyValues": 294,
+     "merged": [],
+     "pixels": 6496,
+     "lightness": [
+      0.3082,
+      0.7348
+     ],
+     "tReference": [
+      -0.5204,
+      4.517
+     ],
+     "t": [
+      -0.5204,
+      4.517
+     ],
+     "minNeighbourStep": 0,
+     "clamped": {
+      "colours": 23,
+      "pixels": 122
+     },
+     "gamutClipped": {
+      "colours": 8,
+      "pixels": 99
+     }
+    },
+    "skin": {
+     "material": "skin",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#815c4d",
+       "#b3846a",
+       "#d8a882",
+       "#e3b792",
+       "#eec8a4",
+       "#f3d6b9"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "reference",
+     "fallback": null,
+     "compressed": false,
+     "values": 168,
+     "keyValues": 168,
+     "merged": [],
+     "pixels": 4969,
+     "lightness": [
+      0.4365,
+      0.9261
+     ],
+     "tReference": [
+      -0.5106,
+      4.5295
+     ],
+     "t": [
+      -0.5106,
+      4.5295
+     ],
+     "minNeighbourStep": 0,
+     "clamped": {
+      "colours": 11,
+      "pixels": 87
+     },
+     "gamutClipped": {
+      "colours": 16,
+      "pixels": 298
+     }
+    }
+   },
+   "busts": {
+    "n": 38232,
+    "mean": 0.0008,
+    "p95": 0.0032,
+    "max": 0.5178,
+    "over": 8,
+    "alpha": 0,
+    "looks": [
+     {
+      "look": "LOOK A (THE GAME LOOK)",
+      "n": 4779,
+      "mean": 0,
+      "p95": 0,
+      "max": 0.0368,
+      "over": 1
+     },
+     {
+      "look": "SKIN 0, WHITE HAIR, CLOTH 6",
+      "n": 4779,
+      "mean": 0.0007,
+      "p95": 0.0027,
+      "max": 0.2243,
+      "over": 1
+     },
+     {
+      "look": "SKIN 6, BLACK HAIR, CLOTH 5",
+      "n": 4779,
+      "mean": 0.0009,
+      "p95": 0.0036,
+      "max": 0.3082,
+      "over": 1
+     },
+     {
+      "look": "SKIN 4, TEAL HAIR, CLOTH 0",
+      "n": 4779,
+      "mean": 0.001,
+      "p95": 0.0032,
+      "max": 0.4112,
+      "over": 1
+     },
+     {
+      "look": "SKIN 2, GOLD HAIR, CLOTH 3",
+      "n": 4779,
+      "mean": 0.001,
+      "p95": 0.0032,
+      "max": 0.4651,
+      "over": 1
+     },
+     {
+      "look": "SKIN 5, PLUM HAIR, CLOTH 7",
+      "n": 4779,
+      "mean": 0.001,
+      "p95": 0.0034,
+      "max": 0.4163,
+      "over": 1
+     },
+     {
+      "look": "SKIN 3, DARK BROWN HAIR, CLOTH 1",
+      "n": 4779,
+      "mean": 0.0011,
+      "p95": 0.0032,
+      "max": 0.5178,
+      "over": 1
+     },
+     {
+      "look": "SKIN 1, GREY HAIR, CLOTH 4",
+      "n": 4779,
+      "mean": 0.0007,
+      "p95": 0.0032,
+      "max": 0.0312,
+      "over": 1
+     }
+    ]
+   }
+  },
+  "sample_sampled_range": {
+   "values": "range",
+   "sampled": {
+    "master": {
+     "w": 768,
+     "h": 640,
+     "native": [
+      192,
+      160
+     ],
+     "cell": [
+      4,
+      4
+     ]
+    },
+    "mask": true,
+    "accessory": "flower",
+    "materials": {
+     "hair": {
+      "pixels": 1036,
+      "tones": [
+       "#632021",
+       "#863528",
+       "#aa5230",
+       "#c2713d",
+       "#c6925d"
+      ]
+     },
+     "accessory": {
+      "pixels": 63,
+      "tones": [
+       "#e7667f",
+       "#ee8289",
+       "#f4a6a0",
+       "#f6cbc2",
+       "#f9e8e2"
+      ]
+     },
+     "clothTrim": {
+      "pixels": 112,
+      "tones": [
+       "#21444d",
+       "#2e6a6e",
+       "#3e8b89"
+      ]
+     },
+     "skin": {
+      "pixels": 885,
+      "tones": [
+       "#815c4d",
+       "#d8a882",
+       "#ecc6a2",
+       "#f5d8bb"
+      ]
+     },
+     "clothMain": {
+      "pixels": 1519,
+      "tones": [
+       "#29412e",
+       "#3a5d3c",
+       "#4e7a4a",
+       "#67945d",
+       "#85a677"
+      ]
+     }
+    },
+    "fixed": 41,
+    "pixels": 3999,
+    "ignored": 0
+   },
+   "reportedFirst": 7,
+   "maskRounds": 1,
+   "maskedPixels": 7,
+   "neighbours": 52,
+   "busts": {
+    "n": 38232,
+    "mean": 0.0028,
+    "p95": 0.0059,
+    "max": 0.488,
+    "over": 1089,
+    "alpha": 0,
+    "looks": [
+     {
+      "look": "LOOK A (THE GAME LOOK)",
+      "n": 4779,
+      "mean": 0.0025,
+      "p95": 0.0013,
+      "max": 0.116,
+      "over": 134
+     },
+     {
+      "look": "SKIN 0, WHITE HAIR, CLOTH 6",
+      "n": 4779,
+      "mean": 0.0027,
+      "p95": 0.0025,
+      "max": 0.1902,
+      "over": 133
+     },
+     {
+      "look": "SKIN 6, BLACK HAIR, CLOTH 5",
+      "n": 4779,
+      "mean": 0.0026,
+      "p95": 0.0062,
+      "max": 0.2865,
+      "over": 133
+     },
+     {
+      "look": "SKIN 4, TEAL HAIR, CLOTH 0",
+      "n": 4779,
+      "mean": 0.0028,
+      "p95": 0.0037,
+      "max": 0.4015,
+      "over": 145
+     },
+     {
+      "look": "SKIN 2, GOLD HAIR, CLOTH 3",
+      "n": 4779,
+      "mean": 0.0032,
+      "p95": 0.0025,
+      "max": 0.4385,
+      "over": 133
+     },
+     {
+      "look": "SKIN 5, PLUM HAIR, CLOTH 7",
+      "n": 4779,
+      "mean": 0.0033,
+      "p95": 0.0059,
+      "max": 0.4071,
+      "over": 145
+     },
+     {
+      "look": "SKIN 3, DARK BROWN HAIR, CLOTH 1",
+      "n": 4779,
+      "mean": 0.0028,
+      "p95": 0.0029,
+      "max": 0.488,
+      "over": 133
+     },
+     {
+      "look": "SKIN 1, GREY HAIR, CLOTH 4",
+      "n": 4779,
+      "mean": 0.0023,
+      "p95": 0.0013,
+      "max": 0.1007,
+      "over": 133
+     }
+    ]
+   }
+  }
+ },
+ "checks": {
+  "failed": []
+ }
+}
