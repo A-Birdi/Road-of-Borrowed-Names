@@ -2423,7 +2423,10 @@ build; the manifest regenerates unchanged):
 - SHOTS.md §7b conflict resolved: the Chapter 3–4 rows, plus the Chapter 5 crossing row;
 - the merged index.html is byte-identical to a fresh build;
 - unit 25,762/0; validator clean;
-- browser: recorded on the next line.
+- browser, one at a time, on 55b97b1:
+  - sequence_chapters 121/0; sequence_chapters_56 196/0; sequence_manual --quick 64/0;
+  - staging_chapters --ch=3 2267/0, --ch=4 1350/0;
+  - story_ch4: all 8 runs ok (52–53 checks each).
 
 **Not verified:**
 - A person's review of the art and pacing.
@@ -2431,3 +2434,57 @@ build; the manifest regenerates unchanged):
 - On a 390 × 844 screen Ren is drawn small, and the glasses are a few pixels.
 - The "Quest complete" notice shows over the first `ch6.ren` shot at 844 × 390 until it fades.
 - The dusk square shows for about 300 ms as the assembly closes.
+
+## Chapters 5–6 staged, and the pass over long quests, cases, Pages, pets, Company, the Atlas and shiritori (merged 2026-10-04; HX33–HX40, HX45)
+
+**What:**
+- **Chapters 5–6** (worker branch, final 335d39b; the record is docs/expressive/reports/staging_ch5_ch6.md):
+  - 126 performed scenes directed and played on 537 branches, including the endings performed in the world
+    (`sa.end_comp`, the epilogue towns);
+  - one quiet oral history;
+  - props `key` and `bell`;
+  - Kei gains the head shake (the one person in Lanternfall who can still say no);
+  - three narrated escalations in KNOWN;
+  - a scratch comparison found the story commands identical in all 1,250 scenes.
+- **The rest** (worker branch, final e58fe4a; the record is docs/expressive/reports/staging_lq_misc.md):
+  - 142 decisions, 112 staged and 30 quiet, including the drafts the chapter passes left in these folders;
+  - by area:
+    - long quests: 25 staged;
+    - cases: 14 staged;
+    - pets: 24 staged (8 vignettes and all 16 greetings);
+    - Pages: 8 staged;
+    - Company: 34 staged;
+    - shiritori: 4 staged;
+    - the Atlas: 3 staged; 9 quiet, because its rooms are generated;
+  - one gesture (`pointup`) and 14 props;
+  - runner fixtures for cases, bond, Company and settle;
+  - three narrated escalations in KNOWN.
+- **No "Performed overworld (H)" draft remains undecided** in any chapter's or group's files.
+
+**The workers' runs, each on its own branch merged with 91eb61f:**
+- Chapters 5–6:
+  - unit 26,538/0; validator no errors;
+  - staging_chapters --ch=5 2174/0 (no walker forced through); --ch=6 2042/0 (6 world's-fallback records, all
+    `sa.epi_lf`); --ch=showcase 66/0;
+  - story_ch5 8/8; story_ch6 all ok; sequence_chapters_56 144/0.
+- The rest:
+  - unit: conversation_continuity 1070/0, scene_manifest 774/0, practice_b 96/0; the full suite 25,587/0 before
+    the merge;
+  - staging_chapters --ch=misc 3586/0 (116 scenes, 493 branches); --ch=showcase 66/0;
+  - pages_ending all ok; pets 20/0; pets_greet 17/0; company all passed; actor_life 39/0; walk_round all passed;
+    cases all passed; long_quests all passed.
+
+**The lead's merge** (done in a scratch checkout, then the task branch fast-forwarded):
+- Conflicts resolved by union:
+  - staging_chapters.mjs runs CH12, CH34, CH56 and MISC (`--ch=1..6|misc|showcase`);
+  - scene_manifest.mjs merges the ch56 decisions, then misc;
+  - the manifest and index.html regenerated.
+- unit 27,093/0; validator clean.
+- browser: recorded on the next line.
+
+**Not verified:**
+- Play speed with a person watching; real devices; Firefox and Safari.
+- A dog's corner in co.village cannot be reached on foot (a map question).
+- In `sa.epi_lf`, Kasane's walk-in is forced past Yae after waiting: the world's fallback.
+- In `lf.water_returns` with staging off you stand on a tile that floods again.
+- `sa.kasane_meet`'s `!move pc up 4` leaves a scene-owned companion behind.
