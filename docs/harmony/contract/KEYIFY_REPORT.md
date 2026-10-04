@@ -142,11 +142,18 @@ The flower, scarf and headband colours were varied with them.
 
 ## Open questions
 
-1. **Lips.** The brief puts blush and lips in the skin family; this task asked for them fixed. `lookA.json` keeps them
+1. **Lips. Settled by the lead (2026-10-04): lips follow skin.** `lookA.json` now sets `"as": { "lips": "skin" }`,
+   as the brief asks, so a darker skin gets darker lips, as the code busts do. Run with `--values=reference` if the
+   lips' darkest value should not set skin's s0 under `range`. (Was:) The brief puts blush and lips in the skin
+   family; this task asked for them fixed. `lookA.json` keeps them
    fixed (part `lips`). `"as": { "lips": "skin" }` maps them as skin instead. They then also join skin's value range,
    so under `range` the darkest lip value becomes skin's s0.
-2. **Look A's trim.** The brief's look A has a darker teal trim, but the game's outfit 2 has a gold one. The default
+2. **Look A's trim. Settled by the lead: teal stays.** It is only the colour the layers are painted in. It is well
+   clear of the brass parts, where a gold trim would sit too close to the buckle and the ferrule, and the game
+   recolours it to the look's own trim. (Was:) The brief's look A has a darker teal trim, but the game's outfit 2
+   has a gold one. The default
    look file uses #2e6a6e, which no shipped outfit offers, so "look A" here is not selectable in the game.
-3. **Regeneration from a real-colour source batch** is two steps: keyify, then the importer. Should
+3. **Regeneration from a real-colour source batch: two steps, kept** (keyify, then the importer, unchanged). (Was:)
+   It is two steps: keyify, then the importer. Should
    `harmony_import.mjs` run keyify itself when `import.json` says `"colours": "real"`? The two-step form keeps the
    importer unchanged.

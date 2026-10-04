@@ -2900,3 +2900,8 @@ the built index.html.
 - **The browser.** Keyify is a node tool, so no browser test was added.
 - **Open questions** (KEYIFY_REPORT.md): lips fixed (this task) or skin (the brief); look A's teal trim is not a
   shipped outfit; whether the importer should run keyify itself for real-colour source batches.
+
+**The lead's check after merging keyify (e533312, then lips → skin in `tools/harmony/lookA.json`):**
+- U all 27,164/0; U harmony 385/0; B harmony_raster 26/0;
+- index.html rebuilds unchanged (keyify is a dev tool and ships nothing).
+- No painted art has been through keyify yet: Batch 1a is its real test.
