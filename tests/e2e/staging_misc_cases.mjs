@@ -179,6 +179,42 @@ const PAGES = [
       { name: 'Suzu · funny', comp: 'suzu', picks: [0], expect: { suzu: ['size', 'palm', 'shrug', 'celebrate', 'check'] } }, { name: 'Suzu · quiet', comp: 'suzu', picks: [1], expect: { suzu: ['nod'] } },
       { name: 'later', comp: 'ren', picks: [2], minLines: 4 }] }),
 ];
+// Pages II and III: the project as the companion keeps it (src/content/pages/10_pages.js state()): accepted with a
+// theme, one recorded moment from an outing that has come home (no outing under way); for Page III, the aspect
+// chosen at the camp. They are told in the Hall, standing clear of the doorway (Tsuru at the desk).
+const THEME = { nao: 'next', mio: 'pause', ren: 'sure', suzu: 'funny' };
+const EV = (ret) => ({ run: 'fixture', id: 'lanterns', kind: 'lanterns', desc: { jp: '{白|しろ}い {灯籠|とうろう} に {言葉|ことば} を {戻|もど}して 、 {灯|ひ} を ともした', en: 'gave the blank lanterns back their words and lit them' },
+  title: { jp: '{白|しろ}い {灯籠|とうろう} の {列|れつ}', en: 'The row of blank lanterns' }, room: null, branch: null, mods: [], pet: null, t: 0, ret });
+const PROJ = (c, stage, o) => ({ project: Object.assign({ v: 1, comp: c, stage, theme: THEME[c], t1: 0, ev: EV('complete'), road: {} }, stage >= 2 ? { aspect: null, where: 'camp' } : {}, o || {}) });
+const HALL = { map: 'rw.hall', at: [6, 5, 'left'], flags: F(POST, { atlas_open: true }) };
+const PAGE3 = { nao: ['write', 'palm', 'nod', 'handover'], mio: ['write', 'palm', 'nod', 'handover'], ren: ['write', 'palm', 'handover'], suzu: ['write', 'palm', 'celebrate', 'read', 'handover', 'check'] };
+PAGES.push(
+  M(Object.assign({ scene: 'pages.home3' }, HALL, { minLines: 4, variants: [
+    ...ALL4.map((c) => ({ name: 'caption · ' + c, comp: c, company: PROJ(c, 2), bond: 6, picks: [0, 0], expect: { [c]: PAGE3[c], pc: ['receive'] } })),
+    { name: 'Nao · turned back early, the card later', comp: 'nao', company: PROJ('nao', 2, { ev: EV('early') }), picks: [2], expect: { nao: ['strap'] } },
+    { name: 'Mio · sent back', comp: 'mio', company: PROJ('mio', 2, { ev: EV('defeat') }), picks: [2], minLines: 3 },
+    { name: 'Ren · not certain, the road gone', comp: 'ren', company: PROJ('ren', 2, { theme: 'unsure', ev: EV(null) }), picks: [1], expect: { pc: ['write'], ren: ['write'] } },
+    { name: 'Suzu · read together', comp: 'suzu', company: PROJ('suzu', 2), picks: [0, 1], expect: { suzu: ['laugh'] } },
+    { name: 'Suzu · just pinned', comp: 'suzu', company: PROJ('suzu', 2), picks: [0, 2] },
+    { name: 'Suzu · later', comp: 'suzu', company: PROJ('suzu', 2), picks: [2], minLines: 3 },
+    { name: 'made at home (from Page II)', comp: 'mio', company: PROJ('mio', 2, { where: 'home' }), picks: [0], minLines: 3 }] })),
+  M(Object.assign({ scene: 'pages.home2' }, HALL, { minLines: 5, variants: [
+    ...ALL4.map((c) => ({ name: 'the aspect, Page III now · ' + c, comp: c, company: PROJ(c, 1), picks: [0, 0, 0, 0], expect: { [c]: PAGE3[c] } })),
+    { name: 'the aspect, Page III later', comp: 'ren', company: PROJ('ren', 1), picks: [1, 1], expect: { comp: ['chin', 'nod'] } },
+    ...ALL4.map((c) => ({ name: 'put off · ' + c, comp: c, company: PROJ(c, 1, { ev: EV('early') }), picks: [3], minLines: 3 }))] })),
+  M(Object.assign({ scene: 'pages.ask3' }, HALL, { minLines: 2, variants: [
+    ...ALL4.map((c) => ({ name: 'now · ' + c, comp: c, company: PROJ(c, 2), picks: [0, 0, 0] })),
+    { name: 'later', comp: 'nao', company: PROJ('nao', 2), picks: [1], expect: { comp: ['strap', 'nod'] } }] })),
+  M(Object.assign({ scene: 'pages.home' }, HALL, { minLines: 2, variants: [
+    { name: 'Page II waiting · talk now', comp: 'suzu', company: PROJ('suzu', 1), picks: [0, 0, 0, 0, 0], expect: { comp: ['palm', 'size'] } },
+    { name: 'Page II waiting · later', comp: 'mio', company: PROJ('mio', 1), picks: [1], expect: { comp: ['palm', 'nod'] } },
+    { name: 'Page III waiting', comp: 'ren', company: PROJ('ren', 2), picks: [0, 0], expect: { ren: ['chin', 'write'] } }] })),
+  // at the camp, the outing under way is the Atlas's own (tests/e2e/pages_ending.mjs plays it there); here the
+  // lines and cues alone, the page left as it was (no camp, no Page II commit)
+  M(Object.assign({ scene: 'pages.camp' }, HALL, { minLines: 2, variants: [
+    ...ALL4.map((c) => ({ name: 'the aspect · ' + c, comp: c, company: PROJ(c, 1, { ev: EV(null) }), picks: [0] })),
+    { name: 'later', comp: 'nao', company: PROJ('nao', 1, { ev: EV(null) }), picks: [3], expect: { comp: ['nod'] } }] })),
+);
 
 // ---- The Company (src/content/company): rest-place talks, reflections, rituals, invitations ----------------------
 // told wherever you rest or wherever the companion asks: a rest place stands for them (the Gull in Saltglass, facing
@@ -238,4 +274,27 @@ COMPANY.push(
   M(Object.assign({ scene: 'co.inv_lf_word_after' }, REST, { comps: ALL4, flags: F(SE, { lf_bell_rung: true }) })),
 );
 
-export const MISC = [...FARE, ...ROAD, ...CASES, ...PETS, ...PAGES, ...COMPANY];
+// ---- Shiritori: How we played (src/content/wordplay/20_reflect.js), a rest-menu topic after a game ----------------
+// (the game's own record — a cooperative chain, who won — only changes which of the lines is said; without one,
+// the plain lines play)
+const WP = { nao: [['lookbetween', 'nod'], ['strap'], ['aside'], ['nod']], mio: [['chin', 'exhale', 'nod'], ['palm'], ['fidget'], ['nod']],
+  ren: [['read', 'count', 'nod'], ['chin'], ['palm'], ['nod']], suzu: [['size', 'nod'], ['avert'], ['thanks'], ['laugh']] };
+const WORDPLAY = ALL4.map((c) => M(Object.assign({ scene: 'wp.reflect_' + c }, REST, { comp: c, minLines: 2,
+  variants: ['the endings', 'finding the word', 'playing together', 'not now'].map((name, i) => ({ name, picks: [i], expect: { [c]: WP[c][i] } })) })));
+
+// ---- The Unwritten Atlas (src/atlas/60_scenes.js): Tsuru's first explanation, the camp, the homecoming -------------
+// (the camp's own map is drawn for each outing: a camp on the Archive road stands for it; without an outing under
+// way its hooks do nothing and the menu offers going on or heading home; tests/e2e/pages_ending.mjs plays the real
+// camps. The homecoming is played where the road sets you down, a step inside the Hall's door, facing out.)
+const ATLAS = [
+  M({ scene: 'atlas.intro.first', map: 'rw.hall', at: [5, 5, 'up'], talk: 'tsuru', flags: F(POST, { atlas_open: true }), comps: ALL4, minLines: 6,
+    expect: { tsuru: ['lookroad', 'count', 'point'] } }),
+  M({ scene: 'atlas.camp', map: 'sa.camp', at: [15, 11, 'right'], flags: F(SE, C5, { ch5_done: true }), minLines: 2,
+    variants: [{ name: 'go on', picks: [0], vars: { atlas_camp_i: 0 }, comps: ALL4 }, { name: 'head home', picks: [1], vars: { atlas_camp_i: 2 }, comps: ALL4 }] }),
+  M({ scene: 'atlas.home', map: 'rw.hall', at: [5, 7, 'down'], flags: F(POST, { atlas_open: true }),
+    variants: [{ name: 'walked to the end', vars: { atlas_kind: 1, atlas_restore: 1, atlas_unlock: 1 }, comps: ALL4 },
+      { name: 'turned back', vars: { atlas_kind: 2 }, comp: 'ren', expect: { comp: ['nod'] } },
+      { name: 'sent back', vars: { atlas_kind: 3, atlas_names: 1 }, comps: ALL4 }] }),
+];
+
+export const MISC = [...FARE, ...ROAD, ...CASES, ...PETS, ...PAGES, ...COMPANY, ...WORDPLAY, ...ATLAS];

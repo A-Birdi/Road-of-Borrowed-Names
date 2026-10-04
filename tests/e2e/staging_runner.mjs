@@ -38,6 +38,8 @@ export async function runBranch(p, c, v, o) {
     // the companion's bond at that moment (src/engine/06_company.js: 3 rhythm, 6 trusted, 10 lasting)
     const bond = v.bond != null ? v.bond : c.bond;
     if (bond != null && s.company) s.company.bond = { fixture: bond };
+    // records the company keeps at that moment, e.g. The Pages We Keep's project (src/content/pages/10_pages.js)
+    for (const [k, val] of Object.entries(Object.assign({}, c.company || {}, v.company || {}))) if (s.company) s.company[k] = JSON.parse(JSON.stringify(val));
     Object.assign(s.player, c.player || {}, v.player || {});
     for (const w of (c.words || []).concat(v.words || [])) if (!s.words.includes(w)) s.words.push(w);
     // the creatures on the maps stay out of it (a patrol reaching you would start a battle mid-scene)
@@ -113,9 +115,11 @@ export async function runBranch(p, c, v, o) {
     // talked to: the person you talk to turns to you (50_world.js talkTo) and the scene knows who they are
     const talk = v.talk !== undefined ? v.talk : c.talk;
     if (talk) { const n = RB.staging.actor(talk); if (n) RB.world.faceTo(n, W.player.x, W.player.y); }
+    // (the history length is taken before the scene starts: a hook's narration can be its first line, shown in the
+    // same tick as the run begins)
+    let seenLines = s.backlog.length;
     RB.script.run(c.scene, talk ? { npc: (RB.staging.actor(talk) || {}).id || talk } : undefined).then(() => { done = true; }, (e) => { err = String(e); done = true; });
     const picks = (v.picks || c.picks || []).slice();
-    let seenLines = s.backlog.length;
     const lines = [], chose = [];
     const t0 = performance.now();
     while (!done && performance.now() - t0 < 60000) {
