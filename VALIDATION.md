@@ -2354,3 +2354,36 @@ scenes.json and SCENES.md regenerated.
 - Phones, Firefox and Safari, taps; a 60 s idle; large text; TTS.
 - When a long line pushes the dialogue sheet past 56 % of the height, a 1280 × 720 shot re-frames mid-way to its
   phone-sideways layout.
+
+## Chapters 3–4 staged (merged 2026-10-04; HX33–HX36, HX39, HX40 for Ch3–Ch4)
+
+**What** (worker branch `staging-ch3-ch4`, final 7b51b0a; the record is docs/expressive/reports/staging_ch3_ch4.md):
+- 113 performed scenes directed, decided `(C)` in tools/scene_curated_ch34.mjs, and played on 481 branches.
+- 16 drafts in lq, cases and pets are left with a proposal each.
+- Six handovers are staged side-on; quiet nights at the futons; ten doorway step-offs.
+- Sōsuke moved one tile (26,19), out from behind the well roof. The overworld geometry record was re-recorded; only
+  sb.hamlet changed.
+- Nine new props (no letters drawn); no new gestures.
+- **No profile changes:** out-of-profile cues were swapped for in-profile ones. Two escalations the text performs are in
+  KNOWN.
+- practice_b indices moved: C04, C05, C06, C09.
+- **The runner** resets every NPC to their place before each branch (no assertion weakened). Chapters 1–2 were rerun
+  for it.
+
+**The worker's runs** (final round, one at a time, no timing failures):
+- staging_chapters: --ch=3 2267/0 (twice), --ch=4 1350/0, --ch=showcase 66/0, --ch=1 698/0, --ch=2 1623/0;
+- story_ch3 16/16; story_ch4 8/8; side_ch3 3/3;
+- actor_life 39/0; walk_round all passed;
+- unit 25,704/0 (scene_manifest 546/0, conversation_continuity 754/0, practice_b 96/0, overworld_geometry 3/0);
+- validator: no errors.
+
+**The lead's runs on the merge** (with the Chapter 5–6 sequences; the merged index.html is byte-identical to a fresh
+build; the manifest regenerates unchanged):
+- unit 25,744/0; validator clean;
+- browser: recorded on the next line.
+
+**Not verified:**
+- Play speed with a person watching; real devices.
+- Whole-story pursue.mjs runs through Chapters 3–4.
+- Some speakers are heard before they are near (the world's placements).
+- In the quiet nights the room brightens for a few frames during the morning fade.

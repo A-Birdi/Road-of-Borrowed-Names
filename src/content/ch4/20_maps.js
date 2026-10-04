@@ -147,7 +147,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'fuki', x: 24, y: 18, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_fuki' },
       { id: 'yae', x: 18, y: 17, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_yae' },
       { id: 'tetsuji', x: 26, y: 17, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_tetsuji' },
-      { id: 'sousuke', x: 27, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
+      // (Sōsuke stands beside the well, not behind it: at 27,19 its roof hid him and the envelopes he holds up in sb.eve_start.)
+      { id: 'sousuke', x: 26, y: 19, dir: 'up', if: 'sb_evening&!post', talk: 'sb.eve_sousuke' },
       // After the story: Hoshino on his bench if he stayed.
       { id: 'hoshino', x: 36, y: 9, dir: 'down', if: 'post&!sb_hoshino_goes', talk: 'sb.hoshino_post' },
       { id: 'fuki', x: 23, y: 16, dir: 'down', if: 'ch4_done&!sb_evening', talk: [{ if: 'post', scene: 'sb.fuki_post' }, { if: 'quest.sb_bell&!quest.sb_bell=done', scene: 'sb.fuki' }, { scene: 'sb.fuki_after' }] },

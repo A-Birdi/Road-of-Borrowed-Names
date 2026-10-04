@@ -80,67 +80,125 @@ comp[smirk]: …… その {前|まえ} に 、 ヒロ が {今|いま} {何|な
 !music cinder
 
 @scene co.suzu_ask
+# Staged: Hiro keeps the blowpipe turning while he answers, shakes his head at his own strange story and works
+# on; with Suzu, her hand brushes the ribbon; when his head goes white the gather is held still; Suzu's
+# thanks, he turns to her ("have we met?"), her laugh; then the two of you step to the door, Suzu looks back
+# at him once, and faces you with her decision.
+!gesture hiro glasswork hold
 pc: {広場|ひろば} の {空|あ}いた {席|せき} 、 {誰|だれ} の ため の {席|せき} です か 。 || The empty seat in the square — who is it for?
 hiro[think]: …… {母|はは} の だ 。 || …My mother's.
 hiro: {俺|おれ} が {七|なな}つ の {年|とし} に 、 {旅|たび} の {一座|いちざ} と {一緒|いっしょ} に {先|さき} へ {行|い}った 。 {春|はる} に {帰|かえ}る 、 って 。 || The year I was seven, she went on ahead with a travelling troupe. Said she'd be back in spring.
+!gesture hiro shake
 hiro[smirk]: {春|はる} は {二十回|にじゅっかい} {来|き}た 。 {変|へん} な {話|はなし} だろ 。 {分|わ}かってる 。 || Spring has come twenty times. Strange story, I know.
+!gesture hiro glasswork hold
 hiro: {赤|あか}い リボン の {姉|ねえ}ちゃん が 、 そう {教|おし}えて くれた 。 {顔|かお} は {覚|おぼ}えて ない 。 リボン だけ 。 || A girl with a red ribbon told me. I don't remember her face. Just the ribbon.
+?(comp=suzu) !gesture comp touchhair
 ?(comp=suzu) narr: スズ の {手|て} が 、 {色褪|いろあ}せた リボン に {触|ふ}れて 、 すぐ {離|はな}れた 。 || Suzu's hand brushes her faded ribbon, and drops away.
 hiro: {席|せき} を {空|あ}けて おく の は …… {習|なら}わし だ 。 {待|ま}ってる わけ じゃ ない 。 たぶん 。 || Keeping the seat is… a habit. It's not that I'm waiting. Probably.
+!gesture hiro cool pc hold
 hiro: {他|ほか} に {何|なに} か {理由|りゆう} が ある {気|き} が する んだ が 、 {考|かんが}える と {頭|あたま} が {白|しろ}く なる 。 || I feel there's some other reason, but when I try to think about it, my head goes white.
+?(comp=suzu) !gesture comp thanks
 ?(comp=suzu) comp[smile]: …… {素敵|すてき} な {習|なら}わし ね 。 ありがとう 、 {話|はな}して くれて 。 || …It's a lovely custom. Thank you for telling us.
+?(comp=suzu) !gesture hiro listen comp
 ?(comp=suzu) hiro: …… あんた 、 どこ か で {会|あ}った か ？ || …Have we met?
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {旅芸人|たびげいにん} の {顔|かお} は 、 みんな どこ か で {見|み}た {顔|かお} よ 。 || Every travelling performer has a face you've seen somewhere.
+?(comp=suzu) !walkto pc 6 8 left
+?(comp=suzu) !walkto comp 5 8 up
+?(comp=suzu) !gesture comp lookroad hiro
 ?(comp=suzu) narr: {工房|こうぼう} を {出|で}る と 、 スズ は {一度|いちど} だけ {振|ふ}り{返|かえ}った 。 || Outside the workshop, Suzu looks back just once.
+?(comp=suzu) !look comp pc
+?(comp=suzu) !look pc comp
+?(comp=suzu) !gesture comp lowered hold
 ?(comp=suzu) comp: …… リボン だけ {覚|おぼ}えてる 、 か 。 {私|わたし} も {同|おな}じ よ 。 あの {子|こ} の {顔|かお} より 、 {引|ひ}っ{張|ぱ}られた リボン の {感|かん}じ の {方|ほう} を {覚|おぼ}えてる 。 || …He remembers only the ribbon. Same for me. I remember the tug on the ribbon better than his face.
+?(comp=suzu) !gesture comp avert pc hold
 ?(comp=suzu) comp: {今|いま} {言|い}って も 、 {火事|かじ} ごと {頭|あたま} から {滑|すべ}り{落|お}ちる だけ 。 {窯|かま} が {記録|きろく} を {返|かえ}して から に する わ 。 || If I told him now, it'd slide off his mind with the rest of the fire. I'll wait until the kiln gives its record back.
 !set co_suzu_asked
 !quest co_suzu 2
 
 @scene co.suzu_c_square
+# Staged: Suzu's small celebration at meeting you again; she greets your companion in kind (points Nao out and
+# Nao's nod, an open hand for Mio and Mio's thanks, a laugh for Ren and Ren counts the times they got lost);
+# her showman's hands for the slot she gave herself, a glance away as she asks after Hiro, you point the way
+# to the workshop, she looks away and back, and points you to Fusa's inn.
 !if co_suzu_c_met -> again
+!gesture suzu celebrate
 suzu[surprise]: …… あら ！ $name ！ {葦|あし}ノ{瀬|せ} {以来|いらい} ね 。 {世|よ} の {中|なか} って 、 {舞台|ぶたい} が {狭|せま}い わ 。 || …Well! $name! Not since Reedwake. What a small stage the world is.
+?(comp=nao) !gesture suzu point comp
 ?(comp=nao) suzu: ナオ も 。 {相変|あいか}わらず {出口|でぐち} ばかり {見|み}てる の ね 。 || And Nao. Still watching the exits, I see.
+?(comp=nao) !gesture comp nod suzu
 ?(comp=nao) comp[smirk]: {職業病|しょくぎょうびょう} だ よ 。 {久|ひさ}しぶり 、 スズ 。 || Occupational habit. Long time, Suzu.
+?(comp=mio) !gesture suzu palm
 ?(comp=mio) suzu: ミオ も ！ {薬箱|くすりばこ} 、 {今日|きょう} も {重|おも}そう ね 。 || Mio too! Your medicine box looks as heavy as ever.
+?(comp=mio) !gesture comp thanks
 ?(comp=mio) comp[smile]: スズ さん 。 お{元気|げんき} そう で よかった 。 || Suzu. I'm glad you look well.
+?(comp=ren) !gesture suzu laugh
 ?(comp=ren) suzu: レン まで 。 {道|みち} に {迷|まよ}わず に {来|こ}られた の ？ {奇跡|きせき} ね 。 || Even Ren. You made it here without getting lost? A miracle.
+?(comp=ren) !gesture comp count
 ?(comp=ren) comp: {三回|さんかい} {迷|まよ}いました 。 {四回目|よんかいめ} で {着|つ}きました 。 || I got lost three times. The fourth time, I arrived.
 pc: スズ も {祭|まつ}り に ？ || You're here for the festival too?
+!gesture suzu size
 suzu[laugh]: {呼|よ}ばれて ない けど 、 {呼|よ}ばれた こと に した の 。 サヨ さん に {手紙|てがみ} を {出|だ}したら 、 {舞台|ぶたい} を {一枠|ひとわく} くれた わ 。 || Nobody invited me, so I invited myself. I wrote to Sayo and she gave me a slot on the stage.
+!gesture suzu aside
 suzu[closed]: …… ねえ 、 ガラス {職人|しょくにん} の ヒロ って {人|ひと} 、 どこ で {働|はたら}いてる か {知|し}ってる ？ || …Say, do you know where a glassblower called Hiro works?
+!gesture pc point 42,17
 pc: {東|ひがし} の {工房|こうぼう} だ よ 。 {知|し}り{合|あ}い ？ || The workshop to the east. Do you know him?
+!gesture suzu avert pc hold
 suzu[smile]: {知|し}り{合|あ}い …… じゃ ない わ 。 {向|む}こう は {私|わたし} を {覚|おぼ}えて ない もの 。 || Know him… no. He wouldn't remember me.
+!gesture suzu point 7,15
 suzu: …… {夜|よる} は フサ さん の {宿|やど} に いる から 。 {暇|ひま} が あったら {来|き}て 。 {観客|かんきゃく} が {一人|ひとり} {欲|ほ}しい の 。 || …I'm staying at Fusa's inn. If you've a moment this evening, come by. I need an audience of one.
 !set co_suzu_c_met
 !quest co_suzu 0
 !end
 :again
+!gesture suzu nod pc
 suzu: {夜|よる} は フサ さん の {宿|やど} よ 。 {待|ま}ってる 。 …… {急|いそ}がなくて いい けど 。 || I'm at Fusa's inn in the evenings. I'll be waiting. …No hurry, though.
 
 @scene co.suzu_c_inn
+# Staged: Suzu's open hand to the seat; she glances away as she begins, and your companion answers (Nao's
+# shake of the head, Mio's guarded hand, Ren's hand to the chin); her head goes down over the woman who did
+# not come back and the lie; she faces you to name Hiro; she holds out her account book open at the unpaid
+# line, reads it over, and asks the favour with an open hand.
+!gesture suzu palm
 suzu[smile]: {来|き}て くれた 。 {座|すわ}って 。 {甘酒|あまざけ} 、 {奢|おご}る わ 。 {帳簿|ちょうぼ} に は {書|か}かない で おいて あげる 。 || You came. Sit. The amazake's on me — and I won't even write it in my book.
+!gesture suzu aside
 suzu: {二十年前|にじゅうねんまえ} 、 {一座|いちざ} で この {里|さと} の {秋祭|あきまつ}り に {来|き}た の 。 {前|まえ} の {晩|ばん} に {火事|かじ} が あって …… {上|うえ} の {段|だん} が {燃|も}えた 。 || Twenty years ago I came here with my troupe for the festival. The night before, there was a fire… the upper terraces burned.
+?(comp=nao) !gesture comp shake
 ?(comp=nao) comp: …… {里|さと} の {人|ひと} は {誰|だれ} も {覚|おぼ}えて ない 。 {記録|きろく} に も ない 。 || …Nobody here remembers. It isn't in the records.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {火事|かじ} …… やっぱり 。 だから {火傷|やけど} の {薬|くすり} が 、 どこ に も ない ん です ね 。 || A fire… I knew it. That's why there's no burn salve anywhere.
+?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: {記録|きろく} から も {人|ひと} から も {消|き}えた {火事|かじ} 。 {灯|ひ} の {名|な} と {同|おな}じ {消|き}え{方|かた} です 。 || A fire gone from the records and from people. It vanished the way lantern names do.
+!gesture suzu lowered hold
 suzu: {私|わたし} は {次|つぎ} の {朝|あさ} に {里|さと} を {出|で}た から 、 {全部|ぜんぶ} {覚|おぼ}えてる 。 {窯|かま} の {女|おんな} の {人|ひと} が {上|うえ} へ {行|い}って 、 {戻|もど}らなかった こと も 。 || I left the next morning, so I remember all of it. Including the woman from the kiln who went up the hill and never came back.
 suzu[sad]: その {人|ひと} の {息子|むすこ} に 、 {私|わたし} 、 {嘘|うそ} を ついた の 。 「 お{母|かあ}さん は {一座|いちざ} と {先|さき} へ {行|い}った 。 {春|はる} に {帰|かえ}って くる 」 って 。 || I lied to her son. I told him, "Your mum's gone on ahead with the troupe. She'll be back in spring."
+!gesture suzu avert pc hold
 suzu: その {子|こ} が ヒロ 。 {広場|ひろば} の {空|あ}いた {席|せき} の 。 || That boy is Hiro. The one with the empty seat in the square.
+!prop suzu accountbook
+!gesture suzu present pc prop=accountbook hold
 narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて {見|み}せた 。 「 ヒロ ── {本当|ほんとう} の こと {一|ひと}つ 。 {未払|みはら}い 。 」 || Suzu opens her account book to show you: "Hiro — one truth. Unpaid."
+!gesture suzu read prop=accountbook hold
 suzu: {手紙|てがみ} で {返|かえ}そう と した こと も ある 。 {字|じ} が {白|しろ}く {消|き}えた わ 。 {嘘|うそ} だけ が {残|のこ}る の 。 {痛|いた}く ない から 。 || I tried to pay it by letter once. The words faded white. Only the lie stays — it doesn't hurt anyone, you see.
+!prop suzu -
+!gesture suzu palm
 suzu[closed]: …… お{願|ねが}い が ある の 。 ヒロ が {今|いま} 、 あの {席|せき} を どう {思|おも}ってる か 、 {聞|き}いて きて くれない ？ {私|わたし} が {聞|き}く と 、 {顔|かお} に {出|で}ちゃう から 。 || …I've a favour to ask. Would you find out what Hiro thinks about that seat now? If I ask, it'll show on my face.
 !set co_suzu_c_inn co_suzu_told
 !note co_suzu_ledger
 !quest co_suzu 1
 
 @scene co.suzu_c_wait
+# Staged: Suzu shrugs at the twenty years; when you report, your open hand, her hand goes to the ribbon, and
+# her nod as she promises.
 !if co_suzu_asked&!co_suzu_c_reported -> report
+!gesture suzu shrug
 suzu: {急|いそ}がなくて いい わ 。 {二十年|にじゅうねん} {待|ま}たせた ん だ もの 。 {数日|すうじつ} くらい 。 || No rush. I've kept him waiting twenty years. What's a few days.
 !end
 :report
+!gesture pc palm
 pc: ヒロ は 、 {赤|あか}い リボン の {姉|ねえ}ちゃん を {覚|おぼ}えて いた 。 {顔|かお} は {覚|おぼ}えて ない けど 、 リボン だけ は 。 || Hiro remembers a girl with a red ribbon. Not her face — just the ribbon.
+!gesture suzu touchhair
 suzu[sad]: …… そう 。 {私|わたし} も 、 あの {子|こ} の {顔|かお} より 、 リボン を {引|ひ}っ{張|ぱ}られた {感|かん}じ の {方|ほう} を {覚|おぼ}えてる 。 || …I see. Same for me. I remember the tug on the ribbon better than his face.
+!gesture suzu nod pc
 suzu: {今|いま} {言|い}って も 、 {火事|かじ} ごと {頭|あたま} から {滑|すべ}り{落|お}ちる だけ ね 。 {窯|かま} の {記録|きろく} が {戻|もど}ったら …… その {時|とき} に {言|い}う 。 {約束|やくそく} する わ 。 {帳簿|ちょうぼ} に {書|か}いて おく 。 || If I told him now, it'd slide off his mind along with the fire. When the kiln's record comes back… I'll tell him then. I promise. I'll write it in my book.
 !set co_suzu_c_reported
 
@@ -214,14 +272,27 @@ suzu: その {子|こ} が ヒロ 。 {帳簿|ちょうぼ} に 、 {二十年|�
 !goto start
 
 @scene co.suzu_c_after
+# Staged: Suzu points to the seat next to Hiro's that she is booked for, and holds out her account book at
+# "Paid in part"; with Nao, she shrugs at her own advice and Nao glances away.
+!gesture suzu point prop:co_seat
 suzu[smile]: {明日|あした} 、 {発|た}つ わ 。 {次|つぎ} の {町|まち} で 、 {次|つぎ} の {舞台|ぶたい} 。 …… {来年|らいねん} の {秋|あき} は 、 {予定|よてい} が {入|はい}ってる の 。 {隣|となり} の {席|せき} に ね 。 || I'm off tomorrow. Next town, next stage. …Next autumn I'm booked, though. The seat next door.
+!prop suzu accountbook
+!gesture suzu present pc prop=accountbook hold
 suzu: {帳簿|ちょうぼ} の {最後|さいご} の {頁|ページ} 、 {見|み}る ？ 「 {一部|いちぶ} {返済|へんさい} 」 。 {線|せん} を {引|ひ}かない {借|か}り が ある なんて 、 {知|し}らなかった 。 || Want to see the last page of my book? "Paid in part." I never knew there were debts you don't cross out.
+?(comp=nao) !prop suzu -
+?(comp=nao) !gesture suzu shrug
 ?(comp=nao) suzu: ナオ 。 あなた の {鞄|かばん} の {底|そこ} の {手紙|てがみ} 、 {重|おも}そう ね 。 …… {私|わたし} が {言|い}える {立場|たちば} じゃ ない けど 。 || Nao. The letter at the bottom of your bag looks heavy. …Not that I'm one to talk.
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: …… {余計|よけい} な お{世話|せわ} だ 。 {分|わ}かってる よ 。 || …Mind your own business. I know.
 
 @scene co.suzu_c_post
+# Staged: Suzu's laugh at this year's payment; a shrug at standing before an audience, an open hand for the
+# watched keeper.
+!gesture suzu laugh
 suzu[laugh]: あら 、 $name ！ {今年|ことし} も {返済|へんさい} に {来|き}た の 。 {残|のこ}り 、 {十八回|じゅうはっかい} 。 {利子|りし} は {柿|かき} で {払|はら}ってる わ 。 || Oh, $name! Here to make this year's payment. Eighteen to go. I'm paying the interest in persimmons.
+?(end_kasane_trial) !gesture suzu shrug
 ?(end_kasane_trial) suzu: {灯落|ひおち} で 、 {番人|ばんにん} さん が {皆|みな} の {前|まえ} に {立|た}った ん です って ね 。 {観客|かんきゃく} の {前|まえ} に {立|た}つ の は 、 {怖|こわ}い の よ 。 {私|わたし} は {知|し}ってる 。 || I heard the keeper stood before everyone in Lanternfall. Standing in front of an audience is frightening. I'd know.
+?(end_kasane_keeper) !gesture suzu palm
 ?(end_kasane_keeper) suzu: {番人|ばんにん} さん は 、 {山|やま} で {書庫|しょこ} を {守|まも}ってる の よ ね 。 {誰|だれ} か が {見|み}て いて くれる の は 、 {悪|わる}く ない こと よ 。 {観客|かんきゃく} が いれば 、 {人|ひと} は {逃|に}げない から 。 || The keeper's minding the archive in the mountains, isn't it. Having someone watch you isn't a bad thing. With an audience, people don't run.
 
 @scene co.fest_suzu_c

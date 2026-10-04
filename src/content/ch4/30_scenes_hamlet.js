@@ -4,18 +4,32 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene sb.arrive
+# Staged: your breath shows in the thin cold air; your companion's own way into the snow (Nao shrugs at the
+# cold, looks up the road to the village where the post waits, a hand to the satchel strap; Mio looks you over
+# for cold fingers and points up to the observatory; Ren looks up the one road and opens a hand; Suzu's
+# showman's hands, then she points up to the village with the clear bell).
 !set sb_arrived
 !chapter 4
 !card {第四章|だいよんしょう} ・ {雪鈴|ゆきすず} || Chapter Four — Snowbell
+!gesture pc exhale
 narr: {坂|さか} を {上|のぼ}る ほど 、 {空気|くうき} が {薄|うす}く なって いく 。 {雪|ゆき} が {音|おと} を {吸|す}いこんで 、 {自分|じぶん} たち の {足音|あしおと} だけ が {聞|き}こえる 。 || The higher the road climbs, the thinner the air. The snow swallows every sound but your own footsteps.
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: {灰実|はいみ} の {里|さと} から {半日|はんにち} で これ か 。 {荷物|にもつ} より {先|さき} に {耳|みみ} が {凍|こお}る 。 || Half a day from Cinder Orchard and it's this. My ears'll freeze before the parcels do.
+?(comp=nao) !gesture comp lookroad up
 ?(comp=nao) comp: {雪鈴|ゆきすず} は 、 {冬|ふゆ} の あいだ {郵便|ゆうびん} が {止|と}まる {村|むら} だ 。 {手紙|てがみ} は みんな 、 {雪|ゆき} が とける まで {待|ま}つ 。 || Snowbell's a place where the post stops for winter. Every letter waits for the thaw.
+?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: …… {待|ま}たせる {側|がわ} の {配達人|はいたつにん} と して は 、 {耳|みみ} が {痛|いた}い {話|はなし} だけど な 。 || …Not a pleasant thing to hear, for a courier who's kept people waiting before.
+?(comp=mio) !gesture comp observe pc
 ?(comp=mio) comp[worry]: {指|ゆび} 、 {冷|つめ}たく なって ない ？ {手袋|てぶくろ} の {予備|よび} 、 ありますよ 。 ええと 、 {二組|ふたくみ} …… いえ 、 {三組|さんくみ} 。 || Are your fingers getting cold? I've got spare gloves. Let's see, two pairs… no, three.
+?(comp=mio) !gesture comp point up
 ?(comp=mio) comp[smile]: {山|やま} の {上|うえ} に 、 {天文台|てんもんだい} が ある そう です 。 {夜|よる} に なる と 、 {下|した} の {町|まち} から も {灯|あか}り が {見|み}える んです って 。 || They say there's an observatory up on the mountain. At night its lamp can be seen even from the towns below.
+?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp[think]: {雪鈴|ゆきすず} 。 {灯|ひ} の {道|みち} の {里|さと} の {中|なか} で 、 いちばん {高|たか}い ところ に ある {村|むら} です 。 || Snowbell. Of all the villages on the lantern roads, it sits the highest.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp[smile]: {記録|きろく} に よれば 、 この {坂|さか} は {一本道|いっぽんみち} です 。 …… わたし でも {迷|まよ}いません 。 たぶん 。 || According to the records, this slope is a single road. …Even I can't get lost. Probably.
+?(comp=suzu) !gesture comp size
 ?(comp=suzu) comp[laugh]: さあ さあ 、 {雪|ゆき} の {舞台|ぶたい} の {幕開|まくあ}け だよ ！ …… さむっ 。 {客席|きゃくせき} に {火鉢|ひばち} を ください 。 || Roll up, roll up — the curtain rises on the snow stage! …Brr. Braziers for the audience, please.
+?(comp=suzu) !gesture comp point up
 ?(comp=suzu) comp: {昔|むかし} 、 {一座|いちざ} で {一度|いちど} だけ {来|き}た こと が ある んだ 。 {鐘|かね} の {音|おと} が 、 やけに きれい な {村|むら} だった 。 || I came here once with the troupe, years ago. A village where the bell sounded ridiculously clear.
 !autosave
 `, 'ch4/arrive');
@@ -35,10 +49,17 @@ narr: {雪|ゆき} を かぶった {小|ちい}さな {祠|ほこら} 。 {誰|
 ?(comp=mio) comp[smile]: {誰|だれ} か が {最近|さいきん} 、 ここ を {通|とお}った んです ね 。 {冬|ふゆ} の {坂|さか} を 。 || Someone came by here recently, then. Up the winter slope.
 
 @scene sb.road_east_locked
+# Staged: you look at the drift over the road down to Lanternfall; your companion's own answer (Nao's shrug,
+# Mio's shake of the head, Ren leans in to the snow, Suzu points up to the village).
+!gesture pc observe 31,13
 narr: {灯落|ひおち} へ {下|くだ}る {道|みち} は 、 {背|せ} より {高|たか}い {吹|ふ}き{溜|だ}まり に {埋|う}もれて いる 。 {今|いま} は {通|とお}れない 。 || The road down to Lanternfall is buried under a drift taller than you. There's no getting through for now.
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp: {春|はる} まで {待|ま}つ か 、 {誰|だれ} か が {掘|ほ}る か だ な 。 {雪鈴|ゆきすず} の {連中|れんちゅう} に {聞|き}いて みよう 。 || Either we wait for spring or somebody digs. Let's ask the Snowbell folk.
+?(comp=mio) !gesture comp shake
 ?(comp=mio) comp: {今|いま} {無理|むり} を して も 、 {凍|こご}える だけ です 。 {先|さき} に {雪鈴|ゆきすず} へ {行|い}きましょう 。 || Forcing it now would only get us frozen. Let's go to Snowbell first.
+?(comp=ren) !gesture comp observe 31,13
 ?(comp=ren) comp: {道|みち} が ある こと は {確|たし}か です 。 …… {見|み}えない だけ で 。 || The road is definitely there. …We just can't see it.
+?(comp=suzu) !gesture comp point up
 ?(comp=suzu) comp: {幕|まく} が {下|お}りてる ね 。 {次|つぎ} の {幕|まく} は 、 {上|うえ} の {村|むら} から だ 。 || The curtain's down on that one. The next act starts in the village up the hill.
 
 @scene sb.hayate_road
@@ -48,15 +69,27 @@ hayate: {下|くだ}り は {滑|すべ}る 。 {足|あし} を {横|よこ} �
 
 RB.script.add(`
 @scene sb.hamlet_first
+# Staged: your companion steps up off the road beside you; you shade your eyes to the dark observatory on the
+# mountain and turn towards Kanta calling from the square (he is up by the snow goats, heard before he is
+# near); your companion's own answer (Nao glances away, Mio's guarded hand, Ren's hand to the chin, Suzu's
+# open hand).
 !set sb_hamlet_seen
+!walkto comp 23 34 up
+!gesture pc lookroad up
 narr: {雪|ゆき} に {半分|はんぶん} {埋|う}もれた {家|いえ} が 、 {十|とお} ほど {寄|よ}り{添|そ}って いる 。 {広場|ひろば} の {真|ま}ん{中|なか} に 、 {鐘|かね} を {吊|つ}るした {柱|はしら} が {立|た}って いる 。 || A dozen or so houses huddle together, half buried in snow. In the middle of the square stands a post with a bell hung from it.
+!gesture pc shadeeyes up
 narr: {北|きた} の {山|やま} の {上|うえ} に 、 {丸|まる}い {屋根|やね} の {建物|たてもの} が {見|み}える 。 その {窓|まど} は {暗|くら}い 。 || On the mountain to the north you can make out a building with a round roof. Its window is dark.
+!look pc kanta
 kanta[surprise]: あ ！ {旅|たび} の {人|ひと} だ ！ {冬|ふゆ} に {来|く}る {人|ひと} なんて 、 はじめて {見|み}た ！ || Oh! Travellers! I've never seen anyone come in winter!
 kanta: あれ ？ あれ は {天文台|てんもんだい} の {灯|あか}り 。 {毎晩|まいばん} ついてた のに 、 {十日|とおか} ぐらい {前|まえ} から ずっと {消|き}えてる んだ 。 || That? That's the observatory lamp. It was lit every single night, but it's been out for about ten days now.
 kanta[worry]: ホシノ じいちゃん 、 {元気|げんき} ない んだ よ 。 {母|かあ}ちゃん が 、 {宿|やど} の ヤエ さん に {聞|き}け って 。 {大人|おとな} の {話|はなし} だ から って 。 || Grandpa Hoshino's been really down. Mum says to ask Yae at the inn. 'Cause it's grown-up business.
+?(comp=nao) !gesture comp aside
 ?(comp=nao) comp: {消|き}えた {灯|あか}り 、 か 。 {嫌|いや} な {予感|よかん} が する な 。 || A lamp that went out. I've got a bad feeling.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {十日|とおか} も …… 。 {宿|やど} に {行|い}って みましょう 。 {体|からだ} も {温|あたた}めないと 。 || Ten days… Let's go to the inn. We need to warm up, too.
+?(comp=ren) !gesture comp chin
 ?(comp=ren) comp[think]: {灯|あか}り が {消|き}える の は 、 {油|あぶら} が {切|き}れた とき か 、 {名前|なまえ} が {消|き}えた とき です 。 || A lamp goes out when the oil runs dry — or when its name is lifted.
+?(comp=suzu) !gesture comp palm
 ?(comp=suzu) comp: {主役|しゅやく} の いない {舞台|ぶたい} みたい だ ね 。 よし 、 {宿|やど} で {筋書|すじが}き を {聞|き}こう 。 || Like a stage with no lead. Right — let's get the plot at the inn.
 !quest sb_lamp start
 !note sb_snowbell
@@ -87,24 +120,36 @@ narr: {石段|いしだん} の {脇|わき} の {石|いし} 。 「 ここ よ
 ?(comp=ren) comp[smile]: いい {言葉|ことば} です 。 わたし の {師匠|ししょう} も 、 {似|に}た こと を {言|い}って いました 。 …… わたし が {言|い}われた {理由|りゆう} は 、 ご{想像|そうぞう} に お{任|まか}せ します 。 || Good words. My teacher used to say something similar. …Why it needed saying to me, I leave to your imagination.
 
 @scene sb.stair_ice
+# Staged: you lean in to the ice over the stair (in the morning your companion looks from it to Hoshino's
+# house); with the flame word you hold your hand up to it, start back at the crack, and your companion answers
+# in their own way (Nao's nod, Mio points to the slippery step, Ren looks up the stair, Suzu's small
+# celebration).
 !if sb_stair_open -> end
 !if sb_obs_open -> melt
+!gesture pc observe 30,1
 narr: {天文台|てんもんだい} へ の {石段|いしだん} が 、 {青白|あおじろ}い {氷|こおり} に すっぽり {包|つつ}まれて いる 。 {叩|たた}いて も びくとも しない 。 || The stone stair to the observatory is completely encased in blue-white ice. Knocking on it does nothing.
 ?(!word.honoo) narr: この {氷|こおり} を とかす {方法|ほうほう} が 、 {今|いま} は {思|おも}いつかない 。 || You can't think of any way to melt this, for now.
 ?(word.honoo&!sb_morning) narr: {外|そと} は もう {吹雪|ふぶき} だ 。 {今|いま} は {上|のぼ}れない 。 || The storm is already here. No climbing now.
+?(sb_morning&!sb_obs_open) !gesture comp lookbetween 35,7 and=pc
 ?(sb_morning&!sb_obs_open) comp: {扉|とびら} の {鍵|かぎ} は ホシノ さん が {持|も}って いる はず です 。 {先|さき} に {話|はなし} を {聞|き}きましょう 。 || Hoshino should have the key to the door. Let's talk to him first.
 !end
 :melt
+!gesture pc handover 30,1
 narr: {氷|こおり} に {手|て} を かざす 。 {昨夜|ゆうべ} {囲炉裏|いろり} で {書|か}いた {字|じ} を 、 もう {一度|いちど} 。 || You hold your hand up to the ice. The word you wrote at the hearth last night — once more.
 !challenge sb.c_melt
 !if var._res=0 -> end
 !sfx fire_out
 !shake
+!gesture pc recoil
 narr: {氷|こおり} が {音|おと} を {立|た}てて {割|わ}れ 、 {湯気|ゆげ} に なって {消|き}えた 。 {石段|いしだん} が {現|あらわ}れる 。 || The ice cracks with a report and vanishes into steam. The stone stair appears.
 !set sb_stair_open
+?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp[smirk]: {便利|べんり} だ な 、 その {字|じ} 。 {冬|ふゆ} の {配達|はいたつ} に {一|ひと}つ {欲|ほ}しい 。 || Handy word, that. I'd like one for winter deliveries.
+?(comp=mio) !gesture comp point 30,1
 ?(comp=mio) comp[smile]: {足元|あしもと} 、 {気|き}を つけて 。 とけた {水|みず} が また {凍|こお}ります から 。 || Watch your step. The meltwater will freeze again.
+?(comp=ren) !gesture comp lookroad up
 ?(comp=ren) comp: {星|ほし} の {石段|いしだん} 。 {上|のぼ}り{切|き}った ところ が 、 {天文台|てんもんだい} です 。 …… {一本道|いっぽんみち} で よかった 。 || The Star Stair. The observatory is at the very top. …Thank goodness it's one road.
+?(comp=suzu) !gesture comp celebrate
 ?(comp=suzu) comp[laugh]: {拍手|はくしゅ} ！ {氷|こおり} の {幕|まく} が {上|あ}がった よ 。 || Applause! The ice curtain rises.
 !quest sb_lamp 6
 `, 'ch4/hamlet');
@@ -172,10 +217,16 @@ yae[smile]: {窓|まど} を {開|あ}ける と 、 {灯|あか}り が {見|�
 !goto later
 
 @scene sb.yae_post
+# Staged: Yae laughs over Kanta keeping the lamp (or opens a hand over Hoshino's nightly cup), a hand to her
+# chin over borrowing books in winter, her nod for your room, and her laugh at your help with the orders.
+?(sb_hoshino_goes) !gesture yae laugh
 ?(sb_hoshino_goes) yae: ホシノ さん が {下|くだ}って から 、 {灯|あか}り は カンタ が ともしてる の 。 {一晩|ひとばん} も {欠|か}かさず に ね 。 {誰|だれ} に {似|に}た んだか 。 || Since Hoshino went down the mountain, Kanta's been lighting the lamp. Hasn't missed a night. Wonder who he takes after.
+?(!sb_hoshino_goes) !gesture yae palm
 ?(!sb_hoshino_goes) yae: ホシノ さん 、 {毎晩|まいばん} {灯|あか}り を ともして から 、 うち で {一杯|いっぱい} {飲|の}んで いく の 。 {前|まえ} より よく {笑|わら}う よ 。 || Every night Hoshino lights the lamp, then stops here for a cup. He laughs more than he used to.
+?(end_archive_library) !gesture yae chin
 ?(end_archive_library) yae: {山|やま} の {上|うえ} の {書庫|しょこ} 、 {図書館|としょかん} に なった んだって ね 。 {冬|ふゆ} でも {本|ほん} を {借|か}り に {行|い}ける かしら 。 || I hear the archive up the mountain's become a library. Wonder if I could borrow books there, even in winter.
 ?(end_archive_closed) yae: {山|やま} の {上|うえ} の {書庫|しょこ} は {閉|と}じた んだって 。 {静|しず}か な の は 、 {雪|ゆき} だけ で {十分|じゅうぶん} だよ 。 || They say the archive up the mountain is shut now. Snow's quiet enough for me.
+!gesture yae nod pc
 yae[smile]: {部屋|へや} は {空|あ}いてる よ 。 あんた たち の {部屋|へや} は 、 いつ でも ね 。 || There's a room free. Your room, always.
 !choice
 * {休|やす}みます || We'll rest. -> rest
@@ -186,6 +237,7 @@ yae[smile]: {部屋|へや} は {空|あ}いてる よ 。 あんた たち の 
 !end
 :help
 !activity sb.a_hearth_orders
+!gesture yae laugh
 yae[laugh]: {助|たす}かる ！ {給金|きゅうきん} は {甘酒|あまざけ} で いい ？ || A lifesaver! Can I pay you in amazake?
 !end
 
@@ -221,20 +273,28 @@ narr: {火|ひ} が {小|ちい}さい 。 {薪|まき} は ある のに 、 {�
 
 RB.script.add(`
 @scene sb.natsume
+# Staged: Natsume yawns and laughs over her uncle; dozes off over the note she wrote; laughs at "it was snow"
+# and yawns over the kids' names; once the lamp is lit, her nod.
 !if sb_lamp_lit -> after
 !if quest.sb_goats=done -> thanks
 !if quest.sb_goats>=1 -> hint
+!gesture natsume yawn
 natsume[tired]: ふぁ …… 。 あ 、 ごめん なさい 。 {夜|よる} の ヤギ {番|ばん} で 、 {昼|ひる} は {眠|ねむ}い の 。 || Hwaah… Oh, sorry. I do the night watch with the goats, so I'm sleepy in the daytime.
+!gesture natsume laugh
 natsume[smile]: テツジ {伯父|おじ} さん の {姪|めい} の ナツメ です 。 {伯父|おじ} さん 、 {怒|おこ}って なかった ？ {朝|あさ} 、 {何|なに} か {叫|さけ}んでた けど …… {眠|ねむ}くて 。 || I'm Natsume, Uncle Tetsuji's niece. Was Uncle angry? He was shouting something this morning, but… I was too sleepy.
 !end
 :hint
+!gesture natsume doze
 natsume[tired]: ヤギ が {多|おお}い ？ …… ちゃんと {書|か}いて おいた よ 。 {小屋|こや} の {柱|はしら} に 。 ぜんぶ 。 …… ぐう 。 || Too many goats? …I wrote it down. On the post in the shed. All of it. …Zzz.
 !end
 :thanks
+!gesture natsume laugh
 natsume[laugh]: {伯父|おじ} さん 、 {子|こ}ヤギ を {抱|だ}いて {泣|な}いてた って 。 {本人|ほんにん} は 「 {泣|な}いて ない 、 {雪|ゆき} だ 」 って {言|い}う けど 。 || They say Uncle cried holding the kids. He says, "I wasn't crying, it was snow."
+!gesture natsume yawn
 natsume: {名前|なまえ} 、 まだ {決|き}めて ない の 。 {何|なに} が いい かな 。 …… {考|かんが}えてたら 、 {眠|ねむ}く なって きた 。 || We haven't named them yet. What would be good? …Thinking about it is making me sleepy.
 !end
 :after
+!gesture natsume nod pc
 natsume[smile]: {夜|よる} の ヤギ {番|ばん} 、 {楽|たの}しく なった よ 。 {灯|あか}り が ある と 、 {星|ほし} を {数|かぞ}えながら {起|お}きて いられる の 。 || The night goat watch is fun now. With the lamp there, I can stay awake counting stars.
 
 @scene sb.natsume_post
@@ -248,30 +308,51 @@ natsume[laugh]: {吹雪|ふぶき} の {夜|よる} は 、 ヤギ {番|ばん} 
 
 RB.script.add(`
 @scene sb.tetsuji
+# Staged: Tetsuji counts on his fingers and comes out at twelve again, counts the ten and the two, his arms
+# fold over the strays; your companion's own answer (Nao's shrug, Suzu's laugh); he points you to the shed; at
+# the note, a hand to his chin, a turn to you at "born", the count again; he pulls his hat down (his head goes
+# down) over the snow in his eye; Mio's thanks, Ren counts the record; he hands you his spare goat bell
+# side-on.
 !if sb_lamp_lit -> after
 !if quest.sb_goats=done -> done
 !if quest.sb_goats>=2 -> report
 !if quest.sb_goats -> waiting
 :intro
+!gesture tetsuji countidle
 tetsuji[angry]: …… {十二|じゅうに} 。 {何度|なんど} {数|かぞ}えて も {十二|じゅうに} だ 。 || …Twelve. However many times I count, it's twelve.
+!gesture tetsuji count
 tetsuji: おれ の ヤギ は {十頭|じゅっとう} だ 。 {朝|あさ} {小屋|こや} を {開|あ}けたら 、 {十二|じゅうに} いた 。 {二頭|にとう} 、 {誰|だれ} か の が {迷|まよ}いこんで いる 。 || I own ten goats. This morning I opened the shed and there were twelve. Two of them belong to someone else and wandered in.
+!gesture tetsuji folded hold
 tetsuji[angry]: {吹雪|ふぶき} の {前|まえ} に 、 {持|も}ち{主|ぬし} に {返|かえ}さない と いかん 。 だが 、 {誰|だれ} も {名乗|なの}り{出|で}ん@名乗り出る 。 {旅|たび} の {人|ひと} 、 {暇|ひま} なら {聞|き}いて まわって くれ 。 || They need returning to their owner before the storm. But no one's come forward. If you've time, travellers, ask around.
+?(comp=nao) !gesture comp shrug
 ?(comp=nao) comp[smirk]: ヤギ の {迷子|まいご} {届|とど}け か 。 {配達|はいたつ} より {難|むずか}しそう だ な 。 || A lost-goat notice. Sounds harder than deliveries.
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {増|ふ}えた ほう で {困|こま}る って 、 {珍|めずら}しい {悩|なや}み だ ね 。 {帳簿|ちょうぼ} が {合|あ}わない の は 、 あたし も {嫌|きら}い だけど 。 || Troubled because you've got more — that's a rare kind of worry. Mind you, I hate books that don't balance too.
 !quest sb_goats start
 !end
 :waiting
+!gesture tetsuji point 6,25
 tetsuji: {誰|だれ} か {心当|こころあ}たり は あった か 。 …… ない か 。 {小屋|こや} も {見|み}て みて くれ 。 おれ は {字|じ} を {読|よ}む の が {遅|おそ}い 。 || Anyone know anything? …No. Take a look in the shed too. I'm slow at reading.
 !end
 :report
+!gesture tetsuji chin
 tetsuji[think]: {書|か}き{置|お}き ？ ナツメ の か 。 {何|なん} と {書|か}いて あった 。 || A note? Natsume's? What did it say?
+!gesture pc palm
 pc: {夜中|よなか} に モモ が {子|こ}ヤギ を {二匹|にひき} {産|う}んだ そう です 。 || It says Momo had two kids in the night.
+!gesture tetsuji listen pc
 tetsuji[surprise]: …… {生|う}まれた 。 モモ に 、 {子|こ}ども が 。 {二匹|にひき} 。 || …Born. Momo had kids. Two of them.
+!gesture tetsuji count
 tetsuji: {誰|だれ} か の ヤギ じゃ なくて 、 おれ の ヤギ だった の か 。 {十頭|じゅっとう} と …… {二匹|にひき} 。 || So they weren't anybody else's goats — they're mine. Ten goats and… two little ones.
+!gesture tetsuji lowered hold
 narr: テツジ は {帽子|ぼうし} を {深|ふか}く かぶり {直|なお}した 。 {目|め} の {辺|あた}り が 、 {少|すこ}し {赤|あか}い 。 || Tetsuji pulls his hat down low. His eyes look a little red.
 tetsuji: …… {雪|ゆき} が {目|め} に {入|はい}った 。 || …Got snow in my eye.
+?(comp=mio) !gesture comp thanks
 ?(comp=mio) comp[smile]: {雪|ゆき} なら 、 すぐ とけます よ 。 おめでとう ございます 。 || Snow melts quickly. Congratulations.
+?(comp=ren) !gesture comp count
 ?(comp=ren) comp[smile]: {記録|きろく} を {訂正|ていせい} しましょう 。 {十頭|じゅっとう} に 、 {二頭|にとう} {追加|ついか} 。 {誤差|ごさ} で は なく 、 {慶事|けいじ} です 。 || Let's correct the record. Ten head, plus two. Not an error — a happy event.
+!prop tetsuji goatbell
+!gesture tetsuji handover pc
+!gesture pc receive tetsuji
 tetsuji: {持|も}って いけ 。 {予備|よび} の {鈴|すず} だ 。 {鳴|な}る と 「 {慌|あわ}てる な 」 と {聞|き}こえる 。 おれ に は な 。 || Take it. My spare bell. When it rings it sounds like "don't panic". To me, anyway.
 !give sb_goat_bell
 !give sb_cheese
@@ -279,9 +360,11 @@ tetsuji: {持|も}って いけ 。 {予備|よび} の {鈴|すず} だ 。 {�
 !quest sb_goats done
 !end
 :done
+!gesture tetsuji countidle
 tetsuji: {十二|じゅうに} 。 …… {何度|なんど} {数|かぞ}えて も {十二|じゅうに} だ 。 {悪|わる}く ない 。 || Twelve. …However many times I count, twelve. Not bad.
 !end
 :after
+!gesture tetsuji lookroad up
 tetsuji: {天文台|てんもんだい} の {灯|あか}り が ある と 、 {夜|よる} の {小屋|こや} が {明|あか}るい 。 {子|こ}ヤギ が {外|そと} を {見|み}たがる@見る 。 || With the observatory lamp lit, the shed's bright at night. The kids want to look outside.
 !if quest.sb_goats=done -> end
 !if quest.sb_goats>=2 -> report
@@ -317,36 +400,51 @@ sousuke[smile]: {春|はる} に なったら 、 {最初|さいしょ} の {袋
 
 RB.script.add(`
 @scene sb.fuki
+# Staged: Fuki (in bed with her cold, a cane at hand) nods hello, shakes her head over the blank board, looks
+# from her notebook to you; her laugh and her nod for help; when the noon bell has rung she laughs and hands
+# you the cord she braided, side-on, and nods over the storm bell.
 !if quest.sb_bell=done -> done
 !if quest.sb_bell>=2 -> report
 !if quest.sb_bell>=1 -> go
+!gesture fuki nod pc
 fuki[tired]: ごほっ …… 。 おや 、 {旅|たび} の {人|ひと} かい 。 {見苦|みぐる}しい ところ を 。 || Koff… Oh, travellers, is it. Forgive the state of me.
 fuki: {鐘撞|かねつ}き の フキ だよ 。 {広場|ひろば} の {鐘|かね} を 、 {五十年|ごじゅうねん} {鳴|な}らして きた 。 {朝|あさ} 、 {昼|ひる} 、 {夕方|ゆうがた} 。 {吹雪|ふぶき} の とき も 、 {迷子|まいご} の とき も 。 || I'm Fuki, keeper of the bell. I've rung the bell in the square for fifty years. Morning, noon and evening. For storms, and for people lost.
+!gesture fuki shake
 fuki[worry]: ところが この かぜ で 、 {柱|はしら} に {上|のぼ}れない 。 おまけ に 、 {決|き}まり を {書|か}いた {柱|はしら} の {板|いた} が 、 {真|ま}っ{白|しろ} に なっちまった@なる 。 || But with this cold I can't climb the post. And on top of that, the board with the rules on it has gone blank as snow.
 fuki: {若|わか}い {者|もの} は 、 {板|いた} を {見|み}て {鳴|な}らして いた から ね 。 {今日|きょう} は {昼|ひる} の {鐘|かね} が {鳴|な}らない かも しれない 。 {昼|ひる} の {鐘|かね} が {鳴|な}らない と 、 {村|むら} じゅう {昼|ひる} ごはん を {食|た}べ{損|そこ}ねる んだよ 。 || The young ones always read the board to ring it. Today the noon bell might not ring at all. And when the noon bell doesn't ring, the whole hamlet misses lunch.
+!gesture fuki lookbetween 5,4 and=pc
 fuki: わたし の {帳面|ちょうめん} に 、 {決|き}まり が {書|か}いて ある 。 {読|よ}んで 、 {代|か}わり に {鳴|な}らして くれない かい 。 || The rules are written in my notebook. Would you read them and ring it for me?
 !choice
 * {任|まか}せて ください || Leave it to us. -> yes
 * {今|いま} は {忙|いそが}しい です || We're busy right now. -> no
 :yes
+!gesture fuki laugh
 fuki[smile]: ありがたい 。 {帳面|ちょうめん} は そこ の {本|ほん} の {山|やま} の {上|うえ} だよ 。 {字|じ} が {汚|きたな}い の は 、 {勘弁|かんべん} して おくれ 。 || Bless you. The notebook's on top of that pile of books. Forgive the messy handwriting.
 !quest sb_bell start
 !end
 :no
+!gesture fuki nod pc
 fuki: いい よ 、 いい よ 。 {昼|ひる} ごはん が {遅|おそ}れる だけ さ 。 …… {村|むら} じゅう の ね 。 || Fine, fine. Lunch will just be late. …For the whole hamlet.
 !end
 :go
+!gesture fuki lookbetween 5,4 and=pc
 fuki: {帳面|ちょうめん} は {読|よ}めた かい 。 {昼|ひる} の {鐘|かね} 、 {頼|たの}んだ よ 。 {間違|まちが}えたら …… ヤギ が {帰|かえ}って きちまう@くる から ね 。 || Managed to read the notebook? The noon bell, then — I'm counting on you. Get it wrong and… the goats will all come home.
 !end
 :report
+!gesture fuki laugh
 fuki[laugh]: {聞|き}こえた よ 。 {昼|ひる} の {鐘|かね} 。 {二|ふた}つ 、 きれい に 。 {五十年|ごじゅうねん} ぶり に 、 {寝床|ねどこ} で {鐘|かね} を {聞|き}いた よ 。 || I heard it. The noon bell. Two strokes, clean. First time in fifty years I've heard the bell from my bed.
+!prop fuki cord
+!gesture fuki handover pc
+!gesture pc receive fuki
 fuki: これ を {持|も}って いき な 。 {古|ふる}い {鐘|かね} の {綱|つな} で {編|あ}んだ んだ 。 {鐘|かね} と {同|おな}じ で 、 {息|いき} を {合|あ}わせる の に いい 。 || Take this. I braided it from an old bell rope. Like the bell, it's good for keeping in time together.
 !give sb_bell_cord
 !note sb_bell_signals
 !quest sb_bell done
+!gesture fuki nod pc
 fuki: {吹雪|ふぶき} の {鐘|かね} も 、 {覚|おぼ}えて おいて おくれ 。 {短|みじか}く 、 {何度|なんど} も 。 {使|つか}わない で {済|す}めば いい けど ね 。 || Remember the storm bell too. Short, again and again. Let's hope you never need it.
 !end
 :done
+!gesture fuki lookroad up
 fuki: {鐘|かね} は {鳴|な}らす {人|ひと} が いれば 、 {鳴|な}る 。 {灯|あか}り と {同|おな}じ さ 。 || A bell rings as long as there's someone to ring it. Same as a lamp.
 
 @scene sb.fuki_notebook
@@ -363,14 +461,22 @@ narr: {決|き}まり は {頭|あたま} に {入|はい}った 。 {広場|ひ
 narr: {枕元|まくらもと} の {盆|ぼん} に 、 {冷|さ}めた しょうが{湯|ゆ} と 、 {誰|だれ} か が {置|お}いて いった みかん 。 || On a tray by the pillow: cold ginger tea, and a mandarin someone left.
 
 @scene sb.bellpost
+# Staged: you lean in to the blank (or rewritten) board on the bell-post; for the noon bell you look up to the
+# bell; one stroke or three, your companion shakes their head or laughs at the wrong signal (Nao shrugs, Ren's
+# open hand); the storm signal makes you start and your companion's guarded hand or glance away; two strokes,
+# you look down over the valley's smoking chimneys and your companion answers in their own way (Nao's nod,
+# Mio's laugh, Ren's open hand, Suzu's celebration).
 !if quest.sb_bell=1 -> ring
 !if quest.sb_bell>=2 -> read
+!gesture pc observe 22,15
 narr: {鐘|かね} の {柱|はしら} 。 {下|した} の {板|いた} は 、 {雪|ゆき} の よう に {白|しろ}い 。 {字|じ} が {一|ひと}つ も {残|のこ}って いない 。 || The bell-post. The board beneath it is white as snow; not a single character remains.
 !end
 :read
+!gesture pc listen 22,15
 narr: {板|いた} に 、 {新|あたら}しく {字|じ} が {書|か}き{直|なお}して ある 。 「 {朝|あさ} {七時|しちじ} {一|ひと}つ 、 {昼|ひる} {十二時|じゅうにじ} {二|ふた}つ 、 {夕方|ゆうがた} {五時|ごじ} {三|みっ}つ 。 {吹雪|ふぶき} は {短|みじか}く {何度|なんど} も 。 {迷子|まいご} は {長|なが}く {一|ひと}つ 、 {休|やす}んで {一|ひと}つ 。 」 || The board has been written anew: "7 a.m. one. Noon, two. 5 p.m., three. Storm: short, again and again. Lost: one long, a pause, one more."
 !end
 :ring
+!gesture pc lookroad up
 narr: {柱|はしら} の {梯子|はしご} を {上|のぼ}る 。 {鐘|かね} の {綱|つな} は 、 {氷|こおり} の よう に {冷|つめ}たい 。 そろそろ {昼|ひる} だ 。 || You climb the ladder on the post. The bell rope is cold as ice. It's nearly noon.
 !choice
 * {一回|いっかい} || Once. -> one
@@ -380,43 +486,65 @@ narr: {柱|はしら} の {梯子|はしご} を {上|のぼ}る 。 {鐘|かね
 :one
 !sfx bell
 narr: ごーん 。 …… {窓|まど} が {開|あ}いて 、 {寝間着|ねまき} の {人|ひと} が {顔|かお} を {出|だ}した 。 「 もう {朝|あさ} ？ 」 || Gonnnng. …A window opens and someone in nightclothes pokes their head out. "Morning already?"
+?(comp) !gesture comp shake
 ?(comp) comp: {一|ひと}つ は {朝|あさ} の {合図|あいず} だった みたい だ よ 。 {帳面|ちょうめん} を {思|おも}い{出|だ}そう 。 || One stroke seems to have been the morning signal. Let's remember the notebook.
 !end
 :three
 !sfx bell
 narr: ごーん 、 ごーん 、 ごーん 。 …… {遠|とお}く で テツジ の {声|こえ} 。 「 もう ヤギ を {入|い}れる {時間|じかん} か ！？ 」 || Gonnng, gonnng, gonnng. …In the distance, Tetsuji's voice: "Time to bring the goats in already?!"
+?(comp=nao) !gesture comp shrug
+?(comp=mio) !gesture comp laugh
+?(comp=ren) !gesture comp palm
+?(comp=suzu) !gesture comp laugh
 ?(comp) comp[laugh]: {三|みっ}つ は {夕方|ゆうがた} の ヤギ の {合図|あいず} だ ね 。 {今|いま} は {昼|ひる} だ よ 。 || Three is the evening goat signal. It's noon now.
 !end
 :storm
 !sfx bell
+!gesture pc flinch
 narr: カン カン カン カン ！ …… {家々|いえいえ} の {戸|と} が {一斉|いっせい} に {閉|し}まる {音|おと} が した 。 {空|そら} は {青|あお}い 。 || Clang clang clang clang! …Every door in the hamlet slams shut at once. The sky is blue.
+?(comp=mio) !gesture comp guard
+?(comp!=mio) !gesture comp aside
 ?(comp) comp[worry]: …… {吹雪|ふぶき} の {合図|あいず} だ よ 、 それ 。 みんな に {謝|あやま}り に {行|い}かない と 。 || …That's the storm signal. We'll have to go round and apologise to everyone.
 !end
 :two
 !sfx bell
 !wait 500
 !sfx bell
+!gesture pc lookroad down
 narr: ごーん …… ごーん 。 {澄|す}んだ {音|おと} が 、 {雪|ゆき} の {谷|たに} に {広|ひろ}がって いく 。 {家々|いえいえ} の {煙突|えんとつ} から 、 {少|すこ}し ずつ {煙|けむり} が {上|あ}がり {始|はじ}めた 。 {昼|ひる} ごはん の {支度|したく} だ 。 || Gonnng… gonnng. The clear note spreads through the snowy valley. One by one, chimneys begin to smoke. Lunch is on.
+?(comp=nao) !gesture comp nod pc
 ?(comp=nao) comp: {時間|じかん} どおり 。 {配達人|はいたつにん} と して は 、 {気持|きも}ち が いい 。 || Right on time. As a courier, that's satisfying.
+?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[smile]: みんな の {昼|ひる} ごはん を {守|まも}りました ね 。 {大事|だいじ} な {仕事|しごと} です 。 || You've saved everyone's lunch. That's important work.
+?(comp=ren) !gesture comp palm
 ?(comp=ren) comp[smile]: {鐘|かね} も {灯|あか}り も 、 {決|き}まった {時|とき} に {決|き}まった {形|かたち} で 。 {灯守|ひもり} の {仕事|しごと} と {似|に}て います 。 || Bells and lamps both: the set form, at the set time. Not unlike a keeper's work.
+?(comp=suzu) !gesture comp celebrate
 ?(comp=suzu) comp[laugh]: {開演|かいえん} の {合図|あいず} みたい ！ …… {昼|ひる} ごはん と いう {名|な} の {演目|えんもく} の ね 。 || Like the call to curtain! …For a show called "Lunch".
 !quest sb_bell 2
 
 @scene sb.fuki_after
+# Staged: Fuki laughs at her cold getting better and looks from the bell-post to the lamp on the mountain (two
+# marks for the way home); still unable to climb, she looks up at the post, nods to ask, and laughs her
+# thanks.
 !if !quest.sb_bell -> offer
+!gesture fuki laugh
 fuki: かぜ は {治|なお}った よ 。 {灯|あか}り が ついた {晩|ばん} に 、 すっと {楽|らく}に なった 。 {気|き}の せい かね 。 || My cold's gone. The night the lamp came on, I felt better just like that. My imagination, maybe.
+!gesture fuki lookbetween 22,15 and=up
 fuki: {鐘|かね} と {灯|あか}り 。 {音|おと} と {光|ひかり} 。 {帰|かえ}り{道|みち} の {目印|めじるし} は 、 {二|ふた}つ ある ほう が いい 。 || The bell and the lamp. Sound and light. It's better for a way home to have two marks.
 
 !end
 :offer
+!gesture fuki lookroad 22,15
 fuki: かぜ は {治|なお}った けど 、 {膝|ひざ} が ね 。 {梯子|はしご} は まだ {無理|むり} だ 。 {柱|はしら} の {板|いた} も {白|しろ}い まま さ 。 || My cold's better, but my knees aren't. The ladder's still beyond me. And the board on the post is still blank.
+!look fuki pc
+!gesture fuki nod pc
 fuki: わたし の {家|いえ} に {帳面|ちょうめん} が ある 。 {決|き}まり を {覚|おぼ}えて 、 {昼|ひる} の {鐘|かね} を {鳴|な}らして くれない かい 。 || My notebook's at my house. Would you learn the rules and ring the noon bell for me?
 !choice
 * {任|まか}せて ください || Leave it to us. -> yes
 * また {今度|こんど} || Another time. -> end
 :yes
 !quest sb_bell start
+!gesture fuki laugh
 fuki[smile]: ありがたい 。 {帳面|ちょうめん} は {本|ほん} の {山|やま} の {上|うえ} だよ 。 || Bless you. The notebook's on top of the pile of books.
 
 @scene sb.fuki_post
@@ -438,20 +566,33 @@ fuki[smile]: {鐘|かね} を {鳴|な}らそう か と {思|おも}った け�
 
 RB.script.add(`
 @scene sb.kanta
+# Staged: Kanta bounces as he asks you to judge, looks between the snow goat and the snow fox, points to the
+# cards, his hands twist over the wind's damage and he points you round the three; your companion's own answer
+# (Suzu's laugh, Ren's glasses); at the judging he points to the winner, Chiyo's small celebration, Rokuta
+# shows how big the tail was, Kanta ducks his head over his goat's horn (Sachi speaks from her washing, where
+# the world has her); once the lamp is lit, he celebrates it.
 !if sb_lamp_lit -> after
 !if quest.sb_snow=done -> done
 !if quest.sb_snow>=1 -> judge
 !if quest.sb_snow -> look
+!gesture kanta bounce
 kanta[smile]: ねえ=(hey) ねえ=(hey) 、 {旅|たび} の {人|ひと} ！ {雪像|せつぞう} コンテスト の {審査員|しんさいん} に なって よ ！ || Hey, hey, traveller! Be the judge for our snow-sculpture contest!
+!gesture kanta lookbetween 18,20 and=24,21
 kanta: おれ と チヨ と ロクタ で 、 {一|ひと}つ ずつ {作|つく}った んだ 。 {大人|おとな} は みんな 「 どれ も {上手|じょうず} 」 って {言|い}う から 、 {決|き}まらない の 。 || Chiyo, Rokuta and me made one each. The grown-ups all say "they're all good", so we can't decide.
+!gesture kanta point 20,21
 kanta: {決|き}まり が ある んだ 。 「 {札|ふだ} に {書|か}いた とおり の {雪像|せつぞう} が {勝|か}ち 」 ！ {大|おお}きさ じゃ ない よ 。 {説明|せつめい} と {同|おな}じ か どう か ！ || There's a rule: "The sculpture that matches what's written on its card wins!" Not the biggest — whichever matches its description!
+!gesture kanta fidget
 kanta[worry]: でも 、 {昨日|きのう} の {風|かぜ} で 、 ちょっと {崩|くず}れた の も ある んだ よね …… 。 || Only, yesterday's wind knocked some of them about a bit…
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {審査員|しんさいん} ！ いい {響|ひび}き 。 {公平|こうへい} に 、 でも {愛|あい} を もって ね 。 || Judge! Has a nice ring. Fair — but with love.
+?(comp=ren) !gesture comp glasses
 ?(comp=ren) comp: {記録|きろく} と {現物|げんぶつ} の {照合|しょうごう} です ね 。 {得意|とくい} {分野|ぶんや} です 。 || Checking the record against the real thing. My speciality.
 !quest sb_snow start
+!gesture kanta point 20,21
 kanta: {三|みっ}つ とも {見|み}て きて ！ {札|ふだ} は {像|ぞう} の {前|まえ} に {立|た}てて ある から ！ || Go and look at all three! The cards are stuck in the snow in front of them!
 !end
 :look
+!gesture kanta lookbetween 18,20 and=24,21
 kanta: {三|みっ}つ とも {見|み}た ？ ヤギ と 、 {天文台|てんもんだい} と 、 キツネ ！ || Seen all three? The goat, the observatory, and the fox!
 !if seen.sb.sculpt_goat&seen.sb.sculpt_obs&seen.sb.sculpt_fox -> ready
 !end
@@ -459,12 +600,17 @@ kanta: {三|みっ}つ とも {見|み}た ？ ヤギ と 、 {天文台|てん�
 !quest sb_snow 1
 !goto judge
 :judge
+!gesture kanta bounce
 kanta: {決|き}まった ？ どれ が {勝|か}ち ？ || Decided? Which one wins?
 !challenge sb.c_snow_judge
 !if var._res=0 -> later
+!gesture kanta point chiyo
 kanta[surprise]: チヨ の {天文台|てんもんだい} ！ || Chiyo's observatory!
+!gesture chiyo celebrate
 chiyo[laugh]: やった ！ {赤|あか}い {実|み} の {灯|あか}り 、 ちゃんと {残|のこ}ってた でしょ ！ || Yes! The red-berry lamp was still there, wasn't it!
+!gesture rokuta size
 rokuta[angry]: くっそー 。 {風|かぜ} が {悪|わる}い 。 {尻尾|しっぽ} は もっと {大|おお}きかった んだ ！ || Aw, rats. It was the wind's fault. The tail was way bigger!
+!gesture kanta duck
 kanta[sad]: おれ の ヤギ 、 {角|つの} が {一本|いっぽん} とれちゃった から なあ 。 …… {次|つぎ} は {氷|こおり} で {角|つの} を {作|つく}る ！ || My goat lost one of its horns… Next time I'll make the horns out of ice!
 narr: {子|こ}ども たち の {後|うし}ろ から 、 サチ が {顔|かお} を {出|だ}した 。 || Sachi appears from behind the children.
 sachi[smile]: {審査員|しんさいん} さん 、 お{疲|つか}れ さま 。 これ 、 {子|こ}ども たち が {色|いろ} を {選|えら}んだ の 。 {審査員|しんさいん} へ の お{礼|れい} だって 。 || Well judged, and thank you. The children chose the colours for this. It's their thank-you to the judge.
@@ -475,13 +621,16 @@ sachi[smile]: {審査員|しんさいん} さん 、 お{疲|つか}れ さま �
 kanta: ゆっくり {決|き}めて いい よ 。 {雪|ゆき} は {春|はる} まで とけない から ！ || Take your time. The snow won't melt till spring!
 !end
 :done
+!gesture kanta point 20,21
 kanta: チヨ の {灯|あか}り 、 {夜|よる} に なる と {本物|ほんもの} みたい に {見|み}える んだ よ 。 …… {赤|あか}い けど 。 || Chiyo's lamp looks like the real one at night. …Well, it's red.
 !end
 :after
+!gesture kanta celebrate
 kanta[laugh]: {灯|あか}り 、 ついた ！ ついた ！ {窓|まど} から {見|み}える んだ よ ！ || The lamp's on! It's on! I can see it from my window!
 !if quest.sb_snow=done -> end
 !if quest.sb_snow>=1 -> judge
 !if quest.sb_snow -> look
+!gesture kanta bounce
 kanta: ねえ=(hey) 、 まだ {審査員|しんさいん} 、 {募集|ぼしゅう} {中|ちゅう} だ よ ！ || Hey, we're still looking for a judge!
 !quest sb_snow start
 !end
@@ -499,55 +648,84 @@ kanta[worry]: {風|かぜ} の {音|おと} 、 {怖|こわ}く ない よ 。 �
 kanta[laugh]: {見|み}て ！ {見|み}て ！ {灯|あか}り が ついた ！ {十日|とおか} ぶり ！ いや 、 {十一日|じゅういちにち} ぶり ！ || Look! Look! The lamp's lit! First time in ten days! No, eleven!
 
 @scene sb.chiyo
+# Staged: Chiyo points to her snow observatory with its berry lamp; she celebrates her win, and with the lamp
+# lit points up to the real one.
 !if quest.sb_snow=done -> won
+!gesture chiyo point 20,21
 chiyo[smile]: チヨ の は {天文台|てんもんだい} ！ {灯|あか}り は ナナカマド の {実|み} な の 。 {本物|ほんもの} は {消|き}えちゃった から 、 チヨ が ともして あげた の 。 || Mine's the observatory! The lamp is a rowan berry. The real one went out, so I lit one for it.
 !end
 :won
+!gesture chiyo celebrate
 chiyo[laugh]: {勝|か}った ！ でも 、 ほんと は ね 、 {本物|ほんもの} の {灯|あか}り が つく ほう が 、 うれしい 。 || I won! But really… I'd be happier if the real lamp came on.
+?(sb_lamp_lit) !gesture chiyo point up
 ?(sb_lamp_lit) chiyo: …… だから 、 {今日|きょう} は {二回|にかい} {勝|か}った の ！ || …So today I won twice!
 
 @scene sb.chiyo_post
 chiyo[smile]: {次|つぎ} の コンテスト は 、 {雪|ゆき} で {灯落|ひおち} の {橋|はし} を {作|つく}る の 。 アカリ さん が {毎晩|まいばん} {立|た}ってた {橋|はし} ！ || For the next contest we're making the Lanternfall bridge out of snow. The one Akari stood on every night!
 
 @scene sb.rokuta
+# Staged: Rokuta shows how big his fox's tail was; with Nao, they lean in to the card and he claps a hand to
+# his forehead (comic); after losing, he glances aside at his plan, and Suzu laughs.
 !if quest.sb_snow=done -> lost
+!gesture rokuta size
 rokuta[smirk]: おれ の キツネ が いちばん かっこいい 。 {尻尾|しっぽ} を {見|み}ろ よ 。 …… {見|み}ろ って 。 {昨日|きのう} は もっと {大|おお}きかった んだ から 。 || My fox is the coolest. Look at the tail. …Look at it, I said. It was way bigger yesterday.
+?(comp=nao) !gesture comp observe 24,21
 ?(comp=nao) comp: {昨日|きのう} の {大|おお}きさ は 、 {札|ふだ} に {書|か}いて ある の か ？ || Is yesterday's size written on the card?
+?(comp=nao) !gesture rokuta forehead
 rokuta[angry]: …… {書|か}いて ある よ ！ {悪|わる}い か よ ！ || …It is! So what!
 !end
 :lost
+!gesture rokuta aside
 rokuta: {次|つぎ} は {負|ま}けない 。 {札|ふだ} を {先|さき} に {書|か}かない で 、 {作|つく}って から {書|か}く 。 …… それ って ずるい ？ || I won't lose next time. I'll build first and write the card after. …Is that cheating?
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: ずるく ない よ 。 それ を {世間|せけん} で は 「 {正直|しょうじき} 」 って {言|い}う の 。 || Not cheating. Out in the world, they call that "honesty".
 
 @scene sb.rokuta_post
 rokuta[smirk]: キツネ 、 {本物|ほんもの} を {見|み}た んだ 。 {雪|ゆき} の {中|なか} から こっち を {見|み}てた 。 {怖|こわ}く なかった 。 …… ほんと だ よ 。 || I saw a real fox. It was watching me from the snow. I wasn't scared. …Honest.
 
 @scene sb.storm_kids
+# Staged: Chiyo points at Rokuta over the "draw"; he weighs the fair wind in his hands (or glances aside at
+# his plan to cancel her win), and she points at him again.
 !if quest.sb_snow=done -> done
+!gesture chiyo point rokuta
 chiyo[angry]: ロクタ が 、 {吹雪|ふぶき} で {雪像|せつぞう} が {全部|ぜんぶ} {崩|くず}れたら 「 {引|ひ}き{分|わ}け 」 だって ！ || Rokuta says if the storm knocks all the sculptures down, it's a "draw"!
+!gesture rokuta size
 rokuta[smirk]: {風|かぜ} は {公平|こうへい} だ から な 。 || The wind's fair, that's why.
 !end
 :done
+!gesture rokuta aside
 rokuta: {吹雪|ふぶき} で チヨ の {天文台|てんもんだい} が {崩|くず}れたら 、 {優勝|ゆうしょう} は {取|と}り{消|け}し だ よな ？ || If the storm knocks down Chiyo's observatory, her win gets cancelled, right?
+!gesture chiyo point rokuta
 chiyo[angry]: {取|と}り{消|け}さない ！ || It does not!
 `, 'ch4/residents-children');
 
 RB.script.add(`
 @scene sb.sachi
+# Staged: Sachi looks from her frozen washing to you and opens a hand over the winter without letters; she
+# holds up her husband's letter and laughs about the doll; an open hand over Kanta at the window, and a laugh at his late
+# night.
 !if sb_evening -> eve
 !if sb_lamp_lit -> after
 !if sb_letters_done -> letter
+!gesture sachi lookbetween 34,19 and=pc
 sachi[smile]: {洗濯物|せんたくもの} 、 {干|ほ}した そば から {凍|こお}っちゃう の 。 {立|た}つ {着物|きもの} 、 {見|み}た ？ カンタ が {喜|よろこ}ぶ の よ 。 || The washing freezes the moment I hang it up. Did you see the kimono that stands up by itself? Kanta loves it.
+!gesture sachi palm
 sachi: {夫|おっと} は {灯落|ひおち} へ {出稼|でかせ}ぎ に {行|い}って いる の 。 {春|はる} まで {帰|かえ}らない 。 {手紙|てがみ} も {届|とど}かない し …… まあ 、 {冬|ふゆ} は いつも そう だけど ね 。 || My husband's working in Lanternfall for the season. He won't be back till spring. No letters get through either… well, it's like that every winter.
 !end
 :letter
+!prop sachi letter
+!gesture sachi present pc prop=letter hold
 sachi[smile]: {夫|おっと} の {手紙|てがみ} 、 ありがとう 。 {春|はる} に {帰|かえ}る って 。 カンタ に {木|き} の {人形|にんぎょう} を {買|か}った んだって 。 || Thank you for my husband's letter. He says he'll be back in spring. He's bought Kanta a wooden doll.
+!prop sachi -
+!gesture sachi laugh
 sachi[laugh]: カンタ に は {内緒|ないしょ} ね 。 もう {人形|にんぎょう} で {遊|あそ}ぶ {年|とし} じゃ ない って {怒|おこ}る から 。 {本当|ほんとう} は {喜|よろこ}ぶ くせ に 。 || Don't tell Kanta. He'll get cross and say he's too old for dolls. When really he'll love it.
 !end
 :after
+!gesture sachi palm
 sachi: {灯|あか}り が ついて から 、 カンタ が {夜|よる} {窓|まど} から {離|はな}れない の 。 {寝|ね}かせる の が {大変|たいへん} 。 {嬉|うれ}しい {大変|たいへん} だけど ね 。 || Since the lamp came on, Kanta won't leave the window at night. Getting him to bed is a struggle. A happy struggle.
 !end
 :eve
+!gesture sachi laugh
 sachi[smile]: カンタ は {広場|ひろば} ？ …… やっぱり 。 {今夜|こんや} だけ は 、 {夜更|よふ}かし を {許|ゆる}して あげる わ 。 || Is Kanta in the square? …Of course. Just for tonight, he can stay up late.
 
 @scene sb.sachi_post
@@ -565,13 +743,23 @@ narr: {箱|はこ} の {中|なか} に 、 {小|ちい}さく なった {子|�
 
 RB.script.add(`
 @scene sb.denji
+# Staged: Denji, sitting by his ice hole, glances at the line, looks up to the dome he built, and nods about
+# the writing on the walls; when the lamp is back he looks up to it and shows with both hands the back stair
+# he is proud of.
 !if sb_lamp_lit -> after
+!gesture denji glance 40,25
 denji: {川|かわ} の {氷|こおり} に {穴|あな} を {開|あ}けて 、 {魚|さかな} を {待|ま}って いる 。 {魚|さかな} も {寒|さむ}くて {動|うご}かん@動く 。 {気|き}が {合|あ}う 。 || I've cut a hole in the ice and I'm waiting for fish. The fish are too cold to move. We get on.
+!gesture denji lookroad up
 denji: おれ は デンジ 。 {大工|だいく} だった 。 {天文台|てんもんだい} の {丸屋根|まるやね} は 、 {四十年|よんじゅうねん} {前|まえ} 、 ホシノ と {二人|ふたり} で {上|あ}げた 。 {二人|ふたり} とも {若|わか}くて 、 {馬鹿|ばか} だった 。 || I'm Denji. I was a carpenter. Forty years ago Hoshino and I put the dome on that observatory, just the two of us. Both young, both fools.
+?(sb_storm) !look denji pc
+?(sb_storm) !gesture denji nod pc
 ?(sb_storm) denji: {中|なか} の こと なら 、 {宿|やど} で {話|はな}した とおり だ 。 {迷|まよ}ったら 、 {壁|かべ} の {字|じ} を {読|よ}め 。 おれ たち は 、 {何|なん} でも {書|か}いて おいた 。 || As I told you at the inn. If you're lost inside, read the writing on the walls. We wrote everything down.
 !end
 :after
+!gesture denji lookroad up
 denji: {灯|あか}り が {戻|もど}った な 。 …… {丸屋根|まるやね} から の {眺|なが}め は 、 どう だった 。 {四十年|よんじゅうねん} {前|まえ} と {同|おな}じ なら 、 いい {眺|なが}め だ 。 || The lamp's back. …How was the view from the dome? If it's the same as forty years ago, it's a good one.
+?(sb_shortcut) !look denji pc
+?(sb_shortcut) !gesture denji size
 ?(sb_shortcut) denji[smirk]: {裏|うら} の {階段|かいだん} 、 {使|つか}った か 。 あれ は おれ の {自慢|じまん} だ 。 ホシノ は 「 {無駄|むだ} だ 」 と {言|い}った が な 。 || Used the back stair, did you? That's my pride and joy. Hoshino called it a waste.
 
 @scene sb.denji_post
@@ -591,14 +779,23 @@ denji: それ と 、 ホシノ を {頼|たの}む 。 あいつ は {約束|�
 
 RB.script.add(`
 @scene sb.hayate
+# Staged: Hayate points to the iced stair and looks up the mountain at what calls the foxes; with Mio, he
+# turns to her at her offer; in the morning he shows with his hands how to slip past, and his arms fold over
+# the fighting.
 !if sb_morning -> morning
+!gesture hayate point 30,1
 hayate: …… {旅|たび} の {者|もの} か 。 {石段|いしだん} に は {近|ちか}づく な 。 {氷|こおり} の {中|なか} に キツネ が いる 。 || …Travellers. Stay away from the stair. There are foxes in the ice.
+!gesture hayate lookroad up
 hayate: {雪|ゆき}ギツネ は {本来|ほんらい} 、 {人|ひと} を {襲|おそ}わない 。 だが {灯|あか}り が {消|き}えて から 、 {目|め} が {変|か}わった 。 {何|なに} か に {呼|よ}ばれて いる よう な {目|め} だ 。 || Snow foxes don't attack people, by nature. But since the lamp went out, their eyes have changed. Like something is calling them.
+?(comp=mio) !gesture comp guard
 ?(comp=mio) comp[worry]: {怪我|けが} を して いる キツネ が いたら 、 {教|おし}えて ください 。 …… {人|ひと} も 、 キツネ も 。 || If you find any hurt foxes, tell me. …People or foxes.
+?(comp=mio) !gesture hayate listen comp
 hayate[surprise]: …… {変|か}わった {人|ひと} だ 。 {覚|おぼ}えて おく 。 || …Odd sort. I'll remember.
 !end
 :morning
+!gesture hayate size
 hayate: {上|のぼ}る の か 。 キツネ は {動|うご}く もの を {追|お}う 。 {走|はし}る な 。 {目|め} を そらさず に 、 {横|よこ} へ {抜|ぬ}けろ 。 || Going up? Foxes chase what moves. Don't run. Keep your eyes on them and slip past to the side.
+!gesture hayate folded hold
 hayate: …… {追|お}って きたら 、 {戦|たたか}う しか ない 。 {傷|きず}つけず に {済|す}む なら 、 それ が いい 。 || …If they come after you, there's nothing for it but to fight. If you can do it without hurting them, better.
 
 @scene sb.hayate_post
