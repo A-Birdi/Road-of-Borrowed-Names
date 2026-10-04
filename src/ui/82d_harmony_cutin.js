@@ -26,7 +26,7 @@
  *   protected: the Resolve/Harmony dock (.cb-party), the action banner, the telegraph and the response dock
  *   unless Adaptive has withdrawn them (Keep visible: they count as occupied; withdrawn, their region is free,
  *   but the portrait stays unseen until they have actually left it — they leave on a 200 ms CSS transition of
- *   wall time, the entrance runs on the presentation clock — then fades in where it stands), the creatures' plates and
+ *   wall time, the entrance runs on the presentation clock — and then makes its whole entrance), the creatures' plates and
  *   badges, each creature's silhouette with its knots (the impact destination), the on-field party, Skip,
  *   the battle's Settings button, an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
  *   transparent corners are not footprint; its hands, glow and backing are). A dialogue, the language task,
@@ -469,15 +469,17 @@ RB.harmonyCutin = (function () {
     // while the entrance runs on the presentation clock (180 ms; Fast 100 ms of wall time): under load one frame could
     // show the portrait over a dock that is still visibly leaving. So the portrait claims that region only once every
     // withdrawn menu its rows (and the path it slides in along) reach is gone — measured each frame, as drawn; until
-    // then it stays unseen and its state does not advance. It then comes in with a short fade where it stands (no
-    // slide); if the middle of the hold passes first it is not shown at all (recorded). Reduced motion has no such
-    // transition (the menus go at once), so it never waits.
+    // then it stays unseen and its state does not advance. Its whole entrance then plays from that moment (its own
+    // clock starts late by the wait: c.lag), so it still slides in; after a late placement (large text) it fades in
+    // where it stands instead. If the wait would leave too little time — the middle of the hold, or the whole
+    // performance no longer over well before the first result (≥ 1,200 presentation ms in) — it is not shown at all
+    // (recorded). Reduced motion has no such transition (the menus go at once), so it never waits.
     if (c.menus) {
       const el0 = pt - c.t0, wr = withdrawing();
       let over = null;
       if (wr.length) { try { over = hits(spansOf({ comp: c.comp, look: c.look, still: c.reduce, variant: c.pl.variant, backing: c.pl.backing, fx: c.pl.fx }).sp, c.pl.x, c.pl.y, c.pl.scale, wr, true); } catch (e) { over = 'unknown'; } }
       if (over) {
-        if (el0 >= c.d.in + c.d.hold / 2) {
+        if (el0 >= Math.min(c.d.in + c.d.hold / 2, 1140 - (c.d.in + c.d.hold + c.d.out))) {
           note('menus');
           S.fallbacks.push({ action: c.action, comp: c.comp, view: c.pl.view, reason: 'the withdrawn ' + over + ' stayed on screen', at: new Date().toISOString() });
           while (S.fallbacks.length > FALLBACK_CAP) S.fallbacks.shift();
@@ -488,10 +490,10 @@ RB.harmonyCutin = (function () {
         c.el.style.opacity = '0';
         return;
       }
-      if (c.menus.waited) { c.waited = Math.round(el0 * 10) / 10; if (c.lateAt == null && el0 > 0) c.lateAt = el0; }
+      if (c.menus.waited) { c.waited = Math.round(el0 * 10) / 10; if (c.lateAt != null) c.lateAt = el0; else c.lag = el0; }
       c.menus = null;
     }
-    const el = pt - c.t0, d = c.d, total = d.in + d.hold + d.out;
+    const el = pt - c.t0 - (c.lag || 0), d = c.d, total = d.in + d.hold + d.out;
     let state, op, dx = 0;
     if (c.cut) {
       const k = (pt - c.cut.pt) / c.cut.d;
@@ -531,7 +533,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }

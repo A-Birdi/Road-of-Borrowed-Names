@@ -410,7 +410,7 @@ await test('geometry: seven viewports at 100 % and 200 % text — the fit mode a
       // the same scene with the portrait Off: the very same layouts, in the same order
       const off = await scene({ name: row.name + ' (portrait off)', w, h, text, comp, flourish: false, flourishOffRun: true });
       row.sameLayoutAsPortraitOff = JSON.stringify(off.lays) === JSON.stringify(sc.lays);
-      if (!row.sameLayoutAsPortraitOff) bad.push(row.name + ': the layout differs from the same scene with the portrait Off ' + JSON.stringify({ on: sc.lays.length, off: off.lays.length }));
+      if (!row.sameLayoutAsPortraitOff) bad.push(row.name + ': the layout differs from the same scene with the portrait Off ' + JSON.stringify({ on: sc.lays.length, off: off.lays.length, layoutsOn: sc.lays, layoutsOff: off.lays }));
     }
     if (row.shown && !(row.disposedAt < row.firstResult)) bad.push(row.name + ': not gone before the first result');
     if (errors.length) bad.push(row.name + ': ' + errors.join('; '));
@@ -813,7 +813,7 @@ async function paintedScene(v, which) {
     const src = await p.evaluate(([look, phs, variant]) => phs.map((ph) => RB.harmonyArt.compose({ comp: 'suzu', look: JSON.parse(look), phase: ph, variant }).painted), [r.look0, shown, L ? L.variant : 'standard']);
     const mixes = L ? L.trace.filter((x) => x[5] != null) : [];
     const mixSpan = mixes.length ? Math.round((mixes[mixes.length - 1][0] - mixes[0][0]) * 10) / 10 : 0;
-    const row = { view: tag, which: which || 'sample', faceCandidates: inst.faceCandidates, started: r.started, why: L && L.why, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, scaleV2: inst.v2, scaleV3: inst.v3, faceH: L && L.faceH, faceW: L && L.faceW, footprintArt: inst.footprint, footprintCss: L && L.footprint, footprintShare: L ? { w: +(L.footprint.w / v.w * 100).toFixed(1), h: +(L.footprint.h / v.h * 100).toFixed(1) } : null, held, states: seq, timeline: order, painted: src, reducedPlan: L && L.reducedPlan, crossFadeMs: mixSpan, travel: L ? Math.max(0, ...L.trace.map((x) => Math.abs(x[3]))) : null, overlaps: r.frames.filter(overlapping).length, waitedForMenus: L ? L.waitedForMenus : null, checkedFrames: r.frames.filter((f) => f.ov).length, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r), approval: inst.approval };
+    const row = { view: tag, which: which || 'sample', faceCandidates: inst.faceCandidates, tried: L ? L.tried : null, started: r.started, why: L && L.why, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, scaleV2: inst.v2, scaleV3: inst.v3, faceH: L && L.faceH, faceW: L && L.faceW, footprintArt: inst.footprint, footprintCss: L && L.footprint, footprintShare: L ? { w: +(L.footprint.w / v.w * 100).toFixed(1), h: +(L.footprint.h / v.h * 100).toFixed(1) } : null, held, states: seq, timeline: order, painted: src, reducedPlan: L && L.reducedPlan, crossFadeMs: mixSpan, travel: L ? Math.max(0, ...L.trace.map((x) => Math.abs(x[3]))) : null, overlaps: r.frames.filter(overlapping).length, waitedForMenus: L ? L.waitedForMenus : null, checkedFrames: r.frames.filter((f) => f.ov).length, disposedAt: L ? markAt(L, 'disposed') : null, firstResult: firstResult(r), approval: inst.approval };
     console.log('  ' + tag + ': ' + (L ? L.fit + ' ' + L.variant + ' ×' + +(+L.scale).toFixed(4) + ' (v2 ' + +(+inst.v2[L.variant]).toFixed(4) + '), faces ' + +(+L.faceW).toFixed(1) + ' × ' + +(+L.faceH).toFixed(1) + ' CSS px; states ' + seq.join(' → ') : 'none'));
     if (!r.started && v.mayOmit && r.fallback) { Object.assign(row, { fit: 'omitted', fallback: { reason: r.fallback.reason, tried: r.fallback.tried } }); console.log('    omitted: ' + r.fallback.reason + ' ' + JSON.stringify(r.fallback.tried)); return { row, bad }; }
     if (r.started !== 1 || !L || L.why !== 'done') { bad.push(tag + ': one cut-in, done ' + JSON.stringify({ started: r.started, why: L && L.why, fb: r.fallback && r.fallback.reason })); return { row, bad }; }
@@ -865,8 +865,12 @@ await test('painted geometry (synthetic sample, and the rich fixture over it): e
     const { row, bad: b2 } = await paintedScene({ w, h, dpr, anim: 'normal', order: false, mayOmit: false }, 'template');
     rows.push(row); bad.push(...b2);
     const fc = row.faceCandidates || {}, best = Math.max(fc.standard || 0, fc.compact || 0);
-    console.log('    faces by pair at the fitted scale (CSS px wide): standard ' + fc.standard + ', compact ' + fc.compact + '; shown ' + row.faceW);
-    if (!(row.faceW >= best - 0.01)) bad.push(row.view + ': the pair with the larger faces ' + JSON.stringify({ shown: [row.variant, row.scale, row.faceW], candidates: fc, fit: row.fit }));
+    // a pair with larger faces is passed over only when it was tried first and could not be placed (it would come
+    // within 12 px of something protected), as the overlay records it
+    const larger = fc.compact > fc.standard ? 'compact' : fc.standard > fc.compact ? 'standard' : null;
+    const refused = (row.tried || []).filter((t) => larger && t.fit.startsWith(larger) && t.scale === row.scaleV3[larger]);
+    console.log('    faces by pair at the fitted scale (CSS px wide): standard ' + fc.standard + ', compact ' + fc.compact + '; shown ' + row.faceW + (refused.length ? ' — the ' + larger + ' pair refused: ' + refused.map((t) => t.fit + ' ×' + t.scale + ' ' + t.why).join('; ') : ''));
+    if (!(row.faceW >= best - 0.01) && !(larger && refused.length && refused.every((t) => /overlaps|too/.test(t.why)))) bad.push(row.view + ': the pair with the larger faces ' + JSON.stringify({ shown: [row.variant, row.scale, row.faceW], candidates: fc, fit: row.fit, tried: row.tried }));
     if (w === 2048 && !(row.variant === 'standard' && row.scale === 2)) bad.push(row.view + ': equal faces — the standard pair at 2× ' + JSON.stringify({ variant: row.variant, scale: row.scale }));
   }
   report.paintedGeometry = { note: 'SYNTHETIC sample (tests/fixtures/harmony_sample) and rich fixture (tests/fixtures/harmony_rich), not the game\'s art. The sample\'s face boxes are the code busts\' (36 × 33 art px); real art uses the template\'s 50 × 52.', rows };
