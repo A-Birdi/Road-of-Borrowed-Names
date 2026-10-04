@@ -236,13 +236,15 @@ The player has:
 - accessories and keepsakes.
 
 Painting every combination whole is impossible, so the player is painted as **layers on the same canvas**,
-**at the same finish as the companion**:
+**at the same finish as the companion**. Since 2026-10-04 the layers can be painted in look A's real colours,
+and the conversion to the key colour families below is done in Track B (§8.0). Painting directly in the key
+families still works:
 
 | Files | What | Notes |
 |---|---|---|
 | `pc_head_focus`, `_cue`, `_peak`, `_settle` | head with ears, neck and face, **bald smooth scalp**, one expressive tilted three-quarter angle, an expression per state | one iris colour (dark brown, final colour), since the game has no eye-colour option; the eyes are fully drawn under where glasses would sit |
 | `pc_torso_tunic`, `_robe`, `_coat`, `_apron`, `_dress` | shoulders and chest to the bottom edge, including the arm that isn't gesturing | folds that follow the pose; the apron bib in its final cream |
-| `pc_arm_<pose>_<sleeve>` | the brush arm: sleeve, hand and brush in one file | poses `prep_a`, `prep_b` (optional), `cue`, `peak_<comp>`, `settle_<comp>` for nao, mio, ren and suzu. Sleeve `wide` for the robe only, `fitted` for every other cut. The brush is a slim black lacquer shaft, a brass ferrule, and cream bristles with an ink-dark tip, in final colours |
+| `pc_arm_<pose>_<sleeve>` | the brush arm: sleeve, hand and brush in one file | poses `prep_a`, `prep_b` (optional), `cue`, `peak_<comp>`, `settle_<comp>` for nao, mio, ren and suzu. Sleeve `wide` for the robe only, `fitted` for every other cut. The brush is a large calligraphy brush: a black lacquer shaft, a brass ferrule, and cream bristles with visible ink at the tip, in final colours (Robin, 2026-10-04) |
 | `pc_hair_<style>_back`, `pc_hair_<style>_front` | **back:** all hair behind the head and shoulders. **front:** crown, fringe, side locks and locks falling in front of the shoulders | every hairstyle (short, bob, long, ponytail, bun, curly, spiky, braid, shaved, twintails, wavy, wrap). `shaved` is front only (stubble). `wrap` is a cloth head wrap in the **cloth-trim** family. Optional `_swing` variants serve prep_b and settle_a. Each hairstyle must fit the bald head exactly; two styles differ in silhouette, not just colour |
 | `acc_<id>[_<part>]` | §7 | |
 
@@ -317,7 +319,56 @@ hides the hair above a hat or cap band, so a hat must cover the scalp above its 
 
 ## 8. Batch 1: the quality bar, then the customisation proof
 
-### Batch 1a: Phase 1, player + Suzu at the mockup's standard (do this first, then stop for Robin's approval)
+### 8.0 The order of work (Robin, 2026-10-04): the approved direction, then two separate tracks
+
+Robin's Suzu test sheet is the first result that lands the intended cut-in style and performance. It is the
+**approved visual direction**. It is not an import batch.
+
+**Suzu's motion grammar is locked** as one full, one-off performance (contract §4 states):
+
+| State | Suzu | Effect layer |
+|---|---|---|
+| `prep_a` | readied and composed: a hand to her chest, a soft knowing smile | — |
+| `prep_b` | anticipation: the turn gathering, the hand starting to move | — |
+| `cue` | the flourish beginning: head and shoulders turning out, the arm reaching forward, an open smile | — |
+| `peak` | the full wink, the forward reaching gesture at full extension, sparkles | `suzu_peak_fx`: the sparkles and the arc |
+| `settle_a` | follow-through: the arm drawing back, the sparkles easing off | `suzu_settle_a_fx`: fewer, smaller sparkles |
+| `settle_b` | settled: eyes closed in a happy smile, hands clasped, the flourish concluded, no sparkles | — |
+
+The sparkles are always on their own effect layer, never painted into Suzu's frame. With particles off, the game
+leaves them out. Batch 1a's required import set stays the 18 files below. `suzu_prep_b`, `suzu_settle_a` and the
+two effect files are painted as part of the same performance and delivered with them. The game plays all six
+states when they are present.
+
+**Track A: art creation (the image tool; Robin approves each step).**
+1. **A1, one paired full-colour style master** at the `peak` moment, in the approved style:
+   - Suzu is on the left. She is the one who winks.
+   - The player is on the right, holding a large calligraphy brush with visible ink at the tip.
+   - The player keeps the glasses, the satchel strap, the flower and the green coat; the ponytail is the hairstyle.
+   - The player's performance is energetic but less flamboyant than Suzu's: an open, excited smile, no wink.
+   - The pair feels coordinated, one shared moment. They are not two unrelated busts.
+   - **Robin approves A1 before anything else is painted.**
+2. **A2, the other states as paired masters** in the same style and lighting: Suzu's six states and the player's
+   four (focus, cue, peak, settle). These are the reference the layers are cut from.
+3. **A3, the Batch 1a files, painted from the approved masters** on the template: the companion frames
+   flattened, and the player kit as separate layers in **look A's real colours**. The painter no longer has to
+   paint in the key colours (Track B converts them).
+
+**Track B: technical extraction, alignment, recolour validation and import proofing (Claude, in the repo).**
+1. **B1, keyify:** the real-colour player layers become key-family layers with masks (contract, "Real-colour
+   delivery").
+2. **B2, alignment:** the grid, the neck pit and placement over the template are the importer's job, with fixes in
+   `import.json`.
+3. **B3, recolour validation:**
+   - a round trip back to look A;
+   - proof sheets of the kit recoloured to at least six looks (light and dark skins, light, dark and vivid hair,
+     light and dark clothing);
+   - any pixel that will not classify, listed.
+4. **B4, import proofing:** the importer's report, stills of every state, the animation, the cut-in assembled.
+5. **Only then** is the importer-facing batch packaged and demonstrated in a real battle (Normal, Fast and
+   reduced motion, particles on and off), as the visual candidate Robin approves.
+
+### Batch 1a: Phase 1, player + Suzu at the mockup's standard (derived from the approved masters; then stop for Robin's approval)
 
 | Group | Files (18 required, plus optional) |
 |---|---|
@@ -331,22 +382,22 @@ hides the hair above a hat or cap band, so a hat must cover the scalp above its 
 - **Look A** is Robin's acceptance look: an auburn ponytail, a green coat, glasses, a flower and the satchel
   strap. The mockup sets the style; its player's exact look came from the image tool, not from Robin's
   character.
-- **Style masters (recommended):** first paint look A + Suzu complete, in real colours, at `peak` and
-  `settle_b`. Then derive the layers from them. Keep style masters in a separate `refs/` folder: the importer
-  accepts only contract names.
+- **Style masters (required since 2026-10-04, §8.0 Track A):** the paired full-colour masters come first
+  and are approved before the layers are derived from them. Keep them in a separate `refs/` folder: the
+  importer accepts only contract names.
 
 **Robin's quality examples (2026-10-04).** While the image tool worked, it produced single-sheet examples:
 Suzu in four states, four bald heads, four brush arms, a torso, ponytail back and front, and the three
 accessories. They are not the delivery, and they are not committed. Robin judged them the right level of detail.
-- **Suzu's performance, approved as shown:** a hand to her chest with a soft smile (`prep_a`); reaching out
+- **Suzu's performance, approved as shown (now locked as six states, §8.0):** a hand to her chest with a soft smile (`prep_a`); reaching out
   with an open smile (`cue`); the reach with a wink and a burst of sparkles (`peak`); ending eyes-closed in a
   happy smile with her hands clasped below her chin (`settle_b`). The in-betweens (`suzu_prep_b`,
   `suzu_settle_a`) are worth having for a smoother flourish.
 - **For the real files, compared with the examples:**
   - every layer is painted in place on the template, at the head's tilted angle and scale; the example
     glasses are drawn flat-on and alone;
-  - skin is painted in the orange key, hair in the purple key and hair ties in the teal trim key; the
-    examples use a real brown skin and pink ties;
+  - since 2026-10-04 the layers may be painted in look A's real colours (Track B converts them); they must
+    still be look A's colours, light skin and auburn hair. The examples use a darker skin and pink ties;
   - the sparkles and ink splash go in `suzu_peak_fx` or are left to the game, so the cut-in works with
     particles off;
   - Batch 1a's arms have fitted coat sleeves; the example arms have wide sleeves, which belong to 1b.
@@ -412,8 +463,7 @@ The published brief page has a checklist.
 
 1. **Look A's hairstyle. Settled 2026-10-04: the ponytail,** your character's. The mockup's player look
    came from the image tool's renditions, so match its style, not its exact appearance.
-2. **The wink.** The player's four head states are shared by all four pairings. The proposal: no wink on the
-   shared head, so the wink stays Suzu's. Alternatively, one extra Suzu-only player peak head.
+2. **The wink. Settled 2026-10-04:** Suzu winks; the player does not (an open, excited smile at `peak`).
 3. **A second head angle at `peak`.** It would need every hairstyle and hair-mounted accessory in that angle
    too (about 24 more hair files). The proposal: decide after Batch 1a.
 4. **Small phones** (not your devices). At 375 × 667 and 320 × 640, faces are 52 CSS px, short of the
