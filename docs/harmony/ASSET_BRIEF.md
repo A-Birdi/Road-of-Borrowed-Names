@@ -352,7 +352,14 @@ states when they are present.
    four (focus, cue, peak, settle). These are the reference the layers are cut from.
 3. **A3, the Batch 1a files, painted from the approved masters** on the template: the companion frames
    flattened, and the player kit as separate layers in **look A's real colours**. The painter no longer has to
-   paint in the key colours (Track B converts them).
+   paint in the key colours (Track B converts them). What the conversion needs:
+   - **One palette per material:** skin, hair, coat, trim and flower use exactly the masters' colours in every
+     layer.
+   - **The full range:** each material's darkest shadow and brightest highlight appear as painted in the masters.
+   - **Clear of the outline:** every colour stays clearly lighter than the dark outline.
+   - **Fixed parts apart:** eyes, lips, brush, metal and leather stay distinct from the materials beside them.
+
+   Where a pixel cannot be told apart, a rough mask settles it (contract §5.5).
 
 **Track B: technical extraction, alignment, recolour validation and import proofing (Claude, in the repo).**
 1. **B1, keyify:** the real-colour player layers become key-family layers with masks (contract, "Real-colour
