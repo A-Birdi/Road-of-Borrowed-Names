@@ -24,17 +24,21 @@
  *
  * Placement (§5.2–§5.4), measured every time from the live layout (CSS px):
  *   protected: the Resolve/Harmony dock (.cb-party), the action banner, the telegraph and the response dock
- *   unless Adaptive has withdrawn them (Keep visible: they count as occupied), the creatures' plates and
+ *   unless Adaptive has withdrawn them (Keep visible: they count as occupied; withdrawn, their region is free,
+ *   but the portrait stays unseen until they have actually left it — they leave on a 200 ms CSS transition of
+ *   wall time, the entrance runs on the presentation clock — then fades in where it stands), the creatures' plates and
  *   badges, each creature's silhouette with its knots (the impact destination), the on-field party, Skip,
  *   the battle's Settings button, an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
  *   transparent corners are not footprint; its hands, glow and backing are). A dialogue, the language task,
  *   word help or another reading layer means no cut-in starts (and an open one is removed at once).
- *   Fit order: 1. the standard pair in the left-middle space (at RB.harmonyArt.fitScale); 2. the same moved
- *   up or down on the left; 3. the authored compact pair (with its backing, then without backing and
- *   effects, then at smaller scales while faces stay ≥ 24 px); 4. no portrait for this action — recorded in
- *   stats().fallbacks. (Where the standard's faces would be under 48 px while the compact's are larger — a
- *   tall tablet — the compact is tried first: §5.4's narrow-screen case.) The composition always enters
- *   from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
+ *   Candidates: the standard pair in the left-middle space (at RB.harmonyArt.fitScale); the same moved
+ *   up or down on the left; the authored compact pair (with its backing, then without backing and
+ *   effects, then at smaller scales while faces stay ≥ 24 px). They are tried in the order of the face size
+ *   each gives at its own fitted scale (each variant inside its own footprint limits), larger first, that list's
+ *   order breaking ties — so 1366–1600 px desktops get the compact pair at 2× (faces ~100 CSS px) rather than the
+ *   standard at 1×, a tall tablet the compact pair (§5.4's narrow-screen case), and views where both give the
+ *   same faces the standard pair. If none can be placed: no portrait for this action — recorded in
+ *   stats().fallbacks. The composition always enters from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
  *   On resize or orientation change the same instance is placed again (no replay, nothing spent again); if
  *   no placement remains it fades out quickly and the stage action continues.
  *
@@ -61,7 +65,7 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
   const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
   // ---- the setting and the moments it must not start -------------------------------------------------
@@ -197,7 +201,8 @@ RB.harmonyCutin = (function () {
     return { sp, comp: comps[comps.length - 1], all: comps };
   }
   // does the composition at (x, y, s) draw anything inside one of the rects (each inflated by SEP)?
-  function hits(sp, x, y, s, rects) {
+  // (path: each drawn row also covers everything to its left — the way the composition slides in from the left edge)
+  function hits(sp, x, y, s, rects, path) {
     for (const R of rects) {
       const rx0 = R.x - SEP, rx1 = R.x + R.w + SEP, ry0 = R.y - SEP, ry1 = R.y + R.h + SEP;
       for (let r = 0; r < sp.length; r++) {
@@ -205,13 +210,23 @@ RB.harmonyCutin = (function () {
         if (!q) continue;
         const y0 = y + r * s, y1 = y0 + s;
         if (y1 <= ry0 || y0 >= ry1) continue;
-        if (x + (q[1] + 1) * s <= rx0 || x + q[0] * s >= rx1) continue;
+        if (x + (q[1] + 1) * s <= rx0 || (!path && x + q[0] * s >= rx1)) continue;
         return R.id;
       }
     }
     return null;
   }
-  // The placement for a companion's pair in the current layout, by the fixed fitting order (see the header).
+  // The menus Adaptive has withdrawn that are still on screen: the response dock and the telegraph leave through
+  // their edge on a CSS transition (200 ms of wall time), measured as drawn (the rectangle moves with the slide;
+  // gone once hidden or under 5 % opacity — the same test as visRect).
+  function withdrawing() {
+    const root = document.querySelector('.combat-ui');
+    if (!root || !root.classList.contains('cb-acting') || root.classList.contains('cb-keep')) return [];
+    const out = [];
+    for (const e of root.querySelectorAll('.intent, .cb-dock')) { const r = visRect(e); if (r) out.push(Object.assign({ id: e.classList.contains('cb-dock') ? 'responses' : 'intent' }, r)); }
+    return out;
+  }
+  // The placement for a companion's pair in the current layout, the candidates tried larger faces first (see the header).
   // o: { comp, look, view?: {w, h} } → { ok, variant, scale, x, y, w, h, fit, footprint, faceH, backing, fx,
   //      tried: [...], reason }
   function place(o) {
@@ -235,9 +250,15 @@ RB.harmonyCutin = (function () {
       cmp.push({ variant: 'compact', scale: sCmp, fit: 'compact-bare', at: 'scan', backing: false, fx: false });
       for (let s = Math.ceil(sCmp) - 1; s >= 1; s--) cmp.push({ variant: 'compact', scale: s, fit: 'compact-small', at: 'scan' });
     }
-    let order = std.concat(cmp);
-    // a tall, narrow view (a tablet held upright): the standard pair would be small while the compact is not
-    if (sStd > 0 && sCmp > 0 && faceOf(Object.assign({ variant: 'standard' }, base), sStd) < 48 && faceOf(Object.assign({ variant: 'compact' }, base), sCmp) > faceOf(Object.assign({ variant: 'standard' }, base), sStd)) order = cmp.concat(std);
+    // The larger faces first: each candidate at its own fitted scale (inside its variant's footprint limits) is tried
+    // in the order of the face size it gives, the fixed order above breaking ties (the standard pair, mid, first). So a
+    // desktop between about 1366 and 1600 px wide shows the compact pair at 2× (faces ~100 CSS px, the mockup's size)
+    // rather than the standard at 1× (~52 px), a tall tablet the compact pair, and a view where both give the same
+    // faces (2048 × 1046, 1920 × 1080; the code busts at 1648 × 840) the standard pair. One that cannot be placed
+    // gives way to the next.
+    const faceAt = {};
+    const fz = (st) => { const k = st.variant + '@' + st.scale; if (faceAt[k] == null) faceAt[k] = faceOf(Object.assign({ variant: st.variant }, base), st.scale); return faceAt[k]; };
+    const order = std.concat(cmp).map((st, i) => ({ st, i, f: fz(st) })).sort((a, b) => b.f - a.f || a.i - b.i).map((x) => x.st);
     const tried = [];
     for (const st of order) {
       const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
@@ -307,7 +328,10 @@ RB.harmonyCutin = (function () {
       // with large text (or an overlay that scrolls) the layout may still reflow as the menus withdraw: the
       // portrait waits, unseen, until it has held still for a few frames (within its entrance), then takes its
       // place — or, if none is left, is not shown at all (never a flash over what then moves under it)
-      settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null };
+      settle: root.scrollHeight > root.clientHeight + 1 || ((RB.game.settings && RB.game.settings.textScale) || 1) > 1.25 ? { sig: null, n: 0 } : null,
+      // the menus withdrawn for the exchange may still be leaving (frame1): until they are gone from where the portrait
+      // will be, it stays unseen
+      menus: root.classList.contains('cb-acting') && !root.classList.contains('cb-keep') ? { waited: false } : null };
     cur.rm = reducedPlan(cur);
     mark(cur, 'inactive', at);
     S.started++; S.shown++;
@@ -441,6 +465,32 @@ RB.harmonyCutin = (function () {
         if (!c.cut) c.cut = { pt, d: Math.min(120, c.d.out), op: c.opacity, why: 'resize-invalid' };
       }
     }
+    // The withdrawn menus' region is free for the placement, but they leave on a CSS transition of wall time (200 ms)
+    // while the entrance runs on the presentation clock (180 ms; Fast 100 ms of wall time): under load one frame could
+    // show the portrait over a dock that is still visibly leaving. So the portrait claims that region only once every
+    // withdrawn menu its rows (and the path it slides in along) reach is gone — measured each frame, as drawn; until
+    // then it stays unseen and its state does not advance. It then comes in with a short fade where it stands (no
+    // slide); if the middle of the hold passes first it is not shown at all (recorded). Reduced motion has no such
+    // transition (the menus go at once), so it never waits.
+    if (c.menus) {
+      const el0 = pt - c.t0, wr = withdrawing();
+      let over = null;
+      if (wr.length) { try { over = hits(spansOf({ comp: c.comp, look: c.look, still: c.reduce, variant: c.pl.variant, backing: c.pl.backing, fx: c.pl.fx }).sp, c.pl.x, c.pl.y, c.pl.scale, wr, true); } catch (e) { over = 'unknown'; } }
+      if (over) {
+        if (el0 >= c.d.in + c.d.hold / 2) {
+          note('menus');
+          S.fallbacks.push({ action: c.action, comp: c.comp, view: c.pl.view, reason: 'the withdrawn ' + over + ' stayed on screen', at: new Date().toISOString() });
+          while (S.fallbacks.length > FALLBACK_CAP) S.fallbacks.shift();
+          dispose('menus');
+          return;
+        }
+        if (!c.menus.waited) { c.menus.waited = true; S.menuWaits++; }
+        c.el.style.opacity = '0';
+        return;
+      }
+      if (c.menus.waited) { c.waited = Math.round(el0 * 10) / 10; if (c.lateAt == null && el0 > 0) c.lateAt = el0; }
+      c.menus = null;
+    }
     const el = pt - c.t0, d = c.d, total = d.in + d.hold + d.out;
     let state, op, dx = 0;
     if (c.cut) {
@@ -481,7 +531,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, reducedPlan: c.rm, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
@@ -497,10 +547,10 @@ RB.harmonyCutin = (function () {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
     const cost = { startMs: S.cost.start.slice(), frameMaxMs: Math.round(S.cost.frameMax * 100) / 100, frameMeanMs: S.cost.frames ? Math.round((S.cost.frameSum / S.cost.frames) * 1000) / 1000 : 0, frames: S.cost.frames };
-    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, menuWaits: S.menuWaits, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = S.menuWaits = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every
