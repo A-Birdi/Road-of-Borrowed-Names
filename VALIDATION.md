@@ -2380,7 +2380,8 @@ scenes.json and SCENES.md regenerated.
 **The lead's runs on the merge** (with the Chapter 5–6 sequences; the merged index.html is byte-identical to a fresh
 build; the manifest regenerates unchanged):
 - unit 25,744/0; validator clean;
-- browser: recorded on the next line.
+- browser, one at a time, on 91eb61f: staging_chapters --ch=3 2267/0, --ch=4 1350/0; sequence_chapters_56 144/0;
+  walk_round all passed.
 
 **Not verified:**
 - Play speed with a person watching; real devices.
