@@ -8,7 +8,8 @@
 //   ch5.boat  lf.boat_to_tower: "Row out" (the crossing lifted out of the fade, then the tower) and "Not yet"
 //   ch6.toya  sa.toya_read: with and without Tōya's bell, with each companion
 // Checks, per run: the shots shown, in order, and every phase of each reached; the scene's state afterwards (flags,
-// items, quests, the place) — the world as the sequence left it (HX52); no page error; nothing of the player left.
+// items, quests, the place) — the world as the sequence left it (HX52); no page error; nothing of the player left;
+// for one run of each kept sequence, the Shared memory's read-only replay (the same beats and shots; nothing changed).
 // Per sequence: 8 s idle moves nothing on; Previous looks back read-only (campaign state unchanged) and Next
 // rejoins without moving on; Skip scene asks first (unseen), Keep watching keeps the line, a confirmed skip stops at
 // the challenge / the end and runs the state lines once; reduced motion holds each action's end at once and no
@@ -44,7 +45,7 @@ const BELL = ['bell', 'gong', 'town', 'hall'], TOYA = ['folio', 'floor', 'turned
 const RUNS = [
   { name: 'ch5.bell · ring · Nao · Foundations (the kana lesson and the challenge over the held shot)', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'nao', profile: 'F', live: true, choose: ['Ring the bell'], shots: BELL,
     after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.q.lf_main === 9 && r.mem },
-  { name: 'ch5.bell · ring · Mio', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'mio', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.mem },
+  { name: 'ch5.bell · ring · Mio', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'mio', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.mem, replay: true },
   { name: 'ch5.bell · ring · Ren', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'ren', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' },
   { name: 'ch5.bell · ring · Suzu', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'suzu', choose: ['Ring the bell'], shots: BELL, after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' },
   { name: 'ch5.bell · Not yet · Mio (the scene ends; the picture goes; nothing rung)', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'mio', choose: ['Not yet'], shots: ['bell'],
@@ -53,7 +54,7 @@ const RUNS = [
     after: (r) => r.map === 'lf.tower_top' && !r.dark && r.world },
   { name: 'ch5.boat · Not yet (no sequence)', seq: 'ch5.boat', scene: 'lf.boat_to_tower', comp: 'mio', choose: ['Not yet'], shots: [], after: (r) => r.map === 'lf.sluice' && !r.dark && r.world },
   { name: 'ch6.toya · with Tōya\'s bell · Ren', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'ren', bell: true, shots: TOYA,
-    after: (r) => r.flags.sa_toya_read && !r.inv.sa_letter_kasane && r.inv.lf_toya_bell && r.q.sa_main === 6 && r.mem },
+    after: (r) => r.flags.sa_toya_read && !r.inv.sa_letter_kasane && r.inv.lf_toya_bell && r.q.sa_main === 6 && r.mem, replay: true },
   { name: 'ch6.toya · without the bell · Mio', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'mio', bell: false, shots: TOYA.filter((x) => x !== 'bell'), after: (r) => r.flags.sa_toya_read && !r.inv.sa_letter_kasane },
   { name: 'ch6.toya · with Tōya\'s bell · Nao', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'nao', bell: true, shots: TOYA, after: (r) => r.flags.sa_toya_read && r.inv.lf_toya_bell },
   { name: 'ch6.toya · without the bell · Suzu', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'suzu', bell: false, shots: TOYA.filter((x) => x !== 'bell'), after: (r) => r.flags.sa_toya_read },
@@ -127,7 +128,7 @@ async function still(p, file) {
 async function play(p, R, o) {
   o = o || {};
   const shots = [], phases = {}, bad = [], lines = [];
-  let picks = (R.choose || []).slice(), lessons = 0, leftForLater = 0, overLayer = [];
+  let picks = (R.choose || []).slice(), lessons = 0, leftForLater = 0, overLayer = [], seqLines = 0;
   for (let i = 0; i < 260; i++) {
     const s = await S(p);
     if (s.done) break;
@@ -158,6 +159,7 @@ async function play(p, R, o) {
         if (o.stills) { await holding(p); await wait(p, 260); const s3 = await S(p); if (s3.seq) await still(p, R.seq + '_' + s3.seq.shot + '_' + o.stills + '.webp'); }
       }
       lines.push(s.en);
+      if (s.seq) seqLines++;
       await next(p, s);
       continue;
     }
@@ -172,7 +174,7 @@ async function play(p, R, o) {
       left: { live: St.live, listeners: St.listeners, timers: St.timers, overlays: St.overlays, ctrl: document.querySelectorAll('.seq-ctrl').length, out: document.querySelectorAll('.seq-out').length },
       shakes: window.__shakes, chal: window.__chal, seen: s.seq && s.seq[seq] ? s.seq[seq].n : 0 };
   }, R.seq);
-  return Object.assign(r, { shots, phases: Object.fromEntries(Object.entries(phases).map(([k, v]) => [k, [...v]])), bad, lessons, leftForLater, overLayer, lines });
+  return Object.assign(r, { shots, phases: Object.fromEntries(Object.entries(phases).map(([k, v]) => [k, [...v]])), bad, lessons, leftForLater, overLayer, lines, seqLines });
 }
 
 // ---- 1. every branch, played through with real clicks ---------------------------------------------------------
@@ -193,6 +195,26 @@ for (const R of SHOTS_ONLY ? [] : RUNS) {
   if (R.live) {
     ok(r.lessons > 0 && r.leftForLater > 0 && r.overLayer.every((x) => x === 'bell'), R.name + ': the kana lesson and the challenge came up over the held first shot (' + JSON.stringify({ lessons: r.lessons, challenge: r.leftForLater, under: [...new Set(r.overLayer)] }) + ')');
   } else if (R.seq !== 'ch5.boat') ok(r.chal.length === 1, R.name + ': the challenge met once inside the sequence (' + r.chal.join(',') + ')');
+  if (R.replay) {
+    // the kept memory (Company › Shared memories) replays read-only: the same beats, shot by shot
+    const before = await campaign(p);
+    await p.evaluate((seq) => { const m = RB.game.s.company.memories.find((x) => x.id === 'seq:' + seq); window.__rp = m ? m.ref.beats.length : 0; window.__rpDone = false; RB.sequence.replay(m.ref).then(() => { window.__rpDone = true; }); }, R.seq);
+    const seen = [];
+    for (let i = 0; i < 60; i++) {
+      const v = await p.evaluate(() => RB.sequence.viewState());
+      if (!v) break;
+      if (!seen.includes(v.shot)) seen.push(v.shot);
+      if (v.i >= v.n - 1) { await p.keyboard.press('Escape'); break; }
+      await p.waitForFunction(() => { const x = RB.sequence.viewState(); return !x || x.state !== 'entering'; }, null, { timeout: 4000 }).catch(() => {});
+      await p.click('.seq-view [data-a=next]');
+      await wait(p, 60);
+    }
+    await p.waitForFunction(() => window.__rpDone === true, null, { timeout: 5000 }).catch(() => {});
+    const rp = await p.evaluate(() => window.__rp);
+    ok(rp > 0 && rp === r.seqLines, R.name + ': its kept memory holds the beats shown in the sequence (' + rp + ' of ' + r.seqLines + '; no picture stored) and replays them');
+    ok(JSON.stringify(seen) === JSON.stringify(R.shots), R.name + ': the replay shows the same shots in the same order');
+    ok((await campaign(p)) === before, R.name + ': the replay changed nothing in the campaign');
+  }
   ok(!errors.length, R.name + ': no page errors ' + errors.slice(0, 2).join(' | '));
   await ctx.close();
 }
