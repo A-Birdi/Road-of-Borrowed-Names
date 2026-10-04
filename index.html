@@ -57220,7 +57220,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const S = stage(w, h, vb), { s, lay } = S;
     const land = lay === 'land', narrow = lay === 'narrow';
     const kx = Math.round(w * (narrow ? 0.5 : land ? 0.42 : 0.5));
-    const ky = Math.round(narrow ? Math.min(vb - s(close ? 120 : 130), h * 0.5) : land ? clamp(vb + 24, 90, 130) : clamp(vb - s(close ? 30 : 40), 100, h));
+    // a phone held upright as the wide frame: the bust low, its shoulders meeting the sheet (never a column of robe)
+    const ky = Math.round(land ? clamp(vb + 24, 90, 130) : clamp(vb - s(close ? 30 : 40), 100, h));
     const k = clamp(land ? 1 : S.Z * (narrow ? 1.25 : 1.05), 0.8, 1.6);
     return Object.assign(S, { land, narrow, kx, ky, k });
   }
