@@ -75,14 +75,29 @@ export default async (t) => {
     t.ok(fs.readFileSync(path.join(R1.outDir, 'suzu_peak.png')).equals(fs.readFileSync(path.join(sampleDir, 'suzu_peak.png'))), 'companion frames are copied byte for byte');
     t.eq(R1.res.report.files.pc_torso_coat.grid.cell, [4, 4], 'a 4× layer is read on its grid'); t.ok(R1.res.report.files.acc_flower.grid.cell.every((v) => Math.abs(v - 1024 / 192) < 0.01), 'the 1024 square is read at 5.333× (' + R1.res.report.files.acc_flower.grid.cell.join(' × ') + ')');
     t.ok(R1.res.report.files.pc_head_focus.warnings.some((w) => /keyed out/.test(w)), 'the magenta background is keyed out');
-    // the materials keyify found = the materials of the original key kit, pixel for pixel
+    // the materials keyify found = the materials of the original key kit, pixel for pixel (decided by neighbours included)
+    const MC = { '255,0,0': 0, '0,255,0': 1, '0,0,255': 2, '255,255,0': 3, '255,0,255': 4, '0,0,0': -1 };
+    function agreement(res, truthOf) {
+      let agree = 0, differ = 0, byNeighbours = 0;
+      for (const f of res.files.filter((q) => q.cls)) {
+        const tr = truthOf(f.name);
+        for (let i = 0; i < W * H; i++) {
+          if (f.cls[i] === -2 || f.partOf[i] === 'protected') continue;
+          const o = 4 * i, tm = MC[tr.data[o] + ',' + tr.data[o + 1] + ',' + tr.data[o + 2]];
+          if (tm === f.cls[i]) agree++; else differ++;
+          if (f.flags[i] & FLAG.neighbours) byNeighbours++;
+        }
+      }
+      return { agree, differ, byNeighbours };
+    }
     let agree = 0, differ = 0;
     for (const n of kitNames) {
-      const a = decodePNG(Buffer.from(sample.files[sample.manifest.files[n].mask || n + '.png'], 'base64')), b = decodePNG(Buffer.from(R1.imp.files[R1.imp.manifest.files[n].mask], 'base64'));
-      if (!sample.manifest.files[n].mask) continue;
+      const a = sampleTruth(n), b = decodePNG(Buffer.from(R1.imp.files[R1.imp.manifest.files[n].mask], 'base64'));
       for (let i = 0; i < W * H; i++) { const o = 4 * i; if (!a.data[o + 3]) continue; if (a.data[o] === b.data[o] && a.data[o + 1] === b.data[o + 1] && a.data[o + 2] === b.data[o + 2]) agree++; else differ++; }
     }
-    t.ok(differ === 0, 'keyify\'s masks match the original kit\'s materials on every opaque pixel (' + agree + ' agree, ' + differ + ' differ)');
+    t.ok(differ === 0, 'the imported masks equal the original kit\'s on every opaque pixel (' + agree + ' agree, ' + differ + ' differ)');
+    const a1 = agreement(R1.res, sampleTruth);
+    t.ok(a1.differ === 0, 'reference: keyify\'s materials = the original kit\'s on every unprotected pixel (' + a1.agree + ' agree, ' + a1.differ + ' differ; ' + a1.byNeighbours + ' decided by neighbours)');
     const b1 = await busts(R1.imp, looks), c1 = compare(ref, b1);
     t.log('reference mapping, sample: busts in ' + looks.length + ' looks vs the original key kit: ΔE mean ' + c1.all.mean + ', p95 ' + c1.all.p95 + ', max ' + c1.all.max + ', over 0.02: ' + c1.all.over + ' of ' + c1.all.n);
     // tolerance: half a just-noticeable difference (ΔE 0.01). The chain rounds to 8 bits twice (look A, then the key
@@ -141,6 +156,7 @@ export default async (t) => {
       for (let i = 0; i < W * H; i++) { if (f.cls[i] === -2 || f.partOf[i] === 'protected') continue; const o = 4 * i, tm = T[truth.data[o] + ',' + truth.data[o + 1] + ',' + truth.data[o + 2]]; if (tm === f.cls[i]) rAgree++; else { rDiffer++; if (rDiffer < 12) t.log('differs', f.name, i % W, (i / W) | 0, hex(f.img.data, 4 * i), 'truth', tm, 'keyify', f.cls[i], f.partOf[i], f.flags[i]); } }
     }
     t.ok(rDiffer === 0, 'rich: keyify\'s materials = the ground truth on every unprotected pixel (' + rAgree + ' agree, ' + rDiffer + ' differ)');
+    t.log('rich: materials = ground truth on ' + rAgree + ' unprotected pixels, ' + rDiffer + ' differ; ' + agreement(richRes2, (n) => decodePNG(fs.readFileSync(path.join(root, 'tests/fixtures/harmony_rich/truth', n + '.mask.png')))).byNeighbours + ' decided by neighbours');
     const outRich = path.join(tmp, 'out_rich');
     writeKeyified(richRes2, outRich);
     const richOut = importToMemory(outRich);
@@ -178,6 +194,27 @@ export default async (t) => {
     const fixedBad = keyifyKit(badDir, { look: testLook, RB, masksDir: bm });
     const fb = fixedBad.report.files.pc_hair_ponytail_front;
     t.ok(fixedBad.ok && fb.materials.clothTrim === painted && fb.flags.masked === painted && fb.flags.clamped === painted, 'a supplied mask (at 4×) marks them trim: converted, the clamped residual reported (' + JSON.stringify(fb.flags) + ')');
+    // a layer delivered in key colours already (the sample's own flower) is passed through beside real-colour ones,
+    // its mask derived as the importer derives it (its leaves and centre are fixed colours: 73 % of it is key colours); the real-colour head is converted, though 27 % of it lies in the skin family
+    const mixDir = path.join(tmp, 'in_mixed');
+    fs.mkdirSync(mixDir);
+    fs.copyFileSync(path.join(sampleDir, 'acc_flower.png'), path.join(mixDir, 'acc_flower.png'));
+    fs.writeFileSync(path.join(mixDir, 'pc_head_focus.png'), encodePNG(layers.pc_head_focus));
+    const mixed = keyifyKit(mixDir, { look: testLook, RB }), mf = mixed.report.files;
+    t.ok(mf.acc_flower.mode === 'keyed' && mf.acc_flower.keyedShare >= 0.5 && mf.acc_flower.unresolvedCount === 0 && mf.pc_head_focus.mode === 'real' && mf.pc_head_focus.keyedShare === 0, 'a key-coloured layer is passed through (share ' + mf.acc_flower.keyedShare + '), a real-colour one converted (share ' + mf.pc_head_focus.keyedShare + ')');
+    const mo = path.join(tmp, 'out_mixed');
+    writeKeyified(mixed, mo);
+    t.ok(fs.readFileSync(path.join(mo, 'acc_flower.png')).length > 0 && importToMemory(mo).report.ok, 'the mixed delivery imports');
+    // a whole delivery in key colours (the sample itself, one layer with its supplied mask) goes through unchanged:
+    // every layer and mask the importer then writes is byte for byte what importing the sample directly writes
+    const kd = keyifyKit(sampleDir, { look: testLook, RB });
+    t.ok(kd.ok && Object.values(kd.report.files).filter((f) => f.materials && f.mode !== 'fixed').every((f) => f.mode === 'keyed'), 'a key-coloured delivery is passed through layer by layer (' + Object.entries(kd.report.files).filter(([, f]) => f.materials && f.mode !== 'keyed' && f.mode !== 'fixed').map(([n]) => n).join(' ') + ')');
+    const ko = path.join(tmp, 'out_keyed');
+    writeKeyified(kd, ko);
+    const kimp = importToMemory(ko);
+    const kitPngs = Object.keys(sample.files).filter((f) => !/^suzu_/.test(f));
+    const sameBytes = kitPngs.filter((f) => kimp.files[f] === sample.files[f]);
+    t.ok(kimp.report.ok && sameBytes.length === kitPngs.length, 'importing it after keyify gives the same ' + kitPngs.length + ' kit layers and masks, byte for byte (' + sameBytes.length + ' equal)');
     // fixed colours near the key families are reported: an anchor shade is an error (the importer refuses it), one in
     // a key family the file may hold a warning (the mask keeps it fixed)
     const sat = { w: W, h: H, data: new Uint8Array(layers.acc_satchel.data) }, satF = R1.res.files.find((f) => f.name === 'acc_satchel');
@@ -215,11 +252,17 @@ export default async (t) => {
     t.log('--sample: ' + first4.report.unresolved + ' pixels reported (' + Object.entries(first4.report.files).filter(([, f]) => f.unresolvedCount).map(([n, f]) => n + ' ' + f.unresolvedCount).join(', ') + '), ' + nb4 + ' decided by their neighbours');
     t.ok(first4.report.unresolved < 120, '--sample: the sampled look places all but a few pixels (' + first4.report.unresolved + ' reported)');
     const s4 = await settle(inDir, path.join(tmp, 'masks_sampled'), first4, sampleTruth, { look: sampled });
+    const a4 = agreement(s4.res, sampleTruth);
+    // (the master shows the trim's darkest value on 1 pixel — the satchel strap, the arm and the head cover the rest — so
+    // the sampled trim lacks it and its 43 pixels in the torsos are read as the nearest fixed colour: a master must show
+    // each material's whole value range)
+    t.ok(a4.differ <= (a4.agree + a4.differ) / 200, '--sample: materials against the original kit, at most 0.5 % differ (' + a4.agree + ' agree, ' + a4.differ + ' differ; ' + a4.byNeighbours + ' decided by neighbours)');
     const R4 = { res: s4.res, outDir: path.join(tmp, 'out_sampled') };
     writeKeyified(R4.res, R4.outDir);
     R4.imp = importToMemory(R4.outDir);
     t.ok(R4.res.report.unresolved === 0 && R4.imp.report.ok && R4.imp.verify.ok, '--sample: with masks over the reported pixels (' + s4.rounds + ' rounds) the delivery converts and imports');
     const c4 = compare(ref, await busts(R4.imp, looks));
+    t.log('--sample: materials vs the original kit: ' + a4.agree + ' agree, ' + a4.differ + ' differ, ' + a4.byNeighbours + ' decided by neighbours');
     t.log('range mapping with the sampled look, sample: busts vs the original kit: ΔE mean ' + c4.all.mean + ', p95 ' + c4.all.p95 + ', max ' + c4.all.max + ', over 0.02: ' + c4.all.over + ' of ' + c4.all.n);
     // the sampled colours are the painted ones, the value scale the base look's: as close as the default look's range run
     // but for the flower's palest petal, which a near-white fixed colour of the master (bristles, an eye white) leaves

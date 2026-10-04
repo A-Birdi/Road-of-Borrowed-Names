@@ -7,13 +7,15 @@
 //    magenta keying, grid detection, cell-centre downsampling, binary alpha, placement) — the same code, not a copy.
 // 2. Classify each opaque pixel of a kit file into a PART the file's kind may hold (the look's `files`): a material
 //    part (skin, hair, clothMain, clothTrim, accessory) matched against the look's reference ramp for it, or a fixed
-//    part (eyes, lips, brush, leaves, …) matched against the look's colours for it. Outline ink and near-white
-//    highlights are fixed first (as the importer protects them; ink is snapped to #140c18). The nearest part within
-//    `near` that is nearer than every part of another material by `margin` wins; anything else is UNRESOLVED and
-//    reported (never guessed). A supplied mask (`<name>.mask.png`, in --masks or beside the file) decides every pixel
-//    it covers. A pixel no part matches but which already lies in one of the file's key families (the importer's own
-//    derivation) is kept as painted (a part delivered in key colours); a file that is mostly in key families already is
-//    passed through whole, its mask derived as the importer derives it.
+//    part (eyes, lips, brush, leaves, …) matched against the look's colours for it. Outline ink (snapped to #140c18,
+//    as the importer does) and white or the eye white are fixed first; other near-whites stay fixed unless a material
+//    claims them. The nearest part within `near` that is nearer than every part of another material by `margin` wins;
+//    a pixel between two parts takes the one its decided neighbours clearly have (flagged and counted); anything else
+//    is UNRESOLVED and reported (never guessed). A supplied mask (`<name>.mask.png`, in --masks or beside the file;
+//    partial masks allowed) decides every pixel it covers. A pixel no part matches but which lies clearly (within half
+//    of `inner`) in one of the file's key families is kept as painted (a part delivered in key colours); a layer mostly
+//    made of such colours is passed through whole, as delivered, its mask the importer's own (derived, or the supplied
+//    one read) — a delivery wholly in key colours comes out exactly as the importer alone would read it.
 // 3. Value mapping, per material across the whole kit (the face, the hand and the neck share one mapping): each
 //    painted colour's place in that material's painted lightness range → t on the key curve, darkest → s0 and lightest
 //    → s4, shaped by the reference ramp (`range`, the default); or its place on the reference ramp itself
@@ -32,7 +34,7 @@ import crypto from 'node:crypto';
 import { decodePNG, encodePNG } from './png.mjs';
 import { detectGrid, downsample, binarize, keyMagenta, looksLikeCheckerboard } from './grid.mjs';
 import { normaliseImage, placeMask } from './importer.mjs';
-import { keyTable, isProtected, classify as keyClassify, deriveMask, maskImage, codeOf, shadeOfT } from './masks.mjs';
+import { keyTable, isProtected, classify as keyClassify, deriveMask, readMask, maskImage, codeOf, shadeOfT } from './masks.mjs';
 import { loadContract, root } from './contract.mjs';
 
 export const DEFAULT_LOOK = path.join(root, 'tools/harmony/lookA.json');
@@ -41,7 +43,7 @@ export const KEYIFY = {
   white: 4, // sRGB distance from #ffffff or the eye white #f6f2ee within which a pixel is always fixed
   maxHue: (12 * Math.PI) / 180, maxChroma: 0.16, maxDist: 0.25, // the residual kept (contract §5.1)
   minValues: 3, minSpan: 2, // `range` needs ≥ 3 values spanning ≥ 2 reference steps
-  keyedShare: 0.5, // a file with at least this share of its unprotected pixels in key families is passed through
+  keyedShare: 0.5, // a file with at least this share of its unprotected pixels matching no part but in a key family is passed through
   neighbours: 3, // an ambiguous pixel (two parts within `near`, under `margin` apart) takes the one of them that at least this
   //               many of its 8 decided neighbours have — twice as many as the other; reported (flag `neighbours`)
 };
@@ -260,23 +262,15 @@ function classifyFile(f, L, ctx) {
   f.counts = {};
   f.snapped = 0;
   const memo = new Map(), labOf = (k) => C.oklab((k >> 16) & 255, (k >> 8) & 255, k & 255);
-  const projAll = (lab) => HC.MATERIALS.map((m, mi) => { const q = C.project(lab, m); return { m, mi, t: q.t, d: q.d }; });
-  // already in key colours? (the importer's own derivation over the file's unprotected pixels)
-  let unprot = 0, inKey = 0;
-  if (allowed.length) for (let i = 0; i < N; i++) {
-    const o = 4 * i;
-    if (!d[o + 3] || isProtected([d[o], d[o + 1], d[o + 2]], KT, HC)) continue;
-    unprot++;
-    const k = (d[o] << 16) | (d[o + 1] << 8) | d[o + 2];
-    let c = memo.get('k' + k);
-    if (!c) { c = keyClassify(projAll(labOf(k)), allowedIdx, HC); memo.set('k' + k, c); }
-    if (c.kind === 'material') inKey++;
-  }
-  f.keyedShare = unprot ? inKey / unprot : 0;
-  if (allowed.length && unprot && f.keyedShare >= T.keyedShare && !f.mask) {
-    // delivered in key colours already: passed through, the mask derived exactly as the importer derives it
+  // delivered in key colours already: passed through, the mask derived exactly as the importer derives it
+  const orig = new Uint8Array(d);
+  const passThrough = () => {
     f.mode = 'keyed';
-    const r = deriveMask(f.img, allowed, HC);
+    d.set(orig); // (as delivered: the importer's own reading decides, ink snapping included)
+    f.cls.fill(-2); f.flags.fill(0); f.partOf.fill(null); f.unresolved = [];
+    // (with a supplied mask, the mask as the importer reads it)
+    const r = f.mask ? readMask(f.img, f.mask, allowed, HC) : deriveMask(f.img, allowed, HC);
+    if (f.mask) { r.unresolved = r.errors.map((e) => ({ x: e.x, y: e.y, colour: hex24((d[4 * (e.y * W + e.x)] << 16) | (d[4 * (e.y * W + e.x) + 1] << 8) | d[4 * (e.y * W + e.x) + 2]), why: 'the mask: ' + e.why })); r.snappedOutline = 0; f.rep.warnings.push(...r.warnings); }
     f.codes = r.codes;
     for (let i = 0; i < N; i++) {
       const c = r.codes[i];
@@ -287,7 +281,8 @@ function classifyFile(f, L, ctx) {
     for (const u of r.unresolved) { const i = u.y * W + u.x; f.cls[i] = -3; f.flags[i] |= FLAG.unresolved; f.unresolved.push({ x: u.x, y: u.y, colour: u.colour, why: 'key colours: ' + u.why }); }
     f.snapped = r.snappedOutline;
     return f;
-  }
+  };
+  const projAll = (lab) => HC.MATERIALS.map((m, mi) => { const q = C.project(lab, m); return { m, mi, t: q.t, d: q.d }; });
   f.mode = parts === 'fixed' ? 'fixed' : 'real';
   const maskMat = (i) => {
     if (!f.mask) return null;
@@ -373,6 +368,25 @@ function classifyFile(f, L, ctx) {
     if (!decided.length) break;
   }
   for (const [i, c, k] of pending) if (f.cls[i] === -3) f.unresolved.push({ x: i % W, y: (i / W) | 0, colour: hex24(k), why: c.why, near: c.near });
+  // a layer most of whose unprotected pixels lie clearly in a key family — kept as key colours above, or matched to a
+  // material whose key family they sit in (within half of `inner`) — was painted in key colours (as the flower already
+  // was in the image tool's examples): passed through whole. Measured: look A's real colours lie 0.37 or more from
+  // their own key families (0 % within half of inner, every layer), the sample's key colours 0; the importer's own
+  // derivation (within inner, any family) finds 27 % of a real-colour head in the skin family — auburn and a light
+  // skin's shadows sit at its edge — so it is not the test. (A key-coloured green sleeve matches look A's green coat.)
+  let unprot = 0, keyedPx = 0;
+  const own = new Map();
+  for (let i = 0; i < N; i++) {
+    if (f.cls[i] === -2 || f.partOf[i] === 'protected') continue;
+    unprot++;
+    if (f.flags[i] & FLAG.keyed) { keyedPx++; continue; }
+    const o = 4 * i, k = (d[o] << 16) | (d[o + 1] << 8) | d[o + 2];
+    let v = own.get(k);
+    if (v === undefined) { const kc = keyClassify(projAll(labOf(k)), allowedIdx, HC); v = kc.kind === 'material' && kc.d <= HC.IMPORT.inner / 2; own.set(k, v); }
+    if (v) keyedPx++;
+  }
+  f.keyedShare = unprot ? keyedPx / unprot : 0;
+  if (allowed.length && unprot && f.keyedShare >= T.keyedShare) return passThrough();
   return f;
 }
 
@@ -542,7 +556,7 @@ export function keyifyKit(inDir, opt = {}) {
       if (anchors.length) R.errors.push(anchors.reduce((a, c) => a + c.count, 0) + ' fixed pixels are exactly an anchor shade (' + anchors.map((c) => c.colour).join(', ') + ')');
       const coll = R.collisions.filter((c) => c.kind !== 'anchor');
       if (coll.length) R.warnings.push(coll.reduce((a, c) => a + c.count, 0) + ' fixed pixels lie in or near a key family (' + coll.slice(0, 5).map((c) => c.colour + ' ' + c.kind + ' ' + c.family + ' ' + c.d).join(', ') + '): kept fixed by the mask');
-      if (f.mode === 'keyed') R.warnings.push('already in key colours (' + Math.round(f.keyedShare * 100) + ' % of its pixels): passed through, mask derived as the importer derives it');
+      if (f.mode === 'keyed') R.warnings.push('already in key colours (' + Math.round(f.keyedShare * 100) + ' % of its pixels): passed through, its mask ' + (f.mask ? 'the supplied one, read' : 'derived') + ' as the importer reads it');
       const kp = f.mode !== 'keyed' && flags.keyed;
       if (kp) R.warnings.push(kp + ' pixels match no part but lie in a key family: kept as painted (key colours)');
       if (f.snapped) R.warnings.push(f.snapped + ' pixels within ' + HC.IMPORT.outline + ' of the outline ink were taken as ink (snapped to #140c18): a material value painted that dark is lost — paint it lighter, or claim it in a mask');
@@ -564,7 +578,10 @@ export function keyifyKit(inDir, opt = {}) {
 export function writeKeyified(res, outDir, opt = {}) {
   const { HC, files, cfg, inDir } = res;
   fs.mkdirSync(outDir, { recursive: true });
-  for (const f of fs.readdirSync(outDir)) if (/\.png$/i.test(f)) fs.rmSync(path.join(outDir, f));
+  // (an earlier keyify output is replaced; a folder of other PNGs — a delivery, a source batch — is never touched)
+  const pngs = fs.readdirSync(outDir).filter((f) => /\.png$/i.test(f));
+  if (pngs.length && !fs.existsSync(path.join(outDir, 'keyify.json'))) throw new Error(outDir + ' holds PNGs keyify did not write: choose an empty folder');
+  for (const f of pngs) fs.rmSync(path.join(outDir, f));
   const synthetic = !!cfg.synthetic, text = synthetic ? { Comment: 'SYNTHETIC SAMPLE — not art' } : {};
   const written = [], skipped = [];
   const ocfg = JSON.parse(JSON.stringify(cfg));

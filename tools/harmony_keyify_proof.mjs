@@ -83,7 +83,7 @@ try {
   const ms = await measure(ss.res, 'out_sampled');
   check(ss.res.ok && ms.imp.report.ok, '--sample: converts and imports after masks over ' + ss.painted + ' reported pixels');
   const cs = compare(orig, ms.b);
-  proof.runs.sample_sampled_range = { values: 'range', sampled: sl.sampled, reportedFirst: s0.report.unresolved, maskRounds: ss.rounds, maskedPixels: ss.painted, neighbours: nb(ss.res), busts: cs };
+  proof.runs.sample_sampled_range = { values: "range", sampled: sl.sampled, reportedFirst: s0.report.unresolved, maskRounds: ss.rounds, maskedPixels: ss.painted, neighbours: nb(ss.res), kit: ss.res.report.kit, warnings: ss.res.report.warnings, busts: cs };
   console.log('     --sample, range: ΔE mean ' + cs.mean + ', p95 ' + cs.p95 + ', max ' + cs.max + ', over 0.02 ' + cs.over + ' of ' + cs.n);
   check(cs.alpha === 0 && cs.mean <= 0.005 && cs.p95 <= 0.01, '--sample: mean ≤ 0.005, p95 ≤ 0.01');
   proof.checks = { failed: fails };

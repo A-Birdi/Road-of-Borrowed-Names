@@ -42,7 +42,8 @@ if (opt('--sample')) {
   console.log('sampled', S.pixels, 'pixels of the style master (' + S.master.w + '×' + S.master.h + ', native ' + S.master.native.join('×') + ')' + (S.mask ? ' with its mask' : ' without a mask') + ':', Object.entries(S.materials).map(([m, v]) => m + ' ' + v.pixels).join(', '), '; fixed colours', S.fixed, '; ignored', S.ignored, '→ look.sampled.json');
 }
 const res = keyifyKit(inDir, { look, RB, values: opt('--values') || 'range', masksDir: opt('--masks') ? path.resolve(opt('--masks')) : null });
-const w = writeKeyified(res, outDir, { force: flag('--force') });
+let w;
+try { w = writeKeyified(res, outDir, { force: flag('--force') }); } catch (e) { console.error(e.message); process.exit(2); }
 const R = res.report;
 console.log('== keyify', path.relative(process.cwd(), inDir) || '.', '→', path.relative(process.cwd(), outDir) || '.', '(look: ' + R.look + ', values: ' + R.values + ')');
 for (const [n, f] of Object.entries(R.files)) {

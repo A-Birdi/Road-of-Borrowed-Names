@@ -1711,6 +1711,442 @@
    "maskRounds": 1,
    "maskedPixels": 7,
    "neighbours": 52,
+   "kit": {
+    "accessory:flower": {
+     "material": "accessory",
+     "accessory": "flower",
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#e7667f",
+       "#ee8289",
+       "#f4a6a0",
+       "#f6cbc2",
+       "#f9e8e2"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       3,
+       4
+      ],
+      "scale": {
+       "tones": [
+        "#df4a7b",
+        "#e7667f",
+        "#ee8289",
+        "#f4a6a0",
+        "#f6cbc2",
+        "#f9e8e2"
+       ],
+       "pick": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      }
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 53,
+     "lightness": [
+      0.6748,
+      0.8768
+     ],
+     "tReference": [
+      -0.0007,
+      3
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1.2383,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "accessory:headband": {
+     "material": "accessory",
+     "accessory": "headband",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#0b1117",
+       "#172a33",
+       "#234750",
+       "#2e6a6e",
+       "#3d8885",
+       "#4da195"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 185,
+     "lightness": [
+      0.273,
+      0.5787
+     ],
+     "tReference": [
+      0,
+      3
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1.2229,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "accessory:scarf": {
+     "material": "accessory",
+     "accessory": "scarf",
+     "reference": {
+      "source": "game",
+      "tones": [
+       "#66311d",
+       "#864c24",
+       "#a66d29",
+       "#c8962e",
+       "#d0b24c",
+       "#d4c66f"
+      ],
+      "pick": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ],
+      "scale": null
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 450,
+     "lightness": [
+      0.4775,
+      0.8196
+     ],
+     "tReference": [
+      0,
+      3.9915
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 0.9841,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "clothMain": {
+     "material": "clothMain",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#29412e",
+       "#3a5d3c",
+       "#4e7a4a",
+       "#67945d",
+       "#85a677"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       3,
+       4
+      ],
+      "scale": {
+       "tones": [
+        "#18251c",
+        "#29412e",
+        "#3a5d3c",
+        "#4e7a4a",
+        "#67945d",
+        "#85a677"
+       ],
+       "pick": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      }
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 6163,
+     "lightness": [
+      0.3493,
+      0.6879
+     ],
+     "tReference": [
+      0,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "clothTrim": {
+     "material": "clothTrim",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#21444d",
+       "#2e6a6e",
+       "#3e8b89"
+      ],
+      "pick": [
+       0,
+       1,
+       1,
+       2,
+       2
+      ],
+      "scale": {
+       "tones": [
+        "#06090c",
+        "#14242c",
+        "#21444d",
+        "#2e6a6e",
+        "#3e8b89",
+        "#50a89c"
+       ],
+       "pick": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      }
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 3,
+     "keyValues": 3,
+     "merged": [],
+     "pixels": 708,
+     "lightness": [
+      0.3644,
+      0.5882
+     ],
+     "tReference": [
+      1,
+      3
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1.958,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "hair": {
+     "material": "hair",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#632021",
+       "#863528",
+       "#aa5230",
+       "#c2713d",
+       "#c6925d"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       3,
+       4
+      ],
+      "scale": {
+       "tones": [
+        "#42161d",
+        "#632021",
+        "#863528",
+        "#aa5230",
+        "#c2713d",
+        "#c6925d"
+       ],
+       "pick": [
+        1,
+        2,
+        3,
+        4,
+        5
+       ]
+      }
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 5,
+     "keyValues": 5,
+     "merged": [],
+     "pixels": 6496,
+     "lightness": [
+      0.3478,
+      0.6985
+     ],
+     "tReference": [
+      0,
+      4
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 1,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    },
+    "skin": {
+     "material": "skin",
+     "accessory": null,
+     "reference": {
+      "source": "look",
+      "tones": [
+       "#815c4d",
+       "#d8a882",
+       "#ecc6a2",
+       "#f5d8bb"
+      ],
+      "pick": [
+       0,
+       1,
+       2,
+       2,
+       3
+      ],
+      "scale": {
+       "tones": [
+        "#815c4d",
+        "#b3846a",
+        "#d8a882",
+        "#e3b792",
+        "#eec8a4",
+        "#f3d6b9"
+       ],
+       "pick": [
+        0,
+        1,
+        2,
+        4,
+        5
+       ]
+      }
+     },
+     "mode": "range",
+     "fallback": null,
+     "compressed": false,
+     "values": 4,
+     "keyValues": 4,
+     "merged": [],
+     "pixels": 4969,
+     "lightness": [
+      0.5096,
+      0.8989
+     ],
+     "tReference": [
+      0,
+      3.9855
+     ],
+     "t": [
+      0,
+      4
+     ],
+     "minNeighbourStep": 0.9709,
+     "clamped": {
+      "colours": 0,
+      "pixels": 0
+     },
+     "gamutClipped": {
+      "colours": 0,
+      "pixels": 0
+     }
+    }
+   },
+   "warnings": [
+    "accessory:flower: range mapping stretches the painted values (reference t -0.0007…3) to s0…s4: if the darkest or lightest painted value is not meant as the material's deepest shadow or highlight, use --values=reference",
+    "accessory:headband: range mapping stretches the painted values (reference t 0…3) to s0…s4: if the darkest or lightest painted value is not meant as the material's deepest shadow or highlight, use --values=reference",
+    "clothTrim: range mapping stretches the painted values (reference t 1…3) to s0…s4: if the darkest or lightest painted value is not meant as the material's deepest shadow or highlight, use --values=reference"
+   ],
    "busts": {
     "n": 38232,
     "mean": 0.0028,

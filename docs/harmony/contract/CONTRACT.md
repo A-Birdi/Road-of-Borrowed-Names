@@ -23,6 +23,7 @@ kept with the means to regenerate the game's files from it, and the art is appro
 | Synthetic fixtures | `tests/fixtures/harmony_sample/` (five exact key shades per family) and `tests/fixtures/harmony_rich/` (many values per family, with ground truth) — both SYNTHETIC SAMPLE, not art |
 | Threshold calibration | `node tools/harmony_calibrate.mjs [--sweep]` → `docs/harmony/contract/calibration.json` |
 | Recolouring proof | `node tools/harmony_recolour_proof.mjs` → `docs/screenshots/harmony/recolour_v3/` |
+| Real-colour delivery → key layers and masks (§5.5) | `node tools/harmony_keyify.mjs` (+ `tools/harmony/keyify.mjs`, `keyify_report.mjs`, the look file `tools/harmony/lookA.json`); evidence `node tools/harmony_keyify_proof.mjs` → `docs/screenshots/harmony/keyify/` |
 
 Everything below is in **art px** (one pixel of the pixel-art grid) unless it says CSS px. Colour distances are in
 OKLab (§5.1) unless they say sRGB.
@@ -420,6 +421,159 @@ already meets the floor is left exactly as it is. Measured over the 63 supported
 **Never recoloured:** fixed pixels, outline ink, near-white highlights and eye whites, glasses, every companion pixel —
 enforced again at runtime. A fixed pixel may not be exactly an anchor shade (the importer refuses it).
 
+### 5.5 Real-colour delivery: the keyify step
+
+**Why.** Image tools paint the unnatural key families badly: their examples came back with real brown skin and pink
+ties. So the player kit may be delivered in **look A's real colours** and converted to the key families by
+`node tools/harmony_keyify.mjs` (a dev tool; nothing of it ships). Its output is an ordinary delivery in key colours
+with a supplied mask per file, which the importer then reads as in §9. The art is made in one place (look A, as the
+owner approves it); the conversion, alignment, recolouring checks and import proof are tooling.
+
+**What the painter delivers.**
+
+* Every kit layer of the batch under its contract name (§1), on the template (§3.1), in the format of §2: binary alpha, real
+  transparency or one flat #ff00ff, no painted checkerboard, any whole enlargement or the 1024 square.
+* Painted in **look A's real colours**: light skin, an auburn ponytail, a green coat with a darker teal trim and collar,
+  a pink flower; the glasses (round, brown frames), the satchel (brown leather, brass buckle) and the brush (black
+  lacquer, brass ferrule, cream bristles) in their final colours.
+* **One palette per material across all layers.** The face, the neck and the hand use the same skin colours; the
+  collar, the cuffs and the hair ties the same trim colours. The value mapping is per material across the whole kit.
+* **Each material's darkest painted value is its deepest shadow and its lightest is its highlight** (the default
+  `range` mapping places them at s0 and s4). A material painted without one of them is mapped with `--values=reference`.
+* **Fixed colours visibly apart from the materials beside them in the same layer:** eyes, eye whites, lips and mouth
+  in a head; the inner collar in a torso; lacquer, brass and bristles in an arm; leaves and the flower's centre in the
+  flower. Measured (below), auburn hair's light values, light skin's shadows, cream bristles and a light skin's
+  highlight are each within one just-noticeable difference of the other in real colours; they come back as reported
+  pixels, so expect masks there.
+* **No material value within 24 (sRGB) of the outline ink #140c18.** It is taken as ink, as the importer takes it.
+  Within 4 of #ffffff or the eye white #f6f2ee a pixel is always fixed; other near-whites stay fixed unless a material's
+  ramp claims them, for example a pink flower's palest petal.
+* Recommended: the **style master** (look A complete at `peak`, in real colours) and a rough mask of it in the mask
+  colours (§5) in `refs/`. `--sample` derives the reference colours from them; the master must show each material's
+  whole value range. Optional: `<name>.mask.png` for any layer, which may be partial, to settle reported pixels.
+
+**What keyify does.**
+
+1. **Read.** Every file goes through the importer's own normalisation (`normaliseImage` in `tools/harmony/importer.mjs`:
+   checkerboard refusal, magenta keying, grid detection, cell-centre downsampling, binary alpha, the `import.json`
+   cell, origin, offset and background). Companion frames are copied byte for byte.
+2. **Classify** each opaque pixel of a kit layer into a **part** its kind may hold. The look file
+   (`tools/harmony/lookA.json` by default; `--look`) gives the parts:
+   * material parts, matched against a reference ramp. The default ramps are the game's own ramps for its game look:
+     skin 1, auburn hair, cloth #4e7a4a / #3c5e38 with the trim #2e6a6e (no shipped outfit has this trim), and the
+     flower channel's default. They are built as `88_harmony_raster.js` builds them; a unit test checks they are equal.
+   * fixed parts, matched against colour lists: eyes, eye whites, lips, mouth, inner collar, lacquer, brass, bristles,
+     leaves and the flower's centre. These defaults are generic starting points, not measured from art.
+   * The parts per kind:
+
+     | Kind | Parts |
+     |---|---|
+     | head | skin, hair (brows, stubble), eyes, eye whites, lips, mouth |
+     | torso | cloth main, cloth trim, skin, inner collar (fixed unless the look's `as` says otherwise) |
+     | arm | cloth main (sleeve), cloth trim (cuff), skin (hand), lacquer, brass, bristles |
+     | hair | hair, cloth trim (ties, the wrap) |
+     | acc_flower | accessory, leaves, the flower's centre |
+     | acc_glasses, acc_satchel, other accessories without a channel | everything fixed |
+
+   Matching works in absolute OKLab. A ramp is matched by the chroma-plane distance at the pixel's own lightness, plus
+   any lightness beyond its ends. A colour list is matched by its nearest colour, with lightness at half weight. The
+   nearest part within **0.09** wins if it is nearer than every part of another material by **0.015**. A pixel between
+   two parts is decided by its neighbours when at least 3 of its 8 decided neighbours, and twice as many as the other,
+   belong to one of the two. Such pixels are flagged `neighbours` and counted. Anything else is **unresolved**: reported
+   with its colour, position and nearest parts, never guessed. A layer with unresolved pixels is not written unless
+   `--force` is given, and then those pixels stay fixed. A supplied mask decides every pixel it covers. A pixel that
+   matches no part but lies clearly in a key family (within half of `inner`) is kept as painted. A layer most of whose
+   unprotected pixels lie that clearly in a key family it may hold is passed through whole, exactly as delivered, its
+   mask the importer's own (derived, or the supplied one read). A delivery wholly in key colours therefore comes out
+   of keyify and the importer byte for byte as from the importer alone (tested on the sample). Measured shares: look A's
+   real-colour layers 0 %, the sample's key-coloured ones 77–100 %. Within `inner` itself the importer finds 27 % of a
+   real-colour head in the orange skin family, so `inner` is not the test.
+3. **Value mapping,** per material across the whole kit, monotonic in lightness. It keeps the number of values and
+   their order; merges caused by 8-bit rounding are reported.
+   * `range` (the default): the material's painted lightness range maps onto s0…s4. The darkest painted value lands
+     at s0 and the lightest at s4, shaped by the reference ramp's value scale.
+   * `reference`: each value's place on the reference ramp, so the reference's s0 lightness lands at s0. Values beyond
+     the key curve's ±0.6 steps are squeezed into it.
+   * A material with fewer than 3 values, or spanning under 2 reference steps, uses `reference`, because a range needs
+     a range. A range that stretches (the values reach under 3.5 or start over 0.5 on the reference) or squeezes is
+     reported.
+4. **Residual.** The colour's chroma, relative, and its hue offset are measured from the reference ramp at its own
+   lightness and rebuilt on the key curve at its value. They stay within the painting tolerance of §5.1: 12° of hue,
+   16 % of chroma and 0.25 together, so rim lights and warm highlights survive. Larger offsets are clamped and
+   reported. A key colour the importer would take for ink or a highlight is moved inward.
+5. **Fixed pixels keep their colours.** Each one is checked against every key family:
+   * within `outer` of a family the layer may hold: a warning, since the supplied mask keeps it fixed;
+   * within `foreign` of a family it may not hold: a warning;
+   * exactly an anchor shade: an error, since the importer refuses it.
+6. **Write** `<outDir>`:
+   * a native 192 × 160 key layer and `<name>.mask.png` per kit file;
+   * the companion frames;
+   * `import.json`: the delivery's, without the per-file grid and offset settings keyify has applied, plus a
+     `keyify` note with the look, the mapping and each source's sha256;
+   * `PROVENANCE.md`;
+   * `keyify.json`, the report.
+
+   The same inputs give the same bytes.
+
+```
+node tools/harmony_keyify.mjs art/harmony/incoming/<batch> <out> [--look=<look.json>] [--masks=<dir>] [--values=range|reference]
+                              [--sample=refs/<master>.png [--sample-mask=refs/<master>.mask.png]] [--report] [--force]
+node tools/harmony_import.mjs <out> --suggest
+```
+
+A committed source batch delivered in real colours stays in `art/harmony/source/<batch>/` exactly as delivered, and
+regeneration runs both steps: keyify into a scratch folder, then the importer from it.
+
+**The report** (`--report`, `<outDir>/keyify_report/`):
+
+* **Round trip.** Every converted material pixel is recoloured back to the reference ramps by the runtime's own
+  per-pixel recolour (`rowOf` / `recolourPx`) and compared with the input: ΔE in OKLab per material (mean, p95, max),
+  pixels changed, and pixels over 0.02.
+* **Import proof.** The importer runs on the result, then `--verify`.
+* **The bust.** The converted kit is installed in the runtime and assembled in the game look and 7 more looks: skins
+  0–6, white, black, teal, gold, plum and grey hair, and light, dark and vivid cloth. Beside them is the input
+  assembled unrecoloured by the same code, with their ΔE.
+* **The value floor (§5.4).** Neighbouring painted values are checked on every supported target ramp: the smallest
+  ΔE, and pairs apart when painted that fall under 0.02 somewhere.
+* **Sheets.** `files.png` shows, per layer, the input, the key layer, the mask over the input, the round trip, a ΔE map
+  and the flagged pixels (unresolved, clamped, colliding, foreign, gamut-clipped, merged, decided by neighbours, kept in
+  key colours). `looks.png` shows the busts. `report.json` holds everything.
+
+**Measured on the synthetic kits** (`node tools/harmony_keyify_proof.mjs` → `docs/screenshots/harmony/keyify/`, every
+image SYNTHETIC; `tests/unit/harmony_keyify.test.mjs` checks the same bounds). The kits were recoloured into look A by
+the runtime, keyified, imported, and recoloured into the 8 looks. They were compared with the same looks painted from
+the original key kits over 38,232 bust pixels:
+
+| Kit, mapping | ΔE mean | p95 | max | > 0.02 | Notes |
+|---|---|---|---|---|---|
+| sample (5 shades), `reference` | 0.0002 | 0.0031 | 0.0062 | 0 | 8-bit rounding twice; bound 0.01 |
+| sample, `range` (default) | 0.0013 | 0.0033 | 0.0973 | 792 | all in the trim and headband: the sample paints them without their lightest shade, so `range` stretches s0…s3 to s0…s4 (reported) |
+| rich (9–11 values, jitter, rim and warm lights), `reference` | 0.0008 | 0.0032 | 0.518 | 8 | 19 pixels reported (masks painted over them, 25 after re-runs); 510 decided by neighbours; 333 residuals clamped; the 8 are one trim value per look that look A's dark teal puts within 24 of the ink |
+| sample, `range`, look sampled from a style master and its mask | 0.0028 | 0.0059 | 0.488 | 1,089 | 7 pixels reported. The master's fixed colours are one list for every layer, so the flower's palest petal stays fixed beside a near-white fixed colour. The master shows the trim's darkest value on 1 pixel (the strap and the arm cover the rest), so its 43 pixels in the torsos are read as a fixed colour |
+
+Round trip on the sample (`range`): skin, hair, cloth main and the flower come back exactly (anchor shades). The trim's
+mean is 0.052 and the headband's 0.040, both from the stretch. Value floor: no pair of painted values falls under 0.02
+on any of the 63 targets.
+
+**Limits** (what the painter must still get right):
+
+* **Palette match.** The default reference ramps are the game's look A. A painter whose look A differs, for example a
+  pinker skin, a greener trim or another auburn, is classified against the wrong colours. Give the style master and
+  its mask (`--sample`), or edit the look file. `--sample` keeps the base look's value scale, since a master shows
+  colours, not where each sits among the shade steps.
+* **Colour alone cannot separate materials that look alike in real colours.** Those pixels are decided by their
+  neighbours or reported, never guessed silently, but a neighbour decision can be wrong at a boundary: check the
+  flagged sheet, and settle with masks.
+* **`range` trusts the painted extremes.** A few misread extreme pixels move a whole material's mapping. A stray
+  near-white or near-ink value does the same. Read the stretch warnings.
+* **The palette difference is discarded.** Hue and chroma offsets from the reference beyond the tolerance are
+  clamped, so a look A whose palette differs from the reference by more than 12° or 16 % loses that difference in every
+  look, look A included. The round trip shows it.
+* **Not covered.** Partial alpha, anti-aliased edges and colour profiles are refused or ignored, as the importer
+  refuses or ignores them. Alignment is the importer's (`--suggest`).
+* **Untested on painted art.** Every number above is synthetic. Batch 1a's real-colour layers are the first real test.
+  Re-run with their style master and read the report before importing.
+
 ## 6. Layer order and transforms
 
 Player bust, back to front (`PC_SLOTS`):
@@ -633,6 +787,8 @@ re-measure on Batch 1a. **Budget policy:** no new hard limit; decoding never run
 | `node tests/run-unit.mjs harmony_timing` | the overlay's timeline playback, reduced motion's two held poses and its ≤ 120 ms cross-fade, the code busts' single held drawing |
 | `node tools/harmony_calibrate.mjs` | the thresholds against both fixtures: 0 errors and the stated headroom |
 | `node tools/harmony_recolour_proof.mjs` | value floor on 63 targets, exact anchors, the residual sweep; writes the proof sheets |
+| `node tests/run-unit.mjs harmony_keyify` | the keyify step (§5.5): the default look file is the game's ramps; the synthetic sample and rich fixture recoloured into look A, converted (enlarged, magenta, 1024-square layers; partial masks), imported, verified and recoloured into 8 looks against the original kits; range vs reference; materials against the ground truth; reported, unwritten and mask-settled pixels; collisions; checkerboards; `--sample`; determinism |
+| `node tools/harmony_keyify_proof.mjs` | the same measurements as evidence: `docs/screenshots/harmony/keyify/` (files.png, looks.png, report.json, proof.json) |
 | `node tests/e2e/harmony_raster.mjs [--sheets]` | the painted path in the built game (both fixtures), the footprint scale, approval, the embedded build, no network; `--sheets` writes the evidence and the budgets |
 | `node tests/e2e/harmony_cutin.mjs painted [--painted-docs]` | the painted overlay: timeline, reduced motion (held poses, cross-fade, no travel), and every geometry viewport plus 2048 × 1046 and 1920 × 1080 with the sample and the rich fixture (scale, faces in CSS px, nothing within 12 px of a protected rectangle, nothing shown over a withdrawn menu still leaving); the sample with the template's face boxes at 1366, 1440, 1600 and 2048 wide (the pair with the larger faces is shown) |
 | `node tests/run-unit.mjs harmony_art`, `node tests/e2e/harmony_art.mjs` | the code-drawn busts, unchanged |

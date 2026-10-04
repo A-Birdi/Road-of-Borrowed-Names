@@ -1009,7 +1009,7 @@
    ],
    "errors": [],
    "warnings": [],
-   "keyedShare": 0.2678,
+   "keyedShare": 0,
    "mask": "--masks/pc_head_cue.mask.png",
    "materials": {
     "hair": 392,
@@ -1065,7 +1065,7 @@
    "warnings": [
     "262062 #ff00ff background pixels keyed out"
    ],
-   "keyedShare": 0.2663,
+   "keyedShare": 0,
    "mask": null,
    "materials": {
     "hair": 392,
@@ -1116,7 +1116,7 @@
    ],
    "errors": [],
    "warnings": [],
-   "keyedShare": 0.2659,
+   "keyedShare": 0,
    "mask": "--masks/pc_head_peak.mask.png",
    "materials": {
     "hair": 392,
@@ -1170,7 +1170,7 @@
    ],
    "errors": [],
    "warnings": [],
-   "keyedShare": 0.267,
+   "keyedShare": 0,
    "mask": null,
    "materials": {
     "hair": 392,
