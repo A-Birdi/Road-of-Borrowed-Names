@@ -565,6 +565,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    - The music's second round (a clean shakuhachi, the town rebalanced) was "a marked improvement - 10/10".
    - The Chapter 2 reworked scenes and illustrated moments need no wait for the owner. They will replay from the start
      once the Harmony and World Idle Life passes are done, so the lead's judgment stands until then.
+18. The four world findings of the Chapters 5–6 staging pass are fixed (2026-10-04; VALIDATION.md "Four staging
+   findings fixed"). A scene's own `!move pc` now brings your companion along (they follow, or step aside when you walk
+   back onto them), with staging on or off. A speaker walking in is never given a place someone else is still walking
+   to. `lf.water_returns` steps you back off the flooding row itself. The dog's corner in Cinder Orchard is faced from
+   a gap in the reeds below it (32,27). By hand, in Firefox: the dog's yard (does the gap read naturally?), and the
+   Lanternfall epilogue's townspeople gathering round you.
 
 ## Known issues / limits
 - No human handwriting samples tested (synthetic + font-derived only).
