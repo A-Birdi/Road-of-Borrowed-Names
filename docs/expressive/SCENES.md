@@ -19,12 +19,12 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | — | 62 | 0 | 160 | 6 | 228 |
 | Ch1 | 56 | 1 | 133 | 9 | 199 |
 | Ch2 | 72 | 2 | 164 | 3 | 241 |
-| Ch3 | 81 | 2 | 128 | 7 | 218 |
+| Ch3 | 83 | 2 | 126 | 7 | 218 |
 | Ch4 | 50 | 2 | 136 | 2 | 190 |
 | Ch5 | 73 | 1 | 103 | 2 | 179 |
 | Ch6 | 62 | 2 | 72 | 0 | 136 |
 | Prologue | 0 | 1 | 0 | 0 | 1 |
-| **All** | **456** | **11** | **896** | **29** | **1392** |
+| **All** | **458** | **11** | **894** | **29** | **1392** |
 
 “—” is material not tied to one chapter (Company, Pages, pets, activities, the Atlas …).
 
@@ -37,7 +37,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | atlas | 3 | 0 | 35 | 5 | 43 |
 | banter | 0 | 0 | 105 | 0 | 105 |
 | battle | 0 | 0 | 41 | 0 | 41 |
-| cases | 10 | 0 | 16 | 0 | 26 |
+| cases | 12 | 0 | 14 | 0 | 26 |
 | company | 34 | 0 | 11 | 0 | 45 |
 | dialect | 0 | 0 | 2 | 0 | 2 |
 | discovery | 0 | 0 | 34 | 1 | 35 |
@@ -55,7 +55,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | practice | 0 | 0 | 0 | 3 | 3 |
 | side | 49 | 0 | 11 | 2 | 62 |
 | wordplay | 4 | 0 | 0 | 0 | 4 |
-| **All** | **456** | **11** | **896** | **29** | **1392** |
+| **All** | **458** | **11** | **894** | **29** | **1392** |
 
 ### By area (source folder)
 
@@ -68,7 +68,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | Ch5 Lanternfall | 68 | 1 | 94 | 2 | 165 |
 | Ch6 The Still Archive | 62 | 2 | 69 | 0 | 133 |
 | Company | 34 | 0 | 3 | 0 | 37 |
-| Deduction cases | 12 | 0 | 19 | 0 | 31 |
+| Deduction cases | 14 | 0 | 17 | 0 | 31 |
 | Everywhere | 0 | 0 | 0 | 1 | 1 |
 | Field Inkweaving and the Mill Road | 0 | 0 | 40 | 1 | 41 |
 | Fishing | 0 | 0 | 4 | 3 | 7 |
@@ -80,7 +80,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | Suzu's speech (setting) | 0 | 0 | 2 | 1 | 3 |
 | The Pages We Keep and endings | 8 | 0 | 90 | 1 | 99 |
 | The Unwritten Atlas | 3 | 0 | 58 | 5 | 66 |
-| **All** | **456** | **11** | **896** | **29** | **1392** |
+| **All** | **458** | **11** | **894** | **29** | **1392** |
 
 ## Entries by area
 
@@ -1194,16 +1194,16 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `cs.hama_after` | src/content/cases/20_parcel.js:183 | cases | 2 | cs_hama×2 |  | npc sg.harbor cs_hama [case.parcel=done] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `cs.hama_bench` | src/content/cases/20_parcel.js:187 | cases | 2 | narr×2 | 1 cond | prop sg.harbor cs_workbench [!case.parcel=done]; prop sg.harbor cs_workbench [case.parcel=done] | prop cs_workbench | Quiet (H) | narration only (2 lines): stillness and the place carry it |
 | `cs.hama_bell` | src/content/cases/20_parcel.js:192 | cases | 3 | narr×3 | 1 cond | prop sg.harbor cs_bellpost [!case.parcel=done]; prop sg.harbor cs_bellpost [case.parcel=done] | prop cs_bellpost | Quiet (H) | narration only (3 lines): stillness and the place carry it |
-| `cs.parcel_marks` | src/content/cases/20_parcel.js:198 | cases | 4 | narr×3 comp | 1 if, 1 choice, 1 cond, comp:nao | prop co.post bookpile | prop bookpile | Quiet (C) | Ch3 case 'A Parcel for a Place That Moved' (the post house's record of marks): a ledger page read in place and a clue noted, with Nao's one remark; you stand reading the ledger — attention only, the record page is the interface (as cs.parcel_record). |
-| `cs.talk_parcel` | src/content/cases/20_parcel.js:211 | cases | 8 | comp×8 | 1 if, 4 cond, comp:mio/nao/ren/suzu | cases.parcel.talk |  | Quiet (C) | Case 'A Parcel for a Place That Moved': the companion's one remark when you talk to them while the case is open (or after it is solved), face to face as any talk to the companion; one line, no beat beyond it (as co.mind). |
+| `cs.parcel_marks` | src/content/cases/20_parcel.js:198 | cases | 4 | narr×3 comp | 1 if, 1 choice, 1 cond, comp:nao | prop co.post bookpile | prop bookpile | Performed (C) | Ch3 case 'A Parcel for a Place That Moved' (staged): you bend to the pile and take up the ledger, and read down its entries with it in your hands (the bell with the notch, the look-alike crest); Nao, if with you, looks between you and the pile: a courier's treasure. |
+| `cs.talk_parcel` | src/content/cases/20_parcel.js:217 | cases | 8 | comp×8 | 1 if, 4 cond, comp:mio/nao/ren/suzu | cases.parcel.talk |  | Quiet (C) | Case 'A Parcel for a Place That Moved': the companion's one remark when you talk to them while the case is open (or after it is solved), face to face as any talk to the companion; one line, no beat beyond it (as co.mind). |
 | `cs.view_window` | src/content/cases/30_view.js:40 | cases | 12 | genzo×5 comp×4 narr×3 | 1 if, 2 choice, 5 cond, comp:mio/nao/ren/suzu | prop sg.lighthouse cs_sketchwin [!case.view]; prop sg.lighthouse cs_sketchwin [case.view] | give:cs_sketch (Translucent sketch); prop cs_sketchwin | Performed (C) | Ch2 case 'The View on the Other Side' (staged): you lean in to the sketch pinned in the window; Genzō points up at it as he tells of the artist and you turn to him; he shakes his head: it matches nowhere. Lent, he steps up beside you and hands you the sketch, then holds up the white chart paper. Your companion's own answer (Nao looks between you and the window, Mio leans in to the thin paper, Ren's open hand, Suzu presents the stage with both hands). Once lent, you look at the pinholes; after the case, Genzō's nod. |
-| `cs.view_note` | src/content/cases/30_view.js:92 | cases | 4 | narr×3 comp | 1 if, 1 choice, 1 cond, comp:suzu | prop co.inn bookpile | prop bookpile | Quiet (C) | Ch3 case 'The View on the Other Side' (the guestbook at Fusa's inn): an old page read in place and a clue noted, with Suzu's one remark; attention only, the record page is the interface (as cs.parcel_record). |
-| `cs.view_seat` | src/content/cases/30_view.js:105 | cases | 4 | narr×3 comp | 2 if, 1 choice, 3 cond | prop sb.obs_path bench | take:cs_sketch (Translucent sketch); prop bench | Performed (C) | Ch4 case 'The View on the Other Side' (staged): sitting a while, you look up the stair (north) as the view is described; holding up the sketch as it hung in the window, you hold it up before you; turned over, you turn it in your hands to look; leaving it here, you reach to set it on the post beside the seat, and your companion nods. |
-| `cs.view_west` | src/content/cases/30_view.js:147 | cases | 3 | narr×3 | 2 if, 1 choice, 1 cond | prop sb.obs_path cs_viewstone | prop cs_viewstone | Performed (C) | Ch4 case 'The View on the Other Side' (staged): looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before you, facing the view; turned over, you turn it in your hands to look. |
-| `cs.view_east` | src/content/cases/30_view.js:179 | cases | 3 | narr×3 | 2 if, 1 choice, 1 cond | prop sb.obs_path cs_viewstone | prop cs_viewstone | Performed (C) | Ch4 case 'The View on the Other Side' (staged): looking out, you turn back west along the slope; holding up the sketch as it hung, you hold it up before you, facing the view; turned over, you turn it in your hands to look. |
-| `cs.view_solved` | src/content/cases/30_view.js:211 | side:cs_view | 4 | narr×4 | 1 if, 1 cond | call← cs.view_east, cs.view_seat +1; cases.view.sheet.solvedScene |  | Quiet (H) | narration only (4 lines): stillness and the place carry it |
-| `cs.view_frame` | src/content/cases/30_view.js:223 | cases | 2 | narr×2 |  | prop sb.obs_path cs_frame [cs_view_framed] | prop cs_frame | Quiet (H) | narration only (2 lines): stillness and the place carry it |
-| `cs.talk_view` | src/content/cases/30_view.js:227 | cases | 8 | comp×8 | 1 if, 4 cond, comp:mio/nao/ren/suzu | cases.view.talk |  | Quiet (C) | Case 'The View on the Other Side': the companion's one remark when you talk to them while the case is open (or after it is solved), face to face as any talk to the companion; one line, no beat beyond it (as co.mind). |
+| `cs.view_note` | src/content/cases/30_view.js:92 | cases | 4 | narr×3 comp | 1 if, 1 choice, 1 cond, comp:suzu | prop co.inn bookpile | prop bookpile | Performed (C) | Ch3 case 'The View on the Other Side' (staged): you bend to the pile and take up the guestbook, and read the old page with it in your hands (thin paper, the leaf mark, the axis seen from the back); Suzu, if with you, leans in to look at the leaf drawn instead of a name. |
+| `cs.view_seat` | src/content/cases/30_view.js:111 | cases | 4 | narr×3 comp | 2 if, 1 choice, 3 cond | prop sb.obs_path bench | take:cs_sketch (Translucent sketch); prop bench | Performed (C) | Ch4 case 'The View on the Other Side' (staged): sitting a while, you look up the stair (north) as the view is described; holding up the sketch as it hung in the window, you hold it up before you; turned over, you turn it in your hands to look; leaving it here, you reach to set it on the post beside the seat, and your companion nods. |
+| `cs.view_west` | src/content/cases/30_view.js:153 | cases | 3 | narr×3 | 2 if, 1 choice, 1 cond | prop sb.obs_path cs_viewstone | prop cs_viewstone | Performed (C) | Ch4 case 'The View on the Other Side' (staged): looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before you, facing the view; turned over, you turn it in your hands to look. |
+| `cs.view_east` | src/content/cases/30_view.js:185 | cases | 3 | narr×3 | 2 if, 1 choice, 1 cond | prop sb.obs_path cs_viewstone | prop cs_viewstone | Performed (C) | Ch4 case 'The View on the Other Side' (staged): looking out, you turn back west along the slope; holding up the sketch as it hung, you hold it up before you, facing the view; turned over, you turn it in your hands to look. |
+| `cs.view_solved` | src/content/cases/30_view.js:217 | side:cs_view | 4 | narr×4 | 1 if, 1 cond | call← cs.view_east, cs.view_seat +1; cases.view.sheet.solvedScene |  | Quiet (H) | narration only (4 lines): stillness and the place carry it |
+| `cs.view_frame` | src/content/cases/30_view.js:229 | cases | 2 | narr×2 |  | prop sb.obs_path cs_frame [cs_view_framed] | prop cs_frame | Quiet (H) | narration only (2 lines): stillness and the place carry it |
+| `cs.talk_view` | src/content/cases/30_view.js:233 | cases | 8 | comp×8 | 1 if, 4 cond, comp:mio/nao/ren/suzu | cases.view.talk |  | Quiet (C) | Case 'The View on the Other Side': the companion's one remark when you talk to them while the case is open (or after it is solved), face to face as any talk to the companion; one line, no beat beyond it (as co.mind). |
 | `cs.tidepost` | src/content/cases/40_refine.js:46 | cases | 2 | narr×2 | 1 if | prop sg.harbor sg_tideboard | prop sg_tideboard | Quiet (H) | a frame around 1 called scene; its own narration only (2 lines): stillness and the place carry it |
 | `cs.shell_shiori` | src/content/cases/40_refine.js:54 | main | 4 | shiori×2 comp narr | 1 cond, comp:mio | npc sg.tidehut shiori [!sg_fog_cleared\|sg_boss_done & sg_tide_low&!keepsake.shell_button&!quest.sg_main=5&!quest.sg_main=6] |  | Performed (C) | Ch2 a keepsake for a sequence read right (staged): Shiori's nod for the tide read right; you step up beside her desk and she gives you a shell button from her hand to yours; Mio's nod at the jar she sorted; you look at the button in your hand. |
 | `cs.swallow_nobu` | src/content/cases/40_refine.js:71 | cases | 4 | co_nobu×3 narr |  | npc co.pottery co_nobu [co_kiln_open&ch3_done&!keepsake.clay_swallow] |  | Performed (C) | Ch3 a keepsake for a sequence read right (staged): Nobu, arms folded as ever, gives one nod for Tomoe's hand read properly; you step to his side and he hands you the clay swallow; you look at it in your hand. |

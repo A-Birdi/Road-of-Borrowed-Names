@@ -20,14 +20,14 @@ in; below).
 ## Outcome
 
 142 decisions in `tools/scene_curated_misc.mjs` (merged into the manifest's `CURATED` after the chapter passes'
-files; 8 inline reactions in `CURATED_INLINE`): **110 staged** (Performed, decided), **32 Quiet by design**
+files; 8 inline reactions in `CURATED_INLINE`): **112 staged** (Performed, decided), **30 Quiet by design**
 (decided, with the reason). The manifest's "—" row has no heuristic "Performed (H)" entry left (**U**
 `scene_manifest.test.mjs`).
 
 | | staged | Quiet | played (B) |
 |---|---:|---:|---:|
 | long quests (`src/content/lq`) | 25 | 0 | all |
-| deduction cases and keepsakes (`src/content/cases`) | 12 | 4 | all staged |
+| deduction cases and keepsakes (`src/content/cases`) | 14 | 2 | all staged |
 | pets: vignettes (8) and the sixteen greetings (`src/content/pets`) | 24 | 2 | all staged |
 | The Pages We Keep (`src/content/pages`: retro, unfinished, offer, camp, home, home2, ask3, home3) | 8 | 17 | all staged |
 | the Company (`src/content/company`: reflections, topics, rituals, invitations) | 34 | 0 | all |
@@ -36,7 +36,7 @@ files; 8 inline reactions in `CURATED_INLINE`): **110 staged** (Performed, decid
 
 (Quiet in Pages counts the three Hall arrivals `pages.enter_*`, whose staging is positions only, the three
 Page II fragments, the five ending extensions `end.*` and six road topics.) The exact per-scene list is the table
-below; 113 data-driven cases, 485 branches.
+below; 116 data-driven cases, 493 branches.
 
 ## What was added
 
@@ -74,7 +74,7 @@ below; 113 data-driven cases, 485 branches.
     (`pages.home2`'s `!hook pages_event`, shown in the same tick as the run begins) is followed line by line
     instead of waiting forever. No assertion was changed.
 - **The group** `--ch=misc` in `tests/e2e/staging_chapters.mjs`, fixtures in `tests/e2e/staging_misc_cases.mjs`
-  (113 cases, 485 branches; each lists the branches that matter: choice picks, companions, the flags and
+  (116 cases, 493 branches; each lists the branches that matter: choice picks, companions, the flags and
   quest stages that change what is said or who is there).
 - **Decisions** `tools/scene_curated_misc.mjs` (generated from the `# Staged:` notes, the fixtures and the
   hand-written Quiet decisions), merged by `tools/scene_manifest.mjs` after `scene_curated_ch12.mjs`; where a
@@ -138,7 +138,7 @@ of that scene in `--ch=misc` (each companion counts as a branch where lines bran
 | scene | ch | decision | direction / reason | branches played (B) |
 |---|---|---|---|---:|
 | `cs.hama_parcel` | Ch2 | Performed, staged | you hold out the parcel and Hama leans in to read the address; she points east to the old landing where her workshop began, turns back, and takes it from you as hers; she unties it and holds up the small metal part, points to the call bell on its post, nods over the address that stayed alive, and gives you the wax seal from her hand to yours. | 3 |
-| `cs.parcel_marks` | Ch3 | Quiet | Ch3 case 'A Parcel for a Place That Moved' (the post house's record of marks): a ledger page read in place and a clue noted, with Nao's one remark; you stand reading the ledger — attention only, the record page is the interface (as cs.parcel_record). | — |
+| `cs.parcel_marks` | Ch3 | Performed, staged | you bend to the pile and take up the ledger, and read down its entries with it in your hands (the bell with the notch, the look-alike crest); Nao, if with you, looks between you and the pile: a courier's treasure. | 4 |
 | `cs.parcel_oldsite` | Ch2 | Performed, staged | you lean in to the old footing and the empty bracket on its post; holding the parcel out at the post, you draw it back and look at it again. Your companion's own answer (Nao's head shake, Mio's open hand, Ren leans in to the empty place, Suzu's shrug: no bouquet on an empty stage). | 6 |
 | `cs.parcel_shelf` | Ch1 | Performed, staged | you bend to the shelf of unclaimed parcels and take up the small package; you read its label with it in your hands, turn it to look at the wax seal, and look along the shelf to the notice. Your companion's own answer (Nao looks between you and the shelf, Mio's hand to her chest, Ren's open hand, Suzu's hand to her chin); once you take it on, Nao's nod, Mio points west to Saltglass, Ren tends their lamp, Suzu presents the mystery with both hands. | 7 |
 | `cs.rosette_box` | Ch4 | Performed, staged | you bend to the little box of paper stars and read its lid; you take one and look at it in your hand (Ren pushes their glasses up: a star does not point the way). With one already, you look at the box. | 3 |
@@ -149,7 +149,7 @@ of that scene in `--ch=misc` (each companion counts as a branch where lines bran
 | `cs.talk_parcel` | — | Quiet | Case 'A Parcel for a Place That Moved': the companion's one remark when you talk to them while the case is open (or after it is solved), face to face as any talk to the companion; one line, no beat beyond it (as co.mind). | — |
 | `cs.talk_view` | — | Quiet | Case 'The View on the Other Side': the companion's one remark when you talk to them while the case is open (or after it is solved), face to face as any talk to the companion; one line, no beat beyond it (as co.mind). | — |
 | `cs.view_east` | Ch4 | Performed, staged | looking out, you turn back west along the slope; holding up the sketch as it hung, you hold it up before you, facing the view; turned over, you turn it in your hands to look. | 3 |
-| `cs.view_note` | Ch3 | Quiet | Ch3 case 'The View on the Other Side' (the guestbook at Fusa's inn): an old page read in place and a clue noted, with Suzu's one remark; attention only, the record page is the interface (as cs.parcel_record). | — |
+| `cs.view_note` | Ch3 | Performed, staged | you bend to the pile and take up the guestbook, and read the old page with it in your hands (thin paper, the leaf mark, the axis seen from the back); Suzu, if with you, leans in to look at the leaf drawn instead of a name. | 3 |
 | `cs.view_seat` | Ch4 | Performed, staged | sitting a while, you look up the stair (north) as the view is described; holding up the sketch as it hung in the window, you hold it up before you; turned over, you turn it in your hands to look; leaving it here, you reach to set it on the post beside the seat, and your companion nods. | 4 |
 | `cs.view_west` | Ch4 | Performed, staged | looking out, you turn east across the slope; holding up the sketch as it hung, you hold it up before you, facing the view; turned over, you turn it in your hands to look. | 3 |
 | `cs.view_window` | Ch2 | Performed, staged | you lean in to the sketch pinned in the window; Genzō points up at it as he tells of the artist and you turn to him; he shakes his head: it matches nowhere. Lent, he steps up beside you and hands you the sketch, then holds up the white chart paper. Your companion's own answer (Nao looks between you and the window, Mio leans in to the thin paper, Ren's open hand, Suzu presents the stage with both hands). Once lent, you look at the pinholes; after the case, Genzō's nod. | 7 |
@@ -251,7 +251,7 @@ of that scene in `--ch=misc` (each companion counts as a branch where lines bran
 | `co.t_ren_stars` | — | Performed, staged | you and Ren turn to each other. A glance aside (the first sleepless night), counting on the fingers (stars instead of lanterns); the glasses for four hundred and twelve, or the lamp tended (one inn lamp is enough now). | 2 |
 | `co.t_suzu_after` | — | Performed, staged | you and Suzu turn to each other. Two showman's hands for the next show; then no flourish, she looks away and back to ask for the same partner; a nod, a small celebration, or a slow breath out. | 3 |
 | `co.t_suzu_amazake` | — | Performed, staged | you and Suzu turn to each other. A touch to her hair (a weakness), her account book (a necessary expense); a small celebration (the audit passed) or she writes the debt down and nods. | 2 |
-| `co.t_suzu_books` | — | Performed, staged | you and Suzu turn to each other. She holds out her account book in both hands; no flourish, her head goes down over ten years of keeping it alone; she looks away and back (mistakes, or lies); her open-handed thanks, or her laugh at the change of subject; a glance aside about the last page. | 2 |
+| `co.t_suzu_books` | — | Performed, staged | you and Suzu turn to each other. She holds out her account book in both hands; no flourish, her head goes down over ten years of keeping it alone; she looks away and back (mistakes, or lies); her open-handed thanks, or her laugh at the change of subject; a glance aside about the last page. | 3 |
 | `co.t_suzu_house` | — | Performed, staged | you and Suzu turn to each other. Two showman's hands for the troupe's first show, her laugh at the fishermen who never laughed, an open hand for the crate of dried fish; a nod, or her account book ("value unknown"). | 2 |
 
 #### Shiritori (4)
@@ -284,6 +284,21 @@ of that scene in `--ch=misc` (each companion counts as a branch where lines bran
 
 @@RUNS@@
 
+## The Chapter 3–4 pass's proposals
+
+That pass left 16 drafts in these folders to this pass, each with a proposal (`docs/expressive/reports/
+staging_ch3_ch4.md`). After merging the task branch (91eb61f) all 16 are decided here, by its proposals:
+`lq.fare_fusa`, `lq.road_ume`, `lq.fare_chigusa`, `lq.chigusa_idle`, `cs.view_seat`, `cs.view_east`,
+`cs.view_west`, `cs.rosette_box`, `pets.dog.dog`, `pets.dog.gate`, `pets.tanuki.papers`, `pets.tanuki.tanuki`
+were already staged in this pass along the same lines (the two view-stones as performed: you look out, as the
+case's other views); `pets.dog.notice` and `pets.tanuki.notice` are Quiet as proposed; `cs.parcel_marks` and
+`cs.view_note`, first decided Quiet here (attention only, as `cs.parcel_record`), are now staged as proposed: you
+bend to the book pile and read the ledger or guestbook with it in your hands, and the one companion with a line
+(Nao at the post house, Suzu at the inn) looks between you and the pile, or leans in to the leaf.
+
+The merge also brought the runner's reset of every NPC to their map place before each branch and the `compAt` and
+`seen` fixtures; `seen` now plays `co.t_suzu_books`'s last line (after the quiet morning in Snowbell).
+
 ## Findings
 
 - **The dog's corner cannot be faced on foot** (`co.village` 32–33,26: the barrel, the crate and the wall close
@@ -299,9 +314,8 @@ of that scene in `--ch=misc` (each companion counts as a branch where lines bran
 - **Gestures read small at play scale**: the pose layer's key poses are a few pixels (e.g. `pointup`'s raised
   arm), visible in the enlarged frame sheets but easy to miss at 1×; a human look at play speed is still owed
   (**H**).
-- **Parts of some branches cannot be reached by fixture**: the lines behind `seen.*` (e.g. `co.t_suzu_books`'s
-  last line) and the shiritori record (`wordplay.reflect=cooperative`, `wordplay.won/lost`) were not set (no
-  fixture for them), so those lines' cues are reviewed (**R**) but not played; `pages.home`'s "came home with
+- **Parts of some branches are not reached by fixture**: the shiritori record (`wordplay.reflect=cooperative`,
+  `wordplay.won/lost`) is not set (no fixture for it), so those lines' cues are reviewed (**R**) but not played; `pages.home`'s "came home with
   nothing to keep" branch needs the homecoming's own event (`pages.empty`), played by `pages_ending.mjs` rather
   than the runner; `pages.camp` in the runner stands in a camp-less map (the Atlas camp's map is drawn per
   outing), so Page II is not committed there — `pages_ending.mjs` plays the real camp talk with staging on.

@@ -196,10 +196,16 @@ narr: {鈴|すず} の {肩|かた} に {刻印|こくいん} が ある 。 {�
 ?(case.parcel=done) narr: {中|なか} の {部品|ぶひん} が {新|あたら}しく 、 {光|ひか}って いる 。 || The part inside is new and bright.
 
 @scene cs.parcel_marks
+# Staged (at the post house's book pile; the Chapter 3–4 pass's proposal): you bend to the pile and take up the
+# ledger, and read down its entries with it in your hands (the bell with the notch, the look-alike crest); Nao,
+# if with you, looks between you and the pile: a courier's treasure.
+!gesture pc bend 5,2
 narr: {郵便所|ゆうびんじょ} の {帳面|ちょうめん} 。 {表紙|ひょうし} に 「 {印|しるし} の {控|ひか}え 」 。 {差出人|さしだしにん} の {分|わ}からない {荷物|にもつ} を 、 {印|しるし} から {調|しら}べる ため の もの らしい 。 || A post-house ledger: "Record of Marks". It seems to be for tracing parcels by their seals when no sender is written.
+!gesture pc read prop=book hold
 narr: 「 {鈴|すず} 、 {右|みぎ} の {肩|かた} に {切|き}り{込|こ}み {一|ひと}つ ── {鋳物師|いもじ} トクゾウ の {刻印|こくいん} 。 {呼|よ}び{鈴|りん} など 。 」 || "A bell with one notch in its right shoulder — the stamp of the caster Tokuzō. On call bells and the like."
 narr: 「 {似|に}た {印|しるし} に {注意|ちゅうい} ： {潮|しお}{硝子|がらす} の セト {家|け} の {紋|もん} は 、 {鈴|すず} の {下|した} に {波|なみ} 。 {切|き}り{込|こ}み なし 。 」 || "Beware a look-alike: the Seto family crest in Saltglass has a wave beneath the bell, and no notch."
 !hook case_clue parcel.makernote
+?(comp=nao) !gesture comp lookbetween pc and=5,2
 ?(comp=nao) comp[smile]: {印|しるし} の {控|ひか}え か 。 {配達人|はいたつにん} に は {宝|たから} だ よ 。 || A record of marks. For a courier, that's treasure.
 !if !case.parcel -> end
 !choice

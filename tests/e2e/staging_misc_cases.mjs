@@ -252,6 +252,8 @@ COMPANY.push(
   topic('co.t_suzu_house', 'suzu', 2, ['size', 'laugh', 'palm', 'nod']),
   topic('co.t_suzu_amazake', 'suzu', 2, ['touchhair', 'check', 'celebrate']),
   topic('co.t_suzu_books', 'suzu', 2, ['present', 'lowered', 'avert', 'thanks']),
+  // (her last line follows the quiet morning in Snowbell: the runner's `seen` fixture)
+  M(Object.assign({ scene: 'co.t_suzu_books' }, REST, { comp: 'suzu', seen: ['sb.quiet_suzu'], variants: [{ name: 'after the quiet morning', picks: [0], expect: { suzu: ['aside'] } }] })),
   topic('co.t_suzu_after', 'suzu', 3, ['size', 'avert', 'nod'], { flags: LATE }),
 );
 // the rituals at a rest place: the bond changes the closing line; at a camp the narration differs (sa.camp)
@@ -297,4 +299,15 @@ const ATLAS = [
       { name: 'sent back', vars: { atlas_kind: 3, atlas_names: 1 }, comps: ALL4 }] }),
 ];
 
-export const MISC = [...FARE, ...ROAD, ...CASES, ...PETS, ...PAGES, ...COMPANY, ...WORDPLAY, ...ATLAS];
+// ---- the two case pages read at a book pile in Cinder Orchard (the Chapter 3–4 pass's proposals) ------------------
+// read from the tile in front of the pile; the companion's line is Nao's (the post house) or Suzu's (the inn)
+const CASE_PAGES = [
+  M({ scene: 'cs.parcel_marks', map: 'co.post', at: [5, 3, 'up'], flags: C3,
+    variants: [{ name: 'the record', comp: 'nao', cases: { parcel: 'open' }, picks: [0], expect: { pc: ['bend', 'read'], comp: ['lookbetween'] } },
+      { name: 'closed', comp: 'mio', cases: { parcel: 'open' }, picks: [1] }, { name: 'before the case', comp: 'ren' }, { name: 'alone', comp: null, cases: { parcel: 'open' }, picks: [1] }] }),
+  M({ scene: 'cs.view_note', map: 'co.inn', at: [5, 3, 'up'], flags: C3,
+    variants: [{ name: 'the record', comp: 'suzu', cases: { view: 'open' }, picks: [0], expect: { pc: ['bend', 'read'], comp: ['observe'] } },
+      { name: 'closed', comp: 'nao', cases: { view: 'open' }, picks: [1] }, { name: 'before the case', comp: 'mio' }] }),
+];
+
+export const MISC = [...FARE, ...ROAD, ...CASES, ...CASE_PAGES, ...PETS, ...PAGES, ...COMPANY, ...WORDPLAY, ...ATLAS];

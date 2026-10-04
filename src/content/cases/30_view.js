@@ -90,10 +90,16 @@ narr: {窓|まど} に は 、 {絵|え} を {留|と}めて いた {小|ちい}
 ?(case.view=done) genzo[smile]: {星|ほし} の {石段|いしだん} か 。 {上|のぼ}った こと は なかった な 。 {膝|ひざ} が {許|ゆる}せば 、 {一度|いちど} {座|すわ}って みる か 。 || The Star Stair, eh. Never been up it. If my knees allow, maybe I'll go and sit there once.
 
 @scene cs.view_note
+# Staged (at the inn's book pile; the Chapter 3–4 pass's proposal): you bend to the pile and take up the
+# guestbook, and read the old page with it in your hands (thin paper, the leaf mark, the axis seen from the back);
+# Suzu, if with you, leans in to look at the leaf drawn instead of a name.
+!gesture pc bend 5,2
 narr: {宿|やど} の {客|きゃく} が {書|か}き{残|のこ}す {帳面|ちょうめん} 。 {古|ふる}い {頁|ページ} に 、 {丁寧|ていねい} な {字|じ} で {書|か}いた もの が ある 。 || The inn's guestbook, where travellers leave a few lines. On an old page, something in a careful hand.
+!gesture pc read prop=book hold
 narr: 「 {薄|うす}い {紙|かみ} に {描|か}いて います 。 {表|おもて} の {隅|すみ} に 、 {葉|は} の {印|しるし} を {押|お}します 。 {軸|じく} は {左|ひだり} 。 」 || "I draw on thin paper. In a front corner I press my leaf mark, stem to the left."
 narr: 「 {裏|うら} から {見|み}る と 、 {軸|じく} は {右|みぎ} を {向|む}いて 、 へこんで {見|み}えます 。 」 {名前|なまえ} の {代|か}わり に 、 {小|ちい}さな {葉|は} の {絵|え} 。 || "From the back, the stem points right, and the mark looks sunken." Instead of a name, a little drawing of a leaf.
 !hook case_clue view.note
+?(comp=suzu) !gesture comp observe 5,2
 ?(comp=suzu) comp[smile]: {名前|なまえ} の {代|か}わり に {葉|は}っぱ 。 {粋|いき} な {署名|しょめい} ね 。 || A leaf instead of a name. A stylish signature.
 !if !case.view -> end
 !choice
