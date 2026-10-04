@@ -7,6 +7,8 @@
 //             left for later with its own "Come back later"), and "Not yet" (the scene ends; the picture goes)
 //   ch5.boat  lf.boat_to_tower: "Row out" (the crossing lifted out of the fade, then the tower) and "Not yet"
 //   ch6.toya  sa.toya_read: with and without Tōya's bell, with each companion
+//   ch6.ren   sa.shelf_ren: Ren's open branch by "Take it back" and by "You decide"; "Leave it" and another companion
+//             (no sequence)
 // Checks, per run: the shots shown, in order, and every phase of each reached; the scene's state afterwards (flags,
 // items, quests, the place) — the world as the sequence left it (HX52); no page error; nothing of the player left;
 // for one run of each kept sequence, the Shared memory's read-only replay (the same beats and shots; nothing changed).
@@ -16,7 +18,7 @@
 // shake fires; at 1280×720, 390×844 and 844×390 every shot's focal area stays above the dialogue sheet at every line.
 // Challenges (other than the one left for later) are answered by the game's own test solver (RB.test.solveStep
 // through the real answer checker), wrapped round RB.challenge.run for the run.
-// Usage: node tests/e2e/sequence_chapters_56.mjs [--only ch5.bell,ch6.toya] [--shots | --shots-only]
+// Usage: node tests/e2e/sequence_chapters_56.mjs [--only ch5.bell,ch6.toya,ch6.ren] [--shots | --shots-only]
 //   --shots: also write the evidence stills (each shot at its hold, three sizes) to docs/screenshots/sequences/;
 //   --shots-only: only the three-size runs (section 4) and their stills
 import fs from 'node:fs';
@@ -40,8 +42,9 @@ const SETUP = {
   'lf.bell_touch': { at: ['lf.bellhall', 8, 5, 'down'], flags: Object.assign({ lf_tower_entered: true, lf_gate_a: true, lf_gate_b: true, lf_gate_c: true, lf_boss_done: true, lf_tokuji_boat: true }, DONE5), quests: [['lf_main', 8]] },
   'lf.boat_to_tower': { at: ['lf.sluice', 18, 17, 'down'], flags: Object.assign({ lf_tokuji_told: true, lf_tokuji_boat: true }, DONE5), quests: [['lf_main', 6]] },
   'sa.toya_read': { at: ['sa.heart', 12, 9, 'up'], flags: Object.assign({ ch5_done: true, sa_arrived: true, sa_hush_down: true }, DONE5), give: ['sa_letter_kasane', 'sa_toya_reply', 'sa_notice'], quests: [['sa_main', 5]] },
+  'sa.shelf_ren': { at: ['sa.memories', 4, 7, 'up'], flags: Object.assign({ ch5_done: true, sa_arrived: true, sa_promise_done: true }, DONE5), quests: [['sa_main', 4], ['ren_ushio', 1]] },
 };
-const BELL = ['bell', 'gong', 'town', 'hall'], TOYA = ['folio', 'floor', 'turned', 'bell', 'decide'];
+const BELL = ['bell', 'gong', 'town', 'hall'], TOYA = ['folio', 'floor', 'turned', 'bell', 'decide'], REN = ['open', 'face', 'ren'];
 const RUNS = [
   { name: 'ch5.bell · ring · Nao · Foundations (the kana lesson and the challenge over the held shot)', seq: 'ch5.bell', scene: 'lf.bell_touch', comp: 'nao', profile: 'F', live: true, choose: ['Ring the bell'], shots: BELL,
     after: (r) => r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.q.lf_main === 9 && r.mem },
@@ -58,6 +61,14 @@ const RUNS = [
   { name: 'ch6.toya · without the bell · Mio', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'mio', bell: false, shots: TOYA.filter((x) => x !== 'bell'), after: (r) => r.flags.sa_toya_read && !r.inv.sa_letter_kasane },
   { name: 'ch6.toya · with Tōya\'s bell · Nao', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'nao', bell: true, shots: TOYA, after: (r) => r.flags.sa_toya_read && r.inv.lf_toya_bell },
   { name: 'ch6.toya · without the bell · Suzu', seq: 'ch6.toya', scene: 'sa.toya_read', comp: 'suzu', bell: false, shots: TOYA.filter((x) => x !== 'bell'), after: (r) => r.flags.sa_toya_read },
+  { name: 'ch6.ren · Ren · "Take it back" (the open branch)', seq: 'ch6.ren', scene: 'sa.shelf_ren', comp: 'ren', choose: ['Take it back'], shots: REN,
+    after: (r) => r.flags.sa_ren_took && r.q.ren_ushio === 'done' && r.map === 'sa.memories' && r.mem && r.world, replay: true },
+  { name: 'ch6.ren · Ren · "You decide" (the open branch, after Ren\'s own line)', seq: 'ch6.ren', scene: 'sa.shelf_ren', comp: 'ren', choose: ['You decide'], shots: REN,
+    after: (r) => r.flags.sa_ren_took && r.q.ren_ushio === 'done' && r.mem },
+  { name: 'ch6.ren · Ren · "Leave it" (no sequence)', seq: 'ch6.ren', scene: 'sa.shelf_ren', comp: 'ren', choose: ['Leave it. You already'], shots: [], chal: 0,
+    after: (r) => r.flags.sa_ren_left && !r.flags.sa_ren_took && !r.mem && r.world },
+  { name: 'ch6.ren · Mio (Ren not here: the folio carried home unopened; no sequence)', seq: 'ch6.ren', scene: 'sa.shelf_ren', comp: 'mio', choose: ['Don\'t open it'], shots: [], chal: 0,
+    after: (r) => r.flags.sa_ren_carried && r.inv.sa_ren_folio && !r.mem && r.world },
 ].filter((R) => !ONLY || ONLY.includes(R.seq));
 
 async function start(p, R0, o) {
@@ -194,7 +205,7 @@ for (const R of SHOTS_ONLY ? [] : RUNS) {
   ok(r.shakes === 0, R.name + ': no screen shake (' + r.shakes + ')');
   if (R.live) {
     ok(r.lessons > 0 && r.leftForLater > 0 && r.overLayer.every((x) => x === 'bell'), R.name + ': the kana lesson and the challenge came up over the held first shot (' + JSON.stringify({ lessons: r.lessons, challenge: r.leftForLater, under: [...new Set(r.overLayer)] }) + ')');
-  } else if (R.seq !== 'ch5.boat') ok(r.chal.length === 1, R.name + ': the challenge met once inside the sequence (' + r.chal.join(',') + ')');
+  } else if (R.seq !== 'ch5.boat') { const want = R.chal != null ? R.chal : 1; ok(r.chal.length === want, R.name + (want ? ': the challenge met once inside the sequence (' : ': no challenge on this branch (') + r.chal.join(',') + ')'); }
   if (R.replay) {
     // the kept memory (Company › Shared memories) replays read-only: the same beats, shot by shot
     const before = await campaign(p);
@@ -224,6 +235,7 @@ const SEQS = [
   { seq: 'ch5.bell', R: RUNS.find((x) => x.seq === 'ch5.bell' && !x.live && x.choose[0] !== 'Not yet'), idleAt: /Words are cast/, stopAt: 'challenge' },
   { seq: 'ch5.boat', R: RUNS.find((x) => x.seq === 'ch5.boat' && x.shots.length), idleAt: /row out/, stopAt: 'end' },
   { seq: 'ch6.toya', R: RUNS.find((x) => x.seq === 'ch6.toya' && x.bell), idleAt: /folio/, stopAt: 'challenge' },
+  { seq: 'ch6.ren', R: RUNS.find((x) => x.seq === 'ch6.ren' && x.replay), idleAt: /opens the folio/, stopAt: 'challenge' },
 ].filter((x) => x.R);
 for (const X of SHOTS_ONLY ? [] : SEQS) {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
@@ -287,7 +299,8 @@ for (const X of SHOTS_ONLY ? [] : SEQS) {
   await p.waitForFunction(() => window.__done === true, null, { timeout: 15000 }).catch(() => {});
   await wait(p, 600);
   const r = await p.evaluate((seq) => ({ seen: RB.game.s.seq[seq] ? RB.game.s.seq[seq].n : 0, map: RB.world.W.map.id, flags: RB.game.s.flags, inv: RB.game.s.inv, q: RB.game.s.quests, live: RB.sequence.active(), dark: !!document.querySelector('#overlay > .fade.on') }), X.seq);
-  const okEnd = X.seq === 'ch5.bell' ? r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.q.lf_main.stage === 9 : X.seq === 'ch5.boat' ? r.map === 'lf.tower_top' && !r.dark : r.flags.sa_toya_read && !r.inv.sa_letter_kasane && r.q.sa_main.stage === 6;
+  const okEnd = X.seq === 'ch5.bell' ? r.flags.lf_bell_rung && r.map === 'lf.sluice' && r.q.lf_main.stage === 9 : X.seq === 'ch5.boat' ? r.map === 'lf.tower_top' && !r.dark
+    : X.seq === 'ch6.ren' ? r.flags.sa_ren_took && r.q.ren_ushio.done : r.flags.sa_toya_read && !r.inv.sa_letter_kasane && r.q.sa_main.stage === 6;
   ok(!r.live && r.seen === 1 && okEnd, X.seq + ': skipped to its end — the state lines ran once, the sequence counted once, the world where the scene leaves it ' + JSON.stringify({ seen: r.seen, map: r.map }));
   ok(!errors.length, X.seq + ': no page errors ' + errors.slice(0, 2).join(' | '));
   await ctx.close();
