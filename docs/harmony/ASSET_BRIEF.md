@@ -74,6 +74,7 @@ contract wins, and this brief is a bug.
 | `template_bust_labelled.png`, `template_pair_labelled.png` | same | the guides explained |
 | *Optional:* a frame of today's cut-in (`docs/screenshots/harmony/cutin/`) | same repo | **for comparison, not imitation**: it shows what is being replaced |
 | From Batch 1b on: the approved Batch 1a images | — | the style lock |
+| Four-tile companion sheets (Nao, Mio, Ren): Robin's Suzu sheet, `four_tile/ref_four_tile_<name>.png` and the prompt in `four_tile/PROMPTS.md` | `docs/harmony/asset_brief/four_tile/` | one 2 × 2 sheet per companion in the approved Suzu style, which is then redrawn in code (2026-10-04) |
 
 The reference sheets show **who** each character is. Their low detail is exactly what is being replaced.
 

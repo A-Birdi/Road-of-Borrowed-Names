@@ -424,6 +424,10 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     in docs/harmony/asset_brief/ are already regenerated from the contract.
 - **The overlay worker** was told to read sizes from `NATIVE`/`fitScale()` only, to treat the phase list as
   data and to use `timeline()` when it exists (its src/ui/82d_harmony_cutin.js is not on this branch yet).
+- **Four-tile companion sheets (2026-10-04):** Robin's 2 × 2 Suzu sheet was redrawn in code as a seven-frame
+  sequence (four tiles + three in-betweens; renderer in the session scratchpad, not committed; the sheet itself is
+  Robin's and never committed). For Nao, Mio and Ren: prompts in docs/harmony/asset_brief/four_tile/PROMPTS.md and
+  reference pages `ref_four_tile_<name>.png` (`node tests/e2e/harmony_four_tile_refs.mjs`). Waiting on Robin's sheets.
 - **The owner's Art Direction Correction (2026-10-03)** is kept verbatim in docs/harmony/ART_DIRECTION_CORRECTION.md and wins over
   every earlier Harmony directive. docs/harmony/DIRECTIVE_RECONCILIATION.md lists the agreements, the nine conflicts (C1–C9)
   and their resolutions, and the open points. The brief is v3; contract v3 (REQUIREMENTS.md HB9) is being built by a worker.
