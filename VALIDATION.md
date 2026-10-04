@@ -2486,10 +2486,10 @@ build; the manifest regenerates unchanged):
 
 **Not verified:**
 - Play speed with a person watching; real devices; Firefox and Safari.
-- A dog's corner in co.village cannot be reached on foot (a map question).
-- In `sa.epi_lf`, Kasane's walk-in is forced past Yae after waiting: the world's fallback.
-- In `lf.water_returns` with staging off you stand on a tile that floods again.
-- `sa.kasane_meet`'s `!move pc up 4` leaves a scene-owned companion behind.
+
+(Four world findings listed here before were fixed on 2026-10-04: the dog's corner in co.village, the forced walk-in
+in `sa.epi_lf`, the flooding row in `lf.water_returns` with staging off, and the companion left behind by
+`sa.kasane_meet`'s `!move pc up 4`. See "Four staging findings fixed" at the end.)
 
 ## The owner's notes of 2026-10-04: the dialogue portrait back to 116 px; the "crashing wave" in the Saltglass music
 
@@ -2633,3 +2633,89 @@ in the Mill here); phones, Firefox, Safari.
 pronoun tidy):** unit 27,110 passed, 0 failed; B portrait_anim all passed; B harmony_cutin 11 passed, 0 failed;
 B battle_presentation 13 passed, 0 failed. These were run one after another while two other workers ran browser
 tests in their own worktrees.
+
+## Four staging findings fixed (2026-10-04): the companion on a scene's own walk, walk-in places, the flooding row, the dog's corner
+
+The four world findings left open by the Chapters 5–6 staging pass (that section's "Not verified" list). Each was
+reproduced first with a scratch browser probe (staged and unstaged runs of the case fixtures; not committed), then
+fixed, then checked by a committed test that fails on the old sources.
+
+**Causes and fixes:**
+- `sa.kasane_meet`: the scene's `!move pc up 4` moved only you. With staging off your companion stayed five tiles
+  behind. A companion the scene directs was never walked back, because staging did not know you had moved.
+  - `50_world.js scriptMove` takes `o.party`, passed only by a scene's `!move` (70_script.js); staging's own
+    `!walkto` walks are unchanged. With it, your companion comes along, staging on or off. If they stand where you
+    are going, they first step aside onto open ground across your way. Then they follow a step behind over the tiles
+    you leave.
+  - A companion the scene directs stays put. `52_staging.js playerMoved` tells the scene you moved, so at its end
+    they walk back to your side.
+- `sa.epi_lf`: not a routing problem. Yae was still on her long walk in when Kasane (or Tae) was called. `spotNear`
+  gave both the tile in front of you (3,17): it checked who stood there, not who was walking there. The later
+  walker arrived first, and Yae had no way round. `spotNear` now leaves out every walker's destination. Kasane and
+  Tae stand at (1,16) and (1,18); the scene's lines and cues are unchanged.
+- `lf.water_returns`: the step back out of the water was staging's (`!walkto pc 10 9`). With staging off you stayed
+  on the row that floods, until `afterScene`'s `unstick` jumped you onto your companion's tile. The scene now
+  steps you back with its own `!move pc up 1`, one tile from whichever column you stepped onto the row. Your
+  companion makes room beside you (the change above). This works with staging on or off, and the long staged walk
+  to (10,9) from the row's ends is gone.
+- `co.village`, the dog's corner (32–33,26): the barrel, the crate, the gate and the reeds closed it in. The dog's
+  first look (`pets.dog.dog` before the gate is shut) could not be had on foot.
+  - Fix: a gap in the reeds below the corner. Tile (32,27) is now grass (`src/content/ch3/20_maps.js`, after the reed
+    scatter), so you face the dog from it.
+  - Why a gap, not a new place for the dog: the reeds along the bank are a seeded scatter with grass gaps already,
+    and one gap more reads naturally (checked in a capture). Moving the corner would mean re-staging his animation
+    (the corner, the tile he gets up to, the gate swinging into him) and the scene's "the corner by the barrel".
+  - The geometry record was re-recorded deliberately. Only the co.village, co.eve and co.festival entries changed;
+    they share the terrain.
+
+**Tests added:**
+- `tests/e2e/staging_runner.mjs`, opt-in per case:
+  - `checkOff`: every branch is also played unstaged, and there too nobody shares a tile or stands on furniture,
+    and your companion ends beside you. Set on `sa.kasane_meet` and `lf.water_returns`.
+  - `noForced`: no walker of the world's goes through anyone. Set on `sa.epi_lf`.
+- `lf.water_returns` also plays from both ends of the row: (1,10) and (20,10).
+- `pets.dog.dog` plays from the gap (32,27) as well.
+- `tests/e2e/walk_round.mjs` (in the default suite):
+  - section 5: two speakers called while the first still walks in get places of their own;
+  - section 6: a scene's `!move pc` with staging on and off. Your companion follows; walking back onto them, they
+    step aside and you never share a tile; one the scene directs is walked back after it.
+- `tests/e2e/pets.mjs`: each vignette's standing place must be reachable on foot from the start (BFS over open
+  ground). The dog's steps now stand at (32,27).
+
+**Evidence:**
+- B. The new checks on the OLD sources, 7cc138e (my tests; `src` temporarily restored, then put back):
+  - staging --ch=5 `--only=lf.water_returns`: 50/6. The six failures are the staging-off checks: you stand on
+    (x,10), the flooding row, and your companion is 0 tiles away.
+  - --ch=6 `--only=sa.kasane_meet,sa.epi_lf`: 105/11. Five companions are 5 tiles away; six walkers are forced at
+    `lf.town@3,17`.
+  - pets.mjs dog vignette: 0/1 ("the place 32,27 can be reached on foot").
+  - walk_round: 7 failed (sections 5 and 6).
+  - The staging case played from (32,27) passed even on the old map (78/0). The runner sets you where the fixture
+    says, so reachability is checked by pets.mjs, not by the staging runner.
+- B. The fixed build, 47db168 sources, run one after another:
+  - staging_chapters:
+    - --ch=5: 2199/0 (no world's-fallback record);
+    - --ch=6: 2057/0 (no world's-fallback record; before, 6 in `sa.epi_lf`);
+    - --ch=3: 2267/0;
+    - --ch=misc: 3593/0;
+    - --ch=1: 698/0;
+    - --ch=2: 1623/0;
+    - --ch=4: 1350/0;
+    - --ch=showcase: 66/0. Its re-captured docs/screenshots/actors/ were restored, unchanged in git.
+  - walk_round 24/24; departures all ok (20); world_fixes all ok (15); pets 20/0; long_quests --fixtures-only all
+    passed.
+  - story_ch1 F mio PASS (31 checks), story_ch5 A suzu PASS, story_ch6 2 all ok.
+- U: full run 27,093/0, after the geometry re-record (before it, 27,092/1: the geometry check named exactly those
+  three maps).
+- Validator: no errors. Scene manifest regenerated; `lf.water_returns` and `pets.dog.dog` have updated reasons
+  and branch lists.
+
+**Not verified:**
+- Watched at play speed by a person.
+- Firefox and Safari.
+- Whether the gap in the reeds reads naturally to the owner.
+- Other scenes with several walk-ins now get different places wherever two were given the same one before. All
+  staged chapter suites pass, but only the staged fixtures were played.
+- The Chapter 1 step-backs at blocked roads (`rw.road_west_blocked`, `rw.mill_blocked`, `rw.leave_early`,
+  `rw.mr_narrows`) now have your companion step aside instead of standing on your tile. They have no staging case,
+  and story_ch1 F mio (which passed) is not known to step on those triggers.

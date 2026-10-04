@@ -471,11 +471,16 @@ RB.world = (function () {
     arriveOnFoot(a);
     if (!a.route) faceTo(a, W.player.x, W.player.y);
   }
-  // A free tile near x,y to stand on: facing the player first, then the nearest.
+  // A free tile near x,y to stand on: facing the player first, then the nearest. Not a tile someone still
+  // walking here is going to stand on (an earlier speaker on their way in, someone the story moves): two
+  // speakers given the same place met there, and the later one went through the first (sa.epi_lf).
   function spotNear(x, y) {
     const p = W.player, [fx, fy] = frontTile(), st = s();
+    const bound = new Set();
+    for (const n of W.npcs.concat(W.extras)) if (n.route && n.route.length) bound.add(n.route[n.route.length - 1].join(','));
     const ok = (tx, ty) => tx >= 0 && ty >= 0 && tx < W.map.w && ty < W.map.h && !RB.maps.blockedStatic(W.map, tx, ty) && !actorAt(tx, ty) &&
-      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) && st;
+      !(tx === p.x && ty === p.y) && !(W.comp && W.comp.x === tx && W.comp.y === ty) && !RB.maps.exitAt(W.map, tx, ty) && !triggerAt(tx, ty) &&
+      !bound.has(tx + ',' + ty) && st;
     if (ok(fx, fy)) return [fx, fy];
     for (let r = 1; r <= 4; r++) {
       const ring = [];
@@ -1011,22 +1016,79 @@ RB.world = (function () {
     return W.npcs.find((n) => n.id === id) || W.extras.find((n) => n.id === id) || null;
   }
   // Scripted walking (cutscenes): moves an actor tile by tile, ignoring NPC blocking.
-  function scriptMove(id, dir, n, dur) {
+  // o.party (a scene's own `!move pc`, 70_script.js): your companion comes along, as on any walk of yours,
+  // with staging on or off. If they stand where you are going, they first step aside onto open ground (across
+  // the way you walk); then they follow a step behind over the tiles you leave. A companion the scene is
+  // directing (staging owns them) stays where the scene put them; the scene's end walks them back to your side
+  // (52_staging.js playerMoved). Staging's own walks (!walkto) call this without o.party.
+  function scriptMove(id, dir, n, dur, o) {
     const a = actorById(id);
     if (!a) return Promise.resolve();
     // a scripted move takes over from a walk-in: finish it where it was going
     if (a.route) { const end = a.route[a.route.length - 1] || [a.x, a.y]; a.x = end[0]; a.y = end[1]; a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.alpha = 1; a.fadeIn = false; }
-    return new Promise((res) => {
-      let left = n;
+    const you = !!(o && o.party && a === W.player);
+    if (you && RB.staging && RB.staging.playerMoved) RB.staging.playerMoved();
+    const c = you && W.comp && !W.comp.route && DIRS[dir] && !(RB.staging && RB.staging.owned(W.comp)) ? W.comp : null;
+    const trail = []; // the tiles you have left, in order (your companion follows over them)
+    return (c ? makeRoom(c, a, dir, n, dur) : Promise.resolve(false)).then((aside) => new Promise((res) => {
+      let left = n, followed = false;
       const go = () => {
-        if (left <= 0) { res(); return; }
+        if (c && follow(c, a, trail, dur)) followed = true;
+        if (left <= 0) {
+          if (!c) { res(); return; }
+          catchUp(c, a, trail, dur).then((m) => { if (aside && !followed && !m) faceTo(c, a.x, a.y); res(); });
+          return;
+        }
         left--;
+        trail.push([a.x, a.y]);
         startMove(a, dir, dur || 220);
         const wait = () => (a.mv ? setTimeout(wait, 16) : go());
         setTimeout(wait, 16);
       };
       go();
+    }));
+  }
+  // (scriptMove, o.party) until the companion's step in progress ends (bounded)
+  function stepDone(c) {
+    const t0 = performance.now();
+    return new Promise((res) => { const w = () => (c.mv && performance.now() - t0 < 2000 ? setTimeout(w, 16) : res()); w(); });
+  }
+  // (scriptMove, o.party) your companion stands on a tile you are about to walk onto: they step aside first,
+  // across the way you walk (above or below a walk left or right, right or left of a walk up or down), onto open
+  // ground that is not a way out, a trigger or anyone's place; true if they did. With no room they stay (as before).
+  function makeRoom(c, a, dir, n, dur) {
+    const [dx, dy] = DIRS[dir];
+    const onPath = (x, y) => { for (let i = 1; i <= n; i++) if (a.x + dx * i === x && a.y + dy * i === y) return true; return false; };
+    return stepDone(c).then(() => {
+      if (!onPath(c.x, c.y)) return false;
+      for (const [sx, sy] of dx ? [[0, -1], [0, 1]] : [[1, 0], [-1, 0]]) {
+        const tx = c.x + sx, ty = c.y + sy;
+        if (tx < 0 || ty < 0 || tx >= W.map.w || ty >= W.map.h || RB.maps.blockedStatic(W.map, tx, ty) || RB.maps.exitAt(W.map, tx, ty) || triggerAt(tx, ty) || personAt(tx, ty, c)) continue;
+        startMove(c, sx > 0 ? 'right' : sx < 0 ? 'left' : sy > 0 ? 'down' : 'up', dur || 220);
+        return stepDone(c).then(() => true);
+      }
+      return false;
     });
+  }
+  // (scriptMove, o.party) your companion steps onto the furthest tile you have left that is next to them (one
+  // step; never one you stand on or are stepping onto); true if they set off
+  function follow(c, a, trail, dur) {
+    if (c.mv) return false;
+    for (let i = trail.length - 1; i >= 0; i--) {
+      const [tx, ty] = trail[i];
+      if (Math.abs(tx - c.x) + Math.abs(ty - c.y) > 1) continue;
+      trail.splice(0, i + 1);
+      if ((tx === c.x && ty === c.y) || (tx === a.x && ty === a.y) || (a.mv && a.mv.tx === tx && a.mv.ty === ty)) return false;
+      startMove(c, tx > c.x ? 'right' : tx < c.x ? 'left' : ty > c.y ? 'down' : 'up', dur || 220);
+      return true;
+    }
+    return false;
+  }
+  // (scriptMove, o.party) after your last step: your companion finishes following you (true if they stepped)
+  function catchUp(c, a, trail, dur) {
+    let moved = false;
+    const step = () => stepDone(c).then(() => (follow(c, a, trail, dur) ? ((moved = true), step()) : moved));
+    return step();
   }
 
   return {

@@ -89,6 +89,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.scatter(',', 24, 315, [2, 26, 30, 12], '.');
       k.scatter('O', 5, 316, [2, 27, 12, 6], '.');
       k.scatter('"', 6, 317, [32, 27, 2, 6], '.');
+      // a gap in the reeds below the dog's corner in the channel keeper's yard (src/content/pets/30_dog.js,
+      // 32–33,26): the barrel, the crate, the gate and the reeds closed it in, so it could not be faced on foot
+      k.set(32, 27, '.');
       k.scatter('"', 5, 318, [36, 26, 1, 12], '.:');
     });
   }

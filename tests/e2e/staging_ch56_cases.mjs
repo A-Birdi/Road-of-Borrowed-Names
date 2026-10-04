@@ -107,7 +107,10 @@ const CH5 = [
   { ch: 5, scene: 'lf.west_plug', map: 'lf.tower_mid', at: [2, 8, 'left'], flags: LM, expect: { pc: ['observe'] },
     variants: [{ name: 'pulled', picks: [0], comp: 'mio', flags: F(LM, { lf_east_open: true }), expect: { pc: ['bend', 'lookroad'] } }, { name: 'stuck · plate unread', picks: [0], comp: 'nao' },
       { name: 'stuck · plate read', picks: [0], comp: 'ren', flags: F(LM, { lf_plate_b_read: true }) }, { name: 'leave it', picks: [1], comp: 'suzu' }, { name: 'out already', comp: 'nao', flags: F(LM, { lf_east_open: true, lf_mid_drained: true }) }] },
-  { ch: 5, scene: 'lf.water_returns', map: 'lf.tower_mid', at: [10, 10, 'down'], flags: F(LM, { lf_east_open: true, lf_mid_drained: true }), comps: ALL4, expect: { pc: ['flinch', 'lookroad'] } },
+  // (checkOff: the step back north out of the water is the scene's own move, so with staging off too nobody is left on
+  // the row that floods again; from either end of the row your companion makes room on the side there is)
+  { ch: 5, scene: 'lf.water_returns', map: 'lf.tower_mid', at: [10, 10, 'down'], flags: F(LM, { lf_east_open: true, lf_mid_drained: true }), checkOff: true, expect: { pc: ['flinch', 'lookroad'] },
+    variants: [{ name: 'mid-row', comps: ALL4 }, { name: 'at the west end of the row', at: [1, 10, 'down'], comp: 'ren' }, { name: 'at the east end', at: [20, 10, 'down'], comp: 'mio' }] },
   { ch: 5, scene: 'lf.junction', map: 'lf.tower_mid', at: [18, 4, 'right'], flags: LM, expect: { pc: ['cupear'] },
     variants: [{ name: 'first', comps: ALL4, expect: { pc: ['observe', 'lookroad', 'receive'] } }, { name: 'again', comp: 'mio', flags: F(LM, { lf_koe: true }) }] },
   { ch: 5, scene: 'lf.low_enter', map: 'lf.tower_low', at: [10, 2, 'down'], flags: LL, comps: ALL4, expect: { pc: ['lookroad', 'listen'] } },
@@ -192,7 +195,8 @@ const CH6 = [
     variants: [{ name: 'without Ren', comps: ['nao', 'mio', 'suzu'] }, { name: 'Ren', comp: 'ren', expect: { comp: ['observe', 'lowered', 'tendlamp', 'nod'] } }, { name: 'seen before', comp: 'nao', seen: ['sa.ushio_grave'] }] },
   { ch: 6, scene: 'sa.gate_first', map: 'sa.gate', at: [14, 19, 'up'], flags: S0, comps: ALL4, expect: { pc: ['lookroad', 'cupear', 'lookbetween'] } },
   // 51_scenes_archive.js
-  { ch: 6, scene: 'sa.kasane_meet', map: 'sa.reading', at: [14, 17, 'up'], flags: S0, minLines: 18, expect: { kasane: ['palm', 'nod', 'lowered', 'point'], pc: ['lookroad'] },
+  // (checkOff: the scene's own !move pc up 4 brings your companion along with staging off too)
+  { ch: 6, scene: 'sa.kasane_meet', map: 'sa.reading', at: [14, 17, 'up'], flags: S0, minLines: 18, checkOff: true, expect: { kasane: ['palm', 'nod', 'lowered', 'point'], pc: ['lookroad'] },
     variants: [{ name: 'without being asked?', comps: ALL4, picks: [0] }, { name: 'why arguments?', comp: 'ren', picks: [1] }] },
   { ch: 6, scene: 'sa.clerk_first', map: 'sa.reading', at: [6, 5, 'up'], talk: 'sa_clerk', flags: SR, comps: ALL4, minLines: 10, expect: { sa_clerk: ['stiff'], pc: ['observe'] } },
   { ch: 6, scene: 'sa.clerk_name', map: 'sa.reading', at: [6, 5, 'up'], talk: 'sa_clerk', flags: SM, items: { sa_ushio_notes: 1 }, quests: { sa_clerk: 0 }, expect: { pc: ['present'], sa_clerk: ['listen'] },
@@ -256,7 +260,8 @@ const CH6 = [
       { name: 'Kasane stays · Isamu waiting', comp: 'ren', flags: SDK, quests: { sa_isamu: 0 }, seen: ['sa.isamu_first'], expect: { sa_oyone: ['nod', 'write'], sa_isamu: ['cupear', 'exhale', 'lookroad'] } },
       { name: 'Isamu never met', comp: 'nao', flags: SDK, expect: { sa_oyone: ['lookroad'] } }] },
   { ch: 6, scene: 'sa.kasane_walk', map: 'sa.camp', at: [15, 15, 'right'], talk: 'kasane', flags: SDT, comps: ['mio', 'nao'], expect: { kasane: ['lookroad'] } },
-  { ch: 6, scene: 'sa.epi_lf', map: 'lf.town', at: [2, 17, 'right'], minLines: 8, expect: { pc: ['lookroad', 'cupear', 'palm'], sa_tae: ['cupear', 'lowered', 'listen'] },
+  // (noForced: each townsperson who walks up is given a place of their own, so nobody waits and goes on through another)
+  { ch: 6, scene: 'sa.epi_lf', map: 'lf.town', at: [2, 17, 'right'], minLines: 8, noForced: true, expect: { pc: ['lookroad', 'cupear', 'palm'], sa_tae: ['cupear', 'lowered', 'listen'] },
     variants: [{ name: 'Kasane came down · Mio', comp: 'mio', flags: F(SE, { sb_hoshino_goes: true }), expect: { kasane: ['bow'], lf_yae: ['laugh'], comp: ['bow', 'laugh'], akari: ['lookroad'] } },
       { name: 'Kasane stayed · Nao delivered', comp: 'nao', flags: F(SEK, { lf_nao_cameo_done: true }), quests: { lf_nao: 'done' }, expect: { umi: ['palm'], comp: ['nod'] } },
       { name: 'Nao came back too soon', comp: 'nao', flags: F(SE, { lf_nao_cameo_done: true }), quests: { lf_nao: 1 }, expect: { comp: ['strap'] } },

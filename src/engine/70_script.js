@@ -338,7 +338,8 @@ RB.script = (function () {
         case 'music': RB.audio && (a[0] === '-' ? RB.audio.stopSong({ fade: 800 }) : RB.audio.playSong(a[0])); break;
         case 'sfx': RB.audio && RB.audio.sfx(a[0]); break;
         case 'emote': RB.world.emote(a[0] === 'npc' ? ctx.npc : resolveId(a[0]), a[1] || '!', a[2] ? +a[2] : 1400); RB.audio && RB.audio.sfx('cursor'); if (!hidden()) await wait(500); break;
-        case 'move': await RB.world.scriptMove(resolveId(a[0]), a[1], +(a[2] || 1), hidden() ? 1 : a[3] ? +a[3] : 220); break;
+        // (your own walk brings your companion along: they make room and follow; 50_world.js scriptMove)
+        case 'move': await RB.world.scriptMove(resolveId(a[0]), a[1], +(a[2] || 1), hidden() ? 1 : a[3] ? +a[3] : 220, { party: true }); break;
         case 'face': { const act = RB.world.actorById(resolveId(a[0])); if (act) act.dir = a[1]; break; }
         case 'faceplayer': { const act = RB.world.actorById(resolveId(a[0] || ctx.npc)); if (act) RB.world.faceTo(act, RB.world.W.player.x, RB.world.W.player.y); break; }
         case 'wait': await wait(+a[0] || 400); break;
