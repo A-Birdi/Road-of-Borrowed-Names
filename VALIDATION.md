@@ -2719,3 +2719,9 @@ fixed, then checked by a committed test that fails on the old sources.
 - The Chapter 1 step-backs at blocked roads (`rw.road_west_blocked`, `rw.mill_blocked`, `rw.leave_early`,
   `rw.mr_narrows`) now have your companion step aside instead of standing on your tile. They have no staging case,
   and story_ch1 F mio (which passed) is not known to step on those triggers.
+
+**The lead's run on the task branch with both wave-3 merges (4b728f2):**
+- unit 27,110 passed, 0 failed;
+- B walk_round all passed; B pets 20/0; B portrait_anim all passed; B harmony_cutin 11/0;
+- B staging_chapters --ch=1 698/0 and --ch=2 1623/0, covering the chapters the owner will replay first. Scene moves now
+  bring the companion along there too.
