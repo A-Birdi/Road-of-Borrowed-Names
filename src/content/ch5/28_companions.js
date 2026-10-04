@@ -9,68 +9,119 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.script.add(`
 # ---- Nao and Umi (comp = nao) ------------------------------------------------------------------------------------------------------------
 @scene lf.nao_umi_first
+# Staged (Nao's personal quest): you step aside and Nao steps up to the counter; Umi's open hand; at her name Nao's
+# hand goes to the satchel strap; Umi starts at "Isamu" and holds out her hand, fingertips trembling (held); Nao
+# speaks plainly with an open hand, draws the letter halfway out and stops (the narration), then the flat hand of
+# "No. Not like this."; Umi's hand drops; Nao's head goes down at "Sorry", turns towards the door and breathes out
+# (the narration: outside, a long breath against the wall), and nods to you at "This time, Umi decides".
+!walkto pc 5 4 up
+!walkto comp 4 4 up
+!gesture umi palm comp
 umi: {渡|わた}し{場|ば} の {事務所|じむしょ} へ ようこそ 。{切符|きっぷ} です か 、{郵便|ゆうびん} です か 。|| Welcome to the ferry office. Tickets, or post?
+!gesture comp strap
 comp[closed]: …… ウミ さん 。|| …Umi.
 umi: はい 、{私|わたし} です 。|| Yes, that's me.
 comp: {配達人|はいたつにん} の ナオ 。{潮硝子|しおがらす} の イサム さん から 、{預|あず}かってる もの が ある 。|| Nao, courier. I've got something for you from Isamu in Saltglass.
+!gesture umi flinch comp
 umi[surprise]: …… {父|ちち} から 。|| …From my father.
 umi[smile]: もちろん 、{受|う}け{取|と}ります 。|| Of course. I'll take it.
+!gesture umi receive comp hold
 narr: ウミ は {手|て} を {差|さ}し{出|だ}した 。{笑顔|えがお} の まま 、{指先|ゆびさき} が {少|すこ}し {震|ふる}えて いる 。|| Umi holds out her hand. Her smile doesn't move, but her fingertips are trembling slightly.
 comp[think]: …… {受|う}け{取|と}りたい ？|| …Do you want to take it?
 umi: もちろん です 。|| Of course.
+!gesture comp palm umi
 comp: {読|よ}みたく ない なら 、{断|ことわ}って いい んだ よ 。|| If you don't want to read it, you're allowed to refuse.
 umi[smile]: かしこまりました 。|| Certainly.
+!gesture comp present umi prop=letter hold
 narr: ナオ は {鞄|かばん} から {手紙|てがみ} を {出|だ}しかけて 、{止|と}まった 。|| Nao starts to draw the letter out of the satchel, and stops.
+!gesture comp emphatic
 comp[angry]: …… だめ だ 。|| …No. Not like this.
 comp: これ は 、{断|ことわ}れる {人|ひと} に {渡|わた}す {手紙|てがみ} なんだ 。{断|ことわ}れない {人|ひと} に は 、{渡|わた}せない 。|| This is a letter for someone who can refuse it. I can't hand it to someone who can't.
 umi: かしこまりました 。|| Certainly.
+!gesture umi -
+!gesture comp lowered
 comp[sad]: …… {出直|でなお}す よ 。ごめん 。|| …I'll come back. Sorry.
+!look comp 5,8
+!gesture comp exhale
 narr: {事務所|じむしょ} を {出|で}る と 、ナオ は {壁|かべ} に もたれて 、{長|なが}い {息|いき} を ついた 。|| Outside the office, Nao leans against the wall and lets out a long breath.
 comp: …… {一年|いちねん} 、{持|も}ってた 。{重|おも}い {手紙|てがみ} だ から 、{渡|わた}さない ほう が {親切|しんせつ} だ と {思|おも}った 。|| …I carried it for a year. It's a heavy letter; I thought not delivering it was the kind thing.
 comp: でも それ 、ウミ の {代|か}わり に {決|き}めた って こと じゃん 。…… この {町|まち} と {同|おな}じ だ 。|| But that's me deciding for Umi. …Same as this whole town.
+!look comp pc
+!gesture comp nod pc
 comp[closed]: {鐘|かね} を {鳴|な}らしたら 、もう {一回|いっかい} {来|く}る 。{今度|こんど} は 、ウミ が {決|き}める 。|| Once the bell's rung, we come back. This time, Umi decides.
 !quest lf_nao 1
 !autosave
 
 @scene lf.nao_deliver
+# Staged (Nao's personal quest, the delivery): you step aside and Nao steps up to the counter; Umi's flat hand for
+# "does NOT run!" (or for "A whole year late"); Nao's hand to the strap, Umi's start at her father's name; Nao looks
+# away and back to own up; Nao holds the envelope out, and Umi looks a long time at it; it passes from Nao's hand to
+# hers (Nao's stronger reaction) and she reads it in silence (hers); Nao looks between her and you; her head goes
+# down over "He was always like this"; she writes her one line and hands it to Nao; Nao points up the mountain,
+# writes the address slowly (the narration), peels the old label into the satchel (the narration), and looks away
+# with a smirk at the collection.
 !if seen.lf.nao_umi_first -> again
+!walkto pc 5 4 up
+!walkto comp 4 4 up
+!gesture umi emphatic
 umi[angry]: {三時|さんじ} の {舟|ふね} は {出|で}ません ！ …… あ 、ごめんなさい 。{言|い}える の が {嬉|うれ}しくて 。|| The three o'clock does NOT run! …Oh, sorry. I'm just so glad I can say it.
+!gesture comp strap
 comp[closed]: …… ウミ さん 。{潮硝子|しおがらす} の イサム さん から 、{手紙|てがみ} を {預|あず}かってる 。|| …Umi. I've got a letter for you, from Isamu in Saltglass.
+!gesture umi flinch comp
 umi[surprise]: …… {父|ちち} から ？|| …From my father?
+!gesture comp avert umi
 comp: {一年|いちねん} {前|まえ} に {預|あず}かった 。{渡|わた}さない と {決|き}めた 。{君|きみ} に {聞|き}かず に 。|| I was given it a year ago. I decided not to deliver it. Without asking you.
 !goto ask
 :again
+!walkto pc 5 4 up
+!walkto comp 4 4 up
+!gesture umi emphatic
 umi[angry]: …… また {来|き}た の ね 。{父|ちち} の {手紙|てがみ} 。{一年|いちねん} も {遅|おく}れて 。|| …You came back. With my father's letter. A whole year late.
+!gesture comp avert umi
 comp: {遅|おく}れた の は 、{自分|じぶん} の せい だ 。{渡|わた}さない と {決|き}めた 。{君|きみ} に {聞|き}かず に 。|| It's late because of me. I decided not to deliver it. Without asking you.
 :ask
 umi: …… {勝手|かって} ね 。|| …That was presumptuous.
 comp: うん 。{勝手|かって} だった 。|| Yeah. It was.
+!gesture comp present umi prop=letter hold
 comp: だから 、{今|いま} {聞|き}く 。{受|う}け{取|と}る ？ {断|ことわ}って も いい 。{捨|す}てて も いい 。|| So I'm asking now. Will you take it? You can refuse. You can throw it away.
 umi: …… {断|ことわ}れる の ね 、{今|いま} は 。|| …I can refuse now, can't I.
+!gesture umi observe comp
 narr: ウミ は {長|なが}い あいだ 、{封筒|ふうとう} を {見|み}て いた 。{宛名|あてな} の {字|じ} が 、{三度|さんど} {書|か}き{直|なお}されて いる 。|| For a long time, Umi looks at the envelope. The address has been rewritten three times.
+!gesture comp handover umi prop=letter
+!gesture umi receive comp
 umi: {受|う}け{取|と}ります 。{断|ことわ}れる けど 、{受|う}け{取|と}る 。|| I'll take it. I could refuse, but I'll take it.
+!gesture umi read prop=letter hold
 narr: {封|ふう} を {切|き}る {音|おと} 。ウミ は {黙|だま}って {読|よ}み 、それ から {手紙|てがみ} を {机|つくえ} に {置|お}いた 。|| The sound of the seal breaking. Umi reads in silence, then lays the letter on the desk.
 narr: 「ウミ へ 。{元気|げんき} か 。{俺|おれ} は もう {長|なが}く ない らしい 。」|| "Umi. Are you well? It seems I don't have long."
 narr: 「{許|ゆる}して ほしい と は {書|か}かない 。{書|か}けば 、お{前|まえ} は {断|ことわ}れなく なる 。」|| "I won't write that I want you to forgive me. If I wrote it, you wouldn't be able to refuse."
 narr: 「ただ 、あの {朝|あさ} 、{港|みなと} で {言|い}えなかった こと が ある 。すまなかった 。」|| "Only, there's something I couldn't say that morning at the harbour. I'm sorry."
 narr: 「{返事|へんじ} は いらない 。いや 、{本当|ほんとう} は ほしい 。どちら でも いい 。お{前|まえ} が {決|き}めて くれ 。 イサム」|| "You needn't reply. No — truthfully, I want you to. Either is fine. You decide. — Isamu"
 !challenge lf.ch_nao_letter
+!gesture comp lookbetween umi and=pc
 comp[think]: …… 「{許|ゆる}して くれ」 って {書|か}いて ある と 、ずっと {思|おも}ってた 。イサム さん が 、そう {言|い}って {渡|わた}した から 。|| …I always thought it said "forgive me". That's what Isamu said when he handed it over.
 comp: {書|か}いて ない 。…… いや 、{書|か}いて ある の か 、これ 。わかんない よ 。|| It doesn't say that. …Or does it? I can't tell.
+!gesture umi lowered
 umi[sad]: 「{返事|へんじ} は いらない 。いや 、{本当|ほんとう} は ほしい 。」 …… {昔|むかし} から 、こう いう {人|ひと} 。|| "You needn't reply. No — truthfully, I want you to." …He was always like this.
 umi: {自分|じぶん} で は {何|なに} も {決|き}められない くせ に 、{決|き}めて くれ って 。|| Can't decide anything himself, then tells me to decide.
 comp[think]: …… どう する ？|| …What will you do?
 umi: {許|ゆる}す か どう か は 、まだ わからない 。|| Whether I forgive him — I don't know yet.
 umi: でも 、{一行|いちぎょう} だけ {書|か}く 。|| But I'll write one line.
+!gesture umi write 4,3
 narr: ウミ は {事務所|じむしょ} の {便箋|びんせん} に 、さらさら と {書|か}いた 。|| Umi writes quickly on the office letter paper.
 umi: 「{読|よ}みました 。 ウミ」|| "I read it. — Umi"
+!gesture umi handover comp prop=letter
+!gesture comp receive umi
 umi: これ を 、{届|とど}けて くれる ？ {父|ちち} が まだ {生|い}きて いて も 、いなくて も 。|| Will you deliver this? Whether my father's still alive or not.
+!gesture comp point up
 comp: イサム さん は 、{春|はる} に {灯|ひ} の {道|みち} を {上|のぼ}って いった って {聞|き}いた 。{山|やま} の ほう だ 。…… ちょうど 、{行|い}く ところ だ よ 。|| I heard Isamu went up the lantern road last spring. Up the mountain. …As it happens, that's where we're headed.
 comp[smile]: …… {届|とど}ける 。{必|かなら}ず 。|| …I'll deliver it. Without fail.
+!gesture comp write
 narr: ナオ は {封筒|ふうとう} に {宛名|あてな} を {書|か}いた 。いつも より 、ずっと ゆっくり 、ていねい に 。|| Nao writes the address on the envelope — far more slowly and carefully than usual.
+!gesture comp check prop=tags
 narr: それ から 、{古|ふる}い {封筒|ふうとう} の {宛名|あてな} の {紙|かみ} を そっと はがして 、{鞄|かばん} の {奥|おく} の {束|たば} に {加|くわ}えた 。|| Then Nao gently peels the old address label off Isamu's envelope and adds it to the bundle deep in the satchel.
 comp: …… {一行|いちぎょう} か 。すごい {量|りょう} だ な 、あの {人|ひと} に しては 。|| …One line, huh. That's a lot, coming from her.
 comp: {許|ゆる}す とも 、{許|ゆる}さない とも {書|か}いて ない 。…… それ で いい んだ 。{決|き}めた の は 、ウミ だ 。|| Doesn't say she forgives him, doesn't say she doesn't. …And that's right. Umi's the one who decided.
+!gesture comp aside
 comp[smirk]: {宛名|あてな} の {紙|かみ} 、{一枚|いちまい} {増|ふ}えた 。…… {笑|わら}う な よ 。{集|あつ}めてる んだ 、{昔|むかし} から 。|| One more address label for the collection. …Don't laugh. I've collected them for years.
 !quest lf_nao done
 !set lf_nao_done
@@ -78,55 +129,104 @@ comp[smirk]: {宛名|あてな} の {紙|かみ} 、{一枚|いちまい} {増|�
 
 # ---- Nao cameo (comp != nao) ----------------------------------------------------------------------------------------------------------------
 @scene lf.naoc
+# Staged (Nao's cameo when travelling with someone else): Nao's nod; a point to the ferry office for Umi's letter; a
+# look between it and you over a town that cannot say no; the hand on the satchel strap: "I'll wait"; your
+# companion's own answer (Mio's laugh, Ren's hand to the chin, Suzu's laugh); Nao's smirk and glance away; a point
+# down to the sluice and the tower.
+!gesture nao nod pc
 nao[smirk]: よう 。{久|ひさ}しぶり 。|| Hey. Long time.
+!gesture nao point 35,29
 nao: {配達|はいたつ} だ よ 。{潮硝子|しおがらす} から 、ここ の ウミ って {人|ひと} に 。{一年|いちねん} {遅|おく}れ の やつ 。|| Delivery. From Saltglass, for someone here called Umi. A year overdue.
+!gesture nao lookbetween 35,29 and=pc
 nao[think]: でも 、この {町|まち} 、{誰|だれ} も 「いいえ」 って {言|い}えない んだ ね 。|| But nobody in this town can say "no", huh.
+!gesture nao strap
 nao: {断|ことわ}れない {人|ひと} に 、この {手紙|てがみ} は {渡|わた}せない 。{待|ま}つ よ 。{何|なに} か が {変|か}わる まで 。|| I can't hand this letter to someone who can't refuse it. I'll wait. Until something changes.
+?(comp=mio) !gesture comp laugh
 ?(comp=mio) comp[smile]: …… ナオ さん 、{変|か}わらない ね 。{頑固|がんこ} な ところ 。|| …Nao, you haven't changed. Stubborn as ever.
+?(comp=ren) !gesture comp chin
 ?(comp=ren) comp: ナオ さん が 「{待|ま}つ」 と {言|い}う の は 、{珍|めずら}しい です ね 。|| It's rare to hear Nao say "I'll wait".
+?(comp=suzu) !gesture comp laugh
 ?(comp=suzu) comp[laugh]: {急|いそ}がば {回|まわ}れ 、ね 。ナオ に しては 。|| More haste, less speed, eh? From you, of all people.
+!gesture nao aside
 nao[smirk]: うるさい 。|| Shut up.
+!gesture nao point 40,39
 nao: …… {鐘楼|しょうろう} に {行|い}く んだって ？ {気|き} を つけて 。{出口|でぐち} は 、{先|さき} に {確|たし}かめて おく こと 。|| …Heading for the bell tower, I hear? Be careful. Check where the way out is first.
 
 @scene lf.naoc_after
+# Staged (Nao's cameo after the bell): Nao's nod; the reply held up, "I read it."; your companion's own exchange
+# with them (Mio looks Nao over and Nao's hand goes to a lighter satchel; Ren's open thanks and Nao's smirk away;
+# Suzu checks her account book and Nao shakes their head); Nao points up the lantern road and waves you goodbye.
+!gesture nao nod pc
 nao: {鐘|かね} 、{聞|き}こえた よ 。あれ 、{君|きみ} たち だ よね 。|| Heard the bell. That was you lot, right?
 nao: {渡|わた}した よ 、{手紙|てがみ} 。ウミ 、{怒|おこ}った 。ちゃんと {怒|おこ}れた 。|| I delivered it. Umi got angry. Properly angry.
+!gesture nao present pc prop=letter
 nao: で 、{一行|いちぎょう} だけ {返事|へんじ} を {書|か}いた 。「{読|よ}みました」 って 。|| Then she wrote one line back. "I read it."
 nao[smile]: {許|ゆる}す とも {許|ゆる}さない とも {書|か}いて ない 。…… いい {返事|へんじ} だ よ 。|| Doesn't say whether she forgives him. …It's a good reply.
+?(comp=mio) !gesture comp observe nao
 ?(comp=mio) comp: ナオ さん も 、{少|すこ}し {軽|かる}く なった ？|| Do you feel a bit lighter too, Nao?
+?(comp=mio) !gesture nao strap
 ?(comp=mio) nao: …… {鞄|かばん} は {軽|かる}く なった 。|| …The satchel's lighter.
+?(comp=ren) !gesture comp thanks nao
 ?(comp=ren) comp: {一年|いちねん} {遅|おく}れ の {配達|はいたつ} 、お{疲|つか}れ さま でした 。|| Well done on a delivery only a year late.
+?(comp=ren) !gesture nao aside
 ?(comp=ren) nao[smirk]: {皮肉|ひにく} か ？ …… ありがと 。|| Is that sarcasm? …Thanks.
+?(comp=suzu) !gesture comp check prop=accountbook
 ?(comp=suzu) comp: {送料|そうりょう} 、{一年分|いちねんぶん} {取|と}る の ？|| Charging a year's worth of postage?
+?(comp=suzu) !gesture nao shake
 ?(comp=suzu) nao[laugh]: {取|と}らない よ 。…… たぶん 。|| No. …Probably not.
+!gesture nao point up
 nao: イサム さん は 、{春|はる} に {灯|ひ} の {道|みち} を {上|のぼ}って いった って {話|はなし} だ 。{返事|へんじ} は 、そっち へ {届|とど}ける 。|| Word is Isamu went up the lantern road last spring. I'll take the reply up that way.
+!gesture nao wave pc
 nao: じゃ 、{行|い}って くる 。{元気|げんき} で ね 。|| Right, I'm off. Take care.
 !set lf_nao_cameo_done
 
 # ---- Mio: a no, out loud (comp = mio) ----------------------------------------------------------------------------------------------------------
 @scene lf.mio_start
+# Staged (Mio's personal quest begins): you walk down to the avenue with Mio (the narration) and turn to her; the
+# townspeople walk up to her one after another and she nods to each "of course", her hands fidget at the third, and
+# she writes the requests in her notebook (the narration); a guarded hand at "I'm used to it"; Hayato hands her the
+# Registrar's envelope; she starts back from her own "Yes, of cour—" (the narration: a hand over her mouth); she
+# holds the recipe out for you to read with her; a shake of the head at what it does, her head goes down; she looks
+# towards the Records Hall, and her hands fidget as she asks you to come.
+!walkto pc 11 15 right
+!walkto comp 12 15 left
 narr: {通|とお}り を {歩|ある}いて いる と 、{町|まち} の {人|ひと} が {次々|つぎつぎ} に ミオ に {声|こえ} を かけて くる 。|| As you walk down the avenue, townsfolk come up to Mio one after another.
 lf_setsu: {薬師|くすし} さん です よね ？ {宿|やど} の お{客|きゃく}さま が 、{咳|せき} を して いて 。|| You're an apothecary, aren't you? One of our guests has a cough.
+!gesture comp nod lf_setsu
 comp[smile]: はい 、もちろん 。{後|あと} で {持|も}って いきます 。|| Yes, of course. I'll bring something later.
 lf_masaru: {俺|おれ} も ！ やけど の {薬|くすり} ！ {十人分|じゅうにんぶん} ！|| Me too! Burn ointment! Ten people's worth!
+!gesture comp nod lf_masaru
 comp: はい 、もちろん 。|| Yes, of course.
 lf_nagi: {油|あぶら} で {荒|あ}れた {手|て} に {効|き}く もの 、ある ？|| Got anything for hands chapped from lamp oil?
+!gesture comp fidget
 comp: …… はい 、もちろん 。|| …Yes, of course.
+!gesture comp write
 narr: ミオ の {手帳|てちょう} が 、{頼|たの}まれ{事|ごと} で {埋|う}まって いく 。|| Mio's notebook fills up with requests.
 pc: ミオ 、{大丈夫|だいじょうぶ} ？|| Mio, are you all right?
+!gesture comp guard
 comp[tired]: …… うん 。{慣|な}れてる から 。{昔|むかし} から 、こう なの 。|| …Mm. I'm used to it. I've always been like this.
 !quest lf_mio start
 lf_hayato: {薬師|くすし} の ミオ {様|さま} で いらっしゃいます か 。{登記官|とうきかん} から の ご{依頼|いらい} です 。|| Would you be Mio, the apothecary? A commission from the Registrar.
+!gesture lf_hayato handover comp prop=letter
+!gesture comp receive lf_hayato
 narr: {封筒|ふうとう} の {中|なか} に は 、{処方|しょほう} の {写|うつ}し と 、{一行|いちぎょう} の {依頼|いらい} 。「{町|まち} の {全員|ぜんいん} {分|ぶん} 。{明日|あした} まで に 。」|| Inside the envelope: a copy of a recipe, and a single line. "Enough for the whole town. By tomorrow."
 comp: はい 、もちろ@もちろん …… 。|| Yes, of cour—
+!gesture comp recoil
 narr: ミオ は 、{自分|じぶん} の {口|くち} を {押|お}さえた 。|| Mio claps a hand over her own mouth.
 comp[surprise]: …… {今|いま} の 、{私|わたし} の {声|こえ} じゃ ない 。この {町|まち} の {声|こえ} だ 。|| …That wasn't my voice. That was this town's voice.
 !quest lf_mio 1
+!look comp pc
+!gesture comp present pc prop=paper hold
 comp[think]: {処方|しょほう} 、{一緒|いっしょ} に {読|よ}んで くれる ？ {嫌|いや}な {予感|よかん} が する 。|| Will you read the recipe with me? I've got a bad feeling.
 !challenge lf.ch_recipe
+!gesture comp shake
 comp[angry]: …… これ は 、{薬|くすり} じゃ ない 。{飲|の}んだ {人|ひと} が 「いや」 と {思|おも}う {気持|きも}ち ごと 、{消|け}して しまう もの 。{本人|ほんにん} に {黙|だま}って 。|| …This isn't medicine. It wipes out the very feeling of "no" in whoever drinks it. Without telling them.
+!gesture comp lowered
 comp[sad]: {作|つく}れない 。{作|つく}っちゃ いけない 。…… でも 、{私|わたし} 、{断|ことわ}った こと なんて 、{一度|いちど} も ない 。|| I can't make it. I mustn't. …But I've never refused anyone, not once in my life.
+!gesture comp lookroad 11,10
 comp: …… タダシ さん に 、{言|い}い に {行|い}かなきゃ 。{言|い}える か 、わからない けど 。|| …I have to go and tell Tadashi. I don't know if I can say it.
+!look comp pc
+!gesture comp fidget
 comp[shy]: {一緒|いっしょ} に {来|き}て くれる ？ {声|こえ} が {出|で}なかったら 、{背中|せなか} を {叩|たた}いて 。|| Will you come with me? If my voice won't come out, give me a pat on the back.
 !quest lf_mio 2
 !autosave
@@ -196,21 +296,40 @@ comp[laugh]: …… ふふ 。{町|まち} の {頼|たの}まれ{事|ごと} �
 
 # ---- Mio cameo (comp != mio) -----------------------------------------------------------------------------------------------------------------
 @scene lf.mioc
+# Staged (Mio's cameo when travelling with someone else): Mio's tired nod, an open hand at three days of requests, a
+# guarded hand when "of course" slips out; your companion's own answer (Nao looks her over, Ren's open hand, Suzu
+# writes her a sign in the air); Mio's laugh behind her hand.
+!gesture mio nod pc
 mio[tired]: あ 、$name さん 。…… {久|ひさ}しぶり 。|| Oh, $name. …It's been a while.
+!gesture mio palm pc
 mio: {薬草|やくそう} を {買|か}い に {来|き}た だけ なの 。でも 、{頼|たの}まれ{事|ごと} が {終|お}わらなくて 。もう {三日|みっか} 。|| I only came to buy herbs. But the requests never stop. Three days now.
+!gesture mio guard
 mio[worry]: {断|ことわ}ろう と する と 、「もちろん」 って {口|くち} が {勝手|かって} に …… 。{前|まえ} から {苦手|にがて} だった けど 、ここ だと もっと {言|い}えない 。|| Whenever I try to refuse, "of course" just comes out… I was never good at it, but here I can't say it at all.
+?(comp=nao) !gesture comp observe mio
 ?(comp=nao) comp: ミオ 、{休|やす}め よ 。{顔|かお} が {真|ま}っ{青|さお} だ 。|| Mio, take a break. You're white as a sheet.
+?(comp=ren) !gesture comp palm mio
 ?(comp=ren) comp: ミオ さん 、{薬師|くすし} が {倒|たお}れて は 、{元|もと} も {子|こ} も ありません 。|| Mio, an apothecary who collapses is no use to anyone.
+?(comp=suzu) !gesture comp write
 ?(comp=suzu) comp: 「{本日|ほんじつ} {休業|きゅうぎょう}」 の {札|ふだ} 、{書|か}いて あげよう か ？|| Want me to write you a "Closed today" sign?
+!gesture mio laugh
 mio[smile]: …… ありがとう 。{書|か}いて もらって も 、{出|だ}せない かも しれない けど 。|| …Thank you. Even if you write it, I might not manage to put it up.
 
 @scene lf.mioc_after
+# Staged (Mio's cameo after the bell): Mio's small celebration at her fourteenth "no", her laugh behind her hand;
+# your companion's own answer (Nao's nod, Ren's and Suzu's open-handed applause); she checks her bottles as she
+# talks of going home to sort the shelves.
+!gesture mio celebrate
 mio[laugh]: $name さん ！ {聞|き}いて 。{十四人目|じゅうよにんめ} の {人|ひと} に 、「いいえ」 って {言|い}えた の 。|| $name! Listen. I managed to say "no" to the fourteenth person.
 mio: {十五人目|じゅうごにんめ} に も 。{言|い}う たび に 、{少|すこ}し ずつ {楽|らく} に なった 。|| And the fifteenth. Each time it got a little easier.
+!gesture mio laugh
 mio[smile]: {断|ことわ}って も 、みんな {怒|おこ}らなかった 。…… {怒|おこ}った {人|ひと} も いた けど 、それ で いい の 。|| Nobody got angry when I refused. …Well, a few did, but that's fine too.
+?(comp=nao) !gesture comp nod mio
 ?(comp=nao) comp[smirk]: {成長|せいちょう} した じゃん 。|| Look at you, growing up.
+?(comp=ren) !gesture comp thanks mio
 ?(comp=ren) comp: おめでとう ございます 。{立派|りっぱ} な 「いいえ」 でした ね 、きっと 。|| Congratulations. I'm sure they were splendid "no"s.
+?(comp=suzu) !gesture comp thanks mio
 ?(comp=suzu) comp[laugh]: {初|はつ}{舞台|ぶたい} ね ！ {花束|はなたば} は ない けど 、{拍手|はくしゅ} なら ある わ 。|| Your stage debut! No bouquet, but have some applause.
+!gesture mio check prop=bottle
 mio: {葦|あし}ノ{瀬|せ} に {帰|かえ}る ね 。{店|みせ} の {棚|たな} 、{整理|せいり} しなきゃ 。…… {断|ことわ}った ぶん 、{余|あま}った {薬草|やくそう} が いっぱい ある から 。|| I'm going home to Reedwake. I need to sort out the shop shelves. …I've got loads of spare herbs now, from everything I turned down.
 !set lf_mio_cameo_done
 

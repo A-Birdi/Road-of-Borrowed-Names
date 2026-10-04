@@ -35,7 +35,8 @@ export async function runBranch(p, c, v, o) {
     Object.assign(s.vars, c.vars || {}, v.vars || {});
     Object.assign(s.player, c.player || {}, v.player || {});
     for (const w of (c.words || []).concat(v.words || [])) if (!s.words.includes(w)) s.words.push(w);
-    // scenes already seen (a person's first-meeting scene, a prop already looked at)
+    // scenes already seen (a scene's `seen.<id>` conditions: a second visit, a reply already heard, a person's
+    // first-meeting scene, a prop already looked at)
     for (const k of (c.seen || []).concat(v.seen || [])) s.seen[k] = true;
     // the creatures on the maps stay out of it (a patrol reaching you would start a battle mid-scene)
     for (const m in RB.content.maps) for (const f of RB.content.maps[m].foes || []) s.flags['foe:' + m + ':' + f.id] = true;
@@ -48,10 +49,11 @@ export async function runBranch(p, c, v, o) {
     // would otherwise still be where that run left them
     for (const n of RB.world.W.npcs) if (n.home) Object.assign(n, { x: n.home[0], y: n.home[1], fx: n.home[0], fy: n.home[1], mv: null, route: null, dir: (n.def && n.def.dir) || n.dir });
     if (comp) RB.world.placeCompanion();
-    // where the follow rule really leaves your companion when the place behind you is blocked (you walked up to
-    // the person from the side: your companion is on the tile you came from, not on yours)
+    // where your companion really stands when the place you talk from has no room behind you (they came along the
+    // row with you, or you walked up to the person from the side and they are on the tile you came from): the follow
+    // rule alone would put them on your own tile; [x, y] or [x, y, dir]
     const compAt = v.compAt || c.compAt;
-    if (comp && compAt && RB.world.W.comp) Object.assign(RB.world.W.comp, { x: compAt[0], y: compAt[1], fx: compAt[0], fy: compAt[1], dir: compAt[2] || RB.world.W.comp.dir });
+    if (comp && compAt && RB.world.W.comp) Object.assign(RB.world.W.comp, { x: compAt[0], y: compAt[1], fx: compAt[0], fy: compAt[1], mv: null, dir: compAt[2] || RB.world.W.comp.dir });
     // stand-ins for what a scene hands over to other screens (the same in every run)
     const pass = !(v.fail || c.fail);
     RB.challenge.run = async () => ({ ok: pass });

@@ -113,7 +113,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   M('hayate', 'craft', O, { every: [10, 18], idle: [['lookroad', 3], ['brow', 1]], talk: [10, 22], social: 0.3 });
   M('natsume', 'craft', O, { every: [8, 14], idle: [['yawn', 3], ['doze', 2]], talk: [32, 2] });
   M('tobi', 'child', O, { every: [5, 10], idle: [['bounce', 2], ['peek', 2]], talk: [10, 31] });
-  M('lf_kei', 'child', O, { rest: 'behind', every: [6, 12], idle: [['peek', 2], ['heeltap', 2]], talk: [17, 10] });
+  // Kei is the one person in Lanternfall who can still say no (lf.kei, lf.nagi): her head shake (20) is hers
+  M('lf_kei', 'child', O, { rest: 'behind', every: [6, 12], idle: [['peek', 2], ['heeltap', 2]], talk: [17, 10, 20] });
   M('bunta', 'craft', O, { rest: 'folded', every: [10, 18], idle: [['hammer', 2, { at: 'bench' }], ['lookroad', 1]], talk: [22, 23] });
   M('kiku', 'elder', O, { every: [12, 20], idle: [['knead', 2, { at: 'bench' }], ['glance', 1]], talk: [20, 9] });
   M('sachi', 'host', O, { every: [9, 16], idle: [['hangwash', 3, { at: 'laundry' }], ['glance', 1]], talk: [13, 32] });
