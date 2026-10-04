@@ -282,7 +282,38 @@ of that scene in `--ch=misc` (each companion counts as a branch where lines bran
 
 ## Runs (exact results)
 
-@@RUNS@@
+All on a shared, loaded 4-core machine (other workers testing), headless Chromium, one browser suite at a time.
+
+**On the merged build** (this branch after merging the task branch at 91eb61f, with the two case pages staged;
+commit 83095ed):
+
+- **U** `node tests/run-unit.mjs conversation_continuity` — **1070 passed, 0 failed**; `scene_manifest` — **774
+  passed, 0 failed**; `practice_b` — **96 passed, 0 failed**.
+- **U** `node tools/validate.mjs` — no errors (warnings only: two map exits unreachable from the default spawn,
+  `co.oldworks`, `sb.obs_path`, and lexicon conflicts; none from these scenes).
+- **B** `node tests/e2e/staging_chapters.mjs --ch=misc` — **3586 passed, 0 failed** (116 scenes, 493 branches,
+  1435 s): every branch plays to its end, every cue names somebody present who can make it, every `!walkto` is
+  reached, nobody shares a tile or stands on furniture at any frame, no idle life, everyone where the world
+  expects them afterwards and the companion beside you, the expected gestures; per case, reduced motion keeps the
+  cues, their order and the outcome, and staged/unstaged end in the same state.
+- **B** `staging_chapters.mjs --ch=showcase` — **66 passed, 0 failed**.
+- **B** `pages_ending.mjs` — all ok (95 checks; the real camp talk, Page II and III, the homecoming and the
+  retrospective with staging on); `pets.mjs` — **20 passed, 0 failed**; `pets_greet.mjs` — **17 passed, 0 failed**;
+  `company.mjs` — all passed (61 checks); `actor_life.mjs` — **39 passed, 0 failed**; `walk_round.mjs` — all passed
+  (16 checks); `cases.mjs` — all passed (118 checks); `long_quests.mjs` — all long-quest checks passed (104
+  checks, 1160 s).
+
+**Before the merge** (this branch at fbe831f): `node tests/run-unit.mjs` (the whole unit suite) — **25587 passed,
+0 failed**; `--ch=misc` — **3527 passed, 0 failed** (113 scenes); `--ch=showcase` — **66 passed, 0 failed**;
+`long_quests.mjs`, `quest_guide.mjs`, `cases.mjs` — all passed. The whole unit suite was not rerun after the merge
+(the three tests above were).
+
+During the pass: a first run of the Pages II–III, shiritori and Atlas cases gave **487 passed, 4 failed** — four
+expectations written under the companion's name for cues addressed to `comp` (fixture keys corrected; the
+gestures were cued) — and, before that, every `pages.home2` branch timed out with no line: the runner read the
+history length after the scene had started, and that scene's first line is a hook's narration shown in the same
+tick (runner corrected, above). Shooting the frame sheets also showed a runner artefact, not a game fault: where
+a cue `wait`s before a line that follows a choice, the runner's line log can name the previous line twice.
 
 ## The Chapter 3–4 pass's proposals
 
