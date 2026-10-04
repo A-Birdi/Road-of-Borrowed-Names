@@ -323,6 +323,9 @@ narr: {鐘|かね} の {台|だい} の {札|ふだ} 。「{灯落|ひおち} {�
 
 @scene lf.bell_touch
 !if !lf_boss_done -> guard
+# Illustrated (src/ui/43e_seq_ch5.js; docs/expressive/SHOTS.md §5): the bell, held through the lesson, the challenge and the choice ("Not yet" ends the scene: the picture dissolves back into the chamber); the state lines run once where they stand.
+!sequence ch5.bell begin
+!shot bell
 narr: {緑|みどり} に くすんだ {大|おお}きな {鐘|かね} 。{表面|ひょうめん} に 、{文字|もじ} が {鋳|い}{込|こ}まれて いる 。|| A great bell gone green with age. Words are cast into its surface.
 !lesson kana
 !challenge lf.ch_bell
@@ -335,16 +338,23 @@ narr: 「この {鐘|かね} が {鳴|な}ったら 、{高|たか}い {所|と�
 * {鐘|かね} を {鳴|な}らす || Ring the bell -> ring
 * まだ {待|ま}つ || Not yet -> end
 :ring
+!shot gong
 !music -
 !sfx bell
-!shake
+# (the stone's shake is the gong shot's own swing: no screen shake inside a sequence, SHOTS.md §0)
 narr: ごおおん …… 。|| GONNNG…
+!shot gong climb
 narr: {低|ひく}い {音|おと} が 、{水|みず} を {震|ふる}わせ 、{石|いし} を {震|ふる}わせ 、{管|くだ} の {中|なか} を {駆|か}け{上|あ}がって いく 。|| The low note shakes the water, shakes the stone, and races up through the pipes.
+!shot town
 !sfx bell
 narr: {二度|にど} 、{三度|さんど} 。{三十年|さんじゅうねん} {分|ぶん} の {音|おと} が 、{一度|いちど} に {出|で}て いく よう に 。|| Twice. Three times. As if thirty years of sound were leaving all at once.
+!shot town turn
 narr: {管|くだ} の {中|なか} の {声|こえ} が 、{向|む}き を {変|か}えた 。{上|うえ} で は なく 、{下|した} へ 。{町|まち} へ 。|| The voices in the pipes turn around. Not up, but down. Towards the town.
+!shot hall
 lf_toya: …… {鳴|な}った 。やっと 。|| …It rang. At last.
+!shot hall turn
 narr: {誰|だれ} の {声|こえ} か 、わからない 。{振|ふ}り{返|かえ}って も 、{水|みず} の {上|うえ} に は {誰|だれ} も いない 。|| You can't tell whose voice it was. When you turn, there's no one on the water.
+!shot hall aside
 ?(comp=nao) comp[closed]: …… {今|いま} の 。{聞|き}こえた よね 。|| …That. You heard it too, right?
 ?(comp=nao) comp: {届|とど}いた よ 。{三十年|さんじゅうねん} {遅|おく}れ でも 、{届|とど}いた 。|| It got there. Thirty years late, but it got there.
 ?(comp=mio) comp[sad]: …… うん 。{聞|き}こえた 。|| …Yes. I heard.
@@ -361,7 +371,9 @@ narr: {誰|だれ} の {声|こえ} か 、わからない 。{振|ふ}り{返|�
 ?(comp=nao&quest.lf_nao>=1&!quest.lf_nao=done) !quest lf_nao 2
 !music lf_bell
 !autosave
+!shot hall ebb
 narr: {湖|みずうみ} の {水|みず} が 、{少|すこ}し ずつ {引|ひ}いて いく 。{舟|ふね} へ {戻|もど}ろう 。|| The lake is slowly drawing back. Time to get back to the boat.
+!sequence ch5.bell end
 !fade out
 !warp lf.sluice 19 16 up
 !fade in

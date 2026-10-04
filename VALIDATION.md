@@ -2325,3 +2325,32 @@ fresh build; scenes.json and SCENES.md regenerated):
 - A press during a shot's 350 ms fade-in only finishes the fade, so a fast reader may feel one press "eaten" at each
   shot change.
 - The noren in ch1.bridge repeats the approved prologue's ring-and-dot crest (a mark, not a letter).
+
+## Illustrated sequences, wave 2: Chapters 5 and 6, and the boat crossing (merged 2026-10-04; HX41, HX42, HX52, HX53, HX71)
+
+**What** (worker branch, final 2ad4915; the record is docs/expressive/reports/sequences_wave2_ch56.md):
+- **`ch5.bell`, in `lf.bell_touch`, 4 shots:** the bell from below; the strike (one swing replaces the screen shake,
+  which SHOTS.md §0 and §5 prescribe); the town lighting street by street; the chamber, where the voice is a ring on the
+  water and is never drawn.
+- **`ch5.boat`, in `lf.boat_to_tower`, 1 shot:** the faded passage filled with a cut at the water's surface, showing
+  the boat, the drowned town below and the tower ahead. It has one composition because the passage has one line.
+- **`ch6.toya`, in `sa.toya_read`, 5 shots:** one of them only when the bell is carried. Papers carry marks and stamps
+  only, never writing.
+- Faded passages filled: 5 of 9.
+
+**The worker's runs** (on its branch, identical to this merge):
+- unit 25,091/0; validator clean;
+- sequence_chapters_56 144/0: 11 branch runs with real clicks, the 8 s idle, read-only Previous, Skip asking first,
+  reduced motion with no shake, focal areas at three sizes, memory replays;
+- sequence_manual --quick 64/0;
+- story_ch5 8/8; story_ch6 all 5 runs ok;
+- interludes 76/0; staging showcase 66/0; sequence_dev 9/0.
+
+**The lead's runs:** unit 25,091/0; validator clean; the merged index.html is byte-identical to a fresh build;
+scenes.json and SCENES.md regenerated.
+
+**Not verified:**
+- A person's review of the art.
+- Phones, Firefox and Safari, taps; a 60 s idle; large text; TTS.
+- When a long line pushes the dialogue sheet past 56 % of the height, a 1280 × 720 shot re-frames mid-way to its
+  phone-sideways layout.
