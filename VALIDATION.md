@@ -2628,3 +2628,8 @@ comment lines of `index.html` after these runs):
 **Not verified:** the new portrait habits and the tablet/phone entrance after the wait, by eye; real painted art (the
 face sizes use the synthetic sample with template face boxes); the 1366 × 768 result in other encounters (one creature
 in the Mill here); phones, Firefox, Safari.
+
+**The lead's run on the merged task branch (ef61dbb: the shared portrait profile, the cut-in's wait and fit order, the
+pronoun tidy):** unit 27,110 passed, 0 failed; B portrait_anim all passed; B harmony_cutin 11 passed, 0 failed;
+B battle_presentation 13 passed, 0 failed. These were run one after another while two other workers ran browser
+tests in their own worktrees.
