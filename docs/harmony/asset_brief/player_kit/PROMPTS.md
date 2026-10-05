@@ -1,21 +1,26 @@
 # Player kit reference sheets: prompts for the image tool
 
-The approach proposed on 2026-10-05, for which Robin asked for these prompts: the player's Harmony kit is drawn **in code** from whole-character reference sheets,
-the way the companions' seven-frame cut-ins were (Suzu, Nao, Mio, Ren). The image tool paints whole pictures of the
-player; the layers (heads, torsos, brush arms in both sleeves, hair back and front, accessories) are measured from them
-and drawn in the key colour families, so every layer separates cleanly and fits every other. This replaces asking the
-tool for separated layer files (ASSET_BRIEF.md §8.0 Track A, step A3).
+The approach proposed on 2026-10-05, for which Robin asked for these prompts: the player's Harmony kit is drawn **in
+code** from whole-character pictures of the player, the way the companions' seven-frame cut-ins were (Suzu, Nao, Mio,
+Ren). The image tool paints whole pictures; the layers (heads, torsos, brush arms in both sleeves, hair back and front,
+accessories) are measured from them and drawn in the key colour families, so every layer separates cleanly and fits
+every other. This replaces asking the tool for separated layer files (ASSET_BRIEF.md §8.0 Track A, step A3).
 
-- **Make Sheet 1 first.** Every other sheet attaches it as the lock for the face, the head angle and the scale.
-- Each request is the shared rules followed by one sheet. A published page with copy buttons holds the same text.
-- Attach the approved paired picture, Suzu's and the other companions' four-tile sheets (Robin's; **never committed**),
-  and from this folder's parent `ref_player_hairstyles.png` and `ref_player_wear.png` (shapes only).
+**How to send them (revised after the first attempt).** Asking for all nine at once, in a conversation that still held
+the companions' pose-guide pages, made the tool redraw those pages. So:
+- Start a new, empty conversation in the image tool.
+- One sheet per message, Sheet 1 first: the sheet's cover prompt, then the shared rules, then the sheet itself.
+- Attach only the pictures that sheet lists. Attaching this document is optional; the cover prompt says to follow it,
+  never draw it.
+- Every later sheet attaches Sheet 1 as the lock for the face, the head angle and the scale.
+- Attachments: the approved paired picture and the companions' four-tile sheets are Robin's (**never committed**);
+  `ref_player_hairstyles.png` and `ref_player_wear.png` are in this folder's parent (shapes only).
 - What comes back: PNG with real transparency or flat #FF00FF magenta (never black), tiles edge to edge, no text.
 
-## Shared rules (every sheet)
+## Shared rules (every sheet, after its cover prompt)
 
 ```text
-You are making reference sheets for a pixel-art game. Every sheet follows these rules.
+You are drawing pixel-art pictures of one game character, the player. These rules apply to every picture.
 
 STYLE
 - Match the style and finish of the attached approved pictures exactly: the Suzu four-tile sheet and the paired picture of Suzu with the player.
@@ -45,6 +50,25 @@ BACKGROUND AND FORMAT
 
 Attach: the approved paired picture; Suzu's four-tile sheet.
 
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 1 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player, the person on the RIGHT of the attached paired picture who holds the large calligraphy brush, four times, in four moments of one motion (focus, cue, peak, settle).
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- The paired picture of Suzu with the player: the player's face, hair, outfit and the art style. Copy the player exactly; leave Suzu out.
+- The Suzu four-tile sheet: the finish and the 2 × 2 layout only. Do not draw Suzu.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a 2 × 2 grid of four tiles of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
+
 ```text
 SHEET 1 OF 9: THE BASE PLAYER, LOOK A (2 × 2 grid, four tiles)
 
@@ -71,6 +95,26 @@ The four tiles are one short, energetic motion: the player's half of the Suzu pa
 
 Attach: Sheet 1; the player hairstyles and player wear pages.
 
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 2 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the same player in look B (deep brown skin, black curly hair, a white headband, a rust-orange robe with wide sleeves, a teal scarf), in the same four moments and poses as Sheet 1.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1 (your earlier picture of the player): the face, head angle, poses and scale to keep.
+- The "Player hairstyles" page from the game: only which hairstyles exist, at low detail. Never copy its look, layout, frames or text.
+- The "Player wear" page from the game: only which shapes exist, at low detail. Never copy its look, layout, frames or text.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a 2 × 2 grid of four tiles of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
+
 ```text
 SHEET 2 OF 9: LOOK B, THE CUSTOMISATION PROOF (2 × 2 grid, four tiles)
 
@@ -90,6 +134,25 @@ Show the wide sleeve clearly in every pose. In "focus" and "settle" it hangs ope
 ## Sheet 3: The other three pairings, look A (3 across × 2 down)
 
 Attach: Sheet 1; the Nao, Mio and Ren four-tile sheets.
+
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 3 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player in look A, six times: the peak and the settle brush gestures for the Nao, Mio and Ren pairings.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1: the player, the head and the scale to keep.
+- The Nao, Mio and Ren four-tile sheets: only to see what each companion does at that moment. Do not draw them.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
 
 ```text
 SHEET 3 OF 9: THE OTHER THREE PAIRINGS, LOOK A (3 across × 2 down, six tiles)
@@ -113,6 +176,25 @@ Bottom row, the settles (each follows the peak above it):
 
 Attach: Sheets 2 and 3.
 
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 4 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player in look B, six times, in exactly the six brush gestures of Sheet 3.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 2: look B to keep.
+- Sheet 3: the six poses to copy.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
+
 ```text
 SHEET 4 OF 9: THE SAME SIX POSES IN LOOK B'S ROBE (3 across × 2 down, six tiles)
 
@@ -126,6 +208,25 @@ Show how the wide sleeve hangs in each pose: it falls back toward the elbow when
 ## Sheet 5: Hairstyles 1–6 (3 across × 2 down)
 
 Attach: Sheet 1; the player hairstyles page.
+
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 5 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player's head and shoulders six times, each with a different hairstyle: short, bob, long, ponytail, bun, curly.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1: the head to keep (angle, size, position, face).
+- The "Player hairstyles" page from the game: only which hairstyles exist, at low detail. Never copy its look, layout, frames or text.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
 
 ```text
 SHEET 5 OF 9: HAIRSTYLES 1–6 (3 across × 2 down, six tiles)
@@ -150,6 +251,25 @@ Every tile shows the same head as Sheet 1's "focus" tile, at exactly the same an
 
 Attach: Sheets 1 and 5; the player hairstyles page.
 
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 6 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player's head and shoulders six times, each with a different hairstyle: spiky, braid, shaved, twintails, wavy, wrap.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1 and Sheet 5: the head and the hair colour to keep.
+- The "Player hairstyles" page from the game: only which hairstyles exist, at low detail. Never copy its look, layout, frames or text.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
+
 ```text
 SHEET 6 OF 9: HAIRSTYLES 7–12 (3 across × 2 down, six tiles)
 
@@ -168,6 +288,25 @@ The same rules as Sheet 5: the same head, angle, size, position and calm express
 ## Sheet 7: Garments (3 across × 2 down)
 
 Attach: Sheet 1; the player wear page.
+
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 7 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player six times, each in a different garment: tunic, robe, coat, apron, dress, and the dress again in the peak pose.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1: the player and the pose to keep.
+- The "Player wear" page from the game: only which shapes exist, at low detail. Never copy its look, layout, frames or text.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
 
 ```text
 SHEET 7 OF 9: GARMENTS (3 across × 2 down, six tiles)
@@ -190,6 +329,25 @@ The fitted sleeve: the tunic, the coat, the apron and the dress all use one iden
 
 Attach: Sheets 1 and 5; the player wear page.
 
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 8 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player's head six times, each wearing one accessory: a straw hat, a ferry cap, a ribbon, a maple-leaf pin, a quill, earrings.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1: the head to keep. Sheet 5: the short hairstyle to use.
+- The "Player wear" page from the game: only which shapes exist, at low detail. Never copy its look, layout, frames or text.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
+
 ```text
 SHEET 8 OF 9: HEAD AND EAR ACCESSORIES (3 across × 2 down, six tiles)
 
@@ -208,6 +366,25 @@ Every tile: Sheet 1's "focus" head at exactly the same angle, size and position,
 ## Sheet 9: Neck, chest and back accessories (3 across × 2 down)
 
 Attach: Sheets 1 and 8; the player wear page.
+
+Cover prompt:
+
+```text
+Make ONE new picture: Sheet 9 of the player kit, described in the text below. Make only this sheet, nothing else.
+
+Draw: the player six times, each wearing one neck, chest or back accessory: a cape, a map-paper sash, a bell, a compass pin, a knitted scarf, then all the chest pieces together.
+
+Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
+
+What the attachments are for:
+- Sheet 1: the head to keep. Sheet 8: the short hair and plain coat to keep.
+- The "Player wear" page from the game: only which shapes exist, at low detail. Never copy its look, layout, frames or text.
+- Any attached document is written instructions: follow it, never draw it.
+
+The picture: a grid of six tiles, 3 across and 2 down of pixel-art busts, the tiles edge to edge, on a transparent or flat #FF00FF magenta background. Nothing else in the picture.
+```
+
+The sheet:
 
 ```text
 SHEET 9 OF 9: NECK, CHEST AND BACK ACCESSORIES (3 across × 2 down, six tiles)
