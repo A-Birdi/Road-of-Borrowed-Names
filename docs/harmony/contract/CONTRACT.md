@@ -237,7 +237,7 @@ unless its faces were under 48 CSS px.
 | atlas_pin | `acc_atlas_pin` → acc_chest | | none | right chest |
 | scarf | `acc_scarf` → acc_neck; with `scarfStripe`: `acc_scarf_knit` | | scarfCol → #c8962e | tail on the left breast |
 | glasses | `acc_glasses` → glasses | | none (never recoloured) | both |
-| hat / cap | `acc_hat` / `acc_cap` → acc_head | yes; hides hair above its band | hatCol → #8a6a44 / capCol → #2c4468 | both |
+| hat / cap | `acc_hat` / `acc_cap` → acc_head | yes; hides the hair above its own top edge | hatCol → #8a6a44 / capCol → #2c4468 | both |
 | headband | `acc_headband` → acc_head | yes | bandCol → the cloth trim | both |
 | ribbon, flower, leaf | `acc_ribbon`, `acc_flower`, `acc_leaf` → acc_head | yes | ribbonCol #c8687a, flowerCol #f4a6a0, leafCol #c8452a | the character's left |
 | atlas_quill | `acc_atlas_quill` → acc_head | yes | none | the character's left |
@@ -635,8 +635,14 @@ Pose-dependent occlusion:
 * **Earrings** hang at their attachment points: the far one behind the head and torso, the near one over the hair.
 * **Straps** (satchel, sash) are on the torso; **rear hair** is behind the shoulders, locks that fall in front
   belong to the front file.
-* **Hats and caps** hide every hair pixel above their band line (`pc.hatBand.<hat|cap>` plus the hairstyle's
-  attachment offset); the painted hat must cover the bald scalp above that line (the validator checks it).
+* **Hats and caps** hide the hair above their own top edge, column by column, in the columns the hat covers
+  (placed with the hairstyle's attachment offset and the head group's); hair beside the hat is kept, so twintails and
+  wide styles are not cut flat. Under the hat the hair is drawn and the hat covers it. Where hidden hair leaves
+  background, the visible hair pixel next to it (left, right, above or below) takes the outline ink #140c18, so the
+  hair ends in a closed edge rather than a raw cut. The band line
+  (`pc.hatBand.<hat|cap>` plus the hairstyle's attachment offset) is the line the painted hat must cover the bald scalp
+  above (the importer checks it), and a hat hides nothing until its band is set. (Until 2026-10-05 a hat hid every
+  hair pixel above its band line, which cut the hair beside the hat in a straight line.)
 
 **Transforms (the only ones):** whole-pixel translation of the head group and the torso group per state
 (`pc.groups.<state>.head|torso = [dx, dy]`), of hair-mounted accessories per hairstyle (`pc.attach.<style>.<acc>`),

@@ -251,7 +251,7 @@ RB.harmonyRaster = (function () {
 
   // ---- assembling ------------------------------------------------------------------------------------------------------
   // draw a decoded file into out at (dx, dy); recolour with `tab` (material → 5 packed colours); skip(x, y) hides
-  function draw(out, f, dx, dy, tab, skip) {
+  function draw(out, f, dx, dy, tab, skip, own, tag) {
     const W = f.w, H = f.h, px = f.px, code = f.code;
     for (let y = 0; y < H; y++) {
       const Y = y + dy;
@@ -266,6 +266,7 @@ RB.harmonyRaster = (function () {
         // (a row is a look's material: its own colour per painted value; a plain list of five tones is the v2 lookup)
         if (code && code[i] >= 2 && tab) { const c = code[i] - 2, mi = (c / 5) | 0, row = tab[mi]; if (row) q = Array.isArray(row) ? row[c % 5] : recolourPx(row, mi, p); }
         out[Y * W + X] = q;
+        if (own) own[Y * W + X] = tag;
       }
     }
   }
@@ -289,14 +290,22 @@ RB.harmonyRaster = (function () {
     const armAt = P.armSlot && P.armSlot[pl.pose];
     if (armAt && H.ARM_SLOT[armAt]) { order = order.filter((s) => s !== 'arm'); order.splice(order.indexOf(H.ARM_SLOT[armAt]), 0, 'arm'); }
     if ((P.glassesOver || []).indexOf(pl.style) >= 0) { order = order.filter((s) => s !== 'glasses'); order.splice(order.indexOf('hair_front') + 1, 0, 'glasses'); }
-    // a hat or cap hides the hair above its band (its row plus the style's attachment offset and the head group's)
-    let band = null;
+    // a hat or cap hides the hair above its own top edge in each column it covers (placed with the style's attachment
+    // offset and the head group's); hair beside it is kept (pc.hatBand is the line it must cover the scalp above)
+    let top = null;
     for (const q of pl.parts) if (q.acc && H.ACC[q.acc].hides && P.hatBand && P.hatBand[q.acc] != null) {
-      const at = (P.attach && P.attach[pl.style] && P.attach[pl.style][q.acc]) || [0, 0];
-      const y = P.hatBand[q.acc] + at[1] + pl.groups.head[1];
-      band = band == null ? y : Math.max(band, y);
+      const f = dec.get(q.file), at = (P.attach && P.attach[pl.style] && P.attach[pl.style][q.acc]) || [0, 0];
+      const ox = at[0] + pl.groups.head[0], oy = at[1] + pl.groups.head[1];
+      top = top || new Int16Array(W).fill(-1);
+      for (let x = 0; x < f.w; x++) for (let y = 0; y < f.h; y++) if (f.px[y * f.w + x] >>> 24) {
+        const X = x + ox, Y = Math.max(0, y + oy);
+        if (X >= 0 && X < W && (top[X] < 0 || Y < top[X])) top[X] = Y;
+        break;
+      }
     }
-    const hide = band == null ? null : (x, y) => y < band;
+    // (where hidden hair leaves background, the visible hair next to it takes the outline ink: a closed edge, not a cut)
+    const own = top && new Uint8Array(W * Hh), cut = top && new Uint8Array(W * Hh);
+    const hide = top && ((x, y) => { if (y < top[x]) { cut[y * W + x] = 1; return true; } return false; });
     const rank = (q) => { const L = H.SLOT_ORDER[q.slot]; return L ? L.indexOf(q.acc) : 0; };
     let armBox = null;
     for (const slot of order) {
@@ -308,8 +317,18 @@ RB.harmonyRaster = (function () {
         let tab = base;
         if (q.acc) { tab = base.slice(); tab[4] = accRow(r, look, q.acc); }
         else if (/^pc_hair_wrap_/.test(q.file)) { tab = base.slice(); tab[3] = r.rows.wrap; }
-        draw(out, f, dx, dy, tab, slot === 'hair_back' || slot === 'hair_front' ? hide : null);
+        const hair = slot === 'hair_back' || slot === 'hair_front';
+        draw(out, f, dx, dy, tab, hair ? hide : null, own, hair ? 1 : 0);
         if (slot === 'arm') armBox = bbox(f.px, f.w, f.h, dx, dy);
+      }
+    }
+    if (cut) {
+      const o = H.colour.hexRgb(H.OUTLINE), ink = ((255 << 24) | (o[2] << 16) | (o[1] << 8) | o[0]) >>> 0;
+      const open = (j) => cut[j] && !(out[j] >>> 24);
+      for (let i = 0; i < W * Hh; i++) {
+        if (own[i] !== 1) continue;
+        const x = i % W;
+        if ((x > 0 && open(i - 1)) || (x < W - 1 && open(i + 1)) || (i >= W && open(i - W)) || (i + W < W * Hh && open(i + W))) out[i] = ink;
       }
     }
     const nk = H.ANCHORS.pc.neck;

@@ -449,11 +449,18 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   constructed fingers, warm creases, never the dark outline inside a hand) applies to every hand.
   - Look A (Batch 1a: four heads, coat, five fitted brush arms, ponytail back and front, glasses, flower, satchel) is
     drawn in code, keyified, and passes the importer's check, import and verify and an eight-look recolour proof.
-    The hands had three passes; awaiting Robin's verdict. Not in the repo and not imported.
-  - Nao's cut-in hands were rebuilt to the hand standard; the previous version is kept for Robin to compare.
-  - Sheets 2–9 are registered (46 tiles, ≤ 1.7 art px landmark error) and measured in the player's canvas; the open
-    contract values are measured (hat band y 41, cap band y 46; per-hairstyle mount offsets estimated, fourteen to place
-    by eye). Nothing needs regenerating. Kit drawing for Batches 1b–4 waits for Robin's approval of look A.
+    **Robin approved look A on 2026-10-05** (with Nao's rebuilt hands, the previous version kept for comparison).
+  - Sheets 2–9 are registered (46 tiles, ≤ 1.7 art px landmark error) and measured in the player's canvas (hat band
+    y 41, cap band y 46; per-hairstyle mount offsets measured or placed by eye and corrected by the integration proof).
+  - The rest of the kit (Batches 1b–4: 11 hairstyles, the robe and eleven wide-sleeve arms, tunic/apron/dress and the
+    six pairing arms, 13 accessories) is drawn in code by five groups and integrated: 72 kit files + the four
+    companions' frames keyify, import (`--check`, `--verify`) and cover the registry (86/86); the game's own runtime
+    painted 2,681 busts (every hairstyle × cut × state × pairing, every accessory) with 0 errors. A defect pass
+    (holes, seams, bald scalp) is in a fix round by six workers; then a review page goes to Robin. Not imported.
+  - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top
+    edge"):** a hat or cap hides hair only above its own top edge in the columns it covers (was: every hair pixel
+    above the band row, which cut twintails and wide styles flat), and the edge hidden hair leaves over background
+    closes with the outline ink. `pc.hatBand` stays the scalp-cover line the importer checks.
   - These working files live outside the repo; nothing of the kit or the cut-ins is committed until Robin approves
     and the art is imported (art/harmony/source/<batch>/ per ASSET_BRIEF.md §10).
 

@@ -66,7 +66,7 @@ const reg = await p.evaluate(({ creationCuts, maxAcc }) => {
     const e = { codeBust: Object.assign({ drawn: drawnByCode }, how) };
     if (d) {
       const fl = HC.accFiles(look).files.filter((f) => f.acc === a);
-      Object.assign(e, { visibleInBust: true, files: fl.map((f) => ({ file: f.file, slot: f.slot })), hairMounted: !!d.hair, hidesHairAboveBand: !!d.hides, channel: d.channel ? Object.assign({ material: 'accessory' }, d.channel) : null });
+      Object.assign(e, { visibleInBust: true, files: fl.map((f) => ({ file: f.file, slot: f.slot })), hairMounted: !!d.hair, hidesHairAboveIt: !!d.hides, channel: d.channel ? Object.assign({ material: 'accessory' }, d.channel) : null });
     } else e.visibleInBust = false;
     e.reason = d ? null : ns || 'not listed in the contract';
     return e;

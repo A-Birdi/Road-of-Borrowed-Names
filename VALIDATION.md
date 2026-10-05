@@ -2906,6 +2906,47 @@ the built index.html.
 - index.html rebuilds unchanged (keyify is a dev tool and ships nothing).
 - No painted art has been through keyify yet: Batch 1a is its real test.
 
+## Hats hide hair above their own top edge (lead, 2026-10-05; CONTRACT.md §3.4 and §6; REQUIREMENTS.md HB11)
+
+The painted player kit was integrated outside the repo (72 kit files). Its proof showed that the runtime's old rule cut
+the hair flat: every hair pixel above the hat's band row was hidden. That chopped twintails and wide styles in a
+straight line beside the hat, on every hairstyle but shaved, across 1–47 columns.
+
+**The new rule** (`src/ui/88_harmony_raster.js` `paint()`):
+- A hat or cap hides hair only above its **own top edge**, column by column, and only in the columns it covers. The hat
+  is placed with the hairstyle's attachment offset and the head group's offset.
+- Hair beside the hat is kept.
+- Where hidden hair leaves background, the visible hair pixel next to it takes the outline ink #140c18, so the hair ends
+  in a closed edge.
+- `pc.hatBand` remains the line the hat must cover the scalp above (the importer's check, unchanged).
+- A hat hides nothing until its band is set (unchanged).
+- `draw()` gains two optional arguments (an ownership array and its tag); existing calls are unchanged.
+
+Only painted busts with a hat or cap change. The code-drawn path and the synthetic sample (which has no hat) do not.
+
+Other changes:
+- registry.json: the creation accessories' key `hidesHairAboveBand` is now `hidesHairAboveIt`.
+- `tools/harmony_registry.mjs`: regenerated with the rename.
+
+**Checks run on this working tree** (built with `node tools/build.mjs`):
+- U `node tests/run-unit.mjs harmony`: **455 passed, 0 failed.** `harmony_raster` is 97/0, including the new block.
+  The sample's flower drawing stands in for a hat, with the band at row 60, well below the hair's top. On ponytail and
+  curly at prep_a:
+  - Beside the hat, the bust equals the hatless bust: 113 and 313 hair pixels above the band are kept. The only
+    allowed differences are the outline-ink edge pixels next to the hat's columns (4 and 9).
+  - Above the hat's top edge in its columns, no hair is drawn: 63 and 141 hair pixels are hidden, and only the bald
+    head shows there (22 px).
+- B `node tests/e2e/harmony_raster.mjs`: **26 passed, 0 failed.**
+- Outside the repo, the integration's proof (the game's runtime in node) covered all 2,681 combinations: 12 hairstyles
+  × 5 cuts × 7 states × 4 pairings, plus every accessory. Results:
+  - 0 errors;
+  - its replay of the stacking equals the paint in every case;
+  - hair cut flat at the band: before, 15 groups (105 cases); after, 0;
+  - unclosed cut edges beside a hat: 0;
+  - the closed edges are inspected at 4× in the proof's contact sheets.
+- Not yet recorded at this checkpoint: the full unit suite, `harmony_cutin` and the content validator on this tree
+  (running; added below when done).
+
 ## Harmony portrait timing — Robin's decision (2026-10-05; REQUIREMENTS.md HB10)
 
 Robin compared three in-battle timings in a preview player and chose: **Normal** plays the proposed performance

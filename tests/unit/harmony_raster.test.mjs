@@ -280,6 +280,39 @@ export default async (t) => {
     t.ok(HR.install({ manifest: Object.assign({}, manifest, { contractVersion: 1 }), files }).ok === false && !HR.active() && HA.PHASES.length === 2, 'a manifest of another contract version is not installed (and the code path is back)');
   }
 
+  // ---- a hat hides the hair above its own top edge, only in the columns it covers, and closes the edge it leaves ------------------
+  // (the sample has no hat: the flower's drawing stands in for one, with a band line well below the hair's top, so the
+  // former rule, every hair pixel above the band, would have cut the hair beside it flat)
+  {
+    const m = JSON.parse(JSON.stringify(manifest)), fh = Object.assign({}, files);
+    m.files.acc_hat = Object.assign({}, m.files.acc_flower, { png: 'acc_hat.png', mask: 'acc_hat.mask.png' });
+    fh['acc_hat.png'] = files['acc_flower.png']; fh['acc_hat.mask.png'] = files['acc_flower.mask.png'];
+    m.pc.hatBand = { hat: 60 };
+    t.eq(HR.install({ manifest: m, files: fh }, { decode }), { ok: true, errors: [] }, 'the sample with a stand-in hat installs');
+    for (const hair of ['ponytail', 'curly']) {
+      const L0 = Object.assign({}, LA, { hair, acc: [] }), L1 = Object.assign({}, L0, { acc: ['hat'] });
+      const p0 = HR.plan('pc', L0, 'prep_a', 'suzu'), p1 = HR.plan('pc', L1, 'prep_a', 'suzu');
+      await HR.load(p0.files.concat(p1.files));
+      const b0 = HR.paint(p0, L0), b1 = HR.paint(p1, L1), W = b0.w, Hh = b0.h;
+      const hat = HR._.decoded.get('acc_hat'), head = HR._.decoded.get(p1.parts.find((q) => q.slot === 'head').file);
+      const hairs = p1.parts.filter((q) => /^hair_/.test(q.slot)).map((q) => HR._.decoded.get(q.file));
+      const top = new Array(W).fill(-1);
+      for (let x = 0; x < W; x++) for (let y = 0; y < Hh; y++) if (hat.px[y * W + x] >>> 24) { top[x] = y; break; }
+      const o = HC.colour.hexRgb(HC.OUTLINE), ink = ((255 << 24) | (o[2] << 16) | (o[1] << 8) | o[0]) >>> 0;
+      let beside = 0, closed = 0, besideAbove = 0, hidden = 0, shown = 0, notHead = 0;
+      for (let x = 0; x < W; x++) for (let y = 0; y < Hh; y++) {
+        const i = y * W + x;
+        // (the one change allowed beside it: the hair pixel next to hair hidden over background closes with the outline ink)
+        if (top[x] < 0) { if (b1.px[i] !== b0.px[i]) { if (b1.px[i] === ink && ((x > 0 && top[x - 1] >= 0 && y < top[x - 1] && !(b1.px[i - 1] >>> 24)) || (x < W - 1 && top[x + 1] >= 0 && y < top[x + 1] && !(b1.px[i + 1] >>> 24)))) closed++; else beside++; } if (y < 60 && hairs.some((f) => f.px[i] >>> 24)) besideAbove++; continue; }
+        if (y >= top[x]) continue;
+        if (hairs.some((f) => f.px[i] >>> 24)) hidden++;
+        if (b1.px[i] >>> 24) { shown++; if (!(head.px[i] >>> 24)) notHead++; }
+      }
+      t.ok(besideAbove > 0 && beside === 0, hair + ': beside the hat the bust is the hatless one, hair above the band line included (' + besideAbove + ' hair px above it kept; ' + closed + ' edge px closed with the outline ink)');
+      t.ok(hidden > 0 && notHead === 0, hair + ': above the hat\'s top edge in its columns no hair is drawn (' + hidden + ' hair px hidden; only the bald head shows there, ' + shown + ' px)');
+    }
+  }
+
   // ---- invalidation on a look change ----------------------------------------------------------------------------------------------------
   {
     HR.install({ manifest, files }, { decode });

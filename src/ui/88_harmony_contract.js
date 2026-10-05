@@ -175,8 +175,8 @@ RB.harmonyContract = (function () {
   // ---- accessories ----------------------------------------------------------------------------------------------
   // Every accessory a player can wear (the creation choices and every cosmetic keepsake's acc): its files
   // (with the slot each goes in), whether it is mounted on the hair (a per-hairstyle offset), whether it hides
-  // the hair above its band, and the colour channel that feeds its accessory-ramp pixels (look field, the
-  // default when the field is absent, and the material options the code busts use for it).
+  // the hair above its own top edge (in the columns it covers), and the colour channel that feeds its accessory-ramp
+  // pixels (look field, the default when the field is absent, and the material options the code busts use for it).
   // `variant`: a look field that selects other files (the knitted keepsake scarf).
   const A6 = (step, o) => Object.assign({ n: 6, at: 3, step, cool: 250, warm: 52, lineCol: '#140c18' }, o || {});
   const A5 = (step, o) => Object.assign({ n: 5, at: 3, step, cool: 250, warm: 52, lineCol: '#140c18' }, o || {});
