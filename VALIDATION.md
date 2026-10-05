@@ -2906,6 +2906,44 @@ the built index.html.
 - index.html rebuilds unchanged (keyify is a dev tool and ships nothing).
 - No painted art has been through keyify yet: Batch 1a is its real test.
 
+## The player's in-betweens (Robin's review of the kit, 2026-10-05; CONTRACT.md §1; REQUIREMENTS.md HB13)
+
+Robin, reviewing the full player kit:
+> "The player's settle_b is the same as settle_a. Overall it looks like the player's is missing frames, acting a little
+> more stiff compared to Suzu."
+
+That was true. The kit had 4 heads, 5 arm poses and hair that never moved:
+- cue_b showed cue shifted by 1 px;
+- settle_a and settle_b were the same drawing;
+- the only real in-between was the prep_b arm.
+
+Suzu has seven fully drawn frames.
+
+**The change** (contract and runtime; the art is being drawn outside the repo). A state may now bring its own:
+- **head**, `pc_head_<prep_b|cue_b|settle_a>`;
+- **arm per pairing**, `pc_arm_<cue_b|settle_a>_<comp>_<sleeve>`;
+- **hair**, `pc_hair_<style>_<part>_<prep_b|cue|cue_b|peak|settle_a>`.
+
+All of these are optional asset keys (registry: 86 required + 172 optional). Each falls back to the drawing the state
+shares today, so a set without them plans exactly as before. The older `_swing` hair still serves prep_b and settle_a
+when a state has no hair file of its own.
+
+Code:
+- `HEAD_STATES`, `ARM_STATES`, `HAIR_STATES`, `parse()`, `assetKeys()` and `validateManifest()` (`pc.face` for the new
+  heads) in `88_harmony_contract.js`;
+- `plan()` in `88_harmony_raster.js`.
+
+**Checks run on this working tree:**
+- U `node tests/run-unit.mjs harmony`: **466 passed, 0 failed.** The new block checks:
+  - the keys are optional, never required;
+  - the names parse;
+  - without in-betweens every state plans as before;
+  - with four stand-in files (copies of the sample's own; not art), cue_b takes its own head, settle_a its own arm
+    for this pairing and its back hair, and peak its front hair;
+  - an arm in-between is per pairing and per sleeve;
+  - the state paints.
+- B `node tests/e2e/harmony_raster.mjs`: **26 passed, 0 failed.**
+
 ## The shaved style may bring a back file (lead, 2026-10-05; CONTRACT.md §1; REQUIREMENTS.md HB12)
 
 The full kit's proof found background showing between the neck and the collar with every hairstyle that has no hair

@@ -93083,6 +93083,12 @@ RB.harmonyContract = (function () {
   // cue drawing through it — head, arm, hair and the state's group offsets, unless pc.groups.cue_b is given)
   const EXPR_OF = { prep_a: 'focus', prep_b: 'focus', cue: 'cue', cue_b: 'cue', peak: 'peak', settle_a: 'settle', settle_b: 'settle' };
   const KIT_STATE = { cue_b: 'cue' };
+  // The player's optional in-betweens (Robin, 2026-10-05: the kit should move as the companions do): a state may bring
+  // its own head (pc_head_<state>), its own arm per pairing (pc_arm_<state>_<comp>_<sleeve>) and its own hair
+  // (pc_hair_<style>_<part>_<state>); each falls back to the drawing named above when absent.
+  const HEAD_STATES = ['prep_b', 'cue_b', 'settle_a'];
+  const ARM_STATES = ['cue_b', 'settle_a'];
+  const HAIR_STATES = ['prep_b', 'cue', 'cue_b', 'peak', 'settle_a'];
   const ARM_SHARED = ['prep_a', 'prep_b', 'cue'];
   const ARM_REQUIRED_SHARED = ['prep_a', 'cue'];
   const armPoses = (comps) => ARM_SHARED.concat(...comps.map((c) => ['peak_' + c, 'settle_' + c]));
@@ -93424,10 +93430,10 @@ RB.harmonyContract = (function () {
       }
       return null;
     }
-    if ((m = /^pc_head_([a-z]+)$/.exec(name))) return EXPRS.indexOf(m[1]) >= 0 ? { name, isMask, kind: 'head', expr: m[1] } : null;
+    if ((m = /^pc_head_([a-z_]+)$/.exec(name))) return EXPRS.indexOf(m[1]) >= 0 || HEAD_STATES.indexOf(m[1]) >= 0 ? { name, isMask, kind: 'head', expr: m[1] } : null;
     if ((m = /^pc_torso_([a-z]+)$/.exec(name))) return { name, isMask, kind: 'torso', shape: m[1] };
     if ((m = /^pc_arm_([a-z_]+)_(fitted|wide)$/.exec(name))) return { name, isMask, kind: 'arm', pose: m[1], sleeve: m[2] };
-    if ((m = /^pc_hair_([a-z]+)_(back|front)(_swing)?$/.exec(name))) return { name, isMask, kind: m[1] === 'wrap' ? 'hair_wrap' : 'hair', style: m[1], part: m[2], swing: !!m[3] };
+    if ((m = /^pc_hair_([a-z]+)_(back|front)(?:_(swing|prep_b|cue_b|cue|peak|settle_a))?$/.exec(name))) return { name, isMask, kind: m[1] === 'wrap' ? 'hair_wrap' : 'hair', style: m[1], part: m[2], swing: m[3] === 'swing', state: m[3] && m[3] !== 'swing' ? m[3] : null };
     if ((m = /^acc_([a-z_]+)$/.exec(name))) {
       for (const id of Object.keys(ACC)) for (const f of ACC[id].files.concat(ACC[id].variant ? ACC[id].variant.files : [])) if (f[0] === name) return { name, isMask, kind: 'acc', acc: id, slot: f[1] };
       return { name, isMask, kind: 'acc', acc: m[1], slot: null, unknown: true };
@@ -93442,14 +93448,17 @@ RB.harmonyContract = (function () {
     const req = [], opt = [];
     for (const c of reg.companions) for (const st of STATES) (REQUIRED.indexOf(st) >= 0 ? req : opt).push(c + '_' + st);
     for (const e of EXPRS) req.push('pc_head_' + e);
+    for (const st of HEAD_STATES) opt.push('pc_head_' + st);
     for (const s of reg.shapes) req.push('pc_torso_' + s);
     const sleeves = SLEEVES.filter((sl) => reg.shapes.some((s) => sleeveOf(s) === sl));
     for (const pose of armPoses(reg.companions)) for (const sl of sleeves) (pose === 'prep_b' ? opt : req).push('pc_arm_' + pose + '_' + sl);
+    for (const st of ARM_STATES) for (const c of reg.companions) for (const sl of sleeves) opt.push('pc_arm_' + st + '_' + c + '_' + sl);
     for (const st of reg.hairstyles) for (const part of HAIR_PARTS) {
       // (a front-only style may still bring a back file: optional, e.g. the shaved style's nape behind the neck)
       if (part === 'back' && FRONT_ONLY.indexOf(st) >= 0) { opt.push('pc_hair_' + st + '_back'); continue; }
       req.push('pc_hair_' + st + '_' + part);
       opt.push('pc_hair_' + st + '_' + part + '_swing');
+      for (const hs of HAIR_STATES) opt.push('pc_hair_' + st + '_' + part + '_' + hs);
     }
     for (const a of reg.accessories) {
       const d = ACC[a];
@@ -93513,7 +93522,7 @@ RB.harmonyContract = (function () {
       for (const v of Object.keys(d.offset || {})) need(PAIR[v] && isPt(d.offset[v]), c + ': offset.' + v + ' must be [dx, dy]');
     }
     const P = m.pc || {};
-    for (const e of Object.keys(P.face || {})) need(EXPRS.indexOf(e) >= 0 && isBox(P.face[e]), 'pc.face.' + e + ' must be an expression box');
+    for (const e of Object.keys(P.face || {})) need((EXPRS.indexOf(e) >= 0 || HEAD_STATES.indexOf(e) >= 0) && isBox(P.face[e]), 'pc.face.' + e + ' must be an expression box');
     for (const st of Object.keys(P.groups || {})) {
       need(STATES.indexOf(st) >= 0, 'pc.groups.' + st + ': not a state');
       for (const g of Object.keys(P.groups[st] || {})) need((g === 'head' || g === 'torso') && isPt(P.groups[st][g]), 'pc.groups.' + st + '.' + g + ' must be head|torso: [dx, dy]');
@@ -93534,7 +93543,7 @@ RB.harmonyContract = (function () {
       approval: APPROVAL, approvalLabel: APPROVAL_LABEL, batches: BATCHES, recolour: RECOLOUR,
       colourModel: 'OKLab key curves through the five anchor shades of each key family, extended ' + IMPORT.extend + ' steps past both ends; t from lightness; deviation relative to the curve\'s chroma (src/ui/88_harmony_contract.js colour)',
       exprs: EXPRS, exprOf: EXPR_OF, kitState: KIT_STATE, armShared: ARM_SHARED, armRequiredShared: ARM_REQUIRED_SHARED, sleeves: SLEEVES, sleeveOf: SLEEVE_OF,
-      hairParts: HAIR_PARTS, frontOnly: FRONT_ONLY, swingStates: SWING_STATES,
+      hairParts: HAIR_PARTS, frontOnly: FRONT_ONLY, swingStates: SWING_STATES, headStates: HEAD_STATES, armStates: ARM_STATES, hairStates: HAIR_STATES,
       pcSlots: PC_SLOTS, groupOf: GROUP_OF, armSlot: Object.keys(ARM_SLOT), slotOrder: SLOT_ORDER,
       accessories: ACC, notShown: NOT_SHOWN, materials: MATERIALS, mask: MASK, keyRamps: KEY_RAMPS, keySkinV1: KEY_SKIN_V1, keyV1: KEY_V1, outline: OUTLINE, pick: PICK, allowed: ALLOWED, import: IMPORT,
     };
@@ -93544,7 +93553,7 @@ RB.harmonyContract = (function () {
 
   return {
     VERSION, COMPATIBLE, BUST, ANCHORS, COMPACT_SAFE, PAIR, DISPLAY, STATES, REQUIRED, OPTIONAL, REDUCED, REDUCED_MOTION, MODES, TIMELINE, TIMELINES, SEGMENTS, CODE_PHASE, APPROVAL, APPROVAL_LABEL, BATCHES,
-    EXPRS, EXPR_OF, KIT_STATE, ARM_SHARED, ARM_REQUIRED_SHARED, SLEEVES, SLEEVE_OF, HAIR_PARTS, FRONT_ONLY, SWING_STATES, PC_SLOTS, GROUP_OF, ARM_SLOT,
+    EXPRS, EXPR_OF, KIT_STATE, HEAD_STATES, ARM_STATES, HAIR_STATES, ARM_SHARED, ARM_REQUIRED_SHARED, SLEEVES, SLEEVE_OF, HAIR_PARTS, FRONT_ONLY, SWING_STATES, PC_SLOTS, GROUP_OF, ARM_SLOT,
     ACC, SLOT_ORDER, NOT_SHOWN, MATERIALS, MASK, KEY_RAMPS, KEY_SKIN_V1, KEY_V1, OUTLINE, PICK, ALLOWED, IMPORT, RECOLOUR,
     timeline, validTimeline, stateFor, armOf, armPoses, sleeveOf, accFiles, parse, allowedOf, assetKeys, validateManifest, describe, batchCoverage, approvalOf,
     colour: { oklab, linOf, srgbOf, fitLab, labHex, hexRgb, dLab, curveAt, keyCurve, project, decompose, targetCurve, recolour },
@@ -94540,11 +94549,14 @@ RB.harmonyRaster = (function () {
     look = look || {};
     const SP = RB.sprites, P = man.pc || {};
     const style = SP.HAIRSTYLES.indexOf(look.hair) >= 0 ? look.hair : 'short';
-    const shape = look.shape || 'tunic', sleeve = H.sleeveOf(shape), expr = H.EXPR_OF[state];
+    const shape = look.shape || 'tunic', sleeve = H.sleeveOf(shape);
+    // (a state's own in-between head, arm and hair when the set has them; otherwise the drawing it shares)
+    const expr = H.HEAD_STATES.indexOf(state) >= 0 && has('pc_head_' + state) ? state : H.EXPR_OF[state];
     let pose = H.armOf(state, comp), arm = 'pc_arm_' + pose + '_' + sleeve;
+    if (H.ARM_STATES.indexOf(state) >= 0 && has('pc_arm_' + state + '_' + comp + '_' + sleeve)) { pose = state + '_' + comp; arm = 'pc_arm_' + pose + '_' + sleeve; }
     if (pose === 'prep_b' && !has(arm)) { pose = 'prep_a'; arm = 'pc_arm_prep_a_' + sleeve; }
-    const swing = H.SWING_STATES.indexOf(state) >= 0;
-    const hairOf = (part) => { const n = 'pc_hair_' + style + '_' + part; return swing && has(n + '_swing') ? n + '_swing' : n; };
+    const swing = H.SWING_STATES.indexOf(state) >= 0, moving = H.HAIR_STATES.indexOf(state) >= 0;
+    const hairOf = (part) => { const n = 'pc_hair_' + style + '_' + part; return moving && has(n + '_' + state) ? n + '_' + state : swing && has(n + '_swing') ? n + '_swing' : n; };
     const parts = [{ slot: 'head', file: 'pc_head_' + expr }, { slot: 'torso', file: 'pc_torso_' + shape }, { slot: 'arm', file: arm }, { slot: 'hair_front', file: hairOf('front') }];
     if (H.FRONT_ONLY.indexOf(style) < 0 || has(hairOf('back'))) parts.push({ slot: 'hair_back', file: hairOf('back') });
     const af = H.accFiles(look);
@@ -94553,7 +94565,7 @@ RB.harmonyRaster = (function () {
     // (a state the kit has no files of its own for — cue_b — takes its kit state's group offsets unless it has its own)
     const ks = H.KIT_STATE && H.KIT_STATE[state];
     const g = (P.groups && (P.groups[state] || (ks && P.groups[ks]))) || {};
-    const face = ((P.face && P.face[expr]) || H.ANCHORS.pc.face).slice();
+    const face = ((P.face && (P.face[expr] || P.face[H.EXPR_OF[state]])) || H.ANCHORS.pc.face).slice();
     const hd = g.head || [0, 0];
     return { ok: !missing.length, who: 'pc', state, comp, style, shape, sleeve, expr, pose, parts, files: parts.map((q) => q.file), missing, groups: { head: hd, torso: g.torso || [0, 0] }, face: [face[0] + hd[0], face[1] + hd[1], face[2] + hd[0], face[3] + hd[1]] };
   }

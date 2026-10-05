@@ -329,6 +329,33 @@ export default async (t) => {
     t.ok(p0.ok && !p0.parts.some((q) => q.slot === 'hair_back') && p1.ok && p1.parts.some((q) => q.slot === 'hair_back' && q.file === 'pc_hair_shaved_back'), 'shaved plans without a back file, and with one when the set has it (drawn in the hair_back slot)');
   }
 
+  // ---- the player's optional in-betweens: a state's own head, arm per pairing and hair, each falling back when absent ------------------
+  {
+    const k = HC.assetKeys({ companions: ['suzu', 'ren'], hairstyles: ['ponytail', 'shaved'], shapes: ['coat', 'robe'], accessories: [] });
+    const want = ['pc_head_prep_b', 'pc_head_cue_b', 'pc_head_settle_a', 'pc_arm_cue_b_suzu_fitted', 'pc_arm_settle_a_ren_wide', 'pc_hair_ponytail_back_peak', 'pc_hair_ponytail_front_cue_b', 'pc_hair_shaved_front_settle_a'];
+    t.ok(want.every((n) => k.optional.indexOf(n) >= 0 && k.required.indexOf(n) < 0) && k.optional.indexOf('pc_hair_shaved_back_peak') < 0, 'the in-betweens are optional asset keys (heads, arms per pairing and sleeve, hair per moving state), never required');
+    t.eq(['pc_head_cue_b', 'pc_arm_settle_a_suzu_fitted', 'pc_hair_ponytail_front_cue_b', 'pc_hair_ponytail_back_swing'].map((n) => { const q = HC.parse(n); return q && [q.kind, q.expr || q.pose || q.state || (q.swing ? 'swing' : null)]; }), [['head', 'cue_b'], ['arm', 'settle_a_suzu'], ['hair', 'cue_b'], ['hair', 'swing']], 'the in-between names parse (head, arm pose, hair state; the older _swing still)');
+    const m = JSON.parse(JSON.stringify(manifest)), fh = Object.assign({}, files);
+    const copy = (to, from) => { m.files[to] = Object.assign({}, m.files[from], { png: to + '.png', mask: to + '.mask.png' }); fh[to + '.png'] = files[from + '.png']; fh[to + '.mask.png'] = files[from + '.mask.png']; };
+    const L = Object.assign({}, LA, { acc: [] });
+    t.eq(HR.install({ manifest: m, files: fh }, { decode }), { ok: true, errors: [] }, 'the sample installs (no in-betweens)');
+    const before = HC.STATES.map((st) => { const p = HR.plan('pc', L, st, 'suzu'); return [st, p.expr, p.pose, p.files.filter((f) => /^pc_hair/.test(f)).join('+')]; });
+    copy('pc_head_cue_b', 'pc_head_cue'); copy('pc_arm_settle_a_suzu_fitted', 'pc_arm_settle_suzu_fitted'); copy('pc_hair_ponytail_front_peak', 'pc_hair_ponytail_front'); copy('pc_hair_ponytail_back_settle_a', 'pc_hair_ponytail_back');
+    t.eq(HR.install({ manifest: m, files: fh }, { decode }), { ok: true, errors: [] }, 'the sample with four in-between files installs');
+    const after = HC.STATES.map((st) => { const p = HR.plan('pc', L, st, 'suzu'); return [st, p.expr, p.pose, p.files.filter((f) => /^pc_hair/.test(f)).join('+')]; });
+    t.eq(before.map((r) => r.slice(1, 3)), [['focus', 'prep_a'], ['focus', 'prep_b'], ['cue', 'cue'], ['cue', 'cue'], ['peak', 'peak_suzu'], ['settle', 'settle_suzu'], ['settle', 'settle_suzu']], 'without in-betweens each state shares its drawing as before');
+    t.eq(after.map((r) => r.slice(1)), [
+      ['focus', 'prep_a', 'pc_hair_ponytail_front+pc_hair_ponytail_back'], ['focus', 'prep_b', 'pc_hair_ponytail_front+pc_hair_ponytail_back_swing'],
+      ['cue', 'cue', 'pc_hair_ponytail_front+pc_hair_ponytail_back'], ['cue_b', 'cue', 'pc_hair_ponytail_front+pc_hair_ponytail_back'],
+      ['peak', 'peak_suzu', 'pc_hair_ponytail_front_peak+pc_hair_ponytail_back'], ['settle', 'settle_a_suzu', 'pc_hair_ponytail_front+pc_hair_ponytail_back_settle_a'],
+      ['settle', 'settle_suzu', 'pc_hair_ponytail_front+pc_hair_ponytail_back'],
+    ], 'with them: cue_b takes its own head, settle_a its own arm (this pairing) and back hair, peak its front hair; the rest fall back (prep_b keeps the older _swing back)');
+    t.eq(HR.plan('pc', L, 'settle_a', 'ren').pose, 'settle_ren', 'an in-between arm is per pairing: Ren\'s settle_a falls back to settle_ren');
+    t.eq(HR.plan('pc', Object.assign({}, L, { shape: 'robe' }), 'settle_a', 'suzu').pose, 'settle_suzu', 'and per sleeve: the robe (wide) falls back to settle_suzu');
+    const p = HR.plan('pc', L, 'cue_b', 'suzu'); await HR.load(p.files);
+    t.ok(p.ok && !!HR.paint(p, L), 'a state with in-betweens plans and paints');
+  }
+
   // ---- invalidation on a look change ----------------------------------------------------------------------------------------------------
   {
     HR.install({ manifest, files }, { decode });

@@ -84,16 +84,17 @@ node tools/harmony_import.mjs art/harmony/source/<batch 1> [art/harmony/source/<
 | Companion frame (flattened) | `<comp>_<state>.png` | `comp` ∈ nao, mio, ren, suzu; `state` §4 (the longest state name matches first: `suzu_cue_b` is the state `cue_b`, never `cue` with a layer `b`) |
 | Companion effect (optional) | `<comp>_<state>_fx.png` | a glint or glow drawn over the frame; left out when the overlay asks for `fx: false` |
 | Companion frame (layered) | `<comp>_<state>_<layer>.png` | the set's `layers` (back to front) are listed in `import.json` |
-| Player head | `pc_head_<expr>.png` | `expr` ∈ focus, cue, peak, settle. Bald head with ears, neck and face; the head never changes angle |
+| Player head | `pc_head_<expr>.png` | `expr` ∈ focus, cue, peak, settle; optional in-betweens prep_b, cue_b, settle_a (each shown at that state, otherwise its EXPR_OF head). Bald head with ears, neck and face; the head never changes angle |
 | Player torso | `pc_torso_<shape>.png` | `shape` ∈ tunic, robe, coat, apron, dress (registry `garmentShapes.all`) |
-| Player brush arm | `pc_arm_<pose>_<sleeve>.png` | `pose` ∈ prep_a, prep_b, cue, peak_<comp>, settle_<comp>; `sleeve` ∈ fitted, wide |
-| Player hair | `pc_hair_<style>_<back\|front>[_swing].png` | every `RB.sprites.HAIRSTYLES` entry; `shaved` is front only (its back file is optional: when present it is drawn like any back, under the torso and head — the nape behind the neck); `_swing` optional for prep_b and settle_a |
+| Player brush arm | `pc_arm_<pose>_<sleeve>.png` | `pose` ∈ prep_a, prep_b, cue, peak_<comp>, settle_<comp>, and the optional in-betweens cue_b_<comp>, settle_a_<comp> (shown at that state of that pairing, otherwise cue / settle_<comp>); `sleeve` ∈ fitted, wide |
+| Player hair | `pc_hair_<style>_<back\|front>[_swing].png` | every `RB.sprites.HAIRSTYLES` entry; `shaved` is front only (its back file is optional: when present it is drawn like any back, under the torso and head — the nape behind the neck); optional motion: `_<state>` for prep_b, cue, cue_b, peak, settle_a (shown at that state, otherwise the rest hair; shaved has none for its back), and the older `_swing` for prep_b and settle_a when a state's own file is absent |
 | Accessory | `acc_<id>[_<part>].png` | §3.4; parts near/far (earrings), back/front (cape); the knitted keepsake scarf is `acc_scarf_knit` |
 | Mask | `<name>.mask.png` | §5 |
 
 Names are lower case `a–z`, `0–9` and `_`. A name that is not in this table is rejected. The full list of
-asset keys (86 required, 37 optional for the current registry: v2's 33 plus `<comp>_cue_b` for each companion since
-Robin's decision of 2026-10-05) is `assetKeys` in `registry.json`.
+asset keys (86 required, 172 optional for the current registry: v2's 33, `<comp>_cue_b` for each companion since
+Robin's decision of 2026-10-05, the shaved style's optional back file, and the player's in-betweens — 3 heads, 16 arms,
+115 hair-motion files — since Robin's review of the kit the same day) is `assetKeys` in `registry.json`.
 
 ### 1.1 Delivery batches (`RB.harmonyContract.BATCHES`, `registry.json` `batches`)
 

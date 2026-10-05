@@ -165,11 +165,14 @@ RB.harmonyRaster = (function () {
     look = look || {};
     const SP = RB.sprites, P = man.pc || {};
     const style = SP.HAIRSTYLES.indexOf(look.hair) >= 0 ? look.hair : 'short';
-    const shape = look.shape || 'tunic', sleeve = H.sleeveOf(shape), expr = H.EXPR_OF[state];
+    const shape = look.shape || 'tunic', sleeve = H.sleeveOf(shape);
+    // (a state's own in-between head, arm and hair when the set has them; otherwise the drawing it shares)
+    const expr = H.HEAD_STATES.indexOf(state) >= 0 && has('pc_head_' + state) ? state : H.EXPR_OF[state];
     let pose = H.armOf(state, comp), arm = 'pc_arm_' + pose + '_' + sleeve;
+    if (H.ARM_STATES.indexOf(state) >= 0 && has('pc_arm_' + state + '_' + comp + '_' + sleeve)) { pose = state + '_' + comp; arm = 'pc_arm_' + pose + '_' + sleeve; }
     if (pose === 'prep_b' && !has(arm)) { pose = 'prep_a'; arm = 'pc_arm_prep_a_' + sleeve; }
-    const swing = H.SWING_STATES.indexOf(state) >= 0;
-    const hairOf = (part) => { const n = 'pc_hair_' + style + '_' + part; return swing && has(n + '_swing') ? n + '_swing' : n; };
+    const swing = H.SWING_STATES.indexOf(state) >= 0, moving = H.HAIR_STATES.indexOf(state) >= 0;
+    const hairOf = (part) => { const n = 'pc_hair_' + style + '_' + part; return moving && has(n + '_' + state) ? n + '_' + state : swing && has(n + '_swing') ? n + '_swing' : n; };
     const parts = [{ slot: 'head', file: 'pc_head_' + expr }, { slot: 'torso', file: 'pc_torso_' + shape }, { slot: 'arm', file: arm }, { slot: 'hair_front', file: hairOf('front') }];
     if (H.FRONT_ONLY.indexOf(style) < 0 || has(hairOf('back'))) parts.push({ slot: 'hair_back', file: hairOf('back') });
     const af = H.accFiles(look);
@@ -178,7 +181,7 @@ RB.harmonyRaster = (function () {
     // (a state the kit has no files of its own for — cue_b — takes its kit state's group offsets unless it has its own)
     const ks = H.KIT_STATE && H.KIT_STATE[state];
     const g = (P.groups && (P.groups[state] || (ks && P.groups[ks]))) || {};
-    const face = ((P.face && P.face[expr]) || H.ANCHORS.pc.face).slice();
+    const face = ((P.face && (P.face[expr] || P.face[H.EXPR_OF[state]])) || H.ANCHORS.pc.face).slice();
     const hd = g.head || [0, 0];
     return { ok: !missing.length, who: 'pc', state, comp, style, shape, sleeve, expr, pose, parts, files: parts.map((q) => q.file), missing, groups: { head: hd, torso: g.torso || [0, 0] }, face: [face[0] + hd[0], face[1] + hd[1], face[2] + hd[0], face[3] + hd[1]] };
   }
