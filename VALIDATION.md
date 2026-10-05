@@ -2944,8 +2944,9 @@ Other changes:
   - hair cut flat at the band: before, 15 groups (105 cases); after, 0;
   - unclosed cut edges beside a hat: 0;
   - the closed edges are inspected at 4× in the proof's contact sheets.
-- Not yet recorded at this checkpoint: the full unit suite, `harmony_cutin` and the content validator on this tree
-  (running; added below when done).
+- U `node tests/run-unit.mjs` (whole suite, 67 files): **27,234 passed, 0 failed.**
+- B `node tests/e2e/harmony_cutin.mjs`: **11 passed, 0 failed.**
+- T `node tools/validate.mjs`: no errors (the usual lexicon warnings).
 
 ## Harmony portrait timing — Robin's decision (2026-10-05; REQUIREMENTS.md HB10)
 

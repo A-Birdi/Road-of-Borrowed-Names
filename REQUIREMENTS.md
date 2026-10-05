@@ -374,7 +374,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [v] HB11 Hats and caps hide the hair above their own top edge, in the columns they cover; hair beside them is kept,
   and the edge hidden hair leaves over background closes with the outline ink (lead's change of 2026-10-05, after the
   full kit's proof showed the band-row rule cutting twintails and wide styles flat). `pc.hatBand` stays the
-  scalp-cover line. Evidence: U harmony_raster (the stand-in hat block), B harmony_raster 26/0; VALIDATION.md "Hats
+  scalp-cover line. Evidence: U harmony_raster (the stand-in hat block; whole suite 27,234/0), B harmony_raster 26/0, harmony_cutin 11/0; VALIDATION.md "Hats
   hide hair above their own top edge".
 
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
