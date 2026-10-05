@@ -2984,3 +2984,6 @@ docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset
   reached passed; the browser was closed by the stop). The remaining scripts (from `staging_chapters.mjs` to the end)
   are being run in two parts with `--skip=` the 64 passed and `--part=k/2`; their result is recorded below when they
   finish. Screenshots the suite rewrites under docs/screenshots/ were restored, not committed.
+- `node tests/e2e/staging_chapters.mjs` on its own (32b79a7, same game code as 56c68c3): **13,850 passed, 0 failed**,
+  446 scenes in 5,622 s. (Two earlier attempts inside the suite were cut off by the time limit and a container restart,
+  each with every check reached passing.) The scripts after it are running in two parts.
