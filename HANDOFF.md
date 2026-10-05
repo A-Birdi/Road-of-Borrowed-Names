@@ -455,8 +455,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   - The rest of the kit (Batches 1b–4: 11 hairstyles, the robe and eleven wide-sleeve arms, tunic/apron/dress and the
     six pairing arms, 13 accessories) is drawn in code by five groups and integrated: 72 kit files + the four
     companions' frames keyify, import (`--check`, `--verify`) and cover the registry (86/86); the game's own runtime
-    painted 2,681 busts (every hairstyle × cut × state × pairing, every accessory) with 0 errors. A defect pass
-    (holes, seams, bald scalp) is in a fix round by six workers; then a review page goes to Robin. Not imported.
+    painted 2,681 busts (every hairstyle × cut × state × pairing, every accessory) with 0 errors. A fix round by six
+    workers took the proof's defects from 147 groups (70 major) to 23 (1 major: a 3-px speck already in approved look
+    A); bald scalp 0; hats cut nothing flat. The neck gap other styles showed (the ponytail always covered it) is
+    closed by raised collars on tunic/apron/dress/robe and nape hair in each style's back file (shaved's in its new
+    optional back file); look A is unchanged. A review page (build any look, watch the paired cut-in at Normal) went
+    to Robin on 2026-10-05 with the known weak points. Awaiting Robin's verdict; not imported.
   - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top
     edge"):** a hat or cap hides hair only above its own top edge in the columns it covers (was: every hair pixel
     above the band row, which cut twintails and wide styles flat), and the edge hidden hair leaves over background
