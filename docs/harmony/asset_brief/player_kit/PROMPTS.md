@@ -31,6 +31,8 @@ STYLE
 THE PLAYER
 - One person in every tile of every sheet: the player character on the right of the approved paired picture, the one holding the large calligraphy brush. Copy their face exactly: face shape, eyes, nose, mouth, proportions and dark brown eyes. Only the hair, skin tone, clothing and accessories change, and only where a sheet asks for it.
 - The brush, whenever it appears: a large calligraphy brush with a black lacquered shaft, a brass ferrule, a small tassel at the end of the shaft, and cream bristles with black ink at the tip. Always the same size.
+- The brush is always in the player's LEFT hand, the hand on the screen-right side. In every grip the thumb wraps round the shaft and points inward, toward the player's body, and the fingers curl round the other side. Never a backwards, mirrored or twisted hand.
+- The outfit is identical in every tile: the same collar, toggles, trim, sleeves and satchel strap. The strap always runs the same way across the chest, from the same shoulder, with the buckle in the same place.
 
 FRAMING (the most important part: the sheets are cut into layers that must line up)
 - Every tile is a bust on a 6:5 canvas (about 687 × 572 px), at the same scale and placement as the player in the approved paired picture.
