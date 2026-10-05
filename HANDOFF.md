@@ -443,6 +443,19 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   redrawn from Robin's revised tile) and Ren; they live outside the repo until they are imported (not yet). The
   player's kit is next, drawn in code from nine reference sheets: prompts in
   `docs/harmony/asset_brief/player_kit/PROMPTS.md` (ASSET_BRIEF.md §8 note). Robin makes Sheet 1 first.
+- **Player kit progress (2026-10-05, overnight):** all nine sheets arrived and passed Robin's eye test (Sheet 9 with the
+  sash corrected to run from the near shoulder down-left over the strap). Robin's decisions: the game's ponytail is
+  Sheet 1's loose mane; the coat keeps fitted sleeves; Robin's hand standard (no "rounded shapes placed on a blob":
+  constructed fingers, warm creases, never the dark outline inside a hand) applies to every hand.
+  - Look A (Batch 1a: four heads, coat, five fitted brush arms, ponytail back and front, glasses, flower, satchel) is
+    drawn in code, keyified, and passes the importer's check, import and verify and an eight-look recolour proof.
+    The hands had three passes; awaiting Robin's verdict. Not in the repo and not imported.
+  - Nao's cut-in hands were rebuilt to the hand standard; the previous version is kept for Robin to compare.
+  - Sheets 2–9 are registered (46 tiles, ≤ 1.7 art px landmark error) and measured in the player's canvas; the open
+    contract values are measured (hat band y 41, cap band y 46; per-hairstyle mount offsets estimated, fourteen to place
+    by eye). Nothing needs regenerating. Kit drawing for Batches 1b–4 waits for Robin's approval of look A.
+  - These working files live outside the repo; nothing of the kit or the cut-ins is committed until Robin approves
+    and the art is imported (art/harmony/source/<batch>/ per ASSET_BRIEF.md §10).
 
 ## Overworld actor system: poses, gestures, mannerisms, idle life, scene direction (expressive addenda, work packages D and (a)) — CONTRACT.md ledger HX28–HX38, WI1–WI24; VALIDATION.md "Overworld actor system"
 - **Where:** pose layer `src/engine/32g_spritepose.js` (hooks in `32_spriteart.js`); gestures `51_gestures.js`;
