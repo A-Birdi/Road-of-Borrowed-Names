@@ -337,7 +337,7 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 
 ## Harmony busts, painted (owner's review of 2026-10-03; docs/harmony/ASSET_BRIEF.md)
 - [ ] HB1 Painted busts at mockup fidelity, per the owner's Art Direction Correction (docs/harmony/ART_DIRECTION_CORRECTION.md, which wins over earlier Harmony directives; reconciled in docs/harmony/DIRECTIVE_RECONCILIATION.md) and brief v3 (docs/harmony/ASSET_BRIEF.md). Label today: **provisional artwork** (the code-drawn busts, docs/harmony/ART.md, stay as the fallback). Sequence: Batch 1a (Suzu + look A) is shown as a **visual candidate awaiting approval**, then the owner's approval; then Batch 1b (look B, the customisation proof); then Batches 2–4. Nothing is being painted until the owner relays the brief.
-- [ ] HB2 Import, recolour, the six-state timeline, tests and in-battle evidence once frames arrive (ASSET_BRIEF.md §8, §10). The machine side is built (HB3–HB8); real frames have not arrived, so nothing painted is verified. Visual approval and technical integration stay separate gates; only the owner moves a pairing to **approved visual direction**.
+- [ ] HB2 Import, recolour, the state timeline (six states; seven with the optional `cue_b` since 2026-10-05, HB10), tests and in-battle evidence once frames arrive (ASSET_BRIEF.md §8, §10). The machine side is built (HB3–HB8); real frames have not arrived, so nothing painted is verified. Visual approval and technical integration stay separate gates; only the owner moves a pairing to **approved visual direction**.
 - [v] HB3 Contract v2 (docs/harmony/contract/CONTRACT.md, `RB.harmonyContract` in src/ui/88_harmony_contract.js): 192 × 160 bust canvas, 352 × 160 pair, per-side anchors, six one-off states and their timeline, file names, layer slots with pose-dependent occlusion, accessories, masks, key ramps, thresholds, manifest schema. Evidence: unit harmony_raster (timeline, schema, registry coverage); code review.
 - [v] HB4 Registry export `tools/harmony_registry.mjs` → docs/harmony/contract/registry.json (sorted keys; source identity; resolver; hairstyles; cuts; creation accessories and limit; 15 keepsakes with layer and side from a pixel diff; 15 statistical items as not drawn; palettes; material channels; companions with technique names; 86 required + 33 optional asset keys; unresolved items named). Evidence: unit harmony_raster ("every registry entry maps to asset keys or is declared not visible"; keys recomputed in node equal the export).
 - [v] HB5 Importer `tools/harmony_import.mjs` (no dependencies; PNG codec on node:zlib): grid detection for whole and fractional enlargements, cell-centre majority, binary alpha, magenta keying, checkerboard and interlace refusals, derived or supplied masks with refusal on unresolved pixels, offset suggestions, manifest, JSON report and contact sheet; `--check`, `--verify`. Evidence: unit harmony_png 26/26, harmony_import 51/51.
@@ -354,6 +354,23 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - Batches 1a and 1b in the registry; approval labels in the manifest and the dev viewer.
   - the checkerboard detector hardened.
   - Evidence: SYNTHETIC fixtures only. See VALIDATION.md "Harmony contract v3" for the runs; real art is not verified.
+- [v] HB10 The portrait's timing, Robin's decision (2026-10-05; VALIDATION.md "Harmony portrait timing — Robin's decision
+  (2026-10-05)"; docs/harmony/contract/CONTRACT.md §4):
+  - Normal plays the proposed performance: in 220 / hold 820 / fade 360 ms (1,400), with a small motion (a 3 art px
+    overshoot at the end of the slide, back by 140 ms; a 2.5 px lean 50 ms after the peak lands; a 1.5 px drift through
+    the fade), in whole CSS px. Fast plays Normal's former timing, 180 / 380 / 220 ms of wall time (257 / 543 / 315
+    presentation ms), no motion. Instant and the setting Off: no portrait, no cue. Hurry and Skip as before.
+  - The stage waits for the portrait: when it can play, every other cue of the technique starts `max(0, portrait end +
+    120 − contact)` later (Normal: Nao 220, Mio 270, Ren 320, Suzu 240 ms; Fast: Ren 35, the others 0); both performers
+    stand in their ready stance through the wait; a slip still comes first. Totals: Normal 2.57–2.69 s, Fast 1.63–1.71 s
+    of wall time.
+  - Placement keeps the motion's reach 12 px clear (3 art px right, 4 left); a late start after the withdrawn menus
+    shortens the hold so the portrait is still gone before the first result.
+  - A seventh, optional state `cue_b` (between cue and peak): a timeline per playback mode; a six-state set holds cue
+    through its span; the importer and the registry accept `<comp>_cue_b` (86 required + 37 optional asset keys).
+  - Evidence: U harmony_timing, harmony_raster, harmony_import (and the full unit suite); B harmony_cutin 11/11,
+    harmony_raster 26/0, battle_invariance (technique fixtures and the full matrix), harmony_perf_sheets --check (Nao,
+    Mio). No painted art was imported: the seven-state path is checked on the synthetic sample and stubs only.
 
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.

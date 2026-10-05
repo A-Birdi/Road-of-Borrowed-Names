@@ -2905,3 +2905,73 @@ the built index.html.
 - U all 27,164/0; U harmony 385/0; B harmony_raster 26/0;
 - index.html rebuilds unchanged (keyify is a dev tool and ships nothing).
 - No painted art has been through keyify yet: Batch 1a is its real test.
+
+## Harmony portrait timing — Robin's decision (2026-10-05; REQUIREMENTS.md HB10)
+
+Robin compared three in-battle timings in a preview player and chose: **Normal** plays the proposed performance
+(220 / 820 / 360 ms, about 1.4 s, with a small motion); **Fast** plays what Normal played before (180 / 380 / 220 ms of
+wall time = 257 / 543 / 315 presentation ms); **Instant** and the setting Off show nothing. The technique's stage now
+waits for the portrait, and a seventh, optional portrait state `cue_b` sits between `cue` and `peak`. Only
+presentation changed; the rules and their results did not.
+
+**Where:** `src/ui/82_battle_seq.js` (`T.cutin`, `T.cutinGap`; the portrait is advanced before the frame's cues);
+`src/ui/82d_harmony_cutin.js` (`MOTION`, `ENVELOPE`, `plays()`, `duration()`, the motion, the envelope in `place()`, the
+menu-wait deadline from the cue's `first`); `src/ui/84p_party_choreo.js` (`player()`: the wait); `src/ui/88_harmony_contract.js`
+(seven states, `TIMELINES` per mode, wall `SEGMENTS`, `cue_b` names, per-mode manifest checks); `88_harmony_raster.js`
+and `88_harmony_art.js` (`timeline(comp, mode)`; the player's kit shows its cue drawing through `cue_b`);
+docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset keys).
+
+**The numbers (from the unit test and the browser run):**
+
+| | Portrait (presentation ms) | Portrait (wall ms) | Stage wait D: Nao / Mio / Ren / Suzu | First result | Technique total |
+|---|---|---|---|---|---|
+| Normal | 220 / 820 / 360 = 1,400 | 1,400 | 220 / 270 / 320 / 240 | 1,520 (all four) | 2,570 / 2,670 / 2,620 / 2,690 ms |
+| Fast | 257 / 543 / 315 = 1,115 | 180 / 380 / 220 = 780 | 0 / 0 / 35 / 0 | 1,300 / 1,250 / 1,235 / 1,280 | 1,643 / 1,678 / 1,633 / 1,713 ms wall |
+| Instant, or the setting Off | none (no cue) | — | 0 | TECH contact | TECH end |
+
+**Checks run on this working tree** (built with `node tools/build.mjs`; headless Chromium, software canvas, a shared
+4-core Linux machine — not a physical device):
+- U `node tests/run-unit.mjs`: **27,229 passed, 0 failed** (67 files). Of these:
+  - `harmony_timing` 143/0: the numbers above; the cue's `d` is the real length; the first result ≥ the portrait's end
+    + 120 at Normal, Fast and after a slip; every other cue exactly D later than with the portrait Off (same order, every
+    field); no pose before D (both stand in their ready stance); no cue and no wait with the setting Off, at Instant and
+    at Fast with the setting Off (with and without a slip); totals Normal 2.5–2.75 s (derived: 2,570–2,690), a group
+    and a slip ≤ 3.3 s (Suzu with three creatures 2,690; with a slip first up to 3,010), Fast 1.4–1.8 s of wall time; the seven states'
+    starts at Normal (prep_a 0, prep_b 132, cue 220, cue_b 311, peak 376, settle_a 762, settle_b 852) and Fast (0, 129,
+    257, 315, 372, 572, 686 presentation ms); a six-state set holding cue through cue_b's span at both modes; reduced
+    motion's held poses and cross-fade on each mode's segments (Normal 581–679, Fast 479–578); the motion sampled
+    (+3 art px at the in's end, back to 0 by 140 ms, a −2.5 lean at the peak + 50, −1.5 at the end, inside the
+    envelope; none at Fast); the envelope making a 14-px-clear placement fail at Normal and stand at Fast.
+  - `harmony_raster` 92/0: timelines per mode, wall starts (Normal 0, 132, 220, 310, 376, 761, 851; Fast 0, 90, 180,
+    220, 260, 400, 480), overrides applied per mode and refused when invalid at either mode (naming it), a missing
+    optional state never trimming an override, the player's kit through cue_b (cue's drawing and offsets), file names,
+    the registry's 37 optional keys.
+  - `harmony_import` 83/0: a delivered `suzu_cue_b` (a copy of the sample's cue frame, not art) imported as the state
+    cue_b, its manifest valid at both modes, Batch 1a listing it, `--verify` passing.
+- T `node tools/validate.mjs`: no errors (the usual lexicon warnings).
+- B `node tests/e2e/harmony_cutin.mjs`: **11 passed, 0 failed.**
+  - core (24 configurations + portrait Off + pets): Normal disposed at 1,400–1,417 ms, first result 1,533; Fast disposed
+    at 1,120, first result 1,239–1,311; wall times Normal 2,564–2,688 ms, Fast 1,622–1,708 ms; Normal's trace shows the
+    overshoot (+6 px at 2×), the lean (−5) and the drift (−3), whole CSS px inside the envelope; Fast and reduced motion
+    no motion; the portrait Off: no cue and the first result at TECH contact; the same rules' state in every
+    configuration of a pairing.
+  - geometry (14 views) and plan (8 scenes): every fit, variant and scale the same as the 2026-10-03 record
+    (docs/screenshots/harmony/cutin/cutin_results.json), no overlaps. Where the portrait waits for the withdrawn menus
+    (768×1024, 390×844, 320×640: 67–100 ms), the hold gives up 7–40 ms and the portrait is gone at about 1,466 ms,
+    before the first result at 1,533.
+  - painted (synthetic sample): the states in the timeline's order at Normal and Fast; reduced motion peak → cross-fade
+    → settle_b, no travel. Painted geometry: at 2048×1046 (the sample, the rich fixture and the template faces) the
+    standard pair now takes the "moved" placement at the same 2× scale (the middle spot is within 12 px of a creature
+    once the motion's reach is counted); everything else as recorded.
+  - never, frozen, life, cycles, setting, dev viewer: passed.
+- B `node tests/e2e/harmony_raster.mjs`: 26 passed, 0 failed.
+- B `node tests/e2e/harmony_perf_sheets.mjs --check` (its default, Nao and Mio): both ok. With `--comps nao,mio,ren,suzu`
+  Ren is NOT OK (wards drawn on 56 of 107 frames); HEAD's build gives the same (55 of 105): the check expects the ward
+  marks to stay at 2, and Lantern Ward raises them to 3. Not caused by this change.
+- B `node tests/e2e/battle_invariance.mjs --tech`: 96 configurations, 8 fixtures, every fixture identical.
+- B `node tests/e2e/battle_invariance.mjs` (the full B6 matrix): **640 configurations, 24 fixtures, every fixture
+  identical across its presentation settings** (1,854 s): rules and results unchanged by the new timing, the wait and
+  the portrait On / Off.
+- The runs above were on a build that differs from the final one only by a comment moved in
+  `src/ui/82d_harmony_cutin.js`; on the final build (`node tools/build.mjs`, 365 sources) `harmony_cutin.mjs core`
+  passed again (1/1), and the registry was regenerated from it.

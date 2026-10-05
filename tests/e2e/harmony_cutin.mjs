@@ -4,8 +4,11 @@
 //   core      4 pairings × Normal / Fast / Instant × reduced motion off / on = 24 configurations: exactly one
 //             cut-in per committed technique in Normal and Fast, none in Instant; the effective look, the
 //             real companion, the technique's action and its targets; entering → holding → fading → disposed
-//             on the presentation clock, gone before the first result; the same rules' state afterwards in
-//             every configuration of a pairing, with the portrait Off, and with a pet shown or hidden
+//             on the presentation clock (Robin's decision, 2026-10-05: Normal 1,400 ms with its small motion
+//             inside the placement envelope; Fast 780 ms of wall time, no motion), the stage waiting so the first
+//             result comes ≥ 120 ms after the portrait's planned end; with the portrait Off no cue and no wait; the
+//             same rules' state afterwards in every configuration of a pairing, with the portrait Off, and with a
+//             pet shown or hidden
 //   never     no cut-in on meter fill, a support action, hovering or focusing the technique (its preview), a
 //             cancelled task or backing out of the companion's menu
 //   plan      Keep visible + Expanded, a group of three, a finishing technique, Adaptive + Expanded on a phone
@@ -291,7 +294,8 @@ await test('core: 4 pairings × Normal / Fast / Instant × reduced motion off / 
       if (v.anim === 'instant' || v.flourish === false) {
         assert(r.started === 0 && !seen.length, tag + ': no portrait at any frame ' + JSON.stringify({ started: r.started, frames: seen.length }));
         if (v.anim === 'instant') assert(!r.frames.some((f) => f.banner), tag + ': Instant — no banner either');
-        if (v.flourish === false) assert(r.tech.fired.includes('cutin') && r.frames.some((f) => f.poses && /act:/.test(f.poses.comp || '')), tag + ': portrait Off — the stage performance plays unchanged (the cue is there, the layer is not)');
+        // (since 2026-10-05 the choreography places no cue at all with the setting Off, and the stage does not wait)
+        if (v.flourish === false) { const contact = await p.evaluate((c) => RB.partyChoreo.TECH[c].contact, comp); assert(!r.tech.fired.includes('cutin') && r.frames.some((f) => f.poses && /act:/.test(f.poses.comp || '')) && firstResult(r) >= contact && firstResult(r) < contact + 40, tag + ': portrait Off — no cue, no wait (the first result at ' + firstResult(r) + ', TECH contact ' + contact + '); the stage performance plays'); }
         continue;
       }
       assert(r.started === 1 && r.disposed === 1 && r.layers === 0, tag + ': exactly one cut-in, disposed, no layer left ' + JSON.stringify({ started: r.started, disposed: r.disposed, layers: r.layers, fb: r.fallback }));
@@ -300,16 +304,24 @@ await test('core: 4 pairings × Normal / Fast / Instant × reduced motion off / 
       assert(JSON.stringify(L.look) === r.look0, tag + ': the player\'s effective look as worn at the action\'s start');
       assert(['entering', 'holding', 'fading', 'disposed'].every((s) => markAt(L, s) != null), tag + ': entering → holding → fading → disposed ' + JSON.stringify(L.marks));
       const dz = markAt(L, 'disposed'), fr = firstResult(r);
-      const want = v.anim === 'fast' ? 687 : 780;
-      assert(dz >= want - 1 && dz <= want + 120 && dz < fr, tag + ': disposed at ' + dz + ' ms (target ' + want + ') — before the first result at ' + fr + ' ms');
+      // (Robin's decision, 2026-10-05: Normal 1,400 ms; Fast 1,115 presentation ms = 780 wall; the stage waits for it, so
+      // the first result comes ≥ 120 ms after the planned end)
+      const want = v.anim === 'fast' ? 1115 : 1400;
+      assert(dz >= want - 1 && dz <= want + 120 && dz < fr && fr >= want + 120, tag + ': disposed at ' + dz + ' ms (target ' + want + ') — before the first result at ' + fr + ' ms (≥ ' + (want + 120) + ')');
       // the cut-in only while the technique's own blue banner names it, never after
       const vis = seen.filter((f) => f.state !== 'inactive');
       assert(vis.length && vis.every((f) => f.banner && f.banner.startsWith('party:') && f.banner.includes(NAME[comp]) && f.banner.includes(TECHNAME[comp])), tag + ': shown only inside the blue banner\'s interval for "' + NAME[comp] + ' — ' + TECHNAME[comp] + '"');
       // the fade is continuous, not a pop; reduced motion never travels
       const fades = L.trace.filter((x) => x[1] === 'f').map((x) => x[2]);
       assert(fades.length >= (v.anim === 'fast' ? 4 : 6) && fades.every((x, i) => !i || x <= fades[i - 1] + 1e-6) && fades[fades.length - 1] < 0.2, tag + ': a smooth fade (' + fades.length + ' steps, ' + fades.map((x) => x.toFixed(2)).join(' ') + ')');
-      if (v.reduce) assert(L.trace.every((x) => x[3] === 0) && L.trace.filter((x) => x[1] === 'e').some((x) => x[2] < 0.9), tag + ': reduced motion — a fade in where it stands, no travel');
-      else assert(L.trace.filter((x) => x[1] === 'e').some((x) => x[3] < 0) && L.trace.filter((x) => x[1] !== 'e').every((x) => x[3] === 0), tag + ': slides in from the left, then stands still while it holds and fades');
+      if (v.reduce) assert(L.trace.every((x) => x[3] === 0) && L.trace.filter((x) => x[1] === 'e').some((x) => x[2] < 0.9) && !L.motion, tag + ': reduced motion — a fade in where it stands, no travel, no motion');
+      else if (v.anim === 'fast') assert(L.trace.filter((x) => x[1] === 'e').some((x) => x[3] < 0) && L.trace.filter((x) => x[1] !== 'e').every((x) => x[3] === 0) && !L.motion, tag + ': Fast — slides in from the left, then stands still while it holds and fades');
+      else {
+        // Normal (Robin's decision, 2026-10-05): it overshoots 3 art px to the right at the end of the slide, settles
+        // back, leans left as the peak lands and drifts left through the fade — within the placement envelope
+        const s = L.scale, hf = L.trace.filter((x) => x[1] !== 'e'), lo = -Math.ceil(L.envelope.l * s), hi = Math.ceil(L.envelope.r * s);
+        assert(L.motion && L.trace.filter((x) => x[1] === 'e').some((x) => x[3] < 0) && L.trace.some((x) => x[3] > 0) && hf.some((x) => x[3] < 0) && hf.every((x) => x[3] >= lo && x[3] <= hi) && L.trace.every((x) => Number.isInteger(x[3])), tag + ': Normal — slides in from the left past its place (+' + Math.max(...L.trace.map((x) => x[3])) + ' px), then a small motion while it holds and fades (' + Math.min(...hf.map((x) => x[3])) + ' to ' + Math.max(...hf.map((x) => x[3])) + ' px; envelope ' + lo + ' / +' + hi + '), whole CSS px');
+      }
       // the target the technique acted on is the one chosen (Suzu alone: that one too)
       assert(r.tech.meta.target === 'foe', tag + ': aimed at the chosen creature ' + r.tech.meta.target);
       if (!v.reduce && v.anim === 'normal' && !v.label) {

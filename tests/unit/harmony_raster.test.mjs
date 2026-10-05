@@ -36,26 +36,67 @@ export default async (t) => {
   const manifest = res.manifest;
   const decode = async (b64) => { const d = decodePNG(Buffer.from(b64, 'base64')); return { w: d.w, h: d.h, data: d.data }; };
   t.eq(HR.install({ manifest, files }, { decode }), { ok: true, errors: [] }, 'the sample installs');
-  t.eq(HA.PHASES, HC.STATES, 'painted: PHASES are the six states');
+  t.eq(HA.PHASES, HC.STATES, 'painted: PHASES are the seven states (cue_b since Robin\'s decision of 2026-10-05)');
   t.eq(JSON.stringify(HA.NATIVE), JSON.stringify({ standard: { w: 352, h: 160 }, compact: { w: 248, h: 128 } }), 'painted: NATIVE is the contract pair (352 × 160, compact 248 × 128)');
   t.eq([HA.fitScale(1280, 720, 'standard'), HA.fitScale(1920, 1080, 'standard'), HA.fitScale(1600, 900, 'standard')], [1, 2, 1], 'standard scales: 1× at 1280 × 720 and 1600 × 900, 2× at 1920 × 1080');
   t.eq([HA.fitScale(390, 844, 'compact', 3), HA.fitScale(412, 915, 2.625 && 'compact', 2.625), HA.fitScale(320, 640, 'compact', 2)].map((v) => +v.toFixed(4)), [1.3333, 1.5238, 1], 'compact scales are DPR-aware (390 × 844 @3 → 4/3: faces 69 CSS px)');
 
   // ---- the timeline --------------------------------------------------------------------------------------------------------
+  // (Robin's decision, 2026-10-05: a timeline per playback mode — Normal the proposed performance, Fast Normal's old
+  // fractions with cue_b taking the second half of cue's span; the sample has no cue_b or settle_a)
   t.eq(HA.timeline('suzu'), [
+    { phase: 'prep_a', seg: 'in', from: 0, to: 0.6 }, { phase: 'prep_b', seg: 'in', from: 0.6, to: 1 },
+    { phase: 'cue', seg: 'hold', from: 0, to: 0.19 }, { phase: 'peak', seg: 'hold', from: 0.19, to: 0.77 },
+    { phase: 'settle_b', seg: 'hold', from: 0.77, to: 1 }, { phase: 'settle_b', seg: 'out', from: 0, to: 1 },
+  ], "Suzu's timeline at Normal (the default): cue holding through the missing cue_b, peak through the missing settle_a");
+  t.eq(HA.timeline('suzu', 'fast'), [
     { phase: 'prep_a', seg: 'in', from: 0, to: 0.5 }, { phase: 'prep_b', seg: 'in', from: 0.5, to: 1 },
     { phase: 'cue', seg: 'hold', from: 0, to: 0.21 }, { phase: 'peak', seg: 'hold', from: 0.21, to: 0.79 },
     { phase: 'settle_b', seg: 'hold', from: 0.79, to: 1 }, { phase: 'settle_b', seg: 'out', from: 0, to: 1 },
-  ], "Suzu's timeline: the default fractions, peak holding through the missing settle_a");
-  t.eq(HA.timeline('nao'), HC.timeline(), 'a companion with no painted set gets the default timeline (its code bust maps each state)');
-  t.eq(HC.timeline(['prep_a', 'cue', 'peak', 'settle_b']).map((e) => [e.phase, e.seg, e.from, e.to]), [['prep_a', 'in', 0, 1], ['cue', 'hold', 0, 0.21], ['peak', 'hold', 0.21, 0.79], ['settle_b', 'hold', 0.79, 1], ['settle_b', 'out', 0, 1]], 'only the required states: prep_a fills the arrival, peak holds to settle_b');
-  const ms = (seg, f) => ({ in: 180, hold: 380, out: 220 }[seg] * f);
-  t.eq(HC.TIMELINE.map((e) => [e.phase, Math.round((e.seg === 'in' ? 0 : e.seg === 'hold' ? 180 : 560) + ms(e.seg, e.from))]), [['prep_a', 0], ['prep_b', 90], ['cue', 180], ['peak', 260], ['settle_a', 400], ['settle_b', 480], ['settle_b', 560]], 'at Normal speed the states start at 0, 90, 180, 260, 400 and 480 ms');
-  for (const T of [HC.timeline(), HC.timeline(['prep_a', 'cue', 'peak', 'settle_b'])]) t.eq(HC.validTimeline(T), [], 'the timelines are valid');
+  ], "Suzu's timeline at Fast: exactly the six-state set's old fractions");
+  t.eq([HA.timeline('nao'), HA.timeline('nao', 'fast')], [HC.timeline(), HC.timeline(null, null, 'fast')], 'a companion with no painted set gets the default timeline of the mode (its code bust maps each state)');
+  t.eq(HC.timeline(['prep_a', 'cue', 'peak', 'settle_b']).map((e) => [e.phase, e.seg, e.from, e.to]), [['prep_a', 'in', 0, 1], ['cue', 'hold', 0, 0.19], ['peak', 'hold', 0.19, 0.77], ['settle_b', 'hold', 0.77, 1], ['settle_b', 'out', 0, 1]], 'only the required states (Normal): prep_a fills the arrival, cue holds to the peak, peak to settle_b');
+  t.eq(HC.timeline(['prep_a', 'cue', 'peak', 'settle_b'], null, 'fast').map((e) => [e.phase, e.seg, e.from, e.to]), [['prep_a', 'in', 0, 1], ['cue', 'hold', 0, 0.21], ['peak', 'hold', 0.21, 0.79], ['settle_b', 'hold', 0.79, 1], ['settle_b', 'out', 0, 1]], 'only the required states (Fast)');
+  // the states' starts in WALL ms (the contract's SEGMENTS): Normal 220 / 820 / 360, Fast 180 / 380 / 220
+  const startsOf = (mode) => { const D = HC.SEGMENTS[mode], o = { in: 0, hold: D.in, out: D.in + D.hold }; return HC.TIMELINES[mode].map((e) => [e.phase, Math.round(o[e.seg] + D[e.seg] * e.from)]); };
+  t.eq(HC.TIMELINE, HC.TIMELINES.normal, 'TIMELINE is Normal\'s');
+  t.eq(startsOf('normal'), [['prep_a', 0], ['prep_b', 132], ['cue', 220], ['cue_b', 310], ['peak', 376], ['settle_a', 761], ['settle_b', 851], ['settle_b', 1040]], 'at Normal the states start at 0, 132, 220, 310, 376, 761 and 851 ms (the fade from 1,040)');
+  t.eq(startsOf('fast'), [['prep_a', 0], ['prep_b', 90], ['cue', 180], ['cue_b', 220], ['peak', 260], ['settle_a', 400], ['settle_b', 480], ['settle_b', 560]], 'at Fast (wall ms) the states start at 0, 90, 180, 220, 260, 400 and 480 — Normal\'s old performance, cue_b at 220');
+  for (const mode of HC.MODES) for (const T of [HC.timeline(null, null, mode), HC.timeline(['prep_a', 'cue', 'peak', 'settle_b'], null, mode)]) t.eq(HC.validTimeline(T), [], 'the timelines are valid (' + mode + ')');
   t.eq(HC.timeline(HC.STATES, { peak: { seg: 'hold', from: 0.2, to: 0.6 } }).find((e) => e.phase === 'peak'), { phase: 'peak', seg: 'hold', from: 0.2, to: 0.6 }, 'a manifest override replaces a state\'s span');
   for (const bad of [{ cue: { seg: 'hold', from: 0.5, to: 0.1 } }, { peak: { seg: 'hold', from: 0.1, to: 0.5 } }, { peak: { seg: 'later', from: 0, to: 1 } }]) {
     const m = JSON.parse(JSON.stringify(manifest)); m.companions.suzu.timeline = bad;
     t.ok(HC.validateManifest(m).some((e) => /timeline/.test(e)), 'an invalid override is refused by the schema: ' + JSON.stringify(bad));
+  }
+  // overrides apply to each mode's base timeline, and must be valid at every mode
+  {
+    const ok = { peak: { seg: 'hold', from: 0.25, to: 0.6 } }, m = JSON.parse(JSON.stringify(manifest)); m.companions.suzu.timeline = ok;
+    const st = manifest.companions.suzu.states;
+    // (the sample has no settle_a, so the peak then holds on to settle_b's start: 0.77 at Normal, 0.79 at Fast)
+    const pk = (mode) => HC.timeline(st, ok, mode).find((e) => e.phase === 'peak');
+    t.ok(!HC.validateManifest(m).some((e) => /timeline/.test(e)) && JSON.stringify([pk('normal'), pk('fast')]) === JSON.stringify([{ phase: 'peak', seg: 'hold', from: 0.25, to: 0.77 }, { phase: 'peak', seg: 'hold', from: 0.25, to: 0.79 }]), 'an override valid at both modes is accepted and applied to each mode\'s base timeline (peak from 0.25 at Normal and at Fast)');
+    const half = { peak: { seg: 'hold', from: 0.2, to: 0.6 } }, m2 = JSON.parse(JSON.stringify(manifest)); m2.companions.suzu.timeline = half;
+    const errs = HC.validateManifest(m2).filter((e) => /timeline/.test(e));
+    t.ok(HC.validTimeline(HC.timeline(st, half, 'normal')).length === 0 && errs.length && errs.every((e) => /\(fast\)/.test(e)), 'an override that overlaps only at Fast (cue there runs to 0.21) is refused, naming the mode: ' + errs.join('; '));
+    // an override written for the old six-state fractions (cue to 0.21) on a set without cue_b: the missing cue_b never
+    // shortens it back to 0.19, so at Normal it overlaps the peak (from 0.19) and is refused, not silently trimmed
+    const old = { cue: { seg: 'hold', from: 0, to: 0.21 } };
+    t.ok(HC.timeline(st, old, 'normal').find((e) => e.phase === 'cue').to === 0.21 && HC.validTimeline(HC.timeline(st, old, 'normal')).length > 0 && HC.validTimeline(HC.timeline(st, old, 'fast')).length === 0, 'a missing optional state only extends the one before it: an override is never trimmed to fit (and is checked at each mode)');
+  }
+  // cue_b: the companion's frame where delivered (else cue, as any missing optional state); the player's kit has no files
+  // of its own for it and shows its cue drawing — head, arm, hair, and cue's group offsets unless cue_b has its own
+  {
+    const pl = HR.plan('pc', LA, 'cue_b', 'suzu'), pq = HR.plan('pc', LA, 'cue', 'suzu'), cs = HR.plan('suzu', null, 'cue_b', 'suzu');
+    t.ok(pl.ok && pl.expr === 'cue' && pl.pose === 'cue' && JSON.stringify(pl.files) === JSON.stringify(pq.files) && JSON.stringify(pl.groups) === JSON.stringify(pq.groups), 'cue_b: the player\'s kit shows its cue drawing (' + pl.files.slice(0, 3).join(', ') + ' …)');
+    t.ok(cs.ok && cs.state === 'cue' && cs.asked === 'cue_b', 'cue_b: a companion set without it shows cue through its span (the sample has none)');
+    const man = HR.manifest(), g0 = man.pc.groups;
+    man.pc.groups = Object.assign({}, g0, { cue: { head: [1, -1], torso: [0, 0] } });
+    const g1 = HR.plan('pc', LA, 'cue_b', 'suzu').groups;
+    man.pc.groups = Object.assign({}, g0, { cue: { head: [1, -1], torso: [0, 0] }, cue_b: { head: [0, -2], torso: [0, 0] } });
+    const g2 = HR.plan('pc', LA, 'cue_b', 'suzu').groups;
+    man.pc.groups = g0;
+    t.eq([g1, g2], [{ head: [1, -1], torso: [0, 0] }, { head: [0, -2], torso: [0, 0] }], 'cue_b takes cue\'s group offsets unless it has its own');
+    t.eq([HC.parse('suzu_cue_b'), HC.parse('suzu_cue_b_fx'), HC.parse('suzu_cue_fx')].map((q) => q && [q.kind, q.who, q.state, q.layer]), [['comp', 'suzu', 'cue_b', null], ['comp', 'suzu', 'cue_b', 'fx'], ['comp', 'suzu', 'cue', 'fx']], 'file names: <comp>_cue_b is the state cue_b (its effect <comp>_cue_b_fx), never cue with a layer');
   }
   t.ok(HC.validTimeline([{ phase: 'peak', seg: 'hold', from: 0, to: 1 }]).some((e) => /settle_b/.test(e)), 'a timeline must end on settle_b (reduced motion shows it alone)');
 

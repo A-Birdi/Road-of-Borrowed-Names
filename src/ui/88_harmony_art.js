@@ -541,8 +541,10 @@ RB.harmonyArt = (function () {
     for (const o of todo) compose(o);
     return todo.length;
   }
-  // The painted performance's timeline for a pairing (only while painted art is installed: see the getter below).
-  function timeline(comp) { return painted() ? R().timeline(comp) : null; }
+  // The painted performance's timeline for a pairing at a playback mode ('normal', the default, or 'fast': Robin's
+  // decision of 2026-10-05 gives each its own fractions) — only while painted art is installed: see the getter below.
+  // (The set of states is the same at both modes, so the footprint and the preparation do not depend on it.)
+  function timeline(comp, mode) { return painted() ? R().timeline(comp, mode) : null; }
   function schedule(fn) {
     if (typeof requestIdleCallback === 'function') requestIdleCallback(fn, { timeout: 200 });
     else setTimeout(fn, 16);

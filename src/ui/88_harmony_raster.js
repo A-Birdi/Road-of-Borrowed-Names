@@ -18,7 +18,7 @@
  *   plan(who, look, state, comp) → { ok, files, missing, state, ... }  (who: 'pc' or a companion)
  *   ready(plan) → every file decoded;  load(names) → Promise (decodes what is missing)
  *   paint(plan, look, fx) → { w, h, px, mt, face, hands, anchor } | null
- *   timeline(comp) → [{ phase, seg, from, to }]
+ *   timeline(comp[, mode]) → [{ phase, seg, from, to }]   (mode: 'normal' (default) or 'fast')
  *   stats(), note(fallback) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -175,7 +175,9 @@ RB.harmonyRaster = (function () {
     const af = H.accFiles(look);
     for (const f of af.files) parts.push({ slot: f.slot, file: f.file, acc: f.acc });
     const missing = parts.filter((q) => !has(q.file)).map((q) => q.file).concat(af.unknown.map((a) => 'acc ' + a + ' (unknown)'));
-    const g = (P.groups && P.groups[state]) || {};
+    // (a state the kit has no files of its own for — cue_b — takes its kit state's group offsets unless it has its own)
+    const ks = H.KIT_STATE && H.KIT_STATE[state];
+    const g = (P.groups && (P.groups[state] || (ks && P.groups[ks]))) || {};
     const face = ((P.face && P.face[expr]) || H.ANCHORS.pc.face).slice();
     const hd = g.head || [0, 0];
     return { ok: !missing.length, who: 'pc', state, comp, style, shape, sleeve, expr, pose, parts, files: parts.map((q) => q.file), missing, groups: { head: hd, torso: g.torso || [0, 0] }, face: [face[0] + hd[0], face[1] + hd[1], face[2] + hd[0], face[3] + hd[1]] };
@@ -326,12 +328,12 @@ RB.harmonyRaster = (function () {
 
   // ---- timing ------------------------------------------------------------------------------------------------------------
   // a companion with a complete painted set: its states (and the manifest's overrides); otherwise the default
-  // timeline (its code bust maps each state to enter or hold)
-  function timeline(comp) {
+  // timeline (its code bust maps each state to enter or hold) — at a playback mode ('normal' by default, 'fast')
+  function timeline(comp, mode) {
     if (!man) return null;
     const set = man.companions && man.companions[comp];
     const done = set && C().REQUIRED.every((s) => set.states.indexOf(s) >= 0);
-    return done ? C().timeline(set.states, set.timeline) : C().timeline();
+    return done ? C().timeline(set.states, set.timeline, mode) : C().timeline(null, null, mode);
   }
 
   // ---- diagnostics -------------------------------------------------------------------------------------------------------

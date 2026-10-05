@@ -187,7 +187,8 @@ RB.harmonyArtFixtures.fixtures(), coverage(list)        (QA only)
 
 * `comp` is required (`nao|mio|ren|suzu`); with no committed companion there is no composition (§7.1).
 * `look` defaults to `RB.equip.look(RB.game.s)`; pass the snapshot taken at the action's start (§6.4).
-* `phase` `'enter'` (0–180 ms) or `'hold'`; `still: true` (reduced motion) → the hold drawing; the overlay
+* `phase` `'enter'` (the arrival: 0–280 ms at Normal since Robin's decision of 2026-10-05, until 60 ms into the hold; it was
+  0–240) or `'hold'`; `still: true` (reduced motion) → the hold drawing; the overlay
   fades the hold drawing out — the art does not change during the fade.
 * `faces`, `hands`, `bounds` and `anchor` are in `cv`'s art px; multiply by the chosen scale. `anchor` is
   the point on the band's left edge, half way down, where the cluster enters (place it at the view's left).

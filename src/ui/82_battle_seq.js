@@ -12,7 +12,8 @@
  * Cues: pose (an adventurer's pose and gesture), foe (the creature's action
  * pose), fx (a transient effect), strip (the paper-and-ink word), num (a
  * small number), beat (one authoritative fx event), log, sfx, final, cutin (a technique's paired portrait:
- * src/ui/82d_harmony_cutin.js, advanced on this clock and disposed whenever a sequence settles).
+ * src/ui/82d_harmony_cutin.js, advanced on this clock before the frame's cues, and disposed whenever a sequence
+ * settles).
  *
  * Time: a presentation clock advanced from the frame loop (dt clamped to
  * 100 ms, so a stalled or background tab never bursts through stale beats),
@@ -40,8 +41,13 @@ RB.battleSeq = (function () {
     finishHold: 1000, speed: { normal: 1, fast: 1.43 }, hurry: 4,
     bannerOut: { normal: 120, fast: 80 }, // the banner leaves inside the action's last ms (§14.3)
     // Harmony portrait (Harmony addendum §7.2, §7.4; src/ui/82d_harmony_cutin.js): in / hold / fade, presentation
-    // ms — Fast's clock runs ×1.43, so its values are 100 / 220 / 160 ms of wall time (480 ms)
-    cutin: { normal: { in: 180, hold: 380, out: 220 }, fast: { in: 143, hold: 315, out: 229 } },
+    // ms. Robin's decision (2026-10-05): Normal plays the proposed performance, 220 / 820 / 360 ms (1,400 ms, wall =
+    // presentation); Fast plays what Normal used to, 180 / 380 / 220 ms of WALL time (780 ms) — on Fast's ×1.43
+    // clock 257 / 543 / 315 presentation ms (1,115). The wall values are RB.harmonyContract.SEGMENTS.
+    cutin: { normal: { in: 220, hold: 820, out: 360 }, fast: { in: 257, hold: 543, out: 315 } },
+    // the technique's stage waits for the portrait: its first result comes at least this long (presentation ms)
+    // after the portrait is gone (src/ui/84p_party_choreo.js player())
+    cutinGap: 120,
   };
   let pt = 0, lastT = null, cur = null, port = null, timeScale = 1; // timeScale: tests and captures only
   const trace = [];
@@ -107,8 +113,10 @@ RB.battleSeq = (function () {
     lastT = t;
     if (paused) return pt;
     pt += dt * timeScale * (cur ? speed() * (cur.hurried ? T.hurry : 1) : 1);
+    // (Harmony portrait: on this clock, hurried with it; advanced first, so a portrait whose time is up is gone
+    // before any result of the same frame fires — a long frame can never show a result under it)
+    if (RB.harmonyCutin) RB.harmonyCutin.frame(pt);
     if (cur) step();
-    if (RB.harmonyCutin) RB.harmonyCutin.frame(pt); // (Harmony portrait: on this clock, hurried with it)
     return pt;
   }
   function now() { return pt; }

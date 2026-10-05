@@ -81,7 +81,7 @@ node tools/harmony_import.mjs art/harmony/source/<batch 1> [art/harmony/source/<
 
 | Kind | File name | Notes |
 |---|---|---|
-| Companion frame (flattened) | `<comp>_<state>.png` | `comp` ∈ nao, mio, ren, suzu; `state` §4 |
+| Companion frame (flattened) | `<comp>_<state>.png` | `comp` ∈ nao, mio, ren, suzu; `state` §4 (the longest state name matches first: `suzu_cue_b` is the state `cue_b`, never `cue` with a layer `b`) |
 | Companion effect (optional) | `<comp>_<state>_fx.png` | a glint or glow drawn over the frame; left out when the overlay asks for `fx: false` |
 | Companion frame (layered) | `<comp>_<state>_<layer>.png` | the set's `layers` (back to front) are listed in `import.json` |
 | Player head | `pc_head_<expr>.png` | `expr` ∈ focus, cue, peak, settle. Bald head with ears, neck and face; the head never changes angle |
@@ -92,14 +92,15 @@ node tools/harmony_import.mjs art/harmony/source/<batch 1> [art/harmony/source/<
 | Mask | `<name>.mask.png` | §5 |
 
 Names are lower case `a–z`, `0–9` and `_`. A name that is not in this table is rejected. The full list of
-asset keys (86 required, 33 optional for the current registry; unchanged from v2) is `assetKeys` in `registry.json`.
+asset keys (86 required, 37 optional for the current registry: v2's 33 plus `<comp>_cue_b` for each companion since
+Robin's decision of 2026-10-05) is `assetKeys` in `registry.json`.
 
 ### 1.1 Delivery batches (`RB.harmonyContract.BATCHES`, `registry.json` `batches`)
 
 **Batch 1a — Phase 1, the quality bar** (Suzu and the player's look A: ponytail, coat, glasses, flower, satchel).
 The owner approves it before anything else is produced. 18 required files:
 
-* `suzu_prep_a`, `suzu_cue`, `suzu_peak`, `suzu_settle_b` (optional: `suzu_prep_b`, `suzu_settle_a`, `suzu_peak_fx`)
+* `suzu_prep_a`, `suzu_cue`, `suzu_peak`, `suzu_settle_b` (optional: `suzu_prep_b`, `suzu_cue_b`, `suzu_settle_a`, `suzu_peak_fx`)
 * `pc_head_focus`, `pc_head_cue`, `pc_head_peak`, `pc_head_settle`
 * `pc_torso_coat`
 * `pc_arm_prep_a_fitted`, `pc_arm_cue_fitted`, `pc_arm_peak_suzu_fitted`, `pc_arm_settle_suzu_fitted` (optional: `pc_arm_prep_b_fitted`)
@@ -250,29 +251,56 @@ the other (`RB.equip.SAME_PLACE`). Charms and tools are never drawn (`registry.s
 
 ## 4. Performance states and timing
 
-| State | Required | Overlay segment | From–to (fraction of the segment) | Normal (ms from the action's start) |
-|---|---|---|---|---|
-| prep_a | yes | in | 0–0.5 | 0–90 |
-| prep_b | optional (holds prep_a) | in | 0.5–1 | 90–180 |
-| cue | yes | hold | 0–0.21 | 180–260 |
-| peak | yes | hold | 0.21–0.58 | 260–400 |
-| settle_a | optional (holds peak) | hold | 0.58–0.79 | 400–480 |
-| settle_b | yes | hold, then all of out | 0.79–1, 0–1 | 480–780 (fading 560–780) |
+**Robin's decision, 2026-10-05:** Normal plays the proposed performance (about 1.4 s, with a small motion); Fast plays
+what Normal played before (780 ms of wall time); Instant and the setting "Harmony portrait flourish" Off show nothing.
+A seventh state, `cue_b`, sits between `cue` and `peak` (Robin's seven-frame art has it). Each playback mode has its
+own timeline (`RB.harmonyContract.TIMELINES`; `TIMELINE` is Normal's).
 
-* Segments: Normal in 180 / hold 380 / out 220 ms; Fast 100 / 220 / 160 ms (the overlay's
-  `RB.battleSeq.T.cutin`). Instant shows nothing.
-* **Reduced motion** (`RB.harmonyContract.REDUCED_MOTION`): no travel, the overlay's own fade in where it stands,
-  hold and fade out. With painted art, **two held poses**: `peak` from the start, then `settle_b`, joined by one
-  cross-fade of 100 presentation ms centred at the middle of the hold (Normal: peak 0–320, cross-fade 320–420,
-  settle_b 420–780; Fast: centred at 301 presentation ms). The cross-fade adds the two drawings (`lighter`) at
-  1 − k and k, so shared pixels keep full opacity. The code-drawn busts keep their single held drawing.
+| State | Required | Segment | Normal: fraction, ms | Fast: fraction, wall ms |
+|---|---|---|---|---|
+| prep_a | yes | in | 0–0.6, 0–132 | 0–0.5, 0–90 |
+| prep_b | optional (holds prep_a) | in | 0.6–1, 132–220 | 0.5–1, 90–180 |
+| cue | yes | hold | 0–0.11, 220–310 | 0–0.105, 180–220 |
+| cue_b | optional (holds cue) | hold | 0.11–0.19, 310–376 | 0.105–0.21, 220–260 |
+| peak | yes | hold | 0.19–0.66, 376–761 | 0.21–0.58, 260–400 |
+| settle_a | optional (holds peak) | hold | 0.66–0.77, 761–851 | 0.58–0.79, 400–480 |
+| settle_b | yes | hold, then all of out | 0.77–1, 851–1,400 (fading 1,040–1,400) | 0.79–1, 480–780 (fading 560–780) |
+
+* Segments (`RB.harmonyContract.SEGMENTS`, wall ms): **Normal 220 / 820 / 360 (1,400)**; **Fast 180 / 380 / 220
+  (780)**. The overlay runs on the battle's presentation clock (`RB.battleSeq.T.cutin`): Normal's are the same
+  numbers; Fast's clock runs ×1.43, so its presentation values are 257 / 543 / 315 (1,115). Instant shows nothing.
+* A six-state set (no `cue_b`, as every set before) holds `cue` through `cue_b`'s span: Normal cue 0–0.19, Fast
+  0–0.21 of the hold. At Fast that is exactly the earlier six-state performance.
+* **Motion (Normal only):** in art px of the composition, × its display scale, rounded to whole CSS px. It slides in
+  from beyond the left edge, `x = −W + (W + 3)·easeOut(k)` (overshooting 3 to the right); in the hold it settles back
+  (`+3·(1 − smooth(h/140))`), leans 2.5 left as the peak lands (50 ms in, 260 ms back) and drifts 1.5 left over the
+  hold and the fade (`−1.5·smooth(h/(hold + out))`). Fast keeps the plain slide and fade. Placement keeps the motion's
+  reach clear too: each drawn row is tested widened by 3 art px × the scale to the right (the overshoot) and 4 to the
+  left (the lean and drift together), so the 12 px rule holds throughout; a placement that fits only without that
+  reach gives way to the next candidate (`src/ui/82d_harmony_cutin.js` `MOTION`, `ENVELOPE`).
+* **The stage waits for the portrait:** when a portrait can play (the setting On, not Instant), every other cue of the
+  technique starts `max(0, portrait end + 120 − first contact)` presentation ms later, so its first result comes at
+  least 120 ms after the portrait is gone (Normal: Nao 220, Mio 270, Ren 320, Suzu 240 ms; Fast: Ren 35, the others
+  0). If the portrait is then not shown (no safe space, a reading layer), the stage still waits — the same timing
+  either way, which is acceptable: the rules and results are untouched. A portrait that starts late because it waits
+  for the withdrawn menus to leave (phones and tablets: 67–100 ms measured) shortens its hold by what it lost beyond
+  that slack, so it is still gone 60 ms before the first result (at most half the hold; beyond that it is not shown).
+* **Reduced motion** (`RB.harmonyContract.REDUCED_MOTION`): no travel and no motion, the overlay's own fade in where it
+  stands, hold and fade out on the mode's segments. With painted art, **two held poses**: `peak` from the start, then
+  `settle_b`, joined by one cross-fade of 100 presentation ms centred at the middle of the hold (Normal: centred at
+  630 ms, so peak 0–580, cross-fade 580–680, settle_b 680–1,400; Fast: centred at 529 presentation ms). The cross-fade
+  adds the two drawings (`lighter`) at 1 − k and k, so shared pixels keep full opacity. The code-drawn busts keep their
+  single held drawing.
 * One-off: each state appears once, in order; nothing loops, blinks on a timer or repeats.
-* `RB.harmonyArt.timeline(comp)` → `[{ phase, seg: 'in'|'hold'|'out', from, to }]`, only while painted art is
-  installed. A missing optional state is left out and the state before it spans its time. A companion's
-  `timeline` in the manifest may replace a state's `{ seg, from, to }`; the result must pass
-  `validTimeline` (known states, 0 ≤ from < to ≤ 1, in order, no overlap, ending on settle_b).
+* `RB.harmonyArt.timeline(comp[, mode])` → `[{ phase, seg: 'in'|'hold'|'out', from, to }]` at a mode (`'normal'`, the
+  default, or `'fast'`), only while painted art is installed. A missing optional state is left out and the state
+  before it spans its time (it is only ever extended, never shortened). A companion's `timeline` in the manifest may
+  replace a state's `{ seg, from, to }`; the replacement applies to each mode's base timeline, and the result must
+  pass `validTimeline` (known states, 0 ≤ from < to ≤ 1, in order, no overlap, ending on settle_b) **at every mode**
+  (an error names the mode).
 * `RB.harmonyArt.PHASES` is the state list while painted art is installed, `['enter', 'hold']` otherwise; with
-  no assets there is no `timeline` and the code-drawn busts behave exactly as before.
+  no assets there is no `timeline` and the code-drawn busts behave as before (the arrival drawing, then the hold
+  60 ms into the hold).
 * A bust with no complete painted set shows its code drawing: `enter` for prep_a/prep_b, `hold` from cue on.
 
 **The player's kit per state** (comp = the companion of the pairing):
@@ -282,6 +310,7 @@ the other (`RB.equip.SAME_PLACE`). Charms and tools are never drawn (`registry.s
 | prep_a | pc_head_focus | prep_a | plain |
 | prep_b | pc_head_focus | prep_b (else prep_a) | `_swing` if delivered |
 | cue | pc_head_cue | cue | plain |
+| cue_b | pc_head_cue | cue | plain (the kit has no cue_b files: its cue drawing, with `pc.groups.cue` unless `pc.groups.cue_b` is given) |
 | peak | pc_head_peak | peak_<comp> | plain |
 | settle_a | pc_head_settle | settle_<comp> | `_swing` if delivered |
 | settle_b | pc_head_settle | settle_<comp> | plain |
@@ -788,7 +817,7 @@ re-measure on Batch 1a. **Budget policy:** no new hard limit; decoding never run
 | `node tests/run-unit.mjs harmony_png` | the codec |
 | `node tests/run-unit.mjs harmony_import` | grid detection, downsampling, family derivation (free values kept, thresholds, the foreign rule), supplied masks against the family, checkerboards (pure, noisy, under art, padded), the sample's import and `--verify`, the rich fixture against its ground truth (every pixel's material, every colour kept), byte-for-byte regeneration of two batches, provenance, approval, the batches |
 | `node tests/run-unit.mjs harmony_raster` | timeline fractions, painted compositions, the footprint and its scale, approval, the rich fixture's values kept apart on dark and pale looks, exact anchor shades = v2's tones on unopened ramps, recolouring discipline, whole-bust fallback, registry coverage, manifest schema, the code path after uninstall |
-| `node tests/run-unit.mjs harmony_timing` | the overlay's timeline playback, reduced motion's two held poses and its ≤ 120 ms cross-fade, the code busts' single held drawing |
+| `node tests/run-unit.mjs harmony_timing` | the overlay's timeline playback at Normal and Fast (seven states; a six-state set holding cue through cue_b's span), reduced motion's two held poses and its ≤ 120 ms cross-fade, the code busts' single held drawing, Normal's motion and its placement envelope, and the stage's wait for the portrait (2026-10-05) |
 | `node tools/harmony_calibrate.mjs` | the thresholds against both fixtures: 0 errors and the stated headroom |
 | `node tools/harmony_recolour_proof.mjs` | value floor on 63 targets, exact anchors, the residual sweep; writes the proof sheets |
 | `node tests/run-unit.mjs harmony_keyify` | the keyify step (§5.5): the default look file is the game's ramps; the synthetic sample and rich fixture recoloured into look A, converted (enlarged, magenta, 1024-square layers; partial masks), imported, verified and recoloured into 8 looks against the original kits; range vs reference; materials against the ground truth; reported, unwritten and mask-settled pixels; collisions; checkerboards; `--sample`; determinism |

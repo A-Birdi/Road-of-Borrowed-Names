@@ -49,42 +49,66 @@ RB.harmonyContract = (function () {
   const DISPLAY = { standard: { maxW: 0.42, maxH: 0.3, maxArea: 0.12, integer: true }, compact: { maxW: 1, maxH: 0.27, dprAware: true }, maxScale: 6, minFaceCss: 64 };
 
   // ---- states and timing ---------------------------------------------------------------------------------
-  const STATES = ['prep_a', 'prep_b', 'cue', 'peak', 'settle_a', 'settle_b'];
+  // Seven states (Robin's decision, 2026-10-05: `cue_b`, an in-between from `cue` to `peak`, the state Robin's
+  // seven-frame art has). A six-state set (no cue_b) holds `cue` through cue_b's span, as any missing optional state.
+  const STATES = ['prep_a', 'prep_b', 'cue', 'cue_b', 'peak', 'settle_a', 'settle_b'];
   const REQUIRED = ['prep_a', 'cue', 'peak', 'settle_b'];
-  const OPTIONAL = ['prep_b', 'settle_a'];
+  const OPTIONAL = ['prep_b', 'cue_b', 'settle_a'];
   const REDUCED = 'settle_b';
   // Reduced motion with painted art (contract v3, the owner's "suitable held poses and restrained fades"): no travel;
   // `peak` held, then `settle_b` held, one cross-fade of `crossFade` presentation ms centred at `at` of the hold,
-  // inside the overlay's own reduced-motion timing (its fade in, hold and fade out). The code busts keep theirs
-  // (the hold drawing alone).
+  // inside the overlay's own reduced-motion timing (its fade in, hold and fade out) on the playback mode's segments.
+  // The code busts keep theirs (the hold drawing alone).
   const REDUCED_MOTION = { states: ['peak', 'settle_b'], at: { seg: 'hold', from: 0.5 }, crossFade: 100 };
-  // fractions of the cut-in overlay's segments (Normal 180 / 380 / 220 ms, Fast 100 / 220 / 160 ms)
-  const TIMELINE = [
-    { phase: 'prep_a', seg: 'in', from: 0, to: 0.5 },
-    { phase: 'prep_b', seg: 'in', from: 0.5, to: 1 },
-    { phase: 'cue', seg: 'hold', from: 0, to: 0.21 },
-    { phase: 'peak', seg: 'hold', from: 0.21, to: 0.58 },
-    { phase: 'settle_a', seg: 'hold', from: 0.58, to: 0.79 },
-    { phase: 'settle_b', seg: 'hold', from: 0.79, to: 1 },
-    { phase: 'settle_b', seg: 'out', from: 0, to: 1 },
-  ];
-  const SEGMENTS = { normal: { in: 180, hold: 380, out: 220 }, fast: { in: 100, hold: 220, out: 160 } };
+  // The playback modes with a portrait (Instant has none) and each one's timeline: fractions of the cut-in overlay's
+  // segments (SEGMENTS). Robin's decision (2026-10-05): Normal plays the proposed performance; Fast plays what Normal
+  // played before (its six-state fractions), with cue_b taking the second half of cue's span.
+  const MODES = ['normal', 'fast'];
+  const TIMELINES = {
+    normal: [
+      { phase: 'prep_a', seg: 'in', from: 0, to: 0.6 },
+      { phase: 'prep_b', seg: 'in', from: 0.6, to: 1 },
+      { phase: 'cue', seg: 'hold', from: 0, to: 0.11 },
+      { phase: 'cue_b', seg: 'hold', from: 0.11, to: 0.19 },
+      { phase: 'peak', seg: 'hold', from: 0.19, to: 0.66 },
+      { phase: 'settle_a', seg: 'hold', from: 0.66, to: 0.77 },
+      { phase: 'settle_b', seg: 'hold', from: 0.77, to: 1 },
+      { phase: 'settle_b', seg: 'out', from: 0, to: 1 },
+    ],
+    fast: [
+      { phase: 'prep_a', seg: 'in', from: 0, to: 0.5 },
+      { phase: 'prep_b', seg: 'in', from: 0.5, to: 1 },
+      { phase: 'cue', seg: 'hold', from: 0, to: 0.105 },
+      { phase: 'cue_b', seg: 'hold', from: 0.105, to: 0.21 },
+      { phase: 'peak', seg: 'hold', from: 0.21, to: 0.58 },
+      { phase: 'settle_a', seg: 'hold', from: 0.58, to: 0.79 },
+      { phase: 'settle_b', seg: 'hold', from: 0.79, to: 1 },
+      { phase: 'settle_b', seg: 'out', from: 0, to: 1 },
+    ],
+  };
+  // (the default: Normal's)
+  const TIMELINE = TIMELINES.normal;
+  // the overlay's segments in WALL ms (Normal 220 / 820 / 360 = 1,400; Fast 180 / 380 / 220 = 780). The sequencer
+  // holds them in presentation ms (RB.battleSeq.T.cutin: Fast's clock runs ×1.43, so 257 / 543 / 315).
+  const SEGMENTS = { normal: { in: 220, hold: 820, out: 360 }, fast: { in: 180, hold: 380, out: 220 } };
   const SEG_ORDER = { in: 0, hold: 1, out: 2 };
   // the drawing a code-drawn bust shows for a state (the fallback when a bust has no complete painted set)
-  const CODE_PHASE = { prep_a: 'enter', prep_b: 'enter', cue: 'hold', peak: 'hold', settle_a: 'hold', settle_b: 'hold' };
+  const CODE_PHASE = { prep_a: 'enter', prep_b: 'enter', cue: 'hold', cue_b: 'hold', peak: 'hold', settle_a: 'hold', settle_b: 'hold' };
 
-  // The timeline for the states a set has. `have`: the states delivered (an optional state that is missing
-  // holds the state before it: that state's span is extended over the missing one's); `over`: per-state
-  // { seg, from, to } replacements from the manifest (checked by validTimeline before use).
-  function timeline(have, over) {
+  // The timeline for the states a set has, at a playback mode (MODES; default Normal). `have`: the states delivered
+  // (an optional state that is missing holds the state before it: that state's span is extended over the missing
+  // one's); `over`: per-state { seg, from, to } replacements from the manifest, applied to the mode's base timeline
+  // (checked by validTimeline before use, at every mode).
+  function timeline(have, over, mode) {
     const set = have ? new Set(have) : new Set(STATES);
-    const base = TIMELINE.map((e) => Object.assign({}, e, over && over[e.phase] && e.seg === over[e.phase].seg ? { from: over[e.phase].from, to: over[e.phase].to } : null));
+    const base = (TIMELINES[mode] || TIMELINE).map((e) => Object.assign({}, e, over && over[e.phase] && e.seg === over[e.phase].seg ? { from: over[e.phase].from, to: over[e.phase].to } : null));
     // an override of a state's hold also moves the neighbouring spans that touch it
     const out = [];
     for (const e of base) {
       if (set.has(e.phase)) { out.push(e); continue; }
       const prev = out[out.length - 1];
-      if (prev && prev.seg === e.seg) prev.to = e.to;
+      // (only ever extended: an override that already runs past the missing state's span is kept, and checked)
+      if (prev && prev.seg === e.seg) prev.to = Math.max(prev.to, e.to);
     }
     return out.map((e) => ({ phase: e.phase, seg: e.seg, from: round(e.from), to: round(e.to) }));
   }
@@ -119,12 +143,16 @@ RB.harmonyContract = (function () {
 
   // ---- the player kit ----------------------------------------------------------------------------------------
   const EXPRS = ['focus', 'cue', 'peak', 'settle'];
-  const EXPR_OF = { prep_a: 'focus', prep_b: 'focus', cue: 'cue', peak: 'peak', settle_a: 'settle', settle_b: 'settle' };
+  // (cue_b, the companion's in-between toward the peak, has no player files of its own: the player's kit shows its
+  // cue drawing through it — head, arm, hair and the state's group offsets, unless pc.groups.cue_b is given)
+  const EXPR_OF = { prep_a: 'focus', prep_b: 'focus', cue: 'cue', cue_b: 'cue', peak: 'peak', settle_a: 'settle', settle_b: 'settle' };
+  const KIT_STATE = { cue_b: 'cue' };
   const ARM_SHARED = ['prep_a', 'prep_b', 'cue'];
   const ARM_REQUIRED_SHARED = ['prep_a', 'cue'];
   const armPoses = (comps) => ARM_SHARED.concat(...comps.map((c) => ['peak_' + c, 'settle_' + c]));
-  // the brush arm's pose for a state of the pairing with `comp` (prep_b falls back to prep_a when absent)
+  // the brush arm's pose for a state of the pairing with `comp` (prep_b falls back to prep_a when absent; cue_b is cue's)
   function armOf(st, comp) {
+    if (st === 'cue_b') return 'cue';
     if (st === 'prep_a' || st === 'prep_b' || st === 'cue') return st;
     if (st === 'peak') return 'peak_' + comp;
     return 'settle_' + comp;
@@ -209,7 +237,7 @@ RB.harmonyContract = (function () {
       look: { hair: 'ponytail', shape: 'coat', acc: ['glasses', 'flower', 'satchel'] },
       required: ['suzu_prep_a', 'suzu_cue', 'suzu_peak', 'suzu_settle_b', 'pc_head_focus', 'pc_head_cue', 'pc_head_peak', 'pc_head_settle', 'pc_torso_coat',
         'pc_arm_prep_a_fitted', 'pc_arm_cue_fitted', 'pc_arm_peak_suzu_fitted', 'pc_arm_settle_suzu_fitted', 'pc_hair_ponytail_back', 'pc_hair_ponytail_front', 'acc_glasses', 'acc_flower', 'acc_satchel'],
-      optional: ['suzu_prep_b', 'suzu_settle_a', 'suzu_peak_fx', 'pc_arm_prep_b_fitted'],
+      optional: ['suzu_prep_b', 'suzu_cue_b', 'suzu_settle_a', 'suzu_peak_fx', 'pc_arm_prep_b_fitted'],
     },
     '1b': {
       phase: 2, purpose: 'the customisation proof: a materially different look B on the same kit (after 1a is approved)', companion: 'suzu', after: '1a',
@@ -442,7 +470,9 @@ RB.harmonyContract = (function () {
 
   // ---- file names ------------------------------------------------------------------------------------------------------
   // <comp>_<state>[_<layer>], pc_head_<expr>, pc_torso_<shape>, pc_arm_<pose>_<sleeve>, pc_hair_<style>_<part>[_swing],
-  // acc_<id>[_<part>|_<variant>]; a mask is <name>.mask.png.
+  // acc_<id>[_<part>|_<variant>]; a mask is <name>.mask.png. The longest state matches first: suzu_cue_b is the
+  // state cue_b (never cue with a layer "b"); suzu_cue_b_fx its effect; suzu_cue_fx cue's.
+  const STATES_LONGEST = STATES.slice().sort((a, b) => b.length - a.length || STATES.indexOf(a) - STATES.indexOf(b));
   function parse(name, reg) {
     name = String(name).replace(/\.png$/i, '');
     const isMask = /\.mask$/.test(name);
@@ -452,7 +482,7 @@ RB.harmonyContract = (function () {
     for (const c of comps) {
       if (name.indexOf(c + '_') !== 0) continue;
       const rest = name.slice(c.length + 1);
-      for (const st of STATES) {
+      for (const st of STATES_LONGEST) {
         if (rest === st) return { name, isMask, kind: 'comp', who: c, state: st, layer: null };
         if (rest.indexOf(st + '_') === 0) return { name, isMask, kind: 'comp', who: c, state: st, layer: rest.slice(st.length + 1) };
       }
@@ -540,7 +570,8 @@ RB.harmonyContract = (function () {
           const o = d.timeline[st];
           need(STATES.indexOf(st) >= 0 && o && SEG_ORDER[o.seg] != null && o.from >= 0 && o.to <= 1 && o.from < o.to, c + ': timeline.' + st + ' must be { seg, from, to } with 0 ≤ from < to ≤ 1');
         }
-        const T = timeline(d.states, d.timeline); const te = validTimeline(T); for (const e of te) E.push(c + ': timeline: ' + e);
+        // (the overrides apply to each playback mode's base timeline: valid at every mode)
+        for (const mode of MODES) { const te = validTimeline(timeline(d.states, d.timeline, mode)); for (const e of te) E.push(c + ': timeline (' + mode + '): ' + e); }
       }
       for (const v of Object.keys(d.offset || {})) need(PAIR[v] && isPt(d.offset[v]), c + ': offset.' + v + ' must be [dx, dy]');
     }
@@ -562,10 +593,10 @@ RB.harmonyContract = (function () {
   function describe() {
     return {
       version: VERSION, compatible: COMPATIBLE, bust: BUST, anchors: ANCHORS, compactSafe: COMPACT_SAFE, pair: PAIR, display: DISPLAY,
-      states: STATES, required: REQUIRED, optional: OPTIONAL, reducedMotion: REDUCED, reducedMotionPlan: REDUCED_MOTION, timeline: TIMELINE, segments: SEGMENTS, codePhase: CODE_PHASE,
+      states: STATES, required: REQUIRED, optional: OPTIONAL, reducedMotion: REDUCED, reducedMotionPlan: REDUCED_MOTION, modes: MODES, timeline: TIMELINE, timelines: TIMELINES, segments: SEGMENTS, segmentsUnit: 'wall ms', codePhase: CODE_PHASE,
       approval: APPROVAL, approvalLabel: APPROVAL_LABEL, batches: BATCHES, recolour: RECOLOUR,
       colourModel: 'OKLab key curves through the five anchor shades of each key family, extended ' + IMPORT.extend + ' steps past both ends; t from lightness; deviation relative to the curve\'s chroma (src/ui/88_harmony_contract.js colour)',
-      exprs: EXPRS, exprOf: EXPR_OF, armShared: ARM_SHARED, armRequiredShared: ARM_REQUIRED_SHARED, sleeves: SLEEVES, sleeveOf: SLEEVE_OF,
+      exprs: EXPRS, exprOf: EXPR_OF, kitState: KIT_STATE, armShared: ARM_SHARED, armRequiredShared: ARM_REQUIRED_SHARED, sleeves: SLEEVES, sleeveOf: SLEEVE_OF,
       hairParts: HAIR_PARTS, frontOnly: FRONT_ONLY, swingStates: SWING_STATES,
       pcSlots: PC_SLOTS, groupOf: GROUP_OF, armSlot: Object.keys(ARM_SLOT), slotOrder: SLOT_ORDER,
       accessories: ACC, notShown: NOT_SHOWN, materials: MATERIALS, mask: MASK, keyRamps: KEY_RAMPS, keySkinV1: KEY_SKIN_V1, keyV1: KEY_V1, outline: OUTLINE, pick: PICK, allowed: ALLOWED, import: IMPORT,
@@ -575,8 +606,8 @@ RB.harmonyContract = (function () {
   RB.harmonyKeyRamps = [['skin (key)', KEY_RAMPS.skin], ['hair', KEY_RAMPS.hair], ['cloth main', KEY_RAMPS.clothMain], ['cloth trim', KEY_RAMPS.clothTrim], ['accessory', KEY_RAMPS.accessory]];
 
   return {
-    VERSION, COMPATIBLE, BUST, ANCHORS, COMPACT_SAFE, PAIR, DISPLAY, STATES, REQUIRED, OPTIONAL, REDUCED, REDUCED_MOTION, TIMELINE, SEGMENTS, CODE_PHASE, APPROVAL, APPROVAL_LABEL, BATCHES,
-    EXPRS, EXPR_OF, ARM_SHARED, ARM_REQUIRED_SHARED, SLEEVES, SLEEVE_OF, HAIR_PARTS, FRONT_ONLY, SWING_STATES, PC_SLOTS, GROUP_OF, ARM_SLOT,
+    VERSION, COMPATIBLE, BUST, ANCHORS, COMPACT_SAFE, PAIR, DISPLAY, STATES, REQUIRED, OPTIONAL, REDUCED, REDUCED_MOTION, MODES, TIMELINE, TIMELINES, SEGMENTS, CODE_PHASE, APPROVAL, APPROVAL_LABEL, BATCHES,
+    EXPRS, EXPR_OF, KIT_STATE, ARM_SHARED, ARM_REQUIRED_SHARED, SLEEVES, SLEEVE_OF, HAIR_PARTS, FRONT_ONLY, SWING_STATES, PC_SLOTS, GROUP_OF, ARM_SLOT,
     ACC, SLOT_ORDER, NOT_SHOWN, MATERIALS, MASK, KEY_RAMPS, KEY_SKIN_V1, KEY_V1, OUTLINE, PICK, ALLOWED, IMPORT, RECOLOUR,
     timeline, validTimeline, stateFor, armOf, armPoses, sleeveOf, accFiles, parse, allowedOf, assetKeys, validateManifest, describe, batchCoverage, approvalOf,
     colour: { oklab, linOf, srgbOf, fitLab, labHex, hexRgb, dLab, curveAt, keyCurve, project, decompose, targetCurve, recolour },

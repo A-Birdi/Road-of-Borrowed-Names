@@ -128,7 +128,7 @@ const reg = await p.evaluate(({ creationCuts, maxAcc }) => {
       samePlace: EQ.SAME_PLACE, source: { look: EQ.look.toString(), lookWith: EQ.lookWith.toString() }, module: 'src/engine/07_equip.js',
     },
     hairstyles: { ids: SP.HAIRSTYLES.slice(), aliases: {}, fallback: { value: 'short', note: 'an unknown style draws as short (src/engine/32h_spritehair.js, src/ui/88_harmony_hair.js hairPart)' }, wrap: 'a cloth head wrap in the clothTrim channel (look.wrapCol || cloth[2])', frontOnly: HC.FRONT_ONLY },
-    garmentShapes: { creationCuts, battleOnly: ['dress'], companionOnly: { high: 'Ren\'s high collar (portrait.collar), drawn over his coat: his frames are painted, not a kit option' }, all: shapes, sleeveOf: HC.SLEEVE_OF },
+    garmentShapes: { creationCuts, battleOnly: ['dress'], companionOnly: { high: 'Ren\'s high collar (portrait.collar), drawn over their coat: their frames are painted, not a kit option' }, all: shapes, sleeveOf: HC.SLEEVE_OF },
     creationAccessories: { ids: SP.ACCESSORIES.slice(), maxChosen: maxAcc, entries: creationAcc },
     keepsakes,
     statisticalItems: statistical,

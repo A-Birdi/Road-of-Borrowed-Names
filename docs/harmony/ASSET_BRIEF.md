@@ -169,20 +169,27 @@ nothing blinks on a timer. A finished still is an approval frame, not the finish
 
 | State | Normal timing | What it shows |
 |---|---|---|
-| `prep_a` | 0–90 ms (the quick entrance from the left edge) | anticipation: arriving, gathering, hair and cloth trailing |
-| `prep_b` *(optional in-between)* | 90–180 ms | anticipation continuing |
-| `cue` | 180–260 ms | the identifying gesture begins |
-| `peak` | 260–400 ms | the gesture or expression at its height: **the principal held pose**, the hero moment |
-| `settle_a` *(optional in-between)* | 400–480 ms | follow-through: hair, ribbon, earrings and cloth catch up |
-| `settle_b` | 480–780 ms, fading from 560 ms | the settled finish: attractive when paused |
+| `prep_a` | 0–132 ms (the entrance from the left edge) | anticipation: arriving, gathering, hair and cloth trailing |
+| `prep_b` *(optional in-between)* | 132–220 ms | anticipation continuing |
+| `cue` | 220–310 ms | the identifying gesture begins |
+| `cue_b` *(optional in-between)* | 310–376 ms | the gesture on its way to the peak |
+| `peak` | 376–761 ms | the gesture or expression at its height: **the principal held pose**, the hero moment |
+| `settle_a` *(optional in-between)* | 761–851 ms | follow-through: hair, ribbon, earrings and cloth catch up |
+| `settle_b` | 851–1,400 ms, fading from 1,040 ms | the settled finish: attractive when paused |
+
+(Robin's decision, 2026-10-05: Normal is the proposed performance, about 1.4 s — in 220, hold 820, fade 360 ms — with a
+small motion of the whole pair: a 3 art px overshoot at the end of the entrance, a 2.5 px lean as the peak lands and a
+1.5 px drift through the fade. The art itself does not move for it.)
 
 **Other modes:**
-- Fast compresses the same sequence (100 / 220 / 160 ms segments), keeping the identifying gesture.
+- Fast plays what Normal played before: 180 / 380 / 220 ms segments (780 ms), the same states, a plain slide and
+  fade, keeping the identifying gesture. `cue_b` takes the second half of `cue`'s span there (180–220 ms).
 - Instant shows nothing.
-- Reduced motion holds `peak`, then `settle_b`, with a short cross-fade and no travel.
+- Reduced motion holds `peak`, then `settle_b`, with a short cross-fade and no travel or motion.
 
-**Required states:** `prep_a`, `cue`, `peak` and `settle_b`. The optional in-betweens make the motion read
-smoothly. A missing state holds the one before.
+**Required states:** `prep_a`, `cue`, `peak` and `settle_b`. The optional in-betweens (`prep_b`, `cue_b`,
+`settle_a`) make the motion read smoothly. A missing state holds the one before; a six-state set without `cue_b`
+holds `cue` until the peak.
 
 **Expression changes:**
 - Every state changes the **eyes, lids, brows, mouth and cheeks**, not only the mouth.
@@ -424,7 +431,8 @@ accessories. They are not the delivery, and they are not committed. Robin judged
 - **Suzu's performance, approved as shown (now locked as six states, §8.0):** a hand to her chest with a soft smile (`prep_a`); reaching out
   with an open smile (`cue`); the reach with a wink and a burst of sparkles (`peak`); ending eyes-closed in a
   happy smile with her hands clasped below her chin (`settle_b`). The in-betweens (`suzu_prep_b`,
-  `suzu_settle_a`) are worth having for a smoother flourish.
+  `suzu_settle_a`) are worth having for a smoother flourish. Since Robin's decision of 2026-10-05 a third optional
+  in-between, `suzu_cue_b` (from the reach toward the wink), is accepted too; Robin's seven-frame art has it.
 - **For the real files, compared with the examples:**
   - every layer is painted in place on the template, at the head's tilted angle and scale; the example
     glasses are drawn flat-on and alone;

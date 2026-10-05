@@ -113,9 +113,9 @@ is ticked here: existing evidence (e.g. BA3) was not re-run in this phase.
 
 ### §7 Trigger, timing, lifecycle
 - [v] HX13 Plays only for a committed, legal technique at its own animation interval (`playPlayer()` with `card.kind === 'tech'`, i.e. inside `RB.battleSeq.run('player'|'finish', …)`); one per action including groups; never on meter fill, hover, selection, preview, recognition, the companion menu or `'join'`. — *missing.* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11) ("never").
-- [v] HX14 Normal timeline: in 0–180, hold 180–560, fade 560–780; companion preparation ≈500–1,050; release and effects ≈1,050–1,750; recovery ≈1,750–2,400; total 2.2–2.7 s (group < 3.0 s). Current 1.80–1.84 s. — *missing (HARMONY.md §3 gives the per-technique table).* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11).
+- [v] HX14 Normal timeline: in 0–180, hold 180–560, fade 560–780; companion preparation ≈500–1,050; release and effects ≈1,050–1,750; recovery ≈1,750–2,400; total 2.2–2.7 s (group < 3.0 s). Current 1.80–1.84 s. — *missing (HARMONY.md §3 gives the per-technique table).* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11). — **2026-10-05, Robin's decision:** the Normal portrait is now in 0–220, hold 220–1,040, fade 1,040–1,400 with a small motion, and the stage waits for it (first result ≥ 120 ms after it is gone); totals 2.57–2.69 s (group and slip ≤ 3.3 s). VALIDATION.md "Harmony portrait timing — Robin's decision (2026-10-05)".
 - [v] HX15 Fade, not pop-out: one continuous opacity ramp for the whole composition and its accents; layer removed at zero; sparkles end first. — *missing.* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11).
-- [v] HX16 Playback: Fast cut-in 480 ms wall (100 / 220 / 160) and technique 1.4–1.8 s; Instant none; reduced motion: fade-in instead of travel, held distinct poses, smooth fade-out, full detail; new setting **Harmony portrait flourish** On/Off (default On) suppressing only the portrait. Battle speed never changes reading/answer time. — *partial: battleAnim, reducedMotion present; flourish setting missing.* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11); reduced motion as two held poses (v3).
+- [v] HX16 Playback: Fast cut-in 480 ms wall (100 / 220 / 160) and technique 1.4–1.8 s; Instant none; reduced motion: fade-in instead of travel, held distinct poses, smooth fade-out, full detail; new setting **Harmony portrait flourish** On/Off (default On) suppressing only the portrait. Battle speed never changes reading/answer time. — *partial: battleAnim, reducedMotion present; flourish setting missing.* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11); reduced motion as two held poses (v3). — **2026-10-05, Robin's decision:** the Fast cut-in is now 780 ms wall (180 / 380 / 220: Normal's former timing), no motion; technique 1.63–1.71 s wall; the setting Off and Instant place no cue and no wait. VALIDATION.md "Harmony portrait timing — Robin's decision (2026-10-05)".
 - [v] HX17 Skip and interruption under the sequencer: the committing press cannot skip (existing fresh-press rule), Skip settles once and disposes the portrait; hidden tab, scene exit, campaign change, cancellation or error dispose it and its callbacks (token). — *partial: sequencer paths exist; portrait hooks missing.* — **2026-10-03:** VALIDATION.md "Harmony cut-in and the four stage performances" (harmony_cutin 11/11).
 
 ### §8 The top banner
@@ -286,7 +286,10 @@ an old instance can never touch a newer one.
 - in `settle(why)` and `detach()`: `RB.harmonyCutin.dispose(why)` (covers Skip, hidden tab, watchdog, overlap,
   scene exit); hurried playback (×4) simply runs the ramp faster;
 - `T.cutin = { normal: { in: 180, hold: 380, out: 220 }, fast: { in: 143, hold: 315, out: 229 } }` in
-  presentation ms (Fast's clock runs ×1.43, so these are 100 / 220 / 160 ms of wall time).
+  presentation ms (Fast's clock runs ×1.43, so these are 100 / 220 / 160 ms of wall time). **Robin's decision,
+  2026-10-05:** `normal: { in: 220, hold: 820, out: 360 }` (1,400 ms, with a small motion), `fast: { in: 257, hold: 543,
+  out: 315 }` (180 / 380 / 220 ms of wall time, 780); `T.cutinGap = 120`; the portrait is now advanced before `step()`
+  in `tick()`, so it is gone before any result of the same frame.
 
 **Who emits the cue.** `RB.partyChoreo.player()` for `plan.family === 'technique'`, at `at = t` (the
 technique's own animation start), only when `ctx.comp` is set, the setting is On and `RB.harmonyCutin.can()`
@@ -335,7 +338,9 @@ technique's interval (`P.end`). The cut-in's rect excludes the banner's.
 - Timing lives in `84p_party_choreo.js TECH[comp]` (`p`, `pAt`, `g`, `gAt`, `word`, `contact`, `rec`, `recD`, `end`)
   and in `player()`'s `perf` (`ant: 200 | 220`, `act: 520 | 540`). The new values per technique are in
   HARMONY.md §3; `contact` moves from 920–1,000 ms to ≈1,100–1,250 ms so the portrait is gone (≤780 ms at
-  Normal) before the principal impact.
+  Normal) before the principal impact. (Since Robin's decision of 2026-10-05 the portrait lasts 1,400 ms at Normal and
+  the technique's stage waits for it instead: `player()` starts every other cue `max(0, portrait end + 120 − contact)`
+  later; `TECH` itself is unchanged.)
 - New companion silhouettes go in `34m_battler_moves.js BY[comp]` (new gesture ids: `opening` for Nao,
   `draught` for Mio, `ward_plane` for Ren, `curtain` for Suzu — stable ids, §20.1), the player's terminal
   variants in `GEST` (`rally_thread`, `rally_release`, `rally_seal`, `rally_catch`). Suzu's twirl needs side and
@@ -452,7 +457,7 @@ view states whether it uses a synthetic fixture, a saved branch, or the live gam
 | Test | Owner |
 |---|---|
 | unit `harmony_art.test.mjs` (cache keys, invalidation on `'equip:change'`, no cross-campaign leak, bounded bytes) | Phase B/C |
-| unit `harmony_timing.test.mjs` (from `RB.partyChoreo.player()`: cut-in cue once per technique, ends ≤780 / fast 686 presentation ms, contact after the fade, totals 2.2–2.7 s Normal, 1.4–1.8 s Fast wall, <3.0 s group) | Phase B/C |
+| unit `harmony_timing.test.mjs` (from `RB.partyChoreo.player()`: cut-in cue once per technique, ends ≤780 / fast 686 presentation ms, contact after the fade, totals 2.2–2.7 s Normal, 1.4–1.8 s Fast wall, <3.0 s group; since 2026-10-05: 1,400 / 1,115 presentation ms, the first result ≥ the portrait's end + 120, totals 2.5–2.75 s Normal, 1.4–1.8 s Fast wall, ≤ 3.3 s group or slip, the motion sampled) | Phase B/C |
 | browser `harmony_cutin.mjs` (24 core configurations, geometry at the §23.2 viewports, overlay on/off frame comparison, disposal) | Phase B → F |
 | unit `staging.test.mjs` (op parsing/validation, cue binding, settle, cleanup, no mutation) and the validator's new ops | Phase D |
 | browser `wataru_omi.mjs` (8 combinations) | Phase B |

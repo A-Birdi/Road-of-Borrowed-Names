@@ -70,6 +70,18 @@ pairings differ only by the companion's arm path, and Ren's pairing shows the sa
 
 ## 3. The new timeline per playback setting
 
+> **Robin's decision, 2026-10-05 (supersedes the portrait's numbers below):** Normal plays the proposed performance,
+> in 220 / hold 820 / fade 360 ms (1,400), with a small motion (a 3 art px overshoot at the end of the slide, a 2.5 px
+> lean as the peak lands, a 1.5 px drift through the fade); Fast plays what Normal played before, 180 / 380 / 220 ms of
+> wall time (780; 257 / 543 / 315 presentation ms), no motion; Instant and the setting Off show nothing. The stage now
+> **waits** for the portrait: when it can play, every other cue of the technique starts `max(0, portrait end + 120 −
+> contact)` later (Normal: Nao 220, Mio 270, Ren 320, Suzu 240; Fast: Ren 35, the others 0), so the first result comes
+> ≥ 120 ms after it is gone; both performers stand in their ready stance through the wait. Totals: Normal 2.57–2.69 s,
+> Fast 1.63–1.71 s of wall time. A seventh portrait state, `cue_b`, sits between cue and peak. Details:
+> docs/harmony/contract/CONTRACT.md §4; code: src/ui/82_battle_seq.js `T.cutin`, src/ui/82d_harmony_cutin.js,
+> src/ui/84p_party_choreo.js `player()`. The tables below keep the plan as it was made; the stage's `TECH` times are
+> unchanged and now count from the end of the wait.
+
 ### 3.1 Shared skeleton (Normal; presentation ms = wall ms)
 
 | Interval | Cut-in (`RB.harmonyCutin`) | Stage (`RB.partyChoreo`) |
@@ -99,16 +111,16 @@ anticipate/act lengths become per-technique fields instead of the fixed 200/520 
 
 | Setting | Cut-in | Stage |
 |---|---|---|
-| **Normal** | in 180 / hold 380 / fade 220 (ends 780) | §3.1 |
-| **Fast** | `T.cutin.fast` = 143 / 315 / 229 presentation ms = **100 / 220 / 160 ms wall (480 ms)**; ends at 687 presentation ms, before every `contact` (≥1,150) | §3.1 values on the ×1.43 clock: 1.61–1.71 s per single-target technique |
+| **Normal** | in 180 / hold 380 / fade 220 (ends 780). **Since 2026-10-05:** in 220 / hold 820 / fade 360 (ends 1,400), with the small motion | §3.1; since 2026-10-05 after the wait (Nao 220, Mio 270, Ren 320, Suzu 240 ms): 2.57–2.69 s |
+| **Fast** | `T.cutin.fast` = 143 / 315 / 229 presentation ms = **100 / 220 / 160 ms wall (480 ms)**; ends at 687 presentation ms, before every `contact` (≥1,150). **Since 2026-10-05:** 257 / 543 / 315 presentation ms = **180 / 380 / 220 ms wall (780)**, no motion; ends at 1,115 presentation ms | §3.1 values on the ×1.43 clock: 1.61–1.71 s per single-target technique (since 2026-10-05: 1.63–1.71 s; Ren waits 35 ms) |
 | **Instant** | none (the sequencer settles at once; the `cutin` cue is in `fire1()`'s visual branch, skipped when `instant`) | none; the recap shows the result (unchanged) |
-| **Reduced motion** | fade in 180 at the final position (no slide), hold the resolved pose (no wink animation — the held "knowing" key), fade out 220; full detail | three distinct held keys per performer instead of interpolated travel: anticipation (0–750), signature (750–1,750), recovery (1,750–end); Suzu: preparation, open-armed cue, finish — no spin (§9.6) |
-| **Harmony portrait flourish: Off** | none | unchanged §3.1 timings (the stage choreography and banner are kept; only the portrait goes) |
+| **Reduced motion** | fade in 180 at the final position (no slide), hold the resolved pose (no wink animation — the held "knowing" key), fade out 220; full detail (since 2026-10-05 on the mode's segments: Normal 220 / 820 / 360; no motion) | three distinct held keys per performer instead of interpolated travel: anticipation (0–750), signature (750–1,750), recovery (1,750–end); Suzu: preparation, open-armed cue, finish — no spin (§9.6) |
+| **Harmony portrait flourish: Off** | none (since 2026-10-05 no cue at all) | unchanged §3.1 timings (the stage choreography and banner are kept; only the portrait goes; no wait) |
 | **Hurried** (Z / Enter / click) | the same instance runs on the ×4 clock (fades fully, then disposes) | ×4 (existing) |
 | **Skip** | `settle('skip')` → `dispose('skip')` at once | the rest applied at once (existing) |
 | **Hidden tab / watchdog / scene exit** | `dispose('hidden' / 'watchdog' / 'exit')` | settled (existing) |
-| **A slip cost** | the cut-in starts with the technique's gesture, after the 320 ms slip beat (the cue's `at` = the `t` after the cost) | +320 (existing) |
-| **Winning technique** | unchanged (gone by 780) | `choreo.finish` appended at `P.end − 360` (existing) |
+| **A slip cost** | the cut-in starts with the technique's gesture, after the 320 ms slip beat (the cue's `at` = the `t` after the cost) | +320 (existing); the same wait after it |
+| **Winning technique** | unchanged (gone by 780; since 2026-10-05 by 1,400, before the first result) | `choreo.finish` appended at `P.end − 360` (existing) |
 
 The banner's interval follows `P.end` automatically (blue party banner throughout, out by `P.end − 120`).
 
@@ -236,7 +248,11 @@ proposals for `34m_battler_moves.js`.
   give cue timestamps for one capture per pairing (§23.1).
 - Unit: from `RB.partyChoreo.player()`, assert per technique: one `cutin` cue at `t`; its end ≤ 780 (Normal),
   ≤ 687 presentation ms (Fast); first `beat` after the cut-in's end; `end` in 2,200–2,700 (group < 3,000);
-  `RB.partyChoreo.coverage().techs` all mapped; with reduced motion, three held keys per performer.
+  `RB.partyChoreo.coverage().techs` all mapped; with reduced motion, three held keys per performer. **Since Robin's
+  decision of 2026-10-05** (`tests/unit/harmony_timing.test.mjs`): the cue's `d` is 1,400 (Normal) / 1,115
+  presentation ms (Fast); the first `beat` ≥ the portrait's end + 120 at Normal, Fast and after a slip; every other
+  cue exactly the wait later than with the portrait Off; `end` 2,500–2,750 at Normal (group and slip ≤ 3,300), Fast
+  1.4–1.8 s of wall time; no cue and no wait with the setting Off or at Instant.
 - Browser: the 24 core configurations, geometry and overlay on/off comparisons (CONTRACT.md HX64–HX65).
 
 ## 7. As built (the cut-in and stage worker)
@@ -254,9 +270,10 @@ gestures in `src/engine/34m_battler_moves.js`, the rig's `turn` / `clothFlare`, 
 ### 7.1 Lifecycle and timing as built
 
 One instance at a time, token `n`; states `inactive → entering → holding → fading → disposed`, each transition
-stamped on the presentation clock (`RB.harmonyCutin.last().marks`, frame resolution). The choreography always
-places the cue (one per technique, groups included, only with a committed companion); the overlay decides
-whether it shows: setting Off, Instant (never fired), a reading layer open (dialogue, word help, the
+stamped on the presentation clock (`RB.harmonyCutin.last().marks`, frame resolution). The choreography places
+the cue (one per technique, groups included, only with a committed companion — and, since Robin's decision of
+2026-10-05, only when a portrait can play: the setting On, not Instant; the stage then waits for it, §3); the overlay
+decides whether it shows: setting Off, Instant (never fired), a reading layer open (dialogue, word help, the
 language task, a confirmation, any `aria-modal` sheet), a hidden tab, or no safe placement — each counted in
 `stats().suppressed`, a placement failure recorded in `stats().fallbacks` with every fit step tried.
 
@@ -290,6 +307,42 @@ Measured (headless Chromium, 2026-10-03; presentation ms from the cue, frame res
 | Suzu | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2450 | 4 ms |
 
 Also run per pairing: pet hidden, pet shown, portrait off — no portrait layer at any frame with the setting Off; the stage performance and every result unchanged (the rules' state compared across all 30 configurations).
+
+Measured again after Robin's decision (headless Chromium, 2026-10-05, `node tests/e2e/harmony_cutin.mjs core`; Normal
+1,400 ms with the wait before the stage, Fast 1,115 presentation ms = 780 wall; the portrait Off: no cue, no wait):
+
+| Pairing | Speed | entering | holding | fading | disposed | first result | sequence end | wall time |
+|---|---|---|---|---|---|---|---|---|
+| Nao | normal | 0 | 233.3 | 1050 | 1400 | 1533 | 2570 | 2564 ms |
+| Nao | normal (reduced motion) | 0 | 233.5 | 1050 | 1400 | 1533 | 2570 | 2572 ms |
+| Nao | fast | 0 | 262.1 | 810.2 | 1120 | 1311 | 2350 | 1637 ms |
+| Nao | fast (reduced motion) | 0 | 262.1 | 810.2 | 1120 | 1311 | 2350 | 1639 ms |
+| Nao | instant | — | — | — | — (no portrait) | 0 | 2350 | 4 ms |
+| Nao | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2350 | 5 ms |
+| Nao | normal (portrait off) | — | — | — | — (no portrait) | 1300 | 2350 | 2342 ms |
+| Mio | normal | 0 | 233.4 | 1050 | 1416.7 | 1533 | 2670 | 2664 ms |
+| Mio | normal (reduced motion) | 0 | 233.3 | 1050 | 1400 | 1533 | 2670 | 2673 ms |
+| Mio | fast | 0 | 262.3 | 810.4 | 1120.1 | 1263 | 2400 | 1672 ms |
+| Mio | fast (reduced motion) | 0 | 262.1 | 810.4 | 1120.1 | 1263 | 2400 | 1669 ms |
+| Mio | instant | — | — | — | — (no portrait) | 0 | 2400 | 5 ms |
+| Mio | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2400 | 4 ms |
+| Mio | normal (portrait off) | — | — | — | — (no portrait) | 1267 | 2400 | 2408 ms |
+| Mio | normal (pet shown) | 0 | 233.4 | 1050 | 1400 | 1533 | 2670 | 2674 ms |
+| Mio | normal (pet hidden) | 0 | 233.3 | 1049.9 | 1416.5 | 1533 | 2670 | 2675 ms |
+| Ren | normal | 0 | 233.3 | 1049.9 | 1416.5 | 1533 | 2620 | 2623 ms |
+| Ren | normal (reduced motion) | 0 | 233.3 | 1049.9 | 1416.6 | 1533 | 2620 | 2621 ms |
+| Ren | fast | 0 | 262.1 | 810.2 | 1120 | 1239 | 2335 | 1623 ms |
+| Ren | fast (reduced motion) | 0 | 262.1 | 810.2 | 1120.1 | 1239 | 2335 | 1622 ms |
+| Ren | instant | — | — | — | — (no portrait) | 0 | 2300 | 5 ms |
+| Ren | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2300 | 4 ms |
+| Ren | normal (portrait off) | — | — | — | — (no portrait) | 1217 | 2300 | 2307 ms |
+| Suzu | normal | 0 | 233.4 | 1050 | 1400 | 1533 | 2690 | 2685 ms |
+| Suzu | normal (reduced motion) | 0 | 233.3 | 1050 | 1400 | 1533 | 2690 | 2688 ms |
+| Suzu | fast | 0 | 262.3 | 810.2 | 1120.1 | 1287 | 2450 | 1708 ms |
+| Suzu | fast (reduced motion) | 0 | 262.1 | 810.4 | 1120.1 | 1287 | 2450 | 1707 ms |
+| Suzu | instant | — | — | — | — (no portrait) | 0 | 2450 | 4 ms |
+| Suzu | instant (reduced motion) | — | — | — | — (no portrait) | 0 | 2450 | 5 ms |
+| Suzu | normal (portrait off) | — | — | — | — (no portrait) | 1283 | 2450 | 2458 ms |
 
 An art timeline (`RB.harmonyArt.timeline(comp)`, if the art provides one) is played instead of the two
 drawings: states on the in / hold / out segments by fraction, a missing state holds the one before, reduced

@@ -63,15 +63,22 @@ RB.partyChoreo = (function () {
     truth: { g: 'lens', motif: 'split', ant: 220, act: 520, word: W(140, 320, 200, 120, 440, 1160, 1340), contact: 760, rec: 1100, recD: 380, end: 1500 },
   };
   // Coordinated techniques (§8.5; Harmony addendum §7.2, §9): one named action, two real participants with
-  // complementary phases, one culmination. Times are presentation ms from the technique's own start:
-  //   0–780      the paired portrait (RB.harmonyCutin: in 0–180, hold 180–560, fade 560–780 at Normal) —
-  //              the `cutin` cue; meanwhile your rally begins (a breath, the writing hand gathered: gAnt)
+  // complementary phases, one culmination. Times are presentation ms from the technique's own start, as the
+  // stage performance would play alone (the portrait Off, or Instant):
+  //   0…         your rally begins (a breath, the writing hand gathered: gAnt)
   //   pAt…       the companion's anticipation (pAnt), then the signature (pAct), its cue at the gesture's
   //              release; held until the recovery
   //   gAt…       your terminal gesture (gAct), released on the companion's cue
-  //   contact    the first result (never before the portrait is gone), the rest 150 ms apart
+  //   contact    the first result, the rest 150 ms apart
   //   rec…       both back to the ready stance (the companion 60 ms later; recD), the technique's end
-  // Fast runs the same table on the ×1.43 clock (1.6–1.7 s); the portrait has its own Fast timing.
+  // The paired portrait (the `cutin` cue, at the technique's start; RB.harmonyCutin) is longer than the stage's lead-in
+  // (Robin's decision, 2026-10-05: Normal 1,400 ms; Fast 780 ms of wall time = 1,115 presentation ms), so when it can
+  // play, everything else of the technique — poses, sounds, the word, the carriers, the results and the end — starts
+  // WAIT = max(0, portrait end + T.cutinGap (120) − contact) later: the first result comes ≥ 120 ms after the portrait
+  // is gone (Normal: Nao 220, Mio 270, Ren 320, Suzu 240; Fast: Ren 35, the others 0). Through the wait both performers
+  // stand in their ready stance (the stage's own idle between actions: no pose cue, no new pose). If the portrait is
+  // then not shown (no space, a reading layer), the stage still waits — the same timing either way.
+  // Fast runs the same table on the ×1.43 clock (1.6–1.75 s of wall time); the portrait has its own Fast timing.
   // g / p: your gesture and the companion's (RB.battlerMoves: rally_*, and opening, draught, ward_plane,
   // curtain); sfx: short accents from the existing sound set (a brush stroke as the rally starts, the
   // companion's object or garment) — nothing is said, and muted play loses nothing.
@@ -156,6 +163,9 @@ RB.partyChoreo = (function () {
     return null;
   }
   const stillWord = (w) => ({ motif: w.motif, travel: 0, unfurl: 0, inkAt: 0, inkEnd: 0, fadeAt: Math.max(880, w.fadeAt - w.inkEnd), end: Math.max(980, w.end - w.inkEnd), still: 1 });
+  // the paired portrait's length at the current playback (presentation ms), 0 when none can play (the setting Off,
+  // Instant): src/ui/82d_harmony_cutin.js plays() / duration(), from RB.battleSeq.T.cutin
+  function portraitMs() { const HC = RB.harmonyCutin; return HC && typeof HC.plays === 'function' && HC.plays() ? HC.duration() : 0; }
 
   // The plan: who acts, the gesture, where the word goes, which family (stable ids for the pet and the record).
   function planOf(card, fx, ctx, H) {
@@ -228,16 +238,22 @@ RB.partyChoreo = (function () {
     const F = plan.spec, W = wordOf(card, ctx);
     const tech = plan.family === 'technique';
     const rel = (g, who) => (who === 'comp' ? MV().release(ctx.comp, g) : MV().release('pc', g));
+    if (tech) {
+      // the paired portrait (Harmony addendum §5, §7): one cue at the technique's own start (after a slip, if any),
+      // whatever the number of targets; only with a committed companion, and only when a portrait can play (the
+      // setting On, not Instant: RB.harmonyCutin.plays()). Its d is its real length at this playback; the stage waits
+      // for it (TECH, above), and the cue carries when the first result comes (first, from its own start).
+      const pm = ctx.comp ? portraitMs() : 0;
+      if (pm > 0) {
+        const wait = Math.max(0, pm + ((H.T && H.T.cutinGap) || 120) - F.contact);
+        Q.push({ at: t, type: 'cutin', comp: ctx.comp, tech: plan.tech, d: pm, wait, first: wait + F.contact });
+        t += wait; // (everything below starts that much later)
+      }
+    }
     // gestures: anticipation → express/release → recovery (a technique: two complementary performances)
     const perf = tech ? [] : [{ who: 'pc', g: F.g, at: 0, ant: F.ant, act: F.act }];
     const releaseAt = tech ? techPoses(Q, t, F, rd, ctx) : {};
-    if (tech) {
-      // the paired portrait (Harmony addendum §5, §7): one cue at the technique's own start, whatever the
-      // number of targets; only with a committed companion. RB.harmonyCutin decides whether it shows (the
-      // setting, Instant, a reading layer, the space available) — the stage below is the same either way.
-      if (ctx.comp) Q.push({ at: t, type: 'cutin', comp: ctx.comp, tech: plan.tech, d: 780 });
-      for (const [at, name] of F.sfx || []) Q.push({ at: t + at, type: 'sfx', name });
-    }
+    if (tech) for (const [at, name] of F.sfx || []) Q.push({ at: t + at, type: 'sfx', name });
     for (const p of perf) {
       if (rd) Q.push({ at: t + p.at, type: 'pose', who: p.who, pose: 'act', gesture: p.g, d: F.rec + F.recD - p.at });
       else {

@@ -222,6 +222,10 @@ with this report). Browser tests one at a time, Playwright with the preinstalled
    build: see VALIDATION.md, "2026-10-04 — Shared portrait profiles (WI13), the cut-in's dock race and fit order …". (A first
    version faded the portrait in where it stood after the wait; it was replaced so that tablets and phones keep the
    slide.)
+   **Superseded in part by Robin's decision of 2026-10-05** (CONTRACT.md §4): the portrait now lasts 1,400 ms at Normal
+   (780 ms wall at Fast) and the technique's stage waits for it, so its first result comes ≥ 120 ms after the planned
+   end; a late start after this wait must still end 60 ms before that result — the hold gives up the difference (at
+   most half of it) instead of the fixed 1,140 ms limit above.
 4. **The registry's `source.git.branch`** records the worktree branch it was generated on; regenerate after merging
    if that matters.
 5. The other asset-brief sheets (`ref_companion_*`, `ref_player_*`) differ from the game now (its dialogue portraits

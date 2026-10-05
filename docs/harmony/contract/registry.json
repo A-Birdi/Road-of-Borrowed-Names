@@ -20,8 +20,10 @@
  "artVersion": 1,
  "assetKeys": {
   "optional": [
+   "mio_cue_b",
    "mio_prep_b",
    "mio_settle_a",
+   "nao_cue_b",
    "nao_prep_b",
    "nao_settle_a",
    "pc_arm_prep_b_fitted",
@@ -49,8 +51,10 @@
    "pc_hair_wavy_front_swing",
    "pc_hair_wrap_back_swing",
    "pc_hair_wrap_front_swing",
+   "ren_cue_b",
    "ren_prep_b",
    "ren_settle_a",
+   "suzu_cue_b",
    "suzu_prep_b",
    "suzu_settle_a"
   ],
@@ -160,6 +164,7 @@
    ],
    "optional": [
     "suzu_prep_b",
+    "suzu_cue_b",
     "suzu_settle_a",
     "suzu_peak_fx",
     "pc_arm_prep_b_fitted"
@@ -811,6 +816,7 @@
     },
     "optional": [
      "suzu_prep_b",
+     "suzu_cue_b",
      "suzu_settle_a",
      "suzu_peak_fx",
      "pc_arm_prep_b_fitted"
@@ -873,6 +879,7 @@
   },
   "codePhase": {
    "cue": "hold",
+   "cue_b": "hold",
    "peak": "hold",
    "prep_a": "enter",
    "prep_b": "enter",
@@ -907,6 +914,7 @@
   },
   "exprOf": {
    "cue": "cue",
+   "cue_b": "cue",
    "peak": "peak",
    "prep_a": "focus",
    "prep_b": "focus",
@@ -1008,6 +1016,9 @@
    "clothTrim0": "#0a3a44",
    "hair0": "#2a0a3a"
   },
+  "kitState": {
+   "cue_b": "cue"
+  },
   "mask": {
    "accessory": "#ff00ff",
    "clothMain": "#0000ff",
@@ -1022,6 +1033,10 @@
    "clothMain",
    "clothTrim",
    "accessory"
+  ],
+  "modes": [
+   "normal",
+   "fast"
   ],
   "notShown": {
    "apronstrap": "part of the apron",
@@ -1039,6 +1054,7 @@
   },
   "optional": [
    "prep_b",
+   "cue_b",
    "settle_a"
   ],
   "outline": "#140c18",
@@ -1169,16 +1185,17 @@
   ],
   "segments": {
    "fast": {
-    "hold": 220,
-    "in": 100,
-    "out": 160
-   },
-   "normal": {
     "hold": 380,
     "in": 180,
     "out": 220
+   },
+   "normal": {
+    "hold": 820,
+    "in": 220,
+    "out": 360
    }
   },
+  "segmentsUnit": "wall ms",
   "sleeveOf": {
    "apron": "fitted",
    "coat": "fitted",
@@ -1212,6 +1229,7 @@
    "prep_a",
    "prep_b",
    "cue",
+   "cue_b",
    "peak",
    "settle_a",
    "settle_b"
@@ -1225,10 +1243,10 @@
     "from": 0,
     "phase": "prep_a",
     "seg": "in",
-    "to": 0.5
+    "to": 0.6
    },
    {
-    "from": 0.5,
+    "from": 0.6,
     "phase": "prep_b",
     "seg": "in",
     "to": 1
@@ -1237,22 +1255,28 @@
     "from": 0,
     "phase": "cue",
     "seg": "hold",
-    "to": 0.21
+    "to": 0.11
    },
    {
-    "from": 0.21,
+    "from": 0.11,
+    "phase": "cue_b",
+    "seg": "hold",
+    "to": 0.19
+   },
+   {
+    "from": 0.19,
     "phase": "peak",
     "seg": "hold",
-    "to": 0.58
+    "to": 0.66
    },
    {
-    "from": 0.58,
+    "from": 0.66,
     "phase": "settle_a",
     "seg": "hold",
-    "to": 0.79
+    "to": 0.77
    },
    {
-    "from": 0.79,
+    "from": 0.77,
     "phase": "settle_b",
     "seg": "hold",
     "to": 1
@@ -1264,6 +1288,108 @@
     "to": 1
    }
   ],
+  "timelines": {
+   "fast": [
+    {
+     "from": 0,
+     "phase": "prep_a",
+     "seg": "in",
+     "to": 0.5
+    },
+    {
+     "from": 0.5,
+     "phase": "prep_b",
+     "seg": "in",
+     "to": 1
+    },
+    {
+     "from": 0,
+     "phase": "cue",
+     "seg": "hold",
+     "to": 0.105
+    },
+    {
+     "from": 0.105,
+     "phase": "cue_b",
+     "seg": "hold",
+     "to": 0.21
+    },
+    {
+     "from": 0.21,
+     "phase": "peak",
+     "seg": "hold",
+     "to": 0.58
+    },
+    {
+     "from": 0.58,
+     "phase": "settle_a",
+     "seg": "hold",
+     "to": 0.79
+    },
+    {
+     "from": 0.79,
+     "phase": "settle_b",
+     "seg": "hold",
+     "to": 1
+    },
+    {
+     "from": 0,
+     "phase": "settle_b",
+     "seg": "out",
+     "to": 1
+    }
+   ],
+   "normal": [
+    {
+     "from": 0,
+     "phase": "prep_a",
+     "seg": "in",
+     "to": 0.6
+    },
+    {
+     "from": 0.6,
+     "phase": "prep_b",
+     "seg": "in",
+     "to": 1
+    },
+    {
+     "from": 0,
+     "phase": "cue",
+     "seg": "hold",
+     "to": 0.11
+    },
+    {
+     "from": 0.11,
+     "phase": "cue_b",
+     "seg": "hold",
+     "to": 0.19
+    },
+    {
+     "from": 0.19,
+     "phase": "peak",
+     "seg": "hold",
+     "to": 0.66
+    },
+    {
+     "from": 0.66,
+     "phase": "settle_a",
+     "seg": "hold",
+     "to": 0.77
+    },
+    {
+     "from": 0.77,
+     "phase": "settle_b",
+     "seg": "hold",
+     "to": 1
+    },
+    {
+     "from": 0,
+     "phase": "settle_b",
+     "seg": "out",
+     "to": 1
+    }
+   ]
+  },
   "version": 3
  },
  "contractVersion": 3,
@@ -2952,12 +3078,12 @@
   "generator": "tools/harmony_registry.mjs",
   "git": {
    "branch": "claude/stoic-sagan-n3jvgk",
-   "commit": "9174d120865818fc99f2e15e76ee5f7adde0f939",
+   "commit": "c7bb0a3e5f6e657e219894597562577be235b999",
    "dirty": true
   },
   "indexHtml": {
-   "bytes": 10405032,
-   "sha256": "5adc6800f7aa7d7ede59a8238abc9378b3c20367b07fe30d2e802f8a45131e0c"
+   "bytes": 11205815,
+   "sha256": "65b30b22bebefdfdc8c2fd0f602739c8fc87b4c73357246f93cdd8bffd40c564"
   },
   "note": "git.commit is HEAD when exported; the export is committed with or after it. indexHtml is the build it was read from.",
   "renderer": [

@@ -12,15 +12,20 @@
  *
  * Lifecycle (one instance at a time, each with its own token):
  *   inactive → entering → holding → fading → disposed
- *   Normal: slides in from beyond the left edge 0–180 ms (ease-out), holds 180–560 (the art's 'enter' drawing
- *   resolves into its 'hold' gesture once), fades in place 560–780, and the layer is removed at zero —
- *   before every principal impact (the first result comes at ≥ 1,200 ms). Fast: 100 / 220 / 160 ms of wall
- *   time (RB.battleSeq.T.cutin). Reduced motion: a short fade in where it stands (no travel), the held
- *   drawing, the same smooth fade out — with painted art (contract v3) two held poses instead of one: `peak`, then
- *   `settle_b`, joined by one restrained cross-fade (RB.harmonyContract.REDUCED_MOTION: 100 presentation ms at the
- *   middle of the hold), still no travel. Instant, or the setting "Harmony portrait flourish" Off: nothing.
- *   Hurried playback (×4) runs the same ramps faster. An older instance's callbacks can never touch a newer
- *   one (every path checks the token).
+ *   Timing (Robin's decision, 2026-10-05; RB.battleSeq.T.cutin in presentation ms, RB.harmonyContract.SEGMENTS in
+ *   wall ms): Normal slides in from beyond the left edge 0–220 ms (ease-out, overshooting 3 art px to the right),
+ *   holds 220–1,040 (the art's 'enter' drawing resolves into its 'hold' gesture once; painted art plays its seven-state
+ *   timeline) with a small motion — it settles back from the overshoot, leans 2.5 art px left as the peak lands, drifts
+ *   1.5 left (MOTION) — and fades in place 1,040–1,400 as the drift ends; the layer is removed at zero. Fast plays what
+ *   Normal played before: 180 / 380 / 220 ms of wall time (257 / 543 / 315 presentation ms on its ×1.43 clock), the
+ *   plain slide and fade, no motion. The technique's stage waits for it (src/ui/84p_party_choreo.js: its first result
+ *   comes ≥ 120 presentation ms after the portrait is gone; the cue carries that moment as `first`). Reduced motion: a
+ *   short fade in where it stands (no travel, no motion), the held drawing, the same smooth fade out — with painted art
+ *   (contract v3) two held poses instead of one: `peak`, then `settle_b`, joined by one restrained cross-fade
+ *   (RB.harmonyContract.REDUCED_MOTION: 100 presentation ms at the middle of the mode's hold). Instant, or the setting
+ *   "Harmony portrait flourish" Off: nothing (and the choreography places no cue). Hurried playback (×4) runs the same
+ *   ramps and the same motion faster. An older instance's callbacks can never touch a newer one (every path checks
+ *   the token).
  *
  * Placement (§5.2–§5.4), measured every time from the live layout (CSS px):
  *   protected: the Resolve/Harmony dock (.cb-party), the action banner, the telegraph and the response dock
@@ -29,7 +34,10 @@
  *   wall time, the entrance runs on the presentation clock — and then makes its whole entrance), the creatures' plates and
  *   badges, each creature's silhouette with its knots (the impact destination), the on-field party, Skip,
  *   the battle's Settings button, an open intent card — each kept 12 px clear, tested against the composition's own visible rows (its
- *   transparent corners are not footprint; its hands, glow and backing are). A dialogue, the language task,
+ *   transparent corners are not footprint; its hands, glow and backing are), each row widened by the motion's reach at
+ *   Normal (ENVELOPE: 3 art px × the scale to the right, the overshoot, and to the left, the lean and drift) so the
+ *   motion never brings it nearer than 12 px; a placement that fits only without that reach gives way to the next
+ *   candidate. A dialogue, the language task,
  *   word help or another reading layer means no cut-in starts (and an open one is removed at once).
  *   Candidates: the standard pair in the left-middle space (at RB.harmonyArt.fitScale); the same moved
  *   up or down on the left; the authored compact pair (with its backing, then without backing and
@@ -51,6 +59,8 @@
  *   RB.harmonyCutin.start(cue, atPt, rec) → token | null      (the sequencer only)
  *   RB.harmonyCutin.frame(pt)                                 (the sequencer's clock, every frame)
  *   RB.harmonyCutin.dispose(why) → boolean
+ *   RB.harmonyCutin.plays(), duration([mode])   (the choreography: can a portrait play now — the setting On and the
+ *                                               playback not Instant — and its length in presentation ms; 0 when not)
  *   RB.harmonyCutin.enabled(), place(o), state(), stats(), last(), reset()   (tests, the dev viewer) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -68,9 +78,45 @@ RB.harmonyCutin = (function () {
   const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
   const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
+  // ---- the motion at Normal (Robin's decision, 2026-10-05) ----------------------------------------------------
+  // Offsets in art px of the composition (+ is right), × its display scale, rounded to whole CSS px; h = ms since the
+  // hold began. In: from beyond the left edge, x = −W + (W + over)·easeOut(k) (W: the travel, as before), so it
+  // overshoots `over` to the right. Hold: it settles back, + over·(1 − smooth(h / settle)); it leans as the peak lands
+  // (q = h − the peak's start in the hold: for q ≥ 0, − lean·(q < leanIn ? smooth(q / leanIn) : 1 − smooth((q − leanIn)
+  // / leanOut))); it drifts, − drift·smooth(h / (hold + out)), which the fade continues to its end. Fast keeps the plain
+  // slide and fade; reduced motion has neither travel nor motion. Hurried, the same on the faster clock.
+  const MOTION = { normal: { over: 3, settle: 140, lean: 2.5, leanIn: 50, leanOut: 260, drift: 1.5 } };
+  // How far that motion reaches either side of where the composition stands (art px), for placement: right, the
+  // overshoot (3); left, the lean and the drift together (4: with the default timelines it reaches about 2.6, but a
+  // manifest's override may put the peak late in the hold, where both add up).
+  const ENVELOPE = { normal: { r: MOTION.normal.over, l: MOTION.normal.lean + MOTION.normal.drift } };
+  const NO_ENVELOPE = { r: 0, l: 0 };
+  const widen = (sp, e) => (e.r || e.l ? sp.map((q) => (q ? [q[0] - e.l, q[1] + e.r] : null)) : sp);
+  const seqMode = () => (RB.battleSeq && RB.battleSeq.mode ? RB.battleSeq.mode() : 'normal');
+  // the in-slide's x (art px, unrounded) at k (0–1 of the in) for a travel of W art px: Normal overshoots, Fast does not
+  function slideAt(M, W, k) { const e = easeOut(k); return M ? -W + (W + M.over) * e : -(1 - e) * W; }
+  // the x offset (art px, unrounded) at h ms into the hold (continuing through the fade); noOver: no overshoot to
+  // settle from (a late placement faded in where it stands)
+  function motionAt(M, d, peakH, h, noOver) {
+    if (!M) return 0;
+    let x = noOver ? 0 : M.over * (1 - smooth(h / M.settle));
+    const q = h - peakH;
+    if (q >= 0) x -= M.lean * (q < M.leanIn ? smooth(q / M.leanIn) : 1 - smooth((q - M.leanIn) / M.leanOut));
+    x -= M.drift * smooth(h / (d.hold + d.out));
+    return x;
+  }
+
   // ---- the setting and the moments it must not start -------------------------------------------------
   // "Harmony portrait flourish" (default On): presentation only; older settings records lack it (= On).
   const enabled = () => !(RB.game && RB.game.settings && RB.game.settings.harmonyFlourish === false);
+  // Can a portrait play now (for the choreography, which makes the stage wait for it): the setting On and the playback
+  // not Instant. (Whether it then shows — a reading layer, the space — is decided when it starts; the stage waits anyway.)
+  const plays = () => enabled() && seqMode() !== 'instant';
+  // its length in presentation ms at a playback mode (default: the current one); 0 at Instant
+  function duration(mode) {
+    const m = mode || seqMode(), d = RB.battleSeq && RB.battleSeq.T && RB.battleSeq.T.cutin && RB.battleSeq.T.cutin[m];
+    return d ? d.in + d.hold + d.out : 0;
+  }
   function readingOpen() {
     try {
       if (RB.ui && RB.ui.dialogue && RB.ui.dialogue.isOpen && RB.ui.dialogue.isOpen()) return 'dialogue';
@@ -86,16 +132,16 @@ RB.harmonyCutin = (function () {
   }
   // the art's phases over an instance's life (data: a third 'flourish' drawing may appear between them)
   function phases() { const P = A() && A().PHASES; return Array.isArray(P) && P.length ? P.slice() : ['enter', 'hold']; }
-  // An authored performance of the portrait, where the art provides one: RB.harmonyArt.timeline(comp) →
+  // An authored performance of the portrait, where the art provides one: RB.harmonyArt.timeline(comp, mode) →
   // [{ phase, seg: 'in'|'hold'|'out', from, to }] (fractions of that segment's duration in RB.battleSeq.T.cutin
-  // for the playback mode) — e.g. prep_a, prep_b while it arrives; cue, peak, settle_a while it holds; settle_b
-  // through the hold's end and the fade. A state the art leaves out holds the one before. Without a timeline
-  // the two drawings above are used ('enter' arriving, then 'hold'). Each entry gets its place on one line:
-  // in 0–1, hold 1–2, out 2–3.
+  // for the playback mode, whose own fractions they are) — e.g. prep_a, prep_b while it arrives; cue, cue_b, peak,
+  // settle_a while it holds; settle_b through the hold's end and the fade. A state the art leaves out holds the one
+  // before. Without a timeline the two drawings above are used ('enter' arriving, then 'hold'). Each entry gets its
+  // place on one line: in 0–1, hold 1–2, out 2–3.
   const SEG = { in: 0, hold: 1, out: 2 };
-  function timelineOf(comp) {
+  function timelineOf(comp, mode) {
     try {
-      const T = A() && typeof A().timeline === 'function' ? A().timeline(comp) : null;
+      const T = A() && typeof A().timeline === 'function' ? A().timeline(comp, mode) : null;
       if (!Array.isArray(T) || !T.length) return null;
       const out = T.filter((e) => e && e.phase && SEG[e.seg] != null).map((e) => ({ phase: e.phase, at: SEG[e.seg] + Math.max(0, Math.min(1, +e.from || 0)) }));
       out.sort((a, b) => a.at - b.at);
@@ -125,6 +171,15 @@ RB.harmonyCutin = (function () {
     return { a: st[0], b: st[1], at: segAt[RM.at.seg] + segLen[RM.at.seg] * RM.at.from, fade: Math.min(120, RM.crossFade) };
   }
   const holdPhase = (comp) => { const T = timelineOf(comp); return T ? T[T.length - 1].phase : 'hold'; };
+  // Where the peak begins on the in–hold–out line (0–3): the painted timeline's own, else the contract's at the mode (the
+  // code busts have no peak drawing; their lean lands on the same beat). peakH: that, in ms from the hold's start.
+  function peakLine(tl, mode) {
+    const e = tl && tl.find((x) => x.phase === 'peak');
+    if (e) return e.at;
+    try { const p = RB.harmonyContract.timeline(null, null, mode).find((x) => x.phase === 'peak'); if (p) return SEG[p.seg] + p.from; } catch (err) { /* no contract */ }
+    return 1.19;
+  }
+  const peakH = (c) => { const a = c.peakAt, d = c.d; return a < 1 ? (a - 1) * d.in : a < 2 ? (a - 1) * d.hold : d.hold + (a - 2) * d.out; };
 
   // ---- measuring ------------------------------------------------------------------------------------
   // (fading: an element whose opacity is running up from 0 — the banner as it appears — still counts)
@@ -227,10 +282,13 @@ RB.harmonyCutin = (function () {
     return out;
   }
   // The placement for a companion's pair in the current layout, the candidates tried larger faces first (see the header).
-  // o: { comp, look, view?: {w, h} } → { ok, variant, scale, x, y, w, h, fit, footprint, faceH, backing, fx,
-  //      tried: [...], reason }
+  // o: { comp, look, still?, mode?, view?: {w, h} } → { ok, variant, scale, x, y, w, h, fit, footprint, envelope, faceH,
+  //      backing, fx, tried: [...], reason }. mode (default: the playback's): at Normal, not still, every drawn row is
+  //      tested widened by the motion's reach (ENVELOPE, art px × the scale) — the width check too.
+  function envelopeOf(o) { return (!o.still && ENVELOPE[o.mode || seqMode()]) || NO_ENVELOPE; }
   function place(o) {
     const vw = (o.view && o.view.w) || window.innerWidth, vh = (o.view && o.view.h) || window.innerHeight;
+    const env = envelopeOf(o);
     const rects = o.rects || protectedRects();
     const stage = visRect(document.querySelector('.combat-ui .cb-stage'));
     const party = rects.find((r) => r.id === 'party');
@@ -262,12 +320,13 @@ RB.harmonyCutin = (function () {
     const tried = [];
     for (const st of order) {
       const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
-      const { sp, comp } = spansOf(spec);
+      const { sp: sp0, comp } = spansOf(spec);
+      const sp = widen(sp0, env);
       const s = st.scale, b = comp.bounds;
       const faceH = Math.min(...comp.faces.map((f) => f.h)) * s, faceW = Math.min(...comp.faces.map((f) => f.w)) * s;
       if (faceH < 24) { tried.push({ fit: st.fit, scale: s, why: 'faces too small' }); continue; }
       const x = 0, w = comp.w * s, h = comp.h * s;
-      if (x + (b.x + b.w) * s > vw) { tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
+      if (x + (b.x + b.w + env.r) * s > vw) { tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
       const yMin = Math.ceil(-b.y * s), yMax = Math.floor(vh - (b.y + b.h) * s);
       if (yMax < yMin) { tried.push({ fit: st.fit, scale: s, why: 'too tall' }); continue; }
       const pref = Math.round(midY - (b.y + b.h / 2) * s);
@@ -282,7 +341,7 @@ RB.harmonyCutin = (function () {
       for (const y of cand) {
         const hit = hits(sp, x, y, s, rects);
         if (hit) { blocked = blocked || hit; continue; }
-        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
+        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, envelope: { l: env.l, r: env.r }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
       }
       tried.push({ fit: st.fit, scale: s, why: 'overlaps ' + blocked });
     }
@@ -303,11 +362,11 @@ RB.harmonyCutin = (function () {
     let look = {};
     try { look = JSON.parse(JSON.stringify(RB.equip.look(RB.game.s) || {})); } catch (e) { look = {}; }
     const mode = RB.battleSeq.mode();
-    const T = (RB.battleSeq.T.cutin || {})[mode] || { in: 180, hold: 380, out: 220 };
+    const T = (RB.battleSeq.T.cutin || {})[mode] || { in: 220, hold: 820, out: 360 };
     const reduce = !!(RB.game.reducedMotion && RB.game.reducedMotion());
     const action = rec && rec.meta && rec.meta.action ? rec.meta.action.id : null;
     let pl;
-    try { pl = place({ comp, look, still: reduce }); } catch (e) { pl = { ok: false, fit: 'omitted', reason: 'error: ' + (e && e.message), tried: [] }; }
+    try { pl = place({ comp, look, still: reduce, mode }); } catch (e) { pl = { ok: false, fit: 'omitted', reason: 'error: ' + (e && e.message), tried: [] }; }
     if (!pl.ok) {
       note('fallback');
       S.fallbacks.push({ action, comp, view: pl.view, reason: pl.reason, tried: pl.tried, rects: pl.rects, at: new Date().toISOString() });
@@ -324,7 +383,13 @@ RB.harmonyCutin = (function () {
     const root = document.querySelector('.combat-ui');
     root.insertBefore(el, root.querySelector('.cb-banner'));
     N++;
-    cur = { n: N, tl: timelineOf(comp), rm: null, mixQ: null, state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
+    const tl = timelineOf(comp, mode), total = T.in + T.hold + T.out;
+    // until: by when (presentation ms from the cue) the portrait must be gone, 60 ms before the technique's first result
+    // (the cue's `first`; the choreography places that ≥ 120 ms after the portrait's end, src/ui/84p_party_choreo.js)
+    const first = cue && cue.first > 0 ? cue.first : total + ((RB.battleSeq.T && RB.battleSeq.T.cutinGap) || 120);
+    cur = { n: N, tl, rm: null, mixQ: null, state: 'inactive', action, comp, tech: cue.tech || comp, look, reduce, mode, d: { in: T.in, hold: T.hold, out: T.out }, t0: at, wall0: now(), el, pl, phase: null, opacity: 0, dx: 0, marks: [], trace: [], dirty: false, cut: null,
+      // the motion (Normal, not reduced) and where its lean begins: the peak's place on the in–hold–out line
+      motion: (!reduce && MOTION[mode]) || null, peakAt: peakLine(tl, mode), until: first - 60, squeezed: 0,
       // with large text (or an overlay that scrolls) the layout may still reflow as the menus withdraw: the
       // portrait waits, unseen, until it has held still for a few frames (within its entrance), then takes its
       // place — or, if none is left, is not shown at all (never a flash over what then moves under it)
@@ -397,7 +462,7 @@ RB.harmonyCutin = (function () {
   // which drawing shows at elapsed el (presentation ms): the arrival, then (shortly after it has arrived) the
   // one gesture resolved into the hold; a 'flourish' drawing, where the art has one, between them
   function phaseAt(c, el) {
-    const T = c.tl !== undefined ? c.tl : timelineOf(c.comp);
+    const T = c.tl !== undefined ? c.tl : timelineOf(c.comp, c.mode);
     if (T) {
       // reduced motion: held poses (peak, then settle_b at the middle of the hold), else the last state only;
       // otherwise the latest state whose start has been reached
@@ -452,7 +517,7 @@ RB.harmonyCutin = (function () {
       c.dirty = false;
       S.relaid++;
       let pl;
-      try { pl = place({ comp: c.comp, look: c.look, still: c.reduce }); } catch (e) { pl = { ok: false }; }
+      try { pl = place({ comp: c.comp, look: c.look, still: c.reduce, mode: c.mode }); } catch (e) { pl = { ok: false }; }
       if (pl.ok) { const redraw = pl.variant !== c.pl.variant || pl.backing !== c.pl.backing; c.pl = pl; if (redraw) { c.phase = null; c.mixQ = null; } layout(c); }
       else {
         // no safe place any more: a short fade where it stands — or, if what it must keep clear of has moved
@@ -466,20 +531,22 @@ RB.harmonyCutin = (function () {
       }
     }
     // The withdrawn menus' region is free for the placement, but they leave on a CSS transition of wall time (200 ms)
-    // while the entrance runs on the presentation clock (180 ms; Fast 100 ms of wall time): under load one frame could
-    // show the portrait over a dock that is still visibly leaving. So the portrait claims that region only once every
-    // withdrawn menu its rows (and the path it slides in along) reach is gone — measured each frame, as drawn; until
-    // then it stays unseen and its state does not advance. Its whole entrance then plays from that moment (its own
-    // clock starts late by the wait: c.lag), so it still slides in; after a late placement (large text) it fades in
-    // where it stands instead. If the wait would leave too little time — the middle of the hold, or the whole
-    // performance no longer over well before the first result (≥ 1,200 presentation ms in) — it is not shown at all
-    // (recorded). Reduced motion has no such transition (the menus go at once), so it never waits.
+    // while the entrance runs on the presentation clock (Normal 220 ms; Fast 180 ms of wall time): under load one frame
+    // could show the portrait over a dock that is still visibly leaving. So the portrait claims that region only once
+    // every withdrawn menu its rows (and the path it slides in along, and the motion's reach) reach is gone — measured
+    // each frame, as drawn; until then it stays unseen and its state does not advance. Its whole entrance then plays from
+    // that moment (its own clock starts late by the wait: c.lag), so it still slides in; after a late placement (large
+    // text) it fades in where it stands instead. The stage waits for the portrait's planned end (≥ 120 ms before the
+    // first result, cue.first), so a late start must still end by c.until (60 ms before that result): when it would
+    // not, the hold is shortened by the difference (c.squeezed; the states keep their fractions of it). If the wait
+    // would leave too little — past the middle of the hold, or less than half the hold before c.until — it is not
+    // shown at all (recorded). Reduced motion has no such transition (the menus go at once), so it never waits.
     if (c.menus) {
       const el0 = pt - c.t0, wr = withdrawing();
       let over = null;
-      if (wr.length) { try { over = hits(spansOf({ comp: c.comp, look: c.look, still: c.reduce, variant: c.pl.variant, backing: c.pl.backing, fx: c.pl.fx }).sp, c.pl.x, c.pl.y, c.pl.scale, wr, true); } catch (e) { over = 'unknown'; } }
+      if (wr.length) { try { over = hits(widen(spansOf({ comp: c.comp, look: c.look, still: c.reduce, variant: c.pl.variant, backing: c.pl.backing, fx: c.pl.fx }).sp, c.pl.envelope || NO_ENVELOPE), c.pl.x, c.pl.y, c.pl.scale, wr, true); } catch (e) { over = 'unknown'; } }
       if (over) {
-        if (el0 >= Math.min(c.d.in + c.d.hold / 2, 1140 - (c.d.in + c.d.hold + c.d.out))) {
+        if (el0 >= Math.min(c.d.in + c.d.hold / 2, c.until - (c.d.in + c.d.hold / 2 + c.d.out))) {
           note('menus');
           S.fallbacks.push({ action: c.action, comp: c.comp, view: c.pl.view, reason: 'the withdrawn ' + over + ' stayed on screen', at: new Date().toISOString() });
           while (S.fallbacks.length > FALLBACK_CAP) S.fallbacks.shift();
@@ -490,11 +557,21 @@ RB.harmonyCutin = (function () {
         c.el.style.opacity = '0';
         return;
       }
-      if (c.menus.waited) { c.waited = Math.round(el0 * 10) / 10; if (c.lateAt != null) c.lateAt = el0; else c.lag = el0; }
+      if (c.menus.waited) {
+        c.waited = Math.round(el0 * 10) / 10;
+        if (c.lateAt != null) c.lateAt = el0;
+        else {
+          c.lag = el0;
+          // still gone by c.until: the hold gives up what the wait took beyond the slack (at most half of it, above)
+          const late = c.d.in + c.d.hold + c.d.out + el0 - c.until;
+          if (late > 0) { c.squeezed = Math.round(late * 10) / 10; c.d = { in: c.d.in, hold: c.d.hold - late, out: c.d.out }; }
+        }
+      }
       c.menus = null;
     }
     const el = pt - c.t0 - (c.lag || 0), d = c.d, total = d.in + d.hold + d.out;
     let state, op, dx = 0;
+    const s = c.pl.scale;
     if (c.cut) {
       const k = (pt - c.cut.pt) / c.cut.d;
       if (k >= 1) { dispose(c.cut.why); return; }
@@ -506,13 +583,21 @@ RB.harmonyCutin = (function () {
       else if (c.reduce) op = smooth(k);
       else {
         op = 1;
-        // from beyond the left edge, eased out; moved in whole art pixels (the grid stays stable)
-        const s = c.pl.scale, travel = c.pl.footprint.x + c.pl.footprint.w + 4;
-        dx = -Math.round(((1 - easeOut(k)) * travel) / s) * s;
+        const travel = c.pl.footprint.x + c.pl.footprint.w + 4;
+        // from beyond the left edge, eased out. Normal: x = −W + (W + over)·easeOut(k) art px (W the travel), × the
+        // scale, to whole CSS px — it overshoots to the right. Fast: as before, in whole art pixels, no overshoot.
+        if (c.motion) dx = Math.round(slideAt(c.motion, travel / s, k) * s);
+        else dx = -Math.round(-slideAt(null, travel / s, k)) * s; // (whole art pixels, exactly as before)
       }
-    } else if (el < d.in + d.hold) { state = 'holding'; op = c.lateAt != null ? smooth((el - c.lateAt) / 80) : 1; }
-    else if (el < total) { state = 'fading'; op = 1 - smooth((el - d.in - d.hold) / d.out); }
-    else { dispose('done'); return; }
+    } else if (el < d.in + d.hold) {
+      state = 'holding'; op = c.lateAt != null ? smooth((el - c.lateAt) / 80) : 1;
+      if (c.motion) dx = Math.round(motionAt(c.motion, d, peakH(c), el - d.in, c.lateAt != null) * s);
+    } else if (el < total) {
+      state = 'fading'; op = 1 - smooth((el - d.in - d.hold) / d.out);
+      // (the fade continues the drift to its end: h runs on through the fade)
+      if (c.motion) dx = Math.round(motionAt(c.motion, d, peakH(c), el - d.in, c.lateAt != null) * s);
+    } else { dispose('done'); return; }
+    if (dx === 0) dx = 0; // (no −0 in the record)
     if (state !== c.state) { c.state = state; mark(c, state, pt); }
     const ph = phaseAt(c, el), mx = c.reduce ? mixAt(c, el) : null;
     if (mx) drawMix(c, mx);
@@ -533,7 +618,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), envelope: c.pl.envelope || null, view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, motion: !!c.motion, segments: { in: c.d.in, hold: Math.round(c.d.hold * 10) / 10, out: c.d.out }, until: c.until, squeezed: c.squeezed || 0, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
@@ -597,5 +682,5 @@ RB.harmonyCutin = (function () {
     RB.bus.on('campaign:changing', () => { prepTok++; dispose('campaign'); spanCache.clear(); });
   }
 
-  return { start, frame, dispose, enabled, place, protectedRects, state, stats, last, reset, prepare, SEP, phases, _: { spansOf, hits, readingOpen, phaseAt, phaseList, timelineOf, mixAt, reducedPlan } };
+  return { start, frame, dispose, enabled, plays, duration, place, protectedRects, state, stats, last, reset, prepare, SEP, MOTION, ENVELOPE, phases, _: { spansOf, hits, widen, envelopeOf, readingOpen, phaseAt, phaseList, timelineOf, mixAt, reducedPlan, slideAt, motionAt, peakLine, peakH } };
 })();

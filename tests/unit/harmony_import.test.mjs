@@ -208,6 +208,28 @@ export default async (t) => {
     t.ok(mut((m) => { m.synthetic = false; m.companions.suzu.approval = 'approved'; m.pc.approval = 'candidate'; }).length === 0, 'a real set may carry candidate / approved per pairing and kit');
   } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
 
+  // ---- cue_b (Robin's decision, 2026-10-05): a seventh, optional state; a delivered <comp>_cue_b is imported as it --------
+  // (the sample with a copy of its own cue frame as suzu_cue_b: a stand-in for the in-between, not art)
+  {
+    const work = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-harmony-cueb-'));
+    try {
+      const inDir = path.join(work, 'in'), out = path.join(work, 'out');
+      fs.cpSync(path.join(root, 'tests/fixtures/harmony_sample/incoming'), inDir, { recursive: true });
+      fs.copyFileSync(path.join(inDir, 'suzu_cue.png'), path.join(inDir, 'suzu_cue_b.png'));
+      const cfg = JSON.parse(fs.readFileSync(path.join(inDir, 'import.json'), 'utf8'));
+      if (cfg.companions && cfg.companions.suzu && cfg.companions.suzu.face && cfg.companions.suzu.face.cue) cfg.companions.suzu.face.cue_b = cfg.companions.suzu.face.cue.slice();
+      fs.writeFileSync(path.join(inDir, 'import.json'), JSON.stringify(cfg, null, 1));
+      const res = importSet(inDir, { out, replace: true });
+      const st = res.manifest.companions.suzu.states;
+      t.ok(res.report.ok && JSON.stringify(st) === JSON.stringify(['prep_a', 'prep_b', 'cue', 'cue_b', 'peak', 'settle_b']) && res.manifest.files.suzu_cue_b && fs.existsSync(path.join(out, 'suzu_cue_b.png')), 'a delivered suzu_cue_b is imported as the state cue_b, in state order (' + st.join(', ') + ')');
+      t.eq(HC.validateManifest(res.manifest, fs.readdirSync(out)), [], 'its manifest passes the schema at both modes');
+      t.ok(res.manifest.batches['1a'].optionalPresent.includes('suzu_cue_b'), 'Batch 1a lists suzu_cue_b among its optional files');
+      const span = (mode) => { const e = HC.timeline(st, null, mode).find((x) => x.phase === 'cue_b'); return e && [e.seg, e.from, e.to]; };
+      t.eq([span('normal'), span('fast')], [['hold', 0.11, 0.19], ['hold', 0.105, 0.21]], 'its span: Normal 0.11–0.19 of the hold, Fast 0.105–0.21');
+      t.ok(verifySet(out).ok, '--verify passes on the seven-file companion set');
+    } finally { fs.rmSync(work, { recursive: true, force: true }); }
+  }
+
   // ---- the rich fixture (contract v3): many values per family, against its ground truth --------------------------------
   {
     const tmp3 = fs.mkdtempSync(path.join(os.tmpdir(), 'rbn-harmony-rich-'));

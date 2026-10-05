@@ -57,7 +57,9 @@ held, distinct keys each (Nao: the pencil out before their shoulder / the route'
 with a glance to you; Mio: the vial at eye level / high and tipped / the nod with the vial at her hip), the effects
 as still marks (the whole route with its pins and ring; the arc, a few drops and a ripple at each of your feet; the
 rinse as a few still drops). The paired portrait (0–780 ms) and the rule that the contact never comes before it is
-gone are unchanged (first results at 1,300 and 1,250).
+gone are unchanged (first results at 1,300 and 1,250). (Since Robin's decision of 2026-10-05 the portrait lasts 1,400 ms
+at Normal and the stage waits for it: these performances now start 220 ms (Nao) and 270 ms (Mio) later, their first
+results at 1,520; docs/harmony/contract/CONTRACT.md §4.)
 
 **Files:** src/engine/34m_battler_moves.js (NAO_EAR, NAO_A, NAO_K, NAO_SKETCH, `opening`; MIO_A, MIO_K,
 `draught`), src/engine/34_battlers.js (the pencil prop and its release point; `vialBig`),

@@ -96,11 +96,11 @@ const r2 = await p.evaluate(async ({ manifest, files, LA, LB }) => {
 }, { manifest, files, LA, LB });
 ok(r2.inst.ok, 'the sample installs in the page: ' + JSON.stringify(r2.inst.errors));
 ok(r2.n > 0 && r2.raster.decoded > 0 && !r2.raster.decodeErrors.length, 'prepare({ async }) decoded ' + r2.raster.decoded + ' files (createImageBitmap) and built ' + r2.n + ' compositions in ' + r2.prepMs.toFixed(0) + ' ms: ' + r2.raster.decodeErrors.join('; '));
-ok(JSON.stringify(r2.phases) === JSON.stringify(['prep_a', 'prep_b', 'cue', 'peak', 'settle_a', 'settle_b']) && r2.native.standard.w === 352 && r2.native.compact.w === 248, 'installed: PHASES are the states, NATIVE 352 × 160 / 248 × 128');
-ok(r2.timeline && r2.timeline[0].phase === 'prep_a' && r2.timeline[r2.timeline.length - 1].phase === 'settle_b' && !r2.timeline.some((e) => e.phase === 'settle_a'), "timeline('suzu') exists, from prep_a to settle_b, without the undelivered settle_a");
-ok(r2.bad.length === 0, r2.comps + ' compositions through compose() (2 looks × 6 states × 2 variants): both busts painted, contract size, faces inside: ' + r2.bad.slice(0, 5).join('; '));
+ok(JSON.stringify(r2.phases) === JSON.stringify(['prep_a', 'prep_b', 'cue', 'cue_b', 'peak', 'settle_a', 'settle_b']) && r2.native.standard.w === 352 && r2.native.compact.w === 248, 'installed: PHASES are the seven states (cue_b since 2026-10-05), NATIVE 352 × 160 / 248 × 128');
+ok(r2.timeline && r2.timeline[0].phase === 'prep_a' && r2.timeline[r2.timeline.length - 1].phase === 'settle_b' && !r2.timeline.some((e) => e.phase === 'settle_a' || e.phase === 'cue_b'), "timeline('suzu') exists, from prep_a to settle_b, without the undelivered cue_b and settle_a");
+ok(r2.bad.length === 0, r2.comps + ' compositions through compose() (2 looks × 7 states × 2 variants): both busts painted, contract size, faces inside: ' + r2.bad.slice(0, 5).join('; '));
 ok(r2.occl.length === 0, 'no face covered by the other bust (pixel comparison with the other omitted): ' + r2.occl.slice(0, 3).join('; '));
-ok(r2.distinctA >= 5 && r2.distinctB >= 5, 'the states are different drawings (' + r2.distinctA + ' and ' + r2.distinctB + ' distinct of 6; settle_a holds peak)');
+ok(r2.distinctA >= 5 && r2.distinctB >= 5, 'the states are different drawings (' + r2.distinctA + ' and ' + r2.distinctB + ' distinct of 7; cue_b holds cue, settle_a holds peak)');
 ok(r2.fit[0] === 1 && r2.fit[1] === 2 && Math.abs(r2.fit[2] - 4 / 3) < 1e-9, 'painted scales: standard 1× at 1280 × 720, 2× at 1920 × 1080; compact 4/3 on a 390 × 844 phone at DPR 3');
 
 // ---- 3: a missing file → the whole bust in code --------------------------------------------------------------------------

@@ -433,6 +433,12 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   and their resolutions, and the open points. The brief is v3; contract v3 (REQUIREMENTS.md HB9) is being built by a worker.
   Labels: the code busts are **provisional artwork**; a delivered batch is a **visual candidate awaiting approval**.
 - **Never commit** the owner's mockup images.
+- **Portrait timing, Robin's decision (2026-10-05; REQUIREMENTS.md HB10, VALIDATION.md "Harmony portrait timing — Robin's
+  decision"):** Normal 220 / 820 / 360 ms (1.4 s) with a small motion (3 art px overshoot, 2.5 lean at the peak, 1.5
+  drift; placement keeps that reach clear); Fast 180 / 380 / 220 ms of wall time (Normal's old timing, no motion); the
+  technique's stage waits for the portrait (`84p_party_choreo.js player()`: first result ≥ 120 ms after it; Normal
+  waits Nao 220, Mio 270, Ren 320, Suzu 240 ms); no cue and no wait with the setting Off or at Instant. A seventh,
+  optional state `cue_b` (contract `TIMELINES` per mode; importer accepts `<comp>_cue_b`). No art imported.
 
 ## Overworld actor system: poses, gestures, mannerisms, idle life, scene direction (expressive addenda, work packages D and (a)) — CONTRACT.md ledger HX28–HX38, WI1–WI24; VALIDATION.md "Overworld actor system"
 - **Where:** pose layer `src/engine/32g_spritepose.js` (hooks in `32_spriteart.js`); gestures `51_gestures.js`;

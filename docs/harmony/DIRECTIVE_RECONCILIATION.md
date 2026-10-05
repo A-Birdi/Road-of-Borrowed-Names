@@ -44,7 +44,7 @@ Measured on the owner's resupplied capture (2000 × 1087 px). The capture is not
 |---|---|---|---|
 | The mockup's role | Fidelity and composition target (brief v2, packet document 02) | The same (§2, §9) | Agreed |
 | Not an enlarged dialogue portrait | Code busts are provisional; painted art replaces them | "not a normal dialogue portrait made larger" (§2, §9) | Agreed |
-| Both participants animate inside the portrait | Six states per character; slide-and-fade is not enough | The same (§7.1, §9) | Agreed |
+| Both participants animate inside the portrait | Six states per character (seven since Robin's decision of 2026-10-05: an optional `cue_b`); slide-and-fade is not enough | The same (§7.1, §9) | Agreed |
 | Player customisation | A layered kit, read from `RB.equip.look` at action start (HX8, contract §6) | "layered illustrated kit" (§4–§5) | Agreed |
 | Inventory from source | `registry.json`: resolver, base vs cosmetic override, visible-in-crop, unresolved items | §5.1 | Agreed (already exported) |
 | Hidden artwork | The eyes are drawn under the glasses; a hat covers the scalp above its band | §5.2 | Agreed |
@@ -53,7 +53,7 @@ Measured on the owner's resupplied capture (2000 × 1087 px). The capture is not
 | Composition | Companion left, player right; cooperative; no VS or slogan; a hand directed outward | §3.4 | Agreed |
 | Companion personalities | Per-pairing table (brief v2 §4) | §6 table | Agreed; the newer wording is added (§3) |
 | Shared player rally, distinct companions | Player prep/cue shared; peak/settle per technique; per-companion frames | §7.2 | Agreed |
-| Duration and modes | 780 ms Normal; Fast 100/220/160; Instant none | §7.3–§7.4 | Agreed |
+| Duration and modes | Robin's decision, 2026-10-05: Normal 1,400 ms (220 / 820 / 360, the proposed performance with a small motion; the technique's stage waits for it, its first result ≥ 120 ms after the portrait is gone); Fast 780 ms of wall time (180 / 380 / 220: Normal's former timing); Instant none. Until then: 780 ms Normal; Fast 100/220/160 | §7.3–§7.4 | Agreed (timing superseded by Robin's decision) |
 | Fade, never pop or slide out | A token lifecycle that fades in place | §7.4 | Agreed |
 | Battle frame untouched | Protected rectangles 12 px clear; banner only during the animated action | §8 | Agreed |
 | Particles off | Gate: pairings distinct with backing and particles off | §3.5 | Agreed |
