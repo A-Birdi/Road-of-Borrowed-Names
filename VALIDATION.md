@@ -2987,3 +2987,10 @@ docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset
 - `node tests/e2e/staging_chapters.mjs` on its own (32b79a7, same game code as 56c68c3): **13,850 passed, 0 failed**,
   446 scenes in 5,622 s. (Two earlier attempts inside the suite were cut off by the time limit and a container restart,
   each with every check reached passing.) The scripts after it are running in two parts.
+- The rest of the default suite (`node tests/e2e/run.mjs --skip=<the scripts above> --part=1/2` and `--part=2/2`, on
+  0882253): **9/9 and 9/9 scripts passed** (staging_wataru, staging_variants --quick, sequence_world --quick,
+  long_quests --fixtures-only, landmarks, cases, cases_shots, known, pace; practice_b, wordplay, wordplay_layout,
+  practice_a_lamps, practice_a_desk, practice_a_layout, fishing, harmony_raster, pursue E mio). With the 64 earlier
+  scripts and staging_chapters, **every script of the default browser suite has passed on the timing change: 83/83, 0
+  failed**, run in pieces because the whole suite exceeds a two-hour run. Screenshots the runs rewrote were restored or
+  removed, not committed.
