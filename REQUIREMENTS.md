@@ -383,7 +383,10 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
 - [ ] HB13 The player's kit moves as the companions do (Robin's review, 2026-10-05: "missing frames, acting a little
   more stiff compared to Suzu"; settle_b was settle_a). Contract and runtime: optional in-between heads, arms per pairing
   and hair per moving state, each falling back to today's drawing — done (U harmony_raster, B harmony_raster 26/0;
-  VALIDATION.md "The player's in-betweens"). Open: the art (in progress outside the repo) and Robin's review of it.
+  VALIDATION.md "The player's in-betweens"). The art is drawn (outside the repo, 2026-10-05): 3 in-between heads, 16
+  in-between arms, 110 hair-motion files, a body arc; with Robin's neck review (neck and collarbone anatomy redone, nape
+  patches removed, cape over the dress, hair rim in the hair ramp) and Ren's peak arm redrawn. The kit proof: 245 files,
+  2,681 busts, 0 errors, 1 major flag (look A's own 3-px speck). Open: Robin's review of it.
 
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.

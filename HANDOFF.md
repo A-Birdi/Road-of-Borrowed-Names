@@ -460,7 +460,16 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     A); bald scalp 0; hats cut nothing flat. The neck gap other styles showed (the ponytail always covered it) is
     closed by raised collars on tunic/apron/dress/robe and nape hair in each style's back file (shaved's in its new
     optional back file); look A is unchanged. A review page (build any look, watch the paired cut-in at Normal) went
-    to Robin on 2026-10-05 with the known weak points. Awaiting Robin's verdict; not imported.
+    to Robin on 2026-10-05 with the known weak points.
+  - **Robin's review of the kit (2026-10-05)** led to two more rounds, both done outside the repo:
+    - **Motion:** settle_b was settle_a and the player looked stiff next to Suzu, so the player now has in-between
+      heads (prep_b, cue_b, settle_a), arms per pairing (cue_b, settle_a), hair motion for 11 styles and a body arc
+      (contract support: REQUIREMENTS HB13). Ren's peak arm no longer folds the elbow in.
+    - **Neck:** the neck was redrawn as a proper column with the collar's back behind it (look A's heads and coat
+      collar changed at Robin's request), collarbones on the dress, the nape patches removed, the cape drapes over
+      the dress's puffs, and the hair rim recolours with the hair.
+  - The review page was republished (version 2), with every pairing's seven frames and the neck before and after.
+    Awaiting Robin's verdict; nothing imported.
   - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top
     edge"):** a hat or cap hides hair only above its own top edge in the columns it covers (was: every hair pixel
     above the band row, which cut twintails and wide styles flat), and the edge hidden hair leaves over background
