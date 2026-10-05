@@ -32,6 +32,8 @@ THE PLAYER
 - One person in every tile of every sheet: the player character on the right of the approved paired picture, the one holding the large calligraphy brush. Copy their face exactly: face shape, eyes, nose, mouth, proportions and dark brown eyes. Only the hair, skin tone, clothing and accessories change, and only where a sheet asks for it.
 - The brush, whenever it appears: a large calligraphy brush with a black lacquered shaft, a brass ferrule, a small tassel at the end of the shaft, and cream bristles with black ink at the tip. Always the same size.
 - The brush is always in the player's LEFT hand, the hand on the screen-right side. In every grip the thumb wraps round the shaft and points inward, toward the player's body, and the fingers curl round the other side. Never a backwards, mirrored or twisted hand.
+- The brush arm is always the NEAR arm: it comes from the shoulder on the screen-right side. The far arm (the shoulder on the screen-left side) never reaches across the chest to hold the brush.
+- The whole brush shows in every tile at the same length as in Sheet 1: the hand never hides most of the shaft.
 - The outfit is identical in every tile: the same collar, toggles, trim, sleeves and satchel strap. The strap always runs the same way across the chest, from the same shoulder, with the buckle in the same place.
 
 FRAMING (the most important part: the sheets are cut into layers that must line up)
@@ -142,7 +144,7 @@ Cover prompt:
 ```text
 Make ONE new picture: Sheet 3 of the player kit, described in the text below. Make only this sheet, nothing else.
 
-Draw: the player in look A, six times: the peak and the settle brush gestures for the Nao, Mio and Ren pairings.
+Draw: the player in look A, six times: the peak and the settle brush gestures for the Nao, Mio and Ren pairings. Six clearly different poses, always with the brush in the near (left) hand on the screen-right side.
 
 Do not draw: Suzu, Nao, Mio, Ren or anyone else; a reference page, pose guide, diagram or document page; captions, labels, titles, text, arrows, boxes, colour swatches or grid lines; a copy or redraw of any attached picture.
 
@@ -163,15 +165,17 @@ Attach: Sheet 1; the Nao, Mio and Ren four-tile sheets (to see what each compani
 
 Look A, exactly as in Sheet 1. The head is copied from Sheet 1: in the top row it is Sheet 1's "peak" head (open, excited smile), in the bottom row Sheet 1's "settle" head (warm, satisfied smile). Only the brush arm and the brush change between tiles.
 
+In all six tiles the brush is in the NEAR (left) hand, the arm coming from the shoulder on the screen-right side, the thumb wrapped round the shaft toward the body. The far arm never crosses the chest. The six poses must look clearly different from one another: three different directions at the peak, three different holds at the settle.
+
 Top row, the peaks:
-1. Top left, with Nao ("Read the Opening": following Nao's cue). The brush arm extended straight out to the right at shoulder height, the brush held like a pointer along one precise line, bristles leading, as if sending a thread along the route Nao drew. A thin, straight ink line trails behind the tip.
-2. Top middle, with Mio ("Clearwater Draught": guiding the ink). The brush raised up and out to the right, above shoulder height, and tipped so the bristles point down, a single round drop of ink falling from the tip. The wrist soft and open: careful, not forceful.
-3. Top right, with Ren ("Lantern Ward": a coordinated seal). The brush held level at chest height, the arm extended to the right, just finishing a firm, short vertical stroke: a short horizontal ink line with a short vertical tick at its right end, like a seal being closed.
+1. Top left, with Nao ("Read the Opening": following Nao's cue). A pointer. The near arm stretched STRAIGHT out to the right at shoulder height, the elbow straight, the brush horizontal and in line with the arm, bristles pointing right, as if sending a thread along the route Nao drew. A thin, straight ink line runs on from the tip.
+2. Top middle, with Mio ("Clearwater Draught": guiding the ink). A lift. The near arm raised HIGH, the hand above the head on the right, the brush tipped so the bristles point down, a single round drop of ink falling from the tip. The wrist soft and open: careful, not forceful.
+3. Top right, with Ren ("Lantern Ward": a coordinated seal). A stamp. The near forearm held out in front at chest height, the brush VERTICAL with the bristles pointing DOWN, pressing a short, firm downward stroke like a seal being closed; a short vertical ink mark under the bristles. The elbow bent, the wrist firm.
 
 Bottom row, the settles (each follows the peak above it):
-4. Bottom left, after Nao: the brush drawn back toward the chest, held level and taut as if pulling a thread tight, the elbow tucked in.
-5. Bottom middle, after Mio: the brush lowered and held upright in front of the chest, bristles up, the hand relaxed around the shaft.
-6. Bottom right, after Ren: the brush held vertical in front of the near shoulder, steady, like a closed seal; the posture upright and still.
+4. Bottom left, after Nao: the near hand drawn back to the near shoulder, the brush still horizontal and pointing right, held taut as if pulling a thread tight, the elbow down at the side.
+5. Bottom middle, after Mio: the brush lowered and held upright in front of the chest, bristles up, the hand relaxed around the shaft (like Sheet 1's "focus" hold).
+6. Bottom right, after Ren: the brush held vertical with the bristles DOWN, resting against the near shoulder like a closed seal, the forearm upright; the posture still.
 ```
 
 ## Sheet 4: The same six poses in look B's robe (3 across × 2 down)
