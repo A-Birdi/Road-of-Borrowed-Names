@@ -2979,3 +2979,8 @@ docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset
   failed; B `node tests/e2e/harmony_cutin.mjs` **11 passed, 0 failed** (at 2048×1046 the painted standard pair takes
   the "moved" placement at 2×, as recorded above). The full default browser suite (`node tests/e2e/run.mjs`) was
   started and cut off by the restart; it has not been run on this change.
+- The default browser suite on 56c68c3 (the timing change plus docs only): `node tests/e2e/run.mjs` ran **64 scripts,
+  64 passed, 0 failed** before the run reached its two-hour limit inside `staging_chapters.mjs` (every case it had
+  reached passed; the browser was closed by the stop). The remaining scripts (from `staging_chapters.mjs` to the end)
+  are being run in two parts with `--skip=` the 64 passed and `--part=k/2`; their result is recorded below when they
+  finish. Screenshots the suite rewrites under docs/screenshots/ were restored, not committed.
