@@ -439,6 +439,10 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
   technique's stage waits for the portrait (`84p_party_choreo.js player()`: first result ≥ 120 ms after it; Normal
   waits Nao 220, Mio 270, Ren 320, Suzu 240 ms); no cue and no wait with the setting Off or at Instant. A seventh,
   optional state `cue_b` (contract `TIMELINES` per mode; importer accepts `<comp>_cue_b`). No art imported.
+- **Harmony art status (2026-10-05):** Robin approved the code-drawn seven-frame cut-ins of Suzu, Nao, Mio (frame 5
+  redrawn from Robin's revised tile) and Ren; they live outside the repo until they are imported (not yet). The
+  player's kit is next, drawn in code from nine reference sheets: prompts in
+  `docs/harmony/asset_brief/player_kit/PROMPTS.md` (ASSET_BRIEF.md §8 note). Robin makes Sheet 1 first.
 
 ## Overworld actor system: poses, gestures, mannerisms, idle life, scene direction (expressive addenda, work packages D and (a)) — CONTRACT.md ledger HX28–HX38, WI1–WI24; VALIDATION.md "Overworld actor system"
 - **Where:** pose layer `src/engine/32g_spritepose.js` (hooks in `32_spriteart.js`); gestures `51_gestures.js`;

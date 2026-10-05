@@ -327,6 +327,14 @@ hides the hair above a hat or cap band, so a hat must cover the scalp above its 
 
 ## 8. Batch 1: the quality bar, then the customisation proof
 
+> **The player kit's route since 2026-10-05.** The companions' seven-frame cut-ins were drawn in code from Robin's
+> four-tile sheets (Suzu, Nao, Mio, Ren), and the player's kit is to be made the same way. The image tool paints
+> **whole-character reference sheets** (nine of them, `asset_brief/player_kit/PROMPTS.md`: look A in four states,
+> look B, the arms for the other pairings in both sleeves, the twelve hairstyles, the garments and the accessories),
+> and the layers are measured from them and drawn in the key colour families. That replaces step A3 below (the tool
+> painting separated layer files) and most of Track B's keyify step; the importer, the recolour proofs and Robin's
+> approval gates stay as written.
+
 ### 8.0 The order of work (Robin, 2026-10-04): the approved direction, then two separate tracks
 
 Robin's Suzu test sheet is the first result that lands the intended cut-in style and performance. It is the

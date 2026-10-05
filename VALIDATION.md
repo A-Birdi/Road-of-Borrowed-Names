@@ -2975,3 +2975,7 @@ docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset
 - The runs above were on a build that differs from the final one only by a comment moved in
   `src/ui/82d_harmony_cutin.js`; on the final build (`node tools/build.mjs`, 365 sources) `harmony_cutin.mjs core`
   passed again (1/1), and the registry was regenerated from it.
+- Re-run on the committed build (00c0242) after a container restart: U `node tests/run-unit.mjs` 27,229 passed, 0
+  failed; B `node tests/e2e/harmony_cutin.mjs` **11 passed, 0 failed** (at 2048×1046 the painted standard pair takes
+  the "moved" placement at 2×, as recorded above). The full default browser suite (`node tests/e2e/run.mjs`) was
+  started and cut off by the restart; it has not been run on this change.
