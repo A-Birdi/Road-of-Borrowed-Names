@@ -510,7 +510,8 @@ RB.harmonyContract = (function () {
     const sleeves = SLEEVES.filter((sl) => reg.shapes.some((s) => sleeveOf(s) === sl));
     for (const pose of armPoses(reg.companions)) for (const sl of sleeves) (pose === 'prep_b' ? opt : req).push('pc_arm_' + pose + '_' + sl);
     for (const st of reg.hairstyles) for (const part of HAIR_PARTS) {
-      if (part === 'back' && FRONT_ONLY.indexOf(st) >= 0) continue;
+      // (a front-only style may still bring a back file: optional, e.g. the shaved style's nape behind the neck)
+      if (part === 'back' && FRONT_ONLY.indexOf(st) >= 0) { opt.push('pc_hair_' + st + '_back'); continue; }
       req.push('pc_hair_' + st + '_' + part);
       opt.push('pc_hair_' + st + '_' + part + '_swing');
     }

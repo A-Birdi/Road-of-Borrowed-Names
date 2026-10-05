@@ -376,6 +376,10 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   full kit's proof showed the band-row rule cutting twintails and wide styles flat). `pc.hatBand` stays the
   scalp-cover line. Evidence: U harmony_raster (the stand-in hat block; whole suite 27,234/0), B harmony_raster 26/0, harmony_cutin 11/0; VALIDATION.md "Hats
   hide hair above their own top edge".
+- [v] HB12 A front-only hairstyle (shaved) may bring an optional back file, drawn under the torso and head like any
+  back (its nape behind the neck: the gap between neck and collar the head cannot close without changing look A).
+  Registry 86 required + 38 optional. Evidence: U harmony_raster (plans with and without it), B harmony_raster
+  26/0; VALIDATION.md "The shaved style may bring a back file".
 
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.

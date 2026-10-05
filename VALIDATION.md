@@ -2906,6 +2906,25 @@ the built index.html.
 - index.html rebuilds unchanged (keyify is a dev tool and ships nothing).
 - No painted art has been through keyify yet: Batch 1a is its real test.
 
+## The shaved style may bring a back file (lead, 2026-10-05; CONTRACT.md §1; REQUIREMENTS.md HB12)
+
+The full kit's proof found background showing between the neck and the collar with every hairstyle that has no hair
+there. Look A's ponytail back file fills that gap. The head can't close it without changing approved look A, because
+it is drawn over the torso. The torso workers close it in the other cuts, and each style's back file in the coat. The
+shaved style was front-only, so nothing could fill its gap on the coat.
+
+**The change:**
+- `pc_hair_shaved_back` is now an **optional** asset key; the registry has 86 required + 38 optional (was 37).
+- When a set has the file, `plan()` draws it in the hair_back slot, under the torso and the head.
+- Without the file, shaved plans exactly as before.
+- Code: `assetKeys()` in `88_harmony_contract.js`, `plan()` in `88_harmony_raster.js`. The registry was regenerated.
+
+**Checks run on this working tree:**
+- U `node tests/run-unit.mjs harmony`: **457 passed, 0 failed.**
+  - The back file is optional, never required.
+  - Shaved plans without a back slot, and with `pc_hair_shaved_back` in the hair_back slot once the set has it.
+- B `node tests/e2e/harmony_raster.mjs`: **26 passed, 0 failed.**
+
 ## Hats hide hair above their own top edge (lead, 2026-10-05; CONTRACT.md §3.4 and §6; REQUIREMENTS.md HB11)
 
 The painted player kit was integrated outside the repo (72 kit files). Its proof showed that the runtime's old rule cut

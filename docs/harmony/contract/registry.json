@@ -40,6 +40,7 @@
    "pc_hair_long_front_swing",
    "pc_hair_ponytail_back_swing",
    "pc_hair_ponytail_front_swing",
+   "pc_hair_shaved_back",
    "pc_hair_shaved_front_swing",
    "pc_hair_short_back_swing",
    "pc_hair_short_front_swing",
@@ -3078,12 +3079,12 @@
   "generator": "tools/harmony_registry.mjs",
   "git": {
    "branch": "claude/stoic-sagan-n3jvgk",
-   "commit": "f54ea82a192062b6705c75d6e23a0e334a060b64",
+   "commit": "c8e6fa0464cfa122e9749bc7575b0999c4482d36",
    "dirty": true
   },
   "indexHtml": {
-   "bytes": 11207025,
-   "sha256": "9f3c2de50ebb5a07dfac13eccbfa3086161c6a54544e97f14e3b05998c4b1822"
+   "bytes": 11207203,
+   "sha256": "631e74f97ee30b57b047956e66987948ff75985758e83f5a3fd367eed7093407"
   },
   "note": "git.commit is HEAD when exported; the export is committed with or after it. indexHtml is the build it was read from.",
   "renderer": [

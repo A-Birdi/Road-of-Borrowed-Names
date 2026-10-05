@@ -87,7 +87,7 @@ node tools/harmony_import.mjs art/harmony/source/<batch 1> [art/harmony/source/<
 | Player head | `pc_head_<expr>.png` | `expr` ∈ focus, cue, peak, settle. Bald head with ears, neck and face; the head never changes angle |
 | Player torso | `pc_torso_<shape>.png` | `shape` ∈ tunic, robe, coat, apron, dress (registry `garmentShapes.all`) |
 | Player brush arm | `pc_arm_<pose>_<sleeve>.png` | `pose` ∈ prep_a, prep_b, cue, peak_<comp>, settle_<comp>; `sleeve` ∈ fitted, wide |
-| Player hair | `pc_hair_<style>_<back\|front>[_swing].png` | every `RB.sprites.HAIRSTYLES` entry; `shaved` is front only; `_swing` optional for prep_b and settle_a |
+| Player hair | `pc_hair_<style>_<back\|front>[_swing].png` | every `RB.sprites.HAIRSTYLES` entry; `shaved` is front only (its back file is optional: when present it is drawn like any back, under the torso and head — the nape behind the neck); `_swing` optional for prep_b and settle_a |
 | Accessory | `acc_<id>[_<part>].png` | §3.4; parts near/far (earrings), back/front (cape); the knitted keepsake scarf is `acc_scarf_knit` |
 | Mask | `<name>.mask.png` | §5 |
 

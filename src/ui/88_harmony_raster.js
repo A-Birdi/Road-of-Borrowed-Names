@@ -171,7 +171,7 @@ RB.harmonyRaster = (function () {
     const swing = H.SWING_STATES.indexOf(state) >= 0;
     const hairOf = (part) => { const n = 'pc_hair_' + style + '_' + part; return swing && has(n + '_swing') ? n + '_swing' : n; };
     const parts = [{ slot: 'head', file: 'pc_head_' + expr }, { slot: 'torso', file: 'pc_torso_' + shape }, { slot: 'arm', file: arm }, { slot: 'hair_front', file: hairOf('front') }];
-    if (H.FRONT_ONLY.indexOf(style) < 0) parts.push({ slot: 'hair_back', file: hairOf('back') });
+    if (H.FRONT_ONLY.indexOf(style) < 0 || has(hairOf('back'))) parts.push({ slot: 'hair_back', file: hairOf('back') });
     const af = H.accFiles(look);
     for (const f of af.files) parts.push({ slot: f.slot, file: f.file, acc: f.acc });
     const missing = parts.filter((q) => !has(q.file)).map((q) => q.file).concat(af.unknown.map((a) => 'acc ' + a + ' (unknown)'));

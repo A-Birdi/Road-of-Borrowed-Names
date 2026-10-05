@@ -313,6 +313,22 @@ export default async (t) => {
     }
   }
 
+  // ---- a front-only style (shaved) may bring an optional back file ---------------------------------------------------------------------
+  {
+    t.ok(HC.assetKeys({ companions: ['suzu'], hairstyles: ['shaved'], shapes: ['coat'], accessories: [] }).optional.indexOf('pc_hair_shaved_back') >= 0 && HC.assetKeys({ companions: ['suzu'], hairstyles: ['shaved'], shapes: ['coat'], accessories: [] }).required.indexOf('pc_hair_shaved_back') < 0, 'the shaved style\'s back file is an optional asset key, never a required one');
+    const m = JSON.parse(JSON.stringify(manifest)), fh = Object.assign({}, files);
+    m.files.pc_hair_shaved_front = Object.assign({}, m.files.pc_hair_ponytail_front, { png: 'pc_hair_shaved_front.png', mask: 'pc_hair_shaved_front.mask.png' });
+    fh['pc_hair_shaved_front.png'] = files['pc_hair_ponytail_front.png']; fh['pc_hair_shaved_front.mask.png'] = files['pc_hair_ponytail_front.mask.png'];
+    HR.install({ manifest: m, files: fh }, { decode });
+    const LS = Object.assign({}, LA, { hair: 'shaved', acc: [] });
+    const p0 = HR.plan('pc', LS, 'peak', 'suzu');
+    m.files.pc_hair_shaved_back = Object.assign({}, m.files.pc_hair_ponytail_back, { png: 'pc_hair_shaved_back.png', mask: 'pc_hair_shaved_back.mask.png' });
+    fh['pc_hair_shaved_back.png'] = files['pc_hair_ponytail_back.png']; fh['pc_hair_shaved_back.mask.png'] = files['pc_hair_ponytail_back.mask.png'];
+    HR.install({ manifest: m, files: fh }, { decode });
+    const p1 = HR.plan('pc', LS, 'peak', 'suzu');
+    t.ok(p0.ok && !p0.parts.some((q) => q.slot === 'hair_back') && p1.ok && p1.parts.some((q) => q.slot === 'hair_back' && q.file === 'pc_hair_shaved_back'), 'shaved plans without a back file, and with one when the set has it (drawn in the hair_back slot)');
+  }
+
   // ---- invalidation on a look change ----------------------------------------------------------------------------------------------------
   {
     HR.install({ manifest, files }, { decode });
