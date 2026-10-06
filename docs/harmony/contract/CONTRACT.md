@@ -812,10 +812,13 @@ machine's load from other workers' browser tests, and the code path for decoding
 | The sample: 31 files + 25 masks (56 PNGs) | 57,327 B → 75 KiB embedded |
 | The rich fixture over the sample (56 PNGs) | 98,500 B → 128 KiB embedded (+72 %: many values compress less than five) |
 | A full delivery at the mockup's density (projected, as in v2) | **0.70 MiB → ≈ 0.94 MiB embedded** |
+| The approved delivery (`assets/harmony/`, 2026-10-06): 245 files + 201 masks (446 PNGs) | **1,256,052 B (1.20 MiB) → 1.60 MiB embedded**; with the 212 KB manifest, `index.html` grew by 1,845,463 B (1.76 MiB) over the code-only build |
 
 The projection measured the owner's mockup at its own pixel grid (in a scratch folder; the image is never copied into
-the project), so it already reflects many values per material. An estimate, not a measurement of delivered art:
-re-measure on Batch 1a. **Budget policy:** no new hard limit; decoding never runs when a technique fires.
+the project), so it already reflects many values per material. It was an estimate made before the in-betweens existed.
+The approved delivery is measured. It is larger mainly because of the player's hair motion: 110 files and their masks,
+614,919 B, about half of the PNG bytes. **Budget policy:** no new hard limit; decoding never runs when a technique
+fires.
 
 ## 11. Tests and evidence
 
