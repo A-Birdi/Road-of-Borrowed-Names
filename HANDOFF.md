@@ -70,7 +70,13 @@
     portrait_dev). It shows the game's own renderer and timeline: every speaker, with Chapter 2 and later hidden
     until revealed; every expression and its lead-in cue; the player's look; and the three dialogue layouts × six
     device pixel ratios at real device pixels. Published for Robin as the private page "Dialogue Portraits" (a copy
-    of the build with the dev flag on). Waiting on Robin's look before any portrait work.
+    of the build with the dev flag on). Robin (2026-10-06): "It looks pretty good for now - we can expand on it
+    further given the ideas discussed at a later time."
+  - **Portrait ideas discussed, for later (not started; Robin will ask):**
+    - expressions for the untagged two-thirds of lines and the player's lines, proposed by a tool from the sentence
+      and written into the scripts as ordinary tags;
+    - bigger, bouncier one-off cues per line;
+    - body language with hand and arm layers, which may belong in the final art pass.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).
