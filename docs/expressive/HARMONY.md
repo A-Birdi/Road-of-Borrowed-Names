@@ -407,6 +407,32 @@ every height, so the compact pair at ×2 is used — same 66 px faces, a smaller
 with a creature's box (not its silhouette), hence compact ×1 or the recorded omission there. At 200 % text
 (`textScale` 2) on phones the banner and the status dock take the room: omitted, recorded, never shown over them.
 
+**The painted art in groups (2026-10-06).** The tables above were measured on the code-drawn busts. The painted compact
+pair is 248 × 128 art px against the code busts' 160 × 84, and its smallest scale is 1, so with the approved art the
+groups at common desktop sizes left the portrait out (the plan's "group of three, 1648×840" and "group of two,
+1920×1080", and Robin's 2048×1046 with three). `place()` now has two further passes, each tried only when the one
+before finds nothing, so every placement that fitted before is unchanged:
+1. **Slid past the left edge** the pair already enters from, in steps of 2 art px, while every face (with the motion's
+   reach) keeps at least 8 px on screen.
+2. **Its top rows past the top edge**, up to 16 art px (an eighth of the pair: hair crowns, a hat's crown, the band's
+   edge), slid or not, the least of the pair cut off first. Faces stay whole and at least 8 px below the edge.
+
+Measured by harmony_cutin "groups at desktop sizes" (one technique each, real clicks, every frame checked):
+
+| View, creatures | Pairing | Fit | Slid | Top rows cut | Faces from (left / top) | Overlaps |
+|---|---|---|---|---|---|---|
+| 2048×1046, three | each of the four | compact-small ×1 | 4 px | 0 | 32 / 253 px | 0 |
+| 1920×1080, two | Nao | compact-small ×1 | 0 | 5 px | 36 / 44 px | 0 |
+| 1920×1080, three | Mio | compact-small ×1 | 0 | 5 px | 36 / 44 px | 0 |
+| 1648×840, three | Ren | compact ×1 | 0 | 15 px | 36 / 34 px | 0 |
+| 1536×864, two | Suzu | compact ×1 | 12 px | 3 px | 24 / 46 px | 0 |
+
+Still left out with the painted art, as designed (the stage performance plays, the banner names the technique),
+measured by a scratch probe of `place()` in the same encounters, on the build before the second further pass (to be re-checked on 91ef7d2): two creatures at 1366×768; three at 1280×720,
+1366×768, 1440×900 and 1104×884 (the room is 29–68 px short); Keep visible + Expanded at 1280×720 (the menus
+stay); and the phone cases at 200 % text above. Phones in portrait (390×844), a tablet (768×1024) and an unfolded
+foldable held upright (884×1104) show it with three creatures without either pass.
+
 ### 7.3 The four stage performances as built (Normal, presentation ms from the technique's start)
 
 Both performers start and end in the rear-three-quarter ready stance; pose segments overlap by 20 ms (no idle
@@ -466,6 +492,8 @@ The painted path with its SYNTHETIC sample (Suzu only; `painted` in the browser 
 
 - A creature is protected by its box, not its silhouette: where a group puts one creature over the party on the
   left, the portrait shrinks to compact ×1 or is omitted (recorded), even where its wings leave a gap.
+  With the painted art (2026-10-06) the pair may also slide past the left edge or lose up to 16 art px of its top rows
+  to fit there (§7.2, "The painted art in groups"); smaller windows with three creatures still omit it.
 - 200 % text is reached only by setting `textScale` to 2 (the slider stops at 150 %); there the portrait is often
   omitted on phones — by the fit order, with the fallback recorded.
 - In the frozen-frame comparison the scene and every surface are identical outside the overlay; Chromium
