@@ -803,7 +803,7 @@ machine's load from other workers' browser tests, and the code path for decoding
 | One decoded file | — | 122,880 B (companion) / 153,600 B (kit file with codes) |
 | One pairing and look, every state and both variants | 8 busts + 4 compositions = 1.18 MiB | look A: 3.19 MB decoded (22 files) + caches = **7.91 MiB peak**; look B (19 files): 7.47 MiB — the same for both fixtures |
 | Recolour memo | — | ≤ 32,768 decompositions + ≤ 8,192 colours per look ramp (16 looks), a few hundred KiB at most |
-| Bound at the caches' caps | ≈ 5.8 MiB | ≈ 17 MiB (as in v2) |
+| Bound at the caches' caps | ≈ 5.8 MiB | ≈ 17 MiB (as in v2); **≈ 20 MiB** since 2026-10-06, when the caches grew to 24 compositions and 32 busts (+8 each, at most 2.9 MiB) so that a group's bare compact pair is prepared beside the rest |
 
 **Encoded size** (embedded as base64, +33 %)
 

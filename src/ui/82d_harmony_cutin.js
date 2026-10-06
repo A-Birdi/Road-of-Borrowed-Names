@@ -275,6 +275,31 @@ RB.harmonyCutin = (function () {
     }
     return null;
   }
+  // The first y of `ys` (in their order) at which the composition at x draws nothing within a rect — hits() asked of
+  // every y at once: each drawn row r whose span meets a rect's columns rules out the open interval of y
+  // (R.y − SEP − (r + 1)·s, R.y + R.h + SEP − r·s); the union is merged once and each y looked up in it. Same answer
+  // as testing hits() at each y in turn (and without `path`), in a fraction of the work when ys is the whole height.
+  function firstFree(sp, x, s, rects, ys) {
+    const iv = [];
+    for (const R of rects) {
+      const rx0 = R.x - SEP, rx1 = R.x + R.w + SEP, ry0 = R.y - SEP, ry1 = R.y + R.h + SEP;
+      for (let r = 0; r < sp.length; r++) {
+        const q = sp[r];
+        if (!q || x + (q[1] + 1) * s <= rx0 || x + q[0] * s >= rx1) continue;
+        iv.push([ry0 - (r + 1) * s, ry1 - r * s]);
+      }
+    }
+    iv.sort((a, b) => a[0] - b[0]);
+    const m = [];
+    for (const v of iv) { const l = m[m.length - 1]; if (l && v[0] < l[1]) l[1] = Math.max(l[1], v[1]); else m.push(v.slice()); }
+    for (const y of ys) {
+      let lo = 0, hi = m.length - 1, k = -1;
+      while (lo <= hi) { const mid = (lo + hi) >> 1; if (m[mid][0] < y) { k = mid; lo = mid + 1; } else hi = mid - 1; }
+      // (merged intervals are disjoint and sorted, so only the last one starting below y can contain it)
+      if (k < 0 || y >= m[k][1]) return y;
+    }
+    return null;
+  }
   // The menus Adaptive has withdrawn that are still on screen: the response dock and the telegraph leave through
   // their edge on a CSS transition (200 ms of wall time), measured as drawn (the rectangle moves with the slide;
   // gone once hidden or under 5 % opacity — the same test as visRect).
@@ -366,14 +391,15 @@ RB.harmonyCutin = (function () {
           for (let x = -2 * s; x >= xMin; x -= 2 * s) xs.push(x);
           if (!xs.length) continue;
         }
-        // (pass 2: the pair against the top edge less a crop, slid or not; the least of the pair cut off first)
+        // (passes 0 and 1: at each x, the first free y in the candidates' order; pass 2: the pair against the top edge
+        // less a crop, slid or not, the least of the pair cut off first)
         const pos = [];
-        if (pass < 2) for (const x of xs) for (const y of cand) pos.push([x, y]);
+        if (pass < 2) for (const x of xs) { const y = firstFree(sp, x, s, rects, cand); if (y != null) { pos.push([x, y]); break; } }
         else {
           for (const k of crops) for (const x of xs) pos.push([x, yMin - k, -x * h + k * w]);
           pos.sort((p, q) => p[2] - q[2] || q[1] - p[1] || q[0] - p[0]);
         }
-        let blocked = null;
+        let blocked = pass < 2 && !pos.length ? hits(sp, xs[0], cand[0], s, rects) : null;
         for (const [x, y] of pos) {
           const hit = hits(sp, x, y, s, rects);
           if (hit) { blocked = blocked || hit; continue; }
@@ -680,7 +706,7 @@ RB.harmonyCutin = (function () {
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every
   // phase), and the technique's battle-figure frames are drawn ahead too — never when the technique fires.
   let prepTok = 0;
-  function prepare(comp) {
+  function prepare(comp, foes) {
     // (in a page only: node tests that play an encounter's events have no canvas to draw into)
     if (typeof document === 'undefined' || !A() || COMPS.indexOf(comp) < 0 || !RB.game || !RB.game.s) return;
     const tok = ++prepTok;
@@ -691,7 +717,16 @@ RB.harmonyCutin = (function () {
       const list = [];
       const tl = !!timelineOf(comp);
       for (const variant of ['standard', 'compact']) for (const phase of phaseList(comp, still)) list.push({ comp, look, variant, phase, still: still && !tl });
-      A().prepare(list, { async: true });
+      // a group: the creatures crowd the left side, where placement reaches the compact pair without its band and
+      // effects too (its rows are measured from those drawings) — prepared now rather than built when the technique fires
+      if (foes > 1) for (const phase of phaseList(comp, still)) list.push({ comp, look, variant: 'compact', phase, still: still && !tl, backing: false, fx: false });
+      const done = A().prepare(list, { async: true });
+      // then the drawn rows placement measures (spansOf: one variant's drawings read back per idle slice), so the
+      // technique's start only looks them up
+      const specs = [{ variant: 'standard' }, { variant: 'compact' }].concat(foes > 1 ? [{ variant: 'compact', backing: false, fx: false }] : []);
+      const idle = typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout;
+      const rows = () => { if (tok !== prepTok || !specs.length) return; try { spansOf(Object.assign({ comp, look, still }, specs.shift())); } catch (e) { return; } idle(rows); };
+      if (done && done.then) done.then(() => idle(rows), () => {});
     } catch (e) { /* presentation only */ }
     // the battle figures' frames for this technique (the cache keeps only this encounter's actors)
     const B = RB.battlers, MV = RB.battlerMoves, TC = RB.partyChoreo && RB.partyChoreo.TECH[comp];
@@ -712,12 +747,12 @@ RB.harmonyCutin = (function () {
   if (RB.bus && RB.bus.on) {
     RB.bus.on('present:scene', (e) => {
       if (!e) return;
-      if (e.phase === 'enter' && e.comp) prepare(e.comp);
+      if (e.phase === 'enter' && e.comp) prepare(e.comp, e.foes);
       if (e.phase === 'exit' || e.phase === 'defeat') { prepTok++; dispose(e.phase); }
     });
     // a campaign changing (new, loaded, back to the title): nothing of the last one's portrait stays
     RB.bus.on('campaign:changing', () => { prepTok++; dispose('campaign'); spanCache.clear(); });
   }
 
-  return { start, frame, dispose, enabled, plays, duration, place, protectedRects, state, stats, last, reset, prepare, SEP, MOTION, ENVELOPE, phases, _: { spansOf, hits, widen, envelopeOf, readingOpen, phaseAt, phaseList, timelineOf, mixAt, reducedPlan, slideAt, motionAt, peakLine, peakH } };
+  return { start, frame, dispose, enabled, plays, duration, place, protectedRects, state, stats, last, reset, prepare, SEP, MOTION, ENVELOPE, phases, _: { spansOf, hits, firstFree, widen, envelopeOf, readingOpen, phaseAt, phaseList, timelineOf, mixAt, reducedPlan, slideAt, motionAt, peakLine, peakH } };
 })();

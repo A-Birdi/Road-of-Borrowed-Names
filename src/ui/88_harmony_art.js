@@ -58,7 +58,7 @@ RB.harmonyArt = (function () {
     standard: { comp: [70, 72], pc: [136, 74], nao: [62, 72] },
     compact: { comp: [45, 72], pc: [108, 73] },
   };
-  const CAP = { busts: 24, comps: 16 };
+  const CAP = { busts: 32, comps: 24 };
   const S = { hits: 0, misses: 0, builds: 0, evictions: 0, buildMs: [], invalidations: 0, paintMs: [], decodeMs: [] };
   const busts = new Map(), comps = new Map();
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

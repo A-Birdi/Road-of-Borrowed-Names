@@ -493,6 +493,21 @@ await test('groups at desktop sizes: the painted pair still shows — slid past 
     assert(!errors.length, tag + ': ' + errors.join('; '));
     await ctx.close();
   }
+  // smaller windows, recorded: shown (by the same rules) or left out with the fallback recorded — never over anything
+  const small = [{ w: 1440, h: 900, comp: 'suzu', foes: 2 }, { w: 1440, h: 900, comp: 'suzu', foes: 3 }, { w: 1366, h: 768, comp: 'ren', foes: 2 }, { w: 1366, h: 768, comp: 'ren', foes: 3 }, { w: 1280, h: 720, comp: 'nao', foes: 2 }, { w: 1104, h: 884, comp: 'mio', foes: 3 }];
+  for (const sc of small) {
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: sc.w, height: sc.h } });
+    await setup(p, { comp: sc.comp, knots: 6, foes: sc.foes });
+    const r = await technique(p, sc.comp, { every: 1 });
+    const L = await p.evaluate(() => RB.harmonyCutin.last());
+    const over = r.frames.filter(overlapping);
+    const tag = sc.comp + ' ' + sc.w + '×' + sc.h + ' ×' + sc.foes;
+    res.push({ case: tag, recorded: true, started: r.started, fit: r.started ? L.fit : 'omitted', reason: r.started ? null : r.fallback && r.fallback.reason, x: r.started ? L.x : null, cropTop: r.started ? L.cropTop : null, overlapping: over.length });
+    assert(r.started + (r.fallbacks ? 1 : 0) === 1, tag + ': one cut-in or one recorded fallback ' + JSON.stringify({ started: r.started, fallbacks: r.fallbacks }));
+    assert(!over.length, tag + ': nothing protected within 12 px');
+    assert(!errors.length, tag + ': ' + errors.join('; '));
+    await ctx.close();
+  }
   for (const x of res) console.log('   ' + JSON.stringify(x));
   report.groupsDesktop = res;
 });
@@ -996,12 +1011,14 @@ if (toDocs) await test('evidence: a real-time WebM of each pairing at Normal (12
 // Budget (--budget; expressive ledger HX59): the approved painted art in real encounters at Robin's window size
 // (2048×1046, ratio 1) — cold preparation from the encounter opening, warm playback of the technique (frame times
 // while the portrait is up, the overlay's own cost per frame), cache size, and what stays after leaving; four
-// pairings × two looks (look A; a heavy look: large hair, hat, cape, scarf, strap, glasses, earrings) × one creature
+// pairings × two looks (look A; a heavy look the game allows: large hair, a hat and a cape, the knitted scarf) × one creature
 // and a group of three. Run alone: `node tests/e2e/harmony_cutin.mjs budget --budget` (writes
 // docs/harmony/contract/budgets_painted.json). Headless Chromium with a software canvas: not a physical device.
 if (args.includes('--budget')) await test('budget: the approved art in real encounters — cold preparation, warm playback, frame times, cache size and cleanup; four pairings, two looks, one creature and a group', async () => {
   const LA = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower', 'satchel'] };
-  const HEAVY = { skin: 6, hair: 'curly', hairColor: 4, outfit: 3, shape: 'robe', acc: ['hat', 'cape', 'scarf', 'satchel', 'glasses', 'earrings'] };
+  // (a heavy look the game allows: two creation accessories, a hat and a cape, and a keepsake on top, the knitted
+  // scarf — as RB.equip.lookWith wears it; the heaviest possible look's file count is harmony_appearance's check)
+  const HEAVY = { skin: 6, hair: 'curly', hairColor: 4, outfit: 3, shape: 'robe', acc: ['hat', 'cape', 'scarf'], scarfCol: '#b8433a', scarfStripe: '#e9c648' };
   const q = (a, f) => { if (!a.length) return null; const s = a.slice().sort((x, y) => x - y); return +s[Math.min(s.length - 1, Math.floor(f * s.length))].toFixed(1); };
   const rows = [], bad = [];
   for (const comp of COMPS) for (const [lname, look] of [['A', LA], ['heavy', HEAVY]]) for (const foes of [1, 3]) {
