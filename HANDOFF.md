@@ -62,9 +62,18 @@
   90_game.js; regression tests/e2e/shift_load_regression.mjs (+ fixture
   tests/fixtures/shift_load_legacy.json), 18/18 in http-origin and file://
   modes; original build 3/18. See VALIDATION.md.
-- **Testing cadence (Robin, 2026-10-06):** finish the work already planned with the full matrix audit (four
-  language profiles × four companions). After that, new content that does not touch a specific companion is checked
-  with **one pairing on all four language profiles**; content that touches a companion also gets that companion.
+- **Testing cadence (Robin, 2026-10-06, clarified the same day):** the routine full run is **F/Ren** (Foundations,
+  Ren). Before starting a long or broad run, work out *why* it is needed, and run only what the change can affect.
+  - **A visual adjustment:** F/Ren is enough; no full suite.
+  - **A new battle sequence:** test it on its own, not with a full run of the whole game.
+  - **A new puzzle, or a feature or area that depends on the Japanese level:** test it on all four language
+    profiles, with good reason.
+  - **Menu systems such as a future illustration book:** test the triggers directly in a test environment (e.g.
+    every combination of the earned marker, effect or border), not with a playthrough.
+  - **Content that touches a specific companion:** that companion too.
+  - **The 16-combination matrix:** only when the reasoning calls for it, or when Robin asks for a final full check.
+
+  Robin: "It's likely that any issues you may come across with F/Ren would be discovered with A/Suzu as well."
 - **Future expansion (discussion only, NOT authorised work):** Robin shared a consolidated note of expansion ideas on
   2026-10-05 (stored unchanged at Robin's request in docs/future/EXPANSION_CONTEXT.md) and settled these points for when it is picked up; nothing is to be built until
   Robin selects and specifies a scope:
@@ -81,7 +90,7 @@
      exam per group, a star when fewer than 30 % of its questions were assisted; weighted measures come later.
      Robin notes that today some recognizer corrections count as assisted (in src/ui/60_pad.js, choosing a candidate
      other than the recognizer's first counts as assisted), which would need ironing out first.
-  5. (The testing cadence above.)
+  5. (The testing cadence above, as clarified.)
   6. A final art pass near the end, across much of the game, toward a more distinct stylised feel with far more
      active and idle animation and a living community; the bar is the dragon-knight reference
      (docs/BATTLE_ART_CONTRACTS.md: material shading, strong silhouette, overlapping forms, secondary motion) at a
@@ -91,9 +100,8 @@
   docs/future/consultation/; `sha256sum -c MANIFEST.sha256` there verifies it. It is also discussion only. Where it
   differs from the six points above, the six points win, because they are later:
   - Its point 7 floated chapter "password" codes for the gallery. Point 1 drops them.
-  - Its closing testing plan deferred the 16-combination matrix and used one F/Ren run as the routine check. Point 5
-    replaces this. The transcript names Ren as the routine companion, so the lead reads "one pairing on all four
-    language profiles" as Ren on F, E, I and A. Robin has not confirmed this.
+  - Its closing testing plan used one F/Ren run as the routine check. Robin confirmed this on 2026-10-06; see the
+    testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
 - Not verified by automation (needs people): real handwriting accuracy,
