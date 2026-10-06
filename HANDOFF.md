@@ -64,7 +64,13 @@
     - layout audit 535/536 → fixed, and 201/201;
     - battle_party 14/0, battle_anim 16/0, harmony_cutin 11/0.
   - Still open in those addenda: a person watching the conversation gestures and portraits at play speed (WI5, WI26,
-    HX33), and the uneven portrait scaling on phones (WI14).
+    HX33), and the uneven portrait scaling on phones (WI14). Robin (2026-10-06): set phone *testing* aside for now; it
+    must still work there.
+  - **Portrait viewer for Robin's review (2026-10-06):** `?dev=portraits` (src/ui/21z_portrait_dev.js; B
+    portrait_dev). It shows the game's own renderer and timeline: every speaker, with Chapter 2 and later hidden
+    until revealed; every expression and its lead-in cue; the player's look; and the three dialogue layouts × six
+    device pixel ratios at real device pixels. Published for Robin as the private page "Dialogue Portraits" (a copy
+    of the build with the dev flag on). Waiting on Robin's look before any portrait work.
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).

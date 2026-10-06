@@ -3212,3 +3212,34 @@ docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset
   scripts and staging_chapters, **every script of the default browser suite has passed on the timing change: 83/83, 0
   failed**, run in pieces because the whole suite exceeds a two-hour run. Screenshots the runs rewrote were restored or
   removed, not committed.
+
+## The portrait viewer (?dev=portraits), 2026-10-06 (Robin's request: "Provide the portraits in a testing environment")
+
+**What it is.** `src/ui/21z_portrait_dev.js`, development-only. It opens only with `?dev=portraits` or with
+`window.__RB_DEV_PORTRAITS__` set before the game loads.
+- It draws with the game's own `RB.portraits` and `RB.portraitAnim.timeline`.
+- Who and what: every speaker, every expression with its lead-in cue, and the player's look controls.
+- Playback: pause, step and slow motion; the still image (Reduce motion); a repeated tag; another seed.
+- Every display size: the three dialogue layouts (116, 84 and 64 CSS px) × device pixel ratios 1, 1.25, 1.5, 2,
+  2.625 and 3, plus one ratio of your own. Each is sized by `fitSize` and drawn at real device pixels, marked even
+  or uneven.
+- Spoilers: Chapter 2 and later characters stay hidden until revealed.
+- Nothing is saved. Sound is muted for the page without writing settings, and no key reaches the title.
+
+**Checks:**
+- B `node tests/e2e/portrait_dev.mjs`: **12 passed, 0 failed.**
+  - Refused on a normal page; opens by itself on a dev page.
+  - Groups: masked as above; Reveal opens one group only.
+  - Size cells: 18, each equal to the game's fit (116, 145, 192, 232, 288, 384; 96, 96, 126, 192, 192, 288; 64, 80,
+    96, 128, 168, 192 device px).
+  - The loop plays; an expression with a cue restarts the line; Still holds the image; the player's look controls
+    work.
+  - Enter, Escape and the arrows leave the title in mode `title` with no campaign.
+  - No page errors and no network requests.
+- U 27,245/0.
+- Captures at 1600×1000 and at 390×844 (device pixel ratio 3): no horizontal overflow.
+- The published review page: a copy of this build, title first, with the html, head and body tags left to the
+  publisher. It is the same build with the flag on, and it drops the game's Content-Security-Policy meta, which would
+  otherwise govern the host page.
+  - Loaded inside a stand-in skeleton at 1440×900 and 400×860: the viewer opens, 18 cells, no errors, no sideways
+    scroll.
