@@ -63,9 +63,22 @@
     - the default suite's first half (two failures explained and fixed);
     - layout audit 535/536 → fixed, and 201/201;
     - battle_party 14/0, battle_anim 16/0, harmony_cutin 11/0.
+  - **The machine-side items Robin asked to finish (2026-10-06), done** (VALIDATION.md "HX59, HX66, HX67 and HX70 on
+    the approved art"):
+    - HX66: appearance fixtures 75/0.
+    - HX67: painted sheets and refreshed recordings.
+    - HX59: the art measured in 16 real encounters, budget 1/0.
+    - HX70: cleanup cycles; F/Ren 1/1 on 54b2673; the 16-combination matrix kept for Robin's final check.
+  - **Found and fixed on the way:**
+    - The painted cut-in was left out in group battles at desktop sizes, Robin's 2048×1046 included. It now slides
+      past the left edge, or trims up to 16 art px of hair crowns at the top, faces always whole (HARMONY.md §7.2).
+      Windows of 1440 px and narrower still leave it out with three creatures, and some with two (recorded).
+    - In a group the cut-in's start cost 0.4–0.8 s; now 12–21 ms.
+    - Latest: unit 27,245/0; harmony_cutin 12/0 on 524e6e2.
   - Still open in those addenda: a person watching the conversation gestures and portraits at play speed (WI5, WI26,
-    HX33), and the uneven portrait scaling on phones (WI14). Robin (2026-10-06): set phone *testing* aside for now; it
-    must still work there.
+    HX33), and the uneven portrait scaling on phones (WI14, deferred). Robin (2026-10-06): set phone *testing* aside for
+    now; it must still work there. Robin's next playthrough goes to the end with all feedback at once; those items
+    wait for it.
   - **Portrait viewer for Robin's review (2026-10-06):** `?dev=portraits` (src/ui/21z_portrait_dev.js; B
     portrait_dev). It shows the game's own renderer and timeline: every speaker, with Chapter 2 and later hidden
     until revealed; every expression and its lead-in cue; the player's look; and the three dialogue layouts × six

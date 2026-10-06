@@ -401,6 +401,15 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - Ren's Lantern Ward now leads your brush by 100 ms (Robin's decision; it had started 20 ms after).
   - Evidence: VALIDATION.md "Checks on the approved art". Not run, with the reasons recorded there: the E, I and A
     campaigns and the rest of the default suite's second half.
+- [v] HB15 The cut-in in groups, and its cost, on the approved art (2026-10-06; HX59, HX70):
+  - **Placement:** where nothing fits against the left edge, the pair slides past it (faces kept ≥ 8 px in view).
+    Then, if needed, up to 16 art px of its top rows pass the top edge (faces whole), the least of it cut off first.
+    It shows again with groups at 2048×1046, 1920×1080, 1648×840 and 1536×864; smaller windows still leave it out
+    with the fallback recorded.
+  - **Cost:** the cut-in's start in a group fell from 360–820 ms to 12–21 ms (caches 24/32, the bare compact pair
+    prepared, an interval search equal to the old one over 1,430,352 positions).
+  - B: harmony_cutin 12/0, budget 1/0, F/Ren 1/1. Evidence: VALIDATION.md "HX59, HX66, HX67 and HX70 on the approved
+    art"; HARMONY.md §7.2; CONTRACT.md §10.
 
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.

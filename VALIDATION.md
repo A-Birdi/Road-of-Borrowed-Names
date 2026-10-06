@@ -3359,3 +3359,19 @@ profiles; no player save was used.
 - **On 524e6e2:** U 27,245/0; B `harmony_cutin` **12/0**, including the groups section and "cycles": 20 techniques in
   one page with listeners, layers, timers and caches bounded.
 - **Not measured:** a physical device, a phone, Firefox. The figures come from a software canvas on a shared machine.
+
+**HX70, cleanup and the campaign check.**
+- **Cut-in cycles:** `harmony_cutin` "cycles" passed in each full run today (12/0 on 70c966e, 91ef7d2 and 524e6e2).
+  It plays 20 techniques in one page, each pairing at Normal, Fast and reduced motion, a few with a pet; listeners,
+  layers, timers and caches stay bounded.
+- **Sequence cycles:** `sequence_manual` (20 enter/exit cycles) 64/0 on ee61e7c. The sequence code is unchanged since
+  2026-10-04.
+- **The budget's 16 encounters:** no overlay left after leaving, caches unchanged.
+- **Campaign, by Robin's cadence** (a visual and performance change to battles: F/Ren; the 16-combination matrix
+  is kept for Robin's final check): `node tests/e2e/matrix.mjs F ren 1` on 54b2673 (the build of 524e6e2):
+  **1/1**, Chapters 1–6 and one Atlas restoration in 15.3 min.
+  - It plays every chapter's battles, the group battles of Chapter 6 and the Atlas included, through the new
+    placement and preparation.
+  - The solver answers the language steps, so this shows the game can be finished, not how it plays.
+- Earlier today on ee61e7c: Foundations with each companion 4/4.
+- **Not verified:** a person playing the cut-ins in groups (are the trimmed crowns acceptable?); Firefox; the foldable.
