@@ -820,6 +820,37 @@ The approved delivery is measured. It is larger mainly because of the player's h
 614,919 B, about half of the PNG bytes. **Budget policy:** no new hard limit; decoding never runs when a technique
 fires.
 
+### The approved art in play (2026-10-06; expressive ledger HX59)
+
+Measured by `node tests/e2e/harmony_cutin.mjs budget --budget` on 524e6e2 (written to
+`docs/harmony/contract/budgets_painted.json`).
+- **Setting:** Playwright, headless Chromium with a software canvas, 2048 × 1046 (Robin's window), DPR 1, a shared
+  4-core Linux machine — not a physical device, no phone claims.
+- **What was played:** the approved art (assets/harmony/) in real synthetic encounters at the Mill: the Flour Moth
+  alone or a group of three, Normal playback, real clicks. Four pairings × two looks (look A; a heavy look the game
+  allows: curly hair, a robe, a hat and a cape, the knitted scarf keepsake) × one creature or three: 16 encounters.
+
+| | One creature (8 encounters) | Three creatures (8) |
+|---|---|---|
+| Cold preparation: the encounter opening → the pairing's drawings settled (idle slices) | 1,150–2,030 ms | 1,224–1,870 ms |
+| What is prepared | 14 compositions (7 states × standard and compact) | 21 (also the compact pair without band and effects) |
+| Art caches after preparation | 6.68 MiB | 10.02 MiB |
+| Decoded files | 40–45 of the cache's 48 | 40–45 |
+| The cut-in's start (placement and first drawing) | 4.9–6.4 ms | 11.8–20.7 ms |
+| The overlay's own cost per frame while up | mean 0.13–0.19 ms, max 3.5 ms | |
+| Animation-frame intervals while up | p50 15.3–18.5 ms, p95 17.7–32.2 ms, max 62.3 ms (one interval over 50 ms in the 16 encounters; the overlay's own cost in that encounter stayed at most 2.3 ms) | |
+| Decoding while a technique played; fallbacks | none; none (every encounter one painted cut-in) | |
+| 600 ms after leaving | no overlay; the caches unchanged (bounded, kept for the next encounter, cleared with the campaign) | |
+
+The first run of this measurement found two faults, both fixed before these figures:
+- **Groups:** the cut-in's start cost 360–820 ms. Placement built the bare compact pair when the technique fired,
+  overflowing the caches, and tested every height at every slide.
+- **The heavy fixture:** it wore six creation accessories, which no player can (two plus a keepsake). With Ren it
+  overflowed the decoded-file cache (4 evictions; art decoded during the technique). The heaviest possible look needs
+  46 files with any companion (harmony_appearance).
+
+VALIDATION.md "HX59, HX66, HX67 and HX70 on the approved art" has the runs.
+
 ## 11. Tests and evidence
 
 | Command | What it checks |

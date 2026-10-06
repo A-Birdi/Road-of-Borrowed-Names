@@ -3313,12 +3313,49 @@ profiles; no player save was used.
   - 1536×864 with two (Suzu): crop 3 px, slid 12 px.
 - Captures in play at 1920×1080 and 1648×840: the pair sits in the top-left corner; only the hair crowns are trimmed;
   both faces are whole and clear of the creatures' labels.
-- Still left out, as designed (the stage performance plays and the banner names the technique), by the same probe on
-  91ef7d2:
-  - two creatures at 1280×720 and 1366×768;
-  - three at 1280×720, 1366×768, 1440×900 and 1104×884 (14–68 px short even with both passes);
-  - Keep visible + Expanded at 1280×720.
-  Phones in portrait, a 768×1024 tablet and an upright unfolded foldable (884×1104) show it with three creatures
-  without either pass. Recorded in HARMONY.md §7.2.
 - On 91ef7d2: U 27,245/0; B `harmony_cutin` **12/0**. The plan now shows "group of three, 1648×840" (compact ×1)
   and "group of two, 1920×1080" (compact-small ×1); its other rows are as before.
+- **Still left out, as designed** (the stage performance plays and the banner names the technique). Measured in real
+  techniques on 524e6e2: the groups section records smaller windows without requiring them.
+  - Two or three creatures at 1440×900 and 1366×768, two at 1280×720, and three at 1104×884: all "overlaps plate"
+    (a creature's name plate is where the pair would go).
+  - The plan's three at 1280×720, and Keep visible + Expanded at 1280×720.
+  - An earlier scratch probe of `place()` at the decision point was not reliable for this: it placed 1440×900 with
+    two, which play leaves out, and left out 1648×840 with three, which play shows. Recorded in HARMONY.md §7.2.
+
+**HX59: the approved art measured in play, and the two faults the first measurement found.**
+- `node tests/e2e/harmony_cutin.mjs budget --budget` at 2048×1046: 16 real encounters (four pairings × look A and a
+  heavy look × one creature or three). Figures in CONTRACT.md §10, "The approved art in play".
+- **First run (91ef7d2): failed, and right to.**
+  - **Groups:** the cut-in's start cost **360–820 ms** with three creatures (8–16 ms with one).
+    - The bare compact pair (no band, no effects) is a candidate only groups reach. It was built when the technique
+      fired, and with the prepared drawings it overflowed the caches (21 compositions and 28 busts against 16 and
+      24), so even a second placement rebuilt evicted drawings.
+    - The search tested every height at every slide, row by row.
+    - A scratch timing of `place()` in the same encounters: 412 ms the first time, 292 ms the second.
+  - **"Ren heavy ×1: art was decoded while the technique played":** 4 evictions from the decoded-file cache (48
+    files) during preparation.
+    - The fixture's fault, not the game's: the heavy look wore six creation accessories. The game allows two and a
+      keepsake (`RB.equip.lookWith`).
+    - harmony_appearance (HX66) already checks the heaviest possible look: 46 files with any companion.
+    - The fixture is now a legal heavy look: a hat and a cape, with the knitted scarf keepsake.
+- **The fixes (524e6e2), placement unchanged:**
+  - **Caches:** 24 compositions and 32 busts (were 16 and 24). The bound at the caps rises from about 17 to about
+    20 MiB.
+  - **Preparation:** a battle with more than one creature also prepares the bare compact pair. After preparation, the
+    drawn rows placement measures are read back in idle slices.
+  - **The search:** `firstFree()` works out, for each slide, the heights each protected box rules out, and takes the
+    first free height in the same order.
+    - Checked against `hits()` at every height from −40 px to the bottom and every slide from 0 to −40 px. Six real
+      layouts, both variants, with and without band, scales 1, 2 and 4/3: **1,430,352 positions, 0 disagreements**.
+    - `place()` in a group: 11–19 ms the first time and 10–12 ms after (was 412 and 292); alone 4 ms, then 1.
+- **Second run (524e6e2): 1/0.** All 16 encounters showed one painted cut-in, with no fallback and no decoding during
+  the technique.
+  - Start 4.9–6.4 ms alone, 11.8–20.7 ms in a group.
+  - The overlay costs at most 3.5 ms in any frame (mean ≤ 0.19 ms).
+  - Frame p95 17.7–32.2 ms. There was one interval over 50 ms (62.3 ms), in an encounter where the overlay's cost
+    stayed at most 2.3 ms.
+  - Caches: 6.68 MiB alone, 10.02 MiB in a group, unchanged 600 ms after leaving; no overlay left.
+- **On 524e6e2:** U 27,245/0; B `harmony_cutin` **12/0**, including the groups section and "cycles": 20 techniques in
+  one page with listeners, layers, timers and caches bounded.
+- **Not measured:** a physical device, a phone, Firefox. The figures come from a software canvas on a shared machine.
