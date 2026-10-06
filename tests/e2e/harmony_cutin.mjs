@@ -464,32 +464,37 @@ await test('plan: Keep visible + Expanded (Ren), a group of three (Suzu: one por
 });
 
 // ---------------------------------------------------------------------------------------------------------
-await test('a group of three at Robin\'s window size (2048×1046): the painted pair still shows — slid past the left edge where the left column is too narrow, faces kept on screen, nothing protected within 12 px', async () => {
+await test('groups at desktop sizes: the painted pair still shows — slid past the left edge, then with up to 16 art px of its top rows past the top edge, never a face; nothing protected within 12 px (Robin\'s 2048×1046 with three, each companion; 1920×1080, 1648×840 and 1536×864)', async () => {
+  const cases = COMPS.map((comp) => ({ w: 2048, h: 1046, comp, foes: 3 })).concat([
+    { w: 1920, h: 1080, comp: 'nao', foes: 2 }, { w: 1920, h: 1080, comp: 'mio', foes: 3 }, { w: 1648, h: 840, comp: 'ren', foes: 3 }, { w: 1536, h: 864, comp: 'suzu', foes: 2 },
+  ]);
   const res = [];
-  for (const comp of COMPS) {
-    const { p, errors, ctx } = await page(b, url, { viewport: { width: 2048, height: 1046 } });
-    await setup(p, { comp, knots: 6, foes: 3 });
-    const r = await technique(p, comp, { every: 1 });
+  for (const sc of cases) {
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: sc.w, height: sc.h } });
+    await setup(p, { comp: sc.comp, knots: 6, foes: sc.foes });
+    const r = await technique(p, sc.comp, { every: 1 });
     const L = await p.evaluate(() => RB.harmonyCutin.last());
-    // the faces of every drawing the performance shows, at the placement (the placement's x, composition px × the scale)
-    const facesIn = await p.evaluate((L) => {
-      const out = [];
+    // the faces of every drawing the performance shows, at the placement (composition px × the scale, from its x, y)
+    const faces = await p.evaluate((L) => {
+      let left = Infinity, top = Infinity;
       for (const phase of RB.harmonyArt.PHASES) {
         const c = RB.harmonyArt.compose({ comp: L.comp, look: L.look, variant: L.variant, phase });
-        for (const f of c.faces) out.push(Math.round(L.x + f.x * L.scale));
+        for (const f of c.faces) { left = Math.min(left, Math.round(L.x + f.x * L.scale)); top = Math.min(top, Math.round(L.y + f.y * L.scale)); }
       }
-      return out;
+      return { left, top };
     }, L);
     const over = r.frames.filter(overlapping);
-    res.push({ comp, started: r.started, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, x: L && L.x, bleed: L && L.bleed, faceH: L && L.faceH, faceLeft: Math.min(...facesIn), overlapping: over.length });
-    assert(r.started === 1, comp + ': the cut-in shows in a group of three ' + JSON.stringify({ started: r.started, fallback: r.fallback }));
-    assert(!over.length, comp + ': no drawn pixel within 12 px of anything protected (' + over.length + ' frames: ' + JSON.stringify(over[0] && over[0].ov) + ')');
-    assert(Math.min(...facesIn) >= 8, comp + ': both faces stay on screen (the leftmost face starts at ' + Math.min(...facesIn) + ' px)');
-    assert(!errors.length, comp + ': ' + errors.join('; '));
+    const tag = sc.comp + ' ' + sc.w + '×' + sc.h + ' ×' + sc.foes;
+    res.push({ case: tag, started: r.started, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, x: L && L.x, y: L && L.y, bleed: L && L.bleed, cropTop: L && L.cropTop, faceH: L && L.faceH, faceLeft: faces.left, faceTop: faces.top, overlapping: over.length });
+    assert(r.started === 1, tag + ': the cut-in shows ' + JSON.stringify({ started: r.started, fallback: r.fallback }));
+    assert(!over.length, tag + ': no drawn pixel within 12 px of anything protected (' + over.length + ' frames: ' + JSON.stringify(over[0] && over[0].ov) + ')');
+    assert(faces.left >= 8 && faces.top >= 8, tag + ': every face whole and on screen (leftmost ' + faces.left + ' px, topmost ' + faces.top + ' px)');
+    assert((L.cropTop || 0) <= 16 * L.scale, tag + ': at most 16 art px past the top edge (' + L.cropTop + ')');
+    assert(!errors.length, tag + ': ' + errors.join('; '));
     await ctx.close();
   }
-  console.log('   ' + JSON.stringify(res));
-  report.groupAt2048 = res;
+  for (const x of res) console.log('   ' + JSON.stringify(x));
+  report.groupsDesktop = res;
 });
 await test('frozen frame: with everything frozen during the hold, the frame with the overlay shown and hidden is identical outside the overlay (1280×720 and 390×844)', async () => {
   const res = [];

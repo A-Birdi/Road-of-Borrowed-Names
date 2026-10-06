@@ -45,7 +45,9 @@
  *   each gives at its own fitted scale (each variant inside its own footprint limits), larger first, that list's
  *   order breaking ties — so 1366–1600 px desktops get the compact pair at 2× where it fits (faces ~100 CSS px) rather than the
  *   standard at 1×, a tall tablet the compact pair (§5.4's narrow-screen case), and views where both give the
- *   same faces the standard pair. If none can be placed: no portrait for this action — recorded in
+ *   same faces the standard pair. Where none fits against the left edge, the same candidates slid past it (faces
+ *   kept ≥ 8 px in view), and then also with up to 16 art px of their top rows past the top edge (faces whole).
+ *   If none can be placed: no portrait for this action — recorded in
  *   stats().fallbacks. The composition always enters from the left edge it bleeds from. It never moves the dock, menus, creatures, camera or backdrop.
  *   On resize or orientation change the same instance is placed again (no replay, nothing spent again); if
  *   no placement remains it fades out quickly and the stage action continues.
@@ -258,6 +260,7 @@ RB.harmonyCutin = (function () {
   // does the composition at (x, y, s) draw anything inside one of the rects (each inflated by SEP)?
   // (path: each drawn row also covers everything to its left — the way the composition slides in from the left edge)
   const BLEED_FACE = 8; // CSS px of every face kept in view when the pair is slid past the left edge (place())
+  const BLEED_TOP = 16; // art px of the pair's top rows (hair crowns, a hat's crown, the band's edge) at most let past the top edge
   function hits(sp, x, y, s, rects, path) {
     for (const R of rects) {
       const rx0 = R.x - SEP, rx1 = R.x + R.w + SEP, ry0 = R.y - SEP, ry1 = R.y + R.h + SEP;
@@ -324,7 +327,11 @@ RB.harmonyCutin = (function () {
     // px, never so far that a face leaves the screen (each face, widened by the motion's reach to the left, stays at
     // least BLEED_FACE px in view): a group of large creatures can leave the left edge's column only just too narrow
     // for the painted pair (2048 × 1046 with three, 2026-10-06), where the portrait would otherwise be left out.
-    for (const pass of [0, 1]) {
+    // Then, only if that fails too, a third pass also lets the pair's top rows past the top edge, 1 art px at a time
+    // up to BLEED_TOP (an eighth of the pair: hair crowns, a hat's crown, the band's edge; every face stays whole and
+    // at least BLEED_FACE px below the edge), with or without a slide, the least of the pair cut off first: a group at
+    // 1920 × 1080, 1648 × 840 or 1536 × 864 leaves the strip above the creatures 2–14 px too low for the painted pair.
+    for (const pass of [0, 1, 2]) {
       for (const st of order) {
         const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
         const { sp: sp0, comp } = spansOf(spec);
@@ -336,6 +343,13 @@ RB.harmonyCutin = (function () {
         if ((b.x + b.w + env.r) * s > vw) { if (!pass) tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
         const yMin = Math.ceil(-b.y * s), yMax = Math.floor(vh - (b.y + b.h) * s);
         if (yMax < yMin) { if (!pass) tried.push({ fit: st.fit, scale: s, why: 'too tall' }); continue; }
+        // pass 2: the top crops (CSS px) allowed, the faces whole and BLEED_FACE px below the edge
+        const crops = [];
+        if (pass === 2) {
+          const top = Math.min(BLEED_TOP * s, Math.floor((Math.min(...comp.faces.map((f) => f.y)) - b.y) * s - BLEED_FACE));
+          for (let k = s; k <= top; k += s) crops.push(k);
+          if (!crops.length) continue;
+        }
         const pref = Math.round(midY - (b.y + b.h / 2) * s);
         const cand = [];
         if (st.at === 'mid') cand.push(Math.max(yMin, Math.min(yMax, pref)));
@@ -348,16 +362,24 @@ RB.harmonyCutin = (function () {
         if (!pass) xs.push(0);
         else {
           const xMin = Math.ceil(BLEED_FACE + env.l * s - Math.min(...comp.faces.map((f) => f.x)) * s);
+          if (pass === 2) xs.push(0);
           for (let x = -2 * s; x >= xMin; x -= 2 * s) xs.push(x);
           if (!xs.length) continue;
         }
+        // (pass 2: the pair against the top edge less a crop, slid or not; the least of the pair cut off first)
+        const pos = [];
+        if (pass < 2) for (const x of xs) for (const y of cand) pos.push([x, y]);
+        else {
+          for (const k of crops) for (const x of xs) pos.push([x, yMin - k, -x * h + k * w]);
+          pos.sort((p, q) => p[2] - q[2] || q[1] - p[1] || q[0] - p[0]);
+        }
         let blocked = null;
-        for (const x of xs) for (const y of cand) {
+        for (const [x, y] of pos) {
           const hit = hits(sp, x, y, s, rects);
           if (hit) { blocked = blocked || hit; continue; }
-          return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, bleed: -x, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, envelope: { l: env.l, r: env.r }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
+          return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, bleed: -x, cropTop: Math.max(0, -(y + b.y * s)), backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, envelope: { l: env.l, r: env.r }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
         }
-        tried.push({ fit: st.fit + (pass ? '-bled' : ''), scale: s, why: 'overlaps ' + blocked });
+        tried.push({ fit: st.fit + (pass === 1 ? '-bled' : pass === 2 ? '-cropped' : ''), scale: s, why: 'overlaps ' + blocked });
       }
     }
     return { ok: false, fit: 'omitted', reason: tried.length ? tried[tried.length - 1].why : 'no variant fits the view', tried, view: { w: vw, h: vh }, rects: rects.map((r) => ({ id: r.id, x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.w), h: Math.round(r.h) })) };
@@ -633,7 +655,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, x: c.pl.x, bleed: c.pl.bleed || 0, footprint: roundRect(c.pl.footprint), envelope: c.pl.envelope || null, view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, motion: !!c.motion, segments: { in: c.d.in, hold: Math.round(c.d.hold * 10) / 10, out: c.d.out }, until: c.until, squeezed: c.squeezed || 0, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, x: c.pl.x, y: c.pl.y, bleed: c.pl.bleed || 0, cropTop: c.pl.cropTop || 0, footprint: roundRect(c.pl.footprint), envelope: c.pl.envelope || null, view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, motion: !!c.motion, segments: { in: c.d.in, hold: Math.round(c.d.hold * 10) / 10, out: c.d.out }, until: c.until, squeezed: c.squeezed || 0, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
