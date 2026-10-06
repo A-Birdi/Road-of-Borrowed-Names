@@ -3243,3 +3243,48 @@ docs/harmony/contract/registry.json regenerated (86 required + 37 optional asset
   otherwise govern the host page.
   - Loaded inside a stand-in skeleton at 1440×900 and 400×860: the viewer opens, 18 cells, no errors, no sideways
     scroll.
+
+## HX59, HX66, HX67 and HX70 on the approved art (2026-10-06; docs/expressive/CONTRACT.md ledger)
+
+Robin (2026-10-06) asked for the listed machine-side items to be finished, with judgements by eye left for their
+next playthrough. Runs: headless Chromium on Linux (Playwright), synthetic campaigns and synthetic looks in fresh
+profiles; no player save was used.
+
+**HX66, appearance fixtures on the painted kit.** B `node tests/e2e/harmony_appearance.mjs`: **75 passed, 0 failed**
+(3932afd; in the default suite).
+- The fixtures are generated from docs/harmony/contract/registry.json, not kept by hand. Together they show every
+  hairstyle, garment shape, creation accessory and keepsake visible in the bust, and every skin, hair colour and cloth
+  palette.
+- 17 stress pairs, chosen by measuring the art: glasses under the heaviest fringes; headwear over the largest hair;
+  scarf and cape with the satchel strap; and, per companion, the state whose brush hand comes nearest the player's face.
+- 664 compositions: both busts painted, no whole-bust fallback, every worn accessory's files in the plan, keepsake
+  colours applied, the contract's sizes, layer order (nothing over the hand, the strap under the scarf and cape, the
+  fringe over glasses, no hair above a hat's band).
+- In the live game: equip a keepsake and the next technique's cut-in wears it; unequip and it is gone; save, reload and
+  load give the same pixels; two slots with different looks each get their own composition.
+- The heaviest possible look needs 46 decoded files; the decode cache holds 48 (asserted).
+- Sheets: docs/screenshots/harmony/appearance/fixtures_peak.png and stress.png (`--sheets`).
+
+**HX67, captures of the painted cut-in.**
+- `node tests/e2e/harmony_painted_sheets.mjs` (90588db): one sheet per companion in docs/screenshots/harmony/painted/.
+  Each shows every state of the timeline at 2× with its time at Normal: as played; with the ink band and effects off;
+  a contrasting look; and the two poses Reduce motion holds. All painted, no page errors, no requests.
+- B `node tests/e2e/harmony_cutin.mjs --docs`: **12/0** (f9491e0). It refreshed the real-time recordings of each
+  pairing at Normal (they carry no audio), the stage performances with the portrait off (with Ren's new timing), the
+  compact pair at 390×844, and cutin_results.json.
+- Whether the four read as distinct at play speed is for Robin's playthrough.
+
+**Found while measuring HX59, and fixed (70c966e): the cut-in was left out in groups at Robin's window size.**
+- The first budget run at 2048×1046 omitted the painted cut-in with three creatures, for all four companions
+  ("overlaps creature"). The painted pair is too tall for the strip above the creatures, and the column left of them is
+  a few pixels too narrow. The performance on stage still played; only the portrait was missing.
+- The rule (82d_harmony_cutin.js `place()`): every candidate is tried at the left edge first, exactly as before. Only
+  when none fits there, the same candidates are tried again, slid past the left edge in steps of 2 art px. A pair is
+  never slid so far that a face, with the motion's reach to the left, has less than 8 px on screen. The pair already
+  enters from that edge, so it reads as bleeding off the page (HX1). Placements that fitted before are unchanged.
+- B harmony_cutin, new section "a group of three at Robin's window size", one run per companion: each shows one
+  cut-in, `compact-small` at scale 1, slid 4 px; the leftmost face starts at 32 px; 0 frames with a drawn pixel within
+  12 px of anything protected; no page errors. A capture (Ren, in the hold) shows both faces whole, clear of the
+  creature's label.
+- U 27,245/0.
+- The rest of `harmony_cutin` on this build, and HX59's measurements: below, when they finish.
