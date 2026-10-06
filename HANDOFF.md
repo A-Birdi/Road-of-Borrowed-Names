@@ -54,6 +54,17 @@
   geometry, invariance, 20-battle cleanup and memory budget on the final build; then the
   full-game matrix with both addenda (VALIDATION.md "Full-game matrix — both addenda"):
   whole-game matrix 16/16, layout audit 536/536 (English, 8 viewports) and 201/201 (Japanese, 3).
+- Since 2026-10-03 also the **Harmony & Expressive Storytelling** and **World Idle Life** addenda (sections below),
+  with the approved painted Harmony art imported on 2026-10-06.
+  - Latest checks, chosen by the clarified testing cadence (VALIDATION.md "Checks on the approved art"):
+    - unit 27,245/0;
+    - Foundations campaigns with each companion 4/4;
+    - staging_chapters 13,850/0;
+    - the default suite's first half (two failures explained and fixed);
+    - layout audit 535/536 → fixed, and 201/201;
+    - battle_party 14/0, battle_anim 16/0, harmony_cutin 11/0.
+  - Still open in those addenda: a person watching the conversation gestures and portraits at play speed (WI5, WI26,
+    HX33), and the uneven portrait scaling on phones (WI14).
 - Test tooling: tests/e2e/drive.mjs (goal-directed driver: walks real maps,
   interacts through the world), pursue.mjs (whole game), matrix.mjs,
   run.mjs (suite runner), explore.mjs (random explorer, weaker).
@@ -519,8 +530,16 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     version 3 with 1× and 8× before/after.
   - **Approved and imported (2026-10-06):** Robin: "The new Harmony pass I would consider finished." Source
     art/harmony/source/full_v1/ → assets/harmony/ (regenerates byte for byte), embedded in index.html (12.7 MiB).
-    The shipped game paints the cut-ins with the approved art; the code-drawn busts remain the fallback. Next: the
-    whole browser suite and the full matrix audit on this build.
+    The shipped game paints the cut-ins with the approved art; the code-drawn busts remain the fallback.
+  - **Checked (2026-10-06, VALIDATION.md "Checks on the approved art"),** by the clarified cadence:
+    - Foundations campaigns with all four companions 4/4; staging 13,850/0; layout audit 535/536 + 201/201; save
+      loading in both modes; the art from `file://`; battle_party, battle_anim and harmony_cutin all passing.
+    - **Fixed on the way:**
+      - The sequence buttons were 40 px on landscape phones, from before the import; now 44 px.
+      - Ren's Lantern Ward started 20 ms after your brush. Robin's decision: Ren's performance moves 120 ms earlier
+        and now leads by 100 ms.
+    - **Added:** the credit "Project Development: Robin Amaral" (About & credits, and the end card).
+    - **Not run, by the cadence:** the E, I and A campaigns and the rest of the default suite's second half.
   - Robin also shared a discussion-only expansion note (future ideas, explicitly not authorised); reviewed in chat,
     stored in docs/future/EXPANSION_CONTEXT.md, no work started from it.
   - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top

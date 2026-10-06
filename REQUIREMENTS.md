@@ -268,6 +268,10 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   - `title_ledger.mjs` "title scene" at 1280×800, 900×1000, 390×844 and 844×390, and "title sky".
   - Captures inspected at 1280×800, 900×1000, 900×865, 390×844, 844×390 and 667×375, with bridge close-ups before and after.
 
+- [v] T6 The credit "Project Development: Robin Amaral" (Robin's request, 2026-10-06): first on the title's About &
+  credits page, and under the closing line of the story's end card (same card, same flow and timing). Evidence: U
+  27,245/0; captures at 1920×1080 and 390×844 (VALIDATION.md "Checks on the approved art").
+
 ## Prologue (owner's report of 2026-10-03; VALIDATION.md "Prologue round"; docs/ART_DIRECTION.md §12)
 - [v] PR1 The traveller walks the road, not into the river:
   - The walk starts on the road just above the caption slip and follows the road's centre line toward the horizon at a steady pace.
@@ -387,6 +391,16 @@ commit (VALIDATION.md); screenshots inspected by eye are noted as such.
   in-between arms, 110 hair-motion files, a body arc; with Robin's neck review (neck and collarbone anatomy redone, nape
   patches removed, cape over the dress, hair rim in the hair ramp) and Ren's peak arm redrawn. The kit proof: 245 files,
   2,681 busts, 0 errors, 1 major flag (look A's own 3-px speck).
+- [v] HB14 The game with the approved art in (2026-10-06), checked by Robin's clarified testing cadence:
+  - B campaigns: Foundations with each companion, 4/4 through Chapters 1–6 and the Atlas.
+  - B layout audit: 535/536 and 201/201. The one finding was the sequence buttons at 40 px on landscape phones,
+    present from before the import; now 44 px.
+  - B staging_chapters 13,850/0; B the first half of the default suite; B save loading 18/18 in both modes; B the art
+    from a `file://` page.
+  - B battle_party 14/0, battle_anim 16/0, harmony_cutin 11/0.
+  - Ren's Lantern Ward now leads your brush by 100 ms (Robin's decision; it had started 20 ms after).
+  - Evidence: VALIDATION.md "Checks on the approved art". Not run, with the reasons recorded there: the E, I and A
+    campaigns and the rest of the default suite's second half.
 
 ## Quest guidance (owner's question of 2026-09-29: hints in the ledger, map markers; VALIDATION.md "Quest guidance")
 - [v] G1 Where each quest's next step happens is derived from the content (src/engine/56_questguide.js): the scenes that move the quest on, walked the way the runner would against the current state, and the people, props, triggers, arrivals and foes that run them; a person who appears only later is not targeted; places you cannot reach yet are not preferred; what a blocked step waits for is followed two levels deep; more than six places marks none. Optional per-stage `hint` and `at` (validated). Evidence: tests/unit/quest_guide.test.mjs lists every stage of every quest — 116 derived, 1 authored (`rw_depart` 1), 4 set and passed within one scene, 0 missing — and checks live analysis on real states in every chapter; quest_guide.mjs checks it in the browser.

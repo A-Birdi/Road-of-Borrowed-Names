@@ -2949,8 +2949,81 @@ of Robin's reference sheets:
       code-drawn pair's faces were ≥ 64, so the threshold is now ≥ 50.
     - **dev viewer:** the art-status panel now reads "approved visual direction" for the kit and every companion,
       where it read "provisional artwork".
-- Still to run on this build: the whole default browser suite (in pieces) and the full matrix audit (four language
-  profiles × four companions), which Robin asked to finish with.
+- The whole-game checks on this build, and the three changes they led to, are in the next section.
+
+## Checks on the approved art, and the changes they led to (2026-10-06; REQUIREMENTS.md HB14, T6)
+
+**Scope.** Chosen by Robin's clarified testing cadence (HANDOFF.md, "Testing cadence"): first work out what a change
+can affect, then run only that.
+- **What the import can affect:** each companion's cut-in art, 1.8 MiB more in `index.html`, and the art's
+  preparation when a battle starts. The art is the same at every language profile.
+- **Run:**
+  - Foundations with each of the four companions, instead of the 16-combination matrix.
+  - The battle and Harmony tests.
+  - The first half of the default suite and the chapter staging test (both already running when the cadence was
+    clarified).
+  - Save loading in both modes, and the art from a `file://` page.
+  - The layout audit.
+- **Not run, and why:**
+  - **The E, I and A campaigns.** Nothing in how language tasks are chosen or checked has changed since the last 16/16
+    matrix (`src/learn/` is unchanged since a1eee28).
+  - **The rest of the default suite's second half** (practice, fishing, cases, wordplay, the per-chapter story tests,
+    `pursue E mio`). The import does not touch them, and the four campaigns play every chapter's battles.
+
+All runs: headless Chromium on Linux (Playwright), synthetic campaigns in fresh profiles; no player save was used.
+Captures went to scratch copies of the same source and build, or were restored afterwards.
+
+**Builds:**
+
+| Commit | What it adds | `index.html` | sha256 |
+|---|---|---|---|
+| cc50226 | the import | 13,054,198 B | `4a14722591f8f089…` |
+| ee61e7c | the sequence buttons | 13,054,215 B | `dce77ba3573b833f…` |
+| 5d8c967 | Ren's technique timing | 13,054,536 B | `c05c605dab5c6ddd…` |
+| 5bc7c83 | the credit | 13,055,578 B | `be326c738754cf8c…` |
+
+**Results:**
+- **B Layout audit** (`visual.mjs --check`, on cc50226):
+  - English labels at 8 viewports (320×640 … 1920×1080): **535/536**.
+  - Japanese labels at 320×640, 390×844 and 1280×800: **201/201**.
+  - **The one finding:** `create_prologue` at 844×390. The five sequence buttons were 40 px tall; the touch target is
+    44 px. The build before the import (4fef336) gives the same result. The cause is the manual-advance prologue
+    (b452770, 2026-10-03: a `max-height: 440px` rule in 51_sequence.css), which came after the last full audit.
+  - **Fixed in ee61e7c:**
+    - `create_prologue` is clean at 844×390, 640×360 and 568×320.
+    - sequence_manual 64/0, prologue 100/0 and create 382/0 on that build.
+- **B Default suite, first half** (`run.mjs --skip=staging_chapters.mjs --part=1/2`, 41 scripts, on cc50226):
+  **39/41**.
+  - **`battle_presentation`** "one cadence": the opening lines' clock rate measured 1.16 while five browsers were
+    running. Run alone it passed, 13/13, with the same reading on cc50226 (1.096) and on 4fef336 (1.093): machine load.
+  - **`battle_party`**, "complementary performances": your `act:rally_seal` and Ren's `act:ward_plane` were first seen
+    on the same sampled frame.
+    - It also fails alone, on cc50226, on 4fef336, and on 56c68c3, where it had passed in the 2026-10-04 run.
+    - Cause: Ren's signature began at 780 ms and yours at 760, 20 ms apart on a 33-ms scene clock, so on most runs
+      they land on the same frame. It also went against the technique's own description (Ren draws the plane; your
+      brush closes it).
+    - Fixed by Robin's decision in 5d8c967: Ren's whole performance moves 120 ms earlier and now leads by 100 ms
+      (HARMONY.md §7.3).
+    - After the fix: Ren's part passed 5/5 with three campaign browsers running, and the whole `battle_party` script
+      passed 14/14 run alone.
+- **B `staging_chapters`** (on cc50226): **13,850 passed, 0 failed** (446 scenes, 5,693 s).
+- **B `shift_load_regression`** (on ee61e7c): **18/18** over http and **18/18** from `file://`.
+- **B Painted art from a `file://` page** (scratch check, on ee61e7c): looks A and B composed painted with each
+  companion; no page errors and no requests other than `file:`.
+- **B Campaigns** (`matrix.mjs F nao,mio,ren,suzu 3`, on ee61e7c): **4/4**. Each played Chapters 1–6 and one Atlas
+  restoration: Ren 16.3 min, Mio 18.3, Suzu 17.6, Nao 18.7. The solver answers the language steps, so these show the
+  game can be finished with the art in, not how it plays.
+- **On 5d8c967:** U `node tests/run-unit.mjs` 27,245/0; B `battle_party` **14/0**; B `battle_anim` **16/0**.
+- **B `harmony_cutin`: 11/0.** It ran in a full scratch copy with 5bc7c83's build; the credit does not touch battles.
+  - An earlier run in a scratch copy that held only `tests/` gave 8/11:
+    - Two "painted" sections could not import `tools/`, which that copy lacked.
+    - "geometry" once measured the portrait-off reference scene at two scroll positions (390×844, 200 % text).
+  - Neither failure came back in the full rerun.
+- **On 5bc7c83 (the credit):**
+  - U 27,245/0.
+  - About & credits and the end card captured at 1920×1080 and 390×844: the credit fits, with no page errors.
+- **Not verified:** Firefox, a real phone or the foldable; play by a person; the E, I and A campaigns on this build
+  (see above).
 
 ## The player's in-betweens (Robin's review of the kit, 2026-10-05; CONTRACT.md §1; REQUIREMENTS.md HB13)
 
