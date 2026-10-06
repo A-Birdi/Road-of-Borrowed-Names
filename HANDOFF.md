@@ -66,7 +66,7 @@
   language profiles × four companions). After that, new content that does not touch a specific companion is checked
   with **one pairing on all four language profiles**; content that touches a companion also gets that companion.
 - **Future expansion (discussion only, NOT authorised work):** Robin shared a consolidated note of expansion ideas on
-  2026-10-05 (kept outside the repo) and settled these points for when it is picked up; nothing is to be built until
+  2026-10-05 (stored unchanged at Robin's request in docs/future/EXPANSION_CONTEXT.md) and settled these points for when it is picked up; nothing is to be built until
   Robin selects and specifies a scope:
   1. Illustrations: the book is always fully viewable from the Main Menu; each save earns a border, sheen,
      holographic finish or badge on the illustrations it witnessed in the story; opening any illustration shows its
@@ -500,7 +500,7 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     across the far shoulder. Kit proof unchanged (2,681 busts, 0 errors, 1 major = look A's speck). Review page
     version 3 with 1× and 8× before/after. Awaiting Robin's verdict; nothing imported.
   - Robin also shared a discussion-only expansion note (future ideas, explicitly not authorised); reviewed in chat,
-    not stored in the repo, no work started from it.
+    stored in docs/future/EXPANSION_CONTEXT.md, no work started from it.
   - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top
     edge"):** a hat or cap hides hair only above its own top edge in the columns it covers (was: every hair pixel
     above the band row, which cut twintails and wide styles flat), and the edge hidden hair leaves over background
