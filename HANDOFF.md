@@ -469,7 +469,14 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
       collar changed at Robin's request), collarbones on the dress, the nape patches removed, the cape drapes over
       the dress's puffs, and the hair rim recolours with the hair.
   - The review page was republished (version 2), with every pairing's seven frames and the neck before and after.
-    Awaiting Robin's verdict; nothing imported.
+  - **Junction round (Robin's direction, 2026-10-05/06):** the head layer drew the whole neck over every torso's
+    neckline (rows 83–116, 459–534 px painted over), so garments could never overlap the neck base. Fixed within the
+    contract: the head keeps a short neck stub under the jaw; every torso is built on one shared body base (shoulders,
+    neck base) with the rear collar behind the neck and the front edges over its base; the satchel strap was moved
+    across the far shoulder. Kit proof unchanged (2,681 busts, 0 errors, 1 major = look A's speck). Review page
+    version 3 with 1× and 8× before/after. Awaiting Robin's verdict; nothing imported.
+  - Robin also shared a discussion-only expansion note (future ideas, explicitly not authorised); reviewed in chat,
+    not stored in the repo, no work started from it.
   - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top
     edge"):** a hat or cap hides hair only above its own top edge in the columns it covers (was: every hair pixel
     above the band row, which cut twintails and wide styles flat), and the edge hidden hair leaves over background
