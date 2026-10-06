@@ -52,6 +52,7 @@ let suites = [
   ['fishing.mjs'],
   // painted Harmony busts: the contract v2 raster path with the SYNTHETIC sample (docs/harmony/contract/CONTRACT.md)
   ['harmony_raster.mjs'],
+  ['portrait_dev.mjs'], // the portrait viewer (?dev=portraits): refused normally, sizes by the game's fit, no keys to the title
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
 // --skip=a.mjs,b.mjs leaves those scripts out; --part=k/n runs the k-th of n equal slices of what is left (a long
