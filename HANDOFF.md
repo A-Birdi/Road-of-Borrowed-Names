@@ -62,6 +62,30 @@
   90_game.js; regression tests/e2e/shift_load_regression.mjs (+ fixture
   tests/fixtures/shift_load_legacy.json), 18/18 in http-origin and file://
   modes; original build 3/18. See VALIDATION.md.
+- **Testing cadence (Robin, 2026-10-06):** finish the work already planned with the full matrix audit (four
+  language profiles × four companions). After that, new content that does not touch a specific companion is checked
+  with **one pairing on all four language profiles**; content that touches a companion also gets that companion.
+- **Future expansion (discussion only, NOT authorised work):** Robin shared a consolidated note of expansion ideas on
+  2026-10-05 (kept outside the repo) and settled these points for when it is picked up; nothing is to be built until
+  Robin selects and specifies a scope:
+  1. Illustrations: the book is always fully viewable from the Main Menu; each save earns a border, sheen,
+     holographic finish or badge on the illustrations it witnessed in the story; opening any illustration shows its
+     unlock and viewing criteria. No passwords (which would also clash with the spec's no-share-code rule).
+  2. Suspend: only for the 100 Trials superdungeon, to pick up where the player left off; never from a battle, least
+     of all a boss. Everywhere else the regular autosave is enough.
+  3. Illustrations with the player in them are high fidelity, idly animated, like Robin's Astra mockups: from the
+     Main Menu they show the Continue file's character (or the creation default with no save); in game, the player's
+     own appearance. Each is a substantial layered-art job.
+  4. Mastery: separate stars (or similar) per input type: handwriting, multiple choice, typed, listening (typing or
+     writing what a repeatable voice says; depends on the device having a Japanese voice). First version: a mastery
+     exam per group, a star when fewer than 30 % of its questions were assisted; weighted measures come later.
+     Robin notes that today some recognizer corrections count as assisted (in src/ui/60_pad.js, choosing a candidate
+     other than the recognizer's first counts as assisted), which would need ironing out first.
+  5. (The testing cadence above.)
+  6. A final art pass near the end, across much of the game, toward a more distinct stylised feel with far more
+     active and idle animation and a living community; the bar is the dragon-knight reference
+     (docs/BATTLE_ART_CONTRACTS.md: material shading, strong silhouette, overlapping forms, secondary motion) at a
+     smaller scale.
 - Not verified by automation (needs people): real handwriting accuracy,
   playtime, native-speaker review, music quality, audible TTS.
 
