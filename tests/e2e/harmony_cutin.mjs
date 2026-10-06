@@ -464,6 +464,33 @@ await test('plan: Keep visible + Expanded (Ren), a group of three (Suzu: one por
 });
 
 // ---------------------------------------------------------------------------------------------------------
+await test('a group of three at Robin\'s window size (2048×1046): the painted pair still shows — slid past the left edge where the left column is too narrow, faces kept on screen, nothing protected within 12 px', async () => {
+  const res = [];
+  for (const comp of COMPS) {
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: 2048, height: 1046 } });
+    await setup(p, { comp, knots: 6, foes: 3 });
+    const r = await technique(p, comp, { every: 1 });
+    const L = await p.evaluate(() => RB.harmonyCutin.last());
+    // the faces of every drawing the performance shows, at the placement (the placement's x, composition px × the scale)
+    const facesIn = await p.evaluate((L) => {
+      const out = [];
+      for (const phase of RB.harmonyArt.PHASES) {
+        const c = RB.harmonyArt.compose({ comp: L.comp, look: L.look, variant: L.variant, phase });
+        for (const f of c.faces) out.push(Math.round(L.x + f.x * L.scale));
+      }
+      return out;
+    }, L);
+    const over = r.frames.filter(overlapping);
+    res.push({ comp, started: r.started, fit: L && L.fit, variant: L && L.variant, scale: L && L.scale, x: L && L.x, bleed: L && L.bleed, faceH: L && L.faceH, faceLeft: Math.min(...facesIn), overlapping: over.length });
+    assert(r.started === 1, comp + ': the cut-in shows in a group of three ' + JSON.stringify({ started: r.started, fallback: r.fallback }));
+    assert(!over.length, comp + ': no drawn pixel within 12 px of anything protected (' + over.length + ' frames: ' + JSON.stringify(over[0] && over[0].ov) + ')');
+    assert(Math.min(...facesIn) >= 8, comp + ': both faces stay on screen (the leftmost face starts at ' + Math.min(...facesIn) + ' px)');
+    assert(!errors.length, comp + ': ' + errors.join('; '));
+    await ctx.close();
+  }
+  console.log('   ' + JSON.stringify(res));
+  report.groupAt2048 = res;
+});
 await test('frozen frame: with everything frozen during the hold, the frame with the overlay shown and hidden is identical outside the overlay (1280×720 and 390×844)', async () => {
   const res = [];
   for (const [w, h, comp] of [[1280, 720, 'suzu'], [390, 844, 'ren'], [1648, 840, 'mio']]) {

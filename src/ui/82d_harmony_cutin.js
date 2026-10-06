@@ -257,6 +257,7 @@ RB.harmonyCutin = (function () {
   }
   // does the composition at (x, y, s) draw anything inside one of the rects (each inflated by SEP)?
   // (path: each drawn row also covers everything to its left — the way the composition slides in from the left edge)
+  const BLEED_FACE = 8; // CSS px of every face kept in view when the pair is slid past the left edge (place())
   function hits(sp, x, y, s, rects, path) {
     for (const R of rects) {
       const rx0 = R.x - SEP, rx1 = R.x + R.w + SEP, ry0 = R.y - SEP, ry1 = R.y + R.h + SEP;
@@ -318,32 +319,46 @@ RB.harmonyCutin = (function () {
     const fz = (st) => { const k = st.variant + '@' + st.scale; if (faceAt[k] == null) faceAt[k] = faceOf(Object.assign({ variant: st.variant }, base), st.scale); return faceAt[k]; };
     const order = std.concat(cmp).map((st, i) => ({ st, i, f: fz(st) })).sort((a, b) => b.f - a.f || a.i - b.i).map((x) => x.st);
     const tried = [];
-    for (const st of order) {
-      const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
-      const { sp: sp0, comp } = spansOf(spec);
-      const sp = widen(sp0, env);
-      const s = st.scale, b = comp.bounds;
-      const faceH = Math.min(...comp.faces.map((f) => f.h)) * s, faceW = Math.min(...comp.faces.map((f) => f.w)) * s;
-      if (faceH < 24) { tried.push({ fit: st.fit, scale: s, why: 'faces too small' }); continue; }
-      const x = 0, w = comp.w * s, h = comp.h * s;
-      if (x + (b.x + b.w + env.r) * s > vw) { tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
-      const yMin = Math.ceil(-b.y * s), yMax = Math.floor(vh - (b.y + b.h) * s);
-      if (yMax < yMin) { tried.push({ fit: st.fit, scale: s, why: 'too tall' }); continue; }
-      const pref = Math.round(midY - (b.y + b.h / 2) * s);
-      const cand = [];
-      if (st.at === 'mid') cand.push(Math.max(yMin, Math.min(yMax, pref)));
-      else {
-        const step = Math.max(1, Math.round(s));
-        for (let y = yMin; y <= yMax; y += step) cand.push(y);
-        cand.sort((p, q) => Math.abs(p - pref) - Math.abs(q - pref) || p - q);
+    // Two passes. First every candidate against the left edge (x 0), as always. Only when none fits there, the same
+    // candidates again, slid further past the left edge the composition bleeds from (§5.2, HX1), in steps of 2 art
+    // px, never so far that a face leaves the screen (each face, widened by the motion's reach to the left, stays at
+    // least BLEED_FACE px in view): a group of large creatures can leave the left edge's column only just too narrow
+    // for the painted pair (2048 × 1046 with three, 2026-10-06), where the portrait would otherwise be left out.
+    for (const pass of [0, 1]) {
+      for (const st of order) {
+        const spec = Object.assign({}, base, { variant: st.variant, backing: st.backing !== false, fx: st.fx !== false });
+        const { sp: sp0, comp } = spansOf(spec);
+        const sp = widen(sp0, env);
+        const s = st.scale, b = comp.bounds;
+        const faceH = Math.min(...comp.faces.map((f) => f.h)) * s, faceW = Math.min(...comp.faces.map((f) => f.w)) * s;
+        if (faceH < 24) { if (!pass) tried.push({ fit: st.fit, scale: s, why: 'faces too small' }); continue; }
+        const w = comp.w * s, h = comp.h * s;
+        if ((b.x + b.w + env.r) * s > vw) { if (!pass) tried.push({ fit: st.fit, scale: s, why: 'too wide' }); continue; }
+        const yMin = Math.ceil(-b.y * s), yMax = Math.floor(vh - (b.y + b.h) * s);
+        if (yMax < yMin) { if (!pass) tried.push({ fit: st.fit, scale: s, why: 'too tall' }); continue; }
+        const pref = Math.round(midY - (b.y + b.h / 2) * s);
+        const cand = [];
+        if (st.at === 'mid') cand.push(Math.max(yMin, Math.min(yMax, pref)));
+        else {
+          const step = Math.max(1, Math.round(s));
+          for (let y = yMin; y <= yMax; y += step) cand.push(y);
+          cand.sort((p, q) => Math.abs(p - pref) - Math.abs(q - pref) || p - q);
+        }
+        const xs = [];
+        if (!pass) xs.push(0);
+        else {
+          const xMin = Math.ceil(BLEED_FACE + env.l * s - Math.min(...comp.faces.map((f) => f.x)) * s);
+          for (let x = -2 * s; x >= xMin; x -= 2 * s) xs.push(x);
+          if (!xs.length) continue;
+        }
+        let blocked = null;
+        for (const x of xs) for (const y of cand) {
+          const hit = hits(sp, x, y, s, rects);
+          if (hit) { blocked = blocked || hit; continue; }
+          return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, bleed: -x, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, envelope: { l: env.l, r: env.r }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
+        }
+        tried.push({ fit: st.fit + (pass ? '-bled' : ''), scale: s, why: 'overlaps ' + blocked });
       }
-      let blocked = null;
-      for (const y of cand) {
-        const hit = hits(sp, x, y, s, rects);
-        if (hit) { blocked = blocked || hit; continue; }
-        return { ok: true, variant: st.variant, scale: s, x, y, w, h, fit: st.fit, backing: spec.backing, fx: spec.fx, faceH, faceW, footprint: { x: x + b.x * s, y: y + b.y * s, w: b.w * s, h: b.h * s }, envelope: { l: env.l, r: env.r }, view: { w: vw, h: vh }, tried, rects: rects.map((r) => r.id) };
-      }
-      tried.push({ fit: st.fit, scale: s, why: 'overlaps ' + blocked });
     }
     return { ok: false, fit: 'omitted', reason: tried.length ? tried[tried.length - 1].why : 'no variant fits the view', tried, view: { w: vw, h: vh }, rects: rects.map((r) => ({ id: r.id, x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.w), h: Math.round(r.h) })) };
   }
@@ -618,7 +633,7 @@ RB.harmonyCutin = (function () {
     c.state = 'disposed';
     mark(c, 'disposed', pt);
     S.disposed++;
-    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, footprint: roundRect(c.pl.footprint), envelope: c.pl.envelope || null, view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, motion: !!c.motion, segments: { in: c.d.in, hold: Math.round(c.d.hold * 10) / 10, out: c.d.out }, until: c.until, squeezed: c.squeezed || 0, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
+    S.log.push({ n: c.n, action: c.action, comp: c.comp, why: why || 'done', displayed: !!c.seen, mode: c.mode, reduce: c.reduce, variant: c.pl.variant, scale: c.pl.scale, fit: c.pl.fit, x: c.pl.x, bleed: c.pl.bleed || 0, footprint: roundRect(c.pl.footprint), envelope: c.pl.envelope || null, view: c.pl.view, faceH: c.pl.faceH, faceW: c.pl.faceW, tried: c.pl.tried || [], reducedPlan: c.rm, motion: !!c.motion, segments: { in: c.d.in, hold: Math.round(c.d.hold * 10) / 10, out: c.d.out }, until: c.until, squeezed: c.squeezed || 0, waitedForMenus: c.waited != null ? c.waited : c.menus && c.menus.waited ? -1 : null, opacityAtEnd: Math.round(c.opacity * 1000) / 1000, marks: c.marks, trace: c.trace, look: c.look });
     while (S.log.length > LOG_CAP) S.log.shift();
     return true;
   }
