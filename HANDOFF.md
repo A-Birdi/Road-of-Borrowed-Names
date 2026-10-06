@@ -498,7 +498,11 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
     contract: the head keeps a short neck stub under the jaw; every torso is built on one shared body base (shoulders,
     neck base) with the rear collar behind the neck and the front edges over its base; the satchel strap was moved
     across the far shoulder. Kit proof unchanged (2,681 busts, 0 errors, 1 major = look A's speck). Review page
-    version 3 with 1× and 8× before/after. Awaiting Robin's verdict; nothing imported.
+    version 3 with 1× and 8× before/after.
+  - **Approved and imported (2026-10-06):** Robin: "The new Harmony pass I would consider finished." Source
+    art/harmony/source/full_v1/ → assets/harmony/ (regenerates byte for byte), embedded in index.html (12.7 MiB).
+    The shipped game paints the cut-ins with the approved art; the code-drawn busts remain the fallback. Next: the
+    whole browser suite and the full matrix audit on this build.
   - Robin also shared a discussion-only expansion note (future ideas, explicitly not authorised); reviewed in chat,
     stored in docs/future/EXPANSION_CONTEXT.md, no work started from it.
   - **Hat rule changed (lead, 2026-10-05; CONTRACT.md §6, VALIDATION.md "Hats hide hair above their own top

@@ -1,6 +1,8 @@
 // The painted Harmony path in the built game (docs/harmony/contract/CONTRACT.md), with the SYNTHETIC sample:
 //   node tests/e2e/harmony_raster.mjs [--sheets]
-// 1. the built index.html has no painted art: PHASES enter/hold, no timeline, the code-drawn sizes;
+// 0. the shipped index.html installs the approved painted art by itself (since 2026-10-06): the seven states, the pair
+//    sizes, every companion and the player's kit painted; the steps below run on a build with no art (codeonly.html);
+// 1. a build with no painted art: PHASES enter/hold, no timeline, the code-drawn sizes;
 // 2. the sample (imported fresh by tools/harmony_import.mjs) is installed into the page, decoded by prepare() (async,
 //    createImageBitmap) and composed through the public API: both looks × Suzu × every state × both variants are
 //    painted; faces inside, never covered by the other bust; the states differ;
@@ -44,9 +46,35 @@ const encodedBytesR = Object.values(filesR).reduce((n, b) => n + Buffer.from(b, 
 const emb = spawnSync(process.execPath, [path.join(root, 'tools/build.mjs'), '--out', path.join(OUT, 'embedded.html'), '--harmony', path.join(OUT, 'assets')], { encoding: 'utf8' });
 ok(emb.status === 0 && /painted Harmony art: \d+ PNGs/.test(emb.stdout), 'tools/build.mjs --harmony embeds the set: ' + emb.stdout.trim().split('\n').pop());
 
+// a build with no painted art (the shipped index.html embeds assets/harmony since 2026-10-06), for steps 1–5 and 8
+const none = spawnSync(process.execPath, [path.join(root, 'tools/build.mjs'), '--out', path.join(OUT, 'codeonly.html'), '--harmony', path.join(OUT, 'no_art')], { encoding: 'utf8' });
+if (none.status !== 0) throw new Error('code-only build failed: ' + none.stderr);
 const { srv, url } = await serve();
 const browser = await launch();
-const { p, errors, requests } = await page(browser, url, { viewport: { width: 1920, height: 1080 } });
+// ---- 0: the shipped game installs the approved art by itself ------------------------------------------------------------
+{
+  const ps = await page(browser, url, { viewport: { width: 1920, height: 1080 } });
+  const r0 = await ps.p.evaluate(async () => {
+    const HA = RB.harmonyArt, HR = RB.harmonyRaster, HC = RB.harmonyContract;
+    for (let i = 0; i < 100 && !HR.active(); i++) await new Promise((r) => setTimeout(r, 50));
+    const m = HR.manifest();
+    const look = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower', 'satchel'] };
+    const painted = [];
+    // (prepare decodes in idle slices: the composition is code-drawn while decoding, then painted)
+    for (const comp of HA.COMPANIONS) {
+      HA.prepare({ comp, look, phase: 'peak', async: true });
+      let c = {};
+      for (let i = 0; i < 60; i++) { HA.clear(); c = HA.compose({ comp, look, phase: 'peak' }).painted || {}; if (c[comp] === 'painted' && c.pc === 'painted') break; await new Promise((r) => setTimeout(r, 100)); }
+      painted.push(c[comp] === 'painted' && c.pc === 'painted');
+    }
+    return { active: HR.active(), phases: HA.PHASES, native: HA.NATIVE, approval: m && m.pc && m.pc.approval, comps: m && Object.keys(m.companions || {}).sort(), files: m && Object.keys(m.files || {}).length, painted, synthetic: m && m.synthetic };
+  });
+  ok(r0.active && JSON.stringify(r0.phases) === JSON.stringify(['prep_a', 'prep_b', 'cue', 'cue_b', 'peak', 'settle_a', 'settle_b']) && r0.native.standard.w === 352 && r0.approval === 'approved' && r0.synthetic === false && JSON.stringify(r0.comps) === '["mio","nao","ren","suzu"]', 'the shipped game installs the approved art by itself: seven states, the 352 × 160 pair, four companions, approval ' + r0.approval + ', ' + r0.files + ' files');
+  ok(r0.painted.length === 4 && r0.painted.every(Boolean), 'look A pairs with each companion painted, not code-drawn (' + JSON.stringify(r0.painted) + ')');
+  ok(!ps.errors.length && !ps.requests.length, 'no page errors, no network requests (' + ps.errors.concat(ps.requests).join('; ') + ')');
+  await ps.p.context().close();
+}
+const { p, errors, requests } = await page(browser, url + 'tests/e2e/out/harmony_raster/codeonly.html', { viewport: { width: 1920, height: 1080 } });
 // the looks of Batches 1a and 1b (contract v3 §1.1)
 const LA = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower', 'satchel'] };
 const LB = { skin: 5, hair: 'curly', hairColor: 8, outfit: 6, shape: 'robe', acc: ['scarf', 'headband'] };
@@ -61,7 +89,7 @@ const snap = () => p.evaluate(({ LA }) => {
   return out;
 }, { LA });
 const before = await snap();
-ok(!before.raster && before.timeline === 'undefined' && JSON.stringify(before.phases) === '["enter","hold"]' && before.native.standard.w === 228, 'the built game has no painted art: PHASES enter/hold, no timeline, 228 × 100 (' + JSON.stringify(before.native) + ')');
+ok(!before.raster && before.timeline === 'undefined' && JSON.stringify(before.phases) === '["enter","hold"]' && before.native.standard.w === 228, 'a build with no painted art: PHASES enter/hold, no timeline, 228 × 100 (' + JSON.stringify(before.native) + ')');
 
 // ---- 2: install, decode, compose ------------------------------------------------------------------------------------------
 const r2 = await p.evaluate(async ({ manifest, files, LA, LB }) => {

@@ -1,0 +1,697 @@
+{
+ "set": "player_kit_full",
+ "approval": "approved",
+ "synthetic": false,
+ "artVersion": 1,
+ "note": "The player's complete Harmony kit and the four companions' seven-state cut-ins, drawn in code in this project from measurements of Robin's reference sheets, approved by Robin on 2026-10-06 (\"The new Harmony pass I would consider finished\"). Player kit: look A (four heads, coat, five fitted Suzu arms, ponytail, glasses, flower, satchel), the other eleven hairstyles, the robe, tunic, apron and dress, the fitted and wide brush arms for every pairing, thirteen accessories, and the in-betweens (heads prep_b, cue_b, settle_a; arms cue_b and settle_a per pairing; hair motion for prep_b, cue, cue_b, peak, settle_a). Converted from real colours to key families by tools/harmony_keyify.mjs with supplied masks. One delivery spanning batches 1a, 1b and the remaining asset keys, so it names no single batch. pc.attach: per-hairstyle mounts measured and corrected by the full-kit proof; pc.groups: the body arc measured from Suzu's frames.",
+ "pc": {
+  "groups": {
+   "prep_b": {
+    "head": [
+     1,
+     1
+    ],
+    "torso": [
+     1,
+     1
+    ]
+   },
+   "cue": {
+    "head": [
+     0,
+     -1
+    ],
+    "torso": [
+     0,
+     -1
+    ]
+   },
+   "cue_b": {
+    "head": [
+     -1,
+     -2
+    ],
+    "torso": [
+     -1,
+     -2
+    ]
+   },
+   "peak": {
+    "head": [
+     -2,
+     -3
+    ],
+    "torso": [
+     -2,
+     -3
+    ]
+   },
+   "settle_a": {
+    "head": [
+     -1,
+     0
+    ],
+    "torso": [
+     -1,
+     0
+    ]
+   }
+  },
+  "attach": {
+   "short": {
+    "hat": [
+     0,
+     7
+    ],
+    "cap": [
+     0,
+     5
+    ],
+    "headband": [
+     0,
+     5
+    ],
+    "ribbon": [
+     -7,
+     3
+    ],
+    "flower": [
+     -6,
+     8
+    ],
+    "leaf": [
+     -6,
+     5
+    ],
+    "atlas_quill": [
+     -12,
+     6
+    ]
+   },
+   "bob": {
+    "hat": [
+     0,
+     3
+    ],
+    "cap": [
+     0,
+     3
+    ],
+    "headband": [
+     0,
+     3
+    ],
+    "ribbon": [
+     -9,
+     4
+    ],
+    "flower": [
+     -5,
+     7
+    ],
+    "leaf": [
+     -8,
+     6
+    ],
+    "atlas_quill": [
+     -13,
+     7
+    ]
+   },
+   "long": {
+    "hat": [
+     0,
+     1
+    ],
+    "cap": [
+     0,
+     3
+    ],
+    "headband": [
+     0,
+     1
+    ],
+    "ribbon": [
+     -7,
+     3
+    ],
+    "flower": [
+     -4,
+     5
+    ],
+    "leaf": [
+     -6,
+     5
+    ],
+    "atlas_quill": [
+     -11,
+     6
+    ]
+   },
+   "ponytail": {
+    "hat": [
+     0,
+     0
+    ],
+    "cap": [
+     0,
+     0
+    ],
+    "headband": [
+     0,
+     0
+    ],
+    "ribbon": [
+     0,
+     0
+    ],
+    "flower": [
+     0,
+     0
+    ],
+    "leaf": [
+     0,
+     0
+    ],
+    "atlas_quill": [
+     0,
+     0
+    ]
+   },
+   "bun": {
+    "hat": [
+     0,
+     2
+    ],
+    "cap": [
+     0,
+     2
+    ],
+    "headband": [
+     0,
+     2
+    ],
+    "ribbon": [
+     -5,
+     1
+    ],
+    "flower": [
+     -4,
+     5
+    ],
+    "leaf": [
+     -12,
+     10
+    ],
+    "atlas_quill": [
+     -8,
+     4
+    ]
+   },
+   "curly": {
+    "hat": [
+     0,
+     0
+    ],
+    "cap": [
+     0,
+     -2
+    ],
+    "headband": [
+     0,
+     -2
+    ],
+    "ribbon": [
+     9,
+     -4
+    ],
+    "flower": [
+     2,
+     -3
+    ],
+    "leaf": [
+     4,
+     -3
+    ],
+    "atlas_quill": [
+     4,
+     -2
+    ]
+   },
+   "spiky": {
+    "hat": [
+     0,
+     1
+    ],
+    "cap": [
+     0,
+     1
+    ],
+    "headband": [
+     0,
+     1
+    ],
+    "ribbon": [
+     1,
+     0
+    ],
+    "flower": [
+     -5,
+     6
+    ],
+    "leaf": [
+     -3,
+     1
+    ],
+    "atlas_quill": [
+     -2,
+     3
+    ]
+   },
+   "braid": {
+    "hat": [
+     0,
+     8
+    ],
+    "cap": [
+     0,
+     6
+    ],
+    "headband": [
+     0,
+     6
+    ],
+    "ribbon": [
+     -6,
+     3
+    ],
+    "flower": [
+     -5,
+     6
+    ],
+    "leaf": [
+     -7,
+     3
+    ],
+    "atlas_quill": [
+     -8,
+     3
+    ]
+   },
+   "shaved": {
+    "hat": [
+     0,
+     8
+    ],
+    "cap": [
+     0,
+     9
+    ],
+    "headband": [
+     0,
+     17
+    ],
+    "ribbon": [
+     -15,
+     3
+    ],
+    "flower": [
+     -15,
+     -1
+    ],
+    "leaf": [
+     -14,
+     7
+    ],
+    "atlas_quill": [
+     -14,
+     8
+    ]
+   },
+   "twintails": {
+    "hat": [
+     0,
+     6
+    ],
+    "cap": [
+     0,
+     6
+    ],
+    "headband": [
+     0,
+     6
+    ],
+    "ribbon": [
+     11,
+     -5
+    ],
+    "flower": [
+     -3,
+     4
+    ],
+    "leaf": [
+     9,
+     -7
+    ],
+    "atlas_quill": [
+     11,
+     -5
+    ]
+   },
+   "wavy": {
+    "hat": [
+     0,
+     5
+    ],
+    "cap": [
+     0,
+     5
+    ],
+    "headband": [
+     0,
+     5
+    ],
+    "ribbon": [
+     -4,
+     2
+    ],
+    "flower": [
+     -4,
+     5
+    ],
+    "leaf": [
+     -5,
+     2
+    ],
+    "atlas_quill": [
+     -5,
+     3
+    ]
+   },
+   "wrap": {
+    "hat": [
+     0,
+     3
+    ],
+    "cap": [
+     0,
+     4
+    ],
+    "headband": [
+     0,
+     4
+    ],
+    "ribbon": [
+     5,
+     -2
+    ],
+    "flower": [
+     -5,
+     6
+    ],
+    "leaf": [
+     0,
+     0
+    ],
+    "atlas_quill": [
+     0,
+     0
+    ]
+   }
+  },
+  "hatBand": {
+   "hat": 40,
+   "cap": 43
+  },
+  "glassesOver": [
+   "shaved"
+  ],
+  "approval": "approved"
+ },
+ "companions": {
+  "suzu": {
+   "approval": "approved"
+  },
+  "nao": {
+   "approval": "approved"
+  },
+  "mio": {
+   "approval": "approved"
+  },
+  "ren": {
+   "approval": "approved"
+  }
+ },
+ "keyify": {
+  "tool": "tools/harmony_keyify.mjs",
+  "look": "look A + every painted channel (full kit) (sampled)",
+  "values": "range",
+  "sources": {
+   "acc_atlas_pin": "1bb59d1e8c491dc1bbac9031c9f68d2a15b0baf8e6fdec69aec2239d27f7ce4e",
+   "acc_atlas_quill": "ffc2bfe6e2f5a13945f07e94343f420546ca6c45d73e474d98b84a504b18d0e5",
+   "acc_atlas_sash": "8ed26b6d2eecf36c1ff5783925f583212a2a9b8cb17314ccfe72a7656e02842f",
+   "acc_bell": "f5be9ba3c7cd4ad31ddb1ddb55ae7eb0c7b41470f2a7cd7afe351947a0f94cf9",
+   "acc_cap": "c5346c517babd3794a1277b29e4d6a26c2cc22a7a04ff6a55cb0f2e921b77506",
+   "acc_cape_back": "abc0135c0f431eca1e72c5069d49b9d0a143ab3f01d8ceae74a3add13e2f7787",
+   "acc_cape_front": "01abbfbb6c4f18e1589f5f89d77883c0314f183c72bba26c0b1db38e37074dd1",
+   "acc_earrings_far": "da21abea655f9685c1cfa4f9620b4477b667dd0beab0af6af5f478111ada49c5",
+   "acc_earrings_near": "d3ba063b8a43b92a02133ad9fb5141b3a0df2f501740cb9882c84f4b626059d3",
+   "acc_flower": "fde927d016da926453245baf4ad37d1153246b1c136d6e4bce82a61805e43aab",
+   "acc_glasses": "e7b7bcaf1b138514674666f7ced8248361dddcfcc0ce8912d9aa61f16be16348",
+   "acc_hat": "abe812e4609d6304163fbbe204bf90e89ccfa5c63b7e6380c6389f60153f4ee7",
+   "acc_headband": "4604de1c6183e9a02a0685593a7b1e8174a8b01c0aca118bd7d9fd726fb3d041",
+   "acc_leaf": "835cb0558ea7a235edc31d8b11e8a458de93e93ef758c84740f1ffc5d149f1c4",
+   "acc_ribbon": "2f15865a1d0f862b98e3100061cb53f9db63eb1061f6f7eede7a11e4029e2790",
+   "acc_satchel": "6d71457fc44506a5761af08ec1842f432cf704e02d3bd2e4b84b3ae742b7ce01",
+   "acc_scarf": "bb2fcd718f2a350b720731438fe344b61d97c6c3fb3c4d2aa95d6c23ae5053a6",
+   "acc_scarf_knit": "aa749404c4cf1b52c8360e38246f7e1229a82b4a0ba600ac453acccdfbbc8aba",
+   "mio_cue": "9cf36e7ff32f864b40396ea49c09753e018a8435712220b09f431524fabe91cb",
+   "mio_cue_b": "0950d7368ad34deda0e2ab80160b71ad40328b13d7646bd706e8c19cba13c39a",
+   "mio_cue_b_fx": "7eeceffbb0c32114c8998b872576abc1398763228f8dc8d3a66336cbd294b2b0",
+   "mio_peak": "c5a6fbbe88e0aa6e63f5b0b6795d96fd5f559bf08882653de83854b327ae0b7b",
+   "mio_peak_fx": "7fd18372c226baf31eaf709b0f2ba74aa94eac549dbc695a3926ffce059ee99d",
+   "mio_prep_a": "a5ba83e9b6cdc3a785d77327f99e214475a2ba827d72c9391e04e50f3beff348",
+   "mio_prep_b": "bc112a8faf89a210fba4b1576b111d7c25577bdeaa5a3543bc2f27c99d64bad2",
+   "mio_settle_a": "a773de3c7a876b2fa76ec009cf72eafe80e2a956182bf9db4d0e6ab57254a2e8",
+   "mio_settle_a_fx": "5d25368d7d29d25fd3166a405f734784918239cba8348cd7f07129709d644d1e",
+   "mio_settle_b": "3909496943e41b4b8f729b8954b40ebe8b08bcfd68befe6aa1d10ef08e7fe01f",
+   "nao_cue": "e2c233cb20105daa6147cd1d388056fa363b81cce12297875f8c1f63e3b72c14",
+   "nao_cue_b": "f85ab1da7dbc27e197239f650cf37fd978b2079e849c697fe15e6a2750e1d6d4",
+   "nao_cue_b_fx": "f3a871d47f8c20217324bbd220bf2d39da6b174c5a5b613dc0d9cabf911d2171",
+   "nao_peak": "c24b0b581f6ee78a8c10da80d7817a31df808d41a2e2ecf74ac6dd39496f75c6",
+   "nao_peak_fx": "18ef9fc375c96c79bab7303668354b7bb6f1a18a757f5463b0596c0e4e3e302f",
+   "nao_prep_a": "cb022007020af192258b33b565dcadbb9d143cd4d34df29647ee2beb3fef761e",
+   "nao_prep_b": "aa999b2483803f33b8bc5a7390ac6ac57875e71304938d9ccd7d158f2ebf404f",
+   "nao_settle_a": "15dd9d7d5fc6c381d87c2cacb775de304e21f1b3fd3aa3a3853ad0277de59b55",
+   "nao_settle_a_fx": "dbd4f8ab943482aef037883fb86e14a304bcd339f1c8c28c6ecd0f5350613c8b",
+   "nao_settle_b": "fc3cfb34affffd4747fa3fad39ab2a8dc39e445e5cb038b3b263d63e6bb87866",
+   "pc_arm_cue_b_mio_fitted": "e9f609b656093ff90e381dfc36ab46023f80260b635361decb960d2957ab9e3a",
+   "pc_arm_cue_b_mio_wide": "6d32491fd1edb6f28a3e2390ec02f0c0d5d57a2f10789e876914f1f08e4f8b90",
+   "pc_arm_cue_b_nao_fitted": "875c240ee9e3ac582fd9502eaa8a97d503ec8798f8ee3f137a4dc1aa58fefb67",
+   "pc_arm_cue_b_nao_wide": "6449b9c5abad785b6e0a61ff443a05ffc5c3b769575954444544f134e136df55",
+   "pc_arm_cue_b_ren_fitted": "1b38945498b2674d324f9b27a24168ff9b4661c3e727c4f3d1db52fccff5499f",
+   "pc_arm_cue_b_ren_wide": "ba2a588a401511fb3b0af75032e7840d91cafc08c1b66cf199bace521b578c95",
+   "pc_arm_cue_b_suzu_fitted": "135efa783276db5cba91bbacbab91d59077c61d27c29d162096b6e9920f2844c",
+   "pc_arm_cue_b_suzu_wide": "e60772846b0544e69b49ef1b88031622f70ff65cdefdd1892553a697f656d25d",
+   "pc_arm_cue_fitted": "728e137e4afabb00bb7669bc61bf9f23a4d454de11196930ce97f2b0eead8b8b",
+   "pc_arm_cue_wide": "021da6462045907ab441742930cd457d2985f5d5b69a4935b498e12fc7216993",
+   "pc_arm_peak_mio_fitted": "6f1048d634c3c47c248010e6c0e653d26a34b863ff38845c3b0b6bc1bbe74fd8",
+   "pc_arm_peak_mio_wide": "8f6ee448e80882cb70e5781eefdb3e0214bbe56cece26248abfec427f0242fbe",
+   "pc_arm_peak_nao_fitted": "a67c61f01d07ae87f4b686b97358c938f3b431803b08d56e885572667f774663",
+   "pc_arm_peak_nao_wide": "23f75c9b38ad21d2dcee920ea2f19f3b063931aa7bb8d2689d9b6a5ba1d72d8a",
+   "pc_arm_peak_ren_fitted": "f743d4fbf7a84a27d214cecd8bd0ab3375f148a664be1fbd4035c42939f45141",
+   "pc_arm_peak_ren_wide": "bcecb4d3a546472ebd803c24f867c4228f387be026909d542e78bf4707896595",
+   "pc_arm_peak_suzu_fitted": "1ac5f7873af59bf6f1ed052cafd609da02e2453e4b950e312431ea50fdd1eae7",
+   "pc_arm_peak_suzu_wide": "a0f0e5624018fd0a397720e8aa523a22c76ad5665c43cfdb9015c975dc5f12e6",
+   "pc_arm_prep_a_fitted": "6fd6e3058089deb085c835099b99469377daaba45215c0cb57dcea0d65807688",
+   "pc_arm_prep_a_wide": "b7eae211a893798a13742734402ee5d97e937cb38cb1e23f7617b5b0f12b5b02",
+   "pc_arm_prep_b_fitted": "e0c36b2c77729098f73880b7f7bafde74fe132d855010c1722b2662bfc8d8029",
+   "pc_arm_prep_b_wide": "cd99b248fecf8a350f8b19d268d5eca46b929a003689e610f4dd2939a9756412",
+   "pc_arm_settle_a_mio_fitted": "2e384219b20e4a438d07fd9618b5b41e365c229a18fb81bfc0d5f02db38d7335",
+   "pc_arm_settle_a_mio_wide": "952c7b55e7714f9a1def01edeaafa62b55dcb7d90c84d5681d1d2e59c53cad18",
+   "pc_arm_settle_a_nao_fitted": "7a796faf1a3ef9f8702fe91e39140806849709158f686d396f91e49637828ab5",
+   "pc_arm_settle_a_nao_wide": "4e5cf55550b22d243ea77ab02969cb3902786f2eb8cfaa8023dc484a113bb8d1",
+   "pc_arm_settle_a_ren_fitted": "72b57489b5a6c0851615c33c4e7509beb441ab48a6d42d33ba77da300560ec7e",
+   "pc_arm_settle_a_ren_wide": "9b6026c67519207d3b5e5f27e21b00782a0676df7e0dbf275a6127353c47e94f",
+   "pc_arm_settle_a_suzu_fitted": "5c94f0cf24e19eba0f99278194dc775121252879948fdeea45d06c1947fed81d",
+   "pc_arm_settle_a_suzu_wide": "9d9f3e87bf228940216a0439bd7d933621a60192c4d4cc2cff2b8e13de9c295e",
+   "pc_arm_settle_mio_fitted": "f6d6b535a5d948e4ec13f6c8eebde136bcd9f83af3d0349e157b5f39a6aa7439",
+   "pc_arm_settle_mio_wide": "de3b662b8b4d2e3ce3f7ecaa681255be2f0c17027c71bef4a70bf2256cd83d4d",
+   "pc_arm_settle_nao_fitted": "f856b460ed188e6df8846fa90d99776f9102e59d3a4919f6b6d6259a42e1f573",
+   "pc_arm_settle_nao_wide": "4cf763f380cea5001f464a21178254477538d191e0b33fe4979d6a3c88812c79",
+   "pc_arm_settle_ren_fitted": "f4ed1c8ddb45b25899dbede8d7aa3620f138d6c836610ac9131c71a559eb7a4c",
+   "pc_arm_settle_ren_wide": "abd1a3bac3998adb7c4d802a3c93dfe9a68e648dac835b521230cd07d26f4961",
+   "pc_arm_settle_suzu_fitted": "d013ed83fb9cae3a7eaed9311e2ddd8fe6fa5e27fa626e12888e073d07b86893",
+   "pc_arm_settle_suzu_wide": "aec2d56f0536ce5760b17f8c7dd4fb2be0e6fe5d683b6815b2b59b06cf43010e",
+   "pc_hair_bob_back": "b3c6b1db9b588626fad5b7c110654655cd9a6e51dc1bea9e4d4bf607fe76dbcd",
+   "pc_hair_bob_back_cue": "babe4442a77f8e61b503194b5c6091199060fb19e72a775ec65ed7ac3f69fbc8",
+   "pc_hair_bob_back_cue_b": "7b4e149cdd23bdb2542e4ef7f0f1364358ff3b101b84bc44fa719f8403bcfd66",
+   "pc_hair_bob_back_peak": "4774f5380eb8bf808c1cc2a063588dec3a8630dc4aea92d6d3bd71c48b7e74b8",
+   "pc_hair_bob_back_prep_b": "47e99f98bdc1560826751808b0bd99d94d3bfc949a8560229675913a343d27fa",
+   "pc_hair_bob_back_settle_a": "62c07d03849b36ea5f72de6615673e6f369f404dbc414c9b0b8b77fc2ad72d55",
+   "pc_hair_bob_front": "b4fcb6745ff11fc1ededd05110535f0fde4911ed2bf33ebf5fc3f8ba37acd4ad",
+   "pc_hair_bob_front_cue": "671bfd8ace726e9ab02dc5fa419a01b0c62b532112dc4b09c23a64911f37667e",
+   "pc_hair_bob_front_cue_b": "f64e1300d1d3e80866dcfdad1c86c574f45bcfa66fb8f287cfefa03c6d2145cd",
+   "pc_hair_bob_front_peak": "25227593b03ef1954c515700ad2b4a9bbae4cb521a9b88bffc20147fbbdb97de",
+   "pc_hair_bob_front_prep_b": "73c6ac654a67fe19bd57d3fcb50605aa890713f4ebb8ec508c98f17787d84ae4",
+   "pc_hair_bob_front_settle_a": "a37a15ff08eb8a0776961d98eff3fe4dc471fbb265dba21f756f2f0e18430a89",
+   "pc_hair_braid_back": "59f55f9a9c1cad3bd7bbd6c86e4358d71992de123922ce00eeb8585b6b486587",
+   "pc_hair_braid_back_cue": "efb727bda3e405b1642ef0a2ba48826bfccffd3cb493f6bac3c8ca0f3c4a684e",
+   "pc_hair_braid_back_cue_b": "055b507f8001e120c8887d98078453feaf8b87f5dd31cd6a14162e16dbd17a54",
+   "pc_hair_braid_back_peak": "ff92ee4dbb80b19bc8ed5f3f107c72dbf0d45292460f2fea4aa1b4e2519f1c5a",
+   "pc_hair_braid_back_prep_b": "967c96487b3e5c800ca5d1b2b4982fed7da68311a56ff97603085af8da145d5b",
+   "pc_hair_braid_back_settle_a": "a9ce9e1d513b6344520589c0f6529835a78e672635b8ec89da807a99f01fa992",
+   "pc_hair_braid_front": "8ab44a617e55ed146dae71dd1b3842606dc51661ba9336816d4bb4687ed88856",
+   "pc_hair_braid_front_cue": "94bf5198249414cdcee6c60e8577d16d5636968aa1ef6bdca355e72d07080ff1",
+   "pc_hair_braid_front_cue_b": "6a2f534e8f3f242378d96b6a7912a3ab464b8a82aaba85fd6e237ebf7d73eee0",
+   "pc_hair_braid_front_peak": "51bed0ef5486e2c1b33afe951ad67a6672786a3b460930a14436c17c38f7ceaf",
+   "pc_hair_braid_front_prep_b": "6efeb67193f151c34b6a5385c89ae279a29c733123b5e0c9a815b45e11351f76",
+   "pc_hair_braid_front_settle_a": "5a07c2ebad65252a381ec006ee431caf6cf9442e742d1f8603015ae52b9aef84",
+   "pc_hair_bun_back": "09551aa79c94999a94b0af8b48661455021252672b8225fd313730041765925e",
+   "pc_hair_bun_back_cue": "2302e7edf4978c05c3dbb4da000be28398b271af954d0f6d9258086823a16273",
+   "pc_hair_bun_back_cue_b": "c4c5a53378e0f496945b9851828ea597a837af902f9a5b6da1e3f610bba237f8",
+   "pc_hair_bun_back_peak": "c96fab747166dae5df58801574e1213df5ff395951b30f35bd98459a48a88aef",
+   "pc_hair_bun_back_prep_b": "ae9374ac87cd2ed1d3d9dfb48ae6f1d73607e507913c5116c405aa9425410fb6",
+   "pc_hair_bun_back_settle_a": "a7fe98bcd64fdbb76c3b646a2f828fc85a1834354aadadff4afdcbc6d4ff8e1e",
+   "pc_hair_bun_front": "ea10d0119adb307e35dc4475f3c136824d6d13876e67d269a449178ffd8a2b77",
+   "pc_hair_bun_front_cue": "5a2e0fd0cec1dd5bff0a4349150b529bb541663982ae987c083c34daeb9e37aa",
+   "pc_hair_bun_front_cue_b": "211c772f0438d1ef50684468594c9d33c59d73d1e288fd5fc5f016ae587405a7",
+   "pc_hair_bun_front_peak": "2c1d39f000f58658554e074c2a15817f2f4bf5c34e98bca65cdf1c525e04414e",
+   "pc_hair_bun_front_prep_b": "13aca0ceec13cfed48f3cc975fb3976dbcc953c9694c23e3fd6e7a59ae5b41b9",
+   "pc_hair_bun_front_settle_a": "42fcd101b73cfc16c5d44469aadaf2d44a31ced6b75cad3d0a8f435a215adb14",
+   "pc_hair_curly_back": "e546fa360e53c7bfbe72e7bd2c35010ebc7a9a5ff858ab9267c3bdf59ba0913a",
+   "pc_hair_curly_back_cue": "aa095e2dd3fe1b1d8d0ae8a3e782af062a8b53a88834743db5cd93925e8e1358",
+   "pc_hair_curly_back_cue_b": "43175e930dd7eba029d16d37807d64aa035d9da816f20ab600215dc10923b9c5",
+   "pc_hair_curly_back_peak": "7bd6e4f289350d8a56f3fb10020ea87dd6793a82b343951ecae8ca1e6437013e",
+   "pc_hair_curly_back_prep_b": "e075a9f3edafdd45e19d53c89d9f18c43b99eb39b97ac9782de4a946340c89b1",
+   "pc_hair_curly_back_settle_a": "a078d80a1920daa274b8f447eaf1f4ef46f174ff9a1b7c9c0b33eb3e2f45eb42",
+   "pc_hair_curly_front": "5b13503b69e110fc9b60fb020e40f6c8d11d6f5312c03704244312e935d61a90",
+   "pc_hair_curly_front_cue": "5b13503b69e110fc9b60fb020e40f6c8d11d6f5312c03704244312e935d61a90",
+   "pc_hair_curly_front_cue_b": "aa8356e757b12a4af179423f83798667657697bbcc0311a32b79866ff0726163",
+   "pc_hair_curly_front_peak": "2e0656aea2b29993ca7a49cb73b2046504a0a5f8d223ab0e7ed34e8c29bae4d2",
+   "pc_hair_curly_front_prep_b": "5b13503b69e110fc9b60fb020e40f6c8d11d6f5312c03704244312e935d61a90",
+   "pc_hair_curly_front_settle_a": "84cec6582aa0ea1cff813a1e773c2e6eb9406e1cb32a5a88f3b4b9edd67bf96b",
+   "pc_hair_long_back": "57c279f5773b4eeab0a5ab971f239a14d8bfe5de549f1f9b6385509749c2b53e",
+   "pc_hair_long_back_cue": "cf1dd814f727022b524b70fe4440a0d461aead8df915e3774b8313f77ad222db",
+   "pc_hair_long_back_cue_b": "a2da26357665f515b4aed13f8446c14bbbe8b1861ca12a6c9f97467d119c3244",
+   "pc_hair_long_back_peak": "5ee84d63dce596f059f4b11b500991608f79da9f188ae22f9e6e31f469ba6e68",
+   "pc_hair_long_back_prep_b": "cc933bc45b2ae9add086c08fb64308e51ca4d280507e3c657d933aa2feda343d",
+   "pc_hair_long_back_settle_a": "1f2747ac177413cb639847fefc47ec831c0e80ec4dd62b4447024090543a6bf3",
+   "pc_hair_long_front": "c20fbf3bfb96b6d42115a27b5e395ea4c17dfad4c01946f33d06e6d7beea8e92",
+   "pc_hair_long_front_cue": "fc9bbce924822f6f961ecf8c19923056a2863e6b3d56e30c21c423cee863f670",
+   "pc_hair_long_front_cue_b": "f70180cb329466d240c0a9995025a5538e9fa782661e254acec47110a4019c4b",
+   "pc_hair_long_front_peak": "149a8e9179315213a73e2a701c84774d2fd8ebab4f73c68a0d99cd034d6506f4",
+   "pc_hair_long_front_prep_b": "cf4934044df79362c77fd86b7ff5899d2aeb6729718ac837100516d5a9fffa5f",
+   "pc_hair_long_front_settle_a": "ec3a774688913f34b9d2a900ed4f152b4df5bf13cd41ca41474fd7990a83e937",
+   "pc_hair_ponytail_back": "e40c58d3df7b8a59156183e9748bfdde6d61c7713a6576865db95f4f91f07444",
+   "pc_hair_ponytail_back_cue": "2bf2e3f44fa707fc028ccdc25afd692e6394e9b4f3d1e77f393bef3b68fdd95e",
+   "pc_hair_ponytail_back_cue_b": "3f296c75ae46f10a7b120fd275bf34fb1ba9234d044dcbcf4da4dd61a485c40c",
+   "pc_hair_ponytail_back_peak": "98098637dda2ba7d2ad7f4dccb7eb425296511517ce255a990443006bc0786d6",
+   "pc_hair_ponytail_back_prep_b": "6114db943ec760a997067abc010b9fb3e3a27aa1b27860158d700f08f7128cd8",
+   "pc_hair_ponytail_back_settle_a": "4a493fff6fd0dcdff73ba260ed7dfb9959d46142577cb4901c7dc15eec876d85",
+   "pc_hair_ponytail_front": "5afa1ed865acbf90fdae8f5eca2bd6cf90c1b8101d9b7ac3d1f5cc18b2d4fbec",
+   "pc_hair_ponytail_front_cue": "32912f5a081ff8ef896f5511110d5bc8cfc4de0755e29c87c7cbf35e4c7758de",
+   "pc_hair_ponytail_front_cue_b": "b64ffb91291a8ecb8b5614058c6716b0e491ceda9d9646ee545536a483ac659a",
+   "pc_hair_ponytail_front_peak": "c086b0f1624b496c0586776266149cfbc27c4a2794d05757beee5c33d2ab73a6",
+   "pc_hair_ponytail_front_prep_b": "9400801de18f7fd80e2a8a5c277719208f5b018dda201c58fa81342016099daa",
+   "pc_hair_ponytail_front_settle_a": "8a51f7c54d5885993c6b9e165fdaeee0da0bbd982b8316b914cc3c9ccd2f3657",
+   "pc_hair_shaved_front": "2c58cc3719a86bf77ead449bf5b909ff8f8d4fc00d9bdf1b27e898a287b52615",
+   "pc_hair_short_back": "f0667c006a26b7ea546baf0b497a122fd13438a39a5a7a137af6ab905ee33906",
+   "pc_hair_short_back_cue": "7f27f35d0d6162de997a33c91dade7112052a814118ae668339710cafcaff578",
+   "pc_hair_short_back_cue_b": "81469e365f3109943a323708dd8656660f0ff271baeaf9f66ba63171b4312d81",
+   "pc_hair_short_back_peak": "6522c93293de3d0dd2c38ebd43fac5e951829b0bea98b9726901439fffdf2b0e",
+   "pc_hair_short_back_prep_b": "50ea23f9bd054cfae1e4f897613a9991a0d63bbaf2a4535ae2851348979ae6b6",
+   "pc_hair_short_back_settle_a": "d0affc9a17369f78ce6bc2102b67f963d1464bf8240b96cb8a80ce11267f408f",
+   "pc_hair_short_front": "211f647b09977f967aca7283e40aff1fa4fc3d91aa2f8c14a5603021d4c36b99",
+   "pc_hair_short_front_cue": "26e84441ae927f1729ffc8514c0f4f6c19b9f8cf6578d4a76b5a739bfc876d16",
+   "pc_hair_short_front_cue_b": "f54ff9c796abd43e10855aed302cae2edfcb2cadec218a082a1a2123fc03ce4c",
+   "pc_hair_short_front_peak": "52be00700558106022c90e43647392e601098e51936cf6bd7d9dd7f30d36c5b9",
+   "pc_hair_short_front_prep_b": "f34a3532fe82ad1712495d7e158c595ee0254d9b17934fd654bb8234f59f0760",
+   "pc_hair_short_front_settle_a": "a227733b913f260f3f7b815de2df7cc65fd28bbebf29615d3c1f9c2f7771cabb",
+   "pc_hair_spiky_back": "6bf2e95d05e5ce8caa3d92d611f28530024ca5f109df45a650f949f650e2be1b",
+   "pc_hair_spiky_back_cue": "9e1369c7e4155a6a9b36bbac9566f3ccd4190549a178ed776c79daa275995384",
+   "pc_hair_spiky_back_cue_b": "33b5cc9c8b53e982ca1c42f1d2136d6265c2b912fa1959590e1d35af7753e1d0",
+   "pc_hair_spiky_back_peak": "1d2951b5417e2212e706bcf4711bc653d623cf82d28c89d7421ea53bfea49840",
+   "pc_hair_spiky_back_prep_b": "a4020f45b0443fa8420acfcea4f0751e70ba875bf36ad8fb4116c5d2828203f3",
+   "pc_hair_spiky_back_settle_a": "9be7e5335b5c8c42528e5b6a9f76fb51593d18c6625c5ff804c7bfc75a7575d2",
+   "pc_hair_spiky_front": "d283259157e91717a9df983d4b14c6b79b0fc75598d70a8b4597e06a3ba02953",
+   "pc_hair_spiky_front_cue": "f0e3745a73efbfb4af1fa0d74f792c4c1094cfc2d643ea43c20aea59b245f61c",
+   "pc_hair_spiky_front_cue_b": "d29299b13ee9a4382d235ba5abb4a39092ab7e357f24876a051ec219a89b01c1",
+   "pc_hair_spiky_front_peak": "17ca65afaf3ac1b167b7138c72c7ff172689658bbc458260f4c4e6f9246d803a",
+   "pc_hair_spiky_front_prep_b": "566c9fec1c2f511b55d0c81a935b8db7093413cb1efdd58d347c60bb434e8bcf",
+   "pc_hair_spiky_front_settle_a": "c4d6b566c068ea8475c804671046049dec14c0646e02bca1528c9476ddd5609f",
+   "pc_hair_twintails_back": "2e0432614d24ef32b27dbf8d0916b8561c792871e2922e18bed4b509bd2036d1",
+   "pc_hair_twintails_back_cue": "fb0b90f6e497970b311cb240847f7f502e56093ae3a83977c2f72df48853597d",
+   "pc_hair_twintails_back_cue_b": "a451d18fb734db52915879df2256f966dff6f9582cce1e96d6a7358e1a1224e0",
+   "pc_hair_twintails_back_peak": "e8e6dd62bb9eef922e622b480e57560fd5fa7e7ba2f0d86a91715717aa423b22",
+   "pc_hair_twintails_back_prep_b": "8e618a7ac20df76318bd194538cc94237942a3133d27b92bbda74a253e66b8fc",
+   "pc_hair_twintails_back_settle_a": "850dc5bd75194cf9b820d3b77a059f22dad452cc2c3d76da5575605be5d8b09c",
+   "pc_hair_twintails_front": "c137e8f391ceeaa88d669cf9a3f39496653fdeb633499a8235630714679324ce",
+   "pc_hair_twintails_front_cue": "4a9d7457411cb270cb733441275eaf3d4ea52ad01d49b36c8a0ebd47b16159b5",
+   "pc_hair_twintails_front_cue_b": "9b11c2ea95156da7619fb40e851a2e4e899e213aef10d3f98d49aac486c2c3c0",
+   "pc_hair_twintails_front_peak": "a63b08f84009c934e7ce112d6e7a2e469d158f112c35af0b2c450ab2893f93ea",
+   "pc_hair_twintails_front_prep_b": "ad5705b6f6914503f4a9b62452c64e94d761b118d577ad398252452e9d304312",
+   "pc_hair_twintails_front_settle_a": "b7769b9617c538b88257ac6819087aca9129a9e97c79b30b01ed492721f9e61a",
+   "pc_hair_wavy_back": "0c460940d20b63c76da431f62fcfa6f12a1806adb0034f8aff9b3c0aa37ce49e",
+   "pc_hair_wavy_back_cue": "183ebd7cba3bcf098ce5d0741664bc407792fc458945c4c9f98b27ff84245c8c",
+   "pc_hair_wavy_back_cue_b": "8c1678a707f0a1a38c32c9f59bb637cb2a4f0511c6b47ba97478899d2d565ca5",
+   "pc_hair_wavy_back_peak": "007fa445bab65c23037813250be979e4b9c9c6942b39c63da5bdd22d8aa6b8ec",
+   "pc_hair_wavy_back_prep_b": "1bee98ee6cbd83f5fc358d515b3f3e887d69458616eb887f2bfcf432e89548e8",
+   "pc_hair_wavy_back_settle_a": "49f6bcb71968b9850554f1b0dc507d9186c8ce14870593bb5e0aa7ae97c8fa14",
+   "pc_hair_wavy_front": "497fe8d25882cd852a2fd40d373990df860cac15ddfb4a8af5a7812cd0cc954c",
+   "pc_hair_wavy_front_cue": "23e6f24a19e3d76a58e2166aeb8762b73e350d2240d3ef0323c81fd6b7221a3f",
+   "pc_hair_wavy_front_cue_b": "69b83f8ab89713dbfcc474d900dd891b071d71d06f5d56be9cdfd695bc2c5084",
+   "pc_hair_wavy_front_peak": "3dbc32ac8ca9fe882a1410105684b406cf1e77c9868d41fd976b19544e04d3d5",
+   "pc_hair_wavy_front_prep_b": "65c850038102b363a2808a4efbc376eff9594abac30262597a57409fdb0f93d6",
+   "pc_hair_wavy_front_settle_a": "b6b29ed391257f4e8a4df27d002e1a3a69e3256fcd402be311cb4ab12572bf61",
+   "pc_hair_wrap_back": "6c65a7e6f8d6920c104bc1bf9b9efedadb599cefc2ecb50fb9d845a9b09398d5",
+   "pc_hair_wrap_back_cue": "c92155b37a05e33e8222fce36985e5d9a52c7f7c5fbc7de2ac15b494a5caf554",
+   "pc_hair_wrap_back_cue_b": "fe2c5c70bd890f28ad63d634fba3be17d61f1e359d423911f8c225e2347578f9",
+   "pc_hair_wrap_back_peak": "a94af8b281b4bb30584880afd0b75b4b24add8d4febb0fe27ffa613174e905b2",
+   "pc_hair_wrap_back_prep_b": "68c8e80bdbbb2444fddd2facde20191da9dba3b6baacc7324f5e86774134d307",
+   "pc_hair_wrap_back_settle_a": "c362af865fd18615ba2cd76472b9f23cca163dff467e0de0e6b2aa1b0c74ee73",
+   "pc_hair_wrap_front": "e953f99cef3ede7f66e4fd077072f6668224db5e68fdec37257f205becad47d5",
+   "pc_hair_wrap_front_cue": "dba276d6bcd1679ee1a1fb8e028e3ca9018435ac72bfb7c509aa0c07f6a60731",
+   "pc_hair_wrap_front_cue_b": "1e18757abad9a85765d7f7124dd7a58ef2287409504f07df24e10a8979a1f23d",
+   "pc_hair_wrap_front_peak": "d9f046ed5db10c904c7eacde74fbe0f941d58c355dca15184294d0c07f4da54e",
+   "pc_hair_wrap_front_prep_b": "eda4ed5e1d49e1396c1d1db3cd974fea2839b70e6da3a9c4049f5ac94df5ceee",
+   "pc_hair_wrap_front_settle_a": "81a51e1a9b15eb20ede80479ac6a123f8081f49bb9b56f4f0fc1d2403932d0e7",
+   "pc_head_cue": "430da517033372dfefc5efbd70f24e9b3dcf3a021246794189e9c65945709660",
+   "pc_head_cue_b": "9e885f91d0c3c7d76b98c4a4b3381071dd2b3307fdeb4b67045c9d36a33f5d43",
+   "pc_head_focus": "baaa5215c63e9c17f3f1b7dea4cf52205f71a68942c2c7b275a77c6528fcf0ad",
+   "pc_head_peak": "1b3065941a87610a7f6f790255e4325029f12472173ccb9e6886b0aebb872140",
+   "pc_head_prep_b": "2e3b93eba72b5783d39746490cbfb467ce385ed2a4aa20bb04c1a098e68733bc",
+   "pc_head_settle": "c448abd86c993a59e20df192ac2685ab448e1cb8fd0a97963b9082003e61828e",
+   "pc_head_settle_a": "164144a27b48de71f2a21512646b6e21ce796387fc80536c0b63a9b5256ac9cc",
+   "pc_torso_apron": "7a20902b610dcb6cc60c3c2ce948c5b97b5ff229e18713be8c5f2d40245599f2",
+   "pc_torso_coat": "5c863b95fc16d4d693252d7e2a04fee7602409c9df27ee72607e775119734576",
+   "pc_torso_dress": "731c8b8c4e41885f4a216d4e214d3ccd126f65da41d9d27a43edc561ef6abc6a",
+   "pc_torso_robe": "dd2e760ddb97f37a0ab69c9541418432ff97c0ecda305f6b93aa59a95dbb43e1",
+   "pc_torso_tunic": "5908f9da6f80be6888761774f69604bb832b0e78e8ca4df835c29a45ac28d47b",
+   "ren_cue": "ce467fd91080f3a742f0ac6891b52620843526be80e0ddbf154d7c2182348b18",
+   "ren_cue_b": "db5cecfd220592da173d915123be997ec01eecf83d5b2aae8cc6ee36799f7575",
+   "ren_cue_b_fx": "f564f945bc1faed5e04ff8ac7ba61494cdd1a1102523297da69199390dd433e6",
+   "ren_cue_fx": "40ab2c5b35309b54105ddb0bc7678d77fa86997498b0f30ef1edb0c47ea6ebbe",
+   "ren_peak": "0b485747c5bb242372d5e6e03ee4777cd829135eb56636b6f3e16ff93927142f",
+   "ren_peak_fx": "ba8bfbf6933c452eac8bcfa1f04534cd8653b7b1a17209ef4d75f2fe336b39de",
+   "ren_prep_a": "71e43d341253c949780cb7da4885c7ccf4803d06d3213ebe01c1aa37406009e6",
+   "ren_prep_a_fx": "e43e7227993aeee8209301d8eee1b217c7b018cdc957533ee6a60ec1a6efde44",
+   "ren_prep_b": "0c767f23e480734694069f9483e8859d2a3c76f035ffaec7fe05aced1dbb02b9",
+   "ren_prep_b_fx": "66d192c4853e5c0df65595fc6405e3c46b39307dad6e74d79b9a9e55d973d6ca",
+   "ren_settle_a": "0cc2ebf4f5a5f34e748fe2bfed74e0c2ccc39369aeb9f52efe5f9f2f4ec74c11",
+   "ren_settle_a_fx": "51da921925d26ee73402c48866eca398207142f0f17af5c88f95a13e29e34b6b",
+   "ren_settle_b": "80bc83b2e5b9ef6e1ca2922698326757cbc0cd3445cd8e78d24c0b0b2edf86ca",
+   "ren_settle_b_fx": "8b80663e47843f15ba227e098fe795044a0676857e95f7f0063150b4fcad7a70",
+   "suzu_cue": "67f42763da7afb750468f95644ee2caf83397cf530de26fc32a62ba5acc86bcd",
+   "suzu_cue_b": "3d1b4e87c4a2541ae49998410edeb6a55712867d1a283197003a64597377ded5",
+   "suzu_cue_b_fx": "c73d4efa7ed1e65b821f149cce4db2980651a6dbfddbb0150ff1e2e60032baed",
+   "suzu_peak": "2fec07ec278d0d905746ca63d9060647addf1c296a7fcf122a73303a16b1f1d1",
+   "suzu_peak_fx": "25622740c0e5a50c355b2041575f18f40fad4941ca2b27ca4e8804902d83f9d3",
+   "suzu_prep_a": "c43981c0f23a0d15533d0707bd0898d808c532b6b8dc6196f9458e0be6b678a1",
+   "suzu_prep_b": "b35a06637962590bd876d2175236f4a048ea7851a084bd314368c33a867a8a31",
+   "suzu_settle_a": "8e6e5260e5d01f45593d2449ab1045e300ba2225120c4b208e2942644debdd1a",
+   "suzu_settle_a_fx": "bb40efcb2fc0827e3ec6adec0bfdc74b1ba5ae1e1d31f2a6ef9c8100e0f29aa3",
+   "suzu_settle_b": "a17b94fb4846d55a29e42fb72e891e587455a130723145e0f80794d264f6bc21"
+  }
+ }
+}

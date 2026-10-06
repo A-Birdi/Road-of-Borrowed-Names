@@ -407,7 +407,7 @@ async function scene(sc) {
   return { row, r, errors, hitsAfterEntry, lays };
 }
 const VIEWS = [[1648, 840], [1440, 900], [1280, 720], [768, 1024], [390, 844], [320, 640], [844, 390]];
-await test('geometry: seven viewports at 100 % and 200 % text — the fit mode and footprint recorded; no drawn pixel within 12 px of a protected rectangle; nothing else moves; 390×844 uses the designed compact pair (faces ≥ 64 px)', async () => {
+await test('geometry: seven viewports at 100 % and 200 % text — the fit mode and footprint recorded; no drawn pixel within 12 px of a protected rectangle; nothing else moves; 390×844 uses the designed compact pair (the art\'s faces ≥ 50 CSS px at ratio 1)', async () => {
   let k = 0;
   const bad = [];
   for (const [w, h] of VIEWS) for (const text of [1, 2]) {
@@ -426,7 +426,10 @@ await test('geometry: seven viewports at 100 % and 200 % text — the fit mode a
     }
     if (row.shown && !(row.disposedAt < row.firstResult)) bad.push(row.name + ': not gone before the first result');
     if (errors.length) bad.push(row.name + ': ' + errors.join('; '));
-    if (w === 390 && text === 1 && !(row.shown && row.variant === 'compact' && row.faceH >= 64)) bad.push('390×844: not the designed compact pair ' + JSON.stringify(row));
+    // (the shipped game paints the approved art since 2026-10-06: at 390 × 844 and device pixel ratio 1 the compact pair
+    // shows at 1×, the art's faces about 50 CSS px (CONTRACT.md §3.3; 67 at the phone's real ratio 3, tested in
+    // 'painted'); the code-drawn compact pair's faces were ≥ 64)
+    if (w === 390 && text === 1 && !(row.shown && row.variant === 'compact' && row.faceH >= 50)) bad.push('390×844: not the designed compact pair ' + JSON.stringify(row));
     if (w === 1648 && text === 1 && !(row.shown && row.variant === 'standard')) bad.push('1648×840: not the standard pair ' + JSON.stringify(row));
   }
   report.geometry = geo.slice();
@@ -734,9 +737,9 @@ await test('dev viewer (?dev=harmony): refused on a normal page; on a dev page t
   await waitSel(p, '#harmony-dev', { timeout: 10000 });
   const label = await p.evaluate(() => document.getElementById('harmony-dev').textContent);
   assert(/Synthetic fixture/.test(label) && /no rules applied/.test(label), 'the panel says it is a synthetic fixture: ' + label.slice(0, 120));
-  // contract v3: the art's approval state, on the dev panel only (the built game has no painted art: provisional)
+  // contract v3: the art's approval state, on the dev panel only (the shipped game's art, approved by Robin on 2026-10-06)
   const status = await p.evaluate(() => ({ text: document.getElementById('hd-status').textContent, api: RB.harmonyCutin.dev.status() }));
-  assert(/player kit: provisional artwork/.test(status.text) && /suzu: provisional artwork/.test(status.text) && status.text === status.api, 'the panel shows the approval state of the art: ' + status.text);
+  assert(/player kit: approved visual direction/.test(status.text) && ['suzu', 'nao', 'mio', 'ren'].every((c) => new RegExp(c + ': approved visual direction').test(status.text)) && status.text === status.api, 'the panel shows the approval state of the art: ' + status.text);
   const out = [];
   for (const comp of COMPS) {
     await p.evaluate((c) => RB.harmonyCutin.dev.battle({ comp: c, foes: c === 'suzu' ? 2 : 1, anim: 'normal', reduce: false, flourish: true }), comp);

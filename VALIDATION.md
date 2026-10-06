@@ -2906,6 +2906,52 @@ the built index.html.
 - index.html rebuilds unchanged (keyify is a dev tool and ships nothing).
 - No painted art has been through keyify yet: Batch 1a is its real test.
 
+## The approved Harmony art, imported (Robin's approval of 2026-10-06; REQUIREMENTS.md HB1, HB2, HB13)
+
+Robin: "The new Harmony pass I would consider finished."
+
+**The art.** The four companions' seven-state cut-ins and the player's complete kit, drawn in code from measurements
+of Robin's reference sheets:
+- 4 heads and 3 in-between heads;
+- 5 garments on one shared body base;
+- fitted and wide brush arms for every pose and pairing, with in-betweens;
+- 12 hairstyles, 11 with motion;
+- 13 accessories, plus glasses, flower and satchel.
+
+**Where it lives:**
+- The source is `art/harmony/source/full_v1/` (`import.json` with approval `approved`, plus `PROVENANCE.md`). Robin's
+  reference images are not committed.
+- The game's copy is `assets/harmony/`.
+
+**Checks run:**
+- `node tools/harmony_import.mjs art/harmony/source/full_v1 --check`: OK.
+  - 245 files; registry 86/86 required keys.
+  - Batches 1a 18/18 and 1b 9/9.
+  - Approval: the kit and each companion approved.
+- The import with `--replace` into `assets/harmony/`, then `--verify assets/harmony`: ok, 245 files.
+- **Regeneration:** a second import into a scratch folder gives byte-identical files. The one difference is the report's
+  `out` field, which records the output folder.
+- `node tools/build.mjs`: 446 PNGs, 1,226.6 KiB encoded, 1,802.2 KiB embedded; `index.html` is 12.7 MiB.
+  - That is more than the contract's projection of about 0.94 MiB embedded. The projection was for a 56-file batch;
+    this delivery has 245 files, including the in-betweens.
+- U `node tests/run-unit.mjs` on the imported build: **27,245 passed, 0 failed.**
+- B `node tests/e2e/harmony_raster.mjs`: **29 passed, 0 failed.**
+  - The test now begins with the shipped game. It installs the approved art by itself: seven states, the 352 × 160
+    pair, four companions, approval `approved`.
+  - Look A pairs painted with every companion, once decoding finishes, with no page errors and no network requests.
+  - The synthetic-sample steps now run on a code-only build of the same source (`--harmony` pointing at an empty
+    folder), because the shipped `index.html` is no longer code-only.
+- B `node tests/e2e/harmony_cutin.mjs`:
+  - 9 of 11 sections passed on the first run.
+  - The two that failed were updated for the shipped art and rerun, both passing:
+    - **geometry:** at 390 × 844 and device pixel ratio 1, the art's compact pair shows at 1× with faces of 52 CSS px.
+      That matches CONTRACT.md §3.3 (50 at 1×; 67 at a real phone's ratio 3, covered by the "painted" section). The
+      code-drawn pair's faces were ≥ 64, so the threshold is now ≥ 50.
+    - **dev viewer:** the art-status panel now reads "approved visual direction" for the kit and every companion,
+      where it read "provisional artwork".
+- Still to run on this build: the whole default browser suite (in pieces) and the full matrix audit (four language
+  profiles × four companions), which Robin asked to finish with.
+
 ## The player's in-betweens (Robin's review of the kit, 2026-10-05; CONTRACT.md §1; REQUIREMENTS.md HB13)
 
 Robin, reviewing the full player kit:
