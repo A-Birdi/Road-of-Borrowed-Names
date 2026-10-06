@@ -86,6 +86,16 @@
      active and idle animation and a living community; the bar is the dragon-knight reference
      (docs/BATTLE_ART_CONTRACTS.md: material shading, strong silhouette, overlapping forms, secondary motion) at a
      smaller scale.
+
+  Robin also supplied the full consultation transcript behind the note (2026-10-06). It is stored unchanged in
+  docs/future/consultation/; `sha256sum -c MANIFEST.sha256` there verifies it. It is also discussion only. Where it
+  differs from the six points above, the six points win, because they are later:
+  - Its point 7 floated chapter "password" codes for the gallery. Point 1 drops them.
+  - Its closing testing plan deferred the 16-combination matrix and used one F/Ren run as the routine check. Point 5
+    replaces this. The transcript names Ren as the routine companion, so the lead reads "one pairing on all four
+    language profiles" as Ren on F, E, I and A. Robin has not confirmed this.
+  - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
+    of questions assisted, per input type.
 - Not verified by automation (needs people): real handwriting accuracy,
   playtime, native-speaker review, music quality, audible TTS.
 

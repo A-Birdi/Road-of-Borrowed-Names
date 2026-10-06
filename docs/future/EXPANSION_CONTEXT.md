@@ -4,6 +4,9 @@ DISCUSSION ONLY: not a specification and not authorised work. Nothing here is to
 and specifies a scope. Robin's later answers to the open points (illustration book, suspend, player appearance in
 illustrations, mastery stars, testing cadence, final art pass) are recorded in HANDOFF.md, "State" ->
 "Future expansion (discussion only, NOT authorised work)", and take precedence over this note where they differ.
+The full consultation this note condenses (Robin's request, the 60 proposals, Robin's written review, the ten-point
+clarification and the replies) is stored unchanged in docs/future/consultation/ (added 2026-10-06); the same
+precedence applies to it.
 The text below is Robin's note, unchanged.
 -->
 
