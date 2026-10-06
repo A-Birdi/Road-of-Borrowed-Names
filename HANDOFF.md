@@ -693,6 +693,8 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    size, the animation, a real battle at Normal, Fast and reduced motion, particles on and off. Only after the owner approves: Batch 1b,
    then 2–4. Re-measure the budgets on real art (CONTRACT.md §10). Open points for the owner: ASSET_BRIEF.md §11 (point 1 settled: the ponytail is the owner's character's hairstyle).
    The owner took the two folders as ZIPs on 2026-10-04 and is making Batch 1a.
+   **Done since:** the art was drawn in code from Robin's sheets, approved and imported on 2026-10-06 (HB1, HB2); the
+   budgets were re-measured on it the same day (VALIDATION.md "HX59, HX66, HX67 and HX70 on the approved art").
 17. The owner's notes of 2026-10-04 (VALIDATION.md "The owner's notes of 2026-10-04"):
    - The four Harmony stage performances, Nao's and Mio's v2 included, are approved as they are: "keep steady". Mio's
      stream keeps its weight.
@@ -718,7 +720,8 @@ chart", "Measured results"); evidence: VALIDATION.md ("Every kanji on the pad").
    - **HX68:** staged scenes are started from other sides, with taken tiles, absences, interruptions, repeats and
      revisits (`staging_variants.mjs`). A companion blocking your only way round now makes way. Kōji and Hana are
      placed at once when the bridge sequence returns to the world.
-   - **HX66 is paused at the owner's request** until the painted busts arrive.
+   - **HX66 was paused at the owner's request** until the painted busts arrived; done on 2026-10-06
+     (harmony_appearance 75/0).
    - **Two small rules kept, by the lead's judgment:**
      - when you stand on Umi's place at the ferry office, she stays put and hands the log across a one-tile gap,
        which is the general rule for a taken place;
