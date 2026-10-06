@@ -1,44 +1,40 @@
 {
- "when": "2026-10-03T19:38:36.409Z",
+ "when": "2026-10-06T12:01:47.718Z",
  "browser": "Chromium (Playwright, headless), software canvas, device pixel ratio 1, shared 4-core Linux machine — not a physical device",
  "cost": {
   "nao": {
    "cutin": {
     "startMs": [
-     11.4,
-     7.3,
-     3.6,
-     2.7
+     20.5,
+     37.1,
+     12.6,
+     38.9
     ],
-    "frameMaxMs": 2.2,
-    "frameMeanMs": 0.252,
-    "frames": 152
+    "frameMaxMs": 1.9,
+    "frameMeanMs": 0.159,
+    "frames": 261
    },
-   "artBuild": {
-    "last": 23.5,
-    "mean": 28.3,
-    "max": 52.2
-   },
+   "artBuild": null,
    "artCache": {
-    "busts": 8,
-    "compositions": 4,
-    "MiB": 1.18
+    "busts": 14,
+    "compositions": 14,
+    "MiB": 6.68
    },
    "figures": {
-    "frames": 271,
-    "bytes": 9018880,
-    "mib": 8.601,
+    "frames": 274,
+    "bytes": 9118720,
+    "mib": 8.696,
     "perActor": {
-     "pc": 124,
-     "nao": 147
+     "pc": 126,
+     "nao": 148
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 271,
-    "meanBuildMs": 8.91,
-    "maxBuildMs": 90.7,
-    "hits": 4541,
+    "built": 274,
+    "meanBuildMs": 7.97,
+    "maxBuildMs": 54.2,
+    "hits": 4526,
     "evicted": 0,
     "released": 0
    }
@@ -46,26 +42,22 @@
   "mio": {
    "cutin": {
     "startMs": [
-     8.6,
-     5,
-     6.4,
-     5.6,
-     2.6,
-     5.2
+     16.3,
+     39.1,
+     14.4,
+     29.9,
+     13.8,
+     7.6
     ],
-    "frameMaxMs": 8,
-    "frameMeanMs": 0.436,
-    "frames": 227
+    "frameMaxMs": 1.4,
+    "frameMeanMs": 0.158,
+    "frames": 429
    },
-   "artBuild": {
-    "last": 21.1,
-    "mean": 35.2,
-    "max": 77.3
-   },
+   "artBuild": null,
    "artCache": {
-    "busts": 8,
-    "compositions": 4,
-    "MiB": 1.18
+    "busts": 14,
+    "compositions": 14,
+    "MiB": 6.68
    },
    "figures": {
     "frames": 281,
@@ -79,9 +71,9 @@
     "capMib": 22.85,
     "budgetMib": 48,
     "built": 284,
-    "meanBuildMs": 11.42,
-    "maxBuildMs": 110.1,
-    "hits": 6133,
+    "meanBuildMs": 8.5,
+    "maxBuildMs": 61.6,
+    "hits": 6208,
     "evicted": 0,
     "released": 3
    }
@@ -89,40 +81,36 @@
   "ren": {
    "cutin": {
     "startMs": [
-     11.8,
-     12.3,
-     6.5,
-     5
+     14.7,
+     51.8,
+     13.1,
+     35.9
     ],
-    "frameMaxMs": 6.4,
-    "frameMeanMs": 0.443,
-    "frames": 136
+    "frameMaxMs": 15.7,
+    "frameMeanMs": 0.227,
+    "frames": 262
    },
-   "artBuild": {
-    "last": 22.5,
-    "mean": 40,
-    "max": 89.5
-   },
+   "artBuild": null,
    "artCache": {
-    "busts": 8,
-    "compositions": 4,
-    "MiB": 1.18
+    "busts": 14,
+    "compositions": 14,
+    "MiB": 6.68
    },
    "figures": {
-    "frames": 246,
-    "bytes": 8186880,
-    "mib": 7.808,
+    "frames": 245,
+    "bytes": 8153600,
+    "mib": 7.776,
     "perActor": {
      "ren": 120,
-     "pc": 126
+     "pc": 125
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 246,
-    "meanBuildMs": 13.45,
-    "maxBuildMs": 133.7,
-    "hits": 4315,
+    "built": 245,
+    "meanBuildMs": 8.12,
+    "maxBuildMs": 53.9,
+    "hits": 4349,
     "evicted": 0,
     "released": 0
    }
@@ -130,40 +118,36 @@
   "suzu": {
    "cutin": {
     "startMs": [
-     13.8,
-     10.2,
-     5.2,
-     4.8
+     15.7,
+     38.4,
+     15.4,
+     43.7
     ],
-    "frameMaxMs": 4.1,
-    "frameMeanMs": 0.414,
-    "frames": 142
+    "frameMaxMs": 1.7,
+    "frameMeanMs": 0.157,
+    "frames": 260
    },
-   "artBuild": {
-    "last": 29.5,
-    "mean": 30.7,
-    "max": 74.8
-   },
+   "artBuild": null,
    "artCache": {
-    "busts": 8,
-    "compositions": 4,
-    "MiB": 1.18
+    "busts": 14,
+    "compositions": 14,
+    "MiB": 6.68
    },
    "figures": {
-    "frames": 290,
-    "bytes": 9651200,
-    "mib": 9.204,
+    "frames": 293,
+    "bytes": 9751040,
+    "mib": 9.299,
     "perActor": {
-     "pc": 123,
-     "suzu": 167
+     "pc": 125,
+     "suzu": 168
     },
     "cap": 720,
     "capMib": 22.85,
     "budgetMib": 48,
-    "built": 290,
-    "meanBuildMs": 13.25,
-    "maxBuildMs": 135.2,
-    "hits": 4629,
+    "built": 293,
+    "meanBuildMs": 9.07,
+    "maxBuildMs": 64.1,
+    "hits": 4681,
     "evicted": 0,
     "released": 0
    }
@@ -197,19 +181,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.4",
-    "fading@566.7",
-    "disposed@783.4"
+    "holding@233.4",
+    "fading@1050",
+    "disposed@1416.7"
    ],
-   "firstResult": 1317,
-   "techMs": 2354,
-   "end": 2350,
+   "firstResult": 1533,
+   "techMs": 2569,
+   "end": 2570,
    "kind": "player"
   },
   {
@@ -219,19 +203,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.6",
-    "disposed@783.3"
+    "holding@233.4",
+    "fading@1050",
+    "disposed@1400.1"
    ],
-   "firstResult": 1300,
-   "techMs": 2357,
-   "end": 2350,
+   "firstResult": 1533,
+   "techMs": 2570,
+   "end": 2570,
    "kind": "player"
   },
   {
@@ -241,18 +225,18 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@143",
-    "fading@476.6",
-    "disposed@691.3"
+    "holding@262.3",
+    "fading@810.4",
+    "disposed@1120.3"
    ],
    "firstResult": 1311,
-   "techMs": 1634,
+   "techMs": 1641,
    "end": 2350,
    "kind": "player"
   },
@@ -263,18 +247,18 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.7",
-    "fading@476.6",
-    "disposed@691.1"
+    "holding@262.1",
+    "fading@810.2",
+    "disposed@1120.1"
    ],
    "firstResult": 1311,
-   "techMs": 1628,
+   "techMs": 1637,
    "end": 2350,
    "kind": "player"
   },
@@ -321,8 +305,8 @@
    "variant": null,
    "scale": null,
    "marks": [],
-   "firstResult": 1300,
-   "techMs": 2337,
+   "firstResult": 1317,
+   "techMs": 2357,
    "end": 2350,
    "kind": "player"
   },
@@ -333,19 +317,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.4",
-    "fading@566.7",
-    "disposed@800"
+    "holding@233.4",
+    "fading@1050",
+    "disposed@1400"
    ],
-   "firstResult": 1250,
-   "techMs": 2403,
-   "end": 2400,
+   "firstResult": 1533,
+   "techMs": 2674,
+   "end": 2670,
    "kind": "player"
   },
   {
@@ -355,19 +339,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.4",
-    "fading@566.7",
-    "disposed@783.3"
+    "holding@233.3",
+    "fading@1049.9",
+    "disposed@1416.5"
    ],
-   "firstResult": 1250,
-   "techMs": 2383,
-   "end": 2400,
+   "firstResult": 1533,
+   "techMs": 2671,
+   "end": 2670,
    "kind": "player"
   },
   {
@@ -377,18 +361,18 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@143",
-    "fading@476.8",
-    "disposed@691.3"
+    "holding@262.3",
+    "fading@810.4",
+    "disposed@1120.1"
    ],
    "firstResult": 1263,
-   "techMs": 1663,
+   "techMs": 1672,
    "end": 2400,
    "kind": "player"
   },
@@ -399,18 +383,18 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.7",
-    "fading@476.6",
-    "disposed@691.1"
+    "holding@262.3",
+    "fading@810.4",
+    "disposed@1120.3"
    ],
    "firstResult": 1263,
-   "techMs": 1666,
+   "techMs": 1675,
    "end": 2400,
    "kind": "player"
   },
@@ -426,7 +410,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 11,
+   "techMs": 5,
    "end": 2400,
    "kind": "player"
   },
@@ -442,7 +426,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 0,
-   "techMs": 6,
+   "techMs": 4,
    "end": 2400,
    "kind": "player"
   },
@@ -458,7 +442,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 1267,
-   "techMs": 2392,
+   "techMs": 2408,
    "end": 2400,
    "kind": "player"
   },
@@ -469,19 +453,19 @@
    "label": "pet shown",
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.7",
-    "disposed@783.3"
+    "holding@233.4",
+    "fading@1050",
+    "disposed@1400"
    ],
-   "firstResult": 1267,
-   "techMs": 2402,
-   "end": 2400,
+   "firstResult": 1533,
+   "techMs": 2672,
+   "end": 2670,
    "kind": "player"
   },
   {
@@ -491,19 +475,19 @@
    "label": "pet hidden",
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.4",
-    "fading@566.6",
-    "disposed@783.4"
+    "holding@233.3",
+    "fading@1050",
+    "disposed@1416.6"
    ],
-   "firstResult": 1250,
-   "techMs": 2381,
-   "end": 2400,
+   "firstResult": 1533,
+   "techMs": 2675,
+   "end": 2670,
    "kind": "player"
   },
   {
@@ -513,19 +497,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@199.9",
-    "fading@566.6",
-    "disposed@783.3"
+    "holding@233.3",
+    "fading@1049.9",
+    "disposed@1416.6"
    ],
-   "firstResult": 1217,
-   "techMs": 2303,
-   "end": 2300,
+   "firstResult": 1533,
+   "techMs": 2615,
+   "end": 2620,
    "kind": "player"
   },
   {
@@ -535,19 +519,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.6",
-    "disposed@783.2"
+    "holding@233.3",
+    "fading@1049.9",
+    "disposed@1416.6"
    ],
-   "firstResult": 1217,
-   "techMs": 2298,
-   "end": 2300,
+   "firstResult": 1533,
+   "techMs": 2620,
+   "end": 2620,
    "kind": "player"
   },
   {
@@ -557,19 +541,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.7",
-    "fading@476.5",
-    "disposed@691.1"
+    "holding@262.3",
+    "fading@810.4",
+    "disposed@1120.3"
    ],
-   "firstResult": 1215,
-   "techMs": 1600,
-   "end": 2300,
+   "firstResult": 1239,
+   "techMs": 1623,
+   "end": 2335,
    "kind": "player"
   },
   {
@@ -579,19 +563,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@143",
-    "fading@476.8",
-    "disposed@691.1"
+    "holding@262.3",
+    "fading@810.2",
+    "disposed@1120.1"
    ],
-   "firstResult": 1216,
-   "techMs": 1597,
-   "end": 2300,
+   "firstResult": 1239,
+   "techMs": 1611,
+   "end": 2335,
    "kind": "player"
   },
   {
@@ -637,8 +621,8 @@
    "variant": null,
    "scale": null,
    "marks": [],
-   "firstResult": 1217,
-   "techMs": 2296,
+   "firstResult": 1200,
+   "techMs": 2308,
    "end": 2300,
    "kind": "player"
   },
@@ -649,19 +633,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.3",
-    "fading@566.6",
-    "disposed@783.2"
+    "holding@233.3",
+    "fading@1066.6",
+    "disposed@1416.6"
    ],
-   "firstResult": 1283,
-   "techMs": 2454,
-   "end": 2450,
+   "firstResult": 1533,
+   "techMs": 2685,
+   "end": 2690,
    "kind": "player"
   },
   {
@@ -671,19 +655,19 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@183.4",
-    "fading@566.7",
-    "disposed@783.4"
+    "holding@233.3",
+    "fading@1049.9",
+    "disposed@1400"
    ],
-   "firstResult": 1283,
-   "techMs": 2439,
-   "end": 2450,
+   "firstResult": 1533,
+   "techMs": 2690,
+   "end": 2690,
    "kind": "player"
   },
   {
@@ -693,18 +677,18 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.7",
-    "fading@476.6",
-    "disposed@691.1"
+    "holding@262.1",
+    "fading@810.2",
+    "disposed@1120.1"
    ],
    "firstResult": 1287,
-   "techMs": 1685,
+   "techMs": 1707,
    "end": 2450,
    "kind": "player"
   },
@@ -715,18 +699,18 @@
    "label": null,
    "started": 1,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
    "marks": [
     "inactive@0",
     "entering@0",
-    "holding@166.9",
-    "fading@476.6",
-    "disposed@691.1"
+    "holding@262.1",
+    "fading@810.2",
+    "disposed@1120"
    ],
    "firstResult": 1287,
-   "techMs": 1711,
+   "techMs": 1707,
    "end": 2450,
    "kind": "player"
   },
@@ -774,7 +758,7 @@
    "scale": null,
    "marks": [],
    "firstResult": 1283,
-   "techMs": 2458,
+   "techMs": 2456,
    "end": 2450,
    "kind": "player"
   }
@@ -793,26 +777,28 @@
    "why": "done",
    "fit": "standard",
    "variant": "standard",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 136,
-    "w": 442,
-    "h": 196
+    "y": 155,
+    "w": 349,
+    "h": 158
    },
    "footprintShare": {
-    "w": 26.8,
-    "h": 23.3,
-    "area": 6.3
+    "w": 21.2,
+    "h": 18.8,
+    "area": 4
    },
-   "checkedFrames": 29,
+   "checkedFrames": 79,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 800,
-   "firstResult": 1300,
+   "disposedAt": 1416.6,
+   "firstResult": 1533,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -828,26 +814,28 @@
    "why": "done",
    "fit": "standard",
    "variant": "standard",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 72,
-    "w": 442,
-    "h": 196
+    "y": 91,
+    "w": 343,
+    "h": 158
    },
    "footprintShare": {
-    "w": 26.8,
-    "h": 23.3,
-    "area": 6.3
+    "w": 20.8,
+    "h": 18.8,
+    "area": 3.9
    },
-   "checkedFrames": 30,
+   "checkedFrames": 75,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
-   "disposedAt": 783.2,
-   "firstResult": 1267
+   "disposedAt": 1416.6,
+   "firstResult": 1533
   },
   {
    "name": "1440x900",
@@ -860,28 +848,30 @@
    "shown": 1,
    "displayed": true,
    "why": "done",
-   "fit": "standard-moved",
+   "fit": "standard",
    "variant": "standard",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 110,
-    "w": 442,
-    "h": 180
+    "y": 185,
+    "w": 345,
+    "h": 158
    },
    "footprintShare": {
-    "w": 30.7,
-    "h": 20,
-    "area": 6.1
+    "w": 24,
+    "h": 17.6,
+    "area": 4.2
    },
-   "checkedFrames": 35,
+   "checkedFrames": 81,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1217
+   "disposedAt": 1400.1,
+   "firstResult": 1533
   },
   {
    "name": "1440x900 200%",
@@ -894,28 +884,30 @@
    "shown": 1,
    "displayed": true,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "fit": "standard",
+   "variant": "standard",
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
     "y": 136,
-    "w": 314,
-    "h": 156
+    "w": 343,
+    "h": 158
    },
    "footprintShare": {
-    "w": 21.8,
-    "h": 17.3,
-    "area": 3.8
+    "w": 23.8,
+    "h": 17.6,
+    "area": 4.2
    },
-   "checkedFrames": 31,
+   "checkedFrames": 71,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
-   "disposedAt": 800,
-   "firstResult": 1283
+   "disposedAt": 1416.5,
+   "firstResult": 1533
   },
   {
    "name": "1280x720",
@@ -928,28 +920,30 @@
    "shown": 1,
    "displayed": true,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 90,
-    "w": 314,
-    "h": 166
+    "y": 3,
+    "w": 349,
+    "h": 158
    },
    "footprintShare": {
-    "w": 24.5,
-    "h": 23.1,
-    "area": 5.7
+    "w": 27.3,
+    "h": 21.9,
+    "area": 6
    },
-   "checkedFrames": 34,
+   "checkedFrames": 77,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.4,
-   "firstResult": 1317,
+   "disposedAt": 1400,
+   "firstResult": 1533,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -963,28 +957,30 @@
    "shown": 1,
    "displayed": true,
    "why": "done",
-   "fit": "compact-small",
+   "fit": "compact",
    "variant": "compact",
    "scale": 1,
-   "faceH": 33,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 69,
-    "w": 157,
-    "h": 83
+    "y": 40,
+    "w": 248,
+    "h": 128
    },
    "footprintShare": {
-    "w": 12.3,
-    "h": 11.5,
-    "area": 1.4
+    "w": 19.4,
+    "h": 17.8,
+    "area": 3.4
    },
-   "checkedFrames": 28,
+   "checkedFrames": 77,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
-   "disposedAt": 783.3,
-   "firstResult": 1267,
+   "disposedAt": 1416.6,
+   "firstResult": 1533,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -1000,26 +996,28 @@
    "why": "done",
    "fit": "compact",
    "variant": "compact",
-   "scale": 3,
-   "faceH": 99,
+   "scale": 2,
+   "faceH": 104,
+   "faceW": 100,
    "footprint": {
     "x": 0,
-    "y": 582,
-    "w": 471,
-    "h": 225
+    "y": 580,
+    "w": 488,
+    "h": 256
    },
    "footprintShare": {
-    "w": 61.3,
-    "h": 22,
-    "area": 13.5
+    "w": 63.5,
+    "h": 25,
+    "area": 15.9
    },
-   "checkedFrames": 32,
+   "checkedFrames": 81,
    "overlaps": 0,
+   "waitedForMenus": 99.9,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1200
+   "disposedAt": 1466.6,
+   "firstResult": 1533
   },
   {
    "name": "768x1024 200%",
@@ -1034,26 +1032,28 @@
    "why": "done",
    "fit": "compact",
    "variant": "compact",
-   "scale": 3,
-   "faceH": 99,
+   "scale": 2,
+   "faceH": 104,
+   "faceW": 100,
    "footprint": {
     "x": 0,
-    "y": 582,
-    "w": 471,
-    "h": 234
+    "y": 580,
+    "w": 496,
+    "h": 256
    },
    "footprintShare": {
-    "w": 61.3,
-    "h": 22.9,
-    "area": 14
+    "w": 64.6,
+    "h": 25,
+    "area": 16.1
    },
-   "checkedFrames": 27,
+   "checkedFrames": 71,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 1,
-   "disposedAt": 783.2,
-   "firstResult": 1317
+   "disposedAt": 1400,
+   "firstResult": 1533
   },
   {
    "name": "390x844",
@@ -1068,26 +1068,28 @@
    "why": "done",
    "fit": "compact",
    "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 346,
-    "w": 314,
-    "h": 166
+    "y": 345,
+    "w": 248,
+    "h": 128
    },
    "footprintShare": {
-    "w": 80.5,
-    "h": 19.7,
-    "area": 15.8
+    "w": 63.6,
+    "h": 15.2,
+    "area": 9.6
    },
-   "checkedFrames": 27,
+   "checkedFrames": 82,
    "overlaps": 0,
+   "waitedForMenus": 83.3,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1300,
+   "disposedAt": 1466.6,
+   "firstResult": 1533,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -1103,36 +1105,33 @@
    "why": "relayout-overlap",
    "fit": "compact",
    "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 178,
-    "w": 314,
-    "h": 166
+    "y": 193,
+    "w": 248,
+    "h": 128
    },
    "footprintShare": {
-    "w": 80.5,
-    "h": 19.7,
-    "area": 15.8
+    "w": 63.6,
+    "h": 15.2,
+    "area": 9.6
    },
    "checkedFrames": 0,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": {
     "reason": "placed again: overlaps banner",
     "tried": [
      {
       "fit": "compact",
-      "scale": 2,
+      "scale": 1,
       "why": "overlaps banner"
      },
      {
       "fit": "compact-bare",
-      "scale": 2,
-      "why": "overlaps banner"
-     },
-     {
-      "fit": "compact-small",
       "scale": 1,
       "why": "overlaps banner"
      }
@@ -1140,8 +1139,8 @@
    },
    "layouts": 2,
    "relaid": 1,
-   "disposedAt": 150,
-   "firstResult": 1267,
+   "disposedAt": 166.6,
+   "firstResult": 1533,
    "sameLayoutAsPortraitOff": true
   },
   {
@@ -1157,26 +1156,28 @@
    "why": "done",
    "fit": "compact",
    "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 232,
-    "w": 314,
-    "h": 150
+    "y": 234,
+    "w": 244,
+    "h": 128
    },
    "footprintShare": {
-    "w": 98.1,
-    "h": 23.4,
-    "area": 23
+    "w": 76.3,
+    "h": 20,
+    "area": 15.3
    },
-   "checkedFrames": 35,
+   "checkedFrames": 79,
    "overlaps": 0,
+   "waitedForMenus": 100,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1217
+   "disposedAt": 1466.6,
+   "firstResult": 1533
   },
   {
    "name": "320x640 200%",
@@ -1193,25 +1194,22 @@
    "variant": null,
    "scale": null,
    "faceH": null,
+   "faceW": null,
    "footprint": null,
    "footprintShare": null,
    "checkedFrames": 0,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": {
     "reason": "overlaps banner",
     "tried": [
      {
       "fit": "compact",
-      "scale": 2,
+      "scale": 1,
       "why": "overlaps banner"
      },
      {
       "fit": "compact-bare",
-      "scale": 2,
-      "why": "overlaps banner"
-     },
-     {
-      "fit": "compact-small",
       "scale": 1,
       "why": "overlaps banner"
      }
@@ -1220,7 +1218,7 @@
    "layouts": 2,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1283
+   "firstResult": 1533
   },
   {
    "name": "844x390",
@@ -1230,31 +1228,27 @@
    "controls": "adaptive",
    "intents": "adaptive",
    "foes": 1,
-   "shown": 1,
-   "displayed": true,
-   "why": "done",
-   "fit": "compact-bare",
-   "variant": "compact",
-   "scale": 1,
-   "faceH": 33,
-   "footprint": {
-    "x": 10,
-    "y": 37,
-    "w": 136,
-    "h": 82
-   },
-   "footprintShare": {
-    "w": 16.1,
-    "h": 21,
-    "area": 3.4
-   },
-   "checkedFrames": 33,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "faceW": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
    "overlaps": 0,
-   "fallback": null,
+   "waitedForMenus": null,
+   "fallback": {
+    "reason": "no variant fits the view",
+    "tried": []
+   },
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.2,
-   "firstResult": 1317
+   "disposedAt": null,
+   "firstResult": 1533
   },
   {
    "name": "844x390 200%",
@@ -1271,39 +1265,20 @@
    "variant": null,
    "scale": null,
    "faceH": null,
+   "faceW": null,
    "footprint": null,
    "footprintShare": null,
    "checkedFrames": 0,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": {
-    "reason": "overlaps status",
-    "tried": [
-     {
-      "fit": "standard",
-      "scale": 1,
-      "why": "overlaps status"
-     },
-     {
-      "fit": "standard-moved",
-      "scale": 1,
-      "why": "overlaps status"
-     },
-     {
-      "fit": "compact",
-      "scale": 1,
-      "why": "overlaps status"
-     },
-     {
-      "fit": "compact-bare",
-      "scale": 1,
-      "why": "overlaps status"
-     }
-    ]
+    "reason": "no variant fits the view",
+    "tried": []
    },
    "layouts": 1,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1267
+   "firstResult": 1533
   }
  ],
  "plan": [
@@ -1315,31 +1290,48 @@
    "controls": "keep",
    "intents": "expanded",
    "foes": 1,
-   "shown": 1,
-   "displayed": true,
-   "why": "done",
-   "fit": "compact-small",
-   "variant": "compact",
-   "scale": 1,
-   "faceH": 33,
-   "footprint": {
-    "x": 0,
-    "y": 211,
-    "w": 157,
-    "h": 75
-   },
-   "footprintShare": {
-    "w": 12.3,
-    "h": 10.4,
-    "area": 1.3
-   },
-   "checkedFrames": 32,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "faceW": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
    "overlaps": 0,
-   "fallback": null,
+   "waitedForMenus": null,
+   "fallback": {
+    "reason": "overlaps intent",
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps intent"
+     },
+     {
+      "fit": "standard-moved",
+      "scale": 1,
+      "why": "overlaps intent"
+     },
+     {
+      "fit": "compact",
+      "scale": 1,
+      "why": "overlaps intent"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 1,
+      "why": "overlaps intent"
+     }
+    ]
+   },
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1217
+   "disposedAt": null,
+   "firstResult": 1533
   },
   {
    "name": "Keep visible + Expanded, 1648×840, Suzu",
@@ -1354,26 +1346,28 @@
    "why": "done",
    "fit": "standard",
    "variant": "standard",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 215,
-    "w": 442,
-    "h": 186
+    "y": 229,
+    "w": 343,
+    "h": 158
    },
    "footprintShare": {
-    "w": 26.8,
-    "h": 22.1,
-    "area": 5.9
+    "w": 20.8,
+    "h": 18.8,
+    "area": 3.9
    },
-   "checkedFrames": 32,
+   "checkedFrames": 76,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1283
+   "disposedAt": 1433.3,
+   "firstResult": 1550
   },
   {
    "name": "group of three, 1280×720, Suzu",
@@ -1390,10 +1384,114 @@
    "variant": null,
    "scale": null,
    "faceH": null,
+   "faceW": null,
    "footprint": null,
    "footprintShare": null,
    "checkedFrames": 0,
    "overlaps": 0,
+   "waitedForMenus": null,
+   "fallback": {
+    "reason": "overlaps plate",
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "standard-moved",
+      "scale": 1,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "compact",
+      "scale": 1,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 1,
+      "why": "overlaps plate"
+     }
+    ]
+   },
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": null,
+   "firstResult": 1533
+  },
+  {
+   "name": "group of three, 1648×840, Mio",
+   "view": "1648×840",
+   "text": "100%",
+   "comp": "mio",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 3,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "faceW": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "waitedForMenus": null,
+   "fallback": {
+    "reason": "overlaps creature",
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps creature"
+     },
+     {
+      "fit": "standard-moved",
+      "scale": 1,
+      "why": "overlaps creature"
+     },
+     {
+      "fit": "compact",
+      "scale": 1,
+      "why": "overlaps creature"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ]
+   },
+   "layouts": 1,
+   "relaid": 0,
+   "disposedAt": null,
+   "firstResult": 1533
+  },
+  {
+   "name": "group of two, 1920×1080, Nao",
+   "view": "1920×1080",
+   "text": "100%",
+   "comp": "nao",
+   "controls": "adaptive",
+   "intents": "adaptive",
+   "foes": 2,
+   "shown": 0,
+   "displayed": false,
+   "why": null,
+   "fit": "omitted",
+   "variant": null,
+   "scale": null,
+   "faceH": null,
+   "faceW": null,
+   "footprint": null,
+   "footprintShare": null,
+   "checkedFrames": 0,
+   "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": {
     "reason": "overlaps creature",
     "tried": [
@@ -1410,12 +1508,12 @@
      {
       "fit": "compact",
       "scale": 2,
-      "why": "overlaps plate"
+      "why": "overlaps creature"
      },
      {
       "fit": "compact-bare",
       "scale": 2,
-      "why": "overlaps plate"
+      "why": "overlaps creature"
      },
      {
       "fit": "compact-small",
@@ -1427,75 +1525,7 @@
    "layouts": 1,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1300
-  },
-  {
-   "name": "group of three, 1648×840, Mio",
-   "view": "1648×840",
-   "text": "100%",
-   "comp": "mio",
-   "controls": "adaptive",
-   "intents": "adaptive",
-   "foes": 3,
-   "shown": 1,
-   "displayed": true,
-   "why": "done",
-   "fit": "compact-small",
-   "variant": "compact",
-   "scale": 1,
-   "faceH": 33,
-   "footprint": {
-    "x": 0,
-    "y": 187,
-    "w": 157,
-    "h": 83
-   },
-   "footprintShare": {
-    "w": 9.5,
-    "h": 9.9,
-    "area": 0.9
-   },
-   "checkedFrames": 28,
-   "overlaps": 0,
-   "fallback": null,
-   "layouts": 1,
-   "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1267
-  },
-  {
-   "name": "group of two, 1920×1080, Nao",
-   "view": "1920×1080",
-   "text": "100%",
-   "comp": "nao",
-   "controls": "adaptive",
-   "intents": "adaptive",
-   "foes": 2,
-   "shown": 1,
-   "displayed": true,
-   "why": "done",
-   "fit": "compact-small",
-   "variant": "compact",
-   "scale": 1,
-   "faceH": 33,
-   "footprint": {
-    "x": 0,
-    "y": 243,
-    "w": 157,
-    "h": 83
-   },
-   "footprintShare": {
-    "w": 8.2,
-    "h": 7.7,
-    "area": 0.6
-   },
-   "checkedFrames": 28,
-   "overlaps": 0,
-   "fallback": null,
-   "layouts": 1,
-   "relaid": 0,
-   "disposedAt": 816.7,
-   "firstResult": 1300
+   "firstResult": 1533
   },
   {
    "name": "finishing technique, 1280×720, Nao",
@@ -1508,28 +1538,30 @@
    "shown": 1,
    "displayed": true,
    "why": "done",
-   "fit": "compact",
-   "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "fit": "standard-moved",
+   "variant": "standard",
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 90,
-    "w": 314,
-    "h": 166
+    "y": 3,
+    "w": 349,
+    "h": 158
    },
    "footprintShare": {
-    "w": 24.5,
-    "h": 23.1,
-    "area": 5.7
+    "w": 27.3,
+    "h": 21.9,
+    "area": 6
    },
-   "checkedFrames": 32,
+   "checkedFrames": 78,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.3,
-   "firstResult": 1300
+   "disposedAt": 1416.7,
+   "firstResult": 1533
   },
   {
    "name": "Adaptive + Expanded, 390×844, Mio",
@@ -1544,26 +1576,28 @@
    "why": "done",
    "fit": "compact",
    "variant": "compact",
-   "scale": 2,
-   "faceH": 66,
+   "scale": 1,
+   "faceH": 52,
+   "faceW": 50,
    "footprint": {
     "x": 0,
-    "y": 346,
-    "w": 314,
-    "h": 166
+    "y": 349,
+    "w": 248,
+    "h": 128
    },
    "footprintShare": {
-    "w": 80.5,
-    "h": 19.7,
-    "area": 15.8
+    "w": 63.6,
+    "h": 15.2,
+    "area": 9.6
    },
-   "checkedFrames": 27,
+   "checkedFrames": 82,
    "overlaps": 0,
+   "waitedForMenus": 83.3,
    "fallback": null,
    "layouts": 1,
    "relaid": 0,
-   "disposedAt": 783.2,
-   "firstResult": 1267
+   "disposedAt": 1466.5,
+   "firstResult": 1533
   },
   {
    "name": "Keep visible, 390×844, Mio",
@@ -1580,25 +1614,22 @@
    "variant": null,
    "scale": null,
    "faceH": null,
+   "faceW": null,
    "footprint": null,
    "footprintShare": null,
    "checkedFrames": 0,
    "overlaps": 0,
+   "waitedForMenus": null,
    "fallback": {
     "reason": "overlaps banner",
     "tried": [
      {
       "fit": "compact",
-      "scale": 2,
+      "scale": 1,
       "why": "overlaps banner"
      },
      {
       "fit": "compact-bare",
-      "scale": 2,
-      "why": "overlaps banner"
-     },
-     {
-      "fit": "compact-small",
       "scale": 1,
       "why": "overlaps banner"
      }
@@ -1607,7 +1638,7 @@
    "layouts": 1,
    "relaid": 0,
    "disposedAt": null,
-   "firstResult": 1267
+   "firstResult": 1533
   }
  ],
  "frozen": [
@@ -1616,12 +1647,12 @@
    "comp": "suzu",
    "overlay": {
     "x": 0,
-    "y": 86,
-    "w": 320,
-    "h": 168
+    "y": 3,
+    "w": 352,
+    "h": 160
    },
    "changedOutside": 575,
-   "changedInside": 35056,
+   "changedInside": 41360,
    "outsideBox": [
     719,
     56,
@@ -1641,13 +1672,13 @@
    "view": "390×844",
    "comp": "ren",
    "overlay": {
-    "x": 0,
-    "y": 330,
-    "w": 320,
-    "h": 168
+    "x": 1,
+    "y": 345,
+    "w": 248,
+    "h": 128
    },
    "changedOutside": 0,
-   "changedInside": 34856,
+   "changedInside": 25471,
    "outsideBox": null,
    "shownTwice": {
     "n": 0,
@@ -1663,12 +1694,12 @@
    "comp": "mio",
    "overlay": {
     "x": 0,
-    "y": 136,
-    "w": 456,
-    "h": 200
+    "y": 155,
+    "w": 352,
+    "h": 160
    },
    "changedOutside": 507,
-   "changedInside": 57080,
+   "changedInside": 41775,
    "outsideBox": [
     1023,
     10,
@@ -1761,9 +1792,9 @@
    "k": 1,
    "comp": "nao",
    "shown": 1,
-   "listeners": 134,
+   "listeners": 135,
    "nodes": 264,
-   "heapMB": 24,
+   "heapMB": 26.1,
    "left": {
     "combat": 0,
     "chal": 0,
@@ -1776,175 +1807,19 @@
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 153
+   "frames": 233
   },
   {
    "k": 2,
    "comp": "mio",
    "shown": 1,
-   "listeners": 137,
-   "nodes": 264,
-   "heapMB": 25.1,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 147
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 255
-  },
-  {
-   "k": 3,
-   "comp": "ren",
-   "shown": 1,
-   "listeners": 143,
-   "nodes": 264,
-   "heapMB": 25.7,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 147
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 276
-  },
-  {
-   "k": 4,
-   "comp": "suzu",
-   "shown": 1,
-   "listeners": 138,
+   "listeners": 133,
    "nodes": 266,
-   "heapMB": 26,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 4,
-   "comps": 2,
-   "artMiB": 0.66,
-   "timers": 0,
-   "frames": 225
-  },
-  {
-   "k": 5,
-   "comp": "nao",
-   "shown": 1,
-   "listeners": 137,
-   "nodes": 266,
-   "heapMB": 26.5,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 148
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 326
-  },
-  {
-   "k": 6,
-   "comp": "mio",
-   "shown": 1,
-   "listeners": 134,
-   "nodes": 266,
-   "heapMB": 26.6,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 147
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 323
-  },
-  {
-   "k": 7,
-   "comp": "ren",
-   "shown": 1,
-   "listeners": 144,
-   "nodes": 264,
-   "heapMB": 26.9,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 147
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 303
-  },
-  {
-   "k": 8,
-   "comp": "suzu",
-   "shown": 1,
-   "listeners": 140,
-   "nodes": 264,
    "heapMB": 28,
    "left": {
     "combat": 0,
@@ -1952,52 +1827,26 @@
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 368
+   "frames": 265
   },
   {
-   "k": 9,
-   "comp": "nao",
-   "shown": 1,
-   "listeners": 141,
-   "nodes": 264,
-   "heapMB": 27.2,
-   "left": {
-    "combat": 0,
-    "chal": 0,
-    "sheet": 0,
-    "strips": 0,
-    "fx": 0,
-    "all": 147
-   },
-   "mode": "world",
-   "layers": 0,
-   "live": 0,
-   "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
-   "timers": 0,
-   "frames": 386
-  },
-  {
-   "k": 10,
-   "comp": "mio",
+   "k": 3,
+   "comp": "ren",
    "shown": 1,
    "listeners": 137,
    "nodes": 266,
-   "heapMB": 27.1,
+   "heapMB": 28.2,
    "left": {
     "combat": 0,
     "chal": 0,
@@ -2010,36 +1859,218 @@
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 373
+   "frames": 288
   },
   {
-   "k": 11,
-   "comp": "ren",
+   "k": 4,
+   "comp": "suzu",
    "shown": 1,
-   "listeners": 145,
+   "listeners": 136,
    "nodes": 266,
-   "heapMB": 27.1,
+   "heapMB": 28.4,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 4,
-   "comps": 2,
-   "artMiB": 0.66,
+   "spans": 1,
+   "busts": 13,
+   "comps": 14,
+   "artMiB": 6.23,
+   "timers": 0,
+   "frames": 239
+  },
+  {
+   "k": 5,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 134,
+   "nodes": 266,
+   "heapMB": 28.7,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
+   "timers": 0,
+   "frames": 325
+  },
+  {
+   "k": 6,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 135,
+   "nodes": 266,
+   "heapMB": 29,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
+   "timers": 0,
+   "frames": 321
+  },
+  {
+   "k": 7,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 135,
+   "nodes": 266,
+   "heapMB": 29,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
+   "timers": 0,
+   "frames": 294
+  },
+  {
+   "k": 8,
+   "comp": "suzu",
+   "shown": 1,
+   "listeners": 137,
+   "nodes": 266,
+   "heapMB": 29.3,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
+   "timers": 0,
+   "frames": 393
+  },
+  {
+   "k": 9,
+   "comp": "nao",
+   "shown": 1,
+   "listeners": 135,
+   "nodes": 266,
+   "heapMB": 29.4,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
+   "timers": 0,
+   "frames": 379
+  },
+  {
+   "k": 10,
+   "comp": "mio",
+   "shown": 1,
+   "listeners": 135,
+   "nodes": 266,
+   "heapMB": 29.5,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
+   "timers": 0,
+   "frames": 370
+  },
+  {
+   "k": 11,
+   "comp": "ren",
+   "shown": 1,
+   "listeners": 136,
+   "nodes": 266,
+   "heapMB": 29.4,
+   "left": {
+    "combat": 0,
+    "chal": 0,
+    "sheet": 0,
+    "strips": 0,
+    "fx": 0,
+    "all": 148
+   },
+   "mode": "world",
+   "layers": 0,
+   "live": 0,
+   "listening": false,
+   "spans": 1,
+   "busts": 13,
+   "comps": 14,
+   "artMiB": 6.23,
    "timers": 0,
    "frames": 299
   },
@@ -2047,181 +2078,181 @@
    "k": 12,
    "comp": "suzu",
    "shown": 1,
-   "listeners": 141,
-   "nodes": 264,
-   "heapMB": 27.2,
+   "listeners": 136,
+   "nodes": 266,
+   "heapMB": 29.6,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 418
+   "frames": 408
   },
   {
    "k": 13,
    "comp": "nao",
    "shown": 1,
-   "listeners": 141,
-   "nodes": 264,
-   "heapMB": 27.3,
+   "listeners": 137,
+   "nodes": 266,
+   "heapMB": 29.7,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 391
+   "frames": 388
   },
   {
    "k": 14,
    "comp": "mio",
    "shown": 1,
-   "listeners": 140,
-   "nodes": 264,
-   "heapMB": 27.5,
+   "listeners": 134,
+   "nodes": 266,
+   "heapMB": 29.9,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 384
+   "frames": 382
   },
   {
    "k": 15,
    "comp": "ren",
    "shown": 1,
-   "listeners": 142,
-   "nodes": 264,
-   "heapMB": 27.2,
+   "listeners": 138,
+   "nodes": 266,
+   "heapMB": 29.9,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 364
+   "frames": 355
   },
   {
    "k": 16,
    "comp": "suzu",
    "shown": 1,
-   "listeners": 140,
-   "nodes": 264,
-   "heapMB": 27.6,
+   "listeners": 136,
+   "nodes": 266,
+   "heapMB": 29.8,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 403
+   "frames": 414
   },
   {
    "k": 17,
    "comp": "nao",
    "shown": 1,
-   "listeners": 141,
-   "nodes": 264,
-   "heapMB": 27.5,
+   "listeners": 138,
+   "nodes": 266,
+   "heapMB": 29.9,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 393
+   "frames": 388
   },
   {
    "k": 18,
    "comp": "mio",
    "shown": 1,
-   "listeners": 144,
+   "listeners": 132,
    "nodes": 266,
-   "heapMB": 27.4,
+   "heapMB": 29.9,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 4,
-   "comps": 2,
-   "artMiB": 0.66,
+   "spans": 1,
+   "busts": 13,
+   "comps": 14,
+   "artMiB": 6.23,
    "timers": 0,
    "frames": 308
   },
@@ -2229,53 +2260,53 @@
    "k": 19,
    "comp": "ren",
    "shown": 1,
-   "listeners": 144,
-   "nodes": 264,
-   "heapMB": 27.6,
+   "listeners": 134,
+   "nodes": 266,
+   "heapMB": 30.1,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 367
+   "frames": 366
   },
   {
    "k": 20,
    "comp": "suzu",
    "shown": 1,
-   "listeners": 143,
-   "nodes": 264,
-   "heapMB": 27.7,
+   "listeners": 136,
+   "nodes": 266,
+   "heapMB": 30.1,
    "left": {
     "combat": 0,
     "chal": 0,
     "sheet": 0,
     "strips": 0,
     "fx": 0,
-    "all": 147
+    "all": 148
    },
    "mode": "world",
    "layers": 0,
    "live": 0,
    "listening": false,
-   "spans": 2,
-   "busts": 8,
-   "comps": 4,
-   "artMiB": 1.18,
+   "spans": 1,
+   "busts": 14,
+   "comps": 14,
+   "artMiB": 6.68,
    "timers": 0,
-   "frames": 397
+   "frames": 417
   }
  ],
  "devViewer": [
@@ -2284,7 +2315,7 @@
    "foes": 1,
    "kind": "dev",
    "cutins": 1,
-   "fit": "compact",
+   "fit": "standard-moved",
    "fallback": null,
    "beats": 0,
    "same": true
@@ -2294,7 +2325,7 @@
    "foes": 1,
    "kind": "dev",
    "cutins": 1,
-   "fit": "compact",
+   "fit": "standard-moved",
    "fallback": null,
    "beats": 0,
    "same": true
@@ -2304,7 +2335,7 @@
    "foes": 1,
    "kind": "dev",
    "cutins": 1,
-   "fit": "compact",
+   "fit": "standard-moved",
    "fallback": null,
    "beats": 0,
    "same": true
@@ -2325,12 +2356,218 @@
   "rows": [
    {
     "view": "1280×720 normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 36
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ],
     "started": 1,
     "why": "done",
     "fit": "standard-moved",
     "variant": "standard",
     "scale": 1,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 1
+    },
     "faceH": 33,
+    "faceW": 36,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 49,
+     "w": 343,
+     "h": 132
+    },
+    "footprintShare": {
+     "w": 26.8,
+     "h": 18.3
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      352,
+      160
+     ],
+     "top": 23,
+     "scale": 1,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 3,
+      "y": 23,
+      "w": 352,
+      "h": 160
+     },
+     "footprint": {
+      "x": 3,
+      "y": 49,
+      "w": 343,
+      "h": 132
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       572,
+       460,
+       132
+      ],
+      [
+       "party",
+       32,
+       308,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 347,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 79,
+    "disposedAt": 1416.6,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1280×720 fast",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 36
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 1
+    },
+    "faceH": 33,
+    "faceW": 36,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 49,
+     "w": 343,
+     "h": 132
+    },
+    "footprintShare": {
+     "w": 26.8,
+     "h": 18.3
+    },
     "held": {
      "cw": 352,
      "ch": 160,
@@ -2410,19 +2647,86 @@
       "pc": "painted"
      }
     ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 347,
     "overlaps": 0,
-    "checkedFrames": 30,
-    "disposedAt": 783.3,
-    "firstResult": 1283
+    "waitedForMenus": null,
+    "checkedFrames": 39,
+    "disposedAt": 1120.1,
+    "firstResult": 1287,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
    },
    {
-    "view": "1280×720 fast",
+    "view": "1280×720 normal reduced",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 36
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ],
     "started": 1,
     "why": "done",
     "fit": "standard-moved",
     "variant": "standard",
     "scale": 1,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 1
+    },
     "faceH": 33,
+    "faceW": 36,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 49,
+     "w": 343,
+     "h": 132
+    },
+    "footprintShare": {
+     "w": 26.8,
+     "h": 18.3
+    },
     "held": {
      "cw": 352,
      "ch": 160,
@@ -2466,10 +2770,9 @@
      ]
     },
     "states": [
-     "prep_a",
-     "prep_b",
-     "cue",
      "peak",
+     "peak~",
+     "settle_b~",
      "settle_b"
     ],
     "timeline": [
@@ -2488,33 +2791,93 @@
      {
       "suzu": "painted",
       "pc": "painted"
-     },
-     {
-      "suzu": "painted",
-      "pc": "painted"
-     },
-     {
-      "suzu": "painted",
-      "pc": "painted"
-     },
-     {
-      "suzu": "painted",
-      "pc": "painted"
      }
     ],
+    "reducedPlan": {
+     "a": "peak",
+     "b": "settle_b",
+     "at": 630,
+     "fade": 100
+    },
+    "crossFadeMs": 83.4,
+    "travel": 0,
     "overlaps": 0,
-    "checkedFrames": 11,
-    "disposedAt": 714.9,
-    "firstResult": 1287
+    "waitedForMenus": null,
+    "checkedFrames": 83,
+    "disposedAt": 1416.5,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
    },
    {
-    "view": "1280×720 normal reduced",
+    "view": "1280×720 fast reduced",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 36
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ],
     "started": 1,
     "why": "done",
     "fit": "standard-moved",
     "variant": "standard",
     "scale": 1,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 1
+    },
     "faceH": 33,
+    "faceW": 36,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 49,
+     "w": 343,
+     "h": 132
+    },
+    "footprintShare": {
+     "w": 26.8,
+     "h": 18.3
+    },
     "held": {
      "cw": 352,
      "ch": 160,
@@ -2526,7 +2889,7 @@
      "scale": 1,
      "variant": "standard",
      "fit": "standard-moved",
-     "phase": "settle_b",
+     "phase": "peak",
      "rect": {
       "x": 0,
       "y": 23,
@@ -2558,6 +2921,9 @@
      ]
     },
     "states": [
+     "peak",
+     "peak~",
+     "settle_b~",
      "settle_b"
     ],
     "timeline": [
@@ -2572,21 +2938,91 @@
      {
       "suzu": "painted",
       "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
      }
     ],
+    "reducedPlan": {
+     "a": "peak",
+     "b": "settle_b",
+     "at": 528.5,
+     "fade": 100
+    },
+    "crossFadeMs": 71.5,
+    "travel": 0,
     "overlaps": 0,
-    "checkedFrames": 32,
-    "disposedAt": 783.2,
-    "firstResult": 1283
+    "waitedForMenus": null,
+    "checkedFrames": 44,
+    "disposedAt": 1120.1,
+    "firstResult": 1287,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
    },
    {
     "view": "390×844 @3x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 0,
+     "compact": 48
+    },
+    "tried": [],
     "started": 1,
     "why": "done",
     "fit": "compact",
     "variant": "compact",
     "scale": 1.3333333333333333,
+    "scaleV2": {
+     "standard": 0,
+     "compact": 1.3333333333333333
+    },
+    "scaleV3": {
+     "standard": 0,
+     "compact": 1.3333333333333333
+    },
     "faceH": 44,
+    "faceW": 48,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 342,
+     "w": 325,
+     "h": 137
+    },
+    "footprintShare": {
+     "w": 83.3,
+     "h": 16.2
+    },
     "held": {
      "cw": 248,
      "ch": 128,
@@ -2600,13 +3036,13 @@
      "fit": "compact",
      "phase": "cue",
      "rect": {
-      "x": 0,
+      "x": 4,
       "y": 309,
       "w": 330.65625,
       "h": 170.65625
      },
      "footprint": {
-      "x": 0,
+      "x": 4,
       "y": 342,
       "w": 325,
       "h": 137
@@ -2666,10 +3102,2316 @@
       "pc": "painted"
      }
     ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 329,
     "overlaps": 0,
-    "checkedFrames": 20,
-    "disposedAt": 783.4,
-    "firstResult": 1300
+    "waitedForMenus": 100.1,
+    "checkedFrames": 67,
+    "disposedAt": 1466.6,
+    "firstResult": 1550,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   }
+  ]
+ },
+ "paintedGeometry": {
+  "note": "SYNTHETIC sample (tests/fixtures/harmony_sample) and rich fixture (tests/fixtures/harmony_rich), not the game's art. The sample's face boxes are the code busts' (36 × 33 art px); real art uses the template's 50 × 52.",
+  "rows": [
+   {
+    "view": "2048×1046 @1x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 72,
+     "compact": 72
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 2,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 2
+    },
+    "scaleV3": {
+     "standard": 2,
+     "compact": 2
+    },
+    "faceH": 66,
+    "faceW": 72,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 98,
+     "w": 686,
+     "h": 264
+    },
+    "footprintShare": {
+     "w": 33.5,
+     "h": 25.2
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      704,
+      320
+     ],
+     "top": 46,
+     "scale": 2,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": 46,
+      "w": 704,
+      "h": 320
+     },
+     "footprint": {
+      "x": 6,
+      "y": 98,
+      "w": 686,
+      "h": 264
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       898,
+       460,
+       132
+      ],
+      [
+       "party",
+       60,
+       507,
+       582,
+       375
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 690,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 75,
+    "disposedAt": 1416.7,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1920×1080 @1x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 72,
+     "compact": 72
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 2,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 2,
+     "compact": 2
+    },
+    "scaleV3": {
+     "standard": 2,
+     "compact": 2
+    },
+    "faceH": 66,
+    "faceW": 72,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 28,
+     "w": 686,
+     "h": 264
+    },
+    "footprintShare": {
+     "w": 35.7,
+     "h": 24.4
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      704,
+      320
+     ],
+     "top": -24,
+     "scale": 2,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": -24,
+      "w": 704,
+      "h": 320
+     },
+     "footprint": {
+      "x": 6,
+      "y": 28,
+      "w": 686,
+      "h": 264
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       932,
+       460,
+       132
+      ],
+      [
+       "party",
+       54,
+       540,
+       582,
+       375
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 690,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 67,
+    "disposedAt": 1400,
+    "firstResult": 1550,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1648×840 @1x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 72
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 2
+    },
+    "faceH": 66,
+    "faceW": 72,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 130,
+     "w": 488,
+     "h": 206
+    },
+    "footprintShare": {
+     "w": 29.6,
+     "h": 24.5
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      496,
+      256
+     ],
+     "top": 80,
+     "scale": 2,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": 80,
+      "w": 496,
+      "h": 256
+     },
+     "footprint": {
+      "x": 6,
+      "y": 130,
+      "w": 488,
+      "h": 206
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       692,
+       460,
+       132
+      ],
+      [
+       "party",
+       52,
+       428,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 492,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 73,
+    "disposedAt": 1416.6,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1440×900 @1x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 72
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 2
+    },
+    "faceH": 66,
+    "faceW": 72,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 36,
+     "w": 488,
+     "h": 206
+    },
+    "footprintShare": {
+     "w": 33.9,
+     "h": 22.9
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      496,
+      256
+     ],
+     "top": -14,
+     "scale": 2,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": -14,
+      "w": 496,
+      "h": 256
+     },
+     "footprint": {
+      "x": 6,
+      "y": 36,
+      "w": 488,
+      "h": 206
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       752,
+       460,
+       132
+      ],
+      [
+       "party",
+       40,
+       488,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 492,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 78,
+    "disposedAt": 1416.6,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1280×720 @1x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 36,
+     "compact": 36
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 1,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 1
+    },
+    "faceH": 33,
+    "faceW": 36,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 49,
+     "w": 343,
+     "h": 132
+    },
+    "footprintShare": {
+     "w": 26.8,
+     "h": 18.3
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      352,
+      160
+     ],
+     "top": 23,
+     "scale": 1,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 3,
+      "y": 23,
+      "w": 352,
+      "h": 160
+     },
+     "footprint": {
+      "x": 3,
+      "y": 49,
+      "w": 343,
+      "h": 132
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       572,
+       460,
+       132
+      ],
+      [
+       "party",
+       32,
+       308,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 347,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 76,
+    "disposedAt": 1416.6,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "768×1024 @2x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 0,
+     "compact": 90
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2.5,
+    "scaleV2": {
+     "standard": 0,
+     "compact": 2
+    },
+    "scaleV3": {
+     "standard": 0,
+     "compact": 2.5
+    },
+    "faceH": 82.5,
+    "faceW": 90,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 583,
+     "w": 610,
+     "h": 258
+    },
+    "footprintShare": {
+     "w": 79.4,
+     "h": 25.2
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      620,
+      320
+     ],
+     "top": 520,
+     "scale": 2.5,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 7,
+      "y": 520,
+      "w": 620,
+      "h": 320
+     },
+     "footprint": {
+      "x": 7,
+      "y": 583,
+      "w": 610,
+      "h": 258
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       8,
+       454,
+       752,
+       114
+      ],
+      [
+       "party",
+       29,
+       257,
+       291,
+       188
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 614,
+    "overlaps": 0,
+    "waitedForMenus": 116.6,
+    "checkedFrames": 58,
+    "disposedAt": 1466.6,
+    "firstResult": 1550,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "390×844 @3x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 0,
+     "compact": 48
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 1.3333333333333333,
+    "scaleV2": {
+     "standard": 0,
+     "compact": 1.3333333333333333
+    },
+    "scaleV3": {
+     "standard": 0,
+     "compact": 1.3333333333333333
+    },
+    "faceH": 44,
+    "faceW": 48,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 342,
+     "w": 325,
+     "h": 137
+    },
+    "footprintShare": {
+     "w": 83.3,
+     "h": 16.2
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      330.66,
+      170.66
+     ],
+     "top": 309,
+     "scale": 1.3333333333333333,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 4,
+      "y": 309,
+      "w": 330.65625,
+      "h": 170.65625
+     },
+     "footprint": {
+      "x": 4,
+      "y": 342,
+      "w": 325,
+      "h": 137
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       8,
+       722,
+       374,
+       114
+      ],
+      [
+       "party",
+       14,
+       208,
+       194,
+       125
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 329,
+    "overlaps": 0,
+    "waitedForMenus": 116.6,
+    "checkedFrames": 56,
+    "disposedAt": 1483.2,
+    "firstResult": 1567,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "320×640 @2x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 0,
+     "compact": 36
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 1,
+    "scaleV2": {
+     "standard": 0,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 0,
+     "compact": 1
+    },
+    "faceH": 33,
+    "faceW": 36,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 234,
+     "w": 244,
+     "h": 103
+    },
+    "footprintShare": {
+     "w": 76.3,
+     "h": 16.1
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      248,
+      128
+     ],
+     "top": 209,
+     "scale": 1,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 3,
+      "y": 209,
+      "w": 248,
+      "h": 128
+     },
+     "footprint": {
+      "x": 3,
+      "y": 234,
+      "w": 244,
+      "h": 103
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       8,
+       518,
+       304,
+       114
+      ],
+      [
+       "party",
+       10,
+       94,
+       194,
+       125
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 248,
+    "overlaps": 0,
+    "waitedForMenus": 83.3,
+    "checkedFrames": 69,
+    "disposedAt": 1466.7,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "844×390 @3x normal",
+    "which": "sample",
+    "faceCandidates": {
+     "standard": 0,
+     "compact": 36
+    },
+    "tried": null,
+    "started": 0,
+    "why": null,
+    "fit": "omitted",
+    "variant": null,
+    "scale": null,
+    "scaleV2": {
+     "standard": 0,
+     "compact": 0.6666666666666666
+    },
+    "scaleV3": {
+     "standard": 0,
+     "compact": 1
+    },
+    "faceH": null,
+    "faceW": null,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": null,
+    "footprintShare": null,
+    "held": null,
+    "states": [],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": null,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 0,
+    "disposedAt": null,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    },
+    "fallback": {
+     "reason": "overlaps banner",
+     "tried": [
+      {
+       "fit": "compact",
+       "scale": 1,
+       "why": "overlaps banner"
+      },
+      {
+       "fit": "compact-bare",
+       "scale": 1,
+       "why": "overlaps banner"
+      }
+     ]
+    }
+   },
+   {
+    "view": "2048×1046 @1x normal (rich)",
+    "which": "rich",
+    "faceCandidates": {
+     "standard": 72,
+     "compact": 72
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 2,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 2
+    },
+    "scaleV3": {
+     "standard": 2,
+     "compact": 2
+    },
+    "faceH": 66,
+    "faceW": 72,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 98,
+     "w": 686,
+     "h": 264
+    },
+    "footprintShare": {
+     "w": 33.5,
+     "h": 25.2
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      704,
+      320
+     ],
+     "top": 46,
+     "scale": 2,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": 46,
+      "w": 704,
+      "h": 320
+     },
+     "footprint": {
+      "x": 6,
+      "y": 98,
+      "w": 686,
+      "h": 264
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       898,
+       460,
+       132
+      ],
+      [
+       "party",
+       60,
+       507,
+       582,
+       375
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 690,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 71,
+    "disposedAt": 1416.6,
+    "firstResult": 1583,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1920×1080 @1x normal (rich)",
+    "which": "rich",
+    "faceCandidates": {
+     "standard": 72,
+     "compact": 72
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 2,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 2,
+     "compact": 2
+    },
+    "scaleV3": {
+     "standard": 2,
+     "compact": 2
+    },
+    "faceH": 66,
+    "faceW": 72,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 28,
+     "w": 686,
+     "h": 264
+    },
+    "footprintShare": {
+     "w": 35.7,
+     "h": 24.4
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      704,
+      320
+     ],
+     "top": -24,
+     "scale": 2,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": -24,
+      "w": 704,
+      "h": 320
+     },
+     "footprint": {
+      "x": 6,
+      "y": 28,
+      "w": 686,
+      "h": 264
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       932,
+       460,
+       132
+      ],
+      [
+       "party",
+       54,
+       540,
+       582,
+       375
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 690,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 74,
+    "disposedAt": 1433.3,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1366×768 @1x normal (template faces)",
+    "which": "template",
+    "faceCandidates": {
+     "standard": 50,
+     "compact": 100
+    },
+    "tried": [
+     {
+      "fit": "compact",
+      "scale": 2,
+      "why": "overlaps plate"
+     },
+     {
+      "fit": "compact-bare",
+      "scale": 2,
+      "why": "overlaps plate"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard",
+    "variant": "standard",
+    "scale": 1,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 2
+    },
+    "faceH": 52,
+    "faceW": 50,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 132,
+     "w": 343,
+     "h": 132
+    },
+    "footprintShare": {
+     "w": 25.1,
+     "h": 17.2
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      352,
+      160
+     ],
+     "top": 106,
+     "scale": 1,
+     "variant": "standard",
+     "fit": "standard",
+     "phase": "cue",
+     "rect": {
+      "x": 3,
+      "y": 106,
+      "w": 352,
+      "h": 160
+     },
+     "footprint": {
+      "x": 3,
+      "y": 132,
+      "w": 343,
+      "h": 132
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       620,
+       460,
+       132
+      ],
+      [
+       "party",
+       36,
+       356,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 347,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 69,
+    "disposedAt": 1400,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1440×900 @1x normal (template faces)",
+    "which": "template",
+    "faceCandidates": {
+     "standard": 50,
+     "compact": 100
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 2
+    },
+    "faceH": 104,
+    "faceW": 100,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 36,
+     "w": 488,
+     "h": 206
+    },
+    "footprintShare": {
+     "w": 33.9,
+     "h": 22.9
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      496,
+      256
+     ],
+     "top": -14,
+     "scale": 2,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": -14,
+      "w": 496,
+      "h": 256
+     },
+     "footprint": {
+      "x": 6,
+      "y": 36,
+      "w": 488,
+      "h": 206
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       752,
+       460,
+       132
+      ],
+      [
+       "party",
+       40,
+       488,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 492,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 76,
+    "disposedAt": 1416.6,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "1600×900 @1x normal (template faces)",
+    "which": "template",
+    "faceCandidates": {
+     "standard": 50,
+     "compact": 100
+    },
+    "tried": [],
+    "started": 1,
+    "why": "done",
+    "fit": "compact",
+    "variant": "compact",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 1
+    },
+    "scaleV3": {
+     "standard": 1,
+     "compact": 2
+    },
+    "faceH": 104,
+    "faceW": 100,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 160,
+     "w": 488,
+     "h": 206
+    },
+    "footprintShare": {
+     "w": 30.5,
+     "h": 22.9
+    },
+    "held": {
+     "cw": 248,
+     "ch": 128,
+     "css": [
+      496,
+      256
+     ],
+     "top": 110,
+     "scale": 2,
+     "variant": "compact",
+     "fit": "compact",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": 110,
+      "w": 496,
+      "h": 256
+     },
+     "footprint": {
+      "x": 6,
+      "y": 160,
+      "w": 488,
+      "h": 206
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       752,
+       460,
+       132
+      ],
+      [
+       "party",
+       50,
+       488,
+       388,
+       250
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 492,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 78,
+    "disposedAt": 1416.5,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
+   },
+   {
+    "view": "2048×1046 @1x normal (template faces)",
+    "which": "template",
+    "faceCandidates": {
+     "standard": 100,
+     "compact": 100
+    },
+    "tried": [
+     {
+      "fit": "standard",
+      "scale": 2,
+      "why": "overlaps creature"
+     }
+    ],
+    "started": 1,
+    "why": "done",
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 2,
+    "scaleV2": {
+     "standard": 1,
+     "compact": 2
+    },
+    "scaleV3": {
+     "standard": 2,
+     "compact": 2
+    },
+    "faceH": 104,
+    "faceW": 100,
+    "footprintArt": {
+     "standard": {
+      "x": 0,
+      "y": 26,
+      "w": 343,
+      "h": 132,
+      "phases": 5
+     },
+     "compact": {
+      "x": 0,
+      "y": 25,
+      "w": 244,
+      "h": 103,
+      "phases": 5
+     }
+    },
+    "footprintCss": {
+     "x": 0,
+     "y": 98,
+     "w": 686,
+     "h": 264
+    },
+    "footprintShare": {
+     "w": 33.5,
+     "h": 25.2
+    },
+    "held": {
+     "cw": 352,
+     "ch": 160,
+     "css": [
+      704,
+      320
+     ],
+     "top": 46,
+     "scale": 2,
+     "variant": "standard",
+     "fit": "standard-moved",
+     "phase": "cue",
+     "rect": {
+      "x": 6,
+      "y": 46,
+      "w": 704,
+      "h": 320
+     },
+     "footprint": {
+      "x": 6,
+      "y": 98,
+      "w": 686,
+      "h": 264
+     },
+     "relaid": 0,
+     "party": [
+      [
+       "status",
+       16,
+       898,
+       460,
+       132
+      ],
+      [
+       "party",
+       60,
+       507,
+       582,
+       375
+      ]
+     ]
+    },
+    "states": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b"
+    ],
+    "timeline": [
+     "prep_a",
+     "prep_b",
+     "cue",
+     "peak",
+     "settle_b",
+     "settle_b"
+    ],
+    "painted": [
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     },
+     {
+      "suzu": "painted",
+      "pc": "painted"
+     }
+    ],
+    "reducedPlan": null,
+    "crossFadeMs": 0,
+    "travel": 690,
+    "overlaps": 0,
+    "waitedForMenus": null,
+    "checkedFrames": 75,
+    "disposedAt": 1400,
+    "firstResult": 1533,
+    "approval": {
+     "kit": "synthetic",
+     "pairings": {
+      "nao": "provisional",
+      "mio": "provisional",
+      "ren": "provisional",
+      "suzu": "synthetic"
+     },
+     "labels": {
+      "provisional": "provisional artwork",
+      "candidate": "visual candidate awaiting approval",
+      "approved": "approved visual direction",
+      "verified": "integrated and verified",
+      "synthetic": "synthetic sample — not art"
+     }
+    }
    }
   ]
  },
@@ -2682,33 +5424,33 @@
  "videos": {
   "nao": {
    "file": "docs/screenshots/harmony/cutin/technique_nao_normal_1280x720.webm",
-   "bytes": 1665576,
+   "bytes": 1334472,
    "shown": 1,
-   "fit": "compact"
+   "fit": "standard-moved"
   },
   "mio": {
    "file": "docs/screenshots/harmony/cutin/technique_mio_normal_1280x720.webm",
-   "bytes": 1719168,
+   "bytes": 1337533,
    "shown": 1,
-   "fit": "compact"
+   "fit": "standard-moved"
   },
   "ren": {
    "file": "docs/screenshots/harmony/cutin/technique_ren_normal_1280x720.webm",
-   "bytes": 1783424,
+   "bytes": 1382562,
    "shown": 1,
-   "fit": "compact"
+   "fit": "standard-moved"
   },
   "suzu": {
    "file": "docs/screenshots/harmony/cutin/technique_suzu_normal_1280x720.webm",
-   "bytes": 1677143,
+   "bytes": 1667953,
    "shown": 1,
-   "fit": "compact"
+   "fit": "standard-moved"
   }
  },
  "sheets": {
   "nao": {
    "file": "docs/screenshots/harmony/cutin/stage_nao_portrait_off.webp",
-   "bytes": 199388,
+   "bytes": 198458,
    "times": [
     0,
     300,
@@ -2726,7 +5468,7 @@
   },
   "mio": {
    "file": "docs/screenshots/harmony/cutin/stage_mio_portrait_off.webp",
-   "bytes": 193924,
+   "bytes": 193270,
    "times": [
     0,
     300,
@@ -2744,17 +5486,17 @@
   },
   "ren": {
    "file": "docs/screenshots/harmony/cutin/stage_ren_portrait_off.webp",
-   "bytes": 204078,
+   "bytes": 202440,
    "times": [
     0,
     300,
-    620,
-    780,
-    890,
-    973,
-    1055,
-    1121,
-    1330,
+    500,
+    660,
+    770,
+    853,
+    935,
+    1001,
+    1210,
     1300,
     2010,
     2280
@@ -2762,7 +5504,7 @@
   },
   "suzu": {
    "file": "docs/screenshots/harmony/cutin/stage_suzu_portrait_off.webp",
-   "bytes": 194380,
+   "bytes": 191750,
    "times": [
     0,
     300,
@@ -2786,348 +5528,695 @@
     {
      "state": "inactive",
      "at": 0,
-     "wall": 0
+     "wall": 1
     },
     {
      "state": "entering",
      "at": 0,
-     "wall": 1
+     "wall": 2
     },
     {
      "state": "holding",
-     "at": 183.4,
-     "wall": 147
+     "at": 233.4,
+     "wall": 195
     },
     {
      "state": "fading",
-     "at": 566.7,
-     "wall": 528
+     "at": 1050,
+     "wall": 1011
     },
     {
      "state": "disposed",
-     "at": 783.4,
-     "wall": 750
+     "at": 1416.7,
+     "wall": 1382
     }
    ],
-   "frames": 43,
+   "frames": 81,
    "trace": [
     [
      0,
      "e",
      1,
-     -318,
-     "enter"
+     -353,
+     "prep_a",
+     null
     ],
     [
      16.7,
      "e",
      1,
-     -238,
-     "enter"
+     -278,
+     "prep_a",
+     null
     ],
     [
-     50.1,
+     33.4,
      "e",
      1,
-     -120,
-     "enter"
+     -214,
+     "prep_a",
+     null
     ],
     [
-     66.7,
+     50,
      "e",
      1,
-     -80,
-     "enter"
+     -161,
+     "prep_a",
+     null
     ],
     [
-     83.4,
+     83.3,
      "e",
      1,
-     -50,
-     "enter"
+     -82,
+     "prep_a",
+     null
+    ],
+    [
+     100,
+     "e",
+     1,
+     -55,
+     "prep_a",
+     null
     ],
     [
      116.7,
      "e",
      1,
-     -14,
-     "enter"
+     -34,
+     "prep_a",
+     null
     ],
     [
      133.3,
      "e",
      1,
-     -6,
-     "enter"
+     -19,
+     "prep_b",
+     null
     ],
     [
-     150,
+     150.1,
      "e",
      1,
-     -2,
-     "enter"
+     -8,
+     "prep_b",
+     null
     ],
     [
      166.7,
      "e",
      1,
-     0,
-     "enter"
+     -2,
+     "prep_b",
+     null
     ],
     [
      183.4,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     1,
+     "prep_b",
+     null
     ],
     [
      200,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
      216.7,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
      233.4,
      "h",
      1,
-     0,
-     "enter"
+     3,
+     "cue",
+     null
     ],
     [
-     250,
+     250.1,
      "h",
      1,
-     0,
-     "hold"
+     3,
+     "cue",
+     null
     ],
     [
      266.7,
      "h",
      1,
-     0,
-     "hold"
+     2,
+     "cue",
+     null
     ],
     [
      283.4,
      "h",
      1,
-     0,
-     "hold"
+     2,
+     "cue",
+     null
     ],
     [
      300,
      "h",
      1,
-     0,
-     "hold"
+     1,
+     "cue",
+     null
     ],
     [
      316.7,
      "h",
      1,
-     0,
-     "hold"
+     1,
+     "cue_b",
+     null
     ],
     [
      333.3,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
-     350,
+     350.1,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
-     366.6,
+     366.7,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
      383.3,
      "h",
      1,
      0,
-     "hold"
+     "peak",
+     null
     ],
     [
-     416.6,
+     400,
      "h",
      1,
-     0,
-     "hold"
+     -1,
+     "peak",
+     null
     ],
     [
-     433.4,
+     416.7,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
+    ],
+    [
+     433.3,
+     "h",
+     1,
+     -3,
+     "peak",
+     null
     ],
     [
      450,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
      466.7,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
-     483.3,
+     483.4,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
      500,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
-     516.6,
+     516.7,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
-     533.3,
+     533.4,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
      550,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
      566.7,
-     "f",
-     0.997,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     583.3,
-     "f",
-     0.969,
-     0,
-     "hold"
+     583.4,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      600,
-     "f",
-     0.913,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     633.4,
-     "f",
-     0.74,
-     0,
-     "hold"
+     616.7,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     633.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      650,
-     "f",
-     0.635,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      666.6,
-     "f",
-     0.523,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      683.4,
-     "f",
-     0.409,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      700,
-     "f",
-     0.301,
-     0,
-     "hold"
-    ],
-    [
-     716.7,
-     "f",
-     0.201,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      733.3,
-     "f",
-     0.116,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      750,
-     "f",
-     0.051,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     766.7,
+     766.6,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     783.3,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     800,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     816.7,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     833.4,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     850,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     866.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     883.4,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     900.1,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     916.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     933.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     950,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     966.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     983.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1000,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1016.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1033.4,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1050,
      "f",
-     0.011,
+     0.998,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1066.7,
+     "f",
+     0.984,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1083.4,
+     "f",
+     0.96,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1100,
+     "f",
+     0.926,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1116.7,
+     "f",
+     0.883,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1133.3,
+     "f",
+     0.833,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1150,
+     "f",
+     0.777,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1166.6,
+     "f",
+     0.716,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1200,
+     "f",
+     0.583,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1233.3,
+     "f",
+     0.445,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1250,
+     "f",
+     0.376,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1266.7,
+     "f",
+     0.31,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1283.3,
+     "f",
+     0.247,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1300,
+     "f",
+     0.189,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1316.6,
+     "f",
+     0.136,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1333.3,
+     "f",
+     0.09,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1350,
+     "f",
+     0.053,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1366.7,
+     "f",
+     0.024,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1383.3,
+     "f",
+     0.006,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1400,
+     "f",
      0,
-     "hold"
+     -1,
+     "settle_b",
+     null
     ]
    ],
    "results": [
     {
      "t": "unravel",
-     "at": 1317,
+     "at": 1533,
      "who": null
     },
     {
      "t": "tech",
-     "at": 1483,
+     "at": 1683,
      "who": "nao"
     }
    ],
    "fired": [
-    "pose:pc=anticipate",
     "cutin",
+    "pose:pc=anticipate",
     "sfx:pen_stroke",
     "pose:comp=anticipate",
     "pose:pc=anticipate",
@@ -3154,19 +6243,19 @@
     "pose:pc=recover",
     "pose:comp=recover"
    ],
-   "sequenceEnd": 2350,
-   "wallMs": 2354,
+   "sequenceEnd": 2570,
+   "wallMs": 2569,
    "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
     "footprint": {
      "x": 0,
-     "y": 90,
-     "w": 314,
-     "h": 166
+     "y": 3,
+     "w": 349,
+     "h": 158
     },
-    "faceH": 66,
+    "faceH": 52,
     "view": {
      "w": 1280,
      "h": 720
@@ -3188,262 +6277,654 @@
     },
     {
      "state": "holding",
-     "at": 183.4,
-     "wall": 153
+     "at": 233.4,
+     "wall": 199
     },
     {
      "state": "fading",
-     "at": 566.7,
-     "wall": 542
+     "at": 1050,
+     "wall": 1016
     },
     {
      "state": "disposed",
-     "at": 800,
-     "wall": 770
+     "at": 1400,
+     "wall": 1378
     }
    ],
-   "frames": 32,
+   "frames": 77,
    "trace": [
     [
      0,
      "e",
      1,
-     -318,
-     "enter"
+     -347,
+     "prep_a",
+     null
     ],
     [
      16.7,
      "e",
      1,
-     -238,
-     "enter"
+     -273,
+     "prep_a",
+     null
     ],
     [
-     33.4,
+     33.3,
      "e",
      1,
-     -172,
-     "enter"
+     -211,
+     "prep_a",
+     null
     ],
     [
-     50.1,
+     50,
      "e",
      1,
-     -120,
-     "enter"
+     -158,
+     "prep_a",
+     null
     ],
     [
-     83.4,
+     66.7,
      "e",
      1,
-     -50,
-     "enter"
+     -115,
+     "prep_a",
+     null
+    ],
+    [
+     83.3,
+     "e",
+     1,
+     -81,
+     "prep_a",
+     null
     ],
     [
      100.1,
      "e",
      1,
-     -28,
-     "enter"
+     -54,
+     "prep_a",
+     null
     ],
     [
      116.7,
      "e",
      1,
-     -14,
-     "enter"
+     -33,
+     "prep_a",
+     null
     ],
     [
-     133.4,
+     133.3,
      "e",
      1,
-     -6,
-     "enter"
+     -18,
+     "prep_b",
+     null
     ],
     [
-     150.1,
+     150,
      "e",
      1,
-     -2,
-     "enter"
+     -8,
+     "prep_b",
+     null
     ],
     [
      166.7,
      "e",
      1,
-     0,
-     "enter"
+     -2,
+     "prep_b",
+     null
     ],
     [
-     183.4,
-     "h",
+     183.3,
+     "e",
      1,
-     0,
-     "enter"
+     1,
+     "prep_b",
+     null
+    ],
+    [
+     200,
+     "e",
+     1,
+     3,
+     "prep_b",
+     null
     ],
     [
      216.7,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
      233.4,
      "h",
      1,
-     0,
-     "enter"
+     3,
+     "cue",
+     null
     ],
     [
-     316.7,
+     250,
+     "h",
+     1,
+     3,
+     "cue",
+     null
+    ],
+    [
+     266.7,
+     "h",
+     1,
+     2,
+     "cue",
+     null
+    ],
+    [
+     283.3,
+     "h",
+     1,
+     2,
+     "cue",
+     null
+    ],
+    [
+     300,
+     "h",
+     1,
+     1,
+     "cue",
+     null
+    ],
+    [
+     333.4,
      "h",
      1,
      0,
-     "hold"
-    ],
-    [
-     333.3,
-     "h",
-     1,
-     0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
      350,
      "h",
      1,
      0,
-     "hold"
-    ],
-    [
-     366.7,
-     "h",
-     1,
-     0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
      383.3,
      "h",
      1,
      0,
-     "hold"
+     "peak",
+     null
     ],
     [
-     416.7,
+     400,
      "h",
      1,
-     0,
-     "hold"
+     -1,
+     "peak",
+     null
     ],
     [
-     433.4,
+     433.3,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
+    ],
+    [
+     450,
+     "h",
+     1,
+     -3,
+     "peak",
+     null
     ],
     [
      466.7,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
-     500.1,
+     483.3,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
+    ],
+    [
+     500,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
+    ],
+    [
+     533.3,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
     ],
     [
      550,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
      566.7,
-     "f",
-     0.997,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      583.4,
-     "f",
-     0.968,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     600,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      616.7,
-     "f",
-     0.835,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     633.3,
-     "f",
-     0.741,
-     0,
-     "hold"
+     633.4,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      666.7,
-     "f",
-     0.522,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      683.3,
-     "f",
-     0.41,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      700,
-     "f",
-     0.301,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     716.6,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      750,
-     "f",
-     0.051,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     766.7,
+     766.6,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     783.4,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     800,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     816.7,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     833.3,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     850,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     866.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     883.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     900,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     916.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     933.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     950,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     966.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     983.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1000,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1016.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1033.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1050,
      "f",
-     0.011,
-     0,
-     "hold"
+     0.998,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1066.6,
+     "f",
+     0.984,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1083.4,
+     "f",
+     0.96,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1100,
+     "f",
+     0.926,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1116.6,
+     "f",
+     0.883,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1133.3,
+     "f",
+     0.833,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1150,
+     "f",
+     0.777,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1166.7,
+     "f",
+     0.716,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1183.4,
+     "f",
+     0.65,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1199.9,
+     "f",
+     0.583,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1233.3,
+     "f",
+     0.445,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1249.9,
+     "f",
+     0.377,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1266.6,
+     "f",
+     0.31,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1283.3,
+     "f",
+     0.247,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1300,
+     "f",
+     0.189,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1316.6,
+     "f",
+     0.136,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1333.3,
+     "f",
+     0.09,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1350,
+     "f",
+     0.053,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1366.6,
+     "f",
+     0.024,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1383.3,
+     "f",
+     0.006,
+     -1,
+     "settle_b",
+     null
     ]
    ],
    "results": [
     {
      "t": "unravel",
-     "at": 1250,
+     "at": 1533,
      "who": null
     },
     {
      "t": "tech",
-     "at": 1417,
+     "at": 1683,
      "who": "mio"
     }
    ],
    "fired": [
-    "pose:pc=anticipate",
     "cutin",
+    "pose:pc=anticipate",
     "sfx:pen_stroke",
     "pose:comp=anticipate",
     "pose:pc=anticipate",
@@ -3468,19 +6949,19 @@
     "pose:pc=recover",
     "pose:comp=recover"
    ],
-   "sequenceEnd": 2400,
-   "wallMs": 2403,
+   "sequenceEnd": 2670,
+   "wallMs": 2674,
    "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
     "footprint": {
      "x": 0,
-     "y": 90,
-     "w": 314,
-     "h": 166
+     "y": 3,
+     "w": 343,
+     "h": 158
     },
-    "faceH": 66,
+    "faceH": 52,
     "view": {
      "w": 1280,
      "h": 720
@@ -3498,316 +6979,742 @@
     {
      "state": "entering",
      "at": 0,
-     "wall": 3
+     "wall": 1
     },
     {
      "state": "holding",
-     "at": 199.9,
-     "wall": 158
+     "at": 233.3,
+     "wall": 198
     },
     {
      "state": "fading",
-     "at": 566.6,
-     "wall": 542
+     "at": 1049.9,
+     "wall": 1012
     },
     {
      "state": "disposed",
-     "at": 783.3,
-     "wall": 740
+     "at": 1416.6,
+     "wall": 1386
     }
    ],
-   "frames": 34,
+   "frames": 83,
    "trace": [
     [
      0,
      "e",
      1,
-     -318,
-     "enter"
+     -349,
+     "prep_a",
+     null
     ],
     [
      16.6,
      "e",
      1,
-     -238,
-     "enter"
+     -275,
+     "prep_a",
+     null
     ],
     [
-     49.9,
+     33.3,
      "e",
      1,
-     -120,
-     "enter"
+     -212,
+     "prep_a",
+     null
     ],
     [
-     66.6,
+     50,
      "e",
      1,
-     -80,
-     "enter"
+     -159,
+     "prep_a",
+     null
+    ],
+    [
+     66.7,
+     "e",
+     1,
+     -116,
+     "prep_a",
+     null
+    ],
+    [
+     83.3,
+     "e",
+     1,
+     -81,
+     "prep_a",
+     null
     ],
     [
      100,
      "e",
      1,
-     -28,
-     "enter"
+     -54,
+     "prep_a",
+     null
     ],
     [
      116.6,
      "e",
      1,
-     -14,
-     "enter"
+     -34,
+     "prep_a",
+     null
+    ],
+    [
+     133.3,
+     "e",
+     1,
+     -19,
+     "prep_b",
+     null
     ],
     [
      150,
      "e",
      1,
-     -2,
-     "enter"
+     -8,
+     "prep_b",
+     null
     ],
     [
-     166.5,
+     166.7,
      "e",
      1,
-     0,
-     "enter"
+     -2,
+     "prep_b",
+     null
+    ],
+    [
+     183.3,
+     "e",
+     1,
+     1,
+     "prep_b",
+     null
     ],
     [
      199.9,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
-     216.6,
-     "h",
+     216.7,
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
-     233.2,
+     233.3,
      "h",
      1,
-     0,
-     "enter"
+     3,
+     "cue",
+     null
     ],
     [
      250,
      "h",
      1,
-     0,
-     "hold"
+     3,
+     "cue",
+     null
     ],
     [
-     283.2,
+     266.7,
      "h",
      1,
-     0,
-     "hold"
+     2,
+     "cue",
+     null
     ],
     [
-     299.9,
+     283.3,
      "h",
      1,
-     0,
-     "hold"
+     2,
+     "cue",
+     null
+    ],
+    [
+     300,
+     "h",
+     1,
+     1,
+     "cue",
+     null
     ],
     [
      316.6,
      "h",
      1,
-     0,
-     "hold"
+     1,
+     "cue_b",
+     null
     ],
     [
-     333.2,
+     333.3,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
-     349.9,
+     350,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
      366.6,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
      383.3,
      "h",
      1,
      0,
-     "hold"
+     "peak",
+     null
+    ],
+    [
+     399.9,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      416.6,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
-     449.9,
+     433.3,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
-     483.2,
+     450,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
+    ],
+    [
+     466.6,
+     "h",
+     1,
+     -3,
+     "peak",
+     null
+    ],
+    [
+     483.3,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
+    ],
+    [
+     499.9,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
     ],
     [
      533.3,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
+    ],
+    [
+     549.9,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
     ],
     [
      566.6,
-     "f",
-     0.997,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     599.9,
-     "f",
-     0.913,
-     0,
-     "hold"
+     583.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     600,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      616.6,
-     "f",
-     0.835,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     633.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      649.9,
-     "f",
-     0.636,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      666.6,
-     "f",
-     0.523,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     683.2,
-     "f",
-     0.41,
-     0,
-     "hold"
+     683.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      699.9,
-     "f",
-     0.301,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     716.5,
-     "f",
-     0.202,
-     0,
-     "hold"
+     716.6,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     733.2,
-     "f",
-     0.117,
-     0,
-     "hold"
+     733.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     749.9,
-     "f",
-     0.051,
-     0,
-     "hold"
+     750,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     766.5,
+     766.6,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     783.3,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     799.9,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     816.7,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     833.3,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     849.9,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     866.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     883.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     899.9,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     916.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     933.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     949.9,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     966.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     983.2,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1000,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1016.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1033.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1049.9,
      "f",
-     0.011,
+     0.998,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1066.6,
+     "f",
+     0.984,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1083.2,
+     "f",
+     0.96,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1099.9,
+     "f",
+     0.926,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1116.6,
+     "f",
+     0.883,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1133.3,
+     "f",
+     0.833,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1150,
+     "f",
+     0.777,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1183.2,
+     "f",
+     0.651,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1199.9,
+     "f",
+     0.583,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1216.6,
+     "f",
+     0.514,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1233.3,
+     "f",
+     0.445,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1250,
+     "f",
+     0.376,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1266.6,
+     "f",
+     0.31,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1283.3,
+     "f",
+     0.247,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1299.9,
+     "f",
+     0.189,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1316.6,
+     "f",
+     0.136,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1333.2,
+     "f",
+     0.091,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1349.9,
+     "f",
+     0.053,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1366.6,
+     "f",
+     0.024,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1383.2,
+     "f",
+     0.006,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1399.9,
+     "f",
      0,
-     "hold"
+     -1,
+     "settle_b",
+     null
     ]
    ],
    "results": [
     {
      "t": "unravel",
-     "at": 1217,
+     "at": 1533,
      "who": null
     },
     {
      "t": "tech",
-     "at": 1400,
+     "at": 1683,
      "who": "ren"
     }
    ],
    "fired": [
-    "pose:pc=anticipate",
     "cutin",
+    "pose:pc=anticipate",
     "sfx:pen_stroke",
     "pose:comp=anticipate",
     "pose:pc=anticipate",
-    "pose:pc=act",
     "pose:comp=act",
-    "strip",
+    "pose:pc=act",
     "sfx:lantern",
     "fx:pLamp",
-    "fx:link",
+    "strip",
     "fx:pPlane",
+    "fx:link",
     "fx:pJoin",
     "fx:knotRelease",
     "fx:loosen",
     "foe:release",
     "beat",
-    "pose:pc=act",
     "pose:comp=act",
+    "pose:pc=act",
     "fx:sealForm",
     "beat",
     "fx:sealForm",
     "pose:pc=recover",
     "pose:comp=recover"
    ],
-   "sequenceEnd": 2300,
-   "wallMs": 2303,
+   "sequenceEnd": 2620,
+   "wallMs": 2615,
    "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
     "footprint": {
      "x": 0,
-     "y": 98,
-     "w": 314,
-     "h": 150
+     "y": 3,
+     "w": 345,
+     "h": 158
     },
-    "faceH": 66,
+    "faceH": 52,
     "view": {
      "w": 1280,
      "h": 720
@@ -3829,297 +7736,678 @@
     },
     {
      "state": "holding",
-     "at": 183.3,
-     "wall": 143
+     "at": 233.3,
+     "wall": 208
     },
     {
      "state": "fading",
-     "at": 566.6,
-     "wall": 532
+     "at": 1066.6,
+     "wall": 1028
     },
     {
      "state": "disposed",
-     "at": 783.2,
-     "wall": 760
+     "at": 1416.6,
+     "wall": 1379
     }
    ],
-   "frames": 37,
+   "frames": 80,
    "trace": [
     [
      0,
      "e",
      1,
-     -318,
-     "enter"
+     -347,
+     "prep_a",
+     null
     ],
     [
-     16.6,
+     16.7,
      "e",
      1,
-     -238,
-     "enter"
+     -273,
+     "prep_a",
+     null
     ],
     [
-     49.9,
+     33.4,
      "e",
      1,
-     -120,
-     "enter"
+     -211,
+     "prep_a",
+     null
+    ],
+    [
+     50,
+     "e",
+     1,
+     -158,
+     "prep_a",
+     null
     ],
     [
      66.6,
      "e",
      1,
-     -80,
-     "enter"
+     -116,
+     "prep_a",
+     null
     ],
     [
      83.3,
      "e",
      1,
-     -50,
-     "enter"
-    ],
-    [
-     100,
-     "e",
-     1,
-     -28,
-     "enter"
+     -81,
+     "prep_a",
+     null
     ],
     [
      116.7,
      "e",
      1,
-     -14,
-     "enter"
+     -33,
+     "prep_a",
+     null
     ],
     [
      133.3,
      "e",
      1,
-     -6,
-     "enter"
+     -18,
+     "prep_b",
+     null
     ],
     [
-     149.9,
+     150,
      "e",
      1,
-     -2,
-     "enter"
+     -8,
+     "prep_b",
+     null
     ],
     [
      166.6,
      "e",
      1,
-     0,
-     "enter"
+     -2,
+     "prep_b",
+     null
     ],
     [
      183.3,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     1,
+     "prep_b",
+     null
     ],
     [
      200,
-     "h",
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
-     216.6,
-     "h",
+     216.7,
+     "e",
      1,
-     0,
-     "enter"
+     3,
+     "prep_b",
+     null
     ],
     [
      233.3,
      "h",
      1,
-     0,
-     "enter"
+     3,
+     "cue",
+     null
     ],
     [
-     249.9,
+     266.7,
      "h",
      1,
-     0,
-     "hold"
-    ],
-    [
-     266.6,
-     "h",
-     1,
-     0,
-     "hold"
+     2,
+     "cue",
+     null
     ],
     [
      283.3,
      "h",
      1,
-     0,
-     "hold"
+     2,
+     "cue",
+     null
     ],
     [
-     299.9,
+     300,
      "h",
      1,
-     0,
-     "hold"
+     1,
+     "cue",
+     null
     ],
     [
-     316.6,
+     316.7,
      "h",
      1,
-     0,
-     "hold"
+     1,
+     "cue_b",
+     null
     ],
     [
      333.3,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
-     349.9,
+     350,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
     ],
     [
-     366.6,
+     366.7,
      "h",
      1,
      0,
-     "hold"
+     "cue_b",
+     null
+    ],
+    [
+     383.3,
+     "h",
+     1,
+     0,
+     "peak",
+     null
     ],
     [
      400,
      "h",
      1,
-     0,
-     "hold"
+     -1,
+     "peak",
+     null
     ],
     [
-     416.6,
+     416.7,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
      433.3,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
      450,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
-     466.6,
+     466.7,
      "h",
      1,
-     0,
-     "hold"
+     -3,
+     "peak",
+     null
     ],
     [
-     483.2,
+     483.3,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
+    ],
+    [
+     500,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
     ],
     [
      516.6,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
-     549.9,
+     533.3,
      "h",
      1,
-     0,
-     "hold"
+     -2,
+     "peak",
+     null
     ],
     [
-     566.6,
-     "f",
-     0.997,
-     0,
-     "hold"
+     550,
+     "h",
+     1,
+     -2,
+     "peak",
+     null
     ],
     [
-     599.9,
-     "f",
-     0.913,
-     0,
-     "hold"
+     566.7,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     616.6,
-     "f",
-     0.835,
-     0,
-     "hold"
+     583.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     600,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     616.7,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      633.3,
-     "f",
-     0.741,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     650,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     666.6,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     683.3,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      700,
-     "f",
-     0.301,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     716.7,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
      733.3,
-     "f",
-     0.116,
-     0,
-     "hold"
+     "h",
+     1,
+     -1,
+     "peak",
+     null
     ],
     [
-     766.6,
+     750,
+     "h",
+     1,
+     -1,
+     "peak",
+     null
+    ],
+    [
+     766.7,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     783.3,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     800,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     816.7,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     833.4,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     849.9,
+     "h",
+     1,
+     -1,
+     "settle_a",
+     null
+    ],
+    [
+     866.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     883.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     900,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     916.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     966.7,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     983.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1000,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1016.6,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1033.3,
+     "h",
+     1,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1066.6,
      "f",
-     0.011,
+     0.984,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1083.3,
+     "f",
+     0.96,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1100,
+     "f",
+     0.926,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1116.6,
+     "f",
+     0.883,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1133.3,
+     "f",
+     0.833,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1150,
+     "f",
+     0.777,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1166.6,
+     "f",
+     0.716,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1183.3,
+     "f",
+     0.651,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1200,
+     "f",
+     0.583,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1216.7,
+     "f",
+     0.514,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1233.3,
+     "f",
+     0.445,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1250,
+     "f",
+     0.376,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1266.6,
+     "f",
+     0.31,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1283.3,
+     "f",
+     0.247,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1300,
+     "f",
+     0.189,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1316.6,
+     "f",
+     0.136,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1333.3,
+     "f",
+     0.09,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1350,
+     "f",
+     0.053,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1366.7,
+     "f",
+     0.024,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1383.3,
+     "f",
+     0.006,
+     -1,
+     "settle_b",
+     null
+    ],
+    [
+     1399.9,
+     "f",
      0,
-     "hold"
+     -1,
+     "settle_b",
+     null
     ]
    ],
    "results": [
     {
      "t": "unravel",
-     "at": 1283,
+     "at": 1533,
      "who": null
     },
     {
      "t": "tech",
-     "at": 1433,
+     "at": 1683,
      "who": "suzu"
     }
    ],
    "fired": [
-    "pose:pc=anticipate",
     "cutin",
+    "pose:pc=anticipate",
     "sfx:pen_stroke",
     "pose:comp=anticipate",
     "pose:pc=anticipate",
@@ -4143,19 +8431,19 @@
     "pose:pc=recover",
     "pose:comp=recover"
    ],
-   "sequenceEnd": 2450,
-   "wallMs": 2454,
+   "sequenceEnd": 2690,
+   "wallMs": 2685,
    "placement": {
-    "fit": "compact",
-    "variant": "compact",
-    "scale": 2,
+    "fit": "standard-moved",
+    "variant": "standard",
+    "scale": 1,
     "footprint": {
      "x": 0,
-     "y": 96,
-     "w": 314,
-     "h": 156
+     "y": 3,
+     "w": 343,
+     "h": 158
     },
-    "faceH": 66,
+    "faceH": 52,
     "view": {
      "w": 1280,
      "h": 720
