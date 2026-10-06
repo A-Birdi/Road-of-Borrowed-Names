@@ -52,6 +52,7 @@ let suites = [
   ['fishing.mjs'],
   // painted Harmony busts: the contract v2 raster path with the SYNTHETIC sample (docs/harmony/contract/CONTRACT.md)
   ['harmony_raster.mjs'],
+  ['harmony_appearance.mjs'], // HX66: every hairstyle, cut, accessory and keepsake on the painted kit; stress pairs; equip, unequip, save/load, slot switch
   ['portrait_dev.mjs'], // the portrait viewer (?dev=portraits): refused normally, sizes by the game's fit, no keys to the title
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
 ];
