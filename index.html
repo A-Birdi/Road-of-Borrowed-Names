@@ -1933,8 +1933,7 @@ body:not([data-mode="world"]) .hud .menu-b { display: none; }
   .seq-view .acts .cbtn { padding: 0 0.7em; }
 }
 @media (max-height: 440px) {
-  .seq-view .acts { gap: 6px; }
-  .seq-view .acts .cbtn { min-height: 40px; }
+  .seq-view .acts { gap: 6px; } /* the buttons keep the 44-px touch target (--tap) here too */
 }
 /* the dev viewer's synthetic preview (src/ui/43z_sequence_dev.js) hides the page it was opened over */
 body.seq-dev-play #ui > :not(.seq-view) { visibility: hidden; }
