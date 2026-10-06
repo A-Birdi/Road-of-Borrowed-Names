@@ -315,6 +315,7 @@ body.in-panel #overlay > .notices > * { pointer-events: none; }
 .banner-txt { min-width: 0; }
 .banner .jline { font-size: 1.55em; color: var(--ink); line-height: 1.9; }
 .banner .en { font-size: 1.08em; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+.banner .credit { margin-top: 0.55em; font-size: 0.82em; letter-spacing: 0.06em; color: var(--ink-2); font-family: var(--serif); }
 /* ink flourishes either side of the title, drawn outward from it */
 .banner .flourish { flex: none; width: clamp(28px, 7vw, 92px); height: 16px; overflow: visible; }
 .banner .flourish.l { transform: scaleX(-1); }

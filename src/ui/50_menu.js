@@ -780,7 +780,9 @@ RB.ui.menu = (function () {
   return { open, close, closeAll, settingsStandalone, addPage, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
+// the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
+RB.CREDIT = { role: 'Project Development', name: 'Robin Amaral' };
 RB.ui.credits = function () {
-  return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.');
+  return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.', { credit: RB.CREDIT.role + ': ' + RB.CREDIT.name });
 };
 RB.ui.shop = function () { return Promise.resolve(); };

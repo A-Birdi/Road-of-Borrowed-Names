@@ -228,4 +228,7 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 /* ---- about ------------------------------------------------------------------------ */
 @media (min-width: 600px) { .folio-about { width: min(760px, calc(100vw - 2 * var(--gutter))); } }
 .folio-about .notice-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8em; line-height: 1.45; color: var(--ink-2); margin: 0.4em 0 0; }
+.folio-about .about-credit { margin: 0 0 1em; padding-bottom: 0.7em; border-bottom: 1px solid var(--paper-edge); font-family: var(--serif); }
+.folio-about .about-credit .role { display: block; font-size: 0.8em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.folio-about .about-credit .name { display: block; font-size: 1.45em; line-height: 1.25; color: var(--ink); }
 .folio-about .leaf h3 svg { width: 1.1em; height: 1.1em; align-self: center; color: var(--ink-2); }

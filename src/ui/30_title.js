@@ -991,6 +991,7 @@ RB.ui.title = (function () {
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet folio-about' });
     fr.setTitle('About &amp; credits', '');
     fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0" aria-label="About">' +
+      '<p class="about-credit"><span class="role">Project Development:</span> <span class="name">' + esc(RB.CREDIT.name) + '</span></p>' +
       '<p>An original Japanese-learning adventure. Story, art, music and code are procedural and self-contained in this one file; nothing is downloaded while you play.</p>' +
       '<p>The world, its lantern roads and its magic are fiction. The Japanese is ordinary Japanese; where the story invents a term it is labelled as fictional in the notebook.</p>' +
       '<p>Voices, when present, come from speech synthesis already installed on your device. They are not recorded performances, and they are not a pronunciation reference.</p>' +

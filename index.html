@@ -1127,6 +1127,9 @@ body.reduced-motion .pbtn.mg-t svg { transition: none; }
 /* ---- about ------------------------------------------------------------------------ */
 @media (min-width: 600px) { .folio-about { width: min(760px, calc(100vw - 2 * var(--gutter))); } }
 .folio-about .notice-text { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.8em; line-height: 1.45; color: var(--ink-2); margin: 0.4em 0 0; }
+.folio-about .about-credit { margin: 0 0 1em; padding-bottom: 0.7em; border-bottom: 1px solid var(--paper-edge); font-family: var(--serif); }
+.folio-about .about-credit .role { display: block; font-size: 0.8em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+.folio-about .about-credit .name { display: block; font-size: 1.45em; line-height: 1.25; color: var(--ink); }
 .folio-about .leaf h3 svg { width: 1.1em; height: 1.1em; align-self: center; color: var(--ink-2); }
 
 /* ==== src/styles/45_create.css ==== */
@@ -1829,6 +1832,7 @@ body.in-panel #overlay > .notices > * { pointer-events: none; }
 .banner-txt { min-width: 0; }
 .banner .jline { font-size: 1.55em; color: var(--ink); line-height: 1.9; }
 .banner .en { font-size: 1.08em; color: var(--ink-2); font-family: var(--serif); font-style: italic; }
+.banner .credit { margin-top: 0.55em; font-size: 0.82em; letter-spacing: 0.06em; color: var(--ink-2); font-family: var(--serif); }
 /* ink flourishes either side of the title, drawn outward from it */
 .banner .flourish { flex: none; width: clamp(28px, 7vw, 92px); height: 16px; overflow: visible; }
 .banner .flourish.l { transform: scaleX(-1); }
@@ -48317,10 +48321,11 @@ RB.ui = (function () {
   // A click, tap or key moves it on; reduced motion fades without sliding.
   // The place-name label waits until it has gone.
   let bannerUp = null;
-  function card(jp, en) {
+  function card(jp, en, opt) {
     return new Promise((res) => {
       const c = el('div', 'banner-layer');
-      const txt = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div>';
+      const credit = opt && opt.credit ? opt.credit : '';
+      const txt = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div>' + (credit ? '<div class="credit">' + esc(credit) + '</div>' : '');
       const stroke = (side) => '<svg class="flourish ' + side + '" viewBox="0 0 120 16" aria-hidden="true" focusable="false"><path d="M2 9 C 30 9, 60 3, 118 8" pathLength="1"/><path d="M40 11 C 60 12, 80 10, 104 11" pathLength="1"/></svg>';
       c.innerHTML = '<div class="banner" role="status" aria-live="polite">' + stroke('l') + '<div class="banner-txt">' + txt + '</div>' + stroke('r') + '</div>';
       const b = c.querySelector('.banner');
@@ -48342,7 +48347,7 @@ RB.ui = (function () {
       pushLayer(layer);
       requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('in')));
       // time to read: a little longer for longer lines
-      const read = 2600 + Math.min(1400, ((en || '').length + (jp || '').replace(/[{}|a-z\s]/g, '').length * 2) * 18);
+      const read = 2600 + Math.min(1400, ((en || '').length + credit.length + (jp || '').replace(/[{}|a-z\s]/g, '').length * 2) * 18);
       tm = setTimeout(done, ff ? 300 : read);
     });
   }
@@ -50911,6 +50916,7 @@ RB.ui.title = (function () {
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet folio-about' });
     fr.setTitle('About &amp; credits', '');
     fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0" aria-label="About">' +
+      '<p class="about-credit"><span class="role">Project Development:</span> <span class="name">' + esc(RB.CREDIT.name) + '</span></p>' +
       '<p>An original Japanese-learning adventure. Story, art, music and code are procedural and self-contained in this one file; nothing is downloaded while you play.</p>' +
       '<p>The world, its lantern roads and its magic are fiction. The Japanese is ordinary Japanese; where the story invents a term it is labelled as fictional in the notebook.</p>' +
       '<p>Voices, when present, come from speech synthesis already installed on your device. They are not recorded performances, and they are not a pronunciation reference.</p>' +
@@ -60687,8 +60693,10 @@ RB.ui.menu = (function () {
   return { open, close, closeAll, settingsStandalone, addPage, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
+// the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
+RB.CREDIT = { role: 'Project Development', name: 'Robin Amaral' };
 RB.ui.credits = function () {
-  return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.');
+  return RB.ui.card('{終|お}わり ── そして 、 {道|みち} は {続|つづ}く 。', 'The end — and the road goes on.', { credit: RB.CREDIT.role + ': ' + RB.CREDIT.name });
 };
 RB.ui.shop = function () { return Promise.resolve(); };
 

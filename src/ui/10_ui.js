@@ -212,10 +212,11 @@ RB.ui = (function () {
   // A click, tap or key moves it on; reduced motion fades without sliding.
   // The place-name label waits until it has gone.
   let bannerUp = null;
-  function card(jp, en) {
+  function card(jp, en, opt) {
     return new Promise((res) => {
       const c = el('div', 'banner-layer');
-      const txt = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div>';
+      const credit = opt && opt.credit ? opt.credit : '';
+      const txt = (jp ? jhtml(jp) : '') + '<div class="en">' + esc(RB.script.enVars(en)) + '</div>' + (credit ? '<div class="credit">' + esc(credit) + '</div>' : '');
       const stroke = (side) => '<svg class="flourish ' + side + '" viewBox="0 0 120 16" aria-hidden="true" focusable="false"><path d="M2 9 C 30 9, 60 3, 118 8" pathLength="1"/><path d="M40 11 C 60 12, 80 10, 104 11" pathLength="1"/></svg>';
       c.innerHTML = '<div class="banner" role="status" aria-live="polite">' + stroke('l') + '<div class="banner-txt">' + txt + '</div>' + stroke('r') + '</div>';
       const b = c.querySelector('.banner');
@@ -237,7 +238,7 @@ RB.ui = (function () {
       pushLayer(layer);
       requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('in')));
       // time to read: a little longer for longer lines
-      const read = 2600 + Math.min(1400, ((en || '').length + (jp || '').replace(/[{}|a-z\s]/g, '').length * 2) * 18);
+      const read = 2600 + Math.min(1400, ((en || '').length + credit.length + (jp || '').replace(/[{}|a-z\s]/g, '').length * 2) * 18);
       tm = setTimeout(done, ff ? 300 : read);
     });
   }
