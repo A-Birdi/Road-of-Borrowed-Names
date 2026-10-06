@@ -428,10 +428,12 @@ Measured by harmony_cutin "groups at desktop sizes" (one technique each, real cl
 | 1536×864, two | Suzu | compact ×1 | 12 px | 3 px | 24 / 46 px | 0 |
 
 Still left out with the painted art, as designed (the stage performance plays, the banner names the technique),
-measured by a scratch probe of `place()` in the same encounters, on the build before the second further pass (to be re-checked on 91ef7d2): two creatures at 1366×768; three at 1280×720,
-1366×768, 1440×900 and 1104×884 (the room is 29–68 px short); Keep visible + Expanded at 1280×720 (the menus
-stay); and the phone cases at 200 % text above. Phones in portrait (390×844), a tablet (768×1024) and an unfolded
-foldable held upright (884×1104) show it with three creatures without either pass.
+measured on 91ef7d2 by a scratch probe of `place()` in the same encounters (the Flour Moth, Adaptive): two
+creatures at 1280×720 and 1366×768; three at 1280×720, 1366×768, 1440×900 and 1104×884 (every protected box would
+have to shrink by 14–68 px more for it to fit); Keep visible + Expanded at 1280×720 (the menus stay); and the phone
+cases at 200 % text above. It shows with two creatures at 1440×900 (slid 16 px) and three at 1536×864 (3 px cut);
+phones in portrait (390×844), a tablet (768×1024) and an unfolded foldable held upright (884×1104) show it with three
+creatures without either pass.
 
 ### 7.3 The four stage performances as built (Normal, presentation ms from the technique's start)
 

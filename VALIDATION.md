@@ -3282,9 +3282,43 @@ profiles; no player save was used.
   when none fits there, the same candidates are tried again, slid past the left edge in steps of 2 art px. A pair is
   never slid so far that a face, with the motion's reach to the left, has less than 8 px on screen. The pair already
   enters from that edge, so it reads as bleeding off the page (HX1). Placements that fitted before are unchanged.
-- B harmony_cutin, new section "a group of three at Robin's window size", one run per companion: each shows one
+- B harmony_cutin, a new section "a group of three at Robin's window size", one run per companion: each shows one
   cut-in, `compact-small` at scale 1, slid 4 px; the leftmost face starts at 32 px; 0 frames with a drawn pixel within
   12 px of anything protected; no page errors. A capture (Ren, in the hold) shows both faces whole, clear of the
   creature's label.
-- U 27,245/0.
-- The rest of `harmony_cutin` on this build, and HX59's measurements: below, when they finish.
+- U 27,245/0, and B `harmony_cutin` **12/0** on 70c966e. Every placement in "geometry" and "plan" is the same as before
+  the fix.
+
+**The same omission at other desktop sizes, found by comparing the record with the code busts' (91ef7d2).**
+- The plan's own record showed it. With the code busts (97bd57a) the portrait showed in "group of three, 1648×840" and
+  "group of two, 1920×1080" (compact-small ×1). With the painted art (f9491e0) both were "omitted (overlaps
+  creature)". The plan test accepts one portrait or none, so it passed.
+- Why: the painted compact pair is 248 × 128 art px, the code busts' 160 × 84, and neither goes below scale 1 at
+  device pixel ratio 1. A scratch probe of `place()` found the strip above the creatures 2–15 px too short at
+  1920×1080, 1648×840 and 1536×864, and the left slide alone did not help there.
+- The rule: a third pass, tried only when the edge and the slide both fail. Up to 16 art px of the pair's top rows
+  (hair crowns, a hat's crown, the band's edge) may pass the top edge, slid or not, the least of the pair cut off
+  first. Faces stay whole and at least 8 px below the edge.
+  - The crop limit was chosen from a sheet of all four pairings, look A and a heavy look with a hat, cut by 0, 4, 14,
+    24 and 36 px. At 4 px nothing visible is lost. At 14 px the crowns and the top of a hat go, and it reads like a
+    panel running off the page. From 24 px heads are cut deeply.
+  - The first version took the least crop first, which at 1536×864 chose a 2 px crop with a 24 px slide. That cut most
+    of Suzu's thumbs-up hand, where a 3 px crop and a 12 px slide fits. It now orders by how much of the pair is cut
+    off.
+- B harmony_cutin, "groups at desktop sizes" (it replaces the section above): **one cut-in each**, faces whole, 0
+  frames within 12 px of anything protected:
+  - 2048×1046 with three, each companion: slid 4 px, no crop.
+  - 1920×1080 with two (Nao) and with three (Mio): crop 5 px.
+  - 1648×840 with three (Ren): crop 15 px.
+  - 1536×864 with two (Suzu): crop 3 px, slid 12 px.
+- Captures in play at 1920×1080 and 1648×840: the pair sits in the top-left corner; only the hair crowns are trimmed;
+  both faces are whole and clear of the creatures' labels.
+- Still left out, as designed (the stage performance plays and the banner names the technique), by the same probe on
+  91ef7d2:
+  - two creatures at 1280×720 and 1366×768;
+  - three at 1280×720, 1366×768, 1440×900 and 1104×884 (14–68 px short even with both passes);
+  - Keep visible + Expanded at 1280×720.
+  Phones in portrait, a 768×1024 tablet and an upright unfolded foldable (884×1104) show it with three creatures
+  without either pass. Recorded in HARMONY.md §7.2.
+- On 91ef7d2: U 27,245/0; B `harmony_cutin` **12/0**. The plan now shows "group of three, 1648×840" (compact ×1)
+  and "group of two, 1920×1080" (compact-small ×1); its other rows are as before.
