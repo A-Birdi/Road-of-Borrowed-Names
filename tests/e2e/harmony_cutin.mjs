@@ -960,6 +960,70 @@ if (toDocs) await test('evidence: a real-time WebM of each pairing at Normal (12
   report.sheets = sheets;
 });
 
+// ---------------------------------------------------------------------------------------------------------
+// Budget (--budget; expressive ledger HX59): the approved painted art in real encounters at Robin's window size
+// (2048×1046, ratio 1) — cold preparation from the encounter opening, warm playback of the technique (frame times
+// while the portrait is up, the overlay's own cost per frame), cache size, and what stays after leaving; four
+// pairings × two looks (look A; a heavy look: large hair, hat, cape, scarf, strap, glasses, earrings) × one creature
+// and a group of three. Run alone: `node tests/e2e/harmony_cutin.mjs budget --budget` (writes
+// docs/harmony/contract/budgets_painted.json). Headless Chromium with a software canvas: not a physical device.
+if (args.includes('--budget')) await test('budget: the approved art in real encounters — cold preparation, warm playback, frame times, cache size and cleanup; four pairings, two looks, one creature and a group', async () => {
+  const LA = { skin: 1, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'coat', acc: ['glasses', 'flower', 'satchel'] };
+  const HEAVY = { skin: 6, hair: 'curly', hairColor: 4, outfit: 3, shape: 'robe', acc: ['hat', 'cape', 'scarf', 'satchel', 'glasses', 'earrings'] };
+  const q = (a, f) => { if (!a.length) return null; const s = a.slice().sort((x, y) => x - y); return +s[Math.min(s.length - 1, Math.floor(f * s.length))].toFixed(1); };
+  const rows = [], bad = [];
+  for (const comp of COMPS) for (const [lname, look] of [['A', LA], ['heavy', HEAVY]]) for (const foes of [1, 3]) {
+    const { p, errors, ctx } = await page(b, url, { viewport: { width: 2048, height: 1046 } });
+    await install(p);
+    // the encounter opening, and the moment the pairing's compositions stop growing (the overlay prepares them in
+    // idle slices from that event; nothing is drawn when the technique fires)
+    await p.evaluate(() => {
+      const BT = (window.__BT = { enter: null, ready: null, last: -1, still: 0 });
+      RB.bus.on('present:scene', (e) => { if (e && e.phase === 'enter' && BT.enter == null) BT.enter = performance.now(); });
+      const poll = () => {
+        const n = RB.harmonyArt.stats().compositions;
+        if (BT.enter != null) { if (n === BT.last && n > 0) BT.still += 20; else BT.still = 0; if (BT.still >= 400 && BT.ready == null) BT.ready = performance.now() - 400; }
+        BT.last = n;
+        if (BT.ready == null) setTimeout(poll, 20);
+      };
+      poll();
+    });
+    await setup(p, { comp, knots: 6, foes, look });
+    await p.waitForFunction(() => window.__BT.ready != null, null, { timeout: 30000 });
+    const cold = await p.evaluate(() => { const s = RB.harmonyArt.stats(), r = s.raster || {}; return { ms: Math.round(window.__BT.ready - window.__BT.enter), compositions: s.compositions, busts: s.busts, MiB: +(s.bytes / 1048576).toFixed(2), decodedFiles: r.decoded != null ? r.decoded : (r.files || null), decodeMs: r.decodeMs, paintMs: r.paintMs, bustBuildMs: s.bustBuildMs, raster: Object.fromEntries(Object.entries(r).filter(([, v]) => typeof v !== 'object' || v === null)) }; });
+    const dec0 = await p.evaluate(() => (RB.harmonyArt.stats().raster || {}).decodes);
+    const r = await technique(p, comp, { every: 1000 });
+    const dec1 = await p.evaluate(() => (RB.harmonyArt.stats().raster || {}).decodes);
+    const up = r.frames.filter((f) => f.state === 'entering' || f.state === 'holding' || f.state === 'fading');
+    const iv = [];
+    for (let i = 1; i < up.length; i++) iv.push(up[i].wall - up[i - 1].wall);
+    const warm = await p.evaluate(() => { const c = RB.harmonyCutin.stats().cost; return { startMs: c.start.map((x) => +x.toFixed(1)), frameMeanMs: c.frames ? +(c.frameSum / c.frames).toFixed(2) : null, frameMaxMs: +c.frameMax.toFixed(2), frames: c.frames }; });
+    await leave(p);
+    await wait(p, 600);
+    const after = await p.evaluate(() => { const s = RB.harmonyArt.stats(); return { compositions: s.compositions, busts: s.busts, MiB: +(s.bytes / 1048576).toFixed(2), overlays: document.querySelectorAll('.cb-cutin').length, cutinState: RB.harmonyCutin.state().state }; });
+    const row = { comp, look: lname, foes, started: r.started, fallbacks: r.fallbacks, cold, warm: Object.assign(warm, { framesShown: up.length, intervalP50: q(iv, 0.5), intervalP95: q(iv, 0.95), intervalMax: iv.length ? +Math.max(...iv).toFixed(1) : null, over50ms: iv.filter((x) => x > 50).length, decodedDuring: dec0 !== dec1 }), after, errors: errors.slice(0, 3) };
+    rows.push(row);
+    console.log('  ' + comp + ' ' + lname + ' ×' + foes + ': cold ' + cold.ms + ' ms (' + cold.compositions + ' compositions, ' + cold.MiB + ' MiB) · frames p50 ' + row.warm.intervalP50 + ' / p95 ' + row.warm.intervalP95 + ' / max ' + row.warm.intervalMax + ' ms · overlay ' + warm.frameMeanMs + ' ms mean, ' + warm.frameMaxMs + ' max · after leaving: ' + after.overlays + ' overlay, ' + after.MiB + ' MiB');
+    if (r.started !== 1 || r.fallbacks) bad.push(comp + ' ' + lname + ' ×' + foes + ': not one painted cut-in ' + JSON.stringify({ started: r.started, fallbacks: r.fallbacks, fallback: r.fallback }));
+    if (row.warm.decodedDuring) bad.push(comp + ' ' + lname + ' ×' + foes + ': art was decoded while the technique played');
+    if (after.overlays) bad.push(comp + ' ' + lname + ' ×' + foes + ': the overlay stayed after leaving');
+    if (errors.length) bad.push(comp + ' ' + lname + ' ×' + foes + ': ' + errors.join('; '));
+    await ctx.close();
+  }
+  const all = (k, f) => rows.map((r) => f(r)).filter((v) => v != null);
+  const summary = {
+    coldMs: { min: Math.min(...all(0, (r) => r.cold.ms)), max: Math.max(...all(0, (r) => r.cold.ms)) },
+    cacheMiB: { min: Math.min(...all(0, (r) => r.cold.MiB)), max: Math.max(...all(0, (r) => r.cold.MiB)) },
+    intervalP95Max: Math.max(...all(0, (r) => r.warm.intervalP95)), intervalMax: Math.max(...all(0, (r) => r.warm.intervalMax)),
+    overlayFrameMeanMax: Math.max(...all(0, (r) => r.warm.frameMeanMs)), overlayFrameMax: Math.max(...all(0, (r) => r.warm.frameMaxMs)),
+    framesOver50ms: rows.reduce((n, r) => n + r.warm.over50ms, 0),
+  };
+  const keep = { date: new Date().toISOString().slice(0, 10), browser: report.browser, viewport: '2048×1046, device pixel ratio 1', note: 'The approved painted art (assets/harmony/, approval approved) in real synthetic encounters (the Mill, the Flour Moth; one creature or a group of three), Normal playback, real clicks. cold: from the encounter opening to the pairing\'s compositions settling (prepared in idle slices). warm: animation-frame intervals while the portrait is up, and the overlay\'s own cost per frame. after: 600 ms after leaving the encounter. Not a phone; no phone claims.', looks: { A: LA, heavy: HEAVY }, summary, rows };
+  fs.writeFileSync(path.join(root, 'docs/harmony/contract/budgets_painted.json'), JSON.stringify(keep, null, 1) + '\n');
+  console.log('  summary ' + JSON.stringify(summary));
+  assert(!bad.length, bad.join('\n'));
+});
+
 const rp = path.join(outDir, 'report.json');
 fs.writeFileSync(rp, JSON.stringify(report, null, 1));
 if (toDocs) {

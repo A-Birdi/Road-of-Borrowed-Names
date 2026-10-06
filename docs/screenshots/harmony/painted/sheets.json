@@ -1,0 +1,131 @@
+{
+ "date": "2026-10-06",
+ "approval": "approved",
+ "note": "Headless Chromium (Playwright) on Linux; the shipped index.html with the approved art; RB.harmonyArt.compose, as played (ink band and effects) and with backing: false, fx: false.",
+ "sheets": {
+  "nao": {
+   "states": [
+    "prep_a",
+    "prep_b",
+    "cue",
+    "cue_b",
+    "peak",
+    "settle_a",
+    "settle_b"
+   ],
+   "times": [
+    0,
+    132,
+    220,
+    310,
+    376,
+    761,
+    851
+   ],
+   "held": [
+    "peak",
+    "settle_b"
+   ],
+   "painted": true,
+   "size": [
+    5072,
+    1628
+   ],
+   "file": "docs/screenshots/harmony/painted/states_nao_2x.webp",
+   "bytes": 856400
+  },
+  "mio": {
+   "states": [
+    "prep_a",
+    "prep_b",
+    "cue",
+    "cue_b",
+    "peak",
+    "settle_a",
+    "settle_b"
+   ],
+   "times": [
+    0,
+    132,
+    220,
+    310,
+    376,
+    761,
+    851
+   ],
+   "held": [
+    "peak",
+    "settle_b"
+   ],
+   "painted": true,
+   "size": [
+    5072,
+    1628
+   ],
+   "file": "docs/screenshots/harmony/painted/states_mio_2x.webp",
+   "bytes": 819848
+  },
+  "ren": {
+   "states": [
+    "prep_a",
+    "prep_b",
+    "cue",
+    "cue_b",
+    "peak",
+    "settle_a",
+    "settle_b"
+   ],
+   "times": [
+    0,
+    132,
+    220,
+    310,
+    376,
+    761,
+    851
+   ],
+   "held": [
+    "peak",
+    "settle_b"
+   ],
+   "painted": true,
+   "size": [
+    5072,
+    1628
+   ],
+   "file": "docs/screenshots/harmony/painted/states_ren_2x.webp",
+   "bytes": 852624
+  },
+  "suzu": {
+   "states": [
+    "prep_a",
+    "prep_b",
+    "cue",
+    "cue_b",
+    "peak",
+    "settle_a",
+    "settle_b"
+   ],
+   "times": [
+    0,
+    132,
+    220,
+    310,
+    376,
+    761,
+    851
+   ],
+   "held": [
+    "peak",
+    "settle_b"
+   ],
+   "painted": true,
+   "size": [
+    5072,
+    1628
+   ],
+   "file": "docs/screenshots/harmony/painted/states_suzu_2x.webp",
+   "bytes": 971776
+  }
+ }
+}
