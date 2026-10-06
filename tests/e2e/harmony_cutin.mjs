@@ -997,7 +997,7 @@ if (args.includes('--budget')) await test('budget: the approved art in real enco
     const up = r.frames.filter((f) => f.state === 'entering' || f.state === 'holding' || f.state === 'fading');
     const iv = [];
     for (let i = 1; i < up.length; i++) iv.push(up[i].wall - up[i - 1].wall);
-    const warm = await p.evaluate(() => { const c = RB.harmonyCutin.stats().cost; return { startMs: c.start.map((x) => +x.toFixed(1)), frameMeanMs: c.frames ? +(c.frameSum / c.frames).toFixed(2) : null, frameMaxMs: +c.frameMax.toFixed(2), frames: c.frames }; });
+    const warm = await p.evaluate(() => { const c = RB.harmonyCutin.stats().cost; return { startMs: c.startMs.map((x) => +x.toFixed(1)), frameMeanMs: c.frameMeanMs, frameMaxMs: c.frameMaxMs, frames: c.frames }; });
     await leave(p);
     await wait(p, 600);
     const after = await p.evaluate(() => { const s = RB.harmonyArt.stats(); return { compositions: s.compositions, busts: s.busts, MiB: +(s.bytes / 1048576).toFixed(2), overlays: document.querySelectorAll('.cb-cutin').length, cutinState: RB.harmonyCutin.state().state }; });
