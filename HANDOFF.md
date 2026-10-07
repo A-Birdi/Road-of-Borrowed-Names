@@ -140,7 +140,7 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 4 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 5 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
@@ -162,8 +162,10 @@
     marks elsewhere; witnessed conflicts shown with restraint; New Game+ keeps the traveller unchanged, carries no
     keepsakes or lore, may use either slot, and plays the originating save's farewell; Nao and Ren always choose
     the same bath.
-  - **Still open** (labelled in 11_CONTRADICTIONS.md): C-67 how the romance moment is offered (confirm); C-62 Suzu
-    (revisit after the playthrough); 25 part B proposals (Robin will review them at home).
+  - **Fourth round:** C-67 confirmed (the romance moment is always the player's choice, the companion's consent
+    shown, at most one earlier moment holding hands after the Steamhollow reconciliation).
+  - **Still open** (labelled in 11_CONTRADICTIONS.md): C-62 Suzu (revisit after the playthrough); 25 part B
+    proposals (Robin will review them at home).
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record
     judgement to the lead): the Grammar met page, lantern grammar labels, activity Translate, Foundations copy steps,
     the promotion rule, the chart's phantom road, creature patrols' random stream, and the `alts` validator (which

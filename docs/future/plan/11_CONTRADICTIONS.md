@@ -1,6 +1,6 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only. Spoiler-safe.*
+*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only. Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
 ideas for covering each. That one is the model:
@@ -23,7 +23,7 @@ The register has five parts:
 - **A. Decisions that blocked a feature.** All answered on 2026-10-07.
 - **A2. Questions raised by those answers.** All answered in the second round, except Suzu (revisit).
 - **A3. Questions raised by the second round.** All answered in the third round.
-- **A4. Questions raised by the third round.** **The one waiting for you.**
+- **A4. Questions raised by the third round.** Answered (C-67).
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
@@ -32,7 +32,6 @@ The register has five parts:
 
 | # | Question | Label |
 |---|---|---|
-| [C-67](#c-67--how-the-romance-moment-is-offered-from-c-63) | The romance moment is always your choice at the ending; at most one earlier moment, holding hands only | **Confirm** |
 | [C-62](#c-62--suzus-dream-from-c-31) | Suzu: star, double act, or both | **Revisit** |
 | Part B | 25 smaller tensions with a proposal each | **Open** · proposal stands |
 
@@ -289,7 +288,7 @@ the companion every time.
 ## A4. Questions raised by the third round
 
 ### C-67 · How the romance moment is offered (from C-63)
-**Confirm.** Proposal:
+**Decided.** Robin: "that works." As proposed:
 - **Always the player's choice.** At the ending, if Bond is high, the moment is offered in the scene itself: the
   companion says, in their own words, what the journey has meant, and the player can answer with the romantic
   moment (holding hands, a kiss) or as the closest of friends. Both are warm; neither is the "right" one; Bond is
@@ -391,6 +390,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review
 | Witnessed conflicts | Shown with restraint; a "shown / summarised" setting; a reflection scene | C-65 |
 | New Game+ details | No keepsakes or lore; the traveller unchanged; either slot; the farewell from the originating save | C-66 |
 | Nao's and Ren's bath | Their own choice, always the same | C-56 |
+| The romance moment | Always the player's choice (romantic or closest friends, Bond the same); the companion's consent shown; at most one earlier moment, holding hands, after the Steamhollow reconciliation | C-67 |
 
 ---
 

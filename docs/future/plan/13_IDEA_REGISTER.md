@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
+*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -261,7 +261,7 @@ item, or records why it was excluded or folded into another. Statuses:
 
 | Idea | Plan item | Status |
 |---|---|---|
-| Romance limited to holding hands and/or a kiss; a story-conclusion moment by Bond; nothing explicit | 10_STORY §7a | Planned (how it is offered: C-67) |
+| Romance limited to holding hands and/or a kiss; a story-conclusion moment by Bond; nothing explicit | 10_STORY §7a | Planned (how it is offered: C-67, decided) |
 | Trying something else when a response does nothing; *tried* marks | E5, E8 | Planned |
 | New Game+ in either slot; the farewell from the originating save; the traveller unchanged; no keepsakes or lore | 10_STORY §9a, K9 | Planned |
 | Nao and Ren always choose the same bath | C13 | Planned |

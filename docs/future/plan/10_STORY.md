@@ -1,6 +1,6 @@
 # 10 · Story: more chapters, the Hush, companions and the postgame
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
+*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
 spec describes them. Every decision that depends on their contents points to a numbered note in
 [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md), which you should not open until you've finished the game.*
 
@@ -111,7 +111,7 @@ quest arrive by ferry in Chapter 9 and miss nothing essential.
 - **When:** a story-conclusion moment at the ending, depending on Bond; very rarely elsewhere.
 - **Who:** the chosen companion only, any of the four, whatever the player's pronouns. Canon makes the companions
   adults, and the player is an adult traveller.
-- **How it is offered** (proposal, C-67): always the player's choice in the scene, answered as the romantic moment
+- **How it is offered** (Robin confirmed, C-67): always the player's choice in the scene, answered as the romantic moment
   or as the closest of friends; both warm, Bond the same either way; the companion's own consent shown in their
   voice. At most one earlier moment, holding hands only, after the Steamhollow reconciliation.
 - **Unchanged:** no jealousy, resentment or sulking; unchosen candidates never resent the player. The

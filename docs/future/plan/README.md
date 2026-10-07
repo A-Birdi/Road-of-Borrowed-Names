@@ -1,6 +1,6 @@
-# The Road of Borrowed Names: expansion plan (draft 4)
+# The Road of Borrowed Names: expansion plan (draft 5)
 
-*2026-10-07. Draft 4 records Robin's three rounds of answers from the same day. A planning document, not authorised work: nothing
+*2026-10-07. Draft 5 records Robin's four rounds of answers from the same day. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
 
@@ -112,17 +112,15 @@ never deleted.
 | C-65 | Witnessed conflicts shown with restraint, with a "shown / summarised" setting and a reflection scene |
 | C-66 | New Game+: no keepsakes or lore; the traveller unchanged; either slot; **the farewell from the originating save** |
 | C-56 | Nao and Ren always choose the same bath, in character |
+| C-67 | The romance moment is always your choice (romantic or closest friends, Bond the same); the companion's consent shown; at most one earlier moment, holding hands, after the Steamhollow reconciliation |
 | Part B | C-05 to C-08 and C-10: the proposals stand as written |
 
 ## Still waiting for you
 
 Labelled in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md):
 
-1. **C-67 (Confirm):** the romance moment is always your choice in the scene (romantic, or the closest of
-   friends; Bond the same either way), with the companion's own consent shown; at most one earlier moment, holding
-   hands only, after the Steamhollow reconciliation.
-2. **C-62 (Revisit):** Suzu's dream, after you finish the story.
-3. **Part B:** 25 smaller tensions, each with a proposal that stands until you say otherwise.
+1. **C-62 (Revisit):** Suzu's dream, after you finish the story.
+2. **Part B:** 25 smaller tensions, each with a proposal that stands until you say otherwise.
 
 ## Fixed in the current game
 
