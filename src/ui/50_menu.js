@@ -438,8 +438,10 @@ RB.ui.menu = (function () {
     }
     if (id === 'grammar') {
       const seen = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).map((k) => k.slice(2));
-      const pts = (RB.grammar && RB.grammar.points ? RB.grammar.points : []).filter((g) => seen.includes(g.id));
-      return pts.length ? '<ul class="entries notes">' + pts.map((g) => '<li class="entry filed"><span class="mark">' + I('book') + '</span><div><div class="written">' + j(g.title) + '</div><div class="t">' + esc(g.en) + '</div>' + (g.ex || []).slice(0, 2).map((e) => '<div class="ex">' + j(e.jp) + en(e.en) + '</div>').join('') + '</div></li>').join('') + '</ul>' : '<p class="muted">Grammar you meet on the road will be collected here.</p>';
+      // in the order they were met; title and explanation are mixed text (English with {漢字|かな} groups)
+      const pts = RB.grammar && RB.grammar.get ? seen.map((id) => RB.grammar.get(id)).filter(Boolean) : [];
+      const mx = (t) => RB.learnUi.mixed(RB.script.enVars(t || ''));
+      return pts.length ? '<ul class="entries notes">' + pts.map((g) => '<li class="entry filed"><span class="mark">' + I('book') + '</span><div><div class="written">' + mx(g.title) + '</div><div class="t">' + mx(g.en) + '</div>' + (g.ex || []).slice(0, 2).map((e) => '<div class="ex">' + j(e.jp) + en(e.en) + '</div>').join('') + '</div></li>').join('') + '</ul>' : '<p class="muted">Grammar you meet on the road will be collected here.</p>';
     }
     if (id === 'lore') {
       const notes = s.notebook.filter((n) => n.kind === 'lore').map((n) => RB.content.notes[n.id]).filter(Boolean);

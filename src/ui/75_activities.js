@@ -94,7 +94,7 @@ RB.activities = (function () {
             P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
             P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < custs.length - 1 ? 'Next customer' : 'Finish');
             P.foot.querySelector('[data-next]').onclick = () => {
-              i++; tray = {}; firstTry = true; showEn = showEnDefault();
+              i++; tray = {}; firstTry = true; assisted = false; showEn = showEnDefault();
               if (i >= custs.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes, results }); } else render();
             };
             P.foot.querySelector('[data-next]').focus({ preventScroll: true });
@@ -146,7 +146,7 @@ RB.activities = (function () {
           b.classList.add('on');
           fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
           P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
-          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
+          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
           P.foot.querySelector('[data-next]').focus({ preventScroll: true });
         } else {

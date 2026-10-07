@@ -65,7 +65,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.places.cinder = { name: { en: 'Cinder Orchard', jp: '{灰実|はいみ}の{里|さと}' }, map: 'co.village', x: 4, y: 18, dir: 'right', pos: [270, 200], region: 'cinder', hub: true, desc: 'Terraced orchards and glass workshops.' };
   C.places.snowbell = { name: { en: 'Snowbell', jp: '{雪鈴|ゆきすず}' }, map: 'sb.hamlet', x: 4, y: 20, dir: 'up', pos: [330, 90], region: 'snowbell', hub: true, desc: 'A mountain hamlet beneath the old observatory.' };
   C.places.lanternfall = { name: { en: 'Lanternfall', jp: '{灯落|ひおち}' }, map: 'lf.town', x: 4, y: 20, dir: 'right', pos: [420, 170], region: 'lanternfall', hub: true, desc: 'An orderly town of records and bridges.' };
-  C.roads = [['reedwake', 'saltglass'], ['saltglass', 'cinder'], ['cinder', 'snowbell'], ['snowbell', 'lanternfall'], ['cinder', 'lanternfall']];
+  C.roads = [['reedwake', 'saltglass'], ['saltglass', 'cinder'], ['cinder', 'snowbell'], ['snowbell', 'lanternfall']];
+  // (no Cinder–Lanternfall road: no map joins them; the way to Lanternfall is through Snowbell)
 
   C.start = { map: 'rw.road', x: 3, y: 9, dir: 'right', scene: 'rw.arrive' };
 })(RB.content);

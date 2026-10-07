@@ -1,6 +1,6 @@
 # 06 · The world: living towns, roads, return trips and the sea
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 ## What exists today (audit summary)
 
@@ -216,12 +216,13 @@ the later chapters. Its reward is a boat and a sailing activity, with:
 |---|---|---|
 | 1. The deal | After Chapter 2 | Ōmi needs a courier boat for the coast. If the player restores an old hull and earns a licence, it is theirs to sail, carrying the coast's post. Fuku, after a conversation about her husband, entrusts the *Chidori-maru*'s hull (her choice; there are other boats if she declines) |
 | 2. The yards | Manybridge | Shipwrights in the canal yards; the sail-maker; **the player names the boat** (kana, painted on by Blockprint Row's sign-writers; naming is this world's magic). Help is earned through favours: there is no currency |
-| 3. Sea trials | A return to Saltglass, new Chapter 5–6 | Tetsu teaches sea words (帆, 舵, 錨, 潮, 風向き); reading Shiori's tide book; a short trial voyage around the point |
-| 4. The licence | Saltglass, new Chapter 6–7 | Ōmi's licence exam: a document mission and a short interview (register with an official). It cannot be failed permanently: retry at once with feedback |
-| 5. Maiden voyage | New Chapter 7 | First voyage to **Sazanami** and **East Landing**, then the hint of the island leads to **Kotonoha**: early access |
+| 3. Sea trials | A return to Saltglass, new Chapters 5–6 | Tetsu teaches sea words (帆, 舵, 錨, 潮, 風向き); reading Shiori's tide book; a short trial voyage around the point |
+| 4. The licence | Saltglass, new Chapters 6–7 | Ōmi's licence exam: a document mission and a short interview (register with an official). It cannot be failed permanently: retry at once with feedback |
+| 5. Maiden voyage | New Chapters 7–8 | First voyage to **Sazanami** and **East Landing**, then the hint of the island leads to **Kotonoha**: an early visit, before its main chapter (9) |
 
-**Everyone gets there later.** Players who skipped the quest reach Kotonoha by **public ferry** from the start of
-new Chapter 8. They can still finish the quest afterwards and get the boat.
+**Everyone gets there in Chapter 9.** Kotonoha is now a main chapter (C-01): players who skipped the quest reach it
+by **public ferry** in Chapter 9 and miss nothing essential. They can still finish the quest afterwards and get the
+boat.
 
 ### Sailing itself
 

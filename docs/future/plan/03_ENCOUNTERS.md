@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -237,8 +237,8 @@ prevent arrivals rather than untie every knot.
 - **Losing the objective** ends the encounter in an authored way (a recoverable setback in side content), not
   necessarily a defeat.
 - **The Unravel-only rule.** Objective encounters are a new encounter type and do not have to be winnable with
-  Unravel alone ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-09). Each must have at least two distinct winning
-  approaches.
+  Unravel alone (Robin, C-09). Each must have at least two distinct winning approaches. Unravel appears only where
+  something can really be unravelled (a knot, a tangled line, crumpled paper); elsewhere it is hidden (C-60).
 
 **Effort:** M (on E1).
 
@@ -269,7 +269,8 @@ prevent arrivals rather than untie every knot.
 - **Step away.** Leaving the encounter costs nothing. The machine's state is kept outside the battle, like field
   puzzles (`s.discovery.puzzles`); clues found elsewhere are noted in Known details.
 - **Resolve this step** (E11) for steps solved before.
-- **Spec boundary.** These are a new encounter type: winnable by procedure, not by Unravel (C-09).
+- **Spec boundary.** These are a new encounter type: winnable by procedure, not by Unravel (Robin, C-09). Where a
+  procedure involves something tangled, Unravel is one of its steps; otherwise it is hidden (C-60).
 
 **Examples in the plan:**
 - the Nameless Bridge (Manybridge A);

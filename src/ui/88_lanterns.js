@@ -247,7 +247,7 @@ RB.ui.lanterns = (function () {
       if (fin && fin.firstNote) h += '<p class="pa-note">' + I('note') + ' A note about the practice lamps is in your notebook (Words › Lore &amp; histories).</p>';
       if (reviewed.length) {
         h += '<details class="pa-reviewed"><summary>What you reviewed (' + reviewed.length + ')</summary><ul class="entries">' +
-          reviewed.map((r) => '<li class="entry"><span class="mark">' + I('lantern') + '</span><div><div class="t">' + (r.label.jp ? J(r.label.jp) + ' ' : '') + '<span class="en">' + esc(r.label.en || '') + '</span></div>' +
+          reviewed.map((r) => '<li class="entry"><span class="mark">' + I('lantern') + '</span><div><div class="t">' + (r.label.mixed ? RB.learnUi.mixed(r.label.mixed) + ' ' : '') + (r.label.jp ? J(r.label.jp) + ' ' : '') + '<span class="en">' + esc(r.label.en || '') + '</span></div>' +
             ((r.help || r.slip) ? '<div class="muted small">' + esc([r.slip ? 'worked out after a second look' : '', r.help ? 'with help' : ''].filter(Boolean).join(', ')) + '</div>' : '') + '</div></li>').join('') +
           '</ul></details>';
       }

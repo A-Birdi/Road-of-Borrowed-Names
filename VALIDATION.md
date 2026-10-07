@@ -3375,3 +3375,39 @@ profiles; no player save was used.
   - The solver answers the language steps, so this shows the game can be finished, not how it plays.
 - Earlier today on ee61e7c: Foundations with each companion 4/4.
 - **Not verified:** a person playing the cut-ins in groups (are the trimmed crowns acceptable?); Firefox; the foldable.
+
+## Audit defects fixed (2026-10-07; Robin: "Fix the bugs you've found"; REQUIREMENTS.md AD1–AD8; docs/future/plan/11_CONTRADICTIONS.md part D)
+
+**What changed.**
+- `src/ui/50_menu.js`: Words › Grammar met reads each point met through `RB.grammar.get` (it read `RB.grammar.points`,
+  which doesn't exist, so it always showed its empty message). Titles and explanations render as mixed text with
+  furigana.
+- `src/engine/77_lanterns.js`, `src/ui/88_lanterns.js`: a grammar lamp's label is its point's title (same cause).
+- `src/ui/75_activities.js`: Translate's assisted flag resets for each customer (orders) and letter (letters).
+- `src/ui/65_challenge.js`: a copy step (the model shown) is recorded as guided practice (assisted), with
+  "Guided practice — that's fine" in the feedback (spec line 188).
+- `src/learn/10_mastery.js`: promotion past box 2 needs a clean typed or handwritten answer in the current run of
+  clean answers (`r.vary`, cleared by a mistake). Before, one typed or written attempt *ever*, even a wrong one,
+  unlocked choice-only promotion. Existing boxes are untouched. C-35 left the judgement to the lead.
+- `src/content/00_world.js`: the route chart no longer draws a Cinder–Lanternfall road (no map joins them).
+- `src/engine/50_world.js`: creature patrols use the world's seeded stream (`wrand`), not `Math.random`, which the
+  language tasks draw from.
+- `tools/validate.mjs`: ordering `alts` are checked (a list of orders, each buildable from the step's tiles, none
+  repeating the answer). It found `sa.di8` (Intermediate): its alternative used a tile the drill didn't have, so it
+  could never be accepted. The alternative became an `explain` line shown after the answer.
+
+**Checks** (on the working tree that became this commit; the build is 12,782.5 KiB):
+- U `node tests/run-unit.mjs audit_fixes`: 22/0. **The same file run against the previous source: 12 failures**,
+  one for each defect the unit half covers (stashed `src/`, then restored).
+- B `node tests/e2e/audit_fixes.mjs`: 4/0 (Grammar met; letters; orders; a copy step). **Against a build of the
+  previous source: 0/4**, each failing on the defect.
+- U the full unit suite: 27,267/0. `node tools/validate.mjs`: no errors.
+- B, chosen because the changes touch them: `learning_ui` 15/0 (the challenge runner, copy steps' neighbour
+  steps), `practice_a_lamps` 51/51 (the lantern list), `world_fixes` all ok (the route chart, the world loop),
+  `playtest_repairs` 7/0 (guided steps).
+- Campaign, by Robin's cadence (learning-record and world changes; one routine run): `node tests/e2e/matrix.mjs F
+  ren 1`: **1/1**, Chapters 1–6 and one Atlas restoration in 15.5 min. The solver answers the language steps, so
+  this shows the game still finishes, not how the new promotion rule feels in play.
+
+**Not verified:** how much slower choice-only items climb past box 2 in a real playthrough (by design they now need
+a typed or written answer in the run); a person reading the Grammar met page; Firefox.

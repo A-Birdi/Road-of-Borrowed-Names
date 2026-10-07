@@ -1,6 +1,6 @@
 # 04 · Dungeons, expeditions and the Hall of a Hundred Tales
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 Robin's direction, consolidated:
 
@@ -27,8 +27,8 @@ Robin's direction, consolidated:
   - Its escorted lantern is the only health-like value that persists across rooms. It needed a MutationObserver
     hack to show its bar.
   - **It adapts during a run:** objective steps are chosen on first contact, and every encounter's pool adds the
-    player's weakest items. That contradicts Robin's "fixed once generated" ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md)
-    C-18).
+    player's weakest items. **Robin (C-18): the Atlas stays the premier randomly generated dungeon.** Its shape is
+    fixed per run; its practice words keep adapting (my reading, to confirm: C-57).
 
 ---
 
@@ -110,10 +110,8 @@ dungeons." Two spec rules shape the design:
   - map knowledge (the auto-map stays revealed, an earned convenience);
   - Resolve-this-step eligibility for solved mechanisms (E11).
 
-**Contradiction to settle.** A full restart for *required* story dungeons would conflict with spec line 128
-("defeat should return the player to a sensible checkpoint… without… repetitive grinding"). The plan applies
-Robin's restart rule to *optional* dungeons and keeps checkpoints in story dungeons
-([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-03).
+**Decided (Robin, C-03).** The full restart applies to *optional* dungeons, and their preview card says so. Story
+dungeons keep checkpoints, as spec line 128 asks, plus the declineable companion help (E19).
 
 ---
 
@@ -189,9 +187,10 @@ Each family gets an authoring template (S5), a worked example at all four profil
   | **Themed commissions** | Authored objectives (Astra A40): recover a route, resolve conflicting instructions, introduce a named grammar family | Topic and length |
   | **Survey commissions** (mapping) | The Cartographer's work: an incomplete route description and an auto-drawn map; annotate verified landmarks, safe passages and conditions, never redraw corridors (A13) | A survey area |
 
-- **Adapting before entry, never after.** The commission's content is chosen from the evidence log *when the player
-  accepts it* and stored in the run, fixing the existing mid-run adaptation ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md)
-  C-18).
+- **Built as Atlas runs** (Robin, C-18: the Atlas stays the premier generated dungeon). Each commission is an
+  Atlas run type: the commission sets the topic, length and shape when the player accepts it, and the run keeps
+  that shape. Within it, the Atlas keeps choosing practice words from the player's weakest items as it does today
+  (C-57).
 - **Survey rewards** (Robin: worthwhile without defeating the purpose):
   - each survey adds a page to the **Cartographer's Atlas**, a map collection in the travel volume;
   - surveyed routes become Atlas shortcuts;

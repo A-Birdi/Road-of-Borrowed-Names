@@ -1,6 +1,6 @@
 # 02 · Foundations: the engine work everything else stands on
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 These are the cross-cutting systems that several features need. Building them first keeps each later feature
 small and consistent. Every entry gives:
@@ -148,46 +148,52 @@ Robin's H1 makes the gallery *always* viewable from the Main Menu, so viewing ne
 
 ---
 
-## S4 · Saves, schema and inserting chapters
+## S4 · Saves, schema and the twelve-chapter edition
 
 **What and why.** Adding chapters *between* existing ones is the plan's biggest structural change
-([10_STORY.md](10_STORY.md)). Every existing save must keep loading, including Robin's, which will be finished by
-the time the expansion lands. Migrations "must never invent history" (ADDENDUM_CONTRACTS).
+([10_STORY.md](10_STORY.md)). **Robin's decision (C-02):** saves from the six-chapter edition don't continue once
+the new chapters ship. That removes draft 1's detour and migration design for those saves, and replaces it with an
+**edition boundary**. Saves are still never deleted or rewritten, and every other update keeps them working.
 
 **Current state.**
 - `RB.SAVE_SCHEMA = 1`.
 - `migrate()` fills missing keys and runs eleven hooks (`80_save.js:155-166`).
 - Chapter flags run `ch1_done`…`ch5_done`, plus `postgame`.
 - Map links are gated by them, for example `sg.road → co.road` needs `ch2_done`.
-- `s.chapter` and the ledger show the chapter number.
+- `s.chapter` and the title's list of saves show the chapter number.
 
 **Approach.**
-- **Never change an existing flag's meaning.** New chapters get new flags (`mb1_done`, `mb2_done`, `kr_done`,
-  `yn_done`).
-- **The main road gains new gates only for saves that have not passed them.**
-  - The link `sg.road → co.road` additionally requires `mb2_done`, *unless* the save already has `ch3_started` or any
-    later flag. For those saves, Manybridge is reachable as a **detour** (by ferry from Saltglass, by road from
-    Reedwake).
-  - Its story is framed for that save's phase, using S1, or offered through a Chapter Journey. These are two
-    options for Robin in [10_STORY.md](10_STORY.md) §3.
-- **Display chapter numbers through a map** (internal id to displayed number) rather than storing the new number.
-  An old save in "Chapter 3: Cinder Orchard" displays as "Chapter 5: Cinder Orchard" after the update. The ledger
-  explains the renumbering once.
-- **A schema bump to 2** only if a field changes shape; additive fields need none. The proposed evidence log (L1)
-  is additive.
+- **An edition number in every save** (`s.edition`, absent = 1). The twelve-chapter build writes edition 2.
+- **On load, an edition-1 save is recognised, not migrated.** The slot shows it as "From the six-chapter
+  edition" with Continue and Load disabled and a one-line reason. Its data is left exactly as it was (spec line 232:
+  incompatible saves handled gracefully, never cleared). The player can still delete it, as with any slot.
+- **Recommended extras, to confirm in C-54:**
+  - **View** an old save read-only: Journey summary, stamps, witnessed seals, learning progress.
+  - **Begin the new edition from it** as New Game+: the defined NG+ carryover (spec line 252) of learning record,
+    appearance and records, with the story from Chapter 1.
+- **One boundary.** All six new chapters ship together, so saves stop only once (C-54).
+- **New chapters get new flags** (`mb1_done`, `mb2_done`, `kr_done`, `ko_done`, `cr_done`, `yn_done`); existing
+  flags keep their meaning, so the existing chapters' scripts don't change.
+- **Chapter numbers are displayed through a map** (internal id to displayed number), so "Cinder Orchard" shows as
+  Chapter 5 without its flags changing.
+- **A schema bump to 2** for the edition field and anything else that changes shape. Every update within an
+  edition keeps migrating saves as today.
 
-**Pros.** No save breaks. New players get the full sequence. Existing players are not forced to restart.
+**Pros.**
+- No "after the fact" framing to write for inserted chapters; every edition-2 save plays them in order.
+- Old saves are never lost or altered.
 
 **Cons.**
-- The renumbering is mildly confusing for anyone mid-game.
-- "Detour" framing adds authoring for every inserted chapter.
+- Players with an old save start again (softened by the NG+ start, if Robin agrees).
+- Robin's own finished save can be viewed but not continued once the new edition replaces the current build.
 
 **Tests.**
-- Fixtures: a save at each existing chapter, plus Robin-like saves (late Chapter 2, finished, postgame) loaded on
-  the expanded build.
-- Each fixture can reach every new region, and nothing it had is lost.
+- Fixtures: an edition-1 save at each existing chapter, a finished one and a postgame one, loaded on the
+  edition-2 build. Each shows as an old save, can't be continued, is byte-for-byte unchanged afterwards, and can
+  be deleted by the player.
+- If C-54's extras are approved: the read-only view, and an NG+ start that carries exactly the defined set.
 
-**Effort:** L.
+**Effort:** M.
 
 ---
 
@@ -230,8 +236,9 @@ the time the expansion lands. Migrations "must never invent history" (ADDENDUM_C
 ## S6 · Size and performance budget
 
 **What and why.** `index.html` is about 13 MiB. The approved Harmony art alone added 1.8 MiB. Robin's illustrated
-travel volume (high-fidelity, animated, with the player in it) could add far more. Robin plays in Firefox, which
-was never tested. A 40 MiB single file would load slowly, and the browser must decode it.
+travel volume (high-fidelity, animated, with the player in it) could add far more. **Robin's decision (C-21):**
+size isn't a concern below 100 MB. So the question is no longer "how big may it get" but "does it still open
+quickly and run smoothly", especially on the foldable.
 
 **Current state.**
 - Measured budgets:
@@ -241,25 +248,23 @@ was never tested. A 40 MiB single file would load slowly, and the browser must d
 - There is no per-feature size budget.
 
 **Approach.**
-- **Set budgets per feature before production, and measure them in tests** (the `--budget` pattern used for
-  Harmony):
+- **The ceiling is 100 MB.** Per-feature sizes are tracked as guidance, not caps:
 
-  | Feature | Proposed encoded size | Notes |
+  | Feature | Guidance | Notes |
   |---|---|---|
-  | Regions' tiles, props, creatures (code-drawn) | ≤ 0.6 MiB per region | Code, not images, as today |
-  | Travel-volume illustrations | ≤ 250 KiB each (layers included), about 60 illustrations: ≤ 15 MiB | Painterly art compresses well as lossy WebP, unlike pixel art; decoded only when opened |
+  | Regions' tiles, props, creatures (code-drawn) | about 0.6 MiB per region | Code, not images, as today |
+  | Travel-volume illustrations | about 250 KiB each (layers included) | Painterly art compresses well as lossy WebP, unlike pixel art; decoded only when opened |
   | New text content | about 1.5 MiB per 2 chapters | Measured from today's chapters |
-  | Total target | ≤ 30 MiB | Decide with Robin after a Firefox load test |
 
 - **Decode lazily**: illustrations decode only when viewed, and only one at a time.
-- **Measure in Firefox** before committing to the illustration count. This is the first real Firefox test this
-  project would run ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-21).
+- **Measure load time and memory** in Firefox and on the foldable as the file grows (Phase 1, then at each
+  phase). A slow first load is a reason to decode later, not to cut content.
 
-**Pros.** Prevents the expansion silently making the game unloadable.
+**Pros.** Content isn't cut for size; the phone stays usable.
 
-**Cons.** May force fewer or lighter illustrations than hoped.
+**Cons.** A very large file takes longer to open the first time on a phone.
 
-**Effort:** S (budgets and tests); the trade-offs are Robin's.
+**Effort:** S.
 
 ---
 
@@ -284,19 +289,19 @@ reach any state.
 
 ## S8 · Spec and contract amendments (Robin's sign-off)
 
-Several plans contradict written rules. Each needs Robin's explicit amendment, not a quiet workaround. The full
-list, with options and recommendations, is [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md). The ones that block whole
-features:
+Several plans contradicted written rules. Robin answered the blocking ones on 2026-10-07. The amendments to write:
 
-| Rule | Where | Blocks |
-|---|---|---|
-| "Build six substantial chapters" | spec line 38 | 10 or 12 chapters (C-01) |
-| "Every battle must be winnable with Unravel alone" | AGENT_COMMON, CONTENT, ATLAS | Puzzle and social encounters (C-09) |
-| "No speed-only, handwriting-only or no-help-only reward" | PRACTICE_CONTRACTS line 125 | Mastery stars per input type (C-13) |
-| "No clock anywhere except fishing" | PRACTICE_CONTRACTS line 123 | Any timed festival minigame (C-17) |
-| "Exactly two adventurers"; no operation removes the companion | spec lines 70, 290; HX52 | Temporary companion absence (C-12) |
-| "Defeat returns to a sensible checkpoint… without grinding" | spec line 128 | Ordinary dungeons restarting from the beginning (C-03) |
-| Battle themes rise strictly by chapter | audio rule ZM2 | Inserted chapters' music (C-22) |
-| Replays live in Shared memories, with event-time appearance | HX53 | The Main Menu gallery with the Continue appearance (C-20) |
+| Rule | Where | Amendment | Decision |
+|---|---|---|---|
+| "Build six substantial chapters" | spec line 38 | Twelve | C-01 |
+| A 10–15 hour first playthrough | spec line 36 | New target to choose | C-61 (open) |
+| Saves keep working | project rules | Except edition-1 saves in the twelve-chapter edition; never deleted | C-02, C-54 |
+| "Every battle must be winnable with Unravel alone" | AGENT_COMMON, CONTENT, ATLAS | "Every *combat* encounter"; other encounter types carry their own guarantee | C-09 |
+| "No speed-only, handwriting-only or no-help-only reward" | PRACTICE_CONTRACTS line 125 | Mastery stars are flair, not rewards: they unlock nothing | C-13 |
+| "No clock anywhere except fishing" | PRACTICE_CONTRACTS line 123 | Also opt-in timed modes in pastimes, under fishing's conditions | C-17 |
+| "Exactly two adventurers"; no operation removes the companion | spec lines 70, 290; HX52 | A story beat may separate them for a while; the same companion always returns; no one replaces them | C-12 |
+| "Defeat returns to a sensible checkpoint… without grinding" | spec line 128 | Unchanged for story dungeons; optional dungeons restart from the beginning | C-03 |
+| Battle themes rise strictly by chapter | audio rule ZM2 | Re-tiered for twelve chapters | C-22 (open) |
+| Replays live in Shared memories, with event-time appearance | HX53 | The Main Menu gallery uses the Continue appearance | C-20 (open) |
 
-**Effort:** S (writing); the decisions are Robin's.
+**Effort:** S (writing).

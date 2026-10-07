@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -9,7 +9,8 @@ item, or records why it was excluded or folded into another. Statuses:
 - **Merged:** folded into another item.
 - **Excluded:** Robin excluded it.
 - **Not recommended:** this plan argues against it; Robin can overrule.
-- **Robin's decision:** waiting on a part A decision in 11_CONTRADICTIONS.md.
+- **Decided:** Robin answered the related question on 2026-10-07 (11_CONTRADICTIONS.md part A).
+- **Robin's decision:** still waiting on an open question in 11_CONTRADICTIONS.md (part A2).
 
 ## 1. Astra's sixty proposals
 
@@ -109,7 +110,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | Push a tier higher by the end | L18 (Grow) | Planned |
 | No FOMO; no pressure to cheat or change how one practises | 01 G10 | Planned |
 | More English → Japanese ordering | L7 | Planned |
-| Runtime can grow | 10_STORY | Robin's decision (C-01) |
+| Runtime can grow | 10_STORY | Decided: twelve chapters (C-01); the playtime target is open (C-61) |
 | Not 20 distractions per area; fresh regions, not more quests | 01 §1, 07 | Planned |
 | Dialects (Suzu's Kansai-ben) | C5 | Planned |
 | Etiquette in public places | C2, C13 | Planned |
@@ -129,7 +130,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | A day/night system | W4: evaluated, not now | Not recommended (yet) |
 | Shogi | C12 | Planned |
 | Expand shiritori | C12 | Planned |
-| A card game only if it fits the world | Collectible card game excluded; hanafuda flagged (C-33) | Robin's decision |
+| A card game only if it fits the world | Collectible card game excluded; hanafuda open (C-33) | Robin's decision |
 | Words changing the battle's flow; "Wow!" moments | E4, E8, E2 | Planned |
 | More enemy slots past three | E12 | Planned (set pieces only) |
 | Contextual fire, wind, water, earth (not an element chart) | E4 | Planned |
@@ -155,8 +156,8 @@ item, or records why it was excluded or folded into another. Statuses:
 | Assess a group and respond to each member; elimination with lasting effects; chained outcomes unlocking content | E17, E8 | Planned |
 | Folklore and word-of-mouth mysteries | C9 | Planned |
 | A festival with kimonos, fireworks, minigames and companion bonding | C10, C10a | Planned |
-| Suzu in a travelling troupe | R1, C11 (canon-adjusted, C-31) | Planned |
-| An onsen with on-screen, towel-wrapped bathing | R3, C13 (C-27) | Planned |
+| Suzu in a travelling troupe | R1, C11 (C-31; her dream revisited after Robin's playthrough, C-62) | Planned |
+| An onsen with on-screen, towel-wrapped bathing | R3, C13 (baths follow pronouns; they/them and custom open, C-56) | Planned |
 | Printers: stories from building blocks, judged by readers | C15 | Planned |
 | The battle system for non-enemies: infighting groups, procedures; restart from step 1; step away and examine | E1, E7, E8 | Planned |
 | The Trials covering everything; folklore; Tsuru | D9 | Planned |
@@ -166,7 +167,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | All companions' illustrations across playthroughs | K8, K9 | Planned |
 | Companion illustrations varying with the ending | K8 | Planned |
 | The exclusions list | 01 §10 | Excluded |
-| Ten or twelve chapters; a more epic Hush; removing its threat | 10_STORY | Robin's decision (C-01) |
+| Ten or twelve chapters; a more epic Hush; removing its threat | 10_STORY | Decided: twelve (C-01) |
 | Side regions as true postgame content | R5, R6, R7 | Planned |
 | The island reachable by about Chapter 8 regardless of the quest | R4 (C-48) | Planned |
 
@@ -177,15 +178,15 @@ item, or records why it was excluded or folded into another. Statuses:
 | 1. Arrivals by event; wanderers with targets and bubbles; interference | E2, E3 | Planned |
 | 1. Event battles with conversation, Light, Water and new options; outcomes from action or inaction; companion options | E8, E9, E10 | Planned |
 | 1. Boss reinforcements: not infinite except big bosses; dispatchable | E2 | Planned |
-| 1. The troupe never dies; temporary separation; NPC deaths possible | 10_STORY §8, E17 (C-11, C-12) | Planned / decision |
-| 2. Large floors; limited stationed resources; restart on failure | D1, D2, D3 (C-03) | Planned / decision |
+| 1. The troupe never dies; temporary separation; NPC deaths possible | 10_STORY §8, E17 (C-11, C-12) | Planned; separation decided (C-12) |
+| 2. Large floors; limited stationed resources; restart on failure | D1, D2, D3 (C-03) | Planned; restart for optional dungeons decided (C-03) |
 | 3. Fixed generation; preview; companion help in story dungeons | D1, D4, E19 | Planned |
 | 4. Weighting "overly assisted" | L2, L3; H4 first version (C-41) | Planned |
 | 5. Ask NPCs about others; quest helper; organic schedules | W3, W2 | Planned |
 | 5. Road events as discussed; no renewable resources | W5 | Planned |
 | 6. Chapter illustrations at chapter end; witnessed marks; companion sets at the story's end | K2, K3, K8 | Planned |
 | 6. Special illustrations hidden with criteria; revealed by confirmation | K5, D9 | Planned |
-| 6. Chapter replay versus multiple saves | K6 (C-02) | Planned / decision |
+| 6. Chapter replay versus multiple saves | K6 (Chapter Journey, a proposal for new-edition saves) | Planned |
 | 6. Festival games revisitable | C10, K7 | Planned |
 | 7. Passwords versus an open gallery | Resolved by H1 | Resolved |
 | 7. Animated illustrations including the player; the Continue character | K2, K4 | Planned |
@@ -194,7 +195,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | 9. Resolve this step | E11 | Planned |
 | 10. The side region adapting to the visit | R4, S1 | Planned |
 | 10. The Hush assumption | Sealed S10 | Recorded |
-| 10. More chapters "a desire for later" | 10_STORY | Decision |
+| 10. More chapters "a desire for later" | 10_STORY | Decided: twelve (C-01) |
 | 10. F/Ren testing | 12_ROADMAP | Planned |
 | 10. A final art pass at the end | Phase Z | Planned (outline only) |
 
@@ -205,7 +206,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | H1 Always viewable; seals per save; criteria shown; no passwords | K2–K5 | Planned |
 | H2 Suspend only in the Trials, never from battle | D3, D9 | Planned |
 | H3 Animated illustrations with the player; Continue look | K2, K4 | Planned |
-| H4 Stars per input type; under 30% assisted; fix the candidate rule first | L3, L2 (C-13, C-14) | Planned / decision |
+| H4 Stars per input type; under 30% assisted; fix the candidate rule first | L3, L2 (C-13, C-14) | Planned; both decided (stars are flair; one-guess pad) |
 | H5 Testing cadence | 12_ROADMAP | Planned |
 | H6 A final art pass | Phase Z | Planned |
 | Portrait ideas (2026-10-06): untagged lines, bigger cues, body language | Phase 11 | Planned (when Robin asks) |
@@ -223,8 +224,8 @@ item, or records why it was excluded or folded into another. Statuses:
 | Manzai with Suzu as her 相方 | C11 |
 | Kotonoha (言の葉) and its Kokinshū origin | R4 |
 | The Hall of a Hundred Tales (百物語), inverted to relighting | D9 |
-| Private reserved baths for pronoun-neutral bathing | R3, C13 |
-| Surety at the Mist Barrier as the companion separation | 10_STORY §8 |
+| Baths by pronoun; the reserved bath for they/them and custom (proposed, C-56) | R3, C13 |
+| Three kinds of separation: staying behind (the Mist Barrier), in danger (the Root Hollows), a disagreement (Steamhollow) | 10_STORY §8 |
 | The new settlement as postgame region | R7 |
 | The boat as a home and Distractions venue | W8 |
 | New inkweaving words (はし, すみ, みち, ゆ) | W6 |
@@ -232,3 +233,8 @@ item, or records why it was excluded or folded into another. Statuses:
 | A Chapter Journey (start a new campaign at a completed chapter) | K6 |
 | Persistent condition that never carries language mistakes | D2 |
 | The honest "effect here" preview as an early standalone fix | E5 |
+| The Keepers' Road as Chapter 7, passing the shuttered hall the postgame opens | R8 |
+| Kotonoha as the main Chapter 9, with an early boat visit kept | R4 |
+| An edition boundary for old saves (kept, labelled, never altered) | S4, C-54 |
+| A beginner's ladder for shogi | C12 |
+| Hanafuda as a late pastime (open) | C12, C-33 |

@@ -27,8 +27,9 @@ RB.world = (function () {
     quietUntil: 0,      // W.time before which no creature engages (just after a battle)
   };
 
-  // People's blink timers draw from the world's own stream (xorshift), never Math.random: the language
-  // tasks pick from Math.random, and life in the world must not change which task comes next.
+  // People's blink timers and creatures' patrols draw from the world's own stream (xorshift), never
+  // Math.random: the language tasks pick from Math.random, and life in the world must not change which
+  // task comes next.
   let wseed = 0x2545f491;
   function wrand() { wseed ^= wseed << 13; wseed >>>= 0; wseed ^= wseed >>> 17; wseed ^= wseed << 5; wseed >>>= 0; return wseed / 4294967296; }
   function makeActor(x, y, dir, look) {
@@ -718,8 +719,8 @@ RB.world = (function () {
       if (!pat || f.mv || RB.game.mode() !== 'world') continue;
       f.wt = (f.wt || 900) - dt;
       if (f.wt > 0) continue;
-      f.wt = 700 + Math.random() * 900;
-      const d = Object.keys(DIRS)[Math.floor(Math.random() * 4)];
+      f.wt = 700 + wrand() * 900;
+      const d = Object.keys(DIRS)[Math.floor(wrand() * 4)];
       const [dx, dy] = DIRS[d];
       const nx = f.x + dx, ny = f.y + dy;
       if (Math.abs(nx - f.home[0]) > pat || Math.abs(ny - f.home[1]) > pat) continue;
@@ -873,7 +874,7 @@ RB.world = (function () {
     }
     if (best) { f.x = best[0]; f.y = best[1]; }
     f.fx = f.x; f.fy = f.y; f.frame = 0;
-    f.wt = 1200 + Math.random() * 800;
+    f.wt = 1200 + wrand() * 800;
   }
   function startFoe(f) {
     if (!canEngage()) return false;

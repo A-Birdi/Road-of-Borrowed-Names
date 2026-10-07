@@ -339,6 +339,13 @@ function checkStep(s, where) {
   } else if (s.kind === 'order') {
     if (!s.tiles || !s.answer) E(where + ': order step needs tiles and answer');
     else if ([...s.tiles].sort().join('|') !== [...s.answer].sort().join('|')) E(where + ': order tiles and answer differ');
+    // every authored alternative order must be buildable from the same tiles, or it can never be accepted
+    if (s.alts != null && !Array.isArray(s.alts)) E(where + ': alts must be a list of tile orders');
+    else (s.alts || []).forEach((alt, ai) => {
+      if (!Array.isArray(alt)) E(where + ': alts[' + ai + '] is not a list of tiles');
+      else if (s.tiles && [...s.tiles].sort().join('|') !== [...alt].sort().join('|')) E(where + ': alts[' + ai + '] uses different tiles from the step, so it can never be built');
+      else if (s.answer && alt.join('|') === [].concat(s.answer).join('|')) E(where + ': alts[' + ai + '] repeats the answer');
+    });
     for (const t of s.tiles || []) jcheck(t, where + ' tile');
   } else E(where + ': unknown step kind ' + s.kind);
 }

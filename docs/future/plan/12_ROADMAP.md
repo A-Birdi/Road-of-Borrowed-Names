@@ -1,6 +1,7 @@
 # 12 · Roadmap: a drafted order of execution
 
-*Expansion plan, draft 1 (2026-10-07). Planning only: phases begin only when Robin authorises them.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only: phases begin only when Robin
+authorises them.*
 
 Robin said time and difficulty are no issue, so the order below is chosen for **quality and risk**, not speed:
 - foundations before content, so each region is built once, on finished systems;
@@ -13,16 +14,17 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 
 | Phase | Name | Main contents | Gate to start |
 |---|---|---|---|
-| **0** | Listen and decide | Robin's playthrough feedback; the remaining addendum reviews; decisions in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A; spec amendments written | Robin finishes the playthrough |
-| **1** | Quick wins | Honest response previews (E5); the audit's defects; measuring what players meet (L19); a Firefox load test (S6) | Phase 0 decisions on C-35 and C-21 |
-| **2** | Language foundations | The evidence log, assistance categories, mastery exams and stars, word pages, sentence forging, validator upgrades, the review ledger | C-13, C-14 |
-| **3** | Encounter engine | The actor model; Wait; conditions; arrivals; wanderers; objectives; procedures; social encounters; Resolve this step; story-dungeon help | C-09, C-08 |
+| **0** | Listen and decide | Robin's playthrough feedback; the remaining addendum reviews; the open and to-confirm items in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) (part A2, part B); spec amendments written | Robin finishes the playthrough |
+| **1** | Quick wins | ~~The audit's defects~~ (done 2026-10-07); the one-guess handwriting pad (C-14); the two Ledgers' names (C-58); honest response previews (E5); measuring what players meet (L19); load-time measurement (S6) | C-58 confirmed |
+| **2** | Language foundations | The evidence log, assistance categories, mastery exams and stars, word pages, sentence forging, validator upgrades, the review ledger | — (C-13, C-14 decided) |
+| **3** | Encounter engine | The actor model; Wait; conditions; arrivals; wanderers; objectives; procedures; social encounters; Resolve this step; story-dungeon help | C-08, C-60 (C-09 decided) |
 | **4** | World systems | Story phases, seeded streams, change beats, routines, "have you seen…?", road events, return keys | — |
 | **5** | Records | Stamp book, travel volume (interim art), personal seal, Main Menu gallery, replay, Pastimes, the folio's regrouping | C-20, C-19, C-34 |
-| **6** | Expeditions | The expedition framework, persistent condition, previews, Atlas commissions, delvers, a pilot side dungeon | C-03, C-18 |
-| **7** | Manybridge (new Chapters 3–4) | Chapter insertion and save migration; the city; the press; the stage; manzai; the festival; the yukata cut | C-01, C-02, C-22, C-32 |
-| **8** | The sea | The Harbourmaster's quest, sailing, the boat home, Sazanami, East Landing, Kotonoha (all phases) | — |
-| **9** | The Cloudroad and Steamhollow (new Chapters 8–9) | Both chapters; the separation at the Mist Barrier; Kotonoha for everyone | C-12, C-27 |
+| **6** | Expeditions | The expedition framework, persistent condition, previews, Atlas commissions as Atlas run types, delvers, a pilot side dungeon | C-57 (C-03, C-18 decided) |
+| **7** | Manybridge (new Chapters 3–4) | The edition boundary (behind a development switch); the city; the press; the stage; manzai; the festival; the yukata cut | C-54, C-55, C-22, C-32 |
+| **7b** | The Keepers' Road (new Chapter 7) | The keepers' road, the scriptorium, the vigil; folklore and records systems in use | C-33 if hanafuda joins the pastimes later |
+| **8** | The sea and Kotonoha (new Chapter 9) | The Harbourmaster's quest, sailing, the boat home, Sazanami, East Landing, Kotonoha's early visit and main chapter | — |
+| **9** | The Cloudroad and Steamhollow (new Chapters 10–11); **the edition ships** | Both chapters; the separations; the twelve-chapter edition released at once | C-56, C-59, C-61 |
 | **10** | The postgame | The Hall of a Hundred Tales (one wing, then ten); superbosses; the new settlement; pastimes (shogi, karuta, shiritori v2); the Cinder festival revisit | — |
 | **11** | Expressive portraits, second round | The portrait ideas Robin left for later: systems only; the drawing belongs to the art pass | Robin asks |
 | **12** | Native review | Language and culture review of all new content (also continuous from Phase 2) | A reviewer |
@@ -36,8 +38,9 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 - **Robin's full playthrough feedback** comes first. It may reorder everything below.
 - **The remaining addendum items** that need Robin's eyes: HX33, HX43 and HX45 (scenes and sequences at play speed),
   WI5 and WI26 (gestures and portraits at play speed). They are recorded in docs/expressive/CONTRACT.md.
-- **Decisions:** part A of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) (C-01, -02, -03, -09, -12, -13, -14, -17,
-  -18, -21, -35), plus confirm or overrule part B.
+- **Decisions:** part A of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) was answered on 2026-10-07. Still to come:
+  the open items in part A2 (C-33, C-54, C-55, C-56, C-61), the four to confirm (C-57 to C-60), Suzu after the
+  playthrough (C-62), and part B.
 - **Spec and contract amendments** written for the decisions taken ([02_FOUNDATIONS.md](02_FOUNDATIONS.md) S8),
   and REQUIREMENTS IDs reserved for each feature.
 - **The open Harmony question** (one technique or charges) decided. The plan recommends keeping one technique
@@ -48,9 +51,11 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 | Item | Why now |
 |---|---|
 | **E5** honest "effect here" line on every response card | Robin expects it; it teaches; small |
-| **Defects** from [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part D: the Grammar page, activity Translate, Foundations copy steps, the promotion rule (C-35), the chart's phantom road, seeded patrols, the `alts` validator | Players see some of them; evidence must be honest before stars exist |
+| ~~**Defects**~~ from [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part D | **Done 2026-10-07**, with tests (VALIDATION.md) |
+| **The one-guess handwriting pad** (C-14): one guess per character, free redraws, "Show more suggestions" marked as assisted | Robin decided it; it changes how help is recorded, so it comes before stars |
+| **The two Ledgers' names** (C-58) | A few labels, once Robin confirms the names |
 | **L19** measure the language interactions a playthrough meets | Answers Robin's first question with data |
-| **S6** Firefox load test of a padded build | Decides the art budget before anything is drawn |
+| **S6** load time and memory in Firefox and on the foldable | The ceiling is 100 MB (C-21); this checks the phone stays quick |
 
 **Tests:** focused unit and browser tests per fix; F/Ren once at the end of the phase.
 
@@ -59,7 +64,7 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 ## Phase 2 · Language foundations
 
 - **The evidence log** (L1), with the new kanji and construction kinds and the migration.
-- **Assistance categories** (L2), including the recognition-repair decision (C-14).
+- **Assistance categories** (L2), with C-14's rule.
 - **Mastery exams and stars** (L3), **word, kanji and kana pages** (L4) and **"What I can do"** (L5).
 - **Spacing by days** (L6) if approved, and **the kanji chart's record** (L20).
 - **Sentence forging** (L7): engine, judge (generalising the letters' reply families), support ladder, authoring
@@ -127,7 +132,7 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 **Contents:**
 - **D1–D4:** the framework, persistent condition, stations, restart rules, previews, and a proper battle hook that
   replaces the Atlas's MutationObserver.
-- **D7:** Atlas commissions, with run content chosen at the start (C-18).
+- **D7:** Atlas commissions, built as Atlas run types; the Atlas keeps adapting its practice words (C-18, C-57).
 - **D8:** delvers.
 - **A pilot optional dungeon** in an existing region, to prove the whole loop: entrance preview, stations,
   persistent condition, restart, shortcuts, an apprenticeship pattern.
@@ -140,8 +145,10 @@ pilot.
 ## Phase 7 · Manybridge (new Chapters 3 and 4)
 
 **Contents:**
-- **S4: chapter insertion.** New flags, gates, the display numbering map, the save fixtures (including a Robin-like
-  finished save), and the C-02 decision implemented.
+- **S4: the edition boundary.** The edition field, old saves shown as such and never altered, new flags, the
+  display numbering map, the save fixtures (including a Robin-like finished save), and C-54's extras if approved.
+- **A development switch.** The new chapters stay off in the build Robin plays until all six are finished, so saves
+  are stopped once, when the edition ships (C-54).
 - **R1:** two chapters: maps, people, creatures, bosses, dungeons, side quests, and change beats for Reedwake and
   Saltglass.
 - **C15** (the press), **C11** (manzai), **C10** (the festival, its planning and games), **C10a** (the yukata cut in
@@ -158,28 +165,49 @@ pilot.
 
 **Effort:** XL.
 
-## Phase 8 · The sea
+## Phase 7b · The Keepers' Road (new Chapter 7)
+
+**Contents:**
+- **R8:** the keepers' road, the lodge and its scriptorium cave, the vigil and its boss, five side quests, and the
+  change beats; Old Hisae; the shuttered hall the postgame opens.
+- **C9** folklore told several ways, and the records it feeds (stamps, travel-volume pages).
+- **Music:** a biwa-led zone, tiered in the twelve-chapter ladder (C-22).
+- **A-profile classical phrases**, glossed and labelled, queued for native review.
+
+**Tests:**
+- F/Ren through the chapter;
+- all four profiles for the tellings (content that depends on the Japanese level);
+- a focused Ren test (their beat must not touch their personal quest);
+- saved-state fixtures for The Keeper Who Stayed's outcomes.
+
+**Effort:** L.
+
+## Phase 8 · The sea and Kotonoha (new Chapter 9)
 
 **Contents:**
 - **W7:** the Harbourmaster's quest (stages across chapters), the sea map and boat mode, sea situations, and the
   travel log.
 - **W8:** the boat home.
 - **R6:** Sazanami and East Landing.
-- **R4:** Kotonoha at its early and normal phases, then postgame.
+- **R4:** Kotonoha's early visit (side content), its main chapter (9) with the Root Hollows and the "in danger"
+  separation, then postgame.
 
 **Tests:**
 - the sailing mode (keyboard, touch, skip, story events in skip mode);
-- Kotonoha at each phase from fixtures;
-- F/Ren with and without the quest.
+- Kotonoha at each phase from fixtures, and Chapter 9 played with and without an early visit;
+- F/Ren with and without the quest;
+- each companion's separation and reunion in the Root Hollows.
 
 **Effort:** XL.
 
-## Phase 9 · The Cloudroad and Steamhollow (new Chapters 8 and 9)
+## Phase 9 · The Cloudroad and Steamhollow (new Chapters 10 and 11), and the edition ships
 
 **Contents:**
-- **R2** and **R3**, including the separation scene (C-12) and the solo encounters tuned for one, and the private
-  baths with the comfort setting (C-27).
-- Kotonoha's public ferry opens.
+- **R2** and **R3**, including two separations (C-12): staying behind at the Mist Barrier, and the disagreement in
+  Steamhollow, with apologies and understanding (C-59). The solo encounters are tuned for one.
+- The baths by pronouns, with the comfort setting (C-27, C-56).
+- **The twelve-chapter edition ships:** the development switch comes off, the playtime target is restated (C-61),
+  and old saves show as from the six-chapter edition.
 
 **Tests:** F/Ren; the solo section with each companion's reunion; the mediation climax's conclusions on saved-state
 fixtures.
@@ -191,7 +219,8 @@ fixtures.
 **Contents:**
 - **D9:** the Hall of a Hundred Tales. **One wing first**, played and judged by Robin, then the other nine.
 - **E16:** superbosses. **R7:** the new settlement.
-- **Pastimes:** shogi (engine, NPC levels, tsume puzzles), karuta, shiritori v2.
+- **Pastimes:** shogi with its beginner's ladder (lessons, hasami shogi, the small board, mini-shogi, handicap
+  games, tsume puzzles), karuta, shiritori v2, and hanafuda if Robin says yes (C-33).
 - **The Cinder Orchard festival revisit** (sealed note S8).
 
 **Tests:**

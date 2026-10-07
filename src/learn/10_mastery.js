@@ -54,15 +54,21 @@ RB.learn = (function () {
         r.streak++;
         // Promotion rules: boxes 0-1 move on any clean success; beyond that
         // the item must be answered correctly on two separate occasions and
-        // not merely by choosing from options twice in a row.
+        // not merely by choosing from options twice in a row: the current run
+        // of clean answers must include a clean typed or handwritten one.
+        // (r.vary is that run's flag. r.modes counts every attempt, wrong ones
+        // too, so it can't stand in for it. Records made before r.vary existed
+        // keep their box; their next typed or written success sets it.)
+        if (result.mode === 'ime' || result.mode === 'hand') r.vary = true;
         const spaced = now - r.lastOk >= 2;
-        const varied = r.modes.recall + r.modes.hand > 0 || r.box < 2;
+        const varied = r.box < 2 || !!r.vary;
         if (r.box < 2 || (r.streak >= 2 && spaced && varied)) r.box = Math.min(5, r.box + 1);
         r.lastOk = now;
         if (result.ctx && r.ctx.indexOf(result.ctx) < 0) { r.ctx.push(result.ctx); if (r.ctx.length > 6) r.ctx.shift(); }
       } else if (!result.ok) {
         r.bad++;
         r.streak = 0;
+        r.vary = false;
         r.box = Math.max(0, r.box - 1);
         r.cool = now + MISTAKE_COOLDOWN;
       }

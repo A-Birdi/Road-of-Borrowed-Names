@@ -1,6 +1,7 @@
 # 01 · Principles and guardrails
 
-*Expansion plan, draft 1 (2026-10-07). Planning only: nothing here is authorised work until Robin selects a scope.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only: nothing here is authorised work until
+Robin selects a scope.*
 
 Everything in the later files is checked against this page. Where an idea elsewhere seems to break one of these
 rules, this page wins, and the conflict belongs in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md).
@@ -10,10 +11,11 @@ Sources are marked like this:
 - **[R1]** Robin's written review.
 - **[R2]** Robin's ten-point clarification.
 - **[H]** The six points Robin settled afterwards (HANDOFF.md, "Future expansion").
+- **[D]** Robin's answers of 2026-10-07 to the plan's decisions (11_CONTRADICTIONS.md, part A).
 - **[A#]** One of Astra's numbered proposals.
 - **[P]** A proposal made in this plan.
 
-When sources disagree, the later one wins: [H] over [R2] over [R1] over [R0], and Robin over Astra.
+When sources disagree, the later one wins: [D] over [H] over [R2] over [R1] over [R0], and Robin over Astra.
 
 ---
 
@@ -40,18 +42,18 @@ experience reliably every chapter or area" [R1].
 | G2 | **Growth is offered, never imposed.** No hidden or permanent promotion to a harder language profile. Backing out of a stretch challenge is never punished. | R1 |
 | G3 | **No global "Japanese accuracy" score governs anything**: not story access, not damage, not difficulty. | R1 (exclusions) |
 | G4 | **A recognition or input-device problem is not a language mistake.** That separation, which the challenge runner already makes, survives every new system. | A, existing code |
-| G5 | **Help is legitimate.** Assistance is recorded honestly as what it supplied, but it does not lower a reward, withhold a story moment, or remove a "witnessed" mark. Mastery stars [H4] are the one place help is weighed, and they are *records*, not rewards: they unlock nothing (C-13). | R2 §4, R2 §6, H1, H4 |
+| G5 | **Help is legitimate.** Assistance is recorded honestly as what it supplied, but it does not lower a reward, withhold a story moment, or remove a "witnessed" mark. Mastery stars [H4] are the one place help is weighed, and they are **flair, just for the player**: they unlock nothing, and the game says so (C-13). | R2 §4, R2 §6, H1, H4, D |
 | G6 | **Every input mode stays a full way to play**: multiple choice, typing, handwriting. Listening is welcome and never required. Spoken pronunciation is never scored. | R1, H4 |
-| G7 | **A dungeon does not move its goalposts.** It is chosen, or generated, before entry and then stays the same while the player learns it. Repeated failure never lengthens or reshapes it. | R2 §3 |
-| G8 | **The main story can always be finished.** Required dungeons offer escalating, declineable companion help after repeated difficulty, up to highlighting suitable responses. | R2 §3 |
+| G7 | **A dungeon does not move its goalposts.** It is chosen, or generated, before entry and then keeps its shape while the player learns it. Repeated failure never lengthens or reshapes it. The Atlas, the premier generated dungeon, may still choose which words each encounter practises (C-18, C-57). | R2 §3, D |
+| G8 | **The main story can always be finished.** Story dungeons keep checkpoints (C-03) and offer escalating, declineable companion help after repeated difficulty, up to highlighting suitable responses. | R2 §3, D |
 | G9 | **Sentence construction grows with new content**; existing content is not refactored to fit it. | R1 |
 
 ## 3. Challenge and consequence are allowed
 
 Robin wants a world with real stakes, not one where nothing can go wrong [R1, R2]:
 
-- Chosen challenges can be lost: a tactical study, an optional superboss, an expedition. Ordinary dungeon failure
-  restarts that dungeon from the beginning [R2 §2].
+- Chosen challenges can be lost: a tactical study, an optional superboss, an expedition. Failing an optional
+  dungeon restarts it from the beginning; story dungeons keep checkpoints [R2 §2, C-03].
 - Side quests can end in more than one way, permanently, and combinations of outcomes can open hidden content [R1].
 - A bad ending can exist if the player deliberately pursues it [R2 §1].
 - Reinforcements, arrivals and summons are allowed by authored, turn-based rules (never on a clock). Ordinary ones
@@ -65,9 +67,10 @@ irreversible on its own [A, R2 §1].
 ## 4. Narrative boundaries [R2 §1]
 
 - **The troupe never dies**, and the companion and pet are never permanently taken away.
-- A companion can stay behind for a critical moment, be captured, or be briefly incapacitated, with a reunion soon
-  after. The solo stretch must be genuinely playable without the companion's help, so its help comes from the
-  environment, notes or another person [A].
+- **Separations are story beats** [C-12]: a companion can stay behind, be in danger, or take some breathing room
+  after a disagreement. The same companion always comes back; nobody replaces them; nothing is permanent. A
+  disagreement ends in apologies and understanding, and the pair are better for it. The solo stretch is playable
+  without the companion: help comes from the place, notes and people who advise but never fight [A, D].
 - Other NPCs may die: of old age, through bereavement, or through an offscreen crime investigated from evidence.
   Such deaths are rare, carefully authored, and never murder shown on screen. They are never a random result of a
   failed Japanese answer.
@@ -95,10 +98,12 @@ These come from SPECIFICATION.txt and CLAUDE.md. No expansion relaxes them.
 - **Every displayed kanji has furigana**, and the content validator enforces it.
 - **Recognition stays separate from answer checking.** The expected answer is never used to manufacture a
   recognition result.
-- **Existing saves keep working.** The schema, database name, keys, slots, learning state and story are preserved.
-  No save is deleted, and New Game is never required. **Robin's own campaign is in Chapter 2; every structural
-  change in this plan must migrate it cleanly.**
+- **Existing saves keep working through every update, with one exception Robin decided** [C-02]: saves from the
+  six-chapter edition don't continue into the twelve-chapter edition. Even then, no save is deleted or rewritten;
+  old saves are handled as the spec's "incompatible saves", gracefully (line 232; details C-54). Every other
+  change keeps the schema, database name, keys, slots, learning state and story.
 - No new font files, CDNs, remote assets or runtime libraries.
+- **Size:** no concern below 100 MB [C-21]. Load time on the phone is measured, not capped.
 
 ## 7. How the plan is tested and built
 
@@ -123,8 +128,10 @@ So in this plan:
 
 ## 8a. Words used in this plan
 
-- **Folio:** the pause menu (Journey, Words, Satchel, Map, Company). Robin calls it "the Ledger".
-- **Ledger:** in the game, the title screen's list of six saves (C-37).
+- **Wayfarer's Ledger** (proposed name, C-58): the pause menu (Journey, Words, Satchel, Map, Company), called the
+  *folio* in the code and in draft 1. Robin calls it "the Ledger".
+- **Inn Ledger** (proposed name, C-58): the title screen's list of six saves. Robin: both are Ledgers, kept
+  distinct (C-37).
 - **Profiles F / E / I / A:** Foundations, Elementary, Intermediate, Advanced.
 - **Existing Chapter N:** today's numbering. **New Chapter N:** the ten-chapter numbering in
   [10_STORY.md](10_STORY.md).

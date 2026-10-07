@@ -1,6 +1,6 @@
 # 05 · Language: evidence, mastery and Japanese as a tool
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 Two halves:
 - **L1–L6, the learning record:** what the game knows about a player's Japanese, and how it shows it.
@@ -65,12 +65,10 @@ listening, assisted practice and transfer distinct; "None needs to be treated as
   struggling with the input surface could appear to know less Japanese than they actually do."
 - **Encountering versus using.** Reading a label twenty times ("met") stays separate from applying a word
   successfully in twenty contexts.
-- **Fix the defects above** as part of this work:
-  - copy steps record as `exposed`;
-  - the activity Translate flag resets per item;
-  - ordering records as `construct`;
-  - the promotion rule's "varied" counts only successful typed or handwritten answers;
-  - the Grammar page reads `RB.grammar.all()`.
+- **The defects above were fixed on 2026-10-07** (Robin asked; C-35 left the judgement to me): copy steps record
+  as guided practice; the activity Translate flag resets per customer or letter; the promotion rule's "varied"
+  needs a clean typed or handwritten answer in the current run; the Grammar page reads `RB.grammar.get`. What
+  remains for this work: ordering recorded as `construct`, and copy steps recorded as `exposed` in the new log.
 - **Migration.** Additive: older items gain empty logs. Nothing is invented: past attempts stay summarised in
   their tallies.
 
@@ -78,8 +76,8 @@ listening, assisted practice and transfer distinct; "None needs to be treated as
 
 **Cons.**
 - Save size grows: 12 compact attempts × about 1,000 items is about 150–250 KiB, acceptable.
-- Some existing promotions may slow once the promotion rule is fixed. That needs Robin's agreement
-  ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-35).
+- Promotions after the 2026-10-07 fix are slower for items answered only by choice, by design; nothing already
+  earned was lowered ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-35).
 
 **Effort:** L.
 
@@ -90,7 +88,8 @@ listening, assisted practice and transfer distinct; "None needs to be treated as
 **What and why.** Robin [R2 §4]: assess every assist system; weigh heavier when someone is consistently assisted or
 fishing for answers. Robin's later first version [H4]: a star when fewer than 30% of an exam's questions were
 assisted. Robin noted that choosing a recognizer candidate other than the first currently counts as assisted, which
-"would need ironing out first."
+"would need ironing out first." **Robin settled it on 2026-10-07 (C-14):** the pad shows one guess, redrawing is
+free, and asking for more suggestions counts as assisted.
 
 **Approach: categorise every help by what it supplies, relative to the skill being assessed.**
 
@@ -99,7 +98,8 @@ assisted. Robin noted that choosing a recognizer candidate other than the first 
 | Text size, contrast, reduced motion, control guidance, word spacing | Access | **No** |
 | Furigana (always shown; there is no toggle, by rule) | Access, except in a reading-recall question, where it would supply the answer, so such questions never show the kanji at all | **No** |
 | Pad: same-shape twin (ロ/口) | Input | **No** (already exempt) |
-| Pad: **another of the recognizer's own candidates for your strokes** | **Recognition repair** | **See C-14**, Robin's call against spec line 158 |
+| Pad: redrawing a character before confirming | Input | **No** (C-14) |
+| Pad: **"Show more suggestions"**, then any of the recognizer's other readings | Answer-constraining | **Yes** (C-14). The button says so, as Translate does |
 | Pad: chart pick, "How to write" model | Answer-constraining or supplied, for that character | Yes |
 | Word help or lookup inside the question | Conceptual, or answer-constraining when it defines the asked word | Yes, if it covers a word in the answer |
 | Translate (English line) | Conceptual (comprehension tasks: answer-constraining) | Yes for comprehension; no for a production task whose English is the prompt anyway |
@@ -143,9 +143,11 @@ assisted. Robin noted that choosing a recognizer candidate other than the first 
 - **Retakes** revisit only the questions that were assisted, not the whole exam (Astra).
 - **Listening star.** Offered only where the device has a local Japanese voice. Labelled "Listening practice with
   your device's voice", never "validated listening" (spec line 280). Absent, not "missing", on devices without one.
-- **Inconsequential means inconsequential.** Stars unlock nothing: no item, no route, no illustration, no Bond.
-  That is what makes them compatible with the "no handwriting-only or no-help-only reward" contract, which needs
-  a one-line amendment saying so ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-13).
+- **Flair, just for you** (Robin, C-13: "just UI flair, not a real reward… it's just for you to feel good about
+  learning and grasping the language"). Stars unlock nothing: no item, no route, no illustration, no Bond, no
+  stamp. The Mastery page says so in plain words: "These stars are just for you: a way to see what you've grasped.
+  They don't unlock anything." That is what makes them compatible with the "no handwriting-only or no-help-only
+  reward" contract, with a one-line amendment saying so.
 - **Home:** Words › a new "Mastery" page listing groups, stars and "next suggested".
 
 **Effort:** M (on L1, L2).

@@ -324,8 +324,10 @@ RB.challenge = (function () {
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
-        if (active.helpUsed || step.guided) res.assisted = true;
-        if (step.guided) res.guided = true;
+        // a copy step shows its model, so writing it is copying practice, never unaided
+        // handwriting (spec line 188): recorded as guided, like a guided example
+        if (active.helpUsed || step.guided || step.copy) res.assisted = true;
+        if (step.guided || step.copy) res.guided = true;
         RB.audio && RB.audio.sfx('answer_right');
         // how it was written: "水 (みず) — written in kanji", one-shape characters
         const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');

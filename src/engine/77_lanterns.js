@@ -21,7 +21,7 @@
  *   RB.lanterns.tend(s, ob, objId, id, step, res, o)  record one lamp → { lit, missed, counted }
  *        (o.exposed: a new word's card was just shown, so the lamp is practice, not recall)
  *   RB.lanterns.finish(s, n)                   end of a session → { firstNote }
- *   RB.lanterns.labelOf(id, step)              { jp, en } for the reviewed list
+ *   RB.lanterns.labelOf(id, step)              { jp, en, mixed? } for the reviewed list
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -207,9 +207,10 @@ RB.lanterns = (function () {
       const e = RB.tasks.findWord(v);
       if (e) return { jp: e.w !== e.r && RB.jp.rubyize ? RB.jp.rubyize(e.w, e.r) || e.w : e.w, en: e.m };
     }
-    if (k === 'g' && RB.grammar && RB.grammar.points) {
-      const g = RB.grammar.points.find((x) => x.id === v);
-      if (g) return { jp: g.title || '', en: g.en || '' };
+    if (k === 'g' && RB.grammar && RB.grammar.get) {
+      // a grammar point's title is mixed text ("は (topic)"), so it is shown as such, not as a Japanese line
+      const g = RB.grammar.get(v);
+      if (g) return { jp: '', mixed: g.title || '', en: '' };
     }
     return { jp: (step && step.ctx && step.ctx.jp) || '', en: (step && (step.title || (step.prompt && step.prompt.en))) || 'A reading question' };
   }

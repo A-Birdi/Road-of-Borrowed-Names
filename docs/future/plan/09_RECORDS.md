@@ -1,6 +1,6 @@
 # 09 · Records: stamps, the travel volume, replay and pastimes
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 Robin's settled decisions govern this file:
 
@@ -185,14 +185,14 @@ to save before a moment they didn't know about."
    - **Never changes any state** (HX49).
 2. **Scene replay** for selected non-illustrated scenes, needing a side-effect-free mode for the script runner. It
    doesn't exist yet; M effort.
-3. **Chapter Journey** (proposal; it also answers how finished saves experience inserted chapters, S4):
+3. **Chapter Journey** (proposal, for saves of the twelve-chapter edition; old saves don't continue, C-02):
    - **What it is.** Start a *new campaign in a free slot* at the start of any chapter this save has completed,
      carrying the save's learning, appearance, keepsakes and records (like New Game+).
    - **Earlier choices** take documented defaults, labelled "a retelling", so no false history is claimed.
    - **Why it's useful.** It lets a player revisit a chapter or see another outcome without having saved in
      advance.
 
-   Robin to decide ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-02).
+   A plan proposal, not a contradiction: build it if Robin wants it.
 
 **Effort:** M (1), M (2), L (3).
 

@@ -33606,8 +33606,9 @@ RB.world = (function () {
     quietUntil: 0,      // W.time before which no creature engages (just after a battle)
   };
 
-  // People's blink timers draw from the world's own stream (xorshift), never Math.random: the language
-  // tasks pick from Math.random, and life in the world must not change which task comes next.
+  // People's blink timers and creatures' patrols draw from the world's own stream (xorshift), never
+  // Math.random: the language tasks pick from Math.random, and life in the world must not change which
+  // task comes next.
   let wseed = 0x2545f491;
   function wrand() { wseed ^= wseed << 13; wseed >>>= 0; wseed ^= wseed >>> 17; wseed ^= wseed << 5; wseed >>>= 0; return wseed / 4294967296; }
   function makeActor(x, y, dir, look) {
@@ -34297,8 +34298,8 @@ RB.world = (function () {
       if (!pat || f.mv || RB.game.mode() !== 'world') continue;
       f.wt = (f.wt || 900) - dt;
       if (f.wt > 0) continue;
-      f.wt = 700 + Math.random() * 900;
-      const d = Object.keys(DIRS)[Math.floor(Math.random() * 4)];
+      f.wt = 700 + wrand() * 900;
+      const d = Object.keys(DIRS)[Math.floor(wrand() * 4)];
       const [dx, dy] = DIRS[d];
       const nx = f.x + dx, ny = f.y + dy;
       if (Math.abs(nx - f.home[0]) > pat || Math.abs(ny - f.home[1]) > pat) continue;
@@ -34452,7 +34453,7 @@ RB.world = (function () {
     }
     if (best) { f.x = best[0]; f.y = best[1]; }
     f.fx = f.x; f.fy = f.y; f.frame = 0;
-    f.wt = 1200 + Math.random() * 800;
+    f.wt = 1200 + wrand() * 800;
   }
   function startFoe(f) {
     if (!canEngage()) return false;
@@ -44538,7 +44539,7 @@ RB.paceCore = (function () {
  *   RB.lanterns.tend(s, ob, objId, id, step, res, o)  record one lamp → { lit, missed, counted }
  *        (o.exposed: a new word's card was just shown, so the lamp is practice, not recall)
  *   RB.lanterns.finish(s, n)                   end of a session → { firstNote }
- *   RB.lanterns.labelOf(id, step)              { jp, en } for the reviewed list
+ *   RB.lanterns.labelOf(id, step)              { jp, en, mixed? } for the reviewed list
  */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -44724,9 +44725,10 @@ RB.lanterns = (function () {
       const e = RB.tasks.findWord(v);
       if (e) return { jp: e.w !== e.r && RB.jp.rubyize ? RB.jp.rubyize(e.w, e.r) || e.w : e.w, en: e.m };
     }
-    if (k === 'g' && RB.grammar && RB.grammar.points) {
-      const g = RB.grammar.points.find((x) => x.id === v);
-      if (g) return { jp: g.title || '', en: g.en || '' };
+    if (k === 'g' && RB.grammar && RB.grammar.get) {
+      // a grammar point's title is mixed text ("は (topic)"), so it is shown as such, not as a Japanese line
+      const g = RB.grammar.get(v);
+      if (g) return { jp: '', mixed: g.title || '', en: '' };
     }
     return { jp: (step && step.ctx && step.ctx.jp) || '', en: (step && (step.title || (step.prompt && step.prompt.en))) || 'A reading question' };
   }
@@ -47761,15 +47763,21 @@ RB.learn = (function () {
         r.streak++;
         // Promotion rules: boxes 0-1 move on any clean success; beyond that
         // the item must be answered correctly on two separate occasions and
-        // not merely by choosing from options twice in a row.
+        // not merely by choosing from options twice in a row: the current run
+        // of clean answers must include a clean typed or handwritten one.
+        // (r.vary is that run's flag. r.modes counts every attempt, wrong ones
+        // too, so it can't stand in for it. Records made before r.vary existed
+        // keep their box; their next typed or written success sets it.)
+        if (result.mode === 'ime' || result.mode === 'hand') r.vary = true;
         const spaced = now - r.lastOk >= 2;
-        const varied = r.modes.recall + r.modes.hand > 0 || r.box < 2;
+        const varied = r.box < 2 || !!r.vary;
         if (r.box < 2 || (r.streak >= 2 && spaced && varied)) r.box = Math.min(5, r.box + 1);
         r.lastOk = now;
         if (result.ctx && r.ctx.indexOf(result.ctx) < 0) { r.ctx.push(result.ctx); if (r.ctx.length > 6) r.ctx.shift(); }
       } else if (!result.ok) {
         r.bad++;
         r.streak = 0;
+        r.vary = false;
         r.box = Math.max(0, r.box - 1);
         r.cool = now + MISTAKE_COOLDOWN;
       }
@@ -60709,8 +60717,10 @@ RB.ui.menu = (function () {
     }
     if (id === 'grammar') {
       const seen = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).map((k) => k.slice(2));
-      const pts = (RB.grammar && RB.grammar.points ? RB.grammar.points : []).filter((g) => seen.includes(g.id));
-      return pts.length ? '<ul class="entries notes">' + pts.map((g) => '<li class="entry filed"><span class="mark">' + I('book') + '</span><div><div class="written">' + j(g.title) + '</div><div class="t">' + esc(g.en) + '</div>' + (g.ex || []).slice(0, 2).map((e) => '<div class="ex">' + j(e.jp) + en(e.en) + '</div>').join('') + '</div></li>').join('') + '</ul>' : '<p class="muted">Grammar you meet on the road will be collected here.</p>';
+      // in the order they were met; title and explanation are mixed text (English with {漢字|かな} groups)
+      const pts = RB.grammar && RB.grammar.get ? seen.map((id) => RB.grammar.get(id)).filter(Boolean) : [];
+      const mx = (t) => RB.learnUi.mixed(RB.script.enVars(t || ''));
+      return pts.length ? '<ul class="entries notes">' + pts.map((g) => '<li class="entry filed"><span class="mark">' + I('book') + '</span><div><div class="written">' + mx(g.title) + '</div><div class="t">' + mx(g.en) + '</div>' + (g.ex || []).slice(0, 2).map((e) => '<div class="ex">' + j(e.jp) + en(e.en) + '</div>').join('') + '</div></li>').join('') + '</ul>' : '<p class="muted">Grammar you meet on the road will be collected here.</p>';
     }
     if (id === 'lore') {
       const notes = s.notebook.filter((n) => n.kind === 'lore').map((n) => RB.content.notes[n.id]).filter(Boolean);
@@ -65668,8 +65678,10 @@ RB.challenge = (function () {
         res.ok = true;
         res.mode = modeUsed;
         if (res.firstTry == null) res.firstTry = true;
-        if (active.helpUsed || step.guided) res.assisted = true;
-        if (step.guided) res.guided = true;
+        // a copy step shows its model, so writing it is copying practice, never unaided
+        // handwriting (spec line 188): recorded as guided, like a guided example
+        if (active.helpUsed || step.guided || step.copy) res.assisted = true;
+        if (step.guided || step.copy) res.guided = true;
         RB.audio && RB.audio.sfx('answer_right');
         // how it was written: "水 (みず) — written in kanji", one-shape characters
         const how = (notes || []).map((n) => '<div class="fb-how" data-note="' + esc(n.code) + '">' + enRuby(n.en) + '</div>').join('');
@@ -67884,7 +67896,7 @@ RB.activities = (function () {
             P.body.querySelectorAll('[data-add], [data-rm]').forEach((x) => (x.disabled = true));
             P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < custs.length - 1 ? 'Next customer' : 'Finish');
             P.foot.querySelector('[data-next]').onclick = () => {
-              i++; tray = {}; firstTry = true; showEn = showEnDefault();
+              i++; tray = {}; firstTry = true; assisted = false; showEn = showEnDefault();
               if (i >= custs.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes, results }); } else render();
             };
             P.foot.querySelector('[data-next]').focus({ preventScroll: true });
@@ -67936,7 +67948,7 @@ RB.activities = (function () {
           b.classList.add('on');
           fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
           P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
-          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
+          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
           P.foot.querySelector('[data-next]').focus({ preventScroll: true });
         } else {
@@ -95455,7 +95467,7 @@ RB.ui.lanterns = (function () {
       if (fin && fin.firstNote) h += '<p class="pa-note">' + I('note') + ' A note about the practice lamps is in your notebook (Words › Lore &amp; histories).</p>';
       if (reviewed.length) {
         h += '<details class="pa-reviewed"><summary>What you reviewed (' + reviewed.length + ')</summary><ul class="entries">' +
-          reviewed.map((r) => '<li class="entry"><span class="mark">' + I('lantern') + '</span><div><div class="t">' + (r.label.jp ? J(r.label.jp) + ' ' : '') + '<span class="en">' + esc(r.label.en || '') + '</span></div>' +
+          reviewed.map((r) => '<li class="entry"><span class="mark">' + I('lantern') + '</span><div><div class="t">' + (r.label.mixed ? RB.learnUi.mixed(r.label.mixed) + ' ' : '') + (r.label.jp ? J(r.label.jp) + ' ' : '') + '<span class="en">' + esc(r.label.en || '') + '</span></div>' +
             ((r.help || r.slip) ? '<div class="muted small">' + esc([r.slip ? 'worked out after a second look' : '', r.help ? 'with help' : ''].filter(Boolean).join(', ')) + '</div>' : '') + '</div></li>').join('') +
           '</ul></details>';
       }
@@ -97417,7 +97429,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.places.cinder = { name: { en: 'Cinder Orchard', jp: '{灰実|はいみ}の{里|さと}' }, map: 'co.village', x: 4, y: 18, dir: 'right', pos: [270, 200], region: 'cinder', hub: true, desc: 'Terraced orchards and glass workshops.' };
   C.places.snowbell = { name: { en: 'Snowbell', jp: '{雪鈴|ゆきすず}' }, map: 'sb.hamlet', x: 4, y: 20, dir: 'up', pos: [330, 90], region: 'snowbell', hub: true, desc: 'A mountain hamlet beneath the old observatory.' };
   C.places.lanternfall = { name: { en: 'Lanternfall', jp: '{灯落|ひおち}' }, map: 'lf.town', x: 4, y: 20, dir: 'right', pos: [420, 170], region: 'lanternfall', hub: true, desc: 'An orderly town of records and bridges.' };
-  C.roads = [['reedwake', 'saltglass'], ['saltglass', 'cinder'], ['cinder', 'snowbell'], ['snowbell', 'lanternfall'], ['cinder', 'lanternfall']];
+  C.roads = [['reedwake', 'saltglass'], ['saltglass', 'cinder'], ['cinder', 'snowbell'], ['snowbell', 'lanternfall']];
+  // (no Cinder–Lanternfall road: no map joins them; the way to Lanternfall is through Snowbell)
 
   C.start = { map: 'rw.road', x: 3, y: 9, dir: 'right', scene: 'rw.arrive' };
 })(RB.content);
@@ -125415,7 +125428,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     mc('sa.di7', 'I', 'g:noni', 'Choose the best ending: 「{誰|だれ}も {泣|な}かなく なった ＿＿ 、 {誰|だれ}も {笑|わら}わなく なった 。」', null, [
       { jp: 'けれど', ok: true }, { jp: 'から', ok: false, why: { en: '"Because no one cried, no one laughed" — the Hush would say so, but the sentence contrasts, it doesn\'t explain.' } }, { jp: 'ため に', ok: false, why: { en: '"In order to" doesn\'t fit.' } },
     ], { en: '"No one cried any more, but no one laughed any more either."' }),
-    { id: 'sa.di8', lv: 'I', tags: ['still'], kind: 'order', item: 'g:relative_clause', prompt: { en: 'Build: "the letter (my) brother wrote" — a clause before the noun.' }, tiles: ['{弟|おとうと}', 'が', '{書|か}いた', '{手紙|てがみ}'], answer: ['{弟|おとうと}', 'が', '{書|か}いた', '{手紙|てがみ}'], alts: [['{弟|おとうと}', 'の', '{書|か}いた', '{手紙|てがみ}']], orderHint: { en: 'The describing clause comes before the noun it describes.' } },
+    { id: 'sa.di8', lv: 'I', tags: ['still'], kind: 'order', item: 'g:relative_clause', prompt: { en: 'Build: "the letter (my) brother wrote" — a clause before the noun.' }, tiles: ['{弟|おとうと}', 'が', '{書|か}いた', '{手紙|てがみ}'], answer: ['{弟|おとうと}', 'が', '{書|か}いた', '{手紙|てがみ}'], explain: { jp: '{弟|おとうと}の {書|か}いた {手紙|てがみ}', en: 'Inside a describing clause, が can also become の, with the same meaning.' }, orderHint: { en: 'The describing clause comes before the noun it describes.' } },
     mc('sa.di9', 'I', 'g:hazu', 'What does 「{鍵|かぎ} の かかって いた はず の {塔|とう}」 imply?', null, [
       { en: 'The tower should have been locked — so how did the bell ring?', ok: true }, { en: 'The tower was definitely locked.', ok: false, why: { en: 'はず is an expectation, not a certainty.' } }, { en: 'The tower had no lock.', ok: false, why: { en: 'It did; the question is who opened it.' } },
     ], { en: 'はず: what should be the case, given what one knows.' }),

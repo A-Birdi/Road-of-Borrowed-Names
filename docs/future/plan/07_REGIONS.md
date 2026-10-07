@@ -1,6 +1,6 @@
 # 07 · Regions
 
-*Expansion plan, draft 1 (2026-10-07). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
 names them. Anything that depends on their contents is in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md).*
 
 Robin's question for every region: *names, stories, unique encounters and mechanics; main quest or postgame; how
@@ -15,17 +15,18 @@ fiction.
 
 | # | Region | Kind | Where it sits | Its new verb | Origin in the consultation |
 |---|---|---|---|---|---|
-| R1 | **Manybridge** (八百橋, Yaobashi): the Exchange | Main story, 2 chapters | After Chapter 2: the destination of Saltglass's eastbound ferry | Route goods and people by saying who sends what to whom; read and negotiate conditional notices | Canal Exchange (A51) |
+| R1 | **Manybridge** (八百橋, Yaobashi): the Exchange | Main story, Chapters 3–4 | After Chapter 2: the destination of Saltglass's eastbound ferry | Route goods and people by saying who sends what to whom; read and negotiate conditional notices | Canal Exchange (A51) |
 | R1 | **Manybridge**: Blockprint Row and Playhouse Row | (same city, second chapter) | | Compose, print and circulate stories and notices; perform on stage | Printers' Quarter (A54), Travelling Stage (A56), festival (A50) |
-| R2 | **The Cloudroad** (雲路, Kumoji) | Main story, 1 chapter | Before the final chapter | Plan a journey from reports of uneven reliability; carry and verify messages | Mountain Relay (A52) |
-| R3 | **Steamhollow** (湯ノ谷, Yunotani) | Main story, 1 chapter | Straight after the Cloudroad | Make, change and decline arrangements with people; mediate | Hot-Spring Commons (A55) |
-| R4 | **Kotonoha, the Isle of Word-Leaves** (言の葉島) | Side region: early by boat, later for everyone | Off the south-west coast | Restore drifted words to the places that lost them; follow folklore told several ways | Robin's sailing and island idea; Echo Isles folded in (A53) |
+| R8 | **The Keepers' Road** (灯守の道, Himori no Michi) | Main story, Chapter 7 | Between Snowbell and Lanternfall | Weigh lore told several ways, and act on what each source can vouch for | The twelve-chapter variant (C-01); folklore (A49) |
+| R2 | **The Cloudroad** (雲路, Kumoji) | Main story, Chapter 10 | Before Steamhollow and the final chapter | Plan a journey from reports of uneven reliability; carry and verify messages | Mountain Relay (A52) |
+| R3 | **Steamhollow** (湯ノ谷, Yunotani) | Main story, Chapter 11 | Straight after the Cloudroad | Make, change and decline arrangements with people; mediate | Hot-Spring Commons (A55) |
+| R4 | **Kotonoha, the Isle of Word-Leaves** (言の葉島) | Main story, Chapter 9; also early by your own boat | Off the south-west coast | Restore drifted words to the places that lost them; follow folklore told several ways | Robin's sailing and island idea; Echo Isles folded in (A53) |
 | R5 | **The Hall of a Hundred Tales** (百物語の館) | Postgame superdungeon | The old keepers' house in the hills | All of it: the "100 Trials" | Robin's 100 Trials (A§4) |
 | R6 | **Sazanami** (漣) and **East Landing** | Small sailing ports, side content | Up the coast | Sea-trade errands; rebuild a lost landing | Sailing destinations (Robin) |
 | R7 | **The new settlement** | Postgame region | Sealed note S6 | Help found a village from nothing: name it, sign it, settle its disputes | Evolving communities (Robin) |
 
-The plan therefore takes the main story from **6 to 10 chapters**. A **12-chapter** variant is described in
-[10_STORY.md](10_STORY.md), with its trade-offs. Robin has not chosen a count, and the architecture works either way.
+The plan takes the main story from **6 to 12 chapters**, Robin's decision of 2026-10-07 (C-01). The full order
+is in [10_STORY.md](10_STORY.md) §4.
 
 Why these placements:
 - **A city early.** After a riverside village and a harbour, the player is ready for density: many people,
@@ -34,8 +35,10 @@ Why these placements:
 - **The mountains and the hot spring late.** They lengthen the approach to the final chapter, which is what Robin
   asked for when wishing the Hush to "feel more epic". They also give the companion relationship a lively,
   social beat before the end, distinct from the spec's quieter stretch in Snowbell.
-- **The island to the side.** Robin's own design: earned early by boat, reachable later by everyone, adapting to
-  the story so far.
+- **The keepers' road in the middle (7).** Folklore and archives deepen the mystery between Snowbell and
+  Lanternfall.
+- **The island after Lanternfall (9).** Robin's own design, now a main chapter: earned early by boat, reached by
+  everyone in Chapter 9, adapting to the story so far.
 
 ---
 
@@ -139,7 +142,7 @@ companion, and minigames that stay playable afterwards (C10 in [08_CULTURE.md](0
 - **Music** (src/audio zones). Shamisen-led, brisker than Saltglass. Hand drums and a taiko pulse in Playhouse
   Row. Wooden clappers (拍子木) as a scene cue. Fireworks as soft, low thumps, never a flash or a harsh crack (spec
   line 264). Battle and boss themes slot into the per-chapter intensity ladder (the audio rule ZM2 needs re-tiering
-  for 10 chapters; [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-22).
+  for twelve chapters; [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-22).
 - **People.** Merchants, porters, boatmen, clerks, printers, apprentices, actors, a troupe manager, festival
   organisers, street sellers. Speech is lively and quick. A Kansai-flavoured *dialect community* exists here.
   The questions still use standard Japanese, as the dialect rules require.
@@ -250,8 +253,8 @@ companion, and minigames that stay playable afterwards (C10 in [08_CULTURE.md](0
 
 ## R2 · The Cloudroad (雲路, Kumoji)
 
-**Placement.** Main story, one chapter, directly before the final chapter. It lengthens the approach to the
-final chapter. Exact geography is in sealed note S3.
+**Placement.** Main story, Chapter 10, followed by Steamhollow (11) and the final chapter. It lengthens the
+approach to the final chapter. Exact geography is in sealed note S3.
 
 **Inspiration.** The Edo-period highways and their post stations (宿場町). Relay couriers (飛脚, hikyaku), who
 carried letters station to station. Mountain checkpoints (関所, sekisho), where travellers showed travel papers
@@ -347,7 +350,7 @@ travel between stations once visited.
 
 ## R3 · Steamhollow (湯ノ谷, Yunotani)
 
-**Placement.** Main story, one chapter, directly after the Cloudroad and before the final chapter. A lively,
+**Placement.** Main story, Chapter 11, directly after the Cloudroad and before the final chapter. A lively,
 crowded hot-spring town in a volcanic valley. It is deliberately *social*, unlike Snowbell's quiet stretch (spec
 line 50), and is the last warm place before the end.
 
@@ -375,9 +378,10 @@ settled, not defeated.
 **Signature activities.**
 - **Reservations** (A44, A46): book rooms for a group of travellers with conflicting needs; change a booking;
   decline politely.
-- **Private baths** (貸切風呂, kashikiri-buro, real): reserve a private bath for the party. This is how on-screen,
-  towel-wrapped bathing scenes happen with the companion (Robin's direction), and it sidesteps sex-separated public
-  baths for a player with chosen pronouns ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-27).
+- **The baths follow pronouns** (Robin, 2026-10-07): she/her uses the women's bath, he/him the men's. They/them
+  and custom pronouns: the inn's reserved private bath (貸切風呂, *kashikiri-buro*, real) is recommended, open in
+  C-56. Companions follow their own pronouns the same way. When the player and the companion are in different
+  baths, they talk over the bamboo partition. Scenes are towel-wrapped and nonsexual (Robin's direction).
 - **House rules** (A42): learn each inn's own rules from signs and staff. They differ, deliberately.
 - **Steam cooking** (温泉卵, onsen eggs, and steamed buns): a cooking minigame. Follow a recipe card, take
   instructions, no timer. The results feed scenes, not a stat economy.
@@ -438,18 +442,18 @@ word (A17). The town is calmer and the steam cooking game stays open. Postgame, 
 
 **Risks.**
 - Tone: warm and funny, never voyeuristic; nonsexual; adults only (spec line 72).
-- The pronoun-neutral bathing design (C-27).
+- Bathing that follows pronouns, and the open question for they/them and custom (C-27, C-56).
 - Cultural accuracy, labelled.
 
 ---
 
 ## R4 · Kotonoha, the Isle of Word-Leaves (言の葉島)
 
-**Placement.** Robin's side region:
-- **Early access** by the player's own boat, earned through the Harbourmaster's long quest (W7), around the
-  existing Chapter 4–5 stretch (new Chapters 6–7).
-- **Normal access** for every save by the start of new Chapter 8 (the Cloudroad), through a public ferry route
-  that opens in Saltglass then.
+**Placement.** Main story, **Chapter 9**, after Lanternfall (C-01: twelve chapters). Robin's original design is
+kept around it:
+- **Early access** by the player's own boat, earned through the Harbourmaster's long quest (W7), around new
+  Chapters 7–8. The early visit is side content with its own small story.
+- **The chapter itself** is reached by public ferry from Saltglass, or by your own boat.
 - Postgame it remains, matured.
 
 **The name.** 言の葉 is a classical word for words and poems ("leaves of words"). The preface of the Kokinshū
@@ -484,9 +488,15 @@ reads three things separately:
 
 | Visit | What is there |
 |---|---|
-| **Early (boat)** | The shore, the village and the tree's lower terraces. The first folklore. Leaves from regions already visited. A complete local story arc: the keepers' apprentice who cannot read the leaves. Progress made now stays made. |
-| **Normal (ferry)** | Everything above, plus the tree's upper terraces and leaves from regions visited since. The keepers have new concerns. |
+| **Early (boat), side content** | The shore, the village and the tree's lower terraces. The first folklore. Leaves from regions already visited. A complete local story arc: the keepers' apprentice who cannot read the leaves. Progress made now stays made, and Chapter 9 picks up from it. |
+| **Chapter 9 (main story)** | Everything above, plus the tree's upper terraces, the Root Hollows and leaves from every region so far. The chapter's own story (below). Written so that it plays fully whether or not the player came early. |
 | **After the final chapter** | The matured island: the keepers' full history, the deepest grove, a postgame dungeon wing. Conversations reflect the ending. |
+
+**Chapter 9's story.** The great tree is shedding faster than the keepers can gather, and words are slipping from
+the mainland sooner than leaves can carry them back. The keepers ask the party for help. They return what they
+can, learn what the island has been holding, and go down into the roots, where the tide separates the player from
+the companion for a while (the "in danger" separation, [10_STORY.md](10_STORY.md) §8). The chapter asks where lost
+words go. It does not answer what the finale answers (sealed S5).
 
 **Dungeon: the Root Hollows.** Caves among the great tree's roots. Leaves drift in currents of air; restoring
 each leaf's word reshapes the roots' passages (connected systems, A11, with words as keys). An optional deeper
@@ -556,7 +566,124 @@ one per story phase. This is the region's main authoring cost.
 **Risks.**
 - The three-phase authoring cost.
 - Folklore labelling (spec line 32): invented island lore must not pass as real.
-- A boat-only early region must not lock in, or lock out, content needed elsewhere.
+- The early boat visit must not lock in, or lock out, content needed elsewhere, and Chapter 9 must play fully
+  without it.
+
+---
+
+## R8 · The Keepers' Road (灯守の道, Himori no Michi)
+
+**Placement.** Main story, Chapter 7: between Snowbell and Lanternfall. Added when Robin chose twelve chapters
+(C-01). Sealed note S2 checks the placement against the existing story.
+
+**Inspiration.** All real, and labelled as such where the game teaches it:
+- **Pilgrimage roads** lined with stone lanterns (石灯籠), and the stamp books pilgrims carry from temple to temple.
+- **Hyaku-monogatari** (百物語怪談会): an Edo-period pastime of telling a hundred ghost stories by lamplight,
+  putting out one wick after each. Tradition says something comes when the hundredth goes out, so people often
+  stopped at ninety-nine.
+- **Etoki** (絵解き): itinerant tellers who explained painted scrolls to audiences.
+- **Tsukumogami** (付喪神): household things said to gain a spirit after a hundred years.
+
+Everything else, including the keepers' order (灯守, *himori*, the game's own word), is fiction.
+
+**What the player does here.** **Piece together lore told several ways, and weigh where each telling comes from.**
+An inscription, an old keeper's memory, a children's rhyme and a teller's scroll all describe the same things
+differently. The player works out what each source can really vouch for, and uses the result to act: find an oil
+cache, choose the right fork, relight a lantern with its true name (folklore told several ways, A49; sources and
+reference, A5). It is the chapter where the player learns to read *stories*, not just signs.
+
+**Story.** An old road of stone lanterns climbs from Snowbell's valley through the hills towards Lanternfall. The
+keepers walked it once, relighting the lanterns and keeping the names of every waystation. Their order dwindled,
+the road grew over, and the lanterns went dark one by one. After Snowbell the party follows it, looking for the
+keepers' records. On the way:
+- a ruined keepers' lodge and its scriptorium cave;
+- **Old Hisae**, the last keeper still living on the road, who remembers Tsuru's teacher as a young apprentice;
+- the keepers' first telling of しじま, in three versions that don't agree. The chapter deepens the mystery and
+  answers nothing that belongs to the finale (sealed S1);
+- and, high in the hills, **a shuttered hall** where the keepers once told a hundred tales. Its door stays shut:
+  "the hundredth was never told". This is the hall the postgame opens (R5).
+
+**Dungeon: the Scriptorium Cave and the Vigil.** Story dungeon, checkpoints (C-03). Shelves of lantern-registers
+in a cave behind the lodge: the passages open as the player relights lanterns in the order the tellings
+describe, and the wrong telling leads to a dead end that explains itself (never a trap). The chapter ends with a
+**vigil**: ninety-nine wicks, a story at each, the room darkening. **The boss: the Hundredth Tale** (百話目,
+*hyakuwa-me*), the story that wants to be told. It is a folklore and social encounter (C-09: no Unravel unless
+something is literally tangled): the party ends the vigil without telling it, by finishing the ninety-ninth in a
+way that leaves nothing for a hundredth.
+
+**Signature activities.**
+- **Weighing tellings:** set the inscription, the memory, the rhyme and the scroll side by side; mark what each
+  can vouch for; act on the result. Any well-supported reading succeeds; a better reading saves a detour.
+- **Relighting by name:** each dark lantern relights when its name is read right from the clues on the road.
+- **The etoki teller:** help a travelling teller restore a damaged scroll's captions, then hear the story told
+  (optional listening with the device's voice; always readable).
+
+**Theme.**
+- **Setting:** cedar and maple forest, moss-covered stone lanterns, worn stone steps, a roofless lodge, a cave
+  of shelves, the shuttered hall in the hills. Late autumn mist.
+- **Palette:** moss green, lantern amber, maple red, ink black.
+- **Music:** biwa-led (the instrument of Japan's travelling storytellers), slow and narrative, with a single bell
+  at the waystations. Its own zone and battle theme, tiered in the twelve-chapter ladder (C-22).
+- **People:** pilgrims, the old keeper, a woodcutter, an etoki teller, a lodge caretaker's family, a scholar copying
+  inscriptions.
+
+**Language focus.**
+
+| Profile | Focus |
+|---|---|
+| **F** | Kana on lanterns and waystones; counting lanterns and steps; むかしむかし and simple story words |
+| **E** | Narrative past (〜ました); sequence (それから, そして); simple quoted speech (〜と言いました) |
+| **I** | Naming and custom (〜という, 〜ことになっている); comparing sources (〜によると, 〜と伝えられている) |
+| **A** | Classical-flavoured set phrases in inscriptions (〜べし, 〜なり), always shown with a modern gloss and labelled as classical; separating a narrator's comment from the story |
+
+Classical forms are optional reading for A only, never needed for progress, and native-reviewed (Phase 12).
+
+**Unique encounters.**
+- **Creatures:**
+  - **Wick Moth:** drinks lantern flame; an objective to keep a lantern lit (E6).
+  - **Hundred-Year Sandal:** a tsukumogami (labelled folklore); comic, and kicks dust over signs.
+  - **Lantern Ghost** (提灯お化け, labelled folklore): repeats a story with the wrong ending; spotting the change
+    calms it.
+  - **Moss Lantern:** a stone lantern that won't let anyone pass until its name is read.
+  - **Teller's Shadow:** retells what you just did, wrongly; correct the account.
+- **Wanderers:** the etoki teller, who helps against anything that threatens the scroll; a pilgrim who joins
+  briefly to reach a shrine (advises only, never fights: no third party member).
+- **Social:** Old Hisae's questions at the lodge, a conversation where asking back (A6) matters more than answering.
+- **Road events** (W5): a fallen cedar across the steps; a lantern that will only relight for someone who reads its
+  name; a pilgrim's lost stamp book.
+
+**Side quests (5).**
+1. **The Pilgrim's Stamp Book:** stamps at the lantern shrines, for the Road Stamp Book (K1).
+2. **Three Tellings of the Fox Bridge:** folklore told three ways; build the version the village will keep.
+3. **The Keeper Who Stayed:** whether and how to tell Old Hisae that the order is gone (permanent outcomes, E17,
+   with the understood intention shown before committing).
+4. **The Rhyme of the Oil Cache:** a children's rhyme read as a map.
+5. **The Teacher's Inkstone:** something of Tsuru's teacher's, to carry back to Reedwake. Tsuru's reply arrives by
+   letter (the Letters system).
+
+**Companions.**
+- **Nao:** the keepers' route registers: names and addresses of waystations long gone.
+- **Mio:** Old Hisae's health, and the remedies a lone keeper should have had.
+- **Ren:** hears one of their own teacher's sayings in a stranger's mouth: a keepers' saying, common to the order.
+  A quiet moment about what is inherited. Ren's teacher's own story stays with Ren's personal quest (sealed S2).
+- **Suzu:** the etoki teller is a performer too; Suzu helps tell the ninety-ninth tale at the vigil.
+
+**Evolving community.** The lanterns relit; pilgrims return; the lodge becomes a waystation inn; in the postgame
+the hall's door opens (R5).
+
+**Illustrations.**
+1. The stone-lantern road at dusk.
+2. The vigil: ninety-nine wicks and one shadow.
+3. The lodge relit.
+
+**Size:** about 14 maps, 20 NPCs, 5 creatures and a boss, about 45 drills, 7 challenges.
+
+**Risks.**
+- **Explaining too much.** It must deepen the mystery, never pre-empt the finale (sealed S1, S2).
+- **Ren's quest.** Their teacher's story belongs to it.
+- **Classical Japanese** stays optional, glossed and labelled.
+- **Folklore labelling** (spec line 32): real customs labelled real; the keepers' lore labelled fiction.
+- **Walking** (spec line 56): the road must be dense with decisions, with fast travel between relit waystations.
 
 ---
 
@@ -564,7 +691,9 @@ one per story phase. This is the region's main authoring cost.
 
 **Placement.** Postgame superdungeon: Robin's "100 Trials". It sits in the old keepers' house in the hills
 (Reedwake's lantern keepers had a teacher, and that teacher's order had a hall). Seeded as folklore from the start
-of the game (Tsuru, then tellers in every new region).
+of the game (Tsuru, then tellers in every new region). **In Chapter 7 the party walks past it** (R8): shut, because
+the hundredth tale was never told, and at the chapter's vigil they refuse the tale that wanted that place. In the
+postgame the door opens, and the hundredth tale is finally told: the player's own journey.
 
 **Inspiration (real, labelled).** 百物語怪談会 (hyakumonogatari kaidankai) was an Edo-period gathering where people
 lit a hundred lamps or candles, told a hundred strange tales, and put out one light after each. Legend held that

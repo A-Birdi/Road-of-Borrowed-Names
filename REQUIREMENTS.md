@@ -514,6 +514,18 @@ Evidence kinds as in COVERAGE.md: U unit, B browser (headless Chromium), V looke
 - [v] BA21 Battle art restyled toward the owner's reference (party: the player in every look option and the four companions; creatures A and B: every family), motion and timings kept, memory 38.58 MiB of 48. Evidence: B battle_party, characters, creatures_a, battle_creatures_b, battle_anim, battle_budget; U creatures_a_restyle and the party/creatures B unit tests; docs/screenshots/battle/*_restyle/. The art judgements are self-reviews (BA14).
 - [b] BA14 Not verified: Firefox, Safari, real phones and the foldable, human judgement of the art, a native speaker's review.
 
+## Audit defects (Robin's request of 2026-10-07: "Fix the bugs you've found"; docs/future/plan/11_CONTRADICTIONS.md part D; VALIDATION.md "Audit defects fixed (2026-10-07)")
+Each fix has a check that fails on the previous source and passes now: U `tests/unit/audit_fixes.test.mjs` (22/0), B
+`tests/e2e/audit_fixes.mjs` (4/0).
+- [v] AD1 Words › Grammar met lists the grammar points met, in the order met, with furigana (it always showed its empty message: it read `RB.grammar.points`, which doesn't exist). B audit_fixes 1.
+- [v] AD2 The lantern list labels a grammar lamp with its point's title (same cause). U audit_fixes; B practice_a_lamps 51/51.
+- [v] AD3 Translate in story activities (orders, letters) marks only the customer or letter it was used on as assisted. B audit_fixes 2 and 3.
+- [v] AD4 A Foundations copy step (the model shown) is recorded as guided practice, not unaided handwriting (spec line 188); the feedback says "Guided practice". B audit_fixes 4; B learning_ui 15/0.
+- [v] AD5 Promotion past box 2 needs a clean typed or handwritten answer in the current run of clean answers (one attempt ever, even a wrong one, used to unlock choice-only promotion). Existing boxes are kept; assisted answers neither count nor break the run (C-35, the lead's judgement at Robin's request). U audit_fixes; U the full suite.
+- [v] AD6 The route chart draws only roads that can be walked (the Cinder–Lanternfall line is gone); a test walks every chart road through the maps. U audit_fixes.
+- [v] AD7 Creature patrols draw from the world's own seeded stream, so a wandering creature no longer changes which language task comes next; the world engine has no `Math.random` left. U audit_fixes.
+- [v] AD8 The validator checks ordering `alts` (a list of orders, each buildable from the step's tiles, none repeating the answer). It found one unbuildable alternative (`sa.di8`, Intermediate), which became an explanation shown after the answer. `node tools/validate.mjs`: no errors.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

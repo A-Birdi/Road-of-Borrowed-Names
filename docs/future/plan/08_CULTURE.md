@@ -1,6 +1,6 @@
 # 08 · Culture, social life, festivals and pastimes
 
-*Expansion plan, draft 1 (2026-10-07). Planning only.*
+*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
 
 Robin [R0]: "dialects… etiquette in public places, politeness, social hierarchy review, and more ideas steeped in
 the Japanese culture." [R1]: all of Astra's group E is "solid", especially folklore (A49) and festival planning
@@ -167,6 +167,8 @@ word-of-mouth misunderstandings, mystery compel a fun side story."
   a bonding activity with the companion.
 - [R2 §6]: the minigames survive the festival, in a building or through the companion, "not gone forever".
 - Streaks and high scores are allowed in these games, as the player's own records.
+- **Robin's decision (2026-10-07, C-17):** every game opens in an **untimed practice mode that gives no rewards**;
+  a **timed mode** is opt-in.
 
 **The Opening of the River (川開き) in Manybridge**, Chapter B's finale. Its name and fireworks come from a real
 Edo custom, labelled.
@@ -191,18 +193,23 @@ Optional tasks add things (a second stall row, a children's corner). Nothing is 
 - At the climax, watch the fireworks with the companion. A bonding scene within the existing Bond table, and the
   chapter's animated illustration (K2).
 
-**3. The games** (each with personal bests and, where natural, streaks):
+**3. The games.** Each has two modes:
+- **Practice** (the default): untimed, no score kept, no rewards. Help never changes anything.
+- **Timed** (opt-in, chosen each time): the same game against a clock, under fishing's conditions (off by default,
+  paused by help, needed for nothing). It keeps the player's personal bests and, where natural, streaks.
+- Whether the timed mode gives anything beyond personal records, and whether trying each game earns a stamp, is
+  open (C-55). The recommendation: personal records only; festival keepsakes and stamps come from taking part in
+  the festival's story, never from scores.
 
-| Game | What it is | Language | Timing |
+| Game | What it is | Language | Timed mode adds |
 |---|---|---|---|
-| **Katanuki** (型抜き, real) | Trace a candy-sheet shape out without breaking it, on the handwriting pad | Stroke control; shapes named in Japanese | Untimed; a "steady hand" judgement of the trace |
-| **Water-balloon fishing** (ヨーヨー釣り, real) | Hook the balloon whose label you're asked for | Reading kana or kanji labels | Untimed by default |
-| **Ring toss** (輪投げ) | Aim at the prize whose description is read out (text and optional voice) | Comprehension of descriptions | Untimed aim |
-| **Word lottery stall** | Draw a word and use it in a sentence for the stall-keeper's prize | Sentence forging (L7) | Untimed |
-| **Taiko** (opt-in) | A drum pattern from written rhythm words (ドン, カッ) | Reading onomatopoeia | **Opt-in timed mode only**, like fishing's; the default is a call-and-response pattern game |
+| **Katanuki** (型抜き, real) | Trace a candy-sheet shape out without breaking it, on the handwriting pad | Stroke control; shapes named in Japanese | A time for the trace (the "steady hand" judgement is the same) |
+| **Water-balloon fishing** (ヨーヨー釣り, real) | Hook the balloon whose label you're asked for | Reading kana or kanji labels | Balloons drift; how many in a round |
+| **Ring toss** (輪投げ) | Aim at the prize whose description is read out (text and optional voice) | Comprehension of descriptions | A round of throws against the clock |
+| **Word lottery stall** | Draw a word and use it in a sentence for the stall-keeper | Sentence forging (L7) | Sentences in a round |
+| **Taiko** | A drum pattern from written rhythm words (ドン, カッ) | Reading onomatopoeia | Playing in time; the practice mode is a call-and-response pattern game |
 
-- **Streaks and high scores** are shown only in the game itself. They are the player's own, never ranked, never
-  rewarded with anything but a stamp for *playing* each game once.
+- **Personal bests** are shown only in the game itself. They are the player's own, never ranked.
 - **After the festival** the games move to the **festival hall** in Manybridge and to the **boat's Distractions
   corner** (W8). The companion can also challenge the player (tandem or versus), as Robin suggested. The
   Distractions list in the folio shows them, but "Begin here" is only at a venue or with the companion
@@ -248,22 +255,43 @@ A collectible card game is **excluded**. Each pastime below is judged on its own
 
 ### Shogi (将棋)
 
+**Robin's direction (2026-10-07):** build it as I see fit; Robin has never played, "so rules won't land with me
+immediately", and will say if something feels off. So the design starts from someone who has never seen a shogi
+board.
+
 - **Canon hook.** Fuku plays shogi on Saltglass's hill bench, and a pawn still lies there. A half-finished game
-  appears elsewhere too (sealed note S9).
-- **Design.**
-  - Real rules (spec line 32 requires authenticity): drops, promotion, all eight pieces.
+  appears elsewhere too (sealed note S9). Fuku is the teacher.
+- **A ladder, not a wall.** Each rung is playable on its own and takes minutes to learn. Nobody has to climb to
+  the top:
+  1. **Meet the pieces.** One piece at a time: its kanji with reading, how it moves (arrows on the piece), and a
+     one-move puzzle that uses it ("Take the pawn with your silver"). Eight short lessons, in any order.
+  2. **Hasami shogi** (はさみ将棋, real): a children's game on a shogi board with pawns only. Capture by
+     sandwiching. It teaches the board before the rules of shogi proper.
+  3. **The small board:** a 3×4 board with four kinds of piece, in the spirit of the children's teaching variants
+     played in Japan. It teaches capturing and **drops** (putting a captured piece back into play), the idea that
+     makes shogi different from chess. Built with the game's own pieces and names; the commercial teaching game of
+     this kind has its own brand, which isn't used.
+  4. **Mini-shogi** (5五将棋, real, a 5×5 variant): every idea of the full game, including **promotion**, on a
+     board small enough to see at once.
+  5. **Full shogi** with real rules (spec line 32 requires authenticity): drops, promotion, all eight pieces. Fuku
+     starts with **handicap games** (駒落ち, real: the stronger player removes pieces), so a beginner can win.
+- **Always available, never penalised:**
+  - **Show moves:** highlight where a piece can go.
+  - **Why?** Fuku explains the last move in a sentence at the player's level.
+  - **Take back** a move in friendly games.
   - **Pieces show their kanji with readings.** Every displayed kanji needs furigana, by rule, and there is no
-    furigana-off toggle. Learner shogi sets with readings and movement arrows exist in Japan, so this is faithful.
-    Movement hints are optional.
-  - **Opponents:** Fuku and other NPCs at a few levels, with a small built-in engine (no Workers, by CSP).
-  - **Tsume-shogi puzzles** (詰将棋, real): bite-size "checkmate in N" puzzles, the strategy-puzzle side.
-  - **No clock** (no byoyomi), by the no-timer rule.
+    furigana-off toggle. Learner sets with readings and movement arrows exist in Japan, so this is faithful.
+- **Tsume-shogi puzzles** (詰将棋, real): bite-size "checkmate in N" puzzles at every rung, the strategy-puzzle side.
+- **No clock** (no byoyomi), by the no-timer rule. Losing costs nothing; nothing in the story needs a win (G15).
+- **Opponents:** Fuku and other NPCs at a few levels, with a small built-in engine (no Workers, by CSP).
 - **Language value:** piece names are real kanji (王, 飛車, 角, 金, 銀, 桂馬, 香車, 歩); shogi vocabulary (王手,
   成る, 持ち駒) and commentary at the player's level.
-- **Pros:** deep, culturally real, a natural NPC bond; the puzzles suit short sessions.
-- **Cons:** a shogi engine is real work; balancing levels; the board on a phone.
+- **Pros:** deep, culturally real, a natural NPC bond; short sessions; a beginner can play the first rung at once.
+- **Cons:** a shogi engine is real work; balancing levels; the board on a phone. The ladder adds lessons and two
+  small variants to build.
+- **Playtest:** Robin, as a newcomer, is the right first player. If a rung doesn't land, that rung changes.
 - **Where:** Saltglass hill bench, the boat, Manybridge's Exchange hall.
-- **Effort:** L.
+- **Effort:** L (plus M for the ladder).
 
 ### Karuta (かるた)
 
@@ -299,9 +327,13 @@ Its contracts stay (Bond only through its two existing events). **Effort:** M.
 
 - Real customs, labelled: wash first, keep towels out of the water, no swimming.
 - **Each inn's rules differ**: the public-space skill (C2).
-- **Bathing scenes** are towel-wrapped, nonsexual and adults only, as Robin directs. They happen in **private
-  reserved baths** (貸切風呂, real), which keeps them pronoun-neutral for the player
-  ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-27).
+- **Bathing scenes** are towel-wrapped, nonsexual and adults only, as Robin directs.
+- **Which bath follows pronouns** (Robin, 2026-10-07; the game asks for pronouns, never a gender): she/her uses the
+  women's bath (女湯), he/him the men's (男湯). For they/them and custom pronouns the recommendation is the inn's
+  reserved private bath (貸切風呂, real and common), with no question asked; that choice is open
+  ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-56). Companions follow their own pronouns the same way.
+- When the player and the companion are in different baths, they talk over the bamboo partition, a familiar
+  onsen moment.
 - **Comfort option:** "Bathing scenes: shown / summarised", for players who prefer.
 
 ## C14 · Stepping into a community's quarrel
