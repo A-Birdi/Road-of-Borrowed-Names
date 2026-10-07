@@ -1,6 +1,6 @@
 # 10 · Story: more chapters, the Hush, companions and the postgame
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
 spec describes them. Every decision that depends on their contents points to a numbered note in
 [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md), which you should not open until you've finished the game.*
 
@@ -101,8 +101,22 @@ quest arrive by ferry in Chapter 9 and miss nothing essential.
   - Nao and Ren use they/them (Nao uses 俺 in Japanese); Mio and Suzu use she/her.
   - Suzu: the canon so far says she wants a double-act partner; Robin's impression is a star of sorts. Revisit
     after Robin has played her story (C-62).
-  - No romance, jealousy or resentment wording (an existing test enforces this).
+  - No jealousy or resentment wording (an existing test enforces this). Romance is now allowed in one narrow form
+    (§7a).
   - Unchosen candidates remain people in the world and never resent the player.
+
+## 7a. Romance (Robin, C-63)
+
+- **What:** holding hands and/or a kiss with the chosen companion. Nothing explicit, ever.
+- **When:** a story-conclusion moment at the ending, depending on Bond; very rarely elsewhere.
+- **Who:** the chosen companion only, any of the four, whatever the player's pronouns. Canon makes the companions
+  adults, and the player is an adult traveller.
+- **How it is offered** (proposal, C-67): always the player's choice in the scene, answered as the romantic moment
+  or as the closest of friends; both warm, Bond the same either way; the companion's own consent shown in their
+  voice. At most one earlier moment, holding hands only, after the Steamhollow reconciliation.
+- **Unchanged:** no jealousy, resentment or sulking; unchosen candidates never resent the player. The
+  companionship contract and its test change only to allow romance wording inside scenes marked as romance
+  moments.
 
 ## 8. Separations from the companion (Robin's rule)
 
@@ -143,7 +157,8 @@ Trying to continue or load one says so first, and offers **a fresh start through
   pastime records come with you."
 - Accepting plays the farewell (§9a) with that save's companion, then starts the new run. Declining leaves the old
   save exactly as it was.
-- Where the new run is written (proposal, C-66): in the same slot, after that confirmation.
+- Where the new run is written (C-66): the player's choice, either that save's own slot (replacing it) or another
+  slot, with an explicit confirmation before anything is replaced.
 - All six new chapters ship together as one edition, so this happens once.
 - Every other update, before and after, keeps saves working as the project rules require.
 
@@ -152,10 +167,14 @@ Trying to continue or load one says so first, and offers **a fresh start through
 **What New Game+ keeps** (Robin, C-54): personal learning records, mastery stars, illustrations and their witnessed
 seals, stamps, pastime records (shiritori, shogi, hanafuda, karuta, festival personal bests), settings and other
 personal metadata. **What it never keeps:** story or character progression, quests, the companion and Bond,
-satchel equipment and items. Details to confirm (keepsakes, the traveller, which slot): C-66.
+satchel equipment and items, keepsakes and lore included. **The traveller stays as they are**: same name, pronouns
+and appearance, with nothing to re-create (C-66).
 
 **Why it matters.** Each run can choose a different companion, and the illustrations witnessed in every run
 accumulate. Over several runs a player can collect every story illustration with every companion.
+
+**Which slot** (C-66): the player chooses, either the originating save's own slot (replacing it) or another slot
+(keeping it), with an explicit confirmation before anything is replaced.
 
 **Where it is offered.**
 - **At the end of the game, by default.** After the ending and its epilogue, the game offers "Begin again (New
@@ -164,7 +183,8 @@ accumulate. Over several runs a player can collect every story illustration with
 - **From the Inn Ledger** when starting a new game, as today.
 - **From an old six-chapter save** (§9).
 
-**The farewell** (Robin's idea). Starting New Game+ plays a short scene with the run's companion:
+**The farewell** (Robin's idea). Starting New Game+ plays a short scene with the companion of the **originating
+save**, the run the player is leaving, never the companion of a save being overwritten:
 - the companion has unfinished work here and can't come; they hope to meet again;
 - the lanterns along the road brighten and the road folds back on itself: the traveller is drawn back to the
   morning they first arrived at Reedwake;

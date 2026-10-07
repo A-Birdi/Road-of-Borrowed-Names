@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -157,7 +157,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | Folklore and word-of-mouth mysteries | C9 | Planned |
 | A festival with kimonos, fireworks, minigames and companion bonding | C10, C10a | Planned |
 | Suzu in a travelling troupe | R1, C11 (C-31; her dream revisited after Robin's playthrough, C-62) | Planned |
-| An onsen with on-screen, towel-wrapped bathing | R3, C13 (baths follow pronouns; they/them and custom open, C-56) | Planned |
+| An onsen with on-screen, towel-wrapped bathing | R3, C13 (baths follow pronouns; they/them and custom choose once, C-56) | Planned |
 | Printers: stories from building blocks, judged by readers | C15 | Planned |
 | The battle system for non-enemies: infighting groups, procedures; restart from step 1; step away and examine | E1, E7, E8 | Planned |
 | The Trials covering everything; folklore; Tsuru | D9 | Planned |
@@ -224,7 +224,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | Manzai with Suzu as her 相方 | C11 |
 | Kotonoha (言の葉) and its Kokinshū origin | R4 |
 | The Hall of a Hundred Tales (百物語), inverted to relighting | D9 |
-| Baths by pronoun; the reserved bath for they/them and custom (proposed, C-56) | R3, C13 |
+| Baths by pronoun; they/them and custom choose once; Nao and Ren always their own choice (C-56) | R3, C13 |
 | Three kinds of separation: staying behind (the Mist Barrier), in danger (the Root Hollows), a disagreement (Steamhollow) | 10_STORY §8 |
 | The new settlement as postgame region | R7 |
 | The boat as a home and Distractions venue | W8 |
@@ -255,4 +255,13 @@ item, or records why it was excluded or folded into another. Statuses:
 | Playtime: about 15 h brisk, about 40 h for a new learner | 10_STORY §11 | Planned (checked by timed play) |
 | Hanafuda | C12 | Planned |
 | Persistent health only where a dungeon specifies it | D2 | Planned |
-| Avoidable, restrained deaths; never NPCs who matter; reflection afterwards | E17, 01 §4 | Planned (C-65 to confirm) |
+| Avoidable, restrained deaths; never NPCs who matter; reflection afterwards | E17, 01 §4 | Planned (C-65 decided) |
+
+## 8. Robin's third round of answers (2026-10-07)
+
+| Idea | Plan item | Status |
+|---|---|---|
+| Romance limited to holding hands and/or a kiss; a story-conclusion moment by Bond; nothing explicit | 10_STORY §7a | Planned (how it is offered: C-67) |
+| Trying something else when a response does nothing; *tried* marks | E5, E8 | Planned |
+| New Game+ in either slot; the farewell from the originating save; the traveller unchanged; no keepsakes or lore | 10_STORY §9a, K9 | Planned |
+| Nao and Ren always choose the same bath | C13 | Planned |

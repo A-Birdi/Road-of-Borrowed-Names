@@ -1,6 +1,6 @@
-# The Road of Borrowed Names: expansion plan (draft 3)
+# The Road of Borrowed Names: expansion plan (draft 4)
 
-*2026-10-07. Draft 3 records Robin's two rounds of answers from the same day. A planning document, not authorised work: nothing
+*2026-10-07. Draft 4 records Robin's three rounds of answers from the same day. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
 
@@ -107,22 +107,22 @@ never deleted.
 | C-56 | Baths follow pronouns; they/them and custom **choose once, and the choice is kept** |
 | C-58 | **The Wayfarer's Ledger** (pause menu) and **the Inn Ledger** (saves) |
 | C-61 | About **15 hours** brisk for the main story; about **40 hours** for a new learner taking in everything |
+| C-63 | **Romance**: holding hands and/or a kiss with the chosen companion, at the ending by Bond, very rarely elsewhere; nothing explicit |
+| C-64 | The "effect here" preview in combat only; elsewhere read the situation and try something else (a *tried* mark helps) |
+| C-65 | Witnessed conflicts shown with restraint, with a "shown / summarised" setting and a reflection scene |
+| C-66 | New Game+: no keepsakes or lore; the traveller unchanged; either slot; **the farewell from the originating save** |
+| C-56 | Nao and Ren always choose the same bath, in character |
 | Part B | C-05 to C-08 and C-10: the proposals stand as written |
 
 ## Still waiting for you
 
-Labelled in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A3:
+Labelled in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md):
 
-1. **C-63 (Open):** romance. Your quarrel answer mentions "romantic partners"; the game currently keeps romance out
-   (a test enforces it). Keep companions as close friends, or add an optional romance path?
-2. **C-64 (Confirm):** the honest "effect here" line on cards in combat only; puzzles and disputes leave the
-   judgement to you.
-3. **C-65 (Confirm):** a witnessed conflict shown with restraint, with a "shown / summarised" setting.
-4. **C-66 (Confirm):** New Game+ details: keepsakes stop carrying; the traveller's name and look carry (changeable);
-   which slot; a solo farewell when no companion was chosen yet.
-5. **C-56 detail (Confirm):** Nao and Ren choose their own bath, in character.
-6. **C-62 (Revisit):** Suzu's dream, after you finish the story.
-7. **Part B:** 25 smaller tensions, each with a proposal that stands until you say otherwise.
+1. **C-67 (Confirm):** the romance moment is always your choice in the scene (romantic, or the closest of
+   friends; Bond the same either way), with the companion's own consent shown; at most one earlier moment, holding
+   hands only, after the Steamhollow reconciliation.
+2. **C-62 (Revisit):** Suzu's dream, after you finish the story.
+3. **Part B:** 25 smaller tensions, each with a proposal that stands until you say otherwise.
 
 ## Fixed in the current game
 

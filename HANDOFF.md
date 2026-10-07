@@ -140,7 +140,7 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 3 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 4 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
@@ -157,8 +157,13 @@
     just for fun; the Atlas keeps a fixed shape with varied rooms; no size concern below 100 MB; baths follow
     pronouns, they/them and custom choose once; the Wayfarer's Ledger and the Inn Ledger; about 15 h brisk and about
     40 h for a new learner; hanafuda in; avoidable deaths, never to NPCs who matter.
-  - **Still open** (labelled in 11_CONTRADICTIONS.md part A3): C-63 romance (open); C-64, C-65, C-66 and the C-56
-    detail (confirm); C-62 Suzu (revisit after the playthrough); 25 part B proposals.
+  - **Third round (same day):** romance limited to holding hands and/or a kiss with the chosen companion, at the
+    ending by Bond, very rarely elsewhere, nothing explicit; the "effect here" preview in combat only, with *tried*
+    marks elsewhere; witnessed conflicts shown with restraint; New Game+ keeps the traveller unchanged, carries no
+    keepsakes or lore, may use either slot, and plays the originating save's farewell; Nao and Ren always choose
+    the same bath.
+  - **Still open** (labelled in 11_CONTRADICTIONS.md): C-67 how the romance moment is offered (confirm); C-62 Suzu
+    (revisit after the playthrough); 25 part B proposals (Robin will review them at home).
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record
     judgement to the lead): the Grammar met page, lantern grammar labels, activity Translate, Foundations copy steps,
     the promotion rule, the chart's phantom road, creature patrols' random stream, and the `alts` validator (which

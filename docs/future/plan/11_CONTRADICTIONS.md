@@ -1,6 +1,6 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only. Spoiler-safe.*
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only. Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
 ideas for covering each. That one is the model:
@@ -22,7 +22,8 @@ ideas for covering each. That one is the model:
 The register has five parts:
 - **A. Decisions that blocked a feature.** All answered on 2026-10-07.
 - **A2. Questions raised by those answers.** All answered in the second round, except Suzu (revisit).
-- **A3. Questions raised by the second round.** **These are the ones waiting for you.**
+- **A3. Questions raised by the second round.** All answered in the third round.
+- **A4. Questions raised by the third round.** **The one waiting for you.**
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
@@ -31,11 +32,7 @@ The register has five parts:
 
 | # | Question | Label |
 |---|---|---|
-| [C-63](#c-63--romance) | Romance: keep companions as close friends, or an optional romance path? | **Open** |
-| [C-64](#c-64--the-effect-here-preview-and-analysis-from-c-60) | The "effect here" preview in combat only; puzzles and disputes leave the judgement to you | **Confirm** |
-| [C-65](#c-65--how-gruesome-a-witnessed-conflict-may-be-from-c-11) | A witnessed conflict shown with restraint, with a "shown / summarised" setting | **Confirm** |
-| [C-66](#c-66--new-game-details-from-c-54) | New Game+ details: keepsakes, the traveller, which slot, no companion yet | **Confirm** |
-| [C-56](#c-56--the-bath-for-theythem-and-custom-pronouns-from-c-27) | Nao and Ren choose their own bath, in character | **Confirm** |
+| [C-67](#c-67--how-the-romance-moment-is-offered-from-c-63) | The romance moment is always your choice at the ending; at most one earlier moment, holding hands only | **Confirm** |
 | [C-62](#c-62--suzus-dream-from-c-31) | Suzu: star, double act, or both | **Revisit** |
 | Part B | 25 smaller tensions with a proposal each | **Open** · proposal stands |
 
@@ -196,13 +193,13 @@ timed mode keeps personal records and nothing else. No stamp or keepsake comes f
 story (setting up, the night, the fireworks) can still give its own story moments.
 
 ### C-56 · The bath for they/them and custom pronouns (from C-27)
-**Decided · detail open.** Robin: "For unclear pronoun choices, the player should be given a choice, and stick with
-it if they revisit the baths." So:
+**Decided.** Robin: "For unclear pronoun choices, the player should be given a choice, and stick with it if they
+revisit the baths." So:
 - she/her: the women's bath; he/him: the men's bath, with no question;
 - they/them and custom pronouns: the player chooses once, at the first bath (men's, women's or the inn's reserved
   bath), and the game keeps that choice for every later visit.
-- **The detail (Confirm):** Nao and Ren, who are they/them, make their own choice in character, written once for
-  each and kept. The player is never asked to choose for them.
+- **Nao and Ren** (they/them) make their own choice in character, and always the same one: written once for each
+  and kept (Robin, third round). The player is never asked to choose for them.
 
 ### C-57 · What "fixed at generation" means for the Atlas (from C-18)
 **Decided.** Yes: each run's shape is fixed when it is generated. Robin added an idea: the rooms inside that fixed
@@ -243,53 +240,65 @@ overall dream."
 
 ---
 
-## A3. Questions raised by the second round
+## A3. Questions raised by the second round (answered 2026-10-07, third round)
 
 ### C-63 · Romance
-**Open.** Robin's C-59 answer describes quarrels as conflict "between friends or more romantic partners". Today the
-companionship contract keeps romance out: no romance, jealousy or resentment wording, and a unit test enforces it
-(`tests/unit/company_bond.test.mjs`). Is that a description of where the language is used in real life, or a wish
-for romance in the game?
-- **(a) Keep companions as close friends** (today). The language of quarrelling and making up is the same, so
-  C-59's lessons work unchanged. **Recommended unless you want romance.**
-- **(b) An optional, mutual romance path** with the chosen companion. A large change: every companion's writing and
-  Bond events, consent and pacing, the player's pronouns, the contract and its test, and the travel volume.
+**Decided.** Robin: "romance is fine, but probably limited to a kiss and/or holding hands — very much a story
+conclusion moment, depending on Bond. This could just be for the story ending, or very rarely elsewhere. Nothing
+explicit."
+- **Who:** only the chosen companion. Canon makes all four companions adults (story bible: "Adults, not
+  one-note"), and the player is an adult traveller. Any companion, whatever the player's pronouns.
+- **What:** holding hands and/or a kiss. Nothing explicit, ever.
+- **When:** the story's ending, at high Bond. Very rarely elsewhere (C-67).
+- **Unchanged:** no jealousy, no resentment, no sulking; unchosen candidates never resent the player; Bond never
+  drops. The contract and its test (`tests/unit/company_bond.test.mjs`) change only to allow romance wording inside
+  scenes marked as romance moments.
+- How the moment is offered: C-67.
 
 ### C-64 · The "effect here" preview and analysis (from C-60)
-**Confirm.** Robin asked earlier for combat cards to say when a response would do nothing (E5, "denoted on the
-actual choice before I make it"). C-60 now asks puzzle and social encounters to leave that judgement to the player.
-Proposal:
-- **Combat** keeps the honest "effect here" line (E5). A creature's state is visible and its rules are fixed, so
-  the preview teaches.
-- **Puzzle, social and objective encounters** describe what each response does *in general* ("loosens what is
-  tangled"), not whether it will work here. Reading the situation is the challenge. A response that does nothing
-  says so plainly afterwards ("Nothing here is tangled"), costs only that action, and is never treated as a
-  language mistake.
+**Decided.** The proposal stands, with Robin's note that "puzzles or situations may evolve turn by turn, it may
+suffice to try something else".
+- **Combat** keeps the honest "effect here" line (E5).
+- **Puzzle, social and objective encounters** describe what each response does in general; the player reads the
+  situation.
+- **Trying something else is the answer** when a response does nothing. To make that easy, a response that did
+  nothing is marked *tried* on its card ("Tried: nothing was tangled") until the situation changes, when the mark
+  clears, because it might work now. Nothing is ever hidden or locked; the mark only saves the player repeating
+  themselves.
 
 ### C-65 · How gruesome a witnessed conflict may be (from C-11)
-**Confirm.** Robin: a conflict may be "a little gruesome, just not to NPCs that matter", and a failure never turns on
-the player; they may witness something terrible and reflect on it with the companion. The story bible's tone is
-"warm, restrained humour… occasional unease". Proposal:
-- shown with restraint: aftermath, silhouettes, sound and reactions, cutting away at the worst moment, never
-  explicit gore;
-- a comfort setting, "Distressing scenes: shown / summarised", like the bathing setting;
-- a reflection scene with the companion afterwards, every time.
+**Decided.** As proposed: shown with restraint (aftermath, silhouettes, sound and reactions, cutting away at the
+worst moment, never explicit gore), a "Distressing scenes: shown / summarised" setting, and a reflection scene with
+the companion every time.
 
 ### C-66 · New Game+ details (from C-54)
-**Confirm.** Four details the answer leaves open, with proposals:
-1. **Keepsakes and story discoveries.** Today's New Game+ carries cosmetic keepsakes, the Atlas's cosmetic rewards
-   and the whole notebook. Under Robin's definition (no satchel equipment or items; no story progression):
-   keepsakes, the Atlas cosmetics and the pet stop carrying, and so do lore notes and Known details (story
-   discoveries). The keepsake catalogue's "found" record and the noted-words notebook carry as personal metadata.
-   The full table is in [09_RECORDS.md](09_RECORDS.md) K9.
-2. **The traveller.** Name, pronouns and appearance carry over, since the same traveller returns. They can be
-   changed at the start, on the creation screen filled in with the old values.
-3. **Where the fresh start goes.** From an *old six-chapter save*: the same slot, after a confirmation that lists
-   what carries and what doesn't; the old record is then replaced (the spec allows a destructive save operation
-   with explicit confirmation). From the *end of the game*: a slot the player chooses, and the finished campaign
-   stays as it is, so its ending remains (spec line 252: New Game+ must not break the original timeline).
-4. **No companion yet.** An old save from before the companion was chosen gets a short solo version of the
-   farewell (the road, the lanterns, the promise of return).
+**Decided.** Robin:
+1. **Keepsakes and lore don't carry.** Nor do the Atlas cosmetics, the pet or Known details. The keepsake
+   catalogue's "found" record and the noted-words notebook carry as personal metadata.
+2. **The traveller stays as they are**: name, pronouns, appearance and (for they/them and custom pronouns) the bath
+   they chose. No change is offered.
+3. **New Game+ allows either**: beginning in the originating save's own slot (replacing it) or in another slot
+   (keeping it). Replacing anything needs an explicit confirmation. (My reading of "allow either"; say if you meant
+   something else.)
+4. **The farewell comes from the originating save**: its companion says goodbye, not the companion of a save being
+   overwritten.
+5. An old save from before a companion was chosen gets the short solo farewell.
+
+---
+
+## A4. Questions raised by the third round
+
+### C-67 · How the romance moment is offered (from C-63)
+**Confirm.** Proposal:
+- **Always the player's choice.** At the ending, if Bond is high, the moment is offered in the scene itself: the
+  companion says, in their own words, what the journey has meant, and the player can answer with the romantic
+  moment (holding hands, a kiss) or as the closest of friends. Both are warm; neither is the "right" one; Bond is
+  the same either way.
+- **The companion's own consent is shown**, in their voice; nothing happens to anyone by surprise.
+- **Elsewhere, at most one earlier moment, holding hands only:** after the reconciliation in Steamhollow (Chapter
+  11), at high Bond, and only as the player's choice there too.
+- **Each moment has its own travel-volume illustration**, witnessed like any other; in New Game+ runs these
+  accumulate per companion.
 
 ---
 
@@ -316,7 +325,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review
 | C-24 | Printing stories "without restraint" vs never faking understanding of free text | R1; spec lines 182, 206 | Story blocks with tags; readers react only to what the blocks say; proofreading kept separate | C15 | **Open** · proposal stands |
 | C-25 | Construction tasks vs "accept every valid answer" | R0; spec line 138; validator gap | Authored alternatives, checked by an upgraded validator | L7, S5 | **Open** · proposal stands |
 | C-26 | A dialect field guide vs "questions always use standard Japanese" and no caricature | R1; dialect rules | The guide is for understanding only; questions stay standard; native review per dialect | C5 | **Open** · proposal stands |
-| C-27 | On-screen bathing vs the player's chosen pronouns (Japanese public baths are usually separated by sex) and tone | R1; spec lines 62, 72 | **Robin: follow pronouns.** she/her: the women's bath; he/him: the men's bath; they/them and custom pronouns: C-56. Towel-wrapped, nonsexual, adults; a "shown / summarised" comfort setting | R3, C13 | **Decided · detail open** (C-56) |
+| C-27 | On-screen bathing vs the player's chosen pronouns (Japanese public baths are usually separated by sex) and tone | R1; spec lines 62, 72 | **Robin: follow pronouns.** she/her: the women's bath; he/him: the men's bath; they/them and custom pronouns: C-56. Towel-wrapped, nonsexual, adults; a "shown / summarised" comfort setting | R3, C13 | **Decided** (C-56) |
 | C-28 | Shogi pieces vs furigana on every kanji (and no furigana toggle) | spec line 186; project rule | Pieces show their kanji *with readings*, as Japanese learner sets do. **Robin: build it as I see fit; Robin has never played**, so it is designed to teach from nothing (08_CULTURE C12) | C12 | **Decided** (2026-10-07) |
 | C-29 | A "Grow" route for Advanced players vs no level above Advanced | R0; spec lines 168, 170 | Grow means nuance, genres and conflicting perspectives for A; never an invented tier or certification | L18 | **Open** · proposal stands |
 | C-30 | Road events that "disappear for a time" vs no missable content | R1; spec line 208 | They re-offer themselves on later visits until resolved; the Journey keeps them as unfinished | W5 | **Open** · proposal stands |
@@ -377,6 +386,11 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review
 | Hanafuda | In | C-33 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
+| Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |
+| The "effect here" preview | Combat only; elsewhere read the situation, try something else; a *tried* mark until the situation changes | C-64 |
+| Witnessed conflicts | Shown with restraint; a "shown / summarised" setting; a reflection scene | C-65 |
+| New Game+ details | No keepsakes or lore; the traveller unchanged; either slot; the farewell from the originating save | C-66 |
+| Nao's and Ren's bath | Their own choice, always the same | C-56 |
 
 ---
 

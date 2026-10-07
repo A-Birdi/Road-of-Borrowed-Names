@@ -1,6 +1,6 @@
 # 08 · Culture, social life, festivals and pastimes
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
 
 Robin [R0]: "dialects… etiquette in public places, politeness, social hierarchy review, and more ideas steeped in
 the Japanese culture." [R1]: all of Astra's group E is "solid", especially folklore (A49) and festival planning
@@ -349,8 +349,8 @@ Its contracts stay (Bond only through its two existing events). **Effort:** M.
   first bath: the men's, the women's or the inn's reserved bath (貸切風呂, real and common). The game keeps that
   choice for every later visit.
 - **Companions:** Mio and Suzu use the women's bath. Nao and Ren, who are they/them, make their own choice in
-  character, written once and kept; the player is never asked to choose for them (to confirm,
-  [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-56).
+  character, always the same one, written once and kept; the player is never asked to choose for them
+  ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-56).
 - When the player and the companion are in different baths, they talk over the bamboo partition, a familiar
   onsen moment.
 - **Comfort option:** "Bathing scenes: shown / summarised", for players who prefer.

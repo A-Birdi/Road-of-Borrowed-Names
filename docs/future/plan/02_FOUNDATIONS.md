@@ -1,6 +1,6 @@
 # 02 · Foundations: the engine work everything else stands on
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
 
 These are the cross-cutting systems that several features need. Building them first keeps each later feature
 small and consistent. Every entry gives:
@@ -168,8 +168,9 @@ the new chapters ship. That removes draft 1's detour and migration design for th
   edition". Continue or Load on it first explains that the journey will begin again (Robin, C-54): no satchel
   equipment or items; settings, learning records, stars, illustrations and pastime records carry. Until the player
   accepts, its data is left exactly as it was (spec line 232: incompatible saves handled gracefully, never cleared).
-- **Accepting starts New Game+ from it** (the carryover in [10_STORY.md](10_STORY.md) §9a), with the farewell, in
-  the same slot after a confirmation (proposal, C-66).
+- **Accepting starts New Game+ from it** (the carryover in [10_STORY.md](10_STORY.md) §9a), with that save's
+  farewell, in its own slot or another, as the player chooses, with a confirmation before anything is replaced
+  (C-66).
 - **One New Game+ carryover function** serves all three ways in (the end of the game, the Inn Ledger, an old save),
   so "what carries" is defined once (spec line 252) and tested once.
 - **One boundary.** All six new chapters ship together, so saves stop only once.
@@ -305,7 +306,7 @@ Several plans contradicted written rules. Robin answered the blocking ones on 20
 | "Exactly two adventurers"; no operation removes the companion | spec lines 70, 290; HX52 | A story beat may separate them for a while; the same companion always returns; no one replaces them | C-12 |
 | "Defeat returns to a sensible checkpoint… without grinding" | spec line 128 | Unchanged for story dungeons; optional dungeons restart from the beginning | C-03 |
 | Battle themes rise strictly by chapter | audio rule ZM2 | Re-tiered for twelve chapters | C-22 (open) |
-| No romance wording | companionship contract; `company_bond` test | Unchanged unless Robin chooses a romance path | C-63 (open) |
+| No romance wording | companionship contract; `company_bond` test | Romance wording allowed only inside scenes marked as romance moments (holding hands, a kiss; nothing explicit); jealousy and resentment stay forbidden | C-63, C-67 |
 | Replays live in Shared memories, with event-time appearance | HX53 | The Main Menu gallery uses the Continue appearance | C-20 (open) |
 
 **Effort:** S (writing).

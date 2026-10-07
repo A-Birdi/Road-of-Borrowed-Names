@@ -1,6 +1,6 @@
 # 01 · Principles and guardrails
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only: nothing here is
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only: nothing here is
 authorised work until Robin selects a scope.*
 
 Everything in the later files is checked against this page. Where an idea elsewhere seems to break one of these
@@ -76,10 +76,12 @@ irreversible on its own [A, R2 §1].
   a conflict the player failed to resolve [C-11]. Such deaths are rare and carefully authored:
   - **avoidable**: a consequence the story lets the player prevent, and never one that stops the story going on;
   - **never NPCs who matter** (companion candidates, people central to a region's story);
-  - **a little gruesome is allowed**, shown with restraint (C-65, to confirm), with a "shown / summarised" setting;
+  - **a little gruesome is allowed**, shown with restraint (C-65), with a "shown / summarised" setting;
   - **never turned on the player**: failing to resolve a conflict means witnessing something terrible, then a
     scene reflecting on it with the companion; it is never a punishment, and never a random result of a failed
     Japanese answer.
+- **Romance** [C-63]: holding hands and/or a kiss with the chosen companion, at the ending and very rarely
+  elsewhere, depending on Bond; always the player's choice (C-67, to confirm); nothing explicit.
 - Capture and other outcomes come from the situation as written. Each event's author decides its possible outcomes
   and how the player's choices lead to each.
 

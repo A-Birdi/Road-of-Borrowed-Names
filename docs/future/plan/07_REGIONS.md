@@ -1,6 +1,6 @@
 # 07 · Regions
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
 names them. Anything that depends on their contents is in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md).*
 
 Robin's question for every region: *names, stories, unique encounters and mechanics; main quest or postgame; how
@@ -382,7 +382,7 @@ settled, not defeated.
   decline politely.
 - **The baths follow pronouns** (Robin, C-56): she/her uses the women's bath, he/him the men's. They/them and
   custom pronouns choose once (men's, women's or the inn's reserved bath, 貸切風呂, *kashikiri-buro*, real), and
-  the game keeps that choice. Nao and Ren make their own choice in character (to confirm). When the player and the companion are in different
+  the game keeps that choice. Nao and Ren make their own choice in character, always the same one (C-56). When the player and the companion are in different
   baths, they talk over the bamboo partition. Scenes are towel-wrapped and nonsexual (Robin's direction).
 - **House rules** (A42): learn each inn's own rules from signs and staff. They differ, deliberately.
 - **Steam cooking** (温泉卵, onsen eggs, and steamed buns): a cooking minigame. Follow a recipe card, take

@@ -1,6 +1,6 @@
 # 12 · Roadmap: a drafted order of execution
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only: phases begin only when Robin
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only: phases begin only when Robin
 authorises them.*
 
 Robin said time and difficulty are no issue, so the order below is chosen for **quality and risk**, not speed:
@@ -19,12 +19,12 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 | **2** | Language foundations | The evidence log, assistance categories, mastery exams and stars, word pages, sentence forging, validator upgrades, the review ledger | — (C-13, C-14 decided) |
 | **3** | Encounter engine | The actor model; Wait; conditions; arrivals; wanderers; objectives; procedures; social encounters; Resolve this step; story-dungeon help | — (C-08, C-09, C-60 decided) |
 | **4** | World systems | Story phases, seeded streams, change beats, routines, "have you seen…?", road events, return keys | — |
-| **5** | Records | Stamp book, travel volume (interim art), personal seal, Main Menu gallery, replay, Pastimes, the Wayfarer's Ledger's regrouping; **New Game+ redefined, offered at the end, with the companion's farewell** | C-20, C-19, C-66 (C-34, C-54 decided) |
+| **5** | Records | Stamp book, travel volume (interim art), personal seal, Main Menu gallery, replay, Pastimes, the Wayfarer's Ledger's regrouping; **New Game+ redefined, offered at the end, either slot, with the originating save's farewell** | C-20, C-19 (C-34, C-54, C-66 decided) |
 | **6** | Expeditions | The expedition framework, persistent condition, previews, Atlas commissions as Atlas run types, varied rooms inside each run's fixed shape, delvers, a pilot side dungeon | — (C-03, C-04, C-18, C-57 decided) |
-| **7** | Manybridge (new Chapters 3–4) | The edition boundary (behind a development switch); the city; the press; the stage; manzai; the festival; the yukata cut; the Unravel lesson at the Tally Exchange | C-22, C-32, C-63 (C-54, C-55, C-60 decided) |
+| **7** | Manybridge (new Chapters 3–4) | The edition boundary (behind a development switch); the city; the press; the stage; manzai; the festival; the yukata cut; the Unravel lesson at the Tally Exchange; *tried* marks on cards | C-22, C-32 (C-54, C-55, C-60, C-64 decided) |
 | **7b** | The Keepers' Road (new Chapter 7) | The keepers' road, the scriptorium, the vigil; folklore and records systems in use | — |
 | **8** | The sea and Kotonoha (new Chapter 9) | The Harbourmaster's quest, sailing, the boat home, Sazanami, East Landing, Kotonoha's early visit and main chapter | — |
-| **9** | The Cloudroad and Steamhollow (new Chapters 10–11); **the edition ships** | Both chapters; the separations and the apology scene; the baths; the twelve-chapter edition released at once, with timed play against the playtime targets | C-56 detail, C-65 (C-59, C-61 decided) |
+| **9** | The Cloudroad and Steamhollow (new Chapters 10–11); **the edition ships** | Both chapters; the separations and the apology scene; the baths; the ending's romance moments; the twelve-chapter edition released at once, with timed play against the playtime targets | C-67 (C-56, C-59, C-61, C-63, C-65 decided) |
 | **10** | The postgame | The Hall of a Hundred Tales (one wing, then ten); superbosses; the new settlement; pastimes (shogi, hanafuda, karuta, shiritori v2); the Cinder festival revisit | — |
 | **11** | Expressive portraits, second round | The portrait ideas Robin left for later: systems only; the drawing belongs to the art pass | Robin asks |
 | **12** | Native review | Language and culture review of all new content (also continuous from Phase 2) | A reviewer |
@@ -39,8 +39,7 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 - **The remaining addendum items** that need Robin's eyes: HX33, HX43 and HX45 (scenes and sequences at play speed),
   WI5 and WI26 (gestures and portraits at play speed). They are recorded in docs/expressive/CONTRACT.md.
 - **Decisions:** parts A and A2 of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) were answered on 2026-10-07, in
-  two rounds. Still to come: C-63 (open), C-64 to C-66 and the C-56 detail (confirm), Suzu after the playthrough
-  (C-62), and the rest of part B.
+  three rounds. Still to come: C-67 (confirm), Suzu after the playthrough (C-62), and part B.
 - **Spec and contract amendments** written for the decisions taken ([02_FOUNDATIONS.md](02_FOUNDATIONS.md) S8),
   and REQUIREMENTS IDs reserved for each feature.
 - **The open Harmony question** (one technique or charges) decided. The plan recommends keeping one technique
@@ -210,6 +209,8 @@ pilot.
 - **R2** and **R3**, including two separations (C-12): staying behind at the Mist Barrier, and the disagreement in
   Steamhollow, with apologies and understanding (C-59). The solo encounters are tuned for one.
 - The baths by pronouns, with the comfort setting (C-27, C-56).
+- **Romance moments** (C-63, C-67): at the ending for each companion, at high Bond, always the player's choice;
+  the companionship contract and its test amended to allow them only inside marked scenes.
 - **The twelve-chapter edition ships:** the development switch comes off, the playtime target is restated (C-61),
   and old saves show as from the six-chapter edition.
 

@@ -1,6 +1,6 @@
 # 09 · Records: stamps, the travel volume, replay and pastimes
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
 
 Robin's settled decisions govern this file:
 
@@ -243,12 +243,14 @@ the end of the game by default, and it opens with a farewell from the companion 
 | The stamp book | Satchel equipment and items, keepsakes included (C-66) |
 | Pastime records: shiritori, shogi, hanafuda, karuta, festival personal bests | Inkweaving words learned in the story; field-puzzle and Atlas progress |
 | Settings; the noted-words notebook; the keepsake catalogue's "found" record | Known details and lore notes, which belong to the story's discoveries |
-| The traveller's name, pronouns and appearance, changeable at the start (C-66) | |
+| The traveller as they are: name, pronouns, appearance, and the bath choice for they/them and custom pronouns (C-66) | |
 
 - **One journey's book across runs.** A player who travels with every companion fills one book: Robin's "complete
   the story with all of them".
-- **Changes from today's New Game+:** keepsakes (cosmetics) and the Atlas's cosmetic rewards stop carrying (C-66),
-  and the stamp book, seals, stars and pastime records start carrying.
+- **Changes from today's New Game+:** keepsakes (cosmetics), lore notes and the Atlas's cosmetic rewards stop
+  carrying (Robin, C-66), and the stamp book, seals, stars and pastime records start carrying.
+- **Which slot and which farewell** (C-66): the player chooses the originating save's own slot or another; the
+  farewell is always the originating save's companion.
 - **The spec** requires the carryover to be defined (line 252); this table is the definition.
 
 ---

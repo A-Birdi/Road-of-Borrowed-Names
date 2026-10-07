@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
+*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -206,10 +206,12 @@ among JRPGs."
 It teaches me that Light did nothing… denoted on the actual choice before I make it." **Today the cards do not say
 it.** This is a small, high-value fix that does not need the rest of the expansion.
 
-**Scope: combat** (proposal, C-64). Robin later asked puzzle, social and objective encounters to leave the judgement
+**Scope: combat** (Robin, C-64). Robin later asked puzzle, social and objective encounters to leave the judgement
 to the player (C-60). So the "effect here" line belongs to fights with creatures, whose state is visible and whose
 rules are fixed. In the other encounter types, cards describe what a response does *in general*; the result says
-plainly when it did nothing.
+plainly when it did nothing. As Robin put it, these situations evolve turn by turn, so trying something else is
+the answer; a response that did nothing is marked *tried* on its card until the situation changes, so the player
+doesn't repeat it by accident (C-64).
 
 **Approach (combat).**
 - Each response card shows a one-line **effect here**, computed from the same rules that will run:
@@ -511,7 +513,7 @@ outcomes chain into hidden content. [R2 §1]: the troupe never dies; other NPCs 
 - **Robin's rules for deaths (C-11, 2026-10-07):**
   - a death is an *avoidable* consequence: the player could have prevented it, and the story goes on either way;
   - never to NPCs who matter;
-  - it may be a little gruesome, shown with restraint, with a "shown / summarised" setting (C-65, to confirm);
+  - it may be a little gruesome, shown with restraint, with a "shown / summarised" setting (C-65);
   - failing never turns on the player: they witness it, then reflect on it with the companion in a written scene.
 
 **Effort:** M (system), plus content.
