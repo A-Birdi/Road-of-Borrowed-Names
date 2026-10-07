@@ -1,6 +1,6 @@
-# The Road of Borrowed Names: expansion plan (draft 2)
+# The Road of Borrowed Names: expansion plan (draft 3)
 
-*2026-10-07. Draft 2 records Robin's answers of the same day. A planning document, not authorised work: nothing
+*2026-10-07. Draft 3 records Robin's two rounds of answers from the same day. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
 
@@ -27,7 +27,7 @@ implementation plan. Every idea is broken down on its own and checked against:
 | [06_WORLD.md](06_WORLD.md) | Evolving towns, routines, "have you seen…?", day and night, road events, return keys, **the Harbourmaster's quest and sailing**, the boat home, exploration verbs |
 | [07_REGIONS.md](07_REGIONS.md) | **The new regions**: names, stories, themes, mechanics, encounters, companions, illustrations, main story or postgame |
 | [08_CULTURE.md](08_CULTURE.md) | Register, public spaces, refusal, dialects, documents, folklore, **the festival**, manzai, shogi and other pastimes, the press |
-| [09_RECORDS.md](09_RECORDS.md) | The stamp book, **the travel volume**, the witnessed seal, the Main Menu gallery, spoilers, replay, Pastimes, the folio |
+| [09_RECORDS.md](09_RECORDS.md) | The stamp book, **the travel volume**, the witnessed seal, the Main Menu gallery, spoilers, replay, Pastimes, the Wayfarer's Ledger |
 | [10_STORY.md](10_STORY.md) | The twelve chapters, the Hush, companions, separations, old saves, the postgame |
 | [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) | **Every contradiction found**, each labelled decided, open, to confirm or to revisit, plus the defects fixed in the current game |
 | [12_ROADMAP.md](12_ROADMAP.md) | The drafted order of execution, from your feedback to the final art pass, with testing per phase |
@@ -90,32 +90,39 @@ never deleted.
 | # | Decision |
 |---|---|
 | C-01 | **Twelve chapters** |
-| C-02 | Old saves don't continue once the new chapters ship (never deleted; details open in C-54) |
+| C-02, C-54 | Old saves don't continue; continuing one begins **New Game+**: a fresh start keeping settings, learning records, stars, illustrations and pastime records |
+| C-54 | **New Game+** keeps personal records, never story or character progression, equipment or items; it is offered at the end of the game, and opens with a **farewell** from the companion ("unfinished work; we'll meet again") |
 | C-03 | Optional dungeons restart from the beginning; story dungeons keep checkpoints |
-| C-09 | Puzzle, social and objective encounters are exempt from "winnable by Unravel alone"; Unravel appears there only where something can really be unravelled |
-| C-12 | Story separations are allowed: the same companion always comes back, never replaced, never permanent |
-| C-13 | Mastery stars are flair, just for you; they unlock nothing |
+| C-04 | Persistent health only in dungeons that specify it |
+| C-09, C-60 | Puzzle, social and objective encounters are exempt from "winnable by Unravel alone"; **Unravel stays available even where it does nothing**, and the first conflict with no creature teaches that |
+| C-11 | Deaths are avoidable and never block the story; never to NPCs who matter; a failure is witnessed and reflected on, never turned on the player |
+| C-12, C-59 | Story separations are allowed; the same companion always comes back; **quarrels never lower Bond** and teach apologising |
+| C-13 | Mastery stars are flair, just for you |
 | C-14 | Handwriting shows one guess; redraw freely; "Show more suggestions" counts as assisted |
-| C-17 | Festival games: untimed, reward-free practice by default; opt-in timed mode |
-| C-18 | The Atlas stays the premier randomly generated dungeon |
+| C-17, C-55 | Festival games: untimed practice by default, opt-in timed mode, **just for fun: personal records only** |
+| C-18, C-57 | The Atlas stays the premier generated dungeon: fixed shape per run, **rooms varied inside it** |
 | C-21 | File size isn't a concern below 100 MB |
-| C-35 | The learning-record fixes, by my judgement: done (nothing earned is taken away) |
-| Others | Baths follow pronouns; both menus are "Ledgers", kept distinct; shogi designed for a newcomer |
+| C-33 | **Hanafuda is in** |
+| C-35 | The learning-record fixes, by my judgement: done |
+| C-56 | Baths follow pronouns; they/them and custom **choose once, and the choice is kept** |
+| C-58 | **The Wayfarer's Ledger** (pause menu) and **the Inn Ledger** (saves) |
+| C-61 | About **15 hours** brisk for the main story; about **40 hours** for a new learner taking in everything |
+| Part B | C-05 to C-08 and C-10: the proposals stand as written |
 
 ## Still waiting for you
 
-Labelled **Open**, **Confirm** or **Revisit** in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md):
+Labelled in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A3:
 
-1. **C-54 (Open):** old saves: what they show, whether one can start the new edition as New Game+, and shipping all
-   six chapters together.
-2. **C-55 (Open):** does the timed mode of a festival game give anything beyond personal records?
-3. **C-56 (Open):** which bath for they/them and custom pronouns (the reserved bath is recommended)?
-4. **C-61 (Open):** the playtime target for twelve chapters.
-5. **C-33 (Open):** hanafuda, in or out?
-6. **C-57, C-58, C-59, C-60 (Confirm):** the Atlas's "fixed" means its shape; names for the two Ledgers; a quarrel
-   never lowers Bond; Unravel hidden where nothing is tangled.
-7. **C-62 (Revisit):** Suzu's dream, after you've played her story.
-8. **Part B:** 33 smaller tensions, each with a proposal that stands until you say otherwise.
+1. **C-63 (Open):** romance. Your quarrel answer mentions "romantic partners"; the game currently keeps romance out
+   (a test enforces it). Keep companions as close friends, or add an optional romance path?
+2. **C-64 (Confirm):** the honest "effect here" line on cards in combat only; puzzles and disputes leave the
+   judgement to you.
+3. **C-65 (Confirm):** a witnessed conflict shown with restraint, with a "shown / summarised" setting.
+4. **C-66 (Confirm):** New Game+ details: keepsakes stop carrying; the traveller's name and look carry (changeable);
+   which slot; a solo farewell when no companion was chosen yet.
+5. **C-56 detail (Confirm):** Nao and Ren choose their own bath, in character.
+6. **C-62 (Revisit):** Suzu's dream, after you finish the story.
+7. **Part B:** 25 smaller tensions, each with a proposal that stands until you say otherwise.
 
 ## Fixed in the current game
 

@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -130,7 +130,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | A day/night system | W4: evaluated, not now | Not recommended (yet) |
 | Shogi | C12 | Planned |
 | Expand shiritori | C12 | Planned |
-| A card game only if it fits the world | Collectible card game excluded; hanafuda open (C-33) | Robin's decision |
+| A card game only if it fits the world | Collectible card game excluded; hanafuda in (C-33) | Planned |
 | Words changing the battle's flow; "Wow!" moments | E4, E8, E2 | Planned |
 | More enemy slots past three | E12 | Planned (set pieces only) |
 | Contextual fire, wind, water, earth (not an element chart) | E4 | Planned |
@@ -237,4 +237,22 @@ item, or records why it was excluded or folded into another. Statuses:
 | Kotonoha as the main Chapter 9, with an early boat visit kept | R4 |
 | An edition boundary for old saves (kept, labelled, never altered) | S4, C-54 |
 | A beginner's ladder for shogi | C12 |
-| Hanafuda as a late pastime (open) | C12, C-33 |
+| Hanafuda as a pastime (Robin: "totally in") | C12, C-33 |
+
+## 7. Robin's second round of answers (2026-10-07)
+
+| Idea | Plan item | Status |
+|---|---|---|
+| Continuing an old save begins New Game+ with a notice | 10_STORY §9, S4 | Planned |
+| New Game+ keeps personal records only; offered at the end of the game | 10_STORY §9a, K9 | Planned |
+| A farewell with the companion when New Game+ begins ("unfinished work; we'll meet again") | 10_STORY §9a | Planned |
+| Collecting every illustration with every companion across runs | K9 | Planned |
+| Festival games just for fun, personal records only | C10 | Planned |
+| They/them and custom pronouns choose a bath once | C13, R3 | Planned |
+| Random room variety inside the Atlas's fixed shape | D1 (the Atlas), D7 | Planned |
+| Quarrels never lower Bond; apologising as language | 10_STORY §8, C16 | Planned |
+| Unravel available where it may do nothing; analysis taught at the first non-creature conflict | E7, E8, R1 | Planned |
+| Playtime: about 15 h brisk, about 40 h for a new learner | 10_STORY §11 | Planned (checked by timed play) |
+| Hanafuda | C12 | Planned |
+| Persistent health only where a dungeon specifies it | D2 | Planned |
+| Avoidable, restrained deaths; never NPCs who matter; reflection afterwards | E17, 01 §4 | Planned (C-65 to confirm) |

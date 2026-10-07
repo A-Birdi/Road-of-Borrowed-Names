@@ -1,6 +1,6 @@
 # 04 · Dungeons, expeditions and the Hall of a Hundred Tales
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
 
 Robin's direction, consolidated:
 
@@ -28,7 +28,12 @@ Robin's direction, consolidated:
     hack to show its bar.
   - **It adapts during a run:** objective steps are chosen on first contact, and every encounter's pool adds the
     player's weakest items. **Robin (C-18): the Atlas stays the premier randomly generated dungeon.** Its shape is
-    fixed per run; its practice words keep adapting (my reading, to confirm: C-57).
+    fixed per run; its practice words keep adapting (Robin confirmed, C-57).
+  - **Robin's addition (C-57): more variety inside the fixed shape.** When a run is generated, each room also gets
+    its own variation within its hand-drawn pattern: mirrored or rotated where the pattern allows, different
+    obstacles and props, different decor, creatures standing in different places. All of it is chosen at the
+    run's start, stored with the run, and never changes during it, so a run "feels a little different each time"
+    without moving its goalposts (G7). A layout check proves every variant is walkable and its exits reachable.
 
 ---
 
@@ -59,6 +64,10 @@ model unless a chapter opts in.
 dungeons." Two spec rules shape the design:
 - mistake costs are "small, capped per exchange, and never compounded" (line 128);
 - "Prevent resource softlocks" (line 216).
+
+**Where (Robin, C-04, 2026-10-07): only in dungeons that specify it.** Persistent condition is a property a
+dungeon declares on its preview card, never a world-wide rule, and recovery never depends on walking back to inns
+(which would be tedious). Everywhere else, resolve resets after each encounter as today.
 
 **Approach: carry over what tactics did, not what language mistakes cost.**
 - **What carries over.** In an expedition with *persistent condition*, at the end of each encounter:
@@ -190,7 +199,7 @@ Each family gets an authoring template (S5), a worked example at all four profil
 - **Built as Atlas runs** (Robin, C-18: the Atlas stays the premier generated dungeon). Each commission is an
   Atlas run type: the commission sets the topic, length and shape when the player accepts it, and the run keeps
   that shape. Within it, the Atlas keeps choosing practice words from the player's weakest items as it does today
-  (C-57).
+  (C-57, confirmed).
 - **Survey rewards** (Robin: worthwhile without defeating the purpose):
   - each survey adds a page to the **Cartographer's Atlas**, a map collection in the travel volume;
   - surveyed routes become Atlas shortcuts;

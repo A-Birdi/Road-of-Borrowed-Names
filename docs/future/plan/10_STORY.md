@@ -1,6 +1,6 @@
 # 10 · Story: more chapters, the Hush, companions and the postgame
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
 spec describes them. Every decision that depends on their contents points to a numbered note in
 [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md), which you should not open until you've finished the game.*
 
@@ -78,7 +78,7 @@ quest arrive by ferry in Chapter 9 and miss nothing essential.
   leaf-returning activity and the Root Hollows dungeon already planned in R4.
 - **The music ladder** (ZM2) is re-tiered across twelve chapters (C-22).
 - **The Bond table** is rebalanced across twelve chapters, cap unchanged (C-32).
-- **Playtime**: the spec's target needs restating (C-61).
+- **Playtime**: about 15 hours brisk for the main story, about 40 for a new learner taking in everything (C-61, §11).
 - **Ship as one edition** (C-54): all six new chapters together, so old saves are stopped once.
 
 ## 6. Making the Hush "more epic" without changing what it is
@@ -128,24 +128,56 @@ understanding abound".
 | **In danger** | Kotonoha's Root Hollows (Chapter 9) | The tide fills a passage between them. Each has to find a way round; the player reaches the companion from the other side. Suspense, then relief |
 | **A disagreement** | Steamhollow (Chapter 11) | Mediating between the two inns, the pair take different sides. The companion spends an evening at the other inn: breathing room. Next morning, apologies and understanding, and the mediation goes better for both views. Authored per companion so it fits each (sealed S4 for Mio) |
 
-**Bond.** A quarrel never lowers Bond; making up is a Bond event (C-59, to confirm).
+**Bond.** A quarrel never lowers Bond, because it is always resolved meaningfully; making up is a Bond event, and
+its apologies are part of the language the player learns (C-59, decided; [08_CULTURE.md](08_CULTURE.md) C16).
 
 **Spec amendment:** "Exactly two adventurers after commitment. A story beat may separate them for a while; the same
 companion always returns, and no one takes their place."
 
 ## 9. Existing saves and the new chapters
 
-**Robin's decision (C-02):** saves from the six-chapter edition don't continue once the new chapters ship.
-
-What that means in practice (details and open points: C-54):
-- An old save stays in its slot, untouched, labelled "From the six-chapter edition". Continue and Load are
-  disabled with a one-line reason. It is never deleted or rewritten automatically; the player can still delete it
-  as now.
-- Recommended: it can still be viewed read-only (Journey summary, stamps, seals, learning progress), and it can
-  start the new edition as a New Game+ that carries learning, appearance and records, with the story from
-  Chapter 1.
+**Robin's decisions (C-02, C-54):** saves from the six-chapter edition don't continue once the new chapters ship.
+Trying to continue or load one says so first, and offers **a fresh start through New Game+** (§9a):
+- "This journey began in an earlier edition of the road. It can't go on from here, but it can begin again: back to
+  the start, with no satchel equipment or items. Your settings, learning records, mastery stars, illustrations and
+  pastime records come with you."
+- Accepting plays the farewell (§9a) with that save's companion, then starts the new run. Declining leaves the old
+  save exactly as it was.
+- Where the new run is written (proposal, C-66): in the same slot, after that confirmation.
 - All six new chapters ship together as one edition, so this happens once.
 - Every other update, before and after, keeps saves working as the project rules require.
+
+## 9a. New Game+ and the farewell
+
+**What New Game+ keeps** (Robin, C-54): personal learning records, mastery stars, illustrations and their witnessed
+seals, stamps, pastime records (shiritori, shogi, hanafuda, karuta, festival personal bests), settings and other
+personal metadata. **What it never keeps:** story or character progression, quests, the companion and Bond,
+satchel equipment and items. Details to confirm (keepsakes, the traveller, which slot): C-66.
+
+**Why it matters.** Each run can choose a different companion, and the illustrations witnessed in every run
+accumulate. Over several runs a player can collect every story illustration with every companion.
+
+**Where it is offered.**
+- **At the end of the game, by default.** After the ending and its epilogue, the game offers "Begin again (New
+  Game+)" beside carrying on into the postgame. It is also in the Wayfarer's Ledger afterwards. Choosing it later is
+  always possible.
+- **From the Inn Ledger** when starting a new game, as today.
+- **From an old six-chapter save** (§9).
+
+**The farewell** (Robin's idea). Starting New Game+ plays a short scene with the run's companion:
+- the companion has unfinished work here and can't come; they hope to meet again;
+- the lanterns along the road brighten and the road folds back on itself: the traveller is drawn back to the
+  morning they first arrived at Reedwake;
+- a slightly tearful goodbye, *for now*, never forever;
+- before the new run begins, the game says plainly that the illustrations, records and stars (the "memories") come
+  with the player.
+- Four written versions, one per companion, each naming their own unfinished work in a way that fits their ending
+  (sealed note S13). A short solo version covers an old save from before a companion was chosen.
+- It gets a travel-volume page of its own: the last illustration of one run, and the first memory of the next.
+
+**Canon fit.** New Game+ is a new timeline: the finished run's ending stays resolved (spec line 242), and the spec
+already allows a New Game+ with another companion choice "without breaking permanence in the original timeline"
+(line 252). Sealed note S13 explains why a road that folds back fits the world after the ending.
 
 ## 10. The postgame, expanded
 
@@ -163,8 +195,20 @@ is Robin's and Astra's shared position.
 
 ## 11. Length (no claims)
 
-- The spec's target is 10–15 hours for a first playthrough (line 36), stated as a target, not a measurement.
-- Six new chapters, each roughly an existing chapter's size, would about double the main story. The new target is
-  Robin's call (C-61); the recommendation is about twice the old one, verified by timed play.
-- Playtime is never claimed from estimates (spec: "never claim measured playtime without evidence"). L19's
-  instrumentation counts content per chapter so the pacing can be compared fairly.
+**Robin's targets (C-61):**
+- **About 15 hours** for a brisk playthrough of the main story, with later chapters taking slightly longer because
+  they hold more.
+- **About 40 hours** for a new learner who takes in the whole game: side quests, practice, pastimes, the Atlas and
+  the postgame.
+
+**A per-chapter budget for the brisk target** (planning guidance): 900 minutes spread so that each chapter takes a
+little longer than the one before, from about 55 minutes for Chapter 1 to about 95 minutes for Chapter 12 (an
+average of 75).
+
+**What is known.** Only a content-based estimate, not a measurement: the existing six chapters at roughly 11–14
+hours for a learner at a plausible pace. A brisk player is faster than that, so twelve chapters at about 15 hours
+brisk is plausible, but unproven.
+
+**How it is checked.** L19's instrumentation counts content per chapter; timed play by people, not estimates,
+decides whether the targets are met (spec: "never claim measured playtime without evidence"). Spec line 36 is
+amended to the two targets.

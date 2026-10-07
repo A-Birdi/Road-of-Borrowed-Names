@@ -140,22 +140,25 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 2 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 3 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
   contradictions. Planning only; nothing is built until Robin authorises a scope. SEALED_STORY_NOTES.md holds
-  spoilers for Robin. A reading page of the plan (without the sealed notes) was published as a private artifact.
-  - **Robin's answers of 2026-10-07** (11_CONTRADICTIONS.md part A): twelve chapters; saves from the six-chapter
-    edition will not continue once the new chapters ship (never deleted; details open in C-54); optional dungeons
-    restart, story dungeons keep checkpoints; puzzle, social and objective encounters are exempt from "winnable by
-    Unravel alone"; story separations allowed with the same companion always back; mastery stars are flair only;
-    handwriting shows one guess, redraws are free and "Show more suggestions" counts as assisted; festival games are
-    untimed and reward-free by default with an opt-in timed mode; the Atlas stays the premier generated dungeon;
-    no size concern below 100 MB; baths follow pronouns; both menus are "Ledgers", kept distinct; shogi designed
-    for a newcomer.
-  - **Still open** (labelled in 11_CONTRADICTIONS.md): C-33, C-54, C-55, C-56, C-61 (open); C-57 to C-60
-    (confirm); C-62 (revisit after the playthrough); 33 part B proposals.
+  spoilers for Robin. A reading page of the plan (without the sealed notes) is published as a private artifact and
+  republished after each round of answers.
+  - **Robin's answers of 2026-10-07, two rounds** (11_CONTRADICTIONS.md parts A, A2 and B): twelve chapters; old
+    six-chapter saves can't continue, and continuing one begins New Game+ after a notice; New Game+ keeps personal
+    records only (learning, stars, illustrations, pastime records, settings), is offered at the end of the game, and
+    opens with a farewell from the companion; optional dungeons restart, story dungeons keep checkpoints; persistent
+    health only where a dungeon specifies it; puzzle, social and objective encounters are exempt from "winnable by
+    Unravel alone", and Unravel stays available there even where it does nothing (taught at the Tally Exchange);
+    story separations allowed, quarrels never lower Bond; stars are flair; one-guess handwriting; festival games
+    just for fun; the Atlas keeps a fixed shape with varied rooms; no size concern below 100 MB; baths follow
+    pronouns, they/them and custom choose once; the Wayfarer's Ledger and the Inn Ledger; about 15 h brisk and about
+    40 h for a new learner; hanafuda in; avoidable deaths, never to NPCs who matter.
+  - **Still open** (labelled in 11_CONTRADICTIONS.md part A3): C-63 romance (open); C-64, C-65, C-66 and the C-56
+    detail (confirm); C-62 Suzu (revisit after the playthrough); 25 part B proposals.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record
     judgement to the lead): the Grammar met page, lantern grammar labels, activity Translate, Foundations copy steps,
     the promotion rule, the chart's phantom road, creature patrols' random stream, and the `alts` validator (which

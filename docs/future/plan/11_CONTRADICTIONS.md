@@ -1,6 +1,6 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only. Spoiler-safe.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only. Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
 ideas for covering each. That one is the model:
@@ -21,8 +21,9 @@ ideas for covering each. That one is the model:
 
 The register has five parts:
 - **A. Decisions that blocked a feature.** All answered on 2026-10-07.
-- **A2. New questions raised by those answers.** **These are the ones waiting for you.**
-- **B. Tensions this plan resolves.** Please confirm or overrule; most are still open.
+- **A2. Questions raised by those answers.** All answered in the second round, except Suzu (revisit).
+- **A3. Questions raised by the second round.** **These are the ones waiting for you.**
+- **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
 
@@ -30,17 +31,13 @@ The register has five parts:
 
 | # | Question | Label |
 |---|---|---|
-| [C-54](#c-54--old-saves-when-the-new-chapters-ship-from-c-02) | Old saves when the new chapters ship: what they show, whether one can seed a new game, and whether all six chapters ship at once | **Open** |
-| [C-55](#c-55--festival-rewards-when-the-default-mode-gives-none-from-c-17) | Does the opt-in timed mode of a festival game give anything? | **Open** |
-| [C-56](#c-56--the-bath-for-theythem-and-custom-pronouns-from-c-27) | Which bath for they/them and custom pronouns? | **Open** |
-| [C-61](#c-61--the-playtime-target-for-twelve-chapters-from-c-01) | The spec's playtime target for twelve chapters | **Open** |
-| [C-57](#c-57--what-fixed-at-generation-means-for-the-atlas-from-c-18) | The Atlas keeps adapting its practice words; only its shape is fixed | **Confirm** |
-| [C-58](#c-58--two-ledgers-from-c-37) | Names for the two Ledgers | **Confirm** |
-| [C-59](#c-59--a-quarrel-and-the-bond-table-from-c-12) | A quarrel never lowers Bond; making up raises it | **Confirm** |
-| [C-60](#c-60--unravel-where-nothing-is-tangled-from-c-09) | Unravel is hidden where nothing can be unravelled | **Confirm** |
-| [C-33](#c-33--hanafuda-a-traditional-card-game) | Hanafuda: a traditional card game, in or out? | **Open** |
+| [C-63](#c-63--romance) | Romance: keep companions as close friends, or an optional romance path? | **Open** |
+| [C-64](#c-64--the-effect-here-preview-and-analysis-from-c-60) | The "effect here" preview in combat only; puzzles and disputes leave the judgement to you | **Confirm** |
+| [C-65](#c-65--how-gruesome-a-witnessed-conflict-may-be-from-c-11) | A witnessed conflict shown with restraint, with a "shown / summarised" setting | **Confirm** |
+| [C-66](#c-66--new-game-details-from-c-54) | New Game+ details: keepsakes, the traveller, which slot, no companion yet | **Confirm** |
+| [C-56](#c-56--the-bath-for-theythem-and-custom-pronouns-from-c-27) | Nao and Ren choose their own bath, in character | **Confirm** |
 | [C-62](#c-62--suzus-dream-from-c-31) | Suzu: star, double act, or both | **Revisit** |
-| Part B | 33 smaller tensions with a proposal each | **Open · proposal stands** |
+| Part B | 25 smaller tensions with a proposal each | **Open** · proposal stands |
 
 ---
 
@@ -175,111 +172,141 @@ The register has five parts:
 
 ---
 
-## A2. New questions raised by the answers
+## A2. Questions raised by the first answers (answered 2026-10-07, second round)
 
 ### C-54 · Old saves when the new chapters ship (from C-02)
-**Open.** Robin's rule: a six-chapter save can't continue in the twelve-chapter edition. What's left to decide:
+**Decided** (second round). Robin's answer, in short:
+- **Continuing or loading an old save says so first:** the journey will begin again at the start, *a fresh start*,
+  without any satchel equipment or items. What carries over: settings, pastime records (shiritori, shogi and the
+  rest), unlocked illustrations and other personal data.
+- **This is New Game+, and New Game+ means the same everywhere:** it keeps personal learning records, mastery
+  stars, illustrations and other personal metadata, never character or story progression. Over several runs a
+  player can collect every story illustration, with every companion.
+- **New Game+ is offered by default at the end of the game.**
+- **Starting New Game+ plays a farewell with the companion:** they have unfinished work and hope to meet again.
+  The player is drawn back to the start of the story, a little tearfully, with the promise that they won't be
+  forgotten: the game tells the player that their illustrations, records and "memories" persist.
 
-1. **What an old save shows.** Recommendation: it stays in its slot, untouched, labelled "From the six-chapter
-   edition", with Continue and Load disabled and a one-line reason. It is never deleted or rewritten
-   automatically. The player can still delete it, as now.
-2. **Whether it can still be looked at.** Recommendation: yes, read-only: its Journey summary, stamps, witnessed
-   seals and learning progress.
-3. **Whether it can seed a new game.** Options:
-   - **(a)** "Begin the new edition from this save": a New Game+ start that carries the learning record, the
-     appearance and the records (stamps, seals), with the story from Chapter 1. It is the spec's defined NG+
-     carryover (line 252), so nothing about the story is invented. **Recommended.**
-   - **(b)** Nothing carries; a plain New Game.
-4. **One cut-off or several.** If the six new chapters ship one at a time, each release would stop saves again.
-   Recommendation: develop them together and ship them as **one edition**, so saves stop only once.
-5. **Your own save.** Once the twelve-chapter edition replaces the current build at the same address, your
-   finished save can be viewed but not continued. Anything you want to do in it, do before then.
+How the plan carries it out: [10_STORY.md](10_STORY.md) §9 and §10, [02_FOUNDATIONS.md](02_FOUNDATIONS.md) S4,
+[09_RECORDS.md](09_RECORDS.md) K9. Four small details: C-66.
 
 ### C-55 · Festival rewards when the default mode gives none (from C-17)
-**Open.** The default practice mode gives no rewards. Does the opt-in timed mode give anything? The contracts say
-"no speed-only reward" (PRACTICE_CONTRACTS line 125), and a reward only in the timed mode would push players
-towards it (G10).
-- **Recommendation:** the timed mode keeps **personal records only** (best score, best time), which Robin already
-  allowed for minigames (G11). Festival keepsakes and stamps come from **taking part in the festival's story**
-  (helping set up, the fireworks, playing at all), never from scores, in either mode.
-- **Alternative:** a cosmetic prize for a timed score. It needs a contract amendment and is not recommended.
+**Decided.** "The Festival Games are just for fun — they can have a personal record tracker, and that's it." The
+timed mode keeps personal records and nothing else. No stamp or keepsake comes from any score. The festival's
+story (setting up, the night, the fireworks) can still give its own story moments.
 
 ### C-56 · The bath for they/them and custom pronouns (from C-27)
-**Open.** The game asks for pronouns at character creation (they/them, she/her, he/him or custom) and never for a
-gender. Robin: follow pronouns exclusively. So she/her goes to the women's bath and he/him to the men's. Not yet
-covered: **they/them**, which is the default choice and also Nao's and Ren's, and **custom** pronouns.
-- **(a) The inn's reserved bath** (貸切風呂, *kashikiri-buro*, a real and common option in Japanese inns), with no
-  question asked. **Recommended**: it follows pronouns without asking anything.
-- **(b)** Ask once at the entrance which bath to use (three curtains: men's, women's, reserved), remembered and
-  changeable.
-- **Companions** follow their own pronouns the same way: Nao and Ren use the reserved bath; Mio and Suzu the
-  women's.
-- When the player and the companion are in different baths, the conversation happens over the bamboo partition,
-  a familiar onsen moment. The scenes stay towel-wrapped and nonsexual, with the "shown / summarised" setting.
+**Decided · detail open.** Robin: "For unclear pronoun choices, the player should be given a choice, and stick with
+it if they revisit the baths." So:
+- she/her: the women's bath; he/him: the men's bath, with no question;
+- they/them and custom pronouns: the player chooses once, at the first bath (men's, women's or the inn's reserved
+  bath), and the game keeps that choice for every later visit.
+- **The detail (Confirm):** Nao and Ren, who are they/them, make their own choice in character, written once for
+  each and kept. The player is never asked to choose for them.
 
 ### C-57 · What "fixed at generation" means for the Atlas (from C-18)
-**Confirm.** My reading of Robin's two answers together: "fixed" is about a dungeon's **shape** (its rooms, length,
-foes and rules), which never change after generation or after mistakes. The Atlas already fixes its shape for each
-run. What it varies is **which words** each encounter practises (your weakest), and that keeps it useful and
-replayable. So the Atlas stays as it is. Yes or no?
+**Decided.** Yes: each run's shape is fixed when it is generated. Robin added an idea: the rooms inside that fixed
+shape can be generated at random too, so each run feels a little different. The plan adds per-run variation inside
+the hand-drawn room patterns (mirroring, obstacles, props, decor, where creatures stand), all chosen when the run
+begins and kept for that run ([04_DUNGEONS.md](04_DUNGEONS.md)).
 
 ### C-58 · Two Ledgers (from C-37)
-**Confirm.** Robin: both can be called Ledger, as long as they are distinct. Proposed names:
-- **The pause menu: the Wayfarer's Ledger**, the book you carry (Journey, Words, Satchel, Map, Company).
-- **The title's six saves: the Inn Ledger** (宿帳, *yadochō*): the register travellers sign at an inn. Six names
-  in it fits a game about borrowed names.
-- The change is a few labels (planned for Phase 1). Until the names are confirmed, the plan's text still says
-  *folio* for the pause menu, as the code does. Other names are welcome.
+**Decided.** **The Wayfarer's Ledger** (the pause menu) and **the Inn Ledger** (宿帳, the title's six saves). The
+labels change in Phase 1; the plan's text now uses the names.
 
 ### C-59 · A quarrel and the Bond table (from C-12)
-**Confirm.** The Bond table is exact and capped at 12. Robin: after a disagreement "they'll make up and be better
-for it". Proposal:
-- A quarrel **never lowers Bond**.
-- Making up is a Bond event, with a Memory page and an illustration.
-- A quarrel is always authored and story-led, never triggered by the player's Japanese.
+**Decided.** A quarrel never lowers Bond, because it is always resolved meaningfully. Robin: it shows conflict and
+the everyday language of making up; "being apologetic is part of learning the language, too." The plan adds
+apologies and making up as a language strand ([08_CULTURE.md](08_CULTURE.md) C16). Robin's mention of "romantic
+partners" raised C-63.
 
 ### C-60 · Unravel where nothing is tangled (from C-09)
-**Confirm.** In a puzzle, social or objective encounter with nothing to unravel, Unravel is **hidden**, and the
-encounter's opening card names the ways it can be resolved. A greyed-out button would only add noise. Where
-something can be unravelled, it appears as usual.
+**Decided.** Unravel stays available in puzzle, social and objective encounters, **even where it does nothing**.
+It is never there just to remove knots from creatures. Working out whether it helps is the player's job: not every
+situation is cut and dried, and analysis is required. **The first non-creature group conflict teaches this:** the
+Tally Exchange dispute in Manybridge (Chapter 3). How this sits with the "effect here" preview: C-64.
 
 ### C-61 · The playtime target for twelve chapters (from C-01)
-**Open.** The spec's target is 10–15 hours for a first playthrough (line 36). Six new chapters, each about an
-existing chapter's size, would roughly double the main story. Options:
-- **(a)** A new target of about twice the old one (20–30 hours), verified by timed play. **Recommended.**
-- **(b)** No total target; a per-chapter target instead.
-Either way, playtime is never claimed without timed play.
+**Decided.** About **15 hours** for a brisk playthrough of the main story, later chapters taking slightly longer as
+they hold more; about **40 hours** for a new learner who takes in the whole game. Spec line 36 is amended to say
+so. The only figure so far is a content-based estimate, not a measurement: the existing six chapters at roughly
+11–14 hours for a learner at a plausible pace. Both targets are checked by timed play, never claimed
+([10_STORY.md](10_STORY.md) §11).
 
 ### C-33 · Hanafuda, a traditional card game
-**Open.** Draft 1 referred to this question without giving it an entry; here it is. Robin excluded a collectible
-card game. **Hanafuda** (花札) is different: a fixed, traditional deck of 48 cards, twelve months of four flowers
-each, played as *koi-koi* in Japan for centuries. It is close in feel to a card game, so it needs Robin's say-so.
-- **For:** strongly cultural; seasonal vocabulary (松に鶴, 梅に鶯, 月見で一杯); reading-based; fits the festival
-  and the boat's Distractions corner.
-- **Against:** card-game feel; historically tied to gambling (in the game: points only, never stakes).
-- **Recommendation:** yes, as a late pastime (koi-koi against NPCs, points only), after shogi and karuta.
+**Decided.** "Totally in." Koi-koi against people in the world, points only, never stakes
+([08_CULTURE.md](08_CULTURE.md) C12).
 
 ### C-62 · Suzu's dream (from C-31)
-**Revisit.** Robin's impression is that Suzu wants to be a star of sorts, and Robin hasn't played her story yet.
-The canon so far says she wants a double-act partner (相方). The two can meet: a double act that aims for the big
-stage. Decide after you've played her story.
+**Revisit.** Robin will come back to it after finishing the story: "my impression appears to have been off with her
+overall dream."
+
+---
+
+## A3. Questions raised by the second round
+
+### C-63 · Romance
+**Open.** Robin's C-59 answer describes quarrels as conflict "between friends or more romantic partners". Today the
+companionship contract keeps romance out: no romance, jealousy or resentment wording, and a unit test enforces it
+(`tests/unit/company_bond.test.mjs`). Is that a description of where the language is used in real life, or a wish
+for romance in the game?
+- **(a) Keep companions as close friends** (today). The language of quarrelling and making up is the same, so
+  C-59's lessons work unchanged. **Recommended unless you want romance.**
+- **(b) An optional, mutual romance path** with the chosen companion. A large change: every companion's writing and
+  Bond events, consent and pacing, the player's pronouns, the contract and its test, and the travel volume.
+
+### C-64 · The "effect here" preview and analysis (from C-60)
+**Confirm.** Robin asked earlier for combat cards to say when a response would do nothing (E5, "denoted on the
+actual choice before I make it"). C-60 now asks puzzle and social encounters to leave that judgement to the player.
+Proposal:
+- **Combat** keeps the honest "effect here" line (E5). A creature's state is visible and its rules are fixed, so
+  the preview teaches.
+- **Puzzle, social and objective encounters** describe what each response does *in general* ("loosens what is
+  tangled"), not whether it will work here. Reading the situation is the challenge. A response that does nothing
+  says so plainly afterwards ("Nothing here is tangled"), costs only that action, and is never treated as a
+  language mistake.
+
+### C-65 · How gruesome a witnessed conflict may be (from C-11)
+**Confirm.** Robin: a conflict may be "a little gruesome, just not to NPCs that matter", and a failure never turns on
+the player; they may witness something terrible and reflect on it with the companion. The story bible's tone is
+"warm, restrained humour… occasional unease". Proposal:
+- shown with restraint: aftermath, silhouettes, sound and reactions, cutting away at the worst moment, never
+  explicit gore;
+- a comfort setting, "Distressing scenes: shown / summarised", like the bathing setting;
+- a reflection scene with the companion afterwards, every time.
+
+### C-66 · New Game+ details (from C-54)
+**Confirm.** Four details the answer leaves open, with proposals:
+1. **Keepsakes and story discoveries.** Today's New Game+ carries cosmetic keepsakes, the Atlas's cosmetic rewards
+   and the whole notebook. Under Robin's definition (no satchel equipment or items; no story progression):
+   keepsakes, the Atlas cosmetics and the pet stop carrying, and so do lore notes and Known details (story
+   discoveries). The keepsake catalogue's "found" record and the noted-words notebook carry as personal metadata.
+   The full table is in [09_RECORDS.md](09_RECORDS.md) K9.
+2. **The traveller.** Name, pronouns and appearance carry over, since the same traveller returns. They can be
+   changed at the start, on the creation screen filled in with the old values.
+3. **Where the fresh start goes.** From an *old six-chapter save*: the same slot, after a confirmation that lists
+   what carries and what doesn't; the old record is then replaced (the spec allows a destructive save operation
+   with explicit confirmation). From the *end of the game*: a slot the player chooses, and the finished campaign
+   stays as it is, so its ending remains (spec line 252: New Game+ must not break the original timeline).
+4. **No companion yet.** An old save from before the companion was chosen gets a short solo version of the
+   farewell (the road, the lanterns, the promise of return).
 
 ---
 
 ## B. Tensions this plan resolves (please confirm or overrule)
 
 Rows marked **Open · proposal stands** are ones you haven't answered yet. Until you do, the plan follows the
-resolution in the row.
+resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review the rest later.
 
 | # | Tension | Sides | This plan's resolution | Where | Status |
 |---|---|---|---|---|---|
-| C-04 | Persistent health vs mistake costs that never compound | R1 wants health and status to persist; spec line 128 | Carry over only what tactics cost; restore what language mistakes cost at each encounter's end | D2 | **Open** · proposal stands |
-| C-05 | Stationed resources vs resource softlocks | R2 §2; spec line 216 | Exits always reachable; leaving is always possible; defeat applies the expedition rule | D2, D3 | **Open** · proposal stands |
-| C-06 | Suspend in the Trials vs six visible slots and no hidden saves | H2; spec lines 224, 228, 238 | A per-slot recovery-style record, removed with the slot, never listed as a save | D9 | **Open** · proposal stands |
-| C-07 | Ambushes vs visible, avoidable foes | R1; AGENT_COMMON | Ambushes only in dungeons whose preview says so; telegraphed on the map | E20 | **Open** · proposal stands |
-| C-08 | Arrivals and wanderers vs "Relaxed: one creature" and rules without randomness | R2 §1; COMBAT_NOTES | Relaxed never sees hostile arrivals; every random draw is seeded per save and stored before the battle | E2, S2 | **Open** · proposal stands |
-| C-10 | Lasting side-quest outcomes from "choosing incorrectly or waiting" vs no irreversible punishment for honest mistakes | R1; spec line 208 | The game shows the intention it understood before a committing action; recognition failures never commit; Wait counts only when chosen | E17 | **Open** · proposal stands |
-| C-11 | NPC deaths vs protected people | R2 §1; spec lines 94, 54, 242 | Never unchosen companion candidates, never people the player helped in a way that undoes their help; rare and authored | E17, 10_STORY | **Open** · proposal stands |
+| C-04 | Persistent health vs mistake costs that never compound | R1 wants health and status to persist; spec line 128 | **Robin: persistent health only where a dungeon specifies it**, not everywhere and not through trips to inns (tedious). In those dungeons, carry over only what tactics cost; restore what language mistakes cost at each encounter's end | D2 | **Decided** (2026-10-07) |
+| C-05 | Stationed resources vs resource softlocks | R2 §2; spec line 216 | Exits always reachable; leaving is always possible; defeat applies the expedition rule | D2, D3 | **Decided** (2026-10-07: "your resolution fits") |
+| C-06 | Suspend in the Trials vs six visible slots and no hidden saves | H2; spec lines 224, 228, 238 | A per-slot recovery-style record, removed with the slot, never listed as a save | D9 | **Decided** (2026-10-07: "your resolution fits") |
+| C-07 | Ambushes vs visible, avoidable foes | R1; AGENT_COMMON | Ambushes only in dungeons whose preview says so; telegraphed on the map | E20 | **Decided** (2026-10-07: "your resolution fits") |
+| C-08 | Arrivals and wanderers vs "Relaxed: one creature" and rules without randomness | R2 §1; COMBAT_NOTES | Relaxed never sees hostile arrivals; every random draw is seeded per save and stored before the battle | E2, S2 | **Decided** (2026-10-07: "your resolution fits") |
+| C-10 | Lasting side-quest outcomes from "choosing incorrectly or waiting" vs no irreversible punishment for honest mistakes | R1; spec line 208 | The game shows the intention it understood before a committing action; recognition failures never commit; Wait counts only when chosen | E17 | **Decided** (2026-10-07: "your resolution fits") |
+| C-11 | NPC deaths vs protected people | R2 §1; spec lines 94, 54, 242 | Never unchosen companion candidates, never people the player helped in a way that undoes their help; rare and authored. **Robin added:** a death is an avoidable consequence of the story and never stops it progressing; a conflict may be a little gruesome, never to NPCs who matter; failing to resolve a conflict never turns on the player: they may witness something terrible and reflect on it with the companion (how it is shown: C-65) | E17, 10_STORY | **Decided** (2026-10-07) |
 | C-15 | A listening star using the device voice vs no listening validation from synthetic speech | H4; spec lines 280, 218 | Labelled "listening practice with your device's voice"; offered only where a voice exists; absent, not missing, elsewhere | L3 | **Open** · proposal stands |
 | C-16 | A "Distractions" tab vs never launching place-based activities remotely | R2 §6; practice index rule | The list lives in Company › Pastimes; companion games start anywhere safe; place games at their place | K7 | **Open** · proposal stands |
 | C-19 | Seals that survive deleting a save vs deletion removing a slot's data | R1's original wish; spec lines 228, 252 | Seals belong to saves; viewing never depends on any save (H1), so nothing is lost but the mark. **Alternative:** a device-level "ever witnessed" record, which needs a spec amendment | S3, K4 | **Open** · proposal stands |
@@ -295,9 +322,9 @@ resolution in the row.
 | C-30 | Road events that "disappear for a time" vs no missable content | R1; spec line 208 | They re-offer themselves on later visits until resolved; the Journey keeps them as unfinished | W5 | **Open** · proposal stands |
 | C-31 | Suzu "aspires to be a star" vs canon (she isn't one; she wants a double-act partner) | R1; canon | Robin's impression is that she wants to be a star of sorts; the canon so far says she wants a double-act partner (相方). The two can meet: a double act aiming for the big stage. Decide after Robin has played her story | C11 | **Revisit** after your playthrough (C-62) |
 | C-32 | New Bond events vs the exact Bond table capped at 12 | company.md | Rebalance the table across twelve chapters; cap unchanged; no gifts or loops | 10_STORY §7 | **Open** · proposal stands |
-| C-34 | New Game+ carryover of records | spec line 252 (must be defined) | NG+ carries stamps, seals, stars and the portfolio | K9 | **Open** · proposal stands |
+| C-34 | New Game+ carryover of records | spec line 252 (must be defined) | **Settled by C-54:** New Game+ carries personal learning records, stars, illustrations and seals, stamps, pastime records, settings and other personal metadata; never story or character progression, equipment or items (details C-66) | K9 | **Decided** (C-54) |
 | C-36 | Spacing reviews by days vs "nothing reads the wall clock" | Astra; practice core | Read the date only to space reviews; never show overdue counts or streaks | L6 | **Open** · proposal stands |
-| C-37 | "The Ledger" means two things | Robin calls the pause menu "the Ledger"; the game calls it the *folio*, and its *ledger* is the title's list of saves | **Robin: both are Ledgers, kept distinct.** Proposed names in C-58 | — | **Decided · names to confirm** (C-58) |
+| C-37 | "The Ledger" means two things | Robin calls the pause menu "the Ledger"; the game calls it the *folio*, and its *ledger* is the title's list of saves | **Robin: both are Ledgers, kept distinct.** Proposed names in C-58 | — | **Decided** (C-58) |
 | C-38 | A day/night system vs the flag-only night design | R1 floated it; the night-leak continuity test | Not now; story-set evenings only in new regions; routines move on ticks | W4 | **Open** · proposal stands |
 | C-39 | Companion highlighting answers in story dungeons vs honest evidence | R2 §3 | Recorded as answer-supplied help; changes nothing else | E19 | **Open** · proposal stands |
 | C-41 | "Overly assisted" by weighting suspected fishing vs inferring motives | R2 §4; Astra | Robin's H4 first version (under 30% of questions assisted) decides; categories by what help supplied; weighting later | L2, L3 | **Open** · proposal stands |
@@ -309,7 +336,7 @@ resolution in the row.
 | C-47 | "Suspend only in the Trials" vs shiritori's "rest later" and the Atlas's resume | H2; audit | H2 is about expeditions; shiritori's pause is a game pause, unaffected; the Atlas resumes by ordinary autosave, consistent with H2 | D3 | **Open** · proposal stands |
 | C-48 | Chapter numbers in the consultation (5, 8) vs the renumbered ten | R1; the context note says they were illustrative | Mapped to twelve chapters: the boat around new 7–8; the island's main chapter is new 9 | R4 | **Updated** for twelve chapters (C-01) |
 | C-49 | Tsuru as the Trials' lore source vs her canon voice | R1 | Fits: she had a teacher, and keeper lore is hers; lines in her dry voice | D9 | **Open** · proposal stands |
-| C-51 | The spec's 10–15 hour target vs a longer main story | spec line 36 | Restate the target after deciding C-01; measure, never claim | 10_STORY §11 | **Open** (C-61) |
+| C-51 | The spec's 10–15 hour target vs a longer main story | spec line 36 | About 15 hours brisk for the main story; about 40 for a new learner taking in the whole game; measured, never claimed | 10_STORY §11 | **Decided** (C-61) |
 | C-52 | A Main Menu illustration of one companion when Continue travels with another | H3; Astra | The other participants stay fixed; only the player's look follows Continue | K2 | **Open** · proposal stands |
 | C-53 | Superboss and Trials rewards vs "no exclusive essentials" | A30; R1; spec line 126 | Stamps, illustrations (revealable) and cosmetics only | E16, D9 | **Open** · proposal stands |
 
@@ -334,11 +361,22 @@ resolution in the row.
 | Old saves | Can't continue in the twelve-chapter edition; never deleted (details C-54) | C-02 |
 | Unravel alone | Combat only; Unravel elsewhere only where it means something | C-09 |
 | Separation | Story beats only; always the same companion back; never replaced | C-12 |
-| Festival games | Untimed, reward-free practice by default; opt-in timed mode | C-17 |
+| Festival games, modes | Untimed, reward-free practice by default; opt-in timed mode | C-17 |
 | File size | Not a concern below 100 MB | C-21 |
 | Learning-record fixes | Done, by my judgement; nothing earned is taken away | C-35 |
 | Shogi | Built as I see fit, designed for someone who has never played | C-28 |
-| The two Ledgers | Both "Ledger", kept distinct (names: C-58) | C-37 |
+| The two Ledgers | The Wayfarer's Ledger (pause menu) and the Inn Ledger (saves) | C-37, C-58 |
+| New Game+ | Keeps personal records, stars, illustrations and personal metadata; never story or character progression, equipment or items; offered at the end of the game; a farewell with the companion | C-54 |
+| Old saves | Continuing one begins New Game+ from it, with a notice first | C-54 |
+| Festival games | Just for fun: personal records only | C-55 |
+| Baths | By pronouns; they/them and custom choose once and keep it | C-56 |
+| The Atlas | Fixed shape per run; rooms varied inside it at random | C-57 |
+| Quarrels | Never lower Bond; always resolved; apologies as language | C-59 |
+| Unravel outside combat | Always available, may do nothing; analysis required; taught at the first non-creature conflict | C-60 |
+| Playtime | About 15 h brisk main story; about 40 h for a new learner taking in everything | C-61 |
+| Hanafuda | In | C-33 |
+| Persistent health | Only in dungeons that specify it | C-04 |
+| NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 
 ---
 

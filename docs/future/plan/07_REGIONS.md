@@ -1,6 +1,6 @@
 # 07 · Regions
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
 names them. Anything that depends on their contents is in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md).*
 
 Robin's question for every region: *names, stories, unique encounters and mechanics; main quest or postgame; how
@@ -170,7 +170,9 @@ companion, and minigames that stay playable afterwards (C10 in [08_CULTURE.md](0
 - **Wanderers** (E3): a canal porter who fends off creatures blocking *their* barge; a busker who joins any fight
   near the theatre and leaves when the crowd does.
 - **Social encounters** (E8): the Tally Exchange dispute, a three-party argument over a mis-delivered shipment,
-  resolved by the evidence you bring; a negotiation for lock passage.
+  resolved by the evidence you bring; a negotiation for lock passage. **The Tally Exchange dispute is the game's
+  first conflict with no creature in it, so it teaches that Unravel can do nothing and the situation must be read**
+  (Robin, C-60; [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E8).
 - **Machine encounters** (E7): the Nameless Bridge; the Understage.
 
 ### Side quests (sketches, 8 across both chapters)
@@ -378,9 +380,9 @@ settled, not defeated.
 **Signature activities.**
 - **Reservations** (A44, A46): book rooms for a group of travellers with conflicting needs; change a booking;
   decline politely.
-- **The baths follow pronouns** (Robin, 2026-10-07): she/her uses the women's bath, he/him the men's. They/them
-  and custom pronouns: the inn's reserved private bath (貸切風呂, *kashikiri-buro*, real) is recommended, open in
-  C-56. Companions follow their own pronouns the same way. When the player and the companion are in different
+- **The baths follow pronouns** (Robin, C-56): she/her uses the women's bath, he/him the men's. They/them and
+  custom pronouns choose once (men's, women's or the inn's reserved bath, 貸切風呂, *kashikiri-buro*, real), and
+  the game keeps that choice. Nao and Ren make their own choice in character (to confirm). When the player and the companion are in different
   baths, they talk over the bamboo partition. Scenes are towel-wrapped and nonsexual (Robin's direction).
 - **House rules** (A42): learn each inn's own rules from signs and staff. They differ, deliberately.
 - **Steam cooking** (温泉卵, onsen eggs, and steamed buns): a cooking minigame. Follow a recipe card, take
@@ -442,7 +444,7 @@ word (A17). The town is calmer and the steam cooking game stays open. Postgame, 
 
 **Risks.**
 - Tone: warm and funny, never voyeuristic; nonsexual; adults only (spec line 72).
-- Bathing that follows pronouns, and the open question for they/them and custom (C-27, C-56).
+- Bathing that follows pronouns, with a remembered choice for they/them and custom (C-27, C-56).
 - Cultural accuracy, labelled.
 
 ---

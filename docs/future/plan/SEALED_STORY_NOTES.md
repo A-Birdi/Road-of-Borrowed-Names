@@ -146,3 +146,17 @@ Not for this plan to fix; recorded so new writing doesn't copy them:
 - **Two different Mitsus:** Gorō's wife, who died in the fire, and Old Yasu's wife from Koharuno.
 - **The route chart** drew a Cinder–Lanternfall road that could not be walked. **Fixed 2026-10-07** (part D of
   11_CONTRADICTIONS.md), with a test that every chart road can be walked.
+
+## S13 · The New Game+ farewell and the world after the ending
+
+- **The road that folds back.** After the ending, the Unwritten Atlas exists because roads were left unmoored: "unstable
+  routes left behind as the world recovers (unmoored names, half-built roads)". A road that folds back on itself to
+  the morning the traveller arrived is the same kind of thing, which is why the farewell can be supernatural without
+  reopening the Hush. It is a road, not the Hush.
+- **"Unfinished work" per companion** should come from each companion's own epilogue, so the line is true to where
+  the ending leaves them: Nao's letters and addresses, Mio's refusals and care, Ren's lanterns and their teacher's
+  sayings, Suzu's play (*The Road of Borrowed Names*, written at the ending) and her troupe.
+- **The finished run stays resolved.** New Game+ starts a new timeline in another slot (C-66); nothing in the finished
+  save changes, so spec line 242 holds.
+- **An old six-chapter save mid-story** gets the same farewell: there the companion's "unfinished work" is literally
+  the story they never finished, which gives that save a gentle close.

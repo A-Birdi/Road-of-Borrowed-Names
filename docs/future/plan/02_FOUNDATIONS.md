@@ -1,6 +1,6 @@
 # 02 · Foundations: the engine work everything else stands on
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
 
 These are the cross-cutting systems that several features need. Building them first keeps each later feature
 small and consistent. Every entry gives:
@@ -165,13 +165,14 @@ the new chapters ship. That removes draft 1's detour and migration design for th
 **Approach.**
 - **An edition number in every save** (`s.edition`, absent = 1). The twelve-chapter build writes edition 2.
 - **On load, an edition-1 save is recognised, not migrated.** The slot shows it as "From the six-chapter
-  edition" with Continue and Load disabled and a one-line reason. Its data is left exactly as it was (spec line 232:
-  incompatible saves handled gracefully, never cleared). The player can still delete it, as with any slot.
-- **Recommended extras, to confirm in C-54:**
-  - **View** an old save read-only: Journey summary, stamps, witnessed seals, learning progress.
-  - **Begin the new edition from it** as New Game+: the defined NG+ carryover (spec line 252) of learning record,
-    appearance and records, with the story from Chapter 1.
-- **One boundary.** All six new chapters ship together, so saves stop only once (C-54).
+  edition". Continue or Load on it first explains that the journey will begin again (Robin, C-54): no satchel
+  equipment or items; settings, learning records, stars, illustrations and pastime records carry. Until the player
+  accepts, its data is left exactly as it was (spec line 232: incompatible saves handled gracefully, never cleared).
+- **Accepting starts New Game+ from it** (the carryover in [10_STORY.md](10_STORY.md) §9a), with the farewell, in
+  the same slot after a confirmation (proposal, C-66).
+- **One New Game+ carryover function** serves all three ways in (the end of the game, the Inn Ledger, an old save),
+  so "what carries" is defined once (spec line 252) and tested once.
+- **One boundary.** All six new chapters ship together, so saves stop only once.
 - **New chapters get new flags** (`mb1_done`, `mb2_done`, `kr_done`, `ko_done`, `cr_done`, `yn_done`); existing
   flags keep their meaning, so the existing chapters' scripts don't change.
 - **Chapter numbers are displayed through a map** (internal id to displayed number), so "Cinder Orchard" shows as
@@ -184,14 +185,15 @@ the new chapters ship. That removes draft 1's detour and migration design for th
 - Old saves are never lost or altered.
 
 **Cons.**
-- Players with an old save start again (softened by the NG+ start, if Robin agrees).
-- Robin's own finished save can be viewed but not continued once the new edition replaces the current build.
+- Players with an old save start again, softened by New Game+: their records and illustrations come with them.
+- Robin's own finished save can begin New Game+ but not continue its story once the new edition replaces the current
+  build.
 
 **Tests.**
 - Fixtures: an edition-1 save at each existing chapter, a finished one and a postgame one, loaded on the
-  edition-2 build. Each shows as an old save, can't be continued, is byte-for-byte unchanged afterwards, and can
-  be deleted by the player.
-- If C-54's extras are approved: the read-only view, and an NG+ start that carries exactly the defined set.
+  edition-2 build. Each shows as an old save; declining the fresh start leaves it byte-for-byte unchanged;
+  accepting starts New Game+ carrying exactly the defined set and nothing else; the player can still delete it.
+- The farewell plays with each companion, and the solo version for a save from before the companion was chosen.
 
 **Effort:** M.
 
@@ -294,14 +296,16 @@ Several plans contradicted written rules. Robin answered the blocking ones on 20
 | Rule | Where | Amendment | Decision |
 |---|---|---|---|
 | "Build six substantial chapters" | spec line 38 | Twelve | C-01 |
-| A 10–15 hour first playthrough | spec line 36 | New target to choose | C-61 (open) |
-| Saves keep working | project rules | Except edition-1 saves in the twelve-chapter edition; never deleted | C-02, C-54 |
-| "Every battle must be winnable with Unravel alone" | AGENT_COMMON, CONTENT, ATLAS | "Every *combat* encounter"; other encounter types carry their own guarantee | C-09 |
+| A 10–15 hour first playthrough | spec line 36 | About 15 hours brisk for the main story; about 40 for a new learner taking in the whole game | C-61 |
+| New Game+ carryover "clearly defined" | spec line 252 | Personal learning records, stars, illustrations, stamps, pastime records, settings and other personal metadata; never story or character progression, equipment or items; offered at the end of the game | C-54, C-66 |
+| Saves keep working | project rules | Except edition-1 saves in the twelve-chapter edition, which begin New Game+ when continued; never deleted without the player's confirmation | C-02, C-54 |
+| "Every battle must be winnable with Unravel alone" | AGENT_COMMON, CONTENT, ATLAS | "Every *combat* encounter"; other encounter types carry their own guarantee, and Unravel stays available in them even where it does nothing | C-09, C-60 |
 | "No speed-only, handwriting-only or no-help-only reward" | PRACTICE_CONTRACTS line 125 | Mastery stars are flair, not rewards: they unlock nothing | C-13 |
 | "No clock anywhere except fishing" | PRACTICE_CONTRACTS line 123 | Also opt-in timed modes in pastimes, under fishing's conditions | C-17 |
 | "Exactly two adventurers"; no operation removes the companion | spec lines 70, 290; HX52 | A story beat may separate them for a while; the same companion always returns; no one replaces them | C-12 |
 | "Defeat returns to a sensible checkpoint… without grinding" | spec line 128 | Unchanged for story dungeons; optional dungeons restart from the beginning | C-03 |
 | Battle themes rise strictly by chapter | audio rule ZM2 | Re-tiered for twelve chapters | C-22 (open) |
+| No romance wording | companionship contract; `company_bond` test | Unchanged unless Robin chooses a romance path | C-63 (open) |
 | Replays live in Shared memories, with event-time appearance | HX53 | The Main Menu gallery uses the Continue appearance | C-20 (open) |
 
 **Effort:** S (writing).

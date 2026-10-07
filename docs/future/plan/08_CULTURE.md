@@ -1,6 +1,6 @@
 # 08 · Culture, social life, festivals and pastimes
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
 
 Robin [R0]: "dialects… etiquette in public places, politeness, social hierarchy review, and more ideas steeped in
 the Japanese culture." [R1]: all of Astra's group E is "solid", especially folklore (A49) and festival planning
@@ -197,9 +197,9 @@ Optional tasks add things (a second stall row, a children's corner). Nothing is 
 - **Practice** (the default): untimed, no score kept, no rewards. Help never changes anything.
 - **Timed** (opt-in, chosen each time): the same game against a clock, under fishing's conditions (off by default,
   paused by help, needed for nothing). It keeps the player's personal bests and, where natural, streaks.
-- Whether the timed mode gives anything beyond personal records, and whether trying each game earns a stamp, is
-  open (C-55). The recommendation: personal records only; festival keepsakes and stamps come from taking part in
-  the festival's story, never from scores.
+- **Just for fun** (Robin, C-55): the games keep a personal record tracker, and that's it. No stamp, keepsake or
+  other reward comes from any score or mode. The festival's *story* (setting up, the night, the fireworks) keeps
+  its own moments and illustration.
 
 | Game | What it is | Language | Timed mode adds |
 |---|---|---|---|
@@ -212,7 +212,7 @@ Optional tasks add things (a second stall row, a children's corner). Nothing is 
 - **Personal bests** are shown only in the game itself. They are the player's own, never ranked.
 - **After the festival** the games move to the **festival hall** in Manybridge and to the **boat's Distractions
   corner** (W8). The companion can also challenge the player (tandem or versus), as Robin suggested. The
-  Distractions list in the folio shows them, but "Begin here" is only at a venue or with the companion
+  Distractions list in the Wayfarer's Ledger shows them, but "Begin here" is only at a venue or with the companion
   ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-16).
 - **No flashing:** fireworks bloom softly; reduced motion shows a held, glowing sky (spec line 264).
 
@@ -312,11 +312,27 @@ The existing game is a real, deep word game with per-companion stages and two bo
 
 Its contracts stay (Bond only through its two existing events). **Effort:** M.
 
+### Hanafuda (花札)
+
+**Robin (C-33): "Totally in."**
+- **Real:** a fixed, traditional deck of 48 cards, twelve months of four cards each, every month a flower or plant
+  (松, 梅, 桜, 藤, 菖蒲, 牡丹, 萩, 芒, 菊, 紅葉, 柳, 桐). It is not collectible: the deck never changes.
+- **The game: koi-koi** (こいこい), the most played form. Match cards by month, collect sets (*yaku*: 五光, 猪鹿蝶,
+  赤短, 青短, 月見で一杯, 花見で一杯 …), then choose to stop or call "koi-koi" and play on for more.
+- **Teaching first,** as with shogi: a short lesson on months and flowers; matching help that highlights cards of
+  the same month (no penalty); each yaku shown with its name and reading when it forms; untimed.
+- **Points only, never stakes.** Hanafuda has a gambling history in Japan; in the game it is points and personal
+  records, nothing else.
+- **Language value:** months and seasons (一月 to 十二月, the season words), flowers and their imagery, the yaku
+  names, counters for cards (〜枚); short seasonal poems on the cards' lore pages (real ones, labelled).
+- **Where:** the boat's Distractions corner, the Manybridge festival hall, inns in Steamhollow; partners among the
+  people of the world.
+- **Effort:** M (rules engine, simple opponents, the deck drawn in the game's style).
+
 ### Considered and not recommended
 
 | Pastime | Why not |
 |---|---|
-| **Hanafuda** (花札) | A traditional card game, not collectible, but close enough in feel to the excluded card game to need Robin's explicit say-so ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-33) |
 | **Go** (囲碁) | Little language value beyond terms; a large engine |
 | **Kendama, spinning tops** | Dexterity and timing, little language |
 | **Tea ceremony** | Deep and easily trivialised; needs specialist review |
@@ -328,10 +344,13 @@ Its contracts stay (Bond only through its two existing events). **Effort:** M.
 - Real customs, labelled: wash first, keep towels out of the water, no swimming.
 - **Each inn's rules differ**: the public-space skill (C2).
 - **Bathing scenes** are towel-wrapped, nonsexual and adults only, as Robin directs.
-- **Which bath follows pronouns** (Robin, 2026-10-07; the game asks for pronouns, never a gender): she/her uses the
-  women's bath (女湯), he/him the men's (男湯). For they/them and custom pronouns the recommendation is the inn's
-  reserved private bath (貸切風呂, real and common), with no question asked; that choice is open
-  ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-56). Companions follow their own pronouns the same way.
+- **Which bath follows pronouns** (Robin, C-56; the game asks for pronouns, never a gender): she/her uses the
+  women's bath (女湯), he/him the men's (男湯), with no question. **They/them and custom pronouns choose** at the
+  first bath: the men's, the women's or the inn's reserved bath (貸切風呂, real and common). The game keeps that
+  choice for every later visit.
+- **Companions:** Mio and Suzu use the women's bath. Nao and Ren, who are they/them, make their own choice in
+  character, written once and kept; the player is never asked to choose for them (to confirm,
+  [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-56).
 - When the player and the companion are in different baths, they talk over the bamboo partition, a familiar
   onsen moment.
 - **Comfort option:** "Bathing scenes: shown / summarised", for players who prefer.
@@ -374,3 +393,26 @@ funny stories are welcome), but the game never pretends to understand text it ca
 It reacts only to what the blocks tell it.
 
 **Effort:** L.
+
+## C16 · Apologising and making up (from Robin's C-59)
+
+**What and why.** Robin: a quarrel never lowers Bond because it is always resolved meaningfully, and "being
+apologetic is part of learning the language, too." Quarrels between companions and the player, and between people
+in the world, are where it comes up.
+
+**Language, by register and closeness:**
+- ごめん / ごめんね, ごめんなさい, すみません, 申し訳ありません: who says which to whom, and why;
+- saying what you're sorry for: 〜て ごめん, 言い過ぎた, 〜つもりじゃなかった;
+- accepting and making up: いいよ, 気にしないで, こちらこそ, 仲直り;
+- a formal apology between neighbours can come with a small gift (菓子折り, a box of sweets), which the scenes can
+  show.
+
+**How it is used.**
+- **The companion quarrel** (the Steamhollow disagreement, [10_STORY.md](10_STORY.md) §8) ends in an apology scene
+  in which the player says sorry in their own way: chosen at lower profiles, built or forged at higher ones.
+- **People in the world** quarrel and make up in side quests, giving the player apologies to read and, sometimes,
+  to help word.
+- **Never scored for politeness** (an exclusion). Each apology the player gives has an outcome the story explains:
+  a stiff 申し訳ありません to a close friend gets a laugh and a softer reply, never a penalty.
+
+**Effort:** S–M (a task family on L7, plus scenes).

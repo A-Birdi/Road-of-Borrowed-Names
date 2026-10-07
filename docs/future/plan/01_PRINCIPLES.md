@@ -1,7 +1,7 @@
 # 01 · Principles and guardrails
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only: nothing here is authorised work until
-Robin selects a scope.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only: nothing here is
+authorised work until Robin selects a scope.*
 
 Everything in the later files is checked against this page. Where an idea elsewhere seems to break one of these
 rules, this page wins, and the conflict belongs in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md).
@@ -11,7 +11,8 @@ Sources are marked like this:
 - **[R1]** Robin's written review.
 - **[R2]** Robin's ten-point clarification.
 - **[H]** The six points Robin settled afterwards (HANDOFF.md, "Future expansion").
-- **[D]** Robin's answers of 2026-10-07 to the plan's decisions (11_CONTRADICTIONS.md, part A).
+- **[D]** Robin's answers of 2026-10-07 to the plan's decisions, in two rounds (11_CONTRADICTIONS.md, parts A, A2
+  and B).
 - **[A#]** One of Astra's numbered proposals.
 - **[P]** A proposal made in this plan.
 
@@ -69,11 +70,16 @@ irreversible on its own [A, R2 §1].
 - **The troupe never dies**, and the companion and pet are never permanently taken away.
 - **Separations are story beats** [C-12]: a companion can stay behind, be in danger, or take some breathing room
   after a disagreement. The same companion always comes back; nobody replaces them; nothing is permanent. A
-  disagreement ends in apologies and understanding, and the pair are better for it. The solo stretch is playable
+  disagreement ends in apologies and understanding, and the pair are better for it; it never lowers Bond [C-59]. The solo stretch is playable
   without the companion: help comes from the place, notes and people who advise but never fight [A, D].
-- Other NPCs may die: of old age, through bereavement, or through an offscreen crime investigated from evidence.
-  Such deaths are rare, carefully authored, and never murder shown on screen. They are never a random result of a
-  failed Japanese answer.
+- Other NPCs may die: of old age, through bereavement, through an offscreen crime investigated from evidence, or in
+  a conflict the player failed to resolve [C-11]. Such deaths are rare and carefully authored:
+  - **avoidable**: a consequence the story lets the player prevent, and never one that stops the story going on;
+  - **never NPCs who matter** (companion candidates, people central to a region's story);
+  - **a little gruesome is allowed**, shown with restraint (C-65, to confirm), with a "shown / summarised" setting;
+  - **never turned on the player**: failing to resolve a conflict means witnessing something terrible, then a
+    scene reflecting on it with the companion; it is never a punishment, and never a random result of a failed
+    Japanese answer.
 - Capture and other outcomes come from the situation as written. Each event's author decides its possible outcomes
   and how the player's choices lead to each.
 
@@ -84,7 +90,7 @@ irreversible on its own [A, R2 §1].
 | G10 | **No FOMO, grind or bribery.** No rare RNG drops, login streaks, perfect-answer chains or daily chores. No reward that pushes a player to avoid help or change input mode. | R0, R1 |
 | G11 | **Streaks and high scores exist only inside recreational minigames built for them** (festival games, for example), as personal records. | R1 |
 | G12 | **Achievements mark meaningful moments**: chapters, regions, all side quests, dungeon families, the Trials. There are no checklists or trackers, except naturally earned milestones such as "used 15 different responses". Each comes with a visual badge, stamp or seal. | R1 |
-| G13 | **Viewing an illustration is separate from having witnessed it.** The travel volume can always be viewed in full from the Main Menu. Each save earns a seal, border, sheen or badge on the illustrations it actually witnessed. Opening any illustration shows how it is unlocked. | H1, R2 §6 |
+| G13 | **Viewing an illustration is separate from having witnessed it.** Witnessed seals, stars and other personal records carry into New Game+ (C-54). The travel volume can always be viewed in full from the Main Menu. Each save earns a seal, border, sheen or badge on the illustrations it actually witnessed. Opening any illustration shows how it is unlocked. | H1, R2 §6 |
 | G14 | **There is no consumable inventory.** The satchel is not a potion bag. Recovery in dungeons comes from stationed, limited resources tied to a place. | R1, R2 §2, R2 §5 |
 | G15 | **Optional is genuinely optional.** Mapping dungeons, superbosses and the Trials give worthwhile rewards that are never essential advantages or story prerequisites. | R1 |
 
@@ -128,10 +134,9 @@ So in this plan:
 
 ## 8a. Words used in this plan
 
-- **Wayfarer's Ledger** (proposed name, C-58): the pause menu (Journey, Words, Satchel, Map, Company), called the
-  *folio* in the code and in draft 1. Robin calls it "the Ledger".
-- **Inn Ledger** (proposed name, C-58): the title screen's list of six saves. Robin: both are Ledgers, kept
-  distinct (C-37).
+- **Wayfarer's Ledger** (C-58, decided): the pause menu (Journey, Words, Satchel, Map, Company), called the
+  *folio* in the code and in draft 1.
+- **Inn Ledger** (宿帳, C-58, decided): the title screen's list of six saves.
 - **Profiles F / E / I / A:** Foundations, Elementary, Intermediate, Advanced.
 - **Existing Chapter N:** today's numbering. **New Chapter N:** the ten-chapter numbering in
   [10_STORY.md](10_STORY.md).

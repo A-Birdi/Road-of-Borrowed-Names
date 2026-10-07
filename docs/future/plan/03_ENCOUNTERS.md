@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -206,7 +206,12 @@ among JRPGs."
 It teaches me that Light did nothing… denoted on the actual choice before I make it." **Today the cards do not say
 it.** This is a small, high-value fix that does not need the rest of the expansion.
 
-**Approach.**
+**Scope: combat** (proposal, C-64). Robin later asked puzzle, social and objective encounters to leave the judgement
+to the player (C-60). So the "effect here" line belongs to fights with creatures, whose state is visible and whose
+rules are fixed. In the other encounter types, cards describe what a response does *in general*; the result says
+plainly when it did nothing.
+
+**Approach (combat).**
 - Each response card shows a one-line **effect here**, computed from the same rules that will run:
   - "Clears the mist on the Moth."
   - "No Heat to cool: no effect here."
@@ -237,8 +242,9 @@ prevent arrivals rather than untie every knot.
 - **Losing the objective** ends the encounter in an authored way (a recoverable setback in side content), not
   necessarily a defeat.
 - **The Unravel-only rule.** Objective encounters are a new encounter type and do not have to be winnable with
-  Unravel alone (Robin, C-09). Each must have at least two distinct winning approaches. Unravel appears only where
-  something can really be unravelled (a knot, a tangled line, crumpled paper); elsewhere it is hidden (C-60).
+  Unravel alone (Robin, C-09). Each must have at least two distinct winning approaches. **Unravel stays available
+  even where it does nothing** (Robin, C-60): it helps only where something is really tangled (a knot, a line,
+  crumpled paper), and working that out is part of the encounter.
 
 **Effort:** M (on E1).
 
@@ -269,8 +275,9 @@ prevent arrivals rather than untie every knot.
 - **Step away.** Leaving the encounter costs nothing. The machine's state is kept outside the battle, like field
   puzzles (`s.discovery.puzzles`); clues found elsewhere are noted in Known details.
 - **Resolve this step** (E11) for steps solved before.
-- **Spec boundary.** These are a new encounter type: winnable by procedure, not by Unravel (Robin, C-09). Where a
-  procedure involves something tangled, Unravel is one of its steps; otherwise it is hidden (C-60).
+- **Spec boundary.** These are a new encounter type: winnable by procedure, not by Unravel (Robin, C-09). Unravel
+  stays on the cards: where a procedure involves something tangled it is one of the steps; elsewhere it does
+  nothing, and saying so plainly is part of the lesson (C-60).
 
 **Examples in the plan:**
 - the Nameless Bridge (Manybridge A);
@@ -295,6 +302,13 @@ prevent arrivals rather than untie every knot.
 Astra's A24 (argument chains) and A28 (negotiation) belong here.
 
 **Approach.**
+- **Not every situation is cut and dried** (Robin, C-60). All the usual responses stay on the cards, Unravel
+  included, even where they do nothing. Reading the situation is the player's job.
+- **The first one teaches it.** The Tally Exchange dispute in Manybridge (Chapter 3) is the first conflict with no
+  creature in it. It is built so the habit of reaching for Unravel meets a situation where nothing is tangled:
+  Unravel answers "Nothing here is tangled: the problem is what each of them believes." The companion then says, in
+  their own words, that this one needs reading, not untying; a one-line tip names the clues to look at (the claims
+  record, who is heated, what each side wants). Later encounters assume the lesson.
 - **The state is human, not knots.** Each party has a *stance*: listening, heated, closed, leaving. They also have a
   set of *claims* in a visible record (Astra: "a visible record preserves earlier claims, so success depends on
   reasoning rather than memorizing").
@@ -494,6 +508,11 @@ outcomes chain into hidden content. [R2 §1]: the troupe never dies; other NPCs 
   every outcome become *viewable* at chapter completion (H1); only the witnessed seal differs.
 - **Unchosen companion candidates and the troupe are never subjects of severe outcomes** (spec line 94; Robin's
   boundary).
+- **Robin's rules for deaths (C-11, 2026-10-07):**
+  - a death is an *avoidable* consequence: the player could have prevented it, and the story goes on either way;
+  - never to NPCs who matter;
+  - it may be a little gruesome, shown with restraint, with a "shown / summarised" setting (C-65, to confirm);
+  - failing never turns on the player: they witness it, then reflect on it with the companion in a written scene.
 
 **Effort:** M (system), plus content.
 

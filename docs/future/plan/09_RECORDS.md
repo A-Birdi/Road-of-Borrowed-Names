@@ -1,6 +1,6 @@
 # 09 · Records: stamps, the travel volume, replay and pastimes
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
 
 Robin's settled decisions govern this file:
 
@@ -24,7 +24,7 @@ Robin's settled decisions govern this file:
     a Main Menu gallery's machinery.
 - **The prologue's viewed state is a device setting**, and it cannot be replayed.
 - **There are no achievements, stamps or global unlocks.** Slot `meta` has no appearance.
-- **The folio has five tabs** that already scroll on phones. The Words index has up to 13 entries; Journey has up to
+- **The Wayfarer's Ledger (the pause menu, called the folio in the code) has five tabs** that already scroll on phones. The Words index has up to 13 entries; Journey has up to
   7 sub-pages.
 
 ---
@@ -139,11 +139,11 @@ or badge.
 
 ---
 
-## K4 · Viewing: in the folio and on the Main Menu
+## K4 · Viewing: in the Wayfarer's Ledger and on the Main Menu
 
 | Where | What is viewable | Marks shown | Player appearance |
 |---|---|---|---|
-| **Folio, Journey › Travel volume** (not in battle) | In-campaign availability (R2 §6): completed chapters' pages, side stories included; the chosen companion's full set after the story; revealed Trials pages | This save's seals | This campaign's player |
+| **Wayfarer's Ledger, Journey › Travel volume** (not in battle) | In-campaign availability (R2 §6): completed chapters' pages, side stories included; the chosen companion's full set after the story; revealed Trials pages | This save's seals | This campaign's player |
 | **Main Menu › Travel volume** | **Everything** (H1), behind a spoiler veil (K5) | Seals from **all existing saves**, read only ("witnessed in Journeys 2 and 5") | **The Continue save's** appearance (slot `meta.look`; the creation default if there is no save), fixed while the volume is open |
 
 - **"Opening any illustration shows its unlock and viewing criteria"** (H1): every page's caption says how it is
@@ -179,7 +179,7 @@ to save before a moment they didn't know about."
 **Approach, in three tiers.**
 1. **Watch it again** (exists for kept memories): extend to **every illustrated sequence and every travel-volume
    page that has a scene behind it**.
-   - Read-only, from the folio and the Main Menu.
+   - Read-only, from the Wayfarer's Ledger and the Main Menu.
    - The Main Menu uses fixtures: the illustration's companion and a neutral branch, as the developer viewer
      already does.
    - **Never changes any state** (HX49).
@@ -232,19 +232,31 @@ site.
 
 ## K9 · New Game+ and records
 
-- New Game+ today carries learning, notebook, keepsakes and appearance, not story flags.
-- **Proposal:** it also carries the **stamp book, the witnessed seals, mastery stars and "Things I can do"**, so a
-  player who travels with every companion across NG+ runs fills one journey's book. Robin's stated replay appeal is
-  "complete the story with all of them".
-- **The spec** requires NG+ carryover to be *defined* (line 252). This would be its definition
-  ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-34).
+**Robin's definition (C-54, 2026-10-07).** New Game+ keeps personal learning records, mastery stars, illustrations
+and other personal metadata; never character or story progression; no satchel equipment or items. It is offered at
+the end of the game by default, and it opens with a farewell from the companion ([10_STORY.md](10_STORY.md) §9a).
+
+| Carries over | Never carries over |
+|---|---|
+| The learning record and evidence log; "Things I can do"; mastery stars | Story flags, quests, chapter progress, map knowledge |
+| Illustrations and their witnessed seals; the travel volume | The companion and Bond; the pet |
+| The stamp book | Satchel equipment and items, keepsakes included (C-66) |
+| Pastime records: shiritori, shogi, hanafuda, karuta, festival personal bests | Inkweaving words learned in the story; field-puzzle and Atlas progress |
+| Settings; the noted-words notebook; the keepsake catalogue's "found" record | Known details and lore notes, which belong to the story's discoveries |
+| The traveller's name, pronouns and appearance, changeable at the start (C-66) | |
+
+- **One journey's book across runs.** A player who travels with every companion fills one book: Robin's "complete
+  the story with all of them".
+- **Changes from today's New Game+:** keepsakes (cosmetics) and the Atlas's cosmetic rewards stop carrying (C-66),
+  and the stamp book, seals, stars and pastime records start carrying.
+- **The spec** requires the carryover to be defined (line 252); this table is the definition.
 
 ---
 
-## K10 · Fitting it all into the folio
+## K10 · Fitting it all into the Wayfarer's Ledger
 
 New pages (Travel volume, Stamp book, Mastery, What I can do, Ways of speaking, Pastimes, the sea chart) would
-overflow the folio if each became a tab.
+overflow the Wayfarer's Ledger if each became a tab.
 
 **Proposal: no new tab; group the sub-pages.**
 
