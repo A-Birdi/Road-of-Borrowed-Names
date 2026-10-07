@@ -3404,7 +3404,8 @@ profiles; no player save was used.
 - U the full unit suite: 27,267/0. `node tools/validate.mjs`: no errors.
 - B, chosen because the changes touch them: `learning_ui` 15/0 (the challenge runner, copy steps' neighbour
   steps), `practice_a_lamps` 51/51 (the lantern list), `world_fixes` all ok (the route chart, the world loop),
-  `playtest_repairs` 7/0 (guided steps).
+  `playtest_repairs` 7/0 (guided steps), `long_quests` all checks passed in 1,168 s (quest markers on the route
+  chart).
 - Campaign, by Robin's cadence (learning-record and world changes; one routine run): `node tests/e2e/matrix.mjs F
   ren 1`: **1/1**, Chapters 1–6 and one Atlas restoration in 15.5 min. The solver answers the language steps, so
   this shows the game still finishes, not how the new promotion rule feels in play.
