@@ -40,7 +40,7 @@ experience reliably every chapter or area" [R1].
 | G2 | **Growth is offered, never imposed.** No hidden or permanent promotion to a harder language profile. Backing out of a stretch challenge is never punished. | R1 |
 | G3 | **No global "Japanese accuracy" score governs anything**: not story access, not damage, not difficulty. | R1 (exclusions) |
 | G4 | **A recognition or input-device problem is not a language mistake.** That separation, which the challenge runner already makes, survives every new system. | A, existing code |
-| G5 | **Help is legitimate.** Assistance is recorded honestly as what it supplied, but it does not lower a reward, withhold a story moment, or remove a "witnessed" mark. | R2 §4, R2 §6, H1 |
+| G5 | **Help is legitimate.** Assistance is recorded honestly as what it supplied, but it does not lower a reward, withhold a story moment, or remove a "witnessed" mark. Mastery stars [H4] are the one place help is weighed, and they are *records*, not rewards: they unlock nothing (C-13). | R2 §4, R2 §6, H1, H4 |
 | G6 | **Every input mode stays a full way to play**: multiple choice, typing, handwriting. Listening is welcome and never required. Spoken pronunciation is never scored. | R1, H4 |
 | G7 | **A dungeon does not move its goalposts.** It is chosen, or generated, before entry and then stays the same while the player learns it. Repeated failure never lengthens or reshapes it. | R2 §3 |
 | G8 | **The main story can always be finished.** Required dungeons offer escalating, declineable companion help after repeated difficulty, up to highlighting suitable responses. | R2 §3 |
@@ -120,6 +120,14 @@ So in this plan:
 - Each plan item records its **art requirements** (layers, poses, compositions, illustration slots) so that work is
   ready when the art pass begins. Producing final art early for content that may still change is not planned.
 - The art pass itself is the last phase in [12_ROADMAP.md](12_ROADMAP.md), outlined but not detailed, as asked.
+
+## 8a. Words used in this plan
+
+- **Folio:** the pause menu (Journey, Words, Satchel, Map, Company). Robin calls it "the Ledger".
+- **Ledger:** in the game, the title screen's list of six saves (C-37).
+- **Profiles F / E / I / A:** Foundations, Elementary, Intermediate, Advanced.
+- **Existing Chapter N:** today's numbering. **New Chapter N:** the ten-chapter numbering in
+  [10_STORY.md](10_STORY.md).
 
 ## 9. Spoiler discipline (for this document)
 

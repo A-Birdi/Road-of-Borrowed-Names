@@ -140,6 +140,15 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
+  **Expansion plan, draft 1 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
+  consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
+  canon and spec. It covers:
+  - regions: Manybridge, the Cloudroad, Steamhollow, Kotonoha, the Hall of a Hundred Tales;
+  - systems, story structure (6 → 10 chapters), a roadmap, and every idea traced;
+  - a register of contradictions with options.
+  Planning only; Robin will reply with the playthrough feedback. SEALED_STORY_NOTES.md holds spoilers for Robin
+  (mid-Chapter 2). Part D of 11_CONTRADICTIONS.md lists small defects in the current game (e.g. Words › Grammar met
+  is always empty), none fixed yet.
 - Not verified by automation (needs people): real handwriting accuracy,
   playtime, native-speaker review, music quality, audible TTS.
 
