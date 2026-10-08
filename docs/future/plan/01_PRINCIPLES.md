@@ -1,6 +1,6 @@
 # 01 · Principles and guardrails
 
-*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only: nothing here is
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only: nothing here is
 authorised work until Robin selects a scope.*
 
 Everything in the later files is checked against this page. Where an idea elsewhere seems to break one of these
@@ -95,6 +95,7 @@ irreversible on its own [A, R2 §1].
 | G13 | **Viewing an illustration is separate from having witnessed it.** Witnessed seals, stars and other personal records carry into New Game+ (C-54). The travel volume can always be viewed in full from the Main Menu. Each save earns a seal, border, sheen or badge on the illustrations it actually witnessed. Opening any illustration shows how it is unlocked. | H1, R2 §6 |
 | G14 | **There is no consumable inventory.** The satchel is not a potion bag. Recovery in dungeons comes from stationed, limited resources tied to a place. | R1, R2 §2, R2 §5 |
 | G15 | **Optional is genuinely optional.** Mapping dungeons, superbosses and the Trials give worthwhile rewards that are never essential advantages or story prerequisites. | R1 |
+| G16 | **One coherent score.** Every piece of music belongs to one intentional score: shared motifs, each region's own small palette, intensity by writing rather than by more instruments or a faster tempo; the final chapter's themes set apart and imposing (07_REGIONS.md, "The score"). | D (C-22) |
 
 ## 6. Hard technical boundaries (the spec and the project rules)
 
@@ -161,7 +162,7 @@ game.**
 | Damage multiplier for "correct Japanese" | Equivalent expressions of the same intention are equally effective |
 | Politeness or cultural-correctness score | Context-specific outcomes, with explanations |
 | Login streaks, general perfect-answer chains | Personal scores in a recreational minigame |
-| Unreviewed AI dialogue grading | Bounded creative composition, authored alternatives, native review |
+| Unreviewed AI dialogue grading | Bounded creative composition, authored alternatives, careful self-review (no native reviewer is available, C-26) |
 | Rare rewards behind RNG drop rates | Unpredictable events without loot farming |
 | Required spoken-pronunciation scoring | Optional listening |
 | Spatial battle lanes (Astra #29) | Actors with intentions; formations stay as they are |

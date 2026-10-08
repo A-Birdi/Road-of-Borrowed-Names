@@ -1,6 +1,6 @@
 # 07 · Regions
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
 names them. Anything that depends on their contents is in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md).*
 
 Robin's question for every region: *names, stories, unique encounters and mechanics; main quest or postgame; how
@@ -39,6 +39,34 @@ Why these placements:
   Lanternfall.
 - **The island after Lanternfall (9).** Robin's own design, now a main chapter: earned early by boat, reached by
   everyone in Chapter 9, adapting to the story so far.
+
+---
+
+## The score across twelve chapters (Robin, C-22)
+
+**Robin's direction.** Each new area builds more energy, more lift, more intensity, but Chapter 9 needn't be an
+extravagant epic theme. The final region, its dungeon and its boss each have a unique theme that says the journey is
+nearing its end: more intense than anything before, slightly imposing, important. And intensity is not more
+instruments at a higher tempo: **every piece of music in the game should sound like one coherent, intentional
+score.**
+
+**How the plan does it.**
+- **One score, not a playlist.** A small set of motifs runs through the whole game: the road's theme (the title and
+  the overworld), a motif for the lanterns and names, one for the Hush, and one per companion. Regions vary
+  instrument, mode and tempo; the motifs keep it one piece of music.
+- **Intensity by writing, not by piling up:** fuller harmony, a stronger bass line, rhythmic drive in the battle
+  themes, longer phrases and bigger ranges, with each region's palette of instruments kept small and its own
+  (shamisen and taiko for Manybridge; biwa for the Keepers' Road; koto harmonics for Kotonoha; shakuhachi and a
+  walking rhythm for the Cloudroad; a lively ensemble for Steamhollow).
+- **The ladder, re-tiered for twelve chapters** (C-22): each chapter's battle theme a step above the last; the
+  middle chapters lively, not grand; the last two chapters before the end the most driven yet.
+- **The final chapter, set apart:** its region theme, dungeon theme and boss theme are unique, built from the Hush's
+  motif and the road's theme set against each other, slower and heavier rather than faster; the score thins as the
+  land goes quiet ([10_STORY.md](10_STORY.md) §6a), so the final battle lands with weight.
+- **Quiet cues count too:** the companions' night-apart cues and ambience ([14_COMPANIONS.md](14_COMPANIONS.md) §5)
+  belong to the same score: the companion's motif, near silent.
+- **A check before each region ships:** its themes are heard beside their neighbours and the main motifs, so the
+  score stays one piece (by ear; the existing loudness ceiling still holds).
 
 ---
 
@@ -249,7 +277,8 @@ companion, and minigames that stay playable afterwards (C10 in [08_CULTURE.md](0
   and let the systems (routing, press, stage) carry the novelty.
 - The press must not pretend to understand free text. It uses bounded blocks
   ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) C-24).
-- Kansai flavour must not become caricature: the dialect rules, and native review.
+- Kansai flavour must not become caricature: the dialect rules, and restraint (no native reviewer is available,
+  C-26: few, well-attested features, always labelled).
 
 ---
 
@@ -638,7 +667,8 @@ way that leaves nothing for a hundredth.
 | **I** | Naming and custom (〜という, 〜ことになっている); comparing sources (〜によると, 〜と伝えられている) |
 | **A** | Classical-flavoured set phrases in inscriptions (〜べし, 〜なり), always shown with a modern gloss and labelled as classical; separating a narrator's comment from the story |
 
-Classical forms are optional reading for A only, never needed for progress, and native-reviewed (Phase 12).
+Classical forms are optional reading for A only, never needed for progress, and limited to famous, well-attested
+set phrases with their glosses, self-reviewed against references (no native reviewer is available, C-26).
 
 **Unique encounters.**
 - **Creatures:**

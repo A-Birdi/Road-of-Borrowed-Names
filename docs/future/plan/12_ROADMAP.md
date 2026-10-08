@@ -1,6 +1,6 @@
 # 12 · Roadmap: a drafted order of execution
 
-*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only: phases begin only when Robin
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only: phases begin only when Robin
 authorises them.*
 
 Robin said time and difficulty are no issue, so the order below is chosen for **quality and risk**, not speed:
@@ -15,19 +15,19 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 | Phase | Name | Main contents | Gate to start |
 |---|---|---|---|
 | **0** | Listen and decide | Robin's playthrough feedback; the remaining addendum reviews; the open and to-confirm items in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) (part A3, part B); spec amendments written | Robin finishes the playthrough |
-| **1** | Quick wins | ~~The audit's defects~~ (done 2026-10-07); the one-guess handwriting pad (C-14); the two Ledgers' names (C-58); honest response previews in combat (E5); measuring what players meet (L19); load-time measurement (S6) | C-64 for E5's scope |
+| **1** | Quick wins | ~~The audit's defects~~ (done 2026-10-07); **Harmony's sound** (E21); the one-guess handwriting pad (C-14); the two Ledgers' names (C-58); honest response previews in combat (E5); measuring what players meet (L19); load-time measurement (S6) | C-64 for E5's scope |
 | **2** | Language foundations | The evidence log, assistance categories, mastery exams and stars, word pages, sentence forging, validator upgrades, the review ledger | — (C-13, C-14 decided) |
-| **3** | Encounter engine | The actor model; Wait; conditions; arrivals; wanderers; objectives; procedures; social encounters; Resolve this step; story-dungeon help | — (C-08, C-09, C-60 decided) |
+| **3** | Encounter engine | The actor model; Wait; conditions; arrivals; wanderers; objectives; procedures; social encounters; Resolve this step; story-dungeon help; **battles: group scaling, two-move turns, silencing, companion growth, more creature kinds, reasons to fight roaming creatures** (E22–E26) | C-69, C-70, C-71 (C-08, C-09, C-60 decided) |
 | **4** | World systems | Story phases, seeded streams, change beats, routines, "have you seen…?", road events, return keys | — |
-| **5** | Records | Stamp book, travel volume (interim art), personal seal, Main Menu gallery, replay, Pastimes, the Wayfarer's Ledger's regrouping; **New Game+ redefined, offered at the end, either slot, with the originating save's farewell** | C-20, C-19 (C-34, C-54, C-66 decided) |
+| **5** | Records | Stamp book, travel volume (interim art), personal seal, Main Menu gallery, replay, the **Distractions** tab and pages, the Wayfarer's Ledger's regrouping; **New Game+ redefined, offered at the end, either slot, with the originating save's farewell** | C-20, C-19 (C-34, C-54, C-66 decided) |
 | **6** | Expeditions | The expedition framework, persistent condition, previews, Atlas commissions as Atlas run types, varied rooms inside each run's fixed shape, delvers, a pilot side dungeon | — (C-03, C-04, C-18, C-57 decided) |
-| **7** | Manybridge (new Chapters 3–4) | The edition boundary (behind a development switch); the city; the press; the stage; manzai; the festival; the yukata cut; the Unravel lesson at the Tally Exchange; *tried* marks on cards | C-22, C-32 (C-54, C-55, C-60, C-64 decided) |
-| **7b** | The Keepers' Road (new Chapter 7) | The keepers' road, the scriptorium, the vigil; folklore and records systems in use | — |
-| **8** | The sea and Kotonoha (new Chapter 9) | The Harbourmaster's quest, sailing, the boat home, Sazanami, East Landing, Kotonoha's early visit and main chapter | — |
-| **9** | The Cloudroad and Steamhollow (new Chapters 10–11); **the edition ships** | Both chapters; the separations and the apology scene; the baths; the ending's romance moments; the twelve-chapter edition released at once, with timed play against the playtime targets | — (C-56, C-59, C-61, C-63, C-65, C-67 decided) |
+| **7** | Manybridge (new Chapters 3–4) | The edition boundary (behind a development switch); the city; the press; the stage; manzai; the festival; the yukata cut; the Unravel lesson at the Tally Exchange; the companions' arc seeds; *tried* marks on cards | C-22, C-32 (C-54, C-55, C-60, C-64 decided) |
+| **7b** | The Keepers' Road (new Chapter 7) | The keepers' road, the scriptorium, the vigil; folklore and records systems in use; Ren's crossroads | — |
+| **8** | The sea and Kotonoha (new Chapter 9) | The Harbourmaster's quest, sailing, the boat home, Sazanami, East Landing, Kotonoha's early visit and main chapter; the arcs' pressure beats | — |
+| **9** | The Cloudroad and Steamhollow (new Chapters 10–11); **the edition ships** | Both chapters; Nao's, Mio's and Suzu's crossroads and nights apart; the separations and the apology scene; **the final chapter's approach reworked** (the Hush at its heaviest; its own themes); the baths; the ending's romance moments; the twelve-chapter edition released at once, with timed play against the playtime targets | — (C-56, C-59, C-61, C-63, C-65, C-67 decided) |
 | **10** | The postgame | The Hall of a Hundred Tales (one wing, then ten); superbosses; the new settlement; pastimes (shogi, hanafuda, karuta, shiritori v2); the Cinder festival revisit | — |
 | **11** | Expressive portraits, second round | The portrait ideas Robin left for later: systems only; the drawing belongs to the art pass | Robin asks |
-| **12** | Native review | Language and culture review of all new content (also continuous from Phase 2) | A reviewer |
+| **12** | Language review | Self-review of all new Japanese against references, recorded in the review ledger; a native reader if one ever becomes available | — |
 | **Z** | **The final art pass** | Outlined only, as Robin asked | Robin: "I'm happy with the final product" |
 | **Final** | Final validation | The full 16-combination matrix and every audit on the art-complete build | Robin calls it |
 
@@ -38,8 +38,8 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 - **Robin's full playthrough feedback** comes first. It may reorder everything below.
 - **The remaining addendum items** that need Robin's eyes: HX33, HX43 and HX45 (scenes and sequences at play speed),
   WI5 and WI26 (gestures and portraits at play speed). They are recorded in docs/expressive/CONTRACT.md.
-- **Decisions:** parts A and A2 of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) were answered on 2026-10-07, in
-  four rounds. Still to come: Suzu after the playthrough (C-62), and part B.
+- **Decisions:** all of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) parts A to A4 and B were answered on 2026-10-07
+  and 2026-10-08. Still to come: the four proposals in part A5 (C-68 to C-71).
 - **Spec and contract amendments** written for the decisions taken ([02_FOUNDATIONS.md](02_FOUNDATIONS.md) S8),
   and REQUIREMENTS IDs reserved for each feature.
 - **The open Harmony question** (one technique or charges) decided. The plan recommends keeping one technique
@@ -51,6 +51,7 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 |---|---|
 | **E5** honest "effect here" line on every response card | Robin expects it; it teaches; small |
 | ~~**Defects**~~ from [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part D | **Done 2026-10-07**, with tests (VALIDATION.md) |
+| **Harmony's sound** (E21): a shared arrival sound and one accent per companion at their peak; none on Instant | Robin plays with the cut-in now and found it empty without sound |
 | **The one-guess handwriting pad** (C-14): one guess per character, free redraws, "Show more suggestions" marked as assisted | Robin decided it; it changes how help is recorded, so it comes before stars |
 | **The two Ledgers' names** (C-58) | A few labels, once Robin confirms the names |
 | **L19** measure the language interactions a playthrough meets | Answers Robin's first question with data |
@@ -87,9 +88,13 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
   **E6** (objectives), **E7** (procedures), **E8** (social encounters), **E10** (companion options and plans),
   **E11** (Resolve this step), **E13–E15**, and **E19** (story-dungeon help).
 - **E12** (two-row formation) only when a set piece needs it.
+- **Battles, from Robin's notes (E22–E26):** numbered turn order and the per-round ceiling; Protect's wider form;
+  two-move turns and two-round plans; silencing a family of responses; companions' growing action sets; the
+  roaming creatures' lost words and notable creatures. New creature kinds arrive with their regions' phases.
 
 **Tests:**
 - the battle suite;
+- the curve test extended to twelve chapters, two-move turns and silencing (Relaxed untouched);
 - the difficulty curve with conditions and arrivals;
 - the geometry audit (with 4–5 actors if E12 is built);
 - new encounter-type tests on fixtures;
@@ -175,7 +180,7 @@ pilot.
   change beats; Old Hisae; the shuttered hall the postgame opens.
 - **C9** folklore told several ways, and the records it feeds (stamps, travel-volume pages).
 - **Music:** a biwa-led zone, tiered in the twelve-chapter ladder (C-22).
-- **A-profile classical phrases**, glossed and labelled, queued for native review.
+- **A-profile classical phrases**, limited to well-attested set phrases, glossed and labelled.
 
 **Tests:**
 - F/Ren through the chapter;
@@ -245,11 +250,17 @@ The ideas Robin left for later on 2026-10-06 (HANDOFF.md):
 
 **Effort:** M (systems).
 
-## Phase 12 · Native review
+## Phase 12 · Language review
 
-All new Japanese, and every culturally framed line, gets read by a native speaker; dialects by a speaker of each.
-This runs continuously from Phase 2, using the review ledger (S5). The game never claims review that hasn't
-happened (spec line 178).
+**Robin (C-26): no native reviewers are available.** So, continuously from Phase 2:
+- **Write conservatively:** standard, textbook-attested forms; no slang or idiom that can't be checked against a
+  reference; dialect and classical forms kept few, well attested and labelled.
+- **Self-review against references** (dictionaries, grammar references, the existing lexicon), recorded line by
+  line in the review ledger (S5) as "self-reviewed", never as "native-reviewed".
+- **The validator** checks furigana, accepted alternatives and every listed answer.
+- **If a native reader ever becomes available**, the ledger shows what to check first: the culturally framed lines,
+  the dialect guide and the classical phrases.
+- The game never claims a review that didn't happen (spec line 178).
 
 ## Phase Z · The final art pass (outline only)
 

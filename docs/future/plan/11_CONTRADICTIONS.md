@@ -1,6 +1,6 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only. Spoiler-safe.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only. Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
 ideas for covering each. That one is the model:
@@ -24,6 +24,7 @@ The register has five parts:
 - **A2. Questions raised by those answers.** All answered in the second round, except Suzu (revisit).
 - **A3. Questions raised by the second round.** All answered in the third round.
 - **A4. Questions raised by the third round.** Answered (C-67).
+- **A5. Proposals from the fourth round.** **The ones waiting for you.**
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
@@ -32,8 +33,10 @@ The register has five parts:
 
 | # | Question | Label |
 |---|---|---|
-| [C-62](#c-62--suzus-dream-from-c-31) | Suzu: star, double act, or both | **Revisit** |
-| Part B | 25 smaller tensions with a proposal each | **Open** · proposal stands |
+| [C-68](#c-68--the-companions-arcs-and-where-their-crossroads-fall) | The companions' second arcs, and where each crossroads falls | **Confirm** |
+| [C-69](#c-69--reasons-to-fight-roaming-creatures) | Reasons to fight roaming creatures: lost words, changed routes, quest carriers, notable creatures | **Confirm** |
+| [C-70](#c-70--group-scaling-and-varied-tactics) | Group scaling and varied tactics | **Confirm** |
+| [C-71](#c-71--companions-growing-in-battle) | About one new companion action per chapter | **Confirm** |
 
 ---
 
@@ -234,8 +237,14 @@ so. The only figure so far is a content-based estimate, not a measurement: the e
 ([08_CULTURE.md](08_CULTURE.md) C12).
 
 ### C-62 · Suzu's dream (from C-31)
-**Revisit.** Robin will come back to it after finishing the story: "my impression appears to have been off with her
-overall dream."
+**Decided** (2026-10-08). Robin: her story could use an expansion with the new regions. As it stands, the player
+never meets her troupe again: her resolve to see the player's story through answers "why isn't she chasing them?",
+but not "do they know she's safe, what do they mean to her, and will they meet again?". So: she crosses paths with
+members of her troupe, and makes the hard decision to stay with the player; a key separation in which she sorts out
+her own thoughts, dismissive at first, then apologetic for making the player wait; a heartfelt night scene at a
+camp or inn, with a sombre, near-silent theme and night ambience; an unfinished matter from her past, resolved; and
+by the end, the next act with the same partner: the double act. She is a travelling comedian who wants fun and good
+company, not a star. **And all four companions get the same depth** ([14_COMPANIONS.md](14_COMPANIONS.md)).
 
 ---
 
@@ -299,12 +308,38 @@ the companion every time.
 - **Each moment has its own travel-volume illustration**, witnessed like any other; in New Game+ runs these
   accumulate per companion.
 
+## A5. Proposals from the fourth round (to confirm)
+
+### C-68 · The companions' arcs and where their crossroads fall
+**Confirm.** [14_COMPANIONS.md](14_COMPANIONS.md) gives each companion a second arc with the same shape (a seed, pressure,
+their existing quest, a crossroads, a night apart, an unfinished matter settled, their dream at the ending). The
+crossroads fall at: **Ren**, Chapter 7 (the Keepers' Road); **Nao**, Chapter 10 (the Cloudroad, woven into the Mist
+Barrier); **Mio** and **Suzu**, Chapter 11 (Steamhollow, where Suzu meets her troupe). Each run keeps to its companion's
+crossroads plus one playable story separation. The specifics are sealed (S14), since they build on later chapters.
+
+### C-69 · Reasons to fight roaming creatures
+**Confirm.** From the options in [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E24, the recommendation is: every roaming creature
+carries a lost word that comes back to its place when it is settled; cleared routes change (people use them);
+a few authored quest carriers; notable named creatures that can teach the companion an action or give an
+exploration cosmetic; and field-guide stamps. No currency, random drops or "slay N".
+
+### C-70 · Group scaling and varied tactics
+**Confirm.** From E22 and E26: number each creature's slip by when it acts; a per-round ceiling on what a group can
+take unless a telegraphed move was left unanswered by choice; Protect learning a wider form later; two moves in one
+round and two-round plans from the middle chapters (never on Relaxed); silencing one family of responses for a few
+rounds, never all of them, with Unravel's guarantee kept.
+
+### C-71 · Companions growing in battle
+**Confirm.** From E25: about one new companion action per chapter (from the story, their arcs, notable creatures and
+secret encounters), some actions growing a wider reach instead of piling up, at most six offered in a battle, and
+the curve test still guarding the language work.
+
 ---
 
 ## B. Tensions this plan resolves (please confirm or overrule)
 
 Rows marked **Open · proposal stands** are ones you haven't answered yet. Until you do, the plan follows the
-resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review the rest later.
+resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on 2026-10-08. All of part B is now decided.
 
 | # | Tension | Sides | This plan's resolution | Where | Status |
 |---|---|---|---|---|---|
@@ -315,38 +350,38 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review
 | C-08 | Arrivals and wanderers vs "Relaxed: one creature" and rules without randomness | R2 §1; COMBAT_NOTES | Relaxed never sees hostile arrivals; every random draw is seeded per save and stored before the battle | E2, S2 | **Decided** (2026-10-07: "your resolution fits") |
 | C-10 | Lasting side-quest outcomes from "choosing incorrectly or waiting" vs no irreversible punishment for honest mistakes | R1; spec line 208 | The game shows the intention it understood before a committing action; recognition failures never commit; Wait counts only when chosen | E17 | **Decided** (2026-10-07: "your resolution fits") |
 | C-11 | NPC deaths vs protected people | R2 §1; spec lines 94, 54, 242 | Never unchosen companion candidates, never people the player helped in a way that undoes their help; rare and authored. **Robin added:** a death is an avoidable consequence of the story and never stops it progressing; a conflict may be a little gruesome, never to NPCs who matter; failing to resolve a conflict never turns on the player: they may witness something terrible and reflect on it with the companion (how it is shown: C-65) | E17, 10_STORY | **Decided** (2026-10-07) |
-| C-15 | A listening star using the device voice vs no listening validation from synthetic speech | H4; spec lines 280, 218 | Labelled "listening practice with your device's voice"; offered only where a voice exists; absent, not missing, elsewhere | L3 | **Open** · proposal stands |
-| C-16 | A "Distractions" tab vs never launching place-based activities remotely | R2 §6; practice index rule | The list lives in Company › Pastimes; companion games start anywhere safe; place games at their place | K7 | **Open** · proposal stands |
-| C-19 | Seals that survive deleting a save vs deletion removing a slot's data | R1's original wish; spec lines 228, 252 | Seals belong to saves; viewing never depends on any save (H1), so nothing is lost but the mark. **Alternative:** a device-level "ever witnessed" record, which needs a spec amendment | S3, K4 | **Open** · proposal stands |
-| C-20 | Always fully viewable vs spoilers | H1; Robin's own wish to avoid spoilers; HX52; Astra | Veiled until revealed; one press per page or chapter; a setting removes the veil. H3 replaces HX53's "event-time appearance" for the Main Menu | K5 | **Open** · proposal stands |
-| C-22 | Inserted chapters vs the strict music intensity ladder | audio rule ZM2 | Re-tier battle and boss themes across twelve chapters; keep the loudness ceiling | 07_REGIONS | **Open** · proposal stands |
-| C-23 | Achievements without trackers vs counting milestones | R1 | Curated stamps only; natural milestones allowed (Robin's own example); no visible counters towards them | K1 | **Open** · proposal stands |
-| C-24 | Printing stories "without restraint" vs never faking understanding of free text | R1; spec lines 182, 206 | Story blocks with tags; readers react only to what the blocks say; proofreading kept separate | C15 | **Open** · proposal stands |
-| C-25 | Construction tasks vs "accept every valid answer" | R0; spec line 138; validator gap | Authored alternatives, checked by an upgraded validator | L7, S5 | **Open** · proposal stands |
-| C-26 | A dialect field guide vs "questions always use standard Japanese" and no caricature | R1; dialect rules | The guide is for understanding only; questions stay standard; native review per dialect | C5 | **Open** · proposal stands |
+| C-15 | A listening star using the device voice vs no listening validation from synthetic speech | H4; spec lines 280, 218 | Labelled "listening practice with your device's voice"; offered only where a voice exists; absent, not missing, elsewhere | L3 | **Decided** (2026-10-08) |
+| C-16 | A "Distractions" tab vs never launching place-based activities remotely | R2 §6; practice index rule | **Robin:** the pastimes get their own **Distractions** tab in the Wayfarer's Ledger, outside Company: a page per game with code-drawn key art around it, how to play and where; companion games offered there, not on the Companion tab (K7, K10) | K7 | **Decided** (2026-10-08) |
+| C-19 | Seals that survive deleting a save vs deletion removing a slot's data | R1's original wish; spec lines 228, 252 | **Robin: seals belong to the save itself, not the slot** — which is what this meant: the seals live inside the save's own data, so copying a save copies them, New Game+ carries them, and deleting a save removes them. A slot is only where a save sits; a new game written into a slot never inherits the old save's seals. The device-level alternative is dropped | S3, K4 | **Decided** (2026-10-08) |
+| C-20 | Always fully viewable vs spoilers | H1; Robin's own wish to avoid spoilers; HX52; Astra | Veiled until revealed; one press per page or chapter; a setting removes the veil. H3 replaces HX53's "event-time appearance" for the Main Menu | K5 | **Decided** (2026-10-08) |
+| C-22 | Inserted chapters vs the strict music intensity ladder | audio rule ZM2 | Re-tier across twelve chapters. **Robin:** energy, lift and intensity build region by region (Chapter 9 needn't be epic); the final region, dungeon and boss themes are unique and imposing; intensity comes from the writing, never from more instruments or a faster tempo; every piece belongs to one coherent score (07_REGIONS, "The score"; G16) | 07_REGIONS | **Decided** (2026-10-08) |
+| C-23 | Achievements without trackers vs counting milestones | R1 | Curated stamps only; natural milestones allowed (Robin's own example); no visible counters towards them | K1 | **Decided** (2026-10-08) |
+| C-24 | Printing stories "without restraint" vs never faking understanding of free text | R1; spec lines 182, 206 | Story blocks with tags; readers react only to what the blocks say; proofreading kept separate. **Robin:** free writing would be too lenient; the story blocks work well | C15 | **Decided** (2026-10-08) |
+| C-25 | Construction tasks vs "accept every valid answer" | R0; spec line 138; validator gap | Authored alternatives, checked by an upgraded validator | L7, S5 | **Decided** (2026-10-08) |
+| C-26 | A dialect field guide vs "questions always use standard Japanese" and no caricature | R1; dialect rules | The guide is for understanding only; questions stay standard. **Robin: no native reviewers are available**, so: careful self-review against references, few well-attested dialect features, always labelled, recorded as self-reviewed (Phase 12) | C5 | **Decided** (2026-10-08) |
 | C-27 | On-screen bathing vs the player's chosen pronouns (Japanese public baths are usually separated by sex) and tone | R1; spec lines 62, 72 | **Robin: follow pronouns.** she/her: the women's bath; he/him: the men's bath; they/them and custom pronouns: C-56. Towel-wrapped, nonsexual, adults; a "shown / summarised" comfort setting | R3, C13 | **Decided** (C-56) |
 | C-28 | Shogi pieces vs furigana on every kanji (and no furigana toggle) | spec line 186; project rule | Pieces show their kanji *with readings*, as Japanese learner sets do. **Robin: build it as I see fit; Robin has never played**, so it is designed to teach from nothing (08_CULTURE C12) | C12 | **Decided** (2026-10-07) |
-| C-29 | A "Grow" route for Advanced players vs no level above Advanced | R0; spec lines 168, 170 | Grow means nuance, genres and conflicting perspectives for A; never an invented tier or certification | L18 | **Open** · proposal stands |
-| C-30 | Road events that "disappear for a time" vs no missable content | R1; spec line 208 | They re-offer themselves on later visits until resolved; the Journey keeps them as unfinished | W5 | **Open** · proposal stands |
-| C-31 | Suzu "aspires to be a star" vs canon (she isn't one; she wants a double-act partner) | R1; canon | Robin's impression is that she wants to be a star of sorts; the canon so far says she wants a double-act partner (相方). The two can meet: a double act aiming for the big stage. Decide after Robin has played her story | C11 | **Revisit** after your playthrough (C-62) |
-| C-32 | New Bond events vs the exact Bond table capped at 12 | company.md | Rebalance the table across twelve chapters; cap unchanged; no gifts or loops | 10_STORY §7 | **Open** · proposal stands |
+| C-29 | A "Grow" route for Advanced players vs no level above Advanced | R0; spec lines 168, 170 | Grow means nuance, genres and conflicting perspectives for A; never an invented tier or certification | L18 | **Decided** (2026-10-08) |
+| C-30 | Road events that "disappear for a time" vs no missable content | R1; spec line 208 | They re-offer themselves on later visits until resolved; the Journey keeps them as unfinished | W5 | **Decided** (2026-10-08) |
+| C-31 | Suzu "aspires to be a star" vs canon (she isn't one; she wants a double-act partner) | R1; canon | **Robin (C-62):** not an aspiring star; a travelling comedian who wants fun, good company and a partner for her shows: the double act. Her story grows with a second arc (14_COMPANIONS) | C11 | **Decided** (C-62) |
+| C-32 | New Bond events vs the exact Bond table capped at 12 | company.md | Rebalance across twelve chapters; no gifts or loops. **Robin:** the table can grow if it needs room (it isn't player-facing); whatever gives Bond a natural progression, with more to do by spending time with the companion and following their story (14_COMPANIONS §6) | 10_STORY §7 | **Decided** (2026-10-08) |
 | C-34 | New Game+ carryover of records | spec line 252 (must be defined) | **Settled by C-54:** New Game+ carries personal learning records, stars, illustrations and seals, stamps, pastime records, settings and other personal metadata; never story or character progression, equipment or items (details C-66) | K9 | **Decided** (C-54) |
-| C-36 | Spacing reviews by days vs "nothing reads the wall clock" | Astra; practice core | Read the date only to space reviews; never show overdue counts or streaks | L6 | **Open** · proposal stands |
+| C-36 | Spacing reviews by days vs "nothing reads the wall clock" | Astra; practice core | Read the date only to space reviews; never show overdue counts or streaks | L6 | **Decided** (2026-10-08) |
 | C-37 | "The Ledger" means two things | Robin calls the pause menu "the Ledger"; the game calls it the *folio*, and its *ledger* is the title's list of saves | **Robin: both are Ledgers, kept distinct.** Proposed names in C-58 | — | **Decided** (C-58) |
-| C-38 | A day/night system vs the flag-only night design | R1 floated it; the night-leak continuity test | Not now; story-set evenings only in new regions; routines move on ticks | W4 | **Open** · proposal stands |
-| C-39 | Companion highlighting answers in story dungeons vs honest evidence | R2 §3 | Recorded as answer-supplied help; changes nothing else | E19 | **Open** · proposal stands |
-| C-41 | "Overly assisted" by weighting suspected fishing vs inferring motives | R2 §4; Astra | Robin's H4 first version (under 30% of questions assisted) decides; categories by what help supplied; weighting later | L2, L3 | **Open** · proposal stands |
-| C-42 | More than three creatures vs layout, Harmony and memory | R1; audit | Three for ordinary encounters; up to five actors in authored set pieces with a two-row formation | E12 | **Open** · proposal stands |
-| C-43 | Hands-on sailing vs untimed play, no reflex, no excessive walking | R1; spec lines 116, 218, 56 | Direct control with nothing chasing and no failure; skip at any time; story events never skipped | W7 | **Open** · proposal stands |
-| C-44 | Early island content vs "only words the player can know by then" and every profile and companion | R2 §10; AGENT_COMMON; spec lines 246, 298 | Story phase, profile and introduced concepts read separately (S1); concept gates validated | R4, S1 | **Open** · proposal stands |
-| C-45 | "Elimination" in group encounters is undefined | R1 | Defined per encounter, never the most severe by default | E17 | **Open** · proposal stands |
-| C-46 | Festival clothing vs garment shapes hard-coded in every renderer, and keepsakes that may change colour only | R1; audit | A fifth garment cut (yukata), built in all renderers, interim art now, painted layers in the art pass | C10a | **Open** · proposal stands |
-| C-47 | "Suspend only in the Trials" vs shiritori's "rest later" and the Atlas's resume | H2; audit | H2 is about expeditions; shiritori's pause is a game pause, unaffected; the Atlas resumes by ordinary autosave, consistent with H2 | D3 | **Open** · proposal stands |
+| C-38 | A day/night system vs the flag-only night design | R1 floated it; the night-leak continuity test | Not now; story-set evenings only in new regions; routines move on ticks | W4 | **Decided** (2026-10-08) |
+| C-39 | Companion highlighting answers in story dungeons vs honest evidence | R2 §3 | Recorded as answer-supplied help; changes nothing else | E19 | **Decided** (2026-10-08) |
+| C-41 | "Overly assisted" by weighting suspected fishing vs inferring motives | R2 §4; Astra | **Left to me (Robin):** in mastery exams the first committed answer counts (retries teach but don't count), nothing is suggested up front, undo and redraw are free when nothing prompted them, options are shuffled (L3) | L2, L3 | **Decided** (2026-10-08) |
+| C-42 | More than three creatures vs layout, Harmony and memory | R1; audit | Three for ordinary encounters; up to five actors in authored set pieces with a two-row formation. **Robin:** the Harmony cut-in overlapping creatures is fine; it's quick | E12 | **Decided** (2026-10-08) |
+| C-43 | Hands-on sailing vs untimed play, no reflex, no excessive walking | R1; spec lines 116, 218, 56 | Direct control, nothing chasing, no failure; skip any time; story events never skipped. **Robin:** things can go wrong aboard, fixed during the voyage or at port by writing the fix; seafaring words learned on the boat; no failure, made clear without saying so (W7) | W7 | **Decided** (2026-10-08) |
+| C-44 | Early island content vs "only words the player can know by then" and every profile and companion | R2 §10; AGENT_COMMON; spec lines 246, 298 | Story phase, profile and introduced concepts read separately (S1); concept gates validated | R4, S1 | **Decided** (2026-10-08) |
+| C-45 | "Elimination" in group encounters is undefined | R1 | Defined per encounter, never the most severe by default. **Robin:** every non-battle group situation is a unique, demanding one-off (reusable in the postgame with new characters), never solved in three turns of common sense (E8) | E17 | **Decided** (2026-10-08) |
+| C-46 | Festival clothing vs garment shapes hard-coded in every renderer, and keepsakes that may change colour only | R1; audit | A yukata cut for the festival. **Robin:** festival only, never in battle, so **no Harmony art** for it (C10a) | C10a | **Decided** (2026-10-08) |
+| C-47 | "Suspend only in the Trials" vs shiritori's "rest later" and the Atlas's resume | H2; audit | H2 is about expeditions; shiritori's pause is a game pause, unaffected; the Atlas resumes by ordinary autosave, consistent with H2 | D3 | **Decided** (2026-10-08) |
 | C-48 | Chapter numbers in the consultation (5, 8) vs the renumbered ten | R1; the context note says they were illustrative | Mapped to twelve chapters: the boat around new 7–8; the island's main chapter is new 9 | R4 | **Updated** for twelve chapters (C-01) |
-| C-49 | Tsuru as the Trials' lore source vs her canon voice | R1 | Fits: she had a teacher, and keeper lore is hers; lines in her dry voice | D9 | **Open** · proposal stands |
-| C-51 | The spec's 10–15 hour target vs a longer main story | spec line 36 | About 15 hours brisk for the main story; about 40 for a new learner taking in the whole game; measured, never claimed | 10_STORY §11 | **Decided** (C-61) |
-| C-52 | A Main Menu illustration of one companion when Continue travels with another | H3; Astra | The other participants stay fixed; only the player's look follows Continue | K2 | **Open** · proposal stands |
-| C-53 | Superboss and Trials rewards vs "no exclusive essentials" | A30; R1; spec line 126 | Stamps, illustrations (revealable) and cosmetics only | E16, D9 | **Open** · proposal stands |
+| C-49 | Tsuru as the Trials' lore source vs her canon voice | R1 | Fits: she had a teacher, and keeper lore is hers; lines in her dry voice | D9 | **Decided** (2026-10-08) |
+| C-51 | The spec's 10–15 hour target vs a longer main story | spec line 36 | About 15 h brisk, about 40 h for a new learner. **Robin:** not measured yet; the goal is about **1–3 hours per chapter** overall (10_STORY §11) | 10_STORY §11 | **Decided** (2026-10-08) |
+| C-52 | A Main Menu illustration of one companion when Continue travels with another | H3; Astra | The other participants stay fixed; only the player's look follows Continue. **Robin:** Main Menu illustrations also show the effects (border, sheen, holographic finish, stamp) earned on the Continue save (K4) | K2 | **Decided** (2026-10-08) |
+| C-53 | Superboss and Trials rewards vs "no exclusive essentials" | A30; R1; spec line 126 | Stamps, illustrations (revealable) and cosmetics only | E16, D9 | **Decided** (2026-10-08) |
 
 ---
 
@@ -391,6 +426,19 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and will review
 | New Game+ details | No keepsakes or lore; the traveller unchanged; either slot; the farewell from the originating save | C-66 |
 | Nao's and Ren's bath | Their own choice, always the same | C-56 |
 | The romance moment | Always the player's choice (romantic or closest friends, Bond the same); the companion's consent shown; at most one earlier moment, holding hands, after the Steamhollow reconciliation | C-67 |
+| Suzu | A travelling comedian; crosses paths with her troupe; chooses to stay; a night apart; the double act at the end | C-62 |
+| Companions | A second arc each, at the same depth (14_COMPANIONS) | C-62 |
+| The Hush | A rising tragedy, chapter by chapter; heavy and imposing near its source | 10_STORY §6a |
+| Distractions | Their own tab and pages in the Wayfarer's Ledger | C-16 |
+| Seals | Belong to the save, not the slot | C-19 |
+| Music | One coherent score; build-up by writing, not by volume; a unique, imposing finale | C-22 |
+| Language review | No native reviewers: careful self-review against references | C-26 |
+| Mastery exams | The first committed answer counts; nothing suggested up front; undo free | C-41 |
+| Sailing | Repairs on board or at port; no failure, shown not said | C-43 |
+| Situation encounters | Unique, demanding one-offs | C-45 |
+| Yukata | Festival only; no Harmony art | C-46 |
+| Playtime | About 1–3 hours per chapter | C-51 |
+| Main Menu illustrations | Show the Continue save's earned effects | C-52 |
 
 ---
 

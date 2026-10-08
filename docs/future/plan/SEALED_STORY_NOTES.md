@@ -4,7 +4,7 @@
 > depend on what happens later in the existing story. Everything a decision needs is stated in the plan in
 > spoiler-free terms. This file records only *why*.
 
-*Expansion plan, draft 2 (2026-10-07, after Robin chose twelve chapters). Sources: docs/STORY.md and src/content
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Sources: docs/STORY.md and src/content
 (read-only audit).*
 
 ---
@@ -160,3 +160,86 @@ Not for this plan to fix; recorded so new writing doesn't copy them:
   save changes, so spec line 242 holds.
 - **An old six-chapter save mid-story** gets the same farewell: there the companion's "unfinished work" is literally
   the story they never finished, which gives that save a gentle close.
+
+## S14 · The companions' second arcs: specifics (for 14_COMPANIONS.md)
+
+Every specific below was checked against the companions' existing lines (src/content). Before writing any of it,
+check again: nothing new may contradict a line already in the game.
+
+### Suzu
+- **Canon used:** sixteen and with the troupe twenty years ago, at the Cinder Orchard festival, "the first year I had
+  lines of my own"; ten years keeping the troupe's books alone, "proud that nobody else ever saw them"; "the curtains
+  put the troupe in the red"; after the storm the troupe went ahead and she meant to follow ("The bridge reaches, so
+  I can chase after my troupe! …Or so I thought."). Her existing quest (Chapter 5, Hiro) is about a comforting lie.
+- **The unfinished matter:** the books. For years she quietly covered the troupe's losses from her own share and
+  told everyone the books balanced: a second comforting lie, about money instead of grief. When the storm came she
+  stayed behind partly to settle the last debts town by town. Nobody in the troupe knows.
+- **Her old partner:** **Koume** (コウメ), her double-act partner of those years, now the troupe's lead comic. Their
+  act ended the night the troupe went ahead without her. Koume's letter (Chapter 4) asks where she went and why.
+- **Why it works after Chapter 5:** having told Hiro the truth, Suzu now owes her troupe the same. In Chapter 11 she
+  shows them the books openly, the meticulous ledger she was proud nobody saw; they are hurt, then grateful; Koume
+  laughs first. The troupe knows she is safe, what they mean to her is said aloud, and they will meet again.
+- **The crossroads:** Koume offers the old act back. Suzu chooses the player as her partner for the next act: not a
+  rejection of Koume, but the act she wants now.
+- **Kotonoha (Chapter 9):** among the drifted leaves, her own unsent reply to Koume. She sends it in Chapter 10 by
+  the relay; that is why the troupe comes to Steamhollow.
+
+### Nao
+- **Canon used:** Nao's own father exists and writes back with a shaking hand ("A reply to my reply came from my
+  father. The writing shakes so badly I can only read half."). Nao's existing quest (Chapter 8, Lanternfall) is a
+  letter from a dying father to an estranged daughter, which Nao chose not to deliver.
+- **The unfinished matter:** Nao's own father, a retired courier of the Cloudroad relay, keeps a post station near the
+  Mist Barrier. Their letters are short and careful; something was never said. The Cloudroad's Courier Who Never
+  Arrived carried the relay's last message the year it failed, and Nao's father was the courier who waited for it.
+- **The crossroads:** the postmaster offers Nao the father's station: take over the post, stay near him. Nao chooses
+  to finish the road with the player and promises to come back.
+- **The night apart:** Nao runs the last leg alone to see their father, then sits with the player on the station's
+  porch. The parallel with the Lanternfall letter is felt, never spelled out.
+- **Ending:** the relay running again; Nao's route passes their father's door.
+
+### Mio
+- **Canon used:** "…I copied my mother."; "My mother loved Saltglass dried fish." (past tense); her existing quest
+  (Chapter 8) is refusing out loud; Steamhollow already carries her "honest rejection of a fraud" (S4).
+- **The unfinished matter:** her mother trained at Steamhollow's springs. Her recipe book ends with a remedy promised
+  to a patient in the valley and never finished. Mio, who copied her mother in everything, finds that the remedy
+  can't honestly be made as promised, and must say so to someone who has waited years.
+- **Her old teacher:** the healer who taught her mother, retiring; the one who offers Mio the dispensary.
+- **The crossroads:** her mother's old place, offered with love. Mio chooses the road, for now, and tells the
+  patient the truth with care: her growth from Chapter 8 in action.
+- **Ending:** her own dispensary, with an honest label on every shelf.
+
+### Ren
+- **Canon used:** "When lost, go back to the oldest name"; terrible at directions; their teacher's story (Ushio)
+  belongs to their existing quest and is not touched.
+- **The unfinished matter:** as an apprentice, Ren got lost on the Keepers' Road and never reached a lantern they had
+  been sent to relight; it went dark, and a traveller lost the way that night (found safe, years later, as Old
+  Hisae remembers). Ren has carried it quietly.
+- **The crossroads:** Old Hisae offers Ren the road's keepership. Ren relights that lantern first, apologises to
+  Hisae, and chooses to finish the road with the player.
+- **Ending:** Ren's answer to Hisae: a keeper who walks the road, as the order once did.
+
+## S15 · The Hush as a rising tragedy: the ladder (for 10_STORY.md §6a)
+
+Robin: the Hush's effect should read as a tragedy that grows, with the party's resolve growing with it, and an
+intense, grand, epic feel near its source by the end. Canon fixes six rungs; the new chapters fill the gaps so that
+every chapter is worse than the one before, never a reveal early (S1).
+
+| Ch | Region | What the Hush takes | The tragedy the player sees | The party's resolve |
+|---|---|---|---|---|
+| 1 | Reedwake | names on labels and lanterns | an eerie inconvenience; a mill that echoes old voices | curiosity |
+| 2 | Saltglass | names "shelved" to a drowned archive | contradiction, a missing man | concern |
+| 3 | Manybridge A | printed names, at a city's scale | barges lost, a family's goods gone, a child lost in the canals one night (found) | "this is bigger than one village" |
+| 4 | Manybridge B | the names in stories and plays | a playhouse that can't remember its characters; actors who forget the roles they loved | anger on others' behalf |
+| 5 | Cinder Orchard | a disaster's memory (canon) | firebreaks abandoned "because there was never a fire" | "forgetting can kill" |
+| 6 | Snowbell | addresses (canon) | a promise broken by silence | grief, shared |
+| 7 | the Keepers' Road | a whole order's work, over generations | a road of dark lanterns; the last keeper alone | the Hush is old; resolve to end it |
+| 8 | Lanternfall | disagreement (canon) | a town that can only say "certainly" | outrage, then purpose |
+| 9 | Kotonoha | words, faster than they can drift home | the great tree shedding; keepers who can't keep up | "the whole language is leaking" |
+| 10 | the Cloudroad | the messages between places | stations that no longer speak to each other; travellers who have stopped talking; snow that falls without a sound | fear, faced |
+| 11 | Steamhollow | (pressing from the ridge above) | the last warm, loud place; refugees from silent villages; the mountain above soundless | a vow |
+| 12 | the Still Archive | (canon) | the land around it drained of colour and sound; lanterns' names peeling and drifting uphill; the companion's voice briefly hushed and won back | the climax |
+
+**Chapter 12's approach is reworked to be heavier** (Robin's "fairly intense surrounding its location"): the palette
+drains step by step, the music thins to a low drone with the score's main motif under it, the ambient sound drops
+out map by map, and a short sequence hushes the companion's voice for a few lines until the player restores it
+(never permanent; the companion is never harmed). The canon events of the chapter stay as they are.

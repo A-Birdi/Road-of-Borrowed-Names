@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -265,3 +265,26 @@ item, or records why it was excluded or folded into another. Statuses:
 | Trying something else when a response does nothing; *tried* marks | E5, E8 | Planned |
 | New Game+ in either slot; the farewell from the originating save; the traveller unchanged; no keepsakes or lore | 10_STORY §9a, K9 | Planned |
 | Nao and Ren always choose the same bath | C13 | Planned |
+
+## 9. Robin's fourth round (2026-10-08)
+
+| Idea | Plan item | Status |
+|---|---|---|
+| Suzu crosses paths with her troupe, chooses to stay, a night apart, the double act | 14_COMPANIONS §4 | Planned (C-68 to confirm) |
+| A second arc for every companion, at the same depth | 14_COMPANIONS | Planned (C-68) |
+| A sombre, near-silent night theme with crickets and frogs | 14_COMPANIONS §5 | Planned |
+| The Hush as a rising tragedy; heavy and imposing near its source | 10_STORY §6a | Planned |
+| A Distractions tab with a page per pastime and key art | K7, K10 | Planned |
+| One coherent score; intensity by writing; a unique, imposing finale | 07_REGIONS "The score", G16 | Planned |
+| No native reviewers: careful self-review | Phase 12, C5 | Planned |
+| No fishing in mastery exams | L3 | Planned |
+| Repairs aboard or at port; no failure, shown not said | W7 | Planned |
+| Situation encounters as unique, demanding one-offs | E8 | Planned |
+| About 1–3 hours per chapter | 10_STORY §11 | Planned |
+| Main Menu illustrations show the Continue save's effects | K4 | Planned |
+| Harmony's sound: a shared arrival, an accent per companion, none on Instant | E21 | Planned (Phase 1) |
+| How groups scale; numbered turns; a per-round ceiling; Protect's wider form | E22 | Planned (C-70) |
+| More creature kinds in every region | E23 | Planned |
+| Reasons to fight roaming creatures | E24 | Planned (C-69) |
+| Companions growing in battle; learning from creatures | E25 | Planned (C-71) |
+| Two moves at once; plans; silencing responses | E26 | Planned (C-70) |

@@ -1,6 +1,6 @@
 # 02 · Foundations: the engine work everything else stands on
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 These are the cross-cutting systems that several features need. Building them first keeps each later feature
 small and consistent. Every entry gives:
@@ -226,8 +226,9 @@ the new chapters ship. That removes draft 1's detour and migration design for th
   - check that every task has a non-audio route.
 - **Recognizer and lexicon intake.** A script lists every new kanji in new content and whether recognition data
   and lexicon entries exist. KanjiVG-derived data is CC BY-SA 3.0 (docs/RECOGNITION.md); keep the notice.
-- **A review ledger** (docs/review/): every new Japanese line is "unreviewed" until a native speaker has read it.
-  This plan never claims review (spec line 178). Robin [R1]: "we can make appropriate consultation if we need to".
+- **A review ledger** (docs/review/): every new Japanese line is marked "self-reviewed" with the reference it was
+  checked against, since no native reviewer is available (Robin, C-26). It never claims a native review that
+  didn't happen (spec line 178).
 - **Authoring templates** for each new task type (05_LANGUAGE.md), with worked examples at all four profiles.
 
 **Tests.** The validator's own unit tests; a new-content report in CI-like runs.

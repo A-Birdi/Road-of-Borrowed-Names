@@ -140,7 +140,7 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 5 (2026-10-07), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 6 (2026-10-08), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
@@ -164,8 +164,14 @@
     the same bath.
   - **Fourth round:** C-67 confirmed (the romance moment is always the player's choice, the companion's consent
     shown, at most one earlier moment holding hands after the Steamhollow reconciliation).
-  - **Still open** (labelled in 11_CONTRADICTIONS.md): C-62 Suzu (revisit after the playthrough); 25 part B
-    proposals (Robin will review them at home).
+  - **2026-10-08:** Suzu expanded (a travelling comedian; crosses paths with her troupe, chooses to stay, a night
+    apart, the double act) and every companion given a second arc of the same depth (14_COMPANIONS.md; specifics
+    in sealed S14); the Hush as a rising tragedy (10_STORY §6a; sealed S15); all of part B decided, including a
+    Distractions tab, one coherent score, no native reviewers (self-review), no fishing in mastery exams, repairs at
+    sea, unique situation encounters, festival-only yukata, 1–3 h per chapter; battle notes planned as E21–E26
+    (Harmony's sound, group scaling, more creatures, reasons to fight roaming creatures, companion growth, varied
+    tactics and silencing).
+  - **Still open** (labelled in 11_CONTRADICTIONS.md part A5): C-68 to C-71, to confirm.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record
     judgement to the lead): the Grammar met page, lantern grammar labels, activity Translate, Foundations copy steps,
     the promotion rule, the chart's phantom road, creature patrols' random stream, and the `alts` validator (which

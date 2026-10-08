@@ -1,6 +1,6 @@
 # 08 · Culture, social life, festivals and pastimes
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 Robin [R0]: "dialects… etiquette in public places, politeness, social hierarchy review, and more ideas steeped in
 the Japanese culture." [R1]: all of Astra's group E is "solid", especially folklore (A49) and festival planning
@@ -13,7 +13,9 @@ the Japanese culture." [R1]: all of Astra's group E is "solid", especially folkl
   situation; "more formal" is not automatically better (Astra, from the Japan Foundation's own course
   descriptions).
 - **No politeness score or cultural-correctness meter** (excluded [R1]).
-- **Native review** for every culturally framed line (S5's review ledger). This plan claims none (spec line 178).
+- **No native reviewer is available** (Robin, C-26), so every culturally framed line is written conservatively and
+  self-reviewed against references, recorded as such in the review ledger (S5). The game never claims a review that
+  didn't happen (spec line 178).
 
 ---
 
@@ -94,11 +96,13 @@ fiction kept apart from claims about real speakers.
 - **Manybridge's Kansai-flavoured speech community** fills most of it. It is the natural home, and Suzu's speech
   finally sounds like the people around her.
 - **Optional comprehension exercises** in the guide: understand, never produce.
-- **Other dialects** only with a native reviewer for each.
+- **Other dialects** only as a handful of well-documented set phrases, each labelled with its region and source; no
+  dialect is ever *produced* in a task. Kansai, already used for Suzu's speech, stays the only dialect community.
 
 **Pros.** Real culture in context; ties Suzu to a place.
 
-**Cons.** Needs native review per dialect; risk of stereotype, checked by review.
+**Cons.** Without native review, the risk of stereotype is managed by restraint: few, well-attested features,
+always labelled, never mocked.
 
 **Effort:** M.
 
@@ -221,10 +225,13 @@ Optional tasks add things (a second stall row, a children's corner). Nothing is 
 - Today the garment *shape* (tunic, robe, coat, apron) is hard-coded in every renderer (road sprite, battle figure,
   portrait, Harmony bust and its painted kit). Keepsakes may change colour only.
 - A **yukata cut** (based on the robe: obi, wide sleeves) touches all of them.
-- **Proposal:** a fifth garment cut, available at creation too, with code-drawn interim art in all renderers, and
-  painted Harmony layers in the final art pass.
+- **Robin (C-46): yukata are for the festival only.** The festival is an isolated event, so there is no scenario
+  where a yukata is worn into battle, and **no Harmony art is needed** for it.
+- **So the cut is smaller than first planned:** the road sprite and the portrait (and the festival's illustrations),
+  not the battle figure or the Harmony bust. It is festival dress, put on for the festival and taken off after;
+  not a creation option.
 
-**Effort:** L (the festival), plus L (the cut).
+**Effort:** L (the festival), plus M (the cut).
 
 ## C11 · Manzai with Suzu: a double act
 

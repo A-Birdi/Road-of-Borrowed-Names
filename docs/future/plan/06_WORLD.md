@@ -1,6 +1,6 @@
 # 06 · The world: living towns, roads, return trips and the sea
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 ## What exists today (audit summary)
 
@@ -243,6 +243,13 @@ boat.
 
   **Unique first-time situations** per route, as with road events. **Story situations are never skipped:** in
   "crew sails" mode they interrupt the skip, so skipping never forfeits content.
+- **Something goes wrong on board** (Robin, C-43): a sail tears, a line frays, the rudder pin works loose, a hatch
+  leaks. The player can **fix it now**, writing or choosing the part and what to do with it (帆, 綱, 舵, 縫う, 結ぶ),
+  or **at the next port**, where a shipwright helps. Until then the boat simply sails a little slower. The words
+  come from the boat itself, so seafaring vocabulary is learned by handling it.
+- **No failure, without saying so.** The boat never sinks, nothing is lost, and the crew's calm lines carry the
+  message ("She'll get us there either way"; "We'll patch it in port if you'd rather"), never a warning or a "you
+  cannot fail" label (Robin).
 - **The travel log** (K2): every voyage writes an entry: route, sights, words learned, people met. It becomes a
   section of the travel volume.
 - **Fishing from the boat:** a new station for the existing pastime.

@@ -1,6 +1,6 @@
 # 10 · Story: more chapters, the Hush, companions and the postgame
 
-*Expansion plan, draft 5 (2026-10-07, after Robin's fourth round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
 spec describes them. Every decision that depends on their contents points to a numbered note in
 [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md), which you should not open until you've finished the game.*
 
@@ -91,16 +91,40 @@ quest arrive by ferry in Chapter 9 and miss nothing essential.
   becomes abstract.
 - **Never re-explain.** New chapters show effects; the existing chapters keep their revelations.
 
+## 6a. The Hush as a rising tragedy (Robin, 2026-10-08)
+
+**Robin's direction.** As the story goes on, what the Hush does to each region should read as a tragedy, and the
+party's resolve should grow with it. By the end its effects are intense around its source, with a grand, epic feel
+built from the lore and mystery of the whole journey: a satisfying build-up to a satisfying climax and resolution.
+
+**How the plan does it.**
+- **A ladder, one rung per chapter.** Every chapter shows the Hush taking something larger or more personal than the
+  chapter before: labels, then a city's printed names, then stories, memories, promises, a whole order's work,
+  speech itself, the words of a language, the links between places. The full ladder, which leans on later canon,
+  is sealed note S15.
+- **Tragedy, not spectacle.** Each rung is shown through people: someone who lost something the player can see and
+  name. Never a statistic.
+- **Resolve, spoken.** Each chapter ends with a short exchange in which the companion's resolve visibly grows, from
+  curiosity early on to a vow before the end.
+- **The final approach is heavier.** The last chapter's road is reworked so the land itself feels the Hush: colour
+  and sound draining map by map, the score thinning to a drone with its main theme underneath, a moment of silence
+  that the party wins back. The existing events of that chapter stay as they are.
+- **Never explained early.** New chapters show effects and deepen the mystery; the existing chapters keep their
+  revelations (sealed S1).
+
 ## 7. Companions in the new chapters
 
-- **Personal quests stay as they are.** Each new chapter adds **one companion beat per companion**: a scene, a
-  choice and an illustration page. Details per region are in [07_REGIONS.md](07_REGIONS.md).
-- **The Bond table** (exact, capped at 12) gets new events from the new chapters. Rebalance it so the cap still
-  arrives late and naturally, without inflating (C-32).
+- **Personal quests stay as they are.** Each companion also gains **a second arc** through the new chapters (Robin,
+  2026-10-08): a seed, pressure, a crossroads where their past offers them a way to leave, a night apart, an
+  unfinished matter settled, and their dream at the ending. **The full design is
+  [14_COMPANIONS.md](14_COMPANIONS.md).**
+- **The Bond table** gets new events from the new chapters and the second arcs. Robin (C-32): it can grow if it needs
+  room, since it isn't player-facing; what matters is a natural progression, with more to do by spending time with
+  the companion and following their story.
 - **Canon notes kept:**
   - Nao and Ren use they/them (Nao uses 俺 in Japanese); Mio and Suzu use she/her.
-  - Suzu: the canon so far says she wants a double-act partner; Robin's impression is a star of sorts. Revisit
-    after Robin has played her story (C-62).
+  - Suzu is a travelling comedian who wants fun, good company and a partner for her shows: a double act, not
+    stardom (Robin, C-62).
   - No jealousy or resentment wording (an existing test enforces this). Romance is now allowed in one narrow form
     (§7a).
   - Unchosen candidates remain people in the world and never resent the player.
@@ -134,13 +158,16 @@ understanding abound".
 - **Never caused by the player's Japanese.** A separation follows the story, never a wrong answer.
 - **The reunion** is a scene per companion, with a travel-volume page.
 
+**Each companion's crossroads adds a night apart** (a narrative separation, not a solo stretch). The companion
+schedule in [14_COMPANIONS.md](14_COMPANIONS.md) §3 keeps every run to a sensible number of separations.
+
 **Three kinds, one of each at most in the main story.**
 
 | Kind | Where | What happens |
 |---|---|---|
 | **Staying behind** | The Mist Barrier (Chapter 10) | The checkpoint lets the party through only when their blanked travel papers are verified. Until then one traveller must stay as surety, an old, non-violent custom. The companion volunteers; the player fetches proof from the next station and comes back |
 | **In danger** | Kotonoha's Root Hollows (Chapter 9) | The tide fills a passage between them. Each has to find a way round; the player reaches the companion from the other side. Suspense, then relief |
-| **A disagreement** | Steamhollow (Chapter 11) | Mediating between the two inns, the pair take different sides. The companion spends an evening at the other inn: breathing room. Next morning, apologies and understanding, and the mediation goes better for both views. Authored per companion so it fits each (sealed S4 for Mio) |
+| **A disagreement, or the companion's crossroads** | Steamhollow (Chapter 11) | For Mio and Suzu, their crossroads and night apart ([14_COMPANIONS.md](14_COMPANIONS.md)). For Nao and Ren, a short disagreement over the mediation, made up the same evening, without a separation |
 
 **Bond.** A quarrel never lowers Bond, because it is always resolved meaningfully; making up is a Bond event, and
 its apologies are part of the language the player learns (C-59, decided; [08_CULTURE.md](08_CULTURE.md) C16).
@@ -215,7 +242,8 @@ is Robin's and Astra's shared position.
 
 ## 11. Length (no claims)
 
-**Robin's targets (C-61):**
+**Robin's targets (C-61, C-51):**
+- **About 1–3 hours per chapter overall**, depending on pace and how much side content a player takes in.
 - **About 15 hours** for a brisk playthrough of the main story, with later chapters taking slightly longer because
   they hold more.
 - **About 40 hours** for a new learner who takes in the whole game: side quests, practice, pastimes, the Atlas and
@@ -223,12 +251,11 @@ is Robin's and Astra's shared position.
 
 **A per-chapter budget for the brisk target** (planning guidance): 900 minutes spread so that each chapter takes a
 little longer than the one before, from about 55 minutes for Chapter 1 to about 95 minutes for Chapter 12 (an
-average of 75).
+average of 75), inside Robin's 1–3 hours.
 
 **What is known.** Only a content-based estimate, not a measurement: the existing six chapters at roughly 11–14
-hours for a learner at a plausible pace. A brisk player is faster than that, so twelve chapters at about 15 hours
-brisk is plausible, but unproven.
+hours for a learner at a plausible pace. The targets are plausible, but unproven.
 
 **How it is checked.** L19's instrumentation counts content per chapter; timed play by people, not estimates,
 decides whether the targets are met (spec: "never claim measured playtime without evidence"). Spec line 36 is
-amended to the two targets.
+amended to these targets.

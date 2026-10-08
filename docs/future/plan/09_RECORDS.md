@@ -1,6 +1,6 @@
 # 09 · Records: stamps, the travel volume, replay and pastimes
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 Robin's settled decisions govern this file:
 
@@ -144,7 +144,7 @@ or badge.
 | Where | What is viewable | Marks shown | Player appearance |
 |---|---|---|---|
 | **Wayfarer's Ledger, Journey › Travel volume** (not in battle) | In-campaign availability (R2 §6): completed chapters' pages, side stories included; the chosen companion's full set after the story; revealed Trials pages | This save's seals | This campaign's player |
-| **Main Menu › Travel volume** | **Everything** (H1), behind a spoiler veil (K5) | Seals from **all existing saves**, read only ("witnessed in Journeys 2 and 5") | **The Continue save's** appearance (slot `meta.look`; the creation default if there is no save), fixed while the volume is open |
+| **Main Menu › Travel volume** | **Everything** (H1), behind a spoiler veil (K5) | **The Continue save's** earned effects on each illustration: its border, sheen, holographic finish or stamp (Robin, C-52) | **The Continue save's** appearance (slot `meta.look`; the creation default if there is no save), fixed while the volume is open |
 
 - **"Opening any illustration shows its unlock and viewing criteria"** (H1): every page's caption says how it is
   witnessed ("Chapter 4: the main story") and, for veiled pages, how to reveal it.
@@ -201,20 +201,28 @@ to save before a moment they didn't know about."
 ## K7 · Distractions
 
 **What and why.** Robin [R2 §6]: festival games and pastimes stay available, "in a building somewhere… or via
-your companion… or from the Ledger in a 'distractions' tab."
+your companion… or from the Ledger in a 'distractions' tab." **Robin (C-16, 2026-10-08):** with hanafuda, shogi,
+shiritori and more, the pastimes need one central, well-made place in the Ledger: their own pages, outside Company,
+labelled **Distractions**.
 
 **Current rule.** The practice index "never launches a physical activity remotely": "Begin here" appears only on
 site.
 
 **Approach (keeps that rule).**
-- **A Distractions list** (Company › Pastimes) shows every pastime the player has met, with records and **where to
-  play it**.
-- **Companion games start anywhere safe**, as shiritori does today: karuta, a festival booth game "in tandem", or
-  shogi on the companion's travel board.
-- **Place games start at their place:** the festival hall, the boat's corner, the Exchange hall, Fuku's bench.
-- **Personal bests and streaks** are shown here and in each game, never ranked (G11).
+- **A Distractions tab** in the Wayfarer's Ledger (K10): an index of every pastime the player has met.
+- **Each pastime has its own page**, drawn like a picture on the Ledger's paper: code-drawn key art around the page
+  that evokes the game (a shogi board's corner and a few pieces; hanafuda cards fanned at the edge; a shiritori chain
+  of words winding round the margin; a festival lantern and a ring-toss post). On the page: what the game is, how to
+  play (a short illustrated how-to), **where to play it**, and the player's personal records.
+- **If the companion can play it, it is offered here** ("Play with Suzu"), not on the Companion tab. Companion games
+  start anywhere safe, as shiritori does today: karuta, a festival booth game in tandem, shogi on the companion's
+  travel board, hanafuda on a cloth.
+- **Place games start at their place:** the festival hall, the boat's corner, the Exchange hall, Fuku's bench. Their
+  page says where.
+- **Personal records** are shown here and in each game, never ranked (G11); the festival games are just for fun
+  (C-55).
 
-**Effort:** S–M.
+**Effort:** M (the pages and their art), on top of each game.
 
 ---
 
@@ -257,10 +265,10 @@ the end of the game by default, and it opens with a farewell from the companion 
 
 ## K10 · Fitting it all into the Wayfarer's Ledger
 
-New pages (Travel volume, Stamp book, Mastery, What I can do, Ways of speaking, Pastimes, the sea chart) would
-overflow the Wayfarer's Ledger if each became a tab.
+New pages (Travel volume, Stamp book, Mastery, What I can do, Ways of speaking, the sea chart) would overflow the
+Wayfarer's Ledger if each became a tab; the pastimes earn a tab of their own (K7).
 
-**Proposal: no new tab; group the sub-pages.**
+**Proposal: group the sub-pages, and add one tab, Distractions** (Robin, C-16).
 
 | Tab | Sections |
 |---|---|
@@ -268,7 +276,8 @@ overflow the Wayfarer's Ledger if each became a tab.
 | **Words** | *My learning:* Progress · **Mastery** · **What I can do** · Noted words · Kept sentences · *Reference:* Kana · Kanji · Grammar · Lore · **Ways of speaking** · Creatures met · *Practice:* Ways to practise · Letters · One word, two moments |
 | **Satchel** | Unchanged |
 | **Map** | Route chart · **Sea chart** · Known details |
-| **Company** | Companion · Pet · Shared memories · **Pastimes** |
+| **Company** | Companion · Pet · Shared memories |
+| **Distractions** | One page per pastime: shiritori, shogi, hanafuda, karuta, the festival games, fishing's records (K7) |
 
 Words becomes a three-section index rather than a flat list. The layout audit (448/448 English, 168/168 Japanese
 labels) re-runs on it.

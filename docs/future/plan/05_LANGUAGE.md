@@ -1,6 +1,6 @@
 # 05 · Language: evidence, mastery and Japanese as a tool
 
-*Expansion plan, draft 2 (2026-10-07, after Robin's answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 Two halves:
 - **L1–L6, the learning record:** what the game knows about a player's Japanese, and how it shows it.
@@ -141,6 +141,15 @@ free, and asking for more suggestions counts as assisted.
   - **A "completed with help" mark** records the attempt honestly without a star (Astra: "demonstrated
     independently / completed with support / needs another opportunity").
 - **Retakes** revisit only the questions that were assisted, not the whole exam (Astra).
+- **No fishing for answers** (Robin, C-41: help should feel good, but an obvious path to fishing must be closed;
+  undoing a move isn't help when nothing prompted it; hiding suggestions up front helps a lot):
+  - **The first committed answer is the one that counts.** A wrong first answer can be retried for learning, but
+    that question doesn't count towards the star, so trying every option gains nothing.
+  - **Nothing is suggested up front:** the pad shows one guess (C-14); choices appear only in a choice exam; hints
+    are a button away and recorded when opened.
+  - **Undo is free:** taking back a tile, clearing a stroke or redrawing before committing is never help, because
+    nothing was shown that prompted it.
+  - **Order and options are shuffled** per attempt, so a retake can't be answered by position.
 - **Listening star.** Offered only where the device has a local Japanese voice. Labelled "Listening practice with
   your device's voice", never "validated listening" (spec line 280). Absent, not "missing", on devices without one.
 - **Flair, just for you** (Robin, C-13: "just UI flair, not a real reward… it's just for you to feel good about

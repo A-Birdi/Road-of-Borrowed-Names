@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 4 (2026-10-07, after Robin's third round of answers). Planning only.*
+*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -306,6 +306,11 @@ Astra's A24 (argument chains) and A28 (negotiation) belong here.
 **Approach.**
 - **Not every situation is cut and dried** (Robin, C-60). All the usual responses stay on the cards, Unravel
   included, even where they do nothing. Reading the situation is the player's job.
+- **Each one is a unique scenario that makes the player think** (Robin, C-45). Every group situation that isn't an
+  ordinary battle is a one-off, written for its place and people (the postgame may reuse a format with new
+  characters). It must not fall to three turns of common sense: each has at least two of hidden information to
+  uncover, competing goals to balance, a situation that changes in response, or a constraint that rules out the
+  obvious move. A test plays the naive approach and checks that it doesn't simply win.
 - **The first one teaches it.** The Tally Exchange dispute in Manybridge (Chapter 3) is the first conflict with no
   creature in it. It is built so the habit of reaching for Unravel meets a situation where nothing is tangled:
   Unravel answers "Nothing here is tangled: the problem is what each of them believes." The companion then says, in
@@ -577,3 +582,171 @@ From [07_REGIONS.md](07_REGIONS.md): about 35 new creatures and 8 bosses or spir
 - a Creatures Met entry.
 
 The art pass at the end replaces interim art.
+
+---
+
+# Battles: Robin's notes of 2026-10-08
+
+Robin wrote these from the playthrough (nearly the end of Chapter 2, travelling with Suzu). Each gets the facts as
+the game stands and a proposal. Planning only.
+
+## E21 · Harmony needs a sound
+
+**Robin:** the cut-in "feels a bit empty" without sound. A base Harmony sound as it slides into frame, for every
+combination; each combination with its own effects that feel important (a sparkle when Suzu's animation reaches its
+peak, for example); none when battle animations are set to Instant.
+
+**Approach.**
+- **A shared arrival sound** for every cut-in, timed to the slide-in: a short rising swell with a soft strike, the
+  same for all four pairs so the player learns "this is Harmony".
+- **One accent per companion**, timed to that companion's peak frame and drawn from their technique:
+  - **Nao:** a quick throw and a paper snap, like a letter landing on a counter.
+  - **Mio:** a rising shimmer of water, then a glass chime.
+  - **Ren:** a deep lantern-bell tone that blooms and hangs.
+  - **Suzu:** a sparkle and a little drum flourish, a stage's "ta-da".
+- **Made in the game's own audio engine** (src/audio, synthesised like every other sound), level-matched to battle
+  music, following the sound settings.
+- **Timing follows the cut-in setting:** Normal plays both sounds at their frames; Fast compresses them with the
+  shorter cut-in; **Instant plays none** (Robin).
+- **Tests:** a unit test that each pair has its cues and that Instant schedules none; a browser check that the cues
+  fire at the arrival and peak frames.
+
+**Effort:** S. **Recommended for Phase 1**: it improves something Robin plays now.
+
+## E22 · How groups scale today, and what changes
+
+**Robin's question:** as groups grow, all three creatures might attack at once; if Protect blocks only the first,
+it could become unmanageable. How do player and companion health scale against enemy damage and numbers?
+
+**How it works today** (docs/COMBAT_NOTES.md; checked by `tests/unit/combat_curve.test.mjs`):
+- **The setting decides the numbers:** Relaxed always one creature (14 resolve), Standard up to two (12), Demanding
+  up to three (10). Resolve is restored after each encounter.
+- **Groups are shared out:** in a pair each creature has half its knots, in a trio 40 %, so a group lasts about as
+  many exchanges as one creature.
+- **They take turns:** each creature after the first starts further into its pattern, so their blows don't all
+  open together. Every move is telegraphed on its slip before you choose.
+- **Protect (まもる)** raises a ward before one of you: it blocks a Strike aimed at that person, or soaks 2 later.
+  Other responses answer a move from *every* creature: stone, warmth, fire, bell, voice and healing guard the whole
+  party, and water and wind act on every creature.
+- **Mistakes cost at most 1 resolve per exchange**, whatever the group; recognition uncertainty never costs any.
+- **Measured:** with a companion, a Demanding trio lasts about 4.1 exchanges and leaves you at 70 % at the lowest;
+  alone, the hardest case (an Atlas trio) leaves 20 %. Every encounter is won at every setting.
+
+**So Robin's worry is mostly answered by staggering and the party-wide responses**, but it grows with the new
+chapters' larger groups and two-move turns (E26). Proposals:
+1. **Show the order.** Number each creature's slip by when it acts this round, so the player can see whose blow
+   lands first.
+2. **A per-round ceiling in groups:** no single round may take more than a set share of the bar unless the player
+   left a telegraphed move unanswered by choice. The curve test enforces it.
+3. **Protect grows:** later in the story the ward learns a wider form (before both of you), and companions'
+   guarding actions (E25) cover the second blow.
+4. **Teach the party-wide answers** when trios first appear: a short note the first time three moves are
+   telegraphed together, pointing at responses that answer every creature.
+5. **The curve test extends to twelve chapters**, with the same promises: Relaxed single and gentle, groups a step
+   and not a spike, companions never shortcutting the language work.
+
+**Effort:** M.
+
+## E23 · More kinds of creature
+
+**Today:** 29 ordinary kinds across the six regions plus 6 bosses (Reedwake 3, Saltglass 7, Cinder Orchard 4,
+Snowbell 5, Lanternfall 5, the Still Archive 5), and 12 more in the Atlas with 3 guardians.
+
+**Robin:** more types, both for general battles and for the new puzzle and group situations; judge what each
+region's theme can hold; more than one new kind per region is fine.
+
+**Approach.**
+- **Every region at least 6–8 ordinary kinds**, each with a move or combination of moves no other has (never a
+  recolour). New regions already list 6–10 each ([07_REGIONS.md](07_REGIONS.md)).
+- **Existing regions get 2–3 new kinds each**, themed from what the spec says of the place:
+
+  | Region | Proposed new kinds (working names) |
+  |---|---|
+  | Reedwake | **Silt Toad** (a Mire that slows your ward), **Reed Whisperer** (Shroud with a False promise), **Storm Kite** (Gust that strips a ward) |
+  | Saltglass | **Gull Thief** (snatches a ward away), **Tidepool Imp** (Flood with a slow build), **Net Tangle** (binds a response; Unravel's natural home) |
+  | Cinder Orchard | **Glass-Shard Wisp** (Mirror), **Ash Mole** (Gathering from below), **Persimmon Imp** (False promise that ripens) |
+  | Snowbell | **Icicle Bat** (Chill from above), **Snow Hare** (Chill and Sweep), **Starling Wisp** (Shroud that light alone clears) |
+  | Lanternfall | **Notice-Board Mimic** (Plea and False promise), **Queue Spirit** (Waiting that turns into a Strike), **Ledger Weevil** (Re-tying from the records) |
+  | The Still Archive | **Index Card Swarm** (many small blows), **Silent Bell** (Hush that spreads), **Page Wraith** (Mirror and Hush) |
+
+- **Each new kind:** its battle art at today's standard, its moves and help text at four tiers, a Creatures Met
+  page, and a place in the curve test.
+- **Situation encounters** (puzzle, social, objective) get their own casts per scenario (E7, E8), never reused
+  creatures.
+
+**Effort:** L (spread across the chapters' phases).
+
+## E24 · Why fight a roaming creature? (options, as Robin asked)
+
+**Today:** roaming creatures give practice and clear the way; only two story creatures give anything at all (both
+bosses), and the Saltglass nets and sea glass come from scenes, not creatures.
+
+**Robin:** some incentive beyond space and practice; avoid currency (unless for a quest), "slay 5 crabs", and
+cosmetic drops from ordinary creatures; cosmetics only from harder encounters, perhaps as an exploration bonus.
+
+**Options, each within the plan's guardrails (no random drops, no currency, no counters to grind):**
+
+| # | Option | What the player gets | Verdict |
+|---|---|---|---|
+| 1 | **Every roaming creature carries a lost word** | Settling it releases a word the Hush took from that place; a sign, a label or a person's memory comes back nearby (a visible change, W1). The word joins the notebook | **Recommended**: it fits the world exactly, rewards every fight, and turns practice into restoration |
+| 2 | **Clearing a route changes it** | When a path's creatures are settled, people start using it: a trader, children, a road event, a shortcut | **Recommended** |
+| 3 | **Quest carriers, authored** | A few creatures hold a quest object (a lost float, a bundle of letters), always one named creature, never "collect five" | **Recommended**, sparingly |
+| 4 | **Notable creatures** | Fixed, named, harder variants in out-of-the-way places. Settling one can teach the companion a new action (E25) or give a cosmetic as an exploration bonus | **Recommended** (Robin's "cosmetics on harder encounters") |
+| 5 | **Inscription fragments** | Settling certain creatures in a particular way leaves part of a stronger form of a word (a gust that also lifts mist) | Possible; overlaps with 4, so only a few |
+| 6 | **Field-guide stamps** | A stamp for settling every kind in a region: a natural milestone, no counter shown (K1) | Recommended as a small extra |
+| — | Currency, random drops, "slay N", crafting materials | — | **Excluded** (Robin, R1) |
+
+**Effort:** M (options 1–3 are content plus small engine hooks; 4 builds on E25).
+
+## E25 · Companions grow in battle too
+
+**Today:** each companion has five actions across the whole game: one on joining, a second when Chapter 2 ends, one
+from their personal quest, and two from the optional long quest lines. The player has twelve inscriptions to learn.
+So Robin's Suzu has only Heckle until the end of Chapter 2 ("Draw its eye" arrives then).
+
+**Robin:** more should open up, steadily, for both the player and the companion; unique creatures and secret
+encounters could teach companions abilities, not just people or quests.
+
+**Approach.**
+- **About one new companion action per chapter**, so twelve chapters give each companion ten or more, from:
+  - the main story's chapter ends;
+  - their personal quest and their second arc's beats ([14_COMPANIONS.md](14_COMPANIONS.md));
+  - **notable creatures** (E24): a companion learns from a creature they faced, in their own way (Suzu copies a
+    tumbler's pratfall into a routine; Ren learns a lantern-moth's glow; Mio a spring-imp's steam; Nao a gull's
+    swoop);
+  - secret encounters off the beaten path.
+- **Upgrades as well as additions**, so the menu doesn't sprawl: some actions grow a wider reach later (Heckle
+  learns to reach every creature).
+- **A manageable menu:** at most six actions offered in a battle, ordered by usefulness against what is telegraphed;
+  the rest are a page away.
+- **The player grows too:** new inscriptions in the new chapters (はし, すみ, みち, ゆ already planned, W6) and
+  stronger forms of familiar ones.
+- **The curve test still guards the language work:** companions may never shorten it (rounds with a companion stay
+  at least 70 % of rounds alone).
+
+**Effort:** M (system) plus content per chapter.
+
+## E26 · Varied tactics: two moves at once, plans, and silencing
+
+**Robin:** as battles get harder, creatures should vary their tactics as well as their numbers (outside the easiest
+setting): strike *and* shroud at once, so the player chooses what to answer, or covers both with a companion's
+ability; the Hush should be able to silence some responses for a time, forcing a different approach while leaving a
+solid way to progress.
+
+**Approach.**
+- **Two moves in one round** (from the middle chapters, Standard and Demanding only): a creature telegraphs, for
+  example, a Strike and a Shroud together. The player answers one; a few responses and companion actions answer
+  both. Never on Relaxed.
+- **Plans over two rounds:** a creature telegraphs a sequence (Gathering, then Flood), so answering the first step
+  heads off the second.
+- **Group coordination:** two creatures act together on a telegraphed signal; answering the one giving the signal
+  breaks it.
+- **Silencing, extended.** Today one move, Hush, stops Unravel until a bell rings or a voice is raised. Later
+  creatures, and especially the final stretch, can silence **one family of responses for a few rounds**, shown on
+  the cards with the rounds left. It never silences everything; there is always a way through; and the promise that
+  every combat encounter can be won with Unravel alone still holds (Unravel is only silenced when its counter is
+  already known, as today).
+- **All of it is telegraphed** before the player chooses, explained in help at four tiers, and tuned with the
+  curve test.
+
+**Effort:** M–L.

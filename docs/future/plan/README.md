@@ -1,6 +1,6 @@
-# The Road of Borrowed Names: expansion plan (draft 5)
+# The Road of Borrowed Names: expansion plan (draft 6)
 
-*2026-10-07. Draft 5 records Robin's four rounds of answers from the same day. A planning document, not authorised work: nothing
+*2026-10-08. Draft 6 records Robin's answers of 2026-10-07 and 2026-10-08. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
 
@@ -29,6 +29,7 @@ implementation plan. Every idea is broken down on its own and checked against:
 | [08_CULTURE.md](08_CULTURE.md) | Register, public spaces, refusal, dialects, documents, folklore, **the festival**, manzai, shogi and other pastimes, the press |
 | [09_RECORDS.md](09_RECORDS.md) | The stamp book, **the travel volume**, the witnessed seal, the Main Menu gallery, spoilers, replay, Pastimes, the Wayfarer's Ledger |
 | [10_STORY.md](10_STORY.md) | The twelve chapters, the Hush, companions, separations, old saves, the postgame |
+| [14_COMPANIONS.md](14_COMPANIONS.md) | **A second arc for each companion**: a seed, pressure, a crossroads, a night apart, an unfinished matter, their dream |
 | [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) | **Every contradiction found**, each labelled decided, open, to confirm or to revisit, plus the defects fixed in the current game |
 | [12_ROADMAP.md](12_ROADMAP.md) | The drafted order of execution, from your feedback to the final art pass, with testing per phase |
 | [13_IDEA_REGISTER.md](13_IDEA_REGISTER.md) | Where every idea went: Astra's 60, all of Robin's, and this plan's own |
@@ -81,7 +82,7 @@ never deleted.
 - the sea;
 - the Cloudroad and Steamhollow;
 - the postgame;
-- native review throughout;
+- careful language review throughout (self-review; no native reviewer is available);
 - **the art pass last**;
 - the full matrix on the finished build.
 
@@ -113,14 +114,30 @@ never deleted.
 | C-66 | New Game+: no keepsakes or lore; the traveller unchanged; either slot; **the farewell from the originating save** |
 | C-56 | Nao and Ren always choose the same bath, in character |
 | C-67 | The romance moment is always your choice (romantic or closest friends, Bond the same); the companion's consent shown; at most one earlier moment, holding hands, after the Steamhollow reconciliation |
-| Part B | C-05 to C-08 and C-10: the proposals stand as written |
+| C-62 | **Suzu** is a travelling comedian; she crosses paths with her troupe, chooses to stay, and wants the double act at the end; **every companion gets a second arc** at the same depth |
+| Story | **The Hush as a rising tragedy**, heaviest near its source, with a satisfying build-up and climax |
+| C-16 | A **Distractions** tab: a page per pastime, with key art, how to play and where |
+| C-19 | Seals belong to the save, not the slot |
+| C-22 | **One coherent score**: build-up by writing, not by volume; a unique, imposing finale |
+| C-26 | No native reviewers: careful self-review against references |
+| C-41 | Mastery exams can't be fished: the first committed answer counts |
+| C-43 | Things go wrong aboard; fix them at sea or in port; no failure, shown not said |
+| C-45 | Situation encounters are unique, demanding one-offs |
+| C-46 | Yukata are festival-only: no Harmony art |
+| C-51 | About 1–3 hours per chapter |
+| C-52 | Main Menu illustrations show the Continue save's earned effects |
+| Part B | All of it decided (C-04 to C-53) |
 
 ## Still waiting for you
 
-Labelled in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md):
+Labelled **Confirm** in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A5:
 
-1. **C-62 (Revisit):** Suzu's dream, after you finish the story.
-2. **Part B:** 25 smaller tensions, each with a proposal that stands until you say otherwise.
+1. **C-68:** the companions' second arcs ([14_COMPANIONS.md](14_COMPANIONS.md)), and where each crossroads falls.
+2. **C-69:** reasons to fight roaming creatures ([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E24).
+3. **C-70:** group scaling and varied tactics (E22, E26).
+4. **C-71:** companions growing in battle (E25).
+
+Also ready when you want it: **Harmony's sound** (E21), a small change to the current game.
 
 ## Fixed in the current game
 
