@@ -1,6 +1,6 @@
 # 14 · Companions: a second arc for each of the four
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only. Spoiler-safe: each
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only. Spoiler-safe: each
 companion's existing personal quest is mentioned only by chapter. The specifics of every arc below, which build on
 those quests, are in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md) S14.*
 
@@ -17,6 +17,10 @@ those quests, are in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md) S14.*
   tension, drama, heartfelt moments, and a way to circle back to the main story. Robin knows little about the
   others' dreams or why they keep travelling with the player. Size them up to Suzu's level, naturally: "Nothing
   should feel forced."
+- **Robin's decision (C-68):** Suzu's arc "sounds promising"; for the other three, "I would trust your judgment in
+  making the other three equally fleshed out." **Decided.** §4 now gives all four the same parts.
+- **Corrected in draft 7.** Checking canon again for this round, I found that two of draft 6's arcs leaned on lines
+  spoken by other characters, not by the companion. Nao's and Mio's arcs now rest on their own lines (sealed S14).
 
 ## 2. The shape every arc shares
 
@@ -63,6 +67,10 @@ with goodbyes. The plan keeps it to this:
 
 ## 4. The four arcs (spoiler-free)
 
+Each arc has the same parts, so none is thinner than another: who they are, their dream, why they keep travelling
+with the player, a seed, pressure, a step in Chapter 10, the crossroads, the night apart, the unfinished matter, the
+postgame and the ending.
+
 ### Suzu (スズ): the travelling comedian
 
 - **Who she is, as the player first meets her:** a travelling performer who answers hard questions with a joke
@@ -88,57 +96,68 @@ with goodbyes. The plan keeps it to this:
 
 ### Nao (ナオ): the courier
 
-- **Who they are:** a courier who checks exits while seeming to listen; wry, impatient with ceremony; quietly
-  sentimental about handwriting.
+- **Who they are:** a courier who knows the road west and checks the exits while seeming to listen; wry, impatient
+  with ceremony; quietly sentimental about handwriting.
 - **Their dream:** a road where letters arrive: a relay that links every town the party restored, so nobody waits
   for word that never comes.
 - **Why they keep travelling with the player:** the biggest delivery of their life, carrying names back to where
   they belong.
-- **Seed (Chapter 3, Manybridge):** the dead-letter office under the Exchange, and an old relay emblem Nao
-  recognises.
-- **Pressure (Chapters 7 and 9):** a name in the keepers' route registers; unsent letters among Kotonoha's leaves.
-- **Crossroads (Chapter 10, the Cloudroad):** while the party waits at the Mist Barrier, the relay's postmaster
-  offers Nao the vacant station post: a home, a route, the work they love. Nao stays with the player and promises to
-  come back.
-- **The night apart:** one last run of the relay alone ("I need to run this one myself"), then the post station's
-  porch at night.
-- **The unfinished matter:** tied to the Cloudroad's last courier (sealed S14).
-- **Ending:** the relay running again, and Nao's place in it.
+- **Seed (Chapter 3, Manybridge):** in the dead-letter office under the Exchange, a bundle held for "the courier
+  Nao", forwarded under an old relay emblem. Nao pockets it unopened, with a joke about fan mail.
+- **Pressure (Chapters 7 and 9):** in the Keepers' Road registers, the name of the old courier who taught Nao the
+  road west; on Kotonoha, a stray letter in a hand Nao knows. Nao reads it alone and says nothing yet.
+- **Chapter 10:** the bundle's sender is on the Cloudroad, still waiting.
+- **Crossroads (Chapter 10, the Cloudroad):** that old courier keeps the last lit station below the Mist Barrier and
+  asks Nao to take it over: a post where letters come to Nao, a place people can find them. Nao chooses to finish
+  the road with the player, and says so face to face rather than by letter.
+- **The night apart:** "I need to run this one myself." Nao runs the last leg of the restored relay alone, carrying
+  a reply written by hand, and delivers it in person. Then the station's porch at night: a mountain stream with
+  kajika frogs, wind in the cedars, a horse bell far below.
+- **The unfinished matter:** the letters Nao has let wait (sealed S14).
+- **Postgame:** the relay runs end to end, and Nao carries the player's letters in it.
+- **Ending:** Nao leaves a forwarding address for the first time, and lets the player choose where it is.
 
 ### Mio (ミオ): the apothecary
 
-- **Who she is:** an apothecary, gentle with frightened people, stubborn when kindness would become dishonesty,
-  with a fierce, funny temper when someone is condescending.
+- **Who she is:** Reedwake's apothecary, gentle with frightened people, stubborn when kindness would become
+  dishonesty, with a fierce, funny temper when someone is condescending.
 - **Her dream:** a dispensary where anyone can come in, and where she can say what is true about every remedy.
 - **Why she keeps travelling with the player:** she meant to help one village; the road keeps needing help, and with
   the player she is learning that helping is not the same as never refusing.
-- **Seed (Chapter 4, Manybridge):** a tonic seller's bold promises on a playbill, and a letter from her old
-  teacher.
-- **Pressure (Chapters 7 and 9):** a lone keeper's health on the Keepers' Road; labels without bottles on
-  Kotonoha.
-- **Crossroads (Chapter 11, Steamhollow):** the valley's healers offer her the dispensary of the springs: respected,
-  settled, everything she said she wanted. She chooses the road, for now.
-- **The night apart:** a long night tending a patient alone ("I'm fine. Go to bed."), then an apology at dawn by
-  the steaming footbath.
-- **The unfinished matter:** her teacher's letter (sealed S14).
-- **Ending:** the dispensary she wants, and the player's place on its shelves of labels.
+- **Seed (Chapter 4, Manybridge):** a tonic seller's playbill promising "cures" for every ailment of a far-off
+  hot-spring valley. Mio's temper, and an old letter in her bag that she doesn't mention.
+- **Pressure (Chapters 7 and 9):** a lone keeper's health on the Keepers' Road, which she cannot stop tending; on
+  Kotonoha, labels without bottles, other people's undecided things.
+- **Chapter 10:** a message on the relay from the springs: "Come and see us."
+- **Crossroads (Chapter 11, Steamhollow):** a healer who knew her mother, retiring, offers her the dispensary of the
+  springs: respected, settled, wanted. She chooses the road, for now.
+- **The night apart:** a long night tending a patient alone ("I'm fine. Go to bed."). At dawn by the steaming
+  footbath she answers the old letter at last and apologises for shutting the player out. Frogs in the terraced
+  paddies below, steam from a vent, a bamboo spout ticking into a basin.
+- **The unfinished matter:** the letter she never answered (sealed S14).
+- **Postgame:** the healer visits the festival hall, bringing something for Mio's shelves.
+- **Ending:** her own dispensary, with an honest label on every shelf.
 
 ### Ren (レン): the lantern keeper
 
-- **Who they are:** a travelling lantern keeper, earnest and precise, unexpectedly funny when comfortable, and
+- **Who they are:** Reedwake's lantern keeper, earnest and precise, unexpectedly funny when comfortable, and
   terrible at directions.
 - **Their dream:** every dark lantern on the old roads relit, and a keeper's life lived on the road rather than
   behind a door.
 - **Why they keep travelling with the player:** lanterns are going dark everywhere, and a keeper goes where the dark
   is.
-- **Seed (Chapter 3, Manybridge):** the bridges' name plaques, cut by a lantern guild Ren has heard of.
+- **Seed (Chapter 3, Manybridge):** the bridges' name plaques, cut by a lantern guild whose mark Ren knows.
 - **Crossroads (Chapter 7, the Keepers' Road):** Old Hisae, the road's last keeper, offers Ren the keepership of
   the road: an order's post, a lodge, belonging. Ren chooses to finish the road with the player first.
 - **The night apart:** a vigil kept alone at the lodge, dismissed as "keeper's business", then explained over the
-  last lit lantern.
-- **The unfinished matter:** kept separate from Ren's existing personal quest, which stays exactly as it is
-  (sealed S2, S14).
-- **Pressure afterwards (Chapter 9):** the oldest lanterns, half-buried in Kotonoha's sand.
+  last lit lantern. Bell crickets in the pampas grass, an owl, wind in the lantern shutters.
+- **The unfinished matter:** an old lantern of Ren's own, on that road (sealed S14). It is kept separate from Ren's
+  existing personal quest, which stays exactly as it is (sealed S2, S14).
+- **Pressure afterwards (Chapter 9):** the oldest lanterns, half-buried in Kotonoha's sand, carrying names only Ren
+  can read.
+- **Chapter 10:** Ren relights the Cloudroad's station lanterns, and word comes by the relay that the Keepers' Road
+  is lit at every post again.
+- **Postgame:** Ren and Old Hisae walk the Keepers' Road together on the night its lanterns are lit.
 - **Ending:** the road relit, and Ren's answer to Old Hisae.
 
 ## 5. Music and staging for the night apart
@@ -146,8 +165,10 @@ with goodbyes. The plan keeps it to this:
 - **A family of quiet cues**, one shared motif with a variation per companion: sombre, near-silent, a few sustained
   notes and long rests (Robin's direction). It sits apart from the battle ladder (§ music in
   [07_REGIONS.md](07_REGIONS.md)).
-- **Night ambience synthesised in the game's own audio engine** (no recordings): crickets, frogs in a paddy or a
-  garden pond, a distant spring or river, an occasional wind chime.
+- **Night ambience synthesised in the game's own audio engine** (no recordings), different for each companion's
+  night (§4): Suzu, crickets and frogs in an inn garden; Nao, kajika frogs in a mountain stream and wind in the
+  cedars; Mio, frogs in terraced paddies, a steam vent and a bamboo spout; Ren, bell crickets, an owl and lantern
+  shutters in the wind.
 - **Staging:** a fixed, still composition; slow idle animation (breathing, a lantern's flicker, steam); no camera
   movement; text paced slower than usual. One travel-volume illustration per companion.
 
@@ -162,6 +183,8 @@ with goodbyes. The plan keeps it to this:
 ## 7. Building it
 
 - **Where:** each arc's beats are built with its chapter (12_ROADMAP.md phases 7, 7b, 8 and 9).
+- **Canon check:** before any line is written, every canon line an arc relies on is checked for its *speaker* as
+  well as its words (draft 6's two misreadings came from lines spoken near the companion, not by them).
 - **Tests:** a focused run per companion through their beats (Robin's cadence: companion content is tested with
   that companion); saved-state fixtures for each crossroads and night apart; the Bond table's curve checked so the
   cap still arrives late and naturally.

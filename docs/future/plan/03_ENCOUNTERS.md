@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -633,17 +633,23 @@ it could become unmanageable. How do player and companion health scale against e
   alone, the hardest case (an Atlas trio) leaves 20 %. Every encounter is won at every setting.
 
 **So Robin's worry is mostly answered by staggering and the party-wide responses**, but it grows with the new
-chapters' larger groups and two-move turns (E26). Proposals:
-1. **Show the order.** Number each creature's slip by when it acts this round, so the player can see whose blow
-   lands first.
-2. **A per-round ceiling in groups:** no single round may take more than a set share of the bar unless the player
-   left a telegraphed move unanswered by choice. The curve test enforces it.
-3. **Protect grows:** later in the story the ward learns a wider form (before both of you), and companions'
-   guarding actions (E25) cover the second blow.
+chapters' larger groups and two-move turns (E26).
+
+**Robin's decision (C-70):** "Numbering each enemy by their action order is good. Groups should still respect
+targeting where applicable." Robin would rather give the player options for the harder fights with two to five
+creatures "without restricting what the enemies can do". So:
+1. **Show the order** (decided). Each creature's slip carries its number in this round's order and whom its move is
+   aimed at (decided when it is telegraphed, as today), so the player sees whose blow lands first and on whom.
+2. **No per-round ceiling** (dropped; C-73 to confirm). Draft 6 proposed capping what a group could take in one
+   round. That restricts the enemies, so the player's answers grow instead: modifier words (E27), companions'
+   growth (E25) and the party-wide responses.
+3. **Protect grows, as a moment of growth** (decided): 「すべてをまもる」, a ward before each of you, learned in a
+   scene in Chapter 7 (E27). Companions' guarding actions (E25) cover more too.
 4. **Teach the party-wide answers** when trios first appear: a short note the first time three moves are
    telegraphed together, pointing at responses that answer every creature.
 5. **The curve test extends to twelve chapters**, with the same promises: Relaxed single and gentle, groups a step
-   and not a spike, companions never shortcutting the language work.
+   and not a spike, companions and modifiers never shortcutting the language work, and every encounter winnable
+   with Unravel alone.
 
 **Effort:** M.
 
@@ -724,6 +730,14 @@ encounters could teach companions abilities, not just people or quests.
 - **The curve test still guards the language work:** companions may never shorten it (rounds with a companion stay
   at least 70 % of rounds alone).
 
+**Robin's decision (C-71):** "Sounds good. Not every action needs to be laid out in the clearest path, as we're
+letting unique enemies possibly reward the companion with a new tool or upgrade, too. This wouldn't be FOMO as the
+player can generally revisit any area at any time (within reason)." So:
+- **Discovery is part of it.** No checklist of actions still to find; a notable creature appears on the Creatures
+  Met page once met, and the companion may mention a rumour once.
+- **Never missable.** Notable creatures and secret encounters are never placed where an area closes for good; each
+  waits until it is settled.
+
 **Effort:** M (system) plus content per chapter.
 
 ## E26 · Varied tactics: two moves at once, plans, and silencing
@@ -741,12 +755,132 @@ solid way to progress.
   heads off the second.
 - **Group coordination:** two creatures act together on a telegraphed signal; answering the one giving the signal
   breaks it.
-- **Silencing, extended.** Today one move, Hush, stops Unravel until a bell rings or a voice is raised. Later
-  creatures, and especially the final stretch, can silence **one family of responses for a few rounds**, shown on
-  the cards with the rounds left. It never silences everything; there is always a way through; and the promise that
-  every combat encounter can be won with Unravel alone still holds (Unravel is only silenced when its counter is
-  already known, as today).
+- **Silencing, extended.** Today one move, Hush, stops Unravel until a bell rings or a voice is raised, and only
+  creatures of Lanternfall and the Still Archive, where the Hush is closest, use it. Later Hush creatures can
+  silence **one family of responses, or the modifiers (E27), for a few rounds**, shown on the cards with the rounds
+  left. It never silences everything; there is always a way through; and the promise that every combat encounter
+  can be won with Unravel alone still holds (Unravel is only silenced when its counter is already known, as today).
 - **All of it is telegraphed** before the player chooses, explained in help at four tiers, and tuned with the
   curve test.
 
+**Robin's decision (C-70):** "Two-move turns and Silencing (Hush or Hush-adjacent enemies can Silence, not us)
+sound fine, as long as it can be inferred clearly." So:
+- **Only the Hush silences.** Silencing belongs to Hush and Hush-adjacent creatures; the player never silences
+  anything, and no response or modifier does.
+- **Inferable at a glance:**
+  - every creature that can silence carries the same visible Hush mark in its art, and its Creatures Met page says
+    so;
+  - its slip shows the silence before it lands: which family, for how many rounds, and what ends it;
+  - a two-move turn shows both moves on one slip, joined by "and", in the numbered order;
+  - a silenced card says why, how many rounds are left, and what would end it early.
+
 **Effort:** M–L.
+
+## E27 · Modifier words: extending a response's reach
+
+**Robin (C-70):** instead of only choosing one response, the player learns **modifiers**, in battle and in the
+overworld. Choosing a modifier, then the response it extends: 「すべてを守る」 (*subete o mamoru*, "Protect everything") shields both
+of you; 「風がすべてを動かす」 (*kaze ga subete o ugokasu*, "The wind moves all") clears or blocks several shrouds; light with a word to
+reveal or illuminate. They are "target modifiers more than direct word/response transformations at heart.
+Extensions, really." Words that read alike at first can do different things (Robin's families below). They let
+targeting and order matter and give the player options in the harder fights with two to five creatures, "without
+restricting what the enemies can do".
+
+**How reach works today** (src/engine/95_combat.js): Unravel, answers, light and rope act on the target; water and
+wind act on every creature; stone, warmth, fire, bell, voice and healing protect you both and answer that move from
+every creature; a ward goes before one of you. Ren's Harmony technique (Lantern Ward) already shields both, once.
+
+**The idea in one line.** A modifier never acts alone. It changes *who*, *how many*, *what kinds*, *how much* or
+*how long* a response reaches; the response still does what it always did.
+
+### Choosing one in battle
+1. The response panel gains a row of the modifiers the player knows. Choosing one shows on every response card what
+   it would do with that modifier (targets highlighted, the reach in words). A response it can't extend is dimmed,
+   with the reason.
+2. Choosing the response then asks for the modifier's option, where it has one (いくつか: which two creatures;
+   大半: which one to leave out).
+3. The player writes the phrase: 「すべてをまもる」, 「ひかりがすべてをてらす」.
+4. Without a modifier, everything works exactly as today. Every combat encounter can still be won with Unravel
+   alone.
+
+### What is written, and how it is recorded
+- **A real sentence.** Noun inscriptions gain one partner verb each, with the particle that is natural for it:
+  が for light and wind, which act by themselves (ひかりがてらす, かぜがうごかす); で for rope and water, which the
+  player uses (なわでしばる, みずでながす). The list is settled in the language self-review (Phase 12).
+- **Only natural Japanese.** A modifier pairs only with the responses it reads naturally with. An unnatural
+  pairing (たくさん with まもる, say) is simply not offered.
+- **How much is written follows the input setting:** typed, the whole phrase; handwritten, the modifier and its
+  particle, with the rest shown (a whole sentence by hand every round would be slow); profiles that don't write yet
+  assemble the phrase from pieces.
+- **Honest records.** The modifier, its grammar point, the response word and the partner verb are separate learning
+  items. Only what the player actually wrote counts as written; shown parts count as nothing.
+
+### The families, and what each does in play
+Words that look alike behave differently, and the difference follows each word's real meaning. Where two words
+overlap in everyday Japanese (すべて and 全部 often mean the same thing), the help says so plainly and presents
+the battle role as the Inkweavers' own convention, never as a rule of Japanese.
+
+**All (who or what is covered)**
+
+- **すべて (全て, *subete*)**, "all, every one". **Breadth:** every one on that side, each separately, each a little lighter. *Example:* 「すべてをまもる」: a ward before each of you; each blocks a Strike aimed at that person and soaks 1 later, not 2.
+- **全部 (ぜんぶ, *zenbu*)**, "all of it". **Completeness on one:** all of it, for one target only. *Example:* 「きずをぜんぶいやす」: restores all of one person's resolve, instead of some to both.
+- **あらゆる (*arayuru*)**, "every kind of". **Kinds:** answers a move of any kind, once. *Example:* 「あらゆるわざからまもる」: a ward before one of you that stops the next blow of any kind (Sweep, Gust, Flood, Chill…), not only a Strike.
+- **全体 (ぜんたい, *zentai*)**, "the whole, as one". **The group as one body**. *Example:* 「ぜんたいをまもる」: one ward around the party that takes the first blow to land on either of you. Aimed at creatures, it answers what a group does together (a coordinated move, E26) and nothing else.
+
+**Each (how it is shared out)**
+
+- **それぞれ (*sorezore*)**, "each, respectively". **Each its own:** fitted to each target, this round only. *Example:* 「それぞれをまもる」: a ward before each of you that fits the blow aimed at that person (a Strike at one, a Chill at the other); it soaks nothing later.
+- **ごとに (*goto ni*)**, "with each, per". **In turn:** repeats as each creature acts, in the numbered order. *Example:* 「いっかいごとにまもる」 (一回ごとに守る): a small ward renewed before every blow this round, whoever it is aimed at (each soaks 1).
+
+**Amount (how many, how much)**
+
+- **いくつか (*ikutsuka*)**, "some, a few". **Two of your choice**. *Example:* 「むすびめをいくつかほどく」: Unravel on two creatures, a knot each (Unravel's growth, below).
+- **大半 (たいはん, *taiban*)**, "most, the greater part". **All but one,** the one the player leaves out, each at full strength. *Example:* 「なわでたいはんをしばる」: stops every creature's Gathering but the one left out (a creature you mean to answer another way).
+- **たくさん (*takusan*)**, "a lot". **More, on one**. *Example:* 「みずをたくさんかける」: puts out one creature's Heat and soaks it, so it can't raise Heat next round.
+
+**Lasting (how long, how many times)**
+
+- **永遠に (えいえんに, *eien ni*)**, "forever". **Time:** one effect that lasts the rest of the encounter, until a named move breaks it. *Example:* 「かぜがえいえんにふく」: while the wind blows, no creature can raise a Shroud (a Gust breaks it).
+- **無限に (むげんに, *mugen ni*)**, "without limit". **Count:** no limit on how many, this round only. *Example:* 「むげんにまもる」: the ward blocks every Strike this round, at either of you, then is gone.
+
+**The grammar they bring** (each taught in a short lesson when first learned, with furigana and examples): すべて
+and 全部 as nouns and as adverbs, with 全部 often placed straight before the verb with no particle (ぜんぶたべた);
+あらゆる only before a noun; 全体 as "the whole" of something (クラス全体); それぞれ and それぞれの; ごとに after a noun
+(一回ごとに "every time", 駅ごとに "at every station"); 大半 (a little formal); たくさん for amount; いくつか after the object (むすびめを
+いくつか); 永遠に and 無限に, grand words, used here with an Inkweaver's flourish (the help says so).
+
+### Every modifier is a trade, never an upgrade
+Reaching more makes each part lighter (すべて); fitting each target lasts only this round (それぞれ); doing more
+means one target only (全部, たくさん); lasting means it can be broken (永遠に); no limit means this round only
+(無限に). The phrase is also longer to write, so a modifier is used when it is worth it. If the curve test finds one
+modifier dominating anyway, the fallback is a breath: an extended response can't be extended again the very next
+round. The curve test, not the modifiers, keeps battles their length: groups in the new chapters are tuned with
+modifiers in hand, so a fight lasts about as many exchanges as before and the language work is never shortened.
+
+### Learned as growth, in the story and off the path
+Robin: "You're a traveling Inkweaver, and still learning the ropes. It makes sense that your abilities improve."
+- **Two growth moments, each a scene with weight, never a sudden reward:**
+  - **Unravel reaches two (いくつか), Chapter 4.** After the city's crowded fights, where the player meets the limit
+    of untying one creature while the others press in, someone whose craft is untangling shows the wider grip.
+  - **Protect covers both (すべて), Chapter 7.** On the Keepers' Road, after a moment where a ward before one of
+    you was not enough, the keepers' old practice teaches the ward that stands before everyone.
+- **Taught by the story** in the other new chapters: それぞれ (Chapter 3, a city of people each wanting their own
+  thing), あらゆる (Chapter 9, where every kind of word washes up), ごとに (Chapter 10, station by station), 全体
+  (Chapter 11, a valley that has to agree as a whole).
+- **Found off the beaten path** (C-71): 全部, たくさん, 大半, 永遠に and 無限に come from people, notable creatures
+  and secret encounters across the world, and the last two from the Trials. Nothing is missable: every source waits
+  until found.
+- **The overworld:** field puzzles can call for a modifier (light every lantern on a ridge at once with すべて; give
+  each bridge its own name with それぞれ; leave an ice path standing with 永遠に). The wrong modifier on the right
+  object gets the same plain physical feedback as today's field weaves. No required puzzle needs a modifier the
+  player can't have yet.
+
+**The Hush narrows reach.** A Hush or Hush-adjacent creature can silence the modifiers for a few rounds, shown like
+any silencing (E26): the player's words reach only one at a time until it ends.
+
+**Tests.** Unit: each modifier's reach and effect on every response it pairs with; the validator checks every
+offered pairing has an authored, natural phrase with furigana. The curve test: battles with modifiers keep their
+length at every setting and chapter, no modifier dominates, and Unravel alone still wins. Browser: choose a
+modifier, a response and its option, write the phrase, and see the effect land on the right targets.
+
+**Effort:** L (engine, battle panel, field rules, lessons and content, spread across Phases 3, 7 and 7b).

@@ -1,6 +1,6 @@
 # 09 · Records: stamps, the travel volume, replay and pastimes
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 Robin's settled decisions govern this file:
 

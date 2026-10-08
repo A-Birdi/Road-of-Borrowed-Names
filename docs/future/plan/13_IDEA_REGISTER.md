@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -270,8 +270,8 @@ item, or records why it was excluded or folded into another. Statuses:
 
 | Idea | Plan item | Status |
 |---|---|---|
-| Suzu crosses paths with her troupe, chooses to stay, a night apart, the double act | 14_COMPANIONS §4 | Planned (C-68 to confirm) |
-| A second arc for every companion, at the same depth | 14_COMPANIONS | Planned (C-68) |
+| Suzu crosses paths with her troupe, chooses to stay, a night apart, the double act | 14_COMPANIONS §4 | Planned (C-68, decided) |
+| A second arc for every companion, at the same depth | 14_COMPANIONS | Planned (C-68: by my judgement, decided) |
 | A sombre, near-silent night theme with crickets and frogs | 14_COMPANIONS §5 | Planned |
 | The Hush as a rising tragedy; heavy and imposing near its source | 10_STORY §6a | Planned |
 | A Distractions tab with a page per pastime and key art | K7, K10 | Planned |
@@ -283,8 +283,22 @@ item, or records why it was excluded or folded into another. Statuses:
 | About 1–3 hours per chapter | 10_STORY §11 | Planned |
 | Main Menu illustrations show the Continue save's effects | K4 | Planned |
 | Harmony's sound: a shared arrival, an accent per companion, none on Instant | E21 | Planned (Phase 1) |
-| How groups scale; numbered turns; a per-round ceiling; Protect's wider form | E22 | Planned (C-70) |
+| How groups scale; numbered turns; Protect's wider form | E22 | Planned (C-70, decided; the ceiling dropped, C-73) |
 | More creature kinds in every region | E23 | Planned |
-| Reasons to fight roaming creatures | E24 | Planned (C-69) |
-| Companions growing in battle; learning from creatures | E25 | Planned (C-71) |
-| Two moves at once; plans; silencing responses | E26 | Planned (C-70) |
+| Reasons to fight roaming creatures | E24 | Planned (C-69, decided) |
+| Companions growing in battle; learning from creatures | E25 | Planned (C-71, decided) |
+| Two moves at once; plans; silencing responses | E26 | Planned (C-70, decided) |
+
+## 10. Robin's fifth round (2026-10-08)
+
+| Idea | Plan item | Status |
+|---|---|---|
+| Nao, Mio and Ren fleshed out to Suzu's depth, by my judgement | 14_COMPANIONS §4, S14 | Planned (C-68) |
+| Each creature numbered by its action order; targeting kept | E22 | Planned (C-70) |
+| Unravel reaching up to two creatures after a point in the story | E27 | Planned (C-74 to confirm) |
+| Protect covering both, as a meaningful moment of growth | E27 | Planned (C-74 to confirm) |
+| Modifier words in battle and the overworld, as target extensions | E27 | Planned (C-72 to confirm) |
+| Words that read alike but behave differently (Robin's four families) | E27 | Planned (C-72 to confirm) |
+| Options for the player rather than limits on the enemies | E22 | Planned (C-73 to confirm) |
+| Only Hush or Hush-adjacent creatures silence, never the player; always inferable | E26 | Planned |
+| Companion tools found off the beaten path; never FOMO, areas revisitable | E25 | Planned |

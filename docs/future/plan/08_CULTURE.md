@@ -1,6 +1,6 @@
 # 08 · Culture, social life, festivals and pastimes
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 Robin [R0]: "dialects… etiquette in public places, politeness, social hierarchy review, and more ideas steeped in
 the Japanese culture." [R1]: all of Astra's group E is "solid", especially folklore (A49) and festival planning

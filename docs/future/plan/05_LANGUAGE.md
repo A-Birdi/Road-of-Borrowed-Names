@@ -1,6 +1,6 @@
 # 05 · Language: evidence, mastery and Japanese as a tool
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 Two halves:
 - **L1–L6, the learning record:** what the game knows about a player's Japanese, and how it shows it.
@@ -268,6 +268,7 @@ each:
 | L15 (A10) | **Comic and dialogue reconstruction** | Rebuild an illustrated exchange from speech bubbles and speakers; several grammatical versions tell different stories | Kotonoha shells; the theatre's scrambled script |
 | L16 (A9) | **Sound-and-meaning workshops** | Compare short spoken pairs and use the difference. **Optional**, the device voice only, always a text route, no validation claims | A small optional room in Kotonoha; Distractions |
 | L17 (A39) | **Explain it to a partner** | Justify a plan to your companion with evidence | Dungeons (D6) |
+| L17b (Robin, C-70) | **Modifier phrases** | Extend a response with a quantity word and write the short sentence it makes (「すべてを守る」, 「光がすべてを照らす」): すべて/全部/あらゆる/全体, それぞれ/ごとに, 大半/たくさん/いくつか, 永遠に/無限に, with が and で chosen by what is natural for each word. Overlaps in everyday Japanese are explained honestly | Battles and field puzzles everywhere, from Chapter 3 ([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E27) |
 
 **Effort:** L (all families); each region uses a subset.
 

@@ -1,6 +1,6 @@
 # 02 · Foundations: the engine work everything else stands on
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 These are the cross-cutting systems that several features need. Building them first keeps each later feature
 small and consistent. Every entry gives:

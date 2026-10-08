@@ -140,7 +140,7 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 6 (2026-10-08), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 7 (2026-10-08), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
@@ -171,7 +171,15 @@
     sea, unique situation encounters, festival-only yukata, 1–3 h per chapter; battle notes planned as E21–E26
     (Harmony's sound, group scaling, more creatures, reasons to fight roaming creatures, companion growth, varied
     tactics and silencing).
-  - **Still open** (labelled in 11_CONTRADICTIONS.md part A5): C-68 to C-71, to confirm.
+  - **Fifth round (2026-10-08):** C-68 to C-71 decided. Suzu's arc approved and Nao's, Mio's and Ren's fleshed out
+    to the same depth by the lead's judgement (while doing it, two canon lines used in draft 6 turned out to be
+    spoken by other characters; Nao's and Mio's arcs were rebuilt on their own lines, sealed S14). Battles: each
+    creature numbered by action order, targeting kept; Unravel reaching two and Protect covering both as story
+    moments; **modifier words** that extend a response's reach (03_ENCOUNTERS.md E27, from Robin's four families);
+    only Hush or Hush-adjacent creatures silence, always inferable; companion tools found off the beaten path,
+    never missable.
+  - **Still open** (labelled in 11_CONTRADICTIONS.md part A6): C-72 to C-74, readings to confirm (the modifiers'
+    roles, no per-round ceiling, where the two growth moments fall).
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record
     judgement to the lead): the Grammar met page, lantern grammar labels, activity Translate, Foundations copy steps,
     the promotion rule, the chart's phantom road, creature patrols' random stream, and the `alts` validator (which

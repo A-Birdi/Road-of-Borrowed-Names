@@ -1,6 +1,6 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only. Spoiler-safe.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only. Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
 ideas for covering each. That one is the model:
@@ -19,12 +19,13 @@ ideas for covering each. That one is the model:
 | **Revisit** | Robin will come back to it after the playthrough |
 | **Fixed** | A defect in the current game, fixed and tested |
 
-The register has five parts:
+The register has these parts:
 - **A. Decisions that blocked a feature.** All answered on 2026-10-07.
 - **A2. Questions raised by those answers.** All answered in the second round, except Suzu (revisit).
 - **A3. Questions raised by the second round.** All answered in the third round.
 - **A4. Questions raised by the third round.** Answered (C-67).
-- **A5. Proposals from the fourth round.** **The ones waiting for you.**
+- **A5. Proposals from the fourth round.** All answered (C-68 to C-71).
+- **A6. Readings of the fifth round.** **The ones waiting for you** (C-72 to C-74).
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
@@ -33,10 +34,9 @@ The register has five parts:
 
 | # | Question | Label |
 |---|---|---|
-| [C-68](#c-68--the-companions-arcs-and-where-their-crossroads-fall) | The companions' second arcs, and where each crossroads falls | **Confirm** |
-| [C-69](#c-69--reasons-to-fight-roaming-creatures) | Reasons to fight roaming creatures: lost words, changed routes, quest carriers, notable creatures | **Confirm** |
-| [C-70](#c-70--group-scaling-and-varied-tactics) | Group scaling and varied tactics | **Confirm** |
-| [C-71](#c-71--companions-growing-in-battle) | About one new companion action per chapter | **Confirm** |
+| [C-72](#c-72--modifier-words-what-each-family-does) | Modifier words: what each of the eleven does, and how they're learned | **Confirm** |
+| [C-73](#c-73--no-per-round-ceiling-on-what-a-group-can-do) | No per-round ceiling on what a group can do | **Confirm** |
+| [C-74](#c-74--where-the-two-growth-moments-fall) | Unravel reaches two in Chapter 4; Protect covers both in Chapter 7 | **Confirm** |
 
 ---
 
@@ -308,31 +308,71 @@ the companion every time.
 - **Each moment has its own travel-volume illustration**, witnessed like any other; in New Game+ runs these
   accumulate per companion.
 
-## A5. Proposals from the fourth round (to confirm)
+## A5. Proposals from the fourth round (all answered 2026-10-08)
 
 ### C-68 · The companions' arcs and where their crossroads fall
-**Confirm.** [14_COMPANIONS.md](14_COMPANIONS.md) gives each companion a second arc with the same shape (a seed, pressure,
-their existing quest, a crossroads, a night apart, an unfinished matter settled, their dream at the ending). The
-crossroads fall at: **Ren**, Chapter 7 (the Keepers' Road); **Nao**, Chapter 10 (the Cloudroad, woven into the Mist
-Barrier); **Mio** and **Suzu**, Chapter 11 (Steamhollow, where Suzu meets her troupe). Each run keeps to its companion's
-crossroads plus one playable story separation. The specifics are sealed (S14), since they build on later chapters.
+**Decided.** Robin: "I can only speak to Suzu's, which sounds promising. I would trust your judgment in making the
+other three equally fleshed out." [14_COMPANIONS.md](14_COMPANIONS.md) gives each companion a second arc with the same
+parts (a seed, pressure, a step in Chapter 10, their existing quest, a crossroads, a night apart, an unfinished
+matter settled, a postgame scene, their dream at the ending). The crossroads fall at: **Ren**, Chapter 7 (the
+Keepers' Road); **Nao**, Chapter 10 (the Cloudroad, woven into the Mist Barrier); **Mio** and **Suzu**, Chapter 11
+(Steamhollow, where Suzu meets her troupe). The specifics are sealed (S14).
+- **Corrected while doing it:** checking canon again, I found two of draft 6's arcs leaned on lines spoken *near*
+  the companion by other characters. Nao's and Mio's arcs now rest on their own lines; every canon line is now
+  checked for its speaker as well as its words.
 
 ### C-69 · Reasons to fight roaming creatures
-**Confirm.** From the options in [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E24, the recommendation is: every roaming creature
-carries a lost word that comes back to its place when it is settled; cleared routes change (people use them);
-a few authored quest carriers; notable named creatures that can teach the companion an action or give an
-exploration cosmetic; and field-guide stamps. No currency, random drops or "slay N".
+**Decided.** Robin: "Sounds reasonable - yes." From [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E24: every roaming creature
+carries a lost word that comes back to its place when it is settled; cleared routes change (people use them); a few
+authored quest carriers; notable named creatures that can teach the companion an action or give an exploration
+cosmetic; and field-guide stamps. No currency, random drops or "slay N".
 
 ### C-70 · Group scaling and varied tactics
-**Confirm.** From E22 and E26: number each creature's slip by when it acts; a per-round ceiling on what a group can
-take unless a telegraphed move was left unanswered by choice; Protect learning a wider form later; two moves in one
-round and two-round plans from the middle chapters (never on Relaxed); silencing one family of responses for a few
-rounds, never all of them, with Unravel's guarantee kept.
+**Decided, with Robin's additions.** Robin: "Numbering each enemy by their action order is good. Groups should still
+respect targeting where applicable." Then three additions, now in the plan:
+- **Growth, as story moments:** Unravel reaches up to two creatures after a point in the story; Protect covers both
+  of you, "a meaningful moment of growth - not a surprise / sudden reward. You're a traveling Inkweaver, and still
+  learning the ropes."
+- **Modifier words** (E27, new): "Instead of choosing one response, we may be able to learn to use modifiers in
+  battle / the overworld", such as すべてを守る ("Protect Everything") and 風がすべてを動かす ("The wind moves all").
+  Words that read alike behave differently (すべて / 全部 / あらゆる / 全体; それぞれ / ごとに; 大半 / たくさん /
+  いくつか; 永遠に / 無限). "They play like target modifiers more than direct word/response transformations at
+  heart. Extensions, really." They give options for harder fights with two to five creatures "without restricting
+  what the enemies can do".
+- **Two-move turns and silencing** "sound fine, as long as it can be inferred clearly": only Hush or Hush-adjacent
+  creatures silence, never the player (E26).
+
+My readings of the additions are part A6 (C-72 to C-74).
 
 ### C-71 · Companions growing in battle
-**Confirm.** From E25: about one new companion action per chapter (from the story, their arcs, notable creatures and
-secret encounters), some actions growing a wider reach instead of piling up, at most six offered in a battle, and
-the curve test still guarding the language work.
+**Decided.** Robin: "Sounds good - Not every action needs to be laid out in the clearest path, as we're letting unique
+enemies possibly reward the companion with a new tool or upgrade, too. This wouldn't be FOMO as the player can
+generally revisit any area at any time (within reason)." From E25: about one new companion action per chapter (from
+the story, their arcs, notable creatures and secret encounters), some actions growing a wider reach instead of
+piling up, at most six offered in a battle, and the curve test still guarding the language work. Notable creatures
+are never placed where an area closes for good.
+
+## A6. Readings of the fifth round (to confirm)
+
+### C-72 · Modifier words: what each family does
+**Confirm.** [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E27 gives each of your eleven words a role that follows its real
+meaning: *breadth* (すべて), *completeness on one* (全部), *every kind* (あらゆる), *the group as one* (全体), *each its
+own* (それぞれ), *in turn* (ごとに), *two of your choice* (いくつか), *all but one* (大半), *more on one* (たくさん),
+*lasting* (永遠に) and *no limit, this round* (無限に). Each is a trade, never a plain upgrade. Only natural phrases
+are offered, the help is honest where two words overlap in everyday Japanese, and with handwriting you write the
+modifier and its particle while the rest is shown. Six are taught by the new chapters' stories; five are found off
+the beaten path (the last two in the Trials).
+
+### C-73 · No per-round ceiling on what a group can do
+**Confirm.** Draft 6 proposed capping what a group could take from you in one round. Your "without restricting what
+the enemies can do" reads to me as dropping it: groups are met by your growing tools (modifiers, companions' growth,
+party-wide responses), while the curve test still guarantees every encounter can be won, at every setting, and with
+Unravel alone.
+
+### C-74 · Where the two growth moments fall
+**Confirm.** **Unravel reaches two** (いくつか) in Chapter 4, after the city's crowded fights; **Protect covers both**
+(すべて) in Chapter 7, on the Keepers' Road, where the keepers' old practice teaches it after a moment when a ward
+before one of you was not enough. Each is a scene, not a pop-up.
 
 ---
 
@@ -418,6 +458,12 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Unravel outside combat | Always available, may do nothing; analysis required; taught at the first non-creature conflict | C-60 |
 | Playtime | About 15 h brisk main story; about 40 h for a new learner taking in everything | C-61 |
 | Hanafuda | In | C-33 |
+| Companions' second arcs | All four at Suzu's depth; crossroads at Chapters 7, 10, 11 and 11 | C-68 |
+| Roaming creatures | Lost words, changed routes, quest carriers, notable creatures, stamps; no currency, drops or "slay N" | C-69 |
+| Group battles | Each creature's slip numbered by action order; targeting kept | C-70 |
+| Silencing | Only Hush or Hush-adjacent creatures; never the player; always inferable | C-70 |
+| Growth | Unravel reaches two and Protect covers both, as story moments; modifier words extend reach | C-70 |
+| Companion actions | About one a chapter; some found off the beaten path, never missable | C-71 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

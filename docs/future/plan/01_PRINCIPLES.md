@@ -1,6 +1,6 @@
 # 01 · Principles and guardrails
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only: nothing here is
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only: nothing here is
 authorised work until Robin selects a scope.*
 
 Everything in the later files is checked against this page. Where an idea elsewhere seems to break one of these

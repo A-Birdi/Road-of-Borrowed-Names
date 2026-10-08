@@ -1,6 +1,6 @@
-# The Road of Borrowed Names: expansion plan (draft 6)
+# The Road of Borrowed Names: expansion plan (draft 7)
 
-*2026-10-08. Draft 6 records Robin's answers of 2026-10-07 and 2026-10-08. A planning document, not authorised work: nothing
+*2026-10-08. Draft 7 records Robin's answers of 2026-10-07 and 2026-10-08, through the fifth round. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
 
@@ -21,7 +21,7 @@ implementation plan. Every idea is broken down on its own and checked against:
 |---|---|
 | [01_PRINCIPLES.md](01_PRINCIPLES.md) | The guardrails everything is checked against, and the exclusions |
 | [02_FOUNDATIONS.md](02_FOUNDATIONS.md) | Engine work the rest stands on: story phases, seeded events, per-save records, inserting chapters, the content pipeline, size budgets, tests, spec amendments |
-| [03_ENCOUNTERS.md](03_ENCOUNTERS.md) | Participants with purposes, arrivals and summons, wanderers, contextual responses, an honest preview, procedures, social encounters, Wait, Resolve this step, more creatures, consequences |
+| [03_ENCOUNTERS.md](03_ENCOUNTERS.md) | Participants with purposes, arrivals and summons, wanderers, contextual responses, an honest preview, procedures, social encounters, Wait, Resolve this step, more creatures, consequences, **battles: groups, growth, silencing and modifier words** |
 | [04_DUNGEONS.md](04_DUNGEONS.md) | Expeditions, persistent condition and stations, failure and suspend rules, previews, ten dungeon families, Atlas commissions (reactive and mapping), delvers, **the Hall of a Hundred Tales** |
 | [05_LANGUAGE.md](05_LANGUAGE.md) | Honest learning evidence, what help supplied, mastery stars, word pages, "What I can do", sentence forging, the language-as-a-tool task families, growth offered |
 | [06_WORLD.md](06_WORLD.md) | Evolving towns, routines, "have you seen…?", day and night, road events, return keys, **the Harbourmaster's quest and sailing**, the boat home, exploration verbs |
@@ -29,7 +29,7 @@ implementation plan. Every idea is broken down on its own and checked against:
 | [08_CULTURE.md](08_CULTURE.md) | Register, public spaces, refusal, dialects, documents, folklore, **the festival**, manzai, shogi and other pastimes, the press |
 | [09_RECORDS.md](09_RECORDS.md) | The stamp book, **the travel volume**, the witnessed seal, the Main Menu gallery, spoilers, replay, Pastimes, the Wayfarer's Ledger |
 | [10_STORY.md](10_STORY.md) | The twelve chapters, the Hush, companions, separations, old saves, the postgame |
-| [14_COMPANIONS.md](14_COMPANIONS.md) | **A second arc for each companion**: a seed, pressure, a crossroads, a night apart, an unfinished matter, their dream |
+| [14_COMPANIONS.md](14_COMPANIONS.md) | **A second arc for each companion**, all four at the same depth: a seed, pressure, a crossroads, a night apart, an unfinished matter, a postgame scene, their dream |
 | [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) | **Every contradiction found**, each labelled decided, open, to confirm or to revisit, plus the defects fixed in the current game |
 | [12_ROADMAP.md](12_ROADMAP.md) | The drafted order of execution, from your feedback to the final art pass, with testing per phase |
 | [13_IDEA_REGISTER.md](13_IDEA_REGISTER.md) | Where every idea went: Astra's 60, all of Robin's, and this plan's own |
@@ -65,6 +65,7 @@ never deleted.
 - contextual responses (fire and wind, water and paper) with an honest preview;
 - arrivals counted in turns;
 - puzzle and social "battles";
+- **modifier words** that extend a response's reach (「すべてを守る」 shields you both), learned as you grow;
 - large dungeons with stationed resources, where language mistakes never carry over;
 - reactive, mapping and themed expeditions in the Atlas;
 - honest learning evidence, mastery stars per input type, and "What I can do";
@@ -128,14 +129,24 @@ never deleted.
 | C-52 | Main Menu illustrations show the Continue save's earned effects |
 | Part B | All of it decided (C-04 to C-53) |
 
+## Decided in the fifth round (2026-10-08)
+
+| # | Decision |
+|---|---|
+| C-68 | Suzu's arc approved; Nao's, Mio's and Ren's fleshed out to the same depth by my judgement ([14_COMPANIONS.md](14_COMPANIONS.md)) |
+| C-69 | Reasons to fight roaming creatures: lost words come back, routes change, quest carriers, notable creatures, stamps |
+| C-70 | Each creature numbered by its action order, targeting kept; **Unravel and Protect grow** as story moments; **modifier words** (E27); only the Hush silences, and it's always inferable |
+| C-71 | About one companion action a chapter; some found off the beaten path; never missable, since areas can be revisited |
+
 ## Still waiting for you
 
-Labelled **Confirm** in [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A5:
+C-68 to C-71 are decided. Three small readings of your answers are labelled **Confirm** in
+[11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A6:
 
-1. **C-68:** the companions' second arcs ([14_COMPANIONS.md](14_COMPANIONS.md)), and where each crossroads falls.
-2. **C-69:** reasons to fight roaming creatures ([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E24).
-3. **C-70:** group scaling and varied tactics (E22, E26).
-4. **C-71:** companions growing in battle (E25).
+1. **C-72:** what each of your eleven modifier words does in play, and how they're learned
+   ([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E27).
+2. **C-73:** no per-round ceiling on what a group can do; your options grow instead (E22).
+3. **C-74:** Unravel reaches two in Chapter 4; Protect covers both in Chapter 7 (E27).
 
 Also ready when you want it: **Harmony's sound** (E21), a small change to the current game.
 

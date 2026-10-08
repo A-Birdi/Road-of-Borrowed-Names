@@ -4,8 +4,8 @@
 > depend on what happens later in the existing story. Everything a decision needs is stated in the plan in
 > spoiler-free terms. This file records only *why*.
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Sources: docs/STORY.md and src/content
-(read-only audit).*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Sources: docs/STORY.md and src/content
+(read-only audit). Chapter numbers are the twelve-chapter edition's unless a note says "old".*
 
 ---
 
@@ -59,10 +59,10 @@ The existing chapters reveal, in order:
 
 ## S4 · Steamhollow and Mio; how it sets up the finale
 
-- **Mio's personal quest** (Chapter 5) is about refusing out loud: she won't make the Registrar's quieting draught.
+- **Mio's personal quest** (Chapter 8; old 5) is about refusing out loud: she won't make the Registrar's quieting draught.
   Steamhollow comes after it, so her "honest rejection of a fraud" there is her growth in action. It must not be
   written as if she has never refused anything.
-- **The inns' mediation** rehearses Chapter 6's real question: how to repair harm and keep promises when people
+- **The inns' mediation** rehearses the final chapter's real question: how to repair harm and keep promises when people
   disagree. Its resolution should *preserve disagreement* (the existing Lanternfall ending, "agrees on nothing",
   shows the game values that).
 - **The Kettle Below** stirs when people argue: a mirror image of the Hush, which quiets argument. The thematic
@@ -163,14 +163,21 @@ Not for this plan to fix; recorded so new writing doesn't copy them:
 
 ## S14 · The companions' second arcs: specifics (for 14_COMPANIONS.md)
 
-Every specific below was checked against the companions' existing lines (src/content). Before writing any of it,
-check again: nothing new may contradict a line already in the game.
+Every specific below was checked against the companions' existing lines (src/content), **with the speaker of each
+line checked as well as its words**. Before writing any of it, check again: nothing new may contradict a line already
+in the game.
+
+**Corrected in draft 7.** Draft 6 rested two arcs on misread lines. "A reply to my reply came from my father" is
+Umi's, about Isamu, not Nao's; nothing in the game gives Nao a family. "…I copied my mother" is Hiro's, not Mio's.
+Nao's and Mio's arcs below are rebuilt on lines they actually speak (Robin, C-68: "I would trust your judgment in
+making the other three equally fleshed out"). Every arc now has the same parts as Suzu's.
 
 ### Suzu
 - **Canon used:** sixteen and with the troupe twenty years ago, at the Cinder Orchard festival, "the first year I had
   lines of my own"; ten years keeping the troupe's books alone, "proud that nobody else ever saw them"; "the curtains
   put the troupe in the red"; after the storm the troupe went ahead and she meant to follow ("The bridge reaches, so
   I can chase after my troupe! …Or so I thought."). Her existing quest (Chapter 5, Hiro) is about a comforting lie.
+  The last page of her account book is for debts money can't repay, and the player's name is on it (Snowbell).
 - **The unfinished matter:** the books. For years she quietly covered the troupe's losses from her own share and
   told everyone the books balanced: a second comforting lie, about money instead of grief. When the storm came she
   stayed behind partly to settle the last debts town by town. Nobody in the troupe knows.
@@ -183,39 +190,96 @@ check again: nothing new may contradict a line already in the game.
   rejection of Koume, but the act she wants now.
 - **Kotonoha (Chapter 9):** among the drifted leaves, her own unsent reply to Koume. She sends it in Chapter 10 by
   the relay; that is why the troupe comes to Steamhollow.
+- **Postgame:** the troupe passes through the festival hall; Suzu and the player perform the double act for them.
 
 ### Nao
-- **Canon used:** Nao's own father exists and writes back with a shaking hand ("A reply to my reply came from my
-  father. The writing shakes so badly I can only read half."). Nao's existing quest (Chapter 8, Lanternfall) is a
-  letter from a dying father to an estranged daughter, which Nao chose not to deliver.
-- **The unfinished matter:** Nao's own father, a retired courier of the Cloudroad relay, keeps a post station near the
-  Mist Barrier. Their letters are short and careful; something was never said. The Cloudroad's Courier Who Never
-  Arrived carried the relay's last message the year it failed, and Nao's father was the courier who waited for it.
-- **The crossroads:** the postmaster offers Nao the father's station: take over the post, stay near him. Nao chooses
-  to finish the road with the player and promises to come back.
-- **The night apart:** Nao runs the last leg alone to see their father, then sits with the player on the station's
-  porch. The parallel with the Lanternfall letter is felt, never spelled out.
-- **Ending:** the relay running again; Nao's route passes their father's door.
+- **Canon used** (all Nao's own lines or the Company page): a courier who knows the road west; "Nao picks the road,
+  you pick the destination"; keeps every address label they ever rewrote in a flat tin, "proof that somebody was
+  waiting for somebody"; "What scares me is someday being the reason somebody waits forever"; "A letter takes on its
+  own meaning wherever it lands. That's not for the courier to decide. …And yet, once, I decided"; carried Isamu's
+  letter to Umi until she could refuse it and delivered it a year late (Chapter 8, "I can't hand it to someone who
+  can't refuse it"); afterwards "The satchel's light. …So light I might forget how to walk." Nao says 俺. **Nothing in
+  the game names Nao's family, home or teacher**, so none is assumed beyond what follows.
+- **The unfinished matter: letters addressed to Nao.** Couriers' mail is held at relay stations until they pass
+  through. Nao never stays anywhere long enough to collect theirs. For years, letters from **Sakichi** (サキチ), the
+  old Cloudroad courier who taught Nao the road west, have waited at station after station, and Nao has let them
+  wait: opening one would mean answering it, and answering means deciding whether to stay. The courier afraid of
+  being the reason somebody waits forever is doing exactly that, to the person who taught them to carry letters.
+- **Seed (Chapter 3):** in Manybridge's dead-letter office, a bundle marked "hold for the courier Nao", forwarded
+  from the Cloudroad's emblem. Nao pockets it unopened, with a joke about fan mail.
+- **Pressure (Chapter 7):** Sakichi's name in the Keepers' Road registers, as a courier who once carried the
+  keepers' post. Nao goes quiet and changes the subject.
+- **Why it works after Chapter 8:** Nao delivered Isamu's letter once Umi could refuse it, and the satchel went
+  light. Now the satchel holds Nao's own letters, and the question turns around: can Nao receive what someone else
+  has to say?
+- **Kotonoha (Chapter 9):** among the drifted leaves, one of Sakichi's letters that went astray years ago, in the
+  first handwriting Nao ever learned to read on an envelope. Nao opens the bundle that night, alone, and says
+  nothing about it until Chapter 10.
+- **The crossroads (Chapter 10):** Sakichi, old now, keeps the last lit station below the Mist Barrier. Sakichi asks
+  Nao to take it over: a post where letters come to Nao, a place people can find them. Nao chooses to finish the road
+  with the player, and says so to Sakichi's face rather than by letter. The Courier Who Never Arrived (the chapter's
+  boss) is a different story (S3): it rhymes with Nao's, and nobody says so.
+- **The night apart:** "I need to run this one myself." Nao runs the last leg of the restored relay alone, carrying
+  a reply written by hand at last, and delivers it to Sakichi in person. Then the station's porch at night: a mountain
+  stream with kajika frogs (カジカガエル), wind in the cedars, a horse bell far below.
+- **Postgame:** the relay running end to end; Nao runs the player's letters in it, and Sakichi's letters now reach
+  Nao within the week.
+- **Ending:** Nao leaves a forwarding address for the first time, and lets the player choose where it is.
 
 ### Mio
-- **Canon used:** "…I copied my mother."; "My mother loved Saltglass dried fish." (past tense); her existing quest
-  (Chapter 8) is refusing out loud; Steamhollow already carries her "honest rejection of a fraud" (S4).
-- **The unfinished matter:** her mother trained at Steamhollow's springs. Her recipe book ends with a remedy promised
-  to a patient in the valley and never finished. Mio, who copied her mother in everything, finds that the remedy
-  can't honestly be made as promised, and must say so to someone who has waited years.
-- **Her old teacher:** the healer who taught her mother, retiring; the one who offers Mio the dispensary.
-- **The crossroads:** her mother's old place, offered with love. Mio chooses the road, for now, and tells the
-  patient the truth with care: her growth from Chapter 8 in action.
-- **Ending:** her own dispensary, with an honest label on every shelf.
+- **Canon used** (Mio's own lines or the Company page): Reedwake's apothecary; "Finds it very hard to say no to
+  anyone who asks"; left the shop key with Tsuru and asked the player not to take her home if she wavered;
+  thirty-one numbered rules (thirty-two, if the player shared their fear at Snowbell); **one jar with no label**,
+  holding scraps of things she couldn't make up her mind about: "Requests I wanted to refuse. Things I couldn't say.
+  If I labelled it, I'd feel I had to come up with answers"; afraid "that I'm only liked because I'm useful"; a
+  condescending town doctor, answered with an hour of diagrams; "My mother loved Saltglass dried fish" (past
+  tense: the plan treats her mother as having died, which nothing in the game contradicts; check again before
+  writing); her existing quest (Chapter 8) is refusing out loud; Steamhollow already carries her "honest rejection
+  of a fraud" (S4).
+- **The unfinished matter: the oldest scrap in the jar.** Years ago, after her mother died, **Kikue** (キクエ), a healer
+  at the Steamhollow springs and her mother's old friend, wrote inviting Mio to come and learn there. Mio could
+  neither say yes (Reedwake needed her) nor no (Kikue had been kind), so the letter went into the jar, unanswered.
+- **Seed (Chapter 4):** a tonic seller's bold promises on a Manybridge playbill, all "cures" for Steamhollow's
+  ailments; Mio's temper, and a moment where she touches the jar in her bag.
+- **Why it works after Chapter 8:** having said "I refuse" where no one could, Mio can now answer the oldest thing
+  she never decided. Her refusal in Steamhollow is kind and clear, which is the growth (S4: never written as if she
+  had never refused anything).
+- **Kotonoha (Chapter 9):** among the drifted leaves, labels without bottles: other people's undecided things. She
+  sorts them with the island's keepers and says, lightly, that her jar is in good company.
+- **Chapter 10:** a message on the relay from Kikue, who has heard of her travels: "Come and see the springs."
+- **The crossroads (Chapter 11, Steamhollow):** Kikue, retiring, offers Mio the dispensary of the springs: respected,
+  settled, wanted. It answers Mio's oldest fear, being wanted for her usefulness, and that is why she can see it
+  clearly. She chooses the road, for now, because the player waits for her on useless days too.
+- **The night apart:** a long night tending a patient alone ("I'm fine. Go to bed."). At dawn by the steaming
+  footbath, she takes the oldest scrap out of the jar, writes her answer on the back, and apologises for shutting
+  the player out. Night sounds: frogs in the terraced paddies below, steam hissing from a vent, a bamboo spout
+  ticking into a basin.
+- **Postgame:** Kikue visits the festival hall with a jar of her own, labelled "undecided".
+- **Ending:** her own dispensary, with an honest label on every shelf, and one jar with no label for whatever she
+  hasn't decided yet.
 
 ### Ren
-- **Canon used:** "When lost, go back to the oldest name"; terrible at directions; their teacher's story (Ushio)
-  belongs to their existing quest and is not touched.
-- **The unfinished matter:** as an apprentice, Ren got lost on the Keepers' Road and never reached a lantern they had
-  been sent to relight; it went dark, and a traveller lost the way that night (found safe, years later, as Old
-  Hisae remembers). Ren has carried it quietly.
-- **The crossroads:** Old Hisae offers Ren the road's keepership. Ren relights that lantern first, apologises to
-  Hisae, and chooses to finish the road with the player.
+- **Canon used:** "When lost, go back to the oldest name"; terrible at directions (lost half a day as an apprentice
+  in the Lantern Hall's single storeroom; found by the sound of their voice reciting the lantern names); remembers
+  every word the teacher said but not the face; recites one saying a night; "A name to the lamp, the lamp to
+  people, people to the name." Their teacher's story (Ushio) belongs to their existing quest (Snowbell and the
+  Archive) and is not touched.
+- **The unfinished matter:** as an apprentice, Ren was sent along the Keepers' Road to relight one lantern, got
+  lost, and never reached it; it went dark, and a traveller lost the way that night (found safe, years later, as
+  Old Hisae remembers). Ren has carried it quietly.
+- **Seed (Chapter 3):** Manybridge's bridge plaques were cut by a lantern guild whose mark Ren recognises from the
+  Keepers' Road registers.
+- **The crossroads (Chapter 7, the Keepers' Road):** Old Hisae offers Ren the road's keepership. Ren relights that
+  lantern first, apologises to Hisae, and chooses to finish the road with the player.
+- **The night apart:** a vigil at the lodge, dismissed as "keeper's business", then explained over the last lit
+  lantern. Night sounds: bell crickets (スズムシ) in the pampas grass, an owl, wind in the lantern shutters.
+- **Why it works before the Archive:** Ren's crossroads is about the road, never the teacher; Hisae says nothing of
+  Ushio, so the existing reveals stay where they are (S1, S2).
+- **Kotonoha (Chapter 9):** the oldest lanterns, half-buried in the island's sand, carry names Ren can read and
+  nobody else can; Ren reads them out, one a night, like the teacher's sayings.
+- **Chapter 10:** Ren relights the Cloudroad's station lanterns, and Hisae's letter arrives by the relay: the
+  Keepers' Road has a lit lantern at every post again.
+- **Postgame:** Ren and Hisae walk the Keepers' Road together on the night its lanterns are lit.
 - **Ending:** Ren's answer to Hisae: a keeper who walks the road, as the order once did.
 
 ## S15 · The Hush as a rising tragedy: the ladder (for 10_STORY.md §6a)

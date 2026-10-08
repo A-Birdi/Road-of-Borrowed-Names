@@ -1,6 +1,6 @@
 # 06 · The world: living towns, roads, return trips and the sea
 
-*Expansion plan, draft 6 (2026-10-08, after Robin's fourth round of answers). Planning only.*
+*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
 
 ## What exists today (audit summary)
 
