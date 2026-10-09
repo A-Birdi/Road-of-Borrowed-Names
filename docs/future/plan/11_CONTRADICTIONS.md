@@ -1,6 +1,6 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only.
 Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
@@ -27,7 +27,7 @@ The register has these parts:
 - **A4. Questions raised by the third round.** Answered (C-67).
 - **A5. Proposals from the fourth round.** All answered (C-68 to C-71).
 - **A6. Readings of the fifth round.** All approved on 2026-10-09 (C-72 to C-74).
-- **A7. Questions raised by the playbook's review.** **The ones waiting for you** (C-75 to C-78).
+- **A7. Questions raised by the playbook's review.** All answered on 2026-10-09 (C-75 to C-78).
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
@@ -37,10 +37,7 @@ The register has these parts:
 
 | # | Question | Label |
 |---|---|---|
-| [C-78](#c-78--the-playbooks-order-of-work-and-the-first-scope) | The playbook's order of work, and which part to start | **Open** |
-| [C-75](#c-75--how-a-wrong-first-answer-counts-towards-a-star) | A wrong first answer counts like help towards a star | **Confirm** |
-| [C-76](#c-76--five-hostile-creatures-in-authored-set-pieces) | Up to five hostile creatures in authored set pieces | **Confirm** |
-| [C-77](#c-77--harmony-one-technique-per-filled-bar) | Harmony keeps one technique per filled bar | **Confirm** |
+| — | Nothing is waiting. Every question so far is answered; the next ones will come with the review set of the book interface | — |
 
 ---
 
@@ -379,13 +376,15 @@ Unravel alone.
 (すべて) in Chapter 7, on the Keepers' Road, where the keepers' old practice teaches it after a moment when a ward
 before one of you was not enough. Each is a scene, not a pop-up.
 
-## A7. Questions raised by the playbook's review (2026-10-09)
+## A7. Questions raised by the playbook's review (all answered 2026-10-09)
 
 Robin's package of 2026-10-09 ([../playbook/](../playbook/README.md)) reviewed draft 7 and found sixteen places where
 the plan disagreed with itself (part E). Most are settled by decisions Robin has already made. These four are not.
 
 ### C-78 · The playbook's order of work, and the first scope
-**Open.** The playbook proposes an order (P00 to P18) and six changes to this plan's roadmap
+**Decided.** Robin: "Yes." The playbook's order replaces the roadmap's, with its six changes, and the first scope is
+the one proposed: **P00** (the recorded baseline, no change to the game), then **P01's interface proof** (U01 and
+U02), ending in one review set for Robin. Nothing beyond that is authorised yet. The proposal as it was put: The playbook proposes an order (P00 to P18) and six changes to this plan's roadmap
 ([12_ROADMAP.md](12_ROADMAP.md), "The playbook's proposed order"):
 - **A01:** prove the visual method early (the book interface and a Reedwake presentation proof, P01), before new
   regions are built on it;
@@ -401,21 +400,21 @@ controls, content and assets, with no change to the game) and then **P01's inter
 on Journey and Company, and a type specimen), which ends in one review set for you.
 
 ### C-75 · How a wrong first answer counts towards a star
-**Confirm.** Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
+**Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
 answer counts like help, so the star needs fewer than 30% of questions to be assisted *or* missed. In ten questions,
 two may be either; three can't. Retakes give fresh versions of just those questions; the whole exam stays the
 measure.
 
 ### C-76 · Five hostile creatures in authored set pieces
-**Confirm.** E12 allowed "up to five actors" but only three hostile at once outside a boss's summons, and never said
+**Decided.** Robin: "Correct." As proposed: E12 allowed "up to five actors" but only three hostile at once outside a boss's summons, and never said
 whether the player and companion counted (D05). Your C-70 answer spoke of "the harder 2-5 enemy fights". Proposed:
 the five counts only the creatures' side (never the two of you), and authored set pieces may field up to five hostile
 creatures; ordinary roaming encounters stay at three or fewer
 ([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E12).
 
 ### C-77 · Harmony: one technique per filled bar
-**Confirm.** The question of one technique per filled bar (today) or capped charges per encounter has been open since
+**Decided.** Robin: "Correct." As proposed: The question of one technique per filled bar (today) or capped charges per encounter has been open since
 before the expansion (E18; D16). The plan recommends keeping today's behaviour: one technique when the bar is full.
 The playbook does the same until you say otherwise.
 
@@ -514,6 +513,10 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Growth moments | Unravel reaches two in Chapter 4; Protect covers both in Chapter 7 | C-74 |
 | The interface | An authored travel book, not nested panels; text stays flat and readable | Robin, 2026-10-09; [15_INTERFACE.md](15_INTERFACE.md) |
 | Fonts | A new font is allowed if readable and in the game's tone; embedded, offline, licence recorded | Robin, 2026-10-09 |
+| Mastery stars | A wrong first answer counts like help: a star needs fewer than 30% assisted or missed | C-75 |
+| Set pieces | Up to five hostile creatures; the player and companion never counted | C-76 |
+| Harmony | One technique per filled bar | C-77 |
+| Order of work | The playbook's P00–P18, with its six changes; first scope P00 and the interface proof | C-78 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |
@@ -566,9 +569,9 @@ a decision already made, or labelled with its question in part A7. **Status** is
 | D02 | The stamp book offered a stamp for a first mastery star; L3 says stars unlock nothing | C-13 | **Fixed**: no star stamps (K1) |
 | D03 | The stamp book offered stamps for playing festival games; festival games keep personal records only | C-55 | **Fixed**: none from festival games; the festival itself is a story stamp (K1) |
 | D04 | E12 said the Harmony portrait could vanish with five actors; Robin accepts the cut-in overlapping creatures | C-42 | **Fixed**: never dropped by actor count (E12) |
-| D05 | "Up to five actors": did the player and companion count, and could all five be hostile? | Proposed reading of C-70 | **C-76** to confirm |
+| D05 | "Up to five actors": did the player and companion count, and could all five be hostile? | C-76 | **Fixed**: the creatures' side only; up to five hostile in set pieces (E12) |
 | D06 | "Winnable with Unravel alone" beside a Hush that silences Unravel | Today's rule, written out | **Fixed**: the exact form in E26; the curve test reports both cases |
-| D07 | How a wrong first answer counts towards a star | Proposed | **C-75** to confirm |
+| D07 | How a wrong first answer counts towards a star | C-75 | **Fixed**: counted like help (L3) |
 | D08 | Generated expeditions fix their learning content at entry; the Atlas keeps adapting its practice | C-57 | **Fixed**: the Atlas named as the exception (D1) |
 | D09 | The travel volume still said ten chapters and 60–70 pages | C-01, C-68 | **Fixed**: twelve chapters, arc illustrations added, an exact manifest instead of an estimate (K2) |
 | D10 | Chapter Journey, a proposal, carried keepsakes, which New Game+ no longer does | C-66 | **Fixed**: it carries what New Game+ carries, and stays out of scope unless asked for (K6) |
@@ -577,4 +580,4 @@ a decision already made, or labelled with its question in part A7. **Status** is
 | D13 | An older Manybridge paragraph said Suzu's troupe could be met there; her arc meets them in Steamhollow | C-68 | **Fixed** (R1) |
 | D14 | Counts and estimates (creatures, roads, side quests) don't all add up | — | **At P00**: a census of what really exists sets each region's list; estimates are not quotas |
 | D15 | New Game+ keeps appearance, but not equipment or keepsakes | C-54, C-66 | **Fixed**: the look chosen at creation carries; anything worn that was earned or found does not (K9) |
-| D16 | Harmony: one technique, or charges, still open | — | **C-77** to confirm |
+| D16 | Harmony: one technique, or charges, still open | C-77 | **Fixed**: one technique per filled bar (E18) |

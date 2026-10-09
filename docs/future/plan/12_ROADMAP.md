@@ -1,6 +1,6 @@
 # 12 · Roadmap: a drafted order of execution
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only: phases begin only when Robin
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only: phases begin only when Robin
 authorises them.*
 
 Robin said time and difficulty are no issue, so the order below is chosen for **quality and risk**, not speed:
@@ -32,11 +32,13 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 | **Final** | Final validation | The full 16-combination matrix and every audit on the art-complete build | Robin calls it |
 
 
-## The playbook's proposed order (C-78, open)
+## The order of work: the playbook's (C-78, decided)
 
 Robin's package of 2026-10-09 ([../playbook/](../playbook/README.md)) proposes delivering the same features in a
-different order, milestones P00 to P18. The features don't change; the order and the method do. If Robin accepts it
-(C-78), it replaces the order of the table above.
+different order, milestones P00 to P18. The features don't change; the order and the method do. **Robin accepted it
+on 2026-10-09 (C-78): it replaces the order of the table above**, which stays as a map of where each feature is
+described. **Authorised so far: P00 and P01's interface proof (U00, U01, U02)**, ending in one review set for Robin;
+P01's Reedwake and Saltglass presentation proof and everything after wait for their own go-ahead.
 
 | Playbook | What | This roadmap |
 |---|---|---|
@@ -72,12 +74,11 @@ remain available whenever Robin asks.
 - **The remaining addendum items** that need Robin's eyes: HX33, HX43 and HX45 (scenes and sequences at play speed),
   WI5 and WI26 (gestures and portraits at play speed). They are recorded in docs/expressive/CONTRACT.md.
 - **Decisions:** all of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) parts A to A4 and B were answered on 2026-10-07
-  and 2026-10-08, part A5 (C-68 to C-71) on 2026-10-08 and part A6 (C-72 to C-74) on 2026-10-09. Still to come:
-  part A7 (C-75 to C-78), above all C-78, the order of work and the first scope.
+  and 2026-10-08, part A5 (C-68 to C-71) on 2026-10-08, and parts A6 and A7 (C-72 to C-78) on 2026-10-09. Nothing
+  is waiting.
 - **Spec and contract amendments** written for the decisions taken ([02_FOUNDATIONS.md](02_FOUNDATIONS.md) S8),
   and REQUIREMENTS IDs reserved for each feature.
-- **The open Harmony question** (one technique or charges) decided: C-77. The plan recommends keeping one technique
-  (E18).
+- **The Harmony question** decided: one technique per filled bar (C-77, E18).
 - **A census of what exists** (the playbook's P00 and D14): screens and controls, creatures, roads, side quests,
   illustrations and assets, so every region's list starts from what is really there. Estimates in this plan are not
   quotas.

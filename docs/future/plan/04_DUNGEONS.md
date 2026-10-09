@@ -1,6 +1,6 @@
 # 04 · Dungeons, expeditions and the Hall of a Hundred Tales
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only.*
 
 Robin's direction, consolidated:
 

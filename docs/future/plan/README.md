@@ -1,6 +1,6 @@
-# The Road of Borrowed Names: expansion plan (draft 8)
+# The Road of Borrowed Names: expansion plan (draft 9)
 
-*2026-10-09. Draft 8 records Robin's answers through the sixth round (2026-10-07 to 2026-10-09) and Robin's
+*2026-10-09. Draft 9 records Robin's answers through the seventh round (2026-10-07 to 2026-10-09) and Robin's
 playbook package of 2026-10-09. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
@@ -153,20 +153,18 @@ Your playbook also found sixteen places where draft 7 disagreed with itself. Twe
 already made, one is left to the census at the start of the work, and three come back to you below
 ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part E).
 
+## Decided in the seventh round (2026-10-09)
+
+| # | Decision |
+|---|---|
+| C-78 | The playbook's order of work, with its six changes. **Started:** P00 (the baseline) and the interface proof (U00 to U02), ending in one review set for you |
+| C-75 | A wrong first answer in a mastery exam counts like help |
+| C-76 | Up to five hostile creatures in authored set pieces; the two of you never counted |
+| C-77 | Harmony keeps one technique per filled bar |
+
 ## Still waiting for you
 
-In [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A7:
-
-1. **C-78 (open): the order of work and the first scope.** Your playbook proposes its own order (P00 to P18) and six
-   changes to this roadmap, and says nothing starts until you name a scope. Do you accept them, and what should
-   start? The natural first step is **P00**, a recorded baseline that changes nothing in the game, then **the book
-   interface proof** on Journey and Company with a type specimen, ending in one review set for you
-   ([12_ROADMAP.md](12_ROADMAP.md)).
-2. **C-75 (confirm):** a wrong first answer in a mastery exam counts like help, so a star needs fewer than 30% of
-   questions assisted or missed.
-3. **C-76 (confirm):** authored set pieces may field up to five hostile creatures (your "2-5 enemy fights"); the two
-   of you are never counted in that five.
-4. **C-77 (confirm):** Harmony keeps one technique per filled bar, as today.
+Nothing. The next questions will come with the review set of the book interface.
 
 Also ready when you want it: **Harmony's sound** (E21), a small change to the current game.
 

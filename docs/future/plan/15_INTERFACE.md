@@ -1,6 +1,6 @@
 # 15 · The interface: an authored travel book
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers). Planning only. The full direction,
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only. The full direction,
 with page-by-page requirements and twenty acceptance checks, is the playbook's §15A
 ([../playbook/UI_BOOK_DIRECTION_ADDENDUM.md](../playbook/UI_BOOK_DIRECTION_ADDENDUM.md)). This page is the short
 version and what it means for this game.*

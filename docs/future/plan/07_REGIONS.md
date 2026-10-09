@@ -1,6 +1,6 @@
 # 07 · Regions
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
 names them. Anything that depends on their contents is in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md).*
 
 Robin's question for every region: *names, stories, unique encounters and mechanics; main quest or postgame; how

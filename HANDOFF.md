@@ -140,7 +140,7 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 8 (2026-10-09), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 9 (2026-10-09), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
@@ -184,9 +184,14 @@
     that purpose only). The package (a proposed order of work P00–P18, the book interface in full, a review of
     draft 7) is stored in docs/future/playbook/ with model names neutralised, images as WebP and the PDFs left out
     (hashes listed). Draft 8 adds plan/15_INTERFACE.md and settles the review's discrepancies (part E).
-  - **Still open** (11_CONTRADICTIONS.md part A7): **C-78**, whether to adopt the playbook's order and which scope to
-    start (the package itself authorises nothing until Robin names one); C-75 to C-77 to confirm (how a wrong first
-    answer counts towards a star; five hostile creatures in set pieces; one Harmony technique per bar).
+  - **Seventh round (2026-10-09):** C-75 to C-78 decided. **C-78: the playbook's order of work is adopted**, and the
+    authorised scope is **P00** (baseline receipt and census, no change to the game) and **P01's interface proof,
+    U00–U02** (inventory, the book shell on Journey and Company with a dialogue strip and phone layout, and the type
+    specimen), ending in one review set for Robin. P01's Reedwake/Saltglass presentation proof and all later
+    milestones are not yet authorised. C-75: a wrong first exam answer counts like help; C-76: up to five hostile
+    creatures in set pieces; C-77: one Harmony technique per filled bar. Nothing is waiting on Robin.
+  - **Work records for the authorised packets:** docs/future/work/ (state, P00 baseline receipt, census, U00
+    inventory).
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

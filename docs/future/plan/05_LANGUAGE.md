@@ -1,6 +1,6 @@
 # 05 · Language: evidence, mastery and Japanese as a tool
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only.*
 
 Two halves:
 - **L1–L6, the learning record:** what the game knows about a player's Japanese, and how it shows it.
@@ -140,7 +140,7 @@ free, and asking for more suggestions counts as assisted.
   - The four stars sit side by side, none above the others. A choice star is as bright as a handwriting star.
   - **A "completed with help" mark** records the attempt honestly without a star (Astra: "demonstrated
     independently / completed with support / needs another opportunity").
-- **How a question counts** (proposed; C-75). Each question in an exam is a fixed slot that keeps its *first committed*
+- **How a question counts** (C-75, decided). Each question in an exam is a fixed slot that keeps its *first committed*
   answer: **independent** (right, with no counting help), **assisted** (right, with counting help) or **missed**
   (wrong first answer, even if put right afterwards). The star needs **fewer than 30% of the exam's questions to be
   assisted or missed** together: Robin's threshold, with a wrong first answer counted like help, so fishing gains

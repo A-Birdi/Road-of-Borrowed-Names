@@ -1,6 +1,6 @@
 # 10 · Story: more chapters, the Hush, companions and the postgame
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only. Spoiler-safe: the existing Chapters 3–6 appear only as the
 spec describes them. Every decision that depends on their contents points to a numbered note in
 [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md), which you should not open until you've finished the game.*
 

@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -412,13 +412,12 @@ completed the step before, that performs the step without further input.
 **Approach.**
 - **Ordinary encounters stay at three or fewer.**
 - **Authored set pieces may hold up to five actors on the creatures' side** (the player and companion are never
-  counted): a boss with summons, a group plus a guest, or, after C-76, up to five hostile creatures (Robin's "harder
-  2-5 enemy fights"). They use a new
+  counted): a boss with summons, a group plus a guest, or up to five hostile creatures (Robin's "harder 2-5 enemy
+  fights"; C-76, decided). They use a new
   **two-row formation**: back row smaller, front row larger, depth scaling as the battle stage already does.
   - **Compact slips** below 1280 px.
   - **On phones** the back row draws smaller and its name plates collapse to letters (A–E).
 - **Validator:** at most 5 actors on the creatures' side; outside authored set pieces, at most 3 hostile at once.
-  (Whether set pieces may field five hostile creatures, not only boss summons, is C-76.)
 - **Harmony:** the cut-in is never dropped because of the number of actors. It overlaps the creatures briefly, which
   Robin is fine with (C-42), with resolve, Harmony and the reading controls kept visible. (Draft 6 said five actors
   could mean no portrait on smaller windows; C-42 replaced that.)
@@ -533,7 +532,7 @@ outcomes chain into hidden content. [R2 §1]: the troupe never dies; other NPCs 
 
 - **The open decision** (COMBAT_NOTES): one technique per filled bar (today), or capped charges per encounter. The
   expansion does not need charges. Bosses with summons (E2) give long fights more Harmony naturally.
-  **Recommendation: keep one technique at a time** (C-77 to confirm).
+  **Decided: one technique per filled bar** (C-77), as today.
 - **New role:** the meter as *mutual understanding* in social encounters (E8).
 - **No Harmony in a companion's temporary absence** (10_STORY.md): techniques need two.
 

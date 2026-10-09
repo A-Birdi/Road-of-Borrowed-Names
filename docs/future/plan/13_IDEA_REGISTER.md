@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
+*Expansion plan, draft 9 (2026-10-09, after Robin's seventh round of answers). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -307,9 +307,9 @@ item, or records why it was excluded or folded into another. Statuses:
 
 | Idea | Plan item | Status |
 |---|---|---|
-| Menus that feel like a physical book in the 2.5D world, not rectangles inside rectangles | 15_INTERFACE; playbook §15A | Planned (order: C-78) |
+| Menus that feel like a physical book in the 2.5D world, not rectangles inside rectangles | 15_INTERFACE; playbook §15A | Under way: U00–U02 (C-78) |
 | A "pop-up / skewed book angle", mixed with physically opening a book | 15_INTERFACE §3 | Planned: depth in the cover and edges, text kept flat |
 | A unique font, readable and in the game's tone | 15_INTERFACE §5 | Allowed; chosen from a specimen of real game text |
 | Clearer direction for text boxes and menus | 15_INTERFACE §3; playbook UI-01 to UI-12 | Planned |
-| The playbook's order: visual proof first, art pass last, one writer at a time | 12_ROADMAP, "The playbook's proposed order" | **C-78** (open) |
+| The playbook's order: visual proof first, art pass last, one writer at a time | 12_ROADMAP, "The order of work" | Adopted (C-78); P00 and U00–U02 under way |
 | A twenty-check acceptance list for the interface | Playbook UI-A01 to UI-A20 | Planned |
