@@ -199,8 +199,10 @@
     **The U01/U02 review set is published for Robin** (one question: does it feel like a book that belongs to this
     journey, and is it easy to use?). Round 1 answer: "the tabs at the top were fine, it's more of the inner layout
     that needed some proper style and organization". **Round 2** restores the classic top tabs and reorganises
-    Journey's and Company's inner pages (U01_BOOK.md "Review round 2"); the review page shows it. Nothing further is
-    authorised until Robin answers and names the next scope.
+    Journey's and Company's inner pages (U01_BOOK.md "Review round 2"); the review page shows it. Robin on round 2:
+    "I think it's an improvement - you may proceed." **C-79: the book direction is accepted** as revised (still a
+    preview behind its setting), and **the rest of P01 is authorised**: Reedwake's presentation proof, then Saltglass
+    reusing it, ending in its own visual gate. P02 and later wait for that gate. State: docs/future/work/STATE.md.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

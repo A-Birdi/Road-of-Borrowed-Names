@@ -37,8 +37,9 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 Robin's package of 2026-10-09 ([../playbook/](../playbook/README.md)) proposes delivering the same features in a
 different order, milestones P00 to P18. The features don't change; the order and the method do. **Robin accepted it
 on 2026-10-09 (C-78): it replaces the order of the table above**, which stays as a map of where each feature is
-described. **Authorised so far: P00 and P01's interface proof (U00, U01, U02)**, ending in one review set for Robin;
-P01's Reedwake and Saltglass presentation proof and everything after wait for their own go-ahead.
+described. **Done and accepted: P00 and P01's interface proof (U00, U01, U02; C-79). Authorised now: the rest of
+P01**, Reedwake's presentation proof and Saltglass reusing it, ending in its own visual gate. Everything after it
+waits for that gate.
 
 | Playbook | What | This roadmap |
 |---|---|---|

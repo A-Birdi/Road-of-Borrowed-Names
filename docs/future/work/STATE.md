@@ -5,9 +5,10 @@ the short, current answer to "where exactly are we?" for the authorised packets.
 
 **Updated:** 2026-10-09.
 
-**Latest explicit authorisation:** Robin, 2026-10-09, C-78 "Yes": the playbook's order of work, and the first scope
-**P00** (baseline, no change to the game) then **P01's interface proof, U00–U02**, ending in one review set for
-Robin. Not authorised yet: P01's Reedwake/Saltglass presentation proof and every later milestone. Plan:
+**Latest explicit authorisation:** Robin, 2026-10-09, on the round-2 review set: "I think it's an improvement - you
+may proceed." Recorded as **C-79**: the book direction is accepted as revised, and **the rest of P01** is authorised:
+Reedwake's presentation proof, then Saltglass reusing it, ending in its own visual gate. P02 and later wait for that
+gate. (Earlier: C-78 adopted the playbook's order of work and authorised P00 and U00–U02.) Plan:
 `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
 
 **Model and tools:** one implementation model, checked at the start of the work (reported to Robin in the
@@ -26,10 +27,10 @@ byte for byte).
 | U00 · interface inventory | Done | [U00_INVENTORY.md](U00_INVENTORY.md), [ui_inventory.json](ui_inventory.json), `docs/screenshots/book/baseline/` |
 | U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
 | U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
-| Review set for Robin | Round 1 published; Robin: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised) published on the same page; waiting on Robin's answer | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
+| Review set for Robin | **Accepted** (C-79). Round 1: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised): "I think it's an improvement - you may proceed." | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
+| P01 · world proof (Reedwake, then Saltglass) | **Active.** Studying the renderer and the target plates; packet plan and art contract next | P01_WORLD.md (to come) |
 
-**Pending Robin gates:** the U01/U02 review set (one question: does it feel like a book that belongs to this
-journey, and is it easy to use?).
+**Pending Robin gates:** none now. The next is P01's visual gate (Reedwake and Saltglass, old beside new).
 
 **Fixed in U01:** the Journey's "Next" box repeated one destination when a step's guidance targets led to the same
 scene (U00_INVENTORY.md), and the closing book showed a blank cover (found while recording). Noted for U03: on a phone,

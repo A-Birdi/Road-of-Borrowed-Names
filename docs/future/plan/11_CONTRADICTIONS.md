@@ -27,7 +27,8 @@ The register has these parts:
 - **A4. Questions raised by the third round.** Answered (C-67).
 - **A5. Proposals from the fourth round.** All answered (C-68 to C-71).
 - **A6. Readings of the fifth round.** All approved on 2026-10-09 (C-72 to C-74).
-- **A7. Questions raised by the playbook's review.** All answered on 2026-10-09 (C-75 to C-78).
+- **A7. Questions raised by the playbook's review.** All answered on 2026-10-09 (C-75 to C-78); the interface
+  proof accepted the same day (C-79).
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
@@ -399,6 +400,19 @@ and which part should start? The natural first scope is **P00** (a recorded base
 controls, content and assets, with no change to the game) and then **P01's interface proof** (U01 and U02: the book
 on Journey and Company, and a type specimen), which ends in one review set for you.
 
+### C-79 · The interface proof accepted; P01 continues
+**Decided.** Robin, on the first review set: "I'll say that the tabs at the top were fine, it's more of the inner
+layout that needed some proper style and organization - sorry for the mixup". On the second: "I think it's an
+improvement - you may proceed."
+- **Accepted:** the book's direction, as revised in round 2 (U01, U02; [../work/U01_BOOK.md](../work/U01_BOOK.md)).
+  The classic tabs stay across the top, the inner pages are organised, and the type is the U02 set. It stays a
+  preview behind its setting until the shell reaches every page (U03 to U06); the method is then applied, not
+  re-voted page by page.
+- **Authorised next:** the rest of P01, in the playbook's order. That is Reedwake's presentation proof and Saltglass
+  reusing it, which ends in its own visual gate (the playbook's P01 exit: Robin approves the world's visual
+  direction).
+- **Still waiting:** later milestones (P02 onward) wait for that gate.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -517,6 +531,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Set pieces | Up to five hostile creatures; the player and companion never counted | C-76 |
 | Harmony | One technique per filled bar | C-77 |
 | Order of work | The playbook's P00–P18, with its six changes; first scope P00 and the interface proof | C-78 |
+| The book interface | Accepted as revised (classic tabs on top, organised inner pages, the U02 type); P01's world proof next | C-79 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

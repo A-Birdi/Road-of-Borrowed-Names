@@ -537,7 +537,7 @@ A preview behind a setting; the classic folio stays the default. B `tests/e2e/bo
 - [v] BK7 The Journey's "Next" names each destination once (person and doorway strip to the same scene are one), in the classic folio too. U next_line_once (every quest step); B book 12.
 - [v] BK8 The dialogue strip keeps its speaker and its manual Next. B book 13.
 - [v] BK10 The inner pages are organised (Robin, review round 1): Journey's itinerary of titles with each step said once on a spread; the request page in groups (what to do now; the way there; a nudge; earlier steps); one label voice; Company leads with Suzu and her words, the speech choice and its asking together, who travels in the running head, records as a ruled table. B book 12 (organisation) and 2 (control parity).
-- [ ] BK9 Robin's visual acceptance (the U01/U02 review set, round 2). H.
+- [v] BK9 Robin's visual acceptance (the U01/U02 review set, round 2): "I think it's an improvement - you may proceed." (2026-10-09; C-79). H.
 
 ## The book's type, U02 (Robin's C-78 and font permission of 2026-10-09; docs/future/work/U02_TYPE.md; data/fonts/README.md; VALIDATION.md "The type, U02")
 Only the preview uses these fonts; the classic folio makes none of them. B `tests/e2e/book.mjs` 14/0; U `book_type` 60/0; B `tests/e2e/type_specimen.mjs`.
@@ -546,7 +546,7 @@ Only the preview uses these fonts; the classic folio makes none of them. B `test
 - [v] TY3 Licence and provenance: OFL 1.1, no Reserved Font Name; source URLs and SHA-256 recorded; licence files beside the subsets and in NOTICE.txt (About & credits). U book_type.
 - [v] TY4 Every kana, kanji and CJK punctuation mark the game uses draws in the learning face, every kana and kanji in the heading face, every Latin letter, digit and mark in Vollkorn; anything else falls back to the system's fonts. U book_type (coverage read from each subset's own cmap, tied by hash to the embedded file).
 - [v] TY5 The specimen sets real strings (Chapter 1 and Robin's Ledger) at 100% and 140%: dakuten, handakuten, small kana, the small tsu, the long vowel mark, dense kanji, a long line, mixed lines, I/l/1 and O/0; no furigana overlaps. B type_specimen.
-- [ ] TY6 Robin's visual acceptance of the type (the U01/U02 review set). H.
+- [v] TY6 Robin's visual acceptance of the type (the U01/U02 review set, accepted with round 2; C-79). H.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
