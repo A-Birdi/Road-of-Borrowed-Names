@@ -32,12 +32,20 @@ RB.render = (function () {
   }
   // Field of view: about 12 tiles across on phones, 17 on tablets, 21 on
   // desktops (8–12 tall). A tile is 32 art pixels, each artPx device pixels.
+  // The world proof (src/engine/65_worldlook.js, development only) may ask for a wider view through setView:
+  // a function of the window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
+  let viewTarget = null;
+  function setView(fn) {
+    viewTarget = typeof fn === 'function' ? fn : null;
+    if (canvas) { resize(); invalidate(); }
+  }
   function resize() {
     cssW = window.innerWidth;
     cssH = window.innerHeight;
     dpr = window.devicePixelRatio || 1;
-    const targetW = cssW < 700 ? 12 : cssW < 1100 ? 17 : 21;
-    const targetH = cssH < 520 ? 8 : 12;
+    const vt = viewTarget && viewTarget(cssW, cssH);
+    const targetW = vt ? vt.w : cssW < 700 ? 12 : cssW < 1100 ? 17 : 21;
+    const targetH = vt ? vt.h : cssH < 520 ? 8 : 12;
     const tileDev = Math.min(cssW / targetW, cssH / targetH) * dpr;
     artPx = Math.max(1, Math.round(tileDev / ATS));
     // never show much less than the intended view: step down if rounding up cost > 20 %
@@ -713,5 +721,5 @@ RB.render = (function () {
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, cam, enclosed, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ART, TS };
 })();

@@ -548,6 +548,19 @@ Only the preview uses these fonts; the classic folio makes none of them. B `test
 - [v] TY5 The specimen sets real strings (Chapter 1 and Robin's Ledger) at 100% and 140%: dakuten, handakuten, small kana, the small tsu, the long vowel mark, dense kanji, a long line, mixed lines, I/l/1 and O/0; no furigana overlaps. B type_specimen.
 - [v] TY6 Robin's visual acceptance of the type (the U01/U02 review set, accepted with round 2; C-79). H.
 
+## The world proof, P01 (Robin's C-79 of 2026-10-09; docs/future/work/P01_WORLD.md; VALIDATION.md "The world proof, W00")
+Development only: drawn only with `?dev=world`, only on the slice's maps. B `tests/e2e/world.mjs`.
+- [v] WP1 Without `?dev=world` the game is unchanged: the proof is not allowed, the view is the game's own, and a held frame is pixel-identical with the proof absent, present but switched off, and on with every layer off. B world 1.
+- [v] WP2 The far view frames the village as the target plate does (45 tiles across at 1440×900, whole device pixels per art pixel); a room keeps the near view; the view returns outside. B world 2; captures docs/screenshots/world/w00/.
+- [v] WP3 In the far view a tap or click lands on the tile under it and collisions are unchanged (1440×900 and a 375-px phone). B world 3, 4.
+- [v] WP4 The art contract is written: grid and art resolution, camera, light, ramps, outlines and contrast, projection and scale, layers, motion, dressing. Code review (P01_WORLD.md).
+- [ ] WP5 Illumination and atmosphere layers, each switchable (W01).
+- [ ] WP6 Reedwake's kit (W02).
+- [ ] WP7 Two purposeful actions (W03).
+- [ ] WP8 The Reedwake slice with a battle, and its evidence (W04).
+- [ ] WP9 Saltglass reusing the method, and the reuse report (W05).
+- [ ] WP10 Robin's visual acceptance of the method (the P01 gate). H.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

@@ -3518,3 +3518,30 @@ judgement.
 - B `node tests/e2e/book_captures.mjs docs/screenshots/book/r2`: 28 captures, reviewed by eye by the lead.
 
 **Not verified:** Firefox; the foldable; Robin's visual judgement of round 2.
+
+## The world proof, W00 (2026-10-09; C-79; docs/future/work/P01_WORLD.md; REQUIREMENTS.md WP1–WP4)
+
+**What changed:**
+- `src/engine/65_worldlook.js` (new): the proof's switch (`?dev=world`, or `window.__RB_DEV_WORLD__` in a test),
+  the slice (rw.village for now), the far view, and per-layer switches.
+- `src/engine/60_render.js`: `setView(fn)`, through which only the proof asks for a wider view. With nothing set,
+  the previous rule runs unchanged.
+- Tests and tools: `tests/e2e/world.mjs`, `tests/e2e/world_captures.mjs` (section `camera`).
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/world.mjs`: **4/0**:
+  - without the flag nothing changes. A held frame (clock paused, drawn at a fixed instant) hashes identically in
+    three states: the game; the proof present but switched off; the proof on with the near view and every layer off;
+  - the far view in the village (45 × 28.1 tiles at 1440×900, 32 css px per tile), the near view in the teahouse,
+    far again outside;
+  - a mouse click (1440×900) and a touch tap (375×667 at 3×) at the middle of tile (24, 19) walk the player there;
+    the well and the teahouse wall block.
+- U `node tests/run-unit.mjs`: **27,450/0**.
+- B `node tests/e2e/world_captures.mjs camera`: 6 captures in `docs/screenshots/world/w00/`, reviewed by eye by the
+  lead. Measured views:
+  - 1440×900: near 22.5 tiles, far 45;
+  - 2048×1046 at 1.25×: near 26.7, far 40;
+  - 375×667 at 3×: near 11.7, far 17.6.
+
+**Not verified:** Firefox; the foldable; the far view's readability on a real phone (a question for the P01 gate).
+
