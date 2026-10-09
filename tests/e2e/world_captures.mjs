@@ -7,6 +7,8 @@
 //            (the kit off: W01 alone)                                              → docs/screenshots/world/w01/
 //   kit      Reedwake's kit: the game as it is beside the proof (paired, actual size), the kit on and off, close-ups
 //            at 3× (the square, the river and bridge, a house front), night, the phone  → docs/screenshots/world/w02/
+//   acts     the two purposeful actions as labelled key-frame strips at 3×, one frame from the middle of each
+//            phase: Yasu's catch and miss rounds, Tomo's folding and clearing rounds   → docs/screenshots/world/w03/
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -106,6 +108,48 @@ if (doing('kit')) {
   await shot('d2048_proof', '?dev=world', null, { viewport: { width: 2048, height: 1046 }, dpr: 1.25 });
   await shot('p375_proof', '?dev=world', null, { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true });
   await shot('p375_game', '', null, { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true });
+}
+
+if (doing('acts')) {
+  const D = 'docs/screenshots/world/w03';
+  const strip = async (file, who, n, clipOf) => {
+    const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+    await square(p);
+    await p.clock.install();
+    await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+    const info = await p.evaluate(({ who, n }) => {
+      const a = RB.world.W.npcs.find((q) => q.id === who), T = 100000, kind = who === 'yasu' ? 'fish' : 'fold';
+      a._act = { kind, t0: T, n };
+      const r = kind === 'fish' ? RB.worldActs.fishRound(n) : RB.worldActs.foldRound(n);
+      let acc = 0;
+      const marks = r.map(([ph, ms]) => { const m = [ph, T + acc + ms * 0.5]; acc += ms; return m; });
+      return { marks, c: RB.render.tileToCss(a.x, a.y) };
+    }, { who, n });
+    const frames = [];
+    for (const [ph, at] of info.marks) {
+      await p.evaluate((at) => RB.render.frame(at), at);
+      frames.push([ph, (await p.screenshot({ clip: clipOf(info.c) })).toString('base64')]);
+    }
+    const data = await p.evaluate(async (frames) => {
+      const imgs = await Promise.all(frames.map(async ([ph, b64]) => { const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode(); return [ph, i]; }));
+      const s = 3, cols = 4, w = imgs[0][1].naturalWidth * s, h = imgs[0][1].naturalHeight * s;
+      const c = document.createElement('canvas'); c.width = cols * (w + 6); c.height = Math.ceil(imgs.length / cols) * (h + 22);
+      const g = c.getContext('2d'); g.fillStyle = '#1b2030'; g.fillRect(0, 0, c.width, c.height); g.imageSmoothingEnabled = false;
+      imgs.forEach(([ph, i], k) => { const x = (k % cols) * (w + 6), y = Math.floor(k / cols) * (h + 22); g.drawImage(i, x, y + 18, w, h); g.fillStyle = '#fff'; g.font = '14px sans-serif'; g.fillText((k + 1) + '. ' + ph, x + 4, y + 14); });
+      return c.toDataURL('image/webp', 0.9);
+    }, frames);
+    fs.mkdirSync(path.join(root, D), { recursive: true });
+    fs.writeFileSync(path.join(root, D, file), Buffer.from(data.split(',')[1], 'base64'));
+    written.push(path.join(D, file));
+    if (errors.length) console.log(file, 'page errors:', errors.join('; '));
+    await ctx.close();
+  };
+  const yclip = (c) => ({ x: c.x - 40, y: c.y - 50, width: 175, height: 90 });
+  const tclip = (c) => ({ x: c.x - 34, y: c.y - 30, width: 76, height: 66 });
+  await strip('yasu_catch.webp', 'yasu', 3, yclip);   // rounds 0 and 1 miss, 2 onward catch (by hash)
+  await strip('yasu_miss.webp', 'yasu', 0, yclip);
+  await strip('tomo_fold.webp', 'tomo', 2, tclip);    // the stack two → three
+  await strip('tomo_clear.webp', 'tomo', 4, tclip);   // four folded cloths lifted into the basket
 }
 
 await b.close();

@@ -370,7 +370,12 @@ RB.render = (function () {
     const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
     // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
     // (a half-step, a hop); not while a turn pivots, so the turn still shows
-    const sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    let sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    // the world proof's purposeful actions (development only, src/engine/67_worldacts.js): a pose and a facing
+    if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.active(RB.world.W.map) && RB.worldLook.opts.kit) {
+      const af = RB.worldActs.frameOf(a, t, still);
+      if (af) sf = af;
+    }
     const art = RB.sprites.getArt && RB.sprites.getArt(a.look, sf ? sf.dir : vw ? vw.dir : a.dir, sf && sf.key ? sf.key : vw ? vw.frame : fr0);
     const dy = (a.dy || 0) + (sf ? sf.oy : 0); // a knee dip during a field action (src/ui/57_weave.js)
     const ox = sf ? sf.ox : 0;
@@ -579,6 +584,7 @@ RB.render = (function () {
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks
+    if (KIT && RB.worldActs) RB.worldActs.push(list, c, m, env, t); // the rod and float, the baskets
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
     if (L) L.illuminate(c, m, W, t, env);

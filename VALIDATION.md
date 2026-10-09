@@ -3591,3 +3591,22 @@ judgement.
 - the foldable;
 - Robin's eye.
 
+## The world proof, W03: two purposeful actions (2026-10-10; P01_WORLD.md "W03"; REQUIREMENTS.md WP7)
+
+**What changed:**
+- `src/engine/67_worldacts.js` (new).
+- `src/engine/60_render.js`: `artFor` asks the actions first, behind the proof and its kit; the actions' world
+  pieces join the y-sort.
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/world.mjs`: **9/0**.
+- B `node tests/e2e/world_captures.mjs acts`: four key-frame strips, reviewed by eye by the lead. Seen and fixed on
+  the way:
+  - Tomo's first action (pegging cloths) had no contact with the line, so it was replaced;
+  - Yasu's float landed by the boat instead of past the jetty;
+  - the rod was too faint against the reeds;
+  - the unhooked fish hung from the rod tip instead of being held in his hands;
+  - Tomo's clearing round showed the stack in her hands and on the basket at once.
+
+**Not verified:** play speed by a person; Firefox; the foldable.
+

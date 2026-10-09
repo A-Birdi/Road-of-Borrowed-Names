@@ -233,6 +233,89 @@ await test('W02 kit: collisions unchanged; low growth only in safe places; the d
   await ctx.close();
 });
 
+await test('W03 actions: Yasu fishes and Tomo folds, in place; outcomes from hashes; they yield to a conversation and begin again; reduced motion holds one pose', async () => {
+  const { p, ctx, errors, requests } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await square(p);
+  await settled(p);
+  await p.clock.install();
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  // a full round of each, sampled every 100 ms: poses vary, the right ones appear, nobody moves or turns
+  const r = await p.evaluate(() => {
+    const W = RB.world.W, out = {};
+    for (const [id, kind, round] of [['yasu', 'fish', RB.worldActs.fishRound(3)], ['tomo', 'fold', RB.worldActs.foldRound(1)]]) {
+      const a = W.npcs.find((n) => n.id === id);
+      const before = [a.x, a.y, a.fx, a.fy, a.dir];
+      const T = 200000; a._act = { kind, t0: T, n: id === 'yasu' ? 3 : 1 };
+      const len = round.reduce((s, q) => s + q[1], 0), poses = new Set(), dirs = new Set(), phases = new Set();
+      for (let t = T; t < T + len - 10; t += 100) {
+        const f = RB.worldActs.frameOf(a, t, false);
+        if (f && f.key) poses.add(/^p:([a-z0-9_]+)/.exec(f.key)[1]);
+        if (f) dirs.add(f.dir);
+        phases.add(RB.worldActs.where(a, kind, t).phase);
+        RB.render.frame(t);
+      }
+      out[id] = { poses: [...poses], dirs: [...dirs], phases: [...phases], same: JSON.stringify(before) === JSON.stringify([a.x, a.y, a.fx, a.fy, a.dir]) };
+    }
+    // the outcome of a round is the same every time it's asked, and about two rounds in three end in a catch
+    let catches = 0;
+    for (let n = 0; n < 60; n++) { const a1 = JSON.stringify(RB.worldActs.fishRound(n)), a2 = JSON.stringify(RB.worldActs.fishRound(n)); if (a1 !== a2) return { bad: 'round ' + n + ' differs' }; if (a1.includes('basket')) catches++; }
+    out.catches = catches;
+    return out;
+  });
+  assert(!r.bad, r.bad);
+  for (const want of ['castback', 'castfwd', 'rodhold', 'strike', 'reel1', 'reel2', 'unhook', 'stoop']) assert(r.yasu.poses.includes(want), 'Yasu never shows ' + want + ': ' + r.yasu.poses.join(' '));
+  for (const want of ['stoop', 'shakeout1', 'shakeout2', 'fold1', 'fold2', 'placeit']) assert(r.tomo.poses.includes(want), 'Tomo never shows ' + want + ': ' + r.tomo.poses.join(' '));
+  assert(r.yasu.same && r.tomo.same, 'an action moved or turned someone (their tile, position or facing)');
+  assert(r.catches >= 30 && r.catches <= 50, 'about two rounds in three should end in a catch: ' + r.catches + ' of 60');
+  // the folded stack grows at the touch: one more cloth after 'place' than before it
+  const st = await p.evaluate(() => [RB.worldActs.stackCount(1), RB.worldActs.stackCount(2), RB.worldActs.stackCount(4), RB.worldActs.stackCount(5)]);
+  assert(st.join() === '1,2,4,0', 'the stack after rounds 1, 2, 4, 5: ' + st.join());
+  // a conversation: both yield (the game's own frames), and afterwards the round begins again from its start
+  const y = await p.evaluate(() => {
+    const W = RB.world.W, a = W.npcs.find((n) => n.id === 'yasu');
+    const t = 300000; a._act = { kind: 'fish', t0: t - 7000, n: 3 };
+    const during = RB.worldActs.where(a, 'fish', t).phase;
+    RB.game.pushMode('dialogue');
+    const yielded = RB.worldActs.frameOf(a, t + 100, false) === null;
+    RB.game.popMode();
+    const after = RB.worldActs.where(a, 'fish', t + 200).phase;
+    return { during, yielded, after };
+  });
+  assert(y.during !== 'ready', 'fixture: the round should be under way: ' + y.during);
+  assert(y.yielded, 'the action must yield while a conversation is open');
+  assert(y.after === 'ready', 'after the conversation the round should begin again: ' + y.after);
+  // reduced motion: one still pose each, the same at any two instants
+  const rm = await p.evaluate(() => {
+    RB.game.settings.reducedMotion = true; RB.game.applySettings();
+    const W = RB.world.W, out = [];
+    for (const id of ['yasu', 'tomo']) { const a = W.npcs.find((n) => n.id === id); out.push(JSON.stringify(RB.worldActs.frameOf(a, 1000, true)) === JSON.stringify(RB.worldActs.frameOf(a, 98765, true))); }
+    return out;
+  });
+  assert(rm.every(Boolean), 'reduced motion should hold one pose: ' + rm.join());
+  const h1 = await frameHash(p);
+  const h2 = await p.evaluate(() => { RB.render.frame(12345); const cv = document.querySelector('canvas'); const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data; let x = 2166136261; for (let i = 0; i < d.length; i += 4) { x ^= d[i] | (d[i + 1] << 8) | (d[i + 2] << 16); x = Math.imul(x, 16777619) >>> 0; } return x.toString(16) + ':' + cv.width + 'x' + cv.height; });
+  assert(h1 === h2, 'reduced motion with the kit and its actions: the frame changed between two instants');
+  assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
+  await ctx.close();
+});
+
+await test('W03: talking to Yasu mid-cast opens the game\'s own conversation, and his rod rests meanwhile', async () => {
+  const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  // stand beside Yasu (on the bank, to his left) facing him, then talk
+  await p.evaluate(() => { RB.game.debugStart('rw.village', 33, 25, { comp: 'suzu', flags: { departed: true }, dir: 'right' }); });
+  await settled(p);
+  await p.waitForTimeout(1500);
+  const front = await p.evaluate(() => RB.world.frontTile());
+  const yasu = await p.evaluate(() => { const a = RB.world.W.npcs.find((n) => n.id === 'yasu'); return [a.x, a.y]; });
+  assert(front[0] === yasu[0] && front[1] === yasu[1], 'fixture: the player should face Yasu: ' + JSON.stringify({ front, yasu }));
+  await p.keyboard.press('Enter');
+  await p.waitForSelector('.dlg:not(.hidden)', { timeout: 5000 });
+  const st = await p.evaluate(() => ({ mode: RB.game.mode(), free: RB.worldActs.free(RB.world.W.npcs.find((n) => n.id === 'yasu')) }));
+  assert(st.mode !== 'world' && st.free === false, 'during the conversation Yasu is the game\'s: ' + JSON.stringify(st));
+  assert(!errors.length, 'errors: ' + errors.join('; '));
+  await ctx.close();
+});
+
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);

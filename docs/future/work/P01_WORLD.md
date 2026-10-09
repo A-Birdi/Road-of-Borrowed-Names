@@ -38,7 +38,7 @@ composition and density. What it is, measured (W00):
 | W00 | Study of the renderer and the plate; the art contract; the camera candidates; the proof's switch (`?dev=world`); its test | **Done** |
 | W01 | Illumination and atmosphere: authored ambient light, the sun's cast shadows (cached per map), local lights, glow on emissive things only, haze, water glints, optional edge softness; each layer switchable | **Done** (below) |
 | W02 | Reedwake's kit: ground and its transitions, foliage masses, cattails, lily pads, water, fences, flower boxes, thatch-on-stone and board houses with lit windows, smoke; footprints, contact points, occlusion; deterministic dressing in safe zones only | **Done, first pass** (below) |
-| W03 | Two purposeful actions by village people (complete actions: anticipation, motion, contact, follow-through, return), stopping cleanly for conversation, staging and reduced motion | |
+| W03 | Two purposeful actions by village people (complete actions: anticipation, motion, contact, follow-through, return), stopping cleanly for conversation, staging and reduced motion | **Done** (below) |
 | W04 | The Reedwake slice assembled: a doorway, water, vegetation, a light, conversation, the customizable player; a battle with Suzu and an existing creature (language UI, action banner, Harmony cut-in) from the slice; evidence (paired captures, recordings, layers on/off, overlays, start-up, frame and memory measurements) | |
 | W05 | Saltglass reusing the method (stone paving, an awning, water, a profession action), the reuse report (every new regional asset listed), skin, sleeve and accessory variants, desktop and narrow, a crowded battle; the visual gate for Robin | |
 
@@ -271,4 +271,59 @@ so pessimistic. A GPU-backed canvas (Robin's Firefox) is expected to be far chea
 |---|---|---|
 | The proof's browser tests (7), adding W02's: collisions unchanged with the kit on and off; low growth only in safe places; the static layer the same in two builds; the reveal rule; the kit changes the frame | `node tests/e2e/world.mjs` | **7 passed, 0 failed** |
 | Captures: the game and the proof at the same moment (desktop and phone), the kit off, the camera only, night, 2048×1046; close-ups at 3× of the square, the river and bridge, a house front | `node tests/e2e/world_captures.mjs kit` | 14 WebP in `docs/screenshots/world/w02/` |
+
+## W03: two purposeful actions
+
+`src/engine/67_worldacts.js`. Two people who already stand where the work is:
+
+**Yasu fishes from the pier.** Each round has eleven steps:
+1. ready, the rod drawn back;
+2. the cast;
+3. the line flying out;
+4. the float landing past the jetty with a ring;
+5. the wait, the float bobbing;
+6. a nibble (the float dips twice);
+7. the bite;
+8. the strike, the rod bending;
+9. the reel, the float coming in;
+10. either a catch (the fish lifted out, held in his hands to unhook, dropped into the basket at his feet) or a
+    miss (an empty hook, a small shake of the head);
+11. baiting again.
+
+About two rounds in three end in a catch, from a hash of the round. The rod, line, float, rings and fish are
+drawn in the world beside him, from his hands in each pose.
+
+**Tomo folds the dry washing beside the line.** Each round:
+- bending to the basket in front of her for a cloth;
+- the anticipation (a lift) and two snaps to shake it out;
+- folding it in half, then again;
+- laying it on the stack, which grows at the touch;
+- stepping back.
+
+Every fifth round she lifts the folded stack into the basket.
+
+**Rejected on the way:** pegging cloths on the line. From where she stands, her raised hands fall well short of the
+line, so the line gained a cloth with no hand there. That fails "contact" (V5), and sliding her a tile to reach it
+would fail V4 (no sliding). It was replaced by an action she can do where she stands.
+
+**The rules each keeps:**
+- **Nobody moves:** no tile, position or facing changes. The drawn facing is presentation, as with every staged
+  pose.
+- **They yield to the game:** while anyone talks, a scene stages the person, they walk, or the world isn't in play,
+  the person is the game's own (Yasu's rod rests against the post). Afterwards the round begins again from its
+  start.
+- **Reduced motion** holds one still, readable pose: the float resting on the water, a cloth folded at the chest.
+- **No random stream:** timing comes from the frame's time and each person's own offset; outcomes come from hashes.
+- **The poses are new keys in the pose layer**, added only when the proof first draws an action:
+  `rodready castback castfwd rodhold strike reel1 reel2 unhook stoop shakeout1 shakeout2 fold1 fold2 placeit
+  lookback`. They use the existing arm targets.
+
+| Check | Command | Result |
+|---|---|---|
+| The proof's browser tests (9), adding W03's:<br>• over a full round each, the expected poses all appear and nobody's tile, position or facing changes<br>• a round's outcome is the same every time, and 30 to 50 of 60 rounds end in a catch<br>• the stack counts<br>• opening a conversation makes the action yield, and it restarts from 'ready' afterwards<br>• reduced motion holds one pose, and a frame with the kit and its actions is the same at two instants<br>• talking to Yasu mid-cast opens the game's own conversation | `node tests/e2e/world.mjs` | **9 passed, 0 failed** |
+| Key-frame strips at 3×, one frame from the middle of each step: Yasu's catch and miss, Tomo's folding and clearing | `node tests/e2e/world_captures.mjs acts` | 4 WebP in `docs/screenshots/world/w03/` |
+
+**Not yet:**
+- recordings at normal speed (W04's evidence);
+- a person's look at play speed: whether the actions read as purposeful without the labels (Robin's eye).
 
