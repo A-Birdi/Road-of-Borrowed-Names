@@ -1,0 +1,1135 @@
+{
+ "generated": {
+  "by": "tools/census.mjs",
+  "note": "Counts of what is registered in the source today; not a plan or a quota."
+ },
+ "maps": {
+  "total": 91,
+  "byRegion": {
+   "co": 17,
+   "lf": 18,
+   "lq": 2,
+   "rw": 14,
+   "sa": 10,
+   "sb": 14,
+   "sg": 16
+  },
+  "list": [
+   {
+    "id": "rw.village",
+    "region": "rw",
+    "name": "Reedwake",
+    "npcs": 13,
+    "size": "36×50"
+   },
+   {
+    "id": "rw.hall",
+    "region": "rw",
+    "name": "Lantern Hall",
+    "npcs": 5,
+    "size": "10×11"
+   },
+   {
+    "id": "rw.tea",
+    "region": "rw",
+    "name": "Hana's Teahouse",
+    "npcs": 3,
+    "size": "9×9"
+   },
+   {
+    "id": "rw.apoth",
+    "region": "rw",
+    "name": "Mio's Apothecary",
+    "npcs": 1,
+    "size": "9×9"
+   },
+   {
+    "id": "rw.warehouse",
+    "region": "rw",
+    "name": "River Warehouse",
+    "npcs": 1,
+    "size": "9×11"
+   },
+   {
+    "id": "rw.carpenter",
+    "region": "rw",
+    "name": "Bunta's Workshop",
+    "npcs": 1,
+    "size": "8×9"
+   },
+   {
+    "id": "rw.house1",
+    "region": "rw",
+    "name": "Oto's House",
+    "npcs": 1,
+    "size": "8×8"
+   },
+   {
+    "id": "rw.house2",
+    "region": "rw",
+    "name": "Kiku's House",
+    "npcs": 1,
+    "size": "8×9"
+   },
+   {
+    "id": "rw.ferry",
+    "region": "rw",
+    "name": "Kōji's Ferry House",
+    "npcs": 0,
+    "size": "8×8"
+   },
+   {
+    "id": "rw.road",
+    "region": "rw",
+    "name": "The Lantern Road",
+    "npcs": 0,
+    "size": "18×32"
+   },
+   {
+    "id": "rw.millroad",
+    "region": "rw",
+    "name": "The Mill Road",
+    "npcs": 5,
+    "size": "26×26"
+   },
+   {
+    "id": "rw.mill1",
+    "region": "rw",
+    "name": "The Old Mill",
+    "npcs": 0,
+    "size": "12×15"
+   },
+   {
+    "id": "rw.mill2",
+    "region": "rw",
+    "name": "The Mill Loft",
+    "npcs": 0,
+    "size": "9×13"
+   },
+   {
+    "id": "rw.mill0",
+    "region": "rw",
+    "name": "The Wheel Pit",
+    "npcs": 0,
+    "size": "10×16"
+   },
+   {
+    "id": "sg.road",
+    "region": "sg",
+    "name": "The Coast Road",
+    "npcs": 0,
+    "size": "22×40"
+   },
+   {
+    "id": "sg.harbor",
+    "region": "sg",
+    "name": "Saltglass",
+    "npcs": 13,
+    "size": "42×56"
+   },
+   {
+    "id": "sg.office",
+    "region": "sg",
+    "name": "Harbour Office",
+    "npcs": 2,
+    "size": "9×11"
+   },
+   {
+    "id": "sg.inn",
+    "region": "sg",
+    "name": "The Gull",
+    "npcs": 3,
+    "size": "10×13"
+   },
+   {
+    "id": "sg.warehouse",
+    "region": "sg",
+    "name": "No. 2 Warehouse",
+    "npcs": 1,
+    "size": "10×13"
+   },
+   {
+    "id": "sg.glass",
+    "region": "sg",
+    "name": "Asahi's Glassworks",
+    "npcs": 1,
+    "size": "9×10"
+   },
+   {
+    "id": "sg.lighthouse",
+    "region": "sg",
+    "name": "Lighthouse",
+    "npcs": 2,
+    "size": "10×9"
+   },
+   {
+    "id": "sg.lighthouse_top",
+    "region": "sg",
+    "name": "Top of the Lighthouse",
+    "npcs": 1,
+    "size": "8×11"
+   },
+   {
+    "id": "sg.tidehut",
+    "region": "sg",
+    "name": "Tide-Watch Hut",
+    "npcs": 1,
+    "size": "8×9"
+   },
+   {
+    "id": "sg.isamu",
+    "region": "sg",
+    "name": "Isamu's House",
+    "npcs": 0,
+    "size": "8×8"
+   },
+   {
+    "id": "sg.cove",
+    "region": "sg",
+    "name": "The Fishers' Cove",
+    "npcs": 0,
+    "size": "20×30"
+   },
+   {
+    "id": "sg.da_entry",
+    "region": "sg",
+    "name": "Drowned Archive — Receiving Hall",
+    "npcs": 0,
+    "size": "18×24"
+   },
+   {
+    "id": "sg.da_stacks",
+    "region": "sg",
+    "name": "Drowned Archive — The Stacks",
+    "npcs": 0,
+    "size": "22×30"
+   },
+   {
+    "id": "sg.da_reading",
+    "region": "sg",
+    "name": "Drowned Archive — Reading Room",
+    "npcs": 0,
+    "size": "14×18"
+   },
+   {
+    "id": "sg.da_sluice",
+    "region": "sg",
+    "name": "Drowned Archive — Sluice Channels",
+    "npcs": 0,
+    "size": "20×28"
+   },
+   {
+    "id": "sg.da_vault",
+    "region": "sg",
+    "name": "Drowned Archive — Returns Counter",
+    "npcs": 1,
+    "size": "16×20"
+   },
+   {
+    "id": "co.road",
+    "region": "co",
+    "name": "The Orchard Road",
+    "npcs": 0,
+    "size": "20×36"
+   },
+   {
+    "id": "co.village",
+    "region": "co",
+    "name": "Cinder Orchard",
+    "npcs": 11,
+    "size": "40×52"
+   },
+   {
+    "id": "co.eve",
+    "region": "co",
+    "name": "Cinder Orchard at dusk",
+    "npcs": 14,
+    "size": "40×52"
+   },
+   {
+    "id": "co.festival",
+    "region": "co",
+    "name": "The Autumn Festival",
+    "npcs": 14,
+    "size": "40×52"
+   },
+   {
+    "id": "co.hall",
+    "region": "co",
+    "name": "Chronicle Hall",
+    "npcs": 1,
+    "size": "10×13"
+   },
+   {
+    "id": "co.inn",
+    "region": "co",
+    "name": "Fusa's Inn",
+    "npcs": 3,
+    "size": "10×13"
+   },
+   {
+    "id": "co.glass",
+    "region": "co",
+    "name": "Glass Workshop",
+    "npcs": 3,
+    "size": "10×13"
+   },
+   {
+    "id": "co.pottery",
+    "region": "co",
+    "name": "Nobu's Pottery",
+    "npcs": 1,
+    "size": "9×11"
+   },
+   {
+    "id": "co.post",
+    "region": "co",
+    "name": "Shino's Post House",
+    "npcs": 2,
+    "size": "8×9"
+   },
+   {
+    "id": "co.terraces",
+    "region": "co",
+    "name": "The Terraces",
+    "npcs": 4,
+    "size": "34×44"
+   },
+   {
+    "id": "co.ume",
+    "region": "co",
+    "name": "Ume's House",
+    "npcs": 0,
+    "size": "8×9"
+   },
+   {
+    "id": "co.upper",
+    "region": "co",
+    "name": "The Upper Terraces",
+    "npcs": 0,
+    "size": "30×40"
+   },
+   {
+    "id": "co.oldworks",
+    "region": "co",
+    "name": "The Old Workshop Row",
+    "npcs": 0,
+    "size": "26×40"
+   },
+   {
+    "id": "co.icehouse",
+    "region": "co",
+    "name": "The Ice House",
+    "npcs": 0,
+    "size": "10×11"
+   },
+   {
+    "id": "co.kiln",
+    "region": "co",
+    "name": "The Great Kiln",
+    "npcs": 0,
+    "size": "24×30"
+   },
+   {
+    "id": "co.kiln_core",
+    "region": "co",
+    "name": "The Kiln's Heart",
+    "npcs": 0,
+    "size": "12×15"
+   },
+   {
+    "id": "co.lookout",
+    "region": "co",
+    "name": "The Lookout",
+    "npcs": 0,
+    "size": "12×16"
+   },
+   {
+    "id": "sb.road",
+    "region": "sb",
+    "name": "The Snowbell Road",
+    "npcs": 2,
+    "size": "22×36"
+   },
+   {
+    "id": "sb.hamlet",
+    "region": "sb",
+    "name": "Snowbell",
+    "npcs": 19,
+    "size": "36×46"
+   },
+   {
+    "id": "sb.inn",
+    "region": "sb",
+    "name": "Yukimiya Inn",
+    "npcs": 17,
+    "size": "12×17"
+   },
+   {
+    "id": "sb.inn_room",
+    "region": "sb",
+    "name": "Upstairs at Yukimiya",
+    "npcs": 0,
+    "size": "8×9"
+   },
+   {
+    "id": "sb.post",
+    "region": "sb",
+    "name": "The Post Shelter",
+    "npcs": 1,
+    "size": "8×10"
+   },
+   {
+    "id": "sb.hoshino",
+    "region": "sb",
+    "name": "Hoshino's House",
+    "npcs": 1,
+    "size": "9×11"
+   },
+   {
+    "id": "sb.goatshed",
+    "region": "sb",
+    "name": "Tetsuji's Goat Shed",
+    "npcs": 5,
+    "size": "9×12"
+   },
+   {
+    "id": "sb.sachi",
+    "region": "sb",
+    "name": "Sachi and Kanta's House",
+    "npcs": 1,
+    "size": "8×9"
+   },
+   {
+    "id": "sb.fuki",
+    "region": "sb",
+    "name": "Fuki's House",
+    "npcs": 1,
+    "size": "7×8"
+   },
+   {
+    "id": "sb.obs_path",
+    "region": "sb",
+    "name": "The Star Stair",
+    "npcs": 0,
+    "size": "40×28"
+   },
+   {
+    "id": "sb.obs_hall",
+    "region": "sb",
+    "name": "Observatory — Ground Floor",
+    "npcs": 0,
+    "size": "16×20"
+   },
+   {
+    "id": "sb.obs_charts",
+    "region": "sb",
+    "name": "The Chart Room",
+    "npcs": 0,
+    "size": "12×16"
+   },
+   {
+    "id": "sb.obs_gallery",
+    "region": "sb",
+    "name": "The Upper Gallery",
+    "npcs": 0,
+    "size": "14×20"
+   },
+   {
+    "id": "sb.obs_dome",
+    "region": "sb",
+    "name": "The Lamp Room",
+    "npcs": 1,
+    "size": "12×14"
+   },
+   {
+    "id": "lf.road",
+    "region": "lf",
+    "name": "The Lantern Road above Lanternfall",
+    "npcs": 0,
+    "size": "22×36"
+   },
+   {
+    "id": "lf.town",
+    "region": "lf",
+    "name": "Lanternfall",
+    "npcs": 6,
+    "size": "40×52"
+   },
+   {
+    "id": "lf.gardens",
+    "region": "lf",
+    "name": "The Garden Quarter",
+    "npcs": 5,
+    "size": "24×34"
+   },
+   {
+    "id": "lf.sluice",
+    "region": "lf",
+    "name": "The Sluice Shore",
+    "npcs": 1,
+    "size": "28×34"
+   },
+   {
+    "id": "lf.records",
+    "region": "lf",
+    "name": "Public Records Hall",
+    "npcs": 2,
+    "size": "12×17"
+   },
+   {
+    "id": "lf.council",
+    "region": "lf",
+    "name": "Council Chamber",
+    "npcs": 1,
+    "size": "10×15"
+   },
+   {
+    "id": "lf.clerks",
+    "region": "lf",
+    "name": "Clerks' Office",
+    "npcs": 1,
+    "size": "9×13"
+   },
+   {
+    "id": "lf.inn",
+    "region": "lf",
+    "name": "The Lamplit Inn",
+    "npcs": 2,
+    "size": "10×13"
+   },
+   {
+    "id": "lf.cafe",
+    "region": "lf",
+    "name": "Ritsu's Café",
+    "npcs": 1,
+    "size": "9×11"
+   },
+   {
+    "id": "lf.bakery",
+    "region": "lf",
+    "name": "Masaru's Bakery",
+    "npcs": 1,
+    "size": "8×9"
+   },
+   {
+    "id": "lf.ferry",
+    "region": "lf",
+    "name": "Ferry Office",
+    "npcs": 1,
+    "size": "9×11"
+   },
+   {
+    "id": "lf.tokuji",
+    "region": "lf",
+    "name": "Tokuji's Hut",
+    "npcs": 0,
+    "size": "8×8"
+   },
+   {
+    "id": "lf.stacks",
+    "region": "lf",
+    "name": "Basement Stacks",
+    "npcs": 0,
+    "size": "16×24"
+   },
+   {
+    "id": "lf.tower_top",
+    "region": "lf",
+    "name": "Belfry Loft",
+    "npcs": 0,
+    "size": "12×16"
+   },
+   {
+    "id": "lf.tower_upper",
+    "region": "lf",
+    "name": "Upper Floor",
+    "npcs": 0,
+    "size": "16×20"
+   },
+   {
+    "id": "lf.tower_mid",
+    "region": "lf",
+    "name": "Gate Works",
+    "npcs": 0,
+    "size": "18×22"
+   },
+   {
+    "id": "lf.tower_low",
+    "region": "lf",
+    "name": "Drowned Stair",
+    "npcs": 0,
+    "size": "18×20"
+   },
+   {
+    "id": "lf.bellhall",
+    "region": "lf",
+    "name": "Bell Chamber",
+    "npcs": 0,
+    "size": "14×16"
+   },
+   {
+    "id": "sa.road",
+    "region": "sa",
+    "name": "The Archive Road",
+    "npcs": 0,
+    "size": "26×36"
+   },
+   {
+    "id": "sa.camp",
+    "region": "sa",
+    "name": "Last Lamp Hut",
+    "npcs": 5,
+    "size": "20×28"
+   },
+   {
+    "id": "sa.hut",
+    "region": "sa",
+    "name": "Last Lamp Hut",
+    "npcs": 1,
+    "size": "9×11"
+   },
+   {
+    "id": "sa.gate",
+    "region": "sa",
+    "name": "The Archive Gate",
+    "npcs": 4,
+    "size": "22×30"
+   },
+   {
+    "id": "sa.reading",
+    "region": "sa",
+    "name": "The Reading Room",
+    "npcs": 6,
+    "size": "20×28"
+   },
+   {
+    "id": "sa.stacks",
+    "region": "sa",
+    "name": "The Stacks",
+    "npcs": 0,
+    "size": "24×32"
+   },
+   {
+    "id": "sa.conduits",
+    "region": "sa",
+    "name": "The Quiet Conduits",
+    "npcs": 0,
+    "size": "22×30"
+   },
+   {
+    "id": "sa.memories",
+    "region": "sa",
+    "name": "The Room of Set-Down Memories",
+    "npcs": 2,
+    "size": "18×24"
+   },
+   {
+    "id": "sa.study",
+    "region": "sa",
+    "name": "The Keeper's Study",
+    "npcs": 0,
+    "size": "12×15"
+   },
+   {
+    "id": "sa.heart",
+    "region": "sa",
+    "name": "The Heart of the Hush",
+    "npcs": 2,
+    "size": "20×25"
+   },
+   {
+    "id": "lq.koharu",
+    "region": "lq",
+    "name": "Koharuno",
+    "npcs": 1,
+    "size": "24×36"
+   },
+   {
+    "id": "lq.koharu_hut",
+    "region": "lq",
+    "name": "The Tree-Keeper's Hut",
+    "npcs": 0,
+    "size": "8×9"
+   }
+  ]
+ },
+ "residents": {
+  "characters": 89,
+  "companions": [
+   "nao",
+   "mio",
+   "ren",
+   "suzu"
+  ],
+  "placedOnMaps": 100,
+  "placements": 199,
+  "byRegion": {
+   "co": 16,
+   "lf": 19,
+   "lq": 1,
+   "rw": 20,
+   "sa": 6,
+   "sb": 23,
+   "sg": 25
+  }
+ },
+ "creatures": {
+  "total": 50,
+  "byRegion": {
+   "atlas": 15,
+   "co": 5,
+   "lf": 6,
+   "rw": 4,
+   "sa": 6,
+   "sb": 6,
+   "sg": 8
+  },
+  "list": [
+   {
+    "id": "rw.reedling",
+    "name": "Reedling",
+    "knots": 2
+   },
+   {
+    "id": "rw.dustmoth",
+    "name": "Flour Moth",
+    "knots": 2
+   },
+   {
+    "id": "rw.inkblot",
+    "name": "Runoff Blot",
+    "knots": 3
+   },
+   {
+    "id": "rw.mill_echo",
+    "name": "The Mill Echo",
+    "knots": 4
+   },
+   {
+    "id": "sg.crab",
+    "name": "Label Crab",
+    "knots": 2
+   },
+   {
+    "id": "sg.crane",
+    "name": "Soggy Paper Crane",
+    "knots": 2
+   },
+   {
+    "id": "sg.blot",
+    "name": "Runaway Ink",
+    "knots": 3
+   },
+   {
+    "id": "sg.fogwisp",
+    "name": "Harbour Fog",
+    "knots": 2
+   },
+   {
+    "id": "sg.moth",
+    "name": "Postmark Moth",
+    "knots": 3
+   },
+   {
+    "id": "sg.golem",
+    "name": "Ledger Heap",
+    "knots": 4
+   },
+   {
+    "id": "sg.letter",
+    "name": "Undelivered Letter",
+    "knots": 3
+   },
+   {
+    "id": "sg.tideclerk",
+    "name": "The Tide Clerk",
+    "knots": 6
+   },
+   {
+    "id": "co.moth",
+    "name": "Ash Moth",
+    "knots": 2
+   },
+   {
+    "id": "co.soot",
+    "name": "Smoke Blot",
+    "knots": 2
+   },
+   {
+    "id": "co.golem",
+    "name": "Glass Golem",
+    "knots": 3
+   },
+   {
+    "id": "co.ember",
+    "name": "Ember Wisp",
+    "knots": 2
+   },
+   {
+    "id": "co.warden",
+    "name": "The Kiln Warden",
+    "knots": 6
+   },
+   {
+    "id": "sb.fox",
+    "name": "Snow Fox",
+    "knots": 2
+   },
+   {
+    "id": "sb.wisp",
+    "name": "Frost Wisp",
+    "knots": 2
+   },
+   {
+    "id": "sb.ghost",
+    "name": "Lantern Ghost",
+    "knots": 3
+   },
+   {
+    "id": "sb.moth",
+    "name": "Chart Moth",
+    "knots": 2
+   },
+   {
+    "id": "sb.golem",
+    "name": "Icicle Warden",
+    "knots": 3
+   },
+   {
+    "id": "sb.boss",
+    "name": "The Lamp That Waited",
+    "knots": 5
+   },
+   {
+    "id": "lf.blot",
+    "name": "Silence Blot",
+    "knots": 2
+   },
+   {
+    "id": "lf.mote",
+    "name": "Hush Mote",
+    "knots": 2
+   },
+   {
+    "id": "lf.stamp",
+    "name": "Consent Stamp",
+    "knots": 2
+   },
+   {
+    "id": "lf.conduit",
+    "name": "Conduit Spirit",
+    "knots": 3
+   },
+   {
+    "id": "lf.wraith",
+    "name": "Bell Wraith",
+    "knots": 3
+   },
+   {
+    "id": "lf.keeper",
+    "name": "The Drowned Bell's Keeper",
+    "knots": 6
+   },
+   {
+    "id": "sa.crane",
+    "name": "Paper Crane",
+    "knots": 2
+   },
+   {
+    "id": "sa.wraith",
+    "name": "Hush Wraith",
+    "knots": 3
+   },
+   {
+    "id": "sa.ghost",
+    "name": "Nameless Lantern",
+    "knots": 3
+   },
+   {
+    "id": "sa.moth",
+    "name": "Catalogue Moth",
+    "knots": 2
+   },
+   {
+    "id": "sa.echo",
+    "name": "Shelved Echo",
+    "knots": 3
+   },
+   {
+    "id": "sa.hush",
+    "name": "The Hush",
+    "knots": 8
+   },
+   {
+    "id": "atlas.stray",
+    "name": "Stray Name",
+    "knots": 2
+   },
+   {
+    "id": "atlas.moth",
+    "name": "Margin Moth",
+    "knots": 2
+   },
+   {
+    "id": "atlas.blot",
+    "name": "Blotted Line",
+    "knots": 3
+   },
+   {
+    "id": "atlas.crane",
+    "name": "Unfolded Crane",
+    "knots": 2
+   },
+   {
+    "id": "atlas.milestone",
+    "name": "Mossy Milestone",
+    "knots": 3
+   },
+   {
+    "id": "atlas.lamp",
+    "name": "Guttering Lantern",
+    "knots": 2
+   },
+   {
+    "id": "atlas.echo",
+    "name": "Road Echo",
+    "knots": 2
+   },
+   {
+    "id": "atlas.toll",
+    "name": "False Gatekeeper",
+    "knots": 3
+   },
+   {
+    "id": "atlas.crab",
+    "name": "Rock-pool Crab",
+    "knots": 2
+   },
+   {
+    "id": "atlas.fox",
+    "name": "Name-borrowing Fox",
+    "knots": 2
+   },
+   {
+    "id": "atlas.mothlamp",
+    "name": "Moth and Lantern",
+    "knots": 3
+   },
+   {
+    "id": "atlas.echotoll",
+    "name": "Echoing Gatekeeper",
+    "knots": 3
+   },
+   {
+    "id": "atlas.cartographer",
+    "name": "The Blank Cartographer",
+    "knots": 5
+   },
+   {
+    "id": "atlas.bell",
+    "name": "The Borrowed Bell",
+    "knots": 5
+   },
+   {
+    "id": "atlas.gate",
+    "name": "The Half-road Gatekeeper",
+    "knots": 5
+   }
+  ]
+ },
+ "battle": {
+  "intents": [
+   "strike",
+   "sweep",
+   "heat",
+   "shroud",
+   "charge",
+   "gust",
+   "mend",
+   "lie",
+   "plea",
+   "rest",
+   "flood",
+   "chill",
+   "silence",
+   "mirror"
+  ],
+  "intentUseInPatterns": {
+   "charge": 10,
+   "chill": 7,
+   "flood": 2,
+   "gust": 3,
+   "heat": 8,
+   "lie": 8,
+   "mend": 14,
+   "mirror": 3,
+   "plea": 5,
+   "rest": 47,
+   "shroud": 8,
+   "silence": 6,
+   "strike": 51,
+   "sweep": 13
+  },
+  "inscriptions": [
+   "mamoru",
+   "mizu",
+   "hikari",
+   "iyasu",
+   "kaze",
+   "nawa",
+   "ishi",
+   "koori",
+   "tsuchi",
+   "honoo",
+   "suzu",
+   "koe"
+  ],
+  "companionActions": {
+   "nao": [
+    "nao_opening",
+    "nao_warn",
+    "nao_hand",
+    "nao_route",
+    "nao_mark"
+   ],
+   "mio": [
+    "mio_draught",
+    "mio_salve",
+    "mio_vapour",
+    "mio_salts",
+    "mio_tonic"
+   ],
+   "ren": [
+    "ren_shade",
+    "ren_flare",
+    "ren_vigil",
+    "ren_lanterns",
+    "ren_chime"
+   ],
+   "suzu": [
+    "suzu_heckle",
+    "suzu_eye",
+    "suzu_encore",
+    "suzu_feint",
+    "suzu_finale"
+   ]
+  },
+  "difficulty": [
+   "relaxed",
+   "normal",
+   "hard"
+  ]
+ },
+ "language": {
+  "challenges": 67,
+  "challengeSteps": 459,
+  "stepKinds": {
+   "choose": 316,
+   "order": 39,
+   "write": 104
+  },
+  "stepTiers": {
+   "A": 122,
+   "E": 114,
+   "F": 106,
+   "I": 117
+  },
+  "drills": 349,
+  "drillKinds": {
+   "choose": 202,
+   "order": 34,
+   "write": 113
+  },
+  "drillLevels": {
+   "A": 82,
+   "E": 95,
+   "F": 86,
+   "I": 86
+  },
+  "activities": 18,
+  "practiceA": [
+   "cards",
+   "lanterns",
+   "desk",
+   "mementos"
+  ],
+  "practiceB": [
+   "letters",
+   "proof",
+   "compare"
+  ],
+  "otherPractice": [
+   "fishing",
+   "shiritori",
+   "pace"
+  ],
+  "wordplay": 6,
+  "atlasDrills": 128
+ },
+ "story": {
+  "quests": 37,
+  "scenes": 1292,
+  "banter": 115,
+  "notes": 76,
+  "keepsakes": 16,
+  "cases": 2,
+  "clues": 16,
+  "knownDetails": 25,
+  "places": [
+   "reedwake",
+   "saltglass",
+   "cinder",
+   "snowbell",
+   "lanternfall",
+   "sa_hut"
+  ],
+  "roads": 5
+ },
+ "art": {
+  "sequences": 14,
+  "harmonyPngs": 447,
+  "keepsakeArt": 6,
+  "caseArt": 9,
+  "portraitExpressions": 15,
+  "hairStyles": 13
+ },
+ "sound": {
+  "songs": 69,
+  "motifs": 6,
+  "sfx": 44
+ },
+ "wardrobe": {
+  "equipSlots": [
+   "charm (Charm, works in battle)",
+   "tool (Tool, works on the road)",
+   "cosmetic (Keepsake, appearance only)"
+  ],
+  "itemsBySlot": {
+   "charm": 14,
+   "cosmetic": 15,
+   "key item": 38,
+   "other": 9,
+   "tool": 1
+  }
+ },
+ "planSource": {
+  "01_PRINCIPLES.md": "e1dae5a093d2fd39",
+  "02_FOUNDATIONS.md": "8b80f67b49e1fcc1",
+  "03_ENCOUNTERS.md": "14ebf574cddfb6c6",
+  "04_DUNGEONS.md": "8b74ebc5e76c06da",
+  "05_LANGUAGE.md": "5d4644cbad9c6a50",
+  "06_WORLD.md": "c6f99e5007734e60",
+  "07_REGIONS.md": "c3582b2321211a28",
+  "08_CULTURE.md": "c5410c3416e09b46",
+  "09_RECORDS.md": "5fe0d35a4fc33ef4",
+  "10_STORY.md": "369ebf486741e01f",
+  "11_CONTRADICTIONS.md": "c38cfee196b80de6",
+  "12_ROADMAP.md": "f2a3e77b39704bcf",
+  "13_IDEA_REGISTER.md": "8cadb72a10803a87",
+  "14_COMPANIONS.md": "a504e9d70dd3f863",
+  "15_INTERFACE.md": "9da47c574c5e47a6",
+  "README.md": "d70da152b8be746e",
+  "SEALED_STORY_NOTES.md": "44df5ea993309ac0"
+ }
+}
