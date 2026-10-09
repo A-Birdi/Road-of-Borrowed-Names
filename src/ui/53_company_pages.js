@@ -129,7 +129,7 @@ RB.ui.companyPages = (function () {
     const qi = questInfo(s, comp);
     const who = esc(c.name.en);
     return '<div class="co-id' + (st.id === 'lasting' ? ' lasting' : '') + '">' +
-      '<canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + c.name.en) + '"></canvas>' +
+      '<span class="co-mount"><canvas class="co-portrait" width="96" height="96" role="img" aria-label="' + esc('Portrait of ' + c.name.en) + '"></canvas></span>' +
       '<div class="co-name"><h3>' + j(c.name.jp) + ' <span class="en">' + who + '</span></h3>' +
       '<p class="muted">' + L(c.role ? c.role.jp : '', c.role ? c.role.en : '') + '</p>' +
       '<p class="co-bond"><span class="k">' + L('{絆|きずな}', 'Bond') + '</span> <b>' + esc(st.label.en) + '</b> <span class="jp">' + j(st.label.jp) + '</span></p></div></div>' +

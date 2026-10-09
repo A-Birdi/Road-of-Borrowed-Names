@@ -3412,3 +3412,32 @@ profiles; no player save was used.
 
 **Not verified:** how much slower choice-only items climb past box 2 in a real playthrough (by design they now need
 a typed or written answer in the run); a person reading the Grammar met page; Firefox.
+
+## The book on Journey and Company, U01 (2026-10-09; C-78; docs/future/work/U01_BOOK.md; REQUIREMENTS.md BK1–BK8)
+
+A preview behind Settings › Display › "The Wayfarer's Ledger (preview)"; the classic folio stays the default.
+
+**Changes:**
+- `src/engine/90_game.js`: the `ledgerStyle` setting (classic, book, flat) and its body classes.
+- `src/ui/55_settings.js`: the setting itself; changing it restyles an open Ledger.
+- `src/ui/12_folio.js`: the book frame; bookmarks that can stand in a column (`aria-orientation`, Up/Down only there).
+- `src/ui/50_menu.js`: running heads (aria-hidden, word help stripped), the page-turn class, the closing image, `restyle()`.
+- `src/ui/53_company_pages.js`: the portrait mount.
+- `src/engine/56_questguide.js`: one "Next" line per destination.
+- `src/styles/90_book.css`: the book, the dialogue strip, the flat, reduced-motion and high-contrast variants.
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/book.mjs`: **13/0**.
+  - The closing check **fails on the previous CSS** ("the closing book's leaves: opacity 0": re-attaching it replayed
+    their fade-in) and passes with the fix.
+  - The dialogue check first timed out because the test pressed Enter within the line's last reveal step (existing
+    behaviour: a press there completes the line); the test now waits the step out.
+- U `node tests/run-unit.mjs`: **27,390/0**, including `next_line_once` (Robin's case: two targets give one line
+  naming the Tide Clerk; every quest step: lines = distinct destinations).
+- B `folio`, `quest_guide`, `settings`, `ui` (14/0), `company`, `company_pets`: all pass.
+- B `node tests/e2e/book_captures.mjs`: 26 captures in `docs/screenshots/book/u01/`, reviewed by eye by the lead.
+- Performance: the median open of Journey and the turn to Company are within 1.4 ms of the classic folio. The book
+  paints one frame later at 1440×900 (44.6 vs 33.1 ms to the second frame, headless software rendering); on a phone
+  there is no difference.
+
+**Not verified:** Firefox; a real foldable; Robin's visual judgement (the U01/U02 review set).

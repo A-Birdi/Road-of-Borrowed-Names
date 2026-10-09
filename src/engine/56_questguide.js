@@ -881,8 +881,25 @@ RB.questGuide = (function () {
     return { jp, en };
   }
   // "Next: …" — the words for the markers (one line per marked place)
+  // One destination is said once: when two targets of a step lead to the same scene on the same map (a person and
+  // the doorway strip in front of them), keep one, naming the person. Different places or scenes stay separate lines.
+  const scenesOf = (t) => (t.opts || []).map((o) => o && o.scene).filter(Boolean);
+  function sameDestination(a, b) {
+    if (a.map !== b.map) return false;
+    const A = scenesOf(a);
+    return A.length > 0 && scenesOf(b).some((x) => A.includes(x));
+  }
+  function distinct(list) {
+    const out = [];
+    for (const t of list) {
+      const i = out.findIndex((u) => sameDestination(u, t));
+      if (i < 0) out.push(t);
+      else if (out[i].kind !== 'npc' && t.kind === 'npc') out[i] = t;
+    }
+    return out;
+  }
   function nextLines(r) {
-    return ordered(r.targets || []).map((t) => {
+    return distinct(ordered(r.targets || [])).map((t) => {
       const n = nameOf(t), pl = placeName(t.map), dir = direction(t);
       const place = t.kind === 'enter' || t.kind === 'trigger' || t.kind === 'spot';
       let jp = 'つぎ ： ' + (place ? pl.jp : pl.jp + ' の ' + n.jp) + ' 。', en = 'Next: ' + (place ? pl.en : n.en + ', in ' + pl.en);
@@ -916,10 +933,10 @@ RB.questGuide = (function () {
         : { jp: pl.jp + ' の あちこち を {見|み}て みよう 。', en: 'Look around all over ' + pl.en + '.' }]);
     } else if (r.how === 'concealed') out.push([THINK]);
     else if (!list.length) out.push([WAIT]);
-    else out.push(list.map(whereLine));
+    else out.push(distinct(list).map(whereLine));
     const second = [];
     if (stage && stage.hint) second.push({ jp: stage.hint.jp, en: stage.hint.en });
-    if (list.length) second.push.apply(second, list.map(doLine));
+    if (list.length) second.push.apply(second, distinct(list).map(doLine));
     if (second.length) out.push(second);
     return { lines: out, result: r, markable: list.length > 0 };
   }

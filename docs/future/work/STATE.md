@@ -24,15 +24,16 @@ byte for byte).
 |---|---|---|
 | P00 · baseline | Done: unit suite 27,267/0; audit fixes 4/0 in the browser; F/Ren PASS (15.1 min) | [P00_BASELINE.md](P00_BASELINE.md), [CENSUS.md](CENSUS.md) |
 | U00 · interface inventory | Done | [U00_INVENTORY.md](U00_INVENTORY.md), [ui_inventory.json](ui_inventory.json), `docs/screenshots/book/baseline/` |
-| U01 · the book on Journey and Company | In progress (uncommitted work in src/: the preview setting, the book frame, 90_book.css, the Next-line fix) | — |
-| U02 · type roles and specimen | Not started | — |
+| U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
+| U02 · type roles and specimen | In progress: candidates compared in the game; choice and embedding next | — |
 | Review set for Robin | Not started | — |
 
 **Pending Robin gates:** the U01/U02 review set (one question: does it feel like a book that belongs to this
 journey, and is it easy to use?).
 
-**Known issue to fix inside U01:** the Journey's "Next" box repeats one destination when a step's guidance targets
-lead to the same scene (U00_INVENTORY.md, "Found during the inventory").
+**Fixed in U01:** the Journey's "Next" box repeated one destination when a step's guidance targets led to the same
+scene (U00_INVENTORY.md), and the closing book showed a blank cover (found while recording). Noted for U03: on a phone,
+an opened quest is not brought into view (same as the classic folio).
 
 ## Guardrails
 

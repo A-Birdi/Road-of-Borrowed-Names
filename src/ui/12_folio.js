@@ -87,9 +87,10 @@ RB.ui.folio = (function () {
 
   // ---- frame -------------------------------------------------------------------
   // Returns the pieces of a folio: scrim > .folio > head / tab slot / leafbox / foot.
+  // opts.book: 'book' or 'flat' draws the folio as an open book (src/styles/90_book.css); presentation only.
   function frame(opts) {
-    const scrim = RB.ui.el('div', 'folio-scrim');
-    const f = RB.ui.el('div', 'folio' + (opts.cls ? ' ' + opts.cls : ''));
+    const scrim = RB.ui.el('div', 'folio-scrim' + (opts.book ? ' book-scrim' : ''));
+    const f = RB.ui.el('div', 'folio' + (opts.cls ? ' ' + opts.cls : '') + (opts.book ? ' book' + (opts.book === 'flat' ? ' book-flat' : '') : ''));
     f.setAttribute('role', 'dialog');
     f.setAttribute('aria-modal', 'true');
     const hid = 'fh' + Math.random().toString(36).slice(2, 7);
@@ -102,6 +103,10 @@ RB.ui.folio = (function () {
       scrim, el: f,
       head: f.querySelector('.folio-head'), tabslot: f.querySelector('.tabslot'), box: f.querySelector('.leafbox'), foot: f.querySelector('.folio-foot'),
       setTitle(html, meta) { f.querySelector('h2').innerHTML = html; f.querySelector('.meta').innerHTML = meta || ''; },
+      // switch between the folio and the book while open (Settings › Display, from inside the Ledger)
+      setBook(style) {
+        f.classList.toggle('book', !!style); f.classList.toggle('book-flat', style === 'flat'); scrim.classList.toggle('book-scrim', !!style);
+      },
     };
     if (opts.onClose) f.querySelector('[data-folio-close]').onclick = opts.onClose;
     // clicks on the dim area outside the book close it (like Back), never on the page
@@ -141,6 +146,10 @@ RB.ui.folio = (function () {
     function place(instant) {
       const b = btns.find((x) => x.dataset.id === cur);
       if (!b) return;
+      const vertical = !!(opts.vertical && opts.vertical());
+      rail.setAttribute('aria-orientation', vertical ? 'vertical' : 'horizontal');
+      // a column never overflows sideways: no edge arrows, nothing to scroll into view
+      if (vertical) { wrap.classList.remove('overflowing'); return; }
       // natural width of the tabs, measured with growth switched off: phone
       // tabs stretch to fill the rail, and the arrows' padding would otherwise
       // feed back into the answer (the rail flickered between the two states)
@@ -180,8 +189,10 @@ RB.ui.folio = (function () {
       const i = btns.findIndex((b) => b === document.activeElement);
       if (i < 0) return;
       let j = null;
-      if (e.key === 'ArrowRight') j = (i + 1) % btns.length;
-      else if (e.key === 'ArrowLeft') j = (i - 1 + btns.length) % btns.length;
+      // a column of bookmarks (the book, on wide screens) also moves with Up and Down
+      const col = rail.getAttribute('aria-orientation') === 'vertical';
+      if (e.key === 'ArrowRight' || (col && e.key === 'ArrowDown')) j = (i + 1) % btns.length;
+      else if (e.key === 'ArrowLeft' || (col && e.key === 'ArrowUp')) j = (i - 1 + btns.length) % btns.length;
       else if (e.key === 'Home') j = 0;
       else if (e.key === 'End') j = btns.length - 1;
       if (j == null) return;
@@ -205,6 +216,12 @@ RB.ui.folio = (function () {
   function wide() {
     return typeof matchMedia !== 'undefined' && matchMedia(WIDE).matches;
   }
+  // The book stands its bookmarks in a column on the fore-edge from this width (matches 90_book.css); narrower,
+  // they hang in a row from the top of the page.
+  const BOOK_COLUMN = '(min-width: 980px)';
+  function bookColumn() {
+    return typeof matchMedia !== 'undefined' && matchMedia(BOOK_COLUMN).matches;
+  }
 
-  return { icon, itemIcon, frame, tabs, wide, WIDE, ICONS: P };
+  return { icon, itemIcon, frame, tabs, wide, WIDE, BOOK_COLUMN, bookColumn, ICONS: P };
 })();

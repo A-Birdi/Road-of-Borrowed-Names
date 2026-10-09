@@ -51,7 +51,10 @@ RB.ui.menu = (function () {
     company: { page: null },
     scroll: {},
   };
-  let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
+  let layer = null, fr = null, tabsApi = null, mq = null, mqCol = null, stopDemo = () => {};
+  let lastSec = null; // the section last drawn: a change of section turns the page (the book)
+  // the book interface (Settings › Display › The Wayfarer's Ledger): 'book', 'flat' or null for the classic folio
+  const bookStyle = () => { const v = RB.game.settings && RB.game.settings.ledgerStyle; return v === 'book' || v === 'flat' ? v : null; };
   let sheet = null; // the Save & Load sheet, when open over the folio
 
   // ---- open / close -------------------------------------------------------------------
@@ -66,7 +69,8 @@ RB.ui.menu = (function () {
     if (RB.game.mode() !== 'world' && RB.game.mode() !== 'dialogue') return;
     RB.game.pushMode('menu');
     RB.audio && RB.audio.sfx('menu_open');
-    fr = F().frame({ onClose: close, closeLabel: 'Close' });
+    fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
+    lastSec = null;
     fr.foot.innerHTML =
       '<button class="cbtn" data-util="save">' + I('ledger') + '<span>' + RB.ui.label('セーブ・ロード', 'Save & Load') + '</span></button>' +
       '<button class="cbtn" data-util="settings">' + I('settings') + '<span>' + RB.ui.label('{設定|せってい}', 'Settings') + '</span></button>';
@@ -81,11 +85,14 @@ RB.ui.menu = (function () {
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
     if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
-    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
+    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page', vertical: () => !!bookStyle() && F().bookColumn() });
     render();
     if (typeof matchMedia !== 'undefined') {
       mq = matchMedia(RB.ui.folio.WIDE);
       mq.onchange = () => { if (layer) { remember(); render(); } };
+      // the book's bookmarks move between a column and a row at this width
+      mqCol = matchMedia(RB.ui.folio.BOOK_COLUMN);
+      mqCol.onchange = () => { if (layer && tabsApi) tabsApi.select(view.section); };
     }
     if (a === '@settings') RB.ui.settings.open();
     else if (a === '@save') saveSheet();
@@ -96,7 +103,18 @@ RB.ui.menu = (function () {
     stopDemo();
     if (tabsApi) tabsApi.destroy();
     if (mq) mq.onchange = null;
+    if (mqCol) mqCol.onchange = null;
+    const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
+    // the book closes with a short motion: what is shown is a copy that can no longer be used (inert), removed
+    // once the motion ends; the Ledger itself is already closed and the world already has the keyboard
+    if (bookStyle() === 'book' && !RB.game.reducedMotion() && at && el.querySelector('.folio.book')) {
+      el.querySelector('.folio.book').classList.add('closing');
+      el.classList.add('closing');
+      el.inert = true; el.setAttribute('aria-hidden', 'true');
+      at.appendChild(el);
+      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 230);
+    }
     layer = null; fr = null; tabsApi = null;
     RB.game.popMode('menu');
     RB.audio && RB.audio.sfx('menu_close');
@@ -147,15 +165,39 @@ RB.ui.menu = (function () {
     const comp = s.comp && RB.content.chars[s.comp];
     fr.setTitle(RB.ui.label(sec.jp, sec.en), esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime));
     const two = F().wide();
-    fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
+    const turn = bookStyle() && lastSec && lastSec !== view.section;
+    lastSec = view.section;
+    fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + (turn ? ' turn' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
       '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
     ({ journey, words, satchel, map, company })[view.section](A, B, two);
+    if (bookStyle()) runningHeads(A, B, two, sec, s, comp);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
   const j = (line) => (line ? RB.ui.jhtml(line) : '');
   const en = (t) => '<div class="en">' + esc(RB.script.enVars(t || '')) + '</div>';
+  // The book's running heads: the section's name at the top of the first page, who is travelling and for how long
+  // at the top of the second (on a phone, both on the one page). They repeat the dialog's own title and meta for
+  // the eye; the dialog keeps its accessible name, so these are hidden from assistive technology.
+  function runningHeads(A, B, two, sec, s, comp) {
+    const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime);
+    // the title's furigana without word help: a running head is read, not studied (and it is hidden from assistive
+    // technology, so nothing in it may take focus)
+    const plain = RB.ui.jhtml(sec.jp).replace(/ data-(i|src)="[^"]*"/g, '').replace(/ tabindex="0"/g, '').replace(/class="jt"/g, 'class="jt-static"');
+    A.insertAdjacentHTML('afterbegin', '<header class="bk-runhead" aria-hidden="true"><span class="bk-sec" lang="ja">' + plain + '</span>' +
+      '<span class="bk-sec-en">' + esc(sec.en) + '</span>' + (two ? '' : '<span class="bk-meta">' + meta + '</span>') + '</header>');
+    if (two) B.insertAdjacentHTML('afterbegin', '<header class="bk-runhead r" aria-hidden="true"><span class="bk-meta">' + meta + '</span></header>');
+  }
+  // Settings › Display changed the Ledger's look while it is open: redraw it in the new style
+  function restyle() {
+    if (!layer || !fr) return;
+    fr.setBook(bookStyle());
+    lastSec = null;
+    remember();
+    if (tabsApi) tabsApi.select(view.section);
+    render();
+  }
 
   // ---- Journey --------------------------------------------------------------------------------
   function questKind(id, d) {
@@ -207,7 +249,7 @@ RB.ui.menu = (function () {
           : '<p class="muted small qnext-none">' + esc(N.result.how === 'many' ? 'No marker for this step: many places could help, so none is marked.' : 'No marker for this step yet.') + '</p>';
       }
     }
-    h += '<div class="ph small-ph">' + I('help') + ' ' + gl('nudge') + '</div>';
+    h += '<div class="nudge-slip"><div class="ph small-ph">' + I('help') + ' ' + gl('nudge') + '</div>';
     h += '<ol class="nudges" aria-live="polite">' + N.lines.slice(0, n).map((ls, i) => '<li tabindex="-1"><span class="kind">Nudge ' + (i + 1) + ' of ' + total + '</span>' +
       ls.map((l) => '<div class="nline">' + j(l.jp) + en(l.en) + '</div>').join('') + '</li>').join('') +
       (mapStep && n > N.lines.length ? '<li tabindex="-1"><span class="kind">Nudge ' + total + ' of ' + total + '</span><div class="nline"><span class="en">Shown on the map: this quest is followed, and its next step is marked.</span></div></li>' : '') + '</ol>';
@@ -215,7 +257,7 @@ RB.ui.menu = (function () {
       const k = n === N.lines.length ? 'onmap' : n === 0 ? 'show' : 'more';
       h += '<div class="row-acts"><button class="pbtn" data-nudge="' + x.id + '">' + (k === 'onmap' ? I('map') : I('help')) + '<span>' + gl(k) + '</span> <span class="count">' + (n + 1) + ' of ' + total + '</span></button></div>';
     }
-    return h + '<p class="muted small">Nudges are free: asking never counts as a mistake.</p></div>';
+    return h + '<p class="muted small">Nudges are free: asking never counts as a mistake.</p></div></div>';
   }
   function guideClick(e, x) {
     const G = RB.questGuide, s = RB.game.s;
@@ -779,7 +821,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, restyle, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits

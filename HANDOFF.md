@@ -191,7 +191,10 @@
     milestones are not yet authorised. C-75: a wrong first exam answer counts like help; C-76: up to five hostile
     creatures in set pieces; C-77: one Harmony technique per filled bar. Nothing is waiting on Robin.
   - **Work records for the authorised packets:** docs/future/work/ (state, P00 baseline receipt, census, U00
-    inventory).
+    inventory, U01 record). **U01 is done:** the book on Journey and Company and the dialogue strip, as a preview
+    behind Settings › Display › "The Wayfarer's Ledger (preview)" (classic stays the default; Robin's game is
+    unchanged unless it is chosen). Evidence: `tests/e2e/book.mjs` 13/0, captures in docs/screenshots/book/u01/.
+    Next: U02 (type roles, an embedded font, the specimen), then the review set for Robin.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

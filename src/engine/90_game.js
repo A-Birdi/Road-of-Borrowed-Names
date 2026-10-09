@@ -44,6 +44,10 @@ RB.game = (function () {
       hideTotals: false,         // shiritori win/loss totals (stage receipts stay visible)
       fishSeconds: false,        // fishing pace: a numeric seconds display beside the line
       fishWait: true,            // fishing: the short waiting animation before a bite
+      // the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A): a preview Robin can switch on;
+      // 'classic' the folio as it was, 'book', or 'flat' (the book without depth, texture or motion).
+      // Presentation only: nothing about the journey changes. (Older records lack it: 'classic'.)
+      ledgerStyle: 'classic',
     };
   }
 
@@ -157,6 +161,9 @@ RB.game = (function () {
     document.documentElement.classList.toggle('text-large', +st.textScale >= 1.4);
     document.body.classList.toggle('high-contrast', st.contrast === 'high');
     document.body.classList.toggle('reduced-motion', !!st.reducedMotion);
+    // the book interface's dialogue strip and Ledger follow the preview setting (src/styles/90_book.css)
+    document.body.classList.toggle('book-ui', st.ledgerStyle === 'book' || st.ledgerStyle === 'flat');
+    document.body.classList.toggle('book-flat', st.ledgerStyle === 'flat');
     document.body.classList.toggle('lead-ja', st.lead === 'ja');
     document.body.classList.toggle('ui-ja', st.uiLang === 'ja');
     const touch = st.touch === 'on' || (st.touch === 'auto' && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches);
