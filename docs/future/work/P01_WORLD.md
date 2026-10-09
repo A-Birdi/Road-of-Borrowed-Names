@@ -39,7 +39,7 @@ composition and density. What it is, measured (W00):
 | W01 | Illumination and atmosphere: authored ambient light, the sun's cast shadows (cached per map), local lights, glow on emissive things only, haze, water glints, optional edge softness; each layer switchable | **Done** (below) |
 | W02 | Reedwake's kit: ground and its transitions, foliage masses, cattails, lily pads, water, fences, flower boxes, thatch-on-stone and board houses with lit windows, smoke; footprints, contact points, occlusion; deterministic dressing in safe zones only | **Done, first pass** (below) |
 | W03 | Two purposeful actions by village people (complete actions: anticipation, motion, contact, follow-through, return), stopping cleanly for conversation, staging and reduced motion | **Done** (below) |
-| W04 | The Reedwake slice assembled: a doorway, water, vegetation, a light, conversation, the customizable player; a battle with Suzu and an existing creature (language UI, action banner, Harmony cut-in) from the slice; evidence (paired captures, recordings, layers on/off, overlays, start-up, frame and memory measurements) | |
+| W04 | The Reedwake slice assembled: a doorway, water, vegetation, a light, conversation, the customizable player; a battle with Suzu and an existing creature (language UI, action banner, Harmony cut-in) from the slice; evidence (paired captures, recordings, layers on/off, overlays, start-up, frame and memory measurements) | **Done** (below) |
 | W05 | Saltglass reusing the method (stone paving, an awning, water, a profession action), the reuse report (every new regional asset listed), skin, sleeve and accessory variants, desktop and narrow, a crowded battle; the visual gate for Robin | |
 
 ## The art contract (V1, V2, V3)
@@ -326,4 +326,72 @@ would fail V4 (no sliding). It was replaced by an action she can do where she st
 **Not yet:**
 - recordings at normal speed (W04's evidence);
 - a person's look at play speed: whether the actions read as purposeful without the labels (Robin's eye).
+
+## W04: the Reedwake slice, assembled, and its evidence
+
+**The slice:**
+- the village at the far view, with the proof's light, atmosphere and kit;
+- water (the river, the pier, the broken span), vegetation (cattails, low growth, the grass), lights (lanterns,
+  lit windows; night);
+- Yasu and Tomo at work;
+- conversation (talking to Yasu mid-cast);
+- a doorway (the teahouse: the near view inside, behind the fade, the far view again outside);
+- the customizable player in two looks.
+
+**The battle.** One real battle begins in the square: Suzu and an existing creature, the Reedling. Real clicks
+take it through:
+- the decision;
+- the language UI (the challenge, answered right);
+- Suzu's "Join";
+- the Harmony cut-in;
+- the action banner.
+
+The world comes back in the far view with the proof active.
+
+**The battle's backdrop** is composed from the village itself (the stone hall, the teahouse, the lantern, the
+teaset, the jetty, the reeds; src/ui/76_battle_places.js). A battle begun in the slice takes the slice's grade on
+that backdrop only, laid before the stage draws anyone, so the combatants, faces, cards and banner keep their own
+colours. A test switches the proof's light off at the same moment and finds the backdrop changes.
+
+**Not in this proof:** the backdrop's own drawing (its houses and grass are the battle composer's, flatter than the
+kit's). Bringing the kit into battle backdrops is a question for the gate, and later work.
+
+**A fix found here:** a person in shade was darkened too much; a deep-skin face went very dark. People now take
+less than half the shade's strength, so faces stay readable (V3).
+
+**Evidence** (`docs/screenshots/world/w04/`, `node tests/e2e/world_slice.mjs [section]`):
+
+| What | Files |
+|---|---|
+| The battle: the game's own start and the proof's, the language UI, the cut-in, the banner, the village afterwards | `battle_start_game`, `battle_start_proof`, `battle_language`, `battle_cutin`, `battle_banner`, `after_battle` |
+| The doorway: outside, inside, outside again | `doorway_1_outside`, `doorway_2_inside`, `doorway_3_out_again` |
+| The customizable player, two looks, in the teahouse's shade with Suzu (3×) | `player_light_fitted`, `player_deep_wide` |
+| The structural overlay: the game's collision (unchanged), exits and doorways, things to use, the kit's low growth (walk-through) and cattails (on solid tiles), people | `overlay_structure` |
+| Recordings at normal speed, 960×540 (30 tiles across), WebM, 1.4 to 2.1 MB each | `rec_square_to_pier` (19 s), `rec_tomo_folding`, `rec_doorway`, `rec_battle` (12 s) |
+| Measurements | `measurements.json` |
+
+Paired captures of the game and the proof at the same moment, and the layers on and off, are W01's and W02's.
+
+**Measurements** (headless Chromium, software raster: pessimistic for drawing; medians of three runs):
+
+| | Page ready | Entering the village (set-up and first frame) | Steady frame | JS heap |
+|---|---|---|---|---|
+| The game, 1440×900 | 1,033 ms | 244 ms | 2.4 ms | 37.4 MB |
+| The proof, 1440×900 | 931 ms | 834 ms | 19.1 ms | 31.4 MB |
+| The game, 375×667 at 3× | 990 ms | 236 ms | 2.7 ms | 28.7 MB |
+| The proof, 375×667 at 3× | 907 ms | 815 ms | 10.1 ms | 26.7 MB |
+
+- **Page ready:** the same with and without the flag; the proof adds nothing at start-up.
+- **Entering the village:** about 0.6 s more with the proof, once per entry, while the doorway's fade is dark. Most
+  of it is the shadow mask (one pixel read per object); noted for optimisation.
+- **Steady frame:** within a 60 Hz budget even here. A GPU-backed canvas (Firefox on Robin's machine) should be far
+  cheaper; not measured.
+- **Memory:**
+  - The JS heap is not where the cost lives; the readings vary with garbage collection.
+  - The canvases are: the static layer 7.7 MB, the shadow mask 7.7 MB, about 200 cached sprites.
+
+| Check | Command | Result |
+|---|---|---|
+| The slice's browser checks (6): the battle; the doorway; the player; the overlay; the measurements; the recordings | `node tests/e2e/world_slice.mjs battle doorway player overlay measure record` | **all pass** (run in parts; see VALIDATION.md) |
+| The proof's browser tests, after the shade change | `node tests/e2e/world.mjs` | **9 passed, 0 failed** |
 

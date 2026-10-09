@@ -3610,3 +3610,26 @@ judgement.
 
 **Not verified:** play speed by a person; Firefox; the foldable.
 
+## The world proof, W04: the Reedwake slice and its evidence (2026-10-10; P01_WORLD.md "W04"; REQUIREMENTS.md WP8)
+
+**What changed:**
+- `src/engine/65_worldlook.js`: `battleGrade` (the slice's grade on a battle's backdrop, behind the proof); less
+  shade on people.
+- `src/ui/80_combat.js`: one call to it after the backdrop (it returns at once unless the proof is active).
+- `tests/e2e/world_slice.mjs` (new).
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/world_slice.mjs battle doorway player overlay measure`: 4 passed and 1 failed on the first run.
+  The doorway failed because coming back plays the village's first-visit scene, which the test didn't read
+  through. The test was fixed; then `doorway record` passed 2/0, and `player` passed again after the shade change.
+- B `node tests/e2e/world.mjs`: **9/0** after the shade change.
+- The recordings were checked by drawing frames from inside the WebM files (the walk to the pier past Yasu; the
+  battle from decision to the technique to the village).
+- Everything was reviewed by eye by the lead.
+
+**Not verified:**
+- Firefox or a GPU-backed canvas (frame cost);
+- the foldable;
+- Robin's eye;
+- the battle at phone size under the proof (W05's crowded battle fixture covers layout).
+

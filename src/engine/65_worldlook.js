@@ -286,7 +286,7 @@ RB.worldLook = (function () {
     tg.clearRect(0, 0, tint.width, tint.height);
     tg.drawImage(art, 0, 0);
     tg.globalCompositeOperation = 'source-atop';
-    tg.fillStyle = 'rgba(' + m.look.sun.shade + ',' + (amt * m.look.sun.shadow * 0.75).toFixed(3) + ')';
+    tg.fillStyle = 'rgba(' + m.look.sun.shade + ',' + (amt * m.look.sun.shadow * 0.42).toFixed(3) + ')';
     tg.fillRect(0, 0, art.width, art.height);
     return tint;
   }
@@ -434,6 +434,21 @@ RB.worldLook = (function () {
     if (opts.soft && env.buf) softEdges(c, env.buf, env);
   }
 
+  // ---- a battle that starts in the slice --------------------------------------------------------------------------
+  // The slice's light carries into the battle's backdrop (composed from the same place by src/ui/76_battle_places.js):
+  // the same grade, laid on the backdrop only, before the stage draws anyone, so combatants, faces and every reading
+  // surface keep their own colours (V3). Night and story states follow the map's own alternatives.
+  function nightOf(m) {
+    const s = RB.game && RB.game.s;
+    for (const a of (m.def && m.def.alt) || []) if (s && RB.state.test(s, a.if)) return !!(a.night || (a.ambient && a.ambient.dark));
+    return false;
+  }
+  function battleGrade(c, w, h) {
+    const m = RB.world && RB.world.W && RB.world.W.map;
+    if (!active(m) || !opts.light) return;
+    illuminate(c, m, RB.world.W, 0, { bw: w, bh: h, night: nightOf(m) });
+  }
+
   // ---- the development panel (only on a ?dev=world page) ---------------------------------------------------------
   // Switches for each layer and the view, and a visit to the slice in a session that is never saved: offered only
   // while no journey is loaded, so no save slot is current and nothing can be autosaved.
@@ -490,5 +505,5 @@ RB.worldLook = (function () {
     setTimeout(open, 0);
   }
 
-  return { allowed, active, cfg, opts, set, onChange, SLICE, farView, FAR, ground, shaded, shadeAt, illuminate, atmosphere, heightOf, panel, stats: () => Object.assign({}, stat) };
+  return { allowed, active, cfg, opts, set, onChange, SLICE, farView, FAR, ground, shaded, shadeAt, illuminate, atmosphere, battleGrade, heightOf, panel, stats: () => Object.assign({}, stat) };
 })();

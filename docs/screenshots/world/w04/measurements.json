@@ -1,0 +1,33 @@
+{
+ "note": "headless Chromium 1194 (Playwright 1.56.1), software raster; medians of 3 runs; ms and MB",
+ "rows": [
+  {
+   "tag": "game 1440×900",
+   "ready": 1033,
+   "first": 244,
+   "steady": 2.4,
+   "heapMB": 37.4
+  },
+  {
+   "tag": "proof 1440×900",
+   "ready": 931,
+   "first": 834,
+   "steady": 19.1,
+   "heapMB": 31.4
+  },
+  {
+   "tag": "game 375×667 (3×)",
+   "ready": 990,
+   "first": 236,
+   "steady": 2.7,
+   "heapMB": 28.7
+  },
+  {
+   "tag": "proof 375×667 (3×)",
+   "ready": 907,
+   "first": 815,
+   "steady": 10.1,
+   "heapMB": 26.7
+  }
+ ]
+}

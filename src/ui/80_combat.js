@@ -94,6 +94,8 @@ RB.combat = (function () {
       S, ex: lay.ex, ey: lay.ey, ext: lay.ext, px: lay.px, py: lay.py, ps: lay.ps, scale: lay.scale, art: enemy.art, party: lay.party,
       creatures: lay.foes.length > 1 ? lay.foes.map((f, i) => ({ ex: f.ex, ey: f.ey, ext: f.ext, art: (members[i] || enemy).art, artOpts: (members[i] || enemy).artOpts })) : null,
     } : null);
+    // the world proof (development only, src/engine/65_worldlook.js): a battle begun in its slice takes its light
+    if (RB.worldLook && RB.worldLook.battleGrade) RB.worldLook.battleGrade(c, w, h);
     if (lay) {
       // the frame loop must survive anything the presentation does wrong
       try { RB.battleStage.draw(c, w, h, { t, pt, amb: tt, view: V(), reduce, calm: calmNow(), Sr: S, lay, stageCss, sealHeld }); }
