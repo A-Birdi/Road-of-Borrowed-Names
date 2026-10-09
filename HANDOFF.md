@@ -194,7 +194,10 @@
     inventory, U01 record). **U01 is done:** the book on Journey and Company and the dialogue strip, as a preview
     behind Settings › Display › "The Wayfarer's Ledger (preview)" (classic stays the default; Robin's game is
     unchanged unless it is chosen). Evidence: `tests/e2e/book.mjs` 13/0, captures in docs/screenshots/book/u01/.
-    Next: U02 (type roles, an embedded font, the specimen), then the review set for Robin.
+    **U02 is done:** the preview's type (Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic), embedded in the
+    game file and made into fonts only when the preview is on (data/fonts/README.md; record U02_TYPE.md).
+    **The U01/U02 review set is published for Robin** (one question: does it feel like a book that belongs to this
+    journey, and is it easy to use?). Nothing further is authorised until Robin answers and names the next scope.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

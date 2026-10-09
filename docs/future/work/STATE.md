@@ -25,8 +25,8 @@ byte for byte).
 | P00 · baseline | Done: unit suite 27,267/0; audit fixes 4/0 in the browser; F/Ren PASS (15.1 min) | [P00_BASELINE.md](P00_BASELINE.md), [CENSUS.md](CENSUS.md) |
 | U00 · interface inventory | Done | [U00_INVENTORY.md](U00_INVENTORY.md), [ui_inventory.json](ui_inventory.json), `docs/screenshots/book/baseline/` |
 | U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
-| U02 · type roles and specimen | In progress: candidates compared in the game; choice and embedding next | — |
-| Review set for Robin | Not started | — |
+| U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
+| Review set for Robin | Published (a private page; link given in the conversation); waiting on Robin's answer | — |
 
 **Pending Robin gates:** the U01/U02 review set (one question: does it feel like a book that belongs to this
 journey, and is it easy to use?).

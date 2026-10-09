@@ -27,7 +27,30 @@
   --bk-gutter: rgba(70, 48, 18, 0.30);
   --bk-corner: #5a4630;          /* the portrait's mounting corners */
 }
+/* The preview's type (U02; data/fonts/README.md), embedded in the page (nothing is fetched). Each list keeps today's
+ * system fonts behind the embedded face, so a character a subset lacks still draws. Only the preview uses them: the
+ * classic folio never names these faces, so they are never decoded there. */
+body.book-ui {
+  --type-latin-display: "RB Vollkorn", "RB UD Gothic P", "RB UD Gothic", var(--serif);
+  --type-latin-reading: "RB Vollkorn", "RB UD Gothic P", "RB UD Gothic", var(--serif);
+  --type-ui: "RB UD Gothic P", "RB UD Gothic", var(--ui-font); /* the P face carries no kanji: its kanji are UD Gothic's */
+  --type-jp-heading: "RB Shippori Mincho", "RB Vollkorn", "RB UD Gothic", var(--jp-font);
+  --type-jp-body: "RB UD Gothic", var(--jp-font);
+}
 .co-mount { display: contents; } /* the classic folio never sees the portrait's mount */
+/* inside the book and its dialogue strip, the older font lists (used all over the pages) speak through the roles */
+.folio.book, body.book-ui .dlg, body.book-ui .choices {
+  --serif: var(--type-latin-reading);
+  --en-font: var(--type-latin-reading);
+  --ui-font: var(--type-ui);
+  --jp-font: var(--type-jp-body);
+}
+/* (a family is inherited already resolved: the strip names its own, as the book does) */
+body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
+/* Vollkorn's figures are old-style by default (its 1 reads as a small I) and it sets words close (a 0.2 em space):
+ * lining figures, and a little more air between words at screen reading sizes. Japanese lines keep their spacing. */
+.folio.book, body.book-ui .dlg, body.book-ui .choices { font-variant-numeric: lining-nums; word-spacing: 0.06em; }
+.folio.book .jline, body.book-ui .dlg .jline, body.book-ui .choices .jline { word-spacing: normal; }
 
 /* ---- the scrim: the world dims around the book, a little warmer at the centre -------------------------------- */
 .folio-scrim.book-scrim { background: radial-gradient(ellipse 80% 70% at 50% 55%, rgba(14, 12, 20, 0.42), rgba(6, 8, 18, 0.80)); }
@@ -206,6 +229,10 @@
 
 /* ---- type on the page ---------------------------------------------------------------------------------------- */
 .folio.book .leaf :lang(ja), .folio.book .leaf .jline { font-family: var(--type-jp-body); }
+/* headings keep the heading face down to their words (the Japanese inside them is marked up as lines of words) */
+.folio.book .leaf .bk-sec, .folio.book .leaf .bk-sec :lang(ja), .folio.book .leaf .bk-sec .jline, .folio.book .leaf .bk-sec .jt-static,
+.folio.book .leaf .qdetail h3 :lang(ja), .folio.book .leaf .qdetail h3 .jline,
+.folio.book .leaf .co-name h3 :lang(ja), .folio.book .leaf .co-name h3 .jline { font-family: var(--type-jp-heading); }
 .folio.book .leaf button, .folio.book .leaf .kind, .folio.book .leaf .count, .folio.book .leaf .muted.small { font-family: var(--type-ui); }
 .folio.book .leaf h3, .folio.book .leaf .ph {
   font-family: var(--type-latin-display); font-weight: 600; font-size: 1.12em; letter-spacing: 0.015em;
@@ -303,7 +330,6 @@
   .folio.book .co-id { grid-template-columns: minmax(0, 1fr); justify-items: start; }
   .folio.book .co-portrait { width: 144px; height: 144px; image-rendering: auto; }
 }
-.folio.book .co-name h3 :lang(ja) { font-family: var(--type-jp-heading); }
 .folio.book .co-bondline { margin: 0.2em 0 0.8em; }
 /* their thought: a quotation in their own voice, not a box */
 .folio.book .co-thought { position: relative; background: none; border: 0; padding: 0 0 0 1.7em; margin: 1em 0 1.1em; }

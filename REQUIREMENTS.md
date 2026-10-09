@@ -538,6 +538,15 @@ A preview behind a setting; the classic folio stays the default. B `tests/e2e/bo
 - [v] BK8 The dialogue strip keeps its speaker and its manual Next. B book 13.
 - [ ] BK9 Robin's visual acceptance (the U01/U02 review set). H.
 
+## The book's type, U02 (Robin's C-78 and font permission of 2026-10-09; docs/future/work/U02_TYPE.md; data/fonts/README.md; VALIDATION.md "The type, U02")
+Only the preview uses these fonts; the classic folio makes none of them. B `tests/e2e/book.mjs` 14/0; U `book_type` 60/0; B `tests/e2e/type_specimen.mjs`.
+- [v] TY1 Five type roles as tokens, filled under the preview: Vollkorn (display, reading), BIZ UDPGothic (controls), Shippori Mincho (Japanese headings), BIZ UDGothic (Japanese learning text and furigana). B book 14 (each role's face on Journey, Company and dialogue elements).
+- [v] TY2 The fonts are inside the game file and made from its own bytes; nothing is fetched; the classic look makes none of them; start-up time is unchanged within noise. B book 14; measurements in U02_TYPE.md.
+- [v] TY3 Licence and provenance: OFL 1.1, no Reserved Font Name; source URLs and SHA-256 recorded; licence files beside the subsets and in NOTICE.txt (About & credits). U book_type.
+- [v] TY4 Every kana, kanji and CJK punctuation mark the game uses draws in the learning face, every kana and kanji in the heading face, every Latin letter, digit and mark in Vollkorn; anything else falls back to the system's fonts. U book_type (coverage read from each subset's own cmap, tied by hash to the embedded file).
+- [v] TY5 The specimen sets real strings (Chapter 1 and Robin's Ledger) at 100% and 140%: dakuten, handakuten, small kana, the small tsu, the long vowel mark, dense kanji, a long line, mixed lines, I/l/1 and O/0; no furigana overlaps. B type_specimen.
+- [ ] TY6 Robin's visual acceptance of the type (the U01/U02 review set). H.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

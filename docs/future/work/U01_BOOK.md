@@ -132,7 +132,7 @@ Firefox and the foldable are **not measured** (not available here).
   (one question: does it feel like a book that belongs to this journey, and is it easy to use?).
 - **Remaining issues, scoped:**
   - (U03) bring an opened quest into view on a phone;
-  - (U02) the type roles still use today's stacks;
+  - (U02, since done) the type roles used today's stacks;
   - (U04) Words, Satchel and Map keep their classic pages inside the book.
 - **Noticed, not changed** (existing behaviour, unrelated to the book): a press within the last reveal step of a
   dialogue line (at most 0.18 s after its last word appears) completes the line instead of advancing it.

@@ -164,6 +164,7 @@ RB.game = (function () {
     // the book interface's dialogue strip and Ledger follow the preview setting (src/styles/90_book.css)
     document.body.classList.toggle('book-ui', st.ledgerStyle === 'book' || st.ledgerStyle === 'flat');
     document.body.classList.toggle('book-flat', st.ledgerStyle === 'flat');
+    if (st.ledgerStyle === 'book' || st.ledgerStyle === 'flat') warmBookType();
     document.body.classList.toggle('lead-ja', st.lead === 'ja');
     document.body.classList.toggle('ui-ja', st.uiLang === 'ja');
     const touch = st.touch === 'on' || (st.touch === 'auto' && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches);
@@ -188,6 +189,14 @@ RB.game = (function () {
   function saveSettings() {
     applySettings();
     return RB.save.saveSettings(G.settings);
+  }
+  // The book preview's embedded type (src/ui/13_booktype.js): made into fonts once, when the browser is idle after
+  // start-up, so the Ledger's first opening doesn't wait on it. The classic look never calls this.
+  let bookTypeWarm = false;
+  function warmBookType() {
+    if (bookTypeWarm || !RB.bookType) return;
+    bookTypeWarm = true;
+    (typeof requestIdleCallback === 'function' ? requestIdleCallback : setTimeout)(() => RB.bookType.install(), { timeout: 1500 });
   }
   function reducedMotion() {
     return !!(G.settings && G.settings.reducedMotion);

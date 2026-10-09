@@ -69,6 +69,7 @@ RB.ui.menu = (function () {
     if (RB.game.mode() !== 'world' && RB.game.mode() !== 'dialogue') return;
     RB.game.pushMode('menu');
     RB.audio && RB.audio.sfx('menu_open');
+    if (bookStyle() && RB.bookType) RB.bookType.install(); // the preview's type, if the idle start hasn't made it yet
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
     fr.foot.innerHTML =
@@ -192,6 +193,7 @@ RB.ui.menu = (function () {
   // Settings › Display changed the Ledger's look while it is open: redraw it in the new style
   function restyle() {
     if (!layer || !fr) return;
+    if (bookStyle() && RB.bookType) RB.bookType.install();
     fr.setBook(bookStyle());
     lastSec = null;
     remember();

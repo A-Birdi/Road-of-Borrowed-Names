@@ -3441,3 +3441,44 @@ A preview behind Settings › Display › "The Wayfarer's Ledger (preview)"; the
   there is no difference.
 
 **Not verified:** Firefox; a real foldable; Robin's visual judgement (the U01/U02 review set).
+
+## The type, U02 (2026-10-09; C-78 and Robin's font permission; docs/future/work/U02_TYPE.md; REQUIREMENTS.md TY1–TY6)
+
+The preview's type: Vollkorn, BIZ UDPGothic, Shippori Mincho and BIZ UDGothic, all OFL 1.1. They are subset into
+`data/fonts/` (`tools/fonts/subset.py`, which checks each original's SHA-256), carried in `index.html` as an inert
+JSON block, and made into fonts by `src/ui/13_booktype.js` only when the preview is on.
+
+**Changes:**
+- `tools/build.mjs`: the block, with a hash check against `data/fonts/fonts.json`.
+- `src/index.template.html`: its place.
+- `src/ui/13_booktype.js` (new).
+- `src/engine/90_game.js`: installs the fonts when idle, under the preview.
+- `src/ui/50_menu.js`: installs them at the latest when the book opens.
+- `src/styles/90_book.css`: the roles filled under `body.book-ui`, the legacy font lists mapped to the roles inside
+  the book and the strip, headings keeping the heading face, lining figures and word space.
+- `data/NOTICE.txt`: the fonts' copyright lines and the OFL text.
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/book.mjs`: **14/0**. The new check covers each role's face on Journey, Company and the strip;
+  7 faces loaded from the page's bytes, 0 requests; the classic look makes none.
+  - It found that the dialogue strip inherited the body's already-resolved system font (variables don't re-resolve
+    an inherited family); the strip now names its own.
+- U `node tests/run-unit.mjs book_type`: **60/0**: hashes, sources, licences, NOTICE, and glyph coverage of every
+  character the game's source uses.
+  - On the first run it also flagged code points that are never drawn (regex range ends, the half-width input
+    table, a battle icon); the test now names and excludes them.
+- B `node tests/e2e/type_specimen.mjs --compare <BIZ UDMincho subset>`: normal and 140%, 7 faces loaded,
+  **100 furigana, 0 overlapping**, 0 requests, 0 errors.
+  - The specimen found Vollkorn's old-style "1" reading as "I" and its close word spacing; both are fixed.
+- B `node tests/e2e/book_captures.mjs docs/screenshots/book/u02`: 26 captures, reviewed by eye by the lead.
+- Start-up time:
+  - first attempt (CSS data URLs): +150 ms (normal CPU) and +675 ms (4× throttle) for every player, so it was replaced;
+  - final build, interleaved medians at 4× throttle: U01 3,994 ms, this build without the block 4,072 ms, this build
+    4,080 ms;
+  - normal CPU: +35 ms against U01.
+- Installing the seven faces from the page's bytes (preview only, in idle time after start-up): median 98 ms at normal CPU, 316 ms at 4× throttle.
+- U the full unit suite: **27,450/0** (includes `book_type`).
+- B the related suites on this build: `folio`, `quest_guide` (all checks passed), `settings`, `ui` 14/0, `company` (all passed), `company_pets`: all pass; `book` 14/0 again after the last change (the fonts also install when Settings switches an open Ledger to the book).
+
+**Not verified:** Firefox; the foldable; text inputs in the new type (not on Journey or Company); Robin's visual
+judgement.

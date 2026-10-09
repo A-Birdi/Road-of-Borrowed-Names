@@ -11,7 +11,8 @@
 //  - Settings switches the Ledger's look while it is open;
 //  - phones: one leaf, no sideways scrolling, the five bookmarks in view (UI-A15);
 //  - the Journey's "Next" says one destination once (UI-A06);
-//  - the dialogue strip keeps its speaker and its manual Next (UI-A13).
+//  - the dialogue strip keeps its speaker and its manual Next (UI-A13);
+//  - the preview's type: each role in its embedded face, nothing fetched, and the classic folio makes none (UI-A11).
 // Usage: node tests/e2e/book.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -286,6 +287,59 @@ await test('the dialogue strip keeps its speaker and its manual Next', async () 
   await p.keyboard.press('Enter');
   await p.waitForFunction(() => window.__done === true, null, { timeout: 5000 }).catch(async () => { throw new Error('Enter did not end the scene: ' + JSON.stringify(await p.evaluate(() => ({ main: document.querySelector('.dlg .main').innerText, focus: document.activeElement && (document.activeElement.className || document.activeElement.tagName), mode: RB.game.mode && RB.game.mode() })))); });
   assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
+await test('the preview\'s type: each role in its embedded face, nothing fetched; the classic folio makes none', async () => {
+  const RB_FACES = () => [...document.fonts].filter((f) => /^"?RB /.test(f.family)).map((f) => f.family.replace(/"/g, '') + ' ' + f.weight + ' ' + f.style + ' ' + f.status);
+  // classic: the faces are in the page but never named, so never decoded
+  {
+    const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
+    await p.evaluate(FIXTURE, null);
+    await open(p, 'journal');
+    await p.waitForTimeout(500);
+    const faces = await p.evaluate(RB_FACES);
+    assert(faces.length === 0 && !(await p.evaluate(() => RB.bookType.installed())), 'classic makes no font of the preview: ' + faces.join('; '));
+    assert(!errors.length && !requests.length, errors.concat(requests).join('; '));
+    await ctx.close();
+  }
+  const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  await p.evaluate(FIXTURE, 'book');
+  const first = (q) => p.evaluate((q) => { const e = document.querySelector(q); return e ? getComputedStyle(e).fontFamily.split(',')[0].replace(/"/g, '').trim() : 'none: ' + q; }, q);
+  await open(p, 'journal');
+  const n = await p.evaluate(() => RB.bookType.install());
+  assert(n === 7, 'faces loaded from the page\'s own bytes: ' + n);
+  await p.evaluate(() => document.fonts.ready);
+  const want = {
+    '.folio.book .bk-sec': 'RB Shippori Mincho',                          // the running head (Japanese heading)
+    '.folio.book .qdetail h3 .jline': 'RB Shippori Mincho',               // the quest's title
+    '.folio.book .qdetail .earlier .jline': 'RB UD Gothic',               // earlier steps (learning text)
+    '.folio.book .qdetail .qnext .jline': 'RB UD Gothic',                 // the Next margin note
+    '.folio.book .leaf .entry .jline': 'RB UD Gothic',
+    '.folio.book .leaf .entry .en': 'RB Vollkorn',                         // English reading text
+    '.folio.book .qdetail .en-title': 'RB Vollkorn',
+    '.folio.book .ptab': 'RB UD Gothic P',                                 // controls
+    '.folio.book .leaf button.pbtn': 'RB UD Gothic P',
+  };
+  for (const [q, f] of Object.entries(want)) { const got = await first(q); assert(got === f, q + ': ' + got + ' (want ' + f + ')'); }
+  await open(p, 'company');
+  await p.evaluate(() => document.fonts.ready);
+  for (const [q, f] of Object.entries({ '.folio.book .co-name h3 .jline': 'RB Shippori Mincho', '.folio.book .co-thought .jline': 'RB UD Gothic', '.folio.book .co-thought .en': 'RB Vollkorn' })) {
+    const got = await first(q); assert(got === f, q + ': ' + got + ' (want ' + f + ')');
+  }
+  await p.evaluate(() => RB.ui.menu.close());
+  await p.evaluate(() => { RB.script.add('@scene t.type\nsuzu: {港|みなと} の {客|きゃく} は {厳|きび}しい 。|| Harbour audiences are tough.\n', 't'); RB.script.run('t.type'); });
+  await p.waitForSelector('.dlg:not(.hidden) .b-next');
+  for (const [q, f] of Object.entries({ '.dlg .main.en': 'RB Vollkorn', '.dlg .who .nm': 'RB Vollkorn', '.dlg .b-next': 'RB UD Gothic P' })) {
+    const got = await first(q); assert(got === f, q + ': ' + got + ' (want ' + f + ')');
+  }
+  // Japanese leading: the line itself in the learning face
+  await p.evaluate(() => { RB.game.settings.lead = 'ja'; RB.ui.dialogue.refresh(); });
+  { const got = await first('.dlg .main .jline'); assert(got === 'RB UD Gothic', 'Japanese-led line: ' + got); }
+  const faces = await p.evaluate(RB_FACES);
+  assert(faces.length === 7 && faces.every((f) => / loaded$/.test(f)), 'book: every embedded face decoded: ' + faces.join('; '));
+  assert(!errors.length, errors.join('; '));
+  assert(!requests.length, 'nothing fetched: ' + requests.join('; '));
   await ctx.close();
 });
 

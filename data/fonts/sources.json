@@ -1,0 +1,123 @@
+{
+  "note": "The book interface's type (expansion packet U02). Each source is an unmodified file from the Google Fonts repository (https://github.com/google/fonts, branch main, retrieved 2026-10-09); tools/fonts/subset.py checks its SHA-256 before subsetting. The subsets in this folder are what the game embeds. When new text uses a kanji the subsets lack, tests/unit/book_type.test.mjs fails until the subsets are made again.",
+  "sets": {
+    "latin": "the game's own non-CJK characters, Basic Latin, Latin-1, Latin Extended-A and general punctuation",
+    "cjk": "the game's own Japanese characters (every kanji it shows), the kana blocks, CJK symbols and punctuation, and full-width forms",
+    "cjk+latin": "both of the above",
+    "kana+latin": "the Latin set with the kana, CJK punctuation and full-width forms but no kanji: the UI face's kanji come from BIZ UDGothic behind it, whose kanji are the same drawings"
+  },
+  "faces": [
+    {
+      "family": "RB Vollkorn",
+      "weight": "400 900",
+      "style": "normal",
+      "set": "latin",
+      "out": "vollkorn-wght.woff2",
+      "source": {
+        "name": "Vollkorn",
+        "version": "5.001",
+        "file": "Vollkorn[wght].ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/vollkorn/Vollkorn%5Bwght%5D.ttf",
+        "sha256": "4ebef434f76f80286204840354a84db79a0dc3c87deeeb791e015b70b2ade49d",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-Vollkorn.txt"
+      }
+    },
+    {
+      "family": "RB Vollkorn",
+      "weight": "400 900",
+      "style": "italic",
+      "set": "latin",
+      "out": "vollkorn-italic-wght.woff2",
+      "source": {
+        "name": "Vollkorn Italic",
+        "version": "5.001",
+        "file": "Vollkorn-Italic[wght].ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/vollkorn/Vollkorn-Italic%5Bwght%5D.ttf",
+        "sha256": "cd947ae49b5d46e812d8d09434fbe8ec452286cd5557ef6a762a3562e2c8d300",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-Vollkorn.txt"
+      }
+    },
+    {
+      "family": "RB UD Gothic P",
+      "weight": "400",
+      "style": "normal",
+      "set": "kana+latin",
+      "out": "biz-udpgothic-regular.woff2",
+      "source": {
+        "name": "BIZ UDPGothic Regular",
+        "version": "1.051",
+        "file": "BIZUDPGothic-Regular.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/bizudpgothic/BIZUDPGothic-Regular.ttf",
+        "sha256": "258d7156c165f2ff774b6efee637c22c3b950de0d8a10e501137061bc8085d01",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-BIZUDGothic.txt"
+      }
+    },
+    {
+      "family": "RB UD Gothic P",
+      "weight": "700",
+      "style": "normal",
+      "set": "kana+latin",
+      "out": "biz-udpgothic-bold.woff2",
+      "source": {
+        "name": "BIZ UDPGothic Bold",
+        "version": "1.051",
+        "file": "BIZUDPGothic-Bold.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/bizudpgothic/BIZUDPGothic-Bold.ttf",
+        "sha256": "30eba52fc837e8b62c97d4b82e6706583149fb7294e3712dd71a655eaea80a90",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-BIZUDGothic.txt"
+      }
+    },
+    {
+      "family": "RB UD Gothic",
+      "weight": "400",
+      "style": "normal",
+      "set": "cjk+latin",
+      "out": "biz-udgothic-regular.woff2",
+      "source": {
+        "name": "BIZ UDGothic Regular",
+        "version": "1.05",
+        "file": "BIZUDGothic-Regular.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/bizudgothic/BIZUDGothic-Regular.ttf",
+        "sha256": "709fcd41e3209fb765da750472f55ccdf925653e9fa7e1eb007cb65c8f749c75",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-BIZUDGothic.txt"
+      }
+    },
+    {
+      "family": "RB UD Gothic",
+      "weight": "700",
+      "style": "normal",
+      "set": "cjk+latin",
+      "out": "biz-udgothic-bold.woff2",
+      "source": {
+        "name": "BIZ UDGothic Bold",
+        "version": "1.05",
+        "file": "BIZUDGothic-Bold.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/bizudgothic/BIZUDGothic-Bold.ttf",
+        "sha256": "98a528b6b638463041968783cc0f63adaf4cdc26f5398afed68bab712d1113f3",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-BIZUDGothic.txt"
+      }
+    },
+    {
+      "family": "RB Shippori Mincho",
+      "weight": "400 700",
+      "style": "normal",
+      "set": "cjk",
+      "out": "shippori-mincho-semibold.woff2",
+      "source": {
+        "name": "Shippori Mincho SemiBold",
+        "version": "3.110",
+        "file": "ShipporiMincho-SemiBold.ttf",
+        "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/shipporimincho/ShipporiMincho-SemiBold.ttf",
+        "sha256": "bc7925544894a91466449adb73c6d943f50c3e53eb1c74d0673fe2dbafcd4d2d",
+        "licence": "OFL-1.1",
+        "licenceFile": "OFL-ShipporiMincho.txt"
+      }
+    }
+  ]
+}
