@@ -22,9 +22,9 @@ byte for byte).
 
 | Packet | State | Record |
 |---|---|---|
-| P00 · baseline | In progress: census done; unit suite passed; F/Ren route running | [P00_BASELINE.md](P00_BASELINE.md), [CENSUS.md](CENSUS.md) |
+| P00 · baseline | Done: unit suite 27,267/0; audit fixes 4/0 in the browser; F/Ren PASS (15.1 min) | [P00_BASELINE.md](P00_BASELINE.md), [CENSUS.md](CENSUS.md) |
 | U00 · interface inventory | Done | [U00_INVENTORY.md](U00_INVENTORY.md), [ui_inventory.json](ui_inventory.json), `docs/screenshots/book/baseline/` |
-| U01 · the book on Journey and Company | Not started | — |
+| U01 · the book on Journey and Company | In progress (uncommitted work in src/: the preview setting, the book frame, 90_book.css, the Next-line fix) | — |
 | U02 · type roles and specimen | Not started | — |
 | Review set for Robin | Not started | — |
 
