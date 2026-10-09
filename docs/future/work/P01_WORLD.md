@@ -35,8 +35,8 @@ composition and density. What it is, measured (W00):
 
 | Packet | Content | State |
 |---|---|---|
-| W00 | Study of the renderer and the plate; the art contract; the camera candidates; the proof's switch (`?dev=world`); its test | **Done** (this record) |
-| W01 | Illumination and atmosphere: authored ambient light, the sun's cast shadows (cached per map), local lights, glow on emissive things only, haze, water glints, optional edge softness; each layer switchable | Next |
+| W00 | Study of the renderer and the plate; the art contract; the camera candidates; the proof's switch (`?dev=world`); its test | **Done** |
+| W01 | Illumination and atmosphere: authored ambient light, the sun's cast shadows (cached per map), local lights, glow on emissive things only, haze, water glints, optional edge softness; each layer switchable | **Done** (below) |
 | W02 | Reedwake's kit: ground and its transitions, foliage masses, cattails, lily pads, water, fences, flower boxes, thatch-on-stone and board houses with lit windows, smoke; footprints, contact points, occlusion; deterministic dressing in safe zones only | |
 | W03 | Two purposeful actions by village people (complete actions: anticipation, motion, contact, follow-through, return), stopping cleanly for conversation, staging and reduced motion | |
 | W04 | The Reedwake slice assembled: a doorway, water, vegetation, a light, conversation, the customizable player; a battle with Suzu and an existing creature (language UI, action banner, Harmony cut-in) from the slice; evidence (paired captures, recordings, layers on/off, overlays, start-up, frame and memory measurements) | |
@@ -145,3 +145,70 @@ it as their kits are built.
 
 The only change outside the proof's own file is the renderer's `setView` hook. With nothing set, it uses exactly the
 previous view rule (tested above).
+
+## W01: illumination and atmosphere
+
+**What it draws** (`src/engine/65_worldlook.js`; the slice's sun is data in `SLICE`):
+
+**Cast shadows** (illumination):
+- **Standing things** (trees, lanterns, the well, signs, carts, people) cast their own silhouette onto the ground,
+  sheared away from the sun by their height. Flat things (water, the pier, the boat, mats) cast none.
+- **Buildings** cast a box: the footprint swept by the building's height, its far corners trimmed by the hips.
+  (Sheared like a billboard, a house's shadow could only fall in front of it, never beside it. Found in the first
+  captures; the test caught it.)
+- **One mask per map.** All the map's shadows are gathered into a single mask, built once with the static layer,
+  softened once and stepped into a core and a penumbra. That keeps the shadows crisp pixel clusters, and
+  overlapping shadows never darken twice.
+- **How it is laid:** by multiplication with a cool violet, so the ground keeps its hue.
+- **People:**
+  - Each person's shadow is made the same way, once per frame of art (cached).
+  - It is laid only where the map's shade isn't already; a person in shade casts no second shadow.
+  - A person whose feet are in shade is shaded too.
+- **Not at night:** the sun casts nothing then.
+
+**The grade** (illumination):
+- the sun's colour by overlay;
+- a plain warm wash toward the sun's side and a cool one away from it;
+- at night, a cool overlay over the game's own darkness and lights.
+
+**Atmosphere:**
+- glow only on lit windows and lanterns, dim by day and strong at night, each light flickering on its own phase
+  (from its position, no random stream);
+- glints on open water;
+- a sunlit haze in the upper left;
+- optional **soft edges**: the view's top and bottom bands softened, never on portrait screens. It is off by
+  default because it is the costliest part (below).
+
+**Reduced motion:** no glints, no flicker; two instants draw the same frame (tested).
+
+**The development panel** (on a `?dev=world` page only) switches the proof, the far view, the kit, light,
+atmosphere and soft edges. It offers a visit to the village in a session that is never saved, and only while no
+journey is loaded, so no save slot is current and nothing can be autosaved.
+
+**Cost**, `RB.render.frame` at 1440×900, median of three runs of 40 frames. Headless Chromium with software raster,
+so pessimistic. A GPU-backed canvas (Robin's Firefox) is expected to be far cheaper; not measured here.
+
+| Configuration | ms per frame |
+|---|---|
+| The game today (near view) | 2.2 |
+| Far view, no layers | 6.0 (four times the pixels) |
+| + light | 14.8 |
+| + atmosphere only | 9.6 |
+| + light and atmosphere (the default) | 17.6 |
+| + soft edges | 23.6 |
+
+- The grade was soft-light first. Measured at about 7 ms on its own, it was replaced by overlay and a wash
+  (same intent, cheaper).
+- The shadow pass costs about 0.6 ms: one multiply of the cached mask and a small patch per person.
+- Building the mask happens once per map entry (it is counted in the test).
+
+| Check | Command | Result |
+|---|---|---|
+| The proof's browser tests (6), adding to W00's four:<br>• W01's layers: each changes the frame on its own and switching them off restores the bare frame; the mask is built once across 30 frames; the ground right of the teahouse is in shade and the open square is not; reduced motion holds still; night builds no sun shadows<br>• the panel: absent without the flag; its switches work and show their state; the visit is withdrawn while a save slot is current | `node tests/e2e/world.mjs` | **6 passed, 0 failed** |
+| Captures: day with every layer, without light, without atmosphere, bare, with soft edges; night with and without; the phone with and without (the kit off, W01 alone) | `node tests/e2e/world_captures.mjs light` | 9 WebP in `docs/screenshots/world/w01/` |
+
+**Seen in the captures:**
+- Light and shade read; the houses stand up from the ground.
+- The village still looks sparse and flat-green, as expected: the plate's density and materials are W02's work.
+- The light balance will be retuned against the kit.
+

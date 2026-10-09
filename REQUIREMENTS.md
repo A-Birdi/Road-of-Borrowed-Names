@@ -554,7 +554,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] WP2 The far view frames the village as the target plate does (45 tiles across at 1440×900, whole device pixels per art pixel); a room keeps the near view; the view returns outside. B world 2; captures docs/screenshots/world/w00/.
 - [v] WP3 In the far view a tap or click lands on the tile under it and collisions are unchanged (1440×900 and a 375-px phone). B world 3, 4.
 - [v] WP4 The art contract is written: grid and art resolution, camera, light, ramps, outlines and contrast, projection and scale, layers, motion, dressing. Code review (P01_WORLD.md).
-- [ ] WP5 Illumination and atmosphere layers, each switchable (W01).
+- [v] WP5 Illumination and atmosphere layers, each switchable (W01): cast shadows cached per map (built once), people shaded in shade, a grade, glow on emissive things only, water glints, haze, optional soft edges; reduced motion holds still; no sun shadows at night. B world 5. The development panel: only with the flag; the session visit is withheld while a save slot is current. B world 6.
 - [ ] WP6 Reedwake's kit (W02).
 - [ ] WP7 Two purposeful actions (W03).
 - [ ] WP8 The Reedwake slice with a battle, and its evidence (W04).

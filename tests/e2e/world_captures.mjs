@@ -3,6 +3,8 @@
 // off in turn. A synthetic session (never a real save). Each section writes WebP files to its own folder.
 // Usage: node tests/e2e/world_captures.mjs [section ...]   (default: every section)
 //   camera   near and far views at 1440×900, 2048×1046 (1.25) and 375×667 (3)   → docs/screenshots/world/w00/
+//   light    the illumination and atmosphere layers on and off, day and night, desktop and phone
+//            (the kit off: W01 alone)                                              → docs/screenshots/world/w01/
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -26,10 +28,12 @@ async function webp(p, png, dir, file) {
   written.push(path.join(dir, file));
 }
 // a fixed moment in the village square: Suzu travelling, the morning's people about, clocks held
-async function square(p, x = 22, y = 18) {
-  await p.evaluate(({ x, y }) => { RB.game.debugStart('rw.village', x, y, { comp: 'suzu', flags: { departed: true } }); }, { x, y });
+async function square(p, x = 22, y = 18, flags = {}) {
+  await p.evaluate(({ x, y, flags }) => { RB.game.debugStart('rw.village', x, y, { comp: 'suzu', flags: Object.assign({ departed: true }, flags) }); }, { x, y, flags });
   await p.waitForTimeout(900);
+  await p.evaluate(() => { const el = document.getElementById('wl-dev'); if (el) el.style.display = 'none'; }); // the dev panel is not part of the picture
 }
+const look = (p, o) => p.evaluate((o) => RB.worldLook.set(Object.assign({ on: true, view: 'far', kit: true, light: true, atmos: true, soft: false }, o)), o);
 const VIEWS = [
   { tag: 'd1440', viewport: { width: 1440, height: 900 }, dpr: 1 },
   { tag: 'd2048', viewport: { width: 2048, height: 1046 }, dpr: 1.25 },
@@ -49,6 +53,31 @@ if (doing('camera')) {
       if (errors.length) console.log('  page errors:', errors.join('; '));
       await ctx.close();
     }
+  }
+}
+
+if (doing('light')) {
+  const D = 'docs/screenshots/world/w01';
+  const shots = [
+    ['day_all', {}, {}], ['day_no_light', {}, { light: false }], ['day_no_atmos', {}, { atmos: false }], ['day_bare', {}, { light: false, atmos: false }],
+    ['day_soft_edges', {}, { soft: true }], ['night_all', { rw_night: true }, {}], ['night_bare', { rw_night: true }, { light: false, atmos: false }],
+  ];
+  for (const [name, flags, o] of shots) {
+    const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+    await square(p, 22, 18, flags);
+    await look(p, Object.assign({ kit: false }, o));
+    await p.waitForTimeout(500);
+    await webp(p, await p.screenshot(), D, 'd1440_' + name + '.webp');
+    if (errors.length) console.log(name, 'page errors:', errors.join('; '));
+    await ctx.close();
+  }
+  for (const [name, o] of [['day_all', {}], ['day_bare', { light: false, atmos: false }]]) {
+    const { p, ctx } = await page(b, url + '?dev=world', { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true, touch: true });
+    await square(p);
+    await look(p, Object.assign({ kit: false }, o));
+    await p.waitForTimeout(700);
+    await webp(p, await p.screenshot(), D, 'p375_' + name + '.webp');
+    await ctx.close();
   }
 }
 

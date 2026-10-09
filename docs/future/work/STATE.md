@@ -28,7 +28,7 @@ byte for byte).
 | U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
 | U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
 | Review set for Robin | **Accepted** (C-79). Round 1: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised): "I think it's an improvement - you may proceed." | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
-| P01 · world proof (Reedwake, then Saltglass) | **Active.** W00 done: the art contract, the far view (the plate is the village at 45 tiles across), the `?dev=world` switch; world tests 4/0, unit 27,450/0. Next: W01, illumination and atmosphere | [P01_WORLD.md](P01_WORLD.md) |
+| P01 · world proof (Reedwake, then Saltglass) | **Active.** W00 done (art contract, far view, `?dev=world`). W01 done: illumination and atmosphere, each switchable; world tests 6/0. Next: W02, Reedwake's kit | [P01_WORLD.md](P01_WORLD.md) |
 
 **Pending Robin gates:** none now. The next is P01's visual gate (Reedwake and Saltglass, old beside new).
 

@@ -36,7 +36,9 @@ RB.render = (function () {
   // a function of the window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
   let viewTarget = null;
   function setView(fn) {
-    viewTarget = typeof fn === 'function' ? fn : null;
+    fn = typeof fn === 'function' ? fn : null;
+    if (fn === viewTarget) return;
+    viewTarget = fn;
     if (canvas) { resize(); invalidate(); }
   }
   function resize() {
@@ -356,6 +358,22 @@ RB.render = (function () {
     const i = u < 0.46 ? 0 : u < 0.52 ? 1 : u < 0.88 ? 2 : u < 0.94 ? 3 : 0;
     return (blink ? IDLE_BLINK : IDLE_KEYS)[i];
   }
+  // The frame of art a person shows at time t, with its offsets: a bob (creatures), a dip or hop (dy), a half-step
+  // (ox). Worked out once per frame (the world proof also reads it for the person's shadow).
+  function artFor(a, t, isFoe) {
+    if (a._af && a._af.t === t) return a._af;
+    const still = RB.game.reducedMotion();
+    const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
+    // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
+    const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
+    // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
+    // (a half-step, a hop); not while a turn pivots, so the turn still shows
+    const sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, sf ? sf.dir : vw ? vw.dir : a.dir, sf && sf.key ? sf.key : vw ? vw.frame : fr0);
+    const dy = (a.dy || 0) + (sf ? sf.oy : 0); // a knee dip during a field action (src/ui/57_weave.js)
+    const ox = sf ? sf.ox : 0;
+    return (a._af = { t, art, bob, dy, ox });
+  }
   function drawActor(c, a, t, isFoe) {
     const x = ax(a.fx * TS), y = ay(a.fy * TS);
     const fx = x + ATS / 2, fy = y + ATS - 2; // the foot anchor on this tile
@@ -374,16 +392,10 @@ RB.render = (function () {
       if (alpha < 1) c.globalAlpha = 1;
       return;
     }
-    const still = RB.game.reducedMotion();
-    const bob = isFoe && !still ? Math.round(Math.sin(t / 300 + a.x) * 3) : 0;
-    // (a turn on the spot is drawn through a pivot: RB.sprites.view, src/engine/32_spriteart.js — drawing only)
-    const fr0 = actorFrame(a, t, isFoe, still), vw = RB.sprites.view ? RB.sprites.view(a, t, still || isFoe, fr0) : null;
-    // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
-    // (a half-step, a hop); not while a turn pivots, so the turn still shows
-    const sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
-    const art = RB.sprites.getArt && RB.sprites.getArt(a.look, sf ? sf.dir : vw ? vw.dir : a.dir, sf && sf.key ? sf.key : vw ? vw.frame : fr0);
-    const dy = (a.dy || 0) + (sf ? sf.oy : 0); // a knee dip during a field action (src/ui/57_weave.js)
-    const ox = sf ? sf.ox : 0;
+    const { art: art0, bob, dy, ox } = artFor(a, t, isFoe);
+    // in the world proof (development only, src/engine/65_worldlook.js) a person standing in shade is shaded
+    const L = art0 && RB.worldLook && RB.worldLook.active(RB.world.W.map) ? RB.worldLook : null;
+    const art = L ? L.shaded(RB.world.W.map, a, art0) : art0;
     if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x + ox, fy - RB.sprites.ANCHOR.y + bob + dy);
     else c.drawImage(RB.sprites.get(a.look, a.dir, a.frame || 0), fx - 16, fy - 46 + bob + dy, 32, 48);
     if (a.overlay) a.overlay(c, fx, fy + dy, t); // the raised hand and brush of a field action
@@ -469,6 +481,24 @@ RB.render = (function () {
     if (Y1 < bh) band(0, Y1, 0, Y1 + D, 0, Y1, bw, bh - Y1);
   }
 
+  // What the world proof's layers read from the renderer: the mapping, the view, the people and their art.
+  function lookEnv(m, W, still) {
+    const amb = ambientOf(m);
+    const actors = () => {
+      const out = [W.player];
+      if (W.comp) out.push(W.comp);
+      for (const n of W.npcs) out.push(n);
+      for (const n of W.leavers || []) out.push(n);
+      for (const n of W.extras || []) out.push(n);
+      return out.filter((a) => a && (a.alpha == null || a.alpha > 0.5) && !(a.look && a.look.pet));
+    };
+    const artOf = (a, t) => {
+      const r = artFor(a, t, false);
+      if (!r.art) return null;
+      return { cv: r.art, fx: ax(a.fx * TS) + ATS / 2 + r.ox, fy: ay(a.fy * TS) + ATS - 2 };
+    };
+    return { ax, ay, bw, bh, cam, TS, ART, ATS, still, buf, night: !!(amb.night || (amb.ambient && amb.ambient.dark)), actors, artOf };
+  }
   function drawWorld(t) {
     const W = RB.world.W;
     const m = W.map;
@@ -497,6 +527,10 @@ RB.render = (function () {
         c.fillRect(sx + ((RB.tiles.hh(x, y, 3) + o) % 12) * ART, sy + (5 + (RB.tiles.hh(x, y, 4) % 6)) * ART, 3 * ART, ART);
         if (ph < 1) { c.fillStyle = pal.water[3] + '90'; c.fillRect(sx + (RB.tiles.hh(x, y, 5) % 13) * ART, sy + 11 * ART, 2 * ART, ART); }
       }
+    // the world proof (development only, src/engine/65_worldlook.js): its cast shadows on the ground
+    const L = RB.worldLook && RB.worldLook.active(m) ? RB.worldLook : null;
+    const env = L ? lookEnv(m, W, still) : null;
+    if (L) L.ground(c, m, W, t, env);
     // y-sorted drawables
     const s = RB.game.s;
     const list = [];
@@ -541,11 +575,13 @@ RB.render = (function () {
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
+    if (L) L.illuminate(c, m, W, t, env);
     drawFade(c, m, pal);
     interactMarker(c, W, t);
     drawLighting(c, m, W, t);
     if (fromHeight(m)) RB.below.drawLights(c, m, belowEnv(m, t)); // the lights far below, through the night
     drawWeather(c, m, t);
+    if (L) L.atmosphere(c, m, W, t, env);
     for (const e of W.emotes) {
       const a = RB.world.actorById(e.who);
       if (a) drawEmote(c, a, e.kind);

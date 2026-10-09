@@ -3545,3 +3545,25 @@ judgement.
 
 **Not verified:** Firefox; the foldable; the far view's readability on a real phone (a question for the P01 gate).
 
+## The world proof, W01: illumination and atmosphere (2026-10-09; P01_WORLD.md "W01"; REQUIREMENTS.md WP5)
+
+**What changed:**
+- `src/engine/65_worldlook.js`: cast shadows, the grade, glow, glints, haze, soft edges, and the development panel.
+- `src/engine/60_render.js`:
+  - the proof's three hooks (ground, after the y-sorted drawables, after the weather), all behind
+    `RB.worldLook.active(map)`;
+  - a person's frame of art is now worked out by `artFor` once per frame, which `drawActor` and the proof's shadow
+    pass share (the same computation as before, moved);
+  - `setView` does nothing when the view function is unchanged.
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/world.mjs`: **6/0**, including W00's pixel-identity test on this build: the game's held frame
+  is the same with the proof absent, switched off, or on with every layer off.
+- B `node tests/e2e/world_captures.mjs light`: 9 captures, reviewed by eye by the lead.
+- Frame cost measured in headless Chromium (software raster), table in P01_WORLD.md.
+
+**Not verified:**
+- Firefox, or any GPU-backed canvas: the real frame cost there is unmeasured;
+- the foldable;
+- Robin's eye.
+

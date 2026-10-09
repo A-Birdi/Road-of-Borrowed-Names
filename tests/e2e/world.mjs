@@ -106,6 +106,77 @@ for (const v of [{ tag: '1440×900', viewport: { width: 1440, height: 900 }, dpr
   });
 }
 
+await test('W01 layers: each switches on its own; the shadow mask is built once; shade reaches a person; reduced motion holds still; night casts no sun shadows', async () => {
+  const { p, ctx, errors, requests } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await square(p);
+  await settled(p);
+  await p.clock.install();
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  const set = (o) => p.evaluate((o) => RB.worldLook.set(Object.assign({ on: true, view: 'far', kit: false, light: false, atmos: false, soft: false }, o)), o);
+  await set({});
+  const bare = await frameHash(p);
+  await set({ light: true });
+  const light = await frameHash(p);
+  await set({ atmos: true });
+  const atmos = await frameHash(p);
+  await set({ light: true, atmos: true });
+  const both = await frameHash(p);
+  await set({ light: true, atmos: true, soft: true });
+  const soft = await frameHash(p);
+  const all = [bare, light, atmos, both, soft];
+  assert(new Set(all).size === all.length, 'each layer should change the frame on its own: ' + all.join(' '));
+  await set({});
+  assert(await frameHash(p) === bare, 'switching the layers off again should give the bare frame back');
+  // the map's shadow mask: built once for the map, not per frame
+  await set({ light: true, atmos: true });
+  await frameHash(p);
+  const m0 = await p.evaluate(() => RB.worldLook.stats().masks);
+  await p.evaluate(() => { for (let i = 0; i < 30; i++) RB.render.frame(5000 + i * 16); });
+  const m1 = await p.evaluate(() => RB.worldLook.stats().masks);
+  assert(m1 === m0, 'drawing frames rebuilt the shadow mask: ' + m0 + ' → ' + m1);
+  // the teahouse (28..32 × 12..15) shades the ground to its right; the open square in front of it is in sun
+  const sh = await p.evaluate(() => { const m = RB.world.W.map; return { right: RB.worldLook.shadeAt(m, { fx: 33, fy: 14 }), open: RB.worldLook.shadeAt(m, { fx: 25, fy: 20 }) }; });
+  assert(sh.right > 0 && sh.open === 0, 'shade where expected: ' + JSON.stringify(sh));
+  // reduced motion: two instants draw the same frame (no glints, no flicker)
+  await p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); });
+  const r1 = await frameHash(p), r2 = await p.evaluate(() => { RB.render.frame(9000); const cv = document.querySelector('canvas'); const d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data; let x = 2166136261; for (let i = 0; i < d.length; i += 4) { x ^= d[i] | (d[i + 1] << 8) | (d[i + 2] << 16); x = Math.imul(x, 16777619) >>> 0; } return x.toString(16) + ':' + cv.width + 'x' + cv.height; });
+  assert(r1 === r2, 'reduced motion: the frame changed between two instants: ' + r1 + ' vs ' + r2);
+  assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
+  await ctx.close();
+  // night: the game's own darkness and lights; the proof adds glow, never sun shadows
+  const n = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await n.p.evaluate(() => { RB.game.debugStart('rw.village', 22, 18, { comp: 'suzu', flags: { departed: true, rw_night: true } }); });
+  await n.p.waitForTimeout(600);
+  const look = await n.p.evaluate(() => ({ mask: !!RB.world.W.map.look, masks: RB.worldLook.stats().masks }));
+  assert(!look.mask && look.masks === 0, 'no sun shadows at night: ' + JSON.stringify(look));
+  assert(!n.errors.length, 'errors: ' + n.errors.join('; '));
+  await n.ctx.close();
+});
+
+await test('the development panel: only on a ?dev=world page; its switches work; the visit is offered only with no journey loaded', async () => {
+  const plain = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  assert(!(await plain.p.$('#wl-dev')), 'the panel must not exist without the flag');
+  await plain.ctx.close();
+  const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await p.waitForSelector('#wl-dev');
+  assert(await p.evaluate(() => RB.save.current().slot == null), 'fixture: no slot is current at the title');
+  assert(await p.isVisible('#wl-visit'), 'the visit is offered at the title');
+  await p.click('#wl-visit');
+  await p.waitForFunction(() => RB.world.W.map && RB.world.W.map.id === 'rw.village');
+  await p.click('#wl-dev [data-k="light"]');
+  assert(await p.evaluate(() => RB.worldLook.opts.light === false), 'the Light switch should turn the layer off');
+  assert(await p.getAttribute('#wl-dev [data-k="light"]', 'aria-pressed') === 'false', 'the switch shows its state');
+  await p.click('#wl-dev [data-k="far"]');
+  const t = await tiles(p);
+  assert(t.w === 22.5, 'Far view off gives the near view: ' + JSON.stringify(t));
+  // pretend a journey is loaded: the visit is withdrawn
+  await p.evaluate(() => { RB.save.setCurrent(3, 1); RB.worldLook.set({}); });
+  assert(!(await p.isVisible('#wl-visit')), 'the visit must not be offered while a save slot is current');
+  await p.evaluate(() => RB.save.setCurrent(null, 0));
+  assert(!errors.length, 'errors: ' + errors.join('; '));
+  await ctx.close();
+});
+
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);
