@@ -1,6 +1,6 @@
 # 04 · Dungeons, expeditions and the Hall of a Hundred Tales
 
-*Expansion plan, draft 3 (2026-10-07, after Robin's second round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 Robin's direction, consolidated:
 
@@ -51,6 +51,9 @@ model unless a chapter opts in.
   or more, with loops, landmarks and optional chambers, as Robin wants.
 - **Fixed at creation.** A generated expedition stores its seed *and* its chosen learning content at entry. It never
   changes what it asks after a mistake. A *new* expedition is a separate, deliberate choice.
+  - **The Atlas is the one exception** (C-57): its shape, rooms, exits and encounter placements are fixed per run,
+    while the practice words inside it keep adapting. Topology, topic and practice pool are three separate policies,
+    so the general rule above never overrides the Atlas's.
 - **Battle hook.** A proper engine hook for expedition values in battle replaces the Atlas's MutationObserver hack:
   the party's starting resolve, extra bars, and field conditions.
 
@@ -288,7 +291,7 @@ and language theme. Astra's ten themes are kept and given tales:
   - two encounters (one with conditions, one social);
   - a counterexample hall (A34);
   - an information-gap room with the companion (A12);
-  - a delver chance;
+  - a resting place where a delver may be met (an optional meeting, never one of the ten trials);
   - a capstone procedure or boss.
 - **Floors** are large authored maps with variable sections. A wing is 3–4 floors. The ten tales are authored; the
   variations inside them (which room order, which version of a puzzle, which items practised) come from controlled

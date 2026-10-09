@@ -1,0 +1,216 @@
+{
+  "revision": "1.2",
+  "basis": "source/Robin_Font_Approval.md",
+  "edits": [
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "every optional proposal, a new font file or implementation/publication outside the authorized scope.",
+      "new": "every optional proposal or implementation/publication outside the authorized scope. New-font permission is recorded separately below.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "a distinctive font treatment is requested, but no particular font or permission to package new fonts has been selected. The existing no-new-font-files/offline rules remain. §15A offers a working system-font route and a separate optional approval gate if a packaged font is later proposed. Do not hold the book's construction hostage to font selection.",
+      "new": "Robin now permits a new font provided it is readable and stylized for the game's tone. This supersedes the font-file prohibition only; single-file offline delivery and no remote dependencies remain. No particular family is selected. UI-TYPE-01 is approved in principle; validate the chosen face, Japanese/ruby support, licence, packaging and fallback in U02.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "CDN, external asset request, new font file or new runtime library.",
+      "new": "CDN, external asset request or new runtime library.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "The new typography direction is governed by §15A/UI-09: exploration is allowed, but new font assets require a separate explicit policy amendment.",
+      "new": "Font-specific exception: Robin permits a new readable, tone-appropriate font. §15A/UI-09 governs selection and verification; embed any selected game font for offline use. This does not authorize remote fonts or unrelated dependencies.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "not claims about the current build or separately approved font assets.",
+      "new": "not claims about the current build or approval of a particular typeface. New-font use is now permitted subject to readability and fit with the game's tone.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "The source and playbook prohibit new font files and remote/runtime dependencies. Robin's wish to explore a unique typeface does not select a font, settle its licence or explicitly amend that rule. Under the current policy, compare available system stacks and original limited title/ornament lettering, with accessible text equivalents. Do not bake paragraphs, controls or Japanese lessons into images. No font files are included in this handoff.",
+      "new": "Robin's latest decision permits a new font: “The new font can work as long as it's readable and stylized for the tone of the game.” This replaces the older font-file prohibition, not the offline/no-network rules. Keep paragraphs, controls and lessons as real text. No particular family is approved or supplied in this handoff.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "If needed, present the exact proposed family, glyph coverage, offline packaging method, licence/provenance review, size impact and fallback comparison. Obtain the policy amendment before acquiring/embedding it for the game. Do not block the book layout or make new production art depend on that decision: keep typography behind role tokens. Font availability across devices must be measured, not promised from a list of names.",
+      "new": "Choose and verify the exact family, glyph coverage, offline embedding, licence/provenance, size impact and fallback behavior. Show actual English/Japanese text and furigana at normal and enlarged sizes within the existing U01/U02 visual review. Do not ask again for permission in principle or block independent layout work. Keep typography behind role tokens; no font has been selected or tested by this document.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "Typography specimen and layout tokens using currently permitted families. Establish reading sizes, ruby spacing and fallback behavior.",
+      "new": "Typography specimen and role tokens using a readable, tone-appropriate new font or permitted fallback. Establish reading sizes, ruby spacing and offline behavior.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "Actual strings at normal/large text on available target platforms; proposed packaged font separately flagged only if necessary.",
+      "new": "Actual strings at normal/large text; selected-family and licence record; glyph/ruby checks; offline and fallback evidence on available platforms.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "Typography obeys the font-policy gate.",
+      "new": "Typography meets the approved readability, tone and offline requirements.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "No new font request/file unless separately approved; fallback and offline report.",
+      "new": "New-font permission recorded; exact family/licence, readable specimens, glyph/ruby coverage, fallback and offline report.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "old": "A packaged font is a **separate optional approval gate, UI-TYPE-01**.",
+      "new": "**UI-TYPE-01 is approved in principle, subject to readability and tone.**",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "every optional proposal, a new font file or implementation/publication outside the authorized scope.",
+      "new": "every optional proposal or implementation/publication outside the authorized scope. New-font permission is recorded separately below.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "a distinctive font treatment is requested, but no particular font or permission to package new fonts has been selected. The existing no-new-font-files/offline rules remain. §15A offers a working system-font route and a separate optional approval gate if a packaged font is later proposed. Do not hold the book's construction hostage to font selection.",
+      "new": "Robin now permits a new font provided it is readable and stylized for the game's tone. This supersedes the font-file prohibition only; single-file offline delivery and no remote dependencies remain. No particular family is selected. UI-TYPE-01 is approved in principle; validate the chosen face, Japanese/ruby support, licence, packaging and fallback in U02.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "CDN, external asset request, new font file or new runtime library.",
+      "new": "CDN, external asset request or new runtime library.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "The new typography direction is governed by §15A/UI-09: exploration is allowed, but new font assets require a separate explicit policy amendment.",
+      "new": "Font-specific exception: Robin permits a new readable, tone-appropriate font. §15A/UI-09 governs selection and verification; embed any selected game font for offline use. This does not authorize remote fonts or unrelated dependencies.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "not claims about the current build or separately approved font assets.",
+      "new": "not claims about the current build or approval of a particular typeface. New-font use is now permitted subject to readability and fit with the game's tone.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "The source and playbook prohibit new font files and remote/runtime dependencies. Robin's wish to explore a unique typeface does not select a font, settle its licence or explicitly amend that rule. Under the current policy, compare available system stacks and original limited title/ornament lettering, with accessible text equivalents. Do not bake paragraphs, controls or Japanese lessons into images. No font files are included in this handoff.",
+      "new": "Robin's latest decision permits a new font: “The new font can work as long as it's readable and stylized for the tone of the game.” This replaces the older font-file prohibition, not the offline/no-network rules. Keep paragraphs, controls and lessons as real text. No particular family is approved or supplied in this handoff.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "If needed, present the exact proposed family, glyph coverage, offline packaging method, licence/provenance review, size impact and fallback comparison. Obtain the policy amendment before acquiring/embedding it for the game. Do not block the book layout or make new production art depend on that decision: keep typography behind role tokens. Font availability across devices must be measured, not promised from a list of names.",
+      "new": "Choose and verify the exact family, glyph coverage, offline embedding, licence/provenance, size impact and fallback behavior. Show actual English/Japanese text and furigana at normal and enlarged sizes within the existing U01/U02 visual review. Do not ask again for permission in principle or block independent layout work. Keep typography behind role tokens; no font has been selected or tested by this document.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "Typography specimen and layout tokens using currently permitted families. Establish reading sizes, ruby spacing and fallback behavior.",
+      "new": "Typography specimen and role tokens using a readable, tone-appropriate new font or permitted fallback. Establish reading sizes, ruby spacing and offline behavior.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "Actual strings at normal/large text on available target platforms; proposed packaged font separately flagged only if necessary.",
+      "new": "Actual strings at normal/large text; selected-family and licence record; glyph/ruby checks; offline and fallback evidence on available platforms.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "Typography obeys the font-policy gate.",
+      "new": "Typography meets the approved readability, tone and offline requirements.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "No new font request/file unless separately approved; fallback and offline report.",
+      "new": "New-font permission recorded; exact family/licence, readable specimens, glyph/ruby coverage, fallback and offline report.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "A specific packaged font, game implementation scope, final matrix and publication retain their separate approval boundaries.",
+      "new": "New-font use is permitted subject to readability and tone; the exact family still needs verification. Game implementation scope, the final matrix and publication retain their separate approval boundaries.",
+      "occurrences": 1
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "old": "A packaged font is a <strong>separate optional approval gate, UI-TYPE-01</strong>.",
+      "new": "<strong>UI-TYPE-01 is approved in principle, subject to readability and tone.</strong>",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "not claims about the current build or separately approved font assets.",
+      "new": "not claims about the current build or approval of a particular typeface. New-font use is now permitted subject to readability and fit with the game's tone.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "The source and playbook prohibit new font files and remote/runtime dependencies. Robin's wish to explore a unique typeface does not select a font, settle its licence or explicitly amend that rule. Under the current policy, compare available system stacks and original limited title/ornament lettering, with accessible text equivalents. Do not bake paragraphs, controls or Japanese lessons into images. No font files are included in this handoff.",
+      "new": "Robin's latest decision permits a new font: “The new font can work as long as it's readable and stylized for the tone of the game.” This replaces the older font-file prohibition, not the offline/no-network rules. Keep paragraphs, controls and lessons as real text. No particular family is approved or supplied in this handoff.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "If needed, present the exact proposed family, glyph coverage, offline packaging method, licence/provenance review, size impact and fallback comparison. Obtain the policy amendment before acquiring/embedding it for the game. Do not block the book layout or make new production art depend on that decision: keep typography behind role tokens. Font availability across devices must be measured, not promised from a list of names.",
+      "new": "Choose and verify the exact family, glyph coverage, offline embedding, licence/provenance, size impact and fallback behavior. Show actual English/Japanese text and furigana at normal and enlarged sizes within the existing U01/U02 visual review. Do not ask again for permission in principle or block independent layout work. Keep typography behind role tokens; no font has been selected or tested by this document.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "Typography specimen and layout tokens using currently permitted families. Establish reading sizes, ruby spacing and fallback behavior.",
+      "new": "Typography specimen and role tokens using a readable, tone-appropriate new font or permitted fallback. Establish reading sizes, ruby spacing and offline behavior.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "Actual strings at normal/large text on available target platforms; proposed packaged font separately flagged only if necessary.",
+      "new": "Actual strings at normal/large text; selected-family and licence record; glyph/ruby checks; offline and fallback evidence on available platforms.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "Typography obeys the font-policy gate.",
+      "new": "Typography meets the approved readability, tone and offline requirements.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "No new font request/file unless separately approved; fallback and offline report.",
+      "new": "New-font permission recorded; exact family/licence, readable specimens, glyph/ruby coverage, fallback and offline report.",
+      "occurrences": 1
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "old": "A packaged font is a **separate optional approval gate, UI-TYPE-01**.",
+      "new": "**UI-TYPE-01 is approved in principle, subject to readability and tone.**",
+      "occurrences": 1
+    },
+    {
+      "path": "templates/CONTINUATION_PROMPT.md",
+      "old": "Typography uses roles and available families; a new packaged font requires its separate explicit policy amendment.",
+      "new": "Robin now permits a new font if it is readable and stylized for the game's tone. UI-TYPE-01 is approved in principle: select and verify the exact family, licence, English/Japanese/ruby behavior, offline embedding and fallback through U02. Do not ask again for this policy permission.",
+      "occurrences": 1
+    },
+    {
+      "path": "templates/UI_PACKET_ACCEPTANCE_TEMPLATE.md",
+      "old": "Font policy: existing permitted fonts / separately approved amendment (record exact authority).",
+      "new": "Font policy: UI-TYPE-01 approved in principle by Robin; new font must be readable and tone-appropriate. Record selected family, licence, glyph/ruby coverage, offline embedding, fallback and visual acceptance.",
+      "occurrences": 1
+    }
+  ]
+}

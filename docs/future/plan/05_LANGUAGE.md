@@ -1,6 +1,6 @@
 # 05 · Language: evidence, mastery and Japanese as a tool
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 Two halves:
 - **L1–L6, the learning record:** what the game knows about a player's Japanese, and how it shows it.
@@ -18,9 +18,9 @@ whatever is decided.
 - **Mode tallies:** choice, recall (typed) and hand (handwritten). They count every attempt, including wrong ones.
 - **Ordering answers are recorded as `choice`**, so sentence construction looks like recognition
   (`ui/65_challenge.js:413`). Ordering can only be arranged, never typed or handwritten.
-- **Promotion beyond box 2 is weaker than its comment says.** One typed or handwritten attempt *ever*, even a
-  wrong one, satisfies the "varied" condition for good.
-- **Defects found in passing:**
+- **Promotion beyond box 2 was weaker than its comment said** (fixed on 2026-10-07): one typed or handwritten
+  attempt *ever*, even a wrong one, satisfied the "varied" condition for good.
+- **Defects found in passing** (all fixed on 2026-10-07, with tests; part D of 11_CONTRADICTIONS.md):
   - **Foundations copy steps** show the answer yet are recorded as clean handwriting.
   - **Story activities' Translate** sets `assisted` and never resets it between customers or letters
     (`ui/75_activities.js:51,120`).
@@ -140,7 +140,13 @@ free, and asking for more suggestions counts as assisted.
   - The four stars sit side by side, none above the others. A choice star is as bright as a handwriting star.
   - **A "completed with help" mark** records the attempt honestly without a star (Astra: "demonstrated
     independently / completed with support / needs another opportunity").
-- **Retakes** revisit only the questions that were assisted, not the whole exam (Astra).
+- **How a question counts** (proposed; C-75). Each question in an exam is a fixed slot that keeps its *first committed*
+  answer: **independent** (right, with no counting help), **assisted** (right, with counting help) or **missed**
+  (wrong first answer, even if put right afterwards). The star needs **fewer than 30% of the exam's questions to be
+  assisted or missed** together: Robin's threshold, with a wrong first answer counted like help, so fishing gains
+  nothing. In a ten-question exam, two such questions earn the star and three don't.
+- **Retakes** revisit only the assisted and missed slots, each with a fresh, equivalent question (Astra); the
+  denominator stays the whole exam, and earlier answers stay in the evidence log.
 - **No fishing for answers** (Robin, C-41: help should feel good, but an obvious path to fishing must be closed;
   undoing a move isn't help when nothing prompted it; hiding suggestions up front helps a lot):
   - **The first committed answer is the one that counts.** A wrong first answer can be retried for learning, but

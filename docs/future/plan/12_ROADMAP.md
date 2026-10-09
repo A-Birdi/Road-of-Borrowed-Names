@@ -1,6 +1,6 @@
 # 12 · Roadmap: a drafted order of execution
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only: phases begin only when Robin
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only: phases begin only when Robin
 authorises them.*
 
 Robin said time and difficulty are no issue, so the order below is chosen for **quality and risk**, not speed:
@@ -31,6 +31,39 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 | **Z** | **The final art pass** | Outlined only, as Robin asked | Robin: "I'm happy with the final product" |
 | **Final** | Final validation | The full 16-combination matrix and every audit on the art-complete build | Robin calls it |
 
+
+## The playbook's proposed order (C-78, open)
+
+Robin's package of 2026-10-09 ([../playbook/](../playbook/README.md)) proposes delivering the same features in a
+different order, milestones P00 to P18. The features don't change; the order and the method do. If Robin accepts it
+(C-78), it replaces the order of the table above.
+
+| Playbook | What | This roadmap |
+|---|---|---|
+| P00 | A recorded baseline: decisions reconciled, a census of screens, content and assets; no change to the game | Phase 0 |
+| P01 | **Visual proof first:** Reedwake's presentation and Saltglass reusing it; the book interface on Journey and Company, and a type specimen (U01, U02) | Moved forward from Phase Z ([15_INTERFACE.md](15_INTERFACE.md)) |
+| P02 | Foundations: story phases, seeded streams, per-save records, the edition boundary, the content pipeline | 02_FOUNDATIONS, across Phases 2–5 |
+| P03 | Learning evidence and the task families | Phase 2 |
+| P04 | Encounters, tactics and modifier words | Phase 3 |
+| P05 | The living world and a reusable animation library | Phase 4 |
+| P06 | Records, both Ledgers, replay, New Game+, pastimes; the book interface finished on Journey and Company and carried to every page (U03, U04) | Phase 5 |
+| P07 | Expeditions and one pilot dungeon | Phase 6 |
+| P08, P09 | Manybridge, Chapters 3 and 4 | Phase 7 |
+| P10 | The existing middle chapters' seams and the Keepers' Road | Phase 7b |
+| P11 | The sea, the ports and Kotonoha | Phase 8 |
+| P12, P13 | The Cloudroad; Steamhollow | Phase 9 |
+| P14 | The twelve chapters joined up, with the four epilogues; **an internal milestone, not a release** | Phase 9's "the edition ships" |
+| P15 | The whole postgame: all ten Hall wings, superbosses, pastimes | Phase 10 |
+| P16 | The art pass over old and new, including the book's finished materials (U05, U06) | Phases 11 and Z |
+| P17 | Closing the registers: language, accessibility, speed (U07) | Phase 12 |
+| P18 | The full matrix and the release, each only when Robin asks | Final |
+
+**The method it asks for:** one implementation model writes, one packet at a time, with tests and rendered evidence
+for each; no second model and no parallel writers; decisions, state and evidence kept so work survives
+interruptions. **The playthrough gate stays:** Robin's full playthrough comes before new content, though a visual
+proof can be authorised separately before it (playbook §03). Phase 1's quick wins (Harmony's sound and the rest)
+remain available whenever Robin asks.
+
 ---
 
 ## Phase 0 · Listen and decide
@@ -39,12 +72,15 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 - **The remaining addendum items** that need Robin's eyes: HX33, HX43 and HX45 (scenes and sequences at play speed),
   WI5 and WI26 (gestures and portraits at play speed). They are recorded in docs/expressive/CONTRACT.md.
 - **Decisions:** all of [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) parts A to A4 and B were answered on 2026-10-07
-  and 2026-10-08, and part A5 (C-68 to C-71) on 2026-10-08. Still to come: three readings to confirm in part A6
-  (C-72 to C-74).
+  and 2026-10-08, part A5 (C-68 to C-71) on 2026-10-08 and part A6 (C-72 to C-74) on 2026-10-09. Still to come:
+  part A7 (C-75 to C-78), above all C-78, the order of work and the first scope.
 - **Spec and contract amendments** written for the decisions taken ([02_FOUNDATIONS.md](02_FOUNDATIONS.md) S8),
   and REQUIREMENTS IDs reserved for each feature.
-- **The open Harmony question** (one technique or charges) decided. The plan recommends keeping one technique
+- **The open Harmony question** (one technique or charges) decided: C-77. The plan recommends keeping one technique
   (E18).
+- **A census of what exists** (the playbook's P00 and D14): screens and controls, creatures, roads, side quests,
+  illustrations and assets, so every region's list starts from what is really there. Estimates in this plan are not
+  quotas.
 
 ## Phase 1 · Quick wins (independent of the expansion's scope)
 
@@ -67,7 +103,7 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 - **The evidence log** (L1), with the new kanji and construction kinds and the migration.
 - **Assistance categories** (L2), with C-14's rule.
 - **Mastery exams and stars** (L3), **word, kanji and kana pages** (L4) and **"What I can do"** (L5).
-- **Spacing by days** (L6) if approved, and **the kanji chart's record** (L20).
+- **Spacing by days** (L6; decided, C-36) and **the kanji chart's record** (L20).
 - **Sentence forging** (L7): engine, judge (generalising the letters' reply families), support ladder, authoring
   templates.
 - **The L8–L17 task families**: templates and judges, with one worked example each at all four profiles.
@@ -100,7 +136,7 @@ Effort sizes (S, M, L, XL) are relative scope including content and testing, not
 **Tests:**
 - the battle suite;
 - the curve test extended to twelve chapters, two-move turns, silencing and modifiers (battle length kept, no
-  modifier dominating, Unravel alone still winning; Relaxed untouched);
+  modifier dominating, Unravel alone still winning in E26's exact form; Relaxed untouched);
 - the difficulty curve with conditions and arrivals;
 - the geometry audit (with 4–5 actors if E12 is built);
 - new encounter-type tests on fixtures;
@@ -160,7 +196,8 @@ pilot.
 
 **Contents:**
 - **S4: the edition boundary.** The edition field, old saves shown as such and never altered, new flags, the
-  display numbering map, the save fixtures (including a Robin-like finished save), and C-54's extras if approved.
+  display numbering map, the save fixtures (including a Robin-like finished save), and C-54's old-save path (a
+  notice, then New Game+ from the old save; decided).
 - **A development switch.** The new chapters stay off in the build Robin plays until all six are finished, so saves
   are stopped once, when the edition ships (C-54).
 - **R1:** two chapters: maps, people, creatures, bosses, dungeons, side quests, and change beats for Reedwake and

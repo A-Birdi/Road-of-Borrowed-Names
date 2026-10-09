@@ -140,7 +140,7 @@
     testing cadence above.
   - Its point 4 left "overly assisted" to a weighted judgement. Point 4 above gives the first version: under 30 %
     of questions assisted, per input type.
-  **Expansion plan, draft 7 (2026-10-08), at Robin's request:** docs/future/plan/ (start with README.md). It
+  **Expansion plan, draft 8 (2026-10-09), at Robin's request:** docs/future/plan/ (start with README.md). It
   consolidates the consultation into an implementation plan, written from a read-only audit of the code, saves,
   canon and spec: regions (Manybridge, the Keepers' Road, Kotonoha, the Cloudroad, Steamhollow, the Hall of a
   Hundred Tales), systems, the story at twelve chapters, a roadmap, every idea traced, and a register of
@@ -178,8 +178,17 @@
     moments; **modifier words** that extend a response's reach (03_ENCOUNTERS.md E27, from Robin's four families);
     only Hush or Hush-adjacent creatures silence, always inferable; companion tools found off the beaten path,
     never missable.
-  - **Still open** (labelled in 11_CONTRADICTIONS.md part A6): C-72 to C-74, readings to confirm (the modifiers'
-    roles, no per-round ceiling, where the two growth moments fall).
+  - **Sixth round and Robin's playbook package (2026-10-09):** C-72 to C-74 approved "as asked". Robin asked for menus
+    that look and feel like a physical book in the 2.5D world rather than nested panels, and allowed a new font if it
+    is readable and fits the game's tone (embedded, offline; this replaces the earlier "no new font files" rule for
+    that purpose only). The package (a proposed order of work P00–P18, the book interface in full, a review of
+    draft 7) is stored in docs/future/playbook/ with model names neutralised, images as WebP and the PDFs left out
+    (hashes listed). Draft 8 adds plan/15_INTERFACE.md and settles the review's discrepancies (part E).
+  - **Still open** (11_CONTRADICTIONS.md part A7): **C-78**, whether to adopt the playbook's order and which scope to
+    start (the package itself authorises nothing until Robin names one); C-75 to C-77 to confirm (how a wrong first
+    answer counts towards a star; five hostile creatures in set pieces; one Harmony technique per bar).
+  - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
+    at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record
     judgement to the lead): the Grammar met page, lantern grammar labels, activity Translate, Foundations copy steps,
     the promotion rule, the chart's phantom road, creature patrols' random stream, and the `alts` validator (which

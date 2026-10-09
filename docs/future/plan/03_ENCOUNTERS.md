@@ -1,6 +1,6 @@
 # 03 · Encounters
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 Robin's diagnosis [R1]: "Given our current enemy diversity, combinations and 'approach' means little — we typically
 have battle flow in an expectant pattern, which can totally feel stale quickly." The fix is not more creatures. It
@@ -411,13 +411,17 @@ completed the step before, that performs the step without further input.
 
 **Approach.**
 - **Ordinary encounters stay at three or fewer.**
-- **Authored set pieces may hold up to five actors**: a boss with summons, or a group plus a guest. They use a new
+- **Authored set pieces may hold up to five actors on the creatures' side** (the player and companion are never
+  counted): a boss with summons, a group plus a guest, or, after C-76, up to five hostile creatures (Robin's "harder
+  2-5 enemy fights"). They use a new
   **two-row formation**: back row smaller, front row larger, depth scaling as the battle stage already does.
   - **Compact slips** below 1280 px.
   - **On phones** the back row draws smaller and its name plates collapse to letters (A–E).
-- **Validator:** at most 5 actors; at most 3 hostile at once outside boss summons.
-- **Harmony:** the portrait's placement rules already fall back gracefully. Five actors will usually mean no
-  portrait on smaller windows, which is acceptable, and recorded.
+- **Validator:** at most 5 actors on the creatures' side; outside authored set pieces, at most 3 hostile at once.
+  (Whether set pieces may field five hostile creatures, not only boss summons, is C-76.)
+- **Harmony:** the cut-in is never dropped because of the number of actors. It overlaps the creatures briefly, which
+  Robin is fine with (C-42), with resolve, Harmony and the reading controls kept visible. (Draft 6 said five actors
+  could mean no portrait on smaller windows; C-42 replaced that.)
 
 **Pros.** Spectacle where it matters, and only there.
 
@@ -529,7 +533,7 @@ outcomes chain into hidden content. [R2 §1]: the troupe never dies; other NPCs 
 
 - **The open decision** (COMBAT_NOTES): one technique per filled bar (today), or capped charges per encounter. The
   expansion does not need charges. Bosses with summons (E2) give long fights more Harmony naturally.
-  **Recommendation: keep one technique at a time.**
+  **Recommendation: keep one technique at a time** (C-77 to confirm).
 - **New role:** the meter as *mutual understanding* in social encounters (E8).
 - **No Harmony in a companion's temporary absence** (10_STORY.md): techniques need two.
 
@@ -649,7 +653,7 @@ creatures "without restricting what the enemies can do". So:
    telegraphed together, pointing at responses that answer every creature.
 5. **The curve test extends to twelve chapters**, with the same promises: Relaxed single and gentle, groups a step
    and not a spike, companions and modifiers never shortcutting the language work, and every encounter winnable
-   with Unravel alone.
+   with Unravel alone (with the bell or voice word first where a Hush silences it: see E26).
 
 **Effort:** M.
 
@@ -759,7 +763,10 @@ solid way to progress.
   creatures of Lanternfall and the Still Archive, where the Hush is closest, use it. Later Hush creatures can
   silence **one family of responses, or the modifiers (E27), for a few rounds**, shown on the cards with the rounds
   left. It never silences everything; there is always a way through; and the promise that every combat encounter
-  can be won with Unravel alone still holds (Unravel is only silenced when its counter is already known, as today).
+  can be won with Unravel alone still holds in this exact form: **Unravel alone, except that where a Hush has
+  silenced Unravel, the bell or voice word the player already knows ends the silence first.** Hush only silences
+  Unravel when the player knows one of those words, as today. The curve test reports the two cases separately:
+  encounters with no silencing (strictly Unravel alone) and encounters with it (Unravel plus the counter).
 - **All of it is telegraphed** before the player chooses, explained in help at four tiers, and tuned with the
   curve test.
 
@@ -880,7 +887,8 @@ any silencing (E26): the player's words reach only one at a time until it ends.
 
 **Tests.** Unit: each modifier's reach and effect on every response it pairs with; the validator checks every
 offered pairing has an authored, natural phrase with furigana. The curve test: battles with modifiers keep their
-length at every setting and chapter, no modifier dominates, and Unravel alone still wins. Browser: choose a
+length at every setting and chapter, no modifier dominates, and Unravel alone still wins (in E26's exact form).
+Browser: choose a
 modifier, a response and its option, write the phrase, and see the effect land on the right targets.
 
 **Effort:** L (engine, battle panel, field rules, lessons and content, spread across Phases 3, 7 and 7b).

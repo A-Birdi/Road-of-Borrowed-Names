@@ -1,6 +1,6 @@
 # 09 · Records: stamps, the travel volume, replay and pastimes
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 Robin's settled decisions govern this file:
 
@@ -50,14 +50,14 @@ It is a cultural custom (labelled, secular), a tactile little ritual, and a reco
 | **Dungeon families** | Each optional dungeon; every Atlas survey; each superboss |
 | **The Hall of a Hundred Tales** | Each wing; all ten |
 | **Roads and sea** | All of a road's events; the maiden voyage; every port |
-| **Pastimes** | Played each festival game once (not scores); first shogi win; first finished karuta game |
+| **Pastimes** | First shogi win; first finished karuta game. **No stamps from festival games** (C-55: personal records only); the festival itself is a story stamp under Chapters and regions |
 | **Natural milestones** (Robin's allowed kind) | "Used 15 different responses"; "Asked someone to explain"; "Found a second way through a puzzle" |
-| **Language** | First mastery star in each input type; first "Things I can do" entry in each family |
+| **Language** | First "Things I can do" entry in each family. **No stamp for mastery stars** (C-13: stars unlock nothing, stamps included) |
 
 **Rules.**
 - **No streaks, no "flawless", no timed records** (excluded).
-- **No stamp requires a particular input mode or going without help**, except mastery stars, which are records of
-  their own (L3).
+- **No stamp requires a particular input mode or going without help**, and none comes from a mastery star (C-13) or
+  a festival game's score or mode (C-55).
 - **Hidden stamps show their criteria** in neutral, spoiler-safe words ("A side story in Chapter 7").
 
 **Home:** Journey › Stamp book.
@@ -79,13 +79,15 @@ the painterly mockup style… used in our Harmony mockup":
 [R2 §7]: animated, "a still-frame, idling animation like the Main Menu background". The player is in them: "You
 were there."
 
-**Contents (proposed; about 60–70 pages, sized against the budget in S6):**
+**Contents (proposed; sized against the budget in S6).** The old estimate of 60–70 pages predates the twelve chapters
+and the companions' arc illustrations; it is not a quota. The real list is an exact composition manifest, built at
+the start of the work (the playbook's P00 census) and kept with the content:
 
 | Section | Pages |
 |---|---|
-| **Chapters (10)** | 2–3 per chapter: the arrival, the turning point, the resolution |
+| **Chapters (12)** | 2–3 per chapter: the arrival, the turning point, the resolution |
 | **Side stories** | About 12, chosen for weight, including outcome variants |
-| **Companions** | Per companion: 4 bond moments + 1 per ending variant (variants come from the ending's choices, never from a "bad bond": Astra) |
+| **Companions** | Per companion: 4 bond moments + 1 per ending variant (variants come from the ending's choices, never from a "bad bond": Astra), plus the second arc's three: the crossroads, the night apart and the dream ([14_COMPANIONS.md](14_COMPANIONS.md) §7) |
 | **The Hall** | 10 wings + the Hundredth Tale |
 | **Superbosses** | 1 each |
 | **Sea log** | Voyage entries (text with small vignettes, not full pages) |
@@ -187,12 +189,14 @@ to save before a moment they didn't know about."
    doesn't exist yet; M effort.
 3. **Chapter Journey** (proposal, for saves of the twelve-chapter edition; old saves don't continue, C-02):
    - **What it is.** Start a *new campaign in a free slot* at the start of any chapter this save has completed,
-     carrying the save's learning, appearance, keepsakes and records (like New Game+).
+     carrying exactly what New Game+ carries (K9: learning, records and the traveller as they are; **no keepsakes**,
+     C-66).
    - **Earlier choices** take documented defaults, labelled "a retelling", so no false history is claimed.
    - **Why it's useful.** It lets a player revisit a chapter or see another outcome without having saved in
      advance.
 
-   A plan proposal, not a contradiction: build it if Robin wants it.
+   A plan proposal, **not in scope** unless Robin asks for it. It is not New Game+ and not tier 1's read-only
+   replay, and nothing builds it by accident.
 
 **Effort:** M (1), M (2), L (3).
 
@@ -251,7 +255,7 @@ the end of the game by default, and it opens with a farewell from the companion 
 | The stamp book | Satchel equipment and items, keepsakes included (C-66) |
 | Pastime records: shiritori, shogi, hanafuda, karuta, festival personal bests | Inkweaving words learned in the story; field-puzzle and Atlas progress |
 | Settings; the noted-words notebook; the keepsake catalogue's "found" record | Known details and lore notes, which belong to the story's discoveries |
-| The traveller as they are: name, pronouns, appearance, and the bath choice for they/them and custom pronouns (C-66) | |
+| The traveller as they are: name, pronouns, the look chosen at creation (body, face, hair, colours), and the bath choice for they/them and custom pronouns (C-66) | Anything *worn* that was earned or found: equipment and keepsake cosmetics. The traveller starts the new run in the starting clothes |
 
 - **One journey's book across runs.** A player who travels with every companion fills one book: Robin's "complete
   the story with all of them".

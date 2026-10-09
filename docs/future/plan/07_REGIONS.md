@@ -1,6 +1,6 @@
 # 07 · Regions
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only. Spoiler-safe: existing Chapters 3–6 appear only as the spec
 names them. Anything that depends on their contents is in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md).*
 
 Robin's question for every region: *names, stories, unique encounters and mechanics; main quest or postgame; how
@@ -232,8 +232,8 @@ companion, and minigames that stay playable afterwards (C10 in [08_CULTURE.md](0
 - **Suzu.** A performer in a theatre city. **Canon note:** Suzu is not a star. She kept her troupe's books and
   minded the luggage, and she wants a double-act partner (相方). Robin's review called her someone who "aspires
   to be a star"; the plan builds her arc on the canon version, finding her 相方 and her own act. That fits a
-  manzai routine with the player, and her troupe can be met here ([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md)
-  C-31).
+  manzai routine with the player. Her troupe is **not** met here: Manybridge has the seed (an old playbill and a
+  letter at a stage door); the reunion is in Steamhollow ([14_COMPANIONS.md](14_COMPANIONS.md); C-31, C-68).
 - **All four** take part in the rehearsal and festival with distinct roles, as Robin asked for the stage idea.
 
 ### Evolving community
@@ -738,11 +738,13 @@ back to them.
 Full design: [04_DUNGEONS.md](04_DUNGEONS.md) §D9. In brief:
 - Ten wings of ten trials. Each wing is a tale-cycle with its own spatial identity and language theme (Astra's
   ten themes, refitted to tales).
-- **Persistent lantern oil** across a wing. Stationed resources only.
+- **Stationed resources only** across a wing: hearths, lamps to relight and resting places. No oil to carry and no
+  inventory (draft 6 said "persistent lantern oil"; it meant the lamps' state, not a resource the player holds).
 - **Checkpoints** at each wing's hearth. **Suspend** anywhere outside battle (Robin's H2: only here).
 - **Earned reprieves**, which let the player return to the surface with exact state kept, and an emergency retreat
   that resets only the current floor.
-- **Delvers:** familiar NPCs met by chance, who help and give better help if you remember shared moments.
+- **Delvers:** familiar NPCs met by chance, who help and give better help if you remember shared moments. A meeting
+  is never required: each wing's ten trials are ten deliberate trials without one.
 - **A Consolidate or Grow route** per wing.
 - Each wing's completion adds a **painted, animated illustration** to the travel volume. Players who cannot
   finish can reveal it through a confirmation, without a fake completion record.

@@ -1,0 +1,72 @@
+[
+  {
+    "file": "01_reedwake_target.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": false,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "02_saltglass_target.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": false,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "03_path_woodland_study.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "04_path_riverside_study.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "05_inn_ledger_title_composite.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "06_wayfarer_company_layout.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "07_battle_decision_layout.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "08_battle_harmony_layout.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "09_suzu_performance_reference.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": false,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  },
+  {
+    "file": "10_compact_battle_layout.webp",
+    "role": "reference or inspection composite, not engine capture",
+    "created_this_turn": true,
+    "origin": "Existing conversation generated art and supplied references; new work is deterministic layout/compositing only",
+    "may_be_committed_as_game_asset": false
+  }
+]

@@ -1,0 +1,167 @@
+{
+  "revision": "1.2",
+  "count": 20,
+  "source": "Playbook §15A/UI-11",
+  "requirements": [
+    {
+      "id": "UI-A01",
+      "requirement": "The ledger reads as one physical, authored object rather than nested application panels.",
+      "acceptance_evidence": "Journey/Company captures with textures and shadows both on and off; Robin's visual review.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A02",
+      "requirement": "Shape and depth never compromise the reading plane.",
+      "acceptance_evidence": "Normal/large text and flat mode; no skewed ruby or clipped body text.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A03",
+      "requirement": "Page families are distinct without arbitrary navigation.",
+      "acceptance_evidence": "Six sections plus Inn Ledger and dialogue shown together with a control map.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A04",
+      "requirement": "Every existing and approved action remains reachable.",
+      "acceptance_evidence": "Old-to-new control inventory and focused mouse, keyboard and touch checks.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A05",
+      "requirement": "Follow, selection, focus, availability and danger are distinguishable without color alone.",
+      "acceptance_evidence": "State captures, keyboard traversal and high-contrast checks.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A06",
+      "requirement": "Journey preserves destination, route explanation and hint progression.",
+      "acceptance_evidence": "Current/unreachable/completed fixtures; hint reveal counts and no accidental repeats.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A07",
+      "requirement": "Company preserves the chosen companion, given pet name, Bond text, thoughts and speech settings.",
+      "acceptance_evidence": "All four companion fixtures; pet absent/present; pending-story and unavailable-topic states.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A08",
+      "requirement": "Distractions remains its own section and obeys venue/companion launch rules.",
+      "acceptance_evidence": "Safe start/return and story-priority fixtures; no remote physical game introduced.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A09",
+      "requirement": "The Inn Ledger stays a six-save interface with honest storage/edition states.",
+      "acceptance_evidence": "Zero/one/six saves; incompatible save; copy/overwrite/delete and storage-refusal tests.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A10",
+      "requirement": "Japanese, furigana and mixed-script text stay correct and legible.",
+      "acceptance_evidence": "Actual-font audit and glyph specimens; long strings; no missing glyph or ruby overlap.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A11",
+      "requirement": "Typography meets the approved readability, tone and offline requirements.",
+      "acceptance_evidence": "New-font permission recorded; exact family/licence, readable specimens, glyph/ruby coverage, fallback and offline report.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A12",
+      "requirement": "Page motion cannot alter results or lose navigation input.",
+      "acceptance_evidence": "Transition interruption, repeated inputs, resize and reduced-motion changes; event-count assertions.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A13",
+      "requirement": "Dialogue remains manually advanced and available without a pointer.",
+      "acceptance_evidence": "Click/tap/key Next; history/help open and return; long lines and speaker identity.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A14",
+      "requirement": "Writing and typing remain independent of decorative book geometry.",
+      "acceptance_evidence": "Handwriting hit coordinates; IME composition; keyboard occlusion; confirm/cancel at large text.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A15",
+      "requirement": "Compact layout is a real reflow, not a shrunken desktop screenshot.",
+      "acceptance_evidence": "320×640 and 375×667 CSS-pixel fixtures plus short landscape and foldable checks.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A16",
+      "requirement": "Battle identity and learning controls remain intact.",
+      "acceptance_evidence": "Decision/action/entry states; two-person HP/Harmony; temporary banner; Suzu cut-in; crowded layout.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A17",
+      "requirement": "Old and new screens share the finished treatment.",
+      "acceptance_evidence": "Complete screen/state census, including empty/error/long-content/settings/help states.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A18",
+      "requirement": "The finished book remains quick and usable.",
+      "acceptance_evidence": "Cold/warm menu-open, frame/stall/cache measures on actual tested devices, compared with baseline.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A19",
+      "requirement": "Presentation cannot fabricate progress or expose hidden story content.",
+      "acceptance_evidence": "State hashes around browsing/replay; spoiler veils; no false stamp/Bond/record award.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    },
+    {
+      "id": "UI-A20",
+      "requirement": "The pass is visually accepted, not merely declared complete by its author.",
+      "acceptance_evidence": "A concise review set and explicit accepted/revise disposition for the remaining artistic issues.",
+      "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT",
+      "test_status": "NOT TESTED BY THIS DOCUMENT",
+      "visual_approval": "NOT YET REQUESTED FOR IMPLEMENTATION"
+    }
+  ]
+}

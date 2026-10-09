@@ -1,6 +1,7 @@
-# The Road of Borrowed Names: expansion plan (draft 7)
+# The Road of Borrowed Names: expansion plan (draft 8)
 
-*2026-10-08. Draft 7 records Robin's answers of 2026-10-07 and 2026-10-08, through the fifth round. A planning document, not authorised work: nothing
+*2026-10-09. Draft 8 records Robin's answers through the sixth round (2026-10-07 to 2026-10-09) and Robin's
+playbook package of 2026-10-09. A planning document, not authorised work: nothing
 here gets built until Robin selects and authorises a scope. Robin's playthrough feedback comes first and may change
 any of it.*
 
@@ -29,11 +30,13 @@ implementation plan. Every idea is broken down on its own and checked against:
 | [08_CULTURE.md](08_CULTURE.md) | Register, public spaces, refusal, dialects, documents, folklore, **the festival**, manzai, shogi and other pastimes, the press |
 | [09_RECORDS.md](09_RECORDS.md) | The stamp book, **the travel volume**, the witnessed seal, the Main Menu gallery, spoilers, replay, Pastimes, the Wayfarer's Ledger |
 | [10_STORY.md](10_STORY.md) | The twelve chapters, the Hush, companions, separations, old saves, the postgame |
+| [15_INTERFACE.md](15_INTERFACE.md) | **The interface as an authored travel book**, not nested panels; type and the new-font permission; how it would be built and reviewed |
 | [14_COMPANIONS.md](14_COMPANIONS.md) | **A second arc for each companion**, all four at the same depth: a seed, pressure, a crossroads, a night apart, an unfinished matter, a postgame scene, their dream |
 | [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) | **Every contradiction found**, each labelled decided, open, to confirm or to revisit, plus the defects fixed in the current game |
 | [12_ROADMAP.md](12_ROADMAP.md) | The drafted order of execution, from your feedback to the final art pass, with testing per phase |
 | [13_IDEA_REGISTER.md](13_IDEA_REGISTER.md) | Where every idea went: Astra's 60, all of Robin's, and this plan's own |
 | [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md) | ⚠ Spoilers: canon reasoning behind story decisions |
+| [../playbook/](../playbook/README.md) | Robin's playbook package of 2026-10-09: a proposed order of work (P00–P18), the book interface in full (§15A), and its review of draft 7 |
 
 ## The plan in one page
 
@@ -138,15 +141,32 @@ never deleted.
 | C-70 | Each creature numbered by its action order, targeting kept; **Unravel and Protect grow** as story moments; **modifier words** (E27); only the Hush silences, and it's always inferable |
 | C-71 | About one companion action a chapter; some found off the beaten path; never missable, since areas can be revisited |
 
+## Decided in the sixth round (2026-10-09)
+
+| # | Decision |
+|---|---|
+| C-72 to C-74 | "All fine as asked": the modifier words, no per-round ceiling, and the two growth moments in Chapters 4 and 7 |
+| The interface | Menus that look and feel like a physical book in the 2.5D world, not rectangles inside rectangles ([15_INTERFACE.md](15_INTERFACE.md)) |
+| Fonts | A new font is allowed if it is readable and fits the game's tone; embedded and offline |
+
+Your playbook also found sixteen places where draft 7 disagreed with itself. Twelve are fixed by decisions you'd
+already made, one is left to the census at the start of the work, and three come back to you below
+([11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part E).
+
 ## Still waiting for you
 
-C-68 to C-71 are decided. Three small readings of your answers are labelled **Confirm** in
-[11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A6:
+In [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) part A7:
 
-1. **C-72:** what each of your eleven modifier words does in play, and how they're learned
-   ([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E27).
-2. **C-73:** no per-round ceiling on what a group can do; your options grow instead (E22).
-3. **C-74:** Unravel reaches two in Chapter 4; Protect covers both in Chapter 7 (E27).
+1. **C-78 (open): the order of work and the first scope.** Your playbook proposes its own order (P00 to P18) and six
+   changes to this roadmap, and says nothing starts until you name a scope. Do you accept them, and what should
+   start? The natural first step is **P00**, a recorded baseline that changes nothing in the game, then **the book
+   interface proof** on Journey and Company with a type specimen, ending in one review set for you
+   ([12_ROADMAP.md](12_ROADMAP.md)).
+2. **C-75 (confirm):** a wrong first answer in a mastery exam counts like help, so a star needs fewer than 30% of
+   questions assisted or missed.
+3. **C-76 (confirm):** authored set pieces may field up to five hostile creatures (your "2-5 enemy fights"); the two
+   of you are never counted in that five.
+4. **C-77 (confirm):** Harmony keeps one technique per filled bar, as today.
 
 Also ready when you want it: **Harmony's sound** (E21), a small change to the current game.
 

@@ -1,6 +1,6 @@
 # 02 · Foundations: the engine work everything else stands on
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 These are the cross-cutting systems that several features need. Building them first keeps each later feature
 small and consistent. Every entry gives:
@@ -73,7 +73,8 @@ Loading a save must not become a way to re-roll an event.
 
 **Current state.**
 - NPC wandering already uses seeded streams (`engine/50_world.js:683-710`).
-- Creature patrols still use `Math.random` (`50_world.js:719-720`).
+- Creature patrols used `Math.random` (`50_world.js:719-720`); **fixed on 2026-10-07** (they draw from the world's
+  stream; part D of 11_CONTRADICTIONS.md, with a regression test).
 - The Atlas seeds its generation per run (`atlas/30_gen.js:32-58`).
 
 **Approach.**
@@ -306,8 +307,9 @@ Several plans contradicted written rules. Robin answered the blocking ones on 20
 | "No clock anywhere except fishing" | PRACTICE_CONTRACTS line 123 | Also opt-in timed modes in pastimes, under fishing's conditions | C-17 |
 | "Exactly two adventurers"; no operation removes the companion | spec lines 70, 290; HX52 | A story beat may separate them for a while; the same companion always returns; no one replaces them | C-12 |
 | "Defeat returns to a sensible checkpoint… without grinding" | spec line 128 | Unchanged for story dungeons; optional dungeons restart from the beginning | C-03 |
-| Battle themes rise strictly by chapter | audio rule ZM2 | Re-tiered for twelve chapters | C-22 (open) |
+| Battle themes rise strictly by chapter | audio rule ZM2 | Re-tiered for twelve chapters: one coherent score, intensity by writing | C-22 |
 | No romance wording | companionship contract; `company_bond` test | Romance wording allowed only inside scenes marked as romance moments (holding hands, a kiss; nothing explicit); jealousy and resentment stay forbidden | C-63, C-67 |
-| Replays live in Shared memories, with event-time appearance | HX53 | The Main Menu gallery uses the Continue appearance | C-20 (open) |
+| Replays live in Shared memories, with event-time appearance | HX53 | The Main Menu gallery uses the Continue appearance, behind a spoiler veil | C-20 |
+| Visuals and interfaces are code-driven | spec line 18 | Text may use one embedded, openly licensed font family (its licence recorded, offline, no web fonts); Japanese stays readable, never a pixel font | Robin, 2026-10-09 ([15_INTERFACE.md](15_INTERFACE.md)) |
 
 **Effort:** S (writing).

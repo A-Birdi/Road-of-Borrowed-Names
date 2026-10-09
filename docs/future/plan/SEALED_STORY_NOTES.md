@@ -4,7 +4,7 @@
 > depend on what happens later in the existing story. Everything a decision needs is stated in the plan in
 > spoiler-free terms. This file records only *why*.
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Sources: docs/STORY.md and src/content
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Sources: docs/STORY.md and src/content
 (read-only audit). Chapter numbers are the twelve-chapter edition's unless a note says "old".*
 
 ---

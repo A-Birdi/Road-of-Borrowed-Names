@@ -1,0 +1,23 @@
+{
+  "asset_id": "example.placeholder.not-production",
+  "status": "planned",
+  "source_requirements": [],
+  "reference_is_private": true,
+  "production_method": "single-model-authored project art definitions; supplied references are not automatically distributed",
+  "source_files": [],
+  "runtime_consumers": [],
+  "native_canvas": {"width": null, "height": null, "pixel_grid": null},
+  "anchors": {"feet": null, "neck": null, "near_shoulder": null, "hand_prop": null},
+  "materials": [],
+  "alpha_class": "binary-sprite / runtime-translucent-effect / opaque-background",
+  "pose_states": [],
+  "wardrobe_variants": [],
+  "occlusion_masks": [],
+  "region_story_states": [],
+  "reference_approval": null,
+  "runtime_visual_approval": null,
+  "source_build_identity": null,
+  "evidence": {"native_still": null, "actual_size": null, "animation": null, "effects_off": null, "mobile": null},
+  "performance": {"measured": false, "decoded_bytes": null, "cache_policy": null},
+  "known_issues": []
+}

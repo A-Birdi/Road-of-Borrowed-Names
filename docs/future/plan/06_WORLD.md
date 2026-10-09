@@ -1,6 +1,6 @@
 # 06 · The world: living towns, roads, return trips and the sea
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 ## What exists today (audit summary)
 
@@ -8,8 +8,9 @@
   - Reedwake → Saltglass → Cinder Orchard → Snowbell → Lanternfall → the Archive;
   - the side area Koharuno;
   - 91 authored maps.
-- **Fast travel** lists five town hubs (`content/00_world.js:63-68`). **Defect:** the route chart draws a
-  Cinder–Lanternfall road that cannot be walked.
+- **Fast travel** lists five town hubs (`content/00_world.js:63-68`). **Defect (fixed on 2026-10-07,
+  with a test that every charted road can be walked):** the route chart drew a Cinder–Lanternfall road that could
+  not be walked.
 - **NPCs are placed by flags.** One person may have several map entries with exclusive conditions; they walk to and
   from exits when flags change (`engine/50_world.js`). There are **no schedules or routines**, and "where someone
   was last seen" is kept only for the session.

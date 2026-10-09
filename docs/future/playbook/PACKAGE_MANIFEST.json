@@ -1,0 +1,225 @@
+{
+  "package": "The Road of Borrowed Names — single-model Expansion and Art Implementation Playbook",
+  "version": "1.2",
+  "source_date": "2026-10-08",
+  "revision_basis": "Robin permits a new font when readable and stylized for the game tone; two standard ZIPs below 30 MB each.",
+  "source_sha256": "32739ac45724fff4a76d73d2a5ccfbce40849c40f4e9712515d66b3aa4ff9796",
+  "main_pages": 84,
+  "files": [
+    {
+      "path": "EXPANSION_PLAYBOOK.html",
+      "bytes": 247860,
+      "sha256": "d1d5f5b01f3d1e98e7886efabff64b8f67aa386676e205ddb4561bd26ed8adf0"
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.md",
+      "bytes": 203829,
+      "sha256": "6c7b73bdcfec1f11c90c3cf29bd8e7e421bd8201891a01ee64990901775e45d7"
+    },
+    {
+      "path": "EXPANSION_PLAYBOOK.pdf",
+      "bytes": 18259075,
+      "sha256": "5b4f1935e6d77ab33c33763b024827412d675057c527c70b5d5ded577a856657"
+    },
+    {
+      "path": "UI_BOOK_DIRECTION_ADDENDUM.md",
+      "bytes": 31075,
+      "sha256": "9c7026a2d99d9cde936d5aed602390de63fc29bfc02061cde0be9a8a8f14e5bb"
+    },
+    {
+      "path": "VISUAL_INSPECTION_ATLAS.html",
+      "bytes": 13352,
+      "sha256": "114aa1a2527f297daec1eafec5ce08c9d38b66f50e4146823b9b6f445f12c883"
+    },
+    {
+      "path": "VISUAL_INSPECTION_ATLAS.pdf",
+      "bytes": 17372670,
+      "sha256": "1e653917064536e14a1fabd46d8ef6556c0dd0081fbdbb6302a3c8e627c0c1d2"
+    },
+    {
+      "path": "REVISION_1_1.md",
+      "bytes": 1298,
+      "sha256": "0daa146f08f454bdf304b74fc600ba4b523afada00956cc63eb961e778ed937d"
+    },
+    {
+      "path": "REVISION_1_2.md",
+      "bytes": 1200,
+      "sha256": "1197362a107db80b2b4a9ea5fa555211273fd4da04c1cb1b9dfbeef26b94651a"
+    },
+    {
+      "path": "START_HERE.md",
+      "bytes": 3802,
+      "sha256": "b961fd356f78c92bca93059b9c931ce697b23ae45b68f46bb0115331dc37b364"
+    },
+    {
+      "path": "mockups/01_reedwake_target.webp",
+      "bytes": 3205635,
+      "sha256": "e751594beeced093a1538b9640a6d633f9fa6c9b07f22a6fdaf9ad3e1d882f05"
+    },
+    {
+      "path": "mockups/02_saltglass_target.webp",
+      "bytes": 3059227,
+      "sha256": "99e0705e23c03a362f09a691d8d234b20807cbdfed32f81aeec540caf8b00d71"
+    },
+    {
+      "path": "mockups/03_path_woodland_study.webp",
+      "bytes": 1641009,
+      "sha256": "5c3433c5ff5c015037a96bdee6752114b393042367e0ffdbe2af911d919e8e3a"
+    },
+    {
+      "path": "mockups/04_path_riverside_study.webp",
+      "bytes": 1024434,
+      "sha256": "bc001642721ac7273f2221329894425a2ba72f3f20f1f00a2386b195c9b023ea"
+    },
+    {
+      "path": "mockups/05_inn_ledger_title_composite.webp",
+      "bytes": 1956321,
+      "sha256": "d9b09409aa13d1a0a4b25e5b1729a5abc254be66225fe07c6b2c25296f24a51c"
+    },
+    {
+      "path": "mockups/06_wayfarer_company_layout.webp",
+      "bytes": 476589,
+      "sha256": "87dcbb958a428f44e8b71f4be513b088d8397b9654cfd56f2b02c998ce7852bb"
+    },
+    {
+      "path": "mockups/07_battle_decision_layout.webp",
+      "bytes": 2072217,
+      "sha256": "4ed9e3a065675aa283f00774c52f3af399e96c65c9c5a31cd3ed4350b351c103"
+    },
+    {
+      "path": "mockups/08_battle_harmony_layout.webp",
+      "bytes": 1972570,
+      "sha256": "edade5eaf1cb964407d9573a537cd8d099e80b9d0df89f0c44b12ee8c55de4b2"
+    },
+    {
+      "path": "mockups/09_suzu_performance_reference.webp",
+      "bytes": 2274877,
+      "sha256": "36c81e2928f968b9f31643485340593762e8ca9dca647c47f11d400956d671c5"
+    },
+    {
+      "path": "mockups/10_compact_battle_layout.webp",
+      "bytes": 247178,
+      "sha256": "008d6503048917456903df11f9672599be4297c2c2fbf2d2de19a54c855ff0a4"
+    },
+    {
+      "path": "references/ui_company_baseline.webp",
+      "bytes": 673715,
+      "sha256": "8cd9616bf62575d7fb4823b9cdfcb3b859f3c20eeee0dc16aa104f5c464b3584"
+    },
+    {
+      "path": "references/ui_company_baseline_crop.webp",
+      "bytes": 252147,
+      "sha256": "34b4dc5b42377f1d2e1afac0c3ede1bd9cc0ea6fc1c08bd66dfb1b321fb25246"
+    },
+    {
+      "path": "references/ui_journey_baseline.webp",
+      "bytes": 680538,
+      "sha256": "daad340aa20d21e341694b52d907c34386b108eace2ee9a09d72cf6b834f16df"
+    },
+    {
+      "path": "references/ui_journey_baseline_crop.webp",
+      "bytes": 260891,
+      "sha256": "85cc97072203c1b9e7b4d976f3bd90ffcd7ee99936197c28da13a837c1b3bd91"
+    },
+    {
+      "path": "registers/document_validation.json",
+      "bytes": 1752,
+      "sha256": "4c3ed0f8fc7abca89e085cc21fc3daf07a302a6da0a3cd074e04af16d40969a5"
+    },
+    {
+      "path": "registers/feature_execution_register.csv",
+      "bytes": 45727,
+      "sha256": "d1c73d7a2b7e70f8acd978fbf4dcead57a2da44c0dd2a64183a129642c83c4ca"
+    },
+    {
+      "path": "registers/feature_execution_register.json",
+      "bytes": 301448,
+      "sha256": "64d7c1e92619523dbbd2ac1f60c6162f30a6a89d99da29d254638f36434a88cd"
+    },
+    {
+      "path": "registers/latest_decisions.json",
+      "bytes": 2055,
+      "sha256": "3d4cf989ac61c24d8addaaf6924d1173f12b4a8fab52f4005db0dc8970317e4f"
+    },
+    {
+      "path": "registers/mockup_provenance.json",
+      "bytes": 3254,
+      "sha256": "c0d3960b3c9590993c2efed5a8bfad25fb7e8ce2524514809a3010e67be44f34"
+    },
+    {
+      "path": "registers/revision_1_2_changes.json",
+      "bytes": 16806,
+      "sha256": "2b17b103d996f9c537561ba8c6f8d29a910607b181343658812d21b745ea6e68"
+    },
+    {
+      "path": "registers/revision_changes.json",
+      "bytes": 45432,
+      "sha256": "5d965487060267cff0701076b93aff9a1a9b11cc5aa20b7f23f7110f1e4eb488"
+    },
+    {
+      "path": "registers/source_feature_coverage.json",
+      "bytes": 567,
+      "sha256": "806c9cab4d9f8855f1015af9786367bae3aed9d1e1d988ea8788507818130d74"
+    },
+    {
+      "path": "registers/ui_acceptance_register.csv",
+      "bytes": 5360,
+      "sha256": "32b201ca866a8352740b43239924a384ee16abc5914f43eccca946d39b293408"
+    },
+    {
+      "path": "registers/ui_acceptance_register.json",
+      "bytes": 8705,
+      "sha256": "5e84e249f151d8611411382d20c79e7e034116bbe5207cdf3c6abf8d25f6b162"
+    },
+    {
+      "path": "source/Borrowed Names Expansion Plan.md",
+      "bytes": 387019,
+      "sha256": "32739ac45724fff4a76d73d2a5ccfbce40849c40f4e9712515d66b3aa4ff9796"
+    },
+    {
+      "path": "source/Robin_Font_Approval.md",
+      "bytes": 334,
+      "sha256": "f57a1d346a55927309735a100ff01d73891677895a422945aa1acec016c81594"
+    },
+    {
+      "path": "source/Robin_UI_Direction_and_Decision_Update.md",
+      "bytes": 1953,
+      "sha256": "9a55f19d3b023def241a39d8ede2940265753b42a2d2544560a275bb61b393eb"
+    },
+    {
+      "path": "templates/ACCEPTANCE_RECORD_TEMPLATE.md",
+      "bytes": 924,
+      "sha256": "ea11e5560f95b387fe077c091baa734069ec6dd41d3339d4e3b2af1d36e1ee18"
+    },
+    {
+      "path": "templates/ASSET_MANIFEST_TEMPLATE.json",
+      "bytes": 986,
+      "sha256": "730c1854ac00dc98a39726df42a35e8baf7a4c0213b4044c92d7fc4c6302bc10"
+    },
+    {
+      "path": "templates/DECISION_TEMPLATE.md",
+      "bytes": 519,
+      "sha256": "3a52290972d51ec488269a4d37e2353f57c2733d4d219f130904cc59c139db2c"
+    },
+    {
+      "path": "templates/CONTINUATION_PROMPT.md",
+      "bytes": 3281,
+      "sha256": "f6fb9258f36212008a210f001ff16009683528654145e8faf02ccc4f2578d4c7"
+    },
+    {
+      "path": "templates/STATE_TEMPLATE.md",
+      "bytes": 786,
+      "sha256": "e81a93a8df0912c720a3d1aadabc89e0038b99f281a0105884546eb3a12f2384"
+    },
+    {
+      "path": "templates/TASK_TEMPLATE.md",
+      "bytes": 1293,
+      "sha256": "74d8bf3a2538a6f36a996102875c26348327236ab8946e2615f345a21e65abbc"
+    },
+    {
+      "path": "templates/UI_PACKET_ACCEPTANCE_TEMPLATE.md",
+      "bytes": 1433,
+      "sha256": "b0bd859fa460d7a7b762af6f77d59288b07e571d925ad32c802b758eddab1c58"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "revision": "1.2",
+  "main_pages": 84,
+  "atlas_pages": 10,
+  "rendered_all_pages": 84,
+  "renderer": "WeasyPrint PDF generation; PyMuPDF render and text checks",
+  "text_bounds_issues": [],
+  "replacement_glyphs": 0,
+  "font_approval_pages": {
+    "Typography boundary:": [
+      3
+    ],
+    "Font-specific exception:": [
+      6
+    ],
+    "Approved font policy.": [
+      42
+    ],
+    "Typography meets the approved": [
+      44
+    ]
+  },
+  "original_visuals_and_source_preserved": [
+    "VISUAL_INSPECTION_ATLAS.html",
+    "VISUAL_INSPECTION_ATLAS.pdf",
+    "mockups/01_reedwake_target.webp",
+    "mockups/02_saltglass_target.webp",
+    "mockups/03_path_woodland_study.webp",
+    "mockups/04_path_riverside_study.webp",
+    "mockups/05_inn_ledger_title_composite.webp",
+    "mockups/06_wayfarer_company_layout.webp",
+    "mockups/07_battle_decision_layout.webp",
+    "mockups/08_battle_harmony_layout.webp",
+    "mockups/09_suzu_performance_reference.webp",
+    "mockups/10_compact_battle_layout.webp",
+    "references/ui_company_baseline.webp",
+    "references/ui_company_baseline_crop.webp",
+    "references/ui_journey_baseline.webp",
+    "references/ui_journey_baseline_crop.webp",
+    "source/Borrowed Names Expansion Plan.md",
+    "source/Robin_UI_Direction_and_Decision_Update.md"
+  ],
+  "source_snapshot_unchanged": true,
+  "font_files_packaged": false,
+  "game_implementation_or_tests_performed": false,
+  "status": "Document and packaging QA only; not game QA",
+  "visual_review": "Changed decision, typography and acceptance pages inspected at readable scale; all 84 pages rendered and text bounds checked. Original source, atlas and all reference-image bytes verified unchanged.",
+  "visual_review_pages": [
+    3,
+    42,
+    44
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "revision": "1.2",
+  "authority": "Robin, later conversation message: \"C-72, 73 and 74 are all fine as asked.\"",
+  "implementation_authorization": "Unchanged. Approval of these decisions is not blanket permission to implement or publish.",
+  "decisions": [
+    {
+      "id": "C-72",
+      "status": "APPROVED AS ASKED",
+      "source_lines": [
+        632,
+        636
+      ],
+      "scope": "Eleven modifier families and the E27 acquisition/evidence/tradeoff design exactly as asked in draft 7."
+    },
+    {
+      "id": "C-73",
+      "status": "APPROVED AS ASKED",
+      "source_lines": [
+        638,
+        640
+      ],
+      "scope": "No proposed per-round enemy-group ceiling; retained solvability, mistake caps and unrelated protections."
+    },
+    {
+      "id": "C-74",
+      "status": "APPROVED AS ASKED",
+      "source_lines": [
+        642,
+        644
+      ],
+      "scope": "Two-target Unravel in Chapter 4 and both-party Protect in Chapter 7 as story growth moments."
+    }
+  ],
+  "ui_direction": {
+    "status": "USER REQUESTED DIRECTION",
+    "scope": "Authored physical-book 2.5D menus, less nested-panel styling, deliberate English/Japanese typography. Exact implementation proposals in §15A."
+  },
+  "font_gate": {
+    "id": "UI-TYPE-01",
+    "status": "APPROVED IN PRINCIPLE — READABILITY AND TONE REQUIRED",
+    "authority": "Robin, later user instruction: \"The new font can work as long as it's readable and stylized for the tone of the game\"",
+    "scope": "A new font is permitted for the game. This supersedes only the older font-file prohibition. Single-file offline delivery and no remote dependencies remain.",
+    "family_selection": "NOT SELECTED BY THIS HANDOFF",
+    "verification": "U02: licence/provenance, actual English/Japanese/furigana specimens, enlarged text, glyph coverage, offline embedding, fallback behavior, and tone/readability review.",
+    "implementation_status": "NOT IMPLEMENTED BY THIS DOCUMENT"
+  },
+  "other_discrepancies": "D01–D16 not silently settled by approval of C-72–74."
+}

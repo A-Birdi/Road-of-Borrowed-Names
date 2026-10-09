@@ -1,6 +1,6 @@
 # 01 · Principles and guardrails
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only: nothing here is
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only: nothing here is
 authorised work until Robin selects a scope.*
 
 Everything in the later files is checked against this page. Where an idea elsewhere seems to break one of these
@@ -111,7 +111,9 @@ These come from SPECIFICATION.txt and CLAUDE.md. No expansion relaxes them.
   six-chapter edition don't continue into the twelve-chapter edition. Even then, no save is deleted or rewritten;
   old saves are handled as the spec's "incompatible saves", gracefully (line 232; details C-54). Every other
   change keeps the schema, database name, keys, slots, learning state and story.
-- No new font files, CDNs, remote assets or runtime libraries.
+- No CDNs, remote assets or runtime libraries. **A new font is allowed** (Robin, 2026-10-09: "The new font can work
+  as long as it's readable and stylized for the tone of the game"), embedded in the single file for offline play,
+  with its licence recorded ([15_INTERFACE.md](15_INTERFACE.md)).
 - **Size:** no concern below 100 MB [C-21]. Load time on the phone is measured, not capped.
 
 ## 7. How the plan is tested and built

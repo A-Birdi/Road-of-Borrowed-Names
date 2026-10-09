@@ -1,6 +1,6 @@
 # 14 · Companions: a second arc for each of the four
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only. Spoiler-safe: each
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only. Spoiler-safe: each
 companion's existing personal quest is mentioned only by chapter. The specifics of every arc below, which build on
 those quests, are in [SEALED_STORY_NOTES.md](SEALED_STORY_NOTES.md) S14.*
 

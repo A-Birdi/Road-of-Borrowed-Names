@@ -1,6 +1,7 @@
 # 11 · Contradictions and open decisions
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only. Spoiler-safe.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.
+Spoiler-safe.*
 
 Robin asked for every contradiction that hasn't been answered yet, "like the illustration book we covered", with
 ideas for covering each. That one is the model:
@@ -25,18 +26,21 @@ The register has these parts:
 - **A3. Questions raised by the second round.** All answered in the third round.
 - **A4. Questions raised by the third round.** Answered (C-67).
 - **A5. Proposals from the fourth round.** All answered (C-68 to C-71).
-- **A6. Readings of the fifth round.** **The ones waiting for you** (C-72 to C-74).
+- **A6. Readings of the fifth round.** All approved on 2026-10-09 (C-72 to C-74).
+- **A7. Questions raised by the playbook's review.** **The ones waiting for you** (C-75 to C-78).
 - **B. Tensions this plan resolves.** Please confirm or overrule; some answered, the rest still open.
 - **C. Already resolved.** Recorded so nobody reopens them by accident.
 - **D. Defects found by the audit.** All fixed on 2026-10-07.
+- **E. The playbook's review of draft 7 (D01–D16).** Each resolved, or labelled with its question in A7.
 
 ## Still waiting for you (at a glance)
 
 | # | Question | Label |
 |---|---|---|
-| [C-72](#c-72--modifier-words-what-each-family-does) | Modifier words: what each of the eleven does, and how they're learned | **Confirm** |
-| [C-73](#c-73--no-per-round-ceiling-on-what-a-group-can-do) | No per-round ceiling on what a group can do | **Confirm** |
-| [C-74](#c-74--where-the-two-growth-moments-fall) | Unravel reaches two in Chapter 4; Protect covers both in Chapter 7 | **Confirm** |
+| [C-78](#c-78--the-playbooks-order-of-work-and-the-first-scope) | The playbook's order of work, and which part to start | **Open** |
+| [C-75](#c-75--how-a-wrong-first-answer-counts-towards-a-star) | A wrong first answer counts like help towards a star | **Confirm** |
+| [C-76](#c-76--five-hostile-creatures-in-authored-set-pieces) | Up to five hostile creatures in authored set pieces | **Confirm** |
+| [C-77](#c-77--harmony-one-technique-per-filled-bar) | Harmony keeps one technique per filled bar | **Confirm** |
 
 ---
 
@@ -352,10 +356,10 @@ the story, their arcs, notable creatures and secret encounters), some actions gr
 piling up, at most six offered in a battle, and the curve test still guarding the language work. Notable creatures
 are never placed where an area closes for good.
 
-## A6. Readings of the fifth round (to confirm)
+## A6. Readings of the fifth round (all approved 2026-10-09)
 
 ### C-72 · Modifier words: what each family does
-**Confirm.** [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E27 gives each of your eleven words a role that follows its real
+**Decided.** Robin: "You can note that C-72, 73 and 74 are all fine as asked." As asked: [03_ENCOUNTERS.md](03_ENCOUNTERS.md) E27 gives each of your eleven words a role that follows its real
 meaning: *breadth* (すべて), *completeness on one* (全部), *every kind* (あらゆる), *the group as one* (全体), *each its
 own* (それぞれ), *in turn* (ごとに), *two of your choice* (いくつか), *all but one* (大半), *more on one* (たくさん),
 *lasting* (永遠に) and *no limit, this round* (無限に). Each is a trade, never a plain upgrade. Only natural phrases
@@ -364,15 +368,56 @@ modifier and its particle while the rest is shown. Six are taught by the new cha
 the beaten path (the last two in the Trials).
 
 ### C-73 · No per-round ceiling on what a group can do
-**Confirm.** Draft 6 proposed capping what a group could take from you in one round. Your "without restricting what
+**Decided** (as asked). This does not touch the cap on what language mistakes cost, Relaxed's guarantees or any other
+protection. Draft 6 proposed capping what a group could take from you in one round. Your "without restricting what
 the enemies can do" reads to me as dropping it: groups are met by your growing tools (modifiers, companions' growth,
 party-wide responses), while the curve test still guarantees every encounter can be won, at every setting, and with
 Unravel alone.
 
 ### C-74 · Where the two growth moments fall
-**Confirm.** **Unravel reaches two** (いくつか) in Chapter 4, after the city's crowded fights; **Protect covers both**
+**Decided** (as asked). **Unravel reaches two** (いくつか) in Chapter 4, after the city's crowded fights; **Protect covers both**
 (すべて) in Chapter 7, on the Keepers' Road, where the keepers' old practice teaches it after a moment when a ward
 before one of you was not enough. Each is a scene, not a pop-up.
+
+## A7. Questions raised by the playbook's review (2026-10-09)
+
+Robin's package of 2026-10-09 ([../playbook/](../playbook/README.md)) reviewed draft 7 and found sixteen places where
+the plan disagreed with itself (part E). Most are settled by decisions Robin has already made. These four are not.
+
+### C-78 · The playbook's order of work, and the first scope
+**Open.** The playbook proposes an order (P00 to P18) and six changes to this plan's roadmap
+([12_ROADMAP.md](12_ROADMAP.md), "The playbook's proposed order"):
+- **A01:** prove the visual method early (the book interface and a Reedwake presentation proof, P01), before new
+  regions are built on it;
+- **A02, A03:** settle animation conventions early, and make interim art in the final format;
+- **A04:** treat the twelve chapters' "edition ships" as an internal milestone; release only the whole expansion,
+  with its postgame and art;
+- **A05:** language and performance review all the way through, not only at the end;
+- **A06:** one implementation model writing at a time, with no parallel writers and no second model.
+
+The playbook itself says it authorises nothing until you name a scope. **The question:** do you accept these six,
+and which part should start? The natural first scope is **P00** (a recorded baseline: the census of screens,
+controls, content and assets, with no change to the game) and then **P01's interface proof** (U01 and U02: the book
+on Journey and Company, and a type specimen), which ends in one review set for you.
+
+### C-75 · How a wrong first answer counts towards a star
+**Confirm.** Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
+*wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
+answer counts like help, so the star needs fewer than 30% of questions to be assisted *or* missed. In ten questions,
+two may be either; three can't. Retakes give fresh versions of just those questions; the whole exam stays the
+measure.
+
+### C-76 · Five hostile creatures in authored set pieces
+**Confirm.** E12 allowed "up to five actors" but only three hostile at once outside a boss's summons, and never said
+whether the player and companion counted (D05). Your C-70 answer spoke of "the harder 2-5 enemy fights". Proposed:
+the five counts only the creatures' side (never the two of you), and authored set pieces may field up to five hostile
+creatures; ordinary roaming encounters stay at three or fewer
+([03_ENCOUNTERS.md](03_ENCOUNTERS.md) E12).
+
+### C-77 · Harmony: one technique per filled bar
+**Confirm.** The question of one technique per filled bar (today) or capped charges per encounter has been open since
+before the expansion (E18; D16). The plan recommends keeping today's behaviour: one technique when the bar is full.
+The playbook does the same until you say otherwise.
 
 ---
 
@@ -464,6 +509,11 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Silencing | Only Hush or Hush-adjacent creatures; never the player; always inferable | C-70 |
 | Growth | Unravel reaches two and Protect covers both, as story moments; modifier words extend reach | C-70 |
 | Companion actions | About one a chapter; some found off the beaten path, never missable | C-71 |
+| Modifier words | Eleven, each a trade; natural phrases only; six taught by the story, five found | C-72 |
+| Group pressure | No per-round ceiling; the player's tools grow instead | C-73 |
+| Growth moments | Unravel reaches two in Chapter 4; Protect covers both in Chapter 7 | C-74 |
+| The interface | An authored travel book, not nested panels; text stays flat and readable | Robin, 2026-10-09; [15_INTERFACE.md](15_INTERFACE.md) |
+| Fonts | A new font is allowed if readable and in the game's tone; embedded, offline, licence recorded | Robin, 2026-10-09 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |
@@ -504,3 +554,27 @@ that fails on the old code and passes on the new: `tests/unit/audit_fixes.test.m
 | The route chart drew a Cinder–Lanternfall road that can't be walked | `content/00_world.js` | A road on the chart that doesn't exist | Removed; a test now checks every chart road can be walked | **Fixed** |
 | Creature patrols used `Math.random`, the language tasks' stream | `engine/50_world.js` | A creature's wandering could change which question came next | Patrols use the world's own seeded stream, as people already did | **Fixed** |
 | Ordering validation never checked `alts` | `tools/validate.mjs` | An authored alternative could be unreachable | Checked now. It found one: an Intermediate ordering drill whose alternative used a tile the drill didn't have. The alternative became an explanation shown after the answer | **Fixed** |
+
+## E. The playbook's review of draft 7 (2026-10-09)
+
+The playbook (§03) listed sixteen places where draft 7 contradicted itself or was unclear. Each is settled below by
+a decision already made, or labelled with its question in part A7. **Status** is what draft 8 did.
+
+| # | What disagreed | Settled by | Status |
+|---|---|---|---|
+| D01 | "If approved" or "(open)" left on things already decided (spacing by days, C-54's old-save path, C-20, C-22) | C-20, C-22, C-36, C-54 | **Fixed** in 12_ROADMAP and 02_FOUNDATIONS S8 |
+| D02 | The stamp book offered a stamp for a first mastery star; L3 says stars unlock nothing | C-13 | **Fixed**: no star stamps (K1) |
+| D03 | The stamp book offered stamps for playing festival games; festival games keep personal records only | C-55 | **Fixed**: none from festival games; the festival itself is a story stamp (K1) |
+| D04 | E12 said the Harmony portrait could vanish with five actors; Robin accepts the cut-in overlapping creatures | C-42 | **Fixed**: never dropped by actor count (E12) |
+| D05 | "Up to five actors": did the player and companion count, and could all five be hostile? | Proposed reading of C-70 | **C-76** to confirm |
+| D06 | "Winnable with Unravel alone" beside a Hush that silences Unravel | Today's rule, written out | **Fixed**: the exact form in E26; the curve test reports both cases |
+| D07 | How a wrong first answer counts towards a star | Proposed | **C-75** to confirm |
+| D08 | Generated expeditions fix their learning content at entry; the Atlas keeps adapting its practice | C-57 | **Fixed**: the Atlas named as the exception (D1) |
+| D09 | The travel volume still said ten chapters and 60–70 pages | C-01, C-68 | **Fixed**: twelve chapters, arc illustrations added, an exact manifest instead of an estimate (K2) |
+| D10 | Chapter Journey, a proposal, carried keepsakes, which New Game+ no longer does | C-66 | **Fixed**: it carries what New Game+ carries, and stays out of scope unless asked for (K6) |
+| D11 | "Persistent lantern oil" in the Hall, and a delver meeting listed among a wing's ten trials | D2's stationed resources | **Fixed**: stationed resources only; a delver meeting is never one of the ten (R5, D9) |
+| D12 | Older "current state" passages still described the audit's eight defects as broken | Part D | **Fixed**: marked fixed where they appear (02, 05, 06) |
+| D13 | An older Manybridge paragraph said Suzu's troupe could be met there; her arc meets them in Steamhollow | C-68 | **Fixed** (R1) |
+| D14 | Counts and estimates (creatures, roads, side quests) don't all add up | — | **At P00**: a census of what really exists sets each region's list; estimates are not quotas |
+| D15 | New Game+ keeps appearance, but not equipment or keepsakes | C-54, C-66 | **Fixed**: the look chosen at creation carries; anything worn that was earned or found does not (K9) |
+| D16 | Harmony: one technique, or charges, still open | — | **C-77** to confirm |

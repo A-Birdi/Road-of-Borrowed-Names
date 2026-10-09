@@ -1,6 +1,6 @@
 # 13 · Idea register: where every idea went
 
-*Expansion plan, draft 7 (2026-10-08, after Robin's fifth round of answers). Planning only.*
+*Expansion plan, draft 8 (2026-10-09, after Robin's sixth round of answers and the playbook). Planning only.*
 
 Robin asked to "leave nothing unaccounted for." This register traces every idea in the consultation to a plan
 item, or records why it was excluded or folded into another. Statuses:
@@ -283,7 +283,7 @@ item, or records why it was excluded or folded into another. Statuses:
 | About 1–3 hours per chapter | 10_STORY §11 | Planned |
 | Main Menu illustrations show the Continue save's effects | K4 | Planned |
 | Harmony's sound: a shared arrival, an accent per companion, none on Instant | E21 | Planned (Phase 1) |
-| How groups scale; numbered turns; Protect's wider form | E22 | Planned (C-70, decided; the ceiling dropped, C-73) |
+| How groups scale; numbered turns; Protect's wider form | E22 | Planned (C-70; the ceiling dropped, C-73; both decided) |
 | More creature kinds in every region | E23 | Planned |
 | Reasons to fight roaming creatures | E24 | Planned (C-69, decided) |
 | Companions growing in battle; learning from creatures | E25 | Planned (C-71, decided) |
@@ -295,10 +295,21 @@ item, or records why it was excluded or folded into another. Statuses:
 |---|---|---|
 | Nao, Mio and Ren fleshed out to Suzu's depth, by my judgement | 14_COMPANIONS §4, S14 | Planned (C-68) |
 | Each creature numbered by its action order; targeting kept | E22 | Planned (C-70) |
-| Unravel reaching up to two creatures after a point in the story | E27 | Planned (C-74 to confirm) |
-| Protect covering both, as a meaningful moment of growth | E27 | Planned (C-74 to confirm) |
-| Modifier words in battle and the overworld, as target extensions | E27 | Planned (C-72 to confirm) |
-| Words that read alike but behave differently (Robin's four families) | E27 | Planned (C-72 to confirm) |
-| Options for the player rather than limits on the enemies | E22 | Planned (C-73 to confirm) |
+| Unravel reaching up to two creatures after a point in the story | E27 | Planned (C-74, decided) |
+| Protect covering both, as a meaningful moment of growth | E27 | Planned (C-74, decided) |
+| Modifier words in battle and the overworld, as target extensions | E27 | Planned (C-72, decided) |
+| Words that read alike but behave differently (Robin's four families) | E27 | Planned (C-72, decided) |
+| Options for the player rather than limits on the enemies | E22 | Planned (C-73, decided) |
 | Only Hush or Hush-adjacent creatures silence, never the player; always inferable | E26 | Planned |
 | Companion tools found off the beaten path; never FOMO, areas revisitable | E25 | Planned |
+
+## 11. Robin's sixth round and the playbook (2026-10-09)
+
+| Idea | Plan item | Status |
+|---|---|---|
+| Menus that feel like a physical book in the 2.5D world, not rectangles inside rectangles | 15_INTERFACE; playbook §15A | Planned (order: C-78) |
+| A "pop-up / skewed book angle", mixed with physically opening a book | 15_INTERFACE §3 | Planned: depth in the cover and edges, text kept flat |
+| A unique font, readable and in the game's tone | 15_INTERFACE §5 | Allowed; chosen from a specimen of real game text |
+| Clearer direction for text boxes and menus | 15_INTERFACE §3; playbook UI-01 to UI-12 | Planned |
+| The playbook's order: visual proof first, art pass last, one writer at a time | 12_ROADMAP, "The playbook's proposed order" | **C-78** (open) |
+| A twenty-check acceptance list for the interface | Playbook UI-A01 to UI-A20 | Planned |
