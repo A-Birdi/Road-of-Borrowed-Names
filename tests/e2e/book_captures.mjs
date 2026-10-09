@@ -72,11 +72,10 @@ for (const v of VIEWS) {
   if (v.mobile) { await journeyQuest(p); await webp(p, [await p.screenshot()], v.tag + '_journey_quest.webp'); }
   await open(p, 'company');
   await webp(p, [await p.screenshot()], v.tag + '_company.webp');
-  if (v.mobile) {
-    await p.evaluate(() => { const l = document.querySelector('.folio:not(.closing) .leaf'); if (l) l.scrollTop = l.scrollHeight; });
-    await p.waitForTimeout(100);
-    await webp(p, [await p.screenshot()], v.tag + '_company_end.webp');
-  }
+  // further down the same pages (the reference notes and records)
+  await p.evaluate(() => { for (const l of document.querySelectorAll('.folio:not(.closing) .leaf')) l.scrollTop = l.scrollHeight; });
+  await p.waitForTimeout(100);
+  await webp(p, [await p.screenshot()], v.tag + '_company_end.webp');
   await p.evaluate(() => RB.ui.menu.close());
   if (v.tag === 'desktop' || v.tag === 'phone') {
     await p.evaluate(() => {

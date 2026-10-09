@@ -137,3 +137,66 @@ Firefox and the foldable are **not measured** (not available here).
 - **Noticed, not changed** (existing behaviour, unrelated to the book): a press within the last reveal step of a
   dialogue line (at most 0.18 s after its last word appears) completes the line instead of advancing it.
 - **Next:** U02 (the type roles and the specimen), then the review set.
+
+## Review round 2 (2026-10-09)
+
+**Robin, on the first review set:** "I'll say that the tabs at the top were fine, it's more of the inner layout that
+needed some proper style and organization - sorry for the mixup".
+
+**The tabs.** The fore-edge column of bookmarks is gone, and so is the code behind it (the tab rail's vertical mode
+and the book's column breakpoint). The book now uses the classic folio's own tabs, in their own look, across the top
+at every width, with the amber bookmark on the open section. Only on phones are they compacted, with the icon above
+the word, so all five fit in one row with no scroll arrows (the classic row needed arrows at 375 px).
+
+**Journey, reorganised:**
+- **The left page is an itinerary.** Each request shows its kind, its Japanese title, and its English title on its
+  own line beneath.
+  - On a two-page spread the step is no longer repeated in the list; the facing page holds it.
+  - On one page (phones) the step stays under its title, smaller and quieter.
+- **The right page is one request in four groups:**
+  - **What to do now**, the page's main text;
+  - **The way there:** Following and its directions together, under one heading;
+  - **Need a nudge?:** the slip;
+  - **Earlier on this road:** quieter.
+- **One label voice:** every section label on both pages is set the same way (small capitals in the display face,
+  counts in italic beside them), replacing four different label styles.
+
+**Company, reorganised:**
+- **Who is travelling:** the summary line ("Suzu, Travelling performer · Samson, Cat") moves into the running head,
+  "Robin & Suzu, with Samson · 3:27". It is no longer repeated above the page's own tabs.
+- **The left page leads with Suzu:** her portrait, name and bond (its Japanese under its English, no longer broken
+  across lines), then her thought, larger, as a quotation, then what you know.
+- **How Suzu speaks:** asking her and the Standard/Kansai-ben choice now sit together under one heading. The talk
+  menu keeps the conversations.
+- **Reference notes:** rest-stop topics and her turn in battle are set quieter than the conversation menu above
+  them.
+- **The word game's records** are a ruled table on the page (a ruled list on phones), no longer boxes inside an
+  amber-edged box. An opened detail (her own road, a case) is marked with the same ink margin line as the other
+  notes.
+- **Fixed:** the book's flat buttons had turned the disabled primary button ("Play shiritori") into near-invisible
+  pale text. The primary button keeps its ink fill, and when unavailable it is a dashed outline, as in the classic
+  folio.
+- **Pronouns:** the page said "Ask what's on their mind", and for her own road "until they decide it", about Suzu,
+  who is she/her. The Company page now uses each companion's canon pronouns in its own sentences (Nao and Ren
+  they/them, Mio and Suzu she/her), in the classic folio too.
+
+Every control and action is unchanged. The parity test now compares each control's words as written, because the
+itinerary deliberately shows a request's step only on the facing page.
+
+**Checks:**
+- B `node tests/e2e/book.mjs`: **15/0**.
+- The bookmark-column test is replaced by a top-tabs test:
+  - at 1440, 1024 and 820 px the tabs stand above the page in one row, clear of Close, with the ribbon, and no
+    scroll arrows;
+  - Left and Right move along them; Up and Down don't, as in the classic folio.
+- A new check covers the organisation:
+  - a step is said once on a spread;
+  - each English title is on its own line;
+  - Following, then its directions, under "The way there";
+  - the running head names Samson;
+  - Company's summary line isn't shown;
+  - asking Suzu sits with the choice and not in the talk menu, and asking her from there still changes how she
+    speaks.
+- Captures: `docs/screenshots/book/r2/` (`node tests/e2e/book_captures.mjs docs/screenshots/book/r2`).
+- Unit suite 27,450/0, Company unit tests 268/0 after the pronoun fix, and the related browser suites all pass:
+  VALIDATION.md "Review round 2".

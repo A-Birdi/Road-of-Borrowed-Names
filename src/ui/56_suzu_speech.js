@@ -129,10 +129,11 @@ RB.ui.suzuSpeech = (function () {
   }
 
   // ---- Company › Suzu: in "Talk with Suzu" -----------------------------------------------------------------
-  function companyHtml() {
+  // (between, optional: html placed under the heading, before the choice: the book puts "ask her" there)
+  function companyHtml(s, between) {
     const v = value();
     const b = (val, label, jp) => '<button type="button" class="pbtn speech-btn" role="radio" aria-checked="' + (v === val) + '" data-suzu-speech-set="' + val + '">' + (v === val ? I('done') : '') + '<span>' + label + '</span> <span class="jp" lang="ja">' + ruby(jp) + '</span></button>';
-    return '<section class="co-speech" aria-labelledby="co-speech-h"><h5 id="co-speech-h">How Suzu speaks</h5>' +
+    return '<section class="co-speech" aria-labelledby="co-speech-h"><h5 id="co-speech-h">How Suzu speaks</h5>' + (between || '') +
       '<div class="row-acts" role="radiogroup" aria-labelledby="co-speech-h">' + b('standard', 'Standard Japanese', '{標準語|ひょうじゅんご}') + b('kansai', 'Kansai-ben', '{関西弁|かんさいべん}') + '</div>' +
       '<p class="muted small">Kansai-ben is a regional dialect (Osaka, Kyoto). Word help explains it; if it is hard to follow, switch back any time.</p></section>';
   }

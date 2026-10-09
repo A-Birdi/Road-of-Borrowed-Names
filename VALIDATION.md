@@ -3482,3 +3482,39 @@ JSON block, and made into fonts by `src/ui/13_booktype.js` only when the preview
 
 **Not verified:** Firefox; the foldable; text inputs in the new type (not on Journey or Company); Robin's visual
 judgement.
+
+## Review round 2 (2026-10-09; Robin: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization"; U01_BOOK.md "Review round 2"; REQUIREMENTS.md BK3, BK10)
+
+**Changes:**
+- **Tabs:**
+  - `src/ui/12_folio.js` and `src/ui/50_menu.js`: the tab rail's vertical mode and the book's column breakpoint
+    removed;
+  - `src/styles/90_book.css`: the classic tabs across the top at every width, compacted on phones.
+- **Journey:**
+  - itinerary entries: the title over its English, and the step not repeated on a two-page spread;
+  - the request page grouped, with "The way there" added in `src/ui/50_menu.js` (book only);
+  - one label style throughout.
+- **Company:**
+  - the summary line folded into the running head (`src/ui/50_menu.js`);
+  - asking Suzu sits with the speech choice (`src/ui/53_company_pages.js`, `src/ui/56_suzu_speech.js`, book only);
+  - her words larger; reference notes quieter; records as a ruled table;
+  - the disabled primary button readable again;
+  - a first version of that button fix gave the generic button rule a higher specificity, which boxed the talk menu's
+    rows. Caught in the captures, fixed, and the book suite rerun.
+- **Pronouns:** the Company page now uses each companion's canon pronouns in its own sentences, in the classic folio
+  too (`src/ui/53_company_pages.js`). It said "Ask what's on their mind" and "until they decide it" for Suzu and Mio,
+  who are she/her.
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/book.mjs`: **15/0** on the final build.
+  - Replacing the bookmark-column test, the top-tabs test checks 1440, 1024 and 820 px.
+  - A new test checks the organisation and Suzu's pronoun in the talk menu.
+  - The parity test now compares controls' words as written, since the itinerary hides a step it shows on the facing
+    page.
+- U `node tests/run-unit.mjs`: **27,450/0** on round 2 before the pronoun fix, then
+  `node tests/run-unit.mjs compan` **268/0** after it.
+- B `folio`, `quest_guide`, `settings`, `ui` (14/0), `company`, `company_pets`: all pass on round 2 before the
+  pronoun fix; `company` and `company_pets` pass again on the final build.
+- B `node tests/e2e/book_captures.mjs docs/screenshots/book/r2`: 28 captures, reviewed by eye by the lead.
+
+**Not verified:** Firefox; the foldable; Robin's visual judgement of round 2.

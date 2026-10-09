@@ -530,13 +530,14 @@ Each fix has a check that fails on the previous source and passes now: U `tests/
 A preview behind a setting; the classic folio stays the default. B `tests/e2e/book.mjs` 13/0; U `next_line_once`.
 - [v] BK1 The classic folio is the default and unchanged; the preview is a display setting (not in the save) and restyles an open Ledger. B book 1, 8.
 - [v] BK2 The book offers exactly the classic folio's controls and actions on Journey and Company. B book 2.
-- [v] BK3 Bookmarks: a column on wide screens (Up/Down move), a row below 980 px (Left/Right); on phones at 375, 344 and 320 px all five fit in one row. B book 3, 9–11.
+- [v] BK3 The section tabs sit across the top at every width in the classic folio's look (Robin, review round 1: "the tabs at the top were fine"); Left/Right move along them; on phones at 375, 344 and 320 px all five fit in one row. B book 3, 9–11. (Round 1's fore-edge column was removed.)
 - [v] BK4 Opening, turning, restyling and closing never change the journey. B book 4.
 - [v] BK5 The reading plane is flat at rest; reduced motion runs no animation; flat draws no texture or depth. B book 5, 6.
 - [v] BK6 Closing hands the world back at once; the closing image shows its pages, can't be used and is gone in 0.23 s; reopening works. B book 7.
 - [v] BK7 The Journey's "Next" names each destination once (person and doorway strip to the same scene are one), in the classic folio too. U next_line_once (every quest step); B book 12.
 - [v] BK8 The dialogue strip keeps its speaker and its manual Next. B book 13.
-- [ ] BK9 Robin's visual acceptance (the U01/U02 review set). H.
+- [v] BK10 The inner pages are organised (Robin, review round 1): Journey's itinerary of titles with each step said once on a spread; the request page in groups (what to do now; the way there; a nudge; earlier steps); one label voice; Company leads with Suzu and her words, the speech choice and its asking together, who travels in the running head, records as a ruled table. B book 12 (organisation) and 2 (control parity).
+- [ ] BK9 Robin's visual acceptance (the U01/U02 review set, round 2). H.
 
 ## The book's type, U02 (Robin's C-78 and font permission of 2026-10-09; docs/future/work/U02_TYPE.md; data/fonts/README.md; VALIDATION.md "The type, U02")
 Only the preview uses these fonts; the classic folio makes none of them. B `tests/e2e/book.mjs` 14/0; U `book_type` 60/0; B `tests/e2e/type_specimen.mjs`.

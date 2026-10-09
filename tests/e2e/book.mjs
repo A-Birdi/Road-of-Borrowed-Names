@@ -3,13 +3,15 @@
 // Robin's save (Saltglass, Suzu, Samson the cat, the main road followed):
 //  - the classic folio stays the default and keeps its behaviour;
 //  - the book offers exactly the classic folio's controls and actions on Journey and Company (UI-A04);
-//  - bookmarks stand in a column on wide screens and a row on narrow ones, and the arrow keys move along them (UI-A03);
+//  - the section tabs sit across the top at every width, in the classic folio's look (Robin, 2026-10-09) (UI-A03);
 //  - opening, turning sections and pages, restyling and closing never change the journey (UI-A12, UI-A19);
 //  - text and controls rest on a flat plane: no transform on the leaves or their contents at rest (UI-A02);
 //  - reduced motion runs no animation; flat draws no texture (UI-A02, UI-A12);
 //  - closing hands the world back at once; the closing book shows its pages, cannot be used and is gone in moments;
 //  - Settings switches the Ledger's look while it is open;
-//  - phones: one leaf, no sideways scrolling, the five bookmarks in view (UI-A15);
+//  - phones: one leaf, no sideways scrolling, all five tabs in one row (UI-A15);
+//  - the inner pages are organised: a step is read once on a spread, following and its directions are one group,
+//    who travels is in the running head, and Suzu's speech (asking and choosing) is one group (Robin, 2026-10-09);
 //  - the Journey's "Next" says one destination once (UI-A06);
 //  - the dialogue strip keeps its speaker and its manual Next (UI-A13);
 //  - the preview's type: each role in its embedded face, nothing fetched, and the classic folio makes none (UI-A11).
@@ -44,7 +46,9 @@ const ACTIONS = () => {
     if (el.dataset.i !== undefined) { words++; continue; }
     if (el.closest('.rail-arrow') || el.classList.contains('rail-arrow')) continue; // the rail's scroll arrows are layout, not actions
     const data = [...el.attributes].filter((a) => a.name.startsWith('data-')).map((a) => a.name + '=' + a.value).sort().join(' ');
-    out.push(el.tagName.toLowerCase() + '|' + data + '|' + (el.innerText || '').replace(/\s+/g, ' ').trim());
+    // its words as written, not as laid out: the book's itinerary shows a request's title and leaves its step to the
+    // facing page, but the control and its words are the same
+    out.push(el.tagName.toLowerCase() + '|' + data + '|' + (el.textContent || '').replace(/\s+/g, ' ').trim());
   }
   return { list: out.sort(), words: document.querySelectorAll('.folio:not(.closing) [data-i]').length };
 };
@@ -62,8 +66,8 @@ await test('the classic folio is the default and keeps its behaviour', async () 
   assert(def === 'classic', 'default ledgerStyle: ' + def);
   await p.evaluate(FIXTURE, null);
   await open(p, 'journal');
-  const o = await p.evaluate(() => ({ book: !!document.querySelector('.folio.book'), ui: document.body.classList.contains('book-ui'), orient: document.querySelector('.tabrail').getAttribute('aria-orientation') }));
-  assert(!o.book && !o.ui && o.orient === 'horizontal', 'classic: ' + JSON.stringify(o));
+  const o = await p.evaluate(() => ({ book: !!document.querySelector('.folio.book'), ui: document.body.classList.contains('book-ui') }));
+  assert(!o.book && !o.ui, 'classic: ' + JSON.stringify(o));
   // Up/Down on a classic tab do nothing (only Left/Right move, as before)
   await p.focus('.ptab[aria-selected="true"]');
   await p.keyboard.press('ArrowDown');
@@ -93,33 +97,33 @@ await test('the book offers exactly the classic folio\'s controls and actions (J
   await ctx.close();
 });
 
-await test('bookmarks: a column on wide screens, a row on narrow ones; the arrow keys move along them', async () => {
+await test('the section tabs sit across the top at every width, as in the classic folio; Left and Right move along them', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
   await p.evaluate(FIXTURE, 'book');
   await open(p, 'journal');
-  await p.waitForTimeout(400);
-  assert(await p.evaluate(() => document.querySelector('.folio.book .tabrail').getAttribute('aria-orientation')) === 'vertical', 'column at 1440');
-  await p.focus('.ptab[aria-selected="true"]');
-  await p.keyboard.press('ArrowDown');
-  let sel = await p.evaluate(() => document.querySelector('.ptab[aria-selected="true"]').dataset.id);
-  assert(sel === 'words', 'ArrowDown → words: ' + sel);
-  await p.keyboard.press('ArrowUp');
-  sel = await p.evaluate(() => document.querySelector('.ptab[aria-selected="true"]').dataset.id);
-  assert(sel === 'journey', 'ArrowUp → journey: ' + sel);
-  // no edge arrows on the column; the bookmarks stand outside the pages, beside them
-  const geo = await p.evaluate(() => {
-    const rail = document.querySelector('.tabrail-wrap'), pages = document.querySelector('.folio.book .leafbox').getBoundingClientRect();
-    const tabs = [...document.querySelectorAll('.ptab')].map((t) => t.getBoundingClientRect());
-    return { over: rail.classList.contains('overflowing'), right: tabs.every((r) => r.left >= pages.right - 30 && r.right <= innerWidth), visible: tabs.every((r) => r.width > 60 && r.height >= 44) };
-  });
-  assert(!geo.over && geo.right && geo.visible, 'column geometry: ' + JSON.stringify(geo));
-  await p.setViewportSize({ width: 820, height: 900 });
-  await p.waitForTimeout(400);
-  assert(await p.evaluate(() => document.querySelector('.folio.book .tabrail').getAttribute('aria-orientation')) === 'horizontal', 'row at 820');
+  for (const w of [1440, 1024, 820]) {
+    await p.setViewportSize({ width: w, height: 900 });
+    await p.waitForTimeout(400);
+    const geo = await p.evaluate(() => {
+      const pages = document.querySelector('.folio.book .leafbox').getBoundingClientRect();
+      const tabs = [...document.querySelectorAll('.folio.book .ptab')].map((t) => t.getBoundingClientRect());
+      const close = document.querySelector('[data-folio-close]').getBoundingClientRect();
+      return {
+        // standing above the page, their feet tucked under its edge as in the classic folio
+        above: tabs.every((r) => r.top < pages.top - 24 && r.bottom <= pages.top + 12), oneRow: tabs.every((r) => Math.abs(r.top - tabs[0].top) < 10),
+        over: document.querySelector('.tabrail-wrap').classList.contains('overflowing'),
+        clear: tabs.every((r) => r.right <= close.left || r.top >= close.bottom), ribbon: !!document.querySelector('.folio.book .tabrail .ribbon') && getComputedStyle(document.querySelector('.folio.book .tabrail .ribbon')).display !== 'none',
+      };
+    });
+    assert(geo.above && geo.oneRow && !geo.over && geo.clear && geo.ribbon, 'tabs at ' + w + ': ' + JSON.stringify(geo));
+  }
   await p.focus('.ptab[aria-selected="true"]');
   await p.keyboard.press('ArrowRight');
+  let sel = await p.evaluate(() => document.querySelector('.ptab[aria-selected="true"]').dataset.id);
+  assert(sel === 'words', 'ArrowRight → words: ' + sel);
+  await p.keyboard.press('ArrowDown');
   sel = await p.evaluate(() => document.querySelector('.ptab[aria-selected="true"]').dataset.id);
-  assert(sel === 'words', 'ArrowRight in a row → words: ' + sel);
+  assert(sel === 'words', 'ArrowDown does nothing on a row of tabs (as in the classic folio): ' + sel);
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
@@ -229,7 +233,7 @@ await test('Settings switches the Ledger\'s look while it is open', async () => 
 });
 
 for (const [w, h] of [[375, 667], [344, 882], [320, 640]]) {
-  await test('phone ' + w + '×' + h + ': one leaf, no sideways scrolling, all five bookmarks in one row', async () => {
+  await test('phone ' + w + '×' + h + ': one leaf, no sideways scrolling, all five tabs in one row', async () => {
     const { p, errors, ctx } = await page(b, url, { viewport: { width: w, height: h }, mobile: true, touch: true });
     await p.evaluate(FIXTURE, 'book');
     for (const sec of ['journal', 'companion']) {
@@ -237,12 +241,12 @@ for (const [w, h] of [[375, 667], [344, 882], [320, 640]]) {
       await settle(p);
       const o = await p.evaluate(() => ({
         sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth,
-        leafB: getComputedStyle(document.querySelector('.leaf-b')).display, orient: document.querySelector('.tabrail').getAttribute('aria-orientation'),
+        leafB: getComputedStyle(document.querySelector('.leaf-b')).display,
         over: document.querySelector('.tabrail-wrap').classList.contains('overflowing'),
         head: (document.querySelector('.bk-runhead .bk-meta') || {}).textContent || '',
         close: (() => { const r = document.querySelector('[data-folio-close]').getBoundingClientRect(); return r.right <= innerWidth && r.top >= 0 && r.height >= 44; })(),
       }));
-      assert(o.sw <= o.cw && o.leafB === 'none' && o.orient === 'horizontal' && o.close, sec + ': ' + JSON.stringify(o));
+      assert(o.sw <= o.cw && o.leafB === 'none' && o.close, sec + ': ' + JSON.stringify(o));
       assert(/Robin/.test(o.head), sec + ': the running head carries who and how long: ' + o.head);
       assert(!o.over, sec + ': the five bookmarks fit without scrolling at ' + w);
     }
@@ -250,6 +254,54 @@ for (const [w, h] of [[375, 667], [344, 882], [320, 640]]) {
     await ctx.close();
   });
 }
+
+await test('the inner pages are organised: each thing said once, related things together', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  await p.evaluate(FIXTURE, 'book');
+  await open(p, 'journal');
+  await settle(p);
+  const j = await p.evaluate(() => {
+    const vis = (e) => !!e && getComputedStyle(e).display !== 'none' && e.getClientRects().length > 0;
+    const step = document.querySelector('.folio.book .qdetail .obj');
+    const stepText = step ? step.querySelector('.en').textContent : '';
+    const shown = [...document.querySelectorAll('.folio.book .obj')].filter((e) => vis(e) && e.querySelector('.en') && e.querySelector('.en').textContent === stepText).length;
+    const titles = [...document.querySelectorAll('.folio.book .leaf:first-child button.entry .t > .en')].map((e) => getComputedStyle(e).display);
+    const way = document.querySelector('.folio.book .qdetail .qway');
+    const follow = document.querySelector('.folio.book .qdetail [data-follow]');
+    const next = document.querySelector('.folio.book .qdetail .qnext');
+    return {
+      stepOnce: shown === 1, titlesOwnLine: titles.length > 0 && titles.every((d) => d === 'block'),
+      wayGroup: !!way && !!follow && !!next && (way.compareDocumentPosition(follow) & 4) !== 0 && (follow.compareDocumentPosition(next) & 4) !== 0,
+      meta: (document.querySelector('.folio.book .bk-meta') || {}).textContent || '',
+    };
+  });
+  assert(j.stepOnce && j.titlesOwnLine && j.wayGroup, 'Journey: ' + JSON.stringify(j));
+  assert(/Robin & Suzu, with Samson/.test(j.meta), 'the running head says who travels: ' + j.meta);
+  await open(p, 'company');
+  await settle(p);
+  const c = await p.evaluate(() => {
+    const pair = document.querySelector('.folio.book .co-pair');
+    const speech = document.querySelector('.folio.book .co-speech');
+    const talk = document.querySelector('.folio.book .co-acts:not(.co-ask)');
+    return {
+      pairHidden: !pair || getComputedStyle(pair).display === 'none',
+      askInSpeech: !!speech && !!speech.querySelector('[data-co-act="speech"]') && !!speech.querySelector('[data-suzu-speech-set]'),
+      notInTalk: !!talk && !talk.querySelector('[data-co-act="speech"]'),
+      mind: ((document.querySelector('.folio.book [data-co-act="mind"]') || {}).textContent || '').replace(/\s+/g, ' ').trim(),
+    };
+  });
+  assert(c.pairHidden && c.askInSpeech && c.notInTalk, 'Company: ' + JSON.stringify(c));
+  // the page speaks of Suzu as she/her (canon), as the row about her speech already did
+  assert(/on her mind/.test(c.mind), 'Suzu\'s pronoun in the talk menu: ' + c.mind);
+  // asking her from inside the group still asks her (the button keeps its action)
+  const before = await p.evaluate(() => RB.ui.suzuSpeech.value());
+  await p.click('.folio.book .co-speech [data-co-act="speech"]');
+  await p.waitForFunction((v) => RB.ui.suzuSpeech.value() !== v, before, { timeout: 8000 }).catch(() => {});
+  const after = await p.evaluate(() => RB.ui.suzuSpeech.value());
+  assert(after !== before, 'asking Suzu from the speech group changes how she speaks: ' + before + ' → ' + after);
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
 
 await test('the Journey\'s "Next" says one destination once', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });

@@ -139,6 +139,9 @@ RB.ui.companyPages = (function () {
       (known.length ? '<h4>' + I('companion') + L('{知|し}って いる こと', 'What you know of ' + c.name.en) + '</h4><ul class="co-know">' + known.map((x) => '<li>' + esc(x.en) + '</li>').join('') + '</ul>' : '') +
       (qi ? '<h4>' + I(qi.done ? 'done' : 'side') + L('{自分|じぶん} の {道|みち}', c.name.en + '\'s own road') + '</h4><p class="co-q"><span class="t">' + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></span> <span class="kind">' + (qi.done ? 'resolved' : 'in progress') + '</span></p>' : '');
   }
+  // each companion's pronouns, for the page's own sentences (canon: Nao and Ren they/them, Mio and Suzu she/her)
+  const PRON = { nao: { s: 'they', o: 'them', p: 'their' }, ren: { s: 'they', o: 'them', p: 'their' }, mio: { s: 'she', o: 'her', p: 'her' }, suzu: { s: 'she', o: 'her', p: 'her' } };
+  const pron = (comp) => PRON[comp] || PRON.nao;
   function actionRow(act, icon, en, jp, note, extra) {
     return '<li><button class="pbtn co-act" data-co-act="' + act + '"' + (extra || '') + '>' + I(icon) + '<span>' + L(jp, en) + '</span></button>' + (note ? '<span class="muted small">' + note + '</span>' : '') + '</li>';
   }
@@ -156,16 +159,19 @@ RB.ui.companyPages = (function () {
     }
     h += '<h4>' + I('talk') + L('{話|はな}す', 'Talk with ' + who) + '</h4><ul class="co-acts">';
     if (here) h += actionRow('place', 'place', 'Talk about this place', 'この {場所|ばしょ} の {話|はなし}', '');
-    h += actionRow('mind', 'mind', 'Ask what\'s on their mind', '{何|なに} を {考|かんが}えて いる ?', pd ? esc(pd.en) : p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
+    h += actionRow('mind', 'mind', 'Ask what\'s on ' + pron(comp).p + ' mind', '{何|なに} を {考|かんが}えて いる ?', pd ? esc(pd.en) : p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
     if (cs.length) h += actionRow('case', 'scroll', 'Discuss a discovered case', '{謎|なぞ} の {話|はなし} を する', cs.length > 1 ? cs.length + ' cases' : '', ' aria-expanded="' + (V.detail === 'cases') + '"');
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
-    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js)
+    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js). The book keeps
+    // the asking with the choice it changes, under one heading; the classic folio lists it with the other talk
     const sp = comp === 'suzu' && RB.ui.suzuSpeech;
-    if (sp) { const tl = sp.talkLabel(); h += actionRow('speech', 'talk', tl.en, tl.jp, ''); }
+    const book = RB.ui.menu && RB.ui.menu.isBook && RB.ui.menu.isBook();
+    const ask = sp ? (() => { const tl = sp.talkLabel(); return actionRow('speech', 'talk', tl.en, tl.jp, ''); })() : '';
+    if (sp && !book) h += ask;
     h += '</ul>';
-    if (sp) h += sp.companyHtml(s);
+    if (sp) h += sp.companyHtml(s, book ? '<ul class="co-acts co-ask">' + ask + '</ul>' : '');
     return h;
   }
   function questDetail(s, comp, c) {
@@ -173,7 +179,7 @@ RB.ui.companyPages = (function () {
     if (!qi) return '';
     return '<section class="co-detail" aria-label="' + esc(c.name.en + '\'s own road') + '"><h4>' + I(qi.done ? 'done' : 'side') + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></h4>' +
       '<ol class="earlier">' + qi.stages.map((st) => '<li>' + j(st.jp) + '<div class="en">' + esc(st.en) + '</div></li>').join('') + '</ol>' +
-      (qi.done ? '<p class="muted">Resolved. ' + esc(c.name.en) + '\'s way, with you beside them.</p>' : '<p class="muted">Still ahead. Nothing is decided for ' + esc(c.name.en) + ' until they decide it.</p>') + '</section>';
+      (qi.done ? '<p class="muted">Resolved. ' + esc(c.name.en) + '\'s way, with you beside ' + pron(comp).o + '.</p>' : '<p class="muted">Still ahead. Nothing is decided for ' + esc(c.name.en) + ' until ' + pron(comp).s + (pron(comp).s === 'they' ? ' decide' : ' decides') + ' it.</p>') + '</section>';
   }
   function topicsBlock(s, c) {
     const list = K.topics(s);

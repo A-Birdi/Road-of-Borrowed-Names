@@ -197,7 +197,10 @@
     **U02 is done:** the preview's type (Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic), embedded in the
     game file and made into fonts only when the preview is on (data/fonts/README.md; record U02_TYPE.md).
     **The U01/U02 review set is published for Robin** (one question: does it feel like a book that belongs to this
-    journey, and is it easy to use?). Nothing further is authorised until Robin answers and names the next scope.
+    journey, and is it easy to use?). Round 1 answer: "the tabs at the top were fine, it's more of the inner layout
+    that needed some proper style and organization". **Round 2** restores the classic top tabs and reorganises
+    Journey's and Company's inner pages (U01_BOOK.md "Review round 2"); the review page shows it. Nothing further is
+    authorised until Robin answers and names the next scope.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

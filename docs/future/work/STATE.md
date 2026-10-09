@@ -26,7 +26,7 @@ byte for byte).
 | U00 · interface inventory | Done | [U00_INVENTORY.md](U00_INVENTORY.md), [ui_inventory.json](ui_inventory.json), `docs/screenshots/book/baseline/` |
 | U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
 | U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
-| Review set for Robin | Published (a private page; link given in the conversation); waiting on Robin's answer | — |
+| Review set for Robin | Round 1 published; Robin: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised) published on the same page; waiting on Robin's answer | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
 
 **Pending Robin gates:** the U01/U02 review set (one question: does it feel like a book that belongs to this
 journey, and is it easy to use?).

@@ -4473,7 +4473,7 @@ mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-botto
  *  - depth lives in the cover, the page stack, the gutter and the portrait's mount; text, furigana and controls stay
  *    on a flat, unskewed reading plane (no transform on a leaf or its contents at rest);
  *  - one frame (the book), shared paper leaves; a slip means an insert (a hint), amber means the place you are
- *    (the open section's bookmark, the followed quest);
+ *    (the followed quest);
  *  - decoration never takes input (pointer-events: none) and nothing here changes what a control does;
  *  - 'flat' keeps the type and page identity without texture, depth or motion; reduced motion and high contrast
  *    are honoured. */
@@ -4523,10 +4523,6 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 .folio.book {
   width: min(1200px, calc(100vw - 2 * var(--gutter)));
   height: min(830px, calc(100 * var(--vh) - 20px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-areas: "pages marks" "foot foot";
-  padding: 14px 0 10px 16px;
   border-radius: 7px 14px 14px 7px;
   font-family: var(--type-ui);
   background-color: var(--cloth-800);
@@ -4618,68 +4614,28 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 }
 .folio.book .leaf:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -4px; }
 
-/* ---- bookmarks: on the fore-edge in a column (wide), or hanging from the top in a row (narrower) -------------- */
-.folio.book .tabslot { grid-area: marks; position: relative; z-index: 1; }
-.folio.book .tabrail-wrap { margin: 0; }
-.folio.book .tabrail-wrap::after, .folio.book .tabrail .ribbon { display: none; }
-.folio.book .ptab { transform: none; color: var(--ink-2); font-weight: 600; letter-spacing: 0.01em; }
-.folio.book .ptab:hover { transform: none; }
-.folio.book .ptab::before { transform: none; }
-.folio.book .ptab.lift { animation: none; }
-/* the open section: the amber place ribbon, cut with a swallowtail */
-.folio.book .ptab[aria-selected="true"] { --tab-bg: var(--ribbon); color: #1d1408; }
-.folio.book .ptab[aria-selected="true"] rt { color: #2a1d0a; }
-.folio.book .ptab:focus-visible { outline: 3px solid var(--focus-cloth); outline-offset: 2px; }
-.folio.book .ptab[aria-selected="true"]:focus-visible { outline: 3px dashed var(--focus-cloth); outline-offset: 2px; }
-
-/* a column on the fore-edge: the bookmarks come out from under the right-hand page, past the cover */
-@media (min-width: 980px) {
-  .folio.book {
-    grid-template-columns: minmax(0, 1fr); grid-template-areas: "pages" "foot"; padding: 14px 16px 10px 16px;
-    width: min(1120px, calc(100vw - 2 * var(--gutter) - 150px)); margin-right: 132px;
-  }
-  .folio.book .tabslot { position: absolute; top: 76px; left: calc(100% - 24px); }
-  /* Close: off the pages, at the top of the bookmarks' edge */
-  .folio.book .folio-head { top: 16px; left: calc(100% - 6px); right: auto; }
-}
-.folio.book .tabrail[aria-orientation="vertical"] {
-  flex-direction: column; align-items: stretch; gap: 7px; padding: 0; overflow: visible;
-}
-.folio.book .tabrail[aria-orientation="vertical"] ~ .rail-arrow, .folio.book .tabrail-wrap:has(.tabrail[aria-orientation="vertical"]) .rail-arrow { display: none !important; }
-.folio.book .tabrail[aria-orientation="vertical"] .ptab {
-  min-height: 46px; min-width: 0; margin: 0; justify-content: flex-start; padding: 0 22px 0 32px; transition: transform var(--t-quick) var(--ease);
-}
-.folio.book .tabrail[aria-orientation="vertical"] .ptab::before {
-  inset: 0 0 0 -2px; border: 1px solid var(--paper-edge); border-left: 0; border-radius: 0 7px 7px 0;
-  box-shadow: inset 7px 0 7px -5px rgba(40, 25, 5, 0.42); /* tucked under the page's edge */
-}
-.folio.book .tabrail[aria-orientation="vertical"] .ptab:hover { transform: translateX(3px); }
-.folio.book .tabrail[aria-orientation="vertical"] .ptab[aria-selected="true"] { transform: translateX(5px); }
-.folio.book .tabrail[aria-orientation="vertical"] .ptab[aria-selected="true"]::before {
-  border-color: var(--ribbon-deep); border-radius: 0;
-  clip-path: polygon(0 0, 100% 0, calc(100% - 11px) 50%, 100% 100%, 0 100%);
-  box-shadow: inset 7px 0 7px -5px rgba(40, 25, 5, 0.42), inset 0 -3px 0 var(--ribbon-deep);
-}
-/* a row hanging from the top of the page (narrower windows and phones) */
-.folio.book .tabrail[aria-orientation="horizontal"] { padding: 6px 12px 0; gap: 5px; }
-.folio.book .tabrail[aria-orientation="horizontal"] .ptab { margin: 0; min-height: 46px; padding: 6px 0.9em 8px; }
-.folio.book .tabrail[aria-orientation="horizontal"] .ptab::before { inset: 0; border-radius: 6px 6px 0 0; border-bottom: 0; box-shadow: inset 0 -6px 6px -5px rgba(40, 25, 5, 0.4); }
-.folio.book .tabrail[aria-orientation="horizontal"] .ptab[aria-selected="true"]::before { box-shadow: inset 0 3px 0 var(--ribbon-deep); }
+/* ---- the section tabs: across the top, in the classic folio's own look (Robin, 2026-10-09: "the tabs at the top
+ * were fine"); the book only seats them on its cover, above the pages -------------------------------------------- */
+.folio.book { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "marks" "pages" "foot"; padding: 12px 16px 10px; }
+.folio.book .tabslot { grid-area: marks; position: relative; z-index: 3; padding-right: 128px; } /* Close keeps the cover's corner */
+.folio.book .tabrail-wrap { margin: 0 4px -1px; }
 @media (max-width: 979px) {
-  .folio.book { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: "marks" "pages" "foot"; padding: 52px 14px 10px; }
-  .folio.book .tabslot { margin: 0 4px -1px; }
+  .folio.book { padding: 52px 14px 10px; }   /* Close above the tabs */
+  .folio.book .tabslot { padding-right: 0; }
 }
 @media (max-width: 599px) {
   .folio.book { width: 100vw; height: calc(100 * var(--vh)); border-radius: 0; padding: max(54px, calc(env(safe-area-inset-top) + 48px)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
   .folio.book .folio-head { top: max(6px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); }
-  .folio.book .tabrail[aria-orientation="horizontal"] { padding: 4px 2px 0; gap: 3px; }
-  .folio.book .tabrail[aria-orientation="horizontal"] .ptab { flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; padding: 6px 0.3em 7px; font-size: 0.82em; letter-spacing: 0; }
+  /* all five in one row, none under a scroll arrow: the icon above its word */
+  .folio.book .tabrail { padding: 4px 2px 0; }
+  .folio.book .ptab { flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; padding: 6px 0.3em 7px; font-size: 0.82em; letter-spacing: 0; }
+  .folio.book .ptab + .ptab { margin-left: 3px; }
   .folio.book .leaf { padding: 16px 16px 24px 18px; }
 }
-/* the narrowest phones (folded cover screens): all five bookmarks still in one row, none under a scroll arrow */
+/* the narrowest phones (folded cover screens) */
 @media (max-width: 359px) {
-  .folio.book .tabrail[aria-orientation="horizontal"] { gap: 2px; }
-  .folio.book .tabrail[aria-orientation="horizontal"] .ptab { font-size: 0.76em; padding: 6px 0.12em 7px; }
+  .folio.book .ptab { font-size: 0.76em; padding: 6px 0.12em 7px; }
+  .folio.book .ptab + .ptab { margin-left: 2px; }
 }
 
 /* ---- running heads ----------------------------------------------------------------------------------------- */
@@ -4705,6 +4661,13 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 .folio.book .leaf h3 > svg, .folio.book .leaf .ph > svg { display: none; }
 .folio.book .leaf h3 .count { font-family: var(--type-latin-reading); font-style: italic; font-weight: 400; }
 .folio.book .leaf h4 { font-family: var(--type-latin-display); }
+/* one voice for every section label on a page (Journey's "Now", the request's "What to do now", Company's "Talk
+ * with Suzu"): small capitals in the display face, a count in italic beside it, the same space above each */
+.folio.book .leaf > h3, .folio.book .leaf .done-list summary h3, .folio.book .leaf .ph, .folio.book .leaf h4, .folio.book .co-speech h5 {
+  font-family: var(--type-latin-display); font-variant: small-caps; font-weight: 600; letter-spacing: 0.06em;
+  font-size: 1.04em !important; color: var(--ink-2); margin: 1.5em 0 0.4em;
+}
+.folio.book .leaf > h3 .count, .folio.book .leaf .done-list summary h3 .count { font-variant: normal; letter-spacing: 0; color: var(--ink-3); font-size: 0.9em; }
 
 /* a section's contents: ink words, the open one underlined; no pills */
 .folio.book .subnav { display: flex; flex-wrap: wrap; gap: 0 1.5em; border-bottom: 0; margin: 0 0 12px; }
@@ -4730,7 +4693,16 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 /* the followed request: the amber ribbon's edge, and the word Following (also when it is the one open) */
 .folio.book .entry.followed, .folio.book button.entry.followed[aria-current="true"] { box-shadow: inset 4px 0 0 var(--ribbon); padding-left: 0.9em; }
 .folio.book .entry > .mark { color: var(--ink-3); }
-.folio.book .entry .kind { font-size: 0.72em; letter-spacing: 0.09em; }
+.folio.book .entry .kind { display: block; font-size: 0.72em; letter-spacing: 0.09em; margin-bottom: 0.2em; }
+/* each request: its Japanese title, the English title beneath it, then (on one page) its step, quieter */
+.folio.book .entry .t { display: block; }
+.folio.book .entry .t > .jline { font-size: 1.1em; }
+.folio.book .entry .t > .en { display: block; font-style: italic; font-size: 0.95em; color: var(--ink-2); margin-top: 0.1em; }
+.folio.book .entry .obj { font-size: 0.94em; color: var(--ink-2); margin-top: 0.45em; }
+.folio.book .entry .obj .en { font-size: 0.94em; }
+/* two pages: the left page is an itinerary of titles; the step is read on the facing page, not twice */
+.folio.book .spread.two button.entry .obj { display: none; }
+.folio.book .spread.two button.entry { padding-top: 0.65em; padding-bottom: 0.7em; }
 .folio.book .done-list summary h3 { margin-top: 0.4em; }
 .folio.book .inline-detail { background: none; border-left: 2px solid var(--ink-3); }
 
@@ -4741,14 +4713,23 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 .folio.book .qdetail .ph.small-ph, .folio.book .qdetail .ph {
   font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.07em; font-size: 1.04em !important; color: var(--ink-2); margin-top: 1.3em;
 }
-.folio.book .qdetail .obj { font-size: 1.04em; }
+.folio.book .qdetail .obj { font-size: 1.1em; }   /* the step: this page's main text */
+.folio.book .qdetail .qway { margin-top: 1.6em; }
+.folio.book .qdetail .follow-row { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5em 0.9em; }
+.folio.book .qdetail .follow-row > .muted.small { flex: 1 1 13em; font-size: 0.86em; line-height: 1.45; }
+.folio.book .qdetail ol.earlier { color: var(--ink-2); font-size: 0.94em; }
 .folio.book .qnext { background: none; border-left: 2px solid var(--ink-3); padding: 0.1em 0 0.2em 0.9em; margin: 0.5em 0 0.8em; }
 .folio.book .qnext .kind { font-variant: small-caps; text-transform: none; letter-spacing: 0.06em; font-size: 0.86em; }
 
 /* paper buttons: ink-edged, flat, no raised shadow */
-.folio.book .leaf .pbtn { background: transparent; border: 1px solid var(--ink-3); box-shadow: none; border-radius: 2px; font-family: var(--type-ui); }
-.folio.book .leaf .pbtn:hover { background: rgba(193, 138, 42, 0.10); }
+.folio.book .leaf .pbtn { border-radius: 2px; font-family: var(--type-ui); box-shadow: none; }
+/* (kept at the specificity of the page's own rows, so the talk menu's ruled rows below still win) */
+.folio.book .pbtn:not(.primary) { background: transparent; border: 1px solid var(--ink-3); }
+.folio.book .pbtn:not(.primary):hover { background: rgba(193, 138, 42, 0.10); }
+/* the page's one strong action keeps its ink; unavailable, it is a dashed outline in quiet ink, as everywhere */
+.folio.book .leaf .pbtn.primary[disabled] { background: transparent; color: var(--ink-3); border: 1px dashed var(--ink-3); }
 .folio.book .leaf .pbtn.quiet { border-color: transparent; }
+.folio.book .wp-card h4 .muted.small { font-variant: normal; letter-spacing: 0; font-family: var(--type-latin-reading); font-style: italic; font-weight: 400; }
 .folio.book .pbtn.follow[aria-pressed="true"] { background: rgba(193, 138, 42, 0.14); border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon); }
 
 /* "Need a nudge?": a slip of paper tucked into the page, with its corner folded */
@@ -4767,8 +4748,8 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 .folio.book .nudges li { border-bottom-style: solid; border-bottom-color: rgba(168, 150, 108, 0.45); }
 
 /* ---- Company: a shared journal ---------------------------------------------------------------------------- */
-.folio.book .co-pair { border: 0; padding: 0; gap: 0.2em 1.4em; }
-.folio.book .co-pair svg { display: none; }
+/* who is travelling is in the running head ("Robin & Suzu, with Samson"), so the summary line isn't repeated here */
+.folio.book .co-pair { display: none; }
 .folio.book .co-id { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.2em; align-items: end; margin: 0.4em 0 1em; }
 .folio.book .co-mount { display: block; position: relative; transform: rotate(-0.8deg); }
 .folio.book .co-portrait {
@@ -4789,6 +4770,7 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 }
 .folio.book .co-id.lasting { padding: 0; border: 0; box-shadow: none; }
 .folio.book .co-name h3 { font-size: 1.7em; margin: 0; }
+.folio.book .co-bond .jp { display: block; margin-top: 0.1em; }   /* the bond's name in Japanese under its English, not broken across lines */
 /* a narrow page: the portrait above the name, so the name keeps its line */
 @container (max-width: 470px) {
   .folio.book .co-id { grid-template-columns: minmax(0, 1fr); justify-items: start; }
@@ -4796,14 +4778,14 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 }
 .folio.book .co-bondline { margin: 0.2em 0 0.8em; }
 /* their thought: a quotation in their own voice, not a box */
-.folio.book .co-thought { position: relative; background: none; border: 0; padding: 0 0 0 1.7em; margin: 1em 0 1.1em; }
+.folio.book .co-thought { position: relative; background: none; border: 0; padding: 0 0 0 1.7em; margin: 1.4em 0 1.4em; }
 .folio.book .co-thought::before {
   content: "\201C"; position: absolute; left: -0.08em; top: 0.25em; font-family: var(--type-latin-display); font-size: 3.4em; line-height: 1;
   color: var(--ribbon); pointer-events: none;
 }
 .folio.book .co-thought h4, .folio.book .leaf h4 { font-variant: small-caps; letter-spacing: 0.06em; font-weight: 600; color: var(--ink-2); }
 .folio.book .co-thought h4 svg, .folio.book .leaf h4 > svg { display: none; }
-.folio.book .co-said .jp { font-size: 1.12em; }
+.folio.book .co-said .jp { font-size: 1.22em; }
 .folio.book .co-said .en { font-style: italic; }
 .folio.book .co-know { list-style: none; margin-left: 0; }
 .folio.book .co-know li { padding-left: 1.1em; text-indent: -1.1em; }
@@ -4821,10 +4803,28 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 .folio.book .co-acts .pbtn[aria-expanded="true"] { background: rgba(193, 138, 42, 0.10); box-shadow: inset 4px 0 0 var(--ribbon); }
 .folio.book .co-acts li > .muted.small { display: block; padding: 0 0.4em 0.55em 2.35em; margin-top: -0.4em; }
 .folio.book .co-pending { border: 0; background-color: var(--bk-slip); background-image: var(--bk-tooth); box-shadow: 0 1px 0 var(--paper-edge), 0 6px 10px -7px rgba(60, 40, 10, 0.45); }
-/* how Suzu speaks: a language note in the margin */
+/* her road's reference: rest-stop topics and her turn in battle, quieter than the talk above them */
+.folio.book .co-topics .entry, .folio.book .co-support .entry { padding: 0.5em 0.2em 0.6em; font-size: 0.95em; }
+.folio.book .co-support + .muted.small { margin-top: 0.5em; }
+/* an opened detail (her own road, a case) is a note in the margin like the others, not an amber-edged box; the
+ * word game's records are a ruled table on the page, not boxes in a box */
+.folio.book .co-detail { border-left: 2px solid var(--ink-3); padding-left: 0.9em; }
+.folio.book .co-detail.wp-card { border-left: 0; padding-left: 0; }
+.folio.book .wp-grid th, .folio.book .wp-grid td { border: 0; border-bottom: 1px solid var(--rule); }
+.folio.book .wp-grid thead th { border-bottom-color: var(--ink-3); font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.04em; }
+.folio.book .wp-cell[data-state="won"] { background: none; }
+@media (max-width: 600px) {
+  .folio.book .wp-grid tr { border: 0; margin: 0 0 0.9em; }
+  .folio.book .wp-grid th[scope="row"] { border-bottom: 1px solid var(--ink-3); padding-left: 0; font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.04em; }
+  .folio.book .wp-grid td { border-bottom: 1px solid var(--rule); padding-left: 0; padding-right: 0; }
+}
+/* how Suzu speaks: a language note in the margin, with the asking and the choice together */
 .folio.book .co-speech { margin: 1.1em 0 0.6em; padding: 0.1em 0 0.3em 1em; border-left: 2px solid var(--ink-3); }
 .folio.book .co-speech h5 { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.06em; font-size: 1em; margin: 0 0 0.3em; color: var(--ink-2); }
 .folio.book .co-speech .speech-btn { border-radius: 2px; }
+.folio.book .co-speech .co-ask { margin: 0 0 0.55em; }
+.folio.book .co-speech .co-ask li { border-bottom: 0; }
+.folio.book .co-speech .co-ask .pbtn { min-height: 44px; padding: 0; font-size: 1em; }
 .folio.book .co-speech .speech-btn[aria-checked="true"] { background: rgba(193, 138, 42, 0.14); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); }
 
 /* ---- the dialogue strip: the same paper and ink, one authored edge, the speaker's mark on the paper ------------ */
@@ -4866,14 +4866,12 @@ body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; backgrou
 .folio.book.book-flat .co-mount { transform: none; }
 .folio.book.book-flat .co-mount::before, .folio.book.book-flat .co-mount::after { display: none; }
 .folio.book.book-flat .nudge-slip, .folio.book.book-flat .co-pending { background-image: none; box-shadow: none; border: 1px solid var(--paper-edge); }
-.folio.book.book-flat .tabrail .ptab { transition: none; }
 body.book-flat .dlg-sheet { background-image: none; }
 body.book-flat .dlg-sheet::before { display: none; }
 
 /* ---- reduced motion and high contrast --------------------------------------------------------------------- */
 body.reduced-motion .folio.book, body.reduced-motion .folio.book .leafbox, body.reduced-motion .folio.book .spread.turn > .leaf,
 body.reduced-motion .folio-scrim.book-scrim.closing { animation: none; }
-body.reduced-motion .folio.book .ptab { transition: none; }
 body.high-contrast .folio.book .leaf, body.high-contrast .folio.book .nudge-slip, body.high-contrast .folio.book .co-pending,
 body.high-contrast.book-ui .dlg-sheet { background-image: none !important; }
 body.high-contrast .folio.book .spread { filter: none; }
@@ -49409,10 +49407,6 @@ RB.ui.folio = (function () {
     function place(instant) {
       const b = btns.find((x) => x.dataset.id === cur);
       if (!b) return;
-      const vertical = !!(opts.vertical && opts.vertical());
-      rail.setAttribute('aria-orientation', vertical ? 'vertical' : 'horizontal');
-      // a column never overflows sideways: no edge arrows, nothing to scroll into view
-      if (vertical) { wrap.classList.remove('overflowing'); return; }
       // natural width of the tabs, measured with growth switched off: phone
       // tabs stretch to fill the rail, and the arrows' padding would otherwise
       // feed back into the answer (the rail flickered between the two states)
@@ -49452,10 +49446,8 @@ RB.ui.folio = (function () {
       const i = btns.findIndex((b) => b === document.activeElement);
       if (i < 0) return;
       let j = null;
-      // a column of bookmarks (the book, on wide screens) also moves with Up and Down
-      const col = rail.getAttribute('aria-orientation') === 'vertical';
-      if (e.key === 'ArrowRight' || (col && e.key === 'ArrowDown')) j = (i + 1) % btns.length;
-      else if (e.key === 'ArrowLeft' || (col && e.key === 'ArrowUp')) j = (i - 1 + btns.length) % btns.length;
+      if (e.key === 'ArrowRight') j = (i + 1) % btns.length;
+      else if (e.key === 'ArrowLeft') j = (i - 1 + btns.length) % btns.length;
       else if (e.key === 'Home') j = 0;
       else if (e.key === 'End') j = btns.length - 1;
       if (j == null) return;
@@ -49479,14 +49471,8 @@ RB.ui.folio = (function () {
   function wide() {
     return typeof matchMedia !== 'undefined' && matchMedia(WIDE).matches;
   }
-  // The book stands its bookmarks in a column on the fore-edge from this width (matches 90_book.css); narrower,
-  // they hang in a row from the top of the page.
-  const BOOK_COLUMN = '(min-width: 980px)';
-  function bookColumn() {
-    return typeof matchMedia !== 'undefined' && matchMedia(BOOK_COLUMN).matches;
-  }
 
-  return { icon, itemIcon, frame, tabs, wide, WIDE, BOOK_COLUMN, bookColumn, ICONS: P };
+  return { icon, itemIcon, frame, tabs, wide, WIDE, ICONS: P };
 })();
 
 
@@ -60959,7 +60945,7 @@ RB.ui.menu = (function () {
     company: { page: null },
     scroll: {},
   };
-  let layer = null, fr = null, tabsApi = null, mq = null, mqCol = null, stopDemo = () => {};
+  let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
   let lastSec = null; // the section last drawn: a change of section turns the page (the book)
   // the book interface (Settings › Display › The Wayfarer's Ledger): 'book', 'flat' or null for the classic folio
   const bookStyle = () => { const v = RB.game.settings && RB.game.settings.ledgerStyle; return v === 'book' || v === 'flat' ? v : null; };
@@ -60994,14 +60980,11 @@ RB.ui.menu = (function () {
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
     if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
-    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page', vertical: () => !!bookStyle() && F().bookColumn() });
+    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
       mq = matchMedia(RB.ui.folio.WIDE);
       mq.onchange = () => { if (layer) { remember(); render(); } };
-      // the book's bookmarks move between a column and a row at this width
-      mqCol = matchMedia(RB.ui.folio.BOOK_COLUMN);
-      mqCol.onchange = () => { if (layer && tabsApi) tabsApi.select(view.section); };
     }
     if (a === '@settings') RB.ui.settings.open();
     else if (a === '@save') saveSheet();
@@ -61012,7 +60995,6 @@ RB.ui.menu = (function () {
     stopDemo();
     if (tabsApi) tabsApi.destroy();
     if (mq) mq.onchange = null;
-    if (mqCol) mqCol.onchange = null;
     const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
     // the book closes with a short motion: what is shown is a copy that can no longer be used (inert), removed
@@ -61090,7 +61072,9 @@ RB.ui.menu = (function () {
   // at the top of the second (on a phone, both on the one page). They repeat the dialog's own title and meta for
   // the eye; the dialog keeps its accessible name, so these are hidden from assistive technology.
   function runningHeads(A, B, two, sec, s, comp) {
-    const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime);
+    // who is travelling: the Company page's summary line folds into this (the pet by the name you gave it)
+    const pet = s.company && s.company.pet && s.company.pets && s.company.pets[s.company.pet];
+    const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + (pet && pet.name ? ', with ' + esc(pet.name) : '') + ' · ' + RB.util.fmtTime(s.playtime);
     // the title's furigana without word help: a running head is read, not studied (and it is hidden from assistive
     // technology, so nothing in it may take focus)
     const plain = RB.ui.jhtml(sec.jp).replace(/ data-(i|src)="[^"]*"/g, '').replace(/ tabindex="0"/g, '').replace(/class="jt"/g, 'class="jt-static"');
@@ -61150,6 +61134,7 @@ RB.ui.menu = (function () {
     let h = '<div class="qguide">';
     if (gm === 'full') {
       const on = G.followed(s) === x.id;
+      if (bookStyle()) h += '<div class="ph small-ph qway">' + I('follow') + ' The way there</div>';
       h += '<div class="follow-row"><button class="pbtn follow' + (on ? ' on' : '') + '" data-follow="' + x.id + '" aria-pressed="' + on + '">' + I('follow') + '<span>' + gl(on ? 'following' : 'follow') + '</span></button>' +
         '<span class="muted small">' + esc(on ? (G.chosen(s) ? 'Markers in the world and on the Map show the way to its next step. Press again to stop.' : 'Followed as the main road: markers show the way to its next step. Press to stop.') : 'Markers will show the way to this quest’s next step instead.') + '</span></div>';
       if (on) {
@@ -61731,7 +61716,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, restyle, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, restyle, isBook: () => !!bookStyle(), isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
@@ -61991,6 +61976,9 @@ RB.ui.companyPages = (function () {
       (known.length ? '<h4>' + I('companion') + L('{知|し}って いる こと', 'What you know of ' + c.name.en) + '</h4><ul class="co-know">' + known.map((x) => '<li>' + esc(x.en) + '</li>').join('') + '</ul>' : '') +
       (qi ? '<h4>' + I(qi.done ? 'done' : 'side') + L('{自分|じぶん} の {道|みち}', c.name.en + '\'s own road') + '</h4><p class="co-q"><span class="t">' + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></span> <span class="kind">' + (qi.done ? 'resolved' : 'in progress') + '</span></p>' : '');
   }
+  // each companion's pronouns, for the page's own sentences (canon: Nao and Ren they/them, Mio and Suzu she/her)
+  const PRON = { nao: { s: 'they', o: 'them', p: 'their' }, ren: { s: 'they', o: 'them', p: 'their' }, mio: { s: 'she', o: 'her', p: 'her' }, suzu: { s: 'she', o: 'her', p: 'her' } };
+  const pron = (comp) => PRON[comp] || PRON.nao;
   function actionRow(act, icon, en, jp, note, extra) {
     return '<li><button class="pbtn co-act" data-co-act="' + act + '"' + (extra || '') + '>' + I(icon) + '<span>' + L(jp, en) + '</span></button>' + (note ? '<span class="muted small">' + note + '</span>' : '') + '</li>';
   }
@@ -62008,16 +61996,19 @@ RB.ui.companyPages = (function () {
     }
     h += '<h4>' + I('talk') + L('{話|はな}す', 'Talk with ' + who) + '</h4><ul class="co-acts">';
     if (here) h += actionRow('place', 'place', 'Talk about this place', 'この {場所|ばしょ} の {話|はなし}', '');
-    h += actionRow('mind', 'mind', 'Ask what\'s on their mind', '{何|なに} を {考|かんが}えて いる ?', pd ? esc(pd.en) : p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
+    h += actionRow('mind', 'mind', 'Ask what\'s on ' + pron(comp).p + ' mind', '{何|なに} を {考|かんが}えて いる ?', pd ? esc(pd.en) : p ? (p.quiet ? 'the topic you put off' : 'something is waiting') : '');
     if (cs.length) h += actionRow('case', 'scroll', 'Discuss a discovered case', '{謎|なぞ} の {話|はなし} を する', cs.length > 1 ? cs.length + ' cases' : '', ' aria-expanded="' + (V.detail === 'cases') + '"');
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
-    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js)
+    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js). The book keeps
+    // the asking with the choice it changes, under one heading; the classic folio lists it with the other talk
     const sp = comp === 'suzu' && RB.ui.suzuSpeech;
-    if (sp) { const tl = sp.talkLabel(); h += actionRow('speech', 'talk', tl.en, tl.jp, ''); }
+    const book = RB.ui.menu && RB.ui.menu.isBook && RB.ui.menu.isBook();
+    const ask = sp ? (() => { const tl = sp.talkLabel(); return actionRow('speech', 'talk', tl.en, tl.jp, ''); })() : '';
+    if (sp && !book) h += ask;
     h += '</ul>';
-    if (sp) h += sp.companyHtml(s);
+    if (sp) h += sp.companyHtml(s, book ? '<ul class="co-acts co-ask">' + ask + '</ul>' : '');
     return h;
   }
   function questDetail(s, comp, c) {
@@ -62025,7 +62016,7 @@ RB.ui.companyPages = (function () {
     if (!qi) return '';
     return '<section class="co-detail" aria-label="' + esc(c.name.en + '\'s own road') + '"><h4>' + I(qi.done ? 'done' : 'side') + j(qi.qd.title.jp) + ' <span class="en">' + esc(qi.qd.title.en) + '</span></h4>' +
       '<ol class="earlier">' + qi.stages.map((st) => '<li>' + j(st.jp) + '<div class="en">' + esc(st.en) + '</div></li>').join('') + '</ol>' +
-      (qi.done ? '<p class="muted">Resolved. ' + esc(c.name.en) + '\'s way, with you beside them.</p>' : '<p class="muted">Still ahead. Nothing is decided for ' + esc(c.name.en) + ' until they decide it.</p>') + '</section>';
+      (qi.done ? '<p class="muted">Resolved. ' + esc(c.name.en) + '\'s way, with you beside ' + pron(comp).o + '.</p>' : '<p class="muted">Still ahead. Nothing is decided for ' + esc(c.name.en) + ' until ' + pron(comp).s + (pron(comp).s === 'they' ? ' decide' : ' decides') + ' it.</p>') + '</section>';
   }
   function topicsBlock(s, c) {
     const list = K.topics(s);
@@ -63151,10 +63142,11 @@ RB.ui.suzuSpeech = (function () {
   }
 
   // ---- Company › Suzu: in "Talk with Suzu" -----------------------------------------------------------------
-  function companyHtml() {
+  // (between, optional: html placed under the heading, before the choice: the book puts "ask her" there)
+  function companyHtml(s, between) {
     const v = value();
     const b = (val, label, jp) => '<button type="button" class="pbtn speech-btn" role="radio" aria-checked="' + (v === val) + '" data-suzu-speech-set="' + val + '">' + (v === val ? I('done') : '') + '<span>' + label + '</span> <span class="jp" lang="ja">' + ruby(jp) + '</span></button>';
-    return '<section class="co-speech" aria-labelledby="co-speech-h"><h5 id="co-speech-h">How Suzu speaks</h5>' +
+    return '<section class="co-speech" aria-labelledby="co-speech-h"><h5 id="co-speech-h">How Suzu speaks</h5>' + (between || '') +
       '<div class="row-acts" role="radiogroup" aria-labelledby="co-speech-h">' + b('standard', 'Standard Japanese', '{標準語|ひょうじゅんご}') + b('kansai', 'Kansai-ben', '{関西弁|かんさいべん}') + '</div>' +
       '<p class="muted small">Kansai-ben is a regional dialect (Osaka, Kyoto). Word help explains it; if it is hard to follow, switch back any time.</p></section>';
   }

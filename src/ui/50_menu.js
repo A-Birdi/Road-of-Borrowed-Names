@@ -51,7 +51,7 @@ RB.ui.menu = (function () {
     company: { page: null },
     scroll: {},
   };
-  let layer = null, fr = null, tabsApi = null, mq = null, mqCol = null, stopDemo = () => {};
+  let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
   let lastSec = null; // the section last drawn: a change of section turns the page (the book)
   // the book interface (Settings › Display › The Wayfarer's Ledger): 'book', 'flat' or null for the classic folio
   const bookStyle = () => { const v = RB.game.settings && RB.game.settings.ledgerStyle; return v === 'book' || v === 'flat' ? v : null; };
@@ -86,14 +86,11 @@ RB.ui.menu = (function () {
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
     if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
-    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page', vertical: () => !!bookStyle() && F().bookColumn() });
+    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
       mq = matchMedia(RB.ui.folio.WIDE);
       mq.onchange = () => { if (layer) { remember(); render(); } };
-      // the book's bookmarks move between a column and a row at this width
-      mqCol = matchMedia(RB.ui.folio.BOOK_COLUMN);
-      mqCol.onchange = () => { if (layer && tabsApi) tabsApi.select(view.section); };
     }
     if (a === '@settings') RB.ui.settings.open();
     else if (a === '@save') saveSheet();
@@ -104,7 +101,6 @@ RB.ui.menu = (function () {
     stopDemo();
     if (tabsApi) tabsApi.destroy();
     if (mq) mq.onchange = null;
-    if (mqCol) mqCol.onchange = null;
     const el = layer.el, at = el.parentNode;
     RB.ui.popLayer(layer);
     // the book closes with a short motion: what is shown is a copy that can no longer be used (inert), removed
@@ -182,7 +178,9 @@ RB.ui.menu = (function () {
   // at the top of the second (on a phone, both on the one page). They repeat the dialog's own title and meta for
   // the eye; the dialog keeps its accessible name, so these are hidden from assistive technology.
   function runningHeads(A, B, two, sec, s, comp) {
-    const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime);
+    // who is travelling: the Company page's summary line folds into this (the pet by the name you gave it)
+    const pet = s.company && s.company.pet && s.company.pets && s.company.pets[s.company.pet];
+    const meta = esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + (pet && pet.name ? ', with ' + esc(pet.name) : '') + ' · ' + RB.util.fmtTime(s.playtime);
     // the title's furigana without word help: a running head is read, not studied (and it is hidden from assistive
     // technology, so nothing in it may take focus)
     const plain = RB.ui.jhtml(sec.jp).replace(/ data-(i|src)="[^"]*"/g, '').replace(/ tabindex="0"/g, '').replace(/class="jt"/g, 'class="jt-static"');
@@ -242,6 +240,7 @@ RB.ui.menu = (function () {
     let h = '<div class="qguide">';
     if (gm === 'full') {
       const on = G.followed(s) === x.id;
+      if (bookStyle()) h += '<div class="ph small-ph qway">' + I('follow') + ' The way there</div>';
       h += '<div class="follow-row"><button class="pbtn follow' + (on ? ' on' : '') + '" data-follow="' + x.id + '" aria-pressed="' + on + '">' + I('follow') + '<span>' + gl(on ? 'following' : 'follow') + '</span></button>' +
         '<span class="muted small">' + esc(on ? (G.chosen(s) ? 'Markers in the world and on the Map show the way to its next step. Press again to stop.' : 'Followed as the main road: markers show the way to its next step. Press to stop.') : 'Markers will show the way to this quest’s next step instead.') + '</span></div>';
       if (on) {
@@ -823,7 +822,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, restyle, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, restyle, isBook: () => !!bookStyle(), isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
