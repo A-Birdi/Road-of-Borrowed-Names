@@ -37,7 +37,7 @@ composition and density. What it is, measured (W00):
 |---|---|---|
 | W00 | Study of the renderer and the plate; the art contract; the camera candidates; the proof's switch (`?dev=world`); its test | **Done** |
 | W01 | Illumination and atmosphere: authored ambient light, the sun's cast shadows (cached per map), local lights, glow on emissive things only, haze, water glints, optional edge softness; each layer switchable | **Done** (below) |
-| W02 | Reedwake's kit: ground and its transitions, foliage masses, cattails, lily pads, water, fences, flower boxes, thatch-on-stone and board houses with lit windows, smoke; footprints, contact points, occlusion; deterministic dressing in safe zones only | |
+| W02 | Reedwake's kit: ground and its transitions, foliage masses, cattails, lily pads, water, fences, flower boxes, thatch-on-stone and board houses with lit windows, smoke; footprints, contact points, occlusion; deterministic dressing in safe zones only | **Done, first pass** (below) |
 | W03 | Two purposeful actions by village people (complete actions: anticipation, motion, contact, follow-through, return), stopping cleanly for conversation, staging and reduced motion | |
 | W04 | The Reedwake slice assembled: a doorway, water, vegetation, a light, conversation, the customizable player; a battle with Suzu and an existing creature (language UI, action banner, Harmony cut-in) from the slice; evidence (paired captures, recordings, layers on/off, overlays, start-up, frame and memory measurements) | |
 | W05 | Saltglass reusing the method (stone paving, an awning, water, a profession action), the reuse report (every new regional asset listed), skin, sleeve and accessory variants, desktop and narrow, a crowded battle; the visual gate for Robin | |
@@ -211,4 +211,64 @@ so pessimistic. A GPU-backed canvas (Robin's Firefox) is expected to be far chea
 - Light and shade read; the houses stand up from the ground.
 - The village still looks sparse and flat-green, as expected: the plate's density and materials are W02's work.
 - The light balance will be retuned against the kit.
+
+## W02: Reedwake's kit (first pass)
+
+**What it draws** (`src/engine/66_worldkit.js`; three small hooks in the renderer, all behind the proof):
+
+| Piece | Where | How |
+|---|---|---|
+| Grass in sunlit and shaded patches | the open grass | the tone field: smooth noise on a 2-px grid, three steps, so the patches are clusters, not speckle; baked once into the static layer |
+| Tufts, clover, flower clusters | the open grass, never under a prop or a building | flowers gather by houses' fronts (most), along paths (some), elsewhere rarely |
+| The square's edge | the cobbles beside grass | grass creeps over the outer stones in a ragged, clumped line, carrying the grass's own texture across, with a dark rim where it overhangs |
+| The river | water tiles, and the water drawn inside bridge tiles | deepened toward the brief's deep blue (darker pixels more; the banks' foam stays light) |
+| Lily pads | still water, mostly near the banks, never by the bridge | each with its own shade on the water, a notch, a few in flower |
+| Cattails | the game's reed tiles (already solid) | irregular clumps in twelve variants by position, taller toward the water, leaning, brown heads, broad blades, a slow sway (held with reduced motion) |
+| The broken span | the bridge's missing planks (a water prop until the mill is settled) | the river's deep blue, with splintered plank ends where the boards remain |
+| Bridge rails | along the outer edges of the intact bridge tiles | posts every two tiles, a sagging rope between; behind or in front of people by y-sort |
+| Ducks | three, on the river | slow loops up and down the channel, each on its own clock; still with reduced motion |
+| Houses | the game's own house | lit within by day, with a flower box under each window and a planter by the door, on the wall's own footprint |
+| Low growth (ferns, flowering shrubs) | open grass in safe places only | knee-high, walked through like the game's tall grass; most against the sides of houses; casts a small shadow |
+
+**Safety rules, each tested:**
+- **Collisions unchanged:** every tile's collision is the same with the kit on and off (B world 7).
+- **Low growth only in safe places:** never on a path, a prop, a building, an exit or a trigger; never within a
+  tile of anything you can use; never in a door's approach (3×2 in front); never at or beside anyone's place.
+  The village has over 20 pieces and none breaks a rule (B world 7).
+- **The reveal rule for tall pieces:** someone standing just behind a clump of cattails (up to two tiles above,
+  within a tile either side) thins it to half, so people stay findable. Yasu on the pier was half hidden before
+  this rule (seen in a capture).
+- **Deterministic:** two builds of the static layer give the same pixels (B world 7).
+
+**Cost** (headless software raster, 1440×900):
+- **A map's first frame** (static layer, shadow mask and the frame), median of five:
+  - proof off: 68 ms;
+  - far view without the kit: 296 ms;
+  - with the kit: 488 ms.
+
+  This is once per map entry, while the doorway's fade is dark: the renderer draws a frame in advance
+  (`prewarm`).
+- **Steady frame**, kit, light and atmosphere on: 17.5 ms.
+- **Memory:** the static layer 7.7 MB and the shadow mask 7.7 MB (decoded RGBA, the village at the far view's
+  margin), and 199 cached sprites.
+- **To improve before a real region adopts the kit** (noted, not done):
+  - make the mask's per-object silhouettes cheaper (one pixel read per object today);
+  - keep the mask at alpha only, or at half resolution.
+
+**Seen in the captures** (`docs/screenshots/world/w02/`):
+- **Closer to the plate:**
+  - the river reads as a river (deep blue, cattails, pads, ducks);
+  - the square sits in the grass;
+  - the houses look lived in;
+  - the open grass has life.
+- **Still short of it:**
+  - big trees among the houses, and hedges and fences around gardens. These would change where people can walk;
+    the proof doesn't touch collision, so they wait for a region's real layout (and Robin's view on density);
+  - the houses keep the game's plaster-and-timber and board walls (the plate shows stone); materials are a
+    question for the gate.
+
+| Check | Command | Result |
+|---|---|---|
+| The proof's browser tests (7), adding W02's: collisions unchanged with the kit on and off; low growth only in safe places; the static layer the same in two builds; the reveal rule; the kit changes the frame | `node tests/e2e/world.mjs` | **7 passed, 0 failed** |
+| Captures: the game and the proof at the same moment (desktop and phone), the kit off, the camera only, night, 2048×1046; close-ups at 3× of the square, the river and bridge, a house front | `node tests/e2e/world_captures.mjs kit` | 14 WebP in `docs/screenshots/world/w02/` |
 

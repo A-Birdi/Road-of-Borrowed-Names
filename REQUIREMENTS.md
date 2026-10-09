@@ -555,7 +555,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] WP3 In the far view a tap or click lands on the tile under it and collisions are unchanged (1440×900 and a 375-px phone). B world 3, 4.
 - [v] WP4 The art contract is written: grid and art resolution, camera, light, ramps, outlines and contrast, projection and scale, layers, motion, dressing. Code review (P01_WORLD.md).
 - [v] WP5 Illumination and atmosphere layers, each switchable (W01): cast shadows cached per map (built once), people shaded in shade, a grade, glow on emissive things only, water glints, haze, optional soft edges; reduced motion holds still; no sun shadows at night. B world 5. The development panel: only with the flag; the session visit is withheld while a save slot is current. B world 6.
-- [ ] WP6 Reedwake's kit (W02).
+- [v] WP6 Reedwake's kit, first pass (W02): grass patches, tufts, clover and flowers; the square's edge; the deep river with lily pads, cattails, ducks; the broken span; bridge rails; lit houses with flower boxes; low growth in safe places only. Collisions unchanged, the dressing deterministic, tall pieces thin to reveal people behind them. B world 7; captures docs/screenshots/world/w02/. (Trees, hedges and fences among the houses wait for a real layout: they change where people walk.)
 - [ ] WP7 Two purposeful actions (W03).
 - [ ] WP8 The Reedwake slice with a battle, and its evidence (W04).
 - [ ] WP9 Saltglass reusing the method, and the reuse report (W05).

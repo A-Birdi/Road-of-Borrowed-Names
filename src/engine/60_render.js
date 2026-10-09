@@ -186,6 +186,8 @@ RB.render = (function () {
         else legacy(c, () => t.draw(c, px / ART, py / ART, pal, RB.tiles.hh(x, y), nb));
       }
     if (RB.tileArt && RB.tileArt.flush) RB.tileArt.flush(); // tile art batches its output per row
+    // the world proof's kit (development only, src/engine/66_worldkit.js): its ground dressing, baked in once
+    if (RB.worldLook && RB.worldLook.active(m) && RB.worldLook.opts.kit && RB.worldKit) RB.worldKit.dressGround(c, m, g);
     m.staticLayer = cv;
     m.margin = g;
     m.apronProps = ext ? buildApronProps(m, g) : [];
@@ -531,6 +533,7 @@ RB.render = (function () {
     const L = RB.worldLook && RB.worldLook.active(m) ? RB.worldLook : null;
     const env = L ? lookEnv(m, W, still) : null;
     if (L) L.ground(c, m, W, t, env);
+    const KIT = L && L.opts.kit && RB.worldKit ? RB.worldKit : null; // the proof's own art for some kinds
     // y-sorted drawables
     const s = RB.game.s;
     const list = [];
@@ -539,7 +542,7 @@ RB.render = (function () {
       if (st.if && !RB.state.test(s, st.if)) continue;
       const kind = st.type || 'house';
       const o = Object.assign({ night }, st);
-      const d2 = RB.props.STRUCT2 && RB.props.STRUCT2[kind];
+      const d2 = (KIT && KIT.STRUCTS[kind]) || (RB.props.STRUCT2 && RB.props.STRUCT2[kind]);
       list.push({
         z: (st.y + st.h) * TS,
         draw: d2 ? () => d2(c, ax(st.x * TS), ay(st.y * TS), pal, t, o)
@@ -554,9 +557,10 @@ RB.render = (function () {
       const lx = p.x * TS - cam.x, ly = p.y * TS - cam.y;
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const opts = Object.assign({ cx: p.x, cy: p.y, still }, p.o || {});
+      const d2 = (KIT && KIT.PROPS[p.p]) || pd.draw2;
       list.push({
         z: (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
-        draw: pd.draw2 ? () => pd.draw2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
+        draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
       });
     }
     for (const p of m.apronProps || []) {
@@ -564,7 +568,8 @@ RB.render = (function () {
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const pd = RB.props.P[p.p];
       const opts = { cx: p.x, cy: p.y, still };
-      list.push({ z: (p.y + 1) * TS - 0.5, draw: pd.draw2 ? () => pd.draw2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
+      const d2 = (KIT && KIT.PROPS[p.p]) || pd.draw2;
+      list.push({ z: (p.y + 1) * TS - 0.5, draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
     }
     for (const n of W.npcs) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
     for (const n of W.leavers || []) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
@@ -573,6 +578,7 @@ RB.render = (function () {
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
+    if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
     if (L) L.illuminate(c, m, W, t, env);

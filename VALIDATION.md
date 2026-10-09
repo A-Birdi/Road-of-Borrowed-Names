@@ -3567,3 +3567,27 @@ judgement.
 - the foldable;
 - Robin's eye.
 
+## The world proof, W02: Reedwake's kit (2026-10-09; P01_WORLD.md "W02"; REQUIREMENTS.md WP6)
+
+**What changed:**
+- `src/engine/66_worldkit.js` (new): the kit.
+- `src/engine/60_render.js`: three hooks, all behind the proof:
+  - the ground dressing after the static layer's tiles;
+  - the proof's art for some kinds of prop and building;
+  - decor in the y-sort.
+- `src/engine/65_worldlook.js`: the low growth casts shadows; a slightly softer grade.
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/world.mjs`: **7/0** (including W00's pixel-identity test on this build).
+- B `node tests/e2e/world_captures.mjs kit`: 14 captures, reviewed by eye by the lead. Seen and fixed on the way:
+  - the square's grass edge first read as a flat straight band;
+  - Yasu was half hidden by cattails (hence the reveal rule);
+  - the broken bridge span showed the old pale water;
+  - the flower boxes covered the windows.
+- Build and frame cost measured in headless Chromium (P01_WORLD.md).
+
+**Not verified:**
+- Firefox or any GPU-backed canvas;
+- the foldable;
+- Robin's eye.
+

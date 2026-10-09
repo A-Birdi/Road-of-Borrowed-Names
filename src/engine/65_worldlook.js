@@ -27,11 +27,12 @@ RB.worldLook = (function () {
     } catch (e) { return false; }
   }
   const opts = { on: true, view: 'far', kit: true, light: true, atmos: true, soft: false };
+  const opts_ = opts; // (for code where a local is named opts)
 
   // The slice: the maps the proof draws, and each one's light. Sun: the direction cast shadows fall (art px of
   // shadow per art px of height, x and y), its colour and the shade's colour; ambient grade as data.
   const SLICE = {
-    'rw.village': { region: 'reedwake', sun: { dx: 0.66, dy: 0.3, key: '255,206,128', shade: '52,40,104', mul: '146,128,196', shadow: 0.72, grade: 0.3 } },
+    'rw.village': { region: 'reedwake', sun: { dx: 0.66, dy: 0.3, key: '255,206,128', shade: '52,40,104', mul: '146,128,196', shadow: 0.72, grade: 0.24 } },
   };
   const cfg = (m) => (m && SLICE[m.id]) || null;
   function active(m) {
@@ -203,7 +204,13 @@ RB.worldLook = (function () {
       const w = pw * ATS + 96, h = ph * ATS + 120, ox = 48, oy = 96;
       const [gx, gy] = at(p.x, p.y);
       const opts = Object.assign({ cx: p.x, cy: p.y, still: true }, p.o || {});
-      castThing(mg, (g, x, y) => pd.draw2(g, x, y, pal, 0, opts), w, h, ox, oy, oy + ph * ATS - 3, k, sun, gx, gy);
+      const d2 = (opts_.kit && RB.worldKit && RB.worldKit.PROPS[p.p]) || pd.draw2;
+      castThing(mg, (g, x, y) => d2(g, x, y, pal, 0, opts), w, h, ox, oy, oy + ph * ATS - 3, k, sun, gx, gy);
+    }
+    // the kit's low growth casts too
+    if (opts_.kit && RB.worldKit) for (const k of RB.worldKit.casters(m)) {
+      const [gx, gy] = at(k.x, k.y);
+      castThing(mg, k.draw, 96, 120, 48, 96, 96 + ATS - 3, k.k, sun, gx, gy);
     }
     const img = stepMask(cv, 2);
     tintMask(mg, W, H, sun.mul);

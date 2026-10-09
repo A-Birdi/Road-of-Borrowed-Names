@@ -5,6 +5,8 @@
 //   camera   near and far views at 1440×900, 2048×1046 (1.25) and 375×667 (3)   → docs/screenshots/world/w00/
 //   light    the illumination and atmosphere layers on and off, day and night, desktop and phone
 //            (the kit off: W01 alone)                                              → docs/screenshots/world/w01/
+//   kit      Reedwake's kit: the game as it is beside the proof (paired, actual size), the kit on and off, close-ups
+//            at 3× (the square, the river and bridge, a house front), night, the phone  → docs/screenshots/world/w02/
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -15,13 +17,14 @@ const { srv, url } = await serve();
 const b = await launch();
 const written = [];
 
-async function webp(p, png, dir, file) {
-  const data = await p.evaluate(async (b64) => {
+async function webp(p, png, dir, file, scale = 1) {
+  const data = await p.evaluate(async ({ b64, scale }) => {
     const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode();
-    const c = document.createElement('canvas'); c.width = i.naturalWidth; c.height = i.naturalHeight;
-    c.getContext('2d').drawImage(i, 0, 0);
+    const c = document.createElement('canvas'); c.width = i.naturalWidth * scale; c.height = i.naturalHeight * scale;
+    const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
+    g.drawImage(i, 0, 0, c.width, c.height);
     return c.toDataURL('image/webp', 0.9);
-  }, png.toString('base64'));
+  }, { b64: png.toString('base64'), scale });
   const out = path.join(root, dir);
   fs.mkdirSync(out, { recursive: true });
   fs.writeFileSync(path.join(out, file), Buffer.from(data.split(',')[1], 'base64'));
@@ -79,6 +82,30 @@ if (doing('light')) {
     await webp(p, await p.screenshot(), D, 'p375_' + name + '.webp');
     await ctx.close();
   }
+}
+
+if (doing('kit')) {
+  const D = 'docs/screenshots/world/w02';
+  const shot = async (name, query, setup, o = {}) => {
+    const { p, ctx, errors } = await page(b, url + query, { viewport: o.viewport || { width: 1440, height: 900 }, dpr: o.dpr || 1, mobile: o.mobile, touch: o.mobile });
+    await square(p, 22, 18, o.flags || {});
+    if (setup) await p.evaluate(setup);
+    await p.waitForTimeout(700);
+    await webp(p, await p.screenshot(), D, name + '.webp');
+    for (const [tag, clip] of o.crops || []) await webp(p, await p.screenshot({ clip }), D, name + '_' + tag + '.webp', 3);
+    if (errors.length) console.log(name, 'page errors:', errors.join('; '));
+    await ctx.close();
+  };
+  const crops = [['square', { x: 500, y: 300, width: 440, height: 250 }], ['river', { x: 1040, y: 360, width: 320, height: 380 }], ['house', { x: 860, y: 220, width: 230, height: 180 }]];
+  // the game as it is (near view) and the proof (far view), the same moment; then the same with the camera only
+  await shot('d1440_game', '', null);
+  await shot('d1440_proof', '?dev=world', null, { crops });
+  await shot('d1440_proof_kit_off', '?dev=world', () => RB.worldLook.set({ kit: false }));
+  await shot('d1440_camera_only', '?dev=world', () => RB.worldLook.set({ kit: false, light: false, atmos: false }), { crops });
+  await shot('d1440_proof_night', '?dev=world', null, { flags: { rw_night: true } });
+  await shot('d2048_proof', '?dev=world', null, { viewport: { width: 2048, height: 1046 }, dpr: 1.25 });
+  await shot('p375_proof', '?dev=world', null, { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true });
+  await shot('p375_game', '', null, { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true });
 }
 
 await b.close();

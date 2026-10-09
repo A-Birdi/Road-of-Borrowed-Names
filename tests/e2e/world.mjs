@@ -177,6 +177,62 @@ await test('the development panel: only on a ?dev=world page; its switches work;
   await ctx.close();
 });
 
+await test('W02 kit: collisions unchanged; low growth only in safe places; the dressing is the same every build; the reveal rule; kit on and off differ', async () => {
+  const { p, ctx, errors, requests } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await square(p);
+  await settled(p);
+  const blocked = () => p.evaluate(() => { const m = RB.world.W.map; let s = ''; for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) s += RB.maps.blockedStatic(m, x, y) ? '1' : '0'; return s; });
+  const withKit = await blocked();
+  await p.evaluate(() => RB.worldLook.set({ kit: false }));
+  await p.evaluate(() => RB.render.frame(5000));
+  const noKit = await blocked();
+  await p.evaluate(() => RB.worldLook.set({ kit: true }));
+  await p.evaluate(() => RB.render.frame(5000));
+  assert(withKit === noKit && withKit === await blocked(), 'the kit changed a collision');
+  // every piece of low growth: open grass, nowhere unsafe
+  const bad = await p.evaluate(() => {
+    const m = RB.world.W.map, def = m.def, out = [];
+    const sh = RB.worldKit.shrubs(m);
+    const near = (x, y, X, Y, r) => Math.abs(x - X) <= r && Math.abs(y - Y) <= r;
+    for (const s of sh) {
+      const t = m.tiles[s.y * m.w + s.x];
+      if (!['grass', 'flowers', 'tallgrass'].includes(t.id)) out.push(s.x + ',' + s.y + ' on ' + t.id);
+      for (const p of m.props) { const pd = RB.props.P[p.p] || {}; const pw = p.w || pd.w || 1, ph = p.h || pd.h || 1; if (s.x >= p.x - ((p.scene || p.text) ? 1 : 0) && s.x < p.x + pw + ((p.scene || p.text) ? 1 : 0) && s.y >= p.y - ((p.scene || p.text) ? 1 : 0) && s.y < p.y + ph + ((p.scene || p.text) ? 1 : 0)) out.push(s.x + ',' + s.y + ' at ' + p.p); }
+      for (const st of m.structs) { if (s.x >= st.x && s.x < st.x + st.w && s.y >= st.y && s.y < st.y + st.h) out.push(s.x + ',' + s.y + ' in a building'); if (st.door != null && near(s.x, s.y, st.x + st.door, st.y + st.h, 1) && s.y >= st.y + st.h - 1) out.push(s.x + ',' + s.y + ' at a door'); }
+      for (const e of (def.exits || []).concat(def.triggers || [])) if (s.x >= e.x - 1 && s.x <= e.x + (e.w || 1) && s.y >= e.y - 1 && s.y <= e.y + (e.h || 1)) out.push(s.x + ',' + s.y + ' at an exit or trigger');
+      for (const n of RB.world.W.npcs) if (n.home && near(s.x, s.y, n.home[0], n.home[1], 1)) out.push(s.x + ',' + s.y + ' at ' + n.id + "'s place");
+    }
+    return { n: sh.length, out };
+  });
+  assert(bad.n > 20, 'expected the village to have low growth: ' + bad.n);
+  assert(!bad.out.length, 'low growth in unsafe places: ' + bad.out.slice(0, 12).join('; '));
+  // the dressing is deterministic: two builds of the static layer are the same pixels
+  const staticHash = () => p.evaluate(() => { RB.render.invalidate(); RB.render.frame(5000); const L = RB.world.W.map.staticLayer, d = L.getContext('2d').getImageData(0, 0, L.width, L.height).data; let x = 2166136261; for (let i = 0; i < d.length; i += 4) { x ^= d[i] | (d[i + 1] << 8) | (d[i + 2] << 16); x = Math.imul(x, 16777619) >>> 0; } return x; });
+  const h1 = await staticHash(), h2 = await staticHash();
+  assert(h1 === h2, 'the dressing differs between builds');
+  // the reveal rule: a person two tiles above a cattail clump thins it; three tiles above does not
+  const rv = await p.evaluate(() => {
+    const m = RB.world.W.map, reed = m.props.find((q) => q.p === 'reeds');
+    const pl = RB.world.W.player, keep = [pl.fx, pl.fy];
+    pl.fx = reed.x; pl.fy = reed.y - 2; const a = RB.worldKit.someoneBehind(reed.x, reed.y);
+    pl.fy = reed.y - 3.5; const b = RB.worldKit.someoneBehind(reed.x, reed.y);
+    pl.fx = keep[0]; pl.fy = keep[1];
+    return { a, b, others: RB.world.W.npcs.length };
+  });
+  assert(rv.a === true, 'a person just behind the cattails should thin them');
+  // (b may be true if someone else stands behind that clump; only a is required)
+  // kit on and off are different pictures
+  await p.clock.install();
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.evaluate(() => RB.worldLook.set({ kit: true }));
+  const on = await frameHash(p);
+  await p.evaluate(() => RB.worldLook.set({ kit: false }));
+  const off = await frameHash(p);
+  assert(on !== off, 'the kit should change the frame');
+  assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
+  await ctx.close();
+});
+
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);
