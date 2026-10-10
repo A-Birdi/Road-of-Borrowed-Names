@@ -312,6 +312,9 @@ would fail V4 (no sliding). It was replaced by an action she can do where she st
 - **They yield to the game:** while anyone talks, a scene stages the person, they walk, or the world isn't in play,
   the person is the game's own (Yasu's rod rests against the post). Afterwards the round begins again from its
   start.
+- **The action is their idle life:** while the proof drives someone, the game's own small habits (a glance, a
+  stretch; `src/engine/52_staging.js`) leave them to it; everyone else keeps theirs. (Added while preparing the gate:
+  until then every habit interrupted the round and started it again. See W05, "Found while preparing the gate".)
 - **Reduced motion** holds one still, readable pose: the float resting on the water, a cloth folded at the chest.
 - **No random stream:** timing comes from the frame's time and each person's own offset; outcomes come from hashes.
 - **The poses are new keys in the pose layer**, added only when the proof first draws an action:
@@ -467,7 +470,39 @@ The same rules as Yasu's and Tomo's (no movement, yields and restarts, reduced m
 
 | Check | Command | Result |
 |---|---|---|
-| The proof's browser tests (11), adding W05's two:<br>• Saltglass: the game's own pixels without the flag; the far view; its own brief; collisions unchanged; low growth safe<br>• Kiyo: every step's pose, nobody moves, the parcels count, she yields and restarts, reduced motion holds | `node tests/e2e/world.mjs` | **11 passed, 0 failed** |
+| The proof's browser tests (11 at W05; **12** with the gate's habit test, below), adding W05's two:<br>• Saltglass: the game's own pixels without the flag; the far view; its own brief; collisions unchanged; low growth safe<br>• Kiyo: every step's pose, nobody moves, the parcels count, she yields and restarts, reduced motion holds | `node tests/e2e/world.mjs` | **11 passed, 0 failed** |
 | Saltglass's slice checks (3): the player's looks; the crowded battle (three creatures and a decision, both sizes, no errors); a recording | `node tests/e2e/world_slice.mjs saltglass` | **3 passed, 0 failed** (after giving the crowded fixture "hard" difficulty, which allows three) |
 | Captures: the game and the proof, the camera only, the evening, 2048, phone; close-ups at 3× (market, quay, piers); Kiyo's strips; the looks; the crowded battle; a recording | `node tests/e2e/world_captures.mjs saltglass`, `node tests/e2e/world_slice.mjs saltglass` | 23 files in `docs/screenshots/world/w05/` (4.1 MB) |
+
+### Found while preparing the gate
+
+**People at work were interrupted by the game's own habits.**
+- **Seen:** Kiyo's first strip came out as six identical frames.
+- **Cause:** the game's idle life (`src/engine/52_staging.js`) gives everyone on screen a small habit now and
+  then. The actions yield to anything staging a person, so each habit made the round start again. The strip was
+  captured with the clock held during one of Kiyo's habits, so every frame was idle. In play, it meant rounds kept
+  restarting, and Kiyo's handover (every fourth round) would rarely be reached.
+- **Fix:** `RB.worldActs.working(a)` is true while the proof drives that person on this map, and the idle life
+  leaves them out. Without the flag it is always false, so the game is unchanged.
+- **Test:** a new browser test runs twelve seconds of play in each town. No working person gets a habit; the rest
+  of the town does; and without the flag nobody is left out.
+- **Unaffected:** the earlier strips of Yasu and Tomo, which happened to be captured between habits.
+- **Redone with the fix:** Kiyo's strips and the three recordings of people at work (`rec_square_to_pier`,
+  `rec_tomo_folding`, `rec_harbour_market`).
+
+**Kiyo's handover showed the parcels twice.**
+- **Seen:** in the corrected strip, the parcels were in her hands and still on the counter for a moment.
+- **Fix:** they now leave the counter as she lifts them, at the end of the pickup.
+
+**The development panel:**
+- it opens whenever the proof is allowed (`?dev=world`, or the switch set before the game starts);
+- it offers **Visit Saltglass** beside Visit Reedwake. Both are offered only while no journey is loaded, and both
+  start a session that is never a save slot.
+
+### The gate
+
+Published to Robin as a private review page: the two towns step by step (the plate, today's game, the far camera,
+light and atmosphere, the proof), close-ups, night and evening, the three people at work with recordings, the doorway,
+the player's looks, a battle in each town, phones and wide screens, the numbers, six smaller questions, and how to try
+the two visits.
 

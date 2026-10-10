@@ -705,6 +705,7 @@ RB.staging = (function () {
     for (const a of w.npcs) {
       if (a.foe || a.alpha === 0 || (a.look && a.look.pet) || !onScreen(a)) continue;
       profileOf(a);
+      if (RB.worldActs && RB.worldActs.working && RB.worldActs.working(a)) continue; // the world proof's action is their habit (dev only)
       people.push(a);
     }
     // the cap counts events, not people: a word between two neighbours, or two people glancing at

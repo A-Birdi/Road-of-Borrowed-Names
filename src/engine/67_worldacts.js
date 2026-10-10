@@ -116,6 +116,13 @@ RB.worldActs = (function () {
     const c = m && CAST[m.id];
     return c && a && a.id ? c[a.id] || null : null;
   }
+  // the proof's action is this person's idle life: the game's own habits (src/engine/52_staging.js) leave them
+  // to it, or every habit would interrupt the round and start it again. Scenes and conversations still take over.
+  function working(a) {
+    const m = RB.world && RB.world.W && RB.world.W.map;
+    if (!kindOf(a, m) || !a.look || a.look.custom) return false;
+    return !!(RB.worldLook && RB.worldLook.active(m) && RB.worldLook.opts.kit);
+  }
 
   // ---- the person's frame: a pose key and a drawn facing (the renderer's artFor asks this first) -------------
   const P = () => RB.sprites._pose;
@@ -308,14 +315,17 @@ RB.worldActs = (function () {
         const n = w ? w.n : 0, ph = w ? w.phase : 'rest', u = w ? w.u : 0;
         let stack = parcelCount(n);
         if (w && parcelCount(n) < 3 && (ph === 'rest' || ph === 'call' || (ph === 'set' && u >= 0.6))) stack++;
-        if (w && parcelCount(n) === 3 && (ph === 'back' || ph === 'call' || ph === 'rest' || (ph === 'across' && u >= 0.6))) stack = 0;
+        // the handover: the parcels leave the counter as she lifts them (the end of the pickup) and stay in her hands
+        if (w && parcelCount(n) === 3 && (ph === 'across' || ph === 'back' || ph === 'call' || ph === 'rest' || (ph === 'pickup' && u > 0.55))) stack = 0;
         const sx = fx + 22, sy = fy + 6;
         list.push({ z: 19 * 16 + 0.1 + (a.fy - 17) * 16, draw: () => { for (let i = 0; i < stack; i++) parcel(c, sx + (i % 2) * 3, sy - i * 3); } });
         if (!w && !still) continue;
         const hx = fx, hy = fy - 22; // between her hands, in front of her
         list.push({ z: z + 0.2, draw: () => {
           if (still) { fishFlat(c, hx - 6, hy - 2); return; }
-          if (ph === 'pickup' && u > 0.55) fishFlat(c, hx - 6, hy + 2);
+          if (ph === 'pickup' && u > 0.55) {
+            if (parcelCount(n) === 3) { for (let i = 0; i < 3; i++) parcel(c, hx - 4, hy + 2 - i * 3); } else fishFlat(c, hx - 6, hy + 2);
+          }
           else if (ph === 'show') fishHang(c, fx - A.x + 4, fy - A.y + 12);
           else if (ph === 'clean') {
             fishFlat(c, hx - 6, hy);
@@ -362,5 +372,5 @@ RB.worldActs = (function () {
       }
     }
   }
-  return { frameOf, push, where, free, CAST, NEW_POSES, stackCount, parcelCount, fishRound, foldRound, sellRound };
+  return { frameOf, push, where, free, working, CAST, NEW_POSES, stackCount, parcelCount, fishRound, foldRound, sellRound };
 })();

@@ -203,6 +203,11 @@
     "I think it's an improvement - you may proceed." **C-79: the book direction is accepted** as revised (still a
     preview behind its setting), and **the rest of P01 is authorised**: Reedwake's presentation proof, then Saltglass
     reusing it, ending in its own visual gate. P02 and later wait for that gate. State: docs/future/work/STATE.md.
+    **P01 is built (W00–W05) and its visual gate is published to Robin (2026-10-10)** as a private review page:
+    Reedwake and Saltglass step by step against their plates, people at work, a battle in each town, phones, the
+    numbers, and six smaller questions. Record: docs/future/work/P01_WORLD.md. Waiting on Robin's answer; P02 waits
+    for it. To try the proof: open `index.html?dev=world`; at the title the panel offers Visit Reedwake and Visit
+    Saltglass (never saved).
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

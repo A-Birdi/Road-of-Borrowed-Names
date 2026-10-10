@@ -153,16 +153,28 @@ await test('W01 layers: each switches on its own; the shadow mask is built once;
   await n.ctx.close();
 });
 
-await test('the development panel: only on a ?dev=world page; its switches work; the visit is offered only with no journey loaded', async () => {
+await test('the development panel: only on a dev page (the URL or the injected switch); its switches work; the visits are offered only with no journey loaded', async () => {
   const plain = await page(b, url, { viewport: { width: 1440, height: 900 } });
   assert(!(await plain.p.$('#wl-dev')), 'the panel must not exist without the flag');
   await plain.ctx.close();
+  // a copy with the switch set before the game starts (no ?dev=world in its address) opens the panel too
+  const injCtx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+  await injCtx.addInitScript(() => { window.__RB_DEV_WORLD__ = true; });
+  const inj = await page(b, url, { context: injCtx });
+  await inj.p.waitForSelector('#wl-dev', { timeout: 5000 });
+  assert(!inj.errors.length, 'errors with the injected switch: ' + inj.errors.join('; '));
+  await injCtx.close();
   const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
   await p.waitForSelector('#wl-dev');
   assert(await p.evaluate(() => RB.save.current().slot == null), 'fixture: no slot is current at the title');
-  assert(await p.isVisible('#wl-visit'), 'the visit is offered at the title');
-  await p.click('#wl-visit');
+  assert(await p.isVisible('#wl-visits'), 'the visits are offered at the title');
+  await p.click('#wl-dev [data-visit="sg"]');
+  await p.waitForFunction(() => RB.world.W.map && RB.world.W.map.id === 'sg.harbor');
+  assert(await p.evaluate(() => RB.save.current().slot == null), 'the visit to Saltglass is never a save slot');
+  assert(await p.evaluate(() => RB.worldLook.active(RB.world.W.map)), 'the proof applies on the Saltglass visit');
+  await p.click('#wl-dev [data-visit="rw"]');
   await p.waitForFunction(() => RB.world.W.map && RB.world.W.map.id === 'rw.village');
+  assert(await p.evaluate(() => RB.save.current().slot == null), 'the visit to Reedwake is never a save slot');
   await p.click('#wl-dev [data-k="light"]');
   assert(await p.evaluate(() => RB.worldLook.opts.light === false), 'the Light switch should turn the layer off');
   assert(await p.getAttribute('#wl-dev [data-k="light"]', 'aria-pressed') === 'false', 'the switch shows its state');
@@ -171,7 +183,7 @@ await test('the development panel: only on a ?dev=world page; its switches work;
   assert(t.w === 22.5, 'Far view off gives the near view: ' + JSON.stringify(t));
   // pretend a journey is loaded: the visit is withdrawn
   await p.evaluate(() => { RB.save.setCurrent(3, 1); RB.worldLook.set({}); });
-  assert(!(await p.isVisible('#wl-visit')), 'the visit must not be offered while a save slot is current');
+  assert(!(await p.isVisible('#wl-visits')), 'the visits must not be offered while a save slot is current');
   await p.evaluate(() => RB.save.setCurrent(null, 0));
   assert(!errors.length, 'errors: ' + errors.join('; '));
   await ctx.close();
@@ -389,6 +401,32 @@ await test('W05 Kiyo sells fish at her stall: every step\'s pose, nobody moves, 
   assert(rm, 'reduced motion should hold one pose');
   assert(!errors.length, 'errors: ' + errors.join('; '));
   await ctx.close();
+});
+
+await test('the game\'s habits leave the working people to their actions (a habit would restart the round); everyone else keeps theirs; without the flag nobody is left out', async () => {
+  const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  for (const [go, who] of [[harbour, ['kiyo']], [square, ['yasu', 'tomo']]]) {
+    await go(p);
+    const r = await p.evaluate(async (who) => {
+      const W = RB.world.W, from = RB.staging.trace().length, people = who.map((id) => W.npcs.find((n) => n.id === id));
+      let idle = 0;
+      for (let i = 0; i < 60; i++) { // twelve seconds of the game's own time and idle life
+        await new Promise((res) => setTimeout(res, 200));
+        for (const a of people) if (a.stg && a.stg.run && a.stg.run.owner === 'idle') idle++;
+      }
+      const habits = RB.staging.trace().slice(from).map((e) => e.who);
+      return { map: W.map.id, working: people.map((a) => RB.worldActs.working(a)), idle, mine: habits.filter((h) => who.some((id) => h.startsWith(id + '@'))), others: habits.length };
+    }, who);
+    assert(r.working.every(Boolean), 'the proof should be driving ' + who.join(', ') + ': ' + JSON.stringify(r));
+    assert(r.idle === 0 && r.mine.length === 0, 'a habit interrupted a working person: ' + JSON.stringify(r));
+    assert(r.others > 0, 'the rest of ' + r.map + ' should keep its idle life: ' + JSON.stringify(r));
+  }
+  assert(!errors.length, 'errors: ' + errors.join('; '));
+  await ctx.close();
+  const plain = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  await harbour(plain.p);
+  assert(await plain.p.evaluate(() => !RB.worldActs.working(RB.world.W.npcs.find((n) => n.id === 'kiyo'))), 'without the flag the game\'s idle life is untouched');
+  await plain.ctx.close();
 });
 
 await b.close();

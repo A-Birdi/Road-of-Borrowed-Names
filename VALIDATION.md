@@ -3654,3 +3654,34 @@ judgement.
 
 **Not verified:** Firefox; the foldable; Robin's eye.
 
+
+## The world proof, the gate's preparation (2026-10-10; P01_WORLD.md "Found while preparing the gate")
+
+**What changed:**
+- `src/engine/52_staging.js`, `src/engine/67_worldacts.js`: while the proof drives a person's action, the game's
+  idle habits leave that person out (`RB.worldActs.working`). Without the flag it is always false.
+- `src/engine/67_worldacts.js`: Kiyo's handover no longer shows the parcels in her hands and on the counter at once.
+- `src/engine/65_worldlook.js`: the development panel opens whenever the proof is allowed, and offers Visit
+  Saltglass beside Visit Reedwake.
+- Tests: `tests/e2e/world.mjs`:
+  - the panel test covers both visits and the switch set before start;
+  - a new test: over twelve seconds of play in each town, no working person gets a habit, the rest of the town
+    does, and without the flag nobody is left out.
+- Evidence redone from the fixed build: `w05/kiyo_sale`, `w05/kiyo_handover`, `w05/rec_harbour_market`,
+  `w04/rec_square_to_pier`, `w04/rec_tomo_folding`.
+
+**Found by** the lead reviewing Kiyo's strip for the gate page: six identical frames. Diagnosed in the browser: Kiyo
+had an idle habit in progress, so the action had yielded. The first panel test failed once on the new row: its
+`display:flex` overrode `hidden`. Fixed with a `[hidden]` rule.
+
+**Checks** (on the build in this commit; `index.html` is byte-identical to the build the browser tests ran on):
+- B `node tests/e2e/world.mjs`: **12/0**.
+- B `node tests/e2e/world_slice.mjs record saltglass`: **4/0**, then `saltglass` again after the handover fix:
+  **3/0**.
+- B `node tests/e2e/world_captures.mjs saltglass`: written. Kiyo's strips reviewed by eye: each step's pose and its
+  objects show; the handover is clean.
+- U `node tests/run-unit.mjs`: **27,450/0**.
+- Campaign `node tests/e2e/matrix.mjs F ren 1`: running on this build at the time of this commit; result recorded
+  below when it finishes.
+
+**Not verified:** Firefox; the foldable; Robin's eye.

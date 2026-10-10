@@ -451,7 +451,7 @@ RB.worldLook = (function () {
     illuminate(c, m, RB.world.W, 0, { bw: w, bh: h, night: nightOf(m) });
   }
 
-  // ---- the development panel (only on a ?dev=world page) ---------------------------------------------------------
+  // ---- the development panel (only on a dev page) ---------------------------------------------------------------
   // Switches for each layer and the view, and a visit to the slice in a session that is never saved: offered only
   // while no journey is loaded, so no save slot is current and nothing can be autosaved.
   function panel() {
@@ -465,20 +465,21 @@ RB.worldLook = (function () {
     el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99999;background:rgba(28,37,48,0.94);color:#eee;font:13px sans-serif;padding:8px;border:1px solid #567;border-radius:6px;max-width:260px;display:grid;gap:6px';
     const css = document.createElement('style');
     css.textContent = '#wl-dev button{font:13px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:28px;padding:2px 8px}' +
-      '#wl-dev button:hover{background:#40586f}#wl-dev button[aria-pressed="true"]{background:#7a5a2a;border-color:#e0b060}#wl-dev.min>*:not(#wl-toggle){display:none}#wl-dev .row{display:flex;flex-wrap:wrap;gap:4px}';
+      '#wl-dev button:hover{background:#40586f}#wl-dev button[aria-pressed="true"]{background:#7a5a2a;border-color:#e0b060}#wl-dev.min>*:not(#wl-toggle){display:none}#wl-dev .row{display:flex;flex-wrap:wrap;gap:4px}#wl-dev [hidden]{display:none!important}';
     document.head.appendChild(css);
     const B = (k, label) => '<button type="button" data-k="' + k + '" aria-pressed="false">' + label + '</button>';
     el.innerHTML = '<button type="button" id="wl-toggle" aria-expanded="true">World proof (dev): hide</button>' +
       '<div class="row">' + B('on', 'The proof') + B('far', 'Far view') + '</div>' +
       '<div class="row">' + B('kit', 'Kit') + B('light', 'Light') + B('atmos', 'Atmosphere') + B('soft', 'Soft edges') + '</div>' +
-      '<button type="button" id="wl-visit">Visit Reedwake (not saved)</button>';
+      '<div class="row" id="wl-visits"><button type="button" data-visit="rw">Visit Reedwake (not saved)</button>' +
+      '<button type="button" data-visit="sg">Visit Saltglass (not saved)</button></div>';
     document.body.appendChild(el);
     const sync = () => {
       for (const b of el.querySelectorAll('[data-k]')) {
         const k = b.dataset.k, on = k === 'far' ? opts.view === 'far' : !!opts[k];
         b.setAttribute('aria-pressed', String(on));
       }
-      const v = el.querySelector('#wl-visit'), cur = RB.save && RB.save.current && RB.save.current();
+      const v = el.querySelector('#wl-visits'), cur = RB.save && RB.save.current && RB.save.current();
       v.hidden = !!(cur && cur.slot != null);
     };
     el.addEventListener('click', (e) => {
@@ -487,10 +488,17 @@ RB.worldLook = (function () {
       const k = b.dataset.k;
       set(k === 'far' ? { view: opts.view === 'far' ? 'near' : 'far' } : { [k]: !opts[k] });
     });
-    el.querySelector('#wl-visit').addEventListener('click', () => {
+    const VISITS = {
+      rw: ['rw.village', 22, 18, { departed: true }],
+      sg: ['sg.harbor', 30, 22, { departed: true, ch1_done: true, sg_arrived: true }],
+    };
+    el.querySelector('#wl-visits').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-visit]');
+      if (!b) return;
       const cur = RB.save && RB.save.current && RB.save.current();
       if (cur && cur.slot != null) return; // a journey is loaded: never risk an autosave over it
-      RB.game.debugStart('rw.village', 22, 18, { comp: 'suzu', flags: { departed: true } });
+      const [map, x, y, flags] = VISITS[b.dataset.visit];
+      RB.game.debugStart(map, x, y, { comp: 'suzu', flags: Object.assign({}, flags) });
       sync();
     });
     const fold = (min) => { el.classList.toggle('min', min); const t = el.querySelector('#wl-toggle'); t.textContent = 'World proof (dev): ' + (min ? 'show' : 'hide'); t.setAttribute('aria-expanded', String(!min)); };
@@ -501,7 +509,7 @@ RB.worldLook = (function () {
     sync();
     return el;
   }
-  if (typeof window !== 'undefined' && typeof document !== 'undefined' && /[?&]dev=world\b/.test((window.location && window.location.search) || '')) {
+  if (typeof window !== 'undefined' && typeof document !== 'undefined' && allowed()) {
     let tries = 0;
     const open = () => { if (window.__RB_READY__ === true && document.body) panel(); else if (++tries < 300) setTimeout(open, 100); };
     setTimeout(open, 0);

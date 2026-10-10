@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-09.
+**Updated:** 2026-10-10.
 
 **Latest explicit authorisation:** Robin, 2026-10-09, on the round-2 review set: "I think it's an improvement - you
 may proceed." Recorded as **C-79**: the book direction is accepted as revised, and **the rest of P01** is authorised:
@@ -28,7 +28,7 @@ byte for byte).
 | U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
 | U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
 | Review set for Robin | **Accepted** (C-79). Round 1: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised): "I think it's an improvement - you may proceed." | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
-| P01 · world proof (Reedwake, then Saltglass) | **Built; at Robin's gate.** W00–W05 done: the art contract and far view, light and atmosphere, Reedwake's kit, two purposeful actions, the slice with a real battle, Saltglass reusing the method (reuse report); world tests 11/0, slice checks pass. Waiting on Robin's visual gate | [P01_WORLD.md](P01_WORLD.md) |
+| P01 · world proof (Reedwake, then Saltglass) | **Built; at Robin's gate.** W00–W05 done: the art contract and far view, light and atmosphere, Reedwake's kit, two purposeful actions, the slice with a real battle, Saltglass reusing the method (reuse report); world tests 12/0, slice checks pass, unit 27,450/0. While preparing the gate: people at work are no longer interrupted by the game's idle habits (they were restarting every round), Kiyo's handover is clean, and the dev panel offers both visits. **The gate's review page is published to Robin (2026-10-10)**; waiting on the answer | [P01_WORLD.md](P01_WORLD.md) |
 
 **Pending Robin gates:** P01's visual gate (Reedwake and Saltglass, old beside new): one question, does this visual direction belong to the game, and what should change?
 
