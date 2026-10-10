@@ -35,6 +35,30 @@
   "jp": "{第|だい}3{章|しょう} の {寄|よ}り{道|みち}",
   "en": "Every side story in Chapter 3 that your journey could have."
  },
+ "stamp:ch.mb2#1r139xj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "jp": "{版木|はんぎ} と {灯|あか}り",
+  "en": "Blockprint and Footlights"
+ },
+ "stamp:ch.mb2#1liul47": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "jp": "{第|だい}4{章|しょう}",
+  "en": "Chapter 4: the main story."
+ },
+ "stamp:side.mb2#hm0jee": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "jp": "{芝居|しばい} の {通|とお}り の {頼|たの}み",
+  "en": "Playhouse Row: everyone helped"
+ },
+ "stamp:side.mb2#1d1a1ym": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "jp": "{第|だい}4{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 4 that your journey could have."
+ },
  "stamp:ch.rw#carm31": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",

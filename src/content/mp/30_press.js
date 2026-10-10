@@ -83,7 +83,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         B('n_rain', ['condition'], '{雨|あめ} が {降|ふ}ったら 、 {次|つぎ} の {日|ひ} に します 。', 'If it rains, it will be the next day.', ['{雨|あめ} が {降|ふ}ったら 、', '{次|つぎ} の {日|ひ} に します 。']),
       ],
       place: [
-        B('n_bank', ['canal'], '{場所|ばしょ} は 、 {長堀|ながぼり} の {岸|きし} です 。', 'At the bank of the Long Canal.', ['{場所|ばしょ} は 、', '{長堀|ながぼり} の {岸|きし} です 。']),
+        B('n_bank', ['canal'], '{場所|ばしょ} は 、 {長堀|ながほり} の {岸|きし} です 。', 'At the bank of the Long Canal.', ['{場所|ばしょ} は 、', '{長堀|ながほり} の {岸|きし} です 。']),
         B('n_playhouse', ['theatre_place'], '{場所|ばしょ} は 、 {芝居小屋|しばいごや} の {前|まえ} です 。', 'In front of the playhouse.', ['{場所|ばしょ} は 、', '{芝居小屋|しばいごや} の {前|まえ} です 。'], { unlock: 'mp_theatre_seen' }),
         B('n_exchange', ['exchange'], '{場所|ばしょ} は 、 {札場|ふだば} の {中|なか} です 。', 'Inside the Tally Exchange.', ['{場所|ばしょ} は 、', '{札場|ふだば} の {中|なか} です 。']),
       ],

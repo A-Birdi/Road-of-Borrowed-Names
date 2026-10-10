@@ -29,7 +29,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   C.quests.mp_apprentice = {
     chapter: 'mb2',
-    title: T('{見習|みなら}い の {見習|みなら}い', 'The Apprentice Printer'),
+    title: T('{刷|す}り{場|ば} の {見習|みなら}い', 'The Apprentice Printer'),
     stages: [
       T('ミヨ に 、 {活字|かつじ} の {並|なら}べ{方|かた} を {教|おし}えよう 。', 'Show Miyo how type is set: you explain, she sets.'),
       T('ミヨ が {組|く}んだ {版|はん} を 、 {宗兵衛|そうべえ} に {見|み}せよう 。', 'Take the forme Miyo set to Sōbē.'),

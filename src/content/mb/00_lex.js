@@ -16,7 +16,7 @@ RB.lex.add(RB.lex.parseTable(`
 東橋|ひがしばし|name|E|East Bridge
 港橋|みなとばし|name|E|Harbour Bridge
 結び橋|むすびばし|name|E|Musubi Bridge, "the Tying Bridge" (Manybridge's first bridge)
-長堀|ながぼり|name|I|the Long Canal
+長堀|ながほり|name|I|the Long Canal
 横堀|よこぼり|name|I|the Cross Canal
 裏堀|うらぼり|name|I|the Back Canal
 まさ屋|まさや|name|F|Masaya (a noodle stall)

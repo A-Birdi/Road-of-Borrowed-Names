@@ -43,7 +43,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     foes: [
       { id: 'n1a', enemy: 'mp.moth', x: 6, y: 9, patrol: 2, bg: 'understage', intro: intro('{紙|かみ} の {羽|はね} の {蛾|が} が 、 {台本|だいほん} の {字|じ} を {食|た}べて いる 。 {食|た}べた {所|ところ} の {字|じ} が 、 {違|ちが}う {字|じ} に なって いる 。', 'A moth with paper wings is eating the prompt-book\'s letters. Where it has eaten, the letters have turned into different ones.') },
       { id: 'n1b', enemy: 'mp.imp', x: 16, y: 4, patrol: 2, bg: 'understage', intro: intro('{活字|かつじ} で できた {小鬼|こおに} が 、 {逆|さか}さま の {字|じ} を ばらまいて いる 。', 'An imp made of loose type is scattering letters about, all of them backwards.') },
-      { id: 'n1c', enemy: 'mp.kuroko', x: 4, y: 15, patrol: 0, bg: 'understage', if: 'mp_kuroko1', intro: intro('{黒子|くろこ} の {姿|すがた} を した {影|かげ} 。 {名前|なまえ} を {呼|よ}ばれて 、 {初|はじ}めて そこ に いる 。', 'A shadow dressed as a kuroko. Named aloud, it is there at last.') },
+      { id: 'n1c', enemy: 'mp.kuroko', x: 4, y: 15, patrol: 0, bg: 'understage', if: 'mp_kuroko1', intro: intro('{黒子|くろこ} の {姿|すがた} を した {影|かげ} 。 {名前|なまえ} を {呼|よ}ばれて 、 やっと 「いる」 こと に なった 。', 'A shadow dressed as a kuroko. Named aloud, it is there at last.') },
     ],
     exits: [],
     onEnter: [{ scene: 'mp.under_arrive', if: '!mp_under_seen' }],

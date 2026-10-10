@@ -128,7 +128,7 @@ narr: {柱|はしら} の {影|かげ} に 、 {黒|くろ}い {頭巾|ずきん
 ?(comp=suzu) comp[think]: {黒子|くろこ} は 、 {見|み}えて も {見|み}えない ふり を する の が {礼儀|れいぎ} よ 。 …… でも 、 ここ は {舞台|ぶたい} じゃ ない わ 。 || With a kuroko, it's good manners to pretend you can't see them. …But this isn't the stage.
 ?(comp!=suzu) comp[think]: {見|み}えて いる のに 、 いない こと に する の か 。 …… {声|こえ} を かけて みよう 。 || You can see it, and it counts as not there? …Say something to it.
 !challenge mp.kuroko_name
-?(var._res=1) narr: {黒子|くろこ} が 、 ゆっくり と {顔|かお} を {上|あ}げた 。 {名前|なまえ} を {呼|よ}ばれて 、 {初|はじ}めて そこ に いる 。 || The kuroko slowly raises its head. Named aloud, it is there at last.
+?(var._res=1) narr: {黒子|くろこ} が 、 ゆっくり と {顔|かお} を {上|あ}げた 。 {名前|なまえ} を {呼|よ}ばれて 、 やっと 「いる」 こと に なった 。 || The kuroko slowly raises its head. Named aloud, it is there at last.
 
 @scene mp.bottom_door
 ?(!mp_u3_raised) narr: {井戸|いど} の {向|む}こう の {戸|と} 。 {台|だい} が {上|あ}がらない と 、 {届|とど}かない 。 || A door beyond the well. Out of reach until the platform is up.

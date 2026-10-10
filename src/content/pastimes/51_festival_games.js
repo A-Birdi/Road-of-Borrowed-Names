@@ -40,7 +40,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       P('uchiwa', T('a round fan', 'うちわ'), T('You wave it to make yourself cool.', 'あおいで 、 すずしく する 。'),
         T('Something you wave at your face in summer to cool down.', '{夏|なつ} に {顔|かお} を あおいで 、 {涼|すず}しく する もの 。')),
       P('omen', T('a festival mask', 'お{面|めん}'), T('You put it on your face. Some have a fox\'s face.', 'かお に つける 。 きつね の かお も ある 。'),
-        T('You wear it over your face. Some have the face of a fox, or an ogre.', '{顔|かお} に {着|つ}ける 。 {狐|きつね} や {鬼|おに} の {顔|かお} を した もの も ある 。')),
+        T('You wear it over your face. Some have the face of a fox, or an ogre.', '{顔|かお} に かぶる 。 {狐|きつね} や {鬼|おに} の {顔|かお} を した もの も ある 。')),
       P('kingyo', T('a goldfish', '{金魚|きんぎょ}'), T('A red fish. It is in a bag of water.', 'あかい さかな 。 ふくろ の みず の なか に いる 。'),
         T('A small red fish, in a bag filled with water.', '{赤|あか}い {小|ちい}さな {魚|さかな} 。 {水|みず} の {入|はい}った {袋|ふくろ} に {入|はい}って いる 。')),
       P('tako', T('a kite', '{凧|たこ}'), T('It rides the wind and flies in the sky.', 'かぜ に のって 、 そら を とぶ 。'),
