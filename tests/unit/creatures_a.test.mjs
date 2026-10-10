@@ -24,9 +24,10 @@ export default async (t) => {
   };
   const mine = Object.keys(E).filter((id) => FAM.indexOf(E[id].art) >= 0).sort();
   const only = (globalThis.process && process.env.CA_FAM) || null; // (while authoring: one family)
-  // 36 from the inventory, plus P08's six Undercroft creatures, P09's five Understage creatures and five of P10's
-  // Keepers' Road creatures drawn on these families in the interim (F-36)
-  t.eq(mine.length, 52, 'the inventory\'s 36 enemies, the eleven interim Manybridge creatures and five of the Keepers\' Road\'s use these ten families');
+  // 36 from the inventory, plus P08's six Undercroft creatures, P09's five Understage creatures, five of P10's
+  // Keepers' Road creatures and four of its twelve-chapter Cinder/Snowbell creatures drawn on these families in the
+  // interim (F-36)
+  t.eq(mine.length, 56, 'the inventory\'s 36 enemies, the eleven interim Manybridge creatures, five of the Keepers\' Road\'s and four of the twelve-chapter Cinder and Snowbell ones use these ten families');
 
   // the rules' results a move of each kind produces (a fixture per kind, as RB.combatLogic.foeAct would)
   const RESULT = {

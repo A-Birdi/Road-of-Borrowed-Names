@@ -542,7 +542,9 @@ RB.content.company = RB.content.company || {
   };
   // What We Keep: prefer the companion's own story, then something solved together, a meeting,
   // the long roads, then a chapter; only moments this journey actually recorded
-  const KEEP_ORDER = ['story:pq_', 'disc:', 'pet:', 'story:fireworks', 'story:lq2', 'story:lq1', 'story:ch4', 'story:ch3', 'story:ch2'];
+  // (story:kr_ridge, Ren's night at the Ridge Light in the twelve-chapter edition's Chapter 7, is Ren's own story too:
+  // it follows the personal quest's memory and never replaces it)
+  const KEEP_ORDER = ['story:pq_', 'story:kr_ridge', 'disc:', 'pet:', 'story:fireworks', 'story:lq2', 'story:lq1', 'story:ch4', 'story:ch3', 'story:ch2'];
   function keepMoment(s) {
     const ms = C(s).memories.filter((m) => m.comp === s.comp || m.comp == null);
     for (const pre of KEEP_ORDER) {

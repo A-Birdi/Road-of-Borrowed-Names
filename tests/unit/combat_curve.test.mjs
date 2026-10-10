@@ -21,6 +21,9 @@ export default async (t) => {
   const RB = load(['core', 'lang', 'recog', 'engine', 'learn', 'ui', 'content', 'atlas'], { __RB_TEST__: true });
   const C = RB.content, L = RB.combatLogic, Sim = RB.combatSim;
   const CHAPTER = { rw: 1, sg: 2, co: 3, sb: 4, lf: 5, sa: 6, atlas: 7 };
+  // the twelve-chapter edition's own chapters, with what a companion can do by then (Manybridge comes after
+  // Saltglass, the Keepers' Road after Snowbell), on rows of their own until the ladder is re-tiered (C-22, P14)
+  const ED2 = { mb: 3, mp: 3, kr: 4 };
   const COMPS = [null, 'nao', 'mio', 'ren', 'suzu'];
   const DIFFS = ['relaxed', 'normal', 'hard'];
   // what a companion can do by a chapter: the second action after chapter 2, the
@@ -47,12 +50,12 @@ export default async (t) => {
   for (const diff of DIFFS) {
     for (const comp of COMPS) {
       for (const id of Object.keys(C.enemies)) {
-        const pre = id.split('.')[0], ch = CHAPTER[pre];
+        const pre = id.split('.')[0], ch = CHAPTER[pre] || ED2[pre];
         const words = pre === 'atlas' ? CH6 : KNOWN_AT[id];
         if (!ch || !words) continue;
         const r = play(id, Object.assign({ difficulty: diff, comp, words }, unlocks(ch)));
         const kind = C.enemies[id].boss ? 'boss' : 'regular';
-        add([diff, pre === 'atlas' ? 'atlas' : 'ch' + ch, kind, comp ? 'comp' : 'alone'].join('|'), r);
+        add([diff, pre === 'atlas' ? 'atlas' : ED2[pre] ? 'ed2-' + pre : 'ch' + ch, kind, comp ? 'comp' : 'alone'].join('|'), r);
         if (!r.win) fails.push(diff + ' ' + (comp || 'alone') + ' ' + id + ' (' + (r.lose ? 'lost' : 'stalled') + ' after ' + r.rounds + ')');
         if (diff === 'relaxed' && kind === 'regular' && r.minPc / r.max < 0.5) fails.push('relaxed is not gentle: ' + (comp || 'alone') + ' ' + id + ' leaves ' + r.minPc + '/' + r.max);
       }

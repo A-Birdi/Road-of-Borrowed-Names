@@ -5,7 +5,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.lex.add(RB.lex.parseTable(`
 # ---- the road and its places ------------------------------------------------------------------------------------
-杉|すぎ|n|E|a Japanese cedar
+杉|すぎ|n|E|a cedar tree, a Japanese cedar
 尾根|おね|n|I|a ridge (of a mountain)
 小道|こみち|n|I|a path, a lane
 洞|ほら|n|I|a cave, a hollow in rock
@@ -16,7 +16,7 @@ RB.lex.add(RB.lex.parseTable(`
 都|みやこ|n|I|the capital
 雨戸|あまど|n|I|a storm shutter
 雨漏り|あまもり|n|I|a leak in a roof
-窪み|くぼみ|n|I|a hollow, a niche
+窪み|くぼみ|n|I|a hollow in the ground or a wall, a niche
 書見台|しょけんだい|n|A|a lectern, a reading stand
 狐橋|きつねばし|name|F|Fox Bridge (a bridge, and the hamlet beside it; fictional)
 第七章|だいななしょう|n|E|Chapter Seven
@@ -42,7 +42,7 @@ RB.lex.add(RB.lex.parseTable(`
 九十九話目|きゅうじゅうきゅうわめ|n|A|the ninety-ninth tale
 四度目|よんどめ|n|E|the fourth time
 何代|なんだい|n|I|how many generations; many generations
-某|なにがし|n|A|so-and-so, a certain person (an old way of not giving a name)
+某|なにがし|n|A|a certain person, so-and-so (an old way of not giving a name)
 同業|どうぎょう|n|A|the same trade; someone in the same trade
 学者|がくしゃ|n|I|a scholar
 殿様|とのさま|n|I|a feudal lord
@@ -61,7 +61,7 @@ RB.lex.add(RB.lex.parseTable(`
 ねだる|ねだる|v5r|I|to coax, to ask for (as a favour)
 まつる|まつる|v5r|I|to enshrine, to honour (a god or spirit)
 指摘|してき|vs|A|pointing out
-堅い|かたい|adj-i|I|stiff, formal (of manner); hard
+堅い|かたい|adj-i|I|hard, stiff; formal (of manner)
 覚え易い|おぼえやすい|adj-i|I|easy to remember
 真っ暗|まっくら|adj-na|E|pitch dark
 出来過ぎ|できすぎ|exp|I|too good to be true

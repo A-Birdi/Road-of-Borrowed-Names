@@ -28,6 +28,9 @@ export const KNOWN_AT = {
   'sb.fox': OBS, 'sb.wisp': OBS, 'sb.ghost': OBS, 'sb.moth': OBS, 'sb.golem': OBS, 'sb.boss': OBS,
   'lf.stamp': CH5, 'lf.blot': BELL, 'lf.mote': BELL, 'lf.conduit': BELL, 'lf.wraith': BELL, 'lf.keeper': BELL,
   'mb.crab': MB1, 'mb.snail': MB1, 'mb.beetle': MB1, 'mb.tangle': MB1, 'mb.barge': MB1, 'mb.bridge': MB1,
+  // the twelve-chapter edition's three more kinds each for Cinder Orchard and Snowbell (P10, E23): met where their
+  // region's own are (the kiln and old works; the upper terraces; the observatory, after the Star Stair)
+  'co.shard': CH3, 'co.mole': CH3, 'co.imp': UPPER, 'sb.bat': OBS, 'sb.hare': OBS, 'sb.starling': OBS,
   'kr.wick': KR, 'kr.sandal': KR, 'kr.chochin': KR, 'kr.moss': KR, 'kr.shadow': KR, 'kr.hyakuwa': KR,
   'mp.kuroko': MB2, 'mp.moth': MB2, 'mp.imp': MB2, 'mp.golem': MB2, 'mp.naraku': MB2,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
