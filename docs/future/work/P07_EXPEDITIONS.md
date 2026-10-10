@@ -99,3 +99,12 @@ every setting with and without a companion; the six-chapter story's group rules 
 |---|---|---|
 | Six people, each met in their own scene, each meeting with the aid before a question of three; only people met, only twelve-chapter journeys; a seeded chance of about one in two (1,008 of 2,000), never a stranger; a roll once per visit (400 visits), the last flag cleared on restart; places on open floor; aid always (Yasu 5 → 9), a wrong memory takes nothing away, a remembered moment adds (never above full), Wataru's shortcut, his other aid once it is open; once per visit, a new chance next visit, the record kept; reading makes no record; the Atlas's self-check over 96 runs dressed as commissions, with safe passage and a delver at the camp: every room solvable, every exit reachable; a delver at the camp only in a run that rolled one | `node tests/run-unit.mjs delvers` | 39/0 |
 | In the browser: Yasu in the lamp room, remembered (4 → 12) and not (4 → 8, kept) | `node tests/e2e/expedition.mjs delver` | 1/0 (of the suite's 6) |
+
+## Phase end (396a308)
+
+Every browser suite P07 touched passes (expedition 6/0, atlas_board 4/0, atlas.check, combat_ui 7/0, encounters 10/0,
+ui 14/0, records 7/0, book 15/0, battle_settings 10/0); F/Ren PASS (15.4 min). The full unit suite found 12 failures
+from two causes, both fixed: a new kanji (遇, in 奇遇) in one delver line, reworded rather than added; and the
+Cartographer's Compass without battle-figure or portrait art, now drawn and listed in the painted-art contract.
+After the fixes the full suite is 30,197 passed, 0 failed (VALIDATION.md "P07's phase end").
+

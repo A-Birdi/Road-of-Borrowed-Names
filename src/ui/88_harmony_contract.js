@@ -207,6 +207,7 @@ RB.harmonyContract = (function () {
   const SLOT_ORDER = { acc_chest: ['satchel', 'atlas_sash', 'bell', 'atlas_pin', 'cape'], acc_head: ['hat', 'cap', 'headband', 'ribbon', 'flower', 'leaf', 'atlas_quill'] };
   // Worn things that are deliberately not painted in a bust (with the reason; the registry lists them).
   const NOT_SHOWN = {
+    atlas_compass: 'hangs at the hip, below the ink band crop',
     atlas_lamplet: 'hangs at the hip, below the ink band crop',
     bottles: 'companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames',
     lamp: 'companion-only (Ren); held in their painted frames',

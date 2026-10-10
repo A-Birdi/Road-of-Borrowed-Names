@@ -3924,3 +3924,25 @@ as authoring templates (docs/future/work/DUNGEON_FAMILIES.md).
 
 **Not verified:** a delver met at the Atlas camp in the browser (unit-tested through the built maps); Firefox; the
 foldable.
+
+## The expansion, P07's phase end (2026-10-10; C-81; docs/future/work/P07_EXPEDITIONS.md; REQUIREMENTS.md XP30–XP33)
+
+**What was checked:** a clean copy of 396a308 (`git archive`), built and run in the background.
+
+**Checks:**
+- B every suite P07 touched or could disturb: `expedition` **6/0**, `atlas_board` **4/0**, `atlas.check` (a whole
+  Atlas run; no failures), `combat_ui` **7/0**, `encounters` **10/0**, `ui` **14/0**, `records` **7/0**, `book`
+  **15/0**, `battle_settings` **10/0**.
+- B `node tests/e2e/matrix.mjs F ren 1`: **PASS** (six chapters and an Atlas expedition, 15.4 min).
+- U the full suite: **30,185 passed, 12 failed**, from two causes. (1) Hana's delver line used 奇遇, and 遇 was new:
+  the embedded fonts did not draw it (five font checks), the recognizer had no strokes for it, and the kanji set and
+  the reading table were out of date. The line was reworded (あら 、 こんな 所 で 会う なんて) rather than adding a
+  kanji for one word; reviewed and entered in the ledger. (2) The Cartographer's Compass (a worn cosmetic) had no
+  battle-figure or portrait art and was not in the painted-art contract: drawn now on the battle figure and the
+  portrait (a brass case at the left hip), and listed as hanging below the painted crop. Also: the scene manifest
+  regenerated (the delvers' and the board's scenes).
+- U after the fixes: `equip` **333/0**, `harmony_raster` **108/0**, `harmony_art` **52/0**, `recog-coverage` **15/0**,
+  `recog-kanji` **557/0**, `book_type` **60/0**, `scene` **1023/0**, `delvers` **39/0**; the full suite **30,197
+  passed, 0 failed**.
+
+**Not verified:** Firefox; the foldable; a person playing the cellars or a commission.

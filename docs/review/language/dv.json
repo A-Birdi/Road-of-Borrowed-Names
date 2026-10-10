@@ -47,11 +47,11 @@
   "jp": "…… まあ 、 {年寄|としよ}り の {話|はなし} だ 。 {気|き} に する な 。",
   "en": "…Well, an old man's talk. Don't let it trouble you."
  },
- "scene:dv.hana#u4oyfb": {
+ "scene:dv.hana#1omuxxz": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
-  "jp": "あら 、 {奇遇|きぐう} ね 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。",
-  "en": "Oh, what a coincidence. I came looking for tea leaves."
+  "ref": "scene:dv.hana#1omuxxz",
+  "jp": "あら 、 こんな {所|ところ} で {会|あ}う なんて 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。",
+  "en": "Oh — fancy meeting you here. I came looking for tea leaves."
  },
  "scene:dv.hana#uyiyg1": {
   "status": "self-reviewed",

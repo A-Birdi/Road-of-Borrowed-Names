@@ -8,9 +8,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const D = RB.delvers;
-  RB.lex.add(RB.lex.parseTable(`
-奇遇|きぐう|n|A|coincidence, a chance meeting
-`), 'expeditions');
   D.define('yasu', { char: 'yasu', source: 'rw.yasu_after', aid: 'rest' });
   D.define('hana', { char: 'hana', source: 'rw.hana_first', aid: 'rest' });
   D.define('fuku', { char: 'fuku', source: 'sg.fuku_idle', aid: 'rest' });
@@ -52,7 +49,7 @@ yasu: …… まあ 、 {年寄|としよ}り の {話|はなし} だ 。 {気|�
 
 @scene dv.hana
 !faceplayer
-hana: あら 、 {奇遇|きぐう} ね 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。 || Oh, what a coincidence. I came looking for tea leaves.
+hana: あら 、 こんな {所|ところ} で {会|あ}う なんて 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。 || Oh — fancy meeting you here. I came looking for tea leaves.
 hana: {一杯|いっぱい} どうぞ 。 {今日|きょう} は ふたつ {入|い}れて も 、 {飲|の}む {人|ひと} が いる わ 。 || Have a cup. Today, if I pour two, there's someone to drink the second.
 !hook dv_aid hana
 hana: {初|はじ}めて {会|あ}った {朝|あさ} 、 わたし が {何|なに} を {入|い}れて いた か 、 {覚|おぼ}えて いる ？ || The first morning we met, do you remember what I'd poured?

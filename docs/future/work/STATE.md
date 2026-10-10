@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-10 (C-81; P02 to P06 done; P07 under way).
+**Updated:** 2026-10-10 (C-81; P02 to P07 done; P08 under way).
 
 **Latest explicit authorisation:** Robin, 2026-10-10, after the fidelity study, recorded as **C-81**: "continue your
 World Proof into full Expansion plan at large. Do your best to implement the *entire* expansion plan without consulting
@@ -37,7 +37,7 @@ byte for byte).
 | P04 · encounters | **Done.** The actor model (1,710 recorded battles held), one shared exchange, Wait, conditions, guests, arrivals, objectives, procedures, conversations and machines, two-move turns, Hushes, order numbers, modifier words, companion plans and growth, help offers, outcome sets, the Tactics Board, five in two rows. Encounters 184/0, modifiers 127/0; browser suites pass (encounters 10/0); invariance 640 identical; F/Ren PASS (15.0 min); unit 28,748/0 | [P04_ENCOUNTERS.md](P04_ENCOUNTERS.md) |
 | P05 · living world | **Done.** The town engine (routines, change beats, "Have you seen…?", road events, sealed places), the exploration actions W9, W11–W17, the performance library (sixteen actions) and profession suggestions, the proof kit's dressing checked on every map. Town 87/0, verbs 116/0, perform 85/0, worldkit 10/0; browser suites all pass; F/Ren PASS (15.3 min); the phase-end unit run's three failures fixed (P06_RECORDS.md) | [P05_WORLD.md](P05_WORLD.md) |
 | P06 · records, replay, New Game+, pastimes, the book everywhere | **Done.** The Road Stamp Book and stands, the travel volume, the seal, read-only replay, New Game+ with the farewell; the pastime registry, shogi's ladder with puzzles, Fuku's bench, the Distractions tab; hanafuda, karuta, shiritori's themes, the festival shell with its first game; the Satchel as the book's folio. Phase end on 6c58b74: every browser suite passes, F/Ren PASS (15.2 min), unit 29,473 passed and 1 failed (a generated reading table, regenerated since) | [P06_RECORDS.md](P06_RECORDS.md) |
-| P07 · expeditions and a pilot | **Under way (phase end next).** Done: the expedition engine and the pilot, the Flood Cellars under Reedwake's warehouse (〜て ある as an apprenticeship dungeon: preview, looped floor, stations, sluice, optional room, shortcut, climbing out and defeat, the plan; unit 30/0, 51/0, the curve 6/0; browser 5/0); the Atlas's commissions (practice, errands, surveys, lengths; unit 38/0, browser 4/0); delvers in the cellars and at the Atlas camp (unit 39/0 with the self-check over 96 dressed runs; browser 6/0); the ten dungeon families as templates. Next: the phase-end run | [P07_EXPEDITIONS.md](P07_EXPEDITIONS.md) |
+| P07 · expeditions and a pilot | **Done.** The expedition engine and the pilot, the Flood Cellars under Reedwake's warehouse (〜て ある as an apprenticeship dungeon); the Atlas's commissions (practice, errands, surveys, lengths); delvers in the cellars and at the Atlas camp; the variation evidence over 96 dressed runs; the ten dungeon families' templates. Phase end on 396a308: every browser suite passes, F/Ren PASS (15.4 min), unit 30,185 passed and 12 failed (a new kanji in one line, the compass's art), fixed: 30,197/0 | [P07_EXPEDITIONS.md](P07_EXPEDITIONS.md) |
 | P08–P13 · the six new chapters | Not started | — |
 | P14–P17 · integration, postgame, art pass, closure | Not started | — |
 

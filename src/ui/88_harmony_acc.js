@@ -316,5 +316,5 @@ RB.harmonyKit = RB.harmonyKit || {};
   }
   HK.acc = A; HK.drawAcc = drawAll;
   // Accessories this module draws; the rest are deliberately not shown in a bust (with the reason).
-  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'held in the hand by the pose (Ren)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron' };
+  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', atlas_compass: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'held in the hand by the pose (Ren)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron' };
 })(RB.harmonyKit);

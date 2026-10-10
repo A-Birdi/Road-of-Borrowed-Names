@@ -479,6 +479,9 @@ RB.portraits = (function () {
     }
     if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
     if (a.includes('atlas_lamplet')) lantern(b, 80, 80); // held, so it stays with the body
+    if (a.includes('atlas_compass')) { // the brass case at the left hip, its needle pointing north
+      b.oval(10, 84, 22, 96, GOLD[1]); b.oval(12, 86, 20, 94, '#e8e0c8'); b.line(16, 87, 16, 91, '#a83e27'); b.line(16, 91, 16, 93, '#3a3440'); b.px(13, 86, GOLD[2]);
+    }
   }
   // Glasses, drawn before the brows (the brows stay readable above the frame) with a lighter top
   // rim one row lower than before (PORTRAITS.md §3 item 5). g: { dy: slipped (+1) or pushed up (−1),

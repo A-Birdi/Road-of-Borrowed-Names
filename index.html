@@ -30709,6 +30709,12 @@ RB.battlers = (function () {
           break;
         }
         case 'atlas_lamplet': lantern(Pl([8.4, 3.6, -1])); break;
+        case 'atlas_compass': { // a brass case on a cord at the left hip, its face turned outward
+          K.S(Pl([-8.4, 3.4, -1.2]), 1.7, Mt.gold, GRP.acc);
+          K.S(Pl([-8.6, 3.4, -2.2]), 1.1, flat('#e8e0c8', { min: 2 }), GRP.acc);
+          K.S(Pl([-8.7, 2.9, -2.9]), 0.4, flat('#a83e27', { min: 2 }), GRP.acc);
+          break;
+        }
         case 'atlas_quill': K.C(H([-hr[0] * 0.66, hr[1] * 0.42, -hr[2] * 0.58]), H([-hr[0] * 1.02 + hsw * 0.3, hr[1] * 1.3, -hr[2] * 0.9]), 1.1, 0.5, flat('#f4f0e0', { min: 2 }), GRP.acc); break;
         default: break;
       }
@@ -32507,6 +32513,9 @@ RB.portraits = (function () {
     }
     if (a.includes('cape')) { const R = R4(p.capeCol || '#6a3a4a'); b.poly([10, 80, 24, 72, 34, 76, 22, 84], R[2]); b.poly([86, 80, 72, 72, 62, 76, 74, 84], R[1]); b.oval(44, 70, 51, 77, GOLD[1]); b.px(46, 72, GOLD[2]); }
     if (a.includes('atlas_lamplet')) lantern(b, 80, 80); // held, so it stays with the body
+    if (a.includes('atlas_compass')) { // the brass case at the left hip, its needle pointing north
+      b.oval(10, 84, 22, 96, GOLD[1]); b.oval(12, 86, 20, 94, '#e8e0c8'); b.line(16, 87, 16, 91, '#a83e27'); b.line(16, 91, 16, 93, '#3a3440'); b.px(13, 86, GOLD[2]);
+    }
   }
   // Glasses, drawn before the brows (the brows stay readable above the frame) with a lighter top
   // rim one row lower than before (PORTRAITS.md §3 item 5). g: { dy: slipped (+1) or pushed up (−1),
@@ -104120,7 +104129,7 @@ RB.harmonyKit = RB.harmonyKit || {};
   }
   HK.acc = A; HK.drawAcc = drawAll;
   // Accessories this module draws; the rest are deliberately not shown in a bust (with the reason).
-  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'held in the hand by the pose (Ren)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron' };
+  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', atlas_compass: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'held in the hand by the pose (Ren)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron' };
 })(RB.harmonyKit);
 
 
@@ -105997,6 +106006,7 @@ RB.harmonyContract = (function () {
   const SLOT_ORDER = { acc_chest: ['satchel', 'atlas_sash', 'bell', 'atlas_pin', 'cape'], acc_head: ['hat', 'cap', 'headband', 'ribbon', 'flower', 'leaf', 'atlas_quill'] };
   // Worn things that are deliberately not painted in a bust (with the reason; the registry lists them).
   const NOT_SHOWN = {
+    atlas_compass: 'hangs at the hip, below the ink band crop',
     atlas_lamplet: 'hangs at the hip, below the ink band crop',
     bottles: 'companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames',
     lamp: 'companion-only (Ren); held in their painted frames',
@@ -149673,9 +149683,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const D = RB.delvers;
-  RB.lex.add(RB.lex.parseTable(`
-奇遇|きぐう|n|A|coincidence, a chance meeting
-`), 'expeditions');
   D.define('yasu', { char: 'yasu', source: 'rw.yasu_after', aid: 'rest' });
   D.define('hana', { char: 'hana', source: 'rw.hana_first', aid: 'rest' });
   D.define('fuku', { char: 'fuku', source: 'sg.fuku_idle', aid: 'rest' });
@@ -149717,7 +149724,7 @@ yasu: …… まあ 、 {年寄|としよ}り の {話|はなし} だ 。 {気|�
 
 @scene dv.hana
 !faceplayer
-hana: あら 、 {奇遇|きぐう} ね 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。 || Oh, what a coincidence. I came looking for tea leaves.
+hana: あら 、 こんな {所|ところ} で {会|あ}う なんて 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。 || Oh — fancy meeting you here. I came looking for tea leaves.
 hana: {一杯|いっぱい} どうぞ 。 {今日|きょう} は ふたつ {入|い}れて も 、 {飲|の}む {人|ひと} が いる わ 。 || Have a cup. Today, if I pour two, there's someone to drink the second.
 !hook dv_aid hana
 hana: {初|はじ}めて {会|あ}った {朝|あさ} 、 わたし が {何|なに} を {入|い}れて いた か 、 {覚|おぼ}えて いる ？ || The first morning we met, do you remember what I'd poured?

@@ -224,7 +224,8 @@
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
     (a hatch there, twelve-chapter journeys after Chapter 2), are done, as are the Atlas's commissions (a board in the Lantern Hall), delvers (people from the journey
-    met by chance in the cellars and at the Atlas camp) and the ten dungeon families' templates; P07's phase end is next.
+    met by chance in the cellars and at the Atlas camp) and the ten dungeon families' templates; P07 is done (phase end: browser suites pass, F/Ren PASS, unit 30,197/0 after
+    two fixes); P08 (Manybridge, Chapter 3) is under way: docs/future/work/P08_MANYBRIDGE.md.
     Development pages: `?dev=enc` (encounter fixtures), `?dev=verbs` (exploration actions). Current state:
     docs/future/work/STATE.md.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
