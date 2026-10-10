@@ -31,7 +31,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   leaf('kr', '{峠|とうげ} の {灯|ひ}', 'The Pass Light', 'A leaf from the tide pools, the characters cut rather than written, as on a lantern\'s plate.');
   leaf('lf', 'はんたい', 'Against', 'The leaf in Ōmi\'s letter: one word, in a thin, determined hand.');
 
-  // back on the mainland: src/content/zz_ko_back.js (it runs after every chapter's people are in place)
+  // back on the mainland: src/content/zz_ko_mainland.js (it runs after every chapter's people are in place)
 })(RB.content);
 
 RB.script.add(`
@@ -101,7 +101,11 @@ narr: {風石|かぜいし} 。 {平|たい}ら な {石|いし} の {上|うえ
 * [item.ko_leaf_sb] 「{春|はる} に は {帰|かえ}ります」 || "I'll be home in spring" -> sb
 * [item.ko_leaf_kr] 「{峠|とうげ} の {灯|ひ}」 || "The Pass Light" -> kr
 * [item.ko_leaf_lf] 「はんたい」 || "Against" -> lf
+* [quest.ko_myname=1] {自分|じぶん} の {返事|へんじ} の {葉|は} || Your own answer, on a fresh leaf -> myname
 * {今|いま} は {返|かえ}さない 。 || Not now. -> end
+:myname
+!call ko.myname_reply
+!end
 :rw
 !challenge ko.ret_rw
 !if var._res=1 -> rw_ok

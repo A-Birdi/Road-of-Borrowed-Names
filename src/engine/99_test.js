@@ -121,7 +121,8 @@ RB.test = (function () {
     while (!st.over && rounds < 60) {
       rounds++;
       let card = null, comp = null, target = st.cur;
-      if (st.foes.length && !st.enc.proc) {
+      // a conversation keeps to its authored route even when a creature leads it (its foe is who you talk to)
+      if (st.foes.length && !st.enc.proc && !(def.kind === 'social' && def.autoRoute)) {
         const c = RB.combatSim.choose(st, words, s, { policy: T.auto.battle === 'smart' ? 'smart' : 'unravel' });
         if (!c || !c.card) { T.problems.push({ where: 'encounter ' + def.id, msg: 'no response available' }); break; }
         card = c.card; target = c.target; comp = c.act ? { act: c.act, target: c.actTarget } : null;

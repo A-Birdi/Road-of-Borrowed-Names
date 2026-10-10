@@ -62,4 +62,57 @@ RB.dialect.add('kansai', `
 @ ko/village [ko.seacave_first]
 = …… {本物|ほんもの} の {舞台|ぶたい} より 、 {舞台|ぶたい} らしい わ 。 || …More of a stage than a real one.
 > …… ほんま の {舞台|ぶたい} より 、 {舞台|ぶたい} らしい わ 。 || …More of a stage than a real one.
+@ ko/side [ko.ao_ask]
+= {稽古|けいこ} は {人|ひと} に {見|み}せない もの よ 。 {幕|まく} が {上|あ}がる まで は ね 。 || Rehearsals aren't for showing anyone. Not till the curtain goes up.
+> {稽古|けいこ} は {人|ひと} に {見|み}せへん もん や 。 {幕|まく} が {上|あ}がる まで は な 。 || Rehearsals aren't for showing anyone. Not till the curtain goes up.
+@ ko/side [ko.ao_reads]
+= {初舞台|はつぶたい} の {台詞|せりふ} が 、 {自分|じぶん} の {名前|なまえ} ！ {大物|おおもの} に なる わ よ 、 この {子|こ} 。 || His first line on stage is his own name! This one'll be a star.
+> {初舞台|はつぶたい} の {台詞|せりふ} が 、 {自分|じぶん} の {名前|なまえ} や ！ {大物|おおもの} に なる で 、 この {子|こ} 。 || His first line on stage is his own name! This one'll be a star.
+@ ko/side [ko.kihei_ask]
+= {出|だ}せなかった {手紙|てがみ} …… 。 {耳|みみ} の {痛|いた}い {話|はなし} ね 。 …… {探|さが}しましょう 。 || A letter never sent… That one stings a little. …Let's look.
+> {出|だ}せへんかった {手紙|てがみ} …… 。 {耳|みみ} の {痛|いた}い {話|はなし} や な 。 …… {探|さが}しましょう 。 || A letter never sent… That one stings a little. …Let's look.
+@ ko/side [ko.kihei_letter]
+= {謝|あやま}る {手紙|てがみ} ね 。 …… {出|だ}せなかった の は 、 {船|ふね} の せい だけ じゃ ない かも ね 。 || A letter saying sorry. …Maybe it wasn't only the boat that kept it from being sent.
+> {謝|あやま}る {手紙|てがみ} や な 。 …… {出|だ}せへんかった ん は 、 {船|ふね} の せい だけ と ちゃう かも な 。 || A letter saying sorry. …Maybe it wasn't only the boat that kept it from being sent.
+@ ko/side [ko.kihei_choose]
+= {幕|まく} の {下|お}ろし{方|かた} は 、 {役者|やくしゃ} じゃ なくて 、 {観|み}た {人|ひと} が {決|き}める もの よ 。 …… いい {幕|まく} だった わ 。 || How the curtain comes down isn't the actor's to say; it's the audience's. …It was a good one.
+> {幕|まく} の {下|お}ろし{方|かた} は 、 {役者|やくしゃ} や なくて 、 {観|み}た {人|ひと} が {決|き}める もん や 。 …… ええ {幕|まく} やった で 。 || How the curtain comes down isn't the actor's to say; it's the audience's. …It was a good one.
+@ ko/side [ko.myname_read]
+= あら 、 {昔|むかし} の お{客|きゃく} さん から の {花束|はなたば} ね 。 お{礼|れい} の {挨拶|あいさつ} 、 しない と 。 || Well, flowers from an old audience. You'll have to take a bow back.
+> あら 、 {昔|むかし} の お{客|きゃく} さん から の {花束|はなたば} や な 。 お{礼|れい} の {挨拶|あいさつ} 、 せな あかん で 。 || Well, flowers from an old audience. You'll have to take a bow back.
+@ ko/side [ko.myname_reply]
+= {返|かえ}し の {挨拶|あいさつ} 、 ちゃんと できた わ ね 。 …… {私|わたし} も 、 いつか しない と 。 || You took your bow properly. …I'll have to, one of these days.
+> {返|かえ}し の {挨拶|あいさつ} 、 ちゃんと できた な 。 …… うち も 、 いつか せな あかん わ 。 || You took your bow properly. …I'll have to, one of these days.
+@ ko/side [ko.census_report]
+= {帳簿|ちょうぼ} を {付|つ}ける {人|ひと} は 、 {信用|しんよう} できる わ 。 …… {私|わたし} も {付|つ}けてる から {分|わ}かる の 。 || You can trust someone who keeps the books. …I keep them too, so I'd know.
+> {帳簿|ちょうぼ} を {付|つ}ける {人|ひと} は 、 {信用|しんよう} できる で 。 …… うち も {付|つ}けてる から {分|わ}かる ねん 。 || You can trust someone who keeps the books. …I keep them too, so I'd know.
+@ ko/side [ko.tide_night]
+= …… {紙吹雪|かみふぶき} の {逆|ぎゃく} ね 。 {降|ふ}る の じゃ なくて 、 {昇|のぼ}って いく 。 {幕切|まくぎ}れ に は 、 もったいない くらい 。 || …Confetti in reverse. Not falling, rising. Almost too good for a final curtain.
+> …… {紙吹雪|かみふぶき} の {逆|ぎゃく} や な 。 {降|ふ}る ん や なくて 、 {昇|のぼ}って いく 。 {幕切|まくぎ}れ に は 、 もったいない くらい や 。 || …Confetti in reverse. Not falling, rising. Almost too good for a final curtain.
+@ ko/comp [ko.suzu_leaf]
+= …… あら 。 {私|わたし} の {字|じ} 。 || …Oh. My handwriting.
+> …… あら 。 うち の {字|じ} や 。 || …Oh. My handwriting.
+= {書|か}きかけ の {返事|へんじ} ！ {捨|す}てた つもり だった のに 、 {海|うみ} を {渡|わた}って {来|く}る なんて 。 {律儀|りちぎ} な {葉|は} ね 。 || A half-written reply! I thought I'd thrown it away, and it's come all the way across the sea. What a dutiful leaf.
+> {書|か}きかけ の {返事|へんじ} や ！ {捨|す}てた つもり やった のに 、 {海|うみ} を {渡|わた}って {来|く}る なんて 。 {律儀|りちぎ} な {葉|は} や な 。 || A half-written reply! I thought I'd thrown it away, and it's come all the way across the sea. What a dutiful leaf.
+= …… 「なぜ か と いう と」 の {続|つづ}き 、 {書|か}けなかった の よ 。 {今|いま} も 、 {書|か}けない 。 || …I couldn't write what came after "The reason is". I still can't.
+> …… 「なぜ か と いう と」 の {続|つづ}き 、 {書|か}けへんかった ねん 。 {今|いま} も 、 {書|か}けへん 。 || …I couldn't write what came after "The reason is". I still can't.
+@ ko/comp [ko.suzu_stage]
+= …… お{客|きゃく} さん が いる なら 、 やる しか ない わ ね 。 || …Well, if there's an audience, there's nothing for it.
+> …… お{客|きゃく} さん が おる なら 、 やる しか ない な 。 || …Well, if there's an audience, there's nothing for it.
+= さあ さあ 、 お{立|た}ち{会|あ}い ！ {言|こと}の{葉|は}{島|じま} の 、 {始|はじ}まり の {話|はなし} ！ || Roll up, roll up! The story of how Kotonoha began!
+> さあ さあ 、 お{立|た}ち{会|あ}い ！ {言|こと}の{葉|は}{島|じま} の 、 {始|はじ}まり の {話|はなし} や で ！ || Roll up, roll up! The story of how Kotonoha began!
+= むかし 、 {一人|ひとり} の {女|おんな} の {人|ひと} が 、 {届|とど}かない {言葉|ことば} の ため に 、 {海|うみ} の {真|ま}ん{中|なか} に {種|たね} を {植|う}えた ！ || Long ago, a woman planted a seed in the middle of the sea, for words that never arrive!
+> むかし 、 {一人|ひとり} の {女|おんな} の {人|ひと} が 、 {届|とど}かへん {言葉|ことば} の ため に 、 {海|うみ} の {真|ま}ん{中|なか} に {種|たね} を {植|う}えた ん や ！ || Long ago, a woman planted a seed in the middle of the sea, for words that never arrive!
+= むかし 、 {大|おお}きな {海蛇|うみへび} が {眠|ねむ}って いた 。 その {背中|せなか} に 、 ある {日|ひ} {木|き} が {生|は}えた ！ || Long ago a great sea serpent lay sleeping, and one day a tree grew on its back!
+> むかし 、 {大|おお}きな {海蛇|うみへび} が {眠|ねむ}って おった 。 その {背中|せなか} に 、 ある {日|ひ} {木|き} が {生|は}えた ん や ！ || Long ago a great sea serpent lay sleeping, and one day a tree grew on its back!
+= むかし 、 チトセ と いう {人|ひと} が 、 {自分|じぶん} と みんな の {手紙|てがみ} の ため に 、 {種|たね} を {植|う}えた ！ || Long ago, a woman called Chitose planted a seed, for her own letters and for everyone's!
+> むかし 、 チトセ と いう {人|ひと} が 、 {自分|じぶん} と みんな の {手紙|てがみ} の ため に 、 {種|たね} を {植|う}えた ん や ！ || Long ago, a woman called Chitose planted a seed, for her own letters and for everyone's!
+= そして {葉守|はもり} は {誓|ちか}った 。 {葉|は} は 、 {一枚|いちまい} {残|のこ}らず {元|もと} の {場所|ばしょ} へ ！ || And the keepers swore: every last leaf, back where it belongs!
+> そして {葉守|はもり} は {誓|ちか}った ん や 。 {葉|は} は 、 {一枚|いちまい} {残|のこ}らず {元|もと} の {場所|ばしょ} へ ！ || And the keepers swore: every last leaf, back where it belongs!
+= そして {舟|ふね} の {人|ひと} は {誓|ちか}った 。 どんな に {遠|とお}くて も 、 {届|とど}けて みせる ！ || And the boat people swore: however far, we'll get them there!
+> そして {舟|ふね} の {人|ひと} は {誓|ちか}った ん や 。 どんな に {遠|とお}くて も 、 {届|とど}けて みせる で ！ || And the boat people swore: however far, we'll get them there!
+= …… でも ね 、 {書|か}いた {人|ひと} だけ の {言葉|ことば} も ある の 。 それ は 、 そっと {仕舞|しま}って おく の よ 。 || …But some words belong only to the one who wrote them. Those, you put away gently.
+> …… でも な 、 {書|か}いた {人|ひと} だけ の {言葉|ことば} も ある ねん 。 それ は 、 そっと {仕舞|しま}って おく ん や で 。 || …But some words belong only to the one who wrote them. Those, you put away gently.
+= アンコール ？ …… {相方|あいかた} が いない と 、 {二幕目|にまくめ} は できない の よ 。 ねえ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
+> アンコール ？ …… {相方|あいかた} が おらん と 、 {二幕目|にまくめ} は でけへん ねん 。 なあ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
 `);

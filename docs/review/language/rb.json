@@ -11,6 +11,54 @@
   "jp": "{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く",
   "en": "Drain the Flood Cellars and open the outflow door."
  },
+ "stamp:ch.ko#qbndxa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{言|こと}の{葉|は}{島|じま}",
+  "en": "Kotonoha"
+ },
+ "stamp:ch.ko#1m6qtwu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{第|だい}9{章|しょう}",
+  "en": "Chapter 9: the main story."
+ },
+ "stamp:side.ko#1be1tcw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{言|こと}の{葉|は}{島|じま} の {頼|たの}み",
+  "en": "Kotonoha: everyone helped"
+ },
+ "stamp:side.ko#kdgk5x": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{第|だい}9{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 9 that your journey could have."
+ },
+ "stamp:ko.leaves#1l0d9lj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{葉|は} を {全部|ぜんぶ} {返|かえ}した",
+  "en": "Every leaf home"
+ },
+ "stamp:ko.leaves#1ovxqhr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{風石|かぜいし} から {八枚|はちまい}",
+  "en": "All eight drifted leaves sent home from the Wind Stone."
+ },
+ "stamp:ko.exhibit#xhbmz8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{島|しま} の {言|い}い{伝|つた}え",
+  "en": "The island's legend, hung"
+ },
+ "stamp:ko.exhibit#15gi6i6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{館|やかた} の {三枚|さんまい} の {板|いた}",
+  "en": "The keepers' hall's three panels, each with the telling you chose."
+ },
  "stamp:ch.kr#dcatc1": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
@@ -490,6 +538,12 @@
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
   "jp": "{三|みっ}つ の {調査|ちょうさ}",
   "en": "Survey all three areas of the Unwritten Atlas."
+ },
+ "stand:kotonoha#qbndxa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",
+  "jp": "{言|こと}の{葉|は}{島|じま}",
+  "en": "Kotonoha"
  },
  "stand:keepers#dcatc1": {
   "status": "self-reviewed",

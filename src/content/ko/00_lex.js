@@ -79,4 +79,79 @@ RB.lex.add(RB.lex.parseTable(`
 曰く|いわく|exp|A|(literary) says, it is said
 望|もち|n|A|(old) the full moon
 朔|さく|n|A|(old) the new moon, the first day of the lunar month
+# ---- P11f: the side stories and the companions -------------------------------------------------------------------
+広まる|ひろまる|v5r|I|to spread, become widespread
+美容院|びよういん|n|E|a hairdresser's, a beauty salon
+美術館|びじゅつかん|n|E|an art museum
+泥棒|どろぼう|n|E|a thief, a burglar
+目上|めうえ|n|I|someone above you (older, or higher in rank)
+贈る|おくる|v5r|I|to give (as a present)|Also read おくる: 送る is to send. 贈る is to give as a gift.
+一葉|いちよう|n|A|(written) one leaf; one sheet|A literary counter for leaves, sheets of paper and photographs, as in 一葉の写真 (real).
+百倍|ひゃくばい|n|E|a hundred times (as much)
+十倍|じゅうばい|n|E|ten times (as much)
+千倍|せんばい|n|E|a thousand times (as much)
+近年|きんねん|n|A|recent years
+落葉|らくよう|n|A|falling leaves; fallen leaves (written)
+増加|ぞうか|vs|A|an increase; to increase
+一途|いっと|n|A|one way only|増加の一途をたどる: to keep on rising, with no sign of turning.
+望月|もちづき|n|A|the full moon (an old name: the fifteenth night)|Real: old Japanese names for the nights of the moon.
+十六夜|いざよい|n|A|the moon of the sixteenth night (an old name: the "hesitating" moon)|Real: it rises a little later than the full moon, as if hesitating.
+立待月|たちまちづき|n|A|the moon of the seventeenth night (an old name: waited for standing)|Real.
+居待月|いまちづき|n|A|the moon of the eighteenth night (an old name: waited for sitting)|Real.
+太る|ふとる|v5r|E|to grow fat; (of the moon) to wax
+明後日|あさって|n|E|the day after tomorrow
+朔望|さくぼう|n|A|the new moon and the full moon|Real: 朔 is the new moon, 望 the full moon.
+上弦|じょうげん|n|A|the first quarter (of the moon)
+百人一首|ひゃくにんいっしゅ|n|I|the Hundred Poets, a Poem Each (an anthology)|Real: a thirteenth-century anthology of a hundred poems, also played as a card game.
+二十番|にじゅうばん|n|E|number twenty
+逢う|あう|v5u|A|to meet (someone dear; literary)
+逢はむ|あはむ|exp|A|(classical) I mean to meet (you)|Real classical form, modern 逢おう.
+思ふ|おもふ|exp|A|(old spelling) to think, to feel|The old kana spelling of 思う (real).
+おもふ|おもふ|exp|I|(old spelling of おもう) to think|The old kana spelling (real).
+いふ|いふ|exp|A|(old spelling of いう) to say|The old kana spelling (real).
+こゑ|こゑ|exp|A|(old spelling of こえ, 声) a voice|The old kana spelling (real).
+ゐ|ゐ|exp|I|an old kana, read い today|Real: one of the two kana dropped from modern spelling, with ゑ.
+ゑ|ゑ|exp|I|an old kana, read え today|Real: one of the two kana dropped from modern spelling, with ゐ.
+みをつくし|みをつくし|n|A|(old spelling of みおつくし) channel markers; (a pun) 身を尽くし, giving oneself up entirely|Real: the pun is in the Hyakunin Isshu's twentieth poem.
+懸ける|かける|v1|I|to stake, to risk
+干る|ひる|v1|A|to dry up; (of the sea) to ebb
+恋|こい|n|E|love, romance
+衣服|いふく|n|I|clothes, clothing
+畝|うね|n|I|a ridge between furrows (in a field)
+う|う|exp|F|the kana う (as a sound)
+はっまい|はっまい|exp|F|(not a word: a wrong reading of 8枚, はちまい)
+いっひゃく|いっひゃく|exp|F|(not a word: a wrong reading of 百, ひゃく)
+さんぴゃくまい|さんぴゃくまい|exp|E|(not a word: a wrong reading of 300枚, さんびゃくまい)
+はちびゃくまい|はちびゃくまい|exp|I|(not a word: a wrong reading of 800枚, はっぴゃくまい)
+ゆなぎ|ゆなぎ|exp|F|(not a word: ゆうなぎ with a sound dropped)
+しほさい|しほさい|exp|F|(not a word: しほさゐ only half read; today しおさい)
+みつくし|みつくし|exp|F|(not a word: みおつくし with a sound dropped)
+みわつくし|みわつくし|exp|E|(not a word: a wrong reading of みをつくし)
+みほつくし|みほつくし|exp|I|(not a word: a wrong spelling of みおつくし)
+いぶ|いぶ|exp|A|(not a word here: a wrong reading of いふ)
+うぃ|うぃ|exp|I|(the old sound of ゐ, wi; not used today)
+こお|こお|exp|A|(not a word: a wrong reading of こゑ)
+れこ|れこ|exp|F|(not a word: Ao's misreading of ねこ)
+わこ|わこ|exp|F|(not a word: a misreading of ねこ)
+ぬこ|ぬこ|exp|E|(not a word here: a misreading of ねこ)
+きつて|きつて|exp|F|(not a word: Ao's misreading of きって)
+こんにち|こんにち|n|E|today, these days (as in こんにちは)
+れ|れ|exp|F|the kana れ
+ぬ|ぬ|exp|F|the kana ぬ
+つ|つ|exp|F|the kana つ (small っ marks a little stop)
+くるっと|くるっと|adv|E|round, with a twist (a little loop)
+仕舞う|しまう|v5u|E|to put away, to keep (somewhere safe)
+観る|みる|v1|E|to watch (a play, a show)
+弓|ゆみ|n|E|a bow (for arrows); a bow shape
+半月|はんげつ|n|E|a half moon
+壮観|そうかん|adj-na|A|a grand sight, spectacular
+ゆふなぎ|ゆふなぎ|exp|I|(old spelling of ゆうなぎ, 夕凪) the evening calm|The old kana spelling (real).
+仮名遣い|かなづかい|n|I|kana spelling (the rules for writing words in kana)|Real: 歴史的仮名遣い is the old spelling, used until 1946.
+しほさゐ|しほさゐ|exp|I|(old spelling of しおさい, 潮騒) the sound of the surf|The old kana spelling (real).
+二幕目|にまくめ|n|I|the second act
+真っ赤|まっか|adj-na|E|bright red; (of a face) bright red, blushing
+助詞|じょし|n|I|a particle (grammar)
+方言|ほうげん|n|I|a dialect
+年下|としした|n|E|younger (than someone)
+山盛り|やまもり|n|E|a heap, piled high
 `));

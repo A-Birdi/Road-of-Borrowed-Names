@@ -57,6 +57,7 @@ ko_tokio: {紙|かみ} の {切|き}れ{端|はし} の よう な {葉|は} は
 narr: {葉守|はもり} の {数|かず} の {板|いた} 。 {一日|いちにち} ごと に 、 {拾|ひろ}った {葉|は} の {数|かず} が {書|か}いて ある 。 || The keepers' tally board: the leaves gathered, day by day.
 ?(!ko_done) narr: {古|ふる}い {方|ほう} は {十|じゅう} 、 {十二|じゅうに} 、 {九|きゅう} …… {新|あたら}しい {方|ほう} は 、 {三百|さんびゃく} 、 {六百|ろっぴゃく} 、 {千百|せんひゃく} 。 || The old ones read ten, twelve, nine… the new ones, three hundred, six hundred, eleven hundred.
 ?(ko_done) narr: {一番|いちばん} {新|あたら}しい {数|かず} は 、 {十一|じゅういち} 。 その {横|よこ} に 、 {小|ちい}さく {花|はな} の {絵|え} が {描|か}いて ある 。 || The newest number is eleven. Beside it, someone has drawn a small flower.
+?(ko_census_done) narr: {板|いた} の {隅|すみ} に 、 {小|ちい}さく 「{手伝|てつだ}い ： $name 、 $comp」 。 || In the corner of the board, small: "Helped: $name, $comp."
 
 # ---- Nana and Ao -------------------------------------------------------------------------------------------------------
 @scene ko.nana_early
@@ -89,7 +90,8 @@ ko_ao: これ 、 {籠|かご} の {底|そこ} に あった 。 {四角|しか
 ?(comp=suzu) comp: {裏方|うらかた} が いない と 、 {役者|やくしゃ} は {台詞|せりふ} も {言|い}えない の よ 。 {胸|むね} を {張|は}り なさい 。 || Without the stagehands, the actors couldn't say a line. Hold your head up.
 @scene ko.ao_after
 !faceplayer
-ko_ao: {庭|にわ} が あった って ？ …… {僕|ぼく} も 、 いつか {行|い}く 。 {字|じ} が {読|よ}める よう に なったら 。 || There was a garden? …I'll go some day. When I can read.
+?(!ko_ao_reads) ko_ao: {庭|にわ} が あった って ？ …… {僕|ぼく} も 、 いつか {行|い}く 。 {字|じ} が {読|よ}める よう に なったら 。 || There was a garden? …I'll go some day. When I can read.
+?(ko_ao_reads) ko_ao: {庭|にわ} が あった って ？ …… {僕|ぼく} も 、 いつか {行|い}く 。 {今|いま} は 、 {朝|あさ} の {授業|じゅぎょう} が ある から {無理|むり} だ けど 。 || There was a garden? …I'll go some day. Not now, mind: I've got morning lessons.
 @scene ko.ao_post
 !faceplayer
 ko_ao: {今日|きょう} 、 {一枚|いちまい} {読|よ}めた 。 「おかえり」 って {書|か}いて あった 。 …… {誰|だれ} に も {言|い}う な よ 。 || I read one today. It said おかえり, welcome home. …Don't tell anyone.
@@ -104,7 +106,8 @@ ko_yoshino: {朝|あさ} は 、 ここ で {子供|こども} たち に {字|�
 ?(tell_ko.t_hall_ok) ko_yoshino[smile]: {子供|こども} たち が 、 {板|いた} の {前|まえ} で {喧嘩|けんか} して います 。 「わたし は {海蛇|うみへび} の {話|はなし} が いい 」 「{僕|ぼく} は {舟|ふね} ！」 …… いい {授業|じゅぎょう} に なりそう です 。 || The children are arguing in front of the panels. "I like the serpent one!" "The boat!" …It'll make a good lesson.
 @scene ko.yoshino_after
 !faceplayer
-ko_yoshino: アオ が 、 {朝|あさ} の {授業|じゅぎょう} を {窓|まど} の {外|そと} から {聞|き}いて いる の です 。 …… {気付|きづ}かない ふり を して います 。 || Ao listens to the morning lessons from outside the window. …I'm pretending not to notice.
+?(!ko_ao_reads) ko_yoshino: アオ が 、 {朝|あさ} の {授業|じゅぎょう} を {窓|まど} の {外|そと} から {聞|き}いて いる の です 。 …… {気付|きづ}かない ふり を して います 。 || Ao listens to the morning lessons from outside the window. …I'm pretending not to notice.
+?(ko_ao_reads) ko_yoshino[smile]: アオ は 、 {一番|いちばん} {後|うし}ろ の {席|せき} で 、 {誰|だれ} より {大|おお}きな {声|こえ} で {読|よ}みます 。 …… {時々|ときどき} 、 {間違|まちが}えて も 。 || Ao sits at the very back and reads louder than anyone. …Mistakes and all, sometimes.
 @scene ko.yoshino_post
 !faceplayer
 ko_yoshino[smile]: アオ が 、 {窓|まど} の {外|そと} から {中|なか} に {入|はい}って きました 。 {一番|いちばん} {後|うし}ろ の {席|せき} です けど 。 || Ao has come in from outside the window. To the back row, but in.
@@ -129,9 +132,12 @@ ko_mitsu[smile]: {船|ふね} で {来|き}た お{客|きゃく} さん ！ {�
 @scene ko.mitsu_after
 !faceplayer
 ko_mitsu[happy]: お{帰|かえ}り なさい ！ ほら 、 {約束|やくそく} の お{汁|しる} 。 {二人|ふたり} {分|ぶん} 、 {大盛|おおも}り よ 。 || Welcome back! Here, the soup I promised. Two big bowls.
+?(ko_kihei_wind) ko_mitsu: …… そう いえば 、 ゆうべ 、 {祖母|そぼ} が {笑|わら}って いる {夢|ゆめ} を {見|み}た の 。 {珍|めずら}しい わ 。 || …Come to think of it, last night I dreamt my grandmother was laughing. That's rare.
+?(ko_kihei_mitsu) ko_mitsu[smile]: {戸|と} の {横|よこ} の {額|がく} 、 {見|み}て くれた ？ {祖父|そふ} の {字|じ} 。 {毎朝|まいあさ} 、 {挨拶|あいさつ} して いる の 。 || Did you see the frame by the door? My grandfather's hand. I say good morning to it every day.
 @scene ko.mitsu_post
 !faceplayer
 ko_mitsu: {最近|さいきん} は 、 {陸|りく} から の お{客|きゃく} さん が {増|ふ}えた の 。 {葉|は} を {見|み}に {来|く}る ん です って 。 {宿|やど} が {賑|にぎ}やか で 、 {嬉|うれ}しい わ 。 || More guests from the mainland lately. They come to see the leaves. The lodging house is lively, and I'm glad.
+?(ko_kihei_kept) ko_mitsu: {潮|しお}だまり に 、 {時々|ときどき} {古|ふる}い {外套|がいとう} の {船乗|ふなの}り さん が {立|た}って いる って 、 {子供|こども} たち が {言|い}う の 。 {宿|やど} に {来|く}れば いい のに ね 。 {戸|と} は {開|あ}いて いる のに 。 || The children say an old sailor in a long coat stands at the tide pools sometimes. He should come to the house. The door's open.
 @scene ko.lodge_rest
 narr: {布団|ふとん} に {横|よこ} に なる 。 {窓|まど} から 、 {葉|は} が {一枚|いちまい} 、 {枕|まくら} の {横|よこ} に {落|お}ちて きた 。 || You lie down on the futon. A leaf drifts in through the window and lands by the pillow.
 !heal
@@ -167,6 +173,8 @@ RB.script.add(`
 # The tide calendar's standing stone (Koyomi's): the moon's phases cut round a disc. Reading it finds the next low
 # tide, which opens the rocks round to the sea cave (the Tide Calendar, 24_scenes_side.js, takes it further).
 !gesture pc read 29,3
+!if quest.ko_tide=1 -> ring
+!if quest.ko_tide=2 -> ring
 narr: {潮|しお} の {暦|こよみ} の {石|いし} 。 {月|つき} の {形|かたち} が 、 {円|えん} の {周|まわ}り に {彫|ほ}って ある 。 || The tide calendar's stone: the moon's shapes cut round a circle.
 !if ko_lowtide -> known
 !challenge ko.tide_read
@@ -179,4 +187,7 @@ narr: {月|つき} の {形|かたち} と {潮|しお} の {関係|かんけい
 !end
 :known
 narr: {今日|きょう} は {大潮|おおしお} 。 {東|ひがし} の {岩場|いわば} が {出|で}て いる 。 || A spring tide today: the eastern rocks are out.
+!end
+:ring
+!call ko.tide_ring
 `);

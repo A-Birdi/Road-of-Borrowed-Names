@@ -1,7 +1,8 @@
 /* Kotonoha's props (expansion P11): a drift of written leaves on the sand, a keeper's gathering basket, a stone
  * lantern half-buried in sand (dark or lit), a great conch on its rock, the great camphor's trunk among its roots, an
  * exhibition panel in the keepers' hall (blank, or showing the telling chosen for it), a rack of drying nets, the tide
- * calendar's standing stone, a tangle of roots across a passage in the Root Hollows, and a current of drifting leaves.
+ * calendar's standing stone, a tangle of roots across a passage in the Root Hollows, a current of drifting leaves,
+ * and (P11f) a moon stone from the calendar's ring and Kihei's letter in its frame.
  * Each has a flat 16-px drawing (the fallback, as every prop) and its art-resolution version in the world's prop style
  * (light from the upper left, hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow).
  * Interim regional assets under AC-1 (C-82): finished in the art pass (P16). */
@@ -53,6 +54,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
   def('ko_current', { block: false }, (c, x, y, p, t) => {
     const k = still() ? 0 : Math.floor((t || 0) / 200) % 4;
     for (let i = 0; i < 3; i++) px(c, x + 4 + ((i * 5 + k * 2) % 9), y + 12 - i * 5 - k, 3, 2, GOLD[3]);
+  });
+
+  // P11f: a moon stone from the tide calendar's ring (o.phase 1 new, 2 crescent, 3 half, 4 full) and Kihei's letter
+  // framed by Mitsu's door
+  const MOONCUT = (c, x, y, n, dark, light) => {
+    px(c, x, y, 6, 6, dark);
+    if (n === 2) px(c, x + 4, y + 1, 2, 4, light);
+    if (n === 3) px(c, x + 3, y, 3, 6, light);
+    if (n === 4) px(c, x, y, 6, 6, light);
+  };
+  def('ko_moonstone', {}, (c, x, y, p, t, o) => {
+    px(c, x + 2, y + 6, 12, 8, p.stone[1]); px(c, x + 2, y + 6, 12, 2, p.stone[2]);
+    MOONCUT(c, x + 5, y + 7, (o && o.phase) || 1, '#2a2a2e', '#e8eef0');
+  });
+  def('ko_frame', {}, (c, x, y, p) => {
+    px(c, x + 3, y - 4, 10, 14, p.wood[1]); px(c, x + 4, y - 3, 8, 12, '#ebe3ca'); px(c, x + 6, y, 4, 2, GOLD[2]);
+    px(c, x + 5, y + 10, 2, 4, p.wood[2]); px(c, x + 9, y + 10, 2, 4, p.wood[2]);
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
@@ -227,6 +245,38 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (const [x0, y0, x1, y1, w, k] of [[2, -30, 30, 28, 6, 2], [62, -30, 34, 28, 6, 1], [16, -34, 48, 26, 5, 3], [44, -32, 14, 26, 5, 2], [0, 4, 64, 8, 4, 1]]) line(g, x0, y0, x1, y1, tr[k], w);
       for (const [x, y] of [[10, -10], [50, -14], [30, 6]]) leaf(g, x, y, 1, 3);
       for (const [x, y] of [[6, 22], [40, 24]]) R(g, x, y, 10, 2, MOSS[2]);
+    },
+  });
+
+  // A moon stone from the tide calendar's ring: a flat beach stone with the moon's shape cut in it (o.phase: 1 the new
+  // moon, a dark disc; 2 a crescent; 3 the half moon; 4 the full moon, white).
+  art('ko_moonstone', {
+    box: [-2, -4, 36, 40],
+    v: (o) => Math.max(1, Math.min(4, o.phase || 1)),
+    ink: true,
+    shadow: () => [16, 28, 12, 3, 0.26],
+    draw(g, M, v) {
+      const S = M.stone, n = v || 1;
+      ell(g, 16, 22, 13, 7, S[2]); ell(g, 14, 20, 9, 4, S[3]); R(g, 6, 26, 20, 1, S[0]);
+      ell(g, 16, 21, 6, 4, '#2c2e34');
+      if (n === 2) { ell(g, 19, 21, 3, 4, '#e8eef0'); ell(g, 17, 21, 3, 4, '#2c2e34'); }
+      if (n === 3) R(g, 16, 17, 6, 8, '#e8eef0');
+      if (n === 4) ell(g, 16, 21, 6, 4, '#e8eef0');
+      R(g, 8, 27, 6, 2, MOSS[2]);
+    },
+  });
+
+  // Kihei's letter, framed by the lodging house's door: a written leaf pressed under glass in a plain wooden frame on a
+  // little stand.
+  art('ko_frame', {
+    box: [0, -20, 32, 52],
+    ink: true,
+    shadow: () => [16, 30, 9, 2, 0.24],
+    draw(g, M) {
+      const W = M.wood;
+      R(g, 6, -14, 20, 30, W[1]); R(g, 8, -12, 16, 26, PP[3]); R(g, 8, -12, 16, 2, PP[4]);
+      leaf(g, 12, -2, 0, 2); R(g, 10, 6, 12, 1, IK[2]); R(g, 10, 9, 9, 1, IK[2]);
+      R(g, 9, 16, 3, 12, W[2]); R(g, 20, 16, 3, 12, W[2]);
     },
   });
 
