@@ -18,9 +18,9 @@ RB.script.add(`
 @scene ko.nao_letter
 !set ko_nao_letter
 narr: {浜|はま} を {歩|ある}いて いる と 、 {風|かぜ} が {葉|は} を {一枚|いちまい} 、 ナオ の {足元|あしもと} に {運|はこ}んだ 。 || As you walk the beach, the wind carries a leaf to Nao's feet.
-!gesture comp bend
+!gesture comp bend prop=letter
 comp[surprise]: …… この {字|じ} 。 || …This handwriting.
-!gesture comp read
+!gesture comp read prop=letter
 narr: ナオ は {背中|せなか} を {向|む}けて 、 {一人|ひとり} で {読|よ}む 。 {長|なが}い {間|あいだ} 、 {動|うご}かない 。 || Nao turns their back and reads it alone. For a long while, they don't move.
 !gesture comp avert
 comp: …… {何|なん} でも ない 。 {誰|だれ} か の {買|か}い{物|もの} の {覚|おぼ}え{書|が}き だ 。 || …It's nothing. Somebody's shopping list.

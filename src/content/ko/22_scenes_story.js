@@ -33,6 +33,7 @@ ko_otoha: {大楠|おおくす} の {根|ね} の {間|あいだ} に 、 {洞|�
 ?(comp=mio) comp: {根|ね} の {病|やまい} は 、 {外|そと} から は {見|み}えない もの です 。 {行|い}きましょう 。 || A sickness in the roots can't be seen from outside. Let's go.
 ?(comp=ren) comp: {灯籠|とうろう} も 、 {火袋|ひぶくろ} より {台|だい} が {割|わ}れて いる こと が あります 。 {下|した} を {見|み}に {行|い}きましょう 。 || A lantern's base can crack before its fire box does. Let's go and look underneath.
 ?(comp=suzu) comp: {奈落|ならく} に {下|お}りる の は 、 {慣|な}れてる わ 。 {舞台|ぶたい} の {下|した} に は 、 いつも {何|なに} か ある の よ 。 || Going down below stage, I'm used to. There's always something under the boards.
+!call ko.arayuru
 !set ko_hollow_open
 !quest ko_main 4
 !journal {大楠|おおくす} の {根|ね} の {洞|ほら} が {開|ひら}いた 。 {上|うえ} の {段|だん} から 、 {根|ね} の {洞|ほら} へ {下|お}りよう 。 || The hollow under the great camphor is open. Go up to the crown and down into the Root Hollows.
@@ -171,7 +172,7 @@ narr: {二本|にほん} の {根|ね} の {間|あいだ} に 、 {暗|くら}�
 !move pc down 1
 
 @scene ko.crown_shrine
-!gesture pc bow
+!gesture pc nod
 narr: {小|ちい}さな {祠|ほこら} 。 {供|そな}えて ある の は 、 {花|はな} で は なく 、 {一枚|いちまい} の {白|しろ}い {紙|かみ} 。 {何|なに} も {書|か}いて いない 。 || A small shrine. The offering isn't flowers: a single sheet of white paper, with nothing written on it.
 
 @scene ko.terrace_shrine
@@ -208,7 +209,7 @@ narr: {葉|は} は まだ {回|まわ}って いる 。 {言葉|ことば} が 
 narr: {根|ね} が {絡|から}み{合|あ}って 、 {道|みち} を {塞|ふさ}いで いる 。 {近|ちか}く の {風|かぜ} の {中|なか} に 、 {何|なに} か {鍵|かぎ} が ありそう だ 。 || Roots knotted together block the way. Something in the wind nearby seems to be the key.
 
 @scene ko.roots_rest
-!gesture pc sitidle
+!gesture pc brow
 narr: {根|ね} の {間|あいだ} の {乾|かわ}いた {窪|くぼ}み 。 {少|すこ}し {休|やす}める 。 || A dry hollow between the roots. You can rest a little.
 !heal
 !checkpoint
@@ -284,7 +285,7 @@ narr: {葉|は} は まだ {回|まわ}って いる 。 || The leaf is still tu
 ?(comp=ren) comp: {顔|かお} を {見|み}せて ください 。 …… はい 、 {確|たし}か に あなた です 。 || Let me see your face. …Yes. It's definitely you.
 ?(comp=ren) comp[smile]: {灯|ひ} を {振|ふ}り{続|つづ}けて いました 。 {見|み}えて いました か 。 {見|み}えて いなくて も 、 {振|ふ}って いました けど 。 || I kept waving the light. Could you see it? I'd have kept waving even if you couldn't.
 ?(comp=suzu) !gesture comp bow
-?(comp=suzu) comp[laugh]: お{帰|かえ}り なさい 、 {主役|しゅやく} さん 。 {出番|でばん} 、 ぎりぎり {間|ま}に{合|あ}った わ ね 。 || Welcome back, star of the show. Just made your cue.
+?(comp=suzu) comp[smile]: お{帰|かえ}り なさい 、 {主役|しゅやく} さん 。 {出番|でばん} 、 ぎりぎり {間|ま}に{合|あ}った わ ね 。 || Welcome back, star of the show. Just made your cue.
 ?(comp=suzu) comp[sad]: …… {本当|ほんとう} は 、 {怖|こわ}かった 。 {台本|だいほん} に {書|か}いて ない {場面|ばめん} は 、 {嫌|きら}い よ 。 || …Honestly? I was scared. I hate scenes that aren't in the script.
 narr: {足元|あしもと} の {水|みず} が 、 {少|すこ}し ずつ {引|ひ}いて いく 。 {東|ひがし} の {根|ね} の {向|む}こう に 、 {緑|みどり} の {光|ひかり} が {見|み}える 。 || The water at your feet is going down. Beyond the roots to the east, a green light.
 !quest ko_main 6
@@ -355,6 +356,19 @@ ko_otoha: ただ 、 {一|ひと}つ 。 {紙|かみ} の {切|き}れ{端|は�
 `);
 
 RB.script.add(`
+@scene ko.arayuru
+# C-74 (the pattern of kr.subete): あらゆる, Protect against a move of any kind, from the keepers' words before the hollow.
+!if mod_arayuru -> end
+ko_otoha: {葉守|はもり} が {洞|ほら} に {入|はい}る とき 、 {唱|とな}える {言葉|ことば} が あります 。 「あらゆる {言葉|ことば} を 、 あらゆる {風|かぜ} から {守|まも}れ 。」 || There are words the keepers say on going into a hollow. "Guard every kind of word from every kind of wind."
+ko_otoha: {根|ね} の {下|した} に は 、 あらゆる もの が {集|あつ}まる 。 {怒|いか}り も 、 {悲|かな}しみ も 、 {言|い}えなかった お{礼|れい} も 。 {何|なに} が {来|き}て も 、 {守|まも}れる よう に 。 || Every kind of thing gathers under the roots. Anger, sorrow, thanks never said. So that whatever comes, you can guard against it.
+?(comp=nao) comp: あらゆる {風|かぜ} から 、 か 。 …… {郵便屋|ゆうびんや} の {心得|こころえ} と {同|おな}じ だ 。 {雨|あめ} でも {雪|ゆき} でも 、 {届|とど}ける 。 || From every kind of wind. …Same as a postman's rule. Rain or snow, it gets there.
+?(comp=mio) comp[smile]: あらゆる {病|やまい} に {効|き}く {薬|くすり} は ない けれど 、 {守|まも}る {言葉|ことば} なら {持|も}って {行|い}けます ね 。 || There's no medicine for every kind of illness, but a guarding word we can take with us.
+?(comp=ren) comp[think]: {灯守|ひもり} は 「すべて の {灯|ひ} を 」 。 {葉守|はもり} は 「あらゆる {言葉|ことば} を 」 。 …… {数|かず} で は なく 、 {種類|しゅるい} の {話|はなし} です ね 。 || The lamp-keepers say "every lamp". The leaf-keepers, "every kind of word". …Not how many: what kinds.
+?(comp=suzu) comp[laugh]: あらゆる {役|やく} を こなす の が 、 {一座|いちざ} の {看板|かんばん} よ 。 {任|まか}せて 。 || Playing every kind of part is what a company's known for. Leave it to me.
+!set mod_arayuru
+!teach mod_arayuru
+:end
+
 @scene ko.otoha_roots
 !faceplayer
 ko_otoha: {根|ね} の {洞|ほら} は 、 {大楠|おおくす} の {上|うえ} の {段|だん} から {下|お}ります 。 {下|した} は {海|うみ} と {繋|つな}がって いる 。 {潮|しお} の {音|おと} が したら 、 {慌|あわ}てず に 。 {潮|しお} は 、 {必|かなら}ず {引|ひ}きます から 。 || The way into the Root Hollows is from the crown, by the great camphor. Down there it joins the sea. If you hear the tide, don't panic. The tide always goes out again.

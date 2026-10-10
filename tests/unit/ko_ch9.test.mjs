@@ -37,6 +37,7 @@ export default async (t) => {
   t.ok(C.quests.ko_main.chapter === 'ko' && C.places.kotonoha.edition === 2, 'the main story is Chapter 9\'s; the island is on the twelve-chapter chart only');
   t.ok(ops('ko.begin').includes('chapter:ko') && ops('ko.begin').includes('quest:ko_main 1') && ops('ko.begin').includes('set:ko_ch9'), 'the chapter begins on the jetty (ko.begin)');
   t.ok(ops('ko.end').includes('set:ko_done') && ops('ko.end').includes('quest:ko_main done'), 'and ends with ko_done');
+  t.ok(ops('ko.arayuru').includes('set:mod_arayuru') && ops('ko.arayuru').includes('teach:mod_arayuru') && ops('ko.otoha_tellings').includes('call:ko.arayuru'), 'C-74: あらゆる, Protect against any kind of move, taught in a story scene before the Root Hollows');
 
   // ---- Lanternfall's end: twelve chapters go to sea, six go up the mountain ------------------------------------------
   {
@@ -80,8 +81,10 @@ export default async (t) => {
       for (const p of PROF) for (const step of ch.tiers[p]) if (step.kind === 'choose') t.ok(step.options.filter((x) => x.ok).length === 1 && step.options.filter((x) => !x.ok).every((x) => x.why), k + ' ' + p + ': one right place, every other one explained');
       t.ok(ws.cmds.some((c) => c.op === 'choice' && c.opts.some((o) => o.if === 'item.ko_leaf_' + k && o.to === k)), k + ': offered at the Wind Stone only while carried');
       t.ok(ops('ko.sent_' + k).includes('take:ko_leaf_' + k) && ops('ko.sent_' + k).includes('set:ko_ret_' + k), k + ': sent home, kept');
-      // the place lost it, and gets it back: someone there says so, once
-      const back = Object.values(C.maps).some((m) => (m.npcs || []).some((n) => Array.isArray(n.talk) && n.talk[0] && n.talk[0].scene === 'ko.back_' + k && n.talk[0].if === 'ko_ret_' + k + '&!seen.ko.back_' + k));
+      // the place lost it, and gets it back: someone there says so, once (first, after a press reaction that is
+      // waiting to be heard: src/content/zzz_press_first.js)
+      const lead = (n) => n.talk.find((x) => !/^mp\.rx_/.test(x.scene || ''));
+      const back = Object.values(C.maps).some((m) => (m.npcs || []).some((n) => Array.isArray(n.talk) && lead(n) && lead(n).scene === 'ko.back_' + k && lead(n).if === 'ko_ret_' + k + '&!seen.ko.back_' + k));
       t.ok(back && C.scenes['ko.back_' + k], k + ': back on the mainland, someone notices (once)');
     }
     // where each is found: a leaf is never offered twice, nor after it has gone home

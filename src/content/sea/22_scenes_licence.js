@@ -127,7 +127,7 @@ sea_kajiro: {送|おく}り{状|じょう} は 、 {渡|わた}し{場|ば} の 
 # Staged: Take reads the note, nods, and whistles for his handcart.
 !faceplayer
 mb_take: {船大工|ふなだいく} の {送|おく}り{状|じょう} か 。 どれ 。 || The shipwright's note? Let's see.
-!gesture mb_take read
+!gesture mb_take read prop=letter
 mb_take: …… なるほど 、 {三番|さんばん}{倉|ぐら} か 。 {板|いた} が {六枚|ろくまい} 。 {任|まか}せな 。 {昼|ひる} まで に {運|はこ}んで おく 。 || …Number three warehouse, eh. Six planks. Leave it to me. They'll be there by noon.
 !take sea_timber_note
 !set sea_f_timber

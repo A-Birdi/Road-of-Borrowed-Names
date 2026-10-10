@@ -26,6 +26,9 @@ RB.dialect.add('kansai', `
 @ ko/story [ko.otoha_tellings]
 = {奈落|ならく} に {下|お}りる の は 、 {慣|な}れてる わ 。 {舞台|ぶたい} の {下|した} に は 、 いつも {何|なに} か ある の よ 。 || Going down below stage, I'm used to. There's always something under the boards.
 > {奈落|ならく} に {下|お}りる の は 、 {慣|な}れてる で 。 {舞台|ぶたい} の {下|した} に は 、 いつも {何|なに} か ある ねん 。 || Going down below stage, I'm used to. There's always something under the boards.
+@ ko/story [ko.arayuru]
+= あらゆる {役|やく} を こなす の が 、 {一座|いちざ} の {看板|かんばん} よ 。 {任|まか}せて 。 || Playing every kind of part is what a company's known for. Leave it to me.
+> あらゆる {役|やく} を こなす の が 、 {一座|いちざ} の {看板|かんばん} や 。 {任|まか}せとき 。 || Playing every kind of part is what a company's known for. Leave it to me.
 @ ko/story [ko.shells_check]
 = {妹|いもうと} さん 、 いい {台詞|せりふ} {言|い}う じゃない 。 {姉|あね} の {肩|かた} を {持|も}つ {妹|いもうと} 。 …… {嫌|きら}い じゃ ない わ 。 || The little sister's got good lines. A sister sticking up for her sister. …I don't mind that at all.
 > {妹|いもうと} さん 、 ええ {台詞|せりふ} {言|い}う やん 。 {姉|あね} の {肩|かた} を {持|も}つ {妹|いもうと} 。 …… {嫌|きら}い や ない で 。 || The little sister's got good lines. A sister sticking up for her sister. …I don't mind that at all.

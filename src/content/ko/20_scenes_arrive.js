@@ -108,14 +108,14 @@ narr: {葉|は} が 、 {雪|ゆき} の よう に {降|ふ}って いる 。 {
 
 @scene ko.begin
 # Chapter 9's beginning on the jetty, whoever arrives first once Lanternfall is over. Staged: Nami at the end of the
-# jetty with a basket of leaves on her hip; she sets it down and bows; her plain welcome; she points up the path to the
+# jetty with a basket of leaves on her hip; she sets it down and nods; her plain welcome; she points up the path to the
 # village and the tree; your companion's own answer.
 !set ko_ch9
 !chapter ko
 !travel kotonoha
 !card {第九章|だいきゅうしょう} 　{言|こと}の{葉|は}{島|じま} || Chapter 9 — Kotonoha, the Isle of Word-Leaves
 !look ko_nami pc
-!gesture ko_nami bow
+!gesture ko_nami nod
 ko_nami: {来|き}て くれた ん だ ね 。 ナミ です 。 {葉守|はもり} の 、 {一番|いちばん} {若|わか}い {方|ほう} 。 || You came. I'm Nami — the youngest of the leaf-keepers, more or less.
 ko_nami: {見|み}て の とおり 。 {木|き} が 、 {毎日|まいにち} {葉|は} を {落|お}として いる 。 {拾|ひろ}って も {拾|ひろ}って も 、 {追|お}いつかない 。 || As you can see. The tree drops its leaves every day. We gather and gather, and can't keep up.
 ko_nami: {葉|は} は 、 どこか で なくなった {言葉|ことば} な ん だ 。 {昔|むかし} は 、 {一日|いちにち} {十枚|じゅうまい} ぐらい だった 。 {今|いま} は 、 {数|かぞ}えられない 。 || The leaves are words that went missing somewhere. It used to be ten or so a day. Now we can't count them.

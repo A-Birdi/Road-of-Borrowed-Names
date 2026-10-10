@@ -154,4 +154,5 @@ RB.lex.add(RB.lex.parseTable(`
 方言|ほうげん|n|I|a dialect
 年下|としした|n|E|younger (than someone)
 山盛り|やまもり|n|E|a heap, piled high
+こなす|こなす|v5s|I|to handle, to manage (a task); to play (a part) well
 `));

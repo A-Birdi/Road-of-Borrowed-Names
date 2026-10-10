@@ -108,6 +108,8 @@ export const CURATED = {
   宵: 'よい', 屓: 'き', 贔: 'ひい', 徳: 'とく', 懸: 'けん,か', 括: 'かつ', 昨: 'さく', 景: 'けい', 為: 'ため', 率: 'そつ,りつ',
   王: 'おう', 硝: 'しょう', 筈: 'はず', 綿: 'わた,めん', 襟: 'えり', 設: 'せつ', 賊: 'ぞく', 隻: 'せき', 鞋: 'あい', 祖: 'そ',
   姜: 'きょう', 尾: 'お,び', 味: 'み,あじ',
+  // whole-word readings the split can't share out: 只今 ただいま, 澪標 みおつくし, 堪忍袋, 海豹 あざらし
+  只: 'ただ', 澪: 'みお', 忍: 'にん,しの', 豹: 'ひょう',
   // 守: the ～守 compounds (灯守, 木守, 関守, 灯台守) each count once and outnumber
   // 守る, though 守る is the word the game uses most (a battle response)
   守: 'まも',
