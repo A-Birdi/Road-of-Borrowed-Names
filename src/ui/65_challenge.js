@@ -486,7 +486,7 @@ RB.challenge = (function () {
         active = null;
         res.cancelled = cancelled;
         if (!cancelled && step.item && !opts.noRecord) {
-          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag });
+          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind });
         }
         if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);

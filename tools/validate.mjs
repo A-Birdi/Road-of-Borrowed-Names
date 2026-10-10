@@ -1,6 +1,9 @@
 // Content validator. Usage: node tools/validate.mjs [--strict] [--unknown] [--filter prefix] [--stats]
 // Exits non-zero on errors. Warnings are listed but don't fail (unless --strict).
+import fs from 'node:fs';
+import path from 'node:path';
 import { load, root } from '../tests/lib/load.mjs';
+import { expansionRules } from './expansion_rules.mjs';
 import { suzuInventory, checkDialect } from './suzu_inventory.mjs';
 
 const args = process.argv.slice(2);
@@ -436,6 +439,18 @@ const dialect = checkDialect(RB, dialectInv);
 dialect.errors.forEach(E);
 dialect.warnings.forEach(Wn);
 for (const x of dialectInv.scan) E('dialect: ' + x.file + ':' + x.line + ': Suzu\'s Japanese that tools/suzu_inventory.mjs does not list (add its table to the inventory, or to the labels if it is not speech): “' + x.jp.slice(0, 40) + '”');
+
+// ---- the expansion's rules (docs/future/plan/02_FOUNDATIONS.md S1, S5; playbook P02; tools/expansion_rules.mjs) ----
+// Content written from here on must pass them; what already existed and does not is named in
+// tools/validate_grandfather.json (a named list, never a global weakening). `--grandfather` rewrites that list from
+// the current content: run it only when an exception is deliberately accepted, and say so in VALIDATION.md.
+{
+  const gfPath = path.join(root, 'tools', 'validate_grandfather.json');
+  const GF = fs.existsSync(gfPath) ? JSON.parse(fs.readFileSync(gfPath, 'utf8')) : { tiers: [], unknown: [], fiction: [] };
+  const r = expansionRules(RB, C, { grandfather: GF, unknownTok });
+  r.errors.forEach(E);
+  if (args.includes('--grandfather')) { fs.writeFileSync(gfPath, JSON.stringify(r.found, null, 1) + '\n'); console.log('wrote ' + path.relative(root, gfPath) + ': ' + r.found.tiers.length + ' tiers, ' + r.found.unknown.length + ' tokens, ' + r.found.fiction.length + ' notes'); }
+}
 
 // ---- report --------------------------------------------------------------------------------------
 const counts = {

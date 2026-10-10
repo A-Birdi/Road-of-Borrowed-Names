@@ -521,7 +521,7 @@ RB.ui.hud = (function () {
       box.setAttribute('role', 'toolbar');
       box.setAttribute('aria-label', 'Game');
       box.innerHTML = '<button class="hbtn bulb" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span class="l">Word help</span><span class="st" aria-hidden="true"></span></button>' +
-        '<button class="hbtn menu-b" title="Menu (C)">' + I('menu') + '<span class="l">Menu</span></button>';
+        '<button class="hbtn menu-b" title="The Wayfarer\'s Ledger (C)">' + I('menu') + '<span class="l">Ledger</span></button>';
       box.querySelector('.bulb').onclick = () => RB.ui.help.toggle();
       box.querySelector('.menu-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open(); };
       RB.ui.root.appendChild(box);

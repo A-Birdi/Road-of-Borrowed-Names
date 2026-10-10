@@ -131,7 +131,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '{倒|たお}れて も 、 {覚|おぼ}えた {言葉|ことば} は {消|き}えない 。',
     en: 'An unwritten road can fold up under you. When it does, it sets you down at the Lantern Hall. What you learned on it stays with you, and so do the names you sent home.' });
   for (const k in A.combos) N('atlas_combo_' + k, { fiction: true, title: { jp: A.combos[k].name.jp, en: 'Combination: ' + A.combos[k].name.en }, en: A.combos[k].desc });
-  A.restorations.forEach((r, i) => N('atlas_news_' + (i + 1), { title: { jp: '{便|たよ}り', en: 'News from the road (' + (i + 1) + ')' }, jp: r.jp, en: r.en }));
+  A.restorations.forEach((r, i) => N('atlas_news_' + (i + 1), { title: { jp: '{便|たよ}り', en: 'News from the road (' + (i + 1) + ')' }, jp: r.jp, en: r.en, fiction: true }));
 
   // ---- encounters ---------------------------------------------------------------------------------------
   const E = (id, d) => (C.enemies[id] = Object.assign({ region: 'atlas', bg: 'atlas', atlas: true }, d));

@@ -77,7 +77,7 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, sounds: [], cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
   const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
   // ---- the motion at Normal (Robin's decision, 2026-10-05) ----------------------------------------------------
@@ -660,6 +660,11 @@ RB.harmonyCutin = (function () {
       // (the fade continues the drift to its end: h runs on through the fade)
       if (c.motion) dx = Math.round(motionAt(c.motion, d, peakH(c), el - d.in, c.lateAt != null) * s);
     } else { dispose('done'); return; }
+    // E21: Harmony's sound, in the game's own synthesis: the shared arrival as the portrait first shows, the
+    // companion's accent as their peak lands (both follow the cut-in's own timing, so Fast compresses them; Instant
+    // plays no portrait and so no sound). Each sounds at most once per portrait.
+    if (!c.cut && op > 0 && !c.snd) { c.snd = { arrive: Math.round(el) }; sound(c, 'harmony_arrive'); }
+    if (c.snd && c.snd.peak == null && !c.cut && el >= d.in + peakH(c)) { c.snd.peak = Math.round(el); sound(c, 'harmony_' + c.comp); }
     if (dx === 0) dx = 0; // (no −0 in the record)
     if (state !== c.state) { c.state = state; mark(c, state, pt); }
     const ph = phaseAt(c, el), mx = c.reduce ? mixAt(c, el) : null;
@@ -670,6 +675,11 @@ RB.harmonyCutin = (function () {
     c.el.style.opacity = String(Math.round(op * 1000) / 1000);
     c.el.style.transform = dx ? 'translate(' + dx + 'px,0)' : '';
     if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph, mx ? Math.round(mx.k * 1000) / 1000 : null]);
+  }
+  function sound(c, id) {
+    S.sounds.push({ id, comp: c.comp, mode: c.mode, at: Math.round(RB.battleSeq ? RB.battleSeq.now() - c.t0 : 0) });
+    while (S.sounds.length > 40) S.sounds.shift();
+    try { if (RB.audio && RB.audio.sfx) RB.audio.sfx(id); } catch (e) { /* sound is never essential */ }
   }
   function dispose(why) {
     const c = cur;
@@ -697,10 +707,10 @@ RB.harmonyCutin = (function () {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
     const cost = { startMs: S.cost.start.slice(), frameMaxMs: Math.round(S.cost.frameMax * 100) / 100, frameMeanMs: S.cost.frames ? Math.round((S.cost.frameSum / S.cost.frames) * 1000) / 1000 : 0, frames: S.cost.frames };
-    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, menuWaits: S.menuWaits, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, menuWaits: S.menuWaits, sounds: S.sounds.slice(), suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = S.menuWaits = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = S.menuWaits = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.sounds = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every

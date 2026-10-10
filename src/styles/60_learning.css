@@ -185,6 +185,12 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 /* outside what the pad reads (a kanji with kanji reading off, or one it doesn't know) */
 .readas[data-state="outside"] .big { border: 2px dashed var(--river); background: transparent; }
 .cands .rd-act { flex: none; padding: 0 0.75em; }
+/* C-14: the other readings wait behind this; it says it counts as assisted. Its own line, so the one guess and its
+   same-shape twin keep their row. */
+.rd-morerow { flex: 1 0 100%; display: flex; min-width: 0; }
+.rd-morerow:empty { display: none; }
+.rd-more { padding: 0 0.6em; font-size: 0.85em; max-width: 100%; white-space: normal; text-align: left; min-height: 32px; }
+.rd-more .aside { opacity: 0.8; }
 .fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }
 
 /* the composed answer line (in the answer slip) */
@@ -704,6 +710,10 @@ body.high-contrast .kwcard { border-color: #000; }
 .combat-ui .rcard.fresh { box-shadow: inset 4px 0 0 var(--ok-ink), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
 .rcard .rc-ans { display: block; margin-top: 0.15em; color: var(--ok-ink); }
 .rcard .rc-ans b { font-weight: 700; }
+/* E5: what the response would do here (the rules' own preview); "none" is marked by words, not colour alone */
+.rcard .rc-here { display: block; margin-top: 0.15em; color: var(--ink, inherit); }
+.rcard .rc-here b { font-weight: 700; }
+.rcard .rc-here.none { opacity: 0.78; font-style: italic; }
 .combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
 .rcard.tech .rc-new { background: var(--river); }
 .combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }

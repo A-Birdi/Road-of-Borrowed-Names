@@ -48,6 +48,9 @@ RB.game = (function () {
       // 'classic' the folio as it was, 'book', or 'flat' (the book without depth, texture or motion).
       // Presentation only: nothing about the journey changes. (Older records lack it: 'classic'.)
       ledgerStyle: 'classic',
+      // the edition new journeys begin in (src/engine/05a_edition.js; the development switch until the release):
+      // '6' or '12' (older records lack it: six chapters)
+      edition: '6',
     };
   }
 

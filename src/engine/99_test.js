@@ -42,7 +42,7 @@ RB.test = (function () {
     } else if (step.kind === 'order') {
       if (!step.answer || step.answer.length !== step.tiles.length) T.problems.push({ where, msg: 'order mismatch' });
     } else T.problems.push({ where, msg: 'unknown step kind ' + step.kind });
-    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false });
+    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || '') });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };
   }
   // Simulate an Inkweaving encounter with perfect answers, through the real

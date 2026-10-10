@@ -142,6 +142,7 @@ RB.pad = (function () {
   const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
   const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
+  const BIG = 'あいうえおつやゆよわアイウエオツヤユヨワカケ';
   const MODES = ['kanji', 'any', 'hira', 'kata']; // "Read as": Kanji or kana / Either kana / ひらがな / カタカナ
   const isKanji = (c) => !!c && RB.kana.isKanji(c);
 
@@ -200,6 +201,7 @@ RB.pad = (function () {
         '<div class="readas" data-state="empty"></div>' +
         '<div class="cands" role="group" aria-label="Other readings"></div>' +
         '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Confirm</span></button>' +
+        '<div class="rd-morerow"></div>' +
         '<div class="sr" aria-live="polite"></div>' +
       '</div>' +
       '<div class="pad-tools" role="group" aria-label="Writing tools">' +
@@ -226,6 +228,7 @@ RB.pad = (function () {
     const box = el.querySelector('.pad-box');
     const strip = comp.querySelector('.strip');
     const candsEl = el.querySelector('.cands');
+    const moreRow = el.querySelector('.rd-morerow');
     const readas = el.querySelector('.readas');
     const live = el.querySelector('.pad-inspect [aria-live]');
     // Practice addendum §4.2: "That is not what I wrote", even after a confident reading.
@@ -241,6 +244,9 @@ RB.pad = (function () {
       replace: -1,      // index being replaced
       result: null,     // last recognizer result
       pick: null,       // candidate chosen by the player
+      // C-14 (Robin, 2026-10-07): one guess per character; redrawing before confirming is free. "More suggestions"
+      // opens the other readings and marks this character as assisted, whatever is then confirmed.
+      moreOpen: false, moreUsed: false,
       small: false,
       // "Read as": the task's kana script (opts.script 'any' | 'hira' | 'kata'),
       // with kanji added in mode 'kanji'. opts.kanji: false for kana tasks,
@@ -433,12 +439,15 @@ RB.pad = (function () {
       if (i > 0) list.unshift(list.splice(i, 1)[0]);
       return list;
     }
+    // the same kana at the other size (つ/っ, や/ゃ…): one shape, so choosing between them is free (lead's F-06)
+    const sizePair = (a, b) => { const i = SMALL.indexOf(a), j = SMALL.indexOf(b); return !!(a && b && a !== b && (i >= 0 ? BIG[i] === b : j >= 0 ? BIG[j] === a : false)); };
     const twinOf = (a, b) => !!(a && b && a !== b && RB.recog.sameShape && (RB.recog.sameShape(a) || []).indexOf(b) >= 0);
     const button = (a, icon, label) => { const b = RB.ui.el('button', 'pbtn rd-act', I(icon) + '<span>' + label + '</span>'); b.setAttribute('data-a', a); return b; };
     function renderRead() {
       const r = P.result;
       const conf = el.querySelector('[data-a=confirm]');
       candsEl.innerHTML = '';
+      moreRow.innerHTML = '';
       P.list = [];
       if (PH) {
         // while a pace is stopped for review, one press inserts the character and continues
@@ -497,13 +506,24 @@ RB.pad = (function () {
       const twin = P.list.some((cd) => twinOf(top, cd.ch));
       const kind = twin ? (isKanji(top) ? ' the kanji' : top === 'ー' ? ' the long-vowel mark' : RB.kana.isKata(top) ? ' katakana' : ' hiragana') : topSmall ? ' a small kana' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : chose ? 'You chose' : 'I read this as' + kind) + small, top, topSmall);
-      // the other readings, so a different one can be chosen (counts as
-      // assisted, except the other character of the same shape)
+        (uncertain ? (P.moreOpen ? '<b>Not sure</b> — pick the one you meant' : '<b>Not sure</b> — is it this? If not, write it again') : chose ? 'You chose' : 'I read this as' + kind) + small, top, topSmall);
+      // One guess (C-14). Shown beside it, free: the other character of the same shape (ロ/口) and the same kana
+      // drawn small or full size, which no drawing can tell apart. The recognizer's other readings wait behind
+      // "More suggestions", which counts as assisted (as Translate does).
       const seen = new Set([top]);
       const alts = P.list.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
-      if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
-      alts.forEach((cd) => candsEl.appendChild(candButton(cd, twinOf(top, cd.ch))));
+      const free = alts.filter((cd) => twinOf(top, cd.ch) || sizePair(top, cd.ch));
+      const more = alts.filter((cd) => free.indexOf(cd) < 0);
+      const shown = free.concat(P.moreOpen ? more : []);
+      if (shown.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
+      shown.forEach((cd) => candsEl.appendChild(candButton(cd, twinOf(top, cd.ch))));
+      if (more.length && !P.moreOpen) {
+        // on its own line under the reading, so it never pushes the one guess or its twin off the row
+        const mb = RB.ui.el('button', 'pbtn quiet rd-more', I('dots') + '<span>More suggestions <span class="aside">(assisted)</span></span>');
+        mb.setAttribute('data-a', 'suggest');
+        mb.title = 'Show the other readings. This character then counts as assisted. Writing it again is always free.';
+        moreRow.appendChild(mb);
+      }
       conf.disabled = false;
       fitAlts();
       RB.audio && RB.audio.sfx(uncertain ? 'recog_unsure' : 'recog_ok', { vol: 0.4 });
@@ -543,14 +563,16 @@ RB.pad = (function () {
       if (!r || !r.candidates.length || ((r.kanjiHint || r.kanjiLike) && !P.pick)) return;
       const top = (P.list.length ? P.list : offered(r))[0].ch;
       const ch = P.pick || top;
-      const assisted = !!(P.pick && P.pick !== top && !twinOf(top, P.pick));
+      const assisted = !!P.moreUsed || !!(P.pick && P.pick !== top && !twinOf(top, P.pick) && !sizePair(top, P.pick));
       const entry = { ch, assisted, uncertain: r.status === 'uncertain', strokes: P.strokes.slice() };
+      if (P.moreUsed) entry.suggested = true;
       if (RB.game.settings.strokePractice && RB.recog.strokeOrderFeedback && !assisted) {
         const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
         try { entry.order = RB.recog.strokeOrderFeedback(strokes, ch, { box: { w: BOX, h: BOX } }); } catch (e) { entry.order = null; }
       }
       put(entry);
-      if (assisted) P.onAssist('correction');
+      if (assisted) P.onAssist(P.moreUsed ? 'suggestions' : 'correction');
+      P.moreOpen = false; P.moreUsed = false;
       if (PH) PH.confirmed();
       clearInk();
       RB.audio && RB.audio.sfx('confirm', { vol: 0.5 });
@@ -633,6 +655,7 @@ RB.pad = (function () {
       if (a === 'clear') clearInk();
       if (a === 'small') { P.small = !P.small; b.classList.toggle('on', P.small); b.setAttribute('aria-pressed', String(P.small)); el.querySelector('.more-on').hidden = !P.small; drawBg(); if (P.strokes.length) recognize(); }
       if (a === 'more') { const open = b.getAttribute('aria-expanded') !== 'true'; b.setAttribute('aria-expanded', String(open)); el.classList.toggle('more-open', open); }
+      if (a === 'suggest') { P.moreOpen = true; P.moreUsed = true; renderRead(); live.textContent = 'Other readings shown. This character counts as assisted.'; const f = candsEl.querySelector('.cand:not([hidden])'); if (f) f.focus(); }
       if (a === 'confirm') confirm();
       if (a === 'del') remove();
       if (a === 'chart') chart();
@@ -641,6 +664,8 @@ RB.pad = (function () {
       if (a === 'notwrote' && PH) {
         // recognition repair: stops a pace, costs nothing, never a Japanese mistake
         PH.review('repair');
+        // the other readings open (C-14: seeing them counts as assisted; it is never a mistake)
+        P.moreOpen = true; P.moreUsed = true;
         renderRead();
         live.textContent = 'Choose the character you meant, write it again, or pick it from the chart. This does not count against you.';
       }

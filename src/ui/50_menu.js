@@ -86,7 +86,7 @@ RB.ui.menu = (function () {
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
     if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
-    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
+    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'The Wayfarer\'s Ledger', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
       mq = matchMedia(RB.ui.folio.WIDE);
@@ -795,7 +795,7 @@ RB.ui.menu = (function () {
     const st = RB.save.status();
     const popSheet = () => { sheet = null; RB.ui.popLayer(lay); };
     const f2 = F().frame({ onClose: () => popSheet(), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
-    f2.setTitle(RB.ui.label('セーブ・ロード', 'Save & Load'), '');
+    f2.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), 'Save &amp; Load');
     f2.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
       (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
       '<ul class="entries">' +

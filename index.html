@@ -2252,6 +2252,12 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
 /* outside what the pad reads (a kanji with kanji reading off, or one it doesn't know) */
 .readas[data-state="outside"] .big { border: 2px dashed var(--river); background: transparent; }
 .cands .rd-act { flex: none; padding: 0 0.75em; }
+/* C-14: the other readings wait behind this; it says it counts as assisted. Its own line, so the one guess and its
+   same-shape twin keep their row. */
+.rd-morerow { flex: 1 0 100%; display: flex; min-width: 0; }
+.rd-morerow:empty { display: none; }
+.rd-more { padding: 0 0.6em; font-size: 0.85em; max-width: 100%; white-space: normal; text-align: left; min-height: 32px; }
+.rd-more .aside { opacity: 0.8; }
 .fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }
 
 /* the composed answer line (in the answer slip) */
@@ -2771,6 +2777,10 @@ body.high-contrast .kwcard { border-color: #000; }
 .combat-ui .rcard.fresh { box-shadow: inset 4px 0 0 var(--ok-ink), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
 .rcard .rc-ans { display: block; margin-top: 0.15em; color: var(--ok-ink); }
 .rcard .rc-ans b { font-weight: 700; }
+/* E5: what the response would do here (the rules' own preview); "none" is marked by words, not colour alone */
+.rcard .rc-here { display: block; margin-top: 0.15em; color: var(--ink, inherit); }
+.rcard .rc-here b { font-weight: 700; }
+.rcard .rc-here.none { opacity: 0.78; font-style: italic; }
 .combat-ui .rcard.tech { border-color: var(--ribbon-deep); box-shadow: inset 4px 0 0 var(--ribbon), 0 2px 0 var(--paper-3), 0 3px 0 var(--ribbon-deep); }
 .rcard.tech .rc-new { background: var(--river); }
 .combat-ui .rcard[disabled] { cursor: not-allowed; background: var(--paper-2); border-style: dashed; box-shadow: none; color: var(--ink-2); }
@@ -18576,6 +18586,43 @@ RB.audio = RB.audio || {};
     note(g, o, t + 0.15, 'bell', 86, 0.3, 0.32, p);
   });
 
+  // Harmony (expansion E21; Robin: the cut-in "feels a bit empty" without sound). One arrival for every pair, timed
+  // to the portrait sliding in, so the player learns "this is Harmony"; then one accent per companion at their peak,
+  // drawn from their technique. Played by src/ui/82d_harmony_cutin.js; none on Instant (no portrait plays then).
+  def('harmony_arrive', 1.8, 0.45, 0.4, (g, o, t, p) => {
+    // a short rising swell with a soft strike
+    whoosh(g, o, t, { f: 420 * p, f2: 2400 * p, q: 1.1, a: 0.22, hold: 0.04, r: 0.22, v: 0.1 });
+    chord(g, o, t + 0.02, 'pad', [62, 69, 74], 0.45, 0.55, p);
+    note(g, o, t + 0.24, 'bell', 81, 0.35, 0.34, p);
+    _.perc.t(g, o, t + 0.24, 0.35);
+  });
+  def('harmony_nao', 1.0, 0.25, 0.3, (g, o, t, p) => {
+    // a quick throw and a paper snap, like a letter landing on a counter
+    whoosh(g, o, t, { f: 900 * p, f2: 3600 * p, q: 1.4, a: 0.06, r: 0.06, v: 0.12 });
+    whoosh(g, o, t + 0.09, { f: 2400 * p, q: 2.5, a: 0.001, r: 0.025, v: 0.2 });
+    _.perc.w(g, o, t + 0.1, 0.45);
+    note(g, o, t + 0.12, 'pluck', 79, 0.18, 0.4, p);
+  });
+  def('harmony_mio', 1.6, 0.4, 0.3, (g, o, t, p, r) => {
+    // a rising shimmer of water, then a glass chime
+    for (let i = 0; i < 4; i++) _.perc.d(g, o, t + i * 0.05 + r() * 0.02, 0.55, r());
+    seq(g, o, t, 'harp', [74, 78, 81, 86], 0.045, 0.25, 0.3, p);
+    note(g, o, t + 0.22, 'glass', 93, 0.6, 0.5, p);
+  });
+  def('harmony_ren', 2.4, 0.5, 0.4, (g, o, t, p) => {
+    // a deep lantern-bell tone that blooms and hangs
+    note(g, o, t, 'toll', 50, 0.9, 0.45, p);
+    note(g, o, t + 0.04, 'bell', 74, 0.6, 0.22, p);
+    chord(g, o, t + 0.05, 'pad', [62, 69], 1.1, 0.4, p);
+  });
+  def('harmony_suzu', 1.4, 0.35, 0.3, (g, o, t, p) => {
+    // a sparkle and a little drum flourish: a stage's "ta-da"
+    seq(g, o, t, 'celesta', [86, 91, 95], 0.035, 0.2, 0.3, p);
+    _.perc.t(g, o, t + 0.08, 0.4); _.perc.t(g, o, t + 0.14, 0.45);
+    _.perc.l(g, o, t + 0.24, 0.55);
+    note(g, o, t + 0.24, 'bell', 88, 0.35, 0.32, p);
+  });
+
   // world
   def('discover', 1.8, 0.45, 0.3, (g, o, t, p) => {
     seq(g, o, t, 'celesta', [72, 76, 78, 79, 83], 0.06, 0.3, 0.4, p);
@@ -18627,7 +18674,7 @@ RB.audio = RB.audio || {};
     'ward', 'water', 'wind', 'light', 'fire_out', 'reveal', 'heal', 'knot_untie', 'enemy_intent',
     'enemy_hit', 'party_hit', 'harmony_ready', 'technique', 'discover', 'item_get', 'quest_update',
     'save', 'lantern', 'bell', 'page', 'splash', 'chest', 'footstep_grass', 'menu_open', 'menu_close',
-    'levelup', 'defeat', 'flee',
+    'levelup', 'defeat', 'flee', 'harmony_arrive', 'harmony_nao', 'harmony_mio', 'harmony_ren', 'harmony_suzu',
   ];
 
   // --------------------------------------------------------- playback
@@ -50399,6 +50446,9 @@ RB.game = (function () {
       // 'classic' the folio as it was, 'book', or 'flat' (the book without depth, texture or motion).
       // Presentation only: nothing about the journey changes. (Older records lack it: 'classic'.)
       ledgerStyle: 'classic',
+      // the edition new journeys begin in (src/engine/05a_edition.js; the development switch until the release):
+      // '6' or '12' (older records lack it: six chapters)
+      edition: '6',
     };
   }
 
@@ -51252,6 +51302,15 @@ RB.combatLogic = (function () {
     st.lastPlayer = { perfect, ok: !!result.ok, answered: any, kind: card.kind, target: T };
     return { fx, countered, answered, perfect };
   }
+  // E5 (expansion plan; Robin's C-64): what a response would do right now, by the same rule that will run, on a copy
+  // of the state (nothing changes, no randomness is drawn). The card's "Here:" line is built from this, so the
+  // preview cannot disagree with the result: { fx, answered, healed } as playerAct would return them on a first-try
+  // answer.
+  function previewAct(st, card) {
+    const x = snapshot(st);
+    const r = playerAct(x, card, { ok: true, firstTry: true, mistakes: 0 });
+    return { fx: r.fx, answered: r.answered, countered: r.countered };
+  }
   function techUnravel(st) {
     return (TECHS[st.compId] && TECHS[st.compId].knots) || 1;
   }
@@ -51536,7 +51595,7 @@ RB.combatLogic = (function () {
   }
   return {
     INTENTS, DIFF, HEAT, TECHS, GROUP, TAG_REACH, init, responses, playerAct, compAct, foeAct, enemyAct, endRound, intentDef, heatBonus, basePower, blowOf, answers,
-    reachOf, compReach, compOptions, compDefs, standing, isGroup, withFoe, target, defaultTarget, threatOf, snapshot, groupFor, knotsIn, aimOf, allSettled, FOE_KEYS,
+    reachOf, previewAct, compReach, compOptions, compDefs, standing, isGroup, withFoe, target, defaultTarget, threatOf, snapshot, groupFor, knotsIn, aimOf, allSettled, FOE_KEYS,
   };
 })();
 
@@ -51784,7 +51843,7 @@ RB.test = (function () {
     } else if (step.kind === 'order') {
       if (!step.answer || step.answer.length !== step.tiles.length) T.problems.push({ where, msg: 'order mismatch' });
     } else T.problems.push({ where, msg: 'unknown step kind ' + step.kind });
-    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false });
+    if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || '') });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };
   }
   // Simulate an Inkweaving encounter with perfect answers, through the real
@@ -52335,6 +52394,77 @@ RB.tasks = (function () {
 })();
 
 
+/* ==== src/learn/30_meter.js ==== */
+/* Measuring what players actually meet (expansion L19; docs/future/plan/05_LANGUAGE.md). Every committed answer the
+ * learning record receives is also counted here, by chapter (story order: RB.edition), by where it happened and how it
+ * was answered, so a playthrough's real diet of language interactions can be read off a save instead of estimated
+ * from what was authored. Counting only: nothing here changes a record, a reward or a difficulty.
+ *
+ *   s.meter = { v: 1, ch: { <chapter key>: { n, where: { story, battle, field, activity, practice, atlas, … },
+ *               how: { choice, ime, hand }, assisted, missed, steps: { write, choose, order, … } } } }
+ *
+ * RB.meter.report(s) summarises it (tests/e2e/matrix.mjs prints it at the end of a route). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.meter = (function () {
+  'use strict';
+  const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+  function of(s) {
+    if (!isObj(s.meter) || s.meter.v !== 1) s.meter = { v: 1, ch: {} };
+    return s.meter;
+  }
+  // where an answer happened, from the context the challenge runner passes (its ctxTag)
+  function where(ctx) {
+    const c = String(ctx || '');
+    if (!c) return 'activity';
+    if (c.startsWith('battle:')) return 'battle';
+    if (c.startsWith('weave:')) return 'field';
+    if (c.startsWith('practice:')) return 'activity';
+    if (c === 'practice') return 'practice';
+    if (c === 'atlas') return 'atlas';
+    if (c === 'fishing' || c === 'signpost' || c === 'history' || c === 'lanterns' || c === 'letters' || c === 'copying' || c === 'proofreading' || c === 'comparisons' || c === 'bookmark') return 'activity';
+    return 'story';
+  }
+  const bump = (o, k, n) => { o[k] = (o[k] || 0) + (n == null ? 1 : n); };
+  function count(s, result) {
+    if (!s || !result) return;
+    const m = of(s);
+    const key = (RB.edition && RB.edition.key(s)) || 'prologue';
+    const r = m.ch[key] || (m.ch[key] = { n: 0, where: {}, how: {}, assisted: 0, missed: 0, steps: {} });
+    r.n++;
+    bump(r.where, where(result.ctx));
+    bump(r.how, result.mode === 'hand' ? 'hand' : result.mode === 'ime' ? 'ime' : 'choice');
+    if (result.assisted) r.assisted++;
+    if (!result.ok) r.missed++;
+    if (result.kind) bump(r.steps, result.kind);
+  }
+  function report(s) {
+    const m = of(s), out = { total: 0, byChapter: {}, where: {}, how: {}, steps: {}, assisted: 0 };
+    for (const k in m.ch) {
+      const r = m.ch[k];
+      out.total += r.n; out.assisted += r.assisted;
+      out.byChapter[k] = r.n;
+      for (const w in r.where) bump(out.where, w, r.where[w]);
+      for (const h in r.how) bump(out.how, h, r.how[h]);
+      for (const st in r.steps) bump(out.steps, st, r.steps[st]);
+    }
+    return out;
+  }
+  // every committed answer passes through RB.learn.record: count it there, once per call (not once per item id)
+  if (RB.learn && RB.learn.record && !RB.learn.record.__metered) {
+    const inner = RB.learn.record;
+    const wrapped = function (id, result) {
+      const r = inner(id, result);
+      try { if (id && RB.game && RB.game.s && !(result && result.unmetered)) count(RB.game.s, result); } catch (e) { /* counting never breaks an answer */ }
+      return r;
+    };
+    wrapped.__metered = true;
+    RB.learn.record = wrapped;
+  }
+  return { of, count, report, where };
+})();
+
+
 /* ==== src/ui/10_ui.js ==== */
 /* UI core: DOM layers with keyboard/touch navigation, bilingual text
  * helpers, toasts, fades, confirmation dialogs and the lightbulb help. */
@@ -52859,7 +52989,7 @@ RB.ui.hud = (function () {
       box.setAttribute('role', 'toolbar');
       box.setAttribute('aria-label', 'Game');
       box.innerHTML = '<button class="hbtn bulb" aria-pressed="false" title="Word help (H)">' + I('bulb') + '<span class="l">Word help</span><span class="st" aria-hidden="true"></span></button>' +
-        '<button class="hbtn menu-b" title="Menu (C)">' + I('menu') + '<span class="l">Menu</span></button>';
+        '<button class="hbtn menu-b" title="The Wayfarer\'s Ledger (C)">' + I('menu') + '<span class="l">Ledger</span></button>';
       box.querySelector('.bulb').onclick = () => RB.ui.help.toggle();
       box.querySelector('.menu-b').onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open(); };
       RB.ui.root.appendChild(box);
@@ -55360,7 +55490,7 @@ RB.ui.title = (function () {
       lay = null;
     };
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-ledger' });
-    fr.setTitle(esc(ttl), '');
+    fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl));
     lay = { el: fr.scrim, name: 'slots', noAutofocus: true };
     lay.onCancel = close;
     let list = null, err = null, failed = false, first = true, focusAfter = null;
@@ -55376,7 +55506,8 @@ RB.ui.title = (function () {
       const cur = RB.save.current();
       const info = storageInfo();
       const used = list ? list.filter((s) => !s.empty).length : 0;
-      fr.setTitle(esc(ttl), list && !failed ? used + ' of 6 in use' : '');
+      // the six saves are the Inn Ledger (宿帳; Robin's C-58); the pause menu is the Wayfarer's Ledger
+      fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl) + (list && !failed ? ' · ' + used + ' of 6 in use' : ''));
       let top = '';
       if (info.level === 'bad') top += '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>';
       if (cur.readOnly && ctx === 'save') top += '<p class="note-slip warn">' + I('warn') + ' This tab is read-only for this campaign because another tab owns it. Saving to other slots is still possible.</p>';
@@ -64624,7 +64755,7 @@ RB.ui.menu = (function () {
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
     if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
-    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'Folio sections', panelId: 'folio-page' });
+    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'The Wayfarer\'s Ledger', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
       mq = matchMedia(RB.ui.folio.WIDE);
@@ -65333,7 +65464,7 @@ RB.ui.menu = (function () {
     const st = RB.save.status();
     const popSheet = () => { sheet = null; RB.ui.popLayer(lay); };
     const f2 = F().frame({ onClose: () => popSheet(), closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet' });
-    f2.setTitle(RB.ui.label('セーブ・ロード', 'Save & Load'), '');
+    f2.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), 'Save &amp; Load');
     f2.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0">' +
       (st.mode === 'session' ? '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>' : '') +
       '<ul class="entries">' +
@@ -66651,6 +66782,25 @@ RB.ui.settings = (function () {
   }
 
   return { open, close, addRows, isOpen: () => !!lay, openBattle, battleReady, inBattle: () => !!(lay && battle) };
+})();
+
+
+/* ==== src/ui/55e_edition.js ==== */
+/* The development switch for the twelve-chapter edition (expansion S4; the lead's decision F-01 under C-81).
+ * Until the release, new journeys are six-chapter; this setting lets new journeys begin in the twelve-chapter edition
+ * while it is being built, so it can be played and reviewed. It changes nothing about a journey already begun: every
+ * save keeps its own edition. (Device setting `edition`: 6 | 12; `?edition=12` on the address does the same.) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  if (!RB.ui || !RB.ui.settings || !RB.ui.settings.addRows) return;
+  RB.ui.settings.addRows('learning', ({ radios }) => {
+    if (RB.edition && RB.edition.shipped()) return '';
+    return '<h3 class="set-sub">New journeys</h3>' +
+      radios('edition', 'Edition for new journeys', [['6', 'Six chapters'], ['12', 'Twelve chapters (in development)']], null,
+        'The twelve-chapter edition adds six new chapters and is still being built. Only journeys begun after choosing it use it; every saved journey keeps the edition it began in.');
+  });
 })();
 
 
@@ -68321,6 +68471,7 @@ RB.pad = (function () {
   const I = (n) => RB.learnUi.icon(n);
   const BOX = 300; // recognizer coordinate space
   const SMALL = 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ';
+  const BIG = 'あいうえおつやゆよわアイウエオツヤユヨワカケ';
   const MODES = ['kanji', 'any', 'hira', 'kata']; // "Read as": Kanji or kana / Either kana / ひらがな / カタカナ
   const isKanji = (c) => !!c && RB.kana.isKanji(c);
 
@@ -68379,6 +68530,7 @@ RB.pad = (function () {
         '<div class="readas" data-state="empty"></div>' +
         '<div class="cands" role="group" aria-label="Other readings"></div>' +
         '<button class="pbtn primary pad-confirm" data-a="confirm" disabled>' + I('done') + '<span>Confirm</span></button>' +
+        '<div class="rd-morerow"></div>' +
         '<div class="sr" aria-live="polite"></div>' +
       '</div>' +
       '<div class="pad-tools" role="group" aria-label="Writing tools">' +
@@ -68405,6 +68557,7 @@ RB.pad = (function () {
     const box = el.querySelector('.pad-box');
     const strip = comp.querySelector('.strip');
     const candsEl = el.querySelector('.cands');
+    const moreRow = el.querySelector('.rd-morerow');
     const readas = el.querySelector('.readas');
     const live = el.querySelector('.pad-inspect [aria-live]');
     // Practice addendum §4.2: "That is not what I wrote", even after a confident reading.
@@ -68420,6 +68573,9 @@ RB.pad = (function () {
       replace: -1,      // index being replaced
       result: null,     // last recognizer result
       pick: null,       // candidate chosen by the player
+      // C-14 (Robin, 2026-10-07): one guess per character; redrawing before confirming is free. "More suggestions"
+      // opens the other readings and marks this character as assisted, whatever is then confirmed.
+      moreOpen: false, moreUsed: false,
       small: false,
       // "Read as": the task's kana script (opts.script 'any' | 'hira' | 'kata'),
       // with kanji added in mode 'kanji'. opts.kanji: false for kana tasks,
@@ -68612,12 +68768,15 @@ RB.pad = (function () {
       if (i > 0) list.unshift(list.splice(i, 1)[0]);
       return list;
     }
+    // the same kana at the other size (つ/っ, や/ゃ…): one shape, so choosing between them is free (lead's F-06)
+    const sizePair = (a, b) => { const i = SMALL.indexOf(a), j = SMALL.indexOf(b); return !!(a && b && a !== b && (i >= 0 ? BIG[i] === b : j >= 0 ? BIG[j] === a : false)); };
     const twinOf = (a, b) => !!(a && b && a !== b && RB.recog.sameShape && (RB.recog.sameShape(a) || []).indexOf(b) >= 0);
     const button = (a, icon, label) => { const b = RB.ui.el('button', 'pbtn rd-act', I(icon) + '<span>' + label + '</span>'); b.setAttribute('data-a', a); return b; };
     function renderRead() {
       const r = P.result;
       const conf = el.querySelector('[data-a=confirm]');
       candsEl.innerHTML = '';
+      moreRow.innerHTML = '';
       P.list = [];
       if (PH) {
         // while a pace is stopped for review, one press inserts the character and continues
@@ -68676,13 +68835,24 @@ RB.pad = (function () {
       const twin = P.list.some((cd) => twinOf(top, cd.ch));
       const kind = twin ? (isKanji(top) ? ' the kanji' : top === 'ー' ? ' the long-vowel mark' : RB.kana.isKata(top) ? ' katakana' : ' hiragana') : topSmall ? ' a small kana' : '';
       setRead(uncertain ? 'unsure' : 'sure',
-        (uncertain ? '<b>Not sure</b> — pick the one you meant' : chose ? 'You chose' : 'I read this as' + kind) + small, top, topSmall);
-      // the other readings, so a different one can be chosen (counts as
-      // assisted, except the other character of the same shape)
+        (uncertain ? (P.moreOpen ? '<b>Not sure</b> — pick the one you meant' : '<b>Not sure</b> — is it this? If not, write it again') : chose ? 'You chose' : 'I read this as' + kind) + small, top, topSmall);
+      // One guess (C-14). Shown beside it, free: the other character of the same shape (ロ/口) and the same kana
+      // drawn small or full size, which no drawing can tell apart. The recognizer's other readings wait behind
+      // "More suggestions", which counts as assisted (as Translate does).
       const seen = new Set([top]);
       const alts = P.list.slice(0, 6).filter((cd) => !seen.has(cd.ch) && seen.add(cd.ch));
-      if (alts.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
-      alts.forEach((cd) => candsEl.appendChild(candButton(cd, twinOf(top, cd.ch))));
+      const free = alts.filter((cd) => twinOf(top, cd.ch) || sizePair(top, cd.ch));
+      const more = alts.filter((cd) => free.indexOf(cd) < 0);
+      const shown = free.concat(P.moreOpen ? more : []);
+      if (shown.length) candsEl.appendChild(RB.ui.el('span', 'or', 'or'));
+      shown.forEach((cd) => candsEl.appendChild(candButton(cd, twinOf(top, cd.ch))));
+      if (more.length && !P.moreOpen) {
+        // on its own line under the reading, so it never pushes the one guess or its twin off the row
+        const mb = RB.ui.el('button', 'pbtn quiet rd-more', I('dots') + '<span>More suggestions <span class="aside">(assisted)</span></span>');
+        mb.setAttribute('data-a', 'suggest');
+        mb.title = 'Show the other readings. This character then counts as assisted. Writing it again is always free.';
+        moreRow.appendChild(mb);
+      }
       conf.disabled = false;
       fitAlts();
       RB.audio && RB.audio.sfx(uncertain ? 'recog_unsure' : 'recog_ok', { vol: 0.4 });
@@ -68722,14 +68892,16 @@ RB.pad = (function () {
       if (!r || !r.candidates.length || ((r.kanjiHint || r.kanjiLike) && !P.pick)) return;
       const top = (P.list.length ? P.list : offered(r))[0].ch;
       const ch = P.pick || top;
-      const assisted = !!(P.pick && P.pick !== top && !twinOf(top, P.pick));
+      const assisted = !!P.moreUsed || !!(P.pick && P.pick !== top && !twinOf(top, P.pick) && !sizePair(top, P.pick));
       const entry = { ch, assisted, uncertain: r.status === 'uncertain', strokes: P.strokes.slice() };
+      if (P.moreUsed) entry.suggested = true;
       if (RB.game.settings.strokePractice && RB.recog.strokeOrderFeedback && !assisted) {
         const strokes = P.strokes.map((s) => s.map((p) => ({ x: p.x * BOX, y: p.y * BOX, t: p.t })));
         try { entry.order = RB.recog.strokeOrderFeedback(strokes, ch, { box: { w: BOX, h: BOX } }); } catch (e) { entry.order = null; }
       }
       put(entry);
-      if (assisted) P.onAssist('correction');
+      if (assisted) P.onAssist(P.moreUsed ? 'suggestions' : 'correction');
+      P.moreOpen = false; P.moreUsed = false;
       if (PH) PH.confirmed();
       clearInk();
       RB.audio && RB.audio.sfx('confirm', { vol: 0.5 });
@@ -68812,6 +68984,7 @@ RB.pad = (function () {
       if (a === 'clear') clearInk();
       if (a === 'small') { P.small = !P.small; b.classList.toggle('on', P.small); b.setAttribute('aria-pressed', String(P.small)); el.querySelector('.more-on').hidden = !P.small; drawBg(); if (P.strokes.length) recognize(); }
       if (a === 'more') { const open = b.getAttribute('aria-expanded') !== 'true'; b.setAttribute('aria-expanded', String(open)); el.classList.toggle('more-open', open); }
+      if (a === 'suggest') { P.moreOpen = true; P.moreUsed = true; renderRead(); live.textContent = 'Other readings shown. This character counts as assisted.'; const f = candsEl.querySelector('.cand:not([hidden])'); if (f) f.focus(); }
       if (a === 'confirm') confirm();
       if (a === 'del') remove();
       if (a === 'chart') chart();
@@ -68820,6 +68993,8 @@ RB.pad = (function () {
       if (a === 'notwrote' && PH) {
         // recognition repair: stops a pace, costs nothing, never a Japanese mistake
         PH.review('repair');
+        // the other readings open (C-14: seeing them counts as assisted; it is never a mistake)
+        P.moreOpen = true; P.moreUsed = true;
         renderRead();
         live.textContent = 'Choose the character you meant, write it again, or pick it from the chart. This does not count against you.';
       }
@@ -70152,7 +70327,7 @@ RB.challenge = (function () {
         active = null;
         res.cancelled = cancelled;
         if (!cancelled && step.item && !opts.noRecord) {
-          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag });
+          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind });
         }
         if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);
@@ -85112,8 +85287,48 @@ RB.combat = (function () {
   // Words used in battle for the first time are marked "New" for that whole
   // encounter, with what they answer; recorded (s.tips) when it ends.
   let newWords = new Set(), shownWords = new Set();
+  // E5: the honest "effect here" line on each response card (Robin, C-64): what it would do now, from the rules'
+  // own preview (RB.combatLogic.previewAct). An unsuitable card stays choosable; it is marked, never hidden.
+  function hereOf(c) {
+    if (c.disabled || !st) return null;
+    let p;
+    try { p = L().previewAct(st, c); } catch (e) { return null; }
+    const nm = (i) => (isGroup() ? 'the ' + shortEn(i) : 'it');
+    const who = (a) => (a === 'comp' ? compName() : 'you');
+    const said = new Set(), out = [];
+    let none = false;
+    for (const f of p.fx) {
+      if (f.t === 'unravel') out.push('frees ' + f.n + ' knot' + (f.n > 1 ? 's' : '') + (isGroup() ? ' on ' + nm(f.foe) : ''));
+      else if (f.t === 'water') { out.push('cools the Heat on ' + nm(f.foe)); }
+      else if (f.t === 'light') { out.push('clears the mist on ' + nm(f.foe)); }
+      else if (f.t === 'bind') { out.push('stops ' + nm(f.foe) + ' gathering force'); said.add(f.foe + ':charge'); }
+      else if (f.t === 'ward') { if (f.block) { out.push('blocks the blow aimed at ' + who(f.target)); said.add(f.foe + ':blow'); } else out.push('raises a ward (2) in front of ' + who(f.target)); }
+      else if (f.t === 'heal') { if (f.gain > 0) out.push('restores resolve (' + f.aim.filter((w) => f.d[w] > 0).map((w) => who(w) + ' +' + f.d[w]).join(', ') + ')'); else none = f.aim.length > 1 ? 'you are both at full resolve' : 'you are at full resolve'; }
+      else if (f.t === 'settle') { out.push('answers its plea, and a knot loosens'); said.add(f.foe + ':plea'); }
+      else if (f.t === 'reveal') { out.push('sees through the false promise'); said.add(f.foe + ':lie'); }
+      else if (f.t === 'tech') out.push('cancels its move');
+    }
+    const up = L().standing(st);
+    for (const i of up) {
+      if (!p.answered[i]) continue;
+      const it = st.foes[i].intent;
+      if (!it || c.kind === 'tech' || said.has(i + ':blow') || said.has(i + ':plea') || said.has(i + ':lie')) continue;
+      if (it.kind === 'rest') continue;
+      out.push('answers ' + (isGroup() ? 'the ' + shortEn(i) + '\'s ' : 'its ') + moveLabel(it));
+    }
+    if (!out.length) {
+      // say what is missing, from the word's own tags
+      const tags = (c.word && c.word.tags) || [];
+      const why = none || (tags.indexOf('water') >= 0 ? 'no Heat to cool' : tags.indexOf('wind') >= 0 ? 'no mist to blow away and no Gust to meet' : tags.indexOf('light') >= 0 ? 'no mist, Re-tying or Mirror to light up'
+        : tags.indexOf('bind') >= 0 ? 'nothing gathering force or re-tying' : 'nothing for it to answer');
+      return { none: true, en: 'No effect here: ' + why + '.' };
+    }
+    const t = out.join('; ');
+    return { none: false, en: t[0].toUpperCase() + t.slice(1) + '.' };
+  }
   function cardHtml(c, i, hi) {
     const r = reachOf(c);
+    const here = hereOf(c);
     const tgt = reachLabel(c, r);
     const desc = c.disabled || RB.script.enVars(c.target ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
     const fresh = c.kind === 'word' && newWords.has(c.word.id);
@@ -85125,7 +85340,8 @@ RB.combat = (function () {
       (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt' + (r.foes.length > 1 ? ' many' : '') + '">' + esc(tgt) + '</span>' : '') +
       '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
-      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span></button>';
+      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') +
+      (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') + '</span></button>';
   }
   // One short note per exchange, the first time something needs explaining:
   // several creatures, a kind of move never seen before, then a full Harmony,
@@ -87394,7 +87610,7 @@ RB.harmonyCutin = (function () {
   const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   const A = () => RB.harmonyArt;
   let cur = null, N = 0, onResize = null;
-  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
+  const S = { started: 0, shown: 0, displayed: 0, disposed: 0, suppressed: {}, fallbacks: [], log: [], maxLive: 0, replaced: 0, relaid: 0, menuWaits: 0, sounds: [], cost: { start: [], frameMax: 0, frameSum: 0, frames: 0 } };
   const keep = (a, v) => { a.push(Math.round(v * 100) / 100); if (a.length > 40) a.shift(); };
 
   // ---- the motion at Normal (Robin's decision, 2026-10-05) ----------------------------------------------------
@@ -87977,6 +88193,11 @@ RB.harmonyCutin = (function () {
       // (the fade continues the drift to its end: h runs on through the fade)
       if (c.motion) dx = Math.round(motionAt(c.motion, d, peakH(c), el - d.in, c.lateAt != null) * s);
     } else { dispose('done'); return; }
+    // E21: Harmony's sound, in the game's own synthesis: the shared arrival as the portrait first shows, the
+    // companion's accent as their peak lands (both follow the cut-in's own timing, so Fast compresses them; Instant
+    // plays no portrait and so no sound). Each sounds at most once per portrait.
+    if (!c.cut && op > 0 && !c.snd) { c.snd = { arrive: Math.round(el) }; sound(c, 'harmony_arrive'); }
+    if (c.snd && c.snd.peak == null && !c.cut && el >= d.in + peakH(c)) { c.snd.peak = Math.round(el); sound(c, 'harmony_' + c.comp); }
     if (dx === 0) dx = 0; // (no −0 in the record)
     if (state !== c.state) { c.state = state; mark(c, state, pt); }
     const ph = phaseAt(c, el), mx = c.reduce ? mixAt(c, el) : null;
@@ -87987,6 +88208,11 @@ RB.harmonyCutin = (function () {
     c.el.style.opacity = String(Math.round(op * 1000) / 1000);
     c.el.style.transform = dx ? 'translate(' + dx + 'px,0)' : '';
     if (c.trace.length < TRACE_CAP) c.trace.push([Math.round(el * 10) / 10, state[0], Math.round(op * 1000) / 1000, dx, ph, mx ? Math.round(mx.k * 1000) / 1000 : null]);
+  }
+  function sound(c, id) {
+    S.sounds.push({ id, comp: c.comp, mode: c.mode, at: Math.round(RB.battleSeq ? RB.battleSeq.now() - c.t0 : 0) });
+    while (S.sounds.length > 40) S.sounds.shift();
+    try { if (RB.audio && RB.audio.sfx) RB.audio.sfx(id); } catch (e) { /* sound is never essential */ }
   }
   function dispose(why) {
     const c = cur;
@@ -88014,10 +88240,10 @@ RB.harmonyCutin = (function () {
     let cache = null;
     try { const s = A() && A().stats(); cache = s ? { busts: s.busts, compositions: s.compositions, bytes: s.bytes, builds: s.builds, hits: s.hits } : null; } catch (e) { cache = null; }
     const cost = { startMs: S.cost.start.slice(), frameMaxMs: Math.round(S.cost.frameMax * 100) / 100, frameMeanMs: S.cost.frames ? Math.round((S.cost.frameSum / S.cost.frames) * 1000) / 1000 : 0, frames: S.cost.frames };
-    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, menuWaits: S.menuWaits, suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
+    return { cost, started: S.started, shown: S.shown, displayed: S.displayed, disposed: S.disposed, live: cur ? 1 : 0, layers: typeof document !== 'undefined' ? document.querySelectorAll('.cb-cutin').length : 0, maxLive: S.maxLive, replaced: S.replaced, relaid: S.relaid, menuWaits: S.menuWaits, sounds: S.sounds.slice(), suppressed: Object.assign({}, S.suppressed), fallbacks: S.fallbacks.slice(), spans: spanCache.size, listening: !!onResize, cache };
   }
   const last = () => (S.log.length ? S.log[S.log.length - 1] : null);
-  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = S.menuWaits = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
+  function reset() { dispose('reset'); S.started = S.shown = S.displayed = S.disposed = S.maxLive = S.replaced = S.relaid = S.menuWaits = 0; S.suppressed = {}; S.fallbacks = []; S.log = []; S.sounds = []; S.cost = { start: [], frameMax: 0, frameSum: 0, frames: 0 }; }
 
   // ---- preparation at a safe moment (§21) and cleanup ------------------------------------------------
   // At an encounter's start the committed companion's pair is built in idle slices (both variants, every
@@ -101675,6 +101901,30 @@ RB.ui.compare = (function () {
 })();
 
 
+/* ==== src/content/00_expansion.js ==== */
+/* The expansion's content registry (docs/future/plan/02_FOUNDATIONS.md S1, S5): which chapter each new id prefix
+ * belongs to, and the story terms each chapter introduces (so tools/validate.mjs can check that no scene names them
+ * earlier). Chapter keys follow RB.edition.ORDER. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  // id prefixes of the new chapters' content (scenes, maps, quests, challenges, enemies, notes)
+  C.chapterOfPrefix = {
+    mb: 'mb1',   // Manybridge, Chapter 3: the Exchange district
+    mp: 'mb2',   // Manybridge, Chapter 4: Blockprint, Playhouse Rows, the festival
+    kr: 'kr',    // the Keepers' Road, Chapter 7
+    ko: 'ko',    // Kotonoha, Chapter 9 (and its early visit)
+    sz: 'ko',    // Sazanami (a port, reached by sea with Chapter 9's crossing)
+    el: 'ko',    // East Landing
+    sea: 'ko',   // the sea chart and sailing
+    cr: 'cr',    // the Cloudroad, Chapter 10
+    yn: 'yn',    // Steamhollow, Chapter 11
+  };
+  // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
+  C.reveals = C.reveals || {};
+})(RB.content);
+
+
 /* ==== src/content/00_world.js ==== */
 /* World-level content: main cast, places, roads, shared items.
  * Story bible: docs/STORY.md. */
@@ -101835,7 +102085,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       F: [{ jp: '$tgt が さむく なる ！', en: '$tgtEn is going to freeze!' }],
       E: [{ jp: '{冷|つめ}たい {息|いき} を $tgt に かけよう と して いる 。', en: 'It is about to breathe cold air on $tgtEn.' }, { jp: '$other に は {息|いき} を かけない 。', en: 'It won\'t breathe on $otherEn.', neg: true }],
       I: [{ jp: '{凍|こお}える よう な {息|いき} が 、 $tgt を ねらって いる 。', en: 'A freezing breath is aimed at $tgtEn.' }],
-      A: [{ jp: '{骨|ほね} まで {凍|こお}て つく よう な {冷気|れいき} が 、 $tgt に {迫|せま}る 。', en: 'A chill that freezes to the bone closes in on $tgtEn.' }],
+      A: [{ jp: '{骨|ほね} まで {凍|い}てつく よう な {冷気|れいき} が 、 $tgt に {迫|せま}る 。', en: 'A chill that freezes to the bone closes in on $tgtEn.' }],
     },
     silence: {
       F: [{ jp: 'しずか に なって いく …… 。', en: 'Everything is going quiet…' }],
@@ -149410,6 +149660,33 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })(RB.content);
 
 
+/* ==== src/content/words/20_lex_fill.js ==== */
+/* Lexicon entries for words the battle telegraphs (01_inkweaving.js intentText, Advanced tier) and the Atlas's
+ * decorations used without one (found by the expansion's validator rule: every token has an entry). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.lex.add(RB.lex.parseTable(`
+ペンキ||n|E|paint (house paint)
+三百段|さんびゃくだん|n|E|three hundred steps
+二百段|にひゃくだん|n|E|two hundred steps
+矛先|ほこさき|n|A|the point of a spear; the aim of an attack
+眼中|がんちゅう|n|A|within one's notice (眼中にない: paying no attention to)
+腹づもり|はらづもり|n|A|a plan in one's mind, an intention
+紛れる|まぎれる|v1|I|to blend into, to be lost among (a crowd, mist)
+紛れ|まぎれ|n|A|cover, confusion (…に紛れて: under cover of …)
+渾身|こんしん|n|A|one's whole body (渾身の: with all one's might)
+備え|そなえ|n|I|preparation, readiness
+潜める|ひそめる|v1|I|to hide, to hold in (breath), to lower (one's voice)
+突風|とっぷう|n|I|a sudden gust of wind
+張り巡らせる|はりめぐらせる|v1|A|to stretch all around (a net, ropes)
+根こそぎ|ねこそぎ|adv|A|root and all, completely
+出方|でかた|n|A|how someone will act; their move
+窺う|うかがう|v5u|A|to watch closely for, to peer at
+濁流|だくりゅう|n|A|a muddy torrent
+攫う|さらう|v5u|A|to sweep away, to carry off
+凍てつく|いてつく|v5k|A|to freeze hard
+`), 'core');
+
+
 /* ==== src/content/zz_atlas_decor.js ==== */
 /* Settlement details restored by completed Unwritten Atlas expeditions
  * (flags atlas_restore_1..6, set by src/atlas/50_run.js; see docs/ATLAS.md).
@@ -149647,6 +149924,20 @@ narr: {枝|えだ} だけ の {枯|か}れ{木|き} 。 {雪|ゆき} の {中|�
  * lexicon so the lightbulb can explain them. */
 var RB = (globalThis.RB = globalThis.RB || {});
 if (RB.jp && RB.jp.registerNames) RB.jp.registerNames();
+
+
+/* ==== src/content/zz_note_kinds.js ==== */
+/* Whether each lore note written before the expansion is invented or real (spec line 32: invented lore must not pass
+ * as real culture). New notes say so where they are defined; tools/validate.mjs requires it. Notes about real
+ * language, customs and crafts are `fiction: false`; the game's own places, people and history are `fiction: true`. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const REAL = ['sg_tide_words', 'sg_gojuon', 'sg_nakute', 'sg_passive', 'co_firebreak', 'co_kiln', 'sb_tsuzumi', 'sb_letters', 'sb_counters', 'sb_honoo', 'lf_refusal', 'lf_promise', 'lq_koharubiyori', 'lq_kakishibu'];
+  const INVENTED = ['rw_founding', 'sg_three_kinds', 'co_orchard', 'co_fire', 'co_hist_ume', 'co_hist_goro', 'co_hist_isao', 'co_suzu_ledger', 'sb_snowbell', 'sb_bell_signals', 'lf_flood', 'lf_toya', 'lf_bell', 'lq_farebook', 'pa_lamps'];
+  for (const id of REAL) if (C.notes[id] && typeof C.notes[id].fiction !== 'boolean') C.notes[id].fiction = false;
+  for (const id of INVENTED) if (C.notes[id] && typeof C.notes[id].fiction !== 'boolean') C.notes[id].fiction = true;
+})(RB.content);
 
 
 /* ==== src/content/zz_ren_quest.js ==== */
@@ -150543,7 +150834,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '{倒|たお}れて も 、 {覚|おぼ}えた {言葉|ことば} は {消|き}えない 。',
     en: 'An unwritten road can fold up under you. When it does, it sets you down at the Lantern Hall. What you learned on it stays with you, and so do the names you sent home.' });
   for (const k in A.combos) N('atlas_combo_' + k, { fiction: true, title: { jp: A.combos[k].name.jp, en: 'Combination: ' + A.combos[k].name.en }, en: A.combos[k].desc });
-  A.restorations.forEach((r, i) => N('atlas_news_' + (i + 1), { title: { jp: '{便|たよ}り', en: 'News from the road (' + (i + 1) + ')' }, jp: r.jp, en: r.en }));
+  A.restorations.forEach((r, i) => N('atlas_news_' + (i + 1), { title: { jp: '{便|たよ}り', en: 'News from the road (' + (i + 1) + ')' }, jp: r.jp, en: r.en, fiction: true }));
 
   // ---- encounters ---------------------------------------------------------------------------------------
   const E = (id, d) => (C.enemies[id] = Object.assign({ region: 'atlas', bg: 'atlas', atlas: true }, d));
@@ -150666,7 +150957,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A.names[id] = d;
     const tags = ['atlas', 'atlas_name', 'atlas_name_' + id];
     for (const lv of ['F', 'E', 'I', 'A']) add(Object.assign({ id: 'atlas.name.' + id + '.' + lv, lv, tags }, d.steps[lv]));
-    C.notes['atlas_name_' + id] = { title: { jp: d.title.jp, en: 'Moored: ' + d.title.en }, jp: d.note.jp, en: d.note.en };
+    C.notes['atlas_name_' + id] = { title: { jp: d.title.jp, en: 'Moored: ' + d.title.en }, jp: d.note.jp, en: d.note.en, fiction: true };
   }
   NAME('ferry', {
     title: { jp: '{朝|あさ} の {渡|わた}し', en: 'The Dawn Ferry\'s Call' }, home: 'reedwake', col: '#e8e0c8',

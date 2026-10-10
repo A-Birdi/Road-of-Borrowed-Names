@@ -308,3 +308,24 @@ Preserve the 10+ hour authored-adventure goal. If the delivered build falls shor
 The desired result is a memorable journey shared by two people: a place the player grows attached to, a companion whose presence matters, and Japanese that gradually becomes something they can use to understand and affect the world.
 
 Build the game now.
+
+20. AMENDMENTS (Robin's decisions, 2026-10-07 to 2026-10-10)
+
+The sections above stand. These amendments record where Robin has since decided otherwise; each names its decision in docs/future/plan/11_CONTRADICTIONS.md. Nothing here reduces the scope above; it grows it.
+
+- Chapters (§3, "Build six substantial chapters"): twelve. The six new chapters are inserted between the existing ones: Reedwake, Saltglass, Manybridge (two chapters), Cinder Orchard, Snowbell, the Keepers' Road, Lanternfall, Kotonoha, the Cloudroad, Steamhollow, the Still Archive. (C-01)
+- Playtime (§3, "approximately 10–15 hours"): about 15 hours, brisk, for the twelve chapters' main story; about 40 for a new learner taking in the whole game. Still a pacing target, never a measured claim without evidence. (C-61)
+- New Game+ (the carryover "clearly defined"): personal learning records, mastery stars, illustrations and their seals, the stamp book, pastime records, settings, the noted-words notebook, kept sentences, the keepsake catalogue's found record, and the traveller as they are. Never story or character progression, the companion, Bond, the pet, equipment or items (keepsakes included), lore or Known details. Offered at the end of the game; it may begin in the originating save's slot or another, with a confirmation before anything is replaced; it opens with a farewell from the originating save's companion. (C-54, C-66)
+- Saves (§14, saves keep working across updates): unchanged, except that once the twelve-chapter edition ships, a save from the six-chapter edition is shown as such and, when continued, begins New Game+ from it after a notice. Saves are never deleted without the player's confirmation and never altered by an update. Until that release, every existing save continues as it is. (C-02, C-54)
+- Unravel alone: "every combat encounter" must be winnable with Unravel alone; other encounter types (procedures, social encounters, objectives) carry their own guarantee, and Unravel stays available in them even where it does nothing. (C-09, C-60)
+- Rewards: mastery stars are flair, not rewards; they unlock nothing. A wrong first answer counts like help: a star needs fewer than 30% of an exam's questions assisted or missed. (C-13, C-75)
+- Clocks: besides fishing, opt-in timed modes in pastimes, under fishing's conditions; the default is always untimed. Festival games keep personal records only. (C-17, C-55)
+- The party: exactly two adventurers, the player and the chosen companion. A story beat may separate them for a while; the same companion always returns, and no one replaces them. (C-12)
+- Defeat: unchanged for story dungeons (a sensible checkpoint); optional dungeons restart from their beginning. (C-03)
+- Music: battle themes re-tiered across twelve chapters, one coherent score with intensity by writing. (C-22)
+- Romance: allowed only inside scenes marked as romance moments (holding hands, a kiss; nothing explicit), with the chosen companion at high Bond, always the player's choice, with an equally warm friendship response and the same Bond. Jealousy and resentment stay forbidden. (C-63, C-67)
+- The gallery: always viewable from the Main Menu, behind deliberate spoiler veils, in the Continue save's appearance; viewing never marks anything witnessed. (H1, C-20)
+- Type: the interface may use embedded, openly licensed fonts (licence recorded, offline, never web fonts); Japanese stays readable and is never a pixel font. (Robin, 2026-10-09)
+- Encounters: authored set pieces may field up to five hostile creatures (the player and companion never counted); ordinary roaming encounters stay at three or fewer. No per-round ceiling on what a group can do; the language-mistake cap, Relaxed's guarantees and finite arrivals remain. One coordinated technique per filled Harmony bar. (C-73, C-76, C-77)
+- The handwriting pad shows one guess per character; redrawing before confirming is free; "More suggestions" opens the other readings and counts as assisted. (C-14)
+- The two Ledgers: the Wayfarer's Ledger (the pause menu) and the Inn Ledger (宿帳, the six saves). (C-58)

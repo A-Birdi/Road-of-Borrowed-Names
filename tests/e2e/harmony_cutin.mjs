@@ -342,6 +342,38 @@ await test('core: 4 pairings × Normal / Fast / Instant × reduced motion off / 
 });
 
 // ---------------------------------------------------------------------------------------------------------
+await test('sound (E21) and the honest preview (E5): each pairing\'s cut-in plays the shared arrival as it shows, then that companion\'s accent at the peak; Fast plays both sooner; Instant plays none; every enabled response card says what it does here', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
+  const p0 = () => p;
+  const peaks = {};
+  for (const comp of COMPS) {
+    await setup(p0(), { comp, anim: 'normal' });
+    const cards = await p0().evaluate(() => [...document.querySelectorAll('.rcard[data-i]:not([disabled])')].map((c) => ({ t: c.textContent.replace(/\s+/g, ' ').slice(0, 50), here: c.querySelector('.rc-here') ? c.querySelector('.rc-here').textContent : null })));
+    assert(cards.length && cards.every((c) => c.here && /^Here: \S/.test(c.here)), 'every card has a Here line: ' + JSON.stringify(cards));
+    const n0 = await p0().evaluate(() => RB.harmonyCutin.stats().sounds.length);
+    const r = await technique(p0(), comp);
+    assert(r.started === 1, comp + ': one cut-in');
+    const snd = await p0().evaluate((n0) => RB.harmonyCutin.stats().sounds.slice(n0), n0);
+    assert(snd.length === 2 && snd[0].id === 'harmony_arrive' && snd[1].id === 'harmony_' + comp && snd[1].at > snd[0].at, comp + ': arrival, then the accent: ' + JSON.stringify(snd));
+    peaks[comp] = snd[1].at - snd[0].at;
+    await leave(p0());
+  }
+  await setup(p0(), { comp: 'mio', anim: 'fast' });
+  let n0 = await p0().evaluate(() => RB.harmonyCutin.stats().sounds.length);
+  await technique(p0(), 'mio');
+  const fast = await p0().evaluate((n0) => RB.harmonyCutin.stats().sounds.slice(n0), n0);
+  assert(fast.length === 2 && fast[1].at - fast[0].at < peaks.mio, 'Fast: both, sooner: ' + JSON.stringify({ fast, normal: peaks.mio }));
+  await leave(p0());
+  await setup(p0(), { comp: 'ren', anim: 'instant' });
+  n0 = await p0().evaluate(() => RB.harmonyCutin.stats().sounds.length);
+  await technique(p0(), 'ren');
+  const inst = await p0().evaluate((n0) => RB.harmonyCutin.stats().sounds.slice(n0), n0);
+  assert(inst.length === 0, 'Instant: no sound: ' + JSON.stringify(inst));
+  await leave(p0());
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
 await test('never: meter fill, a support action, hovering and focusing the technique, a cancelled task, backing out of the companion\'s menu — no cut-in; then the committed technique — exactly one', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
   await setup(p, { comp: 'mio', knots: 8, harmony: 2, pc: 8 });

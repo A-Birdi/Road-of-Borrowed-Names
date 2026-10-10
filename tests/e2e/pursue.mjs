@@ -51,6 +51,14 @@ for (const leg of legs) {
   const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900, fullLog: !!leg.fullLog }), leg).catch((e) => ({ ok: false, fail: String(e) }));
   out.push({ leg: leg.flag, ok: r.ok, steps: r.steps, seconds: Math.round((Date.now() - t1) / 1000), fail: r.fail, map: r.map, last: r.ok ? undefined : r.log });
   console.log((r.ok ? 'reached ' : 'STUCK   ') + leg.flag + ' in ' + r.steps + ' site visits (' + Math.round((Date.now() - t1) / 1000) + ' s)');
+  // S7 (expansion): with PURSUE_FIXTURES=1, the campaign as it stands at each milestone becomes a state fixture
+  // (tests/fixtures/campaign/), the real state a player would have there, for tests that start mid-story
+  if (r.ok && process.env.PURSUE_FIXTURES) {
+    const st = await p.evaluate(() => { const s = JSON.parse(JSON.stringify(RB.game.s)); s.backlog = (s.backlog || []).slice(-20); return s; });
+    const dir = path.join(root, 'tests', 'fixtures', 'campaign');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, profile + '-' + comp + '-' + leg.flag + '.json'), JSON.stringify(st));
+  }
   if (process.env.PURSUE_LOG && r.log) console.log('  ' + r.log.join('\n  '));
   if (!r.ok) { ok = false; console.log(JSON.stringify(r, null, 1).slice(0, 3000)); break; }
 }
@@ -84,6 +92,8 @@ console.log('comings and goings: ' + fin.departures.length + ' (' + guessed.leng
 fs.writeFileSync(path.join(root, 'tests/e2e/out', 'speakers-' + profile + '-' + comp + '.json'), JSON.stringify({ absent: fin.absent, extras: fin.extras, departures: fin.departures }, null, 1));
 console.log('groups met (' + fin.groups.length + ', ' + fin.difficulty + '): ' + fin.groups.join('; '));
 console.log('companion actions taken: ' + JSON.stringify(fin.compActs));
+// L19: the language interactions this route met, by chapter, place and kind (src/learn/30_meter.js)
+console.log('interactions met: ' + JSON.stringify(await p.evaluate(() => RB.meter.report(RB.game.s))));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));

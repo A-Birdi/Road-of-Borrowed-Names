@@ -22,7 +22,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A.names[id] = d;
     const tags = ['atlas', 'atlas_name', 'atlas_name_' + id];
     for (const lv of ['F', 'E', 'I', 'A']) add(Object.assign({ id: 'atlas.name.' + id + '.' + lv, lv, tags }, d.steps[lv]));
-    C.notes['atlas_name_' + id] = { title: { jp: d.title.jp, en: 'Moored: ' + d.title.en }, jp: d.note.jp, en: d.note.en };
+    C.notes['atlas_name_' + id] = { title: { jp: d.title.jp, en: 'Moored: ' + d.title.en }, jp: d.note.jp, en: d.note.en, fiction: true };
   }
   NAME('ferry', {
     title: { jp: '{朝|あさ} の {渡|わた}し', en: 'The Dawn Ferry\'s Call' }, home: 'reedwake', col: '#e8e0c8',

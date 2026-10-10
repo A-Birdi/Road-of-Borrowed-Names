@@ -82,7 +82,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       F: [{ jp: '$tgt が さむく なる ！', en: '$tgtEn is going to freeze!' }],
       E: [{ jp: '{冷|つめ}たい {息|いき} を $tgt に かけよう と して いる 。', en: 'It is about to breathe cold air on $tgtEn.' }, { jp: '$other に は {息|いき} を かけない 。', en: 'It won\'t breathe on $otherEn.', neg: true }],
       I: [{ jp: '{凍|こお}える よう な {息|いき} が 、 $tgt を ねらって いる 。', en: 'A freezing breath is aimed at $tgtEn.' }],
-      A: [{ jp: '{骨|ほね} まで {凍|こお}て つく よう な {冷気|れいき} が 、 $tgt に {迫|せま}る 。', en: 'A chill that freezes to the bone closes in on $tgtEn.' }],
+      A: [{ jp: '{骨|ほね} まで {凍|い}てつく よう な {冷気|れいき} が 、 $tgt に {迫|せま}る 。', en: 'A chill that freezes to the bone closes in on $tgtEn.' }],
     },
     silence: {
       F: [{ jp: 'しずか に なって いく …… 。', en: 'Everything is going quiet…' }],

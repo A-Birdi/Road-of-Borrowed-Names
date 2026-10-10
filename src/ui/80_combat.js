@@ -619,8 +619,48 @@ RB.combat = (function () {
   // Words used in battle for the first time are marked "New" for that whole
   // encounter, with what they answer; recorded (s.tips) when it ends.
   let newWords = new Set(), shownWords = new Set();
+  // E5: the honest "effect here" line on each response card (Robin, C-64): what it would do now, from the rules'
+  // own preview (RB.combatLogic.previewAct). An unsuitable card stays choosable; it is marked, never hidden.
+  function hereOf(c) {
+    if (c.disabled || !st) return null;
+    let p;
+    try { p = L().previewAct(st, c); } catch (e) { return null; }
+    const nm = (i) => (isGroup() ? 'the ' + shortEn(i) : 'it');
+    const who = (a) => (a === 'comp' ? compName() : 'you');
+    const said = new Set(), out = [];
+    let none = false;
+    for (const f of p.fx) {
+      if (f.t === 'unravel') out.push('frees ' + f.n + ' knot' + (f.n > 1 ? 's' : '') + (isGroup() ? ' on ' + nm(f.foe) : ''));
+      else if (f.t === 'water') { out.push('cools the Heat on ' + nm(f.foe)); }
+      else if (f.t === 'light') { out.push('clears the mist on ' + nm(f.foe)); }
+      else if (f.t === 'bind') { out.push('stops ' + nm(f.foe) + ' gathering force'); said.add(f.foe + ':charge'); }
+      else if (f.t === 'ward') { if (f.block) { out.push('blocks the blow aimed at ' + who(f.target)); said.add(f.foe + ':blow'); } else out.push('raises a ward (2) in front of ' + who(f.target)); }
+      else if (f.t === 'heal') { if (f.gain > 0) out.push('restores resolve (' + f.aim.filter((w) => f.d[w] > 0).map((w) => who(w) + ' +' + f.d[w]).join(', ') + ')'); else none = f.aim.length > 1 ? 'you are both at full resolve' : 'you are at full resolve'; }
+      else if (f.t === 'settle') { out.push('answers its plea, and a knot loosens'); said.add(f.foe + ':plea'); }
+      else if (f.t === 'reveal') { out.push('sees through the false promise'); said.add(f.foe + ':lie'); }
+      else if (f.t === 'tech') out.push('cancels its move');
+    }
+    const up = L().standing(st);
+    for (const i of up) {
+      if (!p.answered[i]) continue;
+      const it = st.foes[i].intent;
+      if (!it || c.kind === 'tech' || said.has(i + ':blow') || said.has(i + ':plea') || said.has(i + ':lie')) continue;
+      if (it.kind === 'rest') continue;
+      out.push('answers ' + (isGroup() ? 'the ' + shortEn(i) + '\'s ' : 'its ') + moveLabel(it));
+    }
+    if (!out.length) {
+      // say what is missing, from the word's own tags
+      const tags = (c.word && c.word.tags) || [];
+      const why = none || (tags.indexOf('water') >= 0 ? 'no Heat to cool' : tags.indexOf('wind') >= 0 ? 'no mist to blow away and no Gust to meet' : tags.indexOf('light') >= 0 ? 'no mist, Re-tying or Mirror to light up'
+        : tags.indexOf('bind') >= 0 ? 'nothing gathering force or re-tying' : 'nothing for it to answer');
+      return { none: true, en: 'No effect here: ' + why + '.' };
+    }
+    const t = out.join('; ');
+    return { none: false, en: t[0].toUpperCase() + t.slice(1) + '.' };
+  }
   function cardHtml(c, i, hi) {
     const r = reachOf(c);
+    const here = hereOf(c);
     const tgt = reachLabel(c, r);
     const desc = c.disabled || RB.script.enVars(c.target ? String(c.desc).replace(/\s*\([^)]*\)\s*$/, '') : c.desc);
     const fresh = c.kind === 'word' && newWords.has(c.word.id);
@@ -632,7 +672,8 @@ RB.combat = (function () {
       (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt' + (r.foes.length > 1 ? ' many' : '') + '">' + esc(tgt) + '</span>' : '') +
       '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
-      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') + '</span></button>';
+      (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') +
+      (here ? '<span class="rc-here' + (here.none ? ' none' : '') + '"><b>Here:</b> ' + esc(here.en) + '</span>' : '') + '</span></button>';
   }
   // One short note per exchange, the first time something needs explaining:
   // several creatures, a kind of move never seen before, then a full Harmony,

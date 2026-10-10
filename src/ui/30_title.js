@@ -805,7 +805,7 @@ RB.ui.title = (function () {
       lay = null;
     };
     const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-ledger' });
-    fr.setTitle(esc(ttl), '');
+    fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl));
     lay = { el: fr.scrim, name: 'slots', noAutofocus: true };
     lay.onCancel = close;
     let list = null, err = null, failed = false, first = true, focusAfter = null;
@@ -821,7 +821,8 @@ RB.ui.title = (function () {
       const cur = RB.save.current();
       const info = storageInfo();
       const used = list ? list.filter((s) => !s.empty).length : 0;
-      fr.setTitle(esc(ttl), list && !failed ? used + ' of 6 in use' : '');
+      // the six saves are the Inn Ledger (宿帳; Robin's C-58); the pause menu is the Wayfarer's Ledger
+      fr.setTitle(RB.ui.label('{宿帳|やどちょう}', 'The Inn Ledger'), esc(ttl) + (list && !failed ? ' · ' + used + ' of 6 in use' : ''));
       let top = '';
       if (info.level === 'bad') top += '<p class="note-slip bad">' + I('warn') + ' Storage is unavailable here, so saves only last until this page closes.</p>';
       if (cur.readOnly && ctx === 'save') top += '<p class="note-slip warn">' + I('warn') + ' This tab is read-only for this campaign because another tab owns it. Saving to other slots is still possible.</p>';

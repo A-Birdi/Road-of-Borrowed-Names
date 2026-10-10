@@ -240,6 +240,43 @@ RB.audio = RB.audio || {};
     note(g, o, t + 0.15, 'bell', 86, 0.3, 0.32, p);
   });
 
+  // Harmony (expansion E21; Robin: the cut-in "feels a bit empty" without sound). One arrival for every pair, timed
+  // to the portrait sliding in, so the player learns "this is Harmony"; then one accent per companion at their peak,
+  // drawn from their technique. Played by src/ui/82d_harmony_cutin.js; none on Instant (no portrait plays then).
+  def('harmony_arrive', 1.8, 0.45, 0.4, (g, o, t, p) => {
+    // a short rising swell with a soft strike
+    whoosh(g, o, t, { f: 420 * p, f2: 2400 * p, q: 1.1, a: 0.22, hold: 0.04, r: 0.22, v: 0.1 });
+    chord(g, o, t + 0.02, 'pad', [62, 69, 74], 0.45, 0.55, p);
+    note(g, o, t + 0.24, 'bell', 81, 0.35, 0.34, p);
+    _.perc.t(g, o, t + 0.24, 0.35);
+  });
+  def('harmony_nao', 1.0, 0.25, 0.3, (g, o, t, p) => {
+    // a quick throw and a paper snap, like a letter landing on a counter
+    whoosh(g, o, t, { f: 900 * p, f2: 3600 * p, q: 1.4, a: 0.06, r: 0.06, v: 0.12 });
+    whoosh(g, o, t + 0.09, { f: 2400 * p, q: 2.5, a: 0.001, r: 0.025, v: 0.2 });
+    _.perc.w(g, o, t + 0.1, 0.45);
+    note(g, o, t + 0.12, 'pluck', 79, 0.18, 0.4, p);
+  });
+  def('harmony_mio', 1.6, 0.4, 0.3, (g, o, t, p, r) => {
+    // a rising shimmer of water, then a glass chime
+    for (let i = 0; i < 4; i++) _.perc.d(g, o, t + i * 0.05 + r() * 0.02, 0.55, r());
+    seq(g, o, t, 'harp', [74, 78, 81, 86], 0.045, 0.25, 0.3, p);
+    note(g, o, t + 0.22, 'glass', 93, 0.6, 0.5, p);
+  });
+  def('harmony_ren', 2.4, 0.5, 0.4, (g, o, t, p) => {
+    // a deep lantern-bell tone that blooms and hangs
+    note(g, o, t, 'toll', 50, 0.9, 0.45, p);
+    note(g, o, t + 0.04, 'bell', 74, 0.6, 0.22, p);
+    chord(g, o, t + 0.05, 'pad', [62, 69], 1.1, 0.4, p);
+  });
+  def('harmony_suzu', 1.4, 0.35, 0.3, (g, o, t, p) => {
+    // a sparkle and a little drum flourish: a stage's "ta-da"
+    seq(g, o, t, 'celesta', [86, 91, 95], 0.035, 0.2, 0.3, p);
+    _.perc.t(g, o, t + 0.08, 0.4); _.perc.t(g, o, t + 0.14, 0.45);
+    _.perc.l(g, o, t + 0.24, 0.55);
+    note(g, o, t + 0.24, 'bell', 88, 0.35, 0.32, p);
+  });
+
   // world
   def('discover', 1.8, 0.45, 0.3, (g, o, t, p) => {
     seq(g, o, t, 'celesta', [72, 76, 78, 79, 83], 0.06, 0.3, 0.4, p);
@@ -291,7 +328,7 @@ RB.audio = RB.audio || {};
     'ward', 'water', 'wind', 'light', 'fire_out', 'reveal', 'heal', 'knot_untie', 'enemy_intent',
     'enemy_hit', 'party_hit', 'harmony_ready', 'technique', 'discover', 'item_get', 'quest_update',
     'save', 'lantern', 'bell', 'page', 'splash', 'chest', 'footstep_grass', 'menu_open', 'menu_close',
-    'levelup', 'defeat', 'flee',
+    'levelup', 'defeat', 'flee', 'harmony_arrive', 'harmony_nao', 'harmony_mio', 'harmony_ren', 'harmony_suzu',
   ];
 
   // --------------------------------------------------------- playback

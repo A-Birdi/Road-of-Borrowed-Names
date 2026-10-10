@@ -429,6 +429,15 @@ RB.combatLogic = (function () {
     st.lastPlayer = { perfect, ok: !!result.ok, answered: any, kind: card.kind, target: T };
     return { fx, countered, answered, perfect };
   }
+  // E5 (expansion plan; Robin's C-64): what a response would do right now, by the same rule that will run, on a copy
+  // of the state (nothing changes, no randomness is drawn). The card's "Here:" line is built from this, so the
+  // preview cannot disagree with the result: { fx, answered, healed } as playerAct would return them on a first-try
+  // answer.
+  function previewAct(st, card) {
+    const x = snapshot(st);
+    const r = playerAct(x, card, { ok: true, firstTry: true, mistakes: 0 });
+    return { fx: r.fx, answered: r.answered, countered: r.countered };
+  }
   function techUnravel(st) {
     return (TECHS[st.compId] && TECHS[st.compId].knots) || 1;
   }
@@ -713,6 +722,6 @@ RB.combatLogic = (function () {
   }
   return {
     INTENTS, DIFF, HEAT, TECHS, GROUP, TAG_REACH, init, responses, playerAct, compAct, foeAct, enemyAct, endRound, intentDef, heatBonus, basePower, blowOf, answers,
-    reachOf, compReach, compOptions, compDefs, standing, isGroup, withFoe, target, defaultTarget, threatOf, snapshot, groupFor, knotsIn, aimOf, allSettled, FOE_KEYS,
+    reachOf, previewAct, compReach, compOptions, compDefs, standing, isGroup, withFoe, target, defaultTarget, threatOf, snapshot, groupFor, knotsIn, aimOf, allSettled, FOE_KEYS,
   };
 })();
