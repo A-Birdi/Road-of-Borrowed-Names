@@ -88,6 +88,8 @@ export function encounterRules(RB, C, { jcheck, checkStep, E }) {
       if (e.conclude && !(d.conclusions || []).some((c) => c.id === e.conclude)) E(where + ': concludes with unknown ' + e.conclude);
     };
     const cons = d.conclusions || [];
+    // a severe outcome (E17, C-11): avoidable, told shown or summarised (C-65), then reflected on with the companion
+    cons.forEach((c) => { if (c.severe) { if (!(c.summarised && c.summarised.en)) E(W + ' conclusion ' + c.id + ': a severe outcome needs its summarised telling (C-65)'); if (!c.reflect || !C.scenes[c.reflect]) E(W + ' conclusion ' + c.id + ': a severe outcome is followed by a reflection scene with the companion (C-11)'); if (!d.lasting) E(W + ': a severe outcome belongs to a lasting encounter'); } });
     cons.forEach((c, i) => { if (!c.id) E(W + ' conclusion ' + i + ': needs an id'); walk(c.when, W + ' conclusion ' + c.id); if (c.result && ['win', 'end', 'lose'].indexOf(c.result) < 0) E(W + ' conclusion ' + c.id + ': result must be win, end or lose'); text(c.text, W + ' conclusion ' + c.id); });
     if (d.objective) {
       if (d.objective.aid && !aids.has(d.objective.aid)) E(W + ': the objective names ' + d.objective.aid + ', who is not in the encounter');
@@ -141,8 +143,29 @@ export function encounterRules(RB, C, { jcheck, checkStep, E }) {
     }
     for (const comp in d.companion || {}) for (const a of d.companion[comp]) { text(a.name, W + ' ' + comp + ' ' + a.id); walk(a.when, W + ' ' + comp + ' ' + a.id); eff(a.effect, W + ' ' + comp + ' ' + a.id); }
     if (d.study) for (const w of d.study.tools || []) if (!C.words[w]) E(W + ': the study uses unknown inscription ' + w);
+    for (const p of d.prep || []) {
+      text(p.label, W + ' prep ' + p.id);
+      if (p.task) tiered(p.task, W + ' prep ' + p.id + ' task');
+      for (const f of ((p.effect || {}).unfield || []).concat((p.effect || {}).field || [])) if (!RB.conditions.FIELD[f]) E(W + ' prep ' + p.id + ': unknown place condition ' + f);
+    }
     for (const a of d.arrivals || []) text(a.say, W + ' arrival');
     if (d.rules && d.rules.modifiers && d.rules.modifiers !== 'all') for (const m of [].concat(d.rules.modifiers)) if (!(C.modifiers && C.modifiers.families[m])) E(W + ': unknown modifier ' + m);
+  }
+  // outcome sets (E17): every outcome they need is one an encounter can reach (named among its conclusions)
+  for (const set of C.outcomeSets || []) {
+    if (!set.id || !set.unlocks || !Array.isArray(set.needs) || !set.needs.length) { E('outcome set ' + set.id + ': needs an id, what it unlocks and what it needs'); continue; }
+    for (const n of set.needs) {
+      const d = (C.encounters || {})[n.enc];
+      if (!d) { E('outcome set ' + set.id + ': unknown encounter ' + n.enc); continue; }
+      if (!d.lasting) E('outcome set ' + set.id + ': ' + n.enc + ' does not keep its outcome (lasting)');
+      for (const o of [].concat(n.outcome)) if (!(d.conclusions || []).some((c) => c.id === o)) E('outcome set ' + set.id + ': ' + n.enc + ' has no conclusion ' + o);
+    }
+  }
+  // equivalent phrasings (E13): natural, with furigana, their grammar taught
+  for (const id in C.words) for (const ph of C.words[id].phrasings || []) {
+    jcheck(ph.jp, 'word ' + id + ' phrasing ' + ph.id);
+    if (!ph.en || !ph.unlock) E('word ' + id + ' phrasing ' + ph.id + ': needs its meaning and how it is taught (unlock)');
+    for (const it of [].concat(ph.item || [])) if (it.slice(0, 2) === 'g:' && !(RB.grammar && RB.grammar.get(it.slice(2)))) E('word ' + id + ' phrasing ' + ph.id + ': unknown grammar point ' + it);
   }
   // modifier pairings (E27): every offered pairing is authored, natural, with furigana, its handwritten span part of
   // the phrase, its items real, its option and effect ones the rules know

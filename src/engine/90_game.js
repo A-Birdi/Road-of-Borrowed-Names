@@ -21,7 +21,7 @@ RB.game = (function () {
       textSpeed: 'normal', skipSeen: true, reducedMotion: reduce, textScale: 1, contrast: 'normal',
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
-      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask',
+      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask', outcomeView: 'shown',
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,
@@ -417,19 +417,23 @@ RB.game = (function () {
     opts = Object.assign({}, opts);
     const def = typeof id === 'string' ? RB.content.encounters[id] : id;
     if (!def) { console.warn('unknown encounter', id); return null; }
-    let outcome = null;
+    let outcome = null, fin = null;
     const closing = opts.closing;
-    opts.encounterDone = (o) => { outcome = o; };
+    opts.encounterDone = (o, f) => { outcome = o; fin = f || null; };
+    // after a severe outcome, the companion and the player reflect on it in a written scene (E17, C-11)
+    const reflect = async () => { if (fin && fin.reflect && RB.content.scenes[fin.reflect]) await RB.script.run(fin.reflect); };
     if (def.lead) {
       opts.encounter = def;
       opts.closing = (res) => { if (closing) closing(res); };
       const res = await startBattle(typeof def.lead === 'string' ? def.lead : def.lead.enemy, opts);
+      await reflect();
       return { result: res, outcome: outcome || (res === 'win' ? 'settled' : null) };
     }
     if (battleOpen) { console.warn('a battle is already open; not starting', def.id); return null; }
     const me = (battleOpen = ++battleN);
     let res = null;
     try { res = await RB.encScreen.start(def, opts); } finally { if (battleOpen === me) battleOpen = 0; }
+    await reflect();
     return { result: res ? res.result : null, outcome: res ? res.outcome : null };
   }
 

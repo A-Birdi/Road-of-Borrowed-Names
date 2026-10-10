@@ -138,11 +138,13 @@ RB.encScreen = (function () {
         RB.audio && RB.audio.sfx(ev.fx.some((f) => f.none) ? 'cursor' : 'reveal');
       }
       if (!result) result = st.over;
-      if (st.enc.conclusion && st.enc.conclusion.text && result !== 'flee') await conclusion(st, fr, log);
+      if (E().conclusionText(st.enc.conclusion, RB.game.settings) && result !== 'flee') await conclusion(st, fr, log);
     } finally {
       try {
         const fin = E().finishEncounter(st, s, result);
         if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
+        cur && (cur.fin = fin);
+        if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
       } catch (err) { console.error('encounter finish', err); }
       RB.ui.popLayer(lay);
       RB.game.popMode('encounter');
@@ -177,7 +179,7 @@ RB.encScreen = (function () {
   }
   function conclusion(st, fr, log) {
     return new Promise((resolve) => {
-      const c = st.enc.conclusion;
+      const c = { text: E().conclusionText(st.enc.conclusion, RB.game.settings) };
       fr.leaf.innerHTML = '<div class="enc-grid"><div class="enc-col">' + peopleHtml(st) + machineHtml(st) + recordHtml(st) + '</div><div class="enc-col">' + logHtml(log) +
         '<section class="enc-end paper" aria-live="polite"><h3>' + I('done') + '<span>How it ended</span></h3>' + (c.text.jp ? '<p class="el-jp">' + RB.ui.jhtml(c.text.jp) + '</p>' : '') + '<p>' + esc(c.text.en) + '</p></section></div></div>';
       fr.foot.innerHTML = '<span class="spacer"></span><button type="button" class="cbtn go" data-ok>' + I('next') + '<span>Continue</span></button>';

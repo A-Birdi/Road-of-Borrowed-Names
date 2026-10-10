@@ -745,6 +745,12 @@ RB.combat = (function () {
       H.mark(s, 'group');
       return { icon: 'aim', title: 'More than one', body: H.groupNote(), more: 'target' };
     }
+    // three moves telegraphed together for the first time (E22, C-70): the answers that reach every creature
+    if (L().standing(st).filter((i) => st.foes[i].intent && st.foes[i].intent.kind !== 'rest').length >= 3 && !H.seen(s, 'trio')) {
+      H.mark(s, 'trio');
+      const ws = words(), wide = ws.filter((w) => (w.tags || []).some((t) => L().TAG_REACH[t] === 'all' || (L().TAG_REACH[t] === 'party' && t !== 'heal')));
+      return { icon: 'aim', title: 'Three moves at once', body: 'Some answers reach every creature, not only your target: ' + (wide.length ? wide.map((w) => esc(w.en)).join(', ') : 'water and wind, and the words that guard you both') + '. Each card\'s Here: line says whom it reaches now.', more: 'target' };
+    }
     for (const i of [st.cur].concat(L().standing(st))) {
       const x = st.foes[i].intent;
       if (x && !H.seen(s, 'intent:' + x.kind)) {
@@ -1458,6 +1464,22 @@ RB.combat = (function () {
     let st0 = null;
     if (encDef) {
       if (RB.test && RB.test.auto) return RB.test.encounter(encDef, opts);
+      // preparation (E14): one or two things the place offers, each a small language task; skipping is never
+      // penalised
+      const d0 = typeof encDef === 'string' ? RB.content.encounters[encDef] : encDef;
+      if (d0 && d0.prep && d0.prep.length && !opts.prepared) {
+        const chosen = [];
+        for (let k = 0; k < Math.min(2, d0.prep.length); k++) {
+          const left = d0.prep.filter((p) => chosen.indexOf(p.id) < 0);
+          const r = await live(RB.ui.confirm(k ? 'Anything else before you begin?' : 'Look around first?', left.map((p) => p.label.en).concat(['Begin now'])));
+          if (r < 0 || r >= left.length) break;
+          const p = left[r];
+          const t = p.task ? RB.util.deepClone(tierOf(p.task)) : null;
+          const res = t ? await live(RB.challenge.runStep(RB.tasks.prepare(Object.assign(t, { title: p.label.en })), { allowCancel: true, cancelLabel: 'Not now', ctxTag: 'prepare:' + d0.id })) : { ok: true };
+          if (res && !res.cancelled) chosen.push(p.id);
+        }
+        if (chosen.length) opts.prepared = ENC().prepared(d0, chosen);
+      }
       st0 = ENC().begin(opts.prepared || encDef, s);
       enemyId = st0.foes[0].enemyId;
     }
@@ -1568,7 +1590,15 @@ RB.combat = (function () {
         curCard = card;
         phase = 'challenge';
         renderUi();
-        const step = stepFor(card);
+        // the same response said another way (E13): same effect, a different language task, once it is taught
+        const ways = card.kind === 'word' && !card.mod ? ENC().phrasings(card, s) : [];
+        let way = null;
+        if (ways.length) {
+          const r = await live(RB.ui.confirm('How will you say it?', [RB.jp.plain(card.word.jpK || card.word.jp) + ' (' + card.word.en + ')'].concat(ways.map((w) => RB.jp.plain(w.jp) + ' (' + w.en + ')'), ['Choose again'])));
+          if (r > ways.length) { tg.lock = null; continue; }
+          way = r > 0 ? ways[r - 1] : null;
+        }
+        const step = way ? RB.tasks.prepare({ kind: 'write', item: way.item, answer: RB.jp.reading(way.jp).replace(/\s+/g, ''), accept: [RB.jp.reading(way.jp).replace(/\s+/g, ''), RB.jp.plain(way.jp).replace(/\s+/g, '')], mode: 'reading', title: 'Weave it another way', prompt: { en: 'Write “' + way.en + '”.' }, explain: { jp: way.jp, en: way.en + ' — the same as ' + card.word.en } }) : stepFor(card);
         const T = st.cur;
         // no writing for a decision (Wait) or a step done before (Resolve this step): nothing is recorded
         const res = step ? await live(RB.challenge.runStep(step, {
@@ -1667,8 +1697,9 @@ RB.combat = (function () {
       }
       if (outcome === 'lose') present('scene', { phase: 'defeat' });
       // an authored end that is neither a win nor a defeat (an objective lost, a study's exchanges run out): said
-      if ((outcome === 'end' || outcome === 'win') && st.enc && st.enc.conclusion && st.enc.conclusion.text) {
-        const tx = st.enc.conclusion.text;
+      const ctx0 = st.enc && ENC().conclusionText(st.enc.conclusion, RB.game.settings);
+      if ((outcome === 'end' || outcome === 'win') && ctx0) {
+        const tx = ctx0;
         await live(say({ jp: tx.jp || '', en: tx.en }, 'narr')); RB.ui.dialogue.hide();
       }
       if (outcome === 'win') {
@@ -1696,7 +1727,7 @@ RB.combat = (function () {
         try {
           const fin = ENC().finishEncounter(st, s, outcome);
           if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
-          if (opts.encounterDone) opts.encounterDone(st.enc.outcome);
+          if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
         } catch (err) { console.error('encounter finish', err); }
       }
       // Resolve recovers after every encounter: no attrition grinding.

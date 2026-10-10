@@ -472,6 +472,23 @@ export default async (t) => {
     t.eq(E.roamingWon(s3, { id: 'f9', enemy: 'rw.reedling', lostWord: { jp: '{橋|はし}', en: 'bridge' }, carries: 'rw_ribbon' }, 'rw.road'), [], 'once only');
   }
 
+  // ---- lasting outcomes, outcome sets, grave outcomes (E17) --------------------------------------------------------
+  {
+    const s = camp();
+    const mk = (id, out) => ({ id, kind: 'social', lasting: true, social: { parties: [{ aid: 'n:a', name: { en: 'A' } }], claims: {}, actions: [] }, conclusions: [{ id: out, when: { rounds: 0 }, result: 'end', text: { en: out } }] });
+    C.encounters['tmp.o1'] = mk('tmp.o1', 'mediated'); C.encounters['tmp.o2'] = mk('tmp.o2', 'mediated');
+    C.outcomeSets = [{ id: 'tmp.set', needs: [{ enc: 'tmp.o1', outcome: 'mediated' }, { enc: 'tmp.o2', outcome: 'mediated' }], unlocks: 'tmp_unlocked' }];
+    const a = E.begin('tmp.o1', s); E.close(a); const f1 = E.finishEncounter(a, s, a.over);
+    t.ok(s.enc.outcomes['tmp.o1'].id === 'mediated' && !s.flags.tmp_unlocked && !f1.unlocked.length, 'a lasting outcome is kept, neutrally; one of two is not yet the set');
+    const b2 = E.begin('tmp.o2', s); E.close(b2); const f2 = E.finishEncounter(b2, s, b2.over);
+    t.ok(s.flags.tmp_unlocked && f2.unlocked[0] === 'tmp.set', 'both: the set opens what it unlocks');
+    delete C.encounters['tmp.o1']; delete C.encounters['tmp.o2']; C.outcomeSets = [];
+    const grave = { id: 'x', severe: true, text: { en: 'Shown, with restraint.' }, summarised: { en: 'In a sentence.' } };
+    t.eq(E.conclusionText(grave, { outcomeView: 'shown' }).en, 'Shown, with restraint.', 'a grave outcome shown');
+    t.eq(E.conclusionText(grave, { outcomeView: 'summarised' }).en, 'In a sentence.', 'or summarised, as chosen (C-65)');
+    t.eq(E.conclusionText({ id: 'y', text: { en: 'Plain.' }, summarised: { en: 'no' } }, { outcomeView: 'summarised' }).en, 'Plain.', 'only grave outcomes have the choice');
+  }
+
   // ---- wanderers: rare, never twice in a row, not within five encounters ---------------------------------------------
   {
     C.wanderers = Object.assign({}, C.wanderers, { 'tmp.busker': { region: 'tmp' }, 'tmp.pilgrim': { region: 'tmp' } });

@@ -269,6 +269,70 @@ await test('phone width: a battle with an objective and a group does not overflo
   await ctx.close();
 });
 
+await test('preparation (look around first), a story battle\'s help (point), a companion plan, the Tactics Board', async () => {
+  const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1280, height: 860 } });
+  // preparation: open the window (a small task), the mist is gone before the encounter begins
+  await begin(p, { enc: 'fx.prep', comp: null });
+  await confirmPick(p, 'Open the window');
+  await answer(p);
+  await cards(p);
+  const shrouded = await p.evaluate(() => RB.combat.shown().foes[0].shroud);
+  assert(shrouded === false, 'the mist was let out before it began');
+  await ctx.close();
+  // a story battle lost before: the companion offers help; Point marks suitable responses, recorded as help
+  const q = await page(b, url, { viewport: { width: 1280, height: 860 } });
+  await q.p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, { comp: 'mio' }); s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.words = ['mamoru', 'mizu', 'nawa']; RB.game.settings.input = 'choice'; RB.game.settings.battleAnim = 'instant'; RB.game.applySettings(); RB.encounter.rec(s).defeats['fx.story'] = 3; window.__res = null; RB.game.startEncounter('fx.story', {}).then((r) => { window.__res = r; }); });
+  for (let k = 0; k < 100 && !(await q.p.evaluate(() => !!document.querySelector('.csheet'))); k++) { await q.p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await q.p.waitForTimeout(60); }
+  const offer = await q.p.evaluate(() => [...document.querySelectorAll('.csheet .pbtn')].map((x) => x.textContent));
+  assert(offer.join('|') === 'Explain its pattern|Suggest an answer|Point at good responses|No, thanks', 'after three defeats, all three offers: ' + offer.join('|'));
+  await confirmPick(q.p, 'Point at good responses');
+  await cards(q.p);
+  const pointed = await q.p.evaluate(() => [...document.querySelectorAll('.rcard.pointed')].map((x) => x.textContent.replace(/\s+/g, ' ').slice(0, 30)));
+  assert(pointed.length && pointed.some((t) => /rope/.test(t)), 'rope is pointed out against the gathering: ' + pointed.join(' | '));
+  await clickCard(q.p, 'rope');
+  await answer(q.p);
+  await q.p.waitForTimeout(200);
+  const ev = await q.p.evaluate(() => { const it = RB.game.s.learn.items['v:縄']; return it && it.log ? it.log[it.log.length - 1] : null; });
+  assert(ev && ev.h === 'supplied', 'a pointed-out response counts as help that supplied the answer: ' + JSON.stringify(ev));
+  await q.ctx.close();
+  // a companion plan: Ren protects by himself, no menu
+  const r = await page(b, url, { viewport: { width: 1280, height: 860 } });
+  await begin(r.p, { enc: 'fx.ordinary', comp: 'ren' });
+  await r.p.evaluate(() => { RB.game.settings.compPlan = 'protect'; });
+  await cards(r.p);
+  await clickCard(r.p, 'Unravel');
+  await answer(r.p);
+  await r.p.waitForTimeout(400);
+  const menu = await r.p.evaluate(() => !!document.querySelector('.ccard'));
+  await r.p.waitForFunction(() => RB.combat.phase() === 'choose' || window.__res, null, { timeout: 20000 });
+  const log = await r.p.evaluate(() => (document.querySelector('.clog') || {}).textContent || '');
+  assert(!menu && /ward|shade|lamp|light/i.test(log), 'with a plan, no menu: Ren acted on it: ' + log.slice(0, 300));
+  await r.ctx.close();
+  // the Tactics Board: a study, solved; its best kept
+  const t = await page(b, url, { viewport: { width: 1280, height: 860 } });
+  await t.p.evaluate(() => { window.__RB_DEV_ENC__ = true; const s = RB.game.debugStart('rw.millroad', 10, 22, {}); s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; RB.game.settings.input = 'choice'; RB.game.settings.battleAnim = 'instant'; RB.game.applySettings(); RB.ui.tactics.open(); });
+  await t.p.waitForSelector('.tb-study');
+  const names = await t.p.evaluate(() => [...document.querySelectorAll('.tb-study .tb-n')].map((x) => x.textContent));
+  assert(names.some((n) => /body of flame/i.test(n)), 'the studies are listed: ' + names.join(' | '));
+  await t.p.evaluate(() => [...document.querySelectorAll('.tb-study')].find((x) => /body of flame/i.test(x.textContent)).querySelector('[data-play]').click());
+  await cards(t.p);
+  for (const m of ['water', 'Unravel', 'Unravel']) {
+    await clickCard(t.p, m);
+    await answer(t.p);
+    for (let k = 0; k < 200; k++) {
+      const st = await t.p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); return RB.combat.phase() === 'choose' || !document.querySelector('.combat-ui'); });
+      if (st) break;
+      await t.p.waitForTimeout(100);
+    }
+    await t.p.waitForTimeout(150);
+  }
+  for (let k = 0; k < 100 && !(await t.p.evaluate(() => !!document.querySelector('.tb-study .tb-best') && !document.querySelector('.combat-ui'))); k++) { await t.p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await t.p.waitForTimeout(100); }
+  const best = await t.p.evaluate(() => [...document.querySelectorAll('.tb-study')].find((x) => /body of flame/i.test(x.textContent)).querySelector('.tb-best').textContent);
+  assert(/Best: 2 exchanges/.test(best), 'solved, and its best kept: ' + best);
+  assert(!errors.length && !requests.length && !q.errors.length && !r.errors.length && !t.errors.length, 'no errors, no network: ' + errors.concat(requests, q.errors, r.errors, t.errors).join(' | '));
+  await t.ctx.close();
+});
+
 await test('five on the creatures\' side: two rows, every creature on the stage, at desktop and phone sizes (captures)', async () => {
   const fs = await import('node:fs');
   const path = await import('node:path');

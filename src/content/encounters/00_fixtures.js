@@ -251,6 +251,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
     group: ['sg.crab', 'sg.crane', 'sg.fogwisp', 'sg.moth'],
   });
 
+  // ---- preparation before an encounter (E14): one thing the place offers; skipping it is fine ----------------------
+  const prepTask = (() => { const st = ch({ item: 'c:fx_prep', prompt: { en: 'Which means "open the window"?' }, options: [{ jp: '{窓|まど} を {開|あ}ける', ok: true }, { jp: '{窓|まど} を {閉|し}める', ok: false, why: { en: 'That one shuts the window.' } }] }); return { F: st, E: st, I: st, A: st }; })();
+  add({
+    id: 'fx.prep', name: { jp: '{霧|きり} の {部屋|へや}', en: 'The misty room' },
+    lead: { enemy: 'sg.fogwisp', pattern: ['strike', 'rest', 'shroud'] }, field: ['mist'], rules: { conditions: true },
+    prep: [{ id: 'window', label: { jp: '{窓|まど} を {開|あ}ける', en: 'Open the window (lets the mist out)' }, task: prepTask, effect: { unfield: ['mist'] } }],
+  });
+
+  // ---- a required story battle (E19): help is offered after a defeat ----------------------------------------------
+  add({
+    id: 'fx.story', name: { jp: '{負|ま}けた {相手|あいて}', en: 'The one that beat you' }, story: true,
+    lead: { enemy: 'sg.moth', pattern: ['charge', 'strike', 'rest'] },
+    help: { explain: { en: 'It gathers itself, then strikes hard, then rests: always in that order.' }, suggest: { en: 'When it gathers, a rope stops it; then untie it while it rests.' } },
+  });
+
   // ---- Tactics Board studies (E15): a fixed toolset, a goal, a number of committed exchanges ----------------------
   add({
     id: 'fx.study.mist', kind: 'study', name: { jp: '{霧|きり} の {中|なか} で', en: 'In the mist' },

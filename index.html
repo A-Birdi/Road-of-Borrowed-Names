@@ -3506,6 +3506,16 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
   }
 }
 
+/* the Tactics Board (E15) */
+.tb-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.tb-study { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: var(--r-1); background: var(--paper-2); }
+.tb-study .tb-h { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-weight: 700; }
+.tb-study .tb-h .en { font-weight: 400; color: var(--ink-2); }
+.tb-study .tb-best { font-weight: 600; color: var(--ink-2); }
+.tb-study .tb-tools { display: flex; align-items: center; gap: 0.4em; font-size: 0.92em; }
+.tb-study .tb-tools svg { width: 1.2em; height: 1.2em; flex: none; }
+.tb-study .cbtn { justify-self: start; }
+
 /* ==== src/styles/66_words.css ==== */
 /* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
  * (src/ui/66_words_pages.js). */
@@ -50580,7 +50590,7 @@ RB.game = (function () {
       textSpeed: 'normal', skipSeen: true, reducedMotion: reduce, textScale: 1, contrast: 'normal',
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
-      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask',
+      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask', outcomeView: 'shown',
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,
@@ -50976,19 +50986,23 @@ RB.game = (function () {
     opts = Object.assign({}, opts);
     const def = typeof id === 'string' ? RB.content.encounters[id] : id;
     if (!def) { console.warn('unknown encounter', id); return null; }
-    let outcome = null;
+    let outcome = null, fin = null;
     const closing = opts.closing;
-    opts.encounterDone = (o) => { outcome = o; };
+    opts.encounterDone = (o, f) => { outcome = o; fin = f || null; };
+    // after a severe outcome, the companion and the player reflect on it in a written scene (E17, C-11)
+    const reflect = async () => { if (fin && fin.reflect && RB.content.scenes[fin.reflect]) await RB.script.run(fin.reflect); };
     if (def.lead) {
       opts.encounter = def;
       opts.closing = (res) => { if (closing) closing(res); };
       const res = await startBattle(typeof def.lead === 'string' ? def.lead : def.lead.enemy, opts);
+      await reflect();
       return { result: res, outcome: outcome || (res === 'win' ? 'settled' : null) };
     }
     if (battleOpen) { console.warn('a battle is already open; not starting', def.id); return null; }
     const me = (battleOpen = ++battleN);
     let res = null;
     try { res = await RB.encScreen.start(def, opts); } finally { if (battleOpen === me) battleOpen = 0; }
+    await reflect();
     return { result: res ? res.result : null, outcome: res ? res.outcome : null };
   }
 
@@ -53413,6 +53427,13 @@ RB.encounter = (function () {
   // Called once when an encounter ends (any result). Steps solved count for Resolve this step; a procedure left
   // mid-way keeps its machine (stepping away costs nothing); one-time rewards are given once; a story encounter's
   // defeats are counted (only to offer help, E19); a lasting outcome is recorded (E17), neutrally.
+  // The words a conclusion is told in: a severe outcome (E17, C-11) is shown or summarised, as the player chose in
+  // Settings (C-65); the outcome itself, and the reflection that follows, are the same either way.
+  function conclusionText(c, settings) {
+    if (!c) return null;
+    if (c.severe && c.summarised && settings && settings.outcomeView === 'summarised') return c.summarised;
+    return c.text || null;
+  }
   function finishEncounter(st, s, outcome) {
     const E = st.enc;
     if (!E || !s) return null;
@@ -53427,15 +53448,21 @@ RB.encounter = (function () {
     }
     if (E.def.story && outcome === 'lose') R.defeats[E.id] = (R.defeats[E.id] || 0) + 1;
     if (E.conclusion && E.def.lasting) R.outcomes[E.id] = { id: E.outcome, t: Date.now() };
+    // outcome sets (E17): authored combinations of lasting outcomes that open something later
+    const unlocked = [];
+    for (const set of RB.content.outcomeSets || []) {
+      if (s.flags[set.unlocks]) continue;
+      if (set.needs.every((n) => R.outcomes[n.enc] && [].concat(n.outcome).indexOf(R.outcomes[n.enc].id) >= 0)) { s.flags[set.unlocks] = true; unlocked.push(set.id); }
+    }
     if (E.study) {
-      const won = st.over === 'win';
+      const won = (outcome || st.over) === 'win';
       const b = R.studies[E.id] || {};
       if (won && (!b.best || st.round < b.best)) b.best = st.round;
       b.tries = (b.tries || 0) + 1;
       R.studies[E.id] = b;
     }
     if (RB.streams && E.def.arrivalTable && (outcome === 'win' || outcome === 'end')) RB.streams.consume(s, 'enc:' + E.id + ':arrivals');
-    return { rewards, flags: (E.conclusion && E.conclusion.flags) || null, outcome: E.outcome, text: E.conclusion && E.conclusion.text };
+    return { rewards, flags: (E.conclusion && E.conclusion.flags) || null, outcome: E.outcome, text: E.conclusion && E.conclusion.text, unlocked, reflect: (E.conclusion && E.conclusion.reflect) || null };
   }
   // help in a required story battle after a defeat (E19): what the companion offers now, escalating with defeats
   // (1 explain, 2 suggest, 3+ point); always optional, and the player may also ask at any time
@@ -53594,7 +53621,7 @@ RB.encounter = (function () {
   return {
     begin, exchange, player, companion, guests, foes, close, conclude, cards, coming, test, finishEncounter, helpOffer,
     wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey, compMenu, planned, planOf, pointCards, prepared,
-    phrasings, ordinaryRules, roamingWon,
+    phrasings, ordinaryRules, roamingWon, conclusionText,
   };
 })();
 
@@ -68811,6 +68838,8 @@ RB.ui.settings = (function () {
         radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
         // (expansion E10: a standing intention for the companion's turn; Ask me keeps the menu, as always)
         radios('compPlan', 'Your companion\'s turn', [['ask', 'Ask me'], ['protect', 'Protect'], ['reveal', 'Reveal'], ['press', 'Press the opening']], null, 'Ask me opens your companion\'s menu each exchange. With a plan, they act on it by themselves, in their own way (Nao still reads, Ren still wards), and the menu opens only when they have nothing of that kind.') +
+        // (expansion E17, C-65: how a grave outcome is told; it never changes what happened or what follows)
+        radios('outcomeView', 'Grave outcomes', [['shown', 'Shown'], ['summarised', 'Summarised']], null, 'Rarely, a side story can end badly for someone in it. Shown tells it as it happens, with restraint; Summarised tells it in a sentence. What happened, and the talk with your companion afterwards, are the same either way.') +
         // (Harmony addendum §7.4: the portrait layer only — the technique, its stage performance and the banner stay)
         sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.') +
         radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,
@@ -72268,6 +72297,66 @@ RB.ui.workshop = (function () {
     });
   }
   return { open, tryFamily };
+})();
+
+
+/* ==== src/ui/64c_tactics.js ==== */
+/* The Tactics Board (expansion E15): optional compact studies with a known set of tools and a goal within a number of
+ * committed exchanges; instant retry, with what changed explained; a personal best per study (exchanges, never
+ * time). Studies are encounters of kind 'study' (src/engine/97_encounter.js); the board stands in Manybridge's
+ * Exchange hall and on the boat (P08), and opens from RB.ui.tactics.open(). Development fixtures are listed only
+ * on a development page. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.ui = RB.ui || {};
+
+RB.ui.tactics = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.learnUi.icon(n);
+  function studies() {
+    const C = RB.content.encounters || {};
+    const dev = RB.encDev && RB.encDev.allowed();
+    return Object.keys(C).filter((id) => C[id].kind === 'study' && (!C[id].fixture || dev)).map((id) => C[id]);
+  }
+  function open(o) {
+    o = o || {};
+    return new Promise((resolve) => {
+      const fr = RB.learnUi.sheet({ cls: 'tactics-sheet', title: 'The Tactics Board', headBtn: { html: I('back') + '<span>Close</span>', attrs: { 'data-x': '' } } });
+      const lay = { el: fr.scrim, name: 'tactics' };
+      const close = () => { RB.ui.popLayer(lay); resolve(); };
+      lay.onCancel = close;
+      const render = (note) => {
+        const s = RB.game.s;
+        const best = (RB.encounter.rec(s).studies) || {};
+        const list = studies();
+        fr.leaf.innerHTML = '<p class="muted">Each study gives you a few words and a goal. Reach it within the exchanges allowed; try again at once as often as you like. Your best is kept, in exchanges.</p>' +
+          (note ? '<div class="fbwrap fb info">' + note + '</div>' : '') +
+          (list.length ? '<ol class="tb-list">' + list.map((d) => {
+            const b = best[d.id] || {};
+            const tools = (d.study.tools || []).map((w) => RB.content.words[w]).filter(Boolean);
+            return '<li class="tb-study"><div class="tb-h"><span class="tb-n">' + RB.ui.jhtml(d.name.jp || '') + ' <span class="en">' + esc(d.name.en) + '</span></span>' +
+              '<span class="tb-best">' + (b.best ? 'Best: ' + b.best + ' exchange' + (b.best > 1 ? 's' : '') : b.tries ? 'Not solved yet' : 'New') + '</span></div>' +
+              '<div class="tb-tools">' + I('words') + '<span>Words: ' + tools.map((w) => RB.ui.jhtml(w.jpK || w.jp) + ' (' + esc(w.en) + ')').join(', ') + ' · within ' + d.study.turns + ' exchanges</span></div>' +
+              '<button type="button" class="cbtn" data-play="' + esc(d.id) + '">' + I('next') + '<span>' + (b.tries ? 'Try again' : 'Try it') + '</span></button></li>';
+          }).join('') + '</ol>' : '<p class="muted">No studies here yet.</p>');
+      };
+      fr.el.onclick = async (e) => {
+        if (e.target.closest('[data-x]')) { close(); return; }
+        const b = e.target.closest('[data-play]');
+        if (!b) return;
+        const id = b.getAttribute('data-play');
+        // the board steps aside while the study plays, and comes back when it ends
+        RB.ui.popLayer(lay);
+        let r = null;
+        try { r = await RB.game.startEncounter(id, {}); } finally { RB.ui.pushLayer(lay); }
+        const d = RB.content.encounters[id];
+        render(r && r.result === 'win' ? I('done') + '<span>Solved in ' + (RB.encounter.rec(RB.game.s).studies[id] || {}).best + ' — try for fewer, or another study.</span>' : esc((d.study.explain && d.study.explain.en) || 'Not this time. Try again.'));
+      };
+      RB.ui.pushLayer(lay);
+      render(o.note || '');
+    });
+  }
+  return { open, studies };
 })();
 
 
@@ -88132,6 +88221,12 @@ RB.combat = (function () {
       H.mark(s, 'group');
       return { icon: 'aim', title: 'More than one', body: H.groupNote(), more: 'target' };
     }
+    // three moves telegraphed together for the first time (E22, C-70): the answers that reach every creature
+    if (L().standing(st).filter((i) => st.foes[i].intent && st.foes[i].intent.kind !== 'rest').length >= 3 && !H.seen(s, 'trio')) {
+      H.mark(s, 'trio');
+      const ws = words(), wide = ws.filter((w) => (w.tags || []).some((t) => L().TAG_REACH[t] === 'all' || (L().TAG_REACH[t] === 'party' && t !== 'heal')));
+      return { icon: 'aim', title: 'Three moves at once', body: 'Some answers reach every creature, not only your target: ' + (wide.length ? wide.map((w) => esc(w.en)).join(', ') : 'water and wind, and the words that guard you both') + '. Each card\'s Here: line says whom it reaches now.', more: 'target' };
+    }
     for (const i of [st.cur].concat(L().standing(st))) {
       const x = st.foes[i].intent;
       if (x && !H.seen(s, 'intent:' + x.kind)) {
@@ -88845,6 +88940,22 @@ RB.combat = (function () {
     let st0 = null;
     if (encDef) {
       if (RB.test && RB.test.auto) return RB.test.encounter(encDef, opts);
+      // preparation (E14): one or two things the place offers, each a small language task; skipping is never
+      // penalised
+      const d0 = typeof encDef === 'string' ? RB.content.encounters[encDef] : encDef;
+      if (d0 && d0.prep && d0.prep.length && !opts.prepared) {
+        const chosen = [];
+        for (let k = 0; k < Math.min(2, d0.prep.length); k++) {
+          const left = d0.prep.filter((p) => chosen.indexOf(p.id) < 0);
+          const r = await live(RB.ui.confirm(k ? 'Anything else before you begin?' : 'Look around first?', left.map((p) => p.label.en).concat(['Begin now'])));
+          if (r < 0 || r >= left.length) break;
+          const p = left[r];
+          const t = p.task ? RB.util.deepClone(tierOf(p.task)) : null;
+          const res = t ? await live(RB.challenge.runStep(RB.tasks.prepare(Object.assign(t, { title: p.label.en })), { allowCancel: true, cancelLabel: 'Not now', ctxTag: 'prepare:' + d0.id })) : { ok: true };
+          if (res && !res.cancelled) chosen.push(p.id);
+        }
+        if (chosen.length) opts.prepared = ENC().prepared(d0, chosen);
+      }
       st0 = ENC().begin(opts.prepared || encDef, s);
       enemyId = st0.foes[0].enemyId;
     }
@@ -88955,7 +89066,15 @@ RB.combat = (function () {
         curCard = card;
         phase = 'challenge';
         renderUi();
-        const step = stepFor(card);
+        // the same response said another way (E13): same effect, a different language task, once it is taught
+        const ways = card.kind === 'word' && !card.mod ? ENC().phrasings(card, s) : [];
+        let way = null;
+        if (ways.length) {
+          const r = await live(RB.ui.confirm('How will you say it?', [RB.jp.plain(card.word.jpK || card.word.jp) + ' (' + card.word.en + ')'].concat(ways.map((w) => RB.jp.plain(w.jp) + ' (' + w.en + ')'), ['Choose again'])));
+          if (r > ways.length) { tg.lock = null; continue; }
+          way = r > 0 ? ways[r - 1] : null;
+        }
+        const step = way ? RB.tasks.prepare({ kind: 'write', item: way.item, answer: RB.jp.reading(way.jp).replace(/\s+/g, ''), accept: [RB.jp.reading(way.jp).replace(/\s+/g, ''), RB.jp.plain(way.jp).replace(/\s+/g, '')], mode: 'reading', title: 'Weave it another way', prompt: { en: 'Write “' + way.en + '”.' }, explain: { jp: way.jp, en: way.en + ' — the same as ' + card.word.en } }) : stepFor(card);
         const T = st.cur;
         // no writing for a decision (Wait) or a step done before (Resolve this step): nothing is recorded
         const res = step ? await live(RB.challenge.runStep(step, {
@@ -89054,8 +89173,9 @@ RB.combat = (function () {
       }
       if (outcome === 'lose') present('scene', { phase: 'defeat' });
       // an authored end that is neither a win nor a defeat (an objective lost, a study's exchanges run out): said
-      if ((outcome === 'end' || outcome === 'win') && st.enc && st.enc.conclusion && st.enc.conclusion.text) {
-        const tx = st.enc.conclusion.text;
+      const ctx0 = st.enc && ENC().conclusionText(st.enc.conclusion, RB.game.settings);
+      if ((outcome === 'end' || outcome === 'win') && ctx0) {
+        const tx = ctx0;
         await live(say({ jp: tx.jp || '', en: tx.en }, 'narr')); RB.ui.dialogue.hide();
       }
       if (outcome === 'win') {
@@ -89083,7 +89203,7 @@ RB.combat = (function () {
         try {
           const fin = ENC().finishEncounter(st, s, outcome);
           if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
-          if (opts.encounterDone) opts.encounterDone(st.enc.outcome);
+          if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
         } catch (err) { console.error('encounter finish', err); }
       }
       // Resolve recovers after every encounter: no attrition grinding.
@@ -89320,11 +89440,13 @@ RB.encScreen = (function () {
         RB.audio && RB.audio.sfx(ev.fx.some((f) => f.none) ? 'cursor' : 'reveal');
       }
       if (!result) result = st.over;
-      if (st.enc.conclusion && st.enc.conclusion.text && result !== 'flee') await conclusion(st, fr, log);
+      if (E().conclusionText(st.enc.conclusion, RB.game.settings) && result !== 'flee') await conclusion(st, fr, log);
     } finally {
       try {
         const fin = E().finishEncounter(st, s, result);
         if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
+        cur && (cur.fin = fin);
+        if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
       } catch (err) { console.error('encounter finish', err); }
       RB.ui.popLayer(lay);
       RB.game.popMode('encounter');
@@ -89359,7 +89481,7 @@ RB.encScreen = (function () {
   }
   function conclusion(st, fr, log) {
     return new Promise((resolve) => {
-      const c = st.enc.conclusion;
+      const c = { text: E().conclusionText(st.enc.conclusion, RB.game.settings) };
       fr.leaf.innerHTML = '<div class="enc-grid"><div class="enc-col">' + peopleHtml(st) + machineHtml(st) + recordHtml(st) + '</div><div class="enc-col">' + logHtml(log) +
         '<section class="enc-end paper" aria-live="polite"><h3>' + I('done') + '<span>How it ended</span></h3>' + (c.text.jp ? '<p class="el-jp">' + RB.ui.jhtml(c.text.jp) + '</p>' : '') + '<p>' + esc(c.text.en) + '</p></section></div></div>';
       fr.foot.innerHTML = '<span class="spacer"></span><button type="button" class="cbtn go" data-ok>' + I('next') + '<span>Continue</span></button>';
@@ -105262,7 +105384,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const W = (id, d) => (C.words[id] = Object.assign({ id }, d));
   // `effect` is shown on the battle's response card: what the word does, and
   // which moves it answers (RB.combatLogic.answers lists the same from the tags).
-  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you: it blocks a Strike aimed at them, or soaks up 2 damage later.' });
+  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you: it blocks a Strike aimed at them, or soaks up 2 damage later.',
+    // the same intention said another way (expansion E13): taught in the twelve-chapter game (flag phr_mamoru)
+    phrasings: [{ id: 'ataranai', jp: '{当|あ}たらない ように する', en: 'make sure it does not hit', item: ['g:you_ni_suru', 'v:当たる'], unlock: 'phr_mamoru' }] });
   W('mizu', { jp: 'みず', jpK: '{水|みず}', r: 'みず', lex: '水', en: 'water', tags: ['water'], icon: '💧', effect: 'Cools what is overheating: clears Heat.' });
   W('hikari', { jp: 'ひかり', jpK: '{光|ひかり}', r: 'ひかり', lex: '光', en: 'light', tags: ['light'], icon: '✺', effect: 'Shows what is hidden: clears mist, and stops a Re-tying or a Mirror.' });
   W('iyasu', { jp: 'いやす', jpK: '{癒|いや}す', r: 'いやす', lex: '癒す', en: 'heal, soothe', tags: ['heal'], icon: '✚', effect: 'Restores 3 resolve to each of you.' });
@@ -142637,6 +142761,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
     id: 'fx.five', name: { jp: '{五|いつ}つの {影|かげ}', en: 'Five shadows' }, setPiece: true, capacity: 5,
     lead: { enemy: 'sg.golem', knots: 4 },
     group: ['sg.crab', 'sg.crane', 'sg.fogwisp', 'sg.moth'],
+  });
+
+  // ---- preparation before an encounter (E14): one thing the place offers; skipping it is fine ----------------------
+  const prepTask = (() => { const st = ch({ item: 'c:fx_prep', prompt: { en: 'Which means "open the window"?' }, options: [{ jp: '{窓|まど} を {開|あ}ける', ok: true }, { jp: '{窓|まど} を {閉|し}める', ok: false, why: { en: 'That one shuts the window.' } }] }); return { F: st, E: st, I: st, A: st }; })();
+  add({
+    id: 'fx.prep', name: { jp: '{霧|きり} の {部屋|へや}', en: 'The misty room' },
+    lead: { enemy: 'sg.fogwisp', pattern: ['strike', 'rest', 'shroud'] }, field: ['mist'], rules: { conditions: true },
+    prep: [{ id: 'window', label: { jp: '{窓|まど} を {開|あ}ける', en: 'Open the window (lets the mist out)' }, task: prepTask, effect: { unfield: ['mist'] } }],
+  });
+
+  // ---- a required story battle (E19): help is offered after a defeat ----------------------------------------------
+  add({
+    id: 'fx.story', name: { jp: '{負|ま}けた {相手|あいて}', en: 'The one that beat you' }, story: true,
+    lead: { enemy: 'sg.moth', pattern: ['charge', 'strike', 'rest'] },
+    help: { explain: { en: 'It gathers itself, then strikes hard, then rests: always in that order.' }, suggest: { en: 'When it gathers, a rope stops it; then untie it while it rests.' } },
   });
 
   // ---- Tactics Board studies (E15): a fixed toolset, a goal, a number of committed exchanges ----------------------

@@ -717,6 +717,13 @@ RB.encounter = (function () {
   // Called once when an encounter ends (any result). Steps solved count for Resolve this step; a procedure left
   // mid-way keeps its machine (stepping away costs nothing); one-time rewards are given once; a story encounter's
   // defeats are counted (only to offer help, E19); a lasting outcome is recorded (E17), neutrally.
+  // The words a conclusion is told in: a severe outcome (E17, C-11) is shown or summarised, as the player chose in
+  // Settings (C-65); the outcome itself, and the reflection that follows, are the same either way.
+  function conclusionText(c, settings) {
+    if (!c) return null;
+    if (c.severe && c.summarised && settings && settings.outcomeView === 'summarised') return c.summarised;
+    return c.text || null;
+  }
   function finishEncounter(st, s, outcome) {
     const E = st.enc;
     if (!E || !s) return null;
@@ -731,15 +738,21 @@ RB.encounter = (function () {
     }
     if (E.def.story && outcome === 'lose') R.defeats[E.id] = (R.defeats[E.id] || 0) + 1;
     if (E.conclusion && E.def.lasting) R.outcomes[E.id] = { id: E.outcome, t: Date.now() };
+    // outcome sets (E17): authored combinations of lasting outcomes that open something later
+    const unlocked = [];
+    for (const set of RB.content.outcomeSets || []) {
+      if (s.flags[set.unlocks]) continue;
+      if (set.needs.every((n) => R.outcomes[n.enc] && [].concat(n.outcome).indexOf(R.outcomes[n.enc].id) >= 0)) { s.flags[set.unlocks] = true; unlocked.push(set.id); }
+    }
     if (E.study) {
-      const won = st.over === 'win';
+      const won = (outcome || st.over) === 'win';
       const b = R.studies[E.id] || {};
       if (won && (!b.best || st.round < b.best)) b.best = st.round;
       b.tries = (b.tries || 0) + 1;
       R.studies[E.id] = b;
     }
     if (RB.streams && E.def.arrivalTable && (outcome === 'win' || outcome === 'end')) RB.streams.consume(s, 'enc:' + E.id + ':arrivals');
-    return { rewards, flags: (E.conclusion && E.conclusion.flags) || null, outcome: E.outcome, text: E.conclusion && E.conclusion.text };
+    return { rewards, flags: (E.conclusion && E.conclusion.flags) || null, outcome: E.outcome, text: E.conclusion && E.conclusion.text, unlocked, reflect: (E.conclusion && E.conclusion.reflect) || null };
   }
   // help in a required story battle after a defeat (E19): what the companion offers now, escalating with defeats
   // (1 explain, 2 suggest, 3+ point); always optional, and the player may also ask at any time
@@ -898,6 +911,6 @@ RB.encounter = (function () {
   return {
     begin, exchange, player, companion, guests, foes, close, conclude, cards, coming, test, finishEncounter, helpOffer,
     wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey, compMenu, planned, planOf, pointCards, prepared,
-    phrasings, ordinaryRules, roamingWon,
+    phrasings, ordinaryRules, roamingWon, conclusionText,
   };
 })();

@@ -31,5 +31,12 @@ export default async (t) => {
   has(one({ id: 'h', kind: 'procedure', procedure: { id: 'p', steps: [{ id: 's', actions: [{ id: 'a', label: { en: 'A' } }] }] }, conclusions: [] }), /no right action/, 'a machine step without a right action');
   has(one({ id: 'i', kind: 'procedure', procedure: { id: 'p', steps: [{ id: 's', actions: [{ id: 'a', label: { en: 'A' }, ok: true }, { id: 'b', label: { en: 'B' } }] }] }, conclusions: [] }), /must say what the player will do/, 'an action that can send the machine back without its interpretation');
   has(one({ id: 'j', lead: 'rw.reedling', conclusions: [{ id: 'x', when: { sunset: true } }] }), /unknown condition "sunset"/, 'an unknown condition');
+  has(one({ id: 'l', lead: 'rw.reedling', conclusions: [{ id: 'gone', when: { rounds: 3 }, result: 'end', severe: true, text: { en: 'x' } }] }), /summarised telling/, 'a grave outcome without its summarised telling');
+  has(one({ id: 'm', lead: 'rw.reedling', conclusions: [{ id: 'gone', when: { rounds: 3 }, result: 'end', severe: true, text: { en: 'x' }, summarised: { en: 'y' } }] }), /reflection scene/, 'a grave outcome without a reflection with the companion');
+  {
+    const errs = [];
+    encounterRules(RB, Object.assign({}, C, { encounters: {}, outcomeSets: [{ id: 's', unlocks: 'f', needs: [{ enc: 'nope', outcome: 'x' }] }] }), { jcheck: () => {}, checkStep: () => {}, E: (m) => errs.push(m) });
+    has(errs, /unknown encounter nope/, 'an outcome set needing an encounter that does not exist');
+  }
   has(one({ id: 'k', kind: 'social', social: { parties: [{ aid: 'n:a', name: { en: 'A' } }], claims: {}, actions: [{ id: 'q', label: { en: 'Q' }, effect: { reveal: 'zz' } }] }, conclusions: [] }), /reveals unknown claim zz/, 'an unknown claim');
 };

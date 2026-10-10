@@ -99,3 +99,13 @@
     background: var(--paper); color: var(--ink); font: 700 1em/1 var(--serif);
   }
 }
+
+/* the Tactics Board (E15) */
+.tb-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.tb-study { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: var(--r-1); background: var(--paper-2); }
+.tb-study .tb-h { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-weight: 700; }
+.tb-study .tb-h .en { font-weight: 400; color: var(--ink-2); }
+.tb-study .tb-best { font-weight: 600; color: var(--ink-2); }
+.tb-study .tb-tools { display: flex; align-items: center; gap: 0.4em; font-size: 0.92em; }
+.tb-study .tb-tools svg { width: 1.2em; height: 1.2em; flex: none; }
+.tb-study .cbtn { justify-self: start; }

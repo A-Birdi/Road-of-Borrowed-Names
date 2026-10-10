@@ -8,7 +8,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const W = (id, d) => (C.words[id] = Object.assign({ id }, d));
   // `effect` is shown on the battle's response card: what the word does, and
   // which moves it answers (RB.combatLogic.answers lists the same from the tags).
-  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you: it blocks a Strike aimed at them, or soaks up 2 damage later.' });
+  W('mamoru', { jp: 'まもる', jpK: '{守|まも}る', r: 'まもる', lex: '守る', en: 'protect', tags: ['ward'], icon: '🛡', effect: 'Raises a ward before one of you: it blocks a Strike aimed at them, or soaks up 2 damage later.',
+    // the same intention said another way (expansion E13): taught in the twelve-chapter game (flag phr_mamoru)
+    phrasings: [{ id: 'ataranai', jp: '{当|あ}たらない ように する', en: 'make sure it does not hit', item: ['g:you_ni_suru', 'v:当たる'], unlock: 'phr_mamoru' }] });
   W('mizu', { jp: 'みず', jpK: '{水|みず}', r: 'みず', lex: '水', en: 'water', tags: ['water'], icon: '💧', effect: 'Cools what is overheating: clears Heat.' });
   W('hikari', { jp: 'ひかり', jpK: '{光|ひかり}', r: 'ひかり', lex: '光', en: 'light', tags: ['light'], icon: '✺', effect: 'Shows what is hidden: clears mist, and stops a Re-tying or a Mirror.' });
   W('iyasu', { jp: 'いやす', jpK: '{癒|いや}す', r: 'いやす', lex: '癒す', en: 'heal, soothe', tags: ['heal'], icon: '✚', effect: 'Restores 3 resolve to each of you.' });
