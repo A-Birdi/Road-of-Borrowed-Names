@@ -28,9 +28,9 @@ byte for byte).
 | U01 · the book on Journey and Company | Done (preview behind a setting; classic stays the default): book tests 13/0, unit 27,390/0, related browser suites pass; captures in `docs/screenshots/book/u01/` | [U01_BOOK.md](U01_BOOK.md) |
 | U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
 | Review set for Robin | **Accepted** (C-79). Round 1: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised): "I think it's an improvement - you may proceed." | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
-| P01 · world proof (Reedwake, then Saltglass) | **Active.** W00–W04 done: the art contract and far view, light and atmosphere, Reedwake's kit, two purposeful actions, the slice with a real battle and its evidence (recordings, overlay, measurements); world tests 9/0, slice checks pass. Next: W05, Saltglass reusing the method, then the gate | [P01_WORLD.md](P01_WORLD.md) |
+| P01 · world proof (Reedwake, then Saltglass) | **Built; at Robin's gate.** W00–W05 done: the art contract and far view, light and atmosphere, Reedwake's kit, two purposeful actions, the slice with a real battle, Saltglass reusing the method (reuse report); world tests 11/0, slice checks pass. Waiting on Robin's visual gate | [P01_WORLD.md](P01_WORLD.md) |
 
-**Pending Robin gates:** none now. The next is P01's visual gate (Reedwake and Saltglass, old beside new).
+**Pending Robin gates:** P01's visual gate (Reedwake and Saltglass, old beside new): one question, does this visual direction belong to the game, and what should change?
 
 **Fixed in U01:** the Journey's "Next" box repeated one destination when a step's guidance targets led to the same
 scene (U00_INVENTORY.md), and the closing book showed a blank cover (found while recording). Noted for U03: on a phone,

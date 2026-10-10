@@ -29,7 +29,15 @@ RB.worldKit = (function () {
       blade: ['#3c7a36', '#5f9e45', '#9cc85a'],
     },
   };
-  BRIEF.saltglass = BRIEF.reedwake; // until Saltglass's own brief (W05)
+  BRIEF.reedwake.bird = 'duck'; BRIEF.reedwake.rail = 'rope';
+  // Saltglass (W05): the same pieces, its own colours: coastal grass, the sea's blue, sandstone paving warmed by the
+  // sun, no lily pads in salt water, gulls instead of ducks, chain rails on the piers
+  BRIEF.saltglass = {
+    sunGrass: '#c4c66c', deepGrass: '#46663a', clover: ['#3a6a3a', '#4f8446', '#7aa85a'],
+    flowers: [['#fbfbf0', '#dedad0'], ['#9cc4e8', '#6a90c0'], ['#f4c8a0', '#d89a70'], ['#e89a9a', '#c87070']],
+    deepWater: '#18568f', pad: null, padFlower: null, blade: ['#4a7a3c', '#6c9a4c', '#a8c468'],
+    pave: '#d9c39a', paveAmt: 0.28, bird: 'gull', rail: 'chain',
+  };
   const briefOf = (m) => BRIEF[m.region] || BRIEF.reedwake;
 
   // ---- ground --------------------------------------------------------------------------------------------------
@@ -69,7 +77,12 @@ RB.worldKit = (function () {
           // deeper river: the darker the pixel, the more it takes the deep blue (the banks' foam stays light)
           const L = (r + gg + b) / 765;
           if (L < 0.8) lerp3(d, o, WATER, 0.74 * (1 - L * 0.45));
-        } else if (t.id === 'road') {
+        } else if (B.pave && (t.id === 'road' || t.id === 'stonefloor') && !(r < 40 && gg < 40)) {
+          // sandstone warmed by the sun (Saltglass's streets and quay); the joints stay darker
+          const L = (r + gg + b) / 765;
+          lerp3(d, o, rgb(B.pave), B.paveAmt * (0.6 + L * 0.6));
+        }
+        if (t.id === 'road') {
           // the square's edge: grass creeps over the outer cobbles in a ragged, clumped line, carrying the grass's
           // own texture across (mirrored from beyond the edge), with a dark rim where it overhangs the stones
           const lx = px % ATS, ly = py % ATS, X0 = px - lx, Y0 = py - ly;
@@ -141,7 +154,7 @@ RB.worldKit = (function () {
         const bank = near(tx, ty, (n) => !n.water && n.id !== 'bridgeH' && n.id !== 'bridgeV');
         const bridge = near(tx, ty, (n) => n.id === 'bridgeH' || n.id === 'bridgeV');
         const h0 = hh(tx, ty, 400);
-        if (bridge || h0 % 100 >= (bank ? 42 : 6)) continue;
+        if (!B.pad || bridge || h0 % 100 >= (bank ? 42 : 6)) continue;
         const X = (tx + g.x) * ATS, Y = (ty + g.y) * ATS, n = 1 + ((h0 >>> 8) % 3);
         for (let i = 0; i < n; i++) {
           const r = hh(tx, ty, 410 + i), cx = X + 6 + (r % 20), cy = Y + 6 + ((r >>> 5) % 20), rx = 3 + ((r >>> 10) % 3), ry = rx * 0.7;
@@ -244,6 +257,54 @@ RB.worldKit = (function () {
     c.drawImage(cv, x, y);
   }
   PROPS.water = brokenSpan;
+
+  // Saltglass's market stalls: the game's stall, with a deeper canvas awning over it, sloped toward the square, a
+  // scalloped valance and its shade on the counter; striped in the harbour's blue.
+  function stall(c, x, y, pal, t, o) {
+    const base = RB.props.P.sg_stall && RB.props.P.sg_stall.draw2;
+    // the game's stall below its own low awning (which hid the keeper's head), then taller posts and the canvas
+    // raised clear of a standing keeper's head
+    if (base) { c.save(); c.beginPath(); c.rect(x - 12, y - 34, 124, 90); c.clip(); base(c, x, y, pal, t, o); c.restore(); }
+    const w5 = ramp('#8a6a44', 0.45, 0.35);
+    for (const px of [4, 88]) { R(c, x + px, y - 64, 4, 31, w5[2]); R(c, x + px, y - 64, 1, 31, w5[3]); R(c, x + px + 3, y - 64, 1, 31, w5[0]); }
+    const cv = K.cached('wk-awning', () => K.make(116, 40, (g) => {
+      g.translate(6, 0);
+      for (let i = 0; i < 16; i++) {
+        const blue = i % 2 === 0, cc = ramp(blue ? '#3e5f96' : '#ece8de', 0.42, 0.3);
+        const xT = -2 + i * 6.4, xB = -5 + i * 6.8;
+        // the canvas slopes: narrower at the back, wider at the front; lit at the back, shaded toward the valance
+        for (let r = 0; r < 22; r++) { const u = r / 21, xa = Math.round(xT + (xB - xT) * u); R(g, xa, 6 + r, 7, 1, cc[u < 0.25 ? 4 : u < 0.6 ? 3 : 2]); }
+        // the valance: a scallop per stripe
+        R(g, Math.round(xB), 28, 7, 3, cc[1]); ell(g, Math.round(xB) + 3.5, 31, 3.5, 2.6, cc[1]); R(g, Math.round(xB) + 1, 33, 5, 1, cc[0]);
+      }
+      R(g, -3, 5, 104, 1, '#2a2432'); R(g, -6, 27, 112, 1, 'rgba(30,24,40,0.45)');
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      K.outline(g, 116, 40, 'sel');
+    }));
+    c.drawImage(cv, x - 10, y - 92);
+    R(c, x + 2, y - 26, 92, 4, 'rgba(22,16,40,0.16)'); // its shade on the posts and counter's back
+  }
+  PROPS.sg_stall = stall;
+  // the quay's lamp posts carry the harbour's anchor banner (Saltglass only; elsewhere the game's lamp post)
+  function lamppost(c, x, y, pal, t, o) {
+    const base = RB.props.P.lamppost && RB.props.P.lamppost.draw2;
+    if (base) base(c, x, y, pal, t, o);
+    const m = RB.world && RB.world.W && RB.world.W.map;
+    if (!m || m.region !== 'saltglass') return;
+    const sway = o.still ? 0 : Math.round(Math.sin((t || 0) / 1300 + (o.cx | 0)) * 1);
+    const cv = K.cached('wk-banner|' + sway, () => K.make(16, 30, (g) => {
+      const cl = ramp('#3e5f96', 0.42, 0.32), wh = '#ece8de', ir = K.FIX.iron;
+      R(g, 0, 0, 12, 2, ir[2]); R(g, 0, 0, 12, 1, ir[3]);
+      for (let r = 0; r < 22; r++) { const off = Math.round((r / 22) * sway); R(g, 2 + off, 2 + r, 9, 1, cl[r < 2 ? 3 : 2]); R(g, 10 + off, 2 + r, 1, 1, cl[1]); }
+      // the swallowtail and the anchor
+      R(g, 2 + sway, 24, 3, 3, cl[2]); R(g, 8 + sway, 24, 3, 3, cl[2]);
+      const ax = 6 + Math.round(sway * 0.5);
+      R(g, ax, 7, 1, 11, wh); R(g, ax - 2, 9, 5, 1, wh); R(g, ax - 3, 15, 1, 2, wh); R(g, ax + 3, 15, 1, 2, wh); R(g, ax - 2, 17, 5, 1, wh); ell(g, ax + 0.5, 6, 1.4, 1.4, wh);
+      K.outline(g, 16, 30, 'sel');
+    }));
+    c.drawImage(cv, x + 20, y - 12);
+  }
+  PROPS.lamppost = lamppost;
 
   // ---- buildings ------------------------------------------------------------------------------------------------
   // The game's own house, lit within by day (a lamp behind the panes), with a flower box under each window and a
@@ -360,24 +421,53 @@ RB.worldKit = (function () {
       K.outline(g, 14, 12, 'sel');
     }));
   }
+  function gullArt(f) {
+    return K.cached('wk-gull|' + f, () => K.make(16, 12, (g) => {
+      const w = ramp('#f4f2ea', 0.4, 0.2), wing = ramp('#9aa2b0', 0.45, 0.3);
+      ell(g, 7, 8, 5.5, 2.4, w[2]); ell(g, 6, 7.4, 4, 1.6, w[3]);
+      R(g, 3, 6, 6, 2, wing[2]); R(g, 2, 7, 2, 1, wing[0]); R(g, 1, 7, 1, 1, '#2a2a30');
+      R(g, 10, 3 + (f ? 1 : 0), 3, 4, w[2]); R(g, 10, 3 + (f ? 1 : 0), 2, 1, w[4]);
+      R(g, 13, 5 + (f ? 1 : 0), 2, 1, '#e8b030'); R(g, 11, 4 + (f ? 1 : 0), 1, 1, '#1a1420');
+      K.outline(g, 16, 12, 'sel');
+    }));
+  }
+  function flyArt(up) {
+    return K.cached('wk-fly|' + up, () => K.make(22, 12, (g) => {
+      const w = ramp('#f4f2ea', 0.4, 0.2), wing = ramp('#aab0bc', 0.45, 0.3);
+      ell(g, 11, 7, 4, 1.8, w[2]); R(g, 14, 6, 3, 2, w[3]); R(g, 17, 7, 2, 1, '#e8b030');
+      if (up) { line(g, 10, 6, 4, 1, wing[2], 2); line(g, 12, 6, 17, 2, wing[3], 2); R(g, 3, 1, 2, 1, '#3a3a44'); }
+      else { line(g, 10, 7, 3, 9, wing[2], 2); line(g, 12, 7, 18, 9, wing[3], 2); R(g, 2, 9, 2, 1, '#3a3a44'); }
+      K.outline(g, 22, 12, 'sel');
+    }));
+  }
   function decor(m, env) {
     if (m.kitDecor && m.kitDecor.key === m.staticLayer) return m.kitDecor.list;
     const out = [];
-    // the river's channel: columns of water tiles, for the ducks to swim
-    const water = [];
+    // the water's long axis: a river's channel (ducks swim up and down it) or a sea's breadth (gulls ride across it)
+    const B = briefOf(m), water = [];
     for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) { const t = m.tiles[y * m.w + x]; if (t.water && t.id !== 'darkwater') water.push([x, y]); }
     if (water.length > 30) {
-      const xs = water.map((w) => w[0]).sort((a, b) => a - b), mid = xs[xs.length >> 1];
-      for (let i = 0; i < 3; i++) out.push({ kind: 'duck', i, x: mid + (i - 1) * 0.9, y0: 4 + i * 9, span: m.h - 8 });
+      const xs = water.map((w) => w[0]).sort((a, b) => a - b), ys = water.map((w) => w[1]).sort((a, b) => a - b);
+      const x0 = xs[0], x1 = xs[xs.length - 1], y0 = ys[0], y1 = ys[ys.length - 1];
+      if (x1 - x0 > y1 - y0) for (let i = 0; i < 4; i++) out.push({ kind: 'bird', axis: 'x', i, y: y0 + 2.5 + i * 1.7, a0: x0 + 2 + i * 7, span: x1 - x0 - 6 });
+      else { const mid = xs[xs.length >> 1]; for (let i = 0; i < 3; i++) out.push({ kind: 'bird', axis: 'y', i, x: mid + (i - 1) * 0.9, a0: 4 + i * 9, span: m.h - 8 }); }
+      // gulls also glide over a harbour in slow loops
+      if (B.bird === 'gull') for (let i = 0; i < 2; i++) out.push({ kind: 'flyer', i, cx: (x0 + x1) / 2 - 6 + i * 12, cy: y0 - 6 + i * 3, rx: 9 + i * 3, ry: 4 + i });
     }
-    // bridge rails: posts every two tiles and a rope between, along the outer edges of each run of bridge tiles
+    // rails: posts every two tiles and a rope (Reedwake) or a chain (Saltglass) along the outer edges of each run of
+    // bridge or pier tiles
     for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const t = m.tiles[y * m.w + x];
-        if (t.id !== 'bridgeH') continue;
-        const up = m.tiles[(y - 1) * m.w + x], dn = m.tiles[(y + 1) * m.w + x];
-        if (up && up.id !== 'bridgeH') out.push({ kind: 'rail', x, y, side: 'far' });
-        if (dn && dn.id !== 'bridgeH') out.push({ kind: 'rail', x, y, side: 'near' });
+        if (t.id === 'bridgeH') {
+          const up = m.tiles[(y - 1) * m.w + x], dn = m.tiles[(y + 1) * m.w + x];
+          if (up && up.id !== 'bridgeH') out.push({ kind: 'rail', x, y, side: 'far' });
+          if (dn && dn.id !== 'bridgeH') out.push({ kind: 'rail', x, y, side: 'near' });
+        } else if (t.id === 'bridgeV') {
+          const lf = m.tiles[y * m.w + x - 1], rt = m.tiles[y * m.w + x + 1];
+          if (lf && lf.id !== 'bridgeV' && lf.water) out.push({ kind: 'railV', x, y, side: 'left' });
+          if (rt && rt.id !== 'bridgeV' && rt.water) out.push({ kind: 'railV', x, y, side: 'right' });
+        }
       }
     m.kitDecor = { key: m.staticLayer, list: out };
     return out;
@@ -389,27 +479,56 @@ RB.worldKit = (function () {
       if (X < -40 || Y < -40 || X > env.bw + 40 || Y > env.bh + 40) continue;
       list.push({ z: (sh.y + 1) * 16 - 1, draw: () => c.drawImage(shrubArt(pal, sh.v), X - 4, Y) });
     }
-    const s = RB.game.s, broken = new Set();
+    const B = briefOf(m), s = RB.game.s, broken = new Set();
     for (const p of m.props) if (p.p === 'water' && (!p.if || RB.state.test(s, p.if))) broken.add(p.x + ',' + p.y);
     const wood = ramp('#7a5030', 0.45, 0.35), rope = ramp('#c8a870', 0.4, 0.3);
     for (const d of decor(m, env)) {
-      if (d.kind === 'duck') {
-        // a slow loop up and down the channel, each duck on its own clock
+      if (d.kind === 'bird') {
+        // a slow loop along the water's long axis, each bird on its own clock
         const per = 70000 + d.i * 23000, ph = env.still ? 0.3 + d.i * 0.2 : ((t / per) + d.i * 0.37) % 1;
-        const down = ph < 0.5, k = down ? ph * 2 : (1 - ph) * 2;
-        const fy = d.y0 + k * d.span * 0.4, fx = d.x + (env.still ? 0 : Math.sin(t / 3000 + d.i) * 0.25);
+        const fwd = ph < 0.5, k = fwd ? ph * 2 : (1 - ph) * 2, wob = env.still ? 0 : Math.sin(t / 3000 + d.i) * 0.25;
+        const fx = d.axis === 'x' ? d.a0 + k * d.span * 0.6 : d.x + wob, fy = d.axis === 'x' ? d.y + wob : d.a0 + k * d.span * 0.4;
         const X = env.ax(fx * 16), Y = env.ay(fy * 16);
         if (X < -20 || Y < -20 || X > env.bw + 20 || Y > env.bh + 20) continue;
         const ty = Math.floor(fy), tx = Math.floor(fx), tile = m.tiles[Math.max(0, Math.min(m.h - 1, ty)) * m.w + Math.max(0, Math.min(m.w - 1, tx))];
         if (!tile || !tile.water || broken.has(tx + ',' + ty)) continue;
         const bob = env.still ? 0 : Math.round(Math.sin(t / 500 + d.i * 2));
+        const gull = B.bird === 'gull', flip = d.axis === 'x' ? !fwd : !fwd;
         list.push({ z: fy * 16 + 8, draw: () => {
-          const art = duckArt(env.still ? 0 : Math.floor(t / 900 + d.i) % 2);
+          const art = gull ? gullArt(env.still ? 0 : Math.floor(t / 900 + d.i) % 2) : duckArt(env.still ? 0 : Math.floor(t / 900 + d.i) % 2);
           c.save();
-          if (!down) { c.translate(X + 16, 0); c.scale(-1, 1); c.translate(-(X + 16), 0); }
+          if (flip) { c.translate(X + 16, 0); c.scale(-1, 1); c.translate(-(X + 16), 0); }
           c.fillStyle = 'rgba(255,255,255,0.35)'; c.fillRect(X + 7, Y + 21, 18, 1);
           c.drawImage(art, X + 9, Y + 10 + bob);
           c.restore();
+        } });
+      } else if (d.kind === 'flyer') {
+        // a gull gliding a slow ellipse, its shadow on whatever is below; wings beat now and then
+        const per = 26000 + d.i * 7000, a = env.still ? d.i * 2 : ((t / per) + d.i * 0.4) * Math.PI * 2;
+        const fx = d.cx + Math.cos(a) * d.rx, fy = d.cy + Math.sin(a) * d.ry, alt = 40;
+        const X = env.ax(fx * 16), Y = env.ay(fy * 16);
+        if (X < -40 || Y < -80 || X > env.bw + 40 || Y > env.bh + 40) continue;
+        const beat = env.still ? 1 : (Math.floor(t / 160 + d.i * 3) % 8 < 3 ? Math.floor(t / 160) % 2 : 1), left = Math.sin(a) > 0;
+        list.push({ z: 1e7 + d.i, draw: () => {
+          c.fillStyle = 'rgba(30,24,60,0.18)'; c.fillRect(X + 10, Y + 24, 10, 2);
+          const art = flyArt(beat);
+          c.save();
+          if (left) { c.translate(X + 16, 0); c.scale(-1, 1); c.translate(-(X + 16), 0); }
+          c.drawImage(art, X + 6, Y - alt);
+          c.restore();
+        } });
+      } else if (d.kind === 'railV') {
+        // a pier's side: posts every two tiles down its length and a chain (or rope) between, slung outward
+        const X = env.ax(d.x * 16), Y = env.ay(d.y * 16);
+        if (X < -40 || Y < -60 || X > env.bw + 40 || Y > env.bh + 40) continue;
+        const rx = d.side === 'left' ? X + 1 : X + 29, chain = B.rail === 'chain';
+        list.push({ z: d.y * 16 + 16.2, draw: () => {
+          if (d.y % 2 === 0) { R(c, rx - 1, Y - 10, 3, 12, wood[2]); R(c, rx - 1, Y - 10, 1, 12, wood[3]); R(c, rx - 2, Y - 11, 5, 2, wood[1]); }
+          for (let i = 0; i < 32; i++) {
+            const u = i / 32, out = Math.round(Math.sin(u * Math.PI) * 2) * (d.side === 'left' ? -1 : 1);
+            if (chain) { R(c, rx + out, Y - 7 + i, 1, 1, i % 3 === 2 ? '#3a3a44' : '#8a8a96'); if (i % 3 === 0) R(c, rx + out + (d.side === 'left' ? -1 : 1), Y - 7 + i, 1, 1, '#5a5a66'); }
+            else R(c, rx + out, Y - 7 + i, 1, 1, rope[1]);
+          }
         } });
       } else if (d.kind === 'rail') {
         if (broken.has(d.x + ',' + d.y)) continue;
@@ -419,8 +538,8 @@ RB.worldKit = (function () {
         list.push({ z: far ? d.y * 16 + 0.2 : d.y * 16 + 16.2, draw: () => {
           const post = (px) => { R(c, px, ry - 12, 4, 13, wood[2]); R(c, px, ry - 12, 1, 13, wood[3]); R(c, px + 3, ry - 11, 1, 12, wood[0]); R(c, px - 1, ry - 13, 6, 2, wood[1]); };
           if (d.x % 2 === 0) post(X + 2);
-          // the rope sags between posts
-          for (let i = 0; i < 32; i++) { const u = i / 32, sag = Math.round(Math.sin(u * Math.PI) * 3); R(c, X + i, ry - 9 + sag, 1, 1, rope[1]); if (i % 3 === 0) R(c, X + i, ry - 10 + sag, 1, 1, rope[3]); }
+          // the rope (or chain) sags between posts
+          for (let i = 0; i < 32; i++) { const u = i / 32, sag = Math.round(Math.sin(u * Math.PI) * 3); if (B.rail === 'chain') { R(c, X + i, ry - 9 + sag, 1, 1, i % 3 === 2 ? '#3a3a44' : '#8a8a96'); } else { R(c, X + i, ry - 9 + sag, 1, 1, rope[1]); if (i % 3 === 0) R(c, X + i, ry - 10 + sag, 1, 1, rope[3]); } }
         } });
       }
     }

@@ -3633,3 +3633,24 @@ judgement.
 - Robin's eye;
 - the battle at phone size under the proof (W05's crowded battle fixture covers layout).
 
+## The world proof, W05: Saltglass reuses the method (2026-10-10; P01_WORLD.md "W05"; REQUIREMENTS.md WP9)
+
+**What changed:**
+- `src/engine/65_worldlook.js`: the harbour's entry in the slice.
+- `src/engine/66_worldkit.js`: Saltglass's brief and paving warmth; the birds and rails generalised; gulls; chain
+  rails; the market awning; the anchor banners.
+- `src/engine/67_worldacts.js`: Kiyo's selling action.
+- Tests: `tests/e2e/world.mjs` (two tests), `tests/e2e/world_captures.mjs` (section `saltglass`),
+  `tests/e2e/world_slice.mjs` (section `saltglass`).
+
+**Checks** (on the working tree that became this commit):
+- B `node tests/e2e/world.mjs`: **11/0**.
+- B `node tests/e2e/world_slice.mjs saltglass`: 2/1 on the first run. The crowded fixture had two creatures at
+  "normal" difficulty, which caps groups. The fixture now uses "hard", as the cut-in suite does; then **3/0**.
+- Captures reviewed by eye by the lead. Seen and fixed on the way:
+  - lily pads on the sea;
+  - the awning hiding Kiyo's face, then a sliver of the old valance below the new one;
+  - the selling action unreadable against her apron.
+
+**Not verified:** Firefox; the foldable; Robin's eye.
+

@@ -33,6 +33,8 @@ RB.worldLook = (function () {
   // shadow per art px of height, x and y), its colour and the shade's colour; ambient grade as data.
   const SLICE = {
     'rw.village': { region: 'reedwake', sun: { dx: 0.66, dy: 0.3, key: '255,206,128', shade: '52,40,104', mul: '146,128,196', shadow: 0.72, grade: 0.24 } },
+    // Saltglass reuses the method: the same sun from the upper left, a little lower and warmer over the sea
+    'sg.harbor': { region: 'saltglass', sun: { dx: 0.7, dy: 0.32, key: '255,198,120', shade: '44,40,104', mul: '140,130,200', shadow: 0.7, grade: 0.24 } },
   };
   const cfg = (m) => (m && SLICE[m.id]) || null;
   function active(m) {

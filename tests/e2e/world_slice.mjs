@@ -10,6 +10,9 @@
 //   overlay    the structural overlay: collisions, exits, things to use, people, the kit's low growth and tall pieces
 //   measure    start-up to a controllable scene, the first frame of the village, steady frames, heap and layers
 //   record     normal-speed recordings (WebM): the square to the pier, Tomo folding, the doorway, the battle
+//   saltglass  W05: the player's looks in the harbour (light and deep skin, fitted and wide sleeves, accessories) at
+//              desktop and phone sizes; the crowded battle fixture (three Crabs on the quay) at desktop and phone, with
+//              the harbour's grade on the backdrop; a recording of the harbour with Kiyo at work   → .../world/w05/
 // Usage: node tests/e2e/world_slice.mjs [section ...]   (default: every section except record)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -52,13 +55,14 @@ async function settledCam(p) {
 
 // ---- the battle --------------------------------------------------------------------------------------------
 async function startSliceBattle(p, o = {}) {
+  o = Object.assign({ map: 'rw.village', x: 25, y: 19, enemy: 'rw.reedling', flags: { departed: true } }, o);
   await p.evaluate((o) => {
     const L = RB.combatLogic;
     if (!L.__wl) { const init = L.init; L.init = function (...a) { const st = init.apply(this, a); st.harmony = st.harmonyMax; return st; }; L.__wl = true; }
     const run = RB.challenge.runStep;
     if (!RB.challenge.__wl) { RB.challenge.runStep = (step, x) => { window.__lastStep = step; return run(step, x); }; RB.challenge.__wl = true; }
-    const s = RB.game.debugStart('rw.village', 25, 19, { comp: 'suzu', flags: { departed: true } });
-    s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.learn.difficulty = 'normal';
+    const s = RB.game.debugStart(o.map, o.x, o.y, { comp: 'suzu', flags: o.flags });
+    s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.learn.difficulty = o.difficulty || 'normal';
     s.words = ['mizu', 'iyasu', 'mamoru'];
     s.tips = { harmony: 1, harmonyFull: 1, cturn: 1, group: 1 };
     for (const k of ['strike', 'sweep', 'shroud', 'rest', 'heat', 'charge', 'lie', 'mirror', 'plea']) s.tips['intent:' + k] = 1;
@@ -67,7 +71,7 @@ async function startSliceBattle(p, o = {}) {
     Object.assign(RB.game.settings, { input: 'choice', textSpeed: 'normal', battleAnim: 'normal', reducedMotion: false, battleControls: 'adaptive', intentDisplay: 'adaptive', harmonyFlourish: true });
     RB.game.applySettings();
     window.__result = null;
-    RB.game.startBattle('rw.reedling', { where: { map: 'rw.village', x: 25, y: 19 }, foeKey: 'wl:' + Date.now() }).then((r) => { window.__result = r || 'done'; });
+    RB.game.startBattle(o.enemy, Object.assign({ where: { map: o.map, x: o.x, y: o.y }, foeKey: 'wl:' + Date.now() }, o.group ? { group: o.group } : {})).then((r) => { window.__result = r || 'done'; });
   }, o);
 }
 async function toCards(p) {
@@ -344,6 +348,70 @@ if (doing('record')) {
       console.log('   ', f, kb + ' KB');
       assert(kb < 6000, f + ' is too large for the repository: ' + kb + ' KB');
     }
+  });
+}
+
+if (args.includes('saltglass')) {
+  const D5 = 'docs/screenshots/world/w05';
+  fs.mkdirSync(path.join(root, D5), { recursive: true });
+  const save5 = async (p, png, file, scale = 1) => { await webp(p, png, '../w05/' + file, scale); };
+  const SG = { departed: true, ch1_done: true, sg_arrived: true };
+  await test('W05 the player in the harbour: light and deep skin, fitted and wide sleeves, accessories; desktop and phone', async () => {
+    const LOOKS = [
+      ['light_fitted_glasses', { skin: 0, hair: 'ponytail', hairColor: 3, outfit: 2, shape: 'tunic', acc: ['glasses'] }],
+      ['deep_wide_flower', { skin: 5, hair: 'short', hairColor: 1, outfit: 4, shape: 'robe', acc: ['flower'] }],
+      ['medium_coat_scarf', { skin: 3, hair: 'long', hairColor: 6, outfit: 1, shape: 'coat', acc: ['scarf'] }],
+    ];
+    for (const v of [{ tag: 'd1440', viewport: { width: 1440, height: 900 }, dpr: 1, s: 3 }, { tag: 'p375', viewport: { width: 375, height: 667 }, dpr: 3, mobile: true, s: 1 }]) {
+      for (const [tag, look] of LOOKS) {
+        const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: v.viewport, dpr: v.dpr, mobile: v.mobile, touch: v.mobile });
+        await hidePanel(p);
+        // on the quay by a lamp post and its banner, Suzu alongside
+        await p.evaluate(({ look, SG }) => { const s = RB.game.debugStart('sg.harbor', 25, 25, { comp: 'suzu', flags: SG }); s.player.look = Object.assign({}, s.player.look, look); RB.world.enter('sg.harbor', 25, 25, 'down'); }, { look, SG });
+        await settledCam(p);
+        await wait(p, 500);
+        const c = await p.evaluate(() => RB.render.tileToCss(25, 25));
+        const k = await p.evaluate(() => RB.render.viewSize().scale * 16);
+        const clip = { x: Math.max(0, Math.round(c.x - k * 3)), y: Math.max(0, Math.round(c.y - k * 2.5)), width: Math.round(k * 7), height: Math.round(k * 4.5) };
+        await save5(p, await p.screenshot({ clip }), 'player_' + v.tag + '_' + tag + '.webp', v.s);
+        assert(!errors.length, 'errors: ' + errors.join('; '));
+        await ctx.close();
+      }
+    }
+  });
+  await test('W05 the crowded battle fixture: three Crabs on the quay with Suzu, desktop and phone; the backdrop takes the harbour\'s light', async () => {
+    for (const v of [{ tag: 'd1440', viewport: { width: 1440, height: 900 }, dpr: 1 }, { tag: 'p375', viewport: { width: 375, height: 667 }, dpr: 3, mobile: true }]) {
+      for (const q of ['', '?dev=world']) {
+        const { p, ctx, errors, requests } = await page(b, url + q, { viewport: v.viewport, dpr: v.dpr, mobile: v.mobile, touch: v.mobile });
+        if (q) await hidePanel(p);
+        await startSliceBattle(p, { map: 'sg.harbor', x: 25, y: 26, enemy: 'sg.crab', group: ['sg.crab', 'sg.crab'], flags: SG, difficulty: 'hard' });
+        await toCards(p);
+        await wait(p, 500);
+        const st = await p.evaluate(() => ({ foes: RB.combat.state().foes.length, cards: document.querySelectorAll('.rcard[data-i]').length }));
+        assert(st.foes === 3 && st.cards > 0, 'three creatures and a decision: ' + JSON.stringify(st));
+        await save5(p, await p.screenshot(), 'battle_crowded_' + v.tag + (q ? '_proof' : '_game') + '.webp');
+        assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
+        await ctx.close();
+      }
+    }
+  });
+  await test('W05 a recording of the harbour: the market with Kiyo at work, gulls, the quay', async () => {
+    const dir = path.join(root, D5, '.rec');
+    fs.mkdirSync(dir, { recursive: true });
+    const ctx = await b.newContext({ viewport: { width: 960, height: 540 }, recordVideo: { dir, size: { width: 960, height: 540 } } });
+    const { p } = await page(b, url + '?dev=world', { context: ctx });
+    await hidePanel(p);
+    await p.evaluate((SG) => { RB.game.debugStart('sg.harbor', 31, 21, { comp: 'suzu', flags: SG, dir: 'up' }); }, SG);
+    await settledCam(p);
+    await wait(p, 15000);
+    const vid = p.video();
+    await ctx.close();
+    fs.renameSync(await vid.path(), path.join(root, D5, 'rec_harbour_market.webm'));
+    fs.rmSync(dir, { recursive: true, force: true });
+    written.push(path.join(D5, 'rec_harbour_market.webm'));
+    const kb = Math.round(fs.statSync(path.join(root, D5, 'rec_harbour_market.webm')).size / 1024);
+    console.log('    rec_harbour_market.webm', kb + ' KB');
+    assert(kb < 6000, 'too large: ' + kb);
   });
 }
 

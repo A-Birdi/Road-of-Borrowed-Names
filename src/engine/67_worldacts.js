@@ -13,6 +13,11 @@
  *            (A first version pegged cloths on the line, but from where she stands her hands fall well short of it:
  *            the line gained a cloth with no hand there. Replaced rather than sliding her a tile.)
  *
+ *   sell     Kiyo at her fish stall in Saltglass (W05, the method reused): bending to the counter for a fish, holding
+ *            it up to the square, cleaning it (knife strokes), wrapping it in paper, laying the parcel on the counter's
+ *            end (the stack grows at the touch); every fourth round she hands the stack across to a customer, and now
+ *            and then she calls out to the square. A front view, where the other two are side views.
+ *
  * Every action yields at once to the game: while anyone talks, a scene stages the person, they walk, or the
  * world isn't in play, the person is the game's own (their rod rests against the post, the cloth is in the
  * basket) and the action starts again from its beginning afterwards. With reduced motion each holds one still,
@@ -25,7 +30,7 @@ RB.worldActs = (function () {
   const K = RB.propKit;
   const { R, ell, line, ramp } = K;
   const hh = (x, y, k) => RB.tiles.hh(x, y, k);
-  const CAST = { 'rw.village': { yasu: 'fish', tomo: 'fold' } };
+  const CAST = { 'rw.village': { yasu: 'fish', tomo: 'fold' }, 'sg.harbor': { kiyo: 'sell' } };
 
   // the pose layer's keys the actions use (added to POSES only when the proof first draws an action)
   const NEW_POSES = {
@@ -44,6 +49,15 @@ RB.worldActs = (function () {
     fold2: { G: 'chest', O: 'chest', hy: 1, eyes: 'd' },
     placeit: { G: 'low', O: 'low', lean: 2, hx: 1, hy: 2, drop: 1, eyes: 'd' },
     lookback: { G: 'clasp', O: 'clasp', lean: -1, eyes: 'd' },
+    pickup: { G: 'low', O: 'low', hy: 2, drop: 1, eyes: 'd' },
+    showfish: { G: 'up', O: 'low', eyes: null, mouth: 'w' },
+    clean1: { G: 'in', O: 'forward', hy: 1, eyes: 'd' },
+    clean2: { G: 'chest', O: 'forward', hy: 1, eyes: 'd' },
+    wrap1: { G: 'forward', O: 'forward', hy: 1, eyes: 'd' },
+    wrap2: { G: 'in', O: 'in', hy: 1, eyes: 'd' },
+    setdown: { G: 'low', hy: 2, drop: 1, eyes: 'd' },
+    callout: { G: 'palm', mouth: 'o' },
+    handacross: { G: 'reach', O: 'low', lean: 1 },
   };
   let posesReady = false;
   function readyPoses() {
@@ -68,7 +82,15 @@ RB.worldActs = (function () {
       ? [['stoop', 620], ['lift', 300], ['snap1', 260], ['snap2', 200], ['snap1', 240], ['snap2', 220], ['fold1', 520], ['fold2', 520], ['place', 560], ['back', 300], ['look', 900], ['rest', 2400 + (hh(n, 4, 904) % 2400)]]
       : [['stoop', 640], ['gather', 700], ['lower', 620], ['back', 300], ['rest', 3200 + (hh(n, 5, 905) % 2400)]];
   }
-  const ROUND = { fish: fishRound, fold: foldRound };
+  // the parcels on the counter: three rounds each add one, the fourth hands them across
+  function parcelCount(n) { return ((n % 4) + 4) % 4; }
+  function sellRound(n) {
+    const call = hh(n, 6, 907) % 3 === 0 ? [['call', 900]] : [];
+    return parcelCount(n) < 3
+      ? [['pickup', 520], ['show', 760], ['clean', 1440], ['wrap', 960], ['set', 560]].concat(call, [['rest', 2200 + (hh(n, 7, 908) % 2400)]])
+      : [['pickup', 520], ['across', 900], ['back', 400]].concat(call, [['rest', 2600 + (hh(n, 8, 909) % 2400)]]);
+  }
+  const ROUND = { fish: fishRound, fold: foldRound, sell: sellRound };
   const total = (r) => r.reduce((a, p) => a + p[1], 0);
 
   // where an actor is in their action at time t: { round n, phase, u (0..1 through the phase), into (ms) }
@@ -120,6 +142,14 @@ RB.worldActs = (function () {
         if (!pose) dir = 'down';
       }
     }
+    else if (kind === 'sell') {
+      dir = 'down';
+      if (still) pose = 'showfish';
+      else {
+        const w = where(a, 'sell', t);
+        pose = { pickup: 'pickup', show: 'showfish', clean: Math.floor(w.into / 180) % 2 ? 'clean2' : 'clean1', wrap: w.u < 0.5 ? 'wrap1' : 'wrap2', set: 'setdown', across: 'handacross', back: null, call: 'callout', rest: null }[w.phase];
+      }
+    }
     if (!pose) return { dir, key: null, ox, oy };
     const key = P().key(pose, { prop, breath: 0, blink: false });
     return { dir, key, ox, oy };
@@ -157,6 +187,27 @@ RB.worldActs = (function () {
       K.outline(g, 14, 11, 'sel');
       g.globalCompositeOperation = 'destination-over'; K.shadow(g, 7, 10, 6, 1.5, 0.3); g.globalCompositeOperation = 'source-over';
     }));
+  }
+  // a fish lying across the hands, inked round so it reads against an apron
+  function fishFlat(c, x, y) {
+    const s5 = ramp('#7a9ab8', 0.45, 0.4);
+    ell(c, x + 6, y + 2, 6, 2.8, '#22283a');
+    ell(c, x + 6, y + 2, 5, 1.8, s5[2]); R(c, x + 2, y + 1, 7, 1, s5[4]); R(c, x + 3, y + 3, 6, 1, s5[1]);
+    R(c, x + 11, y - 1, 2, 2, '#22283a'); R(c, x + 11, y + 3, 2, 2, '#22283a'); R(c, x + 11, y, 1, 4, s5[1]);
+    R(c, x + 2, y + 1, 1, 1, '#0e0c14');
+  }
+  // the catch held up by the tail, head down
+  function fishHang(c, x, y) {
+    const s5 = ramp('#7a9ab8', 0.45, 0.4);
+    ell(c, x + 2, y + 7, 2.8, 6, '#22283a');
+    ell(c, x + 2, y + 7, 1.8, 5, s5[2]); R(c, x + 1, y + 3, 1, 8, s5[4]);
+    R(c, x, y, 2, 2, '#22283a'); R(c, x + 3, y, 2, 2, '#22283a');
+    R(c, x + 2, y + 11, 1, 1, '#0e0c14');
+  }
+  // a parcel in kraft paper tied with red string
+  function parcel(c, x, y) {
+    R(c, x - 1, y - 1, 11, 6, '#3a2a1c');
+    R(c, x, y, 9, 4, '#c49a62'); R(c, x, y, 9, 1, '#dcb680'); R(c, x, y + 3, 9, 1, '#9a7448'); R(c, x + 4, y, 1, 4, '#c0303a'); R(c, x, y + 2, 9, 1, '#c0303a');
   }
   const CLOTH = ['#e8dcc4', '#c86a5a', '#5a7ab0', '#d8b860', '#8aa86a'];
   function clothHang(c, hx, hy, col, len, wave) {
@@ -250,6 +301,35 @@ RB.worldActs = (function () {
           if (fishAt && !still) c.drawImage(fishArt(Math.floor(t / 120) % 2), Math.round(fishAt[0]) - 6, Math.round(fishAt[1]) - 3);
           fishFloat(c, Math.round(bx), Math.round(by), sink);
         } });
+      } else if (kind === 'sell') {
+        // the fish and the knife in her hands, the paper parcel, the parcels at the counter's end (drawn over the
+        // counter, which stands in front of her)
+        const w = !working || still ? null : where(a, 'sell', t);
+        const n = w ? w.n : 0, ph = w ? w.phase : 'rest', u = w ? w.u : 0;
+        let stack = parcelCount(n);
+        if (w && parcelCount(n) < 3 && (ph === 'rest' || ph === 'call' || (ph === 'set' && u >= 0.6))) stack++;
+        if (w && parcelCount(n) === 3 && (ph === 'back' || ph === 'call' || ph === 'rest' || (ph === 'across' && u >= 0.6))) stack = 0;
+        const sx = fx + 22, sy = fy + 6;
+        list.push({ z: 19 * 16 + 0.1 + (a.fy - 17) * 16, draw: () => { for (let i = 0; i < stack; i++) parcel(c, sx + (i % 2) * 3, sy - i * 3); } });
+        if (!w && !still) continue;
+        const hx = fx, hy = fy - 22; // between her hands, in front of her
+        list.push({ z: z + 0.2, draw: () => {
+          if (still) { fishFlat(c, hx - 6, hy - 2); return; }
+          if (ph === 'pickup' && u > 0.55) fishFlat(c, hx - 6, hy + 2);
+          else if (ph === 'show') fishHang(c, fx - A.x + 4, fy - A.y + 12);
+          else if (ph === 'clean') {
+            fishFlat(c, hx - 6, hy);
+            const k = Math.floor(w.into / 180) % 2; // the knife, in her right hand (screen left), stroking along the fish
+            R(c, hx - 5 + k * 5, hy - 2, 5, 1, '#d8dce4'); R(c, hx - 5 + k * 5, hy - 1, 5, 1, '#7a808c'); R(c, hx - 7 + k * 5, hy - 2, 2, 2, '#5a3a24');
+            if (k) R(c, hx + 2, hy - 3, 1, 1, '#ffffff');
+          } else if (ph === 'wrap') {
+            fishFlat(c, hx - 6, hy);
+            const cover = u < 0.5 ? u * 2 : 1;
+            R(c, hx - 7, hy - 1, Math.round(14 * cover), 5, '#c49a62'); R(c, hx - 7, hy - 1, Math.round(14 * cover), 1, '#dcb680');
+            if (u >= 0.5) { R(c, hx - 1, hy - 1, 1, 5, '#c0303a'); R(c, hx - 7, hy + 1, 14, 1, '#c0303a'); }
+          } else if (ph === 'set' && u < 0.6) parcel(c, hx - 4 + Math.round(u * 30), hy + Math.round(u * 40));
+          else if (ph === 'across' && u < 0.6) { for (let i = 0; i < 3; i++) parcel(c, hx - 18 - Math.round(u * 8), hy - 2 - i * 3); }
+        } });
       } else if (kind === 'fold') {
         // the basket in front of her (she faces left), the folded stack on its lid, the cloth between her hands
         const bx0 = fx - 28, by0 = fy - 9;
@@ -282,5 +362,5 @@ RB.worldActs = (function () {
       }
     }
   }
-  return { frameOf, push, where, free, CAST, NEW_POSES, stackCount, fishRound, foldRound };
+  return { frameOf, push, where, free, CAST, NEW_POSES, stackCount, parcelCount, fishRound, foldRound, sellRound };
 })();

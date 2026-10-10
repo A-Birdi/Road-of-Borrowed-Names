@@ -40,7 +40,7 @@ composition and density. What it is, measured (W00):
 | W02 | Reedwake's kit: ground and its transitions, foliage masses, cattails, lily pads, water, fences, flower boxes, thatch-on-stone and board houses with lit windows, smoke; footprints, contact points, occlusion; deterministic dressing in safe zones only | **Done, first pass** (below) |
 | W03 | Two purposeful actions by village people (complete actions: anticipation, motion, contact, follow-through, return), stopping cleanly for conversation, staging and reduced motion | **Done** (below) |
 | W04 | The Reedwake slice assembled: a doorway, water, vegetation, a light, conversation, the customizable player; a battle with Suzu and an existing creature (language UI, action banner, Harmony cut-in) from the slice; evidence (paired captures, recordings, layers on/off, overlays, start-up, frame and memory measurements) | **Done** (below) |
-| W05 | Saltglass reusing the method (stone paving, an awning, water, a profession action), the reuse report (every new regional asset listed), skin, sleeve and accessory variants, desktop and narrow, a crowded battle; the visual gate for Robin | |
+| W05 | Saltglass reusing the method (stone paving, an awning, water, a profession action), the reuse report (every new regional asset listed), skin, sleeve and accessory variants, desktop and narrow, a crowded battle; the visual gate for Robin | **Done** (below); the gate is published |
 
 ## The art contract (V1, V2, V3)
 
@@ -394,4 +394,80 @@ Paired captures of the game and the proof at the same moment, and the layers on 
 |---|---|---|
 | The slice's browser checks (6): the battle; the doorway; the player; the overlay; the measurements; the recordings | `node tests/e2e/world_slice.mjs battle doorway player overlay measure record` | **all pass** (run in parts; see VALIDATION.md) |
 | The proof's browser tests, after the shade change | `node tests/e2e/world.mjs` | **9 passed, 0 failed** |
+
+## W05: Saltglass reuses the method
+
+The harbour (`sg.harbor`) was added to the slice by one entry, its sun, and the kit was given Saltglass's brief.
+Everything else came from the Reedwake work, unchanged or generalised.
+
+### The reuse report
+
+**Reused as it is:**
+
+| Piece | Where it lives |
+|---|---|
+| The far view, its rule for rooms, tap and collision mapping | `65_worldlook.js`, `60_render.js` `setView` |
+| Light: cast shadows (box shadows for buildings, silhouettes for standing things, people per frame of art), people shaded in shade, the grade, night | `65_worldlook.js` |
+| Atmosphere: glow on lit windows and lanterns, glints on open water, haze, soft edges | `65_worldlook.js` |
+| The ground pass: sunlit and shaded grass, tufts, clover, flowers by houses and paths, the street's edge broken by grass, deep water | `66_worldkit.js` `dressGround` (driven by the brief) |
+| Low growth in safe places, its safety rules and its shadows | `66_worldkit.js` |
+| Lit houses with flower boxes and a planter | `66_worldkit.js` |
+| The reveal rule for tall pieces | `66_worldkit.js` |
+| The actions framework (rounds, yielding, restarting, reduced motion, outcomes from hashes) | `67_worldacts.js` |
+| The battle backdrop's grade | `65_worldlook.js` `battleGrade` |
+| The development panel, the tests, the capture tools | `65_worldlook.js`, `tests/e2e/world*.mjs` |
+
+**Generalised** (Reedwake's piece made to serve both):
+- **The water birds** follow the water's long axis: a river's channel (ducks) or a sea's breadth (gulls).
+- **The rails** run along vertical piers as well as horizontal bridges, in rope or chain by the brief.
+
+**Genuinely new for Saltglass** (every regional asset):
+
+| New asset | What it is |
+|---|---|
+| Saltglass's brief | coastal grass, the sea's blue, sandstone paving warmed by the sun, no lily pads in salt water, gulls, chain rails (colours and switches only) |
+| Paving warmth | the ground pass's one new step: the streets and quay toward sandstone, joints kept darker |
+| The market awning | a deeper sloped canvas in the harbour's blue stripes with a scalloped valance, raised on taller posts clear of the keeper's head (the game's own low awning hid Kiyo's face) |
+| Anchor banners | on the quay's lamp posts (Saltglass only), swaying a little |
+| Gulls | floating (art) and gliding in slow loops with a shadow below (art and motion) |
+| Chain rails | the chain's look on the pier rails |
+| Kiyo's work | the fish-selling action and its pieces: the fish held up and across the hands, the knife, kraft-paper parcels, the stack on the counter |
+
+**Size:**
+- about 225 lines changed for Saltglass, against 1,432 lines of proof code;
+- of those 225, the bird and rail changes are generalisation; the rest is Saltglass's own.
+
+**Found in Saltglass, fixed for both:**
+- **The awning hid a keeper's face.** It is now raised; the rule (people stay findable) is the art contract's.
+- **The selling action was unreadable at first:** the grey fish and the white parcels vanished against Kiyo's white
+  apron. Fixed with inked fish, kraft paper and a raised "showing the catch" pose. The lesson is now a rule for
+  actions: what's held must contrast with what's behind it.
+
+### Kiyo's profession action
+
+At her stall, facing the square (a front view; the other two actions are side views):
+- bending to the counter for a fish;
+- holding the catch up beside her head;
+- cleaning it with a knife;
+- wrapping it in kraft paper and tying it;
+- laying the parcel at the counter's end, where the stack grows at the touch;
+- every fourth round handing the parcels across;
+- now and then calling out to the square.
+
+The same rules as Yasu's and Tomo's (no movement, yields and restarts, reduced motion still, outcomes from hashes).
+
+### The rest of the playbook's list
+
+- **Light and deep skin, fitted and wide sleeves, accessories:** three looks (glasses, a flower, a scarf; tunic,
+  robe, coat) on the quay, at desktop and phone sizes.
+- **Desktop and narrow:** the harbour at 1440×900, 2048×1046 and 375×667.
+- **A crowded battle:** three Crabs and the party on the quay, at desktop and phone sizes, the game's and the
+  proof's.
+- **The camera** keeps collision and input (W00's test, and every Saltglass test runs in the far view).
+
+| Check | Command | Result |
+|---|---|---|
+| The proof's browser tests (11), adding W05's two:<br>• Saltglass: the game's own pixels without the flag; the far view; its own brief; collisions unchanged; low growth safe<br>• Kiyo: every step's pose, nobody moves, the parcels count, she yields and restarts, reduced motion holds | `node tests/e2e/world.mjs` | **11 passed, 0 failed** |
+| Saltglass's slice checks (3): the player's looks; the crowded battle (three creatures and a decision, both sizes, no errors); a recording | `node tests/e2e/world_slice.mjs saltglass` | **3 passed, 0 failed** (after giving the crowded fixture "hard" difficulty, which allows three) |
+| Captures: the game and the proof, the camera only, the evening, 2048, phone; close-ups at 3× (market, quay, piers); Kiyo's strips; the looks; the crowded battle; a recording | `node tests/e2e/world_captures.mjs saltglass`, `node tests/e2e/world_slice.mjs saltglass` | 23 files in `docs/screenshots/world/w05/` (4.1 MB) |
 

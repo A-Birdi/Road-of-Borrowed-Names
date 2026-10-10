@@ -316,6 +316,81 @@ await test('W03: talking to Yasu mid-cast opens the game\'s own conversation, an
   await ctx.close();
 });
 
+// ---- W05: Saltglass, the method reused ----------------------------------------------------------------------------
+const harbour = (p, extra) => p.evaluate((extra) => { RB.game.debugStart('sg.harbor', 30, 22, { comp: 'suzu', flags: Object.assign({ departed: true, ch1_done: true, sg_arrived: true }, extra || {}) }); }, extra || null);
+
+await test('W05 Saltglass: without the flag the harbour is the game\'s own pixels; with it the far view, its own brief (no lily pads), collisions unchanged, low growth only in safe places', async () => {
+  const { p, ctx, errors, requests } = await page(b, url, { viewport: { width: 1440, height: 900 } });
+  await harbour(p);
+  await settled(p);
+  await p.clock.install();
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  const plain = await frameHash(p);
+  await p.evaluate(() => { window.__RB_DEV_WORLD__ = true; RB.worldLook.set({ on: false }); });
+  const off = await frameHash(p);
+  assert(plain === off, 'the harbour with the proof switched off differs from the game');
+  await ctx.close();
+  const q = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await harbour(q.p);
+  await settled(q.p);
+  const t = await tiles(q.p);
+  assert(t.w === 45, 'the far view in the harbour: ' + JSON.stringify(t));
+  const r = await q.p.evaluate(() => {
+    const m = RB.world.W.map, B = RB.worldKit.BRIEF;
+    let s1 = ''; for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) s1 += RB.maps.blockedStatic(m, x, y) ? '1' : '0';
+    RB.worldLook.set({ kit: false }); RB.render.frame(5000);
+    let s2 = ''; for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) s2 += RB.maps.blockedStatic(m, x, y) ? '1' : '0';
+    RB.worldLook.set({ kit: true }); RB.render.frame(5000);
+    const bad = [];
+    for (const sh of RB.worldKit.shrubs(m)) {
+      const tl = m.tiles[sh.y * m.w + sh.x];
+      if (!['grass', 'flowers', 'tallgrass'].includes(tl.id)) bad.push(sh.x + ',' + sh.y + ' on ' + tl.id);
+      for (const st of m.structs) if (st.door != null && Math.abs(sh.x - (st.x + st.door)) <= 1 && sh.y >= st.y + st.h - 1 && sh.y <= st.y + st.h + 1) bad.push(sh.x + ',' + sh.y + ' at a door');
+      for (const n of RB.world.W.npcs) if (n.home && Math.abs(sh.x - n.home[0]) <= 1 && Math.abs(sh.y - n.home[1]) <= 1) bad.push(sh.x + ',' + sh.y + ' at ' + n.id);
+      for (const e of (m.def.exits || []).concat(m.def.triggers || [])) if (sh.x >= e.x - 1 && sh.x <= e.x + (e.w || 1) && sh.y >= e.y - 1 && sh.y <= e.y + (e.h || 1)) bad.push(sh.x + ',' + sh.y + ' at an exit');
+    }
+    return { same: s1 === s2, bad, pads: B.saltglass.pad, bird: B.saltglass.bird, own: B.saltglass !== B.reedwake, region: m.region };
+  });
+  assert(r.same, 'the kit changed a collision in the harbour');
+  assert(!r.bad.length, 'low growth in unsafe places: ' + r.bad.slice(0, 10).join('; '));
+  assert(r.own && r.pads === null && r.bird === 'gull', 'Saltglass should have its own brief (no pads, gulls): ' + JSON.stringify(r));
+  assert(!errors.length && !requests.length && !q.errors.length && !q.requests.length, 'errors/requests: ' + errors.concat(requests, q.errors, q.requests).join('; '));
+  await q.ctx.close();
+});
+
+await test('W05 Kiyo sells fish at her stall: every step\'s pose, nobody moves, the parcels count, she yields to a conversation, reduced motion holds', async () => {
+  const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+  await harbour(p);
+  await settled(p);
+  await p.clock.install();
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  const r = await p.evaluate(() => {
+    const W = RB.world.W, a = W.npcs.find((n) => n.id === 'kiyo');
+    const before = JSON.stringify([a.x, a.y, a.fx, a.fy, a.dir]);
+    const T = 200000, poses = new Set();
+    for (const n of [1, 3]) {
+      a._act = { kind: 'sell', t0: T, n };
+      const len = RB.worldActs.sellRound(n).reduce((s, q) => s + q[1], 0);
+      for (let t = T; t < T + len - 10; t += 100) { const f = RB.worldActs.frameOf(a, t, false); if (f && f.key) poses.add(/^p:([a-z0-9_]+)/.exec(f.key)[1]); RB.render.frame(t); }
+    }
+    const counts = [0, 1, 2, 3, 4].map((n) => RB.worldActs.parcelCount(n));
+    a._act = { kind: 'sell', t0: 300000 - 3000, n: 1 };
+    RB.game.pushMode('dialogue');
+    const yielded = RB.worldActs.frameOf(a, 300000, false) === null;
+    RB.game.popMode();
+    const after = RB.worldActs.where(a, 'sell', 300100).phase;
+    return { poses: [...poses], same: before === JSON.stringify([a.x, a.y, a.fx, a.fy, a.dir]), counts, yielded, after };
+  });
+  for (const want of ['pickup', 'showfish', 'clean1', 'clean2', 'wrap1', 'wrap2', 'setdown', 'handacross']) assert(r.poses.includes(want), 'Kiyo never shows ' + want + ': ' + r.poses.join(' '));
+  assert(r.same, 'the action moved or turned Kiyo');
+  assert(r.counts.join() === '0,1,2,3,0', 'parcels after rounds 0..4: ' + r.counts.join());
+  assert(r.yielded && r.after === 'pickup', 'yield and restart: ' + JSON.stringify({ yielded: r.yielded, after: r.after }));
+  const rm = await p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); const a = RB.world.W.npcs.find((n) => n.id === 'kiyo'); return JSON.stringify(RB.worldActs.frameOf(a, 1000, true)) === JSON.stringify(RB.worldActs.frameOf(a, 77777, true)); });
+  assert(rm, 'reduced motion should hold one pose');
+  assert(!errors.length, 'errors: ' + errors.join('; '));
+  await ctx.close();
+});
+
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);

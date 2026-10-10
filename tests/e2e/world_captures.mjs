@@ -9,6 +9,8 @@
 //            at 3× (the square, the river and bridge, a house front), night, the phone  → docs/screenshots/world/w02/
 //   acts     the two purposeful actions as labelled key-frame strips at 3×, one frame from the middle of each
 //            phase: Yasu's catch and miss rounds, Tomo's folding and clearing rounds   → docs/screenshots/world/w03/
+//   saltglass the harbour reusing the method: the game beside the proof (desktop, 2048, phone), close-ups at 3× (the
+//            market, the quay, the piers), the evening, and Kiyo's strips              → docs/screenshots/world/w05/
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -150,6 +152,56 @@ if (doing('acts')) {
   await strip('yasu_miss.webp', 'yasu', 0, yclip);
   await strip('tomo_fold.webp', 'tomo', 2, tclip);    // the stack two → three
   await strip('tomo_clear.webp', 'tomo', 4, tclip);   // four folded cloths lifted into the basket
+}
+
+if (doing('saltglass')) {
+  const D = 'docs/screenshots/world/w05';
+  const harbour = async (p, flags) => {
+    await p.evaluate((flags) => { RB.game.debugStart('sg.harbor', 30, 22, { comp: 'suzu', flags: Object.assign({ departed: true, ch1_done: true, sg_arrived: true }, flags || {}) }); }, flags || null);
+    await p.waitForTimeout(1000);
+    await p.addStyleTag({ content: '#wl-dev{display:none!important}' });
+    await p.waitForTimeout(300);
+  };
+  const shot = async (name, query, o = {}) => {
+    const { p, ctx, errors } = await page(b, url + query, { viewport: o.viewport || { width: 1440, height: 900 }, dpr: o.dpr || 1, mobile: o.mobile, touch: o.mobile });
+    await harbour(p, o.flags);
+    if (o.setup) await p.evaluate(o.setup);
+    await p.waitForTimeout(500);
+    await webp(p, await p.screenshot(), D, name + '.webp');
+    for (const [tag, clip] of o.crops || []) await webp(p, await p.screenshot({ clip }), D, name + '_' + tag + '.webp', 3);
+    if (errors.length) console.log(name, 'page errors:', errors.join('; '));
+    await ctx.close();
+  };
+  const crops = [['market', { x: 680, y: 230, width: 360, height: 140 }], ['quay', { x: 140, y: 460, width: 420, height: 200 }], ['piers', { x: 300, y: 640, width: 640, height: 260 }]];
+  await shot('d1440_game', '');
+  await shot('d1440_proof', '?dev=world', { crops });
+  await shot('d1440_camera_only', '?dev=world', { setup: () => RB.worldLook.set({ kit: false, light: false, atmos: false }) });
+  await shot('d1440_proof_evening', '?dev=world', { flags: { sg_evening: true } });
+  await shot('d2048_proof', '?dev=world', { viewport: { width: 2048, height: 1046 }, dpr: 1.25 });
+  await shot('p375_game', '', { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true });
+  await shot('p375_proof', '?dev=world', { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true });
+  // Kiyo's two kinds of round (a sale, and handing the parcels across), one frame from the middle of each step
+  for (const [file, n] of [['kiyo_sale.webp', 1], ['kiyo_handover.webp', 3]]) {
+    const { p, ctx } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
+    await harbour(p);
+    await p.clock.install();
+    await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+    const info = await p.evaluate((n) => { const a = RB.world.W.npcs.find((q) => q.id === 'kiyo'), T = 100000; a._act = { kind: 'sell', t0: T, n }; let acc = 0; const marks = RB.worldActs.sellRound(n).map(([ph, ms]) => { const m = [ph, T + acc + ms * 0.5]; acc += ms; return m; }); return { marks, c: RB.render.tileToCss(a.x, a.y) }; }, n);
+    const frames = [];
+    for (const [ph, at] of info.marks) { await p.evaluate((at) => RB.render.frame(at), at); frames.push([ph, (await p.screenshot({ clip: { x: info.c.x - 30, y: info.c.y - 40, width: 100, height: 80 } })).toString('base64')]); }
+    const data = await p.evaluate(async (frames) => {
+      const imgs = await Promise.all(frames.map(async ([ph, b64]) => { const i = new Image(); i.src = 'data:image/png;base64,' + b64; await i.decode(); return [ph, i]; }));
+      const s = 3, cols = 4, w = imgs[0][1].naturalWidth * s, h = imgs[0][1].naturalHeight * s;
+      const c = document.createElement('canvas'); c.width = cols * (w + 6); c.height = Math.ceil(imgs.length / cols) * (h + 22);
+      const g = c.getContext('2d'); g.fillStyle = '#1b2030'; g.fillRect(0, 0, c.width, c.height); g.imageSmoothingEnabled = false;
+      imgs.forEach(([ph, i], k) => { const x = (k % cols) * (w + 6), y = Math.floor(k / cols) * (h + 22); g.drawImage(i, x, y + 18, w, h); g.fillStyle = '#fff'; g.font = '14px sans-serif'; g.fillText((k + 1) + '. ' + ph, x + 4, y + 14); });
+      return c.toDataURL('image/webp', 0.9);
+    }, frames);
+    fs.mkdirSync(path.join(root, D), { recursive: true });
+    fs.writeFileSync(path.join(root, D, file), Buffer.from(data.split(',')[1], 'base64'));
+    written.push(path.join(D, file));
+    await ctx.close();
+  }
 }
 
 await b.close();
