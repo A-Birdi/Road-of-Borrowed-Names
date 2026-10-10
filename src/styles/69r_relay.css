@@ -1,0 +1,20 @@
+/* The relay (expansion P12; src/ui/89r_relay.js): who the message is for; each part a card on the book's paper with
+ * what you have of it and the ways you could say it; after it is passed on, each part's verdict in words (and a
+ * ribbon for "more than you know"), never by colour alone. Paper tokens; every line carries its readings. */
+.rl-intro { margin: 0 0 0.6em; }
+.rl-to { margin: 0 0 0.7em; }
+.rl-tag { display: inline-block; font-size: 0.75em; padding: 0 0.35em; border: 1px solid var(--ink-2); border-radius: 3px; color: var(--ink-2); }
+.rl-part { margin: 0 0 0.7em; padding: 0.5em 0.7em 0.6em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); min-width: 0; }
+.rl-n { margin: 0 0 0.2em; font-size: 0.85em; letter-spacing: 0.04em; color: var(--ink-2); }
+.rl-have { margin: 0.2em 0; line-height: 2.1; }
+.rl-en { color: var(--ink-2); font-size: 0.88em; }
+.rl-opt .rl-en { display: block; }
+.rl-acts { margin: 0.3em 0; }
+.rl-opts { display: flex; flex-direction: column; gap: 0.4em; }
+.rl-opt { min-height: var(--tap); padding: 0.3em 0.7em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); color: var(--ink); font: inherit; text-align: left; line-height: 2; cursor: pointer; }
+.rl-opt[aria-checked='true'] { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--ink); }
+.rl-opt:disabled { cursor: default; opacity: 1; }
+.rl-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.rl-verdict { margin: 0.45em 0 0; font-size: 0.9em; border-left: 3px solid var(--ink-2); padding-left: 0.45em; }
+.rl-verdict.rl-over { border-left-color: var(--ribbon); }
+.rl-verdict .rl-tag { font-weight: 700; }

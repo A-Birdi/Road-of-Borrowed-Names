@@ -30,6 +30,12 @@ RB.ui.tellings = (function () {
     // Kotonoha (P11): a community's own telling, and a voice kept in a shell
     telling: { en: 'A telling', jp: '{言|い}い{伝|つた}え', vouch: 'what its tellers have handed down, not what anyone saw' },
     shell: { en: 'A voice in a shell', jp: '{貝|かい} の {声|こえ}', vouch: 'what was said, in the words it was said' },
+    // the Cloudroad (P12): reports about the road ahead, by how the teller knows
+    saw: { en: 'Seen with their own eyes', jp: '{自分|じぶん} で {見|み}た', vouch: 'what they saw, when they saw it' },
+    heard: { en: 'Passed on', jp: '{人|ひと} から {聞|き}いた', vouch: 'that someone said it, not that it is so' },
+    rumour: { en: 'A rumour', jp: '{噂|うわさ}', vouch: 'nothing much: nobody says who saw it' },
+    signs: { en: 'Read from the signs', jp: '{様子|ようす} から', vouch: 'what the signs point to, not a certainty' },
+    map: { en: 'A map', jp: '{地図|ちず}', vouch: 'what its maker surveyed, as it was then' },
   };
   const prof = () => (S() && S().learn && S().learn.profile) || 'F';
 
@@ -93,10 +99,10 @@ RB.ui.tellings = (function () {
       }
       function render() {
         const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : d.answer.kind === 'panels' ? d.answer.panels.every((pn) => picks[pn.id]) : !!choice;
-        const goLabel = d.answer.kind === 'order' ? 'Light them in this order' : d.answer.kind === 'panels' ? 'Hang the panels' : 'Do it';
-        fr.leaf.innerHTML = '<p class="tl-intro">Set the tellings side by side. Mark what each one can really vouch for, then act on what holds.</p>' +
+        const goLabel = d.go ? d.go.en : d.answer.kind === 'order' ? 'Light them in this order' : d.answer.kind === 'panels' ? 'Hang the panels' : 'Do it';
+        fr.leaf.innerHTML = '<p class="tl-intro">' + esc(d.intro ? d.intro.en : 'Set the tellings side by side. Mark what each one can really vouch for, then act on what holds.') + '</p>' +
           '<div class="tl-srcs">' + d.sources.map(sourceHtml).join('') + '</div>' +
-          '<section class="tl-act" aria-label="Act on it"><h3>Act on it</h3>' + actHtml() + '</section>';
+          '<section class="tl-act" aria-label="' + esc(d.actTitle ? d.actTitle.en : 'Act on it') + '"><h3>' + esc(d.actTitle ? d.actTitle.en : 'Act on it') + '</h3>' + actHtml() + '</section>';
         fr.foot.innerHTML = '<button class="pbtn tl-cancel">Come back later</button> <button class="pbtn primary tl-go"' + (ready ? '' : ' disabled') + '>' + goLabel + '</button>';
       }
       async function onClick(e) {

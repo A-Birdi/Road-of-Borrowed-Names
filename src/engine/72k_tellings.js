@@ -4,8 +4,9 @@
  * vouch for, then acts on the result. The rules only; the sheet is src/ui/89k_tellings.js and the content
  * RB.content.tellings (src/content/kr/31_tellings.js).
  *
- *   C.tellings[id] = { id, title:{jp,en}, question:{jp,en},
- *     sources: [{ id, kind: 'inscription'|'memory'|'rhyme'|'scroll'|'board'|'record'|'telling'|'shell', who:{jp,en},
+ *   C.tellings[id] = { id, title:{jp,en}, question:{jp,en}, intro?:{en}, actTitle?:{en}, go?:{en} (the sheet's own words),
+ *     sources: [{ id, kind: 'inscription'|'memory'|'rhyme'|'scroll'|'board'|'record'|'telling'|'shell'
+ *       |'saw'|'heard'|'rumour'|'signs'|'map' (the Cloudroad's route reports, P12), who:{jp,en},
  *       read: challenge id (reading it, at the profile's tier; the language evidence),
  *       text: { F:{jp,en}, E:…, I:…, A:… } (what it says, by profile; A may carry a classical line and its gloss),
  *       claims: [{ id, jp, en, vouch: true|false, why:{en}, rule? }] }],

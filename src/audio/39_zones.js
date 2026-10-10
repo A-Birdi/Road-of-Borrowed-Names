@@ -75,6 +75,13 @@ RB.audio = RB.audio || {};
       battle: 'battle_ko', boss: 'boss_ko', route: null,
       songs: ['sazanami'],
     },
+    // the twelve-chapter edition's Cloudroad, Chapter 10 (38x_songs_cr.js): shakuhachi and koto walking; its battle and
+    // boss themes sit a step above Kotonoha's and below the Archive's
+    cloudroad: {
+      chapter: 10, edition: 2, regions: ['cloudroad', 'cloudtop'], prefixes: ['cr.'],
+      battle: 'battle_cr', boss: 'boss_cr', route: null,
+      songs: ['cloudroad', 'cr_pass', 'cr_hut'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',
