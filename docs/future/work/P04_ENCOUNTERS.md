@@ -107,12 +107,23 @@ they always were; beyond six, the six most useful now, the rest a page away.
 
 ## Checks
 
+Phase end, on 6f300ce (the companions' growth followed in 763fe59 and is checked there).
+
 | Check | Command | Result |
 |---|---|---|
-| The recorded battles | `node tests/run-unit.mjs combat_golden` | 2/0 (1,710 battles) |
-| The platform on its fixtures | `node tests/run-unit.mjs encounters` | 152/0 |
+| The recorded battles | `node tests/run-unit.mjs combat_golden` | 2/0 (1,710 battles; unchanged by the growth in 763fe59) |
+| The platform on its fixtures | `node tests/run-unit.mjs encounters` | 184/0 (with the growth, 763fe59) |
 | Modifiers: each pairing (preview equal to rule, effect, trade, phrase routes), the Hush on modifiers, the curve policy | `node tests/run-unit.mjs modifiers` | 127/0 |
-| The encounter content rules | `node tests/run-unit.mjs encounter_rules` | 14/0 |
+| The encounter content rules | `node tests/run-unit.mjs encounter_rules` | 17/0 |
+| New Game+ and older saves | `foundations`, `fixtures_campaign` | 67/0, 145/0 |
 | Validator | `node tools/validate.mjs` | no errors |
 | Combat suites after the refactor | `combat_preview`, `combat_rules`, `combat_fairness`, `combat_curve`, `battle_party`, `battle_seams` | 597/0, 241/0, 621/0, 287/0, 73/0, 12/0 |
-| The battle screen after the refactor | `node tests/e2e/combat_ui.mjs`; `battle_group.mjs` | 7/0; 6/0 |
+| The platform on screen | `node tests/e2e/encounters.mjs` | 10/0 (captures `docs/screenshots/encounters/`) |
+| The battle screens | `combat_ui`, `battle_group`, `combat_small`, `battle_party`, `battle_settings`, `companion_turn` | 7/0, 6/0, all ok, 14/0, 10/0, 4/0 |
+| Twenty battles in a row | `node tests/e2e/battle_cycle.mjs` | stable: listeners 106 → 106, nodes 257 → 255, heap 29.5 → 30 MB |
+| Presentation never changes a battle | `node tests/e2e/battle_invariance.mjs` | 640 configurations in 1,826 s, 24 fixtures, every one identical across its settings |
+| Settings, saves, the pad | `settings`, `ui`, `learning_ui` | all ok, 14/0, 15/0 |
+| The whole campaign | `node tests/e2e/matrix.mjs F ren 1` | PASS: all six chapters and an Atlas expedition (15.0 min) |
+| The unit suite | `node tests/run-unit.mjs` | 28,748/0 |
+
+**Not verified:** Firefox; the foldable; a person playing the fixtures (`?dev=enc`).

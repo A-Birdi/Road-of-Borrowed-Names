@@ -577,6 +577,19 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP10 The Grow route (one level up, offered, never changes the level). U grow 6/0.
 - [ ] XP11 A person using the workshop, an exam and the item pages. H.
 
+## The expansion, P04 encounters (C-81; docs/future/work/P04_ENCOUNTERS.md; VALIDATION.md "The expansion, P04")
+- [v] XP12 The actor model as a pure refactor: the battles recorded before it play the same (1,710; the 102 that differed were shown to differ only in the final round's bookkeeping and re-recorded with a note); presentation never changes a battle. U combat_golden 2/0; B battle_invariance 640 configurations identical.
+- [v] XP13 One shared exchange in a fixed order (you, the companion, guests, the creatures, the close), conclusions after each step; Wait (F-09); conditions; guests and arrivals; objectives; procedures and Resolve this step; conversations and machines; two-move turns; Hushes by family (F-10); order numbers and aims (F-11). U encounters 184/0; B encounters 10/0.
+- [v] XP14 Modifier words (E27): every pairing's preview equals its rule; the breath and the two-knot rule (F-12); a phrase counts as written only when written. U modifiers 127/0; B encounters (the modifier row and its phrase).
+- [v] XP15 Companion plans and the six-action menu (E10, E25), actions that grow, story help offers (E19), outcome sets with grave outcomes shown or summarised (C-65), the Tactics Board and its bests (F-08). U encounters 184/0, encounter_rules 17/0; B encounters, settings.
+- [v] XP16 Five creatures in two rows, every one on the stage, at desktop and phone (E12). B encounters (captures docs/screenshots/encounters/).
+- [v] XP17 Six-chapter battles and the campaign unchanged. C F/Ren PASS (15.0 min) on 6f300ce; U unit 28,748/0; B combat_ui 7/0, battle_group 6/0, battle_party 14/0, battle_settings 10/0, companion_turn 4/0, battle_cycle stable.
+- [ ] XP18 A person playing the encounter fixtures (`?dev=enc`). H.
+
+## The expansion, P05 the living world and exploration actions (C-81; docs/future/work/P05_WORLD.md) — under way
+- [v] XP19 Routines that move only on coming back (three transitions away, a story flag, a rest), never within a town, never mid-conversation, never on a load; one person, one place; pins; change beats kept until seen; "Have you seen…?" with four kinds of answer and no omniscience; notes, not markers; last seen kept (twelve-chapter journeys only); road events deferred and offered once a visit; sealed places noticed and opened. U town 87/0; B world_living 4/0.
+- [v] XP20 Exploration actions as templates over Field Inkweaving and the case engine (W9, W11–W17), each with a fixture: notices people follow, courier rounds, repairs, connected water across maps (every required way always reopenable), observation and instructions, creature routing without a fight, layered sites with several valid readings, stage-blocking. U verbs 116/0; B verbs 5/0 (captures docs/screenshots/verbs/).
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

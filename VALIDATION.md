@@ -3775,3 +3775,29 @@ stroke data, the kanji readings and the embedded font subsets were made again wi
   (`tools/combat_golden.mjs`, `tests/fixtures/combat_golden.json`), the baseline P04's refactor is held to.
 
 **Not verified:** Firefox; the foldable; a person using the workshop or an exam.
+
+## The expansion, P04: encounters (2026-10-10; C-81; docs/future/work/P04_ENCOUNTERS.md; REQUIREMENTS.md XP12–XP17)
+
+**What changed:** the actor model (one list of participants; the old battle as a pure refactor held to 1,710 recorded
+battles), one shared exchange in a fixed order with conclusions checked after each step, Wait, conditions, guests,
+arrivals, objectives, procedures and Resolve this step, conversations and machines on their own screen, two-move
+turns, Hushes by family, order numbers and aims, modifier words with their row and phrases, companion plans and the
+six-action menu, companions' actions that grow, story help offers, outcome sets (grave outcomes shown or summarised),
+the Tactics Board, five creatures in two rows. None of it reaches a six-chapter battle (`ordinaryRules` is empty for
+edition 1); the fixtures play only on `?dev=enc`.
+
+**Checks (phase end, on 6f300ce):**
+- U `encounters` 152 → **184/0** (the last with the growth, 763fe59); `modifiers` **127/0**; `encounter_rules`
+  **17/0**; `combat_golden` **2/0** (1,710 battles, unchanged by the growth); `foundations` **67/0**;
+  `fixtures_campaign` **145/0**; the combat suites 597/0, 241/0, 621/0, 287/0, 73/0, 12/0.
+- U `node tools/validate.mjs`: no errors.
+- B `encounters` **10/0**; `combat_ui` **7/0**; `battle_group` **6/0**; `combat_small` all ok; `battle_party` **14/0**;
+  `battle_settings` **10/0**; `companion_turn` **4/0**; `settings` all ok; `ui` **14/0**; `learning_ui` **15/0**;
+  `battle_cycle` stable over twenty battles (listeners 106 → 106); `battle_invariance` **640 configurations, every
+  fixture identical** across its presentation settings (1,826 s).
+- C `node tests/e2e/matrix.mjs F ren 1`: **PASS**, all six chapters and an Atlas expedition (15.0 min).
+- U the full unit suite: **28,748 passed, 0 failed**.
+- Found while checking P05's first slice: `tests/e2e/play_ui.mjs` had failed since P02 (it counted buttons saying
+  "Menu"; since C-58 the HUD's button says "Ledger"). The test was corrected; **all ok**. Not a game defect.
+
+**Not verified:** Firefox; the foldable; a person playing the encounter fixtures.
