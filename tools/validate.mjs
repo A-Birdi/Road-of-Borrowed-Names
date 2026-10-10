@@ -454,6 +454,7 @@ let regTexts = 0;
     practiceA: C.practiceA, // Practice suite A: lamps, writing desk, mementos (src/content/practice_a/)
     fishing: RB.fishing && RB.fishing.content(), // A Quiet Cast (docs/practice/fishing.md)
     press: C.press, // the press's blocks and readers (expansion P09; src/content/mp/30_press.js)
+    festival: C.festival, // the festival games' words, prizes, lottery sentences and drum words (src/content/pastimes/5*_festival*.js)
   };
   for (const k in roots) walk(roots[k], k);
 }

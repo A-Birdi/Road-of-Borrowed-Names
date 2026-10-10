@@ -87,3 +87,42 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   };
 })(RB.content);
+
+/* The wanderers (expansion P09, moved from P08; plan E3, R1 unique encounters): guests on the encounter platform, each
+ * with an aim of their own. Gonta the porter fends off the creature fouling his barge on Playhouse Row's bank; Hayashi
+ * the drummer joins a fight by the theatre, and goes when the crowd that gathered to watch drifts off. Each is met
+ * once; neither needs anything of you, and the fight goes on without them if they go. */
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  C.encounters = C.encounters || {};
+  C.encounters['mp.wander_gonta'] = {
+    id: 'mp.wander_gonta', name: T('{荷舟|にぶね} を {取|と}り{返|かえ}す', 'Gonta\'s barge'),
+    lead: { enemy: 'mp.golem', knots: 4 },
+    actors: [{
+      aid: 'g:gonta', side: 'guest', name: T('ゴンタ', 'Gonta'), hp: 4,
+      agenda: { wants: 'settle', target: 'f0', act: { kind: 'unravel', n: 1 }, reactsTo: { youSettle: 'satisfied', youHelp: 'thanks' } },
+      lines: {
+        arrive: T('{版木|はんぎ} の {化|ば}け{物|もの} が 、 {俺|おれ} の {舟|ふね} に {乗|の}って {動|うご}かない ！', '"A thing made of woodblocks has climbed onto my barge and won\'t budge!"'),
+        act: T('どっこいしょ ！', 'Gonta puts his shoulder to it: a block comes loose.'),
+        thanks: T('いい ぞ 、 その {調子|ちょうし} だ ！', '"That\'s it, keep at it!"'),
+        satisfied: T('{助|たす}かった ！ この {借|か}り は 、 {荷|に} で {返|かえ}す よ 。', '"You saved my barge! I\'ll pay you back in freight." Gonta poles away down the canal.'),
+        done: T('よし 、 {舟|ふね} が {空|あ}いた 。', '"Right, the barge is clear." Gonta poles away.'),
+      },
+    }],
+  };
+  C.encounters['mp.wander_hayashi'] = {
+    id: 'mp.wander_hayashi', name: T('{芝居小屋|しばいごや} の {前|まえ} の {騒|さわ}ぎ', 'A crowd by the theatre'),
+    lead: { enemy: 'mp.moth', knots: 2 },
+    group: { normal: ['mp.moth'], hard: ['mp.moth', 'mp.imp'] },
+    actors: [{
+      aid: 'g:hayashi', side: 'guest', name: T('ハヤシ', 'Hayashi'), hp: 3,
+      agenda: { wants: 'help', act: { kind: 'ward', on: 'pc', n: 1 }, leavesWhen: { rounds: 3 } },
+      lines: {
+        arrive: T('お{客|きゃく} が {集|あつ}まって きた ！ {太鼓|たいこ} で {応援|おうえん} する よ ！', '"A crowd\'s gathering! I\'ll drum you on!"'),
+        act: T('ポン 、 ポン 、 ポン ！', 'Hayashi\'s drumbeat steadies you.'),
+        leave: T('お{客|きゃく} が {帰|かえ}って いく 。 {俺|おれ} も {次|つぎ} の {場所|ばしょ} へ ！', '"The crowd\'s drifting off. On to the next spot!" Hayashi follows them, still drumming.'),
+      },
+    }],
+  };
+})(RB.content);

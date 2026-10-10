@@ -104,4 +104,6 @@ RB.lex.add(RB.lex.parseTable(`
 活字小鬼|かつじこおに|name|A|the Loose Type Imp (a creature; fictional)
 じゃらじゃら||adv|A|(sound) jingle-jangle, clattering (of small hard things)
 歌舞伎|かぶき|n|I|kabuki (a classical form of Japanese theatre)
+どっこいしょ||exp|I|heave-ho (said when lifting or pushing something heavy)
+子役|こやく|n|A|a child actor; a child's part
 `));

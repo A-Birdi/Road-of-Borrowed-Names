@@ -101,4 +101,7 @@ RB.dialect.add('kansai', `
 @ mp/23_scenes_under [mp.boss_won]
 = カーテンコール よ ！ {一人|ひとり} {残|のこ}らず 、 {名前|なまえ} を {呼|よ}ばれて ！ || Curtain call! Every last one, called by name!
 > カーテンコール や ！ {一人|ひとり} {残|のこ}らず 、 {名前|なまえ} を {呼|よ}ばれて ！ || Curtain call! Every last one, called by name!
+@ mp/22_scenes_fest [mp.manbe_after]
+= そう 。 {小|ちい}さい {字|じ} の {役者|やくしゃ} も 、 {役者|やくしゃ} よ 。 || Yes. An actor in small letters is still an actor.
+> せや 。 {小|ちい}さい {字|じ} の {役者|やくしゃ} も 、 {役者|やくしゃ} や で 。 || Aye. An actor in small letters is still an actor.
 `, 'kansai_94_mp.js');

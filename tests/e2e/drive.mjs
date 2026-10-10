@@ -358,9 +358,16 @@ export function install() {
         const travelOnly = !g.main && !g.other && S().seen[st.scene] && provides(st.scene).warps.length;
         if ((g.main || g.other || g.unseen) && !travelOnly) workAt.add(st.map);
       }
+      // the ways on from a map: its exits, and the places its travel scenes (stairs, lifts, boats) take you
+      const travelTo = {};
+      for (const st of sites) for (const w of provides(st.scene).warps) if (C.maps[w]) (travelTo[st.map] = travelTo[st.map] || new Set()).add(w);
       const reachesWork = (mid) => {
         const seen = new Set([mid]), q = [mid];
-        while (q.length) { const m = q.shift(); if (workAt.has(m)) return true; for (const ex of exitsOf(m)) if (!seen.has(ex.to)) { seen.add(ex.to); q.push(ex.to); } }
+        while (q.length) {
+          const m = q.shift();
+          if (workAt.has(m)) return true;
+          for (const to of exitsOf(m).map((ex) => ex.to).concat([...(travelTo[m] || [])])) if (!seen.has(to)) { seen.add(to); q.push(to); }
+        }
         return false;
       };
       for (const st of sites) {
@@ -375,8 +382,10 @@ export function install() {
         const rs = reachSite(X, st);
         if (!rs) continue;
         const r = pathTo(X, rs.id);
-        // don't use the same site twice in a row (e.g. reopening a door you just opened)
-        const score = tier * 1000 - r.length - (st.scene === lastScene ? 500 : 0);
+        // don't use the same site twice in a row (e.g. reopening a door you just opened); travel already made (stairs
+        // taken before) ranks below anything left to do here, however far, so a pair of stairs is not a loop
+        const again = tier === 1 && S().seen[st.scene] && provides(st.scene).warps.length;
+        const score = tier * 1000 - r.length - (st.scene === lastScene ? 500 : 0) - (again ? 600 : 0);
         if (!best || score > best.score) best = { st, r, score, key, tile: rs.tile };
       }
       if (!best) return { ok: false, steps: i, log: opts.fullLog ? log : log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };

@@ -141,4 +141,8 @@ RB.lex.add(RB.lex.parseTable(`
 ヨーヨー||n|I|a water balloon on a rubber band (a festival toy); a yo-yo
 計る|はかる|v5r|I|to measure, to time
 ヒント||n|I|a hint
+扇ぐ|あおぐ|v5g|I|to fan (oneself, a fire)
+三匹|さんびき|n|E|three (small animals, fish)
+だるま||n|I|a daruma doll (red, round, rights itself when knocked over)
+みに||exp|E|(go) to see (見に: the purpose of going)
 `), 'pastimes');

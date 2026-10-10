@@ -126,6 +126,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mp_saku', x: 30, y: 23, dir: 'down', if: '!quest.mp_actor=done', talk: [{ if: 'quest.mp_actor>=1', scene: 'mp.saku_rehearse' }, { scene: 'mp.saku_first' }] },
     ],
     exits: [{ x: 0, y: 12, w: 1, h: 2, to: 'mp.blockprint', tx: 42, ty: 15, dir: 'left' }],
+    // the wanderers (35_ghost.js): Gonta's barge on the bank; a crowd by the theatre with Hayashi's drum
+    foes: [
+      { id: 'w1', enemy: 'mp.golem', encounter: 'mp.wander_gonta', x: 9, y: 24, patrol: 1, if: 'mb1_done&!mp_fest_night', bg: 'manybridge',
+        intro: { jp: '{版木|はんぎ} で できた {人形|にんぎょう} が 、 {岸|きし} の {荷舟|にぶね} の {上|うえ} に {座|すわ}り{込|こ}んで いる 。', en: 'A figure made of woodblocks has sat itself down on a barge by the bank.' },
+        settle: { jp: '{人形|にんぎょう} は ばらばら の {版木|はんぎ} に なって 、 {岸|きし} に {積|つ}み{上|あ}がった 。', en: 'The figure comes apart into a heap of woodblocks on the bank.' } },
+      { id: 'w2', enemy: 'mp.moth', encounter: 'mp.wander_hayashi', x: 35, y: 13, patrol: 2, if: 'mp_theatre_seen&!mp_fest_night', bg: 'manybridge',
+        intro: { jp: '{芝居小屋|しばいごや} の {前|まえ} で 、 {紙|かみ} の {羽|はね} の {蛾|が} が {番付|ばんづけ} の {字|じ} を {食|た}べて いる 。 {人|ひと} が {集|あつ}まって きた 。', en: 'In front of the theatre, paper-winged moths are eating the letters off the playbills. A crowd is gathering.' },
+        settle: { jp: '{蛾|が} は {川風|かわかぜ} に {乗|の}って 、 {屋根|やね} の {上|うえ} へ {飛|と}んで いった 。', en: 'The moths ride the river wind up over the roofs.' } },
+    ],
     triggers: [{ x: 0, y: 21, w: 52, h: 1, scene: 'mp.fest_night', if: 'mp_fest_night&!mp_fest_walked' }],
     onEnter: [{ scene: 'mp.playhouse_first', if: '!mp_theatre_seen' }],
     spawn: { default: [1, 12, 'right'], from_blockprint: [1, 12, 'right'], from_theatre: [23, 11, 'down'] },
@@ -193,6 +202,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [
       { id: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mp_rehearsal_done&!mb2_done', talk: [{ if: 'quest.mp_main=5', scene: 'mp.manbe_under' }, { scene: 'mp.manbe_idle' }] },
       { id: 'mp_saku', x: 6, y: 4, dir: 'down', if: 'quest.mp_actor=done', talk: 'mp.saku_after' },
+      { id: 'mp_manbe_a', char: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mb2_done', talk: 'mp.manbe_after' },
     ],
   });
   // the festival committee: Tomi's table of lists and plans
@@ -214,6 +224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mp_booth', x: 1, y: 5, scene: 'mp.booth_kuji', o: { game: 'kuji' } }, { p: 'mp_booth', x: 11, y: 5, scene: 'mp.booth_taiko', o: { game: 'taiko' } },
       { p: 'mp_lanterns', x: 6, y: 2, o: { lit: true } },
     ],
+    npcs: [{ id: 'mp_tomi_h', char: 'mp_tomi', x: 7, y: 5, dir: 'down', talk: 'mp.tomi_hall' }],
   });
   // Shinobu's room in the tenement: manuscripts everywhere
   interior('mp.tenement', T('Shinobu\'s Room', 'シノブ の {部屋|へや}'), 9, 8, 4, 'mp.playhouse', [7, 18], {

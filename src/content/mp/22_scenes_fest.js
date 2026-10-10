@@ -414,6 +414,17 @@ narr: {言葉|ことば} の くじ {引|び}き の {屋台|やたい} 。 {引
 narr: {太鼓|たいこ} の {屋台|やたい} 。 {札|ふだ} に {書|か}いた ドン と カッ の とおり に {叩|たた}く 。 || The taiko stall: beat the drum as the cards say, ドン and カッ.
 !hook fest_booth taiko
 
+@scene mp.manbe_after
+!faceplayer
+mp_manbe: {川開|かわびら}き の {芝居|しばい} 、 {夏|なつ} の {間|あいだ} ずっと {打|う}つ こと に なりました 。 {役者|やくしゃ} たち は 、 {毎朝|まいあさ} {自分|じぶん} の {名前|なまえ} を {台本|だいほん} に {書|か}いて から {舞台|ぶたい} に {上|あ}がります 。 || The Opening's play is running all summer. Every morning the actors write their own names in the script before they go on.
+?(comp=suzu) mp_manbe: …… {昔|むかし} 、 スズ と いう {名前|なまえ} の {子役|こやく} が いた そう です よ 。 {番付|ばんづけ} の {隅|すみ} に 、 {小|ちい}さく 。 || …They say there was once a child actor called Suzu. In the corner of a playbill, in small letters.
+?(comp=suzu) comp[smile]: そう 。 {小|ちい}さい {字|じ} の {役者|やくしゃ} も 、 {役者|やくしゃ} よ 。 || Yes. An actor in small letters is still an actor.
+
+@scene mp.tomi_hall
+!faceplayer
+mp_tomi: {祭|まつ}り の {遊|あそ}び は 、 {夏|なつ} の {間|あいだ} ここ で {続|つづ}けて います 。 {屋台|やたい} の {人|ひと} たち も 、 {喜|よろこ}んで いる わ 。 || The festival games carry on here all summer. The stall people are pleased.
+?(mp_inv_matsu) mp_tomi: マツ さん 、 {来年|らいねん} の {世話役|せわやく} を {手伝|てつだ}う って 。 {招待状|しょうたいじょう} の おかげ ね 。 || Matsu says she'll help on next year's committee. Thanks to your invitation.
+
 @scene mp.door_festhall
 narr: {祭|まつ}り の {道具|どうぐ} を しまう {蔵|くら} 。 {今|いま} は {鍵|かぎ} が かかって いる 。 || The storehouse for the festival's things. Locked for now.
 `, 'mp/22_scenes_fest.js');

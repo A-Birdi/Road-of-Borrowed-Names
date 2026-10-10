@@ -25,7 +25,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   def('mp_typecase', {}, (c, x, y, p) => {
     px(c, x + 1, y - 8, 14, 22, p.wood[1]); for (let i = 0; i < 4; i++) px(c, x + 2, y - 6 + i * 5, 12, 3, p.wood[3]);
   });
-  def('mp_lift', { w: 2, h: 2, block: false }, (c, x, y, p, t, o) => {
+  def('mp_lift', { w: 2, h: 2 }, (c, x, y, p, t, o) => {
     px(c, x, y, 32, 32, '#1a1614'); px(c, x + 2, y + 2, 28, 28, o && o.raised ? p.wood[3] : p.wood[1]);
     for (let i = 0; i < 4; i++) px(c, x + 2, y + 4 + i * 7, 28, 1, p.wood[0]);
   });

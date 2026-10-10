@@ -109,6 +109,15 @@ RB.audio = RB.audio || {};
     tone(g, o, t, { f: 85 * p, f2: 55 * p, a: 0.002, r: 0.12, v: 0.38 });
     whoosh(g, o, t, { type: 'lowpass', f: 300, q: 0.7, a: 0.002, r: 0.06, v: 0.22 });
   });
+  // the festival's taiko stall (src/ui/88g_festival_games.js): the drum's face (ドン) and its rim (カッ)
+  def('taiko_don', 0.5, 0.25, 0.05, (g, o, t, p) => {
+    tone(g, o, t, { f: 118 * p, f2: 72 * p, a: 0.003, r: 0.28, v: 0.5 });
+    whoosh(g, o, t, { type: 'lowpass', f: 420, q: 0.7, a: 0.002, r: 0.08, v: 0.24 });
+  });
+  def('taiko_ka', 0.2, 0.1, 0.05, (g, o, t, p) => {
+    tone(g, o, t, { type: 'triangle', f: 920 * p, f2: 720 * p, a: 0.001, r: 0.04, v: 0.2 });
+    whoosh(g, o, t, { f: 2400 * p, q: 3, a: 0.001, r: 0.02, v: 0.16 });
+  });
   def('door', 0.7, 0.2, 0.2, (g, o, t, p) => {
     tone(g, o, t, { type: 'sawtooth', f: 95 * p, f2: 125 * p, glide: 0.28, a: 0.03, hold: 0.2, r: 0.1, v: 0.07, bp: 900, q: 4 });
     tone(g, o, t + 0.3, { f: 70 * p, f2: 50 * p, a: 0.003, r: 0.14, v: 0.36 });
