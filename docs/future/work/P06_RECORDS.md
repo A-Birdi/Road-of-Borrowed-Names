@@ -28,7 +28,7 @@ maps are unchanged; the records browser test checks it.
 | K10: in a twelve-chapter journey, the Words contents in three sections (My learning, Reference, Practice) and the Journey's keepsakes, practice mementos and fishing notes under one Mementos entry with its pages a row below; a six-chapter journey's Ledger as it was | K10 | `src/ui/50_menu.js` (`journeyNav`, `WORD_SECTIONS`) | Done (the sea chart comes with P11) |
 | K8: the chosen companion's whole set viewable once the story is finished; every set on the Main Menu | K8 | `RB.volume` | Done as a rule (the bond and ending pages come with the chapters) |
 | Shiritori v2: themed word sets (`RB.wordplay.addTheme`) offered when a chapter opens them (sea words after sailing, festival words, a set per chapter), built from the installed banks like the journey bank, recorded with the theme, never a stage, never Bond | C12 | `src/engine/73_wordplay.js`, `src/ui/87_wordplay.js` | Done (the sets themselves come with their chapters; the festival tournament with P09) |
-| Festival game support | C10/C11 | — | Next |
+| Festival game support: one booth-game shell (Practice by default, untimed and keeping nothing; Timed opt-in each time, the clock stopping for hints, only the player's own best and longest run kept and shown in the game's corner; no stamp or reward from any score, C-55), its Distractions page, and the first game, water-balloon fishing (ヨーヨー釣り, real): hook the balloon whose word you are asked for in English | C10, C-17, C-55 | `src/engine/72f_festival.js`, `src/ui/88e_festival.js`, `88f_festival_yoyo.js`, `src/content/pastimes/50_festival.js` | Done (the festival and its other games come with P09) |
 | The book shell on the remaining pages | U03–U05 | — | Next |
 
 ## Shogi
@@ -88,7 +88,9 @@ made); F-24 when Fuku offers a game; F-25 koi-koi's house rules.
 | Karuta in the browser: a game word by word, right and wrong, to the end with the record and the stamp; the speed mode; all 35 at phone width; its Distractions page | `node tests/e2e/karuta.mjs` | 3/0 (captures `docs/screenshots/karuta/`) |
 | Shiritori's themed sets: gated, built from the theme's words only, recorded apart, never a stage | `node tests/run-unit.mjs wordplay_themes` | 13/0 |
 | Shiritori unchanged otherwise | `wordplay`, `wordplay_bond`, `shiritori`, `shiritori_banks`; browser `wordplay`, `wordplay_layout` | 329/0, 168/0, 152/0, 105/0; 82/0, 63/0 |
-| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 664 lines, 0 without an entry |
+| Festival games: practice keeps nothing; a timed round keeps the best and the run; read-only peek; New Game+ carries the bests; no stamp reads them; the gate; the words | `node tests/run-unit.mjs festival` | 14/0 |
+| Festival games in the browser: the corner (Practice by default), a practice round (right, wrong, a hint) keeping nothing, a timed round with the clock stopped for a hint and the best kept and shown, no stamp, phone, the Distractions page | `node tests/e2e/festival.mjs` | 3/0 (captures `docs/screenshots/festival/`) |
+| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 696 lines, 0 without an entry |
 
 **Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own
 playtest note).

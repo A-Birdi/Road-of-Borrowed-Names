@@ -45,6 +45,8 @@ export function lines(RB) {
   if (RB.pastimes) for (const d of RB.pastimes.all()) walk('pt.' + d.id, 'pastime:' + d.id + ':page', d, new Set());
   if (C.shogi) walk('pt.shogi', 'pastime:shogi', C.shogi, new Set());
   if (C.karuta) walk('pt.karuta', 'pastime:karuta', C.karuta, new Set());
+  if (C.festival) walk('pt.festival', 'pastime:festival', C.festival, new Set());
+  if (RB.festival) for (const g of RB.festival.list()) walk('pt.festival', 'pastime:festival:' + g.id, g, new Set());
   if (RB.hanafuda) walk('pt.hanafuda', 'pastime:hanafuda:cards', { deck: RB.hanafuda.DECK, months: RB.hanafuda.MONTHS, kinds: RB.hanafuda.KINDS, yaku: RB.hanafuda.YAKU }, new Set());
   if (RB.shogi) walk('pt.shogi', 'pastime:shogi:board', { names: RB.shogi.NAMES, promoted: RB.shogi.PROMOTED, variants: RB.shogi.VARIANTS, handicaps: RB.shogi.HANDICAPS }, new Set());
   return out;

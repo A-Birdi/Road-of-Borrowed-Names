@@ -85,6 +85,18 @@ RB.ui.distractions = (function () {
       });
       return g;
     },
+    festival: (w, h) => {
+      // an evening sky, a string of paper lanterns, and a tub of water balloons
+      let g = '<defs><linearGradient id="ds-eve" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2350"/><stop offset="1" stop-color="#7a3a5a"/></linearGradient></defs><rect width="' + w + '" height="' + h + '" fill="url(#ds-eve)"/>';
+      g += '<path d="M0 ' + h * 0.12 + ' Q' + w / 2 + ' ' + h * 0.42 + ' ' + w + ' ' + h * 0.12 + '" stroke="#1a1a1a" fill="none"/>';
+      for (let i = 1; i < 8; i++) {
+        const x = (w / 8) * i, y = h * 0.12 + Math.sin((i / 8) * Math.PI) * h * 0.22;
+        g += '<ellipse cx="' + x + '" cy="' + (y + 8) + '" rx="7" ry="9" fill="#f2a83a"/><path d="M' + (x - 7) + ' ' + (y + 8) + ' h14" stroke="#c8281e" stroke-width="1.4"/>';
+      }
+      g += '<ellipse cx="' + w * 0.5 + '" cy="' + h * 0.86 + '" rx="' + w * 0.3 + '" ry="' + h * 0.14 + '" fill="#4f8fbf" stroke="#2f6a96" stroke-width="3"/>';
+      ['#e2574c', '#4a90d9', '#f2c14e', '#6cbf6a', '#c06cd6'].forEach((c, i) => { g += '<circle cx="' + (w * 0.32 + i * w * 0.09) + '" cy="' + (h * 0.84 + (i % 2) * 5) + '" r="7" fill="' + c + '"/>'; });
+      return g;
+    },
   };
   function art(id, w, h, cls) {
     const f = ART[id];
@@ -119,6 +131,14 @@ RB.ui.distractions = (function () {
       // the Journey's Fishing notes open once there is something in them (or the survey has begun)
       const notes = !!(s.flags && s.flags.postgame) || (RB.fishing && RB.fishing.distinct(s) > 0);
       return notes ? '<div class="ds-acts"><button type="button" class="pbtn" data-ds-act="notes">' + I('book') + 'Open your Fishing notes</button></div>' : '';
+    }
+    if (d.id === 'festival' && RB.festival) {
+      // each stall game with its own Play (with your companion, or at the festival hall)
+      if (!comp) return '<p class="muted small">Travelling alone, the games are played at the festival hall.</p>';
+      const el = RB.activity.eligible('festival', { source: 'distractions', game: (RB.festival.list()[0] || {}).id });
+      const why = el.ok ? '' : SAFE_WHY[el.why] || el.why || 'Not just now.';
+      return '<div class="ds-acts">' + RB.festival.list().map((g) => '<button type="button" class="pbtn' + (g === RB.festival.list()[0] ? ' primary' : '') + '" data-ds-act="festival" data-g="' + g.id + '"' + (el.ok ? '' : ' disabled aria-describedby="ds-why"') + '>' + I('pastimes') + esc(g.title.en) + ' with ' + esc(comp.name.en) + '</button>').join('') + '</div>' +
+        (why ? '<p class="muted small" id="ds-why">' + esc(why) + ' The page can always be read.</p>' : '');
     }
     if (!d.activity || !d.companion) return '';
     if (!comp) return '<p class="muted small">Travelling alone, it is played where the page says.</p>';
@@ -165,6 +185,11 @@ RB.ui.distractions = (function () {
     const act = b.dataset.dsAct;
     if (act === 'index') { api.view.page = null; api.render(); return; }
     if (act === 'notes') { api.go('journey', 'fishing'); return; }
+    if (act === 'festival') {
+      const r = await RB.activity.launch('festival', { source: 'distractions', game: b.dataset.g });
+      if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(r.why, 'info');
+      return;
+    }
     if (act === 'play' && d && d.activity) {
       const r = await RB.activity.launch(d.activity, { source: 'distractions' });
       if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(r.why, 'info');

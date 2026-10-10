@@ -203,6 +203,42 @@
   "jp": "{間違|まちが}えたら 「お{手|て}つき」 。",
   "en": "Touch the wrong card (お手つき) and your partner takes the right one. Then the proverb is shown whole, with what it means."
  },
+ "pastime:festival:page#ymdt5i": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{祭|まつ}り の {遊|あそ}び",
+  "en": "Festival games"
+ },
+ "pastime:festival:page#3ct75p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{祭|まつ}り の あと も {遊|あそ}べる",
+  "en": "The festival hall in Manybridge, and the boat's corner, once the festival has been."
+ },
+ "pastime:festival:page#x6qmnb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{道連|みちづ}れ と なら 、 {安全|あんぜん} な {場所|ばしょ} で どこ でも",
+  "en": "Or with your companion anywhere safe."
+ },
+ "pastime:festival:page#japqe7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{屋台|やたい} の {遊|あそ}び 。",
+  "en": "The stall games of the festival, kept after it. Practice is untimed and keeps nothing; a timed round keeps only your own best. Just for fun."
+ },
+ "pastime:festival:page#r9y9h7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{練習|れんしゅう} か 、 {時間|じかん} を {計|はか}る か 。",
+  "en": "Choose Practice (untimed) or Timed each time you play."
+ },
+ "pastime:festival:page#cawtmx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "ヒント の {間|あいだ} 、 {時計|とけい} は {止|と}まる 。",
+  "en": "In a timed round the clock stops while a hint is open."
+ },
  "pastime:fishing:page#oandp5": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
@@ -550,6 +586,162 @@
   "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
   "jp": "{今|いま} の かるた",
   "en": "later children's sets"
+ },
+ "pastime:festival#1qf5ksu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{水|みず}",
+  "en": "water"
+ },
+ "pastime:festival#1s5sueo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{火|ひ}",
+  "en": "fire"
+ },
+ "pastime:festival#1l34eos": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{木|き}",
+  "en": "tree"
+ },
+ "pastime:festival#13nes81": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{花|はな}",
+  "en": "flower"
+ },
+ "pastime:festival#1kfc1z5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{魚|さかな}",
+  "en": "fish"
+ },
+ "pastime:festival#kovpqs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{鳥|とり}",
+  "en": "bird"
+ },
+ "pastime:festival#1dz3brh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{犬|いぬ}",
+  "en": "dog"
+ },
+ "pastime:festival#ub5yjg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{猫|ねこ}",
+  "en": "cat"
+ },
+ "pastime:festival#12v75vc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{山|やま}",
+  "en": "mountain"
+ },
+ "pastime:festival#19v8s0g": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{川|かわ}",
+  "en": "river"
+ },
+ "pastime:festival#hvkd3g": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{月|つき}",
+  "en": "moon"
+ },
+ "pastime:festival#1f6c61m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{星|ほし}",
+  "en": "star"
+ },
+ "pastime:festival#1l2oziu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{雨|あめ}",
+  "en": "rain"
+ },
+ "pastime:festival#4tnew1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{空|そら}",
+  "en": "sky"
+ },
+ "pastime:festival#1gu63kp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{海|うみ}",
+  "en": "sea"
+ },
+ "pastime:festival#1ote9q4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{船|ふね}",
+  "en": "boat"
+ },
+ "pastime:festival#1kxjdup": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "すいか",
+  "en": "watermelon"
+ },
+ "pastime:festival#1xnjriv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{花火|はなび}",
+  "en": "fireworks"
+ },
+ "pastime:festival#1axyuzh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "ちょうちん",
+  "en": "paper lantern"
+ },
+ "pastime:festival#1ykh75j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "おまつり",
+  "en": "festival"
+ },
+ "pastime:festival#dbn436": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{浴衣|ゆかた}",
+  "en": "yukata"
+ },
+ "pastime:festival#rj3sl7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{金魚|きんぎょ}",
+  "en": "goldfish"
+ },
+ "pastime:festival#v4dn2d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "うちわ",
+  "en": "hand fan"
+ },
+ "pastime:festival#1dfgbav": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "たいこ",
+  "en": "drum"
+ },
+ "pastime:festival:yoyo#1xxcjj4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "ヨーヨー{釣|つ}り",
+  "en": "Water-balloon fishing"
+ },
+ "pastime:festival:yoyo#ga7r3r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{言葉|ことば} の ヨーヨー を {釣|つ}る 。",
+  "en": "Balloons bob in the tub, each with a word on it. Hook the one you are asked for: read the labels."
  },
  "pastime:hanafuda:cards#bl9q4v": {
   "status": "self-reviewed",

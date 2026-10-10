@@ -3841,6 +3841,27 @@ button.hf-card:focus-visible { outline: 3px solid var(--focus-paper); outline-of
 .kt-k { display: inline-grid; place-items: center; width: 1.8em; height: 1.8em; border-radius: 50%; border: 2px solid var(--danger-ink); font-weight: 700; }
 @media (max-width: 480px) { .kt-mat { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 8px; padding: 8px; } }
 
+/* festival games (src/ui/88e_festival.js and the games): the stall's tub, balloons on rubber bands */
+.fv-folio .leaf { width: 100%; max-width: 900px; justify-self: center; }
+.fv-about { display: grid; gap: 2px; margin: 0 0 8px; }
+.fv-about .en { color: var(--ink-2); }
+.fv-bar { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; min-height: 1.8em; }
+.fv-clock { font-weight: 700; font-variant-numeric: tabular-nums; }
+.fv-say .en { color: var(--ink-2); margin-left: 0.3em; }
+.fv-ask { font-size: 1.1em; margin: 6px 0; }
+.fv-hint { color: var(--ok-ink); }
+.fv-tub { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 18px 14px; border-radius: 50% / 18%; background: radial-gradient(ellipse at center, #8fc3e6, #4f8fbf); box-shadow: inset 0 0 0 4px #2f6a96; }
+.fv-balloon { position: relative; display: grid; justify-items: center; gap: 4px; padding: 6px 2px; border: 0; background: none; cursor: pointer; color: inherit; font: inherit; }
+.fv-balloon:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; border-radius: 8px; }
+.fv-ball { width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffffaa 0 12%, transparent 13%), var(--c); box-shadow: inset -4px -6px 0 rgba(0, 0, 0, 0.18); position: relative; }
+.fv-ball::after { content: ''; position: absolute; left: 50%; top: -14px; width: 2px; height: 14px; background: #e8e2d0; }
+.fv-label { padding: 2px 8px; border-radius: 10px; background: rgba(251, 247, 238, 0.95); color: var(--ink); font-size: 1.05em; }
+@media (prefers-reduced-motion: no-preference) {
+  .fv-tub.drift .fv-balloon { animation: fv-bob 3.2s ease-in-out infinite alternate; animation-delay: calc(var(--d) * -1); }
+  @keyframes fv-bob { from { transform: translate(-6px, -3px); } to { transform: translate(6px, 4px); } }
+}
+@media (max-width: 480px) { .fv-tub { gap: 8px; padding: 12px 8px; } .fv-ball { width: 44px; height: 44px; } }
+
 /* ==== src/styles/66_words.css ==== */
 /* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
  * (src/ui/66_words_pages.js). */
@@ -49582,6 +49603,51 @@ RB.karuta = (function () {
 })();
 
 
+/* ==== src/engine/72f_festival.js ==== */
+/* Festival games (expansion P06 for P09; plan C10, Robin's C-17 and C-55): the shell every booth game uses.
+ *   - Practice, the default: untimed, no score kept, no rewards; help changes nothing.
+ *   - Timed, opt-in and chosen each time: the same game against a clock that stops while help is open; it keeps the
+ *     player's own personal bests (and streaks where natural), shown only in the game itself, never ranked.
+ *   - Just for fun: no stamp, keepsake or other reward from any score or mode.
+ * A game: RB.festival.define(id, { title: { en, jp }, about: { en, jp }, seconds (the timed round), better: 'more',
+ *   streaks: true|false, ui: the screen module's name in RB.ui.festivalGames }). Records live in
+ *   s.practice.festival.games[id] = { timed, best, bestStreak, last } (made at the first timed round; New Game+ carries
+ *   them, F-03). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.festival = (function () {
+  'use strict';
+  const DEFS = {};
+  const ORDER = [];
+  function define(id, d) { if (!DEFS[id]) ORDER.push(id); DEFS[id] = Object.assign({ id, seconds: 60, better: 'more', streaks: true }, d); return DEFS[id]; }
+  const get = (id) => DEFS[id] || null;
+  const list = () => ORDER.map((id) => DEFS[id]);
+  // read only (a page or the game's own corner): never makes a record
+  function peek(s, id) {
+    const f = s && s.practice && s.practice.festival;
+    const g = f && f.games && f.games[id];
+    return g ? JSON.parse(JSON.stringify(g)) : { timed: 0, best: null, bestStreak: 0, last: null };
+  }
+  // a timed round finished: { score, streak } → what changed (new best, new streak); practice rounds keep nothing
+  function timedResult(s, id, r) {
+    const d = DEFS[id];
+    if (!d || !s || !RB.practice) return null;
+    const p = RB.practice.of(s);
+    if (!p.festival || typeof p.festival !== 'object') p.festival = { v: 1, games: {} };
+    const g = p.festival.games[id] || (p.festival.games[id] = { timed: 0, best: null, bestStreak: 0, last: null });
+    const better = (a, b) => (b == null ? true : d.better === 'less' ? a < b : a > b);
+    const out = { newBest: false, newStreak: false };
+    g.timed++;
+    if (better(r.score, g.best)) { g.best = r.score; out.newBest = true; }
+    if (d.streaks && (r.streak || 0) > (g.bestStreak || 0)) { g.bestStreak = r.streak; out.newStreak = true; }
+    g.last = { score: r.score, streak: r.streak || 0, t: Date.now() };
+    return out;
+  }
+  if (RB.ngplus && RB.ngplus.PASTIMES && RB.ngplus.PASTIMES.indexOf('festival') < 0) RB.ngplus.PASTIMES.push('festival');
+  return { define, get, list, peek, timedResult };
+})();
+
+
 /* ==== src/engine/73_wordplay.js ==== */
 /* Companion shiritori at a rest stop: the table's rules of record, the Wordplay
  * records, and the two once-only relationship events (Practice addendum §9,
@@ -77846,6 +77912,18 @@ RB.ui.distractions = (function () {
       });
       return g;
     },
+    festival: (w, h) => {
+      // an evening sky, a string of paper lanterns, and a tub of water balloons
+      let g = '<defs><linearGradient id="ds-eve" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2350"/><stop offset="1" stop-color="#7a3a5a"/></linearGradient></defs><rect width="' + w + '" height="' + h + '" fill="url(#ds-eve)"/>';
+      g += '<path d="M0 ' + h * 0.12 + ' Q' + w / 2 + ' ' + h * 0.42 + ' ' + w + ' ' + h * 0.12 + '" stroke="#1a1a1a" fill="none"/>';
+      for (let i = 1; i < 8; i++) {
+        const x = (w / 8) * i, y = h * 0.12 + Math.sin((i / 8) * Math.PI) * h * 0.22;
+        g += '<ellipse cx="' + x + '" cy="' + (y + 8) + '" rx="7" ry="9" fill="#f2a83a"/><path d="M' + (x - 7) + ' ' + (y + 8) + ' h14" stroke="#c8281e" stroke-width="1.4"/>';
+      }
+      g += '<ellipse cx="' + w * 0.5 + '" cy="' + h * 0.86 + '" rx="' + w * 0.3 + '" ry="' + h * 0.14 + '" fill="#4f8fbf" stroke="#2f6a96" stroke-width="3"/>';
+      ['#e2574c', '#4a90d9', '#f2c14e', '#6cbf6a', '#c06cd6'].forEach((c, i) => { g += '<circle cx="' + (w * 0.32 + i * w * 0.09) + '" cy="' + (h * 0.84 + (i % 2) * 5) + '" r="7" fill="' + c + '"/>'; });
+      return g;
+    },
   };
   function art(id, w, h, cls) {
     const f = ART[id];
@@ -77880,6 +77958,14 @@ RB.ui.distractions = (function () {
       // the Journey's Fishing notes open once there is something in them (or the survey has begun)
       const notes = !!(s.flags && s.flags.postgame) || (RB.fishing && RB.fishing.distinct(s) > 0);
       return notes ? '<div class="ds-acts"><button type="button" class="pbtn" data-ds-act="notes">' + I('book') + 'Open your Fishing notes</button></div>' : '';
+    }
+    if (d.id === 'festival' && RB.festival) {
+      // each stall game with its own Play (with your companion, or at the festival hall)
+      if (!comp) return '<p class="muted small">Travelling alone, the games are played at the festival hall.</p>';
+      const el = RB.activity.eligible('festival', { source: 'distractions', game: (RB.festival.list()[0] || {}).id });
+      const why = el.ok ? '' : SAFE_WHY[el.why] || el.why || 'Not just now.';
+      return '<div class="ds-acts">' + RB.festival.list().map((g) => '<button type="button" class="pbtn' + (g === RB.festival.list()[0] ? ' primary' : '') + '" data-ds-act="festival" data-g="' + g.id + '"' + (el.ok ? '' : ' disabled aria-describedby="ds-why"') + '>' + I('pastimes') + esc(g.title.en) + ' with ' + esc(comp.name.en) + '</button>').join('') + '</div>' +
+        (why ? '<p class="muted small" id="ds-why">' + esc(why) + ' The page can always be read.</p>' : '');
     }
     if (!d.activity || !d.companion) return '';
     if (!comp) return '<p class="muted small">Travelling alone, it is played where the page says.</p>';
@@ -77926,6 +78012,11 @@ RB.ui.distractions = (function () {
     const act = b.dataset.dsAct;
     if (act === 'index') { api.view.page = null; api.render(); return; }
     if (act === 'notes') { api.go('journey', 'fishing'); return; }
+    if (act === 'festival') {
+      const r = await RB.activity.launch('festival', { source: 'distractions', game: b.dataset.g });
+      if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(r.why, 'info');
+      return;
+    }
     if (act === 'play' && d && d.activity) {
       const r = await RB.activity.launch(d.activity, { source: 'distractions' });
       if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(r.why, 'info');
@@ -108361,6 +108452,199 @@ RB.ui.karuta = (function () {
     if (a === 'next') { V.shown = null; if (KR().over(V.g)) { render(); return; } beginReading(); }
   }
   return { run, close, ART, state: () => (V ? { view: V.view, g: V.g, words: V.words, shown: !!V.shown, speed: V.speed } : null) };
+})();
+
+
+/* ==== src/ui/88e_festival.js ==== */
+/* Festival games on screen (expansion P06 for P09; plan C10, C-17, C-55; the shell's rules in
+ * src/engine/72f_festival.js). One activity, 'festival', for every booth game (ctx.game names it): the game's own
+ * corner first, with Practice chosen (untimed, nothing kept) and Timed offered (a clock that stops for help; your own
+ * best, shown here and nowhere else). The games draw themselves (RB.ui.festivalGames[id] = { start(el, api), stop() }).
+ *   api: { mode, s, words, done({ score, streak }), say(line), pause(), resume(), timeLeft() } */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.ui.festivalGames = RB.ui.festivalGames || {};
+
+RB.ui.festival = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const F = () => RB.festival;
+  const S = () => RB.game.s;
+  let V = null;
+
+  RB.activity.register('festival', {
+    title: { en: 'Festival games', jp: '{祭|まつ}り の {遊|あそ}び' },
+    eligible: (s, ctx) => {
+      if (!ctx || !F().get(ctx.game)) return { ok: false, why: 'That game is not here.' };
+      if (!ctx.with && !ctx.venue && !s.comp) return { ok: false, why: 'There is nobody to play with here.' };
+      return RB.activity.safe ? RB.activity.safe(ctx.with || ctx.venue ? {} : { companion: true }) : { ok: true };
+    },
+    run: (session) => run(session),
+    dispose: (session) => { if (V && V.session === session) close(); },
+  });
+
+  function run(session) {
+    return new Promise((resolve) => {
+      const ctx = (session && session.ctx) || {};
+      const d = F().get(ctx.game);
+      const fr = RB.ui.folio.frame({ cls: 'fv-folio', onClose: () => leave(), closeLabel: 'Leave', closeIcon: 'back' });
+      fr.setTitle(RB.ui.label(d.title.jp, d.title.en), '');
+      fr.box.innerHTML = '<div class="leaf fv-leaf" tabindex="-1"></div>';
+      V = { session, d, fr, leaf: fr.box.firstChild, view: 'corner', mode: 'practice', resolve, paused: 0, hidden: false };
+      V.layer = { el: fr.scrim, name: 'festival', noAutofocus: true, onCancel: () => leave() };
+      V.leaf.addEventListener('click', onClick);
+      V.leaf.addEventListener('change', (e) => { if (e.target.name === 'fv-mode') V.mode = e.target.value; });
+      V.onVis = () => { if (!V) return; if (document.hidden) pause(); else resume(); };
+      document.addEventListener('visibilitychange', V.onVis);
+      RB.ui.pushLayer(V.layer);
+      render();
+    });
+  }
+  function stopGame() { if (!V) return; clearInterval(V.tick); const g = RB.ui.festivalGames[V.d.ui || V.d.id]; if (g && g.stop) try { g.stop(); } catch (e) { /* the game is gone with the screen */ } }
+  function close() { if (!V) return; stopGame(); document.removeEventListener('visibilitychange', V.onVis); RB.ui.popLayer(V.layer); const r = V.resolve; V = null; r({ ok: true }); }
+  function leave() { if (!V) return; if (V.view === 'corner') close(); else { stopGame(); V.view = 'corner'; render(); } }
+
+  // ---- the corner: what the game is, the two modes, your best ----------------------------------------------------
+  function cornerHtml() {
+    const d = V.d, p = F().peek(S(), d.id);
+    return '<p class="fv-about">' + RB.ui.jhtml(d.about.jp) + '<span class="en">' + esc(d.about.en) + '</span></p>' +
+      '<fieldset class="sg-level"><legend>How to play this round</legend>' +
+      '<label class="opt"><input type="radio" name="fv-mode" value="practice"' + (V.mode === 'practice' ? ' checked' : '') + '><span><b>Practice</b>: untimed; nothing is kept</span></label>' +
+      '<label class="opt"><input type="radio" name="fv-mode" value="timed"' + (V.mode === 'timed' ? ' checked' : '') + '><span><b>Timed</b>: ' + d.seconds + ' seconds; your own best is kept. The clock stops while a hint is open</span></label></fieldset>' +
+      '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="begin">' + I('next') + '<span>Begin</span></button></div>' +
+      (p.timed ? '<p class="muted small">' + esc('Your best: ' + p.best + (d.streaks && p.bestStreak ? '; longest run ' + p.bestStreak : '') + '. Just for fun: nothing is won by it.') + '</p>' : '<p class="muted small">Just for fun: no score here wins anything.</p>');
+  }
+  function begin() {
+    V.view = 'play'; V.left = V.d.seconds * 1000; V.paused = 0; V.result = null;
+    V.leaf.innerHTML = '<div class="fv-bar">' + (V.mode === 'timed' ? '<span class="fv-clock" role="timer" aria-live="off"></span>' : '<span class="muted small">Practice: untimed, nothing kept</span>') + '<span class="fv-say" role="status"></span></div><div class="fv-stage"></div>';
+    const g = RB.ui.festivalGames[V.d.ui || V.d.id];
+    const api = {
+      mode: V.mode, s: S(), def: V.d,
+      done: (r) => finish(r), say: (x) => { if (!V) return; const el = V.leaf.querySelector('.fv-say'); if (el) el.innerHTML = x; },
+      pause, resume, timeLeft: () => (V ? V.left : 0),
+    };
+    g.start(V.leaf.querySelector('.fv-stage'), api);
+    if (V.mode === 'timed') {
+      let last = Date.now();
+      const show = () => { const el = V && V.leaf.querySelector('.fv-clock'); if (el) el.textContent = Math.ceil(V.left / 1000) + ' s' + (V.paused ? ' (stopped)' : ''); };
+      show();
+      V.tick = setInterval(() => {
+        if (!V) return;
+        const now = Date.now();
+        if (!V.paused) V.left -= now - last;
+        last = now;
+        show();
+        if (V.left <= 0) { clearInterval(V.tick); const r = g.stop ? g.stop() : null; finish(r || { score: 0, streak: 0 }); }
+      }, 200);
+    }
+  }
+  function pause() { if (V) V.paused++; }
+  function resume() { if (V && V.paused > 0) V.paused--; }
+  function finish(r) {
+    if (!V || V.view !== 'play') return;
+    clearInterval(V.tick);
+    V.view = 'over';
+    let note = '';
+    if (V.mode === 'timed') {
+      const ch = F().timedResult(S(), V.d.id, r);
+      const p = F().peek(S(), V.d.id);
+      note = '<p><b>' + esc(r.score + ' this round.') + '</b> ' + esc(ch && ch.newBest ? 'Your best yet.' : 'Your best: ' + p.best + '.') + (V.d.streaks && r.streak ? ' ' + esc('Longest run this round: ' + r.streak + (ch && ch.newStreak ? ' (your longest yet).' : '.')) : '') + '</p>';
+    } else note = '<p><b>' + esc('Practice round over.') + '</b> ' + esc('Nothing is kept from practice.') + '</p>';
+    V.leaf.insertAdjacentHTML('beforeend', '<div class="hf-over fv-over">' + note + '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="again">Again</button><button type="button" class="pbtn" data-a="corner">Back</button></div></div>');
+  }
+  function render() { if (!V) return; if (V.view === 'corner') V.leaf.innerHTML = cornerHtml(); }
+  function onClick(e) {
+    if (!V) return;
+    const b = e.target.closest('[data-a]');
+    if (!b || b.disabled || b.tagName === 'INPUT') return;
+    const a = b.dataset.a;
+    if (a === 'begin' || a === 'again') { stopGame(); begin(); return; }
+    if (a === 'corner') { stopGame(); V.view = 'corner'; render(); }
+  }
+  return { run, close, state: () => (V ? { view: V.view, mode: V.mode, left: V.left, paused: V.paused } : null) };
+})();
+
+
+/* ==== src/ui/88f_festival_yoyo.js ==== */
+/* ヨーヨー釣り, water-balloon fishing (expansion P06 for P09; src/content/pastimes/50_festival.js): balloons bob in
+ * a tub, each with a word and its reading; you are asked for one in English and hook the balloon that says it. In
+ * practice a round is eight balloons, at your own pace; in a timed round they drift and you hook as many as you can.
+ * A wrong balloon says what it is; a hint shows the word's first sound (the clock stops while it is shown). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.ui.festivalGames = RB.ui.festivalGames || {};
+
+RB.ui.festivalGames.yoyo = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const COLORS = ['#e2574c', '#4a90d9', '#f2c14e', '#6cbf6a', '#c06cd6', '#f28fb0'];
+  let G = null;
+  const words = () => RB.content.festival.yoyo.words;
+  const reduced = () => !!(RB.game.reducedMotion && RB.game.reducedMotion());
+  function rng(seed) { let x = (seed >>> 0) || 1; return () => { x ^= x << 13; x >>>= 0; x ^= x >>> 17; x ^= x << 5; x >>>= 0; return x / 4294967296; }; }
+  function start(el, api) {
+    const seed = (RB.util.hashStr(String(api.s.id || 'fv') + '|yoyo|' + Date.now()) >>> 0) || 1;
+    G = { el, api, r: rng(seed), tub: [], target: null, score: 0, streak: 0, best: 0, asked: 0, practiceOf: 8, hint: null };
+    for (let i = 0; i < 6; i++) G.tub.push(newBalloon());
+    pickTarget();
+    el.addEventListener('click', onClick);
+    draw();
+  }
+  function newBalloon() {
+    const used = new Set(G.tub.map((b) => b.w.en));
+    const pool = words().filter((w) => !used.has(w.en));
+    const w = pool[Math.floor(G.r() * pool.length)];
+    return { w, color: COLORS[Math.floor(G.r() * COLORS.length)], drift: (G.r() * 4).toFixed(2), id: 'b' + Math.floor(G.r() * 1e9) };
+  }
+  function pickTarget() { G.target = G.tub[Math.floor(G.r() * G.tub.length)].w; G.asked++; }
+  function draw() {
+    if (!G) return;
+    const timed = G.api.mode === 'timed';
+    G.el.innerHTML = '<p class="fv-ask">Hook the balloon that says <b>“' + esc(G.target.en) + '”</b>.' + (G.hint ? ' <span class="fv-hint">It begins 「' + esc(G.hint) + '」.</span>' : '') + '</p>' +
+      '<div class="fv-tub' + (timed && !reduced() ? ' drift' : '') + '" role="group" aria-label="The tub">' + G.tub.map((b) =>
+        '<button type="button" class="fv-balloon" data-b="' + b.id + '" style="--c:' + b.color + ';--d:' + b.drift + 's" aria-label="' + esc('A balloon') + '"><span class="fv-ball" aria-hidden="true"></span><span class="fv-label">' + RB.ui.jhtml(b.w.jp) + '</span></button>').join('') + '</div>' +
+      '<div class="sg-acts"><button type="button" class="pbtn small" data-y="hint"' + (G.hint ? ' disabled' : '') + '>Hint</button>' + (timed ? '' : '<button type="button" class="pbtn small" data-y="finish">Finish</button>') +
+      '<span class="muted small">' + esc(timed ? 'Hooked: ' + G.score : 'Balloon ' + Math.min(G.asked, G.practiceOf) + ' of ' + G.practiceOf) + '</span></div>';
+  }
+  function onClick(e) {
+    if (!G) return;
+    const y = e.target.closest('[data-y]');
+    if (y) {
+      if (y.dataset.y === 'finish') return end();
+      if (y.dataset.y === 'hint' && !G.hint) {
+        G.hint = RB.jp.reading(G.target.jp).replace(/\s/g, '').charAt(0);
+        G.api.pause(); draw();
+        G.hintTimer = setTimeout(() => { if (!G) return; G.api.resume(); G.hintShown = true; draw(); }, 2500);
+      }
+      return;
+    }
+    const b = e.target.closest('[data-b]');
+    if (!b) return;
+    const ball = G.tub.find((x) => x.id === b.dataset.b);
+    if (!ball) return;
+    if (ball.w.en === G.target.en) {
+      G.score++; G.streak++; G.best = Math.max(G.best, G.streak);
+      G.api.say(RB.ui.jhtml(ball.w.jp) + ' <span class="en">' + esc('Hooked: ' + ball.w.en + '.') + '</span>');
+      G.tub[G.tub.indexOf(ball)] = newBalloon();
+      if (G.api.mode !== 'timed' && G.asked >= G.practiceOf) return end();
+      clearTimeout(G.hintTimer); if (G.hint && !G.hintShown) G.api.resume();
+      G.hint = null; G.hintShown = false;
+      pickTarget(); draw();
+    } else {
+      G.streak = 0;
+      G.api.say('<span class="en">' + esc('That one says ') + '</span>' + RB.ui.jhtml(ball.w.jp) + '<span class="en">' + esc(': ' + ball.w.en + '.') + '</span>');
+    }
+  }
+  function end() { if (!G) return null; const r = { score: G.score, streak: G.best }; const api = G.api; stop(); api.done(r); return r; }
+  // the clock ran out (timed), or the screen closed: what was done
+  function stop() {
+    if (!G) return null;
+    clearTimeout(G.hintTimer);
+    const r = { score: G.score, streak: G.best };
+    G.el.removeEventListener('click', onClick);
+    G = null;
+    return r;
+  }
+  return { start, stop, state: () => (G ? { target: G.target, tub: G.tub.map((b) => ({ id: b.id, en: b.w.en })), score: G.score, streak: G.streak, hint: G.hint } : null) };
 })();
 
 
@@ -153346,6 +153630,16 @@ RB.lex.add(RB.lex.parseTable(`
 急く|せく|v5k|A|to hurry, to be impatient
 仕損じる|しそんじる|v1|A|to make a mess of, to fail at
 `), 'pastimes');
+// the festival's games (src/content/pastimes/50_festival.js)
+RB.lex.add(RB.lex.parseTable(`
+花火|はなび|n|E|fireworks
+浴衣|ゆかた|n|I|yukata, a light summer kimono
+金魚|きんぎょ|n|E|goldfish
+ヨーヨー釣り|ヨーヨーつり|n|A|water-balloon fishing (a festival stall game)
+ヨーヨー||n|I|a water balloon on a rubber band (a festival toy); a yo-yo
+計る|はかる|v5r|I|to measure, to time
+ヒント||n|I|a hint
+`), 'pastimes');
 
 
 /* ==== src/content/pastimes/10_registry.js ==== */
@@ -153535,6 +153829,43 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (n) out.push({ en: 'Proverbs taken', value: n + ' of ' + C.karuta.deck.length });
       return out;
     },
+  });
+})(RB.content);
+
+
+/* ==== src/content/pastimes/50_festival.js ==== */
+/* The festival's games (expansion P06 builds the shell; P09 brings the festival and the rest of its games). The first
+ * is ヨーヨー釣り, water-balloon fishing (real): hook the balloon whose label you are asked for. The words are on the
+ * balloons with their readings; you are asked in English, so the label has to be read. Twelve-chapter journeys meet the
+ * festival's games through the flag pt_festival, set by the festival. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  C.festival = C.festival || {};
+  C.festival.yoyo = {
+    words: [
+      T('water', '{水|みず}'), T('fire', '{火|ひ}'), T('tree', '{木|き}'), T('flower', '{花|はな}'), T('fish', '{魚|さかな}'), T('bird', '{鳥|とり}'),
+      T('dog', '{犬|いぬ}'), T('cat', '{猫|ねこ}'), T('mountain', '{山|やま}'), T('river', '{川|かわ}'), T('moon', '{月|つき}'), T('star', '{星|ほし}'),
+      T('rain', '{雨|あめ}'), T('sky', '{空|そら}'), T('sea', '{海|うみ}'), T('boat', '{船|ふね}'), T('watermelon', 'すいか'), T('fireworks', '{花火|はなび}'),
+      T('paper lantern', 'ちょうちん'), T('festival', 'おまつり'), T('yukata', '{浴衣|ゆかた}'), T('goldfish', '{金魚|きんぎょ}'), T('hand fan', 'うちわ'), T('drum', 'たいこ'),
+    ],
+  };
+  if (RB.festival) RB.festival.define('yoyo', {
+    title: T('Water-balloon fishing', 'ヨーヨー{釣|つ}り'), seconds: 60, better: 'more', streaks: true, ui: 'yoyo',
+    about: T('Balloons bob in the tub, each with a word on it. Hook the one you are asked for: read the labels.', '{言葉|ことば} の ヨーヨー を {釣|つ}る 。'),
+  });
+  if (RB.pastimes) RB.pastimes.define('festival', {
+    order: 50, title: T('Festival games', '{祭|まつ}り の {遊|あそ}び'), kind: 'festival', companion: true, art: 'festival',
+    venue: T('The festival hall in Manybridge, and the boat\'s corner, once the festival has been.', '{祭|まつ}り の あと も {遊|あそ}べる'),
+    anywhere: T('Or with your companion anywhere safe.', '{道連|みちづ}れ と なら 、 {安全|あんぜん} な {場所|ばしょ} で どこ でも'),
+    met: (s) => !!(RB.edition && RB.edition.of(s) >= 2) && !!((s.flags && s.flags.pt_festival) || (s.practice && s.practice.festival)),
+    blurb: T('The stall games of the festival, kept after it. Practice is untimed and keeps nothing; a timed round keeps only your own best. Just for fun.', '{屋台|やたい} の {遊|あそ}び 。'),
+    howto: [
+      T('Choose Practice (untimed) or Timed each time you play.', '{練習|れんしゅう} か 、 {時間|じかん} を {計|はか}る か 。'),
+      T('In a timed round the clock stops while a hint is open.', 'ヒント の {間|あいだ} 、 {時計|とけい} は {止|と}まる 。'),
+    ],
+    records: (s) => (RB.festival ? RB.festival.list().map((d) => ({ d, p: RB.festival.peek(s, d.id) })).filter((x) => x.p.timed).map((x) => ({ en: x.d.title.en + ', best', value: String(x.p.best) })) : []),
   });
 })(RB.content);
 

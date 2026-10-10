@@ -132,3 +132,13 @@ RB.lex.add(RB.lex.parseTable(`
 急く|せく|v5k|A|to hurry, to be impatient
 仕損じる|しそんじる|v1|A|to make a mess of, to fail at
 `), 'pastimes');
+// the festival's games (src/content/pastimes/50_festival.js)
+RB.lex.add(RB.lex.parseTable(`
+花火|はなび|n|E|fireworks
+浴衣|ゆかた|n|I|yukata, a light summer kimono
+金魚|きんぎょ|n|E|goldfish
+ヨーヨー釣り|ヨーヨーつり|n|A|water-balloon fishing (a festival stall game)
+ヨーヨー||n|I|a water balloon on a rubber band (a festival toy); a yo-yo
+計る|はかる|v5r|I|to measure, to time
+ヒント||n|I|a hint
+`), 'pastimes');
