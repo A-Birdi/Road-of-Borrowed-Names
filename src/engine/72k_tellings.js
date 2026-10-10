@@ -10,7 +10,12 @@
  *       text: { F:{jp,en}, E:…, I:…, A:… } (what it says, by profile; A may carry a classical line and its gloss),
  *       claims: [{ id, jp, en, vouch: true|false, why:{en}, rule? }] }],
  *     answer: { kind: 'order', items: [{ id, jp, en }] }      the claims' rules decide which orders are supported
- *           | { kind: 'choice', options: [{ id, jp, en, needs: [claim ids], best?: true, detour?:{en}, why?:{en} }] } }
+ *           | { kind: 'choice', options: [{ id, jp, en, needs: [claim ids], best?: true, detour?:{en}, why?:{en} }] }
+ *           | { kind: 'panels', panels: [{ id, jp, en, picks: [{ source, jp, en, why:{en} }] }] } }
+ *
+ * Panels (expansion P11, Kotonoha's exhibition of tellings): each panel shows one source's version of a part of the
+ * story; there is no single right version, so any full set of picks succeeds, and each pick says what showing that
+ * version means. The reading is 'panel=source,…'; each panel's pick is also kept as s.vars['tell_' + id + '_' + panel].
  *
  * A claim's rule (orders only): { first: x } | { last: x } | { at: [x, n] } (1-based) | { before: [x, y] }.
  * Only claims a source can really vouch for (vouch: true) bind the answer: a reading is supported when it breaks
@@ -69,6 +74,12 @@ RB.tellings = (function () {
   // judge a reading: an order (array of item ids) or a choice (option id)
   function judge(d, reading) {
     if (!d) return { ok: false };
+    if (d.answer.kind === 'panels') {
+      const picks = reading || {};
+      const chosen = d.answer.panels.map((pn) => [pn, pn.picks.find((k) => k.source === picks[pn.id])]);
+      const ok = chosen.every(([, k]) => !!k);
+      return { ok, best: ok, picks: Object.fromEntries(chosen.filter(([, k]) => k).map(([pn, k]) => [pn.id, k.source])), reading: chosen.filter(([, k]) => k).map(([pn, k]) => pn.id + '=' + k.source).join(',') };
+    }
     if (d.answer.kind === 'order') {
       const order = [].concat(reading || []);
       const bad = broken(d, order);
@@ -87,9 +98,11 @@ RB.tellings = (function () {
     s.vars['tell_' + id] = r.reading;
     if (r.ok) s.flags['tell_' + id + '_ok'] = true;
     if (r.ok && r.best) s.flags['tell_' + id + '_best'] = true;
+    if (r.ok && r.picks) for (const pid in r.picks) s.vars['tell_' + id + '_' + pid] = r.picks[pid];
   }
   // the automated runs: the best supported reading (the first supported order; the best option, else any supported)
   function autoReading(d) {
+    if (d.answer.kind === 'panels') return Object.fromEntries(d.answer.panels.map((pn) => [pn.id, pn.picks[0].source]));
     if (d.answer.kind === 'order') return supportedOrders(d)[0] || d.answer.items.map((x) => x.id);
     const ok = d.answer.options.filter((o) => judge(d, o.id).ok);
     return ((ok.find((o) => o.best) || ok[0]) || d.answer.options[0]).id;

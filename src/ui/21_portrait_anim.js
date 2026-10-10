@@ -90,6 +90,9 @@ RB.portraitAnim = (function () {
     // people with fewer than three scenes, voices and creatures (no GESTURES.md profile: the nearest class)
     cs_seto: 'elder', co_tomoe: 'craft', lf_toya: 'child', sa_ushio: 'elder', sa_tae: 'elder', fw_fumi: 'elder',
     echo: ['nonhuman', { sway: { every: [5000, 9000] } }], sg_clerk: 'nonhuman', sb_lampvoice: ['nonhuman', { sway: { every: [5000, 9000] } }], kr_hyakuwa: ['nonhuman', { sway: { every: [4000, 8000] } }],
+    // Kotonoha (P11): the keepers, the village, the sailor's echo, the Gardener
+    ko_otoha: 'elder', ko_nami: 'craft', ko_ao: 'child', ko_hamaji: 'craft', ko_mitsu: 'host', ko_tokio: 'scholar', ko_koyomi: 'keeper',
+    ko_nana: 'child', ko_yoshino: 'scholar', ko_kihei: ['traveller', { sway: { every: [5000, 9000] } }], ko_gardener: ['nonhuman', { sway: { every: [4500, 8500] } }],
     co_goat: 'nonhuman', co_warden: 'nonhuman', mochi: ['nonhuman', { blink: [3000, 6500], dbl: 0.25 }],
     sa_reader: 'scholar', // the Archive's reader (by role)
   };

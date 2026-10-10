@@ -37,7 +37,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [],
     exits: [
       { x: 0, y: 12, w: 1, h: 2, to: 'sb.road', sp: 'from_next', dir: 'left' },
-      { x: 24, y: 0, w: 2, h: 1, to: 'sa.road', sp: 'from_prev', dir: 'up', if: 'ch5_done' },
+      { x: 24, y: 0, w: 2, h: 1, to: 'sa.road', sp: 'from_prev', dir: 'up', if: 'ch5_done&!ed>=2|yn_done' },
       { x: 35, y: 12, w: 1, h: 2, to: 'lf.town', tx: 1, ty: 17, dir: 'right' },
     ],
     triggers: [

@@ -191,7 +191,7 @@ export function install() {
       case 'npc': return T.talk(st.n.id);
       case 'prop': return T.use(st.pr.x, st.pr.y);
       case 'trig': T.place(st.tr.x, st.tr.y); RB.script.run(st.tr.scene); return T.idle(60000);
-      case 'foe': await RB.game.startBattle(st.f.enemy, { foeKey: 'foe:' + W.map.id + ':' + st.f.id, scene: st.f.scene }); return T.idle(60000);
+      case 'foe': await RB.game.startBattle(st.f.enemy, Object.assign({ foeKey: 'foe:' + W.map.id + ':' + st.f.id, scene: st.f.scene }, st.f.encounter ? { place: st.f, where: { map: W.map.id, x: st.f.x, y: st.f.y } } : {})); return T.idle(60000);
       case 'enter': RB.game.runEnterEvents(); return T.idle(60000);
       case 'locked': RB.script.run(st.ex.locked); return T.idle(60000);
     }
@@ -264,6 +264,12 @@ export function install() {
   function provides(id, depth) {
     if (provCache[id]) return provCache[id];
     const out = { flags: [], quests: [], items: [], words: [], warps: [] };
+    // a creature placed with an authored encounter (expansion P04): what its conclusions set
+    if (id.startsWith('enc:')) {
+      const d = C.encounters && C.encounters[id.slice(4)];
+      for (const c of (d && d.conclusions) || []) for (const k in c.flags || {}) if (c.flags[k]) out.flags.push(k);
+      return (provCache[id] = out);
+    }
     const sc = C.scenes[id];
     if (sc && (depth || 0) < 4) {
       for (const c of sc.cmds) {
@@ -295,6 +301,8 @@ export function install() {
     // generated Atlas rooms reuse one objective scene and record progress in
     // the run (via hooks), so each of their sites is worth one try per state
     const atlas = st && st.map.startsWith('atlas.');
+    // (an encounter's creature is worth meeting only for what its conclusions set: roaming ones are left alone)
+    if (id.startsWith('enc:')) return { main, other, unseen: false };
     return { main, other, unseen: atlas || !s.seen[id] || p.warps.some((m) => m !== RB.world.W.map.id) };
   }
   // all sites on maps with the given prefix
@@ -307,7 +315,7 @@ export function install() {
       for (const n of m.npcs || []) { const first = test(n.if) && talkOf(n).find((o) => test(o.if)); if (first) out.push({ kind: 'npc', map: mid, n, scene: first.scene }); }
       for (const pr of m.props || []) if (pr.scene) out.push({ kind: 'prop', map: mid, pr, scene: pr.scene });
       for (const tr of m.triggers || []) out.push({ kind: 'trig', map: mid, tr, scene: tr.scene });
-      for (const f of m.foes || []) if (f.scene) out.push({ kind: 'foe', map: mid, f, scene: f.scene });
+      for (const f of m.foes || []) if (f.scene || f.encounter) out.push({ kind: 'foe', map: mid, f, scene: f.scene || 'enc:' + f.encounter });
       for (const ev of m.onEnter || []) out.push({ kind: 'enter', map: mid, ev, scene: ev.scene });
       for (const ex of comp(mid).exits) if (ex.locked) out.push({ kind: 'locked', map: mid, ex, scene: ex.locked });
     }

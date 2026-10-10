@@ -437,7 +437,19 @@ for (const id in C.tellings || {}) {
     }
   }
   if (d.answer.kind === 'order') { for (const x of d.answer.items) jen(x, w + ' item ' + x.id); if (!RB.tellings.supportedOrders(d).length) E(w + ': no order is supported'); }
-  else {
+  else if (d.answer.kind === 'panels') {
+    // an exhibition (P11): every panel offers at least two sources' versions, each a real source and each explained
+    const sids = new Set((d.sources || []).map((x) => x.id));
+    for (const pn of d.answer.panels) {
+      jen(pn, w + ' panel ' + pn.id);
+      if (!pn.picks || pn.picks.length < 2) E(w + ': panel ' + pn.id + ' offers fewer than two versions');
+      for (const k of pn.picks || []) {
+        jen(k, w + ' panel ' + pn.id + ' pick ' + k.source);
+        if (!sids.has(k.source)) E(w + ': panel ' + pn.id + ' picks an unknown source ' + k.source);
+        if (!k.why || !k.why.en) E(w + ': panel ' + pn.id + ' pick ' + k.source + ' says what showing it means');
+      }
+    }
+  } else {
     for (const o of d.answer.options) { jen(o, w + ' option ' + o.id); for (const c of o.needs || []) if (!cids.has(c)) E(w + ': option ' + o.id + ' needs an unknown claim ' + c); }
     if (!d.answer.options.some((o) => RB.tellings.judge(d, o.id).ok)) E(w + ': no option is supported');
   }

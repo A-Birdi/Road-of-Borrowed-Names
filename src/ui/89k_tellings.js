@@ -8,7 +8,8 @@
  *      other way says why (an inscription vouches for what is carved and can still be read; a memory for what the
  *      person saw and is sure of; a rhyme for its words, not their order; a teller's scroll for the teller's
  *      tradition). Marks are never a gate.
- *   3. Act on it: put the things in order, or choose what to do. The sheet closes with the reading; the scene shows
+ *   3. Act on it: put the things in order, choose what to do, or (an exhibition) choose whose version each panel
+ *      shows, each pick explained. The sheet closes with the reading; the scene shows
  *      what happens (a wrong telling leads to a dead end that explains itself, never a trap).
  * In the test driver's automated runs the best supported reading is taken at once (no screen). */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -35,6 +36,7 @@ RB.ui.tellings = (function () {
     return new Promise((resolve) => {
       const marks = {}, read = {};
       let order = [], choice = null, shownEn = {};
+      const picks = {};
       const fr = RB.learnUi.sheet({ cls: 'activity tl-sheet', title: J(d.title.jp) + ' ' + esc(d.title.en) });
       const lay = { el: fr.scrim, name: 'tellings' };
       RB.learnUi.guardTaps(fr.leaf);
@@ -66,6 +68,16 @@ RB.ui.tellings = (function () {
           (cl ? '<ul class="tl-claims">' + cl + '</ul>' : '') + '</section>';
       }
       function actHtml() {
+        // an exhibition: for each panel, whose version it shows (none is wrong; each pick says what it means)
+        if (d.answer.kind === 'panels') {
+          const who = (sid) => d.sources.find((x) => x.id === sid) || { who: { jp: '', en: sid } };
+          return '<p>' + J(d.question.jp) + '<br><span class="muted">' + esc(d.question.en) + '</span></p>' + d.answer.panels.map((pn) => {
+            const k = pn.picks.find((x) => x.source === picks[pn.id]);
+            return '<fieldset class="tl-panel" data-p="' + esc(pn.id) + '"><legend>' + J(pn.jp) + ' <span class="tl-chipen">' + esc(pn.en) + '</span></legend><div class="tl-opts" role="radiogroup">' +
+              pn.picks.map((x) => '<button class="tl-pick" role="radio" data-p="' + esc(pn.id) + '" data-s="' + esc(x.source) + '" aria-checked="' + (picks[pn.id] === x.source) + '"><span class="tl-pwho">' + J(who(x.source).who.jp) + '</span> ' + J(x.jp) + '<span class="tl-chipen">' + esc(x.en) + '</span></button>').join('') +
+              '</div>' + (k && k.why ? '<p class="tl-pwhy" role="note">' + RB.learnUi.mixed(k.why.en) + '</p>' : '') + '</fieldset>';
+          }).join('');
+        }
         if (d.answer.kind === 'order') {
           const items = d.answer.items;
           const chips = items.map((x) => { const i = order.indexOf(x.id); return '<button class="tl-chip" data-x="' + esc(x.id) + '" aria-pressed="' + (i >= 0) + '">' + (i >= 0 ? '<span class="tl-n">' + (i + 1) + '</span>' : '') + J(x.jp) + ' <span class="tl-chipen">' + esc(x.en) + '</span></button>'; }).join('');
@@ -77,11 +89,12 @@ RB.ui.tellings = (function () {
           d.answer.options.map((o) => '<button class="tl-opt" role="radio" data-o="' + esc(o.id) + '" aria-checked="' + (choice === o.id) + '">' + J(o.jp) + '<span class="tl-chipen">' + esc(o.en) + '</span></button>').join('') + '</div>';
       }
       function render() {
-        const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : !!choice;
+        const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : d.answer.kind === 'panels' ? d.answer.panels.every((pn) => picks[pn.id]) : !!choice;
+        const goLabel = d.answer.kind === 'order' ? 'Light them in this order' : d.answer.kind === 'panels' ? 'Hang the panels' : 'Do it';
         fr.leaf.innerHTML = '<p class="tl-intro">Set the tellings side by side. Mark what each one can really vouch for, then act on what holds.</p>' +
           '<div class="tl-srcs">' + d.sources.map(sourceHtml).join('') + '</div>' +
           '<section class="tl-act" aria-label="Act on it"><h3>Act on it</h3>' + actHtml() + '</section>';
-        fr.foot.innerHTML = '<button class="pbtn tl-cancel">Come back later</button> <button class="pbtn primary tl-go"' + (ready ? '' : ' disabled') + '>' + (d.answer.kind === 'order' ? 'Light them in this order' : 'Do it') + '</button>';
+        fr.foot.innerHTML = '<button class="pbtn tl-cancel">Come back later</button> <button class="pbtn primary tl-go"' + (ready ? '' : ' disabled') + '>' + goLabel + '</button>';
       }
       async function onClick(e) {
         const b = e.target.closest('button');
@@ -95,10 +108,11 @@ RB.ui.tellings = (function () {
         }
         if (b.classList.contains('tl-chip')) { const x = b.dataset.x, i = order.indexOf(x); if (i >= 0) order = order.slice(0, i); else order.push(x); render(); focusSel('.tl-chip[data-x="' + x + '"]'); return; }
         if (b.classList.contains('tl-clear')) { order = []; render(); focusSel('.tl-chip'); return; }
+        if (b.classList.contains('tl-pick')) { picks[b.dataset.p] = b.dataset.s; render(); focusSel('.tl-pick[data-p="' + b.dataset.p + '"][data-s="' + b.dataset.s + '"]'); return; }
         if (b.classList.contains('tl-opt')) { choice = b.dataset.o; render(); focusSel('.tl-opt[data-o="' + choice + '"]'); return; }
         if (b.classList.contains('tl-cancel')) { finish({ cancelled: true }); return; }
         if (b.classList.contains('tl-go')) {
-          const r = T.judge(d, d.answer.kind === 'order' ? order : choice);
+          const r = T.judge(d, d.answer.kind === 'order' ? order : d.answer.kind === 'panels' ? picks : choice);
           r.marks = Object.assign({}, marks);
           finish(r);
         }

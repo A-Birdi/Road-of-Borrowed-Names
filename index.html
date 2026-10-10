@@ -4182,18 +4182,23 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .tl-marks { display: flex; flex-wrap: wrap; gap: 0.35em; }
 .tl-mark { min-height: var(--tap); padding: 0.2em 0.7em; border: 1px solid var(--paper-edge); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
 .tl-mark[aria-pressed='true'] { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); font-weight: 700; }
-.tl-mark:focus-visible, .tl-chip:focus-visible, .tl-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.tl-mark:focus-visible, .tl-chip:focus-visible, .tl-opt:focus-visible, .tl-pick:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .tl-why { font-size: 0.88em; border-left: 3px solid var(--ribbon); padding-left: 0.4em; }
 .tl-ok { font-weight: 700; }
 .tl-act { margin-top: 0.9em; border-top: 2px solid var(--paper-edge); padding-top: 0.5em; }
 .tl-act h3 { margin: 0 0 0.3em; font-size: 1em; }
 .tl-chips, .tl-opts { display: flex; flex-wrap: wrap; gap: 0.45em; }
 .tl-opts { flex-direction: column; }
-.tl-chip, .tl-opt { min-height: var(--tap); padding: 0.3em 0.7em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
-.tl-chip[aria-pressed='true'], .tl-opt[aria-checked='true'] { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--ink); }
+.tl-chip, .tl-opt, .tl-pick { min-height: var(--tap); padding: 0.3em 0.7em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.tl-chip[aria-pressed='true'], .tl-opt[aria-checked='true'], .tl-pick[aria-checked='true'] { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--ink); }
 .tl-chipen { display: block; font-size: 0.82em; color: var(--ink-2); }
 .tl-n { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; margin-right: 0.35em; border-radius: 50%; background: var(--ink); color: var(--paper); font-weight: 700; font-size: 0.85em; }
 .tl-order { min-height: 1.5em; }
+/* an exhibition (Kotonoha, P11): a panel each, whose version it shows */
+.tl-panel { margin: 0.6em 0 0; padding: 0.4em 0.6em 0.5em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); min-width: 0; }
+.tl-panel legend { padding: 0 0.3em; font-weight: 700; }
+.tl-pwho { font-weight: 700; margin-right: 0.3em; }
+.tl-pwhy { margin: 0.4em 0 0; font-size: 0.88em; border-left: 3px solid var(--ink-2); padding-left: 0.4em; }
 
 /* ==== src/styles/70_discovery.css ==== */
 /* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
@@ -50659,7 +50664,12 @@ RB.festival = (function () {
  *       text: { F:{jp,en}, E:…, I:…, A:… } (what it says, by profile; A may carry a classical line and its gloss),
  *       claims: [{ id, jp, en, vouch: true|false, why:{en}, rule? }] }],
  *     answer: { kind: 'order', items: [{ id, jp, en }] }      the claims' rules decide which orders are supported
- *           | { kind: 'choice', options: [{ id, jp, en, needs: [claim ids], best?: true, detour?:{en}, why?:{en} }] } }
+ *           | { kind: 'choice', options: [{ id, jp, en, needs: [claim ids], best?: true, detour?:{en}, why?:{en} }] }
+ *           | { kind: 'panels', panels: [{ id, jp, en, picks: [{ source, jp, en, why:{en} }] }] } }
+ *
+ * Panels (expansion P11, Kotonoha's exhibition of tellings): each panel shows one source's version of a part of the
+ * story; there is no single right version, so any full set of picks succeeds, and each pick says what showing that
+ * version means. The reading is 'panel=source,…'; each panel's pick is also kept as s.vars['tell_' + id + '_' + panel].
  *
  * A claim's rule (orders only): { first: x } | { last: x } | { at: [x, n] } (1-based) | { before: [x, y] }.
  * Only claims a source can really vouch for (vouch: true) bind the answer: a reading is supported when it breaks
@@ -50718,6 +50728,12 @@ RB.tellings = (function () {
   // judge a reading: an order (array of item ids) or a choice (option id)
   function judge(d, reading) {
     if (!d) return { ok: false };
+    if (d.answer.kind === 'panels') {
+      const picks = reading || {};
+      const chosen = d.answer.panels.map((pn) => [pn, pn.picks.find((k) => k.source === picks[pn.id])]);
+      const ok = chosen.every(([, k]) => !!k);
+      return { ok, best: ok, picks: Object.fromEntries(chosen.filter(([, k]) => k).map(([pn, k]) => [pn.id, k.source])), reading: chosen.filter(([, k]) => k).map(([pn, k]) => pn.id + '=' + k.source).join(',') };
+    }
     if (d.answer.kind === 'order') {
       const order = [].concat(reading || []);
       const bad = broken(d, order);
@@ -50736,9 +50752,11 @@ RB.tellings = (function () {
     s.vars['tell_' + id] = r.reading;
     if (r.ok) s.flags['tell_' + id + '_ok'] = true;
     if (r.ok && r.best) s.flags['tell_' + id + '_best'] = true;
+    if (r.ok && r.picks) for (const pid in r.picks) s.vars['tell_' + id + '_' + pid] = r.picks[pid];
   }
   // the automated runs: the best supported reading (the first supported order; the best option, else any supported)
   function autoReading(d) {
+    if (d.answer.kind === 'panels') return Object.fromEntries(d.answer.panels.map((pn) => [pn.id, pn.picks[0].source]));
     if (d.answer.kind === 'order') return supportedOrders(d)[0] || d.answer.items.map((x) => x.id);
     const ok = d.answer.options.filter((o) => judge(d, o.id).ok);
     return ((ok.find((o) => o.best) || ok[0]) || d.answer.options[0]).id;
@@ -60616,6 +60634,9 @@ RB.portraitAnim = (function () {
     // people with fewer than three scenes, voices and creatures (no GESTURES.md profile: the nearest class)
     cs_seto: 'elder', co_tomoe: 'craft', lf_toya: 'child', sa_ushio: 'elder', sa_tae: 'elder', fw_fumi: 'elder',
     echo: ['nonhuman', { sway: { every: [5000, 9000] } }], sg_clerk: 'nonhuman', sb_lampvoice: ['nonhuman', { sway: { every: [5000, 9000] } }], kr_hyakuwa: ['nonhuman', { sway: { every: [4000, 8000] } }],
+    // Kotonoha (P11): the keepers, the village, the sailor's echo, the Gardener
+    ko_otoha: 'elder', ko_nami: 'craft', ko_ao: 'child', ko_hamaji: 'craft', ko_mitsu: 'host', ko_tokio: 'scholar', ko_koyomi: 'keeper',
+    ko_nana: 'child', ko_yoshino: 'scholar', ko_kihei: ['traveller', { sway: { every: [5000, 9000] } }], ko_gardener: ['nonhuman', { sway: { every: [4500, 8500] } }],
     co_goat: 'nonhuman', co_warden: 'nonhuman', mochi: ['nonhuman', { blink: [3000, 6500], dbl: 0.25 }],
     sa_reader: 'scholar', // the Archive's reader (by role)
   };
@@ -112020,7 +112041,8 @@ RB.ui.stage = (function () {
  *      other way says why (an inscription vouches for what is carved and can still be read; a memory for what the
  *      person saw and is sure of; a rhyme for its words, not their order; a teller's scroll for the teller's
  *      tradition). Marks are never a gate.
- *   3. Act on it: put the things in order, or choose what to do. The sheet closes with the reading; the scene shows
+ *   3. Act on it: put the things in order, choose what to do, or (an exhibition) choose whose version each panel
+ *      shows, each pick explained. The sheet closes with the reading; the scene shows
  *      what happens (a wrong telling leads to a dead end that explains itself, never a trap).
  * In the test driver's automated runs the best supported reading is taken at once (no screen). */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -112047,6 +112069,7 @@ RB.ui.tellings = (function () {
     return new Promise((resolve) => {
       const marks = {}, read = {};
       let order = [], choice = null, shownEn = {};
+      const picks = {};
       const fr = RB.learnUi.sheet({ cls: 'activity tl-sheet', title: J(d.title.jp) + ' ' + esc(d.title.en) });
       const lay = { el: fr.scrim, name: 'tellings' };
       RB.learnUi.guardTaps(fr.leaf);
@@ -112078,6 +112101,16 @@ RB.ui.tellings = (function () {
           (cl ? '<ul class="tl-claims">' + cl + '</ul>' : '') + '</section>';
       }
       function actHtml() {
+        // an exhibition: for each panel, whose version it shows (none is wrong; each pick says what it means)
+        if (d.answer.kind === 'panels') {
+          const who = (sid) => d.sources.find((x) => x.id === sid) || { who: { jp: '', en: sid } };
+          return '<p>' + J(d.question.jp) + '<br><span class="muted">' + esc(d.question.en) + '</span></p>' + d.answer.panels.map((pn) => {
+            const k = pn.picks.find((x) => x.source === picks[pn.id]);
+            return '<fieldset class="tl-panel" data-p="' + esc(pn.id) + '"><legend>' + J(pn.jp) + ' <span class="tl-chipen">' + esc(pn.en) + '</span></legend><div class="tl-opts" role="radiogroup">' +
+              pn.picks.map((x) => '<button class="tl-pick" role="radio" data-p="' + esc(pn.id) + '" data-s="' + esc(x.source) + '" aria-checked="' + (picks[pn.id] === x.source) + '"><span class="tl-pwho">' + J(who(x.source).who.jp) + '</span> ' + J(x.jp) + '<span class="tl-chipen">' + esc(x.en) + '</span></button>').join('') +
+              '</div>' + (k && k.why ? '<p class="tl-pwhy" role="note">' + RB.learnUi.mixed(k.why.en) + '</p>' : '') + '</fieldset>';
+          }).join('');
+        }
         if (d.answer.kind === 'order') {
           const items = d.answer.items;
           const chips = items.map((x) => { const i = order.indexOf(x.id); return '<button class="tl-chip" data-x="' + esc(x.id) + '" aria-pressed="' + (i >= 0) + '">' + (i >= 0 ? '<span class="tl-n">' + (i + 1) + '</span>' : '') + J(x.jp) + ' <span class="tl-chipen">' + esc(x.en) + '</span></button>'; }).join('');
@@ -112089,11 +112122,12 @@ RB.ui.tellings = (function () {
           d.answer.options.map((o) => '<button class="tl-opt" role="radio" data-o="' + esc(o.id) + '" aria-checked="' + (choice === o.id) + '">' + J(o.jp) + '<span class="tl-chipen">' + esc(o.en) + '</span></button>').join('') + '</div>';
       }
       function render() {
-        const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : !!choice;
+        const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : d.answer.kind === 'panels' ? d.answer.panels.every((pn) => picks[pn.id]) : !!choice;
+        const goLabel = d.answer.kind === 'order' ? 'Light them in this order' : d.answer.kind === 'panels' ? 'Hang the panels' : 'Do it';
         fr.leaf.innerHTML = '<p class="tl-intro">Set the tellings side by side. Mark what each one can really vouch for, then act on what holds.</p>' +
           '<div class="tl-srcs">' + d.sources.map(sourceHtml).join('') + '</div>' +
           '<section class="tl-act" aria-label="Act on it"><h3>Act on it</h3>' + actHtml() + '</section>';
-        fr.foot.innerHTML = '<button class="pbtn tl-cancel">Come back later</button> <button class="pbtn primary tl-go"' + (ready ? '' : ' disabled') + '>' + (d.answer.kind === 'order' ? 'Light them in this order' : 'Do it') + '</button>';
+        fr.foot.innerHTML = '<button class="pbtn tl-cancel">Come back later</button> <button class="pbtn primary tl-go"' + (ready ? '' : ' disabled') + '>' + goLabel + '</button>';
       }
       async function onClick(e) {
         const b = e.target.closest('button');
@@ -112107,10 +112141,11 @@ RB.ui.tellings = (function () {
         }
         if (b.classList.contains('tl-chip')) { const x = b.dataset.x, i = order.indexOf(x); if (i >= 0) order = order.slice(0, i); else order.push(x); render(); focusSel('.tl-chip[data-x="' + x + '"]'); return; }
         if (b.classList.contains('tl-clear')) { order = []; render(); focusSel('.tl-chip'); return; }
+        if (b.classList.contains('tl-pick')) { picks[b.dataset.p] = b.dataset.s; render(); focusSel('.tl-pick[data-p="' + b.dataset.p + '"][data-s="' + b.dataset.s + '"]'); return; }
         if (b.classList.contains('tl-opt')) { choice = b.dataset.o; render(); focusSel('.tl-opt[data-o="' + choice + '"]'); return; }
         if (b.classList.contains('tl-cancel')) { finish({ cancelled: true }); return; }
         if (b.classList.contains('tl-go')) {
-          const r = T.judge(d, d.answer.kind === 'order' ? order : choice);
+          const r = T.judge(d, d.answer.kind === 'order' ? order : d.answer.kind === 'panels' ? picks : choice);
           r.marks = Object.assign({}, marks);
           finish(r);
         }
@@ -135150,7 +135185,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     npcs: [],
     exits: [
       { x: 0, y: 12, w: 1, h: 2, to: 'sb.road', sp: 'from_next', dir: 'left' },
-      { x: 24, y: 0, w: 2, h: 1, to: 'sa.road', sp: 'from_prev', dir: 'up', if: 'ch5_done' },
+      { x: 24, y: 0, w: 2, h: 1, to: 'sa.road', sp: 'from_prev', dir: 'up', if: 'ch5_done&!ed>=2|yn_done' },
       { x: 35, y: 12, w: 1, h: 2, to: 'lf.town', tx: 1, ty: 17, dir: 'right' },
     ],
     triggers: [
@@ -137485,7 +137520,8 @@ lf_masaru: {賛成|さんせい} ！ {行|い}って {文句|もんく} を {言
 !gesture lf_yae celebrate
 lf_yae[laugh]: {賛成|さんせい} {一|ひと}つ 、{反対|はんたい} {一|ひと}つ 。…… よろしい 。{議会|ぎかい} が {戻|もど}って きた 。|| One for, one against. …Good. The council is back.
 !gesture lf_yae palm pc
-lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、{名前|なまえ} が {戻|もど}って いる はず です 。{書庫|しょこ} へ の {道|みち} は {開|ひら}いた 。|| $name. The lantern on the mountain road should have its name back. The way to the Archive is open.
+?(ed<2) lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、{名前|なまえ} が {戻|もど}って いる はず です 。{書庫|しょこ} へ の {道|みち} は {開|ひら}いた 。|| $name. The lantern on the mountain road should have its name back. The way to the Archive is open.
+?(ed>=2) lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、{名前|なまえ} が {戻|もど}って いる はず です 。…… でも 、{書庫|しょこ} は {遠|とお}い 。{上|うえ} の {道|みち} は 、まだ {霧|きり} の {中|なか} でしょう 。|| $name. The lantern on the mountain road should have its name back. …But the Archive is far, and the road above it will still be in mist.
 lf_yae: {行|い}く か どう か は 、あなた が {決|き}めなさい 。ここ に は もう 、「かしこまりました」 と {言|い}う {者|もの} は いません から ね 。|| Whether to go is for you to decide. There's no one left here who'll just say "certainly".
 !gesture lf_yae present pc prop=book
 lf_yae[sad]: …… もし カサネ に {会|あ}ったら 、{伝|つた}えて ちょうだい 。{議事録|ぎじろく} に は 、あなた の {反論|はんろん} も 、トウヤ の {異議|いぎ} も 、ちゃんと {残|のこ}って いた と 。|| …If you meet Kasane, tell them this. The minutes kept both — their counter-argument, and Tōya's objection. Both, properly recorded.
@@ -137507,8 +137543,10 @@ lf_yae[sad]: …… もし カサネ に {会|あ}ったら 、{伝|つた}え�
 !quest lf_main done
 !set ch5_done
 !travel lanternfall
-!journal {書庫|しょこ} へ の {道|みち} が {開|ひら}いた 。{灯落|ひおち} の {上|うえ} の {分|わ}かれ{道|みち} から {山|やま} へ {登|のぼ}れる 。|| The road to the Still Archive is open: take the north fork on the Lantern Road above Lanternfall.
-!toast {静寂|しじま} の {書庫|しょこ} へ の {道|みち} が {開|ひら}いた || The road to the Still Archive is open (north fork, above town).
+?(ed<2) !journal {書庫|しょこ} へ の {道|みち} が {開|ひら}いた 。{灯落|ひおち} の {上|うえ} の {分|わ}かれ{道|みち} から {山|やま} へ {登|のぼ}れる 。|| The road to the Still Archive is open: take the north fork on the Lantern Road above Lanternfall.
+?(ed<2) !toast {静寂|しじま} の {書庫|しょこ} へ の {道|みち} が {開|ひら}いた || The road to the Still Archive is open (north fork, above town).
+# a twelve-chapter journey goes to sea next (Chapter 9, Kotonoha; expansion P11): a letter from Saltglass
+?(ed>=2) !call ko.call
 !autosave
 !end
 :later
@@ -148998,6 +149036,32 @@ RB.dialect.add('kansai', `
 `, 'kansai_95_kr.js');
 
 
+/* ==== src/content/dialect/kansai_96_ko.js ==== */
+/* Suzu's Kansai-ben: Lanternfall's end and Kotonoha, Chapters 8–9 of a twelve-chapter journey (expansion P11). The
+ * north fork in mist, the letter from Saltglass, the crossing, the island.
+ * Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md.
+ * "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.dialect.add('kansai', `
+@ lf2 [lf.road_north_mist]
+= {幕|まく} は まだ {上|あ}がらない みたい ね 。 {最終|さいしゅう} {幕|まく} の {前|まえ} に 、 {別|べつ} の {幕|まく} が ある の よ 。 || The curtain's not going up yet, it seems. There's another act before the last one.
+> {幕|まく} は まだ {上|あ}がらへん みたい や な 。 {最終|さいしゅう} {幕|まく} の {前|まえ} に 、 {別|べつ} の {幕|まく} が ある ねん 。 || The curtain's not going up yet, it seems. There's another act before the last one.
+@ ko/arrive [ko.call]
+= 「{港長|こうちょう} オウミ」 。 …… あの {人|ひと} が {頼|たの}み{事|ごと} の {手紙|てがみ} を {書|か}く なんて ね 。 {次|つぎ} の {幕|まく} は {海|うみ} の {上|うえ} よ 。 || "Ōmi, Harbourmaster." …Her, writing a letter asking for help. The next act's out at sea.
+> 「{港長|こうちょう} オウミ」 。 …… あの {人|ひと} が {頼|たの}み{事|ごと} の {手紙|てがみ} を {書|か}く なんて な 。 {次|つぎ} の {幕|まく} は {海|うみ} の {上|うえ} や で 。 || "Ōmi, Harbourmaster." …Her, writing a letter asking for help. The next act's out at sea.
+@ ko/arrive [ko.ferry_tetsu]
+= {島|しま} へ {渡|わた}る {船旅|ふなたび} ！ {舞台|ぶたい} が {海|うみ} の {上|うえ} に {移|うつ}る わけ ね 。 || A voyage out to an island! The stage moves out to sea.
+> {島|しま} へ {渡|わた}る {船旅|ふなたび} や ！ {舞台|ぶたい} が {海|うみ} の {上|うえ} に {移|うつ}る わけ や な 。 || A voyage out to an island! The stage moves out to sea.
+@ ko/arrive [ko.first_sight]
+= {紙吹雪|かみふぶき} みたい ね 。 …… {拍手|はくしゅ} の {代|か}わり に 、 {言葉|ことば} が {降|ふ}って くる {舞台|ぶたい} 。 || Like a shower of paper confetti. …A stage where words come down instead of applause.
+> {紙吹雪|かみふぶき} みたい や な 。 …… {拍手|はくしゅ} の {代|か}わり に 、 {言葉|ことば} が {降|ふ}って くる {舞台|ぶたい} や 。 || Like a shower of paper confetti. …A stage where words come down instead of applause.
+@ ko/arrive [ko.begin]
+= {裏方|うらかた} が {足|た}りない {舞台|ぶたい} ね 。 {任|まか}せて 。 {人手|ひとで} なら 、 ここ に {二人|ふたり} いる わ 。 || A show that's short of stagehands. Leave it to us. There are two pairs of hands right here.
+> {裏方|うらかた} が {足|た}りへん {舞台|ぶたい} や な 。 {任|まか}せとき 。 {人手|ひとで} なら 、 ここ に {二人|ふたり} おる で 。 || A show that's short of stagehands. Leave it to us. There are two pairs of hands right here.
+`);
+
+
 /* ==== src/content/discovery/00_lex.js ==== */
 /* Lexicon for field discovery: the Mill Road repair, the field puzzles F1-F6,
  * field weaving and the Roadside Keepsakes. Format: w|r|pos|lv|meaning|note
@@ -153640,6 +153704,632 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })(RB.fishing);
 
 
+/* ==== src/content/ko/00_lex.js ==== */
+/* Kotonoha, Chapter 9 lexicon (expansion P11): the island, its keepers and its tree; the sea crossing. Format:
+ * w|r|pos|lv|meaning|note (docs/CONTENT.md). Fictional names and creatures are marked as such. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.lex.add(RB.lex.parseTable(`
+# ---- the island and its keepers ---------------------------------------------------------------------------------
+言の葉島|ことのはじま|name|F|Kotonoha, the Isle of Word-Leaves (fictional place)
+言の葉|ことのは|n|A|(literary) words; poems ("leaves of words")|A classical word: the Kokinshū's preface (905) says poems grow from the heart as seed into myriad leaves of words.
+葉守|はもり|n|I|leaf-keeper (the island's keepers; this game's use of an old word)|In old poetry 葉守の神 is the god said to dwell in trees and guard their leaves; the island's keepers are the game's own.
+庭守|にわもり|n|A|a garden-keeper (this game's title for a spirit)
+第九章|だいきゅうしょう|n|E|Chapter Nine
+# ---- the crossing and the shore ----------------------------------------------------------------------------------
+船旅|ふなたび|n|E|a voyage, a journey by sea
+砂浜|すなはま|n|E|a sandy beach
+郵便屋|ゆうびんや|n|E|a postman, a courier (casual)
+`));
+
+
+/* ==== src/content/ko/01_region.js ==== */
+/* Kotonoha (言の葉島), the Isle of Word-Leaves, the region (expansion P11; plan 07_REGIONS.md R4;
+ * docs/future/work/P11_SEA.md): the island where lost words wash up as leaves, Chapter 9 of a twelve-chapter journey.
+ * Reached by Tetsu's public ferry from Saltglass once Lanternfall is over (`ch5_done`), or earlier by the player's own
+ * boat (src/content/sea/). Here: its palette (sea-glass teal, leaf gold, moonlit silver, ink black; softer and dreamier
+ * than anywhere else), its place on the route chart, the ferry's route and Tetsu's new line on the board. The maps,
+ * people and story are in the other files of this folder. Nothing here appears in a six-chapter journey. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const TL = RB.tiles;
+  // sea-glass and teal water, pale sand, leaf gold, silvered stone, the camphor's deep green; ink-black shadows
+  TL.PAL.kotonoha = {
+    grass: ['#7aa88a', '#8ab896', '#a0c8a6', '#5e8e70'], dirt: ['#bcae90', '#ccc0a2', '#a29476', '#dcd2b8'],
+    stone: ['#a8b0b2', '#c2c8c8', '#868e92'], water: ['#3e8a8e', '#4a9a9c', '#6cb4b0', '#e0f2ee'],
+    sand: ['#e2dac2', '#eee8d4', '#cac0a2'], wood: ['#8a7058', '#a2866a', '#6a5440', '#c0a482'],
+    leaf: ['#3e6e52', '#4e8460', '#6aa078', '#2c5440'], trunk: ['#6a5a4a', '#4a3e34'],
+    flower: ['#f2e6b0', '#e8c060', '#d0e4ec', '#f4f0e0'], reed: ['#9ab88e', '#b8ceaa', '#7a9670'],
+    wall: ['#e6e4da', '#d0cec4', '#b0aea4'], floor: ['#9c8a70', '#887660', '#74644e'], roof: ['#4a5a5e', '#3a484c', '#2a3438', '#6a7a7e'],
+    snow: ['#eef3f4', '#d8e4e6', '#bccacc'], sky: '#dcecea', dark: '#121a1e',
+  };
+  TL.addRamps(TL.PAL.kotonoha);
+
+  C.places.kotonoha = {
+    name: { en: 'Kotonoha', jp: '{言|こと}の{葉|は}{島|じま}' }, map: 'ko.shore', x: 20, y: 22, dir: 'up', pos: [64, 302], region: 'kotonoha', hub: true,
+    desc: 'The Isle of Word-Leaves, out to sea west of Saltglass, where lost words wash up.', edition: 2,
+  };
+  // the ferry's route out to the island (the scenes that sail are named for the chart's check); the own boat's routes
+  // are the sea chart's (src/content/sea/)
+  C.roads.push(['saltglass', 'kotonoha', { sea: true, edition: 2, if: 'ch5_done|ko_arrived', ferry: ['ko.ferry_out', 'ko.ferry_back'] }]);
+
+  // Saltglass: Tetsu's board has a second new line once Lanternfall is over (twelve-chapter journeys). His talk is
+  // read in order, so the island's entries go before Manybridge's
+  const sg = C.maps['sg.harbor'];
+  const tetsu = sg && sg.npcs.find((n) => n.id === 'tetsu');
+  if (tetsu) {
+    const at = tetsu.talk.findIndex((t) => t.scene === 'mb.ferry_tetsu');
+    tetsu.talk.splice(at < 0 ? 0 : at, 0,
+      { if: 'ed>=2&ch5_done&!ko_arrived', scene: 'ko.ferry_tetsu' },
+      { if: 'ed>=2&ko_arrived&!post', scene: 'ko.ferry_tetsu_again' });
+  }
+})(RB.content);
+
+
+/* ==== src/content/ko/02_art.js ==== */
+/* Kotonoha's props (expansion P11): a drift of written leaves on the sand, a keeper's gathering basket, a stone
+ * lantern half-buried in sand (dark or lit), a great conch on its rock, the great camphor's trunk among its roots, an
+ * exhibition panel in the keepers' hall (blank, or showing the telling chosen for it), a rack of drying nets, the tide
+ * calendar's standing stone, a tangle of roots across a passage in the Root Hollows, and a current of drifting leaves.
+ * Each has a flat 16-px drawing (the fallback, as every prop) and its art-resolution version in the world's prop style
+ * (light from the upper left, hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow).
+ * Interim regional assets under AC-1 (C-82): finished in the art pass (P16). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.props.P;
+  const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
+  const still = () => RB.game && RB.game.reducedMotion && RB.game.reducedMotion();
+  const GOLD = ['#7a5a1e', '#a8822e', '#d0a844', '#e8c868', '#f6e6a4'];
+  const INKS = ['#2a2434', '#3a3048', '#4a4060'];
+
+  // ---- flat fallbacks (16 px a tile) -------------------------------------------------------------------------------
+  def('ko_leaves', { w: 2, block: false }, (c, x, y) => {
+    for (const [lx, ly] of [[2, 10], [7, 12], [12, 9], [17, 11], [22, 13], [27, 10]]) { px(c, x + lx, y + ly, 4, 2, GOLD[2]); px(c, x + lx + 1, y + ly, 1, 1, INKS[0]); }
+  });
+  def('ko_basket', {}, (c, x, y, p) => {
+    px(c, x + 3, y + 6, 10, 8, p.wood[3]); px(c, x + 3, y + 6, 10, 1, p.wood[2]);
+    for (let i = 0; i < 4; i++) px(c, x + 4 + i * 2, y + 3 + (i % 2), 2, 3, GOLD[2 + (i % 2)]);
+  });
+  def('ko_sandtoro', {}, (c, x, y, p, t, o) => {
+    px(c, x + 2, y + 10, 12, 5, p.sand[0]); px(c, x + 4, y + 2, 8, 8, p.stone[1]); px(c, x + 2, y - 1, 12, 3, p.stone[2]);
+    px(c, x + 6, y + 4, 4, 3, o && o.lit ? '#ffc870' : '#2a2a2e');
+  });
+  def('ko_conch', {}, (c, x, y, p) => {
+    px(c, x + 1, y + 10, 14, 5, p.stone[2]); px(c, x + 3, y + 3, 10, 7, '#e8d4c0'); px(c, x + 5, y + 4, 6, 4, '#d89a8a'); px(c, x + 11, y + 2, 3, 3, '#e8d4c0');
+  });
+  def('ko_camphor', { w: 4 }, (c, x, y, p) => {
+    px(c, x + 14, y - 40, 36, 54, p.trunk[0]); px(c, x + 14, y - 40, 8, 54, p.trunk[1]);
+    px(c, x, y + 8, 64, 6, p.trunk[1]); px(c, x + 4, y - 56, 56, 18, p.leaf[0]);
+  });
+  def('ko_panel', {}, (c, x, y, p, t, o) => {
+    px(c, x + 2, y - 8, 12, 18, p.wood[2]); px(c, x + 3, y - 7, 10, 14, '#ebe3ca');
+    if (o && o.v) px(c, x + 5, y - 4, 6, 6, ['#6a9a8a', '#c88a5a', '#8a7ab0', '#5a7a9a'][(o.v - 1) % 4]);
+    px(c, x + 3, y + 10, 2, 5, p.wood[2]); px(c, x + 11, y + 10, 2, 5, p.wood[2]);
+  });
+  def('ko_netrack', { w: 2 }, (c, x, y, p) => {
+    px(c, x + 2, y - 4, 2, 18, p.wood[2]); px(c, x + 28, y - 4, 2, 18, p.wood[2]); px(c, x + 2, y - 4, 28, 2, p.wood[1]);
+    for (let i = 0; i < 6; i++) px(c, x + 5 + i * 4, y - 2, 1, 12, '#8a9a8a');
+  });
+  def('ko_tidestone', {}, (c, x, y, p) => {
+    px(c, x + 4, y - 8, 8, 22, p.stone[1]); px(c, x + 5, y - 4, 6, 6, p.stone[2]); px(c, x + 6, y - 3, 3, 4, '#e8eef0');
+  });
+  def('ko_rootarch', { w: 2 }, (c, x, y, p) => {
+    for (let i = 0; i < 5; i++) px(c, x + 2 + i * 6, y - 6 + (i % 2) * 4, 5, 20, p.trunk[i % 2]);
+  });
+  def('ko_current', { block: false }, (c, x, y, p, t) => {
+    const k = still() ? 0 : Math.floor((t || 0) / 200) % 4;
+    for (let i = 0; i < 3; i++) px(c, x + 4 + ((i * 5 + k * 2) % 9), y + 12 - i * 5 - k, 3, 2, GOLD[3]);
+  });
+
+  // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
+  if (!RB.propArt || !RB.propKit) return;
+  const K = RB.propKit, art = RB.propArt.art;
+  const { R, ell, poly, line } = K;
+  const PP = K.FIX.paper, GL = K.FIX.glow, ST = K.FIX.straw, IK = K.FIX.ink;
+  const SHELL = ['#7e5a50', '#b88272', '#dcae9a', '#f0d6c4', '#fbefe4'];
+  const MOSS = ['#24402e', '#2e5238', '#40684a', '#5a8460', '#78a07a'];
+  // one written leaf: a little almond of gold with a stroke of ink along it
+  const leaf = (g, x, y, a, shade) => {
+    const c = GOLD[shade == null ? 2 : shade];
+    if (a) { poly(g, [[x, y + 2], [x + 3, y], [x + 7, y + 1], [x + 4, y + 3]], c); R(g, x + 2, y + 1, 3, 1, IK[2]); }
+    else { poly(g, [[x, y + 1], [x + 4, y - 1], [x + 7, y + 1], [x + 3, y + 3]], c); R(g, x + 2, y + 1, 3, 1, IK[3]); }
+  };
+
+  // A drift of written leaves (2×1), lying on the sand; nothing to step around.
+  art('ko_leaves', {
+    box: [0, 0, 64, 32],
+    draw(g) {
+      const at = [[4, 14, 0, 1], [11, 18, 1, 2], [18, 13, 1, 3], [26, 19, 0, 2], [33, 15, 1, 1], [40, 20, 0, 3], [47, 14, 1, 2], [54, 18, 0, 2], [15, 22, 0, 4], [37, 9, 1, 3]];
+      for (const [x, y, a, s] of at) { R(g, x + 1, y + 4, 6, 1, 'rgba(40,30,20,0.18)'); leaf(g, x, y, a, s); }
+    },
+  });
+
+  // A keeper's gathering basket: woven bamboo heaped with written leaves.
+  art('ko_basket', {
+    box: [-2, -12, 36, 44],
+    ink: true,
+    shadow: () => [16, 28, 11, 3, 0.28],
+    draw(g, M) {
+      const w5 = M.wood;
+      poly(g, [[5, 8], [27, 8], [25, 26], [7, 26]], ST[1]);
+      for (let y = 10; y < 26; y += 3) R(g, 6, y, 20, 1, ST[0]);
+      for (let x = 8; x < 26; x += 4) R(g, x, 9, 1, 16, ST[2]);
+      R(g, 5, 7, 22, 2, ST[3]); R(g, 5, 7, 22, 1, ST[4]);
+      for (const [x, y, a, s] of [[6, 1, 0, 3], [12, -2, 1, 2], [18, 0, 0, 4], [10, 4, 1, 1], [20, 4, 0, 2]]) leaf(g, x, y, a, s);
+      line(g, 6, 8, 16, -6, w5[2], 1); line(g, 16, -6, 26, 8, w5[2], 1);
+    },
+  });
+
+  // A stone lantern half-buried in sand: the post gone under, the fire box and the hat leaning a little. Dark, or lit
+  // once a companion has found its name (the lit instance's `light` gives the glow around it).
+  art('ko_sandtoro', {
+    box: [-6, -28, 44, 64],
+    v: (o) => (o.lit ? 1 : 0),
+    f: (t, o) => (o.lit && !(o.still || still()) ? Math.floor(t / 340) % 3 : 0),
+    ink: true,
+    shadow: () => [16, 28, 13, 3, 0.25],
+    draw(g, M, v, f) {
+      const S = M.stone;
+      // the drift of sand around it
+      ell(g, 16, 24, 15, 5, '#cac0a2'); ell(g, 14, 23, 11, 3, '#e2dac2');
+      // the fire box, buried to its sill
+      R(g, 7, 2, 18, 18, S[2]); R(g, 7, 2, 18, 2, S[3]); R(g, 24, 2, 1, 18, S[0]);
+      if (v) { const fl = [GL[3], GL[4], GL[3]][f]; R(g, 11, 6, 10, 9, GL[1]); R(g, 12, 7, 8, 7, GL[2]); R(g, 14, 8, 4, 5, fl); }
+      else { R(g, 11, 6, 10, 9, '#1a1a1e'); R(g, 12, 7, 8, 1, '#2a2a30'); }
+      // the hat, tilted
+      poly(g, [[0, 2], [15, -10], [31, 0], [27, 3], [4, 4]], S[2]); poly(g, [[2, 2], [15, -9], [15, 2]], S[3]);
+      ell(g, 16, -12, 3, 3, S[2]);
+      // sand on the hat and a written leaf caught in it
+      R(g, 5, 1, 8, 2, '#e2dac2'); leaf(g, 19, -4, 1, 3);
+      R(g, 6, 18, 5, 2, MOSS[2]);
+    },
+  });
+
+  // A great conch on a flat rock, its mouth turned to the sea. The shells hold fragments of what was said.
+  art('ko_conch', {
+    box: [-4, -16, 40, 52],
+    ink: true,
+    shadow: () => [16, 30, 13, 3, 0.28],
+    draw(g, M) {
+      const S = M.stone;
+      ell(g, 16, 24, 14, 6, S[1]); ell(g, 14, 22, 10, 3, S[3]);
+      // the spire and body
+      poly(g, [[22, -10], [28, 2], [26, 14], [8, 18], [4, 10], [10, 2]], SHELL[2]);
+      for (const [x0, y0, x1, y1] of [[10, 4, 26, 2], [7, 10, 27, 8], [8, 15, 25, 13]]) line(g, x0, y0, x1, y1, SHELL[1], 1);
+      poly(g, [[22, -10], [26, -2], [20, -2]], SHELL[3]);
+      // the mouth, pink inside
+      ell(g, 10, 12, 5, 5, SHELL[4]); ell(g, 11, 12, 3, 3, '#e4a49a'); ell(g, 12, 13, 1, 2, '#c87c78');
+      R(g, 15, 0, 6, 1, SHELL[3]);
+    },
+  });
+
+  // The great camphor (4×1, the trunk's foot): a vast fluted trunk going up out of the frame, buttress roots running
+  // out over the ground, a sacred rope round it with paper streamers, written leaves caught in the bark.
+  art('ko_camphor', {
+    box: [-12, -150, 152, 190],
+    ink: true,
+    shadow: () => [64, 30, 62, 6, 0.32],
+    draw(g, M) {
+      const tr = M.trunk, lf = M.leaf;
+      // canopy shade at the top of the frame
+      for (const [x, y, rx, ry, k] of [[20, -136, 34, 16, 1], [70, -142, 44, 18, 2], [114, -132, 30, 14, 1], [46, -122, 30, 12, 3], [96, -120, 28, 12, 3]]) ell(g, x, y, rx, ry, lf[k]);
+      // the trunk
+      poly(g, [[34, -120], [94, -120], [104, 10], [24, 10]], tr[2]);
+      poly(g, [[34, -120], [52, -120], [44, 10], [24, 10]], tr[3]);
+      poly(g, [[82, -120], [94, -120], [104, 10], [92, 10]], tr[1]);
+      for (const x of [48, 58, 70, 80]) line(g, x, -116, x + (x - 64) / 6, 8, tr[1], 2);
+      // buttress roots
+      poly(g, [[24, 0], [0, 26], [10, 28], [34, 8]], tr[2]); poly(g, [[104, 0], [128, 24], [118, 28], [94, 8]], tr[1]);
+      poly(g, [[50, 6], [42, 30], [54, 30], [60, 8]], tr[2]); poly(g, [[80, 6], [86, 30], [96, 28], [88, 6]], tr[1]);
+      for (const [x, y] of [[4, 24], [44, 28], [90, 26], [120, 24]]) R(g, x, y, 8, 2, MOSS[2]);
+      // the sacred rope and streamers
+      line(g, 26, -48, 102, -44, ST[2], 4); line(g, 26, -47, 102, -43, ST[3], 1);
+      for (let i = 0; i < 5; i++) { const x = 36 + i * 14; poly(g, [[x, -45], [x + 4, -45], [x + 2, -38], [x + 5, -38], [x + 2, -31], [x, -31]], PP[4]); }
+      // leaves caught in the bark
+      for (const [x, y, a, s] of [[40, -90, 0, 3], [72, -70, 1, 2], [60, -20, 0, 4], [86, -100, 1, 3], [46, -10, 1, 2]]) leaf(g, x, y, a, s);
+    },
+  });
+
+  // An exhibition panel on its stand in the keepers' hall: blank, or painted with the telling chosen for it (o.v 1–4:
+  // the keepers', the boatwoman's, the net-mender's, the shell's).
+  const PANEL = [null, ['#4e8a7a', '#8ac0a8'], ['#c0703e', '#e8b070'], ['#5a6ab0', '#a0a8e0'], ['#4a6a8a', '#e8d4c0']];
+  art('ko_panel', {
+    box: [-4, -40, 40, 76],
+    v: (o) => Math.max(0, Math.min(4, o.v || 0)),
+    ink: true,
+    shadow: () => [16, 30, 11, 3, 0.25],
+    draw(g, M, v) {
+      const w5 = M.wood;
+      R(g, 6, 14, 3, 16, w5[1]); R(g, 23, 14, 3, 16, w5[1]);
+      R(g, 2, -34, 28, 48, w5[2]); R(g, 4, -32, 24, 44, PP[3]); R(g, 4, -32, 24, 2, PP[4]);
+      if (v) {
+        const [a, b] = PANEL[v];
+        ell(g, 16, -14, 9, 9, b); ell(g, 14, -16, 5, 4, a);
+        if (v === 1) { R(g, 15, -10, 2, 10, '#6a5a4a'); ell(g, 16, -16, 7, 4, '#3e6e52'); }
+        if (v === 2) { poly(g, [[8, -8], [24, -8], [20, -4], [12, -4]], '#6a5440'); R(g, 15, -22, 1, 14, '#6a5440'); poly(g, [[16, -22], [23, -12], [16, -12]], PP[4]); }
+        if (v === 3) { line(g, 8, -6, 14, -14, '#3a4a7a', 2); line(g, 14, -14, 20, -8, '#3a4a7a', 2); line(g, 20, -8, 25, -18, '#3a4a7a', 2); }
+        if (v === 4) { poly(g, [[12, -20], [22, -12], [12, -6], [9, -12]], '#e8d4c0'); ell(g, 12, -11, 2, 3, '#d89a8a'); }
+        for (let i = 0; i < 3; i++) R(g, 8, 2 + i * 3, 16 - i * 4, 1, IK[3]);
+      } else for (let i = 0; i < 3; i++) R(g, 8, -24 + i * 6, 16, 1, PP[1]);
+    },
+  });
+
+  // A rack of nets drying (2×1): two posts, a pole, the nets hanging with their floats.
+  art('ko_netrack', {
+    box: [-4, -28, 72, 64],
+    ink: true,
+    shadow: () => [32, 30, 28, 3, 0.25],
+    draw(g, M) {
+      const w5 = M.wood;
+      R(g, 4, -20, 3, 50, w5[2]); R(g, 57, -20, 3, 50, w5[2]); R(g, 2, -22, 60, 3, w5[3]);
+      for (let x = 8; x < 56; x += 3) line(g, x, -19, x + ((x / 3) % 2 ? 1 : -1), 16, '#7a8e86', 1);
+      for (let y = -16; y < 16; y += 4) line(g, 8, y, 56, y + 1, '#6a7e76', 1);
+      for (const x of [12, 24, 36, 48]) ell(g, x, -16, 2, 2, '#d8a848');
+    },
+  });
+
+  // The tide calendar's standing stone: a pillar with the moon's phases cut round a disc.
+  art('ko_tidestone', {
+    box: [-4, -44, 40, 80],
+    ink: true,
+    shadow: () => [16, 30, 11, 3, 0.28],
+    draw(g, M) {
+      const S = M.stone;
+      R(g, 6, -38, 20, 66, S[2]); R(g, 6, -38, 5, 66, S[3]); R(g, 25, -38, 1, 66, S[0]);
+      poly(g, [[6, -38], [16, -44], [26, -38]], S[3]);
+      ell(g, 16, -18, 8, 8, S[1]); ell(g, 16, -18, 6, 6, '#e8eef0'); ell(g, 18, -18, 5, 6, S[1]);
+      for (const [x, y] of [[16, -30], [26, -18], [16, -6], [6, -18]]) R(g, x - 1, y - 1, 2, 2, S[0]);
+      R(g, 8, 24, 8, 2, MOSS[2]);
+    },
+  });
+
+  // A tangle of roots across a passage in the Root Hollows (2×1). It gives way when the passage's leaf has its word
+  // back (the open passage has no prop).
+  art('ko_rootarch', {
+    box: [-4, -36, 72, 72],
+    ink: true,
+    draw(g, M) {
+      const tr = M.trunk;
+      for (const [x0, y0, x1, y1, w, k] of [[2, -30, 30, 28, 6, 2], [62, -30, 34, 28, 6, 1], [16, -34, 48, 26, 5, 3], [44, -32, 14, 26, 5, 2], [0, 4, 64, 8, 4, 1]]) line(g, x0, y0, x1, y1, tr[k], w);
+      for (const [x, y] of [[10, -10], [50, -14], [30, 6]]) leaf(g, x, y, 1, 3);
+      for (const [x, y] of [[6, 22], [40, 24]]) R(g, x, y, 10, 2, MOSS[2]);
+    },
+  });
+
+  // A current of drifting leaves: three written leaves rising and turning in the air (stands still with reduced
+  // motion).
+  art('ko_current', {
+    box: [0, -32, 32, 64],
+    f: (t, o) => (o.still || still() ? 0 : Math.floor(t / 180) % 8),
+    draw(g, M, v, f) {
+      for (let i = 0; i < 3; i++) {
+        const k = (f + i * 3) % 8;
+        leaf(g, 6 + ((i * 9 + k * 2) % 18), 22 - i * 16 - k * 2, (k + i) % 2, 2 + (i % 3));
+      }
+    },
+  });
+})();
+
+
+/* ==== src/content/ko/05_data.js ==== */
+/* Kotonoha, Chapter 9: the people (expansion P11; docs/future/work/P11_SEA.md). The island's leaf-keepers (葉守,
+ * hamori: the game's name for them, taken from a real old word; see the lore entry in 30_learning.js) and their
+ * village: Otoha, the eldest keeper; Nami, keeper and boatwoman, who crossed to Saltglass to ask for help; Ao, the
+ * apprentice who gathers leaves he cannot read; Hamaji the net-mender; Mitsu, who keeps the lodging house; Tokio, who
+ * keeps the keepers' census; Koyomi, who keeps the tide calendar; Nana, a child of the village; Yoshino, who teaches the
+ * village children; the lost sailor's echo; and the Gardener of Unsent Words, deep in the roots. They speak standard
+ * Japanese in their own registers (Otoha's has an old, literary turn at the A profile); Suzu's lines have her Kansai
+ * versions as everywhere. Pronouns: Otoha, Nami, Mitsu, Koyomi, Nana, Yoshino she/her; Ao, Hamaji, Tokio, Kihei he/him;
+ * the Gardener it. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const ch = (id, d) => (C.chars[id] = d);
+  // Otoha: the eldest keeper. Very old, very straight-backed; a shawl the colour of dry leaves; listens a long time
+  // before she answers, and answers with a question as often as not.
+  ch('ko_otoha', {
+    name: { en: 'Otoha', jp: 'オトハ' }, voice: { pitch: 0.7 },
+    look: { skin: 1, hair: 'bun', hairColor: 6, cloth: ['#8a7a4a', '#6e6038', '#e8dcb0'], shape: 'robe', acc: ['cane'], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'bun', age: 'old', collar: 'high', bg: '#1e2622' },
+  });
+  // Nami: keeper and the island's boatwoman. Sun-browned, quick, says what she means; a string of sea-glass beads.
+  ch('ko_nami', {
+    name: { en: 'Nami', jp: 'ナミ' }, voice: { pitch: 1.0 },
+    look: { skin: 4, hair: 'ponytail', hairColor: 1, cloth: ['#3e7a7a', '#2e5e5e', '#e6d6a8'], pants: '#3a4448', shape: 'tunic', acc: ['headband'], bandCol: '#d8c070' },
+    portrait: { eyes: 'sharp', style: 'ponytail', acc: [], collar: 'open', bg: '#1c3030' },
+  });
+  // Ao: the apprentice. Eleven, all elbows, gathers more leaves than anyone and cannot read one of them; ashamed of
+  // it and pretends not to be.
+  ch('ko_ao', {
+    name: { en: 'Ao', jp: 'アオ' }, voice: { pitch: 1.3 }, size: 'child',
+    look: { skin: 3, hair: 'spiky', hairColor: 0, cloth: ['#5a8a9a', '#46707e', '#e8e0c8'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'spiky', bg: '#1e2c34' },
+  });
+  // Hamaji: an old net-mender who has fished these waters sixty years; tells the island's story with a sea serpent.
+  ch('ko_hamaji', {
+    name: { en: 'Hamaji', jp: 'ハマジ' }, voice: { pitch: 0.68 },
+    look: { skin: 4, hair: 'shaved', hairColor: 5, cloth: ['#4a5e6e', '#3a4a58', '#c8b088'], shape: 'coat', acc: ['beard'], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', beard: '#d8d4cc', age: 'old', bg: '#1e262c' },
+  });
+  // Mitsu: keeps the lodging house by the shore; brisk and motherly, feeds everyone who lands.
+  ch('ko_mitsu', {
+    name: { en: 'Mitsu', jp: 'ミツ' }, voice: { pitch: 1.05 },
+    look: { skin: 2, hair: 'wrap', wrapCol: '#d8b860', hairColor: 2, cloth: ['#a87a4a', '#8a6038', '#f0e4c8'], shape: 'apron', acc: [] },
+    portrait: { eyes: 'soft', style: 'wrap', wrapCol: '#d8b860', collar: 'apron', blush: true, bg: '#2c2418' },
+  });
+  // Tokio: keeps the keepers' census, the count of every leaf gathered; fussy, honest, behind on his count.
+  ch('ko_tokio', {
+    name: { en: 'Tokio', jp: 'トキオ' }, voice: { pitch: 0.9 },
+    look: { skin: 1, hair: 'short', hairColor: 3, cloth: ['#6a6a5a', '#545446', '#dcd4bc'], shape: 'tunic', acc: ['glasses', 'book'] },
+    portrait: { eyes: 'soft', style: 'short', parted: true, acc: ['glasses', 'pencil'], bg: '#26261e' },
+  });
+  // Koyomi: keeps the tide calendar, a ring of stones on the point; reads the moon better than any book.
+  ch('ko_koyomi', {
+    name: { en: 'Koyomi', jp: 'コヨミ' }, voice: { pitch: 0.95 },
+    look: { skin: 3, hair: 'braid', hairColor: 4, cloth: ['#4a5a7a', '#3a4862', '#d8d8e8'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'soft', style: 'braid', collar: 'high', iris: '#3a4a6a', bg: '#1c2230' },
+  });
+  // Nana: eight, Ao's shadow, can read a little and is very proud of it.
+  ch('ko_nana', {
+    name: { en: 'Nana', jp: 'ナナ' }, voice: { pitch: 1.4 }, size: 'child',
+    look: { skin: 2, hair: 'twintails', hairColor: 1, cloth: ['#d88a6a', '#b86e52', '#f4e8d0'], shape: 'dress', acc: ['ribbon'] },
+    portrait: { eyes: 'round', style: 'twintails', acc: ['ribbon'], blush: true, bg: '#2e2420' },
+  });
+  // Yoshino: teaches the village's six children in the keepers' hall in the mornings; patient, a little tired.
+  ch('ko_yoshino', {
+    name: { en: 'Yoshino', jp: 'ヨシノ' }, voice: { pitch: 1.1 },
+    look: { skin: 1, hair: 'bob', hairColor: 2, cloth: ['#7a8a6a', '#626e54', '#ece6d0'], shape: 'robe', acc: ['book'] },
+    portrait: { eyes: 'soft', style: 'bob', collar: 'high', bg: '#22261e' },
+  });
+  // Kihei: the echo of a sailor lost at sea long ago, who wanders the tide line looking for the letter he never
+  // sent. Drawn pale for now (a see-through figure is P16 art, AC-1).
+  ch('ko_kihei', {
+    name: { en: 'Kihei', jp: 'キヘイ' }, voice: { pitch: 0.85 },
+    look: { skin: 1, hair: 'short', hairColor: 0, cloth: ['#8aa4b0', '#6e8894', '#e0ecf0'], shape: 'coat', acc: ['hat'], hatCol: '#6e8894' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['hat'], hatCol: '#6e8894', bg: '#18242a' },
+  });
+  // The Gardener of Unsent Words: the island's oldest keeper-spirit, among the deepest roots. A tall shape of woven
+  // leaves with a lantern of a face; speaks slowly, in the old way, and listens longer than it speaks. Bodiless (a
+  // figure of leaves: its portrait only).
+  ch('ko_gardener', {
+    name: { en: 'The Gardener of Unsent Words', jp: '{届|とど}かぬ {言葉|ことば} の {庭守|にわもり}' }, voice: { pitch: 0.6 },
+    portrait: { skin: ['#c8b880', '#a89860'], hair: ['#4e7a52', '#3a5e3e'], style: 'long', eyes: 'narrow', acc: ['hood'], hoodCol: '#3a5a3e', bg: '#0e1612' },
+  });
+})(RB.content);
+
+
+/* ==== src/content/ko/06_quests.js ==== */
+/* Kotonoha, Chapter 9: the main quest (expansion P11). The side quests are in 15_side.js. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  C.quests.ko_main = {
+    main: true, chapter: 'ko',
+    title: T('{言|こと}の{葉|は}{島|じま}', 'Kotonoha'),
+    stages: [
+      T('{港|みなと} に 、 {字|じ} の ある {葉|は} が {流|なが}れ{着|つ}いて いる 。 {潮硝子|しおがらす} から テツ の {船|ふね} で 、 {言|こと}の{葉|は}{島|じま} へ {渡|わた}ろう 。', 'Leaves with writing on them are washing up in Saltglass. Take Tetsu\'s ferry from Saltglass to Kotonoha.'),
+      T('{島|しま} の {村|むら} で 、 {葉守|はもり} たち に {会|あ}おう 。', 'Find the island\'s keepers in the village.'),
+      T('オトハ に {頼|たの}まれた 。 {流|なが}れ{着|つ}いた {葉|は} を 、 なくした {場所|ばしょ} へ {返|かえ}そう 。', 'Otoha has asked for help: return drifted leaves to the places that lost them.'),
+      T('{島|しま} の {言|い}い{伝|つた}え を {四人|よにん} から {聞|き}いて 、 {葉守|はもり} の {館|やかた} に {並|なら}べよう 。', 'Hear the island\'s legend from four tellers, and set it out in the keepers\' hall.'),
+      T('{大|おお}きな {木|き} は 、 {根|ね} から {葉|は} を {落|お}として いる 。 {根|ね} の {洞|ほら} へ {下|お}りよう 。', 'The great tree is shedding from its roots. Go down into the Root Hollows.'),
+      T('{潮|しお} が {満|み}ちて 、 {仲間|なかま} と {離|はな}れて しまった 。 {回|まわ}り{道|みち} を {探|さが}そう 。', 'The tide has come in between you and your companion. Find a way round.'),
+      T('{根|ね} の {奥|おく} で 、 {届|とど}かぬ {言葉|ことば} の {庭守|にわもり} に {会|あ}おう 。', 'Meet the Gardener of Unsent Words, deep in the roots.'),
+      T('{木|き} は {静|しず}か に なった 。 オトハ に {知|し}らせよう 。', 'The tree is quiet again. Tell Otoha.'),
+    ],
+    reward: { flags: ['ko_main_done'] },
+  };
+})(RB.content);
+
+
+/* ==== src/content/ko/10_maps.js ==== */
+/* Kotonoha, Chapter 9: the island above ground (expansion P11; docs/future/work/P11_SEA.md). The shore where the boats
+ * land, written leaves drifting along the tide line and old stone lanterns half-buried in the sand; the village of
+ * netted houses with the keepers' hall; the great camphor's lower terraces and, above them, its crown; the tide pools
+ * to the west with their conches and the tide calendar; the sea cave to the east. The Root Hollows are in
+ * 11_roots.js. Twelve-chapter journeys only (`edition: 2`).
+ *
+ * The island's three phases (07_REGIONS.md R4) are read separately: the story phase by flags (an early visit by the
+ * player's own boat before Lanternfall is over, `ko_arrived&!ch5_done`; Chapter 9, `ko_ch9`; after the ending,
+ * `post`), the profile by the tasks' tiers, and introduced concepts by the tasks' items. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  // noCompanion: the companion is away while ko_apart holds (the separation in the Root Hollows, 11_roots.js)
+  const ISLE = { region: 'kotonoha', place: 'kotonoha', travel: 'kotonoha', music: 'kotonoha', edition: 2, noCompanion: '!ko_apart' };
+  // leaves drifting down everywhere, a little sea haze
+  const LEAVES = { weather: 'leaves', tint: 'rgba(200,220,210,0.05)' };
+  // a stone lantern half-buried in sand: dark until `flag`, lit after
+  const sandtoro = (x, y, flag, scene, after) => [
+    Object.assign({ p: 'ko_sandtoro', x, y, if: '!' + flag }, scene ? { scene } : {}),
+    Object.assign({ p: 'ko_sandtoro', x, y, if: flag, light: 30, o: { lit: true } }, after ? { scene: after } : {}),
+  ];
+
+  // ---- the shore (言の葉の浜) -------------------------------------------------------------------------------------------
+  C.maps['ko.shore'] = Object.assign({}, ISLE, {
+    name: T('The Shore of Leaves', '{葉|は} の {浜|はま}'),
+    ambient: LEAVES,
+    terrain: K.build(40, 26, '.', (k) => {
+      k.ragged('top', 'T', 2, 901);
+      k.scatter(';', 14, 902, [0, 3, 40, 8], '.');
+      k.scatter('o', 5, 903, [2, 4, 36, 6], '.');
+      k.rect(0, 11, 40, 10, 's');
+      k.scatter('"', 9, 904, [0, 10, 40, 2], 's');
+      k.rect(0, 20, 40, 2, 'w');
+      k.rect(0, 22, 40, 4, '~');
+      k.ragged('bottom', '~', 2, 905);
+      k.rect(19, 18, 3, 7, '_');                       // the jetty
+      k.path([[20, 0], [20, 11]], ':', 2);             // up to the village
+      k.rect(33, 3, 7, 8, '^'); k.rect(0, 3, 4, 7, '^');
+      k.scatter('h', 6, 906, [1, 12, 38, 7], 's');
+    }),
+    props: [
+      { p: 'ko_leaves', x: 5, y: 17 }, { p: 'ko_leaves', x: 12, y: 19 }, { p: 'ko_leaves', x: 25, y: 18 }, { p: 'ko_leaves', x: 30, y: 15 }, { p: 'ko_leaves', x: 9, y: 13 },
+      { p: 'ko_basket', x: 15, y: 14 }, { p: 'ko_basket', x: 26, y: 13 },
+      ...sandtoro(7, 12, 'ko_l_shore1', null, null), ...sandtoro(34, 16, 'ko_l_shore2', null, null),
+      { p: 'sign', x: 22, y: 10, scene: 'ko.shore_sign' },
+      { p: 'ko_netrack', x: 27, y: 9 },
+      { p: 'pier', x: 19, y: 24 }, { p: 'pier', x: 21, y: 24 },
+      { p: 'boat', x: 22, y: 22, if: 'ko_arrived', scene: 'ko.ferry_back' },
+      { p: 'bench', x: 16, y: 10 },
+    ],
+    npcs: [
+      { id: 'ko_nami', x: 20, y: 17, dir: 'down', if: 'ch5_done&!ko_otoha_met' },
+    ],
+    exits: [],
+    spawn: { default: [20, 22, 'up'], from_sea: [20, 22, 'up'] },
+  });
+})(RB.content, RB.mapkit);
+
+RB.script.add(`
+@scene ko.shore_sign
+!gesture pc read 22,10
+narr: {古|ふる}い {板|いた} に 、 {彫|ほ}った {字|じ} 。 「{言|こと}の{葉|は}{島|じま} 。 {葉|は} を {拾|ひろ}う {者|もの} は 、 {葉守|はもり} の {村|むら} へ 。」 || Old boards, the words cut into them: "Kotonoha. Whoever gathers a leaf, bring it to the keepers' village."
+`);
+
+
+/* ==== src/content/ko/20_scenes_arrive.js ==== */
+/* Kotonoha, Chapter 9: the call and the crossing (expansion P11). At the end of Lanternfall's council in a
+ * twelve-chapter journey, Yae remembers a letter: Ōmi writes from Saltglass that leaves with writing on them are
+ * washing up in the harbour, and that Nami, one of Kotonoha's leaf-keepers, has crossed over to ask for help; in the
+ * envelope is a leaf with はんたい on it, the word Lanternfall lost. Tetsu's board has a new line west; the crossing;
+ * the chapter's beginning on the island's jetty (whoever arrives first, by ferry or by the player's own boat, once
+ * Lanternfall is over: ko.begin). An earlier visit by the player's own boat is side content (25_scenes_early.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene ko.call
+# Staged: after the council, Yae remembers and holds the envelope out; you take it and read; the dry leaf in it, which
+# you hold up; Yae's long look at the word on it; your companion's own answer (Nao turns the envelope over to read
+# the postmark, Mio's hand to her mouth, Ren looks at the leaf against the light, Suzu reads Ōmi's signature twice).
+!gesture lf_yae present pc prop=letter
+lf_yae: そう そう 、 {忘|わす}れる ところ でした 。 {今朝|けさ} 、 {海|うみ} の {方|ほう} から 、 あなた {宛|あ}て の {手紙|てがみ} が {届|とど}いて います よ 。 || Oh, yes, I nearly forgot. A letter came for you this morning, from the coast.
+!gesture pc read prop=letter
+narr: {潮硝子|しおがらす} の {港長|こうちょう} 、 オウミ から だ 。 {封筒|ふうとう} の {中|なか} に は 、 {手紙|てがみ} と 、 {乾|かわ}いた {葉|は} が {一枚|いちまい} 。 || It's from Ōmi, the harbourmaster at Saltglass. In the envelope: a letter, and a single dry leaf.
+narr: 「{港|みなと} に 、 {字|じ} の {書|か}いて ある {葉|は} が {流|なが}れ{着|つ}いて います 。 {毎朝|まいあさ} 、 {何百枚|なんびゃくまい} も 。」 || "Leaves with writing on them are washing up in the harbour. Hundreds, every morning."
+narr: 「{言|こと}の{葉|は}{島|じま} から 、 {葉守|はもり} の ナミ が {来|き}ました 。 {島|しま} の {大|おお}きな {木|き} が 、 {葉|は} を {落|お}とし{過|す}ぎて いる そう です 。 {助|たす}け を {求|もと}めて います 。」 || "Nami, one of the leaf-keepers of Kotonoha, has come over. She says the island's great tree is shedding far too fast. She is asking for help."
+narr: 「テツ が {島|しま} へ {船|ふね} を {出|だ}します 。 {来|こ}られる なら 、 {潮硝子|しおがらす} へ 。 {港長|こうちょう} オウミ」 || "Tetsu will take the boat out to the island. If you can come, come to Saltglass. — Ōmi, Harbourmaster."
+!gesture pc present prop=leaf
+narr: {葉|は} に は 、 {細|ほそ}い {字|じ} で {一言|ひとこと} 、 「はんたい」 と {書|か}いて ある 。 || On the leaf, in a thin hand, one word: はんたい, "against".
+!gesture lf_yae observe pc
+lf_yae[sad]: …… この {町|まち} が なくした {言葉|ことば} です ね 。 {何年|なんねん} も {探|さが}さず に いた のに 、 {海|うみ} まで {流|なが}れて いって いた の か 。 || …The word this town lost. All those years we never looked for it, and it had drifted all the way out to sea.
+?(comp=nao) !gesture comp observe pc
+?(comp=nao) comp: {消印|けしいん} は {三日|みっか} {前|まえ} だ 。 {潮硝子|しおがらす} から の {海|うみ} の {便|びん} で 、 {急|いそ}ぎ の {判|はん} まで {押|お}して ある 。 …… {港長|こうちょう} が {急|いそ}ぎ と {書|か}く の は 、 よっぽど だ 。 || The postmark's three days old. Sea post from Saltglass, stamped urgent. …If the harbourmaster writes urgent, it's serious.
+?(comp=mio) !gesture comp flinch
+?(comp=mio) comp[surprise]: {言葉|ことば} が 、 {葉|は} に なって {流|なが}れて いく の ？ …… {葦|あし}ノ{瀬|せ} の ラベル の {字|じ} も 、 どこか に {流|なが}れ{着|つ}いて いる の かも しれない 。 || Words turn into leaves and drift away? …Then the letters off Reedwake's labels may have washed up somewhere too.
+?(comp=ren) !gesture comp observe pc
+?(comp=ren) comp[think]: {失|うしな}われた {名前|なまえ} を {預|あず}かって いる {人|ひと} たち が 、 {海|うみ} の {向|む}こう に も いる の です ね 。 {灯守|ひもり} と {同|おな}じ よう に 。 || So there are people across the sea looking after lost words too. Like the lantern-keepers.
+?(comp=suzu) !gesture comp observe pc
+?(comp=suzu) comp: 「{港長|こうちょう} オウミ」 。 …… あの {人|ひと} が {頼|たの}み{事|ごと} の {手紙|てがみ} を {書|か}く なんて ね 。 {次|つぎ} の {幕|まく} は {海|うみ} の {上|うえ} よ 。 || "Ōmi, Harbourmaster." …Her, writing a letter asking for help. The next act's out at sea.
+lf_yae: {書庫|しょこ} は {逃|に}げません 。 {先|さき} に 、 {海|うみ} の {向|む}こう の {人|ひと} たち を {助|たす}けて あげなさい 。 {議会|ぎかい} も 、 {賛成|さんせい} {一|ひと}つ 、 {反対|はんたい} {一|ひと}つ で 、 {送|おく}り{出|だ}します から 。 || The Archive won't run away. Help the people across the sea first. The council will send you off with one vote for and one against.
+!set ko_called
+!quest ko_main 0
+!journal オウミ から {手紙|てがみ} が {届|とど}いた 。 {潮硝子|しおがらす} の {港|みなと} から 、 テツ の {船|ふね} が {言|こと}の{葉|は}{島|じま} へ {出|で}る 。 || A letter from Ōmi: Tetsu's boat sails from Saltglass harbour to Kotonoha.
+!toast {言|こと}の{葉|は}{島|じま} へ の {船|ふね} が {出|で}る ({潮硝子|しおがらす}) || A boat sails for Kotonoha (from Saltglass).
+
+@scene ko.ferry_tetsu
+# Staged: Tetsu at the jetty with a fresh line chalked on the board; he looks out west, past the lighthouse.
+!faceplayer
+tetsu: {板|いた} に 、 もう {一|ひと}つ {行|い}き{先|さき} が {出|で}た 。 {西|にし} の {沖|おき} 。 {言|こと}の{葉|は}{島|じま} だ 。 || Another line on the board. West, out to sea. Kotonoha.
+!gesture tetsu lookroad left
+tetsu: {港長|こうちょう} から {聞|き}いた な 。 {島|しま} の {葉守|はもり} が {来|き}て 、 {頭|あたま} を {下|さ}げて {帰|かえ}って いった 。 || You've heard from the harbourmaster. A keeper from the island came, bowed her head and went back.
+tetsu: {島|しま} は {遠|とお}い 。 {半日|はんにち} かかる 。 …… {波|なみ} は {穏|おだ}やか だ 。 || The island's far. Half a day out. …The sea's calm.
+?(comp=nao) comp: {言|こと}の{葉|は}{島|じま} …… {船乗|ふなの}り の {作|つく}り{話|ばなし} だ と {思|おも}って いた 。 {本当|ほんとう} に ある の か 。 || Kotonoha… I thought it was a sailors' tale. It's real?
+?(comp=mio) comp[think]: {落|お}ちた {言葉|ことば} が {流|なが}れ{着|つ}く {島|しま} …… 。 {薬|くすり} の {名前|なまえ} も 、 そこ に ある かしら 。 || An island where fallen words wash up… I wonder if the medicines' names are there too.
+?(comp=ren) comp: {海|うみ} の {上|うえ} の {道|みち} に は 、 {灯籠|とうろう} が ありません ね 。 …… テツ さん の {目|め} が 、 {灯|ひ} の {代|か}わり です か 。 || There are no lanterns on a road over the sea. …So Tetsu's eyes do for the lights?
+?(comp=suzu) comp[smile]: {島|しま} へ {渡|わた}る {船旅|ふなたび} ！ {舞台|ぶたい} が {海|うみ} の {上|うえ} に {移|うつ}る わけ ね 。 || A voyage out to an island! The stage moves out to sea.
+!choice
+* {言|こと}の{葉|は}{島|じま} へ {行|い}きます 。 || We'll go to Kotonoha. -> go
+* まだ です 。 || Not yet. -> wait
+:go
+tetsu: {乗|の}れ 。 {潮|しお} が いい 。 || Get aboard. The tide's right.
+!call ko.ferry_out
+!end
+:wait
+tetsu: {島|しま} へ の {船|ふね} は 、 {毎朝|まいあさ} {出|で}る 。 || The island boat goes out every morning.
+
+@scene ko.ferry_tetsu_again
+!faceplayer
+tetsu: どこ へ {行|い}く 。 || Where to?
+!choice
+* {言|こと}の{葉|は}{島|じま} へ 。 || To Kotonoha. -> ko
+* {八百橋|やおばし} へ 。 || To Manybridge. -> mb
+* {今日|きょう} は いい です 。 || Not today. -> end
+:ko
+!call ko.ferry_out
+!end
+:mb
+!call mb.ferry_east
+!end
+:end
+
+@scene ko.ferry_out
+!fade out
+narr: {船|ふね} は {灯台|とうだい} の {先|さき} を {抜|ぬ}けて 、 {西|にし} の {沖|おき} へ {出|で}る 。 {陸|りく} が {少|すこ}し ずつ {小|ちい}さく なって いく 。 || The boat clears the lighthouse and heads west, out to sea. Little by little the land grows small.
+narr: {昼|ひる} を {過|す}ぎる と 、 {波|なみ} の {間|あいだ} に 、 {金色|きんいろ} の {葉|は} が {浮|う}かび{始|はじ}めた 。 || Past noon, gold leaves begin to float between the waves.
+!warp ko.shore 20 22 up
+!fade in
+?(!ko_arrived) !call ko.first_sight
+?(ch5_done&!ko_ch9) !call ko.begin
+
+@scene ko.ferry_back
+narr: テツ の {船|ふね} が 、 {桟橋|さんばし} に {繋|つな}いで ある 。 {潮硝子|しおがらす} へ の {便|びん} だ 。 || Tetsu's boat is tied up at the jetty: the run back to Saltglass.
+!choice
+* {潮硝子|しおがらす} へ {戻|もど}る 。 || Go back to Saltglass. -> go
+* まだ {乗|の}らない 。 || Not yet. -> end
+:go
+!fade out
+narr: {船|ふね} は {東|ひがし} へ 。 {大|おお}きな {木|き} が 、 {夕日|ゆうひ} の {中|なか} で {遠|とお}ざかって いく 。 || The boat heads east. The great tree draws away into the evening sun.
+!warp sg.harbor 33 28 up
+!fade in
+:end
+
+@scene ko.first_sight
+# The first landing, by any boat: the great camphor above the village, leaves drifting down over everything.
+!set ko_arrived
+!travel kotonoha
+!gesture pc lookroad up
+narr: {砂浜|すなはま} の {向|む}こう に 、 {見|み}た こと も ない {大|おお}きな {木|き} が {立|た}って いる 。 {島|しま} {全体|ぜんたい} を {抱|かか}える よう に 、 {枝|えだ} を {広|ひろ}げて 。 || Beyond the sand stands a tree bigger than any you have seen, its branches spread as if to hold the whole island.
+narr: {葉|は} が 、 {雪|ゆき} の よう に {降|ふ}って いる 。 {一枚|いちまい} {一枚|いちまい} に 、 {薄|うす}く {字|じ} が {見|み}える 。 || Leaves are falling like snow. On each one, faintly, there is writing.
+?(comp=nao) comp: …… {全部|ぜんぶ} 、 {誰|だれ} か が {書|か}いた か {言|い}った か した {言葉|ことば} か 。 {届|とど}け{先|さき} は 、 どこ だった ん だろう な 。 || …All of these, words someone wrote or said. Where were they meant to go, I wonder.
+?(comp=mio) comp[surprise]: きれい …… 。 でも 、 こんな に たくさん 。 {全部|ぜんぶ} 、 なくなった {言葉|ことば} な の ？ || Beautiful… But so many. Are these all lost words?
+?(comp=ren) comp[think]: {灯|ひ} の {道|みち} より も {古|ふる}い {木|き} かも しれません 。 {葉|は} の {字|じ} は 、 {墨|すみ} の {色|いろ} が みんな {違|ちが}います 。 || It may be older than the lantern roads. The ink on the leaves is a different colour on every one.
+?(comp=suzu) comp[smile]: {紙吹雪|かみふぶき} みたい ね 。 …… {拍手|はくしゅ} の {代|か}わり に 、 {言葉|ことば} が {降|ふ}って くる {舞台|ぶたい} 。 || Like a shower of paper confetti. …A stage where words come down instead of applause.
+
+@scene ko.begin
+# Chapter 9's beginning on the jetty, whoever arrives first once Lanternfall is over. Staged: Nami at the end of the
+# jetty with a basket of leaves on her hip; she sets it down and bows; her plain welcome; she points up the path to the
+# village and the tree; your companion's own answer.
+!set ko_ch9
+!chapter ko
+!travel kotonoha
+!card {第九章|だいきゅうしょう} 　{言|こと}の{葉|は}{島|じま} || Chapter 9 — Kotonoha, the Isle of Word-Leaves
+!look ko_nami pc
+!gesture ko_nami bow
+ko_nami: {来|き}て くれた ん だ ね 。 ナミ です 。 {葉守|はもり} の 、 {一番|いちばん} {若|わか}い {方|ほう} 。 || You came. I'm Nami — the youngest of the leaf-keepers, more or less.
+ko_nami: {見|み}て の とおり 。 {木|き} が 、 {毎日|まいにち} {葉|は} を {落|お}として いる 。 {拾|ひろ}って も {拾|ひろ}って も 、 {追|お}いつかない 。 || As you can see. The tree drops its leaves every day. We gather and gather, and can't keep up.
+ko_nami: {葉|は} は 、 どこか で なくなった {言葉|ことば} な ん だ 。 {昔|むかし} は 、 {一日|いちにち} {十枚|じゅうまい} ぐらい だった 。 {今|いま} は 、 {数|かぞ}えられない 。 || The leaves are words that went missing somewhere. It used to be ten or so a day. Now we can't count them.
+!gesture ko_nami point 20,3
+ko_nami: {村|むら} で 、 オトハ {婆|ばあ}さま が {待|ま}って いる 。 {一番|いちばん} {古|ふる}い {葉守|はもり} だ よ 。 || Grandmother Otoha is waiting in the village. She's the oldest keeper there is.
+?(comp=nao) comp: {届|とど}け{先|さき} の ない {手紙|てがみ} が {山|やま} に なってる よう な もん か 。 …… {郵便屋|ゆうびんや} と して は 、 {放|ほう}って おけない な 。 || Like a mountain of letters with no addresses. …As a courier, I can't leave that alone.
+?(comp=mio) comp: {一枚|いちまい} ずつ 、 {元|もと} の {場所|ばしょ} が ある ん です よ ね 。 {手伝|てつだ}わせて ください 。 || Every one of them has a place it came from, doesn't it. Let us help.
+?(comp=ren) comp: {名前|なまえ} を {灯|ひ} に {返|かえ}す の と 、 {似|に}た {仕事|しごと} です ね 。 {私|わたし} に も できる こと が ある はず です 。 || It's work like giving names back to lamps. There must be something I can do.
+?(comp=suzu) comp[smile]: {裏方|うらかた} が {足|た}りない {舞台|ぶたい} ね 。 {任|まか}せて 。 {人手|ひとで} なら 、 ここ に {二人|ふたり} いる わ 。 || A show that's short of stagehands. Leave it to us. There are two pairs of hands right here.
+!quest ko_main 1
+!journal {言|こと}の{葉|は}{島|じま} に {着|つ}いた 。 {木|き} が {葉|は} を {落|お}とし{過|す}ぎて いる 。 {村|むら} で 、 {一番|いちばん} {古|ふる}い {葉守|はもり} オトハ に {会|あ}おう 。 || Kotonoha. The great tree is shedding far too fast. Meet Otoha, the oldest of the keepers, in the village.
+!autosave
+`);
+
+
 /* ==== src/content/kr/00_lex.js ==== */
 /* The Keepers' Road, Chapter 7 lexicon (expansion P10): the old ridge road, its lamps and its lore; the classical
  * forms on its stones (optional reading, A only, always glossed). Format: w|r|pos|lv|meaning|note (docs/CONTENT.md).
@@ -156623,6 +157313,40 @@ var RB = (globalThis.RB = globalThis.RB || {});
   place('lf.stacks', { id: 'x2', enemy: 'lf.queue', x: 14, y: 12, patrol: 1 });
   place('lf.tower_mid', { id: 'x3', enemy: 'lf.weevil', x: 10, y: 11, patrol: 1 });
 })(RB.content);
+
+
+/* ==== src/content/lf2/20_scenes.js ==== */
+/* Lanternfall in twelve-chapter journeys (Chapter 8 there; expansion P11). After the council the fork lantern has its
+ * name back, but in a twelve-chapter journey the Still Archive is the last chapter, not the next: the road above the
+ * fork stays in mist until Steamhollow is behind the party (`yn_done`), and the way on is the sea (Kotonoha,
+ * src/content/ko/). The six-chapter game's north fork is unchanged (its exit and its lock keep their conditions). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const road = C.maps['lf.road'];
+  if (road) road.triggers.push({ x: 24, y: 1, w: 2, h: 1, scene: 'lf.road_north_mist', if: 'ed>=2&ch5_done&!yn_done' });
+})(RB.content);
+
+RB.script.add(`
+@scene lf.road_north_mist
+# Staged: the fork lantern burns with its name again, but a little above it the road still melts into mist; your
+# companion answers it in kind (Nao looks back down towards the coast, Mio's hand at her head, Ren looks up the road
+# at the dark lanterns beyond, Suzu's shrug), and you step back.
+!walkto comp 24 3 up
+!gesture pc lookroad up
+narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} に は 、 {名前|なまえ} が {戻|もど}って いる 。 でも 、 その {少|すこ}し {上|うえ} で 、 {道|みち} は まだ {霧|きり} に {溶|と}けて いる 。 || The fork lantern has its name back. But a little higher up, the road still melts into mist.
+narr: {進|すす}もう と して も 、 {気|き} が つく と {灯籠|とうろう} の {下|した} に {戻|もど}って いる 。 || Try to go on, and you find yourself back under the lantern.
+?(comp=nao) !gesture comp lookroad down
+?(comp=nao) comp: {一|ひと}つ の {灯|ひ} じゃ 、 {山|やま} {全部|ぜんぶ} は {照|て}らせない か 。 …… {先|さき} に 、 {海|うみ} の {方|ほう} の {用|よう} を {済|す}ませよう 。 || One lantern can't light a whole mountain, then. …Let's see to the business by the sea first.
+?(comp=mio) !gesture comp guard
+?(comp=mio) comp[worry]: また {頭|あたま} が くらくら する 。 …… {今|いま} は 、 {登|のぼ}る {時|とき} じゃ ない みたい 。 || My head's spinning again. …It doesn't seem the time to climb.
+?(comp=ren) !gesture comp lookroad up
+?(comp=ren) comp[think]: {上|うえ} の {灯籠|とうろう} は 、 まだ {暗|くら}い まま です 。 {一|ひと}つ {戻|もど}して も 、 {道|みち} は {一本|いっぽん} の {灯|ひ} で は {続|つづ}かない 。 || The lanterns further up are still dark. Bring one back, and still a road doesn't run on a single light.
+?(comp=suzu) !gesture comp shrug
+?(comp=suzu) comp: {幕|まく} は まだ {上|あ}がらない みたい ね 。 {最終|さいしゅう} {幕|まく} の {前|まえ} に 、 {別|べつ} の {幕|まく} が ある の よ 。 || The curtain's not going up yet, it seems. There's another act before the last one.
+!move pc down 1
+`);
 
 
 /* ==== src/content/lq/00_lex.js ==== */

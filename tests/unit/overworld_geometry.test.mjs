@@ -47,7 +47,7 @@ export default async (t) => {
     // Lanternfall's roads there (P10); in a six-chapter game `!ed>=2` and `ed<2` hold and mb2_done is never set, so
     // the condition is the base's, and an exit only the twelve-chapter edition opens (`ed>=2`) is left out, as the
     // triggers and props below are. The exits_fresh/exits_late hashes above check the same in play.)
-    const SIX_IF = { 'ch2_done&!ed>=2|mb2_done': 'ch2_done', 'ch4_done&ed<2': 'ch4_done', 'ed<2': null };
+    const SIX_IF = { 'ch2_done&!ed>=2|mb2_done': 'ch2_done', 'ch4_done&ed<2': 'ch4_done', 'ch5_done&!ed>=2|yn_done': 'ch5_done', 'ed<2': null };
     const sixIf = (c) => (c && Object.prototype.hasOwnProperty.call(SIX_IF, c) ? SIX_IF[c] : c || null);
     rec.exits = m.exits.filter((e) => !(e.if && /(^|[&|])ed>=2(?=$|[&|])/.test(String(e.if)))).map((e) => [e.x, e.y, e.w, e.h, e.to, e.tx == null ? null : e.tx, e.ty == null ? null : e.ty, e.dir || null, !!e.door, sixIf(e.if)]);
     rec.structs = m.structs.map((s) => [s.x, s.y, s.w, s.h, s.door == null ? null : s.door, s.to || null]);
