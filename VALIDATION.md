@@ -3687,3 +3687,26 @@ had an idle habit in progress, so the action had yielded. The first panel test f
   stand for this build.)
 
 **Not verified:** Firefox; the foldable; Robin's eye.
+
+## C-80: battles keep the game's own framing under the world proof (2026-10-10)
+
+**Robin, on the gate's crowded battle:** "The battle scene vs 3 crabs with the far camera reads a little distant. The
+closer one is fine." Under the proof, battles had been drawn at the far view's scale (45 tiles across at 1440×900,
+the creatures and party half size).
+
+**What changed:**
+- `src/engine/90_game.js`: the mode stack emits `mode:change`. Without the proof there are no listeners.
+- `src/engine/65_worldlook.js`: the far view applies only outside battle, so a battle has the game's own framing and
+  the far view returns afterwards.
+- Tests: `tests/e2e/world_slice.mjs`. The slice battle asserts 22.5 tiles across at 1440 during the battle and 45
+  afterwards. The crowded battle asserts the proof's framing equals the game's at desktop and phone sizes.
+- Evidence: `w05/battle_crowded_d1440_proof`, `w05/battle_crowded_p375_proof` redone.
+
+**Checks:**
+- Measured on builds before and after: under the proof, a battle at 1440 had 45 tiles across before and 22.5 after
+  (the Reedling in the square, the three Crabs on the quay).
+- B `node tests/e2e/world_slice.mjs battle saltglass`: **4/0**.
+- B `node tests/e2e/world.mjs`: **12/0**.
+
+**Not changed:** the game's own battles. At most three creatures appear today (Hard). Five, for C-76's set pieces,
+may widen the framing a little, as Robin allowed; that is future work.

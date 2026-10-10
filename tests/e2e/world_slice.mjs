@@ -137,7 +137,7 @@ async function playOut(p, shots) {
 }
 
 if (doing('battle')) {
-  await test('the slice battle: Suzu and a Reedling from the square, the language UI, the cut-in and the banner; the backdrop takes the slice\'s light; the far view and the proof afterwards', async () => {
+  await test('the slice battle: Suzu and a Reedling from the square, the language UI, the cut-in and the banner; the backdrop takes the slice\'s light; the game\'s own framing in battle; the far view and the proof afterwards', async () => {
     // the game's own battle start, for comparison
     {
       const { p, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
@@ -152,6 +152,7 @@ if (doing('battle')) {
     await startSliceBattle(p);
     await toCards(p);
     await wait(p, 400);
+    assert(await tiles(p) === 22.5, 'a battle keeps the game\'s own framing under the proof (22.5 tiles at 1440), not the far view: ' + await tiles(p));
     await webp(p, await p.screenshot(), 'battle_start_proof.webp');
     // the grade lies on the backdrop: with the proof's light off the same moment draws differently
     const graded = await p.evaluate(() => { const cv = document.querySelector('canvas'), g = cv.getContext('2d'); const a = g.getImageData(0, 0, 200, 120).data; RB.worldLook.set({ light: false }); RB.render.frame(performance.now()); const b2 = g.getImageData(0, 0, 200, 120).data; RB.worldLook.set({ light: true }); let d = 0; for (let i = 0; i < a.length; i += 4) d += Math.abs(a[i] - b2[i]) + Math.abs(a[i + 2] - b2[i + 2]); return d / (a.length / 4); });
@@ -381,6 +382,7 @@ if (args.includes('saltglass')) {
   });
   await test('W05 the crowded battle fixture: three Crabs on the quay with Suzu, desktop and phone; the backdrop takes the harbour\'s light', async () => {
     for (const v of [{ tag: 'd1440', viewport: { width: 1440, height: 900 }, dpr: 1 }, { tag: 'p375', viewport: { width: 375, height: 667 }, dpr: 3, mobile: true }]) {
+      let gameTiles = null; // a battle keeps the game's own framing under the proof (C-80)
       for (const q of ['', '?dev=world']) {
         const { p, ctx, errors, requests } = await page(b, url + q, { viewport: v.viewport, dpr: v.dpr, mobile: v.mobile, touch: v.mobile });
         if (q) await hidePanel(p);
@@ -389,6 +391,9 @@ if (args.includes('saltglass')) {
         await wait(p, 500);
         const st = await p.evaluate(() => ({ foes: RB.combat.state().foes.length, cards: document.querySelectorAll('.rcard[data-i]').length }));
         assert(st.foes === 3 && st.cards > 0, 'three creatures and a decision: ' + JSON.stringify(st));
+        const t = await tiles(p);
+        if (!q) gameTiles = t;
+        else assert(t === gameTiles, 'the battle under the proof should keep the game\'s framing: ' + t + ' tiles across, the game ' + gameTiles);
         await save5(p, await p.screenshot(), 'battle_crowded_' + v.tag + (q ? '_proof' : '_game') + '.webp');
         assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
         await ctx.close();

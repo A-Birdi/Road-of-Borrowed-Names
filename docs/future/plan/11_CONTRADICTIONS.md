@@ -413,6 +413,24 @@ improvement - you may proceed."
   direction).
 - **Still waiting:** later milestones (P02 onward) wait for that gate.
 
+### C-80 · P01's visual gate: solid, push the detail further; a fidelity study first
+**Answered (2026-10-10), not yet accepted.** Robin, on the world proof's review page: "The proof direction is really
+solid, don't misunderstand, but I'm wondering if we can push it closer to the mockup's level of detail."
+- **Battles keep the game's own framing.** "The battle scene vs 3 crabs with the far camera reads a little distant.
+  The closer one is fine. If we need to fit 5, keep it marginally spread out, just not so much that we're a mile
+  away." Fixed: under the proof, a battle uses the game's own framing (it had been using the far view). Five
+  creatures (the set pieces of C-76) may widen it a little, never to the far view.
+- **The camera needn't pull back so far.** "The camera also doesn't need to zoom out so much. The mockup was just to
+  show detail, and is loosely based on Octopath Traveler's layout and fidelity." The far view (45 tiles at 1440) is
+  too far; the next camera sits nearer.
+- **The end goal:** "pixel depth, shading, lighting, blur (focus), scenery depth"; crisp, defined pixels rather than
+  shapes (Octopath Traveler given as the reference for fidelity). Sprite dimensions may change if the result reads
+  well and looks like very detailed pixel art; animations follow, "fluid … elegant versus stiff".
+- **Asked for next:** a fidelity study. Suzu redrawn from scratch (her existing sprite as reference only), alone in
+  front of the Mill, rendered as the game would render it (not a painting), with an idle loop and the scenery
+  animated. ([../work/P01_STUDY.md](../work/P01_STUDY.md))
+- **Still waiting:** the gate itself (P02 onward) waits for Robin's view of the study.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -532,6 +550,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Harmony | One technique per filled bar | C-77 |
 | Order of work | The playbook's P00–P18, with its six changes; first scope P00 and the interface proof | C-78 |
 | The book interface | Accepted as revised (classic tabs on top, organised inner pages, the U02 type); P01's world proof next | C-79 |
+| The world's look | The proof's direction is solid; push detail toward the mockup and Octopath Traveler's fidelity; a nearer camera; battles keep their own framing; a Suzu-at-the-Mill fidelity study before the gate | C-80 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

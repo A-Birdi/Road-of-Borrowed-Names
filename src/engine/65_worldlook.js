@@ -49,10 +49,13 @@ RB.worldLook = (function () {
   function farView(cw, ch) {
     return { w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * FAR, h: (ch < 520 ? 8 : 12) * FAR };
   }
+  // A battle keeps the game's own framing (Robin, C-80: the crowded battle read distant in the far view); the
+  // far view comes back when the world is in play again.
+  const inBattle = () => !!(RB.game && RB.game.mode && RB.game.mode() === 'combat');
   function applyCamera() {
     if (!RB.render || !RB.render.setView) return;
     const m = RB.world && RB.world.W && RB.world.W.map;
-    const far = active(m) && opts.view === 'far' && !(RB.render.enclosed && RB.render.enclosed(m));
+    const far = active(m) && opts.view === 'far' && !inBattle() && !(RB.render.enclosed && RB.render.enclosed(m));
     RB.render.setView(far ? farView : null);
   }
   function set(o) {
@@ -67,7 +70,10 @@ RB.worldLook = (function () {
   const listeners = [];
   function onChange(f) { listeners.push(f); }
 
-  if (typeof window !== 'undefined' && RB.bus && RB.bus.on) RB.bus.on('map:enter', () => { if (allowed()) applyCamera(); });
+  if (typeof window !== 'undefined' && RB.bus && RB.bus.on) {
+    RB.bus.on('map:enter', () => { if (allowed()) applyCamera(); });
+    RB.bus.on('mode:change', () => { if (allowed()) applyCamera(); });
+  }
 
   // ---- shared helpers ------------------------------------------------------------------------------------------
   const mk = (w, h) => RB.sprites.makeCanvas(Math.max(1, Math.ceil(w)), Math.max(1, Math.ceil(h)));

@@ -59,6 +59,7 @@ RB.game = (function () {
   // controls, HUD) can follow it without polling
   function syncMode() {
     if (typeof document !== 'undefined' && document.body) document.body.dataset.mode = mode();
+    if (RB.bus && RB.bus.emit) RB.bus.emit('mode:change', mode());
   }
   function pushMode(m) {
     G.modes.push(m);
