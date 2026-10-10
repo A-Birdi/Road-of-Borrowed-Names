@@ -24,6 +24,9 @@ export default async (t) => {
   const flaky = { id: 'y', round: () => [['a', Math.random() < 2 ? 2000 + Math.floor(Math.random() * 100) : 0]], pose: { a: 'check' }, still: { pose: 'check' } };
   t.ok(F.validate(flaky).some((e) => /deterministic/.test(e)), 'and a round that is not deterministic');
 
+  // profession supplies the task: every class's suggestions are real work in the catalogue
+  for (const cls of Object.keys(RB.mannerisms.CLASSES)) t.ok(F.suggest(cls).every((id) => F.get(id) && F.get(id).kind === 'work'), 'suggested work for ' + cls + ': ' + F.suggest(cls).join(', '));
+
   // ---- a person at work ---------------------------------------------------------------------------------------------
   let mode = 'world';
   RB.game.mode = () => mode;

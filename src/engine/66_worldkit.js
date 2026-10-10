@@ -551,5 +551,5 @@ RB.worldKit = (function () {
     return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v), x - 4, y) }));
   }
 
-  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, someoneBehind, BRIEF, vnoise };
+  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, vnoise };
 })();

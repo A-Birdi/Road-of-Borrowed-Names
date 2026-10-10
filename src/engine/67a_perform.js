@@ -59,6 +59,12 @@ RB.perform = (function () {
   };
   // the person's mannerism class gives a default
   const BY_CLASS = { scholar: ['thoughtful'], official: ['brisk'], performer: ['showy'], elder: ['unhurried'], keeper: ['quiet'], child: ['brisk'] };
+  // the work each kind of person is suggested for (V5: profession supplies the task); content chooses, this suggests
+  const WORK = {
+    official: ['sort'], scholar: ['read', 'sort'], clerk: ['sort', 'carry'], host: ['sweep', 'tend'], craft: ['carry', 'tie', 'grind'],
+    elder: ['read', 'sweep'], child: [], keeper: ['tend', 'sweep', 'read'], traveller: ['tie'], performer: ['read'], nonhuman: [], town: ['sweep', 'carry'],
+  };
+  const suggest = (cls) => (WORK[cls] || WORK.town).slice();
 
   // ---- the catalogue -----------------------------------------------------------------------------------------------
   function define(id, c) {
@@ -244,7 +250,7 @@ RB.perform = (function () {
     if (!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion())) await new Promise((r) => setTimeout(r, len));
   };
 
-  return { define, get, list, validate, frameOf, push, working, where, free, check, TRAITS, BY_CLASS, NEW_PROPS, readyProps, actOf, roundOf };
+  return { define, get, list, validate, frameOf, push, working, where, free, check, TRAITS, BY_CLASS, WORK, suggest, NEW_PROPS, readyProps, actOf, roundOf };
 })();
 
 // ---- the catalogue: complete actions (V5's subjects) ----------------------------------------------------------------
