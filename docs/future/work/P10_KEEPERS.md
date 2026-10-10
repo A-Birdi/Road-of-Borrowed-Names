@@ -74,3 +74,15 @@ Classical forms are optional reading for A only, never needed to progress.
   tsukumogami, the chōchin-obake); the keepers' order and its lore the game's own.
 - The hall stays shut until the postgame.
 - Every line of new Japanese through the review ledger (self-review only).
+
+## Phase end
+
+Run on a clean copy of d1d1d60 (logs kept outside the repository); details in VALIDATION.md "The expansion, P10".
+
+| Check | Result |
+|---|---|
+| Browser suites it touched or could disturb (22) | 21 pass; `manybridge` 2/1: its chart check counted the twelve-chapter places before the Keepers' Road was one (a test fix, f7c2e8a; then 3/0) |
+| The route through Chapter 3 at F with Ren | Reached `mb2_done` (215 visits) |
+| The route through Chapters 5–7 at F with Ren (Chapter 4 fixture) | Chapters 5 and 6 done (483 and 93 visits); stuck in Chapter 7 (the story driver never fought a map's placed creatures, fixed in tests/e2e/drive.mjs); then the Chapter 7 leg from the Chapter 6 fixture reached `kr_done` (349 visits) |
+| F/Ren through the six-chapter game and one Atlas expedition | PASS |
+| Unit suite | 35,932 passed, 0 failed |

@@ -3991,3 +3991,33 @@ U `expansion_rules` **11/0**. B `node tests/e2e/matrix.mjs F ren 1` with the fix
 (12.7 min).
 
 **Not verified:** Firefox; the foldable; a person playing either chapter, the press or the festival games.
+
+## The expansion, P10: the Keepers' Road, Chapter 7, and the seams of Chapters 5–6 (2026-10-10; C-81; docs/future/work/P10_KEEPERS.md; REQUIREMENTS.md XP51–XP58)
+
+**The chapter's checks while it was built** (U unless marked): `kr_ch7` **123/0** (the seams, weighing tellings,
+relighting by name, Hisae, the Scriptorium Cave, the vigil and the Hundredth Tale's three endings, the shuttered hall,
+creatures, side stories and companions), `combat_fairness`, `combat_curve`, `creatures_a`, `creatures_b`,
+`audio_zones`, `combat_golden` (180 new battles; the earlier 1,800 unchanged), `quest_guide` **70/0**,
+`conversation_continuity` **1,658/0**, `review_ledger` **2/0** (1,370 lines self-reviewed, F-68). B `keepers` **4/0**
+(I and A profiles, marks, the song refused, the order kept, the cache, phone width).
+
+**P10's phase end.** A clean copy of d1d1d60 (`git archive`), built and run in the background.
+- B `keepers` **4/0**, `manybridge2` **4/0**, `encounters` **10/0**, `combat_ui` **7/0**, `battle_group` **6/0**,
+  `battle_backdrops` **38/0**, `battle_creatures_b` **26/0**, `company` (all passed), `dialect_kansai` (all passed),
+  `perform` **3/0**, `ui` **14/0**, `play_ui` (all ok), `records` **7/0**, `book` **15/0**, `battle_settings` **10/0**,
+  `expedition` **6/0**, `audio_zones` **91/0**, `audit_fixes` **4/0**, `pad_kanji` **8/0**, `kanji_chart` **8/0**,
+  `quest_guide` (all passed).
+- B `manybridge` **2/1**: the chart check expected Manybridge's chart to show a fixed number of places, and the
+  Keepers' Road is now one of the twelve-chapter places. Fixed in the test (f7c2e8a: it counts every twelve-chapter
+  place); on 2d168ae **3/0**.
+- C the route through Chapter 4 at F with Ren from the Chapter 3 fixture: **reached mb2_done** (215 visits, 127 s).
+- C the route through Chapters 5–7 at F with Ren from the twelve-chapter Chapter 4 fixture
+  (`PURSUE_FROM=tests/fixtures/campaign/F-ren-ch4_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren …`):
+  **ch3_done** (Chapter 5; 483 visits) and **ch4_done** (Chapter 6; 93 visits), then **stuck** short of kr_done
+  (313 visits). The story driver walked past creatures placed on a map that a quest stage waits on (it only fought
+  creatures a scene sends). Fixed in tests/e2e/drive.mjs; on 4d8f778 the Chapter 7 leg from the Chapter 6 fixture
+  **reached kr_done in 349 visits** (751 s).
+- B `node tests/e2e/matrix.mjs F ren 1`: **PASS** (all six chapters and one Atlas expedition).
+- U the full suite: **35,932 passed, 0 failed**.
+
+**Not verified:** Firefox; the foldable; a person playing Chapter 7 or weighing a telling (XP59).

@@ -228,7 +228,9 @@
     two fixes); P08 and P09 (Manybridge, Chapters 3 and 4: the Exchange, barge routing, the Undercroft; the press,
     the stage, the Understage, the river festival and its games) are done (phase ends in VALIDATION.md "The
     expansion, P08 and P09"; F/Ren PASS, unit 33,136/0); P10 (the Keepers' Road, Chapter 7, and the seams of the old
-    Chapters 3–4 as 5–6) is under way. Routes for the new chapters from fixtures:
+    Chapters 3–4 as 5–6) is done (phase end in VALIDATION.md "The expansion, P10"; F/Ren PASS, unit 35,932/0); P11
+    (Kotonoha and the sea) is under way: Lanternfall as Chapter 8 hands over to Kotonoha, Chapter 9, which is built
+    (docs/future/work/P11_SEA.md); its side stories, then the open sea and the ports, are next. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`
     and `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`.
     Development pages: `?dev=enc` (encounter fixtures), `?dev=verbs` (exploration actions). Current state:
