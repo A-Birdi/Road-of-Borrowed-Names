@@ -67,7 +67,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (ctx.run && RB.game && RB.game.s && enemy.pool) {
       try {
         const P = RB.game.s.learn.profile;
-        const weak = RB.learn.weakest(6).filter((id) => id !== ctx.run.lastWrong);
+        // (a commission's topic: its own items only, weakest first; src/atlas/80_commissions.js)
+        const topic = RB.atlasCommissions && RB.atlasCommissions.topicItems(ctx.run);
+        const weak = topic ? RB.learn.pick(topic.filter((id) => id !== ctx.run.lastWrong && RB.tasks.stepFor(id)), 4, { ignoreCooldown: true }) : RB.learn.weakest(6).filter((id) => id !== ctx.run.lastWrong);
         if (weak.length) enemy.pool = Object.assign({}, enemy.pool, { [P]: (enemy.pool[P] || []).concat(weak) });
       } catch (e) { /* keep the authored pool */ }
     }

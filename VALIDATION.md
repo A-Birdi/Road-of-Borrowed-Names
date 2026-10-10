@@ -3881,3 +3881,22 @@ for carried resolve.
   group-rule and census conflicts, F-29).
 
 **Not verified:** Firefox; the foldable; a person playing the cellars.
+
+## The expansion, P07: the Atlas's commissions (2026-10-10; C-81; docs/future/work/P07_EXPEDITIONS.md; REQUIREMENTS.md XP32; F-30)
+
+**What changed:** a commission board in the Lantern Hall (twelve-chapter journeys, after the story); practice,
+errand and survey runs of the Unwritten Atlas with a chosen length; topic lanterns and revisits; survey landmarks,
+safe passage, the Cartographer's Atlas page, the compass and the stamp; drills for 〜て ある and 〜て みる.
+
+**Checks:**
+- U `atlas_commissions` **38/0** (offers from evidence; shapes over 60 seeds; topic lamps 90 of 90; the route
+  fixed after forty mistakes; resume; landmarks in every area room of every variant; finishing and rewards),
+  `atlas` **77/0**, `overworld_geometry` **3/0**, `combat_golden` **2/0**; `node tools/validate.mjs`: no errors;
+  `node tools/review_ledger.mjs`: 1,011 lines, none without an entry (self-review only).
+- B `atlas_board` **4/0**: the board and a short road taken; a lantern teaching an unmet grammar point before asking
+  it, answered through the challenge screen; a survey landmark verified and counted; the Cartographer's Atlas and
+  the board at phone width.
+
+**Not verified:** a whole commission walked to its end in the browser (the run's end goes through the Atlas's own
+finalize, unit-tested through `finished`; the ordinary run's end is covered by `atlas.check.mjs`); Firefox; the
+foldable.

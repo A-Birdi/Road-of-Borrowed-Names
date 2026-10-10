@@ -887,6 +887,96 @@
   "jp": "ください",
   "en": ""
  },
+ "drill:xp.d_aru_f#o1ttn6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{窓|まど} が {開|あ}けて あります 。",
+  "en": ""
+ },
+ "drill:xp.d_aru_e#1l1oomm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{机|つくえ} の {上|うえ} に {地図|ちず} が {置|お}いて あります 。",
+  "en": ""
+ },
+ "drill:xp.d_aru_i#1vyi15n": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "Ａ ： {電気|でんき} が ついて いる 。　Ｂ ： {電気|でんき} が つけて ある 。",
+  "en": ""
+ },
+ "drill:xp.d_aru_a#1am8zk6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{裏|うら} に",
+  "en": ""
+ },
+ "drill:xp.d_aru_a#ucsgav": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{名前|なまえ} が",
+  "en": ""
+ },
+ "drill:xp.d_aru_a#yfcxkw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{書|か}いて",
+  "en": ""
+ },
+ "drill:xp.d_aru_a#upo35s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "あります",
+  "en": ""
+ },
+ "drill:xp.d_miru_f#dv2rmx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "この お{茶|ちゃ} を {飲|の}んで みて ください 。",
+  "en": ""
+ },
+ "drill:xp.d_miru_e#zsye2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{新|あたら}しい {道|みち} を {歩|ある}いて みました 。",
+  "en": ""
+ },
+ "drill:xp.d_miru_i#1othyhi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "ここ に",
+  "en": ""
+ },
+ "drill:xp.d_miru_i#5ds7vd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{名前|なまえ} を",
+  "en": ""
+ },
+ "drill:xp.d_miru_i#yfcxkw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{書|か}いて",
+  "en": ""
+ },
+ "drill:xp.d_miru_i#v9ub94": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "みて",
+  "en": ""
+ },
+ "drill:xp.d_miru_i#1uz0w57": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "ください",
+  "en": ""
+ },
+ "drill:xp.d_miru_a#xr3egm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{一度|いちど} {食|た}べて みたら 、 {思|おも}った より {甘|あま}かった 。",
+  "en": ""
+ },
  "expedition:cellars#1dfv6ce": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
@@ -1102,5 +1192,221 @@
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
   "jp": "{貼|は}り{紙|がみ} の {染|し}み",
   "en": "The blot on the notices"
+ },
+ "atlas:commissions#tghwdf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{灯籠|とうろう} が {並|なら}んで いる 。",
+  "en": "Lanterns stand in a row."
+ },
+ "atlas:commissions#1ef0wpr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{白|しろ}い {紙|かみ} の {灯籠|とうろう} が 、 {道|みち} の {両側|りょうがわ} に {並|なら}んで いる 。",
+  "en": "Lanterns of white paper line both sides of the road."
+ },
+ "atlas:commissions#1jmv4qx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{水|みず} の {上|うえ} に {橋|はし} が ある 。",
+  "en": "There is a bridge over the water."
+ },
+ "atlas:commissions#1uredf2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{橋|はし} は まだ {途中|とちゅう} まで しか {架|か}かって いない 。",
+  "en": "The bridge reaches only part of the way across."
+ },
+ "atlas:commissions#18ztnpw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{扉|とびら} が {三|みっ}つ ある 。",
+  "en": "There are three doors."
+ },
+ "atlas:commissions#9vrryp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{同|おな}じ {形|かたち} の {扉|とびら} が {三|みっ}つ 、 {横|よこ} に {並|なら}んで いる 。",
+  "en": "Three doors of the same shape stand side by side."
+ },
+ "atlas:commissions#1i79zwj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{木|き} が たくさん ある 。",
+  "en": "There are many trees."
+ },
+ "atlas:commissions#3m569f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{名前|なまえ} を {忘|わす}れた {木|き} の {間|あいだ} を 、 {声|こえ} が {迷|まよ}って いる 。",
+  "en": "Among trees that have forgotten their names, voices wander."
+ },
+ "atlas:commissions#wdz54b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{本|ほん} の {棚|たな} が ある 。",
+  "en": "There are shelves of books."
+ },
+ "atlas:commissions#6e2cu0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{題|だい} の ない {本|ほん} が 、 {棚|たな} に {詰|つ}まって いる 。",
+  "en": "The shelves are packed with books that have no titles."
+ },
+ "atlas:commissions#y8fgbr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{石|いし} の {庭|にわ} が ある 。",
+  "en": "There is a stone courtyard."
+ },
+ "atlas:commissions#12o47f7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{守|まも}られなかった {約束|やくそく} が 、 {庭|にわ} の {石|いし} に {刻|きざ}まれて いる 。",
+  "en": "Promises that were not kept are carved in the courtyard's stones."
+ },
+ "atlas:commissions#1luuhk0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{階段|かいだん} が {水|みず} に {沈|しず}んで いる 。",
+  "en": "Stairs go down into the water."
+ },
+ "atlas:commissions#1orghk7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{潮|しお} が {引|ひ}く と 、 {水|みず} の {下|した} から {階段|かいだん} が {現|あらわ}れる 。",
+  "en": "When the tide goes out, stairs appear from under the water."
+ },
+ "atlas:commissions#37fukh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{白|しろ}い {野原|のはら} が {広|ひろ}がって いる 。",
+  "en": "A white field spreads out."
+ },
+ "atlas:commissions#8bosj7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{紙|かみ} の {余白|よはく} の よう な {野原|のはら} に 、 {字|じ} が {少|すこ}し だけ {残|のこ}って いる 。",
+  "en": "In a field like the margin of a page, only a few letters remain."
+ },
+ "atlas:commissions#1b9u7m2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{静|しず}か な {池|いけ} が ある 。",
+  "en": "There is a quiet pond."
+ },
+ "atlas:commissions#1yhn4g0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{風|かぜ} の ない {池|いけ} に 、 {誰|だれ}か の {名前|なまえ} が {映|うつ}って いる 。",
+  "en": "Someone's name is reflected in a pond with no wind."
+ },
+ "atlas:commissions#2gyejs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{灯|あか}り の {道|みち}",
+  "en": "The lantern roads"
+ },
+ "atlas:commissions#1rqzcbx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{水|みず} の {道|みち}",
+  "en": "The wet roads"
+ },
+ "atlas:commissions#jdp3p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{草|くさ} の {道|みち}",
+  "en": "The overgrown roads"
+ },
+ "atlas:commissions#ul0003": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{地図師|ちずし}",
+  "en": "The Cartographer"
+ },
+ "atlas:commissions#1vlpm4c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{消|き}えた {道順|みちじゅん}",
+  "en": "The lost route"
+ },
+ "atlas:commissions#173e20": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "ツル",
+  "en": "Tsuru"
+ },
+ "atlas:commissions#dex877": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{二|ふた}つ の {指示|しじ}",
+  "en": "Two sets of instructions"
+ },
+ "atlas:commissions#196afkn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "〜て の {仲間|なかま}",
+  "en": "A family of endings"
+ },
+ "atlas:commissions#1cmywas": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{短|みじか}い",
+  "en": "Short"
+ },
+ "atlas:commissions#ykgjzi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "ふつう",
+  "en": "Standard"
+ },
+ "atlas:commissions#9w8p5a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{長|なが}い",
+  "en": "Long"
+ },
+ "scene:atlas.board#1ubeucr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{壁|かべ} の {掲示板|けいじばん} に 、 {依頼|いらい} の {紙|かみ} が {貼|は}って ある 。 {練習|れんしゅう} 、 {仕事|しごと} 、 {測量|そくりょう} 。",
+  "en": "Commissions have been pinned to the board on the wall: practice, errands, surveys."
+ },
+ "scene:atlas.board.go#c4xhny": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{依頼|いらい} の {紙|かみ} を {一枚|いちまい} {取|と}る と 、 {灯籠|とうろう} の {紙|かみ} に {道|みち} の {名前|なまえ} が {浮|う}かんだ 。",
+  "en": "You take one commission from the board, and the name of a road surfaces on a lantern shade."
+ },
+ "scene:atlas.board.go#9rlxdy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{依頼|いらい} {付|つ}き の {道|みち} か 。 {届|とど}け{先|さき} が ある と 、 {歩|ある}きやすい 。",
+  "en": "A road with a job attached. Easier to walk when there's somewhere to deliver."
+ },
+ "scene:atlas.board.go#pdnq02": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{目的|もくてき} が ある と 、 {迷|まよ}わない わ ね 。 {行|い}きましょう 。",
+  "en": "With a purpose, we won't lose our way. Let's go."
+ },
+ "scene:atlas.board.go#d628xs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{依頼|いらい} は {大切|たいせつ} に {扱|あつか}います 。 {参|まい}りましょう 。",
+  "en": "A commission deserves care. Let us go."
+ },
+ "scene:atlas.board.go#501n76": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{台本|だいほん} {付|つ}き の {舞台|ぶたい} だ ね 。 さあ 、 {開演|かいえん} ！",
+  "en": "A stage with a script this time. Curtain up!"
+ },
+ "scene:atlas.board.later#xz62zo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{依頼|いらい} は 、 {掲示板|けいじばん} に {貼|は}られた まま だ 。",
+  "en": "The commissions stay pinned to the board."
  }
 }

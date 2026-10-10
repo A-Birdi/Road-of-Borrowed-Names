@@ -395,6 +395,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else if (d === 'side') { R(c, 5, 16, 1, 2, '#3a3440'); R(c, 4, 18, 3, 3, '#ffd27a'); R(c, 4, 18, 3, 1, '#3a3440'); }
       else { R(c, 12, 16, 2, 3, '#ffd27a'); R(c, 12, 16, 2, 1, '#3a3440'); }
     },
+    atlas_compass(c, look, d) {
+      // the cartographer's compass at the left hip (src/atlas/80_commissions.js)
+      if (d === 'down') { R(c, 11, 15, 1, 2, '#6a4a2a'); R(c, 10, 17, 3, 3, '#e8c860'); R(c, 11, 18, 1, 1, '#c0402a'); }
+      else if (d === 'side') { R(c, 9, 16, 1, 2, '#6a4a2a'); R(c, 8, 18, 3, 3, '#e8c860'); R(c, 9, 19, 1, 1, '#c0402a'); }
+      else { R(c, 2, 16, 2, 3, '#e8c860'); }
+    },
     atlas_quill(c, look, d) {
       const col = '#f4f0e0', vane = '#d8d0bc';
       if (d === 'down') { R(c, 12, 1, 1, 6, col); R(c, 13, 0, 1, 4, vane); R(c, 12, 7, 1, 1, '#6a5a3a'); }

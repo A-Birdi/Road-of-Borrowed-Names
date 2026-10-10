@@ -439,6 +439,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = scr(v, 'R'), x = s ? 29 : 8;
       b.rect(x + 1, g.bt, 1, 2, IRON); lantern(b, x, g.bt + 3, true);
     },
+    atlas_compass(b, look, p, g, v, L, near) {
+      // the cartographer's compass on a cord at the left hip: a brass case, a pale face, a red needle
+      const at = (x, y) => {
+        b.px(x + 2, y - 2, STRAP); b.px(x + 2, y - 1, STRAP);
+        b.rect(x + 1, y, 3, 1, GOLD[1]); b.rect(x, y + 1, 5, 3, GOLD[1]); b.rect(x + 1, y + 4, 3, 1, GOLD[0]);
+        b.px(x, y + 1, GOLD[2]); b.rect(x + 1, y + 1, 3, 3, '#f4ecd0');
+        b.px(x + 2, y + 1, '#c0402a'); b.px(x + 2, y + 2, IRON); b.px(x + 2, y + 3, '#8a8a90'); b.px(x + 4, y + 3, GOLD[0]);
+      };
+      if (v === 'side') { if (L === sideLayer(near, 'L', 'hand')) at(12, g.bt + 1); return; }
+      if (L !== (v === 'up' ? 'head' : 'body')) return;
+      at(scr(v, 'L') ? 28 : 7, g.bt + 1);
+    },
     atlas_quill(b, look, p, g, v, L, near) {
       // a white feather tucked in the hair on the left
       const y = g.hy;
@@ -449,5 +461,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
   };
   A.ACC = ACC;
-  A.accSide = { flower: 'L', ribbon: 'L', leaf: 'L', atlas_quill: 'L', lamp: 'L', cane: 'L', book: 'R', basket: 'R', atlas_lamplet: 'R', atlas_pin: 'R', satchel: 'L', scarf: 'L', braid: 'L', ponytail: 'L' };
+  A.accSide = { flower: 'L', ribbon: 'L', leaf: 'L', atlas_quill: 'L', lamp: 'L', cane: 'L', book: 'R', basket: 'R', atlas_lamplet: 'R', atlas_pin: 'R', atlas_compass: 'L', satchel: 'L', scarf: 'L', braid: 'L', ponytail: 'L' };
 })();

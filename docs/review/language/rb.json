@@ -371,6 +371,18 @@
   "jp": "「できる こと」",
   "en": "Show you can do one thing of this kind, in two different places."
  },
+ "stamp:atlas.surveys#n5w1dj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{全|すべ}て の {道|みち} の {調査|ちょうさ}",
+  "en": "Every road surveyed"
+ },
+ "stamp:atlas.surveys#am95xp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
+  "jp": "{三|みっ}つ の {調査|ちょうさ}",
+  "en": "Survey all three areas of the Unwritten Atlas."
+ },
  "stand:reedwake#carm31": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",

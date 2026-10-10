@@ -26,3 +26,25 @@
 .xp-plan .xp-sc.off { fill: none; stroke: var(--ink-3); stroke-width: 1; }
 .xp-plan .xp-here { fill: var(--vermilion); stroke: var(--paper); stroke-width: 1.2; }
 .xp-chip .st svg { width: 1em; height: 1em; }
+
+/* the Atlas's commission board and the Cartographer's Atlas (src/ui/89c_atlas_board.js) */
+.ab-folio .leaf { max-width: 1040px; }
+.ab-grid { display: grid; gap: 1em; }
+.ab-grid.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; }
+.ab-list, .ab-card { min-width: 0; }
+.ab-set { border: 1px solid var(--rule); border-radius: var(--r-2); margin: 0 0 0.6em; padding: 0.3em 0.7em 0.5em; }
+.ab-set legend { font-weight: 700; color: var(--ink-2); padding: 0 0.3em; }
+.ab-opt { display: flex; gap: 0.6em; align-items: center; min-height: var(--tap); padding: 0.15em 0.3em; border-radius: var(--r-1); cursor: pointer; }
+.ab-opt:hover { background: var(--paper-2); }
+.ab-opt input { flex: none; width: 1.15em; height: 1.15em; margin: 0; accent-color: var(--ink); cursor: pointer; }
+.ab-opt input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.ab-opt .ab-t { min-width: 0; }
+.ab-opt input:checked + .ab-t { font-weight: 600; box-shadow: inset 0 -3px 0 var(--ribbon); }
+.ab-page { margin: 0.5em 0 1em; }
+.ab-page h4 { margin: 0 0 0.3em; font-size: 1em; }
+.ab-route { display: block; width: 100%; max-width: 560px; height: auto; }
+.ab-route .ab-line { stroke: var(--ink-3); stroke-width: 2; }
+.ab-route .ab-node { fill: var(--paper-3); stroke: var(--ink-2); stroke-width: 1.2; }
+.ab-route .ab-node.on { fill: var(--ribbon); }
+.ab-route .ab-tick { fill: none; stroke: var(--paper); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ab-route .ab-lab { font: 7px var(--serif, serif); fill: var(--ink-2); }

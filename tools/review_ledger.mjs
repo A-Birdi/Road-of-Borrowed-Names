@@ -55,6 +55,12 @@ export function lines(RB) {
     for (const m of d.maps) if (C.maps[m]) walk('xp.' + d.id, 'map:' + m, C.maps[m], new Set());
   }
   for (const id in C.encounters || {}) if (/^xp\./.test(id)) walk(id, 'encounter:' + id, C.encounters[id], new Set());
+  // the Atlas's commissions (P07): the board's scenes, the landmark lines, the areas, errands and lengths
+  if (RB.atlasCommissions) {
+    const K = RB.atlasCommissions;
+    walk('xp.atlas', 'atlas:commissions', { landmarks: K.LANDMARKS, areas: K.AREAS, themed: K.THEMED, lengths: K.LENGTHS }, new Set());
+    for (const id of ['atlas.board', 'atlas.board.go', 'atlas.board.later']) if (C.scenes[id]) for (const c of C.scenes[id].cmds) if (c.op === 'say') add('xp.atlas', 'scene:' + id, c.jp, c.en);
+  }
   return out;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {

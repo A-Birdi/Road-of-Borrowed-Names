@@ -4014,6 +4014,28 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .xp-plan .xp-here { fill: var(--vermilion); stroke: var(--paper); stroke-width: 1.2; }
 .xp-chip .st svg { width: 1em; height: 1em; }
 
+/* the Atlas's commission board and the Cartographer's Atlas (src/ui/89c_atlas_board.js) */
+.ab-folio .leaf { max-width: 1040px; }
+.ab-grid { display: grid; gap: 1em; }
+.ab-grid.two { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; }
+.ab-list, .ab-card { min-width: 0; }
+.ab-set { border: 1px solid var(--rule); border-radius: var(--r-2); margin: 0 0 0.6em; padding: 0.3em 0.7em 0.5em; }
+.ab-set legend { font-weight: 700; color: var(--ink-2); padding: 0 0.3em; }
+.ab-opt { display: flex; gap: 0.6em; align-items: center; min-height: var(--tap); padding: 0.15em 0.3em; border-radius: var(--r-1); cursor: pointer; }
+.ab-opt:hover { background: var(--paper-2); }
+.ab-opt input { flex: none; width: 1.15em; height: 1.15em; margin: 0; accent-color: var(--ink); cursor: pointer; }
+.ab-opt input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.ab-opt .ab-t { min-width: 0; }
+.ab-opt input:checked + .ab-t { font-weight: 600; box-shadow: inset 0 -3px 0 var(--ribbon); }
+.ab-page { margin: 0.5em 0 1em; }
+.ab-page h4 { margin: 0 0 0.3em; font-size: 1em; }
+.ab-route { display: block; width: 100%; max-width: 560px; height: auto; }
+.ab-route .ab-line { stroke: var(--ink-3); stroke-width: 2; }
+.ab-route .ab-node { fill: var(--paper-3); stroke: var(--ink-2); stroke-width: 1.2; }
+.ab-route .ab-node.on { fill: var(--ribbon); }
+.ab-route .ab-tick { fill: none; stroke: var(--paper); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ab-route .ab-lab { font: 7px var(--serif, serif); fill: var(--ink-2); }
+
 /* ==== src/styles/70_discovery.css ==== */
 /* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
  * the Roadside Keepsakes catalogue (src/ui/58_keepsakes.js) and its notices.
@@ -29082,6 +29104,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const s = scr(v, 'R'), x = s ? 29 : 8;
       b.rect(x + 1, g.bt, 1, 2, IRON); lantern(b, x, g.bt + 3, true);
     },
+    atlas_compass(b, look, p, g, v, L, near) {
+      // the cartographer's compass on a cord at the left hip: a brass case, a pale face, a red needle
+      const at = (x, y) => {
+        b.px(x + 2, y - 2, STRAP); b.px(x + 2, y - 1, STRAP);
+        b.rect(x + 1, y, 3, 1, GOLD[1]); b.rect(x, y + 1, 5, 3, GOLD[1]); b.rect(x + 1, y + 4, 3, 1, GOLD[0]);
+        b.px(x, y + 1, GOLD[2]); b.rect(x + 1, y + 1, 3, 3, '#f4ecd0');
+        b.px(x + 2, y + 1, '#c0402a'); b.px(x + 2, y + 2, IRON); b.px(x + 2, y + 3, '#8a8a90'); b.px(x + 4, y + 3, GOLD[0]);
+      };
+      if (v === 'side') { if (L === sideLayer(near, 'L', 'hand')) at(12, g.bt + 1); return; }
+      if (L !== (v === 'up' ? 'head' : 'body')) return;
+      at(scr(v, 'L') ? 28 : 7, g.bt + 1);
+    },
     atlas_quill(b, look, p, g, v, L, near) {
       // a white feather tucked in the hair on the left
       const y = g.hy;
@@ -29092,7 +29126,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
   };
   A.ACC = ACC;
-  A.accSide = { flower: 'L', ribbon: 'L', leaf: 'L', atlas_quill: 'L', lamp: 'L', cane: 'L', book: 'R', basket: 'R', atlas_lamplet: 'R', atlas_pin: 'R', satchel: 'L', scarf: 'L', braid: 'L', ponytail: 'L' };
+  A.accSide = { flower: 'L', ribbon: 'L', leaf: 'L', atlas_quill: 'L', lamp: 'L', cane: 'L', book: 'R', basket: 'R', atlas_lamplet: 'R', atlas_pin: 'R', atlas_compass: 'L', satchel: 'L', scarf: 'L', braid: 'L', ponytail: 'L' };
 })();
 
 
@@ -109926,6 +109960,125 @@ RB.ui.expedition = (function () {
 })();
 
 
+/* ==== src/ui/89c_atlas_board.js ==== */
+/* The Atlas's commission board on screen (expansion P07; plan D7; src/atlas/80_commissions.js), and the
+ * Cartographer's Atlas (Map › Cartographer's Atlas): the surveys you finished, each route as you walked it with the
+ * landmarks you verified, and what is still to survey (F-30).
+ *   RB.ui.atlasBoard.open(s) → Promise<commission | null>: choose a commission and its length; the card says what the
+ *   run will be (its topic, what is new to you, how many rooms, the rules) before anything is fixed. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.atlasBoard = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const K = () => RB.atlasCommissions;
+  const KIND = { practice: { en: 'Practice', jp: '{練習|れんしゅう}' }, themed: { en: 'Errands', jp: '{仕事|しごと}' }, survey: { en: 'Surveys', jp: '{測量|そくりょう}' } };
+  let V = null;
+
+  // the run this commission would be (the same seed the board's run will have), for exact numbers before it is fixed
+  function probe(s, c) {
+    const s2 = Object.assign({}, s, { atlas: Object.assign({}, s.atlas, { started: (s.atlas.started || 0) + 1 }) });
+    const run = RB.atlas.newRun(s2, [], {});
+    run.commission = c;
+    const plan = RB.atlas.plan(run);
+    const lens = [];
+    const walk = (key, n) => { const d = plan.rooms[key]; if (!d || !d.next.length) { lens.push(n); return; } for (const k of d.next) walk(k, n + 1); };
+    walk(plan.start, 1);
+    const area = c.area && K().AREAS[c.area] ? K().AREAS[c.area].patterns : [];
+    const marks = Object.values(plan.rooms).filter((d) => area.indexOf(d.pattern) >= 0 && ['path', 'branch', 'wild'].indexOf(d.kind) >= 0).length;
+    return { min: Math.min(...lens), max: Math.max(...lens), marks };
+  }
+  function newItems(s, c) { return c.topic ? c.topic.items.filter((id) => !(RB.learn.introduced && RB.learn.introduced(id)) && !((s.learn.items[id] || {}).seen > 0)) : []; }
+  function cardHtml(s) {
+    const o = V.offers.find((x) => x.id === V.pick);
+    if (!o) return '<p class="muted">Choose a commission.</p>';
+    const c = K().commission(o, V.length), p = probe(s, c), fresh = newItems(s, c);
+    const rows = [];
+    rows.push(['Client', esc((o.client && o.client.en) || 'The board') + (o.done ? ' <span class="muted small">' + esc('(done ' + o.done + (o.done === 1 ? ' time' : ' times') + ')') + '</span>' : '')]);
+    rows.push(['Aim', esc(o.aim.en)]);
+    if (c.topic) rows.push(['Topic', esc(c.topic.title.en) + ' <span class="muted small">' + esc('(' + c.topic.items.length + ' items' + (fresh.length ? '; ' + fresh.length + ' new to you, each shown before it is asked' : '') + ')') + '</span>']);
+    rows.push(['Length', esc(K().LENGTHS[c.length].en + ': ' + (p.min === p.max ? p.min : p.min + '–' + p.max) + ' rooms on the way (you choose at each fork). ' + K().LENGTHS[c.length].about)]);
+    if (c.kind === 'survey') rows.push(['Survey', esc(p.marks + ' landmark' + (p.marks === 1 ? '' : 's') + ' on this route to verify, one in each room of ' + K().AREAS[c.area].title.en.toLowerCase() + '. Verifying is optional; the survey counts once all of them on the road you walk are verified.')]);
+    rows.push(['Rules', '<ul class="xp-rules"><li>' + esc('The route is fixed when you set out; it never changes after a mistake.') + '</li><li>' + esc(c.topic ? 'Inside it, the lanterns and creatures ask about the topic, your weakest items first.' : 'Inside it, the practice follows your weakest items, as on any road.') + '</li><li>' + esc('As on any road: a camp to turn back from (on a standard or long road), and defeat brings you home with what you learned.') + '</li></ul>']);
+    return '<div class="xp-card">' + rows.map(([k, v]) => '<div class="xp-row"><div class="xp-k">' + esc(k) + '</div><div class="xp-v">' + v + '</div></div>').join('') + '</div>';
+  }
+  function listHtml() {
+    let h = '';
+    for (const kind of ['practice', 'themed', 'survey']) {
+      const L = V.offers.filter((o) => o.kind === kind);
+      if (!L.length) continue;
+      h += '<fieldset class="ab-set"><legend>' + RB.ui.jhtml(KIND[kind].jp) + ' <span class="en">' + esc(KIND[kind].en) + '</span></legend>' +
+        L.map((o) => '<label class="ab-opt"><input type="radio" name="ab-offer" value="' + esc(o.id) + '"' + (o.id === V.pick ? ' checked' : '') + '><span class="ab-t">' + (o.title.jp ? '<span class="jp">' + RB.ui.jhtml(o.title.jp) + '</span> ' : '') + '<span class="en">' + esc(o.title.en) + '</span>' + (o.done ? ' ' + I('done') : '') + '</span></label>').join('') + '</fieldset>';
+    }
+    h += '<fieldset class="ab-set"><legend>How long</legend>' + Object.keys(K().LENGTHS).map((k) => '<label class="ab-opt"><input type="radio" name="ab-len" value="' + k + '"' + (k === V.length ? ' checked' : '') + '><span class="ab-t"><span class="jp">' + RB.ui.jhtml(K().LENGTHS[k].jp) + '</span> <span class="en">' + esc(K().LENGTHS[k].en) + '</span></span></label>').join('') + '</fieldset>';
+    return h;
+  }
+  function render() {
+    if (!V) return;
+    const two = V.fr.el.clientWidth > 760;
+    V.box.innerHTML = '<div class="leaf ab-leaf" tabindex="-1"><p class="muted">' + esc('Commissions pinned to the board. Choose one and how long a road you want; the card shows what it will be before anything is fixed.') + '</p>' +
+      '<div class="ab-grid' + (two ? ' two' : '') + '"><div class="ab-list">' + listHtml() + '</div><div class="ab-card">' + cardHtml(V.s) +
+      '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="take">' + I('next') + '<span>Take this commission</span></button><button type="button" class="pbtn" data-a="no">Not now</button></div></div></div></div>';
+  }
+  function open(s) {
+    return new Promise((resolve) => {
+      const offers = K().offers(s);
+      const finish = (c) => { if (!V) return; RB.ui.popLayer(V.layer); V = null; resolve(c); };
+      const fr = RB.ui.folio.frame({ cls: 'xp-folio ab-folio', onClose: () => finish(null), closeLabel: 'Not now', closeIcon: 'back' });
+      fr.setTitle(RB.ui.label('{依頼|いらい} の {掲示板|けいじばん}', 'The commission board'), 'The Unwritten Atlas');
+      V = { s, fr, box: fr.box, offers, pick: offers[0] ? offers[0].id : null, length: 'standard' };
+      V.layer = { el: fr.scrim, name: 'atlas-board', onCancel: () => finish(null) };
+      fr.box.addEventListener('change', (e) => {
+        if (e.target.name === 'ab-offer') { V.pick = e.target.value; render(); }
+        if (e.target.name === 'ab-len') { V.length = e.target.value; render(); }
+      });
+      fr.box.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-a]');
+        if (!b || !V) return;
+        if (b.dataset.a === 'no') finish(null);
+        if (b.dataset.a === 'take') { const o = V.offers.find((x) => x.id === V.pick); finish(o ? K().commission(o, V.length) : null); }
+      });
+      RB.ui.pushLayer(V.layer);
+      render();
+    });
+  }
+
+  // ---- the Cartographer's Atlas (Map tab) ---------------------------------------------------------------------------
+  function routeSvg(route) {
+    const step = 34, h = 54, w = Math.max(1, route.length) * step + 10;
+    let out = '<svg class="ab-route" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc('The surveyed route: ' + route.length + ' rooms') + '"><line x1="17" y1="20" x2="' + (w - 17) + '" y2="20" class="ab-line"/>';
+    route.forEach((r, i) => {
+      const x = 17 + i * step;
+      out += '<circle cx="' + x + '" cy="20" r="' + (r.pattern && K().areaOf(r.pattern) ? 8 : 5) + '" class="ab-node' + (r.verified ? ' on' : '') + '"/>' + (r.verified ? '<path d="M' + (x - 4) + ' 20 l3 3 l5 -6" class="ab-tick"/>' : '');
+      const pat = r.pattern && RB.content.atlas && RB.content.atlas.patterns[r.pattern];
+      if (pat && K().areaOf(r.pattern)) out += '<text x="' + x + '" y="44" text-anchor="middle" class="ab-lab">' + esc(pat.name.en.replace(/^The /, '').split(' ').slice(0, 2).join(' ')) + '</text>';
+    });
+    return out + '</svg>';
+  }
+  function cartographerHtml(s) {
+    const rec = K().peek(s);
+    let h = '<h3>' + I('map') + ' ' + RB.ui.jhtml('{地図師|ちずし} の {地図帳|ちずちょう}') + ' <span class="en">' + esc('The Cartographer\'s Atlas') + '</span></h3>' +
+      '<p class="muted small">' + esc('One page for each area of the Unwritten Atlas you have surveyed. Rooms of a surveyed area open their way on for you in later walks.') + '</p>';
+    for (const a in K().AREAS) {
+      const A = K().AREAS[a], sv = rec.surveys[a];
+      h += '<div class="ab-page"><h4>' + RB.ui.jhtml(A.title.jp) + ' <span class="en">' + esc(A.title.en) + '</span>' + (sv ? ' <span class="kind">' + I('done') + ' surveyed</span>' : '') + '</h4>' +
+        (sv ? routeSvg(sv.route) + '<p class="small">' + esc(sv.route.filter((r) => r.verified).length + ' landmarks verified on a road of ' + sv.route.length + ' rooms.') + '</p>'
+          : '<p class="muted small">' + esc('Not surveyed yet. Its rooms: ' + A.patterns.map((p) => (RB.content.atlas.patterns[p] || { name: { en: p } }).name.en).join(', ') + '.') + '</p>') + '</div>';
+    }
+    return h;
+  }
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('map', {
+      id: 'cartographer', en: 'Cartographer\'s Atlas', icon: 'map',
+      available: (s) => !!(s && RB.recordsUI && RB.recordsUI.inCampaign(s) && s.atlas && (s.atlas.unlocked || (s.flags && s.flags.postgame))),
+      render(A) { A.innerHTML = cartographerHtml(RB.game.s); },
+    });
+  }
+  return { open, probe, cartographerHtml, routeSvg, state: () => (V ? { pick: V.pick, length: V.length } : null) };
+})();
+
+
 /* ==== src/ui/90_letters.js ==== */
 /* Practice suite B, interface part 1: shared pieces (RB.ui.pb) and the villagers'
  * correspondence (Practice addendum §17). docs/practice/suite_b.md.
@@ -146146,7 +146299,7 @@ RB.dialect.add('kansai', `
 
 
 /* ==== src/content/dialect/kansai_92_expeditions.js ==== */
-/* Suzu's Kansai-ben: the Flood Cellars (expansion P07 pilot).
+/* Suzu's Kansai-ben: the Flood Cellars (expansion P07 pilot) and the Atlas's commission board.
  * Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md.
  * "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -146175,6 +146328,9 @@ RB.dialect.add('kansai', `
 @ expeditions/20_scenes [xp.cellars_outflow]
 = {締|し}め 、 {完了|かんりょう} 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち が いい ね 。 || Books closed. Nothing feels better than accounts that balance.
 > {締|し}め 、 {完了|かんりょう} や 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち ええ な 。 || Books closed. Nothin' beats accounts that balance.
+@ atlas/80_commissions [atlas.board.go]
+= {台本|だいほん} {付|つ}き の {舞台|ぶたい} だ ね 。 さあ 、 {開演|かいえん} ！ || A stage with a script this time. Curtain up!
+> {台本|だいほん} {付|つ}き の {舞台|ぶたい} や な 。 さあ 、 {開演|かいえん} や ！ || A stage with a script this time. Curtain's up!
 `, 'dialect/kansai_92_expeditions');
 
 
@@ -149309,6 +149465,56 @@ narr: {戸|と} は {閉|し}めて ある 。 {鍵|かぎ} は {柱|はしら} 
 :later
 narr: {戸|と} の {前|まえ} で 、 {貼|は}り{紙|がみ} を もう {一度|いちど} {見|み}る 。 {急|いそ}がなくて いい 。 || You look at the notice once more. There's no hurry.
 `, 'expeditions/20_scenes.js');
+
+
+/* ==== src/content/expeditions/30_drills.js ==== */
+/* Drills for two grammar points no chapter drilled yet: 〜て ある (the Flood Cellars teach it) and 〜て みる. They
+ * let the Atlas's commissions (the "family of endings", practice topics built from the grammar families) and the
+ * Exams ask about them at every profile. Tagged 'expedition': they never join a region's battle pools. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const no = (en) => ({ en });
+  const c = (id, lv, item, ctx, prompt, options, extra) => Object.assign({ id, lv, tags: ['expedition'], kind: 'choose', item, ctx, prompt: { en: prompt }, options }, extra || {});
+  const o = (id, lv, item, prompt, tiles, extra) => Object.assign({ id, lv, tags: ['expedition'], kind: 'order', item, prompt: { en: prompt }, tiles, answer: tiles.slice() }, extra || {});
+  C.addDrills([
+    // ---- 〜て ある: a state someone brought about and left so ----
+    c('xp.d_aru_f', 'F', 'g:te_aru', { jp: '{窓|まど} が {開|あ}けて あります 。', en: '' }, 'What does this tell you?', [
+      { en: 'Someone has opened the window, and it is open now.', ok: true },
+      { en: 'Please open the window.', ok: false, why: no('That would be {開|あ}けて ください.') },
+      { en: 'The window is broken.', ok: false, why: no('Nothing is broken: {開|あ}けて あります says someone opened it.') },
+    ], { explain: { en: '〜て あります: someone did it, and it stays done.' } }),
+    c('xp.d_aru_e', 'E', 'g:te_aru', { jp: '{机|つくえ} の {上|うえ} に {地図|ちず} が {置|お}いて あります 。', en: '' }, 'Where is the map?', [
+      { en: 'On the desk: someone put it there.', ok: true },
+      { en: 'In someone\'s bag.', ok: false, why: no('{机|つくえ} の {上|うえ}: on the desk.') },
+      { en: 'Nobody knows; someone is looking for it.', ok: false, why: no('{置|お}いて あります: it has been put there, so it is there.') },
+    ]),
+    c('xp.d_aru_i', 'I', 'g:te_aru', { jp: 'Ａ ： {電気|でんき} が ついて いる 。　Ｂ ： {電気|でんき} が つけて ある 。', en: '' }, 'Which one tells you that someone switched the light on and left it on, on purpose?', [
+      { en: 'B: つけて ある', ok: true },
+      { en: 'A: ついて いる', ok: false, why: no('ついて いる only says the light is on (つく, nobody acting).') },
+      { en: 'Both say the same thing.', ok: false, why: no('Both say the light is on; only つけて ある says someone did it.') },
+    ]),
+    o('xp.d_aru_a', 'A', 'g:te_aru', 'Put it in order: "The names have been written on the back."', ['{裏|うら} に', '{名前|なまえ} が', '{書|か}いて', 'あります']),
+    // ---- 〜て みる: try doing (and see) ----
+    c('xp.d_miru_f', 'F', 'g:te_miru', { jp: 'この お{茶|ちゃ} を {飲|の}んで みて ください 。', en: '' }, 'What is being suggested?', [
+      { en: 'Try this tea and see how it is.', ok: true },
+      { en: 'Drink all of this tea.', ok: false, why: no('Nothing says "all": {飲|の}んで みる is "try drinking".') },
+      { en: 'Look at this tea.', ok: false, why: no('みる here means "try", not "look at".') },
+    ], { explain: { en: 'て form + みる: try doing something and see.' } }),
+    c('xp.d_miru_e', 'E', 'g:te_miru', { jp: '{新|あたら}しい {道|みち} を {歩|ある}いて みました 。', en: '' }, 'What did the speaker do?', [
+      { en: 'Walked the new road to see what it was like.', ok: true },
+      { en: 'Looked at the new road from far away.', ok: false, why: no('{歩|ある}いて みました: tried walking it.') },
+      { en: 'Wanted to walk the new road.', ok: false, why: no('That would be {歩|ある}きたい.') },
+    ]),
+    o('xp.d_miru_i', 'I', 'g:te_miru', 'Put it in order: "Try writing your name here."', ['ここ に', '{名前|なまえ} を', '{書|か}いて', 'みて', 'ください']),
+    c('xp.d_miru_a', 'A', 'g:te_miru', { jp: '{一度|いちど} {食|た}べて みたら 、 {思|おも}った より {甘|あま}かった 。', en: '' }, 'What does the sentence say happened?', [
+      { en: 'Having tried it once, the speaker found it sweeter than expected.', ok: true },
+      { en: 'The speaker looked at it and guessed it would be sweet.', ok: false, why: no('{食|た}べて みたら: on trying it, by eating it.') },
+      { en: 'The speaker has never eaten it.', ok: false, why: no('{一度|いちど} {食|た}べて みた: they did try it, once.') },
+    ]),
+  ]);
+})(RB.content);
 
 
 /* ==== src/content/fishing/00_lex.js ==== */
@@ -162110,6 +162316,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else if (d === 'side') { R(c, 5, 16, 1, 2, '#3a3440'); R(c, 4, 18, 3, 3, '#ffd27a'); R(c, 4, 18, 3, 1, '#3a3440'); }
       else { R(c, 12, 16, 2, 3, '#ffd27a'); R(c, 12, 16, 2, 1, '#3a3440'); }
     },
+    atlas_compass(c, look, d) {
+      // the cartographer's compass at the left hip (src/atlas/80_commissions.js)
+      if (d === 'down') { R(c, 11, 15, 1, 2, '#6a4a2a'); R(c, 10, 17, 3, 3, '#e8c860'); R(c, 11, 18, 1, 1, '#c0402a'); }
+      else if (d === 'side') { R(c, 9, 16, 1, 2, '#6a4a2a'); R(c, 8, 18, 3, 3, '#e8c860'); R(c, 9, 19, 1, 1, '#c0402a'); }
+      else { R(c, 2, 16, 2, 3, '#e8c860'); }
+    },
     atlas_quill(c, look, d) {
       const col = '#f4f0e0', vane = '#d8d0bc';
       if (d === 'down') { R(c, 12, 1, 1, 6, col); R(c, 13, 0, 1, 4, vane); R(c, 12, 7, 1, 1, '#6a5a3a'); }
@@ -163389,6 +163601,19 @@ RB.atlas = (function () {
   function plan(run) {
     const r = U.rng(run.seed);
     const mods = new Set(run.mods || []);
+    // a commission (src/atlas/80_commissions.js) shapes its own run: its length, a survey's area, a theme's lean.
+    // An ordinary run has none, and every choice below is then exactly as it always was.
+    const cm = run.commission || null;
+    const LEN = cm && cm.length ? cm.length : 'standard';
+    const CMS = RB.atlasCommissions;
+    const AREA = cm && cm.kind === 'survey' && CMS && CMS.AREAS[cm.area] ? CMS.AREAS[cm.area].patterns : null;
+    const PREF = cm && cm.prefer ? Object.keys(A.patterns).filter((p) => (A.patterns[p].objectives || []).indexOf(cm.prefer) >= 0) : null;
+    const narrow = (pool) => {
+      const keep = AREA || PREF;
+      if (!keep) return pool;
+      const n = pool.filter((p) => keep.indexOf(p) >= 0);
+      return n.length ? n : pool;
+    };
     const rooms = {};
     const R = (key, d) => (rooms[key] = Object.assign({ key, next: [], caches: [], foes: [], names: [], obj: null, guard: null }, d));
     const pick = (arr) => arr[r.int(arr.length)];
@@ -163447,7 +163672,7 @@ RB.atlas = (function () {
     // ---- layer 0: threshold
     const t = room('t', 'threshold', 'entry', null, { obj: 'inscription' });
     // ---- layer 1: path room
-    let p1pat = pick(PATH_POOL);
+    let p1pat = pick(narrow(PATH_POOL));
     if (mods.has('promises')) p1pat = 'court';
     else if (mods.has('lowtide') && r() < 0.6) p1pat = pick(['tide', 'crossing']);
     else if (mods.has('crowd') && r() < 0.6) p1pat = pick(['grove', 'pool']);
@@ -163460,10 +163685,10 @@ RB.atlas = (function () {
     const bt1 = [types1[0], types1.find((x) => x !== types1[0])];
     const branchRooms = (prefix, type, usedPats) => {
       const keys = [];
-      const n = type === 'long' ? 2 : 1;
+      const n = (type === 'long' ? 2 : 1) + (LEN === 'long' ? 1 : 0);
       for (let i = 0; i < n; i++) {
-        const pool = BRANCH[type].filter((p) => usedPats.indexOf(p) < 0);
-        let pat = pick(pool.length ? pool : BRANCH[type]);
+        const pool = narrow(BRANCH[type]).filter((p) => usedPats.indexOf(p) < 0);
+        let pat = pick(pool.length ? pool : narrow(BRANCH[type]));
         if (mods.has('lowtide') && type !== 'names' && r() < 0.4 && usedPats.indexOf('tide') < 0 && BRANCH[type].indexOf('tide') >= 0) pat = 'tide';
         usedPats.push(pat);
         const key = prefix + (i + 1);
@@ -163479,23 +163704,25 @@ RB.atlas = (function () {
     const B1 = branchRooms('b', bt1[1], used);
     f1.next = [A1[0], B1[0]];
     f1.branches = [bt1[0], bt1[1]];
-    // ---- layer 3: camp
-    const camp = room('c', 'camp', 'camp', null, { obj: null });
-    rooms[A1[A1.length - 1]].next = ['c'];
-    rooms[B1[B1.length - 1]].next = ['c'];
-    const types2 = r.shuffle(['lantern', 'wild', 'names'].concat(mods.has('crowd') ? ['names'] : []));
-    const bt2 = [types2[0], types2.find((x) => x !== types2[0])];
-    const used2 = [];
-    const D = branchRooms('d', bt2[0], used2);
-    const E = branchRooms('e', bt2[1], used2);
-    camp.next = [D[0], E[0]];
-    camp.branches = [bt2[0], bt2[1]];
-    if (mods.has('promises')) cache(camp, 'relic', 'promise');
+    // ---- layer 3: camp (a short commission has none: its first branches lead straight to the guardian)
+    let D = [], E = [];
+    if (LEN !== 'short') {
+      const camp = room('c', 'camp', 'camp', null, { obj: null });
+      rooms[A1[A1.length - 1]].next = ['c'];
+      rooms[B1[B1.length - 1]].next = ['c'];
+      const types2 = r.shuffle(['lantern', 'wild', 'names'].concat(mods.has('crowd') ? ['names'] : []));
+      const bt2 = [types2[0], types2.find((x) => x !== types2[0])];
+      const used2 = [];
+      D = branchRooms('d', bt2[0], used2);
+      E = branchRooms('e', bt2[1], used2);
+      camp.next = [D[0], E[0]];
+      camp.branches = [bt2[0], bt2[1]];
+      if (mods.has('promises')) cache(camp, 'relic', 'promise');
+    }
     // ---- layer 4: guardian, layer 5: road home
     const x = room('x', 'climax', 'climax', null, { obj: null });
     x.boss = C.atlas.climaxes[run.climax] ? run.climax : 'cartographer';
-    rooms[D[D.length - 1]].next = ['x'];
-    rooms[E[E.length - 1]].next = ['x'];
+    for (const last of LEN === 'short' ? [A1[A1.length - 1], B1[B1.length - 1]] : [D[D.length - 1], E[E.length - 1]]) rooms[last].next = ['x'];
     if (mods.has('promises')) cache(x, 'relic', 'promise');
     const z = room('z', 'extract', 'extract', null, { obj: null });
     x.next = ['z'];
@@ -163573,6 +163800,7 @@ RB.atlas = (function () {
     return anchorCache.get(k);
   }
   const ANCHORS = '@123!?$%&GK<W([)]}-IUVNJHMZ';
+  const GROUND = '.,;:+p_*sa'; // template ground a survey's landmark may stand on (it never blocks the way)
   const DECO_W = { M: 2 };
 
   // ---- map building ---------------------------------------------------------------------------------
@@ -163589,11 +163817,12 @@ RB.atlas = (function () {
     const spots = {};
     const deco = [];
     const at = (ch, x, y) => (spots[ch] = spots[ch] || []).push([x, y]);
+    const plain = []; // plain ground (a survey's landmark stands on it)
     const r = U.rng((run.seed ^ U.hashStr('room:' + d.key)) >>> 0);
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
         const ch = rows[y][x];
-        if (ANCHORS.indexOf(ch) < 0) { rows[y][x] = dress[ch] || ch; continue; }
+        if (ANCHORS.indexOf(ch) < 0) { if (GROUND.indexOf(ch) >= 0) plain.push([x, y]); rows[y][x] = dress[ch] || ch; continue; }
         at(ch, x, y);
         switch (ch) {
           case 'W': rows[y][x] = 'B'; break;
@@ -163633,10 +163862,15 @@ RB.atlas = (function () {
       atlas: { run: run.id, room: d.key, pattern: d.pattern, kind: d.kind },
     };
     const gateFlag = d.kind === 'wild' ? 'foe:' + id + ':guard' : d.kind === 'climax' ? FLAG('climax') : d.obj ? FLAG(d.obj.id) : null;
+    // safe passage (a surveyed area, fixed in the run when it began; src/atlas/80_commissions.js): the room's way on
+    // is open from the start; its task stays there to do
+    const CMS = RB.atlasCommissions;
+    const safe = !!(run.safe && run.safe.length && CMS && (d.kind === 'path' || d.kind === 'branch') && run.safe.indexOf(CMS.areaOf(d.pattern)) >= 0);
+    if (safe) def.atlas.safe = true;
     // gate veils
-    for (const [x, y] of spots['!'] || []) def.props.push(gateFlag ? { p: 'atlas_veil', x, y, if: '!' + gateFlag } : { p: 'atlas_veil', x, y, if: 'false' });
+    if (!safe) for (const [x, y] of spots['!'] || []) def.props.push(gateFlag ? { p: 'atlas_veil', x, y, if: '!' + gateFlag } : { p: 'atlas_veil', x, y, if: 'false' });
     // bridge gaps (Unfinished Bridge): water over the planks until the sign is restored
-    for (const [x, y] of spots.W || []) def.props.push({ p: 'water', x, y, if: '!' + (gateFlag || 'false') });
+    if (!safe) for (const [x, y] of spots.W || []) def.props.push({ p: 'water', x, y, if: '!' + (gateFlag || 'false') });
     // promise veils and caches
     for (const [x, y] of spots[')'] || []) if (mods.has('promises')) def.props.push({ p: 'atlas_veil', x, y, if: '!' + FLAG(d.kind === 'climax' ? 'pr2' : 'pr1') });
     // objective props
@@ -163665,6 +163899,21 @@ RB.atlas = (function () {
     } else if (q.length && d.kind === 'extract') {
       def.props.push({ p: 'atlas_waystone', x: q[0][0], y: q[0][1], scene: 'atlas.extract.room' });
     }
+    // a survey commission: one landmark to verify in each room of its area, on plain ground near where you come in
+    const cmS = run.commission;
+    if (cmS && cmS.kind === 'survey' && CMS && CMS.AREAS[cmS.area] && CMS.AREAS[cmS.area].patterns.indexOf(d.pattern) >= 0 && ['path', 'branch', 'wild'].indexOf(d.kind) >= 0) {
+      const sp0 = (spots['@'] || [])[0] || [W >> 1, H - 2];
+      const busy = new Set([].concat(...Object.values(spots)).map(([x, y]) => x + ',' + y));
+      const near = (x, y) => [[0, 1], [1, 0], [0, -1], [-1, 0]].some(([dx, dy]) => busy.has((x + dx) + ',' + (y + dy)));
+      const cand = plain.filter(([x, y]) => !near(x, y) && Math.abs(x - sp0[0]) + Math.abs(y - sp0[1]) >= 2)
+        .sort((a, b) => (Math.abs(a[0] - sp0[0]) + Math.abs(a[1] - sp0[1])) - (Math.abs(b[0] - sp0[0]) + Math.abs(b[1] - sp0[1])) || a[1] - b[1] || a[0] - b[0]);
+      const m = cand[0];
+      if (m) {
+        def.props.push({ p: 'stone_marker', x: m[0], y: m[1], block: false, scene: 'atlas.survey.mark', survey: d.key, if: '!' + FLAG('survey_' + d.key) });
+        def.props.push({ p: 'stone_marker', x: m[0], y: m[1], block: false, text: { jp: '{目印|めじるし} は {確|たし}かめた 。', en: 'Landmark verified: this room is in your survey.' }, if: FLAG('survey_' + d.key) });
+        def.atlas.survey = true;
+      }
+    }
     // exits
     const exitSlots = ['1', '2', '3'].map((k) => (spots[k] || [])[0]).filter(Boolean);
     const target = (key) => { const nd = planR.rooms[key]; const tsp = spawnOf(run, nd); return { to: mapId(run, key), tx: tsp[0], ty: tsp[1] }; };
@@ -163677,7 +163926,8 @@ RB.atlas = (function () {
       const bySide = exitSlots.slice().sort((a, b) => a[0] - b[0]);
       const sides = ['L', 'M', 'R'];
       bySide.forEach(([x, y], i) => {
-        def.exits.push(Object.assign({ x, y, w: 1, h: 1, dir: 'up', locked: 'atlas.doors.step', door: sides[i], correct: sides[i] === o.correct, unlock: sides[i] === o.correct ? FLAG(o.id) : undefined }, target(d.next[0])));
+        const free = safe && sides[i] === o.correct; // a surveyed hall: you know the door
+        def.exits.push(Object.assign({ x, y, w: 1, h: 1, dir: 'up', locked: free ? undefined : 'atlas.doors.step', door: sides[i], correct: sides[i] === o.correct, unlock: sides[i] === o.correct && !free ? FLAG(o.id) : undefined }, target(d.next[0])));
       });
       // door lamps (by screen position): the correct door's lamp is unlit for Intermediate/Advanced clues
       const lamps = (spots['<'] || []).slice().sort((a, b) => a[0] - b[0]);
@@ -163882,6 +164132,12 @@ RB.atlas = (function () {
   // Lamp 0 revisits something weak (if anything is due and off cooldown);
   // the others use familiar atlas material at the player's level.
   function lampStep(o, run, P, i, seed) {
+    // a commission's topic: every lamp asks about it, its weakest items first (C-57), never outside it
+    const topic = RB.atlasCommissions && RB.atlasCommissions.topicItems(run);
+    if (topic && RB.game && RB.game.s) {
+      const st = RB.atlasCommissions.topicStep(RB.game.s, run, topic, (seed ^ (i * 2654435761)) >>> 0, validStep);
+      if (st) return st;
+    }
     if (i === 0 && RB.game && RB.game.s) {
       try {
         const weak = RB.learn.weakest(10).filter((id) => id !== (run && run.lastWrong));
@@ -164028,7 +164284,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (ctx.run && RB.game && RB.game.s && enemy.pool) {
       try {
         const P = RB.game.s.learn.profile;
-        const weak = RB.learn.weakest(6).filter((id) => id !== ctx.run.lastWrong);
+        // (a commission's topic: its own items only, weakest first; src/atlas/80_commissions.js)
+        const topic = RB.atlasCommissions && RB.atlasCommissions.topicItems(ctx.run);
+        const weak = topic ? RB.learn.pick(topic.filter((id) => id !== ctx.run.lastWrong && RB.tasks.stepFor(id)), 4, { ignoreCooldown: true }) : RB.learn.weakest(6).filter((id) => id !== ctx.run.lastWrong);
         if (weak.length) enemy.pool = Object.assign({}, enemy.pool, { [P]: (enemy.pool[P] || []).concat(weak) });
       } catch (e) { /* keep the authored pool */ }
     }
@@ -164299,7 +164557,7 @@ RB.hooks = RB.hooks || {};
   const S = () => RB.game.s;
   const runOf = () => { const s = S(); return s && s.atlas && s.atlas.run; };
   const active = () => AT.combat.runActive();
-  const dbg = { autoSteps: false, log: [], chooseMod: null, choose: null };
+  const dbg = { autoSteps: false, log: [], chooseMod: null, choose: null, commission: null };
 
   // ---- small helpers ------------------------------------------------------------------------
   const lineFor = (o) => (o && (o.jp != null || o.en != null) ? o : RB.activities.tier(o));
@@ -164384,9 +164642,25 @@ RB.hooks = RB.hooks || {};
   }
   const SIDE = { left: { jp: '{左|ひだり}', en: 'left' }, right: { jp: '{右|みぎ}', en: 'right' }, middle: { jp: '{真|ま}ん{中|なか}', en: 'middle' } };
 
+  // a commission's topic item the player has never met is shown before it is asked (D7): a grammar point's card, a
+  // word or a character with its reading
+  async function teachItem(id) {
+    if (!id || (RB.learn.introduced && RB.learn.introduced(id))) return;
+    const k = id.slice(0, 2), v = id.slice(2);
+    RB.ui.dialogue.hide();
+    if (k === 'g:' && RB.lessons) { await RB.lessons.grammarCard(v); return; }
+    let t = null;
+    const ruby = (w, r) => (r && w !== r ? '{' + w + '|' + r + '}' : w);
+    if (k === 'v:') { const e = RB.tasks.findWord ? RB.tasks.findWord(v) : null; if (e) t = { title: 'A new word', jp: ruby(e.w, e.r), en: e.m }; }
+    else if (k === 'k:') t = { title: 'A new character', jp: v, en: RB.kana && RB.kana.romaji ? RB.kana.romaji(v) : '' };
+    else if (k === 'j:' && RB.kanjiInfo) { const info = RB.kanjiInfo.get(v); if (info) t = { title: 'A new kanji', jp: ruby(v, info.readings[0] || ''), en: (info.words || []).slice(0, 2).map((w) => ruby(w.w, w.r) + ': ' + w.m).join('; ') }; }
+    if (t) { RB.learn.markIntroduced(id); await RB.challenge.teachCard(t); }
+  }
+
   // ---- running a language step ------------------------------------------------------------------
   async function runStep(step, title) {
     if (!step) return { ok: true, assisted: true, skipped: true };
+    if (step.teachFirst && step.topicItem && !dbg.autoSteps) await teachItem(step.topicItem);
     const st = RB.tasks.prepare(step);
     if (title) st.title = title;
     if (dbg.autoSteps) {
@@ -164440,20 +164714,65 @@ RB.hooks = RB.hooks || {};
         const j = dbg.chooseMod2 != null ? dbg.chooseMod2 : await choose(o2);
         if (j < rest.length) mods.push(rest[j]);
       }
-      s.atlas.started = (s.atlas.started || 0) + 1;
-      const run = AT.newRun(s, mods, dbg.seed != null ? { seed: dbg.seed } : {});
-      AT.cleanFlags(s, run.id);
-      s.atlas.run = run;
-      AT.register(run);
-      s.checkpoint = AT.hallSpot();
-      s.vars.atlas_mods = mods.length;
-      await scene('atlas.intro.go');
-      const id = AT.mapId(run, 't');
-      const sp = C.maps[id].spawn.default;
-      await RB.game.transition(id, sp[0], sp[1], 'up', { inScript: true });
-      RB.save.autosave('auto');
-      AT.hud.update();
+      await beginRun(s, mods, {});
     });
+  };
+  // a run begins (Tsuru's road, or a commission from the board: opts.commission, fixed from here on)
+  async function beginRun(s, mods, opts) {
+    s.atlas.started = (s.atlas.started || 0) + 1;
+    const o = dbg.seed != null ? { seed: dbg.seed } : {};
+    const run = AT.newRun(s, mods, o);
+    if (opts.commission) run.commission = opts.commission;
+    const safe = RB.atlasCommissions ? RB.atlasCommissions.surveyed(s) : [];
+    if (safe.length) run.safe = safe; // (surveyed areas: safe passage, fixed for this run)
+    AT.cleanFlags(s, run.id);
+    s.atlas.run = run;
+    AT.register(run);
+    s.checkpoint = AT.hallSpot();
+    s.vars.atlas_mods = mods.length;
+    await scene(opts.commission ? 'atlas.board.go' : 'atlas.intro.go');
+    const id = AT.mapId(run, 't');
+    const sp = C.maps[id].spawn.default;
+    await RB.game.transition(id, sp[0], sp[1], 'up', { inScript: true });
+    RB.save.autosave('auto');
+    AT.hud.update();
+    return run;
+  }
+  // the commission board in the Lantern Hall (twelve-chapter journeys, once the Atlas is open; src/atlas/80_commissions.js,
+  // the board itself src/ui/89c_atlas_board.js)
+  RB.hooks.atlas_board = async function () {
+    const s = S();
+    if (!s) return;
+    return inDialogue(async () => {
+      if (!(s.flags.postgame || s.flags.post || s.atlas.unlocked)) {
+        await say('narr', { jp: '{掲示板|けいじばん} は 、 まだ {白紙|はくし} だ 。', en: 'The board is still blank. There is a story to finish first.' });
+        return;
+      }
+      if (s.atlas.run) { await say('narr', { jp: '{今|いま} は 、 {別|べつ} の {道|みち} の {途中|とちゅう} だ 。', en: 'You are already out on a road.' }); return; }
+      RB.ui.dialogue.hide();
+      const pick = dbg.commission || (RB.ui.atlasBoard ? await RB.ui.atlasBoard.open(s) : null);
+      if (!pick) { await scene('atlas.board.later'); return; }
+      s.atlas.unlocked = true;
+      await beginRun(s, [], { commission: pick });
+    });
+  };
+  // a survey's landmark: which line of the old route description is this room?
+  RB.hooks.atlas_survey = async function (args, ctx) {
+    const r = roomNow();
+    const pr = ctx && ctx.prop;
+    if (!r || !pr || !r.run.commission || r.run.commission.kind !== 'survey') return;
+    const s = S(), run = r.run, key = pr.survey || r.key;
+    if (s.flags[FLAG('survey_' + key)]) return;
+    const step = RB.atlasCommissions.landmarkStep(run, key, r.room.pattern, s.learn.profile);
+    await say('narr', { jp: '{古|ふる}い {道|みち} の {書|か}き{付|つ}け と 、 この {部屋|へや} を {見比|みくら}べる 。', en: 'You compare the old route description with this room.' });
+    const res = await runStep(step, 'Verify a landmark');
+    if (res.cancelled) { await compSay(COMP_LATER); return; }
+    s.flags[FLAG('survey_' + key)] = true;
+    run.survey = run.survey || { marks: {} };
+    run.survey.marks[key] = true;
+    await say('narr', { jp: '{目印|めじるし} を {確|たし}かめて 、 {調査|ちょうさ} の {帳面|ちょうめん} に {書|か}き{込|こ}んだ 。', en: 'You verify the landmark and mark it in the survey book. The corridors stay as they are drawn.' });
+    RB.world.refreshActors();
+    AT.hud.update();
   };
 
   // =====================================================================================
@@ -164471,6 +164790,11 @@ RB.hooks = RB.hooks || {};
     s.vars.atlas_esc = r.run.lantern ? 1 : 0;
     s.atlas.patternsSeen = s.atlas.patternsSeen || {};
     s.atlas.patternsSeen[r.room.pattern] = (s.atlas.patternsSeen[r.room.pattern] || 0) + 1;
+    // a room of a surveyed area: its way on is open (safe passage, src/atlas/80_commissions.js)
+    if (r.def.atlas && r.def.atlas.safe && !s.flags[FLAG('safe_' + r.key)]) {
+      s.flags[FLAG('safe_' + r.key)] = true;
+      await say('narr', { jp: '{調査|ちょうさ} した {道|みち} だ 。 {先|さき} へ {行|い}く {道|みち} は 、 もう {分|わ}かって いる 。', en: 'You surveyed roads like this one: the way on is already open. Its task is still here, if you want it.' });
+    }
   };
 
   const OBJ_INTRO = {
@@ -164911,6 +165235,14 @@ RB.hooks = RB.hooks || {};
       }
       addNote('atlas_defeat');
     }
+    // a commission finished: what it keeps (src/atlas/80_commissions.js)
+    const cmOut = RB.atlasCommissions ? RB.atlasCommissions.finished(s, run, kind) : null;
+    if (cmOut) {
+      summary.commission = cmOut;
+      if (cmOut.kind === 'survey' && cmOut.survey) await say('narr', { jp: '{調査|ちょうさ} の {帳面|ちょうめん} は 、 {地図師|ちずし} の {地図帳|ちずちょう} に {綴|と}じられる 。', en: 'The survey book goes into the Cartographer\'s Atlas. From now on, the rooms of ' + RB.atlasCommissions.AREAS[cmOut.survey].title.en.toLowerCase() + ' open their way on for you.' });
+      else if (cmOut.kind === 'survey' && !cmOut.surveyComplete) await say('narr', { jp: '{確|たし}かめて いない {目印|めじるし} が ある 。 {調査|ちょうさ} は 、 また {今度|こんど} 。', en: 'Some landmarks went unverified: the survey will have to wait for another walk.' });
+      if (cmOut.compass) await toast('item', C.items.atlas_cos_compass.name.jp, C.items.atlas_cos_compass.name.en);
+    }
     s.atlas.runs = (s.atlas.runs || 0) + 1;
     s.atlas.relicsSeen = Array.from(new Set((s.atlas.relicsSeen || []).concat(run.relics)));
     s.vars.atlas_restore = summary.restore || 0;
@@ -165082,9 +165414,25 @@ RB.hooks = RB.hooks || {};
         (run.lantern ? '<p class="note-slip">' + RB.ui.folio.icon('lantern') + ' Escorted lantern: ' + run.lantern.hp + '/' + run.lantern.max + (run.lantern.hp ? '' : ' (out — the expedition carries on)') + '</p>' : '') +
         '<h3>' + RB.ui.folio.icon('pouch') + ' Relics (temporary)</h3>' + (run.relics.length ? '<ul class="entries">' + run.relics.map((k) => { const d = A.relics[k]; return entry(d.name.jp, d.name.en, d.desc, d.comp && d.comp !== S().comp ? ' <span class="small muted">(waiting for someone else)</span>' : ''); }).join('') + '</ul>' : '<p class="muted">Nothing found yet.</p>') +
         (combos ? '<h3>Combinations</h3><ul class="entries">' + combos + '</ul>' : '') +
+        commissionHtml(run) +
         '<h3>So far</h3><p class="small">Rooms walked: ' + run.path.length + ' · names sent home: ' + run.names.length + ' · things restored: ' + run.stats.objectives + '</p>' +
         '<p class="small muted">Camps let you head home early and keep what you found. If a fight goes badly, the road folds up and sets you down at the Lantern Hall — nothing you learned is lost.</p></div></div>';
       RB.ui.pushLayer(lay);
+    }
+    // a commission's own page in the panel: what it is, its topic, a survey's landmarks so far
+    function commissionHtml(run) {
+      const c = run.commission;
+      if (!c || !RB.atlasCommissions) return '';
+      const esc = RB.util.esc, K = RB.atlasCommissions;
+      let h = '<h3>' + RB.ui.folio.icon('note') + ' Commission</h3><p>' + (c.title.jp ? RB.ui.jhtml(c.title.jp) + ' ' : '') + '<span class="en">' + esc(c.title.en) + '</span> <span class="muted small">' + esc('(' + K.LENGTHS[c.length].en.toLowerCase() + ')') + '</span></p>';
+      if (c.topic) h += '<p class="small">' + esc('Topic: ' + c.topic.title.en + '. The lanterns and creatures ask about it, your weakest items first.') + '</p>';
+      if (c.kind === 'survey') {
+        const pl = AT.planOf(run), area = K.AREAS[c.area].patterns;
+        const walked = run.path.filter((k) => pl.rooms[k] && area.indexOf(pl.rooms[k].pattern) >= 0 && ['path', 'branch', 'wild'].indexOf(pl.rooms[k].kind) >= 0);
+        const marks = (run.survey && run.survey.marks) || {};
+        h += '<p class="small">' + esc('Landmarks verified on the road so far: ' + walked.filter((k) => marks[k]).length + ' of ' + walked.length + ' in the rooms walked.') + '</p>';
+      }
+      return h;
     }
     return { update, sync, panel };
   })();
@@ -165761,6 +166109,231 @@ var RB = (globalThis.RB = globalThis.RB || {});
   AT.selfCheck = selfCheck;
   AT._check = { walker, bfs, modSets };
 })();
+
+
+/* ==== src/atlas/80_commissions.js ==== */
+/* Atlas commissions (expansion P07; plan 04_DUNGEONS.md D7; Robin's R1, R2 §3, C-18, C-57; F-30). The commission
+ * board in the Lantern Hall offers three kinds of Unwritten Atlas run, in twelve-chapter journeys once the Atlas is
+ * open:
+ *   practice  built round one of the player's weaker groups (RB.exams.groups: kana rows, kanji themes, a region's
+ *             words, a grammar family), ranked from the evidence; the topic and its items are fixed when accepted
+ *   themed    authored: a client, an aim and a fixed topic (a route's directions, requests that disagree, a family
+ *             of endings), and the objective the run leans on
+ *   survey    the Cartographer's work: the route keeps to one area's kinds of room, and each room has a landmark to
+ *             verify against the old route description (a reading task); the corridors are never redrawn (A13)
+ * Each takes a length chosen by the player: short (one fork, no camp), standard (as an ordinary run), long (longer
+ * branches). The run keeps its shape whatever happens (D1: geometry fixed at creation); inside it the practice still
+ * follows the player's weakest items, but only within the topic (C-57).
+ *
+ *   run.commission = { v, kind, id, title, length, topic: { id, title, items } | null, area | null, prefer }
+ *   s.atlas.commissions = { v, done: { <id>: n }, practice: n, surveys: { <area>: { at, route } } }  (made the first
+ *   time a commission is finished, never by reading; New Game+ does not carry it: it is the journey's own Atlas)
+ *
+ * What a finished survey gives: its page in the Cartographer's Atlas (the Map tab), and safe passage: in later runs a
+ * room of a surveyed area opens its way on without its task (the task stays there to do). All three areas: a stamp
+ * and the cartographer's compass. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.atlasCommissions = (function () {
+  'use strict';
+  const C = RB.content;
+  const T = (en, jp) => ({ en, jp });
+  const LENGTHS = {
+    short: { en: 'Short', jp: '{短|みじか}い', about: 'One fork and no camp.' },
+    standard: { en: 'Standard', jp: 'ふつう', about: 'Two forks and a camp, like an ordinary road.' },
+    long: { en: 'Long', jp: '{長|なが}い', about: 'Two forks and a camp, with every branch two rooms deep.' },
+  };
+  // the survey areas: three of the Atlas's nine kinds of path room each
+  const AREAS = {
+    lantern: { title: T('The lantern roads', '{灯|あか}り の {道|みち}'), patterns: ['lanterns', 'court', 'doors'] },
+    water: { title: T('The wet roads', '{水|みず} の {道|みち}'), patterns: ['crossing', 'tide', 'pool'] },
+    wild: { title: T('The overgrown roads', '{草|くさ} の {道|みち}'), patterns: ['grove', 'stacks', 'margin'] },
+  };
+  const areaOf = (pat) => Object.keys(AREAS).find((k) => AREAS[k].patterns.indexOf(pat) >= 0) || null;
+  // themed commissions (Astra A40): authored, each with a client, an aim, a fixed topic and the objective it leans on
+  const THEMED = [
+    { id: 'route', client: T('The Cartographer', '{地図師|ちずし}'), title: T('The lost route', '{消|き}えた {道順|みちじゅん}'),
+      aim: T('A route description has lost its little words. Read where each way leads, and which way you are sent.'),
+      topic: { id: 'theme:route', title: T('Directions: に, へ, を, から, まで'), items: ['g:prt_ni', 'g:prt_he', 'g:prt_wo', 'g:prt_kara_made'] }, prefer: 'doors' },
+    { id: 'orders', client: T('Tsuru', 'ツル'), title: T('Two sets of instructions', '{二|ふた}つ の {指示|しじ}'),
+      aim: T('Two keepers left two sets of instructions. Read what each one asks, allows or forbids.'),
+      topic: { id: 'theme:orders', title: T('Requests and permission'), items: ['g:v_te_kudasai', 'g:v_naide_kudasai', 'g:v_temo_ii', 'g:v_nakereba'] }, prefer: 'sign' },
+    { id: 'endings', client: T('Tsuru', 'ツル'), title: T('A family of endings', '〜て の {仲間|なかま}'),
+      aim: T('The lantern shades on this road carry one family of endings: doing it all, doing it ahead, leaving it so, trying it. Each new one is shown before it is asked.'),
+      topic: { id: 'theme:endings', title: T('Doing, leaving, finishing: 〜て しまう, 〜て おく, 〜て ある, 〜て みる'), items: ['g:te_shimau', 'g:te_oku', 'g:te_aru', 'g:te_miru'] }, prefer: 'lanterns' },
+  ];
+  const themed = (id) => THEMED.find((t) => t.id === id) || null;
+
+  // ---- the board's offers -----------------------------------------------------------------------------------------
+  const learnRec = (s, id) => (s && s.learn && s.learn.items && s.learn.items[id]) || null;
+  // how weak a group is from the evidence: the mean box of the items met, and the wrong answers recorded; lower is
+  // weaker. Only what was answered counts: a group nobody has evidence for is not called weak.
+  function weakness(s, g) {
+    let sum = 0, bad = 0, met = 0;
+    for (const id of g.items) { const r = learnRec(s, id); if (r && r.seen > 0) { met++; sum += r.box || 0; bad += r.bad || 0; } }
+    return { mean: met ? sum / met : Infinity, bad, met };
+  }
+  // the three weakest groups with evidence (at least three items answered; RB.exams' own offer rule), as practice
+  // topics; with none yet, one topic: your weakest items anywhere
+  function practiceTopics(s) {
+    if (!RB.exams) return [];
+    const gs = RB.exams.groups(s).filter((g) => RB.exams.offered(s, g));
+    const ranked = gs.map((g) => ({ g, w: weakness(s, g) })).filter((x) => x.w.met >= 3)
+      .sort((a, b) => a.w.mean - b.w.mean || b.w.bad - a.w.bad || (a.g.id < b.g.id ? -1 : 1));
+    const out = ranked.slice(0, 3).map(({ g }) => ({ id: 'practice:' + g.id, title: T(g.en, g.jp || ''), items: g.items.slice(), group: g.id }));
+    if (!out.length) {
+      const weak = RB.learn && RB.learn.weakest ? RB.learn.weakest(12) : [];
+      if (weak.length >= 3) out.push({ id: 'practice:weakest', title: T('Your weakest items, anywhere', ''), items: weak, group: null });
+    }
+    return out;
+  }
+  function rec(s) { return (s && s.atlas && s.atlas.commissions) || null; }
+  const peek = (s) => { const r = rec(s); return r ? JSON.parse(JSON.stringify(r)) : { v: 1, done: {}, practice: 0, surveys: {} }; };
+  function make(s) {
+    if (!s.atlas.commissions || typeof s.atlas.commissions !== 'object') s.atlas.commissions = { v: 1, done: {}, practice: 0, surveys: {} };
+    const r = s.atlas.commissions;
+    for (const k of ['done', 'surveys']) if (!r[k] || typeof r[k] !== 'object') r[k] = {};
+    return r;
+  }
+  const surveyed = (s) => Object.keys((rec(s) || {}).surveys || {}).filter((a) => AREAS[a]);
+  function offers(s) {
+    const out = [];
+    for (const t of practiceTopics(s)) out.push({ kind: 'practice', id: t.id, title: t.title, aim: T('Built round what the evidence shows you find hardest: ' + t.title.en + '. The words inside still follow your weakest items, within this topic only.'), topic: t, prefer: null, area: null });
+    for (const t of THEMED) out.push({ kind: 'themed', id: 'themed:' + t.id, title: t.title, client: t.client, aim: t.aim, topic: t.topic, prefer: t.prefer, area: null, done: ((rec(s) || {}).done || {})['themed:' + t.id] || 0 });
+    for (const a in AREAS) out.push({ kind: 'survey', id: 'survey:' + a, title: T('Survey: ' + AREAS[a].title.en, AREAS[a].title.jp), client: T('The Cartographer', '{地図師|ちずし}'), aim: T('Walk ' + AREAS[a].title.en.toLowerCase() + ' and check each room against the old route description. The corridors are never redrawn: you mark what you verified.'), topic: null, prefer: null, area: a, done: surveyed(s).indexOf(a) >= 0 ? 1 : 0 });
+    return out;
+  }
+  // a commission as the run will keep it (fixed now: D1, R2 §3)
+  function commission(offer, length) {
+    return { v: 1, kind: offer.kind, id: offer.id, title: offer.title, length: LENGTHS[length] ? length : 'standard', topic: offer.topic ? JSON.parse(JSON.stringify(offer.topic)) : null, area: offer.area || null, prefer: offer.prefer || null };
+  }
+  // what the run's practice may draw on: the topic's items, weakest first (C-57); null = anything (an ordinary run)
+  function topicItems(run) { return run && run.commission && run.commission.topic ? run.commission.topic.items.slice() : null; }
+  // a language step for one item: the Exams' question for it (kana, kanji, words, grammar drills), else the tasks'
+  function stepFor(s, id, n) {
+    let st = null;
+    try { st = RB.exams ? RB.exams.question(s, id, 'choice', n || 0) : null; } catch (e) { st = null; }
+    if (!st) { try { st = RB.tasks.stepFor(id); } catch (e) { st = null; } }
+    return st;
+  }
+  // the next step of a topic: its due and weakest items first (RB.learn.pick), never the item just missed, not the
+  // same item twice running; an item never met is marked to be taught first (step.topicItem, step.teachFirst)
+  function topicStep(s, run, items, seed, valid) {
+    const used = run._topicUsed || [];
+    const pool = items.filter((id) => id !== run.lastWrong && used.indexOf(id) < 0);
+    let ids = [];
+    try { ids = RB.learn.pick(pool.length ? pool : items, 6, { ignoreCooldown: true }); } catch (e) { ids = items.slice(); }
+    const r = RB.util.rng(seed >>> 0);
+    for (const id of ids.concat(r.shuffle(items.slice()))) {
+      const st = stepFor(s, id, r.int(4));
+      if (!st || (valid && valid(st).length)) continue;
+      st.topicItem = id;
+      st.teachFirst = !(RB.learn.introduced && RB.learn.introduced(id)) && !((s.learn.items[id] || {}).seen > 0);
+      run._topicUsed = used.concat([id]).slice(-Math.max(1, Math.min(3, items.length - 1)));
+      return st;
+    }
+    return null;
+  }
+
+  // ---- surveys: the landmark lines of the old route description ------------------------------------------------------
+  const L = (simple, rich) => ({ simple, rich });
+  const LANDMARKS = {
+    lanterns: L(T('Lanterns stand in a row.', '{灯籠|とうろう} が {並|なら}んで いる 。'), T('Lanterns of white paper line both sides of the road.', '{白|しろ}い {紙|かみ} の {灯籠|とうろう} が 、 {道|みち} の {両側|りょうがわ} に {並|なら}んで いる 。')),
+    crossing: L(T('There is a bridge over the water.', '{水|みず} の {上|うえ} に {橋|はし} が ある 。'), T('The bridge reaches only part of the way across.', '{橋|はし} は まだ {途中|とちゅう} まで しか {架|か}かって いない 。')),
+    doors: L(T('There are three doors.', '{扉|とびら} が {三|みっ}つ ある 。'), T('Three doors of the same shape stand side by side.', '{同|おな}じ {形|かたち} の {扉|とびら} が {三|みっ}つ 、 {横|よこ} に {並|なら}んで いる 。')),
+    grove: L(T('There are many trees.', '{木|き} が たくさん ある 。'), T('Among trees that have forgotten their names, voices wander.', '{名前|なまえ} を {忘|わす}れた {木|き} の {間|あいだ} を 、 {声|こえ} が {迷|まよ}って いる 。')),
+    stacks: L(T('There are shelves of books.', '{本|ほん} の {棚|たな} が ある 。'), T('The shelves are packed with books that have no titles.', '{題|だい} の ない {本|ほん} が 、 {棚|たな} に {詰|つ}まって いる 。')),
+    court: L(T('There is a stone courtyard.', '{石|いし} の {庭|にわ} が ある 。'), T('Promises that were not kept are carved in the courtyard\'s stones.', '{守|まも}られなかった {約束|やくそく} が 、 {庭|にわ} の {石|いし} に {刻|きざ}まれて いる 。')),
+    tide: L(T('Stairs go down into the water.', '{階段|かいだん} が {水|みず} に {沈|しず}んで いる 。'), T('When the tide goes out, stairs appear from under the water.', '{潮|しお} が {引|ひ}く と 、 {水|みず} の {下|した} から {階段|かいだん} が {現|あらわ}れる 。')),
+    margin: L(T('A white field spreads out.', '{白|しろ}い {野原|のはら} が {広|ひろ}がって いる 。'), T('In a field like the margin of a page, only a few letters remain.', '{紙|かみ} の {余白|よはく} の よう な {野原|のはら} に 、 {字|じ} が {少|すこ}し だけ {残|のこ}って いる 。')),
+    pool: L(T('There is a quiet pond.', '{静|しず}か な {池|いけ} が ある 。'), T('Someone\'s name is reflected in a pond with no wind.', '{風|かぜ} の ない {池|いけ} に 、 {誰|だれ}か の {名前|なまえ} が {映|うつ}って いる 。')),
+  };
+  // the landmark task for a room: which line of the description is this room? (seeded; F/E the simple lines, I/A the
+  // rich ones; every wrong line says what it describes)
+  function landmarkStep(run, roomKey, pattern, P) {
+    const r = RB.util.rng((run.seed ^ RB.util.hashStr('survey:' + roomKey)) >>> 0);
+    const rich = P === 'I' || P === 'A';
+    const others = r.shuffle(Object.keys(LANDMARKS).filter((k) => k !== pattern)).slice(0, 2);
+    const line = (k) => (rich ? LANDMARKS[k].rich : LANDMARKS[k].simple);
+    const opts = r.shuffle([pattern].concat(others)).map((k) => ({ jp: line(k).jp, ok: k === pattern, why: k === pattern ? undefined : { en: 'That line describes another kind of room: ' + line(k).en.toLowerCase() } }));
+    return {
+      kind: 'choose', item: 'c:atlas_survey_' + pattern,
+      prompt: { en: 'The old route description has a line for each room. Which line is this room? Look around you before you answer.' },
+      options: opts, explain: { jp: line(pattern).jp, en: line(pattern).en },
+      title: 'Verify a landmark',
+    };
+  }
+
+  // ---- finishing: what is kept --------------------------------------------------------------------------------------
+  // a run ended; returns what changed ({ survey: area, page: true, all: true, compass: true } …) for the screens
+  function finished(s, run, kind) {
+    const c = run && run.commission;
+    if (!c || kind !== 'complete') return null;
+    const r = make(s);
+    const out = { kind: c.kind, id: c.id };
+    if (c.kind === 'practice') r.practice = (r.practice || 0) + 1;
+    r.done[c.id] = (r.done[c.id] || 0) + 1;
+    if (c.kind === 'survey' && c.area) {
+      const marks = (run.survey && run.survey.marks) || {};
+      const pl = RB.atlas.planOf(run);
+      const hasMark = (key) => { const m = C.maps[RB.atlas.mapId(run, key)]; return !!(m && m.atlas && m.atlas.survey); };
+      const route = run.path.map((key) => { const d = pl.rooms[key] || {}; return { key, pattern: d.pattern || null, kind: d.kind || null, mark: hasMark(key), verified: !!marks[key] }; });
+      // the landmarks of the road you walked: every room of the area you passed through had one
+      const need = route.filter((x) => x.mark);
+      const ok = need.length > 0 && need.every((x) => x.verified);
+      out.surveyComplete = ok;
+      if (ok && !r.surveys[c.area]) {
+        r.surveys[c.area] = { at: Date.now(), route, seed: run.seed };
+        out.survey = c.area;
+        if (Object.keys(AREAS).every((a) => r.surveys[a])) {
+          out.all = true;
+          if (!(s.inv.atlas_cos_compass > 0) && !(s.equip && Object.values(s.equip).indexOf('atlas_cos_compass') >= 0)) { RB.state.give(s, 'atlas_cos_compass', 1); out.compass = true; }
+        }
+      }
+    }
+    return out;
+  }
+
+  return { LENGTHS, AREAS, THEMED, LANDMARKS, areaOf, themed, practiceTopics, weakness, offers, commission, topicItems, stepFor, topicStep, landmarkStep, finished, peek, rec, surveyed };
+})();
+
+// ---- the board in the Lantern Hall, its scenes, the compass and the stamp ------------------------------------------
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  C.items.atlas_cos_compass = { atlas: true, slot: 'cosmetic', acc: 'atlas_compass', name: T('The Cartographer\'s Compass', '{方位磁石|ほういじしゃく}'), desc: 'Given for surveying every road of the Unwritten Atlas. It hangs at your hip and points, as it should, north.' };
+  C.stamps = C.stamps || {};
+  C.stamps['atlas.surveys'] = { id: 'atlas.surveys', family: 'dungeon', hidden: true, title: T('Every road surveyed', '{全|すべ}て の {道|みち} の {調査|ちょうさ}'), criteria: T('Survey all three areas of the Unwritten Atlas.', '{三|みっ}つ の {調査|ちょうさ}'),
+    when: (s) => !!(RB.edition && RB.edition.of(s) >= 2 && RB.atlasCommissions && RB.atlasCommissions.surveyed(s).length === Object.keys(RB.atlasCommissions.AREAS).length), stand: null, design: { shape: 'round', motif: 'path', ink: '#2a4f8a' } };
+  const hall = C.maps['rw.hall'];
+  if (hall) hall.props = (hall.props || []).concat([{ p: 'noticeboard', x: 7, y: 2, scene: 'atlas.board', if: 'ed>=2&postgame' }]);
+})(RB.content);
+
+RB.script.add(`
+@scene atlas.board
+narr: {壁|かべ} の {掲示板|けいじばん} に 、 {依頼|いらい} の {紙|かみ} が {貼|は}って ある 。 {練習|れんしゅう} 、 {仕事|しごと} 、 {測量|そくりょう} 。 || Commissions have been pinned to the board on the wall: practice, errands, surveys.
+!hook atlas_board
+
+@scene atlas.board.go
+narr: {依頼|いらい} の {紙|かみ} を {一枚|いちまい} {取|と}る と 、 {灯籠|とうろう} の {紙|かみ} に {道|みち} の {名前|なまえ} が {浮|う}かんだ 。 || You take one commission from the board, and the name of a road surfaces on a lantern shade.
+?(comp=nao) comp: {依頼|いらい} {付|つ}き の {道|みち} か 。 {届|とど}け{先|さき} が ある と 、 {歩|ある}きやすい 。 || A road with a job attached. Easier to walk when there's somewhere to deliver.
+?(comp=mio) comp: {目的|もくてき} が ある と 、 {迷|まよ}わない わ ね 。 {行|い}きましょう 。 || With a purpose, we won't lose our way. Let's go.
+?(comp=ren) comp: {依頼|いらい} は {大切|たいせつ} に {扱|あつか}います 。 {参|まい}りましょう 。 || A commission deserves care. Let us go.
+?(comp=suzu) comp: {台本|だいほん} {付|つ}き の {舞台|ぶたい} だ ね 。 さあ 、 {開演|かいえん} ！ || A stage with a script this time. Curtain up!
+
+@scene atlas.board.later
+narr: {依頼|いらい} は 、 {掲示板|けいじばん} に {貼|は}られた まま だ 。 || The commissions stay pinned to the board.
+
+@scene atlas.survey.mark
+!hook atlas_survey
+`, 'atlas/80_commissions.js');
+
+RB.lex.add(RB.lex.parseTable(`
+見比べる|みくらべる|v1|I|to compare (by looking at both)
+地図帳|ちずちょう|n|I|atlas (a book of maps)
+測量|そくりょう|n|A|surveying, a survey
+方位磁石|ほういじしゃく|n|A|compass (for direction)
+`), 'atlas');
 
 
 /* ==== src/main.js ==== */

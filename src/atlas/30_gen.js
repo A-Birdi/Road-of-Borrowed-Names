@@ -80,6 +80,19 @@ RB.atlas = (function () {
   function plan(run) {
     const r = U.rng(run.seed);
     const mods = new Set(run.mods || []);
+    // a commission (src/atlas/80_commissions.js) shapes its own run: its length, a survey's area, a theme's lean.
+    // An ordinary run has none, and every choice below is then exactly as it always was.
+    const cm = run.commission || null;
+    const LEN = cm && cm.length ? cm.length : 'standard';
+    const CMS = RB.atlasCommissions;
+    const AREA = cm && cm.kind === 'survey' && CMS && CMS.AREAS[cm.area] ? CMS.AREAS[cm.area].patterns : null;
+    const PREF = cm && cm.prefer ? Object.keys(A.patterns).filter((p) => (A.patterns[p].objectives || []).indexOf(cm.prefer) >= 0) : null;
+    const narrow = (pool) => {
+      const keep = AREA || PREF;
+      if (!keep) return pool;
+      const n = pool.filter((p) => keep.indexOf(p) >= 0);
+      return n.length ? n : pool;
+    };
     const rooms = {};
     const R = (key, d) => (rooms[key] = Object.assign({ key, next: [], caches: [], foes: [], names: [], obj: null, guard: null }, d));
     const pick = (arr) => arr[r.int(arr.length)];
@@ -138,7 +151,7 @@ RB.atlas = (function () {
     // ---- layer 0: threshold
     const t = room('t', 'threshold', 'entry', null, { obj: 'inscription' });
     // ---- layer 1: path room
-    let p1pat = pick(PATH_POOL);
+    let p1pat = pick(narrow(PATH_POOL));
     if (mods.has('promises')) p1pat = 'court';
     else if (mods.has('lowtide') && r() < 0.6) p1pat = pick(['tide', 'crossing']);
     else if (mods.has('crowd') && r() < 0.6) p1pat = pick(['grove', 'pool']);
@@ -151,10 +164,10 @@ RB.atlas = (function () {
     const bt1 = [types1[0], types1.find((x) => x !== types1[0])];
     const branchRooms = (prefix, type, usedPats) => {
       const keys = [];
-      const n = type === 'long' ? 2 : 1;
+      const n = (type === 'long' ? 2 : 1) + (LEN === 'long' ? 1 : 0);
       for (let i = 0; i < n; i++) {
-        const pool = BRANCH[type].filter((p) => usedPats.indexOf(p) < 0);
-        let pat = pick(pool.length ? pool : BRANCH[type]);
+        const pool = narrow(BRANCH[type]).filter((p) => usedPats.indexOf(p) < 0);
+        let pat = pick(pool.length ? pool : narrow(BRANCH[type]));
         if (mods.has('lowtide') && type !== 'names' && r() < 0.4 && usedPats.indexOf('tide') < 0 && BRANCH[type].indexOf('tide') >= 0) pat = 'tide';
         usedPats.push(pat);
         const key = prefix + (i + 1);
@@ -170,23 +183,25 @@ RB.atlas = (function () {
     const B1 = branchRooms('b', bt1[1], used);
     f1.next = [A1[0], B1[0]];
     f1.branches = [bt1[0], bt1[1]];
-    // ---- layer 3: camp
-    const camp = room('c', 'camp', 'camp', null, { obj: null });
-    rooms[A1[A1.length - 1]].next = ['c'];
-    rooms[B1[B1.length - 1]].next = ['c'];
-    const types2 = r.shuffle(['lantern', 'wild', 'names'].concat(mods.has('crowd') ? ['names'] : []));
-    const bt2 = [types2[0], types2.find((x) => x !== types2[0])];
-    const used2 = [];
-    const D = branchRooms('d', bt2[0], used2);
-    const E = branchRooms('e', bt2[1], used2);
-    camp.next = [D[0], E[0]];
-    camp.branches = [bt2[0], bt2[1]];
-    if (mods.has('promises')) cache(camp, 'relic', 'promise');
+    // ---- layer 3: camp (a short commission has none: its first branches lead straight to the guardian)
+    let D = [], E = [];
+    if (LEN !== 'short') {
+      const camp = room('c', 'camp', 'camp', null, { obj: null });
+      rooms[A1[A1.length - 1]].next = ['c'];
+      rooms[B1[B1.length - 1]].next = ['c'];
+      const types2 = r.shuffle(['lantern', 'wild', 'names'].concat(mods.has('crowd') ? ['names'] : []));
+      const bt2 = [types2[0], types2.find((x) => x !== types2[0])];
+      const used2 = [];
+      D = branchRooms('d', bt2[0], used2);
+      E = branchRooms('e', bt2[1], used2);
+      camp.next = [D[0], E[0]];
+      camp.branches = [bt2[0], bt2[1]];
+      if (mods.has('promises')) cache(camp, 'relic', 'promise');
+    }
     // ---- layer 4: guardian, layer 5: road home
     const x = room('x', 'climax', 'climax', null, { obj: null });
     x.boss = C.atlas.climaxes[run.climax] ? run.climax : 'cartographer';
-    rooms[D[D.length - 1]].next = ['x'];
-    rooms[E[E.length - 1]].next = ['x'];
+    for (const last of LEN === 'short' ? [A1[A1.length - 1], B1[B1.length - 1]] : [D[D.length - 1], E[E.length - 1]]) rooms[last].next = ['x'];
     if (mods.has('promises')) cache(x, 'relic', 'promise');
     const z = room('z', 'extract', 'extract', null, { obj: null });
     x.next = ['z'];
@@ -264,6 +279,7 @@ RB.atlas = (function () {
     return anchorCache.get(k);
   }
   const ANCHORS = '@123!?$%&GK<W([)]}-IUVNJHMZ';
+  const GROUND = '.,;:+p_*sa'; // template ground a survey's landmark may stand on (it never blocks the way)
   const DECO_W = { M: 2 };
 
   // ---- map building ---------------------------------------------------------------------------------
@@ -280,11 +296,12 @@ RB.atlas = (function () {
     const spots = {};
     const deco = [];
     const at = (ch, x, y) => (spots[ch] = spots[ch] || []).push([x, y]);
+    const plain = []; // plain ground (a survey's landmark stands on it)
     const r = U.rng((run.seed ^ U.hashStr('room:' + d.key)) >>> 0);
     for (let y = 0; y < H; y++) {
       for (let x = 0; x < W; x++) {
         const ch = rows[y][x];
-        if (ANCHORS.indexOf(ch) < 0) { rows[y][x] = dress[ch] || ch; continue; }
+        if (ANCHORS.indexOf(ch) < 0) { if (GROUND.indexOf(ch) >= 0) plain.push([x, y]); rows[y][x] = dress[ch] || ch; continue; }
         at(ch, x, y);
         switch (ch) {
           case 'W': rows[y][x] = 'B'; break;
@@ -324,10 +341,15 @@ RB.atlas = (function () {
       atlas: { run: run.id, room: d.key, pattern: d.pattern, kind: d.kind },
     };
     const gateFlag = d.kind === 'wild' ? 'foe:' + id + ':guard' : d.kind === 'climax' ? FLAG('climax') : d.obj ? FLAG(d.obj.id) : null;
+    // safe passage (a surveyed area, fixed in the run when it began; src/atlas/80_commissions.js): the room's way on
+    // is open from the start; its task stays there to do
+    const CMS = RB.atlasCommissions;
+    const safe = !!(run.safe && run.safe.length && CMS && (d.kind === 'path' || d.kind === 'branch') && run.safe.indexOf(CMS.areaOf(d.pattern)) >= 0);
+    if (safe) def.atlas.safe = true;
     // gate veils
-    for (const [x, y] of spots['!'] || []) def.props.push(gateFlag ? { p: 'atlas_veil', x, y, if: '!' + gateFlag } : { p: 'atlas_veil', x, y, if: 'false' });
+    if (!safe) for (const [x, y] of spots['!'] || []) def.props.push(gateFlag ? { p: 'atlas_veil', x, y, if: '!' + gateFlag } : { p: 'atlas_veil', x, y, if: 'false' });
     // bridge gaps (Unfinished Bridge): water over the planks until the sign is restored
-    for (const [x, y] of spots.W || []) def.props.push({ p: 'water', x, y, if: '!' + (gateFlag || 'false') });
+    if (!safe) for (const [x, y] of spots.W || []) def.props.push({ p: 'water', x, y, if: '!' + (gateFlag || 'false') });
     // promise veils and caches
     for (const [x, y] of spots[')'] || []) if (mods.has('promises')) def.props.push({ p: 'atlas_veil', x, y, if: '!' + FLAG(d.kind === 'climax' ? 'pr2' : 'pr1') });
     // objective props
@@ -356,6 +378,21 @@ RB.atlas = (function () {
     } else if (q.length && d.kind === 'extract') {
       def.props.push({ p: 'atlas_waystone', x: q[0][0], y: q[0][1], scene: 'atlas.extract.room' });
     }
+    // a survey commission: one landmark to verify in each room of its area, on plain ground near where you come in
+    const cmS = run.commission;
+    if (cmS && cmS.kind === 'survey' && CMS && CMS.AREAS[cmS.area] && CMS.AREAS[cmS.area].patterns.indexOf(d.pattern) >= 0 && ['path', 'branch', 'wild'].indexOf(d.kind) >= 0) {
+      const sp0 = (spots['@'] || [])[0] || [W >> 1, H - 2];
+      const busy = new Set([].concat(...Object.values(spots)).map(([x, y]) => x + ',' + y));
+      const near = (x, y) => [[0, 1], [1, 0], [0, -1], [-1, 0]].some(([dx, dy]) => busy.has((x + dx) + ',' + (y + dy)));
+      const cand = plain.filter(([x, y]) => !near(x, y) && Math.abs(x - sp0[0]) + Math.abs(y - sp0[1]) >= 2)
+        .sort((a, b) => (Math.abs(a[0] - sp0[0]) + Math.abs(a[1] - sp0[1])) - (Math.abs(b[0] - sp0[0]) + Math.abs(b[1] - sp0[1])) || a[1] - b[1] || a[0] - b[0]);
+      const m = cand[0];
+      if (m) {
+        def.props.push({ p: 'stone_marker', x: m[0], y: m[1], block: false, scene: 'atlas.survey.mark', survey: d.key, if: '!' + FLAG('survey_' + d.key) });
+        def.props.push({ p: 'stone_marker', x: m[0], y: m[1], block: false, text: { jp: '{目印|めじるし} は {確|たし}かめた 。', en: 'Landmark verified: this room is in your survey.' }, if: FLAG('survey_' + d.key) });
+        def.atlas.survey = true;
+      }
+    }
     // exits
     const exitSlots = ['1', '2', '3'].map((k) => (spots[k] || [])[0]).filter(Boolean);
     const target = (key) => { const nd = planR.rooms[key]; const tsp = spawnOf(run, nd); return { to: mapId(run, key), tx: tsp[0], ty: tsp[1] }; };
@@ -368,7 +405,8 @@ RB.atlas = (function () {
       const bySide = exitSlots.slice().sort((a, b) => a[0] - b[0]);
       const sides = ['L', 'M', 'R'];
       bySide.forEach(([x, y], i) => {
-        def.exits.push(Object.assign({ x, y, w: 1, h: 1, dir: 'up', locked: 'atlas.doors.step', door: sides[i], correct: sides[i] === o.correct, unlock: sides[i] === o.correct ? FLAG(o.id) : undefined }, target(d.next[0])));
+        const free = safe && sides[i] === o.correct; // a surveyed hall: you know the door
+        def.exits.push(Object.assign({ x, y, w: 1, h: 1, dir: 'up', locked: free ? undefined : 'atlas.doors.step', door: sides[i], correct: sides[i] === o.correct, unlock: sides[i] === o.correct && !free ? FLAG(o.id) : undefined }, target(d.next[0])));
       });
       // door lamps (by screen position): the correct door's lamp is unlit for Intermediate/Advanced clues
       const lamps = (spots['<'] || []).slice().sort((a, b) => a[0] - b[0]);
@@ -573,6 +611,12 @@ RB.atlas = (function () {
   // Lamp 0 revisits something weak (if anything is due and off cooldown);
   // the others use familiar atlas material at the player's level.
   function lampStep(o, run, P, i, seed) {
+    // a commission's topic: every lamp asks about it, its weakest items first (C-57), never outside it
+    const topic = RB.atlasCommissions && RB.atlasCommissions.topicItems(run);
+    if (topic && RB.game && RB.game.s) {
+      const st = RB.atlasCommissions.topicStep(RB.game.s, run, topic, (seed ^ (i * 2654435761)) >>> 0, validStep);
+      if (st) return st;
+    }
     if (i === 0 && RB.game && RB.game.s) {
       try {
         const weak = RB.learn.weakest(10).filter((id) => id !== (run && run.lastWrong));

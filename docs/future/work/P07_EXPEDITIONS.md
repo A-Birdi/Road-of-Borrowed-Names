@@ -1,8 +1,8 @@
 # P07 · Expeditions, Atlas extensions and a pilot dungeon
 
 *Playbook P07 ("Finish the expedition framework and one pilot"); plan [04_DUNGEONS.md](../plan/04_DUNGEONS.md)
-D1–D8, D10. Authorised by Robin's C-81. Under way: the framework and the pilot done; the Atlas's commissions and
-delvers next.*
+D1–D8, D10. Authorised by Robin's C-81. Under way: the framework, the pilot and the Atlas's commissions done;
+delvers and the room-variation evidence next.*
 
 ## What P07 builds
 
@@ -19,7 +19,8 @@ delvers next.*
 | Coherence: a visit begun or ended by walking onto or off its maps; rest places kept at full resolve; machines part-way through reset on a restart (solved steps kept); unlimited uses survive a save; the floors seen kept | D3, D3a; F-27 | `src/engine/98_expedition.js` | Done |
 | Carried resolve on the map (a chip) and the Map page's Expedition plan (the floors seen, the stations with uses left, the shortcuts) | D2, D10 | `src/ui/89b_expedition.js`, `src/styles/67_expedition.css` | Done |
 | The whole-expedition curve: the player model plays the cellars end to end with carried condition | D2 ("a new curve test that plays whole expeditions"); F-29 | `tests/unit/expedition_curve.test.mjs`; `RB.combatSim.run`'s `onInit` | Done |
-| Atlas commissions (practice, themed, survey), varied rooms inside each run's fixed shape, delvers | D7, C-57, D8 | — | Next |
+| Atlas commissions: the board in the Lantern Hall; practice topics from the evidence, three errands, three survey areas; a length chosen; the card with exact rooms before anything is fixed; topic lanterns and revisits, unmet items taught first; survey landmarks; safe passage; the Cartographer's Atlas (Map tab); the compass and the stamp | D7; F-30 | `src/atlas/80_commissions.js`, the generator's hooks in `src/atlas/30_gen.js`, `50_run.js`, `40_combat.js`; `src/ui/89c_atlas_board.js`; drills `src/content/expeditions/30_drills.js` | Done |
+| Varied rooms inside each run's fixed shape (evidence), delvers | C-57, D8 | — | Next |
 
 ## The accounting (D2), as tested
 
@@ -81,3 +82,11 @@ every setting with and without a companion; the six-chapter story's group rules 
 | In the browser: the whole loop (hatch, card, B1, B2, sluice, shortcut, plan, door, stamp, out); a defeat; a real battle carrying the blow and giving back the mistake; the notice by hand at all four profiles (mouse, tiles, typing, handwriting); phone width | `node tests/e2e/expedition.mjs` | 5/0 (captures `docs/screenshots/expedition/`) |
 | The challenge screen's English fields with readings (F-28), and the suites around it | `node tests/e2e/ui.mjs`, `encounters.mjs` | 14/0, 10/0 |
 | The defeat test gives the battle's outcome (the game's defeat flow after it is its own); the real battle test steps back rather than playing to a finish | — | stated, not hidden |
+
+## The Atlas's commissions (F-30)
+
+| Check | Command | Result |
+|---|---|---|
+| The board (topics from evidence, never a group with none; errands; surveys; reading makes no record; a commission fixed when taken); the shape (a standard practice commission exactly an ordinary run's shape over 60 seeds; short always shorter, long always longer; a survey keeps to its area; the lost route leans on the hall of doors); the topic (every lamp of 90 about it; an unmet item marked to be taught; ordinary lamps unchanged); the route fixed after forty mistakes; a saved run rebuilding the same maps; a landmark in every area room of every variant (40 seeds × 3 areas); the landmark task at four profiles; finishing (the record made at the first finish; an incomplete survey not recorded; safe passage: no veil, planks laid, the right door open; all three: the compass and the stamp) | `node tests/run-unit.mjs atlas_commissions` | 38/0 |
+| Ordinary runs unchanged | `atlas`, `overworld_geometry` (three seeds' rooms), `combat_golden` | 77/0, 3/0, 2/0 |
+| In the browser: the board with the card and a short road taken; a lantern of the family of endings (the grammar card first, then the question through the challenge screen, the lamp lit); a survey landmark verified and counted in the Atlas panel; the Cartographer's Atlas page and the board at phone width | `node tests/e2e/atlas_board.mjs` | 4/0 (captures `docs/screenshots/atlas_board/`) |

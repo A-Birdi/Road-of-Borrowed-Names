@@ -1,4 +1,4 @@
-/* Suzu's Kansai-ben: the Flood Cellars (expansion P07 pilot).
+/* Suzu's Kansai-ben: the Flood Cellars (expansion P07 pilot) and the Atlas's commission board.
  * Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md.
  * "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -27,4 +27,7 @@ RB.dialect.add('kansai', `
 @ expeditions/20_scenes [xp.cellars_outflow]
 = {締|し}め 、 {完了|かんりょう} 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち が いい ね 。 || Books closed. Nothing feels better than accounts that balance.
 > {締|し}め 、 {完了|かんりょう} や 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち ええ な 。 || Books closed. Nothin' beats accounts that balance.
+@ atlas/80_commissions [atlas.board.go]
+= {台本|だいほん} {付|つ}き の {舞台|ぶたい} だ ね 。 さあ 、 {開演|かいえん} ！ || A stage with a script this time. Curtain up!
+> {台本|だいほん} {付|つ}き の {舞台|ぶたい} や な 。 さあ 、 {開演|かいえん} や ！ || A stage with a script this time. Curtain's up!
 `, 'dialect/kansai_92_expeditions');
