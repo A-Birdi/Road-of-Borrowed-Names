@@ -85,7 +85,7 @@ RB.propKit = (function () {
       key: name || 'p' + ++palN,
       region: name,
       snow: name === 'snowbell' || name === 'sa_mount',
-      autumn: name === 'cinder',
+      autumn: name === 'cinder' || name === 'keepers',
       green: name === 'reedwake' || name === 'saltglass' || name === 'lanternfall' || name === '',
       still: name === 'sa_still' || name === 'archive',
       paper: name === 'atlas',

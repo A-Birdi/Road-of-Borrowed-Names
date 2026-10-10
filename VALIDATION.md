@@ -3987,6 +3987,7 @@ guide and the lexicon; the corrections are listed in the ledger's reference (doc
 **Since the phase end** (names, not behaviour): Chapter 4's courier Hayate renamed Kakeru (F-54), Chapter 3's Kayo
 renamed Haru and Chapter 4's Kanta renamed Sanpei (F-55); a validator rule refuses a new person whose name anyone
 else has; the renamed lines re-entered in the ledger. U the full suite after the renames: **33,136 passed, 0 failed**;
-U `expansion_rules` **11/0**.
+U `expansion_rules` **11/0**. B `node tests/e2e/matrix.mjs F ren 1` with the fixed driver (on aba737c): **PASS**
+(12.7 min).
 
 **Not verified:** Firefox; the foldable; a person playing either chapter, the press or the festival games.

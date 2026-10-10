@@ -1,0 +1,36 @@
+/* Weighing tellings (expansion P10; src/ui/89k_tellings.js): the sources side by side on the book's paper, each a
+ * card with what kind of source it is; the claims with their two marks; the act at the bottom. Paper tokens; every
+ * line carries its readings; a mark is shown by its pressed state and its words, never by colour alone. */
+.tl-intro { margin: 0 0 0.7em; }
+.tl-srcs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17em), 1fr)); gap: 0.7em; }
+.tl-src { min-width: 0; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); padding: 0.55em 0.7em 0.6em; }
+.tl-head { display: grid; gap: 0.1em; border-bottom: 1px solid var(--paper-edge); padding-bottom: 0.3em; margin-bottom: 0.4em; }
+.tl-kind { font-size: 0.82em; letter-spacing: 0.04em; color: var(--ink-2); }
+.tl-who { margin: 0; font-size: 1em; }
+.tl-whoen { font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
+.tl-text { margin: 0.2em 0; line-height: 2.1; }
+.tl-gloss { margin: 0.2em 0; padding: 0.2em 0.45em; border-left: 3px solid var(--paper-edge); line-height: 2; }
+.tl-tag { display: inline-block; font-size: 0.75em; padding: 0 0.35em; border: 1px solid var(--ink-2); border-radius: 3px; color: var(--ink-2); }
+.tl-en { margin: 0.2em 0; color: var(--ink-2); font-size: 0.92em; }
+.tl-acts { margin: 0.35em 0; }
+.tl-done { font-size: 0.85em; color: var(--ink-2); }
+.tl-vouch { margin: 0.3em 0; }
+.tl-claims { list-style: none; margin: 0.3em 0 0; padding: 0; display: grid; gap: 0.35em; }
+.tl-claim { display: grid; gap: 0.15em; padding: 0.3em 0.4em; border-radius: var(--r-1); background: var(--paper-2, var(--paper)); }
+.tl-cjp { line-height: 2; }
+.tl-cen { font-size: 0.85em; color: var(--ink-2); }
+.tl-marks { display: flex; flex-wrap: wrap; gap: 0.35em; }
+.tl-mark { min-height: var(--tap); padding: 0.2em 0.7em; border: 1px solid var(--paper-edge); border-radius: 999px; background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
+.tl-mark[aria-pressed='true'] { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); font-weight: 700; }
+.tl-mark:focus-visible, .tl-chip:focus-visible, .tl-opt:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.tl-why { font-size: 0.88em; border-left: 3px solid var(--ribbon); padding-left: 0.4em; }
+.tl-ok { font-weight: 700; }
+.tl-act { margin-top: 0.9em; border-top: 2px solid var(--paper-edge); padding-top: 0.5em; }
+.tl-act h3 { margin: 0 0 0.3em; font-size: 1em; }
+.tl-chips, .tl-opts { display: flex; flex-wrap: wrap; gap: 0.45em; }
+.tl-opts { flex-direction: column; }
+.tl-chip, .tl-opt { min-height: var(--tap); padding: 0.3em 0.7em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.tl-chip[aria-pressed='true'], .tl-opt[aria-checked='true'] { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--ink); }
+.tl-chipen { display: block; font-size: 0.82em; color: var(--ink-2); }
+.tl-n { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; margin-right: 0.35em; border-radius: 50%; background: var(--ink); color: var(--paper); font-weight: 700; font-size: 0.85em; }
+.tl-order { min-height: 1.5em; }
