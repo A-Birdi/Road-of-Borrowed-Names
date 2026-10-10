@@ -63,6 +63,12 @@ RB.state = (function () {
       },
       atlas: { unlocked: false, runs: 0, best: 0, relics: [], cosmetics: [], run: null },
       ngplus: 0,
+      // ---- the expansion's foundations (src/engine/05a_edition.js, 05b_foundations.js); older saves gain them
+      // empty on load (80_save.js migrate), and an older save's edition is 1
+      edition: opts.edition || 1, // 1 six chapters, 2 twelve (S4); a new journey's is RB.edition.forNew()
+      chapterKey: null,  // the chapter's key in the twelve-chapter order (RB.edition.ORDER)
+      records: RB.records ? RB.records.fresh() : { stamps: {}, seals: {}, stars: {}, found: {} },
+      rng: { n: {}, drawn: {} }, // seeded event streams and outcomes drawn once (RB.streams)
       // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
       // all optional: older saves gain empty records on load (80_save.js migrate)
       company: {

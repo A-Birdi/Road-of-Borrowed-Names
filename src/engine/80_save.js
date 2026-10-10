@@ -161,6 +161,9 @@ RB.save = (function () {
     for (const ns of ['company', 'discovery']) for (const k in base[ns]) if (!(k in st[ns])) st[ns][k] = RB.util.deepClone(base[ns][k]);
     // later systems normalise their own records on load (derived milestones, unknown ids kept, ...)
     if (RB.practice) RB.practice.of(st); // practice: empty for an older save, pace Off (nothing inferred)
+    // the expansion's records and streams: empty for an older save; a save without an edition is the six-chapter one
+    // (the base fill above would give it a new journey's, so it is set from the save as it was read)
+    if (RB.foundations) RB.foundations.normalise(st);
     for (const f of MIGRATIONS) f(st);
     return st;
   }
@@ -171,7 +174,12 @@ RB.save = (function () {
       name: st.player.name,
       comp: ch ? ch.name.en : null,
       compId: st.comp || null,
-      chapter: st.chapter,
+      chapter: RB.edition ? RB.edition.number(st) : st.chapter,
+      edition: st.edition || 1,
+      chapterKey: RB.edition ? RB.edition.key(st) : null,
+      // the traveller as they look now, for the Main Menu (S3; H3): the base look and what is worn
+      look: st.player && st.player.look ? RB.util.deepClone(st.player.look) : null,
+      worn: st.equip ? RB.util.deepClone(st.equip) : null,
       place: m && m.name ? m.name.en : st.map,
       placeJp: m && m.name ? m.name.jp : '',
       playtime: Math.floor(st.playtime),

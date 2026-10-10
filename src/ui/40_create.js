@@ -679,10 +679,11 @@ RB.ui.create = (function () {
     });
   }
 
-  // New Game+: offer to carry learning into a fresh timeline. Carried: mastery
-  // records, taught kana, notebook, cosmetic items, player identity. Never
-  // carried: story flags, quests, companion, other items, position.
-  const NGP_TEXT = 'You have a finished campaign. New Game+ starts the story over in this slot with a new companion choice, carrying over only your learning progress, notebook, keepsakes (cosmetics) and appearance. Story choices, companion, quests and other items are not carried, and the finished campaign stays untouched.';
+  // New Game+: offer to carry learning into a fresh timeline. What carries is defined once, in RB.ngplus.carry
+  // (src/engine/05b_foundations.js; expansion K9, Robin's C-54 and C-66): the learning record, records, illustrations
+  // seen, pastime records, noted words, kept sentences and the traveller as they are. Never: story, companion,
+  // quests, items and keepsakes, lore, the pet, position.
+  const NGP_TEXT = 'You have a finished campaign. New Game+ starts the story over in this slot with a new companion choice. It carries your learning record and stars, your stamps and seals, the illustrations you have seen, your pastime records, the words you noted, the sentences you kept, and your traveller as they are. Story choices, the companion, quests, items and keepsakes are not carried, and the finished campaign stays untouched.';
   function chooseCarry(done) {
     return new Promise((resolve) => {
       const fr = RB.ui.folio.frame({ cls: 'folio-ngplus' });
@@ -722,13 +723,7 @@ RB.ui.create = (function () {
     return rec.state;
   }
   function carry(from) {
-    const s = RB.state.newCampaign({ player: RB.util.deepClone(from.player), profile: from.learn.profile, assist: from.learn.assist, difficulty: from.learn.difficulty });
-    s.learn = RB.util.deepClone(from.learn);
-    s.notebook = RB.util.deepClone(from.notebook || []);
-    for (const id in from.inv) { const it = RB.content.items[id]; if (it && it.slot === 'cosmetic') s.inv[id] = 1; }
-    if (from.equip && from.equip.cosmetic) s.equip.cosmetic = from.equip.cosmetic;
-    s.atlas.cosmetics = RB.util.deepClone((from.atlas && from.atlas.cosmetics) || []);
-    s.ngplus = (from.ngplus || 0) + 1;
+    const s = RB.ngplus.carry(from);
     s.journal = [{ jp: 'もう {一度|いちど} 、 {灯|ひ} の {道|みち} を {歩|ある}く 。', en: 'Walking the lantern road once more (New Game+).', t: Date.now() }];
     return s;
   }
@@ -750,7 +745,7 @@ RB.ui.create = (function () {
     st.lead = o.lead; st.secondary = o.secondary; st.uiLang = o.uiLang; st.input = o.input;
     st.spacing = o.profile === 'F' || o.profile === 'E';
     await RB.game.saveSettings();
-    const s = RB.state.newCampaign({ player, profile: o.profile, assist: o.assist, difficulty: o.difficulty });
+    const s = RB.state.newCampaign({ player, profile: o.profile, assist: o.assist, difficulty: o.difficulty, edition: RB.edition.forNew() });
     s.learn.kanaKnown = o.kana; // 'none' | 'hira' | 'both'
     if (o.kana === 'hira') s.learn.kanaGroup = 'hira_done';
     if (o.kana === 'both') s.learn.kanaGroup = 'all_done';

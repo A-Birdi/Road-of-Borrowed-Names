@@ -18963,6 +18963,12 @@ RB.state = (function () {
       },
       atlas: { unlocked: false, runs: 0, best: 0, relics: [], cosmetics: [], run: null },
       ngplus: 0,
+      // ---- the expansion's foundations (src/engine/05a_edition.js, 05b_foundations.js); older saves gain them
+      // empty on load (80_save.js migrate), and an older save's edition is 1
+      edition: opts.edition || 1, // 1 six chapters, 2 twelve (S4); a new journey's is RB.edition.forNew()
+      chapterKey: null,  // the chapter's key in the twelve-chapter order (RB.edition.ORDER)
+      records: RB.records ? RB.records.fresh() : { stamps: {}, seals: {}, stars: {}, found: {} },
+      rng: { n: {}, drawn: {} }, // seeded event streams and outcomes drawn once (RB.streams)
       // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
       // all optional: older saves gain empty records on load (80_save.js migrate)
       company: {
@@ -19116,6 +19122,297 @@ RB.state = (function () {
     return true;
   }
   return { newCampaign, test, give, take, setQuest, pronouns, once, addTerm, PROF_ORDER };
+})();
+
+
+/* ==== src/engine/05a_edition.js ==== */
+/* The twelve-chapter edition (expansion S4; docs/future/plan/02_FOUNDATIONS.md; decisions C-01, C-02, C-54, C-81).
+ *
+ * Every campaign carries an edition: 1 is the six-chapter game (every save made so far; absent means 1), 2 the
+ * twelve-chapter one, which inserts six chapters between the existing ones. Existing chapter flags (ch1_done…) and
+ * `s.chapter` keep their meaning, so no existing scene changes: the new chapters are told apart by a chapter key
+ * (`s.chapterKey`), and the number a player sees comes from the story order below.
+ *
+ * Until the release (A04; P18), the build Robin plays stays six-chapter: new journeys are edition 1 unless the
+ * development switch is on (Settings, "Edition for new journeys", or `?edition=12`), and saves are never converted
+ * (lead's decisions F-01, F-02). The edition-1 notice of C-54 (an old save begins New Game+) applies only once the
+ * edition ships (`SHIPPED`).
+ *
+ * Conditions: `ed>=2` (the campaign's edition), `chap>=mb1` / `chap=kr` (the story's position in the twelve-chapter
+ * order; an edition-1 campaign is placed by its old chapter number). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.edition = (function () {
+  'use strict';
+  const SIX = 1, TWELVE = 2;
+  // The twelve-chapter edition becomes the default for new journeys only at the release (playbook A04).
+  let SHIPPED = false;
+  // story order of the twelve chapters, by key (playbook §02)
+  const ORDER = ['rw', 'sg', 'mb1', 'mb2', 'co', 'sb', 'kr', 'lf', 'ko', 'cr', 'yn', 'sa'];
+  // the six-chapter edition's numbers, and the key each one keeps in the twelve
+  const OLD = { 1: 'rw', 2: 'sg', 3: 'co', 4: 'sb', 5: 'lf', 6: 'sa' };
+  const OLD_NO = { rw: 1, sg: 2, co: 3, sb: 4, lf: 5, sa: 6 };
+  // the flag each chapter sets when its story is finished (existing flags keep their meaning: S4)
+  const DONE = { rw: 'ch1_done', sg: 'ch2_done', mb1: 'mb1_done', mb2: 'mb2_done', co: 'ch3_done', sb: 'ch4_done', kr: 'kr_done', lf: 'ch5_done', ko: 'ko_done', cr: 'cr_done', yn: 'yn_done', sa: 'postgame' };
+  const TITLES = {
+    rw: { en: 'Reedwake', jp: '{葦|あし}ノ{瀬|せ}' },
+    sg: { en: 'Saltglass', jp: '{潮|しお}{硝子|がらす}' },
+    mb1: { en: 'Manybridge: Eight Hundred Bridges', jp: '{八百橋|やおばし} ― {八百|はっぴゃく}の{橋|はし}' },
+    mb2: { en: 'Manybridge: Blockprint and Footlights', jp: '{八百橋|やおばし} ― {版木|はんぎ}と{灯|あか}り' },
+    co: { en: 'Cinder Orchard', jp: '{灰実|はいみ}の{里|さと}' },
+    sb: { en: 'Snowbell', jp: '{雪鈴|ゆきすず}' },
+    kr: { en: 'The Keepers\' Road', jp: '{灯守|ひもり}の{道|みち}' },
+    lf: { en: 'Lanternfall', jp: '{灯落|ひおち}' },
+    ko: { en: 'Kotonoha', jp: '{言|こと}の{葉|は}{島|じま}' },
+    cr: { en: 'The Cloudroad', jp: '{雲路|くもじ}' },
+    yn: { en: 'Steamhollow', jp: '{湯|ゆ}ノ{谷|たに}' },
+    sa: { en: 'The Still Archive', jp: '{静寂|しじま}の{書庫|しょこ}' },
+  };
+
+  const of = (s) => (s && s.edition) || SIX;
+  // the development switch: the device's settings record, or ?edition=12 on the page's address
+  function devOn() {
+    const st = RB.game && RB.game.settings;
+    if (st && +st.edition === 12) return true;
+    try { return typeof location !== 'undefined' && /[?&]edition=12\b/.test(location.search || ''); } catch (e) { return false; }
+  }
+  const forNew = () => (SHIPPED || devOn() ? TWELVE : SIX);
+  const key = (s) => (s && (s.chapterKey || OLD[s.chapter])) || null;
+  // the chapter number a player sees: the old numbering for edition 1, story order for edition 2
+  function number(s) {
+    if (!s) return 0;
+    if (of(s) < TWELVE) return s.chapter || 0;
+    const i = ORDER.indexOf(key(s));
+    return i >= 0 ? i + 1 : s.chapter || 0;
+  }
+  // `!chapter 3` (an existing chapter by its old number) or `!chapter mb1` (a new one by key). A new chapter
+  // leaves `s.chapter` as it was, so `ch>=n` conditions in existing content keep their meaning.
+  function setChapter(s, arg) {
+    const a = String(arg).trim();
+    if (/^\d+$/.test(a)) { s.chapter = +a; s.chapterKey = OLD[+a] || null; return; }
+    if (ORDER.indexOf(a) < 0) throw new Error('unknown chapter ' + a);
+    s.chapterKey = a;
+    if (OLD_NO[a]) s.chapter = OLD_NO[a];
+  }
+  // position in story order: an edition-1 campaign is placed by its old chapter's key
+  const pos = (s) => ORDER.indexOf(key(s));
+  // an edition-1 save once the twelve-chapter edition has shipped: shown as such, begins New Game+ (C-54)
+  const isOld = (s) => SHIPPED && of(s) < TWELVE;
+  const isOldMeta = (m) => SHIPPED && !!m && (m.edition || SIX) < TWELVE;
+
+  if (RB.state && RB.state.addTerm) {
+    RB.state.addTerm('ed', (s, rest, op, val, num, cmp) => cmp(of(s), op || '>=', num(val == null ? 2 : val)));
+    RB.state.addTerm('chap', (s, rest, op, val, num, cmp) => {
+      const want = ORDER.indexOf(val);
+      if (want < 0) throw new Error('unknown chapter key ' + val);
+      return cmp(pos(s), op || '>=', want);
+    });
+  }
+
+  return {
+    SIX, TWELVE, ORDER, OLD, DONE, TITLES, of, forNew, devOn, key, number, setChapter, pos, isOld, isOldMeta,
+    shipped: () => SHIPPED,
+    // tests only: what the release will switch on
+    _ship(v) { SHIPPED = !!v; },
+  };
+})();
+
+
+/* ==== src/engine/05b_foundations.js ==== */
+/* Foundations for the expansion (docs/future/plan/02_FOUNDATIONS.md S1–S3, K9; playbook P02).
+ *
+ *   RB.records   per-save records (S3): stamps, seals, stars, the keepsake catalogue's found record. They live in the
+ *                slot like everything else: copied with it, deleted with it, never written to another slot.
+ *   RB.streams   seeded event streams (S2): one stream per family per save, seeded from the campaign id. An outcome is
+ *                drawn once and kept in the save, so loading never re-rolls it.
+ *   RB.phase     story phases (S1): what has happened in a region, by name, so content can say `phase.manybridge>=after`
+ *                instead of restating flags; and the concepts (responses, constructions, modifiers) taught so far.
+ *   RB.events    the result envelope (playbook §06): a rule's outcome computed once, frozen, then presented.
+ *   RB.ngplus    the one New Game+ carryover (K9; C-54, C-66): what a new journey keeps, defined once.
+ *
+ * Everything here is additive: an older save gains empty records on load and nothing it already holds changes. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const clone = (x) => JSON.parse(JSON.stringify(x));
+  const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+
+  // ---- records (S3) -------------------------------------------------------------------------------------------
+  const KINDS = ['stamps', 'seals', 'stars', 'found'];
+  function freshRecords() { return { stamps: {}, seals: {}, stars: {}, found: {} }; }
+  function of(s) {
+    if (!isObj(s.records)) s.records = freshRecords();
+    for (const k of KINDS) if (!isObj(s.records[k])) s.records[k] = {};
+    return s.records;
+  }
+  // at most once: the first award keeps its time and data; later calls change nothing and return false
+  function award(s, kind, id, data) {
+    if (KINDS.indexOf(kind) < 0) throw new Error('unknown record kind ' + kind);
+    const r = of(s)[kind];
+    if (r[id]) return false;
+    r[id] = Object.assign({ t: Date.now() }, data || {});
+    return true;
+  }
+  const has = (s, kind, id) => !!(s && s.records && s.records[kind] && s.records[kind][id]);
+  RB.records = { KINDS, fresh: freshRecords, of, award, has };
+
+  // ---- seeded streams (S2) ------------------------------------------------------------------------------------
+  // FNV-1a over the seed string, then mulberry32: a float in [0, 1) that depends only on (campaign, family, n).
+  function hash(str) {
+    let h = 2166136261 >>> 0;
+    for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h >>> 0;
+  }
+  function mul(a) {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function rng(s) {
+    if (!isObj(s.rng)) s.rng = { n: {}, drawn: {} };
+    if (!isObj(s.rng.n)) s.rng.n = {};
+    if (!isObj(s.rng.drawn)) s.rng.drawn = {};
+    return s.rng;
+  }
+  // the next value of a family's stream (advances it)
+  function next(s, family) {
+    const r = rng(s);
+    const n = r.n[family] | 0;
+    r.n[family] = n + 1;
+    return mul(hash((s.id || 'campaign') + '|' + family + '|' + n));
+  }
+  const int = (s, family, k) => Math.floor(next(s, family) * k);
+  const pick = (s, family, arr) => (arr && arr.length ? arr[int(s, family, arr.length)] : undefined);
+  // An outcome drawn once and kept: the same key returns the same value until it is consumed, across saves and loads.
+  // fn(draw) gets a function returning the family's next value. The value must be plain JSON.
+  function fixed(s, key, family, fn) {
+    const r = rng(s);
+    if (key in r.drawn) return r.drawn[key];
+    const v = fn(() => next(s, family));
+    r.drawn[key] = v === undefined ? null : v;
+    return r.drawn[key];
+  }
+  function consume(s, key) { const r = rng(s); const had = key in r.drawn; delete r.drawn[key]; return had; }
+  const peek = (s, key) => (s && s.rng && s.rng.drawn && key in s.rng.drawn ? s.rng.drawn[key] : undefined);
+  RB.streams = { next, int, pick, fixed, consume, peek, hash };
+
+  // ---- story phases and concepts (S1) -------------------------------------------------------------------------
+  // A region's phases, in order: each { id, if } holds when its condition does; a region is in the last phase whose
+  // condition holds (the first has none). Phase-guarded content writes `phase.<region>>=<id>`.
+  const PHASES = {};
+  function define(region, list) {
+    if (!Array.isArray(list) || !list.length) throw new Error('phases for ' + region + ' must be a list');
+    PHASES[region] = list.map((p, i) => ({ id: p.id, if: i === 0 ? null : p.if }));
+  }
+  function index(s, region) {
+    const L = PHASES[region];
+    if (!L) throw new Error('no phases for region ' + region);
+    let at = 0;
+    for (let i = 1; i < L.length; i++) if (RB.state.test(s, L[i].if)) at = i;
+    return at;
+  }
+  const phaseOf = (s, region) => PHASES[region][index(s, region)].id;
+  function phaseIndex(region, id) {
+    const L = PHASES[region];
+    const i = L ? L.findIndex((p) => p.id === id) : -1;
+    if (i < 0) throw new Error('unknown phase ' + region + '.' + id);
+    return i;
+  }
+  // Concepts the player can know: a response, a construction or a modifier, each taught by a condition (a scene's
+  // flag, a word learned) in a named chapter. Content that uses one declares it; the validator checks the chapter.
+  const CONCEPTS = {};
+  function concept(id, def) { CONCEPTS[id] = Object.assign({ id, kind: 'construction' }, def); }
+  const knows = (s, id) => !!CONCEPTS[id] && RB.state.test(s, CONCEPTS[id].taught);
+  // A running task holds the phase and profile it began with (S1 "stable activities").
+  function snapshot(s, regions) {
+    const out = { profile: s.learn && s.learn.profile, phases: {}, concepts: {} };
+    for (const r of regions || Object.keys(PHASES)) out.phases[r] = phaseOf(s, r);
+    for (const id in CONCEPTS) if (knows(s, id)) out.concepts[id] = true;
+    Object.freeze(out.phases); Object.freeze(out.concepts);
+    return Object.freeze(out);
+  }
+  // the phases of every region the six chapters already have, from their own flags
+  const story = (start, done) => [
+    { id: 'before' }, { id: 'story', if: start }, { id: 'after', if: done }, { id: 'post', if: 'postgame' },
+  ];
+  define('reedwake', story('true', 'ch1_done'));
+  define('saltglass', story('ch1_done', 'ch2_done'));
+  define('cinder', story('ch2_done&!ed>=2|mb2_done', 'ch3_done'));
+  define('snowbell', story('ch3_done', 'ch4_done'));
+  define('lanternfall', story('ch4_done&!ed>=2|kr_done', 'ch5_done'));
+  define('archive', story('ch5_done&!ed>=2|yn_done', 'postgame'));
+  RB.state.addTerm('phase', (s, rest, op, val, num, cmp) => {
+    if (!op) return index(s, rest) > 0;
+    return cmp(index(s, rest), op, phaseIndex(rest, val));
+  });
+  RB.phase = { define, of: phaseOf, index, phaseIndex, regions: () => Object.keys(PHASES), concept, concepts: () => CONCEPTS, knows, snapshot };
+
+  // ---- the result envelope (playbook §06) ------------------------------------------------------------------------
+  // A rule's outcome, computed once: presentation (sound, motion, text, skip) reads it and never runs the rule again.
+  let seq = 0;
+  const LOG = [];
+  function make(e) {
+    const ev = {
+      id: (e.src || 'ev') + ':' + (++seq),
+      src: e.src || null, action: e.action || null, targets: (e.targets || []).slice(),
+      changes: clone(e.changes || []), evidence: clone(e.evidence || []), cues: clone(e.cues || []),
+    };
+    deepFreeze(ev);
+    LOG.push(ev);
+    if (LOG.length > 200) LOG.shift();
+    return ev;
+  }
+  function deepFreeze(o) { Object.freeze(o); for (const k in o) if (o[k] && typeof o[k] === 'object' && !Object.isFrozen(o[k])) deepFreeze(o[k]); return o; }
+  RB.events = { make, log: () => LOG.slice(), clear: () => { LOG.length = 0; } };
+
+  // ---- New Game+ carryover (K9; C-54, C-66) ---------------------------------------------------------------------
+  // The one definition of what a new journey keeps from an earlier one, whichever way it begins (the end of the
+  // game, the Inn Ledger, an old edition's save). Carries: the learning record; records (stamps, seals, stars, the
+  // keepsake catalogue's found record); illustrations seen; pastime records; the noted-words notebook; kept
+  // sentences; the traveller as they are (name, pronouns, the look chosen at creation, the bath they chose).
+  // Never: story flags, quests, chapter, map knowledge, the companion and Bond, the pet, words learned in the story,
+  // equipment and items (keepsakes included), Known details, lore notes, creatures met, field-puzzle and Atlas
+  // progress, Atlas cosmetics.
+  const CARRY = ['learn', 'records', 'seq', 'practice:records', 'notebook:word', 'bookmarks', 'player', 'ngplus'];
+  // later pastimes keep their own records in s.practice[<key>] and are named here (P06: shogi, hanafuda, karuta, festival)
+  const PASTIMES = [];
+  function carry(from, opts) {
+    opts = opts || {};
+    const s = RB.state.newCampaign({ player: clone(from.player), edition: opts.edition || (RB.edition ? RB.edition.forNew() : 1) });
+    s.learn = clone(from.learn);
+    const rec = of(s);
+    const fr = isObj(from.records) ? from.records : {};
+    for (const k of KINDS) rec[k] = clone(isObj(fr[k]) ? fr[k] : {});
+    // the keepsake catalogue's found record (C-66): what the journey found, kept as a record, never as items
+    const ks = from.discovery && from.discovery.keepsakes;
+    if (isObj(ks)) for (const id in ks) if (!rec.found[id]) rec.found[id] = { t: (ks[id] && ks[id].t) || 0 };
+    s.seq = clone(isObj(from.seq) ? from.seq : {});
+    // pastime records (lead's decision F-03): shiritori's results with each companion, the fishing journal's fish
+    // and personal milestones, the practice tallies. Kept pages, displays and activity progress start fresh, as do
+    // sessions under way.
+    if (isObj(from.practice) && RB.practice) {
+      const p = RB.practice.of(s), fp = from.practice;
+      if (isObj(fp.shiritori)) { p.shiritori = clone(fp.shiritori); p.shiritori.active = null; }
+      if (isObj(fp.fishing)) {
+        if (isObj(fp.fishing.observed)) p.fishing.observed = clone(fp.fishing.observed);
+        if (isObj(fp.fishing.milestones)) p.fishing.milestones = clone(fp.fishing.milestones);
+      }
+      if (isObj(fp.tally)) p.tally = clone(fp.tally);
+      for (const k of PASTIMES) if (isObj(fp[k])) { p[k] = clone(fp[k]); if ('active' in p[k]) p[k].active = null; }
+    }
+    s.notebook = (from.notebook || []).filter((n) => n && n.kind === 'word').map(clone);
+    s.bookmarks = clone(Array.isArray(from.bookmarks) ? from.bookmarks : []);
+    s.ngplus = (from.ngplus || 0) + 1;
+    s.ngFrom = { id: from.id || null, comp: from.comp || null, edition: (from.edition || 1), t: Date.now() };
+    return s;
+  }
+  RB.ngplus = { carry, CARRY, PASTIMES };
+
+  // ---- older saves gain empty records (never anything invented); called by RB.save.migrate ------------------------
+  RB.foundations = { normalise(st) { of(st); rng(st); if (!st.edition) st.edition = 1; } };
 })();
 
 
@@ -45246,7 +45543,7 @@ RB.script = (function () {
         case 'shake': if (!hidden()) RB.ui.shake(); break; // never a screen shake inside a sequence
         case 'autosave': s.checkpoint = { map: s.map, x: s.x, y: s.y, dir: s.dir }; await RB.save.autosave(a[0] || 'progress'); break;
         case 'checkpoint': s.checkpoint = { map: a[0] || s.map, x: a[1] ? +a[1] : s.x, y: a[2] ? +a[2] : s.y, dir: a[3] || s.dir }; break;
-        case 'chapter': s.chapter = +a[0]; break;
+        case 'chapter': if (RB.edition) RB.edition.setChapter(s, a[0]); else s.chapter = +a[0]; break;
         case 'card': RB.ui.dialogue.hide(); await RB.ui.card(c.jp, c.en); break;
         case 'journal': s.journal = s.journal || []; s.journal.push({ jp: c.jp, en: c.en, t: Date.now() }); break;
         case 'toast': await RB.ui.toast({ kind: 'info', jp: c.jp, en: c.en }); break;
@@ -49758,6 +50055,9 @@ RB.save = (function () {
     for (const ns of ['company', 'discovery']) for (const k in base[ns]) if (!(k in st[ns])) st[ns][k] = RB.util.deepClone(base[ns][k]);
     // later systems normalise their own records on load (derived milestones, unknown ids kept, ...)
     if (RB.practice) RB.practice.of(st); // practice: empty for an older save, pace Off (nothing inferred)
+    // the expansion's records and streams: empty for an older save; a save without an edition is the six-chapter one
+    // (the base fill above would give it a new journey's, so it is set from the save as it was read)
+    if (RB.foundations) RB.foundations.normalise(st);
     for (const f of MIGRATIONS) f(st);
     return st;
   }
@@ -49768,7 +50068,12 @@ RB.save = (function () {
       name: st.player.name,
       comp: ch ? ch.name.en : null,
       compId: st.comp || null,
-      chapter: st.chapter,
+      chapter: RB.edition ? RB.edition.number(st) : st.chapter,
+      edition: st.edition || 1,
+      chapterKey: RB.edition ? RB.edition.key(st) : null,
+      // the traveller as they look now, for the Main Menu (S3; H3): the base look and what is worn
+      look: st.player && st.player.look ? RB.util.deepClone(st.player.look) : null,
+      worn: st.equip ? RB.util.deepClone(st.equip) : null,
       place: m && m.name ? m.name.en : st.map,
       placeJp: m && m.name ? m.name.jp : '',
       playtime: Math.floor(st.playtime),
@@ -55947,10 +56252,11 @@ RB.ui.create = (function () {
     });
   }
 
-  // New Game+: offer to carry learning into a fresh timeline. Carried: mastery
-  // records, taught kana, notebook, cosmetic items, player identity. Never
-  // carried: story flags, quests, companion, other items, position.
-  const NGP_TEXT = 'You have a finished campaign. New Game+ starts the story over in this slot with a new companion choice, carrying over only your learning progress, notebook, keepsakes (cosmetics) and appearance. Story choices, companion, quests and other items are not carried, and the finished campaign stays untouched.';
+  // New Game+: offer to carry learning into a fresh timeline. What carries is defined once, in RB.ngplus.carry
+  // (src/engine/05b_foundations.js; expansion K9, Robin's C-54 and C-66): the learning record, records, illustrations
+  // seen, pastime records, noted words, kept sentences and the traveller as they are. Never: story, companion,
+  // quests, items and keepsakes, lore, the pet, position.
+  const NGP_TEXT = 'You have a finished campaign. New Game+ starts the story over in this slot with a new companion choice. It carries your learning record and stars, your stamps and seals, the illustrations you have seen, your pastime records, the words you noted, the sentences you kept, and your traveller as they are. Story choices, the companion, quests, items and keepsakes are not carried, and the finished campaign stays untouched.';
   function chooseCarry(done) {
     return new Promise((resolve) => {
       const fr = RB.ui.folio.frame({ cls: 'folio-ngplus' });
@@ -55990,13 +56296,7 @@ RB.ui.create = (function () {
     return rec.state;
   }
   function carry(from) {
-    const s = RB.state.newCampaign({ player: RB.util.deepClone(from.player), profile: from.learn.profile, assist: from.learn.assist, difficulty: from.learn.difficulty });
-    s.learn = RB.util.deepClone(from.learn);
-    s.notebook = RB.util.deepClone(from.notebook || []);
-    for (const id in from.inv) { const it = RB.content.items[id]; if (it && it.slot === 'cosmetic') s.inv[id] = 1; }
-    if (from.equip && from.equip.cosmetic) s.equip.cosmetic = from.equip.cosmetic;
-    s.atlas.cosmetics = RB.util.deepClone((from.atlas && from.atlas.cosmetics) || []);
-    s.ngplus = (from.ngplus || 0) + 1;
+    const s = RB.ngplus.carry(from);
     s.journal = [{ jp: 'もう {一度|いちど} 、 {灯|ひ} の {道|みち} を {歩|ある}く 。', en: 'Walking the lantern road once more (New Game+).', t: Date.now() }];
     return s;
   }
@@ -56018,7 +56318,7 @@ RB.ui.create = (function () {
     st.lead = o.lead; st.secondary = o.secondary; st.uiLang = o.uiLang; st.input = o.input;
     st.spacing = o.profile === 'F' || o.profile === 'E';
     await RB.game.saveSettings();
-    const s = RB.state.newCampaign({ player, profile: o.profile, assist: o.assist, difficulty: o.difficulty });
+    const s = RB.state.newCampaign({ player, profile: o.profile, assist: o.assist, difficulty: o.difficulty, edition: RB.edition.forNew() });
     s.learn.kanaKnown = o.kana; // 'none' | 'hira' | 'both'
     if (o.kana === 'hira') s.learn.kanaGroup = 'hira_done';
     if (o.kana === 'both') s.learn.kanaGroup = 'all_done';

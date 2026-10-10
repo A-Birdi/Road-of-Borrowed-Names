@@ -38,7 +38,7 @@ The register has these parts:
 
 | # | Question | Label |
 |---|---|---|
-| — | Nothing is waiting. Every question so far is answered; the next ones will come with the review set of the book interface | — |
+| — | Nothing is waiting. Robin authorised the whole expansion without consulting (C-81); the lead's own decisions are logged in part F | — |
 
 ---
 
@@ -431,6 +431,25 @@ solid, don't misunderstand, but I'm wondering if we can push it closer to the mo
   animated. ([../work/P01_STUDY.md](../work/P01_STUDY.md))
 - **Still waiting:** the gate itself (P02 onward) waits for Robin's view of the study.
 
+### C-81 · The whole expansion authorised, without consulting; the study is a test
+**Decided** (2026-10-10). Robin, after the fidelity study: "As a short note, it's both an upgrade and a step away in
+some places, especially from the vision I have for the perspective. As a whole, disregard this as an authoritative
+process - keep it noted as a test - and continue your World Proof into full Expansion plan at large. Do your best to
+implement the *entire* expansion plan without consulting me. If possible I would like to review it in earnest at
+completion, and accept fewer to no distractions or concerns that block or halt progress. Unless a blocker is an
+extreme, serious deviation from what the game already does, work through it in a way that makes sense to you. If by
+the end something has morphed into something else incorrectly, I will address it then."
+- **The study is a test, not a standard.** Its code stays development only; nothing in it is adopted as the art
+  direction. Robin's detailed feedback on it will come later, and the perspective in particular is Robin's to set.
+- **P01's gate is passed; P02 to P17 are authorised**, in the playbook's order, one packet at a time, with tests and
+  evidence for each. P18 (the full matrix and any release) still waits for Robin.
+- **No questions in between.** Where the plan leaves something open, the lead decides, records the choice in this
+  register (part F) and carries on. Robin reviews the whole at the end.
+- **Unchanged:** every guardrail (one offline file, no network, saves and their schema untouched, no save export,
+  furigana everywhere, recognition separate from answer checking); Robin's existing saves are never altered. The
+  twelve-chapter edition stays behind its development switch (S4) until the release, so Robin's six-chapter
+  campaign plays on as it is.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -551,6 +570,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Order of work | The playbook's P00–P18, with its six changes; first scope P00 and the interface proof | C-78 |
 | The book interface | Accepted as revised (classic tabs on top, organised inner pages, the U02 type); P01's world proof next | C-79 |
 | The world's look | The proof's direction is solid; push detail toward the mockup and Octopath Traveler's fidelity; a nearer camera; battles keep their own framing; a Suzu-at-the-Mill fidelity study before the gate | C-80 |
+| The whole expansion | Authorised without consulting (P02 to P17); the lead decides open details and records them; the fidelity study is a test, not the standard; Robin reviews at the end | C-81 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |
@@ -615,3 +635,17 @@ a decision already made, or labelled with its question in part A7. **Status** is
 | D14 | Counts and estimates (creatures, roads, side quests) don't all add up | — | **At P00**: a census of what really exists sets each region's list; estimates are not quotas |
 | D15 | New Game+ keeps appearance, but not equipment or keepsakes | C-54, C-66 | **Fixed**: the look chosen at creation carries; anything worn that was earned or found does not (K9) |
 | D16 | Harmony: one technique, or charges, still open | C-77 | **Fixed**: one technique per filled bar (E18) |
+
+## F. The lead's decisions under C-81
+
+Robin asked for the whole expansion without consulting. Where the plan left something open, the lead chose, and each
+choice is recorded here with its reason, so Robin can overrule any of them at the end.
+
+| # | Question | The lead's choice | Why |
+|---|---|---|---|
+| F-01 | How Robin reviews new chapters while the twelve-chapter edition stays behind its switch | A development switch (`?edition=12`, or the setting under Settings → Development on a `?dev` page) starts **new** journeys in the twelve-chapter edition; every existing save stays six-chapter and untouched | C-02/C-54 apply when the edition ships (A04); until then Robin's saves must not change |
+| F-02 | S4 asks for a schema bump to 2 for the edition field | **No bump.** The edition is an additive field (absent means 1), like every record added since the addenda; `RB.SAVE_SCHEMA` stays 1 | Robin's standing rule: preserve the save schema; an additive field needs no bump, and a bump would make every new save unreadable to an older build |
+| F-03 | K9's "pastime records" inside today's practice record | Carried: shiritori's results with each companion, the fishing journal's fish and milestones, the practice tallies, and each later pastime's own record (shogi, hanafuda, karuta, festival bests). Not carried: kept practice pages, the memento display, activity progress, sessions under way | Records are personal bests and results; pages and displays are mementos, which C-66 leaves with their journey |
+| F-04 | Where the keepsake catalogue's "found" record lives once keepsakes stop carrying (C-66) | In `s.records.found` (the save's records), not as items or `discovery.keepsakes`, so a new run finds each keepsake afresh while the catalogue still shows what earlier runs found | Carrying `discovery.keepsakes` would make the game treat them as already found |
+| F-05 | Kept sentences (bookmarks) in New Game+ | Carried, as personal metadata | They are the player's own collection, like the noted-words notebook |
+

@@ -478,7 +478,7 @@ await test('direct file:// mode boots, reports storage honestly, no network', as
 });
 
 // ---------------------------------------------------------------------------
-await test('New Game+ carries only learning, notebook, cosmetics; source untouched', async () => {
+await test('New Game+ carries the learning record and the traveller, not lore, keepsakes or items (K9; C-54, C-66); source untouched', async () => {
   const ctx = await b.newContext();
   const { p, errors } = await page(b, url, { context: ctx });
   await p.evaluate(async () => {
@@ -496,7 +496,8 @@ await test('New Game+ carries only learning, notebook, cosmetics; source untouch
   await p.click('[role=alertdialog] >> text=New Game+ from slot 1');
   await p.waitForFunction(() => RB.game.G.playing === true);
   const n = await p.evaluate(() => { const s = RB.game.s; return { comp: s.comp, post: !!s.flags.postgame, ch3: !!s.flags.ch3_done, a: s.learn.items['k:あ'] && s.learn.items['k:あ'].box, nb: s.notebook.length, ribbon: s.inv.rw_ribbon, plane: s.inv.rw_plane || 0, ng: s.ngplus, map: s.map, name: s.player.name }; });
-  assert(n.comp === null && !n.post && !n.ch3 && n.a === 4 && n.nb === 1 && n.ribbon === 1 && n.plane === 0 && n.ng === 1 && n.map === 'rw.road' && n.name === 'Veteran', JSON.stringify(n));
+  // (until 2026-10-10 lore notes and cosmetic keepsakes carried; Robin's C-66 ends both)
+  assert(n.comp === null && !n.post && !n.ch3 && n.a === 4 && n.nb === 0 && !n.ribbon && n.plane === 0 && n.ng === 1 && n.map === 'rw.road' && n.name === 'Veteran', JSON.stringify(n));
   const src = await p.evaluate(async () => (await RB.save.read(1, 'manual')).state);
   assert(src.comp === 'ren' && src.flags.postgame, 'source slot changed');
   assert(!errors.length, errors.join('; '));

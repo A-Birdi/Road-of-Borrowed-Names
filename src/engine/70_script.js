@@ -353,7 +353,7 @@ RB.script = (function () {
         case 'shake': if (!hidden()) RB.ui.shake(); break; // never a screen shake inside a sequence
         case 'autosave': s.checkpoint = { map: s.map, x: s.x, y: s.y, dir: s.dir }; await RB.save.autosave(a[0] || 'progress'); break;
         case 'checkpoint': s.checkpoint = { map: a[0] || s.map, x: a[1] ? +a[1] : s.x, y: a[2] ? +a[2] : s.y, dir: a[3] || s.dir }; break;
-        case 'chapter': s.chapter = +a[0]; break;
+        case 'chapter': if (RB.edition) RB.edition.setChapter(s, a[0]); else s.chapter = +a[0]; break;
         case 'card': RB.ui.dialogue.hide(); await RB.ui.card(c.jp, c.en); break;
         case 'journal': s.journal = s.journal || []; s.journal.push({ jp: c.jp, en: c.en, t: Date.now() }); break;
         case 'toast': await RB.ui.toast({ kind: 'info', jp: c.jp, en: c.en }); break;

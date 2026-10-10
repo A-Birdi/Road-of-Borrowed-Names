@@ -413,7 +413,9 @@ export default async (t) => {
     s.practice.mementoDisplay.shelf = 'desk:x';
     const n = RB.ui.create.carry(s);
     t.ok(n.practice && n.practice.deskPages.length === 0 && n.practice.lanterns.sessions === 0 && n.practice.mementoDisplay.shelf === null, 'New Game+ starts the practice records empty: no pages, no lamp history, no display');
-    t.ok(n.notebook.filter((x) => x.id === 'pa_lamps').length <= 1 && !L.finish(n, 3).firstNote, 'the carried notebook keeps its one note; no second one is added');
+    // lore notes stay with their journey (Robin's C-66, 2026-10-07; the carryover since 2026-10-10): the new run writes
+    // the lamp note once when its lamps are finished again
+    t.ok(n.notebook.filter((x) => x.id === 'pa_lamps').length === 0 && L.finish(n, 3).firstNote && !L.finish(n, 3).firstNote && n.notebook.filter((x) => x.id === 'pa_lamps').length === 1, 'the lore note is not carried; the new run earns it once');
   }
 
   // ---- Practice mementos: sources, the shelf, the pinned display ---------------------------------------------

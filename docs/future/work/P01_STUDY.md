@@ -4,6 +4,12 @@
 the proof's panel on a `?dev=world` page (or `?dev=world&study=mill`) and changes nothing in the game, its saves or
 its tests.*
 
+> **A test, not a standard (C-81, 2026-10-10).** Robin: "it's both an upgrade and a step away in some places,
+> especially from the vision I have for the perspective. As a whole, disregard this as an authoritative process -
+> keep it noted as a test". Nothing in the study is adopted as the art direction; the perspective is Robin's to set,
+> and Robin's detailed feedback will come with the review at the end of the expansion. The study stays in the build
+> as a development-only page.
+
 ## The brief, in Robin's words
 
 - "Would you be able to redraw Suzu in as close detail as possible to the mockup, totally from scratch? Only use her
