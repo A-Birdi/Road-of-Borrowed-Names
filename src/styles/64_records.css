@@ -27,3 +27,7 @@
 .rb-pg.veiled .rb-veil { aspect-ratio: 16 / 9; border: 1px dashed var(--ink-3); background: repeating-linear-gradient(-45deg, #efe4c8 0 6px, #e6d9b8 6px 12px); }
 .rb-ngp { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--rule); }
 .folio-volume .rb-menu .opt { display: inline-flex; gap: 0.4em; align-items: center; margin: 4px 0 8px; }
+/* K10 (twelve-chapter journeys): the Mementos pages one row below the Journey's, the Words contents in three sections */
+.subnav.sub2 { border-bottom-width: 1px; margin-top: -0.3em; font-size: 0.92em; padding-left: 1.2em; }
+.index-sec { margin: 12px 0 4px; font-size: 0.95em; color: var(--ink-2); font-weight: 600; }
+.index-sec:first-of-type { margin-top: 4px; }

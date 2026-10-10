@@ -76,6 +76,12 @@ await test('a six-chapter journey: five tabs as before; shiritori on Company', a
   await p.evaluate(() => RB.ui.menu.open('companion'));
   await p.waitForSelector('[data-co-sec="wordplay"]');
   assert(await p.evaluate(() => !!document.querySelector('[data-co-sec="wordplay"][data-wp-act="play"], [data-co-sec="wordplay"][data-wp-act="resume"]')), 'shiritori\'s card, with Play, on Company');
+  await p.evaluate(() => RB.ui.menu.open('words'));
+  await p.waitForSelector('.index');
+  assert(!(await p.$('.index-sec')), 'the Words contents: one list, as before');
+  await p.evaluate(() => { RB.game.s.flags.postgame = true; RB.ui.menu.open('keepsakes'); });
+  await p.waitForSelector('[data-jv="keepsakes"]');
+  assert(!(await p.$('.subnav.sub2')) && (await p.$$('[data-jv="fishing"]')).length === 1, 'the Journey\'s pages side by side, as before');
   assert(!errors.length, 'no errors: ' + errors.join(' | '));
   assert(!requests.length, 'no network: ' + requests.join(' '));
   await ctx.close();
@@ -112,6 +118,19 @@ await test('a twelve-chapter journey: the tab, the index, a page; Play with Mio 
   await p.waitForSelector('.ds-page .wp-card');
   assert(await p.evaluate(() => RB.ui.menu.current().section === 'distractions'), 'Open Distractions: shiritori\'s page, with its card');
   await p.screenshot({ path: path.join(out, 'shiritori_page_desktop.png') });
+  // K10: the Words contents in three sections; the Journey's mementos under one entry
+  await p.evaluate(() => RB.ui.menu.open('words'));
+  await p.waitForSelector('.index-sec');
+  const secs = await p.evaluate(() => [...document.querySelectorAll('.index-sec')].map((h) => h.textContent));
+  assert(secs.length === 3 && /My learning/.test(secs[0]) && /Reference/.test(secs[1]) && /Practice/.test(secs[2]), 'Words: My learning, Reference, Practice: ' + secs.join(' / '));
+  assert(!(await bareKanji(p, '.folio')).length, 'kanji with readings: ' + (await bareKanji(p, '.folio')));
+  await p.screenshot({ path: path.join(out, 'words_sections.png') });
+  await p.evaluate(() => RB.ui.menu.open('fishing'));
+  await p.waitForSelector('.subnav.sub2');
+  const row1 = await p.evaluate(() => [...document.querySelectorAll('.subnav:not(.sub2) [data-jv]')].map((b) => b.textContent.trim()));
+  const row2 = await p.evaluate(() => [...document.querySelectorAll('.subnav.sub2 [data-jv]')].map((b) => b.dataset.jv));
+  assert(row1.includes('Mementos') && !row1.includes('Fishing notes') && row2.includes('keepsakes') && row2.includes('fishing'), 'Journey: one Mementos entry, its pages below: ' + row1.join(', ') + ' | ' + row2.join(', '));
+  await p.screenshot({ path: path.join(out, 'journey_mementos.png') });
   assert(!errors.length, 'no errors: ' + errors.join(' | '));
   await ctx.close();
 });

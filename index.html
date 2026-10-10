@@ -3638,6 +3638,10 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 .rb-pg.veiled .rb-veil { aspect-ratio: 16 / 9; border: 1px dashed var(--ink-3); background: repeating-linear-gradient(-45deg, #efe4c8 0 6px, #e6d9b8 6px 12px); }
 .rb-ngp { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--rule); }
 .folio-volume .rb-menu .opt { display: inline-flex; gap: 0.4em; align-items: center; margin: 4px 0 8px; }
+/* K10 (twelve-chapter journeys): the Mementos pages one row below the Journey's, the Words contents in three sections */
+.subnav.sub2 { border-bottom-width: 1px; margin-top: -0.3em; font-size: 0.92em; padding-left: 1.2em; }
+.index-sec { margin: 12px 0 4px; font-size: 0.95em; color: var(--ink-2); font-weight: 600; }
+.index-sec:first-of-type { margin-top: 4px; }
 
 /* ==== src/styles/65_pastimes.css ==== */
 /* Pastimes (expansion P06, C12; src/ui/88_shogi.js and the other games): a wooden board drawn in code, pieces as
@@ -70118,13 +70122,31 @@ RB.ui.menu = (function () {
     }
     return lines.length ? '<h3>' + I('map') + ' Places <span class="count">' + lines.length + '</span></h3><ul class="entries">' + lines.join('') + '</ul>' : '';
   }
+  // K10 (twelve-chapter journeys): the keepsakes, practice mementos and fishing notes under one Mementos entry, its
+  // pages one row below; a six-chapter journey keeps its Journey as it was (F-21)
+  const JOURNEY_GROUPS = { keepsakes: 'mementos', mementos: 'mementos', fishing: 'mementos' };
+  const grouped = (s) => !!(RB.recordsUI && RB.recordsUI.inCampaign(s));
+  function journeyNav(s, J) {
+    const pages = EXT.journey.filter((d) => avail(d, s));
+    const btn = (id, icon, label, on) => '<button class="subbtn" data-jv="' + id + '" aria-pressed="' + on + '">' + I(icon) + label + '</button>';
+    let h = '<div class="subnav" role="group" aria-label="Journey pages">' + btn('quests', 'journey', 'Quests &amp; notes', J.view === 'quests') + btn('history', 'history', 'Dialogue history', J.view === 'history');
+    if (!grouped(s)) return h + pages.map((d) => btn(d.id, d.icon || 'journey', esc(d.en), J.view === d.id)).join('') + '</div>';
+    const inGroup = pages.filter((d) => JOURNEY_GROUPS[d.id]);
+    let groupShown = false;
+    for (const d of pages) {
+      if (!JOURNEY_GROUPS[d.id]) { h += btn(d.id, d.icon || 'journey', esc(d.en), J.view === d.id); continue; }
+      if (groupShown) continue;
+      groupShown = true;
+      h += btn(inGroup[0].id, 'keepsake', 'Mementos', !!JOURNEY_GROUPS[J.view]);
+    }
+    h += '</div>';
+    if (JOURNEY_GROUPS[J.view] && inGroup.length > 1) h += '<div class="subnav sub2" role="group" aria-label="Mementos">' + inGroup.map((d) => btn(d.id, d.icon || 'journey', esc(d.en), J.view === d.id)).join('') + '</div>';
+    return h;
+  }
   function journey(A, B, two) {
     const s = RB.game.s;
     const J = view.journey;
-    const sub = '<div class="subnav" role="group" aria-label="Journey pages">' +
-      '<button class="subbtn" data-jv="quests" aria-pressed="' + (J.view === 'quests') + '">' + I('journey') + 'Quests &amp; notes</button>' +
-      '<button class="subbtn" data-jv="history" aria-pressed="' + (J.view === 'history') + '">' + I('history') + 'Dialogue history</button>' +
-      EXT.journey.filter((d) => avail(d, s)).map((d) => '<button class="subbtn" data-jv="' + d.id + '" aria-pressed="' + (J.view === d.id) + '">' + I(d.icon || 'journey') + esc(d.en) + '</button>').join('') + '</div>';
+    const sub = journeyNav(s, J);
     const xj = extOf('journey', J.view);
     if (xj && avail(xj, s)) {
       A.innerHTML = sub;
@@ -70233,6 +70255,8 @@ RB.ui.menu = (function () {
     ]],
     kana: ['Kana reference', []],
   };
+  const WORD_SECTIONS = [['learning', 'My learning', '{自分|じぶん} の {学|まな}び'], ['reference', 'Reference', '{調|しら}べる'], ['practice', 'Practice', '{練習|れんしゅう}']];
+  const WORD_GROUPS = { progress: 'learning', mastery: 'learning', cando: 'learning', noted: 'learning', bookmarks: 'learning', inscriptions: 'learning', practice: 'practice', letters: 'practice', compare: 'practice' };
   function wordSubs(s) {
     const lore = s.notebook.filter((n) => n.kind === 'lore' && RB.content.notes[n.id]);
     const gram = Object.keys(s.learn.items).filter((k) => k.startsWith('g:')).length;
@@ -70253,8 +70277,14 @@ RB.ui.menu = (function () {
     const subs = wordSubs(s);
     if (W.sub && !subs.find((x) => x[0] === W.sub)) W.sub = null; // a page not (yet) available
     const ng = s.learn.profile === 'F' && s.learn.kanaKnown !== 'both' ? RB.lessons.nextGroup(s) : null;
-    const index = '<h3>Contents</h3><ul class="index">' + subs.map(([id, l, jp, n]) =>
-      '<li><button data-sub="' + id + '" aria-current="' + (two && (W.sub || 'inscriptions') === id) + '"><span class="lbl">' + esc(l) + '</span><span class="fill"></span>' + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button></li>').join('') + '</ul>' +
+    const item = ([id, l, jp, n]) => '<li><button data-sub="' + id + '" aria-current="' + (two && (W.sub || 'inscriptions') === id) + '"><span class="lbl">' + esc(l) + '</span><span class="fill"></span>' + (n != null ? '<span class="n">' + n + '</span>' : '') + '</button></li>';
+    // K10 (twelve-chapter journeys): three sections; a six-chapter journey keeps its one list (F-21)
+    let list = '<ul class="index">' + subs.map(item).join('') + '</ul>';
+    if (grouped(s)) {
+      const sec = (id) => WORD_GROUPS[id] || 'reference';
+      list = WORD_SECTIONS.map(([k, en, jp]) => { const xs = subs.filter((x) => sec(x[0]) === k); return xs.length ? '<h4 class="index-sec">' + RB.ui.label(jp, en) + '</h4><ul class="index">' + xs.map(item).join('') + '</ul>' : ''; }).join('');
+    }
+    const index = '<h3>Contents</h3>' + list +
       '<div class="row-acts"><button class="pbtn" data-a="practice">' + I('practice') + 'Practise (optional)</button>' +
       (ng ? '<button class="pbtn" data-a="nextkana">' + I('words') + 'Learn the next kana: ' + esc(ng.g.title || '') + '</button>' : '') + '</div>' +
       '<p class="muted small">Practice is optional review of items you are unsure of. The story teaches everything you need as you go.</p>';
