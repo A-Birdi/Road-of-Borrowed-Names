@@ -2,7 +2,7 @@
 
 *Playbook P06 ("Complete records, replay and pastime foundations"); plan [09_RECORDS.md](../plan/09_RECORDS.md)
 K1–K10, [08_CULTURE.md](../plan/08_CULTURE.md) C12, [02_FOUNDATIONS.md](../plan/02_FOUNDATIONS.md) S3–S4; playbook
-§15A U02–U05. Authorised by Robin's C-81. Under way.*
+§15A U02–U05. Authorised by Robin's C-81. Done (phase end below).*
 
 Everything here appears only in journeys of the twelve-chapter edition, and on the Main Menu only with the
 development switch (`?edition=12`) until the edition ships (F-21). A six-chapter journey's Ledger, title screen and
@@ -91,6 +91,14 @@ made); F-24 when Fuku offers a game; F-25 koi-koi's house rules.
 | Festival games: practice keeps nothing; a timed round keeps the best and the run; read-only peek; New Game+ carries the bests; no stamp reads them; the gate; the words | `node tests/run-unit.mjs festival` | 14/0 |
 | Festival games in the browser: the corner (Practice by default), a practice round (right, wrong, a hint) keeping nothing, a timed round with the clock stopped for a hint and the best kept and shown, no stamp, phone, the Distractions page | `node tests/e2e/festival.mjs` | 3/0 (captures `docs/screenshots/festival/`) |
 | Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 696 lines, 0 without an entry |
+
+## The phase end (on 6c58b74, a clean copy of the commit)
+
+| Check | Command | Result |
+|---|---|---|
+| Every browser suite P06 touched or could disturb: records, shogi, distractions, hanafuda, karuta, festival, book, wordplay, wordplay_layout, world_living, verbs, perform, departures, known, settings, folio, play_ui, ui | `node tests/e2e/<suite>.mjs` | all pass (7/0, 5/0, 4/0, 3/0, 3/0, 3/0, 15/0, 82/0, 63/0, 4/0, 5/0, 3/0, all ok ×5, 14/0) |
+| The playthrough: Foundations with Ren, six chapters and an Atlas expedition | `node tests/e2e/matrix.mjs F ren 1` | PASS (15.2 min) |
+| The unit suite | `node tests/run-unit.mjs` | 29,473 passed, **1 failed**: the handwriting reading table (`src/lang/75_kanjiread.js`) was not regenerated after the festival's 計る, so 計 lacked はか. Regenerated with `node tools/kanjiread.mjs` (committed with P07's first content); `recog-coverage` 15/0 since |
 
 **Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own
 playtest note).

@@ -1,0 +1,28 @@
+/* Expeditions (expansion P07; src/ui/89b_expedition.js): the entrance preview card, the plan of a floor on the Map
+ * page, the chip on the map. Paper tokens only: the high-contrast palette (00_tokens.css) restyles them too. */
+.xp-folio .leaf { width: 100%; max-width: 760px; justify-self: center; }
+.xp-card { display: grid; gap: 0.55em; }
+.xp-kind { margin: 0; color: var(--ink-3); font-style: italic; }
+.xp-row { display: grid; grid-template-columns: minmax(6.5em, max-content) 1fr; gap: 0.2em 1em; align-items: baseline; border-top: 1px solid var(--rule); padding-top: 0.45em; }
+.xp-k { font-weight: 700; color: var(--ink-2); }
+.xp-v { min-width: 0; }
+.xp-v .jp { margin-right: 0.3em; }
+.xp-rules { margin: 0; padding-left: 1.1em; display: grid; gap: 0.25em; }
+@media (max-width: 520px) { .xp-row { grid-template-columns: 1fr; } }
+
+.xp-floor { margin: 0.4em 0 0.9em; }
+.xp-floor h4 { margin: 0 0 0.3em; font-size: 1em; }
+.xp-plan { display: block; width: 100%; max-width: 520px; height: auto; border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.xp-plan .xp-rock { fill: var(--ink-2); }
+.xp-plan .xp-ground { fill: var(--paper); }
+.xp-plan .xp-wet { fill: #b9d3e6; }
+.xp-plan .xp-water { fill: var(--river); }
+.xp-plan .xp-exit { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1.5 1; }
+.xp-plan .xp-st { stroke: var(--ink); stroke-width: 0.8; }
+.xp-plan .xp-st.on { fill: var(--ribbon); }
+.xp-plan .xp-st.off { fill: var(--paper-3); }
+.xp-plan .xp-uses { font: 700 6px var(--serif, serif); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 1.6px; }
+.xp-plan .xp-sc.on { fill: var(--ok-ink); }
+.xp-plan .xp-sc.off { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+.xp-plan .xp-here { fill: var(--vermilion); stroke: var(--paper); stroke-width: 1.2; }
+.xp-chip .st svg { width: 1em; height: 1em; }

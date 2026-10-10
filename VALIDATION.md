@@ -3840,3 +3840,19 @@ survey has begun). Pastime records are made at first play, so loading never chan
 - U the full unit suite on the code with all of the above: **29,383 passed, 0 failed**.
 
 **Not verified:** Firefox; the foldable; a newcomer to shogi playing the ladder.
+
+## The expansion, P06's phase end (2026-10-10; C-81; docs/future/work/P06_RECORDS.md; REQUIREMENTS.md XP28–XP29)
+
+**What was checked:** a clean copy of 6c58b74 (`git archive`), built and run in the background.
+
+**Checks:**
+- B every suite P06 touched or could disturb: `records` **7/0**, `shogi` **5/0**, `distractions` **4/0**, `hanafuda`
+  **3/0**, `karuta` **3/0**, `festival` **3/0**, `book` **15/0**, `wordplay` **82/0**, `wordplay_layout` **63/0**,
+  `world_living` **4/0**, `verbs` **5/0**, `perform` **3/0**, `ui` **14/0**; `departures`, `known`, `settings`,
+  `folio`, `play_ui` all ok.
+- B `node tests/e2e/matrix.mjs F ren 1`: **PASS** (six chapters and an Atlas expedition, 15.2 min).
+- U the full suite: **29,473 passed, 1 failed**. The failure: `recog-coverage`'s "src/lang/75_kanjiread.js is up to
+  date": the festival's 計る had given 計 the reading はか, and the generated table was not rebuilt. Rebuilt with
+  `node tools/kanjiread.mjs` (it lands with P07's first content); `recog-coverage` **15/0** after.
+
+**Not verified:** Firefox; the foldable; a newcomer to shogi (XP27, H).

@@ -71,6 +71,8 @@ export default async (t) => {
   t.eq(X.useStation(s, 'b1').ok, false, 'used up for this expedition');
   t.eq(X.useStation(s, 'lamp').why, 'Not yet.', 'the lamp is a rest point only once mended');
   s.flags.xp_xp_test_lamp_fixed = true;
+  t.eq([X.useStation(s, 'lamp').rested, X.stationLeft(s, 'lamp')], [true, 1], 'at full resolve a rest place keeps its use');
+  s.resolve.pc = 6;
   t.ok(X.useStation(s, 'lamp').ok, 'mended: one more rest');
   // the visit's state, and what a restart does to it
   s.flags['foe:rw.village:f9'] = true; s.discovery.puzzles.pz_test = { state: { open: true }, done: true };

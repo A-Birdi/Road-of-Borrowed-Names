@@ -34,6 +34,7 @@ RB.ui.menu = (function () {
     fishing: ['journey', 'fishing'], // A Quiet Cast's Fishing notes (src/ui/86_fishing_notes.js)
     stamps: ['journey', 'stamps'], volume: ['journey', 'volume'], // the journey's records (src/ui/66c_records.js)
     distractions: ['distractions'], pastimes: ['distractions'], // the pastimes' tab (src/ui/68b_distractions.js)
+    expedition: ['map', 'expedition'], // an expedition's floors (src/ui/89b_expedition.js)
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views

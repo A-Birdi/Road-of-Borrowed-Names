@@ -3984,6 +3984,36 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .ms-cando .cd-notyet .t { opacity: 0.85; }
 .ms-jp { white-space: nowrap; }
 
+/* ==== src/styles/67_expedition.css ==== */
+/* Expeditions (expansion P07; src/ui/89b_expedition.js): the entrance preview card, the plan of a floor on the Map
+ * page, the chip on the map. Paper tokens only: the high-contrast palette (00_tokens.css) restyles them too. */
+.xp-folio .leaf { width: 100%; max-width: 760px; justify-self: center; }
+.xp-card { display: grid; gap: 0.55em; }
+.xp-kind { margin: 0; color: var(--ink-3); font-style: italic; }
+.xp-row { display: grid; grid-template-columns: minmax(6.5em, max-content) 1fr; gap: 0.2em 1em; align-items: baseline; border-top: 1px solid var(--rule); padding-top: 0.45em; }
+.xp-k { font-weight: 700; color: var(--ink-2); }
+.xp-v { min-width: 0; }
+.xp-v .jp { margin-right: 0.3em; }
+.xp-rules { margin: 0; padding-left: 1.1em; display: grid; gap: 0.25em; }
+@media (max-width: 520px) { .xp-row { grid-template-columns: 1fr; } }
+
+.xp-floor { margin: 0.4em 0 0.9em; }
+.xp-floor h4 { margin: 0 0 0.3em; font-size: 1em; }
+.xp-plan { display: block; width: 100%; max-width: 520px; height: auto; border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.xp-plan .xp-rock { fill: var(--ink-2); }
+.xp-plan .xp-ground { fill: var(--paper); }
+.xp-plan .xp-wet { fill: #b9d3e6; }
+.xp-plan .xp-water { fill: var(--river); }
+.xp-plan .xp-exit { fill: none; stroke: var(--ink); stroke-width: 1; stroke-dasharray: 1.5 1; }
+.xp-plan .xp-st { stroke: var(--ink); stroke-width: 0.8; }
+.xp-plan .xp-st.on { fill: var(--ribbon); }
+.xp-plan .xp-st.off { fill: var(--paper-3); }
+.xp-plan .xp-uses { font: 700 6px var(--serif, serif); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 1.6px; }
+.xp-plan .xp-sc.on { fill: var(--ok-ink); }
+.xp-plan .xp-sc.off { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+.xp-plan .xp-here { fill: var(--vermilion); stroke: var(--paper); stroke-width: 1.2; }
+.xp-chip .st svg { width: 1em; height: 1em; }
+
 /* ==== src/styles/70_discovery.css ==== */
 /* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
  * the Roadside Keepsakes catalogue (src/ui/58_keepsakes.js) and its notices.
@@ -10321,11 +10351,11 @@ RB.kanjiRead = {
     '砂すな;研けん;破やぶ,わ;硝しょう;硯すずり;碑ひ;碗わん;確たし;磁じ;磨みが;示しめ;礼れい;社しゃ;祈いの;祖そ;祝いわ;神しん;祠ほこら;票ひょう;祭まつ;禁きん;福ふく;秀しゅう;私わたくし,わたし;秋あき;秘ひ;秩ちつ;移うつ;程てい;種たね;稼かせ;稽けい;積つ;穏おだ;穫かく;穴あな;究きゅう;空から,そら,あ,す;突つ;窓まど;' +
     '窯かま,がま;窺うかが;立た,たて;章しょう;端はし,ばた;竹たけ;竿さお,ざお;笑わら;笛ふえ;笠かさ;符ふ;第だい;筆ふで;筈はず;等とう;筋すじ;筏いかだ;筒つつ;答こた;箋せん;算さん;管くだ;箱はこ,ばこ;箸はし;節ふし;範はん;築きず;簡かん;簿ぼ;籠かご;米こめ;粉こな,こ;粋いき;粗あら;粘ねば;粛しゅく;粧しょう;精せい;糊のり;糖とう;' +
     '糧かて;糸いと;約やく;紅べに;紋もん;納おさ;紐ひも;純じゅん;紙かみ,がみ;紛まぎ;素す;索さく;細ほそ,こま;紹しょう;終お;組くみ,く,ぐみ;絆きずな;経きょう,た;結むす,ゆ;絞しぼ;絡から;給きゅう;絨じゅう;統とう;絵え;絶た;継つ;続つづ;維い;綱つな;網あみ;綴つづ,と;綺き;綿わた,めん;緑みどり;緒しょ;線せん;締し;編あ;緩ゆる;' +
-    '練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮ちぢ;繁はん;繋つな;繍しゅう;織お;繕つくろ;繰く;缶かん;罅ひび;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;羊ひつじ;美うつく;羨うらや;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの;耐た;耳みみ;聞き;職しょく;肉にく;肝かん;肩かた;育そだ;肺はい;' +
+    '練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮ちぢ;繁はん;繋つな;繍しゅう;織お;繕つくろ;繰く;缶かん;罅ひび;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;羊ひつじ;美うつく;羨うらや;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの,もん;耐た;耳みみ;聞き;職しょく;肉にく;肝かん;肩かた;育そだ;肺はい;' +
     '背せ;胴どう;胸むね;能あた;脂あぶら;脅おど;脇わき;脈みゃく;脚あし;脱ぬ;腐くさ;腕うで;腰こし;腹なか,はら;膏こう;膝ひざ;膨ふく;膳ぜん;臓ぞう;自じ;臭くさ;至いた;致ち;臼うす;興きょう;舌した,ぜつ;舞ま;舟ふね,ぶね;航こう;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芒すすき;芝しば;芯しん;花はな,ばな;芸げい;' +
     '芽め;苔こけ;苗なえ;若わか;苦くる,く,にが;英えい;茂しげ;茎くき;茨いばら;茶ちゃ;草くさ,ぐさ;荒あ,あら;荷に;菊きく;菓か;菖しょう;菜さい;萎しお;萩はぎ;落お;葉は,ば;葦あし,よし;蒲ぶ;蒸む;蓋ふた,ぶた;蔵ぞう;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;藤ふじ;蘇よみがえ;蘭らん;虎とら;虚むな;虫むし;虹にじ;蛇へび;' +
     '蛍ほたる;蛙かえる;蛛も;蛸たこ;蛾が;蜂はち;蜘く;蜜みつ;蝋ろう;蝕むしば;蝶ちょう;螺ら;蟹かに,がに;血ち;行ぎょう,い,おこな,ゆ;街かい;衝つい;衣い;表ひょう,おもて,あらわ;袋ふくろ,ぶくろ;袖そで;被ひ;裁さば;装そう;裏うら;裕ゆう;補おぎな;複ふく;褒ほ;褪あ;襟えり;襲おそ;西にし;要よう,い;覆おお;見み;規き;覗のぞ;覚おぼ,さ;覧らん;' +
-    '親おや;観かん;角かく,かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい;討とう;訓くん;託たく;記しる;訪おとず,たず;設せつ;許ゆる;訳わけ;診み;証しょう,あかし;評ひょう;詞し;試ため;詫わ;詰つ,つめ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たんじょ;誘さそ;語ご,かた;誠まこと;誤あやま;説せつ;読よ;誰だれ;課か;調しら;' +
+    '親おや;観かん;角かく,かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい,はか;討とう;訓くん;託たく;記しる;訪おとず,たず;設せつ;許ゆる;訳わけ;診み;証しょう,あかし;評ひょう;詞し;試ため;詫わ;詰つ,つめ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たんじょ;誘さそ;語ご,かた;誠まこと;誤あやま;説せつ;読よ;誰だれ;課か;調しら;' +
     '談だん;請う;諍いさか;論ろん;諦あきら;諾だく;謎なぞ;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;谷たに;豆まめ;豊ゆた;豚ぶた;象ぞう;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;資し;賊ぞく;賑にぎ;賛さん;賢かしこ;質たち;賭か;贅ぜい;贈おく;' +
     '贔ひい;赤あか;走はし;起お;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路ろ,じ;跳と,は;踊おど;踏ふ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;辛から,つら;辞や;農のう;辺あた,へん;辻つじ;込こ;辿たど;迎むか;近ちか;返かえ;迫せま;述の;迷まよ;追お;' +
     '退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,どお;逝ゆ;速はや;造ぞう,づく;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが,たが;遠とお,どお;遡さかのぼ;遣づか;適てき;選えら;避さ;那な;邪じゃ;部べ;郵ゆう;郷きょう;配くば;酒さけ;酔よ;酷こく;酸す;釈しゃく;釉くすり;' +
@@ -56517,7 +56547,9 @@ RB.encounter = (function () {
  *   define(id, spec)          spec: { title, kind: 'side' | 'story' | 'hall', floors: [{ id, map, entry: { x, y, dir } }],
  *                               preview: { language, size, suggested } ({ en, jp } each), rules: { persistent,
  *                               restart: 'entrance' | 'checkpoint' | 'floor' }, stations: { <id>: { kind, map, x, y,
- *                               uses, requires } }, shortcuts: { <id>: { map } }, mechanisms: [puzzle ids], maps: [ids] }
+ *                               uses, requires } }, shortcuts: { <id>: { map } }, mechanisms: [puzzle ids],
+ *                               procedures: [procedure ids whose machine a restart resets], maps: [ids],
+ *                               exit: { map, x, y, dir } (where leaving puts you) }
  *   enter(s, id) / leave(s) / restart(s) / active(s) / floorOf(s)
  *   useStation(s, id) → { ok, kind, gave, left, why }      stationLeft(s, id)
  *   openShortcut(s, expId, id) / shortcutOpen(s, expId, id)   (kept across restarts, like the map)
@@ -56530,8 +56562,12 @@ RB.encounter = (function () {
  * first, so a mistake can never turn into carried damage, and the refund is never more than is missing.
  *
  * What a restart resets (D3a): creatures, station uses, mechanisms, the party's condition, the expedition's own
- * flags (xp_<id>_…). What it keeps: the learning record, Known details, map knowledge, shortcuts opened (xpk_<id>_…)
- * and the encounters' solved steps. */
+ * flags (xp_<id>_…), the machines of its procedures part-way through. What it keeps: the learning record, Known
+ * details, map knowledge (the floors seen, xpk_<id>_seen_<floor>), shortcuts opened (xpk_<id>_…) and the encounters'
+ * solved steps (so "Resolve this step" still recognises them, E11).
+ *
+ * Coherence (D3): walking onto one of an expedition's maps without being on it begins a fresh visit; walking onto any
+ * other map while on one leaves it. A save resumed after an interrupted entry or exit is therefore never half in. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.expedition = (function () {
@@ -56540,7 +56576,7 @@ RB.expedition = (function () {
   const KIND = { bench: { gives: 4, uses: 2 }, spring: { gives: 'full', uses: 1, clears: true }, shelter: { gives: 0, uses: Infinity, clears: true }, lamp: { gives: 4, uses: 1 } };
   function define(id, spec) {
     if (!/^\w+$/.test(id)) throw new Error('expedition id: letters, digits and _ only');
-    DEFS[id] = Object.assign({ id, kind: 'side', floors: [], stations: {}, shortcuts: {}, mechanisms: [], maps: [], rules: { persistent: false, restart: 'entrance' } }, spec);
+    DEFS[id] = Object.assign({ id, kind: 'side', floors: [], stations: {}, shortcuts: {}, mechanisms: [], procedures: [], maps: [], exit: null, rules: { persistent: false, restart: 'entrance', ambush: false } }, spec);
     DEFS[id].maps = DEFS[id].maps.length ? DEFS[id].maps : DEFS[id].floors.map((f) => f.map);
     return DEFS[id];
   }
@@ -56550,9 +56586,10 @@ RB.expedition = (function () {
   const active = (s) => !!of(s);
 
   // ---- a fresh instance ---------------------------------------------------------------------------------------------
+  // (uses are saved as numbers: unlimited is -1, since a saved Infinity would come back as null)
   function fresh(s, d) {
     const stations = {};
-    for (const k in d.stations) stations[k] = usesOf(d.stations[k]);
+    for (const k in d.stations) { const u = usesOf(d.stations[k]); stations[k] = u === Infinity ? -1 : u; }
     return { id: d.id, v: 1, floor: 0, started: Date.now(), restarts: 0, stations, statuses: { pc: [], comp: [] } };
   }
   const usesOf = (st) => (st.uses != null ? st.uses : KIND[st.kind] ? KIND[st.kind].uses : 1);
@@ -56578,6 +56615,9 @@ RB.expedition = (function () {
     }
     const pz = s.discovery && s.discovery.puzzles;
     if (pz) for (const id of d.mechanisms) delete pz[id];
+    // a machine left part-way through starts from its beginning; the steps solved before stay recognised
+    const pr = s.enc && s.enc.proc;
+    if (pr) for (const id of d.procedures) delete pr[id];
   }
   function leave(s) {
     const e = of(s);
@@ -56600,13 +56640,19 @@ RB.expedition = (function () {
     return s.expedition;
   }
   const floorOf = (s) => { const e = of(s); return e ? DEFS[e.id].floors[e.floor] || null : null; };
-  // walking onto a floor's map moves the expedition's floor (autosave happens on the transition, never in battle)
+  // walking onto a floor's map moves the expedition's floor (autosave happens on the transition, never in battle);
+  // onto an expedition's map from outside it begins a fresh visit; onto any other map leaves it
+  const owner = (mapId) => Object.keys(DEFS).find((k) => DEFS[k].maps.indexOf(mapId) >= 0) || null;
   function arrived(s, mapId) {
-    const e = of(s);
-    if (!e) return;
-    const i = DEFS[e.id].floors.findIndex((f) => f.map === mapId);
-    if (i >= 0) e.floor = i;
+    if (!s || !s.flags) return;
+    let e = of(s);
+    if (e && DEFS[e.id].maps.indexOf(mapId) < 0) { leave(s); e = null; }
+    if (!e) { const id = owner(mapId); if (!id) return; e = enter(s, id); }
+    const d = DEFS[e.id];
+    const i = d.floors.findIndex((f) => f.map === mapId);
+    if (i >= 0) { e.floor = i; s.flags['xpk_' + d.id + '_seen_' + d.floors[i].id] = true; }
   }
+  const floorSeen = (s, expId, floorId) => !!(s && s.flags && s.flags['xpk_' + expId + '_seen_' + floorId]);
   function onDefeat(s) {
     const e = of(s);
     if (!e) return null;
@@ -56620,21 +56666,26 @@ RB.expedition = (function () {
   }
 
   // ---- stations: places, never things carried -----------------------------------------------------------------------
-  function stationLeft(s, id) { const e = of(s); return e && e.stations[id] != null ? e.stations[id] : 0; }
+  function stationLeft(s, id) { const e = of(s); if (!e || e.stations[id] == null) return 0; return e.stations[id] < 0 ? Infinity : e.stations[id]; }
   function useStation(s, id) {
     const e = of(s);
     if (!e) return { ok: false, why: 'Not on an expedition.' };
     const st = DEFS[e.id].stations[id];
     if (!st) return { ok: false, why: 'No such place.' };
     if (st.requires && !RB.state.test(s, st.requires)) return { ok: false, why: 'Not yet.' };
-    if (!(e.stations[id] > 0)) return { ok: false, why: 'Used up for this expedition.', kind: st.kind, left: 0 };
+    const unlimited = e.stations[id] === -1;
+    if (!unlimited && !(e.stations[id] > 0)) return { ok: false, why: 'Used up for this expedition.', kind: st.kind, left: 0 };
     const k = KIND[st.kind] || KIND.bench;
+    // nothing to mend: the place keeps its use (a rest is never wasted by a press at full strength)
+    const missing = s.resolve.pc < s.resolve.max || (s.comp && s.resolve.comp < s.resolve.max);
+    const statuses = e.statuses && (e.statuses.pc.length || e.statuses.comp.length);
+    if (!missing && !(k.clears && statuses)) return { ok: false, rested: true, why: 'You are rested already: this place will keep.', kind: st.kind, left: stationLeft(s, id) };
     const before = { pc: s.resolve.pc, comp: s.resolve.comp };
     if (k.gives === 'full') { s.resolve.pc = s.resolve.max; s.resolve.comp = s.resolve.max; }
     else if (k.gives) { s.resolve.pc = Math.min(s.resolve.max, s.resolve.pc + k.gives); s.resolve.comp = Math.min(s.resolve.max, s.resolve.comp + k.gives); }
     if (k.clears) e.statuses = { pc: [], comp: [] };
-    if (e.stations[id] !== Infinity) e.stations[id]--;
-    return { ok: true, kind: st.kind, gave: { pc: s.resolve.pc - before.pc, comp: s.resolve.comp - before.comp }, left: e.stations[id] };
+    if (!unlimited) e.stations[id]--;
+    return { ok: true, kind: st.kind, gave: { pc: s.resolve.pc - before.pc, comp: s.resolve.comp - before.comp }, left: stationLeft(s, id) };
   }
 
   // ---- shortcuts: opened from the far side, kept like the map -------------------------------------------------------
@@ -56712,12 +56763,14 @@ RB.expedition = (function () {
     if (st.length) rules.push({ en: 'Places to rest: ' + st.join(', ') + '.' });
     if (Object.keys(d.stations).some((k) => d.stations[k].requires)) rules.push({ en: 'Something along the way can be mended into one more.' });
     rules.push({ en: d.rules.restart === 'entrance' ? 'Defeat starts the expedition again from its entrance; what you learned stays with you.' : d.rules.restart === 'floor' ? 'Defeat starts the floor again.' : 'Defeat wakes you at the last safe place.' });
+    rules.push({ en: d.rules.ambush ? 'Some creatures wait out of sight: an ambush is announced before it begins.' : 'Every creature is in plain sight: nothing ambushes you.' });
     if (Object.keys(d.shortcuts).length) rules.push({ en: 'Shortcuts opened from the far side stay open.' });
+    rules.push({ en: d.exit ? 'You can climb out at the entrance whenever you like; the next visit starts fresh.' : 'You can leave whenever you like; the next visit starts fresh.' });
     return { title: d.title, kind: d.kind, language: d.preview.language, size: d.preview.size, suggested: d.preview.suggested || null, rules };
   }
 
   if (RB.bus) RB.bus.on('map:enter', (e) => { const s = RB.game && RB.game.s; if (s && e && e.id) arrived(s, e.id); });
-  return { define, get, list, of, active, enter, leave, restart, arrived, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
+  return { define, get, list, of, active, enter, leave, restart, arrived, owner, floorSeen, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
 })();
 
 
@@ -70172,6 +70225,7 @@ RB.ui.menu = (function () {
     fishing: ['journey', 'fishing'], // A Quiet Cast's Fishing notes (src/ui/86_fishing_notes.js)
     stamps: ['journey', 'stamps'], volume: ['journey', 'volume'], // the journey's records (src/ui/66c_records.js)
     distractions: ['distractions'], pastimes: ['distractions'], // the pastimes' tab (src/ui/68b_distractions.js)
+    expedition: ['map', 'expedition'], // an expedition's floors (src/ui/89b_expedition.js)
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views
@@ -77520,6 +77574,7 @@ RB.ui.records = (function () {
     brush: 'M26 8 L30 12 L16 26 L12 22 Z M12 22 Q7 27 9 31 Q13 33 16 26',
     ear: 'M14 14 Q20 6 27 13 Q30 20 23 24 Q20 27 22 31 M18 17 Q21 14 23 18',
     path: 'M10 32 Q14 22 20 20 Q27 18 30 8 M14 30 L12 28 M28 12 L31 9',
+    stairs: 'M8 31 H15 V25 H21 V19 H27 V13 H33 M8 31 V34 M33 13 V9',
     koma: 'M20 7 L28 11 L31 32 H9 L12 11 Z M16 18 H24 M20 18 V28 M16 23 H24',
     card: 'M11 9 H29 V33 H11 Z M15 13 a3 3 0 1 0 0.1 0 M14 24 q6 -6 12 0 M14 28 h12',
   };
@@ -109664,6 +109719,200 @@ RB.ui.desk = (function () {
   });
 
   return { run, choose, surface, observe, promptStep, chooser, eligible, statusText, _open: () => open, _step: () => curStep };
+})();
+
+
+/* ==== src/ui/89b_expedition.js ==== */
+/* Expeditions on screen (expansion P07; plan 04_DUNGEONS.md D1–D4, D10; the rules in src/engine/98_expedition.js):
+ *   - the entrance preview card (D4): what is practised, the size, the rules in words, never the solutions; Go down
+ *     or Not now. What the card says is read from the same definition the expedition then runs by.
+ *   - a chip at the top of the map while on an expedition: carried resolve (persistent condition, D2), the floor.
+ *   - the Ledger's Map › Expedition page: each floor seen (map knowledge, kept across restarts), the stations with
+ *     their uses left, the shortcuts open or not, where you are (D10: "the auto-map marks stations with their
+ *     remaining uses").
+ *   - the scenes' hooks: xp_preview <id> (_res 1 to go down), xp_enter <id>, xp_station <station>, xp_shortcut
+ *     <exp> <id>, xp_leave (climb out: the next visit starts fresh). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.expedition = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const X = () => RB.expedition;
+  const S = () => RB.game.s;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const KIND_NAME = { bench: 'Rest bench', spring: 'Spring', shelter: 'Shelter', lamp: 'Lamp' };
+  const KIND_ICON = { bench: 'resolve', spring: 'wave', shelter: 'here', lamp: 'lantern' };
+
+  // ---- the preview card ----------------------------------------------------------------------------------------
+  function cardHtml(id, s) {
+    const pv = X().preview(id), d = X().get(id);
+    const done = s && s.flags && s.flags['xpk_' + id + '_done'];
+    const open = Object.keys(d.shortcuts).filter((k) => X().shortcutOpen(s, id, k)).length;
+    const row = (label, html) => '<div class="xp-row"><div class="xp-k">' + esc(label) + '</div><div class="xp-v">' + html + '</div></div>';
+    return '<div class="xp-card">' +
+      '<p class="xp-kind">' + esc(d.kind === 'side' ? 'A side expedition: entirely optional' : d.kind === 'story' ? 'Part of the story' : 'An expedition') + '</p>' +
+      row('Language', (pv.language.jp ? '<span class="jp">' + RB.ui.jhtml(pv.language.jp) + '</span> ' : '') + esc(pv.language.en)) +
+      row('Size', esc(pv.size.en) + ' ' + esc(d.floors.length + ' floor' + (d.floors.length === 1 ? '' : 's') + ': ') + d.floors.map((f) => (f.name ? RB.ui.jhtml(f.name.jp) + ' <span class="en">' + esc(f.name.en) + '</span>' : esc(f.id))).join(', ')) +
+      (pv.suggested ? row('Suggested', esc(pv.suggested.en)) : '') +
+      row('Rules', '<ul class="xp-rules">' + pv.rules.map((r) => '<li>' + esc(r.en) + '</li>').join('') + '</ul>') +
+      (done || open ? '<p class="note-slip">' + I('done') + ' ' + esc((done ? 'You have been through to the end before. ' : '') + (open ? open + ' shortcut' + (open === 1 ? '' : 's') + ' open from earlier visits.' : '')) + '</p>' : '') +
+      '</div>';
+  }
+  let PV = null;
+  function preview(id) {
+    return new Promise((resolve) => {
+      const d = X().get(id);
+      if (!d) { resolve(false); return; }
+      const finish = (ok) => { if (!PV) return; RB.ui.popLayer(PV.layer); PV = null; resolve(ok); };
+      const fr = RB.ui.folio.frame({ cls: 'xp-folio', onClose: () => finish(false), closeLabel: 'Not now', closeIcon: 'back' });
+      fr.setTitle(RB.ui.label(d.title.jp, d.title.en), 'Before you go down');
+      fr.box.innerHTML = '<div class="leaf xp-leaf" tabindex="-1">' + cardHtml(id, S()) +
+        '<div class="sg-acts"><button type="button" class="pbtn primary" data-a="go">' + I('next') + '<span>Go down</span></button><button type="button" class="pbtn autofocus" data-a="no">Not now</button></div></div>';
+      fr.box.addEventListener('click', (e) => { const b = e.target.closest('[data-a]'); if (b) finish(b.dataset.a === 'go'); });
+      PV = { layer: { el: fr.scrim, name: 'xp-preview', onCancel: () => finish(false) } };
+      RB.ui.pushLayer(PV.layer);
+    });
+  }
+
+  // ---- the chip: carried resolve while on an expedition ------------------------------------------------------------
+  let chip = null, last = '';
+  function ensureChip() {
+    if (chip || typeof document === 'undefined' || !RB.ui.root) return chip;
+    chip = RB.ui.el('button', 'hbtn atlas-chip xp-chip hidden');
+    chip.setAttribute('aria-label', 'Expedition: floors, rests and shortcuts');
+    chip.onclick = () => { if (RB.game.mode() === 'world') RB.ui.menu.open('expedition'); };
+    RB.ui.root.appendChild(chip);
+    return chip;
+  }
+  function sync() {
+    const s = S();
+    const e = s && RB.game.G && RB.game.G.playing ? X().of(s) : null;
+    const show = !!(e && RB.game.mode() !== 'combat' && RB.game.mode() !== 'title');
+    if (!show) { if (chip) chip.classList.add('hidden'); last = ''; return; }
+    const c = ensureChip();
+    if (!c) return;
+    const f = X().floorOf(s);
+    const who = s.comp && RB.content.chars[s.comp] ? RB.content.chars[s.comp].name.en : null;
+    const html = I('map') + '<span class="l">' + esc(f && f.name ? f.name.en : X().get(e.id).title.en) + '</span>' +
+      (X().persistent(s) ? '<span class="st">' + I('resolve') + esc('You ' + s.resolve.pc + '/' + s.resolve.max) + '</span>' + (who ? '<span class="st">' + esc(who + ' ' + s.resolve.comp + '/' + s.resolve.max) + '</span>' : '') : '');
+    if (html !== last) { c.innerHTML = html; last = html; }
+    c.classList.remove('hidden');
+  }
+  if (typeof setInterval !== 'undefined' && typeof document !== 'undefined') setInterval(sync, 400);
+
+  // ---- the Map page: the floors seen, stations, shortcuts -------------------------------------------------------
+  function floorSvg(d, f, s, here) {
+    const m = RB.content.maps[f.map];
+    if (!m) return '';
+    const rows = m.terrain, H = rows.length, W = rows[0].length, c = 6;
+    const T = RB.tiles.T, L = RB.tiles.LEGEND;
+    let out = '<svg class="xp-plan" viewBox="0 0 ' + W * c + ' ' + H * c + '" role="img" aria-label="' + esc('Plan of ' + (f.name ? f.name.en : f.id)) + '">';
+    out += '<rect width="' + W * c + '" height="' + H * c + '" class="xp-rock"/>';
+    for (let y = 0; y < H; y++) {
+      let x = 0;
+      while (x < W) {
+        const ch = rows[y][x], t = (L[ch] || {}).tile, td = T[t] || {};
+        const cls = td.walk === false ? (td.water ? 'xp-water' : null) : td.water ? 'xp-wet' : 'xp-ground';
+        let x2 = x + 1;
+        while (x2 < W && rows[y][x2] === ch) x2++;
+        if (cls) out += '<rect x="' + x * c + '" y="' + y * c + '" width="' + (x2 - x) * c + '" height="' + c + '" class="' + cls + '"/>';
+        x = x2;
+      }
+    }
+    // the ways between floors and out
+    for (const ex of m.exits || []) {
+      if (ex.if && !RB.state.test(s, ex.if)) continue;
+      out += '<rect x="' + (ex.x * c + 1) + '" y="' + (ex.y * c + 1) + '" width="' + (c - 2) + '" height="' + (c - 2) + '" class="xp-exit"/>';
+    }
+    // stations, with their uses left
+    for (const k in d.stations) {
+      const st = d.stations[k];
+      if (st.map !== f.map) continue;
+      const ready = !st.requires || RB.state.test(s, st.requires);
+      const left = X().stationLeft(s, k);
+      out += '<circle cx="' + (st.x * c + c / 2) + '" cy="' + (st.y * c + c / 2) + '" r="' + (c * 0.75) + '" class="xp-st ' + (ready && left > 0 ? 'on' : 'off') + '"/>' +
+        '<text x="' + (st.x * c + c / 2) + '" y="' + (st.y * c - 2) + '" class="xp-uses" text-anchor="middle">' + (!ready ? '?' : left === Infinity ? '∞' : left) + '</text>';
+    }
+    for (const k in d.shortcuts) {
+      const sc = d.shortcuts[k];
+      for (const end of [sc, sc.to].filter(Boolean)) {
+        if (end.map !== f.map || end.x == null) continue;
+        out += '<rect x="' + (end.x * c) + '" y="' + (end.y * c) + '" width="' + c + '" height="' + c + '" class="xp-sc ' + (X().shortcutOpen(s, d.id, k) ? 'on' : 'off') + '"/>';
+      }
+    }
+    if (here) out += '<circle cx="' + (s.x * c + c / 2) + '" cy="' + (s.y * c + c / 2) + '" r="' + (c * 0.9) + '" class="xp-here"/>';
+    return out + '</svg>';
+  }
+  function pageHtml(s) {
+    const e = X().of(s);
+    if (!e) return '<p class="muted">You are not on an expedition.</p>';
+    const d = X().get(e.id);
+    let h = '<h3>' + I('map') + ' ' + RB.ui.jhtml(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></h3>';
+    if (X().persistent(s)) h += '<p class="note-slip">' + I('resolve') + ' ' + esc('Resolve carries between encounters here: you ' + s.resolve.pc + '/' + s.resolve.max + (s.comp && RB.content.chars[s.comp] ? ', ' + RB.content.chars[s.comp].name.en + ' ' + s.resolve.comp + '/' + s.resolve.max : '') + '. What mistakes cost always comes back after each encounter.') + '</p>';
+    d.floors.forEach((f, i) => {
+      const seen = X().floorSeen(s, d.id, f.id), here = i === e.floor && s.map === f.map;
+      h += '<div class="xp-floor"><h4>' + (f.name ? RB.ui.jhtml(f.name.jp) + ' <span class="en">' + esc(f.name.en) + '</span>' : esc(f.id)) + (here ? ' <span class="kind">you are here</span>' : '') + '</h4>' +
+        (seen ? floorSvg(d, f, s, here) : '<p class="muted small">Not seen yet.</p>') + '</div>';
+    });
+    const st = Object.keys(d.stations).map((k) => {
+      const x = d.stations[k], ready = !x.requires || RB.state.test(s, x.requires), left = X().stationLeft(s, k);
+      const fl = d.floors.find((f) => f.map === x.map);
+      return '<li class="entry"><span class="mark">' + I(KIND_ICON[x.kind] || 'resolve') + '</span><div><div class="t">' + esc(KIND_NAME[x.kind] || x.kind) + (fl && fl.name ? ' <span class="muted small">' + esc(fl.name.en) + '</span>' : '') + '</div><div class="small">' + esc(!ready ? 'Not ready yet: something here can be mended.' : left === Infinity ? 'As often as you like.' : left > 0 ? left + ' use' + (left === 1 ? '' : 's') + ' left this expedition.' : 'Used up this expedition.') + '</div></div></li>';
+    }).join('');
+    const sc = Object.keys(d.shortcuts).map((k) => '<li class="entry"><span class="mark">' + I('follow') + '</span><div><div class="t">' + esc('Shortcut') + '</div><div class="small">' + esc(X().shortcutOpen(s, d.id, k) ? 'Open: it stays open on every visit.' : 'Not opened yet: it opens from the far side.') + '</div></div></li>').join('');
+    h += '<h3>' + I('resolve') + ' Places to rest</h3><ul class="entries">' + st + '</ul>' + (sc ? '<h3>' + I('follow') + ' Shortcuts</h3><ul class="entries">' + sc + '</ul>' : '') +
+      '<p class="muted small">' + esc('Key: pale floor, blue water, dashed squares the ways between floors, circles the places to rest (the number: uses left), the ringed dot: you.') + '</p>';
+    return h;
+  }
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('map', {
+      id: 'expedition', en: 'Expedition', icon: 'map',
+      available: (s) => X().active(s),
+      render(A) { A.innerHTML = pageHtml(S()); },
+    });
+  }
+
+  // ---- the hooks ---------------------------------------------------------------------------------------------------
+  RB.hooks = RB.hooks || {};
+  RB.hooks.xp_preview = async (a) => { const s = S(); const ok = await preview(a && a[0]); s.vars._res = ok ? 1 : 0; };
+  RB.hooks.xp_enter = async (a) => {
+    const s = S(), d = X().get(a && a[0]);
+    if (!d) return;
+    X().enter(s, d.id);
+    const f = d.floors[0];
+    await RB.game.transition(f.map, f.entry.x, f.entry.y, f.entry.dir || 'down', { inScript: true });
+    await RB.save.autosave('auto');
+  };
+  const NOTE = {
+    bench: (r) => 'You sit on the bench a while: resolve +' + Math.max(r.gave.pc, r.gave.comp) + '.',
+    spring: () => 'The cold water clears your heads: resolve full again.',
+    lamp: (r) => 'You rest in the lamp\'s light: resolve +' + Math.max(r.gave.pc, r.gave.comp) + '.',
+    shelter: () => 'A dry corner: whatever clung to you is gone.',
+  };
+  RB.hooks.xp_station = async (a) => {
+    const s = S();
+    const r = X().useStation(s, a && a[0]);
+    s.vars._res = r.ok ? 1 : 0;
+    if (!r.ok) { RB.ui.notice(r.why, 'info'); return; }
+    RB.audio && RB.audio.sfx('heal');
+    RB.ui.notice((NOTE[r.kind] || NOTE.bench)(r) + ' ' + (r.left === Infinity ? '' : r.left > 0 ? r.left + ' more here this expedition.' : 'That was the last rest here this expedition.'), 'info');
+  };
+  RB.hooks.xp_shortcut = async (a) => {
+    const s = S();
+    if (X().openShortcut(s, a && a[0], a && a[1])) RB.ui.notice('A shortcut is open: it stays open on every visit.', 'info');
+  };
+  RB.hooks.xp_leave = async () => {
+    const s = S(), e = X().of(s);
+    if (!e) return;
+    const d = X().get(e.id);
+    X().leave(s);
+    if (d.exit) {
+      s.checkpoint = { map: d.exit.map, x: d.exit.x, y: d.exit.y, dir: d.exit.dir || 'down' };
+      await RB.game.transition(d.exit.map, d.exit.x, d.exit.y, d.exit.dir || 'down', { inScript: true });
+      await RB.save.autosave('auto');
+    }
+  };
+  return { preview, cardHtml, pageHtml, floorSvg, sync };
 })();
 
 
@@ -145886,6 +146135,39 @@ RB.dialect.add('kansai', `
 `, 'dialect/kansai_90_atlas');
 
 
+/* ==== src/content/dialect/kansai_92_expeditions.js ==== */
+/* Suzu's Kansai-ben: the Flood Cellars (expansion P07 pilot).
+ * Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md.
+ * "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.dialect.add('kansai', `
+@ expeditions/20_scenes [xp.cellars_yasu]
+= やった こと と 、 やって ない こと 。 {帳簿|ちょうぼ} と {同|おな}じ だ ね 。 {締|し}め は {私|わたし} たち か 。 || What's been done and what hasn't: just like a ledger. And we close the books, do we?
+> やった こと と 、 やって へん こと 。 {帳簿|ちょうぼ} と {同|おんな}じ や な 。 {締|し}め は うちら か 。 || What's been done and what ain't: same as a ledger. And we close the books, do we?
+@ expeditions/20_scenes [xp.cellars_first]
+= {貼|は}り{紙|がみ} が {先|さき} だ よ 。 {前|まえ} の {人|ひと} の {仕事|しごと} を {二回|にかい} やる の は 、 {損|そん} だ から ね 。 || Notice first. Doing the last lot's work twice is a loss on the books.
+> {貼|は}り{紙|がみ} が {先|さき} や で 。 {前|まえ} の {人|ひと} の {仕事|しごと} を {二回|にかい} やる の は 、 {損|そん} や から な 。 || Notice first. Doin' the last lot's work twice is a loss on the books.
+@ expeditions/20_scenes [xp.cellars_board]
+= 「{上|あ}げて あります」 。 {済|す}み の {判|はん} みたい な もの だ よ 。 {誰|だれ} か が やって 、 その まま に して ある 。 || "Has been put up." Like a "done" stamp: someone did it, and it's been left that way.
+> 「{上|あ}げて あります」 。 {済|す}み の {判|はん} みたい な もん や で 。 {誰|だれ} か が やって 、 その まま に して ある ねん 。 || "Has been put up." Like a "done" stamp: somebody did it, and it's been left that way.
+= {貸|か}し {借|か}り {無|な}し 。 {残|のこ}り は {下|した} の {水門|すいもん} {一|ひと}つ 。 || All square. One sluice below left on the books.
+> {貸|か}し {借|か}り {無|な}し や 。 {残|のこ}り は {下|した} の {水門|すいもん} {一|ひと}つ だけ や な 。 || All square. Just the one sluice below left on the books.
+@ expeditions/20_scenes [xp.cellars_grate]
+= {向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも 。 || Maybe from the other side.
+> {向|む}こう {側|がわ} から やったら 、 {開|あ}けられる かも しれん な 。 || From the other side, maybe.
+@ expeditions/20_scenes [xp.cellars_sluice]
+= {水|みず} の {勘定|かんじょう} 、 {合|あ}った よ 。 || The water's accounts balance.
+> {水|みず} の {勘定|かんじょう} 、 ぴったり {合|あ}った で 。 || The water's accounts balance to the drop.
+@ expeditions/20_scenes [xp.cellars_ladder]
+= {近道|ちかみち} 、 {開通|かいつう} 。 {幕間|まくあい} が {短|みじか}く なる の は 、 いい こと だ よ 。 || Shortcut open. Shorter intervals are always welcome.
+> {近道|ちかみち} 、 {開通|かいつう} や 。 {幕間|まくあい} が {短|みじか}く なる の は 、 ええ こと や で 。 || Shortcut's open. Shorter intervals, that's always good.
+@ expeditions/20_scenes [xp.cellars_outflow]
+= {締|し}め 、 {完了|かんりょう} 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち が いい ね 。 || Books closed. Nothing feels better than accounts that balance.
+> {締|し}め 、 {完了|かんりょう} や 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち ええ な 。 || Books closed. Nothin' beats accounts that balance.
+`, 'dialect/kansai_92_expeditions');
+
+
 /* ==== src/content/discovery/00_lex.js ==== */
 /* Lexicon for field discovery: the Mill Road repair, the field puzzles F1-F6,
  * field weaving and the Roadside Keepsakes. Format: w|r|pos|lv|meaning|note
@@ -148365,6 +148647,642 @@ var RB = (globalThis.RB = globalThis.RB || {});
       'In battle it means no limit on how many, for this exchange only (the Inkweavers\' flourish).'),
   ], 'modifiers');
 })(RB.content);
+
+
+/* ==== src/content/expeditions/00_cellars.js ==== */
+/* The Flood Cellars (expansion P07's pilot; plan 04_DUNGEONS.md D1–D4, D6 A31, D10): an optional expedition under
+ * Reedwake's River Warehouse, in journeys of the twelve-chapter edition once Chapter 2 is over. Since the storm the
+ * river has stood in the cellars where the village keeps its rice; the hands who worked the drains left notices
+ * saying what they had already done (～てある), and the sluice cannot be worked without reading them.
+ *
+ * An apprenticeship dungeon (A31): everything in it is known but one construction. The notice at the foot of the
+ * ladder teaches ～てある; the lamp, the grate and the sluice use it; the outflow door combines it with ～ている and
+ * ～てください.
+ *
+ *   B1, the Upper Cellar: a ring of passages round the rice store, with two ways to the stairs down (north past the
+ *     bench, south past the lamp room), the store itself as a cut across, and the lamp room as an optional route.
+ *   B2, the Flooded Cellar: a channel across the middle, a bridge on the west, the spring, the sluice works in the
+ *     south-east; the outflow chamber beyond the water, reached only once the sluice has drained it, holds the
+ *     ladder whose grate opens the way back up (the shortcut) and the outflow door, watched by a blot.
+ *
+ * Expedition rules: condition carries between encounters (mistakes given back), one bench, one spring and a lamp
+ * that can be mended into a rest, every creature in sight, defeat starts the cellars again from the ladder, and
+ * what is learned, the floors seen and the opened grate stay. (Maps, the definition and the stations here; the
+ * language, the sluice and the scenes in 10_learning.js and 20_scenes.js; the screens in src/ui/89b_expedition.js.) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const CELLAR = { region: 'reedwake', music: 'mill', noTravel: true, noCheckpoint: true, travelKind: 'dungeon', travelPlace: { en: 'the Flood Cellars' }, expedition: 'cellars' };
+  // floodwater that stands until the sluice has been worked (an instance flag: a restart brings it back)
+  const flood = (cells, cond) => cells.map(([x, y]) => ({ p: 'lf_flood', x, y, if: cond, o: { cx: x, cy: y } }));
+  const rect = (x0, y0, w, h) => { const out = []; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) out.push([x, y]); return out; };
+  const WET = '!xp_cellars_drained';
+
+  // ---- B1: the Upper Cellar (40 × 26) ----------------------------------------------------------------------------
+  C.maps['rw.cellar1'] = Object.assign({}, CELLAR, {
+    name: T('The Upper Cellar', '{地下|ちか} {一階|いっかい}'),
+    ambient: { dark: 0.5, playerLight: 54, weather: 'motes' },
+    terrain: K.build(40, 26, '#', (k) => {
+      k.rect(1, 17, 9, 7, '+');          // the foot of the ladder
+      k.rect(2, 3, 3, 14, '+');          // the west passage
+      k.rect(2, 3, 30, 3, '+');          // the north passage
+      k.rect(29, 3, 3, 20, '+');         // the east passage
+      k.rect(9, 20, 23, 3, '+');         // the south passage
+      k.rect(9, 9, 17, 8, '+');          // the rice store
+      k.rect(17, 6, 2, 3, '+');          //   its north door
+      k.rect(12, 17, 2, 3, '+');         //   its south door
+      k.rect(18, 11, 6, 4, 'w').rect(19, 12, 4, 2, '~'); // where the floor gave way: a pool
+      k.rect(34, 7, 5, 7, '+');          // the lamp room
+      k.rect(32, 9, 2, 2, '+');          //   its passage
+      k.scatter('w', 14, 701, [2, 3, 30, 3], '+');
+      k.scatter('w', 10, 702, [9, 20, 23, 3], '+');
+      k.scatter('w', 6, 703, [29, 3, 3, 20], '+');
+    }),
+    props: [
+      { p: 'ladder', x: 2, y: 18 },
+      { p: 'noticeboard', x: 5, y: 17, scene: 'xp.cellars_board' },
+      { p: 'bench', x: 3, y: 9, scene: 'xp.cellars_bench' },
+      // the grate over the shortcut: bolted from below until opened from B2
+      { p: 'lf_grate', x: 8, y: 22, scene: 'xp.cellars_grate', if: '!xpk_cellars_sc_ladder' },
+      { p: 'hole', x: 8, y: 22, if: 'xpk_cellars_sc_ladder' }, { p: 'ladder', x: 8, y: 22, if: 'xpk_cellars_sc_ladder' },
+      { p: 'stairs', x: 30, y: 4 },
+      // the rice store
+      { p: 'lf_floursacks', x: 9, y: 9 }, { p: 'lf_floursacks', x: 10, y: 9 }, { p: 'lf_floursacks', x: 9, y: 10 },
+      { p: 'lf_floursacks', x: 24, y: 9 }, { p: 'lf_floursacks', x: 25, y: 9 }, { p: 'lf_floursacks', x: 25, y: 10 },
+      { p: 'crate', x: 9, y: 15 }, { p: 'crate', x: 10, y: 16 }, { p: 'barrel', x: 25, y: 16 }, { p: 'barrel', x: 24, y: 16 },
+      { p: 'pillar', x: 14, y: 12 }, { p: 'pillar', x: 14, y: 14 },
+      { p: 'bookpile', x: 11, y: 12, scene: 'xp.cellars_tally' },
+      // the lamp room (the optional route): a lamp that can be mended into a rest point
+      { p: 'deadlantern', x: 36, y: 8, scene: 'xp.cellars_lamp', if: '!xp_cellars_lamp_fixed' },
+      { p: 'lantern', x: 36, y: 8, scene: 'xp.cellars_lamp_rest', if: 'xp_cellars_lamp_fixed' },
+      { p: 'shelf', x: 34, y: 7 }, { p: 'shelf', x: 38, y: 7 }, { p: 'crate', x: 38, y: 13 }, { p: 'barrel', x: 34, y: 13 },
+      { p: 'sign', x: 37, y: 12, scene: 'xp.cellars_lampnote' },
+      // the passages
+      { p: 'crate', x: 4, y: 4 }, { p: 'barrel', x: 31, y: 16 }, { p: 'crate', x: 2, y: 14 }, { p: 'barrel', x: 20, y: 22 },
+      { p: 'lantern', x: 9, y: 17, o: { lit: true } },
+    ],
+    foes: [
+      { id: 'c1', enemy: 'rw.reedling', x: 16, y: 4, patrol: 2, bg: 'mill', intro: { jp: '{水|みず} と {一緒|いっしょ} に {入|はい}って きた {葦|あし} が 、 {通路|つうろ} で {揺|ゆ}れて いる 。', en: 'Reeds that came in with the flood sway in the passage.' }, settle: { jp: '{葦|あし} は {静|しず}か に なって 、 {水|みず} の {中|なか} に {沈|しず}んだ 。', en: 'The reeds go still and sink back into the water.' } },
+      { id: 'c2', enemy: 'rw.reedling', x: 23, y: 21, patrol: 2, bg: 'mill', intro: { jp: '{水|みず} と {一緒|いっしょ} に {入|はい}って きた {葦|あし} が 、 {通路|つうろ} で {揺|ゆ}れて いる 。', en: 'Reeds that came in with the flood sway in the passage.' }, settle: { jp: '{葦|あし} は {静|しず}か に なって 、 {水|みず} の {中|なか} に {沈|しず}んだ 。', en: 'The reeds go still and sink back into the water.' } },
+      { id: 'c3', enemy: 'rw.dustmoth', x: 12, y: 13, patrol: 1, aggro: true },
+    ],
+    exits: [
+      { x: 30, y: 4, to: 'rw.cellar2', tx: 4, ty: 4, dir: 'down' },
+      { x: 8, y: 22, to: 'rw.cellar2', tx: 30, ty: 4, dir: 'down', if: 'xpk_cellars_sc_ladder' },
+    ],
+    // the ladder up to the warehouse: stepping on its foot asks whether to climb out
+    triggers: [{ x: 2, y: 18, w: 1, h: 1, scene: 'xp.cellars_leave' }],
+    onEnter: [{ scene: 'xp.cellars_first', once: true }],
+    spawn: { default: [4, 20, 'down'] },
+  });
+
+  // ---- B2: the Flooded Cellar (34 × 24) ---------------------------------------------------------------------------
+  C.maps['rw.cellar2'] = Object.assign({}, CELLAR, {
+    name: T('The Flooded Cellar', '{地下|ちか} {二階|にかい}'),
+    ambient: { dark: 0.55, playerLight: 50, weather: 'motes' },
+    terrain: K.build(34, 24, '#', (k) => {
+      k.rect(1, 2, 9, 7, '+');           // the foot of the stairs
+      k.rect(10, 4, 14, 3, '+');         // the north passage (under water until drained)
+      k.rect(24, 2, 9, 7, '+');          // the outflow chamber
+      k.rect(4, 9, 4, 1, '+');           // down to the west bridge
+      k.rect(1, 10, 32, 3, '~');         // the channel
+      k.rect(5, 10, 2, 3, 'B');          //   the west bridge
+      k.rect(26, 9, 2, 1, '+');          //   the east plank's landing
+      k.rect(26, 10, 2, 3, 'B');         //   the east plank (under water until drained)
+      k.rect(1, 13, 32, 9, '+');         // the south hall
+      k.rect(14, 15, 5, 3, 'w');
+      k.scatter('w', 18, 711, [1, 13, 32, 9], '+');
+      k.scatter('w', 6, 712, [1, 2, 9, 7], '+');
+    }),
+    props: [
+      { p: 'stairs', x: 2, y: 3 },
+      { p: 'sign', x: 8, y: 3, scene: 'xp.cellars_b2sign' },
+      // the spring (a station)
+      { p: 'well', x: 3, y: 19, scene: 'xp.cellars_spring' },
+      // the sluice works
+      { p: 'co_sluice', x: 28, y: 14, scene: 'xp.cellars_sluice', o: { open: false }, if: WET },
+      { p: 'co_sluice', x: 28, y: 14, scene: 'xp.cellars_sluice_done', o: { open: true }, if: 'xp_cellars_drained' },
+      { p: 'lf_plate', x: 26, y: 13, scene: 'xp.cellars_sluice_plate' },
+      { p: 'pillar', x: 10, y: 15 }, { p: 'pillar', x: 10, y: 19 }, { p: 'pillar', x: 22, y: 15 }, { p: 'pillar', x: 22, y: 19 },
+      { p: 'crate', x: 1, y: 13 }, { p: 'barrel', x: 32, y: 21 }, { p: 'crate', x: 31, y: 21 }, { p: 'lf_floursacks', x: 1, y: 21 },
+      // the outflow chamber: the ladder up to the grate (the shortcut), the outflow door
+      { p: 'ladder', x: 31, y: 3, scene: 'xp.cellars_ladder' },
+      { p: 'door', x: 28, y: 1, scene: 'xp.cellars_outflow' },
+      { p: 'lantern', x: 25, y: 2, if: 'xpk_cellars_done', o: { lit: true } },
+      { p: 'barrel', x: 32, y: 7 },
+    ].concat(flood(rect(19, 4, 5, 3), WET), flood(rect(26, 9, 2, 4), WET)),
+    foes: [
+      { id: 'd1', enemy: 'rw.inkblot', x: 16, y: 19, patrol: 2 },
+      { id: 'd2', enemy: 'rw.reedling', x: 6, y: 14, patrol: 1, bg: 'belltower', intro: { jp: '{水|みず} と {一緒|いっしょ} に {入|はい}って きた {葦|あし} が 、 {通路|つうろ} で {揺|ゆ}れて いる 。', en: 'Reeds that came in with the flood sway in the passage.' }, settle: { jp: '{葦|あし} は {静|しず}か に なって 、 {水|みず} の {中|なか} に {沈|しず}んだ 。', en: 'The reeds go still and sink back into the water.' } },
+      // the blot at the outflow door: an encounter of its own (10_learning.js), always in sight
+      { id: 'd3', enemy: 'rw.inkblot', encounter: 'xp.cellars_blot', x: 28, y: 4, patrol: 1, aggro: true,
+        intro: { jp: '{戸|と} の {前|まえ} で 、 {墨|すみ} の {染|し}み が {貼|は}り{紙|がみ} を {汚|よご}して いる 。', en: 'In front of the door, a blot of ink is smearing the notices.' },
+        settle: { jp: '{染|し}み は {薄|うす}く なって 、 {水|みず} と {一緒|いっしょ} に {流|なが}れて いった 。', en: 'The blot thins and runs away with the water.' } },
+    ],
+    exits: [
+      { x: 2, y: 3, to: 'rw.cellar1', tx: 30, ty: 5, dir: 'down' },
+    ],
+    spawn: { default: [4, 4, 'down'] },
+  });
+
+  // ---- the expedition --------------------------------------------------------------------------------------------
+  RB.expedition.define('cellars', {
+    title: T('The Flood Cellars', '{倉庫|そうこ} の {地下|ちか}'), kind: 'side',
+    floors: [
+      { id: 'b1', map: 'rw.cellar1', entry: { x: 4, y: 20, dir: 'down' }, name: T('The Upper Cellar', '{地下|ちか} {一階|いっかい}') },
+      { id: 'b2', map: 'rw.cellar2', entry: { x: 4, y: 4, dir: 'down' }, name: T('The Flooded Cellar', '{地下|ちか} {二階|にかい}') },
+    ],
+    preview: {
+      language: T('What someone has done and left so: 〜て ある, read in the cellar hands\' notices. New here: 〜て ある. Also used: 〜て いる, 〜て ください.', '〜て ある'),
+      size: T('Two floors, with an optional room. Each step is fitted to your profile.'),
+      suggested: T('Any profile, once Chapter 2 is over.'),
+    },
+    rules: { persistent: true, restart: 'entrance', ambush: false },
+    stations: {
+      bench: { kind: 'bench', map: 'rw.cellar1', x: 3, y: 9 },
+      spring: { kind: 'spring', map: 'rw.cellar2', x: 3, y: 19 },
+      lamp: { kind: 'lamp', map: 'rw.cellar1', x: 36, y: 8, requires: 'xp_cellars_lamp_fixed' },
+    },
+    shortcuts: { ladder: { map: 'rw.cellar2', x: 31, y: 3, to: { map: 'rw.cellar1', x: 8, y: 22 } } },
+    procedures: ['xp_cellars_sluice'],
+    exit: { map: 'rw.warehouse', x: 7, y: 4, dir: 'down' },
+  });
+
+  // ---- the way in: a hatch in the River Warehouse, and Yasu, who keeps it -----------------------------------------
+  const wh = C.maps['rw.warehouse'];
+  wh.props.push(
+    { p: 'sg_hatch', x: 7, y: 3, scene: 'xp.cellars_hatch', if: 'ed>=2&ch2_done' },
+  );
+  const yasu = (C.maps['rw.village'].npcs || []).find((n) => n.id === 'yasu');
+  if (yasu) yasu.talk.unshift({ if: 'ed>=2&ch2_done&!xpk_cellars_heard', scene: 'xp.cellars_yasu' }, { if: 'ed>=2&xpk_cellars_done&!xpk_cellars_thanked', scene: 'xp.cellars_yasu_done' });
+
+  // ---- the stamp: the cellars drained (a dungeon's stamp, like the Atlas's) ---------------------------------------
+  C.stamps = C.stamps || {};
+  C.stamps['xp.cellars'] = { id: 'xp.cellars', family: 'dungeon', title: T('The cellars drained', '{地下|ちか} の {水|みず} を {抜|ぬ}く'), criteria: T('Drain the Flood Cellars and open the outflow door.', '{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く'), when: 'ed>=2&xpk_cellars_done', stand: null, design: { shape: 'square', motif: 'stairs', ink: '#2a5a6a' } };
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/expeditions/10_learning.js ==== */
+/* The Flood Cellars' language (expansion P07 pilot; an apprenticeship dungeon, plan D6 A31). One construction is
+ * new, 〜て ある: a state someone brought about on purpose and left so. The board at the foot of the ladder teaches it
+ * (with its grammar card); the lamp room and the sluice use it, each asking the question a cellar hand would: what
+ * has been done already, and what is left to me? The outflow door combines it with what was known before: 〜て いる
+ * (a state, nobody's intention said) and 〜て ください (a request). Every step has all four profiles; the steps mix
+ * choosing, putting a notice in order and writing it, so every input route meets the construction. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const no = (en) => ({ en });
+
+  // ---- the notice at the foot of the ladder: the construction taught -------------------------------------------
+  C.challenges['xp.c_notice'] = { title: { jp: '{貼|は}り{紙|がみ}', en: 'The cellar hands\' notice' },
+    tiers: {
+      F: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '{米|こめ} は {棚|たな} の {上|うえ} に {上|あ}げて あります 。', en: '' },
+          prompt: { en: 'The notice says the rice 上げて あります. What does that tell you?' },
+          options: [
+            { en: 'Someone has put the rice up on the shelves, and it is there now.', ok: true },
+            { en: 'Please put the rice up on the shelves.', ok: false, why: no('That would be 上げて ください. 〜て あります says it has been done already.') },
+            { en: 'The rice is floating up on the water.', ok: false, why: no('With 〜て ある, someone did it on purpose: the rice did not move by itself.') },
+          ], explain: { jp: '〜て あります', en: 'て form + あります: someone did it, and it stays done. Here, the rice is safe on the shelves.' } },
+        { kind: 'write', item: 'g:te_aru', ctx: { jp: '{階段|かいだん} の {灯|あか}り は つけて ＿＿ 。', en: 'The stair light: switched on, and left on.' },
+          prompt: { en: 'Finish the notice the polite way the hands write: あります (arimasu).' },
+          template: { before: '{階段|かいだん} の {灯|あか}り は つけて ', after: ' 。' }, answer: 'あります', accept: ['あります', 'ある'], mode: 'reading',
+          explain: { jp: 'つけて あります', en: 'つけて あります — it has been switched on (and is on now).' } },
+      ],
+      E: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '{階段|かいだん} の {灯|あか}り は つけて あります 。', en: '' },
+          prompt: { en: 'What do you need to do about the stair light?' },
+          options: [
+            { jp: 'もう ついて いる 。 その まま で いい 。', ok: true },
+            { jp: '{灯|あか}り を つけて ください 。', ok: false, why: no('The notice says it has been switched on already (〜て あります): there is nothing to do.') },
+            { jp: '{灯|あか}り は {消|き}えて いる 。', ok: false, why: no('つけて ある: someone switched it on and left it on.') },
+          ], explain: { en: '〜て あります tells you what has been done and left so: the light is on.' } },
+        { kind: 'order', item: 'g:te_aru', prompt: { en: 'Put the notice back in order: "The rice has been put up on the shelves."' },
+          tiles: ['{米|こめ}', 'は', '{棚|たな}', 'の', '{上|うえ}', 'に', '{上|あ}げて', 'あります'], answer: ['{米|こめ}', 'は', '{棚|たな}', 'の', '{上|うえ}', 'に', '{上|あ}げて', 'あります'],
+          orderHint: { en: 'The rice first (こめ は), then where (たな の うえ に), then 上げて あります.' } },
+      ],
+      I: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: 'Ａ ： {戸|と} が {開|あ}いて いる 。　Ｂ ： {戸|と} が {開|あ}けて ある 。', en: '' },
+          prompt: { en: 'Which tells you that someone opened the door on purpose, and left it open?' },
+          options: [
+            { en: 'B: 開けて ある', ok: true },
+            { en: 'A: 開いて いる', ok: false, why: no('開いて いる only says the door is open (開く, nobody acting); it says nothing about anyone.') },
+            { en: 'Both say exactly the same.', ok: false, why: no('Both describe an open door, but only 開けて ある says someone did it deliberately.') },
+          ], explain: { en: 'A verb someone does to a thing (開ける) + て ある = a state someone left. A verb of the thing itself (開く) + て いる = just the state.' } },
+        { kind: 'write', item: 'g:te_aru', ctx: { jp: '{階段|かいだん} の {灯|あか}り が ＿＿ ある 。', en: 'The hands left the stair light on.' },
+          prompt: { en: 'Write つける (to switch on) in the て form to finish the notice.' },
+          template: { before: '{階段|かいだん} の {灯|あか}り が ', after: ' ある 。' }, answer: 'つけて', accept: ['つけて'], mode: 'reading',
+          explain: { jp: 'つけて ある', en: 'つける → つけて; + ある: it has been switched on.' } },
+      ],
+      A: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '{米|こめ} は {上|あ}げて ある けど 、 {味噌|みそ} の {樽|たる} は まだ {下|した} に {置|お}いて ある 。', en: '' },
+          prompt: { en: 'What does the notice imply about the miso barrels?' },
+          options: [
+            { en: 'They were left down below deliberately, for now: nobody forgot them.', ok: true },
+            { en: 'Someone forgot them down below.', ok: false, why: no('置いて ある: they were put there and left so. Forgetting would be 忘れた.') },
+            { en: 'They have been carried up with the rice.', ok: false, why: no('まだ 下 に: still down below.') },
+          ], explain: { en: 'Two 〜て ある side by side: both are states somebody chose. まだ marks the second as not yet changed.' } },
+        { kind: 'order', item: 'g:te_aru', prompt: { en: 'Put it in order: "The ladder has been put up against the wall."' },
+          tiles: ['はしご', 'は', '{壁|かべ}', 'に', 'かけて', 'あります'], answer: ['はしご', 'は', '{壁|かべ}', 'に', 'かけて', 'あります'],
+          orderHint: { en: 'はしご は, the wall with に, then かけて あります.' } },
+      ],
+    } };
+
+  // ---- the lamp room (the optional route): what has been done, and what is left -------------------------------------
+  C.challenges['xp.c_lamp'] = { title: { jp: '{消|き}えた ランプ', en: 'The lamp that went out' },
+    tiers: {
+      F: [
+        { kind: 'choose', item: 'c:xp_cellars_lamp', ctx: { jp: '{油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります 。', en: '' },
+          prompt: { en: 'Where is the lamp oil?' },
+          options: [{ en: 'In the box.', ok: true }, { en: 'In the lamp.', ok: false, why: no('はこ の なか: inside the box.') }, { en: 'There is none left.', ok: false, why: no('入れて あります: someone has put it there, so it is there.') }] },
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: 'ガラス は {拭|ふ}いて あります 。 {油|あぶら} は まだ {入|い}れて いません 。', en: '' },
+          prompt: { en: 'What is left for you to do?' },
+          options: [{ en: 'Fill the lamp with oil.', ok: true }, { en: 'Wipe the glass.', ok: false, why: no('ふいて あります: the glass has been wiped already.') }],
+          explain: { en: '〜て あります: done. まだ 〜て いません: not done yet.' } },
+      ],
+      E: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: 'ガラス は {拭|ふ}いて あります 。 {油|あぶら} は まだ {入|い}れて いません 。', en: '' },
+          prompt: { en: 'What do you do?' },
+          options: [{ jp: '{油|あぶら} を {入|い}れる', ok: true }, { jp: 'ガラス を {拭|ふ}く', ok: false, why: no('ふいて あります: it has been done.') }, { jp: '{何|なに} も しない', ok: false, why: no('まだ 入れて いません: the oil is still to do.') }] },
+        { kind: 'write', item: 'g:te_aru', ctx: { jp: 'ガラス は ＿＿ あります 。', en: 'The glass has been wiped.' },
+          prompt: { en: 'Write ふく (to wipe) in the て form.' },
+          template: { before: 'ガラス は ', after: ' あります 。' }, answer: 'ふいて', accept: ['ふいて', '{拭|ふ}いて'], mode: 'reading',
+          explain: { jp: '{拭|ふ}いて あります', en: 'ふく → ふいて (く → いて).' } },
+      ],
+      I: [
+        { kind: 'choose', item: 'c:xp_cellars_lamp', ctx: { jp: 'ガラス は {拭|ふ}いて あります 。 {油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります が 、 ランプ に は まだ {入|い}れて いません 。', en: '' },
+          prompt: { en: 'Which is true?' },
+          options: [{ en: 'The oil is in the box; the lamp is still empty.', ok: true }, { en: 'The oil is already in the lamp.', ok: false, why: no('ランプ に は まだ 入れて いません: not in the lamp yet.') }, { en: 'The glass still needs wiping.', ok: false, why: no('拭いて あります: wiped.') }] },
+        { kind: 'order', item: 'g:te_aru', prompt: { en: 'Put it in order: "The oil has been put in the box."' },
+          tiles: ['{油|あぶら}', 'は', '{箱|はこ}', 'の', '{中|なか}', 'に', '{入|い}れて', 'あります'], answer: ['{油|あぶら}', 'は', '{箱|はこ}', 'の', '{中|なか}', 'に', '{入|い}れて', 'あります'] },
+      ],
+      A: [
+        { kind: 'choose', item: 'c:xp_cellars_lamp', ctx: { jp: '{油|あぶら} は まだ {入|い}れて いません 。 {先|さき} に {入|い}れて おく と 、 {水|みず} が {入|はい}る から です 。', en: '' },
+          prompt: { en: 'Why was the oil not put in?' },
+          options: [{ en: 'If it were put in ahead of time, water would get into it.', ok: true }, { en: 'There was no oil left.', ok: false, why: no('Nothing says so: the reason is から です.') }, { en: 'Someone forgot.', ok: false, why: no('A reason is given: 水 が 入る から.') }],
+          explain: { en: '入れて おく: put in ahead of time (〜て おく, doing something in advance). The hands chose not to.' } },
+        { kind: 'write', item: 'g:te_aru', ctx: { jp: '{油|あぶら} は {箱|はこ} の {中|なか} に ＿＿ あります 。', en: 'The oil has been put in the box.' },
+          prompt: { en: 'Write いれる (to put in) in the て form.' },
+          template: { before: '{油|あぶら} は {箱|はこ} の {中|なか} に ', after: ' あります 。' }, answer: 'いれて', accept: ['いれて', '{入|い}れて'], mode: 'reading' },
+      ],
+    } };
+
+  // ---- the outflow door: the new construction with the old ones -----------------------------------------------------
+  C.challenges['xp.c_final'] = { title: { jp: '{出口|でぐち} の {戸|と}', en: 'The outflow door' },
+    tiers: {
+      F: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '{鍵|かぎ} は {右|みぎ} の {柱|はしら} に かけて あります 。', en: '' },
+          prompt: { en: 'Where is the key?' },
+          options: [{ en: 'Hanging on the right-hand post.', ok: true }, { en: 'In the door.', ok: false, why: no('みぎ の はしら に: on the right-hand post.') }, { en: 'Someone took it away.', ok: false, why: no('かけて あります: it has been hung there, and is there now.') }] },
+        { kind: 'choose', item: 'g:v_te_kudasai', ctx: { jp: '{出|で}る {時|とき} は 、 {戸|と} を {閉|し}めて ください 。', en: '' },
+          prompt: { en: 'What does this part of the notice ask of you?' },
+          options: [{ en: 'Close the door when you go out.', ok: true }, { en: 'It says the door has been closed.', ok: false, why: no('閉めて ください asks you to do it; 閉めて あります would say it was done.') }],
+          explain: { en: '〜て ください asks; 〜て あります reports what was done.' } },
+      ],
+      E: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '{戸|と} に は {鍵|かぎ} が かけて あります 。 {鍵|かぎ} は {右|みぎ} の {柱|はしら} に かけて あります 。', en: '' },
+          prompt: { en: 'What do you do first?' },
+          options: [{ jp: '{柱|はしら} の {鍵|かぎ} を {取|と}る', ok: true }, { jp: '{戸|と} を {押|お}す', ok: false, why: no('鍵 が かけて あります: it has been locked.') }, { jp: '{鍵|かぎ} を {探|さが}しに {帰|かえ}る', ok: false, why: no('The notice says where it is: on the right-hand post.') }] },
+        { kind: 'order', item: 'g:te_aru', prompt: { en: 'Put it in order: "The key has been hung on the post."' },
+          tiles: ['{鍵|かぎ}', 'は', '{柱|はしら}', 'に', 'かけて', 'あります'], answer: ['{鍵|かぎ}', 'は', '{柱|はしら}', 'に', 'かけて', 'あります'] },
+      ],
+      I: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '① {戸|と} に {鍵|かぎ} が かけて あります 。 ② {水|みず} が {流|なが}れて います 。 ③ {出|で}る {時|とき} は 、 {戸|と} を {閉|し}めて ください 。', en: '' },
+          prompt: { en: 'Which line asks something of you, and which tells you what someone did?' },
+          options: [{ en: '③ asks; ① tells what someone did.', ok: true }, { en: '② asks; ③ tells what someone did.', ok: false, why: no('② is just what is happening: the water is flowing (〜て いる).') }, { en: '① asks; ② tells what someone did.', ok: false, why: no('① is 〜て ある: something done. ② has no one in it.') }] },
+        { kind: 'write', item: 'g:te_aru', ctx: { jp: '{鍵|かぎ} は {柱|はしら} に ＿＿ あります 。', en: 'The key has been hung on the post.' },
+          prompt: { en: 'Write かける (to hang) in the て form.' },
+          template: { before: '{鍵|かぎ} は {柱|はしら} に ', after: ' あります 。' }, answer: 'かけて', accept: ['かけて'], mode: 'reading' },
+      ],
+      A: [
+        { kind: 'choose', item: 'g:te_aru', ctx: { jp: '{戸|と} は {閉|し}めて ある が 、 {鍵|かぎ} は かかって いない 。', en: '' },
+          prompt: { en: 'What is the state of the door?' },
+          options: [{ en: 'Someone closed it on purpose, but it is not locked.', ok: true }, { en: 'Someone locked it on purpose, but left it open.', ok: false, why: no('閉めて ある: closed (on purpose). 鍵 は かかって いない: not locked.') }, { en: 'It closed by itself, and it is locked.', ok: false, why: no('閉めて ある means someone closed it; かかって いない is "not locked".') }],
+          explain: { en: 'かける (someone locks it) / かかる (it is locked): the pair behind 〜て ある and 〜て いる.' } },
+        { kind: 'order', item: 'g:te_aru', prompt: { en: 'Put it in order: "When you go out, please leave the door closed."' },
+          tiles: ['{出|で}る', '{時|とき}', 'は', '{戸|と}', 'を', '{閉|し}めて', 'おいて', 'ください'], answer: ['{出|で}る', '{時|とき}', 'は', '{戸|と}', 'を', '{閉|し}めて', 'おいて', 'ください'],
+          orderHint: { en: 'When (出る 時 は), what (戸 を), then 閉めて おいて ください: close it, and leave it so.' } },
+      ],
+    } };
+
+  // ---- the sluice: a procedure read from the hands' plate (P04's machine; E7, E11) ---------------------------------
+  C.encounters = C.encounters || {};
+  const step = (item, prompts, ok, wrong) => {
+    const task = {};
+    for (const t of ['F', 'E', 'I', 'A']) {
+      const p = prompts[t];
+      task[t] = { kind: 'choose', item, ctx: p.ctx, prompt: { en: p.en }, options: p.options || [{ jp: ok, ok: true }, { jp: wrong, ok: false, why: no(p.why) }], explain: p.explain };
+    }
+    return task;
+  };
+  const A = (id, jp, en, more) => Object.assign({ id, label: { jp, en } }, more);
+  const P1 = '{水門|すいもん} は もう {閉|し}めて あります 。 {栓|せん} を {抜|ぬ}いて ください 。';
+  const P2 = '{車|くるま} に は {油|あぶら} が さして あります 。 {車|くるま} を {回|まわ}して ください 。';
+  const P3 = '{水|みず} が {引|ひ}いたら 、 {栓|せん} を {戻|もど}して ください 。 {東|ひがし} に は {板|いた} が {渡|わた}して あります 。';
+  C.encounters['xp.cellars_sluice'] = {
+    id: 'xp.cellars_sluice', kind: 'procedure', name: { jp: '{排水|はいすい} の {水門|すいもん}', en: 'The drain sluice' },
+    rules: { wait: true },
+    procedure: {
+      id: 'xp_cellars_sluice', version: 1, restart: 'stable',
+      machine: { gate: 'shut', plug: 'in', water: 'high' },
+      show: [
+        { key: 'gate', label: { jp: '{水門|すいもん}', en: 'Sluice gate' }, values: { shut: { jp: '{閉|し}まって いる', en: 'shut' }, open: { jp: '{開|あ}いて いる', en: 'open' } } },
+        { key: 'plug', label: { jp: '{栓|せん}', en: 'Drain plug' }, values: { in: { jp: '{入|はい}って いる', en: 'in' }, out: { jp: '{抜|ぬ}けて いる', en: 'out' } } },
+        { key: 'water', label: { jp: '{水|みず}', en: 'Water' }, values: { high: { jp: '{高|たか}い', en: 'high' }, low: { jp: '{低|ひく}い', en: 'low' } } },
+      ],
+      done: { en: 'The water runs out through the drain, the plug is back, and the east plank stands clear of the water.' },
+      steps: [
+        { id: 'p1', text: { jp: P1, en: 'The sluice gate has already been shut. Pull the plug.' },
+          task: step('g:te_aru', {
+            F: { ctx: { jp: '{水門|すいもん} は もう {閉|し}めて あります 。', en: '' }, en: 'The plate says the sluice gate 閉めて あります. What does that mean?',
+              options: [{ en: 'The gate has already been shut: leave it.', ok: true }, { en: 'Please shut the gate.', ok: false, why: no('That would be 閉めて ください. 閉めて あります: done already.') }] },
+            E: { ctx: { jp: P1, en: '' }, en: 'What do you do now?', why: 'The gate has been shut already (閉めて あります). The plate asks you to pull the plug.' },
+            I: { ctx: { jp: P1, en: '' }, en: 'Which has been done, and which is left to you?', options: [{ en: 'The gate is done; the plug is left to me.', ok: true }, { en: 'The plug is done; the gate is left to me.', ok: false, why: no('閉めて あります is the gate, done. 抜いて ください is the plug, asked of you.') }] },
+            A: { ctx: { jp: P1, en: '' }, en: 'Why must you not touch the gate?', options: [{ en: 'Someone shut it on purpose, and it is meant to stay shut.', ok: true }, { en: 'It is broken and cannot move.', ok: false, why: no('Nothing says broken: 閉めて ある is a choice someone made.') }, { en: 'It is not shut yet.', ok: false, why: no('もう 閉めて あります: already.') }] },
+          }, '{栓|せん} を {抜|ぬ}く', '{水門|すいもん} を {閉|し}める'),
+          actions: [
+            A('pull', '{栓|せん} を {抜|ぬ}く', 'Pull the plug', { ok: true, set: { plug: 'out' }, means: { en: 'You will pull the drain plug; the gate stays as it was left.' }, result: { en: 'The plug comes out with a gulp; the water begins to turn.' } }),
+            A('gate', '{水門|すいもん} を {閉|し}める', 'Shut the gate', { means: { en: 'You will shut the sluice gate.' }, wrong: { en: 'You heave at a gate that was shut already; its wheel slips the catch and the gate lifts. You wind it down again: back to the start.' } }),
+          ] },
+        { id: 'p2', stable: true, text: { jp: P2, en: 'The wheel has been oiled. Turn the wheel.' },
+          task: step('g:te_aru', {
+            F: { ctx: { jp: '{車|くるま} に は {油|あぶら} が さして あります 。', en: '' }, en: 'Does the wheel need oil?',
+              options: [{ en: 'No: it has been oiled already.', ok: true }, { en: 'Yes: please oil it.', ok: false, why: no('さして あります: someone has oiled it.') }] },
+            E: { ctx: { jp: P2, en: '' }, en: 'What do you do now?', why: 'さして あります: the wheel has been oiled. The plate asks you to turn it.' },
+            I: { ctx: { jp: P2, en: '' }, en: 'What does the plate tell you, and what does it ask?', options: [{ en: 'It tells me the wheel is oiled; it asks me to turn it.', ok: true }, { en: 'It asks me to oil the wheel and then turn it.', ok: false, why: no('さして あります reports; only 回して ください asks.') }] },
+            A: { ctx: { jp: P2, en: '' }, en: 'Which word shows that the oiling was done by someone, not just a fact about the wheel?', options: [{ en: 'さして あります', ok: true }, { en: '回して ください', ok: false, why: no('That is the request.') }, { en: 'に は', ok: false, why: no('That marks where, as a contrast; it says nothing of anyone acting.') }] },
+          }, '{車|くるま} を {回|まわ}す', '{油|あぶら} を さす'),
+          actions: [
+            A('turn', '{車|くるま} を {回|まわ}す', 'Turn the wheel', { ok: true, set: { water: 'low' }, means: { en: 'You will turn the wheel.' }, result: { en: 'The wheel turns easily (it has been oiled); the water drops down the drain.' } }),
+            A('oil', '{油|あぶら} を さす', 'Oil the wheel', { means: { en: 'You will go and oil the wheel first.' }, wrong: { en: 'While you look for oil it does not need, silt settles in the open drain. You clear it: back to the pulled plug.' } }),
+          ] },
+        { id: 'p3', text: { jp: P3, en: 'When the water has gone down, put the plug back. A plank has been laid across on the east side.' },
+          task: step('g:te_aru', {
+            F: { ctx: { jp: '{東|ひがし} に は {板|いた} が {渡|わた}して あります 。', en: '' }, en: 'What is on the east side?',
+              options: [{ en: 'A plank has been laid across: a way over.', ok: true }, { en: 'Please lay a plank across.', ok: false, why: no('渡して あります: it has been laid already.') }] },
+            E: { ctx: { jp: P3, en: '' }, en: 'The water is low now. What do you do?', why: 'A plank has already been laid across (渡して あります). The plate asks you to put the plug back.' },
+            I: { ctx: { jp: P3, en: '' }, en: 'What is left to you, now that the water is low?', options: [{ en: 'Putting the plug back.', ok: true }, { en: 'Laying the plank on the east side.', ok: false, why: no('渡して あります: it is there already.') }] },
+            A: { ctx: { jp: P3, en: '' }, en: 'When should the plug go back, and how will you cross to the east?', options: [{ en: 'Once the water is down; over the plank someone laid.', ok: true }, { en: 'Straight away; over a plank you must lay.', ok: false, why: no('引いたら: after it has gone down. 渡して あります: laid already.') }] },
+          }, '{栓|せん} を {戻|もど}す', '{板|いた} を {渡|わた}す'),
+          actions: [
+            A('back', '{栓|せん} を {戻|もど}す', 'Put the plug back', { ok: true, set: { plug: 'in' }, means: { en: 'You will put the plug back now that the water is low.' }, result: { en: 'The plug goes home. The cellar is quiet, and the east plank is out of the water.' } }),
+            A('plank', '{板|いた} を {渡|わた}す', 'Lay a plank', { means: { en: 'You will go and lay a plank across.' }, wrong: { en: 'There is a plank there already; while you look at it, the open drain draws silt again. Back to turning the wheel.' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'The cellar drains.' } }],
+  };
+
+  // ---- the blot at the outflow door: a visible encounter of its own ----------------------------------------------
+  C.encounters['xp.cellars_blot'] = {
+    id: 'xp.cellars_blot', name: { jp: '{貼|は}り{紙|がみ} の {染|し}み', en: 'The blot on the notices' },
+    lead: { enemy: 'rw.inkblot' }, group: { normal: [], hard: ['rw.inkblot'] },
+    rules: { wait: true },
+  };
+
+  RB.lex.add(RB.lex.parseTable(`
+地下|ちか|n|E|underground, basement
+倉庫|そうこ|n|I|warehouse, storehouse
+貼り紙|はりがみ|n|I|notice (posted up)
+階段|かいだん|n|E|stairs
+棚|たな|n|E|shelf
+上げる|あげる|v1|E|to raise, put up
+樽|たる|n|A|barrel, cask
+味噌|みそ|n|E|miso
+はしご||n|E|ladder
+拭く|ふく|v5k|E|to wipe
+栓|せん|n|I|plug, stopper
+抜く|ぬく|v5k|E|to pull out
+戻す|もどす|v5s|E|to put back
+板|いた|n|E|board, plank
+渡す|わたす|v5s|E|to hand over; to lay across
+さす||v5s|I|to apply (oil), to drip in
+排水|はいすい|n|A|drainage
+水門|すいもん|n|I|sluice gate
+引く|ひく|v5k|E|to pull; (water) to recede
+柱|はしら|n|E|pillar, post
+鍵|かぎ|n|E|key, lock
+かかる||v5r|E|to hang; (a lock) to be on
+かける||v1|E|to hang; to lock
+染み|しみ|n|I|stain, blot
+墨|すみ|n|I|ink (sumi)
+汚す|よごす|v5s|E|to dirty, smear
+格子|こうし|n|I|grate, lattice
+留める|とめる|v1|I|to fasten
+奥|おく|n|E|the far end, the back
+出口|でぐち|n|F|exit
+傷む|いたむ|v5m|I|to spoil, go bad
+律儀|りちぎ|adj-na|A|conscientious, dutiful
+通路|つうろ|n|I|passage, corridor
+無し|なし|n|E|none, nothing (owed)
+銅|どう|n|I|copper
+勘定|かんじょう|n|I|accounts, the reckoning
+開通|かいつう|n|A|opening (of a road or way)
+揺れる|ゆれる|v1|E|to sway, shake
+沈む|しずむ|v5m|E|to sink
+  `), 'expeditions');
+})(RB.content);
+
+
+/* ==== src/content/expeditions/20_scenes.js ==== */
+/* The Flood Cellars' scenes (expansion P07 pilot): Yasu, who keeps the River Warehouse; the hatch and its preview
+ * card; the notices; the stations, the grate and the ladder (the shortcut), the sluice and the outflow door; the way
+ * out. The hooks (xp_*) are src/ui/89b_expedition.js. Flags: xp_cellars_… belong to one visit (a restart clears
+ * them); xpk_cellars_… are kept (what was heard, taught, opened and finished). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene xp.cellars_yasu
+# Staged: Yasu nods back toward the warehouse, then down at the boards, as if he could see the water under them.
+!faceplayer yasu
+!gesture yasu point 29,24
+yasu: {倉庫|そうこ} の {下|した} に 、 {米|こめ} を {置|お}く {地下|ちか} が ある 。 {嵐|あらし} の {夜|よる} から 、 {水|みず} が {引|ひ}かない 。 || There's a cellar under the warehouse where we keep the rice. Since the night of the storm, the water hasn't gone down.
+!look yasu pc
+yasu: {若|わか}い {者|もん} が {水|みず} を {抜|ぬ}こう と した が 、 {途中|とちゅう} で {逃|に}げて きた 。 {貼|は}り{紙|がみ} だけ {残|のこ}して な 。 || The young hands tried to drain it, and ran off halfway. They left their notices, at least.
+yasu: {何|なに} を やって 、 {何|なに} を やって ない か 。 {読|よ}める {者|もん} が {行|い}けば 、 {水|みず} は {抜|ぬ}ける 。 {急|いそ}ぐ {話|はなし} じゃ ない 。 {床|ゆか} の {上|うえ} の {戸|と} から {降|お}りられる 。 || What they did, and what they didn't. Someone who can read that could drain it. No hurry. The hatch in the floor will take you down.
+?(comp=mio) comp: {水|みず} に {浸|つ}かった {米|こめ} は 、 {早|はや}く {出|だ}さない と {傷|いた}む わ 。 …… {行|い}って みましょう か 。 || Rice that's been in water spoils if it isn't brought out soon. …Shall we go and see?
+?(comp=nao) comp: {逃|に}げる {前|まえ} に {貼|は}り{紙|がみ} を {残|のこ}す か 。 {律儀|りちぎ} な {連中|れんちゅう} だ な 。 || They ran, but left notices first. Conscientious lot.
+?(comp=ren) comp: {貼|は}り{紙|がみ} が {残|のこ}って いる なら 、 {灯|あか}り の {書|か}き{置|お}き と {同|おな}じ です 。 {前|まえ} の {人|ひと} の {手|て} を {読|よ}めば いい 。 || If the notices are still there, it's like a lamplighter's note. We just read the hand that came before.
+?(comp=suzu) comp: やった こと と 、 やって ない こと 。 {帳簿|ちょうぼ} と {同|おな}じ だ ね 。 {締|し}め は {私|わたし} たち か 。 || What's been done and what hasn't: just like a ledger. And we close the books, do we?
+!set xpk_cellars_heard
+
+@scene xp.cellars_yasu_done
+!faceplayer yasu
+!gesture yasu nod pc
+yasu: {水|みず} が {引|ひ}いた な 。 {米|こめ} も {無事|ぶじ} だ 。 …… {若|わか}い {者|もん} の {貼|は}り{紙|がみ} も 、 {読|よ}む {者|もん} が いて {初|はじ}めて {役|やく} に {立|た}つ 。 || The water's down. The rice is safe. …Even the young hands' notices are only any use once someone reads them.
+yasu: {下|した} は いつでも {使|つか}って いい 。 {寒|さむ}い が 、 {静|しず}か だ ぞ 。 || Use the cellars whenever you like. Cold, but quiet.
+!set xpk_cellars_thanked
+
+@scene xp.cellars_hatch
+narr: {床|ゆか} に {四角|しかく} い {戸|と} が ある 。 {下|した} から 、 {水|みず} の {匂|にお}い が {上|あ}がって くる 。 || A square hatch in the floor. The smell of water rises from below.
+!hook xp_preview cellars
+!if var._res=0 -> later
+!hook xp_enter cellars
+!end
+:later
+narr: {戸|と} を {閉|し}めた 。 {急|いそ}ぐ {話|はなし} じゃ ない 。 || You close the hatch. It can wait.
+
+@scene xp.cellars_first
+# Staged: the companion looks round at the dark passages, then at the board by the ladder.
+narr: {冷|つめ}たい {空気|くうき} 。 {通路|つうろ} が {左右|さゆう} に {分|わ}かれて 、 {奥|おく} へ {続|つづ}いて いる 。 || Cold air. The passages split left and right and go on into the dark.
+?(comp=mio) comp: {壁|かべ} の {貼|は}り{紙|がみ} 、 {先|さき} に {読|よ}んで おきましょう 。 {何|なに} が {済|す}んで いる か 、 {分|わ}かる はず よ 。 || Let's read the notice on the wall first. It should tell us what's already been done.
+?(comp=nao) comp: {道|みち} は {二|ふた}つ 、 {行|い}き{先|さき} は {一|ひと}つ か 。 …… まず {貼|は}り{紙|がみ} だ な 。 || Two ways, one destination. …The notice first.
+?(comp=ren) comp: {貼|は}り{紙|がみ} が あります 。 {前|まえ} の {人|ひと} が {何|なに} を {済|す}ませた か 、 {読|よ}んで から {進|すす}みましょう 。 || There's a notice. Let's read what the last people finished before we go on.
+?(comp=suzu) comp: {貼|は}り{紙|がみ} が {先|さき} だ よ 。 {前|まえ} の {人|ひと} の {仕事|しごと} を {二回|にかい} やる の は 、 {損|そん} だ から ね 。 || Notice first. Doing the last lot's work twice is a loss on the books.
+
+@scene xp.cellars_board
+narr: 「 {米|こめ} は {棚|たな} の {上|うえ} に {上|あ}げて あります 。 {階段|かいだん} の {灯|あか}り は つけて あります 。 {下|した} の {水門|すいもん} は まだ です 。 」 || "The rice has been put up on the shelves. The stair light has been switched on. The sluice below is still to do."
+!if xpk_cellars_taught -> again
+?(comp=mio) comp: 「{上|あ}げて あります」 。 {誰|だれ} か が {上|あ}げて 、 その まま に して ある 、 と いう こと ね 。 || "Has been put up": someone put it up, and left it that way.
+?(comp=nao) comp: 「{上|あ}げて あります」 か 。 やった {本人|ほんにん} は {書|か}いて ない が 、 {誰|だれ} か が やった んだ 。 || "Has been put up." Doesn't say who, but somebody did it.
+?(comp=ren) comp: 「〜て あります」 は 、 {誰|だれ} か が {済|す}ませて {残|のこ}した {形|かたち} です 。 {灯|あか}り の {帳面|ちょうめん} でも よく {見|み}ます 。 || "〜て あります" is the shape of something someone finished and left. You see it in lamp logs all the time.
+?(comp=suzu) comp: 「{上|あ}げて あります」 。 {済|す}み の {判|はん} みたい な もの だ よ 。 {誰|だれ} か が やって 、 その まま に して ある 。 || "Has been put up." Like a "done" stamp: someone did it, and it's been left that way.
+!teach te_aru
+!set xpk_cellars_taught
+:again
+!challenge xp.c_notice
+!if var._res=0 -> later
+?(comp=mio) comp: {済|す}んだ こと は {済|す}んだ こと 。 {私|わたし} たち の {仕事|しごと} は 、 その {先|さき} ね 。 || What's done is done. Our work starts after it.
+?(comp=nao) comp: {分|わ}かった 。 {残|のこ}り は {下|した} の {水門|すいもん} だ 。 || Right. What's left is the sluice below.
+?(comp=ren) comp: {読|よ}めました ね 。 {残|のこ}って いる の は 、 {下|した} の {水門|すいもん} です 。 || You read it. What's left is the sluice below.
+?(comp=suzu) comp: {貸|か}し {借|か}り {無|な}し 。 {残|のこ}り は {下|した} の {水門|すいもん} {一|ひと}つ 。 || All square. One sluice below left on the books.
+!end
+:later
+narr: {貼|は}り{紙|がみ} は 、 いつでも {読|よ}み{直|なお}せる 。 || The notice will still be here to read again.
+
+@scene xp.cellars_tally
+narr: {帳面|ちょうめん} が {置|お}いて ある 。 「 {米|こめ} 、 {三十|さんじゅう} {袋|ふくろ} 。 {全部|ぜんぶ} {上|あ}げて ある 。 」 || A tally book has been left here. "Rice, thirty sacks. All put up."
+narr: {最後|さいご} の {字|じ} は 、 {急|いそ}いで {書|か}いた {字|じ} だ 。 「 {水|みず} が {来|く}る 。 {灯|あか}り は つけて おく 。 」 || The last line is in a hurried hand. "Water coming. Leaving the light on."
+
+@scene xp.cellars_bench
+narr: {壁|かべ} {際|ぎわ} に {長椅子|ながいす} が {置|お}いて ある 。 || A bench has been set against the wall.
+!hook xp_station bench
+
+@scene xp.cellars_grate
+narr: {床|ゆか} に {鉄|てつ} の {格子|こうし} が ある 。 {下|した} から {留|と}めて あって 、 {上|うえ} から は {開|あ}かない 。 || An iron grate in the floor. It has been fastened from below, and won't open from up here.
+?(comp) comp: {向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも 。 || Maybe from the other side.
+
+@scene xp.cellars_lampnote
+narr: {棚|たな} に {紙|かみ} が {貼|は}って ある 。 「 ガラス は {拭|ふ}いて あります 。 {油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります 。 ランプ に は まだ {入|い}れて いません 。 」 || A note has been put up on the shelf. "The glass has been wiped. The oil has been put in the box. It is not in the lamp yet."
+
+@scene xp.cellars_lamp
+narr: {消|き}えた ランプ 。 {横|よこ} の {紙|かみ} に 、 {手入|てい}れ の {途中|とちゅう} が {書|か}いて ある 。 || A lamp gone out. The note beside it says how far its tending got.
+!if xpk_cellars_lamp_known -> known
+:read
+!call xp.cellars_lampnote
+!challenge xp.c_lamp
+!if var._res=0 -> later
+!set xpk_cellars_lamp_known
+!goto lit
+:known
+!choice
+* {前|まえ} と {同|おな}じ よう に {直|なお}す 。 || Tend it as before. -> lit
+* {紙|かみ} を {読|よ}み{直|なお}す 。 || Read the note again. -> read
+:lit
+narr: {箱|はこ} の {油|あぶら} を ランプ に {入|い}れて 、 {火|ひ} を つけた 。 {部屋|へや} が {明|あか}るく なる 。 || You fill the lamp from the box and light it. The room brightens.
+!set xp_cellars_lamp_fixed
+!refresh
+narr: ここ で {一度|いちど} 、 {休|やす}める 。 || You can rest here once.
+!end
+:later
+narr: ランプ は {消|き}えた まま だ 。 || The lamp stays dark.
+
+@scene xp.cellars_lamp_rest
+narr: ランプ が {静|しず}か に {灯|とも}って いる 。 || The lamp burns quietly.
+!hook xp_station lamp
+
+@scene xp.cellars_leave
+narr: はしご の {上|うえ} に 、 {倉庫|そうこ} の {床|ゆか} の {戸|と} が {見|み}える 。 || Up the ladder, the warehouse hatch.
+!choice
+* {上|うえ} に {戻|もど}る 。 || Climb out. -> out
+* まだ {下|した} に いる 。 || Stay down here. -> stay
+:out
+!hook xp_leave
+!end
+:stay
+narr: {振|ふ}り{返|かえ}って 、 {通路|つうろ} の {奥|おく} を {見|み}る 。 || You turn back toward the passages.
+
+@scene xp.cellars_b2sign
+narr: 「 {西|にし} の {橋|はし} は {渡|わた}れます 。 {東|ひがし} に も {板|いた} を {渡|わた}して あります が 、 {今|いま} は {水|みず} の {下|した} です 。 {水門|すいもん} は {南|みなみ} の {奥|おく} 。 」 || "The west bridge can be crossed. A plank has been laid on the east side too, but it's under water now. The sluice is at the far south end."
+
+@scene xp.cellars_spring
+narr: {石|いし} の {井戸|いど} 。 {冷|つめ}たい {水|みず} が {下|した} から {出|で}て くる 。 || A stone well. Cold water rises in it from below.
+!hook xp_station spring
+
+@scene xp.cellars_sluice_plate
+narr: {銅|どう} の {板|いた} に {手順|てじゅん} が {刻|きざ}んで ある 。 || The steps have been cut into a copper plate.
+narr: 「 {水門|すいもん} は もう {閉|し}めて あります 。 {栓|せん} を {抜|ぬ}いて ください 。 」 || "The sluice gate has already been shut. Pull the plug."
+narr: 「 {車|くるま} に は {油|あぶら} が さして あります 。 {車|くるま} を {回|まわ}して ください 。 」 || "The wheel has been oiled. Turn the wheel."
+narr: 「 {水|みず} が {引|ひ}いたら 、 {栓|せん} を {戻|もど}して ください 。 {東|ひがし} に は {板|いた} が {渡|わた}して あります 。 」 || "When the water has gone down, put the plug back. A plank has been laid across on the east side."
+
+@scene xp.cellars_sluice
+narr: {排水|はいすい} の {水門|すいもん} 。 {横|よこ} の {銅|どう} の {板|いた} に 、 {手順|てじゅん} が {刻|きざ}んで ある 。 || The drain sluice. The steps have been cut into a copper plate beside it.
+!encounter xp.cellars_sluice
+!if var._res=0 -> later
+!set xp_cellars_drained
+!refresh
+narr: {水|みず} の {音|おと} が {遠|とお}く なって いく 。 {北|きた} の {通路|つうろ} と {東|ひがし} の {板|いた} が 、 {水|みず} の {上|うえ} に {出|で}た 。 || The sound of the water goes further and further off. The north passage and the east plank are out of the water.
+?(comp=mio) comp: {手順|てじゅん} どおり 。 {薬|くすり} の {調合|ちょうごう} と {同|おな}じ ね 。 || Step by step, exactly as written. Like mixing a remedy.
+?(comp=nao) comp: {書|か}いて ある とおり に やれば 、 {水|みず} も {言|い}う こと を {聞|き}く か 。 || Do what it says, and even water does as it's told.
+?(comp=ren) comp: {前|まえ} の {人|ひと} の {仕事|しごと} が 、 {無駄|むだ} に ならなくて よかった 。 || I'm glad the last people's work wasn't wasted.
+?(comp=suzu) comp: {水|みず} の {勘定|かんじょう} 、 {合|あ}った よ 。 || The water's accounts balance.
+!end
+:later
+narr: {水門|すいもん} は その まま だ 。 {板|いた} の {手順|てじゅん} は 、 {逃|に}げない 。 || The sluice stays as it is. The steps on the plate aren't going anywhere.
+
+@scene xp.cellars_sluice_done
+narr: {栓|せん} は {戻|もど}して ある 。 {水門|すいもん} は {閉|し}まった まま 。 || The plug has been put back. The gate stays shut.
+
+@scene xp.cellars_ladder
+narr: {上|うえ} へ {続|つづ}く はしご 。 {天井|てんじょう} の {格子|こうし} が 、 こちら {側|がわ} から {留|と}めて ある 。 || A ladder going up. The grate in the ceiling has been fastened from this side.
+!if xpk_cellars_sc_ladder -> open
+narr: {留|と}め{金|がね} を {外|はず}す と 、 {格子|こうし} が {持|も}ち{上|あ}がった 。 {上|うえ} は 、 はしご の {下|した} の {部屋|へや} だ 。 || You slide the catches back and the grate lifts. Above is the room at the foot of the first ladder.
+!hook xp_shortcut cellars ladder
+?(comp=mio) comp: これ で 、 {次|つぎ} は ここ まで すぐ {来|こ}られる わ ね 。 || Now we can come straight down here next time.
+?(comp=nao) comp: {近道|ちかみち} が {一|ひと}つ 。 {配達|はいたつ} でも {一番|いちばん} {助|たす}かる やつ だ 。 || One shortcut. The kind that helps most on a round.
+?(comp=ren) comp: {帰|かえ}り {道|みち} が {短|みじか}く なりました 。 {次|つぎ} に {来|く}る {時|とき} も 、 ここ は {開|あ}いて います 。 || The way back's shorter now. It'll still be open next time we come.
+?(comp=suzu) comp: {近道|ちかみち} 、 {開通|かいつう} 。 {幕間|まくあい} が {短|みじか}く なる の は 、 いい こと だ よ 。 || Shortcut open. Shorter intervals are always welcome.
+:open
+!choice
+* はしご を {上|のぼ}る 。 || Climb up. -> up
+* {今|いま} は {上|のぼ}らない 。 || Not now. -> stay
+:up
+!warp rw.cellar1 8 21 up
+!end
+:stay
+
+@scene xp.cellars_outflow
+!if xpk_cellars_done&xp_cellars_outflow -> open
+narr: {出口|でぐち} の {戸|と} 。 {貼|は}り{紙|がみ} が {一枚|いちまい} {残|のこ}って いる 。 || The outflow door. One notice is left on it.
+narr: 「 {戸|と} に は {鍵|かぎ} が かけて あります 。 {鍵|かぎ} は {右|みぎ} の {柱|はしら} に かけて あります 。 {出|で}る {時|とき} は 、 {戸|と} を {閉|し}めて ください 。 」 || "The door has been locked. The key has been hung on the right-hand post. When you go out, please close the door."
+!challenge xp.c_final
+!if var._res=0 -> later
+narr: {柱|はしら} の {鍵|かぎ} で {戸|と} を {開|あ}けた 。 {外|そと} の {光|ひかり} と 、 {川|かわ} へ {流|なが}れる {水|みず} の {音|おと} 。 || You open the door with the key from the post. Daylight, and the sound of water running down to the river.
+narr: {水|みず} が {全部|ぜんぶ} {川|かわ} へ {出|で}て いく まで {待|ま}って 、 {戸|と} を {閉|し}めた 。 {鍵|かぎ} は {柱|はしら} に {戻|もど}して おいた 。 || You wait until the last of the water has gone out to the river, then close the door, and hang the key back on its post.
+?(comp=mio) comp: {米|こめ} は {無事|ぶじ} 。 {貼|は}り{紙|がみ} の {人|ひと} たち に も 、 {教|おし}えて あげたい わ 。 || The rice is safe. I'd like the people who wrote the notices to know.
+?(comp=nao) comp: {届|とど}いた な 。 {貼|は}り{紙|がみ} の {返事|へんじ} は 、 {乾|かわ}いた {床|ゆか} だ 。 || Delivered. The reply to their notices is a dry floor.
+?(comp=ren) comp: {書|か}いた {人|ひと} と {読|よ}んだ {人|ひと} 。 {二人|ふたり} {分|ぶん} の {仕事|しごと} で 、 {水|みず} が {引|ひ}きました 。 || The one who wrote and the one who read. It took both to bring the water down.
+?(comp=suzu) comp: {締|し}め 、 {完了|かんりょう} 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち が いい ね 。 || Books closed. Nothing feels better than accounts that balance.
+!set xpk_cellars_done xp_cellars_outflow
+!refresh
+!choice
+* {上|うえ} に {戻|もど}る 。 || Climb out now. -> out
+* もう {少|すこ}し ここ に いる 。 || Stay a little longer. -> stay
+:out
+!hook xp_leave
+!end
+:stay
+!end
+:open
+narr: {戸|と} は {閉|し}めて ある 。 {鍵|かぎ} は {柱|はしら} に かけて ある 。 {全部|ぜんぶ} 、 {貼|は}り{紙|がみ} の とおり だ 。 || The door has been closed; the key hangs on its post. Everything as the notice said.
+!end
+:later
+narr: {戸|と} の {前|まえ} で 、 {貼|は}り{紙|がみ} を もう {一度|いちど} {見|み}る 。 {急|いそ}がなくて いい 。 || You look at the notice once more. There's no hurry.
+`, 'expeditions/20_scenes.js');
 
 
 /* ==== src/content/fishing/00_lex.js ==== */
