@@ -3,7 +3,7 @@
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.lex.add(RB.lex.parseTable(`
-苛立ち|いらだち|n|A|irritation, impatience
+苛立ち|いらだち|n|A|a feeling of irritation, impatience
 堪忍袋|かんにんぶくろ|n|A|one's store of patience (堪忍袋の緒が切れる: one's patience snaps)
 緒|お|n|A|cord, string (as in 堪忍袋の緒)
 なだれ込む|なだれこむ|v5m|A|to surge in, pour in (of a crowd)

@@ -49,7 +49,7 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- East Landing --------------------------------------------------------------------------------------------------
 掃く|はく|v5k|E|to sweep
 掃き手|はきて|n|A|the one who sweeps
-箒|ほうき|n|I|a broom
+箒|ほうき|n|I|a broom for sweeping
 従来|じゅうらい|n|A|until now, as before
 改める|あらためる|v1|I|to change, to renew
 改めぬ|あらためぬ|exp|A|(old written negative of 改める) not to change

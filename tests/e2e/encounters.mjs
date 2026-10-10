@@ -24,7 +24,15 @@ async function test(name, fn) {
 }
 const assert = (c, m) => { if (!c) throw new Error(m); };
 const WORDS = ['mamoru', 'mizu', 'hikari', 'kaze', 'nawa', 'ishi', 'iyasu', 'honoo', 'suzu', 'koe'];
+// remember the step each language task opens with (an ordering task is answered from it: its pieces in order)
+const watchSteps = (p) => p.evaluate(() => {
+  if (RB.challenge.__watched) return;
+  const run = RB.challenge.runStep;
+  RB.challenge.runStep = function (step) { window.__step = step; return run.apply(this, arguments); };
+  RB.challenge.__watched = true;
+});
 async function begin(p, o) {
+  await watchSteps(p);
   await p.evaluate(([o, WORDS]) => {
     const s = RB.game.debugStart('rw.millroad', 10, 22, o.comp ? { comp: o.comp } : {});
     s.learn.kanaKnown = 'both'; s.learn.profile = o.profile || 'E'; s.learn.difficulty = o.difficulty || 'normal';
@@ -70,6 +78,19 @@ const maybeConfirm = async (p, re) => {
 // answer the open language step correctly in choice mode (the right option), continue
 async function answer(p) {
   await p.waitForSelector('.chal');
+  // Unravel can draw an ordering task (a sign come apart, a sentence to put back): place its pieces in order
+  if (await p.evaluate(() => document.querySelector('.chal').getAttribute('data-kind') === 'order')) {
+    const want = await p.evaluate(() => window.__step.answer.map((x) => RB.tasks.plain(x).replace(/\s/g, '')));
+    for (const piece of want) {
+      const i = await p.evaluate((piece) => { const t = (el) => { const c = el.cloneNode(true); c.querySelectorAll('rt').forEach((x) => x.remove()); return c.textContent.replace(/\s/g, ''); }; return [...document.querySelectorAll('.chal .tiles .tile')].findIndex((b) => t(b) === piece); }, piece);
+      assert(i >= 0, 'no piece ' + piece);
+      await p.click('.chal .tiles .tile >> nth=' + i);
+    }
+    await p.click('.chal [data-a=submit]');
+    await p.waitForSelector('.fbwrap[data-fb=ok] .fb-go');
+    await p.click('.fbwrap[data-fb=ok] .fb-go');
+    return;
+  }
   await p.evaluate(() => {
     const tab = document.querySelector('.chal-tabs .ptab[data-mode="choice"]'); if (tab) tab.click();
   });
@@ -311,6 +332,7 @@ await test('preparation (look around first), a story battle\'s help (point), a c
   // the Tactics Board: a study, solved; its best kept
   const t = await page(b, url, { viewport: { width: 1280, height: 860 } });
   await t.p.evaluate(() => { window.__RB_DEV_ENC__ = true; const s = RB.game.debugStart('rw.millroad', 10, 22, {}); s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; RB.game.settings.input = 'choice'; RB.game.settings.battleAnim = 'instant'; RB.game.applySettings(); RB.ui.tactics.open(); });
+  await watchSteps(t.p);
   await t.p.waitForSelector('.tb-study');
   const names = await t.p.evaluate(() => [...document.querySelectorAll('.tb-study .tb-n')].map((x) => x.textContent));
   assert(names.some((n) => /body of flame/i.test(n)), 'the studies are listed: ' + names.join(' | '));

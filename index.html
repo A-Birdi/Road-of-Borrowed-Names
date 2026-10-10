@@ -10634,7 +10634,6 @@ RB.kanjiRead = {
     '艘': '二艘|にそう',
     '薙': '薙|な',
     '謙': '謙譲語|けんじょうご',
-    '隻': '一隻|いっせき',
     '鞋': '草鞋|わらじ',
   },
 };
@@ -155629,7 +155628,7 @@ RB.lex.add(RB.lex.parseTable(`
 干る|ひる|v1|A|to dry up; (of the sea) to ebb
 恋|こい|n|E|love, romance
 衣服|いふく|n|I|clothes, clothing
-畝|うね|n|I|a ridge between furrows (in a field)
+畝|うね|n|I|a ridge of soil in a field (between furrows)
 う|う|exp|F|the kana う (as a sound)
 はっまい|はっまい|exp|F|(not a word: a wrong reading of 8枚, はちまい)
 いっひゃく|いっひゃく|exp|F|(not a word: a wrong reading of 百, ひゃく)
@@ -155667,6 +155666,8 @@ RB.lex.add(RB.lex.parseTable(`
 年下|としした|n|E|younger (than someone)
 山盛り|やまもり|n|E|a heap, piled high
 こなす|こなす|v5s|I|to handle, to manage (a task); to play (a part) well
+只今|ただいま|exp|E|I'm home!; just now (usually written ただいま)
+澪標|みおつくし|n|A|a mark showing boats the channel; (in poems, punning on 身を尽くし) with all one's heart
 `));
 
 
@@ -161899,7 +161900,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.lex.add(RB.lex.parseTable(`
-苛立ち|いらだち|n|A|irritation, impatience
+苛立ち|いらだち|n|A|a feeling of irritation, impatience
 堪忍袋|かんにんぶくろ|n|A|one's store of patience (堪忍袋の緒が切れる: one's patience snaps)
 緒|お|n|A|cord, string (as in 堪忍袋の緒)
 なだれ込む|なだれこむ|v5m|A|to surge in, pour in (of a crowd)
@@ -176450,7 +176451,7 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- the boat ---------------------------------------------------------------------------------------------------
 帆|ほ|n|E|a sail
 帆柱|ほばしら|n|I|a mast
-舵|かじ|n|E|a rudder, a tiller (the helm)
+舵|かじ|n|E|the rudder of a boat, the helm (a tiller)
 綱|つな|n|E|a rope, a line
 錨|いかり|n|I|an anchor
 甲板|かんぱん|n|I|a deck (of a ship)
@@ -176475,7 +176476,7 @@ RB.lex.add(RB.lex.parseTable(`
 擦り切れる|すりきれる|v1|I|to wear through, to fray
 裂ける|さける|v1|I|to tear, to split
 裂け目|さけめ|n|I|a tear, a rip
-汲み出す|くみだす|v5s|I|to bail out (water)
+汲み出す|くみだす|v5s|I|to bail out water
 煽る|あおる|v5r|A|(of wind) to gust against, to catch
 # ---- the sea and the weather -----------------------------------------------------------------------------------
 沖|おき|n|E|the open sea, offshore
@@ -176495,14 +176496,15 @@ RB.lex.add(RB.lex.parseTable(`
 潮見|しおみ|n|I|watching the tide (the tide-keeper's work)
 夕刻|ゆうこく|n|A|evening (written)
 群閃光|ぐんせんこう|n|A|group flashing (a light's pattern)
-閃光|せんこう|n|A|a flash (of light)
+閃光|せんこう|n|A|a flash of light
 表|ひょう|n|I|a table, a list
 毎|まい|pref|I|every, each (毎十秒: every ten seconds)
 十秒|じゅうびょう|n|E|ten seconds
 三秒|さんびょう|n|E|three seconds
-鴎|かもめ|n|I|a gull, a seagull
+鴎|かもめ|n|I|a sea bird, a gull
 海豹|あざらし|n|I|a seal (the animal)
 三頭|さんとう|n|I|three (large animals)
+隻|せき|ctr|I|a counter for boats
 日向ぼっこ|ひなたぼっこ|n|E|basking in the sun
 木箱|きばこ|n|E|a wooden box, a crate
 割れ物|われもの|n|E|fragile things, breakables
@@ -176515,7 +176517,7 @@ RB.lex.add(RB.lex.parseTable(`
 手早い|てばやい|adj-i|I|quick, deft (with the hands)
 記念品|きねんひん|n|I|a keepsake, a souvenir
 将棋盤|しょうぎばん|n|I|a shogi board
-鉤|かぎ|n|I|a hook
+鉤|かぎ|n|I|a hook of iron, a hook
 鎮める|しずめる|v1|I|to calm, to settle
 ぐらぐら|ぐらぐら|adv|E|wobbling, loose
 ぐらつく|ぐらつく|v5k|I|to wobble, to be loose
@@ -176533,7 +176535,7 @@ RB.lex.add(RB.lex.parseTable(`
 水先船|みずさきぶね|n|A|a pilot boat
 造船所|ぞうせんじょ|n|I|a boatyard, a shipyard
 船大工|ふなだいく|n|I|a shipwright
-竜骨|りゅうこつ|n|A|a keel
+竜骨|りゅうこつ|n|A|the keel of a boat
 名物|めいぶつ|n|I|a speciality, what a place is known for
 材木|ざいもく|n|I|timber
 杉板|すぎいた|n|I|cedar planks
@@ -178468,7 +178470,7 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- East Landing --------------------------------------------------------------------------------------------------
 掃く|はく|v5k|E|to sweep
 掃き手|はきて|n|A|the one who sweeps
-箒|ほうき|n|I|a broom
+箒|ほうき|n|I|a broom for sweeping
 従来|じゅうらい|n|A|until now, as before
 改める|あらためる|v1|I|to change, to renew
 改めぬ|あらためぬ|exp|A|(old written negative of 改める) not to change

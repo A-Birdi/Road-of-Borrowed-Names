@@ -1637,6 +1637,42 @@
   "jp": "{第九章|だいきゅうしょう} {完|かん}",
   "en": "Chapter 9 complete"
  },
+ "scene:ko.arayuru#1t73xpt": {
+  "status": "self-reviewed",
+  "ref": "lead self-review: grammar point mod_arayuru (あらゆる + noun only); lexicon; companion voice notes",
+  "jp": "{葉守|はもり} が {洞|ほら} に {入|はい}る とき 、 {唱|とな}える {言葉|ことば} が あります 。 「あらゆる {言葉|ことば} を 、 あらゆる {風|かぜ} から {守|まも}れ 。」",
+  "en": "There are words the keepers say on going into a hollow. \"Guard every kind of word from every kind of wind.\""
+ },
+ "scene:ko.arayuru#6iojlm": {
+  "status": "self-reviewed",
+  "ref": "lead self-review: grammar point mod_arayuru (あらゆる + noun only); lexicon; companion voice notes",
+  "jp": "{根|ね} の {下|した} に は 、 あらゆる もの が {集|あつ}まる 。 {怒|いか}り も 、 {悲|かな}しみ も 、 {言|い}えなかった お{礼|れい} も 。 {何|なに} が {来|き}て も 、 {守|まも}れる よう に 。",
+  "en": "Every kind of thing gathers under the roots. Anger, sorrow, thanks never said. So that whatever comes, you can guard against it."
+ },
+ "scene:ko.arayuru#1b0x04o": {
+  "status": "self-reviewed",
+  "ref": "lead self-review: grammar point mod_arayuru (あらゆる + noun only); lexicon; companion voice notes",
+  "jp": "あらゆる {風|かぜ} から 、 か 。 …… {郵便屋|ゆうびんや} の {心得|こころえ} と {同|おな}じ だ 。 {雨|あめ} でも {雪|ゆき} でも 、 {届|とど}ける 。",
+  "en": "From every kind of wind. …Same as a postman's rule. Rain or snow, it gets there."
+ },
+ "scene:ko.arayuru#cunhff": {
+  "status": "self-reviewed",
+  "ref": "lead self-review: grammar point mod_arayuru (あらゆる + noun only); lexicon; companion voice notes",
+  "jp": "あらゆる {病|やまい} に {効|き}く {薬|くすり} は ない けれど 、 {守|まも}る {言葉|ことば} なら {持|も}って {行|い}けます ね 。",
+  "en": "There's no medicine for every kind of illness, but a guarding word we can take with us."
+ },
+ "scene:ko.arayuru#84kov1": {
+  "status": "self-reviewed",
+  "ref": "lead self-review: grammar point mod_arayuru (あらゆる + noun only); lexicon; companion voice notes",
+  "jp": "{灯守|ひもり} は 「すべて の {灯|ひ} を 」 。 {葉守|はもり} は 「あらゆる {言葉|ことば} を 」 。 …… {数|かず} で は なく 、 {種類|しゅるい} の {話|はなし} です ね 。",
+  "en": "The lamp-keepers say \"every lamp\". The leaf-keepers, \"every kind of word\". …Not how many: what kinds."
+ },
+ "scene:ko.arayuru#99z2c8": {
+  "status": "self-reviewed",
+  "ref": "lead self-review: grammar point mod_arayuru (あらゆる + noun only); lexicon; companion voice notes",
+  "jp": "あらゆる {役|やく} を こなす の が 、 {一座|いちざ} の {看板|かんばん} よ 。 {任|まか}せて 。",
+  "en": "Playing every kind of part is what a company's known for. Leave it to me."
+ },
  "scene:ko.otoha_roots#23ta6e": {
   "status": "self-reviewed",
   "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",

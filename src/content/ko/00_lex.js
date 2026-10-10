@@ -117,7 +117,7 @@ RB.lex.add(RB.lex.parseTable(`
 干る|ひる|v1|A|to dry up; (of the sea) to ebb
 恋|こい|n|E|love, romance
 衣服|いふく|n|I|clothes, clothing
-畝|うね|n|I|a ridge between furrows (in a field)
+畝|うね|n|I|a ridge of soil in a field (between furrows)
 う|う|exp|F|the kana う (as a sound)
 はっまい|はっまい|exp|F|(not a word: a wrong reading of 8枚, はちまい)
 いっひゃく|いっひゃく|exp|F|(not a word: a wrong reading of 百, ひゃく)
@@ -155,4 +155,6 @@ RB.lex.add(RB.lex.parseTable(`
 年下|としした|n|E|younger (than someone)
 山盛り|やまもり|n|E|a heap, piled high
 こなす|こなす|v5s|I|to handle, to manage (a task); to play (a part) well
+只今|ただいま|exp|E|I'm home!; just now (usually written ただいま)
+澪標|みおつくし|n|A|a mark showing boats the channel; (in poems, punning on 身を尽くし) with all one's heart
 `));

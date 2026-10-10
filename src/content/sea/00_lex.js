@@ -6,7 +6,7 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- the boat ---------------------------------------------------------------------------------------------------
 帆|ほ|n|E|a sail
 帆柱|ほばしら|n|I|a mast
-舵|かじ|n|E|a rudder, a tiller (the helm)
+舵|かじ|n|E|the rudder of a boat, the helm (a tiller)
 綱|つな|n|E|a rope, a line
 錨|いかり|n|I|an anchor
 甲板|かんぱん|n|I|a deck (of a ship)
@@ -31,7 +31,7 @@ RB.lex.add(RB.lex.parseTable(`
 擦り切れる|すりきれる|v1|I|to wear through, to fray
 裂ける|さける|v1|I|to tear, to split
 裂け目|さけめ|n|I|a tear, a rip
-汲み出す|くみだす|v5s|I|to bail out (water)
+汲み出す|くみだす|v5s|I|to bail out water
 煽る|あおる|v5r|A|(of wind) to gust against, to catch
 # ---- the sea and the weather -----------------------------------------------------------------------------------
 沖|おき|n|E|the open sea, offshore
@@ -51,14 +51,15 @@ RB.lex.add(RB.lex.parseTable(`
 潮見|しおみ|n|I|watching the tide (the tide-keeper's work)
 夕刻|ゆうこく|n|A|evening (written)
 群閃光|ぐんせんこう|n|A|group flashing (a light's pattern)
-閃光|せんこう|n|A|a flash (of light)
+閃光|せんこう|n|A|a flash of light
 表|ひょう|n|I|a table, a list
 毎|まい|pref|I|every, each (毎十秒: every ten seconds)
 十秒|じゅうびょう|n|E|ten seconds
 三秒|さんびょう|n|E|three seconds
-鴎|かもめ|n|I|a gull, a seagull
+鴎|かもめ|n|I|a sea bird, a gull
 海豹|あざらし|n|I|a seal (the animal)
 三頭|さんとう|n|I|three (large animals)
+隻|せき|ctr|I|a counter for boats
 日向ぼっこ|ひなたぼっこ|n|E|basking in the sun
 木箱|きばこ|n|E|a wooden box, a crate
 割れ物|われもの|n|E|fragile things, breakables
@@ -71,7 +72,7 @@ RB.lex.add(RB.lex.parseTable(`
 手早い|てばやい|adj-i|I|quick, deft (with the hands)
 記念品|きねんひん|n|I|a keepsake, a souvenir
 将棋盤|しょうぎばん|n|I|a shogi board
-鉤|かぎ|n|I|a hook
+鉤|かぎ|n|I|a hook of iron, a hook
 鎮める|しずめる|v1|I|to calm, to settle
 ぐらぐら|ぐらぐら|adv|E|wobbling, loose
 ぐらつく|ぐらつく|v5k|I|to wobble, to be loose
@@ -89,7 +90,7 @@ RB.lex.add(RB.lex.parseTable(`
 水先船|みずさきぶね|n|A|a pilot boat
 造船所|ぞうせんじょ|n|I|a boatyard, a shipyard
 船大工|ふなだいく|n|I|a shipwright
-竜骨|りゅうこつ|n|A|a keel
+竜骨|りゅうこつ|n|A|the keel of a boat
 名物|めいぶつ|n|I|a speciality, what a place is known for
 材木|ざいもく|n|I|timber
 杉板|すぎいた|n|I|cedar planks
