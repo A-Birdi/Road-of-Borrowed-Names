@@ -361,15 +361,17 @@ export function install() {
       // the ways on from a map: its exits, and the places its travel scenes (stairs, lifts, boats) take you
       const travelTo = {};
       for (const st of sites) for (const w of provides(st.scene).warps) if (C.maps[w]) (travelTo[st.map] = travelTo[st.map] || new Set()).add(w);
-      const reachesWork = (mid) => {
-        const seen = new Set([mid]), q = [mid];
+      // how many maps away the nearest work is (Infinity: none), going by exits and travel
+      const hopsToWork = (mid) => {
+        const dist = new Map([[mid, 0]]), q = [mid];
         while (q.length) {
           const m = q.shift();
-          if (workAt.has(m)) return true;
-          for (const to of exitsOf(m).map((ex) => ex.to).concat([...(travelTo[m] || [])])) if (!seen.has(to)) { seen.add(to); q.push(to); }
+          if (workAt.has(m)) return dist.get(m);
+          for (const to of exitsOf(m).map((ex) => ex.to).concat([...(travelTo[m] || [])])) if (!dist.has(to)) { dist.set(to, dist.get(m) + 1); q.push(to); }
         }
-        return false;
+        return Infinity;
       };
+      const reachesWork = (mid) => hopsToWork(mid) < Infinity;
       for (const st of sites) {
         // several sites can share a scene (three doors, one scene): key by place too
         const where = st.n ? st.n.id : st.pr ? st.pr.x + ',' + st.pr.y : st.ex ? st.ex.x + ',' + st.ex.y : st.tr ? st.tr.x + ',' + st.tr.y : st.f ? st.f.id : '';
@@ -383,9 +385,11 @@ export function install() {
         if (!rs) continue;
         const r = pathTo(X, rs.id);
         // don't use the same site twice in a row (e.g. reopening a door you just opened); travel already made (stairs
-        // taken before) ranks below anything left to do here, however far, so a pair of stairs is not a loop
+        // taken before) ranks below anything left to do here, however far, so a pair of stairs is not a loop, and
+        // among such journeys the one that lands nearer the work left (fewer maps away) comes first
         const again = tier === 1 && S().seen[st.scene] && provides(st.scene).warps.length;
-        const score = tier * 1000 - r.length - (st.scene === lastScene ? 500 : 0) - (again ? 600 : 0);
+        const hops = again ? Math.min(...provides(st.scene).warps.filter((m) => C.maps[m]).map(hopsToWork)) : 0;
+        const score = tier * 1000 - r.length - (st.scene === lastScene ? 500 : 0) - (again ? 600 + 40 * Math.min(hops, 9) : 0);
         if (!best || score > best.score) best = { st, r, score, key, tile: rs.tile };
       }
       if (!best) return { ok: false, steps: i, log: opts.fullLog ? log : log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };

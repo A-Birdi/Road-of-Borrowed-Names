@@ -54,8 +54,10 @@ async function cards(p) {
 for (const z of plan) {
   if (only && z.zid !== only) continue;
   console.log(`# ${z.zid} (chapter ${z.chapter}): route ${z.route} -> ${z.routeSong}; battle ${z.battle}; boss ${z.boss}`);
-  // ---- route theme on entry, battle theme in a fight, map music restored after it
-  {
+  // ---- route theme on entry, battle theme in a fight, map music restored after it (a zone that exists only for its
+  // boss's theme, like the Understage whose creatures fight to the city's battle theme, has no creature of its own)
+  if (!z.foe) ok(z.bossId, `${z.zid}: a zone with no creature of its own exists for its boss`);
+  else {
     const { p, errors } = await page(b, url);
     const r = await p.evaluate(async ([z]) => {
       await RB.audio.init();
@@ -95,9 +97,10 @@ for (const z of plan) {
     const { p, errors } = await page(b, url);
     const r = await p.evaluate(async ([z]) => {
       await RB.audio.init();
-      const m = RB.content.maps[z.foe.map];
+      const at = z.foe ? z.foe.map : 'rw.millroad';
+      const m = RB.content.maps[at];
       const sp = (m.spawn && m.spawn.default) || [1, 1, 'down'];
-      const s = RB.game.debugStart(z.foe.map, sp[0], sp[1], { comp: 'nao' });
+      const s = RB.game.debugStart(at, sp[0], sp[1], { comp: 'nao' });
       s.learn.kanaKnown = 'both';
       RB.game.startBattle(z.bossId, {});
       await new Promise((r) => setTimeout(r, 400));
