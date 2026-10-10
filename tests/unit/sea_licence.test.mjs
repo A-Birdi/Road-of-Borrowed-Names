@@ -53,7 +53,7 @@ export default async (t) => {
 
   // ---- the frame ---------------------------------------------------------------------------------------------------
   const Q = C.quests.sea_licence;
-  t.ok(Q && Q.chapter === 'sea' && !Q.main && Q.stages.length === 8, 'A Licence for the Open Sea: eight stages, not the main story');
+  t.ok(Q && Q.chapter === 'sea' && !Q.main && Q.stages.length === 9, 'A Licence for the Open Sea: nine stages, not the main story');
   t.eq((C.scriptErrors || []).filter((e) => /sea\./.test(e)), [], 'the licence\'s scenes parse');
   t.ok(scenes.length >= 25 && scenes.every((id) => C.scenes[id].cmds.every((c) => !(c.op === 'quest' && /_main$/.test(c.args[0])) && !(c.op === 'set' && /^ch\d_done|_done$/.test(c.args[0]) && !/^sea_/.test(c.args[0])))), 'no licence scene moves a main story or ends a chapter (' + scenes.length + ' scenes)');
   t.ok(['sea.yard_timber', 'sea.nui_sail', 'sea.sign_board', 'sea.words_boat', 'sea.words_wind', 'sea.tide_book', 'sea.licence_form', 'sea.interview_1', 'sea.interview_2', 'sea.interview_3'].every((id) => C.challenges[id] && ['F', 'E', 'I', 'A'].every((p) => (C.challenges[id].tiers[p] || []).length)), 'ten tasks, each at the four profiles');

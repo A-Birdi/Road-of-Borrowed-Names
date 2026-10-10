@@ -24,7 +24,7 @@ RB.ui.sail = (function () {
 
   // ---- the chart ---------------------------------------------------------------------------------------------------
   function chartSvg(s, from, list) {
-    const P = RB.content.places, pts = SL().portIds().map((id) => ({ id, pos: (P[SL().port(id).place] || {}).pos })).filter((x) => x.pos);
+    const P = RB.content.places, pts = SL().portIds().map((id) => ({ id, pos: SL().port(id).pos || (P[SL().port(id).place] || {}).pos })).filter((x) => x.pos);
     if (!pts.length) return '';
     const xs = pts.map((p) => p.pos[0]), ys = pts.map((p) => p.pos[1]);
     const x0 = Math.min.apply(null, xs) - 30, y0 = Math.min.apply(null, ys) - 30, w = Math.max.apply(null, xs) - x0 + 30, h = Math.max.apply(null, ys) - y0 + 30;

@@ -4082,5 +4082,23 @@ brings her in, Tetsu's verdict) and `sailing` **2/0** again. Screenshots looked 
 phone width (the dialogue line and its Keep tab now give way to the sheet, and the footer no longer stretches), the
 boat beside the buoy. Language: the licence's lines self-reviewed in the ledger.
 
+**Sazanami, East Landing and the maiden voyage (P11d, on the working tree before its commit).** Unit: `sea_ports`
+**53/0** (the two places and their ways in, twelve-chapter only; Sazanami's three side stories with wrong answers
+costing nothing; the mailbag at both ends; Isaku's nets before and after the winter; the island joining the chart and
+reached by boat, which is its first landing and ends the licence; East Landing over four visits, each job finished only
+after leaving and coming back; its port), `sea_licence` **64/0**, `travel` **499/0**, `quest_guide` **88/0**, `records`
+**156/0**, `dialect` **7,384/0**, `overworld_geometry` **3/0** (the coast road reached by position, not a new spawn on
+the six-chapter road), `audio_songs` **2,629/0**, `audio_zones` **834/0**, `fishing` **670/0** (untouched: the stations
+move to P15, F-82), `kanji_chart` **53/0**, `ko_ch9` **181/0**, `ko_side` **108/0**, `kr_ch7` **123/0**, `encounters`
+**184/0**, `combat_fairness` **799/0**, `creatures_a` **110/0**, `creatures_b` **1,074/0**, `fixtures_campaign`
+**477/0**, `mb_ch3` **76/0**, `mp_ch4` **118/0**, `company` **268/0**, `edition` **87/0**, `seams` **12/0**,
+`expansion_rules` **11/0**, `review_ledger` **2/0**; validator no errors. Browser: `tests/e2e/ports.mjs` **2/0** (west
+along Saltglass's road into Sazanami and its people; the boat at its jetty, the chart, the crew sailing her home and the
+log; phone width; round the east beach into East Landing, silted; rebuilt with its bell, whole jetty and the boat, and
+the chart from there), `licence` **2/0**, `sailing` **2/0**, `kotonoha` **7/0**, `keepers` **4/0**. Screenshots looked
+at: Sazanami's street and market; East Landing before (silt, broken planks) and after (bell, jetty, boat); a sheet of
+every prop the Keepers' Road, the island, the sea and East Landing add, after F-83's fix (their filled shapes had never
+drawn). Language: the ports' lines self-reviewed in the ledger.
+
 **Not verified:** Firefox; the foldable; a person playing Chapter 9 (XP67); audible voices for the shells (local
 Japanese voices are optional and none is installed in the test browser).

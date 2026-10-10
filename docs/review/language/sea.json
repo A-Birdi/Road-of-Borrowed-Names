@@ -1457,6 +1457,18 @@
   "jp": "{言|こと}の{葉|は}{島|じま} に は 、 もう {渡|わた}し{船|ぶね} で {行|い}った ん だった ね 。 {自分|じぶん} の {船|ふね} で {行|い}く {島|しま} は 、 また {違|ちが}って {見|み}える よ 。",
   "en": "You've already been to Kotonoha on the ferry, haven't you. An island looks different when you sail there yourself."
  },
+ "scene:sea.omi_licence#12mfu6y": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{最初|さいしょ} の {仕事|しごと} だ 。 {沿岸|えんがん} の {郵便|ゆうびん} 。 {漣|さざなみ} の {束|たば} は ウキ の {店|みせ} の {郵便|ゆうびん}{箱|ばこ} へ 、 {東|ひがし} の {渡|わた}し{場|ば} の {一通|いっつう} は ゲンロク {爺|じい}さん に 。",
+  "en": "Your first job: the coast's post. Sazanami's bundle goes in the post box at Uki's stall, and the one letter for East Landing to old Genroku."
+ },
+ "scene:sea.omi_licence#18at6zh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{東|ひがし} の {渡|わた}し{場|ば} に は 、 {砂|すな} で {船|ふね} が {着|つ}けられない 。 {浜|はま} を {回|まわ}って {歩|ある}いて {行|い}きな 。",
+  "en": "East Landing's silted: no boat can put in there. Walk round the beach."
+ },
  "scene:sea.omi_licence#16ighmp": {
   "status": "self-reviewed",
   "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
@@ -1468,6 +1480,48 @@
   "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
   "jp": "いい よ 。 {続|つづ}き は 、 また {今度|こんど} だ 。",
   "en": "Fine. We'll carry on another time."
+ },
+ "scene:sea.post_check#1bu2nh2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{郵便|ゆうびん}{袋|ぶくろ} は {空|から} に なった 。 {港長|こうちょう} の {言|い}って いた {島|しま} の {噂|うわさ} 。 {漣|さざなみ} の {漁師|りょうし} に 、 {海|うみ} が {何|なに} を {運|はこ}んで {来|く}る か {聞|き}いて みよう 。",
+  "en": "The mailbag is empty. The harbourmaster's rumour of an island: ask Sazanami's fishers what the sea brings in."
+ },
+ "scene:sea.sit_first_sz#yfa8fa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{岬|みさき} を {西|にし} へ {回|まわ}る と 、 {緑|みどり} の {斜面|しゃめん} の {下|した} に {網|あみ} の {干|ほ}して ある {村|むら} が {見|み}えた 。",
+  "en": "Round the point to the west, a village with nets hung to dry appears below a green slope."
+ },
+ "scene:sea.sit_first_sz#1shl5rn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{漣|さざなみ} だ 。 {桟橋|さんばし} で 、 {誰|だれ} か が {手|て} を {振|ふ}って いる 。",
+  "en": "Sazanami. Someone on the jetty is waving."
+ },
+ "scene:sea.sit_first_sz#xh56jl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{振|ふ}り{返|かえ}る と 、 {漣|さざなみ} の {網|あみ} が {風|かぜ} に {揺|ゆ}れて いた 。",
+  "en": "Looking back, Sazanami's nets sway in the wind."
+ },
+ "scene:sea.pass_el#vfz1w1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{小|ちい}さな {入|い}り{江|え} 。 {砂|すな} が {溜|た}まって 、 {船|ふね} は {入|はい}れそう に ない 。 {桟橋|さんばし} の {根元|ねもと} で 、 {老人|ろうじん} が {一人|ひとり} 、 {箒|ほうき} を {止|と}めて こちら を {見|み}て いる 。",
+  "en": "A small inlet, silted with sand: no boat could get in. At the foot of a jetty an old man stops sweeping and watches you pass."
+ },
+ "scene:sea.arrive_kotonoha#11kxxer": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "$boat {丸|まる} を {桟橋|さんばし} に {繋|つな}ぐ 。 {港長|こうちょう} の {噂|うわさ} の {島|しま} に 、 {自分|じぶん} の {船|ふね} で {着|つ}いた 。",
+  "en": "You tie the $boat up at the jetty. The island of the harbourmaster's rumour, reached in your own boat."
+ },
+ "scene:sea.arrive_kotonoha#1oyh9te": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{自分|じぶん} の {船|ふね} で 、 {西|にし} の {島|しま} に {着|つ}いた 。 {外海|そとうみ} の {免状|めんじょう} の {旅|たび} は 、 ここ まで 。",
+  "en": "In my own boat, to the island out west. The licence's journey ends here."
  },
  "challenges:sea.hail#odt08t": {
   "status": "self-reviewed",
@@ -3269,17 +3323,23 @@
   "jp": "{港長|こうちょう} の オウミ の {試験|しけん} を {受|う}けよう 。 {書類|しょるい} と 、 {面接|めんせつ} 。",
   "en": "Take Harbourmaster Ōmi's examination: a form, and an interview."
  },
- "quests:sea_licence#10kajts": {
+ "quests:sea_licence#s2r78u": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
-  "jp": "{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} と {東|ひがし} の {渡|わた}し{場|ば} へ {運|はこ}ぼう 。",
-  "en": "The maiden voyage: carry the coast's post to Sazanami and East Landing."
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} の ウキ の {店|みせ} と 、 {東|ひがし} の {渡|わた}し{場|ば} の ゲンロク に {届|とど}けよう 。",
+  "en": "The maiden voyage: carry the coast's post to Uki's stall at Sazanami and to Genroku at East Landing."
  },
- "quests:sea_licence#n9259a": {
+ "quests:sea_licence#8hqz6a": {
   "status": "self-reviewed",
-  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
-  "jp": "{噂|うわさ} の {島|しま} へ 。",
-  "en": "To the island of the rumour."
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{噂|うわさ} の {島|しま} 。 {漣|さざなみ} の イサク に 、 {海|うみ} が {何|なに} を {運|はこ}んで {来|く}る か {聞|き}こう 。",
+  "en": "The island of the rumour. Ask Isaku at Sazanami what the sea brings in."
+ },
+ "quests:sea_licence#lvbqr6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{字|じ} の {書|か}いた {葉|は} は 、 {西|にし} の {沖|おき} から {流|なが}れて {来|く}る 。 {海図|かいず} を {開|ひら}いて 、 {西|にし} の {島|しま} へ 。",
+  "en": "The written leaves drift in from out west. Open the chart and sail for the island."
  },
  "maps:sea.coast#1r1e738": {
   "status": "self-reviewed",
@@ -3298,6 +3358,12 @@
   "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
   "jp": "{材木|ざいもく} の {送|おく}り{状|じょう}",
   "en": "The timber's delivery note"
+ },
+ "items:sea_mailbag#m4pliu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
+  "jp": "{郵便|ゆうびん}{袋|ぶくろ}",
+  "en": "The coast's mailbag"
  },
  "items:sea_licence_doc#ug1uxw": {
   "status": "self-reviewed",

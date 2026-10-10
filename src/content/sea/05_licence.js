@@ -20,8 +20,12 @@
  *                      the point (var.sea_trial 1 out, 2 rounded). Flags sea_words, sea_tide, sea_trial_done.
  *   5  the licence     Ōmi's examination: the form, and an interview in an examiner's register; a wrong answer is
  *                      explained and asked again at once. The boat is yours (sea_boat).
- *   6  the maiden voyage and 7 the island: the coast's post to Sazanami and East Landing, and the leaves that lead
- *                      to Kotonoha (the ports, P11d).
+ *   6  the maiden voyage  the coast's post (Ōmi's mailbag) to Uki's stall at Sazanami and to Genroku at East Landing
+ *                      (src/content/sz/, src/content/el/); flags sea_post_sz, sea_post_el.
+ *   7  the island     Isaku's nets at Sazanami: after the winter (Snowbell's story) they bring up written leaves
+ *                      from out west (sea_ko_hint: Kotonoha joins the chart).
+ *   8  the voyage west to the island; arriving there by boat finishes the quest (the island's first landing, if it
+ *                      is the first, is its early visit).
  * Nothing here gates the main story; the quest can be finished after it. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -39,8 +43,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       at(T('{船|ふね} の {名前|なまえ} は {決|き}まった 。 {字|じ} を {書|か}く の は 、 {版木|はんぎ}{通|どお}り の ソウベエ の {店|みせ} の {仕事|しごと} だ 。', 'The boat has her name. Painting the letters is the work of Sōbē\'s print shop on Blockprint Row.'), { map: 'mp.workshop', npc: 'mp_sobe' }),
       at(T('{試|ため}し{乗|の}り は 、 {潮硝子|しおがらす} で テツ と 。 {芝居|しばい} の {通|とお}り の {祭|まつ}り が {終|お}わる まで 、 テツ は {渡|わた}し{船|ぶね} で {忙|いそが}しい 。', 'Sea trials are at Saltglass, with Tetsu. Until Playhouse Row\'s festival is over, he is busy with the ferry.'), { map: 'sg.harbor', npc: 'tetsu' }),
       at(T('{港長|こうちょう} の オウミ の {試験|しけん} を {受|う}けよう 。 {書類|しょるい} と 、 {面接|めんせつ} 。', 'Take Harbourmaster Ōmi\'s examination: a form, and an interview.'), { map: 'sg.office', npc: 'omi' }),
-      at(T('{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} と {東|ひがし} の {渡|わた}し{場|ば} へ {運|はこ}ぼう 。', 'The maiden voyage: carry the coast\'s post to Sazanami and East Landing.'), { map: 'sg.harbor', prop: 'boat', x: 36, y: 33 }),
-      at(T('{噂|うわさ} の {島|しま} へ 。', 'To the island of the rumour.'), 'open'),
+      at(T('{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} の ウキ の {店|みせ} と 、 {東|ひがし} の {渡|わた}し{場|ば} の ゲンロク に {届|とど}けよう 。', 'The maiden voyage: carry the coast\'s post to Uki\'s stall at Sazanami and to Genroku at East Landing.'), [{ map: 'sz.hamlet', npc: 'sz_uki' }, { map: 'el.landing', npc: 'el_genroku' }]),
+      at(T('{噂|うわさ} の {島|しま} 。 {漣|さざなみ} の イサク に 、 {海|うみ} が {何|なに} を {運|はこ}んで {来|く}る か {聞|き}こう 。', 'The island of the rumour. Ask Isaku at Sazanami what the sea brings in.'), { map: 'sz.hamlet', npc: 'sz_isaku' }),
+      at(T('{字|じ} の {書|か}いた {葉|は} は 、 {西|にし} の {沖|おき} から {流|なが}れて {来|く}る 。 {海図|かいず} を {開|ひら}いて 、 {西|にし} の {島|しま} へ 。', 'The written leaves drift in from out west. Open the chart and sail for the island.'), { map: 'sz.hamlet', prop: 'boat', x: 22, y: 23 }),
     ],
     reward: { flags: ['sea_licence_done'] },
   };
@@ -49,6 +54,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   const it = (id, d) => (C.items[id] = d);
   it('sea_timber_note', { name: T('{材木|ざいもく} の {送|おく}り{状|じょう}', 'The timber\'s delivery note'), key: true, desc: 'Kajirō\'s delivery note for the planking, with the warehouse it was left in worked out. Show it to Take the porter on the pier.' });
+  it('sea_mailbag', { name: T('{郵便|ゆうびん}{袋|ぶくろ}', 'The coast\'s mailbag'), key: true, desc: 'Ōmi\'s canvas mailbag for the maiden voyage: a bundle for Sazanami, to go in the post box at Uki\'s stall, and one letter for East Landing.' });
   it('sea_licence_doc', { name: T('{外海|そとうみ} の {免状|めんじょう}', 'The licence for the open sea'), key: true, desc: 'Signed by Harbourmaster Ōmi of Saltglass: the boat, her master, and the coast\'s post she carries. Folded in oilcloth against the spray.' });
 
   // ---- the yard's people (twelve-chapter journeys) ---------------------------------------------------------------------

@@ -7,8 +7,9 @@
  *   and the sail. Nothing runs out, pursues or sinks: a sail set wrong, or a torn one not yet mended, only makes the
  *   trip a little longer.
  *
- *   C.ports[id] = { place, name { jp, en }, dock { map, x, y, dir } (where you stand ashore by the boat), sea { x, y,
- *                   dir } (where the boat puts out), zone { x, y, w, h } (the water off the port, on the sea map),
+ *   C.ports[id] = { place, pos? (its own dot on the sea chart, else its place's), name { jp, en }, dock { map, x, y,
+ *                   dir } (where you stand ashore by the boat), sea { x, y, dir } (where the boat puts out),
+ *                   zone { x, y, w, h } (the water off the port, on the sea map),
  *                   if: cond (the port takes boats), reach: cond (reached other than by sea), arrive: scene (run ashore
  *                   after each arrival by boat; its lines carry their own conditions, e.g. the first landing) }
  *   C.seaSituations[id] = { kind: 'hail'|'fog'|'cargo'|'creature'|'bird'|'seal'|'trouble'|'first'|'story', scene,

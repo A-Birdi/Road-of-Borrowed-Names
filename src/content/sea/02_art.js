@@ -21,7 +21,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line } = K;
+  const { R, ell, line } = K;
+  // the kit's poly takes a flat [x0, y0, x1, y1, …]; the points here are written as pairs
+  const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   art('sea_buoy', {
     box: [-4, -30, 40, 64],
     ink: true,

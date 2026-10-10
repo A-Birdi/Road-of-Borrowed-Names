@@ -19939,6 +19939,57 @@ RB.audio = RB.audio || {};
 })(RB.audio);
 
 
+/* ==== src/audio/38w_songs_sz.js ==== */
+/* Sazanami (expansion P11d; plan 07_REGIONS.md R6): Ripples, for the fishing hamlet up the coast. Notation: see
+ * 30_songs.js.
+ *
+ * The shakuhachi carries the ripple motif (a small lift to the sixth and back down past the third, like a ripple
+ * running in and drawing off); the shamisen keeps a lazy fisher's strum, the koto rolls under it, the bass rocks
+ * between root and fifth, water drops for the pools. D major on the yo pentatonic (no fourth, no seventh in the
+ * tune), unhurried; quieter and more open than Saltglass's working harbour. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 9;
+    _.songDefs[id] = def;
+  }
+  // the ripple motif: a small lift to the sixth and back down past the third
+  _.motifs.ripple = { deg: '5 6 5 3 2 3', notes: 'Sazanami: a small lift to the sixth and back down past the third, a ripple running in and drawing off.' };
+  const SZ_A = "5 - 6 5 3 - 2 3 | 5 - - - 6 - 5 - | 6 - 5 - 1' - 6 5 | 2 - - - - - . . | 5 - 6 5 3 - 2 3 | 6 - 1' - 6 - 5 - | 3 - 5 - 2 - 3 2 | 1 - - - - - . .";
+  const SZ_A_CH = '1 1 4 5 1 4 5 1';
+  const SZ_B = "6 - - - 1' - 6 5 | 3 - - - 5 - - - | 6 - 5 - 6 - 1' - | 3 - - - - - . . | 2 - 3 - 5 - 6 - | 2' - - - 6 - 5 - | 6 - 5 - 2 - 5 - | 5 - - - - - . .";
+  const SZ_B_CH = '6 6 4 1 2 5 4 5';
+  S('sazanami', {
+    title: 'Ripples',
+    kind: 'area',
+    motifs: ['ripple'],
+    notes: 'Sazanami (D major on the yo pentatonic, 84): the shakuhachi sings the ripple motif, a small lift to the sixth and back down past the third; a lazy shamisen strum, the koto rolling under it, the bass rocking between root and fifth, water drops for the tide pools.',
+    key: 'D', mode: 'ionian', bpm: 84, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.4, rv: 0.45 },
+      strum: { i: 'shamisen', o: 3, pat: true, v: 0.2, rv: 0.2, pan: -0.3 },
+      roll: { i: 'koto', o: 4, pat: true, v: 0.18, rv: 0.35, pan: 0.25 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.38 },
+      pad: { i: 'pad', o: 3, hold: true, v: 0.14, rv: 0.6 },
+      drops: { perc: true, v: 0.16, rv: 0.5, pan: 0.2 },
+    },
+    all: { strum: '0 . 2 . 0 . 2 1', roll: ". 0 . 2 . 1 . 2", bass: '0 - - - 2 - - -', pad: '0+2', drops: 'd.......|....d...' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', roll: null },
+      A: { bars: 8, ch: SZ_A_CH, lead: SZ_A },
+      B: { bars: 8, ch: SZ_B_CH, lead: SZ_B },
+      A2: { bars: 8, ch: SZ_A_CH, lead: SZ_A, roll: "0 1 2 1 0 1 2 1" },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+})(RB.audio);
+
+
 /* ==== src/audio/39_zones.js ==== */
 /* Zone music: which battle and boss theme plays where.
  *
@@ -20010,6 +20061,12 @@ RB.audio = RB.audio || {};
       chapter: 9, edition: 2, regions: ['sea'], prefixes: ['sea.'],
       battle: 'battle_ko', boss: 'boss_ko', route: null,
       songs: ['sea'],
+    },
+    // Sazanami, the fishing hamlet up the coast (38w_songs_sz.js); East Landing is Saltglass's (its region and song)
+    sazanami: {
+      chapter: 9, edition: 2, regions: ['sazanami'], prefixes: ['sz.'],
+      battle: 'battle_ko', boss: 'boss_ko', route: null,
+      songs: ['sazanami'],
     },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
@@ -51307,8 +51364,9 @@ RB.shells = (function () {
  *   and the sail. Nothing runs out, pursues or sinks: a sail set wrong, or a torn one not yet mended, only makes the
  *   trip a little longer.
  *
- *   C.ports[id] = { place, name { jp, en }, dock { map, x, y, dir } (where you stand ashore by the boat), sea { x, y,
- *                   dir } (where the boat puts out), zone { x, y, w, h } (the water off the port, on the sea map),
+ *   C.ports[id] = { place, pos? (its own dot on the sea chart, else its place's), name { jp, en }, dock { map, x, y,
+ *                   dir } (where you stand ashore by the boat), sea { x, y, dir } (where the boat puts out),
+ *                   zone { x, y, w, h } (the water off the port, on the sea map),
  *                   if: cond (the port takes boats), reach: cond (reached other than by sea), arrive: scene (run ashore
  *                   after each arrival by boat; its lines carry their own conditions, e.g. the first landing) }
  *   C.seaSituations[id] = { kind: 'hail'|'fog'|'cargo'|'creature'|'bird'|'seal'|'trouble'|'first'|'story', scene,
@@ -113299,7 +113357,7 @@ RB.ui.sail = (function () {
 
   // ---- the chart ---------------------------------------------------------------------------------------------------
   function chartSvg(s, from, list) {
-    const P = RB.content.places, pts = SL().portIds().map((id) => ({ id, pos: (P[SL().port(id).place] || {}).pos })).filter((x) => x.pos);
+    const P = RB.content.places, pts = SL().portIds().map((id) => ({ id, pos: SL().port(id).pos || (P[SL().port(id).place] || {}).pos })).filter((x) => x.pos);
     if (!pts.length) return '';
     const xs = pts.map((p) => p.pos[0]), ys = pts.map((p) => p.pos[1]);
     const x0 = Math.min.apply(null, xs) - 30, y0 = Math.min.apply(null, ys) - 30, w = Math.max.apply(null, xs) - x0 + 30, h = Math.max.apply(null, ys) - y0 + 30;
@@ -150361,6 +150419,27 @@ RB.dialect.add('kansai', `
 > （{役|やく} に {入|はい}った な 。 こっち も {合|あ}わせな あかん 。） || (She's got into character. We'd better play along.)
 = {地図|ちず} に ない {島|しま} 。 {芝居|しばい} の {筋|すじ} なら 、 {次|つぎ} の {幕|まく} は そこ ね 。 || An island that's on no map. If this were a play, that's where the next act would be.
 > {地図|ちず} に ない {島|しま} か 。 {芝居|しばい} の {筋|すじ} やったら 、 {次|つぎ} の {幕|まく} は そこ や な 。 || An island that's on no map. If this were a play, that's where the next act would be.
+@ sea/ports [sz.first]
+= {舞台|ぶたい} は {小|ちい}さい けど 、 {役者|やくしゃ} は {揃|そろ}ってる わ ね 。 || A small stage, but the whole cast is here.
+> {舞台|ぶたい} は {小|ちい}さい けど 、 {役者|やくしゃ} は {揃|そろ}ってる な 。 || A small stage, but the whole cast is here.
+@ sea/ports [sz.isaku_leaves]
+= {台本|だいほん} の {切|き}れ{端|はし} みたい ね 。 {続|つづ}き は 、 {西|にし} の {島|しま} に ある の かしら 。 || Like scraps of a script. Is the rest of it on the island out west?
+> {台本|だいほん} の {切|き}れ{端|はし} みたい や な 。 {続|つづ}き は 、 {西|にし} の {島|しま} に ある ん やろ か 。 || Like scraps of a script. Is the rest of it on the island out west?
+@ sea/ports [sz.school_ask]
+= {教壇|きょうだん} も {舞台|ぶたい} の {一|ひと}つ よ 。 {声|こえ} を {張|は}って ね 。 || A teacher's platform is a kind of stage. Project your voice.
+> {教壇|きょうだん} も {舞台|ぶたい} の {一|ひと}つ や で 。 {声|こえ} を {張|は}って な 。 || A teacher's platform is a kind of stage. Project your voice.
+@ sea/ports [sz.school_lesson]
+= {千秋楽|せんしゅうらく} の {花|はな} より 、 {嬉|うれ}しい {贈|おく}り{物|もの} ね 。 || Better than flowers on closing night.
+> {千秋楽|せんしゅうらく} の {花|はな} より 、 {嬉|うれ}しい {贈|おく}り{物|もの} や な 。 || Better than flowers on closing night.
+@ sea/ports [el.first]
+= {幕|まく} が {下|お}りた {後|あと} の {舞台|ぶたい} を {掃|は}く {人|ひと} ね 。 {次|つぎ} の {幕|まく} を 、 {待|ま}ってる の かしら 。 || Someone sweeping the stage after the curtain's come down. Is he waiting for the next act?
+> {幕|まく} が {下|お}りた {後|あと} の {舞台|ぶたい} を {掃|は}く {人|ひと} や な 。 {次|つぎ} の {幕|まく} を 、 {待|ま}ってる ん やろ か 。 || Someone sweeping the stage after the curtain's come down. Is he waiting for the next act?
+@ sea/ports [el.genroku_first]
+= {小屋|こや} を {建|た}て{直|なお}す {時|とき} は 、 {古|ふる}い {座長|ざちょう} の {話|はなし} から {聞|き}く もの よ 。 || When you rebuild a theatre, you start by listening to the old company head.
+> {小屋|こや} を {建|た}て{直|なお}す {時|とき} は 、 {古|ふる}い {座長|ざちょう} の {話|はなし} から {聞|き}く もん や で 。 || When you rebuild a theatre, you start by listening to the old company head.
+@ sea/ports [el.genroku_bell]
+= {柝|き} の {音|おと} みたい 。 {幕|まく} が {開|あ}く {合図|あいず} ね 。 || Like the clappers before a show. That's the curtain going up.
+> {柝|き} の {音|おと} みたい や 。 {幕|まく} が {開|あ}く {合図|あいず} や な 。 || Like the clappers before a show. That's the curtain going up.
 `);
 
 
@@ -152429,6 +152508,384 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 9, 12, 3, 1, '#ffffff');
       R(g, 5, 25, 22, 1, 'rgba(0,0,0,0.25)');
     },
+  });
+})(RB.content);
+
+
+/* ==== src/content/el/01_region.js ==== */
+/* East Landing (東の渡し場), Saltglass's old landing round the east beach (expansion P11d; plan 07_REGIONS.md R6;
+ * docs/future/work/P11_SEA.md). The landing Saltglass's call-bell case speaks of: silted up and closed, the ferry moved
+ * to the stone quay, the bell workshop with it. Genroku, of the Seto family that owned it, has never left his shack
+ * by the inlet. Rebuilt over several visits: terms agreed with him, a notice asking Saltglass for hands, the channel
+ * dug and the jetty mended (each finished by the next visit), and the bell he kept hung again; then the boat can put
+ * in here. Twelve-chapter journeys only. The scenes are in 20_scenes.js, the tasks in 30_learning.js; the sea's side
+ * of it (sailing past before it is rebuilt) in src/content/sea/23_voyage.js.
+ *   el_rebuild  0 terms with Genroku · 1 the notice · 2 the channel (the volunteers come; the work is done by the next
+ *               visit) · 3 the jetty (likewise) · 4 the bell · done: the port opens (el_done).
+ * A job waiting to be finished is `el_pending`; leaving for anywhere else sets `el_away`; coming back finishes it
+ * (el.progress). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const J = (jp, en) => ({ jp, en });
+
+  // Genroku: the last keeper of the East Landing, Seto's great-uncle; gruff, stubborn, and still sweeps the jetty
+  // that no boat uses (he/him)
+  C.chars.el_genroku = {
+    name: T('Genroku', 'ゲンロク'), voice: { pitch: 0.7 },
+    look: { skin: 3, hair: 'shaved', hairColor: 6, cloth: ['#5a5a6a', '#46465a', '#c8b890'], shape: 'robe', acc: ['beard', 'cane'], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', beard: '#d0d0d0', age: 'old', bg: '#24242e' },
+  };
+
+  // ---- the landing ---------------------------------------------------------------------------------------------------
+  C.maps['el.landing'] = {
+    name: T('East Landing', '{東|ひがし} の {渡|わた}し{場|ば}'), region: 'saltglass', place: 'saltglass', music: 'saltglass', edition: 2,
+    terrain: K.build(30, 20, 's', (k) => {
+      k.rect(0, 0, 30, 3, '^');                       // the headland's cliff
+      k.rect(0, 3, 30, 4, '.');                       // the slope
+      k.scatter(';', 8, 1201, [0, 3, 30, 4], '.');
+      k.path([[0, 12], [17, 12]], ':', 1);            // the old path in from the east beach
+      k.path([[17, 8], [17, 12]], ':', 1);
+      k.rect(0, 14, 30, 6, '~');                      // the inlet
+      k.rect(0, 13, 30, 1, 'w');
+      k.rect(18, 10, 2, 8, '_');                      // the old jetty
+      k.scatter('h', 4, 1202, [1, 8, 10, 4], 's');
+    }),
+    structs: [
+      { type: 'house', x: 22, y: 4, w: 5, h: 3, roof: 'thatch', wall: 'wood', door: 2, windows: [0], shut: T('Genroku\'s shack. The door is shut, but the step has been swept.', 'ゲンロク の {小屋|こや} 。 {戸|と} は {閉|し}まって いる が 、 {入|い}り{口|ぐち} は {掃|は}いて ある 。') },
+    ],
+    props: [
+      { p: 'el_silt', x: 14, y: 15, if: '!el_channel' }, { p: 'el_silt', x: 22, y: 16, if: '!el_channel' }, { p: 'el_silt', x: 10, y: 17, if: '!el_channel' },
+      { p: 'el_brokenplanks', x: 18, y: 14, if: '!el_jetty' }, { p: 'el_brokenplanks', x: 19, y: 15, if: '!el_jetty' },
+      { p: 'pier', x: 18, y: 17, if: 'el_jetty' }, { p: 'pier', x: 19, y: 17, if: 'el_jetty' },
+      { p: 'noticeboard', x: 4, y: 10, scene: 'el.board' },
+      { p: 'cs_bellpost', x: 20, y: 9, if: 'el_bell', scene: 'el.bell' },
+      { p: 'crate', x: 12, y: 9 }, { p: 'barrel', x: 13, y: 9 }, { p: 'bench', x: 24, y: 9 },
+      { p: 'boat', x: 6, y: 12 },
+    ],
+    npcs: [
+      { id: 'el_genroku', x: 21, y: 8, dir: 'down', talk: [{ scene: 'el.genroku_idle' }] },
+      { id: 'el_daigo', char: 'daigo', x: 11, y: 10, dir: 'right', if: 'el_notice&!el_done', talk: [{ scene: 'el.daigo_idle' }] },
+      { id: 'el_sota', char: 'sota', x: 14, y: 12, dir: 'up', if: 'el_notice&!el_done', talk: [{ scene: 'el.sota_idle' }] },
+      { id: 'el_hama', char: 'cs_hama', x: 16, y: 9, dir: 'down', if: 'el_notice&!el_done', talk: [{ scene: 'el.hama_idle' }] },
+    ],
+    exits: [{ x: 0, y: 12, w: 1, h: 1, to: 'sg.harbor', tx: 54, ty: 28, dir: 'left' }],
+    onEnter: [{ scene: 'el.progress', if: 'el_pending&el_away', once: false }, { scene: 'el.first', if: '!el_seen' }],
+    spawn: { default: [1, 12, 'right'] },
+  };
+  // the way round from Saltglass's east beach (twelve-chapter journeys)
+  C.maps['sg.harbor'].exits.push({ x: 55, y: 28, w: 1, h: 2, to: 'el.landing', tx: 1, ty: 12, dir: 'right', if: 'ed>=2' });
+
+  // the port, once the landing is rebuilt (the boat's prop is added with the others, src/content/sea/01_region.js)
+  C.ports = C.ports || {};
+  C.ports.eastlanding = { place: 'saltglass', pos: [198, 262], name: T('East Landing', '{東|ひがし} の {渡|わた}し{場|ば}'), if: 'el_done', reach: 'el_done',
+    dock: { map: 'el.landing', x: 19, y: 16, dir: 'right' }, boat: { x: 20, y: 16 },
+    sea: { x: 34, y: 10, dir: 'down' }, zone: { x: 33, y: 3, w: 4, h: 7 } };
+
+  // ---- the rebuilding ------------------------------------------------------------------------------------------------
+  const at = (o, a) => Object.assign(o, { at: a });
+  C.quests.el_rebuild = {
+    chapter: 'sea', title: J('{東|ひがし} の {渡|わた}し{場|ば} を {建|た}て{直|なお}す', 'Rebuilding East Landing'),
+    stages: [
+      at(J('ゲンロク は 、 {誰|だれ} に も {渡|わた}し{場|ば} に {触|さわ}らせない と {言|い}う 。 {話|はなし} を {聞|き}いて 、 {約束|やくそく} を {決|き}めよう 。', 'Genroku won\'t let anyone touch the landing. Hear him out and settle terms.'), { map: 'el.landing', npc: 'el_genroku' }),
+      at(J('{掲示板|けいじばん} に 、 {手伝|てつだ}い を {頼|たの}む {貼|は}り{紙|がみ} を {出|だ}そう 。', 'Put a notice on the board asking for hands.'), { map: 'el.landing', prop: 'noticeboard', x: 4, y: 10 }),
+      J('{貼|は}り{紙|がみ} を {見|み}た {人|ひと} が {来|く}る の は 、 {次|つぎ} の {日|ひ} 。 {来|き}たら 、 {一緒|いっしょ} に {水路|すいろ} を {掘|ほ}ろう 。', 'Whoever reads the notice will come another day. When they do, dig out the channel with them.'),
+      J('{次|つぎ} は {桟橋|さんばし} の {板|いた} 。 ハマ と {一緒|いっしょ} に {直|なお}そう 。', 'Next, the jetty\'s planks: mend them with Hama.'),
+      at(J('ゲンロク が 、 {見|み}せたい もの が ある と {言|い}う 。', 'Genroku has something he wants to show you.'), { map: 'el.landing', npc: 'el_genroku' }),
+    ],
+    reward: { flags: ['el_rebuild_done'] },
+  };
+  // stages 2 and 3: the volunteers once they have come, the landing itself while you wait for them
+  C.quests.el_rebuild.stages[2].at = [{ map: 'el.landing', npc: 'el_daigo' }];
+  C.quests.el_rebuild.stages[3].at = [{ map: 'el.landing', npc: 'el_hama' }];
+  C.questOnly = C.questOnly || {};
+  C.questOnly.el_rebuild = 'ed>=2';
+
+  const npc = (id) => C.maps['el.landing'].npcs.find((n) => n.id === id);
+  npc('el_genroku').talk.unshift(
+    { if: 'item.sea_mailbag&!sea_post_el', scene: 'el.genroku_post' },
+    { if: 'quest.el_rebuild=4', scene: 'el.genroku_bell' },
+    { if: 'quest.el_rebuild=0', scene: 'el.genroku_terms' },
+    { if: '!quest.el_rebuild', scene: 'el.genroku_first' },
+    { if: 'el_done', scene: 'el.genroku_after' });
+  npc('el_daigo').talk.unshift({ if: 'quest.el_rebuild=2&!el_pending', scene: 'el.channel' }, { if: 'el_pending', scene: 'el.wait' });
+  npc('el_hama').talk.unshift({ if: 'quest.el_rebuild=3&!el_pending', scene: 'el.jetty' }, { if: 'el_pending', scene: 'el.wait' });
+
+  // leaving the landing while a job is waiting: coming back finishes it (el.progress)
+  RB.bus && RB.bus.on && RB.bus.on('map:enter', (e) => {
+    const s = RB.game && RB.game.s;
+    if (s && s.flags && s.flags.el_pending && e && e.id !== 'el.landing') s.flags.el_away = true;
+  });
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/el/02_art.js ==== */
+/* East Landing's props (expansion P11d): silt banked up in the old channel (a pale sand bar over the water, gone once
+ * the channel is dug) and a broken run of jetty planks (blocking, until the jetty is mended). A flat 16-px drawing
+ * (the fallback, as every prop) and its art-resolution version in the world's prop style. Interim regional assets
+ * under AC-1 (C-82): finished in the art pass (P16). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.props.P;
+  const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  const def = (id, o, draw) => (P[id] = Object.assign({ id, w: 1, h: 1, block: true }, o, { draw }));
+  const SILT = ['#a8987a', '#c2b490', '#d8cca8', '#e8dec0'];
+
+  def('el_silt', { w: 2, block: false }, (c, x, y) => {
+    px(c, x + 2, y + 5, 28, 8, SILT[1]); px(c, x + 5, y + 4, 20, 2, SILT[2]); px(c, x + 8, y + 8, 6, 1, SILT[0]); px(c, x + 18, y + 10, 8, 1, SILT[0]);
+  });
+  def('el_brokenplanks', {}, (c, x, y, p) => {
+    px(c, x + 1, y + 3, 6, 3, p.wood[2]); px(c, x + 9, y + 9, 6, 3, p.wood[1]); px(c, x + 3, y + 12, 9, 2, p.wood[0]);
+  });
+
+  if (!RB.propArt || !RB.propKit) return;
+  const K = RB.propKit, art = RB.propArt.art;
+  const { R, ell, line } = K;
+  // the kit's poly takes a flat [x0, y0, x1, y1, …]; the points here are written as pairs
+  const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
+  // silt: a low bar of wet sand breaking the water's surface, ripple lines along its edge, a stranded shell
+  art('el_silt', {
+    box: [0, 0, 64, 32],
+    draw(g) {
+      ell(g, 32, 18, 29, 9, 'rgba(60,80,80,0.18)');
+      poly(g, [[4, 18], [14, 10], [34, 8], [56, 12], [61, 19], [48, 25], [20, 26]], SILT[1]);
+      poly(g, [[12, 14], [30, 10], [50, 13], [40, 17], [18, 18]], SILT[2]);
+      for (const [x0, y0, x1, y1] of [[8, 21, 22, 23], [30, 22, 48, 21], [16, 12, 26, 11]]) line(g, x0, y0, x1, y1, SILT[0], 1);
+      ell(g, 44, 15, 2, 1, SILT[3]); R(g, 26, 16, 3, 1, '#8a7a5e');
+    },
+  });
+  // broken planks: a gap in the jetty, two planks snapped and hanging, one floating askew
+  art('el_brokenplanks', {
+    box: [-2, -4, 36, 40],
+    ink: true,
+    draw(g, M) {
+      const W = M.wood;
+      R(g, 0, 0, 32, 32, 'rgba(30,60,70,0.35)');
+      poly(g, [[2, 2], [14, 4], [12, 10], [1, 8]], W[2]); poly(g, [[2, 2], [14, 4], [14, 5], [2, 3]], W[3]);
+      poly(g, [[18, 18], [31, 14], [31, 19], [19, 23]], W[1]); line(g, 19, 20, 30, 16, W[0], 1);
+      poly(g, [[6, 24], [20, 26], [19, 29], [5, 27]], W[2]);
+      R(g, 0, 0, 3, 32, W[0]); R(g, 29, 0, 3, 32, W[0]);
+    },
+  });
+})();
+
+
+/* ==== src/content/el/20_scenes.js ==== */
+/* East Landing's scenes (expansion P11d; the map, Genroku, the quest and the wiring in 01_region.js, the tasks in
+ * 30_learning.js). Genroku and his terms; the notice and who answers it (Daigo, Sōta and Hama, from Saltglass); the
+ * channel dug and the jetty mended, each finished by the next visit; the bell he kept, hung again; the landing open
+ * to boats. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene el.first
+# Round the east beach: a silted inlet, a jetty with planks missing, a shack, and an old man sweeping the jetty's head.
+!set el_seen
+narr: {浜|はま} を {回|まわ}る と 、 {小|ちい}さな {入|い}り{江|え} に {出|で}た 。 {砂|すな} で {浅|あさ}く なった {水|みず} 、 {板|いた} の {抜|ぬ}けた {桟橋|さんばし} 。 {老人|ろうじん} が {一人|ひとり} 、 {桟橋|さんばし} の {根元|ねもと} を {掃|は}いて いる 。 || Round the beach you come out on a small inlet: water gone shallow with sand, a jetty with planks missing. An old man is sweeping at the foot of the jetty.
+?(comp=nao) comp: {東|ひがし} の {渡|わた}し{場|ば} …… {宛先|あてさき} {不明|ふめい} で {戻|もど}って くる {手紙|てがみ} の 、 {宛名|あてな} の {場所|ばしょ} だ 。 || East Landing… The address on letters that come back "addressee unknown".
+?(comp=mio) comp[think]: {誰|だれ} も {使|つか}わない {桟橋|さんばし} を 、 {掃除|そうじ} して いる ん です ね 。 || He's sweeping a jetty no one uses.
+?(comp=ren) comp: {灯|ひ} の {消|き}えた {灯籠|とうろう} を 、 {毎日|まいにち} {磨|みが}く {人|ひと} を {知|し}って います 。 {同|おな}じ {顔|かお} です 。 || I've known people who polish a lantern that's gone out, every day. He has the same face.
+?(comp=suzu) comp: {幕|まく} が {下|お}りた {後|あと} の {舞台|ぶたい} を {掃|は}く {人|ひと} ね 。 {次|つぎ} の {幕|まく} を 、 {待|ま}ってる の かしら 。 || Someone sweeping the stage after the curtain's come down. Is he waiting for the next act?
+
+@scene el.genroku_first
+# Genroku, before any terms: suspicious of anyone from the harbour; the landing's story; nobody touches it.
+!faceplayer
+el_genroku: …… {港|みなと} の {回|まわ}し{者|もの} か 。 わし を {追|お}い{出|だ}し に {来|き}た なら 、 {帰|かえ}れ 。 || …One of the harbour's lot? If you've come to clear me off, go back.
+el_genroku: ここ は セト の {家|いえ} の {渡|わた}し{場|ば} だった 。 {三十年|さんじゅうねん} {前|まえ} 、 {砂|すな} が {溜|た}まって 、 {船|ふね} は {石|いし} の {岸壁|がんぺき} へ {行|い}って しまった 。 {鐘|かね} の {工房|こうぼう} も な 。 || This was the Seto family's landing. Thirty years ago the sand built up and the boats went off to the stone quay. The bell workshop too.
+el_genroku: それ でも 、 ここ は {渡|わた}し{場|ば} だ 。 {勝手|かって} に {触|さわ}る な 。 || It's a landing all the same. Nobody touches it without my say.
+?(comp=nao) comp: …… {渡|わた}し{場|ば} が {戻|もど}れば 、 {宛先|あてさき} {不明|ふめい} の {手紙|てがみ} も 、 {届|とど}く よう に なる 。 || …If the landing came back, those "addressee unknown" letters would arrive too.
+?(comp=mio) comp: {壊|こわ}す つもり は ありません 。 {話|はなし} を {聞|き}かせて ください 。 || We don't mean to tear anything down. Tell us about it.
+?(comp=ren) comp: {守|まも}って きた もの を 、 {守|まも}った まま {直|なお}す {方法|ほうほう} も ある はず です 。 || There must be a way to mend what you've kept, and keep it still.
+?(comp=suzu) comp: {小屋|こや} を {建|た}て{直|なお}す {時|とき} は 、 {古|ふる}い {座長|ざちょう} の {話|はなし} から {聞|き}く もの よ 。 || When you rebuild a theatre, you start by listening to the old company head.
+!quest el_rebuild 0
+!journal {東|ひがし} の {渡|わた}し{場|ば} 。 {砂|すな} で {閉|と}じた セト {家|け} の {渡|わた}し{場|ば} に 、 ゲンロク が {一人|ひとり} {残|のこ}って いる 。 {建|た}て{直|なお}す なら 、 {彼|かれ} の {約束|やくそく} が {要|い}る 。 || East Landing, the Seto family's landing, closed by the sand. Genroku stays on alone. Rebuilding it needs his word.
+
+@scene el.genroku_post
+# The maiden voyage: the landing's one letter, from Seto (his grand-niece) up the hill in Saltglass.
+!faceplayer
+el_genroku: {郵便|ゆうびん} ？ ここ に ？ …… {三十年|さんじゅうねん} {来|こ}なかった ぞ 。 || Post? Here? …None's come in thirty years.
+narr: {郵便|ゆうびん}{袋|ぶくろ} から 、 {東|ひがし} の {渡|わた}し{場|ば} {宛|あて} の {手紙|てがみ} を {一通|いっつう} {出|だ}して {渡|わた}した 。 {差出人|さしだしにん} は 、 {丘|おか} の {上|うえ} の セト 。 || You take the one letter for East Landing from the mailbag and hand it over. It's from Seto, up the hill.
+el_genroku: …… セト の {家|いえ} の {孫娘|まごむすめ} か 。 「{冬|ふゆ} は {家|いえ} に {来|き}て 。 {一人|ひとり} は {寒|さむ}い でしょう 。」 …… ふん 。 || …The Seto house's granddaughter. "Come and stay with us for the winter. It's cold on your own." …Hmph.
+el_genroku: {宛名|あてな} が 「{東|ひがし} の {渡|わた}し{場|ば}」 だ 。 {港|みなと} の {奴|やつ}ら は 、 もう ない と {言|い}う が 。 …… ちゃんと {届|とど}いた な 。 || Addressed to "East Landing". The harbour folk say there's no such place any more. …It got here all right.
+!set sea_post_el
+!call sea.post_check
+?(!quest.el_rebuild) !call el.genroku_first
+
+@scene el.genroku_terms
+!faceplayer
+el_genroku: {直|なお}す だ と ？ …… {条件|じょうけん} が ある 。 || Mend it, you say? …I've conditions.
+!challenge el.terms
+!if var._res=1 -> ok
+el_genroku: …… {話|はなし} に ならん 。 {出直|でなお}して こい 。 || …That's no good. Come back and try again.
+!end
+:ok
+el_genroku: …… {名前|なまえ} は そのまま 、 {鐘|かね} は また {鳴|な}る 、 {掃|は}く の は わし 。 それ なら 、 {文句|もんく} は ない 。 || …The name stays, the bell rings again, and the sweeping's mine. Then I've no complaint.
+!gesture el_genroku nod
+el_genroku: {人手|ひとで} が {要|い}る ぞ 。 {港|みなと} の {連中|れんちゅう} に 、 {掲示板|けいじばん} で {頼|たの}んで みろ 。 || You'll need hands. Ask the harbour lot, on the notice board.
+!quest el_rebuild 1
+!journal ゲンロク と {約束|やくそく} した 。 {名前|なまえ} は そのまま 、 {鐘|かね} を また {鳴|な}らし 、 {掃除|そうじ} は ゲンロク 。 {掲示板|けいじばん} に {手伝|てつだ}い の {貼|は}り{紙|がみ} を {出|だ}す 。 || Terms with Genroku: the name stays, the bell rings again, the sweeping is his. Next, a notice on the board asking for help.
+
+@scene el.board
+!if quest.el_rebuild=1 -> write
+?(el_notice) narr: {掲示板|けいじばん} に 、 あなた の {貼|は}り{紙|がみ} 。 {誰|だれ} か が {横|よこ} に 「{行|い}く ！ ダイゴ」 と {書|か}き{足|た}して いる 。 || Your notice on the board. Someone has added beside it: "Coming! Daigo".
+?(!el_notice&quest.el_rebuild>=2) narr: {掲示板|けいじばん} に 、 あなた の {貼|は}り{紙|がみ} 。 {誰|だれ} が {読|よ}んで くれる だろう 。 || Your notice on the board. Who will read it?
+?(!quest.el_rebuild>=1) narr: {古|ふる}い {掲示板|けいじばん} 。 {色|いろ} の {抜|ぬ}けた {時刻表|じこくひょう} が 、 {一枚|いちまい} だけ {残|のこ}って いる 。 || An old notice board. A single faded timetable is all that's left on it.
+!end
+:write
+narr: {古|ふる}い {時刻表|じこくひょう} の {横|よこ} に 、 {新|あたら}しい {紙|かみ} を {貼|は}る 。 {何|なん} と {書|か}こう 。 || Beside the faded timetable, you pin up a fresh sheet. What to write?
+!challenge el.notice
+!if var._res=1 -> ok
+narr: …… これ で は 、 {誰|だれ} が いつ どこ へ {来|く}れば いい か {分|わ}からない 。 {書|か}き{直|なお}そう 。 || …From this, nobody could tell who should come, when, or where. Better write it again.
+!end
+:ok
+narr: {貼|は}り{紙|がみ} を {貼|は}った 。 {潮硝子|しおがらす} から {浜|はま} を {回|まわ}って くる {人|ひと} が 、 {必|かなら}ず {見|み}る {場所|ばしょ} だ 。 || The notice is up, where anyone coming round the beach from Saltglass will see it.
+!quest el_rebuild 2
+!set el_pending
+!unset el_away
+!journal {貼|は}り{紙|がみ} を {出|だ}した 。 {人|ひと} が {来|く}る の は 、 {次|つぎ} に {来|き}た {時|とき} 。 || The notice is up. People will have come by the next visit.
+
+@scene el.progress
+# Back at the landing with a job waiting: it has been done meanwhile.
+!if quest.el_rebuild=2&!el_notice -> people
+!if quest.el_rebuild=3&!el_channel -> channel
+!if quest.el_rebuild=4&!el_jetty -> jetty
+!goto clear
+:people
+narr: {貼|は}り{紙|がみ} を {見|み}た {人|ひと} たち が 、 {来|き}て いる 。 {荷揚|にあ}げ の ダイゴ 、 {漁師|りょうし} の ソウタ 、 {岸壁|がんぺき} の {作業台|さぎょうだい} の ハマ 。 || People who read the notice have come: Daigo the porter, Sōta the fisher, Hama from the workbench on the stone quay.
+!set el_notice
+!goto clear
+:channel
+narr: {水路|すいろ} が {掘|ほ}られて いる 。 {入|い}り{江|え} の {奥|おく} まで 、 {深|ふか}い {水|みず} が {通|とお}って いる 。 || The channel has been dug. Deep water runs all the way into the inlet.
+!set el_channel
+!goto clear
+:jetty
+narr: {桟橋|さんばし} に 、 {新|あたら}しい {板|いた} が {張|は}られて いる 。 {白|しろ}い {木|き} が 、 {古|ふる}い {板|いた} の {間|あいだ} で {光|ひか}って いる 。 || The jetty has new planks. The pale new wood shines among the old.
+!set el_jetty
+:clear
+!unset el_pending
+!unset el_away
+
+@scene el.wait
+!faceplayer
+narr: 「{今日|きょう} は {始|はじ}めた ばかり だ 。 {次|つぎ} に {来|く}る {頃|ころ} に は 、 {終|お}わって いる よ 。」 || "We've only just started today. It'll be done by the time you're next here."
+
+@scene el.channel
+# Daigo with a spade: where to dig, and in what order.
+!faceplayer
+daigo: おう ！ {貼|は}り{紙|がみ} 、 {見|み}た ぜ ！ {力|ちから} なら {任|まか}せろ 。 だが 、 どこ を どう {掘|ほ}る ？ || Ho! Saw your notice! Leave the muscle to me. But where do we dig, and how?
+!challenge el.channel
+!if var._res=1 -> ok
+daigo: …… {闇雲|やみくも} に {掘|ほ}って も 、 {潮|しお} が {埋|う}める だけ だ 。 {考|かんが}え{直|なお}そう ぜ 。 || …Dig any old where and the tide just fills it in. Let's think again.
+!end
+:ok
+daigo[happy]: よし 、 その {段取|だんど}り で {行|い}こう ！ {明日|あした} まで に は {掘|ほ}れる ！ || Right, we'll do it that way! It'll be dug by tomorrow!
+!quest el_rebuild 3
+!set el_pending
+!unset el_away
+
+@scene el.jetty
+# Hama, who keeps the notched workbench on the stone quay: the planks, measured.
+!faceplayer
+cs_hama: {板|いた} の {数|かず} は 、 {測|はか}って から {切|き}る の 。 {作業台|さぎょうだい} の {刻|きざ}み{目|め} と {同|おな}じ よ 。 || Measure first, then cut the planks. Like the notches on the workbench.
+!challenge el.jetty
+!if var._res=1 -> ok
+cs_hama: {足|た}りない か 、 {余|あま}る わ ね 。 もう {一度|いちど} {測|はか}りましょう 。 || We'd be short, or have some over. Let's measure again.
+!end
+:ok
+cs_hama[smile]: {合|あ}ってる 。 {切|き}って {張|は}る の は 、 {任|まか}せて 。 || That's it. Leave the cutting and fitting to me.
+!quest el_rebuild 4
+!set el_pending
+!unset el_away
+
+@scene el.genroku_bell
+!faceplayer
+!if el_pending -> wait
+el_genroku: …… {待|ま}って いろ 。 || …Wait there.
+narr: ゲンロク が {小屋|こや} から 、 {布|ぬの} に {包|つつ}んだ もの を {持|も}って {来|く}る 。 {小|ちい}さな {鐘|かね} だ 。 {肩|かた} に 、 {波|なみ} の {線|せん} が {一本|いっぽん} 。 || Genroku comes out of the shack with something wrapped in cloth. A small bell, with a wavy line on its shoulder.
+el_genroku: {渡|わた}し{場|ば} の {鐘|かね} だ 。 {閉|と}じた {日|ひ} に 、 わし が {外|はず}して {仕舞|しま}って おいた 。 {三十年|さんじゅうねん} 、 {磨|みが}いて きた 。 || The landing's bell. I took it down the day we closed, and put it away. Thirty years I've kept it polished.
+!set el_bell
+narr: {桟橋|さんばし} の {根元|ねもと} の {柱|はしら} に 、 {鐘|かね} を {吊|つ}るす 。 ゲンロク が {紐|ひも} を {引|ひ}く 。 {澄|す}んだ {音|おと} が 、 {入|い}り{江|え} に {響|ひび}いた 。 || You hang the bell on the post at the foot of the jetty. Genroku pulls the cord. A clear note rings out across the inlet.
+?(comp=nao) comp: …… いい {音|おと} だ 。 {宛先|あてさき} が 、 {戻|もど}って きた な 。 || …A good sound. The address is back.
+?(comp=mio) comp[smile]: {鐘|かね} の {音|おと} が 、 {港|みなと} まで {届|とど}いた かも しれません ね 。 || The bell might have carried all the way to the harbour.
+?(comp=ren) comp: {名|な} を {守|まも}った {人|ひと} が 、 {音|おと} を {返|かえ}した の です ね 。 || The one who kept the name has given back the sound.
+?(comp=suzu) comp[smile]: {柝|き} の {音|おと} みたい 。 {幕|まく} が {開|あ}く {合図|あいず} ね 。 || Like the clappers before a show. That's the curtain going up.
+el_genroku: …… ふん 。 {掃|は}く の は 、 わし だ ぞ 。 {忘|わす}れる な 。 || …Hmph. The sweeping's mine, mind. Don't forget.
+!set el_done
+!quest el_rebuild done
+narr: {東|ひがし} の {渡|わた}し{場|ば} に 、 {船|ふね} が また {着|つ}ける よう に なった 。 || East Landing can take boats again.
+!journal {東|ひがし} の {渡|わた}し{場|ば} が {戻|もど}った 。 ゲンロク の {鐘|かね} が {鳴|な}り 、 {船|ふね} が {着|つ}ける 。 || East Landing is back. Genroku's bell rings, and boats can put in.
+!autosave
+!end
+:wait
+el_genroku: {板|いた} が {張|は}られる まで 、 {待|ま}て 。 {急|せ}く な 。 || Wait till the planks are in. Don't rush.
+
+@scene el.bell
+narr: {渡|わた}し{場|ば} の {鐘|かね} 。 {肩|かた} に {波|なみ} の {線|せん} 。 {紐|ひも} を {引|ひ}く と 、 {澄|す}んだ {音|おと} が {入|い}り{江|え} に {響|ひび}く 。 || The landing's bell, a wavy line on its shoulder. Pull the cord and a clear note rings across the inlet.
+
+@scene el.genroku_after
+el_genroku: {朝|あさ} に {掃|は}いて 、 {昼|ひる} に {鐘|かね} を {鳴|な}らす 。 …… {忙|いそが}しく なった わい 。 || Sweep in the morning, ring the bell at noon. …I've got busy.
+?(sea_post_el) el_genroku: セト の {孫娘|まごむすめ} に 、 {返事|へんじ} を {書|か}いた 。 {冬|ふゆ} は {行|い}く と な 。 {郵便|ゆうびん} は 、 あんた の {船|ふね} で {頼|たの}む 。 || I wrote back to the Seto girl. Said I'd come for the winter. Your boat can take the letter.
+
+@scene el.genroku_idle
+el_genroku: …… {砂|すな} は {毎日|まいにち} {来|く}る 。 {掃|は}いて も {掃|は}いて も な 。 || …The sand comes every day. Sweep and sweep.
+
+@scene el.daigo_idle
+daigo: {荷|に} より {砂|すな} の {方|ほう} が {重|おも}い ！ {腰|こし} に {来|く}る ！ || Sand's heavier than cargo! It's in my back!
+
+@scene el.sota_idle
+sota: {網|あみ} を {引|ひ}く より 、 {楽|らく} かも 。 …… いや 、 {嘘|うそ} だ 。 || Easier than hauling nets, maybe. …No, that's a lie.
+
+@scene el.hama_idle
+cs_hama: {古|ふる}い {工房|こうぼう} が あった の は 、 ここ な の ね 。 {先生|せんせい} の {先生|せんせい} の {頃|ころ} よ 。 || So this is where the old workshop was. In my teacher's teacher's day.
+`);
+
+
+/* ==== src/content/el/30_learning.js ==== */
+/* East Landing's language tasks (expansion P11d; plan R6: repair jobs A15, notices A17, negotiation with the old
+ * owners). Each is the same question at the four profiles. Real things are labelled real: 一尺, the old measure. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const task = (id, title, tiers) => (C.challenges[id] = { title, tiers });
+
+  // ---- Genroku's terms ------------------------------------------------------------------------------------------------
+  task('el.terms', T('ゲンロク の {条件|じょうけん}', 'Genroku\'s terms'), {
+    F: [ch({ item: 'v:名前', ctx: { jp: 'ゲンロク ： わし の わたしば だ 。 なまえ を かえる な 。', en: '' }, prompt: { en: 'Which promise answers him?' }, options: [o('なまえ は 「ひがし の わたしば」 の まま です 。', 1), o('あたらしい なまえ に しましょう 。', 0, 'He said: don\'t change the name.'), o('かわり に さかな を あげます 。', 0, 'It isn\'t a trade he wants: he wants the name kept.')] })],
+    E: [ch({ item: 'v:条件', ctx: { jp: 'ゲンロク ： {条件|じょうけん} は {三|みっ}つ だ 。 {名前|なまえ} は そのまま 。 {鐘|かね} を また {鳴|な}らす 。 {掃除|そうじ} は わし が {続|つづ}ける 。', en: '' }, prompt: { en: 'Which proposal meets all three?' }, options: [o('{名前|なまえ} も {鐘|かね} も {残|のこ}して 、 {掃除|そうじ} は ゲンロク さん に お{願|ねが}い します 。', 1), o('{名前|なまえ} は {新|あたら}しく して 、 {鐘|かね} を {鳴|な}らします 。', 0, 'The name stays: that was his first condition.'), o('{掃除|そうじ} は {若|わか}い {人|ひと} が やります から 、 {休|やす}んで ください 。', 0, 'Kindly meant, but he asked to keep the sweeping himself.')] })],
+    I: [ch({ item: 'v:決める', ctx: { jp: 'ゲンロク ： {勝手|かって} に {直|なお}される の は {御免|ごめん} だ 。', en: '' }, prompt: { en: 'He won\'t have it done over his head. How do you put it, so that he decides?' }, options: [o('{直|なお}して も いい か どう か 、 ゲンロク さん に {決|き}めて ほしい ん です 。', 1), o('もう {直|なお}す こと に {決|き}まって います 。', 0, 'That is exactly "over his head": ask him to decide.'), o('{直|なお}さない と 、 {港長|こうちょう} に {怒|おこ}られます よ 。', 0, 'A threat, and someone else\'s: let him decide.')] })],
+    A: [ch({ item: 'v:従来', ctx: { jp: '{一|ひと}つ 、 {名|な} を {改|あらた}めぬ こと 。 {一|ひと}つ 、 {鐘|かね} を {再|ふたた}び {吊|つ}る こと 。 {一|ひと}つ 、 {掃|は}き{手|て} は {従来|じゅうらい} どおり と する こと 。', en: '' }, prompt: { en: 'Genroku has written his terms in an old, formal style. What does he ask?' }, options: [o('{名前|なまえ} を {変|か}えない 。 {鐘|かね} を また {吊|つ}るす 。 {掃除|そうじ} は {今|いま} まで どおり {彼|かれ} が する 。', 1), o('{名前|なまえ} を {改|あらた}める 。 {鐘|かね} を {外|はず}す 。 {掃除|そうじ} は {誰|だれ} か に {任|まか}せる 。', 0, '～ぬ is an old negative: 改めぬ, do not change.'), o('{名前|なまえ} を {変|か}えない 。 {鐘|かね} を {新|あたら}しく する 。 {掃除|そうじ} は {当番|とうばん} で する 。', 0, '再び吊る: hang (the old one) again; 従来どおり: as before, his.')] })],
+  });
+
+  // ---- the notice ---------------------------------------------------------------------------------------------------
+  task('el.notice', T('{手伝|てつだ}い の {貼|は}り{紙|がみ}', 'The notice'), {
+    F: [{ kind: 'order', item: 'g:prt_de', prompt: { en: 'Put the notice together: tomorrow morning, at East Landing, help wanted.' }, tiles: ['あした の あさ 、', 'ひがし の わたしば で 、', 'てつだい を さがして います 。'], answer: ['あした の あさ 、', 'ひがし の わたしば で 、', 'てつだい を さがして います 。'], orderHint: { en: 'When, where (で), then what.' } }],
+    E: [{ kind: 'order', item: 'g:prt_de', prompt: { en: 'Put the notice together: when, where, what.' }, tiles: ['{明日|あした} の {朝|あさ} 、', '{東|ひがし} の {渡|わた}し{場|ば} で 、', '{手伝|てつだ}い を {探|さが}して います 。'], answer: ['{明日|あした} の {朝|あさ} 、', '{東|ひがし} の {渡|わた}し{場|ば} で 、', '{手伝|てつだ}い を {探|さが}して います 。'], orderHint: { en: 'The time, the place with で, and the verb last.' } }],
+    I: [ch({ item: 'v:手伝い', prompt: { en: 'Which notice tells a reader everything they need?' }, options: [o('{明日|あした} の {朝|あさ} 、 {東|ひがし} の {渡|わた}し{場|ば} で {水路|すいろ} を {掘|ほ}ります 。 {手|て} を {貸|か}して くれる {人|ひと} は 、 {来|き}て ください 。', 1), o('{手|て} を {貸|か}して くれる {人|ひと} は 、 {来|き}て ください 。', 0, 'Come where, and when? A notice needs the time and the place.'), o('{東|ひがし} の {渡|わた}し{場|ば} で {水路|すいろ} を {掘|ほ}りました 。', 0, 'The past tense reports work done; a notice asks for help ahead.')] })],
+    A: [ch({ item: 'v:募集', prompt: { en: 'A public notice wants a formal register. Which reads as one?' }, options: [o('{東|ひがし} の {渡|わた}し{場|ば} の {再建|さいけん} に つき 、 {手伝|てつだ}い を {募集|ぼしゅう} します 。 {明朝|みょうちょう} 、 {現地|げんち} に お{集|あつ}まり ください 。', 1), o('{渡|わた}し{場|ば} 、 {直|なお}す から さ 、 {明日|あした} {来|き}て よ 。', 0, 'Friendly, but far too casual for a public notice.'), o('{東|ひがし} の {渡|わた}し{場|ば} の {再建|さいけん} に つき 、 {手伝|てつだ}い を {募集|ぼしゅう} します 。', 0, 'Formal, but it never says when or where to come.')] })],
+  });
+
+  // ---- the channel -----------------------------------------------------------------------------------------------------
+  task('el.channel', T('{水路|すいろ} を {掘|ほ}る', 'Digging the channel'), {
+    F: [{ kind: 'order', item: 'v:掘る', prompt: { en: 'Tell Daigo the order: measure the depth, mark it with stakes, dig between the marks.' }, tiles: ['ふかさ を はかって', 'くい で しるし を つけて', 'しるし の あいだ を ほる'], answer: ['ふかさ を はかって', 'くい で しるし を つけて', 'しるし の あいだ を ほる'], orderHint: { en: 'Measure, mark, dig.' } }],
+    E: [{ kind: 'order', item: 'v:掘る', prompt: { en: 'Tell Daigo the order.' }, tiles: ['{深|ふか}さ を {測|はか}って', '{杭|くい} で {印|しるし} を {付|つ}けて', '{印|しるし} の {間|あいだ} を {掘|ほ}る'], answer: ['{深|ふか}さ を {測|はか}って', '{杭|くい} で {印|しるし} を {付|つ}けて', '{印|しるし} の {間|あいだ} を {掘|ほ}る'], orderHint: { en: 'Measure the depth, mark the line with stakes, then dig.' } }],
+    I: [{ kind: 'order', item: 'g:v_te_kara', prompt: { en: 'Four steps: wait for the tide, then measure, mark and dig.' }, tiles: ['{潮|しお} が {引|ひ}いて から', '{深|ふか}さ を {測|はか}り', '{杭|くい} で {印|しるし} を {付|つ}けて', '{印|しるし} の {間|あいだ} を {掘|ほ}る'], answer: ['{潮|しお} が {引|ひ}いて から', '{深|ふか}さ を {測|はか}り', '{杭|くい} で {印|しるし} を {付|つ}けて', '{印|しるし} の {間|あいだ} を {掘|ほ}る'], orderHint: { en: '～てから first: nothing is dug under water.' } }],
+    A: [ch({ item: 'v:干潮', ctx: { jp: '{作業|さぎょう} は {干潮|かんちょう} の {前後|ぜんご} {二時間|にじかん} に {限|かぎ}る 。 {満|み}ち{潮|しお} の {際|さい} は 、 {杭|くい} を {抜|ぬ}かず に {引|ひ}き{上|あ}げる こと 。', en: '' }, prompt: { en: 'Hama\'s written rule for the work. What does it say?' }, options: [o('{潮|しお} が {一番|いちばん} {引|ひ}く {頃|ころ} の {前後|ぜんご} {二時間|にじかん} だけ {掘|ほ}る 。 {潮|しお} が {満|み}ちて きたら 、 {杭|くい} は {残|のこ}して {上|あ}がる 。', 1), o('{二時間|にじかん} ごと に {掘|ほ}る 。 {満|み}ち{潮|しお} に なったら 、 {杭|くい} を {抜|ぬ}いて {帰|かえ}る 。', 0, '抜かずに: without pulling the stakes out, so the marks stay.'), o('{満|み}ち{潮|しお} の {時|とき} だけ {掘|ほ}る 。', 0, '干潮 is low tide: dig around low water.')] })],
+  });
+
+  // ---- the jetty's planks --------------------------------------------------------------------------------------------
+  task('el.jetty', T('{桟橋|さんばし} の {板|いた}', 'The jetty\'s planks'), {
+    F: [ch({ item: 'g:counters', ctx: { jp: 'すきま は 3 メートル 。 いた は 1 まい で 30 センチ 。', en: '' }, prompt: { en: 'How many planks fill the gap?' }, options: [o('10 まい', 1), o('3 まい', 0, '3 metres is 300 centimetres: 300 ÷ 30.'), o('30 まい', 0, 'Each plank is 30 centimetres wide: 300 ÷ 30 = 10.')] })],
+    E: [ch({ item: 'g:counters', ctx: { jp: '{隙間|すきま} は 3 メートル 。 {板|いた} は {一枚|いちまい} で 30 センチ 。', en: '' }, prompt: { en: 'How many planks fill the gap?' }, options: [o('{十枚|じゅうまい}', 1), o('{三枚|さんまい}', 0, '3 metres is 300 centimetres: 300 ÷ 30.'), o('{三十枚|さんじゅうまい}', 0, 'Each plank is 30 centimetres wide: ten of them.')] })],
+    I: [ch({ item: 'g:counters', ctx: { jp: '{隙間|すきま} が {二|ふた}つ ある 。 {一|ひと}つ は 1.5 メートル 、 もう {一|ひと}つ は 1.2 メートル 。 {板|いた} は {一枚|いちまい} 30 センチ 。', en: '' }, prompt: { en: 'How many planks in all?' }, options: [o('{九枚|きゅうまい}', 1), o('{五枚|ごまい}', 0, 'That fills the first gap only; the second needs four more.'), o('{二十七枚|にじゅうななまい}', 0, '150 ÷ 30 = 5 and 120 ÷ 30 = 4: nine.')] })],
+    A: [ch({ item: 'v:尺', ctx: { jp: '{作業台|さぎょうだい} の {刻|きざ}み{目|め} は 、 {一尺|いっしゃく} ごと 。 {隙間|すきま} は {刻|きざ}み{目|め} {十|とお} {分|ぶん} 。 {板|いた} は {一枚|いちまい} {一尺|いっしゃく} {幅|はば} 。', en: '' }, prompt: { en: 'Hama measures on her notched workbench (real: 一尺 is an old measure, about 30 cm). How many planks?' }, options: [o('{十枚|じゅうまい}', 1), o('{一枚|いちまい}', 0, 'Ten notches is ten 尺; each plank is one 尺 wide.'), o('{三十枚|さんじゅうまい}', 0, '一尺 is about 30 cm, but the gap is counted in 尺: ten.')] })],
   });
 })(RB.content);
 
@@ -155290,7 +155747,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line } = K;
+  const { R, ell, line } = K;
+  // the kit's poly takes a flat [x0, y0, x1, y1, …]; the points here are written as pairs
+  const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   const PP = K.FIX.paper, GL = K.FIX.glow, ST = K.FIX.straw, IK = K.FIX.ink;
   const SHELL = ['#7e5a50', '#b88272', '#dcae9a', '#f0d6c4', '#fbefe4'];
   const MOSS = ['#24402e', '#2e5238', '#40684a', '#5a8460', '#78a07a'];
@@ -158686,7 +159145,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line } = K;
+  const { R, ell, line } = K;
+  // the kit's poly takes a flat [x0, y0, x1, y1, …]; the points here are written as pairs
+  const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   const PP = K.FIX.paper, GL = K.FIX.glow, CL = K.FIX.clay, ST = K.FIX.straw;
   const MOSS = ['#2e3e24', '#3e5230', '#52683c', '#6a8250', '#86a064'];
 
@@ -176183,7 +176644,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line } = K;
+  const { R, ell, line } = K;
+  // the kit's poly takes a flat [x0, y0, x1, y1, …]; the points here are written as pairs
+  const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   art('sea_buoy', {
     box: [-4, -30, 40, 64],
     ink: true,
@@ -176229,8 +176692,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *                      the point (var.sea_trial 1 out, 2 rounded). Flags sea_words, sea_tide, sea_trial_done.
  *   5  the licence     Ōmi's examination: the form, and an interview in an examiner's register; a wrong answer is
  *                      explained and asked again at once. The boat is yours (sea_boat).
- *   6  the maiden voyage and 7 the island: the coast's post to Sazanami and East Landing, and the leaves that lead
- *                      to Kotonoha (the ports, P11d).
+ *   6  the maiden voyage  the coast's post (Ōmi's mailbag) to Uki's stall at Sazanami and to Genroku at East Landing
+ *                      (src/content/sz/, src/content/el/); flags sea_post_sz, sea_post_el.
+ *   7  the island     Isaku's nets at Sazanami: after the winter (Snowbell's story) they bring up written leaves
+ *                      from out west (sea_ko_hint: Kotonoha joins the chart).
+ *   8  the voyage west to the island; arriving there by boat finishes the quest (the island's first landing, if it
+ *                      is the first, is its early visit).
  * Nothing here gates the main story; the quest can be finished after it. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -176248,8 +176715,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       at(T('{船|ふね} の {名前|なまえ} は {決|き}まった 。 {字|じ} を {書|か}く の は 、 {版木|はんぎ}{通|どお}り の ソウベエ の {店|みせ} の {仕事|しごと} だ 。', 'The boat has her name. Painting the letters is the work of Sōbē\'s print shop on Blockprint Row.'), { map: 'mp.workshop', npc: 'mp_sobe' }),
       at(T('{試|ため}し{乗|の}り は 、 {潮硝子|しおがらす} で テツ と 。 {芝居|しばい} の {通|とお}り の {祭|まつ}り が {終|お}わる まで 、 テツ は {渡|わた}し{船|ぶね} で {忙|いそが}しい 。', 'Sea trials are at Saltglass, with Tetsu. Until Playhouse Row\'s festival is over, he is busy with the ferry.'), { map: 'sg.harbor', npc: 'tetsu' }),
       at(T('{港長|こうちょう} の オウミ の {試験|しけん} を {受|う}けよう 。 {書類|しょるい} と 、 {面接|めんせつ} 。', 'Take Harbourmaster Ōmi\'s examination: a form, and an interview.'), { map: 'sg.office', npc: 'omi' }),
-      at(T('{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} と {東|ひがし} の {渡|わた}し{場|ば} へ {運|はこ}ぼう 。', 'The maiden voyage: carry the coast\'s post to Sazanami and East Landing.'), { map: 'sg.harbor', prop: 'boat', x: 36, y: 33 }),
-      at(T('{噂|うわさ} の {島|しま} へ 。', 'To the island of the rumour.'), 'open'),
+      at(T('{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} の ウキ の {店|みせ} と 、 {東|ひがし} の {渡|わた}し{場|ば} の ゲンロク に {届|とど}けよう 。', 'The maiden voyage: carry the coast\'s post to Uki\'s stall at Sazanami and to Genroku at East Landing.'), [{ map: 'sz.hamlet', npc: 'sz_uki' }, { map: 'el.landing', npc: 'el_genroku' }]),
+      at(T('{噂|うわさ} の {島|しま} 。 {漣|さざなみ} の イサク に 、 {海|うみ} が {何|なに} を {運|はこ}んで {来|く}る か {聞|き}こう 。', 'The island of the rumour. Ask Isaku at Sazanami what the sea brings in.'), { map: 'sz.hamlet', npc: 'sz_isaku' }),
+      at(T('{字|じ} の {書|か}いた {葉|は} は 、 {西|にし} の {沖|おき} から {流|なが}れて {来|く}る 。 {海図|かいず} を {開|ひら}いて 、 {西|にし} の {島|しま} へ 。', 'The written leaves drift in from out west. Open the chart and sail for the island.'), { map: 'sz.hamlet', prop: 'boat', x: 22, y: 23 }),
     ],
     reward: { flags: ['sea_licence_done'] },
   };
@@ -176258,6 +176726,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   const it = (id, d) => (C.items[id] = d);
   it('sea_timber_note', { name: T('{材木|ざいもく} の {送|おく}り{状|じょう}', 'The timber\'s delivery note'), key: true, desc: 'Kajirō\'s delivery note for the planking, with the warehouse it was left in worked out. Show it to Take the porter on the pier.' });
+  it('sea_mailbag', { name: T('{郵便|ゆうびん}{袋|ぶくろ}', 'The coast\'s mailbag'), key: true, desc: 'Ōmi\'s canvas mailbag for the maiden voyage: a bundle for Sazanami, to go in the post box at Uki\'s stall, and one letter for East Landing.' });
   it('sea_licence_doc', { name: T('{外海|そとうみ} の {免状|めんじょう}', 'The licence for the open sea'), key: true, desc: 'Signed by Harbourmaster Ōmi of Saltglass: the boat, her master, and the coast\'s post she carries. Folded in oilcloth against the spray.' });
 
   // ---- the yard's people (twelve-chapter journeys) ---------------------------------------------------------------------
@@ -177013,12 +177482,71 @@ omi: {港長|こうちょう} と して は 、 {馬鹿|ばか} な {話|はな
 :been
 omi: {言|こと}の{葉|は}{島|じま} に は 、 もう {渡|わた}し{船|ぶね} で {行|い}った ん だった ね 。 {自分|じぶん} の {船|ふね} で {行|い}く {島|しま} は 、 また {違|ちが}って {見|み}える よ 。 || You've already been to Kotonoha on the ferry, haven't you. An island looks different when you sail there yourself.
 :done
+omi: {最初|さいしょ} の {仕事|しごと} だ 。 {沿岸|えんがん} の {郵便|ゆうびん} 。 {漣|さざなみ} の {束|たば} は ウキ の {店|みせ} の {郵便|ゆうびん}{箱|ばこ} へ 、 {東|ひがし} の {渡|わた}し{場|ば} の {一通|いっつう} は ゲンロク {爺|じい}さん に 。 || Your first job: the coast's post. Sazanami's bundle goes in the post box at Uki's stall, and the one letter for East Landing to old Genroku.
+omi: {東|ひがし} の {渡|わた}し{場|ば} に は 、 {砂|すな} で {船|ふね} が {着|つ}けられない 。 {浜|はま} を {回|まわ}って {歩|ある}いて {行|い}きな 。 || East Landing's silted: no boat can put in there. Walk round the beach.
+!give sea_mailbag
 !quest sea_licence 6
 !journal {免状|めんじょう} を {取|と}った 。 $boat {丸|まる} は {自分|じぶん} の {船|ふね} 。 {潮硝子|しおがらす} の {桟橋|さんばし} から 、 {海図|かいず} を {広|ひろ}げて {出|で}られる 。 || The licence is mine, and the $boat with it. She sails from Saltglass's pier: open the chart aboard her.
 !autosave
 !end
 :rest
 omi: いい よ 。 {続|つづ}き は 、 また {今度|こんど} だ 。 || Fine. We'll carry on another time.
+`);
+
+
+/* ==== src/content/sea/23_voyage.js ==== */
+/* The maiden voyage and after (expansion P11b–d; the quest in 05_licence.js; the ports in src/content/sz/ and
+ * src/content/el/). The mailbag delivered at both ends; the first voyage up the coast; sailing past East Landing while
+ * it is silted; the island reached in your own boat, which finishes the licence (and is the island's early visit if
+ * it is the first landing there). Fishing from the boat and at Sazanami are stations of the after-the-story pastime:
+ * P15 (F-82). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (en) => ({ jp: '', en });
+  // the first voyage up the coast; East Landing seen from the water while it is silted (once a journey)
+  C.seaSituations.first_sz = { kind: 'first', first: 'saltglass-sazanami', scene: 'sea.sit_first_sz', log: T('First voyage up the coast to Sazanami.') };
+  const sea = C.maps[C.seaMap || 'sea.coast'];
+  sea.triggers = (sea.triggers || []).concat([{ x: 33, y: 3, w: 4, h: 7, scene: 'sea.pass_el', if: '!el_done', once: true, id: 'pass_el' }]);
+  // the island by boat
+  C.ports.kotonoha.arrive = 'sea.arrive_kotonoha';
+})(RB.content);
+
+RB.script.add(`
+# ---- the maiden voyage ------------------------------------------------------------------------------------------------
+@scene sea.post_check
+# After each delivery: both bundles delivered moves the licence on.
+!if sea_post_sz&sea_post_el -> both
+!end
+:both
+!take sea_mailbag
+!quest sea_licence 7
+!journal {郵便|ゆうびん}{袋|ぶくろ} は {空|から} に なった 。 {港長|こうちょう} の {言|い}って いた {島|しま} の {噂|うわさ} 。 {漣|さざなみ} の {漁師|りょうし} に 、 {海|うみ} が {何|なに} を {運|はこ}んで {来|く}る か {聞|き}いて みよう 。 || The mailbag is empty. The harbourmaster's rumour of an island: ask Sazanami's fishers what the sea brings in.
+
+@scene sea.sit_first_sz
+narr: {岬|みさき} を {西|にし} へ {回|まわ}る と 、 {緑|みどり} の {斜面|しゃめん} の {下|した} に {網|あみ} の {干|ほ}して ある {村|むら} が {見|み}えた 。 || Round the point to the west, a village with nets hung to dry appears below a green slope.
+?(var.sea_to=sazanami) narr: {漣|さざなみ} だ 。 {桟橋|さんばし} で 、 {誰|だれ} か が {手|て} を {振|ふ}って いる 。 || Sazanami. Someone on the jetty is waving.
+?(!var.sea_to=sazanami) narr: {振|ふ}り{返|かえ}る と 、 {漣|さざなみ} の {網|あみ} が {風|かぜ} に {揺|ゆ}れて いた 。 || Looking back, Sazanami's nets sway in the wind.
+!hook sail_log sight Sazanami's nets
+
+@scene sea.pass_el
+# Sailing past East Landing before it is rebuilt: too shallow to put in.
+narr: {小|ちい}さな {入|い}り{江|え} 。 {砂|すな} が {溜|た}まって 、 {船|ふね} は {入|はい}れそう に ない 。 {桟橋|さんばし} の {根元|ねもと} で 、 {老人|ろうじん} が {一人|ひとり} 、 {箒|ほうき} を {止|と}めて こちら を {見|み}て いる 。 || A small inlet, silted with sand: no boat could get in. At the foot of a jetty an old man stops sweeping and watches you pass.
+!hook sail_log sight East Landing, silted
+
+# ---- the island in your own boat --------------------------------------------------------------------------------------
+@scene sea.arrive_kotonoha
+# Ashore on the island's jetty from your own boat. The first landing anywhere is the island's own first sight; the
+# licence's last leg ends here.
+?(!ko_arrived) !call ko.first_sight
+!if quest.sea_licence=8 -> done
+!end
+:done
+narr: $boat {丸|まる} を {桟橋|さんばし} に {繋|つな}ぐ 。 {港長|こうちょう} の {噂|うわさ} の {島|しま} に 、 {自分|じぶん} の {船|ふね} で {着|つ}いた 。 || You tie the $boat up at the jetty. The island of the harbourmaster's rumour, reached in your own boat.
+!quest sea_licence done
+!journal {自分|じぶん} の {船|ふね} で 、 {西|にし} の {島|しま} に {着|つ}いた 。 {外海|そとうみ} の {免状|めんじょう} の {旅|たび} は 、 ここ まで 。 || In my own boat, to the island out west. The licence's journey ends here.
+!autosave
 `);
 
 
@@ -177825,6 +178353,545 @@ var RB = (globalThis.RB = globalThis.RB || {});
     b.problems.forEach((p) => SH.bankProblems.push(d.id + ': ' + p));
   }
 })();
+
+
+/* ==== src/content/sz/00_lex.js ==== */
+/* Sazanami's and East Landing's lexicon (expansion P11d): the hamlet, the market, the nets, the tide pools and the
+ * school; the landing, its terms, its notice and its repairs. Format: w|r|pos|lv|meaning|note (docs/CONTENT.md).
+ * Fictional names are marked as such; deliberately wrong forms in tasks are marked "not a word". */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.lex.add(RB.lex.parseTable(`
+# ---- Sazanami ------------------------------------------------------------------------------------------------------
+漁村|ぎょそん|n|I|a fishing village
+水揚げ|みずあげ|n|I|a catch landed, the day's landing (of fish)
+大漁|たいりょう|n|I|a big catch
+海藻|かいそう|n|I|seaweed
+奴ら|やつら|n|I|(rough) those people, that lot
+獲る|とる|v5r|I|to catch (fish, game)
+尾|び|ctr|A|counter for fish (at markets, in writing)
+二十四尾|にじゅうよんび|n|A|twenty-four (fish)
+二十七尾|にじゅうななび|n|A|twenty-seven (fish)
+三尾|さんび|n|A|three (fish)
+三十七|さんじゅうなな|n|E|thirty-seven
+十九|じゅうきゅう|n|E|nineteen
+いっぴき|いっぴき|exp|F|one (animal): 一匹
+さんびき|さんびき|exp|F|three (animals): 三匹
+さんぴき|さんぴき|exp|F|(not a word: 三匹 is さんびき)
+ろっぴき|ろっぴき|exp|F|six (animals): 六匹
+ろくびき|ろくびき|exp|F|(not a word: 六匹 is ろっぴき)
+ひき|ひき|ctr|F|counter for small animals and fish (匹)
+ぴき|ぴき|exp|F|匹 after いち, ろく, はち, じゅう (いっぴき)
+びき|びき|exp|F|匹 after さん and なん (さんびき)
+ぴ|ぴ|exp|F|the kana ぴ
+ぽ|ぽ|exp|F|the kana ぽ
+っ|っ|exp|F|the small kana っ (a short stop)
+じゅっ|じゅっ|exp|F|十 run together with what follows (じゅっぴき, じゅっぽん)
+言い易い|いいやすい|adj-i|I|easy to say
+ヤトカリ|ヤトカリ|exp|F|(not a word: ヤドカリ written without its dots)
+ヤトガリ|ヤトガリ|exp|F|(not a word: the dots on the wrong letter)
+イソギンチャク||n|I|a sea anemone
+教室|きょうしつ|n|E|a classroom
+教壇|きょうだん|n|A|a teacher's platform
+授業料|じゅぎょうりょう|n|I|tuition, a fee for lessons
+一時間目|いちじかんめ|n|I|the first lesson (of the school day)
+生物|せいぶつ|n|I|living things, creatures
+採取|さいしゅ|vs|A|gathering, collecting (specimens)
+転石|てんせき|n|A|a loose stone (on a shore)
+原状|げんじょう|n|A|the original state
+復する|ふくする|exp|A|(written) to restore, to return (to a state)
+転がす|ころがす|v5s|I|to roll
+ひっくり返す|ひっくりかえす|v5s|I|to turn over
+別々|べつべつ|adj-na|I|separate, each its own
+きつい|きつい|adj-i|E|tight; hard
+# ---- East Landing --------------------------------------------------------------------------------------------------
+掃く|はく|v5k|E|to sweep
+掃き手|はきて|n|A|the one who sweeps
+箒|ほうき|n|I|a broom
+従来|じゅうらい|n|A|until now, as before
+改める|あらためる|v1|I|to change, to renew
+改めぬ|あらためぬ|exp|A|(old written negative of 改める) not to change
+柝|き|n|A|wooden clappers (struck before a play begins)
+荷揚げ|にあげ|n|I|unloading cargo
+闇雲|やみくも|n|A|(闇雲に) at random, blindly
+明朝|みょうちょう|n|A|tomorrow morning (formal)
+現地|げんち|n|I|the place itself, on site
+作業|さぎょう|vs|I|work, a job
+センチ||n|E|centimetre
+一尺|いっしゃく|n|A|one shaku, an old measure of about 30 cm
+孫娘|まごむすめ|n|I|a granddaughter
+`));
+
+
+/* ==== src/content/sz/01_region.js ==== */
+/* Sazanami (漣, "ripples"), a fishing hamlet up the coast from Saltglass (expansion P11d; plan 07_REGIONS.md R6;
+ * docs/future/work/P11_SEA.md). Where, in Chapter 2's talk, Kiyo's elder son works. A port for the boat and a walk
+ * up the coast road from Saltglass's road (west). Twelve-chapter journeys only. Here: its palette, its place on the
+ * route chart, the road and the port, the hamlet's map and people, its three side stories and the wiring. The scenes
+ * are in 20_scenes.js, the tasks in 30_learning.js.
+ *   sz_market  The Morning Catch: Uki calls the catch at the market; tally it (counters: 匹, 杯, 尾) and the totals.
+ *   sz_nets    The Torn Net: Yone mends nets by the racks; find the torn meshes, then the knot, step by step.
+ *   sz_school  The Tide-Pool School: Mina and Riku ask what lives in the pools; the player teaches, three lessons
+ *              (katakana names and their dakuten, counting creatures, a sign by the pools).
+ * Isaku (Kiyo's elder son) keeps the jetty; on the maiden voyage the hamlet's post is left at Uki's stall, and after
+ * the winter (Snowbell's story) his nets bring up written leaves: the hint that leads to the island. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const TL = RB.tiles;
+  // weathered wood and tarred nets, a pale shingle beach, sea pinks on the slope, a cold green sea
+  TL.PAL.sazanami = Object.assign({}, TL.PAL.saltglass || {}, {
+    grass: ['#7a9a6e', '#8aaa7a', '#a2c08e', '#5e7e56'], sand: ['#d6ccb4', '#e4dcc8', '#bab09a'],
+    water: ['#2e7484', '#3a8494', '#62a8b2', '#e0f0ee'], wood: ['#7a6450', '#927a62', '#5e4c3c', '#b09878'],
+    roof: ['#5a4a42', '#4a3c36', '#3a2e2a', '#7a6658'], flower: ['#e8a0b0', '#f0c8d0', '#ffffff', '#d07088'],
+    sky: '#d8e6e6', dark: '#121a1c',
+  });
+  TL.addRamps(TL.PAL.sazanami);
+
+  // ---- the chart, the road and the port ----------------------------------------------------------------------------
+  C.places.sazanami = {
+    name: T('Sazanami', '{漣|さざなみ}'), map: 'sz.hamlet', x: 42, y: 10, dir: 'left', pos: [112, 252], region: 'sazanami',
+    desc: 'A fishing hamlet up the coast from Saltglass: nets drying, a little market, tide pools at the point.', edition: 2,
+  };
+  C.roads.push(['saltglass', 'sazanami', { edition: 2 }]);
+  C.ports.sazanami = { place: 'sazanami', name: T('Sazanami', '{漣|さざなみ}'),
+    dock: { map: 'sz.hamlet', x: 21, y: 23, dir: 'right' }, boat: { x: 22, y: 23 },
+    sea: { x: 10, y: 9, dir: 'down' }, zone: { x: 8, y: 2, w: 5, h: 7 }, arrive: 'sz.arrive_boat' };
+
+  // ---- the people ---------------------------------------------------------------------------------------------------
+  const ch = (id, d) => (C.chars[id] = d);
+  // Isaku: Kiyo's elder son, a young fisher who keeps the jetty; easy-going, says little about home (he/him)
+  ch('sz_isaku', {
+    name: T('Isaku', 'イサク'), voice: { pitch: 0.88 },
+    look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#4a6a8a', '#38526a', '#e8e0cc'], shape: 'tunic', acc: ['headband'], bandCol: '#e8e0cc' },
+    portrait: { eyes: 'sharp', style: 'short', acc: ['headband'], bandCol: '#e8e0cc', mole: true, bg: '#243040' },
+  });
+  // Yone: the hamlet's net-mender, old and quick, who counts meshes under her breath (she/her)
+  ch('sz_yone', {
+    name: T('Yone', 'ヨネ'), voice: { pitch: 0.8 },
+    look: { skin: 2, hair: 'wrap', wrapCol: '#6a5a4a', hairColor: 6, cloth: ['#6a6a5a', '#525246', '#d8ccb0'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'wrap', wrapCol: '#6a5a4a', age: 'old', bg: '#2a2a22' },
+  });
+  // Uki: calls the catch at the market and keeps the hamlet's post box at her stall (she/her)
+  ch('sz_uki', {
+    name: T('Uki', 'ウキ'), voice: { pitch: 1.06 },
+    look: { skin: 4, hair: 'ponytail', hairColor: 2, cloth: ['#c8a050', '#a8843c', '#4a3a2a'], shape: 'apron', acc: ['headband'], bandCol: '#c84a3a' },
+    portrait: { eyes: 'round', style: 'ponytail', acc: ['headband'], bandCol: '#c84a3a', collar: 'apron', bg: '#3a2c1c' },
+  });
+  // Mina and Riku: the hamlet's children, who have the pools for a classroom (she/her; he/him)
+  ch('sz_mina', {
+    name: T('Mina', 'ミナ'), voice: { pitch: 1.3 }, size: 'child',
+    look: { skin: 3, hair: 'bob', hairColor: 1, cloth: ['#d07088', '#a85a6e', '#f0e6d6'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'bob', bg: '#3a2430' },
+  });
+  ch('sz_riku', {
+    name: T('Riku', 'リク'), voice: { pitch: 1.24 }, size: 'child',
+    look: { skin: 4, hair: 'spiky', hairColor: 1, cloth: ['#5a8a6a', '#467054', '#e8e0cc'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'spiky', bg: '#24382c' },
+  });
+
+  // ---- the hamlet ---------------------------------------------------------------------------------------------------
+  C.maps['sz.hamlet'] = {
+    name: T('Sazanami', '{漣|さざなみ}'), region: 'sazanami', place: 'sazanami', travel: 'sazanami', music: 'sazanami', edition: 2,
+    ambient: { weather: null },
+    terrain: K.build(44, 28, '.', (k) => {
+      k.ragged('top', 'T', 2, 1101);                 // the wooded slope behind the hamlet
+      k.scatter(',', 10, 1102, [0, 3, 44, 5], '.');    // sea pinks
+      k.path([[43, 10], [3, 10]], ':', 2);           // the coast road, through the hamlet
+      k.path([[22, 11], [22, 16]], ':', 2);          // down to the jetty
+      k.path([[6, 11], [6, 14]], ':', 1);            // down to the pools
+      k.rect(0, 15, 44, 5, 's');                     // the shingle beach
+      k.rect(0, 19, 44, 1, 'w');                     // the waterline
+      k.rect(0, 20, 44, 8, '~');                     // the sea
+      k.rect(1, 15, 9, 4, 'w');                      // the tide pools at the point
+      k.scatter('h', 7, 1103, [1, 15, 9, 4], 'w');
+      k.rect(20, 17, 2, 8, '_');                     // the jetty
+      k.scatter('h', 4, 1104, [30, 16, 13, 3], 's');
+    }),
+    structs: [
+      { type: 'house', x: 5, y: 5, w: 5, h: 3, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], shut: T('Yone\'s house. Nets hang drying on the wall.', 'ヨネ の {家|いえ} 。 {壁|かべ} に {網|あみ} が {干|ほ}して ある 。') },
+      { type: 'house', x: 13, y: 4, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 4], shut: T('The net shed, shut. It smells of pine tar and rope.', '{網|あみ} の {小屋|こや} 。 {閉|し}まって いる 。 {松|まつ}やに と {縄|なわ} の {匂|にお}い が する 。') },
+      { type: 'house', x: 27, y: 4, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4, 5], shut: T('Isaku\'s room, over the fish store.', '{魚|さかな} の {倉|くら} の {上|うえ} の 、 イサク の {部屋|へや} 。') },
+      { type: 'house', x: 35, y: 5, w: 5, h: 3, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], shut: T('A fisher family\'s house. Someone is singing inside.', '{漁師|りょうし} の {家|いえ} 。 {中|なか} から {歌|うた} が {聞|き}こえる 。') },
+    ],
+    props: [
+      { p: 'ko_netrack', x: 11, y: 13, scene: 'sz.netrack' }, { p: 'ko_netrack', x: 14, y: 13 }, { p: 'ko_netrack', x: 17, y: 13 },
+      { p: 'counter', x: 26, y: 13, across: true, scene: 'sz.stall' }, { p: 'crate', x: 29, y: 13 }, { p: 'barrel', x: 30, y: 13 },
+      { p: 'ko_basket', x: 25, y: 14 }, { p: 'table', x: 32, y: 13 },
+      { p: 'sign', x: 8, y: 13, scene: 'sz.pools_sign' },
+      { p: 'sign', x: 40, y: 11, scene: 'sz.road_sign' },
+      { p: 'pier', x: 20, y: 24 }, { p: 'pier', x: 21, y: 24 },
+      { p: 'boat', x: 24, y: 21 }, { p: 'boat', x: 16, y: 22 },
+      { p: 'bench', x: 34, y: 12 }, { p: 'lantern', x: 23, y: 16, o: { lit: true } },
+    ],
+    npcs: [
+      { id: 'sz_isaku', x: 23, y: 17, dir: 'down', talk: [{ scene: 'sz.isaku_idle' }] },
+      { id: 'sz_yone', x: 14, y: 14, dir: 'up', talk: [{ scene: 'sz.yone_idle' }] },
+      { id: 'sz_uki', x: 28, y: 14, dir: 'down', talk: [{ scene: 'sz.uki_idle' }] },
+      { id: 'sz_mina', x: 4, y: 14, dir: 'down', talk: [{ scene: 'sz.mina_idle' }] },
+      { id: 'sz_riku', x: 7, y: 14, dir: 'left', talk: [{ scene: 'sz.riku_idle' }] },
+    ],
+    exits: [{ x: 43, y: 10, w: 1, h: 2, to: 'sg.road', tx: 1, ty: 10, dir: 'right' }],
+    onEnter: [{ scene: 'sz.first', if: '!sz_seen' }],
+    spawn: { default: [41, 10, 'left'], from_road: [41, 10, 'left'] },
+  };
+  C.seaBoatAt('sazanami'); // (the sea's file, which adds the other ports' boats, loads before this one)
+
+  // the coast road west from Saltglass's road (twelve-chapter journeys)
+  const road = C.maps['sg.road'];
+  // (by position, not a named spawn: the six-chapter road's geometry stays the base's)
+  road.exits.push({ x: 0, y: 10, w: 1, h: 2, to: 'sz.hamlet', sp: 'from_road', dir: 'left', if: 'ed>=2' });
+
+  // ---- the side stories ---------------------------------------------------------------------------------------------
+  const Q = (id, title, stages) => (C.quests[id] = { chapter: 'sea', title, stages, reward: { flags: [id + '_done'] } });
+  const at = (o, a) => Object.assign(o, { at: a });
+  const J = (jp, en) => ({ jp, en });
+  Q('sz_market', J('{朝|あさ} の {水揚|みずあ}げ', 'The Morning Catch'), [
+    at(J('ウキ の {代|か}わり に 、 {朝|あさ} の {水揚|みずあ}げ を {数|かぞ}えよう 。', 'Count the morning\'s catch for Uki.'), { map: 'sz.hamlet', npc: 'sz_uki' }),
+  ]);
+  Q('sz_nets', J('{破|やぶ}れた {網|あみ}', 'The Torn Net'), [
+    at(J('ヨネ の {網|あみ} の {破|やぶ}れ を {探|さが}して 、 {繕|つくろ}おう 。', 'Find the tears in Yone\'s net and mend them.'), { map: 'sz.hamlet', npc: 'sz_yone' }),
+  ]);
+  Q('sz_school', J('{潮|しお}だまり の {学校|がっこう}', 'The Tide-Pool School'), [
+    at(J('ミナ と リク に 、 {潮|しお}だまり の こと を {教|おし}えよう 。 {三|みっ}つ の {授業|じゅぎょう} 。', 'Teach Mina and Riku about the tide pools: three lessons.'), { map: 'sz.hamlet', npc: 'sz_mina' }),
+  ]);
+  C.questOnly = C.questOnly || {};
+  for (const id of ['sz_market', 'sz_nets', 'sz_school']) C.questOnly[id] = 'ed>=2';
+
+  // ---- the wiring --------------------------------------------------------------------------------------------------
+  const npc = (id) => C.maps['sz.hamlet'].npcs.find((n) => n.id === id);
+  npc('sz_uki').talk.unshift(
+    { if: 'item.sea_mailbag&!sea_post_sz', scene: 'sz.uki_post' },
+    { if: 'quest.sz_market=0', scene: 'sz.uki_market' },
+    { if: '!quest.sz_market', scene: 'sz.uki_first' },
+    { if: 'quest.sz_market=done', scene: 'sz.uki_after' });
+  npc('sz_yone').talk.unshift(
+    { if: 'quest.sz_nets=0', scene: 'sz.yone_nets' },
+    { if: '!quest.sz_nets', scene: 'sz.yone_first' },
+    { if: 'quest.sz_nets=done', scene: 'sz.yone_after' });
+  npc('sz_mina').talk.unshift(
+    { if: 'quest.sz_school=0', scene: 'sz.school_lesson' },
+    { if: '!quest.sz_school', scene: 'sz.school_ask' },
+    { if: 'quest.sz_school=done', scene: 'sz.mina_after' });
+  npc('sz_riku').talk.unshift(
+    { if: 'quest.sz_school=0', scene: 'sz.school_lesson' },
+    { if: 'quest.sz_school=done', scene: 'sz.riku_after' });
+  // Isaku: a letter from his mother on the maiden voyage; after the winter, what his nets bring up
+  npc('sz_isaku').talk.unshift(
+    { if: 'ed>=2&ch4_done&quest.sea_licence=7&!sea_ko_hint', scene: 'sz.isaku_leaves' },
+    { if: 'quest.sea_licence=7&!ch4_done', scene: 'sz.isaku_winter' },
+    { if: '!seen.sz.isaku_first', scene: 'sz.isaku_first' });
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/sz/20_scenes.js ==== */
+/* Sazanami's scenes (expansion P11d; the map, people and quests in 01_region.js, the tasks in 30_learning.js). The
+ * first sight of the hamlet; Isaku at the jetty (his mother's letter, the winter's storms, the written leaves in his
+ * nets that point west); Uki's market and the hamlet's post; Yone's torn net; the tide-pool school, where the player
+ * teaches Mina and Riku. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+# ---- arriving --------------------------------------------------------------------------------------------------------
+@scene sz.first
+# The first sight of the hamlet, on foot down the coast road or ashore from the jetty: nets drying on racks, a little
+# market by the jetty, children at the pools on the point.
+!set sz_seen
+!travel sazanami
+narr: {小|ちい}さな {漁村|ぎょそん} 。 {網|あみ} が {風|かぜ} に {揺|ゆ}れ 、 {桟橋|さんばし} の {横|よこ} で {市|いち} が {立|た}って いる 。 {岬|みさき} の {潮|しお}だまり で 、 {子|こ}ども が {二人|ふたり} {遊|あそ}んで いる 。 || A small fishing hamlet. Nets sway in the wind; by the jetty a market is going. Out on the point, two children play at the tide pools.
+?(comp=nao) comp: {漣|さざなみ} か 。 {郵便|ゆうびん} は {月|つき} に {一度|いちど} 。 …… {待|ま}って いる {手紙|てがみ} が 、 たくさん ありそう だ 。 || Sazanami. Post once a month. …There must be a lot of letters people are waiting for.
+?(comp=mio) comp[smile]: {潮|しお} の {匂|にお}い 。 {潮硝子|しおがらす} より 、 {少|すこ}し {静|しず}か です ね 。 || The smell of the sea. A little quieter than Saltglass.
+?(comp=ren) comp: {灯籠|とうろう} が {一|ひと}つ も ありません 。 ここ で は 、 {海|うみ} が {道|みち} な の です ね 。 || Not one lantern. Here, the sea is the road.
+?(comp=suzu) comp[smile]: {舞台|ぶたい} は {小|ちい}さい けど 、 {役者|やくしゃ} は {揃|そろ}ってる わ ね 。 || A small stage, but the whole cast is here.
+
+@scene sz.arrive_boat
+# Ashore from the boat at the jetty.
+?(!sz_seen) !call sz.first
+
+@scene sz.road_sign
+narr: {道標|みちしるべ} 。 「{東|ひがし} 　{潮硝子|しおがらす}」 。 || A signpost: "East: Saltglass".
+
+@scene sz.netrack
+narr: {網|あみ} が {干|ほ}して ある 。 {繕|つくろ}った {跡|あと} が 、 {新|あたら}しい {糸|いと} の {色|いろ} で {分|わ}かる 。 || Nets hung up to dry. The mended places show in the colour of the new twine.
+
+@scene sz.stall
+narr: {台|だい} の {上|うえ} に 、 {今朝|けさ} の {魚|さかな} 。 {端|はし} に 、 {郵便|ゆうびん} の {箱|はこ} が {置|お}いて ある 。 || This morning's fish on the counter. At one end sits the hamlet's post box.
+
+@scene sz.pools_sign
+narr: {立|た}て{札|ふだ} ： 「{貝|かい} を {取|と}らないで ください 。 {石|いし} は {元|もと} に {戻|もど}して ください 。」 || A notice: "Please don't take the shellfish. Please put the stones back as you found them."
+
+# ---- Isaku ----------------------------------------------------------------------------------------------------------
+@scene sz.isaku_first
+!faceplayer
+sz_isaku: よう 。 {潮硝子|しおがらす} から {来|き}た の か 。 || Hey. Come from Saltglass?
+sz_isaku: {市場|いちば} の キヨ を {知|し}ってる か ？ {俺|おれ} の {母|はは} だ 。 …… {元気|げんき} に してる か な 。 {顔|かお} を {見|み}せ に {帰|かえ}れ と 、 {毎月|まいつき} {手紙|てがみ} が {来|く}る 。 || Know Kiyo at the market? She's my mother. …Hope she's well. Every month she writes telling me to come home and show my face.
+?(comp=nao) comp: {毎月|まいつき} {届|とど}く {手紙|てがみ} か 。 …… {返事|へんじ} は 、 {書|か}いて やれ よ 。 || A letter every month, eh. …Write back, at least.
+
+@scene sz.isaku_idle
+!faceplayer
+?(sea_post_sz) sz_isaku: {母|はは} から {手紙|てがみ} が {来|き}た 。 {魚|さかな} ばかり {食|た}べて ない で 、 {野菜|やさい} も {食|た}べろ 、 だ と さ 。 …… {漁師|りょうし} に {言|い}う こと か 。 || A letter from my mother. Don't just eat fish, eat your vegetables too, she says. …To a fisherman.
+?(!sea_post_sz) sz_isaku: {今日|きょう} は {波|なみ} が {穏|おだ}やか だ 。 {網|あみ} を {入|い}れる に は いい 。 || The sea's calm today. Good for putting the nets out.
+
+@scene sz.isaku_winter
+# The licence's last leg, before Snowbell's story is over: nothing in the nets yet.
+!faceplayer
+sz_isaku: {変|へん} な もの ？ …… {今|いま} は 、 {魚|さかな} と {海藻|かいそう} だけ だ 。 || Anything strange? …Just now, only fish and seaweed.
+sz_isaku: だが {冬|ふゆ} の {嵐|あらし} の {後|あと} は 、 {西|にし} から {色々|いろいろ} {流|なが}れて {来|く}る 。 {冬|ふゆ} が {明|あ}けたら 、 また {来|き}な 。 || But after the winter storms, all sorts drifts in from the west. Come back once the winter's over.
+
+@scene sz.isaku_leaves
+# After the winter (Snowbell's story): Isaku brings up a net with written leaves caught in its meshes. They drift from
+# the west, where the old fishers say an island lies past the charts. The island's hint (the port joins the chart).
+!faceplayer
+sz_isaku: {来|き}た か 。 {見|み}せたい もの が ある 。 || There you are. I've something to show you.
+!gesture sz_isaku point 21,20
+narr: イサク が {網|あみ} を {引|ひ}き{上|あ}げる 。 {網|あみ} の {目|め} に 、 {金色|きんいろ} の {葉|は} が {何枚|なんまい} も {引|ひ}っかかって いる 。 {一枚|いちまい} {一枚|いちまい} に 、 {薄|うす}く {字|じ} が {書|か}いて ある 。 || Isaku hauls up a net. Caught in its meshes are gold leaves, many of them, and on each one, faintly, there is writing.
+sz_isaku: {冬|ふゆ} の {嵐|あらし} の {後|あと} から 、 {毎朝|まいあさ} これ だ 。 {潮|しお} は {西|にし} から {来|く}る 。 {爺|じい}さん たち は 、 {西|にし} の {沖|おき} に {島|しま} が ある と {言|い}う 。 {海図|かいず} に は ない {島|しま} だ 。 || Every morning since the winter storms, it's this. The tide comes from the west. The old men say there's an island out west. One that isn't on any chart.
+?(comp=nao) comp: …… {郵便|ゆうびん} の {札|ふだ} の {字|じ} みたい な {葉|は} も ある 。 {港長|こうちょう} の {言|い}って いた {島|しま} か 。 || …Some of these look like the writing on a postal tag. The island the harbourmaster talked about?
+?(comp=mio) comp[think]: {字|じ} の {書|か}いて ある {葉|は} …… 。 {潮|しお} を {辿|たど}れば 、 {島|しま} に {着|つ}く かも しれません 。 || Leaves with writing… If we follow the tide, we might reach the island.
+?(comp=ren) comp: {墨|すみ} の {色|いろ} が 、 {一枚|いちまい} ずつ {違|ちが}います 。 {別々|べつべつ} の {人|ひと} が {書|か}いた {字|じ} です 。 || The ink is a different colour on each one. Different people wrote these.
+?(comp=suzu) comp[surprise]: {台本|だいほん} の {切|き}れ{端|はし} みたい ね 。 {続|つづ}き は 、 {西|にし} の {島|しま} に ある の かしら 。 || Like scraps of a script. Is the rest of it on the island out west?
+sz_isaku: {潮|しお} に {乗|の}って {西|にし} へ {行|い}けば 、 {着|つ}く かも な 。 {自分|じぶん} の {船|ふね} が ある なら 、 {行|い}って みろ よ 。 || Ride the tide west and you might get there. You've a boat of your own: go and see.
+!set sea_ko_hint
+!quest sea_licence 8
+!journal {漣|さざなみ} の {網|あみ} に 、 {字|じ} の {書|か}いて ある {葉|は} 。 {西|にし} の {沖|おき} の {島|しま} から {流|なが}れて {来|く}る らしい 。 {海図|かいず} に 、 {新|あたら}しい {行|い}き{先|さき} が {増|ふ}えた 。 || Written leaves in Sazanami's nets, drifting in from an island out west. A new destination on the chart.
+
+# ---- Uki: the market and the post -------------------------------------------------------------------------------------
+@scene sz.uki_first
+!faceplayer
+sz_uki: いらっしゃい ！ {朝|あさ} の {水揚|みずあ}げ だ よ ！ …… あ 、 {客|きゃく} じゃ ない ね 。 {旅|たび} の {人|ひと} だ 。 || Come and see! The morning catch! …Oh, you're not buying, you're travelling.
+sz_uki: ちょうど いい 。 {帳面|ちょうめん} を {付|つ}ける {人|ひと} が {寝坊|ねぼう} して ね 。 {数|かず} を {数|かぞ}えて くれない ？ || Perfect timing. The one who keeps the tally overslept. Would you count for me?
+!choice
+* {手伝|てつだ}います 。 || I'll help. -> yes
+* また {今度|こんど} 。 || Another time. -> end
+:yes
+!quest sz_market 0
+!call sz.uki_market
+
+@scene sz.uki_market
+!faceplayer
+sz_uki: {言|い}う よ ！ {書|か}いて ！ || I'll call them out! You write!
+!challenge sz.market
+!if var._res=1 -> ok
+sz_uki: あれ 、 {合|あ}わない ね 。 {後|あと} で もう {一回|いっかい} {数|かぞ}えよう 。 || Hm, that doesn't add up. We'll count again later.
+!end
+:ok
+sz_uki[happy]: {合|あ}ってる ！ {助|たす}かった よ 。 {寝坊|ねぼう} した {奴|やつ} より 、 {速|はや}い くらい だ 。 || That's right! What a help. Quicker than the one who overslept, even.
+!quest sz_market done
+
+@scene sz.uki_post
+# The maiden voyage: the hamlet's bundle from the mailbag, into the post box at Uki's stall.
+!faceplayer
+sz_uki: {郵便|ゆうびん} ？ {潮硝子|しおがらす} から ？ …… {月|つき} の {半|なか}ば に ？ || Post? From Saltglass? …In the middle of the month?
+narr: {郵便|ゆうびん}{袋|ぶくろ} から 、 {漣|さざなみ} {宛|あて} の {束|たば} を {出|だ}して {渡|わた}した 。 || You take the bundle for Sazanami from the mailbag and hand it over.
+sz_uki[happy]: {本当|ほんとう} だ ！ イサク 、 お{母|かあ}さん から だ よ ！ …… これ から は 、 {船|ふね} で {来|く}る の ？ {月|つき} に {一度|いちど} じゃ なく て ？ || It really is! Isaku, one from your mother! …From now on it comes by boat? Not once a month?
+!set sea_post_sz
+!call sea.post_check
+
+@scene sz.uki_after
+sz_uki: {今日|きょう} も {大漁|たいりょう} だ よ ！ {数|かぞ}える の は 、 {自分|じぶん} で やる けど ね 。 || Another good catch today! I'm doing the counting myself, though.
+
+@scene sz.uki_idle
+sz_uki: いらっしゃい ！ {見|み}る だけ でも いい よ ！ || Come and look! Looking's free!
+
+# ---- Yone: the torn net -------------------------------------------------------------------------------------------
+@scene sz.yone_first
+!faceplayer
+sz_yone: …… {目|め} が {悪|わる}く なって ね 。 {網|あみ} の {破|やぶ}れ が 、 よく {見|み}えない の さ 。 || …My eyes aren't what they were. I can't make out the tears in a net any more.
+sz_yone: {若|わか}い {目|め} を {貸|か}して おくれ 。 {破|やぶ}れた {目|め} を {見|み}つけて 、 {繕|つくろ}い {方|かた} を {一緒|いっしょ} に 。 || Lend me young eyes. Find the torn meshes, and we'll mend them together.
+!choice
+* {手伝|てつだ}います 。 || I'll help. -> yes
+* また {今度|こんど} 。 || Another time. -> end
+:yes
+!quest sz_nets 0
+!call sz.yone_nets
+
+@scene sz.yone_nets
+!faceplayer
+!if var.sz_net>=1 -> knot
+sz_yone: どこ が {破|やぶ}れて いる か 、 {言|い}って おくれ 。 || Tell me where it's torn.
+!challenge sz.net_find
+!if var._res=1 -> found
+sz_yone: {急|いそ}がない よ 。 {網|あみ} は {逃|に}げない 。 || No hurry. The net isn't going anywhere.
+!end
+:found
+!var sz_net = 1
+sz_yone: そこ だ ね 。 では 、 {繕|つくろ}おう 。 || There, is it. Now, let's mend it.
+:knot
+!challenge sz.net_knot
+!if var._res=1 -> done
+sz_yone: {順番|じゅんばん} が {大事|だいじ} なん だ よ 。 また {後|あと} で 。 || The order's what matters. Later, then.
+!end
+:done
+sz_yone[smile]: …… いい {結|むす}び{目|め} だ 。 {孫|まご} に {教|おそ}わった と {言|い}って おこう 。 {本当|ほんとう} は {孫|まご} なんて いない けど ね 。 || …A good knot. I'll say my grandchild taught me. Not that I have one.
+!quest sz_nets done
+
+@scene sz.yone_after
+sz_yone: {目|め} は {悪|わる}く なって も 、 {手|て} は {覚|おぼ}えて いる もん だ ね 。 || My eyes may go, but my hands remember.
+
+@scene sz.yone_idle
+sz_yone: {網|あみ} は 、 {魚|さかな} より {先|さき} に {風|かぜ} を {捕|つか}まえる 。 {干|ほ}す {時|とき} は 、 {気|き} を つけな 。 || A net catches the wind before it catches a fish. Mind that, when you hang one out.
+
+# ---- the tide-pool school ----------------------------------------------------------------------------------------
+@scene sz.school_ask
+# Mina and Riku's teacher has gone to Saltglass for the season; they ask the traveller to be their teacher at the
+# pools. The player teaches: three lessons, one each time you talk to either child.
+!faceplayer
+sz_mina: ねえ 、 {先生|せんせい} に なって くれる ？ {学校|がっこう} の {先生|せんせい} が 、 {潮硝子|しおがらす} に {行|い}っちゃった の 。 || Hey, will you be our teacher? Our school teacher's gone off to Saltglass.
+sz_riku: {潮|しお}だまり が {教室|きょうしつ} な ん だ 。 {生|い}き{物|もの} の {名前|なまえ} 、 {教|おし}えて ！ || The tide pools are our classroom. Teach us the creatures' names!
+?(comp=nao) comp: {先生|せんせい} か 。 …… {宛名|あてな} の {読|よ}み{方|かた} なら 、 {俺|おれ} も {教|おし}えられる が な 。 || Teacher, eh. …Reading addresses, I could teach.
+?(comp=mio) comp[smile]: {先生|せんせい} です って 。 {頑張|がんば}って ください ね 。 || Teacher, they say. Do your best.
+?(comp=ren) comp: {教|おし}える と 、 {自分|じぶん} も {覚|おぼ}え{直|なお}します 。 いい {授業|じゅぎょう} に なります よ 。 || Teaching, you learn it again yourself. It'll be a good lesson.
+?(comp=suzu) comp[smile]: {教壇|きょうだん} も {舞台|ぶたい} の {一|ひと}つ よ 。 {声|こえ} を {張|は}って ね 。 || A teacher's platform is a kind of stage. Project your voice.
+!choice
+* {引|ひ}き{受|う}けます 。 || All right. -> yes
+* また {今度|こんど} 。 || Another time. -> end
+:yes
+!quest sz_school 0
+sz_mina[happy]: やった ！ じゃあ 、 {一時間目|いちじかんめ} ！ || Yay! First lesson, then!
+!call sz.school_lesson
+
+@scene sz.school_lesson
+!faceplayer
+!if var.sz_lesson>=2 -> l3
+!if var.sz_lesson>=1 -> l2
+sz_riku: {石板|せきばん} に {書|か}いた よ 。 「ヤトカリ」 ！ {貝|かい} を {背負|せお}ってる やつ ！ …… {合|あ}ってる ？ || I wrote it on my slate: ヤトカリ! The one carrying a shell on its back! …Is that right?
+!challenge sz.school_1
+!if var._res=1 -> ok
+!goto later
+:l2
+sz_mina: ヒトデ が {三|みっ}つ いる よ 。 …… {一匹|いっぴき} 、 {二匹|にひき} …… {三匹|さんひき} ？ {読|よ}み{方|かた} が {変|か}わる の 、 なんで ？ || There are three starfish. …One, two… three? Why does the reading keep changing?
+!challenge sz.school_2
+!if var._res=1 -> ok
+!goto later
+:l3
+sz_riku: {立|た}て{札|ふだ} 、 {何|なん} て {書|か}いて ある の ？ {大人|おとな} は {読|よ}んで くれない ん だ 。 || What does the notice say? The grown-ups never read it to us.
+!challenge sz.school_3
+!if var._res=1 -> ok
+!goto later
+:ok
+!var sz_lesson + 1
+!if var.sz_lesson>=3 -> done
+?(var.sz_lesson=1) sz_riku[happy]: ヤ「ド」カリ ！ {点々|てんてん} が いる ん だ 。 …… {覚|おぼ}えた ！ || Ya-DO-kari! It needs the two dots. …Got it!
+?(var.sz_lesson=2) sz_mina[happy]: いっぴき 、 にひき 、 さんびき 。 {口|くち} が {勝手|かって} に {言|い}い{易|やす}い {音|おと} に する ん だ ね 。 || Ippiki, nihiki, sanbiki. Your mouth turns them into whatever's easiest to say.
+sz_mina: {次|つぎ} の {授業|じゅぎょう} も 、 {待|ま}ってる ね ！ || We'll be waiting for the next lesson!
+!end
+:done
+sz_riku[happy]: {貝|かい} を {取|と}らない で 、 {石|いし} は {元|もと} に {戻|もど}す 。 {生|い}き{物|もの} の {家|いえ} だ から ！ || Don't take the shellfish, and put the stones back. Because they're the creatures' homes!
+sz_mina: {先生|せんせい} 、 ありがとう ！ …… これ 、 {授業料|じゅぎょうりょう} 。 {一番|いちばん} きれい な {貝殻|かいがら} ！ {空|から}っぽ だ から 、 {取|と}って いい やつ ！ || Thank you, teacher! …This is your fee. The prettiest shell! It's an empty one, so it's all right to take.
+?(comp=nao) comp: {授業料|じゅぎょうりょう} が {貝殻|かいがら} か 。 …… {一番|いちばん} {高|たか}い {授業料|じゅぎょうりょう} だ な 。 || A shell for the fee. …The best-paid lesson there is.
+?(comp=mio) comp[smile]: {空|から} の {貝殻|かいがら} を {選|えら}んだ の 、 {偉|えら}い わ 。 ちゃんと {聞|き}いて いた の ね 。 || Choosing an empty shell, well done. You were listening.
+?(comp=ren) comp: {教|おし}えた こと が 、 もう {返|かえ}って きました ね 。 || What you taught has already come back to you.
+?(comp=suzu) comp[smile]: {千秋楽|せんしゅうらく} の {花|はな} より 、 {嬉|うれ}しい {贈|おく}り{物|もの} ね 。 || Better than flowers on closing night.
+!quest sz_school done
+!end
+:later
+sz_mina: …… {先生|せんせい} 、 また {明日|あした} {教|おし}えて ね 。 || …Teacher, teach us again tomorrow.
+
+@scene sz.mina_after
+sz_mina: ヤドカリ 、 ヒトデ 、 イソギンチャク ！ {全部|ぜんぶ} {書|か}ける よう に なった よ ！ || Hermit crab, starfish, sea anemone! I can write them all now!
+
+@scene sz.riku_after
+sz_riku: {石|いし} は {元|もと} に {戻|もど}した よ 。 {先生|せんせい} の {言|い}う とおり ！ || I put the stones back. Like teacher said!
+
+@scene sz.mina_idle
+sz_mina: {潮|しお}だまり に は 、 {小|ちい}さい {海|うみ} が {入|はい}ってる ん だ よ 。 || Each tide pool's got a little sea in it.
+
+@scene sz.riku_idle
+sz_riku: {波|なみ} が {来|く}る {前|まえ} に 、 {走|はし}って {逃|に}げる ん だ ！ || When the wave's coming, you run!
+`);
+
+
+/* ==== src/content/sz/30_learning.js ==== */
+/* Sazanami's language tasks (expansion P11d; plan R6: net-mending and the fish market's numbers, A46; the tide-pool
+ * school where the player teaches, A39). Each is the same question at the four profiles. The market counts in boxes,
+ * not money (the world trades in favours). Real things are labelled real: 尾, the market's counter for fish. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const task = (id, title, tiers) => (C.challenges[id] = { title, tiers });
+
+  // ---- Uki's market: the morning catch ------------------------------------------------------------------------------
+  task('sz.market', T('{朝|あさ} の {水揚|みずあ}げ', 'The morning catch'), {
+    F: [ch({ item: 'g:counters', ctx: { jp: 'アジ が 12 ひき 、 イカ が 5 はい 。', en: '' }, prompt: { en: 'Uki calls the catch. How many squid?' }, options: [o('5 はい', 1), o('12 ひき', 0, 'ひき counts the fish (アジ); はい counts the squid.'), o('17', 0, 'Only the squid: イカ が 5 はい.')] })],
+    E: [ch({ item: 'g:counters', ctx: { jp: 'アジ {十二匹|じゅうにひき} 、 イカ {五杯|ごはい} 、 タイ {二匹|にひき} 。', en: '' }, prompt: { en: 'How many fish, leaving the squid apart?' }, options: [o('{十四匹|じゅうよんひき}', 1), o('{十九|じゅうきゅう}', 0, 'The squid are counted with 杯; leave them apart: 12 + 2.'), o('{十二匹|じゅうにひき}', 0, 'And the two タイ: 14 fish.')] })],
+    I: [ch({ item: 'v:箱', ctx: { jp: 'アジ は {一箱|ひとはこ} に {六匹|ろっぴき} ずつ {入|い}れる 。 {今朝|けさ} は {十八匹|じゅうはっぴき} 。', en: '' }, prompt: { en: 'How many boxes will the morning\'s アジ fill?' }, options: [o('{三箱|さんはこ}', 1), o('{六箱|ろっぱこ}', 0, '六匹 is how many go in each box: 18 ÷ 6.'), o('{十八箱|じゅうはっぱこ}', 0, 'ずつ: six to a box, so three boxes.')] })],
+    A: [ch({ item: 'v:尾', ctx: { jp: '{本日|ほんじつ} の {水揚|みずあ}げ ： {鯵|あじ} {二十四尾|にじゅうよんび} 、 {烏賊|いか} {十杯|じっぱい} 、 {鯛|たい} {三尾|さんび} 。', en: '' }, prompt: { en: 'Uki\'s written tally uses 尾 (real: the market\'s counter for fish). How many fish, the squid apart?' }, options: [o('{二十七尾|にじゅうななび}', 1), o('{三十七|さんじゅうなな}', 0, 'The squid (烏賊) are counted with 杯: leave them apart. 24 + 3.'), o('{二十四尾|にじゅうよんび}', 0, 'And the three 鯛: 27.')] })],
+  });
+
+  // ---- Yone's net: the torn meshes and the knot ----------------------------------------------------------------------
+  task('sz.net_find', T('{破|やぶ}れた {目|め}', 'The torn mesh'), {
+    F: [ch({ item: 'v:目', ctx: { jp: 'みぎ から みっつ め 、 うえ から ふたつ め の め が やぶれて いる よ 。', en: '' }, prompt: { en: 'Yone says where the tear is. Which mesh? (め is a mesh, and after a number it means "-th")' }, options: [o('みぎ から 3 ばんめ 、 うえ から 2 ばんめ', 1), o('みぎ から 2 ばんめ 、 うえ から 3 ばんめ', 0, 'みっつ め from the right, ふたつ め from the top.'), o('ひだり から 3 ばんめ 、 うえ から 2 ばんめ', 0, 'みぎ is the right.')] })],
+    E: [ch({ item: 'v:目', ctx: { jp: '{右|みぎ} から {三|みっ}つ{目|め} 、 {上|うえ} から {二|ふた}つ{目|め} の {目|め} が {破|やぶ}れて いる 。', en: '' }, prompt: { en: 'Which mesh is torn?' }, options: [o('{右|みぎ} から 3 {番目|ばんめ} 、 {上|うえ} から 2 {番目|ばんめ}', 1), o('{右|みぎ} から 2 {番目|ばんめ} 、 {上|うえ} から 3 {番目|ばんめ}', 0, 'Three from the right, two from the top.'), o('{左|ひだり} から 3 {番目|ばんめ} 、 {上|うえ} から 2 {番目|ばんめ}', 0, '右 is the right.')] })],
+    I: [ch({ item: 'v:端', ctx: { jp: '{破|やぶ}れ は {二|ふた}か{所|しょ} 。 {一|ひと}つ は {左|ひだり} の {端|はし} から {四|よっ}つ{目|め} 、 もう {一|ひと}つ は その {二|ふた}つ {右|みぎ} 。', en: '' }, prompt: { en: 'Where is the second tear?' }, options: [o('{左|ひだり} の {端|はし} から {六|むっ}つ{目|め}', 1), o('{左|ひだり} の {端|はし} から {二|ふた}つ{目|め}', 0, 'Two to the right of the fourth: the sixth.'), o('{右|みぎ} の {端|はし} から {四|よっ}つ{目|め}', 0, 'Both are counted from the left end.')] })],
+    A: [ch({ item: 'v:揃う', ctx: { jp: '{網|あみ} の {目|め} の {大|おお}きさ が {揃|そろ}って いない と 、 {小|ちい}さい {魚|さかな} まで {獲|と}って しまう 。', en: '' }, prompt: { en: 'Why does Yone keep every mesh the same size?' }, options: [o('{目|め} が {大|おお}きい まま なら 、 {小|ちい}さい {魚|さかな} は {逃|に}げられる から', 1), o('{小|ちい}さい {魚|さかな} を たくさん {獲|と}りたい から', 0, 'The opposite: uneven, tight meshes catch even the small fish.'), o('{揃|そろ}って いる と 、 {網|あみ} が {軽|かる}く なる から', 0, 'She is thinking of the small fish, not the weight.')] })],
+  });
+  task('sz.net_knot', T('{網|あみ} の {繕|つくろ}い', 'Mending the net'), {
+    F: [{ kind: 'order', item: 'v:結ぶ', prompt: { en: 'Put Yone\'s steps in order: cut away the torn twine, pass new twine through, tie it tight.' }, tiles: ['やぶれた いと を きって', 'あたらしい いと を とおして', 'きつく むすぶ'], answer: ['やぶれた いと を きって', 'あたらしい いと を とおして', 'きつく むすぶ'], orderHint: { en: 'Cut, pass through, tie.' } }],
+    E: [{ kind: 'order', item: 'v:結ぶ', prompt: { en: 'Put Yone\'s steps in order.' }, tiles: ['{破|やぶ}れた {糸|いと} を {切|き}って', '{新|あたら}しい {糸|いと} を {通|とお}して', 'きつく {結|むす}ぶ'], answer: ['{破|やぶ}れた {糸|いと} を {切|き}って', '{新|あたら}しい {糸|いと} を {通|とお}して', 'きつく {結|むす}ぶ'], orderHint: { en: 'Cut away the old, pass the new through, then tie: ～て joins the steps in order.' } }],
+    I: [{ kind: 'order', item: 'g:v_te_kara', prompt: { en: 'Four steps, in Yone\'s order.' }, tiles: ['{破|やぶ}れた {糸|いと} を {切|き}って から', '{新|あたら}しい {糸|いと} を {通|とお}し', '{目|め} の {大|おお}きさ を {揃|そろ}えて', '{最後|さいご} に {結|むす}ぶ'], answer: ['{破|やぶ}れた {糸|いと} を {切|き}って から', '{新|あたら}しい {糸|いと} を {通|とお}し', '{目|め} の {大|おお}きさ を {揃|そろ}えて', '{最後|さいご} に {結|むす}ぶ'], orderHint: { en: '～てから first; 最後に last; even the mesh before you tie it.' } }],
+    A: [ch({ item: 'v:繕う', ctx: { jp: '{網|あみ} を {繕|つくろ}う {際|さい} は 、 {結|むす}び{目|め} を {締|し}める {前|まえ} に {目|め} の {大|おお}きさ を {揃|そろ}える こと 。', en: '' }, prompt: { en: 'Yone\'s note (written style). What must come before tightening the knot?' }, options: [o('{目|め} の {大|おお}きさ を {揃|そろ}える', 1), o('{古|ふる}い {糸|いと} を {全部|ぜんぶ} {外|はず}す', 0, '～前に: before tightening, even the mesh.'), o('{網|あみ} を {干|ほ}す', 0, 'The note is about the knot and the mesh size.')] })],
+  });
+
+  // ---- the tide-pool school: the player teaches --------------------------------------------------------------------
+  task('sz.school_1', T('{点々|てんてん} の ある {字|じ}', 'The two dots'), {
+    F: [ch({ item: 'c:sz_dakuten', ctx: { jp: 'リク の せきばん ： 「ヤトカリ」', en: '' }, prompt: { en: 'Riku wrote the hermit crab\'s name. What do you tell him?' }, options: [o('「ト」 に てんてん で 「ド」 。 ヤドカリ 。', 1), o('「カ」 に てんてん で 「ガ」 。 ヤトガリ 。', 0, 'The name is ヤドカリ: the dots go on ト, not カ.'), o('あって いる よ 。', 0, 'It needs the two dots: ヤドカリ.')] })],
+    E: [ch({ item: 'c:sz_dakuten', ctx: { jp: 'リク の {石板|せきばん} ： 「ヤトカリ」', en: '' }, prompt: { en: 'Correct Riku kindly.' }, options: [o('{惜|お}しい ！ 「ト」 に {点々|てんてん} を {付|つ}けて 、 「ヤドカリ」 だ よ 。', 1), o('{全然|ぜんぜん} {違|ちが}う 。 {書|か}き{直|なお}し 。', 0, 'True, but unkind: say what to fix.'), o('「ヤトカリ」 で {合|あ}って いる よ 。', 0, 'It needs the dots: ヤドカリ.')] })],
+    I: [ch({ item: 'c:sz_dakuten', ctx: { jp: 'リク ： 「ヤトカリ 」 と 「ヤドカリ 」 、 どう {違|ちが}う の ？', en: '' }, prompt: { en: 'Explain the dots to Riku.' }, options: [o('{点々|てんてん} が {付|つ}く と 、 「ト」 が {濁|にご}って 「ド」 に なる 。 {音|おと} が {変|か}わる ん だ よ 。', 1), o('{点々|てんてん} は {飾|かざ}り だ から 、 なくて も いい 。', 0, 'The dots change the sound: ト becomes ド.'), o('{点々|てんてん} が {付|つ}く と 、 {小|ちい}さい {字|じ} に なる 。', 0, 'That is ッ and ャ: small letters. The two dots make ト voiced: ド.')] })],
+    A: [ch({ item: 'c:sz_dakuten', ctx: { jp: 'リク ： {間違|まちが}えて ばかり で 、 {恥|は}ずかしい 。', en: '' }, prompt: { en: 'Riku is embarrassed by the mistake. What does a good teacher say?' }, options: [o('{間違|まちが}えた から 、 {点々|てんてん} の {意味|いみ} が {分|わ}かった ん だ よ 。 もう {忘|わす}れない ね 。', 1), o('{恥|は}ずかしい なら 、 {間違|まちが}えない よう に しなさい 。', 0, 'Correct, perhaps, but it won\'t help him: turn the mistake into what he learned.'), o('{誰|だれ} でも {間違|まちが}える から 、 {覚|おぼ}えなくて いい よ 。', 0, 'Kind, but he should still learn it.')] })],
+  });
+  task('sz.school_2', T('{何匹|なんびき} ？', 'How many?'), {
+    F: [ch({ item: 'g:counters', ctx: { jp: 'ヒトデ が 3 ひき 。 なんて よむ ？', en: '' }, prompt: { en: 'Mina asks how to say "three starfish".' }, options: [o('さんびき', 1), o('さんひき', 0, 'After さん, ひき becomes びき.'), o('さんぴき', 0, 'ぴき is after いち, ろく, はち, じゅう: いっぴき. After さん: さんびき.')] })],
+    E: [ch({ item: 'g:counters', ctx: { jp: 'ヒトデ が {一匹|いっぴき} 、 {二匹|にひき} 、 {三匹|さんびき} 。', en: '' }, prompt: { en: 'Mina asks why the reading changes. What do you tell her?' }, options: [o('{前|まえ} の {数|かず} に よって 、 「ひき 」 が 「ぴき 」 や 「びき 」 に なる ん だ よ 。', 1), o('{三|みっ}つ {目|め} から は 、 {全部|ぜんぶ} 「びき 」 。', 0, 'Not all: よんひき, ごひき, ろっぴき.'), o('どれ でも いい ん だ よ 。', 0, 'Each number has its own reading with 匹.')] })],
+    I: [ch({ item: 'g:counters', ctx: { jp: 'ミナ ： {六|ろく} の {時|とき} は ？ 「ろくひき 」 ？', en: '' }, prompt: { en: 'How do you say six with 匹?' }, options: [o('「ろっぴき 」 。 {小|ちい}さい 「っ」 が {入|はい}って 、 「ぴき 」 に なる 。', 1), o('「ろくびき 」 。 {三|さん} と {同|おな}じ 。', 0, 'さんびき is three; six is ろっぴき.'), o('「ろくひき 」 で いい 。', 0, 'ろく and ひき run together: ろっぴき.')] })],
+    A: [ch({ item: 'g:counters', ctx: { jp: 'ミナ ： {十匹|じゅっぴき} の 「じゅっ 」 と 、 {十本|じゅっぽん} の 「じゅっ 」 、 {同|おな}じ ？', en: '' }, prompt: { en: 'Mina has spotted a pattern. Is she right?' }, options: [o('{同|おな}じ だ よ 。 {十|じゅう} は {後|あと} に 「ひ 」 や 「ほ 」 が {来|く}る と 、 {小|ちい}さい 「っ」 に なって 、 「ぴ 」 「ぽ 」 に {変|か}わる 。', 1), o('{違|ちが}う よ 。 {十本|じゅっぽん} は {正|ただ}しく ない 。', 0, '十本 (じゅっぽん) is right: the same change as じゅっぴき.'), o('{同|おな}じ だ けど 、 {数|かず} が {十|じゅう} の {時|とき} だけ だ よ 。', 0, 'It is the same pattern after いち, ろく, はち too: いっぴき, ろっぴき, はっぴき.')] })],
+  });
+  task('sz.school_3', T('{潮|しお}だまり の {立|た}て{札|ふだ}', 'The notice by the pools'), {
+    F: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: 'たてふだ ： 「かい を とらないで ください 。」', en: '' }, prompt: { en: 'Riku asks what the notice says.' }, options: [o('かい を とったら だめ 。', 1), o('かい を とって いい よ 。', 0, '～ないでください asks you not to.'), o('かい を かって ね 。', 0, 'とらないで: don\'t take.')] })],
+    E: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: '{立|た}て{札|ふだ} ： 「{貝|かい} を {取|と}らないで ください 。 {石|いし} は {元|もと} に {戻|もど}して ください 。」', en: '' }, prompt: { en: 'Read the notice to Riku in his words.' }, options: [o('{貝|かい} は {取|と}らない で 、 {動|うご}かした {石|いし} は {元|もと} の ところ に {戻|もど}して ね 。', 1), o('{貝|かい} を {取|と}ったら 、 {石|いし} の {下|した} に {隠|かく}して ね 。', 0, '戻してください: put the stones back as they were.'), o('{石|いし} を {持|も}って {帰|かえ}って いい よ 。', 0, 'The notice asks the opposite.')] })],
+    I: [ch({ item: 'g:n_desu', ctx: { jp: 'リク ： なんで {石|いし} を {戻|もど}す の ？ {誰|だれ} も {困|こま}らない よ 。', en: '' }, prompt: { en: 'Explain why to Riku.' }, options: [o('{石|いし} の {下|した} は 、 {生|い}き{物|もの} の {家|いえ} な ん だ よ 。 {戻|もど}さない と 、 {住|す}む {所|ところ} が なくなる 。', 1), o('{立|た}て{札|ふだ} に {書|か}いて ある から 、 {守|まも}る ん だ よ 。', 0, 'True, but it doesn\'t say why: the stones are the creatures\' homes.'), o('{大人|おとな} に {怒|おこ}られる から だ よ 。', 0, 'That is a reason to be careful, not why it matters.')] })],
+    A: [ch({ item: 'v:採取', ctx: { jp: '{潮|しお}だまり の {生物|せいぶつ} の {採取|さいしゅ} を {禁|きん}ずる 。 {転石|てんせき} は {原状|げんじょう} に {復|ふく}する こと 。', en: '' }, prompt: { en: 'An older notice in formal written style. Put it in words the children will understand.' }, options: [o('{生|い}き{物|もの} を {取|と}っちゃ だめ 。 ひっくり{返|かえ}した {石|いし} は 、 {元|もと} どおり に {戻|もど}そう 。', 1), o('{生|い}き{物|もの} を {取|と}る {時|とき} は 、 {石|いし} を ひっくり{返|かえ}そう 。', 0, '禁ずる forbids: no taking at all.'), o('{石|いし} を {転|ころ}がして {遊|あそ}ぼう 。', 0, '原状に復する: put things back as they were.')] })],
+  });
+})(RB.content);
+
+
+/* ==== src/content/sz/40_records.js ==== */
+/* The sea's and the ports' records (expansion P11b–d; 09_RECORDS.md K1): a stand at Sazanami for the hamlet's
+ * "everyone helped"; the licence, the five ports reached by sea and East Landing rebuilt, pressed at Saltglass's
+ * stand; the island reached in your own boat, at the island's. The voyages themselves are the travel log's (the
+ * Records' volume). Twelve-chapter journeys only. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  C.stamps = C.stamps || {};
+  C.stampStands = C.stampStands || {};
+  C.stampStands.sazanami = { map: 'sz.hamlet', x: 38, y: 12, title: T('Sazanami', '{漣|さざなみ}') };
+  const done = (s, ids) => ids.every((id) => s.quests[id] && s.quests[id].done);
+  const PORTS = ['saltglass', 'manybridge', 'kotonoha', 'sazanami', 'eastlanding'];
+  C.stamps['side.sz'] = { id: 'side.sz', family: 'region', chapter: 'ko', title: T('Sazanami: everyone helped', '{漣|さざなみ} の {頼|たの}み'),
+    criteria: T('Every side story at the fishing hamlet up the coast.', '{漁村|ぎょそん} の {寄|よ}り{道|みち}'), hidden: true,
+    when: (s) => RB.edition.of(s) >= 2 && done(s, ['sz_market', 'sz_nets', 'sz_school']), stand: 'sazanami', design: { shape: 'square', motif: 'path', ink: '#2e5a6a' } };
+  C.stamps['sea.licence'] = { id: 'sea.licence', family: 'milestone', chapter: 'ko', title: T('A licence for the open sea', '{外海|そとうみ} の {免状|めんじょう}'),
+    criteria: T('The harbourmaster\'s licence, and a boat of your own.', '{港長|こうちょう} の {免状|めんじょう}'), hidden: true, when: 'ed>=2&sea_boat', stand: 'saltglass',
+    design: { shape: 'round', motif: 'wave', ink: '#2c5a8a' } };
+  C.stamps['sea.ports'] = { id: 'sea.ports', family: 'milestone', chapter: 'ko', title: T('Every port by sea', '{全|すべ}て の {港|みなと} へ'),
+    criteria: T('Five ports, each reached in your own boat.', '{五|いつ}つ の {港|みなと}'), hidden: true,
+    when: (s) => RB.edition.of(s) >= 2 && PORTS.every((p) => s.flags['sea_port_' + p]), stand: 'saltglass', design: { shape: 'square', motif: 'wave', ink: '#2c5a8a' } };
+  C.stamps['el.rebuilt'] = { id: 'el.rebuilt', family: 'milestone', chapter: 'ko', title: T('East Landing rebuilt', '{東|ひがし} の {渡|わた}し{場|ば}'),
+    criteria: T('The old landing open to boats again.', '{渡|わた}し{場|ば} の {鐘|かね}'), hidden: true, when: 'ed>=2&el_done', stand: 'saltglass',
+    design: { shape: 'round', motif: 'bell', ink: '#8a5a2a' } };
+  C.stamps['sea.voyage'] = { id: 'sea.voyage', family: 'milestone', chapter: 'ko', title: T('The island in your own boat', '{自分|じぶん} の {船|ふね} で'),
+    criteria: T('The harbourmaster\'s rumour followed all the way.', '{噂|うわさ} の {島|しま} へ'), hidden: true, when: 'ed>=2&quest.sea_licence=done', stand: 'kotonoha',
+    design: { shape: 'round', motif: 'leaf', ink: '#2c5a8a' } };
+  const m = C.maps['sz.hamlet'];
+  m.props = (m.props || []).concat([{ p: 'rb_stampstand', x: 38, y: 12, scene: 'rb.stand', o: { stand: 'sazanami' }, if: 'ed>=2' }]);
+})(RB.content);
 
 
 /* ==== src/content/verbs/00_fixtures.js ==== */

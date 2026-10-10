@@ -410,6 +410,9 @@ omi: {港長|こうちょう} と して は 、 {馬鹿|ばか} な {話|はな
 :been
 omi: {言|こと}の{葉|は}{島|じま} に は 、 もう {渡|わた}し{船|ぶね} で {行|い}った ん だった ね 。 {自分|じぶん} の {船|ふね} で {行|い}く {島|しま} は 、 また {違|ちが}って {見|み}える よ 。 || You've already been to Kotonoha on the ferry, haven't you. An island looks different when you sail there yourself.
 :done
+omi: {最初|さいしょ} の {仕事|しごと} だ 。 {沿岸|えんがん} の {郵便|ゆうびん} 。 {漣|さざなみ} の {束|たば} は ウキ の {店|みせ} の {郵便|ゆうびん}{箱|ばこ} へ 、 {東|ひがし} の {渡|わた}し{場|ば} の {一通|いっつう} は ゲンロク {爺|じい}さん に 。 || Your first job: the coast's post. Sazanami's bundle goes in the post box at Uki's stall, and the one letter for East Landing to old Genroku.
+omi: {東|ひがし} の {渡|わた}し{場|ば} に は 、 {砂|すな} で {船|ふね} が {着|つ}けられない 。 {浜|はま} を {回|まわ}って {歩|ある}いて {行|い}きな 。 || East Landing's silted: no boat can put in there. Walk round the beach.
+!give sea_mailbag
 !quest sea_licence 6
 !journal {免状|めんじょう} を {取|と}った 。 $boat {丸|まる} は {自分|じぶん} の {船|ふね} 。 {潮硝子|しおがらす} の {桟橋|さんばし} から 、 {海図|かいず} を {広|ひろ}げて {出|で}られる 。 || The licence is mine, and the $boat with it. She sails from Saltglass's pier: open the chart aboard her.
 !autosave

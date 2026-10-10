@@ -69,6 +69,12 @@ RB.audio = RB.audio || {};
       battle: 'battle_ko', boss: 'boss_ko', route: null,
       songs: ['sea'],
     },
+    // Sazanami, the fishing hamlet up the coast (38w_songs_sz.js); East Landing is Saltglass's (its region and song)
+    sazanami: {
+      chapter: 9, edition: 2, regions: ['sazanami'], prefixes: ['sz.'],
+      battle: 'battle_ko', boss: 'boss_ko', route: null,
+      songs: ['sazanami'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',

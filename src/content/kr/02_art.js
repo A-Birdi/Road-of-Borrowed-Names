@@ -49,7 +49,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
   if (!RB.propArt || !RB.propKit) return;
   const K = RB.propKit, art = RB.propArt.art;
-  const { R, ell, poly, line } = K;
+  const { R, ell, line } = K;
+  // the kit's poly takes a flat [x0, y0, x1, y1, …]; the points here are written as pairs
+  const poly = (g, pts, c) => K.poly(g, Array.isArray(pts[0]) ? pts.flat() : pts, c);
   const PP = K.FIX.paper, GL = K.FIX.glow, CL = K.FIX.clay, ST = K.FIX.straw;
   const MOSS = ['#2e3e24', '#3e5230', '#52683c', '#6a8250', '#86a064'];
 
