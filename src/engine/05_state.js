@@ -73,6 +73,9 @@ RB.state = (function () {
       // before (Resolve this step), one-time rewards given, defeats in story encounters (help offers), lasting
       // outcomes, wanderers met, the Tactics Board's personal bests
       enc: { proc: {}, solved: {}, rewarded: {}, defeats: {}, outcomes: {}, wanderers: { recent: [], met: {} }, studies: {} },
+      // the living world's record (src/engine/53_town.js): routines, change beats seen, where you last saw people,
+      // notes from asking after them, road events, sealed places noticed or opened
+      world: { towns: {}, beats: {}, lastSeen: {}, notes: {}, roads: {}, sealed: {}, moves: 0, rests: 0 },
       // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
       // all optional: older saves gain empty records on load (80_save.js migrate)
       company: {

@@ -154,6 +154,8 @@ RB.world = (function () {
       }
     }
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
+    // where you last saw people, kept with the twelve-chapter game's save (W3)
+    if (RB.town && RB.edition && RB.edition.of(st) >= 2) for (const a of W.npcs) RB.town.seen(st, personOf(a), m.id);
     // Creatures still here stay where they are (a scene ending, a battle won nearby): they used
     // to jump back to their places, onto or right beside you. A map entered places them afresh.
     const keepFoes = new Map(W.foes.filter((f) => f.map === m.id).map((f) => [f.id, f]));
@@ -766,6 +768,8 @@ RB.world = (function () {
     }
     if (!scene) return false;
     if (!def.noFace) faceTo(n, W.player.x, W.player.y);
+    // someone who can be asked after others (W3): talk, or "Have you seen…?"
+    if (def.asks && RB.town && RB.whereabouts) { RB.whereabouts.ask(n, scene); return true; }
     RB.script.run(scene, { npc: n.id });
     return true;
   }

@@ -10,27 +10,30 @@ from encounter content; a battle of the six-chapter game plays exactly as before
 | The recorded battles: every creature alone and in its groups, every setting, alone and with each companion, both player models | playbook "all existing combat results before feature activation" | `tools/combat_golden.mjs`, `tests/fixtures/combat_golden.json`, `tests/unit/combat_golden.test.mjs` | Done |
 | Participants: one list of everyone in the encounter (`st.actors`), with `st.foes`, `st.pc`, `st.comp` kept as the views the rules read | E1 | `src/engine/95_combat.js` (`addActor`, `actors`) | Done |
 | One exchange, one transaction, shared by the screen, the player model and the story runs | playbook §07 | `src/engine/97_encounter.js` (`exchange` and its steps) | Done |
-| The numbered order and whom each move is aimed at | C-70 | `RB.combatLogic.order` | Engine done; screen below |
-| Wait and watch | E9 | the rules (`kind: 'wait'`), offered where an encounter allows it | Engine done; screen below |
-| Conditions with a rule table, bounded spread, durations, and the preview from the same rules | E4, E5 | `src/engine/95a_conditions.js` | Engine done; screen below |
-| Guests and neutrals with agendas; reactions to what you did | E1, E3 | `RB.encounter.guests` | Engine done; screen below |
-| Arrivals: scheduled, called (a summoner, capped), telegraphed, preventable; Relaxed never | E2 | `RB.encounter` (`schedule`, `arrive`, `coming`) | Engine done; screen below |
-| Objectives and authored conclusions (win, end, lose) | E6, E17 | `RB.encounter.conclude`, `test` | Engine done; screen below |
-| Procedures, restarts to the start or the last stable step, stepping away, Resolve this step | E7, E11 | `RB.encounter` (`procBegin`, `procAct`, `solvedKey`) | Engine done; screen below |
-| Social encounters: stances, a claims record, choices, ordinary responses where they mean something, Wait, each companion's own options, agreement as Harmony, several conclusions | E8 | `RB.encounter` (`socialBegin`, `socialAct`, `socialDrift`) | Engine done; screen below |
-| Two moves at once, plans over two exchanges, group signals | E26 | the rules (`intent2`, `then`, `signal` / `cue`) | Engine done; screen below |
-| A Hush on one family of responses, for a few exchanges; never on a bell or a voice | E26 | the rules (`st.hushed`), `RB.encounter.cards` | Engine done; screen below |
-| Set pieces of up to five on the creatures' side; group shares for four and five | E12, C-76 | `init(…, { maxFoes })`, `GROUP.share` | Engine done; two-row stage below |
-| Help after defeat in a story encounter: explain, suggest, point | E19 | `RB.encounter.helpOffer`, `s.enc.defeats` | Engine done; screen below |
-| Wanderers: rare, remembered, never twice in a row | E3 | `RB.encounter.wanderer`, `s.enc.wanderers` | Engine done; casts come with the chapters |
-| Tactics Board studies: a fixed toolset, a goal within committed exchanges, a personal best | E15 | `kind: 'study'`, `s.enc.studies` | Engine done; the board below |
+| The numbered order and whom each move is aimed at, on slips and badges | C-70, F-11 | `RB.combatLogic.order`; `src/ui/80_combat.js`, `82c_battle_intents.js` | Done |
+| Wait: chosen on purpose, answers nothing, shows the next moves | E9, F-09 | the rules (`kind: 'wait'`); the screen confirms it | Done |
+| Conditions: a rule table (condition × family), bounded spread, durations, the place; the "Here:" line from the same rule; named on slips with a note | E4, E5 | `src/engine/95a_conditions.js`; the screen | Done |
+| Guests and neutrals with agendas and reactions; objects to protect; on the party's slip, never on your menu | E1, E3, E6 | `RB.encounter.guests`; the screen | Done |
+| Arrivals: scheduled, called (a summoner, capped), telegraphed ("coming: in 2 exchanges"), preventable by a bell or a rope; never on Relaxed; joining the stage | E2 | `RB.encounter` (`schedule`, `arrive`, `coming`); the screen | Done |
+| Objectives and authored conclusions (win, end, lose) | E6, E17 | `RB.encounter.conclude`, `test` | Done |
+| Procedures: restarts to the start or the last stable step, the interpretation shown before a step commits, stepping away, Resolve this step | E7, E11 | `RB.encounter` (`procAct`, `solvedKey`); `src/ui/80s_encounter.js` | Done |
+| Conversations: stances, the record of claims, choices with language steps, ordinary responses where they mean something, Wait, each companion's own options, understanding as Harmony and a joint gesture, several conclusions | E8 | `RB.encounter` (`socialAct`, `socialDrift`); `src/ui/80s_encounter.js` | Done |
+| Two moves at once, plans over two exchanges, group signals | E26 | the rules (`intent2`, `then`, `signal` / `cue`) | Done |
+| A Hush on one family of responses or on the modifiers, for a few exchanges; never on a bell or a voice | E26, F-10 | the rules (`st.hushed`), `RB.encounter.cards`, `RB.modifiers.offered` | Done |
+| Modifier words: eleven families, thirteen natural pairings, each a trade; options (whom, which two, which to leave out); the phrase by route (typed whole, handwritten span with the rest shown, recorded as written); the breath and the two-knot rule | E27, C-72, C-74, F-12 | `src/engine/95b_modifiers.js`, `src/content/encounters/10_modifiers.js`; the screen's modifier row | Done |
+| Set pieces of up to five: two rows on the stage, letters for the plates on a phone | E12, C-76 | `src/ui/83_battle_stage.js`; the screen | Done |
+| Help in a story battle after a defeat: explain, suggest, point (pointed responses recorded as supplied help) | E19 | `RB.encounter.helpOffer`, `pointCards`; the screen | Done |
+| Companion plans (Ask me, Protect, Reveal, Press the opening); encounter-specific companion actions; six actions shown at most, the rest a page away; actions that grow | E10, E25 | `RB.encounter` (`planned`, `compMenu`), `RB.combatLogic` (`growthOf`); Settings | Done |
+| Equivalent phrasings (same effect, another language task, once taught) | E13 | word `phrasings`; the screen | Done |
+| Preparation before an encounter ("Look around first?") | E14 | `RB.encounter.prepared`; the screen | Done |
+| The Tactics Board: studies with a fixed toolset, a goal within committed exchanges, instant retry with what changed, a personal best | E15 | `kind: 'study'`; `src/ui/64c_tactics.js` | Done (studies placed with Manybridge, P08) |
+| Roaming-world consequences: lost words come back, carried things handed over, notable creatures teach, cleared routes, field-guide stamps (twelve-chapter game) | E24 | `RB.encounter.roamingWon`; `src/engine/90_game.js` | Done (content with the chapters) |
+| Lasting outcomes, outcome sets, grave outcomes shown or summarised and followed by a reflection | E17, C-11, C-65 | `finishEncounter`, `conclusionText`; Settings › Grave outcomes | Done (content with the chapters) |
+| Wanderers: rare, remembered, never twice in a row | E3 | `RB.encounter.wanderer` | Done (casts with the chapters) |
+| The trio note: the answers that reach every creature | E22 | the screen's coach | Done |
 | Encounter content rules | playbook "authoring and diagnostics" | `tools/encounter_rules.mjs` (run by `tools/validate.mjs`) | Done |
-| The fixtures (ordinary fight, summoner, guest, protected object, short and long machines, disagreement, Hush recovery, two moves, arrivals, every modifier option, studies) | playbook P04 | `src/content/encounters/00_fixtures.js` | Done |
-| Modifier words: eleven families, thirteen natural pairings, each a trade; the phrase by route (typed whole, handwritten span with the rest shown); the Hush on modifiers; the breath and the two-knot rule (F-12) | E27, C-72, C-74 | `src/engine/95b_modifiers.js`, `src/content/encounters/10_modifiers.js` | Engine done; screen below |
-| Companion plans and encounter-specific companion actions; the six-action menu | E10, E25 | encounter actions done (`companionOptions`) | Plans to do |
-| The screens: order numbers, conditions, guests, objects, arrivals, objectives, two-move slips, hushed cards, Wait, procedures, conversations, the two-row stage | E1–E27 | — | To do |
-| Roaming-world consequences: lost words, cleared routes, quest carriers, notable creatures, field-guide stamps | E24 | — | To do |
-| Equivalent expressions; preparation before an encounter | E13, E14 | — | To do |
+| The fixtures, the development panel (`?dev=enc`), `!encounter` in scenes, `RB.game.startEncounter` | playbook P04 | `src/content/encounters/00_fixtures.js`, `src/ui/80t_encounter_dev.js`, `src/engine/70_script.js`, `90_game.js` | Done |
+| Belongs to later packets: superbosses (E16, P15), ambushes in dungeons (E20, P07), new creature kinds (E23, with the chapters and P14), the curve test over twelve chapters (E22, with the chapters) | — | — | Planned there |
 
 ## The order within an exchange
 
@@ -75,6 +78,23 @@ first step after a wrong move; a long one goes back to its last stable step. Ste
 ### The campaign's record
 `s.enc = { proc, solved, rewarded, defeats, outcomes, wanderers: { recent, met }, studies }`, empty for an older save
 on load. New Game+ starts it fresh except the studies' personal bests (lead's decision F-08).
+
+### Modifiers (E27)
+A pairing is data: `{ mod, resp, respEn, jp (the whole phrase), hand: { before, write, after, items }, items, en, effect,
+option, does, trade, wrong }`. Not listed, not offered; the response with no modifier is unchanged. Typed, the whole
+phrase is written and its items (modifier, grammar point, response, partner verb) are recorded; handwritten, only the
+modifier and its particle, recorded as that; the rest is shown and earns nothing. Taught by a scene setting
+`mod_<id>` (concepts declared for the phases); a study or fixture may grant them all. The breath: an extended response
+cannot be extended again the very next exchange.
+
+### Companion actions that grow (E25)
+`companionActions[c][k].grows: [{ when, aim, effect, name, desc }]`: the last growth whose condition holds when the
+encounter begins replaces what it changes (its aim, its effect's fields, its name). Six or fewer actions are shown as
+they always were; beyond six, the six most useful now, the rest a page away.
+
+### Where encounters start
+`!encounter <id>` in a scene (`_res` 1 for a win, `_enc` the conclusion's id); a map placement's `encounter`;
+`RB.game.startEncounter(id)`; the Tactics Board. With creatures, the battle screen; without, the encounter screen.
 
 ## Lead's decisions (logged in 11_CONTRADICTIONS.md part F)
 - F-08: New Game+ keeps the Tactics Board's personal bests (a pastime-like record) and nothing else of `s.enc`.

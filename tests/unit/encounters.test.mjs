@@ -440,6 +440,20 @@ export default async (t) => {
     t.ok(m2.shown.length === 6 && m2.more.length === 2, 'eight actions: six shown, two a page away (' + m2.shown.length + ' + ' + m2.more.length + ')');
   }
 
+  // ---- a companion action that grows (E25): a wider reach later, the menu no longer --------------------------------
+  {
+    const heck = C.companionActions.suzu.find((d) => d.id === 'suzu_heckle');
+    heck.grows = [{ when: 'tmp_heckle_grown', aim: 'foes', name: { jp: '{野次|やじ}', en: 'Heckle them all' }, desc: 'Every creature\'s blow lands softer.' }];
+    const s = camp({ comp: 'suzu' });
+    const st0 = E.begin('fx.ordinary', s);
+    t.eq(L.compOptions(st0, s, null).find((o) => o.def.id === 'suzu_heckle').def.aim, 'foe', 'before: Heckle reaches one creature');
+    s.flags.tmp_heckle_grown = true;
+    const st1 = E.begin('fx.ordinary', s);
+    const g = L.compOptions(st1, s, null).find((o) => o.def.id === 'suzu_heckle');
+    t.ok(g.def.aim === 'foes' && g.def.name.en === 'Heckle them all' && L.compOptions(st1, s, null).length === L.compOptions(st0, s, null).length, 'after it grows: the same action reaches every creature; the menu is no longer');
+    delete heck.grows;
+  }
+
   // ---- Point: the suitable responses, by the rules' own preview ------------------------------------------------------
   {
     const s = camp();

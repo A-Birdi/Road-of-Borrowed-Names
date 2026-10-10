@@ -303,6 +303,8 @@ RB.combatLogic = (function () {
       // what this encounter allows beyond an ordinary battle (src/engine/97_encounter.js): none of it by default,
       // so a battle no encounter definition asks for plays exactly as it always has
       rules: Object.assign({}, opts.rules || {}),
+      // the companion's actions as they have grown by now (E25); null when none has
+      compGrowth: comp ? growthOf(s, comp) : null,
     };
     foes.forEach((f, i) => { f.aid = 'f' + i; });
     st.actors = partyActors(comp).concat(foes);
@@ -577,9 +579,22 @@ RB.combatLogic = (function () {
   // each round (content: RB.content.companionActions), chosen from a menu once
   // your response is queued. Unlocked by story beats and quests (`unlock`, a
   // condition for RB.state.test); some can be used once per encounter.
-  function compDefs(compId) {
+  function compDefs(compId, st) {
     const C = RB.content || {};
-    return ((C.companionActions || {})[compId] || []).slice();
+    const list = ((C.companionActions || {})[compId] || []).slice();
+    // an action that has grown (E25): its growth, decided when the encounter began, replaces what it changes
+    const g = st && st.compGrowth;
+    return g ? list.map((d) => (g[d.id] ? Object.assign({}, d, g[d.id], { effect: Object.assign({}, d.effect, g[d.id].effect || {}) }) : d)) : list;
+  }
+  // the growths a campaign has reached (E25): def.grows [{ when (a condition), aim, effect, desc, name }], the last that
+  // holds; none in the six-chapter game's actions
+  function growthOf(s, compId) {
+    const out = {};
+    for (const d of (((RB.content || {}).companionActions || {})[compId] || [])) {
+      const gs = (d.grows || []).filter((g) => s && RB.state && RB.state.test(s, g.when));
+      if (gs.length) { const g = Object.assign({}, gs[gs.length - 1]); delete g.when; out[d.id] = g; }
+    }
+    return Object.keys(out).length ? out : null;
   }
   // The actions on offer this round: [{ def, used (once per encounter and
   // spent), locked }]. With the technique queued the companion is busy with it.
@@ -587,7 +602,7 @@ RB.combatLogic = (function () {
     if (!st.compId || st.comp <= 0) return [];
     if (queued && queued.kind === 'tech') return [{ def: { id: 'join', name: { en: 'Join the technique', jp: 'あわせる' }, aim: 'none', desc: 'Your companion is part of the technique you queued.' }, used: false, locked: false }];
     const out = [];
-    for (const d of compDefs(st.compId)) {
+    for (const d of compDefs(st.compId, st)) {
       const locked = !!(d.unlock && s && RB.state && !RB.state.test(s, d.unlock));
       out.push({ def: d, locked, used: !!(d.uses && (st.compUses[d.id] || 0) >= d.uses) });
     }
@@ -618,7 +633,7 @@ RB.combatLogic = (function () {
     if (!st.compId || st.comp <= 0 || !actionId) return { fx };
     const who = st.compId;
     if (actionId === 'join') return { fx };
-    const def = compDefs(who).find((d) => d.id === actionId);
+    const def = compDefs(who, st).find((d) => d.id === actionId);
     if (!def) return { fx };
     if (def.uses) {
       if ((st.compUses[def.id] || 0) >= def.uses) return { fx };

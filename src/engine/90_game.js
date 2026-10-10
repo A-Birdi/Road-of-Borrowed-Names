@@ -21,7 +21,7 @@ RB.game = (function () {
       textSpeed: 'normal', skipSeen: true, reducedMotion: reduce, textScale: 1, contrast: 'normal',
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
-      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask', outcomeView: 'shown',
+      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask', outcomeView: 'shown', townHints: 'on',
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,
@@ -311,7 +311,10 @@ RB.game = (function () {
         const nightThere = (def.alt || []).some((a) => a.night && RB.state.test(G.s, a.if)) || def.region === 'interior' || def.night;
         if (nightHere && !nightThere) (RB.test.nightLeaks = RB.test.nightLeaks || []).push(RB.world.W.map.id + ' -> ' + mapId);
       }
+      // the living world (src/engine/53_town.js): a town's routine may move on as you come back to it; never on a load
+      if (RB.town) RB.town.beforeEnter(G.s, mapId);
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
+      if (RB.town) RB.town.visited(G.s, mapId);
       RB.render.prewarm(); // build the new map's art while the screen is still dark
       await RB.ui.fade(false, reducedMotion() ? 80 : 220);
       if (def.name && !opts.inScript && !G.s.flags['named:' + mapId]) {
@@ -338,6 +341,9 @@ RB.game = (function () {
       RB.script.run(ev.scene);
       return;
     }
+    // a road's event (W5): the unique one until it is solved, then now and then a variant
+    const re = RB.town && RB.town.roadEventAt(G.s, m.id);
+    if (re && RB.content.scenes[re]) RB.script.run(re);
   }
   function afterScene() {
     if (!G.playing) return;
@@ -469,6 +475,7 @@ RB.game = (function () {
   }
   async function rest() {
     const s = G.s;
+    if (RB.town) RB.town.rested(s); // routines may move on while you sleep
     s.resolve.pc = s.resolve.max;
     s.resolve.comp = s.resolve.max;
     await RB.ui.fade(true, 500);

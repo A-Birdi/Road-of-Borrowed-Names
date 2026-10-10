@@ -211,6 +211,26 @@ RB.ui.known = (function () {
       '<span><button class="pbtn small primary" data-k="save">' + I('save') + '<span>' + (f.id ? 'Save pin' : 'Place pin') + '</span></button> <button class="pbtn small" data-k="cancel"><span>Cancel</span></button></span></div>' +
       '<p class="muted small">Plain words, just for you. Up to ' + KN.MAX_PINS + ' pins on each map.</p></div>';
   }
+  // People (expansion W3): where you last saw someone, and what you were told when you asked after them. Notes,
+  // never live markers: each says who told you and that it was then. Only people who can be asked after (town
+  // residents and the relations table, src/engine/53_town.js); a six-chapter journey has none, and no block.
+  const KIND_WORD = { sighting: 'Seen nearby, when you asked', routine: 'Their usual places', uncertain: 'Not sure' };
+  function peopleBlock(s) {
+    if (!RB.town || !s.world) return '';
+    const R = s.world, ids = RB.town.findable().filter((p) => (R.lastSeen && R.lastSeen[p]) || (R.notes && R.notes[p]));
+    if (!ids.length) return '';
+    const t = (p) => Math.max((R.lastSeen[p] || {}).t || 0, (R.notes[p] || {}).t || 0);
+    ids.sort((a, b) => t(b) - t(a));
+    const nm = (p) => { const c = RB.content.chars[p]; return c && c.name ? c.name.en : p; };
+    return '<h4 class="kd-h">' + I('companion') + ' People <span class="count">' + ids.length + '</span></h4>' +
+      '<p class="muted small">Where you last saw them yourself, and what people told you. Notes from then, not where anyone is now.</p>' +
+      '<ul class="kd-list kd-people">' + ids.slice(0, 12).map((p) => {
+        const ls = R.lastSeen[p], n = R.notes[p];
+        const said = n ? '<div class="kd-told"><span class="kd-state">' + esc(KIND_WORD[n.kind] || 'Told') + (n.from ? ' · ' + esc(nm(n.from)) + ' said' : '') + '</span> ' +
+          esc(n.line ? n.line.en : n.map ? 'near ' + mapName(n.map) : '') + '</div>' : '';
+        return '<li><div><div class="t">' + esc(nm(p)) + '</div>' + (ls ? '<div class="small">You last saw them at ' + esc(mapName(ls.map)) + '.</div>' : '') + said + '</div></li>';
+      }).join('') + '</ul>';
+  }
   function maps(s) {
     const L = Object.keys(s.visited || {}).filter((id) => RB.content.maps[id]);
     if (s.map && RB.content.maps[s.map] && !L.includes(s.map)) L.unshift(s.map);
@@ -230,8 +250,9 @@ RB.ui.known = (function () {
     const dia = '<div class="kd-map">' + diagram(s, map, list, pinsL, V.form && V.form.map === map ? V.form : null) + '</div><p class="muted small">The shapes: ? unexplained · barred · ◇ noted · ✓ solved · dashed arrow opened · eye a view; pins are pale: a house (return here), ? in a square (question), a triangle (view), arrows (passage). Blue outlines are ways out.</p>';
     const details = '<h4 class="kd-h">' + I('look') + ' Known details <span class="count">' + list.length + '</span></h4>' + listBlock(list);
     const status = V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '';
-    if (two) { A.innerHTML = head + dia; B.innerHTML = details + pinBlock(s, map, pinsL) + status; }
-    else A.innerHTML = head + dia + details + pinBlock(s, map, pinsL) + status;
+    const people = peopleBlock(s);
+    if (two) { A.innerHTML = head + dia; B.innerHTML = details + pinBlock(s, map, pinsL) + people + status; }
+    else A.innerHTML = head + dia + details + pinBlock(s, map, pinsL) + people + status;
     const root = two ? [A, B] : [A];
     for (const el of root) {
       el.onclick = (e) => click(e, s, api);

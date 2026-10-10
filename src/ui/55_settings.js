@@ -166,7 +166,9 @@ RB.ui.settings = (function () {
         // (Harmony addendum §7.4: the portrait layer only — the technique, its stage performance and the banner stay)
         sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.') +
         radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,
-          'Markers point to where the followed quest’s next step happens. Hints are nudges you open in the Journey page. Asking for them is free and never counts as a mistake.');
+          'Markers point to where the followed quest’s next step happens. Hints are nudges you open in the Journey page. Asking for them is free and never counts as a mistake.') +
+        // (expansion W1: a gentle line, never a list of what changed)
+        radios('townHints', 'Towns that have changed', [['on', 'A line in the Journey'], ['off', 'Off']], null, 'When a town you know has changed since you were last there, the Journey says so in one line. It never says what changed.');
     } else if (g === 'controls') {
       const binds = RB.input.getBinds();
       h += '<p class="muted small">Choose Change, then press the key you want. Each key does one thing; taking a key from another action removes it there.</p><ul class="entries keys">' +

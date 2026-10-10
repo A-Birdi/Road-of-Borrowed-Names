@@ -295,6 +295,19 @@ RB.ui.menu = (function () {
     }
     return false;
   }
+  // The living world in the Journey (expansion W1, W5): one line for each town that has changed since you were last
+  // there (never what changed; Settings can turn it off), and a road's first event you left unfinished. Only the new
+  // chapters' towns and roads have either, so a six-chapter journey shows nothing here.
+  function placesBlock(s) {
+    if (!RB.town || !s.world) return '';
+    const lines = [];
+    if (RB.game.settings.townHints !== 'off') for (const c of RB.town.changed(s)) lines.push('<li class="entry"><span class="mark">' + I('map') + '</span><div>' + (c.name && c.name.jp ? j(c.name.jp) : '') + en((c.name ? c.name.en : c.town) + ' has changed since you were last there.') + '</div></li>');
+    for (const r of RB.town.unfinished(s)) {
+      const d = (RB.content.roadEvents || {})[r] || {}, u = d.unique || {}, m = RB.content.maps[(d.maps || [])[0]];
+      lines.push('<li class="entry"><span class="mark">' + I('side') + '</span><div>' + (u.title && u.title.jp ? j(u.title.jp) : '') + en('Unfinished on ' + (m && m.name ? m.name.en : 'the road') + (u.title ? ': ' + u.title.en : '') + '. It will be there when you pass again.') + '</div></li>');
+    }
+    return lines.length ? '<h3>' + I('map') + ' Places <span class="count">' + lines.length + '</span></h3><ul class="entries">' + lines.join('') + '</ul>' : '';
+  }
   function journey(A, B, two) {
     const s = RB.game.s;
     const J = view.journey;
@@ -351,6 +364,7 @@ RB.ui.menu = (function () {
       h += '<h3>' + I('main') + ' Now <span class="count">' + (fid && !RB.content.quests[fid].main ? 'followed, then the main road' : 'the main road') + '</span></h3>';
       h += mains.length ? '<ul class="entries">' + mains.map(row).join('') + '</ul>' : '<p class="muted">Nothing pressing. Walk around; people will tell you what they need.</p>';
       if (others.length) h += '<h3>' + I('side') + ' Also on the way <span class="count">' + others.length + ' optional</span></h3><ul class="entries">' + others.map(row).join('') + '</ul>';
+      h += placesBlock(s);
       const notes = (s.journal || []).slice(-8).reverse();
       if (notes.length) h += '<h3>' + I('note') + ' Notes to self</h3><ul class="entries">' + notes.map((e) => '<li class="entry"><span class="mark">' + I('note') + '</span><div>' + j(e.jp) + en(e.en) + '</div></li>').join('') + '</ul>';
       if (done.length) h += '<details class="done-list"' + (J.doneOpen ? ' open' : '') + '><summary><h3>' + I('done') + ' Completed <span class="count">' + done.length + '</span></h3></summary><ul class="entries">' + done.map(row).join('') + '</ul></details>';
