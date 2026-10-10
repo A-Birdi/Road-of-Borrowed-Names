@@ -26,7 +26,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: K.build(28, 20, '#', (k) => {
       k.rect(5, 2, 20, 17, '+');
       k.rect(13, 0, 3, 2, '+');                     // the inner door (opens once the rite is done)
-      k.rect(1, 9, 4, 3, '+');                      // the alcove behind the sliding shelf (the dead end)
+      k.rect(1, 9, 3, 3, '+');                      // the alcove behind the sliding shelf (the dead end),
+      k.set(4, 10, '+');                            // reached only through the gap the shelf covers
       for (const y of [8, 12]) { k.hline(6, 11, y, 'L'); k.hline(18, 23, y, 'L'); }
       k.set(14, 19, '+');
     }),

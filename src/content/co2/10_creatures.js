@@ -1,7 +1,8 @@
 /* Cinder Orchard in twelve-chapter journeys (Chapter 5 there; expansion P10; plan 03_ENCOUNTERS.md E23): three more
  * kinds of creature, met only in a twelve-chapter journey (`ed>=2` on their placements), and one changed-world line.
  *   co.shard  Glass-Shard Wisp, in the kiln: a Mirror (your words reflected back to front) and Heat.
- *   co.mole   Ash Mole, in the old works: a Gathering from below, then the ground heaves (Flood).
+ *   co.mole   Ash Mole, in the old works: a Gathering from below, then the ground heaves (Flood); it burrows back
+ *             to re-tie a loosened knot (Re-tying).
  *   co.imp    Persimmon Imp, on the upper terraces: Heat while it ripens, then a False promise ("wait, and the names
  *             will come back on their own").
  * Interim art on existing families with their own palettes (F-36's rule; their own families are P16 art under AC-1,
@@ -36,7 +37,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: { jp: 'かけら は {床|ゆか} に {落|お}ちて 、 ただ の ガラス に {戻|もど}った 。 {窯|かま} の {火|ひ} が 、 まっすぐ {映|うつ}って いる 。', en: 'The shard drops to the floor and is just glass again. The kiln fire shows in it the right way round.' } };
 
   EN['co.mole'] = { setting: 'outdoor', name: { en: 'Ash Mole', jp: '{灰|はい}モグラ' }, art: 'golem', artOpts: { col: '#8a8078', core: '#d8a070' }, look: { custom: 'golem', col: '#6a625c' },
-    region: 'cinder', bg: 'cinder', knots: 3, pool, pattern: ['charge', 'flood', 'rest', 'strike'],
+    region: 'cinder', bg: 'cinder', knots: 3, pool, pattern: ['charge', 'flood', 'mend', 'rest'],
     intents: {
       charge: { text: {
         F: { jp: 'じめん が すこし ずつ もりあがって くる 。', en: 'The ground is heaving up, little by little.' },

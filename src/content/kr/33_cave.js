@@ -327,7 +327,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
             E: ch({ item: 'g:v_ta', prompt: { en: 'Finish the tale so that nothing is left over.' }, options: [{ jp: '{見習|みなら}い は {最後|さいご} に {鐘|かね} を {鳴|な}らした 。 それで 、 おしまい です 。', ok: true }, { jp: '{見習|みなら}い は {鐘|かね} を {鳴|な}らした 。 それから 、 {何|なに} か が {来|き}ました 。', ok: false, why: { en: 'それから opens a sequel: just what the tale wants.' } }] }),
             I: ch({ item: 'g:kr_tsutaerareru', prompt: { en: 'Finish the tale so that nothing is left over (read closely: two are near).' }, options: [{ jp: '{鐘|かね} が {鳴|な}り 、 {儀式|ぎしき} は {終|お}わった と {伝|つた}えられて いる 。 {話|はなし} は ここ まで 。', ok: true }, { jp: '{鐘|かね} が {鳴|な}った {後|あと} 、 {何|なに} か が {来|き}た と {伝|つた}えられて いる 。', ok: false, why: { en: 'That hands down a sequel.' } }, { jp: '{鐘|かね} が {鳴|な}った か どう か は 、 {伝|つた}えられて いない 。', ok: false, why: { en: 'That leaves the ending open.' } }] }),
             A: ch({ item: 'g:kr_classical', prompt: { en: 'Close the tale the old way (read closely: two are near).' }, options: [{ jp: '{鐘|かね} {鳴|な}りて 、 {物語|ものがたり} {終|お}はりぬ 。', ok: true }, { jp: '{鐘|かね} {鳴|な}りて 、 {物語|ものがたり} {始|はじ}まりぬ 。', ok: false, why: { en: '始まりぬ: "began". That opens a new story.' } }, { jp: '{鐘|かね} {鳴|な}る べし 。', ok: false, why: { en: 'べし is "must ring": it does not finish anything.' } }] }) },
-          effect: { understanding: 2 }, says: { en: '"…And that is the end," you say. The shape waits for more. There is no more.' } },
+          effect: { understanding: 2, flag: 'told' }, says: { en: '"…And that is the end," you say. The shape waits for more. There is no more.' } },
       ],
       responses: {
         hikari: { says: { en: 'Light only makes the shadows in the corners sharper. A story isn\'t afraid of the light.' } },
@@ -335,16 +335,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       },
       wait: { when: { all: [{ stance: { 'n:tale': 'listening' } }, { not: { claims: 't3' } }] }, effect: { reveal: 't3' }, says: { en: 'In the silence the shape speaks again: "The ninety-ninth… you never finished it."' } },
       companion: {
-        nao: [{ id: 'nao_seal', name: say('{封|ふう} を する', 'Seal it like a letter'), desc: 'A delivered letter is finished.', once: true, effect: { understanding: 1 }, says: { en: 'Nao folds the last page of the tale and presses their thumb on it, like a seal on a delivered letter. "Done."' } }],
-        mio: [{ id: 'mio_lullaby', name: say('{静|しず}か に {締|し}める', 'Close it gently'), desc: 'As at a bedside.', once: true, effect: { understanding: 1 }, says: { en: 'Mio closes the tale the way you end a bedtime story: quietly, so no one asks for another.' } }],
-        ren: [{ id: 'ren_wick', name: say('{最後|さいご} の {芯|しん} を {守|まも}る', 'Keep the last wick'), desc: 'Ren keeps it from guttering into a sequel.', once: true, effect: { understanding: 1 }, says: { en: 'Ren cups the last wick so it burns down clean, all the way, with nothing left smouldering.' } }],
+        nao: [{ id: 'nao_seal', name: say('{封|ふう} を する', 'Seal it like a letter'), desc: 'A delivered letter is finished.', once: true, effect: { understanding: 2 }, says: { en: 'Nao folds the last page of the tale and presses their thumb on it, like a seal on a delivered letter. "Done."' } }],
+        mio: [{ id: 'mio_lullaby', name: say('{静|しず}か に {締|し}める', 'Close it gently'), desc: 'As at a bedside.', once: true, effect: { understanding: 2 }, says: { en: 'Mio closes the tale the way you end a bedtime story: quietly, so no one asks for another.' } }],
+        ren: [{ id: 'ren_wick', name: say('{最後|さいご} の {芯|しん} を {守|まも}る', 'Keep the last wick'), desc: 'Ren keeps it from guttering into a sequel.', once: true, effect: { understanding: 2 }, says: { en: 'Ren cups the last wick so it burns down clean, all the way, with nothing left smouldering.' } }],
         suzu: [{ id: 'suzu_tell', name: say('{一緒|いっしょ} に {語|かた}る', 'Tell it together'), desc: 'Suzu helps tell the ninety-ninth, to its end.', once: true, effect: { understanding: 2 }, says: { en: 'Suzu takes up the tale with Kikyō, the two of them trading lines like a double act, and lands the ending so neatly there is nowhere left to go.' } }],
       },
       drift: [{ when: { all: [{ rounds: 2 }, { stance: { 'n:tale': 'closed' } }] }, once: true, effect: { stance: { 'n:tale': 'listening' } }, says: { en: 'Another wick goes out. The shape turns its faceless head towards you, waiting.' } }],
     },
     conclusions: [
       { id: 'closed', when: { flag: 'closed' }, result: 'win', text: { en: 'The ninety-ninth tale is finished, and there is nothing left for a hundredth.' }, flags: { kr_tale_closed: true } },
-      { id: 'ended', when: { understanding: 4 }, result: 'win', text: { en: 'With nothing left to tell, the Hundredth Tale thins away.' }, flags: { kr_tale_closed: true } },
+      { id: 'ended', when: { flag: 'told' }, result: 'win', text: { en: 'With nothing left to tell, the Hundredth Tale thins away.' }, flags: { kr_tale_closed: true } },
       { id: 'hisae', when: { rounds: 9 }, result: 'end', text: { en: 'Hisae finishes the tale herself, in a few dry words. The shape has nothing left, and goes.' } },
     ],
   };

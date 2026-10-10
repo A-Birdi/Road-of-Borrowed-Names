@@ -1156,7 +1156,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 
 | id | source | storyline | lines | speakers | branches | entry points | objects | class | reason |
 |---|---|---|---:|---|---|---|---|---|---|
-| `co2.heita_city` | src/content/co2/10_creatures.js:87 | ambient | 2 | co_heita×2 |  | npc co.village co_heita [!co_firebreak_cut & ed>=2&mb2_done&!co2_heita_city]; npc co.village co_heita [co_firebreak_cut & ed>=2&mb2_done&!co2_heita_city] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
+| `co2.heita_city` | src/content/co2/10_creatures.js:89 | ambient | 2 | co_heita×2 |  | npc co.village co_heita [!co_firebreak_cut & ed>=2&mb2_done&!co2_heita_city]; npc co.village co_heita [co_firebreak_cut & ed>=2&mb2_done&!co2_heita_city] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 
 ### Company (37)
 
@@ -1813,7 +1813,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 
 | id | source | storyline | lines | speakers | branches | entry points | objects | class | reason |
 |---|---|---|---:|---|---|---|---|---|---|
-| `sb2.rokuta_city` | src/content/sb2/10_creatures.js:71 | ambient | 3 | rokuta×2 comp | 1 cond, comp:nao | npc sb.hamlet rokuta [!sb_evening\|post & ed>=2&mb2_done&!post&!sb2_rokuta_city] |  | Performed (H) | 3 lines, 2 speakers |
+| `sb2.rokuta_city` | src/content/sb2/10_creatures.js:72 | ambient | 3 | rokuta×2 comp | 1 cond, comp:nao | npc sb.hamlet rokuta [!sb_evening\|post & ed>=2&mb2_done&!post&!sb2_rokuta_city] |  | Performed (H) | 3 lines, 2 speakers |
 
 ### Shiritori (wordplay) (4)
 
