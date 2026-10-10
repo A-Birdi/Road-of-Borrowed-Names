@@ -458,7 +458,8 @@ RB.combat = (function () {
     ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
       member('pc', s.player.name, v.pc, v.max, v.ward.pc) +
       (s.comp ? member('comp', compName(), v.comp, v.max, v.ward.comp) : '') + others +
-      '<div class="pm-note">' + hush + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
+      '<div class="pm-note">' + hush + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>' +
+      (RB.ui.combatBars || []).map((f) => { try { return f(st, s) || ''; } catch (e) { return ''; } }).join('');
     objLine();
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
@@ -1501,6 +1502,8 @@ RB.combat = (function () {
     // an ordinary battle of the six-chapter game uses none of the platform's new rules (ordinaryRules: {})
     st = st0 || L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1), rules: ENC().ordinaryRules(s) }));
     st.noFlee = !!opts.noFlee || !!enemy.boss || !!st.noFlee;
+    // an expedition with persistent condition sorts what each loss of resolve came from (D2)
+    if (RB.expedition) RB.expedition.battleStart(st, s);
     showIntentEn = false;
     const H = RB.combatHelp;
     newWords = new Set(s.words.filter((w) => !H.seen(s, 'word:' + w)));
@@ -1730,9 +1733,12 @@ RB.combat = (function () {
           if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
         } catch (err) { console.error('encounter finish', err); }
       }
-      // Resolve recovers after every encounter: no attrition grinding.
-      s.resolve.pc = s.resolve.max;
-      s.resolve.comp = s.resolve.max;
+      // Resolve recovers after every encounter: no attrition grinding (except in an expedition that declares
+      // persistent condition, which carries what tactics cost and gives back what mistakes cost, D2)
+      if (!(RB.expedition && st && RB.expedition.battleEnd(st, s, outcome))) {
+        s.resolve.pc = s.resolve.max;
+        s.resolve.comp = s.resolve.max;
+      }
       for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
       RB.combatHelp.detach();
       RB.battleBanner.detach();

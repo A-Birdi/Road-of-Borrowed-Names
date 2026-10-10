@@ -53829,12 +53829,14 @@ RB.game = (function () {
       if (opts.scene) await RB.script.run(opts.scene);
     }
     if (res === 'lose') {
-      // Back to the last safe checkpoint; learning progress and items are kept.
-      const cp = G.s.checkpoint || { map: G.s.map, x: G.s.x, y: G.s.y, dir: G.s.dir };
+      // Back to the last safe checkpoint; learning progress and items are kept. In an expedition, its own rule
+      // (D3): an optional dungeon starts again from its entrance, everything learned kept.
+      const xp = RB.expedition ? RB.expedition.onDefeat(G.s) : null;
+      const cp = xp || G.s.checkpoint || { map: G.s.map, x: G.s.x, y: G.s.y, dir: G.s.dir };
       G.s.resolve.pc = G.s.resolve.max;
       G.s.resolve.comp = G.s.resolve.max;
       await transition(cp.map, cp.x, cp.y, cp.dir, { inScript: true });
-      RB.ui.notice('You wake at the last safe place you passed. Everything you learned is still with you.', 'info');
+      RB.ui.notice(xp ? 'The expedition starts again from its entrance. Everything you learned is still with you, and so is the map.' : 'You wake at the last safe place you passed. Everything you learned is still with you.', 'info');
     }
     if (res === 'flee') RB.ui.notice('You stepped back from the encounter.', 'info');
     return res;
@@ -54384,7 +54386,9 @@ RB.combatLogic = (function () {
     if (result.mistakes > 0 && !st.assist) {
       // small, capped consequence: one point of resolve, once per exchange
       st.mistakeCostThisRound = 1;
-      st.pc = Math.max(0, st.pc - 1);
+      // a language mistake: in an expedition with persistent condition it is given back after the encounter (D2)
+      if (RB.expedition) RB.expedition.mistake(st, () => { st.pc = Math.max(0, st.pc - 1); });
+      else st.pc = Math.max(0, st.pc - 1);
       fx.push({ t: 'cost', en: 'A slip of the brush costs a little resolve (−1).' });
     }
     const perfect = result.ok && result.firstTry !== false;
@@ -55874,7 +55878,9 @@ RB.encounter = (function () {
     st.mistakeCostThisRound = 0;
     if (res && res.mistakes > 0 && !st.assist && st.foes.length) {
       st.mistakeCostThisRound = 1;
-      st.pc = Math.max(0, st.pc - 1);
+      // a language mistake (given back after the encounter in an expedition with persistent condition, D2)
+      if (RB.expedition) RB.expedition.mistake(st, () => { st.pc = Math.max(0, st.pc - 1); });
+      else st.pc = Math.max(0, st.pc - 1);
       fx.push({ t: 'cost', en: 'A slip of the brush costs a little resolve (−1).' });
     }
   }
@@ -56500,6 +56506,218 @@ RB.encounter = (function () {
     wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey, compMenu, planned, planOf, pointCards, prepared,
     phrasings, ordinaryRules, roamingWon, conclusionText,
   };
+})();
+
+
+/* ==== src/engine/98_expedition.js ==== */
+/* Expeditions (expansion P07; plan 04_DUNGEONS.md D1–D4, D10; playbook P07). One engine for every dungeon with
+ * expedition rules: authored side dungeons now, the Hall of a Hundred Tales later. Story dungeons keep their
+ * checkpoints unless a chapter opts in; the Unwritten Atlas keeps its own run (it uses the battle hooks below).
+ *
+ *   define(id, spec)          spec: { title, kind: 'side' | 'story' | 'hall', floors: [{ id, map, entry: { x, y, dir } }],
+ *                               preview: { language, size, suggested } ({ en, jp } each), rules: { persistent,
+ *                               restart: 'entrance' | 'checkpoint' | 'floor' }, stations: { <id>: { kind, map, x, y,
+ *                               uses, requires } }, shortcuts: { <id>: { map } }, mechanisms: [puzzle ids], maps: [ids] }
+ *   enter(s, id) / leave(s) / restart(s) / active(s) / floorOf(s)
+ *   useStation(s, id) → { ok, kind, gave, left, why }      stationLeft(s, id)
+ *   openShortcut(s, expId, id) / shortcutOpen(s, expId, id)   (kept across restarts, like the map)
+ *   battleStart(st, s) / battleEnd(st, s, outcome) → true when the expedition took care of resolve
+ *   onDefeat(s) → where to wake ({ map, x, y, dir }) or null for the game's checkpoint
+ *
+ * Persistent condition (D2): in an expedition that declares it, resolve carries from encounter to encounter, but only
+ * what tactics cost: what language mistakes cost is given back at the end of each encounter. The accounting (track,
+ * below) keeps two pools per party member, mistakes and everything else; a heal repairs the everything-else pool
+ * first, so a mistake can never turn into carried damage, and the refund is never more than is missing.
+ *
+ * What a restart resets (D3a): creatures, station uses, mechanisms, the party's condition, the expedition's own
+ * flags (xp_<id>_…). What it keeps: the learning record, Known details, map knowledge, shortcuts opened (xpk_<id>_…)
+ * and the encounters' solved steps. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.expedition = (function () {
+  'use strict';
+  const DEFS = {};
+  const KIND = { bench: { gives: 4, uses: 2 }, spring: { gives: 'full', uses: 1, clears: true }, shelter: { gives: 0, uses: Infinity, clears: true }, lamp: { gives: 4, uses: 1 } };
+  function define(id, spec) {
+    if (!/^\w+$/.test(id)) throw new Error('expedition id: letters, digits and _ only');
+    DEFS[id] = Object.assign({ id, kind: 'side', floors: [], stations: {}, shortcuts: {}, mechanisms: [], maps: [], rules: { persistent: false, restart: 'entrance' } }, spec);
+    DEFS[id].maps = DEFS[id].maps.length ? DEFS[id].maps : DEFS[id].floors.map((f) => f.map);
+    return DEFS[id];
+  }
+  const get = (id) => DEFS[id] || null;
+  const list = () => Object.keys(DEFS).map((k) => DEFS[k]);
+  const of = (s) => (s && s.expedition && DEFS[s.expedition.id] ? s.expedition : null);
+  const active = (s) => !!of(s);
+
+  // ---- a fresh instance ---------------------------------------------------------------------------------------------
+  function fresh(s, d) {
+    const stations = {};
+    for (const k in d.stations) stations[k] = usesOf(d.stations[k]);
+    return { id: d.id, v: 1, floor: 0, started: Date.now(), restarts: 0, stations, statuses: { pc: [], comp: [] } };
+  }
+  const usesOf = (st) => (st.uses != null ? st.uses : KIND[st.kind] ? KIND[st.kind].uses : 1);
+  function enter(s, id) {
+    const d = DEFS[id];
+    if (!d || !s) return null;
+    if (of(s) && s.expedition.id !== id) leave(s);
+    if (!of(s)) {
+      clearInstance(s, d);
+      s.expedition = fresh(s, d);
+      full(s);
+    }
+    return s.expedition;
+  }
+  // the party at full resolve, no statuses
+  function full(s) { if (s.resolve) { s.resolve.pc = s.resolve.max; s.resolve.comp = s.resolve.max; } if (s.expedition) s.expedition.statuses = { pc: [], comp: [] }; }
+  // what belongs to one visit: creatures beaten, mechanisms' states, the expedition's own flags
+  function clearInstance(s, d) {
+    const pre = 'xp_' + d.id + '_';
+    for (const k of Object.keys(s.flags)) {
+      if (k.indexOf(pre) === 0) delete s.flags[k];
+      for (const m of d.maps) if (k.indexOf('foe:' + m + ':') === 0) delete s.flags[k];
+    }
+    const pz = s.discovery && s.discovery.puzzles;
+    if (pz) for (const id of d.mechanisms) delete pz[id];
+  }
+  function leave(s) {
+    const e = of(s);
+    if (!e) return false;
+    const d = DEFS[e.id];
+    clearInstance(s, d);
+    delete s.expedition;
+    full(s);
+    return true;
+  }
+  // defeat or a deliberate restart: everything of the visit resets coherently, the learning and the map stay
+  function restart(s) {
+    const e = of(s);
+    if (!e) return null;
+    const d = DEFS[e.id], n = e.restarts + 1;
+    clearInstance(s, d);
+    s.expedition = fresh(s, d);
+    s.expedition.restarts = n;
+    full(s);
+    return s.expedition;
+  }
+  const floorOf = (s) => { const e = of(s); return e ? DEFS[e.id].floors[e.floor] || null : null; };
+  // walking onto a floor's map moves the expedition's floor (autosave happens on the transition, never in battle)
+  function arrived(s, mapId) {
+    const e = of(s);
+    if (!e) return;
+    const i = DEFS[e.id].floors.findIndex((f) => f.map === mapId);
+    if (i >= 0) e.floor = i;
+  }
+  function onDefeat(s) {
+    const e = of(s);
+    if (!e) return null;
+    const d = DEFS[e.id];
+    const rule = d.rules.restart || 'entrance';
+    if (rule === 'checkpoint') return null;
+    const floor = rule === 'floor' ? d.floors[e.floor] : d.floors[0];
+    if (rule === 'entrance') restart(s);
+    else { full(s); }
+    return floor ? { map: floor.map, x: floor.entry.x, y: floor.entry.y, dir: floor.entry.dir || 'down' } : null;
+  }
+
+  // ---- stations: places, never things carried -----------------------------------------------------------------------
+  function stationLeft(s, id) { const e = of(s); return e && e.stations[id] != null ? e.stations[id] : 0; }
+  function useStation(s, id) {
+    const e = of(s);
+    if (!e) return { ok: false, why: 'Not on an expedition.' };
+    const st = DEFS[e.id].stations[id];
+    if (!st) return { ok: false, why: 'No such place.' };
+    if (st.requires && !RB.state.test(s, st.requires)) return { ok: false, why: 'Not yet.' };
+    if (!(e.stations[id] > 0)) return { ok: false, why: 'Used up for this expedition.', kind: st.kind, left: 0 };
+    const k = KIND[st.kind] || KIND.bench;
+    const before = { pc: s.resolve.pc, comp: s.resolve.comp };
+    if (k.gives === 'full') { s.resolve.pc = s.resolve.max; s.resolve.comp = s.resolve.max; }
+    else if (k.gives) { s.resolve.pc = Math.min(s.resolve.max, s.resolve.pc + k.gives); s.resolve.comp = Math.min(s.resolve.max, s.resolve.comp + k.gives); }
+    if (k.clears) e.statuses = { pc: [], comp: [] };
+    if (e.stations[id] !== Infinity) e.stations[id]--;
+    return { ok: true, kind: st.kind, gave: { pc: s.resolve.pc - before.pc, comp: s.resolve.comp - before.comp }, left: e.stations[id] };
+  }
+
+  // ---- shortcuts: opened from the far side, kept like the map -------------------------------------------------------
+  const scFlag = (expId, id) => 'xpk_' + expId + '_sc_' + id;
+  function openShortcut(s, expId, id) { if (!DEFS[expId] || !DEFS[expId].shortcuts[id]) return false; s.flags[scFlag(expId, id)] = true; return true; }
+  const shortcutOpen = (s, expId, id) => !!(s && s.flags && s.flags[scFlag(expId, id)]);
+
+  // ---- the accounting (D2) ----------------------------------------------------------------------------------------
+  // st.pc / st.comp become accessors that sort every change by its cause: a change made inside mistake(st, fn) is a
+  // language mistake; every other loss is "the rest" (blows, a procedure's misstep, a status); a gain heals the rest
+  // first, then mistakes. start: what was already missing counts as the rest.
+  function track(st) {
+    if (!st || st.acct) return st;
+    const pools = { pc: { rest: Math.max(0, st.max - st.pc), mist: 0 }, comp: { rest: st.compId ? Math.max(0, st.max - st.comp) : 0, mist: 0 } };
+    const acct = { pools, cause: null };
+    for (const who of ['pc', 'comp']) {
+      let v = st[who];
+      Object.defineProperty(st, who, {
+        configurable: true, enumerable: true,
+        get: () => v,
+        set: (n) => {
+          const d = n - v;
+          v = n;
+          const p = pools[who];
+          if (d < 0) { if (acct.cause === 'mistake') p.mist += -d; else p.rest += -d; }
+          else if (d > 0) { let h = d; const r = Math.min(p.rest, h); p.rest -= r; h -= r; p.mist = Math.max(0, p.mist - h); }
+        },
+      });
+    }
+    Object.defineProperty(st, 'acct', { value: acct, enumerable: false, configurable: true });
+    return st;
+  }
+  function mistake(st, fn) {
+    if (!st || !st.acct) return fn();
+    const was = st.acct.cause;
+    st.acct.cause = 'mistake';
+    try { return fn(); } finally { st.acct.cause = was; }
+  }
+  // the encounter is over: what mistakes cost comes back (never more than is missing)
+  function settle(st) {
+    if (!st || !st.acct) return { pc: st ? st.pc : 0, comp: st ? st.comp : 0, refund: { pc: 0, comp: 0 } };
+    const P = st.acct.pools;
+    const refund = { pc: Math.min(P.pc.mist, st.max - st.pc), comp: st.compId ? Math.min(P.comp.mist, st.max - st.comp) : 0 };
+    return { pc: st.pc + refund.pc, comp: st.compId ? st.comp + refund.comp : 0, refund };
+  }
+
+  // ---- the battle hooks ---------------------------------------------------------------------------------------------
+  const persistent = (s) => { const e = of(s); return !!(e && DEFS[e.id].rules.persistent); };
+  function battleStart(st, s) {
+    if (!persistent(s)) return;
+    track(st);
+  }
+  // returns true when the expedition took care of resolve (the game otherwise restores it after every encounter)
+  function battleEnd(st, s, outcome) {
+    if (!persistent(s) || !st) return false;
+    if (outcome === 'lose') return false; // defeat applies the expedition's rule (onDefeat)
+    const r = settle(st);
+    // back from the battle's scale (the difficulty setting) to the campaign's
+    const dr = st.max - s.resolve.max;
+    s.resolve.pc = Math.max(1, Math.min(s.resolve.max, r.pc - dr));
+    s.resolve.comp = s.comp ? Math.max(1, Math.min(s.resolve.max, r.comp - dr)) : s.resolve.max;
+    return true;
+  }
+
+  // ---- the preview card (D4): what is practised, never the solutions ---------------------------------------------------
+  function preview(id) {
+    const d = DEFS[id];
+    if (!d) return null;
+    const rules = [];
+    rules.push(d.rules.persistent ? { en: 'Resolve carries from encounter to encounter (what mistakes cost always comes back).', jp: '' } : { en: 'Resolve recovers after every encounter.', jp: '' });
+    const n = {};
+    for (const k in d.stations) n[d.stations[k].kind] = (n[d.stations[k].kind] || 0) + (d.stations[k].requires ? 0 : 1);
+    const names = { bench: ['rest bench', 'rest benches'], spring: ['spring', 'springs'], shelter: ['shelter', 'shelters'], lamp: ['lamp', 'lamps'] };
+    const st = Object.keys(n).filter((k) => n[k]).map((k) => n[k] + ' ' + names[k][n[k] > 1 ? 1 : 0]);
+    if (st.length) rules.push({ en: 'Places to rest: ' + st.join(', ') + '.' });
+    if (Object.keys(d.stations).some((k) => d.stations[k].requires)) rules.push({ en: 'Something along the way can be mended into one more.' });
+    rules.push({ en: d.rules.restart === 'entrance' ? 'Defeat starts the expedition again from its entrance; what you learned stays with you.' : d.rules.restart === 'floor' ? 'Defeat starts the floor again.' : 'Defeat wakes you at the last safe place.' });
+    if (Object.keys(d.shortcuts).length) rules.push({ en: 'Shortcuts opened from the far side stay open.' });
+    return { title: d.title, kind: d.kind, language: d.preview.language, size: d.preview.size, suggested: d.preview.suggested || null, rules };
+  }
+
+  if (RB.bus) RB.bus.on('map:enter', (e) => { const s = RB.game && RB.game.s; if (s && e && e.id) arrived(s, e.id); });
+  return { define, get, list, of, active, enter, leave, restart, arrived, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
 })();
 
 
@@ -91973,7 +92191,8 @@ RB.combat = (function () {
     ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
       member('pc', s.player.name, v.pc, v.max, v.ward.pc) +
       (s.comp ? member('comp', compName(), v.comp, v.max, v.ward.comp) : '') + others +
-      '<div class="pm-note">' + hush + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
+      '<div class="pm-note">' + hush + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>' +
+      (RB.ui.combatBars || []).map((f) => { try { return f(st, s) || ''; } catch (e) { return ''; } }).join('');
     objLine();
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
@@ -93016,6 +93235,8 @@ RB.combat = (function () {
     // an ordinary battle of the six-chapter game uses none of the platform's new rules (ordinaryRules: {})
     st = st0 || L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1), rules: ENC().ordinaryRules(s) }));
     st.noFlee = !!opts.noFlee || !!enemy.boss || !!st.noFlee;
+    // an expedition with persistent condition sorts what each loss of resolve came from (D2)
+    if (RB.expedition) RB.expedition.battleStart(st, s);
     showIntentEn = false;
     const H = RB.combatHelp;
     newWords = new Set(s.words.filter((w) => !H.seen(s, 'word:' + w)));
@@ -93245,9 +93466,12 @@ RB.combat = (function () {
           if (opts.encounterDone) opts.encounterDone(st.enc.outcome, fin);
         } catch (err) { console.error('encounter finish', err); }
       }
-      // Resolve recovers after every encounter: no attrition grinding.
-      s.resolve.pc = s.resolve.max;
-      s.resolve.comp = s.resolve.max;
+      // Resolve recovers after every encounter: no attrition grinding (except in an expedition that declares
+      // persistent condition, which carries what tactics cost and gives back what mistakes cost, D2)
+      if (!(RB.expedition && st && RB.expedition.battleEnd(st, s, outcome))) {
+        s.resolve.pc = s.resolve.max;
+        s.resolve.comp = s.resolve.max;
+      }
       for (const w of shownWords) RB.combatHelp.mark(s, 'word:' + w);
       RB.combatHelp.detach();
       RB.battleBanner.detach();
@@ -163869,11 +164093,6 @@ RB.hooks = RB.hooks || {};
       chip.onclick = () => { if (RB.game.mode() === 'world') panel(); };
       RB.ui.root.appendChild(chip);
       timer = setInterval(sync, 400);
-      // The combat UI rewrites its bars on every render; put the lantern back at once.
-      if (typeof MutationObserver !== 'undefined') {
-        new MutationObserver(() => { if (RB.game.mode() === 'combat') { const run = runOf(); if (run && run.lantern) lanternBar(); } })
-          .observe(RB.ui.root, { childList: true, subtree: true });
-      }
       return chip;
     }
     function sync() {
@@ -163882,17 +164101,14 @@ RB.hooks = RB.hooks || {};
       if (!chip) return;
       const combat = RB.game.mode() === 'combat';
       chip.classList.toggle('hidden', !on || combat || RB.game.mode() === 'title');
-      if (on && combat) lanternBar();
     }
-    function lanternBar() {
+    // the escorted lantern on the battle screen's bars, drawn with them every time (the combat UI's bar hook, D1)
+    RB.ui.combatBars = RB.ui.combatBars || [];
+    RB.ui.combatBars.push(() => {
       const run = runOf();
-      const bars = document.querySelector('.combat-ui .bars');
-      if (!bars || !run || !run.lantern) return;
-      let row = bars.querySelector('.atlas-lantern');
-      const html = 'Lantern <span class="dim small">' + run.lantern.hp + '/' + run.lantern.max + '</span><div class="bar"><i style="width:' + Math.round(100 * run.lantern.hp / run.lantern.max) + '%;background:linear-gradient(90deg,#e0a040,#ffd27a)"></i></div>';
-      if (!row) { row = document.createElement('div'); row.className = 'atlas-lantern'; bars.appendChild(row); }
-      if (row.innerHTML !== html) row.innerHTML = html;
-    }
+      if (!run || !run.lantern || !active()) return '';
+      return '<div class="atlas-lantern">Lantern <span class="dim small">' + run.lantern.hp + '/' + run.lantern.max + '</span><div class="bar"><i style="width:' + Math.round(100 * run.lantern.hp / run.lantern.max) + '%;background:linear-gradient(90deg,#e0a040,#ffd27a)"></i></div></div>';
+    });
     function update() {
       const c = ensure();
       if (!c) return;

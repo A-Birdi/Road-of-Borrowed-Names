@@ -754,11 +754,6 @@ RB.hooks = RB.hooks || {};
       chip.onclick = () => { if (RB.game.mode() === 'world') panel(); };
       RB.ui.root.appendChild(chip);
       timer = setInterval(sync, 400);
-      // The combat UI rewrites its bars on every render; put the lantern back at once.
-      if (typeof MutationObserver !== 'undefined') {
-        new MutationObserver(() => { if (RB.game.mode() === 'combat') { const run = runOf(); if (run && run.lantern) lanternBar(); } })
-          .observe(RB.ui.root, { childList: true, subtree: true });
-      }
       return chip;
     }
     function sync() {
@@ -767,17 +762,14 @@ RB.hooks = RB.hooks || {};
       if (!chip) return;
       const combat = RB.game.mode() === 'combat';
       chip.classList.toggle('hidden', !on || combat || RB.game.mode() === 'title');
-      if (on && combat) lanternBar();
     }
-    function lanternBar() {
+    // the escorted lantern on the battle screen's bars, drawn with them every time (the combat UI's bar hook, D1)
+    RB.ui.combatBars = RB.ui.combatBars || [];
+    RB.ui.combatBars.push(() => {
       const run = runOf();
-      const bars = document.querySelector('.combat-ui .bars');
-      if (!bars || !run || !run.lantern) return;
-      let row = bars.querySelector('.atlas-lantern');
-      const html = 'Lantern <span class="dim small">' + run.lantern.hp + '/' + run.lantern.max + '</span><div class="bar"><i style="width:' + Math.round(100 * run.lantern.hp / run.lantern.max) + '%;background:linear-gradient(90deg,#e0a040,#ffd27a)"></i></div>';
-      if (!row) { row = document.createElement('div'); row.className = 'atlas-lantern'; bars.appendChild(row); }
-      if (row.innerHTML !== html) row.innerHTML = html;
-    }
+      if (!run || !run.lantern || !active()) return '';
+      return '<div class="atlas-lantern">Lantern <span class="dim small">' + run.lantern.hp + '/' + run.lantern.max + '</span><div class="bar"><i style="width:' + Math.round(100 * run.lantern.hp / run.lantern.max) + '%;background:linear-gradient(90deg,#e0a040,#ffd27a)"></i></div></div>';
+    });
     function update() {
       const c = ensure();
       if (!c) return;

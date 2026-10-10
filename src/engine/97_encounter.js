@@ -287,7 +287,9 @@ RB.encounter = (function () {
     st.mistakeCostThisRound = 0;
     if (res && res.mistakes > 0 && !st.assist && st.foes.length) {
       st.mistakeCostThisRound = 1;
-      st.pc = Math.max(0, st.pc - 1);
+      // a language mistake (given back after the encounter in an expedition with persistent condition, D2)
+      if (RB.expedition) RB.expedition.mistake(st, () => { st.pc = Math.max(0, st.pc - 1); });
+      else st.pc = Math.max(0, st.pc - 1);
       fx.push({ t: 'cost', en: 'A slip of the brush costs a little resolve (−1).' });
     }
   }

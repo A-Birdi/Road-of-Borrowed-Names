@@ -442,7 +442,9 @@ RB.combatLogic = (function () {
     if (result.mistakes > 0 && !st.assist) {
       // small, capped consequence: one point of resolve, once per exchange
       st.mistakeCostThisRound = 1;
-      st.pc = Math.max(0, st.pc - 1);
+      // a language mistake: in an expedition with persistent condition it is given back after the encounter (D2)
+      if (RB.expedition) RB.expedition.mistake(st, () => { st.pc = Math.max(0, st.pc - 1); });
+      else st.pc = Math.max(0, st.pc - 1);
       fx.push({ t: 'cost', en: 'A slip of the brush costs a little resolve (−1).' });
     }
     const perfect = result.ok && result.firstTry !== false;

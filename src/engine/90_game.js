@@ -405,12 +405,14 @@ RB.game = (function () {
       if (opts.scene) await RB.script.run(opts.scene);
     }
     if (res === 'lose') {
-      // Back to the last safe checkpoint; learning progress and items are kept.
-      const cp = G.s.checkpoint || { map: G.s.map, x: G.s.x, y: G.s.y, dir: G.s.dir };
+      // Back to the last safe checkpoint; learning progress and items are kept. In an expedition, its own rule
+      // (D3): an optional dungeon starts again from its entrance, everything learned kept.
+      const xp = RB.expedition ? RB.expedition.onDefeat(G.s) : null;
+      const cp = xp || G.s.checkpoint || { map: G.s.map, x: G.s.x, y: G.s.y, dir: G.s.dir };
       G.s.resolve.pc = G.s.resolve.max;
       G.s.resolve.comp = G.s.resolve.max;
       await transition(cp.map, cp.x, cp.y, cp.dir, { inScript: true });
-      RB.ui.notice('You wake at the last safe place you passed. Everything you learned is still with you.', 'info');
+      RB.ui.notice(xp ? 'The expedition starts again from its entrance. Everything you learned is still with you, and so is the map.' : 'You wake at the last safe place you passed. Everything you learned is still with you.', 'info');
     }
     if (res === 'flee') RB.ui.notice('You stepped back from the encounter.', 'info');
     return res;
