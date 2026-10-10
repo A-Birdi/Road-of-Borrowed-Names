@@ -562,6 +562,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [ ] WP10 Robin's visual acceptance of the method (the P01 gate). H. The gate's review page is published (2026-10-10). Robin's answer (C-80): the direction is solid; push the detail further; a fidelity study first.
 - [v] WP11 The fidelity study (C-80): Suzu redrawn from scratch alone at the Mill, rendered by the game from the real map with an idle loop and the scenery animated (ground, water, trees, the mill, the wheel, plants, motes, butterflies, leaves), light shafts, bloom, depth of field, three cameras; development only. B study 4/0; B world 12/0; docs/screenshots/world/study/; P01_STUDY.md.
 
+## The expansion, P02 foundations (Robin's C-81 of 2026-10-10; docs/future/work/P02_FOUNDATIONS.md; VALIDATION.md "The expansion, P02 and P03")
+- [v] XP1 The edition field (absent = six chapters), the twelve-chapter display map and chapter keys, `ed`/`chap` conditions; new journeys six-chapter unless the development switch is on; no schema bump. U foundations 66/0.
+- [v] XP2 Older saves load unchanged: three campaign fixtures loaded without the expansion's fields keep everything they held, stay six-chapter, and only once the edition ships begin New Game+ in it. U fixtures_campaign 142/0.
+- [v] XP3 Records with each save, seeded streams drawn once and kept across loads, story phases as conditions, frozen result envelopes, the one New Game+ carryover (K9, C-66). U foundations 66/0; U practice_a 234/0.
+- [v] XP4 Quick wins: the card's "effect here" line matches the move (E5; U combat_preview 597/0); Harmony's sound (E21); the one-guess pad (C-14; B pace 13/0, learning_ui 15/0); the two Ledgers' names (C-58); the interaction meter (L19).
+- [v] XP5 Validator rules for expansion content with an empty exception list; the review ledger. U expansion_rules 10/0; U review_ledger 2/0; validate: no errors.
+- [v] XP6 The campaign still plays through with fixtures written. C F/Ren PASS (14.9 min) on 0d18ff7.
+
+## The expansion, P03 learning evidence and task families (C-81; docs/future/work/P03_LEARNING.md)
+- [v] XP7 The evidence log (mode, place, help, first try, transfer; kanji in words with readings) and help by category. U evidence 24/0.
+- [v] XP8 Sentence forging and the task families with worked examples at four levels, in the workshop. B workshop 6/0; validate: every accepted reply readable typed and buildable.
+- [v] XP9 Mastery exams and stars (one input type, first committed answer, the 30% rule counting help and misses together, retakes of those slots; stars unlock nothing), item pages without percentages, What I can do. U exams 113/0; B workshop (a Choose exam and its star).
+- [v] XP10 The Grow route (one level up, offered, never changes the level). U grow 6/0.
+- [ ] XP11 A person using the workshop, an exam and the item pages. H.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

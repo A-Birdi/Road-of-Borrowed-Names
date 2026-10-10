@@ -214,6 +214,13 @@
     Suzu at the Mill", or `index.html?dev=world&study=mill`). Record: docs/future/work/P01_STUDY.md. **Its review
     page is published to Robin (2026-10-10)**, with the recordings, her frames, close-ups and four things that would
     help. Waiting on Robin's view of it.
+    **C-81 (Robin, 2026-10-10): the whole expansion is authorised.** The fidelity study is kept as a test, not a
+    standard (Robin will give feedback later). P02 to P17 are to be built in the playbook's order without consulting
+    Robin; the lead decides what the plan leaves open and logs it in docs/future/plan/11_CONTRADICTIONS.md part F;
+    Robin reviews it all at completion. P18 (the full matrix, any release) still waits for Robin. The twelve-chapter
+    edition stays behind its development switch (Settings › Edition for new journeys, or `?edition=12`) until the
+    release, so Robin's saves are never changed. **P02 (foundations) and P03 (learning evidence, task families,
+    Mastery, What I can do) are done**; P04 (encounters) is under way. Current state: docs/future/work/STATE.md.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

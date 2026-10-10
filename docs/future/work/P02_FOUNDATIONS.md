@@ -13,16 +13,16 @@ Authorised by C-81 (2026-10-10). The existing game keeps working; new editions s
 | Story phases as conditions; concepts; task snapshots | S1 | `05b_foundations.js` (`RB.phase`) | Done |
 | The frozen result envelope | playbook §06 | `05b_foundations.js` (`RB.events`) | Done |
 | The one New Game+ carryover | K9, C-54, C-66 | `05b_foundations.js` (`RB.ngplus`); the creation screen uses it | Done |
-| The development switch for new journeys | F-01 | Settings | — |
-| Validator upgrades and the review ledger | S5 | `tools/validate.mjs`, `docs/review/` | — |
-| State fixtures | S7 | `tests/fixtures/` | — |
-| Spec amendments | S8 | `SPECIFICATION.txt` appendix | — |
-| Honest "effect here" line | E5 | combat | — |
-| Harmony's sound | E21 | audio | — |
-| One-guess handwriting pad | C-14 | pad | — |
-| The two Ledgers' names | C-58 | menus | — |
-| Measuring what players meet | L19 | learning | — |
-| Load time and memory | S6 | tools | — |
+| The development switch for new journeys | F-01 | Settings › Edition for new journeys (`src/ui/55e_edition.js`), or `?edition=12` | Done |
+| Validator upgrades and the review ledger | S5 | `tools/expansion_rules.mjs` (run by `tools/validate.mjs`; exception list `tools/validate_grandfather.json`, empty), `tools/review_ledger.mjs`, `docs/review/language/` | Done |
+| State fixtures | S7 | `PURSUE_FIXTURES=1` on the campaign test writes one per milestone; three kept in `tests/fixtures/campaign/` | Done |
+| Spec amendments | S8 | `SPECIFICATION.txt` §20 (appended; nothing above it changed) | Done |
+| Honest "effect here" line | E5 | `RB.combat.previewAct`; the card's `.rc-here` line (`src/ui/80_combat.js`) | Done |
+| Harmony's sound | E21 | five `harmony_*` sounds (`src/audio/40_sfx.js`), played by the cut-in (`src/ui/82d_harmony_cutin.js`) | Done |
+| One-guess handwriting pad | C-14 | `src/ui/60_pad.js`: one guess, More suggestions on its own line (F-07), free twins and size pairs (F-06) | Done |
+| The two Ledgers' names | C-58 | Inn Ledger (saves) and Ledger (HUD) in `src/ui/10_ui.js`, `30_title.js`, `50_menu.js` | Done |
+| Measuring what players meet | L19 | `src/learn/30_meter.js` (`RB.meter`: counts per kind of interaction and place) | Done |
+| Load time and memory | S6 | `tests/e2e/load_budget.mjs`: about 0.87 s to ready, heap about 61–65 MB, at a 15.9 MB file | Done |
 
 ## Contracts
 
@@ -75,3 +75,9 @@ companion for the farewell (P06).
 |---|---|---|
 | Foundations | `node tests/run-unit.mjs foundations` | 66/0 |
 | Practice (New Game+ contract updated) | `node tests/run-unit.mjs practice_a` | 234/0 |
+| Older saves meet the expansion (the three fixtures, loaded without the new fields; once shipped, New Game+) | `node tests/run-unit.mjs fixtures_campaign` | 142/0 |
+| Card previews match what the move does | `node tests/run-unit.mjs combat_preview` | 597/0 |
+| Expansion validator rules | `node tests/run-unit.mjs expansion_rules` | 10/0 |
+| Review ledger | `node tests/run-unit.mjs review_ledger` | 2/0 |
+| The pad after C-14, in the browser | `node tests/e2e/pace.mjs`; `node tests/e2e/learning_ui.mjs` | 13/0; 15/0 |
+| The campaign, with fixtures written (F, Ren; six chapters and one Atlas expedition) | `PURSUE_FIXTURES=1 node tests/e2e/matrix.mjs F ren 1` | pass, 14.9 min (on 0d18ff7) |

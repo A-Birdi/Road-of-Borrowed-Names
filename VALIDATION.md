@@ -3746,3 +3746,32 @@ may widen the framing a little, as Robin allowed; that is future work.
   recordings, 0.8–1.3 s to build the scene on opening (P01_STUDY.md "Measurements").
 
 **Not verified:** Firefox; the foldable; Robin's eye.
+
+## The expansion, P02 and P03 (2026-10-10; C-81; docs/future/work/P02_FOUNDATIONS.md, P03_LEARNING.md)
+
+**What changed:** the foundations (edition field and display map behind a development switch, per-save records, seeded
+streams, story phases, the result envelope, the one New Game+ carryover, validator rules, review ledger, fixtures,
+spec amendments §20, the quick wins E5, E21, C-14, C-58, L19), then the learning evidence and task families (the
+evidence log, help by category, day-aware spacing, sentence forging, the workshop, Ask back, listening, Mastery exams
+and stars, item pages, What I can do, the Grow route). New text brought five kanji (攫 潜 攻 版 略): the recognizer's
+stroke data, the kanji readings and the embedded font subsets were made again with the repository's own tools.
+
+**Checks:**
+- U `node tests/run-unit.mjs foundations` **66/0**; `fixtures_campaign` **142/0** (three campaign fixtures loaded as
+  older saves: nothing they held changes, they stay six-chapter, once the edition ships a finished one begins New
+  Game+ in it); `combat_preview` **597/0**; `expansion_rules` **10/0**; `review_ledger` **2/0**; `practice_a`
+  **234/0**; `evidence` **24/0**; `exams` **113/0**; `grow` **6/0**; `book_type` **60/0**, `recog-coverage`
+  **15/0**, `recog-kanji` **558/0**, `kanji_chart` **53/0** after the data was made again.
+- U `node tools/validate.mjs`: no errors; the expansion rules' exception list is empty.
+- B `node tests/e2e/pace.mjs` **13/0** and `node tests/e2e/learning_ui.mjs` **15/0** (the pad after C-14);
+  `node tests/e2e/workshop.mjs` **6/0**; `node tests/e2e/kanji_chart.mjs` **8/0**.
+- C `PURSUE_FIXTURES=1 node tests/e2e/matrix.mjs F ren 1` on 0d18ff7: **PASS**, all six chapters and an Atlas
+  expedition (14.9 min), writing the fixtures.
+- U the full unit suite on 0d18ff7: 28,122 passed, 8 failed, all eight the new kanji's missing data (font subsets,
+  recognizer data, readings). After making the data again, on this commit's tree: **28,414 passed, 1 failed** (the
+  workshop's Ask back demonstration was not yet in the scene manifest); `node tools/scene_manifest.mjs` then
+  `scene_manifest` **1023/0**.
+- U `node tests/run-unit.mjs combat_golden` **2/0**: 1,710 battles recorded from the combat rules before P04
+  (`tools/combat_golden.mjs`, `tests/fixtures/combat_golden.json`), the baseline P04's refactor is held to.
+
+**Not verified:** Firefox; the foldable; a person using the workshop or an exam.

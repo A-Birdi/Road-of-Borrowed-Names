@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-10 (C-81; P02 under way).
+**Updated:** 2026-10-10 (C-81; P02 and P03 done; P04 under way).
 
 **Latest explicit authorisation:** Robin, 2026-10-10, after the fidelity study, recorded as **C-81**: "continue your
 World Proof into full Expansion plan at large. Do your best to implement the *entire* expansion plan without consulting
@@ -31,10 +31,9 @@ byte for byte).
 | U02 · type roles and specimen | Done (the preview's type; classic unchanged): Vollkorn, BIZ UDPGothic, Shippori Mincho, BIZ UDGothic, embedded and offline; book tests 14/0, coverage 60/0, specimen 0 furigana overlaps | [U02_TYPE.md](U02_TYPE.md), [data/fonts/README.md](../../../data/fonts/README.md) |
 | Review set for Robin | **Accepted** (C-79). Round 1: "the tabs at the top were fine, it's more of the inner layout that needed some proper style and organization". Round 2 (top tabs restored, Journey and Company reorganised): "I think it's an improvement - you may proceed." | [U01_BOOK.md](U01_BOOK.md) "Review round 2" |
 | P01 · world proof (Reedwake, then Saltglass) | **Built; at Robin's gate.** W00–W05 done: the art contract and far view, light and atmosphere, Reedwake's kit, two purposeful actions, the slice with a real battle, Saltglass reusing the method (reuse report); world tests 12/0, slice checks pass, unit 27,450/0, F/Ren PASS (14.9 min). While preparing the gate: people at work are no longer interrupted by the game's idle habits (they were restarting every round), Kiyo's handover is clean, and the dev panel offers both visits. **The gate's review page is published to Robin (2026-10-10).** Robin's answer (C-80): the direction is solid, push the detail further toward the mockup and Octopath Traveler, with a nearer camera; battles keep their own framing (fixed). **The fidelity study is built** (P01_STUDY.md): Suzu redrawn from scratch alone at the Mill, rendered by the game with her idle and the scenery moving, three cameras; development only; study tests 4/0, unit 27,450/0, F/Ren PASS on its first pass. **Its review page is published to Robin (2026-10-10).** Waiting on Robin's view of it; the gate waits for that | [P01_WORLD.md](P01_WORLD.md) |
-
-| P02 · foundations | **Under way.** Done so far: the edition field and twelve-chapter display map (`05a_edition.js`), records, seeded streams, story phases, the result envelope and the one New Game+ carryover (`05b_foundations.js`); foundations tests 66/0 | [P02_FOUNDATIONS.md](P02_FOUNDATIONS.md) |
-| P03 · learning evidence and task families | Not started | — |
-| P04 · encounters | Not started | — |
+| P02 · foundations | **Done.** The edition field, display map and development switch; records, seeded streams, story phases, the result envelope and the one New Game+ carryover; validator rules (empty exception list) and the review ledger; fixtures; spec amendments (§20); the quick wins E5, E21, C-14, C-58, L19; load budget measured. Foundations 66/0, older-save fixtures 142/0, previews 597/0; pad suites 13/0 and 15/0; F/Ren PASS with fixtures (14.9 min) | [P02_FOUNDATIONS.md](P02_FOUNDATIONS.md) |
+| P03 · learning evidence and task families | **Done.** The evidence log, help by category, day-aware spacing, sentence forging, the task families and the workshop, Ask back, listening, Mastery exams and stars, item pages, What I can do, the Grow route. Evidence 24/0, exams 113/0, grow 6/0; workshop in the browser 6/0, kanji chart 8/0 | [P03_LEARNING.md](P03_LEARNING.md) |
+| P04 · encounters | **Under way** | [P04_ENCOUNTERS.md](P04_ENCOUNTERS.md) |
 | P05 · living world | Not started | — |
 | P06 · records, replay, New Game+, pastimes, the book everywhere | Not started | — |
 | P07 · expeditions and a pilot | Not started | — |

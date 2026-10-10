@@ -21,7 +21,7 @@ RB.evidence = (function () {
   const MODES = ['recog', 'context', 'construct', 'typed', 'hand', 'listen'];
   const COUNTING = { constrain: true, supplied: true }; // help that counts as "assisted" for a star (L2)
   const day = (t) => Math.floor((t == null ? Date.now() : t) / 86400000);
-  const isKanji = (ch) => /[一-鿿㐀-䶿々]/.test(ch);
+  const isKanji = (ch) => /[\u4e00-\u9fff\u3400-\u4dbf\u3005]/.test(ch);
 
   // the evidence mode of an answer, from the step and the input used
   function modeOf(step, inputMode) {
