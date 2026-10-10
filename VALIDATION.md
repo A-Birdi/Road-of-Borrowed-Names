@@ -3728,7 +3728,9 @@ may widen the framing a little, as Robin allowed; that is future work.
 **Checks:**
 - B `node tests/e2e/study.mjs`: **4/0**, on the build of f761049 and again on the final build of this commit.
 - B `node tests/e2e/world.mjs`: **12/0**, on the same two builds.
-- U `node tests/run-unit.mjs` on f761049 (the study's first pass): **27,450/0**.
+- U `node tests/run-unit.mjs` on f761049 (the study's first pass): **27,450/0**; again on 51dc6c2 (the finished
+  pass): **27,450/0**.
+- C `node tests/e2e/matrix.mjs F ren 1` on f761049: **PASS**, all six chapters and an Atlas expedition (15.0 min).
 - Reviewed by eye by the lead at every step, at 2–12× zoom, on desktop, wide and phone sizes. The first passes showed
   problems that were redone before the evidence was taken:
   - grass that read as static;
