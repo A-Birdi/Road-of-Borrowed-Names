@@ -198,6 +198,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 1, y: 6, o: { lit: true } }, { p: 'lantern', x: 19, y: 6, o: { lit: true } },
       { p: 'mp_nobori', x: 1, y: 2 }, { p: 'mp_nobori', x: 19, y: 2, o: { col: 'indigo' } },
       { p: 'desk', x: 15, y: 12, scene: 'mp.promptbook' },
+      { p: 'bookpile', x: 4, y: 12, scene: 'mp.oldest_play' },
     ],
     npcs: [
       { id: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mp_rehearsal_done&!mb2_done', talk: [{ if: 'quest.mp_main=5', scene: 'mp.manbe_under' }, { scene: 'mp.manbe_idle' }] },

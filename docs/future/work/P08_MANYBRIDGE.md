@@ -26,7 +26,7 @@ turns out, were cut upstream in Blockprint Row, where Chapter 4 begins.
 | Maps: the pier, the Exchange district, the warehouse row, interiors (the Tally Exchange, the trading house, the porters' office, the inn, the dead-letter office, the lock-keeper's house), the Undercroft Locks (three levels) and the Nameless Bridge | R1 | `src/content/mb/10_maps.js` | Built: `mb.pier`, `mb.exchange` (hub, night), `mb.kura`, six interiors; `mb.under1–3`, `mb.firstbridge` (`11_under.js`) |
 | The cast, with looks, portraits and voices; the city's Kansai-flavoured speech community (the tasks stay standard Japanese) | R1 | `src/content/mb/05_data.js`, dialect files | Built: fourteen people (`05_data.js`); the city speaks standard Japanese, Suzu Kansai (F-33; 17 lines) |
 | **Barge routing** (the chapter's new verb): a canal map, a package, a sentence of who sends what to whom by which way; the barge goes where the sentence sends it, right or wrong; several valid plans | R1, L9 (A3, A14) | a forge step with a canal scene: `src/ui/89e_canal.js`, `src/learn/50_forge.js` hooks | Built: `RB.ui.canal` (`89e_canal.js`), `C.canals['mb.canal_city']`, jobs `mb.route1/2` at F/E/I/A; browser `manybridge` (a wrong sentence sends the barge where it says) |
-| The Tally Exchange: notices and offers with conditions; finding the condition that makes a deal impossible | R1 (A46, A48) | challenges in `src/content/mb/30_learning.js` | Built in part: the boards (`mb.board_*`), Heiji's tally and its condition read two ways (the dispute's c3/c4), route2's I tier (〜たら); a dedicated notice-reading job waits for P09's Exchange scenes |
+| The Tally Exchange: notices and offers with conditions; finding the condition that makes a deal impossible | R1 (A46, A48) | challenges in `src/content/mb/30_learning.js` | Built: the boards (`mb.board_*`), Heiji's tally and its condition read two ways (the dispute's c3/c4), route2's I tier (〜たら), and the Exchange's offers (one tally's conditions checked at every profile, at the counter after the dispute) |
 | The Tally Exchange dispute: the game's first conflict with no creature, where Unravel does nothing (C-60) and Wait is taught (`c_wait`) | E8, C-60 | a social encounter | Built: `mb.dispute` (Wait taught: `learn_wait`); every conclusion leads on (F-34); browser `manybridge` |
 | Negotiating passage with the lock-keeper | R1 (A28), E8 | a social encounter | Built: `mb.passage` (the letter, the offer, Wait); Sen's leave as the fallback (F-34) |
 | The Undercroft Locks: connected water levels across rooms, lock tablets as routing sentences, the barge between levels; a story dungeon with checkpoints | R1 (A11), D6 | maps, procedures, props | Built: tablets (`mb.tablet1/3`), the west sluice, procedures `mb.locks` and `mb.greatlock` with checkpoints, Matsu's lamp as the rest place |
@@ -37,8 +37,8 @@ turns out, were cut upstream in Blockprint Row, where Chapter 4 begins.
 | Music: Manybridge's palette (shamisen-led, brisker than Saltglass) for the city, the Undercroft and a battle a step above Saltglass's | R1 Theme, C-22 | `src/audio` | Built: four songs (`37_songs_mb.js`), zone `manybridge` (F-35) |
 | Growth on C-74's schedule: それぞれ ("each one", Protect fitted to each), learned in a scene at the canal board after the second job | 10_modifiers.js schedule | `21_scenes_main.js` (`mod_sorezore`) | Built; unit `mb_ch3` |
 | Records and the notebook: the chapter and region stamps with a stand in the Exchange district; the honest note on the name (八百八橋, labelled real); the three causes | K1, R1 inspiration | `40_records.js`, `05_data.js` | Built (F-39: the travel-volume pages are P16 art) |
-| Wanderers (E3): the canal porter who fends off creatures blocking his barge; the busker by the theatre | R1 unique encounters | — | Moved to P09, with the river and Playhouse Row |
-| The automated route through Chapter 3 at F with Ren; a browser test of routing and the dispute | playbook P08 evidence | `tests/e2e/`, `tests/unit/` | Browser `manybridge` 3/3; the automated route: in progress |
+| Wanderers (E3): the canal porter who fends off creatures blocking his barge; the busker by the theatre | R1 unique encounters | — | Moved to P09, with the river and Playhouse Row; built there (F-52) |
+| The automated route through Chapter 3 at F with Ren; a browser test of routing and the dispute | playbook P08 evidence | `tests/e2e/`, `tests/unit/` | Built: browser `manybridge` 3/3; the route from the Chapter 2 fixture reaches `mb1_done` (phase end below) |
 
 ## Side content across Manybridge (assigned; none disappears)
 
@@ -48,7 +48,7 @@ turns out, were cut upstream in Blockprint Row, where Chapter 4 begins.
 | The Rival Noodle Stalls | P08 | complete (まさ屋 and ます屋: two signs a kana apart) | the stalls at the festival (P09) |
 | Boatman's Riddles | P08 | complete, repeatable as a Distraction | more riddles once the river is open (P09) |
 | The Lost Contract | P08 | complete (an old canal plan against today's) | — |
-| A Ghostwriter's Debt | P09 | — | complete |
+| A Ghostwriter's Debt | P09 | — | complete (P09) |
 | The Apprentice Printer | P09 | — | complete |
 | The Missing Lead Actor | P09 | — | complete |
 | Festival preparations | P09 | — | complete |
@@ -70,3 +70,14 @@ turns out, were cut upstream in Blockprint Row, where Chapter 4 begins.
   (found); the party's resolve, "this is bigger than one village".
 - The Canal Kappa stays out (a real folklore figure; at most a told story, C9).
 - Every line of new Japanese through the review ledger (self-review only, never claimed as native-reviewed).
+
+## Phase end
+
+Run on a clean copy of 666ad80 (the build, then each check in turn; logs kept outside the repository):
+
+| Check | Result |
+|---|---|
+| Browser suites it touched or could disturb | All pass: manybridge 3/0, encounters 10/0, combat_ui 7/0, ui 14/0, records 7/0, book 15/0, battle_settings 10/0, expedition 6/0, audio_zones 78/0, audit_fixes 4/0 |
+| The automated route through Chapter 3 at F with Ren, from the Chapter 2 fixture (twelve-chapter edition) | Reached `mb1_done` in 340 site visits (288 s) |
+| Unit suite | 31,271 passed, 0 failed |
+| F/Ren through the six-chapter game and one Atlas expedition | **Failed at Chapter 6** (Chapters 1–5 passed, 12.1 min): the story driver found "no site offers progress" in Chapter 6. A test-driver gap, not the game: a scene already seen during testing was not counted as progress (F-51). Fixed in the driver; Chapter 6 then passed from the Chapter 5 fixture, and the whole run **passed (12.7 min)** on fb9a604 together with the Chapter 3 route again (361 visits) |

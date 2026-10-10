@@ -52,6 +52,9 @@ RB.dialect.add('kansai', `
 > {昨日|きのう} は な 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} {食|た}べた ねん 。 || Yesterday, see, I crossed the chopsticks and ate my rice with a bridge.
 = …… ありがとう 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない わ よ 。 || …Thank you, partner. It's been a long time since I laughed on a stage. Your timing's not bad at all.
 > …… おおきに 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない で 。 || …Thanks, partner. Been a long time since I laughed on a stage. Your timing's not bad at all.
+@ mp/21_scenes_stage [mp.oldest_play]
+= 「{百物語|ひゃくものがたり}」 ！ {一座|いちざ} の {年寄|としよ}り が 、 よく {話|はな}して くれた わ 。 …… でも 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて よ 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But a version where you light the lamps, that's new to me.
+> 「{百物語|ひゃくものがたり}」 や ！ {一座|いちざ} の {年寄|としよ}り が 、 よう {話|はな}して くれた わ 。 …… せやけど 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて や 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But one where you light the lamps, that's new to me.
 @ mp/21_scenes_stage [mp.saku_first]
 = {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えて いる わ 。 {一緒|いっしょ} に 、 {読|よ}んで みましょう 。 || Your body remembers the lines, even without the name. Let's read them together.
 > {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えてる で 。 {一緒|いっしょ} に 、 {読|よ}んで みよ か 。 || Your body remembers the lines, even without the name. Shall we read them together?

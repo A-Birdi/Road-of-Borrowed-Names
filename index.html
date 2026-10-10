@@ -148192,6 +148192,9 @@ RB.dialect.add('kansai', `
 > {昨日|きのう} は な 、 {箸|はし} を {渡|わた}って 、 {橋|はし} で ご{飯|はん} {食|た}べた ねん 。 || Yesterday, see, I crossed the chopsticks and ate my rice with a bridge.
 = …… ありがとう 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない わ よ 。 || …Thank you, partner. It's been a long time since I laughed on a stage. Your timing's not bad at all.
 > …… おおきに 、 {相方|あいかた} 。 {久|ひさ}しぶり に 、 {舞台|ぶたい} で {笑|わら}った わ 。 {間|ま} の {取|と}り{方|かた} 、 {悪|わる}く ない で 。 || …Thanks, partner. Been a long time since I laughed on a stage. Your timing's not bad at all.
+@ mp/21_scenes_stage [mp.oldest_play]
+= 「{百物語|ひゃくものがたり}」 ！ {一座|いちざ} の {年寄|としよ}り が 、 よく {話|はな}して くれた わ 。 …… でも 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて よ 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But a version where you light the lamps, that's new to me.
+> 「{百物語|ひゃくものがたり}」 や ！ {一座|いちざ} の {年寄|としよ}り が 、 よう {話|はな}して くれた わ 。 …… せやけど 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて や 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But one where you light the lamps, that's new to me.
 @ mp/21_scenes_stage [mp.saku_first]
 = {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えて いる わ 。 {一緒|いっしょ} に 、 {読|よ}んで みましょう 。 || Your body remembers the lines, even without the name. Let's read them together.
 > {名前|なまえ} が なくて も 、 {台詞|せりふ} は {体|からだ} が {覚|おぼ}えてる で 。 {一緒|いっしょ} に 、 {読|よ}んで みよ か 。 || Your body remembers the lines, even without the name. Shall we read them together?
@@ -157630,6 +157633,8 @@ RB.lex.add(RB.lex.parseTable(`
 歌舞伎|かぶき|n|I|kabuki (a classical form of Japanese theatre)
 どっこいしょ||exp|I|heave-ho (said when lifting or pushing something heavy)
 子役|こやく|n|A|a child actor; a child's part
+百物語|ひゃくものがたり|n|A|"a hundred tales": an Edo-period night of ghost stories told by a hundred lights
+番目|ばんめ|suf|I|-th (in order: 三番目, the third)
 `));
 
 
@@ -157921,6 +157926,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '{瓦版|かわらばん} は 、 {江戸|えど} {時代|じだい} の {一枚|いちまい} {刷|ず}り の {知|し}らせ 。 {町|まち} で {読|よ}み{上|あ}げながら {売|う}った 。',
     en: 'Kawaraban were the single-sheet news prints of the Edo period, cut in woodblock and sold in the street by criers who read the stories aloud.',
   };
+  C.notes.mp_hyakumonogatari = {
+    title: { jp: '{百物語|ひゃくものがたり}', en: 'Hyaku-monogatari, a hundred tales' }, fiction: false,
+    jp: '{百物語|ひゃくものがたり} は 、 {江戸|えど} {時代|じだい} の {夜|よる} の {集|あつ}まり 。 {百|ひゃく} の {灯|あか}り を {点|つ}けて {怖|こわ}い {話|はなし} を し 、 {一|ひと}つ {話|はな}す たび に {一|ひと}つ {消|け}した 。',
+    en: 'Hyaku-monogatari ("a hundred tales") was an Edo-period gathering: a hundred lights, a hundred strange tales told by lamplight, one light put out after each. Tradition said something came when the hundredth went out, so people often stopped at ninety-nine. The playhouse\'s script, where lantern-keepers\' apprentices light the lamps one tale at a time, is the game\'s own.',
+  };
   C.notes.mp_kuroko = {
     title: { jp: '{黒子|くろこ}', en: 'Kuroko, the stagehands in black' }, fiction: false,
     jp: '{歌舞伎|かぶき} の {黒子|くろこ} は 、 {黒|くろ}い {服|ふく} と {頭巾|ずきん} で {舞台|ぶたい} に {出|で}る 。 お{客|きゃく} は 、 {黒子|くろこ} を 「いない」 こと に して {見|み}る 。',
@@ -158203,6 +158213,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'lantern', x: 1, y: 6, o: { lit: true } }, { p: 'lantern', x: 19, y: 6, o: { lit: true } },
       { p: 'mp_nobori', x: 1, y: 2 }, { p: 'mp_nobori', x: 19, y: 2, o: { col: 'indigo' } },
       { p: 'desk', x: 15, y: 12, scene: 'mp.promptbook' },
+      { p: 'bookpile', x: 4, y: 12, scene: 'mp.oldest_play' },
     ],
     npcs: [
       { id: 'mp_manbe', x: 10, y: 7, dir: 'down', if: 'mp_rehearsal_done&!mb2_done', talk: [{ if: 'quest.mp_main=5', scene: 'mp.manbe_under' }, { scene: 'mp.manbe_idle' }] },
@@ -158544,6 +158555,7 @@ mp_sobe: {三日|みっか} {止|と}まって いた {刷|す}り{場|ば} が 
 ?(comp=ren) !gesture mp_sobe present comp prop=paper
 ?(comp=ren) mp_sobe: …… あんた 、 {灯守|ひもり} の {弟子|でし} だ な 。 これ を {見|み}て いけ 。 {灯籠|とうろう} の {笠|かさ} に {貼|は}る {名札|なふだ} の {版木|はんぎ} だ 。 {次|つぎ} の {宿場|しゅくば} の {名前|なまえ} を 、 ここ で {彫|ほ}る 。 || …You're a keeper's apprentice, aren't you. Look at this, then. The block for the name slips pasted on lantern shades. We cut the name of the next post town here.
 ?(comp=ren) comp[think]: {毎晩|まいばん} {灯|ひ} を {入|い}れて いた {名札|なふだ} は 、 ここ で {生|う}まれて いた の です ね 。 …… {彫|ほ}る {人|ひと} の {手|て} を 、 {初|はじ}めて {見|み}ました 。 || The name slips I lit every night were born here. …I've never seen the hands that cut them before.
+?(comp=ren) !set mp_ev_slips
 mp_sobe: {芝居|しばい} の {通|とお}り の マンベエ が 、 {昨日|きのう} {来|き}た 。 {台本|だいほん} の {役|やく} の {名前|なまえ} が 、 {消|き}えて いく と 。 {行|い}って やって くれ 。 {版木|はんぎ} の {通|とお}り の {東|ひがし} だ 。 || Manbē from Playhouse Row came by yesterday. The names of the parts in his script are fading, he says. Go and see him. It's east of Blockprint Row.
 !quest mp_main 2
 !journal {刷|す}った {知|し}らせ は {消|き}えない 。 {芝居|しばい} の {通|とお}り の マンベエ に {会|あ}う 。 || The new print holds. To Manbē on Playhouse Row.
@@ -158716,6 +158728,19 @@ narr: {舞台|ぶたい} の {床|ゆか} の せり 。 {今|いま} は {上|�
 ?(mb2_done) narr: {台本|だいほん} 。 {役|やく} の {名前|なまえ} が 、 {墨|すみ} で {刷|す}り{直|なお}されて いる 。 || The prompt-book. The parts' names have been printed in again, in ink.
 ?(mb2_done) !end
 narr: {台本|だいほん} 。 {役|やく} の {名前|なまえ} の {所|ところ} が {白|しろ}く 、 {鉛筆|えんぴつ} の {字|じ} が {書|か}き{込|こ}まれて いる 。 || The prompt-book. Where the parts' names were, the page is white; names have been pencilled in.
+
+@scene mp.oldest_play
+# The folklore seed (07_REGIONS R1, seeding R5 / 04_DUNGEONS D9): the theatre's oldest play is the Hundred Tales
+# gathering in the keepers' version (a lantern relit for each tale understood). A rumour only: no hall, no key.
+narr: {棚|たな} の {一番|いちばん} {奥|おく} に 、 {古|ふる}い {台本|だいほん} が ある 。 {表紙|ひょうし} に は 「{百物語|ひゃくものがたり}」 。 || At the very back of the shelf is an old script. On its cover: "A Hundred Tales".
+narr: {百|ひゃく} の {灯|あか}り を {点|つ}けて 、 {話|はなし} を {一|ひと}つ {語|かた}る たび に 、 {一|ひと}つ {消|け}す 。 {百|ひゃく} {番目|ばんめ} が {消|き}える と 、 {何|なに} か が {来|く}る と いう 。 || You light a hundred lights, and each time a tale is told you put one out. When the hundredth goes out, they say, something comes.
+narr: でも 、 この {台本|だいほん} で は {逆|ぎゃく} だ 。 {灯守|ひもり} の {見習|みなら}い たち が 、 {話|はなし} を {一|ひと}つ {分|わ}かる たび に 、 {灯|あか}り を {一|ひと}つ {点|つ}けて いく 。 || But in this script it runs the other way: lantern-keepers' apprentices light one lamp for each tale they understand.
+narr: {最後|さいご} の ページ は 、 {破|やぶ}れて なくなって いる 。 || The last page has been torn away.
+?(comp=nao) comp[think]: {百|ひゃく} の {話|はなし} か 。 …… {全部|ぜんぶ} {分|わ}かったら 、 {何|なに} が {起|お}きる ん だろう な 。 || A hundred tales. …I wonder what happens if you understand every one.
+?(comp=mio) comp[worry]: {百|ひゃく} {番目|ばんめ} で {何|なに} か が {来|く}る …… 。 {夜|よる} に は {読|よ}みたく ない わ 。 || Something comes at the hundredth… I wouldn't want to read this at night.
+?(comp=ren) comp[think]: {灯守|ひもり} の {見習|みなら}い …… 。 {組合|くみあい} に も 、 こんな {話|はなし} は {残|のこ}って いません 。 {誰|だれ} が {書|か}いた の でしょう 。 || Lantern-keepers' apprentices… Nothing like this survives in the guild. I wonder who wrote it.
+?(comp=suzu) comp[happy]: 「{百物語|ひゃくものがたり}」 ！ {一座|いちざ} の {年寄|としよ}り が 、 よく {話|はな}して くれた わ 。 …… でも 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて よ 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But a version where you light the lamps, that's new to me.
+!note mp_hyakumonogatari
 
 @scene mp.stagedoor
 # Suzu's seed (14_COMPANIONS; sealed companion note): an old playbill with her name, a letter left for her (from

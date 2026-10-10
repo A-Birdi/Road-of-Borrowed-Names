@@ -74,6 +74,7 @@ mp_sobe: {三日|みっか} {止|と}まって いた {刷|す}り{場|ば} が 
 ?(comp=ren) !gesture mp_sobe present comp prop=paper
 ?(comp=ren) mp_sobe: …… あんた 、 {灯守|ひもり} の {弟子|でし} だ な 。 これ を {見|み}て いけ 。 {灯籠|とうろう} の {笠|かさ} に {貼|は}る {名札|なふだ} の {版木|はんぎ} だ 。 {次|つぎ} の {宿場|しゅくば} の {名前|なまえ} を 、 ここ で {彫|ほ}る 。 || …You're a keeper's apprentice, aren't you. Look at this, then. The block for the name slips pasted on lantern shades. We cut the name of the next post town here.
 ?(comp=ren) comp[think]: {毎晩|まいばん} {灯|ひ} を {入|い}れて いた {名札|なふだ} は 、 ここ で {生|う}まれて いた の です ね 。 …… {彫|ほ}る {人|ひと} の {手|て} を 、 {初|はじ}めて {見|み}ました 。 || The name slips I lit every night were born here. …I've never seen the hands that cut them before.
+?(comp=ren) !set mp_ev_slips
 mp_sobe: {芝居|しばい} の {通|とお}り の マンベエ が 、 {昨日|きのう} {来|き}た 。 {台本|だいほん} の {役|やく} の {名前|なまえ} が 、 {消|き}えて いく と 。 {行|い}って やって くれ 。 {版木|はんぎ} の {通|とお}り の {東|ひがし} だ 。 || Manbē from Playhouse Row came by yesterday. The names of the parts in his script are fading, he says. Go and see him. It's east of Blockprint Row.
 !quest mp_main 2
 !journal {刷|す}った {知|し}らせ は {消|き}えない 。 {芝居|しばい} の {通|とお}り の マンベエ に {会|あ}う 。 || The new print holds. To Manbē on Playhouse Row.

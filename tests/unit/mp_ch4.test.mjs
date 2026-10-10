@@ -191,4 +191,28 @@ export default async (t) => {
   for (const song of ['playhouse', 'understage', 'festival', 'fireworks', 'boss_understage']) t.ok(!!RB.audio._.songDefs[song], 'song: ' + song);
   t.ok(ops('mp.ikutsuka').includes('set:mod_ikutsuka') && ops('mp.ikutsuka').includes('teach:mod_ikutsuka'), 'C-74: Unravel reaches two (いくつか), taught after the crowded fights');
   t.ok(C.maps['mp.under3'].onEnter.some((e) => e.scene === 'mp.ikutsuka'), 'the growth comes at the top of the weight well, after the revolve\'s crowded fights');
+
+  // ---- the double act, the side stories, the seeds, the world after -------------------------------------------------
+  for (const id of ['mp.manzai_1', 'mp.manzai_2', 'mp.manzai_3']) {
+    const tiers = C.challenges[id].tiers;
+    t.ok(tiers.F[0].options.length === 2 && tiers.E[0].options.length === 2 && tiers.I[0].options.length === 3 && tiers.A[0].options.length === 3, id + ': two retorts to choose from at F and E, three at I and A');
+    t.ok(['F', 'E', 'I', 'A'].every((k) => tiers[k][0].options.filter((o) => o.ok).length === 1 && tiers[k][0].options.every((o) => o.ok || (o.why && o.why.en))), id + ': one right retort, and every near miss says why');
+  }
+  const mz = cmds('mp.manzai');
+  t.ok(mz.filter((c) => c.op === 'challenge').length === 3 && ['comp=suzu', 'comp!=suzu'].every((w) => mz.filter((c) => c.op === 'say' && c.if === w && c.who !== 'narr').length >= 4), 'the double act: three bits, Suzu the funny one in her journeys and Genta in the others');
+  t.ok(!mz.some((c) => c.op === 'give' || c.op === 'gold' || c.op === 'xp'), 'the double act gives nothing: the audience reacts, nothing is scored');
+  const onMap = (id) => Object.keys(C.maps).filter((m) => /^m[bp]\./.test(m) && JSON.stringify([C.maps[m].props, C.maps[m].npcs, C.maps[m].onEnter]).includes('"' + id + '"'));
+  const doneBy = (q) => Object.keys(C.scenes).filter((id) => cmds(id).some((c) => c.op === 'quest' && c.args[0] === q && c.args[1] === 'done'));
+  for (const q of ['mp_census', 'mp_apprentice', 'mp_actor', 'mp_ghost', 'mp_fest_extra']) t.ok(doneBy(q).length >= 1, q + ': the side story has its end (' + doneBy(q).join(', ') + ')');
+  for (const id of ['mp.plaque_hangi', 'mp.plaque_sumi', 'mp.plaque_maku']) t.ok(onMap(id).length === 1, 'the census, continued: ' + id + ' on ' + onMap(id).join(', '));
+  const seeds = { suzu: ['mp.stagedoor', 'mp_ev_koume'], mio: ['mp.tonic_bill', 'mp_ev_tonic'], nao: ['mp.hayate', 'mp_ev_hayate'], ren: ['mp.sobe_printed', 'mp_ev_slips'] };
+  for (const comp in seeds) {
+    const [id, flag] = seeds[comp];
+    t.ok(cmds(id).some((c) => c.op === 'set' && c.args[0] === flag && (!c.if || c.if === 'comp=' + comp)), comp + '\'s seed in Chapter 4: ' + id + ' (' + flag + ')');
+  }
+  for (const [scene, note, map] of [['mp.oldest_block', 'mp_oldest_block', 'mp.workshop'], ['mp.oldest_play', 'mp_hyakumonogatari', 'mp.theatre']]) {
+    t.ok(ops(scene).includes('note:' + note) && C.notes[note] && onMap(scene).includes(map), 'the folklore seed ' + scene + ': in ' + map + ', with its notebook page');
+  }
+  t.ok(C.notes.mp_oldest_block.fiction === true && C.notes.mp_hyakumonogatari.fiction === false && /game's own/.test(C.notes.mp_hyakumonogatari.en), 'the oldest block is the game\'s own; the Hundred Tales is labelled real, its keepers\' version the game\'s own');
+  for (const id of ['mp.manbe_after', 'mp.genta_after', 'mp.tomi_hall', 'mp.shinobu_after', 'mp.miyo_after', 'mp.saku_after']) t.ok(onMap(id).length >= 1, 'the world after: ' + id + ' (' + onMap(id).join(', ') + ')');
 };

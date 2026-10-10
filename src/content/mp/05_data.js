@@ -106,6 +106,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '{瓦版|かわらばん} は 、 {江戸|えど} {時代|じだい} の {一枚|いちまい} {刷|ず}り の {知|し}らせ 。 {町|まち} で {読|よ}み{上|あ}げながら {売|う}った 。',
     en: 'Kawaraban were the single-sheet news prints of the Edo period, cut in woodblock and sold in the street by criers who read the stories aloud.',
   };
+  C.notes.mp_hyakumonogatari = {
+    title: { jp: '{百物語|ひゃくものがたり}', en: 'Hyaku-monogatari, a hundred tales' }, fiction: false,
+    jp: '{百物語|ひゃくものがたり} は 、 {江戸|えど} {時代|じだい} の {夜|よる} の {集|あつ}まり 。 {百|ひゃく} の {灯|あか}り を {点|つ}けて {怖|こわ}い {話|はなし} を し 、 {一|ひと}つ {話|はな}す たび に {一|ひと}つ {消|け}した 。',
+    en: 'Hyaku-monogatari ("a hundred tales") was an Edo-period gathering: a hundred lights, a hundred strange tales told by lamplight, one light put out after each. Tradition said something came when the hundredth went out, so people often stopped at ninety-nine. The playhouse\'s script, where lantern-keepers\' apprentices light the lamps one tale at a time, is the game\'s own.',
+  };
   C.notes.mp_kuroko = {
     title: { jp: '{黒子|くろこ}', en: 'Kuroko, the stagehands in black' }, fiction: false,
     jp: '{歌舞伎|かぶき} の {黒子|くろこ} は 、 {黒|くろ}い {服|ふく} と {頭巾|ずきん} で {舞台|ぶたい} に {出|で}る 。 お{客|きゃく} は 、 {黒子|くろこ} を 「いない」 こと に して {見|み}る 。',

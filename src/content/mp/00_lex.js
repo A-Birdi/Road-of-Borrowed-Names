@@ -106,4 +106,6 @@ RB.lex.add(RB.lex.parseTable(`
 歌舞伎|かぶき|n|I|kabuki (a classical form of Japanese theatre)
 どっこいしょ||exp|I|heave-ho (said when lifting or pushing something heavy)
 子役|こやく|n|A|a child actor; a child's part
+百物語|ひゃくものがたり|n|A|"a hundred tales": an Edo-period night of ghost stories told by a hundred lights
+番目|ばんめ|suf|I|-th (in order: 三番目, the third)
 `));

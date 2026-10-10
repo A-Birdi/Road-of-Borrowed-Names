@@ -629,6 +629,54 @@
   "jp": "{台本|だいほん} 。 {役|やく} の {名前|なまえ} の {所|ところ} が {白|しろ}く 、 {鉛筆|えんぴつ} の {字|じ} が {書|か}き{込|こ}まれて いる 。",
   "en": "The prompt-book. Where the parts' names were, the page is white; names have been pencilled in."
  },
+ "scene:mp.oldest_play#1or3cff": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{棚|たな} の {一番|いちばん} {奥|おく} に 、 {古|ふる}い {台本|だいほん} が ある 。 {表紙|ひょうし} に は 「{百物語|ひゃくものがたり}」 。",
+  "en": "At the very back of the shelf is an old script. On its cover: \"A Hundred Tales\"."
+ },
+ "scene:mp.oldest_play#1u0idmb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{百|ひゃく} の {灯|あか}り を {点|つ}けて 、 {話|はなし} を {一|ひと}つ {語|かた}る たび に 、 {一|ひと}つ {消|け}す 。 {百|ひゃく} {番目|ばんめ} が {消|き}える と 、 {何|なに} か が {来|く}る と いう 。",
+  "en": "You light a hundred lights, and each time a tale is told you put one out. When the hundredth goes out, they say, something comes."
+ },
+ "scene:mp.oldest_play#12jyfhc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "でも 、 この {台本|だいほん} で は {逆|ぎゃく} だ 。 {灯守|ひもり} の {見習|みなら}い たち が 、 {話|はなし} を {一|ひと}つ {分|わ}かる たび に 、 {灯|あか}り を {一|ひと}つ {点|つ}けて いく 。",
+  "en": "But in this script it runs the other way: lantern-keepers' apprentices light one lamp for each tale they understand."
+ },
+ "scene:mp.oldest_play#1wi13vb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{最後|さいご} の ページ は 、 {破|やぶ}れて なくなって いる 。",
+  "en": "The last page has been torn away."
+ },
+ "scene:mp.oldest_play#m9fz11": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{百|ひゃく} の {話|はなし} か 。 …… {全部|ぜんぶ} {分|わ}かったら 、 {何|なに} が {起|お}きる ん だろう な 。",
+  "en": "A hundred tales. …I wonder what happens if you understand every one."
+ },
+ "scene:mp.oldest_play#1p27rcy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{百|ひゃく} {番目|ばんめ} で {何|なに} か が {来|く}る …… 。 {夜|よる} に は {読|よ}みたく ない わ 。",
+  "en": "Something comes at the hundredth… I wouldn't want to read this at night."
+ },
+ "scene:mp.oldest_play#12e881d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{灯守|ひもり} の {見習|みなら}い …… 。 {組合|くみあい} に も 、 こんな {話|はなし} は {残|のこ}って いません 。 {誰|だれ} が {書|か}いた の でしょう 。",
+  "en": "Lantern-keepers' apprentices… Nothing like this survives in the guild. I wonder who wrote it."
+ },
+ "scene:mp.oldest_play#1y6nz6l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "「{百物語|ひゃくものがたり}」 ！ {一座|いちざ} の {年寄|としよ}り が 、 よく {話|はな}して くれた わ 。 …… でも 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて よ 。",
+  "en": "\"A Hundred Tales\"! The old hands in the troupe used to tell it. …But a version where you light the lamps, that's new to me."
+ },
  "scene:mp.stagedoor#jjd389": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -3718,6 +3766,18 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
   "jp": "{瓦版|かわらばん}",
   "en": "Kawaraban, the broadsheet"
+ },
+ "notes:mp_hyakumonogatari#1vhnxmb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{百物語|ひゃくものがたり} は 、 {江戸|えど} {時代|じだい} の {夜|よる} の {集|あつ}まり 。 {百|ひゃく} の {灯|あか}り を {点|つ}けて {怖|こわ}い {話|はなし} を し 、 {一|ひと}つ {話|はな}す たび に {一|ひと}つ {消|け}した 。",
+  "en": "Hyaku-monogatari (\"a hundred tales\") was an Edo-period gathering: a hundred lights, a hundred strange tales told by lamplight, one light put out after each. Tradition said something came when the hundredth went out, so people often stopped at ninety-nine. The playhouse's script, where lantern-keepers' apprentices light the lamps one tale at a time, is the game's own."
+ },
+ "notes:mp_hyakumonogatari#3iz14j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, Suzu's Kansai version against docs/dialect/suzu_kansai.md, the plan's Hundred Tales lore (04_DUNGEONS D9: the real custom and the keepers' version) and the lexicon (P09, the theatre's oldest play)",
+  "jp": "{百物語|ひゃくものがたり}",
+  "en": "Hyaku-monogatari, a hundred tales"
  },
  "notes:mp_kuroko#1vadhly": {
   "status": "self-reviewed",

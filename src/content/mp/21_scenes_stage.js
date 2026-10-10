@@ -83,6 +83,19 @@ narr: {舞台|ぶたい} の {床|ゆか} の せり 。 {今|いま} は {上|�
 ?(mb2_done) !end
 narr: {台本|だいほん} 。 {役|やく} の {名前|なまえ} の {所|ところ} が {白|しろ}く 、 {鉛筆|えんぴつ} の {字|じ} が {書|か}き{込|こ}まれて いる 。 || The prompt-book. Where the parts' names were, the page is white; names have been pencilled in.
 
+@scene mp.oldest_play
+# The folklore seed (07_REGIONS R1, seeding R5 / 04_DUNGEONS D9): the theatre's oldest play is the Hundred Tales
+# gathering in the keepers' version (a lantern relit for each tale understood). A rumour only: no hall, no key.
+narr: {棚|たな} の {一番|いちばん} {奥|おく} に 、 {古|ふる}い {台本|だいほん} が ある 。 {表紙|ひょうし} に は 「{百物語|ひゃくものがたり}」 。 || At the very back of the shelf is an old script. On its cover: "A Hundred Tales".
+narr: {百|ひゃく} の {灯|あか}り を {点|つ}けて 、 {話|はなし} を {一|ひと}つ {語|かた}る たび に 、 {一|ひと}つ {消|け}す 。 {百|ひゃく} {番目|ばんめ} が {消|き}える と 、 {何|なに} か が {来|く}る と いう 。 || You light a hundred lights, and each time a tale is told you put one out. When the hundredth goes out, they say, something comes.
+narr: でも 、 この {台本|だいほん} で は {逆|ぎゃく} だ 。 {灯守|ひもり} の {見習|みなら}い たち が 、 {話|はなし} を {一|ひと}つ {分|わ}かる たび に 、 {灯|あか}り を {一|ひと}つ {点|つ}けて いく 。 || But in this script it runs the other way: lantern-keepers' apprentices light one lamp for each tale they understand.
+narr: {最後|さいご} の ページ は 、 {破|やぶ}れて なくなって いる 。 || The last page has been torn away.
+?(comp=nao) comp[think]: {百|ひゃく} の {話|はなし} か 。 …… {全部|ぜんぶ} {分|わ}かったら 、 {何|なに} が {起|お}きる ん だろう な 。 || A hundred tales. …I wonder what happens if you understand every one.
+?(comp=mio) comp[worry]: {百|ひゃく} {番目|ばんめ} で {何|なに} か が {来|く}る …… 。 {夜|よる} に は {読|よ}みたく ない わ 。 || Something comes at the hundredth… I wouldn't want to read this at night.
+?(comp=ren) comp[think]: {灯守|ひもり} の {見習|みなら}い …… 。 {組合|くみあい} に も 、 こんな {話|はなし} は {残|のこ}って いません 。 {誰|だれ} が {書|か}いた の でしょう 。 || Lantern-keepers' apprentices… Nothing like this survives in the guild. I wonder who wrote it.
+?(comp=suzu) comp[happy]: 「{百物語|ひゃくものがたり}」 ！ {一座|いちざ} の {年寄|としよ}り が 、 よく {話|はな}して くれた わ 。 …… でも 、 {灯|あか}り を {点|つ}けて いく {話|はなし} は 、 {初|はじ}めて よ 。 || "A Hundred Tales"! The old hands in the troupe used to tell it. …But a version where you light the lamps, that's new to me.
+!note mp_hyakumonogatari
+
 @scene mp.stagedoor
 # Suzu's seed (14_COMPANIONS; sealed companion note): an old playbill with her name, a letter left for her (from
 # Koume); she pockets it, laughs it off, and leaves word that she is safe. Her troupe is not met here.
