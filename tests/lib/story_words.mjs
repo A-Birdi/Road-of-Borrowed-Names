@@ -32,6 +32,8 @@ export const KNOWN_AT = {
   // region's own are (the kiln and old works; the upper terraces; the observatory, after the Star Stair)
   'co.shard': CH3, 'co.mole': CH3, 'co.imp': UPPER, 'sb.bat': OBS, 'sb.hare': OBS, 'sb.starling': OBS,
   'kr.wick': KR, 'kr.sandal': KR, 'kr.chochin': KR, 'kr.moss': KR, 'kr.shadow': KR, 'kr.hyakuwa': KR,
+  // Lanternfall's three more (P11, E23): the mimic and the queue in the basement stacks, the weevil in the tower
+  'lf.mimic': CH5, 'lf.queue': CH5, 'lf.weevil': BELL,
   'mp.kuroko': MB2, 'mp.moth': MB2, 'mp.imp': MB2, 'mp.golem': MB2, 'mp.naraku': MB2,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
 };

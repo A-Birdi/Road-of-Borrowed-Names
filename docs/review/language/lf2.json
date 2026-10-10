@@ -1,0 +1,368 @@
+{
+ "enemies:lf.mimic#1us0di6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{掲示板|けいじばん} の {化|ば}け{物|もの}",
+  "en": "Notice-Board Mimic"
+ },
+ "enemies:lf.mimic#m2na87": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:鈴",
+  "en": ""
+ },
+ "enemies:lf.mimic#333ipn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:声",
+  "en": ""
+ },
+ "enemies:lf.mimic#9v0chv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:鐘",
+  "en": ""
+ },
+ "enemies:lf.mimic#ba25uq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:舟",
+  "en": ""
+ },
+ "enemies:lf.mimic#lx49s7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:水",
+  "en": ""
+ },
+ "enemies:lf.mimic#6ag3jq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:反対",
+  "en": ""
+ },
+ "enemies:lf.mimic#17cpp0w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:結構",
+  "en": ""
+ },
+ "enemies:lf.mimic#mpvv1o": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "みんな さんせい 。 はんたい は ない 。",
+  "en": "Everyone agrees. Nobody is against."
+ },
+ "enemies:lf.mimic#1arm49t": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{全員|ぜんいん} {賛成|さんせい} です 。 {反対|はんたい} は ありません 。",
+  "en": "Everyone is in favour. There are no objections."
+ },
+ "enemies:lf.mimic#xl7vqx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{本日|ほんじつ} の {会議|かいぎ} は 、 {全員|ぜんいん} {賛成|さんせい} で {決|き}まりました 。 {反対|はんたい} の {意見|いけん} は 、 {一|ひと}つ も ありません でした 。",
+  "en": "Today's meeting was decided unanimously. There was not a single objection."
+ },
+ "enemies:lf.mimic#1t47ko9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{全員|ぜんいん} が 「かしこまりました」 と {答|こた}えた 。 よって 、 {反対|はんたい} は なかった もの と する 。",
+  "en": "Everyone answered \"Certainly\". It is therefore taken that there was no objection."
+ },
+ "enemies:lf.mimic#1nshuwz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "わたし を はがさないで 。 まだ だれ も よんで いない 。",
+  "en": "Don't tear me down. Nobody has read me yet."
+ },
+ "enemies:lf.mimic#tutlb0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{私|わたし} を はがさないで ください 。 まだ {誰|だれ} も {読|よ}んで いない ん です 。",
+  "en": "Please don't take me down. Nobody has read me yet."
+ },
+ "enemies:lf.mimic#2d4faq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{貼|は}られて から 、 {誰|だれ} も {足|あし} を {止|と}めて くれなかった 。 {一度|いちど} で いい から 、 {読|よ}んで ほしい 。",
+  "en": "Since I was posted, nobody has stopped to look. Just once, I want to be read."
+ },
+ "enemies:lf.mimic#1cfoyyi": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{誰|だれ} に も {読|よ}まれない {掲示|けいじ} は 、 {掲示|けいじ} と {言|い}える だろう か 。 せめて 、 {一度|いちど} は {読|よ}んで くれ 。",
+  "en": "Is a notice nobody reads still a notice? At least read me once."
+ },
+ "enemies:lf.mimic#4kqfo4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "よみました 。 でも 、 これ は ふるい です 。",
+  "en": "I read it. But this is out of date."
+ },
+ "enemies:lf.mimic#1ajy8a6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "よみません 。",
+  "en": "I won't read it."
+ },
+ "enemies:lf.mimic#axyivj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{読|よ}みました 。 でも 、 この お{知|し}らせ は もう {古|ふる}い です 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#1lnziu4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{読|よ}みました 。 {全部|ぜんぶ} {本当|ほんとう} です ね 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#dxjnj0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{読|よ}んで いません 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#1mznt3d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{読|よ}ませて もらいました 。 ただ 、 {賛成|さんせい} した と は {言|い}えません 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#h1tzj8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{読|よ}ませて もらいました 。 {賛成|さんせい} します 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#2zj0kz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{読|よ}む {必要|ひつよう} は ありません 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#8o3gjx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{拝見|はいけん} しました 。 です が 、 {全員|ぜんいん} {賛成|さんせい} と は {申|もう}し{上|あ}げかねます 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#kasdq4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{拝見|はいけん} しました 。 かしこまりました 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#trosax": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{拝見|はいけん} いたしかねます 。",
+  "en": ""
+ },
+ "enemies:lf.mimic#1r5lpaa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{古|ふる}い {掲示板|けいじばん} が 、 {棚|たな} の {間|あいだ} を {這|は}って いる 。 {貼|は}られた {紙|かみ} の {字|じ} が 、 {勝手|かって} に {書|か}き{換|か}わる 。",
+  "en": "An old notice board creeps between the shelves. The words on its papers rewrite themselves."
+ },
+ "enemies:lf.mimic#1enmvnf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{掲示板|けいじばん} は {壁|かべ} に {戻|もど}って 、 {古|ふる}い {紙|かみ} を {一枚|いちまい} 、 {床|ゆか} に {落|お}とした 。",
+  "en": "The board goes back to the wall, and lets one old paper fall to the floor."
+ },
+ "enemies:lf.queue#1dqnaf4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{列|れつ} の {霊|れい}",
+  "en": "Queue Spirit"
+ },
+ "enemies:lf.queue#m2na87": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:鈴",
+  "en": ""
+ },
+ "enemies:lf.queue#333ipn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:声",
+  "en": ""
+ },
+ "enemies:lf.queue#9v0chv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:鐘",
+  "en": ""
+ },
+ "enemies:lf.queue#ba25uq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:舟",
+  "en": ""
+ },
+ "enemies:lf.queue#lx49s7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:水",
+  "en": ""
+ },
+ "enemies:lf.queue#6ag3jq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:反対",
+  "en": ""
+ },
+ "enemies:lf.queue#17cpp0w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:結構",
+  "en": ""
+ },
+ "enemies:lf.queue#m4oz0h": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "ならんで 、 まって いる 。",
+  "en": "It stands in line, waiting."
+ },
+ "enemies:lf.queue#l7qvs2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{列|れつ} に {並|なら}んで 、 {静|しず}か に {待|ま}って いる 。",
+  "en": "It waits quietly in line."
+ },
+ "enemies:lf.queue#1c364jv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{順番|じゅんばん} を {待|ま}つ {列|れつ} が 、 {少|すこ}し ずつ {長|なが}く なって いく 。",
+  "en": "The line waiting its turn grows a little longer."
+ },
+ "enemies:lf.queue#5qd9lv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{待|ま}つ こと に {慣|な}れすぎた {者|もの} たち の {列|れつ} 。 {苛立|いらだ}ち が 、 {静|しず}か に {溜|た}まって いく 。",
+  "en": "A line of those too used to waiting. Their impatience quietly builds."
+ },
+ "enemies:lf.queue#1hn5r08": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "れつ が いっせい に おしよせる ！",
+  "en": "The whole line surges forward!"
+ },
+ "enemies:lf.queue#13k8cdr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{待|ま}ちくたびれた {列|れつ} が 、 {一度|いちど} に {押|お}し{寄|よ}せて くる ！",
+  "en": "Tired of waiting, the line surges forward all at once!"
+ },
+ "enemies:lf.queue#gknlpi": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{待|ま}たされ{続|つづ}けた {列|れつ} が 、 ついに {崩|くず}れて 、 ふたり に {押|お}し{寄|よ}せる ！",
+  "en": "Kept waiting too long, the line finally breaks and surges over you both!"
+ },
+ "enemies:lf.queue#11ypvqf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{堪忍袋|かんにんぶくろ} の {緒|お} が {切|き}れた か 、 {列|れつ} が {一斉|いっせい} に なだれ{込|こ}んで くる ！",
+  "en": "Their patience snaps, and the line comes pouring in all at once!"
+ },
+ "enemies:lf.queue#18g5d1u": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{窓口|まどぐち} の {前|まえ} に 、 {薄|うす}い {影|かげ} が {一列|いちれつ} に {並|なら}んで いる 。 {誰|だれ} も {呼|よ}ばれない まま 、 {待|ま}ち{続|つづ}けて いる 。",
+  "en": "Before a counter, faint shapes stand in a single line, waiting on and on to be called."
+ },
+ "enemies:lf.queue#1j9bzlx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{一人|ひとり} ずつ {名前|なまえ} が {呼|よ}ばれる と 、 {影|かげ} は {順番|じゅんばん} に {消|き}えて いった 。",
+  "en": "Called one by one by name, the shapes leave in turn."
+ },
+ "enemies:lf.weevil#1ako64p": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{帳簿|ちょうぼ} {虫|むし}",
+  "en": "Ledger Weevil"
+ },
+ "enemies:lf.weevil#m2na87": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:鈴",
+  "en": ""
+ },
+ "enemies:lf.weevil#333ipn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:声",
+  "en": ""
+ },
+ "enemies:lf.weevil#9v0chv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:鐘",
+  "en": ""
+ },
+ "enemies:lf.weevil#ba25uq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:舟",
+  "en": ""
+ },
+ "enemies:lf.weevil#lx49s7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:水",
+  "en": ""
+ },
+ "enemies:lf.weevil#6ag3jq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:反対",
+  "en": ""
+ },
+ "enemies:lf.weevil#17cpp0w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "v:結構",
+  "en": ""
+ },
+ "enemies:lf.weevil#1sb7rm7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "ふるい きろく から 、 また つながる 。",
+  "en": "It ties itself back together from the old records."
+ },
+ "enemies:lf.weevil#1fserb0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{古|ふる}い {記録|きろく} を かじって 、 {結|むす}び{目|め} を {結|むす}び{直|なお}して いる 。",
+  "en": "It gnaws the old records and re-ties its knots."
+ },
+ "enemies:lf.weevil#zqgot1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{記録|きろく} の {頁|ページ} を {食|た}べる たび に 、 ほどけた {所|ところ} が {元|もと} に {戻|もど}って いく 。",
+  "en": "With every page of the records it eats, what was loosened goes back as it was."
+ },
+ "enemies:lf.weevil#1j4u99r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{書|か}かれた とおり に {戻|もど}る 。 {帳簿|ちょうぼ} に {従|したが}う こと しか 、 {知|し}らない らしい 。",
+  "en": "It goes back to exactly what was written. Following the ledger seems all it knows."
+ },
+ "enemies:lf.weevil#1jmzz8j": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{帳簿|ちょうぼ} の {間|あいだ} から 、 {硬|かた}い {殻|から} の {虫|むし} が {這|は}い{出|だ}した 。 {食|た}べた {字|じ} の {形|かたち} が 、 {背中|せなか} に {浮|う}かんで いる 。",
+  "en": "A hard-shelled insect crawls out from between the ledgers, the shapes of the characters it has eaten showing on its back."
+ },
+ "enemies:lf.weevil#1hsacq1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",
+  "jp": "{虫|むし} は {背中|せなか} の {字|じ} を {一|ひと}つ ずつ {落|お}として 、 {棚|たな} の {隙間|すきま} に {消|き}えた 。",
+  "en": "The insect sheds the characters from its back one by one, and vanishes into a gap in the shelves."
+ }
+}
