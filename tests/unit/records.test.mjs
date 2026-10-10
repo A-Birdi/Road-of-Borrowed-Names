@@ -132,6 +132,18 @@ export default async (t) => {
     t.eq([n.player.seal.frame, n.player.seal.kana], ['gourd', 'ハル'], 'New Game+ carries the seal with the traveller');
     t.ok(n.records.stamps['ch.rw'] && n.seq['ch1.bridge'], 'and the stamps and the volume\'s witnessed pages');
     t.ok(!n.flags.ch1_done && !n.flags.postgame && !n.comp, 'never the story or the companion');
+    // a keepsake found is carried as a record of finding, never as the keepsake itself (C-66)
+    {
+      const f = camp(); f.flags.postgame = true;
+      f.discovery = f.discovery || {}; f.discovery.keepsakes = { ks_test: { t: 5 } };
+      const n2 = RB.ui.create.carry(f);
+      t.ok(!!n2.records.found.ks_test && !Object.keys((n2.discovery && n2.discovery.keepsakes) || {}).length, 'New Game+: the keepsake is a record of finding, not a keepsake in the new journey');
+      // the pastimes' records carry; a game under way does not
+      RB.pastimes.result(f, 'shogi', 'mini', true); RB.pastimes.rec(f, 'shogi').active = { x: 1 };
+      RB.pastimes.result(f, 'hanafuda', 'koikoi', true, 9); RB.pastimes.result(f, 'karuta', 'game', true, 6);
+      const n3 = RB.ui.create.carry(f);
+      t.ok(n3.practice.shogi.wins.mini === 1 && n3.practice.shogi.active === null && n3.practice.hanafuda.best === 9 && n3.practice.karuta.games === 1, 'New Game+ carries the shogi, hanafuda and karuta records, never a game under way');
+    }
     for (const c of ['nao', 'mio', 'ren', 'suzu']) t.ok((C.ngFarewell[c] || []).length >= 2 && C.ngFarewell[c].every((l) => l.who === c && l.jp && l.en && RB.jp.validate(l.jp).length === 0), c + ': a farewell in their own words, with furigana');
   }
 };

@@ -63,13 +63,16 @@ made); F-24 when Fuku offers a game; F-25 koi-koi's house rules.
 - The pastime records were first registered as practice namespaces, which filled them in on load: the save-fixture
   test caught older saves changing. They are now made at first play, and reading a page makes nothing (F-23).
 - Fishing in this game is Yasu's postgame survey; its page appears only then, matching the fishing engine's rule.
+- The Main Menu's travel volume chose its "Continue journey" by a save time it never read (always 0), so with several
+  saves it showed the lowest slot's seals and look. It now uses the title's own rule (the newest of each slot's save
+  and autosave). The browser test puts the older journey in the lower slot; it fails on the old code and passes now.
 
 ## Checks so far
 
 | Check | Command | Result |
 |---|---|---|
-| Stamps, volume, seal, replay, New Game+ | `node tests/run-unit.mjs records` | 102/0 |
-| The same in the browser | `node tests/e2e/records.mjs` | 5/0 (captures `docs/screenshots/records/`) |
+| Stamps, volume, seal, replay, New Game+ (a keepsake carried only as a record of finding; the pastimes' records carried, never a game under way) | `node tests/run-unit.mjs records` | 105/0 |
+| The same in the browser, with the playbook's checks: zero saves (veiled, the creation look), saves (the Continue journey's seals, fixed while open), New Game+ into another journey's slot (asked first, Choose again changes nothing, the ending journey's farewell, the origin slot untouched) | `node tests/e2e/records.mjs` | 7/0 (captures `docs/screenshots/records/`) |
 | Shogi's rules, engine, lessons, puzzles, hasami, words | `node tests/run-unit.mjs shogi` | 64/0 |
 | Shogi in the browser: ladder, lesson, puzzles with promotion, mini-shogi with Why? and Take back, a win recorded and taken back, hasami, handicap at phone width | `node tests/e2e/shogi.mjs` | 5/0 (captures `docs/screenshots/shogi/`) |
 | Fonts and handwriting cover every displayed kanji | `book_type`, `recog-coverage` | 60/0, 15/0 |

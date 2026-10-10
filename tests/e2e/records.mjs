@@ -153,6 +153,86 @@ await test('New Game+ from the end: the slot, the farewell, a new journey with t
   await ctx.close();
 });
 
+await test('New Game+ into another journey\'s slot: asked first; Choose again changes nothing; the farewell is the ending journey\'s; the origin slot untouched', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, 2);
+  const ids = await p.evaluate(async () => {
+    const s = RB.game.s;
+    s.flags.postgame = true; s.flags.ngp_offered = true; s.flags.ch1_done = true;
+    await RB.save.manualSave(1);
+    const other = JSON.parse(JSON.stringify(s));
+    other.id = 'other-journey'; other.comp = 'ren'; other.player.name = 'Kai'; other.flags = { departed: true };
+    await RB.save.writeSlot(3, other);
+    return { origin: s.id };
+  });
+  await p.evaluate(() => RB.ui.menu.open('volume'));
+  await p.waitForSelector('[data-a="ngplus"]');
+  await p.click('[data-a="ngplus"]');
+  await p.waitForSelector('.folio-ngplus [data-slot="3"]');
+  assert(/erased/.test(await p.textContent('.folio-ngplus [data-slot="3"]')), 'another journey\'s slot says it will be erased');
+  await p.click('.folio-ngplus [data-slot="3"]');
+  await p.waitForSelector('.confirm-scrim button');
+  assert(/Kai's journey/.test(await p.textContent('.confirm-scrim')), 'asked first, naming whose journey it erases');
+  await p.evaluate(() => [...document.querySelectorAll('.confirm-scrim button')].find((x) => /Choose again/.test(x.textContent)).click());
+  await p.waitForSelector('.folio-ngplus [data-slot="3"]');
+  assert(await p.evaluate(async () => { const r = await RB.save.read(3, 'manual'); return r && r.state && r.state.id === 'other-journey'; }), 'Choose again: slot 3 untouched');
+  await p.click('.folio-ngplus [data-slot="3"]');
+  await p.waitForSelector('.confirm-scrim button');
+  await p.evaluate(() => [...document.querySelectorAll('.confirm-scrim button')].find((x) => /Erase and begin/.test(x.textContent)).click());
+  const said = [];
+  for (let i = 0; i < 80; i++) {
+    const st = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), cur: RB.ui.dialogue.isOpen() ? RB.ui.dialogue.shown() : null, ng: RB.game.s && RB.game.s.ngplus }));
+    if (st.ng === 1) break;
+    if (st.cur && (!said.length || said[said.length - 1].en !== st.cur.en)) said.push(st.cur);
+    if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
+    await p.waitForTimeout(120);
+  }
+  assert(said.length >= 3 && said.slice(0, -1).every((l) => l.who === 'mio'), 'the farewell is the ending journey\'s companion\'s (Mio), not the erased one\'s (Ren): ' + said.map((l) => l.who).join(','));
+  const after = await p.evaluate(async (ids) => {
+    const rd = async (n) => { try { return (await RB.save.read(n, 'manual')).state; } catch (e) { return null; } };
+    const one = await rd(1), three = await rd(3);
+    // slot 3: the erased journey is gone; the new one is there once it is first saved
+    return { cur: RB.save.current().slot, ng: RB.game.s.ngplus, oneId: one && one.state === undefined ? one.id : one && one.id, onePost: !!(one && one.flags.postgame), threeOld: !!(three && three.id === 'other-journey') };
+  }, ids);
+  assert(after.cur === 3 && after.ng === 1 && after.oneId === ids.origin && after.onePost && !after.threeOld, 'the new journey is in slot 3, Kai\'s is gone; the finished journey in slot 1 is as it was: ' + JSON.stringify(after));
+  assert(!errors.length, 'no errors: ' + errors.join(' | '));
+  await ctx.close();
+});
+
+await test('the Main Menu\'s volume with saves: the Continue journey\'s seals and look, fixed while open', async () => {
+  const { p, errors, ctx } = await page(b, url + '?edition=12', { viewport: { width: 1280, height: 800 } });
+  await p.waitForSelector('.title [data-a="volume"]');
+  // two journeys: an older one in slot 1 and the Continue one in slot 5 (saved last), each a real game state; the
+  // lower slot first, so a volume that ignored the save times would show the wrong journey
+  await p.evaluate(async () => {
+    const mk = async (slot, id, name, kana, frame) => {
+      const s = RB.game.debugStart('rw.village', 22, 30, { comp: 'mio', flags: { departed: true, ch1_done: true } });
+      s.edition = 2; s.id = id; s.player.name = name; s.player.nameJp = kana;
+      s.seq['ch1.bridge'] = { n: 1, h: [] };
+      RB.seal.set(s, { frame, kana: kana.slice(0, 1), style: 'fine' });
+      await RB.save.writeSlot(slot, s);
+      await new Promise((r) => setTimeout(r, 30));
+    };
+    await mk(1, 'menu-older', 'Ao', 'アオ', 'round');
+    await mk(5, 'menu-cont', 'Haru', 'ハル', 'gourd');
+  });
+  await p.reload();
+  await p.waitForFunction(() => window.__RB_READY__ === true);
+  await p.waitForSelector('.title [data-a="volume"]');
+  await p.click('.title [data-a="volume"]');
+  await p.waitForSelector('.folio-volume .rb-pages');
+  assert(/With the Continue journey/.test(await p.textContent('.folio-volume')), 'with a save: the Continue journey\'s seals');
+  assert(await p.evaluate(() => { const pg = document.querySelector('.folio-volume [data-page="ch1.bridge"]'); const card = pg && pg.closest('.rb-pg'); return !!card && !card.classList.contains('veiled') && !!card.querySelector('.rb-mark'); }), 'a page that journey witnessed: open, with its seal');
+  assert(await p.evaluate(() => /ハ/.test(document.querySelector('.folio-volume .rb-pg .rb-mark').innerHTML) && !/>ア</.test(document.querySelector('.folio-volume .rb-pg .rb-mark').innerHTML)), 'the seal is the Continue journey\'s (saved last), not the older one\'s');
+  // a newer save written while the volume is open does not change what it shows
+  const before = await p.evaluate(() => document.querySelector('.folio-volume .rb-pages').innerHTML.length);
+  await p.evaluate(async () => { const s = RB.state.newCampaign({ edition: 2 }); s.id = 'menu-two'; s.player.name = 'Ao'; await RB.save.writeSlot(4, s); });
+  await p.waitForTimeout(300);
+  assert(await p.evaluate(() => document.querySelector('.folio-volume .rb-pages').innerHTML.length) === before, 'fixed while open');
+  assert(!errors.length, 'no errors: ' + errors.join(' | '));
+  await ctx.close();
+});
+
 await test('phone width: the stamp book and the volume fit', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 390, height: 844 }, mobile: true, touch: true });
   await start(p, 2);

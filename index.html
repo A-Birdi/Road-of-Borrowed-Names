@@ -77281,7 +77281,8 @@ RB.ui.records = (function () {
     const list = await RB.save.list();
     const live = list.filter((x) => !x.empty && !x.corrupt);
     const saves = [];
-    for (const x of live) { try { const r = await RB.save.read(x.slot, x.manual ? 'manual' : 'auto'); if (r && r.state) saves.push({ slot: x.slot, s: r.state, t: (x.manual || x.auto || {}).savedAt || 0 }); } catch (e) { /* an unreadable slot shows nothing */ } }
+    // the Continue save is the title's: the newest of every slot's save and autosave, read as the title would load it
+    for (const x of live) { try { const r = await RB.save.read(x.slot, x.autoNewer || !x.manual ? 'auto' : 'manual'); if (r && r.state) saves.push({ slot: x.slot, s: r.state, t: Math.max((x.meta && x.meta.savedAt) || 0, x.auto ? x.auto.savedAt : 0) }); } catch (e) { /* an unreadable slot shows nothing */ } }
     saves.sort((a, b) => b.t - a.t);
     const cont = saves[0] ? saves[0].s : null; // the Continue save: its look and its seals, fixed while open
     const look = cont ? (RB.equip ? RB.equip.look(cont) : cont.player.look) : (RB.ui.create && RB.ui.create.defaultLook ? RB.ui.create.defaultLook() : { skin: 2, hair: 'short', hairColor: 3, outfit: 0, acc: [] });
