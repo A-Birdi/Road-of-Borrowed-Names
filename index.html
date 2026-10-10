@@ -40315,6 +40315,7 @@ RB.render = (function () {
   function setOverride(fn) {
     override = fn;
   }
+  const getOverride = () => override;
   // Draw one frame now, e.g. while a transition is still dark, so the new
   // map's static layer and prop caches are built before it fades in.
   function prewarm() {
@@ -40357,7 +40358,7 @@ RB.render = (function () {
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, getOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ART, TS };
 })();
 
 
@@ -41656,9 +41657,9 @@ RB.worldLook = (function () {
   function farView(cw, ch) {
     return { w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * FAR, h: (ch < 520 ? 8 : 12) * FAR };
   }
-  // A battle keeps the game's own framing (Robin, C-80: the crowded battle read distant in the far view); the
-  // far view comes back when the world is in play again.
-  const inBattle = () => !!(RB.game && RB.game.mode && RB.game.mode() === 'combat');
+  // A battle keeps the game's own framing (Robin, C-80: the crowded battle read distant in the far view), and so
+  // does the fidelity study (src/engine/68d_study.js); the far view comes back when the world is in play again.
+  const inBattle = () => !!(RB.game && RB.game.mode && (RB.game.mode() === 'combat' || RB.game.mode() === 'study'));
   function applyCamera() {
     if (!RB.render || !RB.render.setView) return;
     const m = RB.world && RB.world.W && RB.world.W.map;
@@ -42085,7 +42086,8 @@ RB.worldLook = (function () {
       '<div class="row">' + B('on', 'The proof') + B('far', 'Far view') + '</div>' +
       '<div class="row">' + B('kit', 'Kit') + B('light', 'Light') + B('atmos', 'Atmosphere') + B('soft', 'Soft edges') + '</div>' +
       '<div class="row" id="wl-visits"><button type="button" data-visit="rw">Visit Reedwake (not saved)</button>' +
-      '<button type="button" data-visit="sg">Visit Saltglass (not saved)</button></div>';
+      '<button type="button" data-visit="sg">Visit Saltglass (not saved)</button></div>' +
+      '<button type="button" id="wl-study">Study: Suzu at the Mill</button>';
     document.body.appendChild(el);
     const sync = () => {
       for (const b of el.querySelectorAll('[data-k]')) {
@@ -42114,6 +42116,8 @@ RB.worldLook = (function () {
       RB.game.debugStart(map, x, y, { comp: 'suzu', flags: Object.assign({}, flags) });
       sync();
     });
+    // the fidelity study (src/engine/68d_study.js): its own mode, nothing saved; Escape or its Close returns here
+    el.querySelector('#wl-study').addEventListener('click', () => { if (RB.study && RB.study.open) RB.study.open(); });
     const fold = (min) => { el.classList.toggle('min', min); const t = el.querySelector('#wl-toggle'); t.textContent = 'World proof (dev): ' + (min ? 'show' : 'hide'); t.setAttribute('aria-expanded', String(!min)); };
     el.querySelector('#wl-toggle').addEventListener('click', () => fold(!el.classList.contains('min')));
     fold(window.innerHeight < 500 || window.innerWidth < 700);
@@ -43066,6 +43070,1779 @@ RB.worldActs = (function () {
     }
   }
   return { frameOf, push, where, free, working, CAST, NEW_POSES, stackCount, parcelCount, fishRound, foldRound, sellRound };
+})();
+
+
+/* ==== src/engine/68a_studykit.js ==== */
+/* The fidelity study's toolkit (development only; docs/future/work/P01_STUDY.md). Robin's C-80 asked how far the
+ * world's pixel art can go toward the mockup and Octopath Traveler: crisp, defined pixels rather than shapes, with
+ * depth, light and focus. The study draws Suzu at the Mill from scratch with these tools:
+ *  - hue-shifted ramps per material, eight or nine steps, shadows toward violet and highlights toward gold;
+ *  - an RGBA pixel buffer written pixel by pixel (no antialiased canvas paths), with coverage tests at 4×4
+ *    samples so every edge is a deliberate stair, never a blur;
+ *  - hashes and value noise for deterministic variation (no random stream; the same picture every time).
+ * Nothing here is used by the game unless the study is opened (src/engine/68d_study.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.studyKit = (function () {
+  'use strict';
+  const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+  const R = (list) => list.map(hex);
+
+  // ---- ramps (darkest first) ---------------------------------------------------------------------------------
+  const RAMP = {
+    grass: R(['#11221f', '#173329', '#1e4630', '#2a5d33', '#3b7536', '#548d39', '#72a53e', '#97bd4b', '#c2d564', '#e6e99a']),
+    leaf: R(['#0c1a1a', '#122722', '#18372a', '#21492f', '#2d5e33', '#3e7536', '#558d3a', '#73a63f', '#9bbf4c', '#c9da6e']),
+    dirt: R(['#2a1c1e', '#3f2a27', '#583a30', '#73503b', '#8d6847', '#a88257', '#c09c6d', '#d6b789', '#ead3aa']),
+    stone: R(['#201d28', '#2f2b38', '#423c4b', '#58515e', '#706874', '#8b828b', '#a69ea1', '#c3bbb7', '#ded7cd']),
+    thatch: R(['#24170f', '#3a2414', '#553418', '#72471c', '#905d22', '#ad772b', '#c79239', '#dcae52', '#ecca78', '#f7e3a8']),
+    wood: R(['#1d1316', '#2f1d1f', '#462a25', '#5e3a2c', '#784c35', '#94633f', '#ad7c4f', '#c79a68']),
+    plaster: R(['#4a4148', '#62585b', '#7d7271', '#988c86', '#b3a69b', '#cbbfb0', '#e0d5c4', '#f1e9da']),
+    water: R(['#0a1730', '#0f2445', '#14345d', '#1b4777', '#245d92', '#3277ac', '#4993c4', '#6cb0d8', '#9ccde8', '#d6eef8']),
+    bark: R(['#171114', '#251a1b', '#382723', '#4c352b', '#634635', '#7b5a43', '#957252']),
+    reed: R(['#16241c', '#203624', '#2e4a2a', '#405f30', '#567539', '#718c45', '#90a65a', '#b3c078']),
+    cattail: R(['#2a1712', '#43241a', '#5e3322', '#7a4630', '#955d3f']),
+    // Suzu (the bust reference, docs/future/playbook/mockups/09: copper hair with violet in its shade, deep warm
+    // skin, a plum dress with gold trim, a pink bow, gold at her ears, throat and wrists, amber eyes)
+    skin: R(['#26120f', '#3d1d17', '#56291f', '#703828', '#894832', '#a15b3f', '#b8714f', '#cc8a63', '#dda67c']),
+    hair: R(['#24091d', '#3c0e23', '#5a1524', '#7a2023', '#9a2e1f', '#b8411d', '#d1591f', '#e57629', '#f29a3e', '#f9c068']),
+    dress: R(['#1d0819', '#320d2c', '#4a1440', '#641d55', '#7f2869', '#99387c', '#b24f8e', '#c96ea3', '#dc93ba']),
+    gold: R(['#3a210d', '#5f3a12', '#8d5d17', '#b98420', '#dcaa31', '#f0cd56', '#fbe68c', '#fff8cf']),
+    bow: R(['#4f1a36', '#7a2f53', '#a74a72', '#cf6e95', '#ec97b6', '#f9c1d4', '#fff0f5']),
+    iris: R(['#1e0c08', '#4b1f0f', '#843a14', '#bd6119', '#e8912a', '#f8c35a']),
+    boot: R(['#1b1210', '#2d1d18', '#432b21', '#5b3c2b', '#765036', '#916949']),
+    sky: R(['#7fa8c9', '#9cbcd6', '#b9d0e1', '#d6e2e8', '#efe9dc']),
+    flower: { white: R(['#8a8aa0', '#cfd3dc', '#ffffff']), yellow: R(['#8a5a12', '#e0a92a', '#ffe36a']), pink: R(['#7a2c4c', '#d0638e', '#f7a6c4']), blue: R(['#2b3478', '#5465c8', '#9cb2f2']), red: R(['#5c1418', '#b02a2a', '#ec6a50']) },
+  };
+  const OUTLINE = hex('#140a12');
+
+  // ---- deterministic variation ------------------------------------------------------------------------------
+  function hash(x, y, s) {
+    let h = (Math.imul(x | 0, 374761393) + Math.imul(y | 0, 668265263) + Math.imul((s | 0) + 1, 1442695041)) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  }
+  const smooth = (t) => t * t * (3 - 2 * t);
+  function vnoise(x, y, sc, s) {
+    const fx = x / sc, fy = y / sc, ix = Math.floor(fx), iy = Math.floor(fy), tx = smooth(fx - ix), ty = smooth(fy - iy);
+    const a = hash(ix, iy, s), b = hash(ix + 1, iy, s), c = hash(ix, iy + 1, s), d = hash(ix + 1, iy + 1, s);
+    return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+  }
+  function fbm(x, y, sc, s, oct) {
+    let v = 0, amp = 0.5, tot = 0;
+    for (let i = 0; i < (oct || 3); i++) { v += vnoise(x, y, sc, s + i * 17) * amp; tot += amp; sc /= 2; amp /= 2; }
+    return v / tot;
+  }
+  // a 4×4 ordered-dither threshold (0..1), for the rare soft transition that should stay pixel-clean
+  const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+  const bayer = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+
+  // ---- the pixel buffer -------------------------------------------------------------------------------------
+  function Buf(w, h) {
+    this.w = w; this.h = h;
+    this.d = new Uint8ClampedArray(w * h * 4);
+  }
+  Buf.prototype.set = function (x, y, c, a) {
+    x |= 0; y |= 0;
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h || !c) return;
+    const i = (y * this.w + x) * 4, A = a == null ? 255 : a;
+    if (A >= 255) { this.d[i] = c[0]; this.d[i + 1] = c[1]; this.d[i + 2] = c[2]; this.d[i + 3] = 255; return; }
+    const k = A / 255, ia = this.d[i + 3] / 255, oa = k + ia * (1 - k);
+    if (oa <= 0) return;
+    for (let j = 0; j < 3; j++) this.d[i + j] = (c[j] * k + this.d[i + j] * ia * (1 - k)) / oa;
+    this.d[i + 3] = oa * 255;
+  };
+  Buf.prototype.get = function (x, y) {
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return null;
+    const i = (y * this.w + x) * 4;
+    return this.d[i + 3] ? [this.d[i], this.d[i + 1], this.d[i + 2], this.d[i + 3]] : null;
+  };
+  Buf.prototype.alpha = function (x, y) {
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return 0;
+    return this.d[(y * this.w + x) * 4 + 3];
+  };
+  Buf.prototype.clear = function (x, y) {
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return;
+    this.d.fill(0, (y * this.w + x) * 4, (y * this.w + x) * 4 + 4);
+  };
+  Buf.prototype.canvas = function () {
+    const cv = RB.sprites.makeCanvas(this.w, this.h);
+    const g = cv.getContext('2d');
+    const id = g.createImageData(this.w, this.h);
+    id.data.set(this.d);
+    g.putImageData(id, 0, 0);
+    return cv;
+  };
+  // Draw buffer b onto this one at (ox, oy), only where b has colour.
+  Buf.prototype.blit = function (b, ox, oy) {
+    for (let y = 0; y < b.h; y++) for (let x = 0; x < b.w; x++) {
+      const i = (y * b.w + x) * 4;
+      if (b.d[i + 3]) this.set(ox + x, oy + y, [b.d[i], b.d[i + 1], b.d[i + 2]], b.d[i + 3]);
+    }
+  };
+
+  // ---- coverage: a pixel is in a shape when at least half its 4×4 samples are ---------------------------------
+  function covered(fn, x, y) {
+    let n = 0;
+    for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) if (fn(x + (i + 0.5) / 4, y + (j + 0.5) / 4)) n++;
+    return n >= 8;
+  }
+  // a mask (Uint8Array w×h) of a shape given as an inside(x, y) test in continuous coordinates
+  function mask(w, h, fn) {
+    const m = new Uint8Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (covered(fn, x, y)) m[y * w + x] = 1;
+    return m;
+  }
+  // inside tests
+  const inEll = (cx, cy, rx, ry) => (x, y) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1;
+  function inPoly(pts) {
+    return (x, y) => {
+      let c = false;
+      for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+        const [xi, yi] = pts[i], [xj, yj] = pts[j];
+        if (((yi > y) !== (yj > y)) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) c = !c;
+      }
+      return c;
+    };
+  }
+  // a thick quadratic Bézier stroke (a lock of hair, a ribbon): width w0 at the start tapering to w1
+  function inStroke(p0, p1, p2, w0, w1) {
+    const N = 24, pts = [];
+    for (let i = 0; i <= N; i++) {
+      const t = i / N, u = 1 - t;
+      pts.push([u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0], u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1], w0 + (w1 - w0) * t, t]);
+    }
+    const f = (x, y) => {
+      for (let i = 0; i < N; i++) {
+        const a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy || 1;
+        let s = ((x - a[0]) * dx + (y - a[1]) * dy) / L;
+        s = s < 0 ? 0 : s > 1 ? 1 : s;
+        const px = a[0] + dx * s, py = a[1] + dy * s, w = (a[2] + (b[2] - a[2]) * s) / 2;
+        if ((x - px) ** 2 + (y - py) ** 2 <= w * w) return true;
+      }
+      return false;
+    };
+    // where along the stroke, and how far across it (−1 left edge … 1 right edge), for shading
+    f.at = (x, y) => {
+      let best = 1e9, bt = 0, side = 0, bw = 1;
+      for (let i = 0; i < N; i++) {
+        const a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy || 1;
+        let s = ((x - a[0]) * dx + (y - a[1]) * dy) / L;
+        s = s < 0 ? 0 : s > 1 ? 1 : s;
+        const px = a[0] + dx * s, py = a[1] + dy * s, d2 = (x - px) ** 2 + (y - py) ** 2;
+        if (d2 < best) {
+          best = d2; bt = a[3] + (b[3] - a[3]) * s; bw = (a[2] + (b[2] - a[2]) * s) / 2;
+          side = Math.sign(dx * (y - a[1]) - dy * (x - a[0])) * Math.sqrt(d2);
+        }
+      }
+      return { t: bt, across: side / (bw || 1) };
+    };
+    return f;
+  }
+
+  // a thick Catmull-Rom curve through points (a lock of hair that waves): width w0 at the start tapering to w1;
+  // .at(x, y) gives how far along (t, 0..1) and how far across (−1 … 1, negative on the curve's left)
+  function inCurve(points, w0, w1) {
+    const pts = [], n = points.length, P = (i) => points[Math.max(0, Math.min(n - 1, i))];
+    for (let i = 0; i < n - 1; i++) for (let k = 0; k < 8; k++) {
+      const u = k / 8, p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2), u2 = u * u, u3 = u2 * u;
+      const f = (a, b, c, d) => 0.5 * (2 * b + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u2 + (-a + 3 * b - 3 * c + d) * u3);
+      pts.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1])]);
+    }
+    pts.push(points[n - 1].slice());
+    const N = pts.length - 1;
+    for (let i = 0; i <= N; i++) { pts[i][2] = w0 + (w1 - w0) * Math.pow(i / N, 1.4); pts[i][3] = i / N; }
+    const nearest = (x, y) => {
+      let best = 1e9, bi = 0, bs = 0;
+      for (let i = 0; i < N; i++) {
+        const a = pts[i], b = pts[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy || 1;
+        let s = ((x - a[0]) * dx + (y - a[1]) * dy) / L2;
+        s = s < 0 ? 0 : s > 1 ? 1 : s;
+        const d2 = (x - a[0] - dx * s) ** 2 + (y - a[1] - dy * s) ** 2;
+        if (d2 < best) { best = d2; bi = i; bs = s; }
+      }
+      const a = pts[bi], b = pts[bi + 1], dx = b[0] - a[0], dy = b[1] - a[1];
+      const w = (a[2] + (b[2] - a[2]) * bs) / 2, t = a[3] + (b[3] - a[3]) * bs;
+      const side = Math.sign(dx * (y - a[1]) - dy * (x - a[0]));
+      return { d: Math.sqrt(best), w, t, side, dx, dy };
+    };
+    const f = (x, y) => { const q = nearest(x, y); return q.d <= q.w; };
+    f.at = (x, y) => { const q = nearest(x, y); return { t: q.t, across: (q.side * q.d) / (q.w || 1), dx: q.dx, dy: q.dy }; };
+    return f;
+  }
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  // a ramp colour from a 0..1 value, with optional dithering between the two nearest steps
+  function rampAt(ramp, v, x, y, dither) {
+    const n = ramp.length - 1, f = clamp(v, 0, 1) * n;
+    let i = Math.floor(f);
+    if (dither && f - i > bayer(x, y)) i++;
+    else if (!dither && f - i >= 0.5) i++;
+    return ramp[clamp(i, 0, n)];
+  }
+  const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+
+  return { RAMP, OUTLINE, hex, hash, vnoise, fbm, bayer, Buf, mask, covered, inEll, inPoly, inStroke, inCurve, lerp, clamp, rampAt, mixc, smooth };
+})();
+
+
+/* ==== src/engine/68b_studymill.js ==== */
+/* The fidelity study's world: the Mill and its surroundings, from the real map (C.maps['rw.millroad']), drawn
+ * from scratch at the study's standard (docs/future/work/P01_STUDY.md; development only).
+ *
+ * Everything is generated once when the study opens, pixel by pixel into buffers, then composed every frame:
+ *  - the ground: grass with blade clusters and tonal patches, the worn path with its grass-bitten edges and
+ *    pebbles, flowers, the banks, the forest floor, the ridge;
+ *  - the water: the river and the mill race, a loop of frames (flow lines, ripples, glints, foam at the banks);
+ *  - things that stand: the mill (thatch, timber frame, plaster, stone footing, lit windows, the door), the wheel
+ *    (a loop of turning frames), trees (leaf clusters lit from the upper left), reeds and cattails, tall grass;
+ *    each one drawn in depth order with the people;
+ *  - the shadows they cast (a mask, multiplied in a cool violet), and what is bright enough to bloom.
+ * The sun is low in the upper left, warm; shade is cool. Variation comes only from hashes of position. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.studyMill = (function () {
+  'use strict';
+  const K = RB.studyKit;
+  const { RAMP, hash, vnoise, fbm, Buf, clamp } = K;
+  const TS = 32;
+  const MAP = 'rw.millroad';
+  // the scene's extent in world art px (the map's own coordinates; the camera stays near the mill's door)
+  const X0 = -128, Y0 = -224, W = 864, H = 768;
+  const SUN = { x: -0.62, y: -0.7, z: 0.6 }; // towards the sun: upper left, a little in front
+  { const l = Math.hypot(SUN.x, SUN.y, SUN.z); SUN.x /= l; SUN.y /= l; SUN.z /= l; }
+
+  let rows = null;
+  function T(tx, ty) {
+    if (ty < 0 || tx < 0) return 'T';
+    if (tx >= 26) return '~';
+    if (ty >= 26) return '.';
+    return rows[ty][tx];
+  }
+  const tileAt = (x, y) => T(Math.floor(x / TS), Math.floor(y / TS));
+
+  // ---- the path's centre line: segments between neighbouring path tiles, and on to the mill's door ------------
+  function pathSegments() {
+    const segs = [];
+    for (let ty = 0; ty < 26; ty++) for (let tx = 0; tx < 26; tx++) {
+      if (T(tx, ty) !== ':') continue;
+      const c = [tx * TS + 16, ty * TS + 16];
+      if (T(tx + 1, ty) === ':') segs.push([c, [c[0] + TS, c[1]]]);
+      if (T(tx, ty + 1) === ':') segs.push([c, [c[0], c[1] + TS]]);
+      if (tx === 9 && ty === 5) segs.push([c, [c[0], 150]]); // up to the step
+    }
+    return segs;
+  }
+  function segDist(px, py, s) {
+    const [a, b] = s, dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy || 1;
+    let u = ((px - a[0]) * dx + (py - a[1]) * dy) / L;
+    u = u < 0 ? 0 : u > 1 ? 1 : u;
+    return Math.hypot(px - a[0] - dx * u, py - a[1] - dy * u);
+  }
+
+  // ---- the ground ---------------------------------------------------------------------------------------------
+  // material per pixel: 0 grass, 1 path, 2 water, 3 bank, 4 forest floor, 5 cliff face, 6 cliff top
+  function buildGround(S) {
+    const mat = new Uint8Array(W * H), lvl = new Float32Array(W * H);
+    const segs = pathSegments();
+    const waterTile = (tx, ty) => T(tx, ty) === '~';
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const wx = x + X0, wy = y + Y0, tx = Math.floor(wx / TS), ty = Math.floor(wy / TS), ch = T(tx, ty);
+      let m = 0;
+      // under the forest it is grass too: the canopy's shadow darkens it (no tile edges)
+      if (ch === '^') m = 5;
+      if (ch === '~') {
+        // the bank bites into the water tile where a neighbour is land, by a wobbling width
+        const fx = wx - tx * TS, fy = wy - ty * TS;
+        let d = 99;
+        if (!waterTile(tx - 1, ty)) d = Math.min(d, fx);
+        if (!waterTile(tx + 1, ty)) d = Math.min(d, TS - 1 - fx);
+        if (!waterTile(tx, ty - 1)) d = Math.min(d, fy);
+        if (!waterTile(tx, ty + 1)) d = Math.min(d, TS - 1 - fy);
+        const bw = 3 + vnoise(wx, wy, 7, 31) * 4;
+        m = d < bw ? 3 : 2;
+        lvl[y * W + x] = d;
+      } else if (m === 0 || m === 4) {
+        let pd = 99;
+        for (const s of segs) {
+          if (Math.abs(s[0][0] - wx) > 60 && Math.abs(s[1][0] - wx) > 60) continue;
+          if (Math.abs(s[0][1] - wy) > 60 && Math.abs(s[1][1] - wy) > 60) continue;
+          pd = Math.min(pd, segDist(wx, wy, s));
+        }
+        // the path is narrower than its tile, wider at the door and the bends, with a wandering edge
+        const hw = 10 + (vnoise(wx, wy, 11, 32) - 0.5) * 5 + (wy < 200 && Math.abs(wx - 304) < 30 ? 3 : 0);
+        if (pd < hw) { m = 1; lvl[y * W + x] = hw - pd; }
+      }
+      mat[y * W + x] = m;
+    }
+    // the ridge: a ledge of grass along the top of each cliff run
+    for (let y = 1; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      if (mat[i] === 5 && mat[i - W] !== 5 && mat[i - W] !== 6) for (let k = 0; k < 5 && y + k < H; k++) if (mat[i + k * W] === 5) mat[i + k * W] = 6;
+    }
+    S.mat = mat; S.lvl = lvl;
+
+    const g = new Buf(W, H), G = RAMP.grass, D = RAMP.dirt, St = RAMP.stone;
+    // grass: calm tonal patches with ragged (not noisy) edges; the texture is in the tufts, not in every pixel
+    const gl = new Int8Array(W * H).fill(-1);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x, wx = x + X0, wy = y + Y0, m = mat[i];
+      if (m !== 0 && m !== 4 && m !== 6) continue;
+      const v = fbm(wx, wy, 90, 41, 3) + (vnoise(wx, wy, 4, 43) - 0.5) * 0.09;
+      let L = v < 0.36 ? 3 : v < 0.47 ? 4 : v < 0.6 ? 5 : 6;
+      if (fbm(wx + 500, wy, 60, 44, 2) + (vnoise(wx, wy, 3, 45) - 0.5) * 0.08 > 0.66) L++; // sunny, drier patches
+      if (m === 4) L = Math.max(1, L - 3);
+      gl[i] = L;
+    }
+    // tufts: a handful of designed shapes (h highlight, m mid, d the shadow beneath), placed sparsely
+    const TUFT = [
+      ['h...h', '.h.h.', '.mhm.', 'ddddd'],
+      ['..h..', '.hmh.', 'hm.mh', '.ddd.'],
+      ['h.h.h', 'mhmhm', 'ddddd'],
+      ['.h', 'hm', 'dd'],
+      ['h..', 'mh.', 'mmh', 'ddd'],
+      ['..h', '.hm', 'hmm', 'ddd'],
+    ];
+    const tuftLvl = new Int8Array(W * H);
+    for (let cy = 2; cy < H; cy += 6) for (let cx = (cy / 6) % 2 ? 0 : 3; cx < W; cx += 7) {
+      const wx = cx + X0, wy = cy + Y0;
+      if (hash(wx, wy, 51) > 0.62) continue;
+      const tp = TUFT[Math.floor(hash(wx, wy, 52) * TUFT.length)];
+      const ox = cx + Math.floor(hash(wx, wy, 53) * 4), oy = cy + Math.floor(hash(wx, wy, 54) * 3);
+      const base = gl[Math.min(H - 1, oy + tp.length - 1) * W + Math.min(W - 1, ox)];
+      if (base < 0) continue;
+      for (let r = 0; r < tp.length; r++) for (let k = 0; k < tp[r].length; k++) {
+        const ch = tp[r][k], px = ox + k, py = oy + r;
+        if (ch === '.' || px >= W || py >= H) continue;
+        const j = py * W + px;
+        if (gl[j] < 0) continue;
+        tuftLvl[j] = ch === 'h' ? 2 : ch === 'm' ? 1 : -1;
+      }
+    }
+    // clover: three-leaf sprigs here and there in the cooler patches
+    for (let k = 0; k < 520; k++) {
+      const x = Math.floor(hash(k, 7, 55) * (W - 4)) + 1, y = Math.floor(hash(k, 8, 55) * (H - 4)) + 1;
+      if (gl[y * W + x] < 0 || gl[y * W + x] > 5 || mat[y * W + x] !== 0) continue;
+      for (const [dx, dy, d] of [[0, -1, 2], [-1, 0, 2], [1, 0, 1], [0, 0, 1], [0, 1, -1], [1, 1, -1]]) tuftLvl[(y + dy) * W + x + dx] = d;
+    }
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      if (gl[i] < 0) continue;
+      g.set(x, y, G[clamp(gl[i] + tuftLvl[i], 0, 9)]);
+    }
+    // the path: packed earth in three tones with ragged edges, sunken a little: its north edge in the bank's shade,
+    // its south edge a sunlit lip, grass leaning over both
+    const isPath = (x, y) => x >= 0 && y >= 0 && x < W && y < H && mat[y * W + x] === 1;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = y * W + x, wx = x + X0, wy = y + Y0, m = mat[i];
+      if (m === 1) {
+        const v = fbm(wx, wy, 16, 61, 2) + (vnoise(wx, wy, 3, 62) - 0.5) * 0.1;
+        let L = v < 0.4 ? 4 : v < 0.6 ? 5 : 6;
+        if (lvl[i] > 5 && fbm(wx, wy, 7, 63, 1) > 0.7) L = 7; // worn smooth along the middle
+        let up = 0, down = 0;
+        for (let k = 1; k <= 3; k++) { if (!up && !isPath(x, y - k)) up = k; if (!down && !isPath(x, y + k)) down = k; }
+        if (up === 1 || up === 2) L = up === 1 ? 2 : 3;
+        else if (!isPath(x - 1, y) || !isPath(x - 2, y)) L = Math.min(L, 3);
+        if (down === 1) L = 7;
+        else if (!isPath(x + 1, y)) L = Math.max(L, 6);
+        g.set(x, y, D[L]);
+      } else if (m === 3) {
+        // the bank: wet earth and a few stones at the water's edge
+        const d = lvl[i];
+        const v = 2.2 + (vnoise(wx, wy, 4, 71) - 0.5) * 1.4 - (d < 2 ? 0.8 : 0);
+        g.set(x, y, D[clamp(Math.round(v), 0, 4)]);
+      } else if (m === 2) {
+        const d = lvl[i];
+        g.set(x, y, RAMP.water[d < 5 ? 5 : d < 9 ? 4 : 3]); // the bed; the moving surface is drawn over it
+      } else if (m === 5) {
+        // the ridge's face: layered stone, lit from the upper left
+        const sh = Math.floor(vnoise(wx, 0, 9, 81) * 6), band = Math.floor((wy + sh) / 7);
+        const v = 4 + (hash(Math.floor(wx / 9), band, 82) - 0.5) * 2.2 + ((wy + sh) % 7 === 0 ? -2 : 0);
+        g.set(x, y, St[clamp(Math.round(v), 1, 7)]);
+      }
+    }
+    // grass leaning over the path's edges: blades from the grass side reaching 2–3 px onto the earth
+    for (let y = 2; y < H - 2; y++) for (let x = 2; x < W - 2; x++) {
+      const i = y * W + x;
+      if (mat[i] !== 0) continue;
+      const below = isPath(x, y + 1), above = isPath(x, y - 1);
+      if (!below && !above) continue;
+      const wx = x + X0, wy = y + Y0, r = hash(wx, wy, 57);
+      if (r > 0.5) continue;
+      const L = Math.max(3, gl[i]), n = 1 + Math.floor(hash(wx, wy, 58) * 3);
+      for (let k = 1; k <= n; k++) {
+        const yy = below ? y + k : y - k + 1, xx = x + (r < 0.18 ? (below ? 1 : -1) * (k > 1 ? 1 : 0) : 0);
+        if (!isPath(xx, yy) && k > 1) break;
+        g.set(xx, yy, G[clamp(L + (k === n ? 2 : 1), 0, 9)]);
+      }
+      if (below) g.set(x + 1, y + n + 1, D[2]);
+    }
+    // pebbles on the path and at its edges: a lit pixel, a body, a shadow
+    for (let k = 0; k < 900; k++) {
+      const x = Math.floor(hash(k, 1, 91) * W), y = Math.floor(hash(k, 2, 91) * H), i = y * W + x;
+      if (mat[i] !== 1 || x >= W - 2 || y >= H - 2) continue;
+      const big = hash(k, 3, 91) > 0.75;
+      g.set(x, y, St[6]); g.set(x + 1, y, St[5]);
+      if (big) { g.set(x, y + 1, St[4]); g.set(x + 1, y + 1, St[3]); g.set(x + 2, y + 1, D[2]); }
+      else g.set(x + 1, y + 1, D[2]);
+    }
+    // stones in the bank
+    for (let k = 0; k < 500; k++) {
+      const x = Math.floor(hash(k, 4, 92) * W), y = Math.floor(hash(k, 5, 92) * H), i = y * W + x;
+      if (mat[i] !== 3 || x >= W - 3 || y >= H - 3) continue;
+      g.set(x, y, St[6]); g.set(x + 1, y, St[5]); g.set(x, y + 1, St[4]); g.set(x + 1, y + 1, St[3]); g.set(x + 2, y + 1, St[2]);
+    }
+    // flowers on the flower tiles and scattered wherever grass meets the path or the mill's footing
+    const F = RAMP.flower, kinds = [F.white, F.yellow, F.pink, F.blue, F.white];
+    const flower = (x, y, f) => {
+      g.set(x, y + 1, G[2]); g.set(x + 1, y + 2, G[3]); // a stalk's shadow
+      g.set(x - 1, y, f[1]); g.set(x + 1, y, f[1]); g.set(x, y - 1, f[2]); g.set(x, y + 1, f[0]);
+      g.set(x, y, F.yellow[2]);
+      g.set(x - 1, y + 2, G[7]); g.set(x + 2, y + 1, G[6]);
+    };
+    for (let ty = -1; ty < 18; ty++) for (let tx = -4; tx < 24; tx++) {
+      const ch = T(tx, ty);
+      const n = ch === ',' ? 7 : ch === '.' ? (hash(tx, ty, 93) > 0.55 ? 2 : 0) : 0;
+      for (let k = 0; k < n; k++) {
+        const fx = tx * TS + 3 + Math.floor(hash(tx * 7 + k, ty, 94) * 26) - X0, fy = ty * TS + 3 + Math.floor(hash(tx, ty * 7 + k, 95) * 26) - Y0;
+        if (fx < 2 || fy < 2 || fx >= W - 3 || fy >= H - 3 || mat[fy * W + fx] !== 0) continue;
+        flower(fx, fy, kinds[Math.floor(hash(tx + k, ty - k, 96) * kinds.length)]);
+      }
+    }
+    S.ground = g;
+  }
+
+  // ---- the water: the river (south) and the mill race (west, into the wheel), a seamless loop of frames ------
+  // Flow lines are short streaks in lanes 3 px wide, each lane with its own phase; everything repeats after
+  // WATER_MS, so the loop never jumps. Glints twinkle for three frames; foam runs along the banks.
+  const WATER_N = 16, WATER_MS = 3200;
+  function buildWater(S) {
+    const { mat, lvl } = S, Wa = RAMP.water;
+    let x0 = W, y0 = H, x1 = 0, y1 = 0;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (mat[y * W + x] === 2) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; }
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1, Lp = 48;
+    S.water = { x: x0, y: y0, w: bw, h: bh, frames: [] };
+    // ripple marks: short arcs across the flow, in a periodic field that drifts with it
+    for (let f = 0; f < WATER_N; f++) {
+      const b = new Buf(bw, bh), ph = f / WATER_N;
+      for (let y = 0; y < bh; y++) for (let x = 0; x < bw; x++) {
+        const i = (y + y0) * W + (x + x0);
+        if (mat[i] !== 2) continue;
+        const wx = x + x0 + X0, wy = y + y0 + Y0, race = wy >= 96 && wy < 128 && wx < 608, d = lvl[i];
+        let L = race ? (d < 6 ? 5 : 4) : d < 4 ? 5 : d < 10 ? 4 : 3;
+        const along = race ? -wx : wy, v = race ? 2 : 1;
+        if (d < 2.2) { const uf = (((along * 0.7 - v * 9 * ph * 3) % 9) + 9) % 9; L = uf < 3 ? 8 : 6; }
+        b.set(x, y, Wa[clamp(L, 1, 9)]);
+      }
+      // ripple marks, block by block: each drifts with the flow and wraps inside its own block of Lp px
+      const isRace = (qx, qy) => { const wy = qy + y0 + Y0, wx = qx + x0 + X0; return wy >= 96 && wy < 128 && wx < 608; };
+      const mark = (qx, qy) => qx >= 0 && qy >= 0 && qx < bw && qy < bh && mat[(qy + y0) * W + qx + x0] === 2 && lvl[(qy + y0) * W + qx + x0] >= 2.5;
+      for (let blk = 0; blk < Math.ceil(bh / Lp); blk++) for (let k = 0; k < Math.floor(bw * Lp / 40); k++) {
+        const ax = Math.floor(hash(blk, k, 304) * bw), ay = Math.floor(blk * Lp + (((hash(blk, k, 305) * Lp + Lp * ph) % Lp) + Lp) % Lp);
+        const len = 2 + Math.floor(hash(blk, k, 306) * 4), dark = hash(blk, k, 307) < 0.3;
+        if (!mark(ax, ay) || isRace(ax, ay)) continue;
+        for (let q = 0; q < len; q++) {
+          const qx = ax + q - (len >> 1), qy = ay + (q === 0 || q === len - 1 ? 1 : 0);
+          if (!mark(qx, qy) || isRace(qx, qy)) continue;
+          b.set(qx, qy, Wa[dark ? 2 : lvl[(qy + y0) * W + qx + x0] < 5 ? 7 : 6]);
+          if (!dark && mark(qx, qy + 1)) b.set(qx, qy + 1, Wa[3]);
+        }
+      }
+      for (let blk = 0; blk < Math.ceil(bw / Lp); blk++) for (let k = 0; k < 40; k++) {
+        const ay = Math.floor(hash(blk, k, 308) * bh), ax = Math.floor(blk * Lp + (((hash(blk, k, 309) * Lp - 2 * Lp * ph) % Lp) + Lp) % Lp);
+        const len = 2 + Math.floor(hash(blk, k, 310) * 3);
+        if (!mark(ax, ay) || !isRace(ax, ay)) continue;
+        for (let q = 0; q < len; q++) {
+          const qx = ax + (q === 0 || q === len - 1 ? 1 : 0), qy = ay + q - (len >> 1);
+          if (!mark(qx, qy) || !isRace(qx, qy)) continue;
+          b.set(qx, qy, Wa[7]);
+          if (mark(qx + 1, qy)) b.set(qx + 1, qy, Wa[3]);
+        }
+      }
+      // glints: a few twinkles, each three frames long, brightest in its middle frame
+      for (let k = 0; k < Math.floor(bw * bh / 900); k++) {
+        const gx = Math.floor(hash(k, 11, 302) * bw), gy = Math.floor(hash(k, 12, 302) * bh), at = Math.floor(hash(k, 13, 302) * WATER_N);
+        const age = (f - at + WATER_N) % WATER_N;
+        if (age > 2 || mat[(gy + y0) * W + gx + x0] !== 2 || lvl[(gy + y0) * W + gx + x0] < 3) continue;
+        if (age === 1) { b.set(gx, gy, Wa[9]); b.set(gx - 1, gy, Wa[8]); b.set(gx + 1, gy, Wa[8]); b.set(gx, gy - 1, Wa[8]); b.set(gx, gy + 1, Wa[8]); }
+        else b.set(gx, gy, Wa[8]);
+      }
+      S.water.frames.push(b.canvas());
+    }
+  }
+
+  // ---- trees: leaf clusters on a dome, each lit as a small sphere, layered back to front ----------------------
+  // Returns the canopy, the trunk, and the canopy's mask (for its shadow), anchored at the trunk's foot.
+  function makeTree(seed, R, bush) {
+    const pad = 4, cw = Math.ceil(R * 2.4) + pad * 2, chh = Math.ceil(R * 2.15) + pad * 2, trunkH = bush ? 0 : Math.round(R * 0.95);
+    const w = cw, h = chh + trunkH, cx = w / 2, cy = pad + R * 1.08, L = RAMP.leaf, Bk = RAMP.bark;
+    const clumps = [];
+    const n = 11 + Math.floor(hash(seed, 1, 401) * 4);
+    clumps.push({ x: cx, y: cy - R * 0.15, r: R * 0.6 });
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2 + hash(seed, k, 402) * 0.6, rho = R * (0.48 + hash(seed, k, 403) * 0.18);
+      clumps.push({ x: cx + Math.cos(a) * rho, y: cy + Math.sin(a) * rho * 0.86, r: R * (0.38 + hash(seed, k, 404) * 0.14) });
+    }
+    for (let k = 0; k < 4; k++) {
+      const a = Math.PI * (1.15 + k * 0.23) + hash(seed, k, 405) * 0.3;
+      clumps.push({ x: cx + Math.cos(a) * R * 0.32, y: cy + Math.sin(a) * R * 0.3, r: R * 0.36 });
+    }
+    clumps.sort((a, b) => a.y - b.y); // back (upper) clumps first; the front ones overlap them
+    const own = new Int16Array(w * h).fill(-1);
+    for (let y = 0; y < chh; y++) for (let x = 0; x < w; x++) {
+      for (let k = clumps.length - 1; k >= 0; k--) {
+        const c = clumps[k], d2 = ((x + 0.5 - c.x) ** 2 + (y + 0.5 - c.y) ** 2) / (c.r * c.r);
+        const notch = (hash(x >> 1, y >> 1, seed + 406) - 0.5) * 0.22;
+        if (d2 < 1 + notch) { own[y * w + x] = k; break; }
+      }
+    }
+    const b = new Buf(w, h), m = new Uint8Array(w * h);
+    // the trunk first (the canopy overlaps its top)
+    const tx = Math.round(cx), baseY = bush ? Math.round(cy + R * 0.8) : h - 3;
+    for (let y = Math.round(cy + R * 0.3); !bush && y <= baseY; y++) {
+      const t = (y - (cy + R * 0.3)) / (baseY - (cy + R * 0.3)), hw = 2.6 + t * 1.2 + (y > baseY - 3 ? (y - (baseY - 3)) * 1.4 : 0);
+      for (let x = Math.floor(tx - hw); x <= Math.ceil(tx + hw); x++) {
+        const u = (x + 0.5 - tx) / hw;
+        if (Math.abs(u) > 1) continue;
+        let v = 3.6 - u * 2.2 + (hash(x, y >> 2, seed + 407) - 0.5) * 0.8;
+        if (hash(x, 0, seed + 408) > 0.7 && Math.abs(u) < 0.8) v -= 1.3; // bark furrows
+        if (y < cy + R * 0.75) v -= 1.4; // under the canopy
+        b.set(x, y, Bk[clamp(Math.round(v), 0, 6)]);
+      }
+    }
+    for (let y = 0; y < chh; y++) for (let x = 0; x < w; x++) {
+      const k = own[y * w + x];
+      if (k < 0) continue;
+      const c = clumps[k];
+      let nx = (x + 0.5 - c.x) / c.r, ny = (y + 0.5 - c.y) / c.r;
+      const nn = nx * nx + ny * ny, nz = Math.sqrt(Math.max(0, 1 - Math.min(1, nn)));
+      // blend with the whole dome's normal, so the tree reads as one mass lit from the upper left
+      const dx = (x + 0.5 - cx) / R, dy = (y + 0.5 - cy) / R, dz = Math.sqrt(Math.max(0, 1 - Math.min(1, dx * dx + dy * dy)));
+      const Nx = nx * 0.55 + dx * 0.45, Ny = ny * 0.55 + dy * 0.45, Nz = nz * 0.55 + dz * 0.45;
+      let v = 0.18 + 0.82 * Math.max(0, (Nx * SUN.x + Ny * SUN.y + Nz * SUN.z) / Math.hypot(Nx, Ny, Nz));
+      // a crevice where this clump's upper edge meets the one behind it
+      const up = y > 0 ? own[(y - 1) * w + x] : -1, up2 = y > 1 ? own[(y - 2) * w + x] : -1;
+      if ((up >= 0 && up !== k) || (up2 >= 0 && up2 !== k && ny < -0.5)) v -= 0.22;
+      // leaf texture: little lit leaves in 2-px cells, darker gaps between
+      const cell = hash((x + (y >> 1)) >> 1, y >> 1, seed + 409);
+      v += (cell - 0.5) * 0.16;
+      let li = clamp(Math.round(v * 9), 1, 9);
+      if (li >= 7 && hash(x, y, seed + 410) > 0.82) li = 9;
+      b.set(x, y, L[li]);
+      m[y * w + x] = 1;
+    }
+    // the silhouette: dark on the lower right, a step darker on the upper left
+    for (let y = 0; y < chh; y++) for (let x = 0; x < w; x++) {
+      if (!m[y * w + x]) continue;
+      const out = (dx, dy) => { const xx = x + dx, yy = y + dy; return xx < 0 || yy < 0 || xx >= w || yy >= h || !m[yy * w + xx]; };
+      if (out(1, 0) || out(0, 1)) b.set(x, y, L[out(1, 0) && out(0, 1) ? 0 : 1]);
+      else if (out(-1, 0) || out(0, -1)) { const c0 = b.get(x, y); if (c0) b.set(x, y, [c0[0] * 0.86, c0[1] * 0.86, c0[2] * 0.9]); }
+    }
+    // roots
+    if (!bush) for (const [dx, len] of [[-1, 3], [1, 3]]) for (let k = 1; k <= len; k++) b.set(tx + dx * (3 + k), baseY - 1 + (k > 1 ? 1 : 0), Bk[k === 1 ? 3 : 2]);
+    return { cv: b.canvas(), mask: m, w, h, ax: Math.round(cx), ay: baseY, R, canopyBottom: Math.round(cy + R) };
+  }
+
+  function buildTrees(S) {
+    const variants = [];
+    for (let k = 0; k < 10; k++) variants.push(makeTree(k * 7 + 3, 20 + Math.floor(hash(k, 1, 411) * 8)));
+    S.variants = variants;
+    S.trees = [];
+    for (let ty = Math.floor(Y0 / TS) - 1; ty < Math.ceil((Y0 + H) / TS); ty++) for (let tx = Math.floor(X0 / TS) - 1; tx < Math.ceil((X0 + W) / TS); tx++) {
+      if (T(tx, ty) !== 'T') continue;
+      const v = variants[Math.floor(hash(tx, ty, 412) * variants.length)];
+      const x = tx * TS + 16 + Math.round((hash(tx, ty, 413) - 0.5) * 10), y = ty * TS + 26 + Math.round((hash(tx, ty, 414) - 0.5) * 8);
+      // a tree whose neighbours below and to the side are open ground stands at the forest's edge, and moves
+      const edge = T(tx, ty + 1) !== 'T' || T(tx + 1, ty) !== 'T' || T(tx - 1, ty) !== 'T';
+      S.trees.push({ v, x, y, edge, ph: hash(tx, ty, 415) * Math.PI * 2 });
+    }
+    // undergrowth where the forest meets open ground: low leafy masses hiding the gaps between trunks
+    const bushes = [];
+    for (let k = 0; k < 6; k++) bushes.push(makeTree(900 + k * 13, 8 + Math.floor(hash(k, 2, 416) * 5), true));
+    S.bushes = bushes;
+    for (let ty = Math.floor(Y0 / TS) - 1; ty < Math.ceil((Y0 + H) / TS); ty++) for (let tx = Math.floor(X0 / TS) - 1; tx < Math.ceil((X0 + W) / TS); tx++) {
+      if (T(tx, ty) !== 'T') continue;
+      const open = (a, b2) => T(a, b2) !== 'T' && T(a, b2) !== '~';
+      const spots = [];
+      if (open(tx, ty + 1)) spots.push([8, 30], [24, 31]);
+      if (open(tx + 1, ty)) spots.push([30, 10], [31, 26]);
+      for (const [ox, oy] of spots) {
+        const v = bushes[Math.floor(hash(tx * 3 + ox, ty * 5 + oy, 417) * bushes.length)];
+        S.trees.push({ v, x: tx * TS + ox + Math.round((hash(tx, ty + ox, 418) - 0.5) * 6), y: ty * TS + oy, edge: false, bush: true, ph: 0 });
+      }
+    }
+  }
+
+  // ---- shadows: one mask of how much each ground pixel is shaded (multiplied in a cool violet) -----------------
+  function buildShadows(S) {
+    const a = new Float32Array(W * H);
+    const put = (x, y, v) => { x |= 0; y |= 0; if (x < 0 || y < 0 || x >= W || y >= H) return; const i = y * W + x; if (v > a[i]) a[i] = v; };
+    for (const tr of S.trees) {
+      const R = tr.v.R, cx = tr.x - X0 + R * (tr.bush ? 0.45 : 0.95), cy = tr.y - Y0 + (tr.bush ? 1 : R * 0.08);
+      const rx = R * (tr.bush ? 1.05 : 1.15), ry = R * (tr.bush ? 0.5 : 0.6);
+      for (let y = Math.floor(cy - ry - 1); y <= cy + ry + 1; y++) for (let x = Math.floor(cx - rx - 1); x <= cx + rx + 1; x++) {
+        const d = ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2 + (hash(x >> 1, y >> 1, 420) - 0.5) * 0.18;
+        if (d > 1) continue;
+        const fleck = !tr.bush && hash(x >> 1, y >> 1, 421) > 0.9; // sun through the leaves
+        put(x, y, fleck ? 0.2 : d > 0.8 ? 0.45 : 0.72);
+      }
+      if (!tr.bush) {
+        for (let y = -2; y <= 1; y++) for (let x = -6; x <= 7; x++) if ((x / 7) ** 2 + (y / 2.2) ** 2 <= 1) put(tr.x - X0 + x, tr.y - Y0 + y, 0.78); // the trunk's foot
+        for (let k = 0; k < R * 0.9; k++) for (let w = -1; w <= 1; w++) put(tr.x - X0 + 3 + k, tr.y - Y0 + Math.round(k * 0.2) + w, 0.7); // the trunk's shadow
+      }
+    }
+    S.shadowA = a;
+  }
+  function shadowCanvas(S) {
+    const b = new Buf(W, H), a = S.shadowA, col = [96, 86, 150];
+    for (let i = 0; i < W * H; i++) if (a[i] > 0) { const x = i % W, y = (i / W) | 0; b.set(x, y, col, Math.round(a[i] * 255)); }
+    return b.canvas();
+  }
+
+  // ---- plants that move: tall grass and reeds, each in three leans; and the small life of the clearing ---------
+  function makePlant(seed, kind) {
+    const tall = kind === 'reed', w = tall ? 13 : 11, h = tall ? 26 : 12, frames = [];
+    const blades = [];
+    const n = tall ? 5 : 5 + Math.floor(hash(seed, 1, 701) * 3);
+    for (let k = 0; k < n; k++) blades.push({ x: (tall ? 3 : 2) + hash(seed, k, 702) * (w - (tall ? 6 : 4)), h: (tall ? 14 : 5) + hash(seed, k, 703) * (tall ? 10 : 6), lean: (hash(seed, k, 704) - 0.5) * (tall ? 3 : 4), cat: tall && hash(seed, k, 705) > 0.5 });
+    for (const sway of [-1, 0, 1]) {
+      const b = new Buf(w, h), Rp = tall ? RAMP.reed : RAMP.grass;
+      for (const bl of blades) {
+        let px = bl.x, py = h - 1;
+        for (let k = 0; k < bl.h; k++) {
+          const t = k / bl.h, x = Math.round(bl.x + (bl.lean + sway * 1.6) * t * t), y = h - 1 - k;
+          const top = k >= bl.h - 2;
+          b.set(x, y, Rp[top ? (tall ? 7 : 8) : clamp(Math.round(3 + t * 4), 2, tall ? 6 : 7)]);
+          if (!top && x + 1 < w && t < 0.5) b.set(x + 1, y, Rp[2]);
+          px = x; py = y;
+        }
+        if (bl.cat) for (let k = 0; k < 5; k++) { b.set(px, py + k + 1, RAMP.cattail[k === 0 ? 4 : k === 4 ? 1 : 3]); b.set(px + 1, py + k + 1, RAMP.cattail[k === 4 ? 0 : 1]); }
+      }
+      frames.push(b.canvas());
+    }
+    return { frames, w, h };
+  }
+  function buildPlants(S) {
+    const grass = [], reeds = [];
+    for (let k = 0; k < 5; k++) grass.push(makePlant(800 + k, 'grass'));
+    for (let k = 0; k < 4; k++) reeds.push(makePlant(850 + k, 'reed'));
+    S.plants = [];
+    const place = (x, y, kinds) => { const v = kinds[Math.floor(hash(x, y, 706) * kinds.length)]; S.plants.push({ v, x, y }); };
+    for (let ty = -1; ty < 17; ty++) for (let tx = -2; tx < 26; tx++) {
+      const ch = T(tx, ty);
+      if (ch === ';') for (let k = 0; k < 4; k++) place(tx * TS + 4 + Math.floor(hash(tx, ty + k, 707) * 24), ty * TS + 8 + Math.floor(hash(tx + k, ty, 708) * 22), grass);
+      else if (ch === '"') for (let k = 0; k < 5; k++) place(tx * TS + 2 + Math.floor(hash(tx, ty + k, 709) * 26), ty * TS + 3 + k * 6 + Math.floor(hash(tx + k, ty, 715) * 5), hash(tx + k, ty + k, 716) > 0.3 ? reeds : grass);
+      else if ((ch === '.' || ch === ',') && hash(tx, ty, 710) > 0.55) place(tx * TS + 4 + Math.floor(hash(tx, ty, 711) * 24), ty * TS + 6 + Math.floor(hash(tx, ty, 712) * 24), grass);
+    }
+    // a fringe along the mill's footing and the race's banks
+    for (let x = 196; x < 412; x += 9) if (hash(x, 3, 713) > 0.35 && (x < 286 || x > 322)) place(x, 162, grass);
+    for (let x = 418; x < 600; x += 8) { place(x, 98, reeds); if (hash(x, 1, 714) > 0.5) place(x + 3, 131, grass); }
+  }
+  // the breeze: a gust travelling across the clearing from the west
+  const leanAt = (x, t) => (t ? Math.round(Math.sin(t / 900 - x / 70) * 0.7 + Math.sin(t / 2300 - x / 160) * 0.6) : 0);
+
+  // motes in the light, two butterflies, a few leaves coming down from the forest
+  function life(S, c, cam, bw, bh, t) {
+    const px = (x, y, col, w, h) => { c.fillStyle = col; c.fillRect(Math.round(x - cam.x), Math.round(y - cam.y), w || 1, h || 1); };
+    for (let k = 0; k < 46; k++) {
+      const bx = -80 + hash(k, 1, 720) * 640, by = -40 + hash(k, 2, 720) * 280, sp = 4 + hash(k, 3, 720) * 6;
+      const y = by - ((t / 1000) * sp + hash(k, 4, 720) * 60) % 60, x = bx + Math.sin(t / (1600 + k * 37) + k) * 7;
+      const a = 0.35 + 0.45 * Math.max(0, Math.sin(t / (700 + k * 23) + k * 1.7));
+      px(x, y, 'rgba(255,240,200,' + a.toFixed(2) + ')', hash(k, 5, 720) > 0.8 ? 2 : 1, 1);
+    }
+    for (const [k, cx, cy, col] of [[0, 262, 188, '#fbfbf2'], [1, 404, 176, '#f8d860']]) {
+      const x = cx + Math.sin(t / 1900 + k * 2) * 34 + Math.sin(t / 700 + k) * 6, y = cy + Math.sin(t / 1300 + k * 3) * 14 + Math.sin(t / 260 + k) * 2;
+      const open = Math.floor(t / 110 + k) % 2 === 0;
+      if (open) { px(x - 2, y, col, 2, 2); px(x + 1, y, col, 2, 2); px(x, y + 1, '#3a2a2a'); }
+      else { px(x - 1, y - 1, col, 1, 2); px(x + 1, y - 1, col, 1, 2); px(x, y, '#3a2a2a', 1, 2); }
+    }
+    for (let k = 0; k < 6; k++) {
+      const life = 7000 + k * 900, ph = ((t + k * 2300) % life) / life;
+      const x = -20 + k * 34 + ph * 140 + Math.sin(ph * 12 + k) * 10, y = -10 + k * 12 + ph * 230;
+      const col = ['#c9b04a', '#9cbf4c', '#d88a3a'][k % 3];
+      const flip = Math.floor(ph * 40) % 2;
+      px(x, y, col, flip ? 2 : 1, flip ? 1 : 2);
+    }
+  }
+
+  function build() {
+    rows = RB.content.maps[MAP].terrain;
+    const S = { X0, Y0, W, H, TS };
+    const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
+    buildGround(S);
+    S.groundCv = S.ground.canvas();
+    buildWater(S);
+    buildTrees(S);
+    S.house = RB.studyHouse.build();
+    buildPlants(S);
+    buildShadows(S);
+    { // the mill's own shadow, and a dark line of contact along its foot
+      const poly = K.inPoly(S.house.shadow.map(([x, y]) => [x - X0, y - Y0]));
+      for (let y = 84 - Y0; y < 172 - Y0; y++) for (let x = 405 - X0; x < 466 - X0; x++) {
+        if (!poly(x + 0.5, y + 0.5)) continue;
+        const edge = !poly(x + 2.5, y + 0.5) || !poly(x + 0.5, y + 2.5) || !poly(x - 1.5, y - 1.5);
+        S.shadowA[y * W + x] = Math.max(S.shadowA[y * W + x], edge ? 0.4 : 0.62); // a softer rim: the penumbra
+      }
+      for (let x = 190 - X0; x < 418 - X0; x++) for (let y = 160 - Y0; y < 164 - Y0; y++) S.shadowA[y * W + x] = Math.max(S.shadowA[y * W + x], 0.55 - (y - (160 - Y0)) * 0.12);
+    }
+    S.shadowCv = shadowCanvas(S);
+    S.buildMs = (typeof performance !== 'undefined' ? performance.now() : 0) - t0;
+    return S;
+  }
+
+  // draw the scene into c (the game's art-resolution buffer); cam = the world point at the buffer's top left
+  function draw(S, c, cam, bw, bh, t, o) {
+    o = o || {};
+    const sx = Math.round(cam.x - X0), sy = Math.round(cam.y - Y0);
+    c.drawImage(S.groundCv, sx, sy, bw, bh, 0, 0, bw, bh);
+    const tm = o.motion === false ? 0 : Math.max(0, t);
+    const f = Math.floor(((tm % WATER_MS) / WATER_MS) * WATER_N) % WATER_N, Wt = S.water;
+    c.drawImage(Wt.frames[f], Wt.x - sx, Wt.y - sy);
+    if (o.light !== false) {
+      c.globalCompositeOperation = 'multiply';
+      c.drawImage(S.shadowCv, sx, sy, bw, bh, 0, 0, bw, bh);
+      c.globalCompositeOperation = 'source-over';
+    }
+    // things that stand, back to front
+    const list = [];
+    for (const tr of S.trees) {
+      const v = tr.v, dx = tr.x - v.ax - cam.x, dy = tr.y - v.ay - cam.y;
+      if (dx > bw || dy > bh || dx + v.w < 0 || dy + v.h < 0) continue;
+      list.push({ z: tr.y, draw: () => drawTree(c, tr, dx, dy, tm) });
+    }
+    for (const pl of S.plants) {
+      const v = pl.v, dx = pl.x - (v.w >> 1) - cam.x, dy = pl.y - v.h - cam.y;
+      if (dx > bw || dy > bh || dx + v.w < 0 || dy + v.h < 0) continue;
+      list.push({ z: pl.y, draw: () => c.drawImage(v.frames[leanAt(pl.x, tm) + 1], dx, dy) });
+    }
+    const Hs = S.house;
+    list.push({ z: Hs.mill.z, draw: () => c.drawImage(Hs.mill.cv, Hs.mill.x - cam.x, Hs.mill.y - cam.y) });
+    list.push({ z: Hs.lean.z, draw: () => c.drawImage(Hs.lean.cv, Hs.lean.x - cam.x, Hs.lean.y - cam.y) });
+    const wf = Math.floor(((tm % Hs.WHEEL_MS) / Hs.WHEEL_MS) * Hs.WHEEL_N) % Hs.WHEEL_N;
+    list.push({ z: Hs.wheel.z, draw: () => { c.drawImage(Hs.wheel.frames[wf], Hs.wheel.x - cam.x, Hs.wheel.y - cam.y); Hs.drawFoam(c, cam, tm); } });
+    if (o.extra) for (const e of o.extra) list.push(e);
+    list.sort((a, b) => a.z - b.z);
+    for (const e of list) e.draw();
+  }
+  // a tree, its canopy in three bands that sway a pixel in the breeze (the top most, the trunk not at all)
+  function drawTree(c, tr, dx, dy, t) {
+    const v = tr.v;
+    if (!tr.edge || !t) { c.drawImage(v.cv, dx, dy); return; }
+    const gust = Math.sin(t / 1300 + tr.ph) * 0.6 + Math.sin(t / 3100 + tr.ph * 0.7) * 0.6;
+    const cut1 = Math.round(v.canopyBottom * 0.35), cut2 = Math.round(v.canopyBottom * 0.7);
+    const o1 = Math.round(gust * 1.4), o2 = Math.round(gust * 0.8);
+    c.drawImage(v.cv, 0, cut2, v.w, v.h - cut2, dx, dy + cut2, v.w, v.h - cut2);
+    c.drawImage(v.cv, 0, cut1, v.w, cut2 - cut1, dx + o2, dy + cut1, v.w, cut2 - cut1);
+    c.drawImage(v.cv, 0, 0, v.w, cut1, dx + o1, dy, v.w, cut1);
+  }
+
+  return { build, draw, life, T: () => T, X0, Y0, W, H, TS, SUN };
+})();
+
+
+/* ==== src/engine/68c_studyhouse.js ==== */
+/* The fidelity study's mill and wheel (docs/future/work/P01_STUDY.md; development only).
+ *
+ * The mill stands on the map's own footprint (rw.millroad, the house at tiles 6–12 × 1–4, its door at tile 9), the
+ * wheel on its own (tiles 14–15 × 2–3) in the race. Drawn pixel by pixel in world art px:
+ *  - a stone footing of fitted blocks, lit on their upper left edges, mossy at the foot;
+ *  - a timber frame (posts, sill, top plate, braces) with lime plaster between, weathered, cracked, patched;
+ *  - two windows lit warm from inside, open shutters, flower boxes; an arched door in a stone surround, a lantern;
+ *  - a deep thatch roof in courses of straw, the cut eave catching the light, the left hip lit and the right in
+ *    shade, a bound ridge with grass growing on it, moss in the shade;
+ *  - by the wall: flour sacks, a spare millstone, a barrel;
+ *  - the lean-to that carries the axle out to the wheel, and the wheel itself turning in a loop of frames, wet at
+ *    the bottom, with foam and drips where it meets the race. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.studyHouse = (function () {
+  'use strict';
+  const K = RB.studyKit;
+  const { RAMP, hash, vnoise, fbm, Buf, clamp, covered, inPoly } = K;
+  const OX = 172, OY = -24, BW = 264, BH = 192; // the mill's buffer, world art px
+  // the facade: the top plate at 82, the sill at 141, the footing to the ground at 160; a door as tall as a person
+  const WT = 82, SILL = 141, FOOT = 147, GROUND = 160;
+
+  function buildMill() {
+    const b = new Buf(BW, BH);
+    const P = (x, y, c, a) => b.set(x - OX, y - OY, c, a);
+    const G = (x, y) => b.get(x - OX, y - OY);
+    const Pl = RAMP.plaster, Wd = RAMP.wood, St = RAMP.stone, Th = RAMP.thatch, Gr = RAMP.grass, Au = RAMP.gold;
+    const darken = (x, y, k) => { const c = G(x, y); if (c) P(x, y, [c[0] * k, c[1] * k, c[2] * (k + (1 - k) * 0.25)]); };
+
+    // ---- the wall's infill: lime plaster, warm, weathered toward the foot ----------------------------------------
+    for (let y = WT; y < FOOT; y++) for (let x = 196; x < 413; x++) {
+      let v = 5 + (vnoise(x, y, 3, 501) - 0.5) * 1.3 + (fbm(x, y, 18, 502, 2) - 0.5) * 1.2;
+      if (y > SILL - 8) v -= (y - (SILL - 8)) * 0.16;
+      P(x, y, Pl[clamp(Math.round(v), 1, 7)]);
+    }
+    for (let k = 0; k < 11; k++) {
+      let x = 200 + Math.floor(hash(k, 1, 503) * 206), y = WT + 12 + Math.floor(hash(k, 2, 503) * 40);
+      for (let s2 = 0; s2 < 4 + Math.floor(hash(k, 3, 503) * 6); s2++) { P(x, y, Pl[2]); x += hash(k, s2, 504) > 0.5 ? 1 : 0; y += 1; }
+    }
+    for (const [px, py] of [[206, 116], [393, 96], [292 - 60, 132]]) {
+      for (let y = py; y < py + 8; y++) for (let x = px; x < px + 11; x++) {
+        if (((x - px - 5.5) / 6) ** 2 + ((y - py - 4) / 4.2) ** 2 > 1) continue;
+        const row = Math.floor((y - py) / 3), col = Math.floor((x - px + row * 2) / 4);
+        const edge = (y - py) % 3 === 0 || (x - px + row * 2) % 4 === 0;
+        P(x, y, edge ? St[2] : St[3 + Math.floor(hash(col, row, 505) * 2)]);
+      }
+    }
+    // ---- the timber frame ----------------------------------------------------------------------------------------
+    const post = (x0, x1, y0, y1) => {
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        let v = 3.4 + (hash(x, y >> 2, 506) - 0.5) * 0.9;
+        if (x === x0) v += 1.6;
+        if (x === x1 - 1) v -= 1.6;
+        if (hash(x, y >> 3, 507) > 0.9) v -= 1;
+        P(x, y, Wd[clamp(Math.round(v), 0, 7)]);
+      }
+    };
+    const beam = (x0, x1, y0, y1) => {
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        let v = 3.4 + (hash(x >> 2, y, 508) - 0.5) * 0.9;
+        if (y === y0) v += 1.5;
+        if (y === y1 - 1) v -= 1.7;
+        P(x, y, Wd[clamp(Math.round(v), 0, 7)]);
+      }
+    };
+    const brace = (xa, ya, xb, yb) => {
+      const n = Math.max(Math.abs(xb - xa), Math.abs(yb - ya));
+      for (let i = 0; i <= n; i++) {
+        const x = Math.round(xa + ((xb - xa) * i) / n), y = Math.round(ya + ((yb - ya) * i) / n);
+        P(x, y, Wd[4]); P(x + 1, y, Wd[3]); P(x + 2, y, Wd[3]); P(x + 3, y, Wd[1]);
+      }
+    };
+    brace(267, SILL, 277, WT + 6);
+    brace(329, WT + 6, 337, SILL);
+    beam(196, 413, WT, WT + 6);
+    beam(196, 413, SILL, FOOT);
+    for (const [x0, x1] of [[196, 202], [262, 267], [280, 285], [323, 328], [341, 346], [407, 413]]) post(x0, x1, WT, FOOT);
+
+    // ---- the footing: fitted stones in two courses, mossy at the foot --------------------------------------------
+    for (const [y0, off] of [[FOOT, 0], [FOOT + 7, 6]]) {
+      let x = 192 - off, n = 0;
+      while (x < 417) {
+        const w = 9 + Math.floor(hash(n, y0, 509) * 8), tone = 3.6 + hash(n, y0, 510) * 1.6;
+        for (let y = y0; y < Math.min(y0 + 7, GROUND); y++) for (let xx = x; xx < x + w && xx < 417; xx++) {
+          if (xx < 192) continue;
+          const ex = xx - x, ey = y - y0;
+          let v = tone;
+          if (ex === 0 || ey === 0) v += 1.6;
+          if (ex === w - 1 || ey === 6) v = 1.2;
+          v += (vnoise(xx, y, 2, 511) - 0.5) * 0.8;
+          P(xx, y, St[clamp(Math.round(v), 0, 8)]);
+        }
+        x += w; n++;
+      }
+    }
+    for (let x = 192; x < 417; x++) {
+      const h = Math.floor(vnoise(x, 0, 5, 512) * 4);
+      for (let k = 0; k < h; k++) P(x, GROUND - k, Gr[3 + (k === h - 1 ? 2 : 0) + (hash(x, k, 513) > 0.7 ? 1 : 0)]);
+    }
+
+    // ---- windows: warm light inside, a cross of mullions, open shutters, a flower box ----------------------------
+    const windowAt = (cx) => {
+      const x0 = cx - 12, x1 = cx + 12, y0 = 99, y1 = 124;
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+        const fr = x < x0 + 2 || x >= x1 - 2 || y < y0 + 2 || y >= y1 - 2;
+        if (fr) { P(x, y, Wd[x === x0 || y === y0 ? 4 : 2]); continue; }
+        if (x === cx || x === cx - 1 || y === y0 + 11) { P(x, y, Wd[3]); continue; }
+        let v = 3.2 + ((y - y0) / (y1 - y0)) * 2.8;
+        if (y < y0 + 5) v -= 1.6;
+        let c = Au[clamp(Math.round(v), 1, 6)];
+        if (x < x0 + 6) c = RAMP.dress[clamp(Math.round(v * 0.8), 2, 6)]; // a curtain
+        if ((x - x0) + (y - y0) >= 8 && (x - x0) + (y - y0) <= 9 && y < y0 + 11 && x < cx - 1) c = [214, 230, 236];
+        P(x, y, c);
+      }
+      for (const [sx0, sx1] of [[x0 - 9, x0 - 1], [x1 + 1, x1 + 9]]) for (let y = y0 - 1; y < y1 + 1; y++) for (let x = sx0; x < sx1; x++) {
+        let v = 4 + ((x - sx0) % 3 === 0 ? -1.5 : 0) + (x === sx0 ? 1.2 : 0) + (hash(x, y >> 2, 514) - 0.5) * 0.7;
+        if (y === y0 + 4 || y === y1 - 4) v = 2;
+        P(x, y, Wd[clamp(Math.round(v), 0, 7)]);
+      }
+      for (let y = y1; y < y1 + 6; y++) for (let x = x0 - 3; x < x1 + 3; x++) P(x, y, Wd[y === y1 ? 5 : y === y1 + 5 ? 1 : 3]);
+      for (let k = 0; k < 30; k++) {
+        const fx = x0 - 3 + Math.floor(hash(k, cx, 515) * 30), fy = y1 - 4 + Math.floor(hash(k, cx + 1, 515) * 5);
+        const fl = [RAMP.flower.red, RAMP.flower.pink, RAMP.flower.white, RAMP.flower.red][k % 4];
+        if (k % 3 === 0) { P(fx, fy, Gr[6]); P(fx + 1, fy, Gr[4]); P(fx, fy + 1, Gr[3]); continue; }
+        P(fx, fy, fl[2]); P(fx + 1, fy, fl[1]); P(fx, fy + 1, fl[1]); P(fx + 1, fy + 1, fl[0]);
+      }
+      for (let x = x0 - 2; x < x1 + 2; x += 3) { P(x, y1 + 6, Gr[4]); P(x + 1, y1 + 7, Gr[2]); }
+    };
+    windowAt(240);
+    windowAt(368);
+
+    // ---- the door: an arch of stones, two plank leaves, iron straps, a warm line of light at the seam ------------
+    const dcx = 304, ar = 14, ay = 112, dBot = 157;
+    const inDoor = (x, y) => (y >= ay && y < dBot && Math.abs(x - dcx) < ar) || ((x - dcx) ** 2 + (y - ay) ** 2 < ar * ar && y < ay);
+    const inArch = (x, y) => (y >= ay && y < dBot && Math.abs(x - dcx) < ar + 4) || ((x - dcx) ** 2 + (y - ay) ** 2 < (ar + 4) ** 2 && y < ay);
+    for (let y = ay - ar - 5; y < dBot; y++) for (let x = dcx - ar - 5; x < dcx + ar + 5; x++) {
+      if (!covered(inArch, x, y) || covered(inDoor, x, y)) continue;
+      const a = Math.atan2(y + 0.5 - ay, x + 0.5 - dcx), seg = Math.floor((a + Math.PI) / (Math.PI / 7));
+      const joint = y >= ay ? (y - ay) % 7 === 6 : Math.abs((a + Math.PI) % (Math.PI / 7)) < 0.07;
+      let v = 5 + (hash(seg, y >= ay ? Math.floor((y - ay) / 7) : 0, 516) - 0.5) * 1.6;
+      if (x < dcx - ar - 2) v += 1; else if (x > dcx + ar + 1) v -= 1;
+      P(x, y, St[clamp(Math.round(joint ? 2 : v), 1, 8)]);
+    }
+    for (let y = ay - ar; y < dBot; y++) for (let x = dcx - ar; x < dcx + ar; x++) {
+      if (!covered(inDoor, x, y)) continue;
+      const plank = Math.floor((x - (dcx - ar)) / 4), seam = (x - (dcx - ar)) % 4 === 0;
+      let v = 3.6 + (plank % 2 ? 0.5 : -0.3) + (hash(x, y >> 2, 517) - 0.5) * 0.8 - (y < ay ? 1 : 0);
+      if (seam) v = 1.6;
+      const strap = y === 120 || y === 121 || y === 145 || y === 146;
+      let c = strap ? St[y === 120 || y === 145 ? 3 : 1] : Wd[clamp(Math.round(v), 0, 7)];
+      if (strap && (x - dcx) % 5 === 0) c = St[6];
+      if (x === dcx && y > 128 && y < 140) c = Wd[5]; // the leaves meet: a lighter edge where the light catches it
+      P(x, y, c);
+    }
+    for (const [x, y, c] of [[dcx + 5, 132, St[1]], [dcx + 6, 132, St[1]], [dcx + 5, 133, St[6]], [dcx + 6, 133, St[2]], [dcx + 5, 134, St[1]]]) P(x, y, c);
+    for (let y = 157; y < 162; y++) for (let x = dcx - 17; x < dcx + 17; x++) P(x, y, St[y === 157 ? 7 : y === 161 ? 2 : 5]);
+
+    // ---- the lantern on the right of the door --------------------------------------------------------------------
+    for (let x = 327; x < 337; x++) P(x, 98, St[1]);
+    for (let y = 100; y < 110; y++) for (let x = 332; x < 339; x++) {
+      const fr = x === 332 || x === 338 || y === 100 || y === 109;
+      P(x, y, fr ? St[1] : Au[y < 103 ? 7 : y < 106 ? 6 : 5]);
+    }
+    P(335, 99, St[2]); P(334, 110, St[1]); P(336, 110, St[1]);
+
+    // ---- the eave's shadow on the wall --------------------------------------------------------------------------
+    for (let y = WT + 4; y < WT + 20; y++) for (let x = 192; x < 417; x++) darken(x, y, y < WT + 10 ? 0.5 : 0.5 + (y - (WT + 10)) * 0.05);
+
+    // ---- the roof: courses of straw with ragged edges, the left hip in the sun, the right in shade ---------------
+    const RT = -6, RB = 96;
+    const inRoof = inPoly([[180, RB], [428, RB], [374, RT], [234, RT]]);
+    const hipL = (y) => 234 + (204 - 234) * ((y - RT) / (RB - RT)), hipR = (y) => 374 + (404 - 374) * ((y - RT) / (RB - RT));
+    for (let y = RT - 4; y < RB + 4; y++) for (let x = 176; x < 432; x++) {
+      if (!covered(inRoof, x, y)) continue;
+      const side = x < hipL(y) ? -1 : x > hipR(y) ? 1 : 0;
+      // the course boundary wanders a couple of pixels; each course is 8 px of straw
+      const cy2 = y - RT + 2.4 * vnoise(x, 0, 6, 518) + 1.2 * vnoise(x, 7, 2.5, 519);
+      const course = Math.floor(cy2 / 8), within = cy2 - course * 8;
+      // the sun from the upper left: the left hip brightest, the front slope warming toward its upper left,
+      // the right hip and the lower courses in shade
+      let v = side < 0 ? 6.8 : side > 0 ? 3.2 : 5.2 + (1 - (x - 204) / 200) * 0.9;
+      v += (1 - (y - RT) / (RB - RT)) * 1.1;
+      v += (hash(x, course, 520) - 0.5) * 1.5 + (vnoise(x, y, 3, 521) - 0.5) * 0.6;
+      // each course: straw tips catching light at its top, its belly in the shadow of the course above
+      if (within > 6.9) v -= 2.2;
+      else if (within > 6) v -= 1;
+      else if (within < 1.3 && hash(x, course, 522) > 0.5) v += 1.2;
+      else if (within < 2.6) v -= 0.5;
+      if (y > 56) v -= (y - 56) / 30;
+      let c = Th[clamp(Math.round(v), 1, 9)];
+      // moss in small cushions, tucked into the shaded side's lower courses, the colour of old straw gone green
+      const moss = fbm(x, y, 6, 523, 2);
+      if (y > 40 && (side > 0 || x > 350) && moss > 0.7 && within < 6) c = K.mixc(Gr[clamp(Math.round(2.4 + (moss - 0.7) * 14 + (hash(x, y, 524) > 0.85 ? 1 : 0)), 2, 5)], Th[3], 0.35);
+      P(x, y, c);
+    }
+    for (let y = RT + 2; y < RB; y++) { if (hash(1, y, 525) > 0.2) P(Math.round(hipL(y)), y, Th[8]); if (hash(2, y, 525) > 0.2) P(Math.round(hipR(y)), y, Th[2]); }
+    // the cut eave: straw ends catching the light, a dark underside
+    for (let x = 180; x < 428; x++) {
+      const depth = 5 + Math.floor(vnoise(x, 0, 4, 526) * 3);
+      for (let k = 0; k < depth; k++) {
+        let v = (k === depth - 1 ? 1.5 : 6.6 - k * 0.75) + (hash(x, k, 527) - 0.5) * 1.4;
+        if (x < 200) v += 0.8; else if (x > 410) v -= 1.2;
+        P(x, RB + k, Th[clamp(Math.round(v), 0, 9)]);
+      }
+      P(x, RB + depth, Th[0]);
+    }
+    // the ridge: a thick bound roll with grass growing along it
+    const RR = RT - 9;
+    for (let y = RR; y < RR + 13; y++) for (let x = 228; x < 381; x++) {
+      const t = (y - RR) / 12, ex = Math.min(x - 228, 380 - x);
+      if (ex < 3 && (t < 0.25 || t > 0.85)) continue;
+      let v = t < 0.2 ? 6.5 : t < 0.5 ? 5 : t < 0.8 ? 3.5 : 2;
+      v += (hash(x, y >> 1, 528) - 0.5) * 1.2;
+      if ((x - 228) % 16 < 2) v = t < 0.5 ? 7.5 : 4;
+      P(x, y, Th[clamp(Math.round(v), 0, 9)]);
+    }
+    for (let x = 230; x < 379; x++) if (hash(x, 1, 529) > 0.55) { const hgt = 1 + Math.floor(hash(x, 2, 529) * 3); for (let k = 0; k < hgt; k++) P(x, RR - k, Gr[k === hgt - 1 ? 7 : 5]); }
+
+    // ---- by the wall: flour sacks, a spare millstone, a barrel ----------------------------------------------------
+    const sack = (cx, by, w, h) => {
+      for (let y = by - h; y < by; y++) for (let x = cx - w; x <= cx + w; x++) {
+        const u = (x - cx) / w, t = (y - (by - h)) / h;
+        const half = 0.62 + 0.38 * Math.sin(Math.min(1, t * 1.25) * Math.PI * 0.5);
+        if (Math.abs(u) > half) continue;
+        let v = 6.2 - u * 1.8 - t * 0.9 + (hash(x, y, 530) - 0.5) * 0.5;
+        if (Math.abs(u) > half - 0.12) v -= 1.6;
+        if (t < 0.16 && Math.abs(u) < 0.3) v = 3;
+        P(x, y, Pl[clamp(Math.round(v), 1, 7)]);
+      }
+      P(cx, by - h - 1, Wd[3]); P(cx - 1, by - h, Wd[2]); P(cx + 1, by - h, Wd[4]);
+    };
+    sack(262, 158, 6, 16); sack(275, 158, 6, 15); sack(268, 145, 6, 14);
+    for (let y = 134; y < 159; y++) for (let x = 348; x < 374; x++) {
+      const dx = x + 0.5 - 361, dy = y + 0.5 - 146.5, r = Math.hypot(dx, dy);
+      if (r > 12.5) continue;
+      let v = 4.6 - ((dx + dy) / 12) * 1.4 + (Math.floor(Math.atan2(dy, dx) * 3) % 2 ? 0.4 : -0.4);
+      if (r > 11.5) v -= 1.8;
+      if (r < 2.6) v = 0.5;
+      else if (r < 3.6) v = 6.8;
+      P(x, y, St[clamp(Math.round(v), 0, 8)]);
+    }
+    for (let y = 139; y < 160; y++) for (let x = 384; x < 400; x++) {
+      const u = (x + 0.5 - 392) / 8, t = (y - 139) / 21;
+      if (Math.abs(u) > 0.92 + 0.08 * Math.sin(t * Math.PI)) continue;
+      let v = 4.4 - u * 2 + ((x - 384) % 4 === 0 ? -1.2 : 0);
+      if (y === 142 || y === 155) v = -1;
+      P(x, y, v < 0 ? St[u < 0 ? 4 : 2] : Wd[clamp(Math.round(v), 0, 7)]);
+    }
+    return b;
+  }
+
+  // ---- the lean-to carrying the axle, and the wheel ---------------------------------------------------------------
+  const WH = { cx: 480, cy: 92, R: 34 };
+  function buildLeanTo() {
+    const b = new Buf(52, 80), ox = 410, oy = 52, Wd = RAMP.wood, St = RAMP.stone;
+    const P = (x, y, c) => b.set(x - ox, y - oy, c);
+    // the axle from the wall to the hub
+    for (let x = 412; x < 462; x++) for (let y = 89; y < 95; y++) P(x, y, Wd[y === 89 ? 5 : y === 94 ? 1 : 3 + (hash(x >> 2, y, 530) > 0.6 ? -1 : 0)]);
+    for (const px of [420, 444]) for (let y = 62; y < 128; y++) for (let x = px; x < px + 5; x++) P(x, y, Wd[x === px ? 5 : x === px + 4 ? 1 : 3 + (hash(x, y >> 2, 531) > 0.8 ? -1 : 0)]);
+    for (let x = 412; x < 452; x++) for (let y = 58; y < 66; y++) P(x, y, Wd[y === 58 ? 6 : y === 65 ? 1 : 4 - ((x - 412) % 6 === 0 ? 1 : 0)]); // the cap beam
+    for (let y = 89; y < 95; y++) for (const px of [421, 445]) P(px, y, St[2]); // iron straps
+    return { cv: b.canvas(), x: ox, y: oy, z: 126 };
+  }
+  const WHEEL_N = 30, WHEEL_MS = 1500; // one 30° step (the paddles' and spokes' symmetry) per WHEEL_MS
+  function buildWheel() {
+    const sz = WH.R * 2 + 4, c0 = sz / 2, frames = [];
+    const Wd = RAMP.wood, St = RAMP.stone, Wa = RAMP.water;
+    for (let f = 0; f < WHEEL_N; f++) {
+      const th = (f / WHEEL_N) * (Math.PI / 6), b = new Buf(sz, sz);
+      for (let y = 0; y < sz; y++) for (let x = 0; x < sz; x++) {
+        const dx = x + 0.5 - c0, dy = y + 0.5 - c0, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx) - th;
+        const off = (n, ph) => { const step = (Math.PI * 2) / n; let q = (((a + ph) % step) + step) % step; if (q > step / 2) q -= step; return q * r; };
+        const lit = -(dx * 0.7 + dy * 0.7) / Math.max(r, 1);
+        let v = 3.6 + lit * 1.5, col = null;
+        if (r < 4.5) col = St[r < 1.6 ? 1 : dx + dy < -2 ? 6 : 3]; // the iron hub
+        else if (r >= 21 && r < WH.R - 1) {
+          // the band of paddle boards between the two rims: each board lit on its upper face, a dark gap after it
+          const step = (Math.PI * 2) / 12, q = ((((a + Math.PI / 12) % step) + step) % step) / step;
+          if (r < 22.4 || r > WH.R - 2.4) v -= 1.2; // the rims' edges
+          else if (q > 0.8) v -= 2.2; // the gap between boards
+          else if (q < 0.18) v += 1; // the board's lit edge
+          if (r > WH.R - 3.4 && q > 0.8) continue; // the boards stand proud of the rim: notches in the outline
+        } else if (r >= 12 && r < 14.4) v -= 0.4; // the inner ring
+        else if (r < 21 && Math.abs(off(6, 0)) < 1.7) { if (off(6, 0) > 0.6) v -= 1; } // six spokes
+        else continue;
+        if (!col) col = Wd[clamp(Math.round(v), 0, 7)];
+        // under the race's surface: the wheel sinks into the water (tinted, darker), foam along the line
+        const wy = WH.cy - c0 + y;
+        if (wy > 108) col = K.mixc(col, Wa[3], 0.6);
+        else if (wy === 108) col = Wa[8];
+        else if (dy > 4 && hash(x, y, 532 + f) > 0.94) col = Wa[8]; // wet glints just above
+        b.set(x, y, col);
+      }
+      frames.push(b.canvas());
+    }
+    return { frames, x: WH.cx - c0, y: WH.cy - c0, z: 127 };
+  }
+  // foam and drips where the wheel meets the race: drawn every frame, in front of the wheel
+  function drawFoam(c, cam, t) {
+    const Wa = RAMP.water, f = Math.floor(t / 90);
+    const px = (x, y, col) => { c.fillStyle = col; c.fillRect(Math.round(x - cam.x), Math.round(y - cam.y), 1, 1); };
+    const C = (i) => 'rgb(' + Wa[i].join(',') + ')';
+    for (let k = 0; k < 46; k++) {
+      const x = 450 + hash(k, f % 7, 540) * 58, y = 112 + hash(k, (f + 3) % 7, 541) * 10;
+      px(x, y, C(hash(k, 1, 542) > 0.5 ? 9 : 8));
+      if (hash(k, 2, 542) > 0.6) px(x + 1, y, C(7));
+    }
+    // drips falling from the paddles rising on the left
+    for (let k = 0; k < 7; k++) {
+      const life = 520, ph = ((t + k * 140) % life) / life, x0 = 452 + k * 2.5, y0 = 96 + (k % 3) * 4;
+      px(x0 - ph * 2, y0 + ph * ph * 22, C(8));
+    }
+  }
+
+  function build() {
+    const mill = buildMill();
+    return { mill: { cv: mill.canvas(), x: OX, y: OY, z: 161 }, lean: buildLeanTo(), wheel: buildWheel(), WHEEL_N, WHEEL_MS, drawFoam,
+      // the lights that glow: windows, the lantern, the door's seam (world art px)
+      lights: [{ x: 240, y: 111, r: 18, a: 0.5 }, { x: 368, y: 111, r: 18, a: 0.5 }, { x: 335, y: 105, r: 11, a: 0.8 }],
+      // the mill's shadow on the ground, to the lower right of its east wall
+      shadow: [[413, 92], [438, 90], [462, 118], [462, 168], [413, 166]] };
+  }
+  return { build };
+})();
+
+
+/* ==== src/engine/68d_study.js ==== */
+/* The fidelity study: Suzu at the Mill (expansion P01, C-80; docs/future/work/P01_STUDY.md). Development only.
+ *
+ * Robin asked to see how far the world's pixel art can go: Suzu redrawn from scratch, alone in front of the Mill,
+ * rendered as the game renders (not a painting), with an idle loop and the scenery moving. The study is a mode of
+ * the game: it draws into the game's own art-resolution buffer through the renderer's full-screen override, at the
+ * same whole-number pixel scale as the world, every frame, from the real map's layout (rw.millroad).
+ *
+ * It opens only on a development page (the world proof's switch: ?dev=world, or window.__RB_DEV_WORLD__ set before
+ * start), from the proof's panel or with ?study=mill in the address. It reads no save, writes none and changes no
+ * state of a journey: closing it returns to whatever was on screen.
+ *
+ *   RB.study.open()  RB.study.close()  RB.study.isOpen()  RB.study.opts (layers)  RB.study.set({...})
+ *   RB.study.stats() (build and frame timings, for the measurements) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.study = (function () {
+  'use strict';
+  const allowed = () => !!(RB.worldLook && RB.worldLook.allowed && RB.worldLook.allowed());
+  const opts = { light: true, focus: true, bloom: true, motion: true, life: true, close: false };
+  // the game's own camera, or a closer one (about two thirds as many tiles across) for looking at the detail
+  const closeView = (cw, ch) => ({ w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * 0.68, h: (ch < 520 ? 8 : 12) * 0.68 });
+  function applyView() { if (RB.render && RB.render.setView) RB.render.setView(on && opts.close ? closeView : null); }
+  const stat = { buildMs: 0, frames: 0, frameMs: 0, lastMs: 0 };
+  let S = null, on = false, prev = null, ui = null, t0 = 0;
+  // the camera: the door of the mill a little above the middle, Suzu below it (world art px)
+  const FOCUS = { x: 316, y: 170 };
+  const SUZU = { x: 334, y: 215 }; // on the path a step east of the door (tile 10, 6), between her feet
+
+  function draw(c, bw, bh, t) {
+    const a = typeof performance !== 'undefined' ? performance.now() : 0;
+    const cam = { x: Math.round(FOCUS.x - bw / 2), y: Math.round(FOCUS.y - bh / 2) };
+    c.fillStyle = '#10161c';
+    c.fillRect(0, 0, bw, bh);
+    const tt = t - t0;
+    const suzu = { z: SUZU.y, draw: () => RB.studySuzu.draw(c, cam, SUZU.x, SUZU.y, tt, opts) };
+    RB.studyMill.draw(S, c, cam, bw, bh, tt, Object.assign({ extra: [suzu] }, opts));
+    if (opts.life) RB.studyMill.life(S, c, cam, bw, bh, opts.motion ? tt : 0);
+    post(c, cam, bw, bh, opts.motion ? tt : 0);
+    const ms = (typeof performance !== 'undefined' ? performance.now() : 0) - a;
+    stat.frames++; stat.frameMs += ms; stat.lastMs = ms;
+  }
+  draw.art = true;
+
+  // ---- the lens: light shafts, bloom, focus, grade, vignette (all at the buffer's resolution) ----------------
+  const cvs = {};
+  function scratch(k, w, h) {
+    let c = cvs[k];
+    if (!c || c.width !== w || c.height !== h) { c = cvs[k] = RB.sprites.makeCanvas(w, h); }
+    const g = c.getContext('2d');
+    g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    g.clearRect(0, 0, w, h);
+    return { c, g };
+  }
+  // a soft copy of the frame: down to a quarter and back, smoothed (a cheap, even blur)
+  function soften(src, w, h, k) {
+    const a = scratch('sa' + k, Math.max(1, Math.round(w / k)), Math.max(1, Math.round(h / k)));
+    a.g.imageSmoothingEnabled = true;
+    a.g.drawImage(src, 0, 0, w, h, 0, 0, a.c.width, a.c.height);
+    return a.c;
+  }
+  function post(c, cam, bw, bh, t) {
+    const frame = c.canvas;
+    if (opts.light) {
+      // sun shafts slanting from the upper left through the gaps in the canopy, breathing slowly
+      c.save();
+      c.globalCompositeOperation = 'screen';
+      for (const sh of SHAFTS) {
+        const x0 = sh.x - cam.x, y0 = -60 - cam.y, len = 520, a = sh.a * (0.75 + 0.25 * Math.sin(t / 2600 + sh.x));
+        const g = c.createLinearGradient(x0, y0, x0 + len * 0.62, y0 + len * 0.78);
+        g.addColorStop(0, 'rgba(255,226,160,' + a + ')');
+        g.addColorStop(0.55, 'rgba(255,214,150,' + a * 0.5 + ')');
+        g.addColorStop(1, 'rgba(255,210,150,0)');
+        c.fillStyle = g;
+        c.beginPath();
+        c.moveTo(x0, y0); c.lineTo(x0 + sh.w, y0); c.lineTo(x0 + sh.w + len * 0.62, y0 + len * 0.78); c.lineTo(x0 + len * 0.62, y0 + len * 0.78);
+        c.closePath(); c.fill();
+      }
+      c.restore();
+      // the grade: warm in the light, a breath of haze over the far forest
+      c.save();
+      c.globalCompositeOperation = 'overlay';
+      c.fillStyle = 'rgba(255,196,120,0.16)';
+      c.fillRect(0, 0, bw, bh);
+      c.globalCompositeOperation = 'screen';
+      const hz = c.createLinearGradient(0, -40 - cam.y, 0, 60 - cam.y);
+      hz.addColorStop(0, 'rgba(190,200,190,0.22)'); hz.addColorStop(1, 'rgba(190,200,190,0)');
+      c.fillStyle = hz; c.fillRect(0, 0, bw, bh);
+      c.restore();
+    }
+    if (opts.bloom) {
+      // bloom: only what is already bright (the frame multiplied by itself twice), spread and laid back on top
+      const q = scratch('bloom', Math.ceil(bw / 4), Math.ceil(bh / 4));
+      q.g.imageSmoothingEnabled = true;
+      q.g.drawImage(frame, 0, 0, bw, bh, 0, 0, q.c.width, q.c.height);
+      q.g.globalCompositeOperation = 'multiply';
+      q.g.drawImage(q.c, 0, 0); q.g.drawImage(q.c, 0, 0); q.g.drawImage(q.c, 0, 0);
+      const r = soften(q.c, q.c.width, q.c.height, 2);
+      c.save();
+      c.imageSmoothingEnabled = true;
+      c.globalCompositeOperation = 'screen';
+      c.globalAlpha = 0.5;
+      c.drawImage(r, 0, 0, r.width, r.height, 0, 0, bw, bh);
+      c.globalAlpha = 0.35;
+      c.drawImage(q.c, 0, 0, q.c.width, q.c.height, 0, 0, bw, bh);
+      c.restore();
+    }
+    if (opts.focus) {
+      // depth of field: the far forest and the near foreground soften; the mill and Suzu stay sharp
+      const blur = soften(soften(frame, bw, bh, 2), Math.ceil(bw / 2), Math.ceil(bh / 2), 2);
+      const m = scratch('dof', bw, bh);
+      m.g.imageSmoothingEnabled = true;
+      m.g.drawImage(blur, 0, 0, blur.width, blur.height, 0, 0, bw, bh);
+      m.g.globalCompositeOperation = 'destination-in';
+      const yFar0 = -70 - cam.y, yFar1 = -16 - cam.y, yNear0 = 280 - cam.y, yNear1 = 380 - cam.y;
+      const g = m.g.createLinearGradient(0, Math.min(yFar0, 0), 0, Math.max(yNear1, bh));
+      const span = Math.max(yNear1, bh) - Math.min(yFar0, 0), at = (y) => Math.max(0, Math.min(1, (y - Math.min(yFar0, 0)) / span));
+      g.addColorStop(at(yFar0), 'rgba(0,0,0,1)'); g.addColorStop(at(yFar1), 'rgba(0,0,0,0)');
+      g.addColorStop(at(yNear0), 'rgba(0,0,0,0)'); g.addColorStop(at(yNear1), 'rgba(0,0,0,1)');
+      m.g.fillStyle = g; m.g.fillRect(0, 0, bw, bh);
+      c.drawImage(m.c, 0, 0);
+    }
+    if (opts.light) {
+      // a soft vignette
+      c.save();
+      c.globalCompositeOperation = 'multiply';
+      const v = c.createRadialGradient(bw / 2, bh * 0.46, Math.min(bw, bh) * 0.35, bw / 2, bh * 0.46, Math.hypot(bw, bh) * 0.62);
+      v.addColorStop(0, 'rgba(255,255,255,1)'); v.addColorStop(1, 'rgba(150,140,175,1)');
+      c.fillStyle = v; c.fillRect(0, 0, bw, bh);
+      c.restore();
+    }
+  }
+  // where the sun comes through the trees (world x at the top of the shafts), their widths and strengths
+  const SHAFTS = [{ x: -80, w: 40, a: 0.22 }, { x: 30, w: 20, a: 0.17 }, { x: 140, w: 30, a: 0.2 }, { x: 410, w: 24, a: 0.14 }];
+
+  function open() {
+    if (!allowed() || on) return false;
+    const a = typeof performance !== 'undefined' ? performance.now() : 0;
+    if (!S) { S = RB.studyMill.build(); RB.studySuzu.build(); }
+    stat.buildMs = (typeof performance !== 'undefined' ? performance.now() : 0) - a;
+    on = true;
+    t0 = typeof performance !== 'undefined' ? performance.now() : 0;
+    prev = RB.render.getOverride ? RB.render.getOverride() : null;
+    RB.game.pushMode('study');
+    RB.render.setOverride(draw);
+    applyView();
+    if (typeof document !== 'undefined' && !document.getElementById('study-css')) {
+      const css = document.createElement('style');
+      css.id = 'study-css';
+      css.textContent = 'body[data-mode="study"] #ui, body[data-mode="study"] #overlay { visibility: hidden; }';
+      document.head.appendChild(css);
+    }
+    showUi();
+    return true;
+  }
+  function close() {
+    if (!on) return;
+    on = false;
+    RB.render.setOverride(prev || null);
+    prev = null;
+    RB.game.popMode('study');
+    RB.render.setView(null);
+    if (RB.worldLook && RB.worldLook.set) RB.worldLook.set({});
+    if (ui) { ui.remove(); ui = null; }
+    if (RB.world && RB.world.W && RB.world.W.map) RB.render.invalidate();
+  }
+  function set(o) { Object.assign(opts, o || {}); applyView(); syncUi(); }
+
+  // a small caption with the layer switches and a way out (Escape closes it too)
+  function showUi() {
+    if (typeof document === 'undefined') return;
+    ui = document.createElement('div');
+    ui.id = 'study-ui';
+    ui.setAttribute('role', 'region');
+    ui.setAttribute('aria-label', 'Fidelity study (development)');
+    ui.style.cssText = 'position:fixed;right:8px;bottom:8px;z-index:99999;background:rgba(20,26,34,0.86);color:#eee;font:12px sans-serif;padding:6px 8px;border:1px solid #567;border-radius:6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;max-width:94vw';
+    const B = (k, label) => '<button type="button" data-k="' + k + '" aria-pressed="true" style="font:12px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:26px;padding:1px 7px">' + label + '</button>';
+    ui.innerHTML = '<span style="margin-right:4px">Study: Suzu at the Mill</span>' + B('light', 'Light') + B('focus', 'Focus') + B('bloom', 'Bloom') + B('motion', 'Motion') + B('life', 'Life') + B('close', 'Close') +
+      '<button type="button" id="study-close" style="font:12px sans-serif;color:#fff;background:#7a3a3a;border:1px solid #c88;border-radius:4px;min-height:26px;padding:1px 7px">Close</button>';
+    document.body.appendChild(ui);
+    ui.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-k]');
+      if (b) { set({ [b.dataset.k]: !opts[b.dataset.k] }); return; }
+      if (e.target.closest('#study-close')) close();
+    });
+    syncUi();
+  }
+  function syncUi() {
+    if (!ui) return;
+    for (const b of ui.querySelectorAll('[data-k]')) b.setAttribute('aria-pressed', String(!!opts[b.dataset.k]));
+  }
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', (e) => { if (on && e.key === 'Escape') { e.preventDefault(); close(); } });
+    // ?study=mill on a development page opens it once the game is ready
+    if (/[?&]study=mill\b/.test((window.location && window.location.search) || '')) {
+      let tries = 0;
+      const go = () => { if (window.__RB_READY__ === true && document.body && allowed()) open(); else if (++tries < 300) setTimeout(go, 100); };
+      setTimeout(go, 0);
+    }
+  }
+
+  return { open, close, set, opts, isOpen: () => on, stats: () => Object.assign({}, stat, { avgMs: stat.frames ? stat.frameMs / stat.frames : 0 }), scene: () => S, FOCUS };
+})();
+
+
+/* ==== src/engine/68e_studysuzu.js ==== */
+/* The fidelity study's Suzu, redrawn from scratch (docs/future/work/P01_STUDY.md; development only).
+ *
+ * From her bust reference (docs/future/playbook/mockups/09) and her game sprite, only as reference: long copper
+ * hair falling in heavy waves with violet in its shade, a pink bow on her left, deep warm skin, amber eyes, a plum
+ * dress with gold at the neck, the sash and the wide sleeves, gold at her throat, ears and wrists. She stands facing
+ * us, her weight easy, her left hand on her hip (as she stands in battle), her right arm loose.
+ *
+ * Built once in layers (back hair, body, face, front hair, bow, earrings), pixel by pixel at 48×72, lit from the
+ * upper left like the rest of the scene, each part shaded in its own ramp with a selective outline (the darkest
+ * step of what it bounds, lighter on the lit side). The idle loop moves whole pixels, never redraws shapes, so every
+ * frame stays crisp:
+ *  - breath (3.2 s): the shoulders and chest lift a pixel; the head follows a beat later;
+ *  - the hair: a slow wave runs down it, the tips swinging a pixel or two in the breeze from the west;
+ *  - the hem sways a pixel behind the hips; the bow's tails flutter; the earrings swing after the head;
+ *  - a blink every few seconds (half, closed, half), and now and then a glance toward the wheel.
+ * Reduced motion holds the first frame. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.studySuzu = (function () {
+  'use strict';
+  const K = RB.studyKit;
+  const { RAMP, hash, Buf, clamp, covered, inEll, inPoly } = K;
+  const FW = 48, FH = 72, FOOT = { x: 24, y: 69 };
+  const L = (() => { const v = [-0.55, -0.62, 0.56], n = Math.hypot(...v); return v.map((a) => a / n); })();
+  const Hr = RAMP.hair, Sk = RAMP.skin, Dr = RAMP.dress, Au = RAMP.gold, Bw = RAMP.bow, Bt = RAMP.boot, Ir = RAMP.iris;
+
+  // a layer: colours plus, per pixel, which ramp it came from (for the outline)
+  function Layer() { this.b = new Buf(FW, FH); this.m = new Uint8Array(FW * FH); }
+  Layer.prototype.put = function (x, y, ramp, i, mat) {
+    if (x < 0 || y < 0 || x >= FW || y >= FH) return;
+    this.b.set(x, y, ramp[clamp(Math.round(i), 0, ramp.length - 1)]);
+    this.m[y * FW + x] = mat;
+  };
+  const MATS = [null, Hr, Sk, Dr, Au, Bw, Bt];
+  // lighting on an ellipsoid at (cx, cy) with radii (rx, ry): 0 (away) … 1 (facing the sun)
+  function sphere(x, y, cx, cy, rx, ry) {
+    const nx = (x + 0.5 - cx) / rx, ny = (y + 0.5 - cy) / ry, nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+    return Math.max(0, nx * L[0] + ny * L[1] + nz * L[2]);
+  }
+  const wave = (y, ph) => Math.sin(y * 0.42 + ph) * 1.3;
+
+  // ---- the back hair: the long mass behind her shoulders, as heavy wavy locks ----------------------------------
+  // Each lock is a tapered curve; locks are laid back to front (inner ones first) so each outer lock's edge
+  // shades the one behind it. Light runs down the lit (outer-left) edge of each wave; the tips curl out.
+  const BACK_LOCKS = [
+    // inner locks, behind her shoulders, mostly in shade
+    { p: [[19, 22], [17.5, 32], [17, 42], [18.6, 51], [17, 57]], w: [5, 1.4], d: -1.4 },
+    { p: [[29, 22], [30.5, 32], [31, 42], [29.6, 51], [31.4, 57]], w: [5, 1.4], d: -1.4 },
+    // the middle locks
+    { p: [[16.5, 17], [13, 26], [13.4, 36], [11.4, 46], [13, 54], [16.4, 59]], w: [6.4, 1.6], d: -0.4 },
+    { p: [[31.5, 17], [35, 26], [34.6, 36], [36.8, 46], [35, 54], [31.8, 59]], w: [6.4, 1.6], d: -0.5 },
+    // the outer locks, catching the light
+    { p: [[15, 12.5], [10.6, 20], [9.4, 30], [7.4, 40], [8.6, 49], [11.8, 55.5]], w: [6.6, 1.6], d: 0.5 },
+    { p: [[33, 12.5], [37.6, 20], [38.8, 30], [41, 40], [39.6, 49], [36.4, 55.4]], w: [6.6, 1.6], d: 0 },
+  ].map((o) => Object.assign(o, { f: K.inCurve(o.p, o.w[0], o.w[1]) }));
+  function backHair() {
+    const ly = new Layer();
+    const crown = inEll(24, 17.5, 12.4, 11);
+    // the mass beneath the locks: no gaps beside her neck, none between locks above their tips
+    const mass = inPoly([[13, 14], [9.6, 24], [8.6, 36], [8.8, 46], [12, 53], [17, 55], [24, 52], [31, 55], [36, 53], [39.2, 46], [39.4, 36], [38.4, 24], [35, 14], [24, 9]]);
+    for (let y = 8; y < 58; y++) for (let x = 6; x < 42; x++) if (covered(mass, x, y)) ly.put(x, y, Hr, 1.6 + sphere(x, y, 22, 20, 16, 24) * 1.6, 1);
+    const own = new Int8Array(FW * FH).fill(-1);
+    for (let y = 4; y < 62; y++) for (let x = 2; x < 46; x++) {
+      for (let k = BACK_LOCKS.length - 1; k >= 0; k--) if (covered(BACK_LOCKS[k].f, x, y)) { own[y * FW + x] = k; break; }
+      if (own[y * FW + x] < 0 && covered(crown, x, y)) own[y * FW + x] = 99;
+    }
+    for (let y = 4; y < 62; y++) for (let x = 2; x < 46; x++) {
+      const k = own[y * FW + x];
+      if (k < 0) continue;
+      let v;
+      if (k === 99) v = 2.6 + sphere(x, y, 22, 15, 13, 12) * 3.6;
+      else {
+        const lk = BACK_LOCKS[k], q = lk.f.at(x + 0.5, y + 0.5);
+        v = 3.4 + lk.d + sphere(x, y, 23, 22, 17, 28) * 3.2;
+        v += (1 - Math.abs(q.across)) * 1.5 - 0.5; // round across the lock
+        // light runs along the lit side of each wave: where the lock leans out to the left, its left edge shines
+        const lean = q.dx / (Math.hypot(q.dx, q.dy) || 1);
+        if (q.across < -0.1 && q.across > -0.75 && lean < -0.12) v += 1.6;
+        if (q.across > 0.55) v -= 1; // the shadowed side
+        if (q.t > 0.82) v -= 0.6; // the tips, thinner and darker
+        // a thin dark parting where this lock lies over another
+        const up = own[(y - 1) * FW + x], lf = own[y * FW + x - 1], rt = own[y * FW + x + 1];
+        if ((up >= 0 && up !== k && up !== 99) || (lf >= 0 && lf !== k && lf < k) || (rt >= 0 && rt !== k && rt < k)) v -= 1.4;
+      }
+      ly.put(x, y, Hr, v, 1);
+    }
+    return ly;
+  }
+
+  // ---- the body: boots, skirt, bodice, sash, sleeves, arms, hands -----------------------------------------------
+  function body() {
+    const ly = new Layer();
+    // legs and boots
+    for (let y = 60; y < 70; y++) for (const [x0, x1] of [[19, 23], [25, 29]]) for (let x = x0; x < x1; x++) {
+      if (y < 65) ly.put(x, y, Sk, 3.4 + (x === x0 ? 1.4 : x === x1 - 1 ? -1 : 0), 2);
+      else {
+        const toe = y >= 67 ? (x0 === 19 ? -1 : 0) : 0;
+        if (x + toe < x0 - 1) continue;
+        ly.put(x + toe, y, Bt, 2.6 + (y === 65 ? 1.6 : 0) + (x === x0 ? 1 : x === x1 - 1 ? -1 : 0), 6);
+      }
+    }
+    // the skirt: a flared bell, lit on the left, four soft folds, gold at the hem
+    const skirt = (x, y) => {
+      if (y < 43 || y > 63) return false;
+      const t = (y - 43) / 20, half = 6.4 + t * 5.6 + Math.sin(t * Math.PI) * 0.8;
+      const hem = 62 + Math.cos(((x - 24) / 12) * 1.4) * 1.2;
+      return Math.abs(x - 23.8) < half && y < hem;
+    };
+    for (let y = 42; y < 65; y++) for (let x = 8; x < 40; x++) {
+      if (!covered(skirt, x, y)) continue;
+      const t = (y - 43) / 20, half = 6.4 + t * 5.6;
+      const u = (x + 0.5 - 23.8) / half;
+      let v = 4.6 - u * 1.8;
+      const fold = Math.sin((x + 0.5 - 23.8) * (0.62 - t * 0.18) * 1.1 + 0.6);
+      v += fold * (0.4 + t * 1.3);
+      if (!covered(skirt, x, y + 1)) { ly.put(x, y, Au, 4.6 - u * 1.2, 4); continue; } // gold at the hem
+      if (!covered(skirt, x, y + 2)) { ly.put(x, y, Au, 3.2 - u, 4); continue; }
+      ly.put(x, y, Dr, v, 3);
+    }
+    // the bodice
+    const bodice = inPoly([[15.5, 33], [32.5, 33], [30.5, 39], [29.6, 44], [18.4, 44], [17.5, 39]]);
+    for (let y = 32; y < 45; y++) for (let x = 14; x < 34; x++) {
+      if (!covered(bodice, x, y)) continue;
+      let v = 2.6 + sphere(x, y, 23.4, 37, 9.5, 8) * 4.4;
+      if (y >= 36 && y <= 38 && Math.abs(x - 23.5) > 1 && Math.abs(x - 23.5) < 5) v += x < 24 ? 0.9 : -0.4; // the curve of the chest
+      ly.put(x, y, Dr, v, 3);
+    }
+    // the neckline: skin of the throat and chest, a gold trim around it
+    for (let y = 31; y < 37; y++) for (let x = 18; x < 30; x++) {
+      const d = ((x + 0.5 - 23.8) / 4.8) ** 2 + ((y + 0.5 - 31) / 4.6) ** 2;
+      if (d > 1.18) continue;
+      if (d > 0.82) ly.put(x, y, Au, 5.2 - (x - 18) * 0.22, 4);
+      else ly.put(x, y, Sk, 3.6 + sphere(x, y, 22, 31, 6, 6) * 3.4, 2);
+    }
+    // the sash: deep plum with gold edges and a clasp
+    for (let y = 42; y < 46; y++) for (let x = 17; x < 31; x++) {
+      if (!covered(skirt, x, y) && !covered(bodice, x, y)) continue;
+      if (y === 42 || y === 45) ly.put(x, y, Au, x < 24 ? 5 : 3.4, 4);
+      else ly.put(x, y, Dr, 2 + (x < 22 ? 1 : 0), 3);
+    }
+    for (const [x, y, i] of [[23, 43, 6], [24, 43, 5], [23, 44, 4], [24, 44, 3]]) ly.put(x, y, Au, i, 4);
+
+    // her right arm (on our left), loose: a bell sleeve falling from the shoulder, its dark mouth at the bottom
+    // edged in gold, the hand hanging just out of it
+    const sleeveL = inPoly([[15.5, 33], [13.2, 36], [11.6, 41], [10.4, 45.6], [11, 47.6], [13.6, 48.4], [16.8, 47.8], [18, 45.5], [18, 38], [17.8, 34]]);
+    const mouthL = inEll(14, 47.3, 3.3, 1.15);
+    for (let y = 32; y < 50; y++) for (let x = 8; x < 20; x++) {
+      if (!covered(sleeveL, x, y)) continue;
+      if (covered(mouthL, x, y)) { ly.put(x, y, Dr, 0.6, 3); continue; }
+      if (!covered(sleeveL, x, y + 1) || (y >= 45 && !covered(sleeveL, x - 1, y + 1))) { ly.put(x, y, Au, x < 13 ? 5.4 : 3.6, 4); continue; }
+      let v = 2.6 + sphere(x, y, 13, 38, 6, 12) * 4;
+      if (x >= 16.5) v -= 1.2; // the inner side
+      if (y > 40 && Math.abs(x + 0.5 - (12.8 + (y - 40) * -0.15)) < 0.6) v -= 1; // one fold down the sleeve
+      ly.put(x, y, Dr, v, 3);
+    }
+    const handL = [
+      [12, 48, 'a', 5.6], [13, 48, 'a', 6.4], [14, 48, 'a', 4.6], [15, 48, 'a', 3.2],
+      [12, 49, 's', 5.6], [13, 49, 's', 5], [14, 49, 's', 4], [15, 49, 's', 2.8],
+      [12, 50, 's', 5.4], [13, 50, 's', 4.8], [14, 50, 's', 3.8], [15, 50, 's', 2.6],
+      [12, 51, 's', 4.6], [13, 51, 's', 4.2], [14, 51, 's', 3.2], [15, 51, 's', 2.2],
+      [13, 52, 's', 3.6], [14, 52, 's', 2.6],
+    ];
+    for (const [x, y, r, i] of handL) ly.put(x, y, r === 'a' ? Au : Sk, i, r === 'a' ? 4 : 2);
+
+    // her left arm (on our right): the elbow out, the hand on her hip; the wide sleeve hangs from the elbow
+    const upperR = inPoly([[29.6, 33], [33, 33.4], [36.2, 37], [38.8, 41.2], [36.4, 43], [33.6, 40.4], [31, 37.4]]);
+    const drapeR = inPoly([[35, 41], [38.8, 41.2], [40.4, 45], [40.8, 49.4], [38.6, 50.6], [36.4, 49.2], [35.4, 45.6]]);
+    const mouthR = inEll(38.4, 49.4, 2.2, 1);
+    for (let y = 32; y < 52; y++) for (let x = 28; x < 43; x++) {
+      const up = covered(upperR, x, y), dr = covered(drapeR, x, y);
+      if (!up && !dr) continue;
+      if (dr && !up) {
+        if (covered(mouthR, x, y)) { ly.put(x, y, Dr, 0.6, 3); continue; }
+        if (!covered(drapeR, x, y + 1)) { ly.put(x, y, Au, 3.4, 4); continue; }
+        ly.put(x, y, Dr, 2.2 + (x < 37.5 ? 1 : 0) + (y < 44 ? 0.6 : 0), 3);
+        continue;
+      }
+      let v = 2.8 + sphere(x, y, 32.4, 35.4, 6.4, 7) * 3.6;
+      if (y > 38 && x > 35) v -= 0.6;
+      ly.put(x, y, Dr, v, 3);
+    }
+    // the forearm, back from the elbow to her hip, the bracelet, and the hand resting there
+    const armR = [
+      [35, 42, 's', 4.4], [34, 42, 's', 5], [34, 43, 's', 4.2], [33, 43, 's', 5.2], [35, 43, 's', 3],
+      [33, 44, 'a', 5.4], [32, 44, 'a', 6.4], [32, 45, 'a', 3.4], [33, 45, 'a', 2.6],
+      [31, 44, 's', 5.6], [30, 44, 's', 5.2], [29, 44, 's', 4.4],
+      [31, 45, 's', 4.6], [30, 45, 's', 4.8], [29, 45, 's', 3.8], [28, 45, 's', 3.2],
+      [30, 46, 's', 3.8], [29, 46, 's', 3.2], [31, 46, 's', 3],
+    ];
+    for (const [x, y, r, i] of armR) ly.put(x, y, r === 'a' ? Au : Sk, i, r === 'a' ? 4 : 2);
+    // a pendant on her choker
+    ly.put(24, 33, Au, 6, 4); ly.put(24, 34, Au, 4, 4);
+    return ly;
+  }
+
+  // ---- the face and neck ---------------------------------------------------------------------------------------
+  function head() {
+    const ly = new Layer();
+    const face = (x, y) => {
+      if (y < 12 || y > 30) return false;
+      const top = ((x - 23.9) / 7.3) ** 2 + ((y - 20.2) / 8) ** 2 <= 1 && y < 24;
+      const jaw = y >= 22 && Math.abs(x - 23.9) < 7.1 - Math.pow((y - 22) / 7.4, 1.5) * 5.4 && y < 29.6;
+      return top || jaw;
+    };
+    for (let y = 26; y < 34; y++) for (let x = 20; x < 28; x++) {
+      if (Math.abs(x + 0.5 - 23.9) > 3.1 - (y > 31 ? 1 : 0) * -0.6) continue;
+      ly.put(x, y, Sk, y < 30 ? 2.4 : 3.4 + (x < 23 ? 0.8 : 0), 2); // the neck, shaded under the jaw
+    }
+    for (let y = 12; y < 31; y++) for (let x = 14; x < 34; x++) {
+      if (!covered(face, x, y)) continue;
+      let v = 3.4 + sphere(x, y, 22.6, 19.5, 8.4, 10) * 4.2;
+      if (y >= 28) v -= 0.6;
+      ly.put(x, y, Sk, v, 2);
+    }
+    // the bangs' shadow across the forehead
+    for (let x = 16; x < 32; x++) for (let y = 15; y < 19; y++) { const c = ly.b.get(x, y); if (c) ly.put(x, y, Sk, 3.2 + (x < 22 ? 0.8 : 0), 2); }
+    return ly;
+  }
+  // the features, as small pixel maps (drawn onto the face layer; the eyes also as blink and glance variants)
+  const EYE_OPEN = {
+    // [x, y, ramp, index]: h hair (lashes), s skin, i iris, w white, x catchlight; the left eye (on our left), the right
+    L: [[17, 19, 'h', 1], [18, 19, 'h', 0], [19, 19, 'h', 0], [20, 19, 'h', 0], [21, 19, 'h', 1], [16, 20, 'h', 1],
+      [17, 20, 'w', 0], [18, 20, 'x', 0], [19, 20, 'i', 1], [20, 20, 'i', 2], [21, 20, 's', 4],
+      [17, 21, 'w', 0], [18, 21, 'i', 2], [19, 21, 'i', 0], [20, 21, 'i', 3], [21, 21, 's', 5],
+      [18, 22, 'i', 3], [19, 22, 'i', 5], [20, 22, 'i', 4], [17, 22, 's', 4], [21, 22, 's', 5]],
+    R: [[26, 19, 'h', 1], [27, 19, 'h', 0], [28, 19, 'h', 0], [29, 19, 'h', 0], [30, 19, 'h', 1], [31, 20, 'h', 1],
+      [26, 20, 's', 4], [27, 20, 'x', 0], [28, 20, 'i', 1], [29, 20, 'i', 2], [30, 20, 'w', 0],
+      [26, 21, 's', 4], [27, 21, 'i', 2], [28, 21, 'i', 0], [29, 21, 'i', 3], [30, 21, 'w', 0],
+      [27, 22, 'i', 3], [28, 22, 'i', 5], [29, 22, 'i', 4], [26, 22, 's', 3], [30, 22, 's', 4]],
+  };
+  function eyeMap(state, glance) {
+    const out = [];
+    for (const k of ['L', 'R']) for (const p of EYE_OPEN[k]) out.push(p.slice());
+    // a glance to her left (our right, toward the wheel): irises and catchlights move a pixel; the whites swap side
+    if (glance) for (const p of out) { if (p[2] === 'i' || p[2] === 'x') p[0] += 1; else if (p[2] === 'w') p[0] -= 3; }
+    if (state === 'half') {
+      // the lid comes down: the top row of iris becomes lid
+      return out.map((p) => (p[1] === 20 && p[2] !== 's' ? [p[0], p[1], 'h', 1] : p));
+    }
+    if (state === 'closed') {
+      const c = [];
+      for (const [x0, x1] of [[17, 21], [26, 30]]) for (let x = x0; x <= x1; x++) { c.push([x, 21, 'h', 1]); c.push([x, 20, 's', 5]); c.push([x, 22, 's', 4]); c.push([x, 19, 's', 5]); }
+      c.push([17, 22, 'h', 1]); c.push([30, 22, 'h', 1]);
+      return c;
+    }
+    return out;
+  }
+  function paintFeatures(ly, eye, glance) {
+    const R = { h: Hr, s: Sk, i: Ir };
+    for (const [x, y, r, i] of eyeMap(eye, glance)) {
+      if (r === 'w') ly.put(x, y, [[236, 226, 218]], 0, 2);
+      else if (r === 'x') ly.put(x, y, [[255, 248, 236]], 0, 2); // the catchlight
+      else ly.put(x, y, R[r], i, r === 'h' ? 1 : 2);
+    }
+    // brows (half hidden by the bangs), the nose, the mouth's small smile, a little warmth on the cheeks
+    for (const [x, y, i] of [[18, 17, 2], [19, 17, 1], [20, 17, 2], [27, 17, 2], [28, 17, 1], [29, 17, 2]]) ly.put(x, y, Hr, i, 1);
+    ly.put(24, 23, Sk, 7.6, 2); ly.put(25, 24, Sk, 3.4, 2); ly.put(24, 24, Sk, 5.2, 2);
+    const lip = [[118, 46, 44]], lipL = [[150, 70, 64]];
+    ly.put(22, 26, Sk, 3.2, 2); ly.put(23, 27, lip, 0, 2); ly.put(24, 27, lip, 0, 2); ly.put(25, 27, lip, 0, 2); ly.put(26, 26, Sk, 3, 2);
+    ly.put(24, 28, lipL, 0, 2); ly.put(23, 28, Sk, 6.4, 2);
+    for (const [x, y, k] of [[18, 24, 0.32], [19, 24, 0.4], [20, 25, 0.2], [28, 24, 0.4], [29, 24, 0.32], [27, 25, 0.2]]) { const c = ly.b.get(x, y); if (c) ly.b.set(x, y, K.mixc(c, [222, 112, 112], k)); }
+  }
+
+  // ---- the front hair: the crown over the skull, the bangs swept across, the locks framing her face ------------
+  const BANGS = [
+    { p: [[18.6, 9], [15.6, 13], [14.6, 17], [15, 20.5]], w: [4.8, 0.6] },
+    { p: [[20.6, 9], [18.6, 13.4], [18.2, 17], [18.8, 19.6]], w: [4.4, 0.6] },
+    { p: [[23, 9.4], [22.2, 13.6], [22, 18.6]], w: [4.6, 0.6] },
+    { p: [[25.6, 9.6], [26, 13.8], [26.6, 18]], w: [4.2, 0.6] },
+    { p: [[28, 10], [29.6, 13.8], [31, 18.8]], w: [4, 0.6] },
+    { p: [[30.6, 10.6], [32.8, 15], [33.4, 20.4]], w: [3.6, 0.6] },
+  ].map((o) => Object.assign(o, { f: K.inCurve(o.p, o.w[0], o.w[1]) }));
+  const SIDE_LOCKS = [
+    // on our left, a long lock over her shoulder, curling at the chest
+    { p: [[15.4, 13], [13, 21], [12.8, 30], [14.6, 37], [13.6, 43]], w: [5.4, 1.2] },
+    { p: [[17.4, 16], [16.4, 24], [16.6, 31]], w: [3.4, 0.8] },
+    // on our right, shorter, behind the bow
+    { p: [[32.8, 13.4], [35.2, 21], [35.4, 29], [34, 35.5]], w: [4.8, 1] },
+  ].map((o) => Object.assign(o, { f: K.inCurve(o.p, o.w[0], o.w[1]) }));
+  function frontHair() {
+    const ly = new Layer();
+    const cap = (x, y) => ((x - 24) / 11.4) ** 2 + ((y - 16.2) / 8.8) ** 2 <= 1 && y < 17.2 + (x < 24 ? (24 - x) * 0.1 : 0);
+    const part = { x: 21, y: 8.6 }; // where the hair parts, a little to her right
+    for (let y = 3; y < 46; y++) for (let x = 6; x < 42; x++) {
+      const inCap = covered(cap, x, y);
+      let lk = null, kind = 0;
+      if (!inCap) {
+        for (let i = BANGS.length - 1; i >= 0 && !lk; i--) if (covered(BANGS[i].f, x, y)) { lk = BANGS[i]; kind = 1; }
+        for (let i = SIDE_LOCKS.length - 1; i >= 0 && !lk; i--) if (covered(SIDE_LOCKS[i].f, x, y)) { lk = SIDE_LOCKS[i]; kind = 2; }
+        if (!lk) continue;
+      }
+      let v;
+      if (inCap) {
+        // strands radiate from the parting; the sheen is a broken arc of short bright strands
+        const a = Math.atan2(y + 0.5 - part.y, x + 0.5 - part.x), strand = Math.floor(a * 9), fr = a * 9 - strand;
+        v = 2.8 + sphere(x, y, 21.5, 13.4, 11.8, 9.6) * 5.2;
+        v += (hash(strand, 0, 601) - 0.5) * 1.2;
+        if (fr < 0.18) v -= 1.1;
+        const ring = Math.abs(((x + 0.5 - 23.6) / 9.4) ** 2 + ((y + 0.5 - 13.8) / 5.2) ** 2 - 1);
+        if (ring < 0.2 && x < 31 && hash(strand, 1, 602) > 0.25) v += 2.2;
+      } else {
+        const q = lk.f.at(x + 0.5, y + 0.5);
+        v = 3.4 + sphere(x, y, 22, 15, 13, 15) * 3.8 + (1 - Math.abs(q.across)) * 1.4 - 0.4;
+        if (q.across > 0.5) v -= 1.3; // each lock's shadowed right edge
+        if (q.across < -0.45 && q.across > -0.85) v += 0.9;
+        if (kind === 1 && q.t > 0.72) v -= 1; // the bangs' tips, darker where they touch the face
+        if (kind === 2 && q.t > 0.4 && q.t < 0.58 && q.across < 0.1) v += 1.4; // light on the turn of a side lock
+      }
+      ly.put(x, y, Hr, v, 1);
+    }
+    return ly;
+  }
+
+  // ---- the bow, on her left (our right), and the earrings ------------------------------------------------------
+  function bow() {
+    const ly = new Layer();
+    // two loops, fuller now: lit along their tops, shaded beneath, a fold inside each; the knot between
+    const loops = [{ cx: 29.8, cy: 8.2, rx: 4, ry: 3 }, { cx: 36.8, cy: 9.6, rx: 3.8, ry: 3 }];
+    for (let y = 3; y < 15; y++) for (let x = 24; x < 43; x++) {
+      for (const lp of loops) {
+        if (!covered(inEll(lp.cx, lp.cy, lp.rx, lp.ry), x, y)) continue;
+        let v = 1.6 + sphere(x, y, lp.cx - 1.2, lp.cy - 1.4, lp.rx + 1, lp.ry + 1) * 4.6;
+        const fx = x + 0.5 - lp.cx, fy = y + 0.5 - lp.cy;
+        if (Math.abs(fy - fx * 0.3) < 0.6 && Math.abs(fx) < lp.rx - 1.2) v -= 1.5; // the fold
+        ly.put(x, y, Bw, v, 5);
+        break;
+      }
+    }
+    for (const [x, y, i] of [[33, 8, 4], [34, 8, 3], [33, 9, 3], [34, 9, 2], [33, 10, 2], [34, 10, 1]]) ly.put(x, y, Bw, i, 5);
+    ly.tails = [[33, 11, 3], [34, 11, 2], [32, 12, 3], [35, 12, 2], [32, 13, 2], [35, 13, 3], [31, 14, 3], [36, 14, 2], [31, 15, 2], [36, 15, 3], [37, 16, 2]];
+    return ly;
+  }
+
+  // the pixel artist's cleanup: a lone pixel whose four neighbours all differ from it takes the colour most of
+  // them share (so shading reads as clusters, never as speckle)
+  function despeckle(ly) {
+    const d = ly.b.d, src = new Uint8ClampedArray(d), key = (i) => (src[i] << 16) | (src[i + 1] << 8) | src[i + 2];
+    for (let y = 1; y < FH - 1; y++) for (let x = 1; x < FW - 1; x++) {
+      const i = (y * FW + x) * 4;
+      if (!src[i + 3]) continue;
+      const me = key(i), nb = [i - 4, i + 4, i - FW * 4, i + FW * 4].filter((j) => src[j + 3]);
+      if (nb.length < 4 || nb.some((j) => key(j) === me)) continue;
+      const count = new Map();
+      for (const j of nb) count.set(key(j), (count.get(key(j)) || 0) + 1);
+      let best = nb[0], bc = 0;
+      for (const j of nb) if (count.get(key(j)) > bc) { bc = count.get(key(j)); best = j; }
+      if (bc < 2) continue;
+      d[i] = src[best]; d[i + 1] = src[best + 1]; d[i + 2] = src[best + 2];
+    }
+    return ly;
+  }
+
+  // the selective outline around a set of layers composited together: the darkest step of the material the edge
+  // bounds, one step lighter where the edge faces the sun (up or left)
+  function outline(buf, mat) {
+    const out = new Buf(FW, FH);
+    out.d.set(buf.d);
+    const at = (x, y) => (x < 0 || y < 0 || x >= FW || y >= FH ? 0 : buf.alpha(x, y));
+    for (let y = 0; y < FH; y++) for (let x = 0; x < FW; x++) {
+      if (!at(x, y)) continue;
+      const o = { l: !at(x - 1, y), r: !at(x + 1, y), u: !at(x, y - 1), d: !at(x, y + 1) };
+      if (!o.l && !o.r && !o.u && !o.d) continue;
+      const ramp = MATS[mat[y * FW + x]] || Hr;
+      const lit = (o.l || o.u) && !o.r && !o.d;
+      out.set(x, y, ramp[lit ? 1 : 0]);
+    }
+    return out;
+  }
+
+  // ---- the parts, built once; frames composed from them with whole-pixel offsets --------------------------------
+  let P = null;
+  function build() {
+    const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
+    P = { back: despeckle(backHair()), body: body(), head: head(), front: despeckle(frontHair()), bow: bow(), cache: new Map() };
+    P.ms = (typeof performance !== 'undefined' ? performance.now() : 0) - t0;
+    return P;
+  }
+  // the pose at time t (ms): integer offsets for each part and row, and the eyes
+  function poseAt(t, still) {
+    if (still) return { lift: 0, head: 0, sway: [0, 0, 0, 0], hem: 0, tail: 0, ear: 0, eye: 'open', glance: false };
+    const br = (1 - Math.cos((t / 3200) * Math.PI * 2)) / 2, brH = (1 - Math.cos(((t - 260) / 3200) * Math.PI * 2)) / 2;
+    const s = (ph) => Math.sin((t / 4600) * Math.PI * 2 - ph);
+    const sway = [0, Math.round(s(0.5) * 0.7 + 0.2), Math.round(s(1.1) * 1.2 + 0.3), Math.round(s(1.7) * 1.7 + 0.4)];
+    const blinkT = t % 4300, eye = blinkT < 70 ? 'half' : blinkT < 170 ? 'closed' : blinkT < 240 ? 'half' : 'open';
+    const glance = (t % 11000) > 7600 && (t % 11000) < 9200;
+    return { lift: br > 0.55 ? 1 : 0, head: brH > 0.62 ? 1 : 0, sway, hem: Math.round(Math.sin((t / 4600) * Math.PI * 2 - 2.2) * 0.8), tail: Math.sin(t / 260) > 0.2 ? 1 : 0, ear: brH > 0.62 && br < 0.62 ? 1 : 0, eye, glance };
+  }
+  function frameFor(p) {
+    const key = [p.lift, p.head, p.sway.join(''), p.hem, p.tail, p.ear, p.eye, p.glance ? 1 : 0].join('|');
+    let f = P.cache.get(key);
+    if (f) return f;
+    const comp = new Buf(FW, FH), mat = new Uint8Array(FW * FH);
+    // copy a layer's rows with a vertical lift and a per-row horizontal shift
+    const lay = (ly, dy, dxRow, rowMin, rowMax) => {
+      for (let y = 0; y < FH; y++) {
+        if (y < (rowMin || 0) || y > (rowMax == null ? FH : rowMax)) continue;
+        const dx = dxRow ? dxRow(y) : 0, ty = y - dy;
+        for (let x = 0; x < FW; x++) {
+          const i = (y * FW + x) * 4;
+          if (!ly.b.d[i + 3]) continue;
+          const tx = x + dx;
+          if (tx < 0 || tx >= FW || ty < 0 || ty >= FH) continue;
+          comp.set(tx, ty, [ly.b.d[i], ly.b.d[i + 1], ly.b.d[i + 2]], ly.b.d[i + 3]);
+          mat[ty * FW + tx] = ly.m[y * FW + x];
+        }
+      }
+    };
+    const hairShift = (y) => (y < 30 ? 0 : y < 40 ? p.sway[1] : y < 50 ? p.sway[2] : p.sway[3]);
+    lay(P.back, p.head, hairShift);
+    // the body: everything above the sash rises with the breath; the skirt sways at the hem
+    lay(P.body, 0, (y) => (y >= 58 && y < 64 ? p.hem : 0), 34, FH);
+    lay(P.body, p.lift, null, 0, 41);
+    const face = new Layer();
+    face.b.d.set(P.head.b.d); face.m.set(P.head.m);
+    paintFeatures(face, p.eye, p.glance);
+    if (p.head) lay(face, 0, null, 27, 33); // the neck stays; the head rises above it
+    lay(face, p.head);
+    lay(P.front, p.head, (y) => (y < 30 ? 0 : y < 38 ? p.sway[1] : p.sway[2]));
+    lay(P.bow, p.head);
+    // the bow's tails, fluttering a pixel
+    for (const [x, y, i] of P.bow.tails) { comp.set(x + (y > 13 ? p.tail : 0), y - p.head, Bw[i]); mat[(y - p.head) * FW + x + (y > 13 ? p.tail : 0)] = 5; }
+    // the earrings: a bead and a drop below each ear, swinging after the head
+    for (const ex of [16, 31]) {
+      const ey = 26 - p.head, sw = p.ear;
+      comp.set(ex, ey, Au[6]); // the bead
+      comp.set(ex + sw, ey + 1, Au[6]); comp.set(ex + sw, ey + 2, Au[3]); // the drop, swinging after the head
+      for (const [dx, dy] of [[0, 0], [sw, 1], [sw, 2]]) mat[(ey + dy) * FW + ex + dx] = 4;
+    }
+    const out = outline(comp, mat);
+    f = { cv: out.canvas(), buf: out };
+    P.cache.set(key, f);
+    return f;
+  }
+  // the silhouette, for her shadow on the ground
+  const shadowCache = new Map();
+  function silhouette(f) {
+    let s = shadowCache.get(f);
+    if (s) return s;
+    const b = new Buf(FW, FH);
+    for (let i = 0; i < FW * FH; i++) if (f.buf.d[i * 4 + 3]) b.set(i % FW, (i / FW) | 0, [70, 60, 120]);
+    s = b.canvas();
+    shadowCache.set(f, s);
+    return s;
+  }
+
+  // draw her at world (wx, wy) = the point between her feet, into c with the camera at cam
+  function draw(c, cam, wx, wy, t, o) {
+    if (!P) build();
+    const still = !!(o && o.motion === false) || !!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion());
+    const f = frameFor(poseAt(Math.max(0, t), still));
+    const x = Math.round(wx - FOOT.x - cam.x), y = Math.round(wy - FOOT.y - cam.y);
+    if (!o || o.light !== false) {
+      // her shadow: the silhouette laid on the ground toward the lower right, and a darker contact under her feet
+      const fy = y + FOOT.y, sk = 0.95;
+      c.save();
+      c.globalAlpha = 0.55;
+      c.globalCompositeOperation = 'multiply';
+      c.setTransform(1, 0, -0.8 * sk, -0.36 * sk, 0.8 * sk * fy, fy * (1 + 0.36 * sk));
+      c.drawImage(silhouette(f), x, y);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.fillStyle = 'rgb(60,50,96)';
+      c.globalAlpha = 0.45;
+      c.beginPath(); c.ellipse(x + FOOT.x + 1, fy, 8, 2.2, 0, 0, Math.PI * 2); c.fill();
+      c.restore();
+    }
+    c.drawImage(f.cv, x, y);
+  }
+
+  return { build, draw, frameFor, poseAt, FW, FH, FOOT };
 })();
 
 

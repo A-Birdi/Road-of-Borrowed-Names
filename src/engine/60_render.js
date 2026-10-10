@@ -727,6 +727,7 @@ RB.render = (function () {
   function setOverride(fn) {
     override = fn;
   }
+  const getOverride = () => override;
   // Draw one frame now, e.g. while a transition is still dark, so the new
   // map's static layer and prop caches are built before it fades in.
   function prewarm() {
@@ -769,5 +770,5 @@ RB.render = (function () {
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, prewarm, invalidate, setOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ART, TS };
+  return { init, frame, prewarm, invalidate, setOverride, getOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ART, TS };
 })();

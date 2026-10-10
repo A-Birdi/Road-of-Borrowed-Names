@@ -49,9 +49,9 @@ RB.worldLook = (function () {
   function farView(cw, ch) {
     return { w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * FAR, h: (ch < 520 ? 8 : 12) * FAR };
   }
-  // A battle keeps the game's own framing (Robin, C-80: the crowded battle read distant in the far view); the
-  // far view comes back when the world is in play again.
-  const inBattle = () => !!(RB.game && RB.game.mode && RB.game.mode() === 'combat');
+  // A battle keeps the game's own framing (Robin, C-80: the crowded battle read distant in the far view), and so
+  // does the fidelity study (src/engine/68d_study.js); the far view comes back when the world is in play again.
+  const inBattle = () => !!(RB.game && RB.game.mode && (RB.game.mode() === 'combat' || RB.game.mode() === 'study'));
   function applyCamera() {
     if (!RB.render || !RB.render.setView) return;
     const m = RB.world && RB.world.W && RB.world.W.map;
@@ -478,7 +478,8 @@ RB.worldLook = (function () {
       '<div class="row">' + B('on', 'The proof') + B('far', 'Far view') + '</div>' +
       '<div class="row">' + B('kit', 'Kit') + B('light', 'Light') + B('atmos', 'Atmosphere') + B('soft', 'Soft edges') + '</div>' +
       '<div class="row" id="wl-visits"><button type="button" data-visit="rw">Visit Reedwake (not saved)</button>' +
-      '<button type="button" data-visit="sg">Visit Saltglass (not saved)</button></div>';
+      '<button type="button" data-visit="sg">Visit Saltglass (not saved)</button></div>' +
+      '<button type="button" id="wl-study">Study: Suzu at the Mill</button>';
     document.body.appendChild(el);
     const sync = () => {
       for (const b of el.querySelectorAll('[data-k]')) {
@@ -507,6 +508,8 @@ RB.worldLook = (function () {
       RB.game.debugStart(map, x, y, { comp: 'suzu', flags: Object.assign({}, flags) });
       sync();
     });
+    // the fidelity study (src/engine/68d_study.js): its own mode, nothing saved; Escape or its Close returns here
+    el.querySelector('#wl-study').addEventListener('click', () => { if (RB.study && RB.study.open) RB.study.open(); });
     const fold = (min) => { el.classList.toggle('min', min); const t = el.querySelector('#wl-toggle'); t.textContent = 'World proof (dev): ' + (min ? 'show' : 'hide'); t.setAttribute('aria-expanded', String(!min)); };
     el.querySelector('#wl-toggle').addEventListener('click', () => fold(!el.classList.contains('min')));
     fold(window.innerHeight < 500 || window.innerWidth < 700);
