@@ -87,7 +87,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.seaBoatAt = (id) => {
     const P = C.ports[id], m = P && C.maps[P.dock.map];
     if (!m || (m.props || []).some((p) => p.scene === 'sea.boat' && p.o && p.o.port === id)) return;
-    m.props = (m.props || []).concat([{ p: 'boat', x: P.boat.x, y: P.boat.y, if: both('sea_boat', P.if), scene: 'sea.boat', o: { port: id } }]);
+    m.props = (m.props || []).concat([{ p: 'boat', x: P.boat.x, y: P.boat.y, if: both('ed>=2&sea_boat', P.if), scene: 'sea.boat', o: { port: id } }]);
   };
   for (const id in C.ports) C.seaBoatAt(id);
 })(RB.content, RB.mapkit);

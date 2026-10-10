@@ -804,6 +804,7 @@ RB.questGuide = (function () {
     ko_leaves: ['{葉|は}', 'the leaves'], ko_basket: ['{籠|かご}', 'the basket'], ko_sandtoro: ['{灯籠|とうろう}', 'the stone lantern'], ko_conch: ['{法螺貝|ほらがい}', 'the conch'],
     ko_panel: ['{板|いた}', 'the panel'], ko_tidestone: ['{石|いし}', 'the standing stone'], ko_rootarch: ['{根|ね}', 'the roots'], ko_current: ['{風|かぜ}', 'the drifting leaves'],
     ko_camphor: ['{大楠|おおくす}', 'the great camphor'],
+    boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],

@@ -4064,5 +4064,23 @@ faces), the strip's furigana on paper buttons. The boat is given by a test hook 
 gives it is P11b. Language: the sea's lines self-reviewed in the ledger (direction-aware first voyages, 灯 for the
 light in the fog, the rudder's 留め具, a hedged-humble distractor replacing a malformed one).
 
+**A Licence for the Open Sea, stages 1–4 (P11b, on the working tree before its commit).** Unit: `sea_licence`
+**64/0** (the whole quest through the real scene runner with dialogue stubbed: the deal put off and taken; Fuku's choice
+both ways; the planking found and carted; the sail's order; the naming put off, then a name, and ちどり kept; Sōbē's
+practice board; the trials waiting for the festival; the ferry still offered; the five words with a wrong answer
+resumed where it stopped; the tide book; the trial sailed and by the crew; the examination with a break and a
+question asked again; the boat, the licence and Ōmi's rumour; the names the sign-writers refuse; none of it in a
+six-chapter journey or moving the main story), `quest_guide` **78/0**, `kanji_chart` **53/0** (five meanings reworded
+so their kanji find a theme), `overworld_geometry` **3/0** (the boats at the piers marked twelve-chapter; this had
+been red since P11c, which had not run it), `travel` **495/0**, `dialect` **7,335/0**, `expansion_rules` **11/0**,
+`records` **143/0**, `ko_ch9` **181/0**, `ko_side` **108/0**, `encounters` **184/0**, `combat_fairness` **799/0**,
+`fixtures_campaign` **477/0**, `audio_zones` **827/0**, `mp_ch4` **118/0**, `seams` **12/0**, `edition` **87/0**,
+`review_ledger` **2/0**; validator no errors. Browser: `tests/e2e/licence.mjs` **2/0** (the door by Manybridge's pier
+into the yard; the naming sheet: a refused name with its reason, a kana taken back, かもめ丸 and "Kamome-maru" on the
+bow, painted; the sheet at phone width; the trial: out of the cove, the buoy's water rounds it, Saltglass's water
+brings her in, Tetsu's verdict) and `sailing` **2/0** again. Screenshots looked at: the naming sheet at desktop and
+phone width (the dialogue line and its Keep tab now give way to the sheet, and the footer no longer stretches), the
+boat beside the buoy. Language: the licence's lines self-reviewed in the ledger.
+
 **Not verified:** Firefox; the foldable; a person playing Chapter 9 (XP67); audible voices for the shells (local
 Japanese voices are optional and none is installed in the test browser).

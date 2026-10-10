@@ -4256,6 +4256,22 @@ body.in-panel .sea-strip, body.in-dialogue .sea-strip { display: none; }
 .sea-sights { margin: 0.2em 0; padding-left: 1.2em; }
 .sea-strip .pbtn rt { color: var(--rt-ink); }
 
+/* naming the boat: the bow with the name painted on, the kana tiles */
+.sea-bow { display: grid; justify-items: center; gap: 0.2em; padding: 0.8em 1em; border-radius: var(--r-1);
+  background: linear-gradient(180deg, #6a4a2e, #4e3420); border: 1px solid var(--paper-edge); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.25); }
+.sea-paint { font: 700 2em/1.2 var(--serif); color: #f4ecd8; letter-spacing: 0.12em; text-shadow: 0 1px 0 rgba(0,0,0,0.45); }
+.sea-paint .maru { margin-left: 0.1em; }
+.sea-paint .muted { color: #c8b89a; }
+.sea-bow .en { color: #e8dcc0; font-size: 0.85em; }
+.sea-name-err { margin: 0; color: var(--vermilion); }
+.sea-name { align-content: start; }
+.sea-kana { display: grid; gap: 0.3em; max-height: min(58vh, 36em); overflow-y: auto; padding: 0.1em; }
+@media (max-width: 520px) { .sea-kana { max-height: 46vh; } }
+.sea-kana-row { display: grid; grid-template-columns: repeat(5, minmax(0, 3em)); gap: 0.3em; justify-content: center; }
+.sea-k { min-height: 2.5em; padding: 0; justify-content: center; font-size: 1.15em; }
+.sea-kana-gap { display: block; }
+.sea-name-foot { display: flex; flex-wrap: wrap; gap: 0.4em; justify-content: center; align-items: center; }
+
 /* ==== src/styles/70_discovery.css ==== */
 /* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
  * the Roadside Keepsakes catalogue (src/ui/58_keepsakes.js) and its notices.
@@ -36086,7 +36102,7 @@ RB.maps = (function () {
         const dx = s.x + s.door, dy = s.y + s.h - 1;
         if (s.to) {
           block[dy * w + dx] = 0;
-          exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked });
+          exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked, unlock: s.unlock });
         } else shut.push({ x: dx, y: dy, if: s.if, text: s.shut || null });
       }
     }
@@ -40943,6 +40959,7 @@ RB.questGuide = (function () {
     ko_leaves: ['{葉|は}', 'the leaves'], ko_basket: ['{籠|かご}', 'the basket'], ko_sandtoro: ['{灯籠|とうろう}', 'the stone lantern'], ko_conch: ['{法螺貝|ほらがい}', 'the conch'],
     ko_panel: ['{板|いた}', 'the panel'], ko_tidestone: ['{石|いし}', 'the standing stone'], ko_rootarch: ['{根|ね}', 'the roots'], ko_current: ['{風|かぜ}', 'the drifting leaves'],
     ko_camphor: ['{大楠|おおくす}', 'the great camphor'],
+    boat: ['{船|ふね}', 'the boat'], sea_buoy: ['ブイ', 'the buoy'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],
@@ -51292,7 +51309,8 @@ RB.shells = (function () {
  *
  *   C.ports[id] = { place, name { jp, en }, dock { map, x, y, dir } (where you stand ashore by the boat), sea { x, y,
  *                   dir } (where the boat puts out), zone { x, y, w, h } (the water off the port, on the sea map),
- *                   if: cond (the port takes boats), reach: cond (reached other than by sea) }
+ *                   if: cond (the port takes boats), reach: cond (reached other than by sea), arrive: scene (run ashore
+ *                   after each arrival by boat; its lines carry their own conditions, e.g. the first landing) }
  *   C.seaSituations[id] = { kind: 'hail'|'fog'|'cargo'|'creature'|'bird'|'seal'|'trouble'|'first'|'story', scene,
  *                   routes?: ['a-b', …] (either way round), first?: route (once, the first voyage on it), story?: cond
  *                   (never skipped while it holds), once?: bool, weight?: n }
@@ -51442,6 +51460,8 @@ RB.sail = (function () {
       if (d.first && route.apply(null, d.first.split('-')) === r && !q.seen[id]) forced.push(id);
       else if (d.story && RB.state.test(s, d.story) && !q.seen[id] && (!d.routes || d.routes.some((x) => route.apply(null, x.split('-')) === r))) forced.push(id);
     }
+    // a trial round the point (from a port back to it) has no drawn situations and a set wind: the lesson is the sail
+    if (a === b) return { sits: forced, wind: 'left' };
     const key = 'voyage:' + q.n;
     const drawn = RB.streams.fixed(s, key, 'sea', (draw) => {
       const pool = eligible(s, a, b);
@@ -51497,9 +51517,22 @@ RB.sail = (function () {
     v.steps++;
     const x = due(s);
     if (x) { busy = true; try { await runSituation(s, x); } finally { busy = false; } return; }
+    // the sea map's own triggers (a mark to round on a trial), as on land: `if`, and `once` per journey
+    const p = W.player;
+    for (const tr of W.map.triggers || []) {
+      if (p.x < tr.x || p.x >= tr.x + tr.w || p.y < tr.y || p.y >= tr.y + tr.h) continue;
+      if (tr.if && !RB.state.test(s, tr.if)) continue;
+      const onceKey = 'trig:' + W.map.id + ':' + (tr.id || tr.x + ',' + tr.y);
+      if (tr.once && s.flags[onceKey]) continue;
+      if (tr.once) s.flags[onceKey] = true;
+      busy = true;
+      try { await RB.script.run(tr.scene, { trigger: tr }); } finally { busy = false; }
+      return;
+    }
     // in a port's water: the destination docks; another port reached offers to
     const at = portAt(W.player.x, W.player.y);
-    if (at && (at === v.to || reached(s, at) && open(s, at)) && v.offered !== at) {
+    // (a trial, out and back to the same port, puts in nowhere else)
+    if (at && (at === v.to || v.from !== v.to && reached(s, at) && open(s, at)) && v.offered !== at) {
       v.offered = at;
       busy = true;
       try { await RB.script.run('sea.dock_' + at, { port: at }); } finally { busy = false; }
@@ -51520,6 +51553,8 @@ RB.sail = (function () {
     q.voyage = null;
     syncVars(s);
     if (!(opts && opts.noWarp) && P) await RB.game.transition(P.dock.map, P.dock.x, P.dock.y, P.dock.dir || 'down', { inScript: true });
+    // the port's own arrival by boat (the first landing on the island, say), when it has one
+    if (P && P.arrive && RB.content.scenes[P.arrive] && !(opts && opts.noWarp)) await RB.script.run(P.arrive, { port: to });
     return entry;
   }
   // the crew takes over: what situations are left still happen (story ones are never skipped), then arrival
@@ -51583,6 +51618,17 @@ RB.sail = (function () {
     syncVars(s);
   };
   RB.hooks.sail_trial = async (a) => { const s = S(); await putOut(s, a[0], a[1], 'self'); };
+  //   !hook sail_name [keep]     name the boat in kana (the yards): var._res 1 when a name is painted, 0 if put off;
+  //                              `keep` offers to keep the hull's old name (ちどり)
+  RB.hooks.sail_name = async (a) => {
+    const s = S(), q = of(s);
+    const keep = a[0] === 'keep' ? 'ちどり' : null;
+    const name = RB.ui.sail && RB.ui.sail.nameBoat ? await RB.ui.sail.nameBoat(s, { keep, current: (q.boat && q.boat.name) || '' }) : null;
+    if (!name) { s.vars._res = 0; return; }
+    q.boat = Object.assign({}, q.boat || {}, { name });
+    s.vars.sea_kept = keep && name === keep ? 1 : 0;
+    s.vars._res = 1;
+  };
   //   !hook sail_cabin           below to the cabin from the boat at this port (the port is remembered for coming up)
   //   !hook sail_ashore          up from the cabin, onto the pier by the boat
   //   !hook sail_open <page>     the Ledger at a page (the cabin's shelf, volume, Distractions corner)
@@ -51597,6 +51643,20 @@ RB.sail = (function () {
     await RB.game.transition(P.dock.map, P.dock.x, P.dock.y, P.dock.dir || 'down', { inScript: true });
   };
   RB.hooks.sail_open = async (a) => { if (RB.ui.menu && RB.ui.menu.open) RB.ui.menu.open(a[0]); };
+  // a name the sign-writers can paint: one to five hiragana; not starting with ん or a small kana; a small ゃゅょ only
+  // after a kana of the い column; a small っ never last. Returns null when it is fine, or why not ({ jp, en }).
+  const SMALL = 'ゃゅょ', ICOL = 'きしちにひみりぎじぢびぴ';
+  function nameProblem(k) {
+    k = String(k || '');
+    const ch = Array.from(k);
+    if (!ch.length) return { jp: '{名前|なまえ} が まだ ない 。', en: 'Choose at least one kana.' };
+    if (ch.length > 5) return { jp: '{五文字|ごもじ} まで 。', en: 'Five kana at most: the sign-writers need room for 丸.' };
+    if (ch.some((c) => !/[\u3041-\u3093]/.test(c))) return { jp: 'ひらがな だけ 。', en: 'Hiragana only.' };
+    if (('んっ' + SMALL).indexOf(ch[0]) >= 0) return { jp: '「' + ch[0] + '」 で は {始|はじ}まらない 。', en: 'A name can\'t begin with ' + ch[0] + '.' };
+    for (let i = 1; i < ch.length; i++) if (SMALL.indexOf(ch[i]) >= 0 && ICOL.indexOf(ch[i - 1]) < 0) return { jp: '「' + ch[i] + '」 は 、 い の {段|だん} の {後|あと} だけ 。', en: 'A small ' + ch[i] + ' only follows a kana ending in i (き, し, ち…).' };
+    if (ch[ch.length - 1] === 'っ') return { jp: '「っ」 で は {終|お}わらない 。', en: 'A name can\'t end with a small っ.' };
+    return null;
+  }
   // the boat's name, as painted: kana, always followed by 丸 (`$boat {丸|まる}` in a line); in English, "Chidori-maru"
   function boatName(s) {
     const q = of(s), k = (q && q.boat && q.boat.name) || '';
@@ -51606,7 +51666,7 @@ RB.sail = (function () {
   }
 
   const api = { of, owns, active, onSea, port, portIds, open, reached, destinations, portAt, route, pointOf, stepDur, sailState, setTrim, TRIMS, WIND_NAME,
-    plan, begin, distance, due, onStep, arrive, crew, putOut, damage, mend, note, boatName, LEGEND, syncVars };
+    plan, begin, distance, due, onStep, arrive, crew, putOut, damage, mend, note, boatName, nameProblem, LEGEND, syncVars };
   return api;
 })();
 
@@ -113259,6 +113319,7 @@ RB.ui.sail = (function () {
     return g + '</svg>';
   }
   function chart(s, from) {
+    if (RB.ui.dialogue) RB.ui.dialogue.hide();
     return new Promise((resolve) => {
       const list = SL().destinations(s, from), q = SL().of(s);
       let to = null, done = false;
@@ -113363,7 +113424,55 @@ RB.ui.sail = (function () {
     }
     return h + '</ol>';
   }
-  return { chart, sync, cycleTrim, logHtml };
+  // ---- naming the boat (the yards; A Licence for the Open Sea) --------------------------------------------------------
+  // A sheet of kana tiles: the name is put together a kana at a time (one to five, hiragana), shown painted on the
+  // bow with 丸 after it, read aloud in romaji; the sign-writers' rules are checked as it grows. Resolves with the
+  // name, or null when put off ("Not yet"). `keep` offers the hull's old name.
+  const KANA_ROWS = ['あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの', 'はひふへほ', 'まみむめも', 'や・ゆ・よ', 'らりるれろ', 'わ・を・ん',
+    'がぎぐげご', 'ざじずぜぞ', 'だぢづでど', 'ばびぶべぼ', 'ぱぴぷぺぽ', 'ゃゅょっ・'];
+  function nameBoat(s, o) {
+    o = o || {};
+    if (RB.ui.dialogue) RB.ui.dialogue.hide(); // the line before it (and its Keep tab) give way to the sheet
+    return new Promise((resolve) => {
+      let name = Array.from(o.current || ''), done = false, err = null;
+      const fr = RB.ui.folio.frame({ cls: 'sea-folio sea-namefolio', onClose: () => finish(null), closeLabel: 'Not yet', closeIcon: 'back' });
+      fr.setTitle(RB.ui.label('{船|ふね} の {名前|なまえ}', 'Naming the boat'), 'In kana, one to five; the sign-writers add 丸');
+      const layer = { el: fr.scrim, name: 'sea-name', onCancel: () => finish(null) };
+      function finish(r) { if (done) return; done = true; RB.ui.popLayer(layer); resolve(r); }
+      const ro = (k) => (RB.kana && RB.kana.romaji ? RB.kana.romaji(k) : k);
+      function render(focusSel) {
+        const k = name.join(''), prob = k ? SL().nameProblem(k) : null;
+        let h = '<div class="leaf sea-leaf sea-name" tabindex="-1">';
+        h += '<div class="sea-bow" aria-live="polite"><span class="sea-paint" lang="ja">' + (k ? esc(k) : '<span class="muted">…</span>') + '<span class="maru">丸</span></span>' +
+          '<span class="en">' + (k ? esc(ro(k).charAt(0).toUpperCase() + ro(k).slice(1) + '-maru') : 'No name yet') + '</span></div>';
+        if (err || prob) h += '<p class="sea-name-err" role="alert">' + J((err || prob).jp) + ' <span class="en">' + esc((err || prob).en) + '</span></p>';
+        h += '<div class="sea-kana" role="group" aria-label="Kana">' + KANA_ROWS.map((row) => '<div class="sea-kana-row">' + Array.from(row).map((c) => c === '・' ? '<span class="sea-kana-gap"></span>' :
+          '<button type="button" class="pbtn sea-k" data-k="' + c + '" lang="ja" aria-label="' + c + ' (' + esc(ro(c)) + ')"' + (name.length >= 5 ? ' disabled' : '') + '>' + c + '</button>').join('') + '</div>').join('') + '</div>';
+        h += '<div class="sea-name-foot"><button type="button" class="pbtn small" data-a="back"' + (name.length ? '' : ' disabled') + '>' + I('back') + ' Take back a kana</button>' +
+          '<button type="button" class="pbtn small" data-a="clear"' + (name.length ? '' : ' disabled') + '>Start again</button>' +
+          (o.keep ? '<button type="button" class="pbtn small" data-a="keep" lang="ja">Keep ' + esc(o.keep) + '</button>' : '') +
+          '<button type="button" class="pbtn primary" data-a="paint"' + (k && !prob ? '' : ' disabled') + '>' + I('brush') + ' Paint this name</button></div>';
+        fr.box.innerHTML = h + '</div>';
+        const f = fr.box.querySelector(focusSel || '.sea-k');
+        if (f) setTimeout(() => f.focus({ preventScroll: true }), 0);
+      }
+      fr.box.addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b || b.disabled) return;
+        err = null;
+        if (b.dataset.k) { if (name.length < 5) name.push(b.dataset.k); render('[data-k="' + b.dataset.k + '"]'); return; }
+        const a = b.dataset.a;
+        if (a === 'back') { name.pop(); render('[data-a="back"]'); return; }
+        if (a === 'clear') { name = []; render(); return; }
+        if (a === 'keep') { finish(o.keep); return; }
+        if (a === 'paint') { const k = name.join(''), p = SL().nameProblem(k); if (p) { err = p; render('[data-a="paint"]'); return; } finish(k); }
+      });
+      RB.ui.pushLayer(layer);
+      render();
+    });
+  }
+
+  return { chart, sync, cycleTrim, logHtml, nameBoat };
 })();
 
 // ---- the boat, drawn under the traveller and the companion at sea ------------------------------------------------
@@ -150222,6 +150331,39 @@ RB.dialect.add('kansai', `
 `);
 
 
+/* ==== src/content/dialect/kansai_97_sea.js ==== */
+/* Suzu's Kansai-ben: A Licence for the Open Sea (expansion P11b): Ōmi's deal, Fuku's boat, the yard, the trial and
+ * the examination. Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md.
+ * "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.dialect.add('kansai', `
+@ sea/licence [sea.omi_deal]
+= {船|ふね} の {旅|たび} ね 。 {一座|いちざ} の {巡業|じゅんぎょう} みたい 。 {乗|の}った わ 。 || A journey by boat. Like a troupe on tour. Count me in.
+> {船|ふね} の {旅|たび} か 。 {一座|いちざ} の {巡業|じゅんぎょう} みたい や な 。 {乗|の}った で 。 || A journey by boat. Like a troupe on tour. Count me in.
+@ sea/licence [sea.fuku_hull]
+= {二代目|にだいめ} を {襲名|しゅうめい} する よう な もの ね 。 {恥|は}ずかしく ない {舞台|ぶたい} に する わ 。 || Like taking on a stage name from the one before. We'll do her proud.
+> {二代目|にだいめ} を {襲名|しゅうめい} する よう な もん や な 。 {恥|は}ずかしく ない {舞台|ぶたい} に する で 。 || Like taking on a stage name from the one before. We'll do her proud.
+@ sea/licence [sea.kajiro_first]
+= {小道具|こどうぐ} が {別|べつ} の {小屋|こや} に {届|とど}く の と {同|おな}じ ね 。 {探|さが}せば ある わ 。 || Like props delivered to the wrong theatre. Look, and they'll turn up.
+> {小道具|こどうぐ} が {別|べつ} の {小屋|こや} に {届|とど}く の と {同|おな}じ や な 。 {探|さが}せば ある で 。 || Like props delivered to the wrong theatre. Look, and they'll turn up.
+@ sea/licence [sea.kajiro_paint]
+= {看板|かんばん} が {上|あ}がった わ ね 。 {初日|しょにち} は いつ ？ || The sign's up. When's opening night?
+> {看板|かんばん} が {上|あ}がった な 。 {初日|しょにち} は いつ や ？ || The sign's up. When's opening night?
+@ sea/licence [sea.nui_sail]
+= {衣装|いしょう}{方|かた} に {欲|ほ}しい {腕|うで} ね 。 || I'd want hands like that in the wardrobe department.
+> {衣装|いしょう}{方|かた} に {欲|ほ}しい {腕|うで} や な 。 || I'd want hands like that in the wardrobe department.
+@ sea/licence [sea.arrive_saltglass]
+= {初舞台|はつぶたい} に して は 、 {上出来|じょうでき} じゃない ？ || Not bad for a debut, was it?
+> {初舞台|はつぶたい} に して は 、 {上出来|じょうでき} ちゃう ？ || Not bad for a debut, was it?
+@ sea/licence [sea.omi_licence]
+= （{役|やく} に {入|はい}った わ ね 。 こっち も {合|あ}わせ ない と 。） || (She's got into character. We'd better play along.)
+> （{役|やく} に {入|はい}った な 。 こっち も {合|あ}わせな あかん 。） || (She's got into character. We'd better play along.)
+= {地図|ちず} に ない {島|しま} 。 {芝居|しばい} の {筋|すじ} なら 、 {次|つぎ} の {幕|まく} は そこ ね 。 || An island that's on no map. If this were a play, that's where the next act would be.
+> {地図|ちず} に ない {島|しま} か 。 {芝居|しばい} の {筋|すじ} やったら 、 {次|つぎ} の {幕|まく} は そこ や な 。 || An island that's on no map. If this were a play, that's where the next act would be.
+`);
+
+
 /* ==== src/content/discovery/00_lex.js ==== */
 /* Lexicon for field discovery: the Mill Road repair, the field puzzles F1-F6,
  * field weaving and the Roadside Keepsakes. Format: w|r|pos|lv|meaning|note
@@ -175858,6 +176000,66 @@ RB.lex.add(RB.lex.parseTable(`
 海岸|かいがん|n|E|the coast, the shore
 幾つ|いくつ|n|E|how many; (幾つも) many, one after another
 勧む|すすむ|exp|A|(written, old style) to recommend (modern 勧める)
+# ---- A Licence for the Open Sea (P11b): the deal, the yard, the trials, the examination -------------------------------
+外海|そとうみ|n|I|the open sea
+免状|めんじょう|n|I|an official licence, a certificate
+沿岸|えんがん|n|I|the coast; coastal
+郵便船|ゆうびんせん|n|I|a post boat
+郵便物|ゆうびんぶつ|n|I|post, mail (the items)
+小回り|こまわり|n|I|turning in a small space (小回りが利く: handy, nimble)
+水先|みずさき|n|A|pilotage; the pilot who guides ships in
+水先船|みずさきぶね|n|A|a pilot boat
+造船所|ぞうせんじょ|n|I|a boatyard, a shipyard
+船大工|ふなだいく|n|I|a shipwright
+竜骨|りゅうこつ|n|A|a keel
+名物|めいぶつ|n|I|a speciality, what a place is known for
+材木|ざいもく|n|I|timber
+杉板|すぎいた|n|I|cedar planks
+送り状|おくりじょう|n|I|a delivery note
+三番倉|さんばんぐら|n|E|warehouse number three
+参番蔵|さんばんぐら|n|A|warehouse number three (with 参, the formal 三 used on documents)
+入船|いりふね|n|A|a ship coming in
+遅延|ちえん|vs|A|a delay
+寸法|すんぽう|n|I|measurements, dimensions
+帆布|はんぷ|n|I|sailcloth, canvas
+一幅|ひとはば|n|A|one width of cloth
+三幅|みはば|n|A|three widths of cloth (cloth is counted ひとはば, ふたはば, みはば)
+塗料|とりょう|n|I|paint
+一画|いっかく|n|A|one stroke (of a character)
+めぐみ|めぐみ|n|I|a blessing (and a boat's name)
+若|わか|n|A|young (in compounds: 若潮, 若者)
+若潮|わかしお|n|A|the rising morning tide (and a boat's name)
+そ|そ|exp|F|the kana そ
+ぬぐみ|ぬぐみ|exp|E|(not a word: めぐみ painted with ぬ for め)
+さとせ|さとせ|exp|E|(not a word: ちとせ with さ for ち)
+きくら|きくら|exp|E|(not a word: さくら with き for さ)
+れかしお|れかしお|exp|I|(not a word: わかしお painted with れ for わ)
+ブイ||n|I|a buoy
+風向き|かざむき|n|I|the wind's direction (where it comes from)
+干満|かんまん|n|A|ebb and flow (of the tide)
+差|さ|n|I|a difference in size or amount
+大|だい|n|A|large, great (in notes and compounds)
+二代目|にだいめ|n|I|the second to bear a name, a successor
+襲名|しゅうめい|vs|A|taking on a predecessor's name (as actors do)
+上出来|じょうでき|adj-na|I|well done, a fine result
+意地|いじ|n|I|temper, spite (意地が悪い: mean)
+試験|しけん|n|E|an examination
+試験官|しけんかん|n|I|an official examiner
+面接|めんせつ|vs|I|an interview
+合格|ごうかく|vs|E|passing an examination
+別人|べつじん|n|I|a different person
+所有者|しょゆうしゃ|n|I|an owner
+母港|ぼこう|n|I|a home port
+用途|ようと|n|A|a use, a purpose
+本船|ほんせん|n|A|this vessel (in documents)
+速度|そくど|n|I|speed
+視界|しかい|n|A|visibility, the field of view
+不良|ふりょう|n|A|poor, bad (of a condition)
+対応|たいおう|vs|I|a response; dealing with
+信号|しんごう|n|E|a sign or signal (a light, a flag)
+損傷|そんしょう|vs|A|damage
+生じる|しょうじる|v1|A|to arise, to occur
+漣|さざなみ|n|A|ripples (and Sazanami, a fishing hamlet up the coast: fictional)
 `));
 
 
@@ -175951,9 +176153,197 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.seaBoatAt = (id) => {
     const P = C.ports[id], m = P && C.maps[P.dock.map];
     if (!m || (m.props || []).some((p) => p.scene === 'sea.boat' && p.o && p.o.port === id)) return;
-    m.props = (m.props || []).concat([{ p: 'boat', x: P.boat.x, y: P.boat.y, if: both('sea_boat', P.if), scene: 'sea.boat', o: { port: id } }]);
+    m.props = (m.props || []).concat([{ p: 'boat', x: P.boat.x, y: P.boat.y, if: both('ed>=2&sea_boat', P.if), scene: 'sea.boat', o: { port: id } }]);
   };
   for (const id in C.ports) C.seaBoatAt(id);
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/sea/02_art.js ==== */
+/* The sea's props (expansion P11b): the mark off Saltglass point that a sea trial rounds, a float banded red and
+ * white with a short pole and a pennant, riding the swell (still with reduced motion). A flat 16-px drawing (the
+ * fallback, as every prop) and its art-resolution version in the world's prop style (light from the upper left, an
+ * ink outline, a soft ring of disturbed water instead of a contact shadow). Interim regional asset under AC-1 (C-82):
+ * finished in the art pass (P16). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const P = RB.props.P;
+  const px = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
+  const still = () => RB.game && RB.game.reducedMotion && RB.game.reducedMotion();
+  const RED = ['#6e1c22', '#9a2a30', '#c8404e', '#e0707a'], WHITE = ['#b8c0c4', '#dce2e4', '#f4f6f4'];
+
+  P.sea_buoy = { id: 'sea_buoy', w: 1, h: 1, block: true, draw: (c, x, y, p, t) => {
+    const b = still() ? 0 : Math.round(Math.sin((t || 0) / 520));
+    px(c, x + 3, y + 12 + b, 10, 3, WHITE[0]);
+    px(c, x + 4, y + 6 + b, 8, 7, RED[2]); px(c, x + 4, y + 8 + b, 8, 2, WHITE[2]);
+    px(c, x + 7, y - 2 + b, 2, 8, '#3a3a40'); px(c, x + 9, y - 2 + b, 4, 3, RED[3]);
+  } };
+
+  if (!RB.propArt || !RB.propKit) return;
+  const K = RB.propKit, art = RB.propArt.art;
+  const { R, ell, poly, line } = K;
+  art('sea_buoy', {
+    box: [-4, -30, 40, 64],
+    ink: true,
+    f: (t, o) => (o.still || still() ? 0 : Math.floor(t / 260) % 8),
+    draw(g, M, v, f) {
+      const b = [0, 1, 2, 2, 1, 0, -1, -1][f || 0];
+      // the water stirred round it
+      ell(g, 16, 26, 14, 4, 'rgba(230,240,240,0.35)'); ell(g, 16, 26, 10, 2, 'rgba(255,255,255,0.35)');
+      // the float: red, a white band, red
+      ell(g, 16, 20 + b, 11, 5, RED[1]);
+      R(g, 6, 6 + b, 20, 14, RED[2]); R(g, 6, 6 + b, 6, 14, RED[3]); R(g, 22, 6 + b, 4, 14, RED[1]);
+      R(g, 6, 11 + b, 20, 4, WHITE[1]); R(g, 6, 11 + b, 6, 4, WHITE[2]); R(g, 22, 11 + b, 4, 4, WHITE[0]);
+      ell(g, 16, 6 + b, 10, 3, RED[3]);
+      // the pole and its pennant
+      R(g, 15, -22 + b, 2, 28, '#3a3a40'); R(g, 15, -22 + b, 1, 28, '#5a5a62');
+      poly(g, [[17, -22 + b], [29, -18 + b + (f % 2)], [17, -14 + b]], RED[2]);
+      line(g, 17, -21 + b, 26, -18 + b, RED[3], 1);
+    },
+  });
+})();
+
+
+/* ==== src/content/sea/05_licence.js ==== */
+/* A Licence for the Open Sea (expansion P11b; plan 06_WORLD.md W7; docs/future/work/P11_SEA.md). Harbourmaster Ōmi's
+ * long quest, from Chapter 2's end into the middle chapters: the boat that sailing (src/engine/72v_sail.js) is about.
+ * Twelve-chapter journeys only. The scenes are in 22_scenes_licence.js, the tasks in 31_licence_learning.js.
+ *
+ *   0  the deal        Ōmi needs a little post boat for the coast: mend an old hull and earn a licence, and she is yours
+ *                      to sail, carrying the coast's post. Fuku's Chidori-maru, if Fuku will (her choice: once her
+ *                      husband's boat has its name back, gladly; until then she cannot hand over a boat whose name she
+ *                      has lost, and the harbour's old pilot boat is there instead). var.sea_hull: chidori | pilot.
+ *   1  the yards       the hull is towed to Manybridge, to Kajirō's yard by the ferry pier (the shut house there opens
+ *                      in twelve-chapter journeys).
+ *   2  two favours     Kajirō's planking went to the wrong warehouse (read the delivery note; Take the porter carts it
+ *                      once he is shown where), and Nui the sail-maker cannot read his order (read her the
+ *                      measurements). Flags sea_f_timber, sea_f_sail.
+ *   3  the name        once both favours are done the player names the boat in kana (or keeps ちどり), and the stage
+ *                      begins; Blockprint Row's printers paint the yards' names, so Sōbē checks the letters first (his
+ *                      apprentice's practice board); then Sanpei and Miyo paint it at the yard. Flags sea_named,
+ *                      sea_sign_ok.
+ *   4  sea trials      at Saltglass once Playhouse Row's festival is over (Tetsu runs the ferry day and night until
+ *                      then): Tetsu's sea words (帆 舵 錨 潮 風向き), Shiori's tide book, and a trial round the mark off
+ *                      the point (var.sea_trial 1 out, 2 rounded). Flags sea_words, sea_tide, sea_trial_done.
+ *   5  the licence     Ōmi's examination: the form, and an interview in an examiner's register; a wrong answer is
+ *                      explained and asked again at once. The boat is yours (sea_boat).
+ *   6  the maiden voyage and 7 the island: the coast's post to Sazanami and East Landing, and the leaves that lead
+ *                      to Kotonoha (the ports, P11d).
+ * Nothing here gates the main story; the quest can be finished after it. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const at = (o, a) => Object.assign(o, { at: a });
+
+  C.quests.sea_licence = {
+    chapter: 'sea', title: T('{外海|そとうみ} の {免状|めんじょう}', 'A Licence for the Open Sea'),
+    stages: [
+      at(T('フク さん に 、 {亡|な}くなった {旦那|だんな} さん の {船|ふね} の こと を {聞|き}いて みよう 。', 'Ask Fuku about her late husband\'s boat.'), { map: 'sg.harbor', npc: 'fuku' }),
+      at(T('{船|ふね} は {八百橋|やおばし} の {造船所|ぞうせんじょ} へ {運|はこ}ばれた 。 {渡|わた}し{場|ば} の {横|よこ} の {船大工|ふなだいく} 、 カジロウ を {訪|たず}ねよう 。', 'The hull has been towed to Manybridge. Find Kajirō the shipwright, in the yard by the ferry pier.'), { map: 'mb.yard', npc: 'sea_kajiro' }),
+      at(T('カジロウ と {帆|ほ}{縫|ぬ}い の ヌイ に 、 {一|ひと}つ ずつ {手|て} を {貸|か}そう 。 {行方|ゆくえ} {不明|ふめい} の {板|いた} と 、 {帆|ほ} の {寸法|すんぽう} 。', 'Do Kajirō and Nui the sail-maker a favour each: the planking that went astray, and the sail\'s measurements.'), { map: 'mb.yard' }),
+      at(T('{船|ふね} の {名前|なまえ} は {決|き}まった 。 {字|じ} を {書|か}く の は 、 {版木|はんぎ}{通|どお}り の ソウベエ の {店|みせ} の {仕事|しごと} だ 。', 'The boat has her name. Painting the letters is the work of Sōbē\'s print shop on Blockprint Row.'), { map: 'mp.workshop', npc: 'mp_sobe' }),
+      at(T('{試|ため}し{乗|の}り は 、 {潮硝子|しおがらす} で テツ と 。 {芝居|しばい} の {通|とお}り の {祭|まつ}り が {終|お}わる まで 、 テツ は {渡|わた}し{船|ぶね} で {忙|いそが}しい 。', 'Sea trials are at Saltglass, with Tetsu. Until Playhouse Row\'s festival is over, he is busy with the ferry.'), { map: 'sg.harbor', npc: 'tetsu' }),
+      at(T('{港長|こうちょう} の オウミ の {試験|しけん} を {受|う}けよう 。 {書類|しょるい} と 、 {面接|めんせつ} 。', 'Take Harbourmaster Ōmi\'s examination: a form, and an interview.'), { map: 'sg.office', npc: 'omi' }),
+      at(T('{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} と {東|ひがし} の {渡|わた}し{場|ば} へ {運|はこ}ぼう 。', 'The maiden voyage: carry the coast\'s post to Sazanami and East Landing.'), { map: 'sg.harbor', prop: 'boat', x: 36, y: 33 }),
+      at(T('{噂|うわさ} の {島|しま} へ 。', 'To the island of the rumour.'), 'open'),
+    ],
+    reward: { flags: ['sea_licence_done'] },
+  };
+  C.questOnly = C.questOnly || {};
+  C.questOnly.sea_licence = 'ed>=2';
+
+  const it = (id, d) => (C.items[id] = d);
+  it('sea_timber_note', { name: T('{材木|ざいもく} の {送|おく}り{状|じょう}', 'The timber\'s delivery note'), key: true, desc: 'Kajirō\'s delivery note for the planking, with the warehouse it was left in worked out. Show it to Take the porter on the pier.' });
+  it('sea_licence_doc', { name: T('{外海|そとうみ} の {免状|めんじょう}', 'The licence for the open sea'), key: true, desc: 'Signed by Harbourmaster Ōmi of Saltglass: the boat, her master, and the coast\'s post she carries. Folded in oilcloth against the spray.' });
+
+  // ---- the yard's people (twelve-chapter journeys) ---------------------------------------------------------------------
+  // Kajirō: Manybridge's shipwright, old and sparing with words; he talks to hulls more than to people (he/him).
+  C.chars.sea_kajiro = {
+    name: { en: 'Kajirō', jp: 'カジロウ' }, voice: { pitch: 0.72 },
+    look: { skin: 3, hair: 'shaved', hairColor: 6, cloth: ['#6a5a44', '#524634', '#d8c8a0'], shape: 'apron', acc: ['headband'], bandCol: '#d8c8a0', age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: ['headband'], bandCol: '#d8c8a0', collar: 'apron', bg: '#2c261c' },
+  };
+  // Nui: the sail-maker in the yard's loft, quick with a needle, singing as she sews (she/her).
+  C.chars.sea_nui = {
+    name: { en: 'Nui', jp: 'ヌイ' }, voice: { pitch: 1.08 },
+    look: { skin: 2, hair: 'ponytail', hairColor: 1, cloth: ['#c8b890', '#a8986e', '#4a6a8a'], shape: 'apron', acc: ['scarf'], scarfCol: '#4a6a8a' },
+    portrait: { eyes: 'round', style: 'ponytail', collar: 'apron', bg: '#2a3240' },
+  };
+
+  // ---- the yard: the hull on the slip, the timber, Nui's sail loom ----------------------------------------------------
+  C.maps['mb.yard'] = {
+    name: T('{船大工|ふなだいく} の {造船所|ぞうせんじょ}', 'The Boatyard'), region: 'interior', place: 'manybridge', music: null, noTravel: true, travelKind: 'interior', edition: 2,
+    terrain: K.build(14, 10, '#', (k) => { k.rect(1, 2, 12, 7, '+'); k.set(6, 9, '+'); }),
+    props: [
+      { p: 'exitmat', x: 6, y: 8 },
+      { p: 'boat', x: 3, y: 4, scene: 'sea.yard_hull' },
+      { p: 'sb_woodpile', x: 1, y: 7 }, { p: 'cs_workbench', x: 1, y: 2 }, { p: 'ladder', x: 5, y: 2 },
+      { p: 'loom', x: 10, y: 4, scene: 'sea.yard_loom' }, { p: 'net', x: 8, y: 2 },
+      { p: 'barrel', x: 12, y: 7 }, { p: 'crate', x: 11, y: 7 }, { p: 'lantern', x: 12, y: 2, o: { lit: true } },
+    ],
+    npcs: [
+      { id: 'sea_kajiro', x: 5, y: 5, dir: 'left', talk: [
+        { if: 'quest.sea_licence=1', scene: 'sea.kajiro_first' },
+        { if: 'quest.sea_licence=2&!sea_f_timber&!item.sea_timber_note', scene: 'sea.kajiro_timber' },
+        { if: 'quest.sea_licence=2&item.sea_timber_note', scene: 'sea.kajiro_take' },
+        { if: 'quest.sea_licence=2&sea_f_timber&sea_f_sail', scene: 'sea.kajiro_name' },
+        { if: 'quest.sea_licence=2', scene: 'sea.kajiro_nui' },
+        { if: 'quest.sea_licence=3&sea_sign_ok', scene: 'sea.kajiro_paint' },
+        { if: 'quest.sea_licence=3', scene: 'sea.kajiro_sobe' },
+        { if: 'quest.sea_licence>=4', scene: 'sea.kajiro_after' },
+        { scene: 'sea.kajiro_idle' }] },
+      { id: 'sea_nui', x: 10, y: 6, dir: 'up', talk: [
+        { if: 'quest.sea_licence=2&!sea_f_sail', scene: 'sea.nui_sail' },
+        { if: 'sea_f_sail', scene: 'sea.nui_after' },
+        { scene: 'sea.nui_idle' }] },
+    ],
+    exits: [{ x: 6, y: 9, to: 'mb.pier', tx: 33, ty: 8, dir: 'down' }],
+    spawn: { default: [6, 8, 'up'] },
+  };
+
+  // ---- the wiring --------------------------------------------------------------------------------------------------
+  const M = (id) => C.maps[id];
+  const npc = (map, id) => ((M(map) && M(map).npcs) || []).find((n) => n.id === id);
+  // the shut house by the ferry pier is the yard, in twelve-chapter journeys
+  const yard = (M('mb.pier').structs || []).find((s) => s.x === 31 && s.y === 5);
+  if (yard) Object.assign(yard, { to: 'mb.yard', spawn: [6, 8], unlock: 'ed>=2' });
+
+  // Ōmi: the deal, and the examination (before her post-story lines: the quest can be taken up after the story)
+  npc('sg.office', 'omi').talk.unshift(
+    { if: 'ed>=2&quest.sea_licence=5', scene: 'sea.omi_licence' },
+    { if: 'ed>=2&ch2_done&!quest.sea_licence&seen.sea.omi_deal', scene: 'sea.omi_deal_again' },
+    { if: 'ed>=2&ch2_done&!quest.sea_licence', scene: 'sea.omi_deal' });
+  // Fuku: her husband's boat (after the nameplate is given, if it is still to give); once the boat sails, she sees her
+  const fuku = npc('sg.harbor', 'fuku');
+  const plate = fuku.talk.findIndex((t) => t.if === 'item.sg_plate');
+  fuku.talk.splice(plate + 1, 0,
+    { if: 'ed>=2&quest.sea_licence=0', scene: 'sea.fuku_hull' },
+    { if: 'ed>=2&sea_boat&var.sea_hull=chidori&!seen.sea.fuku_sails', scene: 'sea.fuku_sails' });
+  // Tetsu: the sea words and the trial, once the festival's ferries are over (ahead of his ferry, which his scenes
+  // still offer)
+  const tetsu = npc('sg.harbor', 'tetsu');
+  const fe = tetsu.talk.findIndex((t) => /^ko\.ferry|^mb\.ferry|^ko\.rumour/.test(t.scene));
+  tetsu.talk.splice(fe < 0 ? 0 : fe, 0,
+    { if: 'ed>=2&quest.sea_licence=4&mb2_done&!sea_words', scene: 'sea.tetsu_words' },
+    { if: 'ed>=2&quest.sea_licence=4&mb2_done&sea_words&sea_tide&!sea_trial_done', scene: 'sea.tetsu_trial' });
+  // Shiori: the tide book, once Tetsu has sent you to her
+  npc('sg.tidehut', 'shiori').talk.unshift({ if: 'ed>=2&quest.sea_licence=4&sea_words&!sea_tide', scene: 'sea.shiori_tide' });
+  // Take the porter: the planking, once he is shown where it is
+  npc('mb.pier', 'mb_take').talk.unshift({ if: 'item.sea_timber_note', scene: 'sea.take_timber' });
+  // Sōbē: the letters checked before the boat is painted
+  const sobe = npc('mp.workshop', 'mp_sobe');
+  if (sobe) sobe.talk.unshift({ if: 'ed>=2&quest.sea_licence=3&sea_named&!sea_sign_ok', scene: 'sea.sobe_sign' });
+
+  // ---- the trial's mark off Saltglass point (the sea map) --------------------------------------------------------------
+  const sea = M(C.seaMap || 'sea.coast');
+  sea.props = (sea.props || []).concat([{ p: 'sea_buoy', x: 33, y: 13 }]);
+  sea.triggers = (sea.triggers || []).concat([{ x: 31, y: 11, w: 5, h: 5, scene: 'sea.trial_mark', if: 'var.sea_trial=1' }]);
+  // a trial ends back at Saltglass: what Tetsu makes of it
+  C.ports.saltglass.arrive = 'sea.arrive_saltglass';
 })(RB.content, RB.mapkit);
 
 
@@ -175985,12 +176375,24 @@ narr: {港|みなと} の {人|ひと} が {手早|てばや}く {直|なお}し
 
 # ---- bringing her in --------------------------------------------------------------------------------------------------
 @scene sea.dock_saltglass
+!if var.sea_trial=1 -> mark
 ?(var.sea_to=saltglass) narr: {潮硝子|しおがらす} の {港|みなと} が {見|み}えて きた 。 || Saltglass harbour, dead ahead.
 ?(!var.sea_to=saltglass) narr: {潮硝子|しおがらす} の {港|みなと} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？ || You're passing Saltglass harbour. Put in here?
 !choice
 * {港|みなと} に {入|はい}る 。 || Bring her in. -> in
 * このまま {進|すす}む 。 || Sail on. -> end
 :in
+!hook sail_dock
+!end
+:mark
+# the sea trial (22_scenes_licence.js), back before the mark off the point is rounded
+narr: テツ が {南東|なんとう} を {指|さ}す 。 「ブイ が まだ だ 。 {岬|みさき} の {先|さき} に ある 。」 || Tetsu points south-east. "The buoy first. It's out past the point."
+!choice
+* ブイ を {回|まわ}って くる 。 || Go round the buoy. -> end
+* {乗組員|のりくみいん} に {任|まか}せる 。 || Let the crew take her round. -> crew
+:crew
+narr: {乗組員|のりくみいん} が {舵|かじ} を {取|と}り 、 ブイ を {回|まわ}って {港|みなと} に {戻|もど}った 。 || The crew takes the tiller, rounds the buoy and brings her back in.
+!var sea_trial = 2
 !hook sail_dock
 @scene sea.dock_manybridge
 ?(var.sea_to=manybridge) narr: {川口|かわぐち} の {向|む}こう に 、 {八百橋|やおばし} の {橋|はし} が {並|なら}んで いる 。 || Beyond the river mouth, Manybridge's bridges stand in a row.
@@ -176198,6 +176600,428 @@ narr: {沖|おき} に {出|で}る と 、 {波|なみ} の {間|あいだ} に
 `);
 
 
+/* ==== src/content/sea/22_scenes_licence.js ==== */
+/* A Licence for the Open Sea (expansion P11b; the quest, the yard and the wiring in 05_licence.js, the tasks in
+ * 31_licence_learning.js). Ōmi's deal; Fuku and her husband's boat; Kajirō's yard and Nui's loom in Manybridge; the
+ * name, checked by Sōbē and painted by Sanpei and Miyo; Tetsu's five sea words, Shiori's tide book and the trial round
+ * the mark; Ōmi's examination, the licence, and her version of the rumour. The boat's name is `$boat {丸|まる}` (its
+ * kana and 丸); in English, "the $boat" (Chidori-maru). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+# ---- 0 · the deal -----------------------------------------------------------------------------------------------------
+@scene sea.omi_deal
+# Staged: Ōmi at her desk with a chart of the coast pinned beside her; she taps the little ports along it, then nods
+# out of the window at the old hulls drawn up on the beach.
+!faceplayer
+omi: おう 、 {来|き}た か 。 ちょうど いい 。 {話|はなし} が ある 。 || Ah, there you are. Good timing. I've a proposition.
+!gesture omi point 8,2
+omi: {渡|わた}し{船|ぶね} は {時刻表|じこくひょう} どおり だ 。 {結構|けっこう} な こと だ よ 。 だが 、 {沿岸|えんがん} の {小|ちい}さな {港|みなと} に は 、 {郵便|ゆうびん} が {月|つき} に {一度|いちど} しか {届|とど}かない 。 || The ferry keeps its timetable. Very nice. But the little ports along the coast get their post once a month.
+omi: {小回|こまわ}り の {利|き}く {郵便船|ゆうびんせん} が 、 {一隻|いっせき} {欲|ほ}しい 。 {古|ふる}い {船|ふね} なら 、 {浜|はま} に {何隻|なんせき} も ある 。 {足|た}りない の は 、 {直|なお}す {手|て} と 、 {乗|の}る {人|ひと} だ 。 || I want one handy little post boat. There are old hulls all along the beach. What I'm short of is hands to mend one, and someone to sail her.
+!look omi pc
+omi: そこ で だ 。 {古|ふる}い {船|ふね} を {一隻|いっせき} {直|なお}して 、 {免状|めんじょう} を {取|と}ったら 、 その {船|ふね} は あんた の もの だ 。 {代|か}わり に 、 {沿岸|えんがん} の {郵便|ゆうびん} を {運|はこ}んで もらう 。 || So here's the deal. Mend an old hull and earn your licence, and she's yours to sail. In return, you carry the coast's post.
+?(comp=nao) comp[surprise]: {郵便|ゆうびん} を {船|ふね} で ？ …… {飛脚|ひきゃく} が {海|うみ} に {出|で}る の か 。 {悪|わる}く ない な 。 || Post by boat? …A courier taking to the sea. Not bad at all.
+?(comp=mio) comp[smile]: {船|ふね} が あれば 、 {海|うみ} の {向|む}こう の {人|ひと} に も {薬|くすり} を {届|とど}けられます ね 。 || With a boat, we could get medicine to people across the water too.
+?(comp=ren) comp[think]: {海|うみ} に も 、 {灯|ひ} の {道|みち} の よう な {道|みち} が ある の でしょう か 。 {見|み}て みたい です 。 || I wonder whether the sea has roads like the lantern roads. I'd like to see.
+?(comp=suzu) comp[smile]: {船|ふね} の {旅|たび} ね 。 {一座|いちざ} の {巡業|じゅんぎょう} みたい 。 {乗|の}った わ 。 || A journey by boat. Like a troupe on tour. Count me in.
+!choice
+* {引|ひ}き{受|う}けます 。 || I'll take it on. -> yes
+* {少|すこ}し {考|かんが}えさせて ください 。 || Let me think it over. -> later
+:yes
+!call sea.omi_deal_yes
+!end
+:later
+omi: いつでも いい 。 {港|みなと} は {逃|に}げない よ 。 || Whenever you like. The harbour isn't going anywhere.
+
+@scene sea.omi_deal_again
+!faceplayer
+omi: {船|ふね} の {話|はなし} 、 {考|かんが}えて くれた かい ？ || Thought any more about the boat?
+!choice
+* {引|ひ}き{受|う}けます 。 || I'll take it on. -> yes
+* まだ {考|かんが}えて います 。 || I'm still thinking. -> later
+:yes
+!call sea.omi_deal_yes
+!end
+:later
+omi: {急|いそ}がない よ 。 {古|ふる}い {船|ふね} は 、 {待|ま}つ の に {慣|な}れてる 。 || No hurry. Old boats are used to waiting.
+
+@scene sea.omi_deal_yes
+omi[smile]: よし 。 {話|はなし} が {早|はや}い 。 || Good. Quick to the point.
+?(quest.sg_seaglass=done) omi: {船|ふね} だ が …… {当|あ}て が ある 。 フク さん の {千鳥丸|ちどりまる} だ 。 {旦那|だんな} が {亡|な}くなって から 、 {浜|はま} に {上|あ}げた まま に なってる 。 || As for the boat… I've one in mind. Fuku's Chidori-maru. She's sat up on the beach since Fuku's husband died.
+?(!quest.sg_seaglass=done) omi: {船|ふね} だ が …… {当|あ}て が ある 。 フク さん の {旦那|だんな} の {船|ふね} だ 。 {浜|はま} に {上|あ}げた まま に なってる 。 {名前|なまえ} は …… {港|みなと} の {帳面|ちょうめん} から も {消|き}えて しまった 。 || As for the boat… I've one in mind. Fuku's late husband's. She's sat up on the beach. Her name… it's gone from the harbour's books as well.
+omi: {無理|むり} に とは {言|い}わない 。 フク さん が {嫌|いや} なら 、 {港|みなと} の {古|ふる}い {水先船|みずさきぶね} が ある 。 まず 、 {話|はなし} を {聞|き}いて きな 。 || I won't push it. If she'd rather not, there's the harbour's old pilot boat. Go and talk to her first.
+!quest sea_licence 0
+!journal オウミ と {約束|やくそく} した 。 {古|ふる}い {船|ふね} を {直|なお}して {免状|めんじょう} を {取|と}れば 、 {船|ふね} は {自分|じぶん} の もの 。 {代|か}わり に {沿岸|えんがん} の {郵便|ゆうびん} を {運|はこ}ぶ 。 || A deal with Ōmi: mend an old hull and earn a licence, and the boat is mine to sail, carrying the coast's post.
+
+# ---- Fuku and her husband's boat ---------------------------------------------------------------------------------------
+@scene sea.fuku_hull
+# Staged: Fuku on her bench, looking down the beach to where a hull lies under a tarpaulin.
+!faceplayer
+!if quest.sg_seaglass=done -> named
+fuku: {港長|こうちょう} さん から {聞|き}きました よ 。 {夫|おっと} の {船|ふね} の こと 。 || The harbourmaster told me. About my husband's boat.
+!gesture fuku lookroad right
+fuku[worry]: …… でも ね 、 わたし 、 あの {船|ふね} の {名前|なまえ} も {思|おも}い{出|だ}せない の 。 {名前|なまえ} も {分|わ}からない {船|ふね} を 、 {人|ひと} に {渡|わた}す なんて …… 。 || …But you see, I can't even remember her name. To hand over a boat when I don't know her name…
+fuku: アサヒ ちゃん に 、 {名札|なふだ} を {頼|たの}んで ある の 。 {名前|なまえ} が {分|わ}かったら 、 その {時|とき} は {喜|よろこ}んで 。 || I've asked little Asahi for a nameplate. If the name turns up, then gladly.
+!choice
+* {名前|なまえ} が {分|わ}かる まで 、 {待|ま}ちます 。 || I'll wait until her name turns up. -> wait
+* {港|みなと} の {水先船|みずさきぶね} に します 。 || I'll take the harbour's pilot boat. -> pilot
+:wait
+fuku[smile]: ありがとう 。 {待|ま}って くれる {人|ひと} が いる と 、 {思|おも}い{出|だ}す の も {楽|たの}しみ に なる わ 。 || Thank you. With someone waiting, I might even look forward to remembering.
+!journal フク さん は 、 {旦那|だんな} さん の {船|ふね} の {名前|なまえ} を {思|おも}い{出|だ}せない 。 アサヒ さん の {名札|なふだ} が できたら 、 {船|ふね} を {任|まか}せて くれる 。 || Fuku can't remember her husband's boat's name. Once Asahi's nameplate is made, she'll trust us with the boat.
+!end
+:pilot
+fuku: ごめんなさい ね 。 …… {水先船|みずさきぶね} も 、 いい {船|ふね} です よ 。 {港|みなと} の {子|こ} たち は 、 みんな あれ の {横|よこ} で {泳|およ}ぎ を {覚|おぼ}えた の 。 || I'm sorry. …The pilot boat's a good boat too. Every child in the harbour learned to swim alongside her.
+!var sea_hull = pilot
+!goto tow
+:named
+fuku[smile]: {千鳥丸|ちどりまる} の こと ね 。 {港長|こうちょう} さん から {聞|き}きました よ 。 || It's about the Chidori-maru. The harbourmaster told me.
+!gesture fuku lookroad right
+fuku: {毎朝|まいあさ} 「いってらっしゃい 」 って {言|い}う でしょう 。 {返事|へんじ} は {鳥|とり} だけ 。 …… あの {船|ふね} が また {海|うみ} に {出|で}たら 、 {返事|へんじ} が {一|ひと}つ {増|ふ}える わ 。 || I say "take care" every morning, you know. Only the bird answers. …If she went to sea again, there'd be one more answer.
+!look fuku pc
+fuku: {名前|なまえ} を {返|かえ}して くれた あなた に 、 {乗|の}って ほしい の 。 {名前|なまえ} は ね 、 {好|す}き に つけて いい の よ 。 {新|あたら}しい {主|あるじ} に は 、 {新|あたら}しい {名前|なまえ} が {似合|にあ}う こと も ある から 。 || I'd like you to sail her, you who gave me back her name. And you may name her as you like. A new master sometimes suits a new name.
+?(comp=nao) comp: …… {大事|だいじ} に 、 {預|あず}かります 。 || …We'll look after her.
+?(comp=mio) comp[smile]: {大切|たいせつ} に {乗|の}ります 。 {約束|やくそく} します 。 || We'll sail her with care. I promise.
+?(comp=ren) comp: {名|な} を {変|か}えて も 、 {船|ふね} が {覚|おぼ}えて いる こと は {変|か}わりません 。 || Even with a new name, what a boat remembers doesn't change.
+?(comp=suzu) comp[smile]: {二代目|にだいめ} を {襲名|しゅうめい} する よう な もの ね 。 {恥|は}ずかしく ない {舞台|ぶたい} に する わ 。 || Like taking on a stage name from the one before. We'll do her proud.
+!var sea_hull = chidori
+:tow
+narr: {次|つぎ} の {朝|あさ} 、 テツ の {渡|わた}し{船|ぶね} が 、 {古|ふる}い {船体|せんたい} を {引|ひ}いて {東|ひがし} へ {出|で}た 。 {行|い}き{先|さき} は 、 {八百橋|やおばし} の {造船所|ぞうせんじょ} 。 || Next morning, Tetsu's ferry heads east with the old hull in tow, bound for the boatyard at Manybridge.
+!quest sea_licence 1
+!journal {船体|せんたい} は {八百橋|やおばし} の {造船所|ぞうせんじょ} へ 。 {渡|わた}し{場|ば} の {横|よこ} の {船大工|ふなだいく} 、 カジロウ を {訪|たず}ねる 。 || The hull has gone to Manybridge. Find Kajirō the shipwright, by the ferry pier.
+
+@scene sea.fuku_sails
+# Once the boat is yours and lies at the quay: Fuku has walked down to see her.
+!faceplayer
+fuku[smile]: {見|み}ました よ 。 {岸|きし} に {着|つ}いて いる の を 。 $boat {丸|まる} 。 いい {名前|なまえ} ね 。 || I saw her, tied up at the quay. The $boat. That's a lovely name.
+?(var.sea_kept=1) fuku: …… ちどり の まま に して くれた の ね 。 あの {人|ひと} 、 きっと {照|て}れて いる わ 。 || …You kept her name. He'd be blushing, I'm sure.
+fuku: {今朝|けさ} は 、 {船|ふね} に も 「いってらっしゃい 」 を {言|い}いました 。 || This morning I said "take care" to the boat as well.
+
+# ---- 1–3 · the yard ------------------------------------------------------------------------------------------------
+@scene sea.kajiro_first
+# Staged: Kajirō walks the length of the old hull on the slip, knocking on the planks with a knuckle and listening.
+!faceplayer
+sea_kajiro: …… {港長|こうちょう} の {客|きゃく} か 。 {船|ふね} は {届|とど}いてる 。 || …Ōmi's lot, are you. The hull's arrived.
+!gesture sea_kajiro observe 3,4
+sea_kajiro: {竜骨|りゅうこつ} は {丈夫|じょうぶ} だ 。 {板|いた} が {六枚|ろくまい} {腐|くさ}ってる 。 {帆|ほ} は {新|あたら}しく {縫|ぬ}う 。 || The keel's sound. Six planks are rotten. The sail we sew new.
+sea_kajiro: {板|いた} は {注文|ちゅうもん} した 。 が 、 {届|とど}かない 。 この {町|まち} で は 、 よく ある こと だ 。 || I ordered the planking. It hasn't come. Happens a lot, in this town.
+?(comp=nao) comp: {荷物|にもつ} が {違|ちが}う {倉|くら} に {行|い}く の は 、 この {町|まち} の {名物|めいぶつ} だ な 。 || Cargo going to the wrong warehouse is this town's speciality.
+?(comp=mio) comp: また {倉|くら} {違|ちが}い です か 。 {札|ふだ} を {読|よ}めば 、 {見|み}つかる かも しれません 。 || The wrong warehouse again? If we read the labels, we may find it.
+?(comp=ren) comp: {届|とど}かない {荷|に} に も 、 {必|かなら}ず {行|い}き{先|さき} が あります 。 {間違|まちが}って いて も 。 || A delivery that doesn't arrive has always gone somewhere. Even if it's the wrong place.
+?(comp=suzu) comp: {小道具|こどうぐ} が {別|べつ} の {小屋|こや} に {届|とど}く の と {同|おな}じ ね 。 {探|さが}せば ある わ 。 || Like props delivered to the wrong theatre. Look, and they'll turn up.
+sea_kajiro: それ と 、 {帆|ほ} だ 。 {奥|おく} の ヌイ に {聞|き}いて くれ 。 {俺|おれ} の {字|じ} が {読|よ}めない と {怒|おこ}ってる 。 || And the sail. Ask Nui, at the back. She's cross that she can't read my writing.
+!quest sea_licence 2
+!journal カジロウ の {造船所|ぞうせんじょ} 。 {届|とど}かない {板|いた} を {探|さが}す 。 {帆|ほ}{縫|ぬ}い の ヌイ に 、 {注文|ちゅうもん} を {読|よ}んで あげる 。 || Kajirō's yard. Find the planking that never arrived, and read Nui the sail-maker her order.
+
+@scene sea.kajiro_timber
+!faceplayer
+sea_kajiro: {板|いた} の {送|おく}り{状|じょう} だ 。 {倉|くら}{通|どお}り の どこ か に ある 。 {読|よ}んで くれ 。 || Here's the delivery note for the planking. It's somewhere on Warehouse Row. Read it for me.
+!challenge sea.yard_timber
+!if var._res=1 -> ok
+sea_kajiro: …… {急|いそ}がん 。 {板|いた} は {逃|に}げない 。 || …No rush. Planks don't run off.
+!end
+:ok
+sea_kajiro: そこ か 。 {渡|わた}し{場|ば} の タケ に 、 この {送|おく}り{状|じょう} を {見|み}せて くれ 。 {車|くるま} で {運|はこ}んで くれる 。 || There, is it. Show this note to Take, the porter on the pier. He'll cart it over.
+!give sea_timber_note
+
+@scene sea.kajiro_take
+sea_kajiro: {送|おく}り{状|じょう} は 、 {渡|わた}し{場|ば} の タケ に 。 || The note goes to Take, on the pier.
+
+@scene sea.take_timber
+# Staged: Take reads the note, nods, and whistles for his handcart.
+!faceplayer
+mb_take: {船大工|ふなだいく} の {送|おく}り{状|じょう} か 。 どれ 。 || The shipwright's note? Let's see.
+!gesture mb_take read
+mb_take: …… なるほど 、 {三番|さんばん}{倉|ぐら} か 。 {板|いた} が {六枚|ろくまい} 。 {任|まか}せな 。 {昼|ひる} まで に {運|はこ}んで おく 。 || …Number three warehouse, eh. Six planks. Leave it to me. They'll be there by noon.
+!take sea_timber_note
+!set sea_f_timber
+!journal {板|いた} は {三番|さんばん}{倉|ぐら} に あった 。 タケ が {造船所|ぞうせんじょ} へ {運|はこ}んで くれる 。 || The planking was in warehouse three. Take is carting it to the yard.
+
+@scene sea.kajiro_nui
+sea_kajiro: ヌイ の {方|ほう} は 、 どう だ 。 {帆|ほ} の ない {船|ふね} は 、 ただ の {箱|はこ} だ 。 || How's Nui getting on? A boat without a sail is just a box.
+
+@scene sea.kajiro_name
+# Both favours done: the planks are in and the sail is sewn. Now the name, chosen kana by kana.
+!faceplayer
+?(quest.sea_licence=2) sea_kajiro: {板|いた} は {張|は}った 。 {帆|ほ} も {縫|ぬ}い{上|あ}がった 。 || The planks are in. The sail's sewn.
+sea_kajiro: あと は 、 {名前|なまえ} だ 。 {名前|なまえ} の ない {船|ふね} は 、 {呼|よ}んで も {帰|かえ}って こない 。 || All she needs now is a name. A boat with no name won't come back when you call her.
+?(var.sea_hull=chidori) sea_kajiro: {前|まえ} の {名前|なまえ} は ちどり だった な 。 {残|のこ}す か 、 {変|か}える か 。 あんた が {決|き}めろ 。 || Her old name was Chidori. Keep it or change it. Your call.
+?(!var.sea_hull=chidori) sea_kajiro: {水先船|みずさきぶね} に は 、 {名前|なまえ} が なかった 。 みんな 「{水先|みずさき}」 と {呼|よ}んで いた 。 {初|はじ}めて の {名前|なまえ} だ な 。 || The pilot boat never had a name. Everyone just called her "the pilot". This'll be her first.
+narr: {名前|なまえ} は 、 かな で 。 {字|じ} を {一|ひと}つ ずつ {選|えら}ぶ 。 || The name, in kana. Choose the letters one by one.
+?(var.sea_hull=chidori) !hook sail_name keep
+?(!var.sea_hull=chidori) !hook sail_name
+!if var._res=1 -> named
+sea_kajiro: …… {急|いそ}がん で いい 。 {名前|なまえ} は 、 {一生|いっしょう} もの だ 。 || …Take your time. A name's for life.
+!end
+:named
+!set sea_named
+sea_kajiro: $boat {丸|まる} 、 か 。 || The $boat, is it.
+!quest sea_licence 3
+!gesture sea_kajiro nod
+?(var.sea_kept=1) sea_kajiro: ちどり の まま か 。 フク さん が {喜|よろこ}ぶ 。 || Chidori still. Fuku will be pleased.
+sea_kajiro: {悪|わる}く ない 。 {字|じ} は 、 {版木|はんぎ}{通|どお}り の ソウベエ の {店|みせ} が {書|か}く 。 {造船所|ぞうせんじょ} の {船|ふね} の {名前|なまえ} は 、 {昔|むかし} から あそこ の {仕事|しごと} だ 。 || Not bad. Sōbē's shop on Blockprint Row will paint the letters. The yard's boat names have always been their work.
+?(!mb1_done) sea_kajiro: …… {版木|はんぎ}{通|どお}り へ の {道|みち} は 、 {札場|ふだば} の {騒|さわ}ぎ が {片付|かたづ}く まで {閉|し}まって いる 。 {落|お}ち{着|つ}いたら 、 {行|い}って くれ 。 || …The way to Blockprint Row is shut until the Exchange's trouble is sorted out. Go once it's settled.
+!journal {船|ふね} の {名前|なまえ} は 「$boat {丸|まる}」 。 {字|じ} を {書|か}いて もらう ため 、 {版木|はんぎ}{通|どお}り の ソウベエ を {訪|たず}ねる 。 || The boat's name is the $boat. Ask Sōbē on Blockprint Row to have it painted.
+
+@scene sea.kajiro_sobe
+sea_kajiro: {字|じ} は 、 ソウベエ の {店|みせ} に {頼|たの}んで くれ 。 {版木|はんぎ}{通|どお}り だ 。 || Ask Sōbē's shop for the letters. Blockprint Row.
+
+@scene sea.sobe_sign
+# Staged: Sōbē takes a practice board down from the rack: boat names painted in his apprentice's hand.
+!faceplayer
+mp_sobe: {船|ふね} の {名前|なまえ} ？ …… {刷|す}り{物|もの} じゃ ねえ が 、 {字|じ} は {字|じ} だ 。 {引|ひ}き{受|う}けた 。 || A boat's name? …It's not printing, but letters are letters. We'll take it on.
+mp_sobe: {筆|ふで} を {持|も}つ の は サンペイ だ 。 だが その {前|まえ} に 、 あいつ の {稽古|けいこ}{板|いた} を {見|み}て くれ 。 {間違|まちが}い が {一|ひと}つ ある 。 {見|み}つけられる か 。 || Sanpei holds the brush. But first, look at his practice board. There's one mistake on it. Can you find it?
+!challenge sea.sign_board
+!if var._res=1 -> ok
+mp_sobe: …… もう {一度|いちど} 、 よく {見|み}な 。 {急|いそ}ぐ こと は ねえ 。 || …Take another good look. No hurry.
+!end
+:ok
+!set sea_sign_ok
+mp_sobe[smile]: そう だ 。 {一画|いっかく} {違|ちが}えば 、 {別|べつ} の {船|ふね} に なる 。 {名前|なまえ} って の は 、 そういう もん だ 。 || That's it. One stroke wrong and she's a different boat. That's what names are like.
+mp_sobe: サンペイ を {造船所|ぞうせんじょ} に {行|い}かせる 。 …… ミヨ も {付|つ}いて {行|い}く だろう な 。 {止|と}めて も {無駄|むだ} だ 。 || I'll send Sanpei to the yard. …Miyo will tag along, I expect. No use stopping her.
+!journal ソウベエ の {店|みせ} の サンペイ が 、 {造船所|ぞうせんじょ} で {船|ふね} の {名前|なまえ} を {書|か}いて くれる 。 || Sanpei from Sōbē's shop will paint the boat's name at the yard.
+
+@scene sea.kajiro_paint
+# Staged: Sanpei on a crate at the bow with a brush and a pot of white; Miyo at his elbow reading each letter out;
+# Miyo is allowed the last one; everyone steps back to look.
+!faceplayer
+narr: サンペイ が 、 {舳先|へさき} に {白|しろ}い {塗料|とりょう} で {字|じ} を {書|か}いて いく 。 ミヨ が {横|よこ} で 、 {一字|いちじ} ずつ {読|よ}み{上|あ}げる 。 || Sanpei paints the letters on the bow in white. Beside him, Miyo reads each one out.
+mp_miyo: …… {最後|さいご} の 「{丸|まる}」 は 、 わたし ！ {丸|まる} なら 、 {小|ちい}さく て も {書|か}ける もん ！ || …The last one, 丸, is mine! Even I can write 丸, small as I am!
+mp_sanpei: しょうがない な 。 …… {曲|ま}げる なよ 。 || Oh, all right. …Don't make it wonky.
+narr: 「$boat {丸|まる}」 。 {舳先|へさき} で 、 {白|しろ}い {字|じ} が {乾|かわ}いて いく 。 || The $boat. The white letters dry on the bow.
+?(comp=nao) comp: …… いい {字|じ} だ 。 {宛名|あてな} に {書|か}いたら 、 {迷|まよ}わず {届|とど}く 。 || …Good lettering. Write that on an envelope and it'd never go astray.
+?(comp=mio) comp[smile]: {名前|なまえ} が {入|はい}る と 、 {急|きゅう} に {生|い}きて いる みたい に {見|み}えます ね 。 || Once the name's on, she suddenly looks alive.
+?(comp=ren) comp: {名|な} を {書|か}く の は 、 {灯|ひ} を {入|い}れる の と {似|に}て います 。 {灯|とも}りました ね 。 || Writing a name is like lighting a lamp. She's lit.
+?(comp=suzu) comp[smile]: {看板|かんばん} が {上|あ}がった わ ね 。 {初日|しょにち} は いつ ？ || The sign's up. When's opening night?
+sea_kajiro: {試|ため}し{乗|の}り は 、 {潮硝子|しおがらす} の テツ の {仕事|しごと} だ 。 {船|ふね} は {俺|おれ} が {回|まわ}して おく 。 || Sea trials are Tetsu's business, at Saltglass. I'll have her sailed round.
+?(!mb2_done) sea_kajiro: …… だが 、 {祭|まつ}り が {終|お}わる まで 、 テツ は {渡|わた}し{船|ぶね} で {手|て} が {離|はな}せない だろう 。 || …But until the festival's over, Tetsu won't have a hand free from the ferry.
+!quest sea_licence 4
+!journal {名前|なまえ} が {入|はい}った 。 {試|ため}し{乗|の}り は {潮硝子|しおがらす} で テツ と 。 || The name's on her. Sea trials are at Saltglass, with Tetsu.
+
+@scene sea.kajiro_after
+sea_kajiro: {船|ふね} は {元気|げんき} か 。 {板|いた} が {鳴|な}ったら 、 {持|も}って こい 。 || How's the boat? If her planks start creaking, bring her in.
+
+@scene sea.kajiro_idle
+sea_kajiro: …… {船|ふね} の {用|よう} じゃ ない なら 、 {後|あと} に して くれ 。 || …If it's not about a boat, later.
+
+@scene sea.yard_hull
+?(quest.sea_licence>=0&quest.sea_licence<=3) narr: {台|だい} の {上|うえ} に 、 あなた の {船|ふね} に なる {古|ふる}い {船体|せんたい} 。 || On the trestles, the old hull that's going to be your boat.
+?(!quest.sea_licence|quest.sea_licence>=4) narr: {台|だい} の {上|うえ} に 、 {誰|だれ} か の {小舟|こぶね} 。 {底|そこ} に {新|あたら}しい {板|いた} が {張|は}って ある 。 || Someone's skiff on the trestles, new planks along her bottom.
+
+@scene sea.yard_loom
+narr: ヌイ の {機|はた} 。 {帆布|はんぷ} が {長|なが}く {伸|の}びて いる 。 || Nui's loom, with a long run of sailcloth stretching from it.
+
+@scene sea.nui_sail
+# Staged: Nui at the loom with a strip of canvas over her knees; she waves a scrap of paper at you.
+!faceplayer
+sea_nui: あっ 、 ちょうど よかった ！ ねえ 、 これ {読|よ}める ？ カジロウ さん の {字|じ} 、 {蟹|かに} が {歩|ある}いた みたい で 。 || Oh, perfect timing! Hey, can you read this? Kajirō's writing looks like a crab walked across it.
+!challenge sea.nui_sail
+!if var._res=1 -> ok
+sea_nui: {惜|お}しい ！ …… {急|いそ}がない から 、 また {読|よ}んで ね 。 || Close! …No hurry. Read it to me again later.
+!end
+:ok
+sea_nui[happy]: それ それ ！ {縦|たて} と {横|よこ} が {分|わ}かれば 、 {後|あと} は {縫|ぬ}う だけ 。 {三日|みっか} で {仕上|しあ}げる よ 。 || That's it! Once I know the height and the width, it's just sewing. I'll have it done in three days.
+?(comp=nao) comp: {帆|ほ} も 、 {寸法|すんぽう} を {間違|まちが}えたら {届|とど}かない {手紙|てがみ} と {同|おな}じ か 。 || So a sail with the wrong measurements is like a letter that never arrives.
+?(comp=mio) comp: {針|はり} の {運|はこ}び が 、 {私|わたし} が {包帯|ほうたい} を {巻|ま}く より {速|はや}い …… 。 || Her needle's faster than I am winding a bandage…
+?(comp=ren) comp: {一目|ひとめ} ずつ に 、 {風|かぜ} を {受|う}ける {力|ちから} が {入|はい}る の です ね 。 || Every stitch takes a little of the wind's weight.
+?(comp=suzu) comp[smile]: {衣装|いしょう}{方|かた} に {欲|ほ}しい {腕|うで} ね 。 || I'd want hands like that in the wardrobe department.
+!set sea_f_sail
+!journal ヌイ に {帆|ほ} の {寸法|すんぽう} を {読|よ}んで あげた 。 {三日|みっか} で {縫|ぬ}い{上|あ}がる 。 || Read Nui the sail's measurements. She'll have it sewn in three days.
+
+@scene sea.nui_after
+sea_nui: {帆|ほ} は {任|まか}せて 。 {破|やぶ}れたら 、 いつでも {持|も}って きて ！ || Leave sails to me. If one tears, bring it any time!
+
+@scene sea.nui_idle
+narr: ヌイ が 、 {歌|うた}い ながら {針|はり} を {動|うご}かして いる 。 || Nui is singing as she sews.
+sea_nui: {縫|ぬ}う {時|とき} は 、 {歌|うた}う の 。 {針|はり} が {迷|まよ}わない よう に 。 || I sing when I sew. It keeps the needle from wandering.
+
+# ---- 4 · sea trials at Saltglass ----------------------------------------------------------------------------------------
+@scene sea.tetsu_words
+# Staged: Tetsu on the quay beside your boat, newly sailed round from Manybridge; he points to each part as he names
+# it, then out at the water and up at the wind.
+!faceplayer
+tetsu: {来|き}た か 。 $boat {丸|まる} 、 {着|つ}いてる 。 || There you are. The $boat's in.
+!choice
+* {試|ため}し{乗|の}り の {話|はなし} です 。 || About the sea trials. -> words
+* {渡|わた}し{船|ぶね} に {乗|の}りたい です 。 || I'd like the ferry. -> ferry
+:ferry
+!call sea.tetsu_ferry
+!end
+:words
+!if var.sea_w>=1 -> two
+tetsu: {海|うみ} に {出|で}る {前|まえ} に 、 {言葉|ことば} を {五|いつ}つ 。 {覚|おぼ}えろ 。 || Before you go out, five words. Learn them.
+!gesture tetsu point 36,33
+tetsu: {帆|ほ} 。 {風|かぜ} を {受|う}ける 。 {舵|かじ} 。 {船|ふね} の {向|む}き を {決|き}める 。 {錨|いかり} 。 {船|ふね} を {止|と}めて おく 。 || 帆, the sail: it takes the wind. 舵, the rudder: it decides where she points. 錨, the anchor: it holds her still.
+!challenge sea.words_boat
+!if var._res=1 -> one
+tetsu: …… もう {一度|いちど} だ 。 {帆|ほ} 、 {舵|かじ} 、 {錨|いかり} 。 {急|いそ}がなくて いい 。 || …Again. 帆, 舵, 錨. No need to hurry.
+!end
+:one
+!var sea_w = 1
+:two
+!gesture tetsu lookroad down
+tetsu: {潮|しお} 。 {海|うみ} の {水|みず} の {満|み}ち{引|ひ}き 。 {風向|かざむ}き 。 {風|かぜ} が どこ から {来|く}る か 。 || 潮, the tide: the sea's water coming in and going out. 風向き, the wind's direction: where it comes from.
+tetsu: {陸|おか} の {人間|にんげん} は 、 {風|かぜ} が どこ へ {行|い}く か を {言|い}う 。 {船乗|ふなの}り は 、 どこ から {来|く}る か を {言|い}う 。 || Landsmen say where the wind goes. Sailors say where it comes from.
+!challenge sea.words_wind
+!if var._res=1 -> ok
+tetsu: {潮|しお} と {風向|かざむ}き 。 また {聞|き}く 。 || The tide and the wind's direction. I'll ask again.
+!end
+:ok
+tetsu: よし 。 …… {潮|しお} の {時刻|じこく} は 、 シオリ の {帳面|ちょうめん} に ある 。 {潮見|しおみ}{小屋|ごや} で {読|よ}ませて もらえ 。 || Good. …The tide times are in Shiori's book. Have her let you read it at the tide-watch hut.
+!set sea_words
+!journal テツ に {海|うみ} の {言葉|ことば} を {五|いつ}つ {教|おそ}わった 。 {帆|ほ} 、 {舵|かじ} 、 {錨|いかり} 、 {潮|しお} 、 {風向|かざむ}き 。 {次|つぎ} は シオリ の {潮|しお} の {帳面|ちょうめん} 。 || Tetsu taught me five sea words: sail, rudder, anchor, tide, the wind's direction. Next, Shiori's tide book.
+
+# Tetsu's ferry, offered from his sea-trial scenes (whichever run his board has now)
+@scene sea.tetsu_ferry
+!if ch5_done&!ko_arrived -> ko1
+!if ko_arrived&!post -> ko2
+!call mb.ferry_tetsu_again
+!end
+:ko1
+!call ko.ferry_tetsu
+!end
+:ko2
+!call ko.ferry_tetsu_again
+
+@scene sea.shiori_tide
+# Staged: Shiori opens her tide book on the desk and turns it round so you can read the day's page.
+!faceplayer
+shiori: テツ さん から {聞|き}きました 。 {試|ため}し{乗|の}り です ね 。 {潮|しお} の {表|ひょう} を {見|み}ましょう 。 || Tetsu told me. Your sea trial. Let's look at the tide table.
+!gesture shiori read
+shiori: {港|みなと} を {出|で}る の は 、 {満|み}ち{潮|しお} の ころ が {一番|いちばん} です 。 {浅瀬|あさせ} で {底|そこ} を {擦|す}りません から 。 || Around high tide is the best time to leave harbour. You won't scrape the bottom on the shallows.
+!challenge sea.tide_book
+!if var._res=1 -> ok
+shiori: {急|いそ}ぎません 。 {潮|しお} は {毎日|まいにち} {二回|にかい} {満|み}ちます から 。 || There's no hurry. The tide comes in twice a day.
+!end
+:ok
+shiori[smile]: その とおり です 。 テツ さん に 、 その {時刻|じこく} を {伝|つた}えて ください 。 {帳面|ちょうめん} の {字|じ} も {潮|しお} も 、 {今日|きょう} は {正直|しょうじき} です よ 。 || Just so. Tell Tetsu the time. My book and the tide are both honest today.
+!set sea_tide
+!journal シオリ の {帳面|ちょうめん} で 、 {満|み}ち{潮|しお} の {時刻|じこく} を {読|よ}んだ 。 テツ と {試|ため}し{乗|の}り に {出|で}る 。 || Read the time of high tide in Shiori's book. Time to go out with Tetsu on the trial.
+
+@scene sea.tetsu_trial
+!faceplayer
+tetsu: {潮|しお} は 。 || The tide?
+!choice
+* {満|み}ち{潮|しお} です 。 {今|いま} {出|で}られます 。 || It's high. We can go now. -> go
+* {渡|わた}し{船|ぶね} に {乗|の}りたい です 。 || I'd like the ferry. -> ferry
+* また {後|あと} で 。 || Later. -> later
+:ferry
+!call sea.tetsu_ferry
+!end
+:later
+tetsu: {潮|しお} は {待|ま}って くれん が 、 また {満|み}ちる 。 || The tide won't wait, but it comes in again.
+!end
+:go
+tetsu: {岬|みさき} の {先|さき} の ブイ を {回|まわ}って 、 {戻|もど}って こい 。 {帆|ほ} は {風|かぜ} に {合|あ}わせろ 。 {風|かぜ} は {西|にし} から だ 。 || Round the buoy off the point and come back. Set the sail to the wind. The wind's from the west.
+tetsu: …… {心配|しんぱい} は {要|い}らん 。 {俺|おれ} も {乗|の}って いる 。 || …No need to worry. I'm aboard too.
+!var sea_trial = 1
+!hook sail_trial saltglass saltglass
+
+@scene sea.trial_mark
+# At sea on the trial: the buoy off the point is rounded. (Tetsu is aboard, not on the sea map: his words are quoted.)
+narr: {赤|あか} と {白|しろ} の ブイ を 、 ぐるり と {回|まわ}った 。 テツ が {頷|うなず}く 。 「よし 。 {港|みなと} へ {戻|もど}れ 。」 || You round the red-and-white buoy. Tetsu nods. "Good. Back to harbour."
+!var sea_trial = 2
+!hook sail_log sight the mark off the point
+
+@scene sea.arrive_saltglass
+# After any arrival at Saltglass by boat; the sea trial's end, if this was the trial (the crew may have sailed her round).
+!if var.sea_trial>=1 -> trial
+!end
+:trial
+?(var.sea_trial=1) narr: {乗組員|のりくみいん} が 、 ブイ を {回|まわ}って から {港|みなと} に {入|い}れた 。 || The crew rounded the buoy before bringing her in.
+!look tetsu pc
+tetsu: …… {悪|わる}く ない 。 {帆|ほ} の {張|は}り も 、 {舵|かじ} も 。 || …Not bad. The sail and the rudder, both.
+?(comp=nao) comp: {海|うみ} の {上|うえ} だ と 、 {道|みち} が ない の に {迷|まよ}わない もん だ な 。 || Out on the water there's no road, and somehow you still don't get lost.
+?(comp=mio) comp[smile]: {風|かぜ} が {帆|ほ} に {入|はい}った {時|とき} 、 {船|ふね} が {笑|わら}った みたい でした 。 || When the wind filled the sail, it was as if the boat laughed.
+?(comp=ren) comp: {灯|ひ} の ない {道|みち} でも 、 {風|かぜ} と {潮|しお} が {道|みち} を {教|おし}えて くれる の です ね 。 || Even with no lamps on the way, the wind and the tide show you the road.
+?(comp=suzu) comp[smile]: {初舞台|はつぶたい} に して は 、 {上出来|じょうでき} じゃない ？ || Not bad for a debut, was it?
+tetsu: {次|つぎ} は {港長|こうちょう} の {試験|しけん} だ 。 {書類|しょるい} と 、 {話|はなし} だ 。 オウミ は {厳|きび}しい が 、 {意地|いじ} は {悪|わる}く ない 。 || Next is the harbourmaster's examination. Papers, and a talk. Ōmi's strict, but she's not mean.
+!var sea_trial = 0
+!set sea_trial_done
+!quest sea_licence 5
+!journal {試|ため}し{乗|の}り は {無事|ぶじ} {終|お}わった 。 {次|つぎ} は {港長|こうちょう} オウミ の {試験|しけん} 。 || The sea trial went well. Next, Harbourmaster Ōmi's examination.
+
+# ---- 5 · the licence ------------------------------------------------------------------------------------------------
+@scene sea.omi_licence
+# Staged: Ōmi has cleared her desk; a form lies on it with a pen beside it. For the interview she puts on her reading
+# glasses and an examiner's voice, and drops both again at the end.
+!faceplayer
+!if var.sea_exam>=1 -> again
+omi: {来|き}た ね 。 テツ から {聞|き}いた 。 {腕|うで} は {確|たし}か だ と さ 。 || There you are. Tetsu says your hands are sound.
+omi: じゃあ 、 {試験|しけん} だ 。 まず {書類|しょるい} 。 それから 、 {少|すこ}し {話|はなし} を {聞|き}く 。 {間違|まちが}えたら 、 その {場|ば} で やり{直|なお}し だ 。 {何度|なんど} でも な 。 || Right, the examination. Papers first. Then I'll ask you a few things. Get one wrong and you go again, then and there. As many times as it takes.
+!var sea_exam = 1
+!goto start
+:again
+omi: {続|つづ}き を やる かい ？ || Shall we carry on?
+:start
+!if var.sea_exam_form>=1 -> talk
+:form
+!challenge sea.licence_form
+!if var._res=1 -> formok
+omi: …… {惜|お}しい 。 もう {一度|いちど} {書|か}いて みな 。 || …Close. Write it again.
+!choice
+* もう {一度|いちど} 。 || Again. -> form
+* {少|すこ}し {休|やす}みます 。 || I'll take a break. -> rest
+:formok
+!var sea_exam_form = 1
+omi: {書類|しょるい} は いい 。 …… では 。 || The form's fine. …Now, then.
+:talk
+omi: ゴホン 。 これ より 、 {面接|めんせつ} を {始|はじ}めます 。 || Ahem. The interview will now begin.
+?(comp=nao) comp: （…… {急|きゅう} に {言葉|ことば} が {硬|かた}く なった な 。） || (…Her voice just went all stiff.)
+?(comp=mio) comp: （{港長|こうちょう} さん 、 {眼鏡|めがね} を かける と {別人|べつじん} みたい ……。） || (With her glasses on, the harbourmaster's like a different person…)
+?(comp=ren) comp: （{試験|しけん} の {言葉|ことば} です ね 。 {丁寧|ていねい} に {答|こた}えましょう 。） || (Examination language. Let's answer politely.)
+?(comp=suzu) comp: （{役|やく} に {入|はい}った わ ね 。 こっち も {合|あ}わせ ない と 。） || (She's got into character. We'd better play along.)
+:q1
+!challenge sea.interview_1
+!if var._res=1 -> q2
+omi: …… もう {一度|いちど} 、 {伺|うかが}います 。 || …I shall ask once more.
+!choice
+* はい 。 || Yes. -> q1
+* {少|すこ}し {休|やす}ませて ください 。 || May I take a break? -> rest
+:q2
+!challenge sea.interview_2
+!if var._res=1 -> q3
+omi: …… もう {一度|いちど} 、 {伺|うかが}います 。 || …I shall ask once more.
+!choice
+* はい 。 || Yes. -> q2
+* {少|すこ}し {休|やす}ませて ください 。 || May I take a break? -> rest
+:q3
+!challenge sea.interview_3
+!if var._res=1 -> pass
+omi: …… もう {一度|いちど} 、 {伺|うかが}います 。 || …I shall ask once more.
+!choice
+* はい 。 || Yes. -> q3
+* {少|すこ}し {休|やす}ませて ください 。 || May I take a break? -> rest
+:pass
+omi: …… {以上|いじょう} で 、 {面接|めんせつ} を {終|お}わります 。 || …That concludes the interview.
+!gesture omi nod
+omi[smile]: {合格|ごうかく} だ 。 …… ああ 、 {肩|かた} が {凝|こ}った 。 {試験官|しけんかん} の {喋|しゃべ}り{方|かた} は 、 {性|しょう} に {合|あ}わない よ 。 || You pass. …Oof, my shoulders. Talking like an examiner doesn't suit me.
+!give sea_licence_doc
+narr: {免状|めんじょう} に は 、 {船|ふね} の {名前|なまえ} 「$boat {丸|まる}」 と 、 あなた の {名前|なまえ} 。 その {下|した} に 、 オウミ の {大|おお}きな {署名|しょめい} 。 || On the licence: the boat's name, the $boat, and yours. Beneath them, Ōmi's large signature.
+?(var.sea_hull=pilot) !hook sail_boat pilot
+?(!var.sea_hull=pilot) !hook sail_boat chidori
+omi: {船|ふね} は あんた の もの だ 。 {港|みなと} の {桟橋|さんばし} に {繋|つな}いで ある 。 {海図|かいず} は {船|ふね} の {中|なか} に {置|お}いた 。 || She's yours. She's tied up at the harbour's pier. I've put the chart aboard.
+!if ko_arrived -> been
+omi: …… それ と な 。 {郵便|ゆうびん} を {運|はこ}ぶ なら 、 {一|ひと}つ {話|はなし} して おく 。 || …And one more thing, since you'll be carrying the post.
+omi: {海|うみ} で なくなった {郵便|ゆうびん} は 、 {西|にし} の {沖|おき} の {島|しま} に {流|なが}れ{着|つ}く 、 って {話|はなし} が ある 。 {船乗|ふなの}り の {噂|うわさ} さ 。 どの {帳面|ちょうめん} に も {載|の}って ない {島|しま} だ 。 || There's a tale that post lost at sea washes up on an island out west. Sailors' talk. An island that's in no ledger.
+omi: {港長|こうちょう} と して は 、 {馬鹿|ばか} な {話|はなし} だ と {言|い}う べき だろう ね 。 …… でも 、 なくした {手紙|てがみ} が どこ か に {届|とど}いて いる なら 、 {悪|わる}く ない と {思|おも}う よ 。 || As harbourmaster, I suppose I ought to call it nonsense. …But if lost letters are getting somewhere after all, I wouldn't mind that.
+?(comp=nao) comp: …… {届|とど}かなかった {手紙|てがみ} が 、 {島|しま} に 。 || …Letters that never arrived. On an island.
+?(comp=mio) comp[think]: なくした もの が {集|あつ}まる {島|しま} …… 。 {本当|ほんとう} に ある なら 、 {行|い}って みたい です 。 || An island where lost things gather… If it's real, I'd like to go.
+?(comp=ren) comp: {噂|うわさ} に は 、 {必|かなら}ず {少|すこ}し {本当|ほんとう} の こと が {入|はい}って います 。 || There's always a little truth in a rumour.
+?(comp=suzu) comp[smile]: {地図|ちず} に ない {島|しま} 。 {芝居|しばい} の {筋|すじ} なら 、 {次|つぎ} の {幕|まく} は そこ ね 。 || An island that's on no map. If this were a play, that's where the next act would be.
+!set sea_rumour_omi
+!goto done
+:been
+omi: {言|こと}の{葉|は}{島|じま} に は 、 もう {渡|わた}し{船|ぶね} で {行|い}った ん だった ね 。 {自分|じぶん} の {船|ふね} で {行|い}く {島|しま} は 、 また {違|ちが}って {見|み}える よ 。 || You've already been to Kotonoha on the ferry, haven't you. An island looks different when you sail there yourself.
+:done
+!quest sea_licence 6
+!journal {免状|めんじょう} を {取|と}った 。 $boat {丸|まる} は {自分|じぶん} の {船|ふね} 。 {潮硝子|しおがらす} の {桟橋|さんばし} から 、 {海図|かいず} を {広|ひろ}げて {出|で}られる 。 || The licence is mine, and the $boat with it. She sails from Saltglass's pier: open the chart aboard her.
+!autosave
+!end
+:rest
+omi: いい よ 。 {続|つづ}き は 、 また {今度|こんど} だ 。 || Fine. We'll carry on another time.
+`);
+
+
 /* ==== src/content/sea/30_learning.js ==== */
 /* The sea's language tasks (expansion P11c; plan W7 "learning about the sea": weather, tides, directions, the boat's
  * parts and what to do with them). The words come from the boat itself (帆, 綱, 舵, 蓋), so seafaring vocabulary is
@@ -176259,6 +177083,91 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { kind: 'order', item: 'v:塞ぐ', prompt: { en: 'Put the instruction together: stop the gap with cloth and a wedge.' }, tiles: ['{布|ぬの} と {楔|くさび} で', '{隙間|すきま} を', '{塞|ふさ}ぐ'], answer: ['{布|ぬの} と {楔|くさび} で', '{隙間|すきま} を', '{塞|ふさ}ぐ'], orderHint: { en: 'With what (で), what (を), then the verb.' } },
     { kind: 'write', item: 'v:塞ぐ', ctx: { jp: '{蓋|ふた} の {隙間|すきま} を {布|ぬの} で □□□ 。', en: '' }, prompt: { en: 'You…the hatch\'s gap with cloth. Write the verb in hiragana (dictionary form).' }, answer: 'ふさぐ', accept: ['ふさぐ', '塞ぐ'], mode: 'reading', explain: { jp: '{塞|ふさ}ぐ', en: 'to stop up, to plug' } },
     ch({ item: 'v:塞ぐ', prompt: { en: 'The crew asks whether to bail first or plug first. Which reply is sound?' }, options: [o('{先|さき} に {隙間|すきま} を {塞|ふさ}ごう 。 {水|みず} は その {後|あと} で {汲|く}み{出|だ}せば いい 。', 1), o('{先|さき} に {水|みず} を {全部|ぜんぶ} {汲|く}み{出|だ}そう 。', 0, 'While the gap is open, bailing never ends: plug it first.'), o('{何|なに} も しない で {港|みなと} へ {急|いそ}ごう 。', 0, 'It is a small leak: plug it and carry on calmly.')] }));
+})(RB.content);
+
+
+/* ==== src/content/sea/31_licence_learning.js ==== */
+/* A Licence for the Open Sea's language tasks (expansion P11b; the scenes in 22_scenes_licence.js). Each is the same
+ * question at the four profiles: the yard's delivery note (counters: 枚 for planks, 番 for a warehouse), the sail's
+ * measurements, an apprentice's practice board with one look-alike letter on it, Tetsu's five sea words, Shiori's
+ * tide table, the licence's form, and Ōmi's interview in an examiner's register (answer about yourself in polite or
+ * humble forms, never the respectful ones). Real things are labelled real: 参 as the formal 三 on documents, 大潮. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const task = (id, title, tiers) => (C.challenges[id] = { title, tiers });
+
+  // ---- the yard ----------------------------------------------------------------------------------------------------
+  task('sea.yard_timber', T('{板|いた} の {送|おく}り{状|じょう}', 'The planking\'s delivery note'), {
+    F: [ch({ item: 'v:倉', ctx: { jp: 'おくりじょう ： すぎ の いた 、 ろく まい 。 くら どおり 、 さんばん の くら に あずけました 。', en: '' }, prompt: { en: 'Which warehouse is the planking in?' }, options: [o('さんばん', 1), o('ろくばん', 0, 'ろく まい is how many planks; the warehouse is さんばん.'), o('いちばん', 0, 'The note says さんばん の くら.')] })],
+    E: [ch({ item: 'g:counters', ctx: { jp: '{送|おく}り{状|じょう} ： {杉板|すぎいた} {六枚|ろくまい} 。 {倉|くら}{通|どお}り {三番|さんばん}{倉|ぐら} に {預|あず}けました 。', en: '' }, prompt: { en: 'What was delivered, and where is it?' }, options: [o('{板|いた} が {六枚|ろくまい} 。 {三番|さんばん} の {倉|くら}', 1), o('{板|いた} が {三枚|さんまい} 。 {六番|ろくばん} の {倉|くら}', 0, '六枚 is the planks (枚 counts flat things); 三番 is the warehouse\'s number.'), o('{杉|すぎ} の {木|き} が {六本|ろっぽん} 。 {三番|さんばん} の {倉|くら}', 0, '枚 counts flat things: planks, not trees (本).')] })],
+    I: [ch({ item: 'g:tame', ctx: { jp: '{送|おく}り{状|じょう} ： {杉板|すぎいた} {六枚|ろくまい} 、 {造船所|ぞうせんじょ} {行|ゆ}き 。 {船|ふね} の {着|つ}く の が {遅|おく}れた ため 、 {倉|くら}{通|どお}り {三番|さんばん}{倉|ぐら} に {預|あず}けて おきます 。', en: '' }, prompt: { en: 'Why isn\'t the planking at the yard, and where is it?' }, options: [o('{船|ふね} が {遅|おく}れた ので 、 {三番|さんばん} の {倉|くら} に {置|お}いて ある', 1), o('{造船所|ぞうせんじょ} が {閉|し}まって いた ので 、 {返|かえ}された', 0, 'ため gives the reason: the boat bringing it was late.'), o('{六番|ろくばん} の {倉|くら} に {預|あず}ける つもり だ', 0, 'It has been left (ておきます) in warehouse 三番; 六枚 is the planks.')] })],
+    A: [ch({ item: 'v:保管', ctx: { jp: '{杉板|すぎいた} {六枚|ろくまい} 、 {入船|いりふね} {遅延|ちえん} の ため 、 {倉|くら}{通|どお}り {参番|さんばん}{蔵|ぐら} にて {一時|いちじ} {保管|ほかん} 。', en: '' }, prompt: { en: 'A clipped note, with 参 for 三 (real: the formal numeral on documents, which can\'t be altered with a stroke). Where is the planking, and for how long?' }, options: [o('{三番|さんばん} の {倉|くら} に 、 {取|と}りに {来|く}る まで {預|あず}けて ある', 1), o('{三番|さんばん} の {倉|くら} に 、 ずっと {置|お}く こと に なった', 0, '一時保管: kept for the time being, until it is collected.'), o('{八番|はちばん} の {倉|くら} に 、 {一時間|いちじかん} だけ ある', 0, '参 is the formal 三; 一時 here means "for the time being", not one hour.')] })],
+  });
+  task('sea.nui_sail', T('{帆|ほ} の {寸法|すんぽう}', 'The sail\'s measurements'), {
+    F: [ch({ item: 'v:縦', ctx: { jp: 'ほ ： たて 5 メートル 、 よこ 3 メートル 。 ぬの は 3 まい 。', en: '' }, prompt: { en: 'How tall is the sail?' }, options: [o('5 メートル', 1), o('3 メートル', 0, 'よこ is the width; たて is the height.'), o('3 まい', 0, 'まい counts the cloths.')] })],
+    E: [ch({ item: 'v:横', ctx: { jp: '{帆|ほ} ： {縦|たて} 5 メートル 、 {横|よこ} 3 メートル 。 {布|ぬの} は {三枚|さんまい} を {縫|ぬ}い{合|あ}わせる 。', en: '' }, prompt: { en: 'Read Nui her order. Which is right?' }, options: [o('{縦|たて} が 5 メートル 、 {横|よこ} が 3 メートル 。 {布|ぬの} は {三枚|さんまい} 。', 1), o('{縦|たて} が 3 メートル 、 {横|よこ} が 5 メートル 。 {布|ぬの} は {五枚|ごまい} 。', 0, '縦 is the height: 5. 横 is the width: 3.'), o('{縦|たて} も {横|よこ} も 5 メートル 。 {布|ぬの} は {一枚|いちまい} 。', 0, 'The width is 3, and three cloths are sewn together.')] })],
+    I: [ch({ item: 'v:幅', ctx: { jp: '{帆|ほ} ： {縦|たて} 5 メートル 。 {横|よこ} は {縦|たて} より 2 メートル {短|みじか}い 。 {布|ぬの} の {幅|はば} は 1 メートル 。', en: '' }, prompt: { en: 'How many widths of cloth does Nui sew side by side?' }, options: [o('{三枚|さんまい}', 1), o('{五枚|ごまい}', 0, 'That would be 5 metres across; the width is 2 shorter than the height: 3 metres.'), o('{二枚|にまい}', 0, '2 is how much shorter it is, not the width.')] })],
+    A: [ch({ item: 'v:縫い代', ctx: { jp: '{帆|ほ} ： {縦|たて} 5 メートル 、 {横|よこ} 3 メートル 。 {帆布|はんぷ} {三幅|みはば} {縫|ぬ}い{合|あ}わせ 、 {縫|ぬ}い{代|しろ} {別|べつ} 。', en: '' }, prompt: { en: 'A clipped order. What does 縫い代別 tell Nui?' }, options: [o('{縫|ぬ}い{合|あ}わせる {分|ぶん} の {布|ぬの} は 、 {寸法|すんぽう} と は {別|べつ} に {足|た}す', 1), o('{縫|ぬ}い{代|しろ} は {要|い}らない', 0, '別 means separately: the seam allowance is added on top, not left out.'), o('{三幅|みはば} と は {別|べつ} に 、 もう {一幅|ひとはば} {縫|ぬ}う', 0, '別 belongs to the seam allowance (縫い代), not to another width.')] })],
+  });
+  task('sea.sign_board', T('{稽古|けいこ}{板|いた} の {間違|まちが}い', 'The practice board'), {
+    F: [ch({ item: 'c:sea_kana_me', ctx: { jp: 'けいこ いた ： さくら {丸|まる} ・ ぬぐみ {丸|まる} ・ ちとせ {丸|まる}', en: '' }, prompt: { en: 'One kana should be め. Which?' }, options: [o('ぬぐみ の 「ぬ」', 1), o('さくら の 「さ」', 0, 'さくら is right.'), o('ちとせ の 「ち」', 0, 'ちとせ is right.')] })],
+    E: [ch({ item: 'c:sea_kana_me', ctx: { jp: '{稽古|けいこ}{板|いた} ： さくら{丸|まる} ・ ぬぐみ{丸|まる} ・ ちとせ{丸|まる}', en: '' }, prompt: { en: 'Which name is painted wrong, and what should it say?' }, options: [o('ぬぐみ{丸|まる} は 、 めぐみ{丸|まる}', 1), o('ちとせ{丸|まる} は 、 さとせ{丸|まる}', 0, 'ちとせ is right. ぬ and め differ by the little loop.'), o('さくら{丸|まる} は 、 きくら{丸|まる}', 0, 'さくら is right. Look for ぬ written where め belongs.')] })],
+    I: [ch({ item: 'c:sea_kana_wa', ctx: { jp: '{稽古|けいこ}{板|いた} ： はやて{丸|まる} ・ れかしお{丸|まる} ・ うみねこ{丸|まる}', en: '' }, prompt: { en: 'One kana is wrong. Which, and what should it be?' }, options: [o('れかしお の 「れ」 は 、 「わ」', 1), o('うみねこ の 「ね」 は 、 「れ」', 0, 'うみねこ, the black-tailed gull, is right.'), o('はやて の 「て」 は 、 「そ」', 0, 'はやて, a gale, is right. れ and わ differ in their right-hand stroke.')] })],
+    A: [ch({ item: 'c:sea_kanji_maru', ctx: { jp: '{稽古|けいこ}{板|いた} ： {若潮|わかしお}{丸|まる} ・ {潮風|しおかぜ}{九|きゅう} ・ {千鳥|ちどり}{丸|まる}', en: '' }, prompt: { en: 'One character is a stroke short. Which?' }, options: [o('{潮風|しおかぜ} の 「{九|きゅう}」 は 、 {点|てん} の ない 「{丸|まる}」', 1), o('{若潮|わかしお} の 「{若|わか}」 は 、 「{苦|く}」', 0, '若 is right: わかしお, the rising morning tide.'), o('{千鳥|ちどり} の 「{鳥|とり}」 は 、 「{烏|からす}」', 0, '鳥 is right; 烏, a crow, is the one a stroke short. The slip is 九 for 丸.')] })],
+  });
+
+  // ---- Tetsu's five sea words --------------------------------------------------------------------------------------
+  task('sea.words_boat', T('{帆|ほ} ・ {舵|かじ} ・ {錨|いかり}', 'Sail, rudder, anchor'), {
+    F: [ch({ item: 'v:帆', ctx: { jp: 'かぜ を うける もの は ？', en: '' }, prompt: { en: 'Tetsu asks: which takes the wind?' }, options: [o('ほ', 1), o('かじ', 0, 'かじ turns the boat.'), o('いかり', 0, 'いかり holds the boat still.')] })],
+    E: [ch({ item: 'v:錨', ctx: { jp: '{船|ふね} を {止|と}めて おく もの は ？', en: '' }, prompt: { en: 'Tetsu asks: what holds the boat still?' }, options: [o('{錨|いかり}', 1), o('{舵|かじ}', 0, '舵 decides which way she points.'), o('{帆|ほ}', 0, '帆 takes the wind.')] })],
+    I: [ch({ item: 'g:v_te_kara', ctx: { jp: '{港|みなと} に {入|はい}ったら 、 {帆|ほ} を {下|お}ろして から 、 {錨|いかり} を {下|お}ろす 。', en: '' }, prompt: { en: 'In what order does Tetsu say to do it?' }, options: [o('{先|さき} に {帆|ほ} 、 {次|つぎ} に {錨|いかり}', 1), o('{先|さき} に {錨|いかり} 、 {次|つぎ} に {帆|ほ}', 0, '～てから: the sail comes down first, then the anchor.'), o('{舵|かじ} を {外|はず}して から 、 {港|みなと} に {入|はい}る', 0, 'Nothing about taking off the rudder: the sail, then the anchor.')] })],
+    A: [ch({ item: 'v:舵', ctx: { jp: '{舵|かじ} を {取|と}る {者|もの} は 、 {帆|ほ} の {張|は}り を {見|み}よ 。', en: '' }, prompt: { en: 'An old saying cut into the tiller (written style). What does it tell the one steering?' }, options: [o('{舵|かじ} を {持|も}つ {人|ひと} は 、 {帆|ほ} の {様子|ようす} を {見|み}なさい', 1), o('{帆|ほ} を {張|は}る {人|ひと} は 、 {舵|かじ} を {取|と}る な', 0, '見よ is the written-style command "look": the one at the tiller should watch the sail.'), o('{舵|かじ} を {取|と}ったら 、 {帆|ほ} は {見|み}なくて いい', 0, 'It says the opposite: watch how the sail is drawing.')] })],
+  });
+  task('sea.words_wind', T('{潮|しお} と {風向|かざむ}き', 'The tide and the wind\'s direction'), {
+    F: [ch({ item: 'v:風', ctx: { jp: 'かぜ は にし から 。', en: '' }, prompt: { en: 'Where does the wind come from?' }, options: [o('にし', 1), o('ひがし', 0, 'から marks where it comes from: にし.'), o('きた', 0, 'The wind is from にし.')] })],
+    E: [ch({ item: 'v:風向き', ctx: { jp: '{風向|かざむ}き は {西|にし} 。', en: '' }, prompt: { en: 'Tetsu says the wind\'s direction is west. Which way does it blow?' }, options: [o('{西|にし} から {東|ひがし} へ {吹|ふ}く', 1), o('{東|ひがし} から {西|にし} へ {吹|ふ}く', 0, 'A wind is named by where it comes from: a west wind blows from the west.'), o('{西|にし} へ {向|む}かって {吹|ふ}く', 0, 'Sailors say where the wind comes from, not where it goes.')] })],
+    I: [ch({ item: 'v:潮', ctx: { jp: '{潮|しお} が {引|ひ}いて いる 。 {浅瀬|あさせ} に {気|き} を つけろ 。', en: '' }, prompt: { en: 'What is the tide doing, and why take care?' }, options: [o('{潮|しお} が {引|ひ}いて 、 {浅|あさ}い {所|ところ} が {出|で}て くる から', 1), o('{潮|しお} が {満|み}ちて 、 {岸|きし} が {沈|しず}む から', 0, '引いている: it is going out.'), o('{潮|しお} が {速|はや}く 、 {船|ふね} が {流|なが}される から', 0, '引く is going out, and the shallows come up.')] })],
+    A: [ch({ item: 'v:北東', ctx: { jp: '{北東|ほくとう} の {風|かぜ} 、 {上|あ}げ{潮|しお} 。', en: '' }, prompt: { en: 'Tetsu\'s clipped report. What are the wind and the tide doing?' }, options: [o('{北東|ほくとう} から {風|かぜ} が {吹|ふ}き 、 {潮|しお} が {満|み}ちて きて いる', 1), o('{北東|ほくとう} へ {風|かぜ} が {吹|ふ}き 、 {潮|しお} が {引|ひ}いて いる', 0, 'A 北東の風 comes from the north-east; 上げ潮 is the rising tide.'), o('{風|かぜ} は {止|や}み 、 {潮|しお} は {止|と}まって いる', 0, 'There is a north-easterly, and the tide is rising (上げ潮).')] })],
+  });
+
+  // ---- Shiori's tide book ----------------------------------------------------------------------------------------------
+  task('sea.tide_book', T('{潮|しお} の {表|ひょう}', 'The tide table'), {
+    F: [ch({ item: 'v:満潮', ctx: { jp: 'しお の ひょう ： まんちょう 6 じ ・ かんちょう 12 じ', en: '' }, prompt: { en: 'When is high tide (まんちょう)?' }, options: [o('6 じ', 1), o('12 じ', 0, 'かんちょう is low tide.'), o('18 じ', 0, 'The table gives まんちょう at 6 じ.')] })],
+    E: [ch({ item: 'v:干潮', ctx: { jp: '{潮|しお} の {表|ひょう} ： {満潮|まんちょう} {午前|ごぜん} 6 {時|じ} {半|はん} ・ {干潮|かんちょう} {午後|ごご} 1 {時|じ}', en: '' }, prompt: { en: 'Shiori says to go out at high tide. When?' }, options: [o('{午前|ごぜん} 6 {時|じ} {半|はん}', 1), o('{午後|ごご} 1 {時|じ}', 0, '干潮 is low tide.'), o('{午前|ごぜん} 1 {時|じ}', 0, 'High tide (満潮) is at half past six in the morning.')] })],
+    I: [ch({ item: 'v:満潮', ctx: { jp: '{潮|しお} の {表|ひょう} ： {満潮|まんちょう} {午前|ごぜん} 6 {時|じ} {半|はん} ・ {午後|ごご} 7 {時|じ} ／ {干潮|かんちょう} {午後|ごご} 1 {時|じ} 。 {今|いま} は {午後|ごご} 2 {時|じ} 。', en: '' }, prompt: { en: 'It is 2 in the afternoon. When is the next high tide, and what is the tide doing now?' }, options: [o('{午後|ごご} 7 {時|じ} 。 {今|いま} は {満|み}ちて きて いる', 1), o('{午前|ごぜん} 6 {時|じ} {半|はん} 。 {今|いま} は {引|ひ}いて いる', 0, 'The morning\'s high tide is past; low tide was at 1, so it is coming in now.'), o('{午後|ごご} 1 {時|じ} 。 {今|いま} は {満潮|まんちょう}', 0, '1 PM was low tide (干潮).')] })],
+    A: [ch({ item: 'v:大潮', ctx: { jp: '{本日|ほんじつ} {大潮|おおしお} 。 {満潮|まんちょう} {午前|ごぜん} {六時|ろくじ} {半|はん} 。 {干満|かんまん} の {差|さ} {大|だい} に つき 、 {浅瀬|あさせ} {注意|ちゅうい} 。', en: '' }, prompt: { en: 'Shiori\'s note (written style; real: 大潮 is a spring tide). What does it warn?' }, options: [o('{今日|きょう} は {潮|しお} の {差|さ} が {大|おお}きい ので 、 {浅|あさ}い {所|ところ} に {気|き} を つける', 1), o('{今日|きょう} は {潮|しお} が {動|うご}かない ので 、 いつ {出|で}て も いい', 0, '大潮 is the spring tide: the biggest rise and fall.'), o('{大|おお}きな {波|なみ} が {来|く}る ので 、 {港|みなと} を {出|で}ない', 0, '大潮 is about the tide, not waves; the note says to mind the shallows.')] })],
+  });
+
+  // ---- Ōmi's examination: the form, and the interview ----------------------------------------------------------------
+  task('sea.licence_form', T('{免状|めんじょう} の {申請書|しんせいしょ}', 'The licence\'s form'), {
+    F: [ch({ item: 'v:名前', ctx: { jp: 'しんせいしょ ： ふね の なまえ ／ もちぬし ／ みなと', en: '' }, prompt: { en: 'Where does the boat\'s name go?' }, options: [o('ふね の なまえ', 1), o('もちぬし', 0, 'もちぬし is the owner: you.'), o('みなと', 0, 'みなと is her harbour.')] })],
+    E: [ch({ item: 'v:所有者', ctx: { jp: '{申請書|しんせいしょ} ： {船名|せんめい} ／ {所有者|しょゆうしゃ} ／ {母港|ぼこう} ／ {用途|ようと}', en: '' }, prompt: { en: 'Your own name goes in which box?' }, options: [o('{所有者|しょゆうしゃ}', 1), o('{船名|せんめい}', 0, '船名 is the boat\'s name.'), o('{母港|ぼこう}', 0, '母港 is her home port: Saltglass.')] })],
+    I: [ch({ item: 'v:用途', ctx: { jp: '{申請書|しんせいしょ} ： {船名|せんめい} ／ {所有者|しょゆうしゃ} ／ {母港|ぼこう} ／ {用途|ようと}', en: '' }, prompt: { en: 'What do you write under 用途?' }, options: [o('{沿岸|えんがん} の {郵便|ゆうびん} を {運|はこ}ぶ こと', 1), o('{潮硝子|しおがらす}', 0, 'That is her home port (母港). 用途 is what she is used for.'), o('{船|ふね} の {長|なが}さ', 0, '用途 asks what she is for: carrying the coast\'s post.')] })],
+    A: [ch({ item: 'v:記入', ctx: { jp: '{本船|ほんせん} の {母港|ぼこう} 、 {所有者|しょゆうしゃ} {及|およ}び {用途|ようと} を {記入|きにゅう} の {上|うえ} 、 {提出|ていしゅつ} の こと 。', en: '' }, prompt: { en: 'The form\'s instruction (written style). What are you told to do?' }, options: [o('{母港|ぼこう} と {持|も}ち{主|ぬし} と {使|つか}い{道|みち} を {書|か}いて から 、 {出|だ}す', 1), o('{船|ふね} の {名前|なまえ} だけ {書|か}いて 、 {出|だ}さずに {持|も}って おく', 0, '～の上: after filling these in; ～のこと: an instruction to hand it in.'), o('{港長|こうちょう} が {書|か}いて くれる の を {待|ま}つ', 0, 'You fill it in (記入) and hand it in (提出).')] })],
+  });
+  task('sea.interview_1', T('{面接|めんせつ} ： {出港|しゅっこう} の {前|まえ}', 'The interview: before putting out'), {
+    F: [ch({ item: 'v:確かめる', ctx: { jp: 'ふね を だす まえ に 、 なに を みます か 。', en: '' }, prompt: { en: 'Ōmi, very formal: what do you look at before putting out?' }, options: [o('かぜ と しお を みます 。', 1), o('なに も みません 。', 0, 'An examiner wants to hear what you check.'), o('おなか が すきました 。', 0, 'That answers nothing: tell her what you check.')] })],
+    E: [ch({ item: 'g:mae_ato', ctx: { jp: '{船|ふね} を {出|だ}す {前|まえ} に 、 {何|なに} を {確|たし}かめます か 。', en: '' }, prompt: { en: 'Answer the examiner.' }, options: [o('{風向|かざむ}き と {潮|しお} を {確|たし}かめます 。', 1), o('{特|とく}に {何|なに} も {確|たし}かめません 。', 0, 'An examiner wants to hear that you check the wind and the tide.'), o('{確|たし}かめた ほう が いい です か 。', 0, 'Answering a question with a question: tell her what you check.')] })],
+    I: [ch({ item: 'g:keigo_sonkei', ctx: { jp: '{出港|しゅっこう} の {前|まえ} に は 、 {何|なに} を {確認|かくにん} されます か 。', en: '' }, prompt: { en: 'The examiner uses a respectful form (されます) for what you do. Answer about yourself.' }, options: [o('{風向|かざむ}き と {潮|しお} を {確認|かくにん} します 。', 1), o('{風向|かざむ}き と {潮|しお} を {確認|かくにん} されます 。', 0, 'されます is respectful: she uses it for you. About yourself, say します.'), o('{確認|かくにん} は 、 {特|とく}に しません 。', 0, 'Polite, but an examiner wants to hear that you check.')] })],
+    A: [ch({ item: 'g:keigo_kenjo', ctx: { jp: '{出港|しゅっこう} の {際|さい} の {確認|かくにん} に ついて 、 ご{説明|せつめい} ください 。', en: '' }, prompt: { en: 'Answer in a humble register.' }, options: [o('はい 。 {風向|かざむ}き と {潮|しお} の {時刻|じこく} を {確認|かくにん} いたして から 、 {出港|しゅっこう} いたします 。', 1), o('はい 。 {風向|かざむ}き と {潮|しお} を ご{確認|かくにん} に なって から 、 {出港|しゅっこう} なさいます 。', 0, 'ご～になる and なさる raise the one acting, and here that is you: use いたす.'), o('まあ 、 {適当|てきとう} に やって ます 。', 0, 'Far too casual for an examination, and it says nothing.')] })],
+  });
+  task('sea.interview_2', T('{面接|めんせつ} ： {霧|きり} の {時|とき}', 'The interview: in fog'), {
+    F: [ch({ item: 'v:霧', ctx: { jp: 'きり が でたら 、 どう します か 。', en: '' }, prompt: { en: 'What do you do if fog comes in?' }, options: [o('ほ を しぼって 、 ゆっくり すすみます 。', 1), o('いそいで すすみます 。', 0, 'In fog you slow down.'), o('ねます 。', 0, 'Not at sea: slow down and take care.')] })],
+    E: [ch({ item: 'g:cond_tara', ctx: { jp: '{霧|きり} が {出|で}たら 、 どう します か 。', en: '' }, prompt: { en: 'Answer the examiner.' }, options: [o('{帆|ほ} を {絞|しぼ}って 、 {灯台|とうだい} の {光|ひかり} を {探|さが}します 。', 1), o('{急|いそ}いで 、 {帆|ほ} を {全部|ぜんぶ} {張|は}ります 。', 0, 'Full sail in fog is how boats meet rocks: slow down.'), o('{霧|きり} が {出|で}たら 、 {晴|は}れます 。', 0, 'That says "if fog comes, it clears": it doesn\'t say what you do.')] })],
+    I: [ch({ item: 'g:keigo_sonkei', ctx: { jp: '{航海|こうかい} {中|ちゅう} に {霧|きり} が {出|で}た {場合|ばあい} 、 どう なさいます か 。', en: '' }, prompt: { en: 'Answer about yourself.' }, options: [o('{速度|そくど} を {落|お}として 、 {灯台|とうだい} の {光|ひかり} を {数|かぞ}えます 。', 1), o('どう なさる か 、 {分|わ}かりません 。', 0, 'なさる is respectful, for others; and an examiner wants a plan.'), o('{霧|きり} が {晴|は}れる まで 、 {帆|ほ} を {張|は}って {急|いそ}ぎます 。', 0, 'Hurrying in fog is the wrong answer at any register.')] })],
+    A: [ch({ item: 'v:視界', ctx: { jp: '{視界|しかい} {不良|ふりょう} の {際|さい} の {対応|たいおう} を {述|の}べて ください 。', en: '' }, prompt: { en: 'An examiner\'s formal question. Which answer is sound?' }, options: [o('{帆|ほ} を {絞|しぼ}って {速度|そくど} を {落|お}とし 、 {灯台|とうだい} の {信号|しんごう} で {位置|いち} を {確|たし}かめます 。', 1), o('{視界|しかい} が {悪|わる}い ので 、 {何|なに} も {見|み}えません 。', 0, '視界不良 is poor visibility; she asks how you respond (対応).'), o('{霧|きり} の {日|ひ} は 、 {港|みなと} で {昼寝|ひるね} を いたします 。', 0, 'Humble and polite, but fog can come in after you have put out.')] })],
+  });
+  task('sea.interview_3', T('{面接|めんせつ} ： {郵便|ゆうびん} が {濡|ぬ}れたら', 'The interview: wet post'), {
+    F: [ch({ item: 'v:手紙', ctx: { jp: 'てがみ が ぬれたら 、 どう します か 。', en: '' }, prompt: { en: 'What do you do if the letters get wet?' }, options: [o('すぐ みなと に いいます 。', 1), o('だまって とどけます 。', 0, 'Tell the harbour: a wet letter may need sending again.'), o('すてます 。', 0, 'Never throw away the post: tell the harbour.')] })],
+    E: [ch({ item: 'v:郵便', ctx: { jp: '{郵便|ゆうびん} が {濡|ぬ}れたら 、 どう します か 。', en: '' }, prompt: { en: 'Answer the examiner.' }, options: [o('{港|みなと} に {着|つ}いたら 、 すぐ {伝|つた}えます 。', 1), o('{乾|かわ}かして 、 {黙|だま}って {届|とど}けます 。', 0, 'Ōmi wants to be told: a wet letter may need sending again.'), o('{濡|ぬ}れた {郵便|ゆうびん} は 、 {海|うみ} に {返|かえ}します 。', 0, 'The post is never thrown away.')] })],
+    I: [ch({ item: 'g:keigo_sonkei', ctx: { jp: '{郵便物|ゆうびんぶつ} が {濡|ぬ}れて しまった {場合|ばあい} は 、 どう されます か 。', en: '' }, prompt: { en: 'Answer about yourself.' }, options: [o('{港|みなと} に {着|つ}いたら すぐ 、 {港長|こうちょう} に {報告|ほうこく} します 。', 1), o('{港|みなと} に {着|つ}いたら すぐ 、 {港長|こうちょう} に {報告|ほうこく} されます 。', 0, 'されます is respectful: for what others do. About yourself, say します.'), o('{濡|ぬ}れて も 、 {大丈夫|だいじょうぶ} だ と {思|おも}います 。', 0, 'That avoids the question: say what you would do.')] })],
+    A: [ch({ item: 'g:keigo_kenjo', ctx: { jp: '{郵便物|ゆうびんぶつ} に {損傷|そんしょう} が {生|しょう}じた {場合|ばあい} の {対応|たいおう} を お{聞|き}かせ ください 。', en: '' }, prompt: { en: 'Answer in a humble register.' }, options: [o('{港|みなと} に {着|つ}き{次第|しだい} 、 {港長|こうちょう} に ご{報告|ほうこく} いたします 。', 1), o('{港|みなと} に {着|つ}き{次第|しだい} 、 {港長|こうちょう} が ご{報告|ほうこく} なさいます 。', 0, 'なさる raises the one acting, and the harbourmaster isn\'t the one reporting: you are (ご～いたす).'), o('{損傷|そんしょう} は {生|しょう}じない と {存|ぞん}じます 。', 0, 'Humble, but it dodges the question.')] })],
+  });
 })(RB.content);
 
 

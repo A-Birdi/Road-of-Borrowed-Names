@@ -37,3 +37,19 @@ body.in-panel .sea-strip, body.in-dialogue .sea-strip { display: none; }
 .sea-entry .t { font-weight: 600; }
 .sea-sights { margin: 0.2em 0; padding-left: 1.2em; }
 .sea-strip .pbtn rt { color: var(--rt-ink); }
+
+/* naming the boat: the bow with the name painted on, the kana tiles */
+.sea-bow { display: grid; justify-items: center; gap: 0.2em; padding: 0.8em 1em; border-radius: var(--r-1);
+  background: linear-gradient(180deg, #6a4a2e, #4e3420); border: 1px solid var(--paper-edge); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.25); }
+.sea-paint { font: 700 2em/1.2 var(--serif); color: #f4ecd8; letter-spacing: 0.12em; text-shadow: 0 1px 0 rgba(0,0,0,0.45); }
+.sea-paint .maru { margin-left: 0.1em; }
+.sea-paint .muted { color: #c8b89a; }
+.sea-bow .en { color: #e8dcc0; font-size: 0.85em; }
+.sea-name-err { margin: 0; color: var(--vermilion); }
+.sea-name { align-content: start; }
+.sea-kana { display: grid; gap: 0.3em; max-height: min(58vh, 36em); overflow-y: auto; padding: 0.1em; }
+@media (max-width: 520px) { .sea-kana { max-height: 46vh; } }
+.sea-kana-row { display: grid; grid-template-columns: repeat(5, minmax(0, 3em)); gap: 0.3em; justify-content: center; }
+.sea-k { min-height: 2.5em; padding: 0; justify-content: center; font-size: 1.15em; }
+.sea-kana-gap { display: block; }
+.sea-name-foot { display: flex; flex-wrap: wrap; gap: 0.4em; justify-content: center; align-items: center; }

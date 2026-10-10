@@ -25,12 +25,24 @@ narr: {港|みなと} の {人|ひと} が {手早|てばや}く {直|なお}し
 
 # ---- bringing her in --------------------------------------------------------------------------------------------------
 @scene sea.dock_saltglass
+!if var.sea_trial=1 -> mark
 ?(var.sea_to=saltglass) narr: {潮硝子|しおがらす} の {港|みなと} が {見|み}えて きた 。 || Saltglass harbour, dead ahead.
 ?(!var.sea_to=saltglass) narr: {潮硝子|しおがらす} の {港|みなと} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？ || You're passing Saltglass harbour. Put in here?
 !choice
 * {港|みなと} に {入|はい}る 。 || Bring her in. -> in
 * このまま {進|すす}む 。 || Sail on. -> end
 :in
+!hook sail_dock
+!end
+:mark
+# the sea trial (22_scenes_licence.js), back before the mark off the point is rounded
+narr: テツ が {南東|なんとう} を {指|さ}す 。 「ブイ が まだ だ 。 {岬|みさき} の {先|さき} に ある 。」 || Tetsu points south-east. "The buoy first. It's out past the point."
+!choice
+* ブイ を {回|まわ}って くる 。 || Go round the buoy. -> end
+* {乗組員|のりくみいん} に {任|まか}せる 。 || Let the crew take her round. -> crew
+:crew
+narr: {乗組員|のりくみいん} が {舵|かじ} を {取|と}り 、 ブイ を {回|まわ}って {港|みなと} に {戻|もど}った 。 || The crew takes the tiller, rounds the buoy and brings her back in.
+!var sea_trial = 2
 !hook sail_dock
 @scene sea.dock_manybridge
 ?(var.sea_to=manybridge) narr: {川口|かわぐち} の {向|む}こう に 、 {八百橋|やおばし} の {橋|はし} が {並|なら}んで いる 。 || Beyond the river mouth, Manybridge's bridges stand in a row.

@@ -9,7 +9,8 @@
  *
  *   C.ports[id] = { place, name { jp, en }, dock { map, x, y, dir } (where you stand ashore by the boat), sea { x, y,
  *                   dir } (where the boat puts out), zone { x, y, w, h } (the water off the port, on the sea map),
- *                   if: cond (the port takes boats), reach: cond (reached other than by sea) }
+ *                   if: cond (the port takes boats), reach: cond (reached other than by sea), arrive: scene (run ashore
+ *                   after each arrival by boat; its lines carry their own conditions, e.g. the first landing) }
  *   C.seaSituations[id] = { kind: 'hail'|'fog'|'cargo'|'creature'|'bird'|'seal'|'trouble'|'first'|'story', scene,
  *                   routes?: ['a-b', …] (either way round), first?: route (once, the first voyage on it), story?: cond
  *                   (never skipped while it holds), once?: bool, weight?: n }
@@ -159,6 +160,8 @@ RB.sail = (function () {
       if (d.first && route.apply(null, d.first.split('-')) === r && !q.seen[id]) forced.push(id);
       else if (d.story && RB.state.test(s, d.story) && !q.seen[id] && (!d.routes || d.routes.some((x) => route.apply(null, x.split('-')) === r))) forced.push(id);
     }
+    // a trial round the point (from a port back to it) has no drawn situations and a set wind: the lesson is the sail
+    if (a === b) return { sits: forced, wind: 'left' };
     const key = 'voyage:' + q.n;
     const drawn = RB.streams.fixed(s, key, 'sea', (draw) => {
       const pool = eligible(s, a, b);
@@ -214,9 +217,22 @@ RB.sail = (function () {
     v.steps++;
     const x = due(s);
     if (x) { busy = true; try { await runSituation(s, x); } finally { busy = false; } return; }
+    // the sea map's own triggers (a mark to round on a trial), as on land: `if`, and `once` per journey
+    const p = W.player;
+    for (const tr of W.map.triggers || []) {
+      if (p.x < tr.x || p.x >= tr.x + tr.w || p.y < tr.y || p.y >= tr.y + tr.h) continue;
+      if (tr.if && !RB.state.test(s, tr.if)) continue;
+      const onceKey = 'trig:' + W.map.id + ':' + (tr.id || tr.x + ',' + tr.y);
+      if (tr.once && s.flags[onceKey]) continue;
+      if (tr.once) s.flags[onceKey] = true;
+      busy = true;
+      try { await RB.script.run(tr.scene, { trigger: tr }); } finally { busy = false; }
+      return;
+    }
     // in a port's water: the destination docks; another port reached offers to
     const at = portAt(W.player.x, W.player.y);
-    if (at && (at === v.to || reached(s, at) && open(s, at)) && v.offered !== at) {
+    // (a trial, out and back to the same port, puts in nowhere else)
+    if (at && (at === v.to || v.from !== v.to && reached(s, at) && open(s, at)) && v.offered !== at) {
       v.offered = at;
       busy = true;
       try { await RB.script.run('sea.dock_' + at, { port: at }); } finally { busy = false; }
@@ -237,6 +253,8 @@ RB.sail = (function () {
     q.voyage = null;
     syncVars(s);
     if (!(opts && opts.noWarp) && P) await RB.game.transition(P.dock.map, P.dock.x, P.dock.y, P.dock.dir || 'down', { inScript: true });
+    // the port's own arrival by boat (the first landing on the island, say), when it has one
+    if (P && P.arrive && RB.content.scenes[P.arrive] && !(opts && opts.noWarp)) await RB.script.run(P.arrive, { port: to });
     return entry;
   }
   // the crew takes over: what situations are left still happen (story ones are never skipped), then arrival
@@ -300,6 +318,17 @@ RB.sail = (function () {
     syncVars(s);
   };
   RB.hooks.sail_trial = async (a) => { const s = S(); await putOut(s, a[0], a[1], 'self'); };
+  //   !hook sail_name [keep]     name the boat in kana (the yards): var._res 1 when a name is painted, 0 if put off;
+  //                              `keep` offers to keep the hull's old name (ちどり)
+  RB.hooks.sail_name = async (a) => {
+    const s = S(), q = of(s);
+    const keep = a[0] === 'keep' ? 'ちどり' : null;
+    const name = RB.ui.sail && RB.ui.sail.nameBoat ? await RB.ui.sail.nameBoat(s, { keep, current: (q.boat && q.boat.name) || '' }) : null;
+    if (!name) { s.vars._res = 0; return; }
+    q.boat = Object.assign({}, q.boat || {}, { name });
+    s.vars.sea_kept = keep && name === keep ? 1 : 0;
+    s.vars._res = 1;
+  };
   //   !hook sail_cabin           below to the cabin from the boat at this port (the port is remembered for coming up)
   //   !hook sail_ashore          up from the cabin, onto the pier by the boat
   //   !hook sail_open <page>     the Ledger at a page (the cabin's shelf, volume, Distractions corner)
@@ -314,6 +343,20 @@ RB.sail = (function () {
     await RB.game.transition(P.dock.map, P.dock.x, P.dock.y, P.dock.dir || 'down', { inScript: true });
   };
   RB.hooks.sail_open = async (a) => { if (RB.ui.menu && RB.ui.menu.open) RB.ui.menu.open(a[0]); };
+  // a name the sign-writers can paint: one to five hiragana; not starting with ん or a small kana; a small ゃゅょ only
+  // after a kana of the い column; a small っ never last. Returns null when it is fine, or why not ({ jp, en }).
+  const SMALL = 'ゃゅょ', ICOL = 'きしちにひみりぎじぢびぴ';
+  function nameProblem(k) {
+    k = String(k || '');
+    const ch = Array.from(k);
+    if (!ch.length) return { jp: '{名前|なまえ} が まだ ない 。', en: 'Choose at least one kana.' };
+    if (ch.length > 5) return { jp: '{五文字|ごもじ} まで 。', en: 'Five kana at most: the sign-writers need room for 丸.' };
+    if (ch.some((c) => !/[\u3041-\u3093]/.test(c))) return { jp: 'ひらがな だけ 。', en: 'Hiragana only.' };
+    if (('んっ' + SMALL).indexOf(ch[0]) >= 0) return { jp: '「' + ch[0] + '」 で は {始|はじ}まらない 。', en: 'A name can\'t begin with ' + ch[0] + '.' };
+    for (let i = 1; i < ch.length; i++) if (SMALL.indexOf(ch[i]) >= 0 && ICOL.indexOf(ch[i - 1]) < 0) return { jp: '「' + ch[i] + '」 は 、 い の {段|だん} の {後|あと} だけ 。', en: 'A small ' + ch[i] + ' only follows a kana ending in i (き, し, ち…).' };
+    if (ch[ch.length - 1] === 'っ') return { jp: '「っ」 で は {終|お}わらない 。', en: 'A name can\'t end with a small っ.' };
+    return null;
+  }
   // the boat's name, as painted: kana, always followed by 丸 (`$boat {丸|まる}` in a line); in English, "Chidori-maru"
   function boatName(s) {
     const q = of(s), k = (q && q.boat && q.boat.name) || '';
@@ -323,6 +366,6 @@ RB.sail = (function () {
   }
 
   const api = { of, owns, active, onSea, port, portIds, open, reached, destinations, portAt, route, pointOf, stepDur, sailState, setTrim, TRIMS, WIND_NAME,
-    plan, begin, distance, due, onStep, arrive, crew, putOut, damage, mend, note, boatName, LEGEND, syncVars };
+    plan, begin, distance, due, onStep, arrive, crew, putOut, damage, mend, note, boatName, nameProblem, LEGEND, syncVars };
   return api;
 })();

@@ -44,7 +44,7 @@ RB.maps = (function () {
         const dx = s.x + s.door, dy = s.y + s.h - 1;
         if (s.to) {
           block[dy * w + dx] = 0;
-          exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked });
+          exits.push({ x: dx, y: dy, w: 1, h: 1, to: s.to, tx: s.spawn ? s.spawn[0] : null, ty: s.spawn ? s.spawn[1] : null, dir: 'up', door: true, if: s.if, locked: s.locked, unlock: s.unlock });
         } else shut.push({ x: dx, y: dy, if: s.if, text: s.shut || null });
       }
     }

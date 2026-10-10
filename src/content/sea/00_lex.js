@@ -78,4 +78,64 @@ RB.lex.add(RB.lex.parseTable(`
 海岸|かいがん|n|E|the coast, the shore
 幾つ|いくつ|n|E|how many; (幾つも) many, one after another
 勧む|すすむ|exp|A|(written, old style) to recommend (modern 勧める)
+# ---- A Licence for the Open Sea (P11b): the deal, the yard, the trials, the examination -------------------------------
+外海|そとうみ|n|I|the open sea
+免状|めんじょう|n|I|an official licence, a certificate
+沿岸|えんがん|n|I|the coast; coastal
+郵便船|ゆうびんせん|n|I|a post boat
+郵便物|ゆうびんぶつ|n|I|post, mail (the items)
+小回り|こまわり|n|I|turning in a small space (小回りが利く: handy, nimble)
+水先|みずさき|n|A|pilotage; the pilot who guides ships in
+水先船|みずさきぶね|n|A|a pilot boat
+造船所|ぞうせんじょ|n|I|a boatyard, a shipyard
+船大工|ふなだいく|n|I|a shipwright
+竜骨|りゅうこつ|n|A|a keel
+名物|めいぶつ|n|I|a speciality, what a place is known for
+材木|ざいもく|n|I|timber
+杉板|すぎいた|n|I|cedar planks
+送り状|おくりじょう|n|I|a delivery note
+三番倉|さんばんぐら|n|E|warehouse number three
+参番蔵|さんばんぐら|n|A|warehouse number three (with 参, the formal 三 used on documents)
+入船|いりふね|n|A|a ship coming in
+遅延|ちえん|vs|A|a delay
+寸法|すんぽう|n|I|measurements, dimensions
+帆布|はんぷ|n|I|sailcloth, canvas
+一幅|ひとはば|n|A|one width of cloth
+三幅|みはば|n|A|three widths of cloth (cloth is counted ひとはば, ふたはば, みはば)
+塗料|とりょう|n|I|paint
+一画|いっかく|n|A|one stroke (of a character)
+めぐみ|めぐみ|n|I|a blessing (and a boat's name)
+若|わか|n|A|young (in compounds: 若潮, 若者)
+若潮|わかしお|n|A|the rising morning tide (and a boat's name)
+そ|そ|exp|F|the kana そ
+ぬぐみ|ぬぐみ|exp|E|(not a word: めぐみ painted with ぬ for め)
+さとせ|さとせ|exp|E|(not a word: ちとせ with さ for ち)
+きくら|きくら|exp|E|(not a word: さくら with き for さ)
+れかしお|れかしお|exp|I|(not a word: わかしお painted with れ for わ)
+ブイ||n|I|a buoy
+風向き|かざむき|n|I|the wind's direction (where it comes from)
+干満|かんまん|n|A|ebb and flow (of the tide)
+差|さ|n|I|a difference in size or amount
+大|だい|n|A|large, great (in notes and compounds)
+二代目|にだいめ|n|I|the second to bear a name, a successor
+襲名|しゅうめい|vs|A|taking on a predecessor's name (as actors do)
+上出来|じょうでき|adj-na|I|well done, a fine result
+意地|いじ|n|I|temper, spite (意地が悪い: mean)
+試験|しけん|n|E|an examination
+試験官|しけんかん|n|I|an official examiner
+面接|めんせつ|vs|I|an interview
+合格|ごうかく|vs|E|passing an examination
+別人|べつじん|n|I|a different person
+所有者|しょゆうしゃ|n|I|an owner
+母港|ぼこう|n|I|a home port
+用途|ようと|n|A|a use, a purpose
+本船|ほんせん|n|A|this vessel (in documents)
+速度|そくど|n|I|speed
+視界|しかい|n|A|visibility, the field of view
+不良|ふりょう|n|A|poor, bad (of a condition)
+対応|たいおう|vs|I|a response; dealing with
+信号|しんごう|n|E|a sign or signal (a light, a flag)
+損傷|そんしょう|vs|A|damage
+生じる|しょうじる|v1|A|to arise, to occur
+漣|さざなみ|n|A|ripples (and Sazanami, a fishing hamlet up the coast: fictional)
 `));

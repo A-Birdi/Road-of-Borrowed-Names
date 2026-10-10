@@ -44,6 +44,7 @@ RB.ui.sail = (function () {
     return g + '</svg>';
   }
   function chart(s, from) {
+    if (RB.ui.dialogue) RB.ui.dialogue.hide();
     return new Promise((resolve) => {
       const list = SL().destinations(s, from), q = SL().of(s);
       let to = null, done = false;
@@ -148,7 +149,55 @@ RB.ui.sail = (function () {
     }
     return h + '</ol>';
   }
-  return { chart, sync, cycleTrim, logHtml };
+  // ---- naming the boat (the yards; A Licence for the Open Sea) --------------------------------------------------------
+  // A sheet of kana tiles: the name is put together a kana at a time (one to five, hiragana), shown painted on the
+  // bow with 丸 after it, read aloud in romaji; the sign-writers' rules are checked as it grows. Resolves with the
+  // name, or null when put off ("Not yet"). `keep` offers the hull's old name.
+  const KANA_ROWS = ['あいうえお', 'かきくけこ', 'さしすせそ', 'たちつてと', 'なにぬねの', 'はひふへほ', 'まみむめも', 'や・ゆ・よ', 'らりるれろ', 'わ・を・ん',
+    'がぎぐげご', 'ざじずぜぞ', 'だぢづでど', 'ばびぶべぼ', 'ぱぴぷぺぽ', 'ゃゅょっ・'];
+  function nameBoat(s, o) {
+    o = o || {};
+    if (RB.ui.dialogue) RB.ui.dialogue.hide(); // the line before it (and its Keep tab) give way to the sheet
+    return new Promise((resolve) => {
+      let name = Array.from(o.current || ''), done = false, err = null;
+      const fr = RB.ui.folio.frame({ cls: 'sea-folio sea-namefolio', onClose: () => finish(null), closeLabel: 'Not yet', closeIcon: 'back' });
+      fr.setTitle(RB.ui.label('{船|ふね} の {名前|なまえ}', 'Naming the boat'), 'In kana, one to five; the sign-writers add 丸');
+      const layer = { el: fr.scrim, name: 'sea-name', onCancel: () => finish(null) };
+      function finish(r) { if (done) return; done = true; RB.ui.popLayer(layer); resolve(r); }
+      const ro = (k) => (RB.kana && RB.kana.romaji ? RB.kana.romaji(k) : k);
+      function render(focusSel) {
+        const k = name.join(''), prob = k ? SL().nameProblem(k) : null;
+        let h = '<div class="leaf sea-leaf sea-name" tabindex="-1">';
+        h += '<div class="sea-bow" aria-live="polite"><span class="sea-paint" lang="ja">' + (k ? esc(k) : '<span class="muted">…</span>') + '<span class="maru">丸</span></span>' +
+          '<span class="en">' + (k ? esc(ro(k).charAt(0).toUpperCase() + ro(k).slice(1) + '-maru') : 'No name yet') + '</span></div>';
+        if (err || prob) h += '<p class="sea-name-err" role="alert">' + J((err || prob).jp) + ' <span class="en">' + esc((err || prob).en) + '</span></p>';
+        h += '<div class="sea-kana" role="group" aria-label="Kana">' + KANA_ROWS.map((row) => '<div class="sea-kana-row">' + Array.from(row).map((c) => c === '・' ? '<span class="sea-kana-gap"></span>' :
+          '<button type="button" class="pbtn sea-k" data-k="' + c + '" lang="ja" aria-label="' + c + ' (' + esc(ro(c)) + ')"' + (name.length >= 5 ? ' disabled' : '') + '>' + c + '</button>').join('') + '</div>').join('') + '</div>';
+        h += '<div class="sea-name-foot"><button type="button" class="pbtn small" data-a="back"' + (name.length ? '' : ' disabled') + '>' + I('back') + ' Take back a kana</button>' +
+          '<button type="button" class="pbtn small" data-a="clear"' + (name.length ? '' : ' disabled') + '>Start again</button>' +
+          (o.keep ? '<button type="button" class="pbtn small" data-a="keep" lang="ja">Keep ' + esc(o.keep) + '</button>' : '') +
+          '<button type="button" class="pbtn primary" data-a="paint"' + (k && !prob ? '' : ' disabled') + '>' + I('brush') + ' Paint this name</button></div>';
+        fr.box.innerHTML = h + '</div>';
+        const f = fr.box.querySelector(focusSel || '.sea-k');
+        if (f) setTimeout(() => f.focus({ preventScroll: true }), 0);
+      }
+      fr.box.addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b || b.disabled) return;
+        err = null;
+        if (b.dataset.k) { if (name.length < 5) name.push(b.dataset.k); render('[data-k="' + b.dataset.k + '"]'); return; }
+        const a = b.dataset.a;
+        if (a === 'back') { name.pop(); render('[data-a="back"]'); return; }
+        if (a === 'clear') { name = []; render(); return; }
+        if (a === 'keep') { finish(o.keep); return; }
+        if (a === 'paint') { const k = name.join(''), p = SL().nameProblem(k); if (p) { err = p; render('[data-a="paint"]'); return; } finish(k); }
+      });
+      RB.ui.pushLayer(layer);
+      render();
+    });
+  }
+
+  return { chart, sync, cycleTrim, logHtml, nameBoat };
 })();
 
 // ---- the boat, drawn under the traveller and the companion at sea ------------------------------------------------

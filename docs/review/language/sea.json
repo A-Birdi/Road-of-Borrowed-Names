@@ -65,6 +65,30 @@
   "jp": "このまま {進|すす}む 。",
   "en": "Sail on."
  },
+ "scene:sea.dock_saltglass#111hvsr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "テツ が {南東|なんとう} を {指|さ}す 。 「ブイ が まだ だ 。 {岬|みさき} の {先|さき} に ある 。」",
+  "en": "Tetsu points south-east. \"The buoy first. It's out past the point.\""
+ },
+ "scene:sea.dock_saltglass:choice#iyumjf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ブイ を {回|まわ}って くる 。",
+  "en": "Go round the buoy."
+ },
+ "scene:sea.dock_saltglass:choice#14juul": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{乗組員|のりくみいん} に {任|まか}せる 。",
+  "en": "Let the crew take her round."
+ },
+ "scene:sea.dock_saltglass#1l12s9m": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{乗組員|のりくみいん} が {舵|かじ} を {取|と}り 、 ブイ を {回|まわ}って {港|みなと} に {戻|もど}った 。",
+  "en": "The crew takes the tiller, rounds the buoy and brings her back in."
+ },
  "scene:sea.dock_manybridge#je9yhm": {
   "status": "self-reviewed",
   "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
@@ -466,6 +490,984 @@
   "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
   "jp": "{振|ふ}り{返|かえ}る と 、 {八百橋|やおばし} の {橋|はし} が {幾|いく}つ も {重|かさ}なって 、 {遠|とお}ざかって いく 。",
   "en": "Looking back, Manybridge's bridges stand one behind another, growing smaller."
+ },
+ "scene:sea.omi_deal#kegccn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "おう 、 {来|き}た か 。 ちょうど いい 。 {話|はなし} が ある 。",
+  "en": "Ah, there you are. Good timing. I've a proposition."
+ },
+ "scene:sea.omi_deal#163ko32": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{渡|わた}し{船|ぶね} は {時刻表|じこくひょう} どおり だ 。 {結構|けっこう} な こと だ よ 。 だが 、 {沿岸|えんがん} の {小|ちい}さな {港|みなと} に は 、 {郵便|ゆうびん} が {月|つき} に {一度|いちど} しか {届|とど}かない 。",
+  "en": "The ferry keeps its timetable. Very nice. But the little ports along the coast get their post once a month."
+ },
+ "scene:sea.omi_deal#11t0qlx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{小回|こまわ}り の {利|き}く {郵便船|ゆうびんせん} が 、 {一隻|いっせき} {欲|ほ}しい 。 {古|ふる}い {船|ふね} なら 、 {浜|はま} に {何隻|なんせき} も ある 。 {足|た}りない の は 、 {直|なお}す {手|て} と 、 {乗|の}る {人|ひと} だ 。",
+  "en": "I want one handy little post boat. There are old hulls all along the beach. What I'm short of is hands to mend one, and someone to sail her."
+ },
+ "scene:sea.omi_deal#t81178": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "そこ で だ 。 {古|ふる}い {船|ふね} を {一隻|いっせき} {直|なお}して 、 {免状|めんじょう} を {取|と}ったら 、 その {船|ふね} は あんた の もの だ 。 {代|か}わり に 、 {沿岸|えんがん} の {郵便|ゆうびん} を {運|はこ}んで もらう 。",
+  "en": "So here's the deal. Mend an old hull and earn your licence, and she's yours to sail. In return, you carry the coast's post."
+ },
+ "scene:sea.omi_deal#1iicotb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{郵便|ゆうびん} を {船|ふね} で ？ …… {飛脚|ひきゃく} が {海|うみ} に {出|で}る の か 。 {悪|わる}く ない な 。",
+  "en": "Post by boat? …A courier taking to the sea. Not bad at all."
+ },
+ "scene:sea.omi_deal#1yefiy5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} が あれば 、 {海|うみ} の {向|む}こう の {人|ひと} に も {薬|くすり} を {届|とど}けられます ね 。",
+  "en": "With a boat, we could get medicine to people across the water too."
+ },
+ "scene:sea.omi_deal#v370tx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{海|うみ} に も 、 {灯|ひ} の {道|みち} の よう な {道|みち} が ある の でしょう か 。 {見|み}て みたい です 。",
+  "en": "I wonder whether the sea has roads like the lantern roads. I'd like to see."
+ },
+ "scene:sea.omi_deal#17slzf5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {旅|たび} ね 。 {一座|いちざ} の {巡業|じゅんぎょう} みたい 。 {乗|の}った わ 。",
+  "en": "A journey by boat. Like a troupe on tour. Count me in."
+ },
+ "scene:sea.omi_deal:choice#wgib4c": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{引|ひ}き{受|う}けます 。",
+  "en": "I'll take it on."
+ },
+ "scene:sea.omi_deal:choice#k95f5u": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{少|すこ}し {考|かんが}えさせて ください 。",
+  "en": "Let me think it over."
+ },
+ "scene:sea.omi_deal#13qecph": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "いつでも いい 。 {港|みなと} は {逃|に}げない よ 。",
+  "en": "Whenever you like. The harbour isn't going anywhere."
+ },
+ "scene:sea.omi_deal_again#1yi9x4d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {話|はなし} 、 {考|かんが}えて くれた かい ？",
+  "en": "Thought any more about the boat?"
+ },
+ "scene:sea.omi_deal_again:choice#wgib4c": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{引|ひ}き{受|う}けます 。",
+  "en": "I'll take it on."
+ },
+ "scene:sea.omi_deal_again:choice#13q3019": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "まだ {考|かんが}えて います 。",
+  "en": "I'm still thinking."
+ },
+ "scene:sea.omi_deal_again#gdu428": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{急|いそ}がない よ 。 {古|ふる}い {船|ふね} は 、 {待|ま}つ の に {慣|な}れてる 。",
+  "en": "No hurry. Old boats are used to waiting."
+ },
+ "scene:sea.omi_deal_yes#r7ib73": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "よし 。 {話|はなし} が {早|はや}い 。",
+  "en": "Good. Quick to the point."
+ },
+ "scene:sea.omi_deal_yes#t6y2dt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} だ が …… {当|あ}て が ある 。 フク さん の {千鳥丸|ちどりまる} だ 。 {旦那|だんな} が {亡|な}くなって から 、 {浜|はま} に {上|あ}げた まま に なってる 。",
+  "en": "As for the boat… I've one in mind. Fuku's Chidori-maru. She's sat up on the beach since Fuku's husband died."
+ },
+ "scene:sea.omi_deal_yes#oztsuj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} だ が …… {当|あ}て が ある 。 フク さん の {旦那|だんな} の {船|ふね} だ 。 {浜|はま} に {上|あ}げた まま に なってる 。 {名前|なまえ} は …… {港|みなと} の {帳面|ちょうめん} から も {消|き}えて しまった 。",
+  "en": "As for the boat… I've one in mind. Fuku's late husband's. She's sat up on the beach. Her name… it's gone from the harbour's books as well."
+ },
+ "scene:sea.omi_deal_yes#1c1v1d7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{無理|むり} に とは {言|い}わない 。 フク さん が {嫌|いや} なら 、 {港|みなと} の {古|ふる}い {水先船|みずさきぶね} が ある 。 まず 、 {話|はなし} を {聞|き}いて きな 。",
+  "en": "I won't push it. If she'd rather not, there's the harbour's old pilot boat. Go and talk to her first."
+ },
+ "scene:sea.omi_deal_yes#1mm1qee": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "オウミ と {約束|やくそく} した 。 {古|ふる}い {船|ふね} を {直|なお}して {免状|めんじょう} を {取|と}れば 、 {船|ふね} は {自分|じぶん} の もの 。 {代|か}わり に {沿岸|えんがん} の {郵便|ゆうびん} を {運|はこ}ぶ 。",
+  "en": "A deal with Ōmi: mend an old hull and earn a licence, and the boat is mine to sail, carrying the coast's post."
+ },
+ "scene:sea.fuku_hull#byjp8a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港長|こうちょう} さん から {聞|き}きました よ 。 {夫|おっと} の {船|ふね} の こと 。",
+  "en": "The harbourmaster told me. About my husband's boat."
+ },
+ "scene:sea.fuku_hull#1k9j5c2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… でも ね 、 わたし 、 あの {船|ふね} の {名前|なまえ} も {思|おも}い{出|だ}せない の 。 {名前|なまえ} も {分|わ}からない {船|ふね} を 、 {人|ひと} に {渡|わた}す なんて …… 。",
+  "en": "…But you see, I can't even remember her name. To hand over a boat when I don't know her name…"
+ },
+ "scene:sea.fuku_hull#1jmvv1n": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "アサヒ ちゃん に 、 {名札|なふだ} を {頼|たの}んで ある の 。 {名前|なまえ} が {分|わ}かったら 、 その {時|とき} は {喜|よろこ}んで 。",
+  "en": "I've asked little Asahi for a nameplate. If the name turns up, then gladly."
+ },
+ "scene:sea.fuku_hull:choice#b1i69d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名前|なまえ} が {分|わ}かる まで 、 {待|ま}ちます 。",
+  "en": "I'll wait until her name turns up."
+ },
+ "scene:sea.fuku_hull:choice#1ezi3jh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} の {水先船|みずさきぶね} に します 。",
+  "en": "I'll take the harbour's pilot boat."
+ },
+ "scene:sea.fuku_hull#gb894y": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ありがとう 。 {待|ま}って くれる {人|ひと} が いる と 、 {思|おも}い{出|だ}す の も {楽|たの}しみ に なる わ 。",
+  "en": "Thank you. With someone waiting, I might even look forward to remembering."
+ },
+ "scene:sea.fuku_hull#1rx9v3l": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "フク さん は 、 {旦那|だんな} さん の {船|ふね} の {名前|なまえ} を {思|おも}い{出|だ}せない 。 アサヒ さん の {名札|なふだ} が できたら 、 {船|ふね} を {任|まか}せて くれる 。",
+  "en": "Fuku can't remember her husband's boat's name. Once Asahi's nameplate is made, she'll trust us with the boat."
+ },
+ "scene:sea.fuku_hull#p17fcj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ごめんなさい ね 。 …… {水先船|みずさきぶね} も 、 いい {船|ふね} です よ 。 {港|みなと} の {子|こ} たち は 、 みんな あれ の {横|よこ} で {泳|およ}ぎ を {覚|おぼ}えた の 。",
+  "en": "I'm sorry. …The pilot boat's a good boat too. Every child in the harbour learned to swim alongside her."
+ },
+ "scene:sea.fuku_hull#8iupuf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{千鳥丸|ちどりまる} の こと ね 。 {港長|こうちょう} さん から {聞|き}きました よ 。",
+  "en": "It's about the Chidori-maru. The harbourmaster told me."
+ },
+ "scene:sea.fuku_hull#1codsvj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{毎朝|まいあさ} 「いってらっしゃい 」 って {言|い}う でしょう 。 {返事|へんじ} は {鳥|とり} だけ 。 …… あの {船|ふね} が また {海|うみ} に {出|で}たら 、 {返事|へんじ} が {一|ひと}つ {増|ふ}える わ 。",
+  "en": "I say \"take care\" every morning, you know. Only the bird answers. …If she went to sea again, there'd be one more answer."
+ },
+ "scene:sea.fuku_hull#1wgn9i2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名前|なまえ} を {返|かえ}して くれた あなた に 、 {乗|の}って ほしい の 。 {名前|なまえ} は ね 、 {好|す}き に つけて いい の よ 。 {新|あたら}しい {主|あるじ} に は 、 {新|あたら}しい {名前|なまえ} が {似合|にあ}う こと も ある から 。",
+  "en": "I'd like you to sail her, you who gave me back her name. And you may name her as you like. A new master sometimes suits a new name."
+ },
+ "scene:sea.fuku_hull#1fv66nb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {大事|だいじ} に 、 {預|あず}かります 。",
+  "en": "…We'll look after her."
+ },
+ "scene:sea.fuku_hull#p6oi3g": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{大切|たいせつ} に {乗|の}ります 。 {約束|やくそく} します 。",
+  "en": "We'll sail her with care. I promise."
+ },
+ "scene:sea.fuku_hull#vq2gjg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名|な} を {変|か}えて も 、 {船|ふね} が {覚|おぼ}えて いる こと は {変|か}わりません 。",
+  "en": "Even with a new name, what a boat remembers doesn't change."
+ },
+ "scene:sea.fuku_hull#37mewp": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{二代目|にだいめ} を {襲名|しゅうめい} する よう な もの ね 。 {恥|は}ずかしく ない {舞台|ぶたい} に する わ 。",
+  "en": "Like taking on a stage name from the one before. We'll do her proud."
+ },
+ "scene:sea.fuku_hull#1njp65q": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{次|つぎ} の {朝|あさ} 、 テツ の {渡|わた}し{船|ぶね} が 、 {古|ふる}い {船体|せんたい} を {引|ひ}いて {東|ひがし} へ {出|で}た 。 {行|い}き{先|さき} は 、 {八百橋|やおばし} の {造船所|ぞうせんじょ} 。",
+  "en": "Next morning, Tetsu's ferry heads east with the old hull in tow, bound for the boatyard at Manybridge."
+ },
+ "scene:sea.fuku_hull#2mpwgy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船体|せんたい} は {八百橋|やおばし} の {造船所|ぞうせんじょ} へ 。 {渡|わた}し{場|ば} の {横|よこ} の {船大工|ふなだいく} 、 カジロウ を {訪|たず}ねる 。",
+  "en": "The hull has gone to Manybridge. Find Kajirō the shipwright, by the ferry pier."
+ },
+ "scene:sea.fuku_sails#i4wkw9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{見|み}ました よ 。 {岸|きし} に {着|つ}いて いる の を 。 $boat {丸|まる} 。 いい {名前|なまえ} ね 。",
+  "en": "I saw her, tied up at the quay. The $boat. That's a lovely name."
+ },
+ "scene:sea.fuku_sails#129nrki": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… ちどり の まま に して くれた の ね 。 あの {人|ひと} 、 きっと {照|て}れて いる わ 。",
+  "en": "…You kept her name. He'd be blushing, I'm sure."
+ },
+ "scene:sea.fuku_sails#vutppe": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{今朝|けさ} は 、 {船|ふね} に も 「いってらっしゃい 」 を {言|い}いました 。",
+  "en": "This morning I said \"take care\" to the boat as well."
+ },
+ "scene:sea.kajiro_first#5zicz8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {港長|こうちょう} の {客|きゃく} か 。 {船|ふね} は {届|とど}いてる 。",
+  "en": "…Ōmi's lot, are you. The hull's arrived."
+ },
+ "scene:sea.kajiro_first#t9ursk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{竜骨|りゅうこつ} は {丈夫|じょうぶ} だ 。 {板|いた} が {六枚|ろくまい} {腐|くさ}ってる 。 {帆|ほ} は {新|あたら}しく {縫|ぬ}う 。",
+  "en": "The keel's sound. Six planks are rotten. The sail we sew new."
+ },
+ "scene:sea.kajiro_first#wqk99f": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} は {注文|ちゅうもん} した 。 が 、 {届|とど}かない 。 この {町|まち} で は 、 よく ある こと だ 。",
+  "en": "I ordered the planking. It hasn't come. Happens a lot, in this town."
+ },
+ "scene:sea.kajiro_first#1s1mdo6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{荷物|にもつ} が {違|ちが}う {倉|くら} に {行|い}く の は 、 この {町|まち} の {名物|めいぶつ} だ な 。",
+  "en": "Cargo going to the wrong warehouse is this town's speciality."
+ },
+ "scene:sea.kajiro_first#si27ut": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "また {倉|くら} {違|ちが}い です か 。 {札|ふだ} を {読|よ}めば 、 {見|み}つかる かも しれません 。",
+  "en": "The wrong warehouse again? If we read the labels, we may find it."
+ },
+ "scene:sea.kajiro_first#ruir3q": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{届|とど}かない {荷|に} に も 、 {必|かなら}ず {行|い}き{先|さき} が あります 。 {間違|まちが}って いて も 。",
+  "en": "A delivery that doesn't arrive has always gone somewhere. Even if it's the wrong place."
+ },
+ "scene:sea.kajiro_first#ypedqj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{小道具|こどうぐ} が {別|べつ} の {小屋|こや} に {届|とど}く の と {同|おな}じ ね 。 {探|さが}せば ある わ 。",
+  "en": "Like props delivered to the wrong theatre. Look, and they'll turn up."
+ },
+ "scene:sea.kajiro_first#13bus65": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "それ と 、 {帆|ほ} だ 。 {奥|おく} の ヌイ に {聞|き}いて くれ 。 {俺|おれ} の {字|じ} が {読|よ}めない と {怒|おこ}ってる 。",
+  "en": "And the sail. Ask Nui, at the back. She's cross that she can't read my writing."
+ },
+ "scene:sea.kajiro_first#1s4intj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "カジロウ の {造船所|ぞうせんじょ} 。 {届|とど}かない {板|いた} を {探|さが}す 。 {帆|ほ}{縫|ぬ}い の ヌイ に 、 {注文|ちゅうもん} を {読|よ}んで あげる 。",
+  "en": "Kajirō's yard. Find the planking that never arrived, and read Nui the sail-maker her order."
+ },
+ "scene:sea.kajiro_timber#v4s4wb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} の {送|おく}り{状|じょう} だ 。 {倉|くら}{通|どお}り の どこ か に ある 。 {読|よ}んで くれ 。",
+  "en": "Here's the delivery note for the planking. It's somewhere on Warehouse Row. Read it for me."
+ },
+ "scene:sea.kajiro_timber#8quzyf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {急|いそ}がん 。 {板|いた} は {逃|に}げない 。",
+  "en": "…No rush. Planks don't run off."
+ },
+ "scene:sea.kajiro_timber#3rfm48": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "そこ か 。 {渡|わた}し{場|ば} の タケ に 、 この {送|おく}り{状|じょう} を {見|み}せて くれ 。 {車|くるま} で {運|はこ}んで くれる 。",
+  "en": "There, is it. Show this note to Take, the porter on the pier. He'll cart it over."
+ },
+ "scene:sea.kajiro_take#h0pfi9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{送|おく}り{状|じょう} は 、 {渡|わた}し{場|ば} の タケ に 。",
+  "en": "The note goes to Take, on the pier."
+ },
+ "scene:sea.take_timber#1xk270l": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船大工|ふなだいく} の {送|おく}り{状|じょう} か 。 どれ 。",
+  "en": "The shipwright's note? Let's see."
+ },
+ "scene:sea.take_timber#6r9xrx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… なるほど 、 {三番|さんばん}{倉|ぐら} か 。 {板|いた} が {六枚|ろくまい} 。 {任|まか}せな 。 {昼|ひる} まで に {運|はこ}んで おく 。",
+  "en": "…Number three warehouse, eh. Six planks. Leave it to me. They'll be there by noon."
+ },
+ "scene:sea.take_timber#1onn504": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} は {三番|さんばん}{倉|ぐら} に あった 。 タケ が {造船所|ぞうせんじょ} へ {運|はこ}んで くれる 。",
+  "en": "The planking was in warehouse three. Take is carting it to the yard."
+ },
+ "scene:sea.kajiro_nui#g6rub0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ヌイ の {方|ほう} は 、 どう だ 。 {帆|ほ} の ない {船|ふね} は 、 ただ の {箱|はこ} だ 。",
+  "en": "How's Nui getting on? A boat without a sail is just a box."
+ },
+ "scene:sea.kajiro_name#1h6s9no": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} は {張|は}った 。 {帆|ほ} も {縫|ぬ}い{上|あ}がった 。",
+  "en": "The planks are in. The sail's sewn."
+ },
+ "scene:sea.kajiro_name#1csx3xf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "あと は 、 {名前|なまえ} だ 。 {名前|なまえ} の ない {船|ふね} は 、 {呼|よ}んで も {帰|かえ}って こない 。",
+  "en": "All she needs now is a name. A boat with no name won't come back when you call her."
+ },
+ "scene:sea.kajiro_name#ub4c3d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{前|まえ} の {名前|なまえ} は ちどり だった な 。 {残|のこ}す か 、 {変|か}える か 。 あんた が {決|き}めろ 。",
+  "en": "Her old name was Chidori. Keep it or change it. Your call."
+ },
+ "scene:sea.kajiro_name#i74cgg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{水先船|みずさきぶね} に は 、 {名前|なまえ} が なかった 。 みんな 「{水先|みずさき}」 と {呼|よ}んで いた 。 {初|はじ}めて の {名前|なまえ} だ な 。",
+  "en": "The pilot boat never had a name. Everyone just called her \"the pilot\". This'll be her first."
+ },
+ "scene:sea.kajiro_name#1jvphx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名前|なまえ} は 、 かな で 。 {字|じ} を {一|ひと}つ ずつ {選|えら}ぶ 。",
+  "en": "The name, in kana. Choose the letters one by one."
+ },
+ "scene:sea.kajiro_name#y96gjn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {急|いそ}がん で いい 。 {名前|なまえ} は 、 {一生|いっしょう} もの だ 。",
+  "en": "…Take your time. A name's for life."
+ },
+ "scene:sea.kajiro_name#10lqoyu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "$boat {丸|まる} 、 か 。",
+  "en": "The $boat, is it."
+ },
+ "scene:sea.kajiro_name#4wq3t6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ちどり の まま か 。 フク さん が {喜|よろこ}ぶ 。",
+  "en": "Chidori still. Fuku will be pleased."
+ },
+ "scene:sea.kajiro_name#utvxol": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{悪|わる}く ない 。 {字|じ} は 、 {版木|はんぎ}{通|どお}り の ソウベエ の {店|みせ} が {書|か}く 。 {造船所|ぞうせんじょ} の {船|ふね} の {名前|なまえ} は 、 {昔|むかし} から あそこ の {仕事|しごと} だ 。",
+  "en": "Not bad. Sōbē's shop on Blockprint Row will paint the letters. The yard's boat names have always been their work."
+ },
+ "scene:sea.kajiro_name#1uy5tnw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {版木|はんぎ}{通|どお}り へ の {道|みち} は 、 {札場|ふだば} の {騒|さわ}ぎ が {片付|かたづ}く まで {閉|し}まって いる 。 {落|お}ち{着|つ}いたら 、 {行|い}って くれ 。",
+  "en": "…The way to Blockprint Row is shut until the Exchange's trouble is sorted out. Go once it's settled."
+ },
+ "scene:sea.kajiro_name#n8zcmj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {名前|なまえ} は 「$boat {丸|まる}」 。 {字|じ} を {書|か}いて もらう ため 、 {版木|はんぎ}{通|どお}り の ソウベエ を {訪|たず}ねる 。",
+  "en": "The boat's name is the $boat. Ask Sōbē on Blockprint Row to have it painted."
+ },
+ "scene:sea.kajiro_sobe#ztkapt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{字|じ} は 、 ソウベエ の {店|みせ} に {頼|たの}んで くれ 。 {版木|はんぎ}{通|どお}り だ 。",
+  "en": "Ask Sōbē's shop for the letters. Blockprint Row."
+ },
+ "scene:sea.sobe_sign#1apx9in": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {名前|なまえ} ？ …… {刷|す}り{物|もの} じゃ ねえ が 、 {字|じ} は {字|じ} だ 。 {引|ひ}き{受|う}けた 。",
+  "en": "A boat's name? …It's not printing, but letters are letters. We'll take it on."
+ },
+ "scene:sea.sobe_sign#zb65rz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{筆|ふで} を {持|も}つ の は サンペイ だ 。 だが その {前|まえ} に 、 あいつ の {稽古|けいこ}{板|いた} を {見|み}て くれ 。 {間違|まちが}い が {一|ひと}つ ある 。 {見|み}つけられる か 。",
+  "en": "Sanpei holds the brush. But first, look at his practice board. There's one mistake on it. Can you find it?"
+ },
+ "scene:sea.sobe_sign#16ps6d8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… もう {一度|いちど} 、 よく {見|み}な 。 {急|いそ}ぐ こと は ねえ 。",
+  "en": "…Take another good look. No hurry."
+ },
+ "scene:sea.sobe_sign#hagsh5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "そう だ 。 {一画|いっかく} {違|ちが}えば 、 {別|べつ} の {船|ふね} に なる 。 {名前|なまえ} って の は 、 そういう もん だ 。",
+  "en": "That's it. One stroke wrong and she's a different boat. That's what names are like."
+ },
+ "scene:sea.sobe_sign#6fksys": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "サンペイ を {造船所|ぞうせんじょ} に {行|い}かせる 。 …… ミヨ も {付|つ}いて {行|い}く だろう な 。 {止|と}めて も {無駄|むだ} だ 。",
+  "en": "I'll send Sanpei to the yard. …Miyo will tag along, I expect. No use stopping her."
+ },
+ "scene:sea.sobe_sign#1w5vvtg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ソウベエ の {店|みせ} の サンペイ が 、 {造船所|ぞうせんじょ} で {船|ふね} の {名前|なまえ} を {書|か}いて くれる 。",
+  "en": "Sanpei from Sōbē's shop will paint the boat's name at the yard."
+ },
+ "scene:sea.kajiro_paint#1odvqvr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "サンペイ が 、 {舳先|へさき} に {白|しろ}い {塗料|とりょう} で {字|じ} を {書|か}いて いく 。 ミヨ が {横|よこ} で 、 {一字|いちじ} ずつ {読|よ}み{上|あ}げる 。",
+  "en": "Sanpei paints the letters on the bow in white. Beside him, Miyo reads each one out."
+ },
+ "scene:sea.kajiro_paint#1x44jgm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {最後|さいご} の 「{丸|まる}」 は 、 わたし ！ {丸|まる} なら 、 {小|ちい}さく て も {書|か}ける もん ！",
+  "en": "…The last one, 丸, is mine! Even I can write 丸, small as I am!"
+ },
+ "scene:sea.kajiro_paint#nokfy4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "しょうがない な 。 …… {曲|ま}げる なよ 。",
+  "en": "Oh, all right. …Don't make it wonky."
+ },
+ "scene:sea.kajiro_paint#irf8rv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "「$boat {丸|まる}」 。 {舳先|へさき} で 、 {白|しろ}い {字|じ} が {乾|かわ}いて いく 。",
+  "en": "The $boat. The white letters dry on the bow."
+ },
+ "scene:sea.kajiro_paint#pqol7f": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… いい {字|じ} だ 。 {宛名|あてな} に {書|か}いたら 、 {迷|まよ}わず {届|とど}く 。",
+  "en": "…Good lettering. Write that on an envelope and it'd never go astray."
+ },
+ "scene:sea.kajiro_paint#dwq40n": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名前|なまえ} が {入|はい}る と 、 {急|きゅう} に {生|い}きて いる みたい に {見|み}えます ね 。",
+  "en": "Once the name's on, she suddenly looks alive."
+ },
+ "scene:sea.kajiro_paint#t73j51": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名|な} を {書|か}く の は 、 {灯|ひ} を {入|い}れる の と {似|に}て います 。 {灯|とも}りました ね 。",
+  "en": "Writing a name is like lighting a lamp. She's lit."
+ },
+ "scene:sea.kajiro_paint#m5pw3y": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{看板|かんばん} が {上|あ}がった わ ね 。 {初日|しょにち} は いつ ？",
+  "en": "The sign's up. When's opening night?"
+ },
+ "scene:sea.kajiro_paint#1r597t5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{試|ため}し{乗|の}り は 、 {潮硝子|しおがらす} の テツ の {仕事|しごと} だ 。 {船|ふね} は {俺|おれ} が {回|まわ}して おく 。",
+  "en": "Sea trials are Tetsu's business, at Saltglass. I'll have her sailed round."
+ },
+ "scene:sea.kajiro_paint#rp43pv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… だが 、 {祭|まつ}り が {終|お}わる まで 、 テツ は {渡|わた}し{船|ぶね} で {手|て} が {離|はな}せない だろう 。",
+  "en": "…But until the festival's over, Tetsu won't have a hand free from the ferry."
+ },
+ "scene:sea.kajiro_paint#tmn6xp": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{名前|なまえ} が {入|はい}った 。 {試|ため}し{乗|の}り は {潮硝子|しおがらす} で テツ と 。",
+  "en": "The name's on her. Sea trials are at Saltglass, with Tetsu."
+ },
+ "scene:sea.kajiro_after#1d70xtt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} は {元気|げんき} か 。 {板|いた} が {鳴|な}ったら 、 {持|も}って こい 。",
+  "en": "How's the boat? If her planks start creaking, bring her in."
+ },
+ "scene:sea.kajiro_idle#x4oj6g": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {船|ふね} の {用|よう} じゃ ない なら 、 {後|あと} に して くれ 。",
+  "en": "…If it's not about a boat, later."
+ },
+ "scene:sea.yard_hull#s9yqbk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{台|だい} の {上|うえ} に 、 あなた の {船|ふね} に なる {古|ふる}い {船体|せんたい} 。",
+  "en": "On the trestles, the old hull that's going to be your boat."
+ },
+ "scene:sea.yard_hull#3mnysj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{台|だい} の {上|うえ} に 、 {誰|だれ} か の {小舟|こぶね} 。 {底|そこ} に {新|あたら}しい {板|いた} が {張|は}って ある 。",
+  "en": "Someone's skiff on the trestles, new planks along her bottom."
+ },
+ "scene:sea.yard_loom#1uwirek": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ヌイ の {機|はた} 。 {帆布|はんぷ} が {長|なが}く {伸|の}びて いる 。",
+  "en": "Nui's loom, with a long run of sailcloth stretching from it."
+ },
+ "scene:sea.nui_sail#1w95m98": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "あっ 、 ちょうど よかった ！ ねえ 、 これ {読|よ}める ？ カジロウ さん の {字|じ} 、 {蟹|かに} が {歩|ある}いた みたい で 。",
+  "en": "Oh, perfect timing! Hey, can you read this? Kajirō's writing looks like a crab walked across it."
+ },
+ "scene:sea.nui_sail#1viync3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{惜|お}しい ！ …… {急|いそ}がない から 、 また {読|よ}んで ね 。",
+  "en": "Close! …No hurry. Read it to me again later."
+ },
+ "scene:sea.nui_sail#dpe7jh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "それ それ ！ {縦|たて} と {横|よこ} が {分|わ}かれば 、 {後|あと} は {縫|ぬ}う だけ 。 {三日|みっか} で {仕上|しあ}げる よ 。",
+  "en": "That's it! Once I know the height and the width, it's just sewing. I'll have it done in three days."
+ },
+ "scene:sea.nui_sail#fnx5r4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} も 、 {寸法|すんぽう} を {間違|まちが}えたら {届|とど}かない {手紙|てがみ} と {同|おな}じ か 。",
+  "en": "So a sail with the wrong measurements is like a letter that never arrives."
+ },
+ "scene:sea.nui_sail#d09d88": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{針|はり} の {運|はこ}び が 、 {私|わたし} が {包帯|ほうたい} を {巻|ま}く より {速|はや}い …… 。",
+  "en": "Her needle's faster than I am winding a bandage…"
+ },
+ "scene:sea.nui_sail#1n5h2eq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{一目|ひとめ} ずつ に 、 {風|かぜ} を {受|う}ける {力|ちから} が {入|はい}る の です ね 。",
+  "en": "Every stitch takes a little of the wind's weight."
+ },
+ "scene:sea.nui_sail#1f460cs": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{衣装|いしょう}{方|かた} に {欲|ほ}しい {腕|うで} ね 。",
+  "en": "I'd want hands like that in the wardrobe department."
+ },
+ "scene:sea.nui_sail#3g7vwh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ヌイ に {帆|ほ} の {寸法|すんぽう} を {読|よ}んで あげた 。 {三日|みっか} で {縫|ぬ}い{上|あ}がる 。",
+  "en": "Read Nui the sail's measurements. She'll have it sewn in three days."
+ },
+ "scene:sea.nui_after#1241lky": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} は {任|まか}せて 。 {破|やぶ}れたら 、 いつでも {持|も}って きて ！",
+  "en": "Leave sails to me. If one tears, bring it any time!"
+ },
+ "scene:sea.nui_idle#1ji1j0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ヌイ が 、 {歌|うた}い ながら {針|はり} を {動|うご}かして いる 。",
+  "en": "Nui is singing as she sews."
+ },
+ "scene:sea.nui_idle#rmutuj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{縫|ぬ}う {時|とき} は 、 {歌|うた}う の 。 {針|はり} が {迷|まよ}わない よう に 。",
+  "en": "I sing when I sew. It keeps the needle from wandering."
+ },
+ "scene:sea.tetsu_words#1dmduca": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{来|き}た か 。 $boat {丸|まる} 、 {着|つ}いてる 。",
+  "en": "There you are. The $boat's in."
+ },
+ "scene:sea.tetsu_words:choice#1qtc55q": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{試|ため}し{乗|の}り の {話|はなし} です 。",
+  "en": "About the sea trials."
+ },
+ "scene:sea.tetsu_words:choice#of5p3a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{渡|わた}し{船|ぶね} に {乗|の}りたい です 。",
+  "en": "I'd like the ferry."
+ },
+ "scene:sea.tetsu_words#3694lc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{海|うみ} に {出|で}る {前|まえ} に 、 {言葉|ことば} を {五|いつ}つ 。 {覚|おぼ}えろ 。",
+  "en": "Before you go out, five words. Learn them."
+ },
+ "scene:sea.tetsu_words#hqvv98": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} 。 {風|かぜ} を {受|う}ける 。 {舵|かじ} 。 {船|ふね} の {向|む}き を {決|き}める 。 {錨|いかり} 。 {船|ふね} を {止|と}めて おく 。",
+  "en": "帆, the sail: it takes the wind. 舵, the rudder: it decides where she points. 錨, the anchor: it holds her still."
+ },
+ "scene:sea.tetsu_words#19g9jii": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… もう {一度|いちど} だ 。 {帆|ほ} 、 {舵|かじ} 、 {錨|いかり} 。 {急|いそ}がなくて いい 。",
+  "en": "…Again. 帆, 舵, 錨. No need to hurry."
+ },
+ "scene:sea.tetsu_words#qii04h": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} 。 {海|うみ} の {水|みず} の {満|み}ち{引|ひ}き 。 {風向|かざむ}き 。 {風|かぜ} が どこ から {来|く}る か 。",
+  "en": "潮, the tide: the sea's water coming in and going out. 風向き, the wind's direction: where it comes from."
+ },
+ "scene:sea.tetsu_words#ksuryc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{陸|おか} の {人間|にんげん} は 、 {風|かぜ} が どこ へ {行|い}く か を {言|い}う 。 {船乗|ふなの}り は 、 どこ から {来|く}る か を {言|い}う 。",
+  "en": "Landsmen say where the wind goes. Sailors say where it comes from."
+ },
+ "scene:sea.tetsu_words#1pvvum0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} と {風向|かざむ}き 。 また {聞|き}く 。",
+  "en": "The tide and the wind's direction. I'll ask again."
+ },
+ "scene:sea.tetsu_words#1d36zlr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "よし 。 …… {潮|しお} の {時刻|じこく} は 、 シオリ の {帳面|ちょうめん} に ある 。 {潮見|しおみ}{小屋|ごや} で {読|よ}ませて もらえ 。",
+  "en": "Good. …The tide times are in Shiori's book. Have her let you read it at the tide-watch hut."
+ },
+ "scene:sea.tetsu_words#zbr8go": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "テツ に {海|うみ} の {言葉|ことば} を {五|いつ}つ {教|おそ}わった 。 {帆|ほ} 、 {舵|かじ} 、 {錨|いかり} 、 {潮|しお} 、 {風向|かざむ}き 。 {次|つぎ} は シオリ の {潮|しお} の {帳面|ちょうめん} 。",
+  "en": "Tetsu taught me five sea words: sail, rudder, anchor, tide, the wind's direction. Next, Shiori's tide book."
+ },
+ "scene:sea.shiori_tide#1lu7m02": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "テツ さん から {聞|き}きました 。 {試|ため}し{乗|の}り です ね 。 {潮|しお} の {表|ひょう} を {見|み}ましょう 。",
+  "en": "Tetsu told me. Your sea trial. Let's look at the tide table."
+ },
+ "scene:sea.shiori_tide#s2oy4a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} を {出|で}る の は 、 {満|み}ち{潮|しお} の ころ が {一番|いちばん} です 。 {浅瀬|あさせ} で {底|そこ} を {擦|す}りません から 。",
+  "en": "Around high tide is the best time to leave harbour. You won't scrape the bottom on the shallows."
+ },
+ "scene:sea.shiori_tide#1wt2vgt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{急|いそ}ぎません 。 {潮|しお} は {毎日|まいにち} {二回|にかい} {満|み}ちます から 。",
+  "en": "There's no hurry. The tide comes in twice a day."
+ },
+ "scene:sea.shiori_tide#tfaitk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "その とおり です 。 テツ さん に 、 その {時刻|じこく} を {伝|つた}えて ください 。 {帳面|ちょうめん} の {字|じ} も {潮|しお} も 、 {今日|きょう} は {正直|しょうじき} です よ 。",
+  "en": "Just so. Tell Tetsu the time. My book and the tide are both honest today."
+ },
+ "scene:sea.shiori_tide#j7m60m": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "シオリ の {帳面|ちょうめん} で 、 {満|み}ち{潮|しお} の {時刻|じこく} を {読|よ}んだ 。 テツ と {試|ため}し{乗|の}り に {出|で}る 。",
+  "en": "Read the time of high tide in Shiori's book. Time to go out with Tetsu on the trial."
+ },
+ "scene:sea.tetsu_trial#u0jmy7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} は 。",
+  "en": "The tide?"
+ },
+ "scene:sea.tetsu_trial:choice#dpnwkf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{満|み}ち{潮|しお} です 。 {今|いま} {出|で}られます 。",
+  "en": "It's high. We can go now."
+ },
+ "scene:sea.tetsu_trial:choice#of5p3a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{渡|わた}し{船|ぶね} に {乗|の}りたい です 。",
+  "en": "I'd like the ferry."
+ },
+ "scene:sea.tetsu_trial:choice#94pton": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "また {後|あと} で 。",
+  "en": "Later."
+ },
+ "scene:sea.tetsu_trial#1opmix2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} は {待|ま}って くれん が 、 また {満|み}ちる 。",
+  "en": "The tide won't wait, but it comes in again."
+ },
+ "scene:sea.tetsu_trial#nmq0ml": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{岬|みさき} の {先|さき} の ブイ を {回|まわ}って 、 {戻|もど}って こい 。 {帆|ほ} は {風|かぜ} に {合|あ}わせろ 。 {風|かぜ} は {西|にし} から だ 。",
+  "en": "Round the buoy off the point and come back. Set the sail to the wind. The wind's from the west."
+ },
+ "scene:sea.tetsu_trial#1hbmnbl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {心配|しんぱい} は {要|い}らん 。 {俺|おれ} も {乗|の}って いる 。",
+  "en": "…No need to worry. I'm aboard too."
+ },
+ "scene:sea.trial_mark#1o1ueuq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{赤|あか} と {白|しろ} の ブイ を 、 ぐるり と {回|まわ}った 。 テツ が {頷|うなず}く 。 「よし 。 {港|みなと} へ {戻|もど}れ 。」",
+  "en": "You round the red-and-white buoy. Tetsu nods. \"Good. Back to harbour.\""
+ },
+ "scene:sea.arrive_saltglass#11gbk3k": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{乗組員|のりくみいん} が 、 ブイ を {回|まわ}って から {港|みなと} に {入|い}れた 。",
+  "en": "The crew rounded the buoy before bringing her in."
+ },
+ "scene:sea.arrive_saltglass#1nlfp3m": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {悪|わる}く ない 。 {帆|ほ} の {張|は}り も 、 {舵|かじ} も 。",
+  "en": "…Not bad. The sail and the rudder, both."
+ },
+ "scene:sea.arrive_saltglass#1wu8lc9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{海|うみ} の {上|うえ} だ と 、 {道|みち} が ない の に {迷|まよ}わない もん だ な 。",
+  "en": "Out on the water there's no road, and somehow you still don't get lost."
+ },
+ "scene:sea.arrive_saltglass#1fhh3sn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{風|かぜ} が {帆|ほ} に {入|はい}った {時|とき} 、 {船|ふね} が {笑|わら}った みたい でした 。",
+  "en": "When the wind filled the sail, it was as if the boat laughed."
+ },
+ "scene:sea.arrive_saltglass#lh3mo5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{灯|ひ} の ない {道|みち} でも 、 {風|かぜ} と {潮|しお} が {道|みち} を {教|おし}えて くれる の です ね 。",
+  "en": "Even with no lamps on the way, the wind and the tide show you the road."
+ },
+ "scene:sea.arrive_saltglass#rujczk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{初舞台|はつぶたい} に して は 、 {上出来|じょうでき} じゃない ？",
+  "en": "Not bad for a debut, was it?"
+ },
+ "scene:sea.arrive_saltglass#1gq9xib": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{次|つぎ} は {港長|こうちょう} の {試験|しけん} だ 。 {書類|しょるい} と 、 {話|はなし} だ 。 オウミ は {厳|きび}しい が 、 {意地|いじ} は {悪|わる}く ない 。",
+  "en": "Next is the harbourmaster's examination. Papers, and a talk. Ōmi's strict, but she's not mean."
+ },
+ "scene:sea.arrive_saltglass#11xweol": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{試|ため}し{乗|の}り は {無事|ぶじ} {終|お}わった 。 {次|つぎ} は {港長|こうちょう} オウミ の {試験|しけん} 。",
+  "en": "The sea trial went well. Next, Harbourmaster Ōmi's examination."
+ },
+ "scene:sea.omi_licence#162neiu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{来|き}た ね 。 テツ から {聞|き}いた 。 {腕|うで} は {確|たし}か だ と さ 。",
+  "en": "There you are. Tetsu says your hands are sound."
+ },
+ "scene:sea.omi_licence#yh6ld0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "じゃあ 、 {試験|しけん} だ 。 まず {書類|しょるい} 。 それから 、 {少|すこ}し {話|はなし} を {聞|き}く 。 {間違|まちが}えたら 、 その {場|ば} で やり{直|なお}し だ 。 {何度|なんど} でも な 。",
+  "en": "Right, the examination. Papers first. Then I'll ask you a few things. Get one wrong and you go again, then and there. As many times as it takes."
+ },
+ "scene:sea.omi_licence#116s2nm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{続|つづ}き を やる かい ？",
+  "en": "Shall we carry on?"
+ },
+ "scene:sea.omi_licence#1rd2xhy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {惜|お}しい 。 もう {一度|いちど} {書|か}いて みな 。",
+  "en": "…Close. Write it again."
+ },
+ "scene:sea.omi_licence:choice#1c4gdal": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "もう {一度|いちど} 。",
+  "en": "Again."
+ },
+ "scene:sea.omi_licence:choice#12ybsxn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{少|すこ}し {休|やす}みます 。",
+  "en": "I'll take a break."
+ },
+ "scene:sea.omi_licence#13flodl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{書類|しょるい} は いい 。 …… では 。",
+  "en": "The form's fine. …Now, then."
+ },
+ "scene:sea.omi_licence#llf7jn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ゴホン 。 これ より 、 {面接|めんせつ} を {始|はじ}めます 。",
+  "en": "Ahem. The interview will now begin."
+ },
+ "scene:sea.omi_licence#1o33i31": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "（…… {急|きゅう} に {言葉|ことば} が {硬|かた}く なった な 。）",
+  "en": "(…Her voice just went all stiff.)"
+ },
+ "scene:sea.omi_licence#1832l97": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "（{港長|こうちょう} さん 、 {眼鏡|めがね} を かける と {別人|べつじん} みたい ……。）",
+  "en": "(With her glasses on, the harbourmaster's like a different person…)"
+ },
+ "scene:sea.omi_licence#1vfvqb7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "（{試験|しけん} の {言葉|ことば} です ね 。 {丁寧|ていねい} に {答|こた}えましょう 。）",
+  "en": "(Examination language. Let's answer politely.)"
+ },
+ "scene:sea.omi_licence#1pl3od0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "（{役|やく} に {入|はい}った わ ね 。 こっち も {合|あ}わせ ない と 。）",
+  "en": "(She's got into character. We'd better play along.)"
+ },
+ "scene:sea.omi_licence#1wt2tfw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… もう {一度|いちど} 、 {伺|うかが}います 。",
+  "en": "…I shall ask once more."
+ },
+ "scene:sea.omi_licence:choice#c0olnc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "はい 。",
+  "en": "Yes."
+ },
+ "scene:sea.omi_licence:choice#w1o4nq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{少|すこ}し {休|やす}ませて ください 。",
+  "en": "May I take a break?"
+ },
+ "scene:sea.omi_licence#1fjpmfd": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {以上|いじょう} で 、 {面接|めんせつ} を {終|お}わります 。",
+  "en": "…That concludes the interview."
+ },
+ "scene:sea.omi_licence#1ixb5kz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{合格|ごうかく} だ 。 …… ああ 、 {肩|かた} が {凝|こ}った 。 {試験官|しけんかん} の {喋|しゃべ}り{方|かた} は 、 {性|しょう} に {合|あ}わない よ 。",
+  "en": "You pass. …Oof, my shoulders. Talking like an examiner doesn't suit me."
+ },
+ "scene:sea.omi_licence#tfd0q4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{免状|めんじょう} に は 、 {船|ふね} の {名前|なまえ} 「$boat {丸|まる}」 と 、 あなた の {名前|なまえ} 。 その {下|した} に 、 オウミ の {大|おお}きな {署名|しょめい} 。",
+  "en": "On the licence: the boat's name, the $boat, and yours. Beneath them, Ōmi's large signature."
+ },
+ "scene:sea.omi_licence#oopu9p": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} は あんた の もの だ 。 {港|みなと} の {桟橋|さんばし} に {繋|つな}いで ある 。 {海図|かいず} は {船|ふね} の {中|なか} に {置|お}いた 。",
+  "en": "She's yours. She's tied up at the harbour's pier. I've put the chart aboard."
+ },
+ "scene:sea.omi_licence#y2rlpi": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… それ と な 。 {郵便|ゆうびん} を {運|はこ}ぶ なら 、 {一|ひと}つ {話|はなし} して おく 。",
+  "en": "…And one more thing, since you'll be carrying the post."
+ },
+ "scene:sea.omi_licence#wdvdnh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{海|うみ} で なくなった {郵便|ゆうびん} は 、 {西|にし} の {沖|おき} の {島|しま} に {流|なが}れ{着|つ}く 、 って {話|はなし} が ある 。 {船乗|ふなの}り の {噂|うわさ} さ 。 どの {帳面|ちょうめん} に も {載|の}って ない {島|しま} だ 。",
+  "en": "There's a tale that post lost at sea washes up on an island out west. Sailors' talk. An island that's in no ledger."
+ },
+ "scene:sea.omi_licence#167ho94": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港長|こうちょう} と して は 、 {馬鹿|ばか} な {話|はなし} だ と {言|い}う べき だろう ね 。 …… でも 、 なくした {手紙|てがみ} が どこ か に {届|とど}いて いる なら 、 {悪|わる}く ない と {思|おも}う よ 。",
+  "en": "As harbourmaster, I suppose I ought to call it nonsense. …But if lost letters are getting somewhere after all, I wouldn't mind that."
+ },
+ "scene:sea.omi_licence#nsbcr4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "…… {届|とど}かなかった {手紙|てがみ} が 、 {島|しま} に 。",
+  "en": "…Letters that never arrived. On an island."
+ },
+ "scene:sea.omi_licence#1xsvleo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "なくした もの が {集|あつ}まる {島|しま} …… 。 {本当|ほんとう} に ある なら 、 {行|い}って みたい です 。",
+  "en": "An island where lost things gather… If it's real, I'd like to go."
+ },
+ "scene:sea.omi_licence#1gve739": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{噂|うわさ} に は 、 {必|かなら}ず {少|すこ}し {本当|ほんとう} の こと が {入|はい}って います 。",
+  "en": "There's always a little truth in a rumour."
+ },
+ "scene:sea.omi_licence#ynvsej": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{地図|ちず} に ない {島|しま} 。 {芝居|しばい} の {筋|すじ} なら 、 {次|つぎ} の {幕|まく} は そこ ね 。",
+  "en": "An island that's on no map. If this were a play, that's where the next act would be."
+ },
+ "scene:sea.omi_licence#1vmnku8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{言|こと}の{葉|は}{島|じま} に は 、 もう {渡|わた}し{船|ぶね} で {行|い}った ん だった ね 。 {自分|じぶん} の {船|ふね} で {行|い}く {島|しま} は 、 また {違|ちが}って {見|み}える よ 。",
+  "en": "You've already been to Kotonoha on the ferry, haven't you. An island looks different when you sail there yourself."
+ },
+ "scene:sea.omi_licence#16ighmp": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{免状|めんじょう} を {取|と}った 。 $boat {丸|まる} は {自分|じぶん} の {船|ふね} 。 {潮硝子|しおがらす} の {桟橋|さんばし} から 、 {海図|かいず} を {広|ひろ}げて {出|で}られる 。",
+  "en": "The licence is mine, and the $boat with it. She sails from Saltglass's pier: open the chart aboard her."
+ },
+ "scene:sea.omi_licence#1siqw4j": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "いい よ 。 {続|つづ}き は 、 また {今度|こんど} だ 。",
+  "en": "Fine. We'll carry on another time."
  },
  "challenges:sea.hail#odt08t": {
   "status": "self-reviewed",
@@ -1211,6 +2213,1074 @@
   "jp": "{何|なに} も しない で {港|みなと} へ {急|いそ}ごう 。",
   "en": ""
  },
+ "challenges:sea.yard_timber#bkiuxc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} の {送|おく}り{状|じょう}",
+  "en": "The planking's delivery note"
+ },
+ "challenges:sea.yard_timber#wje9sp": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "おくりじょう ： すぎ の いた 、 ろく まい 。 くら どおり 、 さんばん の くら に あずけました 。",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#1n8r4so": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "さんばん",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#x0cgkk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ろくばん",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#1w2oto3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "いちばん",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#16ywbzp": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{送|おく}り{状|じょう} ： {杉板|すぎいた} {六枚|ろくまい} 。 {倉|くら}{通|どお}り {三番|さんばん}{倉|ぐら} に {預|あず}けました 。",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#1ok0sj5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} が {六枚|ろくまい} 。 {三番|さんばん} の {倉|くら}",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#1t6kjlt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{板|いた} が {三枚|さんまい} 。 {六番|ろくばん} の {倉|くら}",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#t8ffgi": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{杉|すぎ} の {木|き} が {六本|ろっぽん} 。 {三番|さんばん} の {倉|くら}",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#1xxw0sz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{送|おく}り{状|じょう} ： {杉板|すぎいた} {六枚|ろくまい} 、 {造船所|ぞうせんじょ} {行|ゆ}き 。 {船|ふね} の {着|つ}く の が {遅|おく}れた ため 、 {倉|くら}{通|どお}り {三番|さんばん}{倉|ぐら} に {預|あず}けて おきます 。",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#2udmq8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} が {遅|おく}れた ので 、 {三番|さんばん} の {倉|くら} に {置|お}いて ある",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#yjvfwa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{造船所|ぞうせんじょ} が {閉|し}まって いた ので 、 {返|かえ}された",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#4p3a91": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{六番|ろくばん} の {倉|くら} に {預|あず}ける つもり だ",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#11tqudx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{杉板|すぎいた} {六枚|ろくまい} 、 {入船|いりふね} {遅延|ちえん} の ため 、 {倉|くら}{通|どお}り {参番|さんばん}{蔵|ぐら} にて {一時|いちじ} {保管|ほかん} 。",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#j4nqvx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{三番|さんばん} の {倉|くら} に 、 {取|と}りに {来|く}る まで {預|あず}けて ある",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#17jxqmu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{三番|さんばん} の {倉|くら} に 、 ずっと {置|お}く こと に なった",
+  "en": ""
+ },
+ "challenges:sea.yard_timber#10c0ihe": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{八番|はちばん} の {倉|くら} に 、 {一時間|いちじかん} だけ ある",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#gv5eoy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} の {寸法|すんぽう}",
+  "en": "The sail's measurements"
+ },
+ "challenges:sea.nui_sail#kydsj9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ほ ： たて 5 メートル 、 よこ 3 メートル 。 ぬの は 3 まい 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#16unevw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "5 メートル",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#14mngrq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "3 メートル",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#fygqv8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "3 まい",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#h6b15y": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} ： {縦|たて} 5 メートル 、 {横|よこ} 3 メートル 。 {布|ぬの} は {三枚|さんまい} を {縫|ぬ}い{合|あ}わせる 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#1s4yj3f": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{縦|たて} が 5 メートル 、 {横|よこ} が 3 メートル 。 {布|ぬの} は {三枚|さんまい} 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#1uk8msw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{縦|たて} が 3 メートル 、 {横|よこ} が 5 メートル 。 {布|ぬの} は {五枚|ごまい} 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#od4asb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{縦|たて} も {横|よこ} も 5 メートル 。 {布|ぬの} は {一枚|いちまい} 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#1bh0txl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} ： {縦|たて} 5 メートル 。 {横|よこ} は {縦|たて} より 2 メートル {短|みじか}い 。 {布|ぬの} の {幅|はば} は 1 メートル 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#1skco28": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{三枚|さんまい}",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#utcsz9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{五枚|ごまい}",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#m7efee": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{二枚|にまい}",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#ie7wl9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} ： {縦|たて} 5 メートル 、 {横|よこ} 3 メートル 。 {帆布|はんぷ} {三幅|みはば} {縫|ぬ}い{合|あ}わせ 、 {縫|ぬ}い{代|しろ} {別|べつ} 。",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#13p0kmo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{縫|ぬ}い{合|あ}わせる {分|ぶん} の {布|ぬの} は 、 {寸法|すんぽう} と は {別|べつ} に {足|た}す",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#oivg22": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{縫|ぬ}い{代|しろ} は {要|い}らない",
+  "en": ""
+ },
+ "challenges:sea.nui_sail#1jslxmp": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{三幅|みはば} と は {別|べつ} に 、 もう {一幅|ひとはば} {縫|ぬ}う",
+  "en": ""
+ },
+ "challenges:sea.sign_board#4ebt27": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{稽古|けいこ}{板|いた} の {間違|まちが}い",
+  "en": "The practice board"
+ },
+ "challenges:sea.sign_board#1f71n7r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "けいこ いた ： さくら {丸|まる} ・ ぬぐみ {丸|まる} ・ ちとせ {丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#ida4wf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ぬぐみ の 「ぬ」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#6zla20": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "さくら の 「さ」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#1fzci51": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ちとせ の 「ち」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#1pym5w5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{稽古|けいこ}{板|いた} ： さくら{丸|まる} ・ ぬぐみ{丸|まる} ・ ちとせ{丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#a9v0qa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ぬぐみ{丸|まる} は 、 めぐみ{丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#133inot": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ちとせ{丸|まる} は 、 さとせ{丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#1muozq9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "さくら{丸|まる} は 、 きくら{丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#1uqj0t9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{稽古|けいこ}{板|いた} ： はやて{丸|まる} ・ れかしお{丸|まる} ・ うみねこ{丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#1mqa5q6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "れかしお の 「れ」 は 、 「わ」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#fjd3yn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "うみねこ の 「ね」 は 、 「れ」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#2nsp4f": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "はやて の 「て」 は 、 「そ」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#alukxd": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{稽古|けいこ}{板|いた} ： {若潮|わかしお}{丸|まる} ・ {潮風|しおかぜ}{九|きゅう} ・ {千鳥|ちどり}{丸|まる}",
+  "en": ""
+ },
+ "challenges:sea.sign_board#jtvpib": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮風|しおかぜ} の 「{九|きゅう}」 は 、 {点|てん} の ない 「{丸|まる}」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#1fjy8w7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{若潮|わかしお} の 「{若|わか}」 は 、 「{苦|く}」",
+  "en": ""
+ },
+ "challenges:sea.sign_board#18rymdc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{千鳥|ちどり} の 「{鳥|とり}」 は 、 「{烏|からす}」",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1qw3g41": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} ・ {舵|かじ} ・ {錨|いかり}",
+  "en": "Sail, rudder, anchor"
+ },
+ "challenges:sea.words_boat#15lq9g6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "かぜ を うける もの は ？",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1yiljx6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ほ",
+  "en": ""
+ },
+ "challenges:sea.words_boat#nxwnme": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "かじ",
+  "en": ""
+ },
+ "challenges:sea.words_boat#14dosh2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "いかり",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1ey4ho0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} を {止|と}めて おく もの は ？",
+  "en": ""
+ },
+ "challenges:sea.words_boat#fjekza": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{錨|いかり}",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1px7793": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{舵|かじ}",
+  "en": ""
+ },
+ "challenges:sea.words_boat#198m5e4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ}",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1ysccj1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} に {入|はい}ったら 、 {帆|ほ} を {下|お}ろして から 、 {錨|いかり} を {下|お}ろす 。",
+  "en": ""
+ },
+ "challenges:sea.words_boat#sbvtfb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{先|さき} に {帆|ほ} 、 {次|つぎ} に {錨|いかり}",
+  "en": ""
+ },
+ "challenges:sea.words_boat#15q0dkb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{先|さき} に {錨|いかり} 、 {次|つぎ} に {帆|ほ}",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1k8nobg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{舵|かじ} を {外|はず}して から 、 {港|みなと} に {入|はい}る",
+  "en": ""
+ },
+ "challenges:sea.words_boat#18t7dny": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{舵|かじ} を {取|と}る {者|もの} は 、 {帆|ほ} の {張|は}り を {見|み}よ 。",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1g3cvh5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{舵|かじ} を {持|も}つ {人|ひと} は 、 {帆|ほ} の {様子|ようす} を {見|み}なさい",
+  "en": ""
+ },
+ "challenges:sea.words_boat#1e5axpc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} を {張|は}る {人|ひと} は 、 {舵|かじ} を {取|と}る な",
+  "en": ""
+ },
+ "challenges:sea.words_boat#17t1vo4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{舵|かじ} を {取|と}ったら 、 {帆|ほ} は {見|み}なくて いい",
+  "en": ""
+ },
+ "challenges:sea.words_wind#fjapej": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} と {風向|かざむ}き",
+  "en": "The tide and the wind's direction"
+ },
+ "challenges:sea.words_wind#pmamk7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "かぜ は にし から 。",
+  "en": ""
+ },
+ "challenges:sea.words_wind#18w3cef": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "にし",
+  "en": ""
+ },
+ "challenges:sea.words_wind#6ole3o": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ひがし",
+  "en": ""
+ },
+ "challenges:sea.words_wind#ot93gl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "きた",
+  "en": ""
+ },
+ "challenges:sea.words_wind#y94od2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{風向|かざむ}き は {西|にし} 。",
+  "en": ""
+ },
+ "challenges:sea.words_wind#4nc4fv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{西|にし} から {東|ひがし} へ {吹|ふ}く",
+  "en": ""
+ },
+ "challenges:sea.words_wind#bokst": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{東|ひがし} から {西|にし} へ {吹|ふ}く",
+  "en": ""
+ },
+ "challenges:sea.words_wind#1tkx8ha": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{西|にし} へ {向|む}かって {吹|ふ}く",
+  "en": ""
+ },
+ "challenges:sea.words_wind#1cuugzc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} が {引|ひ}いて いる 。 {浅瀬|あさせ} に {気|き} を つけろ 。",
+  "en": ""
+ },
+ "challenges:sea.words_wind#e7i83j": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} が {引|ひ}いて 、 {浅|あさ}い {所|ところ} が {出|で}て くる から",
+  "en": ""
+ },
+ "challenges:sea.words_wind#1is2ykm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} が {満|み}ちて 、 {岸|きし} が {沈|しず}む から",
+  "en": ""
+ },
+ "challenges:sea.words_wind#wukyja": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} が {速|はや}く 、 {船|ふね} が {流|なが}される から",
+  "en": ""
+ },
+ "challenges:sea.words_wind#cwcoee": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{北東|ほくとう} の {風|かぜ} 、 {上|あ}げ{潮|しお} 。",
+  "en": ""
+ },
+ "challenges:sea.words_wind#11fg6p5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{北東|ほくとう} から {風|かぜ} が {吹|ふ}き 、 {潮|しお} が {満|み}ちて きて いる",
+  "en": ""
+ },
+ "challenges:sea.words_wind#gtoutr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{北東|ほくとう} へ {風|かぜ} が {吹|ふ}き 、 {潮|しお} が {引|ひ}いて いる",
+  "en": ""
+ },
+ "challenges:sea.words_wind#17m5v3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{風|かぜ} は {止|や}み 、 {潮|しお} は {止|と}まって いる",
+  "en": ""
+ },
+ "challenges:sea.tide_book#1bhv4zl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} の {表|ひょう}",
+  "en": "The tide table"
+ },
+ "challenges:sea.tide_book#1tuqlf2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "しお の ひょう ： まんちょう 6 じ ・ かんちょう 12 じ",
+  "en": ""
+ },
+ "challenges:sea.tide_book#18lpf3d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "6 じ",
+  "en": ""
+ },
+ "challenges:sea.tide_book#oe568i": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "12 じ",
+  "en": ""
+ },
+ "challenges:sea.tide_book#58tdv8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "18 じ",
+  "en": ""
+ },
+ "challenges:sea.tide_book#hulit4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} の {表|ひょう} ： {満潮|まんちょう} {午前|ごぜん} 6 {時|じ} {半|はん} ・ {干潮|かんちょう} {午後|ごご} 1 {時|じ}",
+  "en": ""
+ },
+ "challenges:sea.tide_book#7f1cpr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{午前|ごぜん} 6 {時|じ} {半|はん}",
+  "en": ""
+ },
+ "challenges:sea.tide_book#eecv5a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{午後|ごご} 1 {時|じ}",
+  "en": ""
+ },
+ "challenges:sea.tide_book#2mmf7s": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{午前|ごぜん} 1 {時|じ}",
+  "en": ""
+ },
+ "challenges:sea.tide_book#1tbej73": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮|しお} の {表|ひょう} ： {満潮|まんちょう} {午前|ごぜん} 6 {時|じ} {半|はん} ・ {午後|ごご} 7 {時|じ} ／ {干潮|かんちょう} {午後|ごご} 1 {時|じ} 。 {今|いま} は {午後|ごご} 2 {時|じ} 。",
+  "en": ""
+ },
+ "challenges:sea.tide_book#7oda6x": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{午後|ごご} 7 {時|じ} 。 {今|いま} は {満|み}ちて きて いる",
+  "en": ""
+ },
+ "challenges:sea.tide_book#1dmmbzm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{午前|ごぜん} 6 {時|じ} {半|はん} 。 {今|いま} は {引|ひ}いて いる",
+  "en": ""
+ },
+ "challenges:sea.tide_book#kot9n8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{午後|ごご} 1 {時|じ} 。 {今|いま} は {満潮|まんちょう}",
+  "en": ""
+ },
+ "challenges:sea.tide_book#ts3i1c": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{本日|ほんじつ} {大潮|おおしお} 。 {満潮|まんちょう} {午前|ごぜん} {六時|ろくじ} {半|はん} 。 {干満|かんまん} の {差|さ} {大|だい} に つき 、 {浅瀬|あさせ} {注意|ちゅうい} 。",
+  "en": ""
+ },
+ "challenges:sea.tide_book#fmnrkk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{今日|きょう} は {潮|しお} の {差|さ} が {大|おお}きい ので 、 {浅|あさ}い {所|ところ} に {気|き} を つける",
+  "en": ""
+ },
+ "challenges:sea.tide_book#wwqujh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{今日|きょう} は {潮|しお} が {動|うご}かない ので 、 いつ {出|で}て も いい",
+  "en": ""
+ },
+ "challenges:sea.tide_book#1k7ay1u": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{大|おお}きな {波|なみ} が {来|く}る ので 、 {港|みなと} を {出|で}ない",
+  "en": ""
+ },
+ "challenges:sea.licence_form#ee3z7s": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{免状|めんじょう} の {申請書|しんせいしょ}",
+  "en": "The licence's form"
+ },
+ "challenges:sea.licence_form#1om3pch": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "しんせいしょ ： ふね の なまえ ／ もちぬし ／ みなと",
+  "en": ""
+ },
+ "challenges:sea.licence_form#1b2u66d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ふね の なまえ",
+  "en": ""
+ },
+ "challenges:sea.licence_form#1om4s5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "もちぬし",
+  "en": ""
+ },
+ "challenges:sea.licence_form#si366k": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "みなと",
+  "en": ""
+ },
+ "challenges:sea.licence_form#ewoblr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{申請書|しんせいしょ} ： {船名|せんめい} ／ {所有者|しょゆうしゃ} ／ {母港|ぼこう} ／ {用途|ようと}",
+  "en": ""
+ },
+ "challenges:sea.licence_form#7v7m9j": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{所有者|しょゆうしゃ}",
+  "en": ""
+ },
+ "challenges:sea.licence_form#f9rni2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船名|せんめい}",
+  "en": ""
+ },
+ "challenges:sea.licence_form#axyosa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{母港|ぼこう}",
+  "en": ""
+ },
+ "challenges:sea.licence_form#lk068w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{沿岸|えんがん} の {郵便|ゆうびん} を {運|はこ}ぶ こと",
+  "en": ""
+ },
+ "challenges:sea.licence_form#1iqt6cr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{潮硝子|しおがらす}",
+  "en": ""
+ },
+ "challenges:sea.licence_form#1rd0k0c": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {長|なが}さ",
+  "en": ""
+ },
+ "challenges:sea.licence_form#i9r9ch": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{本船|ほんせん} の {母港|ぼこう} 、 {所有者|しょゆうしゃ} {及|およ}び {用途|ようと} を {記入|きにゅう} の {上|うえ} 、 {提出|ていしゅつ} の こと 。",
+  "en": ""
+ },
+ "challenges:sea.licence_form#7tmxkw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{母港|ぼこう} と {持|も}ち{主|ぬし} と {使|つか}い{道|みち} を {書|か}いて から 、 {出|だ}す",
+  "en": ""
+ },
+ "challenges:sea.licence_form#qbii80": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {名前|なまえ} だけ {書|か}いて 、 {出|だ}さずに {持|も}って おく",
+  "en": ""
+ },
+ "challenges:sea.licence_form#1bu2bfu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港長|こうちょう} が {書|か}いて くれる の を {待|ま}つ",
+  "en": ""
+ },
+ "challenges:sea.interview_1#4z5z9v": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{面接|めんせつ} ： {出港|しゅっこう} の {前|まえ}",
+  "en": "The interview: before putting out"
+ },
+ "challenges:sea.interview_1#1btiyk2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ふね を だす まえ に 、 なに を みます か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1tvwid3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "かぜ と しお を みます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1hpik75": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "なに も みません 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1pbsi0y": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "おなか が すきました 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#684lkm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} を {出|だ}す {前|まえ} に 、 {何|なに} を {確|たし}かめます か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1uslfpy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{風向|かざむ}き と {潮|しお} を {確|たし}かめます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1lz6blo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{特|とく}に {何|なに} も {確|たし}かめません 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1gt44oo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{確|たし}かめた ほう が いい です か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1mktd3m": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{出港|しゅっこう} の {前|まえ} に は 、 {何|なに} を {確認|かくにん} されます か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1s5c39q": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{風向|かざむ}き と {潮|しお} を {確認|かくにん} します 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1si8c3u": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{風向|かざむ}き と {潮|しお} を {確認|かくにん} されます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#chnfo8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{確認|かくにん} は 、 {特|とく}に しません 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1cmglaj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{出港|しゅっこう} の {際|さい} の {確認|かくにん} に ついて 、 ご{説明|せつめい} ください 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#1avu9h": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "はい 。 {風向|かざむ}き と {潮|しお} の {時刻|じこく} を {確認|かくにん} いたして から 、 {出港|しゅっこう} いたします 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#4mgtxv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "はい 。 {風向|かざむ}き と {潮|しお} を ご{確認|かくにん} に なって から 、 {出港|しゅっこう} なさいます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_1#ityre0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "まあ 、 {適当|てきとう} に やって ます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#18a1xka": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{面接|めんせつ} ： {霧|きり} の {時|とき}",
+  "en": "The interview: in fog"
+ },
+ "challenges:sea.interview_2#1946lyc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "きり が でたら 、 どう します か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#us0rqx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ほ を しぼって 、 ゆっくり すすみます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#yp3fcz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "いそいで すすみます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#19cqrtf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "ねます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#57ieg7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{霧|きり} が {出|で}たら 、 どう します か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#17u710j": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} を {絞|しぼ}って 、 {灯台|とうだい} の {光|ひかり} を {探|さが}します 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#1xnhvok": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{急|いそ}いで 、 {帆|ほ} を {全部|ぜんぶ} {張|は}ります 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#ie2kjv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{霧|きり} が {出|で}たら 、 {晴|は}れます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#lgdjz7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{航海|こうかい} {中|ちゅう} に {霧|きり} が {出|で}た {場合|ばあい} 、 どう なさいます か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#130gyhh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{速度|そくど} を {落|お}として 、 {灯台|とうだい} の {光|ひかり} を {数|かぞ}えます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#uucd2y": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "どう なさる か 、 {分|わ}かりません 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#fzld04": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{霧|きり} が {晴|は}れる まで 、 {帆|ほ} を {張|は}って {急|いそ}ぎます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#bbempr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{視界|しかい} {不良|ふりょう} の {際|さい} の {対応|たいおう} を {述|の}べて ください 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#hib9t2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{帆|ほ} を {絞|しぼ}って {速度|そくど} を {落|お}とし 、 {灯台|とうだい} の {信号|しんごう} で {位置|いち} を {確|たし}かめます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#4mgyq1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{視界|しかい} が {悪|わる}い ので 、 {何|なに} も {見|み}えません 。",
+  "en": ""
+ },
+ "challenges:sea.interview_2#1axqvyj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{霧|きり} の {日|ひ} は 、 {港|みなと} で {昼寝|ひるね} を いたします 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1ts44gc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{面接|めんせつ} ： {郵便|ゆうびん} が {濡|ぬ}れたら",
+  "en": "The interview: wet post"
+ },
+ "challenges:sea.interview_3#1p7nf51": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "てがみ が ぬれたら 、 どう します か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1l4fkgd": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "すぐ みなと に いいます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#agp9xv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "だまって とどけます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#jd7t5d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "すてます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#d5wd31": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{郵便|ゆうびん} が {濡|ぬ}れたら 、 どう します か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1j3ktdr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} に {着|つ}いたら 、 すぐ {伝|つた}えます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1nucxxt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{乾|かわ}かして 、 {黙|だま}って {届|とど}けます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#ii87v9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{濡|ぬ}れた {郵便|ゆうびん} は 、 {海|うみ} に {返|かえ}します 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1d3fm50": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{郵便物|ゆうびんぶつ} が {濡|ぬ}れて しまった {場合|ばあい} は 、 どう されます か 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1gru8qs": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} に {着|つ}いたら すぐ 、 {港長|こうちょう} に {報告|ほうこく} します 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#fbcpd4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} に {着|つ}いたら すぐ 、 {港長|こうちょう} に {報告|ほうこく} されます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#puhntk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{濡|ぬ}れて も 、 {大丈夫|だいじょうぶ} だ と {思|おも}います 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#1nf9ql3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{郵便物|ゆうびんぶつ} に {損傷|そんしょう} が {生|しょう}じた {場合|ばあい} の {対応|たいおう} を お{聞|き}かせ ください 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#lv7oc9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} に {着|つ}き{次第|しだい} 、 {港長|こうちょう} に ご{報告|ほうこく} いたします 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#gaqtfv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港|みなと} に {着|つ}き{次第|しだい} 、 {港長|こうちょう} が ご{報告|ほうこく} なさいます 。",
+  "en": ""
+ },
+ "challenges:sea.interview_3#10ouuoh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{損傷|そんしょう} は {生|しょう}じない と {存|ぞん}じます 。",
+  "en": ""
+ },
+ "quests:sea_licence#ug1uxw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{外海|そとうみ} の {免状|めんじょう}",
+  "en": "A Licence for the Open Sea"
+ },
+ "quests:sea_licence#89jw7p": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "フク さん に 、 {亡|な}くなった {旦那|だんな} さん の {船|ふね} の こと を {聞|き}いて みよう 。",
+  "en": "Ask Fuku about her late husband's boat."
+ },
+ "quests:sea_licence#14j3hd1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} は {八百橋|やおばし} の {造船所|ぞうせんじょ} へ {運|はこ}ばれた 。 {渡|わた}し{場|ば} の {横|よこ} の {船大工|ふなだいく} 、 カジロウ を {訪|たず}ねよう 。",
+  "en": "The hull has been towed to Manybridge. Find Kajirō the shipwright, in the yard by the ferry pier."
+ },
+ "quests:sea_licence#1nklnoz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "カジロウ と {帆|ほ}{縫|ぬ}い の ヌイ に 、 {一|ひと}つ ずつ {手|て} を {貸|か}そう 。 {行方|ゆくえ} {不明|ふめい} の {板|いた} と 、 {帆|ほ} の {寸法|すんぽう} 。",
+  "en": "Do Kajirō and Nui the sail-maker a favour each: the planking that went astray, and the sail's measurements."
+ },
+ "quests:sea_licence#53sngq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船|ふね} の {名前|なまえ} は {決|き}まった 。 {字|じ} を {書|か}く の は 、 {版木|はんぎ}{通|どお}り の ソウベエ の {店|みせ} の {仕事|しごと} だ 。",
+  "en": "The boat has her name. Painting the letters is the work of Sōbē's print shop on Blockprint Row."
+ },
+ "quests:sea_licence#1qbk2cr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{試|ため}し{乗|の}り は 、 {潮硝子|しおがらす} で テツ と 。 {芝居|しばい} の {通|とお}り の {祭|まつ}り が {終|お}わる まで 、 テツ は {渡|わた}し{船|ぶね} で {忙|いそが}しい 。",
+  "en": "Sea trials are at Saltglass, with Tetsu. Until Playhouse Row's festival is over, he is busy with the ferry."
+ },
+ "quests:sea_licence#1topf0n": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{港長|こうちょう} の オウミ の {試験|しけん} を {受|う}けよう 。 {書類|しょるい} と 、 {面接|めんせつ} 。",
+  "en": "Take Harbourmaster Ōmi's examination: a form, and an interview."
+ },
+ "quests:sea_licence#10kajts": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{初|はつ}{航海|こうかい} 。 {沿岸|えんがん} の {郵便|ゆうびん} を 、 {漣|さざなみ} と {東|ひがし} の {渡|わた}し{場|ば} へ {運|はこ}ぼう 。",
+  "en": "The maiden voyage: carry the coast's post to Sazanami and East Landing."
+ },
+ "quests:sea_licence#n9259a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{噂|うわさ} の {島|しま} へ 。",
+  "en": "To the island of the rumour."
+ },
  "maps:sea.coast#1r1e738": {
   "status": "self-reviewed",
   "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
@@ -1222,5 +3292,17 @@
   "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
   "jp": "{船室|せんしつ}",
   "en": "The Cabin"
+ },
+ "items:sea_timber_note#7tn5k7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{材木|ざいもく} の {送|おく}り{状|じょう}",
+  "en": "The timber's delivery note"
+ },
+ "items:sea_licence_doc#ug1uxw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{外海|そとうみ} の {免状|めんじょう}",
+  "en": "The licence for the open sea"
  }
 }

@@ -3785,6 +3785,12 @@
   "jp": "{一番|いちばん} の {橋|はし}",
   "en": "The First Bridge"
  },
+ "maps:mb.yard#zuaase": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: A Licence for the Open Sea (Ōmi's deal and examination, Fuku's boat, Kajirō's yard and Nui's loom, Sōbē's practice board, Tetsu's sea words, Shiori's tide book, the trial round the mark, Suzu's Kansai lines): オウミ for Ōmi throughout, contracted てる joined, the first stage naming no boat whose name is lost, 芝居の通り for Playhouse Row, 及び with its reading",
+  "jp": "{船大工|ふなだいく} の {造船所|ぞうせんじょ}",
+  "en": "The Boatyard"
+ },
  "enemies:mb.crab#csma6f": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
