@@ -39,3 +39,18 @@
 .tl-panel legend { padding: 0 0.3em; font-weight: 700; }
 .tl-pwho { font-weight: 700; margin-right: 0.3em; }
 .tl-pwhy { margin: 0.4em 0 0; font-size: 0.88em; border-left: 3px solid var(--ink-2); padding-left: 0.4em; }
+/* shell messages (Kotonoha, P11): who said it, to whom */
+.sh-frags { display: grid; gap: 0.7em; grid-template-columns: repeat(auto-fit, minmax(17em, 1fr)); }
+.sh-frag { border: 1px solid var(--paper-edge); border-radius: var(--r-1); padding: 0.45em 0.65em; background: var(--paper); min-width: 0; }
+.sh-head { font-size: 0.85em; color: var(--ink-2); }
+.sh-text { margin: 0.25em 0; font-size: 1.08em; }
+.sh-entext { margin: 0 0 0.3em; color: var(--ink-2); }
+.sh-acts { margin: 0.2em 0 0.4em; }
+.sh-ql { display: block; font-size: 0.82em; font-weight: 700; margin-top: 0.35em; }
+.sh-chips { display: flex; flex-wrap: wrap; gap: 0.35em; }
+.sh-chip { min-height: var(--tap); padding: 0.2em 0.55em; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; }
+.sh-chip[aria-checked='true'] { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--ink); }
+.sh-chip:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.sh-en { font-size: 0.82em; color: var(--ink-2); }
+.sh-why { font-size: 0.88em; border-left: 3px solid var(--ribbon); padding-left: 0.4em; margin: 0.4em 0 0; }
+.sh-ok { font-weight: 700; margin: 0.4em 0 0; }

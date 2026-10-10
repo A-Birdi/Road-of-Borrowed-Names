@@ -34,6 +34,10 @@ export const KNOWN_AT = {
   'kr.wick': KR, 'kr.sandal': KR, 'kr.chochin': KR, 'kr.moss': KR, 'kr.shadow': KR, 'kr.hyakuwa': KR,
   // Lanternfall's three more (P11, E23): the mimic and the queue in the basement stacks, the weevil in the tower
   'lf.mimic': CH5, 'lf.queue': CH5, 'lf.weevil': BELL,
+  // Kotonoha (twelve-chapter Chapter 9, P11): its shore, terraces and tide pools can be reached early by the player's
+  // own boat (after Snowbell: the Harbourmaster's quest), so those creatures are fair with Snowbell's words; the
+  // Root Hollows' and the Gardener only in Chapter 9 itself, after Lanternfall
+  'ko.leafling': OBS, 'ko.jelly': OBS, 'ko.mirror': OBS, 'ko.echo': OBS, 'ko.sandlantern': OBS, 'ko.gardener': CH6,
   'mp.kuroko': MB2, 'mp.moth': MB2, 'mp.imp': MB2, 'mp.golem': MB2, 'mp.naraku': MB2,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
 };

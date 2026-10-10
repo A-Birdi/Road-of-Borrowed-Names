@@ -62,6 +62,8 @@ export function lines(RB) {
   for (const id in C.reviewEnemies || {}) if (C.enemies[id]) walk(C.reviewEnemies[id] + '.' + id, 'enemies:' + id, C.enemies[id], new Set());
   // weighing tellings (P10): the sources, what they claim, and the readings to choose from
   for (const id in C.tellings || {}) walk(id, 'tellings:' + id, C.tellings[id], new Set());
+  // shell messages (P11): the lines in the conches and the people who said them
+  for (const id in C.shells || {}) walk(id, 'shells:' + id, C.shells[id], new Set());
   // the companions' memories and bond lines added by the expansion's chapters (P09's fireworks, P10's Ridge Light)
   const MEM_PREFIX = { fireworks: 'mp' };
   if (C.company && C.company.mem) for (const k in C.company.mem) { const id = MEM_PREFIX[k] ? MEM_PREFIX[k] + '.' + k : k; walk(id, 'memory:' + k, C.company.mem[k], new Set()); }

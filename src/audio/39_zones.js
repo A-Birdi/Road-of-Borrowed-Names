@@ -56,6 +56,13 @@ RB.audio = RB.audio || {};
       battle: 'battle_keepers', boss: 'boss_keepers', route: null,
       songs: ['keepers', 'kr_cave', 'kr_vigil', 'kr_hall'],
     },
+    // the twelve-chapter edition's Kotonoha, Chapter 9 (38_songs_ko.js): bowed voice, koto harmonics, glass chimes; its
+    // battle and boss themes sit a step above Lanternfall's (Chapter 8 there) and below the Archive's
+    kotonoha: {
+      chapter: 9, edition: 2, regions: ['kotonoha'], prefixes: ['ko.'],
+      battle: 'battle_ko', boss: 'boss_ko', route: null,
+      songs: ['kotonoha', 'ko_roots', 'ko_garden'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',

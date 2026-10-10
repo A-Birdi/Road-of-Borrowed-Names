@@ -20,6 +20,7 @@ narr: 「{言|こと}の{葉|は}{島|じま} から 、 {葉守|はもり} の 
 narr: 「テツ が {島|しま} へ {船|ふね} を {出|だ}します 。 {来|こ}られる なら 、 {潮硝子|しおがらす} へ 。 {港長|こうちょう} オウミ」 || "Tetsu will take the boat out to the island. If you can come, come to Saltglass. — Ōmi, Harbourmaster."
 !gesture pc present prop=leaf
 narr: {葉|は} に は 、 {細|ほそ}い {字|じ} で {一言|ひとこと} 、 「はんたい」 と {書|か}いて ある 。 || On the leaf, in a thin hand, one word: はんたい, "against".
+!give ko_leaf_lf quiet
 !gesture lf_yae observe pc
 lf_yae[sad]: …… この {町|まち} が なくした {言葉|ことば} です ね 。 {何年|なんねん} も {探|さが}さず に いた のに 、 {海|うみ} まで {流|なが}れて いって いた の か 。 || …The word this town lost. All those years we never looked for it, and it had drifted all the way out to sea.
 ?(comp=nao) !gesture comp observe pc
@@ -34,7 +35,7 @@ lf_yae: {書庫|しょこ} は {逃|に}げません 。 {先|さき} に 、 {�
 !set ko_called
 !quest ko_main 0
 !journal オウミ から {手紙|てがみ} が {届|とど}いた 。 {潮硝子|しおがらす} の {港|みなと} から 、 テツ の {船|ふね} が {言|こと}の{葉|は}{島|じま} へ {出|で}る 。 || A letter from Ōmi: Tetsu's boat sails from Saltglass harbour to Kotonoha.
-!toast {言|こと}の{葉|は}{島|じま} へ の {船|ふね} が {出|で}る ({潮硝子|しおがらす}) || A boat sails for Kotonoha (from Saltglass).
+!toast {言|こと}の{葉|は}{島|じま} へ の {船|ふね} が {出|で}る （{潮硝子|しおがらす}） || A boat sails for Kotonoha (from Saltglass).
 
 @scene ko.ferry_tetsu
 # Staged: Tetsu at the jetty with a fresh line chalked on the board; he looks out west, past the lighthouse.

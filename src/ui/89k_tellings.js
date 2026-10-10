@@ -27,6 +27,9 @@ RB.ui.tellings = (function () {
     scroll: { en: 'A teller\'s scroll', jp: '{絵巻|えまき}', vouch: 'the teller\'s tradition, told for listeners' },
     board: { en: 'A notice', jp: '{掲示|けいじ}', vouch: 'what whoever wrote it knew' },
     record: { en: 'A record', jp: '{記録|きろく}', vouch: 'what was written down at the time' },
+    // Kotonoha (P11): a community's own telling, and a voice kept in a shell
+    telling: { en: 'A telling', jp: '{言|い}い{伝|つた}え', vouch: 'what its tellers have handed down, not what anyone saw' },
+    shell: { en: 'A voice in a shell', jp: '{貝|かい} の {声|こえ}', vouch: 'what was said, in the words it was said' },
   };
   const prof = () => (S() && S().learn && S().learn.profile) || 'F';
 

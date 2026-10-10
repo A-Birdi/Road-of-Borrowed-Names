@@ -5,7 +5,7 @@
  * RB.content.tellings (src/content/kr/31_tellings.js).
  *
  *   C.tellings[id] = { id, title:{jp,en}, question:{jp,en},
- *     sources: [{ id, kind: 'inscription'|'memory'|'rhyme'|'scroll'|'board'|'record', who:{jp,en},
+ *     sources: [{ id, kind: 'inscription'|'memory'|'rhyme'|'scroll'|'board'|'record'|'telling'|'shell', who:{jp,en},
  *       read: challenge id (reading it, at the profile's tier; the language evidence),
  *       text: { F:{jp,en}, E:…, I:…, A:… } (what it says, by profile; A may carry a classical line and its gloss),
  *       claims: [{ id, jp, en, vouch: true|false, why:{en}, rule? }] }],

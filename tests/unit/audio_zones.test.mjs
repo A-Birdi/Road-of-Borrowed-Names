@@ -8,7 +8,7 @@ import { load } from '../lib/load.mjs';
 import { intensity, fmtIntensity } from '../lib/intensity.mjs';
 
 // zones that have their own score so far (chapter by chapter)
-const SCORED = ['saltglass', 'manybridge', 'keepers', 'cinder', 'snowbell', 'lanternfall', 'still'];
+const SCORED = ['saltglass', 'manybridge', 'keepers', 'kotonoha', 'cinder', 'snowbell', 'lanternfall', 'still'];
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
@@ -116,6 +116,14 @@ export default async (t) => {
     t.log(`kr  ${kind.padEnd(6)} ${Z.keepers[kind].padEnd(20)} ${fmtIntensity(k)}`);
     t.ok(k.bpm > lo.bpm && k.score > lo.score, `the Keepers' Road's ${kind} theme is a step above Snowbell's (score ${lo.score.toFixed(2)} -> ${k.score.toFixed(2)})`);
     t.ok(k.bpm < hi.bpm && k.score < hi.score, `and below Lanternfall's (score ${k.score.toFixed(2)} -> ${hi.score.toFixed(2)})`);
+  }
+  // Kotonoha (Chapter 9 of twelve) sits above Lanternfall (8 there) and below the Archive (12), leaving room for 10 and 11
+  if (Z.kotonoha) for (const kind of ['battle', 'boss']) {
+    const k = intensity(_.compile(songs[Z.kotonoha[kind]]));
+    const lo = intensity(_.compile(songs[Z.lanternfall[kind]])), hi = intensity(_.compile(songs[Z.still[kind]]));
+    t.log(`ko  ${kind.padEnd(6)} ${Z.kotonoha[kind].padEnd(20)} ${fmtIntensity(k)}`);
+    t.ok(k.bpm > lo.bpm && k.score > lo.score, `Kotonoha's ${kind} theme is a step above Lanternfall's (score ${lo.score.toFixed(2)} -> ${k.score.toFixed(2)})`);
+    t.ok(k.bpm < hi.bpm && k.score < hi.score, `and below the Archive's (score ${k.score.toFixed(2)} -> ${hi.score.toFixed(2)})`);
   }
   const rows = { battle: [], boss: [] };
   for (const [zid, z] of order) {

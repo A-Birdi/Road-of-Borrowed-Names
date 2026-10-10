@@ -801,6 +801,9 @@ RB.questGuide = (function () {
     door: ['{戸|と}', 'the door'], mb_canaltable: ['{運河|うんが} の {盤|ばん}', 'the canal board'], mb_plaque: ['{橋|はし} の {札|ふだ}', 'the bridge\'s plaque'],
     mb_bricked: ['{塗|ぬ}り{込|こ}められた {戸|と}', 'the walled-up door'], mb_noodle: ['{屋台|やたい}', 'the stall'],
     kr_toro: ['{灯籠|とうろう}', 'the stone lantern'], kr_stele: ['{石|いし}', 'the carved stone'], kr_halldoor: ['{館|やかた} の {戸|と}', 'the hall\'s door'],
+    ko_leaves: ['{葉|は}', 'the leaves'], ko_basket: ['{籠|かご}', 'the basket'], ko_sandtoro: ['{灯籠|とうろう}', 'the stone lantern'], ko_conch: ['{法螺貝|ほらがい}', 'the conch'],
+    ko_panel: ['{板|いた}', 'the panel'], ko_tidestone: ['{石|いし}', 'the standing stone'], ko_rootarch: ['{根|ね}', 'the roots'], ko_current: ['{風|かぜ}', 'the drifting leaves'],
+    ko_camphor: ['{大楠|おおくす}', 'the great camphor'],
   };
   const PROP_PREFIX = [
     [/icewall/, '{氷|こおり}', 'the ice'], [/dial/, '{仕掛|しか}け', 'the dial mechanism'], [/crank/, 'ハンドル', 'the crank'], [/lamp/, '{灯|あか}り', 'the lamp'],

@@ -28,6 +28,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'atlas.mothlamp': { disposition: 'upgraded', note: 'pale lantern with its white moths circling (part of the creature: drawn by flame colour #d8c0a0); Shroud = smoke with the moths whirling out' },
     'co.imp': { disposition: 'meets standard (reverified)', note: 'interim (P10, E23, F-36): a twelve-chapter Cinder Orchard creature, the Persimmon Imp, on the lantern family in persimmon orange; Heat and False promise as the lantern family; its own family is P16 art work (AC-1, C-82)' },
     'sb.hare': { disposition: 'meets standard (reverified)', note: 'interim (P10, E23, F-36): a twelve-chapter Snowbell creature, the Snow Hare, on the snow fox rig; Sweep and Chill as the snow fox; its own family is P16 art work (AC-1, C-82)' },
+    'ko.sandlantern': { disposition: 'meets standard (reverified)', note: 'interim (P11, F-36): Kotonoha\'s Sand Lantern on the lantern family in sand and pale stone; Shroud, Heat and Re-tying as the lantern family; its own half-buried stone body is P16 art work (AC-1, C-82)' },
     'kr.chochin': { disposition: 'meets standard (reverified)', note: 'interim (P10, F-36): the Keepers\' Road\'s chōchin-obake on the lantern family in warm paper amber; Shroud and Strike as the lantern family; its own split-rib grin is P16 art work (AC-1, C-82)' },
   };
   const ALLOWED = ['upgraded', 'meets standard (reverified)', 'incomplete'];

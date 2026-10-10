@@ -1,4 +1,46 @@
 {
+ "scene:lf2.yae_far#1dej7ni": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "$name さん 。{山道|やまみち} の {灯籠|とうろう} に 、 {名前|なまえ} が {戻|もど}って いる はず です 。 …… でも 、 {書庫|しょこ} は {遠|とお}い 。 {上|うえ} の {道|みち} は 、 まだ {霧|きり} の {中|なか} でしょう 。",
+  "en": "$name. The lantern on the mountain road should have its name back. …But the Archive is far, and the road above it will still be in mist."
+ },
+ "scene:lf2.road_north_mist#1f31x77": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "{分|わ}かれ{道|みち} の {灯籠|とうろう} に は 、 {名前|なまえ} が {戻|もど}って いる 。 でも 、 その {少|すこ}し {上|うえ} で 、 {道|みち} は まだ {霧|きり} に {溶|と}けて いる 。",
+  "en": "The fork lantern has its name back. But a little higher up, the road still melts into mist."
+ },
+ "scene:lf2.road_north_mist#1tcja7s": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "{進|すす}もう と して も 、 {気|き} が つく と {灯籠|とうろう} の {下|した} に {戻|もど}って いる 。",
+  "en": "Try to go on, and you find yourself back under the lantern."
+ },
+ "scene:lf2.road_north_mist#v0pbnf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "{一|ひと}つ の {灯|ひ} じゃ 、 {山|やま} {全部|ぜんぶ} は {照|て}らせない か 。 …… {先|さき} に 、 {海|うみ} の {方|ほう} の {用|よう} を {済|す}ませよう 。",
+  "en": "One lantern can't light a whole mountain, then. …Let's see to the business by the sea first."
+ },
+ "scene:lf2.road_north_mist#1o2kwvq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "また {頭|あたま} が くらくら する 。 …… {今|いま} は 、 {登|のぼ}る {時|とき} じゃ ない みたい 。",
+  "en": "My head's spinning again. …It doesn't seem the time to climb."
+ },
+ "scene:lf2.road_north_mist#fe92ea": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "{上|うえ} の {灯籠|とうろう} は 、 まだ {暗|くら}い まま です 。 {一|ひと}つ {戻|もど}して も 、 {道|みち} は {一本|いっぽん} の {灯|ひ} で は {続|つづ}かない 。",
+  "en": "The lanterns further up are still dark. Bring one back, and still a road doesn't run on a single light."
+ },
+ "scene:lf2.road_north_mist#1gjlxyl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",
+  "jp": "{幕|まく} は まだ {上|あ}がらない みたい ね 。 {最終|さいしゅう} {幕|まく} の {前|まえ} に 、 {別|べつ} の {幕|まく} が ある の よ 。",
+  "en": "The curtain's not going up yet, it seems. There's another act before the last one."
+ },
  "enemies:lf.mimic#1us0di6": {
   "status": "self-reviewed",
   "ref": "P11 self-review: Lanternfall's three twelve-chapter creatures (lf2)",

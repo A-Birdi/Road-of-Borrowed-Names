@@ -97,7 +97,7 @@ RB.battlePlaces = (function () {
   const CODEOF = { meadow: 'g', sand: 's', snow: 'n', ash: 'a', paper: 'q', stone: 'o', earth: 'p', parch: 'q' };
   const GROUNDOF = { grass: 'meadow', flowers: 'meadow', tallgrass: 'meadow', field: 'meadow', sand: 'sand', snow: 'snow', ice: 'snow', ash: 'ash', paper: 'paper', stonefloor: 'stone', path: 'earth', road: 'earth', atlas_sketch: 'parch', wood: 'earth', carpet: 'stone', tatami: 'stone', glass: 'stone' };
   // region of the tile palette for a backdrop family (colours of the same world)
-  const FAMREGION = { mill: 'reedwake', kiln: 'cinder', archive: 'archive', observatory: 'snowbell', belltower: 'lanternfall', still: 'sa_still', atlas: 'atlas', undercroft: 'manybridge', understage: 'manybridge', keepers: 'keepers', keepers_cave: 'keepers' };
+  const FAMREGION = { mill: 'reedwake', kiln: 'cinder', archive: 'archive', observatory: 'snowbell', belltower: 'lanternfall', still: 'sa_still', atlas: 'atlas', undercroft: 'manybridge', understage: 'manybridge', keepers: 'keepers', keepers_cave: 'keepers', kotonoha: 'kotonoha', kotonoha_cave: 'kotonoha' };
 
   // ---- scale (backdrop px, before the actors' whole-number scale) --------------------------------
   const COL = 24;          // a map column at the horizon, out of doors and in halls
@@ -371,6 +371,9 @@ RB.battlePlaces = (function () {
     understage: ['rope', 'storage', 'tools', 'lanternCrate', 'cobweb', 'pages'],
     keepers: ['leaves', 'pebbles', 'stone', 'tufts', 'logs'],
     keepers_cave: ['books', 'pages', 'papers', 'candles', 'scroll1', 'cobweb'],
+    // Kotonoha (P11): written leaves on sand and shells; in the roots, leaves, pages and wet stone
+    kotonoha: ['leaves', 'shells', 'pebbles', 'tufts', 'stone'],
+    kotonoha_cave: ['leaves', 'pages', 'puddle', 'cobweb', 'stone'],
     atlas: ['tufts', 'pebbles', 'stone', 'pages'],
     stillOut: ['pages', 'pebbles', 'stone'],
   };
@@ -1228,6 +1231,8 @@ RB.battlePlaces = (function () {
     understage: { n: 8, col: 'rgba(236,224,196,0.35)', size: 1, vx: 0.001, vy: 0.004, wob: 4 },
     keepers: { n: 9, col: 'rgba(206,118,62,0.65)', size: 2, vx: -0.004, vy: 0.006, wob: 9 },
     keepers_cave: { n: 7, col: 'rgba(236,224,196,0.3)', size: 1, vx: 0.001, vy: 0.003, wob: 4 },
+    kotonoha: { n: 11, col: 'rgba(232,200,96,0.7)', size: 2, vx: -0.003, vy: 0.004, wob: 11 },
+    kotonoha_cave: { n: 8, col: 'rgba(214,196,120,0.45)', size: 2, vx: 0.001, vy: -0.004, wob: 7 },
   };
   // How much the scenery quiets itself now (0 calm … 1 still): while you read,
   // choose and write; and for a moment when a blow lands (a result is placed).

@@ -656,7 +656,7 @@ lf_masaru: {賛成|さんせい} ！ {行|い}って {文句|もんく} を {言
 lf_yae[laugh]: {賛成|さんせい} {一|ひと}つ 、{反対|はんたい} {一|ひと}つ 。…… よろしい 。{議会|ぎかい} が {戻|もど}って きた 。|| One for, one against. …Good. The council is back.
 !gesture lf_yae palm pc
 ?(ed<2) lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、{名前|なまえ} が {戻|もど}って いる はず です 。{書庫|しょこ} へ の {道|みち} は {開|ひら}いた 。|| $name. The lantern on the mountain road should have its name back. The way to the Archive is open.
-?(ed>=2) lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、{名前|なまえ} が {戻|もど}って いる はず です 。…… でも 、{書庫|しょこ} は {遠|とお}い 。{上|うえ} の {道|みち} は 、まだ {霧|きり} の {中|なか} でしょう 。|| $name. The lantern on the mountain road should have its name back. …But the Archive is far, and the road above it will still be in mist.
+?(ed>=2) !call lf2.yae_far
 lf_yae: {行|い}く か どう か は 、あなた が {決|き}めなさい 。ここ に は もう 、「かしこまりました」 と {言|い}う {者|もの} は いません から ね 。|| Whether to go is for you to decide. There's no one left here who'll just say "certainly".
 !gesture lf_yae present pc prop=book
 lf_yae[sad]: …… もし カサネ に {会|あ}ったら 、{伝|つた}えて ちょうだい 。{議事録|ぎじろく} に は 、あなた の {反論|はんろん} も 、トウヤ の {異議|いぎ} も 、ちゃんと {残|のこ}って いた と 。|| …If you meet Kasane, tell them this. The minutes kept both — their counter-argument, and Tōya's objection. Both, properly recorded.

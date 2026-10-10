@@ -155,8 +155,8 @@ const compiled = {};
 // backdrops painted as interiors / as open country (RB.combat uses the same lists), and whether a
 // map reads as indoors (RB.render.enclosed: an interior region, def.indoor, or
 // a border that is mostly wall)
-const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower', 'undercroft', 'understage', 'keepers_cave']);
-const OUTDOOR_BG = new Set(['reedwake', 'saltglass', 'cinder', 'snowbell', 'lanternfall', 'manybridge', 'keepers']); // 'still' and 'atlas' are open, dreamlike places
+const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower', 'undercroft', 'understage', 'keepers_cave', 'kotonoha_cave']);
+const OUTDOOR_BG = new Set(['reedwake', 'saltglass', 'cinder', 'snowbell', 'lanternfall', 'manybridge', 'keepers', 'kotonoha']); // 'still' and 'atlas' are open, dreamlike places
 function indoorMap(m, def) {
   if (m.region === 'interior' || def.indoor) return true;
   let wall = 0, n = 0;
@@ -452,6 +452,20 @@ for (const id in C.tellings || {}) {
   } else {
     for (const o of d.answer.options) { jen(o, w + ' option ' + o.id); for (const c of o.needs || []) if (!cids.has(c)) E(w + ': option ' + o.id + ' needs an unknown claim ' + c); }
     if (!d.answer.options.some((o) => RB.tellings.judge(d, o.id).ok)) E(w + ': no option is supported');
+  }
+}
+// Shell messages (P11, src/engine/72s_shells.js): every line and name, a speaker and a listener among the people, a
+// clue for a wrong placing, and a reading task that exists
+for (const id in C.shells || {}) {
+  const d = C.shells[id], w = 'shells ' + id;
+  jen(d.title, w + ' title'); jen(d.question, w + ' question');
+  const pids = new Set((d.people || []).map((x) => x.id));
+  for (const pp of d.people || []) jen(pp, w + ' person ' + pp.id);
+  if (!d.read || !C.challenges[d.read]) E(w + ': reads an unknown challenge ' + d.read);
+  for (const f of d.frags || []) {
+    tiered(f.text, w + ' ' + f.id + ' text', jen);
+    if (!pids.has(f.who) || !pids.has(f.to)) E(w + ': line ' + f.id + ' names someone not among the people');
+    if (!f.cue || !f.cue.en) E(w + ': line ' + f.id + ' has no clue for a wrong placing');
   }
 }
 // A Quiet Cast: every situation's four task variants are ordinary steps (docs/practice/fishing.md)

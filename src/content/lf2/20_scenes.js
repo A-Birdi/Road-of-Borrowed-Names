@@ -7,11 +7,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const road = C.maps['lf.road'];
-  if (road) road.triggers.push({ x: 24, y: 1, w: 2, h: 1, scene: 'lf.road_north_mist', if: 'ed>=2&ch5_done&!yn_done' });
+  if (road) road.triggers.push({ x: 24, y: 1, w: 2, h: 1, scene: 'lf2.road_north_mist', if: 'ed>=2&ch5_done&!yn_done' });
 })(RB.content);
 
 RB.script.add(`
-@scene lf.road_north_mist
+@scene lf2.yae_far
+# The council's end in a twelve-chapter journey (lf.yae_after): the fork lantern's name is back, but the Archive is
+# far, and the road above still in mist.
+lf_yae: $name さん 。{山道|やまみち} の {灯籠|とうろう} に 、 {名前|なまえ} が {戻|もど}って いる はず です 。 …… でも 、 {書庫|しょこ} は {遠|とお}い 。 {上|うえ} の {道|みち} は 、 まだ {霧|きり} の {中|なか} でしょう 。 || $name. The lantern on the mountain road should have its name back. …But the Archive is far, and the road above it will still be in mist.
+
+@scene lf2.road_north_mist
 # Staged: the fork lantern burns with its name again, but a little above it the road still melts into mist; your
 # companion answers it in kind (Nao looks back down towards the coast, Mio's hand at her head, Ren looks up the road
 # at the dark lanterns beyond, Suzu's shrug), and you step back.
