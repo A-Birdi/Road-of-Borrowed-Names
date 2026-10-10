@@ -32,6 +32,8 @@ reduce its scope.
 - Never mark something verified in REQUIREMENTS.md/VALIDATION.md without
   having run the check. Distinguish browser tests, unit tests and code review.
 - Keep personal local paths and credentials out of committed files.
+- Art work (region kits, rendering, camera, actors, animation, light, battle staging, the book's look) follows
+  `docs/future/plan/AC1_ART.md` (Robin's C-82); it applies to art work only.
 
 ## Checkpoint policy
 Commit and push to the task branch after meaningful milestones, before risky

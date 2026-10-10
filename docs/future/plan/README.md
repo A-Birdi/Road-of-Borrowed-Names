@@ -32,6 +32,7 @@ implementation plan. Every idea is broken down on its own and checked against:
 | [10_STORY.md](10_STORY.md) | The twelve chapters, the Hush, companions, separations, old saves, the postgame |
 | [15_INTERFACE.md](15_INTERFACE.md) | **The interface as an authored travel book**, not nested panels; type and the new-font permission; how it would be built and reviewed |
 | [14_COMPANIONS.md](14_COMPANIONS.md) | **A second arc for each companion**, all four at the same depth: a seed, pressure, a crossroads, a night apart, an unfinished matter, a postgame scene, their dream |
+| [AC1_ART.md](AC1_ART.md) | **The art critique amendment (C-82)**, for art work only: what to keep from the proofs, the directions for camera, density, materials, Suzu, light, focus, animation and battles, and the internal checklist AC-A01–A20 |
 | [11_CONTRADICTIONS.md](11_CONTRADICTIONS.md) | **Every contradiction found**, each labelled decided, open, to confirm or to revisit, plus the defects fixed in the current game |
 | [12_ROADMAP.md](12_ROADMAP.md) | The drafted order of execution, from your feedback to the final art pass, with testing per phase |
 | [13_IDEA_REGISTER.md](13_IDEA_REGISTER.md) | Where every idea went: Astra's 60, all of Robin's, and this plan's own |

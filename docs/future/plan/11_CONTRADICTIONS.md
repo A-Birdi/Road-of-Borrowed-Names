@@ -450,6 +450,31 @@ the end something has morphed into something else incorrectly, I will address it
   twelve-chapter edition stays behind its development switch (S4) until the release, so Robin's six-chapter
   campaign plays on as it is.
 
+### C-82 · The art critique amendment (AC-1): for art work only
+**Decided** (2026-10-10). Robin sent a reviewer's "Art critique and autonomous implementation amendment, revision
+AC-1" with the note: "Addendum for art feedback - only consider it when we're working on more art." Digest:
+[AC1_ART.md](AC1_ART.md) (the PDF is not committed: 13 MB of figures, and it names the implementation model).
+- **Scope:** art work only (each new region's material kit, staging and battle backdrops in P08–P15; P16; any change
+  to rendering, camera, actors, animation, light, focus, battle staging or the book's look). Everything else carries
+  on under C-81 unchanged.
+- **What it settles for art:** no approval pauses; the lead makes evidence-backed internal decisions and reports
+  them honestly ("internally reviewed", never "Robin-approved"); the Mill study stays an experiment, its techniques
+  adopted one by one; the camera serves play, not whole-map coverage; layouts may change for the scene's sake with
+  connectivity, marker and interaction checks and saved positions kept valid; authored assets (pixel tables, masks,
+  pose frames) are as much code-authored art as generators; the checklist AC-A01–A20.
+- **Reconciled with Robin's standing rules (the lead's reading):**
+  - *Perspective.* C-81 said the perspective is Robin's to set; AC-1, which Robin sent, makes the projection the
+    lead's decision for art work. The lead chooses and documents it when art work next touches rendering; Robin's
+    own feedback on the study, when it comes, wins.
+  - *Libraries.* Robin's rule is no runtime libraries; AC-1 allows a locally bundled presentation component only when
+    necessary. The lead keeps to project-authored Canvas or a project-authored GPU layer; a bundled component would
+    need a recorded necessity in part F, offline, with its licence, and has not been needed.
+  - *Release.* AC-1 asks for the final verification (the matrix included) near completion under the current
+    authorisation; running tests changes nothing, so the matrix is run near the end. Any release, deployment or merge
+    still waits for Robin (no destination is authorised; standing rule).
+  - *Robin's devices.* Firefox and the foldable remain untested by automation; performance is reported for the
+    measured environment only.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -571,6 +596,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | The book interface | Accepted as revised (classic tabs on top, organised inner pages, the U02 type); P01's world proof next | C-79 |
 | The world's look | The proof's direction is solid; push detail toward the mockup and Octopath Traveler's fidelity; a nearer camera; battles keep their own framing; a Suzu-at-the-Mill fidelity study before the gate | C-80 |
 | The whole expansion | Authorised without consulting (P02 to P17); the lead decides open details and records them; the fidelity study is a test, not the standard; Robin reviews at the end | C-81 |
+| Art work | The AC-1 amendment governs art work only: internal evidence-backed decisions, the Mill as an experiment, camera for play, the AC-A01–A20 checklist; libraries and release still under Robin's standing rules | C-82 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

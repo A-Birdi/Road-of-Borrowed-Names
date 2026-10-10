@@ -10,7 +10,8 @@ World Proof into full Expansion plan at large. Do your best to implement the *en
 me … accept fewer to no distractions or concerns that block or halt progress." So **P02 to P17 are authorised**, in
 the playbook's order, one packet at a time, each with tests and evidence; the lead decides what the plan leaves open
 and logs it in `docs/future/plan/11_CONTRADICTIONS.md` part F. P18 (the full matrix, any release) still waits for
-Robin. The fidelity study is a test, not a standard. (Earlier: C-78 adopted the playbook's order; C-79 accepted the
+Robin. The fidelity study is a test, not a standard. **C-82** (the same day): Robin's art amendment AC-1, "only consider it when we're working on more
+art"; digest in `docs/future/plan/AC1_ART.md`, applied from the next art work (each new region's kit, P16). (Earlier: C-78 adopted the playbook's order; C-79 accepted the
 book interface; C-80 the world proof's direction.) Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
 
 **Model and tools:** one implementation model, checked at the start of the work (reported to Robin in the
