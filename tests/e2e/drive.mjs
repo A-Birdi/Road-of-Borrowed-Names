@@ -283,7 +283,9 @@ export function install() {
     let main = 0, other = 0;
     for (const [q, st] of p.quests) {
       const cur = s.quests[q];
-      const newer = !cur || (st === 'done' ? !cur.done : st !== 'start' && +st > cur.stage);
+      // a finished quest is never advanced again (a scene that names a stage of it, guarded by its own conditions,
+      // offers nothing once the quest is done)
+      const newer = !cur || (!cur.done && (st === 'done' || (st !== 'start' && +st > cur.stage)));
       if (newer) { if (q === mainQuest) main++; else other++; }
     }
     for (const f of p.flags) if (!s.flags[f]) other++;
@@ -326,6 +328,11 @@ export function install() {
     opts = opts || {};
     const max = opts.max || 600;
     const tried = new Set();
+    // sites that changed nothing that counts as progress (flags, quests, items, words, companion): skipped until
+    // progress changes, so a scene that only names a step it cannot take here (its own conditions stop it) is not
+    // tried again and again while only what has been seen grows. Travel (a warp) is never counted fruitless.
+    const fruitless = new Set();
+    const progOf = () => sigOf().split('|').slice(0, 5).join('|');
     const log = [];
     let lastScene = null;
     for (let i = 0; i < max; i++) {
@@ -339,7 +346,7 @@ export function install() {
         // several sites can share a scene (three doors, one scene): key by place too
         const where = st.n ? st.n.id : st.pr ? st.pr.x + ',' + st.pr.y : st.ex ? st.ex.x + ',' + st.ex.y : st.tr ? st.tr.x + ',' + st.tr.y : st.f ? st.f.id : '';
         const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene + '|' + where;
-        if (tried.has(key)) continue;
+        if (tried.has(key) || fruitless.has(progOf() + '|' + key.slice(sig.length))) continue;
         const g = gain(st.scene, opts.main, st);
         const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
         if (!tier) continue;
@@ -352,13 +359,14 @@ export function install() {
       }
       if (!best) return { ok: false, steps: i, log: opts.fullLog ? log : log.slice(-25), fail: 'no site offers progress towards ' + target, map: here, quests: S().quests };
       tried.add(best.key);
-      const before = ran.length;
+      const before = ran.length, prog0 = progOf();
       try {
         await walk(best.r);
         if (ran.indexOf(best.st.scene, before) < 0 && available(best.st)) await fire(best.st, best.tile);
       } catch (e) { log.push('ERR ' + best.st.scene + ': ' + e.message); continue; }
       log.push(best.st.scene + ' (' + best.st.kind + '@' + best.st.map + ')');
       lastScene = best.st.scene;
+      if (progOf() === prog0 && !provides(best.st.scene).warps.length) fruitless.add(prog0 + '|' + best.key.slice(sig.length));
     }
     return { ok: !!S().flags[target], steps: max, log: log.slice(-25), fail: 'step limit' };
   }
