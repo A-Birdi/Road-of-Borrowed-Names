@@ -186,7 +186,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 8, y: 9 },
       { p: 'noticeboard', x: 2, y: 2, scene: 'mb.board_rice' }, { p: 'noticeboard', x: 5, y: 2, scene: 'mb.board_fish' },
       { p: 'noticeboard', x: 11, y: 2, scene: 'mb.board_passage' }, { p: 'noticeboard', x: 14, y: 2, scene: 'mb.board_lost' },
-      { p: 'counter', x: 7, y: 3, across: true }, { p: 'bookpile', x: 9, y: 2, scene: 'mb.offers' },
+      { p: 'counter', x: 7, y: 3, across: true }, { p: 'bookpile', x: 9, y: 2 },
+      // the day's tallies waiting to go up, on a desk by the benches (the Exchange's offers, after the dispute)
+      { p: 'desk', x: 13, y: 8, scene: 'mb.offers' },
       { p: 'bench', x: 2, y: 7 }, { p: 'bench', x: 14, y: 7 }, { p: 'lantern', x: 1, y: 4, o: { lit: true } }, { p: 'lantern', x: 15, y: 4, o: { lit: true } },
     ],
     npcs: [

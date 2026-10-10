@@ -121,8 +121,16 @@ export function install() {
       case 'npc': {
         const live = RB.world.W.map.id === st.map && RB.world.W.npcs.find((a) => a.id === st.n.id);
         around(live ? live.x : st.n.x, live ? live.y : st.n.y, 1, 1);
-        // talking across a counter / desk
-        for (const [dx, dy] of DIRS4) out.push([(live ? live.x : st.n.x) + 2 * dx, (live ? live.y : st.n.y) + 2 * dy]);
+        // talking across a counter / desk: only where one stands between, as the game itself requires
+        // (src/engine/50_world.js interact); across anything else, the thing in between answers, not the person
+        const nx = live ? live.x : st.n.x, ny = live ? live.y : st.n.y;
+        const counterAt = (x, y) => (comp(st.map).props || []).some((pr) => {
+          const pd = RB.props.P[pr.p] || {};
+          if (!(pr.p === 'counter' || pr.across || pd.across) || (pr.if && !test(pr.if))) return false;
+          const pw = pr.w || pd.w || 1, ph = pr.h || pd.h || 1;
+          return x >= pr.x && x < pr.x + pw && y >= pr.y && y < pr.y + ph;
+        });
+        for (const [dx, dy] of DIRS4) if (counterAt(nx + dx, ny + dy)) out.push([nx + 2 * dx, ny + 2 * dy]);
         break;
       }
       case 'prop': { const pd = RB.props.P[st.pr.p] || {}; around(st.pr.x, st.pr.y, st.pr.w || pd.w || 1, st.pr.h || pd.h || 1); break; }
