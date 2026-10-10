@@ -263,7 +263,7 @@ comp[think]: {奈落|ならく} で 、 わたし 、 {怒|おこ}って いま�
 * {怒|おこ}る こと も 、 {薬|くすり} に なる かも しれない 。 || Maybe anger can be a medicine too. -> mio_a
 * {怒|おこ}って くれて 、 {役者|やくしゃ} さん たち は {助|たす}かった よ 。 || Your anger helped the actors. -> mio_b
 :mio_a
-comp[smile]: …… {量|りょう} を {間違|まちが}え なければ 、 です ね 。 {覚|おぼ}えて おきます 。 || …As long as the dose is right. I'll remember that.
+comp[smile]: …… {量|りょう} を {間違|まちが}えなければ 、 です ね 。 {覚|おぼ}えて おきます 。 || …As long as the dose is right. I'll remember that.
 !goto close
 :mio_b
 comp[smile]: はい 。 …… {次|つぎ} も 、 {一緒|いっしょ} に {怒|おこ}って ください ね 。 || Yes. …Next time too, be angry alongside me.

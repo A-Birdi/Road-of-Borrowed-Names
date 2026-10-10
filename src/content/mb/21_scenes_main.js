@@ -287,7 +287,7 @@ mb_ichi: {一番|いちばん} の {橋|はし} は 、 「{結|むす}ぶ」 {�
 !unset mb_night
 mb_haru: …… ありがとう ございました 。 {本当|ほんとう} に 、 ありがとう …… 。 || …Thank you. Thank you, truly…
 !gesture mb_haru nod pc
-mb_ichi: {橋|はし} に {名前|なまえ} が あったら 、 {迷|まよ}わなかった の に 。 || If the bridges had names, I wouldn't have got lost.
+mb_ichi: {橋|はし} に {名前|なまえ} が あったら 、 {迷|まよ}わなかった のに 。 || If the bridges had names, I wouldn't have got lost.
 ?(comp=nao) comp[think]: …… {子供|こども} が {帰|かえ}れない {町|まち} は 、 だめ だ 。 {一番|いちばん} の {橋|はし} 、 {行|い}く ぞ 。 || …A city a child can't find his way home in is no good. To the first bridge.
 ?(comp=mio) comp[think]: {荷物|にもつ} だけ じゃ ない ん だ ね 。 {名前|なまえ} が {消|き}える と 、 {人|ひと} も {帰|かえ}れなく なる 。 || It's not just cargo. When the names go, people can't get home either.
 ?(comp=ren) comp[think]: {村|むら} {一|ひと}つ の {話|はなし} では ありません ね 。 {町|まち} {一|ひと}つ が 、 {帰|かえ}り{道|みち} を {失|うしな}いかけて いる 。 || This isn't one village's trouble any more. A whole city is losing its way home.

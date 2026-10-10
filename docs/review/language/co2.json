@@ -1,0 +1,320 @@
+{
+ "scene:co2.heita_city#1wswnal": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "あ 、 {南|みなみ} から {来|き}た ん っす か 。 {八百橋|やおばし} を {通|とお}って ？",
+  "en": "Oh, you came up from the south? Through Manybridge?"
+ },
+ "scene:co2.heita_city#x4kfaq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{川開|かわびら}き の {花火|はなび} 、 {本当|ほんとう} に {見|み}た ん っす か 。 いい なあ 。 おれ 、 {柿|かき} の {木|き} より {高|たか}い もの 、 {見|み}た こと ない っす よ 。",
+  "en": "You really saw the fireworks at the Opening of the River? Lucky. I've never seen anything taller than a persimmon tree."
+ },
+ "enemies:co.shard#1ww569o": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "ガラス の かけら",
+  "en": "Glass-Shard Wisp"
+ },
+ "enemies:co.shard#w6gq12": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:火",
+  "en": ""
+ },
+ "enemies:co.shard#3bazv2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:石",
+  "en": ""
+ },
+ "enemies:co.shard#b4ymn6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:土",
+  "en": ""
+ },
+ "enemies:co.shard#28byrm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:柿",
+  "en": ""
+ },
+ "enemies:co.shard#12k7kzf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:灰",
+  "en": ""
+ },
+ "enemies:co.shard#r6q35c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:煙",
+  "en": ""
+ },
+ "enemies:co.shard#1f11djm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:窯",
+  "en": ""
+ },
+ "enemies:co.shard#1bib8tk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:覚える",
+  "en": ""
+ },
+ "enemies:co.shard#6d7p2j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:燃える",
+  "en": ""
+ },
+ "enemies:co.shard#j5bmzh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:逃げる",
+  "en": ""
+ },
+ "enemies:co.shard#24yoz4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "「 ひ を けさないで 」 …… 「 ひ を けして 」 。",
+  "en": "\"Don't put the fire out.\" … \"Put the fire out.\""
+ },
+ "enemies:co.shard#11leo38": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "「 {窯|かま} の {火|ひ} を {消|け}さないで 」 …… 「 {窯|かま} の {火|ひ} を {消|け}して 」 。",
+  "en": "\"Don't let the kiln fire go out.\" … \"Put the kiln fire out.\""
+ },
+ "enemies:co.shard#w28cg0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "「 {火|ひ} が {強|つよ}すぎたら 、 {灰|はい} を かけて 」 …… 「 {火|ひ} が {弱|よわ}すぎたら 、 {灰|はい} を かけて 」 。",
+  "en": "\"If the fire gets too strong, bank it with ash.\" … \"If the fire gets too weak, bank it with ash.\""
+ },
+ "enemies:co.shard#1stfy2x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "「 {急|いそ}いで {冷|さ}ます と 、 ガラス は {割|わ}れる 」 …… 「 {急|いそ}いで {冷|さ}まさない と 、 ガラス は {割|わ}れる 」 。",
+  "en": "\"Cool glass in a hurry and it cracks.\" … \"Don't cool glass in a hurry and it cracks.\""
+ },
+ "enemies:co.shard#1atcak8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{割|わ}れた ガラス の かけら が 、 {窯|かま} の {火|ひ} を {映|うつ}して {浮|う}かんで いる 。 {聞|き}こえた {言葉|ことば} を 、 {逆|さか}さ に {映|うつ}す 。",
+  "en": "A shard of broken glass floats in the air, the kiln fire in it. It reflects the words it hears back to front."
+ },
+ "enemies:co.shard#9by4w8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "かけら は {床|ゆか} に {落|お}ちて 、 ただ の ガラス に {戻|もど}った 。 {窯|かま} の {火|ひ} が 、 まっすぐ {映|うつ}って いる 。",
+  "en": "The shard drops to the floor and is just glass again. The kiln fire shows in it the right way round."
+ },
+ "enemies:co.mole#187uifl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{灰|はい}モグラ",
+  "en": "Ash Mole"
+ },
+ "enemies:co.mole#w6gq12": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:火",
+  "en": ""
+ },
+ "enemies:co.mole#3bazv2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:石",
+  "en": ""
+ },
+ "enemies:co.mole#b4ymn6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:土",
+  "en": ""
+ },
+ "enemies:co.mole#28byrm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:柿",
+  "en": ""
+ },
+ "enemies:co.mole#12k7kzf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:灰",
+  "en": ""
+ },
+ "enemies:co.mole#r6q35c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:煙",
+  "en": ""
+ },
+ "enemies:co.mole#1f11djm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:窯",
+  "en": ""
+ },
+ "enemies:co.mole#1bib8tk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:覚える",
+  "en": ""
+ },
+ "enemies:co.mole#6d7p2j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:燃える",
+  "en": ""
+ },
+ "enemies:co.mole#j5bmzh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:逃げる",
+  "en": ""
+ },
+ "enemies:co.mole#baafz5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "じめん が すこし ずつ もりあがって くる 。",
+  "en": "The ground is heaving up, little by little."
+ },
+ "enemies:co.mole#5c5mor": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{灰|はい} の {下|した} で 、 {地面|じめん} が {少|すこ}し ずつ {盛|も}り{上|あ}がって くる 。",
+  "en": "Under the ash, the ground is heaving up little by little."
+ },
+ "enemies:co.mole#narznp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{灰|はい} の {下|した} で 、 {何|なに} か が {力|ちから} を {溜|た}めて いる 。 {縛|しば}る なら {今|いま} だ 。",
+  "en": "Something under the ash is gathering its strength. If you mean to bind it, now is the time."
+ },
+ "enemies:co.mole#u7g6kp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{足元|あしもと} の {灰|はい} が 、 {不気味|ぶきみ} な ほど {静|しず}か に なった 。 {下|した} で 、 {力|ちから} が {溜|た}まって いる 。",
+  "en": "The ash underfoot has gone unnervingly still. Below, strength is building."
+ },
+ "enemies:co.mole#4l99gy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{灰|はい} の {下|した} から 、 {鼻|はな} だけ が {出|で}て いる 。 {地面|じめん} が 、 ゆっくり {盛|も}り{上|あ}がって くる 。",
+  "en": "Only a nose pokes out from under the ash. The ground is slowly heaving up."
+ },
+ "enemies:co.mole#10qt3ab": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "モグラ は {灰|はい} を {一度|いちど} {振|ふ}り{払|はら}って 、 {土|つち} の {中|なか} へ {帰|かえ}って いった 。",
+  "en": "The mole shakes the ash off once and goes back down into the earth."
+ },
+ "enemies:co.imp#6eimrd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{柿|かき}{小僧|こぞう}",
+  "en": "Persimmon Imp"
+ },
+ "enemies:co.imp#w6gq12": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:火",
+  "en": ""
+ },
+ "enemies:co.imp#3bazv2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:石",
+  "en": ""
+ },
+ "enemies:co.imp#b4ymn6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:土",
+  "en": ""
+ },
+ "enemies:co.imp#28byrm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:柿",
+  "en": ""
+ },
+ "enemies:co.imp#12k7kzf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:灰",
+  "en": ""
+ },
+ "enemies:co.imp#r6q35c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:煙",
+  "en": ""
+ },
+ "enemies:co.imp#1f11djm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:窯",
+  "en": ""
+ },
+ "enemies:co.imp#1bib8tk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:覚える",
+  "en": ""
+ },
+ "enemies:co.imp#6d7p2j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:燃える",
+  "en": ""
+ },
+ "enemies:co.imp#j5bmzh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "v:逃げる",
+  "en": ""
+ },
+ "enemies:co.imp#2l6ot4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "かき が あまく なる まで まって 。 なまえ は じぶん で もどって くる よ 。",
+  "en": "Wait till the persimmons are sweet. The names will come back by themselves."
+ },
+ "enemies:co.imp#12qfses": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{柿|かき} が {甘|あま}く なる まで {待|ま}って 。 {名前|なまえ} は 、 {自分|じぶん} で {戻|もど}って くる よ 。",
+  "en": "Wait until the persimmons turn sweet. The names will come back on their own."
+ },
+ "enemies:co.imp#s5sz7a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{渋|しぶ}い {柿|かき} も 、 {待|ま}てば {甘|あま}く なる 。 {名前|なまえ} も {同|おな}じ さ 。 {何|なに} も しなくて も 、 そのうち {戻|もど}る はず だ 。",
+  "en": "Even bitter persimmons turn sweet if you wait. Names are the same: do nothing, and they're bound to come back."
+ },
+ "enemies:co.imp#1p7axmk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{熟|う}れる まで {待|ま}つ が いい 。 {名|な} と いう もの は 、 {放|ほう}って おけば おのずと {戻|もど}る もの だ 。",
+  "en": "Best to wait for it to ripen. A name, left alone, comes back of its own accord."
+ },
+ "enemies:co.imp#i08x39": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{枝|えだ} に {残|のこ}った {柿|かき} が {一|ひと}つ 、 {顔|かお} を {持|も}って いる 。 {甘|あま}い {声|こえ} で 、 {待|ま}て と {言|い}う 。",
+  "en": "One persimmon left on the branch has a face. In a sweet voice, it tells you to wait."
+ },
+ "enemies:co.imp#76q56a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English (P10): the Keepers' Road's scenes, tasks, tellings, encounters and creatures against each person's established speech (Hisae, Aya, Kumazō, Shōzō, Kame, Jūzō, Kikyō, Iwa, Seiji, Mokichi, Fuyu, Sora and the companions), the chapter's language by profile (P10_KEEPERS.md: F kana, E 〜と言いました, I 〜によると / 〜と伝えられている / 〜ことになっている, A classical forms always glossed), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, and the lexicon; also the twelve-chapter Cinder Orchard and Snowbell creatures and lines, and the Manybridge encounters (P08, P09) the ledger now lists; corrected in review: split tokens joined (まま, のに, いつも, 黒い, 戦えません, 間違えなければ, 語り口, 立ちふさがって), nested quotes as 『』, quoted speech kept in the speaker's own register (Hisae, Kame, Kumazō), によると spelled one way, two sentences rewritten (碑を読んでおきたい; 九十九の話をしたら), English glosses (いい腕だ, 手の火傷, 嘘だ, 石も字も)",
+  "jp": "{柿|かき} は {枝|えだ} から ぽとり と {落|お}ちた 。 {割|わ}って みる と 、 まだ {渋|しぶ}かった 。",
+  "en": "The persimmon drops from the branch with a soft plop. Broken open, it is still bitter."
+ }
+}

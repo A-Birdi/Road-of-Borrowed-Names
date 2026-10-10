@@ -32,7 +32,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: { jp: 'ゆき を けりあげた ！', en: 'It kicked up the snow!' },
         E: { jp: '{雪|ゆき} を {蹴|け}り{上|あ}げて 、 ふたり に かけた ！', en: 'It kicked up the snow and threw it over you both!' },
         I: { jp: '{跳|は}ねる たび に {雪|ゆき} が {舞|ま}い{上|あ}がって 、 ふたり を {包|つつ}む 。', en: 'Every bound throws up snow, and it closes around you both.' },
-        A: { jp: '{雪|ゆき} を {蹴|け}って {駆|か}け{回|まわ}り 、 {辺|あた}り を {真|ま}っ{白|しろ}に した 。', en: 'It races round kicking up snow until everything is white.' },
+        A: { jp: '{雪|ゆき} を {蹴|け}って {駆|か}け{回|まわ}り 、 {辺|あた}り を {真|ま}っ{白|しろ} に した 。', en: 'It races round kicking up snow until everything is white.' },
       } },
     },
     intro: { jp: '{雪|ゆき} の {中|なか} から 、 {白|しろ}い ウサギ が {跳|と}び{出|だ}した 。 {後|うし}ろ {足|あし} で 、 {雪|ゆき} を {蹴|け}り{上|あ}げる 。', en: 'A white hare bursts out of the snow, kicking it up with its hind legs.' },
@@ -46,7 +46,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         F: { jp: 'ほし が ひかり を かくした 。 かぜ では はれない 。', en: 'The star hid its light. Wind won\'t clear it.' },
         E: { jp: '{星|ほし} が {光|ひかり} を {隠|かく}した 。 {風|かぜ} で は {晴|は}れない 。 {光|ひかり} で なければ 。', en: 'The star hid its light. Wind won\'t clear it; only light will.' },
         I: { jp: '{星|ほし} の {光|ひかり} が {霧|きり} の よう に {広|ひろ}がった 。 {風|かぜ} で は {散|ち}らない 。 {光|ひかり} だけ が {晴|は}らせる 。', en: 'Starlight spreads like fog. Wind won\'t scatter it; only light can clear it.' },
-        A: { jp: '{星|ほし} の {光|ひかり} が {重|おも}く {垂|た}れ{込|こ}める 。 {風|かぜ} に は {動|うご}かず 、 {光|ひかり} に だけ {晴|は}れる 。', en: 'Starlight hangs heavy in the air. Wind won\'t move it; it clears for light alone.' },
+        A: { jp: '{星|ほし} の {光|ひかり} が {重|おも}く {垂|た}れ{込|こ}める 。 {風|かぜ} に は {動|うご}かず 、 {光|ひかり} で だけ {晴|は}れる 。', en: 'Starlight hangs heavy in the air. Wind won\'t move it; it clears for light alone.' },
       } },
     },
     intro: { jp: '{星図|せいず} の {星|ほし} が {一|ひと}つ 、 {紙|かみ} から {抜|ぬ}け{出|だ}して {飛|と}んで いる 。 {群|む}れ から はぐれた ムクドリ の よう に 。', en: 'One star has slipped off the star chart and is flying about, like a starling lost from its flock.' },
@@ -73,7 +73,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 # Twelve-chapter journeys: Rokuta has heard of a town of eight hundred bridges.
 !faceplayer
 rokuta: なあ 、 {橋|はし} が {八百|はっぴゃく} も ある {町|まち} って 、 {本当|ほんとう} に ある の か ？ || Hey, is there really a town with eight hundred bridges?
-rokuta[smirk]: …… {嘘|うそ} だ 。 {数|かぞ}えた やつ 、 いない だろ 。 || …Liar. Nobody's ever counted them.
+rokuta[smirk]: …… {嘘|うそ} だ 。 {数|かぞ}えた やつ 、 いない だろ 。 || …No way. Nobody's ever counted them.
 ?(comp=nao) comp: {数|かぞ}えた やつ は いない 。 だから 「{八百|やお}」 なんだ 。 たくさん と いう {意味|いみ} だ よ 。 || Nobody has. That's why it's "yao": it just means a great many.
 !set sb2_rokuta_city
 `, 'sb2/world');

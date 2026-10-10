@@ -249,7 +249,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   EN('mp.kuroko', {
     name: T('Prompter\'s Ghost', '{黒子|くろこ} の {幽霊|ゆうれい}'), art: 'wisp', artOpts: { col: '#1e1c22' }, look: { custom: 'spirit', col: '#2a2830' }, knots: 3, pool: POOL,
     pattern: ['shroud', 'strike', 'rest'],
-    intro: T('A figure in a kuroko\'s black, the hood down over its face. It whispers the line before yours, always one ahead.', '{黒|くろ} い {頭巾|ずきん} の {黒子|くろこ} 。 あなた の {台詞|せりふ} を 、 いつ も {一|ひと}つ {先|さき} に ささやく 。'),
+    intro: T('A figure in a kuroko\'s black, the hood down over its face. It whispers the line before yours, always one ahead.', '{黒|くろ}い {頭巾|ずきん} の {黒子|くろこ} 。 あなた の {台詞|せりふ} を 、 いつも {一|ひと}つ {先|さき} に ささやく 。'),
     settle: T('The ghost bows, as kuroko do when no one is looking, and is simply not there any more.', '{黒子|くろこ} は {頭|あたま} を {下|さ}げて 、 もう そこ に は いなかった 。') });
   EN('mp.moth', {
     name: T('Misprint Moth', '{誤植|ごしょく}{蛾|が}'), art: 'moth', artOpts: { col: '#d8ccb0', col2: '#2a2420' }, look: { custom: 'moth', col: '#d8ccb0' }, knots: 2, pool: POOL,

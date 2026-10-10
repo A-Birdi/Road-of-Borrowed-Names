@@ -130,7 +130,7 @@ kr_kumazo: そっち の {端|はし} を {持|も}って くれ 。 {俺|おれ
 !set kr_cedar_cleared
 !gesture kr_kumazo brow
 narr: {杉|すぎ} が {転|ころ}がって 、 {石段|いしだん} が {空|あ}いた 。 || The cedar rolls over and away, and the steps are clear.
-kr_kumazo[laugh]: いい {腕|うで} だ ！ …… {礼|れい} に 、 {一|ひと}つ {教|おし}えて やろう 。 この {上|うえ} の {灯籠|とうろう} は 、 「{杉|すぎ} の {灯|ひ}」 と {言|い}う ん だ 。 {親父|おやじ} が そう {呼|よ}んで いた 。 || Good arms! …Here's something for your trouble. The lantern up there is called "the Cedar Light". My father called it that.
+kr_kumazo[laugh]: いい {腕|うで} だ ！ …… {礼|れい} に 、 {一|ひと}つ {教|おし}えて やろう 。 この {上|うえ} の {灯籠|とうろう} は 、 「{杉|すぎ} の {灯|ひ}」 と {言|い}う ん だ 。 {親父|おやじ} が そう {呼|よ}んで いた 。 || Nice work! …Here's something for your trouble. The lantern up there is called "the Cedar Light". My father called it that.
 !set kr_clue_steps
 !end
 :gone
@@ -191,7 +191,7 @@ narr: {井戸|いど} の そば で 、 {子供|こども} が {二人|ふた�
 kr_shozo: {里長|さとおさ} の ショウゾウ です 。 {宿坊|しゅくぼう} へ ？ {橋|はし} を {渡|わた}って 、 {尾根|おね} を {東|ひがし} へ 。 {分|わ}かれ{道|みち} は 、 {右|みぎ} です 。 || I'm Shōzō, the headman. To the lodge? Across the bridge and east along the ridge. Keep right at the fork.
 kr_shozo: {左|ひだり} の {道|みち} は 、 {古|ふる}い {館|やかた} へ {行|い}く だけ です 。 {戸|と} は {閉|し}まった まま です よ 。 {誰|だれ} も {開|あ}けた こと が ない 。 || The left way only goes to the old hall. Its door stays shut. No one has ever opened it.
 kr_shozo: …… ところで 、 この {橋|はし} の {名前|なまえ} の {話|はなし} 、 {聞|き}きました か 。 {里|さと} に は {三|みっ}つ も {話|はなし} が あって 、 {困|こま}って いる ん です 。 || …By the way, have you heard about this bridge's name? The hamlet has three stories about it, and it's a nuisance.
-kr_shozo: {新|あたら}しい {板|いた} を {作|つく}る の に 、 どれ を {書|か}けば いい か {決|き}まらない 。 {話|はなし} を {聞|き}いて くれたら 、 {助|たす}かります 。 || We're making a new board and can't decide which to write. If you'd hear them out, I'd be grateful.
+kr_shozo: {新|あたら}しい {板|いた} を {作|つく}る のに 、 どれ を {書|か}けば いい か {決|き}まらない 。 {話|はなし} を {聞|き}いて くれたら 、 {助|たす}かります 。 || We're making a new board and can't decide which to write. If you'd hear them out, I'd be grateful.
 !quest kr_fox 0
 
 @scene kr.shozo_idle

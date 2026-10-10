@@ -55,7 +55,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   EN('kr.moss', {
     name: T('Moss Lantern', '{苔|こけ}{灯籠|どうろう}'), art: 'golem', artOpts: { col: '#6a7a5a', core: '#c8b070' }, look: { custom: 'golem', col: '#6a7a5a' }, knots: 3, pool: POOL,
     pattern: ['chill', 'strike', 'rest'],
-    intro: T('A stone lantern grown over with moss so thick it has stood up. It plants itself across the steps and will let no one by.', '{苔|こけ} に {覆|おお}われた {石|いし} の {灯籠|とうろう} が 、 {立|た}ち{上|あ}がった 。 {石段|いしだん} に {立|た}ち ふさがって 、 {誰|だれ} も {通|とお}さない 。'),
+    intro: T('A stone lantern grown over with moss so thick it has stood up. It plants itself across the steps and will let no one by.', '{苔|こけ} に {覆|おお}われた {石|いし} の {灯籠|とうろう} が 、 {立|た}ち{上|あ}がった 。 {石段|いしだん} に {立|た}ちふさがって 、 {誰|だれ} も {通|とお}さない 。'),
     settle: T('Named, the lantern settles back onto its base, and a little light shows in its fire box.', '{名前|なまえ} を {呼|よ}ばれた {灯籠|とうろう} は 、 {台|だい} の {上|うえ} に {戻|もど}り 、 {火袋|ひぶくろ} に {小|ちい}さな {灯|ひ} が ともった 。') });
   EN('kr.shadow', {
     name: T('Teller\'s Shadow', '{語|かた}り{部|べ} の {影|かげ}'), art: 'echo', artOpts: { col: '#3a3440' }, look: { custom: 'spirit', col: '#3a3440' }, knots: 2, pool: POOL, setting: 'indoor', bg: 'keepers_cave',
@@ -66,7 +66,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         text: {
           F: { jp: 'あなた は 、 なまえ を よばない で ひ を つけた 。', en: 'You lit the lamps without calling their names.' },
           E: { jp: 'あなた は {名前|なまえ} を {呼|よ}ばない で 、 {灯|ひ} を つけた 。 {名前|なまえ} なんて 、 いらなかった 。', en: 'You lit the lamps without calling their names. Names weren\'t needed at all.' },
-          I: { jp: '{聞|き}いた {話|はなし} に よる と 、 あなた は {尾根|おね} の {灯|ひ} を 、 {名前|なまえ} も {呼|よ}ばない で {点|とも}した そう だ 。', en: 'According to what I heard, you lit the ridge lamps without so much as calling their names.' },
+          I: { jp: '{聞|き}いた {話|はなし} に よると 、 あなた は {尾根|おね} の {灯|ひ} を 、 {名前|なまえ} も {呼|よ}ばない で {点|とも}した そう だ 。', en: 'According to what I heard, you lit the ridge lamps without so much as calling their names.' },
           A: { jp: '{此|こ}の {道|みち} の {灯|ひ} は 、 {名|な} を {呼|よ}ばれる こと なく {点|とも}された 、 と {伝|つた}えられて いる 。', en: 'It is handed down that the lamps of this road were lit without their names ever being called.' },
         },
         truth: {
@@ -88,7 +88,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         text: {
           F: { jp: 'ひゃく ばんめ の はなし を して 。 そう すれば 、 ひ が もどる よ 。', en: 'Tell the hundredth story. Then the lamps will come back.' },
           E: { jp: '{百|ひゃく} {番目|ばんめ} の {話|はなし} を して 。 そう すれば 、 {道|みち} の {灯|ひ} が {全部|ぜんぶ} {戻|もど}る よ 。', en: 'Tell the hundredth story. Then every lamp on the road will come back.' },
-          I: { jp: '{灯守|ひもり} の {記録|きろく} に よる と 、 {百話目|ひゃくわめ} を {語|かた}れば {灯|ひ} が {戻|もど}る と いう 。 さあ 、 {語|かた}って 。', en: 'According to the keepers\' registers, if the hundredth is told, the lamps return. Go on, tell it.' },
+          I: { jp: '{灯守|ひもり} の {記録|きろく} に よると 、 {百話目|ひゃくわめ} を {語|かた}れば {灯|ひ} が {戻|もど}る と いう 。 さあ 、 {語|かた}って 。', en: 'According to the keepers\' registers, if the hundredth is told, the lamps return. Go on, tell it.' },
           A: { jp: '{百話|ひゃくわ} {語|かた}り{終|お}えて こそ 、 {夜|よ} は {明|あ}ける 。 そう {伝|つた}えられて きた の だ 。', en: 'Only when a hundred tales are told does the night end. So it has always been handed down.' },
         },
         truth: {
@@ -164,7 +164,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       wait: { when: { all: [{ stance: { 'n:hisae': 'listening' } }, { not: { claims: 'p2' } }] }, effect: { reveal: 'p2' }, says: { en: 'You say nothing. Hisae trims the wick. "Thirty years," she says at last, to the lamp. "The others will be walking other roads."' } },
       companion: {
         nao: [{ id: 'nao_road', name: say('{道|みち} の {話|はなし} を する', 'Talk about roads'), desc: 'Nao has walked more roads than most.', once: true, effect: { understanding: 1, stance: { 'n:hisae': 'listening' } }, says: { en: 'Nao names the roads they have carried letters on. Hisae knows half of them, and how the lanterns stood on each.' } }],
-        mio: [{ id: 'mio_hands', name: say('{手|て} の {火傷|やけど} を {診|み}る', 'See to the burn on her thumb'), desc: 'Mio has salve in her bag.', once: true, effect: { understanding: 1, stance: { 'n:hisae': 'listening' } }, says: { en: 'Mio takes Hisae\'s hand without asking and puts salve on the old burn. Hisae lets her.' } }],
+        mio: [{ id: 'mio_hands', name: say('{手|て} の {火傷|やけど} を {診|み}る', 'See to the burn on her hand'), desc: 'Mio has salve in her bag.', once: true, effect: { understanding: 1, stance: { 'n:hisae': 'listening' } }, says: { en: 'Mio takes Hisae\'s hand without asking and puts salve on the old burn. Hisae lets her.' } }],
         ren: [{ id: 'ren_wick', name: say('{芯|しん} を {整|ととの}える', 'Trim the wick'), desc: 'Keeper to keeper.', once: true, effect: { understanding: 1, stance: { 'n:hisae': 'listening' } }, says: { en: 'Ren trims the wick, a keeper\'s small exact movement. Hisae watches their hands, and says nothing, and that says a great deal.' } }],
         suzu: [{ id: 'suzu_story', name: say('{昔話|むかしばなし} を ねだる', 'Ask her for an old story'), desc: 'Suzu knows how to ask.', once: true, effect: { understanding: 1, stance: { 'n:hisae': 'listening' } }, says: { en: 'Suzu asks for a story from the old days. Hisae pretends to be annoyed for exactly as long as it takes to start one.' } }],
       },
@@ -357,7 +357,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       aid: 'g:seiji', side: 'guest', name: say('セイジ', 'Seiji'), hp: 3,
       agenda: { wants: 'pass', act: { kind: 'say' }, leavesWhen: { rounds: 3 } },
       lines: {
-        arrive: say('{草履|ぞうり} の {付喪神|つくもがみ} です ！ {戦|たたか}え ません が 、 {知|し}って いる こと は {言|い}えます 。', '"A sandal tsukumogami! I can\'t fight, but I can tell you what I know."'),
+        arrive: say('{草履|ぞうり} の {付喪神|つくもがみ} です ！ {戦|たたか}えません が 、 {知|し}って いる こと は {言|い}えます 。', '"A sandal tsukumogami! I can\'t fight, but I can tell you what I know."'),
         act: say('{古|ふる}い {物|もの} は 、 {大事|だいじ} に {扱|あつか}えば {静|しず}か に なる と {言|い}います 。', '"Old things settle down if you treat them with care, they say."'),
         leave: say('{僕|ぼく} は {社|やしろ} へ {急|いそ}ぎます 。 お{気|き}を つけて ！', '"I\'ll hurry on to the shrine. Take care!" Seiji goes up the north path.'),
       },

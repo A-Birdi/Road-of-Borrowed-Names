@@ -20,7 +20,7 @@ narr: {灯|ひ} の {順番|じゅんばん} の {行|ぎょう} と 、 {油|�
 kr_juzo: {都|みやこ} から {来|き}た {学者|がくしゃ} の ジュウゾウ です 。 この {道|みち} の {碑|ひ} を 、 {全部|ぜんぶ} {写|うつ}して いる ところ で して 。 || I'm Jūzō, a scholar from the capital. I'm copying every inscription on this road.
 kr_juzo: {石|いし} は {嘘|うそ} を つきません 。 {人|ひと} の {記憶|きおく} は {変|か}わる が 、 {彫|ほ}った {字|じ} は {変|か}わらない 。 …… {削|けず}れて {読|よ}めない ところ は 、 {困|こま}ります が ね 。 || Stone doesn't lie. People's memories change; carved characters don't. …Though where they're worn away, that's a nuisance.
 ?(comp=ren) comp[think]: {石|いし} は 、 {彫|ほ}った {人|ひと} が {知|し}って いた こと しか {言|い}えません 。 {読|よ}めない ところ は 、 {誰|だれ} か に {聞|き}く しか ない です ね 。 || A stone can only say what the person who cut it knew. Where it can't be read, we'll have to ask someone.
-?(comp=nao) comp: {石|いし} も {字|じ} も 、 {削|けず}れる 。 {手紙|てがみ} と {同|おな}じ だ 。 || Stone wears and so do letters. Same as mail.
+?(comp=nao) comp: {石|いし} も {字|じ} も 、 {削|けず}れる 。 {手紙|てがみ} と {同|おな}じ だ 。 || Stone wears away, and so does writing. Same as letters.
 ?(comp=mio) comp: {石|いし} は {正直|しょうじき} です けど 、 {全部|ぜんぶ} は {教|おし}えて くれない の ね 。 || Stone is honest, but it doesn't tell you everything.
 ?(comp=suzu) comp[smirk]: {石|いし} の {台本|だいほん} ね 。 {一行|いちぎょう} {抜|ぬ}けて たら 、 {芝居|しばい} は {止|と}まる わ よ 。 || A script in stone. Miss one line and the play stops.
 
@@ -124,7 +124,7 @@ narr: 「{名|な} は {灯|ひ} に 、 {灯|ひ} は {人|ひと} に 、 {人
 narr: {古|ふる}い {灯守|ひもり} の {言葉|ことば} らしい 。 || An old keepers' saying, it seems.
 
 @scene kr.ruin_lanterns
-narr: {崩|くず}れた {三|さん} の {宿|やど} の {灯籠|とうろう} が {二|ふた}つ 。 {暗|くら}い ま ま だ 。 || Two lanterns at the ruined third waystation, still dark.
+narr: {崩|くず}れた {三|さん} の {宿|やど} の {灯籠|とうろう} が {二|ふた}つ 。 {暗|くら}い まま だ 。 || Two lanterns at the ruined third waystation, still dark.
 ?(!kr_hisae_met) narr: {宿坊|しゅくぼう} の {人|ひと} なら 、 この {灯籠|とうろう} の こと を {知|し}って いる かも しれない 。 || Someone at the lodge may know about these lanterns.
 
 @scene kr.moths
@@ -218,7 +218,7 @@ narr: {机|つくえ} の {上|うえ} に 、 {書|か}きかけ の {手紙|�
 narr: {尾根|おね} の {上|うえ} に 、 {大|おお}きな {古|ふる}い {館|やかた} が {建|た}って いる 。 {雨戸|あまど} は {全部|ぜんぶ} {閉|し}まって いる 。 || Above the ridge stands a great old hall. Every shutter is closed.
 ?(comp=ren) comp[think]: {灯守|ひもり} の {館|やかた} …… でしょう か 。 {灯籠|とうろう} が {円|えん} に {並|なら}んで います 。 || A keepers' hall… perhaps. The lanterns stand in a ring.
 ?(comp=nao) comp: {閉|し}まってる な 。 {宛先|あてさき} の ない {建物|たてもの} だ 。 || Shut up. A building with no address.
-?(comp=mio) comp[worry]: {静|しず}か すぎる …… 。 {誰|だれ} も {住|す}んで いない の に 、 {誰|だれ} か が {待|ま}って いる みたい 。 || Too quiet… No one lives here, but it feels like someone's waiting.
+?(comp=mio) comp[worry]: {静|しず}か すぎる …… 。 {誰|だれ} も {住|す}んで いない のに 、 {誰|だれ} か が {待|ま}って いる みたい 。 || Too quiet… No one lives here, but it feels like someone's waiting.
 ?(comp=suzu) comp: {幕|まく} が {下|お}りた まま の {小屋|こや} ね 。 …… {何|なん} の {芝居|しばい} を して いた の かしら 。 || A theatre with its curtain left down. …I wonder what they used to play here.
 
 @scene kr.hall_door

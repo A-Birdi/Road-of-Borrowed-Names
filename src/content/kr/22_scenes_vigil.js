@@ -49,7 +49,7 @@ narr: {代|か}わり に 、 {西|にし} の {棚|たな} が {横|よこ} に
 narr: {順番|じゅんばん} は 、 また {後|あと} で {考|かんが}えよう 。 || You can work out the order later.
 !end
 :stele
-narr: {順番|じゅんばん} を {決|き}める {前|まえ} に 、 {尾根|おね} の {碑|ひ} を まだ {読|よ}んで いない 。 || Before deciding the order: you haven't read the ridge's stele yet.
+narr: {順番|じゅんばん} を {決|き}める {前|まえ} に 、 {尾根|おね} の {碑|ひ} を {読|よ}んで おきたい 。 || Before deciding the order, you'd like to read the ridge's stele.
 !end
 :rhyme
 narr: {狐橋|きつねばし} の {子供|こども} たち が {歌|うた}って いた {歌|うた} も 、 {聞|き}いて おきたい 。 || You'd like to hear the song the Fox Bridge children were singing, too.
@@ -145,7 +145,7 @@ narr: {灯守|ひもり} の {記録|きろく} 。 しじま の {三|みっ}�
 !set kr_vigil_begun
 narr: {灯明|とうみょう} の {間|ま} 。 {壁|かべ} に {沿|そ}って 、 {芯|しん} が {九十九|きゅうじゅうきゅう} {本|ほん} 。 || The Room of Wicks. Ninety-nine wicks along the walls.
 kr_hisae: {灯守|ひもり} は 、 {年|とし} に {一度|いちど} 、 ここ で {夜|よ}{通|どお}し {話|はなし} を した 。 {一|ひと}つ {話|はな}す たび に 、 {芯|しん} を {一本|いっぽん} {消|け}す 。 || Once a year the keepers told stories here all night. With each story, one wick is put out.
-kr_hisae: {九十九|きゅうじゅうきゅう} {話|はな}したら 、 {夜|よ} が {明|あ}ける 。 {百|ひゃく} {番目|ばんめ} は 、 {語|かた}らない 。 それ が {決|き}まり さ 。 || After ninety-nine, the dawn comes. The hundredth is not told. That's the rule.
+kr_hisae: {九十九|きゅうじゅうきゅう} の {話|はなし} を したら 、 {夜|よ} が {明|あ}ける 。 {百|ひゃく} {番目|ばんめ} は 、 {語|かた}らない 。 それ が {決|き}まり さ 。 || After ninety-nine, the dawn comes. The hundredth is not told. That's the rule.
 !fade out
 narr: ヒサエ が {語|かた}り 、 キキョウ が {語|かた}り 、 {芯|しん} が {一本|いっぽん} 、 また {一本|いっぽん} と {消|き}えて いく 。 || Hisae tells, Kikyō tells, and the wicks go out, one and then another.
 ?(comp=nao) narr: ナオ は 、 {届|とど}かなかった {手紙|てがみ} の {話|はなし} を {一|ひと}つ {語|かた}った 。 {誰|だれ} の {手紙|てがみ} か は 、 {言|い}わなかった 。 || Nao tells a story about a letter that never arrived. Whose letter, they don't say.

@@ -36,7 +36,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         g1: { by: 'n:ryusui', jp: 'あの {話|はなし} は 、 {私|わたし} の {名前|なまえ} で {出|で}た 。 {私|わたし} の もの だ 。', en: 'Those stories came out under my name. They are mine.' },
         g2: { by: 'n:ryusui', jp: '{借金|しゃっきん} は {私|わたし} が {払|はら}った 。 {話|はなし} は 、 その {代|か}わり だ 。', en: 'I paid her debt. The stories were in return.' },
         g3: { by: 'manuscript', jp: '{原稿|げんこう} は {春|はる} 、 シノブ の {字|じ} 。 {本|ほん} は {夏|なつ} 。', en: 'The manuscript: spring, in Shinobu\'s hand. The book: summer.', hidden: true },
-        g4: { by: 'n:sanpei', jp: '{原稿|げんこう} を {刷|す}り{場|ば} に {持|も}って {来|き}た の は 、 いつ も シノブ さん でした 。', en: 'Sanpei: "It was always Shinobu who brought the manuscripts to the press."', hidden: true },
+        g4: { by: 'n:sanpei', jp: '{原稿|げんこう} を {刷|す}り{場|ば} に {持|も}って {来|き}た の は 、 いつも シノブ さん でした 。', en: 'Sanpei: "It was always Shinobu who brought the manuscripts to the press."', hidden: true },
         g5: { by: 'n:ryusui', jp: '…… {十年|じゅうねん} {前|まえ} から 、 {一行|いちぎょう} も {書|か}けない ん だ 。', en: '…For ten years I haven\'t been able to write a line.', hidden: true },
       },
       understanding: 3,

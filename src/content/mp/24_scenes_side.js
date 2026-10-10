@@ -107,10 +107,10 @@ mp_shinobu: …… {持|も}って いって 。 わたし が {持|も}って �
 
 @scene mp.ghost_sanpei
 !faceplayer
-mp_sanpei: リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつ も シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。 || Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press.
+mp_sanpei: リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつも シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。 || Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press.
 mp_sanpei: {親方|おやかた} は 、 {知|し}って いて {黙|だま}って いる みたい だけど 。 || The master knows and keeps quiet about it, I think.
 !set mp_ghost_sanpei
-!journal サンペイ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。 || Sanpei says it is always Shinobu who brings the manuscripts.
+!journal サンペイ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつも シノブ だ と {言|い}った 。 || Sanpei says it is always Shinobu who brings the manuscripts.
 
 @scene mp.shinobu_evidence
 !faceplayer

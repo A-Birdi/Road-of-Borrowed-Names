@@ -119,7 +119,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       unravelTip: { en: 'There is no knot in a closed door. What is closed is Matsu: why, and what would let her trust you?' },
       actions: [
         { id: 'introduce', kind: 'restate', label: say('{藤屋|ふじや} と {札場|ふだば} の {頼|たの}み で {来|き}ました 。', 'Say Fujiya and the Exchange sent you'), once: true,
-          task: task('g:prt_de', 'Which says you came at the request of Fujiya and the Exchange?', '{藤屋|ふじや} と {札場|ふだば} の {頼|たの}み で {来|き}ました 。', '{藤屋|ふじや} と {札場|ふだば} に {頼|たの}みに {来|き}ました 。', 'That says you came to ask them for something.', '{藤屋|ふじや} と {札場|ふだば} から {逃|に}げて {来|き}ました 。', 'That says you ran away from them.'),
+          task: task('g:prt_de', 'Which says you came at the request of Fujiya and the Exchange?', '{藤屋|ふじや} と {札場|ふだば} の {頼|たの}み で {来|き}ました 。', '{藤屋|ふじや} と {札場|ふだば} に {頼|たの}み に {来|き}ました 。', 'That says you came to ask them for something.', '{藤屋|ふじや} と {札場|ふだば} から {逃|に}げて {来|き}ました 。', 'That says you ran away from them.'),
           effect: { understanding: 1, stance: { 'n:matsu': 'listening' } }, says: { en: 'Matsu looks up. "Fujiko\'s lot. Hm."' } },
         { id: 'ask_why', kind: 'ask', label: say('どうして {閉|し}めて いる ん です か 。', 'Ask why she keeps it shut'), when: { not: { claims: 'p2' } },
           task: task('g:n_desu', 'Which asks why she keeps it shut?', 'どうして {閉|し}めて いる ん です か 。', 'いつ {閉|し}めた ん です か 。', 'That asks when she shut it.', 'どうして {開|あ}けて いる ん です か 。', 'That asks why it is open.'),

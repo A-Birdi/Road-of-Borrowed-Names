@@ -44,7 +44,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   const HISAE = {
     F: T('ヒサエ さん が いった 。 「いちばん は ひがし 。 よく おぼえて いる よ 。 かね は 、 なまえ の あと 。 かね が なったら 、 おわり だから ね 。 いずみ は …… わすれた 。」', 'Hisae said: "East was first. I remember that well. The bell came after the name: when the bell has rung, it\'s over. The spring… I forget."'),
-    E: T('ヒサエ さん は 「{最初|さいしょ} は {東|ひがし} でした 。 よく {覚|おぼ}えて います 。 {鐘|かね} は {名|な} の {灯|ひ} の {後|あと} でした 。 {鐘|かね} が {鳴|な}ったら 、 {終|お}わり です から 。 {泉|いずみ} は …… {忘|わす}れました 。」 と {言|い}いました 。', 'Hisae said: "East was first. I remember that well. The bell came after the name lantern: once the bell has rung, it\'s over. The spring… I\'ve forgotten."'),
+    E: T('ヒサエ さん は 「{最初|さいしょ} は {東|ひがし} だった 。 よく {覚|おぼ}えて いる よ 。 {鐘|かね} は {名|な} の {灯|ひ} の {後|あと} だった 。 {鐘|かね} が {鳴|な}ったら 、 {終|お}わり だ から ね 。 {泉|いずみ} は …… {忘|わす}れた 。」 と {言|い}いました 。', 'Hisae said: "East was first. I remember that well. The bell came after the name lantern: once the bell has rung, it\'s over. The spring… I\'ve forgotten."'),
     I: T('ヒサエ さん の {話|はなし} に よると 、 {最初|さいしょ} は {東|ひがし} の {灯|ひ} だった 。 {名|な} の {灯|ひ} の {後|あと} で {鐘|かね} を {鳴|な}らす こと に なって いた 。 {鐘|かね} が {鳴|な}れば 、 {終|お}わり だ から だ 。 {泉|いずみ} が {何番目|なんばんめ} だった か は 、 {覚|おぼ}えて いない そう だ 。', 'By Hisae\'s account, the east lantern was first. The bell was rung after the name lantern, because once it rings, it is over. Where the spring came, she says she doesn\'t remember.'),
     A: T('{七十年|ななじゅうねん} {前|まえ} の {記憶|きおく} だ が 、 {東|ひがし} が {最初|さいしょ} だった こと 、 {鐘|かね} が {名|な} の {後|あと} だった こと は {確|たし}か だ と いう 。 {泉|いずみ} の {順番|じゅんばん} に ついて は 、 {本人|ほんにん} も {自信|じしん} が ない 。', 'A memory seventy years old, but she is certain the east came first and the bell after the name. About the spring\'s place she is not sure herself.'),
   };
@@ -56,7 +56,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   const SCROLL = {
     F: T('えまき の え 。 1 みならい が ひがし の ひ を つける 。 2 いずみ の ひ 。 3 なまえ の ひ 。 4 かね が なる 。 きつね が みて いる 。', 'The scroll\'s pictures: 1, an apprentice lights the east lantern. 2, the spring\'s. 3, the name\'s. 4, the bell rings. A fox is watching.'),
-    E: T('{絵巻|えまき} に は 、 {見習|みなら}い が {東|ひがし} の {灯|ひ} を {点|つ}けて 、 それから {泉|いずみ} の {灯|ひ} 、 {名|な} の {灯|ひ} を {点|つ}けて 、 {最後|さいご} に {鐘|かね} を {鳴|な}らす {絵|え} が ある 。 {狐|きつね} も {見|み}て います 。', 'The scroll shows an apprentice lighting the east lantern, then the spring\'s and the name\'s, and last ringing the bell. A fox is watching too.'),
+    E: T('{絵巻|えまき} に は 、 {見習|みなら}い が {東|ひがし} の {灯|ひ} を {点|つ}けて 、 それから {泉|いずみ} の {灯|ひ} 、 {名|な} の {灯|ひ} を {点|つ}けて 、 {最後|さいご} に {鐘|かね} を {鳴|な}らす {絵|え} が ある 。 {狐|きつね} も {見|み}て いる 。', 'The scroll shows an apprentice lighting the east lantern, then the spring\'s and the name\'s, and last ringing the bell. A fox is watching too.'),
     I: T('{絵巻|えまき} に よると 、 {見習|みなら}い は {東|ひがし} 、 {泉|いずみ} 、 {名|な} の {順|じゅん} に {灯|ひ} を {点|とも}し 、 {最後|さいご} に {鐘|かね} を {鳴|な}らした と {伝|つた}えられて いる 。 {狐|きつね} は 、 {絵解|えと}き が {足|た}した もの らしい 。', 'According to the scroll, it is handed down that the apprentice lit the east, the spring and the name lanterns in that order, and rang the bell last. The fox seems to be the tellers\' own addition.'),
     A: T('キキョウ さん の {語|かた}り で は 、 {順番|じゅんばん} は {東|ひがし} 、 {泉|いずみ} 、 {名|な} 、 {鐘|かね} 。 ただし 、 「{狐|きつね} が {見守|みまも}って いた」 と いう の は {語|かた}り{手|て} の {付|つ}け{足|た}し だ と 、 {本人|ほんにん} が {言|い}う 。', 'In Kikyō\'s telling the order is east, spring, name, bell. But "a fox was watching over them" is, she says herself, a teller\'s addition.'),
   };
@@ -76,20 +76,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   const KUMAZO = {
     F: T('クマゾウ さん が いった 。 「むかし 、 ひもり が 、 おね の ちいさい みち を おりて いった 。 かめ を もって 。 その さき は …… しらない 。」', 'Kumazō said: "Long ago, keepers went down the little path off the ridge, carrying jars. Where to… I don\'t know."'),
-    E: T('クマゾウ さん は 「{子供|こども} の とき 、 {灯守|ひもり} が {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}ました 。 かめ を {持|も}って いました 。 {小屋|こや} が あった と {思|おも}います が 、 よく {分|わ}かりません 。」 と {言|い}いました 。', 'Kumazō said: "When I was a boy I saw keepers go down the little path off the ridge. They were carrying jars. I think there was a hut, but I\'m not sure."'),
+    E: T('クマゾウ さん は 「{子供|こども} の とき 、 {灯守|ひもり} が {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}た 。 かめ を {持|も}って いた 。 {小屋|こや} が あった と {思|おも}う が 、 よく {分|わ}からない 。」 と {言|い}いました 。', 'Kumazō said: "When I was a boy I saw keepers go down the little path off the ridge. They were carrying jars. I think there was a hut, but I\'m not sure."'),
     I: T('クマゾウ さん に よると 、 {子供|こども} の ころ 、 {灯守|ひもり} が かめ を {持|も}って {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}た そう だ 。 {小屋|こや} が あった か どう か は 、 はっきり しない と いう 。', 'According to Kumazō, as a boy he saw keepers carrying jars down the little path off the ridge. Whether there was a hut, he says he isn\'t clear.'),
     A: T('クマゾウ さん が {自分|じぶん} の {目|め} で {見|み}た の は 、 {灯守|ひもり} が かめ を {抱|かか}えて {小道|こみち} を {下|お}りる {姿|すがた} だけ だ 。 「{小屋|こや}」 は 、 {後|あと} で {誰|だれ} か から {聞|き}いた {話|はなし} かも しれない と 、 {本人|ほんにん} も {認|みと}めて いる 。', 'What Kumazō saw with his own eyes was only keepers carrying jars down the little path. The "hut", he admits himself, may be something he heard from someone later.'),
   };
   // the Fox Bridge
   const KAME = {
     F: T('カメ さん の はなし 。 「むかし 、 きつね が ひとばん で はし を かけた 。 たすけて もらった おれい に 。 おばあさん から きいた よ 。」', 'Kame\'s story: "Long ago a fox built the bridge in one night, to repay a kindness. I heard it from my grandmother."'),
-    E: T('カメ さん は 「{昔|むかし} 、 {狐|きつね} が {一晩|ひとばん} で {橋|はし} を {架|か}けました 。 {助|たす}けて もらった お{礼|れい} です 。 おばあさん が いつも {話|はな}して くれました 。」 と {言|い}いました 。', 'Kame said: "Long ago a fox built the bridge in a single night, as thanks for being helped. My grandmother always told it."'),
+    E: T('カメ さん は 「{昔|むかし} 、 {狐|きつね} が {一晩|ひとばん} で {橋|はし} を {架|か}けた ん だ 。 {助|たす}けて もらった お{礼|れい} さ 。 おばあさん が いつも {話|はな}して くれた よ 。」 と {言|い}いました 。', 'Kame said: "Long ago a fox built the bridge in a single night, as thanks for being helped. My grandmother always told it."'),
     I: T('カメ さん の {家|いえ} で は 、 {狐|きつね} が {一晩|ひとばん} で {橋|はし} を {架|か}けた と {伝|つた}えられて いる 。 {助|たす}けて もらった {礼|れい} だった と いう 。 カメ さん は 、 おばあさん から {何度|なんど} も {聞|き}いた そう だ 。', 'In Kame\'s family it is handed down that a fox built the bridge in one night, as thanks for being helped. Kame says she heard it from her grandmother many times.'),
-    A: T('カメ さん が {確|たし}か に {覚|おぼ}えて いる の は 、 おばあさん の {語|かた}り {口|くち} だ 。 {狐|きつね} が {橋|はし} を {架|か}けた と いう {出来事|できごと} そのもの を 、 {誰|だれ} か が {見|み}た わけ で は ない 。', 'What Kame truly remembers is her grandmother\'s way of telling it. Nobody saw a fox build a bridge.'),
+    A: T('カメ さん が {確|たし}か に {覚|おぼ}えて いる の は 、 おばあさん の {語|かた}り{口|くち} だ 。 {狐|きつね} が {橋|はし} を {架|か}けた と いう {出来事|できごと} そのもの を 、 {誰|だれ} か が {見|み}た わけ で は ない 。', 'What Kame truly remembers is her grandmother\'s way of telling it. Nobody saw a fox build a bridge.'),
   };
   const RECORD = {
     F: T('さと の きろく 。 「ひもり が 、 はし の そば の とうろう を きつねいろ に ぬった 。 それで 、 きつねばし と よんだ 。」', 'The hamlet\'s register: "A keeper painted the lantern by the bridge fox-colour. So it was called Fox Bridge."'),
-    E: T('{里|さと} の {記録|きろく} に 、 「{灯守|ひもり} が {橋|はし} の そば の {灯籠|とうろう} を {狐色|きつねいろ} に {塗|ぬ}った 。 それで 「{狐橋|きつねばし}」 と {呼|よ}んだ 。」 と {書|か}いて ある 。', 'The hamlet\'s register says: "A keeper painted the lantern by the bridge fox-colour, and so called it Fox Bridge."'),
+    E: T('{里|さと} の {記録|きろく} に 、 「{灯守|ひもり} が {橋|はし} の そば の {灯籠|とうろう} を {狐色|きつねいろ} に {塗|ぬ}った 。 それで 『{狐橋|きつねばし}』 と {呼|よ}んだ 。」 と {書|か}いて ある 。', 'The hamlet\'s register says: "A keeper painted the lantern by the bridge fox-colour, and so called it Fox Bridge."'),
     I: T('{里|さと} の {記録|きろく} に よると 、 {橋|はし} の そば の {灯籠|とうろう} を {狐色|きつねいろ} に {塗|ぬ}った {灯守|ひもり} が 、 {橋|はし} を 「{狐橋|きつねばし}」 と {名付|なづ}けた 。 {狐色|きつねいろ} と いう の は 、 {焼|や}けた パン の よう な {茶色|ちゃいろ} の こと だ 。', 'According to the register, a keeper who painted the lantern by the bridge fox-colour named it Fox Bridge. Fox-colour (狐色) means a golden brown, like toasted bread.'),
     A: T('{記録|きろく} は {橋|はし} が できた {年|とし} に {書|か}かれた もの で 、 {名付|なづ}けた {灯守|ひもり} の {名前|なまえ} も {残|のこ}って いる 。 {狐|きつね} が {出|で}て くる の は 、 {灯籠|とうろう} の {色|いろ} の {話|はなし} だけ だ 。', 'The register was written the year the bridge was built, and keeps the name of the keeper who named it. The only fox in it is the lantern\'s colour.'),
   };
