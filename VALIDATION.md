@@ -3681,7 +3681,9 @@ had an idle habit in progress, so the action had yielded. The first panel test f
 - B `node tests/e2e/world_captures.mjs saltglass`: written. Kiyo's strips reviewed by eye: each step's pose and its
   objects show; the handover is clean.
 - U `node tests/run-unit.mjs`: **27,450/0**.
-- Campaign `node tests/e2e/matrix.mjs F ren 1`: running on this build at the time of this commit; result recorded
-  below when it finishes.
+- Campaign `node tests/e2e/matrix.mjs F ren 1` on df6b159's build: **1/1**, Chapters 1–6 and one Atlas restoration
+  in 14.9 min. The solver answers the language steps, so this shows the game can be finished, not how it plays.
+  (A run started earlier on b6d7138's build was stopped unfinished once these fixes were made, so that it would not
+  stand for this build.)
 
 **Not verified:** Firefox; the foldable; Robin's eye.
