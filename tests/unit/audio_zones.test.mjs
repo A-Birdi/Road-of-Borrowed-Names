@@ -8,7 +8,7 @@ import { load } from '../lib/load.mjs';
 import { intensity, fmtIntensity } from '../lib/intensity.mjs';
 
 // zones that have their own score so far (chapter by chapter)
-const SCORED = ['saltglass', 'manybridge', 'cinder', 'snowbell', 'lanternfall', 'still'];
+const SCORED = ['saltglass', 'manybridge', 'keepers', 'cinder', 'snowbell', 'lanternfall', 'still'];
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
@@ -108,6 +108,14 @@ export default async (t) => {
     const m = intensity(_.compile(songs[Z.manybridge[kind]])), p = intensity(_.compile(songs[Z.saltglass[kind]]));
     t.log(`mb  ${kind.padEnd(6)} ${Z.manybridge[kind].padEnd(20)} ${fmtIntensity(m)}`);
     t.ok(m.bpm > p.bpm && m.score > p.score, `Manybridge's ${kind} theme is a step above Saltglass's (score ${p.score.toFixed(2)} -> ${m.score.toFixed(2)})`);
+  }
+  // the Keepers' Road (Chapter 7 of twelve) sits between Snowbell and Lanternfall, the chapters either side of it there
+  if (Z.keepers) for (const kind of ['battle', 'boss']) {
+    const k = intensity(_.compile(songs[Z.keepers[kind]]));
+    const lo = intensity(_.compile(songs[Z.snowbell[kind]])), hi = intensity(_.compile(songs[Z.lanternfall[kind]]));
+    t.log(`kr  ${kind.padEnd(6)} ${Z.keepers[kind].padEnd(20)} ${fmtIntensity(k)}`);
+    t.ok(k.bpm > lo.bpm && k.score > lo.score, `the Keepers' Road's ${kind} theme is a step above Snowbell's (score ${lo.score.toFixed(2)} -> ${k.score.toFixed(2)})`);
+    t.ok(k.bpm < hi.bpm && k.score < hi.score, `and below Lanternfall's (score ${k.score.toFixed(2)} -> ${hi.score.toFixed(2)})`);
   }
   const rows = { battle: [], boss: [] };
   for (const [zid, z] of order) {

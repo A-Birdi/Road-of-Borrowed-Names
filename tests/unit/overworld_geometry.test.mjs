@@ -43,10 +43,13 @@ export default async (t) => {
       RB.game.s = prev;
     }
     // (an exit's condition as the six-chapter game reads it: the expansion made Saltglass's north road wait for
-    // Manybridge in the twelve-chapter edition (P08, F-32); in a six-chapter game `!ed>=2` holds and mb2_done is
-    // never set, so the condition is the base's. The exits_fresh/exits_late hashes above check the same in play.)
-    const SIX_IF = { 'ch2_done&!ed>=2|mb2_done': 'ch2_done' };
-    rec.exits = m.exits.map((e) => [e.x, e.y, e.w, e.h, e.to, e.tx == null ? null : e.tx, e.ty == null ? null : e.ty, e.dir || null, !!e.door, (e.if && SIX_IF[e.if]) || e.if || null]);
+    // Manybridge in the twelve-chapter edition (P08, F-32), and put the Keepers' Road between Snowbell's and
+    // Lanternfall's roads there (P10); in a six-chapter game `!ed>=2` and `ed<2` hold and mb2_done is never set, so
+    // the condition is the base's, and an exit only the twelve-chapter edition opens (`ed>=2`) is left out, as the
+    // triggers and props below are. The exits_fresh/exits_late hashes above check the same in play.)
+    const SIX_IF = { 'ch2_done&!ed>=2|mb2_done': 'ch2_done', 'ch4_done&ed<2': 'ch4_done', 'ed<2': null };
+    const sixIf = (c) => (c && Object.prototype.hasOwnProperty.call(SIX_IF, c) ? SIX_IF[c] : c || null);
+    rec.exits = m.exits.filter((e) => !(e.if && /(^|[&|])ed>=2(?=$|[&|])/.test(String(e.if)))).map((e) => [e.x, e.y, e.w, e.h, e.to, e.tx == null ? null : e.tx, e.ty == null ? null : e.ty, e.dir || null, !!e.door, sixIf(e.if)]);
     rec.structs = m.structs.map((s) => [s.x, s.y, s.w, s.h, s.door == null ? null : s.door, s.to || null]);
     // (placements only the expansion can show are left out: the twelve-chapter edition's (ed>=2) and the
     // development fixtures' (dev_verbs, dev_perform). A six-chapter game never meets them, so its geometry is the

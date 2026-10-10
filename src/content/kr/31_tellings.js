@@ -39,8 +39,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: T('いし に 、 こう {書|か}いて ある 。 「いちばん は ひがし 。 にばん は いずみ 。 さんばん は …… （よめない） 。 さいご は かね 。」', 'The stone says: "First, east. Second, spring. Third… (worn away). Last, the bell."'),
     E: T('{石|いし} に 、 「{最初|さいしょ} に {東|ひがし} の {灯|ひ} を {点|つ}けて 、 それから {泉|いずみ} の {灯|ひ} 。 …… 。 {最後|さいご} に {鐘|かね} の {灯|ひ} 。」 と {彫|ほ}って ある 。 {三|みっ}つ{目|め} は {読|よ}めない 。', 'Cut in the stone: "Light the east lantern first, and then the spring\'s. … Last, the bell\'s." The third is worn away.'),
     I: T('{碑|ひ} に よると 、 {東|ひがし} の {灯|ひ} を {最初|さいしょ} に {点|とも}す こと に なって いる 。 {次|つぎ} は {泉|いずみ} 。 {三|みっ}つ{目|め} の {字|じ} は {削|けず}れて {読|よ}めない が 、 {鐘|かね} の {灯|ひ} は {最後|さいご} だ 。', 'According to the stele, the east lantern is the one lit first. Next, the spring. The third is worn too smooth to read, but the bell\'s lantern is last.'),
-    A: Object.assign(T('「{東|ひがし} の {灯|ひ} より {点|とも}す べし 。 {次|つぎ} に {泉|いずみ} 。 …… 。 {鐘|かね} の {灯|ひ} を {終|お}わり と す べし 。」 （{三|みっ}つ{目|め} は {削|けず}れて {読|よ}めない）', '"Begin with the east lantern. Next, the spring. … The bell\'s lantern shall be the last." (The third is worn away.)'),
-      { gloss: T('{東|ひがし} の {灯|ひ} から {点|つ}けなければ ならない 。 {次|つぎ} に {泉|いずみ} 。 …… 。 {鐘|かね} の {灯|ひ} を {最後|さいご} に しなければ ならない 。', 'In today\'s Japanese') }),
+    A: Object.assign(T('「{東|ひがし} の {灯|ひ} より {点|とも}す べし 。 {次|つぎ} に {泉|いずみ} 。 …… 。 {鐘|かね} の {灯|ひ} は {最後|さいご} なり 。」 （{三|みっ}つ{目|め} は {削|けず}れて {読|よ}めない）', '"Begin with the east lantern. Next, the spring. … The bell\'s lantern is the last." (The third is worn away.)'),
+      { gloss: T('{東|ひがし} の {灯|ひ} から {点|つ}けなければ ならない 。 {次|つぎ} に {泉|いずみ} 。 …… 。 {鐘|かね} の {灯|ひ} は {最後|さいご} で ある 。', 'In today\'s Japanese') }),
   };
   const HISAE = {
     F: T('ヒサエ さん が いった 。 「いちばん は ひがし 。 よく おぼえて いる よ 。 かね は 、 なまえ の あと 。 かね が なったら 、 おわり だから ね 。 いずみ は …… わすれた 。」', 'Hisae said: "East was first. I remember that well. The bell came after the name: when the bell has rung, it\'s over. The spring… I forget."'),
@@ -115,7 +115,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: ['Which lantern is last?', [o('かね', 'the bell', 1), o('ひがし', 'the east', 0, 'East is first: いちばん.'), o('いずみ', 'the spring', 0, 'The spring is second: にばん.')]],
     E: ['What can\'t be read on the stone?', [o('', 'Which lantern comes third', 1), o('', 'Which lantern comes first', 0, '最初 に 東: the east is first, plainly cut.'), o('', 'Which lantern comes last', 0, '最後 に 鐘: the bell is last.')]],
     I: ['According to the stele, what is the rule?', [o('', 'The east lantern is lit first and the bell\'s last', 1), o('', 'The bell is lit third', 0, 'The third is worn away: 読めない.'), o('', 'Any order will do', 0, 'こと に なって いる: there is a fixed custom.')]],
-    A: ['What does べし add to 点す and to 終わりとす?', [o('', 'An obligation: it must be done so (today ～なければならない)', 1), o('', 'A guess: it probably happened so', 0, 'That would be だろう or らしい; べし is "must, shall".'), o('', 'A past tense: it was done so', 0, 'The past would be き or けり in classical Japanese; べし is "must".')]],
+    A: ['What does べし add to 点す?', [o('', 'An obligation: it must be done so (today ～なければならない)', 1), o('', 'A guess: it probably happened so', 0, 'That would be だろう or らしい; べし is "must, shall".'), o('', 'A past tense: it was done so', 0, 'The past would be き or けり in classical Japanese; べし is "must".')]],
   });
   readTask('kr.read_hisae', T('ヒサエ の {話|はなし}', 'What Hisae remembers'), HISAE, 'v:覚える', {
     items: { F: 'v:覚える', E: 'v:後', I: 'g:sou_hear', A: 'v:記憶' },

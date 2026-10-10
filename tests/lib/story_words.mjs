@@ -16,6 +16,7 @@ export const UPPER = [...CH3, 'ishi'];              // co.upper: the foes are ab
 export const CH4 = [...CH3, 'ishi', 'tsuchi', 'koori'];
 export const OBS = [...CH4, 'honoo'];               // the Star Stair only opens after ほのお (sb.stair_ice needs it)
 export const CH5 = OBS;
+export const KR = OBS;                              // the Keepers' Road (twelve-chapter Chapter 7) opens at ch4_done, after Snowbell; it gives no new word
 export const BELL = [...CH5, 'suzu'];               // すず and Tokuji's boat to the tower come in one scene (lf.tokuji_story)
 export const CH6 = [...BELL, 'koe'];
 
@@ -27,6 +28,7 @@ export const KNOWN_AT = {
   'sb.fox': OBS, 'sb.wisp': OBS, 'sb.ghost': OBS, 'sb.moth': OBS, 'sb.golem': OBS, 'sb.boss': OBS,
   'lf.stamp': CH5, 'lf.blot': BELL, 'lf.mote': BELL, 'lf.conduit': BELL, 'lf.wraith': BELL, 'lf.keeper': BELL,
   'mb.crab': MB1, 'mb.snail': MB1, 'mb.beetle': MB1, 'mb.tangle': MB1, 'mb.barge': MB1, 'mb.bridge': MB1,
+  'kr.wick': KR, 'kr.sandal': KR, 'kr.chochin': KR, 'kr.moss': KR, 'kr.shadow': KR, 'kr.hyakuwa': KR,
   'mp.kuroko': MB2, 'mp.moth': MB2, 'mp.imp': MB2, 'mp.golem': MB2, 'mp.naraku': MB2,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
 };

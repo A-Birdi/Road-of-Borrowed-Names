@@ -26,6 +26,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'atlas.fox': { disposition: 'upgraded', note: 'warm fox wearing the borrowed name as a paper scarf (ends trail behind); Sweep = tail whirl trailing foxfire across the party; false promise = sits up with a leaf on its head and sends a pale double of itself' },
     'atlas.lamp': { disposition: 'upgraded', note: 'guttering orange lantern; Heat and Strike as the lantern family (the idle flame dips through a guttering shape)' },
     'atlas.mothlamp': { disposition: 'upgraded', note: 'pale lantern with its white moths circling (part of the creature: drawn by flame colour #d8c0a0); Shroud = smoke with the moths whirling out' },
+    'kr.chochin': { disposition: 'meets standard (reverified)', note: 'interim (P10, F-36): the Keepers\' Road\'s chōchin-obake on the lantern family in warm paper amber; Shroud and Strike as the lantern family; its own split-rib grin is P16 art work (AC-1, C-82)' },
   };
   const ALLOWED = ['upgraded', 'meets standard (reverified)', 'incomplete'];
   function movesOf(d) {

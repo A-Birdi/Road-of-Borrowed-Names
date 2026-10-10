@@ -89,7 +89,7 @@ RB.portraitAnim = (function () {
     kiku: 'elder', sachi: 'host', lf_shu: 'craft', nagisa: 'traveller', chiyo: 'child', rokuta: 'child', sae: 'craft',
     // people with fewer than three scenes, voices and creatures (no GESTURES.md profile: the nearest class)
     cs_seto: 'elder', co_tomoe: 'craft', lf_toya: 'child', sa_ushio: 'elder', sa_tae: 'elder', fw_fumi: 'elder',
-    echo: ['nonhuman', { sway: { every: [5000, 9000] } }], sg_clerk: 'nonhuman', sb_lampvoice: ['nonhuman', { sway: { every: [5000, 9000] } }],
+    echo: ['nonhuman', { sway: { every: [5000, 9000] } }], sg_clerk: 'nonhuman', sb_lampvoice: ['nonhuman', { sway: { every: [5000, 9000] } }], kr_hyakuwa: ['nonhuman', { sway: { every: [4000, 8000] } }],
     co_goat: 'nonhuman', co_warden: 'nonhuman', mochi: ['nonhuman', { blink: [3000, 6500], dbl: 0.25 }],
     sa_reader: 'scholar', // the Archive's reader (by role)
   };

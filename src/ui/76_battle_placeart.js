@@ -795,6 +795,7 @@ RB.battlePlaceArt = (function () {
     snowbell: { sky: ['#7890b2', '#8aa0c0', '#a4b6cc', '#c4d0dc', '#dde6ee'], peaks: true, ridges: [[0.18, 6.2, '#b8c6d6', '#d0dae6', '#a8b8cc']], haze: '#d4dee8' },
     sa_mount: { sky: ['#6a7c9a', '#7a8cac', '#96a6c0', '#b8c4d4', '#d4dce6'], peaks: true, ridges: [[0.18, 6.2, '#aab8c8', '#c4d0dc', '#98a8bc']], haze: '#c4ccd8' },
     lanternfall: { sky: ['#5a5a94', '#6a6aa0', '#8a82b4', '#b4a8d0', '#d8c8e8'], ridges: [[0.12, 2.2, '#8a84b0', '#9c96c0', '#7a74a0']], haze: '#b8b0d4' },
+    keepers: { sky: ['#8a8aa0', '#9c98a8', '#b4aca8', '#ccbca4', '#dccaa4'], cloud: ['#c8c0b4', '#e4dcd0', '#f4eee4'], ridges: [[0.3, 2.6, '#8a6a52', '#9a7a5c', '#7a5a48', 1.2], [0.15, 4.8, '#5e6a4e', '#6e7a5a', '#4e5a42']], haze: '#cfc4b0' },
     manybridge: { sky: ['#6f98ac', '#80a8b8', '#9cbcc4', '#bccfce', '#d8e2da'], cloud: ['#c4d4d4', '#e6eeea', '#f6f8f2'], ridges: [[0.1, 1.6, '#76808c', '#88929c', '#646e7a']], haze: '#cad8d4' },
     still: { sky: ['#08090f', '#0a0c18', '#10122a', '#1a1c30'], dotted: true, haze: '#2a2c44' },
     atlas: { sky: ['#c8b890', '#d4c6a0', '#e0d4b4', '#f0e8d0'], grid: true, symbols: true, haze: '#e4d8b8' },
@@ -925,6 +926,7 @@ RB.battlePlaceArt = (function () {
     belltower: { wall: 'stone', floor: 'flags', dark: 0.6, cool: true },
     undercroft: { wall: 'stone', floor: 'flags', dark: 0.6, cool: true },
     understage: { wall: 'timber', floor: 'wood', dark: 0.62 },
+    keepers_cave: { wall: 'stone', floor: 'flags', dark: 0.6, warm: true },
     still: { wall: 'void', floor: 'paper', dark: 0.5 },
     interior: { wall: 'timber', floor: 'wood', dark: 0.35 },
   };

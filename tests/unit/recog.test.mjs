@@ -52,7 +52,10 @@ export default async (t) => {
   t.ok(Math.abs(a1.x - 31) <= 1 && Math.abs(a1.y - 33) <= 1, 'あ stroke 1 starts where KanjiVG says');
   const dataFile = path.join(root, 'src', 'recog', '10_strokedata.js');
   const kb = fs.statSync(dataFile).size / 1024;
-  t.ok(kb < 200, `stroke data compact: 164 kana + ${gameKanji.length} kanji in ${kb.toFixed(1)} KiB (< 200)`);
+  // compact per character: the original budget was 200 KiB for 164 kana + 1,549 kanji, about 120 bytes a character;
+  // the twelve-chapter edition displays more kanji, so the same per-character budget holds as the set grows (F-56)
+  const perChar = (kb * 1024) / (164 + gameKanji.length);
+  t.ok(perChar < 120, `stroke data compact: 164 kana + ${gameKanji.length} kanji in ${kb.toFixed(1)} KiB, ${perChar.toFixed(1)} bytes a character (< 120)`);
   t.ok(/KanjiVG/.test(fs.readFileSync(dataFile, 'utf8').slice(0, 800)) && /CC BY-SA 3\.0/.test(fs.readFileSync(dataFile, 'utf8').slice(0, 800)), 'attribution header in stroke data');
   const notice = fs.readFileSync(path.join(root, 'data', 'NOTICE.txt'), 'utf8');
   t.ok(/KanjiVG/.test(notice) && /Ulrich Apel/.test(notice) && /CC BY-SA 3\.0/.test(notice) && !notice.includes('-->'), 'NOTICE.txt carries KanjiVG attribution and no -->');

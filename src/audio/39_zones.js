@@ -49,6 +49,13 @@ RB.audio = RB.audio || {};
       battle: 'battle_manybridge', boss: 'boss_understage', route: null,
       songs: ['understage'],
     },
+    // the twelve-chapter edition's Keepers' Road, Chapter 7 (38_songs_kr.js): biwa-led; its battle and boss themes sit
+    // a step above Snowbell's and below Lanternfall's, the chapters either side of it in that edition
+    keepers: {
+      chapter: 7, edition: 2, regions: ['keepers'], prefixes: ['kr.'],
+      battle: 'battle_keepers', boss: 'boss_keepers', route: null,
+      songs: ['keepers', 'kr_cave', 'kr_vigil', 'kr_hall'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',

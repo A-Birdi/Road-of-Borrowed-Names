@@ -91,5 +91,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#1e2a36' },
   });
   // voices that speak only in scenes: the Hundredth Tale, and the lanterns' own names when read
-  ch('kr_hyakuwa', { name: { en: 'The Hundredth Tale', jp: '{百話目|ひゃくわめ}' }, voice: { pitch: 0.6 } });
+  // the Hundredth Tale: the dark in the corner of the vigil room, a hooded shape of wick-smoke (bodiless, as the lamp at
+  // Snowbell is)
+  ch('kr_hyakuwa', { name: { en: 'The Hundredth Tale', jp: '{百話目|ひゃくわめ}' }, bodiless: true, voice: { pitch: 0.6 },
+    look: { custom: 'spirit', col: '#1e1c26' },
+    portrait: { skin: ['#b8b0c4', '#958da4'], hair: ['#1a1822', '#2a2632', '#4a4458'], cloth: ['#24202e', '#18161f', '#4a4458'], style: 'long', eyes: 'narrow', acc: ['hood'], hoodCol: '#24202e', bg: '#0c0a10' } });
 })(RB.content);

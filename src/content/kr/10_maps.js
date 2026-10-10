@@ -12,7 +12,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C, K) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
-  const ROAD = { region: 'keepers', place: 'keepers', travel: 'keepers', music: 'keepers', edition: 2 };
+  // noCompanion: the companion is away while kr_apart holds (Ren's night apart, 24_scenes_comp.js)
+  const ROAD = { region: 'keepers', place: 'keepers', travel: 'keepers', music: 'keepers', edition: 2, noCompanion: '!kr_apart' };
   const MIST = { weather: 'motes', tint: 'rgba(200,205,190,0.06)' };
   // a stone lantern: dark until `flag`, lit after (relit by name, or at dawn); `scene` while dark, `after` once lit
   const toro = (x, y, flag, scene, after) => [
@@ -35,7 +36,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.rect(18, 0, 2, 4, '+');
     }),
     structs: [
-      { type: 'house', x: 4, y: 4, w: 8, h: 4, roof: 'thatch', wall: 'wood', door: 4, windows: [1, 6], to: 'kr.foot_inn', spawn: [5, 7], lit: true, sign: true, signX: 1 },
+      { type: 'house', x: 4, y: 4, w: 8, h: 4, roof: 'thatch', wall: 'wood', door: 4, windows: [1, 6], to: 'kr.foot_inn', spawn: [5, 6], lit: true, sign: true, signX: 1 },
     ],
     props: [
       ...toro(8, 10, 'kr_l_foot', 'kr.toro_foot', 'kr.toro_foot_lit'),
@@ -46,7 +47,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'bench', x: 4, y: 15 },
     ],
     npcs: [
-      { id: 'kr_iwa', x: 25, y: 11, dir: 'up', if: '!kr_iwa_book_lost|kr_iwa_book_found', talk: [{ if: 'kr_done', scene: 'kr.iwa_after' }, { if: 'kr_iwa_book_found', scene: 'kr.iwa_thanks' }, { scene: 'kr.iwa_first' }] },
+      { id: 'kr_iwa', x: 25, y: 11, dir: 'up', if: '!kr_iwa_met', talk: 'kr.iwa_first' },
       { id: 'kr_seiji', x: 20, y: 15, dir: 'left', if: '!kr_seiji_gone', talk: 'kr.seiji_first' },
     ],
     exits: [
@@ -71,8 +72,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'kr_cedar', x: 6, y: 20, if: '!kr_cedar_cleared', scene: 'kr.cedar' },
       ...toro(16, 15, 'kr_l_steps', 'kr.toro_steps', 'kr.toro_steps_lit'),
+      { p: 'kr_toro', x: 14, y: 9, if: 'kr_moss1_named', light: 34, o: { lit: true }, scene: 'kr.toro_fern' },
       ...dawn(5, 26), ...dawn(9, 5),
       { p: 'shrine', x: 13, y: 2, scene: 'kr.shrine_steps' },
+      { p: 'bookpile', x: 13, y: 27, if: 'kr_iwa_met&!kr_iwa_book_found', scene: 'kr.iwa_book' },
     ],
     npcs: [
       { id: 'kr_kumazo', x: 9, y: 23, dir: 'left', talk: [{ if: 'kr_done', scene: 'kr.kumazo_after' }, { if: 'kr_cedar_cleared', scene: 'kr.kumazo_idle' }, { scene: 'kr.kumazo_first' }] },
@@ -104,7 +107,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     structs: [
       { type: 'house', x: 2, y: 4, w: 7, h: 4, roof: 'thatch', wall: 'wood', door: null, windows: [1, 5] },
-      { type: 'house', x: 12, y: 4, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: 2, windows: [4], to: 'kr.kame', spawn: [4, 6], lit: true },
+      { type: 'house', x: 12, y: 4, w: 6, h: 4, roof: 'thatch', wall: 'wood', door: 2, windows: [4], to: 'kr.kame', spawn: [4, 5], lit: true },
       { type: 'house', x: 31, y: 4, w: 6, h: 3, roof: 'thatch', wall: 'wood', door: null },
     ],
     props: [
@@ -119,6 +122,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'kr_shozo', x: 5, y: 9, dir: 'down', talk: [{ if: 'kr_done', scene: 'kr.shozo_after' }, { if: 'quest.kr_fox=1', scene: 'kr.shozo_fox' }, { if: 'kr_shozo_met', scene: 'kr.shozo_idle' }, { scene: 'kr.shozo_first' }] },
       { id: 'kr_hinata', x: 13, y: 18, dir: 'left', talk: [{ if: 'quest.kr_cache=done', scene: 'kr.kids_after' }, { scene: 'kr.kids_rhyme' }] },
       { id: 'kr_kai', x: 14, y: 20, dir: 'up', talk: [{ if: 'quest.kr_cache=done', scene: 'kr.kids_after' }, { scene: 'kr.kids_rhyme' }] },
+      { id: 'kr_iwa', x: 17, y: 16, dir: 'left', if: 'kr_iwa_met', talk: [
+        { if: 'kr_done', scene: 'kr.iwa_after' },
+        { if: 'quest.kr_stamps=done', scene: 'kr.iwa_idle' },
+        { if: 'kr_seal_1&kr_seal_2&kr_seal_3&quest.kr_stamps=1', scene: 'kr.iwa_done' },
+        { if: 'item.kr_stampbook&quest.kr_stamps=0', scene: 'kr.iwa_thanks' },
+        { scene: 'kr.iwa_idle' }] },
     ],
     exits: [
       { x: 8, y: 25, w: 2, h: 1, to: 'kr.steps', sp: 'from_fox', dir: 'down' },
@@ -149,17 +158,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the third waystation's ruin: two lanterns the Wick Moths come for (kept lit, they stay lit)
       ...toro(27, 14, 'kr_moths_done', 'kr.ruin_lanterns', null), ...toro(31, 14, 'kr_moths_done', 'kr.ruin_lanterns', null),
       // the oil cache, under the broken lantern the rhyme counts to
-      { p: 'deadlantern', x: 34, y: 20, if: '!kr_cache_found', scene: 'kr.cache_spot' },
+      { p: 'deadlantern', x: 34, y: 20, if: '!kr_cache_found', scene: 'kr.cache_spot', o: { staysDark: true } },
       { p: 'kr_jar', x: 34, y: 20, if: 'kr_cache_found', scene: 'kr.cache_jar' },
-      ...dawn(9, 12), ...dawn(38, 9),
+      ...dawn(9, 12),
+      // the Ridge Light: the lamp Ren never reached as an apprentice (lit by Ren at night in Ren's journeys, else at dawn)
+      { p: 'kr_toro', x: 38, y: 9, if: '!kr_l_ridge&!kr_vigil_done', scene: 'kr.toro_ridge' },
+      { p: 'kr_toro', x: 38, y: 9, if: 'kr_l_ridge|kr_vigil_done', light: 34, o: { lit: true } },
     ],
     npcs: [
-      { id: 'kr_juzo', x: 12, y: 11, dir: 'up', talk: [{ if: 'kr_done', scene: 'kr.juzo_after' }, { if: 'kr_juzo_met', scene: 'kr.juzo_idle' }, { scene: 'kr.juzo_first' }] },
-      { id: 'kr_kikyo', x: 38, y: 12, dir: 'left', if: '!kr_kikyo_lodge', talk: 'kr.kikyo_first' },
+      { id: 'kr_juzo', x: 12, y: 10, dir: 'up', talk: [{ if: 'kr_done', scene: 'kr.juzo_after' }, { if: 'kr_juzo_met', scene: 'kr.juzo_idle' }, { scene: 'kr.juzo_first' }] },
+      { id: 'kr_ren_n', char: 'ren', x: 37, y: 10, dir: 'up', if: 'kr_apart', talk: 'kr.ren_lantern' },
+      { id: 'kr_kikyo', x: 38, y: 12, dir: 'left', if: '!kr_kikyo_lodge', talk: [{ if: 'kr_ridge_ghost_done', scene: 'kr.kikyo_go' }, { if: 'kr_kikyo_met', scene: 'kr.kikyo_wait' }, { scene: 'kr.kikyo_first' }] },
     ],
     foes: [
-      { id: 'r1', enemy: 'kr.sandal', x: 7, y: 16, patrol: 2, bg: 'keepers' },
-      { id: 'r2', enemy: 'kr.chochin', x: 24, y: 6, patrol: 1, bg: 'keepers' },
+      // the wanderers (E3): Seiji walks this stretch with you; Kikyō's scroll has a lantern ghost after it
+      { id: 'r1', enemy: 'kr.sandal', x: 7, y: 16, patrol: 2, bg: 'keepers', if: '!kr_seiji_met|kr_seiji_gone' },
+      { id: 'r1s', enemy: 'kr.sandal', encounter: 'kr.wander_seiji', x: 7, y: 16, patrol: 2, bg: 'keepers', if: 'kr_seiji_met&!kr_seiji_gone' },
+      { id: 'r2', enemy: 'kr.chochin', encounter: 'kr.wander_kikyo', x: 34, y: 13, patrol: 1, bg: 'keepers', if: 'kr_kikyo_met&!kr_ridge_ghost_done' },
+      { id: 'r3', enemy: 'kr.chochin', x: 24, y: 6, patrol: 1, bg: 'keepers', if: 'kr_ridge_ghost_done' },
     ],
     triggers: [
       { x: 26, y: 11, w: 7, h: 1, scene: 'kr.moths', if: 'kr_hisae_met&!kr_moths_done' },
@@ -196,7 +212,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.path([[6, 11], [6, 17]], ':', 1);
     }),
     structs: [
-      { type: 'house', x: 30, y: 5, w: 7, h: 5, roof: 'thatch', wall: 'wood', door: 3, windows: [1, 5], to: 'kr.hisae', spawn: [4, 6], lit: true },
+      { type: 'house', x: 30, y: 5, w: 7, h: 5, roof: 'thatch', wall: 'wood', door: 3, windows: [1, 5], to: 'kr.hisae', spawn: [4, 5], lit: true },
       { type: 'house', x: 3, y: 6, w: 7, h: 5, roof: 'tile', wall: 'stone', door: 3, windows: [1, 5], to: 'kr.lodge_in', spawn: [4, 6], lit: true },
     ],
     props: [
@@ -210,10 +226,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'kr_hisae', x: 20, y: 10, dir: 'down', if: '!kr_night|kr_vigil_done', talk: [
-        { if: 'kr_done', scene: 'kr.hisae_after' },
-        { if: 'kr_registers_read&!kr_vigil_done', scene: 'kr.hisae_vigil' },
+        { if: 'kr_vigil_done&!quest.kr_inkstone', scene: 'kr.hisae_inkstone' },
+        { if: 'kr_vigil_done&quest.kr_hisae=1', scene: 'kr.hisae_truth' },
+        { if: 'kr_vigil_done', scene: 'kr.hisae_after' },
         { if: 'kr_hisae_met', scene: 'kr.hisae_idle' },
         { scene: 'kr.hisae_first' }] },
+      { id: 'kr_hisae_n', char: 'kr_hisae', x: 20, y: 9, dir: 'down', if: 'kr_night&!kr_vigil_done', talk: [{ if: 'kr_evening_done', scene: 'kr.hisae_vigil' }, { scene: 'kr.hisae_night' }] },
       { id: 'kr_mokichi', x: 6, y: 13, dir: 'down', talk: [{ if: 'kr_done', scene: 'kr.mokichi_after' }, { scene: 'kr.mokichi' }] },
       { id: 'kr_sora', x: 9, y: 15, dir: 'left', wander: 1, talk: [{ if: 'kr_done', scene: 'kr.sora_after' }, { scene: 'kr.sora' }] },
       { id: 'kr_kikyo', x: 24, y: 13, dir: 'left', if: 'kr_kikyo_lodge&!kr_done', talk: 'kr.kikyo_lodge' },
@@ -225,7 +243,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { x: 0, y: 18, w: 1, h: 2, to: 'kr.ridge', sp: 'from_lodge', dir: 'left' },
       { x: 39, y: 18, w: 1, h: 2, to: 'kr.descent', sp: 'from_lodge', dir: 'right', if: 'kr_vigil_done' },
     ],
-    onEnter: [{ scene: 'kr.lodge_arrive', if: '!kr_lodge_seen' }],
+    onEnter: [{ scene: 'kr.lodge_arrive', if: '!kr_lodge_seen' }, { scene: 'kr.evening', if: 'kr_night&!kr_evening_seen' }],
     spawn: { default: [1, 18, 'right'], from_ridge: [1, 18, 'right'], from_descent: [38, 18, 'left'], from_cave: [20, 5, 'down'] },
   });
 
@@ -288,7 +306,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- interiors ---------------------------------------------------------------------------------------------------
   function interior(id, name, w, h, doorX, outside, back, extra) {
     C.maps[id] = Object.assign({
-      name, region: 'interior', place: 'keepers', music: null, noTravel: true, travelKind: 'interior', edition: 2,
+      name, region: 'interior', place: 'keepers', music: null, noTravel: true, travelKind: 'interior', edition: 2, noCompanion: '!kr_apart',
       terrain: K.room(w, h, '_', doorX),
       props: [], npcs: [],
       exits: [{ x: doorX, y: h - 1, to: outside, tx: back[0], ty: back[1], dir: 'down' }],
@@ -301,7 +319,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 5, y: 6 }, { p: 'counter', x: 3, y: 2, across: true }, { p: 'bench', x: 1, y: 4 }, { p: 'bench', x: 8, y: 4 },
       { p: 'table', x: 8, y: 2, scene: 'kr.inn_book' }, { p: 'lantern', x: 10, y: 3, o: { lit: true } },
     ],
-    npcs: [{ id: 'kr_aya', x: 4, y: 3, dir: 'down', talk: [{ if: 'kr_done', scene: 'kr.aya_after' }, { if: 'kr_aya_met', scene: 'kr.aya_idle' }, { scene: 'kr.aya_first' }] }],
+    npcs: [{ id: 'kr_aya', x: 4, y: 3, dir: 'down', talk: [{ if: 'quest.kr_inkstone=1&kr_done', scene: 'kr.inkstone_reply' }, { if: 'item.kr_inkstone&quest.kr_inkstone=0', scene: 'kr.aya_inkstone' }, { if: 'kr_done', scene: 'kr.aya_after' }, { if: 'kr_aya_met', scene: 'kr.aya_idle' }, { scene: 'kr.aya_first' }] }],
   });
   // Kame's house in the hamlet
   interior('kr.kame', T('Kame\'s House', 'カメ の {家|いえ}'), 9, 7, 4, 'kr.fox', [14, 8], {

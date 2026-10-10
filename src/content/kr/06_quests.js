@@ -59,8 +59,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     chapter: 'kr',
     title: T('{師匠|ししょう} の {硯|すずり}', 'The Teacher\'s Inkstone'),
     stages: [
-      T('ヒサエ が 、 ツル さん の {師匠|ししょう} の {硯|すずり} を {預|あず}かって いた 。', 'Hisae has kept an inkstone that belonged to Tsuru\'s teacher.'),
-      T('{硯|すずり} を {葦|あし}ノ{瀬|せ} の ツル さん に {送|おく}ろう 。', 'Send the inkstone to Tsuru in Reedwake.'),
+      T('{麓|ふもと} の {茶屋|ちゃや} の アヤ に 、 {硯|すずり} を {葦|あし}ノ{瀬|せ} の ツル さん へ {送|おく}って もらおう 。', 'Ask Aya at the teahouse at the foot to send the inkstone to Tsuru in Reedwake.'),
       T('ツル さん から 、 {返事|へんじ} が {届|とど}く の を {待|ま}とう 。', 'Wait for Tsuru\'s reply.'),
     ],
     reward: { flags: ['kr_inkstone_done'] },
