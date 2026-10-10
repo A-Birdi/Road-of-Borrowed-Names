@@ -61,7 +61,9 @@ export default async (t) => {
   const C = RB.content;
   const pre = (id) => id.split('.')[0];
   const links = (def) => { const out = new Set(); const seen = new Set(); const go = (o) => { if (!o || typeof o !== 'object' || seen.has(o)) return; seen.add(o); if (typeof o.to === 'string' && C.maps[o.to]) out.add(o.to); for (const k in o) if (k !== 'npcs') go(o[k]); }; go(def.exits); go(def.props); go(def.structs); return out; };
-  for (const [a, b] of C.roads) {
+  for (const [a, b, ro] of C.roads) {
+    // a ferry's route: the scenes that sail it, each way
+    if (ro && ro.sea) { t.ok(ro.ferry.every((id) => C.scenes[id] && C.scenes[id].cmds.some((c) => c.op === 'warp')), 'the ferry ' + a + '–' + b + ' sails both ways (' + ro.ferry.join(', ') + ')'); continue; }
     const A = C.places[a].map, B = C.places[b].map, ok = new Set([pre(A), pre(B)]);
     const seen = new Set([A]), q = [A];
     while (q.length) { const m = q.shift(); for (const n of links(C.maps[m])) if (ok.has(pre(n)) && !seen.has(n)) { seen.add(n); q.push(n); } }

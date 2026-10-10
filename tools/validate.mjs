@@ -155,8 +155,8 @@ const compiled = {};
 // backdrops painted as interiors / as open country (RB.combat uses the same lists), and whether a
 // map reads as indoors (RB.render.enclosed: an interior region, def.indoor, or
 // a border that is mostly wall)
-const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower']);
-const OUTDOOR_BG = new Set(['reedwake', 'saltglass', 'cinder', 'snowbell', 'lanternfall']); // 'still' and 'atlas' are open, dreamlike places
+const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower', 'undercroft']);
+const OUTDOOR_BG = new Set(['reedwake', 'saltglass', 'cinder', 'snowbell', 'lanternfall', 'manybridge']); // 'still' and 'atlas' are open, dreamlike places
 function indoorMap(m, def) {
   if (m.region === 'interior' || def.indoor) return true;
   let wall = 0, n = 0;

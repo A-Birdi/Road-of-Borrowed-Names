@@ -203,6 +203,36 @@
   "jp": "{間違|まちが}えたら 「お{手|て}つき」 。",
   "en": "Touch the wrong card (お手つき) and your partner takes the right one. Then the proverb is shown whole, with what it means."
  },
+ "pastime:mb_riddles:page#14vpgmq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "jp": "{船頭|せんどう} の なぞなぞ",
+  "en": "Boatman's Riddles"
+ },
+ "pastime:mb_riddles:page#s9oiu7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "jp": "{八百橋|やおばし} の {蔵|くら} の {並|なら}び",
+  "en": "Kansuke's mooring on Warehouse Row, Manybridge."
+ },
+ "pastime:mb_riddles:page#j69m9f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "jp": "{道|みち} を なぞなぞ で {教|おし}える {船頭|せんどう} 。",
+  "en": "An old boatman who gives directions only in riddles. One at a time, as often as you like."
+ },
+ "pastime:mb_riddles:page#79lzzc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "jp": "カンスケ に {話|はな}しかける 。",
+  "en": "Talk to Kansuke at his mooring. He tells one riddle at a time."
+ },
+ "pastime:mb_riddles:page#74rw5e": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "jp": "{急|いそ}がなくて いい 。",
+  "en": "There is no hurry and no penalty: a riddle you miss comes round again."
+ },
  "pastime:festival:page#ymdt5i": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",

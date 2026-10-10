@@ -18,7 +18,7 @@ export default async (t) => {
   };
 
   // ---- the registry and the tab -------------------------------------------------------------------------------------
-  t.eq(P.all().map((d) => d.id), ['shiritori', 'shogi', 'hanafuda', 'karuta', 'festival', 'fishing'], 'six pastimes so far, in the index\'s order');
+  t.eq(P.all().map((d) => d.id), ['shiritori', 'shogi', 'hanafuda', 'karuta', 'mb_riddles', 'festival', 'fishing'], 'seven pastimes so far, in the index\'s order (Manybridge\'s riddles since P08)');
   const s1 = fresh(1), s2 = fresh(2);
   t.eq(P.met(s1).map((d) => d.id), [], 'a six-chapter journey meets none of them here (F-21)');
   t.ok(!RB.recordsUI.inCampaign(s1) && RB.recordsUI.inCampaign(s2), 'the tab is for twelve-chapter journeys');

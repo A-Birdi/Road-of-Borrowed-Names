@@ -781,8 +781,10 @@ RB.ui.menu = (function () {
     for (const t of r.targets) { const p = G.placeOf(t.map); if (p && !ids.includes(p)) ids.push(p); }
     return ids.length ? { qid, places: ids, title: RB.content.quests[qid].title } : null;
   }
+  // places and routes of this journey's edition (the twelve-chapter edition's places stay off a six-chapter chart)
+  const inEd = (s, o) => !o || !o.edition || (RB.edition ? RB.edition.of(s) : 1) >= o.edition;
   function chartSvg(s, curMap) {
-    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id]));
+    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => inEd(s, p));
     const Wd = 520, H = 320;
     const fs = Math.round(14 * Math.min(1.5, Math.max(1, (RB.game.settings && RB.game.settings.textScale) || 1)));
     const gm = guideMarks(s);
@@ -795,11 +797,17 @@ RB.ui.menu = (function () {
     // paper, folds and the sea/mountain washes (decorative)
     svg += '<rect width="' + Wd + '" height="' + H + '" fill="#efe3c6"/><path d="M0 252 Q120 222 200 252 T 520 232 L520 320 L0 320Z" fill="#cfdbd6"/><path d="M60 0 L140 90 L230 60 L300 120 L420 40 L520 80 L520 0Z" fill="#e2d4b2"/>';
     svg += '<path d="M173 0V320M346 0V320M0 160H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"/>';
-    for (const [a, b] of RB.content.roads || []) {
+    for (const [a, b, ro] of RB.content.roads || []) {
       const A = RB.content.places[a], B = RB.content.places[b];
-      if (!A || !B) continue;
+      if (!A || !B || !inEd(s, ro) || !inEd(s, A) || !inEd(s, B)) continue;
       const known = s.travel[a] && s.travel[b];
       const half = s.travel[a] || s.travel[b];
+      // a ferry's route: a curve over the sea, in the sea's ink
+      if (ro && ro.sea) {
+        const mx = (A.pos[0] + B.pos[0]) / 2, my = Math.max(A.pos[1], B.pos[1]) + 26;
+        svg += '<path d="M' + A.pos[0] + ' ' + A.pos[1] + ' Q' + mx + ' ' + my + ' ' + B.pos[0] + ' ' + B.pos[1] + '" fill="none" stroke="' + (known ? '#2c5470' : '#7a98a8') + '" stroke-width="' + (known ? 2.2 : 1.6) + '" stroke-dasharray="' + (known ? '7 4' : '2 6') + '"/>';
+        continue;
+      }
       svg += '<line x1="' + A.pos[0] + '" y1="' + A.pos[1] + '" x2="' + B.pos[0] + '" y2="' + B.pos[1] + '" stroke="' + (known ? '#3b2e1c' : '#9d8b66') + '" stroke-width="' + (known ? 2.5 : 1.6) + '" stroke-dasharray="' + (known ? '0' : half ? '6 5' : '2 6') + '"/>';
     }
     for (const p of places) {
@@ -840,9 +848,9 @@ RB.ui.menu = (function () {
     // out in the open with nothing under way; otherwise why not, in the place's own terms (src/engine/52_travel.js)
     const tr = RB.travel.status(s.map);
     const canTravel = tr.ok && RB.game.mode() === 'menu';
-    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id]);
+    const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id] && inEd(s, p));
     const gm = guideMarks(s);
-    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of. The red mark is where you are.' +
+    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2])) ? '; blue dashes are ferry routes' : '') + '. The red mark is where you are.' +
       (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +

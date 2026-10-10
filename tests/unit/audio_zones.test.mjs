@@ -8,7 +8,7 @@ import { load } from '../lib/load.mjs';
 import { intensity, fmtIntensity } from '../lib/intensity.mjs';
 
 // zones that have their own score so far (chapter by chapter)
-const SCORED = ['saltglass', 'cinder', 'snowbell', 'lanternfall', 'still'];
+const SCORED = ['saltglass', 'manybridge', 'cinder', 'snowbell', 'lanternfall', 'still'];
 
 export default async (t) => {
   globalThis.__RB_TEST__ = true;
@@ -45,8 +45,9 @@ export default async (t) => {
   t.log('maps checked in scored zones:', mapsChecked, 'music entries');
   for (const zid of SCORED) {
     const z = Z[zid];
-    const roads = Object.keys(C.maps).filter((mid) => mid === z.prefixes[0] + 'road');
-    t.ok(roads.length === 1, `${zid}: has a route map ${z.prefixes[0]}road`);
+    // (a place reached only by water has no road of its own: Manybridge's ferry)
+    const roads = z.route ? Object.keys(C.maps).filter((mid) => mid === z.prefixes[0] + 'road') : [];
+    if (z.route) t.ok(roads.length === 1, `${zid}: has a route map ${z.prefixes[0]}road`);
     for (const mid of roads) {
       const c = cands(C.maps[mid]);
       t.ok(c[c.length - 1] === z.route, `${mid}: the route plays ${z.route} (got ${c.join(', ')})`);
@@ -100,7 +101,14 @@ export default async (t) => {
   }
 
   // ---- intensity: battle (and boss) themes rise from chapter to chapter
-  const order = Object.entries(Z).filter(([zid, z]) => z.chapter <= 6 && (zid === 'reedwake' || SCORED.includes(zid))).sort((a, b) => a[1].chapter - b[1].chapter);
+  // (the six-chapter ladder; the twelve-chapter edition's zones join theirs when it is re-tiered, C-22)
+  const order = Object.entries(Z).filter(([zid, z]) => z.chapter <= 6 && !z.edition && (zid === 'reedwake' || SCORED.includes(zid))).sort((a, b) => a[1].chapter - b[1].chapter);
+  // Manybridge's themes sit a step above Saltglass's (printed; the full ladder is checked with C-22)
+  if (Z.manybridge) for (const kind of ['battle', 'boss']) {
+    const m = intensity(_.compile(songs[Z.manybridge[kind]])), p = intensity(_.compile(songs[Z.saltglass[kind]]));
+    t.log(`mb  ${kind.padEnd(6)} ${Z.manybridge[kind].padEnd(20)} ${fmtIntensity(m)}`);
+    t.ok(m.bpm > p.bpm && m.score > p.score, `Manybridge's ${kind} theme is a step above Saltglass's (score ${p.score.toFixed(2)} -> ${m.score.toFixed(2)})`);
+  }
   const rows = { battle: [], boss: [] };
   for (const [zid, z] of order) {
     for (const kind of ['battle', 'boss']) {

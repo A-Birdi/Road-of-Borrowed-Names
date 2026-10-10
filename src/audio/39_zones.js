@@ -34,6 +34,13 @@ RB.audio = RB.audio || {};
       songs: ['sg_road', 'saltglass', 'drowned_archive'],
       cues: ['sg_confession', 'sg_counter', 'sg_letters', 'sg_lighthouse'],
     },
+    // the twelve-chapter edition's Manybridge (37_songs_mb.js): its chapter number is the twelve-chapter one; it joins
+    // the intensity ladder when the edition's whole ladder is re-tiered (C-22, P14)
+    manybridge: {
+      chapter: 3, edition: 2, regions: ['manybridge'], prefixes: ['mb.'],
+      battle: 'battle_manybridge', boss: 'boss_manybridge', route: null,
+      songs: ['manybridge', 'undercroft'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',

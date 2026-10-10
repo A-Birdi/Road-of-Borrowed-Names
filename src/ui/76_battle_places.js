@@ -97,7 +97,7 @@ RB.battlePlaces = (function () {
   const CODEOF = { meadow: 'g', sand: 's', snow: 'n', ash: 'a', paper: 'q', stone: 'o', earth: 'p', parch: 'q' };
   const GROUNDOF = { grass: 'meadow', flowers: 'meadow', tallgrass: 'meadow', field: 'meadow', sand: 'sand', snow: 'snow', ice: 'snow', ash: 'ash', paper: 'paper', stonefloor: 'stone', path: 'earth', road: 'earth', atlas_sketch: 'parch', wood: 'earth', carpet: 'stone', tatami: 'stone', glass: 'stone' };
   // region of the tile palette for a backdrop family (colours of the same world)
-  const FAMREGION = { mill: 'reedwake', kiln: 'cinder', archive: 'archive', observatory: 'snowbell', belltower: 'lanternfall', still: 'sa_still', atlas: 'atlas' };
+  const FAMREGION = { mill: 'reedwake', kiln: 'cinder', archive: 'archive', observatory: 'snowbell', belltower: 'lanternfall', still: 'sa_still', atlas: 'atlas', undercroft: 'manybridge' };
 
   // ---- scale (backdrop px, before the actors' whole-number scale) --------------------------------
   const COL = 24;          // a map column at the horizon, out of doors and in halls
@@ -366,6 +366,8 @@ RB.battlePlaces = (function () {
     cinder: ['leaves', 'pebbles', 'tufts', 'stone', 'logs', 'ash'],
     snowbell: ['snow', 'pebbles', 'stone', 'logs'],
     lanternfall: ['flowers', 'pebbles', 'leaves', 'tufts', 'stone'],
+    manybridge: ['pebbles', 'stone', 'tufts', 'reedtufts', 'pebbles'],
+    undercroft: ['puddle', 'rope', 'storage', 'lanternCrate', 'cobweb', 'tools'],
     atlas: ['tufts', 'pebbles', 'stone', 'pages'],
     stillOut: ['pages', 'pebbles', 'stone'],
   };
@@ -1218,6 +1220,8 @@ RB.battlePlaces = (function () {
     still: { n: 7, col: 'rgba(236,232,220,0.5)', size: 3, vx: 0.004, vy: -0.004, wob: 10 },
     atlas: { n: 5, col: 'rgba(250,244,226,0.7)', size: 3, vx: 0.007, vy: 0.002, wob: 8 },
     saltglass: { n: 0 },
+    manybridge: { n: 6, col: 'rgba(236,240,232,0.45)', size: 2, vx: 0.003, vy: -0.002, wob: 9 },
+    undercroft: { n: 9, col: 'rgba(190,214,220,0.4)', size: 1, vx: 0, vy: 0.006, wob: 3 },
   };
   // How much the scenery quiets itself now (0 calm … 1 still): while you read,
   // choose and write; and for a moment when a blow lands (a result is placed).

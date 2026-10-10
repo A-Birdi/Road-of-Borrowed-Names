@@ -145,7 +145,7 @@ daigo: {二番|にばん}{倉庫|そうこ} の ワタル ？ {真面目|まじ�
 
 @scene sg.daigo_after
 daigo: {札|ふだ} が {白|しろ}く ならねえ ！ {荷|に} が {迷|まよ}わねえ ！ {仕事|しごと} が {楽|らく} だ ！ …… {暇|ひま} だ ！ || The tags stay put! The cargo doesn't wander! Work's easy! …Too easy!
-?(ch2_done) daigo: {北|きた} へ {行|い}く の か 。 {灰実|はいみ} の {里|さと} の {酒|さけ} は {甘|あま}い ぞ 。 {飲|の}み{過|す}ぎる な よ 。 || Heading north? Cinder Orchard's wine is sweet. Don't overdo it.
+?(ch2_done&!ed>=2|mb2_done) daigo: {北|きた} へ {行|い}く の か 。 {灰実|はいみ} の {里|さと} の {酒|さけ} は {甘|あま}い ぞ 。 {飲|の}み{過|す}ぎる な よ 。 || Heading north? Cinder Orchard's wine is sweet. Don't overdo it.
 
 @scene sg.daigo_post
 daigo: よう 、 {久|ひさ}しぶり ！ {入|い}り{江|え} まで の {道|みち} 、 {今|いま} は {俺|おれ} も {右|みぎ} って {言|い}う よう に した ぜ 。 {陸|おか} から {見|み}て な ！ || Hey, long time! These days even I say "right" for the cove path. Seen from land, mind you!

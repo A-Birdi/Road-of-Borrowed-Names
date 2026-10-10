@@ -65,9 +65,16 @@ RB.challenge = (function () {
     if (step.kind === 'forge') return orderRng('forge|' + (step.id || '') + '|' + step.sentences.map((o) => o.jp).join('|')).shuffle(step.sentences).map((o) => Object.assign({}, o));
     // Authors (and the meaning questions RB.tasks builds) list the right
     // option first, so where an option sits must never give the answer away.
+    // The step's own order (seeded by its text) turns one place with every asking, so over a run of askings the
+    // right option visits every place equally often, and never stays put (P08: the fairness holds by construction,
+    // not by the luck of a hash).
     if (step.kind === 'choose' || step.kind === 'listen') {
       const key = (step.item || '') + '|' + ((step.prompt && step.prompt.en) || '') + '|' + step.options.map((o) => o.en || o.jp || '').join('|');
-      return orderRng(key).shuffle(step.options).map((o) => Object.assign({}, o));
+      const base = RB.util.rng(RB.util.hashStr(key)).shuffle(step.options);
+      let turn = 0;
+      try { turn = RB.learn.clock(); } catch (e) { turn = 0; }
+      const n = base.length, k = n ? (((turn + RB.util.hashStr(key + '#r')) % n) + n) % n : 0;
+      return base.slice(k).concat(base.slice(0, k)).map((o) => Object.assign({}, o));
     }
     let opts = step.choices ? step.choices.slice() : null;
     const ans = plain(step.answer);
@@ -182,6 +189,8 @@ RB.challenge = (function () {
         }
         if (step.copy) h += '<div class="chal-copy">' + RB.ui.jhtml(step.answer) + '</div>';
         ctxEl.innerHTML = h;
+        // barge routing (P08): the canals above the task, the barge where the last answer sent it
+        if (step.canal && RB.ui.canal) RB.ui.canal.mount(ctxEl, step, active.canalAt);
         // the translation toggle shares a line with "I don't know"
         const trSlot = wrap.querySelector('.task-tr');
         trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
@@ -428,6 +437,7 @@ RB.challenge = (function () {
         if (PH) PH.submit(modeUsed); // stamped before evaluation: on time stays on time
         const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
+          if (step.kind === 'forge' && r.family != null) consequence(r.family);
           if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); }
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
           success(modeUsed, r.notes);
@@ -451,6 +461,8 @@ RB.challenge = (function () {
           return;
         }
         // opts.wrongNote(text): real Japanese for another action this task doesn't support here (explained as such)
+        // (the barge goes where a misread sentence would send it only once it counts as said)
+        if (step.kind === 'forge' && r.family != null) consequence(r.family);
         const note = opts.wrongNote ? opts.wrongNote(text, modeUsed) : null;
         if (note && note.length) r.feedback = note;
         const firstBefore = res.firstTry;
@@ -481,8 +493,15 @@ RB.challenge = (function () {
         if (opts.onMistake) opts.onMistake(r);
         if (pad && modeUsed === 'hand' && !PH && !opts.misread) pad.reset();
       }
+      // a forged sentence that sends a barge (P08): whatever was said, the barge goes there (never part of the judging)
+      function consequence(fi) {
+        if (!step.canal || !RB.ui.canal || fi == null || fi < 0) return;
+        const at = RB.ui.canal.play(ctxEl, step, fi);
+        if (at) active.canalAt = at;
+      }
       function evaluateChoice(o, btn) {
         if (PH) PH.submit('choice');
+        if (o && o._f) consequence((step.families || []).indexOf(o._f));
         if (o.ok) { btn.classList.add('on'); res.given = { option: o, mode: 'choice' }; success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
@@ -523,6 +542,7 @@ RB.challenge = (function () {
       function evaluatePieces(arr, modeUsed) {
         if (PH) PH.submit(modeUsed);
         const m = RB.forge.piecesMatch(step, arr);
+        if (m) consequence(m.i);
         if (m && m.family.ok) { res.given = { pieces: arr.slice(), mode: modeUsed, family: m.i }; success(modeUsed); return; }
         if (!m) {
           res.limits = (res.limits || 0) + 1;

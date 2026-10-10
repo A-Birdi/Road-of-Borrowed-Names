@@ -40,11 +40,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     foes: [{ id: 'r1', enemy: 'sg.crab', x: 8, y: 16, patrol: 2 }],
     exits: [
       { x: 39, y: 10, w: 1, h: 2, to: 'rw.road', sp: 'from_next', dir: 'right' },
-      { x: 15, y: 0, w: 2, h: 1, to: 'co.road', sp: 'from_prev', dir: 'up', if: 'ch2_done' },
+      { x: 15, y: 0, w: 2, h: 1, to: 'co.road', sp: 'from_prev', dir: 'up', if: 'ch2_done&!ed>=2|mb2_done' },
       { x: 18, y: 21, w: 2, h: 1, to: 'sg.harbor', tx: 27, ty: 2, dir: 'down' },
     ],
     triggers: [{ x: 15, y: 0, w: 2, h: 1, scene: 'sg.road_inland_closed', if: '!ch2_done' }],
-    onEnter: [{ scene: 'sg.arrive', if: '!sg_arrived' }, { scene: 'sg.road_open', if: 'ch2_done&!sg_road_open_seen' }],
+    onEnter: [{ scene: 'sg.arrive', if: '!sg_arrived' }, { scene: 'sg.road_open', if: 'ch2_done&!sg_road_open_seen&!ed>=2|mb2_done&!sg_road_open_seen' }],
     spawn: { default: [37, 10, 'left'], from_prev: [37, 10, 'left'], from_next: [15, 2, 'down'], from_harbor: [18, 20, 'up'] },
   };
 

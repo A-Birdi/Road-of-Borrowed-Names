@@ -1,0 +1,13 @@
+/* Barge routing's canal map (expansion P08; src/ui/89e_canal.js): the canals above a routing task, the barge going
+ * where the sentence sends it. Paper tokens; the labels carry readings (ruby), never bare kanji. */
+.cn { margin: 0 0 0.6em; }
+.cn-map { position: relative; width: 100%; max-width: 560px; margin: 0 auto; border: 1px solid var(--paper-edge); border-radius: var(--r-1); overflow: hidden; }
+.cn-svg { display: block; width: 100%; height: auto; }
+.cn-lab { position: absolute; transform: translate(-50%, 0); font-size: 0.78em; line-height: 1.1; padding: 0.05em 0.3em; border-radius: 0.3em; background: color-mix(in srgb, var(--paper) 86%, transparent); color: var(--ink); white-space: nowrap; pointer-events: none; }
+.cn-bridge { transform: translate(-50%, -100%); font-size: 0.7em; color: var(--ink-2); }
+.cn-bridge.blank { color: var(--ink-3); font-weight: 700; }
+.cn-place.cn-here { outline: 2px solid var(--ink); }
+.cn-ok .cn-place.cn-here { background: var(--ok-bg, #dcebd6); }
+.cn-wrong .cn-place.cn-here { background: var(--warn-bg, #f4e2c4); }
+.cn-say { text-align: center; margin-top: 0.3em; }
+@media (max-width: 520px) { .cn-lab { font-size: 0.68em; } }

@@ -24,7 +24,8 @@ export default async (t) => {
   };
   const mine = Object.keys(E).filter((id) => FAM.indexOf(E[id].art) >= 0).sort();
   const only = (globalThis.process && process.env.CA_FAM) || null; // (while authoring: one family)
-  t.eq(mine.length, 36, 'the inventory\'s 36 enemies use these ten families');
+  // 36 from the inventory, plus P08's six Undercroft creatures drawn on these families in the interim (F-36)
+  t.eq(mine.length, 42, 'the inventory\'s 36 enemies and the six interim Undercroft creatures use these ten families');
 
   // the rules' results a move of each kind produces (a fixture per kind, as RB.combatLogic.foeAct would)
   const RESULT = {

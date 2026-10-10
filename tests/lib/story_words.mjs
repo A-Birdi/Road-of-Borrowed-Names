@@ -8,6 +8,8 @@ export const MILL = [...CH1, 'mizu'];               // rw.m1_gears grants みず
 export const CH2 = MILL;                            // かぜ (tide) and なわ (sluice) come during the chapter
 export const SLUICE = [...CH2, 'nawa'];             // sg.da_raft grants なわ; the far bank, the vault and the gated moth come after
 export const CH3 = [...CH2, 'kaze', 'nawa'];
+// the twelve-chapter edition's Manybridge (after Chapter 2: Saltglass has granted かぜ and なわ)
+export const MB1 = CH3;
 export const UPPER = [...CH3, 'ishi'];              // co.upper: the foes are above the ridge that いし opens (co.upper_wall)
 export const CH4 = [...CH3, 'ishi', 'tsuchi', 'koori'];
 export const OBS = [...CH4, 'honoo'];               // the Star Stair only opens after ほのお (sb.stair_ice needs it)
@@ -22,5 +24,6 @@ export const KNOWN_AT = {
   'co.moth': UPPER, 'co.soot': UPPER, 'co.golem': CH3, 'co.ember': CH3, 'co.warden': CH3,
   'sb.fox': OBS, 'sb.wisp': OBS, 'sb.ghost': OBS, 'sb.moth': OBS, 'sb.golem': OBS, 'sb.boss': OBS,
   'lf.stamp': CH5, 'lf.blot': BELL, 'lf.mote': BELL, 'lf.conduit': BELL, 'lf.wraith': BELL, 'lf.keeper': BELL,
+  'mb.crab': MB1, 'mb.snail': MB1, 'mb.beetle': MB1, 'mb.tangle': MB1, 'mb.barge': MB1, 'mb.bridge': MB1,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
 };
