@@ -418,6 +418,30 @@ for (const id in C.activities) {
   if (a.type === 'signpost') for (const arm of a.arms) { tiered(arm.clue, 'activity ' + id, jen); if (!a.places.find((p) => p.id === arm.to)) E('activity ' + id + ': arm to unknown place'); }
   if (a.type === 'history') { for (const f of a.fragments) tiered(f, 'activity ' + id, jen); if (a.question) tiered(a.question, 'activity ' + id + ' question', checkStep); if (a.note && !C.notes[a.note]) E('activity ' + id + ': unknown note ' + a.note); }
 }
+// Weighing tellings (P10, src/engine/72k_tellings.js): every line of every source, claim and answer, and the
+// structure the rules rely on (a reading task that exists; claim rules naming real items; a supported reading)
+for (const id in C.tellings || {}) {
+  const d = C.tellings[id], w = 'tellings ' + id;
+  jen(d.title, w + ' title'); jen(d.question, w + ' question');
+  const items = d.answer && d.answer.kind === 'order' ? d.answer.items.map((x) => x.id) : null;
+  const cids = new Set();
+  for (const src of d.sources || []) {
+    jen(src.who, w + ' ' + src.id + ' who');
+    tiered(src.text, w + ' ' + src.id + ' text', jen);
+    if (!src.read || !C.challenges[src.read]) E(w + ': source ' + src.id + ' reads an unknown challenge ' + src.read);
+    for (const c of src.claims || []) {
+      cids.add(c.id);
+      jen(c, w + ' claim ' + c.id);
+      if (!c.why || !c.why.en) E(w + ': claim ' + c.id + ' says why it can or cannot be vouched for');
+      if (c.rule && items) for (const x of [].concat(...Object.values(c.rule))) if (typeof x === 'string' && !items.includes(x)) E(w + ': claim ' + c.id + ' names an unknown item ' + x);
+    }
+  }
+  if (d.answer.kind === 'order') { for (const x of d.answer.items) jen(x, w + ' item ' + x.id); if (!RB.tellings.supportedOrders(d).length) E(w + ': no order is supported'); }
+  else {
+    for (const o of d.answer.options) { jen(o, w + ' option ' + o.id); for (const c of o.needs || []) if (!cids.has(c)) E(w + ': option ' + o.id + ' needs an unknown claim ' + c); }
+    if (!d.answer.options.some((o) => RB.tellings.judge(d, o.id).ok)) E(w + ': no option is supported');
+  }
+}
 // A Quiet Cast: every situation's four task variants are ordinary steps (docs/practice/fishing.md)
 if (RB.fishing) for (const id in RB.fishing.SITU) for (const k in RB.fishing.SITU[id].tasks) checkStep(RB.fishing.SITU[id].tasks[k], 'fishing ' + id + '[' + k + ']');
 // intent texts

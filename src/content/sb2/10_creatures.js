@@ -52,6 +52,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{星図|せいず} の {星|ほし} が {一|ひと}つ 、 {紙|かみ} から {抜|ぬ}け{出|だ}して {飛|と}んで いる 。 {群|む}れ から はぐれた ムクドリ の よう に 。', en: 'One star has slipped off the star chart and is flying about, like a starling lost from its flock.' },
     settle: { jp: '{星|ほし} は {星図|せいず} の {上|うえ} に {戻|もど}って 、 {元|もと} の {場所|ばしょ} で {光|ひか}った 。', en: 'The star goes back onto the chart and shines in its old place.' } };
 
+  Object.assign(C.reviewEnemies = C.reviewEnemies || {}, { 'sb.bat': 'sb2', 'sb.hare': 'sb2', 'sb.starling': 'sb2' });
   if (RB.creaturesA && RB.creaturesA.auditEnemy) {
     const note = 'interim: a twelve-chapter Snowbell creature (P10, E23) drawn on an existing family with its own palette; its own family is P16 art work (AC-1, C-82)';
     RB.creaturesA.auditEnemy('sb.bat', 'moth', 'incomplete', note);

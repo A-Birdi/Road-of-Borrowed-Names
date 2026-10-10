@@ -113422,7 +113422,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     yn: 'yn',    // Steamhollow, Chapter 11
   };
   // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
-  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv'];
+  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv', 'co2', 'sb2'];
+  // creatures the expansion adds to a six-chapter region (their ids keep the region's prefix): reviewed under these
+  C.reviewEnemies = C.reviewEnemies || {};
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
   C.reveals = C.reveals || {};
 })(RB.content);
@@ -143912,6 +143914,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{枝|えだ} に {残|のこ}った {柿|かき} が {一|ひと}つ 、 {顔|かお} を {持|も}って いる 。 {甘|あま}い {声|こえ} で 、 {待|ま}て と {言|い}う 。', en: 'One persimmon left on the branch has a face. In a sweet voice, it tells you to wait.' },
     settle: { jp: '{柿|かき} は {枝|えだ} から ぽとり と {落|お}ちた 。 {割|わ}って みる と 、 まだ {渋|しぶ}かった 。', en: 'The persimmon drops from the branch with a soft plop. Broken open, it is still bitter.' } };
 
+  Object.assign(C.reviewEnemies = C.reviewEnemies || {}, { 'co.shard': 'co2', 'co.mole': 'co2', 'co.imp': 'co2' });
   if (RB.creaturesA && RB.creaturesA.auditEnemy) {
     const note = 'interim: a twelve-chapter Cinder Orchard creature (P10, E23) drawn on an existing family with its own palette; its own family is P16 art work (AC-1, C-82)';
     RB.creaturesA.auditEnemy('co.shard', 'echo', 'incomplete', note);
@@ -156029,7 +156032,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ] },
     ],
     answer: { kind: 'choice', options: [
-      { id: 'both', jp: '{灯守|ひもり} の {名付|なづ}け を {書|か}いて 、 {狐|きつね} の {話|はなし} は 「カメ さん の 家 の 話」 と して {添|そ}える', en: 'Write the keeper\'s naming, and add the fox story as "the tale Kame\'s family tells"', needs: ['f3', 'f4', 'f2'], best: true },
+      { id: 'both', jp: '{灯守|ひもり} の {名付|なづ}け を {書|か}いて 、 {狐|きつね} の {話|はなし} は 「カメ さん の {家|いえ} の {話|はなし}」 と して {添|そ}える', en: 'Write the keeper\'s naming, and add the fox story as "the tale Kame\'s family tells"', needs: ['f3', 'f4', 'f2'], best: true },
       { id: 'record', jp: '{灯守|ひもり} の {名付|なづ}け だけ を {書|か}く', en: 'Write only the keeper\'s naming', needs: ['f3', 'f4'] },
       { id: 'three', jp: '{三|みっ}つ の {話|はなし} を 、 だれ の {話|はなし} か {書|か}いて 、 {全部|ぜんぶ} {並|なら}べる', en: 'Set all three tellings side by side, each with whose it is', needs: ['f2', 'f4', 'f5'] },
       { id: 'fox', jp: '「{狐|きつね} が {橋|はし} を {架|か}けた」 と {書|か}く', en: 'Write that a fox built the bridge', needs: ['f1'] },
@@ -170851,6 +170854,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{星図|せいず} の {星|ほし} が {一|ひと}つ 、 {紙|かみ} から {抜|ぬ}け{出|だ}して {飛|と}んで いる 。 {群|む}れ から はぐれた ムクドリ の よう に 。', en: 'One star has slipped off the star chart and is flying about, like a starling lost from its flock.' },
     settle: { jp: '{星|ほし} は {星図|せいず} の {上|うえ} に {戻|もど}って 、 {元|もと} の {場所|ばしょ} で {光|ひか}った 。', en: 'The star goes back onto the chart and shines in its old place.' } };
 
+  Object.assign(C.reviewEnemies = C.reviewEnemies || {}, { 'sb.bat': 'sb2', 'sb.hare': 'sb2', 'sb.starling': 'sb2' });
   if (RB.creaturesA && RB.creaturesA.auditEnemy) {
     const note = 'interim: a twelve-chapter Snowbell creature (P10, E23) drawn on an existing family with its own palette; its own family is P16 art work (AC-1, C-82)';
     RB.creaturesA.auditEnemy('sb.bat', 'moth', 'incomplete', note);

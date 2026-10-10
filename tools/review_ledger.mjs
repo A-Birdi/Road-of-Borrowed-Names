@@ -56,7 +56,15 @@ export function lines(RB) {
     walk('xp.' + d.id, 'expedition:' + d.id, d, new Set());
     for (const m of d.maps) if (C.maps[m]) walk('xp.' + d.id, 'map:' + m, C.maps[m], new Set());
   }
-  for (const id in C.encounters || {}) if (/^xp\./.test(id)) walk(id, 'encounter:' + id, C.encounters[id], new Set());
+  // every encounter of the expansion's chapters and expeditions (add() keeps only the review prefixes)
+  for (const id in C.encounters || {}) walk(id, 'encounter:' + id, C.encounters[id], new Set());
+  // creatures the expansion adds to the six-chapter regions (P10's twelve-chapter Cinder Orchard and Snowbell)
+  for (const id in C.reviewEnemies || {}) if (C.enemies[id]) walk(C.reviewEnemies[id] + '.' + id, 'enemies:' + id, C.enemies[id], new Set());
+  // weighing tellings (P10): the sources, what they claim, and the readings to choose from
+  for (const id in C.tellings || {}) walk(id, 'tellings:' + id, C.tellings[id], new Set());
+  // the companions' memories and bond lines added by the expansion's chapters (P09's fireworks, P10's Ridge Light)
+  const MEM_PREFIX = { fireworks: 'mp' };
+  if (C.company && C.company.mem) for (const k in C.company.mem) { const id = MEM_PREFIX[k] ? MEM_PREFIX[k] + '.' + k : k; walk(id, 'memory:' + k, C.company.mem[k], new Set()); }
   // the Atlas's commissions (P07): the board's scenes, the landmark lines, the areas, errands and lengths
   if (RB.atlasCommissions) {
     const K = RB.atlasCommissions;

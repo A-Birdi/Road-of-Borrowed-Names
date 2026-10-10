@@ -68,6 +68,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     intro: { jp: '{枝|えだ} に {残|のこ}った {柿|かき} が {一|ひと}つ 、 {顔|かお} を {持|も}って いる 。 {甘|あま}い {声|こえ} で 、 {待|ま}て と {言|い}う 。', en: 'One persimmon left on the branch has a face. In a sweet voice, it tells you to wait.' },
     settle: { jp: '{柿|かき} は {枝|えだ} から ぽとり と {落|お}ちた 。 {割|わ}って みる と 、 まだ {渋|しぶ}かった 。', en: 'The persimmon drops from the branch with a soft plop. Broken open, it is still bitter.' } };
 
+  Object.assign(C.reviewEnemies = C.reviewEnemies || {}, { 'co.shard': 'co2', 'co.mole': 'co2', 'co.imp': 'co2' });
   if (RB.creaturesA && RB.creaturesA.auditEnemy) {
     const note = 'interim: a twelve-chapter Cinder Orchard creature (P10, E23) drawn on an existing family with its own palette; its own family is P16 art work (AC-1, C-82)';
     RB.creaturesA.auditEnemy('co.shard', 'echo', 'incomplete', note);

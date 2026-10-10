@@ -256,7 +256,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ] },
     ],
     answer: { kind: 'choice', options: [
-      { id: 'both', jp: '{灯守|ひもり} の {名付|なづ}け を {書|か}いて 、 {狐|きつね} の {話|はなし} は 「カメ さん の 家 の 話」 と して {添|そ}える', en: 'Write the keeper\'s naming, and add the fox story as "the tale Kame\'s family tells"', needs: ['f3', 'f4', 'f2'], best: true },
+      { id: 'both', jp: '{灯守|ひもり} の {名付|なづ}け を {書|か}いて 、 {狐|きつね} の {話|はなし} は 「カメ さん の {家|いえ} の {話|はなし}」 と して {添|そ}える', en: 'Write the keeper\'s naming, and add the fox story as "the tale Kame\'s family tells"', needs: ['f3', 'f4', 'f2'], best: true },
       { id: 'record', jp: '{灯守|ひもり} の {名付|なづ}け だけ を {書|か}く', en: 'Write only the keeper\'s naming', needs: ['f3', 'f4'] },
       { id: 'three', jp: '{三|みっ}つ の {話|はなし} を 、 だれ の {話|はなし} か {書|か}いて 、 {全部|ぜんぶ} {並|なら}べる', en: 'Set all three tellings side by side, each with whose it is', needs: ['f2', 'f4', 'f5'] },
       { id: 'fox', jp: '「{狐|きつね} が {橋|はし} を {架|か}けた」 と {書|か}く', en: 'Write that a fox built the bridge', needs: ['f1'] },
