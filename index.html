@@ -157635,6 +157635,7 @@ RB.lex.add(RB.lex.parseTable(`
 子役|こやく|n|A|a child actor; a child's part
 百物語|ひゃくものがたり|n|A|"a hundred tales": an Edo-period night of ghost stories told by a hundred lights
 番目|ばんめ|suf|I|-th (in order: 三番目, the third)
+カケル||name|F|Kakeru (a name)
 `));
 
 
@@ -157874,9 +157875,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 1, hair: 'short', hairColor: 2, cloth: ['#2a4a6a', '#1e3a54', '#e8d8a8'], shape: 'coat', acc: ['glasses'] },
     portrait: { eyes: 'sharp', style: 'short', acc: ['glasses'], collar: 'high', bg: '#1a2a3a' },
   });
-  // Hayate: a courier of the Blockprint Row guild, quick and boastful; knew of Nao before meeting them.
-  ch('mp_hayate', {
-    name: { en: 'Hayate', jp: 'ハヤテ' }, voice: { pitch: 1.02 },
+  // Kakeru: a courier of the Blockprint Row guild, quick and boastful; knew of Nao before meeting them.
+  ch('mp_kakeru', {
+    name: { en: 'Kakeru', jp: 'カケル' }, voice: { pitch: 1.02 },
     look: { skin: 3, hair: 'short', hairColor: 0, cloth: ['#8a6a2a', '#6e5420', '#e8e0cc'], shape: 'tunic', acc: ['headband'], bandCol: '#a8462e' },
     portrait: { eyes: 'sharp', style: 'short', acc: ['headband'], bandCol: '#a8462e', bg: '#2e2414' },
   });
@@ -158069,7 +158070,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'mp_kanta', x: 7, y: 8, dir: 'down', if: '!mp_sobe_met', talk: 'mp.kanta_first' },
-      { id: 'mp_hayate', x: 30, y: 9, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.hayate_after' }, { scene: 'mp.hayate' }] },
+      { id: 'mp_kakeru', x: 30, y: 9, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.kakeru_after' }, { scene: 'mp.kakeru' }] },
       { id: 'mp_tokube', x: 26, y: 12, dir: 'left', if: '!mb2_done', talk: 'mp.tokube' },
       { id: 'mp_miyo', x: 13, y: 29, dir: 'up', if: 'mp_sobe_met', talk: [{ if: 'quest.mp_apprentice=done', scene: 'mp.miyo_after' }, { if: 'quest.mp_apprentice=1', scene: 'mp.miyo_teach' }, { scene: 'mp.miyo_first' }] },
     ],
@@ -158413,7 +158414,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const BRIDGES = {
     hangi: { clue: T('Kanta: "It\'s in front of the master\'s workshop. The blocks go over it. Woodblock Bridge!"', '「{親方|おやかた} の {仕事場|しごとば} の {前|まえ} の {橋|はし} 。 {版木|はんぎ} を {運|はこ}ぶ から 、 {版木橋|はんぎばし} ！」'), name: '{版木橋|はんぎばし}', kana: 'はんぎばし', en: 'Woodblock Bridge',
       near: ['{墨橋|すみばし}', 'すみばし', 'Kanta names it for the woodblocks carried over it: {版木橋|はんぎばし}.'], third: ['{幕橋|まくばし}', 'まくばし'] },
-    sumi: { clue: T('Hayate: "The ink-makers wash their brushes under it, so the water\'s black. Ink Bridge."', '「{墨屋|すみや} が {下|した} で {筆|ふで} を {洗|あら}う から 、 {水|みず} が {黒|くろ}い 。 {墨橋|すみばし} だ 。」'), name: '{墨橋|すみばし}', kana: 'すみばし', en: 'Ink Bridge',
+    sumi: { clue: T('Kakeru: "The ink-makers wash their brushes under it, so the water\'s black. Ink Bridge."', '「{墨屋|すみや} が {下|した} で {筆|ふで} を {洗|あら}う から 、 {水|みず} が {黒|くろ}い 。 {墨橋|すみばし} だ 。」'), name: '{墨橋|すみばし}', kana: 'すみばし', en: 'Ink Bridge',
       near: ['{版木橋|はんぎばし}', 'はんぎばし', 'The water under it is black with ink: {墨|すみ}. {墨橋|すみばし}.'], third: ['{中橋|なかばし}', 'なかばし'] },
     maku: { clue: T('Hayashi: "They wash the theatre\'s curtain and hang it on this bridge to dry. Curtain Bridge, see?"', '「{芝居小屋|しばいごや} の {幕|まく} を {洗|あら}って 、 この {橋|はし} に {干|ほ}す ん だ 。 だから {幕橋|まくばし} 。」'), name: '{幕橋|まくばし}', kana: 'まくばし', en: 'Curtain Bridge',
       near: ['{墨橋|すみばし}', 'すみばし', 'The theatre\'s curtain is dried on it: {幕|まく}. {幕橋|まくばし}.'], third: ['{版木橋|はんぎばし}', 'はんぎばし'] },
@@ -158613,18 +158614,18 @@ mp_tokube: さあ さあ 、 {湯|ゆ} の {谷|たに} の {名薬|めいやく
 ?(comp=mio) mp_tokube: いや …… それ は 、 {秘伝|ひでん} で …… 。 || Well… that's a secret recipe…
 ?(comp!=mio) comp: {何|なん} でも {治|なお}る は 、 {何|なに} も {治|なお}らない と {同|おな}じ かも ね 。 || "Cures everything" might be the same as "cures nothing".
 
-@scene mp.hayate
+@scene mp.kakeru
 # Nao's thread here (14_COMPANIONS): the courier guild, a rival who has heard of them.
 !faceplayer
-mp_hayate: {飛脚|ひきゃく} の {組合|くみあい} へ ようこそ 。 {版木|はんぎ} が {白|しろ}く なって 、 {宛名|あてな} の {札|ふだ} も {刷|す}れない 。 {口|くち} で {覚|おぼ}えて {走|はし}る しか ない ぜ 。 || Welcome to the courier guild. With the blocks gone blank we can't print address tags. We run with the addresses in our heads.
-?(comp=nao) mp_hayate: …… あんた 、 {灯|ひ} の {道|みち} の ナオ か 。 {一度|いちど} も {手紙|てがみ} を {落|お}とした こと が ない って いう 。 || …You're Nao, of the lantern roads. The one who's never dropped a letter, they say.
+mp_kakeru: {飛脚|ひきゃく} の {組合|くみあい} へ ようこそ 。 {版木|はんぎ} が {白|しろ}く なって 、 {宛名|あてな} の {札|ふだ} も {刷|す}れない 。 {口|くち} で {覚|おぼ}えて {走|はし}る しか ない ぜ 。 || Welcome to the courier guild. With the blocks gone blank we can't print address tags. We run with the addresses in our heads.
+?(comp=nao) mp_kakeru: …… あんた 、 {灯|ひ} の {道|みち} の ナオ か 。 {一度|いちど} も {手紙|てがみ} を {落|お}とした こと が ない って いう 。 || …You're Nao, of the lantern roads. The one who's never dropped a letter, they say.
 ?(comp=nao) comp[smirk]: {落|お}とした こと は ある 。 {拾|ひろ}った だけ だ 。 || I've dropped plenty. I just picked them up again.
-?(comp=nao) mp_hayate: はは ！ {噂|うわさ} より {正直|しょうじき} だ な 。 {今度|こんど} 、 {八百橋|やおばし} から {潮硝子|しおがらす} まで 、 どっち が {早|はや}い か {競|きそ}おう ぜ 。 || Ha! More honest than the stories. Some day let's race from Manybridge to Saltglass and see who's faster.
-?(comp=nao) !set mp_ev_hayate
+?(comp=nao) mp_kakeru: はは ！ {噂|うわさ} より {正直|しょうじき} だ な 。 {今度|こんど} 、 {八百橋|やおばし} から {潮硝子|しおがらす} まで 、 どっち が {早|はや}い か {競|きそ}おう ぜ 。 || Ha! More honest than the stories. Some day let's race from Manybridge to Saltglass and see who's faster.
+?(comp=nao) !set mp_ev_kakeru
 
-@scene mp.hayate_after
+@scene mp.kakeru_after
 !faceplayer
-mp_hayate: {宛名|あてな} の {札|ふだ} が {刷|す}れる 。 {頭|あたま} が {軽|かる}く なった ぜ 。 || We can print address tags again. My head feels lighter already.
+mp_kakeru: {宛名|あてな} の {札|ふだ} が {刷|す}れる 。 {頭|あたま} が {軽|かる}く なった ぜ 。 || We can print address tags again. My head feels lighter already.
 
 @scene mp.guild_board
 narr: {飛脚|ひきゃく} の {組合|くみあい} の {掲示板|けいじばん} 。 「{本日|ほんじつ} の {便|びん} ： {潮硝子|しおがらす} 、 {葦|あし}ノ{瀬|せ} 。 {北|きた} の {道|みち} は {橋|はし} の {修理|しゅうり} {中|ちゅう} 。」 || The courier guild's board: "Today's runs: Saltglass, Reedwake. The north road: bridge under repair."
@@ -159146,7 +159147,7 @@ narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひ�
 
 @scene mp.chapter_end
 # Staged: fade; the next morning on Playhouse Row: lanterns coming down, boats going upstream for the first time this
-# year; Kanta with the morning's broadsheet; Hayate with the courier's news; Sōbē's blocks are cut again.
+# year; Kanta with the morning's broadsheet; Kakeru with the courier's news; Sōbē's blocks are cut again.
 !fade out
 !set mb2_done
 !quest mp_main done
@@ -159158,8 +159159,8 @@ narr: カンタ が {刷|す}り{物|もの} を {振|ふ}りながら {走|は�
 !note mp_kawaraban
 narr: 「{川開|かわびら}き 、 {無事|ぶじ} {終|お}わる 。 {芝居小屋|しばいごや} の {台本|だいほん} 、 {名前|なまえ} {戻|もど}る 。 {旅|たび} の {者|もの} {二人|ふたり} 、 {奈落|ならく} より {帰|かえ}る 。」 || "The Opening ends safely. The playhouse's script has its names again. Two travellers return from the Understage."
 ?(press_printed) narr: {隅|すみ} に 、 {小|ちい}さく ： 「{刷|す}り{場|ば} の {話|はなし} 、 {町|まち} で {評判|ひょうばん} 。」 || In the corner, in small type: "The press room's story: the talk of the town."
-narr: {飛脚|ひきゃく} の ハヤテ が 、 {人込|ひとご}み を {抜|ぬ}けて {来|く}る 。 || Hayate the courier pushes through the crowd.
-mp_hayate: {知|し}らせ だ 。 {潮硝子|しおがらす} から {北|きた} へ の {道|みち} が 、 {直|なお}った 。 {道標|みちしるべ} の {名前|なまえ} が 、 {戻|もど}った ん だ 。 {灰実|はいみ} の {里|さと} まで 、 {飛脚|ひきゃく} が また {走|はし}れる 。 || News. The road north from Saltglass is mended: the names on its waymarks are back. Couriers can run all the way to Cinder Orchard again.
+narr: {飛脚|ひきゃく} の カケル が 、 {人込|ひとご}み を {抜|ぬ}けて {来|く}る 。 || Kakeru the courier pushes through the crowd.
+mp_kakeru: {知|し}らせ だ 。 {潮硝子|しおがらす} から {北|きた} へ の {道|みち} が 、 {直|なお}った 。 {道標|みちしるべ} の {名前|なまえ} が 、 {戻|もど}った ん だ 。 {灰実|はいみ} の {里|さと} まで 、 {飛脚|ひきゃく} が また {走|はし}れる 。 || News. The road north from Saltglass is mended: the names on its waymarks are back. Couriers can run all the way to Cinder Orchard again.
 ?(comp=nao) comp: {北|きた} の {道|みち} か 。 {灰実|はいみ} …… {果樹園|かじゅえん} と {硝子|がらす} の {里|さと} だ な 。 {行|い}こう 。 || The north road. Cinder Orchard… the village of orchards and glass. Let's go.
 ?(comp=mio) comp: {北|きた} の {道|みち} …… 。 {次|つぎ} は 、 そこ です ね 。 {薬箱|くすりばこ} 、 {詰|つ}め{直|なお}して おきます 。 || The north road… That's where we go next. I'll repack my medicine chest.
 ?(comp=ren) comp: {北|きた} へ 。 {地図|ちず} は 、 あなた が {持|も}って いて ください 。 {念|ねん} の ため 。 || North. Please keep the map yourself. Just in case.
@@ -159508,7 +159509,7 @@ narr: {名前|なまえ} を {帳面|ちょうめん} に {書|か}き{留|と}�
 ?(mb_pl_sumi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の ハヤテ が {走|はし}って {来|き}て 、 {何|なに} か {言|い}った 。 || The water under the bridge is cloudy black. Hayate the courier runs up and says something.
+narr: {橋|はし} の {下|した} の {水|みず} が 、 {黒|くろ}く {濁|にご}って いる 。 {飛脚|ひきゃく} の カケル が {走|はし}って {来|き}て 、 {何|なに} か {言|い}った 。 || The water under the bridge is cloudy black. Kakeru the courier runs up and says something.
 !challenge mb.census_sumi
 !set mb_pl_sumi
 !var mp_census + 1

@@ -54,9 +54,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 1, hair: 'short', hairColor: 2, cloth: ['#2a4a6a', '#1e3a54', '#e8d8a8'], shape: 'coat', acc: ['glasses'] },
     portrait: { eyes: 'sharp', style: 'short', acc: ['glasses'], collar: 'high', bg: '#1a2a3a' },
   });
-  // Hayate: a courier of the Blockprint Row guild, quick and boastful; knew of Nao before meeting them.
-  ch('mp_hayate', {
-    name: { en: 'Hayate', jp: 'ハヤテ' }, voice: { pitch: 1.02 },
+  // Kakeru: a courier of the Blockprint Row guild, quick and boastful; knew of Nao before meeting them.
+  ch('mp_kakeru', {
+    name: { en: 'Kakeru', jp: 'カケル' }, voice: { pitch: 1.02 },
     look: { skin: 3, hair: 'short', hairColor: 0, cloth: ['#8a6a2a', '#6e5420', '#e8e0cc'], shape: 'tunic', acc: ['headband'], bandCol: '#a8462e' },
     portrait: { eyes: 'sharp', style: 'short', acc: ['headband'], bandCol: '#a8462e', bg: '#2e2414' },
   });

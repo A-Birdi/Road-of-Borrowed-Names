@@ -108,4 +108,5 @@ RB.lex.add(RB.lex.parseTable(`
 子役|こやく|n|A|a child actor; a child's part
 百物語|ひゃくものがたり|n|A|"a hundred tales": an Edo-period night of ghost stories told by a hundred lights
 番目|ばんめ|suf|I|-th (in order: 三番目, the third)
+カケル||name|F|Kakeru (a name)
 `));

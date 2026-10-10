@@ -304,7 +304,7 @@ narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひ�
 
 @scene mp.chapter_end
 # Staged: fade; the next morning on Playhouse Row: lanterns coming down, boats going upstream for the first time this
-# year; Kanta with the morning's broadsheet; Hayate with the courier's news; Sōbē's blocks are cut again.
+# year; Kanta with the morning's broadsheet; Kakeru with the courier's news; Sōbē's blocks are cut again.
 !fade out
 !set mb2_done
 !quest mp_main done
@@ -316,8 +316,8 @@ narr: カンタ が {刷|す}り{物|もの} を {振|ふ}りながら {走|は�
 !note mp_kawaraban
 narr: 「{川開|かわびら}き 、 {無事|ぶじ} {終|お}わる 。 {芝居小屋|しばいごや} の {台本|だいほん} 、 {名前|なまえ} {戻|もど}る 。 {旅|たび} の {者|もの} {二人|ふたり} 、 {奈落|ならく} より {帰|かえ}る 。」 || "The Opening ends safely. The playhouse's script has its names again. Two travellers return from the Understage."
 ?(press_printed) narr: {隅|すみ} に 、 {小|ちい}さく ： 「{刷|す}り{場|ば} の {話|はなし} 、 {町|まち} で {評判|ひょうばん} 。」 || In the corner, in small type: "The press room's story: the talk of the town."
-narr: {飛脚|ひきゃく} の ハヤテ が 、 {人込|ひとご}み を {抜|ぬ}けて {来|く}る 。 || Hayate the courier pushes through the crowd.
-mp_hayate: {知|し}らせ だ 。 {潮硝子|しおがらす} から {北|きた} へ の {道|みち} が 、 {直|なお}った 。 {道標|みちしるべ} の {名前|なまえ} が 、 {戻|もど}った ん だ 。 {灰実|はいみ} の {里|さと} まで 、 {飛脚|ひきゃく} が また {走|はし}れる 。 || News. The road north from Saltglass is mended: the names on its waymarks are back. Couriers can run all the way to Cinder Orchard again.
+narr: {飛脚|ひきゃく} の カケル が 、 {人込|ひとご}み を {抜|ぬ}けて {来|く}る 。 || Kakeru the courier pushes through the crowd.
+mp_kakeru: {知|し}らせ だ 。 {潮硝子|しおがらす} から {北|きた} へ の {道|みち} が 、 {直|なお}った 。 {道標|みちしるべ} の {名前|なまえ} が 、 {戻|もど}った ん だ 。 {灰実|はいみ} の {里|さと} まで 、 {飛脚|ひきゃく} が また {走|はし}れる 。 || News. The road north from Saltglass is mended: the names on its waymarks are back. Couriers can run all the way to Cinder Orchard again.
 ?(comp=nao) comp: {北|きた} の {道|みち} か 。 {灰実|はいみ} …… {果樹園|かじゅえん} と {硝子|がらす} の {里|さと} だ な 。 {行|い}こう 。 || The north road. Cinder Orchard… the village of orchards and glass. Let's go.
 ?(comp=mio) comp: {北|きた} の {道|みち} …… 。 {次|つぎ} は 、 そこ です ね 。 {薬箱|くすりばこ} 、 {詰|つ}め{直|なお}して おきます 。 || The north road… That's where we go next. I'll repack my medicine chest.
 ?(comp=ren) comp: {北|きた} へ 。 {地図|ちず} は 、 あなた が {持|も}って いて ください 。 {念|ねん} の ため 。 || North. Please keep the map yourself. Just in case.

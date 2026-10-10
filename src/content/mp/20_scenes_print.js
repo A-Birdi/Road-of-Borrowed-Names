@@ -132,18 +132,18 @@ mp_tokube: さあ さあ 、 {湯|ゆ} の {谷|たに} の {名薬|めいやく
 ?(comp=mio) mp_tokube: いや …… それ は 、 {秘伝|ひでん} で …… 。 || Well… that's a secret recipe…
 ?(comp!=mio) comp: {何|なん} でも {治|なお}る は 、 {何|なに} も {治|なお}らない と {同|おな}じ かも ね 。 || "Cures everything" might be the same as "cures nothing".
 
-@scene mp.hayate
+@scene mp.kakeru
 # Nao's thread here (14_COMPANIONS): the courier guild, a rival who has heard of them.
 !faceplayer
-mp_hayate: {飛脚|ひきゃく} の {組合|くみあい} へ ようこそ 。 {版木|はんぎ} が {白|しろ}く なって 、 {宛名|あてな} の {札|ふだ} も {刷|す}れない 。 {口|くち} で {覚|おぼ}えて {走|はし}る しか ない ぜ 。 || Welcome to the courier guild. With the blocks gone blank we can't print address tags. We run with the addresses in our heads.
-?(comp=nao) mp_hayate: …… あんた 、 {灯|ひ} の {道|みち} の ナオ か 。 {一度|いちど} も {手紙|てがみ} を {落|お}とした こと が ない って いう 。 || …You're Nao, of the lantern roads. The one who's never dropped a letter, they say.
+mp_kakeru: {飛脚|ひきゃく} の {組合|くみあい} へ ようこそ 。 {版木|はんぎ} が {白|しろ}く なって 、 {宛名|あてな} の {札|ふだ} も {刷|す}れない 。 {口|くち} で {覚|おぼ}えて {走|はし}る しか ない ぜ 。 || Welcome to the courier guild. With the blocks gone blank we can't print address tags. We run with the addresses in our heads.
+?(comp=nao) mp_kakeru: …… あんた 、 {灯|ひ} の {道|みち} の ナオ か 。 {一度|いちど} も {手紙|てがみ} を {落|お}とした こと が ない って いう 。 || …You're Nao, of the lantern roads. The one who's never dropped a letter, they say.
 ?(comp=nao) comp[smirk]: {落|お}とした こと は ある 。 {拾|ひろ}った だけ だ 。 || I've dropped plenty. I just picked them up again.
-?(comp=nao) mp_hayate: はは ！ {噂|うわさ} より {正直|しょうじき} だ な 。 {今度|こんど} 、 {八百橋|やおばし} から {潮硝子|しおがらす} まで 、 どっち が {早|はや}い か {競|きそ}おう ぜ 。 || Ha! More honest than the stories. Some day let's race from Manybridge to Saltglass and see who's faster.
-?(comp=nao) !set mp_ev_hayate
+?(comp=nao) mp_kakeru: はは ！ {噂|うわさ} より {正直|しょうじき} だ な 。 {今度|こんど} 、 {八百橋|やおばし} から {潮硝子|しおがらす} まで 、 どっち が {早|はや}い か {競|きそ}おう ぜ 。 || Ha! More honest than the stories. Some day let's race from Manybridge to Saltglass and see who's faster.
+?(comp=nao) !set mp_ev_kakeru
 
-@scene mp.hayate_after
+@scene mp.kakeru_after
 !faceplayer
-mp_hayate: {宛名|あてな} の {札|ふだ} が {刷|す}れる 。 {頭|あたま} が {軽|かる}く なった ぜ 。 || We can print address tags again. My head feels lighter already.
+mp_kakeru: {宛名|あてな} の {札|ふだ} が {刷|す}れる 。 {頭|あたま} が {軽|かる}く なった ぜ 。 || We can print address tags again. My head feels lighter already.
 
 @scene mp.guild_board
 narr: {飛脚|ひきゃく} の {組合|くみあい} の {掲示板|けいじばん} 。 「{本日|ほんじつ} の {便|びん} ： {潮硝子|しおがらす} 、 {葦|あし}ノ{瀬|せ} 。 {北|きた} の {道|みち} は {橋|はし} の {修理|しゅうり} {中|ちゅう} 。」 || The courier guild's board: "Today's runs: Saltglass, Reedwake. The north road: bridge under repair."

@@ -16,7 +16,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const BRIDGES = {
     hangi: { clue: T('Kanta: "It\'s in front of the master\'s workshop. The blocks go over it. Woodblock Bridge!"', '「{親方|おやかた} の {仕事場|しごとば} の {前|まえ} の {橋|はし} 。 {版木|はんぎ} を {運|はこ}ぶ から 、 {版木橋|はんぎばし} ！」'), name: '{版木橋|はんぎばし}', kana: 'はんぎばし', en: 'Woodblock Bridge',
       near: ['{墨橋|すみばし}', 'すみばし', 'Kanta names it for the woodblocks carried over it: {版木橋|はんぎばし}.'], third: ['{幕橋|まくばし}', 'まくばし'] },
-    sumi: { clue: T('Hayate: "The ink-makers wash their brushes under it, so the water\'s black. Ink Bridge."', '「{墨屋|すみや} が {下|した} で {筆|ふで} を {洗|あら}う から 、 {水|みず} が {黒|くろ}い 。 {墨橋|すみばし} だ 。」'), name: '{墨橋|すみばし}', kana: 'すみばし', en: 'Ink Bridge',
+    sumi: { clue: T('Kakeru: "The ink-makers wash their brushes under it, so the water\'s black. Ink Bridge."', '「{墨屋|すみや} が {下|した} で {筆|ふで} を {洗|あら}う から 、 {水|みず} が {黒|くろ}い 。 {墨橋|すみばし} だ 。」'), name: '{墨橋|すみばし}', kana: 'すみばし', en: 'Ink Bridge',
       near: ['{版木橋|はんぎばし}', 'はんぎばし', 'The water under it is black with ink: {墨|すみ}. {墨橋|すみばし}.'], third: ['{中橋|なかばし}', 'なかばし'] },
     maku: { clue: T('Hayashi: "They wash the theatre\'s curtain and hang it on this bridge to dry. Curtain Bridge, see?"', '「{芝居小屋|しばいごや} の {幕|まく} を {洗|あら}って 、 この {橋|はし} に {干|ほ}す ん だ 。 だから {幕橋|まくばし} 。」'), name: '{幕橋|まくばし}', kana: 'まくばし', en: 'Curtain Bridge',
       near: ['{墨橋|すみばし}', 'すみばし', 'The theatre\'s curtain is dried on it: {幕|まく}. {幕橋|まくばし}.'], third: ['{版木橋|はんぎばし}', 'はんぎばし'] },

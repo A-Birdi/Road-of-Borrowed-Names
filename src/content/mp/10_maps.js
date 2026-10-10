@@ -54,7 +54,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'mp_kanta', x: 7, y: 8, dir: 'down', if: '!mp_sobe_met', talk: 'mp.kanta_first' },
-      { id: 'mp_hayate', x: 30, y: 9, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.hayate_after' }, { scene: 'mp.hayate' }] },
+      { id: 'mp_kakeru', x: 30, y: 9, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.kakeru_after' }, { scene: 'mp.kakeru' }] },
       { id: 'mp_tokube', x: 26, y: 12, dir: 'left', if: '!mb2_done', talk: 'mp.tokube' },
       { id: 'mp_miyo', x: 13, y: 29, dir: 'up', if: 'mp_sobe_met', talk: [{ if: 'quest.mp_apprentice=done', scene: 'mp.miyo_after' }, { if: 'quest.mp_apprentice=1', scene: 'mp.miyo_teach' }, { scene: 'mp.miyo_first' }] },
     ],

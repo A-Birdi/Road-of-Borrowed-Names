@@ -205,7 +205,7 @@ export default async (t) => {
   const doneBy = (q) => Object.keys(C.scenes).filter((id) => cmds(id).some((c) => c.op === 'quest' && c.args[0] === q && c.args[1] === 'done'));
   for (const q of ['mp_census', 'mp_apprentice', 'mp_actor', 'mp_ghost', 'mp_fest_extra']) t.ok(doneBy(q).length >= 1, q + ': the side story has its end (' + doneBy(q).join(', ') + ')');
   for (const id of ['mp.plaque_hangi', 'mp.plaque_sumi', 'mp.plaque_maku']) t.ok(onMap(id).length === 1, 'the census, continued: ' + id + ' on ' + onMap(id).join(', '));
-  const seeds = { suzu: ['mp.stagedoor', 'mp_ev_koume'], mio: ['mp.tonic_bill', 'mp_ev_tonic'], nao: ['mp.hayate', 'mp_ev_hayate'], ren: ['mp.sobe_printed', 'mp_ev_slips'] };
+  const seeds = { suzu: ['mp.stagedoor', 'mp_ev_koume'], mio: ['mp.tonic_bill', 'mp_ev_tonic'], nao: ['mp.kakeru', 'mp_ev_kakeru'], ren: ['mp.sobe_printed', 'mp_ev_slips'] };
   for (const comp in seeds) {
     const [id, flag] = seeds[comp];
     t.ok(cmds(id).some((c) => c.op === 'set' && c.args[0] === flag && (!c.if || c.if === 'comp=' + comp)), comp + '\'s seed in Chapter 4: ' + id + ' (' + flag + ')');
