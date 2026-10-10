@@ -393,6 +393,15 @@ RB.atlas = (function () {
         def.atlas.survey = true;
       }
     }
+    // a delver waiting at the camp (D8; src/engine/98b_delvers.js): twelve-chapter journeys only
+    const dvd = run.delver && RB.delvers ? RB.delvers.get(run.delver) : null;
+    if (dvd && d.kind === 'camp') {
+      const c0 = (spots['?'] || [])[0] || [W >> 1, H >> 1];
+      const busy = new Set([].concat(...Object.values(spots)).map(([x, y]) => x + ',' + y));
+      const near = (x, y) => [[0, 1], [1, 0], [0, -1], [-1, 0]].some(([dx, dy]) => busy.has((x + dx) + ',' + (y + dy)));
+      const at = plain.filter(([x, y]) => !near(x, y) && !busy.has(x + ',' + y)).sort((a, b) => (Math.abs(a[0] - c0[0]) + Math.abs(a[1] - c0[1])) - (Math.abs(b[0] - c0[0]) + Math.abs(b[1] - c0[1])) || a[1] - b[1] || a[0] - b[0])[0];
+      if (at) def.npcs.push({ id: dvd.char, char: dvd.char, x: at[0], y: at[1], dir: 'down', arrive: 'here', leave: 'here', talk: 'dv.' + dvd.id, if: 'ed>=2&!' + FLAG('dv_met') });
+    }
     // exits
     const exitSlots = ['1', '2', '3'].map((k) => (spots[k] || [])[0]).filter(Boolean);
     const target = (key) => { const nd = planR.rooms[key]; const tsp = spawnOf(run, nd); return { to: mapId(run, key), tx: tsp[0], ty: tsp[1] }; };

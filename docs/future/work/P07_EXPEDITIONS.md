@@ -1,8 +1,8 @@
 # P07 · Expeditions, Atlas extensions and a pilot dungeon
 
 *Playbook P07 ("Finish the expedition framework and one pilot"); plan [04_DUNGEONS.md](../plan/04_DUNGEONS.md)
-D1–D8, D10. Authorised by Robin's C-81. Under way: the framework, the pilot and the Atlas's commissions done;
-delvers and the room-variation evidence next.*
+D1–D8, D10. Authorised by Robin's C-81. Built: the framework, the pilot, the Atlas's commissions, delvers and the
+variation evidence; the phase end below.*
 
 ## What P07 builds
 
@@ -20,7 +20,9 @@ delvers and the room-variation evidence next.*
 | Carried resolve on the map (a chip) and the Map page's Expedition plan (the floors seen, the stations with uses left, the shortcuts) | D2, D10 | `src/ui/89b_expedition.js`, `src/styles/67_expedition.css` | Done |
 | The whole-expedition curve: the player model plays the cellars end to end with carried condition | D2 ("a new curve test that plays whole expeditions"); F-29 | `tests/unit/expedition_curve.test.mjs`; `RB.combatSim.run`'s `onInit` | Done |
 | Atlas commissions: the board in the Lantern Hall; practice topics from the evidence, three errands, three survey areas; a length chosen; the card with exact rooms before anything is fixed; topic lanterns and revisits, unmet items taught first; survey landmarks; safe passage; the Cartographer's Atlas (Map tab); the compass and the stamp | D7; F-30 | `src/atlas/80_commissions.js`, the generator's hooks in `src/atlas/30_gen.js`, `50_run.js`, `40_combat.js`; `src/ui/89c_atlas_board.js`; drills `src/content/expeditions/30_drills.js` | Done |
-| Varied rooms inside each run's fixed shape (evidence), delvers | C-57, D8 | — | Next |
+| Delvers: six people met by chance in the depths (the cellars' side chambers, the Atlas's camp), the aid always, a remembered moment adding to it, once per visit or run | D8; F-31 | `src/engine/98b_delvers.js`, `src/content/expeditions/40_delvers.js`, `src/ui/89d_delvers.js`; the camp in `src/atlas/30_gen.js` | Done |
+| Room variation never blocks an anchor or exit, for the expansion's runs too: the Atlas's own self-check over runs dressed as every errand and survey at every length, with safe passage and a delver at the camp | D1, C-57 | `RB.atlas.selfCheck(n, { dress })` | Done |
+| The ten dungeon families: authoring templates, the cellars as A31's worked example, where each other example is built | D6 | [DUNGEON_FAMILIES.md](DUNGEON_FAMILIES.md) | Templates done; examples with their chapters (P08–P15) |
 
 ## The accounting (D2), as tested
 
@@ -90,3 +92,10 @@ every setting with and without a companion; the six-chapter story's group rules 
 | The board (topics from evidence, never a group with none; errands; surveys; reading makes no record; a commission fixed when taken); the shape (a standard practice commission exactly an ordinary run's shape over 60 seeds; short always shorter, long always longer; a survey keeps to its area; the lost route leans on the hall of doors); the topic (every lamp of 90 about it; an unmet item marked to be taught; ordinary lamps unchanged); the route fixed after forty mistakes; a saved run rebuilding the same maps; a landmark in every area room of every variant (40 seeds × 3 areas); the landmark task at four profiles; finishing (the record made at the first finish; an incomplete survey not recorded; safe passage: no veil, planks laid, the right door open; all three: the compass and the stamp) | `node tests/run-unit.mjs atlas_commissions` | 38/0 |
 | Ordinary runs unchanged | `atlas`, `overworld_geometry` (three seeds' rooms), `combat_golden` | 77/0, 3/0, 2/0 |
 | In the browser: the board with the card and a short road taken; a lantern of the family of endings (the grammar card first, then the question through the challenge screen, the lamp lit); a survey landmark verified and counted in the Atlas panel; the Cartographer's Atlas page and the board at phone width | `node tests/e2e/atlas_board.mjs` | 4/0 (captures `docs/screenshots/atlas_board/`) |
+
+## Delvers and the variation evidence (F-31)
+
+| Check | Command | Result |
+|---|---|---|
+| Six people, each met in their own scene, each meeting with the aid before a question of three; only people met, only twelve-chapter journeys; a seeded chance of about one in two (1,008 of 2,000), never a stranger; a roll once per visit (400 visits), the last flag cleared on restart; places on open floor; aid always (Yasu 5 → 9), a wrong memory takes nothing away, a remembered moment adds (never above full), Wataru's shortcut, his other aid once it is open; once per visit, a new chance next visit, the record kept; reading makes no record; the Atlas's self-check over 96 runs dressed as commissions, with safe passage and a delver at the camp: every room solvable, every exit reachable; a delver at the camp only in a run that rolled one | `node tests/run-unit.mjs delvers` | 39/0 |
+| In the browser: Yasu in the lamp room, remembered (4 → 12) and not (4 → 8, kept) | `node tests/e2e/expedition.mjs delver` | 1/0 (of the suite's 6) |

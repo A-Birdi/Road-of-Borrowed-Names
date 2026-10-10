@@ -3900,3 +3900,27 @@ safe passage, the Cartographer's Atlas page, the compass and the stamp; drills f
 **Not verified:** a whole commission walked to its end in the browser (the run's end goes through the Atlas's own
 finalize, unit-tested through `finished`; the ordinary run's end is covered by `atlas.check.mjs`); Firefox; the
 foldable.
+
+## The expansion, P07: delvers and the variation evidence (2026-10-10; C-81; docs/future/work/P07_EXPEDITIONS.md; REQUIREMENTS.md XP33; F-31)
+
+**What changed:** six people from Reedwake to Snowbell may be met by chance in the depths (twelve-chapter journeys,
+only people already met): in the Flood Cellars (the lamp room on B1, or by the spring on B2) and at the Atlas's
+camp. Their aid always comes first (a rest, a grate opened, or the next floor or fork shown); a memory question from
+a moment shared with them adds a little rest; a wrong answer takes nothing away. The ten dungeon families written
+as authoring templates (docs/future/work/DUNGEON_FAMILIES.md).
+
+**Checks:**
+- U `delvers` **39/0**: only met people, only in the twelve-chapter edition; a seeded chance near one visit in two
+  over 2,000 seeds, never a stranger; one roll per cellar visit over 400 visits, a restart clearing the last one's
+  flag; both places on open floor; the aid before the question, kept after a wrong answer; once per visit; no
+  record made by reading or in a six-chapter journey; the Atlas's self-check over **96 runs** dressed as
+  commissions (every errand and survey, every length) with safe passage and a delver at the camp: every room
+  solvable, every exit reachable, nobody in the way; a delver only at the camp of a run that rolled one.
+- U `expedition` (the three suites), `atlas`, `atlas_commissions` pass alongside (see the phase end below for the
+  whole suite); `node tools/validate.mjs`: no errors; `node tools/review_ledger.mjs`: every new line has an entry
+  (self-review only).
+- B `expedition` **6/0**: the five earlier tests, and a delver in the lamp room met through the real scene: the aid
+  given, a wrong memory answered, the resolve kept, nobody there afterwards this visit.
+
+**Not verified:** a delver met at the Atlas camp in the browser (unit-tested through the built maps); Firefox; the
+foldable.

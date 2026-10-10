@@ -184,6 +184,9 @@ RB.hooks = RB.hooks || {};
     if (opts.commission) run.commission = opts.commission;
     const safe = RB.atlasCommissions ? RB.atlasCommissions.surveyed(s) : [];
     if (safe.length) run.safe = safe; // (surveyed areas: safe passage, fixed for this run)
+    // someone from the journey may be waiting at the camp (a delver, D8; seeded by the run, fixed with it)
+    const dv = RB.delvers && RB.edition && RB.edition.of(s) >= 2 ? RB.delvers.pick(s, (run.seed ^ U.hashStr('delver')) >>> 0, 0.5) : null;
+    if (dv) run.delver = dv;
     AT.cleanFlags(s, run.id);
     s.atlas.run = run;
     AT.register(run);
@@ -471,7 +474,7 @@ RB.hooks = RB.hooks || {};
     const m = RB.world.W.map;
     const exits = m.exits.filter((e) => e.branch).slice().sort((a, b) => a.x - b.x);
     await say('narr', { jp: '{道標|みちしるべ} の {腕|うで} が 、 {二|ふた}つ の {方向|ほうこう} を {指|さ}して いる 。', en: 'The signpost\'s two arms point two ways.' });
-    const detail = run => run.relics.indexOf('compass') >= 0 || run.relics.indexOf('map') >= 0;
+    const detail = run => run.relics.indexOf('compass') >= 0 || run.relics.indexOf('map') >= 0 || !!run.dvGuide; // (a delver's word, D8)
     for (const e of exits) {
       const bt = A.branchTypes[e.branch];
       const side = SIDE[sideOf(e, m)];

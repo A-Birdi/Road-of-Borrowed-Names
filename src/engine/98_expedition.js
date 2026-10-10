@@ -51,6 +51,10 @@ RB.expedition = (function () {
     return { id: d.id, v: 1, floor: 0, started: Date.now(), restarts: 0, stations, statuses: { pc: [], comp: [] } };
   }
   const usesOf = (st) => (st.uses != null ? st.uses : KIND[st.kind] ? KIND[st.kind].uses : 1);
+  // what a fresh visit decides once (a delver's chance, src/engine/98b_delvers.js): onVisit(fn(s, def, instance))
+  const VISIT = [];
+  const onVisit = (fn) => VISIT.push(fn);
+  function visited(s, d) { for (const f of VISIT) { try { f(s, d, s.expedition); } catch (e) { console.warn('expedition visit', e); } } }
   function enter(s, id) {
     const d = DEFS[id];
     if (!d || !s) return null;
@@ -59,6 +63,7 @@ RB.expedition = (function () {
       clearInstance(s, d);
       s.expedition = fresh(s, d);
       full(s);
+      visited(s, d);
     }
     return s.expedition;
   }
@@ -95,6 +100,7 @@ RB.expedition = (function () {
     s.expedition = fresh(s, d);
     s.expedition.restarts = n;
     full(s);
+    visited(s, d);
     return s.expedition;
   }
   const floorOf = (s) => { const e = of(s); return e ? DEFS[e.id].floors[e.floor] || null : null; };
@@ -228,5 +234,5 @@ RB.expedition = (function () {
   }
 
   if (RB.bus) RB.bus.on('map:enter', (e) => { const s = RB.game && RB.game.s; if (s && e && e.id) arrived(s, e.id); });
-  return { define, get, list, of, active, enter, leave, restart, arrived, owner, floorSeen, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
+  return { define, get, list, of, active, enter, leave, restart, arrived, owner, floorSeen, onVisit, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
 })();

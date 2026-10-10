@@ -15,7 +15,9 @@
  *   - every battle's enemy exists, its intents are valid and authored, and it
  *     is winnable with Unravel alone for every companion, at normal and hard
  *     tactics, with and without a light word, with no relics / all relics /
- *     each charm. Returns {ok, errors, warnings, stats}. */
+ *     each charm. Returns {ok, errors, warnings, stats}.
+ * opts: { salt, dress(run, i, s) } (dress: what a run is given before its maps are built, for checking commission
+ * runs, safe passage and delvers with the same rules). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -114,6 +116,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (P === 'F') { s.learn.taught = {}; if (i % 8 !== 0) for (const ch of KANA) s.learn.taught[ch] = true; }
         RB.game.s = s;
         const run = AT.newRun(s, mods, { seed: (Math.imul(0x9e3779b1, i + 1) ^ (opts.salt || 0)) >>> 0 });
+        // (opts.dress(run, i, s): a run given more before its maps are built: a commission, safe passage, a delver)
+        if (opts.dress) opts.dress(run, i, s);
         const b = AT.buildMaps(run);
         for (const id in b.maps) C.maps[id] = b.maps[id];
         try {

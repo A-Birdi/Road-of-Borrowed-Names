@@ -11,7 +11,8 @@
 //     resolve carried is the blows only, the mistake given back;
 //  4. the notice by hand at all four profiles, through every input route: choosing (mouse), putting the notice in
 //     order (tiles), typing (the IME field), handwriting (the pad, reference strokes);
-//  5. phone width: the preview card and the plan fit; every kanji with its reading; no errors, no network.
+//  5. a delver in the lamp room: the aid first; a remembered moment adds to it; a wrong one takes nothing away;
+//  6. phone width: the preview card and the plan fit; every kanji with its reading; no errors, no network.
 // Captures in docs/screenshots/expedition/.
 // Usage: node tests/e2e/expedition.mjs [filter]
 import path from 'node:path';
@@ -310,6 +311,31 @@ await test('the notice by hand at every profile: choosing, ordering, typing, han
   }
   const kinds = [...used].map((x) => x.split(':')[1]);
   assert(['choose', 'order', 'write/ime', 'write/hand'].every((k) => kinds.includes(k)), 'every route met the construction: ' + [...used].join(', '));
+  assert(!errors.length && !requests.length, 'no errors, no network: ' + errors.concat(requests).join(' | '));
+  await ctx.close();
+});
+
+await test('a delver in the lamp room: the aid first, a remembered moment adds to it, a wrong one takes nothing away', async () => {
+  const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const meet = async (pick) => {
+    await start(p, { map: 'rw.cellar1', x: 34, y: 10, auto: true });
+    await p.evaluate((pick) => {
+      const s = RB.game.s;
+      s.seen['rw.yasu_after'] = true;
+      s.flags.xp_cellars_dv_yasu_b1 = true; delete s.flags.xp_cellars_dv_met;
+      s.resolve.pc = 4; s.resolve.comp = 4;
+      RB.test.enable({ choose: () => pick });
+      RB.world.refreshActors();
+    }, pick);
+    const before = await p.evaluate(() => !!RB.world.W.npcs.find((n) => n.id === 'yasu'));
+    await p.evaluate(() => RB.test.talk('yasu'));
+    return Object.assign({ before }, await p.evaluate(() => ({ pc: RB.game.s.resolve.pc, comp: RB.game.s.resolve.comp, rec: RB.game.s.delvers, met: !!RB.game.s.flags.xp_cellars_dv_met, still: !!RB.world.W.npcs.find((n) => n.id === 'yasu'), notice: document.querySelector('.notices') ? document.querySelector('.notices').textContent : '' })));
+  };
+  const right = await meet(0);
+  assert(right.before && right.pc === 12 && right.rec && right.rec.remembered.yasu && right.met && !right.still, 'remembered: the rest (+4) and the moment (+4) from 4, kept as met and remembered; Yasu goes on his way: ' + JSON.stringify(right).slice(0, 300));
+  assert(/A rest with them/.test(right.notice) && /Remembering it together/.test(right.notice), 'both said: ' + right.notice);
+  const wrong = await meet(1);
+  assert(wrong.pc === 8 && wrong.met && !(wrong.rec.remembered || {}).yasu, 'not remembered: the rest is still given (4 → 8), nothing taken: ' + JSON.stringify(wrong).slice(0, 300));
   assert(!errors.length && !requests.length, 'no errors, no network: ' + errors.concat(requests).join(' | '));
   await ctx.close();
 });

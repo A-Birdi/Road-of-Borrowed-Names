@@ -56634,6 +56634,10 @@ RB.expedition = (function () {
     return { id: d.id, v: 1, floor: 0, started: Date.now(), restarts: 0, stations, statuses: { pc: [], comp: [] } };
   }
   const usesOf = (st) => (st.uses != null ? st.uses : KIND[st.kind] ? KIND[st.kind].uses : 1);
+  // what a fresh visit decides once (a delver's chance, src/engine/98b_delvers.js): onVisit(fn(s, def, instance))
+  const VISIT = [];
+  const onVisit = (fn) => VISIT.push(fn);
+  function visited(s, d) { for (const f of VISIT) { try { f(s, d, s.expedition); } catch (e) { console.warn('expedition visit', e); } } }
   function enter(s, id) {
     const d = DEFS[id];
     if (!d || !s) return null;
@@ -56642,6 +56646,7 @@ RB.expedition = (function () {
       clearInstance(s, d);
       s.expedition = fresh(s, d);
       full(s);
+      visited(s, d);
     }
     return s.expedition;
   }
@@ -56678,6 +56683,7 @@ RB.expedition = (function () {
     s.expedition = fresh(s, d);
     s.expedition.restarts = n;
     full(s);
+    visited(s, d);
     return s.expedition;
   }
   const floorOf = (s) => { const e = of(s); return e ? DEFS[e.id].floors[e.floor] || null : null; };
@@ -56811,8 +56817,102 @@ RB.expedition = (function () {
   }
 
   if (RB.bus) RB.bus.on('map:enter', (e) => { const s = RB.game && RB.game.s; if (s && e && e.id) arrived(s, e.id); });
-  return { define, get, list, of, active, enter, leave, restart, arrived, owner, floorSeen, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
+  return { define, get, list, of, active, enter, leave, restart, arrived, owner, floorSeen, onVisit, onDefeat, floorOf, stationLeft, useStation, openShortcut, shortcutOpen, track, mistake, settle, battleStart, battleEnd, preview, persistent, KIND };
 })();
+
+
+/* ==== src/engine/98b_delvers.js ==== */
+/* Delvers (expansion P07; plan 04_DUNGEONS.md D8; Robin's R1; F-31): people from the journey met by chance in the
+ * depths. In journeys of the twelve-chapter edition, a person the player has already met (their scene seen) may be
+ * waiting in a side chamber: a seeded chance once per visit of an expedition, once per run of the Atlas (at its
+ * camp). Meeting them always helps (their aid: a rest, a way opened, or what lies ahead shown). A short memory
+ * question from a moment you shared adds a little more; a wrong answer takes nothing away. Nothing depends on
+ * meeting anyone (the curve and the route tests run with nobody there).
+ *
+ *   define(id, { char, source (the scene that must have been seen), aid: 'rest' | 'guide' | 'shortcut' })
+ *   eligible(s) → ids;  pick(s, seed, chance) → id | null (seeded; never one the journey has not met)
+ *   aid(s, id, where) → what it gave;  bonus(s, id) → what the remembered moment added
+ *   met(s, id, remembered)   the record (s.delvers = { met: { id: n }, remembered: { id: true } }, made at the first
+ *                            meeting; the six-chapter edition never makes it)
+ * An expedition names where a delver may stand (spec.delvers: { <floor>: { map, x, y, dir } }); a visit rolls once
+ * (RB.expedition.onVisit) and sets its own flag xp_<exp>_dv_<id>_<floor>, which a restart clears like any other. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.delvers = (function () {
+  'use strict';
+  const DEFS = {};
+  const ORDER = [];
+  function define(id, d) { if (!DEFS[id]) ORDER.push(id); DEFS[id] = Object.assign({ id, aid: 'rest' }, d); return DEFS[id]; }
+  const get = (id) => DEFS[id] || null;
+  const list = () => ORDER.map((id) => DEFS[id]);
+  const inEdition = (s) => !!(s && RB.edition && RB.edition.of(s) >= 2);
+  // the people this journey has met (their scene seen), in a fixed order
+  const eligible = (s) => (inEdition(s) ? ORDER.filter((id) => s.seen && s.seen[DEFS[id].source]) : []);
+  // a seeded choice: someone, with the given chance, among those met
+  function pick(s, seed, chance) {
+    const ids = eligible(s);
+    if (!ids.length) return null;
+    const r = RB.util.rng(seed >>> 0);
+    if (r() >= (chance == null ? 0.5 : chance)) return null;
+    return ids[r.int(ids.length)];
+  }
+  function rec(s) {
+    if (!s.delvers || typeof s.delvers !== 'object') s.delvers = { v: 1, met: {}, remembered: {} };
+    for (const k of ['met', 'remembered']) if (!s.delvers[k] || typeof s.delvers[k] !== 'object') s.delvers[k] = {};
+    return s.delvers;
+  }
+  const peek = (s) => (s && s.delvers ? JSON.parse(JSON.stringify(s.delvers)) : { v: 1, met: {}, remembered: {} });
+  function met(s, id, remembered) {
+    const r = rec(s);
+    r.met[id] = (r.met[id] || 0) + 1;
+    if (remembered) r.remembered[id] = true;
+  }
+  const rest = (s, n) => {
+    const before = { pc: s.resolve.pc, comp: s.resolve.comp };
+    s.resolve.pc = Math.min(s.resolve.max, s.resolve.pc + n);
+    s.resolve.comp = Math.min(s.resolve.max, s.resolve.comp + n);
+    return Math.max(s.resolve.pc - before.pc, s.resolve.comp - before.comp);
+  };
+  // the delver's aid, always given. where: { kind: 'expedition', exp } or { kind: 'atlas', run }
+  function aid(s, id, where) {
+    const d = DEFS[id];
+    if (!d) return null;
+    const X = RB.expedition;
+    if (d.aid === 'shortcut' && where && where.kind === 'expedition') {
+      const e = X.get(where.exp);
+      const shut = e && Object.keys(e.shortcuts).find((k) => !X.shortcutOpen(s, e.id, k));
+      if (shut) { X.openShortcut(s, e.id, shut); return { kind: 'shortcut', id: shut }; }
+    }
+    if ((d.aid === 'guide' || d.aid === 'shortcut') && where && where.kind === 'expedition') {
+      const e = X.get(where.exp);
+      const unseen = e && e.floors.find((f) => !X.floorSeen(s, e.id, f.id));
+      if (unseen) { s.flags['xpk_' + e.id + '_seen_' + unseen.id] = true; return { kind: 'guide', floor: unseen.id }; }
+    }
+    if ((d.aid === 'guide' || d.aid === 'shortcut') && where && where.kind === 'atlas' && where.run) {
+      where.run.dvGuide = true; // the next fork's sign names both roads (src/atlas/50_run.js)
+      return { kind: 'guide', atlas: true };
+    }
+    return { kind: 'rest', gave: rest(s, 4) };
+  }
+  // a remembered moment: a little more rest (never more than full)
+  function bonus(s, id) { return DEFS[id] ? { kind: 'rest', gave: rest(s, 4) } : null; }
+  return { define, get, list, eligible, pick, aid, bonus, met, peek, rec };
+})();
+
+// a visit of an expedition with delvers' places: roll once (src/engine/98_expedition.js)
+if (RB.expedition && RB.expedition.onVisit) {
+  RB.expedition.onVisit((s, d, e) => {
+    if (!d.delvers || !e) return;
+    const floors = Object.keys(d.delvers);
+    if (!floors.length) return;
+    const seed = RB.util.hashStr(String(s.id) + ':dv:' + d.id + ':' + e.started + ':' + e.restarts) >>> 0;
+    const who = RB.delvers.pick(s, seed, d.delverChance);
+    if (!who) return;
+    const floor = floors[RB.util.rng(seed ^ 0x9e3779b9).int(floors.length)];
+    e.delver = { id: who, floor };
+    s.flags['xp_' + d.id + '_dv_' + who + '_' + floor] = true;
+  });
+}
 
 
 /* ==== src/engine/99_test.js ==== */
@@ -110079,6 +110179,51 @@ RB.ui.atlasBoard = (function () {
 })();
 
 
+/* ==== src/ui/89d_delvers.js ==== */
+/* Delvers' hooks (expansion P07; plan D8; src/engine/98b_delvers.js; the people and scenes in
+ * src/content/expeditions/40_delvers.js). The aid comes first and always; a remembered moment adds to it; the
+ * meeting is kept once (an expedition's visit, or an Atlas run) and in the journey's record.
+ *   !hook dv_aid <id>      the delver's aid, said in a notice
+ *   !hook dv_bonus <id>    a remembered moment: a little more rest
+ *   !hook dv_met <id> 1|0  the meeting kept (remembered or not) */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const S = () => RB.game.s;
+  // where the meeting happens: an expedition's visit, or an Atlas run
+  function where(s) {
+    const e = RB.expedition && RB.expedition.of(s);
+    if (e) return { kind: 'expedition', exp: e.id };
+    if (s.atlas && s.atlas.run) return { kind: 'atlas', run: s.atlas.run };
+    return null;
+  }
+  const SAY = {
+    rest: (r) => 'A rest with them: resolve +' + r.gave + '.',
+    shortcut: () => 'They show you the catches of a grate: a shortcut is open, and stays open on every visit.',
+    guide: (r) => (r.atlas ? 'They tell you what lies down both roads at the next fork.' : 'They tell you how the next floor lies: its plan is in your map now.'),
+  };
+  RB.hooks = RB.hooks || {};
+  RB.hooks.dv_aid = async (a) => {
+    const s = S(), id = a && a[0];
+    const r = RB.delvers.aid(s, id, where(s));
+    if (r) { RB.audio && RB.audio.sfx(r.kind === 'rest' ? 'heal' : 'reveal'); RB.ui.notice((SAY[r.kind] || SAY.rest)(r), 'info'); }
+  };
+  RB.hooks.dv_bonus = async (a) => {
+    const s = S();
+    const r = RB.delvers.bonus(s, a && a[0]);
+    if (r) RB.ui.notice('Remembering it together: resolve +' + r.gave + '.', 'info');
+  };
+  RB.hooks.dv_met = async (a) => {
+    const s = S(), id = a && a[0], w = where(s);
+    RB.delvers.met(s, id, a && a[1] === '1');
+    if (w && w.kind === 'expedition') s.flags['xp_' + w.exp + '_dv_met'] = true;
+    if (w && w.kind === 'atlas') s.flags[RB.atlas.FLAG('dv_met')] = true;
+    if (RB.world.W && RB.world.W.map) RB.world.refreshActors();
+  };
+})();
+
+
 /* ==== src/ui/90_letters.js ==== */
 /* Practice suite B, interface part 1: shared pieces (RB.ui.pb) and the villagers'
  * correspondence (Practice addendum §17). docs/practice/suite_b.md.
@@ -111149,7 +111294,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     yn: 'yn',    // Steamhollow, Chapter 11
   };
   // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
-  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp'];
+  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv'];
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
   C.reveals = C.reveals || {};
 })(RB.content);
@@ -149517,6 +149662,156 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })(RB.content);
 
 
+/* ==== src/content/expeditions/40_delvers.js ==== */
+/* Delvers (expansion P07; plan D8; src/engine/98b_delvers.js; F-31): six people the journey has met, from Reedwake to
+ * Snowbell, who may be found in the depths: in the Flood Cellars (the lamp room on B1, or by the spring on B2) and at
+ * the Unwritten Atlas's camp. Each has an aid (always given), and one memory question from a moment the player saw
+ * with them (their source scene): answering it adds a little more; a wrong answer takes nothing away. The new
+ * chapters' people join with their chapters. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const D = RB.delvers;
+  RB.lex.add(RB.lex.parseTable(`
+奇遇|きぐう|n|A|coincidence, a chance meeting
+`), 'expeditions');
+  D.define('yasu', { char: 'yasu', source: 'rw.yasu_after', aid: 'rest' });
+  D.define('hana', { char: 'hana', source: 'rw.hana_first', aid: 'rest' });
+  D.define('fuku', { char: 'fuku', source: 'sg.fuku_idle', aid: 'rest' });
+  D.define('wataru', { char: 'wataru', source: 'sg.wataru_first', aid: 'shortcut' });
+  D.define('goro', { char: 'co_goro', source: 'co.goro', aid: 'rest' });
+  D.define('hoshino', { char: 'hoshino', source: 'sb.hoshino', aid: 'guide' });
+
+  // where they may be in the cellars: the lamp room on B1, the west end of the south hall on B2
+  const xp = RB.expedition.get('cellars');
+  if (xp) {
+    xp.delvers = { b1: { map: 'rw.cellar1', x: 35, y: 11, dir: 'down' }, b2: { map: 'rw.cellar2', x: 2, y: 16, dir: 'right' } };
+    xp.delverChance = 0.5;
+    for (const fl in xp.delvers) {
+      const at = xp.delvers[fl], m = C.maps[at.map];
+      for (const d of D.list()) m.npcs = (m.npcs || []).concat([{ id: d.char, char: d.char, x: at.x, y: at.y, dir: at.dir, arrive: 'here', leave: 'here', if: 'xp_cellars_dv_' + d.id + '_' + fl + '&!xp_cellars_dv_met', talk: [{ scene: 'dv.' + d.id }] }]);
+    }
+  }
+})(RB.content);
+
+RB.script.add(`
+@scene dv.yasu
+!faceplayer
+yasu: おう 。 こんな {所|ところ} で {会|あ}う と は な 。 {水|みず} の {音|おと} が した から 、 {来|き}て みた んだ 。 || Well. Fancy meeting you here. I heard water, so I came to have a look.
+yasu: {座|すわ}って いけ 。 {年寄|としよ}り の {茶|ちゃ} だ が 、 {温|あたた}まる ぞ 。 || Sit down a while. An old man's tea, but it'll warm you.
+!hook dv_aid yasu
+yasu: …… {川|かわ} の こと 、 {前|まえ} に {話|はな}した な 。 {俺|おれ} は {何|なん} と {言|い}った ？ || …I told you something about the river once. What did I say?
+!choice
+* {川|かわ} は {正直|しょうじき} だ 。 || That the river is honest: it shows you when it rises and when it falls. -> right
+* {川|かわ} は {怖|こわ}い 。 || That the river is frightening. -> wrong
+* {川|かわ} は {名前|なまえ} を {覚|おぼ}えて いる 。 || That the river remembers names. -> wrong
+:right
+yasu: よく {覚|おぼ}えて いた な 。 …… {覚|おぼ}えて いて くれる {人|ひと} も 、 {悪|わる}く ない 。 || You remembered. …People who remember aren't so bad either.
+!hook dv_bonus yasu
+!hook dv_met yasu 1
+!end
+:wrong
+yasu: …… まあ 、 {年寄|としよ}り の {話|はなし} だ 。 {気|き} に する な 。 || …Well, an old man's talk. Don't let it trouble you.
+!hook dv_met yasu 0
+
+@scene dv.hana
+!faceplayer
+hana: あら 、 {奇遇|きぐう} ね 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。 || Oh, what a coincidence. I came looking for tea leaves.
+hana: {一杯|いっぱい} どうぞ 。 {今日|きょう} は ふたつ {入|い}れて も 、 {飲|の}む {人|ひと} が いる わ 。 || Have a cup. Today, if I pour two, there's someone to drink the second.
+!hook dv_aid hana
+hana: {初|はじ}めて {会|あ}った {朝|あさ} 、 わたし が {何|なに} を {入|い}れて いた か 、 {覚|おぼ}えて いる ？ || The first morning we met, do you remember what I'd poured?
+!choice
+* お{茶|ちゃ} を ふたつ 。 || Two cups of tea: one for someone she couldn't remember. -> right
+* お{茶|ちゃ} を みっつ 。 || Three cups of tea. -> wrong
+* お{酒|さけ} を ひとつ 。 || One cup of sake. -> wrong
+:right
+hana: …… そう 。 ふたつ 。 {覚|おぼ}えて いて くれて 、 ありがとう 。 || …Yes. Two. Thank you for remembering.
+!hook dv_bonus hana
+!hook dv_met hana 1
+!end
+:wrong
+hana: ふふ 、 {前|まえ} の こと だ もの ね 。 || Heh. It was a while ago, after all.
+!hook dv_met hana 0
+
+@scene dv.fuku
+!faceplayer
+fuku: まあ 、 こんな {所|ところ} で 。 {風|かぜ} の ない {日|ひ} は 、 {少|すこ}し {歩|ある}きたく なる の よ 。 || Well, of all places. On days without wind I feel like walking a little.
+fuku: {少|すこ}し {休|やす}んで いきなさい 。 {急|いそ}ぐ {旅|たび} でも 、 {座|すわ}る {時間|じかん} は ある わ 。 || Rest a little. Even on a journey in a hurry, there's time to sit.
+!hook dv_aid fuku
+fuku: ベンチ で {誰|だれ} と {将棋|しょうぎ} を {指|さ}して いた か 、 {話|はな}した かしら 。 || Did I ever tell you who I used to play shōgi with on the bench?
+!choice
+* イサム さん 。 || Isamu, from up the west lane. -> right
+* {旦那|だんな} さん 。 || Her husband. -> wrong
+* アサヒ ちゃん 。 || Little Asahi. -> wrong
+:right
+fuku: そう 、 イサム さん 。 {覚|おぼ}えて いて くれた の ね 。 || Yes, Isamu. You remembered.
+!hook dv_bonus fuku
+!hook dv_met fuku 1
+!end
+:wrong
+fuku: いい の よ 。 {名前|なまえ} は 、 わたし が {覚|おぼ}えて いる から 。 || That's all right. I remember the name for both of us.
+!hook dv_met fuku 0
+
+@scene dv.wataru
+!faceplayer
+wataru: あっ 、 {皆|みな}さん ！ {迷子|まいご} の {荷物|にもつ} を {探|さが}しに {来|き}た ん です 。 {仕事|しごと} の {癖|くせ} で …… 。 || Oh — it's you! I came looking for lost parcels. Occupational habit…
+wataru: この {先|さき} の {道|みち} 、 {帳簿|ちょうぼ} に {書|か}き{写|うつ}して おきました 。 よかったら 。 || I copied the way ahead into my ledger. In case it helps.
+!hook dv_aid wataru
+wataru: {嵐|あらし} の {夜|よる} 、 {僕|ぼく} の {倉庫|そうこ} で {何|なに} が {起|お}きた か 、 {覚|おぼ}えて います か 。 || Do you remember what happened in my warehouse on the night of the storm?
+!choice
+* ラベル が {全部|ぜんぶ} {剥|は}がれた 。 || All the labels came off. -> right
+* {倉庫|そうこ} が {燃|も}えた 。 || The warehouse burned. -> wrong
+* {箱|はこ} が {流|なが}された 。 || The crates were washed away. -> wrong
+:right
+wataru: そう です 、 {全部|ぜんぶ} ！ …… {思|おも}い{出|だ}す と 、 まだ {手|て} が {震|ふる}えます 。 || That's right, every one! …My hands still shake when I think of it.
+!hook dv_bonus wataru
+!hook dv_met wataru 1
+!end
+:wrong
+wataru: あはは 、 {僕|ぼく} の {話|はなし} なんて 、 {忘|わす}れて {当然|とうぜん} です よ 。 || Ha ha, no wonder you've forgotten my story.
+!hook dv_met wataru 0
+
+@scene dv.goro
+!faceplayer
+co_goro: おお 、 {若|わか}い の 。 {鐘|かね} の {綱|つな} に {使|つか}える {縄|なわ} を {探|さが}して おる ところ じゃ 。 || Oh, it's you young folk. I'm looking for a rope fit for the bell.
+co_goro: {休|やす}んで いけ 。 わし も {腰|こし} を {下|お}ろす ところ だった 。 || Have a rest. I was just about to sit down myself.
+!hook dv_aid goro
+co_goro: {鐘|かね} は {磨|みが}いて おかん と 、 どう なる と {言|い}った かの ？ || What did I say happens to a bell if you don't polish it?
+!choice
+* {音|おと} が {曇|くも}る 。 || Its voice clouds over. -> right
+* {錆|さ}びて {割|わ}れる 。 || It rusts and cracks. -> wrong
+* {誰|だれ} も {鳴|な}らさなく なる 。 || Nobody rings it any more. -> wrong
+:right
+co_goro: そう じゃ 。 {鳴|な}らさん {鐘|かね} でも な 。 || That's it. Even a bell nobody rings.
+!hook dv_bonus goro
+!hook dv_met goro 1
+!end
+:wrong
+co_goro: {年寄|としよ}り の {話|はなし} は 、 {長|なが}くて {覚|おぼ}えきれん から の 。 || An old man's stories go on too long to keep.
+!hook dv_met goro 0
+
+@scene dv.hoshino
+!faceplayer
+hoshino: …… おや 。 {郵便|ゆうびん} かね 。 いや 、 {違|ちが}う な 。 {道|みち} を {見|み}に {来|き}た んだ 。 || …Oh. The post? No, of course not. I came to look at the road.
+hoshino: この {先|さき} の {様子|ようす} は 、 {見|み}て きた よ 。 {話|はな}して おこう 。 || I've seen what lies ahead. Let me tell you.
+!hook dv_aid hoshino
+hoshino: {娘|むすめ} の {名前|なまえ} を 、 {覚|おぼ}えて いる かね 。 || Do you remember my daughter's name?
+!choice
+* アカリ 。 || Akari. -> right
+* ヤエ 。 || Yae. -> wrong
+* ホシ 。 || Hoshi. -> wrong
+:right
+hoshino: …… そう 、 アカリ だ 。 {名前|なまえ} を {呼|よ}ばれる と 、 {少|すこ}し {近|ちか}く なる 。 || …Yes, Akari. When someone says her name, she feels a little closer.
+!hook dv_bonus hoshino
+!hook dv_met hoshino 1
+!end
+:wrong
+hoshino: いい んだ 。 {私|わたし} が {何度|なんど} でも {言|い}う から 。 || It's all right. I'll say it as often as it takes.
+!hook dv_met hoshino 0
+`, 'expeditions/40_delvers.js');
+
+
 /* ==== src/content/fishing/00_lex.js ==== */
 /* Lexicon for A Quiet Cast (fishing): the nine fish names, the waterside
  * words of the eighteen situations, the remarks and the stations. Format:
@@ -163914,6 +164209,15 @@ RB.atlas = (function () {
         def.atlas.survey = true;
       }
     }
+    // a delver waiting at the camp (D8; src/engine/98b_delvers.js): twelve-chapter journeys only
+    const dvd = run.delver && RB.delvers ? RB.delvers.get(run.delver) : null;
+    if (dvd && d.kind === 'camp') {
+      const c0 = (spots['?'] || [])[0] || [W >> 1, H >> 1];
+      const busy = new Set([].concat(...Object.values(spots)).map(([x, y]) => x + ',' + y));
+      const near = (x, y) => [[0, 1], [1, 0], [0, -1], [-1, 0]].some(([dx, dy]) => busy.has((x + dx) + ',' + (y + dy)));
+      const at = plain.filter(([x, y]) => !near(x, y) && !busy.has(x + ',' + y)).sort((a, b) => (Math.abs(a[0] - c0[0]) + Math.abs(a[1] - c0[1])) - (Math.abs(b[0] - c0[0]) + Math.abs(b[1] - c0[1])) || a[1] - b[1] || a[0] - b[0])[0];
+      if (at) def.npcs.push({ id: dvd.char, char: dvd.char, x: at[0], y: at[1], dir: 'down', arrive: 'here', leave: 'here', talk: 'dv.' + dvd.id, if: 'ed>=2&!' + FLAG('dv_met') });
+    }
     // exits
     const exitSlots = ['1', '2', '3'].map((k) => (spots[k] || [])[0]).filter(Boolean);
     const target = (key) => { const nd = planR.rooms[key]; const tsp = spawnOf(run, nd); return { to: mapId(run, key), tx: tsp[0], ty: tsp[1] }; };
@@ -164725,6 +165029,9 @@ RB.hooks = RB.hooks || {};
     if (opts.commission) run.commission = opts.commission;
     const safe = RB.atlasCommissions ? RB.atlasCommissions.surveyed(s) : [];
     if (safe.length) run.safe = safe; // (surveyed areas: safe passage, fixed for this run)
+    // someone from the journey may be waiting at the camp (a delver, D8; seeded by the run, fixed with it)
+    const dv = RB.delvers && RB.edition && RB.edition.of(s) >= 2 ? RB.delvers.pick(s, (run.seed ^ U.hashStr('delver')) >>> 0, 0.5) : null;
+    if (dv) run.delver = dv;
     AT.cleanFlags(s, run.id);
     s.atlas.run = run;
     AT.register(run);
@@ -165012,7 +165319,7 @@ RB.hooks = RB.hooks || {};
     const m = RB.world.W.map;
     const exits = m.exits.filter((e) => e.branch).slice().sort((a, b) => a.x - b.x);
     await say('narr', { jp: '{道標|みちしるべ} の {腕|うで} が 、 {二|ふた}つ の {方向|ほうこう} を {指|さ}して いる 。', en: 'The signpost\'s two arms point two ways.' });
-    const detail = run => run.relics.indexOf('compass') >= 0 || run.relics.indexOf('map') >= 0;
+    const detail = run => run.relics.indexOf('compass') >= 0 || run.relics.indexOf('map') >= 0 || !!run.dvGuide; // (a delver's word, D8)
     for (const e of exits) {
       const bt = A.branchTypes[e.branch];
       const side = SIDE[sideOf(e, m)];
@@ -165829,7 +166136,9 @@ for (const c of ['nao', 'mio', 'ren', 'suzu']) for (const i of [1, 2]) RB.conten
  *   - every battle's enemy exists, its intents are valid and authored, and it
  *     is winnable with Unravel alone for every companion, at normal and hard
  *     tactics, with and without a light word, with no relics / all relics /
- *     each charm. Returns {ok, errors, warnings, stats}. */
+ *     each charm. Returns {ok, errors, warnings, stats}.
+ * opts: { salt, dress(run, i, s) } (dress: what a run is given before its maps are built, for checking commission
+ * runs, safe passage and delvers with the same rules). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -165928,6 +166237,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (P === 'F') { s.learn.taught = {}; if (i % 8 !== 0) for (const ch of KANA) s.learn.taught[ch] = true; }
         RB.game.s = s;
         const run = AT.newRun(s, mods, { seed: (Math.imul(0x9e3779b1, i + 1) ^ (opts.salt || 0)) >>> 0 });
+        // (opts.dress(run, i, s): a run given more before its maps are built: a commission, safe passage, a delver)
+        if (opts.dress) opts.dress(run, i, s);
         const b = AT.buildMaps(run);
         for (const id in b.maps) C.maps[id] = b.maps[id];
         try {

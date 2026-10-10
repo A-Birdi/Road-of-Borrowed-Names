@@ -1,0 +1,290 @@
+{
+ "scene:dv.yasu#f0hs7r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "おう 。 こんな {所|ところ} で {会|あ}う と は な 。 {水|みず} の {音|おと} が した から 、 {来|き}て みた んだ 。",
+  "en": "Well. Fancy meeting you here. I heard water, so I came to have a look."
+ },
+ "scene:dv.yasu#1vc1suu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{座|すわ}って いけ 。 {年寄|としよ}り の {茶|ちゃ} だ が 、 {温|あたた}まる ぞ 。",
+  "en": "Sit down a while. An old man's tea, but it'll warm you."
+ },
+ "scene:dv.yasu#2c0jam": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "…… {川|かわ} の こと 、 {前|まえ} に {話|はな}した な 。 {俺|おれ} は {何|なん} と {言|い}った ？",
+  "en": "…I told you something about the river once. What did I say?"
+ },
+ "scene:dv.yasu:choice#1821sr1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{川|かわ} は {正直|しょうじき} だ 。",
+  "en": "That the river is honest: it shows you when it rises and when it falls."
+ },
+ "scene:dv.yasu:choice#1meorpv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{川|かわ} は {怖|こわ}い 。",
+  "en": "That the river is frightening."
+ },
+ "scene:dv.yasu:choice#16tt0fa": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{川|かわ} は {名前|なまえ} を {覚|おぼ}えて いる 。",
+  "en": "That the river remembers names."
+ },
+ "scene:dv.yasu#gtorxd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "よく {覚|おぼ}えて いた な 。 …… {覚|おぼ}えて いて くれる {人|ひと} も 、 {悪|わる}く ない 。",
+  "en": "You remembered. …People who remember aren't so bad either."
+ },
+ "scene:dv.yasu#wqu93j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "…… まあ 、 {年寄|としよ}り の {話|はなし} だ 。 {気|き} に する な 。",
+  "en": "…Well, an old man's talk. Don't let it trouble you."
+ },
+ "scene:dv.hana#u4oyfb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "あら 、 {奇遇|きぐう} ね 。 お{茶|ちゃ} の {葉|は} を {探|さが}しに {来|き}た の よ 。",
+  "en": "Oh, what a coincidence. I came looking for tea leaves."
+ },
+ "scene:dv.hana#uyiyg1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{一杯|いっぱい} どうぞ 。 {今日|きょう} は ふたつ {入|い}れて も 、 {飲|の}む {人|ひと} が いる わ 。",
+  "en": "Have a cup. Today, if I pour two, there's someone to drink the second."
+ },
+ "scene:dv.hana#flno0q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{初|はじ}めて {会|あ}った {朝|あさ} 、 わたし が {何|なに} を {入|い}れて いた か 、 {覚|おぼ}えて いる ？",
+  "en": "The first morning we met, do you remember what I'd poured?"
+ },
+ "scene:dv.hana:choice#8urgn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "お{茶|ちゃ} を ふたつ 。",
+  "en": "Two cups of tea: one for someone she couldn't remember."
+ },
+ "scene:dv.hana:choice#zvw9cl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "お{茶|ちゃ} を みっつ 。",
+  "en": "Three cups of tea."
+ },
+ "scene:dv.hana:choice#1wpra1r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "お{酒|さけ} を ひとつ 。",
+  "en": "One cup of sake."
+ },
+ "scene:dv.hana#sa5zjo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "…… そう 。 ふたつ 。 {覚|おぼ}えて いて くれて 、 ありがとう 。",
+  "en": "…Yes. Two. Thank you for remembering."
+ },
+ "scene:dv.hana#1txvq7j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "ふふ 、 {前|まえ} の こと だ もの ね 。",
+  "en": "Heh. It was a while ago, after all."
+ },
+ "scene:dv.fuku#1x2o9m7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "まあ 、 こんな {所|ところ} で 。 {風|かぜ} の ない {日|ひ} は 、 {少|すこ}し {歩|ある}きたく なる の よ 。",
+  "en": "Well, of all places. On days without wind I feel like walking a little."
+ },
+ "scene:dv.fuku#1on7nn2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{少|すこ}し {休|やす}んで いきなさい 。 {急|いそ}ぐ {旅|たび} でも 、 {座|すわ}る {時間|じかん} は ある わ 。",
+  "en": "Rest a little. Even on a journey in a hurry, there's time to sit."
+ },
+ "scene:dv.fuku#2vc6a3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "ベンチ で {誰|だれ} と {将棋|しょうぎ} を {指|さ}して いた か 、 {話|はな}した かしら 。",
+  "en": "Did I ever tell you who I used to play shōgi with on the bench?"
+ },
+ "scene:dv.fuku:choice#ysm3rw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "イサム さん 。",
+  "en": "Isamu, from up the west lane."
+ },
+ "scene:dv.fuku:choice#d9xwbj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{旦那|だんな} さん 。",
+  "en": "Her husband."
+ },
+ "scene:dv.fuku:choice#154vh4l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "アサヒ ちゃん 。",
+  "en": "Little Asahi."
+ },
+ "scene:dv.fuku#ue46bp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "そう 、 イサム さん 。 {覚|おぼ}えて いて くれた の ね 。",
+  "en": "Yes, Isamu. You remembered."
+ },
+ "scene:dv.fuku#ogvdmj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "いい の よ 。 {名前|なまえ} は 、 わたし が {覚|おぼ}えて いる から 。",
+  "en": "That's all right. I remember the name for both of us."
+ },
+ "scene:dv.wataru#phnr5w": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "あっ 、 {皆|みな}さん ！ {迷子|まいご} の {荷物|にもつ} を {探|さが}しに {来|き}た ん です 。 {仕事|しごと} の {癖|くせ} で …… 。",
+  "en": "Oh — it's you! I came looking for lost parcels. Occupational habit…"
+ },
+ "scene:dv.wataru#1w6isie": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "この {先|さき} の {道|みち} 、 {帳簿|ちょうぼ} に {書|か}き{写|うつ}して おきました 。 よかったら 。",
+  "en": "I copied the way ahead into my ledger. In case it helps."
+ },
+ "scene:dv.wataru#1aljvq1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{嵐|あらし} の {夜|よる} 、 {僕|ぼく} の {倉庫|そうこ} で {何|なに} が {起|お}きた か 、 {覚|おぼ}えて います か 。",
+  "en": "Do you remember what happened in my warehouse on the night of the storm?"
+ },
+ "scene:dv.wataru:choice#zy7dd6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "ラベル が {全部|ぜんぶ} {剥|は}がれた 。",
+  "en": "All the labels came off."
+ },
+ "scene:dv.wataru:choice#1maxq51": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{倉庫|そうこ} が {燃|も}えた 。",
+  "en": "The warehouse burned."
+ },
+ "scene:dv.wataru:choice#v0a50b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{箱|はこ} が {流|なが}された 。",
+  "en": "The crates were washed away."
+ },
+ "scene:dv.wataru#1p389th": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "そう です 、 {全部|ぜんぶ} ！ …… {思|おも}い{出|だ}す と 、 まだ {手|て} が {震|ふる}えます 。",
+  "en": "That's right, every one! …My hands still shake when I think of it."
+ },
+ "scene:dv.wataru#1wfjsy5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "あはは 、 {僕|ぼく} の {話|はなし} なんて 、 {忘|わす}れて {当然|とうぜん} です よ 。",
+  "en": "Ha ha, no wonder you've forgotten my story."
+ },
+ "scene:dv.goro#xc8iat": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "おお 、 {若|わか}い の 。 {鐘|かね} の {綱|つな} に {使|つか}える {縄|なわ} を {探|さが}して おる ところ じゃ 。",
+  "en": "Oh, it's you young folk. I'm looking for a rope fit for the bell."
+ },
+ "scene:dv.goro#1bigiuz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{休|やす}んで いけ 。 わし も {腰|こし} を {下|お}ろす ところ だった 。",
+  "en": "Have a rest. I was just about to sit down myself."
+ },
+ "scene:dv.goro#8mmsju": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{鐘|かね} は {磨|みが}いて おかん と 、 どう なる と {言|い}った かの ？",
+  "en": "What did I say happens to a bell if you don't polish it?"
+ },
+ "scene:dv.goro:choice#m1j1xr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{音|おと} が {曇|くも}る 。",
+  "en": "Its voice clouds over."
+ },
+ "scene:dv.goro:choice#1sve13z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{錆|さ}びて {割|わ}れる 。",
+  "en": "It rusts and cracks."
+ },
+ "scene:dv.goro:choice#1jqgdff": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{誰|だれ} も {鳴|な}らさなく なる 。",
+  "en": "Nobody rings it any more."
+ },
+ "scene:dv.goro#149zq0h": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "そう じゃ 。 {鳴|な}らさん {鐘|かね} でも な 。",
+  "en": "That's it. Even a bell nobody rings."
+ },
+ "scene:dv.goro#1mkf9l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{年寄|としよ}り の {話|はなし} は 、 {長|なが}くて {覚|おぼ}えきれん から の 。",
+  "en": "An old man's stories go on too long to keep."
+ },
+ "scene:dv.hoshino#n6rcwm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "…… おや 。 {郵便|ゆうびん} かね 。 いや 、 {違|ちが}う な 。 {道|みち} を {見|み}に {来|き}た んだ 。",
+  "en": "…Oh. The post? No, of course not. I came to look at the road."
+ },
+ "scene:dv.hoshino#1jq9ca1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "この {先|さき} の {様子|ようす} は 、 {見|み}て きた よ 。 {話|はな}して おこう 。",
+  "en": "I've seen what lies ahead. Let me tell you."
+ },
+ "scene:dv.hoshino#umghs7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "{娘|むすめ} の {名前|なまえ} を 、 {覚|おぼ}えて いる かね 。",
+  "en": "Do you remember my daughter's name?"
+ },
+ "scene:dv.hoshino:choice#pp3cpy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "アカリ 。",
+  "en": "Akari."
+ },
+ "scene:dv.hoshino:choice#oxce5f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "ヤエ 。",
+  "en": "Yae."
+ },
+ "scene:dv.hoshino:choice#1beqrmd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "ホシ 。",
+  "en": "Hoshi."
+ },
+ "scene:dv.hoshino#1j71ewn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "…… そう 、 アカリ だ 。 {名前|なまえ} を {呼|よ}ばれる と 、 {少|すこ}し {近|ちか}く なる 。",
+  "en": "…Yes, Akari. When someone says her name, she feels a little closer."
+ },
+ "scene:dv.hoshino#prg7d2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against each person's established speech in their own scenes (rw.yasu_*, rw.hana_*, sg.fuku_*, sg.wataru_*, co.goro, sb.hoshino) and the game's lexicon (P07)",
+  "jp": "いい んだ 。 {私|わたし} が {何度|なんど} でも {言|い}う から 。",
+  "en": "It's all right. I'll say it as often as it takes."
+ }
+}
