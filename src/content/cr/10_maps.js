@@ -79,6 +79,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         o.oldShut ? [Object.assign({ x: 17, y: 3, h: 2 }, o.oldShut)] : [],
         o.props || []),
       npcs: o.npcs || [],
+      foes: o.foes || [],
       exits: [
         { x: 0, y: 11, w: 1, h: 2, to: o.from, tx: 34, ty: 12, dir: 'left' },
         { x: 0, y: 3, w: 1, h: 2, to: o.from, tx: 34, ty: 12, dir: 'left' },
@@ -120,6 +121,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'stone_marker', x: 6, y: 14, scene: 'cr.leg1_stone' }, { p: 'kr_toro', x: 25, y: 9 },
       { p: 'shrine', x: 20, y: 2, scene: 'cr.leg1_shrine' },
     ],
+    foes: [
+      { id: 'e1', enemy: 'cr.waystone', x: 28, y: 12, patrol: 2 },
+      // the pilgrim on the shrine path (a wanderer, E3)
+      { id: 'w_oshika', enemy: 'cr.waystone', encounter: 'cr.wander_oshika', x: 18, y: 4, patrol: 1, if: 'cr_called&!cr_oshika_met' },
+    ],
   });
 
   // ==== 2 · Suginoki (杉ノ木宿), under the great cedar =================================================================
@@ -153,6 +159,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'rock', x: 12, y: 10 }, { p: 'rock', x: 23, y: 13 },
       { p: 'stone_marker', x: 9, y: 13, scene: 'cr.leg2_stone' },
     ],
+    foes: [{ id: 'e1', enemy: 'cr.echo', x: 27, y: 11, patrol: 2 }, { id: 'e2', enemy: 'cr.packlantern', x: 8, y: 3, patrol: 2 }],
   });
 
   // ==== 3 · Sakashita (坂下宿), at the foot of the long slope ===========================================================
@@ -180,8 +187,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   leg('cr.leg3', 3, T('The Stream', '{沢|さわ}'), {
     from: 'cr.sakashita', to: 'cr.nakayama',
     terrain: (k) => { k.rect(17, 0, 2, 22, '~'); k.rect(16, 11, 4, 2, 'b'); k.rect(16, 3, 4, 2, 'w'); },
-    mainShut: { p: 'cr_bridge_out', if: 'var.cr_phase>=3&!cr_bridge_mended', w: 2 },
+    mainShut: { p: 'cr_bridge_out', if: 'cr_bridge_washed&!cr_bridge_mended', w: 2 },
     props: [{ p: 'stone_marker', x: 10, y: 13, scene: 'cr.leg3_stone' }],
+    foes: [{ id: 'e1', enemy: 'cr.packlantern', x: 26, y: 12, patrol: 2 }, { id: 'e2', enemy: 'cr.waystone', x: 9, y: 3, patrol: 1 }],
     npcs: [{ id: 'cr_matazo', x: 24, y: 3, dir: 'left', if: 'cr_st3&!cr_matazo_done', talk: 'cr.matazo' }],
   });
 
@@ -216,6 +224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     terrain: (k) => { k.rect(13, 2, 10, 1, '^'); k.scatter('r', 6, 994, [24, 4, 10, 4], '.'); },
     oldShut: { p: 'cr_slide', if: '!cr_ledge_cleared', w: 2 },
     props: [{ p: 'stone_marker', x: 8, y: 13, scene: 'cr.leg4_stone' }, { p: 'cr_horse', x: 11, y: 3, if: '!cr_horse_safe', scene: 'cr.horse' }],
+    foes: [{ id: 'e1', enemy: 'cr.echo', x: 26, y: 12, patrol: 2 }],
   });
 
   // ==== 5 · Umagaeshi (馬返し宿), where the horses turn back ==========================================================
@@ -247,6 +256,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     oldShut: { p: 'cr_fogbank', if: 'var.cr_phase=4' },
     props: [{ p: 'stone_marker', x: 7, y: 13, scene: 'cr.leg5_stone' }, { p: 'kr_toro', x: 24, y: 9 }],
     triggers: [{ x: 15, y: 11, w: 1, h: 2, scene: 'cr.ox', if: 'var.cr_phase=4&!cr_ox_done' }],
+    foes: [
+      // the Fog Porter goes for your travel papers (E6) until you have kept them from it once
+      { id: 'fp', enemy: 'cr.fogporter', encounter: 'cr.fog_papers', x: 27, y: 12, patrol: 2, if: 'item.cr_papers&!cr_papers_kept' },
+      { id: 'e1', enemy: 'cr.echo', x: 8, y: 3, patrol: 2 },
+    ],
   });
 
   // ==== 6 · Kirishita (霧下宿), the last lit station below the Barrier ==================================================
@@ -315,6 +329,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [{ p: 'stone_marker', x: 18, y: 6, scene: 'cr.above_stone' }, { p: 'kr_toro', x: 9, y: 10 }],
     npcs: [],
+    foes: [
+      { id: 'e1', enemy: 'cr.moth', x: 30, y: 12, patrol: 2, bg: 'cloudtop' },
+      // the smuggler, on the road he took round the checkpoint (a wanderer, E3)
+      { id: 'w_ginji', enemy: 'cr.moth', encounter: 'cr.wander_ginji', x: 20, y: 8, patrol: 1, bg: 'cloudtop', if: '!cr_ginji_met' },
+    ],
     exits: [
       { x: 0, y: 12, w: 1, h: 2, to: 'cr.barrier', sp: 'from_east', dir: 'left' },
       { x: 35, y: 12, w: 1, h: 2, to: 'cr.kumoi', sp: 'from_west', dir: 'right' },

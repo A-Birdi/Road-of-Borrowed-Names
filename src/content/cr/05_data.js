@@ -4,7 +4,7 @@
  * S14), the Mist Barrier's keeper and its inspector, the headwoman above the cloud, a pilgrim and a smuggler. They
  * speak standard Japanese in their own registers (the checkpoint's officials formally); Suzu's lines have her Kansai
  * versions as everywhere. Pronouns, for anyone writing about them: Kanbe, Jinpachi, Sada, Kōsuke, Heisuke, Yahei,
- * Seibe, Tatsu, Genji, Matazō, Sakichi, Ujie, Gonza and Ginji he/him; Tome, Ine, Sono, Otaki, Rin, Chika, Sue, Sumi,
+ * Seibe, Tatsu, Genji, Matazō, Sakichi, Ujie, Gonza, Ginji and Genta (the courier) he/him; Tome, Ine, Sono, Otaki, Rin, Chika, Sue, Sumi,
  * Shizu, Koma and Oshika she/her. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -162,6 +162,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     name: { en: 'Oshika', jp: 'オシカ' }, voice: { pitch: 0.84 },
     look: { skin: 2, hair: 'wrap', hairColor: 6, cloth: ['#e8e4d8', '#ccc6b6', '#7a6a4a'], shape: 'robe', acc: ['hat', 'cane'], hatCol: '#c8b07a', age: 'old' },
     portrait: { eyes: 'soft', style: 'wrap', age: 'old', acc: ['hat'], hatCol: '#c8b07a', bg: '#2a2620' },
+  });
+  // ---- the Courier's Hut ----------------------------------------------------------------------------------------------
+  // the Courier Who Never Arrived: what is left of Genta, the last courier, at the hut on the pass (he/him); a straw
+  // hat, a runner's legs, the snow showing through him
+  ch('cr_genta', {
+    name: { en: 'The Courier Who Never Arrived', jp: '{届|とど}かず の {飛脚|ひきゃく}' }, voice: { pitch: 0.82 },
+    portrait: { skin: ['#d8ccb0', '#b8ac90'], hair: ['#5a5048', '#463e38'], style: 'short', eyes: 'narrow', acc: ['hat'], hatCol: '#b8a070', bg: '#161a20' },
   });
   // Ginji: a smuggler who knows a way round the checkpoint and would rather you didn't ask about the crates.
   ch('cr_ginji', {

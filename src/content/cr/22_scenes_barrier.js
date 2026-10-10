@@ -55,7 +55,7 @@ cr_sakichi: {急|いそ}ぐ な 。 {伝言|でんごん} は {逃|に}げん �
 @scene cr.r5_snow
 # The night post held for a forecast passed on as certain; put right by saying it was Genji's reading.
 !faceplayer
-cr_sakichi: {今夜|こんや} は {雪|ゆき} が {降|ふ}らなかった な 。 {便|びん} を {止|と}めた ぶん 、 {上|うえ} の {宿|しゅく} で {一日|いちにち} {待|ま}つ {者|もの} が 出る 。 || No snow tonight, then. Because I held the post, someone up the road waits a day longer.
+cr_sakichi: {今夜|こんや} は {雪|ゆき} が {降|ふ}らなかった な 。 {便|びん} を {止|と}めた ぶん 、 {上|うえ} の {宿|しゅく} で {一日|いちにち} {待|ま}つ {者|もの} が {出|で}る 。 || No snow tonight, then. Because I held the post, someone up the road waits a day longer.
 !choice
 * ゲンジ さん の 「だろう 」 を 、 {言|い}い{落|お}としました 。 || I left out Genji's "likely". -> sorry
 * {確|たし}か な {話|はなし} で は ありません でした 。 すみません 。 || It wasn't certain. I'm sorry. -> sorry
@@ -280,7 +280,7 @@ cr_koma: {雲|くも} の {下|した} から {来|き}た の ？ {下|した} 
 cr_koma: {飛脚|ひきゃく} の お{兄|にい}さん が 、 {毎日|まいにち} {来|く}る よう に なった ！ {手紙|てがみ} も 、 {毎日|まいにち} ！ || A relay runner comes every day now! And letters, every day!
 
 @scene cr.kumoi_stone
-narr: {雲居|くもい} の {石|いし} 。 「{峠|とうげ} {越|ご}え の {飛脚|ひきゃく} 、 {此|こ}処 に て {息|いき} を {継|つ}ぐ 。」 || Kumoi's stone: "Couriers crossing the pass catch their breath here."
+narr: {雲居|くもい} の {石|いし} 。 「{峠|とうげ} {越|ご}え の {飛脚|ひきゃく} 、 {此処|ここ} に て {息|いき} を {継|つ}ぐ 。」 || Kumoi's stone: "Couriers crossing the pass catch their breath here."
 
 @scene cr.kumoi_east
 ?(cr_fetching) narr: {峠|とうげ} へ の {道|みち} は 、 {先|さき} へ {続|つづ}いて いる 。 でも 、 {関所|せきしょ} で {待|ま}って いる {人|ひと} が いる 。 {先|さき} に {戻|もど}ろう 。 || The road to the pass goes on ahead. But someone is waiting at the Barrier. Go back first.
@@ -334,7 +334,7 @@ narr: {縁側|えんがわ} に 、 ナオ が {座|すわ}って いる 。 {�
 nao[closed]: …… {走|はし}った よ 。 {最後|さいご} の {区間|くかん} 。 {手紙|てがみ} は 、 {手|て} で {渡|わた}した 。 || …I ran it. The last leg. I handed him the letter myself.
 nao: {答|こた}え も 、 {言|い}った 。 この {宿|しゅく} は {継|つ}げない 。 {今|いま} は 、 お{前|まえ} と {道|みち} の {最後|さいご} まで {行|い}く 。 …… {顔|かお} を {見|み}て {言|い}えた 。 {手紙|てがみ} で {逃|に}げなかった 。 || I told him my answer too. I can't take this station. For now, I'm going to the end of the road with you. …I said it looking at him. I didn't hide in a letter.
 !sfx wind
-nao: サキチ さん は 、 {笑|わら}った よ 。 「{知|し}って いた 」 って 。 「{手紙|てがみ} を {開|あ}けた と {聞|き}いた 時 から な 」 。 || Sakichi laughed. "I knew," he said. "From the moment I heard you'd opened the letters."
+nao: サキチ さん は 、 {笑|わら}った よ 。 「{知|し}って いた 」 って 。 「{手紙|てがみ} を {開|あ}けた と {聞|き}いた {時|とき} から な 」 。 || Sakichi laughed. "I knew," he said. "From the moment I heard you'd opened the letters."
 !choice
 * {待|ま}たせて いた {人|ひと} が いた ん だ ね 。 || There was someone you'd kept waiting. -> waited
 * {顔|かお} を {見|み}て {言|い}えて 、 よかった 。 || I'm glad you could say it to his face. -> face

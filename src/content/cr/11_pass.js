@@ -36,6 +36,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'kr_toro', x: 20, y: 27 },
     ],
     npcs: [],
+    foes: [{ id: 'e1', enemy: 'cr.moth', x: 12, y: 22, patrol: 2, bg: 'cloudtop' }, { id: 'e2', enemy: 'cr.packlantern', x: 14, y: 10, patrol: 2, bg: 'cloudtop' }],
     exits: [
       { x: 3, y: 33, w: 2, h: 1, to: 'cr.kumoi', tx: 34, ty: 12, dir: 'down' },
       { x: 24, y: 0, w: 2, h: 1, to: 'cr.pass2', sp: 'from_below', dir: 'up' },
@@ -63,6 +64,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'sb_woodpile', x: 32, y: 8, scene: 'cr.shelter_wood' },
     ],
     npcs: [],
+    foes: [{ id: 'e1', enemy: 'cr.echo', x: 6, y: 14, patrol: 2, bg: 'cloudtop' }],
     exits: [
       { x: 0, y: 18, w: 1, h: 2, to: 'cr.pass1', sp: 'from_above', dir: 'left' },
       { x: 35, y: 10, w: 1, h: 2, to: 'cr.pass3', sp: 'from_west', dir: 'right' },
@@ -83,9 +85,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     props: [
       { p: 'stone_marker', x: 6, y: 9, scene: 'cr.snow_stone1' }, { p: 'stone_marker', x: 18, y: 13, scene: 'cr.snow_stone2' },
       { p: 'stone_marker', x: 28, y: 7, scene: 'cr.snow_stone3' },
-      { p: 'sb_drift', x: 20, y: 14, if: '!cr_drift_cleared' },
+      { p: 'sb_drift', x: 20, y: 14, if: '!cr_drift_cleared', scene: 'cr.drift' },
     ],
     npcs: [],
+    foes: [{ id: 'e1', enemy: 'cr.moth', x: 16, y: 14, patrol: 2, bg: 'cloudtop' }, { id: 'e2', enemy: 'cr.ox', x: 30, y: 8, patrol: 1, bg: 'cloudtop' }],
     exits: [
       { x: 0, y: 10, w: 1, h: 1, to: 'cr.pass2', sp: 'from_east', dir: 'left' },
       { x: 35, y: 8, w: 1, h: 1, to: 'cr.hut', sp: 'from_west', dir: 'right' },

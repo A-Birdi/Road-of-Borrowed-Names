@@ -162,6 +162,7 @@ cr_ine: {塩|しお} が {来|く}る …… らしい ？ カンベエ さん �
 :next
 cr_ine: じゃあ 、 {次|つぎ} は わたし から 。 {坂下|さかした} の ヘイスケ さん に 。 「{杉|すぎ}ノ{木|き} の {茶屋|ちゃや} は 、 {来月|らいげつ} から また {開|あ}けます 。」 お{願|ねが}い ね 。 || Then the next one's from me. For Heisuke at Sakashita: "Suginoki's teahouse opens again next month." Please.
 !set cr_given2
+!call cr.goto
 !journal イネ に {伝言|でんごん} を {伝|つた}えた 。 {次|つぎ} は {坂下|さかした} の ヘイスケ へ 。 {常夜灯|じょうやとう} に {名前|なまえ} を {戻|もど}して 、 {道|みち} の {話|はなし} を {比|くら}べて から {出|で}かけよう 。 || You passed the message to Ine. The next is for Heisuke at Sakashita. Relight the lamp, weigh what you hear about the road, then set off.
 !end
 :later

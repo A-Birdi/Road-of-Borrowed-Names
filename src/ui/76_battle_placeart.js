@@ -797,6 +797,9 @@ RB.battlePlaceArt = (function () {
     lanternfall: { sky: ['#5a5a94', '#6a6aa0', '#8a82b4', '#b4a8d0', '#d8c8e8'], ridges: [[0.12, 2.2, '#8a84b0', '#9c96c0', '#7a74a0']], haze: '#b8b0d4' },
     keepers: { sky: ['#8a8aa0', '#9c98a8', '#b4aca8', '#ccbca4', '#dccaa4'], cloud: ['#c8c0b4', '#e4dcd0', '#f4eee4'], ridges: [[0.3, 2.6, '#8a6a52', '#9a7a5c', '#7a5a48', 1.2], [0.15, 4.8, '#5e6a4e', '#6e7a5a', '#4e5a42']], haze: '#cfc4b0' },
     kotonoha: { sky: ['#5e9aa4', '#72aab0', '#92c0bc', '#bcd8c8', '#e2e8c8'], cloud: ['#b8d4d0', '#e0ece4', '#f6f8ee'], ridges: [[0.08, 1.2, '#6aa4a8', '#7cb4b4', '#5a9498']], haze: '#c8e0d8' },
+    // the Cloudroad (P12): mist over dark cedar ridges; above the cloud, white peaks over a sea of cloud
+    cloudroad: { sky: ['#7e8e98', '#8e9ca4', '#a8b4b8', '#c4ccca', '#dce0dc'], cloud: ['#c8d0d0', '#e4e8e6', '#f4f6f4'], ridges: [[0.32, 2.2, '#5e7262', '#6a7e6c', '#4e6254', 1.2], [0.16, 4.6, '#3e5446', '#4a604e', '#34483c']], haze: '#d4dad6' },
+    cloudtop: { sky: ['#5c84b0', '#6c92bc', '#8eaccc', '#b8cce0', '#e4ecf2'], peaks: true, cloud: ['#e4ecf2', '#f2f6f8', '#ffffff'], ridges: [[0.08, 1.4, '#e8eef2', '#f4f8fa', '#d4dee6']], haze: '#eef2f6' },
     manybridge: { sky: ['#6f98ac', '#80a8b8', '#9cbcc4', '#bccfce', '#d8e2da'], cloud: ['#c4d4d4', '#e6eeea', '#f6f8f2'], ridges: [[0.1, 1.6, '#76808c', '#88929c', '#646e7a']], haze: '#cad8d4' },
     still: { sky: ['#08090f', '#0a0c18', '#10122a', '#1a1c30'], dotted: true, haze: '#2a2c44' },
     atlas: { sky: ['#c8b890', '#d4c6a0', '#e0d4b4', '#f0e8d0'], grid: true, symbols: true, haze: '#e4d8b8' },
@@ -929,6 +932,7 @@ RB.battlePlaceArt = (function () {
     understage: { wall: 'timber', floor: 'wood', dark: 0.62 },
     keepers_cave: { wall: 'stone', floor: 'flags', dark: 0.6, warm: true },
     kotonoha_cave: { wall: 'stone', floor: 'flags', dark: 0.55, cool: true },
+    cloudroad_hut: { wall: 'timber', floor: 'wood', dark: 0.6, cool: true },
     still: { wall: 'void', floor: 'paper', dark: 0.5 },
     interior: { wall: 'timber', floor: 'wood', dark: 0.35 },
   };
