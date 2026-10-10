@@ -36,6 +36,11 @@ export function lines(RB) {
   };
   for (const kind of ['challenges', 'notes', 'quests', 'maps', 'enemies', 'items']) for (const id in C[kind] || {}) walk(id, kind + ':' + id, C[kind][id], new Set());
   for (const d of C.drills || []) walk(d.id, 'drill:' + d.id, d, new Set());
+  // the expansion's systems with their own tables (P05, P06): the exploration actions, stamps, New Game+'s farewell
+  if (RB.verbs) for (const v of RB.verbs.list()) walk(v.id, 'verb:' + v.id, v, new Set());
+  for (const id in C.stamps || {}) walk('rb.' + id, 'stamp:' + id, C.stamps[id], new Set());
+  for (const id in C.stampStands || {}) walk('rb.' + id, 'stand:' + id, C.stampStands[id], new Set());
+  if (C.ngFarewell) walk('ngp.farewell', 'ngplus:farewell', C.ngFarewell, new Set());
   return out;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {

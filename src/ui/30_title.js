@@ -646,6 +646,8 @@ RB.ui.title = (function () {
       '<button class="tm go hidden" data-a="continue">' + I('main') + '<span class="tl"><span class="lbl">Continue</span><span class="sub" data-cont></span></span></button>' +
       '<button class="tm" data-a="new">' + I('newpage') + '<span class="lbl">New Game</span></button>' +
       '<button class="tm" data-a="load">' + I('ledger') + '<span class="lbl">Load</span></button>' +
+      // the travel volume (expansion K4): once the twelve-chapter edition ships, or with its development switch on
+      (RB.recordsUI && RB.recordsUI.onMenu() ? '<button class="tm" data-a="volume">' + I('book') + '<span class="lbl">Travel volume</span></button>' : '') +
       '<button class="tm" data-a="settings">' + I('settings') + '<span class="lbl">Settings</span></button>' +
       '<button class="tm" data-a="about">' + I('info') + '<span class="lbl">About &amp; credits</span></button>' +
       '</div>' +
@@ -679,6 +681,7 @@ RB.ui.title = (function () {
       if (a === 'load') slots('load');
       if (a === 'settings') RB.ui.settings.open();
       if (a === 'about') about();
+      if (a === 'volume' && RB.ui.records) RB.ui.records.menuVolume();
       if (a === 'continue') {
         const list = await RB.save.list();
         const s = newest(list);

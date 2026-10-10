@@ -1,0 +1,29 @@
+/* The journey's records (expansion P06; src/ui/66c_records.js): the Road Stamp Book, the travel volume and the
+   traveller's seal, in the Ledger and on the Main Menu. Pressed stamps in their own ink; the rest dashed and faint,
+   in words as well as shape. */
+.rb-fam { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4em 0.8em; margin: 14px 0 6px; font-size: 1em; }
+.rb-fam .en { font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
+.rb-stamps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; }
+.rb-st { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; align-items: center; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+.rb-st .rb-stamp { width: 52px; height: 52px; }
+.rb-st.pressed .rb-stamp { transform: rotate(-4deg); }
+.rb-st-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rb-st-t .en { font-size: 0.88em; color: var(--ink-2); }
+.rb-st-n { font-size: 0.82em; color: var(--ink-3); }
+.rb-st.ready .rb-st-n { color: var(--ink); font-weight: 600; }
+.rb-seal-box { display: flex; gap: 12px; align-items: center; margin: 4px 0 10px; }
+.rb-seal-box p { margin: 0 0 6px; }
+.rb-seal-form { display: grid; gap: 8px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: var(--r-1); margin-bottom: 10px; }
+.rb-seal-form fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.rb-seal-form legend { font-weight: 600; font-size: 0.9em; margin-bottom: 2px; }
+.rb-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.rb-pg { display: flex; flex-direction: column; gap: 6px; }
+.rb-frame { position: relative; border: 6px solid #f6efdc; box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 4px rgba(0,0,0,0.15); background: #e8dcc0; line-height: 0; }
+.rb-thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; display: block; max-width: 100%; }
+.rb-mark { position: absolute; right: 2px; bottom: 2px; line-height: 0; }
+.rb-mark .rb-seal { width: 28px; height: 28px; }
+.rb-pg-t { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+.rb-pg-t .en { font-size: 0.88em; color: var(--ink-2); }
+.rb-pg.veiled .rb-veil { aspect-ratio: 16 / 9; border: 1px dashed var(--ink-3); background: repeating-linear-gradient(-45deg, #efe4c8 0 6px, #e6d9b8 6px 12px); }
+.rb-ngp { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--rule); }
+.folio-volume .rb-menu .opt { display: inline-flex; gap: 0.4em; align-items: center; margin: 4px 0 8px; }

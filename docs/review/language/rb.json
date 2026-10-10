@@ -1,0 +1,368 @@
+{
+ "stamp:ch.rw#carm31": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{葦|あし}ノ{瀬|せ}",
+  "en": "Reedwake"
+ },
+ "stamp:ch.rw#1kblvye": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}1{章|しょう}",
+  "en": "Chapter 1: the main story."
+ },
+ "stamp:side.rw#cx1h8j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{葦|あし}ノ{瀬|せ} の {頼|たの}み",
+  "en": "Reedwake: everyone helped"
+ },
+ "stamp:side.rw#e89bq5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}1{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 1 that your journey could have."
+ },
+ "stamp:ch.sg#1s7fuxh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{潮|しお}{硝子|がらす}",
+  "en": "Saltglass"
+ },
+ "stamp:ch.sg#ubdk5x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}2{章|しょう}",
+  "en": "Chapter 2: the main story."
+ },
+ "stamp:side.sg#1h59kq3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{潮|しお}{硝子|がらす} の {頼|たの}み",
+  "en": "Saltglass: everyone helped"
+ },
+ "stamp:side.sg#8a8zn4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}2{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 2 that your journey could have."
+ },
+ "stamp:ch.co#1d4ja3b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{灰実|はいみ}の{里|さと}",
+  "en": "Cinder Orchard"
+ },
+ "stamp:ch.co#1gkwds8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}3{章|しょう}",
+  "en": "Chapter 3: the main story."
+ },
+ "stamp:side.co#1i1o7yx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{灰実|はいみ}の{里|さと} の {頼|たの}み",
+  "en": "Cinder Orchard: everyone helped"
+ },
+ "stamp:side.co#ehvl4b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}3{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 3 that your journey could have."
+ },
+ "stamp:ch.sb#apgu19": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{雪鈴|ゆきすず}",
+  "en": "Snowbell"
+ },
+ "stamp:ch.sb#1liul47": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}4{章|しょう}",
+  "en": "Chapter 4: the main story."
+ },
+ "stamp:side.sb#6s7f9f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{雪鈴|ゆきすず} の {頼|たの}み",
+  "en": "Snowbell: everyone helped"
+ },
+ "stamp:side.sb#1d1a1ym": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}4{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 4 that your journey could have."
+ },
+ "stamp:ch.lf#yjxig4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{灯落|ひおち}",
+  "en": "Lanternfall"
+ },
+ "stamp:ch.lf#1jey82q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}5{章|しょう}",
+  "en": "Chapter 5: the main story."
+ },
+ "stamp:side.lf#98yjm2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{灯落|ひおち} の {頼|たの}み",
+  "en": "Lanternfall: everyone helped"
+ },
+ "stamp:side.lf#ejybuh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}5{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 5 that your journey could have."
+ },
+ "stamp:ch.sa#bhirnd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{旅|たび} の {終|お}わり",
+  "en": "The end of the road"
+ },
+ "stamp:ch.sa#17m7069": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}6{章|しょう}",
+  "en": "Chapter 6: the main story."
+ },
+ "stamp:side.sa#qy0ove": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{最後|さいご} の {頼|たの}み",
+  "en": "The last requests"
+ },
+ "stamp:side.sa#1vj7ing": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{第|だい}6{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 6 that your journey could have."
+ },
+ "stamp:atlas.first#sf1ya9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{白紙|はくし} の {地図帳|ちずちょう}",
+  "en": "The Unwritten Atlas"
+ },
+ "stamp:atlas.first#qw7qu7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{探索|たんさく} から {帰|かえ}る",
+  "en": "Return from an expedition after the story."
+ },
+ "stamp:pt.shiritori#pzn4uy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "しりとり",
+  "en": "A word for a word"
+ },
+ "stamp:pt.shiritori#cz6joo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "しりとり を {最後|さいご} まで",
+  "en": "Finish a game of shiritori with your companion."
+ },
+ "stamp:pt.fishing#oandp5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{静|しず}か な {釣|つ}り",
+  "en": "A quiet cast"
+ },
+ "stamp:pt.fishing#1q4ghv3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{魚|さかな} を {釣|つ}る",
+  "en": "Catch a fish anywhere you may fish."
+ },
+ "stamp:ms.responses#tqh2r9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{色々|いろいろ} な {答|こた}え{方|かた}",
+  "en": "Many ways to answer"
+ },
+ "stamp:ms.responses#h9l9sx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{八|はち} つ の {答|こた}え{方|かた}",
+  "en": "Answer creatures with eight different responses."
+ },
+ "stamp:ms.askback#1n6ew6b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{聞|き}き{返|かえ}す",
+  "en": "Asking is speaking too"
+ },
+ "stamp:ms.askback#y62k6j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "もう {一度|いちど} {聞|き}く",
+  "en": "Ask someone to say it again, or more simply."
+ },
+ "stamp:ms.ways#1avfjt4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{別|べつ} の {道|みち}",
+  "en": "Another way through"
+ },
+ "stamp:ms.ways#qw52je": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{二|ふた} つ の やり{方|かた}",
+  "en": "Solve field puzzles in two different ways."
+ },
+ "stamp:can.ways#1cjs6jq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{道|みち} と {張|は}り{紙|がみ}",
+  "en": "Directions, signs and asking again"
+ },
+ "stamp:can.ways#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.giving#18m54se": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "あげる ・ もらう",
+  "en": "Who gives what to whom"
+ },
+ "stamp:can.giving#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.time#1caker9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{順番|じゅんばん} と {時|とき}",
+  "en": "Sequence and timing"
+ },
+ "stamp:can.time#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.asking#1xhqbry": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "お{願|ねが}い",
+  "en": "Requests, permission and intention"
+ },
+ "stamp:can.asking#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.reasons#uuk6b8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{理由|りゆう}",
+  "en": "Reasons and contrasts"
+ },
+ "stamp:can.reasons#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.conditions#miyr4m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "もし",
+  "en": "Conditions and exceptions"
+ },
+ "stamp:can.conditions#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.reference#1hy6nsv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{省略|しょうりゃく}",
+  "en": "What is meant, without saying it"
+ },
+ "stamp:can.reference#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.reports#u9nrgw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{伝|つた}える",
+  "en": "Reports, evidence and uncertainty"
+ },
+ "stamp:can.reports#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.register#p1zq0b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{丁寧|ていねい}さ",
+  "en": "Register and relationship"
+ },
+ "stamp:can.register#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stamp:can.everyday#tmefim": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{毎日|まいにち}",
+  "en": "Everyday things"
+ },
+ "stamp:can.everyday#11frgwq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "「できる こと」",
+  "en": "Show you can do one thing of this kind, in two different places."
+ },
+ "stand:reedwake#carm31": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{葦|あし}ノ{瀬|せ}",
+  "en": "Reedwake"
+ },
+ "stand:saltglass#1s7fuxh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{潮|しお}{硝子|がらす}",
+  "en": "Saltglass"
+ },
+ "stand:cinder#1d4ja3b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{灰実|はいみ}の{里|さと}",
+  "en": "Cinder Orchard"
+ },
+ "stand:snowbell#apgu19": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{雪鈴|ゆきすず}",
+  "en": "Snowbell"
+ },
+ "stand:lanternfall#yjxig4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
+  "jp": "{灯落|ひおち}",
+  "en": "Lanternfall"
+ }
+}

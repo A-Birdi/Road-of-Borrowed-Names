@@ -44,10 +44,14 @@ export default async (t) => {
     }
     rec.exits = m.exits.map((e) => [e.x, e.y, e.w, e.h, e.to, e.tx == null ? null : e.tx, e.ty == null ? null : e.ty, e.dir || null, !!e.door, e.if || null]);
     rec.structs = m.structs.map((s) => [s.x, s.y, s.w, s.h, s.door == null ? null : s.door, s.to || null]);
-    rec.triggers = h(m.triggers.map((q) => [q.x, q.y, q.w, q.h, q.if || null, q.scene || q.run || null]));
+    // (placements only the expansion can show are left out: the twelve-chapter edition's (ed>=2) and the
+    // development fixtures' (dev_verbs, dev_perform). A six-chapter game never meets them, so its geometry is the
+    // base's; the expansion's own tests check what they place: tests/unit/verbs, perform, records.)
+    const six = (x) => !(x.if && /(^|[&|])(ed>=2|dev_verbs|dev_perform)(?=$|[&|])/.test(String(x.if)));
+    rec.triggers = h(m.triggers.filter(six).map((q) => [q.x, q.y, q.w, q.h, q.if || null, q.scene || q.run || null]));
     rec.spawn = h(m.def.spawn || null);
-    rec.props = h(m.props.map((p) => { const d = RB.props.P[p.p] || {}; return [p.p, p.x, p.y, p.w || d.w, p.h || d.h, !!(d.block && p.block !== false), p.if || null, !!(p.scene || p.text)]; }));
-    rec.npcs = h((m.def.npcs || []).map((n) => [n.id, n.x, n.y, n.if || null]));
+    rec.props = h(m.props.filter(six).map((p) => { const d = RB.props.P[p.p] || {}; return [p.p, p.x, p.y, p.w || d.w, p.h || d.h, !!(d.block && p.block !== false), p.if || null, !!(p.scene || p.text)]; }));
+    rec.npcs = h((m.def.npcs || []).filter(six).map((n) => [n.id, n.x, n.y, n.if || null]));
     return rec;
   }
   const out = { base: '982c8df', maps: {}, props: {}, consts: {} };

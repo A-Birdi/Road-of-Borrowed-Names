@@ -3608,6 +3608,37 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
   .vb-stage { grid-template-columns: 44px minmax(0, 1fr) 44px; }
 }
 
+/* ==== src/styles/64_records.css ==== */
+/* The journey's records (expansion P06; src/ui/66c_records.js): the Road Stamp Book, the travel volume and the
+   traveller's seal, in the Ledger and on the Main Menu. Pressed stamps in their own ink; the rest dashed and faint,
+   in words as well as shape. */
+.rb-fam { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4em 0.8em; margin: 14px 0 6px; font-size: 1em; }
+.rb-fam .en { font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
+.rb-stamps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; }
+.rb-st { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 8px; align-items: center; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+.rb-st .rb-stamp { width: 52px; height: 52px; }
+.rb-st.pressed .rb-stamp { transform: rotate(-4deg); }
+.rb-st-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rb-st-t .en { font-size: 0.88em; color: var(--ink-2); }
+.rb-st-n { font-size: 0.82em; color: var(--ink-3); }
+.rb-st.ready .rb-st-n { color: var(--ink); font-weight: 600; }
+.rb-seal-box { display: flex; gap: 12px; align-items: center; margin: 4px 0 10px; }
+.rb-seal-box p { margin: 0 0 6px; }
+.rb-seal-form { display: grid; gap: 8px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: var(--r-1); margin-bottom: 10px; }
+.rb-seal-form fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.rb-seal-form legend { font-weight: 600; font-size: 0.9em; margin-bottom: 2px; }
+.rb-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.rb-pg { display: flex; flex-direction: column; gap: 6px; }
+.rb-frame { position: relative; border: 6px solid #f6efdc; box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 4px rgba(0,0,0,0.15); background: #e8dcc0; line-height: 0; }
+.rb-thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; display: block; max-width: 100%; }
+.rb-mark { position: absolute; right: 2px; bottom: 2px; line-height: 0; }
+.rb-mark .rb-seal { width: 28px; height: 28px; }
+.rb-pg-t { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }
+.rb-pg-t .en { font-size: 0.88em; color: var(--ink-2); }
+.rb-pg.veiled .rb-veil { aspect-ratio: 16 / 9; border: 1px dashed var(--ink-3); background: repeating-linear-gradient(-45deg, #efe4c8 0 6px, #e6d9b8 6px 12px); }
+.rb-ngp { margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--rule); }
+.folio-volume .rb-menu .opt { display: inline-flex; gap: 0.4em; align-items: center; margin: 4px 0 8px; }
+
 /* ==== src/styles/66_words.css ==== */
 /* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
  * (src/ui/66_words_pages.js). */
@@ -40768,6 +40799,225 @@ RB.content.company = RB.content.company || {
 })(RB.company);
 
 
+/* ==== src/engine/58b_records.js ==== */
+/* Records of a journey (expansion P06; docs/future/plan/09_RECORDS.md K1–K5, K8; Robin's H1, H3, R1, R2 §6; C-13,
+ * C-52, C-55, C-66): the Road Stamp Book, the travel volume and the traveller's own seal. They read what the journey
+ * did and keep their marks in the save's records (RB.records, src/engine/05b_foundations.js), which New Game+ carries.
+ *
+ *   RB.stampBook  stamps[id] = { family, title, criteria { en, jp }, hidden, chapter, when: cond | fn(s), stand,
+ *                 design: { shape, motif, ink } }; stands[id] = { map, x, y, title }.
+ *                 A stamp is *earned* when its criteria hold, and *pressed* (recorded, once) at its stand in the
+ *                 world, or at once when it has none. No stamp asks for an input mode, going without help, a
+ *                 streak, a time, a mastery star (C-13) or a festival score (C-55). Hidden stamps show neutral,
+ *                 spoiler-safe criteria ("A side story in Chapter 7").
+ *   RB.volume     the travel volume's pages: every illustrated sequence (src/ui/43_sequence.js), and pages content
+ *                 adds. *Witnessed* = the moment happened in this campaign (skipped or helped counts; no time spent
+ *                 watching is asked). Viewable in a campaign (R2 §6): what was witnessed, every page of a finished
+ *                 chapter (side stories included), the chosen companion's whole set once the story is finished,
+ *                 and special pages revealed with a confirmation. On the Main Menu everything is viewable behind a
+ *                 veil until revealed (K5; a device preference, never a witnessed mark).
+ *   RB.seal       the traveller's name seal (判子): a frame, a kana from their name, a style; drawn in red on every
+ *                 page they witnessed. Designed at creation, or later from the Ledger for older journeys.
+ * All of it appears in a journey of the twelve-chapter edition (and on the Main Menu once the edition ships or the
+ * development switch is on): a six-chapter journey's Ledger is unchanged until the release (lead's decision F-21). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+// ---- the gate: where the records appear before the release --------------------------------------------------------
+RB.recordsUI = {
+  inCampaign: (s) => !!(s && RB.edition && RB.edition.of(s) >= 2),
+  onMenu: () => !!(RB.edition && (RB.edition.devOn() || (RB.edition.shipped && RB.edition.shipped()))),
+};
+
+RB.stampBook = (function () {
+  'use strict';
+  const C = () => RB.content;
+  const S = () => C().stamps || {};
+  const ST = () => C().stampStands || {};
+  function earned(s, id) {
+    const d = S()[id];
+    if (!d || !s) return false;
+    try { return typeof d.when === 'function' ? !!d.when(s) : RB.state.test(s, d.when); } catch (e) { return false; }
+  }
+  const pressed = (s, id) => !!(s && RB.records && RB.records.has(s, 'stamps', id));
+  function press1(s, id, where) {
+    if (pressed(s, id) || !earned(s, id)) return false;
+    return RB.records.award(s, 'stamps', id, { at: where || null });
+  }
+  // at a stand: every stamp of that stand that has been earned and not yet pressed
+  function pressAt(s, standId) {
+    const out = [];
+    for (const id in S()) if (S()[id].stand === standId && press1(s, id, standId)) out.push(id);
+    return out;
+  }
+  // stamps without a stand are pressed as soon as they are earned (the story settles, a page is opened)
+  function settle(s) {
+    if (!RB.recordsUI.inCampaign(s)) return [];
+    const out = [];
+    for (const id in S()) if (!S()[id].stand && press1(s, id, null)) out.push(id);
+    return out;
+  }
+  // the earned stamps waiting at a stand
+  const ready = (s, standId) => Object.keys(S()).filter((id) => S()[id].stand === standId && earned(s, id) && !pressed(s, id));
+  // the book: every stamp in order, with its state ('pressed' | 'ready' (earned, its stand waiting) | 'open')
+  function book(s) {
+    const out = [];
+    for (const id of Object.keys(S())) {
+      const d = S()[id];
+      const st = pressed(s, id) ? 'pressed' : earned(s, id) && d.stand ? 'ready' : 'open';
+      const rec = st === 'pressed' ? (s.records.stamps[id] || {}) : null;
+      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, veiled: st === 'open' && !!d.hidden });
+    }
+    return out;
+  }
+  // a stand in the world: content places a prop with scene 'rb.stand' and o.stand = <id>
+  RB.hooks = RB.hooks || {};
+  RB.hooks.rb_stand = async (a, ctx) => {
+    const s = RB.game && RB.game.s;
+    const stand = (ctx && ctx.prop && ctx.prop.o && ctx.prop.o.stand) || a[0];
+    if (!s || !ST()[stand]) return;
+    const got = pressAt(s, stand);
+    const T = ST()[stand].title;
+    if (got.length) {
+      const names = got.map((id) => S()[id].title);
+      await RB.script.runInline([{ who: 'narr', jp: '{判|はん} を {押|お}した 。 ' + names.map((n) => '「' + n.jp + '」').join(' '), en: 'You press the stamp' + (got.length > 1 ? 's' : '') + ' into your book: ' + names.map((n) => n.en).join(', ') + '.' }]);
+      if (RB.save && RB.save.autosave) RB.save.autosave('progress');
+    } else {
+      await RB.script.runInline([{ who: 'narr', jp: (T ? T.jp + ' の ' : '') + '{判|はん} が {置|お}いて ある 。 {今|いま} は {押|お}す もの が ない 。', en: (T ? T.en + ': ' : '') + 'a stamp stand. Nothing to press here yet.' }]);
+    }
+  };
+  if (RB.bus) RB.bus.on('story:settled', () => { const s = RB.game && RB.game.s; if (s) settle(s); });
+  return { earned, pressed, pressAt, settle, ready, book, press1 };
+})();
+
+RB.volume = (function () {
+  'use strict';
+  const EXTRA = {}; // pages content adds (later chapters, side stories, the Hall …)
+  function add(p) { EXTRA[p.id] = p; return p; }
+  // every page: the illustrated sequences, then pages content added
+  function pages() {
+    const out = [];
+    if (RB.sequence && RB.sequence.ids) for (const id of RB.sequence.ids()) {
+      const d = RB.sequence.get(id);
+      if (!d || d.devOnly) continue;
+      out.push({ id, seq: id, scene: d.scene || null, chapter: d.chapter || 0, title: d.title, kind: d.kind || (d.chapter ? 'chapter' : 'prologue'), comp: d.comp || null, special: !!d.special, memory: !!d.memory });
+    }
+    for (const id in EXTRA) out.push(Object.assign({ kind: 'side' }, EXTRA[id]));
+    return out;
+  }
+  const page = (id) => pages().find((p) => p.id === id) || null;
+  // the moment happened in this campaign (a skipped sequence still counts: s.seq records every viewing; an older
+  // save that saw the scene before its sequence existed counts too)
+  function witnessed(s, p) {
+    if (!s || !p) return false;
+    if (p.seq && s.seq && s.seq[p.seq]) return true;
+    if (p.scene && s.seen && s.seen[p.scene]) return true;
+    if (p.flag && s.flags && s.flags[p.flag]) return true;
+    if (p.kind === 'prologue') return true; // every journey began with it
+    return false;
+  }
+  // a chapter's story is finished (by its old number, or a new chapter's key)
+  function chapterDone(s, ch) {
+    if (!s || !ch) return false;
+    const key = typeof ch === 'number' ? { 1: 'rw', 2: 'sg', 3: 'co', 4: 'sb', 5: 'lf', 6: 'sa' }[ch] : ch;
+    const flag = { rw: 'ch1_done', sg: 'ch2_done', mb1: 'mb1_done', mb2: 'mb2_done', co: 'ch3_done', sb: 'ch4_done', kr: 'kr_done', lf: 'ch5_done', ko: 'ko_done', cr: 'cr_done', yn: 'yn_done', sa: 'postgame' }[key];
+    return !!(flag && s.flags && s.flags[flag]);
+  }
+  // viewable inside this campaign (R2 §6)
+  function viewable(s, p) {
+    if (witnessed(s, p)) return true;
+    if (p.special) return !!(s.records && s.records.seals && s.records.seals['reveal:' + p.id]);
+    if (p.comp) return !!(s.flags && s.flags.postgame && s.comp === p.comp);
+    return chapterDone(s, p.chapter);
+  }
+  // a special page revealed in a campaign after its confirmation (kept with the journey's records)
+  function revealSpecial(s, id) { return RB.records.award(s, 'seals', 'reveal:' + id); }
+  // what the page says about how it is witnessed (H1: every page shows its criteria, spoiler-safe)
+  function criteria(p) {
+    if (p.criteria) return p.criteria;
+    if (p.kind === 'prologue') return { en: 'The prologue: every journey.', jp: '{序章|じょしょう}' };
+    if (p.comp) return { en: 'A moment with one companion, in Chapter ' + p.chapter + '.', jp: '{第|だい}' + p.chapter + '{章|しょう}' };
+    return { en: 'Chapter ' + p.chapter + ': the main story.', jp: '{第|だい}' + p.chapter + '{章|しょう}' };
+  }
+  // ---- the Main Menu (K4, K5): everything, veiled until revealed; the Continue save's marks ----------------------
+  // prefs: the device's viewing preference { unveiled: { id: true }, showAll: bool }; saves: [state…] read-only
+  function menuState(p, prefs, saves) {
+    const seenIn = (saves || []).filter((s) => witnessed(s, p)).length;
+    const open = !!(prefs && (prefs.showAll || (prefs.unveiled && prefs.unveiled[p.id]))) || seenIn > 0;
+    return { veiled: !open, seenIn };
+  }
+  // The beats of a page's sequence, read from its scene with a branch decided by `test` (the campaign's own
+  // conditions, read only; or a neutral fixture on the Main Menu). Nothing runs: no state command, no award (K6).
+  function beats(seqId, test, comp) {
+    const def = RB.sequence && RB.sequence.get(seqId);
+    const sc = def && def.scene && RB.content.scenes[def.scene];
+    if (!sc) return [];
+    const out = [];
+    let on = false, shot = null, phase = null;
+    for (const c of sc.cmds) {
+      if (c.if && !test(c.if)) continue;
+      const a = c.args || [];
+      if (c.op === 'sequence' && a[0] === seqId) { on = (a[1] || 'begin') === 'begin'; if (!on) break; continue; }
+      if (!on) continue;
+      if (c.op === 'shot') { if (a[0] !== shot) { shot = a[0]; phase = a[1] || null; } else if (a[1]) phase = a[1]; continue; }
+      if (c.op === 'say' && shot) out.push({ shot, phase, line: { who: c.who === 'comp' ? (comp || 'narr') : c.who, expr: c.expr || null, jp: c.jp, en: c.en } });
+    }
+    return out;
+  }
+  // a neutral fixture branch for the Main Menu: the page's own companion (or the first of the four), no flags
+  function fixtureTest(comp) {
+    return (cond) => String(cond).split('|').some((alt) => alt.split('&').every((t) => {
+      t = t.trim();
+      const neg = t[0] === '!'; if (neg) t = t.slice(1);
+      const v = t.startsWith('comp=') ? t.slice(5) === comp : false;
+      return neg ? !v : v;
+    }));
+  }
+  return { add, pages, page, witnessed, viewable, chapterDone, revealSpecial, criteria, menuState, beats, fixtureTest };
+})();
+
+RB.seal = (function () {
+  'use strict';
+  const FRAMES = ['round', 'square', 'oval', 'gourd'];
+  const STYLES = ['bold', 'fine'];
+  // the first kana of the traveller's name (their own reading); a sensible default for an older journey
+  function defaultKana(s) {
+    const src = (s && s.player && (s.player.nameJp || s.player.name)) || 'ア';
+    const ch = String(src).trim()[0] || 'ア';
+    return RB.kana && RB.kana.isKana && RB.kana.isKana(ch) ? ch : 'ア';
+  }
+  function of(s) {
+    const d = s && s.player && s.player.seal;
+    if (d && FRAMES.indexOf(d.frame) >= 0) return d;
+    return { frame: 'round', kana: defaultKana(s), style: 'bold', chosen: false };
+  }
+  // the traveller sets their seal (kept with the traveller: New Game+ carries it, C-66)
+  function set(s, d) {
+    if (!s || !s.player || !d) return null;
+    const k = String(d.kana || '').trim();
+    if (FRAMES.indexOf(d.frame) < 0 || STYLES.indexOf(d.style || 'bold') < 0 || !k || [...k].length > 2) return null;
+    if (![...k].every((c) => RB.kana && RB.kana.isKana(c))) return null;
+    s.player.seal = { frame: d.frame, kana: k, style: d.style || 'bold', chosen: true };
+    return s.player.seal;
+  }
+  // an SVG of the seal (crisp at any size); red ink, the kana in the middle
+  function svg(d, size, label) {
+    const z = size || 40;
+    const ink = '#b8322a', sw = d.style === 'fine' ? 2.2 : 3.4;
+    let frame;
+    if (d.frame === 'square') frame = '<rect x="4" y="4" width="32" height="32" rx="3" fill="none" stroke="' + ink + '" stroke-width="' + sw + '"/>';
+    else if (d.frame === 'oval') frame = '<ellipse cx="20" cy="20" rx="13" ry="17" fill="none" stroke="' + ink + '" stroke-width="' + sw + '"/>';
+    else if (d.frame === 'gourd') frame = '<path d="M20 3 C27 3 28 11 24 15 C32 17 34 27 30 32 C26 38 14 38 10 32 C6 27 8 17 16 15 C12 11 13 3 20 3 Z" fill="none" stroke="' + ink + '" stroke-width="' + sw + '"/>';
+    else frame = '<circle cx="20" cy="20" r="16" fill="none" stroke="' + ink + '" stroke-width="' + sw + '"/>';
+    const k = [...String(d.kana)];
+    const text = k.length > 1
+      ? '<text x="20" y="18" text-anchor="middle" font-size="12" fill="' + ink + '" font-weight="700">' + k[0] + '</text><text x="20" y="31" text-anchor="middle" font-size="12" fill="' + ink + '" font-weight="700">' + k[1] + '</text>'
+      : '<text x="20" y="26" text-anchor="middle" font-size="' + (d.frame === 'oval' ? 15 : 17) + '" fill="' + ink + '" font-weight="' + (d.style === 'fine' ? 500 : 700) + '">' + k[0] + '</text>';
+    return '<svg class="rb-seal" viewBox="0 0 40 40" width="' + z + '" height="' + z + '" role="img" aria-label="' + (label || 'Your seal') + '" lang="ja"><g opacity="0.92">' + frame + text + '</g></svg>';
+  }
+  return { FRAMES, STYLES, of, set, svg, defaultKana };
+})();
+
+
 /* ==== src/engine/59_cases.js ==== */
 /* Cases: permanent evidence records for the deduction cases of the Living
  * Company and Discovery addendum (§15, §16; docs/addendum/cases.md).
@@ -44279,7 +44529,7 @@ RB.worldKit = (function () {
     return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v), x - 4, y) }));
   }
 
-  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, someoneBehind, BRIEF, vnoise };
+  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, vnoise };
 })();
 
 
@@ -44724,6 +44974,12 @@ RB.perform = (function () {
   };
   // the person's mannerism class gives a default
   const BY_CLASS = { scholar: ['thoughtful'], official: ['brisk'], performer: ['showy'], elder: ['unhurried'], keeper: ['quiet'], child: ['brisk'] };
+  // the work each kind of person is suggested for (V5: profession supplies the task); content chooses, this suggests
+  const WORK = {
+    official: ['sort'], scholar: ['read', 'sort'], clerk: ['sort', 'carry'], host: ['sweep', 'tend'], craft: ['carry', 'tie', 'grind'],
+    elder: ['read', 'sweep'], child: [], keeper: ['tend', 'sweep', 'read'], traveller: ['tie'], performer: ['read'], nonhuman: [], town: ['sweep', 'carry'],
+  };
+  const suggest = (cls) => (WORK[cls] || WORK.town).slice();
 
   // ---- the catalogue -----------------------------------------------------------------------------------------------
   function define(id, c) {
@@ -44909,7 +45165,7 @@ RB.perform = (function () {
     if (!(RB.game && RB.game.reducedMotion && RB.game.reducedMotion())) await new Promise((r) => setTimeout(r, len));
   };
 
-  return { define, get, list, validate, frameOf, push, working, where, free, check, TRAITS, BY_CLASS, NEW_PROPS, readyProps, actOf, roundOf };
+  return { define, get, list, validate, frameOf, push, working, where, free, check, TRAITS, BY_CLASS, WORK, suggest, NEW_PROPS, readyProps, actOf, roundOf };
 })();
 
 // ---- the catalogue: complete actions (V5's subjects) ----------------------------------------------------------------
@@ -59167,6 +59423,8 @@ RB.ui.title = (function () {
       '<button class="tm go hidden" data-a="continue">' + I('main') + '<span class="tl"><span class="lbl">Continue</span><span class="sub" data-cont></span></span></button>' +
       '<button class="tm" data-a="new">' + I('newpage') + '<span class="lbl">New Game</span></button>' +
       '<button class="tm" data-a="load">' + I('ledger') + '<span class="lbl">Load</span></button>' +
+      // the travel volume (expansion K4): once the twelve-chapter edition ships, or with its development switch on
+      (RB.recordsUI && RB.recordsUI.onMenu() ? '<button class="tm" data-a="volume">' + I('book') + '<span class="lbl">Travel volume</span></button>' : '') +
       '<button class="tm" data-a="settings">' + I('settings') + '<span class="lbl">Settings</span></button>' +
       '<button class="tm" data-a="about">' + I('info') + '<span class="lbl">About &amp; credits</span></button>' +
       '</div>' +
@@ -59200,6 +59458,7 @@ RB.ui.title = (function () {
       if (a === 'load') slots('load');
       if (a === 'settings') RB.ui.settings.open();
       if (a === 'about') about();
+      if (a === 'volume' && RB.ui.records) RB.ui.records.menuVolume();
       if (a === 'continue') {
         const list = await RB.save.list();
         const s = newest(list);
@@ -60272,6 +60531,8 @@ RB.ui.create = (function () {
     RB.game.setBase('create');
     const from = await offerCarryover();
     if (from) {
+      // the ending journey's companion says goodbye (C-66; twelve-chapter journeys, F-21)
+      if (RB.ui.ngplus && RB.recordsUI && RB.recordsUI.inCampaign(from)) await RB.ui.ngplus.farewell(from);
       const s = carry(from);
       RB.render.setOverride(null);
       await RB.game.startNewCampaign(slot, s);
@@ -68535,6 +68796,7 @@ RB.ui.menu = (function () {
     cases: ['journey', 'cases'], keepsakes: ['journey', 'keepsakes'], bookmarks: ['words', 'bookmarks'], creatures: ['words', 'creatures'], known: ['map', 'known'],
     practice: ['words', 'practice'], letters: ['words', 'letters'], compare: ['words', 'compare'], // practice suite B pages
     fishing: ['journey', 'fishing'], // A Quiet Cast's Fishing notes (src/ui/86_fishing_notes.js)
+    stamps: ['journey', 'stamps'], volume: ['journey', 'volume'], // the journey's records (src/ui/66c_records.js)
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views
@@ -75775,6 +76037,358 @@ RB.ui.mastery = (function () {
     });
   }
   return { itemHtml, masteryHtml, canDoHtml, canDoState, runExam, labelOf };
+})();
+
+
+/* ==== src/ui/66c_records.js ==== */
+/* The journey's records in the Wayfarer's Ledger and on the Main Menu (expansion P06; K1–K5, K6 tier 1, K8; the
+ * engines in src/engine/58b_records.js). Journey › Stamp book and Journey › Travel volume appear in journeys of the
+ * twelve-chapter edition (F-21); the Main Menu's Travel volume appears once the edition ships or the development
+ * switch is on.
+ *
+ *   Stamp book     every stamp in its family: pressed (the design in ink, where and when), ready (earned; its stand
+ *                  waits in a town), or open (its criteria; a hidden one in neutral words). No counters to fill, no
+ *                  percentages.
+ *   Travel volume  your seal (and changing it); every page of the volume: viewable ones with their picture, the
+ *                  seal on those you witnessed and "Watch it again" (read-only: nothing in the journey changes);
+ *                  the rest as their criteria only, never their picture or title. A special page is revealed after
+ *                  a confirmation.
+ *   Main Menu      everything (H1), veiled until revealed (K5: one page or a whole chapter, after a one-line
+ *                  confirmation; re-veil; "Show all illustrations unveiled"); the Continue save's look and seals,
+ *                  fixed while the volume is open; a replay uses a neutral fixture branch. Nothing is written to
+ *                  any save: the reveals are a device preference. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.records = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const J = (x) => (x && x.jp ? RB.ui.jhtml(x.jp) : '');
+  const both = (x) => (x ? '<span class="rb-jp">' + J(x) + '</span><span class="en">' + esc(x.en || '') + '</span>' : '');
+  const FAMILY = [
+    ['chapter', 'Chapters', '{章|しょう}'], ['region', 'People helped', '{頼|たの}み'], ['dungeon', 'Places explored', '{探索|たんさく}'],
+    ['pastime', 'Pastimes', '{遊|あそ}び'], ['milestone', 'Along the way', '{道|みち}すがら'], ['language', 'What I can do', 'できる こと'],
+  ];
+
+  // ---- a stamp's design (SVG: a shape, a motif, an ink; pictures, never characters) ---------------------------------
+  const MOTIF = {
+    bridge: 'M8 26 Q20 12 32 26 M8 26 H32 M12 26 V30 M28 26 V30',
+    wave: 'M6 22 Q11 16 16 22 T26 22 T36 22 M6 28 Q11 22 16 28 T26 28 T36 28',
+    leaf: 'M20 8 C30 14 30 26 20 32 C10 26 10 14 20 8 Z M20 10 V31',
+    bell: 'M14 28 C14 16 16 12 20 12 C24 12 26 16 26 28 Z M12 28 H28 M20 28 V31',
+    lantern: 'M15 12 H25 M14 14 H26 V27 H14 Z M16 27 V30 H24 V27 M20 9 V12',
+    book: 'M8 12 Q14 10 20 13 Q26 10 32 12 V29 Q26 27 20 30 Q14 27 8 29 Z M20 13 V30',
+    chain: 'M8 20 a4 4 0 1 1 8 0 a4 4 0 1 1 -8 0 M16 20 a4 4 0 1 1 8 0 a4 4 0 1 1 -8 0 M24 20 a4 4 0 1 1 8 0 a4 4 0 1 1 -8 0',
+    fish: 'M8 20 Q18 10 30 20 Q18 30 8 20 Z M30 20 L35 15 V25 Z',
+    brush: 'M26 8 L30 12 L16 26 L12 22 Z M12 22 Q7 27 9 31 Q13 33 16 26',
+    ear: 'M14 14 Q20 6 27 13 Q30 20 23 24 Q20 27 22 31 M18 17 Q21 14 23 18',
+    path: 'M10 32 Q14 22 20 20 Q27 18 30 8 M14 30 L12 28 M28 12 L31 9',
+  };
+  function stampSvg(d, state, label) {
+    const ink = state === 'pressed' ? d.design.ink : '#8a7a62';
+    const op = state === 'pressed' ? 0.95 : 0.55, dash = state === 'pressed' ? '' : ' stroke-dasharray="3 2"';
+    let shape;
+    const sh = d.design.shape;
+    if (sh === 'square') shape = '<rect x="3" y="3" width="34" height="34" rx="4" fill="none" stroke="' + ink + '" stroke-width="2.6"' + dash + '/>';
+    else if (sh === 'oval') shape = '<ellipse cx="20" cy="20" rx="17" ry="14" fill="none" stroke="' + ink + '" stroke-width="2.6"' + dash + '/>';
+    else if (sh === 'hexagon') shape = '<path d="M20 2 L36 11 V29 L20 38 L4 29 V11 Z" fill="none" stroke="' + ink + '" stroke-width="2.6"' + dash + '/>';
+    else shape = '<circle cx="20" cy="20" r="17" fill="none" stroke="' + ink + '" stroke-width="2.6"' + dash + '/><circle cx="20" cy="20" r="14" fill="none" stroke="' + ink + '" stroke-width="1"' + dash + '/>';
+    const motif = state === 'open' && d.hidden ? '<text x="20" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="' + ink + '">?</text>' : '<path d="' + (MOTIF[d.design.motif] || MOTIF.path) + '" fill="none" stroke="' + ink + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    return '<svg class="rb-stamp ' + state + '" viewBox="0 0 40 40" role="img" aria-label="' + esc(label) + '"><g opacity="' + op + '">' + shape + motif + '</g></svg>';
+  }
+
+  // ---- Journey › Stamp book ---------------------------------------------------------------------------------------
+  const STATE_WORD = { pressed: 'Pressed', ready: 'Earned: ready to press', open: 'Not yet' };
+  function stamps(A, B, two, api) {
+    const s = api.s;
+    RB.stampBook.settle(s);
+    const book = RB.stampBook.book(s);
+    const stands = RB.content.stampStands || {};
+    const fmt = (t) => { try { return new Date(t).toLocaleDateString(); } catch (e) { return ''; } };
+    let h = '<h3>' + I('ledger') + ' The Road Stamp Book <span class="count">' + book.filter((x) => x.state === 'pressed').length + ' pressed</span></h3>' +
+      '<p class="muted small">A stamp for each moment worth keeping. Many are pressed at a stand in the town where it happened; the rest are pressed as soon as they are earned. None asks for a way of answering or for doing without help.</p>';
+    for (const [fam, en, jp] of FAMILY) {
+      const L = book.filter((x) => x.d.family === fam);
+      if (!L.length) continue;
+      h += '<h4 class="rb-fam">' + RB.ui.jhtml(jp) + ' <span class="en">' + esc(en) + '</span></h4><ul class="rb-stamps">' + L.map((x) => {
+        const st = stands[x.d.stand];
+        const title = x.veiled ? { en: 'A stamp of the story', jp: '{物語|ものがたり} の {判|はん}' } : x.d.title;
+        const note = x.state === 'pressed' ? 'Pressed' + (x.at && stands[x.at] ? ' at ' + stands[x.at].title.en : '') + (x.t ? ', ' + fmt(x.t) : '')
+          : x.state === 'ready' ? 'Earned: press it at the stand in ' + (st ? st.title.en : 'its town') + '.'
+          : x.d.criteria.en;
+        return '<li class="rb-st ' + x.state + '" data-stamp="' + esc(x.id) + '">' + stampSvg(x.d, x.state, STATE_WORD[x.state] + ': ' + title.en) +
+          '<div class="rb-st-t">' + both(title) + '<span class="rb-st-n">' + esc(note) + '</span></div></li>';
+      }).join('') + '</ul>';
+    }
+    if (two) { A.innerHTML = h; B.innerHTML = '<p class="muted">Stands are found in each town, near where you arrive. A stand presses every stamp of its town that you have earned.</p>'; }
+    else A.innerHTML = h;
+  }
+
+  // ---- your seal -------------------------------------------------------------------------------------------------
+  const V = { seal: null, status: '' };
+  function sealBlock(s) {
+    const cur = RB.seal.of(s);
+    if (!V.seal) return '<div class="rb-seal-box">' + RB.seal.svg(cur, 56, 'Your seal: ' + cur.kana) + '<div><p>Your seal marks every page you witnessed. In this world a seal is a name: you press it as yourself.</p>' +
+      '<button type="button" class="pbtn" data-a="seal-edit">' + I('note') + '<span>' + (cur.chosen ? 'Change your seal' : 'Design your seal') + '</span></button></div></div>';
+    const d = V.seal, name = String((s.player && (s.player.nameJp || s.player.name)) || '');
+    const kanaOpts = [...new Set([...name].filter((c) => RB.kana && RB.kana.isKana(c)))].slice(0, 8);
+    if (kanaOpts.indexOf(d.kana) < 0 && d.kana) kanaOpts.unshift(d.kana);
+    return '<div class="rb-seal-form" role="group" aria-label="Design your seal"><div class="rb-seal-prev">' + RB.seal.svg(d, 72, 'Preview of your seal') + '</div>' +
+      '<fieldset><legend>Frame</legend>' + RB.seal.FRAMES.map((f) => '<label class="opt"><input type="radio" name="rb-frame" value="' + f + '"' + (d.frame === f ? ' checked' : '') + '><span>' + esc({ round: 'Round', square: 'Square', oval: 'Oval', gourd: 'Gourd' }[f]) + '</span></label>').join('') + '</fieldset>' +
+      '<fieldset><legend>From your name</legend>' + kanaOpts.map((k) => '<label class="opt"><input type="radio" name="rb-kana" value="' + esc(k) + '"' + (d.kana === k ? ' checked' : '') + '><span lang="ja">' + esc(k) + '</span></label>').join('') + '</fieldset>' +
+      '<fieldset><legend>Brush</legend>' + RB.seal.STYLES.map((f) => '<label class="opt"><input type="radio" name="rb-style" value="' + f + '"' + (d.style === f ? ' checked' : '') + '><span>' + (f === 'bold' ? 'Bold' : 'Fine') + '</span></label>').join('') + '</fieldset>' +
+      '<div class="cs-acts"><button type="button" class="pbtn primary" data-a="seal-save">' + I('save') + '<span>Keep this seal</span></button><button type="button" class="pbtn" data-a="seal-cancel"><span>Cancel</span></button></div></div>';
+  }
+
+  // ---- Journey › Travel volume ----------------------------------------------------------------------------------
+  function thumb(p, cast, test) {
+    const def = RB.sequence.get(p.seq);
+    if (!def) return '';
+    const shot = Object.keys(def.shots)[0];
+    const ph = def.shots[shot].phases;
+    const phase = Array.isArray(ph) ? (ph[ph.length - 1] || [])[0] || (ph[ph.length - 1] || {}).id : Object.keys(ph || {}).pop();
+    return '<canvas class="rb-thumb" width="160" height="90" data-seq="' + esc(p.seq) + '" data-shot="' + esc(shot) + '" data-phase="' + esc(phase || '') + '" aria-hidden="true"></canvas>';
+  }
+  function paintThumbs(root, cast, test) {
+    for (const c of root.querySelectorAll('canvas.rb-thumb')) {
+      try {
+        const g = c.getContext('2d');
+        RB.sequence.drawAt(g, c.width, c.height, { seq: c.dataset.seq, shot: c.dataset.shot, phase: c.dataset.phase || undefined, k: 1, vb: c.height, t: 4000, cast, test });
+      } catch (e) { /* a picture that cannot be drawn small stays blank paper */ }
+    }
+  }
+  const castOf = (s) => ({ pc: RB.equip ? RB.equip.look(s) : s.player.look, comp: s.comp ? { id: s.comp, look: (RB.content.chars[s.comp] || {}).look || {} } : null });
+  function volume(A, B, two, api) {
+    const s = api.s;
+    const pages = RB.volume.pages();
+    let h = '<h3>' + I('book') + ' The travel volume</h3>' + sealBlock(s) + (V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '');
+    const byCh = {};
+    for (const p of pages) (byCh[p.chapter] = byCh[p.chapter] || []).push(p);
+    for (const ch of Object.keys(byCh).sort((a, b) => a - b)) {
+      h += '<h4 class="rb-fam">' + (+ch ? RB.ui.jhtml('{第|だい}' + ch + '{章|しょう}') + ' <span class="en">Chapter ' + ch + '</span>' : RB.ui.jhtml('{序章|じょしょう}') + ' <span class="en">Prologue</span>') + '</h4><ul class="rb-pages">';
+      for (const p of byCh[ch]) {
+        const ok = RB.volume.viewable(s, p), w = RB.volume.witnessed(s, p);
+        if (!ok) {
+          h += '<li class="rb-pg veiled"><div class="rb-veil" aria-hidden="true"></div><div class="rb-pg-t"><span class="en">' + esc(RB.volume.criteria(p).en) + '</span>' +
+            (p.special ? '<button type="button" class="pbtn small" data-a="reveal" data-page="' + esc(p.id) + '">Reveal…</button>' : '') + '</div></li>';
+          continue;
+        }
+        h += '<li class="rb-pg' + (w ? ' witnessed' : '') + '"><div class="rb-frame">' + thumb(p) + (w ? '<span class="rb-mark">' + RB.seal.svg(RB.seal.of(s), 28, 'Witnessed in this journey') + '</span>' : '') + '</div>' +
+          '<div class="rb-pg-t">' + both(p.title) + '<span class="rb-st-n">' + esc(w ? 'You were there.' : RB.volume.criteria(p).en) + '</span>' +
+          (p.scene ? '<button type="button" class="pbtn small" data-a="watch" data-page="' + esc(p.id) + '">' + I('next') + '<span>Watch it again</span></button>' : '') + '</div></li>';
+      }
+      h += '</ul>';
+    }
+    // after the story: a new journey with what carries (K9)
+    if (s.flags.postgame && RB.ui.ngplus) h += '<div class="rb-ngp"><h4 class="rb-fam">' + RB.ui.jhtml('{新|あたら}しい {旅|たび}') + ' <span class="en">A new journey</span></h4><p class="muted small">New Game+ begins the story again with what you have learned, your records and this volume.</p><button type="button" class="pbtn" data-a="ngplus">' + I('journey') + '<span>Begin New Game+…</span></button></div>';
+    A.innerHTML = h;
+    if (two) B.innerHTML = '<p class="muted">Every chapter you finish opens all of its pages, side stories included; finishing the story opens all of your companion\'s. Watching a page again changes nothing in your journey.</p>';
+    paintThumbs(A, castOf(s), (cond) => RB.state.test(s, cond));
+    A.onclick = (e) => click(e, s, api);
+    A.onchange = (e) => {
+      if (!V.seal) return;
+      const t = e.target;
+      if (t.name === 'rb-frame') V.seal.frame = t.value;
+      if (t.name === 'rb-kana') V.seal.kana = t.value;
+      if (t.name === 'rb-style') V.seal.style = t.value;
+      const pv = A.querySelector('.rb-seal-prev');
+      if (pv) pv.innerHTML = RB.seal.svg(V.seal, 72, 'Preview of your seal');
+    };
+  }
+  async function click(e, s, api) {
+    const b = e.target.closest('[data-a]');
+    if (!b) return;
+    const a = b.dataset.a;
+    if (a === 'ngplus') { RB.ui.ngplus.begin(s, RB.save.current ? RB.save.current().slot : null); return; }
+    if (a === 'seal-edit') { V.seal = Object.assign({}, RB.seal.of(s)); api.render(); return; }
+    if (a === 'seal-cancel') { V.seal = null; api.render(); return; }
+    if (a === 'seal-save') {
+      const r = RB.seal.set(s, V.seal);
+      V.seal = null; V.status = r ? 'Your seal is kept.' : 'That seal could not be kept.';
+      if (r && RB.save && RB.save.autosave) RB.save.autosave('progress');
+      api.render(); return;
+    }
+    if (a === 'reveal') {
+      const p = RB.volume.page(b.dataset.page);
+      const r = await RB.ui.confirm('This shows a special moment (' + RB.volume.criteria(p).en + ') before you reach it. Reveal it?', ['Reveal', 'Keep it veiled']);
+      if (r === 0) { RB.volume.revealSpecial(s, p.id); api.render(); }
+      return;
+    }
+    if (a === 'watch') {
+      const p = RB.volume.page(b.dataset.page);
+      if (!p || !RB.volume.viewable(s, p)) return;
+      if (api.remember) api.remember();
+      RB.ui.menu.close();
+      await watch(p, castOf(s), (cond) => RB.state.test(s, cond), s.comp);
+      if (RB.game.s === s) RB.ui.menu.open('volume');
+    }
+  }
+  // a read-only replay: the beats are read from the scene, nothing runs (K6, HX49)
+  function watch(p, cast, test, comp) {
+    const beats = RB.volume.beats(p.seq, test, comp);
+    if (!beats.length) return Promise.resolve(null);
+    return RB.sequence.view({ seq: p.seq, beats, cast, label: 'Replay: ' + p.title.en, name: 'seq-replay', seen: () => true, skip: { label: 'Close' }, replay: true, speakers: true });
+  }
+
+  // ---- the Main Menu's travel volume (K4, K5) -----------------------------------------------------------------------
+  async function menuVolume() {
+    if (!RB.recordsUI.onMenu()) return;
+    const list = await RB.save.list();
+    const live = list.filter((x) => !x.empty && !x.corrupt);
+    const saves = [];
+    for (const x of live) { try { const r = await RB.save.read(x.slot, x.manual ? 'manual' : 'auto'); if (r && r.state) saves.push({ slot: x.slot, s: r.state, t: (x.manual || x.auto || {}).savedAt || 0 }); } catch (e) { /* an unreadable slot shows nothing */ } }
+    saves.sort((a, b) => b.t - a.t);
+    const cont = saves[0] ? saves[0].s : null; // the Continue save: its look and its seals, fixed while open
+    const look = cont ? (RB.equip ? RB.equip.look(cont) : cont.player.look) : (RB.ui.create && RB.ui.create.defaultLook ? RB.ui.create.defaultLook() : { skin: 2, hair: 'short', hairColor: 3, outfit: 0, acc: [] });
+    const settings = RB.game.settings;
+    settings.volume = settings.volume || { unveiled: {}, showAll: false };
+    const prefs = settings.volume;
+    let close = null;
+    const fr = RB.ui.folio.frame({ cls: 'folio-volume', onClose: () => close() });
+    fr.setTitle('The travel volume', cont ? 'With the Continue journey\'s seals' : 'No journey yet');
+    const layer = { el: fr.scrim, name: 'menu-volume' };
+    close = () => { RB.ui.popLayer(layer); };
+    layer.onCancel = close;
+    function render() {
+      const pages = RB.volume.pages();
+      const byCh = {};
+      for (const p of pages) (byCh[p.chapter] = byCh[p.chapter] || []).push(p);
+      let h = '<section class="leaf rb-menu"><p class="muted small">Every illustration is here. Those no journey has reached yet are veiled until you choose to see them.</p>' +
+        '<label class="opt"><input type="checkbox" data-a="showall"' + (prefs.showAll ? ' checked' : '') + '><span>Show all illustrations unveiled</span></label>';
+      for (const ch of Object.keys(byCh).sort((a, b) => a - b)) {
+        const L = byCh[ch];
+        const anyVeiled = L.some((p) => RB.volume.menuState(p, prefs, saves.map((x) => x.s)).veiled);
+        h += '<h4 class="rb-fam">' + (+ch ? 'Chapter ' + ch : 'Prologue') + (anyVeiled ? ' <button type="button" class="pbtn small" data-a="revealch" data-ch="' + ch + '">Reveal this chapter…</button>' : '') + '</h4><ul class="rb-pages">';
+        for (const p of L) {
+          const st = RB.volume.menuState(p, prefs, saves.map((x) => x.s));
+          if (st.veiled) {
+            h += '<li class="rb-pg veiled"><div class="rb-veil" aria-hidden="true"></div><div class="rb-pg-t"><span class="en">' + esc(RB.volume.criteria(p).en) + '</span><button type="button" class="pbtn small" data-a="reveal" data-page="' + esc(p.id) + '">Reveal…</button></div></li>';
+            continue;
+          }
+          const sealed = cont && RB.volume.witnessed(cont, p);
+          h += '<li class="rb-pg' + (sealed ? ' witnessed' : '') + '"><div class="rb-frame">' + thumb(p) + (sealed ? '<span class="rb-mark">' + RB.seal.svg(RB.seal.of(cont), 28, 'Witnessed in the Continue journey') + '</span>' : '') + '</div>' +
+            '<div class="rb-pg-t">' + both(p.title) + '<span class="rb-st-n">' + esc(RB.volume.criteria(p).en) + (st.seenIn ? ' Seen in ' + st.seenIn + ' journey' + (st.seenIn > 1 ? 's' : '') + '.' : '') + '</span>' +
+            (p.scene ? '<button type="button" class="pbtn small" data-a="watch" data-page="' + esc(p.id) + '">' + I('next') + '<span>Watch</span></button>' : '') +
+            (prefs.unveiled[p.id] && !st.seenIn ? '<button type="button" class="pbtn small quiet" data-a="reveil" data-page="' + esc(p.id) + '">Veil again</button>' : '') + '</div></li>';
+        }
+        h += '</ul>';
+      }
+      fr.box.innerHTML = h + '</section>';
+      const comp = cont && cont.comp;
+      paintThumbs(fr.box, { pc: look, comp: comp ? { id: comp, look: (RB.content.chars[comp] || {}).look || {} } : null }, RB.volume.fixtureTest(comp || 'mio'));
+    }
+    fr.box.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-a]');
+      if (!b) return;
+      const a = b.dataset.a;
+      if (a === 'reveal' || a === 'revealch') {
+        const ch = a === 'revealch' ? +b.dataset.ch : RB.volume.page(b.dataset.page).chapter;
+        const r = await RB.ui.confirm('This shows a moment from ' + (ch ? 'Chapter ' + ch : 'the prologue') + '. Reveal ' + (a === 'revealch' ? 'the whole chapter' : 'it') + '?', ['Reveal', 'Keep it veiled']);
+        if (r !== 0) return;
+        for (const p of RB.volume.pages()) if (a === 'revealch' ? p.chapter === ch : p.id === b.dataset.page) prefs.unveiled[p.id] = true;
+        await RB.game.saveSettings(); render(); return;
+      }
+      if (a === 'reveil') { delete prefs.unveiled[b.dataset.page]; await RB.game.saveSettings(); render(); return; }
+      if (a === 'watch') {
+        const p = RB.volume.page(b.dataset.page);
+        const comp = p.comp || (cont && cont.comp) || 'mio';
+        fr.scrim.classList.add('hidden');
+        await watch(p, { pc: look, comp: { id: comp, look: (RB.content.chars[comp] || {}).look || {} } }, RB.volume.fixtureTest(comp), comp);
+        fr.scrim.classList.remove('hidden');
+      }
+    });
+    fr.box.addEventListener('change', async (e) => {
+      if (e.target.dataset.a === 'showall') { prefs.showAll = e.target.checked; await RB.game.saveSettings(); render(); }
+    });
+    render();
+    RB.ui.pushLayer(layer);
+    return { close };
+  }
+
+  RB.ui.menu.addPage('journey', { id: 'stamps', en: 'Stamp book', icon: 'ledger', available: (s) => RB.recordsUI.inCampaign(s), render: stamps });
+  RB.ui.menu.addPage('journey', { id: 'volume', en: 'Travel volume', icon: 'book', available: (s) => RB.recordsUI.inCampaign(s), render: volume });
+  return { stamps, volume, menuVolume, watch, stampSvg, V };
+})();
+
+
+/* ==== src/ui/66d_ngplus.js ==== */
+/* New Game+ from the end of a journey (expansion P06, K9; Robin's C-54, C-66): offered when the story ends (and from
+ * Journey › Travel volume afterwards), in a journey of the twelve-chapter edition (F-21). What carries is defined
+ * once (RB.ngplus.carry, src/engine/05b_foundations.js). The new journey goes to the slot you choose: this journey's
+ * own (the finished story leaves the slot) or another (erasing what it held, after its own confirmation; an empty
+ * one asks nothing). Whichever you choose, the farewell is the ending journey's companion's (C-66), and it is only
+ * spoken: nothing in the ending journey changes. The Inn Ledger's New Game+ (src/ui/40_create.js) plays the same
+ * farewell. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui.ngplus = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  // The farewell: the companion of the journey that ended, then a line of narration. Spoken in that journey's
+  // context (names and looks), read only.
+  async function farewell(from) {
+    if (!from) return;
+    const lines = ((RB.content.ngFarewell || {})[from.comp] || []).concat(RB.content.ngFarewellEnd ? [RB.content.ngFarewellEnd] : []);
+    if (!lines.length) return;
+    const keep = RB.game.s;
+    RB.game.s = from;
+    RB.game.pushMode('dialogue');
+    try { for (const l of lines) await RB.ui.dialogue.say(Object.assign({}, l)); }
+    finally { RB.ui.dialogue.hide(); RB.game.popMode('dialogue'); RB.game.s = keep; }
+  }
+  // which slot: [{ slot, label, origin, empty }] → the chosen slot, or null
+  function chooseSlot(list, origin) {
+    return new Promise((resolve) => {
+      let close = null;
+      const fr = RB.ui.folio.frame({ cls: 'folio-ngplus', onClose: () => close(null) });
+      fr.setTitle('New Game+', 'Choose where the new journey is kept');
+      fr.box.innerHTML = '<section class="leaf cr-ngplus"><p id="ngp-d">The new journey carries your learning record and stars, stamps and seals, the illustrations you witnessed, your pastime records, noted words, kept sentences and your traveller as they are. Story, companion, quests and items start fresh.</p><ul class="ng-list">' +
+        list.map((x) => {
+          const m = x.meta || {};
+          const what = x.empty ? 'Empty' : x.slot === origin ? 'This journey (finished): the new one takes its place' : (m.name || 'A journey') + (m.comp ? ' & ' + m.comp : '') + (m.chapter ? ', Chapter ' + m.chapter : '') + ': erased';
+          return '<li><button type="button" class="ng-opt" data-slot="' + x.slot + '"><span class="mk">' + I(x.empty ? 'journey' : x.slot === origin ? 'lantern' : 'warn') + '</span><span class="t">Slot ' + x.slot + '</span><span class="d">' + esc(what) + '</span></button></li>';
+        }).join('') + '</ul></section>';
+      const layer = { el: fr.scrim, name: 'ngplus-slot' };
+      close = (v) => { RB.ui.popLayer(layer); resolve(v); };
+      layer.onCancel = () => close(null);
+      fr.box.addEventListener('click', (e) => { const b = e.target.closest('[data-slot]'); if (b) { RB.audio && RB.audio.sfx('cursor'); close(+b.dataset.slot); } });
+      RB.ui.pushLayer(layer);
+    });
+  }
+  // the whole step, from a finished journey `from` (kept in slot `origin`, or none)
+  async function begin(from, origin) {
+    if (!from || !(from.flags && from.flags.postgame)) return false;
+    const list = await RB.save.list();
+    const slot = await chooseSlot(list, origin);
+    if (slot == null) return false;
+    const x = list[slot - 1];
+    if (!x.empty) {
+      const msg = slot === origin
+        ? 'The new journey will be kept in slot ' + slot + ' in place of this finished one. What carries goes with you; the finished story itself will no longer be in the slot.'
+        : 'Slot ' + slot + ' holds ' + ((x.meta && x.meta.name) ? x.meta.name + '\'s journey' : 'a journey') + '. Starting the new journey there erases it and its autosaves.';
+      const r = await RB.ui.confirm(msg, [slot === origin ? 'Begin here' : 'Erase and begin', 'Choose again'], { danger: slot !== origin });
+      if (r !== 0) return begin(from, origin);
+    }
+    await farewell(from);
+    if (!x.empty) await RB.save.del(slot);
+    const s = RB.ui.create.carry(from);
+    if (RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen()) RB.ui.menu.close();
+    await RB.game.startNewCampaign(slot, s);
+    return true;
+  }
+  // offered once when the story ends (the story settles with the journey finished)
+  async function offer(s) {
+    if (!s || !RB.recordsUI.inCampaign(s) || !s.flags.postgame || s.flags.ngp_offered) return;
+    s.flags.ngp_offered = true;
+    const r = await RB.ui.confirm('Your story is complete. Begin a new journey now with New Game+? You can also begin it later from Journey › Travel volume.', ['Not now', 'Begin New Game+…']);
+    if (r === 1) begin(s, RB.save.current ? RB.save.current().slot : null);
+  }
+  if (RB.bus) RB.bus.on('story:settled', (e) => {
+    const s = RB.game && RB.game.s;
+    if (s && s.flags && s.flags.postgame && !s.flags.ngp_offered && RB.recordsUI.inCampaign(s) && e && e.mode === 'world') setTimeout(() => { if (RB.game.mode() === 'world') offer(s); }, 400);
+  });
+  return { farewell, chooseSlot, begin, offer };
 })();
 
 
@@ -107281,7 +107895,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     yn: 'yn',    // Steamhollow, Chapter 11
   };
   // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
-  C.reviewPrefixes = ['ws'];
+  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb'];
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
   C.reveals = C.reveals || {};
 })(RB.content);
@@ -154069,6 +154683,170 @@ narr: {郵便|ゆうびん} の {箱|はこ} 。 {横|よこ} の {棚|たな} �
 })(RB.content);
 
 
+/* ==== src/content/records/00_stamps.js ==== */
+/* The Road Stamp Book's stamps and stands (expansion P06, K1; src/engine/58b_records.js). Stamps for meaningful
+ * moments only: each chapter's story, a region's people helped (every side story this journey could have; one that
+ * belongs to another companion's journey counts as done), the Atlas, pastimes, natural milestones and the first
+ * "What I can do" of each kind. None asks for an input mode, going without help, a streak, a time, a mastery star
+ * (C-13) or a festival score (C-55). The stands stand in each region's town, only in journeys of the twelve-chapter
+ * edition until the release (F-21); the new chapters add their own stamps and stands. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  C.stamps = C.stamps || {};
+  C.stampStands = C.stampStands || {};
+  const ED = 'ed>=2';
+
+  // ---- the stands -------------------------------------------------------------------------------------------------
+  const stands = {
+    // a few steps from where you arrive in each town (checked: free, beside no way out, cutting off nothing)
+    reedwake: { map: 'rw.village', x: 25, y: 27, title: T('Reedwake', '{葦|あし}ノ{瀬|せ}') },
+    saltglass: { map: 'sg.harbor', x: 30, y: 3, title: T('Saltglass', '{潮|しお}{硝子|がらす}') },
+    cinder: { map: 'co.village', x: 6, y: 17, title: T('Cinder Orchard', '{灰実|はいみ}の{里|さと}') },
+    snowbell: { map: 'sb.hamlet', x: 24, y: 30, title: T('Snowbell', '{雪鈴|ゆきすず}') },
+    lanternfall: { map: 'lf.town', x: 5, y: 15, title: T('Lanternfall', '{灯落|ひおち}') },
+  };
+  Object.assign(C.stampStands, stands);
+
+  // side stories that only some journeys can have (a condition on the journey): on any other road they count as
+  // done. (Suzu's own story in Cinder Orchard happens only when she is not the one travelling with you.)
+  C.questOnly = Object.assign(C.questOnly || {}, { lf_nao: 'comp=nao', lf_mio: 'comp=mio', ren_ushio: 'comp=ren', co_suzu: 'comp!=suzu' });
+  // every side story of a chapter this journey could have, finished
+  const sidesDone = (ch) => (s) => {
+    const qs = Object.keys(C.quests).filter((id) => C.quests[id].chapter === ch && !C.quests[id].main);
+    return qs.length > 0 && qs.every((id) => (C.questOnly[id] && !RB.state.test(s, C.questOnly[id])) || (s.quests[id] && s.quests[id].done));
+  };
+  const add = (id, d) => { C.stamps[id] = Object.assign({ id }, d); };
+
+  // ---- chapters and regions ---------------------------------------------------------------------------------------
+  const CH = [
+    ['rw', 1, 'ch1_done', 'reedwake', 'bridge', '#b8322a', T('Reedwake', '{葦|あし}ノ{瀬|せ}')],
+    ['sg', 2, 'ch2_done', 'saltglass', 'wave', '#2a4f8a', T('Saltglass', '{潮|しお}{硝子|がらす}')],
+    ['co', 3, 'ch3_done', 'cinder', 'leaf', '#4a6a2a', T('Cinder Orchard', '{灰実|はいみ}の{里|さと}')],
+    ['sb', 4, 'ch4_done', 'snowbell', 'bell', '#5a4a8a', T('Snowbell', '{雪鈴|ゆきすず}')],
+    ['lf', 5, 'ch5_done', 'lanternfall', 'lantern', '#8a5a1e', T('Lanternfall', '{灯落|ひおち}')],
+  ];
+  for (const [key, n, flag, stand, motif, ink, title] of CH) {
+    add('ch.' + key, { family: 'chapter', chapter: n, title, criteria: T('Chapter ' + n + ': the main story.', '{第|だい}' + n + '{章|しょう}'), hidden: n > 2, when: ED + '&' + flag, stand, design: { shape: 'round', motif, ink } });
+    add('side.' + key, { family: 'region', chapter: n, title: T(title.en + ': everyone helped', title.jp + ' の {頼|たの}み'), criteria: T('Every side story in Chapter ' + n + ' that your journey could have.', '{第|だい}' + n + '{章|しょう} の {寄|よ}り{道|みち}'), hidden: n > 2, when: (s) => RB.edition.of(s) >= 2 && sidesDone(n)(s), stand, design: { shape: 'square', motif, ink } });
+  }
+  add('ch.sa', { family: 'chapter', chapter: 6, title: T('The end of the road', '{旅|たび} の {終|お}わり'), criteria: T('Chapter 6: the main story.', '{第|だい}6{章|しょう}'), hidden: true, when: ED + '&postgame', stand: null, design: { shape: 'round', motif: 'book', ink: '#3a3a3a' } });
+  add('side.sa', { family: 'region', chapter: 6, title: T('The last requests', '{最後|さいご} の {頼|たの}み'), criteria: T('Every side story in Chapter 6 that your journey could have.', '{第|だい}6{章|しょう} の {寄|よ}り{道|みち}'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && sidesDone(6)(s), stand: null, design: { shape: 'square', motif: 'book', ink: '#3a3a3a' } });
+
+  // ---- the Atlas, pastimes --------------------------------------------------------------------------------------------
+  add('atlas.first', { family: 'dungeon', title: T('The Unwritten Atlas', '{白紙|はくし} の {地図帳|ちずちょう}'), criteria: T('Return from an expedition after the story.', '{探索|たんさく} から {帰|かえ}る'), hidden: true, when: (s) => RB.edition.of(s) >= 2 && !!(s.atlas && s.atlas.runs > 0), stand: null, design: { shape: 'hexagon', motif: 'book', ink: '#2a4f8a' } });
+  add('pt.shiritori', { family: 'pastime', title: T('A word for a word', 'しりとり'), criteria: T('Finish a game of shiritori with your companion.', 'しりとり を {最後|さいご} まで'), when: (s) => RB.edition.of(s) >= 2 && Object.values((s.practice && s.practice.shiritori && s.practice.shiritori.byCompanion) || {}).some((c) => (c.recent && c.recent.length) || (c.totals && Object.values(c.totals).some((v) => +v > 0))), stand: null, design: { shape: 'oval', motif: 'chain', ink: '#8a2a5a' } });
+  add('pt.fishing', { family: 'pastime', title: T('A quiet cast', '{静|しず}か な {釣|つ}り'), criteria: T('Catch a fish anywhere you may fish.', '{魚|さかな} を {釣|つ}る'), when: (s) => RB.edition.of(s) >= 2 && !!(s.practice && s.practice.fishing && Object.keys(s.practice.fishing.observed || {}).length), stand: null, design: { shape: 'oval', motif: 'fish', ink: '#2a6a7a' } });
+
+  // ---- natural milestones (Robin's allowed kind: reached by playing, never a tracker) ------------------------------
+  const tips = (s) => Object.keys(s.tips || {});
+  add('ms.responses', { family: 'milestone', title: T('Many ways to answer', '{色々|いろいろ} な {答|こた}え{方|かた}'), criteria: T('Answer creatures with eight different responses.', '{八|はち} つ の {答|こた}え{方|かた}'), when: (s) => RB.edition.of(s) >= 2 && tips(s).filter((k) => /^word:/.test(k)).length + (tips(s).some((k) => /unravel/.test(k)) ? 1 : 0) >= 8, stand: null, design: { shape: 'round', motif: 'brush', ink: '#3a3a6a' } });
+  add('ms.askback', { family: 'milestone', title: T('Asking is speaking too', '{聞|き}き{返|かえ}す'), criteria: T('Ask someone to say it again, or more simply.', 'もう {一度|いちど} {聞|き}く'), when: (s) => RB.edition.of(s) >= 2 && !!(s.learn && s.learn.items && s.learn.items['c:ask_back']), stand: null, design: { shape: 'round', motif: 'ear', ink: '#6a3a2a' } });
+  add('ms.ways', { family: 'milestone', title: T('Another way through', '{別|べつ} の {道|みち}'), criteria: T('Solve field puzzles in two different ways.', '{二|ふた} つ の やり{方|かた}'), when: (s) => {
+    if (RB.edition.of(s) < 2) return false;
+    const p = (s.discovery && s.discovery.puzzles) || {};
+    return new Set(Object.keys(p).filter((id) => p[id] && p[id].done && p[id].method).map((id) => p[id].method)).size >= 2;
+  }, stand: null, design: { shape: 'square', motif: 'path', ink: '#4a6a2a' } });
+
+  // ---- the stands in the towns (twelve-chapter journeys only, until the release) ------------------------------------
+  for (const id in stands) {
+    const st = stands[id], m = C.maps[st.map];
+    if (!m) continue;
+    m.props = (m.props || []).concat([{ p: 'rb_stampstand', x: st.x, y: st.y, scene: 'rb.stand', o: { stand: id }, if: ED }]);
+  }
+  RB.script.add(`
+@scene rb.stand
+!hook rb_stand
+`, 'records/00_stamps.js');
+})(RB.content);
+
+
+/* ==== src/content/records/05_stand.js ==== */
+/* The stamp stand (expansion P06, K1): a small wooden lectern with an ink pad, a stamp on its cord and a paper
+ * notice, where a traveller presses a stamp into their book. Art at art resolution in the props' own kit
+ * (src/engine/27_propart.js rules: light from the upper left, ink outline and a warm accent on something you use). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function () {
+  'use strict';
+  const P = RB.props && RB.props.P;
+  if (!P || P.rb_stampstand) return;
+  P.rb_stampstand = {
+    id: 'rb_stampstand', w: 1, h: 1, block: true,
+    draw(c, x, y) { // the 16-px fallback
+      c.fillStyle = '#6a4a2c'; c.fillRect(x + 4, y + 6, 8, 9); c.fillStyle = '#8a6a44'; c.fillRect(x + 3, y + 4, 10, 3);
+      c.fillStyle = '#f2ead8'; c.fillRect(x + 5, y + 8, 6, 4); c.fillStyle = '#b8322a'; c.fillRect(x + 10, y + 2, 2, 3);
+    },
+  };
+  if (!RB.propArt || !RB.propKit) return;
+  const K = RB.propKit, { R, ell, ramp } = K;
+  RB.propArt.art('rb_stampstand', {
+    box: [-2, -16, 36, 48], ink: true,
+    draw(g, M) {
+      const w = M.wood || ramp('#8a6a44', 0.45, 0.35);
+      // the post and its feet
+      R(g, 13, 8, 6, 22, w[1]); R(g, 13, 8, 2, 22, w[2]); R(g, 9, 28, 14, 3, w[0]);
+      // the slanted top with its lip
+      R(g, 4, 0, 24, 9, w[2]); R(g, 4, 0, 24, 2, w[3]); R(g, 4, 8, 24, 2, w[0]);
+      // the notice pinned under it (paper, brush dashes, never letters)
+      R(g, 9, 12, 14, 10, '#f2ead8'); R(g, 9, 12, 14, 1, '#fffaf0');
+      for (let i = 0; i < 3; i++) R(g, 11, 14 + i * 3, 10 - (i % 2) * 3, 1, '#4a4038');
+      R(g, 15, 11, 2, 2, '#b8322a');
+      // the ink pad and the stamp on its cord (the warm focal accent)
+      R(g, 7, -3, 8, 4, '#3a2a2a'); R(g, 8, -3, 6, 2, '#a83a32');
+      R(g, 19, -7, 4, 6, '#5a3a24'); R(g, 19, -7, 4, 1, '#7a5a3c'); R(g, 18, -2, 6, 2, '#b8322a');
+      ell(g, 25, 2, 2, 1.2, '#c8a868');
+    },
+    shadow: () => [16, 30, 12, 3, 0.3],
+  });
+})();
+
+
+/* ==== src/content/records/10_ngplus.js ==== */
+/* New Game+'s farewell (expansion P06, K9; Robin's C-54, C-66; docs/future/plan/10_STORY.md §9a): the companion of
+ * the journey that ended says goodbye before the new one begins, whichever slot it goes to and however it began (the
+ * end of the story, the Journey, or the Inn Ledger). Spoken by the originating journey's companion, never another.
+ * Short and spoiler-free: it names nothing of the story. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  C.ngFarewell = {
+    nao: [
+      { who: 'nao', jp: 'また {最初|さいしょ} から か 。 …… {悪|わる}く ない 。', en: 'From the beginning again, huh. …Not bad.' },
+      { who: 'nao', jp: '{道|みち} は {覚|おぼ}えて いる だろう 。 {言葉|ことば} も な 。', en: 'You remember the road. The words, too.' },
+      { who: 'nao', jp: '{向|む}こう で も 、 ちゃんと {届|とど}けろ よ 。 {自分|じぶん} の {名前|なまえ} を 。', en: 'Over there, deliver it properly. Your own name.' },
+    ],
+    mio: [
+      { who: 'mio', jp: '{行|い}って しまう の ね 。', en: 'So you\'re going.' },
+      { who: 'mio', jp: '{大丈夫|だいじょうぶ} 。 {覚|おぼ}えた こと は 、 {消|き}えない から 。', en: 'It\'s all right. What you learned won\'t fade.' },
+      { who: 'mio', jp: '…… また 、 どこ か の {道|みち} で 。', en: '…Until another road, somewhere.' },
+    ],
+    ren: [
+      { who: 'ren', jp: '{新|あたら}しい ページ を {開|ひら}く の です ね 。', en: 'You\'re opening a new page, then.' },
+      { who: 'ren', jp: '{前|まえ} の ページ は {消|き}えません 。 {紙|かみ} の {下|した} に 、 ちゃんと {残|のこ}って います 。', en: 'The pages before don\'t disappear. They stay, under the paper.' },
+      { who: 'ren', jp: 'どうか 、 お{元気|げんき} で 。', en: 'Please, take care.' },
+    ],
+    suzu: [
+      { who: 'suzu', jp: 'もう {次|つぎ} の {幕|まく} ？', en: 'The next act, already?' },
+      { who: 'suzu', jp: '…… いい わ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}して あげる 。', en: '…All right. I\'ll send you off with applause.' },
+      { who: 'suzu', jp: '{次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あなた よ 。', en: 'On the next stage too, the lead is you.' },
+    ],
+  };
+  C.ngFarewellEnd = { who: 'narr', jp: '{新|あたら}しい {旅|たび} が 、 {始|はじ}まる 。', en: 'A new journey begins.' };
+  if (RB.dialect && RB.dialect.add) RB.dialect.add('kansai', `
+@ records/10_ngplus:31 [ngplus.farewell]
+= もう {次|つぎ} の {幕|まく} ？ || The next act, already?
+> もう {次|つぎ} の {幕|まく} なん ？ || The next act, already?
+@ records/10_ngplus:32 [ngplus.farewell]
+= …… いい わ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}して あげる 。 || …All right. I'll send you off with applause.
+> …… ええ よ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}したる 。 || …All right. I'll send you off with applause.
+@ records/10_ngplus:33 [ngplus.farewell]
+= {次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あなた よ 。 || On the next stage too, the lead is you.
+> {次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あんた や で 。 || On the next stage too, the lead's you.
+`);
+})(RB.content);
+
+
 /* ==== src/content/shiritori/00_lex.js ==== */
 /* Lexicon for the shiritori word banks (src/content/shiritori/): the bank words the
  * game's lexicon did not have yet, so word help can explain them. Meanings are written
@@ -156390,6 +157168,25 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { jp: 'レン は {師匠|ししょう} ウシオ の {顔|かお} を {思|おも}い{出|だ}せない 。 {星図|せいず} は {南東|なんとう} の {光|ひかり} を {指|さ}して いた 。', en: 'Ren can\'t remember their teacher Ushio\'s face. The star charts pointed to a light in the southeast — where Ushio went.' },
       { jp: 'ウシオ の {墓|はか} を {見|み}つけた 。 {墓|はか} を {彫|ほ}った {人|ひと} に 、 レン は {聞|き}きたい こと が ある 。', en: 'You found Ushio\'s grave below the Archive. Ren has questions for whoever carved it — and the Archive may be holding what Ushio left.' },
     ] };
+})(RB.content);
+
+
+/* ==== src/content/zz_stamps_lang.js ==== */
+/* The Road Stamp Book's language stamps (expansion P06, K1): the first "What I can do" of each kind, shown in two
+ * different places (never a mastery star: C-13). Loaded last, after the "What I can do" themes. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const add = (id, d) => { C.stamps[id] = Object.assign({ id }, d); };
+  // ---- language: the first "What I can do" of each kind ----------------------------------------------------------
+  for (const th of C.canDoThemes || []) {
+    add('can.' + th.id, { family: 'language', title: th, criteria: T('Show you can do one thing of this kind, in two different places.', '「できる こと」'), when: (s) => {
+      if (RB.edition.of(s) < 2 || !RB.ui || !RB.ui.mastery || !RB.ui.mastery.canDoState) return false;
+      return (C.canDo || []).filter((x) => x.theme === th.id).some((x) => RB.ui.mastery.canDoState(s, x).status === 'shown');
+    }, stand: null, design: { shape: 'oval', motif: 'brush', ink: '#2a4f8a' } });
+  }
+
 })(RB.content);
 
 

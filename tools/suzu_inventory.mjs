@@ -253,6 +253,8 @@ function registryLines(RB) {
       else for (const j in t) if (t[j] && t[j].suzu) push('atlas', 'atlas.' + k + '.' + j + '.suzu', t[j].suzu);
     }
   }
+  // New Game+'s farewell (src/content/records/10_ngplus.js)
+  if (C.ngFarewell && C.ngFarewell.suzu) push('ngplus', 'ngplus.farewell.suzu', C.ngFarewell.suzu);
   return out;
 }
 

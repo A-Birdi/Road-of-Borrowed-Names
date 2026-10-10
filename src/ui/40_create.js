@@ -732,6 +732,8 @@ RB.ui.create = (function () {
     RB.game.setBase('create');
     const from = await offerCarryover();
     if (from) {
+      // the ending journey's companion says goodbye (C-66; twelve-chapter journeys, F-21)
+      if (RB.ui.ngplus && RB.recordsUI && RB.recordsUI.inCampaign(from)) await RB.ui.ngplus.farewell(from);
       const s = carry(from);
       RB.render.setOverride(null);
       await RB.game.startNewCampaign(slot, s);
