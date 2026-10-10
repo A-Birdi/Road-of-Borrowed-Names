@@ -138,7 +138,9 @@ export default async (t) => {
     s.practice.fishing.observed = { carp: { n: 1 } };
     s.practice.deskPages.push({ id: 'p1' });
     s.ngplus = 1;
+    s.enc.studies['fx.study.mist'] = { best: 2, tries: 3 }; s.enc.solved['x:s1:v1:[]'] = true; s.enc.defeats['tmp'] = 2;
     const n = RB.ngplus.carry(s);
+    t.ok(n.enc.studies['fx.study.mist'].best === 2 && !Object.keys(n.enc.solved).length && !Object.keys(n.enc.defeats).length, 'carries: the Tactics Board\'s bests only (F-08)');
     t.ok(n.learn.items['k:あ'].box === 4 && n.learn.profile === 'I', 'carries: the learning record and profile');
     t.ok(n.records.stamps.st1 && n.records.seals['seq.ch1'] && n.records.stars['ex1:hand'] && n.records.found.rw_ribbon, 'carries: stamps, seals, stars, and the keepsake catalogue\'s found record');
     t.ok(n.seq['ch1.lantern'], 'carries: illustrations seen');

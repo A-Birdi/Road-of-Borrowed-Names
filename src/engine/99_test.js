@@ -93,11 +93,9 @@ RB.test = (function () {
       if (card.kind === 'answer' && st.intent.answer) solveStep(RB.activities.tier(st.intent.answer) || st.intent.answer, 'battle ' + st.enemyId + ' answer');
       if (card.kind === 'truth' && st.intent.truth) solveStep(RB.activities.tier(st.intent.truth) || st.intent.truth, 'battle ' + st.enemyId + ' truth');
       if (card.kind === 'tech') techs++;
-      const P = L.playerAct(st, card, { ok: true, firstTry: true, mistakes: 0 }, enemy);
-      if (c.act) { if (c.actTarget != null) L.target(st, c.actTarget); L.compAct(st, c.act, P); acts[c.act] = (acts[c.act] || 0) + 1; }
-      if (L.allSettled(st)) { st.over = 'win'; break; }
-      L.enemyAct(st, P.answered);
-      L.endRound(st, enemy);
+      if (c.act) acts[c.act] = (acts[c.act] || 0) + 1;
+      // one exchange, by the encounter's steps (src/engine/97_encounter.js), with the live rules (the Atlas's too)
+      RB.encounter.exchange(st, { card, res: { ok: true, firstTry: true, mistakes: 0 }, comp: c.act ? { act: c.act, target: c.actTarget } : null, target: c.target }, { enemy });
     }
     T.log.push({ t: 'battle', enemy: enemyId, group: st.foes.slice(1).map((f) => f.enemyId), result: st.over, rounds, pc: st.pc, comp: st.comp, techs, acts });
     if (st.over !== 'win') T.problems.push({ where: 'battle ' + enemyId + (group.length ? ' +' + group.join('+') : ''), msg: 'not won with policy ' + policy + ' (' + st.over + ' after ' + rounds + ' rounds)' });

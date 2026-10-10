@@ -59,26 +59,42 @@ RB.combatSim = (function () {
     v -= 1.2 * (usesOf(x) - usesOf(st0));
     return v;
   }
-  // one exchange on a copy: your response (on creature ti), the companion's action (on aTi), the creatures
+  // one exchange on a copy, by the encounter's own steps (src/engine/97_encounter.js) with the unwrapped rules:
+  // your response (on creature ti), the companion's action (on aTi), the creatures (the close is not needed to
+  // judge it)
   function look(st, card, ti, act, aTi) {
     const x = clone(st);
+    const E = RB.encounter;
     L.target(x, ti);
-    const P = core.playerAct(x, card, OK);
-    if (act) { if (aTi != null) L.target(x, aTi); core.compAct(x, act, P); }
-    if (!L.allSettled(x)) core.enemyAct(x, P.answered || [P.countered], core.foeAct);
+    const P = E.player(x, card, OK, null, core);
+    if (act) E.companion(x, { act, target: aTi }, P, ti, core);
+    if (!L.allSettled(x)) E.foes(x, P, core);
     return x;
   }
   const knownTags = (words) => new Set(words.flatMap((w) => w.tags || []));
   // The cards the screen would offer for creature i (Unravel blocked while it
   // is shrouded or you are hushed, when you know a word that clears it).
-  function cardsFor(st, i, words, known) {
+  // mods: also every modifier the encounter offers on every response it pairs with, with each of its options
+  // (expansion E27; the curve's modifier policy).
+  function cardsFor(st, i, words, known, mods) {
     return L.withFoe(st, i, () => {
       const cards = core.responses(st, words);
       for (const c of cards) {
         if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'hushed';
       }
-      return cards.filter((c) => !c.disabled);
+      const out = cards.filter((c) => !c.disabled);
+      if (!mods || !RB.modifiers || (st.hushed && st.hushed.modifiers) || RB.modifiers.breathing(st)) return out;
+      const M = RB.modifiers, up = L.standing(st);
+      for (const c of out.slice()) {
+        for (const m of M.known(st, null)) {
+          const p = M.pairsFor(c).find((x) => x.mod === m);
+          if (!p || (c.target && c.target !== 'pc')) continue;
+          const opts = p.option === 'who' ? (st.compId ? ['pc', 'comp'] : ['pc']) : p.option === 'two' ? up.flatMap((a, k) => up.slice(k + 1).map((b) => [a, b])) : p.option === 'leaveOut' ? up : [null];
+          for (const o of opts) out.push(M.extend(c, m, o));
+        }
+      }
+      return out;
     });
   }
   // companion actions on offer (ids), with what each would aim at
@@ -115,7 +131,7 @@ RB.combatSim = (function () {
       return Object.assign(pick, act);
     }
     for (const i of up) {
-      for (const card of cardsFor(st, i, words, known)) {
+      for (const card of cardsFor(st, i, words, known, o.mods)) {
         // a response that does not depend on the target is tried once
         const r = L.withFoe(st, i, () => L.reachOf(st, card));
         if (r.foes.length !== 1 && i !== up[0] && card.kind === 'word') continue;
@@ -149,7 +165,8 @@ RB.combatSim = (function () {
     return best || { act: null, actTarget: null };
   }
 
-  // A whole encounter. o: { difficulty, comp, words (ids), group (ids), policy,
+  // A whole encounter. o: { difficulty, comp, words (ids), group (ids), policy, mods (consider modifiers), encounter
+  // (an encounter definition or id: begun by RB.encounter.begin instead of a plain battle),
   // slips (every n-th answer has one slip, costing its capped −1; 0 = none),
   // flags, quests (for companion unlocks), atlasCtx (unused here) }.
   function run(enemy, o) {
@@ -162,7 +179,9 @@ RB.combatSim = (function () {
       flags: Object.assign({}, o.flags || {}), quests: Object.assign({}, o.quests || {}), vars: {}, words: (o.words || []).slice(), inv: {}, seen: {}, chapter: 6, player: { bg: '' },
     };
     const words = s.words.map((w) => C.words[w]).filter(Boolean);
-    const st = core.init(enemy, s, { group: o.group || [] });
+    if (o.encounter) s.id = s.id || 'sim';
+    const st = o.encounter ? RB.encounter.begin(o.encounter, s) : core.init(enemy, s, { group: o.group || [] });
+    if (o.encounter) enemy = st.foes[0].def;
     const out = { win: false, rounds: 0, lost: 0, minPc: st.pc, minComp: st.comp, max: st.max, techs: 0, acts: {}, foes: st.foes.map((f) => f.enemyId), knots: st.foes.map((f) => f.maxKnots) };
     let n = 0, stall = 0;
     const knotsLeft = () => sum(st.foes, (f) => Math.max(0, f.knots));
@@ -170,22 +189,27 @@ RB.combatSim = (function () {
       const k0 = knotsLeft();
       const c = choose(st, words, s, Object.assign({}, o, { stall }));
       if (!c || !c.card) break;
-      L.target(st, c.target);
       n++;
       const slip = o.slips && n % o.slips === 0;
       const before = st.pc + st.comp;
-      const P = core.playerAct(st, c.card, slip ? { ok: true, firstTry: false, mistakes: 1 } : OK, enemy);
       if (c.card.kind === 'tech') out.techs++;
-      if (c.act) { if (c.actTarget != null) L.target(st, c.actTarget); core.compAct(st, c.act, P); out.acts[c.act] = (out.acts[c.act] || 0) + 1; }
-      if (o.trace) o.trace.push('r' + round + ' ' + st.foes.map((f, i) => i + ':' + f.enemyId + ' k' + f.knots + ' ' + (f.intent && f.intent.kind) + (f.heat ? ' h' + f.heat : '') + (f.shroud ? ' mist' : '') + (f.charged ? ' chg' : '')).join(' | ') + ' || ' + (c.card.word ? c.card.word.id : c.card.kind) + '@' + c.target + ' ' + (c.act || '') + ' pc' + st.pc + ' hush' + st.silenced);
+      if (c.card.mod) { out.mods = out.mods || {}; out.mods[c.card.mod.id] = (out.mods[c.card.mod.id] || 0) + 1; }
+      if (c.act) out.acts[c.act] = (out.acts[c.act] || 0) + 1;
+      // one exchange, by the encounter's steps (src/engine/97_encounter.js)
+      const ev = RB.encounter.exchange(st, { card: c.card, res: slip ? { ok: true, firstTry: false, mistakes: 1 } : OK, comp: c.act ? { act: c.act, target: c.actTarget } : null, target: c.target }, {
+        enemy, impl: core,
+        onStep(name) {
+          if (name === 'companion' && o.trace) o.trace.push('r' + round + ' ' + st.foes.map((f, i) => i + ':' + f.enemyId + ' k' + f.knots + ' ' + (f.intent && f.intent.kind) + (f.heat ? ' h' + f.heat : '') + (f.shroud ? ' mist' : '') + (f.charged ? ' chg' : '')).join(' | ') + ' || ' + (c.card.word ? c.card.word.id : c.card.kind) + '@' + c.target + ' ' + (c.act || '') + ' pc' + st.pc + ' hush' + st.silenced);
+          if (name === 'foes') {
+            out.lost += Math.max(0, before - (st.pc + st.comp));
+            out.minPc = Math.min(out.minPc, st.pc); out.minComp = Math.min(out.minComp, st.comp);
+          }
+        },
+      });
       out.rounds++;
-      if (L.allSettled(st)) { st.over = 'win'; break; }
-      core.enemyAct(st, P.answered, core.foeAct);
-      out.lost += Math.max(0, before - (st.pc + st.comp));
-      out.minPc = Math.min(out.minPc, st.pc); out.minComp = Math.min(out.minComp, st.comp);
-      core.endRound(st, enemy);
+      if (ev.over === 'win') break;
       stall = knotsLeft() < k0 ? 0 : stall + 1;
-      if (st.log.length && st.log[st.log.length - 1].t === 'revive') { st.log.pop(); out.revived = true; }
+      if (ev.revived) out.revived = true;
     }
     out.win = st.over === 'win';
     out.lose = st.over === 'lose';

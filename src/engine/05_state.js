@@ -69,6 +69,10 @@ RB.state = (function () {
       chapterKey: null,  // the chapter's key in the twelve-chapter order (RB.edition.ORDER)
       records: RB.records ? RB.records.fresh() : { stamps: {}, seals: {}, stars: {}, found: {} },
       rng: { n: {}, drawn: {} }, // seeded event streams and outcomes drawn once (RB.streams)
+      // the encounter platform's own record (src/engine/97_encounter.js): machines left mid-procedure, steps solved
+      // before (Resolve this step), one-time rewards given, defeats in story encounters (help offers), lasting
+      // outcomes, wanderers met, the Tactics Board's personal bests
+      enc: { proc: {}, solved: {}, rewarded: {}, defeats: {}, outcomes: {}, wanderers: { recent: [], met: {} }, studies: {} },
       // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
       // all optional: older saves gain empty records on load (80_save.js migrate)
       company: {

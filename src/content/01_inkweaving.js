@@ -15,7 +15,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   W('kaze', { jp: 'かぜ', jpK: '{風|かぜ}', r: 'かぜ', lex: '風', en: 'wind', tags: ['wind'], icon: '🌬', effect: 'Blows away mist and smoke: clears mist.' });
   W('nawa', { jp: 'なわ', jpK: '{縄|なわ}', r: 'なわ', lex: '縄', en: 'rope', tags: ['bind'], icon: '➰', effect: 'Holds something in place: stops Gathering or a Re-tying.' });
   W('ishi', { jp: 'いし', jpK: '{石|いし}', r: 'いし', lex: '石', en: 'stone', tags: ['anchor', 'stone'], icon: '⬣', effect: 'Stands firm: cancels a Gust or a Flood.' });
-  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], icon: '❄', effect: 'Cools heat (another way to answer it): clears Heat.' });
+  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], family: 'ice', icon: '❄', effect: 'Cools heat (another way to answer it): clears Heat.' });
   W('tsuchi', { jp: 'つち', jpK: '{土|つち}', r: 'つち', lex: '土', en: 'earth, soil', tags: ['stone'], icon: '⛰', effect: 'Banks against rising water: cancels a Flood.' });
   W('honoo', { jp: 'ほのお', jpK: '{炎|ほのお}', r: 'ほのお', lex: '炎', en: 'flame', tags: ['fire', 'warm', 'light'], icon: '🔥', effect: 'Warms against cold: cancels a Chill. Also gives light: clears mist, stops a Re-tying or a Mirror.' });
   W('suzu', { jp: 'すず', jpK: '{鈴|すず}', r: 'すず', lex: '鈴', en: 'bell (small)', tags: ['bell'], icon: '🔔', effect: 'A clear sound that breaks a hush: ends the Hush.' });

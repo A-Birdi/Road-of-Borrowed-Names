@@ -182,6 +182,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (isObj(fp.tally)) p.tally = clone(fp.tally);
       for (const k of PASTIMES) if (isObj(fp[k])) { p[k] = clone(fp[k]); if ('active' in p[k]) p[k].active = null; }
     }
+    // the Tactics Board's personal bests (lead's decision F-08); the rest of the encounter record starts fresh
+    if (isObj(from.enc) && isObj(from.enc.studies) && isObj(s.enc)) s.enc.studies = clone(from.enc.studies);
     s.notebook = (from.notebook || []).filter((n) => n && n.kind === 'word').map(clone);
     s.bookmarks = clone(Array.isArray(from.bookmarks) ? from.bookmarks : []);
     s.ngplus = (from.ngplus || 0) + 1;

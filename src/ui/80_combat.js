@@ -1388,24 +1388,16 @@ RB.combat = (function () {
         L().target(st, T);
         tg.lock = null; tg.hover = null;
         setActing(true);
-        // The rules resolve the exchange (once); the screen then shows it beat by beat:
-        // your response, your companion's action, then each creature in turn.
-        const hb = st.harmony;
+        // The rules resolve the exchange (once), by the encounter's steps (src/engine/97_encounter.js); the
+        // screen then shows it beat by beat: your response, your companion's action, then each creature in turn.
+        const E = RB.encounter;
         const before = snapshot(st);
         const reach = reachOf(card);
-        const P = L().playerAct(st, card, res, enemy);
+        const P = E.player(st, card, res, enemy);
         const { fx } = P;
-        if (st.compId && st.harmony > hb) fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
-        let won = L().allSettled(st);
-        let cfx = null;
-        if (!won && cact && cact.act && cact.act.id !== 'join') {
-          const hc = st.harmony;
-          L().target(st, cact.target != null ? cact.target : T);
-          cfx = L().compAct(st, cact.act.id, P).fx;
-          if (!L().target(st, T)) st.cur = L().defaultTarget(st);
-          if (st.harmony > hc && !cfx.some((f) => f.t === 'harmony')) cfx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
-        }
-        const wonByComp = !won && L().allSettled(st);
+        const won = E.conclude(st) === 'win';
+        const cfx = won ? null : E.companion(st, cact, P, T);
+        const wonByComp = !won && E.conclude(st) === 'win';
         // (the displayed state starts as `before` and steps forward: keep its knots apart)
         const knots0 = before.foes.map((f) => f.knots);
         chain = true;
@@ -1425,10 +1417,8 @@ RB.combat = (function () {
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: fx.concat(cfx || []), card, answered: P.answered }); // what your response and your companion's did
         if (won || wonByComp) { outcome = 'win'; break; }
         // each creature still standing acts in turn
-        const standing = L().standing(st);
         const before2 = snapshot(st);
-        const intents = st.foes.map((f) => f.intent);
-        const efx = L().enemyAct(st, P.answered);
+        const { efx, standing, intents } = E.foes(st, P);
         view = before2; chain = true;
         const tail = efx.filter((f) => f.foe == null || standing.indexOf(f.foe) < 0);
         for (let k = 0; k < standing.length; k++) {
@@ -1442,12 +1432,9 @@ RB.combat = (function () {
         endChain();
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: efx, enemy: true }); // their moves as they landed
         sealHeld = null;
-        L().endRound(st, enemy);
-        if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
-          st.log.pop();
-          await live(playRevive());
-        }
-        if (st.over) outcome = st.over;
+        const end = E.close(st, enemy);
+        if (end.revived) await live(playRevive());
+        if (end.over) outcome = end.over;
       }
       if (outcome === 'lose') present('scene', { phase: 'defeat' });
       if (outcome === 'win') {

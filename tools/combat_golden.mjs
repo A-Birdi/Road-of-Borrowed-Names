@@ -69,6 +69,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
     console.log(n + ' cases, ' + diff.length + ' differ (' + ((Date.now() - t0) / 1000).toFixed(1) + ' s)');
     process.exit(diff.length ? 1 : 0);
   }
-  fs.writeFileSync(OUT, JSON.stringify({ note: 'Written by tools/combat_golden.mjs from the combat rules as they stood before the expansion\'s encounter platform (P04). Each value: result, rounds, resolve lost, lowest resolve (you, companion), techniques, companion actions, and a hash of the round-by-round trace.', cases: now }, null, 0).replace(/","/g, '",\n"') + '\n');
+  fs.writeFileSync(OUT, JSON.stringify({ note: 'Written by tools/combat_golden.mjs from the combat rules as they stood before the expansion\'s encounter platform (P04); re-recorded once when the player model moved onto the shared exchange (src/engine/97_encounter.js): every result identical in all 1,710, every round identical except the final winning round of 102, where the old player model let the companion act after the last knot came free (the screen never did). Each value: result, rounds, resolve lost, lowest resolve (you, companion), techniques, companion actions, and a hash of the round-by-round trace.', cases: now }, null, 0).replace(/","/g, '",\n"') + '\n');
   console.log('wrote ' + n + ' cases (' + ((Date.now() - t0) / 1000).toFixed(1) + ' s)');
 }

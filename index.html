@@ -19044,6 +19044,10 @@ RB.state = (function () {
       chapterKey: null,  // the chapter's key in the twelve-chapter order (RB.edition.ORDER)
       records: RB.records ? RB.records.fresh() : { stamps: {}, seals: {}, stars: {}, found: {} },
       rng: { n: {}, drawn: {} }, // seeded event streams and outcomes drawn once (RB.streams)
+      // the encounter platform's own record (src/engine/97_encounter.js): machines left mid-procedure, steps solved
+      // before (Resolve this step), one-time rewards given, defeats in story encounters (help offers), lasting
+      // outcomes, wanderers met, the Tactics Board's personal bests
+      enc: { proc: {}, solved: {}, rewarded: {}, defeats: {}, outcomes: {}, wanderers: { recent: [], met: {} }, studies: {} },
       // ---- the Living Company and Discovery addendum (docs/ADDENDUM_CONTRACTS.md);
       // all optional: older saves gain empty records on load (80_save.js migrate)
       company: {
@@ -19478,6 +19482,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (isObj(fp.tally)) p.tally = clone(fp.tally);
       for (const k of PASTIMES) if (isObj(fp[k])) { p[k] = clone(fp[k]); if ('active' in p[k]) p[k].active = null; }
     }
+    // the Tactics Board's personal bests (lead's decision F-08); the rest of the encounter record starts fresh
+    if (isObj(from.enc) && isObj(from.enc.studies) && isObj(s.enc)) s.enc.studies = clone(from.enc.studies);
     s.notebook = (from.notebook || []).filter((n) => n && n.kind === 'word').map(clone);
     s.bookmarks = clone(Array.isArray(from.bookmarks) ? from.bookmarks : []);
     s.ngplus = (from.ngplus || 0) + 1;
@@ -50932,7 +50938,14 @@ RB.game = (function () {
  * and writable on `st` itself: they are accessors to `st.foes[st.cur]`, the
  * creature in focus. Every single-creature rule below works on the creature
  * in focus; `withFoe(st, i, fn)` focuses another for a moment. A battle with
- * one creature is a group of one, and plays exactly as before. */
+ * one creature is a group of one, and plays exactly as before.
+ *
+ * Participants (expansion E1; docs/future/work/P04_ENCOUNTERS.md): `st.actors` is the one list of everyone in
+ * the encounter, in stage order: the party (you, your companion), the creatures, and from the encounter platform
+ * on, guests, neutrals and objects with agendas of their own. `st.foes` (the creatures, in the order they
+ * joined), `st.pc` / `st.comp` (the party's resolve) and `st.ward` stay the views every rule below reads, so a
+ * battle with only a party and creatures plays exactly as before. Actors join with `addActor`; nothing is ever
+ * removed (a creature that settles, or a guest that leaves, stays in the list, marked). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.combatLogic = (function () {
@@ -50954,6 +50967,9 @@ RB.combatLogic = (function () {
     chill: { icon: '❄', label: 'Chill', counters: ['fire', 'warm'], effect: 'chill', power: 1, target: 'rand' },
     silence: { icon: '🔇', label: 'Hush', counters: ['voice', 'bell'], effect: 'silence' },
     mirror: { icon: '🪞', label: 'Mirror', counters: ['truth', 'light'], effect: 'mirror', power: 2, target: 'rand' },
+    // the encounter platform's (E2): a creature calls another; a bell calls it off, a rope holds the way shut.
+    // `ext`: never listed among what a word answers in an ordinary battle
+    call: { icon: '📯', label: 'Calling', counters: ['bell', 'bind'], effect: 'call', ext: true },
   };
   // maxFoes: how many creatures a group placement may bring at this setting
   // (Relaxed: always one; Standard: up to two; Demanding: up to three).
@@ -50967,7 +50983,7 @@ RB.combatLogic = (function () {
   // A creature's knots in a group of n: max(1, round(knots × share[n])).
   // A guardian (boss) keeps all of its knots; its attendants follow the rule.
   // Tuned with the difficulty curve (tests/unit/combat_curve.test.mjs).
-  const GROUP = { share: { 2: 0.5, 3: 0.4 } };
+  const GROUP = { share: { 2: 0.5, 3: 0.4, 4: 0.35, 5: 0.3 } };
   // Heat: every Heat intent left unanswered raises the level by one, up to
   // `max`; while it lasts, each blow it lands hits `per` harder per level.
   // A water word (or Mio's technique) cools it back to 0. Small and capped.
@@ -50990,13 +51006,22 @@ RB.combatLogic = (function () {
     const who = it.kind === 'sweep' || it.kind === 'flood' ? (st.compId ? ['pc', 'comp'] : ['pc'])
       : it.kind === 'gust' ? ['pc'] : [aimOf(st, it)];
     const f = st.foes && st.foes[st.cur];
-    return { per: Math.max(0, basePower(it) + st.diff.powerMod + heatBonus(st) - ((f && f.soften) || 0)), who };
+    return { per: Math.max(0, basePower(it) + st.diff.powerMod + heatBonus(st) + condPower(st, f) - ((f && f.soften) || 0)), who };
+  }
+  // what a creature's conditions add to its blows (E4; none unless the encounter has conditions)
+  function condPower(st, f) {
+    return f && st.rules && st.rules.conditions && RB.conditions ? RB.conditions.power(st, f) : 0;
   }
   // the one a single-target blow lands on (Suzu may have drawn its eye)
   function aimOf(st, it) {
     const f = st.foes && st.foes[st.cur];
     if (f && f.drawn && st.compId && st.comp > 0) return 'comp';
+    // a blow aimed at a guest, a neutral or an object (E1, E6), while it is there to be hit
+    if (it.target && it.target.indexOf(':') > 0) { const a = actorOf(st, it.target); if (a && !a.left && (a.hp || 0) > 0) return it.target; }
     return it.target === 'comp' && st.compId ? 'comp' : 'pc';
+  }
+  function actorOf(st, aid) {
+    return (st.actors || []).find((a) => a.aid === aid) || null;
   }
   // Coordinated techniques: one per companion, decided by who travels with you.
   // `knots` is how many knots it frees on the target; every technique also
@@ -51044,13 +51069,14 @@ RB.combatLogic = (function () {
         if (r === 'all') foesAll = true;
         else if (r === 'target') foesT = true;
         else if (r === 'party') out.allies = both;
-        else if (r === 'ally') out.allies = [card.target === 'comp' && st.compId ? 'comp' : 'pc'];
+        else if (r === 'ally') out.allies = [card.target === 'comp' && st.compId ? 'comp' : card.target && card.target.indexOf(':') > 0 ? card.target : 'pc'];
       }
       out.foes = foesAll ? up : foesT ? [T] : [];
       // what protects you both also answers that move from every creature
       out.party = tags.some((t) => TAG_REACH[t] === 'party' && t !== 'heal');
     }
     out.all = up.length > 1 && out.foes.length === up.length;
+    if (card.mod && RB.modifiers) return RB.modifiers.reach(st, card, out);
     return out;
   }
   function standing(st) {
@@ -51062,10 +51088,11 @@ RB.combatLogic = (function () {
 
   // The intents a word cancels outright (a ward only cancels a single-target
   // Strike raised in front of its target; against Sweep/Flood it soaks damage).
-  function answers(word) {
+  function answers(word, withExt) {
     const tags = (word && word.tags) || [];
     const out = [];
     for (const k in INTENTS) {
+      if (INTENTS[k].ext && !withExt) continue;
       const c = INTENTS[k].counters;
       if (tags.some((t) => c.indexOf(t) >= 0 && (t !== 'ward' || INTENTS[k].target !== 'both'))) out.push(k);
     }
@@ -51089,7 +51116,7 @@ RB.combatLogic = (function () {
     const f = {
       enemyId: enemy.id, knots, maxKnots: knots, pattern: (enemy.pattern || ['strike', 'rest']).slice(), pi: 0, phase: -1,
       intent: null, nextIntents: [], heat: 0, shroud: false, charged: false, phaseChanged: null,
-      settled: false, boss: !!enemy.boss,
+      settled: false, boss: !!enemy.boss, side: 'foe', aid: null,
       // this round only (a companion's support): its blow weaker by n, its single blow drawn to the companion, its move cancelled
       soften: 0, drawn: false, stunned: null,
     };
@@ -51104,13 +51131,48 @@ RB.combatLogic = (function () {
   }
   // A copy of the state (for the screen's displayed state): its own creature
   // records, the same accessors. Enemy definitions are not copied.
+  function copyActor(a) {
+    const g = Object.assign({}, a);
+    if (a.cond) g.cond = Object.assign({}, a.cond);
+    if ('def' in a) Object.defineProperty(g, 'def', { value: a.def, writable: true, enumerable: false, configurable: true });
+    return g;
+  }
   function snapshot(x) {
     const o = {};
-    for (const k in x) if (FOE_KEYS.indexOf(k) < 0 && k !== 'foes') o[k] = x[k];
+    for (const k in x) if (FOE_KEYS.indexOf(k) < 0 && k !== 'foes' && k !== 'actors') o[k] = x[k];
     o.ward = Object.assign({}, x.ward);
-    o.foes = x.foes.map((f) => { const g = Object.assign({}, f); Object.defineProperty(g, 'def', { value: f.def, writable: true, enumerable: false, configurable: true }); return g; });
+    if (x.actors) {
+      // the copy keeps the same participants in the same order, each its own record; the creatures' view is
+      // rebuilt from the copies, so a copied creature is the same object in both lists
+      o.actors = x.actors.map((a) => (a.side === 'party' ? Object.assign({}, a) : copyActor(a)));
+      const byFoe = new Map();
+      x.actors.forEach((a, k) => { if (a.side === 'foe') byFoe.set(a, o.actors[k]); });
+      o.foes = x.foes.map((f) => byFoe.get(f) || copyActor(f));
+    } else o.foes = x.foes.map(copyActor);
     o.cur = x.cur;
     return focusable(o);
+  }
+  // ---- participants ----------------------------------------------------------------------------------------------
+  // The party's records name who they are; their resolve and wards stay on the state (st.pc, st.comp, st.ward).
+  function partyActors(compId) {
+    const out = [{ aid: 'pc', side: 'party', role: 'player' }];
+    if (compId) out.push({ aid: 'comp', side: 'party', role: 'companion', who: compId });
+    return out;
+  }
+  // Another participant joins (a creature arriving, a guest, a neutral, an object). A creature joins the
+  // creatures' view at the end, so every index the rules hold stays valid. Returns the actor.
+  function addActor(st, a) {
+    if (a.side === 'foe') {
+      a.aid = a.aid || 'f' + st.foes.length;
+      st.foes.push(a);
+    } else a.aid = a.aid || (a.side || 'x') + ':' + st.actors.length;
+    st.actors.push(a);
+    return a;
+  }
+  // Everyone in the encounter, optionally only one side ('party' | 'foe' | 'guest' | 'neutral' | 'object').
+  function actors(st, side) {
+    const all = st.actors || partyActors(st.compId).concat(st.foes);
+    return side ? all.filter((a) => a.side === side) : all.slice();
   }
   // Which creatures come to a placement at this difficulty: the lead, then its
   // group for the setting (a group authored for Demanding is used on Standard
@@ -51135,7 +51197,10 @@ RB.combatLogic = (function () {
     const d = DIFF[s.learn.difficulty] || DIFF.normal;
     const comp = s.comp || null;
     const C = RB.content || {};
-    const others = (opts.group || []).map((g) => (typeof g === 'string' ? Object.assign({ id: g }, (C.enemies || {})[g] || {}) : g)).slice(0, Math.max(0, d.maxFoes - 1));
+    // an authored set piece may hold more creatures than the setting's usual group (E12; up to five), never on
+    // Relaxed, which always meets one
+    const cap = opts.maxFoes && d !== DIFF.relaxed ? Math.min(5, opts.maxFoes) : d.maxFoes;
+    const others = (opts.group || []).map((g) => (typeof g === 'string' ? Object.assign({ id: g }, (C.enemies || {})[g] || {}) : g)).slice(0, Math.max(0, cap - 1));
     const members = [enemy].concat(others);
     const foes = members.map((m) => makeFoe(m, knotsIn(m, members.length, d)));
     // a group takes turns: each creature after the lead starts a step further into
@@ -51153,7 +51218,12 @@ RB.combatLogic = (function () {
       compId: comp, misdirectUsed: false, openingBonus: false, compUses: {}, salts: false, share: false,
       round: 0, log: [], over: null, diff: d, mistakeCostThisRound: 0,
       assist: s.learn.assist === 'assist',
+      // what this encounter allows beyond an ordinary battle (src/engine/97_encounter.js): none of it by default,
+      // so a battle no encounter definition asks for plays exactly as it always has
+      rules: Object.assign({}, opts.rules || {}),
     };
+    foes.forEach((f, i) => { f.aid = 'f' + i; });
+    st.actors = partyActors(comp).concat(foes);
     focusable(st);
     if (comp === 'ren') st.ward.pc = 1, st.ward.comp = 1;
     // Equipped charm effects (small, well-defined sidegrades).
@@ -51194,6 +51264,17 @@ RB.combatLogic = (function () {
     if (it.target === 'rand') it.target = st.compId && (st.round * 7 + st.pi * 3 + st.knots + (st.cur || 0) * 5) % 2 ? 'comp' : 'pc';
     if (!st.compId && it.target === 'comp') it.target = 'pc';
     if (st.charged && (it.kind === 'strike' || it.kind === 'sweep')) it.power = (it.power || 2) + 2;
+    // a two-move turn (E26; Standard and Demanding, encounters that allow it): both are telegraphed now
+    const me = st.foes && st.foes[st.cur];
+    if (me) {
+      me.intent2 = null;
+      if (it.and && st.rules && st.rules.doubles && st.diff !== DIFF.relaxed) {
+        const it2 = intentDef(enemy, it.and);
+        if (it2.target === 'rand') it2.target = st.compId && (st.round * 5 + st.pi * 7 + st.knots + (st.cur || 0) * 3) % 2 ? 'comp' : 'pc';
+        if (!st.compId && it2.target === 'comp') it2.target = 'pc';
+        me.intent2 = it2;
+      }
+    }
     st.nextIntents = [];
     for (let k = 0; k < 2; k++) st.nextIntents.push(intentDef(enemy, st.pattern[(st.pi + k) % st.pattern.length]));
     return it;
@@ -51238,10 +51319,15 @@ RB.combatLogic = (function () {
     out.push({ id: 'unravel', kind: 'unravel', icon: '🪢', jp: 'ほどく', en: 'Unravel', desc: 'Restore one of its tangled words — frees a knot.', disabled: st.shroud ? 'Shrouded: you can\'t see the knots. A light or wind word clears it.' : null });
     if (it && it.kind === 'plea') out.push({ id: 'answer', kind: 'answer', icon: '💬', jp: 'こたえる', en: 'Answer', desc: 'Reply to what it is really asking.' });
     if (it && (it.kind === 'lie' || it.kind === 'mirror')) out.push({ id: 'truth', kind: 'truth', icon: '🔍', jp: 'みぬく', en: 'See through', desc: 'Point out what is false in what it said.' });
+    // Wait and watch (E9): an action, never idleness. It answers nothing and costs the exchange; in a battle it
+    // shows every creature's next two moves; an encounter can author more (a neutral acts, a quarrel runs on).
+    if (st.rules && st.rules.wait) out.push({ id: 'wait', kind: 'wait', icon: '…', jp: '{待|ま}つ', en: 'Wait and watch', desc: st.rules.waitDesc || 'Answer nothing this time and watch closely: you see each creature\'s next two moves.' });
     for (const w of words) {
       if (w.tags.indexOf('ward') >= 0) {
         out.push({ id: 'w:' + w.id + ':pc', kind: 'word', word: w, target: 'pc', icon: w.icon || '🛡', jp: w.jp, en: w.en, desc: w.effect + ' (you)' });
         if (st.compId) out.push({ id: 'w:' + w.id + ':comp', kind: 'word', word: w, target: 'comp', icon: w.icon || '🛡', jp: w.jp, en: w.en, desc: w.effect + ' (' + ((RB.content.chars[st.compId] && RB.content.chars[st.compId].name.en) || 'companion') + ')' });
+        // a ward can also stand before something the encounter asks you to protect (E6)
+        for (const a of st.actors || []) if (a.protectable && !a.left && (a.hp == null || a.hp > 0)) out.push({ id: 'w:' + w.id + ':' + a.aid, kind: 'word', word: w, target: a.aid, icon: w.icon || '🛡', jp: w.jp, en: w.en, desc: w.effect + ' (' + (a.name ? a.name.en : a.aid) + ')' });
       } else {
         out.push({ id: 'w:' + w.id, kind: 'word', word: w, icon: w.icon || '✦', jp: w.jp, en: w.en, desc: w.effect });
       }
@@ -51277,14 +51363,23 @@ RB.combatLogic = (function () {
     }
     const perfect = result.ok && result.firstTry !== false;
     const reach = reachOf(st, card);
-    if (card.kind === 'unravel' || card.kind === 'tech') {
+    if (card.mod && RB.modifiers) {
+      // a modifier extends the response's reach (E27): its own rule, one of the authored pairings
+      RB.modifiers.act(st, card, answered, fx);
+    } else if (card.kind === 'unravel' || card.kind === 'tech') {
       let n = 1;
       if (st.openingBonus && card.kind === 'unravel') { n = 2; st.openingBonus = false; fx.push({ t: 'comp', who: 'nao', en: 'Nao saw the opening — two knots come loose.', foe: T }); }
       if (card.kind === 'tech') n = techUnravel(st);
+      // a condition can loosen a creature's knots (water on a creature of flame: E4)
+      const fT = st.foes[T];
+      if (fT && fT.loose && card.kind === 'unravel') { n += fT.loose; fT.loose = 0; }
       st.knots = Math.max(0, st.knots - n);
       fx.push(tagged({ t: 'unravel', n }));
       if (card.kind === 'tech') { applyTech(st, fx, answered); answered[T] = true; st.harmony = 0; }
       if (it.kind === 'rest') answered[T] = true;
+    } else if (card.kind === 'wait') {
+      st.watching = st.round + 1;
+      fx.push({ t: 'wait', en: st.rules && st.rules.waitSays ? st.rules.waitSays : 'You hold back and watch how they move.' });
     } else if (card.kind === 'answer') {
       if (it.kind === 'plea') { answered[T] = true; st.knots = Math.max(0, st.knots - 1); fx.push(tagged({ t: 'settle', en: 'It listens. One knot loosens on its own.' })); }
     } else if (card.kind === 'truth') {
@@ -51319,8 +51414,10 @@ RB.combatLogic = (function () {
           if (has('bind')) { if (f.charged) fx.push({ t: 'bind', foe: i }); f.charged = false; }
         });
       }
+      // conditions (E4): what this response does to what each creature (and the place) is, by the rule table
+      if (st.rules && st.rules.conditions && RB.conditions) RB.conditions.onResponse(st, card, reached, answered, fx);
       if (tags.indexOf('warm') >= 0 || tags.indexOf('fire') >= 0) fx.push({ t: 'warm' });
-      if (tags.indexOf('bell') >= 0 || tags.indexOf('voice') >= 0) { st.silenced = 0; fx.push({ t: 'bell' }); }
+      if (tags.indexOf('bell') >= 0 || tags.indexOf('voice') >= 0) { st.silenced = 0; if (st.hushed) st.hushed = {}; fx.push({ t: 'bell' }); }
       // which telegraphed moves it answers: those of the creatures it reaches (party-wide
       // protection reaches every creature's move of that kind)
       for (const i of standing(st)) {
@@ -51332,14 +51429,33 @@ RB.combatLogic = (function () {
         }
       }
     }
+    // the second move of a two-move turn (E26): answered by the same rules, on its own
+    const answered2 = st.foes.map(() => false);
+    if (st.rules && st.rules.doubles && !card.mod) {
+      const tags = card.kind === 'word' ? card.word.tags : [];
+      for (const i of standing(st)) {
+        const f = st.foes[i], it2 = f.intent2;
+        if (!it2) continue;
+        if (card.kind === 'tech' && i === T) { answered2[i] = true; continue; }
+        if (card.kind === 'truth' && i === T && (it2.kind === 'lie' || it2.kind === 'mirror')) { answered2[i] = true; continue; }
+        if (card.kind === 'answer' && i === T && it2.kind === 'plea') { answered2[i] = true; continue; }
+        for (const tg of tags) {
+          if (it2.counters.indexOf(tg) < 0) continue;
+          if (tg === 'ward') { if (it2.target === card.target && it2.target !== 'both' && !fx.some((e) => e.t === 'ward' && e.block)) { answered2[i] = true; fx.push({ t: 'ward', target: card.target, block: true, foe: i, second: true }); } continue; }
+          const r = TAG_REACH[tg];
+          if (r === 'all' || r === 'party' || ((r === 'target' || !r) && i === T)) answered2[i] = true;
+        }
+      }
+    }
+    st.answered2 = answered2;
     const countered = answered[T];
-    const any = answered.some(Boolean);
+    const any = answered.some(Boolean) || answered2.some(Boolean);
     // harmony builds on clean, meaningful play (a technique spends it: it
     // starts again from 0, so the technique itself adds nothing)
     if (perfect && card.kind !== 'tech' && (any || card.kind === 'unravel')) st.harmony = Math.min(st.harmonyMax, st.harmony + 1);
     st.lastCountered = countered;
     st.lastPlayer = { perfect, ok: !!result.ok, answered: any, kind: card.kind, target: T };
-    return { fx, countered, answered, perfect };
+    return { fx, countered, answered, answered2, perfect };
   }
   // E5 (expansion plan; Robin's C-64): what a response would do right now, by the same rule that will run, on a copy
   // of the state (nothing changes, no randomness is drawn). The card's "Here:" line is built from this, so the
@@ -51530,7 +51646,10 @@ RB.combatLogic = (function () {
     const soft = (f && f.soften) || 0;
     const dmg = (who, p) => {
       if (who === 'comp' && !st.compId) who = 'pc';
-      let power = Math.max(0, p + st.diff.powerMod + heatBonus(st) - soft);
+      let power = Math.max(0, p + st.diff.powerMod + heatBonus(st) + condPower(st, f) - soft);
+      if (who !== 'pc' && who !== 'comp') { land(who, power); return; }
+      // a modifier's lasting ward meets the blow first (E27)
+      if (st.mods && RB.modifiers) { power = RB.modifiers.onBlow(st, who, power, it, fx); if (power <= 0) return; }
       if (st.compId === 'suzu' && !st.misdirectUsed && power > 0 && ((who === 'pc' ? st.pc : st.comp) - power <= 2)) {
         st.misdirectUsed = true;
         fx.push({ t: 'comp', who: 'suzu', en: 'Suzu steps into the blow with a flourish — it meets empty air.', missAt: who });
@@ -51547,11 +51666,17 @@ RB.combatLogic = (function () {
       land(who, power);
     };
     const land = (who, power) => {
-      const w = st.ward[who];
+      const w = st.ward[who] || 0;
       const absorbed = Math.min(w, power);
-      st.ward[who] -= absorbed;
+      st.ward[who] = w - absorbed;
       power -= absorbed;
       if (absorbed) fx.push({ t: 'block', who, n: absorbed });
+      if (power > 0 && who !== 'pc' && who !== 'comp') {
+        // a guest, a neutral or an object takes the blow on its own resolve
+        const a = actorOf(st, who);
+        if (a) { a.hp = Math.max(0, (a.hp || 0) - power); fx.push({ t: 'hit', who, n: power }); }
+        return;
+      }
       if (power > 0) {
         const cur = who === 'pc' ? st.pc : st.comp;
         // Mio's smelling salts: this round no blow takes either of you below 1
@@ -51561,6 +51686,9 @@ RB.combatLogic = (function () {
         fx.push({ t: 'hit', who, n: power, held: floor && cur - power < 1 ? true : undefined });
       }
     };
+    // what a lasting modifier turns away before it happens (the everlasting wind, a soaked creature)
+    const stopped = !countered && st.mods && RB.modifiers ? RB.modifiers.stops(st, it) : null;
+    if (stopped) { fx.push({ t: 'countered', kind: it.kind, by: 'mod:' + stopped }); return fx; }
     if (!countered) {
       switch (it.kind) {
         case 'strike': case 'lie': case 'mirror': case 'chill':
@@ -51568,18 +51696,27 @@ RB.combatLogic = (function () {
         case 'sweep': case 'flood':
           dmg('pc', basePower(it)); if (st.compId) dmg('comp', basePower(it)); break;
         case 'gust':
+          if (st.mods && RB.modifiers) RB.modifiers.broken(st, it, fx);
           st.ward.pc = 0; st.ward.comp = 0; fx.push({ t: 'stripWard' }); dmg('pc', basePower(it)); break;
         case 'heat': st.heat = Math.min(HEAT.max, st.heat + 1); fx.push({ t: 'heat', n: st.heat, bonus: heatBonus(st) }); break;
         case 'shroud': st.shroud = true; fx.push({ t: 'shroud' }); break;
         case 'charge': st.charged = true; fx.push({ t: 'charge' }); break;
         case 'mend': if (st.knots < st.maxKnots) { st.knots++; fx.push({ t: 'mend' }); } break;
-        case 'silence': st.silenced = 1; fx.push({ t: 'silence' }); break;
+        case 'silence':
+          // a Hush on one family of responses, or on the modifiers, for a few exchanges (E26); never on a bell or
+          // a voice, which always end it
+          if (it.family && it.family !== 'bell' && it.family !== 'voice') { st.hushed = Object.assign({}, st.hushed); st.hushed[it.family] = (it.rounds || 2) + 1; fx.push({ t: 'silence', family: it.family, rounds: it.rounds || 2 }); }
+          else { st.silenced = 1; fx.push({ t: 'silence' }); }
+          break;
+        case 'call': st.calls = (st.calls || []).concat([{ by: st.cur, enemy: it.calls || null }]); fx.push({ t: 'call', en: it.say || 'It calls out: something is coming.' }); break;
         case 'plea': fx.push({ t: 'plea' }); break;
         default: break;
       }
     } else {
-      fx.push({ t: 'countered', kind: it.kind, by: f && f.stunned ? f.stunned : undefined });
+      fx.push({ t: 'countered', kind: it.kind, by: f && f.stunned ? f.stunned : undefined, headedOff: it.then ? true : undefined });
       if (it.kind === 'charge') st.charged = false;
+      // a plan over two exchanges (E26): answering the first step heads off the second
+      if (it.then && f) { f.pi++; f.headedOff = it.then; }
     }
     if (it.kind === 'strike' || it.kind === 'sweep') st.charged = false;
     return fx;
@@ -51593,10 +51730,31 @@ RB.combatLogic = (function () {
     const fx = [];
     const arr = Array.isArray(countered) ? countered : null;
     const one = act || ((x, c) => RB.combatLogic.foeAct(x, c));
-    for (const i of standing(st)) {
-      const c = arr ? !!arr[i] : i === st.cur ? !!countered : false;
+    const up = standing(st);
+    const said = (i) => (arr ? !!arr[i] : i === st.cur ? !!countered : false);
+    // group coordination (E26): answering the creature that gives the signal breaks every move cued on it
+    const cuedOff = {};
+    if (st.rules && st.rules.doubles) {
+      for (const i of up) {
+        const it = st.foes[i].intent;
+        if (!it || !it.signal || !said(i)) continue;
+        for (const j of up) { const jt = st.foes[j].intent; if (j !== i && jt && jt.cue) { cuedOff[j] = true; st.foes[j].stunned = st.foes[j].stunned || 'signal'; } }
+      }
+    }
+    for (const i of up) {
+      const c = said(i) || !!cuedOff[i];
       const mine = withFoe(st, i, () => one(st, c));
       for (const f of mine) { if (f.foe == null) f.foe = i; fx.push(f); }
+      // the second move of a two-move turn, after the first
+      const f = st.foes[i];
+      if (f.intent2 && st.rules && st.rules.doubles && f.knots > 0) {
+        const c2 = !!(st.answered2 && st.answered2[i]) || !!f.stunned;
+        const first = f.intent;
+        f.intent = f.intent2;
+        let m2;
+        try { m2 = withFoe(st, i, () => one(st, c2)); } finally { f.intent = first; }
+        for (const e of m2) { if (e.foe == null) e.foe = i; e.second = true; fx.push(e); }
+      }
     }
     return fx;
   }
@@ -51613,6 +51771,11 @@ RB.combatLogic = (function () {
       if (f.knots <= 0 && !f.settled) { f.settled = true; st.justSettled.push(i); }
       f.soften = 0; f.drawn = false; f.stunned = null;
     }
+    if (st.rules && st.rules.conditions && RB.conditions) RB.conditions.tick(st);
+    if (st.mods && RB.modifiers) RB.modifiers.tick(st);
+    // (a Hush of n exchanges is set at n + 1 by the move, so the player meets it for n whole exchanges)
+    if (st.hushed) for (const k of Object.keys(st.hushed)) { if (--st.hushed[k] <= 0) delete st.hushed[k]; }
+    st.answered2 = null;
     if (allSettled(st)) { st.over = 'win'; return; }
     const partyDown = st.pc <= 0 && (!st.compId || st.comp <= 0);
     if (partyDown || st.pc <= 0) {
@@ -51632,10 +51795,531 @@ RB.combatLogic = (function () {
     // the target is kept while it stands; otherwise the most threatening one
     if (st.foes[st.cur].settled) st.cur = defaultTarget(st);
   }
+  // ---- the order of an exchange (C-70) ------------------------------------------------------------------------------
+  // Each standing creature's place in this exchange's order (1, 2, 3… as they act: left to right as they stand) and
+  // whom its move is aimed at ('pc', 'comp', 'both', or null for a move that hits no one), from the telegraph.
+  function order(st) {
+    const out = [];
+    let n = 0;
+    for (const i of standing(st)) {
+      const f = st.foes[i];
+      const it = f.intent;
+      const b = it ? withFoe(st, i, () => blowOf(st, it)) : null;
+      const e = { i, n: ++n, aim: b ? (b.who.length > 1 ? 'both' : b.who[0]) : null };
+      if (f.intent2) { const b2 = withFoe(st, i, () => blowOf(st, f.intent2)); e.aim2 = b2 ? (b2.who.length > 1 ? 'both' : b2.who[0]) : null; }
+      out.push(e);
+    }
+    return out;
+  }
+
   return {
-    INTENTS, DIFF, HEAT, TECHS, GROUP, TAG_REACH, init, responses, playerAct, compAct, foeAct, enemyAct, endRound, intentDef, heatBonus, basePower, blowOf, answers,
+    INTENTS, DIFF, HEAT, TECHS, GROUP, TAG_REACH, init, order, condPower, responses, playerAct, compAct, foeAct, enemyAct, endRound, intentDef, heatBonus, basePower, blowOf, answers,
     reachOf, previewAct, compReach, compOptions, compDefs, standing, isGroup, withFoe, target, defaultTarget, threatOf, snapshot, groupFor, knotsIn, aimOf, allSettled, FOE_KEYS,
+    makeFoe, addActor, actors, partyActors, actorOf, drawIntent,
   };
+})();
+
+
+/* ==== src/engine/95a_conditions.js ==== */
+/* Conditions (expansion E4; docs/future/plan/03_ENCOUNTERS.md; docs/future/work/P04_ENCOUNTERS.md "Conditions").
+ *
+ * A condition is something you can see and name on a creature (or the place): burning, wet, frozen, airborne,
+ * made of flame, made of paper, made of glass, rooted. "Misted" is the creature's Shroud, as it has always been:
+ * light clears the target's, wind every creature's. What a response does to a condition comes from one table,
+ * condition × response family, never from the species, so learning one creature teaches the world. Correct
+ * Japanese with an unsuitable result (wind on a burning creature) is a tactical result, never a language mistake.
+ *
+ * Only encounters whose rules turn conditions on use any of this (st.rules.conditions); an ordinary battle of
+ * the six-chapter game never does.
+ *
+ * Bounded: a fire spreads at most once per response, to one neighbour that was not itself a target, and a spread
+ * never spreads again. Every timed condition has a start (a response, a move, the place), a length in exchanges,
+ * what ends it early, and what it becomes (frozen thaws to wet; wet and burning simply end). Conditions belong to
+ * the encounter: stepping back, losing or winning ends them all. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.conditions = (function () {
+  'use strict';
+  const L = () => RB.combatLogic;
+  // lasts: exchanges (counted at each close); material: what the creature is made of (never ends)
+  const DEFS = {
+    burning: { jp: '{燃|も}えている', en: 'Burning', icon: 'flame', lasts: 3,
+      what: 'It is on fire: its blows land 1 harder while it burns, for three exchanges.', ends: 'Water or earth puts it out. Wind fans it, and it spreads.' },
+    flame: { jp: '{炎|ほのお}の{体|からだ}', en: 'Made of flame', icon: 'flame', material: true,
+      what: 'Its body is fire. Water weakens it, so a knot comes loose more easily; earth buries it for a moment.', ends: 'Wind and flame feed it: its blows land harder.' },
+    wet: { jp: '{濡|ぬ}れている', en: 'Wet', icon: 'drop', lasts: 3,
+      what: 'Soaked through, for three exchanges. Ice freezes something wet solid.', ends: 'Wind or flame dries it.' },
+    frozen: { jp: '{凍|こお}っている', en: 'Frozen', icon: 'snow', lasts: 1,
+      what: 'Frozen solid: it cannot move this exchange. Then it thaws and is wet.', ends: 'A stone cracks it (a knot comes loose). Flame thaws it at once.' },
+    airborne: { jp: '{宙|ちゅう}に{浮|う}いている', en: 'Airborne', icon: 'wind',
+      what: 'It flies. A gust of wind blows it off course, so it misses its move.', ends: 'Rope pulls it down for good.' },
+    paper: { jp: '{紙|かみ}でできている', en: 'Made of paper', icon: 'note', material: true,
+      what: 'Made of paper: water makes it soggy, wind scatters it, rope bundles it, and flame catches.', ends: 'Fire frees a knot but burns: anything of paper nearby is in danger.' },
+    glass: { jp: 'ガラスでできている', en: 'Made of glass', icon: 'mirror', material: true,
+      what: 'Made of glass: a stone cracks it, and light splits in it and shows every creature\'s knots.', ends: '' },
+    rooted: { jp: '{根|ね}を{張|は}っている', en: 'Rooted', icon: 'leaf', material: true,
+      what: 'Rooted where it stands: no wind can move it.', ends: '' },
+  };
+  // the place (an encounter's `field`)
+  const FIELD = {
+    rain: { jp: '{雨|あめ}', en: 'Rain', what: 'Rain: every creature is wet, and nothing can catch fire.' },
+    mist: { jp: '{霧|きり}', en: 'Mist', what: 'Mist: every creature starts hidden in it.' },
+  };
+  // A response's family: the word's own `family`, else its tags (flame before light: ほのお is fire first).
+  const BY_TAG = [['fire', 'flame'], ['water', 'water'], ['wind', 'wind'], ['stone', 'stone'], ['anchor', 'stone'], ['bind', 'rope'], ['light', 'light']];
+  function familyOf(card) {
+    if (!card || card.kind !== 'word' || !card.word) return null;
+    if (card.word.family) return card.word.family;
+    const tags = card.word.tags || [];
+    for (const [t, f] of BY_TAG) if (tags.indexOf(t) >= 0) return f;
+    return null;
+  }
+  // which creatures a family's condition rules reach: spreading elements every creature, the rest the target
+  const REACH = { water: 'all', ice: 'all', wind: 'all', stone: 'target', flame: 'target', light: 'target', rope: 'target' };
+  // condition × family -> the effect, and what the preview says (`$` is the creature's name)
+  const RULES = {
+    burning: {
+      water: { fx: 'out', en: 'puts out the fire on $' },
+      stone: { fx: 'out', en: 'smothers the fire on $' },
+      wind: { fx: 'flare', en: 'fans the fire on $: its blows land 1 harder, and the fire spreads' },
+      ice: { fx: 'steam', en: 'meets the fire on $ in a burst of steam: every creature is hidden in it' },
+      flame: { fx: 'none', en: '$ is already burning: no change' },
+    },
+    flame: {
+      water: { fx: 'weaken', en: 'quenches part of $: your next Unravel on it frees one more knot' },
+      wind: { fx: 'bold', en: 'feeds $: its blows land 1 harder this exchange' },
+      flame: { fx: 'bold', en: 'feeds $: its blows land 1 harder this exchange' },
+      stone: { fx: 'bury', en: 'buries $ for a moment: it misses its move' },
+      ice: { fx: 'steam', en: 'melts against $ in a burst of steam: every creature is hidden in it' },
+    },
+    wet: {
+      wind: { fx: 'dry', en: 'dries $' },
+      flame: { fx: 'steam', en: 'boils the water on $ into steam: every creature is hidden in it' },
+      ice: { fx: 'freeze', en: 'freezes $ solid: it misses its move' },
+    },
+    paper: {
+      water: { fx: 'soggy', en: 'soaks $: its blows land 1 softer for the rest of the encounter' },
+      wind: { fx: 'scatter', en: 'scatters $: it misses its move' },
+      flame: { fx: 'catch', en: 'sets $ alight: a knot burns loose, but it burns, and paper nearby is in danger' },
+      rope: { fx: 'bundle', en: 'bundles $ up: it cannot gather force' },
+    },
+    airborne: {
+      wind: { fx: 'skip', en: 'blows $ off course: it misses its move' },
+      rope: { fx: 'ground', en: 'pulls $ down: it cannot fly again' },
+    },
+    frozen: {
+      stone: { fx: 'crack', en: 'cracks $: a knot comes loose' },
+      flame: { fx: 'thaw', en: 'thaws $: it is wet again' },
+    },
+    glass: {
+      stone: { fx: 'crack', en: 'cracks $: a knot comes loose' },
+      light: { fx: 'refract', en: 'splits in $ into every colour: the mist on every creature clears' },
+    },
+    rooted: {
+      wind: { fx: 'none', en: '$ is rooted: the wind cannot move it' },
+    },
+  };
+  // the order conditions are looked at on one creature (a creature can be several things at once)
+  const ORDER = ['frozen', 'burning', 'wet', 'flame', 'paper', 'glass', 'airborne', 'rooted'];
+
+  const has = (f, c) => !!(f && f.cond && f.cond[c] != null && f.cond[c] !== 0);
+  function set(st, f, c, n) {
+    if (c === 'burning' && st.field && st.field.rain) return false; // nothing catches fire in the rain
+    f.cond = f.cond || {};
+    f.cond[c] = n != null ? n : DEFS[c].material ? -1 : DEFS[c].lasts || -1;
+    return true;
+  }
+  const clear = (f, c) => { if (f.cond) delete f.cond[c]; };
+
+  // ---- the encounter begins: what the creatures are, and the place -----------------------------------------------
+  function begin(st, field) {
+    st.field = {};
+    for (const k of field || []) if (FIELD[k]) st.field[k] = true;
+    for (const f of st.foes) {
+      const own = (f.def && f.def.conditions) || [];
+      for (const c of own) if (DEFS[c]) set(st, f, c, -1);
+      if (st.field.rain) set(st, f, 'wet', -1);
+      if (st.field.mist) f.shroud = true;
+    }
+  }
+
+  // ---- a response meets the conditions --------------------------------------------------------------------------
+  // reached: the creatures the response itself reaches (by its tags); answered: per creature, its move answered.
+  function onResponse(st, card, reached, answered, fx) {
+    const fam = familyOf(card);
+    if (!fam) return;
+    const up = L().standing(st);
+    const targets = REACH[fam] === 'all' ? up.slice() : up.indexOf(st.cur) >= 0 ? [st.cur] : [];
+    const nameOf = (i) => '$' + i;
+    let steamed = false, spread = false;
+    for (const i of targets) {
+      const f = st.foes[i];
+      for (const c of ORDER) {
+        if (!has(f, c)) continue;
+        const r = RULES[c] && RULES[c][fam];
+        if (!r) continue;
+        const e = { t: 'cond', cond: c, change: r.fx, foe: i, fam, en: r.en.replace(/\$/g, nameOf(i)) };
+        switch (r.fx) {
+          case 'none': e.none = true; break;
+          case 'out': clear(f, 'burning'); break;
+          case 'flare': {
+            f.bold = (f.bold || 0) + 1;
+            if (!spread) {
+              // one neighbour on the stage that is not already burning and was not a target itself
+              const near = [i - 1, i + 1].filter((j) => up.indexOf(j) >= 0 && targets.indexOf(j) < 0 && !has(st.foes[j], 'burning') && !has(st.foes[j], 'flame'));
+              if (near.length && set(st, st.foes[near[0]], 'burning')) { e.spread = near[0]; spread = true; }
+            }
+            break;
+          }
+          case 'steam':
+            if (!steamed) { for (const j of up) st.foes[j].shroud = true; steamed = true; } else e.again = true;
+            break;
+          case 'weaken': f.loose = 1; break;
+          case 'bold': f.bold = (f.bold || 0) + 1; break;
+          case 'bury': case 'scatter': case 'skip':
+            if (!answered[i]) { answered[i] = true; f.stunned = 'cond'; }
+            break;
+          case 'freeze':
+            clear(f, 'wet'); set(st, f, 'frozen');
+            if (!answered[i]) { answered[i] = true; f.stunned = 'cond'; }
+            break;
+          case 'dry': clear(f, 'wet'); break;
+          case 'soggy': f.soggy = true; break;
+          case 'catch': {
+            f.knots = Math.max(0, f.knots - 1);
+            if (!set(st, f, 'burning')) e.rained = true;
+            // anything made of paper the party is protecting is singed
+            for (const a of st.actors || []) {
+              if (a.side === 'object' && has(a, 'paper') && (a.hp || 0) > 0) { a.hp = Math.max(0, a.hp - 1); fx.push({ t: 'cond', change: 'scorch', aid: a.aid, en: 'The sparks catch ' + (a.name ? a.name.en : 'it') + ' (−1).' }); }
+            }
+            break;
+          }
+          case 'bundle':
+            if (f.charged) f.charged = false;
+            if (f.intent && f.intent.kind === 'charge' && !answered[i]) answered[i] = true;
+            break;
+          case 'ground':
+            clear(f, 'airborne');
+            break;
+          case 'crack': f.knots = Math.max(0, f.knots - 1); break;
+          case 'thaw': clear(f, 'frozen'); set(st, f, 'wet'); break;
+          case 'refract': for (const j of up) st.foes[j].shroud = false; break;
+          default: break;
+        }
+        fx.push(e);
+      }
+    }
+  }
+  // what a creature's conditions add to its blows this exchange
+  function power(st, f) {
+    let p = 0;
+    if (has(f, 'burning') && !has(f, 'flame')) p += 1;
+    p += f.bold || 0;
+    if (f.soggy) p -= 1;
+    return p;
+  }
+  // ---- the close of an exchange: what lasts a time counts down --------------------------------------------------
+  function tick(st) {
+    for (const f of st.foes) {
+      f.bold = 0;
+      if (!f.cond) continue;
+      for (const c of Object.keys(f.cond)) {
+        const n = f.cond[c];
+        if (n < 0) continue;
+        if (n - 1 > 0) { f.cond[c] = n - 1; continue; }
+        delete f.cond[c];
+        if (c === 'frozen') set(st, f, 'wet');
+      }
+      if (st.field && st.field.rain && !has(f, 'wet') && !has(f, 'frozen')) set(st, f, 'wet', -1);
+    }
+  }
+  // the conditions on a creature, for its slip: [{ id, jp, en, icon, left }]
+  function list(f) {
+    const out = [];
+    for (const c of ORDER) if (has(f, c)) out.push({ id: c, jp: DEFS[c].jp, en: DEFS[c].en, icon: DEFS[c].icon, left: f.cond[c] > 0 ? f.cond[c] : null });
+    return out;
+  }
+  // the rule a family would apply to a condition (for help notes and the validator)
+  const rule = (c, fam) => (RULES[c] && RULES[c][fam]) || null;
+
+  return { DEFS, FIELD, RULES, REACH, ORDER, familyOf, begin, onResponse, power, tick, list, rule, has, set };
+})();
+
+
+/* ==== src/engine/95b_modifiers.js ==== */
+/* Modifier words (expansion E27; Robin's C-70, C-72, C-74; docs/future/work/P04_ENCOUNTERS.md "Modifiers").
+ *
+ * A modifier never acts alone: it changes who, how many, what kinds, how much or how long a response reaches, and
+ * the response still does what it always did. Each permitted pairing is data (src/content/encounters/10_modifiers.js:
+ * the modifier, the response, the natural phrase, the option it asks for, the effect, the trade, how it is taught);
+ * a pairing that is not listed is not offered, and the response with no modifier stays exactly as it was.
+ *
+ * Every modifier is a trade, never an upgrade: reaching more makes each part lighter (すべて); fitting each target
+ * lasts only this round (それぞれ); doing more means one target only (全部, たくさん); lasting means it can be broken
+ * (永遠に); no limit means this round only (無限に). The phrase is longer to write, so a modifier is used when it is
+ * worth it.
+ *
+ * Only encounters whose rules allow modifiers offer them (st.rules.modifiers), and only those the player has been
+ * taught (a concept, RB.phase), never on Relaxed's first meeting with a word. A Hush can silence the modifiers for a
+ * few exchanges (st.hushed.modifiers): the player's words reach one at a time until it ends. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.modifiers = (function () {
+  'use strict';
+  const L = () => RB.combatLogic;
+  const C = () => RB.content.modifiers || { families: {}, pairs: [] };
+
+  // the pairings for a response card (by its word, or 'unravel')
+  const respOf = (card) => (card.kind === 'word' ? card.word.id : card.kind === 'unravel' ? 'unravel' : null);
+  function pairsFor(card) {
+    const r = respOf(card);
+    return r ? C().pairs.filter((p) => p.resp === r) : [];
+  }
+  // what the player knows: the encounter allows modifiers, and each is taught (or the encounter grants them all:
+  // a development fixture, or a Tactics Board study of modifiers)
+  function known(st, s) {
+    if (!st.rules || !st.rules.modifiers) return [];
+    const fams = C().families;
+    return Object.keys(fams).filter((id) => st.rules.modifiers === 'all' || [].concat(st.rules.modifiers).indexOf(id) >= 0 || (s && RB.phase && RB.phase.knows(s, 'mod_' + id)));
+  }
+  // The modifiers on offer this exchange: [{ id, family, hushed (why, if silenced) }]
+  // The breath (E27's fallback, adopted after the curve test: lead's decision F-12): an extended response cannot be
+  // extended again the very next exchange.
+  const breathing = (st) => st.modRound != null && st.modRound === st.round - 1;
+  function offered(st, s) {
+    const out = [];
+    for (const id of known(st, s)) {
+      const left = st.hushed && st.hushed.modifiers;
+      const why = left ? 'Hushed for ' + left + ' more exchange' + (left > 1 ? 's' : '') + ': your words reach one at a time. A bell or a voice ends it now.'
+        : breathing(st) ? 'Catching your breath: a modifier cannot extend a response two exchanges running.' : null;
+      out.push({ id, family: C().families[id], hushed: why });
+    }
+    return out;
+  }
+  // The card a modifier makes of a response (or null when it does not pair): the same card, with `mod` and the
+  // phrase to write. opt: the pairing's option (whom, which two, which to leave out).
+  function extend(card, modId, opt) {
+    const p = C().pairs.find((x) => x.mod === modId && x.resp === respOf(card));
+    if (!p) return null;
+    const out = Object.assign({}, card, { mod: { id: modId, pair: p, opt: opt == null ? null : opt }, id: card.id + '+' + modId });
+    return out;
+  }
+  // Why a response does not pair with a modifier (for the dimmed card)
+  function why(card, modId) {
+    const f = C().families[modId];
+    if (!f) return 'Not a modifier.';
+    const ok = C().pairs.filter((p) => p.mod === modId).map((p) => p.respEn);
+    return f.en + ' does not read naturally with this response' + (ok.length ? '; it goes with ' + ok.join(', ') : '') + '.';
+  }
+
+  // ---- what an extended response reaches (for the screen's marks and the preview) --------------------------------
+  function reach(st, card, base) {
+    const p = card.mod.pair, up = L().standing(st), T = st.cur;
+    const both = st.compId ? ['pc', 'comp'] : ['pc'];
+    const o = { foes: base.foes.slice(), allies: base.allies.slice(), all: false };
+    switch (p.effect) {
+      case 'ward_each': case 'ward_fit': case 'ward_per_blow': case 'ward_unlimited': case 'ward_party': o.allies = both; o.foes = []; break;
+      case 'ward_any': o.allies = [card.mod.opt === 'comp' && st.compId ? 'comp' : 'pc']; o.foes = []; break;
+      case 'heal_full': o.allies = [card.mod.opt === 'comp' && st.compId ? 'comp' : 'pc']; o.foes = []; break;
+      case 'light_all': case 'rope_all': case 'rope_group': o.foes = up.slice(); break;
+      case 'rope_most': o.foes = up.filter((i) => i !== card.mod.opt); break;
+      case 'unravel_two': o.foes = [].concat(card.mod.opt || [T]).filter((i) => up.indexOf(i) >= 0); break;
+      case 'water_more': o.foes = up.indexOf(T) >= 0 ? [T] : []; break;
+      case 'wind_forever': o.foes = up.slice(); break;
+      default: break;
+    }
+    o.all = up.length > 1 && o.foes.length === up.length;
+    return o;
+  }
+
+  // ---- what it does (called by the rules' playerAct, which keeps the slip cost and Harmony) ----------------------
+  function act(st, card, answered, fx) {
+    const p = card.mod.pair, up = L().standing(st), T = st.cur;
+    st.modRound = st.round;
+    const both = st.compId ? ['pc', 'comp'] : ['pc'];
+    st.mods = st.mods || {};
+    const strikeAt = (who) => up.find((i) => { const it = st.foes[i].intent; return it && !answered[i] && it.counters.indexOf('ward') >= 0 && it.target === who && it.target !== 'both' && it.kind !== 'charge'; });
+    const tag = { mod: card.mod.id };
+    switch (p.effect) {
+      case 'ward_each':
+        // すべて: a ward before each of you; each blocks a Strike aimed at that person and soaks 1 later, not 2
+        for (const who of both) {
+          const b = strikeAt(who);
+          if (b != null) { answered[b] = true; fx.push(Object.assign({ t: 'ward', target: who, block: true, foe: b }, tag)); }
+          else { st.ward[who] = (st.ward[who] || 0) + 1; fx.push(Object.assign({ t: 'ward', target: who, n: 1 }, tag)); }
+        }
+        break;
+      case 'ward_any': {
+        // あらゆる: before one of you, the next blow of any kind is stopped (not only a Strike); it soaks nothing else
+        const who = card.mod.opt === 'comp' && st.compId ? 'comp' : 'pc';
+        st.mods.any = Object.assign({}, st.mods.any, { [who]: true });
+        fx.push(Object.assign({ t: 'ward', target: who, any: true, en: 'A ward against every kind of blow rises before ' + (who === 'comp' ? 'your companion' : 'you') + '.' }, tag));
+        break;
+      }
+      case 'ward_party':
+        // 全体: one ward around the party: the first blow to land on either of you
+        st.mods.shield = true;
+        fx.push(Object.assign({ t: 'ward', target: 'party', party: true, en: 'One ward closes around you both: it will take the first blow that lands.' }, tag));
+        break;
+      case 'ward_fit': {
+        // それぞれ: before each of you, a ward fitted to the blow aimed at that person (any kind: a Strike at one, a
+        // Chill at the other; a Sweep at both meets both wards), this round only; it soaks nothing later
+        const used = {};
+        for (const i of up) {
+          const it = st.foes[i].intent;
+          if (!it || answered[i] || !L().basePower(it)) continue;
+          const bl = L().withFoe(st, i, () => L().blowOf(st, it));
+          if (!bl || !bl.who.length || bl.who.some((w) => used[w] || (w !== 'pc' && w !== 'comp'))) continue;
+          for (const w of bl.who) used[w] = true;
+          answered[i] = true;
+          fx.push(Object.assign({ t: 'ward', target: bl.who.length > 1 ? 'party' : bl.who[0], block: true, foe: i, fit: true }, tag));
+        }
+        if (!Object.keys(used).length) fx.push(Object.assign({ t: 'ward', target: 'party', fit: true, none: true, en: 'No blow is aimed at either of you: the fitted wards have nothing to meet.' }, tag));
+        break;
+      }
+      case 'ward_per_blow':
+        // ごとに: a small ward renewed before every blow this round, whoever it is aimed at (each soaks 1)
+        st.mods.perBlow = st.round;
+        fx.push(Object.assign({ t: 'ward', target: 'party', perBlow: true, en: 'A small ward will rise before every blow this exchange (each soaks 1).' }, tag));
+        break;
+      case 'ward_unlimited':
+        // 無限に: the ward blocks every Strike this round, at either of you, then it is gone
+        for (const i of up) { const it = st.foes[i].intent; if (it && it.kind === 'strike' && !answered[i]) { answered[i] = true; fx.push(Object.assign({ t: 'ward', target: it.target === 'comp' && st.compId ? 'comp' : 'pc', block: true, foe: i }, tag)); } }
+        st.mods.unlimited = st.round;
+        break;
+      case 'heal_full': {
+        // 全部: all of one person's resolve, instead of some to both
+        const who = card.mod.opt === 'comp' && st.compId ? 'comp' : 'pc';
+        const was = { pc: st.pc, comp: st.comp };
+        if (who === 'pc') st.pc = st.max; else st.comp = st.max;
+        const d = { pc: st.pc - was.pc, comp: st.comp - was.comp };
+        fx.push(Object.assign({ t: 'heal', n: d[who], aim: [who], who: d[who] > 0 ? [who] : [], d, gain: d.pc + d.comp }, tag));
+        break;
+      }
+      case 'light_all':
+        // すべて + light: the mist on every creature clears, and every Shroud is answered; spread this thin it stops
+        // no Re-tying and no Mirror
+        for (const i of up) {
+          const f = st.foes[i];
+          if (f.shroud) { f.shroud = false; fx.push(Object.assign({ t: 'light', foe: i }, tag)); }
+          if (f.intent && f.intent.kind === 'shroud' && !answered[i]) answered[i] = true;
+        }
+        break;
+      case 'rope_all':
+        // すべて + rope: every creature's Gathering stops; spread this thin it holds no Re-tying
+        for (const i of up) {
+          const f = st.foes[i];
+          if (f.charged) { f.charged = false; fx.push(Object.assign({ t: 'bind', foe: i }, tag)); }
+          if (f.intent && f.intent.kind === 'charge' && !answered[i]) answered[i] = true;
+        }
+        break;
+      case 'rope_most':
+        // 大半: every creature but the one you leave out, each at full strength (Gathering and Re-tying)
+        for (const i of up) {
+          if (i === card.mod.opt) continue;
+          const f = st.foes[i];
+          if (f.charged) { f.charged = false; fx.push(Object.assign({ t: 'bind', foe: i }, tag)); }
+          if (f.intent && (f.intent.kind === 'charge' || f.intent.kind === 'mend') && !answered[i]) answered[i] = true;
+        }
+        break;
+      case 'rope_group':
+        // 全体 + rope: what the group does together (a signal and the moves cued on it) and nothing else
+        for (const i of up) { const it = st.foes[i].intent; if (it && (it.signal || it.cue) && !answered[i]) { answered[i] = true; fx.push(Object.assign({ t: 'bind', foe: i, group: true }, tag)); } }
+        break;
+      case 'unravel_two': {
+        // いくつか: Unravel on two creatures of your choice, a knot each
+        const two = [].concat(card.mod.opt || [T]).filter((i) => up.indexOf(i) >= 0).slice(0, 2);
+        for (const i of two) {
+          const f = st.foes[i];
+          let n = 1;
+          if (f.loose) { n += f.loose; f.loose = 0; }
+          f.knots = Math.max(0, f.knots - n);
+          fx.push(Object.assign({ t: 'unravel', n, foe: i }, tag));
+          if (f.intent && f.intent.kind === 'rest') answered[i] = true;
+        }
+        break;
+      }
+      case 'water_more': {
+        // たくさん: one creature only (water usually reaches all): its Heat goes, and soaked through it cannot raise
+        // Heat next exchange
+        if (up.indexOf(T) < 0) break;
+        const f = st.foes[T];
+        if (f.heat) fx.push(Object.assign({ t: 'water', foe: T }, tag));
+        f.heat = 0;
+        if (f.intent && f.intent.kind === 'heat' && !answered[T]) answered[T] = true;
+        st.mods.soaked = Object.assign({}, st.mods.soaked, { [T]: st.round + 1 });
+        fx.push(Object.assign({ t: 'water', foe: T, soaked: true, en: 'Soaked through: it cannot raise Heat next exchange.' }, tag));
+        break;
+      }
+      case 'wind_forever':
+        // 永遠に: the wind does what wind does, and goes on blowing: no creature can raise a Shroud until a Gust breaks it
+        for (const i of up) {
+          const f = st.foes[i];
+          if (f.shroud) { f.shroud = false; fx.push(Object.assign({ t: 'light', foe: i, by: 'wind' }, tag)); }
+          if (f.intent && f.intent.kind === 'shroud' && !answered[i]) answered[i] = true;
+        }
+        st.mods.wind = true;
+        fx.push(Object.assign({ t: 'wind', lasting: true, en: 'The wind keeps blowing: no mist can gather while it does. A Gust would break it.' }, tag));
+        break;
+      default: break;
+    }
+  }
+
+  // ---- lasting effects meet the creatures' moves (called by the rules' foeAct) ----------------------------------
+  // A blow about to land on `who` with `power`: returns the power left (0 when stopped), adding what happened to fx.
+  function onBlow(st, who, power, it, fx) {
+    const m = st.mods;
+    if (!m || power <= 0) return power;
+    if (who !== 'pc' && who !== 'comp') return power;
+    if (m.unlimited === st.round && it.kind === 'strike') { fx.push({ t: 'block', who, n: power, mod: 'mugen' }); return 0; }
+    if (m.any && m.any[who]) { m.any = Object.assign({}, m.any, { [who]: false }); fx.push({ t: 'block', who, n: power, mod: 'arayuru' }); return 0; }
+    if (m.shield) { m.shield = false; fx.push({ t: 'block', who, n: power, mod: 'zentai' }); return 0; }
+    if (m.perBlow === st.round) { fx.push({ t: 'block', who, n: 1, mod: 'goto' }); return power - 1; }
+    return power;
+  }
+  // A move that a lasting effect turns away before it happens: returns a reason, or null
+  function stops(st, it) {
+    const m = st.mods;
+    if (!m) return null;
+    if (it.kind === 'shroud' && m.wind) return 'wind';
+    if (it.kind === 'heat' && m.soaked && m.soaked[st.cur] === st.round) return 'soaked';
+    return null;
+  }
+  // a Gust breaks the everlasting wind
+  function broken(st, it, fx) {
+    if (st.mods && st.mods.wind && it.kind === 'gust') { st.mods.wind = false; fx.push({ t: 'wind', broken: true, en: 'The gust breaks the wind\'s long blowing.' }); }
+  }
+  // the close of an exchange: what lasted this round only ends
+  function tick(st) {
+    const m = st.mods;
+    if (!m) return;
+    if (m.soaked) for (const k of Object.keys(m.soaked)) if (m.soaked[k] < st.round) delete m.soaked[k];
+  }
+
+  // ---- the phrase to write (the language step) -------------------------------------------------------------------
+  // Typed: the whole phrase; handwritten: the modifier (and its particle) with the rest shown; the pieces route
+  // assembles it (construction, never handwriting). Only what was written counts as written: displayed nouns and
+  // verbs earn no production credit (`items` differ by route).
+  function step(card) {
+    const p = card.mod.pair;
+    const fam = C().families[card.mod.id];
+    const plain = (m) => RB.jp.plain(m).replace(/\s+/g, '');
+    const read = (m) => RB.jp.reading(m).replace(/\s+/g, '');
+    const accept = Array.from(new Set([read(p.jp), plain(p.jp)].concat(p.accept || [])));
+    const H = p.hand;
+    const hAccept = Array.from(new Set([read(H.write), plain(H.write)]));
+    return {
+      kind: 'write', item: p.items, answer: read(p.jp), accept, mode: 'reading',
+      title: 'Weave the phrase: ' + fam.en + ' and ' + p.respEn,
+      prompt: { en: 'Write the whole phrase for “' + p.en + '”.' },
+      explain: { jp: p.jp, en: p.en + ' — ' + p.does },
+      choices: [read(p.jp)].concat(p.wrong || []).slice(0, 3),
+      // handwritten: the modifier and its particle; the rest is shown and earns nothing
+      byMode: { hand: { item: H.items, answer: read(H.write), accept: hAccept, template: { before: H.before || '', after: H.after || '' }, prompt: { en: 'Write the missing words (' + fam.en + ') for “' + p.en + '”.' }, choices: null } },
+    };
+  }
+
+  return { pairsFor, known, offered, extend, why, reach, act, onBlow, stops, broken, tick, step, respOf, breathing };
 })();
 
 
@@ -51701,26 +52385,42 @@ RB.combatSim = (function () {
     v -= 1.2 * (usesOf(x) - usesOf(st0));
     return v;
   }
-  // one exchange on a copy: your response (on creature ti), the companion's action (on aTi), the creatures
+  // one exchange on a copy, by the encounter's own steps (src/engine/97_encounter.js) with the unwrapped rules:
+  // your response (on creature ti), the companion's action (on aTi), the creatures (the close is not needed to
+  // judge it)
   function look(st, card, ti, act, aTi) {
     const x = clone(st);
+    const E = RB.encounter;
     L.target(x, ti);
-    const P = core.playerAct(x, card, OK);
-    if (act) { if (aTi != null) L.target(x, aTi); core.compAct(x, act, P); }
-    if (!L.allSettled(x)) core.enemyAct(x, P.answered || [P.countered], core.foeAct);
+    const P = E.player(x, card, OK, null, core);
+    if (act) E.companion(x, { act, target: aTi }, P, ti, core);
+    if (!L.allSettled(x)) E.foes(x, P, core);
     return x;
   }
   const knownTags = (words) => new Set(words.flatMap((w) => w.tags || []));
   // The cards the screen would offer for creature i (Unravel blocked while it
   // is shrouded or you are hushed, when you know a word that clears it).
-  function cardsFor(st, i, words, known) {
+  // mods: also every modifier the encounter offers on every response it pairs with, with each of its options
+  // (expansion E27; the curve's modifier policy).
+  function cardsFor(st, i, words, known, mods) {
     return L.withFoe(st, i, () => {
       const cards = core.responses(st, words);
       for (const c of cards) {
         if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
         if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'hushed';
       }
-      return cards.filter((c) => !c.disabled);
+      const out = cards.filter((c) => !c.disabled);
+      if (!mods || !RB.modifiers || (st.hushed && st.hushed.modifiers) || RB.modifiers.breathing(st)) return out;
+      const M = RB.modifiers, up = L.standing(st);
+      for (const c of out.slice()) {
+        for (const m of M.known(st, null)) {
+          const p = M.pairsFor(c).find((x) => x.mod === m);
+          if (!p || (c.target && c.target !== 'pc')) continue;
+          const opts = p.option === 'who' ? (st.compId ? ['pc', 'comp'] : ['pc']) : p.option === 'two' ? up.flatMap((a, k) => up.slice(k + 1).map((b) => [a, b])) : p.option === 'leaveOut' ? up : [null];
+          for (const o of opts) out.push(M.extend(c, m, o));
+        }
+      }
+      return out;
     });
   }
   // companion actions on offer (ids), with what each would aim at
@@ -51757,7 +52457,7 @@ RB.combatSim = (function () {
       return Object.assign(pick, act);
     }
     for (const i of up) {
-      for (const card of cardsFor(st, i, words, known)) {
+      for (const card of cardsFor(st, i, words, known, o.mods)) {
         // a response that does not depend on the target is tried once
         const r = L.withFoe(st, i, () => L.reachOf(st, card));
         if (r.foes.length !== 1 && i !== up[0] && card.kind === 'word') continue;
@@ -51791,7 +52491,8 @@ RB.combatSim = (function () {
     return best || { act: null, actTarget: null };
   }
 
-  // A whole encounter. o: { difficulty, comp, words (ids), group (ids), policy,
+  // A whole encounter. o: { difficulty, comp, words (ids), group (ids), policy, mods (consider modifiers), encounter
+  // (an encounter definition or id: begun by RB.encounter.begin instead of a plain battle),
   // slips (every n-th answer has one slip, costing its capped −1; 0 = none),
   // flags, quests (for companion unlocks), atlasCtx (unused here) }.
   function run(enemy, o) {
@@ -51804,7 +52505,9 @@ RB.combatSim = (function () {
       flags: Object.assign({}, o.flags || {}), quests: Object.assign({}, o.quests || {}), vars: {}, words: (o.words || []).slice(), inv: {}, seen: {}, chapter: 6, player: { bg: '' },
     };
     const words = s.words.map((w) => C.words[w]).filter(Boolean);
-    const st = core.init(enemy, s, { group: o.group || [] });
+    if (o.encounter) s.id = s.id || 'sim';
+    const st = o.encounter ? RB.encounter.begin(o.encounter, s) : core.init(enemy, s, { group: o.group || [] });
+    if (o.encounter) enemy = st.foes[0].def;
     const out = { win: false, rounds: 0, lost: 0, minPc: st.pc, minComp: st.comp, max: st.max, techs: 0, acts: {}, foes: st.foes.map((f) => f.enemyId), knots: st.foes.map((f) => f.maxKnots) };
     let n = 0, stall = 0;
     const knotsLeft = () => sum(st.foes, (f) => Math.max(0, f.knots));
@@ -51812,28 +52515,807 @@ RB.combatSim = (function () {
       const k0 = knotsLeft();
       const c = choose(st, words, s, Object.assign({}, o, { stall }));
       if (!c || !c.card) break;
-      L.target(st, c.target);
       n++;
       const slip = o.slips && n % o.slips === 0;
       const before = st.pc + st.comp;
-      const P = core.playerAct(st, c.card, slip ? { ok: true, firstTry: false, mistakes: 1 } : OK, enemy);
       if (c.card.kind === 'tech') out.techs++;
-      if (c.act) { if (c.actTarget != null) L.target(st, c.actTarget); core.compAct(st, c.act, P); out.acts[c.act] = (out.acts[c.act] || 0) + 1; }
-      if (o.trace) o.trace.push('r' + round + ' ' + st.foes.map((f, i) => i + ':' + f.enemyId + ' k' + f.knots + ' ' + (f.intent && f.intent.kind) + (f.heat ? ' h' + f.heat : '') + (f.shroud ? ' mist' : '') + (f.charged ? ' chg' : '')).join(' | ') + ' || ' + (c.card.word ? c.card.word.id : c.card.kind) + '@' + c.target + ' ' + (c.act || '') + ' pc' + st.pc + ' hush' + st.silenced);
+      if (c.card.mod) { out.mods = out.mods || {}; out.mods[c.card.mod.id] = (out.mods[c.card.mod.id] || 0) + 1; }
+      if (c.act) out.acts[c.act] = (out.acts[c.act] || 0) + 1;
+      // one exchange, by the encounter's steps (src/engine/97_encounter.js)
+      const ev = RB.encounter.exchange(st, { card: c.card, res: slip ? { ok: true, firstTry: false, mistakes: 1 } : OK, comp: c.act ? { act: c.act, target: c.actTarget } : null, target: c.target }, {
+        enemy, impl: core,
+        onStep(name) {
+          if (name === 'companion' && o.trace) o.trace.push('r' + round + ' ' + st.foes.map((f, i) => i + ':' + f.enemyId + ' k' + f.knots + ' ' + (f.intent && f.intent.kind) + (f.heat ? ' h' + f.heat : '') + (f.shroud ? ' mist' : '') + (f.charged ? ' chg' : '')).join(' | ') + ' || ' + (c.card.word ? c.card.word.id : c.card.kind) + '@' + c.target + ' ' + (c.act || '') + ' pc' + st.pc + ' hush' + st.silenced);
+          if (name === 'foes') {
+            out.lost += Math.max(0, before - (st.pc + st.comp));
+            out.minPc = Math.min(out.minPc, st.pc); out.minComp = Math.min(out.minComp, st.comp);
+          }
+        },
+      });
       out.rounds++;
-      if (L.allSettled(st)) { st.over = 'win'; break; }
-      core.enemyAct(st, P.answered, core.foeAct);
-      out.lost += Math.max(0, before - (st.pc + st.comp));
-      out.minPc = Math.min(out.minPc, st.pc); out.minComp = Math.min(out.minComp, st.comp);
-      core.endRound(st, enemy);
+      if (ev.over === 'win') break;
       stall = knotsLeft() < k0 ? 0 : stall + 1;
-      if (st.log.length && st.log[st.log.length - 1].t === 'revive') { st.log.pop(); out.revived = true; }
+      if (ev.revived) out.revived = true;
     }
     out.win = st.over === 'win';
     out.lose = st.over === 'lose';
     return out;
   }
   return { choose, run, score, clone, look, cardsFor, core };
+})();
+
+
+/* ==== src/engine/97_encounter.js ==== */
+/* The encounter platform (expansion P04; docs/future/plan/03_ENCOUNTERS.md E1–E27; docs/future/work/P04_ENCOUNTERS.md).
+ *
+ * One committed exchange is one transaction, run here and nowhere else: the screens (src/ui/80_combat.js for
+ * encounters with creatures, src/ui/80s_encounter.js for those without), the player model
+ * (src/engine/96_combat_sim.js) and the automated story runs (src/engine/99_test.js) all call it. The rules it
+ * calls are RB.combatLogic's, looked up at call time so the Atlas's wrappers still apply, or the set a caller
+ * passes as `impl` (the player model's look-ahead uses the unwrapped rules).
+ *
+ * The order within an exchange, derived from the rules as they stood and held to the 1,710 recorded battles
+ * (tests/fixtures/combat_golden.json):
+ *   1. your response (or a procedure step, or a conversational choice), and the Harmony it earns;
+ *   2. your companion's action, aimed where you aimed it; then the target goes back to yours;
+ *   3. guests and neutrals, each by its agenda, in the order they joined (in a social encounter, the people
+ *      react);
+ *   4. every creature still standing, in its numbered order (left to right as they stand), each creature's
+ *      second move straight after its first;
+ *   5. the close: creatures whose knots are all free settle, what lasts a time counts down, the next moves are
+ *      telegraphed, then calls and scheduled arrivals come (while there is room).
+ * After each step the encounter's conclusions are checked, in the order the encounter lists them; the first that
+ * holds ends the exchange there, as freeing the last knot with your response always has. So a creature settled
+ * by your response never acts; a guest whose objective is met leaves before the creatures move; a conclusion
+ * reached in the close comes before any arrival. Nothing here is timed, and nothing advances while a player reads,
+ * writes or opens help: only `exchange` (or its steps, in this order) moves an encounter on.
+ *
+ * An encounter definition (content: RB.content.encounters[id]; the validator checks every one):
+ *   { id, kind: 'battle' | 'social' | 'procedure' | 'study', name: { jp, en },
+ *     lead, group: [ids] | { normal, hard },       creatures at the start (none for a conversation or a machine)
+ *     setPiece, capacity,                          up to five on the creatures' side in an authored set piece
+ *     rules: { wait, conditions, doubles, modifiers }, field: ['rain' | 'mist'],
+ *     actors: [{ aid, side: 'guest' | 'neutral' | 'object', name, hp, cond, protectable, agenda, lines }],
+ *     arrivals: [{ enemy, after | leadBelow, prevent: [tags], say }], calls: { enemy, standing, knots },
+ *     objective: { kind, aid, rounds, text }, conclusions: [{ id, when, result, text, flags }],
+ *     procedure: {…}, social: {…}, study: {…}, companion: { <comp>: [actions] }, help: {…}, story, pool }
+ * Results: 'win' (succeeded), 'end' (concluded another authored way: an objective lost, a conversation's end;
+ * never a defeat), 'lose' (the party fell: back to the checkpoint, learning kept), 'flee' (stepped back). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.encounter = (function () {
+  'use strict';
+  const L = () => RB.combatLogic;
+  const clone = (x) => (x == null ? x : JSON.parse(JSON.stringify(x)));
+  const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+  // the rules to run: the caller's set, else the live ones (with whatever wrappers are installed)
+  function rules(impl) {
+    const C = L();
+    // (live rules: enemyAct looks up RB.combatLogic.foeAct itself, wrapped or not)
+    if (!impl) return { playerAct: C.playerAct, compAct: C.compAct, enemyAct: C.enemyAct, foeAct: null, endRound: C.endRound };
+    return {
+      playerAct: impl.playerAct || C.playerAct, compAct: impl.compAct || C.compAct, enemyAct: impl.enemyAct || C.enemyAct,
+      foeAct: impl.foeAct || null, endRound: impl.endRound || C.endRound,
+    };
+  }
+  function defOf(id) {
+    const d = (RB.content.encounters || {})[id];
+    if (!d) throw new Error('unknown encounter ' + id);
+    return d;
+  }
+  // the campaign's encounter record (older saves gain it empty: RB.save.migrate)
+  function rec(s) {
+    if (!isObj(s.enc)) s.enc = {};
+    const e = s.enc;
+    for (const k of ['proc', 'solved', 'rewarded', 'defeats', 'outcomes', 'studies']) if (!isObj(e[k])) e[k] = {};
+    if (!isObj(e.wanderers)) e.wanderers = { recent: [], met: {} };
+    if (!Array.isArray(e.wanderers.recent)) e.wanderers.recent = [];
+    if (!isObj(e.wanderers.met)) e.wanderers.met = {};
+    return e;
+  }
+
+  // ---- beginning an encounter -----------------------------------------------------------------------------------
+  // A creature in an encounter: an existing creature's id, or { enemy: id, …what this encounter changes } (its
+  // pattern, authored moves, conditions, knots, name): a set piece's variation, never a new species.
+  function creature(spec) {
+    const C = RB.content;
+    if (typeof spec === 'string') return Object.assign({ id: spec }, C.enemies[spec] || {});
+    const base = C.enemies[spec.enemy] || {};
+    const o = Object.assign({ id: spec.enemy }, base, spec);
+    delete o.enemy;
+    if (spec.intents) o.intents = Object.assign({}, base.intents || {}, spec.intents);
+    return o;
+  }
+  function groupOf(def, difficulty) {
+    const g = def.group;
+    if (!g || difficulty === 'relaxed') return [];
+    const list = Array.isArray(g) ? g : (difficulty === 'hard' ? g.hard || g.normal : g.normal || g.hard) || [];
+    return list.map(creature);
+  }
+  // an encounter with no creatures in it (a conversation, a machine): the party and the people or the object
+  function bare(s, rules0) {
+    const d = L().DIFF[s.learn.difficulty] || L().DIFF.normal;
+    const comp = s.comp || null;
+    const max = Math.max(4, s.resolve.max + ((d.resolve || 12) - 12));
+    return {
+      foes: [], cur: 0, pc: Math.min(s.resolve.pc + ((d.resolve || 12) - 12), max), comp: comp ? Math.min(s.resolve.comp + ((d.resolve || 12) - 12), max) : 0, max,
+      ward: { pc: 0, comp: 0 }, harmony: 0, harmonyMax: 3, silenced: 0, compId: comp, compUses: {}, round: 0, log: [], over: null, diff: d,
+      assist: s.learn.assist === 'assist', rules: Object.assign({}, rules0), actors: L().partyActors(comp), mistakeCostThisRound: 0,
+    };
+  }
+  function actorFrom(a) {
+    const o = Object.assign({ side: 'guest' }, clone(a));
+    if (o.hp != null) o.maxHp = o.maxHp || o.hp;
+    const cond = {};
+    for (const c of [].concat(a.cond || [])) cond[c] = -1;
+    o.cond = cond;
+    o.left = false;
+    return o;
+  }
+  // the arrivals of this encounter, drawn before it begins and kept with it (E2). Relaxed: never a hostile arrival.
+  function schedule(def, s) {
+    if (s.learn.difficulty === 'relaxed') return [];
+    const out = [];
+    for (const a of def.arrivals || []) out.push({ enemy: a.enemy, after: a.after, leadBelow: a.leadBelow, prevent: a.prevent || null, say: a.say || null, knots: a.knots, state: 'waiting' });
+    if (s.learn.difficulty === 'hard') for (const a of def.extras || []) out.push({ enemy: a.enemy, after: a.after, leadBelow: a.leadBelow, prevent: a.prevent || null, say: a.say || null, knots: a.knots, state: 'waiting', extra: true });
+    // a zone's table (an eligible dungeon encounter): 0–2 arrivals, drawn once from the campaign's own stream
+    const T = def.arrivalTable;
+    if (T && RB.streams && s.id) {
+      const pick = RB.streams.fixed(s, 'enc:' + def.id + ':arrivals', 'arrivals', (d) => {
+        const n = Math.min(2, Math.floor(d() * ((T.max != null ? T.max : 2) + 1)));
+        const list = [];
+        for (let k = 0; k < n; k++) list.push({ enemy: T.from[Math.floor(d() * T.from.length)], after: (T.after || 2) + k * (T.gap || 2) });
+        return list;
+      });
+      for (const a of pick || []) out.push(Object.assign({ state: 'waiting', prevent: T.prevent || null }, a));
+    }
+    return out;
+  }
+  // def: an encounter definition or its id. o: { words } (the battle's inscriptions, for the study's fixed tools)
+  function begin(def, s, o) {
+    o = o || {};
+    def = typeof def === 'string' ? defOf(def) : def;
+    const kind = def.kind || 'battle';
+    const rules0 = Object.assign({}, def.rules || {});
+    let st;
+    if (def.lead) {
+      st = L().init(creature(def.lead), s, { group: groupOf(def, s.learn.difficulty), rules: rules0, maxFoes: def.setPiece ? def.capacity || 5 : null });
+    } else st = bare(s, rules0);
+    st.enc = {
+      id: def.id, def, kind, flags: {}, outcome: null, conclusion: null, arrived: 0, prevented: 0,
+      arrivals: schedule(def, s), lines: [], tried: {}, point: false,
+      capacity: def.setPiece ? Math.min(5, def.capacity || 5) : Math.min(3, def.capacity || 3),
+    };
+    // tuned with modifiers in hand (E27; lead's decision F-12): where modifiers are allowed, a creature in a group
+    // keeps at least two knots, so reaching two (いくつか, a knot each) never settles two creatures in one exchange
+    if (rules0.modifiers && st.foes.length > 1) for (const f of st.foes) if (!f.boss && f.maxKnots < 2) { f.knots = 2; f.maxKnots = 2; }
+    for (const a of def.actors || []) L().addActor(st, actorFrom(a));
+    if (rules0.conditions && RB.conditions && st.foes.length) RB.conditions.begin(st, def.field);
+    if (def.procedure) procBegin(st, s);
+    if (def.social) socialBegin(st);
+    if (def.study) st.enc.study = { limit: def.study.turns || 3 };
+    st.noFlee = !!def.noFlee;
+    return st;
+  }
+
+  // ---- conditions to test (`when`) ------------------------------------------------------------------------------
+  function actorOf(st, aid) { return (st.actors || []).find((a) => a.aid === aid) || null; }
+  function foeIndex(st, ref) {
+    if (typeof ref === 'number') return ref;
+    if (/^f\d+$/.test(ref)) return +ref.slice(1);
+    const i = st.foes.findIndex((f) => f.enemyId === ref);
+    return i;
+  }
+  function test(st, w, self) {
+    if (w == null) return true;
+    if (Array.isArray(w)) return w.every((x) => test(st, x, self));
+    const E = st.enc || {};
+    for (const k of Object.keys(w)) {
+      const v = w[k];
+      let ok = true;
+      switch (k) {
+        case 'all': ok = v.every((x) => test(st, x, self)); break;
+        case 'any': ok = v.some((x) => test(st, x, self)); break;
+        case 'not': ok = !test(st, v, self); break;
+        case 'settled':
+          if (v === 'all') ok = st.foes.length > 0 && L().allSettled(st);
+          else ok = [].concat(v).every((r) => { const i = foeIndex(st, r === 'target' && self ? self.agenda.target : r); return i >= 0 && st.foes[i] && st.foes[i].knots <= 0; });
+          break;
+        case 'down': ok = [].concat(v).every((aid) => { const a = actorOf(st, aid); return !!a && (a.hp || 0) <= 0; }); break;
+        case 'standing': ok = [].concat(v).every((aid) => { const a = actorOf(st, aid); return !!a && (a.hp == null || a.hp > 0) && !a.left; }); break;
+        case 'left': ok = [].concat(v).every((aid) => { const a = actorOf(st, aid); return !!a && a.left; }); break;
+        case 'rounds': ok = st.round >= v; break;
+        case 'flag': ok = [].concat(v).every((f) => !!E.flags[f]); break;
+        case 'noFlag': ok = [].concat(v).every((f) => !E.flags[f]); break;
+        case 'arrived': ok = (E.arrived || 0) >= v; break;
+        case 'prevented': ok = (E.prevented || 0) >= v; break;
+        case 'comp': ok = st.compId === v; break;
+        case 'proc': ok = !!E.proc && (v === 'done' ? E.proc.done : E.proc.steps[E.proc.step] && E.proc.steps[E.proc.step].id === v); break;
+        case 'machine': ok = !!E.proc && Object.keys(v).every((m) => E.proc.machine[m] === v[m]); break;
+        case 'stance': ok = !!E.social && Object.keys(v).every((aid) => [].concat(v[aid]).indexOf(E.social.stance[aid]) >= 0); break;
+        case 'claims': ok = !!E.social && [].concat(v).every((c) => !!E.social.revealed[c]); break;
+        case 'understanding': ok = !!E.social && E.social.understanding >= v; break;
+        case 'used': ok = !!E.social && [].concat(v).every((id) => (E.social.used[id] || 0) > 0); break;
+        case 'knots': ok = Object.keys(v).every((r) => { const i = foeIndex(st, r); return i >= 0 && st.foes[i].knots <= v[r]; }); break;
+        default: throw new Error('unknown encounter condition ' + k);
+      }
+      if (!ok) return false;
+    }
+    return true;
+  }
+
+  // ---- conclusions ---------------------------------------------------------------------------------------------
+  // An ordinary battle ends when every creature is settled (a win), or in the close when the party has fallen.
+  // An encounter lists its own conclusions, checked in order; with none that holds, settling every creature
+  // still wins a battle (an objective encounter says so itself if it should not).
+  function conclude(st) {
+    const E = st.enc;
+    if (!E) return L().allSettled(st) ? 'win' : null;
+    if (E.conclusion) return E.conclusion.result || 'win';
+    for (const c of E.def.conclusions || []) {
+      if (test(st, c.when)) { E.conclusion = c; E.outcome = c.id; return c.result || 'win'; }
+    }
+    if (st.foes.length && E.def.settleWins !== false && L().allSettled(st)) { E.conclusion = { id: 'settled', result: 'win' }; E.outcome = 'settled'; return 'win'; }
+    return null;
+  }
+
+  // ---- the cards on offer ---------------------------------------------------------------------------------------
+  // The responses for the current target, as the screen offers them: Unravel is blocked only while a word that
+  // clears the way is known (every encounter stays solvable), a Hush on a family says so with the exchanges left,
+  // and an encounter adds its own (procedure steps, conversational choices, Resolve this step).
+  function cards(st, s, words) {
+    const E = st.enc;
+    const known = new Set(words.flatMap((w) => w.tags || []));
+    let out = [];
+    if (st.foes.length) {
+      out = L().responses(st, words);
+      for (const c of out) {
+        if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
+        if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
+      }
+    } else if (E) {
+      out.push({ id: 'unravel', kind: 'unravel', icon: '🪢', jp: 'ほどく', en: 'Unravel', desc: 'Restore something tangled — where something really is.' });
+      for (const w of words) out.push({ id: 'w:' + w.id, kind: 'word', word: w, icon: w.icon || '✦', jp: w.jp, en: w.en, desc: w.effect });
+      if (st.rules.wait) out.push({ id: 'wait', kind: 'wait', icon: '…', jp: '{待|ま}つ', en: 'Wait', desc: st.rules.waitDesc || 'Say nothing this time, and let the others speak.' });
+    }
+    // a Hush on one family of responses (E26): the card says why, for how long, and what ends it
+    if (st.hushed) {
+      for (const c of out) {
+        const fam = c.kind === 'word' && RB.conditions ? RB.conditions.familyOf(c) : null;
+        const left = fam && st.hushed[fam];
+        if (left && !c.disabled) c.disabled = 'Hushed for ' + left + ' more exchange' + (left > 1 ? 's' : '') + ': a bell or a voice ends it now.';
+      }
+    }
+    if (E && E.proc) out = procCards(st, s).concat(out);
+    if (E && E.social) out = socialCards(st).concat(out);
+    // a response that did nothing in a situation that has not changed since is marked tried (C-64)
+    if (E && !st.foes.length) for (const c of out) if (E.tried[c.id] === stateKey(st)) c.tried = true;
+    return out;
+  }
+  function stateKey(st) {
+    const E = st.enc;
+    return JSON.stringify([E.proc ? [E.proc.step, E.proc.machine] : null, E.social ? [E.social.stance, E.social.revealed, E.social.understanding, E.flags] : null]);
+  }
+
+  // ---- the steps -----------------------------------------------------------------------------------------------
+  // 1. Your response. res: { ok, firstTry, mistakes } from the language step.
+  function player(st, card, res, enemy, impl) {
+    res = res || { ok: true, firstTry: true, mistakes: 0 };
+    const E = st.enc;
+    if (card.kind === 'proc' || card.kind === 'resolve') return procAct(st, card, res);
+    if (E && E.social) return socialAct(st, card, res);
+    if (!st.foes.length) return plainAct(st, card, res);
+    const R = rules(impl);
+    const hb = st.harmony;
+    const P = R.playerAct(st, card, res, enemy);
+    if (st.compId && st.harmony > hb) P.fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
+    if (E) preventArrivals(st, card, P.fx);
+    return P;
+  }
+  // a response in an encounter with no creatures and no conversation (a machine): it does what it does in
+  // general, and says plainly when that was nothing (C-60, C-64)
+  function plainAct(st, card, res) {
+    const fx = [];
+    costOf(st, res, fx);
+    const step = st.enc.proc && st.enc.proc.steps[st.enc.proc.step];
+    const fam = card.kind === 'word' && RB.conditions ? RB.conditions.familyOf(card) : card.kind;
+    const r = step && step.responses && (step.responses[card.kind === 'word' ? card.word.id : card.kind] || step.responses[fam]);
+    if (r && test(st, r.when)) { applyEffect(st, r.effect || {}, fx); fx.push({ t: 'say', en: r.says ? r.says.en : '', jp: r.says ? r.says.jp : '' }); }
+    else {
+      const says = card.kind === 'unravel' ? (step && step.untangled) || { en: 'Nothing here is tangled.' } : card.kind === 'wait' ? { en: 'You wait. Nothing moves.' } : { en: 'Nothing here answers to it.' };
+      fx.push({ t: 'say', none: true, en: says.en, jp: says.jp });
+      st.enc.tried[card.id] = stateKey(st);
+    }
+    return { fx, answered: [], countered: false, perfect: res.ok && res.firstTry !== false };
+  }
+  // a mistake costs at most 1 resolve an exchange, and nothing with Assisted (as in every battle)
+  function costOf(st, res, fx) {
+    st.mistakeCostThisRound = 0;
+    if (res && res.mistakes > 0 && !st.assist) {
+      st.mistakeCostThisRound = 1;
+      st.pc = Math.max(0, st.pc - 1);
+      fx.push({ t: 'cost', en: 'A slip of the brush costs a little resolve (−1).' });
+    }
+  }
+  // 2. Your companion's action. cact: { act: id | def, target } or null; T: the target of your response.
+  function companion(st, cact, P, T, impl) {
+    const id = cact && cact.act && (typeof cact.act === 'string' ? cact.act : cact.act.id);
+    if (!id || id === 'join') return null;
+    const E = st.enc;
+    if (E && E.social) return socialCompanion(st, id);
+    if (E && E.def.companion && E.def.companion[st.compId] && E.def.companion[st.compId].some((a) => a.id === id)) return ownCompanion(st, id, T);
+    if (!st.foes.length) return null;
+    const R = rules(impl);
+    const hc = st.harmony;
+    L().target(st, cact.target != null ? cact.target : T);
+    const cfx = R.compAct(st, id, P).fx;
+    if (!L().target(st, T)) st.cur = L().defaultTarget(st);
+    if (st.harmony > hc && !cfx.some((f) => f.t === 'harmony')) cfx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
+    return cfx;
+  }
+  // an encounter's own companion actions (E10): authored per encounter, in the companion's own role
+  function companionOptions(st, s) {
+    const E = st.enc;
+    if (!E || !st.compId || st.comp <= 0 && st.foes.length) return [];
+    const list = E.social ? (E.def.social.companion || {})[st.compId] : (E.def.companion || {})[st.compId];
+    return (list || []).filter((a) => test(st, a.when) && !(a.once && (st.compUses[a.id] || 0) > 0)).map((a) => ({ def: { id: a.id, name: a.name, desc: a.desc, aim: a.aim || 'none', own: true }, locked: false, used: false }));
+  }
+  function ownCompanion(st, id, T) {
+    const list = (st.enc.def.companion || {})[st.compId] || [];
+    const a = list.find((x) => x.id === id);
+    const fx = [];
+    if (!a) return fx;
+    st.compUses[id] = (st.compUses[id] || 0) + 1;
+    applyEffect(st, a.effect || {}, fx, T);
+    fx.push({ t: 'cact', who: st.compId, id, en: a.says ? a.says.en : '', jp: a.says ? a.says.jp : '' });
+    return fx;
+  }
+  // 3. Guests and neutrals act by their agendas (E1, E3); in a conversation, the people react (E8).
+  function guests(st, P) {
+    const gfx = [];
+    const E = st.enc;
+    if (!E) return gfx;
+    if (E.social) return socialDrift(st);
+    for (const a of st.actors) {
+      if ((a.side !== 'guest' && a.side !== 'neutral') || a.left || !a.agenda) continue;
+      if (a.hp != null && a.hp <= 0) { a.left = true; gfx.push({ t: 'leave', aid: a.aid, en: line(a, 'hurt') || (a.name.en + ' falls back, out of it.') }); continue; }
+      const ag = a.agenda;
+      const ti = ag.target != null ? foeIndex(st, ag.target) : -1;
+      const tf = ti >= 0 ? st.foes[ti] : null;
+      // what you did this exchange, as this person sees it
+      const youHit = !!(P && tf && (P.fx || []).some((f) => (f.t === 'unravel' || f.t === 'settle' || f.t === 'cond') && f.foe === ti));
+      if (tf && tf.knots <= 0) {
+        const how = youHit ? (ag.reactsTo && ag.reactsTo.youSettle) || 'satisfied' : 'done';
+        a.left = true;
+        if (how === 'engaged') { a.engaged = true; E.flags['engaged:' + a.aid] = true; }
+        gfx.push({ t: 'leave', aid: a.aid, how, en: line(a, how) || line(a, 'leave') || (a.name.en + ' nods and goes on their way.') });
+        continue;
+      }
+      if (ag.leavesWhen && test(st, ag.leavesWhen, a)) { a.left = true; gfx.push({ t: 'leave', aid: a.aid, en: line(a, 'leave') || (a.name.en + ' goes on their way.') }); continue; }
+      if (youHit && ag.reactsTo && ag.reactsTo.youHelp) gfx.push({ t: 'gsay', aid: a.aid, en: line(a, ag.reactsTo.youHelp) || '' });
+      const act = ag.act || { kind: 'say' };
+      const n = act.n || 1;
+      if (act.kind === 'unravel' && tf) {
+        tf.knots = Math.max(0, tf.knots - n);
+        gfx.push({ t: 'gact', aid: a.aid, act: 'unravel', foe: ti, n, en: line(a, 'act') || (a.name.en + ' works a knot loose.') });
+        // their own work done: they go, with their own words
+        if (tf.knots <= 0) { a.left = true; gfx.push({ t: 'leave', aid: a.aid, how: 'done', en: line(a, 'done') || line(a, 'leave') || (a.name.en + ' goes on their way.') }); }
+      }
+      else if (act.kind === 'soften' && tf) { tf.soften = (tf.soften || 0) + n; gfx.push({ t: 'gact', aid: a.aid, act: 'soften', foe: ti, n, en: line(a, 'act') || (a.name.en + ' gets in its way: its blow will land softer.') }); }
+      else if (act.kind === 'ward') { const on = act.on || 'pc'; st.ward[on] = (st.ward[on] || 0) + n; gfx.push({ t: 'gact', aid: a.aid, act: 'ward', target: on, n, en: line(a, 'act') || (a.name.en + ' stands guard.') }); }
+      else if (act.kind === 'stun' && tf && tf.intent) { tf.stunned = a.aid; gfx.push({ t: 'gact', aid: a.aid, act: 'stun', foe: ti, en: line(a, 'act') || (a.name.en + ' throws it off its stride.') }); }
+      else if (line(a, 'act')) gfx.push({ t: 'gsay', aid: a.aid, en: line(a, 'act') });
+    }
+    return gfx;
+  }
+  function line(a, key) {
+    const l = a.lines && a.lines[key];
+    if (!l) return '';
+    return typeof l === 'string' ? l : l.en || '';
+  }
+  // 4. The creatures still standing, each in turn. Returns { efx, standing, intents } as they were when the step
+  // began (the screen plays each creature's move from these). A guest stunned a creature: its move comes to nothing.
+  function foes(st, P, impl) {
+    const R = rules(impl);
+    const standing = L().standing(st);
+    const intents = st.foes.map((f) => f.intent);
+    if (!standing.length) return { efx: [], standing, intents };
+    let answered = P.answered || [P.countered];
+    if (st.enc) answered = st.foes.map((f, i) => !!(P.answered && P.answered[i]) || (!!f.stunned && f.stunned.indexOf && f.stunned.indexOf(':') > 0));
+    const efx = R.foeAct ? R.enemyAct(st, answered, R.foeAct) : R.enemyAct(st, answered);
+    return { efx, standing, intents };
+  }
+  // 5. The close of the exchange. Returns { revived, over, afx (arrivals) }.
+  function close(st, enemy, impl) {
+    const E = st.enc;
+    let revived = false;
+    const afx = [];
+    if (st.foes.length) {
+      const R = rules(impl);
+      R.endRound(st, enemy);
+      if (st.log.length && st.log[st.log.length - 1].t === 'revive') { st.log.pop(); revived = true; }
+    } else {
+      st.round++;
+      if (E && E.social) socialClose(st);
+    }
+    if (E) {
+      if (st.over === 'win' && E.def.settleWins === false) st.over = null;
+      if (st.over !== 'lose') {
+        const r = conclude(st);
+        if (r) st.over = r;
+        else if (st.over === 'win') st.over = null;
+      }
+      if (!st.over) arrive(st, afx);
+      if (!st.over && E.study && st.round >= E.study.limit) { st.over = 'end'; E.outcome = 'over'; E.conclusion = { id: 'over', result: 'end', text: E.def.study.explain || null }; }
+      st.calls = [];
+    }
+    return { revived, over: st.over || null, afx };
+  }
+
+  // ---- arrivals (E2) ---------------------------------------------------------------------------------------------
+  // What is on its way, for the telegraph: [{ enemy, in (exchanges), prevent (tags that stop it), say }].
+  function coming(st) {
+    const E = st.enc;
+    if (!E) return [];
+    const out = [];
+    for (const a of E.arrivals) {
+      if (a.state !== 'waiting') continue;
+      if (a.after != null) { const n = Math.max(0, a.after - st.round); if (n <= 2) out.push({ enemy: a.enemy, in: n || 1, prevent: a.prevent, say: a.say }); }
+      else if (a.leadBelow != null && st.foes[0] && st.foes[0].knots <= a.leadBelow + 1) out.push({ enemy: a.enemy, in: null, prevent: a.prevent, say: a.say, when: 'below' });
+    }
+    return out;
+  }
+  function room(st) {
+    const E = st.enc;
+    const side = L().standing(st).length + st.actors.filter((a) => a.side === 'neutral' && a.hostile && !a.left).length;
+    return side < E.capacity;
+  }
+  function joinFoe(st, spec, knots, afx, how) {
+    const def = creature(spec);
+    const enemyId = def.id;
+    const f = L().makeFoe(def, Math.max(1, knots || Math.min(2, def.knots || 2)));
+    L().addActor(st, f);
+    const i = st.foes.length - 1;
+    f.pi = i % f.pattern.length;
+    if (st.rules.conditions && RB.conditions) for (const c of def.conditions || []) RB.conditions.set(st, f, c, -1);
+    L().withFoe(st, i, (g) => { st.intent = L().drawIntent(g.def, st); });
+    st.enc.arrived++;
+    afx.push({ t: 'arrive', foe: i, enemy: enemyId, how, en: ((def.name && def.name.en) || 'A creature') + ' joins the encounter.' });
+    return i;
+  }
+  function arrive(st, afx) {
+    const E = st.enc;
+    // Relaxed: never a hostile arrival, whoever calls (the tested promise: Relaxed always meets one creature)
+    if (st.diff === L().DIFF.relaxed) { if ((st.calls || []).length) afx.push({ t: 'arrive', none: true, en: 'The call goes unanswered.' }); return; }
+    // calls answered by no one bring the creature called (a summoner's, up to its standing limit)
+    for (const c of st.calls || []) {
+      const spec = E.def.calls || {};
+      const enemyId = c.enemy || spec.enemy;
+      if (!enemyId) continue;
+      const standingCalled = st.foes.filter((f) => f.called && f.knots > 0).length;
+      if (spec.standing != null && standingCalled >= spec.standing) { afx.push({ t: 'arrive', none: true, en: 'Nothing more comes: there are already as many as can answer.' }); continue; }
+      if (!room(st)) { afx.push({ t: 'arrive', none: true, en: 'There is no room for anything more to come.' }); continue; }
+      const i = joinFoe(st, enemyId, spec.knots, afx, 'called');
+      st.foes[i].called = true;
+    }
+    for (const a of E.arrivals) {
+      if (a.state !== 'waiting') continue;
+      const due = (a.after != null && st.round >= a.after) || (a.leadBelow != null && st.foes[0] && st.foes[0].knots <= a.leadBelow);
+      if (!due || !room(st)) continue;
+      a.state = 'arrived';
+      joinFoe(st, a.enemy, a.knots, afx, a.extra ? 'extra' : 'scheduled');
+    }
+  }
+  // a response that stops what is coming: a bell calls the swarm off, a rope holds the way shut (never "Silence")
+  function preventArrivals(st, card, fx) {
+    if (card.kind !== 'word') return;
+    const tags = card.word.tags || [];
+    const near = coming(st);
+    for (const a of st.enc.arrivals) {
+      if (a.state !== 'waiting' || !a.prevent || !tags.some((t) => a.prevent.indexOf(t) >= 0)) continue;
+      if (!near.some((c) => c.enemy === a.enemy)) continue;
+      a.state = 'prevented';
+      st.enc.prevented++;
+      fx.push({ t: 'prevent', enemy: a.enemy, en: 'What was coming turns back.' });
+    }
+  }
+
+  // ---- effects authored in content (companion actions, procedure steps, conversational choices) ---------------
+  function applyEffect(st, e, fx, T) {
+    const E = st.enc;
+    if (e.flag) for (const f of [].concat(e.flag)) E.flags[f] = true;
+    if (e.unflag) for (const f of [].concat(e.unflag)) delete E.flags[f];
+    if (e.reveal && E.social) for (const c of [].concat(e.reveal)) if (!E.social.revealed[c]) { E.social.revealed[c] = true; fx.push({ t: 'claim', claim: c }); }
+    if (e.stance && E.social) for (const aid of Object.keys(e.stance)) { const was = E.social.stance[aid]; E.social.stance[aid] = e.stance[aid]; if (was !== e.stance[aid]) fx.push({ t: 'stance', aid, from: was, to: e.stance[aid] }); }
+    if (e.understanding && E.social) {
+      const was = E.social.understanding;
+      E.social.understanding = Math.max(0, Math.min(E.social.max, was + e.understanding));
+      st.harmony = E.social.understanding;
+      if (E.social.understanding !== was) fx.push({ t: 'harmony', n: E.social.understanding, max: E.social.max, understanding: true });
+    }
+    if (e.machine && E.proc) Object.assign(E.proc.machine, e.machine);
+    if (e.knots && st.foes.length) { const i = T != null ? T : st.cur; const f = st.foes[i]; if (f && f.knots > 0) { f.knots = Math.max(0, f.knots - e.knots); fx.push({ t: 'unravel', n: e.knots, foe: i, by: st.compId }); } }
+    if (e.ward) for (const who of Object.keys(e.ward)) { st.ward[who] = (st.ward[who] || 0) + e.ward[who]; fx.push({ t: 'ward', target: who, n: e.ward[who] }); }
+    if (e.hp) for (const aid of Object.keys(e.hp)) { const a = actorOf(st, aid); if (a) { a.hp = Math.max(0, Math.min(a.maxHp || 99, (a.hp || 0) + e.hp[aid])); } }
+    if (e.leave) for (const aid of [].concat(e.leave)) { const a = actorOf(st, aid); if (a && !a.left) { a.left = true; fx.push({ t: 'leave', aid }); } }
+    if (e.conclude) { const c = (E.def.conclusions || []).find((x) => x.id === e.conclude); if (c) { E.conclusion = c; E.outcome = c.id; } }
+  }
+
+  // ---- procedures (E7) and Resolve this step (E11) ---------------------------------------------------------------
+  // procedure: { id, version, machine: {…}, show: [{ key, label, values }], restart: 'start' | 'stable',
+  //   steps: [{ id, text: { jp, en } (the instruction, read in the language step), task (the language step),
+  //     actions: [{ id, label: { jp, en }, means: { en } (the interpretation shown before committing),
+  //       ok, set: {…}, result: { jp, en }, wrong: { en, restart, cost } }],
+  //     stable (a checkpoint a long procedure goes back to), responses: { <family | word | 'unravel'>: … },
+  //     untangled: { en } (what Unravel finds), reward: { once: id, flag } }] }
+  function procBegin(st, s) {
+    const P = st.enc.def.procedure;
+    const kept = s && rec(s).proc[P.id];
+    const fresh = { step: 0, machine: clone(P.machine || {}), stable: { step: 0, machine: clone(P.machine || {}) } };
+    const k = kept && kept.version === (P.version || 1) && !kept.done ? kept : null;
+    st.enc.proc = {
+      id: P.id, version: P.version || 1, steps: P.steps, step: k ? k.step : 0, machine: k ? clone(k.machine) : fresh.machine,
+      stable: k && k.stable ? clone(k.stable) : fresh.stable, start: clone(P.machine || {}), done: false, restarts: 0, resolved: 0,
+      startOf: null,
+    };
+    st.enc.proc.startOf = clone(st.enc.proc.machine);
+  }
+  // the key under which a step counts as done before: the same procedure, the same step, the same version of its
+  // instructions and the same machine state when it began (a different valve, or the same valve after the
+  // machine changed, is never the same step)
+  function solvedKey(p, step) {
+    return p.id + ':' + step.id + ':v' + p.version + ':' + JSON.stringify(Object.keys(p.startOf || {}).sort().map((k) => [k, p.startOf[k]]));
+  }
+  function procCards(st, s) {
+    const p = st.enc.proc;
+    if (!p || p.done) return [];
+    const step = p.steps[p.step];
+    if (!step) return [];
+    const out = step.actions.map((a) => ({ id: 'p:' + a.id, kind: 'proc', action: a, step: step.id, icon: '⚙', jp: a.label.jp, en: a.label.en, desc: a.desc || '', means: a.means || null }));
+    if (s && rec(s).solved[solvedKey(p, step)]) {
+      const ok = step.actions.find((a) => a.ok);
+      if (ok) out.unshift({ id: 'resolve', kind: 'resolve', action: ok, step: step.id, icon: '✓', jp: ok.label.jp, en: 'Resolve this step (completed before)', desc: 'Does exactly what you did before: ' + ok.label.en + '. No writing; nothing new is recorded.', means: ok.means || null });
+    }
+    return out;
+  }
+  function procAct(st, card, res) {
+    const E = st.enc, p = E.proc;
+    const fx = [];
+    const step = p.steps[p.step];
+    if (card.kind !== 'resolve') costOf(st, res, fx);
+    const a = card.action;
+    const ok = !!a.ok && test(st, a.requires);
+    if (ok) {
+      if (a.set) Object.assign(p.machine, a.set);
+      fx.push({ t: 'proc', ok: true, step: step.id, action: a.id, resolved: card.kind === 'resolve' || undefined, en: a.result ? a.result.en : '', jp: a.result ? a.result.jp : '' });
+      if (card.kind === 'resolve') p.resolved++;
+      else E.solvedNow = (E.solvedNow || []).concat([solvedKey(p, step)]);
+      if (step.reward && card.kind !== 'resolve') E.rewardNow = (E.rewardNow || []).concat([step.reward]);
+      if (step.stable) p.stable = { step: p.step + 1, machine: clone(p.machine) };
+      p.step++;
+      p.startOf = clone(p.machine);
+      if (p.step >= p.steps.length) { p.done = true; fx.push({ t: 'proc', done: true, en: (E.def.procedure.done && E.def.procedure.done.en) || 'It is done.' }); }
+    } else {
+      const w = a.wrong || step.wrong || {};
+      if (a.set && w.apply) Object.assign(p.machine, a.set);
+      const restart = w.restart != null ? w.restart : E.def.procedure.restart || 'start';
+      let to = p.step;
+      if (restart === 'start' || restart === true) { to = 0; p.machine = clone(p.start); }
+      else if (restart === 'stable') { to = p.stable.step; p.machine = clone(p.stable.machine); }
+      if (to !== p.step) p.restarts++;
+      p.step = to;
+      p.startOf = clone(p.machine);
+      if (w.cost && !st.assist) st.pc = Math.max(0, st.pc - w.cost);
+      fx.push({ t: 'proc', ok: false, step: step.id, action: a.id, to: p.steps[to] ? p.steps[to].id : null, restart: to !== p.step || restart, en: w.en || 'That was not the way: the machine settles back.', cost: w.cost || 0 });
+    }
+    return { fx, answered: st.foes.map(() => false), countered: false, perfect: ok && res.ok && res.firstTry !== false, proc: { ok } };
+  }
+
+  // ---- social encounters (E8) ------------------------------------------------------------------------------------
+  // social: { parties: [{ aid, name, stance, wants }], claims: { id: { by, jp, en, hidden } },
+  //   actions: [{ id, kind, label, when, task, effect, says, once, lasting, means }],
+  //   responses: { <word id | family | 'unravel' | 'wait'>: { when, effect, says } }, unravelTip: { en },
+  //   companion: { <comp>: [{ id, name, desc, when, effect, says, once }] },
+  //   drift: [{ when, effect, says, once }], understanding: n (the agreement meter's size), gesture: { name, effect, says },
+  //   rounds (it comes to an end regardless), conclusions (in the encounter's own list) }
+  function socialBegin(st) {
+    const S = st.enc.def.social;
+    for (const p of S.parties || []) if (!actorOf(st, p.aid)) L().addActor(st, actorFrom(Object.assign({ side: 'neutral' }, p)));
+    const stance = {};
+    for (const p of S.parties || []) stance[p.aid] = p.stance || 'listening';
+    const revealed = {};
+    for (const id of Object.keys(S.claims || {})) if (!S.claims[id].hidden) revealed[id] = true;
+    st.enc.social = { stance, revealed, understanding: 0, max: S.understanding || 3, used: {}, drifted: {}, said: [] };
+    st.harmonyMax = st.enc.social.max;
+  }
+  function socialCards(st) {
+    const E = st.enc, S = E.def.social;
+    const out = [];
+    for (const a of S.actions || []) {
+      if (a.once && E.social.used[a.id]) continue;
+      if (!test(st, a.when)) continue;
+      out.push({ id: 's:' + a.id, kind: 'social', action: a, icon: '💬', jp: a.label.jp, en: a.label.en, desc: a.desc || '', means: a.means || null, lasting: !!a.lasting });
+    }
+    if (S.gesture && st.compId && E.social.understanding >= E.social.max) out.unshift({ id: 'gesture', kind: 'gesture', icon: '✧', jp: S.gesture.name.jp, en: S.gesture.name.en, desc: S.gesture.desc || '', tech: st.compId });
+    return out;
+  }
+  function socialAct(st, card, res) {
+    const E = st.enc, S = E.def.social;
+    const fx = [];
+    costOf(st, res, fx);
+    let did = false;
+    if (card.kind === 'social') {
+      const a = card.action;
+      E.social.used[a.id] = (E.social.used[a.id] || 0) + 1;
+      // a choice can work differently as things stand (`cases`, the first that holds); with none that holds it says
+      // so, and changes nothing
+      const cs = (a.cases || []).find((c) => test(st, c.when));
+      if (a.cases && !cs) { if (a.says) fx.push({ t: 'say', none: true, en: a.says.en, jp: a.says.jp }); }
+      else {
+        applyEffect(st, (cs || a).effect || {}, fx);
+        const sy = (cs && cs.says) || a.says;
+        if (sy) fx.push({ t: 'say', who: 'pc', en: sy.en, jp: sy.jp });
+        did = true;
+      }
+    } else if (card.kind === 'gesture') {
+      applyEffect(st, S.gesture.effect || {}, fx);
+      E.social.understanding = 0; st.harmony = 0;
+      fx.push({ t: 'tech', who: st.compId, en: S.gesture.says ? S.gesture.says.en : '', jp: S.gesture.says ? S.gesture.says.jp : '' });
+      did = true;
+    } else {
+      const key = card.kind === 'word' ? card.word.id : card.kind;
+      const fam = card.kind === 'word' && RB.conditions ? RB.conditions.familyOf(card) : null;
+      const R = S.responses || {};
+      // by the word itself, its family, or any of its tags (a bell: 'bell')
+      const tagKey = card.kind === 'word' ? (card.word.tags || []).find((t) => R[t]) : null;
+      const r = R[key] || (fam && R[fam]) || (tagKey && R[tagKey]);
+      if (r && test(st, r.when) && !(card.kind === 'unravel' && !r.effect)) { applyEffect(st, r.effect || {}, fx); if (r.says) fx.push({ t: 'say', en: r.says.en, jp: r.says.jp }); did = true; }
+      else if (card.kind === 'unravel') {
+        fx.push({ t: 'say', none: true, en: (R.unravel && R.unravel.says && R.unravel.says.en) || 'Nothing here is tangled: the problem is what each of them believes.' });
+        if (!E.flags._unravelTold && S.unravelTip) { E.flags._unravelTold = true; fx.push({ t: 'tip', en: S.unravelTip.en, who: st.compId }); }
+      } else if (card.kind === 'wait') {
+        const w = S.wait;
+        if (w && test(st, w.when)) { applyEffect(st, w.effect || {}, fx); if (w.says) fx.push({ t: 'say', en: w.says.en, jp: w.says.jp }); did = true; }
+        else fx.push({ t: 'say', none: true, en: 'You let the silence sit. No one fills it.' });
+      } else fx.push({ t: 'say', none: true, en: 'It changes nothing here.' });
+    }
+    if (!did) E.tried[card.id] = stateKey(st);
+    return { fx, answered: [], countered: false, perfect: did && res.ok && res.firstTry !== false };
+  }
+  function socialCompanion(st, id) {
+    const S = st.enc.def.social;
+    const a = ((S.companion || {})[st.compId] || []).find((x) => x.id === id);
+    const fx = [];
+    if (!a) return fx;
+    st.compUses[id] = (st.compUses[id] || 0) + 1;
+    applyEffect(st, a.effect || {}, fx);
+    fx.push({ t: 'cact', who: st.compId, id, en: a.says ? a.says.en : '', jp: a.says ? a.says.jp : '' });
+    return fx;
+  }
+  // the people react to how things stand (authored, in order, each once unless repeatable)
+  function socialDrift(st) {
+    const E = st.enc, S = E.def.social;
+    const fx = [];
+    (S.drift || []).forEach((d, k) => {
+      if (d.once !== false && E.social.drifted[k]) return;
+      if (!test(st, d.when)) return;
+      E.social.drifted[k] = true;
+      applyEffect(st, d.effect || {}, fx);
+      if (d.says) fx.push({ t: 'say', who: d.who || null, en: d.says.en, jp: d.says.jp });
+    });
+    return fx;
+  }
+  function socialClose(st) {
+    const E = st.enc;
+    // someone who is leaving goes at the end of the exchange
+    for (const aid of Object.keys(E.social.stance)) if (E.social.stance[aid] === 'leaving') { const a = actorOf(st, aid); if (a && !a.left) a.left = true; }
+  }
+
+  // ---- the whole exchange --------------------------------------------------------------------------------------
+  // input: { card, res, comp: { act, target } | null, target (whom your response acts on) }
+  // o: { enemy, impl, onStep(name, ev) }. Returns the exchange's record:
+  // { P, fx, cfx, gfx, efx, afx, standing, intents, won, wonByComp, revived, over, log }.
+  function exchange(st, input, o) {
+    o = o || {};
+    const T = input.target != null ? input.target : st.cur;
+    if (st.foes.length) L().target(st, T);
+    const ev = { round: st.round, P: null, fx: [], cfx: null, gfx: [], efx: [], afx: [], standing: [], intents: [], won: false, wonByComp: false, revived: false, over: null };
+    const step = (name) => { if (o.onStep) o.onStep(name, ev); };
+    const ended = () => { const r = conclude(st); if (r) { ev.over = st.over = r; return true; } return false; };
+    ev.P = player(st, input.card, input.res || { ok: true, firstTry: true, mistakes: 0 }, o.enemy, o.impl);
+    ev.fx = ev.P.fx;
+    const r1 = conclude(st);
+    ev.won = r1 === 'win';
+    step('player');
+    if (r1) { ev.over = st.over = r1; step('companion'); return finish(ev); }
+    ev.cfx = companion(st, input.comp, ev.P, T, o.impl);
+    const r2 = conclude(st);
+    ev.wonByComp = r2 === 'win';
+    step('companion');
+    if (r2) { ev.over = st.over = r2; return finish(ev); }
+    ev.gfx = guests(st, ev.P);
+    step('guests');
+    if (st.enc && ended()) return finish(ev);
+    const F = foes(st, ev.P, o.impl);
+    ev.efx = F.efx; ev.standing = F.standing; ev.intents = F.intents;
+    step('foes');
+    if (st.enc && conclude(st) && conclude(st) !== 'win') { ev.over = st.over = conclude(st); return finish(ev); }
+    const C = close(st, o.enemy, o.impl);
+    ev.revived = C.revived; ev.over = C.over; ev.afx = C.afx;
+    step('close');
+    return finish(ev);
+  }
+  // the exchange's lines, for logs and tests: every effect in order, as plain words
+  function finish(ev) {
+    const line = (ph, f) => ph + ':' + f.t + (f.foe != null ? '@' + f.foe : '') + (f.aid ? '@' + f.aid : '') + (f.n != null ? '=' + f.n : '') + (f.who ? '>' + f.who : '') + (f.target ? '>' + f.target : '') + (f.change ? '/' + f.change : '') + (f.ok != null ? '/' + (f.ok ? 'ok' : 'wrong') : '');
+    ev.log = [].concat(
+      ev.fx.map((f) => line('you', f)),
+      (ev.cfx || []).map((f) => line('comp', f)),
+      ev.gfx.map((f) => line('guest', f)),
+      ev.efx.map((f) => line('foe', f)),
+      ev.afx.map((f) => line('close', f)),
+      ev.over ? ['over:' + ev.over] : [],
+    );
+    return ev;
+  }
+
+  // ---- after the encounter: what the campaign keeps -------------------------------------------------------------
+  // Called once when an encounter ends (any result). Steps solved count for Resolve this step; a procedure left
+  // mid-way keeps its machine (stepping away costs nothing); one-time rewards are given once; a story encounter's
+  // defeats are counted (only to offer help, E19); a lasting outcome is recorded (E17), neutrally.
+  function finishEncounter(st, s, outcome) {
+    const E = st.enc;
+    if (!E || !s) return null;
+    const R = rec(s);
+    for (const k of E.solvedNow || []) R.solved[k] = true;
+    const rewards = [];
+    for (const rw of E.rewardNow || []) if (rw.once && !R.rewarded[rw.once]) { R.rewarded[rw.once] = true; rewards.push(rw); }
+    if (E.proc) {
+      const P = E.def.procedure;
+      if (E.proc.done) R.proc[P.id] = { done: true, version: E.proc.version };
+      else if (P.keep !== false) R.proc[P.id] = { step: E.proc.step, machine: clone(E.proc.machine), stable: clone(E.proc.stable), version: E.proc.version };
+    }
+    if (E.def.story && outcome === 'lose') R.defeats[E.id] = (R.defeats[E.id] || 0) + 1;
+    if (E.conclusion && E.def.lasting) R.outcomes[E.id] = { id: E.outcome, t: Date.now() };
+    if (E.study) {
+      const won = st.over === 'win';
+      const b = R.studies[E.id] || {};
+      if (won && (!b.best || st.round < b.best)) b.best = st.round;
+      b.tries = (b.tries || 0) + 1;
+      R.studies[E.id] = b;
+    }
+    if (RB.streams && E.def.arrivalTable && (outcome === 'win' || outcome === 'end')) RB.streams.consume(s, 'enc:' + E.id + ':arrivals');
+    return { rewards, flags: (E.conclusion && E.conclusion.flags) || null, outcome: E.outcome, text: E.conclusion && E.conclusion.text };
+  }
+  // help in a required story battle after a defeat (E19): what the companion offers now, escalating with defeats
+  // (1 explain, 2 suggest, 3+ point); always optional, and the player may also ask at any time
+  function helpOffer(s, def) {
+    if (!def || !def.story) return 0;
+    const n = rec(s).defeats[def.id] || 0;
+    return Math.min(3, n);
+  }
+
+  // ---- wanderers (E3) --------------------------------------------------------------------------------------------
+  // At most about one eligible encounter in eight brings a wanderer from the region's cast, drawn from the
+  // campaign's own stream; none who appeared in the last five, never the same twice in a row.
+  function wanderer(s, region, eligible) {
+    const W = RB.content.wanderers || {};
+    const R = rec(s).wanderers;
+    if (!eligible || !RB.streams) return null;
+    const cast = Object.keys(W).filter((id) => W[id].region === region && R.recent.indexOf(id) < 0);
+    if (!cast.length) { R.recent.push(null); R.recent = R.recent.slice(-5); return null; }
+    const roll = RB.streams.next(s, 'wanderers');
+    if (roll >= (W._rate || 1 / 8)) { R.recent.push(null); R.recent = R.recent.slice(-5); return null; }
+    const id = cast[Math.floor(RB.streams.next(s, 'wanderers') * cast.length)];
+    R.recent.push(id); R.recent = R.recent.slice(-5);
+    R.met[id] = (R.met[id] || 0) + 1;
+    return id;
+  }
+
+  return {
+    begin, exchange, player, companion, guests, foes, close, conclude, cards, coming, test, finishEncounter, helpOffer,
+    wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey,
+  };
 })();
 
 
@@ -51933,11 +53415,9 @@ RB.test = (function () {
       if (card.kind === 'answer' && st.intent.answer) solveStep(RB.activities.tier(st.intent.answer) || st.intent.answer, 'battle ' + st.enemyId + ' answer');
       if (card.kind === 'truth' && st.intent.truth) solveStep(RB.activities.tier(st.intent.truth) || st.intent.truth, 'battle ' + st.enemyId + ' truth');
       if (card.kind === 'tech') techs++;
-      const P = L.playerAct(st, card, { ok: true, firstTry: true, mistakes: 0 }, enemy);
-      if (c.act) { if (c.actTarget != null) L.target(st, c.actTarget); L.compAct(st, c.act, P); acts[c.act] = (acts[c.act] || 0) + 1; }
-      if (L.allSettled(st)) { st.over = 'win'; break; }
-      L.enemyAct(st, P.answered);
-      L.endRound(st, enemy);
+      if (c.act) acts[c.act] = (acts[c.act] || 0) + 1;
+      // one exchange, by the encounter's steps (src/engine/97_encounter.js), with the live rules (the Atlas's too)
+      RB.encounter.exchange(st, { card, res: { ok: true, firstTry: true, mistakes: 0 }, comp: c.act ? { act: c.act, target: c.actTarget } : null, target: c.target }, { enemy });
     }
     T.log.push({ t: 'battle', enemy: enemyId, group: st.foes.slice(1).map((f) => f.enemyId), result: st.over, rounds, pc: st.pc, comp: st.comp, techs, acts });
     if (st.over !== 'win') T.problems.push({ where: 'battle ' + enemyId + (group.length ? ' +' + group.join('+') : ''), msg: 'not won with policy ' + policy + ' (' + st.over + ' after ' + rounds + ' rounds)' });
@@ -86964,24 +88444,16 @@ RB.combat = (function () {
         L().target(st, T);
         tg.lock = null; tg.hover = null;
         setActing(true);
-        // The rules resolve the exchange (once); the screen then shows it beat by beat:
-        // your response, your companion's action, then each creature in turn.
-        const hb = st.harmony;
+        // The rules resolve the exchange (once), by the encounter's steps (src/engine/97_encounter.js); the
+        // screen then shows it beat by beat: your response, your companion's action, then each creature in turn.
+        const E = RB.encounter;
         const before = snapshot(st);
         const reach = reachOf(card);
-        const P = L().playerAct(st, card, res, enemy);
+        const P = E.player(st, card, res, enemy);
         const { fx } = P;
-        if (st.compId && st.harmony > hb) fx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
-        let won = L().allSettled(st);
-        let cfx = null;
-        if (!won && cact && cact.act && cact.act.id !== 'join') {
-          const hc = st.harmony;
-          L().target(st, cact.target != null ? cact.target : T);
-          cfx = L().compAct(st, cact.act.id, P).fx;
-          if (!L().target(st, T)) st.cur = L().defaultTarget(st);
-          if (st.harmony > hc && !cfx.some((f) => f.t === 'harmony')) cfx.push({ t: 'harmony', n: st.harmony, max: st.harmonyMax });
-        }
-        const wonByComp = !won && L().allSettled(st);
+        const won = E.conclude(st) === 'win';
+        const cfx = won ? null : E.companion(st, cact, P, T);
+        const wonByComp = !won && E.conclude(st) === 'win';
         // (the displayed state starts as `before` and steps forward: keep its knots apart)
         const knots0 = before.foes.map((f) => f.knots);
         chain = true;
@@ -87001,10 +88473,8 @@ RB.combat = (function () {
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: fx.concat(cfx || []), card, answered: P.answered }); // what your response and your companion's did
         if (won || wonByComp) { outcome = 'win'; break; }
         // each creature still standing acts in turn
-        const standing = L().standing(st);
         const before2 = snapshot(st);
-        const intents = st.foes.map((f) => f.intent);
-        const efx = L().enemyAct(st, P.answered);
+        const { efx, standing, intents } = E.foes(st, P);
         view = before2; chain = true;
         const tail = efx.filter((f) => f.foe == null || standing.indexOf(f.foe) < 0);
         for (let k = 0; k < standing.length; k++) {
@@ -87018,12 +88488,9 @@ RB.combat = (function () {
         endChain();
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: efx, enemy: true }); // their moves as they landed
         sealHeld = null;
-        L().endRound(st, enemy);
-        if (st.log.length && st.log[st.log.length - 1].t === 'revive') {
-          st.log.pop();
-          await live(playRevive());
-        }
-        if (st.over) outcome = st.over;
+        const end = E.close(st, enemy);
+        if (end.revived) await live(playRevive());
+        if (end.over) outcome = end.over;
       }
       if (outcome === 'lose') present('scene', { phase: 'defeat' });
       if (outcome === 'win') {
@@ -102928,7 +104395,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   W('kaze', { jp: 'かぜ', jpK: '{風|かぜ}', r: 'かぜ', lex: '風', en: 'wind', tags: ['wind'], icon: '🌬', effect: 'Blows away mist and smoke: clears mist.' });
   W('nawa', { jp: 'なわ', jpK: '{縄|なわ}', r: 'なわ', lex: '縄', en: 'rope', tags: ['bind'], icon: '➰', effect: 'Holds something in place: stops Gathering or a Re-tying.' });
   W('ishi', { jp: 'いし', jpK: '{石|いし}', r: 'いし', lex: '石', en: 'stone', tags: ['anchor', 'stone'], icon: '⬣', effect: 'Stands firm: cancels a Gust or a Flood.' });
-  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], icon: '❄', effect: 'Cools heat (another way to answer it): clears Heat.' });
+  W('koori', { jp: 'こおり', jpK: '{氷|こおり}', r: 'こおり', lex: '氷', en: 'ice', tags: ['water'], family: 'ice', icon: '❄', effect: 'Cools heat (another way to answer it): clears Heat.' });
   W('tsuchi', { jp: 'つち', jpK: '{土|つち}', r: 'つち', lex: '土', en: 'earth, soil', tags: ['stone'], icon: '⛰', effect: 'Banks against rising water: cancels a Flood.' });
   W('honoo', { jp: 'ほのお', jpK: '{炎|ほのお}', r: 'ほのお', lex: '炎', en: 'flame', tags: ['fire', 'warm', 'light'], icon: '🔥', effect: 'Warms against cold: cancels a Chill. Also gives light: clears mist, stops a Re-tying or a Mirror.' });
   W('suzu', { jp: 'すず', jpK: '{鈴|すず}', r: 'すず', lex: '鈴', en: 'bell (small)', tags: ['bell'], icon: '🔔', effect: 'A clear sound that breaks a hush: ends the Hush.' });
@@ -140041,6 +141508,396 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, 5, 25, 22, 1, 'rgba(0,0,0,0.25)');
     },
   });
+})(RB.content);
+
+
+/* ==== src/content/encounters/00_fixtures.js ==== */
+/* The encounter platform's fixtures (playbook P04: "create fixture examples before region-specific content"). These
+ * are DEVELOPMENT FIXTURES, not story content: no map, scene or quest starts them. They are played by the unit
+ * tests (tests/unit/encounters.test.mjs), the browser test (tests/e2e/encounters.mjs) and the development panel
+ * (index.html?dev=enc). Each shows one kind of encounter a chapter will author: an ordinary fight with conditions,
+ * a summoner, an independent guest, a protected object, a short machine that restarts, a long one with stable
+ * checkpoints, a disagreement, a recovery from a Hush on one family of responses, two-move turns, arrivals, and
+ * Tactics Board studies. Creatures are existing ones, varied for the encounter (never a new species). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  C.encounters = C.encounters || {};
+  const add = (d) => { C.encounters[d.id] = Object.assign({ fixture: true }, d); };
+  const ch = (opts) => ({ kind: 'choose', ...opts });
+
+  // ---- an ordinary fight, with conditions and Wait ---------------------------------------------------------------
+  add({
+    id: 'fx.ordinary', name: { jp: '{燃|も}える {紙|かみ}', en: 'Fire and paper' },
+    lead: { enemy: 'co.ember', conditions: ['flame'] }, group: [{ enemy: 'sg.crane', conditions: ['paper'] }],
+    rules: { wait: true, conditions: true },
+  });
+
+  // ---- a summoner: it calls others, never more than two at once; a bell calls them off, a rope bars the way ----
+  add({
+    id: 'fx.summoner', name: { jp: '{呼|よ}ぶ もの', en: 'The one who calls' }, setPiece: true, capacity: 4,
+    lead: { enemy: 'co.warden', pattern: ['call', 'strike', 'heat', 'call', 'sweep'], intents: { call: { say: 'It throws back its head and calls.' } } },
+    calls: { enemy: { enemy: 'co.ember', pattern: ['strike', 'rest'] }, standing: 2, knots: 1 },
+  });
+
+  // ---- an independent guest: a porter with their own aim ----------------------------------------------------------
+  add({
+    id: 'fx.guest', name: { jp: '{荷物|にもつ} を {取|と}り{返|かえ}す', en: 'The porter\'s cargo' },
+    lead: { enemy: 'sg.crab', knots: 3 },
+    actors: [{
+      aid: 'g:porter', side: 'guest', name: { jp: '{荷運|にはこ}び', en: 'The porter' }, hp: 4,
+      agenda: { wants: 'settle', target: 'f0', act: { kind: 'unravel', n: 1 }, reactsTo: { youSettle: 'satisfied', youHelp: 'thanks' } },
+      lines: {
+        arrive: { jp: 'その {蟹|かに} 、 {荷物|にもつ} を {離|はな}さない んだ ！', en: 'That crab won\'t let go of my cargo!' },
+        act: { jp: 'よいしょ ！', en: 'The porter heaves at a knot: it comes loose.' },
+        thanks: { jp: 'いい ぞ 、 その {調子|ちょうし} ！', en: '"Good, keep it up!"' },
+        satisfied: { jp: '{助|たす}かった ！ ありがとう 。', en: '"You saved me there. Thank you!" The porter shoulders the cargo and goes.' },
+        done: { jp: 'よし 、 {取|と}り{返|かえ}した 。', en: '"Right, got it back." The porter goes on their way.' },
+      },
+    }],
+  });
+
+  // ---- a protected object: a paper letter the creatures aim at ----------------------------------------------------
+  add({
+    id: 'fx.protect', name: { jp: '{手紙|てがみ} を {守|まも}る', en: 'Keep the letter safe' },
+    lead: { enemy: 'sa.crane', pattern: ['strike:letter', 'rest', 'strike:letter', 'gust'], intents: { 'strike:letter': { target: 'o:letter' } } },
+    group: { normal: ['sg.fogwisp'], hard: ['sg.fogwisp', 'rw.reedling'] },
+    rules: { conditions: true },
+    actors: [{ aid: 'o:letter', side: 'object', name: { jp: '{手紙|てがみ}', en: 'the letter' }, hp: 3, cond: ['paper'], protectable: true }],
+    objective: { kind: 'protect', aid: 'o:letter', text: { jp: '{手紙|てがみ} を {守|まも}る', en: 'Keep the letter safe until the creatures settle or give up.' } },
+    settleWins: true,
+    conclusions: [
+      { id: 'lost', when: { down: 'o:letter' }, result: 'end', text: { en: 'The letter is torn past reading. It can be written again; the words are not lost, only the paper.' } },
+      { id: 'safe', when: { settled: 'all' }, result: 'win', text: { en: 'The letter is safe.' } },
+      { id: 'held', when: { all: [{ rounds: 6 }, { standing: 'o:letter' }] }, result: 'win', text: { en: 'They give up on the letter and drift away.' } },
+    ],
+  });
+
+  // ---- a short machine: a wrong move starts it again from the first step ------------------------------------------
+  const gateTask = (en, ok, wrong) => ({
+    F: ch({ item: 'c:fx_sluice', prompt: { en }, options: [{ jp: ok, ok: true }, { jp: wrong, ok: false, why: { en: 'That is not what the notice says to do now.' } }] }),
+    E: ch({ item: 'c:fx_sluice', prompt: { en }, options: [{ jp: ok, ok: true }, { jp: wrong, ok: false, why: { en: 'That is not what the notice says to do now.' } }] }),
+    I: ch({ item: 'c:fx_sluice', prompt: { en }, options: [{ jp: ok, ok: true }, { jp: wrong, ok: false, why: { en: 'That is not what the notice says to do now.' } }] }),
+    A: ch({ item: 'c:fx_sluice', prompt: { en }, options: [{ jp: ok, ok: true }, { jp: wrong, ok: false, why: { en: 'That is not what the notice says to do now.' } }] }),
+  });
+  const A = (id, jp, en, more) => Object.assign({ id, label: { jp, en } }, more);
+  add({
+    id: 'fx.sluice', kind: 'procedure', name: { jp: '{小|ちい}さな {水門|すいもん}', en: 'The little sluice' },
+    rules: { wait: true },
+    procedure: {
+      id: 'fx_sluice', version: 1, restart: 'start',
+      machine: { gate: 'shut', wheel: 'still' },
+      show: [
+        { key: 'gate', label: { jp: '{水門|すいもん}', en: 'Sluice gate' }, values: { shut: { jp: '{閉|し}まっている', en: 'shut' }, open: { jp: '{開|あ}いている', en: 'open' } } },
+        { key: 'wheel', label: { jp: '{車輪|しゃりん}', en: 'Wheel' }, values: { still: { jp: '{止|と}まっている', en: 'still' }, turning: { jp: '{回|まわ}っている', en: 'turning' } } },
+      ],
+      done: { en: 'Water runs, the wheel turns, and the gate is shut again: the mill can work.' },
+      steps: [
+        { id: 's1', text: { jp: 'まず 、 {水門|すいもん} を {開|あ}けて ください 。', en: 'First, open the sluice gate.' },
+          task: gateTask('What does the notice ask you to do first?', '{水門|すいもん} を {開|あ}ける', '{車輪|しゃりん} を {回|まわ}す'),
+          actions: [
+            A('open', '{水門|すいもん} を {開|あ}ける', 'Open the gate', { ok: true, set: { gate: 'open' }, means: { en: 'You will open the sluice gate first.' }, result: { en: 'The gate lifts; water rushes into the race.' } }),
+            A('turn', '{車輪|しゃりん} を {回|まわ}す', 'Turn the wheel', { means: { en: 'You will turn the wheel first.' }, wrong: { en: 'The wheel grinds against dry wood and jams. Everything settles back to the start.' } }),
+          ] },
+        { id: 's2', text: { jp: '{次|つぎ} に 、 {車輪|しゃりん} を {回|まわ}して ください 。', en: 'Next, turn the wheel.' },
+          task: gateTask('What does the notice ask you to do next?', '{車輪|しゃりん} を {回|まわ}す', '{水門|すいもん} を {閉|し}める'),
+          actions: [
+            A('turn', '{車輪|しゃりん} を {回|まわ}す', 'Turn the wheel', { ok: true, set: { wheel: 'turning' }, means: { en: 'You will turn the wheel now.' }, result: { en: 'The wheel catches the water and turns.' } }),
+            A('close', '{水門|すいもん} を {閉|し}める', 'Close the gate', { means: { en: 'You will close the gate now.' }, wrong: { en: 'The water stops before the wheel has moved. Back to the start.' } }),
+          ] },
+        { id: 's3', text: { jp: '{最後|さいご} に 、 {水門|すいもん} を {閉|し}めて ください 。', en: 'Finally, close the gate.' },
+          task: gateTask('What does the notice ask you to do last?', '{水門|すいもん} を {閉|し}める', '{車輪|しゃりん} を {止|と}める'),
+          actions: [
+            A('close', '{水門|すいもん} を {閉|し}める', 'Close the gate', { ok: true, set: { gate: 'shut' }, means: { en: 'You will close the gate now.' }, result: { en: 'The gate drops; the race keeps just enough water.' } }),
+            A('stop', '{車輪|しゃりん} を {止|と}める', 'Stop the wheel', { set: { wheel: 'still' }, means: { en: 'You will stop the wheel now.' }, wrong: { en: 'The wheel stops, the race floods over. Back to the start.' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'The sluice works.' } }],
+  });
+
+  // ---- a long machine: a wrong move goes back only to the last stable step ----------------------------------------
+  const lockTask = (en, ok, wrong) => gateTask(en, ok, wrong);
+  add({
+    id: 'fx.lock', kind: 'procedure', name: { jp: '{閘門|こうもん}', en: 'The canal lock' },
+    procedure: {
+      id: 'fx_lock', version: 1, restart: 'stable',
+      machine: { lower: 'open', upper: 'shut', water: 'low', boat: 'outside' },
+      show: [
+        { key: 'lower', label: { jp: '{下|した} の {門|もん}', en: 'Lower gate' }, values: { open: { jp: '{開|あ}いている', en: 'open' }, shut: { jp: '{閉|し}まっている', en: 'shut' } } },
+        { key: 'upper', label: { jp: '{上|うえ} の {門|もん}', en: 'Upper gate' }, values: { open: { jp: '{開|あ}いている', en: 'open' }, shut: { jp: '{閉|し}まっている', en: 'shut' } } },
+        { key: 'water', label: { jp: '{水|みず}', en: 'Water' }, values: { low: { jp: '{低|ひく}い', en: 'low' }, high: { jp: '{高|たか}い', en: 'high' } } },
+        { key: 'boat', label: { jp: '{舟|ふね}', en: 'Boat' }, values: { outside: { jp: '{外|そと}', en: 'outside' }, inside: { jp: '{中|なか}', en: 'inside' }, through: { jp: '{通|とお}った', en: 'through' } } },
+      ],
+      done: { en: 'The boat rides up and out onto the higher canal.' },
+      steps: [
+        { id: 'l1', text: { jp: '{舟|ふね} を {中|なか} に {入|い}れて ください 。', en: 'Bring the boat inside.' }, task: lockTask('What comes first?', '{舟|ふね} を {入|い}れる', '{上|うえ} の {門|もん} を {開|あ}ける'),
+          actions: [A('boat_in', '{舟|ふね} を {入|い}れる', 'Bring the boat in', { ok: true, set: { boat: 'inside' }, means: { en: 'You will bring the boat into the lock.' }, result: { en: 'The boat glides into the chamber.' } }),
+            A('upper', '{上|うえ} の {門|もん} を {開|あ}ける', 'Open the upper gate', { means: { en: 'You will open the upper gate now.' }, wrong: { en: 'Water pours through the open lower gate: the keeper shuts everything again.' } })] },
+        { id: 'l2', stable: true, text: { jp: '{下|した} の {門|もん} を {閉|し}めて ください 。', en: 'Close the lower gate.' }, task: lockTask('What now?', '{下|した} の {門|もん} を {閉|し}める', '{舟|ふね} を {出|だ}す'),
+          actions: [A('lower', '{下|した} の {門|もん} を {閉|し}める', 'Close the lower gate', { ok: true, set: { lower: 'shut' }, means: { en: 'You will close the lower gate.' }, result: { en: 'The lower gate swings shut behind the boat.' } }),
+            A('out', '{舟|ふね} を {出|だ}す', 'Take the boat out', { means: { en: 'You will take the boat back out.' }, wrong: { en: 'The boat bumps back out: you start again from bringing it in.' } })] },
+        { id: 'l3', text: { jp: '{水|みず} が {高|たか}く なる まで {待|ま}って ください 。', en: 'Wait until the water is high.' }, task: lockTask('What now?', '{待|ま}つ', '{上|うえ} の {門|もん} を {開|あ}ける'),
+          actions: [A('wait', '{待|ま}つ', 'Wait for the water', { ok: true, set: { water: 'high' }, means: { en: 'You will wait for the water to rise.' }, result: { en: 'The water rises, and the boat with it.' } }),
+            A('upper', '{上|うえ} の {門|もん} を {開|あ}ける', 'Open the upper gate', { means: { en: 'You will open the upper gate before the water has risen.' }, wrong: { en: 'The gate will not budge against the weight of water. The keeper sets it back: the lower gate is still shut.' } })] },
+        { id: 'l4', stable: true, text: { jp: '{上|うえ} の {門|もん} を {開|あ}けて ください 。', en: 'Open the upper gate.' }, task: lockTask('What now?', '{上|うえ} の {門|もん} を {開|あ}ける', '{下|した} の {門|もん} を {開|あ}ける'),
+          actions: [A('upper', '{上|うえ} の {門|もん} を {開|あ}ける', 'Open the upper gate', { ok: true, set: { upper: 'open' }, means: { en: 'You will open the upper gate.' }, result: { en: 'The upper gate opens onto the high canal.' } }),
+            A('lower', '{下|した} の {門|もん} を {開|あ}ける', 'Open the lower gate', { means: { en: 'You will open the lower gate.' }, wrong: { en: 'The water drains away again. Back to waiting for it.' } })] },
+        { id: 'l5', text: { jp: '{舟|ふね} を {出|だ}して ください 。', en: 'Take the boat out.' }, task: lockTask('What now?', '{舟|ふね} を {出|だ}す', '{上|うえ} の {門|もん} を {閉|し}める'),
+          actions: [A('out', '{舟|ふね} を {出|だ}す', 'Take the boat out', { ok: true, set: { boat: 'through' }, means: { en: 'You will take the boat out onto the high canal.' }, result: { en: 'The boat slides out onto the high canal.' } }),
+            A('upper_shut', '{上|うえ} の {門|もん} を {閉|し}める', 'Close the upper gate', { means: { en: 'You will close the upper gate with the boat still inside.' }, wrong: { en: 'The boat is shut in. The keeper opens the upper gate again.' } })] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Through the lock.' } }],
+  });
+
+  // ---- a disagreement: claims on record, what each wants, a situation that changes -------------------------------
+  const say = (jp, en) => ({ jp, en });
+  const choose3 = (item, en, ok, w1, why1) => {
+    const st = ch({ item, prompt: { en }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }] });
+    return { F: st, E: st, I: st, A: st };
+  };
+  add({
+    id: 'fx.dispute', kind: 'social', name: { jp: '{足|た}りない かご', en: 'The missing basket' },
+    rules: { wait: true },
+    social: {
+      parties: [
+        { aid: 'n:baker', name: { jp: 'パン{屋|や}さん', en: 'The baker' }, stance: 'heated', wants: { en: 'Paid for three baskets.' } },
+        { aid: 'n:runner', name: { jp: '{配達|はいたつ} の {子|こ}', en: 'The delivery runner' }, stance: 'closed', wants: { en: 'Not to be called a thief.' } },
+      ],
+      claims: {
+        c1: { by: 'n:baker', jp: 'かご を {三|みっ}つ {渡|わた}しました 。', en: 'I handed over three baskets.' },
+        c2: { by: 'n:runner', jp: '{二|ふた}つ しか {受|う}け{取|と}って いません 。', en: 'I only received two.' },
+        c3: { by: 'slip', jp: '{三|みっ}つ{目|め} は {午後|ごご} 。', en: 'The slip: the third is for the afternoon.', hidden: true },
+        c4: { by: 'n:runner', jp: '{裏口|うらぐち} で {受|う}け{取|と}りました 。', en: 'I picked them up at the back door.', hidden: true },
+      },
+      understanding: 3,
+      gesture: { name: { jp: '{二人|ふたり} を つなぐ', en: 'Bring them together' }, desc: 'With your companion, help them hear each other.', effect: { flag: 'reconciled' }, says: { en: 'For a moment they laugh at the same thing. The rest is easy.' } },
+      unravelTip: { en: 'Nothing is tangled here. Look at the record of what each said, who is heated, and what each one wants.' },
+      actions: [
+        { id: 'calm', kind: 'restate', label: say('お{二人|ふたり} とも 、 {落|お}ち{着|つ}いて ください 。', 'Ask them both to calm down'),
+          task: choose3('c:fx_dispute_calm', 'Which asks them both to calm down?', 'お{二人|ふたり} とも 、 {落|お}ち{着|つ}いて ください 。', 'お{二人|ふたり} とも 、 {急|いそ}いで ください 。', 'That one asks them to hurry.'),
+          cases: [{ when: { stance: { 'n:baker': 'heated' } }, effect: { stance: { 'n:baker': 'listening' } }, says: { en: 'The baker takes a breath.' } }],
+          says: { en: 'They are already calm. Saying it again changes nothing.' } },
+        { id: 'ask_where', kind: 'ask', label: say('どこ で {受|う}け{取|と}りました か 。', 'Ask the runner where they picked them up'), once: true,
+          task: choose3('c:fx_dispute_where', 'Which asks where they picked them up?', 'どこ で {受|う}け{取|と}りました か 。', 'いつ {受|う}け{取|と}りました か 。', 'That one asks when, not where.'),
+          effect: { reveal: 'c4', stance: { 'n:runner': 'listening' } }, says: { en: 'The runner looks up, surprised to be asked.' } },
+        { id: 'ask_slip', kind: 'evidence', label: say('{伝票|でんぴょう} を {見|み}せて ください 。', 'Ask to see the delivery slip'), once: true, when: { used: 'ask_where' },
+          task: choose3('c:fx_dispute_slip', 'Which asks to see the slip?', '{伝票|でんぴょう} を {見|み}せて ください 。', '{伝票|でんぴょう} を {書|か}いて ください 。', 'That one asks them to write a slip.'),
+          effect: { reveal: 'c3', understanding: 1 }, says: { en: 'The slip says it plainly: the third basket was for the afternoon.' } },
+        { id: 'propose', kind: 'propose', label: say('{三|みっ}つ{目|め} は {午後|ごご} に {届|とど}けましょう 。', 'Suggest the third goes out this afternoon'), when: { claims: 'c3' },
+          task: choose3('c:fx_dispute_propose', 'Which suggests delivering the third this afternoon?', '{三|みっ}つ{目|め} は {午後|ごご} に {届|とど}けましょう 。', '{三|みっ}つ{目|め} は {明日|あした} {返|かえ}しましょう 。', 'That suggests returning it tomorrow.'),
+          effect: { flag: 'agreed' }, says: { en: 'Both nod. The third basket goes out this afternoon.' } },
+        { id: 'blame', kind: 'propose', label: say('{配達|はいたつ} の {子|こ} が {悪|わる}い です 。', 'Say the runner is to blame'), lasting: true, means: { en: 'You will tell them the runner is to blame.' },
+          task: choose3('c:fx_dispute_blame', 'Which says the runner is to blame?', '{配達|はいたつ} の {子|こ} が {悪|わる}い です 。', 'パン{屋|や}さん が {悪|わる}い です 。', 'That blames the baker.'),
+          effect: { stance: { 'n:runner': 'leaving' } }, says: { en: 'The runner goes white, then turns to leave.' } },
+      ],
+      responses: {
+        hikari: { when: { not: { claims: 'c3' } }, effect: { reveal: 'c3', understanding: 1 }, says: { en: 'In the light, the slip\'s small print can be read.' } },
+        water: { when: { stance: { 'n:baker': 'heated' } }, effect: { stance: { 'n:baker': 'listening' } }, says: { en: 'A cup of water, and the baker\'s temper cools.' } },
+        bell: { when: { any: [{ stance: { 'n:baker': 'heated' } }, { stance: { 'n:runner': 'heated' } }] }, effect: { stance: { 'n:baker': 'listening' } }, says: { en: 'A clear note: for a moment, everyone stops talking.' } },
+        unravel: { says: { en: 'Nothing here is tangled: the problem is what each of them believes.' } },
+      },
+      wait: { when: { stance: { 'n:runner': 'closed' } }, effect: { reveal: 'c4', stance: { 'n:runner': 'listening' } }, says: { en: 'In the quiet, the runner speaks up at last.' } },
+      companion: {
+        nao: [{ id: 'nao_mismatch', name: say('{食|く}い{違|ちが}い を {見|み}つける', 'Spot the mismatch'), desc: 'Nao looks for where the stories differ.', when: { claims: 'c4' }, once: true, effect: { understanding: 1 }, says: { en: 'Nao: "You\'re both right about the number. It\'s the time you disagree about."' } }],
+        mio: [{ id: 'mio_calm', name: say('{落|お}ち{着|つ}かせる', 'Calm the baker'), desc: 'Mio speaks to the baker quietly.', when: { stance: { 'n:baker': 'heated' } }, effect: { stance: { 'n:baker': 'listening' } }, says: { en: 'Mio: "Nobody is calling you a liar." The baker sits down.' } }],
+        ren: [{ id: 'ren_light', name: say('{伝票|でんぴょう} を {照|て}らす', 'Hold the lamp to the slip'), desc: 'Ren holds the lamp close to the paper.', when: { not: { claims: 'c3' } }, effect: { reveal: 'c3' }, says: { en: 'Ren holds the lamp close: there is writing at the bottom of the slip.' } }],
+        suzu: [{ id: 'suzu_joke', name: say('{冗談|じょうだん} を {言|い}う', 'Make a joke'), desc: 'Suzu breaks the tension.', once: true, effect: { understanding: 1, stance: { 'n:runner': 'listening' } }, says: { en: 'Suzu: "If the basket ran off by itself, it\'s faster than both of you." Even the runner smiles.' } }],
+      },
+      drift: [
+        { when: { all: [{ rounds: 2 }, { stance: { 'n:baker': 'heated' } }] }, effect: { stance: { 'n:runner': 'closed' } }, says: { en: 'The baker\'s voice rises; the runner folds their arms.' } },
+        { when: { all: [{ rounds: 4 }, { stance: { 'n:baker': 'heated' } }] }, effect: { stance: { 'n:runner': 'leaving' } }, says: { en: '"I don\'t have to listen to this." The runner turns to go.' } },
+        { when: { stance: { 'n:baker': 'listening', 'n:runner': 'listening' } }, effect: { understanding: 1 }, says: { en: 'They are both listening now.' } },
+      ],
+    },
+    conclusions: [
+      { id: 'walked_out', when: { left: 'n:runner' }, result: 'end', text: { en: 'The runner walks out. The baker is left counting baskets alone.' } },
+      { id: 'reconciled', when: { flag: 'reconciled' }, result: 'end', text: { en: 'They settle it together, and agree to check the slip next time.' } },
+      { id: 'resolved', when: { flag: 'agreed' }, result: 'end', text: { en: 'The third basket goes out this afternoon. Nobody was a thief.' } },
+      { id: 'differ', when: { all: [{ rounds: 6 }, { claims: 'c3' }] }, result: 'end', text: { en: 'The slip is clear, but neither will say so. They agree to disagree, and the basket goes out anyway.' } },
+      { id: 'unresolved', when: { rounds: 6 }, result: 'end', text: { en: 'The shop opens; the argument goes nowhere. The basket stays a mystery for today.' } },
+    ],
+  });
+
+  // ---- a Hush on one family: water silenced for two exchanges; a bell or a voice ends it -------------------------
+  add({
+    id: 'fx.hush', name: { jp: '{静|しず}かな {水|みず}', en: 'The silenced water' },
+    lead: { enemy: 'lf.blot', knots: 4, pattern: ['silence:water', 'heat', 'strike', 'silence', 'heat'], intents: { 'silence:water': { family: 'water', rounds: 2 } } },
+  });
+
+  // ---- two moves at once, a plan over two exchanges, and a signal -------------------------------------------------
+  add({
+    id: 'fx.doubles', name: { jp: '{二|ふた}つ の {動|うご}き', en: 'Two moves at once' },
+    lead: { enemy: 'sb.golem', pattern: ['strike:cued', 'charge:plan', 'flood', 'strike:and'], intents: { 'strike:cued': { cue: true }, 'charge:plan': { then: 'flood' }, 'strike:and': { and: 'shroud' } } },
+    // (the second creature starts one step into its pattern: its signal and the lead's cued blow come together)
+    group: [{ enemy: 'sb.fox', pattern: ['rest', 'charge:signal', 'strike'], intents: { 'charge:signal': { signal: true } } }],
+    rules: { doubles: true },
+  });
+
+  // ---- arrivals: one is coming in two exchanges; a bell or a rope can stop it -------------------------------------
+  add({
+    id: 'fx.arrivals', name: { jp: '{近|ちか}づく {羽音|はおと}', en: 'Wings coming closer' },
+    lead: 'rw.reedling',
+    arrivals: [{ enemy: 'rw.dustmoth', after: 2, prevent: ['bell', 'bind'], say: { jp: '{遠|とお}く で {羽音|はおと} が する 。', en: 'Wings whirr in the distance: something is coming.' } }],
+    extras: [{ enemy: 'rw.reedling', after: 3 }],
+  });
+
+  // ---- every modifier option (E27): three creatures with moves of every kind; every modifier known ------------
+  add({
+    id: 'fx.mods', name: { jp: '{言葉|ことば} の {届|とど}く {先|さき}', en: 'How far words reach' }, setPiece: true, capacity: 3,
+    lead: { enemy: 'sb.golem', knots: 4, pattern: ['strike', 'charge', 'shroud', 'heat', 'mend', 'gust'] },
+    group: [{ enemy: 'sb.fox', knots: 3, pattern: ['heat', 'strike', 'chill', 'charge', 'sweep', 'shroud'] }, { enemy: 'sg.fogwisp', knots: 3, pattern: ['charge', 'shroud', 'strike', 'mend', 'heat', 'flood'] }],
+    rules: { modifiers: 'all', doubles: true },
+  });
+  // the same creatures before any modifier (the curve's comparison)
+  add(Object.assign(JSON.parse(JSON.stringify(C.encounters['fx.mods'])), { id: 'fx.mods_base', name: { jp: '{言葉|ことば} の {届|とど}く {先|さき}', en: 'How far words reach (before modifiers)' }, rules: { doubles: true } }));
+  add({
+    id: 'fx.mods_hush', name: { jp: '{届|とど}かない {言葉|ことば}', en: 'Words that do not reach' },
+    lead: { enemy: 'sa.wraith', knots: 4, pattern: ['silence:mods', 'strike', 'rest', 'strike'], intents: { 'silence:mods': { family: 'modifiers', rounds: 2 } } },
+    rules: { modifiers: 'all' },
+  });
+
+  // ---- Tactics Board studies (E15): a fixed toolset, a goal, a number of committed exchanges ----------------------
+  add({
+    id: 'fx.study.mist', kind: 'study', name: { jp: '{霧|きり} の {中|なか} で', en: 'In the mist' },
+    lead: { enemy: 'sg.fogwisp', pattern: ['shroud', 'rest', 'shroud'], knots: 2 },
+    study: { tools: ['kaze', 'hikari'], turns: 3, explain: { en: 'Clear the mist first, then untie: wind reaches every creature, light only one.' } },
+  });
+  add({
+    id: 'fx.study.fire', kind: 'study', name: { jp: '{炎|ほのお} の {体|からだ}', en: 'A body of flame' }, rules: { conditions: true },
+    lead: { enemy: 'co.ember', conditions: ['flame'], pattern: ['mend', 'rest', 'mend'], knots: 3 },
+    study: { tools: ['mizu', 'kaze'], turns: 3, explain: { en: 'Water weakens a creature of flame, so the next Unravel frees one more knot. Wind only feeds it.' } },
+  });
+})(RB.content);
+
+
+/* ==== src/content/encounters/01_lex.js ==== */
+/* Words of the encounter platform's fixtures (src/content/encounters/00_fixtures.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.lex.add(RB.lex.parseTable(`
+荷運び|にはこび|n|I|a porter (someone who carries loads)
+よいしょ|よいしょ|int|E|heave-ho (said when lifting something heavy)
+閘門|こうもん|n|A|a canal lock
+伝票|でんぴょう|n|I|a slip, a delivery note
+羽音|はおと|n|I|the sound of wings
+`), 'encounters');
+RB.lex.add(RB.lex.parseTable(`
+あらゆる|あらゆる|exp|I|every possible, every kind of (before a noun)
+ごと|ごと|suf|I|every …, per … (〜ごとに: with each …)
+大半|たいはん|n|A|most, the greater part
+無限|むげん|n|A|infinity, without limit (無限に: endlessly)
+技|わざ|n|E|a technique, a move
+いくつか|いくつか|n|E|some, a few
+`), 'encounters');
+
+
+/* ==== src/content/encounters/10_modifiers.js ==== */
+/* Modifier words (expansion E27; Robin's C-70, C-72 approved as asked, C-74). The eleven families, their honest
+ * meanings, the battle role each takes as the Inkweavers' own convention (never a rule of Japanese), the natural
+ * pairings with responses, and how each is learned. src/engine/95b_modifiers.js applies them.
+ *
+ * Learned as growth, in story scenes (C-74): いくつか (Unravel reaches two) in Chapter 4, すべて (Protect covers
+ * both) in Chapter 7; それぞれ in Chapter 3, あらゆる in Chapter 9, ごとに in Chapter 10, 全体 in Chapter 11; found
+ * off the beaten path (C-71): 全部, たくさん, 大半, and 永遠に and 無限に from the Trials. Nothing is missable: every
+ * source waits until found. A scene teaches one by setting its flag (`mod_<id>`); the concept is declared below. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const F = (id, o) => Object.assign({ id }, o);
+  const families = {
+    subete: F('subete', { jp: 'すべて', kanji: '{全|すべ}て', en: 'すべて (all, every one)', role: 'Breadth', does: 'Every one on that side, each separately, each a little lighter.', grammar: 'mod_subete', ch: 'kr', source: 'story' }),
+    zenbu: F('zenbu', { jp: '{全部|ぜんぶ}', en: '全部 (all of it)', role: 'Completeness on one', does: 'All of it, for one target only.', grammar: 'mod_zenbu', ch: null, source: 'found' }),
+    arayuru: F('arayuru', { jp: 'あらゆる', en: 'あらゆる (every kind of)', role: 'Kinds', does: 'Answers a move of any kind, once.', grammar: 'mod_arayuru', ch: 'ko', source: 'story' }),
+    zentai: F('zentai', { jp: '{全体|ぜんたい}', en: '全体 (the whole, as one)', role: 'The group as one body', does: 'One ward around the party; aimed at creatures, it answers what the group does together and nothing else.', grammar: 'mod_zentai', ch: 'yn', source: 'story' }),
+    sorezore: F('sorezore', { jp: 'それぞれ', en: 'それぞれ (each, respectively)', role: 'Each its own', does: 'Fitted to each target, this exchange only.', grammar: 'mod_sorezore', ch: 'mb1', source: 'story' }),
+    goto: F('goto', { jp: 'ごとに', en: 'ごとに (with each, per)', role: 'In turn', does: 'Renewed as each creature acts, in the numbered order.', grammar: 'mod_goto', ch: 'cr', source: 'story' }),
+    ikutsuka: F('ikutsuka', { jp: 'いくつか', en: 'いくつか (some, a few)', role: 'Two of your choice', does: 'Two targets you choose.', grammar: 'mod_ikutsuka', ch: 'mb2', source: 'story' }),
+    taihan: F('taihan', { jp: '{大半|たいはん}', en: '大半 (most, the greater part)', role: 'All but one', does: 'Every creature but the one you leave out, each at full strength.', grammar: 'mod_taihan', ch: null, source: 'found' }),
+    takusan: F('takusan', { jp: 'たくさん', en: 'たくさん (a lot)', role: 'More, on one', does: 'More, on one target only.', grammar: 'mod_takusan', ch: null, source: 'found' }),
+    eien: F('eien', { jp: '{永遠|えいえん}に', en: '永遠に (forever)', role: 'Time', does: 'One effect that lasts the rest of the encounter, until a named move breaks it.', grammar: 'mod_eien', ch: null, source: 'trials' }),
+    mugen: F('mugen', { jp: '{無限|むげん}に', en: '無限に (without limit)', role: 'Count', does: 'No limit on how many, this exchange only.', grammar: 'mod_mugen', ch: null, source: 'trials' }),
+  };
+  // A pairing: the modifier, the response, the whole phrase (typed), the handwritten span (the modifier and its
+  // particle, the rest shown), the learning items of each route, the option it asks for, its effect and its trade.
+  const P = (mod, resp, respEn, jp, hand, items, o) => Object.assign({ mod, resp, respEn, jp, hand, items }, o);
+  const pairs = [
+    P('subete', 'mamoru', 'Protect', 'すべて を {守|まも}る', { write: 'すべて を', after: '{守|まも}る', items: ['v:全て', 'g:mod_subete'] }, ['v:全て', 'g:mod_subete', 'v:守る'],
+      { en: 'protect everyone', effect: 'ward_each', does: 'A ward before each of you: each blocks a Strike aimed at that person, or soaks 1 later (not 2).', trade: 'Each ward is lighter: it soaks 1, not 2.', wrong: ['すべてにまもる', 'すべてがまもる'] }),
+    P('subete', 'hikari', 'light', '{光|ひかり} が すべて を {照|て}らす', { before: '{光|ひかり} が', write: 'すべて を', after: '{照|て}らす', items: ['v:全て', 'g:mod_subete'] }, ['v:全て', 'g:mod_subete', 'v:光', 'v:照らす'],
+      { en: 'the light shines on everything', effect: 'light_all', does: 'Clears the mist on every creature and answers every Shroud.', trade: 'Spread this thin, it stops no Re-tying and no Mirror.', wrong: ['ひかりをすべてがてらす', 'ひかりですべてにてらす'] }),
+    P('subete', 'nawa', 'rope', '{縄|なわ} で すべて を {縛|しば}る', { before: '{縄|なわ} で', write: 'すべて を', after: '{縛|しば}る', items: ['v:全て', 'g:mod_subete'] }, ['v:全て', 'g:mod_subete', 'v:縄', 'v:縛る'],
+      { en: 'bind them all with rope', effect: 'rope_all', does: 'Stops every creature\'s Gathering.', trade: 'Spread this thin, it holds no Re-tying.', wrong: ['なわにすべてをしばる', 'なわですべてがしばる'] }),
+    P('zenbu', 'iyasu', 'heal', '{傷|きず} を {全部|ぜんぶ} {癒|いや}す', { before: '{傷|きず} を', write: '{全部|ぜんぶ}', after: '{癒|いや}す', items: ['v:全部', 'g:mod_zenbu'] }, ['v:全部', 'g:mod_zenbu', 'v:傷', 'v:癒す'],
+      { en: 'heal every wound', effect: 'heal_full', option: 'who', does: 'Restores all of one person\'s resolve.', trade: 'One person only, instead of some to both.', wrong: ['きずがぜんぶいやす', 'きずにぜんぶいやす'] }),
+    P('arayuru', 'mamoru', 'Protect', 'あらゆる {技|わざ} から {守|まも}る', { write: 'あらゆる', after: '{技|わざ} から {守|まも}る', items: ['v:あらゆる', 'g:mod_arayuru'] }, ['v:あらゆる', 'g:mod_arayuru', 'v:技', 'v:守る'],
+      { en: 'protect from every kind of move', effect: 'ward_any', option: 'who', does: 'A ward before one of you that stops the next blow of any kind (Sweep, Gust, Flood, Chill…), not only a Strike.', trade: 'One person, one blow; it soaks nothing else.', wrong: ['あらゆるわざにまもる', 'あらゆるわざがまもる'] }),
+    P('zentai', 'mamoru', 'Protect', '{全体|ぜんたい} を {守|まも}る', { write: '{全体|ぜんたい} を', after: '{守|まも}る', items: ['v:全体', 'g:mod_zentai'] }, ['v:全体', 'g:mod_zentai', 'v:守る'],
+      { en: 'protect the whole', effect: 'ward_party', does: 'One ward around you both: it takes the first blow to land on either of you.', trade: 'One blow only, whoever it lands on.', wrong: ['ぜんたいにまもる', 'ぜんたいがまもる'] }),
+    P('zentai', 'nawa', 'rope', '{縄|なわ} で {全体|ぜんたい} を {縛|しば}る', { before: '{縄|なわ} で', write: '{全体|ぜんたい} を', after: '{縛|しば}る', items: ['v:全体', 'g:mod_zentai'] }, ['v:全体', 'g:mod_zentai', 'v:縄', 'v:縛る'],
+      { en: 'bind the whole group', effect: 'rope_group', does: 'Answers what the group does together: a signal and every move cued on it.', trade: 'Nothing else: no single creature\'s Gathering.', wrong: ['なわにぜんたいをしばる', 'なわでぜんたいがしばる'] }),
+    P('sorezore', 'mamoru', 'Protect', 'それぞれ を {守|まも}る', { write: 'それぞれ を', after: '{守|まも}る', items: ['v:それぞれ', 'g:mod_sorezore'] }, ['v:それぞれ', 'g:mod_sorezore', 'v:守る'],
+      { en: 'protect each one', effect: 'ward_fit', does: 'A ward before each of you, fitted to the blow aimed at that person (a Strike at one, a Chill at the other).', trade: 'This exchange only; it soaks nothing later.', wrong: ['それぞれにまもる', 'それぞれがまもる'] }),
+    P('goto', 'mamoru', 'Protect', '{一回|いっかい} ごと に {守|まも}る', { before: '{一回|いっかい}', write: 'ごと に', after: '{守|まも}る', items: ['v:ごと', 'g:mod_goto'] }, ['v:ごと', 'g:mod_goto', 'v:一回', 'v:守る'],
+      { en: 'protect every time', effect: 'ward_per_blow', does: 'A small ward renewed before every blow this exchange, whoever it is aimed at (each soaks 1).', trade: 'Each soaks only 1, and only this exchange.', wrong: ['いっかいごとをまもる', 'いっかいごとがまもる'] }),
+    P('ikutsuka', 'unravel', 'Unravel', '{結|むす}び{目|め} を いくつか ほどく', { before: '{結|むす}び{目|め} を', write: 'いくつか', after: 'ほどく', items: ['v:いくつか', 'g:mod_ikutsuka'] }, ['v:いくつか', 'g:mod_ikutsuka', 'v:結び目'],
+      { en: 'untie some of the knots', effect: 'unravel_two', option: 'two', does: 'Unravel on two creatures you choose, a knot each.', trade: 'A knot each, never two on one.', wrong: ['むすびめにいくつかほどく', 'むすびめがいくつかほどく'] }),
+    P('taihan', 'nawa', 'rope', '{縄|なわ} で {大半|たいはん} を {縛|しば}る', { before: '{縄|なわ} で', write: '{大半|たいはん} を', after: '{縛|しば}る', items: ['v:大半', 'g:mod_taihan'] }, ['v:大半', 'g:mod_taihan', 'v:縄', 'v:縛る'],
+      { en: 'bind most of them with rope', effect: 'rope_most', option: 'leaveOut', does: 'Stops every creature\'s Gathering or Re-tying but the one you leave out, each at full strength.', trade: 'One creature is always left out.', wrong: ['なわでたいはんがしばる', 'なわにたいはんをしばる'] }),
+    P('takusan', 'mizu', 'water', '{水|みず} を たくさん かける', { before: '{水|みず} を', write: 'たくさん', after: 'かける', items: ['v:たくさん', 'g:mod_takusan'] }, ['v:たくさん', 'g:mod_takusan', 'v:水', 'v:掛ける'],
+      { en: 'pour on a lot of water', effect: 'water_more', does: 'Puts out one creature\'s Heat and soaks it, so it cannot raise Heat next exchange.', trade: 'One creature only (water usually reaches all).', wrong: ['みずがたくさんかける', 'みずにたくさんかける'] }),
+    P('eien', 'kaze', 'wind', '{風|かぜ} が {永遠|えいえん} に {吹|ふ}く', { before: '{風|かぜ} が', write: '{永遠|えいえん} に', after: '{吹|ふ}く', items: ['v:永遠', 'g:mod_eien'] }, ['v:永遠', 'g:mod_eien', 'v:風', 'v:吹く'],
+      { en: 'the wind blows forever', effect: 'wind_forever', does: 'Clears the mist as wind does, and goes on blowing: no creature can raise a Shroud until a Gust breaks it.', trade: 'A Gust breaks it.', wrong: ['かぜをえいえんにふく', 'かぜがえいえんでふく'] }),
+    P('mugen', 'mamoru', 'Protect', '{無限|むげん} に {守|まも}る', { write: '{無限|むげん} に', after: '{守|まも}る', items: ['v:無限', 'g:mod_mugen'] }, ['v:無限', 'g:mod_mugen', 'v:守る'],
+      { en: 'protect without limit', effect: 'ward_unlimited', does: 'The ward blocks every Strike this exchange, at either of you, then it is gone.', trade: 'This exchange only, and only Strikes.', wrong: ['むげんをまもる', 'むげんがまもる'] }),
+  ];
+  C.modifiers = { families, pairs };
+
+  // the concepts the phases know (RB.phase): taught by a scene setting the flag `mod_<id>`
+  if (RB.phase && RB.phase.concept) for (const id in families) RB.phase.concept('mod_' + id, { kind: 'modifier', ch: families[id].ch, taught: 'mod_' + id });
+
+  // the grammar each brings, taught in a short lesson when first learned (honest about everyday overlap; the battle
+  // role is the Inkweavers' own convention)
+  const G = (id, lv, title, en, ex, notes) => ({ id, lv, title, en, ex: ex.map(([jp, e]) => ({ jp, en: e })), notes });
+  if (RB.grammar) RB.grammar.add([
+    G('mod_subete', 'I', 'すべて (all)',
+      `すべて ({全|すべ}て) means "all, every one". It works as a noun (すべてを {見|み}た "saw everything") and as an adverb (すべて {終|お}わった "it is all over"). In everyday Japanese すべて and {全部|ぜんぶ} often mean the same thing; すべて sounds a little more formal or written.`,
+      [['すべてを {守|まも}る。', 'Protect everyone.'], ['{答|こた}えは すべて {正|ただ}しい。', 'The answers are all correct.']],
+      'In battle, the Inkweavers use すべて for breadth: every one, each a little lighter. That is their convention, not a rule of Japanese.'),
+    G('mod_zenbu', 'E', '{全部|ぜんぶ} (all of it)',
+      `{全部|ぜんぶ} means "all of it, the whole lot". As an adverb it often comes straight before the verb with no particle: ぜんぶ {食|た}べた "ate it all". In everyday speech it overlaps with すべて, and is the more casual of the two.`,
+      [['ぜんぶ {食|た}べました。', 'I ate it all.'], ['{傷|きず}を {全部|ぜんぶ} {癒|いや}す。', 'Heal every wound.']],
+      'In battle, 全部 means completeness on one target: all of it, for one person only (the Inkweavers\' convention).'),
+    G('mod_arayuru', 'I', 'あらゆる (every kind of)',
+      `あらゆる means "every possible, every kind of". It only ever comes before a noun: あらゆる {方法|ほうほう} "every possible way". It cannot stand alone or take a particle.`,
+      [['あらゆる {技|わざ}から {守|まも}る。', 'Protect from every kind of move.'], ['あらゆる {本|ほん}を {読|よ}んだ。', 'I read every kind of book.']]),
+    G('mod_zentai', 'I', '{全体|ぜんたい} (the whole)',
+      `{全体|ぜんたい} means "the whole" of something, taken as one: クラス{全体|ぜんたい} "the whole class", {町|まち}{全体|ぜんたい} "the whole town". It looks at the group as a single body rather than at each member.`,
+      [['{全体|ぜんたい}を {守|まも}る。', 'Protect the whole (party, as one).'], ['{町|まち}{全体|ぜんたい}が {静|しず}かだ。', 'The whole town is quiet.']]),
+    G('mod_sorezore', 'E', 'それぞれ (each)',
+      `それぞれ means "each, respectively": each one separately, in its own way. それぞれの + noun: それぞれの {道|みち} "each one's own road".`,
+      [['それぞれを {守|まも}る。', 'Protect each one.'], ['それぞれの {考|かんが}えが ある。', 'Each has their own view.']]),
+    G('mod_goto', 'I', '～ごとに (every …, per …)',
+      `After a noun, ごとに means "every …, with each …": {一回|いっかい}ごとに "every time", {駅|えき}ごとに "at every station", {一日|いちにち}ごとに "every day".`,
+      [['{一回|いっかい}ごとに {守|まも}る。', 'Protect every time.'], ['{駅|えき}ごとに {止|と}まる。', 'It stops at every station.']]),
+    G('mod_ikutsuka', 'E', 'いくつか (some, a few)',
+      `いくつか means "some, a few" (things that can be counted). Like other words of amount, it usually comes after the object and its particle, before the verb: {結|むす}び{目|め}を いくつか ほどく "untie a few of the knots".`,
+      [['{結|むす}び{目|め}を いくつか ほどく。', 'Untie some of the knots.'], ['{質問|しつもん}が いくつか あります。', 'I have a few questions.']]),
+    G('mod_taihan', 'A', '{大半|たいはん} (most)',
+      `{大半|たいはん} means "the greater part, most". It is a little formal; in conversation ほとんど is more common. {大半|たいはん}の + noun: {大半|たいはん}の {人|ひと} "most people".`,
+      [['{縄|なわ}で {大半|たいはん}を {縛|しば}る。', 'Bind most of them with rope.'], ['{大半|たいはん}の {店|みせ}は {閉|し}まって いる。', 'Most of the shops are closed.']]),
+    G('mod_takusan', 'F', 'たくさん (a lot)',
+      `たくさん means "a lot, many, much", for amount or number. As an adverb it comes before the verb: たくさん {食|た}べる "eat a lot".`,
+      [['{水|みず}を たくさん かける。', 'Pour on a lot of water.'], ['{人|ひと}が たくさん いる。', 'There are a lot of people.']]),
+    G('mod_eien', 'I', '{永遠|えいえん}に (forever)',
+      `{永遠|えいえん} is "eternity"; {永遠|えいえん}に is "forever". It is a grand word, at home in songs and vows; in everyday speech ずっと is usual.`,
+      [['{風|かぜ}が {永遠|えいえん}に {吹|ふ}く。', 'The wind blows forever.'], ['{永遠|えいえん}に {忘|わす}れない。', 'I will never forget.']],
+      'The Inkweavers use it with a flourish: in battle it means one effect that lasts until a named move breaks it.'),
+    G('mod_mugen', 'A', '{無限|むげん}に (without limit)',
+      `{無限|むげん} is "infinity, without limit"; {無限|むげん}に is "endlessly, without limit". Like {永遠|えいえん}に, it is a grand word, more at home in stories and science than in conversation.`,
+      [['{無限|むげん}に {守|まも}る。', 'Protect without limit.'], ['{星|ほし}は {無限|むげん}に ある ように {見|み}える。', 'The stars look endless.']],
+      'In battle it means no limit on how many, for this exchange only (the Inkweavers\' flourish).'),
+  ], 'modifiers');
 })(RB.content);
 
 

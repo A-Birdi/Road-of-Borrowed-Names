@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { load, root } from '../tests/lib/load.mjs';
 import { expansionRules } from './expansion_rules.mjs';
+import { encounterRules } from './encounter_rules.mjs';
 import { suzuInventory, checkDialect } from './suzu_inventory.mjs';
 
 const args = process.argv.slice(2);
@@ -468,6 +469,10 @@ const dialect = checkDialect(RB, dialectInv);
 dialect.errors.forEach(E);
 dialect.warnings.forEach(Wn);
 for (const x of dialectInv.scan) E('dialect: ' + x.file + ':' + x.line + ': Suzu\'s Japanese that tools/suzu_inventory.mjs does not list (add its table to the inventory, or to the labels if it is not speech): “' + x.jp.slice(0, 40) + '”');
+
+// ---- encounters (expansion P04; tools/encounter_rules.mjs): before the expansion's rules, whose lexicon check reads
+// the tokens these texts add ----
+encounterRules(RB, C, { jcheck, checkStep, E });
 
 // ---- the expansion's rules (docs/future/plan/02_FOUNDATIONS.md S1, S5; playbook P02; tools/expansion_rules.mjs) ----
 // Content written from here on must pass them; what already existed and does not is named in

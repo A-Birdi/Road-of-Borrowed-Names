@@ -286,6 +286,11 @@ function labelLines(RB) {
   const w = C.words && C.words.suzu;
   if (w) { L(w, 'words.suzu', 'the inscription word 鈴 (bell), not Suzu'); if (w.jpK) L({ jp: w.jpK }, 'words.suzu.jpK', 'the inscription word 鈴 (bell), not Suzu'); if (w.lex) L({ jp: w.lex }, 'words.suzu.lex', 'the inscription word 鈴 (bell), not Suzu'); }
   if (RB.pets && RB.pets.meeting) for (const sp in RB.pets.meeting) { /* titles and texts: narration */ }
+  // the encounter platform (src/engine/97_encounter.js): Suzu's options in an encounter are menu labels
+  for (const id in C.encounters || {}) {
+    const d = C.encounters[id];
+    for (const a of ((d.companion || {}).suzu || []).concat(((d.social && d.social.companion) || {}).suzu || [])) L(a.name, 'encounters.' + id + '.' + a.id, 'an encounter menu label');
+  }
   return out;
 }
 
