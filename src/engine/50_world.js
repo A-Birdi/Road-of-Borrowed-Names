@@ -590,7 +590,8 @@ RB.world = (function () {
     }
     const tool = s().equip.tool && RB.content.items[s().equip.tool];
     const quick = tool && tool.effect && tool.effect.walk ? 0.88 : 1;
-    const dur = Math.round((RB.input.running() || (W.path && W.path.length > 4) ? 105 : 160) * quick);
+    // at sea (src/engine/72v_sail.js) a step takes what the wind and the sail make of it
+    const dur = W.map.def.sea && RB.sail ? RB.sail.stepDur(dir) : Math.round((RB.input.running() || (W.path && W.path.length > 4) ? 105 : 160) * quick);
     // companion takes the player's old tile
     if (W.comp) {
       const c = W.comp;
@@ -613,6 +614,8 @@ RB.world = (function () {
     const p = W.player;
     const st = s();
     st.x = p.x; st.y = p.y; st.dir = p.dir;
+    // a step at sea: the voyage goes on (its situations, the ports' water)
+    if (W.map.def.sea && RB.sail) { W.path = W.path && W.path.length ? W.path : null; RB.sail.onStep(); return; }
     const ex = RB.maps.exitAt(W.map, p.x, p.y);
     if (ex) {
       // a map can hold you while a story moment lasts (e.g. a night that only

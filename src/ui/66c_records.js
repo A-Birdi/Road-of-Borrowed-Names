@@ -141,6 +141,8 @@ RB.ui.records = (function () {
       }
       h += '</ul>';
     }
+    // the voyages' log, a section of the volume (src/ui/89v_sail.js)
+    if (RB.ui.sail && RB.ui.sail.logHtml) h += RB.ui.sail.logHtml(s);
     // after the story: a new journey with what carries (K9)
     if (s.flags.postgame && RB.ui.ngplus) h += '<div class="rb-ngp"><h4 class="rb-fam">' + RB.ui.jhtml('{新|あたら}しい {旅|たび}') + ' <span class="en">A new journey</span></h4><p class="muted small">New Game+ begins the story again with what you have learned, your records and this volume.</p><button type="button" class="pbtn" data-a="ngplus">' + I('journey') + '<span>Begin New Game+…</span></button></div>';
     A.innerHTML = h;

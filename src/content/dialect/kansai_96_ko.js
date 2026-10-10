@@ -115,4 +115,7 @@ RB.dialect.add('kansai', `
 > …… でも な 、 {書|か}いた {人|ひと} だけ の {言葉|ことば} も ある ねん 。 それ は 、 そっと {仕舞|しま}って おく ん や で 。 || …But some words belong only to the one who wrote them. Those, you put away gently.
 = アンコール ？ …… {相方|あいかた} が いない と 、 {二幕目|にまくめ} は できない の よ 。 ねえ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
 > アンコール ？ …… {相方|あいかた} が おらん と 、 {二幕目|にまくめ} は でけへん ねん 。 なあ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
+@ sea [sea.sit_seal]
+= {観客|かんきゃく} が {三人|さんにん} ！ {手|て} を {振|ふ}って おこう か な 。 || An audience of three! I'll give them a wave.
+> {観客|かんきゃく} が {三人|さんにん} や ！ {手|て} を {振|ふ}って おこう か な 。 || An audience of three! I'll give them a wave.
 `);

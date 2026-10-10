@@ -1,0 +1,39 @@
+/* Sailing (expansion P11c; src/ui/89v_sail.js): the sea chart sheet, the strip at sea, the travel log. */
+
+/* the chart */
+.sea-leaf { display: grid; gap: 0.8em; }
+.sea-chart { width: 100%; max-width: 34em; height: auto; justify-self: center; border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.sea-chart .sea-water { fill: #cfe2e4; }
+.sea-chart .sea-route { stroke: var(--river); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.sea-chart .sea-port { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+.sea-chart .sea-port.here { fill: var(--vermilion); }
+.sea-chart .sea-name { font: 600 10px var(--serif); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; }
+.sea-dests, .sea-modes { display: grid; gap: 0.5em; }
+.sea-dest, .sea-mode { justify-content: flex-start; text-align: left; flex-wrap: wrap; }
+.sea-mode .muted { flex-basis: 100%; }
+
+/* the strip at sea: wind, sail, heading */
+.sea-strip {
+  position: absolute; left: 50%; transform: translateX(-50%); top: max(8px, env(safe-area-inset-top)); z-index: 5;
+  display: grid; gap: 0.35em; padding: 0.5em 0.8em; max-width: min(40em, calc(100vw - 16px));
+  background: rgba(28, 35, 70, 0.92); background-image: var(--cloth-weave); color: var(--on-cloth);
+  border: 1px solid var(--paper-edge); border-radius: var(--r-2); box-shadow: 0 4px 12px rgba(0,0,0,0.35); font-size: 0.88em;
+}
+.sea-strip .en { color: var(--on-cloth-2); font-size: 0.85em; margin-left: 0.3em; }
+.sea-wind { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.sea-arrow { font-size: 1.4em; line-height: 1; }
+.sea-pennant { width: 1.4em; height: 0.6em; background: #c8404e; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.sea-pennant.off { opacity: 0.6; transform: skewY(8deg); }
+.sea-trims { display: flex; gap: 0.3em; flex-wrap: wrap; }
+.sea-trim[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--ribbon); }
+.sea-hint { margin: 0; color: var(--on-cloth-2); }
+.sea-dest-line { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.sea-dest-line svg { width: 1.1em; height: 1.1em; }
+body.in-panel .sea-strip, body.in-dialogue .sea-strip { display: none; }
+@media (max-width: 520px) { .sea-strip { font-size: 0.8em; } .sea-strip .en { display: none; } }
+
+/* the travel log */
+.sea-log { margin: 0.4em 0 1em; padding-left: 1.4em; display: grid; gap: 0.5em; }
+.sea-entry .t { font-weight: 600; }
+.sea-sights { margin: 0.2em 0; padding-left: 1.2em; }
+.sea-strip .pbtn rt { color: var(--rt-ink); }

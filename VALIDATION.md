@@ -4050,5 +4050,19 @@ shells, the Wind Stone at F, phone width, Kihei's lasting choice in its scene, t
 island and story; the side stories and companions: 三つも年下, 山盛り, okurigana on 黒い/白い, the craft leaf's "first
 sold", numerals spaced from counters, the ゑ task on こゑ). Self-review only.
 
+**Sailing (P11c, on the working tree before its commit).** Unit: `travel` **492/0** (the sea is a story lock for fast
+travel), `quest_guide` **71/0** (the sea and the cabin filed under Saltglass), `audio_songs` **2,605/0** (Open Water,
+and four faults in P11e's island songs that the suite had not been run on: the glass's range, ko_garden's loop length,
+the leaf motif, a clash in battle_ko's harmony), `audio_zones` **826/0**, `dialect` **7,279/0**, `records` **143/0**,
+`ko_ch9` **181/0**, `ko_side` **108/0**, `encounters` **184/0**, `combat_fairness` **799/0**, `creatures_a` **110/0**,
+`creatures_b` **1,074/0**, `fixtures_campaign` **477/0**, `expansion_rules` **11/0**, `review_ledger` **2/0**; validator no
+errors. Browser: `tests/e2e/sailing.mjs` **2/0**: the chart, the strip at sea, the step slower with the wrong trim and
+faster after Q, the seals at the third step, docking at Manybridge and the log entry; then the crew sailing her home with
+a torn sail left for port, the harbour mending it, the cabin (bunk, volume's log, back up) and phone width. Screenshots
+looked at: the boat and sail at each heading (the sail moved to the bow heading north or south so it no longer hides
+faces), the strip's furigana on paper buttons. The boat is given by a test hook here; the Harbourmaster's quest that
+gives it is P11b. Language: the sea's lines self-reviewed in the ledger (direction-aware first voyages, 灯 for the
+light in the fog, the rudder's 留め具, a hedged-humble distractor replacing a malformed one).
+
 **Not verified:** Firefox; the foldable; a person playing Chapter 9 (XP67); audible voices for the shells (local
 Japanese voices are optional and none is installed in the test browser).

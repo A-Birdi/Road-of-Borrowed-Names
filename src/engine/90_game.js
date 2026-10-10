@@ -122,6 +122,7 @@ RB.game = (function () {
       else if (a === 'menu' || a === 'cancel') RB.ui.menu.open();
       else if (a === 'log') RB.ui.menu.open('log');
       else if (a === 'map') RB.ui.menu.open('map');
+      else if (a === 'sail' && RB.ui.sail) RB.ui.sail.cycleTrim(); // at sea: set the sail (src/ui/89v_sail.js)
       return;
     }
     // in battle the menu key opens the battle's settings sheet (presentation only; src/ui/55_settings.js)

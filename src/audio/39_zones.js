@@ -63,6 +63,12 @@ RB.audio = RB.audio || {};
       battle: 'battle_ko', boss: 'boss_ko', route: null,
       songs: ['kotonoha', 'ko_roots', 'ko_garden'],
     },
+    // the coastal sea, sailed in the boat (38v_songs_sea.js): a creature on deck fights to the island's battle theme
+    sea: {
+      chapter: 9, edition: 2, regions: ['sea'], prefixes: ['sea.'],
+      battle: 'battle_ko', boss: 'boss_ko', route: null,
+      songs: ['sea'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',

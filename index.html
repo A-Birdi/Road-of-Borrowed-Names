@@ -4215,6 +4215,47 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .sh-why { font-size: 0.88em; border-left: 3px solid var(--ribbon); padding-left: 0.4em; margin: 0.4em 0 0; }
 .sh-ok { font-weight: 700; margin: 0.4em 0 0; }
 
+/* ==== src/styles/69v_sail.css ==== */
+/* Sailing (expansion P11c; src/ui/89v_sail.js): the sea chart sheet, the strip at sea, the travel log. */
+
+/* the chart */
+.sea-leaf { display: grid; gap: 0.8em; }
+.sea-chart { width: 100%; max-width: 34em; height: auto; justify-self: center; border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.sea-chart .sea-water { fill: #cfe2e4; }
+.sea-chart .sea-route { stroke: var(--river); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.sea-chart .sea-port { fill: var(--paper); stroke: var(--ink); stroke-width: 1.5; }
+.sea-chart .sea-port.here { fill: var(--vermilion); }
+.sea-chart .sea-name { font: 600 10px var(--serif); fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 3px; }
+.sea-dests, .sea-modes { display: grid; gap: 0.5em; }
+.sea-dest, .sea-mode { justify-content: flex-start; text-align: left; flex-wrap: wrap; }
+.sea-mode .muted { flex-basis: 100%; }
+
+/* the strip at sea: wind, sail, heading */
+.sea-strip {
+  position: absolute; left: 50%; transform: translateX(-50%); top: max(8px, env(safe-area-inset-top)); z-index: 5;
+  display: grid; gap: 0.35em; padding: 0.5em 0.8em; max-width: min(40em, calc(100vw - 16px));
+  background: rgba(28, 35, 70, 0.92); background-image: var(--cloth-weave); color: var(--on-cloth);
+  border: 1px solid var(--paper-edge); border-radius: var(--r-2); box-shadow: 0 4px 12px rgba(0,0,0,0.35); font-size: 0.88em;
+}
+.sea-strip .en { color: var(--on-cloth-2); font-size: 0.85em; margin-left: 0.3em; }
+.sea-wind { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.sea-arrow { font-size: 1.4em; line-height: 1; }
+.sea-pennant { width: 1.4em; height: 0.6em; background: #c8404e; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.sea-pennant.off { opacity: 0.6; transform: skewY(8deg); }
+.sea-trims { display: flex; gap: 0.3em; flex-wrap: wrap; }
+.sea-trim[aria-pressed="true"] { box-shadow: inset 0 -3px 0 var(--ribbon); }
+.sea-hint { margin: 0; color: var(--on-cloth-2); }
+.sea-dest-line { display: flex; align-items: center; gap: 0.5em; flex-wrap: wrap; }
+.sea-dest-line svg { width: 1.1em; height: 1.1em; }
+body.in-panel .sea-strip, body.in-dialogue .sea-strip { display: none; }
+@media (max-width: 520px) { .sea-strip { font-size: 0.8em; } .sea-strip .en { display: none; } }
+
+/* the travel log */
+.sea-log { margin: 0.4em 0 1em; padding-left: 1.4em; display: grid; gap: 0.5em; }
+.sea-entry .t { font-weight: 600; }
+.sea-sights { margin: 0.2em 0; padding-left: 1.2em; }
+.sea-strip .pbtn rt { color: var(--rt-ink); }
+
 /* ==== src/styles/70_discovery.css ==== */
 /* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
  * the Roadside Keepsakes catalogue (src/ui/58_keepsakes.js) and its notices.
@@ -19234,6 +19275,7 @@ RB.audio = RB.audio || {};
     _.songDefs[id] = def;
   }
   // the leaf motif: up to the octave, a breath, and a slow fall
+  _.motifs.leaf = { deg: "5, 6, 1 6, 5, 3,", notes: 'Kotonoha: a rise to the octave and a slow fall, a leaf lifted and let go.' };
   const LEAF = "5, - 6, - 1 - - - | 6, - 5, - 3, - - - | 2, - 3, - 5, - 3, - | 2, - - - - - . .";
   const LEAF_HI = "5 - 6 - 1' - - - | 6 - 5 - 3 - - - | 2 - 3 - 5 - 3 - | 2 - - - - - . .";
 
@@ -19252,7 +19294,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.5, rv: 0.55 },
       hi: { i: 'koto', o: 5, v: 0.28, rv: 0.7, pan: 0.25 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.15, rv: 0.85, pan: 0.35 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.15, rv: 0.85, pan: 0.35 },
       koto: { i: 'koto', o: 4, pat: true, v: 0.2, rv: 0.4, pan: -0.25 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.34 },
@@ -19282,7 +19324,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'koto', o: 3, v: 0.5, rv: 0.6 },
       deep: { i: 'bowed', o: 3, v: 0.44, rv: 0.55, pan: -0.15 },
-      chime: { i: 'glass', o: 4, pat: true, v: 0.12, rv: 0.9, pan: 0.35 },
+      chime: { i: 'glass', o: 3, pat: true, v: 0.12, rv: 0.9, pan: 0.35 },
       sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.26, rv: 0.55 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.26, rv: 0.5 },
       drip: { perc: true, v: 0.24, rv: 0.75, pan: 0.3 },
@@ -19308,7 +19350,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.46, rv: 0.6 },
       harp: { i: 'harp', o: 3, pat: true, v: 0.26, rv: 0.55, pan: -0.2 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.16, rv: 0.85, pan: 0.3 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.16, rv: 0.85, pan: 0.3 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.22, rv: 0.55 },
     },
     all: { harp: "0 2 1'", chime: ". 2' .", low: '0+2' },
@@ -19316,7 +19358,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: GD_A_CH, lead: GD_A },
       B: { bars: 8, ch: GD_A_CH, harp: "0 . 2", chime: "1' . 2'" },
     },
-    form: ['A', 'B'],
+    form: ['A', 'B', 'A'],
   });
 
   // =========================================================== THE ISLAND'S BATTLE
@@ -19326,7 +19368,7 @@ RB.audio = RB.audio || {};
   const BK_B_CH = '1 4 2 5 4 3 7 1';
   const BK_B_LOW = '1 - - - - - - - | 4, - - - - - - - | 2 - - - - - - - | 5, - - - - - - - | 4, - - - - - - - | 3, - - - - - - - | 7, - - - - - - - | 1 - - - - - - -';
   // C: the leaf motif torn about by the wind, phrygian, over a close cluster
-  const BK_C_HI = "5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 2! - 1 - 7, - 1 - | 5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 7,! - 1 - 2 - - -";
+  const BK_C_HI = "5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 2! - 1 - 7, - 1 - | 5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 7,! - 1 - 7, - - -";
   const BK_C_LOW = '1 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | 2 - - - - - - - | 1 - - - - - - - | 7, - - - - - - - | 6, - - - - - - - | 5, - - - - - - -';
   const BK_C_CH = '1 2 3 2 1 7 6 5P';
   S('battle_ko', {
@@ -19341,7 +19383,7 @@ RB.audio = RB.audio || {};
       low: { i: 'bowed', o: 3, v: 0.56, rv: 0.25, pan: -0.15 },
       ost: { i: 'shamisen', o: 3, pat: true, v: 0.38, rv: 0.12, pan: -0.25 },
       arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.25, pan: 0.3 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.2, rv: 0.6, pan: 0.35 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.2, rv: 0.6, pan: 0.35 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.32, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.66 },
       taiko: { perc: true, v: 0.56 },
@@ -19382,10 +19424,10 @@ RB.audio = RB.audio || {};
       riff: { i: 'koto', o: 3, v: 0.56, rv: 0.15, pan: -0.2 },
       lead: { i: 'bowed', o: 4, v: 0.62, rv: 0.25 },
       hi: { i: 'shinobue', o: 5, v: 0.52, rv: 0.25, pan: 0.15 },
-      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.45, pan: 0.2 },
+      glass: { i: 'glass', o: 4, v: 0.85, rv: 0.45, pan: 0.2 },
       low: { i: 'bowed', o: 3, v: 0.55, rv: 0.25, pan: 0.2 },
       ost: { i: 'shamisen', o: 3, pat: true, v: 0.4, rv: 0.12, pan: 0.25 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.16, rv: 0.6, pan: -0.3 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.16, rv: 0.6, pan: -0.3 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.3, rv: 0.35 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.7 },
       taiko: { perc: true, v: 0.6 },
@@ -19830,6 +19872,57 @@ RB.audio = RB.audio || {};
 })(RB.audio);
 
 
+/* ==== src/audio/38v_songs_sea.js ==== */
+/* The sea (expansion P11c; plan 06_WORLD.md W7; 07_REGIONS.md R6): Open Water, for the coastal sea when you sail her
+ * yourself. Notation: see 30_songs.js.
+ *
+ * The shinobue carries the sail motif (a swell up to the sixth and back, a sail filling and easing); the koto rolls
+ * under it like the swell; the bass rocks between root and fifth; brush and water drops for the spray. G mixolydian,
+ * unhurried. The sea's creature on deck fights to Kotonoha's battle theme (the zone below). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 9;
+    _.songDefs[id] = def;
+  }
+  // the sail motif: a swell up to the sixth and back
+  _.motifs.sail = { deg: '1 3 5 6 5 3', notes: 'The sea: a swell up to the sixth and back, a sail filling and easing.' };
+  const SAIL = '1 - 3 - 5 - 6 - | 5 - - - 3 - - - | 2 - 3 - 5 - 3 - | 2 - - - - - . .';
+  const SEA_A = SAIL + " | 1 - 3 - 5 - 1' - | 7 - 6 - 5 - - - | 4 - 3 - 2 - 3 - | 1 - - - - - . .";
+  const SEA_A_CH = '1 1 5 5 1 7 4 1';
+  const SEA_B = "5 - - - 6 - 7 - | 1' - - - - - . . | 6 - - - 5 - 4 - | 5 - - - - - . . | 3 - - - 4 - 5 - | 6 - - - 5 - 3 - | 2 - - - 3 - 2 - | 1 - - - - - . .";
+  const SEA_B_CH = '4 4 2 5 6 4 5 1';
+  S('sea', {
+    title: 'Open Water',
+    kind: 'area',
+    motifs: ['sail'],
+    notes: 'The coastal sea (G mixolydian, 92): the shinobue sings the sail motif, a swell up to the sixth and back; the koto rolls under it like the swell, the bass rocks between root and fifth; brush and water drops for the spray.',
+    key: 'G', mode: 'mixolydian', bpm: 92, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shinobue', o: 5, v: 0.42, rv: 0.45 },
+      roll: { i: 'koto', o: 4, pat: true, v: 0.24, rv: 0.35, pan: -0.25 },
+      hi: { i: 'harp', o: 4, pat: true, v: 0.14, rv: 0.6, pan: 0.3 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.4 },
+      pad: { i: 'pad', o: 3, hold: true, v: 0.16, rv: 0.6 },
+      spray: { perc: true, v: 0.2, rv: 0.5, pan: 0.2 },
+    },
+    all: { roll: '0 1 2 1 0 1 2 1', hi: ". . 2 . . . 1' .", bass: '0 - - - 2 - - -', pad: '0+2', spray: 'b...d...|b.....d.' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', hi: null },
+      A: { bars: 8, ch: SEA_A_CH, lead: SEA_A },
+      B: { bars: 8, ch: SEA_B_CH, lead: SEA_B },
+      A2: { bars: 8, ch: SEA_A_CH, lead: SEA_A, hi: "2 . 1' . 2 . 1' ." },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+})(RB.audio);
+
+
 /* ==== src/audio/39_zones.js ==== */
 /* Zone music: which battle and boss theme plays where.
  *
@@ -19895,6 +19988,12 @@ RB.audio = RB.audio || {};
       chapter: 9, edition: 2, regions: ['kotonoha'], prefixes: ['ko.'],
       battle: 'battle_ko', boss: 'boss_ko', route: null,
       songs: ['kotonoha', 'ko_roots', 'ko_garden'],
+    },
+    // the coastal sea, sailed in the boat (38v_songs_sea.js): a creature on deck fights to the island's battle theme
+    sea: {
+      chapter: 9, edition: 2, regions: ['sea'], prefixes: ['sea.'],
+      battle: 'battle_ko', boss: 'boss_ko', route: null,
+      songs: ['sea'],
     },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
@@ -21720,12 +21819,14 @@ RB.input = (function () {
     run: ['ShiftLeft', 'ShiftRight'],
     tr: ['KeyT'],
     weave: ['KeyV'], // field weaving (src/ui/57_weave.js)
+    sail: ['KeyQ'], // at sea, set the sail to the wind (src/ui/89v_sail.js)
   };
   const ACTION_LABELS = {
     up: 'Move up', down: 'Move down', left: 'Move left', right: 'Move right',
     ok: 'Confirm / talk', cancel: 'Back', menu: 'Menu', help: 'Lightbulb help',
     log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)', tr: 'Show or hide the translation',
     weave: 'Weave a word on something nearby',
+    sail: 'Set the sail (at sea)',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
   const DIRECTIONS = ['up', 'down', 'left', 'right'];
@@ -36732,7 +36833,8 @@ RB.world = (function () {
     }
     const tool = s().equip.tool && RB.content.items[s().equip.tool];
     const quick = tool && tool.effect && tool.effect.walk ? 0.88 : 1;
-    const dur = Math.round((RB.input.running() || (W.path && W.path.length > 4) ? 105 : 160) * quick);
+    // at sea (src/engine/72v_sail.js) a step takes what the wind and the sail make of it
+    const dur = W.map.def.sea && RB.sail ? RB.sail.stepDur(dir) : Math.round((RB.input.running() || (W.path && W.path.length > 4) ? 105 : 160) * quick);
     // companion takes the player's old tile
     if (W.comp) {
       const c = W.comp;
@@ -36755,6 +36857,8 @@ RB.world = (function () {
     const p = W.player;
     const st = s();
     st.x = p.x; st.y = p.y; st.dir = p.dir;
+    // a step at sea: the voyage goes on (its situations, the ports' water)
+    if (W.map.def.sea && RB.sail) { W.path = W.path && W.path.length ? W.path : null; RB.sail.onStep(); return; }
     const ex = RB.maps.exitAt(W.map, p.x, p.y);
     if (ex) {
       // a map can hold you while a story moment lasts (e.g. a night that only
@@ -43460,6 +43564,7 @@ RB.render = (function () {
     for (const f of W.foes) list.push({ z: f.fy * TS + TS, draw: () => drawActor(c, f, t, true) });
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
+    if (m.def.sea && RB.sailDraw) RB.sailDraw.push(list, c, ax, ay, t); // the boat under the traveller at sea (src/ui/89v_sail.js)
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     if (RB.perform) RB.perform.push(list, c, ax, ay, t); // what a person's action puts beside them (67a_perform.js)
     if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks
@@ -48687,7 +48792,7 @@ RB.script = (function () {
     const compName = comp && RB.content.chars[comp] ? RB.content.chars[comp].name.en : 'your companion';
     const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1);
     const map = {
-      name: s.player.name, comp: compName,
+      name: s.player.name, comp: compName, boat: RB.sail ? RB.sail.boatName(s).en : '',
       they: pr.they, them: pr.them, their: pr.their, theirs: pr.theirs, self: pr.self,
       They: cap(pr.they), Them: cap(pr.them), Their: cap(pr.their),
       are: pr.plural ? 'are' : 'is', were: pr.plural ? 'were' : 'was', have: pr.plural ? 'have' : 'has',
@@ -48701,6 +48806,7 @@ RB.script = (function () {
     const comp = s && (s.comp || s.provisional);
     return {
       name: s ? s.player.nameJp || s.player.name : '',
+      boat: s && RB.sail ? RB.sail.boatName(s).jp : '', // the kana of the boat's name; lines write `$boat {丸|まる}`
       comp: comp && RB.content.chars[comp] ? RB.jp.plain(RB.content.chars[comp].name.jp) : '',
     };
   }
@@ -51171,6 +51277,337 @@ RB.shells = (function () {
   // the automated runs: every line placed right
   function autoPlaced(d) { return Object.fromEntries(d.frags.map((fr) => [fr.id, { who: fr.who, to: fr.to }])); }
   return { def, textAt, judge, keep, autoPlaced };
+})();
+
+
+/* ==== src/engine/72v_sail.js ==== */
+/* Sailing (expansion P11c; plan 06_WORLD.md W7–W8; docs/future/work/P11_SEA.md). The boat, the sea chart, the two
+ * ways to travel, the situations of a voyage, something going wrong on board, and the travel log. Twelve-chapter
+ * journeys only: the boat is earned through A Licence for the Open Sea (src/content/sea/).
+ *
+ *   The sea is an ordinary map with `sea: true`: its open water is sailable and its land is not (the tiles below), the
+ *   traveller and the companion stand in the boat (src/ui/89v_sail.js draws it), and a step's length follows the wind
+ *   and the sail. Nothing runs out, pursues or sinks: a sail set wrong, or a torn one not yet mended, only makes the
+ *   trip a little longer.
+ *
+ *   C.ports[id] = { place, name { jp, en }, dock { map, x, y, dir } (where you stand ashore by the boat), sea { x, y,
+ *                   dir } (where the boat puts out), zone { x, y, w, h } (the water off the port, on the sea map),
+ *                   if: cond (the port takes boats), reach: cond (reached other than by sea) }
+ *   C.seaSituations[id] = { kind: 'hail'|'fog'|'cargo'|'creature'|'bird'|'seal'|'trouble'|'first'|'story', scene,
+ *                   routes?: ['a-b', …] (either way round), first?: route (once, the first voyage on it), story?: cond
+ *                   (never skipped while it holds), once?: bool, weight?: n }
+ *
+ *   A voyage: chosen on the chart (from where the boat lies, to a port reached), then sailed yourself (the sea map) or
+ *   by the crew (straight to arrival); both switchable: "let the crew sail" at any time at sea, and the chart's choice
+ *   each time. Its situations are drawn once from the 'sea' stream when it begins and kept with it, so a reload never
+ *   re-rolls them; first-time situations of the route and story ones come first and are never skipped (in the crew's
+ *   sailing they interrupt the skip). Every voyage writes an entry in the travel log (route, how, sights, words,
+ *   people): a section of the travel volume.
+ *
+ *   s.sea = { boat { name, hull }, at (port), dmg (null | 'sail' | 'line' | 'rudder' | 'hatch'), trim (0 close-hauled,
+ *             1 half, 2 full), n (voyages made), seen { situation: n }, log [entry…], voyage (under way) }
+ *   Conditions read flags: sea_boat (the boat is yours), sea_port_<id> (a port reached by sea), sea_dmg (something to
+ *   mend), and vars: var.sea_at, var.sea_n. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.sail = (function () {
+  'use strict';
+  const C = () => RB.content;
+  const S = () => RB.game && RB.game.s;
+  const isObj = (o) => !!o && typeof o === 'object' && !Array.isArray(o);
+  const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
+  const TRIMS = [
+    { id: 0, jp: '{帆|ほ} を {絞|しぼ}る', en: 'Sheeted in' },
+    { id: 1, jp: '{帆|ほ} を {半分|はんぶん}', en: 'Half out' },
+    { id: 2, jp: '{帆|ほ} を {張|は}る', en: 'Full out' },
+  ];
+  const WINDS = ['up', 'right', 'down', 'left']; // where the wind comes FROM: up = from the north
+  const WIND_NAME = { up: { jp: '{北|きた}', en: 'north' }, right: { jp: '{東|ひがし}', en: 'east' }, down: { jp: '{南|みなみ}', en: 'south' }, left: { jp: '{西|にし}', en: 'west' } };
+  const DMG = ['sail', 'line', 'rudder', 'hatch'];
+
+  // ---- the sea's tiles: water you can sail, land you cannot ------------------------------------------------------
+  (function tiles() {
+    const T = RB.tiles && RB.tiles.T;
+    if (!T || T.sea) return;
+    T.sea = Object.assign({}, T.water, { id: 'sea', walk: true, water: true, step: 'splash' });
+    T.seashoal = Object.assign({}, T.shallow, { id: 'seashoal', walk: true, water: true, step: 'splash' });
+    T.isle = Object.assign({}, T.grass, { id: 'isle', walk: false });
+    T.isleSand = Object.assign({}, T.sand, { id: 'isleSand', walk: false });
+  })();
+  // the legend a sea map uses: '~' open sea, 'w' shoal water (both sailable); land, sand, rock and cliff are solid
+  const LEGEND = { '~': { tile: 'sea' }, w: { tile: 'seashoal' }, '.': { tile: 'isle' }, s: { tile: 'isleSand' }, h: { tile: 'isleSand', prop: 'rock' }, T: { tile: 'isle', prop: 'tree' }, r: { tile: 'isle', prop: 'rock' } };
+
+  // ---- state -----------------------------------------------------------------------------------------------------
+  function of(s) {
+    s = s || S();
+    if (!s) return null;
+    if (!isObj(s.sea)) s.sea = {};
+    const q = s.sea;
+    if (!isObj(q.seen)) q.seen = {};
+    if (!Array.isArray(q.log)) q.log = [];
+    if (q.trim == null) q.trim = 1;
+    if (q.n == null) q.n = 0;
+    return q;
+  }
+  const owns = (s) => !!(s && s.flags && s.flags.sea_boat);
+  const onSea = (map) => !!(map && map.def && map.def.sea);
+  const active = (s) => { s = s || S(); return !!(s && s.sea && s.sea.voyage); };
+  function syncVars(s) {
+    const q = of(s);
+    s.vars = s.vars || {};
+    s.vars.sea_at = q.at || '';
+    s.vars.sea_to = (q.voyage && q.voyage.to) || '';
+    s.vars.sea_n = q.n;
+    if (q.dmg) s.flags.sea_dmg = true; else delete s.flags.sea_dmg;
+  }
+
+  // ---- ports and the chart ---------------------------------------------------------------------------------------
+  const port = (id) => (C().ports || {})[id] || null;
+  const portIds = () => Object.keys(C().ports || {});
+  const open = (s, id) => { const p = port(id); return !!p && (!p.if || RB.state.test(s, p.if)); };
+  function reached(s, id) {
+    const p = port(id);
+    if (!p) return false;
+    if (s.flags['sea_port_' + id]) return true;
+    if (p.reach && RB.state.test(s, p.reach)) return true;
+    return !!(s.visited && s.visited[p.dock.map]);
+  }
+  // where the boat can go from here: ports open and reached, but the one it lies at
+  function destinations(s, from) {
+    return portIds().filter((id) => id !== from && open(s, id) && reached(s, id));
+  }
+  // which port's water a sea tile is in
+  function portAt(x, y) {
+    for (const id of portIds()) {
+      const z = port(id).zone;
+      if (z && x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h) return id;
+    }
+    return null;
+  }
+  const route = (a, b) => [a, b].sort().join('-');
+
+  // ---- wind and sail -----------------------------------------------------------------------------------------------
+  // the point of sail for a heading: run (wind from behind), reach (from the side), beat (from ahead)
+  function pointOf(heading, wind) {
+    if (wind === OPP[heading]) return 'run';
+    if (wind === heading) return 'beat';
+    return 'reach';
+  }
+  const BEST = { run: 2, reach: 1, beat: 0 };
+  const POINT = { run: 1.0, reach: 0.9, beat: 1.45 };
+  const OFF = [1, 1.35, 1.7];
+  // how long one step takes: never forever, never failure; a sail set wrong or something unmended only slows it
+  function stepDur(dir, s) {
+    s = s || S();
+    const q = of(s), v = q.voyage;
+    const wind = (v && v.wind) || 'left';
+    const pt = pointOf(dir, wind);
+    const off = Math.abs((q.trim | 0) - BEST[pt]);
+    const dmg = q.dmg ? 1.25 : 1;
+    return Math.round(150 * POINT[pt] * OFF[off] * dmg);
+  }
+  // what the pennant tells: the point of sail and whether the sail suits it
+  function sailState(s, heading) {
+    const q = of(s), v = q.voyage;
+    const wind = (v && v.wind) || 'left';
+    const pt = pointOf(heading || 'up', wind);
+    return { wind, windName: WIND_NAME[wind], point: pt, best: BEST[pt], trim: q.trim | 0, good: (q.trim | 0) === BEST[pt], dmg: q.dmg || null };
+  }
+  function setTrim(s, k) { const q = of(s); q.trim = Math.max(0, Math.min(2, k | 0)); return q.trim; }
+
+  // ---- a voyage: its situations, drawn once ----------------------------------------------------------------------
+  function eligible(s, a, b) {
+    const out = [];
+    const SIT = C().seaSituations || {};
+    const q = of(s), r = route(a, b);
+    for (const id in SIT) {
+      const d = SIT[id];
+      if (d.first || d.story) continue;
+      if (d.routes && !d.routes.some((x) => route.apply(null, x.split('-')) === r)) continue;
+      if (d.once && q.seen[id]) continue;
+      if (d.if && !RB.state.test(s, d.if)) continue;
+      if (d.kind === 'trouble' && q.dmg) continue;
+      out.push(id);
+    }
+    return out;
+  }
+  function plan(s, a, b) {
+    const SIT = C().seaSituations || {};
+    const q = of(s), r = route(a, b);
+    const forced = [];
+    // the route's first-time situation, once; story situations whose condition holds
+    for (const id in SIT) {
+      const d = SIT[id];
+      if (d.first && route.apply(null, d.first.split('-')) === r && !q.seen[id]) forced.push(id);
+      else if (d.story && RB.state.test(s, d.story) && !q.seen[id] && (!d.routes || d.routes.some((x) => route.apply(null, x.split('-')) === r))) forced.push(id);
+    }
+    const key = 'voyage:' + q.n;
+    const drawn = RB.streams.fixed(s, key, 'sea', (draw) => {
+      const pool = eligible(s, a, b);
+      const n = pool.length ? 1 + (draw() < 0.45 ? 1 : 0) : 0;
+      const out = [];
+      for (let i = 0; i < n && pool.length; i++) {
+        const tot = pool.reduce((t, id) => t + ((SIT[id] && SIT[id].weight) || 1), 0);
+        let x = draw() * tot, k = 0;
+        for (; k < pool.length - 1; k++) { x -= (SIT[pool[k]].weight || 1); if (x < 0) break; }
+        out.push(pool.splice(k, 1)[0]);
+      }
+      const wind = WINDS[Math.floor(draw() * 4)];
+      return { sits: out, wind };
+    });
+    RB.streams.consume(s, key);
+    return { sits: forced.concat(drawn.sits), wind: drawn.wind };
+  }
+  // the distance the boat sails between two ports, in steps (by the sea map's own coordinates)
+  function distance(a, b) {
+    const A = port(a), B = port(b);
+    if (!A || !B) return 30;
+    return Math.max(8, Math.abs(A.sea.x - B.sea.x) + Math.abs(A.sea.y - B.sea.y));
+  }
+  // begin: from where the boat lies, to `to`, sailed by `mode` ('self' | 'crew')
+  function begin(s, from, to, mode) {
+    const q = of(s);
+    const p = api.plan(s, from, to), d = distance(from, to); // (through the api, so a test can set a voyage's situations)
+    // situations spaced over the voyage (at a third, then two thirds of the way, for the self-sailed voyage)
+    const sits = p.sits.map((id, i) => ({ id, at: Math.max(3, Math.round(d * (i + 1) / (p.sits.length + 1))), done: false }));
+    q.voyage = { from, to, mode, wind: p.wind, steps: 0, sits, sights: [], words: [], people: [], crewFrom: null, offered: from };
+    syncVars(s);
+    return q.voyage;
+  }
+  // the next situation due (sailing yourself, at its step), or any left (when the crew sails)
+  function due(s, all) {
+    const v = of(s).voyage;
+    if (!v) return null;
+    return v.sits.find((x) => !x.done && (all || v.steps >= x.at)) || null;
+  }
+  async function runSituation(s, x) {
+    const d = (C().seaSituations || {})[x.id];
+    x.done = true;
+    const q = of(s);
+    q.seen[x.id] = (q.seen[x.id] | 0) + 1;
+    if (d && d.scene && RB.content.scenes[d.scene]) await RB.script.run(d.scene);
+  }
+  // a step at sea (src/engine/50_world.js calls it after each step on a sea map)
+  let busy = false;
+  async function onStep() {
+    const s = S(), W = RB.world.W;
+    if (!s || !active(s) || busy || !onSea(W.map)) return;
+    const v = of(s).voyage;
+    v.steps++;
+    const x = due(s);
+    if (x) { busy = true; try { await runSituation(s, x); } finally { busy = false; } return; }
+    // in a port's water: the destination docks; another port reached offers to
+    const at = portAt(W.player.x, W.player.y);
+    if (at && (at === v.to || reached(s, at) && open(s, at)) && v.offered !== at) {
+      v.offered = at;
+      busy = true;
+      try { await RB.script.run('sea.dock_' + at, { port: at }); } finally { busy = false; }
+    } else if (!at) v.offered = null;
+  }
+  // arrive at `to`: the log's entry, the boat lies there, ashore by it
+  async function arrive(s, to, opts) {
+    const q = of(s), v = q.voyage;
+    if (!v) return;
+    const P = port(to);
+    q.n++;
+    q.at = to;
+    s.flags['sea_port_' + to] = true;
+    const entry = { n: q.n, from: v.from, to, mode: v.crewFrom != null ? (v.crewFrom > 0 ? 'both' : 'crew') : v.mode, wind: v.wind,
+      sights: v.sights.slice(), words: v.words.slice(), people: v.people.slice(), sits: v.sits.filter((x) => x.done).map((x) => x.id), ch: s.chapter || 0, t: Date.now() };
+    q.log.push(entry);
+    if (q.log.length > 200) q.log.shift();
+    q.voyage = null;
+    syncVars(s);
+    if (!(opts && opts.noWarp) && P) await RB.game.transition(P.dock.map, P.dock.x, P.dock.y, P.dock.dir || 'down', { inScript: true });
+    return entry;
+  }
+  // the crew takes over: what situations are left still happen (story ones are never skipped), then arrival
+  async function crew(s) {
+    const q = of(s), v = q.voyage;
+    if (!v) return;
+    v.crewFrom = v.steps;
+    let x;
+    while ((x = due(s, true))) await runSituation(s, x);
+    if (RB.content.scenes['sea.crew_arrive']) await RB.script.run('sea.crew_arrive');
+    await arrive(s, v.to);
+  }
+  // put out: the boat on the sea map at the port's water, or the crew's crossing
+  async function putOut(s, from, to, mode) {
+    const v = begin(s, from, to, mode);
+    if (mode === 'crew') { await crew(s); return v; }
+    const P = port(from);
+    const m = C().seaMap || 'sea.coast';
+    await RB.game.transition(m, P.sea.x, P.sea.y, P.sea.dir || 'down', { inScript: true });
+    return v;
+  }
+  // something goes wrong on board (a situation): mend now, or later in port
+  function damage(s, kind) { const q = of(s); q.dmg = DMG.indexOf(kind) >= 0 ? kind : 'sail'; syncVars(s); return q.dmg; }
+  function mend(s) { const q = of(s); const had = q.dmg; q.dmg = null; syncVars(s); return had; }
+  // what a voyage noted, for the log
+  function note(s, kind, what) {
+    const v = of(s).voyage;
+    const list = v && { sight: v.sights, word: v.words, person: v.people }[kind];
+    if (list && list.indexOf(what) < 0) list.push(what);
+  }
+
+  // ---- the scenes' hooks ------------------------------------------------------------------------------------------
+  //   !hook sail_chart <port>    the chart at this port's boat: choose where and how (var._sail: 'self' | 'crew' |
+  //                              'cancel'); the voyage begins
+  //   !hook sail_crew            let the crew sail from here (at sea)
+  //   !hook sail_dock [port]     dock at the voyage's destination (or the port given): arrive
+  //   !hook sail_damage <kind>   something goes wrong on board
+  //   !hook sail_mend            mended (now, or in port)
+  //   !hook sail_log <sight|word|person> <id>   the voyage notes it for the log
+  //   !hook sail_boat <hull> [name]  the boat is yours (A Licence for the Open Sea)
+  //   !hook sail_trial <from> <to>   a voyage that the story sets (the sea trial, the maiden voyage), sailed yourself
+  RB.hooks = RB.hooks || {};
+  RB.hooks.sail_chart = async (a, ctx) => {
+    const s = S(), from = a[0] || (ctx && ctx.prop && ctx.prop.o && ctx.prop.o.port) || of(s).at || 'saltglass';
+    const pick = RB.ui.sail && RB.ui.sail.chart ? await RB.ui.sail.chart(s, from) : null;
+    if (!pick || !pick.to) { s.vars._sail = 'cancel'; return; }
+    s.vars._sail = pick.mode;
+    await putOut(s, from, pick.to, pick.mode);
+  };
+  RB.hooks.sail_crew = async () => { const s = S(); if (active(s)) await crew(s); };
+  RB.hooks.sail_dock = async (a, ctx) => { const s = S(); const v = of(s).voyage; if (!v) return; await arrive(s, a[0] || (ctx && ctx.port) || v.to); };
+  RB.hooks.sail_damage = async (a) => { damage(S(), a[0]); };
+  RB.hooks.sail_mend = async () => { mend(S()); };
+  RB.hooks.sail_log = async (a) => { note(S(), a[0], a.slice(1).join(' ')); };
+  RB.hooks.sail_boat = async (a) => {
+    const s = S(), q = of(s);
+    q.boat = Object.assign({}, q.boat || {}, { hull: a[0] || (q.boat && q.boat.hull) || 'chidori' });
+    if (a[1]) q.boat.name = a.slice(1).join(' ');
+    s.flags.sea_boat = true;
+    if (!q.at) q.at = 'saltglass';
+    syncVars(s);
+  };
+  RB.hooks.sail_trial = async (a) => { const s = S(); await putOut(s, a[0], a[1], 'self'); };
+  //   !hook sail_cabin           below to the cabin from the boat at this port (the port is remembered for coming up)
+  //   !hook sail_ashore          up from the cabin, onto the pier by the boat
+  //   !hook sail_open <page>     the Ledger at a page (the cabin's shelf, volume, Distractions corner)
+  RB.hooks.sail_cabin = async (a, ctx) => {
+    const s = S(), q = of(s);
+    q.at = a[0] || (ctx && ctx.prop && ctx.prop.o && ctx.prop.o.port) || q.at || 'saltglass';
+    syncVars(s);
+    await RB.game.transition('sea.cabin', 5, 5, 'up', { inScript: true });
+  };
+  RB.hooks.sail_ashore = async () => {
+    const s = S(), P = port(of(s).at) || port('saltglass');
+    await RB.game.transition(P.dock.map, P.dock.x, P.dock.y, P.dock.dir || 'down', { inScript: true });
+  };
+  RB.hooks.sail_open = async (a) => { if (RB.ui.menu && RB.ui.menu.open) RB.ui.menu.open(a[0]); };
+  // the boat's name, as painted: kana, always followed by 丸 (`$boat {丸|まる}` in a line); in English, "Chidori-maru"
+  function boatName(s) {
+    const q = of(s), k = (q && q.boat && q.boat.name) || '';
+    if (!k) return { jp: '', en: '' };
+    const ro = RB.kana && RB.kana.romaji ? RB.kana.romaji(k) : k;
+    return { jp: k, en: ro.charAt(0).toUpperCase() + ro.slice(1) + '-maru' };
+  }
+
+  const api = { of, owns, active, onSea, port, portIds, open, reached, destinations, portAt, route, pointOf, stepDur, sailState, setTrim, TRIMS, WIND_NAME,
+    plan, begin, distance, due, onStep, arrive, crew, putOut, damage, mend, note, boatName, LEGEND, syncVars };
+  return api;
 })();
 
 
@@ -55056,6 +55493,7 @@ RB.game = (function () {
       else if (a === 'menu' || a === 'cancel') RB.ui.menu.open();
       else if (a === 'log') RB.ui.menu.open('log');
       else if (a === 'map') RB.ui.menu.open('map');
+      else if (a === 'sail' && RB.ui.sail) RB.ui.sail.cycleTrim(); // at sea: set the sail (src/ui/89v_sail.js)
       return;
     }
     // in battle the menu key opens the battle's settings sheet (presentation only; src/ui/55_settings.js)
@@ -79299,6 +79737,8 @@ RB.ui.records = (function () {
       }
       h += '</ul>';
     }
+    // the voyages' log, a section of the volume (src/ui/89v_sail.js)
+    if (RB.ui.sail && RB.ui.sail.logHtml) h += RB.ui.sail.logHtml(s);
     // after the story: a new journey with what carries (K9)
     if (s.flags.postgame && RB.ui.ngplus) h += '<div class="rb-ngp"><h4 class="rb-fam">' + RB.ui.jhtml('{新|あたら}しい {旅|たび}') + ' <span class="en">A new journey</span></h4><p class="muted small">New Game+ begins the story again with what you have learned, your records and this volume.</p><button type="button" class="pbtn" data-a="ngplus">' + I('journey') + '<span>Begin New Game+…</span></button></div>';
     A.innerHTML = h;
@@ -112769,6 +113209,261 @@ RB.ui.shells = (function () {
     s.vars._shells = r.ok ? 'ok' : 'cancel';
   };
   return { open };
+})();
+
+
+/* ==== src/ui/89v_sail.js ==== */
+/* Sailing on screen (expansion P11c; the rules in src/engine/72v_sail.js):
+ *   - the sea chart at the boat (`!hook sail_chart <port>`): the ports reached, drawn where they lie, the boat's name
+ *     and anything to mend; choose where, then how: sail yourself, or let the crew sail (each voyage chooses again);
+ *   - at sea, a strip at the top of the map: the wind (where it comes from, an arrow and a pennant that streams with
+ *     it), the sail's three settings (帆を絞る, 帆を半分, 帆を張る; the Q key steps through them), the heading to the
+ *     destination, and "Let the crew sail"; the strip says, calmly, when the sail would draw better set another way
+ *     or something is waiting to be mended, never a warning;
+ *   - the boat under the traveller and the companion (RB.sailDraw.push, called by src/engine/60_render.js);
+ *   - the travel log, a section of the travel volume (Journey › Travel volume): an entry per voyage. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.ui = RB.ui || {};
+
+RB.ui.sail = (function () {
+  'use strict';
+  const esc = (s) => RB.util.esc(String(s == null ? '' : s));
+  const J = (t) => RB.ui.jhtml(t || '');
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const S = () => RB.game && RB.game.s;
+  const SL = () => RB.sail;
+  const ARROW = { up: '↓', down: '↑', left: '→', right: '←' }; // the wind blows away from where it comes from
+  const PT_EN = { run: 'the wind behind you', reach: 'the wind on the beam', beat: 'the wind ahead' };
+  const DMG_EN = { sail: 'the torn sail', line: 'the frayed line', rudder: 'the loose rudder pin', hatch: 'the leaking hatch' };
+  const portName = (id) => { const p = SL().port(id); return p ? p.name : { jp: id, en: id }; };
+
+  // ---- the chart ---------------------------------------------------------------------------------------------------
+  function chartSvg(s, from, list) {
+    const P = RB.content.places, pts = SL().portIds().map((id) => ({ id, pos: (P[SL().port(id).place] || {}).pos })).filter((x) => x.pos);
+    if (!pts.length) return '';
+    const xs = pts.map((p) => p.pos[0]), ys = pts.map((p) => p.pos[1]);
+    const x0 = Math.min.apply(null, xs) - 30, y0 = Math.min.apply(null, ys) - 30, w = Math.max.apply(null, xs) - x0 + 30, h = Math.max.apply(null, ys) - y0 + 30;
+    let g = '<svg class="sea-chart" viewBox="' + x0 + ' ' + y0 + ' ' + w + ' ' + h + '" role="img" aria-label="The sea chart: the ports you have reached">';
+    g += '<rect x="' + x0 + '" y="' + y0 + '" width="' + w + '" height="' + h + '" class="sea-water"/>';
+    for (const p of pts) {
+      const can = p.id === from || list.indexOf(p.id) >= 0;
+      if (!can) continue;
+      if (p.id !== from) { const f = pts.find((q) => q.id === from); if (f) g += '<line x1="' + f.pos[0] + '" y1="' + f.pos[1] + '" x2="' + p.pos[0] + '" y2="' + p.pos[1] + '" class="sea-route"/>'; }
+    }
+    for (const p of pts) {
+      const here = p.id === from, can = list.indexOf(p.id) >= 0;
+      if (!here && !can) continue;
+      g += '<circle cx="' + p.pos[0] + '" cy="' + p.pos[1] + '" r="' + (here ? 7 : 5) + '" class="sea-port' + (here ? ' here' : '') + '"/>' +
+        '<text x="' + p.pos[0] + '" y="' + (p.pos[1] - 10) + '" text-anchor="middle" class="sea-name">' + esc(portName(p.id).en) + '</text>';
+    }
+    return g + '</svg>';
+  }
+  function chart(s, from) {
+    return new Promise((resolve) => {
+      const list = SL().destinations(s, from), q = SL().of(s);
+      let to = null, done = false;
+      const fr = RB.ui.folio.frame({ cls: 'sea-folio', onClose: () => finish(null), closeLabel: 'Not now', closeIcon: 'back' });
+      const name = SL().boatName(s).en;
+      fr.setTitle(RB.ui.label('{海図|かいず}', 'The sea chart'), name ? 'The ' + name + ', at ' + portName(from).en : 'At ' + portName(from).en);
+      const layer = { el: fr.scrim, name: 'sea-chart', onCancel: () => finish(null) };
+      function finish(r) { if (done) return; done = true; RB.ui.popLayer(layer); resolve(r); }
+      function render() {
+        let h = '<div class="leaf sea-leaf" tabindex="-1">' + chartSvg(s, from, list);
+        if (q.dmg) h += '<p class="note-slip">' + I('repair') + ' ' + esc('Something to mend: ' + DMG_EN[q.dmg] + '. She sails a little slower until then; any port\'s yard will see to it, or you can mend it at sea.') + '</p>';
+        if (!list.length) h += '<p class="muted">There is nowhere else the boat can go yet: ports join the chart once you have been there.</p>';
+        else if (!to) {
+          h += '<h3>Where to?</h3><div class="sea-dests">' + list.map((id) => '<button type="button" class="pbtn sea-dest" data-to="' + esc(id) + '">' + J(portName(id).jp) + ' <span class="en">' + esc(portName(id).en) + '</span><span class="muted small"> ' + esc(SL().distance(from, id) > 40 ? 'a long day\'s sail' : SL().distance(from, id) > 22 ? 'a morning\'s sail' : 'a short hop') + '</span></button>').join('') + '</div>';
+        } else {
+          h += '<h3>' + J(portName(to).jp) + ' <span class="en">' + esc(portName(to).en) + '</span></h3><p>How would you like to go?</p><div class="sea-modes">' +
+            '<button type="button" class="pbtn primary sea-mode" data-mode="self">' + I('wave') + '<span>Sail her yourself</span><span class="muted small">Steer, and set the sail to the wind. Take as long as you like.</span></button>' +
+            '<button type="button" class="pbtn sea-mode" data-mode="crew">' + I('next') + '<span>Let the crew sail</span><span class="muted small">Straight to ' + esc(portName(to).en) + '. Anything that happens on the way still happens.</span></button>' +
+            '</div><p><button type="button" class="pbtn small sea-back">Somewhere else</button></p>';
+        }
+        fr.box.innerHTML = h + '</div>';
+        const f = fr.box.querySelector('.sea-dest, .sea-mode');
+        if (f) setTimeout(() => f.focus({ preventScroll: true }), 0);
+      }
+      fr.box.addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        if (b.classList.contains('sea-dest')) { to = b.dataset.to; render(); return; }
+        if (b.classList.contains('sea-back')) { to = null; render(); return; }
+        if (b.classList.contains('sea-mode')) finish({ to, mode: b.dataset.mode });
+      });
+      RB.ui.pushLayer(layer);
+      render();
+    });
+  }
+
+  // ---- the strip at sea ------------------------------------------------------------------------------------------
+  let strip = null, last = '';
+  function ensure() {
+    if (strip || typeof document === 'undefined' || !RB.ui.root) return strip;
+    strip = RB.ui.el('div', 'sea-strip hidden');
+    strip.setAttribute('role', 'group');
+    strip.setAttribute('aria-label', 'At sea: the wind and the sail');
+    strip.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b || RB.game.mode() !== 'world') return;
+      if (b.dataset.trim != null) { SL().setTrim(S(), +b.dataset.trim); sync(true); }
+      if (b.dataset.a === 'crew') { RB.script.run('sea.crew_take'); }
+    });
+    RB.ui.root.appendChild(strip);
+    return strip;
+  }
+  function heading(s) {
+    const W = RB.world.W, v = SL().of(s).voyage, P = v && SL().port(v.to);
+    if (!P || !W.player) return '';
+    const dx = P.sea.x - W.player.x, dy = P.sea.y - W.player.y;
+    if (Math.abs(dx) + Math.abs(dy) < 3) return 'close by';
+    const ns = dy < -2 ? 'north' : dy > 2 ? 'south' : '', ew = dx < -2 ? 'west' : dx > 2 ? 'east' : '';
+    return (ns + (ns && ew ? '-' : '') + ew) || 'close by';
+  }
+  function sync(force) {
+    const s = S();
+    const W = RB.world && RB.world.W;
+    const show = !!(s && RB.game.G && RB.game.G.playing && W && W.map && SL() && SL().onSea(W.map) && SL().active(s) && RB.game.mode() !== 'title');
+    if (!show) { if (strip) strip.classList.add('hidden'); last = ''; return; }
+    const el = ensure();
+    if (!el) return;
+    const v = SL().of(s).voyage, st = SL().sailState(s, W.player.dir);
+    const trims = SL().TRIMS.map((t) => '<button type="button" class="pbtn small sea-trim" data-trim="' + t.id + '" aria-pressed="' + (st.trim === t.id) + '">' + J(t.jp) + '<span class="en">' + esc(t.en) + '</span></button>').join('');
+    const hint = st.good ? 'The sail draws well with ' + PT_EN[st.point] + '.' : 'With ' + PT_EN[st.point] + ', she would go better ' + SL().TRIMS[st.best].en.toLowerCase() + '.';
+    const html = '<div class="sea-wind" title="' + esc('Wind from the ' + st.windName.en) + '"><span class="sea-arrow" aria-hidden="true">' + ARROW[st.wind] + '</span>' +
+      '<span class="sea-pennant ' + (st.good ? 'good' : 'off') + '" aria-hidden="true"></span><span>' + J(st.windName.jp + ' の {風|かぜ}') + ' <span class="en">wind from the ' + esc(st.windName.en) + '</span></span></div>' +
+      '<div class="sea-trims" role="group" aria-label="The sail (Q)">' + trims + '</div>' +
+      '<p class="sea-hint" aria-live="polite">' + esc(hint + (st.dmg ? ' ' + DMG_EN[st.dmg][0].toUpperCase() + DMG_EN[st.dmg].slice(1) + ' can wait for port.' : '')) + '</p>' +
+      '<div class="sea-dest-line">' + I('map') + '<span>' + esc('To ' + portName(v.to).en + ': ' + heading(s)) + '</span><button type="button" class="pbtn small" data-a="crew">Let the crew sail</button></div>';
+    if (force || html !== last) { el.innerHTML = html; last = html; }
+    el.classList.remove('hidden');
+  }
+  if (typeof setInterval !== 'undefined' && typeof document !== 'undefined') setInterval(sync, 300);
+  function cycleTrim() {
+    const s = S(), W = RB.world && RB.world.W;
+    if (!s || !SL() || !SL().active(s) || !SL().onSea(W.map)) return;
+    const q = SL().of(s);
+    SL().setTrim(s, ((q.trim | 0) + 1) % 3);
+    sync(true);
+  }
+
+  // ---- the travel log (a section of the travel volume) -----------------------------------------------------------
+  function logHtml(s) {
+    const q = s && s.sea;
+    if (!q || !Array.isArray(q.log) || !q.log.length) return '';
+    const how = { self: 'You sailed her.', crew: 'The crew sailed.', both: 'You sailed, then the crew took over.' };
+    const name = SL().boatName(s).en;
+    let h = '<h4 class="rb-fam">' + J('{航海|こうかい} {日誌|にっし}') + ' <span class="en">The travel log' + (name ? ': the ' + esc(name) : '') + '</span></h4><ol class="sea-log">';
+    for (const e of q.log.slice().reverse()) {
+      const sit = (e.sits || []).map((id) => { const d = (RB.content.seaSituations || {})[id]; return d && d.log ? d.log.en : null; }).filter(Boolean);
+      h += '<li class="sea-entry"><div class="t">' + esc('Voyage ' + e.n + ': ' + portName(e.from).en + ' to ' + portName(e.to).en) + '</div>' +
+        '<div class="muted small">' + esc(how[e.mode] || '') + ' ' + esc('Wind from the ' + ((SL().WIND_NAME[e.wind] || {}).en || '?') + '.') + '</div>' +
+        (sit.length ? '<ul class="sea-sights">' + sit.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '') +
+        ((e.words || []).length ? '<div class="small">' + esc('Words: ') + e.words.map((w) => J(w)).join('、') + '</div>' : '') +
+        ((e.people || []).length ? '<div class="small">' + esc('People: ' + e.people.join(', ')) + '</div>' : '') + '</li>';
+    }
+    return h + '</ol>';
+  }
+  return { chart, sync, cycleTrim, logHtml };
+})();
+
+// ---- the boat, drawn under the traveller and the companion at sea ------------------------------------------------
+RB.sailDraw = (function () {
+  'use strict';
+  const WOOD = ['#5e4430', '#7a5a3e', '#9a7650', '#b8946a'], CANVAS = ['#d8ccb2', '#ece2ca', '#faf4e4'], INK = '#2a2024';
+  function push(list, c, ax, ay, t) {
+    const W = RB.world.W, s = RB.game.s, p = W.player;
+    if (!p || !RB.sail) return;
+    const TS = RB.tiles.TS, A = ax((p.fx + 1) * TS) - ax(p.fx * TS); // one tile at art resolution
+    const still = RB.game.reducedMotion && RB.game.reducedMotion();
+    // the hull lies from the companion (aft) to the traveller (forward), or a tile behind the traveller alone
+    const D = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[p.dir] || [0, -1];
+    const cmp = W.comp && Math.abs(W.comp.fx - p.fx) + Math.abs(W.comp.fy - p.fy) <= 1.2 ? W.comp : null;
+    const aft = cmp ? { x: cmp.fx, y: cmp.fy } : { x: p.fx - D[0], y: p.fy - D[1] };
+    const horiz = Math.abs(p.fx - aft.x) >= Math.abs(p.fy - aft.y) && (cmp ? Math.abs(p.fx - aft.x) > 0.3 : D[0] !== 0);
+    const cx = (p.fx + aft.x) / 2, cy = (p.fy + aft.y) / 2;
+    const X = (x) => ax(x * TS) + A / 2, Y = (y) => ay(y * TS) + A * 0.78;
+    const mx = X(cx), my = Y(cy);
+    const L = A * 1.25, Wd = A * 0.46; // half-length, half-beam
+    const bob = still ? 0 : Math.sin(t / 420) * A * 0.03;
+    // the traveller and companion stand still in the boat
+    p.frame = 0; if (cmp) cmp.frame = 0;
+    const hull = (g, inset, col) => {
+      g.fillStyle = col;
+      g.beginPath();
+      if (horiz) {
+        const fw = D[0] >= 0 ? 1 : -1; // the bow points the way the traveller faces
+        g.moveTo(mx - fw * (L - inset), my - Wd + inset + bob);
+        g.lineTo(mx + fw * (L * 0.62), my - Wd + inset + bob);
+        g.quadraticCurveTo(mx + fw * (L + A * 0.25 - inset), my + bob, mx + fw * (L * 0.62), my + Wd - inset + bob);
+        g.lineTo(mx - fw * (L - inset), my + Wd - inset + bob);
+      } else {
+        const fw = D[1] >= 0 ? 1 : -1;
+        g.moveTo(mx - Wd + inset, my - fw * (L - inset) + bob);
+        g.lineTo(mx - Wd + inset, my + fw * (L * 0.62) + bob);
+        g.quadraticCurveTo(mx, my + fw * (L + A * 0.25 - inset) + bob, mx + Wd - inset, my + fw * (L * 0.62) + bob);
+        g.lineTo(mx + Wd - inset, my - fw * (L - inset) + bob);
+      }
+      g.closePath();
+      g.fill();
+    };
+    const st = RB.sail.sailState(s, p.dir);
+    // under the people: wake, hull, deck, mast and sail
+    list.push({ z: Math.min(p.fy, aft.y) * TS + TS - 0.6, draw: () => {
+      // a wake and a little foam
+      c.fillStyle = 'rgba(240,250,250,0.35)';
+      for (let i = 0; i < 3; i++) {
+        const k = still ? i : (i + t / 300) % 3;
+        c.beginPath();
+        c.ellipse(X(aft.x - D[0] * (0.8 + k * 0.5)), Y(aft.y - D[1] * (0.8 + k * 0.5)) + A * 0.1, A * (0.28 - k * 0.06), A * 0.1, 0, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.fillStyle = 'rgba(0,0,0,0.22)';
+      c.beginPath(); c.ellipse(mx, my + Wd * 0.7, horiz ? L * 1.05 : Wd * 1.2, horiz ? Wd * 0.6 : L * 0.6, 0, 0, Math.PI * 2); c.fill();
+      hull(c, 0, INK);
+      hull(c, A * 0.04, WOOD[1]);
+      hull(c, A * 0.12, WOOD[3]);
+      c.fillStyle = WOOD[2];
+      for (let i = -2; i <= 2; i++) {
+        if (horiz) c.fillRect(mx - L * 0.7, my + bob + i * Wd * 0.3, L * 1.4, 1);
+        else c.fillRect(mx + i * Wd * 0.3, my + bob - L * 0.7, 1, L * 1.4);
+      }
+    } });
+    // the mast stands amidships when she lies east-west; heading north or south it steps to the bow, clear of faces
+    const bowY = p.fy + D[1] * 0.55;
+    list.push({ z: horiz ? Math.min(p.fy, aft.y) * TS + TS - 0.5 : bowY * TS + TS + 0.05, draw: () => {
+      const mx = horiz ? X(cx) : X(p.fx), my = horiz ? Y(cy) : Y(bowY);
+      // the mast, amidships, and the sail: sheeted in, half out or full, filled downwind
+      const down = { up: [0, 1], down: [0, -1], left: [1, 0], right: [-1, 0] }[st.wind]; // where the wind blows to
+      const top = my - A * 1.6 + bob;
+      c.fillStyle = WOOD[0];
+      c.fillRect(mx - 1.5, top, 3, my - top + bob);
+      const full = [0.35, 0.65, 1][st.trim];
+      const sw = A * 0.9 * full, sh = A * 1.25;
+      const bx = down[0] * sw * 0.35, by = down[1] * A * 0.12;
+      c.fillStyle = INK;
+      c.beginPath(); c.moveTo(mx, top + 2); c.quadraticCurveTo(mx + sw + bx, top + sh * 0.45 + by, mx + 2, top + sh); c.lineTo(mx - sw * 0.5 + bx * 0.4, top + sh * 0.92 + by); c.closePath(); c.fill();
+      c.fillStyle = CANVAS[st.good ? 2 : 1];
+      c.beginPath(); c.moveTo(mx + 1, top + 4); c.quadraticCurveTo(mx + sw * 0.9 + bx, top + sh * 0.45 + by, mx + 2, top + sh - 2); c.lineTo(mx - sw * 0.42 + bx * 0.4, top + sh * 0.9 + by); c.closePath(); c.fill();
+      if (st.dmg === 'sail') { c.fillStyle = INK; c.fillRect(mx + sw * 0.25, top + sh * 0.4, 2, A * 0.25); }
+      // the pennant at the masthead streams downwind
+      const wav = still ? 0 : Math.sin(t / 160) * 2;
+      c.fillStyle = '#c8404e';
+      c.beginPath(); c.moveTo(mx, top); c.lineTo(mx + down[0] * A * 0.45, top + down[1] * A * 0.2 + wav); c.lineTo(mx, top + 4); c.closePath(); c.fill();
+    } });
+    // over the people's feet: the near gunwale
+    list.push({ z: Math.max(p.fy, aft.y) * TS + TS + 0.2, draw: () => {
+      c.save();
+      c.beginPath();
+      if (horiz) c.rect(mx - L * 1.3, my + bob - Wd * 0.05, L * 2.6, Wd * 1.2);
+      else c.rect(mx - Wd * 1.2, my + bob + L * 0.15 - (D[1] < 0 ? 0 : L * 0.3), Wd * 2.4, L * 1.2);
+      c.clip();
+      hull(c, 0, INK);
+      hull(c, A * 0.04, WOOD[0]);
+      hull(c, A * 0.1, WOOD[1]);
+      c.restore();
+    } });
+  }
+  return { push };
 })();
 
 
@@ -149521,6 +150216,9 @@ RB.dialect.add('kansai', `
 > …… でも な 、 {書|か}いた {人|ひと} だけ の {言葉|ことば} も ある ねん 。 それ は 、 そっと {仕舞|しま}って おく ん や で 。 || …But some words belong only to the one who wrote them. Those, you put away gently.
 = アンコール ？ …… {相方|あいかた} が いない と 、 {二幕目|にまくめ} は できない の よ 。 ねえ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
 > アンコール ？ …… {相方|あいかた} が おらん と 、 {二幕目|にまくめ} は でけへん ねん 。 なあ 、 $name ？ || An encore? …I can't do a second act without a partner. Can I, $name?
+@ sea [sea.sit_seal]
+= {観客|かんきゃく} が {三人|さんにん} ！ {手|て} を {振|ふ}って おこう か な 。 || An audience of three! I'll give them a wave.
+> {観客|かんきゃく} が {三人|さんにん} や ！ {手|て} を {振|ふ}って おこう か な 。 || An audience of three! I'll give them a wave.
 `);
 
 
@@ -175076,6 +175774,491 @@ rokuta[smirk]: …… {嘘|うそ} だ 。 {数|かぞ}えた やつ 、 いな�
 ?(comp=nao) comp: {数|かぞ}えた やつ は いない 。 だから 「{八百|やお}」 なんだ 。 たくさん と いう {意味|いみ} だ よ 。 || Nobody has. That's why it's "yao": it just means a great many.
 !set sb2_rokuta_city
 `, 'sb2/world');
+})(RB.content);
+
+
+/* ==== src/content/sea/00_lex.js ==== */
+/* The sea's lexicon (expansion P11): the boat and its parts, sailing, the weather, the ports' and the voyage's words.
+ * Format: w|r|pos|lv|meaning|note (docs/CONTENT.md). Fictional names are marked as such. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.lex.add(RB.lex.parseTable(`
+# ---- the boat ---------------------------------------------------------------------------------------------------
+帆|ほ|n|E|a sail
+帆柱|ほばしら|n|I|a mast
+舵|かじ|n|E|a rudder, a tiller (the helm)
+綱|つな|n|E|a rope, a line
+錨|いかり|n|I|an anchor
+甲板|かんぱん|n|I|a deck (of a ship)
+船室|せんしつ|n|I|a cabin (on a ship)
+寝台|しんだい|n|I|a bunk, a berth
+舳先|へさき|n|A|the bow (of a boat)
+乗組員|のりくみいん|n|I|a crew member; the crew
+桟橋|さんばし|n|E|a pier, a jetty
+楔|くさび|n|A|a wedge
+木槌|きづち|n|I|a wooden mallet
+隙間|すきま|n|E|a gap, a crack
+蓋|ふた|n|E|a lid, a cover; (on a boat) a hatch
+# ---- what you do to it -----------------------------------------------------------------------------------------
+縫う|ぬう|v5u|E|to sew, to stitch
+縫い合わせる|ぬいあわせる|v1|I|to sew together
+結ぶ|むすぶ|v5b|E|to tie, to knot
+結び直す|むすびなおす|v5s|I|to tie again, to retie
+締める|しめる|v1|E|to tighten, to fasten
+締め直す|しめなおす|v5s|I|to tighten again
+塞ぐ|ふさぐ|v5g|I|to stop up, to plug, to block
+打ち込む|うちこむ|v5m|I|to drive in, to knock in
+擦り切れる|すりきれる|v1|I|to wear through, to fray
+裂ける|さける|v1|I|to tear, to split
+裂け目|さけめ|n|I|a tear, a rip
+汲み出す|くみだす|v5s|I|to bail out (water)
+煽る|あおる|v5r|A|(of wind) to gust against, to catch
+# ---- the sea and the weather -----------------------------------------------------------------------------------
+沖|おき|n|E|the open sea, offshore
+漁船|ぎょせん|n|I|a fishing boat
+漁師|りょうし|n|E|a fisher, a fisherman
+灯台|とうだい|n|E|a lighthouse
+岬|みさき|n|E|a cape, a headland, a point
+黒岩|くろいわ|name|E|Kuroiwa, Black Rock (a rock with a light; fictional)
+霧|きり|n|E|fog, mist
+風上|かざかみ|n|I|upwind, windward
+海図|かいず|n|I|a sea chart
+航海|こうかい|vs|I|a voyage; to sail (a voyage)
+日誌|にっし|n|I|a log, a journal
+川口|かわぐち|n|I|a river mouth
+入港|にゅうこう|vs|A|entering port
+出港|しゅっこう|vs|A|leaving port, setting sail
+潮見|しおみ|n|I|watching the tide (the tide-keeper's work)
+夕刻|ゆうこく|n|A|evening (written)
+群閃光|ぐんせんこう|n|A|group flashing (a light's pattern)
+閃光|せんこう|n|A|a flash (of light)
+表|ひょう|n|I|a table, a list
+毎|まい|pref|I|every, each (毎十秒: every ten seconds)
+十秒|じゅうびょう|n|E|ten seconds
+三秒|さんびょう|n|E|three seconds
+鴎|かもめ|n|I|a gull, a seagull
+海豹|あざらし|n|I|a seal (the animal)
+三頭|さんとう|n|I|three (large animals)
+日向ぼっこ|ひなたぼっこ|n|E|basking in the sun
+木箱|きばこ|n|E|a wooden box, a crate
+割れ物|われもの|n|E|fragile things, breakables
+天地無用|てんちむよう|exp|A|this side up (do not turn over)|Real: a common shipping mark, often misread as "either way up is fine".
+差出人|さしだしにん|n|I|the sender
+上下|じょうげ|n|I|up and down; top and bottom
+桶|おけ|n|I|a bucket, a tub
+ぷるぷる|ぷるぷる|adv|E|wobbling, quivering (jelly-like)
+ぷかぷか|ぷかぷか|adv|E|bobbing, floating
+手早い|てばやい|adj-i|I|quick, deft (with the hands)
+記念品|きねんひん|n|I|a keepsake, a souvenir
+将棋盤|しょうぎばん|n|I|a shogi board
+鉤|かぎ|n|I|a hook
+鎮める|しずめる|v1|I|to calm, to settle
+ぐらぐら|ぐらぐら|adv|E|wobbling, loose
+ぐらつく|ぐらつく|v5k|I|to wobble, to be loose
+海岸|かいがん|n|E|the coast, the shore
+幾つ|いくつ|n|E|how many; (幾つも) many, one after another
+勧む|すすむ|exp|A|(written, old style) to recommend (modern 勧める)
+`));
+
+
+/* ==== src/content/sea/01_region.js ==== */
+/* The sea (expansion P11c; plan 06_WORLD.md W7–W8; docs/future/work/P11_SEA.md; the rules in src/engine/72v_sail.js):
+ * the ports the boat can reach, the coastal sea it sails, the cabin below deck, and the boat at each port's pier once
+ * she is yours. Twelve-chapter journeys only.
+ *
+ * The sea map lies the way the chart does: the coast along the north (Sazanami's bay to the west, Saltglass harbour,
+ * the East Landing's cove just east of it, the river mouth below Manybridge far to the east), open water to the south
+ * with a few rocks and islets, and Kotonoha far out to the south-west, its jetty on the island's east side. Sazanami's
+ * and the East Landing's ports are added with their towns (src/content/sz/, src/content/el/). Reedwake's river landing
+ * is not a port of the boat's: the river is the barges' (F-76). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, K) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const TL = RB.tiles;
+  // the open sea: deep blue-green water, pale shoals, grey-green headlands
+  TL.PAL.sea = Object.assign({}, TL.PAL.saltglass || {}, {
+    water: ['#2c6e8a', '#357e9a', '#58a0b8', '#e2f2f2'], sand: ['#d8ceb0', '#e6dec4', '#bcb090'],
+    grass: ['#6e9a74', '#7eaa82', '#94bc94', '#567e5e'], leaf: ['#3e6a4e', '#4e7e5c', '#689a72', '#2e543c'],
+    stone: ['#8e989a', '#a8b0b2', '#727a7e'], sky: '#d6e8ec', dark: '#101a20',
+  });
+  TL.addRamps(TL.PAL.sea);
+
+  // ---- the ports -------------------------------------------------------------------------------------------------
+  C.ports = C.ports || {};
+  C.ports.saltglass = { place: 'saltglass', name: T('Saltglass', '{潮硝子|しおがらす}'),
+    dock: { map: 'sg.harbor', x: 35, y: 33, dir: 'right' }, boat: { x: 36, y: 33 },
+    sea: { x: 26, y: 10, dir: 'down' }, zone: { x: 22, y: 2, w: 10, h: 8 } };
+  C.ports.manybridge = { place: 'manybridge', name: T('Manybridge', '{八百橋|やおばし}'), if: 'mb_arrived',
+    dock: { map: 'mb.pier', x: 16, y: 17, dir: 'right' }, boat: { x: 17, y: 17 },
+    sea: { x: 63, y: 10, dir: 'down' }, zone: { x: 59, y: 0, w: 10, h: 9 } };
+  C.ports.kotonoha = { place: 'kotonoha', name: T('Kotonoha', '{言|こと}の{葉|は}{島|じま}'), if: 'ko_arrived|sea_ko_hint', reach: 'sea_ko_hint',
+    dock: { map: 'ko.shore', x: 19, y: 22, dir: 'left' }, boat: { x: 18, y: 22 },
+    sea: { x: 16, y: 35, dir: 'right' }, zone: { x: 14, y: 31, w: 6, h: 9 } };
+  C.seaMap = 'sea.coast';
+
+  // ---- the coastal sea (the route chart files it, and the cabin, under Saltglass, the boat's home harbour) -------
+  C.maps['sea.coast'] = {
+    name: T('The Coastal Sea', '{沖|おき}'), region: 'sea', place: 'saltglass', music: 'sea', edition: 2,
+    sea: true, legend: RB.sail.LEGEND,
+    noTravel: true, noTravelWhy: { en: 'You are at sea: bring the boat into a port, or let the crew sail her in.' },
+    ambient: { weather: 'motes', tint: 'rgba(170,210,220,0.05)' },
+    terrain: K.build(72, 44, '~', (k) => {
+      k.rect(0, 0, 72, 4, '.');                          // the coast, to the north
+      k.ragged('top', '.', 7, 9011);                     // its headlands and inlets
+      for (let x = 0; x < 72; x++) { let y = 0; while (y < 44 && k.get(x, y) === '.') y++; if (y < 44) k.set(x, y, 's'); }
+      k.scatter('T', 26, 9012, [0, 0, 72, 3], '.');      // pines on the headlands
+      k.rect(8, 2, 5, 7, '~');                           // Sazanami's bay
+      k.rect(24, 1, 6, 9, '~');                          // Saltglass harbour mouth
+      k.rect(33, 3, 4, 7, '~');                          // the East Landing's cove
+      k.rect(62, 0, 4, 9, '~');                          // the river mouth below Manybridge
+      k.scatter('h', 12, 9014, [20, 14, 50, 26], '~');   // rocks out at sea
+      k.rect(40, 18, 3, 2, 's'); k.set(41, 18, 'r');     // an islet with a rock
+      k.rect(53, 27, 5, 3, 's'); k.rect(54, 27, 3, 2, '.'); k.set(55, 27, 'T');
+      k.rect(28, 30, 2, 2, 's');
+      k.rect(2, 31, 11, 10, 's'); k.rect(3, 32, 9, 8, '.'); k.rect(6, 34, 3, 3, 'T'); // Kotonoha
+      k.rect(13, 33, 3, 5, '~');                         // the water off its jetty
+    }),
+    props: [
+      { p: 'lantern', x: 21, y: 4, o: { lit: true }, light: 40 },  // Saltglass point's light
+      { p: 'lantern', x: 60, y: 3, o: { lit: true }, light: 30 },
+    ],
+    npcs: [], foes: [], triggers: [], exits: [],
+    spawn: { default: [26, 10, 'down'] },
+  };
+
+  // ---- the cabin: a shelf of keepsakes, the travel volume, the Distractions corner, a bunk ------------------------
+  C.maps['sea.cabin'] = {
+    name: T('The Cabin', '{船室|せんしつ}'), region: 'interior', place: 'saltglass', music: null, edition: 2,
+    noTravel: true, travelKind: 'interior', travelPlace: { en: 'the cabin' },
+    terrain: K.room(10, 8, '_', 5),
+    props: [
+      { p: 'shelf', x: 1, y: 2, scene: 'sea.cabin_shelf' },
+      { p: 'desk', x: 4, y: 2, scene: 'sea.cabin_volume' },
+      { p: 'table', x: 7, y: 3, scene: 'sea.cabin_corner' },
+      { p: 'bed', x: 8, y: 5, scene: 'sea.cabin_bunk' },
+      { p: 'lantern', x: 2, y: 5, o: { lit: true } },
+    ],
+    npcs: [], exits: [],
+    triggers: [{ x: 4, y: 6, w: 3, h: 2, scene: 'sea.cabin_up' }],
+    spawn: { default: [5, 5, 'up'] },
+  };
+
+  // ---- the boat at each port's pier, once she is yours ------------------------------------------------------------
+  // (conditions have no brackets: & binds tighter than |, so the port's own condition is distributed)
+  const both = (a, b) => (b ? b.split('|').map((x) => a + '&' + x).join('|') : a);
+  C.seaBoatAt = (id) => {
+    const P = C.ports[id], m = P && C.maps[P.dock.map];
+    if (!m || (m.props || []).some((p) => p.scene === 'sea.boat' && p.o && p.o.port === id)) return;
+    m.props = (m.props || []).concat([{ p: 'boat', x: P.boat.x, y: P.boat.y, if: both('sea_boat', P.if), scene: 'sea.boat', o: { port: id } }]);
+  };
+  for (const id in C.ports) C.seaBoatAt(id);
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/sea/20_scenes.js ==== */
+/* The sea's scenes (expansion P11c; src/engine/72v_sail.js): the boat at her mooring (the chart, the cabin, the yard's
+ * mending), bringing her into a port, the crew taking over, and the cabin below deck. The voyage's situations are in
+ * 21_situations.js. The boat's name is `$boat {丸|まる}` (its kana, and 丸 with its reading). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene sea.boat
+# The boat at her mooring in any port she can reach: where next, below to the cabin, or the yard's mending.
+narr: $boat {丸|まる} が 、 {桟橋|さんばし} に {繋|つな}いで ある 。 || The $boat lies at her mooring.
+?(sea_dmg) narr: {直|なお}す ところ が {一|ひと}つ ある 。 {港|みなと} の {人|ひと} に {頼|たの}めば 、 すぐ {直|なお}る 。 || There's one thing to mend. The harbour's people would see to it in no time.
+!choice
+* {海図|かいず} を {広|ひろ}げる 。 || Open the chart. -> chart
+* {船室|せんしつ} へ {下|お}りる 。 || Go below to the cabin. -> cabin
+* [sea_dmg] {港|みなと} の {人|ひと} に {直|なお}して もらう 。 || Have the harbour's people mend her. -> mend
+* {今|いま} は いい 。 || Not now. -> end
+:chart
+!hook sail_chart
+!end
+:cabin
+!hook sail_cabin
+!end
+:mend
+narr: {港|みなと} の {人|ひと} が {手早|てばや}く {直|なお}して くれた 。 「いい {船|ふね} だ 。 {大事|だいじ} に しな 。」 || The harbour's people see to it quickly. "She's a good boat. Look after her."
+!hook sail_mend
+
+# ---- bringing her in --------------------------------------------------------------------------------------------------
+@scene sea.dock_saltglass
+?(var.sea_to=saltglass) narr: {潮硝子|しおがらす} の {港|みなと} が {見|み}えて きた 。 || Saltglass harbour, dead ahead.
+?(!var.sea_to=saltglass) narr: {潮硝子|しおがらす} の {港|みなと} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？ || You're passing Saltglass harbour. Put in here?
+!choice
+* {港|みなと} に {入|はい}る 。 || Bring her in. -> in
+* このまま {進|すす}む 。 || Sail on. -> end
+:in
+!hook sail_dock
+@scene sea.dock_manybridge
+?(var.sea_to=manybridge) narr: {川口|かわぐち} の {向|む}こう に 、 {八百橋|やおばし} の {橋|はし} が {並|なら}んで いる 。 || Beyond the river mouth, Manybridge's bridges stand in a row.
+?(!var.sea_to=manybridge) narr: {八百橋|やおばし} の {川口|かわぐち} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？ || You're passing the river mouth below Manybridge. Put in here?
+!choice
+* {港|みなと} に {入|はい}る 。 || Bring her in. -> in
+* このまま {進|すす}む 。 || Sail on. -> end
+:in
+!hook sail_dock
+@scene sea.dock_kotonoha
+?(var.sea_to=kotonoha) narr: {大|おお}きな {木|き} の {島|しま} 。 {東|ひがし} の {桟橋|さんばし} が {見|み}えて きた 。 || The island of the great tree. Its east jetty comes into sight.
+?(!var.sea_to=kotonoha) narr: {言|こと}の{葉|は}{島|じま} の {桟橋|さんばし} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？ || You're passing Kotonoha's jetty. Put in here?
+!choice
+* {桟橋|さんばし} に {着|つ}ける 。 || Bring her in. -> in
+* このまま {進|すす}む 。 || Sail on. -> end
+:in
+!hook sail_dock
+
+# ---- the crew ---------------------------------------------------------------------------------------------------------
+@scene sea.crew_take
+# "Let the crew sail" at sea: they take the tiller; anything still to happen on the voyage still happens.
+narr: {乗組員|のりくみいん} に {舵|かじ} を {任|まか}せた 。 「{任|まか}せて ください 。 {風|かぜ} は {読|よ}めて ます から 。」 || You hand the tiller to the crew. "Leave her to us. We've got the wind's measure."
+!hook sail_crew
+@scene sea.crew_arrive
+narr: {乗組員|のりくみいん} が {帆|ほ} を {下|お}ろし 、 {船|ふね} を {静|しず}か に {着|つ}けた 。 || The crew lowers the sail and brings her gently alongside.
+
+# ---- the cabin --------------------------------------------------------------------------------------------------------
+@scene sea.cabin_shelf
+!gesture pc observe
+narr: {旅|たび} の {記念品|きねんひん} を {並|なら}べる {棚|たな} 。 || A shelf for the journey's keepsakes.
+!hook sail_open keepsakes
+@scene sea.cabin_volume
+!gesture pc read
+narr: {小|ちい}さな {机|つくえ} に 、 {旅|たび} の {本|ほん} が {開|ひら}いて ある 。 {航海|こうかい} {日誌|にっし} も 、 {一緒|いっしょ} に {綴|と}じて ある 。 || On the little desk, the travel volume lies open, with the voyages' log bound in.
+!hook sail_open volume
+@scene sea.cabin_corner
+narr: {将棋盤|しょうぎばん} 、 かるた 、 {花札|はなふだ} 。 {波|なみ} の {音|おと} を {聞|き}きながら 、 {一局|いっきょく} どう ？ || A shogi board, karuta, hanafuda. A game, with the waves for company?
+!hook sail_open distractions
+@scene sea.cabin_bunk
+narr: {狭|せま}い {寝台|しんだい} 。 {波|なみ} が 、 {揺|ゆ}り{籠|かご} の よう に {揺|ゆ}らす 。 || A narrow bunk. The waves rock it like a cradle.
+!heal
+!checkpoint
+narr: よく {眠|ねむ}れた 。 || You slept well.
+@scene sea.cabin_up
+!hook sail_ashore
+`);
+
+
+/* ==== src/content/sea/21_situations.js ==== */
+/* What happens on a voyage (expansion P11c; plan W7 "sea situations"; src/engine/72v_sail.js draws them once per voyage
+ * from the 'sea' stream). Either way you travel they happen: sailing yourself, at points along the way; with the crew
+ * sailing, one after another before arrival. First-time situations of a route and story ones are never skipped.
+ *   hail      a passing boat calls across the water; answer it
+ *   fog       fog comes down; read the light's signal on the chart's key
+ *   cargo     a crate in the water; read where it was bound
+ *   creature  something comes aboard; settle it, or ease it back over the side
+ *   bird      a sea bird with a message tied to its leg
+ *   seal      seals on the rocks: a sight for the log
+ *   trouble   something goes wrong on board (a sail, a line, the rudder's fastener, a hatch): mend it now, with its words, or
+ *             leave it for port; until then she only sails a little slower. Calm lines, never a warning.
+ *   first     the first voyage on a route: what you see the first time
+ * Each one's `log` is what the travel log says of it. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  C.seaSituations = Object.assign(C.seaSituations || {}, {
+    hail: { kind: 'hail', scene: 'sea.sit_hail', weight: 3, log: T('', 'A fishing boat hailed you, and you answered.') },
+    fog: { kind: 'fog', scene: 'sea.sit_fog', weight: 2, log: T('', 'Fog came down; the light on the point showed the way.') },
+    cargo: { kind: 'cargo', scene: 'sea.sit_cargo', weight: 2, log: T('', 'A crate in the water, its label still readable.') },
+    creature: { kind: 'creature', scene: 'sea.sit_creature', weight: 1, if: 'ch4_done', log: T('', 'Something came aboard with a wave.') },
+    bird: { kind: 'bird', scene: 'sea.sit_bird', weight: 2, log: T('', 'A gull brought a message from Shiori.') },
+    seal: { kind: 'seal', scene: 'sea.sit_seal', weight: 2, log: T('', 'Seals on the rocks, watching you go by.') },
+    t_sail: { kind: 'trouble', scene: 'sea.sit_sail', weight: 1, log: T('', 'The sail tore.') },
+    t_line: { kind: 'trouble', scene: 'sea.sit_line', weight: 1, log: T('', 'A line frayed.') },
+    t_rudder: { kind: 'trouble', scene: 'sea.sit_rudder', weight: 1, log: T('', 'The rudder\'s fastener worked loose.') },
+    t_hatch: { kind: 'trouble', scene: 'sea.sit_hatch', weight: 1, log: T('', 'The hatch began to leak.') },
+    first_ko: { kind: 'first', first: 'saltglass-kotonoha', scene: 'sea.first_ko', log: T('', 'The first time between Saltglass and the island: written leaves on the water.') },
+    first_mb: { kind: 'first', first: 'manybridge-saltglass', scene: 'sea.first_mb', log: T('', 'The first time along the coast between Saltglass and Manybridge: the river mouth and its bridges.') },
+  });
+})(RB.content);
+
+RB.script.add(`
+@scene sea.sit_hail
+# A fishing boat hails: answer its call.
+narr: {漁船|ぎょせん} が {近|ちか}づいて きた 。 {舳先|へさき} で 、 {日焼|ひや}け した {漁師|りょうし} が {手|て} を {振|ふ}って いる 。 || A fishing boat draws near. At its bow, a sunburnt fisher is waving.
+narr: 「おーい ！ {潮硝子|しおがらす} の {港|みなと} は 、 {開|あ}いて いる か ？」 || "Ahoy! Is Saltglass harbour open?"
+!challenge sea.hail
+!if var._res=0 -> late
+narr: 「ありがとう よ ！ {気|き} を {付|つ}けて な ！」 {漁船|ぎょせん} は {帆|ほ} を {張|は}って 、 {離|はな}れて いった 。 || "Thanks! Take care!" The fishing boat sets its sail and draws away.
+!hook sail_log person a fisher
+!end
+:late
+narr: {答|こた}える {前|まえ} に 、 {漁船|ぎょせん} は {波|なみ} の {向|む}こう へ {行|い}って しまった 。 {手|て} を {振|ふ}る と 、 {振|ふ}り{返|かえ}して くれた 。 || Before you can answer, the fishing boat is away beyond the waves. You wave, and they wave back.
+
+@scene sea.sit_fog
+# Fog: the light on the point flashes its own pattern; the chart's key says which light is which.
+narr: {急|きゅう} に {霧|きり} が {出|で}て きた 。 {陸|りく} も {島|しま} も {見|み}えない 。 || Fog comes down all at once. No land, no islands.
+narr: {霧|きり} の {向|む}こう で 、 {光|ひかり} が {点|つ}いて は {消|き}える 。 || Somewhere beyond the fog, a light comes and goes.
+!challenge sea.fog
+?(var._res=1) narr: {光|ひかり} の {数|かず} で 、 どこ の {灯台|とうだい} か {分|わ}かった 。 {舵|かじ} を {少|すこ}し {切|き}って 、 {霧|きり} を {抜|ぬ}ける 。 || The count of the flashes tells you which light it is. A touch on the tiller, and you're out of the fog.
+?(var._res=0) narr: {乗組員|のりくみいん} が {笑|わら}う 。 「{慌|あわ}て なくて いい 。 {霧|きり} は 、 {待|ま}てば {晴|は}れる 。」 {少|すこ}し {待|ま}つ と 、 {本当|ほんとう} に {晴|は}れた 。 || The crew laughs. "No need to hurry. Fog lifts if you wait." You wait a little, and it does.
+!hook sail_log sight fog
+
+@scene sea.sit_cargo
+# A crate in the water: read its label.
+narr: {木箱|きばこ} が {一|ひと}つ 、 {波|なみ} に {揺|ゆ}れて いる 。 {札|ふだ} が まだ {付|つ}いて いる 。 || A wooden crate bobs on the waves, its label still on.
+!challenge sea.cargo
+?(var._res=1) narr: {鉤|かぎ} で {引|ひ}き{寄|よ}せて 、 {船|ふね} に {上|あ}げた 。 {八百橋|やおばし} の {取引所|とりひきじょ} へ 、 {誰|だれ} か が {届|とど}けて くれる だろう 。 || You hook it in and haul it aboard. Someone will get it to Manybridge's Exchange.
+?(var._res=0) narr: {札|ふだ} の {字|じ} が {波|なみ} で {滲|にじ}んで 、 {最後|さいご} まで {読|よ}めなかった 。 {箱|はこ} は {流|なが}れて いった 。 || The waves have blurred the label's letters past reading. The crate drifts away.
+!hook sail_log sight crate
+
+@scene sea.sit_creature
+# Something comes aboard with a wave: settle it, or ease it back into the sea.
+narr: {大|おお}きな {波|なみ} と {一緒|いっしょ} に 、 {何|なに} か が {甲板|かんぱん} に {上|あ}がって きた 。 ぷるぷる {震|ふる}えて いる 。 || With a big wave, something slops aboard. It's quivering.
+!choice
+* {鎮|しず}める 。 || Settle it. -> fight
+* そっと {海|うみ} へ {帰|かえ}す 。 || Ease it back into the sea. -> back
+:fight
+!battle ko.jelly
+?(var._res=1) narr: {静|しず}か に なった それ を 、 {海|うみ} へ {帰|かえ}した 。 || Quiet now, it goes back over the side.
+!hook sail_log sight creature
+!end
+:back
+narr: {桶|おけ} で すくって 、 {海|うみ} へ {帰|かえ}した 。 ぷかぷか {浮|う}いて 、 {離|はな}れて いく 。 || You scoop it up in a bucket and tip it back into the sea. It bobs away.
+!hook sail_log sight creature
+
+@scene sea.sit_bird
+# A gull with a message tied to its leg: Shiori's tide book, by gull.
+narr: {鴎|かもめ} が {一羽|いちわ} 、 {帆柱|ほばしら} に {止|と}まった 。 {足|あし} に 、 {小|ちい}さな {紙|かみ} が {結|むす}んで ある 。 || A gull lands on the mast. A slip of paper is tied to its leg.
+!challenge sea.bird
+narr: {鴎|かもめ} は {一声|ひとこえ} {鳴|な}いて 、 {飛|と}んで いった 。 || The gull gives one cry and flies off.
+!hook sail_log person Shiori
+
+@scene sea.sit_seal
+# Seals on the rocks: a sight for the log.
+narr: {岩|いわ} の {上|うえ} に 、 {海豹|あざらし} が {三頭|さんとう} 。 {顔|かお} を {上|あ}げて 、 {船|ふね} を {見送|みおく}って いる 。 || Three seals on a rock, heads up, watching the boat go by.
+?(comp=nao) comp: {仕事|しごと} が ない って の は 、 いい もん だ な 。 || Must be nice, having no deliveries.
+?(comp=mio) comp[smile]: {日向|ひなた}ぼっこ ね 。 …… {羨|うらや}ましい 。 || Sunbathing. …I'm jealous.
+?(comp=ren) comp: {三頭|さんとう} とも 、 {同|おな}じ {方|ほう} を {向|む}いて います 。 {風上|かざかみ} です ね 。 || All three facing the same way. Into the wind.
+?(comp=suzu) comp[laugh]: {観客|かんきゃく} が {三人|さんにん} ！ {手|て} を {振|ふ}って おこう か な 。 || An audience of three! I'll give them a wave.
+!hook sail_log sight seals
+
+# ---- something goes wrong on board: mend it now, or in port ------------------------------------------------------------
+@scene sea.sit_sail
+narr: {風|かぜ} に {煽|あお}られて 、 {帆|ほ} の {端|はし} が {裂|さ}けた 。 || A gust catches the sail, and its edge tears.
+narr: {乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {縫|ぬ}う か 、 {港|みなと} で {直|なお}す か 。 どっち でも {着|つ}きます よ 。」 || The crew says, "Stitch it now or mend it in port. She'll get us there either way."
+!hook sail_damage sail
+!choice
+* {今|いま} {縫|ぬ}う 。 || Stitch it now. -> now
+* {港|みなと} で {直|なお}す 。 || Leave it for port. -> end
+:now
+!challenge sea.mend_sail
+?(var._res=1) !hook sail_mend
+?(var._res=1) narr: {針|はり} と {糸|いと} で 、 {裂|さ}け{目|め} を {縫|ぬ}い{合|あ}わせた 。 {帆|ほ} が また {風|かぜ} を {受|う}ける 。 || With needle and thread you stitch the tear. The sail takes the wind again.
+?(var._res=0) narr: 「{港|みなと} で {直|なお}しましょう 。 {急|いそ}ぐ {旅|たび} じゃ ない 。」 || "We'll mend it in port. We're in no hurry."
+@scene sea.sit_line
+narr: {帆|ほ} を {張|は}る {綱|つな} が 、 {一本|いっぽん} {擦|す}り{切|き}れかけて いる 。 || One of the lines that hold the sail is fraying.
+narr: {乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {結|むす}び{直|なお}す か 、 {港|みなと} で {替|か}える か 。 どっち でも {着|つ}きます よ 。」 || The crew says, "Tie it fresh now, or change it in port. She'll get us there either way."
+!hook sail_damage line
+!choice
+* {今|いま} {結|むす}び{直|なお}す 。 || Tie it fresh now. -> now
+* {港|みなと} で {替|か}える 。 || Leave it for port. -> end
+:now
+!challenge sea.mend_line
+?(var._res=1) !hook sail_mend
+?(var._res=1) narr: {傷|いた}んだ ところ を {切|き}って 、 {結|むす}び{直|なお}した 。 || You cut out the worn stretch and tie it fresh.
+?(var._res=0) narr: 「{港|みなと} で {替|か}えましょう 。 {急|いそ}ぐ {旅|たび} じゃ ない 。」 || "We'll change it in port. We're in no hurry."
+@scene sea.sit_rudder
+narr: {舵|かじ} が 、 {少|すこ}し ぐらぐら する 。 {舵|かじ} の {留|と}め{具|ぐ} が {緩|ゆる}んで きた らしい 。 || The rudder has a wobble in it. Its fastener seems to be working loose.
+narr: {乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {締|し}める か 、 {港|みなと} で {見|み}て もらう か 。 どっち でも {着|つ}きます よ 。」 || The crew says, "Tighten it now, or have the yard look at it. She'll get us there either way."
+!hook sail_damage rudder
+!choice
+* {今|いま} {締|し}める 。 || Tighten it now. -> now
+* {港|みなと} で {見|み}て もらう 。 || Leave it for port. -> end
+:now
+!challenge sea.mend_rudder
+?(var._res=1) !hook sail_mend
+?(var._res=1) narr: {木槌|きづち} で {留|と}め{具|ぐ} を {打|う}ち{込|こ}んだ 。 {舵|かじ} が しっかり した 。 || You knock the fastener home with a mallet. The rudder is steady again.
+?(var._res=0) narr: 「{港|みなと} で {見|み}て もらいましょう 。 {急|いそ}ぐ {旅|たび} じゃ ない 。」 || "We'll have the yard look at it. We're in no hurry."
+@scene sea.sit_hatch
+narr: {甲板|かんぱん} の {蓋|ふた} の {隙間|すきま} から 、 {波|なみ} の {水|みず} が {少|すこ}し ずつ {入|はい}って くる 。 || Through a gap in the deck hatch, a little seawater is getting in.
+narr: {乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {塞|ふさ}ぐ か 、 {港|みなと} で {直|なお}す か 。 どっち でも {着|つ}きます よ 。」 || The crew says, "Plug it now or fix it in port. She'll get us there either way."
+!hook sail_damage hatch
+!choice
+* {今|いま} {塞|ふさ}ぐ 。 || Plug it now. -> now
+* {港|みなと} で {直|なお}す 。 || Leave it for port. -> end
+:now
+!challenge sea.mend_hatch
+?(var._res=1) !hook sail_mend
+?(var._res=1) narr: {布|ぬの} と {木|き} の {楔|くさび} で 、 {隙間|すきま} を {塞|ふさ}いだ 。 || You stop the gap with cloth and a wooden wedge.
+?(var._res=0) narr: 「{港|みなと} で {直|なお}しましょう 。 {水|みず} は {汲|く}み{出|だ}せば いい 。」 || "We'll fix it in port. We can bail meanwhile."
+
+# ---- the first time on a route --------------------------------------------------------------------------------------
+@scene sea.first_ko
+narr: {沖|おき} に {出|で}る と 、 {波|なみ} の {間|あいだ} に {金色|きんいろ} の {葉|は} が {浮|う}いて いる 。 {字|じ} が {書|か}いて ある 。 || Out at sea, golden leaves float between the waves. There is writing on them.
+?(var.sea_to=kotonoha) narr: {葉|は} は みんな 、 {西|にし} へ {流|なが}れて いく 。 {船|ふね} と {同|おな}じ {方|ほう} へ 。 || All of them drift west, the way the boat is going.
+?(!var.sea_to=kotonoha) narr: {葉|は} は みんな 、 {西|にし} へ {流|なが}れて いく 。 {島|しま} の {方|ほう} へ 。 || All of them drift west, back towards the island.
+!hook sail_log sight leaves
+@scene sea.first_mb
+?(var.sea_to=manybridge) narr: {海岸|かいがん} に {沿|そ}って {東|ひがし} へ 。 やがて {川口|かわぐち} が {開|ひら}けて 、 {橋|はし} が {幾|いく}つ も {重|かさ}なって {見|み}えて きた 。 || East along the coast. At last the river mouth opens out, and bridge after bridge comes into view, one behind another.
+?(!var.sea_to=manybridge) narr: {振|ふ}り{返|かえ}る と 、 {八百橋|やおばし} の {橋|はし} が {幾|いく}つ も {重|かさ}なって 、 {遠|とお}ざかって いく 。 || Looking back, Manybridge's bridges stand one behind another, growing smaller.
+!hook sail_log sight bridges
+`);
+
+
+/* ==== src/content/sea/30_learning.js ==== */
+/* The sea's language tasks (expansion P11c; plan W7 "learning about the sea": weather, tides, directions, the boat's
+ * parts and what to do with them). The words come from the boat itself (帆, 綱, 舵, 蓋), so seafaring vocabulary is
+ * learned by handling it. Each task is the same question at the four profiles. Real things are labelled real: 天地無用
+ * on a crate. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const task = (id, title, tiers) => (C.challenges[id] = { title, tiers });
+
+  task('sea.hail', T('{漁船|ぎょせん} の {呼|よ}び{声|ごえ}', 'A boat\'s hail'), {
+    F: [ch({ item: 'v:港', ctx: { jp: '「みなと は 、 あいて いる か ？」', en: '' }, prompt: { en: 'The fisher asks whether the harbour is open. It is. Call back.' }, options: [o('あいて います よ ！', 1), o('おはよう ございます ！', 0, 'A greeting, but it doesn\'t answer the question.'), o('みなと は どこ ？', 0, 'They asked you; tell them it\'s open.')] })],
+    E: [ch({ item: 'v:開く', ctx: { jp: '「{潮硝子|しおがらす} の {港|みなと} は 、 {開|あ}いて いる か ？」', en: '' }, prompt: { en: 'Call back that it is open.' }, options: [o('{開|あ}いて います よ ！', 1), o('{開|あ}けて ください ！', 0, 'That asks someone to open it; they want to know if it is open.'), o('{閉|し}まって います よ ！', 0, 'It is open: Ōmi opened the ferry again.')] })],
+    I: [ch({ item: 'g:sou_hear', ctx: { jp: '「{港|みなと} は 、 {開|あ}いて いる か ？」 （{港長|こうちょう} が {今朝|けさ} 、 {開|あ}いて いる と {言|い}って いた ）', en: '' }, prompt: { en: 'Pass on what the harbourmaster said this morning.' }, options: [o('{開|あ}いて いる そう です よ ！ {港長|こうちょう} が {言|い}って いました ！', 1), o('{開|あ}いて いる よう です ね 。 {見|み}えません けど 。', 0, 'よう guesses from what you see; you heard it from the harbourmaster: そうです.'), o('{開|あ}いて いる か どう か 、 {知|し}りません 。', 0, 'You do know: the harbourmaster told you.')] })],
+    A: [ch({ item: 'g:indirectness', ctx: { jp: '{波|なみ} の {向|む}こう から 、 {漁師|りょうし} が {大声|おおごえ} で ： 「{港|みなと} 、 {開|あ}いてる か ？」', en: '' }, prompt: { en: 'Shouted across water, to a fisher who asked plainly: which reply fits?' }, options: [o('「{開|あ}いてる ぞ ！」', 1), o('「{開|あ}いて おる か と {存|ぞん}じます 。」', 0, 'Stiffly humble and hedged ("I humbly believe it may be open"): far too formal for a shout across the water, and you know it is open.'), o('「{存|ぞん}じません 。」', 0, 'Politely "I don\'t know": but you do.')] })],
+  });
+  task('sea.fog', T('{霧|きり} の {中|なか} の {灯|ひ}', 'A light in the fog'), {
+    F: [ch({ item: 'v:灯台', ctx: { jp: 'かいず の しるし ： ひかり みっつ ＝ しおがらす の みさき 。 ひかり ふたつ ＝ くろいわ 。 ／ きり の むこう で 、 ひかり が みっつ 。', en: '' }, prompt: { en: 'Three flashes. Which light is it?' }, options: [o('しおがらす の みさき', 1), o('くろいわ', 0, 'Kuroiwa flashes twice. This one flashed three times.'), o('ことのはじま', 0, 'The chart\'s key gives three flashes to Saltglass point.')] })],
+    E: [ch({ item: 'v:灯台', ctx: { jp: '{海図|かいず} の {印|しるし} ： {三回|さんかい} {光|ひか}る ＝ {潮硝子|しおがらす} の {岬|みさき} 。 {二回|にかい} {光|ひか}る ＝ {黒岩|くろいわ} 。 ／ {霧|きり} の {向|む}こう で 、 {灯|ひ} が {三回|さんかい} {光|ひか}った 。', en: '' }, prompt: { en: 'Which light is it?' }, options: [o('{潮硝子|しおがらす} の {岬|みさき} の {灯台|とうだい}', 1), o('{黒岩|くろいわ} の {灯|ひ}', 0, 'Kuroiwa flashes twice.'), o('{漁船|ぎょせん} の {灯|あか}り', 0, 'A boat\'s lamp doesn\'t keep a count; this is the point\'s light.')] })],
+    I: [ch({ item: 'g:kr_ni_yoruto', ctx: { jp: '{海図|かいず} に よると 、 {潮硝子|しおがらす} の {岬|みさき} は {三回|さんかい} 、 {黒岩|くろいわ} は {二回|にかい} {光|ひか}る と いう 。 {今|いま} 、 {右手|みぎて} で {二回|にかい} {光|ひか}った 。', en: '' }, prompt: { en: 'Which light is on your right, and so which way is the point?' }, options: [o('{右|みぎ} は {黒岩|くろいわ} 。 {岬|みさき} は もっと {先|さき}', 1), o('{右|みぎ} は {潮硝子|しおがらす} の {岬|みさき}', 0, 'Two flashes, by the chart, is Kuroiwa.'), o('どちら か {分|わ}からない', 0, 'The chart tells them apart by their flashes.')] })],
+    A: [ch({ item: 'v:灯台', ctx: { jp: '{灯台|とうだい} {表|ひょう} ： 「{潮硝子|しおがらす} {岬|みさき} ・ {群閃光|ぐんせんこう} {三|さん} ・ {毎|まい} {十秒|じゅうびょう}」', en: '' }, prompt: { en: 'A lighthouse list\'s entry (written style). What will you see?' }, options: [o('{十秒|じゅうびょう} ごと に 、 {三回|さんかい} {続|つづ}けて {光|ひか}る', 1), o('{三秒|さんびょう} ごと に {一回|いっかい} {光|ひか}る', 0, '群閃光三: a group of three flashes; 毎十秒: every ten seconds.'), o('{十回|じゅっかい} {光|ひか}って 、 {三秒|さんびょう} {消|き}える', 0, 'Three flashes in a group, once every ten seconds.')] })],
+  });
+  task('sea.cargo', T('{流|なが}れて きた {木箱|きばこ}', 'A drifting crate'), {
+    F: [ch({ item: 'v:割れ物', ctx: { jp: 'ふだ ： 「われもの ・ やおばし の とりひきじょ まで」', en: '' }, prompt: { en: 'Where was the crate going?' }, options: [o('やおばし', 1), o('しおがらす', 0, 'まで marks where it goes: やおばし.'), o('ことのはじま', 0, 'The label says やおばし の とりひきじょ まで.')] })],
+    E: [ch({ item: 'v:割れ物', ctx: { jp: '{札|ふだ} ： 「{割|わ}れ{物|もの} ・ {八百橋|やおばし} {取引所|とりひきじょ} {行|ゆ}き」', en: '' }, prompt: { en: 'What is in it, and where was it going?' }, options: [o('{割|わ}れる {物|もの} 。 {八百橋|やおばし} の {取引所|とりひきじょ} へ', 1), o('{食|た}べ{物|もの} 。 {潮硝子|しおがらす} へ', 0, '割れ物: things that break. 行き: bound for.'), o('{割|わ}れる {物|もの} 。 {取引所|とりひきじょ} から', 0, '行き means bound for, not from.')] })],
+    I: [ch({ item: 'v:差出人', ctx: { jp: '{札|ふだ} ： 「{割|わ}れ{物|もの} ・ {八百橋|やおばし} {取引所|とりひきじょ} {行|ゆ}き 。 {差出人|さしだしにん} ： {潮硝子|しおがらす} アサヒ {硝子|がらす} {工房|こうぼう}」', en: '' }, prompt: { en: 'Who sent it, and to where?' }, options: [o('アサヒ の {工房|こうぼう} から 、 {八百橋|やおばし} の {取引所|とりひきじょ} へ', 1), o('{取引所|とりひきじょ} から 、 アサヒ の {工房|こうぼう} へ', 0, '差出人 is the sender: Asahi\'s workshop. 行き is where it goes.'), o('アサヒ さん が {自分|じぶん} に {送|おく}った', 0, 'It is bound for the Exchange.')] })],
+    A: [ch({ item: 'v:天地無用', ctx: { jp: '{札|ふだ} ： 「{割|わ}れ{物|もの} ・ {天地無用|てんちむよう}」', en: '' }, prompt: { en: 'How do you haul it aboard? (Real: 天地無用 is a common shipping mark, and often misread.)' }, options: [o('{上下|じょうげ} を {逆|ぎゃく} に しない よう に 、 その まま {上|あ}げる', 1), o('どちら を {上|うえ} に して も いい', 0, 'The usual misreading: 無用 here means "turning it over is not allowed": keep this side up.'), o('{開|あ}けて {中身|なかみ} を {確|たし}かめる', 0, 'The mark is about which way up, not opening it.')] })],
+  });
+  task('sea.bird', T('{鴎|かもめ} の {手紙|てがみ}', 'The gull\'s message'), {
+    F: [ch({ item: 'v:潮', ctx: { jp: '「しおり より 。 しお が かわる 。 はやめ に みなと へ 。」', en: '' }, prompt: { en: 'What does Shiori tell you?' }, options: [o('しお が かわる から 、 はやく みなと へ', 1), o('みなと が しまって いる', 0, 'She says the tide is turning: come in early.'), o('しおり が ふね に のりたい', 0, 'It is a warning about the tide.')] })],
+    E: [ch({ item: 'v:潮', ctx: { jp: '「シオリ より 。 {昼|ひる} から {潮|しお} が {変|か}わります 。 {早|はや}め に {港|みなと} へ {入|はい}って ください 。」', en: '' }, prompt: { en: 'What does Shiori ask?' }, options: [o('{昼|ひる} {前|まえ} に {港|みなと} に {入|はい}って ほしい', 1), o('{昼|ひる} から {沖|おき} へ {出|で}て ほしい', 0, 'She asks you to come in early, before the tide turns at noon.'), o('{潮|しお} の {本|ほん} を {持|も}って きて ほしい', 0, 'It is about the tide turning.')] })],
+    I: [ch({ item: 'g:sou_hear', ctx: { jp: '「シオリ より 。 {潮見|しおみ} の {記録|きろく} に よると 、 {今日|きょう} は {昼|ひる} から {潮|しお} が {速|はや}く なる そう です 。」', en: '' }, prompt: { en: 'What will happen, by Shiori\'s tide records?' }, options: [o('{昼|ひる} から 、 {潮|しお} の {流|なが}れ が {速|はや}く なる', 1), o('{昼|ひる} から 、 {潮|しお} が {止|と}まる', 0, '速くなる: it gets faster.'), o('{潮見|しおみ} の {記録|きろく} が なくなった', 0, 'によると: according to the records, the tide quickens.')] })],
+    A: [ch({ item: 'v:潮', ctx: { jp: '「{夕刻|ゆうこく} より {潮|しお} {変|か}わる 。 {早|はや}め の {入港|にゅうこう} を {勧|すす}む 。 シオリ」', en: '' }, prompt: { en: 'A note in clipped written style. What does it advise?' }, options: [o('{夕方|ゆうがた} に {潮|しお} が {変|か}わる ので 、 {早|はや}く {港|みなと} に {入|はい}る ほう が いい', 1), o('{夕方|ゆうがた} まで {港|みなと} に {入|はい}らない ほう が いい', 0, '勧む: she recommends coming in early.'), o('{潮|しお} の {変|か}わり{目|め} に {出港|しゅっこう} せよ', 0, '入港 is coming in; she advises coming in early.')] })],
+  });
+
+  // ---- mending the boat: the part, and what to do with it --------------------------------------------------------
+  const mend = (id, title, part, verb, pr, F, E, I, A) => task(id, title, { F: [F], E: [E], I: [I], A: [A] });
+  mend('sea.mend_sail', T('{帆|ほ} を {縫|ぬ}う', 'Stitching the sail'), '帆', '縫う', null,
+    ch({ item: 'v:帆', ctx: { jp: 'ほ が やぶれた 。', en: '' }, prompt: { en: 'The sail has torn. What do you do?' }, options: [o('ぬう', 1), o('むすぶ', 0, 'You tie a line; a torn sail you sew.'), o('しめる', 0, 'You tighten a fastener; a torn sail you sew.')] }),
+    { kind: 'order', item: 'v:縫う', prompt: { en: 'Put the instruction together: stitch the tear in the sail.' }, tiles: ['{帆|ほ} の', '{裂|さ}け{目|め} を', '{縫|ぬ}う'], answer: ['{帆|ほ} の', '{裂|さ}け{目|め} を', '{縫|ぬ}う'], orderHint: { en: 'Whose tear (帆の), the tear (裂け目を), then the verb.' } },
+    { kind: 'write', item: 'v:縫う', ctx: { jp: '{帆|ほ} が {裂|さ}けた 。 {針|はり} と {糸|いと} で □□ 。', en: '' }, prompt: { en: 'The sail tore; with needle and thread you…? Write the verb in hiragana (dictionary form).' }, answer: 'ぬう', accept: ['ぬう', '縫う'], mode: 'reading', explain: { jp: '{縫|ぬ}う', en: 'to sew, to stitch' } },
+    ch({ item: 'v:縫う', prompt: { en: 'Ask the crew for what you need, briskly but politely.' }, options: [o('{針|はり} と {糸|いと} を {取|と}って くれ 。 {帆|ほ} を {縫|ぬ}う 。', 1), o('{綱|つな} を {結|むす}んで くれ 。', 0, 'That is for a frayed line; the sail needs sewing.'), o('{帆|ほ} を {縫|ぬ}わせて いただけ ませんか 。', 0, 'Far too formal for your own crew in a gust.')] }));
+  mend('sea.mend_line', T('{綱|つな} を {結|むす}ぶ', 'Tying a line'), '綱', '結ぶ', null,
+    ch({ item: 'v:綱', ctx: { jp: 'つな が きれそう 。', en: '' }, prompt: { en: 'A line is about to part. What do you do?' }, options: [o('むすびなおす', 1), o('ぬう', 0, 'You sew a sail; a line you tie.'), o('ふさぐ', 0, 'You stop up a gap; a line you tie.')] }),
+    { kind: 'order', item: 'v:結ぶ', prompt: { en: 'Put the instruction together: cut out the worn part and tie it again.' }, tiles: ['{傷|いた}んだ ところ を', '{切|き}って', '{結|むす}び{直|なお}す'], answer: ['{傷|いた}んだ ところ を', '{切|き}って', '{結|むす}び{直|なお}す'], orderHint: { en: 'What (the worn part), the first action (〜て), then the last.' } },
+    { kind: 'write', item: 'v:結ぶ', ctx: { jp: '{綱|つな} が {擦|す}り{切|き}れた 。 {新|あたら}しく □□□ 。', en: '' }, prompt: { en: 'A line is frayed; you…it fresh. Write the verb in hiragana (dictionary form).' }, answer: 'むすぶ', accept: ['むすぶ', '結ぶ'], mode: 'reading', explain: { jp: '{結|むす}ぶ', en: 'to tie, to knot' } },
+    ch({ item: 'v:結ぶ', prompt: { en: 'Tell the crew what you are doing, so they keep the sail steady.' }, options: [o('{綱|つな} を {結|むす}び{直|なお}す から 、 {帆|ほ} を {押|お}さえて いて くれ 。', 1), o('{帆|ほ} を {縫|ぬ}う から 、 {針|はり} を くれ 。', 0, 'It is a line, not the sail.'), o('{綱|つな} が 、 {結|むす}ばれた 。', 0, 'It hasn\'t been tied yet, and it asks nothing of them.')] }));
+  mend('sea.mend_rudder', T('{舵|かじ} を {締|し}める', 'The rudder\'s fastener'), '舵', '締める', null,
+    ch({ item: 'v:舵', ctx: { jp: 'かじ が ぐらぐら する 。', en: '' }, prompt: { en: 'The rudder wobbles. What do you do?' }, options: [o('しめる', 1), o('ぬう', 0, 'You sew a sail; a loose fastener you tighten.'), o('むすぶ', 0, 'You tie a line; a loose fastener you tighten.')] }),
+    { kind: 'order', item: 'v:締める', prompt: { en: 'Put the instruction together: knock the rudder\'s fastener home with a mallet.' }, tiles: ['{木槌|きづち} で', '{舵|かじ} の {留|と}め{具|ぐ} を', '{打|う}ち{込|こ}む'], answer: ['{木槌|きづち} で', '{舵|かじ} の {留|と}め{具|ぐ} を', '{打|う}ち{込|こ}む'], orderHint: { en: 'With what (で), what (を), then the verb.' } },
+    { kind: 'write', item: 'v:締める', ctx: { jp: '{舵|かじ} の {留|と}め{具|ぐ} が {緩|ゆる}んだ 。 しっかり □□□ 。', en: '' }, prompt: { en: 'The fastener worked loose; you…it firmly. Write the verb in hiragana (dictionary form).' }, answer: 'しめる', accept: ['しめる', '締める'], mode: 'reading', explain: { jp: '{締|し}める', en: 'to tighten, to fasten' } },
+    ch({ item: 'v:舵', prompt: { en: 'Which instruction makes the fastener hold?' }, options: [o('{留|と}め{具|ぐ} を {締|し}め{直|なお}して 、 {舵|かじ} が ぐらつかない か {確|たし}かめる 。', 1), o('{舵|かじ} を {外|はず}して 、 {港|みなと} まで {漕|こ}ぐ 。', 0, 'No need to take the rudder off: tighten the fastener.'), o('{留|と}め{具|ぐ} を {抜|ぬ}いて 、 {舵|かじ} を {軽|かる}く する 。', 0, 'Taking the fastener out would loosen it more.')] }));
+  mend('sea.mend_hatch', T('{蓋|ふた} を {塞|ふさ}ぐ', 'The leaking hatch'), '蓋', '塞ぐ', null,
+    ch({ item: 'v:塞ぐ', ctx: { jp: 'ふた の すきま から 、 みず が はいる 。', en: '' }, prompt: { en: 'Water comes in through a gap in the hatch. What do you do?' }, options: [o('すきま を ふさぐ', 1), o('ふた を あける', 0, 'Opening it would let more in: stop up the gap.'), o('みず を のむ', 0, 'Seawater isn\'t for drinking: stop up the gap.')] }),
+    { kind: 'order', item: 'v:塞ぐ', prompt: { en: 'Put the instruction together: stop the gap with cloth and a wedge.' }, tiles: ['{布|ぬの} と {楔|くさび} で', '{隙間|すきま} を', '{塞|ふさ}ぐ'], answer: ['{布|ぬの} と {楔|くさび} で', '{隙間|すきま} を', '{塞|ふさ}ぐ'], orderHint: { en: 'With what (で), what (を), then the verb.' } },
+    { kind: 'write', item: 'v:塞ぐ', ctx: { jp: '{蓋|ふた} の {隙間|すきま} を {布|ぬの} で □□□ 。', en: '' }, prompt: { en: 'You…the hatch\'s gap with cloth. Write the verb in hiragana (dictionary form).' }, answer: 'ふさぐ', accept: ['ふさぐ', '塞ぐ'], mode: 'reading', explain: { jp: '{塞|ふさ}ぐ', en: 'to stop up, to plug' } },
+    ch({ item: 'v:塞ぐ', prompt: { en: 'The crew asks whether to bail first or plug first. Which reply is sound?' }, options: [o('{先|さき} に {隙間|すきま} を {塞|ふさ}ごう 。 {水|みず} は その {後|あと} で {汲|く}み{出|だ}せば いい 。', 1), o('{先|さき} に {水|みず} を {全部|ぜんぶ} {汲|く}み{出|だ}そう 。', 0, 'While the gap is open, bailing never ends: plug it first.'), o('{何|なに} も しない で {港|みなと} へ {急|いそ}ごう 。', 0, 'It is a small leak: plug it and carry on calmly.')] }));
 })(RB.content);
 
 

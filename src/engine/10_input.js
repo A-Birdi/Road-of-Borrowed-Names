@@ -19,12 +19,14 @@ RB.input = (function () {
     run: ['ShiftLeft', 'ShiftRight'],
     tr: ['KeyT'],
     weave: ['KeyV'], // field weaving (src/ui/57_weave.js)
+    sail: ['KeyQ'], // at sea, set the sail to the wind (src/ui/89v_sail.js)
   };
   const ACTION_LABELS = {
     up: 'Move up', down: 'Move down', left: 'Move left', right: 'Move right',
     ok: 'Confirm / talk', cancel: 'Back', menu: 'Menu', help: 'Lightbulb help',
     log: 'Dialogue history', map: 'Map', run: 'Walk faster (hold)', tr: 'Show or hide the translation',
     weave: 'Weave a word on something nearby',
+    sail: 'Set the sail (at sea)',
   };
   let binds = RB.util.deepClone(DEFAULT_BINDS);
   const DIRECTIONS = ['up', 'down', 'left', 'right'];

@@ -118,7 +118,7 @@ RB.script = (function () {
     const compName = comp && RB.content.chars[comp] ? RB.content.chars[comp].name.en : 'your companion';
     const cap = (w) => w.charAt(0).toUpperCase() + w.slice(1);
     const map = {
-      name: s.player.name, comp: compName,
+      name: s.player.name, comp: compName, boat: RB.sail ? RB.sail.boatName(s).en : '',
       they: pr.they, them: pr.them, their: pr.their, theirs: pr.theirs, self: pr.self,
       They: cap(pr.they), Them: cap(pr.them), Their: cap(pr.their),
       are: pr.plural ? 'are' : 'is', were: pr.plural ? 'were' : 'was', have: pr.plural ? 'have' : 'has',
@@ -132,6 +132,7 @@ RB.script = (function () {
     const comp = s && (s.comp || s.provisional);
     return {
       name: s ? s.player.nameJp || s.player.name : '',
+      boat: s && RB.sail ? RB.sail.boatName(s).jp : '', // the kana of the boat's name; lines write `$boat {丸|まる}`
       comp: comp && RB.content.chars[comp] ? RB.jp.plain(RB.content.chars[comp].name.jp) : '',
     };
   }

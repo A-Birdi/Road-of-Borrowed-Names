@@ -19,6 +19,7 @@ RB.audio = RB.audio || {};
     _.songDefs[id] = def;
   }
   // the leaf motif: up to the octave, a breath, and a slow fall
+  _.motifs.leaf = { deg: "5, 6, 1 6, 5, 3,", notes: 'Kotonoha: a rise to the octave and a slow fall, a leaf lifted and let go.' };
   const LEAF = "5, - 6, - 1 - - - | 6, - 5, - 3, - - - | 2, - 3, - 5, - 3, - | 2, - - - - - . .";
   const LEAF_HI = "5 - 6 - 1' - - - | 6 - 5 - 3 - - - | 2 - 3 - 5 - 3 - | 2 - - - - - . .";
 
@@ -37,7 +38,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.5, rv: 0.55 },
       hi: { i: 'koto', o: 5, v: 0.28, rv: 0.7, pan: 0.25 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.15, rv: 0.85, pan: 0.35 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.15, rv: 0.85, pan: 0.35 },
       koto: { i: 'koto', o: 4, pat: true, v: 0.2, rv: 0.4, pan: -0.25 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.34 },
@@ -67,7 +68,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'koto', o: 3, v: 0.5, rv: 0.6 },
       deep: { i: 'bowed', o: 3, v: 0.44, rv: 0.55, pan: -0.15 },
-      chime: { i: 'glass', o: 4, pat: true, v: 0.12, rv: 0.9, pan: 0.35 },
+      chime: { i: 'glass', o: 3, pat: true, v: 0.12, rv: 0.9, pan: 0.35 },
       sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.26, rv: 0.55 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.26, rv: 0.5 },
       drip: { perc: true, v: 0.24, rv: 0.75, pan: 0.3 },
@@ -93,7 +94,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'bowed', o: 4, v: 0.46, rv: 0.6 },
       harp: { i: 'harp', o: 3, pat: true, v: 0.26, rv: 0.55, pan: -0.2 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.16, rv: 0.85, pan: 0.3 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.16, rv: 0.85, pan: 0.3 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.22, rv: 0.55 },
     },
     all: { harp: "0 2 1'", chime: ". 2' .", low: '0+2' },
@@ -101,7 +102,7 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: GD_A_CH, lead: GD_A },
       B: { bars: 8, ch: GD_A_CH, harp: "0 . 2", chime: "1' . 2'" },
     },
-    form: ['A', 'B'],
+    form: ['A', 'B', 'A'],
   });
 
   // =========================================================== THE ISLAND'S BATTLE
@@ -111,7 +112,7 @@ RB.audio = RB.audio || {};
   const BK_B_CH = '1 4 2 5 4 3 7 1';
   const BK_B_LOW = '1 - - - - - - - | 4, - - - - - - - | 2 - - - - - - - | 5, - - - - - - - | 4, - - - - - - - | 3, - - - - - - - | 7, - - - - - - - | 1 - - - - - - -';
   // C: the leaf motif torn about by the wind, phrygian, over a close cluster
-  const BK_C_HI = "5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 2! - 1 - 7, - 1 - | 5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 7,! - 1 - 2 - - -";
+  const BK_C_HI = "5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 2! - 1 - 7, - 1 - | 5,! - 6, - 1 - - - | 6,! - 5, - 3, - - - | .:8 | 7,! - 1 - 7, - - -";
   const BK_C_LOW = '1 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | 2 - - - - - - - | 1 - - - - - - - | 7, - - - - - - - | 6, - - - - - - - | 5, - - - - - - -';
   const BK_C_CH = '1 2 3 2 1 7 6 5P';
   S('battle_ko', {
@@ -126,7 +127,7 @@ RB.audio = RB.audio || {};
       low: { i: 'bowed', o: 3, v: 0.56, rv: 0.25, pan: -0.15 },
       ost: { i: 'shamisen', o: 3, pat: true, v: 0.38, rv: 0.12, pan: -0.25 },
       arp: { i: 'koto', o: 4, pat: true, v: 0.3, rv: 0.25, pan: 0.3 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.2, rv: 0.6, pan: 0.35 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.2, rv: 0.6, pan: 0.35 },
       pad: { i: 'pad', o: 3, hold: true, fold: 'all', win: 5, v: 0.32, rv: 0.3 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.66 },
       taiko: { perc: true, v: 0.56 },
@@ -167,10 +168,10 @@ RB.audio = RB.audio || {};
       riff: { i: 'koto', o: 3, v: 0.56, rv: 0.15, pan: -0.2 },
       lead: { i: 'bowed', o: 4, v: 0.62, rv: 0.25 },
       hi: { i: 'shinobue', o: 5, v: 0.52, rv: 0.25, pan: 0.15 },
-      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.45, pan: 0.2 },
+      glass: { i: 'glass', o: 4, v: 0.85, rv: 0.45, pan: 0.2 },
       low: { i: 'bowed', o: 3, v: 0.55, rv: 0.25, pan: 0.2 },
       ost: { i: 'shamisen', o: 3, pat: true, v: 0.4, rv: 0.12, pan: 0.25 },
-      chime: { i: 'glass', o: 5, pat: true, v: 0.16, rv: 0.6, pan: -0.3 },
+      chime: { i: 'glass', o: 4, pat: true, v: 0.16, rv: 0.6, pan: -0.3 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.3, rv: 0.35 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.7 },
       taiko: { perc: true, v: 0.6 },

@@ -587,6 +587,7 @@ RB.render = (function () {
     for (const f of W.foes) list.push({ z: f.fy * TS + TS, draw: () => drawActor(c, f, t, true) });
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
+    if (m.def.sea && RB.sailDraw) RB.sailDraw.push(list, c, ax, ay, t); // the boat under the traveller at sea (src/ui/89v_sail.js)
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     if (RB.perform) RB.perform.push(list, c, ax, ay, t); // what a person's action puts beside them (67a_perform.js)
     if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks

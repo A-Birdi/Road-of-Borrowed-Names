@@ -1,0 +1,1226 @@
+{
+ "scene:sea.boat#ehjtfs": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "$boat {丸|まる} が 、 {桟橋|さんばし} に {繋|つな}いで ある 。",
+  "en": "The $boat lies at her mooring."
+ },
+ "scene:sea.boat#8p0zir": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{直|なお}す ところ が {一|ひと}つ ある 。 {港|みなと} の {人|ひと} に {頼|たの}めば 、 すぐ {直|なお}る 。",
+  "en": "There's one thing to mend. The harbour's people would see to it in no time."
+ },
+ "scene:sea.boat:choice#1glswb7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{海図|かいず} を {広|ひろ}げる 。",
+  "en": "Open the chart."
+ },
+ "scene:sea.boat:choice#1klqdc1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{船室|せんしつ} へ {下|お}りる 。",
+  "en": "Go below to the cabin."
+ },
+ "scene:sea.boat:choice#lhwkwc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} の {人|ひと} に {直|なお}して もらう 。",
+  "en": "Have the harbour's people mend her."
+ },
+ "scene:sea.boat:choice#nx5jim": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{今|いま} は いい 。",
+  "en": "Not now."
+ },
+ "scene:sea.boat#fisgjn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} の {人|ひと} が {手早|てばや}く {直|なお}して くれた 。 「いい {船|ふね} だ 。 {大事|だいじ} に しな 。」",
+  "en": "The harbour's people see to it quickly. \"She's a good boat. Look after her.\""
+ },
+ "scene:sea.dock_saltglass#126xwdh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{潮硝子|しおがらす} の {港|みなと} が {見|み}えて きた 。",
+  "en": "Saltglass harbour, dead ahead."
+ },
+ "scene:sea.dock_saltglass#1cyuqwy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{潮硝子|しおがらす} の {港|みなと} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？",
+  "en": "You're passing Saltglass harbour. Put in here?"
+ },
+ "scene:sea.dock_saltglass:choice#1mmf1o3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} に {入|はい}る 。",
+  "en": "Bring her in."
+ },
+ "scene:sea.dock_saltglass:choice#1khgbua": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "このまま {進|すす}む 。",
+  "en": "Sail on."
+ },
+ "scene:sea.dock_manybridge#je9yhm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{川口|かわぐち} の {向|む}こう に 、 {八百橋|やおばし} の {橋|はし} が {並|なら}んで いる 。",
+  "en": "Beyond the river mouth, Manybridge's bridges stand in a row."
+ },
+ "scene:sea.dock_manybridge#15nek6q": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{八百橋|やおばし} の {川口|かわぐち} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？",
+  "en": "You're passing the river mouth below Manybridge. Put in here?"
+ },
+ "scene:sea.dock_manybridge:choice#1mmf1o3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} に {入|はい}る 。",
+  "en": "Bring her in."
+ },
+ "scene:sea.dock_manybridge:choice#1khgbua": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "このまま {進|すす}む 。",
+  "en": "Sail on."
+ },
+ "scene:sea.dock_kotonoha#kr7lio": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{大|おお}きな {木|き} の {島|しま} 。 {東|ひがし} の {桟橋|さんばし} が {見|み}えて きた 。",
+  "en": "The island of the great tree. Its east jetty comes into sight."
+ },
+ "scene:sea.dock_kotonoha#fm586c": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{言|こと}の{葉|は}{島|じま} の {桟橋|さんばし} の {前|まえ} を {通|とお}る 。 ここ に {寄|よ}る ？",
+  "en": "You're passing Kotonoha's jetty. Put in here?"
+ },
+ "scene:sea.dock_kotonoha:choice#1qugwzh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{桟橋|さんばし} に {着|つ}ける 。",
+  "en": "Bring her in."
+ },
+ "scene:sea.dock_kotonoha:choice#1khgbua": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "このまま {進|すす}む 。",
+  "en": "Sail on."
+ },
+ "scene:sea.crew_take#mjb93u": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} に {舵|かじ} を {任|まか}せた 。 「{任|まか}せて ください 。 {風|かぜ} は {読|よ}めて ます から 。」",
+  "en": "You hand the tiller to the crew. \"Leave her to us. We've got the wind's measure.\""
+ },
+ "scene:sea.crew_arrive#1iun9gy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} が {帆|ほ} を {下|お}ろし 、 {船|ふね} を {静|しず}か に {着|つ}けた 。",
+  "en": "The crew lowers the sail and brings her gently alongside."
+ },
+ "scene:sea.cabin_shelf#1szo82o": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{旅|たび} の {記念品|きねんひん} を {並|なら}べる {棚|たな} 。",
+  "en": "A shelf for the journey's keepsakes."
+ },
+ "scene:sea.cabin_volume#1fz7t06": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{小|ちい}さな {机|つくえ} に 、 {旅|たび} の {本|ほん} が {開|ひら}いて ある 。 {航海|こうかい} {日誌|にっし} も 、 {一緒|いっしょ} に {綴|と}じて ある 。",
+  "en": "On the little desk, the travel volume lies open, with the voyages' log bound in."
+ },
+ "scene:sea.cabin_corner#1tfx11w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{将棋盤|しょうぎばん} 、 かるた 、 {花札|はなふだ} 。 {波|なみ} の {音|おと} を {聞|き}きながら 、 {一局|いっきょく} どう ？",
+  "en": "A shogi board, karuta, hanafuda. A game, with the waves for company?"
+ },
+ "scene:sea.cabin_bunk#ywmsuc": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{狭|せま}い {寝台|しんだい} 。 {波|なみ} が 、 {揺|ゆ}り{籠|かご} の よう に {揺|ゆ}らす 。",
+  "en": "A narrow bunk. The waves rock it like a cradle."
+ },
+ "scene:sea.cabin_bunk#ule864": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "よく {眠|ねむ}れた 。",
+  "en": "You slept well."
+ },
+ "scene:sea.sit_hail#1vs6l46": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{漁船|ぎょせん} が {近|ちか}づいて きた 。 {舳先|へさき} で 、 {日焼|ひや}け した {漁師|りょうし} が {手|て} を {振|ふ}って いる 。",
+  "en": "A fishing boat draws near. At its bow, a sunburnt fisher is waving."
+ },
+ "scene:sea.sit_hail#19f2yxx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「おーい ！ {潮硝子|しおがらす} の {港|みなと} は 、 {開|あ}いて いる か ？」",
+  "en": "\"Ahoy! Is Saltglass harbour open?\""
+ },
+ "scene:sea.sit_hail#dcocff": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「ありがとう よ ！ {気|き} を {付|つ}けて な ！」 {漁船|ぎょせん} は {帆|ほ} を {張|は}って 、 {離|はな}れて いった 。",
+  "en": "\"Thanks! Take care!\" The fishing boat sets its sail and draws away."
+ },
+ "scene:sea.sit_hail#10qj1il": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{答|こた}える {前|まえ} に 、 {漁船|ぎょせん} は {波|なみ} の {向|む}こう へ {行|い}って しまった 。 {手|て} を {振|ふ}る と 、 {振|ふ}り{返|かえ}して くれた 。",
+  "en": "Before you can answer, the fishing boat is away beyond the waves. You wave, and they wave back."
+ },
+ "scene:sea.sit_fog#fg2wzw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{急|きゅう} に {霧|きり} が {出|で}て きた 。 {陸|りく} も {島|しま} も {見|み}えない 。",
+  "en": "Fog comes down all at once. No land, no islands."
+ },
+ "scene:sea.sit_fog#1hxfhx1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{霧|きり} の {向|む}こう で 、 {光|ひかり} が {点|つ}いて は {消|き}える 。",
+  "en": "Somewhere beyond the fog, a light comes and goes."
+ },
+ "scene:sea.sit_fog#1shgxu8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{光|ひかり} の {数|かず} で 、 どこ の {灯台|とうだい} か {分|わ}かった 。 {舵|かじ} を {少|すこ}し {切|き}って 、 {霧|きり} を {抜|ぬ}ける 。",
+  "en": "The count of the flashes tells you which light it is. A touch on the tiller, and you're out of the fog."
+ },
+ "scene:sea.sit_fog#48k49j": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} が {笑|わら}う 。 「{慌|あわ}て なくて いい 。 {霧|きり} は 、 {待|ま}てば {晴|は}れる 。」 {少|すこ}し {待|ま}つ と 、 {本当|ほんとう} に {晴|は}れた 。",
+  "en": "The crew laughs. \"No need to hurry. Fog lifts if you wait.\" You wait a little, and it does."
+ },
+ "scene:sea.sit_cargo#ed8l13": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{木箱|きばこ} が {一|ひと}つ 、 {波|なみ} に {揺|ゆ}れて いる 。 {札|ふだ} が まだ {付|つ}いて いる 。",
+  "en": "A wooden crate bobs on the waves, its label still on."
+ },
+ "scene:sea.sit_cargo#1mt1bp1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{鉤|かぎ} で {引|ひ}き{寄|よ}せて 、 {船|ふね} に {上|あ}げた 。 {八百橋|やおばし} の {取引所|とりひきじょ} へ 、 {誰|だれ} か が {届|とど}けて くれる だろう 。",
+  "en": "You hook it in and haul it aboard. Someone will get it to Manybridge's Exchange."
+ },
+ "scene:sea.sit_cargo#19ohu4w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{札|ふだ} の {字|じ} が {波|なみ} で {滲|にじ}んで 、 {最後|さいご} まで {読|よ}めなかった 。 {箱|はこ} は {流|なが}れて いった 。",
+  "en": "The waves have blurred the label's letters past reading. The crate drifts away."
+ },
+ "scene:sea.sit_creature#1eifwx1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{大|おお}きな {波|なみ} と {一緒|いっしょ} に 、 {何|なに} か が {甲板|かんぱん} に {上|あ}がって きた 。 ぷるぷる {震|ふる}えて いる 。",
+  "en": "With a big wave, something slops aboard. It's quivering."
+ },
+ "scene:sea.sit_creature:choice#wep6cu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{鎮|しず}める 。",
+  "en": "Settle it."
+ },
+ "scene:sea.sit_creature:choice#rolgcz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "そっと {海|うみ} へ {帰|かえ}す 。",
+  "en": "Ease it back into the sea."
+ },
+ "scene:sea.sit_creature#1no8p6o": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{静|しず}か に なった それ を 、 {海|うみ} へ {帰|かえ}した 。",
+  "en": "Quiet now, it goes back over the side."
+ },
+ "scene:sea.sit_creature#2j9gxl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{桶|おけ} で すくって 、 {海|うみ} へ {帰|かえ}した 。 ぷかぷか {浮|う}いて 、 {離|はな}れて いく 。",
+  "en": "You scoop it up in a bucket and tip it back into the sea. It bobs away."
+ },
+ "scene:sea.sit_bird#w3u0p2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{鴎|かもめ} が {一羽|いちわ} 、 {帆柱|ほばしら} に {止|と}まった 。 {足|あし} に 、 {小|ちい}さな {紙|かみ} が {結|むす}んで ある 。",
+  "en": "A gull lands on the mast. A slip of paper is tied to its leg."
+ },
+ "scene:sea.sit_bird#11v6w9d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{鴎|かもめ} は {一声|ひとこえ} {鳴|な}いて 、 {飛|と}んで いった 。",
+  "en": "The gull gives one cry and flies off."
+ },
+ "scene:sea.sit_seal#1b3nq8w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{岩|いわ} の {上|うえ} に 、 {海豹|あざらし} が {三頭|さんとう} 。 {顔|かお} を {上|あ}げて 、 {船|ふね} を {見送|みおく}って いる 。",
+  "en": "Three seals on a rock, heads up, watching the boat go by."
+ },
+ "scene:sea.sit_seal#f5i5ta": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{仕事|しごと} が ない って の は 、 いい もん だ な 。",
+  "en": "Must be nice, having no deliveries."
+ },
+ "scene:sea.sit_seal#3va4pd": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{日向|ひなた}ぼっこ ね 。 …… {羨|うらや}ましい 。",
+  "en": "Sunbathing. …I'm jealous."
+ },
+ "scene:sea.sit_seal#1svgvxo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{三頭|さんとう} とも 、 {同|おな}じ {方|ほう} を {向|む}いて います 。 {風上|かざかみ} です ね 。",
+  "en": "All three facing the same way. Into the wind."
+ },
+ "scene:sea.sit_seal#1ghjxvt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{観客|かんきゃく} が {三人|さんにん} ！ {手|て} を {振|ふ}って おこう か な 。",
+  "en": "An audience of three! I'll give them a wave."
+ },
+ "scene:sea.sit_sail#1ptrls9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{風|かぜ} に {煽|あお}られて 、 {帆|ほ} の {端|はし} が {裂|さ}けた 。",
+  "en": "A gust catches the sail, and its edge tears."
+ },
+ "scene:sea.sit_sail#30l3an": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {縫|ぬ}う か 、 {港|みなと} で {直|なお}す か 。 どっち でも {着|つ}きます よ 。」",
+  "en": "The crew says, \"Stitch it now or mend it in port. She'll get us there either way.\""
+ },
+ "scene:sea.sit_sail:choice#nm1des": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{今|いま} {縫|ぬ}う 。",
+  "en": "Stitch it now."
+ },
+ "scene:sea.sit_sail:choice#5plakb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} で {直|なお}す 。",
+  "en": "Leave it for port."
+ },
+ "scene:sea.sit_sail#1dvxhcw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{針|はり} と {糸|いと} で 、 {裂|さ}け{目|め} を {縫|ぬ}い{合|あ}わせた 。 {帆|ほ} が また {風|かぜ} を {受|う}ける 。",
+  "en": "With needle and thread you stitch the tear. The sail takes the wind again."
+ },
+ "scene:sea.sit_sail#h8w0ka": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{港|みなと} で {直|なお}しましょう 。 {急|いそ}ぐ {旅|たび} じゃ ない 。」",
+  "en": "\"We'll mend it in port. We're in no hurry.\""
+ },
+ "scene:sea.sit_line#6q0wne": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{帆|ほ} を {張|は}る {綱|つな} が 、 {一本|いっぽん} {擦|す}り{切|き}れかけて いる 。",
+  "en": "One of the lines that hold the sail is fraying."
+ },
+ "scene:sea.sit_line#1hx9m3r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {結|むす}び{直|なお}す か 、 {港|みなと} で {替|か}える か 。 どっち でも {着|つ}きます よ 。」",
+  "en": "The crew says, \"Tie it fresh now, or change it in port. She'll get us there either way.\""
+ },
+ "scene:sea.sit_line:choice#82e3eg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{今|いま} {結|むす}び{直|なお}す 。",
+  "en": "Tie it fresh now."
+ },
+ "scene:sea.sit_line:choice#owc027": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} で {替|か}える 。",
+  "en": "Leave it for port."
+ },
+ "scene:sea.sit_line#jkroji": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{傷|いた}んだ ところ を {切|き}って 、 {結|むす}び{直|なお}した 。",
+  "en": "You cut out the worn stretch and tie it fresh."
+ },
+ "scene:sea.sit_line#sykk39": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{港|みなと} で {替|か}えましょう 。 {急|いそ}ぐ {旅|たび} じゃ ない 。」",
+  "en": "\"We'll change it in port. We're in no hurry.\""
+ },
+ "scene:sea.sit_rudder#hv4wk3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{舵|かじ} が 、 {少|すこ}し ぐらぐら する 。 {舵|かじ} の {留|と}め{具|ぐ} が {緩|ゆる}んで きた らしい 。",
+  "en": "The rudder has a wobble in it. Its fastener seems to be working loose."
+ },
+ "scene:sea.sit_rudder#m0szst": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {締|し}める か 、 {港|みなと} で {見|み}て もらう か 。 どっち でも {着|つ}きます よ 。」",
+  "en": "The crew says, \"Tighten it now, or have the yard look at it. She'll get us there either way.\""
+ },
+ "scene:sea.sit_rudder:choice#1r23ltq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{今|いま} {締|し}める 。",
+  "en": "Tighten it now."
+ },
+ "scene:sea.sit_rudder:choice#1od1iut": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} で {見|み}て もらう 。",
+  "en": "Leave it for port."
+ },
+ "scene:sea.sit_rudder#270u07": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{木槌|きづち} で {留|と}め{具|ぐ} を {打|う}ち{込|こ}んだ 。 {舵|かじ} が しっかり した 。",
+  "en": "You knock the fastener home with a mallet. The rudder is steady again."
+ },
+ "scene:sea.sit_rudder#1jgoyio": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{港|みなと} で {見|み}て もらいましょう 。 {急|いそ}ぐ {旅|たび} じゃ ない 。」",
+  "en": "\"We'll have the yard look at it. We're in no hurry.\""
+ },
+ "scene:sea.sit_hatch#t5w4u1": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{甲板|かんぱん} の {蓋|ふた} の {隙間|すきま} から 、 {波|なみ} の {水|みず} が {少|すこ}し ずつ {入|はい}って くる 。",
+  "en": "Through a gap in the deck hatch, a little seawater is getting in."
+ },
+ "scene:sea.sit_hatch#kxspac": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{乗組員|のりくみいん} が {言|い}う 。 「{今|いま} {塞|ふさ}ぐ か 、 {港|みなと} で {直|なお}す か 。 どっち でも {着|つ}きます よ 。」",
+  "en": "The crew says, \"Plug it now or fix it in port. She'll get us there either way.\""
+ },
+ "scene:sea.sit_hatch:choice#102natn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{今|いま} {塞|ふさ}ぐ 。",
+  "en": "Plug it now."
+ },
+ "scene:sea.sit_hatch:choice#5plakb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{港|みなと} で {直|なお}す 。",
+  "en": "Leave it for port."
+ },
+ "scene:sea.sit_hatch#kzhg8g": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{布|ぬの} と {木|き} の {楔|くさび} で 、 {隙間|すきま} を {塞|ふさ}いだ 。",
+  "en": "You stop the gap with cloth and a wooden wedge."
+ },
+ "scene:sea.sit_hatch#1pf7gs3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{港|みなと} で {直|なお}しましょう 。 {水|みず} は {汲|く}み{出|だ}せば いい 。」",
+  "en": "\"We'll fix it in port. We can bail meanwhile.\""
+ },
+ "scene:sea.first_ko#6gmizb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{沖|おき} に {出|で}る と 、 {波|なみ} の {間|あいだ} に {金色|きんいろ} の {葉|は} が {浮|う}いて いる 。 {字|じ} が {書|か}いて ある 。",
+  "en": "Out at sea, golden leaves float between the waves. There is writing on them."
+ },
+ "scene:sea.first_ko#54fcvv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{葉|は} は みんな 、 {西|にし} へ {流|なが}れて いく 。 {船|ふね} と {同|おな}じ {方|ほう} へ 。",
+  "en": "All of them drift west, the way the boat is going."
+ },
+ "scene:sea.first_ko#1icio4l": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{葉|は} は みんな 、 {西|にし} へ {流|なが}れて いく 。 {島|しま} の {方|ほう} へ 。",
+  "en": "All of them drift west, back towards the island."
+ },
+ "scene:sea.first_mb#f2ku1l": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{海岸|かいがん} に {沿|そ}って {東|ひがし} へ 。 やがて {川口|かわぐち} が {開|ひら}けて 、 {橋|はし} が {幾|いく}つ も {重|かさ}なって {見|み}えて きた 。",
+  "en": "East along the coast. At last the river mouth opens out, and bridge after bridge comes into view, one behind another."
+ },
+ "scene:sea.first_mb#1gkrd4b": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{振|ふ}り{返|かえ}る と 、 {八百橋|やおばし} の {橋|はし} が {幾|いく}つ も {重|かさ}なって 、 {遠|とお}ざかって いく 。",
+  "en": "Looking back, Manybridge's bridges stand one behind another, growing smaller."
+ },
+ "challenges:sea.hail#odt08t": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{漁船|ぎょせん} の {呼|よ}び{声|ごえ}",
+  "en": "A boat's hail"
+ },
+ "challenges:sea.hail#heevbk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「みなと は 、 あいて いる か ？」",
+  "en": ""
+ },
+ "challenges:sea.hail#fxisil": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "あいて います よ ！",
+  "en": ""
+ },
+ "challenges:sea.hail#1nojrd0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "おはよう ございます ！",
+  "en": ""
+ },
+ "challenges:sea.hail#1o4zx26": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "みなと は どこ ？",
+  "en": ""
+ },
+ "challenges:sea.hail#1fb8bzs": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{潮硝子|しおがらす} の {港|みなと} は 、 {開|あ}いて いる か ？」",
+  "en": ""
+ },
+ "challenges:sea.hail#1n4nqfo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{開|あ}いて います よ ！",
+  "en": ""
+ },
+ "challenges:sea.hail#150y7qw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{開|あ}けて ください ！",
+  "en": ""
+ },
+ "challenges:sea.hail#1ke72t4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{閉|し}まって います よ ！",
+  "en": ""
+ },
+ "challenges:sea.hail#1anv28w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{港|みなと} は 、 {開|あ}いて いる か ？」 （{港長|こうちょう} が {今朝|けさ} 、 {開|あ}いて いる と {言|い}って いた ）",
+  "en": ""
+ },
+ "challenges:sea.hail#lj4t70": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{開|あ}いて いる そう です よ ！ {港長|こうちょう} が {言|い}って いました ！",
+  "en": ""
+ },
+ "challenges:sea.hail#1e047zq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{開|あ}いて いる よう です ね 。 {見|み}えません けど 。",
+  "en": ""
+ },
+ "challenges:sea.hail#12x6ihz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{開|あ}いて いる か どう か 、 {知|し}りません 。",
+  "en": ""
+ },
+ "challenges:sea.hail#mutugt": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{波|なみ} の {向|む}こう から 、 {漁師|りょうし} が {大声|おおごえ} で ： 「{港|みなと} 、 {開|あ}いてる か ？」",
+  "en": ""
+ },
+ "challenges:sea.hail#1xoczrn": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{開|あ}いてる ぞ ！」",
+  "en": ""
+ },
+ "challenges:sea.hail#12kodsl": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{開|あ}いて おる か と {存|ぞん}じます 。」",
+  "en": ""
+ },
+ "challenges:sea.hail#3wwu6b": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{存|ぞん}じません 。」",
+  "en": ""
+ },
+ "challenges:sea.fog#wn6tza": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{霧|きり} の {中|なか} の {灯|ひ}",
+  "en": "A light in the fog"
+ },
+ "challenges:sea.fog#6djvcs": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "かいず の しるし ： ひかり みっつ ＝ しおがらす の みさき 。 ひかり ふたつ ＝ くろいわ 。 ／ きり の むこう で 、 ひかり が みっつ 。",
+  "en": ""
+ },
+ "challenges:sea.fog#gd1ppv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "しおがらす の みさき",
+  "en": ""
+ },
+ "challenges:sea.fog#1mksueg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "くろいわ",
+  "en": ""
+ },
+ "challenges:sea.fog#jqn6lf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ことのはじま",
+  "en": ""
+ },
+ "challenges:sea.fog#16fyfts": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{海図|かいず} の {印|しるし} ： {三回|さんかい} {光|ひか}る ＝ {潮硝子|しおがらす} の {岬|みさき} 。 {二回|にかい} {光|ひか}る ＝ {黒岩|くろいわ} 。 ／ {霧|きり} の {向|む}こう で 、 {灯|ひ} が {三回|さんかい} {光|ひか}った 。",
+  "en": ""
+ },
+ "challenges:sea.fog#uoa2qv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{潮硝子|しおがらす} の {岬|みさき} の {灯台|とうだい}",
+  "en": ""
+ },
+ "challenges:sea.fog#1gjhile": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{黒岩|くろいわ} の {灯|ひ}",
+  "en": ""
+ },
+ "challenges:sea.fog#1fa32vw": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{漁船|ぎょせん} の {灯|あか}り",
+  "en": ""
+ },
+ "challenges:sea.fog#m8qj6v": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{海図|かいず} に よると 、 {潮硝子|しおがらす} の {岬|みさき} は {三回|さんかい} 、 {黒岩|くろいわ} は {二回|にかい} {光|ひか}る と いう 。 {今|いま} 、 {右手|みぎて} で {二回|にかい} {光|ひか}った 。",
+  "en": ""
+ },
+ "challenges:sea.fog#1bgy5zj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{右|みぎ} は {黒岩|くろいわ} 。 {岬|みさき} は もっと {先|さき}",
+  "en": ""
+ },
+ "challenges:sea.fog#mrd9tb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{右|みぎ} は {潮硝子|しおがらす} の {岬|みさき}",
+  "en": ""
+ },
+ "challenges:sea.fog#23ip5q": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "どちら か {分|わ}からない",
+  "en": ""
+ },
+ "challenges:sea.fog#j30poo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{灯台|とうだい} {表|ひょう} ： 「{潮硝子|しおがらす} {岬|みさき} ・ {群閃光|ぐんせんこう} {三|さん} ・ {毎|まい} {十秒|じゅうびょう}」",
+  "en": ""
+ },
+ "challenges:sea.fog#ws7u4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{十秒|じゅうびょう} ごと に 、 {三回|さんかい} {続|つづ}けて {光|ひか}る",
+  "en": ""
+ },
+ "challenges:sea.fog#tjgui8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{三秒|さんびょう} ごと に {一回|いっかい} {光|ひか}る",
+  "en": ""
+ },
+ "challenges:sea.fog#14igqzy": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{十回|じゅっかい} {光|ひか}って 、 {三秒|さんびょう} {消|き}える",
+  "en": ""
+ },
+ "challenges:sea.cargo#n3tchh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{流|なが}れて きた {木箱|きばこ}",
+  "en": "A drifting crate"
+ },
+ "challenges:sea.cargo#vr7hzr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ふだ ： 「われもの ・ やおばし の とりひきじょ まで」",
+  "en": ""
+ },
+ "challenges:sea.cargo#vvv76a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "やおばし",
+  "en": ""
+ },
+ "challenges:sea.cargo#w6hoji": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "しおがらす",
+  "en": ""
+ },
+ "challenges:sea.cargo#jqn6lf": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ことのはじま",
+  "en": ""
+ },
+ "challenges:sea.cargo#13bjml2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{札|ふだ} ： 「{割|わ}れ{物|もの} ・ {八百橋|やおばし} {取引所|とりひきじょ} {行|ゆ}き」",
+  "en": ""
+ },
+ "challenges:sea.cargo#1l473e0": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{割|わ}れる {物|もの} 。 {八百橋|やおばし} の {取引所|とりひきじょ} へ",
+  "en": ""
+ },
+ "challenges:sea.cargo#sj86kh": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{食|た}べ{物|もの} 。 {潮硝子|しおがらす} へ",
+  "en": ""
+ },
+ "challenges:sea.cargo#4cd0zx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{割|わ}れる {物|もの} 。 {取引所|とりひきじょ} から",
+  "en": ""
+ },
+ "challenges:sea.cargo#1iysjge": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{札|ふだ} ： 「{割|わ}れ{物|もの} ・ {八百橋|やおばし} {取引所|とりひきじょ} {行|ゆ}き 。 {差出人|さしだしにん} ： {潮硝子|しおがらす} アサヒ {硝子|がらす} {工房|こうぼう}」",
+  "en": ""
+ },
+ "challenges:sea.cargo#lg31m8": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "アサヒ の {工房|こうぼう} から 、 {八百橋|やおばし} の {取引所|とりひきじょ} へ",
+  "en": ""
+ },
+ "challenges:sea.cargo#1qor0rb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{取引所|とりひきじょ} から 、 アサヒ の {工房|こうぼう} へ",
+  "en": ""
+ },
+ "challenges:sea.cargo#i66yv2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "アサヒ さん が {自分|じぶん} に {送|おく}った",
+  "en": ""
+ },
+ "challenges:sea.cargo#1iafpth": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{札|ふだ} ： 「{割|わ}れ{物|もの} ・ {天地無用|てんちむよう}」",
+  "en": ""
+ },
+ "challenges:sea.cargo#ogzyfz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{上下|じょうげ} を {逆|ぎゃく} に しない よう に 、 その まま {上|あ}げる",
+  "en": ""
+ },
+ "challenges:sea.cargo#1r5y7qo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "どちら を {上|うえ} に して も いい",
+  "en": ""
+ },
+ "challenges:sea.cargo#qza952": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{開|あ}けて {中身|なかみ} を {確|たし}かめる",
+  "en": ""
+ },
+ "challenges:sea.bird#1wsmfgi": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{鴎|かもめ} の {手紙|てがみ}",
+  "en": "The gull's message"
+ },
+ "challenges:sea.bird#1ykp27p": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「しおり より 。 しお が かわる 。 はやめ に みなと へ 。」",
+  "en": ""
+ },
+ "challenges:sea.bird#d5b37x": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "しお が かわる から 、 はやく みなと へ",
+  "en": ""
+ },
+ "challenges:sea.bird#mjaoa5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "みなと が しまって いる",
+  "en": ""
+ },
+ "challenges:sea.bird#sr5m98": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "しおり が ふね に のりたい",
+  "en": ""
+ },
+ "challenges:sea.bird#1rya0wu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「シオリ より 。 {昼|ひる} から {潮|しお} が {変|か}わります 。 {早|はや}め に {港|みなと} へ {入|はい}って ください 。」",
+  "en": ""
+ },
+ "challenges:sea.bird#19q5noa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{昼|ひる} {前|まえ} に {港|みなと} に {入|はい}って ほしい",
+  "en": ""
+ },
+ "challenges:sea.bird#eo6q3a": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{昼|ひる} から {沖|おき} へ {出|で}て ほしい",
+  "en": ""
+ },
+ "challenges:sea.bird#63jy9r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{潮|しお} の {本|ほん} を {持|も}って きて ほしい",
+  "en": ""
+ },
+ "challenges:sea.bird#suxo83": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「シオリ より 。 {潮見|しおみ} の {記録|きろく} に よると 、 {今日|きょう} は {昼|ひる} から {潮|しお} が {速|はや}く なる そう です 。」",
+  "en": ""
+ },
+ "challenges:sea.bird#j72ldz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{昼|ひる} から 、 {潮|しお} の {流|なが}れ が {速|はや}く なる",
+  "en": ""
+ },
+ "challenges:sea.bird#b3oilr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{昼|ひる} から 、 {潮|しお} が {止|と}まる",
+  "en": ""
+ },
+ "challenges:sea.bird#1t2zcse": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{潮見|しおみ} の {記録|きろく} が なくなった",
+  "en": ""
+ },
+ "challenges:sea.bird#21sgx5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "「{夕刻|ゆうこく} より {潮|しお} {変|か}わる 。 {早|はや}め の {入港|にゅうこう} を {勧|すす}む 。 シオリ」",
+  "en": ""
+ },
+ "challenges:sea.bird#nf07ym": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{夕方|ゆうがた} に {潮|しお} が {変|か}わる ので 、 {早|はや}く {港|みなと} に {入|はい}る ほう が いい",
+  "en": ""
+ },
+ "challenges:sea.bird#wj2wfa": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{夕方|ゆうがた} まで {港|みなと} に {入|はい}らない ほう が いい",
+  "en": ""
+ },
+ "challenges:sea.bird#zks69h": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{潮|しお} の {変|か}わり{目|め} に {出港|しゅっこう} せよ",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#6irra7": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{帆|ほ} を {縫|ぬ}う",
+  "en": "Stitching the sail"
+ },
+ "challenges:sea.mend_sail#njetj3": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ほ が やぶれた 。",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#myiz3r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ぬう",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#15o0xak": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "むすぶ",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#rxetlm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "しめる",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#7bqixq": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{帆|ほ} の",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#mb75oo": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{裂|さ}け{目|め} を",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#1fv6mw4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{縫|ぬ}う",
+  "en": "to sew, to stitch"
+ },
+ "challenges:sea.mend_sail#1alzxzu": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{帆|ほ} が {裂|さ}けた 。 {針|はり} と {糸|いと} で □□ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#6k0n0k": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "縫う",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#tz3y77": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{針|はり} と {糸|いと} を {取|と}って くれ 。 {帆|ほ} を {縫|ぬ}う 。",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#1pcg4l2": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{綱|つな} を {結|むす}んで くれ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_sail#zk2x6s": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{帆|ほ} を {縫|ぬ}わせて いただけ ませんか 。",
+  "en": ""
+ },
+ "challenges:sea.mend_line#ugocbv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{綱|つな} を {結|むす}ぶ",
+  "en": "Tying a line"
+ },
+ "challenges:sea.mend_line#1k1yr3x": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "つな が きれそう 。",
+  "en": ""
+ },
+ "challenges:sea.mend_line#zt4qfi": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "むすびなおす",
+  "en": ""
+ },
+ "challenges:sea.mend_line#myiz3r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ぬう",
+  "en": ""
+ },
+ "challenges:sea.mend_line#w802ql": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ふさぐ",
+  "en": ""
+ },
+ "challenges:sea.mend_line#ev7xme": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{傷|いた}んだ ところ を",
+  "en": ""
+ },
+ "challenges:sea.mend_line#ly91ai": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{切|き}って",
+  "en": ""
+ },
+ "challenges:sea.mend_line#11yiytk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{結|むす}び{直|なお}す",
+  "en": ""
+ },
+ "challenges:sea.mend_line#1ew9wm5": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{綱|つな} が {擦|す}り{切|き}れた 。 {新|あたら}しく □□□ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_line#15o0xak": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "むすぶ",
+  "en": ""
+ },
+ "challenges:sea.mend_line#dbgmz": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "結ぶ",
+  "en": ""
+ },
+ "challenges:sea.mend_line#53edo6": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{結|むす}ぶ",
+  "en": "to tie, to knot"
+ },
+ "challenges:sea.mend_line#mzug6f": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{綱|つな} を {結|むす}び{直|なお}す から 、 {帆|ほ} を {押|お}さえて いて くれ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_line#1xcv3u9": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{帆|ほ} を {縫|ぬ}う から 、 {針|はり} を くれ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_line#4tibmr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{綱|つな} が 、 {結|むす}ばれた 。",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#1fgs9k": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{舵|かじ} を {締|し}める",
+  "en": "The rudder's fastener"
+ },
+ "challenges:sea.mend_rudder#1qfpq60": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "かじ が ぐらぐら する 。",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#rxetlm": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "しめる",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#myiz3r": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ぬう",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#15o0xak": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "むすぶ",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#1uusytj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{木槌|きづち} で",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#z0yo5w": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{舵|かじ} の {留|と}め{具|ぐ} を",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#j97lsg": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{打|う}ち{込|こ}む",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#tjytcj": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{舵|かじ} の {留|と}め{具|ぐ} が {緩|ゆる}んだ 。 しっかり □□□ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#1n9nepv": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "締める",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#1lv112m": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{締|し}める",
+  "en": "to tighten, to fasten"
+ },
+ "challenges:sea.mend_rudder#11wy7dk": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{留|と}め{具|ぐ} を {締|し}め{直|なお}して 、 {舵|かじ} が ぐらつかない か {確|たし}かめる 。",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#qkvvan": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{舵|かじ} を {外|はず}して 、 {港|みなと} まで {漕|こ}ぐ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_rudder#9wz6yx": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{留|と}め{具|ぐ} を {抜|ぬ}いて 、 {舵|かじ} を {軽|かる}く する 。",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#m5l4m": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{蓋|ふた} を {塞|ふさ}ぐ",
+  "en": "The leaking hatch"
+ },
+ "challenges:sea.mend_hatch#klw02d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ふた の すきま から 、 みず が はいる 。",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#1ob5rgb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "すきま を ふさぐ",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#1diy57x": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ふた を あける",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#1g9rit4": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "みず を のむ",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#9mt78e": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{布|ぬの} と {楔|くさび} で",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#18v831z": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{隙間|すきま} を",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#anaycr": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{塞|ふさ}ぐ",
+  "en": "to stop up, to plug"
+ },
+ "challenges:sea.mend_hatch#1lwdj5d": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{蓋|ふた} の {隙間|すきま} を {布|ぬの} で □□□ 。",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#w802ql": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "ふさぐ",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#11tar2b": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "塞ぐ",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#kh1lbb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{先|さき} に {隙間|すきま} を {塞|ふさ}ごう 。 {水|みず} は その {後|あと} で {汲|く}み{出|だ}せば いい 。",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#1vqe38f": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{先|さき} に {水|みず} を {全部|ぜんぶ} {汲|く}み{出|だ}そう 。",
+  "en": ""
+ },
+ "challenges:sea.mend_hatch#1n54xdb": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{何|なに} も しない で {港|みなと} へ {急|いそ}ごう 。",
+  "en": ""
+ },
+ "maps:sea.coast#1r1e738": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{沖|おき}",
+  "en": "The Coastal Sea"
+ },
+ "maps:sea.cabin#t1377": {
+  "status": "self-reviewed",
+  "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
+  "jp": "{船室|せんしつ}",
+  "en": "The Cabin"
+ }
+}
