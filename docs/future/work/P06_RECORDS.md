@@ -23,7 +23,8 @@ maps are unchanged; the records browser test checks it.
 | Shogi: the ladder (eight lessons, hasami shogi, the small board, mini-shogi, shogi with handicaps), mate-in-one puzzles, Show moves, Why?, Take back, three levels, no clock | C12 | `src/engine/72b_shogi.js` (`RB.shogi`, `RB.hasami`), `src/content/pastimes/`, `src/ui/88_shogi.js`, `src/styles/65_pastimes.css` | Done |
 | Fuku's bench: after her nameplate she walks down and offers a game; the board opens with her | C12, K7 | `src/content/pastimes/20_scenes.js`, the hooks in `src/ui/88_shogi.js`; one gated line in `sg.bench_fuku` | Done (F-24) |
 | The Distractions tab: an index of the games met, one page per game round its key art (what it is, how to play, where, records), Play with your companion; shiritori's card moves here from Company; fishing's page once the survey has begun | K7, K10 | `src/ui/50_menu.js` (`addSection`), `src/ui/68b_distractions.js`, `src/content/pastimes/10_registry.js`, `src/ui/87_wordplay_links.js` | Done (F-23) |
-| Hanafuda (koi-koi), karuta, shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
+| Hanafuda: koi-koi with the real deck drawn in code (48 cards), the months and their flowers, the sets with names and readings, matching help, stop or koi-koi, a three-level partner, games of one to twelve months; met through the chapter that teaches it (flag `pt_hanafuda`) | C12 | `src/engine/72d_hanafuda.js`, `src/ui/88b_hanafuda.js`, `88c_hanafuda_cards.js`, `src/content/pastimes/30_hanafuda.js` | Done (F-25) |
+| Karuta, shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
 | The book shell on the remaining pages | U03–U05 | — | Next |
 
 ## Shogi
@@ -50,7 +51,7 @@ maps are unchanged; the records browser test checks it.
 
 F-21 where the records appear before the release; F-22 shogi's piece orientation, Take back on a finished game, and
 stamps after Take back; F-23 the Distractions tab (what it lists, where the companion's games live, when a record is
-made); F-24 when Fuku offers a game.
+made); F-24 when Fuku offers a game; F-25 koi-koi's house rules.
 
 ## Found and fixed on the way
 
@@ -74,7 +75,9 @@ made); F-24 when Fuku offers a game.
 | The tab's gating, the index, records never made by reading, older saves unchanged, Fuku's gate, the Japanese | `node tests/run-unit.mjs distractions` | 19/0 |
 | Save fixtures load exactly as they were | `node tests/run-unit.mjs fixtures_campaign` | 148/0 |
 | Distractions in the browser: five tabs in a six-chapter journey; the sixth tab, a page, Play with Mio and back to the Ledger; Company's pointer; phone index/page/back; Fuku's bench in both editions | `node tests/e2e/distractions.mjs` | 4/0 (captures `docs/screenshots/distractions/`) |
-| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 522 lines, 0 without an entry |
+| Hanafuda: the deck, the deal, taking by month, the sets and house rules, stop and koi-koi, doubling, 1,200 rounds with nothing lost, the levels, the words | `node tests/run-unit.mjs hanafuda` | 40/0 |
+| Hanafuda in the browser: the months (48 cards), the sets, a game (take one, choose between two, lay down, the partner, a set, stop, the record), phone, its Distractions page | `node tests/e2e/hanafuda.mjs` | 3/0 (captures `docs/screenshots/hanafuda/`) |
+| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 618 lines, 0 without an entry |
 
 **Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own
 playtest note).

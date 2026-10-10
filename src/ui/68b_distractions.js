@@ -59,6 +59,19 @@ RB.ui.distractions = (function () {
         '<path d="M' + fx + ' ' + (fy - 10) + 'v8" stroke="#a51d12" stroke-width="3" stroke-linecap="round"/>';
       return g;
     },
+    hanafuda: (w, h) => {
+      // a few cards fanned on a dark red cloth: the crane, the curtain, the moon, the boar, the phoenix
+      const HC = RB.ui.hanafudaCards;
+      let g = '<rect width="' + w + '" height="' + h + '" fill="#6e1f1a"/><rect width="' + w + '" height="' + h + '" fill="url(#ds-grain)" opacity="0.18"/>';
+      if (!HC || !RB.hanafuda) return g;
+      g += '<defs><clipPath id="hf-clip"><rect width="' + HC.W + '" height="' + HC.H + '" rx="4"/></clipPath></defs>';
+      const ch = h * 0.86, cw = ch * HC.W / HC.H, ids = ['c01', 'c09', 'c29', 'c25', 'c45'];
+      ids.forEach((id, i) => {
+        const a = (i - 2) * 11, x = w / 2 + (i - 2) * cw * 0.62 - cw / 2, y = h * 0.1 + Math.abs(i - 2) * 3;
+        g += '<g transform="rotate(' + a + ' ' + (x + cw / 2) + ' ' + (y + ch) + ')">' + HC.svg(id).replace('<svg class="hf-svg"', '<svg x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + cw.toFixed(1) + '" height="' + ch.toFixed(1) + '"') + '</g>';
+      });
+      return g;
+    },
   };
   function art(id, w, h, cls) {
     const f = ART[id];

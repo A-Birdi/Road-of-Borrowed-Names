@@ -37,3 +37,52 @@ RB.lex.add(RB.lex.parseTable(`
 RB.lex.add(RB.lex.parseTable(`
 寂しがる|さびしがる|v5r|I|to feel lonely, to miss company
 `), 'pastimes');
+// hanafuda: the cards, the months' flowers and the sets
+RB.lex.add(RB.lex.parseTable(`
+花札|はなふだ|n|I|hanafuda, flower cards (a 48-card deck, four for each month)
+札|ふだ|n|I|a card, a tag, a slip
+こいこい||n|A|koi-koi (the hanafuda game; also the call to play on)
+短冊|たんざく|n|I|a ribbon card (in hanafuda); a strip of paper for a poem
+赤短|あかたん|n|A|the poem ribbons (in hanafuda: three red ribbons with poems)
+青短|あおたん|n|A|the blue ribbons (in hanafuda)
+タネ||n|A|animal cards (in hanafuda)
+タン||n|A|ribbon cards (in hanafuda)
+カス||n|A|plain cards (in hanafuda; literally "dregs")
+五光|ごこう|n|A|five brights (a hanafuda set)
+四光|しこう|n|A|four brights (a hanafuda set)
+雨四光|あめしこう|n|A|rainy four brights (a hanafuda set with the rain card)
+三光|さんこう|n|A|three brights (a hanafuda set)
+猪鹿蝶|いのしかちょう|n|A|boar, deer and butterflies (a hanafuda set)
+花見|はなみ|n|I|cherry-blossom viewing
+月見|つきみ|n|I|moon viewing
+一杯|いっぱい|n|E|a cupful, a drink; full
+鶯|うぐいす|n|A|bush warbler (a songbird)
+ほととぎす||n|A|lesser cuckoo (a bird of early summer)
+八橋|やつはし|n|A|a plank bridge in a zigzag (the iris card's bridge)
+猪|いのしし|n|I|wild boar
+雁|かり|n|A|wild goose
+盃|さかずき|n|A|sake cup
+小野道風|おののみちかぜ|name|A|Ono no Michikaze (a calligrapher, the man with the umbrella on the willow card)
+鳳凰|ほうおう|n|A|phoenix (the Chinese phoenix)
+藤|ふじ|n|I|wisteria
+菖蒲|あやめ|n|A|iris (the flower of May in hanafuda)
+菖蒲|しょうぶ|n|A|sweet flag (the same kanji as あやめ, iris)
+牡丹|ぼたん|n|A|peony
+萩|はぎ|n|A|bush clover
+芒|すすき|n|A|pampas grass (Japanese silver grass)
+菊|きく|n|I|chrysanthemum
+柳|やなぎ|n|I|willow
+桐|きり|n|A|paulownia (a tree)
+一月|いちがつ|n|F|January
+二月|にがつ|n|F|February
+三月|さんがつ|n|F|March
+四月|しがつ|n|F|April
+五月|ごがつ|n|F|May
+六月|ろくがつ|n|F|June
+七月|しちがつ|n|F|July
+八月|はちがつ|n|F|August
+九月|くがつ|n|F|September
+十月|じゅうがつ|n|F|October
+十一月|じゅういちがつ|n|F|November
+十二月|じゅうにがつ|n|F|December
+`), 'pastimes');

@@ -125,6 +125,48 @@
   "jp": "{玉|ぎょく} が {詰|つ}めば {勝|か}ち 。",
   "en": "Attack the king so it has nowhere safe to go, and the game is yours: checkmate."
  },
+ "pastime:hanafuda:page#1177hkv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{花札|はなふだ}",
+  "en": "Hanafuda"
+ },
+ "pastime:hanafuda:page#x6qmnb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{道連|みちづ}れ と なら 、 {安全|あんぜん} な {場所|ばしょ} で どこ でも",
+  "en": "On a cloth, anywhere safe with your companion."
+ },
+ "pastime:hanafuda:page#8cqy4p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{十二|じゅうに}か{月|げつ} の {花|はな} の {札|ふだ} 。",
+  "en": "Forty-eight flower cards, four for each month of the year. The game is koi-koi: match the months, collect sets, and decide when to stop."
+ },
+ "pastime:hanafuda:page#1k4lbe3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{同|おな}じ {月|つき} の {札|ふだ} を {取|と}る 。",
+  "en": "Play a card from your hand onto a card of the same month on the field, and take both. No match: lay it down."
+ },
+ "pastime:hanafuda:page#674vss": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{山|やま} から {一枚|いちまい} めくる 。",
+  "en": "Then turn the top card of the pile: it takes a card of its month too, or stays on the field."
+ },
+ "pastime:hanafuda:page#8uf0t7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{役|やく} が できたら 、 {勝負|しょうぶ} か こいこい か 。",
+  "en": "Collect a set and choose: stop and score it, or call koi-koi and play on for more."
+ },
+ "pastime:hanafuda:page#3mtqd9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{点|てん} は {点|てん} だけ 。",
+  "en": "Points are only points: hanafuda is played here for the flowers and the fun of it."
+ },
  "pastime:fishing:page#oandp5": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
@@ -244,6 +286,456 @@
   "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
   "jp": "{一手詰|いってづ}め 。 {歩|ふ} が {成|な}れば 、 {金|きん} の よう に {動|うご}く 。",
   "en": "Mate in one: the pawn. A pawn that promotes moves like a gold."
+ },
+ "pastime:hanafuda:cards#bl9q4v": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{松|まつ} に {鶴|つる}",
+  "en": "Pine with crane"
+ },
+ "pastime:hanafuda:cards#3rasje": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{松|まつ} に {赤短|あかたん}",
+  "en": "Pine with poem ribbon"
+ },
+ "pastime:hanafuda:cards#11y0wi5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{松|まつ} の カス",
+  "en": "Pine"
+ },
+ "pastime:hanafuda:cards#rzthym": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{梅|うめ} に {鶯|うぐいす}",
+  "en": "Plum with bush warbler"
+ },
+ "pastime:hanafuda:cards#i3qkay": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{梅|うめ} に {赤短|あかたん}",
+  "en": "Plum with poem ribbon"
+ },
+ "pastime:hanafuda:cards#1oeye4d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{梅|うめ} の カス",
+  "en": "Plum"
+ },
+ "pastime:hanafuda:cards#10nnk9t": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桜|さくら} に {幕|まく}",
+  "en": "Cherry with curtain"
+ },
+ "pastime:hanafuda:cards#1t8zycb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桜|さくら} に {赤短|あかたん}",
+  "en": "Cherry with poem ribbon"
+ },
+ "pastime:hanafuda:cards#1wtnzoi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桜|さくら} の カス",
+  "en": "Cherry"
+ },
+ "pastime:hanafuda:cards#11zhs3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{藤|ふじ} に ほととぎす",
+  "en": "Wisteria with cuckoo"
+ },
+ "pastime:hanafuda:cards#18yd5dl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{藤|ふじ} に {短冊|たんざく}",
+  "en": "Wisteria with ribbon"
+ },
+ "pastime:hanafuda:cards#1dvm7bg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{藤|ふじ} の カス",
+  "en": "Wisteria"
+ },
+ "pastime:hanafuda:cards#28jaf5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菖蒲|あやめ} に {八橋|やつはし}",
+  "en": "Iris with plank bridge"
+ },
+ "pastime:hanafuda:cards#1oevtkh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菖蒲|あやめ} に {短冊|たんざく}",
+  "en": "Iris with ribbon"
+ },
+ "pastime:hanafuda:cards#18ywmn8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菖蒲|あやめ} の カス",
+  "en": "Iris"
+ },
+ "pastime:hanafuda:cards#ev7auq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{牡丹|ぼたん} に {蝶|ちょう}",
+  "en": "Peony with butterflies"
+ },
+ "pastime:hanafuda:cards#1k6ytzx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{牡丹|ぼたん} に {青短|あおたん}",
+  "en": "Peony with blue ribbon"
+ },
+ "pastime:hanafuda:cards#1hnap19": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{牡丹|ぼたん} の カス",
+  "en": "Peony"
+ },
+ "pastime:hanafuda:cards#1r6p6by": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{萩|はぎ} に {猪|いのしし}",
+  "en": "Bush clover with boar"
+ },
+ "pastime:hanafuda:cards#1c1g63q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{萩|はぎ} に {短冊|たんざく}",
+  "en": "Bush clover with ribbon"
+ },
+ "pastime:hanafuda:cards#14qqtf1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{萩|はぎ} の カス",
+  "en": "Bush clover"
+ },
+ "pastime:hanafuda:cards#1e7aq3y": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{芒|すすき} に {月|つき}",
+  "en": "Pampas grass with the moon"
+ },
+ "pastime:hanafuda:cards#bskj87": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{芒|すすき} に {雁|かり}",
+  "en": "Pampas grass with geese"
+ },
+ "pastime:hanafuda:cards#pkgbeq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{芒|すすき} の カス",
+  "en": "Pampas grass"
+ },
+ "pastime:hanafuda:cards#oyib8s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菊|きく} に {盃|さかずき}",
+  "en": "Chrysanthemum with sake cup"
+ },
+ "pastime:hanafuda:cards#1eoi6r3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菊|きく} に {青短|あおたん}",
+  "en": "Chrysanthemum with blue ribbon"
+ },
+ "pastime:hanafuda:cards#7m07in": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菊|きく} の カス",
+  "en": "Chrysanthemum"
+ },
+ "pastime:hanafuda:cards#te8jv8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{紅葉|もみじ} に {鹿|しか}",
+  "en": "Maple with deer"
+ },
+ "pastime:hanafuda:cards#1lu1fxc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{紅葉|もみじ} に {青短|あおたん}",
+  "en": "Maple with blue ribbon"
+ },
+ "pastime:hanafuda:cards#jcym": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{紅葉|もみじ} の カス",
+  "en": "Maple"
+ },
+ "pastime:hanafuda:cards#dg9hf4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{柳|やなぎ} に {小野道風|おののみちかぜ}",
+  "en": "Willow with the poet in the rain"
+ },
+ "pastime:hanafuda:cards#5tv8l5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{柳|やなぎ} に {燕|つばめ}",
+  "en": "Willow with swallow"
+ },
+ "pastime:hanafuda:cards#1rn1kkx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{柳|やなぎ} に {短冊|たんざく}",
+  "en": "Willow with ribbon"
+ },
+ "pastime:hanafuda:cards#z6jp9g": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{柳|やなぎ} の カス",
+  "en": "Willow with lightning"
+ },
+ "pastime:hanafuda:cards#1ccop1j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桐|きり} に {鳳凰|ほうおう}",
+  "en": "Paulownia with phoenix"
+ },
+ "pastime:hanafuda:cards#1nfjct2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桐|きり} の カス",
+  "en": "Paulownia"
+ },
+ "pastime:hanafuda:cards#uf3fsl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{松|まつ}",
+  "en": "Pine"
+ },
+ "pastime:hanafuda:cards#1khew7g": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{一月|いちがつ}",
+  "en": "January"
+ },
+ "pastime:hanafuda:cards#a7uxk5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{梅|うめ}",
+  "en": "Plum blossom"
+ },
+ "pastime:hanafuda:cards#1plv6hy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{二月|にがつ}",
+  "en": "February"
+ },
+ "pastime:hanafuda:cards#k2pjb4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桜|さくら}",
+  "en": "Cherry blossom"
+ },
+ "pastime:hanafuda:cards#obd2oc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{三月|さんがつ}",
+  "en": "March"
+ },
+ "pastime:hanafuda:cards#370f7y": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{藤|ふじ}",
+  "en": "Wisteria"
+ },
+ "pastime:hanafuda:cards#rg2a7r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{四月|しがつ}",
+  "en": "April"
+ },
+ "pastime:hanafuda:cards#8uq8g6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菖蒲|あやめ}",
+  "en": "Iris"
+ },
+ "pastime:hanafuda:cards#16mdrk1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{五月|ごがつ}",
+  "en": "May"
+ },
+ "pastime:hanafuda:cards#kmqizp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{牡丹|ぼたん}",
+  "en": "Peony"
+ },
+ "pastime:hanafuda:cards#s9mep8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{六月|ろくがつ}",
+  "en": "June"
+ },
+ "pastime:hanafuda:cards#10ge51x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{萩|はぎ}",
+  "en": "Bush clover"
+ },
+ "pastime:hanafuda:cards#ettp8q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{七月|しちがつ}",
+  "en": "July"
+ },
+ "pastime:hanafuda:cards#1t8skm8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{芒|すすき}",
+  "en": "Pampas grass"
+ },
+ "pastime:hanafuda:cards#1ay6kju": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{八月|はちがつ}",
+  "en": "August"
+ },
+ "pastime:hanafuda:cards#8omxur": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{菊|きく}",
+  "en": "Chrysanthemum"
+ },
+ "pastime:hanafuda:cards#1bh7ad9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{九月|くがつ}",
+  "en": "September"
+ },
+ "pastime:hanafuda:cards#fpycak": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{紅葉|もみじ}",
+  "en": "Maple"
+ },
+ "pastime:hanafuda:cards#1dlw2uv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{十月|じゅうがつ}",
+  "en": "October"
+ },
+ "pastime:hanafuda:cards#1mmouo6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{柳|やなぎ}",
+  "en": "Willow"
+ },
+ "pastime:hanafuda:cards#djffh8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{十一月|じゅういちがつ}",
+  "en": "November"
+ },
+ "pastime:hanafuda:cards#3hpwb8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{桐|きり}",
+  "en": "Paulownia"
+ },
+ "pastime:hanafuda:cards#1xankby": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{十二月|じゅうにがつ}",
+  "en": "December"
+ },
+ "pastime:hanafuda:cards#hbr705": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{光|ひかり}",
+  "en": "Bright"
+ },
+ "pastime:hanafuda:cards#1kglzp5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "タネ",
+  "en": "Animals"
+ },
+ "pastime:hanafuda:cards#j486ot": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{短冊|たんざく}",
+  "en": "Ribbon"
+ },
+ "pastime:hanafuda:cards#1exmfzd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "カス",
+  "en": "Plain cards"
+ },
+ "pastime:hanafuda:cards#b2td9j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{五光|ごこう}",
+  "en": "Five brights"
+ },
+ "pastime:hanafuda:cards#p2480t": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{四光|しこう}",
+  "en": "Four brights"
+ },
+ "pastime:hanafuda:cards#mb6lp0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{雨四光|あめしこう}",
+  "en": "Rainy four brights"
+ },
+ "pastime:hanafuda:cards#nv130g": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{三光|さんこう}",
+  "en": "Three brights"
+ },
+ "pastime:hanafuda:cards#ftlk8y": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{猪鹿蝶|いのしかちょう}",
+  "en": "Boar, deer and butterflies"
+ },
+ "pastime:hanafuda:cards#qcb7bp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{花見|はなみ} で {一杯|いっぱい}",
+  "en": "Sake under the blossoms"
+ },
+ "pastime:hanafuda:cards#1suc150": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{月見|つきみ} で {一杯|いっぱい}",
+  "en": "Sake under the moon"
+ },
+ "pastime:hanafuda:cards#pjzab1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{赤短|あかたん} ・ {青短|あおたん}",
+  "en": "Poem and blue ribbons"
+ },
+ "pastime:hanafuda:cards#1ecw4th": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{赤短|あかたん}",
+  "en": "Poem ribbons"
+ },
+ "pastime:hanafuda:cards#1iz0xwi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "{青短|あおたん}",
+  "en": "Blue ribbons"
+ },
+ "pastime:hanafuda:cards#1iuvyf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, the standard names of the hanafuda cards and koi-koi sets, and textbook grammar (P06)",
+  "jp": "タン",
+  "en": "Ribbons"
  },
  "pastime:shogi:board#1x2emn0": {
   "status": "self-reviewed",
