@@ -27,7 +27,8 @@ maps are unchanged; the records browser test checks it.
 | Karuta: iroha karuta, 35 real proverbs (Edo set, two from other traditional sets, named), turn-based, read a word at a time with its first sound first, the device's own voice if chosen, お手つき, an opt-in speed mode, each proverb shown whole with its meaning, the proverbs you take kept; a stamp for a first game played to the end | C12 | `src/engine/72e_karuta.js`, `src/ui/88d_karuta.js`, `src/content/pastimes/40_karuta.js` | Done |
 | K10: in a twelve-chapter journey, the Words contents in three sections (My learning, Reference, Practice) and the Journey's keepsakes, practice mementos and fishing notes under one Mementos entry with its pages a row below; a six-chapter journey's Ledger as it was | K10 | `src/ui/50_menu.js` (`journeyNav`, `WORD_SECTIONS`) | Done (the sea chart comes with P11) |
 | K8: the chosen companion's whole set viewable once the story is finished; every set on the Main Menu | K8 | `RB.volume` | Done as a rule (the bond and ending pages come with the chapters) |
-| Shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
+| Shiritori v2: themed word sets (`RB.wordplay.addTheme`) offered when a chapter opens them (sea words after sailing, festival words, a set per chapter), built from the installed banks like the journey bank, recorded with the theme, never a stage, never Bond | C12 | `src/engine/73_wordplay.js`, `src/ui/87_wordplay.js` | Done (the sets themselves come with their chapters; the festival tournament with P09) |
+| Festival game support | C10/C11 | — | Next |
 | The book shell on the remaining pages | U03–U05 | — | Next |
 
 ## Shogi
@@ -85,6 +86,8 @@ made); F-24 when Fuku offers a game; F-25 koi-koi's house rules.
 | Hanafuda in the browser: the months (48 cards), the sets, a game (take one, choose between two, lay down, the partner, a set, stop, the record), phone, its Distractions page | `node tests/e2e/hanafuda.mjs` | 3/0 (captures `docs/screenshots/hanafuda/`) |
 | Karuta: the deck (35, one per sound, iroha order, each beginning with its sound), the game (right, お手つき, the speed mode's reach, every card read once), the gate, the stamp, the words | `node tests/run-unit.mjs karuta` | 22/0 |
 | Karuta in the browser: a game word by word, right and wrong, to the end with the record and the stamp; the speed mode; all 35 at phone width; its Distractions page | `node tests/e2e/karuta.mjs` | 3/0 (captures `docs/screenshots/karuta/`) |
+| Shiritori's themed sets: gated, built from the theme's words only, recorded apart, never a stage | `node tests/run-unit.mjs wordplay_themes` | 13/0 |
+| Shiritori unchanged otherwise | `wordplay`, `wordplay_bond`, `shiritori`, `shiritori_banks`; browser `wordplay`, `wordplay_layout` | 329/0, 168/0, 152/0, 105/0; 82/0, 63/0 |
 | Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 664 lines, 0 without an entry |
 
 **Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own

@@ -156,6 +156,27 @@ RB.wordplay = (function () {
     for (const b of BANDS) { const bk = SH().bank(b); if (bk) for (const e of bk.entries) out[e.id] = e; }
     return out;
   }
+  // ---- themed word sets (expansion P06, C12 "Shiritori v2"): sea words after sailing, festival words, a set for a
+  // chapter. A theme names its words; its bank is built from the installed banks' entries for those words, like the
+  // journey bank, frozen when a game starts. Its games are recorded apart from the nine stages (r.themes, made on
+  // first play), never a stage and never Bond. The chapters add the themes (addTheme), each with when(s).
+  const THEMES = {};
+  const themeBand = (id) => 'theme:' + id;
+  const isTheme = (band) => typeof band === 'string' && band.indexOf('theme:') === 0 && !!THEMES[band.slice(6)];
+  function addTheme(id, def) {
+    if (!/^\w+$/.test(id)) throw new Error('wordplay theme id: letters, digits and _ only');
+    THEMES[id] = Object.assign({ id, words: [] }, def);
+    BAND[themeBand(id)] = { en: def.title.en, jp: def.title.jp, code: 'T' };
+    return THEMES[id];
+  }
+  const themes = (s) => Object.keys(THEMES).map((k) => THEMES[k]).filter((t) => { try { return !t.when || t.when(s); } catch (e) { return false; } });
+  function themePool(id) {
+    const t = THEMES[id];
+    if (!t) return [];
+    const want = new Set(t.words.map((w) => SH().norm(w)));
+    const all = allEntries();
+    return Object.keys(all).sort().map((k) => all[k]).filter((e) => e.forms.concat(SH().readingsOf(e)).some((f) => want.has(SH().norm(f))));
+  }
   // "encountered": introduced in ordinary learning, kept in the notebook, or shown with its meaning
   // at the table or in the primer. Never a claim of mastery.
   function encounteredEntry(s, e, words) {
@@ -184,6 +205,19 @@ RB.wordplay = (function () {
   }
   // setup: { format, band, level, support, goal }
   function bankFor(s, setup) {
+    if (isTheme(setup.band)) {
+      const id = setup.band.slice(6), srcs = installed();
+      if (!srcs.length) return { ok: false, why: 'The shiritori word banks are not installed in this copy of the game.', code: 'nobank' };
+      if (!themes(s).some((t) => t.id === id)) return { ok: false, why: 'That set of words is not open in this journey yet.', code: 'closed' };
+      const pool = themePool(id);
+      if (pool.length < 2) return { ok: false, why: 'Too few of this set\'s words are in the word banks.', code: 'tiny', size: pool.length };
+      const src = srcs.map((b) => SH().bank(b));
+      const version = 't.' + id + '.' + src.map((b) => b.id + '.' + b.version).join('+');
+      const bank = SH().buildBank({ id: 'theme_' + id, version, entries: pool.map((e) => Object.assign({}, e)), starters: [] });
+      bank.starters = journeyStarters(bank);
+      const small = bank.groupCount < LIMITS.smallBank || !bank.starters.length;
+      return { ok: true, bank, kind: 'theme', theme: id, size: bank.groupCount, small, certified: bank.starters.length > 0, src: src.map((b) => ({ id: b.id, version: b.version, hash: b.hash })) };
+    }
     if (setup.band === 'journey') {
       const srcs = installed();
       if (!srcs.length) return { ok: false, why: 'The shiritori word banks are not installed in this copy of the game.', code: 'nobank' };
@@ -207,7 +241,7 @@ RB.wordplay = (function () {
     const format = st.format || st.shiritoriFormat;
     const out = {
       format: format === 'cooperative' ? 'cooperative' : 'competitive',
-      band: BANDS.concat('journey').indexOf(st.band || st.shiritoriBand) >= 0 ? (st.band || st.shiritoriBand) : 'pocket',
+      band: BANDS.concat('journey').indexOf(st.band || st.shiritoriBand) >= 0 || (isTheme(st.band || st.shiritoriBand) && themes(s).some((t) => themeBand(t.id) === (st.band || st.shiritoriBand))) ? (st.band || st.shiritoriBand) : 'pocket',
       level: st.level || st.shiritoriLevel,
       support: (st.support || st.shiritoriSupport) === 'recall' ? 'recall' : 'open',
       goal: GOALS.indexOf(+(st.goal || st.shiritoriChain)) >= 0 ? +(st.goal || st.shiritoriChain) : 12,
@@ -596,6 +630,15 @@ RB.wordplay = (function () {
         result.coopFirst = g.done === 1;
       }
     }
+    if (a.kind === 'theme' && ok && reason !== 'abandoned' && reason !== 'incompatible-resume') {
+      const id = String(a.band).slice(6);
+      r.themes = r.themes || {};
+      const c = r.themes[id] || (r.themes[id] = { played: 0, won: 0, lost: 0, coop: 0, best: 0, last: null });
+      if (coop) { if (reason === 'cooperative-goal') c.coop++; }
+      else { c.played++; if (winner === 'pc') c.won++; else c.lost++; }
+      c.best = Math.max(c.best, cmoves);
+      c.last = { t: result.t, format: a.format, level: a.level, winner, reason, size: a.bank.size, session: a.session };
+    }
     if (a.kind === 'journey' && ok && reason !== 'abandoned' && reason !== 'incompatible-resume') {
       const c = r.customSummary;
       if (coop) { if (reason === 'cooperative-goal') c.coop++; }
@@ -830,6 +873,6 @@ RB.wordplay = (function () {
     ns, rec, peek, blankComp, normComp, norm, eligible, installed, bankFor, journeyPool, journeyStarters, snapOf, fromSnap, strategyVersion,
     normSetup, start, live, draft, playWord, cpuChoose, cpuCommit, noteSuggestion, noteInputAssist, concede, stopChain, abandon, suspend, resumed,
     verify, finish, reflection, deferReflection, reflect, line, mayComment, cells, supportLabel, transcripts, findTranscript, pin, unpin,
-    primer, markEncountered, recentThought, describe, combined, isCoop,
+    primer, markEncountered, recentThought, describe, combined, isCoop, addTheme, themes, themePool, isTheme,
   };
 })();

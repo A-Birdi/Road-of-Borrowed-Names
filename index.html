@@ -49741,6 +49741,27 @@ RB.wordplay = (function () {
     for (const b of BANDS) { const bk = SH().bank(b); if (bk) for (const e of bk.entries) out[e.id] = e; }
     return out;
   }
+  // ---- themed word sets (expansion P06, C12 "Shiritori v2"): sea words after sailing, festival words, a set for a
+  // chapter. A theme names its words; its bank is built from the installed banks' entries for those words, like the
+  // journey bank, frozen when a game starts. Its games are recorded apart from the nine stages (r.themes, made on
+  // first play), never a stage and never Bond. The chapters add the themes (addTheme), each with when(s).
+  const THEMES = {};
+  const themeBand = (id) => 'theme:' + id;
+  const isTheme = (band) => typeof band === 'string' && band.indexOf('theme:') === 0 && !!THEMES[band.slice(6)];
+  function addTheme(id, def) {
+    if (!/^\w+$/.test(id)) throw new Error('wordplay theme id: letters, digits and _ only');
+    THEMES[id] = Object.assign({ id, words: [] }, def);
+    BAND[themeBand(id)] = { en: def.title.en, jp: def.title.jp, code: 'T' };
+    return THEMES[id];
+  }
+  const themes = (s) => Object.keys(THEMES).map((k) => THEMES[k]).filter((t) => { try { return !t.when || t.when(s); } catch (e) { return false; } });
+  function themePool(id) {
+    const t = THEMES[id];
+    if (!t) return [];
+    const want = new Set(t.words.map((w) => SH().norm(w)));
+    const all = allEntries();
+    return Object.keys(all).sort().map((k) => all[k]).filter((e) => e.forms.concat(SH().readingsOf(e)).some((f) => want.has(SH().norm(f))));
+  }
   // "encountered": introduced in ordinary learning, kept in the notebook, or shown with its meaning
   // at the table or in the primer. Never a claim of mastery.
   function encounteredEntry(s, e, words) {
@@ -49769,6 +49790,19 @@ RB.wordplay = (function () {
   }
   // setup: { format, band, level, support, goal }
   function bankFor(s, setup) {
+    if (isTheme(setup.band)) {
+      const id = setup.band.slice(6), srcs = installed();
+      if (!srcs.length) return { ok: false, why: 'The shiritori word banks are not installed in this copy of the game.', code: 'nobank' };
+      if (!themes(s).some((t) => t.id === id)) return { ok: false, why: 'That set of words is not open in this journey yet.', code: 'closed' };
+      const pool = themePool(id);
+      if (pool.length < 2) return { ok: false, why: 'Too few of this set\'s words are in the word banks.', code: 'tiny', size: pool.length };
+      const src = srcs.map((b) => SH().bank(b));
+      const version = 't.' + id + '.' + src.map((b) => b.id + '.' + b.version).join('+');
+      const bank = SH().buildBank({ id: 'theme_' + id, version, entries: pool.map((e) => Object.assign({}, e)), starters: [] });
+      bank.starters = journeyStarters(bank);
+      const small = bank.groupCount < LIMITS.smallBank || !bank.starters.length;
+      return { ok: true, bank, kind: 'theme', theme: id, size: bank.groupCount, small, certified: bank.starters.length > 0, src: src.map((b) => ({ id: b.id, version: b.version, hash: b.hash })) };
+    }
     if (setup.band === 'journey') {
       const srcs = installed();
       if (!srcs.length) return { ok: false, why: 'The shiritori word banks are not installed in this copy of the game.', code: 'nobank' };
@@ -49792,7 +49826,7 @@ RB.wordplay = (function () {
     const format = st.format || st.shiritoriFormat;
     const out = {
       format: format === 'cooperative' ? 'cooperative' : 'competitive',
-      band: BANDS.concat('journey').indexOf(st.band || st.shiritoriBand) >= 0 ? (st.band || st.shiritoriBand) : 'pocket',
+      band: BANDS.concat('journey').indexOf(st.band || st.shiritoriBand) >= 0 || (isTheme(st.band || st.shiritoriBand) && themes(s).some((t) => themeBand(t.id) === (st.band || st.shiritoriBand))) ? (st.band || st.shiritoriBand) : 'pocket',
       level: st.level || st.shiritoriLevel,
       support: (st.support || st.shiritoriSupport) === 'recall' ? 'recall' : 'open',
       goal: GOALS.indexOf(+(st.goal || st.shiritoriChain)) >= 0 ? +(st.goal || st.shiritoriChain) : 12,
@@ -50181,6 +50215,15 @@ RB.wordplay = (function () {
         result.coopFirst = g.done === 1;
       }
     }
+    if (a.kind === 'theme' && ok && reason !== 'abandoned' && reason !== 'incompatible-resume') {
+      const id = String(a.band).slice(6);
+      r.themes = r.themes || {};
+      const c = r.themes[id] || (r.themes[id] = { played: 0, won: 0, lost: 0, coop: 0, best: 0, last: null });
+      if (coop) { if (reason === 'cooperative-goal') c.coop++; }
+      else { c.played++; if (winner === 'pc') c.won++; else c.lost++; }
+      c.best = Math.max(c.best, cmoves);
+      c.last = { t: result.t, format: a.format, level: a.level, winner, reason, size: a.bank.size, session: a.session };
+    }
     if (a.kind === 'journey' && ok && reason !== 'abandoned' && reason !== 'incompatible-resume') {
       const c = r.customSummary;
       if (coop) { if (reason === 'cooperative-goal') c.coop++; }
@@ -50415,7 +50458,7 @@ RB.wordplay = (function () {
     ns, rec, peek, blankComp, normComp, norm, eligible, installed, bankFor, journeyPool, journeyStarters, snapOf, fromSnap, strategyVersion,
     normSetup, start, live, draft, playWord, cpuChoose, cpuCommit, noteSuggestion, noteInputAssist, concede, stopChain, abandon, suspend, resumed,
     verify, finish, reflection, deferReflection, reflect, line, mayComment, cells, supportLabel, transcripts, findTranscript, pin, unpin,
-    primer, markEncountered, recentThought, describe, combined, isCoop,
+    primer, markEncountered, recentThought, describe, combined, isCoop, addTheme, themes, themePool, isTheme,
   };
 })();
 
@@ -102553,7 +102596,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       const setup = WP().normSetup(s, {});
       const banks = WP().installed();
       const active = WP().ns(s).active;
-      const jb = setup.band === 'journey' ? WP().bankFor(s, setup) : null;
+      const themed = WP().isTheme && WP().isTheme(setup.band);
+      const jb = setup.band === 'journey' || themed ? WP().bankFor(s, setup) : null;
       const prov = /^provisional/.test(WP().strategyVersion());
       const line = firstOpen ? WP().line(s, 'invite', 'invite') : null;
       const g = (RB.content.wordplay.gestures || {})[s.comp] || {};
@@ -102573,14 +102617,18 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       h += '<fieldset class="wp-field"><legend>' + lab('format') + '</legend>' +
         radio('format', 'competitive', setup.format, lab('competitive') + '<span class="muted small"> a real win or loss; fixed banks fill the stage records</span>') +
         radio('format', 'cooperative', setup.format, lab('cooperative') + '<span class="muted small"> a shared chain; ' + esc(who(s)) + ' avoids dead ends when a reply exists</span>') + '</fieldset>';
-      h += '<fieldset class="wp-field"><legend>' + lab('words') + '</legend>' + ['pocket', 'everyday', 'extended', 'journey'].map((b) => {
-        const bk = b === 'journey' ? null : SH().bank(b);
-        const size = bk ? ' <span class="muted small">' + bk.groupCount + ' words</span>' : b !== 'journey' ? ' <span class="muted small">not installed</span>' : '';
-        return radio('band', b, setup.band, esc(WP().BAND[b].en) + size + '<span class="muted small"> — ' + esc(BAND_NOTE[b]) + (b === 'journey' ? ' (free play: a custom record, never a stage)' : '') + '</span>', { disabled: b !== 'journey' ? !bk : !banks.length });
+      // themed sets the chapters have opened (expansion P06): free play, recorded apart from the stages
+      const themeBands = (WP().themes ? WP().themes(s) : []).map((t) => 'theme:' + t.id);
+      h += '<fieldset class="wp-field"><legend>' + lab('words') + '</legend>' + ['pocket', 'everyday', 'extended', 'journey'].concat(themeBands).map((b) => {
+        const custom = b === 'journey' || themeBands.indexOf(b) >= 0;
+        const bk = custom ? null : SH().bank(b);
+        const size = bk ? ' <span class="muted small">' + bk.groupCount + ' words</span>' : !custom ? ' <span class="muted small">not installed</span>' : '';
+        const note = themeBands.indexOf(b) >= 0 ? (WP().themes(s).find((t) => 'theme:' + t.id === b).note || 'a set of words from the road') + ' (free play, never a stage)' : BAND_NOTE[b] + (b === 'journey' ? ' (free play: a custom record, never a stage)' : '');
+        return radio('band', b, setup.band, esc(WP().BAND[b].en) + size + '<span class="muted small"> — ' + esc(note) + '</span>', { disabled: !custom ? !bk : !banks.length });
       }).join('') + '</fieldset>';
       if (jb) {
         h += '<div class="wp-journey" role="note">' + (jb.ok
-          ? '<p>' + esc(jb.size + ' word' + (jb.size === 1 ? '' : 's') + ' you have met on the road are in the banks (frozen when the game starts).') + '</p>' +
+          ? '<p>' + esc(jb.size + ' word' + (jb.size === 1 ? '' : 's') + (themed ? ' of this set are in the banks (frozen when the game starts).' : ' you have met on the road are in the banks (frozen when the game starts).')) + '</p>' +
             (jb.small ? '<p><b>Small bank; some chains may end quickly.</b> ' + esc(jb.size < WP().LIMITS.smallBank ? 'With fewer than ' + WP().LIMITS.smallBank + ' words, ' : 'With no certified opening, ') + 'Learning partner or a fixed bank will play better. You can still play it.</p>' : '')
           : '<p>' + esc(jb.why) + '</p>') +
           (banks.length ? '<button class="pbtn" data-wp="primer">' + I('words') + lab('primer') + '</button>' : '') + '</div>';
@@ -102595,7 +102643,7 @@ RB.ui.wordplay = RB.ui.wordplay || {};
       h += '<fieldset class="wp-field"><legend>' + lab('support') + '</legend>' +
         radio('support', 'open', setup.support, lab('open') + '<span class="muted small"> — the whole bank is on the table, searchable by kana</span>') +
         radio('support', 'recall', setup.support, lab('recall') + '<span class="muted small"> — no word suggestions unless you ask (Find a word); asking is recorded, never penalised</span>') + '</fieldset>';
-      const canStart = !active && (setup.band === 'journey' ? !!(jb && jb.ok) : !!SH().bank(setup.band));
+      const canStart = !active && (setup.band === 'journey' || themed ? !!(jb && jb.ok) : !!SH().bank(setup.band));
       h += '<div class="row-acts wp-prep-acts"><button class="pbtn primary" data-wp="start"' + (canStart ? (active ? '' : ' data-autofocus') : ' disabled') + '>' + I('practice') + lab('start') + '</button>' +
         '<button class="pbtn" data-wp="rules">' + I('note') + lab('rules') + '</button>' +
         '<button class="pbtn" data-wp="browse"' + (banks.length ? '' : ' disabled') + '>' + I('list') + lab('browse') + '</button>' +
@@ -103141,6 +103189,8 @@ RB.ui.wordplay = RB.ui.wordplay || {};
         (fc ? '<div class="wp-say"><span class="jp">' + J(fc.jp) + '</span><span class="en">' + esc(fc.en) + '</span></div>' : '') + '</div></div>';
     } else if (!coop && result.winner === 'pc' && result.band === 'journey') {
       h += '<p class="muted small">From my journey is free play: kept as a custom-bank result, not a stage.</p>';
+    } else if (!coop && result.winner === 'pc' && WP().isTheme && WP().isTheme(result.band)) {
+      h += '<p class="muted small">' + esc(WP().BAND[result.band].en) + ' is free play: kept with its own record, not a stage.</p>';
     } else if (!coop && result.winner === 'pc' && !result.verified) {
       h += '<p class="muted small">This result could not be checked against its word bank, so no stage record was made.</p>';
     }
