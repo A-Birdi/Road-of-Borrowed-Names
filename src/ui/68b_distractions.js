@@ -72,6 +72,19 @@ RB.ui.distractions = (function () {
       });
       return g;
     },
+    karuta: (w, h) => {
+      // picture cards scattered on a tatami mat, each with its red circle and first sound
+      let g = '<rect width="' + w + '" height="' + h + '" fill="#cdbf86"/>';
+      for (let x = 0; x < w; x += 6) g += '<path d="M' + x + ' 0 V' + h + '" stroke="#b8a96e" stroke-width="1"/>';
+      const cards = [['い', -8], ['ろ', 6], ['は', -3], ['た', 9], ['お', -6]];
+      cards.forEach(([k, a], i) => {
+        const cw = h * 0.5, ch = h * 0.62, x = w * (0.12 + i * 0.18), y = h * (0.16 + (i % 2) * 0.14);
+        g += '<g transform="rotate(' + a + ' ' + (x + cw / 2) + ' ' + (y + ch / 2) + ')"><rect x="' + x + '" y="' + y + '" width="' + cw + '" height="' + ch + '" rx="3" fill="#f7efd9" stroke="#7a5a2a"/>' +
+          '<circle cx="' + (x + cw * 0.28) + '" cy="' + (y + cw * 0.28) + '" r="' + cw * 0.2 + '" fill="#fff8ea" stroke="#c8281e" stroke-width="1.6"/>' +
+          '<text x="' + (x + cw * 0.28) + '" y="' + (y + cw * 0.36) + '" text-anchor="middle" font-size="' + cw * 0.26 + '" font-weight="700" fill="#1b1410">' + k + '</text></g>';
+      });
+      return g;
+    },
   };
   function art(id, w, h, cls) {
     const f = ART[id];

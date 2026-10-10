@@ -18,7 +18,7 @@ export default async (t) => {
   };
 
   // ---- the registry and the tab -------------------------------------------------------------------------------------
-  t.eq(P.all().map((d) => d.id), ['shiritori', 'shogi', 'hanafuda', 'fishing'], 'four pastimes so far, in the index\'s order');
+  t.eq(P.all().map((d) => d.id), ['shiritori', 'shogi', 'hanafuda', 'karuta', 'fishing'], 'five pastimes so far, in the index\'s order');
   const s1 = fresh(1), s2 = fresh(2);
   t.eq(P.met(s1).map((d) => d.id), [], 'a six-chapter journey meets none of them here (F-21)');
   t.ok(!RB.recordsUI.inCampaign(s1) && RB.recordsUI.inCampaign(s2), 'the tab is for twelve-chapter journeys');
@@ -70,10 +70,11 @@ export default async (t) => {
       if (!o || typeof o !== 'object' || seen.has(o)) return;
       seen.add(o);
       if (Array.isArray(o)) { o.forEach((x, i) => walk(x, where + '[' + i + ']', seen)); return; }
-      if (typeof o.jp === 'string') { jcheck(o.jp, where); if (typeof o.en !== 'string' || !o.en) errs.push(where + ': no English'); }
+      if (typeof o.jp === 'string') { jcheck(o.jp, where); if (typeof o.en !== 'string' || !o.en) errs.push(where + ': no English'); else if (/[一-鿿]/.test(o.en)) errs.push(where + ': kanji in the English line (shown without its reading)'); }
       for (const k in o) if (k !== 'jp' && o[k] && typeof o[k] === 'object') walk(o[k], where + '.' + k, seen);
     };
     for (const d of P.all()) walk(d, 'pastime ' + d.id);
+    walk(RB.content.karuta, 'karuta'); walk(RB.hanafuda.DECK, 'hanafuda'); walk(RB.hanafuda.YAKU, 'hanafuda sets'); walk(RB.content.shogi, 'shogi');
     for (const c of RB.content.scenes['pt.fuku_bench'].cmds) { if (c.jp) jcheck(c.jp, 'pt.fuku_bench'); if (c.opts) c.opts.forEach((o) => jcheck(o.jp, 'pt.fuku_bench choice')); }
     const ui = fs.readFileSync(new URL('../../src/ui/68b_distractions.js', import.meta.url), 'utf8');
     for (const m of ui.matchAll(/(?:label\(|jp: )'((?:[^'\\]|\\.)*[一-鿿](?:[^'\\]|\\.)*)'/g)) jcheck(m[1], 'tab');

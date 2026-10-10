@@ -41,6 +41,7 @@ RB.ui.records = (function () {
     ear: 'M14 14 Q20 6 27 13 Q30 20 23 24 Q20 27 22 31 M18 17 Q21 14 23 18',
     path: 'M10 32 Q14 22 20 20 Q27 18 30 8 M14 30 L12 28 M28 12 L31 9',
     koma: 'M20 7 L28 11 L31 32 H9 L12 11 Z M16 18 H24 M20 18 V28 M16 23 H24',
+    card: 'M11 9 H29 V33 H11 Z M15 13 a3 3 0 1 0 0.1 0 M14 24 q6 -6 12 0 M14 28 h12',
   };
   function stampSvg(d, state, label) {
     const ink = state === 'pressed' ? d.design.ink : '#8a7a62';

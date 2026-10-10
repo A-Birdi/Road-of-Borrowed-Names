@@ -167,6 +167,42 @@
   "jp": "{点|てん} は {点|てん} だけ 。",
   "en": "Points are only points: hanafuda is played here for the flowers and the fun of it."
  },
+ "pastime:karuta:page#17hu6n8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "かるた",
+  "en": "Karuta"
+ },
+ "pastime:karuta:page#x6qmnb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{道連|みちづ}れ と なら 、 {安全|あんぜん} な {場所|ばしょ} で どこ でも",
+  "en": "Anywhere safe with your companion, cards spread on the ground."
+ },
+ "pastime:karuta:page#qrv7ll": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "いろはかるた 。 {読|よ}み{札|ふだ} を {聞|き}いて 、 {取|と}り{札|ふだ} を {取|と}る 。",
+  "en": "Iroha karuta: a proverb for each sound of the old iroha poem. Listen, read, and find its card."
+ },
+ "pastime:karuta:page#1x262el": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{読|よ}み{手|て} が {札|ふだ} を {読|よ}む 。",
+  "en": "The reader reads a proverb, its first sound first."
+ },
+ "pastime:karuta:page#12wec7z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{最初|さいしょ} の {音|おと} の {札|ふだ} を {取|と}る 。",
+  "en": "Find the picture card with that first sound in its red circle, and touch it."
+ },
+ "pastime:karuta:page#1hg049n": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{間違|まちが}えたら 「お{手|て}つき」 。",
+  "en": "Touch the wrong card (お手つき) and your partner takes the right one. Then the proverb is shown whole, with what it means."
+ },
  "pastime:fishing:page#oandp5": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
@@ -286,6 +322,234 @@
   "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
   "jp": "{一手詰|いってづ}め 。 {歩|ふ} が {成|な}れば 、 {金|きん} の よう に {動|うご}く 。",
   "en": "Mate in one: the pawn. A pawn that promotes moves like a gold."
+ },
+ "pastime:karuta#o4dg4a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{犬|いぬ} も {歩|ある}けば {棒|ぼう} に {当|あ}たる",
+  "en": "Even a dog that goes walking bumps into a stick."
+ },
+ "pastime:karuta#1fl5ub6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{論|ろん} より {証拠|しょうこ}",
+  "en": "Proof rather than argument."
+ },
+ "pastime:karuta#a9oobj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{花|はな} より {団子|だんご}",
+  "en": "Dumplings rather than flowers."
+ },
+ "pastime:karuta#85ehkl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{憎|にく}まれっ{子|こ} {世|よ} に はばかる",
+  "en": "The child nobody likes gets on in the world."
+ },
+ "pastime:karuta#t5iu71": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{骨折|ほねお}り{損|ぞん} の くたびれ{儲|もう}け",
+  "en": "Broken bones for a loss, and a profit of weariness."
+ },
+ "pastime:karuta#i3n6wi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{下手|へた} の {長談義|ながだんぎ}",
+  "en": "The poor speaker's long speech."
+ },
+ "pastime:karuta#1u9opw2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{年寄|としよ}り の {冷|ひ}や{水|みず}",
+  "en": "An old person's cold water."
+ },
+ "pastime:karuta#apskx8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{塵|ちり} も {積|つ}もれば {山|やま} と なる",
+  "en": "Even dust, piled up, becomes a mountain."
+ },
+ "pastime:karuta#bryeqn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{律儀者|りちぎもの} の {子沢山|こだくさん}",
+  "en": "The honest man has a house full of children."
+ },
+ "pastime:karuta#1b372kt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{盗人|ぬすびと} の {昼寝|ひるね}",
+  "en": "The thief's afternoon nap."
+ },
+ "pastime:karuta#51i01u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{瑠璃|るり} も {玻璃|はり} も {照|て}らせば {光|ひか}る",
+  "en": "Lapis and crystal both shine when light falls on them."
+ },
+ "pastime:karuta#g7gip9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{破|わ}れ{鍋|なべ} に {綴|と}じ{蓋|ぶた}",
+  "en": "A mended lid for a cracked pot."
+ },
+ "pastime:karuta#j1djud": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{蛙|かえる} の {子|こ} は {蛙|かえる}",
+  "en": "A frog's child is a frog."
+ },
+ "pastime:karuta#1vs5ba8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{葦|よし} の {髄|ずい} から {天井|てんじょう} {覗|のぞ}く",
+  "en": "Looking at the ceiling through a reed stem."
+ },
+ "pastime:karuta#bvcz6a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{旅|たび} は {道連|みちづ}れ {世|よ} は {情|なさ}け",
+  "en": "On a journey, a companion; in the world, kindness."
+ },
+ "pastime:karuta#77v08u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{月夜|つきよ} に {釜|かま} を {抜|ぬ}かれる",
+  "en": "Having your pot stolen on a moonlit night."
+ },
+ "pastime:karuta#34blzu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{念|ねん} には {念|ねん} を {入|い}れよ",
+  "en": "Add care to care."
+ },
+ "pastime:karuta#xv4xcg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{泣|な}きっ{面|つら} に {蜂|はち}",
+  "en": "A bee on a crying face."
+ },
+ "pastime:karuta#15qi3cx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{楽|らく} あれば {苦|く} あり",
+  "en": "Where there is ease, there is hardship."
+ },
+ "pastime:karuta#1eachov": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{無理|むり} が {通|とお}れば {道理|どうり} {引|ひ}っ{込|こ}む",
+  "en": "When the unreasonable gets through, reason steps back."
+ },
+ "pastime:karuta#77nzjc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{嘘|うそ} から {出|で}た {実|まこと}",
+  "en": "Truth that came out of a lie."
+ },
+ "pastime:karuta#pob5tc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{喉元|のどもと} {過|す}ぎれば {熱|あつ}さ を {忘|わす}れる",
+  "en": "Once past the throat, the heat is forgotten."
+ },
+ "pastime:karuta#19nrak5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{鬼|おに} に {金棒|かなぼう}",
+  "en": "An iron club for an ogre."
+ },
+ "pastime:karuta#mwtwa9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{臭|くさ}い {物|もの} に {蓋|ふた} を する",
+  "en": "Putting a lid on what smells."
+ },
+ "pastime:karuta#o5aa1l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{安物買|やすものが}い の {銭失|ぜにうしな}い",
+  "en": "Buying cheap, losing money."
+ },
+ "pastime:karuta#pasuhm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{負|ま}ける が {勝|か}ち",
+  "en": "Losing is winning."
+ },
+ "pastime:karuta#1u3p86o": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{得手|えて} に {帆|ほ} を {揚|あ}げる",
+  "en": "Raising the sail for what you do well."
+ },
+ "pastime:karuta#vmx2ij": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{頭|あたま} {隠|かく}して {尻|しり} {隠|かく}さず",
+  "en": "Hiding the head but not the bottom."
+ },
+ "pastime:karuta#ht5pqw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{聞|き}いて {極楽|ごくらく} {見|み}て {地獄|じごく}",
+  "en": "Paradise to hear of, hell to see."
+ },
+ "pastime:karuta#1fwxevi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{油断|ゆだん} {大敵|たいてき}",
+  "en": "Carelessness is the great enemy."
+ },
+ "pastime:karuta#ad8i7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{目|め} の {上|うえ} の こぶ",
+  "en": "A lump above the eye."
+ },
+ "pastime:karuta#gd9yo1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{身|み} から {出|で}た {錆|さび}",
+  "en": "Rust that came from the blade itself."
+ },
+ "pastime:karuta#jc0jph": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{知|し}らぬ が {仏|ほとけ}",
+  "en": "Not knowing, one is at peace as a Buddha."
+ },
+ "pastime:karuta#bwl8l6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{門前|もんぜん} の {小僧|こぞう} {習|なら}わぬ {経|きょう} を {読|よ}む",
+  "en": "The boy by the temple gate reads sutras he was never taught."
+ },
+ "pastime:karuta#p95cj6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{急|せ}いて は {事|こと} を {仕損|しそん}じる",
+  "en": "Hurrying, you spoil the thing."
+ },
+ "pastime:karuta#18j8ln2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{江戸|えど} いろはかるた",
+  "en": "the Edo set"
+ },
+ "pastime:karuta#1k6pyse": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{京|きょう} いろはかるた",
+  "en": "the Kyoto set"
+ },
+ "pastime:karuta#1oc4rag": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{今|いま} の かるた",
+  "en": "later children's sets"
  },
  "pastime:hanafuda:cards#bl9q4v": {
   "status": "self-reviewed",

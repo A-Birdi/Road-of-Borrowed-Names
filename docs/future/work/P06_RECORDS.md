@@ -24,7 +24,8 @@ maps are unchanged; the records browser test checks it.
 | Fuku's bench: after her nameplate she walks down and offers a game; the board opens with her | C12, K7 | `src/content/pastimes/20_scenes.js`, the hooks in `src/ui/88_shogi.js`; one gated line in `sg.bench_fuku` | Done (F-24) |
 | The Distractions tab: an index of the games met, one page per game round its key art (what it is, how to play, where, records), Play with your companion; shiritori's card moves here from Company; fishing's page once the survey has begun | K7, K10 | `src/ui/50_menu.js` (`addSection`), `src/ui/68b_distractions.js`, `src/content/pastimes/10_registry.js`, `src/ui/87_wordplay_links.js` | Done (F-23) |
 | Hanafuda: koi-koi with the real deck drawn in code (48 cards), the months and their flowers, the sets with names and readings, matching help, stop or koi-koi, a three-level partner, games of one to twelve months; met through the chapter that teaches it (flag `pt_hanafuda`) | C12 | `src/engine/72d_hanafuda.js`, `src/ui/88b_hanafuda.js`, `88c_hanafuda_cards.js`, `src/content/pastimes/30_hanafuda.js` | Done (F-25) |
-| Karuta, shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
+| Karuta: iroha karuta, 35 real proverbs (Edo set, two from other traditional sets, named), turn-based, read a word at a time with its first sound first, the device's own voice if chosen, お手つき, an opt-in speed mode, each proverb shown whole with its meaning, the proverbs you take kept; a stamp for a first game played to the end | C12 | `src/engine/72e_karuta.js`, `src/ui/88d_karuta.js`, `src/content/pastimes/40_karuta.js` | Done |
+| Shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
 | The book shell on the remaining pages | U03–U05 | — | Next |
 
 ## Shogi
@@ -77,7 +78,9 @@ made); F-24 when Fuku offers a game; F-25 koi-koi's house rules.
 | Distractions in the browser: five tabs in a six-chapter journey; the sixth tab, a page, Play with Mio and back to the Ledger; Company's pointer; phone index/page/back; Fuku's bench in both editions | `node tests/e2e/distractions.mjs` | 4/0 (captures `docs/screenshots/distractions/`) |
 | Hanafuda: the deck, the deal, taking by month, the sets and house rules, stop and koi-koi, doubling, 1,200 rounds with nothing lost, the levels, the words | `node tests/run-unit.mjs hanafuda` | 40/0 |
 | Hanafuda in the browser: the months (48 cards), the sets, a game (take one, choose between two, lay down, the partner, a set, stop, the record), phone, its Distractions page | `node tests/e2e/hanafuda.mjs` | 3/0 (captures `docs/screenshots/hanafuda/`) |
-| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 618 lines, 0 without an entry |
+| Karuta: the deck (35, one per sound, iroha order, each beginning with its sound), the game (right, お手つき, the speed mode's reach, every card read once), the gate, the stamp, the words | `node tests/run-unit.mjs karuta` | 22/0 |
+| Karuta in the browser: a game word by word, right and wrong, to the end with the record and the stamp; the speed mode; all 35 at phone width; its Distractions page | `node tests/e2e/karuta.mjs` | 3/0 (captures `docs/screenshots/karuta/`) |
+| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 664 lines, 0 without an entry |
 
 **Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own
 playtest note).

@@ -44,6 +44,7 @@ export function lines(RB) {
   // the pastimes (P06): each game's page, its lessons and puzzles, and the names its board shows
   if (RB.pastimes) for (const d of RB.pastimes.all()) walk('pt.' + d.id, 'pastime:' + d.id + ':page', d, new Set());
   if (C.shogi) walk('pt.shogi', 'pastime:shogi', C.shogi, new Set());
+  if (C.karuta) walk('pt.karuta', 'pastime:karuta', C.karuta, new Set());
   if (RB.hanafuda) walk('pt.hanafuda', 'pastime:hanafuda:cards', { deck: RB.hanafuda.DECK, months: RB.hanafuda.MONTHS, kinds: RB.hanafuda.KINDS, yaku: RB.hanafuda.YAKU }, new Set());
   if (RB.shogi) walk('pt.shogi', 'pastime:shogi:board', { names: RB.shogi.NAMES, promoted: RB.shogi.PROMOTED, variants: RB.shogi.VARIANTS, handicaps: RB.shogi.HANDICAPS }, new Set());
   return out;

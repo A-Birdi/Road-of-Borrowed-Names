@@ -179,6 +179,18 @@
   "jp": "{将棋|しょうぎ} で {一回|いっかい} {勝|か}つ",
   "en": "Win a game of shogi: on the small board, at mini-shogi, or at shogi itself."
  },
+ "stamp:pt.karuta#lxitfe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "{札|ふだ} が なくなる まで",
+  "en": "Every card taken"
+ },
+ "stamp:pt.karuta#si9ls2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the standard wording of the iroha karuta proverbs (Edo set; へ from the Kyoto set; か from later children's sets), the game's lexicon and textbook grammar (P06)",
+  "jp": "かるた を {最後|さいご} まで",
+  "en": "Play a game of karuta to its last card."
+ },
  "stamp:pt.fishing#oandp5": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",

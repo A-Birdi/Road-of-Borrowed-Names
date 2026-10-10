@@ -86,3 +86,49 @@ RB.lex.add(RB.lex.parseTable(`
 十一月|じゅういちがつ|n|F|November
 十二月|じゅうにがつ|n|F|December
 `), 'pastimes');
+// karuta: the proverbs' words (src/content/pastimes/40_karuta.js)
+RB.lex.add(RB.lex.parseTable(`
+かるた||n|I|karuta, Japanese playing cards (from the Portuguese carta)
+いろはかるた||n|A|iroha karuta: a card game of proverbs, one for each kana of the iroha poem
+江戸|えど|name|I|Edo (the old name of Tokyo)
+京|きょう|name|A|the capital (Kyoto, in old usage)
+論|ろん|n|A|argument, theory
+憎まれっ子|にくまれっこ|n|A|a child nobody likes; a disliked person
+骨折り損|ほねおりぞん|n|A|wasted effort (literally "a loss of broken bones")
+くたびれ儲け|くたびれもうけ|n|A|a profit of nothing but tiredness
+長談義|ながだんぎ|n|A|a long-winded talk
+冷や水|ひやみず|n|A|cold water
+塵|ちり|n|A|dust
+律儀者|りちぎもの|n|A|an honest, dutiful person
+子沢山|こだくさん|n|A|having many children
+盗人|ぬすびと|n|A|thief (an older word)
+瑠璃|るり|n|A|lapis lazuli
+玻璃|はり|n|A|crystal, glass (an old word)
+葦|よし|n|A|reed (another reading of あし)
+髄|ずい|n|A|pith, the hollow core of a stem
+月夜|つきよ|n|I|a moonlit night
+釜|かま|n|I|an iron pot, a kettle
+泣きっ面|なきっつら|n|A|a crying face
+苦|く|n|A|hardship, suffering
+道理|どうり|n|I|reason, what is right
+喉元|のどもと|n|A|the throat
+鬼|おに|n|I|ogre, demon (oni)
+金棒|かなぼう|n|A|an iron club
+安物買い|やすものがい|n|A|buying cheap things
+銭失い|ぜにうしない|n|A|losing money
+得手|えて|n|A|one's strong point, what one does well
+帆|ほ|n|I|sail
+揚げる|あげる|v1|I|to raise, to hoist (a sail, a flag)
+尻|しり|n|I|bottom, behind
+極楽|ごくらく|n|I|paradise
+地獄|じごく|n|I|hell
+大敵|たいてき|n|A|a great enemy
+こぶ||n|I|a lump, a bump
+仏|ほとけ|n|I|a Buddha; one at peace
+門前|もんぜん|n|A|in front of the gate (of a temple)
+小僧|こぞう|n|A|a boy apprentice (at a temple or a shop)
+経|きょう|n|A|sutra, a Buddhist scripture
+事|こと|n|E|thing, matter
+急く|せく|v5k|A|to hurry, to be impatient
+仕損じる|しそんじる|v1|A|to make a mess of, to fail at
+`), 'pastimes');
