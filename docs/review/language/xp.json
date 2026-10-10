@@ -1,0 +1,1106 @@
+{
+ "scene:xp.cellars_yasu#10du5jd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{倉庫|そうこ} の {下|した} に 、 {米|こめ} を {置|お}く {地下|ちか} が ある 。 {嵐|あらし} の {夜|よる} から 、 {水|みず} が {引|ひ}かない 。",
+  "en": "There's a cellar under the warehouse where we keep the rice. Since the night of the storm, the water hasn't gone down."
+ },
+ "scene:xp.cellars_yasu#3mvndw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{若|わか}い {者|もん} が {水|みず} を {抜|ぬ}こう と した が 、 {途中|とちゅう} で {逃|に}げて きた 。 {貼|は}り{紙|がみ} だけ {残|のこ}して な 。",
+  "en": "The young hands tried to drain it, and ran off halfway. They left their notices, at least."
+ },
+ "scene:xp.cellars_yasu#19pzdno": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{何|なに} を やって 、 {何|なに} を やって ない か 。 {読|よ}める {者|もん} が {行|い}けば 、 {水|みず} は {抜|ぬ}ける 。 {急|いそ}ぐ {話|はなし} じゃ ない 。 {床|ゆか} の {戸|と} から {降|お}りられる 。",
+  "en": "What they did, and what they didn't. Someone who can read that could drain it. No hurry. The hatch in the floor will take you down."
+ },
+ "scene:xp.cellars_yasu#81wht7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} に {浸|つ}かった {米|こめ} は 、 {早|はや}く {出|だ}さない と {傷|いた}む わ 。 …… {行|い}って みましょう か 。",
+  "en": "Rice that's been in water spoils if it isn't brought out soon. …Shall we go and see?"
+ },
+ "scene:xp.cellars_yasu#1t1t8ro": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{逃|に}げる {前|まえ} に {貼|は}り{紙|がみ} を {残|のこ}す か 。 {律儀|りちぎ} な {連中|れんちゅう} だ な 。",
+  "en": "They ran, but left notices first. Conscientious lot."
+ },
+ "scene:xp.cellars_yasu#zwwy8l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貼|は}り{紙|がみ} が {残|のこ}って いる なら 、 {灯|あか}り の {書|か}き{置|お}き と {同|おな}じ です 。 {前|まえ} の {人|ひと} の {手|て} を {読|よ}めば いい 。",
+  "en": "If the notices are still there, it's like a lamplighter's note. We just read the hand that came before."
+ },
+ "scene:xp.cellars_yasu#useutw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "やった こと と 、 やって ない こと 。 {帳簿|ちょうぼ} と {同|おな}じ だ ね 。 {締|し}め は {私|わたし} たち か 。",
+  "en": "What's been done and what hasn't: just like a ledger. And we close the books, do we?"
+ },
+ "scene:xp.cellars_yasu_done#1074gaj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} が {引|ひ}いた な 。 {米|こめ} も {無事|ぶじ} だ 。 …… {若|わか}い {者|もん} の {貼|は}り{紙|がみ} も 、 {読|よ}む {者|もん} が いて {初|はじ}めて {役|やく} に {立|た}つ 。",
+  "en": "The water's down. The rice is safe. …Even the young hands' notices are only any use once someone reads them."
+ },
+ "scene:xp.cellars_yasu_done#1q4il1u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{下|した} は いつでも {使|つか}って いい 。 {寒|さむ}い が 、 {静|しず}か だ ぞ 。",
+  "en": "Use the cellars whenever you like. Cold, but quiet."
+ },
+ "scene:xp.cellars_hatch#1jqnbl3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{床|ゆか} に {四角|しかく} い {戸|と} が ある 。 {下|した} から 、 {水|みず} の {匂|にお}い が {上|あ}がって くる 。",
+  "en": "A square hatch in the floor. The smell of water rises from below."
+ },
+ "scene:xp.cellars_hatch#w21qwt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} を {閉|し}めた 。 {急|いそ}ぐ {話|はなし} じゃ ない 。",
+  "en": "You close the hatch. It can wait."
+ },
+ "scene:xp.cellars_first#1z30q7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{冷|つめ}たい {空気|くうき} 。 {通路|つうろ} が {左右|さゆう} に {分|わ}かれて 、 {奥|おく} へ {続|つづ}いて いる 。",
+  "en": "Cold air. The passages split left and right and go on into the dark."
+ },
+ "scene:xp.cellars_first#1b3f5il": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{壁|かべ} の {貼|は}り{紙|がみ} 、 {先|さき} に {読|よ}んで おきましょう 。 {何|なに} が {済|す}んで いる か 、 {分|わ}かる はず よ 。",
+  "en": "Let's read the notice on the wall first. It should tell us what's already been done."
+ },
+ "scene:xp.cellars_first#65tnky": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{道|みち} は {二|ふた}つ 、 {行|い}き{先|さき} は {一|ひと}つ か 。 …… まず {貼|は}り{紙|がみ} だ な 。",
+  "en": "Two ways, one destination. …The notice first."
+ },
+ "scene:xp.cellars_first#ns1qp1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貼|は}り{紙|がみ} が あります 。 {前|まえ} の {人|ひと} が {何|なに} を {済|す}ませた か 、 {読|よ}んで から {進|すす}みましょう 。",
+  "en": "There's a notice. Let's read what the last people finished before we go on."
+ },
+ "scene:xp.cellars_first#lj45st": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貼|は}り{紙|がみ} が {先|さき} だ よ 。 {前|まえ} の {人|ひと} の {仕事|しごと} を {二回|にかい} やる の は 、 {損|そん} だ から ね 。",
+  "en": "Notice first. Doing the last lot's work twice is a loss on the books."
+ },
+ "scene:xp.cellars_board#rvks67": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「 {米|こめ} は {棚|たな} の {上|うえ} に {上|あ}げて あります 。 {階段|かいだん} の {灯|あか}り は つけて あります 。 {下|した} の {水門|すいもん} は まだ です 。 」",
+  "en": "\"The rice has been put up on the shelves. The stair light has been switched on. The sluice below is still to do.\""
+ },
+ "scene:xp.cellars_board#1r36494": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「{上|あ}げて あります」 。 {誰|だれ} か が {上|あ}げて 、 その まま に して ある 、 と いう こと ね 。",
+  "en": "\"Has been put up\": someone put it up, and left it that way."
+ },
+ "scene:xp.cellars_board#1qgx5od": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「{上|あ}げて あります」 か 。 やった {本人|ほんにん} は {書|か}いて ない が 、 {誰|だれ} か が やった んだ 。",
+  "en": "\"Has been put up.\" Doesn't say who, but somebody did it."
+ },
+ "scene:xp.cellars_board#1ui8dsv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「〜て あります」 は 、 {誰|だれ} か が {済|す}ませて {残|のこ}した {形|かたち} です 。 {灯|あか}り の {帳面|ちょうめん} でも よく {見|み}ます 。",
+  "en": "\"〜て あります\" is the shape of something someone finished and left. You see it in lamp logs all the time."
+ },
+ "scene:xp.cellars_board#1d6i5qe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「{上|あ}げて あります」 。 {済|す}み の {判|はん} みたい な もの だ よ 。 {誰|だれ} か が やって 、 その まま に して ある 。",
+  "en": "\"Has been put up.\" Like a \"done\" stamp: someone did it, and it's been left that way."
+ },
+ "scene:xp.cellars_board#sr1ker": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{済|す}んだ こと は {済|す}んだ こと 。 {私|わたし} たち の {仕事|しごと} は 、 その {先|さき} ね 。",
+  "en": "What's done is done. Our work starts after it."
+ },
+ "scene:xp.cellars_board#19q35q9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{分|わ}かった 。 {残|のこ}り は {下|した} の {水門|すいもん} だ 。",
+  "en": "Right. What's left is the sluice below."
+ },
+ "scene:xp.cellars_board#19sjv63": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{読|よ}めました ね 。 {残|のこ}って いる の は 、 {下|した} の {水門|すいもん} です 。",
+  "en": "You read it. What's left is the sluice below."
+ },
+ "scene:xp.cellars_board#26jjmt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貸|か}し {借|か}り {無|な}し 。 {残|のこ}り は {下|した} の {水門|すいもん} {一|ひと}つ 。",
+  "en": "All square. One sluice below left on the books."
+ },
+ "scene:xp.cellars_board#1rqu7td": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貼|は}り{紙|がみ} は 、 いつでも {読|よ}み{直|なお}せる 。",
+  "en": "The notice will still be here to read again."
+ },
+ "scene:xp.cellars_tally#hcpk2r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{帳面|ちょうめん} が {置|お}いて ある 。 「 {米|こめ} 、 {三十|さんじゅう} {袋|ふくろ} 。 {全部|ぜんぶ} {上|あ}げて ある 。 」",
+  "en": "A tally book has been left here. \"Rice, thirty sacks. All put up.\""
+ },
+ "scene:xp.cellars_tally#kklby1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{最後|さいご} の {字|じ} は 、 {急|いそ}いで {書|か}いた {字|じ} だ 。 「 {水|みず} が {来|く}る 。 {灯|あか}り は つけて おく 。 」",
+  "en": "The last line is in a hurried hand. \"Water coming. Leaving the light on.\""
+ },
+ "scene:xp.cellars_bench#196g41z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{壁|かべ} {際|ぎわ} に {長椅子|ながいす} が {置|お}いて ある 。",
+  "en": "A bench has been set against the wall."
+ },
+ "scene:xp.cellars_grate#1x1pbh6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{床|ゆか} に {鉄|てつ} の {格子|こうし} が ある 。 {下|した} から {留|と}めて あって 、 {上|うえ} から は {開|あ}かない 。",
+  "en": "An iron grate in the floor. It has been fastened from below, and won't open from up here."
+ },
+ "scene:xp.cellars_grate#1w2lv1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{向|む}こう {側|がわ} から なら 、 {開|あ}けられる かも 。",
+  "en": "Maybe from the other side."
+ },
+ "scene:xp.cellars_lampnote#wj4s7n": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{棚|たな} に {紙|かみ} が {貼|は}って ある 。 「 ガラス は {拭|ふ}いて あります 。 {油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります 。 ランプ に は まだ {入|い}れて いません 。 」",
+  "en": "A note has been put up on the shelf. \"The glass has been wiped. The oil has been put in the box. It is not in the lamp yet.\""
+ },
+ "scene:xp.cellars_lamp#1u0tybr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{消|き}えた ランプ 。 {横|よこ} の {紙|かみ} に 、 {手入|てい}れ が どこ まで {済|す}んだ か 、 {書|か}いて ある 。",
+  "en": "A lamp gone out. The note beside it says how far its tending got."
+ },
+ "scene:xp.cellars_lamp:choice#zfwjoi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{前|まえ} と {同|おな}じ よう に {直|なお}す 。",
+  "en": "Tend it as before."
+ },
+ "scene:xp.cellars_lamp:choice#dimguf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{紙|かみ} を {読|よ}み{直|なお}す 。",
+  "en": "Read the note again."
+ },
+ "scene:xp.cellars_lamp#o5400a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{箱|はこ} の {油|あぶら} を ランプ に {入|い}れて 、 {火|ひ} を つけた 。 {部屋|へや} が {明|あか}るく なる 。",
+  "en": "You fill the lamp from the box and light it. The room brightens."
+ },
+ "scene:xp.cellars_lamp#1knvavr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ここ で {一度|いちど} 、 {休|やす}める 。",
+  "en": "You can rest here once."
+ },
+ "scene:xp.cellars_lamp#1s8jrux": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ランプ は {消|き}えた まま だ 。",
+  "en": "The lamp stays dark."
+ },
+ "scene:xp.cellars_lamp_rest#18elrf7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ランプ が {静|しず}か に {灯|とも}って いる 。",
+  "en": "The lamp burns quietly."
+ },
+ "scene:xp.cellars_leave#jcjhmv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "はしご の {上|うえ} に 、 {倉庫|そうこ} の {床|ゆか} の {戸|と} が {見|み}える 。",
+  "en": "Up the ladder, the warehouse hatch."
+ },
+ "scene:xp.cellars_leave:choice#12mutdd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{上|うえ} に {戻|もど}る 。",
+  "en": "Climb out."
+ },
+ "scene:xp.cellars_leave:choice#1tplqnu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "まだ {下|した} に いる 。",
+  "en": "Stay down here."
+ },
+ "scene:xp.cellars_leave#3iqb3l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{振|ふ}り{返|かえ}って 、 {通路|つうろ} の {奥|おく} を {見|み}る 。",
+  "en": "You turn back toward the passages."
+ },
+ "scene:xp.cellars_b2sign#34ynt9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「 {西|にし} の {橋|はし} は {渡|わた}れます 。 {東|ひがし} に も {板|いた} を {渡|わた}して あります が 、 {今|いま} は {水|みず} の {下|した} です 。 {水門|すいもん} は {南|みなみ} の {奥|おく} 。 」",
+  "en": "\"The west bridge can be crossed. A plank has been laid on the east side too, but it's under water now. The sluice is at the far south end.\""
+ },
+ "scene:xp.cellars_spring#27uu8f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{石|いし} の {井戸|いど} 。 {冷|つめ}たい {水|みず} が {下|した} から {出|で}て くる 。",
+  "en": "A stone well. Cold water rises in it from below."
+ },
+ "scene:xp.cellars_sluice_plate#qi7ia6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{銅|どう} の {板|いた} に {手順|てじゅん} が {刻|きざ}んで ある 。",
+  "en": "The steps have been cut into a copper plate."
+ },
+ "scene:xp.cellars_sluice_plate#1r4qp3s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「 {水門|すいもん} は もう {閉|し}めて あります 。 {栓|せん} を {抜|ぬ}いて ください 。 」",
+  "en": "\"The sluice gate has already been shut. Pull the plug.\""
+ },
+ "scene:xp.cellars_sluice_plate#1ktupxb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「 {車輪|しゃりん} に は {油|あぶら} が さして あります 。 {車輪|しゃりん} を {回|まわ}して ください 。 」",
+  "en": "\"The wheel has been oiled. Turn the wheel.\""
+ },
+ "scene:xp.cellars_sluice_plate#1hk31li": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「 {水|みず} が {引|ひ}いたら 、 {栓|せん} を {戻|もど}して ください 。 {東|ひがし} に は {板|いた} が {渡|わた}して あります 。 」",
+  "en": "\"When the water has gone down, put the plug back. A plank has been laid across on the east side.\""
+ },
+ "scene:xp.cellars_sluice#spr8ja": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{排水|はいすい} の {水門|すいもん} 。 {横|よこ} の {銅|どう} の {板|いた} に 、 {手順|てじゅん} が {刻|きざ}んで ある 。",
+  "en": "The drain sluice. The steps have been cut into a copper plate beside it."
+ },
+ "scene:xp.cellars_sluice#h8dh6y": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} の {音|おと} が {遠|とお}く なって いく 。 {北|きた} の {通路|つうろ} と {東|ひがし} の {板|いた} が 、 {水|みず} の {上|うえ} に {出|で}た 。",
+  "en": "The sound of the water goes further and further off. The north passage and the east plank are out of the water."
+ },
+ "scene:xp.cellars_sluice#1svb1ev": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{手順|てじゅん} どおり 。 {薬|くすり} の {調合|ちょうごう} と {同|おな}じ ね 。",
+  "en": "Step by step, exactly as written. Like mixing a remedy."
+ },
+ "scene:xp.cellars_sluice#93yr80": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{書|か}いて ある とおり に やれば 、 {水|みず} も {言|い}う こと を {聞|き}く か 。",
+  "en": "Do what it says, and even water does as it's told."
+ },
+ "scene:xp.cellars_sluice#1lkveb5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{前|まえ} の {人|ひと} の {仕事|しごと} が 、 {無駄|むだ} に ならなくて よかった です 。",
+  "en": "I'm glad the last people's work wasn't wasted."
+ },
+ "scene:xp.cellars_sluice#1kse61c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} の {勘定|かんじょう} 、 {合|あ}った よ 。",
+  "en": "The water's accounts balance."
+ },
+ "scene:xp.cellars_sluice#hl18wo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水門|すいもん} は その まま だ 。 {板|いた} の {手順|てじゅん} は 、 {逃|に}げない 。",
+  "en": "The sluice stays as it is. The steps on the plate aren't going anywhere."
+ },
+ "scene:xp.cellars_sluice_done#1sefc1k": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{栓|せん} は {戻|もど}して ある 。 {水門|すいもん} は {閉|し}まった まま 。",
+  "en": "The plug has been put back. The gate stays shut."
+ },
+ "scene:xp.cellars_ladder#lxksb3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{上|うえ} へ {続|つづ}く はしご 。 {天井|てんじょう} の {格子|こうし} が 、 こちら {側|がわ} から {留|と}めて ある 。",
+  "en": "A ladder going up. The grate in the ceiling has been fastened from this side."
+ },
+ "scene:xp.cellars_ladder#185r02": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{留|と}め{金|がね} を {外|はず}す と 、 {格子|こうし} が {持|も}ち{上|あ}がった 。 {上|うえ} は 、 はしご の {下|した} の {部屋|へや} だ 。",
+  "en": "You slide the catches back and the grate lifts. Above is the room at the foot of the first ladder."
+ },
+ "scene:xp.cellars_ladder#sr3n00": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "これ で 、 {次|つぎ} は ここ まで すぐ {来|こ}られる わ ね 。",
+  "en": "Now we can come straight down here next time."
+ },
+ "scene:xp.cellars_ladder#cfokic": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{近道|ちかみち} が {一|ひと}つ 。 {配達|はいたつ} でも {一番|いちばん} {助|たす}かる やつ だ 。",
+  "en": "One shortcut. The kind that helps most on a round."
+ },
+ "scene:xp.cellars_ladder#e55yyp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{帰|かえ}り {道|みち} が {短|みじか}く なりました 。 {次|つぎ} に {来|く}る {時|とき} も 、 ここ は {開|あ}いて います 。",
+  "en": "The way back's shorter now. It'll still be open next time we come."
+ },
+ "scene:xp.cellars_ladder#1w05rxf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{近道|ちかみち} 、 {開通|かいつう} 。 {幕間|まくあい} が {短|みじか}く なる の は 、 いい こと だ よ 。",
+  "en": "Shortcut open. Shorter intervals are always welcome."
+ },
+ "scene:xp.cellars_ladder:choice#ns45rk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "はしご を {上|のぼ}る 。",
+  "en": "Climb up."
+ },
+ "scene:xp.cellars_ladder:choice#ew735r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{今|いま} は {上|のぼ}らない 。",
+  "en": "Not now."
+ },
+ "scene:xp.cellars_outflow#jtxqx6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{出口|でぐち} の {戸|と} 。 {貼|は}り{紙|がみ} が {一枚|いちまい} {残|のこ}って いる 。",
+  "en": "The outflow door. One notice is left on it."
+ },
+ "scene:xp.cellars_outflow#zc2sc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "「 {戸|と} に は {鍵|かぎ} が かけて あります 。 {鍵|かぎ} は {右|みぎ} の {柱|はしら} に かけて あります 。 {出|で}る {時|とき} は 、 {戸|と} を {閉|し}めて ください 。 」",
+  "en": "\"The door has been locked. The key has been hung on the right-hand post. When you go out, please close the door.\""
+ },
+ "scene:xp.cellars_outflow#1azhb8m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{柱|はしら} の {鍵|かぎ} で {戸|と} を {開|あ}けた 。 {外|そと} の {光|ひかり} と 、 {川|かわ} へ {流|なが}れる {水|みず} の {音|おと} 。",
+  "en": "You open the door with the key from the post. Daylight, and the sound of water running down to the river."
+ },
+ "scene:xp.cellars_outflow#eq2dla": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} が {全部|ぜんぶ} {川|かわ} へ {出|で}て いく まで {待|ま}って 、 {戸|と} を {閉|し}めた 。 {鍵|かぎ} は {柱|はしら} に {戻|もど}して おいた 。",
+  "en": "You wait until the last of the water has gone out to the river, then close the door, and hang the key back on its post."
+ },
+ "scene:xp.cellars_outflow#6e2y62": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{米|こめ} は {無事|ぶじ} 。 {貼|は}り{紙|がみ} の {人|ひと} たち に も 、 {教|おし}えて あげたい わ 。",
+  "en": "The rice is safe. I'd like the people who wrote the notices to know."
+ },
+ "scene:xp.cellars_outflow#1t8ynig": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{届|とど}いた な 。 {貼|は}り{紙|がみ} の {返事|へんじ} は 、 {乾|かわ}いた {床|ゆか} だ 。",
+  "en": "Delivered. The reply to their notices is a dry floor."
+ },
+ "scene:xp.cellars_outflow#59ku8m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{書|か}いた {人|ひと} と {読|よ}んだ {人|ひと} 。 {二人|ふたり} {分|ぶん} の {仕事|しごと} で 、 {水|みず} が {引|ひ}きました 。",
+  "en": "The one who wrote and the one who read. It took both to bring the water down."
+ },
+ "scene:xp.cellars_outflow#frfm3f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{締|し}め 、 {完了|かんりょう} 。 {帳簿|ちょうぼ} が {合|あ}う と 、 {気持|きも}ち が いい ね 。",
+  "en": "Books closed. Nothing feels better than accounts that balance."
+ },
+ "scene:xp.cellars_outflow:choice#12mutdd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{上|うえ} に {戻|もど}る 。",
+  "en": "Climb out now."
+ },
+ "scene:xp.cellars_outflow:choice#1knmlc3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "もう {少|すこ}し ここ に いる 。",
+  "en": "Stay a little longer."
+ },
+ "scene:xp.cellars_outflow#iubd5m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} は {閉|し}めて ある 。 {鍵|かぎ} は {柱|はしら} に かけて ある 。 {全部|ぜんぶ} 、 {貼|は}り{紙|がみ} の とおり だ 。",
+  "en": "The door has been closed; the key hangs on its post. Everything as the notice said."
+ },
+ "scene:xp.cellars_outflow#a9kqtr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} の {前|まえ} で 、 {貼|は}り{紙|がみ} を もう {一度|いちど} {見|み}る 。 {急|いそ}がなくて いい 。",
+  "en": "You look at the notice once more. There's no hurry."
+ },
+ "challenges:xp.c_notice#15a5et0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貼|は}り{紙|がみ}",
+  "en": "The cellar hands' notice"
+ },
+ "challenges:xp.c_notice#15iyypm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{米|こめ} は {棚|たな} の {上|うえ} に {上|あ}げて あります 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1a4r6hs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "〜て あります",
+  "en": "て form + あります: someone did it, and it stays done. Here, the rice is safe on the shelves."
+ },
+ "challenges:xp.c_notice#lxl8ns": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{階段|かいだん} の {灯|あか}り は つけて ＿＿ 。",
+  "en": "The stair light: switched on, and left on."
+ },
+ "challenges:xp.c_notice#upo35s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "あります",
+  "en": ""
+ },
+ "challenges:xp.c_notice#138j2fe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ある",
+  "en": ""
+ },
+ "challenges:xp.c_notice#e9byph": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "つけて あります",
+  "en": "つけて あります — it has been switched on (and is on now)."
+ },
+ "challenges:xp.c_notice#1uhu4yn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{階段|かいだん} の {灯|あか}り は つけて あります 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1vagee8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "もう ついて いる 。 その まま で いい 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1llcx7o": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{灯|あか}り を つけて ください 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#xyc0ew": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{灯|あか}り は {消|き}えて いる 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1ymlvq4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{米|こめ}",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1syti1q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "は",
+  "en": ""
+ },
+ "challenges:xp.c_notice#19hm6t0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{棚|たな}",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1t8t3qp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "の",
+  "en": ""
+ },
+ "challenges:xp.c_notice#wji6z9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{上|うえ}",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1u2rwtm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "に",
+  "en": ""
+ },
+ "challenges:xp.c_notice#xi262p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{上|あ}げて",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1jp4xub": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "Ａ ： {戸|と} が {開|あ}いて いる 。　Ｂ ： {戸|と} が {開|あ}けて ある 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#133nhnd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{階段|かいだん} の {灯|あか}り が ＿＿ ある 。",
+  "en": "The hands left the stair light on."
+ },
+ "challenges:xp.c_notice#oh98dc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "つけて",
+  "en": ""
+ },
+ "challenges:xp.c_notice#febriv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "つけて ある",
+  "en": "つける → つけて; + ある: it has been switched on."
+ },
+ "challenges:xp.c_notice#1yybw25": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{米|こめ} は {上|あ}げて ある けど 、 {味噌|みそ} の {樽|たる} は まだ {下|した} に {置|お}いて ある 。",
+  "en": ""
+ },
+ "challenges:xp.c_notice#9jw8bx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "はしご",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1ji9xpq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{壁|かべ}",
+  "en": ""
+ },
+ "challenges:xp.c_notice#1aqoy5h": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "かけて",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#yjrgns": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{消|き}えた ランプ",
+  "en": "The lamp that went out"
+ },
+ "challenges:xp.c_lamp#2ugfvy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります 。",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1dw2zpn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ガラス は {拭|ふ}いて あります 。 {油|あぶら} は まだ {入|い}れて いません 。",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#7wn80h": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{油|あぶら} を {入|い}れる",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#15vzc6u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ガラス を {拭|ふ}く",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#hims6e": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{何|なに} も しない",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#gzd8y9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ガラス は ＿＿ あります 。",
+  "en": "The glass has been wiped."
+ },
+ "challenges:xp.c_lamp#17b14tq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ふいて",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#15ua367": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{拭|ふ}いて",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1w9prig": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{拭|ふ}いて あります",
+  "en": "ふく → ふいて (く → いて)."
+ },
+ "challenges:xp.c_lamp#9fvjd9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ガラス は {拭|ふ}いて あります 。 {油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります が 、 ランプ に は まだ {入|い}れて いません 。",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1xxma3d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{油|あぶら}",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1syti1q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "は",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#7ovylw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{箱|はこ}",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1t8t3qp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "の",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#109ghqn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{中|なか}",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1u2rwtm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "に",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1b036im": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{入|い}れて",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#upo35s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "あります",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#tnveld": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{油|あぶら} は まだ {入|い}れて いません 。 {先|さき} に {入|い}れて おく と 、 {水|みず} が {入|はい}る から です 。",
+  "en": ""
+ },
+ "challenges:xp.c_lamp#1ovjvun": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{油|あぶら} は {箱|はこ} の {中|なか} に ＿＿ あります 。",
+  "en": "The oil has been put in the box."
+ },
+ "challenges:xp.c_lamp#zmqvg1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "いれて",
+  "en": ""
+ },
+ "challenges:xp.c_final#11vxh3a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{出口|でぐち} の {戸|と}",
+  "en": "The outflow door"
+ },
+ "challenges:xp.c_final#chs0ni": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{鍵|かぎ} は {右|みぎ} の {柱|はしら} に かけて あります 。",
+  "en": ""
+ },
+ "challenges:xp.c_final#1mpvdg3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{出|で}る {時|とき} は 、 {戸|と} を {閉|し}めて ください 。",
+  "en": ""
+ },
+ "challenges:xp.c_final#1osxugb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} に は {鍵|かぎ} が かけて あります 。 {鍵|かぎ} は {右|みぎ} の {柱|はしら} に かけて あります 。",
+  "en": ""
+ },
+ "challenges:xp.c_final#lx6w8m": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{柱|はしら} の {鍵|かぎ} を {取|と}る",
+  "en": ""
+ },
+ "challenges:xp.c_final#yj4xrm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} を {押|お}す",
+  "en": ""
+ },
+ "challenges:xp.c_final#1fpp25w": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{鍵|かぎ} を {探|さが}しに {帰|かえ}る",
+  "en": ""
+ },
+ "challenges:xp.c_final#ihgpst": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{鍵|かぎ}",
+  "en": ""
+ },
+ "challenges:xp.c_final#1syti1q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "は",
+  "en": ""
+ },
+ "challenges:xp.c_final#cwl3hf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{柱|はしら}",
+  "en": ""
+ },
+ "challenges:xp.c_final#1u2rwtm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "に",
+  "en": ""
+ },
+ "challenges:xp.c_final#1aqoy5h": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "かけて",
+  "en": ""
+ },
+ "challenges:xp.c_final#upo35s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "あります",
+  "en": ""
+ },
+ "challenges:xp.c_final#ciewut": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "① {戸|と} に {鍵|かぎ} が かけて あります 。 ② {水|みず} が {流|なが}れて います 。 ③ {出|で}る {時|とき} は 、 {戸|と} を {閉|し}めて ください 。",
+  "en": ""
+ },
+ "challenges:xp.c_final#10h1idc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{鍵|かぎ} は {柱|はしら} に ＿＿ あります 。",
+  "en": "The key has been hung on the post."
+ },
+ "challenges:xp.c_final#30add": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} は {閉|し}めて ある が 、 {鍵|かぎ} は かかって いない 。",
+  "en": ""
+ },
+ "challenges:xp.c_final#t9culx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{出|で}る",
+  "en": ""
+ },
+ "challenges:xp.c_final#1or4hne": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{時|とき}",
+  "en": ""
+ },
+ "challenges:xp.c_final#12mt3gd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と}",
+  "en": ""
+ },
+ "challenges:xp.c_final#15xqhh1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "を",
+  "en": ""
+ },
+ "challenges:xp.c_final#1g0y0h0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{閉|し}めて",
+  "en": ""
+ },
+ "challenges:xp.c_final#j2w24n": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "おいて",
+  "en": ""
+ },
+ "challenges:xp.c_final#1uz0w57": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "ください",
+  "en": ""
+ },
+ "expedition:cellars#1dfv6ce": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{地下|ちか}{一階|いっかい}",
+  "en": "The Upper Cellar"
+ },
+ "expedition:cellars#1lf6zws": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{地下|ちか}{二階|にかい}",
+  "en": "The Flooded Cellar"
+ },
+ "expedition:cellars#1xdgsw8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{倉庫|そうこ} の {地下|ちか}",
+  "en": "The Flood Cellars"
+ },
+ "expedition:cellars#xfg16": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "〜て ある",
+  "en": "What someone has done and left so, read in the cellar hands' notices. New here: 〜て ある. Also used: 〜て いる, 〜て ください."
+ },
+ "map:rw.cellar1#1dfv6ce": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{地下|ちか}{一階|いっかい}",
+  "en": "The Upper Cellar"
+ },
+ "map:rw.cellar1#1uiv6kv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} と {一緒|いっしょ} に {入|はい}って きた {葦|あし} が 、 {通路|つうろ} で {揺|ゆ}れて いる 。",
+  "en": "Reeds that came in with the flood sway in the passage."
+ },
+ "map:rw.cellar1#qzv1mr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{葦|あし} は {静|しず}か に なって 、 {水|みず} の {中|なか} に {沈|しず}んだ 。",
+  "en": "The reeds go still and sink back into the water."
+ },
+ "map:rw.cellar2#1lf6zws": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{地下|ちか}{二階|にかい}",
+  "en": "The Flooded Cellar"
+ },
+ "map:rw.cellar2#1uiv6kv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} と {一緒|いっしょ} に {入|はい}って きた {葦|あし} が 、 {通路|つうろ} で {揺|ゆ}れて いる 。",
+  "en": "Reeds that came in with the flood sway in the passage."
+ },
+ "map:rw.cellar2#qzv1mr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{葦|あし} は {静|しず}か に なって 、 {水|みず} の {中|なか} に {沈|しず}んだ 。",
+  "en": "The reeds go still and sink back into the water."
+ },
+ "map:rw.cellar2#1h4pms": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{戸|と} の {前|まえ} で 、 {墨|すみ} の {染|し}み が {貼|は}り{紙|がみ} を {汚|よご}して いる 。",
+  "en": "In front of the door, a blot of ink is smearing the notices."
+ },
+ "map:rw.cellar2#15z0xx5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{染|し}み は {薄|うす}く なって 、 {水|みず} と {一緒|いっしょ} に {流|なが}れて いった 。",
+  "en": "The blot thins and runs away with the water."
+ },
+ "encounter:xp.cellars_sluice#1tepwnb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{排水|はいすい} の {水門|すいもん}",
+  "en": "The drain sluice"
+ },
+ "encounter:xp.cellars_sluice#rhgg1b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水門|すいもん}",
+  "en": "Sluice gate"
+ },
+ "encounter:xp.cellars_sluice#8fgj53": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{閉|し}まって いる",
+  "en": "shut"
+ },
+ "encounter:xp.cellars_sluice#pj18pv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{開|あ}いて いる",
+  "en": "open"
+ },
+ "encounter:xp.cellars_sluice#1rq0uia": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{栓|せん}",
+  "en": "Drain plug"
+ },
+ "encounter:xp.cellars_sluice#prpkxv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{入|はい}って いる",
+  "en": "in"
+ },
+ "encounter:xp.cellars_sluice#ag4ogb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{抜|ぬ}けて いる",
+  "en": "out"
+ },
+ "encounter:xp.cellars_sluice#1qf5ksu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず}",
+  "en": "Water"
+ },
+ "encounter:xp.cellars_sluice#vxmsht": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{高|たか}い",
+  "en": "high"
+ },
+ "encounter:xp.cellars_sluice#1x7rtvm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{低|ひく}い",
+  "en": "low"
+ },
+ "encounter:xp.cellars_sluice#1jub9qb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水門|すいもん} は もう {閉|し}めて あります 。 {栓|せん} を {抜|ぬ}いて ください 。",
+  "en": ""
+ },
+ "encounter:xp.cellars_sluice#1jg34ys": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水門|すいもん} は もう {閉|し}めて あります 。",
+  "en": ""
+ },
+ "encounter:xp.cellars_sluice#1wvjd7j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{栓|せん} を {抜|ぬ}く",
+  "en": "Pull the plug"
+ },
+ "encounter:xp.cellars_sluice#282tst": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水門|すいもん} を {閉|し}める",
+  "en": "Shut the gate"
+ },
+ "encounter:xp.cellars_sluice#1rzhj6s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{車輪|しゃりん} に は {油|あぶら} が さして あります 。 {車輪|しゃりん} を {回|まわ}して ください 。",
+  "en": ""
+ },
+ "encounter:xp.cellars_sluice#1b624tp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{車輪|しゃりん} に は {油|あぶら} が さして あります 。",
+  "en": ""
+ },
+ "encounter:xp.cellars_sluice#4a5akq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{車輪|しゃりん} を {回|まわ}す",
+  "en": "Turn the wheel"
+ },
+ "encounter:xp.cellars_sluice#26zzsf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{油|あぶら} を さす",
+  "en": "Oil the wheel"
+ },
+ "encounter:xp.cellars_sluice#14o0zbt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{水|みず} が {引|ひ}いたら 、 {栓|せん} を {戻|もど}して ください 。 {東|ひがし} に は {板|いた} が {渡|わた}して あります 。",
+  "en": ""
+ },
+ "encounter:xp.cellars_sluice#1xbsawm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{東|ひがし} に は {板|いた} が {渡|わた}して あります 。",
+  "en": ""
+ },
+ "encounter:xp.cellars_sluice#lc1hvt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{栓|せん} を {戻|もど}す",
+  "en": "Put the plug back"
+ },
+ "encounter:xp.cellars_sluice#139rldx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{板|いた} を {渡|わた}す",
+  "en": "Lay a plank"
+ },
+ "encounter:xp.cellars_pair#1uas6nj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{墨|すみ} と {粉|こな}",
+  "en": "Ink and flour"
+ },
+ "encounter:xp.cellars_blot#1x63exd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{貼|は}り{紙|がみ} の {染|し}み",
+  "en": "The blot on the notices"
+ }
+}

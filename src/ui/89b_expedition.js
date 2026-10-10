@@ -27,7 +27,7 @@ RB.ui.expedition = (function () {
     return '<div class="xp-card">' +
       '<p class="xp-kind">' + esc(d.kind === 'side' ? 'A side expedition: entirely optional' : d.kind === 'story' ? 'Part of the story' : 'An expedition') + '</p>' +
       row('Language', (pv.language.jp ? '<span class="jp">' + RB.ui.jhtml(pv.language.jp) + '</span> ' : '') + esc(pv.language.en)) +
-      row('Size', esc(pv.size.en) + ' ' + esc(d.floors.length + ' floor' + (d.floors.length === 1 ? '' : 's') + ': ') + d.floors.map((f) => (f.name ? RB.ui.jhtml(f.name.jp) + ' <span class="en">' + esc(f.name.en) + '</span>' : esc(f.id))).join(', ')) +
+      row('Size', esc(['One floor', 'Two floors', 'Three floors', 'Four floors'][d.floors.length - 1] || d.floors.length + ' floors') + ': ' + d.floors.map((f) => (f.name ? RB.ui.jhtml(f.name.jp) + ' <span class="en">' + esc(f.name.en) + '</span>' : esc(f.id))).join(', ') + '. ' + esc(pv.size.en)) +
       (pv.suggested ? row('Suggested', esc(pv.suggested.en)) : '') +
       row('Rules', '<ul class="xp-rules">' + pv.rules.map((r) => '<li>' + esc(r.en) + '</li>').join('') + '</ul>') +
       (done || open ? '<p class="note-slip">' + I('done') + ' ' + esc((done ? 'You have been through to the end before. ' : '') + (open ? open + ' shortcut' + (open === 1 ? '' : 's') + ' open from earlier visits.' : '')) + '</p>' : '') +
@@ -118,9 +118,10 @@ RB.ui.expedition = (function () {
     if (here) out += '<circle cx="' + (s.x * c + c / 2) + '" cy="' + (s.y * c + c / 2) + '" r="' + (c * 0.9) + '" class="xp-here"/>';
     return out + '</svg>';
   }
-  function pageHtml(s) {
+  // the page in two parts: the floors (left), the places to rest and the shortcuts (right, or below on one page)
+  function pageParts(s) {
     const e = X().of(s);
-    if (!e) return '<p class="muted">You are not on an expedition.</p>';
+    if (!e) return { left: '<p class="muted">You are not on an expedition.</p>', right: '' };
     const d = X().get(e.id);
     let h = '<h3>' + I('map') + ' ' + RB.ui.jhtml(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span></h3>';
     if (X().persistent(s)) h += '<p class="note-slip">' + I('resolve') + ' ' + esc('Resolve carries between encounters here: you ' + s.resolve.pc + '/' + s.resolve.max + (s.comp && RB.content.chars[s.comp] ? ', ' + RB.content.chars[s.comp].name.en + ' ' + s.resolve.comp + '/' + s.resolve.max : '') + '. What mistakes cost always comes back after each encounter.') + '</p>';
@@ -134,16 +135,17 @@ RB.ui.expedition = (function () {
       const fl = d.floors.find((f) => f.map === x.map);
       return '<li class="entry"><span class="mark">' + I(KIND_ICON[x.kind] || 'resolve') + '</span><div><div class="t">' + esc(KIND_NAME[x.kind] || x.kind) + (fl && fl.name ? ' <span class="muted small">' + esc(fl.name.en) + '</span>' : '') + '</div><div class="small">' + esc(!ready ? 'Not ready yet: something here can be mended.' : left === Infinity ? 'As often as you like.' : left > 0 ? left + ' use' + (left === 1 ? '' : 's') + ' left this expedition.' : 'Used up this expedition.') + '</div></div></li>';
     }).join('');
-    const sc = Object.keys(d.shortcuts).map((k) => '<li class="entry"><span class="mark">' + I('follow') + '</span><div><div class="t">' + esc('Shortcut') + '</div><div class="small">' + esc(X().shortcutOpen(s, d.id, k) ? 'Open: it stays open on every visit.' : 'Not opened yet: it opens from the far side.') + '</div></div></li>').join('');
-    h += '<h3>' + I('resolve') + ' Places to rest</h3><ul class="entries">' + st + '</ul>' + (sc ? '<h3>' + I('follow') + ' Shortcuts</h3><ul class="entries">' + sc + '</ul>' : '') +
-      '<p class="muted small">' + esc('Key: pale floor, blue water, dashed squares the ways between floors, circles the places to rest (the number: uses left), the ringed dot: you.') + '</p>';
-    return h;
+    const sc = Object.keys(d.shortcuts).map((k) => '<li class="entry"><span class="mark">' + I('follow') + '</span><div><div class="t">' + esc(d.shortcuts[k].name ? d.shortcuts[k].name.en : 'Shortcut') + '</div><div class="small">' + esc(X().shortcutOpen(s, d.id, k) ? 'Open: it stays open on every visit.' : 'Not opened yet: it opens from the far side.') + '</div></div></li>').join('');
+    const right = '<h3>' + I('resolve') + ' Places to rest</h3><ul class="entries">' + st + '</ul>' + (sc ? '<h3>' + I('follow') + ' Shortcuts</h3><ul class="entries">' + sc + '</ul>' : '') +
+      '<p class="muted small">' + esc('Key: pale floor, blue water, dashed squares the ways between floors, circles the places to rest (the number: uses left; ? not mended yet), green squares a shortcut open, the red dot: you.') + '</p>';
+    return { left: h, right };
   }
+  function pageHtml(s) { const p = pageParts(s); return p.left + p.right; }
   if (RB.ui.menu && RB.ui.menu.addPage) {
     RB.ui.menu.addPage('map', {
       id: 'expedition', en: 'Expedition', icon: 'map',
       available: (s) => X().active(s),
-      render(A) { A.innerHTML = pageHtml(S()); },
+      render(A, B, two) { const p = pageParts(S()); if (two && B) { A.innerHTML = p.left; B.innerHTML = p.right; } else A.innerHTML = p.left + p.right; },
     });
   }
 

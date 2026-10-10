@@ -1,7 +1,8 @@
 # P07 · Expeditions, Atlas extensions and a pilot dungeon
 
 *Playbook P07 ("Finish the expedition framework and one pilot"); plan [04_DUNGEONS.md](../plan/04_DUNGEONS.md)
-D1–D8, D10. Authorised by Robin's C-81. Under way.*
+D1–D8, D10. Authorised by Robin's C-81. Under way: the framework and the pilot done; the Atlas's commissions and
+delvers next.*
 
 ## What P07 builds
 
@@ -13,8 +14,11 @@ D1–D8, D10. Authorised by Robin's C-81. Under way.*
 | Shortcuts opened from the far side, kept like the map | D10 | `RB.expedition.openShortcut` | Done (engine) |
 | Defeat by the expedition's rule (entrance, floor or checkpoint) | D3 | `RB.expedition.onDefeat`, the defeat flow in `90_game.js` | Done (engine) |
 | The battle screen's hooks: start/end for expeditions; a bar registry (`RB.ui.combatBars`) that now draws the Atlas's escorted lantern, replacing its page observer | D1 | `src/ui/80_combat.js`, `src/atlas/50_run.js` | Done |
-| The entrance preview card (what is practised, size, the rules in words) | D4 | `RB.expedition.preview`; the card on screen | Engine done; screen next |
-| A pilot optional dungeon in an existing region: entrance preview, a large looped floor, stations, a procedure, an optional route, a visible encounter, a shortcut, retreat and restart, an apprenticeship pattern | P07 pilot, D6 A31 | — | Next |
+| The entrance preview card (what is practised, size, the rules in words, ambushes, leaving), read from the same definition the run uses | D4 | `RB.expedition.preview`; `src/ui/89b_expedition.js` | Done |
+| A pilot optional dungeon in an existing region: entrance preview, a large looped floor, stations, a procedure, an optional route, a visible encounter, a shortcut, retreat and restart, an apprenticeship pattern | P07 pilot, D6 A31; F-26 | The Flood Cellars: `src/content/expeditions/` (maps and definition, the language, the scenes), Suzu's Kansai lines | Done |
+| Coherence: a visit begun or ended by walking onto or off its maps; rest places kept at full resolve; machines part-way through reset on a restart (solved steps kept); unlimited uses survive a save; the floors seen kept | D3, D3a; F-27 | `src/engine/98_expedition.js` | Done |
+| Carried resolve on the map (a chip) and the Map page's Expedition plan (the floors seen, the stations with uses left, the shortcuts) | D2, D10 | `src/ui/89b_expedition.js`, `src/styles/67_expedition.css` | Done |
+| The whole-expedition curve: the player model plays the cellars end to end with carried condition | D2 ("a new curve test that plays whole expeditions"); F-29 | `tests/unit/expedition_curve.test.mjs`; `RB.combatSim.run`'s `onInit` | Done |
 | Atlas commissions (practice, themed, survey), varied rooms inside each run's fixed shape, delvers | D7, C-57, D8 | — | Next |
 
 ## The accounting (D2), as tested
@@ -30,10 +34,50 @@ D1–D8, D10. Authorised by Robin's C-81. Under way.*
 | Six capped mistakes | 12 → 6 | 12 |
 | Random sequences (2,000) | | the pools always add up to what is missing; the refund never exceeds it |
 
-## Checks so far
+## Checks of the engine slice (85f39c8)
 
 | Check | Command | Result |
 |---|---|---|
 | The accounting, the instance, stations, shortcuts, defeat, the hooks, the preview, the Atlas lantern bar | `node tests/run-unit.mjs expedition` | 29/0 |
 | Recorded battles unchanged; encounters; modifiers; the Atlas | `combat_golden`, `encounters`, `modifiers`, `encounter_rules`, `atlas` | 2/0 (1,710 battles), 184/0, 127/0, 17/0, 77/0 |
 | The battle screen | `node tests/e2e/combat_ui.mjs`, `battle_settings.mjs` | 7/0, 10/0 |
+
+## The pilot: the Flood Cellars
+
+Under Reedwake's River Warehouse, in twelve-chapter journeys once Chapter 2 is over (F-26). Old Yasu tells you the
+young hands ran off halfway through draining it, leaving their notices; reading what they had already done is the
+way through.
+
+| What P07 asks for | In the cellars |
+|---|---|
+| Entry preview | The hatch shows the card: 〜て ある (new), 〜て いる and 〜て ください (used); two floors and an optional room; the rules in words; "Go down" or "Not now" |
+| A large looped floor | B1 (40 × 26): a ring of passages round the rice store; two ways to the stairs (north past the bench, south past the lamp room) and the store as a cut across. Tested: with either passage closed, the stairs are still reached |
+| A station | The bench (B1, +4, twice), the spring (B2, full, once), the lamp (mended into one more rest) |
+| A procedure | The drain sluice: three steps read from the hands' plate, each a 〜て ある notice (what is done) and a 〜て ください one (what is asked); a wrong move goes back to the last stable step |
+| An optional route | The lamp room east of B1 (its lamp, its note): closing it off changes nothing about the way on |
+| A visible encounter | Every creature is in sight; the blot at the outflow door is an authored encounter of its own |
+| A shortcut | The grate by the first ladder, bolted from below: opened from B2's outflow chamber, it stays open on every visit, and lands beyond the water |
+| Retreat and restart | Climb out at the first ladder whenever you like (the next visit starts fresh); defeat starts the cellars again from the ladder: the water back, the lamp out, the creatures returned, the stations and condition full; kept: the grate, what was taught, the floors seen, the steps solved |
+| An apprenticeship pattern (A31) | Taught at the foot of the ladder with its grammar card and a task; used by the lamp, the grate, the sluice; combined at the outflow door with 〜て いる and 〜て ください |
+| All profiles and input routes | Every task at Foundations, Elementary, Intermediate and Advanced; choosing, ordering and writing all meet 〜て ある; the browser test answers the notice by mouse, by tiles, by typing and by handwriting |
+
+### The curve (F-29)
+
+`node tests/run-unit.mjs expedition_curve`: the player model plays all six creatures in walking order at every
+difficulty, with each companion, reading the telegraphs or mostly unravelling, with no slips and with one in three
+(48 runs). All won. The lowest resolve between encounters: 11 (Relaxed), 8 (Standard, a rest used in some runs), 8
+(Demanding, up to two rests). What slips cost was given back after each encounter. B2's two groups (a blot and a
+strayed flour moth) are authored encounters, each within 5 exchanges and half a resolve bar of the blot alone at
+every setting with and without a companion; the six-chapter story's group rules and recorded battles are untouched
+(`combat_fairness` 621/0, `combat_golden` 2/0, `combat_curve` 287/0).
+
+## Checks
+
+| Check | Command | Result |
+|---|---|---|
+| The engine: accounting, instance, stations (kept at full resolve), shortcuts, defeat, hooks, preview, the Atlas lantern bar | `node tests/run-unit.mjs expedition.test` | 30/0 |
+| The cellars: the card says what the run does; the places where the definition says; walking (the loop, the optional room, the flood, the shortcut beyond it); story maps outside any expedition; an instance through the reset matrix, coherence and a save; four profiles and every input route; no bare kanji in an English line | `node tests/run-unit.mjs expedition_cellars` | 51/0 |
+| The whole-expedition curve, and the groups' spike bound | `node tests/run-unit.mjs expedition_curve` | 6/0 |
+| In the browser: the whole loop (hatch, card, B1, B2, sluice, shortcut, plan, door, stamp, out); a defeat; a real battle carrying the blow and giving back the mistake; the notice by hand at all four profiles (mouse, tiles, typing, handwriting); phone width | `node tests/e2e/expedition.mjs` | 5/0 (captures `docs/screenshots/expedition/`) |
+| The challenge screen's English fields with readings (F-28), and the suites around it | `node tests/e2e/ui.mjs`, `encounters.mjs` | 14/0, 10/0 |
+| The defeat test gives the battle's outcome (the game's defeat flow after it is its own); the real battle test steps back rather than playing to a finish | — | stated, not hidden |

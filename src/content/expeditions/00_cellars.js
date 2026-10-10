@@ -22,7 +22,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C, K) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
-  const CELLAR = { region: 'reedwake', music: 'mill', noTravel: true, noCheckpoint: true, travelKind: 'dungeon', travelPlace: { en: 'the Flood Cellars' }, expedition: 'cellars' };
+  // edition: 2 — a map only the twelve-chapter edition can reach (its hatch is gated); the six-chapter census leaves it out
+  const CELLAR = { region: 'reedwake', music: 'mill', noTravel: true, noCheckpoint: true, travelKind: 'dungeon', travelPlace: { en: 'the Flood Cellars' }, expedition: 'cellars', edition: 2 };
   // floodwater that stands until the sluice has been worked (an instance flag: a restart brings it back)
   const flood = (cells, cond) => cells.map(([x, y]) => ({ p: 'lf_flood', x, y, if: cond, o: { cx: x, cy: y } }));
   const rect = (x0, y0, w, h) => { const out = []; for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) out.push([x, y]); return out; };
@@ -30,7 +31,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- B1: the Upper Cellar (40 × 26) ----------------------------------------------------------------------------
   C.maps['rw.cellar1'] = Object.assign({}, CELLAR, {
-    name: T('The Upper Cellar', '{地下|ちか} {一階|いっかい}'),
+    name: T('The Upper Cellar', '{地下|ちか}{一階|いっかい}'),
     ambient: { dark: 0.5, playerLight: 54, weather: 'motes' },
     terrain: K.build(40, 26, '#', (k) => {
       k.rect(1, 17, 9, 7, '+');          // the foot of the ladder
@@ -88,7 +89,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- B2: the Flooded Cellar (34 × 24) ---------------------------------------------------------------------------
   C.maps['rw.cellar2'] = Object.assign({}, CELLAR, {
-    name: T('The Flooded Cellar', '{地下|ちか} {二階|にかい}'),
+    name: T('The Flooded Cellar', '{地下|ちか}{二階|にかい}'),
     ambient: { dark: 0.55, playerLight: 50, weather: 'motes' },
     terrain: K.build(34, 24, '#', (k) => {
       k.rect(1, 2, 9, 7, '+');           // the foot of the stairs
@@ -122,7 +123,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'barrel', x: 32, y: 7 },
     ].concat(flood(rect(19, 4, 5, 3), WET), flood(rect(26, 9, 2, 4), WET)),
     foes: [
-      { id: 'd1', enemy: 'rw.inkblot', x: 16, y: 19, patrol: 2 },
+      // two together on Standard and Demanding (Relaxed: always one; a flour moth from the rice store, a creature of
+      // indoor places): an authored encounter (10_learning.js), so the six-chapter maps' own group rules stay as they
+      // are (F-29); carried condition starts to matter on B2
+      { id: 'd1', enemy: 'rw.inkblot', encounter: 'xp.cellars_pair', x: 16, y: 19, patrol: 2 },
       { id: 'd2', enemy: 'rw.reedling', x: 6, y: 14, patrol: 1, bg: 'belltower', intro: { jp: '{水|みず} と {一緒|いっしょ} に {入|はい}って きた {葦|あし} が 、 {通路|つうろ} で {揺|ゆ}れて いる 。', en: 'Reeds that came in with the flood sway in the passage.' }, settle: { jp: '{葦|あし} は {静|しず}か に なって 、 {水|みず} の {中|なか} に {沈|しず}んだ 。', en: 'The reeds go still and sink back into the water.' } },
       // the blot at the outflow door: an encounter of its own (10_learning.js), always in sight
       { id: 'd3', enemy: 'rw.inkblot', encounter: 'xp.cellars_blot', x: 28, y: 4, patrol: 1, aggro: true,
@@ -139,12 +143,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
   RB.expedition.define('cellars', {
     title: T('The Flood Cellars', '{倉庫|そうこ} の {地下|ちか}'), kind: 'side',
     floors: [
-      { id: 'b1', map: 'rw.cellar1', entry: { x: 4, y: 20, dir: 'down' }, name: T('The Upper Cellar', '{地下|ちか} {一階|いっかい}') },
-      { id: 'b2', map: 'rw.cellar2', entry: { x: 4, y: 4, dir: 'down' }, name: T('The Flooded Cellar', '{地下|ちか} {二階|にかい}') },
+      { id: 'b1', map: 'rw.cellar1', entry: { x: 4, y: 20, dir: 'down' }, name: T('The Upper Cellar', '{地下|ちか}{一階|いっかい}') },
+      { id: 'b2', map: 'rw.cellar2', entry: { x: 4, y: 4, dir: 'down' }, name: T('The Flooded Cellar', '{地下|ちか}{二階|にかい}') },
     ],
     preview: {
-      language: T('What someone has done and left so: 〜て ある, read in the cellar hands\' notices. New here: 〜て ある. Also used: 〜て いる, 〜て ください.', '〜て ある'),
-      size: T('Two floors, with an optional room. Each step is fitted to your profile.'),
+      language: T('What someone has done and left so, read in the cellar hands\' notices. New here: 〜て ある. Also used: 〜て いる, 〜て ください.', '〜て ある'),
+      size: T('An optional room off the first. Each step is fitted to your profile.'),
       suggested: T('Any profile, once Chapter 2 is over.'),
     },
     rules: { persistent: true, restart: 'entrance', ambush: false },
@@ -153,7 +157,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       spring: { kind: 'spring', map: 'rw.cellar2', x: 3, y: 19 },
       lamp: { kind: 'lamp', map: 'rw.cellar1', x: 36, y: 8, requires: 'xp_cellars_lamp_fixed' },
     },
-    shortcuts: { ladder: { map: 'rw.cellar2', x: 31, y: 3, to: { map: 'rw.cellar1', x: 8, y: 22 } } },
+    shortcuts: { ladder: { name: T('The grate by the first ladder'), map: 'rw.cellar2', x: 31, y: 3, to: { map: 'rw.cellar1', x: 8, y: 22 } } },
     procedures: ['xp_cellars_sluice'],
     exit: { map: 'rw.warehouse', x: 7, y: 4, dir: 'down' },
   });

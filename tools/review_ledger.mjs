@@ -49,6 +49,12 @@ export function lines(RB) {
   if (RB.festival) for (const g of RB.festival.list()) walk('pt.festival', 'pastime:festival:' + g.id, g, new Set());
   if (RB.hanafuda) walk('pt.hanafuda', 'pastime:hanafuda:cards', { deck: RB.hanafuda.DECK, months: RB.hanafuda.MONTHS, kinds: RB.hanafuda.KINDS, yaku: RB.hanafuda.YAKU }, new Set());
   if (RB.shogi) walk('pt.shogi', 'pastime:shogi:board', { names: RB.shogi.NAMES, promoted: RB.shogi.PROMOTED, variants: RB.shogi.VARIANTS, handicaps: RB.shogi.HANDICAPS }, new Set());
+  // the expeditions (P07): each definition (its card), its floors' maps, and its encounters
+  if (RB.expedition) for (const d of RB.expedition.list()) {
+    walk('xp.' + d.id, 'expedition:' + d.id, d, new Set());
+    for (const m of d.maps) if (C.maps[m]) walk('xp.' + d.id, 'map:' + m, C.maps[m], new Set());
+  }
+  for (const id in C.encounters || {}) if (/^xp\./.test(id)) walk(id, 'encounter:' + id, C.encounters[id], new Set());
   return out;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {

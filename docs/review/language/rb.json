@@ -1,4 +1,16 @@
 {
+ "stamp:xp.cellars#1d58c9a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{地下|ちか} の {水|みず} を {抜|ぬ}く",
+  "en": "The cellars drained"
+ },
+ "stamp:xp.cellars#pq8v62": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",
+  "jp": "{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く",
+  "en": "Drain the Flood Cellars and open the outflow door."
+ },
  "stamp:ch.rw#carm31": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",

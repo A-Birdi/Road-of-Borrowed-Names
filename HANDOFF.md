@@ -220,9 +220,11 @@
     Robin reviews it all at completion. P18 (the full matrix, any release) still waits for Robin. The twelve-chapter
     edition stays behind its development switch (Settings › Edition for new journeys, or `?edition=12`) until the
     release, so Robin's saves are never changed. **P02 (foundations), P03 (learning evidence, task families,
-    Mastery, What I can do) and P04 (encounters) are done**; P05 (the living world, exploration actions, the
-    performance library) is under way. Development pages: `?dev=enc` (encounter fixtures), `?dev=verbs`
-    (exploration actions). Current state: docs/future/work/STATE.md.
+    Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
+    done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
+    (a hatch there, twelve-chapter journeys after Chapter 2), are done; the Atlas's commissions and delvers are next.
+    Development pages: `?dev=enc` (encounter fixtures), `?dev=verbs` (exploration actions). Current state:
+    docs/future/work/STATE.md.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

@@ -36,6 +36,7 @@ RB.challenge = (function () {
 
   function plain(s) { return RB.tasks.plain(s || ''); }
   // English feedback may carry {漢字|かな} markup for a word it quotes: give it ruby
+  // English with {漢字|かな} groups: the groups get their readings (plain English is unchanged)
   const enRuby = (t) => RB.learnUi.mixed(t);
 
   // opts.handwritten: the text came from the writing pad, so characters that
@@ -162,7 +163,7 @@ RB.challenge = (function () {
         let h = situ ? '<div class="chal-situ">' + situ + '</div>' : '';
         if (step.ctx && step.ctx.jp) {
           h += '<div class="chal-ctx' + (step.ctx.big ? ' big' : '') + '">' + RB.ui.jhtml(step.ctx.jp) + '</div>';
-          if (step.ctx.en && showEn) h += '<div class="chal-en">' + esc(RB.script.enVars(step.ctx.en)) + '</div>';
+          if (step.ctx.en && showEn) h += '<div class="chal-en">' + enRuby(RB.script.enVars(step.ctx.en)) + '</div>';
         }
         // a listening step (L16): the device's own voice, optional; the words are always a tap away and reading them
         // is never help (it is recorded as reading, not listening). With no Japanese voice, the words are simply shown.
@@ -172,7 +173,7 @@ RB.challenge = (function () {
           h += '<div class="chal-listen">' + (canHear ? '<button class="pbtn" data-a="hear">' + I('sound') + '<span>Listen (your device\'s voice)</span></button>' : '<p class="muted small">No Japanese voice on this device: read it instead.</p>') +
             (res.read ? '<div class="chal-ctx">' + RB.ui.jhtml(step.transcript.jp) + '</div>' : '<button class="pbtn quiet" data-a="readit">' + I('note') + '<span>Read it instead</span></button>') + '</div>';
         }
-        if (step.prompt) h += '<div class="chal-prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
+        if (step.prompt) h += '<div class="chal-prompt">' + enRuby(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
         // a guided example shows its model on the task (battle addendum RBN-07): said so, and
         // recorded as assisted — never as independent recall or deduction
         if (step.guided) h += '<div class="chal-guided muted small">' + I('help') + '<span>' + esc(step.guided.en || 'A guided example: the model is shown above.') + '</span></div>';
@@ -234,7 +235,7 @@ RB.challenge = (function () {
           const ch = choicesFor(step);
           ch.forEach((o) => {
             const b = RB.ui.el('button', 'btn choice');
-            b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + esc(o.en) + '</span>' : '');
+            b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + enRuby(o.en) + '</span>' : '');
             b.onclick = () => {
               if (locked) return;
               if (step.kind === 'choose' || step.kind === 'forge' || step.kind === 'listen') evaluateChoice(o, b);
@@ -388,7 +389,7 @@ RB.challenge = (function () {
       function explainHtml() {
         const e = step.explain;
         if (!e) return '';
-        return '<div class="fb-ex">' + (e.jp ? '<div class="fb-jp">' + RB.ui.jhtml(e.jp) + '</div>' : '') + '<div>' + esc(RB.script.enVars(e.en || '')) + '</div></div>';
+        return '<div class="fb-ex">' + (e.jp ? '<div class="fb-jp">' + RB.ui.jhtml(e.jp) + '</div>' : '') + '<div>' + enRuby(RB.script.enVars(e.en || '')) + '</div></div>';
       }
       function continueBtn(label) {
         const btn = RB.ui.el('button', 'pbtn primary fb-go', '<span>' + esc(label || opts.continueLabel || 'Continue') + '</span>' + I('next'));
@@ -489,7 +490,7 @@ RB.challenge = (function () {
         btn.disabled = true;
         btn.classList.add('tried');
         RB.audio && RB.audio.sfx('answer_wrong');
-        fb('no', 'Not that one.', (o.why ? '<div class="fb-why">' + (o.why.jp ? RB.ui.jhtml(o.why.jp) + ' ' : '') + esc(o.why.en) + '</div>' : '') + '<p class="muted small">Try another.</p>');
+        fb('no', 'Not that one.', (o.why ? '<div class="fb-why">' + (o.why.jp ? RB.ui.jhtml(o.why.jp) + ' ' : '') + enRuby(o.why.en) + '</div>' : '') + '<p class="muted small">Try another.</p>');
         if (opts.onMistake) opts.onMistake({});
       }
       function evaluateOrder(arr) {
@@ -501,7 +502,7 @@ RB.challenge = (function () {
         if (res.firstTry == null) res.firstTry = false;
         if (PH) PH.outcome('wrong');
         RB.audio && RB.audio.sfx('answer_wrong');
-        fb('no', 'Not quite.', '<div class="fb-why">' + (step.orderHint ? esc(step.orderHint.en) : 'Check where the particles and the verb go.') + '</div><p class="muted small">Try again.</p>');
+        fb('no', 'Not quite.', '<div class="fb-why">' + (step.orderHint ? enRuby(step.orderHint.en) : 'Check where the particles and the verb go.') + '</div><p class="muted small">Try again.</p>');
         if (opts.onMistake) opts.onMistake({});
       }
       function submitIme() {

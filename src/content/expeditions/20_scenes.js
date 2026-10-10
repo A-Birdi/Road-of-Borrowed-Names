@@ -12,7 +12,7 @@ RB.script.add(`
 yasu: {倉庫|そうこ} の {下|した} に 、 {米|こめ} を {置|お}く {地下|ちか} が ある 。 {嵐|あらし} の {夜|よる} から 、 {水|みず} が {引|ひ}かない 。 || There's a cellar under the warehouse where we keep the rice. Since the night of the storm, the water hasn't gone down.
 !look yasu pc
 yasu: {若|わか}い {者|もん} が {水|みず} を {抜|ぬ}こう と した が 、 {途中|とちゅう} で {逃|に}げて きた 。 {貼|は}り{紙|がみ} だけ {残|のこ}して な 。 || The young hands tried to drain it, and ran off halfway. They left their notices, at least.
-yasu: {何|なに} を やって 、 {何|なに} を やって ない か 。 {読|よ}める {者|もん} が {行|い}けば 、 {水|みず} は {抜|ぬ}ける 。 {急|いそ}ぐ {話|はなし} じゃ ない 。 {床|ゆか} の {上|うえ} の {戸|と} から {降|お}りられる 。 || What they did, and what they didn't. Someone who can read that could drain it. No hurry. The hatch in the floor will take you down.
+yasu: {何|なに} を やって 、 {何|なに} を やって ない か 。 {読|よ}める {者|もん} が {行|い}けば 、 {水|みず} は {抜|ぬ}ける 。 {急|いそ}ぐ {話|はなし} じゃ ない 。 {床|ゆか} の {戸|と} から {降|お}りられる 。 || What they did, and what they didn't. Someone who can read that could drain it. No hurry. The hatch in the floor will take you down.
 ?(comp=mio) comp: {水|みず} に {浸|つ}かった {米|こめ} は 、 {早|はや}く {出|だ}さない と {傷|いた}む わ 。 …… {行|い}って みましょう か 。 || Rice that's been in water spoils if it isn't brought out soon. …Shall we go and see?
 ?(comp=nao) comp: {逃|に}げる {前|まえ} に {貼|は}り{紙|がみ} を {残|のこ}す か 。 {律儀|りちぎ} な {連中|れんちゅう} だ な 。 || They ran, but left notices first. Conscientious lot.
 ?(comp=ren) comp: {貼|は}り{紙|がみ} が {残|のこ}って いる なら 、 {灯|あか}り の {書|か}き{置|お}き と {同|おな}じ です 。 {前|まえ} の {人|ひと} の {手|て} を {読|よ}めば いい 。 || If the notices are still there, it's like a lamplighter's note. We just read the hand that came before.
@@ -79,7 +79,7 @@ narr: {床|ゆか} に {鉄|てつ} の {格子|こうし} が ある 。 {下|�
 narr: {棚|たな} に {紙|かみ} が {貼|は}って ある 。 「 ガラス は {拭|ふ}いて あります 。 {油|あぶら} は {箱|はこ} の {中|なか} に {入|い}れて あります 。 ランプ に は まだ {入|い}れて いません 。 」 || A note has been put up on the shelf. "The glass has been wiped. The oil has been put in the box. It is not in the lamp yet."
 
 @scene xp.cellars_lamp
-narr: {消|き}えた ランプ 。 {横|よこ} の {紙|かみ} に 、 {手入|てい}れ の {途中|とちゅう} が {書|か}いて ある 。 || A lamp gone out. The note beside it says how far its tending got.
+narr: {消|き}えた ランプ 。 {横|よこ} の {紙|かみ} に 、 {手入|てい}れ が どこ まで {済|す}んだ か 、 {書|か}いて ある 。 || A lamp gone out. The note beside it says how far its tending got.
 !if xpk_cellars_lamp_known -> known
 :read
 !call xp.cellars_lampnote
@@ -125,7 +125,7 @@ narr: {石|いし} の {井戸|いど} 。 {冷|つめ}たい {水|みず} が {
 @scene xp.cellars_sluice_plate
 narr: {銅|どう} の {板|いた} に {手順|てじゅん} が {刻|きざ}んで ある 。 || The steps have been cut into a copper plate.
 narr: 「 {水門|すいもん} は もう {閉|し}めて あります 。 {栓|せん} を {抜|ぬ}いて ください 。 」 || "The sluice gate has already been shut. Pull the plug."
-narr: 「 {車|くるま} に は {油|あぶら} が さして あります 。 {車|くるま} を {回|まわ}して ください 。 」 || "The wheel has been oiled. Turn the wheel."
+narr: 「 {車輪|しゃりん} に は {油|あぶら} が さして あります 。 {車輪|しゃりん} を {回|まわ}して ください 。 」 || "The wheel has been oiled. Turn the wheel."
 narr: 「 {水|みず} が {引|ひ}いたら 、 {栓|せん} を {戻|もど}して ください 。 {東|ひがし} に は {板|いた} が {渡|わた}して あります 。 」 || "When the water has gone down, put the plug back. A plank has been laid across on the east side."
 
 @scene xp.cellars_sluice
@@ -137,7 +137,7 @@ narr: {排水|はいすい} の {水門|すいもん} 。 {横|よこ} の {銅|
 narr: {水|みず} の {音|おと} が {遠|とお}く なって いく 。 {北|きた} の {通路|つうろ} と {東|ひがし} の {板|いた} が 、 {水|みず} の {上|うえ} に {出|で}た 。 || The sound of the water goes further and further off. The north passage and the east plank are out of the water.
 ?(comp=mio) comp: {手順|てじゅん} どおり 。 {薬|くすり} の {調合|ちょうごう} と {同|おな}じ ね 。 || Step by step, exactly as written. Like mixing a remedy.
 ?(comp=nao) comp: {書|か}いて ある とおり に やれば 、 {水|みず} も {言|い}う こと を {聞|き}く か 。 || Do what it says, and even water does as it's told.
-?(comp=ren) comp: {前|まえ} の {人|ひと} の {仕事|しごと} が 、 {無駄|むだ} に ならなくて よかった 。 || I'm glad the last people's work wasn't wasted.
+?(comp=ren) comp: {前|まえ} の {人|ひと} の {仕事|しごと} が 、 {無駄|むだ} に ならなくて よかった です 。 || I'm glad the last people's work wasn't wasted.
 ?(comp=suzu) comp: {水|みず} の {勘定|かんじょう} 、 {合|あ}った よ 。 || The water's accounts balance.
 !end
 :later

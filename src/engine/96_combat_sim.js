@@ -14,7 +14,10 @@
  * does not show (every telegraph is visible before you choose).
  *
  * run(enemy, o) plays a whole encounter with a policy and returns what
- * happened: {win, rounds, lost (resolve lost), minPc, minComp, techs, acts}. */
+ * happened: {win, rounds, lost (resolve lost), minPc, minComp, techs, acts}.
+ * o.onInit(st) sees the state before the first exchange (an expedition sets
+ * the resolve it carries in, and its accounting), and out.st is then the
+ * state at the end. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.combatSim = (function () {
@@ -182,6 +185,9 @@ RB.combatSim = (function () {
     if (o.encounter) s.id = s.id || 'sim';
     const st = o.encounter ? RB.encounter.begin(o.encounter, s) : core.init(enemy, s, { group: o.group || [] });
     if (o.encounter) enemy = st.foes[0].def;
+    // an expedition's carried condition (src/engine/98_expedition.js): the caller sets where the encounter starts and
+    // attaches its accounting (o.onInit), and reads the state at the end (out.st)
+    if (o.onInit) o.onInit(st);
     const out = { win: false, rounds: 0, lost: 0, minPc: st.pc, minComp: st.comp, max: st.max, techs: 0, acts: {}, foes: st.foes.map((f) => f.enemyId), knots: st.foes.map((f) => f.maxKnots) };
     let n = 0, stall = 0;
     const knotsLeft = () => sum(st.foes, (f) => Math.max(0, f.knots));
@@ -213,6 +219,7 @@ RB.combatSim = (function () {
     }
     out.win = st.over === 'win';
     out.lose = st.over === 'lose';
+    if (o.onInit) out.st = st;
     return out;
   }
   return { choose, run, score, clone, look, cardsFor, core };

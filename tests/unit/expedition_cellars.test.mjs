@@ -29,6 +29,12 @@ export default async (t) => {
   t.ok(propAt('rw.cellar1', 36, 8, 'lantern') && propAt('rw.cellar1', 36, 8, 'lantern').if === d.stations.lamp.requires, 'the lamp station appears where the dead lamp was, once mended');
   t.ok(propAt('rw.cellar2', 31, 3, 'ladder') && (C.maps['rw.cellar1'].exits || []).some((e) => e.x === 8 && e.y === 22 && e.if === 'xpk_cellars_sc_ladder'), 'the shortcut: a ladder on B2, the grate on B1 a way down once opened');
   for (const sc of ['xp.cellars_hatch', 'xp.cellars_board', 'xp.cellars_bench', 'xp.cellars_lamp', 'xp.cellars_spring', 'xp.cellars_sluice', 'xp.cellars_ladder', 'xp.cellars_outflow', 'xp.cellars_leave', 'xp.cellars_yasu']) t.ok(!!C.scenes[sc], 'scene ' + sc);
+  // story dungeons keep their checkpoints (D5): no map but the cellars' belongs to an expedition
+  const owned = Object.keys(C.maps).filter((id) => X.owner(id));
+  t.eq(owned.sort(), ['rw.cellar1', 'rw.cellar2'], 'only the cellars\' floors are an expedition\'s; every story map keeps the checkpoint rule');
+  // the cellars are the twelve-chapter edition's only: no way in from the six-chapter world but the gated hatch
+  const into = Object.keys(C.maps).filter((id) => !/^rw\.cellar/.test(id)).flatMap((id) => (C.maps[id].exits || []).filter((e) => /^rw\.cellar/.test(e.to)).map((e) => id));
+  t.ok(!into.length && C.maps['rw.cellar1'].edition === 2 && C.maps['rw.cellar2'].edition === 2, 'no exit from any other map leads into the cellars; both floors are marked as the expansion\'s (' + into.join(', ') + ')');
   t.ok(propAt('rw.warehouse', 7, 3, 'sg_hatch') && propAt('rw.warehouse', 7, 3, 'sg_hatch').if === 'ed>=2&ch2_done', 'the hatch: twelve-chapter journeys, once Chapter 2 is over');
 
   // ---- walking: the loop, the optional room, the flood --------------------------------------------------------------
@@ -121,4 +127,11 @@ export default async (t) => {
   const items = new Set();
   for (const id of ['xp.c_notice', 'xp.c_lamp', 'xp.c_final']) for (const k in C.challenges[id].tiers) for (const step of C.challenges[id].tiers[k]) items.add(step.item);
   t.ok(items.has('g:te_aru') && items.has('g:v_te_kudasai'), 'the construction is the evidence item; the last door also asks the old 〜て ください');
+  // every kanji shown carries its reading: English fields write Japanese as {漢字|かな} groups (the challenge screen
+  // renders them with ruby), never bare
+  const bare = [];
+  const walk = (o, path) => { for (const k in o) { const v = o[k]; if (typeof v === 'string' && (k === 'en') && /[一-鿿々]/.test(v.replace(/\{[^|}]+\|[^}]+\}/g, ''))) bare.push(path + '.' + k); else if (v && typeof v === 'object') walk(v, path + '.' + k); } };
+  for (const id of ['xp.c_notice', 'xp.c_lamp', 'xp.c_final']) walk(C.challenges[id], id);
+  walk(C.encounters['xp.cellars_sluice'], 'sluice'); walk(C.encounters['xp.cellars_blot'], 'blot'); walk(d, 'def');
+  t.eq(bare, [], 'no bare kanji in any English line of the cellars');
 };

@@ -55,7 +55,9 @@ export default async (t) => {
     return rec;
   }
   const out = { base: '982c8df', maps: {}, props: {}, consts: {} };
-  for (const id of Object.keys(C.maps).sort()) out.maps[id] = mapRecord(id);
+  // (maps only the twelve-chapter edition can reach, `edition: 2` on their definition, are left out for the same reason:
+  // the expansion's own tests walk them, e.g. tests/unit/expedition_cellars)
+  for (const id of Object.keys(C.maps).sort()) if (!(C.maps[id].edition >= 2)) out.maps[id] = mapRecord(id);
   // Atlas rooms from three fixed seeds
   for (const seed of [11, 4242, 90001]) {
     const s = RB.state.newCampaign({}); s.id = 'geom-' + seed;

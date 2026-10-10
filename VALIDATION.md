@@ -3856,3 +3856,28 @@ survey has begun). Pastime records are made at first play, so loading never chan
   `node tools/kanjiread.mjs` (it lands with P07's first content); `recog-coverage` **15/0** after.
 
 **Not verified:** Firefox; the foldable; a newcomer to shogi (XP27, H).
+
+## The expansion, P07: the expedition framework and the pilot, the Flood Cellars (2026-10-10; C-81; docs/future/work/P07_EXPEDITIONS.md; REQUIREMENTS.md XP30–XP31)
+
+**What changed:** the expedition engine (85f39c8) and its pilot: the Flood Cellars under Reedwake's River Warehouse,
+twelve-chapter journeys after Chapter 2 (F-26). Coherence rules for visits (F-27); the challenge screen renders
+{漢字|かな} groups in English fields (F-28); the cellars' difficulty (F-29); `RB.combatSim.run` takes an `onInit` hook
+for carried resolve.
+
+**Checks:**
+- U `expedition.test` **30/0**, `expedition_cellars` **51/0**, `expedition_curve` **6/0** (48 whole-expedition runs,
+  all won; lowest resolve between encounters 11 / 8 / 8 on Relaxed / Standard / Demanding; B2's groups within the
+  story's spike bound), `combat_fairness` **621/0**, `combat_golden` **2/0**, `combat_curve` **287/0**,
+  `overworld_geometry` **3/0** (maps only the twelve-chapter edition reaches are left out of the six-chapter census), `encounters` **184/0**,
+  `cases` **194/0**, `records` **106/0**, `recog-coverage` **15/0**, `dialect` **6422/0**; `node tools/validate.mjs`:
+  no errors; `node tools/review_ledger.mjs`: 947 lines, none without an entry (self-review only).
+- B `expedition` **5/0**: the whole loop through the real hatch, card, scenes and exits (the automated player answers
+  and checks every canonical answer); a defeat (the battle's outcome given; the defeat flow the game's own); a real
+  battle on the battle screen where a wrong answer counted as a mistake and was given back, the blow carried; the
+  notice at all four profiles by mouse, tiles, typing and handwriting (reference strokes); phone width. `ui` **14/0**,
+  `encounters` **10/0**, `combat_ui` **7/0** with the challenge screen change.
+
+- U the full suite on the final code: **30,100 passed, 0 failed** (an earlier full run on the first draft found the
+  group-rule and census conflicts, F-29).
+
+**Not verified:** Firefox; the foldable; a person playing the cellars.
