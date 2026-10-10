@@ -203,6 +203,24 @@ RB.audio = RB.audio || {};
     whoosh(g, o, t, { f: 350 * p, f2: 1100 * p, q: 1.5, a: 0.45, hold: 0.3, r: 0.5, v: 0.32 });
     whoosh(g, o, t + 0.1, { f: 700 * p, f2: 1800 * p, q: 3, a: 0.5, hold: 0.2, r: 0.5, v: 0.07 });
   });
+  // night sounds for the companions' nights apart (sealed notes S14): soft, far off, never startling
+  def('crickets', 2.0, 0.3, 0.8, (g, o, t, p, r) => {
+    // bell crickets (スズムシ): a pure, high "riii" in short trilled bursts, two insects a little apart
+    for (let k = 0; k < 2; k++) {
+      const f0 = (4200 + k * 380) * p, t0 = t + k * 0.55 + r() * 0.1;
+      for (let i = 0; i < 6; i++) tone(g, o, t0 + i * 0.045, { f: f0, a: 0.004, hold: 0.02, r: 0.03, v: 0.035 });
+    }
+  });
+  def('owl', 2.0, 0.5, 1.5, (g, o, t, p) => {
+    // an owl far off: two soft hoots, the second a little lower
+    tone(g, o, t, { f: 400 * p, f2: 360 * p, glide: 0.35, a: 0.06, hold: 0.12, r: 0.25, v: 0.06, lp: 900 });
+    tone(g, o, t + 0.55, { f: 380 * p, f2: 330 * p, glide: 0.5, a: 0.08, hold: 0.2, r: 0.35, v: 0.055, lp: 900 });
+  });
+  def('shutters', 2.0, 0.3, 0.6, (g, o, t, p, r) => {
+    // wind in a lantern's shutters: a soft gust, and the wooden flaps knocking twice
+    whoosh(g, o, t, { f: 400 * p, f2: 900 * p, q: 1.2, a: 0.4, hold: 0.25, r: 0.5, v: 0.18 });
+    for (let i = 0; i < 2; i++) _.perc.w(g, o, t + 0.5 + i * (0.18 + r() * 0.08), 0.35);
+  });
   def('light', 1.6, 0.4, 0.15, (g, o, t, p) => {
     seq(g, o, t, 'celesta', [79, 83, 86, 91, 95], 0.04, 0.25, 0.32, p);
     note(g, o, t + 0.1, 'glass', 91, 0.5, 0.6, p);

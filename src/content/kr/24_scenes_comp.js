@@ -148,10 +148,12 @@ kr_hisae: {喧嘩|けんか} かい 。 {灯|ひ} の {前|まえ} で {喧嘩|�
 :end
 
 @scene kr.ren_lantern
-# Ren's night apart, resolved at the Ridge Light (the unfinished matter); then the crossroads' answer.
+# Ren's night apart, resolved at the Ridge Light (the unfinished matter); then the crossroads' answer. Its night
+# sounds: bell crickets in the grass, an owl, wind in the lantern's shutters.
 !if kr_ren_back -> end
 ?(!kr_hisae_told_ren) narr: レン は 、 {暗|くら}い {灯籠|とうろう} の {前|まえ} に {立|た}って いる 。 {声|こえ} を かけて いい か {迷|まよ}う 。 ヒサエ に {先|さき} に {話|はなし} を {聞|き}こう か 。 || Ren is standing before the dark lantern. You're not sure whether to call out. Perhaps talk to Hisae first.
 ?(!kr_hisae_told_ren) !end
+!sfx crickets
 ren[closed]: …… {来|き}て しまいました か 。 {灯守|ひもり} の {用事|ようじ} だ と {言|い}った のに 。 || …So you came. I did say it was keeper's business.
 ren: これ が 、 {私|わたし} が {着|つ}けなかった {灯|ひ} です 。 {見習|みなら}い の {時|とき} 、 {道|みち} に {迷|まよ}って 、 {夜|よる} が {明|あ}けて しまった 。 {誰|だれ} か が 、 この {暗|くら}い {道|みち} で {迷|まよ}った と {聞|き}きました 。 || This is the lamp I never reached. As an apprentice I got lost, and the night was over before I found it. I heard someone lost their way on this dark road.
 !choice
@@ -162,12 +164,14 @@ narr: ヒサエ に {聞|き}いた こと を 、 そのまま {伝|つた}え�
 ren[surprise]: …… {無事|ぶじ} 、 だった 。 || …They were safe.
 ren[closed]: …… ずっと 、 {誰|だれ} に も {聞|き}けなかった ん です 。 {聞|き}いたら 、 {答|こた}え を {知|し}って しまう から 。 || …I could never ask anyone. If I asked, I'd know the answer.
 :light
+!sfx owl
 ren: {名前|なまえ} を {呼|よ}んで ください 。 {今度|こんど} は 、 {一人|ひとり} じゃ ない 。 || Call its name, please. This time I'm not alone.
 !challenge kr.name_ridge
 !set kr_l_ridge
 !sfx bell
 narr: 「{尾根|おね} の {灯|ひ}」 。 {何十年|なんじゅうねん} {暗|くら}かった {灯籠|とうろう} に 、 {灯|ひ} が ともった 。 || "The Ridge Light". A lantern dark for decades catches.
 ren[smile]: …… {点|つ}きました 。 {遅|おそ}く なって 、 ごめんなさい 。 || …It's lit. I'm sorry I took so long.
+!sfx shutters
 ren: ヒサエ さん に 、 この {道|みち} を {継|つ}がない か と {言|い}われました 。 {宿坊|しゅくぼう} も 、 {灯|ひ} も 、 {全部|ぜんぶ} 。 …… {正直|しょうじき} 、 {嬉|うれ}しかった 。 {灯守|ひもり} の {居場所|いばしょ} です から 。 || Hisae asked me to take on this road. The lodge, the lamps, all of it. …Honestly, I was glad. It's a place for a keeper.
 ren: でも 、 {灯|ひ} は {今|いま} 、 どこ でも {消|き}えて います 。 {灯守|ひもり} は 、 {暗|くら}い ところ へ {行|い}く もの です 。 …… あなた と 、 {最後|さいご} まで {歩|ある}きたい 。 この {道|みち} の {答|こた}え は 、 その {後|あと} で {出|だ}します 。 || But lamps are going out everywhere now. A keeper goes where it's dark. …I want to walk with you to the end. I'll give this road its answer after that.
 !unset kr_apart

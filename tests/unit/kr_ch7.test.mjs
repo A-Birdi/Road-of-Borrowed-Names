@@ -168,6 +168,7 @@ export default async (t) => {
     t.ok(krScenes.every((id) => !cmds(id).some((c) => (c.args || []).join(' ').includes('ren_ushio') || (c.if || '').includes('ren_ushio'))), 'no Chapter 7 scene touches Ren\'s own quest (ren_ushio)');
     const rl = ops('kr.ren_lantern');
     t.ok(rl.includes('unset:kr_apart') && rl.includes('set:kr_ren_crossroads') && rl.includes('hook:co_bond kr:night') && rl.includes('hook:co_remember together kr_ridge'), 'Ren\'s night apart ends at the Ridge Light: the crossroads answered later, a bond event and a kept memory');
+    t.ok(['crickets', 'owl', 'shutters'].every((x) => rl.includes('sfx:' + x) && RB.audio._.sfxDefs[x]), 'Ren\'s night has its night sounds: bell crickets, an owl, wind in the shutters');
     t.ok(C.maps['kr.ridge'].npcs.some((n) => n.id === 'kr_ren_n' && n.if === 'kr_apart') && C.maps['kr.foot'].noCompanion === '!kr_apart', 'while Ren is apart, Ren waits on the ridge and walks with no one');
     for (const comp of ['nao', 'mio', 'suzu']) t.ok(cmds('kr.makeup').filter((c) => c.op === 'say' && c.if && c.if.includes('comp=' + comp)).length >= 3, comp + ': a quarrel made up in their own words');
     t.ok(ops('kr.makeup').includes('hook:co_bond kr:makeup'), 'making up is a bond event');
