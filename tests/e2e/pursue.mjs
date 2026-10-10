@@ -4,6 +4,9 @@
 // six chapters and one Atlas expedition.
 // Usage: node tests/e2e/pursue.mjs [profile] [comp|none] [legs] [startMap x y] [flags] [words]
 //   legs: "ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>…" (flag@mapPrefix@mainQuest)
+// From a campaign fixture instead of a new campaign (expansion P08): PURSUE_FROM=<fixture.json> starts there, as the
+// save would load (RB.save.migrate), and PURSUE_EDITION=2 plays it in the twelve-chapter edition, e.g.
+//   PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'
 import fs from 'node:fs';
 import path from 'node:path';
 import { serve, launch, page, root } from './lib.mjs';
@@ -13,6 +16,8 @@ import { install } from './drive.mjs';
 // Unwritten Atlas expedition, started from the Lantern Hall
 const ALL = 'ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>ch3_done@co.@co_main>ch4_done@sb.@sb_lamp>ch5_done@lf.@lf_main>ch6_done@sa.@sa_main>atlas_restore_1@rw.hall|atlas.@';
 const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = process.argv.slice(2);
+const fromFixture = process.env.PURSUE_FROM ? JSON.parse(fs.readFileSync(path.resolve(root, process.env.PURSUE_FROM), 'utf8')) : null;
+const edition = +(process.env.PURSUE_EDITION || 0) || null;
 const legs = legsArg.split('>').map((l) => { const [flag, prefix, main] = l.split('@'); return { flag, prefix, main, fullLog: !!process.env.PURSUE_LOG }; });
 const { srv, url } = await serve();
 const b = await launch();
@@ -22,7 +27,7 @@ await p.evaluate(install);
 await p.evaluate(async (a) => {
   // A new campaign recruits the companion in the story: prefer choices that
   // name them (e.g. "Set out with Mio"); otherwise the first option.
-  const fresh = a.startMap === 'rw.road' && !a.flagList;
+  const fresh = a.startMap === 'rw.road' && !a.flagList && !a.fixture;
   const want = a.comp !== 'none' && RB.content.chars[a.comp] ? RB.content.chars[a.comp].name.en : null;
   const names = ['nao', 'mio', 'ren', 'suzu'].map((c) => RB.content.chars[c].name.en);
   RB.test.enable({ battle: 'unravel', choose: (opts) => {
@@ -37,18 +42,28 @@ await p.evaluate(async (a) => {
   } });
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
-  const s = RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
+  const s = a.fixture ? RB.game.debugStart(a.fixture.map, a.fixture.x, a.fixture.y, {}) : RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
+  if (a.fixture) {
+    // the fixture's campaign, loaded as its save would be, in place of the session's new one
+    const m = RB.save.migrate(JSON.parse(JSON.stringify(a.fixture)));
+    for (const k of Object.keys(s)) delete s[k];
+    Object.assign(s, m, a.edition ? { edition: a.edition } : {});
+    Object.assign(s.flags, flags);
+    RB.world.enter(s.map, s.x, s.y, s.dir || 'down');
+  }
   s.learn.kanaKnown = a.profile === 'F' ? 'hira' : 'both';
   for (const w of a.wordList.split(',').filter(Boolean)) if (!s.words.includes(w)) s.words.push(w);
   await RB.test.idle(60000);
   RB.game.runEnterEvents();
   await RB.test.idle(60000);
-}, { startMap, sx, sy, comp, profile, flagList, wordList });
+}, { startMap, sx, sy, comp, profile, flagList, wordList, fixture: fromFixture, edition });
 const out = [];
 let ok = true;
 for (const leg of legs) {
   const t1 = Date.now();
-  const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900, fullLog: !!leg.fullLog }), leg).catch((e) => ({ ok: false, fail: String(e) }));
+  const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900, fullLog: !!leg.fullLog }), leg).catch(async (e) => ({ ok: false, fail: String(e), map: await p.evaluate(() => RB.world.W.map.id).catch(() => null),
+    // what was running when the driver stopped: the last scenes and any open activity
+    last: await p.evaluate(() => ({ ran: RBDrive.ran.slice(-15), mode: RB.game.mode(), activity: RB.activity && RB.activity.active() ? RB.activity.active().kind : null })).catch(() => null) }));
   out.push({ leg: leg.flag, ok: r.ok, steps: r.steps, seconds: Math.round((Date.now() - t1) / 1000), fail: r.fail, map: r.map, last: r.ok ? undefined : r.log });
   console.log((r.ok ? 'reached ' : 'STUCK   ') + leg.flag + ' in ' + r.steps + ' site visits (' + Math.round((Date.now() - t1) / 1000) + ' s)');
   // S7 (expansion): with PURSUE_FIXTURES=1, the campaign as it stands at each milestone becomes a state fixture

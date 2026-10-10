@@ -108553,6 +108553,8 @@ RB.ui.shogi = (function () {
   RB.hooks.pt_play = async (a) => {
     const kind = a && a[0], who = a && a[1];
     if (!kind) return;
+    // the test driver's story runs do not sit down to a game (as with the lamps and the desk)
+    if (RB.test && RB.test.auto) { RB.test.log.push({ t: 'activity', kind, skipped: 'auto' }); return; }
     const t0 = Date.now();
     const tick = () => {
       if (!RB.game || !RB.game.s) return;
@@ -153578,6 +153580,7 @@ RB.lex.add(RB.lex.parseTable(`
 拓本|たくほん|n|A|a rubbing (paper and ink pressed over an inscription)
 約定|やくじょう|n|A|agreement, compact (old-fashioned)
 約定書|やくじょうしょ|n|A|a written agreement (old-fashioned)
+以内|いない|n|I|within (a period or amount)
 両家|りょうけ|n|A|both houses, both families
 木目|もくめ|n|I|the grain of wood
 版木|はんぎ|n|I|printing woodblock
@@ -154187,7 +154190,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'exitmat', x: 8, y: 9 },
       { p: 'noticeboard', x: 2, y: 2, scene: 'mb.board_rice' }, { p: 'noticeboard', x: 5, y: 2, scene: 'mb.board_fish' },
       { p: 'noticeboard', x: 11, y: 2, scene: 'mb.board_passage' }, { p: 'noticeboard', x: 14, y: 2, scene: 'mb.board_lost' },
-      { p: 'counter', x: 7, y: 3, across: true }, { p: 'bookpile', x: 9, y: 2 },
+      { p: 'counter', x: 7, y: 3, across: true }, { p: 'bookpile', x: 9, y: 2, scene: 'mb.offers' },
       { p: 'bench', x: 2, y: 7 }, { p: 'bench', x: 14, y: 7 }, { p: 'lantern', x: 1, y: 4, o: { lit: true } }, { p: 'lantern', x: 15, y: 4, o: { lit: true } },
     ],
     npcs: [
@@ -154536,6 +154539,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
     howto: [T('Talk to Kansuke at his mooring. He tells one riddle at a time.', 'カンスケ に {話|はな}しかける 。'), T('There is no hurry and no penalty: a riddle you miss comes round again.', '{急|いそ}がなくて いい 。')],
     records: (s) => [{ en: 'Riddles solved', value: Math.min(RIDDLES.length, (s.vars && s.vars.mb_riddles) || 0) + ' of ' + RIDDLES.length }],
   });
+
+  // ---- the Exchange's offers (R1, A46/A48): a tally's conditions, and the one that cannot be kept --------------------
+  // Sen asks for one of the day's tallies to be checked before it goes up. F reads a deadline in kana, E a deadline and
+  // a destination, I a chain of conditions (〜なら・〜たら・〜なければ), A a contract's exception clause.
+  C.challenges['mb.offers'] = { title: T('Today\'s tallies', '{今日|きょう} の {札|ふだ}'),
+    tiers: {
+      F: [{ kind: 'choose', item: 'g:prt_kara_made', ctx: { jp: '「こめ 、 じっぴょう 。 あした まで に 。」', en: 'A tally: "Rice, ten bales. By tomorrow." The barge from the rice fields takes three days.' },
+        prompt: { en: 'Which part of the tally can\'t be kept?' },
+        options: [{ jp: 'あした まで に', ok: true }, { jp: 'じっぴょう', ok: false, why: no('Ten bales is only how much. The barge takes three days: "by tomorrow" (あした まで に) is what can\'t be kept.') },
+          { jp: 'こめ', ok: false, why: no('Rice is only what is sent.') }] }],
+      E: [{ kind: 'choose', item: 'g:prt_kara_made', ctx: { jp: '「{干物|ひもの} 、 {百枚|ひゃくまい} 。 {三日|みっか} まで に {藤屋|ふじや} へ 。 {代金|だいきん} は {着|つ}いて から 。」', en: 'Today is the first day of the month. The Saltglass boat takes four days.' },
+        prompt: { en: 'Which condition can\'t be kept?' },
+        options: [{ jp: '{三日|みっか} まで に', ok: true }, { jp: '{藤屋|ふじや} へ', ok: false, why: no('Fujiya is only where it goes. Four days from the first is the fifth: {三日|みっか} まで に (by the third) is too soon.') },
+          { jp: '{代金|だいきん} は {着|つ}いて から', ok: false, why: no('Paying once it arrives is easy to keep.') }] }],
+      I: [{ kind: 'choose', item: 'g:cond_tara', ctx: { jp: '「{雨|あめ} なら 、 {舟|ふね} は {出|だ}さない 。 {晴|は}れたら 、 {朝|あさ} {出|だ}す 。 {明日|あした} {着|つ}かなければ 、 {代金|だいきん} は {払|はら}わない 。」', en: '' },
+        prompt: { en: 'Tomorrow will be rainy all day, and the trip takes a day. Which line makes this deal impossible to keep?' },
+        options: [{ jp: '{明日|あした} {着|つ}かなければ 、 {代金|だいきん} は {払|はら}わない 。', ok: true },
+          { jp: '{雨|あめ} なら 、 {舟|ふね} は {出|だ}さない 。', ok: false, why: no('That one is only sensible. But with no boat in the rain, the load cannot arrive tomorrow, and {明日|あした} {着|つ}かなければ makes it unpaid whatever happens.') },
+          { jp: '{晴|は}れたら 、 {朝|あさ} {出|だ}す 。', ok: false, why: no('〜たら: if it clears. Tomorrow it won\'t, so this line never comes into force.') }] }],
+      A: [{ kind: 'choose', item: 'g:cond_ba', ctx: { jp: '「{特|とく}に {問題|もんだい} が なければ 、 {十日|とおか} {以内|いない} に {納|おさ}める もの と する 。 ただし 、 {運河|うんが} が {使|つか}えない {場合|ばあい} は 、 この {限|かぎ}り で ない 。」', en: '' },
+        prompt: { en: 'The Long Canal is closed for repairs all month. What does the tally mean now?' },
+        options: [{ en: 'The ten-day promise no longer binds the seller while the canal is closed.', ok: true },
+          { en: 'The seller must still deliver within ten days, by road if need be.', ok: false, why: no('ただし … この {限|かぎ}り で ない: "but … this does not apply". With the canal unusable, the ten days do not bind.') },
+          { en: 'The buyer must pay at once, before the goods arrive.', ok: false, why: no('The tally says nothing about paying early.') }] }],
+    } };
 
   // ---- the Lost Contract: the old plan against today's row ---------------------------------------------------------
   C.challenges['mb.lc_plan'] = { title: T('The old canal plan', '{古|ふる}い {運河|うんが} の {図|ず}'),
@@ -155304,6 +155332,18 @@ narr: {川|かわ} の {見|み}える {窓際|まどぎわ} の {席|せき} �
 @scene mb.inn_stairs
 narr: {二階|にかい} の {客間|きゃくま} へ の {階段|かいだん} 。 || The stairs up to the guest rooms.
 
+@scene mb.offers
+# The Exchange's offers (R1, A46/A48): one of the day's tallies checked before it goes up (15_side.js, mb.offers)
+?(mb_offers_done) narr: {今日|きょう} の {札|ふだ} の {束|たば} 。 セン が {条件|じょうけん} を {確|たし}かめた {印|しるし} が {付|つ}いて いる 。 || Today's bundle of tallies, each marked where Sen checked its conditions.
+?(mb_offers_done) !end
+?(!mb_dispute_done) narr: {札|ふだ} の {束|たば} 。 {揉|も}め{事|ごと} の {間|あいだ} は 、 {誰|だれ} も {見|み}て いない 。 || A bundle of tallies. With the dispute on, nobody is looking at them.
+?(!mb_dispute_done) !end
+!look mb_sen pc
+mb_sen: {揉|も}め{事|ごと} の {後|あと} で {悪|わる}い です が …… {今日|きょう} の {札|ふだ} を {一枚|いちまい} 、 {見|み}て もらえます か 。 {条件|じょうけん} の {中|なか} に 、 {守|まも}れない もの が {一|ひと}つ ある はず です 。 || Sorry to ask after all that… would you look at one of today's tallies? One of its conditions can't be kept.
+!challenge mb.offers
+?(var._res=1) mb_sen[smile]: そう 、 それ です 。 {掛|か}ける {前|まえ} に {気|き}づけて よかった 。 {揉|も}め{事|ごと} が {一|ひと}つ {減|へ}りました 。 || Yes, that one. Good to catch it before it went up. One dispute fewer.
+!set mb_offers_done
+
 @scene mb.inn_menu
 narr: 「{本日|ほんじつ} の お{品書|しなが}き 。 {潮硝子|しおがらす} の {干物|ひもの} 、 {葦|あし}ノ{瀬|せ} の お{米|こめ} 。」 || "Today's menu: Saltglass dried fish; Reedwake rice."
 `, 'mb/22_scenes_side.js');
@@ -155662,6 +155702,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.encounters['mb.dispute'] = {
     id: 'mb.dispute', kind: 'social', name: { jp: '{札場|ふだば} の {揉|も}め{事|ごと}', en: 'The dispute at the Tally Exchange' },
     rules: { wait: true },
+    // the automated runs' route (src/engine/99_test.js): Wait for Gonta, the tally, calm, which storehouse (his confession comes meanwhile), the proposal
+    autoRoute: ['wait', 's:show_tally', 's:calm', 's:ask_where', 's:propose'],
     social: {
       parties: [
         { aid: 'n:fujiko', name: { jp: 'フジコ', en: 'Fujiko' }, stance: 'heated', wants: { en: 'To be believed, and paid.' } },
@@ -155737,6 +155779,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.encounters['mb.passage'] = {
     id: 'mb.passage', kind: 'social', name: { jp: '{閘門番|こうもんばん} の {戸|と}', en: 'The lock-keeper\'s door' },
     rules: { wait: true },
+    // the automated runs' route: who sent you, why it is shut, Wait (her husband), the letter, reading it together
+    autoRoute: ['s:introduce', 's:ask_why', 'wait', 's:letter', 'gesture', 's:offer'],
     social: {
       parties: [{ aid: 'n:matsu', name: { jp: 'マツ', en: 'Matsu' }, stance: 'closed', wants: { en: 'That nobody else goes down there and is lost.' } }],
       claims: {

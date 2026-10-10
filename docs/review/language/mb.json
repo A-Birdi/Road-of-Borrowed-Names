@@ -1709,6 +1709,30 @@
   "jp": "{二階|にかい} の {客間|きゃくま} へ の {階段|かいだん} 。",
   "en": "The stairs up to the guest rooms."
  },
+ "scene:mb.offers#1l6ghqp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{今日|きょう} の {札|ふだ} の {束|たば} 。 セン が {条件|じょうけん} を {確|たし}かめた {印|しるし} が {付|つ}いて いる 。",
+  "en": "Today's bundle of tallies, each marked where Sen checked its conditions."
+ },
+ "scene:mb.offers#osbpe1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{札|ふだ} の {束|たば} 。 {揉|も}め{事|ごと} の {間|あいだ} は 、 {誰|だれ} も {見|み}て いない 。",
+  "en": "A bundle of tallies. With the dispute on, nobody is looking at them."
+ },
+ "scene:mb.offers#139fxv5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{揉|も}め{事|ごと} の {後|あと} で {悪|わる}い です が …… {今日|きょう} の {札|ふだ} を {一枚|いちまい} 、 {見|み}て もらえます か 。 {条件|じょうけん} の {中|なか} に 、 {守|まも}れない もの が {一|ひと}つ ある はず です 。",
+  "en": "Sorry to ask after all that… would you look at one of today's tallies? One of its conditions can't be kept."
+ },
+ "scene:mb.offers#1pwunon": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "そう 、 それ です 。 {掛|か}ける {前|まえ} に {気|き}づけて よかった 。 {揉|も}め{事|ごと} が {一|ひと}つ {減|へ}りました 。",
+  "en": "Yes, that one. Good to catch it before it went up. One dispute fewer."
+ },
  "scene:mb.inn_menu#juvggt": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
@@ -2775,6 +2799,90 @@
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
   "jp": "てがみ",
+  "en": ""
+ },
+ "challenges:mb.offers#ipch1u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{今日|きょう} の {札|ふだ}",
+  "en": "Today's tallies"
+ },
+ "challenges:mb.offers#1mop2sz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "「こめ 、 じっぴょう 。 あした まで に 。」",
+  "en": "A tally: \"Rice, ten bales. By tomorrow.\" The barge from the rice fields takes three days."
+ },
+ "challenges:mb.offers#fgubar": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "あした まで に",
+  "en": ""
+ },
+ "challenges:mb.offers#1jaicyp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "じっぴょう",
+  "en": ""
+ },
+ "challenges:mb.offers#1h9en4p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "こめ",
+  "en": ""
+ },
+ "challenges:mb.offers#16b4ffm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "「{干物|ひもの} 、 {百枚|ひゃくまい} 。 {三日|みっか} まで に {藤屋|ふじや} へ 。 {代金|だいきん} は {着|つ}いて から 。」",
+  "en": "Today is the first day of the month. The Saltglass boat takes four days."
+ },
+ "challenges:mb.offers#1qmkack": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{三日|みっか} まで に",
+  "en": ""
+ },
+ "challenges:mb.offers#1fozf7n": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{藤屋|ふじや} へ",
+  "en": ""
+ },
+ "challenges:mb.offers#b6e8bg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{代金|だいきん} は {着|つ}いて から",
+  "en": ""
+ },
+ "challenges:mb.offers#15u08cy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "「{雨|あめ} なら 、 {舟|ふね} は {出|だ}さない 。 {晴|は}れたら 、 {朝|あさ} {出|だ}す 。 {明日|あした} {着|つ}かなければ 、 {代金|だいきん} は {払|はら}わない 。」",
+  "en": ""
+ },
+ "challenges:mb.offers#1bn0gfg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{明日|あした} {着|つ}かなければ 、 {代金|だいきん} は {払|はら}わない 。",
+  "en": ""
+ },
+ "challenges:mb.offers#dii7ed": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{雨|あめ} なら 、 {舟|ふね} は {出|だ}さない 。",
+  "en": ""
+ },
+ "challenges:mb.offers#dmtrxw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "{晴|は}れたら 、 {朝|あさ} {出|だ}す 。",
+  "en": ""
+ },
+ "challenges:mb.offers#7rk04s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English and the conditions grammar (cond_tara, cond_ba; ただし … この限りでない), Sen's established speech and the game's lexicon (P08, the Exchange's offers)",
+  "jp": "「{特|とく}に {問題|もんだい} が なければ 、 {十日|とおか} {以内|いない} に {納|おさ}める もの と する 。 ただし 、 {運河|うんが} が {使|つか}えない {場合|ばあい} は 、 この {限|かぎ}り で ない 。」",
   "en": ""
  },
  "challenges:mb.lc_plan#w7t1zl": {

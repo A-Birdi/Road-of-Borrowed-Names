@@ -354,6 +354,8 @@ RB.ui.shogi = (function () {
   RB.hooks.pt_play = async (a) => {
     const kind = a && a[0], who = a && a[1];
     if (!kind) return;
+    // the test driver's story runs do not sit down to a game (as with the lamps and the desk)
+    if (RB.test && RB.test.auto) { RB.test.log.push({ t: 'activity', kind, skipped: 'auto' }); return; }
     const t0 = Date.now();
     const tick = () => {
       if (!RB.game || !RB.game.s) return;

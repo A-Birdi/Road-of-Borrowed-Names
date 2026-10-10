@@ -254,6 +254,18 @@ narr: {川|かわ} の {見|み}える {窓際|まどぎわ} の {席|せき} �
 @scene mb.inn_stairs
 narr: {二階|にかい} の {客間|きゃくま} へ の {階段|かいだん} 。 || The stairs up to the guest rooms.
 
+@scene mb.offers
+# The Exchange's offers (R1, A46/A48): one of the day's tallies checked before it goes up (15_side.js, mb.offers)
+?(mb_offers_done) narr: {今日|きょう} の {札|ふだ} の {束|たば} 。 セン が {条件|じょうけん} を {確|たし}かめた {印|しるし} が {付|つ}いて いる 。 || Today's bundle of tallies, each marked where Sen checked its conditions.
+?(mb_offers_done) !end
+?(!mb_dispute_done) narr: {札|ふだ} の {束|たば} 。 {揉|も}め{事|ごと} の {間|あいだ} は 、 {誰|だれ} も {見|み}て いない 。 || A bundle of tallies. With the dispute on, nobody is looking at them.
+?(!mb_dispute_done) !end
+!look mb_sen pc
+mb_sen: {揉|も}め{事|ごと} の {後|あと} で {悪|わる}い です が …… {今日|きょう} の {札|ふだ} を {一枚|いちまい} 、 {見|み}て もらえます か 。 {条件|じょうけん} の {中|なか} に 、 {守|まも}れない もの が {一|ひと}つ ある はず です 。 || Sorry to ask after all that… would you look at one of today's tallies? One of its conditions can't be kept.
+!challenge mb.offers
+?(var._res=1) mb_sen[smile]: そう 、 それ です 。 {掛|か}ける {前|まえ} に {気|き}づけて よかった 。 {揉|も}め{事|ごと} が {一|ひと}つ {減|へ}りました 。 || Yes, that one. Good to catch it before it went up. One dispute fewer.
+!set mb_offers_done
+
 @scene mb.inn_menu
 narr: 「{本日|ほんじつ} の お{品書|しなが}き 。 {潮硝子|しおがらす} の {干物|ひもの} 、 {葦|あし}ノ{瀬|せ} の お{米|こめ} 。」 || "Today's menu: Saltglass dried fish; Reedwake rice."
 `, 'mb/22_scenes_side.js');

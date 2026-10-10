@@ -113,6 +113,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
     records: (s) => [{ en: 'Riddles solved', value: Math.min(RIDDLES.length, (s.vars && s.vars.mb_riddles) || 0) + ' of ' + RIDDLES.length }],
   });
 
+  // ---- the Exchange's offers (R1, A46/A48): a tally's conditions, and the one that cannot be kept --------------------
+  // Sen asks for one of the day's tallies to be checked before it goes up. F reads a deadline in kana, E a deadline and
+  // a destination, I a chain of conditions (〜なら・〜たら・〜なければ), A a contract's exception clause.
+  C.challenges['mb.offers'] = { title: T('Today\'s tallies', '{今日|きょう} の {札|ふだ}'),
+    tiers: {
+      F: [{ kind: 'choose', item: 'g:prt_kara_made', ctx: { jp: '「こめ 、 じっぴょう 。 あした まで に 。」', en: 'A tally: "Rice, ten bales. By tomorrow." The barge from the rice fields takes three days.' },
+        prompt: { en: 'Which part of the tally can\'t be kept?' },
+        options: [{ jp: 'あした まで に', ok: true }, { jp: 'じっぴょう', ok: false, why: no('Ten bales is only how much. The barge takes three days: "by tomorrow" (あした まで に) is what can\'t be kept.') },
+          { jp: 'こめ', ok: false, why: no('Rice is only what is sent.') }] }],
+      E: [{ kind: 'choose', item: 'g:prt_kara_made', ctx: { jp: '「{干物|ひもの} 、 {百枚|ひゃくまい} 。 {三日|みっか} まで に {藤屋|ふじや} へ 。 {代金|だいきん} は {着|つ}いて から 。」', en: 'Today is the first day of the month. The Saltglass boat takes four days.' },
+        prompt: { en: 'Which condition can\'t be kept?' },
+        options: [{ jp: '{三日|みっか} まで に', ok: true }, { jp: '{藤屋|ふじや} へ', ok: false, why: no('Fujiya is only where it goes. Four days from the first is the fifth: {三日|みっか} まで に (by the third) is too soon.') },
+          { jp: '{代金|だいきん} は {着|つ}いて から', ok: false, why: no('Paying once it arrives is easy to keep.') }] }],
+      I: [{ kind: 'choose', item: 'g:cond_tara', ctx: { jp: '「{雨|あめ} なら 、 {舟|ふね} は {出|だ}さない 。 {晴|は}れたら 、 {朝|あさ} {出|だ}す 。 {明日|あした} {着|つ}かなければ 、 {代金|だいきん} は {払|はら}わない 。」', en: '' },
+        prompt: { en: 'Tomorrow will be rainy all day, and the trip takes a day. Which line makes this deal impossible to keep?' },
+        options: [{ jp: '{明日|あした} {着|つ}かなければ 、 {代金|だいきん} は {払|はら}わない 。', ok: true },
+          { jp: '{雨|あめ} なら 、 {舟|ふね} は {出|だ}さない 。', ok: false, why: no('That one is only sensible. But with no boat in the rain, the load cannot arrive tomorrow, and {明日|あした} {着|つ}かなければ makes it unpaid whatever happens.') },
+          { jp: '{晴|は}れたら 、 {朝|あさ} {出|だ}す 。', ok: false, why: no('〜たら: if it clears. Tomorrow it won\'t, so this line never comes into force.') }] }],
+      A: [{ kind: 'choose', item: 'g:cond_ba', ctx: { jp: '「{特|とく}に {問題|もんだい} が なければ 、 {十日|とおか} {以内|いない} に {納|おさ}める もの と する 。 ただし 、 {運河|うんが} が {使|つか}えない {場合|ばあい} は 、 この {限|かぎ}り で ない 。」', en: '' },
+        prompt: { en: 'The Long Canal is closed for repairs all month. What does the tally mean now?' },
+        options: [{ en: 'The ten-day promise no longer binds the seller while the canal is closed.', ok: true },
+          { en: 'The seller must still deliver within ten days, by road if need be.', ok: false, why: no('ただし … この {限|かぎ}り で ない: "but … this does not apply". With the canal unusable, the ten days do not bind.') },
+          { en: 'The buyer must pay at once, before the goods arrive.', ok: false, why: no('The tally says nothing about paying early.') }] }],
+    } };
+
   // ---- the Lost Contract: the old plan against today's row ---------------------------------------------------------
   C.challenges['mb.lc_plan'] = { title: T('The old canal plan', '{古|ふる}い {運河|うんが} の {図|ず}'),
     tiers: {

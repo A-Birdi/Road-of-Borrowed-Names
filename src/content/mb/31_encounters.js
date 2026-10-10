@@ -28,6 +28,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.encounters['mb.dispute'] = {
     id: 'mb.dispute', kind: 'social', name: { jp: '{札場|ふだば} の {揉|も}め{事|ごと}', en: 'The dispute at the Tally Exchange' },
     rules: { wait: true },
+    // the automated runs' route (src/engine/99_test.js): Wait for Gonta, the tally, calm, which storehouse (his confession comes meanwhile), the proposal
+    autoRoute: ['wait', 's:show_tally', 's:calm', 's:ask_where', 's:propose'],
     social: {
       parties: [
         { aid: 'n:fujiko', name: { jp: 'フジコ', en: 'Fujiko' }, stance: 'heated', wants: { en: 'To be believed, and paid.' } },
@@ -103,6 +105,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.encounters['mb.passage'] = {
     id: 'mb.passage', kind: 'social', name: { jp: '{閘門番|こうもんばん} の {戸|と}', en: 'The lock-keeper\'s door' },
     rules: { wait: true },
+    // the automated runs' route: who sent you, why it is shut, Wait (her husband), the letter, reading it together
+    autoRoute: ['s:introduce', 's:ask_why', 'wait', 's:letter', 'gesture', 's:offer'],
     social: {
       parties: [{ aid: 'n:matsu', name: { jp: 'マツ', en: 'Matsu' }, stance: 'closed', wants: { en: 'That nobody else goes down there and is lost.' } }],
       claims: {

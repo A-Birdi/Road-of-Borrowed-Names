@@ -52,6 +52,7 @@ RB.lex.add(RB.lex.parseTable(`
 拓本|たくほん|n|A|a rubbing (paper and ink pressed over an inscription)
 約定|やくじょう|n|A|agreement, compact (old-fashioned)
 約定書|やくじょうしょ|n|A|a written agreement (old-fashioned)
+以内|いない|n|I|within (a period or amount)
 両家|りょうけ|n|A|both houses, both families
 木目|もくめ|n|I|the grain of wood
 版木|はんぎ|n|I|printing woodblock
