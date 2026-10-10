@@ -412,3 +412,19 @@ body.high-contrast .folio.book .leaf, body.high-contrast .folio.book .nudge-slip
 body.high-contrast.book-ui .dlg-sheet { background-image: none !important; }
 body.high-contrast .folio.book .spread { filter: none; }
 body.high-contrast .folio.book .co-thought::before { color: var(--ink); }
+
+/* The Satchel as an equipment folio (U04, UI-07): slots are ruled entries with their names in small capitals, not
+   boxes; the appearance study faces them, the traveller drawn three ways with what each slot holds */
+.folio.book .eq-slot, .folio.book .eq-slot.empty { border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none; box-shadow: none; }
+.folio.book .eq-slot + .eq-slot { margin-top: 0; }
+.folio.book .eq-slot.worn > .mark { color: var(--ribbon-deep); }
+.folio.book .as-study { margin: 0 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); display: grid; gap: 8px; }
+.folio.book .as-study figcaption { font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink-2); }
+.folio.book .as-figs { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+.folio.book .as-figs canvas { image-rendering: pixelated; }
+.folio.book .as-figs canvas[data-dir="face"] { width: 96px; height: 96px; border-radius: 50%; box-shadow: 0 0 0 2px var(--paper-edge), 0 2px 4px rgba(60, 35, 5, 0.2); background: #e8dcc0; }
+.folio.book .as-figs canvas[data-dir="down"], .folio.book .as-figs canvas[data-dir="battle"] { width: auto; height: 116px; }
+.folio.book .as-worn { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.folio.book .as-worn li { display: grid; grid-template-columns: minmax(6em, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.folio.book .as-k { font-size: 0.82em; color: var(--ink-2); }
+.folio.book .as-v .en { color: var(--ink-2); font-style: italic; }

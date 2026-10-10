@@ -5368,6 +5368,22 @@ body.high-contrast .folio.book .leaf, body.high-contrast .folio.book .nudge-slip
 body.high-contrast.book-ui .dlg-sheet { background-image: none !important; }
 body.high-contrast .folio.book .spread { filter: none; }
 body.high-contrast .folio.book .co-thought::before { color: var(--ink); }
+
+/* The Satchel as an equipment folio (U04, UI-07): slots are ruled entries with their names in small capitals, not
+   boxes; the appearance study faces them, the traveller drawn three ways with what each slot holds */
+.folio.book .eq-slot, .folio.book .eq-slot.empty { border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none; box-shadow: none; }
+.folio.book .eq-slot + .eq-slot { margin-top: 0; }
+.folio.book .eq-slot.worn > .mark { color: var(--ribbon-deep); }
+.folio.book .as-study { margin: 0 0 14px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); display: grid; gap: 8px; }
+.folio.book .as-study figcaption { font-variant: small-caps; letter-spacing: 0.06em; color: var(--ink-2); }
+.folio.book .as-figs { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+.folio.book .as-figs canvas { image-rendering: pixelated; }
+.folio.book .as-figs canvas[data-dir="face"] { width: 96px; height: 96px; border-radius: 50%; box-shadow: 0 0 0 2px var(--paper-edge), 0 2px 4px rgba(60, 35, 5, 0.2); background: #e8dcc0; }
+.folio.book .as-figs canvas[data-dir="down"], .folio.book .as-figs canvas[data-dir="battle"] { width: auto; height: 116px; }
+.folio.book .as-worn { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.folio.book .as-worn li { display: grid; grid-template-columns: minmax(6em, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.folio.book .as-k { font-size: 0.82em; color: var(--ink-2); }
+.folio.book .as-v .en { color: var(--ink-2); font-style: italic; }
 </style>
 </head>
 <body>
@@ -70529,6 +70545,21 @@ RB.ui.menu = (function () {
   const tagRow = (d) => '<span class="etags">' + EQ().tags(d).map(tagChip).join('') + '</span>';
   const wornChip = () => '<span class="worn-tag">' + I('worn') + '<span>' + lab('{装備中|そうびちゅう}', 'Equipped') + '</span></span>';
   const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
+  // The book's Satchel (U04, UI-07): an appearance study facing the equipment folio: the traveller as they look now,
+  // in portrait, on the road and in battle, and what each slot holds, named
+  function appearanceStudy(s) {
+    const cos = esc(s.equip.cosmetic || '');
+    const F = RB.sprites.FRAME || { w: 40, h: 58 };
+    const worn = EQ().SLOTS.map((z) => {
+      const id = s.equip[z.id], it = id && RB.content.items[id];
+      return '<li><span class="as-k">' + lab(z.jp, z.en) + '</span><span class="as-v">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">nothing worn</span>') + '</span></li>';
+    }).join('');
+    return '<figure class="as-study"><figcaption>' + lab('{旅姿|たびすがた}', 'As you travel') + '</figcaption><div class="as-figs">' +
+      '<canvas width="96" height="96" data-prev="' + cos + '" data-dir="face" role="img" aria-label="Your portrait as you look now"></canvas>' +
+      '<canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + cos + '" data-dir="down" role="img" aria-label="You on the road"></canvas>' +
+      '<canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + cos + '" data-dir="battle" role="img" aria-label="You in battle"></canvas></div>' +
+      '<ul class="as-worn">' + worn + '</ul></figure>';
+  }
   function wearPreview(id, d, s) {
     const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
     // on the road (front, side and back, 40×58) and in battle (seen from behind, facing the foe), all at 2 CSS px per art px
@@ -70621,9 +70652,15 @@ RB.ui.menu = (function () {
         (seen.some((t) => t.kind === 'cost') ? '<p class="muted small">A dashed mark with a minus sign is the drawback that comes with a charm.</p>' : '');
     }
     h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
-    A.innerHTML = h;
     const selX = inv.find((x) => x.id === S.sel);
-    B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    if (bookStyle()) {
+      // the book: the study faces the folio (on a phone, it heads the page)
+      if (two) { A.innerHTML = h; B.innerHTML = appearanceStudy(s) + (selX ? itemDetail(selX, s) : '<p class="muted">Choose something you carry to look at it closely.</p>'); }
+      else A.innerHTML = appearanceStudy(s) + h;
+    } else {
+      A.innerHTML = h;
+      B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    }
     drawPreviews(A, s); drawPreviews(B, s);
     // a polite announcement of what changed (the page itself is redrawn)
     let live = fr.el.querySelector('.eq-live');
@@ -77866,12 +77903,14 @@ RB.ui.distractions = (function () {
       // a chain of words winding across the page, each link a stone
       const words = ['しりとり', 'りんご', 'ごりら', 'らっぱ', 'ぱん'];
       let g = '<rect width="' + w + '" height="' + h + '" fill="#efe2c4"/>';
-      const n = words.length, pts = words.map((x, i) => [w * (0.1 + 0.8 * i / (n - 1)), h * (i % 2 ? 0.66 : 0.36)]);
+      // the stones sized and spaced to stay inside the picture at any width
+      const n = words.length, r = Math.min(h * 0.2, w / (n * 3.4)), m = r * 1.6;
+      const pts = words.map((x, i) => [m + (w - 2 * m) * i / (n - 1), h * (i % 2 ? 0.66 : 0.36)]);
       g += '<path d="M' + pts.map(([x, y]) => x.toFixed(1) + ' ' + y.toFixed(1)).join(' L') + '" fill="none" stroke="#8a2a5a" stroke-width="2" stroke-dasharray="4 4"/>';
       words.forEach((wd, i) => {
-        const [x, y] = pts[i], r = Math.min(h * 0.2, w * 0.08);
+        const [x, y] = pts[i];
         g += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r * 1.5 + '" ry="' + r + '" fill="#fbf4e2" stroke="' + (i === n - 1 ? '#a51d12' : '#8a2a5a') + '" stroke-width="1.6"/>' +
-          '<text x="' + x + '" y="' + (y + r * 0.35) + '" text-anchor="middle" font-size="' + (r * 0.9).toFixed(1) + '" fill="#3a2410" lang="ja">' + wd + '</text>';
+          '<text x="' + x + '" y="' + (y + r * 0.3) + '" text-anchor="middle" font-size="' + Math.min(r * 0.9, (r * 2.6) / wd.length).toFixed(1) + '" fill="#3a2410" lang="ja">' + wd + '</text>';
       });
       return g;
     },
@@ -157774,6 +157813,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
 !hook rb_stand
 `, 'records/00_stamps.js');
 })(RB.content);
+
+
+/* ==== src/content/records/01_lex.js ==== */
+/* Words of the journey's records and the book's pages (expansion P06). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.lex.add(RB.lex.parseTable(`
+旅姿|たびすがた|n|A|travelling clothes; how one looks on a journey
+`), 'records');
 
 
 /* ==== src/content/records/05_stand.js ==== */

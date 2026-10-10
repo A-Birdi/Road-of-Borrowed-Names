@@ -625,6 +625,21 @@ RB.ui.menu = (function () {
   const tagRow = (d) => '<span class="etags">' + EQ().tags(d).map(tagChip).join('') + '</span>';
   const wornChip = () => '<span class="worn-tag">' + I('worn') + '<span>' + lab('{装備中|そうびちゅう}', 'Equipped') + '</span></span>';
   const ACC_WORD = { hat: 'hat', cap: 'cap', scarf: 'scarf', earrings: 'earrings', flower: 'flower', cape: 'cape' };
+  // The book's Satchel (U04, UI-07): an appearance study facing the equipment folio: the traveller as they look now,
+  // in portrait, on the road and in battle, and what each slot holds, named
+  function appearanceStudy(s) {
+    const cos = esc(s.equip.cosmetic || '');
+    const F = RB.sprites.FRAME || { w: 40, h: 58 };
+    const worn = EQ().SLOTS.map((z) => {
+      const id = s.equip[z.id], it = id && RB.content.items[id];
+      return '<li><span class="as-k">' + lab(z.jp, z.en) + '</span><span class="as-v">' + (it ? j(it.name.jp) + ' <span class="en">' + esc(it.name.en) + '</span>' : '<span class="muted">nothing worn</span>') + '</span></li>';
+    }).join('');
+    return '<figure class="as-study"><figcaption>' + lab('{旅姿|たびすがた}', 'As you travel') + '</figcaption><div class="as-figs">' +
+      '<canvas width="96" height="96" data-prev="' + cos + '" data-dir="face" role="img" aria-label="Your portrait as you look now"></canvas>' +
+      '<canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + cos + '" data-dir="down" role="img" aria-label="You on the road"></canvas>' +
+      '<canvas width="' + F.w + '" height="' + F.h + '" data-prev="' + cos + '" data-dir="battle" role="img" aria-label="You in battle"></canvas></div>' +
+      '<ul class="as-worn">' + worn + '</ul></figure>';
+  }
   function wearPreview(id, d, s) {
     const rep = EQ().replaces(s.player.look, id).map((a) => ACC_WORD[a] || a);
     // on the road (front, side and back, 40×58) and in battle (seen from behind, facing the foe), all at 2 CSS px per art px
@@ -717,9 +732,15 @@ RB.ui.menu = (function () {
         (seen.some((t) => t.kind === 'cost') ? '<p class="muted small">A dashed mark with a minus sign is the drawback that comes with a charm.</p>' : '');
     }
     h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
-    A.innerHTML = h;
     const selX = inv.find((x) => x.id === S.sel);
-    B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    if (bookStyle()) {
+      // the book: the study faces the folio (on a phone, it heads the page)
+      if (two) { A.innerHTML = h; B.innerHTML = appearanceStudy(s) + (selX ? itemDetail(selX, s) : '<p class="muted">Choose something you carry to look at it closely.</p>'); }
+      else A.innerHTML = appearanceStudy(s) + h;
+    } else {
+      A.innerHTML = h;
+      B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
+    }
     drawPreviews(A, s); drawPreviews(B, s);
     // a polite announcement of what changed (the page itself is redrawn)
     let live = fr.el.querySelector('.eq-live');

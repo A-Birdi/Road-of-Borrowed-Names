@@ -29,7 +29,7 @@ maps are unchanged; the records browser test checks it.
 | K8: the chosen companion's whole set viewable once the story is finished; every set on the Main Menu | K8 | `RB.volume` | Done as a rule (the bond and ending pages come with the chapters) |
 | Shiritori v2: themed word sets (`RB.wordplay.addTheme`) offered when a chapter opens them (sea words after sailing, festival words, a set per chapter), built from the installed banks like the journey bank, recorded with the theme, never a stage, never Bond | C12 | `src/engine/73_wordplay.js`, `src/ui/87_wordplay.js` | Done (the sets themselves come with their chapters; the festival tournament with P09) |
 | Festival game support: one booth-game shell (Practice by default, untimed and keeping nothing; Timed opt-in each time, the clock stopping for hints, only the player's own best and longest run kept and shown in the game's corner; no stamp or reward from any score, C-55), its Distractions page, and the first game, water-balloon fishing (ヨーヨー釣り, real): hook the balloon whose word you are asked for in English | C10, C-17, C-55 | `src/engine/72f_festival.js`, `src/ui/88e_festival.js`, `88f_festival_yoyo.js`, `src/content/pastimes/50_festival.js` | Done (the festival and its other games come with P09) |
-| The book shell on the remaining pages | U03–U05 | — | Next |
+| The book shell on the remaining pages: all six tabs share the book (U01's shell with the sixth tab); the Satchel as an equipment folio (an appearance study facing ruled slot entries, UI-07); Distractions' pages round their art; the records pages; the Inn Ledger keeps its own registration-book look | U03–U05 | `src/ui/50_menu.js` (`appearanceStudy`), `src/styles/90_book.css` | Done for P06 (the complete UI census is P16's) |
 
 ## Shogi
 

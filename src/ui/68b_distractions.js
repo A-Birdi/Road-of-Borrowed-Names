@@ -39,12 +39,14 @@ RB.ui.distractions = (function () {
       // a chain of words winding across the page, each link a stone
       const words = ['しりとり', 'りんご', 'ごりら', 'らっぱ', 'ぱん'];
       let g = '<rect width="' + w + '" height="' + h + '" fill="#efe2c4"/>';
-      const n = words.length, pts = words.map((x, i) => [w * (0.1 + 0.8 * i / (n - 1)), h * (i % 2 ? 0.66 : 0.36)]);
+      // the stones sized and spaced to stay inside the picture at any width
+      const n = words.length, r = Math.min(h * 0.2, w / (n * 3.4)), m = r * 1.6;
+      const pts = words.map((x, i) => [m + (w - 2 * m) * i / (n - 1), h * (i % 2 ? 0.66 : 0.36)]);
       g += '<path d="M' + pts.map(([x, y]) => x.toFixed(1) + ' ' + y.toFixed(1)).join(' L') + '" fill="none" stroke="#8a2a5a" stroke-width="2" stroke-dasharray="4 4"/>';
       words.forEach((wd, i) => {
-        const [x, y] = pts[i], r = Math.min(h * 0.2, w * 0.08);
+        const [x, y] = pts[i];
         g += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + r * 1.5 + '" ry="' + r + '" fill="#fbf4e2" stroke="' + (i === n - 1 ? '#a51d12' : '#8a2a5a') + '" stroke-width="1.6"/>' +
-          '<text x="' + x + '" y="' + (y + r * 0.35) + '" text-anchor="middle" font-size="' + (r * 0.9).toFixed(1) + '" fill="#3a2410" lang="ja">' + wd + '</text>';
+          '<text x="' + x + '" y="' + (y + r * 0.3) + '" text-anchor="middle" font-size="' + Math.min(r * 0.9, (r * 2.6) / wd.length).toFixed(1) + '" fill="#3a2410" lang="ja">' + wd + '</text>';
       });
       return g;
     },
