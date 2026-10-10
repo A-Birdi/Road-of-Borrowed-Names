@@ -3946,3 +3946,47 @@ foldable.
   passed, 0 failed**.
 
 **Not verified:** Firefox; the foldable; a person playing the cellars or a commission.
+
+## The expansion, P08 and P09: Manybridge, Chapters 3 and 4 (2026-10-10; C-81; docs/future/work/P08_MANYBRIDGE.md, P09_MANYBRIDGE2.md; REQUIREMENTS.md XP34–XP49)
+
+**P08's phase end.** A clean copy of 666ad80 (`git archive`), built and run in the background.
+- B `manybridge` **3/0**, `encounters` **10/0**, `combat_ui` **7/0**, `ui` **14/0**, `records` **7/0**, `book` **15/0**,
+  `battle_settings` **10/0**, `expedition` **6/0**, `audio_zones` **78/0**, `audit_fixes` **4/0**.
+- C the route through Chapter 3 at F with Ren, from the Chapter 2 fixture in the twelve-chapter edition
+  (`PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren
+  'mb1_done@sg.|mb.@mb_main'`): **reached mb1_done** (340 visits, 288 s).
+- U the full suite: **31,271 passed, 0 failed**.
+- B `node tests/e2e/matrix.mjs F ren 1`: **FAIL at Chapter 6** (Chapters 1–5 passed, 12.1 min): "no site offers
+  progress". The story driver did not count a scene seen during testing as progress (a condition in Chapter 6 tests
+  `seen.<scene>`); fixed in tests/e2e/drive.mjs (F-51). Chapter 6 then passed from the Chapter 5 fixture, and on
+  fb9a604 F/Ren **PASS** (12.7 min) with the Chapter 3 route again (361 visits).
+
+**P09's language review.** All 1,030 unique new lines read against their English, the cast's speech, Suzu's Kansai
+guide and the lexicon; the corrections are listed in the ledger's reference (docs/review/language/). Self-review only.
+
+**P09's phase end.** A clean copy of 112496c, built and run in the background.
+- B `manybridge` **3/0**, `manybridge2` **4/0** (the press, the rehearsal, the fireworks moving and under reduced
+  motion, festival dress), `festival_games` **5/0** (katanuki, ring toss, word lottery, taiko, phone width),
+  `festival` **3/0**, `distractions` **4/0**, `encounters` **10/0**, `combat_ui` **7/0**, `battle_group` **6/0**,
+  `battle_backdrops` **38/0**, `company` (all passed), `dialect_kansai` (all passed), `perform` **3/0**, `ui` **14/0**,
+  `play_ui` (all ok), `records` **7/0**, `book` **15/0**, `battle_settings` **10/0**, `expedition` **6/0**,
+  `audit_fixes` **4/0**.
+- B `audio_zones`: **crashed** at the Understage's zone, which exists only for its boss's theme (its creatures fight
+  to the city's battle theme): the test looked for a creature of the zone's own. Fixed in the test (a boss-only
+  zone is checked for its boss); on the fixed code **82/0**.
+- C the route through Chapter 3: **stuck** (248 visits). After resting at the Undercroft's bench, the driver took the
+  nearest stairs, upward, away from the Great Lock: every journey already made ranked the same. Fixed in
+  tests/e2e/drive.mjs (journeys already made now rank by how many maps their landing is from the work left); on
+  the fixed code **reached mb1_done in 166 visits**. The previous driver on the same content passed (361 visits) by
+  luck of order.
+- C the route through Chapter 4 at F with Ren, from the Chapter 3 fixture: **reached mb2_done** (237 visits); with
+  the fixed driver, 215.
+- B `node tests/e2e/matrix.mjs F ren 1`: **PASS** (12.5 min).
+- U the full suite: **33,136 passed, 0 failed**.
+
+**Since the phase end** (names, not behaviour): Chapter 4's courier Hayate renamed Kakeru (F-54), Chapter 3's Kayo
+renamed Haru and Chapter 4's Kanta renamed Sanpei (F-55); a validator rule refuses a new person whose name anyone
+else has; the renamed lines re-entered in the ledger. U the full suite after the renames: **33,136 passed, 0 failed**;
+U `expansion_rules` **11/0**.
+
+**Not verified:** Firefox; the foldable; a person playing either chapter, the press or the festival games.

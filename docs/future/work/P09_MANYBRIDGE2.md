@@ -54,3 +54,18 @@ with the companion. The river opens; the road north from Saltglass is mended.
 - The press reacts to blocks, never to free text; no popularity or currency grind; proofreading is separate.
 - Festival games: Practice by default (untimed, nothing kept), Timed opt-in; no reward from any score (C-17, C-55).
 - Every line of new Japanese through the review ledger (self-review only).
+
+## Phase end
+
+Run on a clean copy of 112496c (logs kept outside the repository); details in VALIDATION.md "The expansion, P08 and P09".
+
+| Check | Result |
+|---|---|
+| Browser suites it touched or could disturb (20) | 18 pass as they were; `audio_zones` crashed on the Understage's boss-only zone (a test fix; then 82/0) |
+| The route through Chapter 3 (Chapter 2 fixture) | Stuck after the Undercroft's bench (a story-driver ranking gap, fixed); then 166 visits |
+| The route through Chapter 4 at F with Ren (Chapter 3 fixture) | Reached `mb2_done` (237 visits; 215 with the fixed driver) |
+| F/Ren through the six-chapter game and one Atlas expedition | PASS (12.5 min) |
+| Unit suite | 33,136 passed, 0 failed |
+
+After the phase end three people were renamed so that no new person shares a name with an older one (F-54, F-55),
+and a validator rule now enforces it.

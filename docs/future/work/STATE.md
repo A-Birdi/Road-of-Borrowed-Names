@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-10 (C-81; P02 to P07 done; P08 under way).
+**Updated:** 2026-10-10 (C-81; P02 to P09 done; P10 under way).
 
 **Latest explicit authorisation:** Robin, 2026-10-10, after the fidelity study, recorded as **C-81**: "continue your
 World Proof into full Expansion plan at large. Do your best to implement the *entire* expansion plan without consulting
@@ -38,7 +38,9 @@ byte for byte).
 | P05 · living world | **Done.** The town engine (routines, change beats, "Have you seen…?", road events, sealed places), the exploration actions W9, W11–W17, the performance library (sixteen actions) and profession suggestions, the proof kit's dressing checked on every map. Town 87/0, verbs 116/0, perform 85/0, worldkit 10/0; browser suites all pass; F/Ren PASS (15.3 min); the phase-end unit run's three failures fixed (P06_RECORDS.md) | [P05_WORLD.md](P05_WORLD.md) |
 | P06 · records, replay, New Game+, pastimes, the book everywhere | **Done.** The Road Stamp Book and stands, the travel volume, the seal, read-only replay, New Game+ with the farewell; the pastime registry, shogi's ladder with puzzles, Fuku's bench, the Distractions tab; hanafuda, karuta, shiritori's themes, the festival shell with its first game; the Satchel as the book's folio. Phase end on 6c58b74: every browser suite passes, F/Ren PASS (15.2 min), unit 29,473 passed and 1 failed (a generated reading table, regenerated since) | [P06_RECORDS.md](P06_RECORDS.md) |
 | P07 · expeditions and a pilot | **Done.** The expedition engine and the pilot, the Flood Cellars under Reedwake's warehouse (〜て ある as an apprenticeship dungeon); the Atlas's commissions (practice, errands, surveys, lengths); delvers in the cellars and at the Atlas camp; the variation evidence over 96 dressed runs; the ten dungeon families' templates. Phase end on 396a308: every browser suite passes, F/Ren PASS (15.4 min), unit 30,185 passed and 12 failed (a new kanji in one line, the compass's art), fixed: 30,197/0 | [P07_EXPEDITIONS.md](P07_EXPEDITIONS.md) |
-| P08–P13 · the six new chapters | Not started | — |
+| P08 · Manybridge, Chapter 3 (the Exchange) | **Done.** The ferry east, the Exchange district and Warehouse Row, barge routing, the Tally Exchange dispute (Wait), the lock-keeper's negotiation, the Undercroft Locks and the Nameless Bridge, five creatures (interim art), the census, stalls, riddles and the Lost Contract, Nao's and Ren's seeds, four songs, それぞれ, the records. Phase end on 666ad80: browser suites pass, the Chapter 3 route reaches mb1_done, unit 31,271/0; F/Ren stopped at Chapter 6 on a story-driver gap (fixed), then PASS (12.7 min) | [P08_MANYBRIDGE.md](P08_MANYBRIDGE.md) |
+| P09 · Manybridge, Chapter 4 (print, stage and festival) | **Done.** Blockprint and Playhouse Rows, the press, the rehearsal and manzai, the Understage's machines and its Lord, four creatures, いくつか, the festival (preparations, yukata, fireworks, four games, the hall), side stories, the wanderers, the seeds, the world after (the river road, the north road), five songs, the records; every new line self-reviewed. Phase end on 112496c: 18 of 20 browser suites as they were, two test-side faults fixed (audio_zones 82/0; the Chapter 3 route 166 visits); the Chapter 4 route reaches mb2_done; F/Ren PASS (12.5 min); unit 33,136/0 | [P09_MANYBRIDGE2.md](P09_MANYBRIDGE2.md) |
+| P10–P13 · the Keepers' Road, Kotonoha and the sea, the Cloudroad, Steamhollow | P10 under way | — |
 | P14–P17 · integration, postgame, art pass, closure | Not started | — |
 
 **Pending Robin gates:** none until the end (C-81). Robin will review the whole expansion at completion, the
