@@ -27,7 +27,7 @@ RB.ui.tellings = (function () {
     board: { en: 'A notice', jp: '{掲示|けいじ}', vouch: 'what whoever wrote it knew' },
     record: { en: 'A record', jp: '{記録|きろく}', vouch: 'what was written down at the time' },
   };
-  const prof = () => (S() && S().profile) || 'F';
+  const prof = () => (S() && S().learn && S().learn.profile) || 'F';
 
   function open(id) {
     const T = RB.tellings, d = T.def(id);
