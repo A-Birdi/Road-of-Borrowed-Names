@@ -70,7 +70,7 @@ mp_sobe: {刷|す}り{場|ば} は {隣|となり} だ 。 {刷|す}れたら �
 !faceplayer
 !gesture mp_sobe read prop=paper
 mp_sobe: …… {字|じ} が 、 {残|のこ}って いる 。 {組|く}んだ ばかり の {活字|かつじ} は 、 まだ {大丈夫|だいじょうぶ} だ 。 || …The letters are holding. Freshly set type is still all right.
-mp_sobe: {一日|いちにち} {止|と}まって いた {刷|す}り{場|ば} が 、 {動|うご}いた 。 {礼|れい} を {言|い}う 。 …… これ で {知|し}らせ は {町|まち} に {出|で}る 。 || The press that stood idle has run. My thanks. …Now notices can go out into the city again.
+mp_sobe: {三日|みっか} {止|と}まって いた {刷|す}り{場|ば} が 、 {動|うご}いた 。 {礼|れい} を {言|い}う 。 …… これ で {知|し}らせ は {町|まち} に {出|で}る 。 || The press that stood idle three days has run. My thanks. …Now notices can go out into the city again.
 ?(comp=ren) !gesture mp_sobe present comp prop=paper
 ?(comp=ren) mp_sobe: …… あんた 、 {灯守|ひもり} の {弟子|でし} だ な 。 これ を {見|み}て いけ 。 {灯籠|とうろう} の {笠|かさ} に {貼|は}る {名札|なふだ} の {版木|はんぎ} だ 。 {次|つぎ} の {宿場|しゅくば} の {名前|なまえ} を 、 ここ で {彫|ほ}る 。 || …You're a keeper's apprentice, aren't you. Look at this, then. The block for the name slips pasted on lantern shades. We cut the name of the next post town here.
 ?(comp=ren) comp[think]: {毎晩|まいばん} {灯|ひ} を {入|い}れて いた {名札|なふだ} は 、 ここ で {生|う}まれて いた の です ね 。 …… {彫|ほ}る {人|ひと} の {手|て} を 、 {初|はじ}めて {見|み}ました 。 || The name slips I lit every night were born here. …I've never seen the hands that cut them before.

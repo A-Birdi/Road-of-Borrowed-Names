@@ -29,14 +29,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
           O('At the far right, at the front', false, { saku: [4, 2] }, 'Sakutarō at the far right, at the front.', 'まんなか is the middle.'),
         ] }],
       E: [{ kind: 'choose', stage: 'mp.stage_play', item: 'g:v_te_kudasai', ctx: { jp: 'サクタロウ は {上手|かみて} の {奥|おく} に {立|た}って ください 。 {屏風|びょうぶ} は {下手|しもて} に {置|お}いて ください 。', en: '' },
-        prompt: { en: 'Stage it: where do Sakutarō and the screen go? (上手, kamite, is the audience\'s right.)' },
+        prompt: { en: 'Stage it: where do Sakutarō and the screen go? ({上手|かみて}, kamite, is the audience\'s right.)' },
         options: [
           O('Sakutarō at the back on the right; the screen on the left', true, { saku: [4, 0], byobu: [0, 1] }, 'Sakutarō at the back, the audience\'s right; the screen on the left.'),
           O('Sakutarō at the back on the left; the screen on the right', false, { saku: [0, 0], byobu: [4, 1] }, 'Sakutarō on the left, the screen on the right: swapped.', '{上手|かみて} is the audience\'s right and {下手|しもて} the audience\'s left.'),
           O('Sakutarō at the front on the right; the screen on the left', false, { saku: [4, 2], byobu: [0, 1] }, 'Sakutarō at the front.', '{奥|おく} is the back of the stage, away from the seats.'),
         ] }],
       I: [{ kind: 'choose', stage: 'mp.stage_play', item: 'v:その', ctx: { jp: '{娘役|むすめやく} は {下手|しもて} の {前|まえ} に {立|た}つ 。 サクタロウ は 、 その {隣|となり} 。 {屏風|びょうぶ} は 、 {二人|ふたり} の {後|うし}ろ 。', en: '' },
-        prompt: { en: 'Who is その, who are the 二人? Stage it.' },
+        prompt: { en: 'Who is その, who are the {二人|ふたり}? Stage it.' },
         options: [
           O('The daughter front left; Sakutarō beside her; the screen just behind them', true, { hina: [0, 2], saku: [1, 2], byobu: [1, 1] }, 'The daughter and Sakutarō side by side at the front left, the screen behind them.'),
           O('The daughter front left; Sakutarō across the stage; the screen behind her', false, { hina: [0, 2], saku: [4, 2], byobu: [0, 1] }, 'Sakutarō across the stage from her.', 'その{隣|となり}: next to her, the one just named.'),
@@ -79,9 +79,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         tiles: ['まく が あく 。', 'ふね が くる 。', 'まく が しまる 。'], answer: ['まく が あく 。', 'ふね が くる 。', 'まく が しまる 。'] }],
       E: [{ kind: 'order', item: 'c:mp_book_e', prompt: { en: 'Put the scene back in order.' },
         tiles: [L1, L2, L3, L5], answer: [L1, L2, L3, L5] }],
-      I: [{ kind: 'order', item: 'c:mp_book_i', prompt: { en: 'Put the scene back in order. 二人 needs both of them on stage.' },
+      I: [{ kind: 'order', item: 'c:mp_book_i', prompt: { en: 'Put the scene back in order. {二人|ふたり} needs both of them on stage.' },
         tiles: [L1, L2, L3, L4, L5], answer: [L1, L2, L3, L4, L5] }],
-      A: [{ kind: 'order', item: 'c:mp_book_a', prompt: { en: 'Put the scene back in order. それ and その時 point back to something said before.' },
+      A: [{ kind: 'order', item: 'c:mp_book_a', prompt: { en: 'Put the scene back in order. それ and その{時|とき} point back to something said before.' },
         tiles: [L1, L2, L3, 'その {時|とき} 、 {最初|さいしょ} の {花火|はなび} が {上|あ}がる 。', 'それ を {見|み}て 、 {娘|むすめ} は {名前|なまえ} を {思|おも}い{出|だ}す 。', L5],
         answer: [L1, L2, L3, 'その {時|とき} 、 {最初|さいしょ} の {花火|はなび} が {上|あ}がる 。', 'それ を {見|み}て 、 {娘|むすめ} は {名前|なまえ} を {思|おも}い{出|だ}す 。', L5] }],
     } };

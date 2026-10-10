@@ -26,7 +26,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- Kansuke's new riddles (he promised new ones) --------------------------------------------------------------
   const MORE = [
-    { q: T('"I stand backwards, so that what I print reads the right way round. What am I?"', '{逆|さか}さま に {立|た}って いる から 、 {正|ただ}しく {読|よ}める もの 、 なあんだ 。'), a: 'かつじ', w: ['かがみ', 'A mirror shows things backwards, but nothing is printed from it.'], w2: ['ほん', 'A book is printed; it does not print.'], en: 'katsuji: movable type (each letter cast backwards)' },
+    { q: T('"I stand backwards, and print the letters the right way round. What am I?"', '{逆|さか}さま に {立|た}って 、 {正|ただ}しい {字|じ} を {刷|す}る もの 、 なあんだ 。'), a: 'かつじ', w: ['かがみ', 'A mirror shows things backwards, but nothing is printed from it.'], w2: ['ほん', 'A book is printed; it does not print.'], en: 'katsuji: movable type (each letter cast backwards)' },
     { q: T('"The more I write, the shorter I get. What am I?"', '{書|か}けば {書|か}く ほど 、 {短|みじか}く なる もの 、 なあんだ 。'), a: 'えんぴつ', w: ['ふで', 'A brush does not get shorter as it writes.'], w2: ['かみ', 'Paper does not write.'], en: 'enpitsu: a pencil' },
     { q: T('"In the theatre everyone can see me, and nobody looks. I wear black. What am I?"', '{芝居|しばい} で 、 みんな に {見|み}えて いる のに 、 だれ も {見|み}ない もの 、 なあんだ 。 {黒|くろ}い {服|ふく} を {着|き}て いる よ 。'), a: 'くろこ', w: ['やくしゃ', 'Everyone looks at the actors.'], w2: ['まく', 'The curtain is not dressed in black.'], en: 'kuroko: the stagehands in black, who by convention are not there' },
     { q: T('"When I open, everyone falls quiet; when I close, everyone claps. What am I?"', '{開|ひら}く と みんな {静|しず}か に なって 、 {閉|し}まる と みんな {手|て} を {叩|たた}く もの 、 なあんだ 。'), a: 'まく', w: ['と', 'Nobody claps when a door shuts.'], w2: ['かさ', 'Nobody falls quiet for an umbrella.'], en: 'maku: the theatre curtain' },
@@ -76,6 +76,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
       A: [ch({ item: 'g:you_ni_suru', prompt: { en: 'Explain the spacing rule so that it says what it is for.' },
         options: [{ jp: '{読|よ}む {人|ひと} が {迷|まよ}わない よう に 、 {行|ぎょう} の {間|あいだ} を {揃|そろ}えて おく ん だ よ 。', ok: true },
           { jp: '{読|よ}む {人|ひと} が {迷|まよ}う よう に 、 {行|ぎょう} の {間|あいだ} を {揃|そろ}えて おく ん だ よ 。', ok: false, why: no('That says the spacing is there to confuse the reader.') },
-          { jp: '{読|よ}む {人|ひと} が {迷|まよ}わない ため に 、 {行|ぎょう} の {間|あいだ} を {変|か}えて おく ん だ よ 。', ok: false, why: no('Changing the spacing line to line is what would lose a reader: keep it even.') }] })],
+          { jp: '{読|よ}む {人|ひと} が {迷|まよ}わない よう に 、 {行|ぎょう} の {間|あいだ} を {変|か}えて おく ん だ よ 。', ok: false, why: no('Changing the spacing line to line is what would lose a reader: keep it even.') }] })],
     } };
 })(RB.content);

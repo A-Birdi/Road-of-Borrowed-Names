@@ -79,7 +79,7 @@ mp_tomi: {提灯|ちょうちん} {屋|や} さん たち が {待|ま}って �
 ?(var._forge=theatre) mp_tomi: {芝居小屋|しばいごや} の {前|まえ} ！ {芝居|しばい} の {帰|かえ}り の お{客|きゃく} が {喜|よろこ}ぶ わ 。 || In front of the playhouse! The audience coming out will love it.
 ?(var._forge=bridge) mp_tomi: {幕橋|まくばし} の {上|うえ} ね 。 {花火|はなび} と {一緒|いっしょ} に {川|かわ} に {映|うつ}る わ 。 || Over the Curtain Bridge. They'll be reflected in the river with the fireworks.
 !if mp_lan_bank|mp_lan_theatre|mp_lan_bridge -> done
-?(var._forge=river) mp_tomi: …… {川|かわ} の {中|なか} は 、 {消|き}えちゃう わ よ 。 {岸|きし} に {沿|そ}って {吊|つ}るして おきます ね 。 || …In the river they'd go out. I'll have them hung along the bank.
+?(var._forge=river) mp_tomi: …… {川|かわ} の {中|なか} じゃ 、 {消|き}えちゃう わ よ 。 {岸|きし} に {沿|そ}って {吊|つ}るして おきます ね 。 || …In the river they'd go out. I'll have them hung along the bank.
 ?(!var._forge=river) mp_tomi: {明|あか}るい うち に {灯|とも}したら 、 {夜|よる} まで {持|も}たない わ 。 {暗|くら}く なって から 、 {岸|きし} の {提灯|ちょうちん} を {灯|とも}します ね 。 || Lit in daylight, they'd burn out before night. We'll light the ones along the bank once it's dark.
 !set mp_lan_bank
 :done
@@ -315,7 +315,7 @@ narr: {川開|かわびら}き が {終|お}わって 、 {川|かわ} の {道|
 narr: カンタ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」 || Kanta comes running, waving a printed sheet. "Broadsheet! This morning's broadsheet!"
 !note mp_kawaraban
 narr: 「{川開|かわびら}き 、 {無事|ぶじ} {終|お}わる 。 {芝居小屋|しばいごや} の {台本|だいほん} 、 {名前|なまえ} {戻|もど}る 。 {旅|たび} の {者|もの} {二人|ふたり} 、 {奈落|ならく} より {帰|かえ}る 。」 || "The Opening ends safely. The playhouse's script has its names again. Two travellers return from the Understage."
-?(press_printed) narr: {隅|すみ} に 、 {小|ちい}さく : 「{刷|す}り{場|ば} の {話|はなし} 、 {町|まち} で {評判|ひょうばん} 。」 || In the corner, in small type: "The press room's story: the talk of the town."
+?(press_printed) narr: {隅|すみ} に 、 {小|ちい}さく ： 「{刷|す}り{場|ば} の {話|はなし} 、 {町|まち} で {評判|ひょうばん} 。」 || In the corner, in small type: "The press room's story: the talk of the town."
 narr: {飛脚|ひきゃく} の ハヤテ が 、 {人込|ひとご}み を {抜|ぬ}けて {来|く}る 。 || Hayate the courier pushes through the crowd.
 mp_hayate: {知|し}らせ だ 。 {潮硝子|しおがらす} から {北|きた} へ の {道|みち} が 、 {直|なお}った 。 {道標|みちしるべ} の {名前|なまえ} が 、 {戻|もど}った ん だ 。 {灰実|はいみ} の {里|さと} まで 、 {飛脚|ひきゃく} が また {走|はし}れる 。 || News. The road north from Saltglass is mended: the names on its waymarks are back. Couriers can run all the way to Cinder Orchard again.
 ?(comp=nao) comp: {北|きた} の {道|みち} か 。 {灰実|はいみ} …… {果樹園|かじゅえん} と {硝子|がらす} の {里|さと} だ な 。 {行|い}こう 。 || The north road. Cinder Orchard… the village of orchards and glass. Let's go.
@@ -395,7 +395,7 @@ narr: {舟|ふね} は 、 {流|なが}れ に {逆|さか}らって 、 ゆっ�
 :end
 
 @scene mp.booth_yoyo
-narr: ヨーヨー{釣|つ}り の {屋台|やたい} 。 {水|みず} の {上|うえ} に 、 {言葉|ことば} の {書|か}いた {風船|ふうせん} が {浮|う}いて いる 。 || The water-balloon fishing stall: balloons with words on them bob in the tub.
+narr: ヨーヨー{釣|つ}り の {屋台|やたい} 。 {水|みず} の {上|うえ} に 、 {言葉|ことば} を {書|か}いた {風船|ふうせん} が {浮|う}いて いる 。 || The water-balloon fishing stall: balloons with words on them bob in the tub.
 !hook fest_booth yoyo
 
 @scene mp.booth_wanage

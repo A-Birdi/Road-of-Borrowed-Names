@@ -41,7 +41,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         options: [{ en: 'The left one, the last one named.', ok: true }, { en: 'The right one.', ok: false, why: no('それ points back to what was just said: ひだり の (the left one).') }] })],
       E: [ch({ item: 'g:kosoado', ctx: { jp: BOOK1, en: '' }, prompt: { en: 'What does それ point back to?' },
         options: [{ jp: '{左|ひだり} の せり', ok: true }, { jp: '{右|みぎ} の せり', ok: false, why: no('それ is the one just raised: {左|ひだり} の.') }, { jp: '{錘|おもり}', ok: false, why: no('The weight is what you take off after; それ stops first.') }] })],
-      I: [ch({ item: 'g:prt_no', ctx: { jp: BOOK1, en: '' }, prompt: { en: '左の を 上げる: what has been left out after 左の?' },
+      I: [ch({ item: 'g:prt_no', ctx: { jp: BOOK1, en: '' }, prompt: { en: '{左|ひだり}の を {上|あ}げる: what has been left out after {左|ひだり}の?' },
         options: [{ jp: 'せり', ok: true }, { jp: '{錘|おもり}', ok: false, why: no('の stands for the thing already named: the lift (せり).') }, { jp: '{右|みぎ}', ok: false, why: no('{左|ひだり} の is "the left one": the left lift.') }] })],
       A: [ch({ item: 'g:kosoado', ctx: { jp: BOOK1, en: '' }, prompt: { en: 'Write the page out in full, nothing left to the reader.' },
         options: [{ jp: '{右|みぎ} の せり を {下|お}ろして 、 {左|ひだり} の せり を {上|あ}げる 。 {左|ひだり} の せり が {止|と}まったら 、 {錘|おもり} を {外|はず}す 。', ok: true },
@@ -54,7 +54,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         options: [{ en: 'East again, the same way.', ok: true }, { en: 'Back west.', ok: false, why: no('もう はんぶん: another half of the same turn. Turning back comes only after the curtain.') }] })],
       E: [ch({ item: 'g:cond_tara', ctx: { jp: BOOK2, en: '' }, prompt: { en: 'When do you turn the second half?' },
         options: [{ en: 'Once the set is on the revolve.', ok: true }, { en: 'Straight after the first half.', ok: false, why: no('{道具|どうぐ} が {乗|の}ったら: once the set is loaded.') }, { en: 'After the curtain is down.', ok: false, why: no('That is when it may be turned back.') }] })],
-      I: [ch({ item: 'g:v_te_kara', ctx: { jp: BOOK2, en: '' }, prompt: { en: 'もう半分: what has been left out?' },
+      I: [ch({ item: 'g:v_te_kara', ctx: { jp: BOOK2, en: '' }, prompt: { en: 'もう{半分|はんぶん}: what has been left out?' },
         options: [{ jp: '{東|ひがし} へ {回|まわ}す', ok: true }, { jp: '{西|にし} へ {戻|もど}す', ok: false, why: no('Turning back is the last sentence, and only after the curtain.') }, { jp: '{道具|どうぐ} を {乗|の}せる', ok: false, why: no('That is the condition (〜たら), not what is done.') }] })],
       A: [ch({ item: 'g:v_te_kara', ctx: { jp: BOOK2, en: '' }, prompt: { en: 'There is no curtain down here. What does the last sentence tell you to do?' },
         options: [{ en: 'Leave the revolve where it is: turning it back is for later.', ok: true }, { en: 'Turn it back at once.', ok: false, why: no('{戻|もど}す の は … {下|お}りて から: not before the curtain.') }, { en: 'Lower a curtain first.', ok: false, why: no('The page sets when to turn it back; it asks for no curtain.') }] })],
@@ -65,7 +65,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         options: [{ en: 'Half as heavy as the first.', ok: true }, { en: 'As heavy as the first.', ok: false, why: no('ひとつめ の はんぶん: half the first one.') }] })],
       E: [ch({ item: 'g:cond_ba', ctx: { jp: BOOK3, en: '' }, prompt: { en: 'How many weights do you lower in all?' },
         options: [{ en: 'Two: the first, then one half its size.', ok: true }, { en: 'Three.', ok: false, why: no('{三|みっ}つ{目|め} は いらない: no third.') }, { en: 'One.', ok: false, why: no('{二|ふた}つ{目|め} は …: there is a second.') }] })],
-      I: [ch({ item: 'g:kosoado', ctx: { jp: BOOK3, en: '' }, prompt: { en: 'その分だけ: by how much does the platform rise?' },
+      I: [ch({ item: 'g:kosoado', ctx: { jp: BOOK3, en: '' }, prompt: { en: 'その{分|ぶん}だけ: by how much does the platform rise?' },
         options: [{ en: 'By as much as the weight lowered.', ok: true }, { en: 'By half a weight.', ok: false, why: no('その {分|ぶん}: the amount just named, the weight you lowered.') }, { en: 'All the way at once.', ok: false, why: no('だけ: by that much and no more.') }] })],
       A: [ch({ item: 'g:kosoado', ctx: { jp: BOOK3, en: '' }, prompt: { en: 'Which reads the page with nothing left out?' },
         options: [{ jp: '{錘|おもり} を {一|ひと}つ {下|お}ろせば 、 {錘|おもり} の {重|おも}さ の {分|ぶん} だけ {台|だい} が {上|あ}がる 。 {二|ふた}つ{目|め} の {錘|おもり} は 、 {一|ひと}つ{目|め} の {錘|おもり} の {半分|はんぶん} の {重|おも}さ で いい 。', ok: true },
@@ -152,8 +152,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
           task: step('g:cond_tara', {
             F: { ctx: { jp: 'どうぐ が のったら 、 もう はんぶん 。', en: '' }, en: 'The flats are not on yet. What now?', options: [{ en: 'Load the set first, then turn another half.', ok: true }, { en: 'Turn another half now.', ok: false, why: no('のったら: once the set is on.') }] },
             E: { ctx: { jp: '{道具|どうぐ} が {乗|の}ったら 、 もう {半分|はんぶん} 。', en: '' }, en: 'The flats are not on yet. What now?', options: [{ jp: '{道具|どうぐ} を {乗|の}せて から {回|まわ}す', ok: true }, { jp: 'すぐ {回|まわ}す', ok: false, why: no('〜たら: after the set is on.') }] },
-            I: { ctx: { jp: BOOK2, en: '' }, en: 'Load the set, then: もう半分. What do you do?', options: [{ jp: '{東|ひがし} へ もう {半分|はんぶん} {回|まわ}す', ok: true }, { jp: '{西|にし} へ {半分|はんぶん} {戻|もど}す', ok: false, why: no('もう: another, of the same.') }] },
-            A: { ctx: { jp: BOOK2, en: '' }, en: 'Load the set, then: もう半分. What do you do?', options: [{ jp: '{東|ひがし} へ もう {半分|はんぶん} {回|まわ}す', ok: true }, { jp: '{西|にし} へ {半分|はんぶん} {戻|もど}す', ok: false, why: no('Turning back is for after the curtain.') }] },
+            I: { ctx: { jp: BOOK2, en: '' }, en: 'Load the set, then: もう{半分|はんぶん}. What do you do?', options: [{ jp: '{東|ひがし} へ もう {半分|はんぶん} {回|まわ}す', ok: true }, { jp: '{西|にし} へ {半分|はんぶん} {戻|もど}す', ok: false, why: no('もう: another, of the same.') }] },
+            A: { ctx: { jp: BOOK2, en: '' }, en: 'Load the set, then: もう{半分|はんぶん}. What do you do?', options: [{ jp: '{東|ひがし} へ もう {半分|はんぶん} {回|まわ}す', ok: true }, { jp: '{西|にし} へ {半分|はんぶん} {戻|もど}す', ok: false, why: no('Turning back is for after the curtain.') }] },
           }),
           actions: [
             A('load_turn', '{道具|どうぐ} を {乗|の}せて 、 もう {半分|はんぶん}', 'Load the set, then another half east', { ok: true, set: { set: 'on', turn: 'full' }, means: { en: 'You will load the flats onto the revolve, then turn it another half east.' }, result: { en: 'The flats go on; the ring turns again and carries them round, out of the way through.' } }),
@@ -168,7 +168,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           }),
           actions: [
             A('leave', 'その まま に する', 'Leave it as it is', { ok: true, set: { set: 'on' }, means: { en: 'You will leave the revolve as it stands.' }, result: { en: 'You step back from the capstan. The way through stays open.' } }),
-            A('back', '{西|にし} へ {戻|もど}す', 'Turn it back west', { means: { en: 'You will turn the revolve back now.' }, wrong: { en: 'The flats swing back round into the way. Turn it again, half and half.' }, restart: 'stable' }),
+            A('back', '{西|にし} へ {戻|もど}す', 'Turn it back west', { means: { en: 'You will turn the revolve back now.' }, wrong: { en: 'The flats start to swing back round into the way; you stop the capstan and wind it forward again. Not before the curtain.' }, restart: 'stable' }),
           ] },
       ],
     },
@@ -205,7 +205,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           task: step('g:kosoado', {
             F: { ctx: { jp: 'ふたつめ は 、 ひとつめ の はんぶん で いい 。', en: '' }, en: 'Which weight next?', options: [{ en: 'The small one, half the first.', ok: true }, { en: 'The big one, the same as the first.', ok: false, why: no('ひとつめ の はんぶん: half the first.') }] },
             E: { ctx: { jp: '{二|ふた}つ{目|め} は 、 {一|ひと}つ{目|め} の {半分|はんぶん} で いい 。', en: '' }, en: 'Which weight next?', options: [{ jp: '{半分|はんぶん} の {錘|おもり}', ok: true }, { jp: '{同|おな}じ {重|おも}さ の {錘|おもり}', ok: false, why: no('{半分|はんぶん} で いい: half is enough.') }] },
-            I: { ctx: { jp: BOOK3, en: '' }, en: '二つ目 is short for what?', options: [{ jp: '{二|ふた}つ{目|め} の {錘|おもり}', ok: true }, { jp: '{二|ふた}つ{目|め} の {台|だい}', ok: false, why: no('There is one platform; the weights are counted.') }] },
+            I: { ctx: { jp: BOOK3, en: '' }, en: '{二|ふた}つ{目|め} is short for what?', options: [{ jp: '{二|ふた}つ{目|め} の {錘|おもり}', ok: true }, { jp: '{二|ふた}つ{目|め} の {台|だい}', ok: false, why: no('There is one platform; the weights are counted.') }] },
             A: { ctx: { jp: BOOK3, en: '' }, en: 'Why only half?', options: [{ en: 'The platform is part way: half the first weight\'s lift brings it level.', ok: true }, { en: 'The second weight is weaker.', ok: false, why: no('A weight is not weak or strong: it is how much, and only half is wanted.') }] },
           }),
           actions: [

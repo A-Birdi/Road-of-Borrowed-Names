@@ -803,5 +803,8 @@ RB.render = (function () {
     return { x: (x * TS - cam.x) * k, y: (y * TS - cam.y) * k };
   }
 
-  return { init, frame, prewarm, invalidate, setOverride, getOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ART, TS };
+  // read-only views for the browser tests: the ambience the current map shows now, and the fireworks drawn alone
+  const ambientNow = () => (RB.world && RB.world.W && RB.world.W.map ? ambientOf(RB.world.W.map) : null);
+  const fireworksOn = (c, t, reduced) => drawFireworks(c, t, reduced);
+  return { init, frame, prewarm, invalidate, setOverride, getOverride, setReserve, viewSize, thumbnail, tileToCss, worldVisible, resize, setView, cam, enclosed, ambientNow, fireworksOn, ART, TS };
 })();

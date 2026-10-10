@@ -548,7 +548,7 @@ RB.ui.menu = (function () {
     }
     if (id === 'lore') {
       const notes = s.notebook.filter((n) => n.kind === 'lore').map((n) => RB.content.notes[n.id]).filter(Boolean);
-      return notes.length ? '<ul class="entries notes">' + notes.map((n) => '<li class="entry filed"><span class="mark">' + I('scroll') + '</span><div><div class="t">' + j(n.title.jp) + ' <span class="en">' + esc(n.title.en) + '</span>' + (n.fiction ? ' <span class="sealmark small">fictional term</span>' : '') + '</div>' + (n.jp ? '<div>' + j(n.jp) + '</div>' : '') + en(n.en) + '</div></li>').join('') + '</ul>' : '<p class="muted">Stories and inscriptions you collect will be kept here.</p>';
+      return notes.length ? '<ul class="entries notes">' + notes.map((n) => '<li class="entry filed"><span class="mark">' + I('scroll') + '</span><div><div class="t">' + j(n.title.jp) + ' <span class="en">' + esc(n.title.en) + '</span>' + (n.fiction ? ' <span class="sealmark small">fictional term</span>' : '') + '</div>' + (n.jp ? '<div>' + j(n.jp) + '</div>' : '') + '<div class="en">' + RB.learnUi.mixed(RB.script.enVars(n.en || '')) + '</div>' + '</div></li>').join('') + '</ul>' : '<p class="muted">Stories and inscriptions you collect will be kept here.</p>';
     }
     if (id === 'progress') {
       const L = s.learn;
