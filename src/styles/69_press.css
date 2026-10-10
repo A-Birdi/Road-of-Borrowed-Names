@@ -1,0 +1,39 @@
+/* The press (expansion P09; src/ui/89p_press.js): the racks of blocks, the proof, the press bed, who is reading.
+ * Paper tokens; every line carries its readings (ruby), never bare kanji; nothing is shown by colour alone. */
+.pr-intro { margin: 0 0 0.7em; }
+.pr-slots { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.45em; }
+.pr-slot { border: 1px solid var(--paper-edge); border-radius: var(--r-1); padding: 0.4em 0.55em; background: var(--paper); }
+.pr-slot.open { border-color: var(--ink-2); }
+.pr-slothead { display: grid; grid-template-columns: 8.5em 1fr auto; align-items: center; gap: 0.6em; }
+.pr-label { font-weight: 700; color: var(--ink-2); font-size: 0.9em; }
+.pr-cur { min-width: 0; }
+.pr-jp { display: block; line-height: 2; }
+.pr-en { display: block; font-size: 0.86em; color: var(--ink-2); }
+.pr-opts { list-style: none; margin: 0.45em 0 0; padding: 0; display: grid; gap: 0.3em; }
+.pr-opt { width: 100%; text-align: left; border: 1px solid var(--paper-edge); border-radius: var(--r-1); background: var(--paper-2, var(--paper)); padding: 0.3em 0.5em; cursor: pointer; color: var(--ink); font: inherit; }
+.pr-opt.on { border-color: var(--ink); box-shadow: inset 3px 0 0 var(--ink); }
+.pr-opt:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.pr-paper { margin: 0 auto; max-width: 30em; background: #f6f0de; color: #2a2024; border: 1px solid #c8b890; box-shadow: 0 1px 0 #d8ccb0, 0 3px 8px rgba(40, 30, 20, 0.12); padding: 0.9em 1.1em 1.1em; }
+.pr-head { text-align: center; font-weight: 700; letter-spacing: 0.3em; border-bottom: 1px solid #c8b890; padding-bottom: 0.3em; margin-bottom: 0.4em; }
+.pr-page { margin: 0; padding-left: 1.4em; }
+.pr-page li { margin: 0.15em 0; }
+.pr-page.small { font-size: 0.92em; }
+.pr-last { margin-top: 0.6em; }
+.pr-last h3 { font-size: 1em; margin: 0 0 0.3em; }
+.pr-readers { margin: 0.3em 0 0.6em; }
+.pr-status { text-align: center; margin: 0.5em 0 0; }
+/* the press bed: a frame of type, the platen above, the sheet; three states (ink, press, peel) */
+.pr-pressbed { position: relative; width: 220px; height: 120px; margin: 0.4em auto; }
+.pr-frame { position: absolute; left: 30px; right: 30px; bottom: 10px; height: 46px; background: repeating-linear-gradient(90deg, #5a4a3a 0 6px, #6e5c48 6px 8px); border: 3px solid #3a2e24; }
+.pr-platen { position: absolute; left: 20px; right: 20px; top: 0; height: 22px; background: #4a4a52; border: 2px solid #2a2a30; transition: top 0.35s ease-in; }
+.pr-sheetart { position: absolute; left: 36px; right: 36px; bottom: 58px; height: 8px; background: #f6f0de; border: 1px solid #c8b890; transition: bottom 0.35s ease-in, transform 0.35s; }
+.pr-pressbed.st1 .pr-frame { background: repeating-linear-gradient(90deg, #1e1a1a 0 6px, #2e2828 6px 8px); }
+.pr-pressbed.st2 .pr-platen { top: 52px; }
+.pr-pressbed.st2 .pr-sheetart { bottom: 56px; }
+.pr-pressbed.still .pr-platen, .pr-pressbed.still .pr-sheetart { transition: none; }
+@media (prefers-reduced-motion: reduce) { .pr-platen, .pr-sheetart { transition: none; } }
+@media (max-width: 520px) {
+  .pr-slothead { grid-template-columns: 1fr auto; }
+  .pr-label { grid-column: 1 / -1; }
+  .pr-paper { padding: 0.7em 0.8em 0.9em; }
+}

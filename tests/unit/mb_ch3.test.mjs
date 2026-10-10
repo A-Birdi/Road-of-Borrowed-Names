@@ -197,7 +197,7 @@ export default async (t) => {
   t.eq(placed.slice().sort(), bridges.slice().sort(), 'the census: seven plaques on the maps, one per bridge (' + bridges.join(', ') + ')');
   for (const b of bridges) t.ok(C.scenes['mb.plaque_' + b] && ['F', 'E', 'I', 'A'].every((k) => C.challenges['mb.census_' + b].tiers[k]), b + ': its plaque scene and its name at four profiles');
   t.ok(['masa', 'masu'].every((w) => C.challenges['mb.noodle_' + w] && C.scenes['mb.' + w]), 'the rival stalls: a notice for each');
-  t.ok(C.mbRiddles.length === 6 && C.mbRiddles.every((r, i) => C.challenges['mb.riddle_' + (i + 1)]) && RB.pastimes.get('mb_riddles'), 'Boatman\'s Riddles: six riddles, a pastime of its own');
+  t.ok(C.mbRiddles.length === 10 && C.mbRiddles.every((r, i) => C.challenges['mb.riddle_' + (i + 1)]) && RB.pastimes.get('mb_riddles'), 'Boatman\'s Riddles: six riddles, four more once Chapter 4 begins, a pastime of its own');
   t.ok(C.quests.mb_lc && C.challenges['mb.lc_plan'] && C.scenes['mb.lc_wall'] && C.scenes['mb.zenzo_contract'], 'the Lost Contract: the plan, the wall, the agreement');
   // the Exchange's offers (R1, A46/A48): at the counter, after the dispute; one condition that cannot be kept, at each profile
   const off = C.challenges['mb.offers'];

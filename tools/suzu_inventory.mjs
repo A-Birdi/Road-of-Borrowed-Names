@@ -267,6 +267,7 @@ function labelLines(RB) {
   if (ch) { L(ch.name, 'chars.suzu.name', 'her name'); L(ch.role, 'chars.suzu.role', 'a label (her role)'); }
   for (const a of (C.companionActions && C.companionActions.suzu) || []) L(a.name, 'companionActions.' + a.id, 'a battle menu label');
   const CC = C.company || {};
+  for (const k in CC.mem || {}) { const m = CC.mem[k]; if (m.texts && m.texts.suzu) L(m.texts.suzu, 'company.mem.' + k + '.texts.suzu', 'narration (the memory\'s text)'); }
   if (CC.rituals && CC.rituals.suzu) L(CC.rituals.suzu.title, 'company.rituals.suzu.title', 'a rest-menu label');
   for (const t of CC.topics || []) if (t.comp === 'suzu') L(t.title, 'company.topics ' + t.id, 'a topic title (label)');
   const PG = RB.pages || {};

@@ -49,9 +49,10 @@ export default async (t) => {
       }
     }
   }
-  // groups appear only in the final stretch of the last chapter (and in the Atlas, generated)
+  // groups appear only in the final stretch of the last chapter (and in the Atlas, generated), and in the
+  // twelve-chapter edition's Chapter 4, beneath the revolve: the crowded fights C-74's いくつか follows
   const where = new Set(groups.map((g) => g.split(' ')[0]));
-  t.eq([...where].sort(), ['sa.conduits', 'sa.stacks'], 'story groups are authored only for the Stacks and the Conduits: ' + [...where].join(', '));
+  t.eq([...where].sort(), ['mp.under2', 'sa.conduits', 'sa.stacks'], 'story groups are authored only for the Stacks, the Conduits and beneath the revolve: ' + [...where].join(', '));
   // the Atlas generator's groups use the regular Atlas creatures (all answerable after the ending)
   t.ok(!!(RB.atlas && RB.atlas.plan), 'the Atlas generator is loaded');
   if (RB.atlas && RB.atlas.plan) {

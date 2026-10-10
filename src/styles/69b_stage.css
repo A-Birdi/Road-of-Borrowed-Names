@@ -1,0 +1,14 @@
+/* Rehearsal's stage (expansion P09; src/ui/89f_stage.js): the stage from the seats, the wings named with their
+ * readings, each actor or prop a labelled chip (name and English, never colour alone). */
+.st { margin: 0 0 0.6em; }
+.st-wings { display: flex; justify-content: space-between; font-size: 0.82em; color: var(--ink-2); max-width: 560px; margin: 0 auto 0.15em; }
+.st-board { display: grid; gap: 2px; max-width: 560px; margin: 0 auto; background: #5a4630; border: 2px solid #3a2e24; border-radius: var(--r-1); padding: 3px; }
+.st-cell { min-height: 3.1em; background: #c8a878; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px; padding: 2px; }
+.st-cell[data-r="0"] { background: #b89868; }
+.st-tok { display: inline-flex; flex-direction: column; align-items: center; background: #f6f0de; color: #2a2024; border: 1px solid #3a2e24; border-radius: 0.35em; padding: 0 0.3em; font-size: 0.78em; line-height: 1.25; }
+.st-tok .en { font-size: 0.8em; color: #5a4e44; }
+.st-front { text-align: center; max-width: 560px; margin: 0.15em auto 0; }
+.st[data-res="ok"] .st-board { outline: 2px solid var(--ink); }
+.st[data-res="wrong"] .st-board { outline: 2px dashed var(--ink); }
+.st-say { text-align: center; margin-top: 0.3em; }
+@media (max-width: 520px) { .st-cell { min-height: 2.6em; } .st-tok { font-size: 0.7em; } }

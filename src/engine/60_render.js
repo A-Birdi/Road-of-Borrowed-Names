@@ -674,6 +674,9 @@ RB.render = (function () {
     const kind = amb.weather;
     if (!kind) return;
     const reduced = RB.game.reducedMotion();
+    // fireworks over the canals (expansion P09, the Opening of the River): soft blooms high in the sky, never a
+    // flash or a sudden brightness (spec line 264); with reduced motion, a few held glows that do not move
+    if (kind === 'fireworks') { drawFireworks(c, t, reduced); return; }
     const target = reduced ? 16 : kind === 'rain' ? 110 : 60;
     while (particles.length < target) particles.push({ x: prand() * bw, y: prand() * bh, v: 0.5 + prand(), p: prand() * 6 });
     for (const p of particles) {
@@ -711,6 +714,30 @@ RB.render = (function () {
       if (p.y < -12) { p.y = bh + 4; p.x = prand() * bw; }
       if (p.x < -8) p.x = bw + 4;
       if (p.x > bw + 12) p.x = -4;
+    }
+  }
+
+  const BLOOM = ['255,196,120', '255,150,150', '170,210,255', '200,255,190', '255,236,160'];
+  function drawFireworks(c, t, reduced) {
+    const n = 5;
+    for (let i = 0; i < n; i++) {
+      const cx = bw * (0.14 + 0.18 * i) + Math.sin(i * 7.1) * 18, cy = bh * (0.12 + 0.07 * ((i * 3) % 4));
+      const col = BLOOM[i % BLOOM.length];
+      if (reduced) {
+        // a held glow: the same every frame
+        const g = c.createRadialGradient(cx, cy, 0, cx, cy, 34);
+        g.addColorStop(0, 'rgba(' + col + ',0.22)'); g.addColorStop(1, 'rgba(' + col + ',0)');
+        c.fillStyle = g; c.fillRect(cx - 34, cy - 34, 68, 68);
+        continue;
+      }
+      // each bloom: 4.6 s; it opens over the first second and fades, gently, for the rest
+      const life = ((t / 1000 + i * 0.93) % 4.6) / 4.6;
+      const r = 6 + Math.min(1, life * 4) * 30, a = life < 0.22 ? 0.55 : 0.55 * (1 - (life - 0.22) / 0.78);
+      for (let k = 0; k < 14; k++) {
+        const ang = (k / 14) * Math.PI * 2 + i, x = cx + Math.cos(ang) * r, y = cy + Math.sin(ang) * r + life * 10;
+        c.fillStyle = 'rgba(' + col + ',' + a.toFixed(3) + ')';
+        c.fillRect(Math.round(x), Math.round(y), 2, 2);
+      }
     }
   }
 

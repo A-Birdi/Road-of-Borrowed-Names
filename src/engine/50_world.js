@@ -80,7 +80,9 @@ RB.world = (function () {
     return typeof def.music === 'function' ? def.music(st) : pickMusic(def.music, st);
   }
   function playerLook() {
-    return RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
+    const l = RB.equip.look(s()); // own look + the equipped keepsake (src/engine/07_equip.js)
+    // festival dress on the night of the Opening of the River (src/engine/58f_festdress.js)
+    return RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(l, 'pc') : l;
   }
   function partyCompanion() {
     const st = s();
@@ -97,7 +99,7 @@ RB.world = (function () {
     const back = DIRS[OPP[p.dir]];
     let cx = p.x + back[0], cy = p.y + back[1];
     if (blocked(cx, cy, { ignoreComp: true }) || RB.maps.exitAt(W.map, cx, cy)) { cx = p.x; cy = p.y; }
-    W.comp = makeActor(cx, cy, p.dir, ch.look);
+    W.comp = makeActor(cx, cy, p.dir, RB.festDress && RB.festDress.on(s()) ? RB.festDress.look(ch.look, cid) : ch.look);
     W.comp.id = cid;
     W.trail = [];
   }

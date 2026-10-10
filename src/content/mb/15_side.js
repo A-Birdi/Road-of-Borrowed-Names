@@ -34,8 +34,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       near: ['{西橋|にしばし}', 'にしばし', 'The water runs east: {東|ひがし}. {東橋|ひがしばし}.'], third: ['{港橋|みなとばし}', 'みなとばし'] },
   };
   C.mbBridges = BRIDGES;
-  for (const id in BRIDGES) {
-    const b = BRIDGES[id];
+  // one challenge per bridge (Chapter 4's census adds three more through C.mbCensus, src/content/mp/15_side.js)
+  C.mbCensus = function (id, b) {
     C.challenges['mb.census_' + id] = { title: T('A bridge\'s name: ' + b.en, b.name),
       tiers: {
         F: [{ kind: 'choose', item: 'k:hira', ctx: { jp: b.clue.jp, en: b.clue.en }, prompt: { en: 'What is this bridge called? Choose its name in kana.' },
@@ -47,7 +47,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         A: [{ kind: 'choose', ctx: { jp: b.clue.jp, en: '' }, prompt: { en: 'From what you were told, which name goes into the register?' },
           options: [{ jp: b.name, ok: true }, { jp: b.near[0], ok: false, why: no(b.near[2]) }, { jp: b.third[0], ok: false, why: no('That is another bridge of the city.') }] }],
       } };
-  }
+  };
+  for (const id in BRIDGES) C.mbCensus(id, BRIDGES[id]);
 
   // ---- the Rival Noodle Stalls ------------------------------------------------------------------------------------
   // Each stall's notice tells customers which one it is by what they can see: the colour of the curtain and where

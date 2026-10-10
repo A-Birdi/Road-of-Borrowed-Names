@@ -924,6 +924,7 @@ RB.battlePlaceArt = (function () {
     observatory: { wall: 'stone', floor: 'flags', dark: 0.55, cool: true },
     belltower: { wall: 'stone', floor: 'flags', dark: 0.6, cool: true },
     undercroft: { wall: 'stone', floor: 'flags', dark: 0.6, cool: true },
+    understage: { wall: 'timber', floor: 'wood', dark: 0.62 },
     still: { wall: 'void', floor: 'paper', dark: 0.5 },
     interior: { wall: 'timber', floor: 'wood', dark: 0.35 },
   };

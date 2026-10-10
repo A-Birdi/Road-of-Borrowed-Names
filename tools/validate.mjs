@@ -155,7 +155,7 @@ const compiled = {};
 // backdrops painted as interiors / as open country (RB.combat uses the same lists), and whether a
 // map reads as indoors (RB.render.enclosed: an interior region, def.indoor, or
 // a border that is mostly wall)
-const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower', 'undercroft']);
+const INDOOR_BG = new Set(['mill', 'archive', 'kiln', 'observatory', 'belltower', 'undercroft', 'understage']);
 const OUTDOOR_BG = new Set(['reedwake', 'saltglass', 'cinder', 'snowbell', 'lanternfall', 'manybridge']); // 'still' and 'atlas' are open, dreamlike places
 function indoorMap(m, def) {
   if (m.region === 'interior' || def.indoor) return true;
@@ -453,10 +453,16 @@ let regTexts = 0;
     wordplay: { content: C.wordplay, BAND: RB.wordplay && RB.wordplay.BAND, LEVEL: RB.wordplay && RB.wordplay.LEVEL }, // companion shiritori (docs/practice/wordplay.md)
     practiceA: C.practiceA, // Practice suite A: lamps, writing desk, mementos (src/content/practice_a/)
     fishing: RB.fishing && RB.fishing.content(), // A Quiet Cast (docs/practice/fishing.md)
+    press: C.press, // the press's blocks and readers (expansion P09; src/content/mp/30_press.js)
   };
   for (const k in roots) walk(roots[k], k);
 }
 
+// the press (expansion P09): every slot offers a block from the start; readers wait only for tags that exist
+if (RB.press) for (const e of RB.press.check()) E(e);
+// barge routing's canals (P08) and rehearsal's stage (P09): every answer has somewhere to go
+if (RB.ui && RB.ui.canal) for (const e of RB.ui.canal.check(C)) E(e);
+if (RB.ui && RB.ui.stage) for (const e of RB.ui.stage.check(C)) E(e);
 // dangling scene refs
 for (const [id, where] of sceneRefs) if (!C.scenes[id]) E(where + ': missing scene ' + id);
 // lexicon

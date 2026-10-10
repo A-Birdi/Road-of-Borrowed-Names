@@ -103,5 +103,14 @@ RB.ui.festival = (function () {
     if (a === 'begin' || a === 'again') { stopGame(); begin(); return; }
     if (a === 'corner') { stopGame(); V.view = 'corner'; render(); }
   }
+  // !hook fest_booth <game>: a booth on the festival night or in the festival hall (the venue: no companion needed)
+  RB.hooks = RB.hooks || {};
+  RB.hooks.fest_booth = async (a) => {
+    const id = a && a[0];
+    if (!F().get(id)) return;
+    if (RB.test && RB.test.auto) { RB.test.log.push({ t: 'activity', kind: 'festival', game: id, skipped: 'auto' }); return; }
+    if (RB.ui.dialogue && RB.ui.dialogue.hide) RB.ui.dialogue.hide();
+    await RB.activity.launch('festival', { source: 'booth', game: id, venue: true });
+  };
   return { run, close, state: () => (V ? { view: V.view, mode: V.mode, left: V.left, paused: V.paused } : null) };
 })();

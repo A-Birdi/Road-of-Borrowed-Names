@@ -485,11 +485,13 @@ RB.content.company = RB.content.company || {
     const prev = t['t:' + a[0]];
     t['t:' + a[0]] = { t: Date.now(), n: ((prev && prev.n) || 0) + 1, choice: a[1] || (prev && prev.choice) || null };
   };
-  // !hook co_bond <reflect:travel|reflect:keep>: the two journey reflections, once each
+  // !hook co_bond <event>: a named story moment, once each: the two journey reflections, and the moments later
+  // chapters add to CC.bondEvents (id -> points; e.g. Chapter 4's fireworks, src/content/mp/40_company.js)
   RB.hooks.co_bond = async (a) => {
     const s = S();
-    if (a[0] !== 'reflect:travel' && a[0] !== 'reflect:keep') return;
-    K.award(s, a[0], 1);
+    const ev = Object.assign({ 'reflect:travel': 1, 'reflect:keep': 1 }, CC.bondEvents || {});
+    if (ev[a[0]] == null) return;
+    K.award(s, a[0], ev[a[0]]);
   };
   // !hook co_note <decision> <value>: forward recording of a choice the story keeps no flag for
   // (kept as talk['d.<decision>'], so conditions can read it: talk.d.<decision>=<value>)
@@ -540,7 +542,7 @@ RB.content.company = RB.content.company || {
   };
   // What We Keep: prefer the companion's own story, then something solved together, a meeting,
   // the long roads, then a chapter; only moments this journey actually recorded
-  const KEEP_ORDER = ['story:pq_', 'disc:', 'pet:', 'story:lq2', 'story:lq1', 'story:ch4', 'story:ch3', 'story:ch2'];
+  const KEEP_ORDER = ['story:pq_', 'disc:', 'pet:', 'story:fireworks', 'story:lq2', 'story:lq1', 'story:ch4', 'story:ch3', 'story:ch2'];
   function keepMoment(s) {
     const ms = C(s).memories.filter((m) => m.comp === s.comp || m.comp == null);
     for (const pre of KEEP_ORDER) {

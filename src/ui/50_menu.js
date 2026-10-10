@@ -799,7 +799,7 @@ RB.ui.menu = (function () {
     svg += '<path d="M173 0V320M346 0V320M0 160H520" stroke="#b9a57a" stroke-width="1" stroke-dasharray="2 5" opacity="0.8"/>';
     for (const [a, b, ro] of RB.content.roads || []) {
       const A = RB.content.places[a], B = RB.content.places[b];
-      if (!A || !B || !inEd(s, ro) || !inEd(s, A) || !inEd(s, B)) continue;
+      if (!A || !B || !inEd(s, ro) || !inEd(s, A) || !inEd(s, B) || (ro && ro.if && !RB.state.test(s, ro.if))) continue;
       const known = s.travel[a] && s.travel[b];
       const half = s.travel[a] || s.travel[b];
       // a ferry's route: a curve over the sea, in the sea's ink
@@ -850,7 +850,7 @@ RB.ui.menu = (function () {
     const canTravel = tr.ok && RB.game.mode() === 'menu';
     const places = Object.keys(RB.content.places).map((id) => Object.assign({ id }, RB.content.places[id])).filter((p) => s.travel[p.id] && inEd(s, p));
     const gm = guideMarks(s);
-    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2])) ? '; blue dashes are ferry routes' : '') + '. The red mark is where you are.' +
+    const chart = '<div class="chartbox" tabindex="-1">' + chartSvg(s, curMap) + '</div><p class="muted small">Solid lines are roads you have walked; dashed lines are roads you have heard of' + ((RB.content.roads || []).some((r) => r[2] && r[2].sea && inEd(s, r[2]) && (!r[2].if || RB.state.test(s, r[2].if))) ? '; blue dashes are ferry routes' : '') + '. The red mark is where you are.' +
       (gm ? ' The amber diamond marks where the next step of the quest you follow is.' : '') + '</p>' +
       (gm ? '<p class="note-slip next-note">' + I('follow') + ' <span>Next step of <b>' + esc(gm.title.en) + '</b>: ' + esc(gm.places.map((id) => (s.travel[id] ? RB.content.places[id].name.en : 'a place you have not reached yet')).join(', ')) + '.</span></p>' : '');
     const list = '<h3>' + I('travel') + ' Travel <span class="count">' + places.length + ' known</span></h3>' +

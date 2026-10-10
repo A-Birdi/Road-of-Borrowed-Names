@@ -171,8 +171,12 @@ narr: ます{屋|や} の {屋台|やたい} 。 {青|あお}い のれん 。 {
 !set mb_riddles_met
 ?(!mb_kansuke_met) mb_kansuke: {道|みち} を {聞|き}きたい の かい 。 {儂|わし} は なぞなぞ で しか {答|こた}えん よ 。 {解|と}けたら 、 {次|つぎ} の を {出|だ}そう 。 || Want directions? I only answer in riddles. Solve one and I'll tell you the next.
 ?(!mb_kansuke_met) !set mb_kansuke_met
-?(var.mb_riddles>=6) mb_kansuke: {儂|わし} の なぞなぞ は 、 もう {全部|ぜんぶ} {解|と}かれて しもうた 。 …… {次|つぎ} に {来|く}る まで に 、 {新|あたら}しい の を {考|かんが}えて おこう 。 || You've solved every riddle I have. …By the time you come again, I'll have thought up new ones.
-?(var.mb_riddles>=6) !end
+?(var.mb_riddles>=6&!mb1_done) mb_kansuke: {儂|わし} の なぞなぞ は 、 もう {全部|ぜんぶ} {解|と}かれて しもうた 。 …… {次|つぎ} に {来|く}る まで に 、 {新|あたら}しい の を {考|かんが}えて おこう 。 || You've solved every riddle I have. …By the time you come again, I'll have thought up new ones.
+?(var.mb_riddles>=6&!mb1_done) !end
+?(var.mb_riddles>=10) mb_kansuke: {新|あたら}しい の も 、 {全部|ぜんぶ} {解|と}かれて しもうた 。 …… まいった 。 {儂|わし} の {負|ま}け じゃ 。 || You've solved the new ones too. …I give up. You win.
+?(var.mb_riddles>=10) !end
+?(var.mb_riddles=6&!mb_riddles_new) mb_kansuke: {約束|やくそく} どおり 、 {新|あたら}しい の を {考|かんが}えて おいた ぞ 。 {版木|はんぎ} と {芝居|しばい} の {通|とお}り の {話|はなし} から {作|つく}った 。 || As promised, I've thought up new ones. Made them from Blockprint and Playhouse Rows.
+?(var.mb_riddles=6) !set mb_riddles_new
 !choice
 * なぞなぞ を {聞|き}く 。 || Hear a riddle. -> riddle
 * また {今度|こんど} 。 || Another time. -> end
@@ -183,6 +187,10 @@ narr: ます{屋|や} の {屋台|やたい} 。 {青|あお}い のれん 。 {
 ?(var.mb_riddles=3) !challenge mb.riddle_4
 ?(var.mb_riddles=4) !challenge mb.riddle_5
 ?(var.mb_riddles=5) !challenge mb.riddle_6
+?(var.mb_riddles=6) !challenge mb.riddle_7
+?(var.mb_riddles=7) !challenge mb.riddle_8
+?(var.mb_riddles=8) !challenge mb.riddle_9
+?(var.mb_riddles=9) !challenge mb.riddle_10
 ?(var.mb_riddles=0) !set mb_ev_riddle
 ?(var.mb_riddles=0) mb_kansuke: むすび 、 じゃ 。 …… {一番|いちばん} {古|ふる}い {橋|はし} も 、 {昔|むかし} は そう {呼|よ}ばれて おった のう 。 || Musubi, a tie. …The oldest bridge was called something like that, once.
 !var mb_riddles + 1

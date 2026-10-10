@@ -26,8 +26,10 @@ RB.portraits = (function () {
   function paramsFor(id) {
     const ch = RB.content.chars[id];
     if (!ch) return null;
-    if (ch.portrait) return Object.assign({}, fromLook(ch.look || {}), ch.portrait);
-    return fromLook(ch.look || RB.sprites.randomLook(RB.util.hashStr(id)));
+    const p = ch.portrait ? Object.assign({}, fromLook(ch.look || {}), ch.portrait) : fromLook(ch.look || RB.sprites.randomLook(RB.util.hashStr(id)));
+    // the companion's festival dress on the night of the Opening of the River (src/engine/58f_festdress.js)
+    const s = RB.game && RB.game.s;
+    return s && id === s.comp && RB.festDress && RB.festDress.on(s) ? RB.festDress.portrait(p, id) : p;
   }
   const COLLAR_OF_SHAPE = { apron: 'apron', robe: 'robe', coat: 'coat', dress: 'dress' };
   function fromLook(look) {
@@ -870,14 +872,16 @@ RB.portraits = (function () {
   // ---- subjects: a character, or the player's portrait from the look they wear ----------------------------
   const PC_BG = '#2e3a34';
   function subject(who, look) {
+    const gs = RB.game && RB.game.s, fest = !!(RB.festDress && RB.festDress.on(gs));
     if (who === 'pc' || look) {
-      const lk = look || (RB.equip ? RB.equip.look() : {});
+      const lk0 = look || (RB.equip ? RB.equip.look() : {});
+      const lk = !look && fest ? RB.festDress.look(lk0, 'pc') : lk0; // the festival night's yukata (58f_festdress.js)
       const p = fromLook(lk);
       p.bg = PC_BG;
       return { key: 'pc|' + JSON.stringify(lk), p, who: 'pc' };
     }
     const p = paramsFor(who);
-    return p ? { key: who, p, who } : null;
+    return p ? { key: who + (fest && gs && who === gs.comp ? '|yukata' : ''), p, who } : null;
   }
   // the frame of a subject (a canvas without background) and painted with its background
   function frame(sj, expr, fr) { return sj ? build(sj.p, expr, sj.key, fr) : null; }

@@ -332,7 +332,10 @@ export function install() {
     // progress changes, so a scene that only names a step it cannot take here (its own conditions stop it) is not
     // tried again and again while only what has been seen grows. Travel (a warp) is never counted fruitless.
     const fruitless = new Set();
-    const progOf = () => sigOf().split('|').slice(0, 5).join('|');
+    // …but a condition may test whether a scene has been seen (seen.<scene>, e.g. Chapter 6's grille needs the call
+    // slip read): those scenes, once seen, count as progress too
+    const SEEN_TESTED = [...new Set((JSON.stringify(C.maps) + JSON.stringify(C.scenes)).match(/seen\.[a-z][\w.]*\w/g) || [])].map((x) => x.slice(5));
+    const progOf = () => sigOf().split('|').slice(0, 5).join('|') + '|' + SEEN_TESTED.filter((id) => S().seen[id]).join(',');
     const log = [];
     let lastScene = null;
     for (let i = 0; i < max; i++) {

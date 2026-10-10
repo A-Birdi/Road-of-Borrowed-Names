@@ -41,6 +41,8 @@ export function lines(RB) {
   for (const id in C.stamps || {}) walk('rb.' + id, 'stamp:' + id, C.stamps[id], new Set());
   for (const id in C.stampStands || {}) walk('rb.' + id, 'stand:' + id, C.stampStands[id], new Set());
   if (C.ngFarewell) walk('ngp.farewell', 'ngplus:farewell', C.ngFarewell, new Set());
+  // the press (P09): its blocks (and how they come apart when set by hand) and its readers' reactions
+  if (C.press) walk('mp.press', 'press', C.press, new Set());
   // the pastimes (P06): each game's page, its lessons and puzzles, and the names its board shows
   if (RB.pastimes) for (const d of RB.pastimes.all()) walk('pt.' + d.id, 'pastime:' + d.id + ':page', d, new Set());
   if (C.shogi) walk('pt.shogi', 'pastime:shogi', C.shogi, new Set());

@@ -191,6 +191,8 @@ RB.challenge = (function () {
         ctxEl.innerHTML = h;
         // barge routing (P08): the canals above the task, the barge where the last answer sent it
         if (step.canal && RB.ui.canal) RB.ui.canal.mount(ctxEl, step, active.canalAt);
+        // rehearsal (P09): the stage above the task, everyone where the last answer put them
+        if (step.stage && RB.ui.stage) RB.ui.stage.mount(ctxEl, step, active.stageAt);
         // the translation toggle shares a line with "I don't know"
         const trSlot = wrap.querySelector('.task-tr');
         trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
@@ -502,6 +504,8 @@ RB.challenge = (function () {
       function evaluateChoice(o, btn) {
         if (PH) PH.submit('choice');
         if (o && o._f) consequence((step.families || []).indexOf(o._f));
+        // a staging answer (P09): whatever is chosen, the actors go where it puts them (never part of the judging)
+        if (o && o.place && step.stage && RB.ui.stage) { const at = RB.ui.stage.play(ctxEl, step, o); if (at) active.stageAt = at; }
         if (o.ok) { btn.classList.add('on'); res.given = { option: o, mode: 'choice' }; success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;

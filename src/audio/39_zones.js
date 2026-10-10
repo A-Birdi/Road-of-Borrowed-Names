@@ -37,9 +37,17 @@ RB.audio = RB.audio || {};
     // the twelve-chapter edition's Manybridge (37_songs_mb.js): its chapter number is the twelve-chapter one; it joins
     // the intensity ladder when the edition's whole ladder is re-tiered (C-22, P14)
     manybridge: {
-      chapter: 3, edition: 2, regions: ['manybridge'], prefixes: ['mb.'],
+      chapter: 3, edition: 2, regions: ['manybridge'], prefixes: ['mb.', 'mp.'],
       battle: 'battle_manybridge', boss: 'boss_manybridge', route: null,
-      songs: ['manybridge', 'undercroft'],
+      songs: ['manybridge', 'undercroft', 'playhouse', 'understage', 'festival'],
+      cues: ['fireworks'],
+    },
+    // Chapter 4 (38_songs_mp.js) is the same city and its creatures fight to the city's battle theme; only its boss,
+    // the Lord of the Understage (region 'understage'), has a theme of its own
+    understage: {
+      chapter: 4, edition: 2, regions: ['understage'], prefixes: [],
+      battle: 'battle_manybridge', boss: 'boss_understage', route: null,
+      songs: ['understage'],
     },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
