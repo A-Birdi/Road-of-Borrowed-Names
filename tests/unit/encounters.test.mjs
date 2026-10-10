@@ -37,7 +37,7 @@ export default async (t) => {
       const s = camp({ comp: 'ren' });
       const st = E.begin('fx.guest', s);
       const logs = [];
-      for (let k = 0; k < 6 && !st.over; k++) logs.push(play(st, s, cardOf(st, s, (c) => c.kind === 'unravel'), { comp: { act: 'ren_lamps', target: 0 } }).log.join(' '));
+      for (let k = 0; k < 6 && !st.over; k++) logs.push(play(st, s, cardOf(st, s, (c) => c.kind === 'unravel'), { comp: { act: 'ren_shade', target: 0 } }).log.join(' '));
       return { logs, st };
     };
     const a = run(), b = run();
@@ -418,6 +418,58 @@ export default async (t) => {
     E.finishEncounter(st, s, 'lose'); E.finishEncounter(st, s, 'lose'); E.finishEncounter(st, s, 'lose');
     t.eq(E.helpOffer(s, def), 3, 'then suggest, then point (and no further)');
     t.eq(E.helpOffer(s, { id: 'tmp.side', lead: 'rw.reedling' }), 0, 'never counted outside a story encounter');
+  }
+
+  // ---- the companion: plans, the six-action menu --------------------------------------------------------------------
+  {
+    const s = camp({ comp: 'ren' });
+    s.flags.ch2_done = true; s.quests.ren_ushio = { done: true, stage: 9 }; s.flags.lq_ally1 = true; s.flags.lq_ally2 = true;
+    const st = E.begin('fx.ordinary', s);
+    const card = cardOf(st, s, (c) => c.kind === 'unravel');
+    const m = E.compMenu(st, s, card, wordsOf(s), st.cur);
+    t.eq(m.shown.map((o) => o.def.id), L.compOptions(st, s, card).filter((o) => !o.locked).map((o) => o.def.id), 'six or fewer actions: shown as the game always has, in their own order');
+    const pr = E.planned(st, s, card, 'protect', wordsOf(s), st.cur);
+    t.ok(pr && E.planOf(pr.def) === 'protect', 'a "protect" plan chooses a protecting action: ' + (pr && pr.def.id));
+    const rv = E.planned(st, s, card, 'reveal', wordsOf(s), st.cur);
+    t.ok(rv && E.planOf(rv.def) === 'reveal', 'a "reveal" plan chooses a revealing action: ' + (rv && rv.def.id));
+    t.eq(E.planned(st, s, card, 'ask', wordsOf(s), st.cur), null, '"ask" opens the menu as always');
+    // beyond six: the six most useful, the rest a page away
+    const big = { id: 'tmp.big', lead: 'rw.reedling', companion: { ren: [1, 2, 3].map((k) => ({ id: 'ren_x' + k, name: { jp: 'x', en: 'Extra ' + k }, effect: { ward: { pc: 1 } } })) } };
+    const st2 = E.begin(big, s);
+    const m2 = E.compMenu(st2, s, cardOf(st2, s, (c) => c.kind === 'unravel'), wordsOf(s), 0);
+    t.ok(m2.shown.length === 6 && m2.more.length === 2, 'eight actions: six shown, two a page away (' + m2.shown.length + ' + ' + m2.more.length + ')');
+  }
+
+  // ---- Point: the suitable responses, by the rules' own preview ------------------------------------------------------
+  {
+    const s = camp();
+    const st = E.begin('fx.ordinary', s);
+    const pts = E.pointCards(st, s, wordsOf(s));
+    t.ok(pts.length > 0, 'something suitable is pointed out: ' + pts.join(', '));
+    for (const id of pts) {
+      const c = cardOf(st, s, (x) => x.id === id);
+      const p = L.previewAct(st, c);
+      t.ok(p.answered.some(Boolean) || c.kind === 'unravel', id + ' answers a move');
+    }
+  }
+
+  // ---- preparation, phrasings, ordinary battles of the twelve-chapter game, roaming consequences -------------------
+  {
+    const def = { id: 'tmp.prep', lead: 'rw.reedling', field: ['rain'], rules: { conditions: true }, prep: [{ id: 'cover', label: { jp: 'x', en: 'Take cover' }, effect: { unfield: ['rain'] } }] };
+    t.eq(E.prepared(def, ['cover']).field, [], 'a preparation changes the encounter it begins with');
+    t.eq(E.prepared(def, []).field, ['rain'], 'skipping it changes nothing');
+    const s = camp();
+    t.eq(E.phrasings({ kind: 'word', word: C.words.mamoru }, s), [], 'no other phrasing until one is taught');
+    t.eq(JSON.stringify(E.ordinaryRules(s)), '{}', 'the six-chapter game: ordinary battles use none of the new rules');
+    const s2 = camp(); s2.edition = 2;
+    t.ok(E.ordinaryRules(s2).modifiers && !E.ordinaryRules(s2).wait, 'the twelve-chapter game: modifiers taught so far; Wait once taught');
+    s2.flags.learn_wait = true;
+    t.ok(E.ordinaryRules(s2).wait, 'and Wait after Manybridge teaches it');
+    const s3 = camp();
+    t.eq(E.roamingWon(s3, { id: 'f1', enemy: 'rw.reedling' }, 'rw.road'), [], 'an existing creature on an existing map: nothing new happens');
+    const ev = E.roamingWon(s3, { id: 'f9', enemy: 'rw.reedling', lostWord: { jp: '{橋|はし}', en: 'bridge' }, carries: 'rw_ribbon' }, 'rw.road');
+    t.ok(ev.some((e) => e.t === 'lostWord') && ev.some((e) => e.t === 'item') && s3.inv.rw_ribbon === 1, 'new content: a lost word comes back, a carried thing is handed over');
+    t.eq(E.roamingWon(s3, { id: 'f9', enemy: 'rw.reedling', lostWord: { jp: '{橋|はし}', en: 'bridge' }, carries: 'rw_ribbon' }, 'rw.road'), [], 'once only');
   }
 
   // ---- wanderers: rare, never twice in a row, not within five encounters ---------------------------------------------

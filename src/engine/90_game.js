@@ -21,7 +21,7 @@ RB.game = (function () {
       textSpeed: 'normal', skipSeen: true, reducedMotion: reduce, textScale: 1, contrast: 'normal',
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
-      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive',
+      battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask',
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,
@@ -385,6 +385,15 @@ RB.game = (function () {
       RB.world.hush && RB.world.hush();
     }
     if (res === 'win' && opts.foeKey) G.s.flags[opts.foeKey] = true;
+    // what the world keeps when a roaming creature is settled (expansion E24): only new content carries any of it
+    if (res === 'win' && opts.place && RB.encounter && opts.where) {
+      for (const e of RB.encounter.roamingWon(G.s, opts.place, opts.where.map)) {
+        if (e.t === 'lostWord') RB.ui.toast({ kind: 'word', jp: e.jp, en: 'A lost word comes back: ' + e.en });
+        else if (e.t === 'item' && RB.content.items[e.id]) RB.ui.toast({ kind: 'item', jp: RB.content.items[e.id].name.jp, en: RB.content.items[e.id].name.en });
+        else if (e.t === 'cleared') RB.ui.notice('The way is clear now: people will start using it again.', 'info');
+        else if (e.t === 'stamp') RB.ui.notice('A field-guide stamp: every kind of creature in this region settled.', 'info');
+      }
+    }
     if (res === 'win') {
       RB.world.refreshActors();
       if (opts.scene) await RB.script.run(opts.scene);
@@ -399,6 +408,29 @@ RB.game = (function () {
     }
     if (res === 'flee') RB.ui.notice('You stepped back from the encounter.', 'info');
     return res;
+  }
+
+  // An authored encounter (expansion P04; src/engine/97_encounter.js): with creatures, on the battle screen; a
+  // conversation or a machine without them, on the encounter screen (src/ui/80s_encounter.js). Returns
+  // { result: 'win' | 'end' | 'lose' | 'flee', outcome (the conclusion's id) }.
+  async function startEncounter(id, opts) {
+    opts = Object.assign({}, opts);
+    const def = typeof id === 'string' ? RB.content.encounters[id] : id;
+    if (!def) { console.warn('unknown encounter', id); return null; }
+    let outcome = null;
+    const closing = opts.closing;
+    opts.encounterDone = (o) => { outcome = o; };
+    if (def.lead) {
+      opts.encounter = def;
+      opts.closing = (res) => { if (closing) closing(res); };
+      const res = await startBattle(typeof def.lead === 'string' ? def.lead : def.lead.enemy, opts);
+      return { result: res, outcome: outcome || (res === 'win' ? 'settled' : null) };
+    }
+    if (battleOpen) { console.warn('a battle is already open; not starting', def.id); return null; }
+    const me = (battleOpen = ++battleN);
+    let res = null;
+    try { res = await RB.encScreen.start(def, opts); } finally { if (battleOpen === me) battleOpen = 0; }
+    return { result: res ? res.result : null, outcome: res ? res.outcome : null };
   }
 
   // ---- companions ------------------------------------------------------------------------
@@ -466,7 +498,7 @@ RB.game = (function () {
     set s(v) { G.s = v; },
     get settings() { return G.settings; },
     G, mode, pushMode, popMode, setBase, boot, applySettings, saveSettings, reducedMotion, fastForward, setFastForward,
-    startNewCampaign, loadCampaign, toTitle, transition, afterScene, startBattle, inBattle, recruit, depart, companionTalk, rest,
+    startNewCampaign, loadCampaign, toTitle, transition, afterScene, startBattle, startEncounter, inBattle, recruit, depart, companionTalk, rest,
     defaultSettings, runEnterEvents,
   };
 })();

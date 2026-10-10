@@ -1,0 +1,101 @@
+/* The encounter platform (expansion P04): the order of an exchange and whom each move is aimed at, a second move,
+   conditions, modifier chips, pointed and tried responses, the objective and what is coming, guests and objects on
+   the party's slip, and the screen for conversations and machines (src/ui/80s_encounter.js). Shape and words carry
+   every meaning; colour only reinforces. */
+
+/* the order of the exchange (C-70) on a slip and on a badge */
+.cb-foe .fs .fs-ord, .cb-ib .ib-o {
+  display: inline-grid; place-items: center; min-width: 1.3em; height: 1.3em; padding: 0 2px; border-radius: 50%;
+  background: var(--ink); color: var(--paper); font: 700 0.78em/1 var(--serif); flex: none;
+}
+.cb-ib .ib-o { position: absolute; top: -0.45em; left: -0.45em; box-shadow: 0 0 0 2px var(--paper); }
+.cb-ib { position: relative; }
+.cb-foe .fs .fs-aim { font-weight: 700; color: var(--ink-2); }
+.cb-foe .fs .fs-and, .cb-ib .ib-and { display: inline-flex; align-items: center; gap: 2px; font-weight: 700; }
+.cb-foe .fs .fs-and svg, .cb-ib .ib-and svg { width: 1.1em; height: 1.1em; }
+.ic-ord, .ic-and { margin: 0.25em 0 0; font-weight: 600; display: flex; align-items: center; gap: 0.35em; }
+.ic-and svg { width: 1.2em; height: 1.2em; flex: none; }
+
+/* the objective and what is on its way, above the creatures */
+.combat-ui .cb-obj {
+  position: absolute; z-index: 3; top: max(6px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; max-width: min(92vw, 640px);
+  padding: 4px 10px; font-size: 0.9em; color: var(--ink); background: var(--paper); border: 1px solid var(--paper-edge); border-radius: var(--r-1);
+}
+.cb-obj .cb-obj-t, .cb-obj .cb-coming { display: inline-flex; align-items: center; gap: 0.35em; }
+.cb-obj svg { width: 1.2em; height: 1.2em; flex: none; }
+.cb-obj .en { color: var(--ink-2); }
+
+/* guests and objects on the party's slip; a Hush on a family */
+.pm-list .pm-guest .pm-n { font-style: italic; }
+.pm-note .pm-hush { display: inline-flex; align-items: center; gap: 0.3em; margin-right: 0.5em; padding: 0 0.4em; border: 1px dashed currentColor; border-radius: 2px; font-weight: 700; }
+.pm-note .pm-hush svg { width: 1.1em; height: 1.1em; }
+
+/* modifier chips (E27): a row above the responses */
+.cb-mods { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 8px; }
+.cb-mods .mods-h { display: inline-flex; align-items: center; gap: 0.3em; font-weight: 700; color: var(--ink-2); font-size: 0.9em; }
+.cb-mods .mods-h svg { width: 1.2em; height: 1.2em; }
+.cb-mods .mod-chip {
+  min-height: var(--tap); padding: 2px 10px; border: 1px solid var(--paper-edge); border-radius: 999px; background: var(--paper-2); color: var(--ink);
+  font: 600 1em/1.2 var(--serif); cursor: pointer;
+}
+.cb-mods .mod-chip.on { background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--paper); }
+.cb-mods .mod-chip[disabled] { border-style: dashed; color: var(--ink-3); cursor: not-allowed; }
+.cb-mods .mod-chip:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
+.rcard .rc-mod { display: block; font-size: 0.85em; color: var(--ink-2); }
+
+/* responses: pointed out by the companion (E19), tried already (C-64) */
+.rcard .rc-new.rc-point { background: var(--river); }
+.rcard .rc-new.rc-tried { background: var(--ink-3); }
+.combat-ui .rcard.pointed, .enc-sheet .rcard.pointed { box-shadow: inset 4px 0 0 var(--river), 0 2px 0 var(--paper-3), 0 3px 0 var(--paper-edge); }
+.rcard.tried { opacity: 0.85; }
+.ccards + .cq-more { margin-top: 6px; }
+
+/* the encounter screen: conversations and machines */
+.enc-sheet .leaf { padding-bottom: 12px; }
+.enc-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px 18px; align-items: start; }
+@media (max-width: 760px) { .enc-grid { grid-template-columns: minmax(0, 1fr); } }
+.enc-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.enc-sheet h3 { display: flex; align-items: center; gap: 0.4em; margin: 0 0 6px; font: 700 1em/1.3 var(--serif); }
+.enc-sheet h3 svg { width: 1.2em; height: 1.2em; flex: none; }
+.enc-sheet h3 .count { margin-left: auto; font-weight: 600; color: var(--ink-2); }
+.enc-people ul, .enc-record ol, .enc-log ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.enc-person { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 6px 8px; border: 1px solid var(--rule); border-radius: var(--r-1); background: var(--paper-2); }
+.enc-person.left { opacity: 0.7; border-style: dashed; }
+.enc-person .ep-n { font-weight: 700; }
+.enc-person .ep-n .en, .enc-machine .en { font-weight: 400; color: var(--ink-2); }
+.enc-person .ep-st { display: inline-flex; align-items: center; gap: 0.3em; padding: 0 0.45em; border: 1px solid currentColor; border-radius: 2px; font-size: 0.88em; font-weight: 700; }
+.enc-person .ep-st svg { width: 1.1em; height: 1.1em; }
+.enc-person .ep-st.st-heated { color: var(--danger-ink); }
+.enc-person .ep-st.st-leaving { border-style: dashed; }
+.enc-person .ep-w { flex-basis: 100%; font-size: 0.9em; color: var(--ink-2); }
+.enc-claim { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 8px; padding: 4px 0; border-bottom: 1px solid var(--rule); }
+.enc-claim .ec-by { grid-row: span 2; font-weight: 700; font-size: 0.88em; color: var(--ink-2); }
+.enc-claim .ec-en { font-size: 0.9em; color: var(--ink-2); }
+.enc-agree { display: flex; align-items: center; gap: 0.4em; flex-wrap: wrap; font-weight: 700; }
+.enc-agree svg { width: 1.2em; height: 1.2em; }
+.enc-agree .aside { font-weight: 400; color: var(--ink-2); }
+.enc-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px 12px; margin: 0 0 8px; }
+.enc-parts div { padding: 4px 6px; border: 1px solid var(--rule); border-radius: var(--r-1); }
+.enc-parts dt { font-weight: 700; font-size: 0.9em; }
+.enc-parts dd { margin: 0; }
+.enc-notice { padding: 8px 10px; border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+.enc-notice .en-jp { font-size: 1.15em; line-height: 1.9; }
+.enc-log li { padding: 3px 0 3px 8px; border-left: 3px solid var(--rule); }
+.enc-log li.you { border-left-color: var(--ink); }
+.enc-log li.comp { border-left-color: var(--river); }
+.enc-log li.none { color: var(--ink-2); font-style: italic; }
+.enc-choices .rcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 8px; }
+.enc-card { text-align: left; }
+.enc-card.resolve { border-style: double; }
+.enc-end { padding: 10px 12px; border: 1px solid var(--paper-edge); border-radius: var(--r-1); }
+
+/* a set piece of four or five (E12): on a phone the plates on the stage collapse to letters, A to E across it */
+.cb-foe .fs .fs-letter { display: none; }
+@media (max-width: 600px) {
+  .cb-foe.many.onstage .fs .fs-n { display: none; }
+  .cb-foe.many.onstage .fs .fs-letter {
+    display: inline-grid; place-items: center; min-width: 1.6em; height: 1.6em; border-radius: 3px;
+    background: var(--paper); color: var(--ink); font: 700 1em/1 var(--serif);
+  }
+}

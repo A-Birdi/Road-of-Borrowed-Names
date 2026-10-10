@@ -52,7 +52,7 @@ RB.modifiers = (function () {
   function extend(card, modId, opt) {
     const p = C().pairs.find((x) => x.mod === modId && x.resp === respOf(card));
     if (!p) return null;
-    const out = Object.assign({}, card, { mod: { id: modId, pair: p, opt: opt == null ? null : opt }, id: card.id + '+' + modId });
+    const out = Object.assign({}, card, { mod: { id: modId, pair: p, opt: opt == null ? null : opt }, id: String(card.id).split('+')[0] + '+' + modId });
     return out;
   }
   // Why a response does not pair with a modifier (for the dimmed card)

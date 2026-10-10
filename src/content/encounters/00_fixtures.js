@@ -244,6 +244,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     rules: { modifiers: 'all' },
   });
 
+  // ---- a set piece of five on the creatures' side (E12, C-76): the two-row formation --------------------------------
+  add({
+    id: 'fx.five', name: { jp: '{五|いつ}つの {影|かげ}', en: 'Five shadows' }, setPiece: true, capacity: 5,
+    lead: { enemy: 'sg.golem', knots: 4 },
+    group: ['sg.crab', 'sg.crane', 'sg.fogwisp', 'sg.moth'],
+  });
+
   // ---- Tactics Board studies (E15): a fixed toolset, a goal, a number of committed exchanges ----------------------
   add({
     id: 'fx.study.mist', kind: 'study', name: { jp: '{霧|きり} の {中|なか} で', en: 'In the mist' },

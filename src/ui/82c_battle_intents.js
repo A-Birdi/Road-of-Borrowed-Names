@@ -105,16 +105,18 @@ RB.battleIntents = (function () {
     layer.classList.toggle('quiet', quiet);
     layer.inert = quiet;
     if (quiet) layer.setAttribute('aria-hidden', 'true'); else layer.removeAttribute('aria-hidden');
-    const k = JSON.stringify(items.map((x) => [x.i, x.mark, x.icon, x.label, x.short, x.answered, x.actor, x.reading, open && open.i === x.i ? open.how : '']));
+    const k = JSON.stringify(items.map((x) => [x.i, x.mark, x.icon, x.label, x.short, x.answered, x.actor, x.reading, x.order, x.and, open && open.i === x.i ? open.how : '']));
     if (k === key) return;
     key = k;
     const focused = document.activeElement && layer.contains(document.activeElement) ? idx(document.activeElement.closest('.cb-ib') || document.activeElement) : null;
     layer.innerHTML = items.map((x) => {
       const on = open && open.i === x.i;
-      const lbl = x.name + (x.mark ? ' ' + x.mark : '') + ': about to ' + x.label + (x.answered ? ' (answered)' : '') + '. Details';
+      const lbl = x.name + (x.mark ? ' ' + x.mark : '') + (x.order ? ', acts ' + ['', 'first', 'second', 'third', 'fourth', 'fifth'][x.order] : '') + ': about to ' + x.label + (x.answered ? ' (answered)' : '') + '. Details';
       return '<button type="button" class="cb-ib' + (x.answered ? ' answered' : '') + (x.actor ? ' acting' : '') + (x.reading ? ' reading' : '') + (on ? ' open' : '') + '" data-ib="' + x.i + '"' +
         ' aria-expanded="' + (on ? 'true' : 'false') + '" aria-controls="cb-icard" aria-label="' + esc(lbl) + '">' +
+        (x.order ? '<span class="ib-o" aria-hidden="true">' + x.order + '</span>' : '') +
         '<span class="ib-ic" aria-hidden="true">' + I(x.answered ? 'done' : x.icon) + '</span>' +
+        (x.and && !x.answered ? '<span class="ib-and" aria-hidden="true">+' + I(x.and) + '</span>' : '') +
         (x.short ? '<span class="ib-s" aria-hidden="true">' + esc(x.short) + '</span>' : '') +
         (x.mark ? '<span class="ib-m" aria-hidden="true">' + esc(x.mark) + '</span>' : '') + '</button>';
     }).join('');

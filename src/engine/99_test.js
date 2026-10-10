@@ -106,6 +106,45 @@ RB.test = (function () {
     return st.over || 'lose';
   }
 
+  // An authored encounter in automated runs (expansion P04): battles by the player model, procedures by their
+  // right actions, conversations by the encounter's authored route (def.autoRoute: card ids) or, without one, the
+  // first choice that is not a lasting one, else Wait. Every language step met is checked as in a battle.
+  function encounter(defOrId, opts) {
+    const s = RB.game.s;
+    const E = RB.encounter, L = RB.combatLogic;
+    const def = typeof defOrId === 'string' ? RB.content.encounters[defOrId] : defOrId;
+    if (!def) { T.problems.push({ where: 'encounter ' + defOrId, msg: 'missing encounter' }); return 'win'; }
+    const st = E.begin(def, s);
+    const words = (def.study ? def.study.tools : s.words).map((w) => RB.content.words[w]).filter(Boolean);
+    let rounds = 0;
+    const route = (def.autoRoute || []).slice();
+    while (!st.over && rounds < 60) {
+      rounds++;
+      let card = null, comp = null, target = st.cur;
+      if (st.foes.length && !st.enc.proc) {
+        const c = RB.combatSim.choose(st, words, s, { policy: T.auto.battle === 'smart' ? 'smart' : 'unravel' });
+        if (!c || !c.card) { T.problems.push({ where: 'encounter ' + def.id, msg: 'no response available' }); break; }
+        card = c.card; target = c.target; comp = c.act ? { act: c.act, target: c.actTarget } : null;
+      } else {
+        const cs = E.cards(st, s, words).filter((c) => !c.disabled);
+        const want = route.length ? route.shift() : null;
+        card = (want && cs.find((c) => c.id === want)) || (st.enc.proc && cs.find((c) => c.kind === 'resolve')) || (st.enc.proc && cs.find((c) => c.kind === 'proc' && c.action.ok)) ||
+          cs.find((c) => c.kind === 'social' && !c.lasting) || cs.find((c) => c.kind === 'gesture') || cs.find((c) => c.kind === 'wait') || cs[0];
+      }
+      if (!card) break;
+      if (card.kind === 'proc' && st.enc.proc) { const stp = st.enc.proc.steps[st.enc.proc.step]; if (stp && stp.task) solveStep(RB.activities.tier(stp.task) || stp.task, 'encounter ' + def.id + ' step ' + stp.id); }
+      if (card.kind === 'social' && card.action.task) solveStep(RB.activities.tier(card.action.task) || card.action.task, 'encounter ' + def.id + ' choice ' + card.action.id);
+      E.exchange(st, { card, res: { ok: true, firstTry: true, mistakes: 0 }, comp, target }, { enemy: st.foes[0] && st.foes[0].def });
+      void L;
+    }
+    const out = st.over || 'end';
+    T.log.push({ t: 'encounter', id: def.id, result: out, outcome: st.enc.outcome, rounds });
+    if (out === 'lose' || (!st.over)) T.problems.push({ where: 'encounter ' + def.id, msg: 'not concluded (' + out + ' after ' + rounds + ')' });
+    const fin = E.finishEncounter(st, s, out);
+    if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
+    return out;
+  }
+
   // Helpers for driving the world from a test page.
   function wait(ms) { return new Promise((r) => setTimeout(r, ms)); }
   async function idle(timeout) {
@@ -196,7 +235,7 @@ RB.test = (function () {
     await idle();
   }
   return {
-    enable, disable, choose, solveStep, battle, idle, talk, use, go, step, place, wait,
+    enable, disable, choose, solveStep, battle, encounter, idle, talk, use, go, step, place, wait,
     get auto() { return T.auto; }, get log() { return T.log; }, get problems() { return T.problems; },
   };
 })();

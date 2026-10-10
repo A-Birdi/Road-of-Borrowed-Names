@@ -22,6 +22,8 @@ RB.combat = (function () {
   'use strict';
   const esc = RB.util.esc;
   const L = () => RB.combatLogic;
+  // the encounter platform (src/engine/97_encounter.js): the exchange's steps, the cards on offer, conclusions
+  const ENC = () => RB.encounter;
   // st: the rules' state; enemy: the lead creature (placement, rewards, lines);
   // members: every creature of the encounter by the rules' index (the lead first)
   let st = null, enemy = null, ui = null, members = [];
@@ -126,9 +128,9 @@ RB.combat = (function () {
     const same = st.foes.map((_, k) => k).filter((k) => nameOf(k).en === en);
     if (same.length < 2) return '';
     const lay = RB.battleStage.lay();
-    const slot = (k) => (lay && lay.foes && lay.foes[k] && lay.foes[k].slot != null ? lay.foes[k].slot : [1, 0, 2][k]);
+    const slot = (k) => (lay && lay.foes && lay.foes[k] && lay.foes[k].slot != null ? lay.foes[k].slot : [1, 0, 2, 3, 4][k]);
     same.sort((a, b) => slot(a) - slot(b));
-    return 'ABCD'[same.indexOf(i)] || '';
+    return 'ABCDE'[same.indexOf(i)] || '';
   }
   const nameEn = (i) => nameOf(i).en + (markOf(i) ? ' ' + markOf(i) : '');
   const markHtml = (i) => (markOf(i) ? ' <span class="ib-m">' + markOf(i) + '</span>' : '');
@@ -182,6 +184,8 @@ RB.combat = (function () {
   const moveLabel = (it) => (it && READING[it.kind] && READING[it.kind].en) || (it && it.label) || '';
   const moveIcon = (it) => (it && READING[it.kind] && READING[it.kind].icon) || INTENT_ICON[it && it.kind] || 'strike';
   function cardIcon(c) {
+    if (c.kind === 'wait') return 'rest';
+    if (c.kind === 'proc' || c.kind === 'resolve') return 'needle';
     if (c.kind === 'unravel') return 'knot';
     if (c.kind === 'answer') return 'history';
     if (c.kind === 'truth') return 'lens';
@@ -276,6 +280,8 @@ RB.combat = (function () {
     if (f.shroud) out.push({ key: 'shroud', label: 'Shrouded' });
     if (f.charged) out.push({ key: 'charge', label: 'Gathering' });
     if (v.silenced) out.push({ key: 'silence', label: 'Hushed' });
+    // conditions (expansion E4): a word you can see and name, with furigana in its note
+    if (f.cond && RB.conditions && st.rules && st.rules.conditions) for (const c of RB.conditions.list(f)) out.push({ key: 'cond:' + c.id, label: c.en + (c.left ? ' ' + c.left : ''), icon: c.icon });
     return out;
   }
   // a key with the creature it concerns (a group: 'heat:1'; one creature: 'heat')
@@ -324,6 +330,11 @@ RB.combat = (function () {
       return { icon: 'join', title: h.title, body: '<p class="kw-now">' + h.now + '</p><p><b>How it fills:</b> ' + h.fills + '</p><p><b>When it is full:</b> ' + h.offers + '</p><p>' + h.more + '</p>' };
     }
     if (k === 'target') return { icon: 'aim', title: 'Choosing whom you act on', body: p(H.groupNote()) };
+    if (k.indexOf('cond:') === 0 && RB.conditions) {
+      const d = RB.conditions.DEFS[k.slice(5)];
+      if (d) return { icon: d.icon, title: title(esc(d.en)), body: '<p class="kw-jp">' + RB.ui.jhtml(d.jp) + '</p>' + p(esc(d.what)) + (d.ends ? p(esc(d.ends)) : '') };
+    }
+    if (k === 'objective' && st.enc && st.enc.def.objective) return { icon: 'aim', title: 'What this encounter asks', body: p(esc(st.enc.def.objective.text.en)) };
     const v = V();
     const i = L().withFoe(v, who, () => H.statusInfo(v, k, ws, { pc: esc(s.player.name), comp: esc(compName()) }));
     if (!i) return null;
@@ -337,6 +348,10 @@ RB.combat = (function () {
   }
   // ---- the creatures' slips (a group): one per creature, a radio each; the
   // target's is marked with an ink bracket; its move (icon, name, gist) is on it
+  // the numbered order of this exchange (C-70) and whom each move is aimed at, from the rules
+  const NTH = ['', 'first', 'second', 'third', 'fourth', 'fifth'];
+  function ordOf(i) { const o = st && st.foes.length > 1 ? L().order(st).find((x) => x.i === i) : null; return o || null; }
+  function aimEn(a) { return a === 'pc' ? 'you' : a === 'comp' ? compName() : a === 'both' ? 'you both' : a && st.enc ? ((ENC().actorOf(st, a) || {}).name || { en: a }).en : ''; }
   function slipsHtml() {
     const v = V();
     const lay = RB.battleStage.lay();
@@ -350,14 +365,19 @@ RB.combat = (function () {
       const g = !down && it ? gistOf(i, it) : '';
       const pv = previewFoes().indexOf(i) >= 0 && !down;
       const states = down ? [] : statusList(i).filter((x) => x.key !== 'silence');
-      const label = esc(nameEn(i)) + (down ? ', settled' : ', ' + f.knots + ' of ' + f.maxKnots + ' knots' + (it ? ', about to ' + moveLabel(it) + (g ? ': ' + g : '') : '') + (states.length ? ', ' + states.map((x) => x.label).join(', ') : ''));
+      const od = !down ? ordOf(i) : null;
+      const it2 = !down && st.foes[i].intent2;
+      const label = esc(nameEn(i)) + (down ? ', settled' : ', ' + f.knots + ' of ' + f.maxKnots + ' knots' + (it ? ', about to ' + moveLabel(it) + (g ? ': ' + g : '') + (od && od.aim ? ', aimed at ' + aimEn(od.aim) : '') : '') + (it2 ? ' and ' + moveLabel(it2) : '') + (od ? ', acting ' + NTH[od.n] : '') + (states.length ? ', ' + states.map((x) => x.label).join(', ') : ''));
       h += '<button type="button" class="fs' + (on ? ' on' : '') + (pv ? ' cb-pv' : '') + (down ? ' down' : '') + '" role="radio" data-foe="' + i + '" aria-checked="' + on + '"' +
         (down ? ' aria-disabled="true"' : '') + ' tabindex="' + (on ? 0 : -1) + '" aria-label="' + label + '"' + (can ? '' : ' data-locked="1"') + '>' +
         '<span class="fs-mark" aria-hidden="true"></span>' +
+        // a set piece of four or five (E12): on a phone the plates collapse to letters, A to E across the stage
+        (st.foes.length >= 4 ? '<span class="fs-letter" aria-hidden="true">' + 'ABCDE'[order.indexOf(i)] + '</span>' : '') +
         '<span class="fs-n" aria-hidden="true">' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
         '<span class="fs-l2" aria-hidden="true"><span class="fs-k">' + (down ? '<span class="fs-done">' + I('done') + 'Settled</span>' : knotsHtml(i)) + '</span>' +
-        (down || !it ? '' : '<span class="fs-it">' + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') + '</span>') + '</span>' +
-        (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>').join('') + '</span>' : '') +
+        (down || !it ? '' : '<span class="fs-it">' + (od ? '<span class="fs-ord" aria-hidden="true">' + od.n + '</span>' : '') + I(moveIcon(it)) + '<span class="k">' + esc(moveLabel(it)) + '</span>' + (g ? '<span class="gist">' + esc(g) + '</span>' : '') +
+          (od && od.aim ? '<span class="fs-aim">→ ' + esc(aimEn(od.aim)) + '</span>' : '') + (it2 ? '<span class="fs-and">and ' + I(moveIcon(it2)) + esc(moveLabel(it2)) + '</span>' : '') + '</span>') + '</span>' +
+        (states.length ? '<span class="fs-st" aria-hidden="true">' + states.map((x) => '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>').join('') + '</span>' : '') +
         '</button>';
     }
     return '<span class="fs-h" id="cb-tgt-h">' + I('aim') + '<span>' + (can ? 'Target' : 'Creatures') + '</span>' + kw('target', 'fs-help', Q(), ' — how to choose whom you act on') + '</span>' +
@@ -372,13 +392,14 @@ RB.combat = (function () {
       const keep = document.activeElement && ui.foe.contains(document.activeElement);
       ui.foe.innerHTML = slipsHtml();
       ui.foe.classList.add('group');
+      ui.foe.classList.toggle('many', st.foes.length >= 4);
       if (keep) { const on = ui.foe.querySelector('.fs.on') || ui.foe.querySelector('.fs:not(.down)'); if (on) on.focus({ preventScroll: true }); }
     } else {
       const states = statusList(T);
       ui.foe.classList.remove('group');
       ui.foe.innerHTML = '<div class="fplate solo" data-foe="' + T + '"><span class="foe-n">' + RB.ui.jhtml(enemy.name.jp) + ' <span class="en">' + esc(enemy.name.en) + '</span></span>' +
         '<span class="foe-k' + (states.length ? ' has-st' : '') + '">' + knotsHtml(T) + (states.length ? '<span class="it-states" role="group" aria-label="Its state">' +
-          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
+          states.map((x) => kw(x.key, 'st', '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</span></div>';
     }
     // the telegraph panel, by intent display (battle addendum §13.3, §13.6). Adaptive: a routine move
     // is its creature's badge (symbol and strength; its words, what it does and the translation in the
@@ -395,7 +416,7 @@ RB.combat = (function () {
         const sts = statusList(i).filter((x) => x.key !== 'silence');
         return '<div class="it-block' + (i === T ? ' it-target' : ' it-other') + '" data-foe="' + i + '"><div class="it-who">' + (i === T ? I('aim') : '') + '<span>' + RB.ui.jhtml(nameOf(i).jp) + ' <span class="en">' + esc(nameOf(i).en) + '</span>' + markHtml(i) + '</span>' +
           (tag ? '<span class="it-tag">' + tag + '</span>' : '') +
-          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
+          (sts.length ? '<span class="it-states" role="group" aria-label="Its state">' + sts.map((x) => kw(kkey(x.key, i), 'st', '<span class="pill">' + I(x.icon || STATUS_ICON[x.key]) + esc(x.label) + '</span>')).join('') + '</span>' : '') + '</div>' + intentHtml(false, i) + '</div>';
       };
       const lay = RB.battleStage.lay();
       const order = lay && lay.visual && lay.visual.length === st.foes.length ? lay.visual : st.foes.map((_, k) => k);
@@ -428,12 +449,34 @@ RB.combat = (function () {
       '<div class="pm-r"><div class="bar" role="meter" aria-label="' + esc(name) + ' resolve" aria-valuemin="0" aria-valuemax="' + max + '" aria-valuenow="' + v + '"><i style="width:' + Math.round((100 * v) / max) + '%"></i></div>' +
       '<span class="pm-v"><span class="sr">Resolve </span>' + v + ' / ' + max + '</span></div></div>';
     const v = V();
+    // guests and the things the encounter asks you to protect (E1, E6): on the party's slip, never on your menu
+    const others = (st.actors || []).filter((a) => (a.side === 'guest' || a.side === 'object') && !a.left).map((a) => {
+      const va = (v.actors || st.actors).find((x) => x.aid === a.aid) || a;
+      return a.hp != null ? member(a.aid, a.name.en + (a.side === 'object' ? '' : ' (guest)'), va.hp, a.maxHp || a.hp, (v.ward && v.ward[a.aid]) || 0) : '<div class="pm pm-guest"><div class="pm-h"><span class="pm-n">' + esc(a.name.en) + '</span></div></div>';
+    }).join('');
+    const hush = st.hushed ? Object.keys(st.hushed).map((k) => '<span class="pill pm-hush">' + I('mute') + esc((k === 'modifiers' ? 'Modifiers' : k[0].toUpperCase() + k.slice(1)) + ' hushed · ' + st.hushed[k]) + '</span>').join('') : '';
     ui.bars.innerHTML = (s.comp && st.compId ? harmonyHtml() : '') + '<div class="pm-list">' +
       member('pc', s.player.name, v.pc, v.max, v.ward.pc) +
-      (s.comp ? member('comp', compName(), v.comp, v.max, v.ward.comp) : '') +
-      '<div class="pm-note">' + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
+      (s.comp ? member('comp', compName(), v.comp, v.max, v.ward.comp) : '') + others +
+      '<div class="pm-note">' + hush + (st.assist ? 'Assisted: mistakes cost nothing' : 'Mistakes cost at most 1') + '</div></div>';
+    objLine();
     RB.combatHelp.refresh(ui.root);
     requestAnimationFrame(measure);
+  }
+  // The encounter's objective (E6) and what is on its way (E2), above the creatures: one short line each
+  function objLine() {
+    let el = ui.root.querySelector('.cb-obj');
+    const E0 = st.enc;
+    const parts = [];
+    if (E0 && E0.def.objective && E0.def.objective.text) parts.push(kw('objective', 'cb-obj-t', I('aim') + '<span>' + RB.ui.jhtml(E0.def.objective.text.jp || '') + ' <span class="en">' + esc(E0.def.objective.text.en) + '</span></span>', ' — what this encounter asks'));
+    if (E0) for (const c of ENC().coming(st)) {
+      const nm = typeof c.enemy === 'string' ? (RB.content.enemies[c.enemy] || {}).name : (RB.content.enemies[c.enemy.enemy] || {}).name;
+      parts.push('<span class="cb-coming">' + I('hourglass') + '<span>' + esc((nm ? nm.en : 'Something') + ' is coming' + (c.in ? ': in ' + c.in + ' exchange' + (c.in > 1 ? 's' : '') : '') + (c.prevent ? '. ' + c.prevent.map((t) => (t === 'bell' ? 'a bell' : t === 'bind' ? 'a rope' : t)).join(' or ') + ' can stop it' : '')) + '</span></span>');
+    }
+    if (E0 && E0.study) parts.push('<span class="cb-coming">' + I('hourglass') + '<span>' + esc('Study: ' + Math.max(0, E0.study.limit - st.round) + ' exchange' + (E0.study.limit - st.round === 1 ? '' : 's') + ' left') + '</span></span>');
+    if (!parts.length) { if (el) el.remove(); return; }
+    if (!el) { el = document.createElement('div'); el.className = 'cb-obj paper'; ui.root.insertBefore(el, ui.root.firstChild); }
+    el.innerHTML = parts.join('');
   }
   // The party's permanent status, compact, for surfaces that cover the battle (the language task):
   // names, Resolve as numbers and bars, Harmony as pips — the values the rules hold now.
@@ -461,6 +504,8 @@ RB.combat = (function () {
   }
   function words() {
     const s = RB.game.s;
+    // a Tactics Board study (E15) brings its own fixed toolset
+    if (st && st.enc && st.enc.def.study) return (st.enc.def.study.tools || []).map((id) => RB.content.words[id]).filter(Boolean);
     return s.words.map((id) => RB.content.words[id]).filter(Boolean);
   }
 
@@ -574,7 +619,10 @@ RB.combat = (function () {
       const it = badgeSnap ? badgeSnap[i] : st.foes[i].intent;
       if (!it || !f || f.knots <= 0 || st.foes[i].settled) continue;
       const b = L().withFoe(st, i, () => L().blowOf(st, it));
-      items.push({ i, mark: markOf(i), name: nameOf(i).en, icon: moveIcon(it), label: moveLabel(it), short: b && b.per ? String(b.per) : '', reading: !!READING[it.kind], answered: !!(shownAnswered && shownAnswered[i] && it.kind !== 'rest'), actor: actFoe === i });
+      const od = !badgeSnap ? ordOf(i) : null;
+      const it2 = !badgeSnap && st.foes[i].intent2;
+      items.push({ i, mark: markOf(i), name: nameOf(i).en, icon: moveIcon(it), label: moveLabel(it) + (it2 ? ' and ' + moveLabel(it2) : ''), short: b && b.per ? String(b.per) : '', reading: !!READING[it.kind], answered: !!(shownAnswered && shownAnswered[i] && it.kind !== 'rest'), actor: actFoe === i,
+        order: od ? od.n : null, and: it2 ? moveIcon(it2) : null });
     }
     RB.battleIntents.render(items, { quiet: acting || phase === 'challenge' || phase === 'intro' || phase === 'outro' });
   }
@@ -593,6 +641,8 @@ RB.combat = (function () {
       (line.en && enShown() ? '<div class="ic-en">' + esc(line.en) + '</div>' : '') +
       (line.en && !enShown() ? '<button type="button" class="pbtn quiet tr ic-tr" data-tr title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '') +
       (what ? '<p class="ic-what">' + what + '</p>' : '') +
+      // the order (C-70) and a second move (E26), when there are
+      (() => { const od = !badgeSnap ? ordOf(i) : null; const it2 = !badgeSnap && st.foes[i].intent2; return (od ? '<p class="ic-ord">' + esc('Acts ' + NTH[od.n] + (od.aim ? ', aimed at ' + aimEn(od.aim) : '') + '.') + '</p>' : '') + (it2 ? '<p class="ic-and">' + I(moveIcon(it2)) + esc('And then: ' + moveLabel(it2) + '. ' + (L().withFoe(st, i, () => RB.combatHelp.gist(st, it2)) || '')) + '</p>' : ''); })() +
       (!badgeSnap && RB.game.s.comp === 'nao' && (st.foes[i].nextIntents || []).length ? '<div class="it-next">' + I('companion') + '<span>Nao: “After that — ' + esc(st.foes[i].nextIntents.map(moveLabel).join(', then ')) + '.”</span></div>' : '') +
       '<div class="ic-f">' + kw(kkey('intent', i), 'pbtn quiet ic-more', '<span>How to answer it</span>', ' — opens a note') + '</div>';
   }
@@ -623,18 +673,24 @@ RB.combat = (function () {
   // own preview (RB.combatLogic.previewAct). An unsuitable card stays choosable; it is marked, never hidden.
   function hereOf(c) {
     if (c.disabled || !st) return null;
+    // a decision, a procedure step or a conversation is judged by the player (C-60): no "Here:" line
+    if (['wait', 'proc', 'resolve', 'social', 'gesture'].indexOf(c.kind) >= 0) return null;
     let p;
     try { p = L().previewAct(st, c); } catch (e) { return null; }
     const nm = (i) => (isGroup() ? 'the ' + shortEn(i) : 'it');
-    const who = (a) => (a === 'comp' ? compName() : 'you');
+    const who = (a) => (a === 'comp' ? compName() : a === 'pc' ? 'you' : aimEn(a));
     const said = new Set(), out = [];
     let none = false;
+    // an authored sentence (a condition's rule, a modifier's lasting effect): said as written, with names
+    const authored = (t) => { const x = String(t).replace(/\$(\d+)/g, (_, k) => nm(+k)).replace(/\.$/, ''); return x[0].toLowerCase() + x.slice(1); };
     for (const f of p.fx) {
+      if (f.t === 'cond') { if (f.change === 'scorch') out.push(authored(f.en)); else if (f.none) none = authored(f.en); else out.push(authored(f.en)); continue; }
+      if (f.en && (f.mod || f.t === 'wind' || f.t === 'prevent') && f.t !== 'unravel') { out.push(authored(f.en)); continue; }
       if (f.t === 'unravel') out.push('frees ' + f.n + ' knot' + (f.n > 1 ? 's' : '') + (isGroup() ? ' on ' + nm(f.foe) : ''));
       else if (f.t === 'water') { out.push('cools the Heat on ' + nm(f.foe)); }
       else if (f.t === 'light') { out.push('clears the mist on ' + nm(f.foe)); }
       else if (f.t === 'bind') { out.push('stops ' + nm(f.foe) + ' gathering force'); said.add(f.foe + ':charge'); }
-      else if (f.t === 'ward') { if (f.block) { out.push('blocks the blow aimed at ' + who(f.target)); said.add(f.foe + ':blow'); } else out.push('raises a ward (2) in front of ' + who(f.target)); }
+      else if (f.t === 'ward') { if (f.block) { out.push('blocks the blow aimed at ' + (f.target === 'party' ? 'you both' : who(f.target))); said.add(f.foe + ':blow'); } else out.push('raises a ward (' + (f.n || 2) + ') in front of ' + who(f.target)); }
       else if (f.t === 'heal') { if (f.gain > 0) out.push('restores resolve (' + f.aim.filter((w) => f.d[w] > 0).map((w) => who(w) + ' +' + f.d[w]).join(', ') + ')'); else none = f.aim.length > 1 ? 'you are both at full resolve' : 'you are at full resolve'; }
       else if (f.t === 'settle') { out.push('answers its plea, and a knot loosens'); said.add(f.foe + ':plea'); }
       else if (f.t === 'reveal') { out.push('sees through the false promise'); said.add(f.foe + ':lie'); }
@@ -666,10 +722,12 @@ RB.combat = (function () {
     const fresh = c.kind === 'word' && newWords.has(c.word.id);
     const ans = fresh ? L().answers(c.word).map((k) => L().INTENTS[k].label) : [];
     const ready = c.kind === 'tech' && !c.disabled; // a technique waiting for the companion doesn't glow
-    return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
+    return '<button class="resp rcard' + (fresh ? ' fresh' : '') + (ready ? ' tech' : '') + (c.pointed ? ' pointed' : '') + (c.tried ? ' tried' : '') + (c.mod ? ' modded' : '') + '" data-i="' + i + '"' + (c.id != null ? ' data-cid="' + esc(String(c.id)) + '"' : '') + ' data-foes="' + r.foes.join(',') + '" data-allies="' + r.allies.join(',') + '"' + (c.disabled ? ' disabled' : '') + '>' +
       '<span class="ic">' + I(cardIcon(c)) + '</span>' +
       '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(hi && c.word && c.word.jpK ? c.word.jpK : c.jp) + '</span><span class="rc-en">' + esc(c.en) + '</span>' +
-      (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') + '</span>' +
+      (fresh ? '<span class="rc-new">New</span>' : '') + (ready ? '<span class="rc-new">With ' + esc(compName()) + '</span>' : '') +
+      (c.pointed ? '<span class="rc-new rc-point">' + esc(compName()) + ' suggests this</span>' : '') + (c.tried ? '<span class="rc-new rc-tried">Tried</span>' : '') +
+      (c.mod ? '<span class="rc-mod">' + RB.ui.jhtml(c.mod.pair.jp) + '</span>' : '') + '</span>' +
       (tgt ? '<span class="rc-tgt' + (r.foes.length > 1 ? ' many' : '') + '">' + esc(tgt) + '</span>' : '') +
       '<span class="rc-d">' + (c.disabled ? I('warn') : '') + esc(desc) +
       (ans.length ? '<span class="rc-ans"><b>Answers:</b> ' + esc(ans.join(', ')) + (c.word.tags.indexOf('ward') >= 0 ? ' (in front of the one it aims at)' : '') + '</span>' : '') +
@@ -758,15 +816,26 @@ RB.combat = (function () {
       // say "kana or kanji" whenever the writing pad will read kanji for this player
       const hi = RB.pad && RB.pad.kanjiPreferred ? RB.pad.kanjiPreferred() : s.learn.profile === 'I' || s.learn.profile === 'A';
       const deal = () => {
-        cards = L().responses(st, words());
-        // Keep every encounter solvable: only block Unravel if a counter is actually known.
-        for (const c of cards) {
-          if (c.kind === 'unravel' && st.shroud && !(known.has('light') || known.has('wind'))) c.disabled = null;
-          if (c.kind === 'unravel' && st.silenced && (known.has('bell') || known.has('voice'))) c.disabled = 'The hush swallows words: ring a bell or raise a voice first.';
+        // the cards on offer, as the encounter platform decides them (src/engine/97_encounter.js): every encounter
+        // stays solvable (Unravel is blocked only while a word that clears the way is known); a Hush on a family says
+        // so with the exchanges left
+        cards = ENC().cards(st, s, words());
+        void known;
+        // a modifier chosen (E27): each response it pairs with is extended, the others dimmed with the reason
+        const mods = RB.modifiers ? RB.modifiers.offered(st, s) : [];
+        if (tg.mod && !mods.some((m) => m.id === tg.mod && !m.hushed)) tg.mod = null;
+        if (tg.mod) {
+          cards = cards.filter((c) => !(c.kind === 'word' && c.target && c.target !== 'pc' && RB.modifiers.extend(c, tg.mod)))
+            .map((c) => { if (c.disabled) return c; const x = (c.kind === 'word' || c.kind === 'unravel') && RB.modifiers.extend(c, tg.mod, null); return x || Object.assign({}, c, { disabled: RB.modifiers.why(c, tg.mod) }); });
         }
+        // the responses your companion points out (E19), when you accepted that help
+        if (st.enc && st.enc.point) { const pts = ENC().pointCards(st, s, words()); for (const c of cards) if (pts.indexOf(c.id) >= 0) c.pointed = true; }
         for (const c of cards) if (c.kind === 'word') shownWords.add(c.word.id);
         const focusedI = document.activeElement && ui.resp.contains(document.activeElement) ? document.activeElement.getAttribute('data-i') : null;
-        ui.resp.innerHTML = '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
+        const modRow = mods.length ? '<div class="cb-mods" role="group" aria-label="Reach: modifiers">' + '<span class="mods-h">' + I('words') + '<span>Reach</span></span>' + mods.map((m) => '<button type="button" class="mod-chip' + (tg.mod === m.id ? ' on' : '') + '" data-mod="' + m.id + '" aria-pressed="' + (tg.mod === m.id) + '"' + (m.hushed ? ' disabled title="' + esc(m.hushed) + '"' : ' title="' + esc(m.family.role + ': ' + m.family.does) + '"') + '>' + RB.ui.jhtml(m.family.jp) + '</button>').join('') + '</div>' : '';
+        const canAsk = st.enc && st.compId && (st.enc.def.story || ENC().helpOffer(s, st.enc.def) > 0);
+        ui.resp.innerHTML = modRow + '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
+          (canAsk ? '<button class="cbtn" data-askhelp>' + I('companion') + '<span>Ask ' + esc(compName()) + ' for help</span></button>' : '') +
           (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
         if (focusedI != null) { const b = ui.resp.querySelector('[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }
         // a card still under the pointer or focus previews for the new target
@@ -801,8 +870,11 @@ RB.combat = (function () {
       const done = (v) => { if (chosen) return; chosen = true; onTarget = null; unwirePreview(ui.resp); RB.combatHelp.hide(); showCoach(null); RB.ui.popLayer(layer); ui.dock.insertBefore(ui.resp, ui.log); resolve(v); };
       ui.resp.onclick = (e) => {
         if (stalePress(e, openAt)) return;
+        const mb = e.target.closest('[data-mod]');
+        if (mb && !mb.disabled) { const id = mb.getAttribute('data-mod'); tg.mod = tg.mod === id ? null : id; deal(); return; }
         const b = e.target.closest('[data-i]');
         if (b && !b.disabled) { const c = cards[+b.getAttribute('data-i')]; lastCardId = c.id != null ? String(c.id) : null; tg.lock = reachOf(c); tg.hover = null; done(c); return; }
+        if (e.target.closest('[data-askhelp]')) { done({ kind: 'askhelp' }); return; }
         if (e.target.closest('[data-flee]')) done({ kind: 'flee' });
       };
       // Back closes an open keyword note first; it never leaves the encounter.
@@ -829,7 +901,10 @@ RB.combat = (function () {
     return new Promise((resolve) => {
       const s = RB.game.s;
       const H = RB.combatHelp;
-      const opts = L().compOptions(st, s, card).filter((o) => !o.locked);
+      // the menu (E25): as it has always been with six or fewer; beyond six, the six most useful now and the rest a
+      // page away; an encounter's own actions for the companion (E10) among them
+      const menu = ENC().compMenu(st, s, card, words(), st.cur);
+      let opts = menu.shown;
       const cn = compName();
       const pn = s.player.name;
       tg.compTarget = st.cur;
@@ -863,7 +938,8 @@ RB.combat = (function () {
               '<span class="rc-w"><span class="rc-jp">' + RB.ui.jhtml(d.name.jp) + '</span><span class="rc-en">' + esc(d.name.en) + '</span>' + (fresh ? '<span class="rc-new">New</span>' : '') + '</span>' +
               (t ? '<span class="rc-tgt">' + esc(t) + '</span>' : '') +
               '<span class="rc-d">' + esc(d.desc || '') + (d.uses ? '<span class="rc-uses">' + (used ? 'Used in this encounter' : 'Once per encounter') + '</span>' : '') + '</span></button>';
-          }).join('') + '</div>';
+          }).join('') + '</div>' +
+          (menu.more.length && opts === menu.shown ? '<button type="button" class="pbtn quiet cq-more" data-more>' + I('next') + '<span>More of ' + esc(cn) + '\'s moves (' + menu.more.length + ')</span></button>' : '');
         if (focusedA != null) { const b = ui.resp.querySelector('[data-a="' + focusedA + '"]'); if (b) b.focus({ preventScroll: true }); }
         refreshMarks();
       };
@@ -896,6 +972,7 @@ RB.combat = (function () {
       ui.resp.onclick = (e) => {
         if (early()) return;
         if (e.target.closest('[data-back]')) { done('back'); return; }
+        if (e.target.closest('[data-more]')) { opts = menu.shown.concat(menu.more); render(); return; }
         const b = e.target.closest('[data-a]');
         if (b && !b.disabled) { const o = opts[+b.getAttribute('data-a')]; tg.hover = null; done({ act: o.def, target: tg.compTarget }); }
       };
@@ -919,6 +996,19 @@ RB.combat = (function () {
   }
   function stepFor(card) {
     const s = RB.game.s;
+    // a decision with no writing (Wait, F-09), a step done before (Resolve this step, E11)
+    if (card.kind === 'wait' || card.kind === 'resolve') return null;
+    // a modifier's phrase (E27): typed whole, handwritten as the modifier and its particle with the rest shown
+    if (card.mod && RB.modifiers) return RB.tasks.prepare(RB.modifiers.step(card));
+    // a procedure step (E7): its instructions, read in the step's own task
+    if (card.kind === 'proc') {
+      const pr = st.enc && st.enc.proc, stp = pr && pr.steps[pr.step];
+      const t = stp && stp.task ? RB.util.deepClone(tierOf(stp.task)) : null;
+      if (!t) return null;
+      t.title = 'Read the instructions';
+      if (stp.text && !t.ctx) t.ctx = { jp: stp.text.jp, en: stp.text.en };
+      return RB.tasks.prepare(t);
+    }
     const it = st.intent;
     const pool = (members[st.cur] || enemy).pool || enemy.pool || {};
     if (card.kind === 'unravel' || card.kind === 'tech') {
@@ -1078,6 +1168,24 @@ RB.combat = (function () {
       case 'spent': fo.charged = false; msg = who('The force it gathered is spent in that blow.'); break;
       case 'revive': v.pc = st.pc; msg = compName() + ' hauls you back to your feet.'; break;
       case 'woven': msg = ''; break;
+      // the encounter platform's results (expansion P04): each said in words; the displayed state follows
+      case 'cond':
+        if (f.change === 'scorch') { const a = (v.actors || []).find((x) => x.aid === f.aid); if (a) a.hp = Math.max(0, (a.hp || 0) - 1); }
+        else if (fo) fo.cond = Object.assign({}, (st.foes[fi] || {}).cond);
+        if (f.change === 'steam' || f.change === 'refract') for (let k = 0; k < v.foes.length; k++) v.foes[k].shroud = st.foes[k].shroud;
+        sfx(f.change === 'flare' || f.change === 'catch' || f.change === 'bold' ? 'enemy_intent' : f.change === 'freeze' || f.change === 'crack' ? 'knot_untie' : 'water');
+        msg = String(f.en || '').replace(/\$(\d+)/g, (_, k) => (isGroup() ? 'the ' + shortEn(+k) : 'it'));
+        msg = msg ? msg[0].toUpperCase() + msg.slice(1) + (/[.!?]$/.test(msg) ? '' : '.') : '';
+        break;
+      case 'wait': sfx('cursor'); msg = f.en || ''; break;
+      case 'gact': sfx('reveal'); if (f.act === 'unravel' && fo) fo.knots = Math.max(0, fo.knots - (f.n || 1)); msg = f.en || ''; break;
+      case 'gsay': msg = f.en || ''; break;
+      case 'leave': { const a = (v.actors || []).find((x) => x.aid === f.aid); if (a) a.left = true; msg = f.en || ''; break; }
+      case 'arrive': sfx(f.none ? 'cursor' : 'enemy_intent'); msg = f.en || ''; break;
+      case 'call': sfx('enemy_intent'); msg = who(f.en || 'It calls out.'); break;
+      case 'prevent': sfx('reveal'); msg = f.en || ''; break;
+      case 'proc': sfx(f.ok === false ? 'party_hit' : 'reveal'); msg = f.en || ''; break;
+      case 'say': case 'tip': msg = f.en || ''; break;
       default: msg = f.en || '';
     }
     const w = cue && cue.word;
@@ -1222,6 +1330,16 @@ RB.combat = (function () {
     const action = performed ? actionOf('enemy', nameEn(i), { en: moveLabel(it) }, 'foe' + i + ':' + it.kind, E.end) : null;
     return RB.battleSeq.run('enemy', tagSide(E.cues, 'enemy'), { end: E.end, action, kind: it.kind, target: it.target, foe: i, fx: fx.map((f) => f.t + (f.who ? ':' + f.who : '')) });
   }
+  // Guests' and neutrals' turns (E1, E3) and the encounter's close (arrivals, E2): each result a beat with its words,
+  // under one banner; Instant playback shows them all at once, as for every other actor
+  function playOthers(kind, fx, who) {
+    if (!fx || !fx.length) return Promise.resolve();
+    const cues = fx.map((f, k) => ({ type: 'beat', at: 150 + k * 520, f }));
+    const end = 150 + fx.length * 520 + 250;
+    phase = kind === 'arrive' ? 'enemy' : 'guest';
+    const action = who ? actionOf(kind === 'arrive' ? 'enemy' : 'party', who, { en: kind === 'arrive' ? 'Arrives' : 'Acts' }, kind + ':' + exchangeN, end) : null;
+    return RB.battleSeq.run(kind, cues, { end, action, fx: fx.map((f) => f.t) });
+  }
   function playRevive() {
     view = snapshot(st);
     view.pc = 0;
@@ -1266,6 +1384,65 @@ RB.combat = (function () {
     if (opts.group) return [enemyId].concat(opts.group).slice(0, (L().DIFF[s.learn.difficulty] || L().DIFF.normal).maxFoes);
     return L().groupFor(enemyId, opts.place, s.learn.difficulty);
   }
+  // ---- help in a story battle (E19) ---------------------------------------------------------------------------
+  // After a defeat the companion offers, escalating: explain the pattern, suggest an answer, point at suitable
+  // responses next time. Each offer can be declined; asked for from the battle (auto false), all three are there.
+  function explainText() {
+    const h = st.enc && st.enc.def.help;
+    if (h && h.explain) return h.explain.en;
+    return L().standing(st).map((i) => nameEn(i) + ' moves in a cycle: ' + (st.foes[i].pattern || []).map((k) => moveLabel(L().intentDef(st.foes[i].def, k))).filter(Boolean).join(', then ') + '.').join(' ');
+  }
+  function suggestText() {
+    const h = st.enc && st.enc.def.help;
+    if (h && h.suggest) return h.suggest.en;
+    const ws = words(), out = [];
+    for (const i of L().standing(st)) {
+      const it = st.foes[i].intent;
+      if (!it || it.kind === 'rest') continue;
+      const w = ws.find((x) => L().answers(x, true).indexOf(it.kind) >= 0);
+      out.push(w ? 'When it is about to ' + moveLabel(it).toLowerCase() + ', ' + w.en + ' answers it.' : 'Its ' + moveLabel(it) + ' has no answer among your words yet: Unravel it instead.');
+    }
+    return out.join(' ') || 'Unravel while nothing threatens you.';
+  }
+  async function offerHelp(auto) {
+    const s = RB.game.s;
+    const lv = auto ? ENC().helpOffer(s, st.enc.def) : 3;
+    const cn = compName();
+    const opts = ['Explain its pattern'];
+    if (lv >= 2) opts.push('Suggest an answer');
+    if (lv >= 3) opts.push('Point at good responses');
+    opts.push('No, thanks');
+    const r = await live(RB.ui.confirm(cn + (auto ? ': "That one beat us before. Want some help this time?"' : ': "What would help?"'), opts));
+    const pick = opts[r];
+    if (pick === 'Explain its pattern') { await live(say({ jp: '', en: cn + ': "' + explainText() + '"' }, 'narr')); RB.ui.dialogue.hide(); }
+    else if (pick === 'Suggest an answer') { await live(say({ jp: '', en: cn + ': "' + suggestText() + '"' }, 'narr')); RB.ui.dialogue.hide(); }
+    else if (pick === 'Point at good responses') { st.enc.point = true; RB.ui.notice(cn + ' will point out good responses. Choosing one counts as help that gave the answer.', 'info'); }
+  }
+  // a modifier's option (E27): whom (you or your companion), which two creatures, which one to leave out
+  async function modOption(card) {
+    const kind = card.mod.pair.option;
+    if (kind === 'who') {
+      if (!st.compId) return 'pc';
+      const r = await live(RB.ui.confirm('Whom for: ' + card.mod.pair.en + '?', ['You', compName(), 'Choose again']));
+      return r === 0 ? 'pc' : r === 1 ? 'comp' : null;
+    }
+    const up = L().standing(st);
+    if (kind === 'two') {
+      if (up.length < 2) return up.slice();
+      const a = await live(RB.ui.confirm('The first of the two:', up.map((i) => nameEn(i)).concat(['Choose again'])));
+      if (a < 0 || a >= up.length) return null;
+      const rest = up.filter((i) => i !== up[a]);
+      if (rest.length === 1) return [up[a], rest[0]];
+      const b = await live(RB.ui.confirm('And the second:', rest.map((i) => nameEn(i)).concat(['Choose again'])));
+      if (b < 0 || b >= rest.length) return null;
+      return [up[a], rest[b]];
+    }
+    if (kind === 'leaveOut') {
+      const a = await live(RB.ui.confirm('Which one to leave out?', up.map((i) => nameEn(i)).concat(['Choose again'])));
+      return a >= 0 && a < up.length ? up[a] : null;
+    }
+    return null;
+  }
   // Every await of start() goes through live(): once the battle has been left for another journey
   // (abandon(), below) whatever it was waiting for never resumes it, so nothing of the abandoned
   // battle (its outcome, flags, rewards, lines, fades, music) reaches the campaign that comes next.
@@ -1275,13 +1452,22 @@ RB.combat = (function () {
   async function start(enemyId, opts) {
     opts = opts || {};
     const s = RB.game.s;
-    const ids = groupOf(enemyId, opts).filter((id, k) => k === 0 || RB.content.enemies[id]);
+    // an authored encounter (expansion P04): the script's `!encounter`, a map placement's `encounter`, a study;
+    // its creatures, guests, objective and rules come from its definition (src/engine/97_encounter.js)
+    const encDef = opts.encounter || (opts.place && opts.place.encounter) || null;
+    let st0 = null;
+    if (encDef) {
+      if (RB.test && RB.test.auto) return RB.test.encounter(encDef, opts);
+      st0 = ENC().begin(opts.prepared || encDef, s);
+      enemyId = st0.foes[0].enemyId;
+    }
+    const ids = st0 ? st0.foes.map((f) => f.enemyId) : groupOf(enemyId, opts).filter((id, k) => k === 0 || RB.content.enemies[id]);
     if (RB.creatures) RB.creatures.meet(s, ids, opts); // Creatures met: the encounter begins (src/engine/64_creatures.js)
     if (RB.test && RB.test.auto) return RB.test.battle(enemyId, { group: ids.slice(1) });
-    enemy = Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
+    enemy = st0 ? st0.foes[0].def : Object.assign({ id: enemyId }, RB.content.enemies[enemyId] || {});
     if (!RB.content.enemies[enemyId]) console.warn('missing enemy', enemyId);
     placeEnemy(enemy, opts);
-    members = [enemy].concat(ids.slice(1).map((id) => Object.assign({ id }, RB.content.enemies[id])));
+    members = st0 ? st0.foes.map((f) => f.def) : [enemy].concat(ids.slice(1).map((id) => Object.assign({ id }, RB.content.enemies[id])));
     RB.game.pushMode('combat');
     const prevSong = RB.audio && RB.audio.currentSong();
     // the zone's battle or boss theme (src/audio/39_zones.js); enemy.music still overrides
@@ -1290,14 +1476,15 @@ RB.combat = (function () {
     await live(RB.ui.fade(true, 200));
     if (RB.battlers && RB.battlers.prewarm) { RB.battlers.prewarm(RB.equip.look(s), 'pc'); if (s.comp) RB.battlers.prewarm(RB.content.chars[s.comp].look, 'comp'); }
     RB.render.setOverride(draw);
-    st = L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1) }));
-    st.noFlee = !!opts.noFlee || !!enemy.boss;
+    // an ordinary battle of the six-chapter game uses none of the platform's new rules (ordinaryRules: {})
+    st = st0 || L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1), rules: ENC().ordinaryRules(s) }));
+    st.noFlee = !!opts.noFlee || !!enemy.boss || !!st.noFlee;
     showIntentEn = false;
     const H = RB.combatHelp;
     newWords = new Set(s.words.filter((w) => !H.seen(s, 'word:' + w)));
     shownWords = new Set();
     H.attach(helpFor);
-    tg.hover = null; tg.lock = null; tg.compTarget = null;
+    tg.hover = null; tg.lock = null; tg.compTarget = null; tg.mod = null;
     ui = buildUi();
     RB.battleBanner.attach(ui.root);
     RB.battleIntents.attach(ui.root, {
@@ -1330,6 +1517,8 @@ RB.combat = (function () {
     try {
       if (enemy.intro) await live(say(tierOf(enemy.intro) || enemy.intro, enemy.introWho));
       RB.ui.dialogue.hide();
+      // a required story battle lost before: the companion offers help, more each time; always optional (E19)
+      if (st.enc && st.compId && ENC().helpOffer(s, st.enc.def) > 0) await live(offerHelp(true));
       while (!outcome) {
         // a creature's new phase (a guardian changing its ways) is told before you choose
         for (let i = 0; i < st.foes.length; i++) {
@@ -1355,7 +1544,20 @@ RB.combat = (function () {
         if (RB.creatures) RB.creatures.saw(s, st, members); // the telegraphs now on screen
         RB.audio && RB.audio.sfx('enemy_intent', { vol: 0.5 });
         st.assistedRound = false;
-        const card = await live(pickCard());
+        let card = await live(pickCard());
+        if (card.kind === 'askhelp') { await live(offerHelp(false)); continue; }
+        // Wait answers nothing (E9): chosen on purpose, never by a slip of the finger
+        if (card.kind === 'wait') {
+          const r = await live(RB.ui.confirm('Wait and watch: you answer nothing this exchange, and the creatures act. You will see their next moves.', ['Wait', 'Choose again']));
+          if (r !== 0) { tg.lock = null; continue; }
+        }
+        // a modifier with an option (E27): whom, which two, which to leave out
+        if (card.mod && card.mod.pair.option) {
+          const opt = await live(modOption(card));
+          if (opt == null) { tg.lock = null; continue; }
+          card = RB.modifiers.extend(card, card.mod.id, opt);
+          tg.lock = reachOf(card);
+        }
         if (card.kind === 'flee') {
           tg.lock = null;
           const r = await live(RB.ui.confirm('Step back from this encounter? Nothing is lost; you can return whenever you like.', ['Step back', 'Stay']));
@@ -1368,16 +1570,27 @@ RB.combat = (function () {
         renderUi();
         const step = stepFor(card);
         const T = st.cur;
-        const res = await live(RB.challenge.runStep(step, {
+        // no writing for a decision (Wait) or a step done before (Resolve this step): nothing is recorded
+        const res = step ? await live(RB.challenge.runStep(step, {
           header: situationHtml(card), status: statusInset,
           allowCancel: true, cancelLabel: 'Choose a different response', ctxTag: 'battle:' + (st.enemyId || enemyId),
-        }));
+          // a response your companion pointed out counts as help that supplied the answer (E19, L2)
+          preHelp: card.pointed ? 'supplied' : null,
+        })) : { ok: true, firstTry: true, mistakes: 0 };
         // backed out: the preview drops back to normal, nothing else changed
         if (res.cancelled) { tg.lock = null; continue; }
         if (st.assistedRound) res.assisted = true;
+        // a procedure's action that can send the machine back: what you understood, before it is done (E7, E17)
+        if ((card.kind === 'proc' || card.kind === 'resolve') && card.means) {
+          const r = await live(RB.ui.confirm(card.means.en, ['Do it', 'Choose again']));
+          if (r !== 0) { tg.lock = null; continue; }
+        }
         // your companion's turn: the response is queued, not yet applied
         let cact = null;
-        if (st.compId && st.comp > 0 && L().compOptions(st, s, card).some((o) => !o.locked)) {
+        const plan = RB.game.settings.compPlan || 'ask';
+        const planned = plan !== 'ask' && st.compId && st.comp > 0 ? ENC().planned(st, s, card, plan, words(), T) : null;
+        if (planned) cact = { act: planned.def, target: T }; // a standing plan (E10): the companion's turn plays itself
+        else if (st.compId && st.comp > 0 && ENC().compMenu(st, s, card, words(), T).shown.length) {
           phase = 'companion';
           renderUi();
           const c = await live(pickCompanion(card));
@@ -1416,6 +1629,15 @@ RB.combat = (function () {
         endChain();
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: fx.concat(cfx || []), card, answered: P.answered }); // what your response and your companion's did
         if (won || wonByComp) { outcome = 'win'; break; }
+        // an encounter's own conclusion, reached by your response or your companion's (an objective, a procedure)
+        if (st.enc) { const rc = E.conclude(st); if (rc) { outcome = rc; break; } }
+        // guests and neutrals, each by its agenda (E1, E3)
+        if (st.enc) {
+          const gfx = E.guests(st, P);
+          if (gfx.length) { chain = true; await live(playOthers('guest', gfx, null)); endChain(); }
+          const rc = E.conclude(st);
+          if (rc) { outcome = rc; break; }
+        }
         // each creature still standing acts in turn
         const before2 = snapshot(st);
         const { efx, standing, intents } = E.foes(st, P);
@@ -1432,11 +1654,23 @@ RB.combat = (function () {
         endChain();
         if (RB.creatures) RB.creatures.saw(s, st, members, { fx: efx, enemy: true }); // their moves as they landed
         sealHeld = null;
+        if (st.enc) { const rc = E.conclude(st); if (rc && rc !== 'win') { outcome = rc; break; } }
         const end = E.close(st, enemy);
         if (end.revived) await live(playRevive());
+        // what came at the close (E2): a called or scheduled creature joins the stage
+        if (end.afx && end.afx.length) {
+          for (const f of end.afx) if (f.t === 'arrive' && !f.none && st.foes[f.foe]) { members[f.foe] = st.foes[f.foe].def; if (RB.creatures) RB.creatures.meet(s, [st.foes[f.foe].enemyId], opts); }
+          if (ui) ui.root.classList.toggle('cb-group', isGroup());
+          chain = true; await live(playOthers('arrive', end.afx, null)); endChain();
+        }
         if (end.over) outcome = end.over;
       }
       if (outcome === 'lose') present('scene', { phase: 'defeat' });
+      // an authored end that is neither a win nor a defeat (an objective lost, a study's exchanges run out): said
+      if ((outcome === 'end' || outcome === 'win') && st.enc && st.enc.conclusion && st.enc.conclusion.text) {
+        const tx = st.enc.conclusion.text;
+        await live(say({ jp: tx.jp || '', en: tx.en }, 'narr')); RB.ui.dialogue.hide();
+      }
       if (outcome === 'win') {
         present('scene', { phase: 'victory' });
         phase = 'outro';
@@ -1456,6 +1690,15 @@ RB.combat = (function () {
       present('scene', { phase: 'exit', outcome });
       view = null; sealHeld = null; curCard = null; phase = 'idle';
       tg.hover = null; tg.lock = null; tg.compTarget = null; onTarget = null;
+      // what the campaign keeps from an authored encounter (solved steps, a machine left mid-way, defeats in a story
+      // battle, a lasting outcome, a study's best)
+      if (st && st.enc) {
+        try {
+          const fin = ENC().finishEncounter(st, s, outcome);
+          if (fin && fin.flags) for (const k in fin.flags) s.flags[k] = fin.flags[k];
+          if (opts.encounterDone) opts.encounterDone(st.enc.outcome);
+        } catch (err) { console.error('encounter finish', err); }
+      }
       // Resolve recovers after every encounter: no attrition grinding.
       s.resolve.pc = s.resolve.max;
       s.resolve.comp = s.resolve.max;

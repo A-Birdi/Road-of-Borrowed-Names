@@ -159,6 +159,8 @@ RB.ui.settings = (function () {
         radios('battleAnim', 'Battle animations', [['normal', 'Normal'], ['fast', 'Fast'], ['instant', 'Instant']], null, 'How long each action takes to play. Separate from Text speed. Instant shows the results at once, with a summary of the last exchange.') +
         radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice.') +
         radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
+        // (expansion E10: a standing intention for the companion's turn; Ask me keeps the menu, as always)
+        radios('compPlan', 'Your companion\'s turn', [['ask', 'Ask me'], ['protect', 'Protect'], ['reveal', 'Reveal'], ['press', 'Press the opening']], null, 'Ask me opens your companion\'s menu each exchange. With a plan, they act on it by themselves, in their own way (Nao still reads, Ren still wards), and the menu opens only when they have nothing of that kind.') +
         // (Harmony addendum §7.4: the portrait layer only — the technique, its stage performance and the banner stay)
         sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.') +
         radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,
@@ -291,7 +293,7 @@ RB.ui.settings = (function () {
     'vol.master': 1, 'vol.music': 1, 'vol.sfx': 1, 'vol.voice': 1, muted: 1, petSounds: 1, 'voice.rate': 1,
     lead: 1, secondary: 1, spacing: 1, lightbulb: 1, romaji: 1,
     textScale: 1, contrast: 1,
-    battleControls: 1, intentDisplay: 1, petBattle: 1,
+    battleControls: 1, intentDisplay: 1, petBattle: 1, compPlan: 1,
     harmonyFlourish: 1, // (Harmony addendum §7.4: the portrait layer only — presentation)
   };
   // (the voice and its automatic speaking, and Suzu's speech, which src/ui/56_suzu_speech.js applies, are allowed too)
@@ -352,6 +354,7 @@ RB.ui.settings = (function () {
     } else if (title[0] === 'battle') {
       h += radios('battleControls', 'Battle controls during actions', [['adaptive', 'Adaptive'], ['keep', 'Keep visible']], null, 'Adaptive moves the menus out of the way while actions play, so the scene has room. Keep visible leaves them in place, disabled until your next choice. From the next exchange.') +
         radios('intentDisplay', 'What creatures are about to do', [['adaptive', 'Adaptive'], ['expanded', 'Expanded']], null, 'Adaptive shows a compact badge on each creature that opens when you point at it, focus it or tap it; wording you need to read stays visible. Expanded keeps the full descriptions open while you decide.') +
+        radios('compPlan', 'Your companion\'s turn', [['ask', 'Ask me'], ['protect', 'Protect'], ['reveal', 'Reveal'], ['press', 'Press the opening']], null, 'With a plan, your companion acts on it by themselves from the next exchange; Ask me opens their menu.') +
         sw('petBattle', 'Show pet in battle', 'It sits beside the two of you and watches. It never acts, and hiding it changes nothing.') +
         // (Harmony addendum §7.4: the portrait layer only; a portrait on screen goes when the encounter resumes)
         sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance and its name at the top.');

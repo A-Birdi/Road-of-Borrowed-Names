@@ -177,6 +177,39 @@ RB.battleStage = (function () {
     if (n === 1) {
       const { ex, ey } = place1(ext, 0.62);
       foes.push({ ex, ey, ext, row: 'front' });
+    } else if (n >= 4) {
+      // An authored set piece of four or five (expansion E12, C-76): two rows. The front row (the lead at its right end)
+      // stands where a group's front stands; the back row a step up and behind, between them, drawn first. Everyone
+      // keeps the whole-pixel scale (the formation's span has already brought it down where needed).
+      const frontN = n === 4 ? 2 : 3;
+      const idx = []; for (let i = 0; i < n; i++) idx.push(i);
+      const frontI = [0].concat(idx.slice(1, frontN)), backI = idx.slice(frontN);
+      const big = exts.reduce((a, e) => (e.bottom - e.top > a.bottom - a.top ? e : a), ext);
+      const fr = place1(big, 0.62);
+      const lo = (e) => Math.round(Sr.y - e.top * scale + 2), hi = Math.round(Sr.y + Sr.h - 64 * scale);
+      const left = Math.max(right + 4 * scale, Sr.x + Sr.w * 0.36), span = Sr.x + Sr.w - 4 * scale - left;
+      const xsF = frontN === 2 ? [0.22, 0.86] : [0.06, 0.5, 0.94];
+      const xsB = [0.32, 0.7];
+      // where the stage is tall enough, the back row floats above the party's heads, on the left (as a group's
+      // creature a step back does), so the front row has the right side to itself
+      const partyTop = Math.min(pc.y, comp ? comp.y : pc.y) - ph * 0.95;
+      const backAbove = backI.every((i) => partyTop - exts[i].bottom * scale * 0.9 >= lo(exts[i]) + 8 * scale);
+      // front row positions by slot
+      // (the lead, often the largest, at the right end of the front row, nearest the stage's edge, as in a pair)
+      const frontSlots = frontN === 2 ? [1, 0] : [2, 0, 1];
+      frontI.forEach((i, k) => {
+        const e = exts[i], sl = frontSlots[k];
+        let ex = left + span * xsF[sl];
+        ex = Math.round(Math.min(Math.max(ex, Sr.x - e.left * scale * 0.7), Sr.x + Sr.w - e.right * scale * 0.9));
+        foes[i] = { ex, ey: Math.min(Math.max(fr.ey + Math.round(10 * scale), lo(e)), hi), ext: e, row: 'front', slot: sl };
+      });
+      backI.forEach((i, k) => {
+        const e = exts[i];
+        let ex = backAbove ? Sr.x + Sr.w * (k ? 0.36 : 0.12) - e.left * scale * 0.6 : left + span * xsB[k];
+        ex = Math.round(Math.min(Math.max(ex, Sr.x - e.left * scale * 0.7), Sr.x + Sr.w - e.right * scale * 0.9));
+        const ey = backAbove ? Math.round(partyTop - e.bottom * scale * 0.9) : fr.ey - Math.round(40 * scale);
+        foes[i] = { ex, ey: Math.min(Math.max(ey, lo(e)), hi), ext: e, row: 'back', slot: frontN + k };
+      });
     } else {
       // A formation right of the party (left → right), the lead in front: a pair
       // is one a step back on the left and the lead on the right; three are one

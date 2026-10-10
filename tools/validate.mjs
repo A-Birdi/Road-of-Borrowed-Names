@@ -55,7 +55,7 @@ function jen(o, where) {
 const sceneRefs = new Map(); // id -> where
 const ref = (id, where) => { if (id && !sceneRefs.has(id)) sceneRefs.set(id, where); };
 const speakers = new Set(['narr', 'pc', 'comp', 'npc']);
-const OPS = new Set(['say', 'set', 'unset', 'var', 'give', 'take', 'word', 'technique', 'note', 'quest', 'if', 'goto', 'choice', 'call', 'end', 'challenge', 'activity', 'battle', 'lesson', 'teach', 'warp', 'music', 'sfx', 'emote', 'move', 'face', 'faceplayer', 'wait', 'fade', 'interlude', 'shake', 'autosave', 'checkpoint', 'chapter', 'card', 'journal', 'toast', 'travel', 'refresh', 'recruit', 'depart', 'heal', 'inn', 'shop', 'menu', 'postgame', 'credits', 'speakerless', 'hook',
+const OPS = new Set(['say', 'set', 'unset', 'var', 'give', 'take', 'word', 'technique', 'note', 'quest', 'if', 'goto', 'choice', 'call', 'end', 'challenge', 'activity', 'battle', 'encounter', 'lesson', 'teach', 'warp', 'music', 'sfx', 'emote', 'move', 'face', 'faceplayer', 'wait', 'fade', 'interlude', 'shake', 'autosave', 'checkpoint', 'chapter', 'card', 'journal', 'toast', 'travel', 'refresh', 'recruit', 'depart', 'heal', 'inn', 'shop', 'menu', 'postgame', 'credits', 'speakerless', 'hook',
   // scene direction (src/engine/52_staging.js; docs/expressive/CONTRACT.md §3.4): presentation only
   'gesture', 'look', 'pose', 'walkto', 'prop', 'beat', 'ambience',
   // illustrated sequences (src/ui/43_sequence.js; docs/expressive/SHOTS.md §0): presentation only
@@ -88,6 +88,7 @@ for (const id in C.scenes) {
     if (c.op === 'challenge' && !C.challenges[a[0]]) E(where(c) + ' unknown challenge ' + a[0]);
     if (c.op === 'activity' && !C.activities[a[0]]) E(where(c) + ' unknown activity ' + a[0]);
     if (c.op === 'battle' && !C.enemies[a[0]]) E(where(c) + ' unknown enemy ' + a[0]);
+    if (c.op === 'encounter' && !(C.encounters || {})[a[0]]) E(where(c) + ' unknown encounter ' + a[0]);
     if (c.op === 'teach' && RB.grammar && !(RB.grammar.get ? RB.grammar.get(a[0]) : null)) E(where(c) + ' unknown grammar point ' + a[0]);
     if (c.op === 'warp') { const m = C.maps[a[0]]; if (!m) E(where(c) + ' unknown map ' + a[0]); }
     if (c.op === 'music' && a[0] !== '-' && RB.audio && RB.audio.songList && !RB.audio.songList().some((s) => s.id === a[0])) Wn(where(c) + ' unknown song ' + a[0]);

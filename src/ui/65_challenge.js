@@ -113,6 +113,14 @@ RB.challenge = (function () {
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
       active = { step, helpUsed: false, help: null };
+      // help given before the task began (a companion pointing at the response in a story battle, E19): it counts as
+      // what it supplied, from the first answer
+      if (opts.preHelp) { active.helpUsed = true; helpCat(opts.preHelp); }
+      // a step whose blank depends on how it is answered (a modifier phrase, E27: typed whole, handwritten as the
+      // modifier and its particle with the rest shown): the fields of the route in use, so only what is written is
+      // recorded as written
+      const baseFields = step.byMode ? { answer: step.answer, accept: step.accept, template: step.template, item: step.item, prompt: step.prompt, choices: step.choices } : null;
+      const routeFields = (m) => { if (!baseFields) return; Object.assign(step, baseFields, step.byMode[m] || {}); if (!step.choices) delete step.choices; };
       // Fishing pace hooks (src/ui/69_pace.js): passed only by RB.pace.attempt.
       // Without them (every other challenge) nothing here is timed or changes.
       const PH = opts.pace || null;
@@ -322,6 +330,7 @@ RB.challenge = (function () {
       }
       function showMode(m, how) {
         mode = m;
+        if (baseFields) { routeFields(m); renderCtx(); }
         pane(m);
         for (const k in panes) panes[k].hidden = k !== m;
         wrap.setAttribute('data-mode', m);

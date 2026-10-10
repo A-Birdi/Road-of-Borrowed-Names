@@ -337,6 +337,18 @@ RB.script = (function () {
           if (res !== 'win') { pc = sc.cmds.length; }
           break;
         }
+        // an authored encounter (expansion P04): a battle with an objective, guests or arrivals, a machine, a
+        // conversation. `_res` is 1 for a win; `_enc` holds the conclusion reached (its id), so a scene can branch on
+        // how it ended; an encounter that concludes another way (end) carries on with the scene, as a win does
+        case 'encounter': {
+          if (RB.sequence) RB.sequence.stopSkip('encounter');
+          RB.ui.dialogue.hide();
+          const r = await RB.game.startEncounter(a[0], { inScript: true, noFlee: a.includes('noflee') });
+          s.vars._res = r && r.result === 'win' ? 1 : 0;
+          s.vars._enc = (r && r.outcome) || '';
+          if (!r || r.result === 'lose' || r.result === 'flee') { pc = sc.cmds.length; }
+          break;
+        }
         case 'lesson': if (RB.sequence) RB.sequence.stopSkip('lesson'); RB.ui.dialogue.hide(); await RB.lessons.run(a[0]); break;
         case 'teach': if (RB.sequence) RB.sequence.stopSkip('teach'); RB.ui.dialogue.hide(); await RB.lessons.grammarCard(a[0]); break;
         case 'warp': {

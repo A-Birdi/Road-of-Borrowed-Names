@@ -146,6 +146,7 @@ RB.encounter = (function () {
     if (def.procedure) procBegin(st, s);
     if (def.social) socialBegin(st);
     if (def.study) st.enc.study = { limit: def.study.turns || 3 };
+    for (const f of def.startFlags || []) st.enc.flags[f] = true;
     st.noFlee = !!def.noFlee;
     return st;
   }
@@ -280,10 +281,11 @@ RB.encounter = (function () {
     }
     return { fx, answered: [], countered: false, perfect: res.ok && res.firstTry !== false };
   }
-  // a mistake costs at most 1 resolve an exchange, and nothing with Assisted (as in every battle)
+  // a mistake costs at most 1 resolve an exchange, and nothing with Assisted (as in every battle); where nothing can
+  // hurt you (a conversation, a machine with no creatures) resolve is not at stake, so a slip costs nothing at all
   function costOf(st, res, fx) {
     st.mistakeCostThisRound = 0;
-    if (res && res.mistakes > 0 && !st.assist) {
+    if (res && res.mistakes > 0 && !st.assist && st.foes.length) {
       st.mistakeCostThisRound = 1;
       st.pc = Math.max(0, st.pc - 1);
       fx.push({ t: 'cost', en: 'A slip of the brush costs a little resolve (−1).' });
@@ -764,8 +766,138 @@ RB.encounter = (function () {
     return id;
   }
 
+  // ---- the companion: tactical plans (E10) and a manageable menu (E25) -----------------------------------------
+  // A plan is a standing intention ('protect' | 'reveal' | 'press'; 'ask', the default, opens the menu as always).
+  // With one set, the companion's turn plays itself with the most useful action of that kind, unless the player
+  // opens the menu; Nao still reads, Ren still wards.
+  const PLAN = { heal: 'protect', salts: 'protect', ward: 'protect', share: 'protect', draw: 'protect', drawAll: 'protect', soften: 'protect', opening: 'reveal', clear: 'reveal', knot: 'press', stun: 'press', heckle: 'press', harmony: 'press' };
+  const planOf = (def) => def.plan || PLAN[def.effect && def.effect.kind] || null;
+  // How useful each companion action is with this response queued: each tried on a copy for one exchange.
+  function ranked(st, s, card, words, T) {
+    const opts = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+    if (!RB.combatSim || !st.foes.length) return opts.map((o) => ({ o, v: 0 }));
+    const known = new Set(words.flatMap((w) => w.tags || []));
+    return opts.map((o) => {
+      if (o.used || o.def.own || o.def.id === 'join') return { o, v: o.def.own ? 1e6 : -1e6 };
+      const x = RB.combatSim.look(st, card, T, o.def.id, T);
+      return { o, v: RB.combatSim.score(x, st, known, 0) };
+    });
+  }
+  // The menu: in content order while there are six or fewer (as the game has always shown them); beyond six, the
+  // six most useful against what is telegraphed, and the rest a page away (never removed).
+  function compMenu(st, s, card, words, T) {
+    const all = L().compOptions(st, s, card).filter((o) => !o.locked).concat(companionOptions(st, s));
+    if (all.length <= 6) return { shown: all, more: [] };
+    const r = ranked(st, s, card, words, T).sort((a, b) => b.v - a.v).map((x) => x.o);
+    return { shown: r.slice(0, 6), more: r.slice(6) };
+  }
+  // The action a plan chooses (or null: the plan has nothing of its kind to offer, so the menu opens)
+  function planned(st, s, card, plan, words, T) {
+    if (!plan || plan === 'ask') return null;
+    const r = ranked(st, s, card, words, T).filter((x) => !x.o.used && x.o.def.id !== 'join' && (planOf(x.o.def) === plan || x.o.def.plan === plan));
+    if (!r.length) return null;
+    r.sort((a, b) => b.v - a.v);
+    return r[0].o;
+  }
+
+  // ---- help in a story battle: Point (E19) ------------------------------------------------------------------------
+  // The responses that would do something suitable now (answer a telegraphed move, or free a knot when nothing
+  // threatens), by the rules' own preview. Choosing one recorded as answer-supplied help (L2).
+  function pointCards(st, s, words) {
+    if (!st.foes.length) return [];
+    const out = [];
+    const threats = L().standing(st).some((i) => st.foes[i].intent && st.foes[i].intent.kind !== 'rest');
+    for (const c of cards(st, s, words)) {
+      if (c.disabled || c.kind === 'wait' || c.kind === 'tech') continue;
+      let p;
+      try { p = L().previewAct(st, c); } catch (e) { continue; }
+      const answers = L().standing(st).some((i) => p.answered[i] && st.foes[i].intent && st.foes[i].intent.kind !== 'rest');
+      if (answers || (!threats && c.kind === 'unravel')) out.push(c.id);
+    }
+    return out;
+  }
+
+  // ---- preparation before an encounter (E14) ---------------------------------------------------------------------
+  // def.prep: [{ id, label, task, effect: { unfield: [...], field: [...], hp: { aid: n }, flag } }]: one or two things
+  // the place offers ("douse the brazier"). The definition the encounter begins with, after the chosen ones.
+  function prepared(def, chosen) {
+    def = typeof def === 'string' ? defOf(def) : def;
+    const d = clone(def);
+    const ids = [].concat(chosen || []);
+    for (const p of def.prep || []) {
+      if (ids.indexOf(p.id) < 0) continue;
+      const e = p.effect || {};
+      if (e.unfield) d.field = (d.field || []).filter((f) => e.unfield.indexOf(f) < 0);
+      if (e.field) d.field = (d.field || []).concat(e.field);
+      if (e.hp) for (const a of d.actors || []) if (e.hp[a.aid] != null) a.hp = (a.hp || 0) + e.hp[a.aid];
+      if (e.flag) d.startFlags = (d.startFlags || []).concat([].concat(e.flag));
+      if (e.calm) d.lead = Object.assign({}, typeof d.lead === 'string' ? { enemy: d.lead } : d.lead, { pattern: e.calm });
+    }
+    d.id = def.id;
+    return d;
+  }
+
+  // ---- equivalent expressions (E13) ------------------------------------------------------------------------------
+  // A response can be written in another, newer way with the same effect: word.phrasings [{ id, jp, en, item, grammar,
+  // unlock }]. The ways open to this campaign (the plain inscription always first).
+  function phrasings(card, s) {
+    if (!card || card.kind !== 'word' || !card.word.phrasings) return [];
+    return card.word.phrasings.filter((p) => !p.unlock || (s && RB.state.test(s, p.unlock)));
+  }
+
+  // ---- ordinary battles of the twelve-chapter game ---------------------------------------------------------------
+  // Which of the platform's rules an ordinary battle (a creature on the map, a scripted fight) uses: none in the
+  // six-chapter game; in the twelve-chapter one, Wait once taught (Manybridge), the modifiers taught so far,
+  // conditions where creatures have them, and two-move turns where creatures make them.
+  function ordinaryRules(s) {
+    if (!s || !RB.edition || RB.edition.of(s) < 2) return {};
+    return { wait: !!(RB.phase && RB.phase.knows(s, 'c_wait')), modifiers: true, conditions: true, doubles: true };
+  }
+
+  // ---- after a roaming creature is settled (E24) -----------------------------------------------------------------
+  // What the world keeps: a lost word comes back to its place, a creature carrying something hands it over, a
+  // notable creature teaches the companion something, a route whose creatures are all settled is cleared, and
+  // settling every kind of a region earns a field-guide stamp. Never currency, random drops or counts to grind.
+  // Returns what happened (for the screen); all of it from content fields that only new content carries, and the
+  // field guide only in the twelve-chapter game.
+  function roamingWon(s, place, mapId) {
+    const out = [];
+    if (!s || !place) return out;
+    const C = RB.content;
+    if (place.lostWord) {
+      const k = 'lw:' + mapId + ':' + place.id;
+      if (!s.flags[k]) { s.flags[k] = true; if (place.lostWord.flag) s.flags[place.lostWord.flag] = true; out.push({ t: 'lostWord', jp: place.lostWord.jp, en: place.lostWord.en }); if (place.lostWord.note && s.notebook) s.notebook.push({ kind: 'word', id: place.lostWord.note, t: Date.now() }); }
+    }
+    if (place.carries && !s.flags['carried:' + mapId + ':' + place.id]) {
+      s.flags['carried:' + mapId + ':' + place.id] = true;
+      RB.state.give(s, place.carries, 1);
+      out.push({ t: 'item', id: place.carries });
+    }
+    if (place.notable && place.notable.teaches && !s.flags[place.notable.teaches.flag]) {
+      s.flags[place.notable.teaches.flag] = true;
+      out.push({ t: 'teach', comp: place.notable.teaches.comp, flag: place.notable.teaches.flag });
+    }
+    const m = C.maps[mapId];
+    if (m && m.route && !s.flags['cleared:' + m.route]) {
+      const all = (m.foes || []).every((f) => s.flags['foe:' + mapId + ':' + f.id]);
+      if (all) { s.flags['cleared:' + m.route] = true; out.push({ t: 'cleared', route: m.route }); }
+    }
+    if (RB.edition && RB.edition.of(s) >= 2 && RB.records && place.enemy) {
+      const region = (C.enemies[place.enemy] || {}).region;
+      if (region && RB.creatures && s.creatures) {
+        const kinds = Object.keys(C.enemies).filter((id) => C.enemies[id].region === region && !C.enemies[id].boss);
+        const done = kinds.every((id) => s.creatures[id] && s.creatures[id].settled);
+        if (kinds.length && done && RB.records.award(s, 'stamps', 'guide:' + region)) out.push({ t: 'stamp', id: 'guide:' + region });
+      }
+    }
+    return out;
+  }
+
+  if (RB.phase && RB.phase.concept) RB.phase.concept('c_wait', { kind: 'response', ch: 'mb1', taught: 'learn_wait' });
+
   return {
     begin, exchange, player, companion, guests, foes, close, conclude, cards, coming, test, finishEncounter, helpOffer,
-    wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey,
+    wanderer, companionOptions, solvedKey, rec, defOf, actorOf, stateKey, compMenu, planned, planOf, pointCards, prepared,
+    phrasings, ordinaryRules, roamingWon,
   };
 })();
