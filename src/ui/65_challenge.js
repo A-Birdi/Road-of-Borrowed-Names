@@ -19,7 +19,20 @@ RB.challenge = (function () {
   let active = null; // {step, assisted}
 
   function isActive() { return !!active; }
-  function noteHelp() { if (active) active.helpUsed = true; }
+  // L2 (expansion plan 05_LANGUAGE.md): what help supplied, by category, strongest kept per question:
+  // conceptual (a word explained, an English line for a production prompt) < constrain (narrows the answer:
+  // suggestions, the chart, word help on a word of the answer, Translate on a comprehension question) < supplied
+  // (the answer or a model shown). Access and input help (text size, redrawing, a same-shape twin) never count.
+  const HELP_RANK = { conceptual: 1, constrain: 2, supplied: 3 };
+  function helpCat(cat) { if (!active || !HELP_RANK[cat]) return; if (!active.help || HELP_RANK[cat] > HELP_RANK[active.help]) active.help = cat; }
+  function noteHelp(tok) {
+    if (!active) return;
+    active.helpUsed = true;
+    // word help on a word that is (part of) the answer narrows it; otherwise it explains the situation
+    const ans = active.step && active.step.answer ? plain(active.step.answer) : '';
+    const surf = tok && (tok.surface || tok.s) ? String(tok.surface || tok.s) : '';
+    helpCat(surf && ans && (ans.indexOf(surf) >= 0 || surf.indexOf(ans) >= 0) ? 'constrain' : 'conceptual');
+  }
 
   function plain(s) { return RB.tasks.plain(s || ''); }
   // English feedback may carry {漢字|かな} markup for a word it quotes: give it ruby
@@ -28,7 +41,7 @@ RB.challenge = (function () {
   // opts.handwritten: the text came from the writing pad, so characters that
   // are written with one shape (ロ/口, へ/ヘ…) count as one (RB.answers).
   function check(input, step, opts) {
-    if (step.kind !== 'write') return { ok: false };
+    if (step.kind !== 'write' && step.kind !== 'forge') return { ok: false };
     // an authored bounded answer space (practice suite B): the step judges its own replies;
     // { ok, feedback, limit?, head?, html? } — `limit` means "outside what this can read", not wrong
     if (typeof step.judge === 'function') { try { return step.judge(input, opts || {}) || { ok: false }; } catch (e) { console.error('judge', e); return { ok: false, feedback: [] }; } }
@@ -47,9 +60,11 @@ RB.challenge = (function () {
     return RB.util.rng(RB.util.hashStr(key + '#' + turn));
   }
   function choicesFor(step) {
+    // a forged sentence's first rung: its complete sentences, with their readings (L7)
+    if (step.kind === 'forge') return orderRng('forge|' + (step.id || '') + '|' + step.sentences.map((o) => o.jp).join('|')).shuffle(step.sentences).map((o) => Object.assign({}, o));
     // Authors (and the meaning questions RB.tasks builds) list the right
     // option first, so where an option sits must never give the answer away.
-    if (step.kind === 'choose') {
+    if (step.kind === 'choose' || step.kind === 'listen') {
       const key = (step.item || '') + '|' + ((step.prompt && step.prompt.en) || '') + '|' + step.options.map((o) => o.en || o.jp || '').join('|');
       return orderRng(key).shuffle(step.options).map((o) => Object.assign({}, o));
     }
@@ -72,7 +87,15 @@ RB.challenge = (function () {
     { id: 'choice', en: 'Choose', jp: '{選|えら}ぶ', icon: 'list' },
     { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
   ];
-  const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces' };
+  const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces', build: 'Build it from pieces', fine: 'Build it word by word' };
+  // a forged sentence's support ladder (L7): choose a sentence · pieces · word by word · type or write
+  const FORGE_MODES = [
+    { id: 'choice', en: 'Choose', jp: '{選|えら}ぶ', icon: 'list' },
+    { id: 'build', en: 'Pieces', jp: '{組|く}む', icon: 'pieces' },
+    { id: 'fine', en: 'Word by word', jp: '{一語|いちご}ずつ', icon: 'pieces' },
+    { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
+    { id: 'hand', en: 'Write', jp: '{書|か}く', icon: 'practice' },
+  ];
   // A kana-practice step (a k: item) asks for kana, so its pad reads kana only;
   // every other step reads kanji too when the player does (RB.pad).
   const kanaTask = (step) => [].concat(step.item || []).some((i) => typeof i === 'string' && i.slice(0, 2) === 'k:');
@@ -82,13 +105,14 @@ RB.challenge = (function () {
   // Render one step; resolves with a result object.
   function runStep(step, opts) {
     opts = opts || {};
+    if (step && step.kind === 'forge' && RB.forge) step = RB.forge.prepare(step);
     if (RB.test && RB.test.auto) return Promise.resolve(RB.test.solveStep(step, 'step ' + (step.title || step.item)));
     return new Promise((resolve) => {
       const st = RB.game.settings;
-      let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : 'choice';
+      let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : step.kind === 'forge' ? (opts.mode || RB.forge.startRung(st, RB.game.s && RB.game.s.learn.profile)) : 'choice';
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
-      active = { step, helpUsed: false };
+      active = { step, helpUsed: false, help: null };
       // Fishing pace hooks (src/ui/69_pace.js): passed only by RB.pace.attempt.
       // Without them (every other challenge) nothing here is timed or changes.
       const PH = opts.pace || null;
@@ -117,7 +141,7 @@ RB.challenge = (function () {
       const $ = (q) => wrap.querySelector(q);
       const ctxEl = $('.chal-task .task-ctx'), sheet = $('.chal-sheet'), line = $('.chal-line'), body = $('.chal-body');
       const submitBtn = $('[data-a=submit]'), revealBtn = $('[data-a=reveal]');
-      $('.chal-title').innerHTML = (step.titleJp ? RB.ui.jhtml(step.titleJp) + ' ' : '') + esc(step.title || (step.kind === 'choose' ? 'Read and choose' : step.kind === 'order' ? 'Put it in order' : 'Write it'));
+      $('.chal-title').innerHTML = (step.titleJp ? RB.ui.jhtml(step.titleJp) + ' ' : '') + esc(step.title || (step.kind === 'choose' ? 'Read and choose' : step.kind === 'order' ? 'Put it in order' : step.kind === 'forge' ? 'Say it' : 'Write it'));
       const layer = { el: wrap, name: 'challenge', noAutofocus: true };
       let pad = null, locked = false, tabsApi = null, ime = null, order = null;
       const panes = {};
@@ -125,10 +149,20 @@ RB.challenge = (function () {
       // ---- 1 · the task ----
       let showEn = !!(step.showEn || (step.ctx && step.ctx.showEn) || (RB.game.s && RB.game.s.learn.profile === 'F'));
       function renderCtx() {
-        let h = opts.header ? '<div class="chal-situ">' + opts.header + '</div>' : '';
+        // the situation: the caller's, or the step's own (a task family's picture or device, L8/L10)
+        const situ = opts.header || step.header;
+        let h = situ ? '<div class="chal-situ">' + situ + '</div>' : '';
         if (step.ctx && step.ctx.jp) {
           h += '<div class="chal-ctx' + (step.ctx.big ? ' big' : '') + '">' + RB.ui.jhtml(step.ctx.jp) + '</div>';
           if (step.ctx.en && showEn) h += '<div class="chal-en">' + esc(RB.script.enVars(step.ctx.en)) + '</div>';
+        }
+        // a listening step (L16): the device's own voice, optional; the words are always a tap away and reading them
+        // is never help (it is recorded as reading, not listening). With no Japanese voice, the words are simply shown.
+        if (step.kind === 'listen') {
+          const canHear = !!(RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0);
+          if (!canHear) res.read = true;
+          h += '<div class="chal-listen">' + (canHear ? '<button class="pbtn" data-a="hear">' + I('sound') + '<span>Listen (your device\'s voice)</span></button>' : '<p class="muted small">No Japanese voice on this device: read it instead.</p>') +
+            (res.read ? '<div class="chal-ctx">' + RB.ui.jhtml(step.transcript.jp) + '</div>' : '<button class="pbtn quiet" data-a="readit">' + I('note') + '<span>Read it instead</span></button>') + '</div>';
         }
         if (step.prompt) h += '<div class="chal-prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
         // a guided example shows its model on the task (battle addendum RBN-07): said so, and
@@ -142,8 +176,11 @@ RB.challenge = (function () {
         // the translation toggle shares a line with "I don't know"
         const trSlot = wrap.querySelector('.task-tr');
         trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
+        const hear = ctxEl.querySelector('[data-a=hear]'), readit = ctxEl.querySelector('[data-a=readit]');
+        if (hear) hear.onclick = () => { try { RB.voice.speak(RB.jp.reading(step.transcript.jp)); } catch (e) { /* the voice is optional */ } };
+        if (readit) readit.onclick = () => { res.read = true; renderCtx(); };
         const tr = trSlot.querySelector('[data-a=tr]');
-        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; if (PH) PH.assist('translation'); renderCtx(); };
+        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); if (PH) PH.assist('translation'); renderCtx(); };
       }
 
       // ---- 2 · the sheet: one pane per input mode, kept when switching ----
@@ -158,7 +195,7 @@ RB.challenge = (function () {
             composeHost: line,
             pace: PH,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); if (PH) PH.draft(); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; if (why === 'correction') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) { active.helpUsed = true; helpCat(why === 'model' ? 'supplied' : 'constrain'); } if (why === 'correction' || why === 'suggestions') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -192,7 +229,7 @@ RB.challenge = (function () {
             b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + esc(o.en) + '</span>' : '');
             b.onclick = () => {
               if (locked) return;
-              if (step.kind === 'choose') evaluateChoice(o, b);
+              if (step.kind === 'choose' || step.kind === 'forge' || step.kind === 'listen') evaluateChoice(o, b);
               else {
                 evaluate(o.text, 'choice', {});
                 // like comprehension choices: a wrong option can't be picked twice
@@ -237,7 +274,43 @@ RB.challenge = (function () {
           order = { placed, lineBox, complete: () => placed.length === step.tiles.length, value: () => placed.map((x) => x.t) };
           draw();
         },
+        // a forged sentence's rungs 2 and 3 (L7): pieces of meaning, or word by word; some pieces don't belong
+        build(p) { piecesPane(p, 'build', step.chunks); },
+        fine(p) { piecesPane(p, 'fine', step.fine); },
       };
+      const pieceSets = {};
+      function piecesPane(p, key, list) {
+        const placed = [];
+        const pool = RB.util.rng(RB.util.hashStr(key + list.join(''))).shuffle(list.map((t, i) => ({ t, i })));
+        const lineBox = RB.ui.el('div', 'order-line forge-line');
+        lineBox.innerHTML = '<div class="pad-lab" id="fl-' + key + '">Your sentence</div><ol class="built" aria-labelledby="fl-' + key + '"></ol>' +
+          '<button class="pbtn" data-o="clr">' + I('erase') + '<span>Clear</span></button>';
+        line.appendChild(lineBox);
+        p.innerHTML = '<div class="pool-lab muted small">' + (key === 'fine' ? 'Tap the words in order: particles and endings are pieces of their own.' : 'Tap the pieces in the order they belong. Not every piece is needed.') + ' Tap a placed piece to take it back.</div><div class="tiles"></div>';
+        const built = lineBox.querySelector('.built'), tiles = p.querySelector('.tiles');
+        function draw() {
+          built.innerHTML = placed.length ? placed.map((pc, j) => '<li><button class="tile placed" data-rm="' + j + '">' + RB.ui.jhtml(pc.t) + '</button></li>').join('') : '<li class="empty muted small">Nothing placed yet.</li>';
+          tiles.innerHTML = pool.map((pc, j) => placed.indexOf(pc) >= 0 ? '' : '<button class="tile" data-add="' + j + '">' + RB.ui.jhtml(pc.t) + '</button>').join('') || '<span class="muted small">Every piece is placed.</span>';
+          lineBox.querySelector('[data-o=clr]').disabled = !placed.length;
+          syncSubmit();
+        }
+        const click = (e) => {
+          if (locked) return;
+          const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), clr = e.target.closest('[data-o=clr]');
+          if (add) placed.push(pool[+add.getAttribute('data-add')]);
+          else if (rm) placed.splice(+rm.getAttribute('data-rm'), 1);
+          else if (clr) placed.length = 0;
+          else return;
+          RB.audio && RB.audio.sfx('cursor');
+          draw();
+        };
+        p.addEventListener('click', click);
+        lineBox.addEventListener('click', click);
+        RB.learnUi.guardTaps(p);
+        RB.learnUi.guardTaps(lineBox);
+        pieceSets[key] = { placed, lineBox, complete: () => placed.length > 0, value: () => placed.map((x) => x.t) };
+        draw();
+      }
       function pane(m) {
         if (panes[m]) return panes[m];
         const p = RB.ui.el('div', 'pane pane-' + m);
@@ -254,10 +327,11 @@ RB.challenge = (function () {
         wrap.setAttribute('data-mode', m);
         if (pad) pad.compose.hidden = m !== 'hand';
         if (order) order.lineBox.hidden = m !== 'order';
+        for (const k in pieceSets) pieceSets[k].lineBox.hidden = m !== k;
         line.hidden = m === 'choice' || m === 'ime';
         submitBtn.hidden = m === 'choice';
         $('.sheet-lab .t').textContent = SHEET_LAB[m];
-        if (step.kind === 'write') sheet.setAttribute('aria-labelledby', 'tab-' + m);
+        if (step.kind === 'write' || step.kind === 'forge') sheet.setAttribute('aria-labelledby', 'tab-' + m);
         else { sheet.setAttribute('role', 'region'); sheet.setAttribute('aria-label', SHEET_LAB[m]); }
         if (m === 'hand' && pad) requestAnimationFrame(() => pad && pad.layout());
         if (m === 'ime' && ime) {
@@ -273,6 +347,7 @@ RB.challenge = (function () {
         let ready = true;
         if (mode === 'ime') ready = !!(ime && ime.inp.value.trim());
         if (mode === 'order') ready = !!(order && order.complete());
+        if (mode === 'build' || mode === 'fine') ready = !!(pieceSets[mode] && pieceSets[mode].complete());
         submitBtn.disabled = locked || !ready;
         submitBtn.setAttribute('aria-disabled', String(submitBtn.disabled));
       }
@@ -343,7 +418,7 @@ RB.challenge = (function () {
         if (PH) PH.submit(modeUsed); // stamped before evaluation: on time stays on time
         const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
-          if (meta.assisted) active.helpUsed = true;
+          if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); }
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
           success(modeUsed, r.notes);
           return;
@@ -432,16 +507,35 @@ RB.challenge = (function () {
           evaluate(pad.text(), 'hand', pad.meta());
         } else if (mode === 'ime') submitIme();
         else if (mode === 'order' && order && order.complete()) evaluateOrder(order.value());
+        else if ((mode === 'build' || mode === 'fine') && pieceSets[mode] && pieceSets[mode].complete()) evaluatePieces(pieceSets[mode].value(), mode);
+      }
+      // a forged sentence built from pieces: which authored reply it is (L7), judged like the letters' parts
+      function evaluatePieces(arr, modeUsed) {
+        if (PH) PH.submit(modeUsed);
+        const m = RB.forge.piecesMatch(step, arr);
+        if (m && m.family.ok) { res.given = { pieces: arr.slice(), mode: modeUsed, family: m.i }; success(modeUsed); return; }
+        if (!m) {
+          res.limits = (res.limits || 0) + 1;
+          fb('unsure', 'Outside what this can read', '<p>You built <span class="jp big" lang="ja">' + arr.map((x) => RB.ui.jhtml(x)).join(' ') + '</span>.</p><p class="muted small">It may be fine Japanese; this task can only read the sentences it was written with. Try another arrangement, or another rung.</p>');
+          return;
+        }
+        res.mistakes++;
+        if (res.firstTry == null) res.firstTry = false;
+        RB.audio && RB.audio.sfx('answer_wrong');
+        fb('no', 'Not quite.', '<div class="fb-why">' + enRuby(m.family.why ? m.family.why.en : 'That says something else.') + '</div><p class="muted small">Try again — take all the time you need.</p>');
+        if (opts.onMistake) opts.onMistake({});
       }
       function revealAnswer() {
         active.helpUsed = true;
+        helpCat('supplied');
         res.assisted = true;
         res.revealed = true;
         if (PH) PH.assist('reveal');
         let ans = '';
         if (step.kind === 'write') ans = plain(step.answer);
-        if (step.kind === 'choose') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
+        if (step.kind === 'choose' || step.kind === 'listen') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
         if (step.kind === 'order') ans = step.answer.map(plain).join(' ');
+        if (step.kind === 'forge') ans = step.answerReading;
         revealBtn.hidden = true;
         fb('reveal', 'The answer', '<p><span class="jp big" lang="ja">' + esc(ans) + '</span></p>' + explainHtml() + '<p class="muted small">This is recorded as assisted. Enter it to continue, or just continue.</p>');
         const w = wrap.querySelector('.fbwrap');
@@ -483,10 +577,14 @@ RB.challenge = (function () {
         if (pad) { pad.destroy(); pad = null; }
         RB.ui.popLayer(layer);
         RB.ui.help.hide(true);
+        res.help = active ? active.help || null : null; // L2: the strongest help this question used (callers may read it)
         active = null;
         res.cancelled = cancelled;
         if (!cancelled && step.item && !opts.noRecord) {
-          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind });
+          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind,
+            // the evidence log (L1): what was actually shown and supplied (src/learn/40_evidence.js)
+            ev: RB.evidence ? (step.kind === 'listen' && res.read ? 'context' : RB.evidence.modeOf(step, res.mode)) : null, help: res.help, exposed: !!(step.copy || step.guided),
+            repairs: res.recogRepairs || 0, written: res.mode === 'hand' && res.given && res.given.text ? res.given.text : null, task: step.id || null });
         }
         if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);
@@ -508,11 +606,13 @@ RB.challenge = (function () {
         return false;
       };
       renderCtx();
-      if (step.kind === 'write') {
-        tabsApi = RB.ui.folio.tabs($('.tabslot'), MODES, mode, (id) => {
+      if (step.kind === 'write' || step.kind === 'forge') {
+        tabsApi = RB.ui.folio.tabs($('.tabslot'), step.kind === 'forge' ? FORGE_MODES : MODES, mode, (id) => {
           if (locked) { tabsApi.select(mode); return; }
+          // the rung a player chooses is remembered for the next forged sentence (L7: the player picks the support)
+          if (step.kind === 'forge' && RB.game.settings) { RB.game.settings.forgeRung = id; RB.game.saveSettings(); }
           showMode(id, 'tab');
-        }, { label: 'Answer by', panelId: 'chal-sheet' });
+        }, { label: step.kind === 'forge' ? 'Support' : 'Answer by', panelId: 'chal-sheet' });
         tabsApi.el.classList.add('chal-tabs');
         tabsApi.el.querySelectorAll('.ptab').forEach((b) => { b.setAttribute('data-mode', b.getAttribute('data-id')); b.classList.remove('autofocus'); });
         sheet.setAttribute('role', 'tabpanel');
@@ -528,7 +628,14 @@ RB.challenge = (function () {
   async function run(id, ctx) {
     const ch = RB.content.challenges[id];
     if (!ch) { console.warn('missing challenge', id); return { ok: true }; }
-    if (RB.test && RB.test.auto) { RB.tasks.stepsOf(ch).forEach((st, i) => RB.test.solveStep(st, 'challenge ' + id + '[' + i + ']')); RB.game.s.flags['chal:' + id] = true; return { ok: true }; }
+    if (RB.test && RB.test.auto) {
+      RB.tasks.stepsOf(ch).forEach((st, i) => {
+        const r = RB.test.solveStep(st, 'challenge ' + id + '[' + i + ']');
+        if (st.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(st, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
+      });
+      RB.game.s.flags['chal:' + id] = true;
+      return { ok: true };
+    }
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
@@ -540,6 +647,8 @@ RB.challenge = (function () {
         if (step.teach && !RB.learn.introduced([].concat(step.item)[0])) await teachCard(step.teach);
         const r = await runStep(step, { ctxTag: id, cancelLabel: 'Come back later' });
         if (r.cancelled) return { ok: false, cancelled: true };
+        // a forged sentence changes the scene by what was said (L7): its reply's result, for the scene to read
+        if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
         results.push(r);
       }
       RB.game.s.flags['chal:' + id] = true;

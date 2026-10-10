@@ -360,3 +360,7 @@ body.in-panel .atlas-chip, body.in-dialogue .atlas-chip { display: none; }
 
 /* the Menu tag belongs to exploration; in battle and other modes only Word help stays */
 body:not([data-mode="world"]) .hud .menu-b { display: none; }
+/* L12, asking back: three ways to ask, over the line (src/ui/20_dialogue.js askBack) */
+.dlg-ask { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; margin-top: 6px; border-radius: 6px; }
+.dlg-ask .dbtn { display: inline-flex; flex-direction: column; align-items: flex-start; min-height: 44px; padding: 4px 10px; }
+.dlg-ask .dbtn .en { opacity: 0.8; }

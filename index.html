@@ -1999,6 +1999,10 @@ body.in-panel .atlas-chip, body.in-dialogue .atlas-chip { display: none; }
 
 /* the Menu tag belongs to exploration; in battle and other modes only Word help stays */
 body:not([data-mode="world"]) .hud .menu-b { display: none; }
+/* L12, asking back: three ways to ask, over the line (src/ui/20_dialogue.js askBack) */
+.dlg-ask { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; margin-top: 6px; border-radius: 6px; }
+.dlg-ask .dbtn { display: inline-flex; flex-direction: column; align-items: flex-start; min-height: 44px; padding: 4px 10px; }
+.dlg-ask .dbtn .en { opacity: 0.8; }
 
 /* ==== src/styles/51_sequence.css ==== */
 /* Illustrated sequences (src/ui/43_sequence.js): the scene controls in the dialogue sheet, the text hidden to
@@ -2256,7 +2260,7 @@ body.high-contrast .pad-area { --pad-paper: #ffffff; --pad-ink: #000000; --pad-g
    same-shape twin keep their row. */
 .rd-morerow { flex: 1 0 100%; display: flex; min-width: 0; }
 .rd-morerow:empty { display: none; }
-.rd-more { padding: 0 0.6em; font-size: 0.85em; max-width: 100%; white-space: normal; text-align: left; min-height: 32px; }
+.rd-more { padding: 0 0.6em; font-size: 0.85em; max-width: 100%; white-space: normal; text-align: left; min-height: 44px; }
 .rd-more .aside { opacity: 0.8; }
 .fbwrap .fb-how { margin: 0.2em 0 0.4em; font-size: 1.05em; }
 
@@ -3286,6 +3290,13 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 @media (max-width: 599px) and (min-height: 560px) {
   .combat-ui .intent.it-multi { max-height: min(calc(26 * var(--vh)), 300px); }
 }
+/* The Language Workshop (src/ui/64_workshop.js) and its task families */
+.ws-scene { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0; }
+.ws-pane { border: 1px dashed var(--line, rgba(80, 60, 30, 0.4)); border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+.ws-thing { display: inline-block; padding: 2px 6px; border-radius: 4px; background: var(--paper-2, rgba(0, 0, 0, 0.05)); font-size: 0.9em; }
+.ws-device { font-size: 0.92em; margin: 4px 0; }
+.chal-listen { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0; }
+.chal[data-kind=order] .tile, .forge-line .tile { white-space: normal; }
 
 /* ==== src/styles/61_battle_party.css ==== */
 /* Party responses in battle: the written word's own look for each response family (battle addendum
@@ -45307,6 +45318,14 @@ RB.script = (function () {
         cur.cmds.push(cmd);
         continue;
       }
+      // L12, asking back (expansion plan 05_LANGUAGE.md): `~ JP || EN` right after a line is how the speaker says it
+      // more simply when asked; the dialogue box then offers "Ask back"
+      if (line.startsWith('~ ')) {
+        const last = cur.cmds[cur.cmds.length - 1];
+        if (!last || last.op !== 'say') { errors.push(where + ' a simpler line (~) must follow a spoken line'); continue; }
+        last.simple = splitBilingual(line.slice(2).trim());
+        continue;
+      }
       const m = line.match(LINE_RE);
       if (!m) { errors.push(where + ' cannot parse: ' + line.slice(0, 60)); continue; }
       const bl = splitBilingual(m[3]);
@@ -45453,7 +45472,7 @@ RB.script = (function () {
             // someone still walking to their place speaks once they are there
             await RB.world.whenArrived(who, 3000);
           }
-          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
+          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line, simple: c.simple || null });
           // the reader moved on: every gesture cued for this line settles at its hold or its end
           if (RB.staging) RB.staging.settle('advance');
           break;
@@ -49419,6 +49438,9 @@ RB.practiceB = (function () {
         outs = next.length > 512 ? next.slice(0, 512) : next;
       }
     }
+    // a long reply has more mixes than are listed: its all-kana and all-kanji writings are always among them
+    // (typed answers are usually one or the other)
+    try { outs.push(RB.jp.reading(markup), RB.jp.plain(markup)); } catch (e) { /* the mixes above stand */ }
     return Array.from(new Set(outs.map(norm)));
   }
   // A family: { parts:[markup…], also?:[[markup…]…], ok, tone, en, why? }. A part that
@@ -51842,6 +51864,25 @@ RB.test = (function () {
       if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'no correct option' });
     } else if (step.kind === 'order') {
       if (!step.answer || step.answer.length !== step.tiles.length) T.problems.push({ where, msg: 'order mismatch' });
+    } else if (step.kind === 'forge') {
+      // every accepted reply must be readable typed, handwritten and from its own pieces; the first one is "said"
+      const F = RB.forge.prepare(step);
+      let first = -1;
+      F.families.forEach((f, i) => {
+        if (!f.ok) return;
+        if (first < 0) first = i;
+        for (const q of RB.practiceB.sequences(f)) {
+          const j = F.judge(RB.jp.reading(q.join(' ')), {});
+          if (!j.ok) T.problems.push({ where, msg: 'forge: an accepted reply is not read', reply: q.join(' ') });
+          const pm = RB.forge.piecesMatch(F, q);
+          if (!pm || !pm.family.ok) T.problems.push({ where, msg: 'forge: an accepted reply cannot be built from its pieces', reply: q.join(' ') });
+        }
+      });
+      if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: 'forge', ev: 'construct', ctx: String(where || '') });
+      return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'build', given: { family: first } };
+    } else if (step.kind === 'listen') {
+      if (!step.transcript || !step.transcript.jp) T.problems.push({ where, msg: 'listen: no transcript' });
+      if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'listen: no correct option' });
     } else T.problems.push({ where, msg: 'unknown step kind ' + step.kind });
     if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || '') });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };
@@ -52096,9 +52137,12 @@ RB.learn = (function () {
 
   // Choose up to n items from pool, favouring due and weak items, never the
   // same item twice in a row, and not an item just answered wrongly.
+  // days between reviews by box, for spacing that notices days (L6)
+  const DAY_GAP = [1, 1, 2, 4, 9, 20];
   function pick(pool, n, opts) {
     opts = opts || {};
     const now = clock();
+    const today = Math.floor((opts.now != null ? opts.now : Date.now()) / 86400000);
     const seen = new Set();
     const cands = [];
     for (const id of pool) {
@@ -52111,8 +52155,12 @@ RB.learn = (function () {
         if (now - r.last < COOLDOWN && !opts.ignoreCooldown) continue;
         if (r.cool > now && !opts.ignoreCooldown) continue;
         const overdue = now - r.due;
-        score = (overdue >= 0 ? 4 + Math.min(overdue, 10) * 0.2 : 0) + (5 - r.box) * 0.8 + Math.random();
-        if (r.box >= 4 && overdue < 0) score -= 4; // already solid: rarely drill
+        // L6 (expansion; C-36): spacing also notices days. An item last met on an earlier day, longer ago than its
+        // box's gap, counts as due too, so an evening's many events don't stand in for remembering it next week.
+        // It only orders suggestions: nothing shows an overdue count, a streak or a reminder.
+        const dueByDays = r.lastDay != null && today - r.lastDay >= DAY_GAP[Math.min(r.box, DAY_GAP.length - 1)];
+        score = (overdue >= 0 ? 4 + Math.min(overdue, 10) * 0.2 : 0) + (dueByDays ? 2.5 : 0) + (5 - r.box) * 0.8 + Math.random();
+        if (r.box >= 4 && overdue < 0 && !dueByDays) score -= 4; // already solid: rarely drill
       }
       if (score >= 0) cands.push({ id, score });
     }
@@ -52135,7 +52183,7 @@ RB.learn = (function () {
     const by = (k) => items.filter((r) => kindOf(r.id) === k);
     return { k: by('k').length, v: by('v').length, g: by('g').length, c: by('c').length, steady: items.filter((r) => r.box >= 3).length };
   }
-  return { record, rec, pick, weakest, summary, introduced, markIntroduced, taughtKana, kanaKnown, clock, tick, kindOf };
+  return { DAY_GAP, record, rec, pick, weakest, summary, introduced, markIntroduced, taughtKana, kanaKnown, clock, tick, kindOf };
 })();
 
 
@@ -52462,6 +52510,223 @@ RB.meter = (function () {
     RB.learn.record = wrapped;
   }
   return { of, count, report, where };
+})();
+
+
+/* ==== src/learn/40_evidence.js ==== */
+/* The evidence log (expansion L1, L2, L6, L20; docs/future/plan/05_LANGUAGE.md). Beside the scheduler's own record
+ * (src/learn/10_mastery.js, unchanged), every committed answer leaves an honest trace of what happened:
+ *
+ *   how it was answered (evidence mode): recog (chose among options) · context (understood a passage in a situation)
+ *     · construct (ordered or forged a sentence) · typed · hand (handwritten) · listen (device voice; optional)
+ *   where (context type: story, battle, field, activity, practice, atlas, exam, chart)
+ *   what help supplied, by category (L2): conceptual < constrain < supplied; access and input help never count
+ *   whether the first committed answer was right, recognition repairs (input data, never a mistake), whether a model
+ *   was shown (exposed: copying and guided examples are practice, not independent production)
+ *
+ * Per item (s.learn.items[id]): `log` (the last 12 attempts), `ev` (independent successes per mode, plus `transfer`:
+ * an independent success in a context type the item had not succeeded in before), `evTry` (attempts per mode),
+ * `okIn` (context types of independent successes), `lastDay`. Kanji have their own record (s.learn.kanji[char]):
+ * the words they were met and used in, with each word's reading, so meeting 水 in みず never certifies すい.
+ * Nothing earlier is rewritten: an older item simply starts its log empty. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.evidence = (function () {
+  'use strict';
+  const LOG = 12;
+  const MODES = ['recog', 'context', 'construct', 'typed', 'hand', 'listen'];
+  const COUNTING = { constrain: true, supplied: true }; // help that counts as "assisted" for a star (L2)
+  const day = (t) => Math.floor((t == null ? Date.now() : t) / 86400000);
+  const isKanji = (ch) => /[一-鿿㐀-䶿々]/.test(ch);
+
+  // the evidence mode of an answer, from the step and the input used
+  function modeOf(step, inputMode) {
+    if (!step) return 'recog';
+    if (step.kind === 'listen') return 'listen';
+    if (step.kind === 'order' || step.kind === 'forge') return inputMode === 'hand' ? 'hand' : inputMode === 'ime' ? 'typed' : inputMode === 'choice' ? 'recog' : 'construct';
+    if (step.kind === 'choose') return step.ctx && step.ctx.jp && plainLen(step.ctx.jp) > 12 ? 'context' : 'recog';
+    if (inputMode === 'hand') return 'hand';
+    if (inputMode === 'ime') return 'typed';
+    return 'recog';
+  }
+  function plainLen(jp) { try { return RB.tasks.plain(jp).length; } catch (e) { return String(jp).length; } }
+  const independent = (r) => !!(r.ok && r.firstTry !== false && !r.exposed && !(r.help && COUNTING[r.help]) && !r.assisted);
+
+  function add(s, ids, r) {
+    if (!s || !s.learn || !ids) return;
+    const list = Array.isArray(ids) ? ids : [ids];
+    const where = RB.meter ? RB.meter.where(r.ctx) : 'story';
+    const today = day(r.t);
+    const entry = { d: today, m: r.ev || 'recog', c: where, h: r.help || null, f: r.firstTry === false || !r.ok ? 0 : 1, x: r.exposed ? 1 : 0 };
+    if (r.repairs) entry.r = r.repairs;
+    const indep = independent(r);
+    for (const id of list) {
+      const it = s.learn.items[id];
+      if (!it) continue;
+      const log = it.log || (it.log = []);
+      log.push(entry);
+      if (log.length > LOG) log.splice(0, log.length - LOG);
+      const tries = it.evTry || (it.evTry = {});
+      tries[entry.m] = (tries[entry.m] || 0) + 1;
+      if (indep) {
+        const ev = it.ev || (it.ev = {});
+        ev[entry.m] = (ev[entry.m] || 0) + 1;
+        const okIn = it.okIn || (it.okIn = []);
+        if (okIn.length && okIn.indexOf(where) < 0) ev.transfer = (ev.transfer || 0) + 1;
+        if (okIn.indexOf(where) < 0) okIn.push(where);
+      }
+      it.lastDay = today;
+      // kanji: the words they appear in (with that word's reading), and whether they were written by hand
+      if (id.slice(0, 2) === 'v:') kanjiOf(s, id.slice(2), r, entry, indep);
+    }
+  }
+  function kanjiRec(s, ch) {
+    const K = s.learn.kanji || (s.learn.kanji = {});
+    return K[ch] || (K[ch] = { met: 0, words: {}, hand: 0, handOk: 0, lastDay: null });
+  }
+  function readingOf(surface) {
+    try { const e = RB.lex && RB.lex.get ? RB.lex.get(surface) : null; return e && e.r ? e.r : null; } catch (e) { return null; }
+  }
+  function kanjiOf(s, surface, r, entry, indep) {
+    const chars = Array.from(surface).filter(isKanji);
+    if (!chars.length) return;
+    const rd = readingOf(surface);
+    const key = surface + (rd ? '（' + rd + '）' : '');
+    const written = r.written ? Array.from(String(r.written)) : [];
+    for (const ch of chars) {
+      const k = kanjiRec(s, ch);
+      k.met++;
+      k.words[key] = (k.words[key] || 0) + 1;
+      k.lastDay = entry.d;
+      // written by hand in this answer (not merely shown in it)
+      if (entry.m === 'hand' && written.indexOf(ch) >= 0) { k.hand++; if (indep) k.handOk++; }
+    }
+  }
+  // L20: the kanji chart's practice square (src/ui/62_kanjichart.js): tracing over the model is exposed practice,
+  // writing from memory is handwriting practice. Never a mistake, never a box change.
+  function chartPractice(s, ch, o) {
+    if (!s || !s.learn || !isKanji(ch)) return null;
+    const k = kanjiRec(s, ch);
+    k.practice = k.practice || { traced: 0, memory: 0, memoryOk: 0 };
+    if (o && o.traced) k.practice.traced++;
+    else { k.practice.memory++; if (o && o.ok) k.practice.memoryOk++; }
+    k.lastDay = day();
+    return k;
+  }
+  // a plain summary for an item's page (L4): never a single percentage, always with its denominator
+  function profile(s, id) {
+    const it = s && s.learn && s.learn.items[id];
+    if (!it) return null;
+    const ev = it.ev || {}, tries = it.evTry || {};
+    const recent = (it.log || []).slice(-10);
+    return {
+      id, box: it.box, seen: it.seen,
+      recogRecent: { ok: recent.filter((e) => (e.m === 'recog' || e.m === 'context') && e.f && !e.h).length, of: recent.filter((e) => e.m === 'recog' || e.m === 'context').length },
+      modes: Object.fromEntries(MODES.map((m) => [m, { independent: ev[m] || 0, tries: tries[m] || 0 }])),
+      contexts: (it.okIn || []).slice(), transfer: ev.transfer || 0, helped: (it.log || []).filter((e) => e.h).length,
+      lastDay: it.lastDay == null ? null : it.lastDay, limited: (it.log || []).length < 3,
+    };
+  }
+
+  // every committed answer passes through RB.learn.record: log it there (after the meter)
+  if (RB.learn && RB.learn.record && !RB.learn.record.__evidence) {
+    const inner = RB.learn.record;
+    const wrapped = function (id, result) {
+      const out = inner(id, result);
+      try { if (id && RB.game && RB.game.s && result) add(RB.game.s, id, result); } catch (e) { /* the log never breaks an answer */ }
+      return out;
+    };
+    wrapped.__evidence = true; wrapped.__metered = !!inner.__metered;
+    RB.learn.record = wrapped;
+  }
+  return { modeOf, add, chartPractice, profile, independent, day, MODES, COUNTING, LOG };
+})();
+
+
+/* ==== src/learn/50_forge.js ==== */
+/* Sentence forging (expansion L7; docs/future/plan/05_LANGUAGE.md): say what you need. A forge step states an
+ * intention ("Ask the keeper to leave the side gate open until evening"), sometimes with a picture or a situation,
+ * and accepts any of its authored replies. The answer space is the villagers' letters' (src/engine/79_bcore.js,
+ * RB.practiceB): families of approved parts, optional parts ('?'), either sentence order, kanji or kana per word.
+ * Text outside it is "outside what this can read", never marked wrong.
+ *
+ * The support ladder (the player picks a rung and can change it mid-task, as input modes switch today):
+ *   1 'choice'  choose among complete sentences               evidence: recog
+ *   2 'build'   arrange meaningful chunks (some don't belong)  construct
+ *   3 'fine'    arrange it word by word, particles and endings separate   construct
+ *   4 'ime' / 'hand'  type or handwrite it                     typed / hand
+ *
+ * A step: { kind: 'forge', id, title, prompt: { en, jp? }, ctx?, header?, families: [{ parts, also?, ok, tone?, en,
+ *   why?, result? }], extra?: [markup chunks that don't belong], extraFine?: [words that don't belong], explain?,
+ *   item?, concepts? }. A family's `result` (a short id) is what the scene does next: the keeper opens the gate, the
+ *   barge goes where you sent it (RB.challenge.run leaves it in var._forge). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.forge = (function () {
+  'use strict';
+  const B = () => RB.practiceB;
+  const reading = (m) => { try { return RB.jp.reading(m).replace(/\s+/g, ''); } catch (e) { return String(m); } };
+  const bare = (p) => (typeof p === 'string' && p[0] === '?' ? p.slice(1) : p);
+  // the word-by-word tiles of a chunk: its markup tokens, punctuation kept with the word before it
+  function words(chunk) {
+    const out = [];
+    for (const t of String(bare(chunk)).split(' ').filter(Boolean)) {
+      if (/^[。、！？]$/.test(t) && out.length) out[out.length - 1] += ' ' + t;
+      else out.push(t);
+    }
+    return out;
+  }
+  function prepare(step) {
+    if (step.__forge) return step;
+    const fams = step.families || [];
+    const oks = fams.filter((f) => f.ok);
+    if (!oks.length) throw new Error('forge ' + (step.id || '?') + ': no accepted reply');
+    const sp = B().space(fams);
+    let longest = '';
+    const okReadings = [];
+    fams.forEach((f) => B().sequences(f).forEach((q) => { const r = reading(q.join(' ')); if (f.ok) okReadings.push(r); if (r.length > longest.length) longest = r; }));
+    const chunks = B().pieces(fams, step.extra);
+    const fine = [];
+    for (const c of chunks) for (const w of words(c)) if (fine.indexOf(w) < 0) fine.push(w);
+    for (const w of step.extraFine || []) if (fine.indexOf(w) < 0) fine.push(w);
+    const out = Object.assign({}, step, {
+      __forge: true, kind: 'forge',
+      answer: B().replyOf(oks[0]), answerReading: reading(B().replyOf(oks[0])), fullAnswer: longest, accept: okReadings, mode: 'reading',
+      sentences: fams.map((f) => ({ jp: B().replyOf(f), en: f.en, ok: !!f.ok, why: f.why || null, _f: f })),
+      chunks, fine,
+      judge(text, jo) {
+        const m = B().match(sp, text, { handwritten: !!(jo && jo.handwritten) });
+        if (!m) return { ok: false, limit: true, head: 'Outside what this can read', html: limitHtml(fams), feedback: [] };
+        if (m.family.ok) return { ok: true, matched: m.family, family: m.i };
+        return { ok: false, family: m.i, feedback: [{ code: 'intent', en: m.family.why ? m.family.why.en : 'That says something else.' }] };
+      },
+    });
+    return out;
+  }
+  // pieces placed in order (chunks or words): which family they make, or null (outside the space)
+  function piecesMatch(step, picked) { return B().partsMatch(step.families, picked); }
+  function limitHtml(fams) {
+    const esc = RB.util.esc;
+    return '<p>This task can only read the sentences it was written with (' + fams.length + ' of them). Yours may be perfectly good Japanese; it is simply outside what it can check, so it is not marked wrong.</p>' +
+      '<p class="muted small">Sentences it can read say:</p><ul class="pb-shapes">' + fams.filter((f) => f.ok).map((f) => '<li>' + esc(f.en) + '</li>').join('') + '</ul>';
+  }
+  // the family a result came from, and what it does in the scene
+  function outcome(step, res) {
+    const fams = step.families || [];
+    let i = res && res.given && res.given.family != null ? res.given.family : -1;
+    if (i < 0 && res && res.given && res.given.option && res.given.option._f) i = fams.indexOf(res.given.option._f);
+    const f = fams[i] || fams.find((x) => x.ok) || null;
+    return f ? { family: i, result: f.result || null, tone: f.tone || null, en: f.en } : null;
+  }
+  const RUNGS = ['choice', 'build', 'fine', 'ime', 'hand'];
+  // the rung a player starts on: the one they chose last time, else by level (Foundations and Elementary: chunks;
+  // Intermediate: word by word; Advanced: typing)
+  function startRung(settings, profile) {
+    const r = settings && settings.forgeRung;
+    if (RUNGS.indexOf(r) >= 0) return r;
+    return profile === 'A' ? 'ime' : profile === 'I' ? 'fine' : 'build';
+  }
+  return { prepare, piecesMatch, outcome, words, RUNGS, startRung };
 })();
 
 
@@ -53332,6 +53597,7 @@ RB.ui.dialogue = (function () {
       '<button class="dbtn b-voice" title="Replay the Japanese line with this device\'s voice">' + I('sound') + '<span>Voice</span></button>' +
       '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
       '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
+      '<button class="dbtn b-ask hidden" title="Ask them to say it again, slower or more simply">' + I('help') + '<span>Ask back</span></button>' +
       '</div><button class="dbtn primary b-next">Next' + I('next') + '</button></div></div>';
     // A press that began before this line appeared (the click that chose a
     // response or finished an exchange) never also dismisses it; keyboard
@@ -53351,6 +53617,7 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); syncCtrl(); };
     box.querySelector('.b-words').onclick = () => { RB.ui.help.toggle(); syncCtrl(); };
     box.querySelector('.b-skip').onclick = () => { RB.game.setFastForward(true); advance(); };
+    box.querySelector('.b-ask').onclick = () => askBack();
     RB.ui.root.appendChild(box);
     // Keep this sentence: a tab in the sheet's tab row, outside the text and the controls (src/ui/66_words_pages.js)
     if (RB.ui.keep) RB.ui.keep.attach(box);
@@ -53444,6 +53711,7 @@ RB.ui.dialogue = (function () {
     renderSub();
     box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
+    box.querySelector('.b-ask').classList.toggle('hidden', !(line.simple && line.simple.jp));
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
     syncCtrl();
     box.querySelector('.txt').scrollTop = 0;
@@ -53463,6 +53731,39 @@ RB.ui.dialogue = (function () {
       else if (RB.sequence && RB.sequence.skipping()) setTimeout(() => { if (pending === res) advance(true); }, 30);
       else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
     });
+  }
+  // L12, asking back: the player asks in Japanese (again, slower, more simply); the speaker answers with the
+  // authored simpler version. Asking well is a success, never a failure: it is recorded as understanding in context.
+  const ASKS = [
+    { jp: 'もう {一度|いちど} 、 お{願|ねが}いします 。', en: 'Once more, please.', how: 'again' },
+    { jp: 'もう {少|すこ}し ゆっくり {話|はな}して ください 。', en: 'A little slower, please.', how: 'slower' },
+    { jp: 'もっと {簡単|かんたん} に {言|い}って もらえます か 。', en: 'Could you say it more simply?', how: 'simpler' },
+  ];
+  function askBack() {
+    if (!current || !current.src || !current.src.simple) return;
+    const src = current.src;
+    const sheet = RB.ui.el('div', 'dlg-ask paper');
+    sheet.setAttribute('role', 'group');
+    sheet.setAttribute('aria-label', 'Ask back');
+    sheet.innerHTML = '<div class="small muted">Ask them:</div>' + ASKS.map((a, i) => '<button class="dbtn" data-ask="' + i + '"><span class="jp">' + RB.ui.jhtml(a.jp) + '</span><span class="en small">' + esc(a.en) + '</span></button>').join('');
+    box.querySelector('.dlg-sheet').appendChild(sheet);
+    const f = sheet.querySelector('button'); if (f) f.focus({ preventScroll: true });
+    sheet.onclick = (e) => {
+      const b = e.target.closest('[data-ask]');
+      if (!b) return;
+      const a = ASKS[+b.dataset.ask];
+      sheet.remove();
+      const s = RB.game.s;
+      if (s) s.backlog.push({ who: 'pc', jp: a.jp, en: a.en });
+      // again and slower repeat the line (slower with the device's voice, if any); simpler gives the simpler version
+      if (a.how === 'simpler') current = Object.assign({}, src, { jp: src.simple.jp, en: src.simple.en || src.en, src });
+      if (s) s.backlog.push({ who: src.who, jp: current.jp, en: current.en });
+      renderMain(); renderSub();
+      requestAnimationFrame(syncMore);
+      if (a.how === 'slower' && RB.voice && RB.voice.speak) { try { RB.voice.speak(RB.jp.reading(current.jp), { rate: 0.75 }); } catch (err) { /* optional */ } }
+      try { RB.learn.record('c:ask_back', { ok: true, mode: 'choice', assisted: false, ctx: 'story', ev: 'context', kind: 'ask' }); } catch (err) { /* recording never blocks the scene */ }
+      box.querySelector('.b-ask').classList.add('hidden');
+    };
   }
   function renderMain() {
     if (!current) return;
@@ -68984,7 +69285,7 @@ RB.pad = (function () {
       if (a === 'clear') clearInk();
       if (a === 'small') { P.small = !P.small; b.classList.toggle('on', P.small); b.setAttribute('aria-pressed', String(P.small)); el.querySelector('.more-on').hidden = !P.small; drawBg(); if (P.strokes.length) recognize(); }
       if (a === 'more') { const open = b.getAttribute('aria-expanded') !== 'true'; b.setAttribute('aria-expanded', String(open)); el.classList.toggle('more-open', open); }
-      if (a === 'suggest') { P.moreOpen = true; P.moreUsed = true; renderRead(); live.textContent = 'Other readings shown. This character counts as assisted.'; const f = candsEl.querySelector('.cand:not([hidden])'); if (f) f.focus(); }
+      if (a === 'suggest') { P.moreOpen = true; P.moreUsed = true; if (PH) PH.review('candidate'); renderRead(); live.textContent = 'Other readings shown. This character counts as assisted.'; const f = candsEl.querySelector('.cand:not([hidden])'); if (f) f.focus(); }
       if (a === 'confirm') confirm();
       if (a === 'del') remove();
       if (a === 'chart') chart();
@@ -69800,6 +70101,9 @@ RB.kanjiChart = (function () {
         body = '<p>Other readings: <span lang="ja">' + others.map((c) => glyph(c)).join(' ') + '</span>. Compare with the model.</p>';
       }
       // stroke order: count, then order/direction notes when they are certain
+      // L20: the practice is recorded for the kanji's page (src/learn/40_evidence.js): tracing over the model is
+      // exposed practice, writing from memory is handwriting practice. Never a mistake, never a box change.
+      if (RB.evidence && RB.game && RB.game.s && isKanji(target)) RB.evidence.chartPractice(RB.game.s, target, { traced: !!P.model || !!P.modelSeen, ok: at === 0 && r.status === 'confident' });
       const want = RB.recog.strokeCount(target), got = P.strokes.length;
       const notes = [];
       if (got !== want) notes.push(T + ' has ' + want + ' stroke' + (want === 1 ? '' : 's') + '; you wrote ' + got + '.');
@@ -69817,8 +70121,8 @@ RB.kanjiChart = (function () {
       if (!b || b.disabled) return;
       const a = b.getAttribute('data-pp');
       if (a === 'undo') { P.strokes.pop(); redraw(); }
-      if (a === 'clear') { P.strokes = []; P.cur = null; redraw(); fb.innerHTML = '<p class="muted small">Write <span lang="ja">' + glyph(target) + '</span> in the square, then Check.</p>'; fb.removeAttribute('data-fb'); fb.className = 'kc-pp-fb'; }
-      if (a === 'model') { P.model = !P.model; b.setAttribute('aria-pressed', String(P.model)); b.classList.toggle('on', P.model); drawBg(); }
+      if (a === 'clear') { P.strokes = []; P.cur = null; if (!P.model) P.modelSeen = false; redraw(); fb.innerHTML = '<p class="muted small">Write <span lang="ja">' + glyph(target) + '</span> in the square, then Check.</p>'; fb.removeAttribute('data-fb'); fb.className = 'kc-pp-fb'; }
+      if (a === 'model') { P.model = !P.model; if (P.model) P.modelSeen = true; b.setAttribute('aria-pressed', String(P.model)); b.classList.toggle('on', P.model); drawBg(); }
       if (a === 'check') check();
     });
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => layout()) : null;
@@ -69835,6 +70139,90 @@ RB.kanjiChart = (function () {
   let lastPP = null;
 
   return { open, glyph, practicePad, _lastPractice: () => lastPP };
+})();
+
+
+/* ==== src/ui/64_workshop.js ==== */
+/* The Language Workshop (expansion L7–L17b): one worked example of each new task family, at any of the four levels,
+ * from Words › Ways to practise. Practice only: it records like any practice (src/learn/40_evidence.js, context
+ * "practice"), never changes the campaign's level, and a level above yours is offered as a stretch, never imposed
+ * (L18). Content: src/content/workshop/. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui = RB.ui || {};
+RB.ui.workshop = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const J = (m) => RB.ui.jhtml(m);
+  const LV = [['F', 'Foundations'], ['E', 'Elementary'], ['I', 'Intermediate'], ['A', 'Advanced']];
+  let lay = null;
+
+  function open() {
+    if (lay) return;
+    const s = RB.game.s;
+    const mine = (s && s.learn.profile) || 'E';
+    let lv = mine;
+    const opener = document.activeElement;
+    const close = () => {
+      if (!lay) return;
+      if (opener && opener.focus && document.contains(opener)) opener.focus({ preventScroll: true });
+      RB.ui.popLayer(lay);
+      lay = null;
+    };
+    const fr = RB.ui.folio.frame({ onClose: close, closeLabel: 'Back', closeIcon: 'back', cls: 'folio-sheet folio-workshop' });
+    fr.setTitle(RB.ui.label('{言葉|ことば} の {工房|こうぼう}', 'The workshop'), 'One example of each way to use Japanese');
+    function render() {
+      const fams = (RB.content.workshop && RB.content.workshop.families) || [];
+      fr.box.innerHTML = '<div class="spread"><div class="leaf" tabindex="0" aria-label="The workshop">' +
+        '<p>Each of these is a way the new chapters ask you to use Japanese: to get something done, not just to recognise it. Try any of them at any level. It is practice: nothing here changes your journey or your level.</p>' +
+        '<fieldset class="field"><legend>Level</legend><div class="opts">' + LV.map(([k, en]) => '<label class="opt"><input type="radio" name="ws-lv" value="' + k + '"' + (k === lv ? ' checked' : '') + '><span>' + esc(en) + (k === mine ? ' (yours)' : LV.findIndex((x) => x[0] === k) > LV.findIndex((x) => x[0] === mine) ? ' (a stretch)' : '') + '</span></label>').join('') + '</div></fieldset>' +
+        '<ul class="entries ws-list">' + fams.map((f) => '<li class="entry"><span class="mark">' + I('practice') + '</span><div><div class="t">' + J(f.jp) + '<span class="en">' + esc(f.en) + '</span></div>' +
+          '<div class="small muted">' + esc(f.what) + '</div><div class="row-acts"><button class="pbtn" data-ws="' + esc(f.id) + '">' + I('practice') + '<span>Try it</span></button></div></div></li>').join('') + '</ul>' +
+        '</div></div>';
+      fr.box.querySelectorAll('input[name=ws-lv]').forEach((r) => { r.onchange = () => { lv = r.value; }; });
+      fr.box.onclick = async (e) => {
+        const b = e.target.closest('[data-ws]');
+        if (!b || b.disabled) return;
+        const f = fams.find((x) => x.id === b.dataset.ws);
+        if (!f) return;
+        b.disabled = true;
+        try { await tryFamily(f, lv, close); } finally { b.disabled = false; }
+      };
+    }
+    lay = { el: fr.scrim, name: 'workshop' };
+    lay.onCancel = close;
+    RB.ui.pushLayer(lay);
+    render();
+  }
+  async function tryFamily(f, lv, close) {
+    if (f.scene) {
+      // asking back is a scene: it plays in the dialogue box, with Ask back on its harder lines
+      close();
+      if (RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen()) RB.ui.menu.closeAll ? RB.ui.menu.closeAll() : RB.ui.menu.close();
+      await new Promise((r) => setTimeout(r, 60));
+      if (RB.game.mode() === 'world') await RB.script.run(f.scene);
+      return;
+    }
+    const ch = RB.content.challenges['ws.' + f.id];
+    if (!ch) return;
+    const steps = (ch.tiers && (ch.tiers[lv] || ch.tiers.E)) || [];
+    for (const st of steps) {
+      const step = Object.assign({}, st, { title: (ch.title && ch.title.en) || f.en, titleJp: ch.title && ch.title.jp });
+      const r = await RB.challenge.runStep(step, { ctxTag: 'practice:workshop', cancelLabel: 'Back to the workshop' });
+      if (r.cancelled) return;
+    }
+  }
+  if (RB.practice && RB.practice.addActivity) {
+    RB.practice.addActivity({
+      id: 'workshop', en: 'The workshop', jp: '{言葉|ことば} の {工房|こうぼう}', icon: 'practice', order: 20,
+      available: () => true,
+      here: () => true,
+      note: () => 'One example of each new way to use Japanese, at any level.',
+      begin: () => open(),
+    });
+  }
+  return { open, tryFamily };
 })();
 
 
@@ -69860,7 +70248,20 @@ RB.challenge = (function () {
   let active = null; // {step, assisted}
 
   function isActive() { return !!active; }
-  function noteHelp() { if (active) active.helpUsed = true; }
+  // L2 (expansion plan 05_LANGUAGE.md): what help supplied, by category, strongest kept per question:
+  // conceptual (a word explained, an English line for a production prompt) < constrain (narrows the answer:
+  // suggestions, the chart, word help on a word of the answer, Translate on a comprehension question) < supplied
+  // (the answer or a model shown). Access and input help (text size, redrawing, a same-shape twin) never count.
+  const HELP_RANK = { conceptual: 1, constrain: 2, supplied: 3 };
+  function helpCat(cat) { if (!active || !HELP_RANK[cat]) return; if (!active.help || HELP_RANK[cat] > HELP_RANK[active.help]) active.help = cat; }
+  function noteHelp(tok) {
+    if (!active) return;
+    active.helpUsed = true;
+    // word help on a word that is (part of) the answer narrows it; otherwise it explains the situation
+    const ans = active.step && active.step.answer ? plain(active.step.answer) : '';
+    const surf = tok && (tok.surface || tok.s) ? String(tok.surface || tok.s) : '';
+    helpCat(surf && ans && (ans.indexOf(surf) >= 0 || surf.indexOf(ans) >= 0) ? 'constrain' : 'conceptual');
+  }
 
   function plain(s) { return RB.tasks.plain(s || ''); }
   // English feedback may carry {漢字|かな} markup for a word it quotes: give it ruby
@@ -69869,7 +70270,7 @@ RB.challenge = (function () {
   // opts.handwritten: the text came from the writing pad, so characters that
   // are written with one shape (ロ/口, へ/ヘ…) count as one (RB.answers).
   function check(input, step, opts) {
-    if (step.kind !== 'write') return { ok: false };
+    if (step.kind !== 'write' && step.kind !== 'forge') return { ok: false };
     // an authored bounded answer space (practice suite B): the step judges its own replies;
     // { ok, feedback, limit?, head?, html? } — `limit` means "outside what this can read", not wrong
     if (typeof step.judge === 'function') { try { return step.judge(input, opts || {}) || { ok: false }; } catch (e) { console.error('judge', e); return { ok: false, feedback: [] }; } }
@@ -69888,9 +70289,11 @@ RB.challenge = (function () {
     return RB.util.rng(RB.util.hashStr(key + '#' + turn));
   }
   function choicesFor(step) {
+    // a forged sentence's first rung: its complete sentences, with their readings (L7)
+    if (step.kind === 'forge') return orderRng('forge|' + (step.id || '') + '|' + step.sentences.map((o) => o.jp).join('|')).shuffle(step.sentences).map((o) => Object.assign({}, o));
     // Authors (and the meaning questions RB.tasks builds) list the right
     // option first, so where an option sits must never give the answer away.
-    if (step.kind === 'choose') {
+    if (step.kind === 'choose' || step.kind === 'listen') {
       const key = (step.item || '') + '|' + ((step.prompt && step.prompt.en) || '') + '|' + step.options.map((o) => o.en || o.jp || '').join('|');
       return orderRng(key).shuffle(step.options).map((o) => Object.assign({}, o));
     }
@@ -69913,7 +70316,15 @@ RB.challenge = (function () {
     { id: 'choice', en: 'Choose', jp: '{選|えら}ぶ', icon: 'list' },
     { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
   ];
-  const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces' };
+  const SHEET_LAB = { hand: 'Write', choice: 'Choose', ime: 'Type', order: 'Arrange the pieces', build: 'Build it from pieces', fine: 'Build it word by word' };
+  // a forged sentence's support ladder (L7): choose a sentence · pieces · word by word · type or write
+  const FORGE_MODES = [
+    { id: 'choice', en: 'Choose', jp: '{選|えら}ぶ', icon: 'list' },
+    { id: 'build', en: 'Pieces', jp: '{組|く}む', icon: 'pieces' },
+    { id: 'fine', en: 'Word by word', jp: '{一語|いちご}ずつ', icon: 'pieces' },
+    { id: 'ime', en: 'Type', jp: '{打|う}つ', icon: 'keyboard' },
+    { id: 'hand', en: 'Write', jp: '{書|か}く', icon: 'practice' },
+  ];
   // A kana-practice step (a k: item) asks for kana, so its pad reads kana only;
   // every other step reads kanji too when the player does (RB.pad).
   const kanaTask = (step) => [].concat(step.item || []).some((i) => typeof i === 'string' && i.slice(0, 2) === 'k:');
@@ -69923,13 +70334,14 @@ RB.challenge = (function () {
   // Render one step; resolves with a result object.
   function runStep(step, opts) {
     opts = opts || {};
+    if (step && step.kind === 'forge' && RB.forge) step = RB.forge.prepare(step);
     if (RB.test && RB.test.auto) return Promise.resolve(RB.test.solveStep(step, 'step ' + (step.title || step.item)));
     return new Promise((resolve) => {
       const st = RB.game.settings;
-      let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : 'choice';
+      let mode = step.kind === 'write' ? (opts.mode || st.input || 'hand') : step.kind === 'order' ? 'order' : step.kind === 'forge' ? (opts.mode || RB.forge.startRung(st, RB.game.s && RB.game.s.learn.profile)) : 'choice';
       if (step.kind === 'write' && !MODES.some((m) => m.id === mode)) mode = 'hand';
       const res = { ok: false, firstTry: null, mistakes: 0, assisted: false, mode: null, recogMisses: 0 };
-      active = { step, helpUsed: false };
+      active = { step, helpUsed: false, help: null };
       // Fishing pace hooks (src/ui/69_pace.js): passed only by RB.pace.attempt.
       // Without them (every other challenge) nothing here is timed or changes.
       const PH = opts.pace || null;
@@ -69958,7 +70370,7 @@ RB.challenge = (function () {
       const $ = (q) => wrap.querySelector(q);
       const ctxEl = $('.chal-task .task-ctx'), sheet = $('.chal-sheet'), line = $('.chal-line'), body = $('.chal-body');
       const submitBtn = $('[data-a=submit]'), revealBtn = $('[data-a=reveal]');
-      $('.chal-title').innerHTML = (step.titleJp ? RB.ui.jhtml(step.titleJp) + ' ' : '') + esc(step.title || (step.kind === 'choose' ? 'Read and choose' : step.kind === 'order' ? 'Put it in order' : 'Write it'));
+      $('.chal-title').innerHTML = (step.titleJp ? RB.ui.jhtml(step.titleJp) + ' ' : '') + esc(step.title || (step.kind === 'choose' ? 'Read and choose' : step.kind === 'order' ? 'Put it in order' : step.kind === 'forge' ? 'Say it' : 'Write it'));
       const layer = { el: wrap, name: 'challenge', noAutofocus: true };
       let pad = null, locked = false, tabsApi = null, ime = null, order = null;
       const panes = {};
@@ -69966,10 +70378,20 @@ RB.challenge = (function () {
       // ---- 1 · the task ----
       let showEn = !!(step.showEn || (step.ctx && step.ctx.showEn) || (RB.game.s && RB.game.s.learn.profile === 'F'));
       function renderCtx() {
-        let h = opts.header ? '<div class="chal-situ">' + opts.header + '</div>' : '';
+        // the situation: the caller's, or the step's own (a task family's picture or device, L8/L10)
+        const situ = opts.header || step.header;
+        let h = situ ? '<div class="chal-situ">' + situ + '</div>' : '';
         if (step.ctx && step.ctx.jp) {
           h += '<div class="chal-ctx' + (step.ctx.big ? ' big' : '') + '">' + RB.ui.jhtml(step.ctx.jp) + '</div>';
           if (step.ctx.en && showEn) h += '<div class="chal-en">' + esc(RB.script.enVars(step.ctx.en)) + '</div>';
+        }
+        // a listening step (L16): the device's own voice, optional; the words are always a tap away and reading them
+        // is never help (it is recorded as reading, not listening). With no Japanese voice, the words are simply shown.
+        if (step.kind === 'listen') {
+          const canHear = !!(RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0);
+          if (!canHear) res.read = true;
+          h += '<div class="chal-listen">' + (canHear ? '<button class="pbtn" data-a="hear">' + I('sound') + '<span>Listen (your device\'s voice)</span></button>' : '<p class="muted small">No Japanese voice on this device: read it instead.</p>') +
+            (res.read ? '<div class="chal-ctx">' + RB.ui.jhtml(step.transcript.jp) + '</div>' : '<button class="pbtn quiet" data-a="readit">' + I('note') + '<span>Read it instead</span></button>') + '</div>';
         }
         if (step.prompt) h += '<div class="chal-prompt">' + esc(RB.script.enVars(step.prompt.en || '')) + (step.prompt.jp ? ' ' + RB.ui.jhtml(step.prompt.jp) : '') + '</div>';
         // a guided example shows its model on the task (battle addendum RBN-07): said so, and
@@ -69983,8 +70405,11 @@ RB.challenge = (function () {
         // the translation toggle shares a line with "I don't know"
         const trSlot = wrap.querySelector('.task-tr');
         trSlot.innerHTML = step.ctx && step.ctx.jp && step.ctx.en && !showEn ? '<button class="pbtn quiet tr" data-a="tr" title="Show the English (counts as assisted)">' + I('note') + '<span>Translate <span class="aside">(assisted)</span></span></button>' : '';
+        const hear = ctxEl.querySelector('[data-a=hear]'), readit = ctxEl.querySelector('[data-a=readit]');
+        if (hear) hear.onclick = () => { try { RB.voice.speak(RB.jp.reading(step.transcript.jp)); } catch (e) { /* the voice is optional */ } };
+        if (readit) readit.onclick = () => { res.read = true; renderCtx(); };
         const tr = trSlot.querySelector('[data-a=tr]');
-        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; if (PH) PH.assist('translation'); renderCtx(); };
+        if (tr) tr.onclick = () => { showEn = true; active.helpUsed = true; helpCat(step.kind === 'choose' ? 'constrain' : 'conceptual'); if (PH) PH.assist('translation'); renderCtx(); };
       }
 
       // ---- 2 · the sheet: one pane per input mode, kept when switching ----
@@ -69999,7 +70424,7 @@ RB.challenge = (function () {
             composeHost: line,
             pace: PH,
             onChange: () => { if (step.copy && pad) pad.setGuide(Array.from(plain(step.answer))[pad.text().length] || null); if (PH) PH.draft(); },
-            onAssist: (why) => { if (why !== 'model' || !step.copy) active.helpUsed = true; if (why === 'correction') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
+            onAssist: (why) => { if (why !== 'model' || !step.copy) { active.helpUsed = true; helpCat(why === 'model' ? 'supplied' : 'constrain'); } if (why === 'correction' || why === 'suggestions') res.recogRepairs = (res.recogRepairs || 0) + 1; if (PH) PH.assist(why); },
             modelFor: () => Array.from(plain(step.answer))[pad ? Math.min(pad.text().length, Array.from(plain(step.answer)).length - 1) : 0],
           });
         },
@@ -70033,7 +70458,7 @@ RB.challenge = (function () {
             b.innerHTML = o.text != null ? RB.ui.jhtml(o.text) : (o.jp ? RB.ui.jhtml(o.jp) : '') + (o.en ? '<span class="enline">' + esc(o.en) + '</span>' : '');
             b.onclick = () => {
               if (locked) return;
-              if (step.kind === 'choose') evaluateChoice(o, b);
+              if (step.kind === 'choose' || step.kind === 'forge' || step.kind === 'listen') evaluateChoice(o, b);
               else {
                 evaluate(o.text, 'choice', {});
                 // like comprehension choices: a wrong option can't be picked twice
@@ -70078,7 +70503,43 @@ RB.challenge = (function () {
           order = { placed, lineBox, complete: () => placed.length === step.tiles.length, value: () => placed.map((x) => x.t) };
           draw();
         },
+        // a forged sentence's rungs 2 and 3 (L7): pieces of meaning, or word by word; some pieces don't belong
+        build(p) { piecesPane(p, 'build', step.chunks); },
+        fine(p) { piecesPane(p, 'fine', step.fine); },
       };
+      const pieceSets = {};
+      function piecesPane(p, key, list) {
+        const placed = [];
+        const pool = RB.util.rng(RB.util.hashStr(key + list.join(''))).shuffle(list.map((t, i) => ({ t, i })));
+        const lineBox = RB.ui.el('div', 'order-line forge-line');
+        lineBox.innerHTML = '<div class="pad-lab" id="fl-' + key + '">Your sentence</div><ol class="built" aria-labelledby="fl-' + key + '"></ol>' +
+          '<button class="pbtn" data-o="clr">' + I('erase') + '<span>Clear</span></button>';
+        line.appendChild(lineBox);
+        p.innerHTML = '<div class="pool-lab muted small">' + (key === 'fine' ? 'Tap the words in order: particles and endings are pieces of their own.' : 'Tap the pieces in the order they belong. Not every piece is needed.') + ' Tap a placed piece to take it back.</div><div class="tiles"></div>';
+        const built = lineBox.querySelector('.built'), tiles = p.querySelector('.tiles');
+        function draw() {
+          built.innerHTML = placed.length ? placed.map((pc, j) => '<li><button class="tile placed" data-rm="' + j + '">' + RB.ui.jhtml(pc.t) + '</button></li>').join('') : '<li class="empty muted small">Nothing placed yet.</li>';
+          tiles.innerHTML = pool.map((pc, j) => placed.indexOf(pc) >= 0 ? '' : '<button class="tile" data-add="' + j + '">' + RB.ui.jhtml(pc.t) + '</button>').join('') || '<span class="muted small">Every piece is placed.</span>';
+          lineBox.querySelector('[data-o=clr]').disabled = !placed.length;
+          syncSubmit();
+        }
+        const click = (e) => {
+          if (locked) return;
+          const add = e.target.closest('[data-add]'), rm = e.target.closest('[data-rm]'), clr = e.target.closest('[data-o=clr]');
+          if (add) placed.push(pool[+add.getAttribute('data-add')]);
+          else if (rm) placed.splice(+rm.getAttribute('data-rm'), 1);
+          else if (clr) placed.length = 0;
+          else return;
+          RB.audio && RB.audio.sfx('cursor');
+          draw();
+        };
+        p.addEventListener('click', click);
+        lineBox.addEventListener('click', click);
+        RB.learnUi.guardTaps(p);
+        RB.learnUi.guardTaps(lineBox);
+        pieceSets[key] = { placed, lineBox, complete: () => placed.length > 0, value: () => placed.map((x) => x.t) };
+        draw();
+      }
       function pane(m) {
         if (panes[m]) return panes[m];
         const p = RB.ui.el('div', 'pane pane-' + m);
@@ -70095,10 +70556,11 @@ RB.challenge = (function () {
         wrap.setAttribute('data-mode', m);
         if (pad) pad.compose.hidden = m !== 'hand';
         if (order) order.lineBox.hidden = m !== 'order';
+        for (const k in pieceSets) pieceSets[k].lineBox.hidden = m !== k;
         line.hidden = m === 'choice' || m === 'ime';
         submitBtn.hidden = m === 'choice';
         $('.sheet-lab .t').textContent = SHEET_LAB[m];
-        if (step.kind === 'write') sheet.setAttribute('aria-labelledby', 'tab-' + m);
+        if (step.kind === 'write' || step.kind === 'forge') sheet.setAttribute('aria-labelledby', 'tab-' + m);
         else { sheet.setAttribute('role', 'region'); sheet.setAttribute('aria-label', SHEET_LAB[m]); }
         if (m === 'hand' && pad) requestAnimationFrame(() => pad && pad.layout());
         if (m === 'ime' && ime) {
@@ -70114,6 +70576,7 @@ RB.challenge = (function () {
         let ready = true;
         if (mode === 'ime') ready = !!(ime && ime.inp.value.trim());
         if (mode === 'order') ready = !!(order && order.complete());
+        if (mode === 'build' || mode === 'fine') ready = !!(pieceSets[mode] && pieceSets[mode].complete());
         submitBtn.disabled = locked || !ready;
         submitBtn.setAttribute('aria-disabled', String(submitBtn.disabled));
       }
@@ -70184,7 +70647,7 @@ RB.challenge = (function () {
         if (PH) PH.submit(modeUsed); // stamped before evaluation: on time stays on time
         const r = check(text, step, { handwritten: modeUsed === 'hand', input: modeUsed });
         if (r.ok) {
-          if (meta.assisted) active.helpUsed = true;
+          if (meta.assisted) { active.helpUsed = true; helpCat('constrain'); }
           res.given = { text: plain(text), mode: modeUsed, matched: r.matched != null ? r.matched : null, family: r.family != null ? r.family : null };
           success(modeUsed, r.notes);
           return;
@@ -70273,16 +70736,35 @@ RB.challenge = (function () {
           evaluate(pad.text(), 'hand', pad.meta());
         } else if (mode === 'ime') submitIme();
         else if (mode === 'order' && order && order.complete()) evaluateOrder(order.value());
+        else if ((mode === 'build' || mode === 'fine') && pieceSets[mode] && pieceSets[mode].complete()) evaluatePieces(pieceSets[mode].value(), mode);
+      }
+      // a forged sentence built from pieces: which authored reply it is (L7), judged like the letters' parts
+      function evaluatePieces(arr, modeUsed) {
+        if (PH) PH.submit(modeUsed);
+        const m = RB.forge.piecesMatch(step, arr);
+        if (m && m.family.ok) { res.given = { pieces: arr.slice(), mode: modeUsed, family: m.i }; success(modeUsed); return; }
+        if (!m) {
+          res.limits = (res.limits || 0) + 1;
+          fb('unsure', 'Outside what this can read', '<p>You built <span class="jp big" lang="ja">' + arr.map((x) => RB.ui.jhtml(x)).join(' ') + '</span>.</p><p class="muted small">It may be fine Japanese; this task can only read the sentences it was written with. Try another arrangement, or another rung.</p>');
+          return;
+        }
+        res.mistakes++;
+        if (res.firstTry == null) res.firstTry = false;
+        RB.audio && RB.audio.sfx('answer_wrong');
+        fb('no', 'Not quite.', '<div class="fb-why">' + enRuby(m.family.why ? m.family.why.en : 'That says something else.') + '</div><p class="muted small">Try again — take all the time you need.</p>');
+        if (opts.onMistake) opts.onMistake({});
       }
       function revealAnswer() {
         active.helpUsed = true;
+        helpCat('supplied');
         res.assisted = true;
         res.revealed = true;
         if (PH) PH.assist('reveal');
         let ans = '';
         if (step.kind === 'write') ans = plain(step.answer);
-        if (step.kind === 'choose') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
+        if (step.kind === 'choose' || step.kind === 'listen') ans = (step.options.find((o) => o.ok) || {}).en || (step.options.find((o) => o.ok) || {}).jp || '';
         if (step.kind === 'order') ans = step.answer.map(plain).join(' ');
+        if (step.kind === 'forge') ans = step.answerReading;
         revealBtn.hidden = true;
         fb('reveal', 'The answer', '<p><span class="jp big" lang="ja">' + esc(ans) + '</span></p>' + explainHtml() + '<p class="muted small">This is recorded as assisted. Enter it to continue, or just continue.</p>');
         const w = wrap.querySelector('.fbwrap');
@@ -70324,10 +70806,14 @@ RB.challenge = (function () {
         if (pad) { pad.destroy(); pad = null; }
         RB.ui.popLayer(layer);
         RB.ui.help.hide(true);
+        res.help = active ? active.help || null : null; // L2: the strongest help this question used (callers may read it)
         active = null;
         res.cancelled = cancelled;
         if (!cancelled && step.item && !opts.noRecord) {
-          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind });
+          RB.learn.record(step.item, { ok: res.firstTry !== false, mode: res.mode === 'hand' ? 'hand' : res.mode === 'ime' ? 'ime' : 'choice', assisted: res.assisted, ctx: opts.ctxTag, kind: step.kind,
+            // the evidence log (L1): what was actually shown and supplied (src/learn/40_evidence.js)
+            ev: RB.evidence ? (step.kind === 'listen' && res.read ? 'context' : RB.evidence.modeOf(step, res.mode)) : null, help: res.help, exposed: !!(step.copy || step.guided),
+            repairs: res.recogRepairs || 0, written: res.mode === 'hand' && res.given && res.given.text ? res.given.text : null, task: step.id || null });
         }
         if (step.item) [].concat(step.item).forEach((i) => RB.learn.markIntroduced(i));
         resolve(res);
@@ -70349,11 +70835,13 @@ RB.challenge = (function () {
         return false;
       };
       renderCtx();
-      if (step.kind === 'write') {
-        tabsApi = RB.ui.folio.tabs($('.tabslot'), MODES, mode, (id) => {
+      if (step.kind === 'write' || step.kind === 'forge') {
+        tabsApi = RB.ui.folio.tabs($('.tabslot'), step.kind === 'forge' ? FORGE_MODES : MODES, mode, (id) => {
           if (locked) { tabsApi.select(mode); return; }
+          // the rung a player chooses is remembered for the next forged sentence (L7: the player picks the support)
+          if (step.kind === 'forge' && RB.game.settings) { RB.game.settings.forgeRung = id; RB.game.saveSettings(); }
           showMode(id, 'tab');
-        }, { label: 'Answer by', panelId: 'chal-sheet' });
+        }, { label: step.kind === 'forge' ? 'Support' : 'Answer by', panelId: 'chal-sheet' });
         tabsApi.el.classList.add('chal-tabs');
         tabsApi.el.querySelectorAll('.ptab').forEach((b) => { b.setAttribute('data-mode', b.getAttribute('data-id')); b.classList.remove('autofocus'); });
         sheet.setAttribute('role', 'tabpanel');
@@ -70369,7 +70857,14 @@ RB.challenge = (function () {
   async function run(id, ctx) {
     const ch = RB.content.challenges[id];
     if (!ch) { console.warn('missing challenge', id); return { ok: true }; }
-    if (RB.test && RB.test.auto) { RB.tasks.stepsOf(ch).forEach((st, i) => RB.test.solveStep(st, 'challenge ' + id + '[' + i + ']')); RB.game.s.flags['chal:' + id] = true; return { ok: true }; }
+    if (RB.test && RB.test.auto) {
+      RB.tasks.stepsOf(ch).forEach((st, i) => {
+        const r = RB.test.solveStep(st, 'challenge ' + id + '[' + i + ']');
+        if (st.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(st, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
+      });
+      RB.game.s.flags['chal:' + id] = true;
+      return { ok: true };
+    }
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
@@ -70381,6 +70876,8 @@ RB.challenge = (function () {
         if (step.teach && !RB.learn.introduced([].concat(step.item)[0])) await teachCard(step.teach);
         const r = await runStep(step, { ctxTag: id, cancelLabel: 'Come back later' });
         if (r.cancelled) return { ok: false, cancelled: true };
+        // a forged sentence changes the scene by what was said (L7): its reply's result, for the scene to read
+        if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
         results.push(r);
       }
       RB.game.s.flags['chal:' + id] = true;
@@ -101920,6 +102417,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     cr: 'cr',    // the Cloudroad, Chapter 10
     yn: 'yn',    // Steamhollow, Chapter 11
   };
+  // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
+  C.reviewPrefixes = ['ws'];
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
   C.reveals = C.reveals || {};
 })(RB.content);
@@ -149685,6 +150184,282 @@ RB.lex.add(RB.lex.parseTable(`
 攫う|さらう|v5u|A|to sweep away, to carry off
 凍てつく|いてつく|v5k|A|to freeze hard
 `), 'core');
+
+
+/* ==== src/content/workshop/00_lex.js ==== */
+/* Words of the Language Workshop's examples (src/content/workshop/10_families.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.lex.add(RB.lex.parseTable(`
+早口|はやくち|n|I|fast talking
+増水|ぞうすい|n|A|a rise in the water level
+最終便|さいしゅうびん|n|A|the last service (boat, coach) of the day
+見合わせる|みあわせる|v1|A|to put off, to hold back from (doing)
+台車|だいしゃ|n|I|a hand cart, trolley
+門番|もんばん|n|I|a gatekeeper
+閉鎖|へいさ|n|A|closure (of a place)
+円|えん|ctr|E|yen
+川沿い|かわぞい|n|I|along the river
+攻撃|こうげき|n|I|an attack
+`), 'workshop');
+
+
+/* ==== src/content/workshop/10_families.js ==== */
+/* The Language Workshop (expansion L7–L17b; docs/future/plan/05_LANGUAGE.md): one fully worked example of each new
+ * language-task family, at all four levels. They are the templates the new chapters' tasks follow, and a place to try
+ * each family on its own (Words › Ways to practise › The workshop). Situations are small and everyday; the devices of
+ * L10 are labelled as the game's own magic, not as how Japanese works. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  const ok = (parts, en, o) => Object.assign({ parts, ok: true, en }, o || {});
+  const no = (parts, en, why, o) => Object.assign({ parts, ok: false, en, why: { en: why } }, o || {});
+  const F = (o) => Object.assign({ kind: 'forge' }, o);
+  // a small before/after picture for "scene to sentence" (L8): text in boxes, nothing that needs colour alone
+  const scene = (before, after) => '<div class="ws-scene"><div class="ws-pane"><b>Before</b>' + before + '</div><div class="ws-pane"><b>After</b>' + after + '</div></div>';
+
+  C.workshop = { families: [] };
+  const fam = (id, en, jp, what, ch) => { C.workshop.families.push({ id, en, jp, what }); C.challenges['ws.' + id] = ch; };
+
+  // ---- L7 · sentence forging: say what you need -------------------------------------------------------
+  fam('L7', 'Say what you need', '{言|い}いたい こと を {言|い}う', 'An intention in English; build, type or write the Japanese that does it.', {
+    title: T('Leave the side gate open', '{横|よこ} の {門|もん}'),
+    tiers: {
+      F: [F({ id: 'ws.L7.F', item: 'g:v_te_kudasai', prompt: T('Ask the keeper to open the gate.'),
+        families: [ok(['もん を', 'あけて ください 。'], 'Please open the gate.', { result: 'open' }), no(['もん を', 'しめて ください 。'], 'Please close the gate.', 'That asks to close it.')],
+        explain: T('〜て ください asks someone to do something.') })],
+      E: [F({ id: 'ws.L7.E', item: 'g:te_oku', prompt: T('Ask the keeper to leave the side gate open until evening.'),
+        families: [
+          ok(['{横|よこ} の {門|もん} を', '{夕方|ゆうがた} まで', '{開|あ}けて おいて ください 。'], 'Please leave the side gate open until evening.', { result: 'open', tone: 'plain-polite' }),
+          ok(['{横|よこ} の {門|もん} を', '{夕方|ゆうがた} まで', '{開|あ}けて おいて もらえません か 。'], 'Could you leave the side gate open until evening?', { result: 'open', tone: 'softer' }),
+          no(['{横|よこ} の {門|もん} を', '{夕方|ゆうがた} まで', '{閉|し}めて おいて ください 。'], 'Please keep the side gate shut until evening.', 'That asks to keep it shut.'),
+        ], extra: ['{朝|あさ} まで'],
+        explain: T('〜て おく: do something and leave it that way. まで: until.') })],
+      I: [F({ id: 'ws.L7.I', item: 'g:conj_node', prompt: T('Ask the keeper to leave the side gate open until evening, because a delivery comes then.'),
+        families: [
+          ok(['{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く ので 、', '{横|よこ} の {門|もん} を', '{開|あ}けて おいて もらえません か 。'], 'A delivery comes in the evening, so could you leave the side gate open?', { result: 'open' }),
+          ok(['{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く ので 、', '{横|よこ} の {門|もん} を', '{開|あ}けて おいて ください 。'], 'A delivery comes in the evening, so please leave the side gate open.', { result: 'open' }),
+          no(['{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く のに 、', '{横|よこ} の {門|もん} を', '{開|あ}けて おいて ください 。'], 'Even though a delivery comes in the evening, please leave the gate open.', 'のに means "even though": it doesn\'t give your reason.'),
+        ], extra: ['{朝|あさ} に'],
+        explain: T('〜ので gives a reason gently; 〜て もらえません か is a soft request.') })],
+      A: [F({ id: 'ws.L7.A', item: 'g:keigo_kenjo', prompt: T('Ask the keeper, very politely, whether the side gate could be left open until evening, since a delivery is due then.'),
+        families: [
+          ok(['{恐|おそ}れ{入|い}ります が 、', '{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く {予定|よてい} です ので 、', '{横|よこ} の {門|もん} を {開|あ}けて おいて いただけない でしょう か 。'], 'I\'m sorry to trouble you, but a delivery is due this evening; might the side gate be left open?', { result: 'open' }),
+          ok(['{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く {予定|よてい} です ので 、', '{横|よこ} の {門|もん} を {開|あ}けて おいて いただけない でしょう か 。'], 'A delivery is due this evening; might the side gate be left open?', { result: 'open' }),
+          no(['{恐|おそ}れ{入|い}ります が 、', '{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く {予定|よてい} です ので 、', '{横|よこ} の {門|もん} を {開|あ}けて おけ 。'], 'Sorry, but a delivery is due: leave the gate open!', 'おけ is a blunt command: it clashes with the polite opening.'),
+        ],
+        explain: T('〜て いただけない でしょう か is a very polite request; 恐れ入ります が opens it gently.') })],
+    },
+  });
+
+  // ---- L8 · scene to sentence --------------------------------------------------------------------------
+  const parcels = scene('<span class="ws-thing">blue parcel · on the bench</span><span class="ws-thing">red parcel · on the cart</span>', '<span class="ws-thing">blue parcel · on the cart</span><span class="ws-thing">red parcel · on the cart</span>');
+  fam('L8', 'Scene to sentence', '{様子|ようす} を {言|い}う', 'Look at what changed and say the change that matters.', {
+    title: T('What moved?', '{何|なに} が {動|うご}いた ？'),
+    tiers: {
+      F: [F({ id: 'ws.L8.F', item: 'v:あお', header: parcels, prompt: T('Say which parcel moved: "the blue one".'),
+        families: [ok(['あお い', 'の です 。'], 'The blue one.'), no(['あか い', 'の です 。'], 'The red one.', 'The red parcel was on the cart all along.')] })],
+      E: [F({ id: 'ws.L8.E', item: 'v:台車', header: parcels, prompt: T('Say what happened: the blue parcel is now on the cart.'),
+        families: [
+          ok(['{青|あお}い {荷物|にもつ} が', '{台車|だいしゃ} に', '{乗|の}りました 。'], 'The blue parcel went onto the cart.'),
+          ok(['{青|あお}い {荷物|にもつ} は', '{台車|だいしゃ} に', 'あります 。'], 'The blue parcel is on the cart.'),
+          no(['{赤|あか}い {荷物|にもつ} が', '{台車|だいしゃ} に', '{乗|の}りました 。'], 'The red parcel went onto the cart.', 'The red one didn\'t move.'),
+        ], extra: ['ベンチ に'] })],
+      I: [F({ id: 'ws.L8.I', item: 'v:載せる', header: parcels, prompt: T('Say what someone did: they moved the blue parcel from the bench to the cart.'),
+        families: [
+          ok(['{誰|だれ}か が', '{青|あお}い {荷物|にもつ} を', 'ベンチ から {台車|だいしゃ} に', '{載|の}せました 。'], 'Someone put the blue parcel from the bench onto the cart.'),
+          ok(['{青|あお}い {荷物|にもつ} が', 'ベンチ から {台車|だいしゃ} に', '{移|うつ}されました 。'], 'The blue parcel was moved from the bench to the cart.'),
+          no(['{誰|だれ}か が', '{青|あお}い {荷物|にもつ} を', '{台車|だいしゃ} から ベンチ に', '{載|の}せました 。'], 'Someone moved it from the cart to the bench.', 'から marks where it came from: that sends it the other way.'),
+        ] })],
+      A: [F({ id: 'ws.L8.A', item: 'g:te_aru', header: parcels, prompt: T('Say it as a state someone left on purpose: the blue parcel has been put on the cart (ready to go).'),
+        families: [
+          ok(['{青|あお}い {荷物|にもつ} は', 'もう {台車|だいしゃ} に', '{載|の}せて あります 。'], 'The blue parcel has already been put on the cart.'),
+          no(['{青|あお}い {荷物|にもつ} は', 'もう {台車|だいしゃ} に', '{載|の}って います 。'], 'The blue parcel is on the cart (no one\'s intention said).', 'Not wrong as a fact, but 〜て ある is what says someone left it so on purpose.'),
+        ] })],
+    },
+  });
+
+  // ---- L9 · particle routing ---------------------------------------------------------------------------
+  fam('L9', 'Who gives what to whom', '{誰|だれ} が {誰|だれ} に', 'Send letters, goods or gifts by saying who gives what to whom.', {
+    title: T('A letter for Hana', 'ハナ への {手紙|てがみ}'),
+    tiers: {
+      F: [F({ id: 'ws.L9.F', item: 'g:prt_ni', prompt: T('Send the letter to Hana: "to Hana, the letter".'),
+        families: [ok(['ハナ に', 'てがみ を', 'おくります 。'], 'I\'ll send a letter to Hana.', { result: 'hana' }), no(['ハナ が', 'てがみ を', 'おくります 。'], 'Hana sends a letter.', 'が says who does the sending; に says who receives it.')] })],
+      E: [F({ id: 'ws.L9.E', item: 'g:prt_ni', prompt: T('Kōji sends Hana a letter. Say it so the courier takes it the right way.'),
+        families: [
+          ok(['コウジ が', 'ハナ に', '{手紙|てがみ} を', '{送|おく}ります 。'], 'Kōji sends Hana a letter.', { result: 'k2h' }),
+          ok(['ハナ に', 'コウジ が', '{手紙|てがみ} を', '{送|おく}ります 。'], 'To Hana, Kōji sends a letter.', { result: 'k2h' }),
+          no(['ハナ が', 'コウジ に', '{手紙|てがみ} を', '{送|おく}ります 。'], 'Hana sends Kōji a letter.', 'That sends it the other way: が is the sender, に the one it goes to.'),
+        ] })],
+      I: [F({ id: 'ws.L9.I', item: 'g:giving', prompt: T('Say that Hana received a letter from Kōji (from Hana\'s side).'),
+        families: [
+          ok(['ハナ は', 'コウジ に', '{手紙|てがみ} を', 'もらいました 。'], 'Hana got a letter from Kōji.', { result: 'k2h' }),
+          ok(['ハナ は', 'コウジ から', '{手紙|てがみ} を', 'もらいました 。'], 'Hana got a letter from Kōji.', { result: 'k2h' }),
+          no(['ハナ は', 'コウジ に', '{手紙|てがみ} を', 'あげました 。'], 'Hana gave Kōji a letter.', 'あげる gives away from the subject; もらう receives.'),
+        ] })],
+      A: [F({ id: 'ws.L9.A', item: 'g:te_giving', prompt: T('Say, from your own side, that Kōji kindly wrote a letter to you on Hana\'s behalf.'),
+        families: [
+          ok(['コウジ さん が', 'ハナ さん の {代|か}わり に', '{手紙|てがみ} を {書|か}いて くれました 。'], 'Kōji kindly wrote me a letter on Hana\'s behalf.', { result: 'k2me' }),
+          no(['コウジ さん が', 'ハナ さん の {代|か}わり に', '{手紙|てがみ} を {書|か}いて あげました 。'], 'Kōji wrote a letter (as a favour to someone else).', '〜て あげる is a favour done for someone else; for a favour to you, 〜て くれる.'),
+        ] })],
+    },
+  });
+
+  // ---- L10 · verb-transforming devices (the game's own magic) -----------------------------------------
+  const device = '<p class="ws-device"><b>A word-lock</b> (a device of this world, not a rule of Japanese): it answers only to the form it is asked for.</p>';
+  fam('L10', 'Verb-transforming devices', '{言葉|ことば} の {錠|じょう}', 'A device of this world needs an instruction in a particular form: change a known verb to fit.', {
+    title: T('The word-lock', '{言葉|ことば} の {錠|じょう}'),
+    tiers: {
+      F: [F({ id: 'ws.L10.F', item: 'v:あける', header: device, prompt: T('The lock wants a request: turn あける (open) into "please open".'),
+        families: [ok(['あけて', 'ください 。'], 'Please open.', { result: 'open' }), no(['あける', 'ください 。'], '(not a request form)', 'Requests use the て-form: あけて ください.')] })],
+      E: [F({ id: 'ws.L10.E', item: 'v:開ける', header: device, prompt: T('The lock wants a polite request to open (開ける).'),
+        families: [ok(['{開|あ}けて', 'ください 。'], 'Please open.', { result: 'open' }), no(['{開|あ}けます', 'ください 。'], '(not a request form)', 'ください follows the て-form: 開けて ください.')] })],
+      I: [F({ id: 'ws.L10.I', item: 'g:v_naide_kudasai', header: device, prompt: T('Now it wants a prohibition: "please don\'t touch" (触る).'),
+        families: [ok(['{触|さわ}らないで', 'ください 。'], 'Please don\'t touch.', { result: 'still' }), no(['{触|さわ}って', 'ください 。'], 'Please touch.', 'That asks the opposite: 〜ないで ください is "please don\'t".')] })],
+      A: [F({ id: 'ws.L10.A', item: 'g:te_oku', header: device, prompt: T('It wants preparation: "shut it ahead of time (and leave it so)" (閉める).'),
+        families: [ok(['{前|まえ} もって', '{閉|し}めて おいて', 'ください 。'], 'Please shut it in advance.', { result: 'prepared' }), no(['{前|まえ} もって', '{閉|し}めて しまって', 'ください 。'], 'Please shut it (completely, regrettably).', '〜て しまう is completion (often with regret); preparation is 〜て おく.')] })],
+    },
+  });
+
+  // ---- L11 · reference detective ----------------------------------------------------------------------
+  const ch = (jp, en, okv, why) => ({ jp, en, ok: okv, why: why ? { en: why } : undefined });
+  fam('L11', 'Reference detective', '{誰|だれ} の こと ？', 'Work out what "that one", a left-out subject or an earlier mention refers to.', {
+    title: T('Who was it?', '{誰|だれ} の こと ？'),
+    tiers: {
+      F: [{ kind: 'choose', item: 'v:これ', ctx: T('Hana holds up a cup. "これ は ナオ の です。"', 'これ は ナオ の です 。'), prompt: T('What is これ?'), options: [ch(null, 'The cup Hana is holding', true), ch(null, 'A cup over there', false, 'それ / あれ would point further away; これ is right here with the speaker.')] }],
+      E: [{ kind: 'choose', item: 'c:ws_reference', ctx: T('Mio: "Did you meet Kōji?" You: "Yes. (He) looked well."', 'ミオ : 「 コウジ さん に {会|あ}った ？ 」 あなた : 「 うん 、 {元気|げんき} そう だった よ 。 」'), prompt: T('Who looked well?'), options: [ch(null, 'Kōji', true), ch(null, 'Mio', false, 'The subject left out is the one just talked about: Kōji.'), ch(null, 'You', false, 'You are describing someone you met.')] }],
+      I: [{ kind: 'choose', item: 'v:その', ctx: T('Notice: "Two bags were left at the gate. The keeper is holding one. That one is Nao\'s."', '{門|もん} に {鞄|かばん} が {二|ふた}つ {置|お}いて あった 。 ひとつ は {門番|もんばん} が {預|あず}かって いる 。 その {鞄|かばん} は ナオ の だ 。'), prompt: T('Which bag is Nao\'s?'), options: [ch(null, 'The one the keeper is holding', true), ch(null, 'The one still at the gate', false, 'その points back to the bag just mentioned: the one the keeper holds.'), ch(null, 'Both bags', false, 'その 鞄 is one bag, the last one mentioned.')] }],
+      A: [{ kind: 'choose', item: 'c:ws_reference', ctx: T('Letter: "I asked the ferryman about the parcel. He said he had handed it to the innkeeper, but when I went, (she) said she had never received it."', '{渡|わた}し{守|もり} に {荷物|にもつ} の こと を {聞|き}いた 。 {宿|やど} の {女将|おかみ} に {渡|わた}した と {言|い}う が 、 {行|い}って みる と 、 {受|う}け{取|と}って いない と {言|い}われた 。'), prompt: T('Who said they had never received it?'), options: [ch(null, 'The innkeeper', true), ch(null, 'The ferryman', false, 'The ferryman says he handed it over; the one who says she never received it is where you went: the innkeeper.'), ch(null, 'The writer', false, '言われた: the writer was told this by someone else.')] }],
+    },
+  });
+
+  // ---- L13 · paraphrase bridges --------------------------------------------------------------------------
+  const notice = { jp: '{本日|ほんじつ} {午後|ごご} {三時|さんじ} {以降|いこう} 、 {正面|しょうめん} {入口|いりぐち} は {閉鎖|へいさ} いたします 。 {裏口|うらぐち} を ご{利用|りよう} ください 。', en: 'From 3 p.m. today the front entrance will be closed. Please use the back entrance.' };
+  fam('L13', 'Paraphrase bridges', 'やさしく {言|い}い{換|か}える', 'Explain a complicated notice in simpler Japanese, keeping its condition.', {
+    title: T('The notice by the door', '{戸口|とぐち} の {張|は}り{紙|がみ}'),
+    tiers: {
+      F: [F({ id: 'ws.L13.F', item: 'v:うしろ', ctx: notice, prompt: T('Tell a child, simply: "go round the back".'),
+        families: [ok(['うしろ から', 'はいって ね 。'], 'Go in from the back, OK?'), no(['まえ から', 'はいって ね 。'], 'Go in from the front.', 'The notice closes the front.')] })],
+      E: [F({ id: 'ws.L13.E', item: 'v:入口', ctx: notice, prompt: T('Say it simply, keeping the time: from three, use the back.'),
+        families: [
+          ok(['{三時|さんじ} から', '{後|うし}ろ の {入|い}り{口|ぐち} を', '{使|つか}って ください 。'], 'From three, please use the back door.'),
+          no(['{後|うし}ろ の {入|い}り{口|ぐち} を', '{使|つか}って ください 。'], 'Please use the back door.', 'Simpler, but it loses the condition: only from three o\'clock.'),
+        ] })],
+      I: [F({ id: 'ws.L13.I', item: 'g:prt_kara_made', ctx: notice, prompt: T('Explain it to a traveller in plain Japanese: what changes, and when.'),
+        families: [
+          ok(['{今日|きょう} は {三時|さんじ} から', '{前|まえ} の {入|い}り{口|ぐち} が {使|つか}えない ので 、', '{後|うし}ろ から {入|はい}って ください 。'], 'From three today the front door can\'t be used, so please go in at the back.'),
+          ok(['{三時|さんじ} を {過|す}ぎたら', '{前|まえ} の {入|い}り{口|ぐち} は {閉|し}まる ので 、', '{後|うし}ろ から {入|はい}って ください 。'], 'After three the front closes, so please go in at the back.'),
+          no(['{今日|きょう} は', '{前|まえ} の {入|い}り{口|ぐち} が {使|つか}えない ので 、', '{後|うし}ろ から {入|はい}って ください 。'], 'Today the front can\'t be used, so use the back.', 'It drops "from three": the front is open until then.'),
+        ] })],
+      A: [F({ id: 'ws.L13.A', item: 'c:ws_paraphrase', ctx: notice, prompt: T('Rephrase the notice in everyday polite Japanese, keeping both the time and the alternative, without the formal words (閉鎖, 以降, ご利用).'),
+        families: [
+          ok(['{今日|きょう} の {午後|ごご} {三時|さんじ} から 、', '{表|おもて} の {入|い}り{口|ぐち} は {閉|し}まります 。', '{裏|うら} から {入|はい}って ください 。'], 'From three this afternoon the front door closes. Please go in at the back.'),
+          no(['{本日|ほんじつ} {午後|ごご} {三時|さんじ} {以降|いこう} 、', '{表|おもて} の {入|い}り{口|ぐち} は {閉|し}まります 。', '{裏|うら} から {入|はい}って ください 。'], 'From 3 p.m. today (formal), the front closes; use the back.', 'It keeps the formal 本日 / 以降 the task asks you to put plainly.'),
+        ] })],
+    },
+  });
+
+  // ---- L14 · evidence reporting --------------------------------------------------------------------------
+  fam('L14', 'Report what you know, and how', '{伝|つた}える', 'Report what you saw, heard or suspect, with the right certainty (そうだ, らしい, ようだ).', {
+    title: T('Is the bridge closed?', '{橋|はし} は {閉|し}まって いる ？'),
+    tiers: {
+      F: [F({ id: 'ws.L14.F', item: 'g:sou_hear', prompt: T('Hana told you the bridge is closed. Pass it on: "(I hear) it\'s closed".'),
+        families: [ok(['はし が', 'しまって いる', 'そう です 。'], 'I hear the bridge is closed.'), no(['はし が', 'しまって', 'います 。'], 'The bridge is closed.', 'You only heard it: そう です says so.')] })],
+      E: [F({ id: 'ws.L14.E', item: 'g:sou_hear', prompt: T('Hana told you the bridge is closed. Tell Nao, and say you heard it.'),
+        families: [
+          ok(['ハナ さん に よる と 、', '{橋|はし} が {閉|し}まって いる', 'そう です 。'], 'According to Hana, the bridge is closed.'),
+          ok(['{橋|はし} が {閉|し}まって いる', 'そう です 。'], 'I hear the bridge is closed.'),
+          no(['{橋|はし} が {閉|し}まって いる', 'よう です 。'], 'It looks as if the bridge is closed.', 'よう です is what you judge from what you saw yourself; you only heard it.'),
+        ] })],
+      I: [F({ id: 'ws.L14.I', item: 'g:you_mitai', prompt: T('You saw a crowd turning back at the bridge. Say what you infer from that.'),
+        families: [
+          ok(['{人|ひと} が {引|ひ}き{返|かえ}して いた ので 、', '{橋|はし} が {閉|し}まって いる', 'よう です 。'], 'People were turning back, so the bridge seems to be closed.'),
+          no(['{人|ひと} が {引|ひ}き{返|かえ}して いた ので 、', '{橋|はし} が {閉|し}まって いる', 'そう です 。'], 'People were turning back, so I hear the bridge is closed.', 'そう です (hearsay) is for what you were told; this is your own inference: よう です.'),
+        ] })],
+      A: [F({ id: 'ws.L14.A', item: 'g:rashii', prompt: T('It is going round the market that the bridge is closed; nobody you trust has said so. Pass it on as a rumour.'),
+        families: [
+          ok(['{市場|いちば} で は 、', '{橋|はし} が {閉|し}まって いる', 'らしい です よ 。'], 'At the market they\'re saying the bridge is closed, apparently.'),
+          no(['{市場|いちば} で は 、', '{橋|はし} が {閉|し}まって いる', 'に {違|ちが}いない です 。'], 'At the market — the bridge must be closed.', 'に 違いない is near-certainty; a rumour is らしい.'),
+        ] })],
+    },
+  });
+
+  // ---- L15 · comic and dialogue reconstruction ---------------------------------------------------------
+  const B = (who, jp) => '「' + jp + '」';
+  fam('L15', 'Put the exchange back together', '{会話|かいわ} を {並|なら}べる', 'Rebuild an illustrated exchange from its speech bubbles.', {
+    title: T('At the stall', '{屋台|やたい} で'),
+    tiers: {
+      F: [{ kind: 'order', item: 'v:ください', bubbles: true, prompt: T('Put the exchange at the stall in order.'), tiles: ['いらっしゃい ませ 。', 'りんご を ください 。', 'はい 、 どうぞ 。'], answer: ['いらっしゃい ませ 。', 'りんご を ください 。', 'はい 、 どうぞ 。'], orderHint: T('The stallholder greets first; the customer asks; then it is handed over.') }],
+      E: [{ kind: 'order', item: 'v:いくら', bubbles: true, prompt: T('Put the exchange in order.'), tiles: ['この りんご は いくら です か 。', '{一|ひと}つ {百|ひゃく} {円|えん} です 。', 'じゃあ 、 {二|ふた}つ ください 。', 'ありがとう ございます 。'], answer: ['この りんご は いくら です か 。', '{一|ひと}つ {百|ひゃく} {円|えん} です 。', 'じゃあ 、 {二|ふた}つ ください 。', 'ありがとう ございます 。'], orderHint: T('A question, its answer, the decision, the thanks.') }],
+      I: [{ kind: 'order', item: 'g:cond_nara', bubbles: true, prompt: T('Put the exchange in order.'), tiles: ['{柿|かき} は もう ない ん です か 。', '{今日|きょう} は {売|う}り{切|き}れ です 。', '{明日|あした} なら ありますか 。', 'ええ 、 {朝|あさ} {入|はい}ります よ 。'], answer: ['{柿|かき} は もう ない ん です か 。', '{今日|きょう} は {売|う}り{切|き}れ です 。', '{明日|あした} なら ありますか 。', 'ええ 、 {朝|あさ} {入|はい}ります よ 。'], orderHint: T('なら ("if it\'s tomorrow") picks up what was just said.') }],
+      A: [{ kind: 'order', item: 'c:ws_reference', bubbles: true, prompt: T('Put the exchange in order (a misunderstanding put right).'), tiles: ['すみません 、 さっき の お{釣|つ}り なんです が …', 'あ 、 {足|た}りません でした か 。', 'いえ 、 {逆|ぎゃく} に {多|おお}すぎた みたい で 。', 'それ は ご{丁寧|ていねい} に 、 ありがとう ございます 。'], answer: ['すみません 、 さっき の お{釣|つ}り なんです が …', 'あ 、 {足|た}りません でした か 。', 'いえ 、 {逆|ぎゃく} に {多|おお}すぎた みたい で 。', 'それ は ご{丁寧|ていねい} に 、 ありがとう ございます 。'], orderHint: T('The customer raises it; the stallholder guesses wrong; the customer corrects it; thanks.') }],
+    },
+  });
+
+  // ---- L16 · sound and meaning (optional; the device's own voice; always a text route) ------------------
+  const L = (o) => Object.assign({ kind: 'listen' }, o);
+  fam('L16', 'Sound and meaning', '{音|おと} と {意味|いみ}', 'Compare short spoken pairs and use the difference. Optional: your device\'s voice, always a text route.', {
+    title: T('Two words that sound alike', '{似|に}た {音|おと}'),
+    tiers: {
+      F: [L({ item: 'v:おばあさん', transcript: T('Grandmother', 'おばあさん'), prompt: T('Who is it: an aunt (おばさん) or a grandmother (おばあさん)?'), options: [{ en: 'A grandmother', ok: true }, { en: 'An aunt', ok: false, why: { en: 'The long あー makes it おばあさん.' } }] })],
+      E: [L({ item: 'v:来て', transcript: T('Come here.', 'きて'), prompt: T('Is it きて (come) or きって (stamp)?'), options: [{ en: 'きて · come', ok: true }, { en: 'きって · a stamp', ok: false, why: { en: 'No small っ: no pause before て.' } }] })],
+      I: [L({ item: 'v:病院', transcript: T('Hospital', 'びょういん'), prompt: T('Is it びょういん (hospital) or びよういん (hair salon)?'), options: [{ en: 'びょういん · hospital', ok: true }, { en: 'びよういん · hair salon', ok: false, why: { en: 'びょ is one sound; び・よ is two.' } }] })],
+      A: [L({ item: 'v:主人', transcript: T('Husband / master', 'しゅじん'), prompt: T('Is it しゅじん (husband, master) or しゅうじん (prisoner)?'), options: [{ en: 'しゅじん · husband, master', ok: true }, { en: 'しゅうじん · prisoner', ok: false, why: { en: 'No long う: しゅ, not しゅう.' } }] })],
+    },
+  });
+
+  // ---- L17 · explain it to a partner ---------------------------------------------------------------------
+  fam('L17', 'Explain it to your companion', '{相棒|あいぼう} に {説明|せつめい}', 'Justify a plan to your companion with what you know.', {
+    title: T('Which way?', 'どっち の {道|みち} ？'),
+    tiers: {
+      F: [F({ id: 'ws.L17.F', item: 'v:ひだり', prompt: T('The right-hand bridge is closed. Tell $comp: "let\'s go left".'),
+        families: [ok(['ひだり に', 'いこう 。'], 'Let\'s go left.'), no(['みぎ に', 'いこう 。'], 'Let\'s go right.', 'The right-hand bridge is closed.')] })],
+      E: [F({ id: 'ws.L17.E', item: 'g:conj_kara', prompt: T('Tell $comp why: the right-hand bridge is closed, so let\'s take the left path.'),
+        families: [
+          ok(['{右|みぎ} の {橋|はし} は {閉|し}まって いる から 、', '{左|ひだり} の {道|みち} を {行|い}こう 。'], 'The right bridge is closed, so let\'s take the left path.'),
+          ok(['{左|ひだり} の {道|みち} を {行|い}こう 。', '{右|みぎ} の {橋|はし} は {閉|し}まって いる から 。'], 'Let\'s take the left path. The right bridge is closed, you see.'),
+          no(['{右|みぎ} の {橋|はし} は {閉|し}まって いる から 、', '{右|みぎ} の {道|みち} を {行|い}こう 。'], 'The right bridge is closed, so let\'s go right.', 'Your reason points the other way.'),
+        ] })],
+      I: [F({ id: 'ws.L17.I', item: 'g:prt_shi', prompt: T('Give two reasons for the left path: the bridge is closed, and it is shorter anyway.'),
+        families: [
+          ok(['{右|みぎ} の {橋|はし} は {閉|し}まって いる し 、', '{左|ひだり} の ほう が {近|ちか}い し 、', '{左|ひだり} から {行|い}こう よ 。'], 'The right bridge is closed, and the left is nearer anyway: let\'s go left.'),
+          no(['{右|みぎ} の {橋|はし} は {閉|し}まって いる けど 、', '{左|ひだり} の ほう が {近|ちか}い し 、', '{左|ひだり} から {行|い}こう よ 。'], 'The right bridge is closed, but the left is nearer: let\'s go left.', 'けど sets up a contrast; for reasons that add up, 〜し.'),
+        ] })],
+      A: [F({ id: 'ws.L17.A', item: 'g:hazu', prompt: T('Persuade $comp, who wants the river path: the notice said the right bridge is closed, so the river path should be flooded too, since it runs under it.'),
+        families: [
+          ok(['{張|は}り{紙|がみ} に {右|みぎ} の {橋|はし} が {閉|し}まって いる と あった から 、', 'その {下|した} を {通|とお}る {川沿|かわぞ}い の {道|みち} も', '{水|みず} が {出|で}て いる はず だ よ 。'], 'The notice said the right bridge is closed, so the river path under it should be flooded too.'),
+          no(['{張|は}り{紙|がみ} に {右|みぎ} の {橋|はし} が {閉|し}まって いる と あった から 、', 'その {下|した} を {通|とお}る {川沿|かわぞ}い の {道|みち} も', '{水|みず} が {出|で}て いる わけ が ない よ 。'], '…so the river path can\'t possibly be flooded.', 'わけ が ない denies it outright; your evidence points the other way: はず だ.'),
+        ] })],
+    },
+  });
+
+  // ---- L17b · modifier phrases (Robin's C-70, C-72) ----------------------------------------------------
+  fam('L17b', 'Modifier phrases', '{範囲|はんい} の {言葉|ことば}', 'Extend a response with a word of how far it reaches, and write the short sentence it makes.', {
+    title: T('How far does it reach?', 'どこ まで {届|とど}く ？'),
+    tiers: {
+      F: [F({ id: 'ws.L17b.F', item: 'v:みんな', prompt: T('Protect everyone: "everyone, protect".'),
+        families: [ok(['みんな を', 'まもる 。'], 'Protect everyone.'), no(['ひとり を', 'まもる 。'], 'Protect one person.', 'ひとり is just one.')] })],
+      E: [F({ id: 'ws.L17b.E', item: 'v:すべて', prompt: T('Make the light reach everything: "the light lights up everything".'),
+        families: [ok(['{光|ひかり} が', 'すべて を', '{照|て}らす 。'], 'The light lights up everything.'), ok(['{光|ひかり} が', '{全部|ぜんぶ} を', '{照|て}らす 。'], 'The light lights up all of it.'), no(['{光|ひかり} が', 'ひとつ を', '{照|て}らす 。'], 'The light lights up one thing.', 'ひとつ is a single one.')] })],
+      I: [F({ id: 'ws.L17b.I', item: 'v:それぞれ', prompt: T('Give water to each of them separately: "to each, water".'),
+        families: [ok(['それぞれ に', '{水|みず} を', 'あげる 。'], 'Give each of them water.'), no(['{全体|ぜんたい} に', '{水|みず} を', 'あげる 。'], 'Give water to the whole (as one).', '全体 treats them as one whole; それぞれ is each one separately.')] })],
+      A: [F({ id: 'ws.L17b.A', item: 'v:あらゆる', prompt: T('Ward against every kind of attack: "against every attack, protect".'),
+        families: [ok(['あらゆる {攻撃|こうげき} から', '{守|まも}る 。'], 'Protect against every kind of attack.'), no(['いくつか の {攻撃|こうげき} から', '{守|まも}る 。'], 'Protect against some attacks.', 'いくつか is "a few"; あらゆる is every kind.')] })],
+    },
+  });
+
+  // ---- L12 · asking back: a short scene with simpler lines (the dialogue box's "Ask back") ------------
+  C.workshop.families.push({ id: 'L12', en: 'Ask back', jp: '{聞|き}き{返|かえ}す', what: 'Ask someone to repeat, slow down or say it more simply; they rephrase. Asking well is a success.', scene: 'ws.ask' });
+  RB.script.add(`
+@scene ws.ask
+narr: {渡|わた}し{守|もり} が {早口|はやくち} で {説明|せつめい} する 。 「 Ask back 」 で {聞|き}き{返|かえ}せます 。 || The ferryman explains, quickly. "Ask back" lets you ask him again.
+koji: {本日|ほんじつ} は {増水|ぞうすい} の {恐|おそ}れ が ある ため 、 {最終便|さいしゅうびん} の {出航|しゅっこう} を {見合|みあ}わせる {可能性|かのうせい} が ございます 。 || With the river likely to rise today, the last boat may not sail.
+~ {今日|きょう} は {水|みず} が {増|ふ}える かも しれない から 、 {最後|さいご} の {船|ふね} は {出|で}ない かも 。 || The water might rise today, so the last boat might not go.
+koji: お{急|いそ}ぎ なら 、 {一|ひと}つ {前|まえ} の {便|びん} を お{勧|すす}め します 。 || If you're in a hurry, I'd suggest the boat before it.
+~ {急|いそ}いで いる なら 、 その {前|まえ} の {船|ふね} に {乗|の}って ね 。 || If you're in a hurry, take the boat before that one.
+narr: {聞|き}き{返|かえ}す の は {失敗|しっぱい} で は ありません 。 {話|はなし} を {分|わ}かる ため の 、 {立派|りっぱ} な {日本語|にほんご} です 。 || Asking back is not failing. It is good Japanese, used to understand.
+`, 'workshop/ask');
+})(RB.content);
 
 
 /* ==== src/content/zz_atlas_decor.js ==== */

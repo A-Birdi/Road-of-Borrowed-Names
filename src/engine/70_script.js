@@ -70,6 +70,14 @@ RB.script = (function () {
         cur.cmds.push(cmd);
         continue;
       }
+      // L12, asking back (expansion plan 05_LANGUAGE.md): `~ JP || EN` right after a line is how the speaker says it
+      // more simply when asked; the dialogue box then offers "Ask back"
+      if (line.startsWith('~ ')) {
+        const last = cur.cmds[cur.cmds.length - 1];
+        if (!last || last.op !== 'say') { errors.push(where + ' a simpler line (~) must follow a spoken line'); continue; }
+        last.simple = splitBilingual(line.slice(2).trim());
+        continue;
+      }
       const m = line.match(LINE_RE);
       if (!m) { errors.push(where + ' cannot parse: ' + line.slice(0, 60)); continue; }
       const bl = splitBilingual(m[3]);
@@ -216,7 +224,7 @@ RB.script = (function () {
             // someone still walking to their place speaks once they are there
             await RB.world.whenArrived(who, 3000);
           }
-          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line });
+          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line, simple: c.simple || null });
           // the reader moved on: every gesture cued for this line settles at its hold or its end
           if (RB.staging) RB.staging.settle('advance');
           break;

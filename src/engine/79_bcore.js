@@ -92,6 +92,9 @@ RB.practiceB = (function () {
         outs = next.length > 512 ? next.slice(0, 512) : next;
       }
     }
+    // a long reply has more mixes than are listed: its all-kana and all-kanji writings are always among them
+    // (typed answers are usually one or the other)
+    try { outs.push(RB.jp.reading(markup), RB.jp.plain(markup)); } catch (e) { /* the mixes above stand */ }
     return Array.from(new Set(outs.map(norm)));
   }
   // A family: { parts:[markup…], also?:[[markup…]…], ok, tone, en, why? }. A part that

@@ -72,7 +72,7 @@ await test('pad controls are distinct, labelled and at least 44px (phone and des
     await p.waitForSelector('.pad-box canvas.pad-ink');
     await p.evaluate(async () => { RB.pad.__last._inject(__ink('み')); await __wait(80); });
     const r = await p.evaluate(() => {
-      const sel = ['[data-a=undo]', '[data-a=clear]', '[data-a=confirm]', '[data-a=del]', '[data-a=submit]', '.cands .cand:not([hidden])', '[data-mode=hand]', '[data-mode=choice]', '[data-mode=ime]', '[data-a=more], [data-a=chart]'];
+      const sel = ['[data-a=undo]', '[data-a=clear]', '[data-a=confirm]', '[data-a=del]', '[data-a=submit]', '.cands .cand:not([hidden]), .rd-more', '[data-mode=hand]', '[data-mode=choice]', '[data-mode=ime]', '[data-a=more], [data-a=chart]'];
       const vis = (q) => [...document.querySelectorAll(q.split(', ').map((x) => '.chal ' + x).join(', '))].find((e) => e.getClientRects().length && getComputedStyle(e).visibility !== 'hidden');
       const got = sel.map((s) => { const e = vis(s); if (!e) return { s, missing: true }; const rc = e.getBoundingClientRect(); const cs = getComputedStyle(e); return { s, w: rc.width, h: rc.height, x: rc.left, y: rc.top, vis: cs.display !== 'none' && cs.visibility !== 'hidden' && rc.width > 0, label: (e.getAttribute('aria-label') || e.textContent || '').replace(/\s+/g, ' ').trim() }; });
       return got;

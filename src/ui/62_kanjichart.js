@@ -441,6 +441,9 @@ RB.kanjiChart = (function () {
         body = '<p>Other readings: <span lang="ja">' + others.map((c) => glyph(c)).join(' ') + '</span>. Compare with the model.</p>';
       }
       // stroke order: count, then order/direction notes when they are certain
+      // L20: the practice is recorded for the kanji's page (src/learn/40_evidence.js): tracing over the model is
+      // exposed practice, writing from memory is handwriting practice. Never a mistake, never a box change.
+      if (RB.evidence && RB.game && RB.game.s && isKanji(target)) RB.evidence.chartPractice(RB.game.s, target, { traced: !!P.model || !!P.modelSeen, ok: at === 0 && r.status === 'confident' });
       const want = RB.recog.strokeCount(target), got = P.strokes.length;
       const notes = [];
       if (got !== want) notes.push(T + ' has ' + want + ' stroke' + (want === 1 ? '' : 's') + '; you wrote ' + got + '.');
@@ -458,8 +461,8 @@ RB.kanjiChart = (function () {
       if (!b || b.disabled) return;
       const a = b.getAttribute('data-pp');
       if (a === 'undo') { P.strokes.pop(); redraw(); }
-      if (a === 'clear') { P.strokes = []; P.cur = null; redraw(); fb.innerHTML = '<p class="muted small">Write <span lang="ja">' + glyph(target) + '</span> in the square, then Check.</p>'; fb.removeAttribute('data-fb'); fb.className = 'kc-pp-fb'; }
-      if (a === 'model') { P.model = !P.model; b.setAttribute('aria-pressed', String(P.model)); b.classList.toggle('on', P.model); drawBg(); }
+      if (a === 'clear') { P.strokes = []; P.cur = null; if (!P.model) P.modelSeen = false; redraw(); fb.innerHTML = '<p class="muted small">Write <span lang="ja">' + glyph(target) + '</span> in the square, then Check.</p>'; fb.removeAttribute('data-fb'); fb.className = 'kc-pp-fb'; }
+      if (a === 'model') { P.model = !P.model; if (P.model) P.modelSeen = true; b.setAttribute('aria-pressed', String(P.model)); b.classList.toggle('on', P.model); drawBg(); }
       if (a === 'check') check();
     });
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => layout()) : null;

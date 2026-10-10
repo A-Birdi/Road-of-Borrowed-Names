@@ -52,6 +52,9 @@ export function expansionRules(RB, C, opts = {}) {
       if (k && d.ch && order.indexOf(d.ch) > order.indexOf(k)) E('challenge ' + id + ' (' + k + '): uses ' + cid + ', taught later (' + d.ch + ')');
     }
   }
+  // 7. a grammar item a task records (g:…) is one the game teaches (RB.grammar), so its page and its exam exist
+  const gram = (st, where) => { for (const it of [].concat(st && st.item || [])) if (typeof it === 'string' && it.slice(0, 2) === 'g:' && RB.grammar && !RB.grammar.get(it.slice(2))) E(where + ': unknown grammar point ' + it); };
+  for (const id in C.challenges) for (const k in C.challenges[id].tiers || {}) C.challenges[id].tiers[k].forEach((st, i) => gram(st, 'challenge ' + id + '[' + k + '][' + i + ']'));
   const listen = (st, where) => { if (st && st.kind === 'listen' && !(st.transcript && st.transcript.jp)) E(where + ': a listening step needs a transcript (no task may need hearing)'); };
   for (const id in C.challenges) for (const k in C.challenges[id].tiers || {}) C.challenges[id].tiers[k].forEach((st, i) => listen(st, 'challenge ' + id + '[' + k + '][' + i + ']'));
   return { errors, found };

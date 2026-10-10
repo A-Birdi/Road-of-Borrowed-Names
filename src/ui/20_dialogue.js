@@ -36,6 +36,7 @@ RB.ui.dialogue = (function () {
       '<button class="dbtn b-voice" title="Replay the Japanese line with this device\'s voice">' + I('sound') + '<span>Voice</span></button>' +
       '<button class="dbtn b-log" title="Dialogue history (L)">' + I('history') + '<span>History</span></button>' +
       '<button class="dbtn b-skip" title="Skip lines you have already seen">' + I('next') + '<span>Skip seen</span></button>' +
+      '<button class="dbtn b-ask hidden" title="Ask them to say it again, slower or more simply">' + I('help') + '<span>Ask back</span></button>' +
       '</div><button class="dbtn primary b-next">Next' + I('next') + '</button></div></div>';
     // A press that began before this line appeared (the click that chose a
     // response or finished an exchange) never also dismisses it; keyboard
@@ -55,6 +56,7 @@ RB.ui.dialogue = (function () {
     box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); syncCtrl(); };
     box.querySelector('.b-words').onclick = () => { RB.ui.help.toggle(); syncCtrl(); };
     box.querySelector('.b-skip').onclick = () => { RB.game.setFastForward(true); advance(); };
+    box.querySelector('.b-ask').onclick = () => askBack();
     RB.ui.root.appendChild(box);
     // Keep this sentence: a tab in the sheet's tab row, outside the text and the controls (src/ui/66_words_pages.js)
     if (RB.ui.keep) RB.ui.keep.attach(box);
@@ -148,6 +150,7 @@ RB.ui.dialogue = (function () {
     renderSub();
     box.querySelector('.b-voice').classList.toggle('hidden', !(hasJp && RB.voice && RB.voice.japaneseVoices && RB.voice.japaneseVoices().length));
     box.querySelector('.b-skip').classList.toggle('hidden', !(seenScene && RB.game.settings.skipSeen));
+    box.querySelector('.b-ask').classList.toggle('hidden', !(line.simple && line.simple.jp));
     box.querySelector('.b-tr').classList.toggle('hidden', RB.game.settings.secondary === 'always' || !hasJp);
     syncCtrl();
     box.querySelector('.txt').scrollTop = 0;
@@ -167,6 +170,39 @@ RB.ui.dialogue = (function () {
       else if (RB.sequence && RB.sequence.skipping()) setTimeout(() => { if (pending === res) advance(true); }, 30);
       else if (RB.test && RB.test.auto) setTimeout(() => advance(true), 5);
     });
+  }
+  // L12, asking back: the player asks in Japanese (again, slower, more simply); the speaker answers with the
+  // authored simpler version. Asking well is a success, never a failure: it is recorded as understanding in context.
+  const ASKS = [
+    { jp: 'もう {一度|いちど} 、 お{願|ねが}いします 。', en: 'Once more, please.', how: 'again' },
+    { jp: 'もう {少|すこ}し ゆっくり {話|はな}して ください 。', en: 'A little slower, please.', how: 'slower' },
+    { jp: 'もっと {簡単|かんたん} に {言|い}って もらえます か 。', en: 'Could you say it more simply?', how: 'simpler' },
+  ];
+  function askBack() {
+    if (!current || !current.src || !current.src.simple) return;
+    const src = current.src;
+    const sheet = RB.ui.el('div', 'dlg-ask paper');
+    sheet.setAttribute('role', 'group');
+    sheet.setAttribute('aria-label', 'Ask back');
+    sheet.innerHTML = '<div class="small muted">Ask them:</div>' + ASKS.map((a, i) => '<button class="dbtn" data-ask="' + i + '"><span class="jp">' + RB.ui.jhtml(a.jp) + '</span><span class="en small">' + esc(a.en) + '</span></button>').join('');
+    box.querySelector('.dlg-sheet').appendChild(sheet);
+    const f = sheet.querySelector('button'); if (f) f.focus({ preventScroll: true });
+    sheet.onclick = (e) => {
+      const b = e.target.closest('[data-ask]');
+      if (!b) return;
+      const a = ASKS[+b.dataset.ask];
+      sheet.remove();
+      const s = RB.game.s;
+      if (s) s.backlog.push({ who: 'pc', jp: a.jp, en: a.en });
+      // again and slower repeat the line (slower with the device's voice, if any); simpler gives the simpler version
+      if (a.how === 'simpler') current = Object.assign({}, src, { jp: src.simple.jp, en: src.simple.en || src.en, src });
+      if (s) s.backlog.push({ who: src.who, jp: current.jp, en: current.en });
+      renderMain(); renderSub();
+      requestAnimationFrame(syncMore);
+      if (a.how === 'slower' && RB.voice && RB.voice.speak) { try { RB.voice.speak(RB.jp.reading(current.jp), { rate: 0.75 }); } catch (err) { /* optional */ } }
+      try { RB.learn.record('c:ask_back', { ok: true, mode: 'choice', assisted: false, ctx: 'story', ev: 'context', kind: 'ask' }); } catch (err) { /* recording never blocks the scene */ }
+      box.querySelector('.b-ask').classList.add('hidden');
+    };
   }
   function renderMain() {
     if (!current) return;

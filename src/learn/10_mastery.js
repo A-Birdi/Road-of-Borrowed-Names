@@ -107,9 +107,12 @@ RB.learn = (function () {
 
   // Choose up to n items from pool, favouring due and weak items, never the
   // same item twice in a row, and not an item just answered wrongly.
+  // days between reviews by box, for spacing that notices days (L6)
+  const DAY_GAP = [1, 1, 2, 4, 9, 20];
   function pick(pool, n, opts) {
     opts = opts || {};
     const now = clock();
+    const today = Math.floor((opts.now != null ? opts.now : Date.now()) / 86400000);
     const seen = new Set();
     const cands = [];
     for (const id of pool) {
@@ -122,8 +125,12 @@ RB.learn = (function () {
         if (now - r.last < COOLDOWN && !opts.ignoreCooldown) continue;
         if (r.cool > now && !opts.ignoreCooldown) continue;
         const overdue = now - r.due;
-        score = (overdue >= 0 ? 4 + Math.min(overdue, 10) * 0.2 : 0) + (5 - r.box) * 0.8 + Math.random();
-        if (r.box >= 4 && overdue < 0) score -= 4; // already solid: rarely drill
+        // L6 (expansion; C-36): spacing also notices days. An item last met on an earlier day, longer ago than its
+        // box's gap, counts as due too, so an evening's many events don't stand in for remembering it next week.
+        // It only orders suggestions: nothing shows an overdue count, a streak or a reminder.
+        const dueByDays = r.lastDay != null && today - r.lastDay >= DAY_GAP[Math.min(r.box, DAY_GAP.length - 1)];
+        score = (overdue >= 0 ? 4 + Math.min(overdue, 10) * 0.2 : 0) + (dueByDays ? 2.5 : 0) + (5 - r.box) * 0.8 + Math.random();
+        if (r.box >= 4 && overdue < 0 && !dueByDays) score -= 4; // already solid: rarely drill
       }
       if (score >= 0) cands.push({ id, score });
     }
@@ -146,5 +153,5 @@ RB.learn = (function () {
     const by = (k) => items.filter((r) => kindOf(r.id) === k);
     return { k: by('k').length, v: by('v').length, g: by('g').length, c: by('c').length, steady: items.filter((r) => r.box >= 3).length };
   }
-  return { record, rec, pick, weakest, summary, introduced, markIntroduced, taughtKana, kanaKnown, clock, tick, kindOf };
+  return { DAY_GAP, record, rec, pick, weakest, summary, introduced, markIntroduced, taughtKana, kanaKnown, clock, tick, kindOf };
 })();

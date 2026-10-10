@@ -208,6 +208,8 @@ await test('recognition repair stops the pace and costs nothing ("That is not wh
   // "Confirm character & continue" goes on
   await p.evaluate(() => RB.pad.__last._inject(__ink('ぎ')));
   await p.waitForFunction(() => document.querySelector('.readas').getAttribute('data-state') === 'sure');
+  // (C-14: the pad shows one guess; the other readings open with More suggestions, which is the review)
+  await p.click('[data-a=suggest]');
   await p.click('.cands .cand >> nth=0');
   await p.waitForFunction(() => __clk().reasons && __clk().reasons.includes('candidate-review'));
   const cr = await p.evaluate(() => ({ c: __clk(), conf: document.querySelector('[data-a=confirm]').textContent.trim(), st: document.querySelector('.pace-st').textContent }));

@@ -41,6 +41,25 @@ RB.test = (function () {
       if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'no correct option' });
     } else if (step.kind === 'order') {
       if (!step.answer || step.answer.length !== step.tiles.length) T.problems.push({ where, msg: 'order mismatch' });
+    } else if (step.kind === 'forge') {
+      // every accepted reply must be readable typed, handwritten and from its own pieces; the first one is "said"
+      const F = RB.forge.prepare(step);
+      let first = -1;
+      F.families.forEach((f, i) => {
+        if (!f.ok) return;
+        if (first < 0) first = i;
+        for (const q of RB.practiceB.sequences(f)) {
+          const j = F.judge(RB.jp.reading(q.join(' ')), {});
+          if (!j.ok) T.problems.push({ where, msg: 'forge: an accepted reply is not read', reply: q.join(' ') });
+          const pm = RB.forge.piecesMatch(F, q);
+          if (!pm || !pm.family.ok) T.problems.push({ where, msg: 'forge: an accepted reply cannot be built from its pieces', reply: q.join(' ') });
+        }
+      });
+      if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: 'forge', ev: 'construct', ctx: String(where || '') });
+      return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'build', given: { family: first } };
+    } else if (step.kind === 'listen') {
+      if (!step.transcript || !step.transcript.jp) T.problems.push({ where, msg: 'listen: no transcript' });
+      if (!step.options || !step.options.some((o) => o.ok)) T.problems.push({ where, msg: 'listen: no correct option' });
     } else T.problems.push({ where, msg: 'unknown step kind ' + step.kind });
     if (step.item) RB.learn.record(step.item, { ok: true, mode: 'choice', assisted: false, kind: step.kind, ctx: /^battle /.test(String(where || '')) ? 'battle:' + String(where).split(' ')[1] : String(where || '') });
     return { ok: true, firstTry: true, mistakes: 0, assisted: false, mode: 'choice' };

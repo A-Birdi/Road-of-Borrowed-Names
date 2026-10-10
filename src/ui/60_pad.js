@@ -655,7 +655,7 @@ RB.pad = (function () {
       if (a === 'clear') clearInk();
       if (a === 'small') { P.small = !P.small; b.classList.toggle('on', P.small); b.setAttribute('aria-pressed', String(P.small)); el.querySelector('.more-on').hidden = !P.small; drawBg(); if (P.strokes.length) recognize(); }
       if (a === 'more') { const open = b.getAttribute('aria-expanded') !== 'true'; b.setAttribute('aria-expanded', String(open)); el.classList.toggle('more-open', open); }
-      if (a === 'suggest') { P.moreOpen = true; P.moreUsed = true; renderRead(); live.textContent = 'Other readings shown. This character counts as assisted.'; const f = candsEl.querySelector('.cand:not([hidden])'); if (f) f.focus(); }
+      if (a === 'suggest') { P.moreOpen = true; P.moreUsed = true; if (PH) PH.review('candidate'); renderRead(); live.textContent = 'Other readings shown. This character counts as assisted.'; const f = candsEl.querySelector('.cand:not([hidden])'); if (f) f.focus(); }
       if (a === 'confirm') confirm();
       if (a === 'del') remove();
       if (a === 'chart') chart();

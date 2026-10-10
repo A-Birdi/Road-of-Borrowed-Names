@@ -74,6 +74,8 @@ for (const id in C.scenes) {
       if (!c.jp && c.who !== 'narr') Wn(where(c) + ' line without Japanese');
       if (!c.en) E(where(c) + ' line without English');
       jcheck(c.jp, where(c));
+      // L12: the simpler version a speaker gives when asked back
+      if (c.simple) { jcheck(c.simple.jp, where(c) + ' (simpler)'); if (!c.simple.en) E(where(c) + ' a simpler line without English'); }
     }
     if (c.op === 'choice') for (const o of c.opts) { jcheck(o.jp, where(c)); if (!o.en) E(where(c) + ' choice without English'); }
     if (c.op === 'card' || c.op === 'journal' || c.op === 'toast') jcheck(c.jp, where(c));
@@ -350,6 +352,33 @@ function checkStep(s, where) {
       else if (s.answer && alt.join('|') === [].concat(s.answer).join('|')) E(where + ': alts[' + ai + '] repeats the answer');
     });
     for (const t of s.tiles || []) jcheck(t, where + ' tile');
+  } else if (s.kind === 'forge') {
+    // a forged sentence (L7): its replies are families of parts; every accepted one must be readable typed, written
+    // and from its own pieces, and say in English what it does
+    const fams = s.families || [];
+    if (!fams.length || !fams.some((f) => f.ok)) E(where + ': forge step has no accepted reply');
+    if (!s.prompt || !s.prompt.en) E(where + ': forge step needs its intention in English (prompt.en)');
+    for (const f of fams) {
+      if (!Array.isArray(f.parts) || !f.parts.length) { E(where + ': a reply without parts'); continue; }
+      [f.parts].concat(f.also || []).forEach((q) => q.forEach((pt) => jcheck(String(pt).replace(/^\?/, ''), where + ' part')));
+      if (!f.en) E(where + ': a reply without English');
+      if (!f.ok && !(f.why && f.why.en)) E(where + ': a reply that is not accepted needs a why');
+    }
+    for (const x of (s.extra || []).concat(s.extraFine || [])) jcheck(x, where + ' extra piece');
+    try {
+      const F = RB.forge.prepare(s);
+      for (const f of fams) if (f.ok) for (const q of RB.practiceB.sequences(f)) {
+        if (!F.judge(RB.jp.reading(q.join(' ')), {}).ok) E(where + ': an accepted reply is not read when typed: ' + q.join(' '));
+        const pm = RB.forge.piecesMatch(F, q);
+        if (!pm || !pm.family.ok) E(where + ': an accepted reply cannot be built from its pieces: ' + q.join(' '));
+      }
+    } catch (err) { E(where + ': forge ' + err.message); }
+  } else if (s.kind === 'listen') {
+    // L16: optional listening; the words are always there to read
+    if (!s.transcript || !s.transcript.jp) E(where + ': a listening step needs its transcript');
+    else jcheck(s.transcript.jp, where + ' transcript');
+    if (!s.options || !s.options.some((o) => o.ok)) E(where + ': listen step has no correct option');
+    for (const o of s.options || []) jcheck(o.jp, where + ' option');
   } else E(where + ': unknown step kind ' + s.kind);
 }
 for (const id in C.challenges) {

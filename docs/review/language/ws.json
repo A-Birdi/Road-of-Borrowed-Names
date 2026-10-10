@@ -1,0 +1,962 @@
+{
+ "scene:ws.ask#1th2jpg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{渡|わた}し{守|もり} が {早口|はやくち} で {説明|せつめい} する 。 「 Ask back 」 で {聞|き}き{返|かえ}せます 。",
+  "en": "The ferryman explains, quickly. \"Ask back\" lets you ask him again."
+ },
+ "scene:ws.ask#1ui1wwb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{本日|ほんじつ} は {増水|ぞうすい} の {恐|おそ}れ が ある ため 、 {最終便|さいしゅうびん} の {出航|しゅっこう} を {見合|みあ}わせる {可能性|かのうせい} が ございます 。",
+  "en": "With the river likely to rise today, the last boat may not sail."
+ },
+ "scene:ws.ask:simpler#6xl2dt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{今日|きょう} は {水|みず} が {増|ふ}える かも しれない から 、 {最後|さいご} の {船|ふね} は {出|で}ない かも 。",
+  "en": "The water might rise today, so the last boat might not go."
+ },
+ "scene:ws.ask#tx5cz1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "お{急|いそ}ぎ なら 、 {一|ひと}つ {前|まえ} の {便|びん} を お{勧|すす}め します 。",
+  "en": "If you're in a hurry, I'd suggest the boat before it."
+ },
+ "scene:ws.ask:simpler#3ph2tg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{急|いそ}いで いる なら 、 その {前|まえ} の {船|ふね} に {乗|の}って ね 。",
+  "en": "If you're in a hurry, take the boat before that one."
+ },
+ "scene:ws.ask#1u9e253": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{聞|き}き{返|かえ}す の は {失敗|しっぱい} で は ありません 。 {話|はなし} を {分|わ}かる ため の 、 {立派|りっぱ} な {日本語|にほんご} です 。",
+  "en": "Asking back is not failing. It is good Japanese, used to understand."
+ },
+ "challenges:ws.L7#o5c6dr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{横|よこ} の {門|もん}",
+  "en": "Leave the side gate open"
+ },
+ "challenges:ws.L7#ri413w": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "もん を",
+  "en": ""
+ },
+ "challenges:ws.L7#yy4cfe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あけて ください 。",
+  "en": ""
+ },
+ "challenges:ws.L7#owifxj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "しめて ください 。",
+  "en": ""
+ },
+ "challenges:ws.L7#1rthvr1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{横|よこ} の {門|もん} を",
+  "en": ""
+ },
+ "challenges:ws.L7#efoe7r": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{夕方|ゆうがた} まで",
+  "en": ""
+ },
+ "challenges:ws.L7#1iiguld": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{開|あ}けて おいて ください 。",
+  "en": ""
+ },
+ "challenges:ws.L7#20a6fz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{開|あ}けて おいて もらえません か 。",
+  "en": ""
+ },
+ "challenges:ws.L7#fy1mvw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{閉|し}めて おいて ください 。",
+  "en": ""
+ },
+ "challenges:ws.L7#1qpd0uk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{朝|あさ} まで",
+  "en": ""
+ },
+ "challenges:ws.L7#3hgx22": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く ので 、",
+  "en": ""
+ },
+ "challenges:ws.L7#2bj5hi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く のに 、",
+  "en": ""
+ },
+ "challenges:ws.L7#s50iek": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{朝|あさ} に",
+  "en": ""
+ },
+ "challenges:ws.L7#1ssmg2f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{恐|おそ}れ{入|い}ります が 、",
+  "en": ""
+ },
+ "challenges:ws.L7#1lg8kge": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{夕方|ゆうがた} に {荷物|にもつ} が {届|とど}く {予定|よてい} です ので 、",
+  "en": ""
+ },
+ "challenges:ws.L7#19s5hud": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{横|よこ} の {門|もん} を {開|あ}けて おいて いただけない でしょう か 。",
+  "en": ""
+ },
+ "challenges:ws.L7#1btj4qs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{横|よこ} の {門|もん} を {開|あ}けて おけ 。",
+  "en": ""
+ },
+ "challenges:ws.L8#1uiqmec": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{何|なに} が {動|うご}いた ？",
+  "en": "What moved?"
+ },
+ "challenges:ws.L8#1ridk1l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あお い",
+  "en": ""
+ },
+ "challenges:ws.L8#vwj39p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "の です 。",
+  "en": ""
+ },
+ "challenges:ws.L8#1a22oa6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あか い",
+  "en": ""
+ },
+ "challenges:ws.L8#122nlmy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{青|あお}い {荷物|にもつ} が",
+  "en": ""
+ },
+ "challenges:ws.L8#197pgko": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{台車|だいしゃ} に",
+  "en": ""
+ },
+ "challenges:ws.L8#1qkgm6w": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{乗|の}りました 。",
+  "en": ""
+ },
+ "challenges:ws.L8#1aoba53": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{青|あお}い {荷物|にもつ} は",
+  "en": ""
+ },
+ "challenges:ws.L8#1g3y7uu": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あります 。",
+  "en": ""
+ },
+ "challenges:ws.L8#1y97skh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{赤|あか}い {荷物|にもつ} が",
+  "en": ""
+ },
+ "challenges:ws.L8#vyrdnh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ベンチ に",
+  "en": ""
+ },
+ "challenges:ws.L8#5m26hi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{誰|だれ}か が",
+  "en": ""
+ },
+ "challenges:ws.L8#1kdv5tc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{青|あお}い {荷物|にもつ} を",
+  "en": ""
+ },
+ "challenges:ws.L8#14cm2fv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ベンチ から {台車|だいしゃ} に",
+  "en": ""
+ },
+ "challenges:ws.L8#1jlmqkf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{載|の}せました 。",
+  "en": ""
+ },
+ "challenges:ws.L8#10mvbfv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{移|うつ}されました 。",
+  "en": ""
+ },
+ "challenges:ws.L8#b2krpl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{台車|だいしゃ} から ベンチ に",
+  "en": ""
+ },
+ "challenges:ws.L8#tenlke": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "もう {台車|だいしゃ} に",
+  "en": ""
+ },
+ "challenges:ws.L8#15hlgim": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{載|の}せて あります 。",
+  "en": ""
+ },
+ "challenges:ws.L8#o55imc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{載|の}って います 。",
+  "en": ""
+ },
+ "challenges:ws.L9#qejsxb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ハナ への {手紙|てがみ}",
+  "en": "A letter for Hana"
+ },
+ "challenges:ws.L9#mcbs5p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ハナ に",
+  "en": ""
+ },
+ "challenges:ws.L9#1kxjty": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "てがみ を",
+  "en": ""
+ },
+ "challenges:ws.L9#1xpk1dz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "おくります 。",
+  "en": ""
+ },
+ "challenges:ws.L9#ta1ui0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ハナ が",
+  "en": ""
+ },
+ "challenges:ws.L9#1p8o0zs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "コウジ が",
+  "en": ""
+ },
+ "challenges:ws.L9#wud1tm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{手紙|てがみ} を",
+  "en": ""
+ },
+ "challenges:ws.L9#x0gd1k": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{送|おく}ります 。",
+  "en": ""
+ },
+ "challenges:ws.L9#114h2l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "コウジ に",
+  "en": ""
+ },
+ "challenges:ws.L9#l8dddt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ハナ は",
+  "en": ""
+ },
+ "challenges:ws.L9#1p0hz4u": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "もらいました 。",
+  "en": ""
+ },
+ "challenges:ws.L9#1yezzrg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "コウジ から",
+  "en": ""
+ },
+ "challenges:ws.L9#1qs4jud": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あげました 。",
+  "en": ""
+ },
+ "challenges:ws.L9#kubo90": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "コウジ さん が",
+  "en": ""
+ },
+ "challenges:ws.L9#1tmjlow": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ハナ さん の {代|か}わり に",
+  "en": ""
+ },
+ "challenges:ws.L9#1c49rqi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{手紙|てがみ} を {書|か}いて くれました 。",
+  "en": ""
+ },
+ "challenges:ws.L9#126fkhv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{手紙|てがみ} を {書|か}いて あげました 。",
+  "en": ""
+ },
+ "challenges:ws.L10#1gtj67c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{言葉|ことば} の {錠|じょう}",
+  "en": "The word-lock"
+ },
+ "challenges:ws.L10#c1uq7i": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あけて",
+  "en": ""
+ },
+ "challenges:ws.L10#15x5g3d": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ください 。",
+  "en": ""
+ },
+ "challenges:ws.L10#11urk45": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あける",
+  "en": ""
+ },
+ "challenges:ws.L10#1eupzun": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{開|あ}けて",
+  "en": ""
+ },
+ "challenges:ws.L10#c6vibe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{開|あ}けます",
+  "en": ""
+ },
+ "challenges:ws.L10#i8u5dl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{触|さわ}らないで",
+  "en": ""
+ },
+ "challenges:ws.L10#wddf46": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{触|さわ}って",
+  "en": ""
+ },
+ "challenges:ws.L10#4dmgoz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{前|まえ} もって",
+  "en": ""
+ },
+ "challenges:ws.L10#1e95ga4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{閉|し}めて おいて",
+  "en": ""
+ },
+ "challenges:ws.L10#7xbhok": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{閉|し}めて しまって",
+  "en": ""
+ },
+ "challenges:ws.L11#16y50aj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{誰|だれ} の こと ？",
+  "en": "Who was it?"
+ },
+ "challenges:ws.L11#wuls53": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "これ は ナオ の です 。",
+  "en": "Hana holds up a cup. \"これ は ナオ の です。\""
+ },
+ "challenges:ws.L11#adc8p1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ミオ : 「 コウジ さん に {会|あ}った ？ 」 あなた : 「 うん 、 {元気|げんき} そう だった よ 。 」",
+  "en": "Mio: \"Did you meet Kōji?\" You: \"Yes. (He) looked well.\""
+ },
+ "challenges:ws.L11#1himqib": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{門|もん} に {鞄|かばん} が {二|ふた}つ {置|お}いて あった 。 ひとつ は {門番|もんばん} が {預|あず}かって いる 。 その {鞄|かばん} は ナオ の だ 。",
+  "en": "Notice: \"Two bags were left at the gate. The keeper is holding one. That one is Nao's.\""
+ },
+ "challenges:ws.L11#1xx9hk7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{渡|わた}し{守|もり} に {荷物|にもつ} の こと を {聞|き}いた 。 {宿|やど} の {女将|おかみ} に {渡|わた}した と {言|い}う が 、 {行|い}って みる と 、 {受|う}け{取|と}って いない と {言|い}われた 。",
+  "en": "Letter: \"I asked the ferryman about the parcel. He said he had handed it to the innkeeper, but when I went, (she) said she had never received it.\""
+ },
+ "challenges:ws.L13#d72bkt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{戸口|とぐち} の {張|は}り{紙|がみ}",
+  "en": "The notice by the door"
+ },
+ "challenges:ws.L13#zh4f44": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{本日|ほんじつ} {午後|ごご} {三時|さんじ} {以降|いこう} 、 {正面|しょうめん} {入口|いりぐち} は {閉鎖|へいさ} いたします 。 {裏口|うらぐち} を ご{利用|りよう} ください 。",
+  "en": "From 3 p.m. today the front entrance will be closed. Please use the back entrance."
+ },
+ "challenges:ws.L13#xi9cdr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "うしろ から",
+  "en": ""
+ },
+ "challenges:ws.L13#13zeojm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "はいって ね 。",
+  "en": ""
+ },
+ "challenges:ws.L13#1vkbssl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "まえ から",
+  "en": ""
+ },
+ "challenges:ws.L13#piaey8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{三時|さんじ} から",
+  "en": ""
+ },
+ "challenges:ws.L13#1ra8pga": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{後|うし}ろ の {入|い}り{口|ぐち} を",
+  "en": ""
+ },
+ "challenges:ws.L13#i7sakm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{使|つか}って ください 。",
+  "en": ""
+ },
+ "challenges:ws.L13#1l6clo6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{今日|きょう} は {三時|さんじ} から",
+  "en": ""
+ },
+ "challenges:ws.L13#1j2jfaf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{前|まえ} の {入|い}り{口|ぐち} が {使|つか}えない ので 、",
+  "en": ""
+ },
+ "challenges:ws.L13#7twrz4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{後|うし}ろ から {入|はい}って ください 。",
+  "en": ""
+ },
+ "challenges:ws.L13#1kqyrk7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{三時|さんじ} を {過|す}ぎたら",
+  "en": ""
+ },
+ "challenges:ws.L13#1xhc7r5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{前|まえ} の {入|い}り{口|ぐち} は {閉|し}まる ので 、",
+  "en": ""
+ },
+ "challenges:ws.L13#ixo139": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{今日|きょう} は",
+  "en": ""
+ },
+ "challenges:ws.L13#1sg1j7w": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{今日|きょう} の {午後|ごご} {三時|さんじ} から 、",
+  "en": ""
+ },
+ "challenges:ws.L13#rfi37q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{表|おもて} の {入|い}り{口|ぐち} は {閉|し}まります 。",
+  "en": ""
+ },
+ "challenges:ws.L13#1xe5nls": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{裏|うら} から {入|はい}って ください 。",
+  "en": ""
+ },
+ "challenges:ws.L13#g2hu17": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{本日|ほんじつ} {午後|ごご} {三時|さんじ} {以降|いこう} 、",
+  "en": ""
+ },
+ "challenges:ws.L14#1yhh476": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{橋|はし} は {閉|し}まって いる ？",
+  "en": "Is the bridge closed?"
+ },
+ "challenges:ws.L14#l72cfb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "はし が",
+  "en": ""
+ },
+ "challenges:ws.L14#kgj7pa": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "しまって いる",
+  "en": ""
+ },
+ "challenges:ws.L14#8eeb5c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "そう です 。",
+  "en": ""
+ },
+ "challenges:ws.L14#1wh6ylh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "しまって",
+  "en": ""
+ },
+ "challenges:ws.L14#1d9682c": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "います 。",
+  "en": ""
+ },
+ "challenges:ws.L14#35v0mh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ハナ さん に よる と 、",
+  "en": ""
+ },
+ "challenges:ws.L14#14iuaj6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{橋|はし} が {閉|し}まって いる",
+  "en": ""
+ },
+ "challenges:ws.L14#g9s22j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "よう です 。",
+  "en": ""
+ },
+ "challenges:ws.L14#yio1wo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{人|ひと} が {引|ひ}き{返|かえ}して いた ので 、",
+  "en": ""
+ },
+ "challenges:ws.L14#1l011kj": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{市場|いちば} で は 、",
+  "en": ""
+ },
+ "challenges:ws.L14#srpokf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "らしい です よ 。",
+  "en": ""
+ },
+ "challenges:ws.L14#svm93y": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "に {違|ちが}いない です 。",
+  "en": ""
+ },
+ "challenges:ws.L15#1ar8um0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{屋台|やたい} で",
+  "en": "At the stall"
+ },
+ "challenges:ws.L15#1wodqd4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "いらっしゃい ませ 。",
+  "en": ""
+ },
+ "challenges:ws.L15#ynlwkk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "りんご を ください 。",
+  "en": ""
+ },
+ "challenges:ws.L15#1qsm8ng": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "はい 、 どうぞ 。",
+  "en": ""
+ },
+ "challenges:ws.L15#uo1p13": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "この りんご は いくら です か 。",
+  "en": ""
+ },
+ "challenges:ws.L15#ghq6cc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{一|ひと}つ {百|ひゃく} {円|えん} です 。",
+  "en": ""
+ },
+ "challenges:ws.L15#1opls5f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "じゃあ 、 {二|ふた}つ ください 。",
+  "en": ""
+ },
+ "challenges:ws.L15#tutr0k": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ありがとう ございます 。",
+  "en": ""
+ },
+ "challenges:ws.L15#56vcyd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{柿|かき} は もう ない ん です か 。",
+  "en": ""
+ },
+ "challenges:ws.L15#1oklzxn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{今日|きょう} は {売|う}り{切|き}れ です 。",
+  "en": ""
+ },
+ "challenges:ws.L15#7l0on7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{明日|あした} なら ありますか 。",
+  "en": ""
+ },
+ "challenges:ws.L15#dmclld": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ええ 、 {朝|あさ} {入|はい}ります よ 。",
+  "en": ""
+ },
+ "challenges:ws.L15#txhqab": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "すみません 、 さっき の お{釣|つ}り なんです が …",
+  "en": ""
+ },
+ "challenges:ws.L15#1ussrh6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あ 、 {足|た}りません でした か 。",
+  "en": ""
+ },
+ "challenges:ws.L15#1n7rc7o": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "いえ 、 {逆|ぎゃく} に {多|おお}すぎた みたい で 。",
+  "en": ""
+ },
+ "challenges:ws.L15#1rinevd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "それ は ご{丁寧|ていねい} に 、 ありがとう ございます 。",
+  "en": ""
+ },
+ "challenges:ws.L16#87x7y": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{似|に}た {音|おと}",
+  "en": "Two words that sound alike"
+ },
+ "challenges:ws.L16#1epvjd3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "おばあさん",
+  "en": "Grandmother"
+ },
+ "challenges:ws.L16#142n8m2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "きて",
+  "en": "Come here."
+ },
+ "challenges:ws.L16#9tlny2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "びょういん",
+  "en": "Hospital"
+ },
+ "challenges:ws.L16#1fxsafk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "しゅじん",
+  "en": "Husband / master"
+ },
+ "challenges:ws.L17#nx23dq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "どっち の {道|みち} ？",
+  "en": "Which way?"
+ },
+ "challenges:ws.L17#itzmxe": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ひだり に",
+  "en": ""
+ },
+ "challenges:ws.L17#1m49gcc": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "いこう 。",
+  "en": ""
+ },
+ "challenges:ws.L17#17jhuxd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "みぎ に",
+  "en": ""
+ },
+ "challenges:ws.L17#zd6550": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{右|みぎ} の {橋|はし} は {閉|し}まって いる から 、",
+  "en": ""
+ },
+ "challenges:ws.L17#f3t4zx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{左|ひだり} の {道|みち} を {行|い}こう 。",
+  "en": ""
+ },
+ "challenges:ws.L17#1074y7x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{右|みぎ} の {橋|はし} は {閉|し}まって いる から 。",
+  "en": ""
+ },
+ "challenges:ws.L17#zris3x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{右|みぎ} の {道|みち} を {行|い}こう 。",
+  "en": ""
+ },
+ "challenges:ws.L17#1dqvl2z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{右|みぎ} の {橋|はし} は {閉|し}まって いる し 、",
+  "en": ""
+ },
+ "challenges:ws.L17#1p5er5p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{左|ひだり} の ほう が {近|ちか}い し 、",
+  "en": ""
+ },
+ "challenges:ws.L17#15zpkq4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{左|ひだり} から {行|い}こう よ 。",
+  "en": ""
+ },
+ "challenges:ws.L17#u78a5a": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{右|みぎ} の {橋|はし} は {閉|し}まって いる けど 、",
+  "en": ""
+ },
+ "challenges:ws.L17#1o6n3s0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{張|は}り{紙|がみ} に {右|みぎ} の {橋|はし} が {閉|し}まって いる と あった から 、",
+  "en": ""
+ },
+ "challenges:ws.L17#1r32cbz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "その {下|した} を {通|とお}る {川沿|かわぞ}い の {道|みち} も",
+  "en": ""
+ },
+ "challenges:ws.L17#1533jkh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{水|みず} が {出|で}て いる はず だ よ 。",
+  "en": ""
+ },
+ "challenges:ws.L17#15sh29i": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{水|みず} が {出|で}て いる わけ が ない よ 。",
+  "en": ""
+ },
+ "challenges:ws.L17b#jxewvp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "どこ まで {届|とど}く ？",
+  "en": "How far does it reach?"
+ },
+ "challenges:ws.L17b#1wpzi1x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "みんな を",
+  "en": ""
+ },
+ "challenges:ws.L17b#5az81s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "まもる 。",
+  "en": ""
+ },
+ "challenges:ws.L17b#1spirxh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ひとり を",
+  "en": ""
+ },
+ "challenges:ws.L17b#1c69cvt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{光|ひかり} が",
+  "en": ""
+ },
+ "challenges:ws.L17b#1ikayr5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "すべて を",
+  "en": ""
+ },
+ "challenges:ws.L17b#1wia4co": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{照|て}らす 。",
+  "en": ""
+ },
+ "challenges:ws.L17b#3z3l88": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{全部|ぜんぶ} を",
+  "en": ""
+ },
+ "challenges:ws.L17b#11jtudn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "ひとつ を",
+  "en": ""
+ },
+ "challenges:ws.L17b#6m3l6b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "それぞれ に",
+  "en": ""
+ },
+ "challenges:ws.L17b#amsbfs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{水|みず} を",
+  "en": ""
+ },
+ "challenges:ws.L17b#ayyctg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あげる 。",
+  "en": ""
+ },
+ "challenges:ws.L17b#16ev9tn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{全体|ぜんたい} に",
+  "en": ""
+ },
+ "challenges:ws.L17b#qq3e1x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "あらゆる {攻撃|こうげき} から",
+  "en": ""
+ },
+ "challenges:ws.L17b#m48lhk": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "{守|まも}る 。",
+  "en": ""
+ },
+ "challenges:ws.L17b#evk86t": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead (no native review, C-26): standard textbook grammar and register; words checked against the game's lexicon",
+  "jp": "いくつか の {攻撃|こうげき} から",
+  "en": ""
+ }
+}
