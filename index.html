@@ -3516,6 +3516,98 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 .tb-study .tb-tools svg { width: 1.2em; height: 1.2em; flex: none; }
 .tb-study .cbtn { justify-self: start; }
 
+/* ==== src/styles/63_verbs.css ==== */
+/* The exploration actions' sheets (expansion P05; src/ui/57b_verbs.js): the Weave sheet's frame, taller for the
+   diagrams; every state in words and shapes, colour only reinforcing. */
+.verb-sheet { max-height: min(80vh, 660px); }
+.verb-sheet .vb-title { display: inline-flex; flex-direction: column; line-height: 1.25; }
+.verb-sheet .vb-title .en { font-size: 0.82em; font-weight: 400; color: var(--on-cloth); opacity: 0.85; }
+.verb-sheet .vb-l { display: inline-flex; flex-direction: column; gap: 1px; }
+.verb-sheet .vb-l .en, .verb-sheet .wv-t .en { font-size: 0.86em; color: var(--ink-2); }
+.verb-sheet .wv-t { display: inline-flex; flex-direction: column; align-items: flex-start; min-height: var(--tap); padding: 4px 10px; text-align: left; }
+.verb-sheet .wv-t[aria-pressed="true"] { background: var(--paper); border-color: var(--ribbon-deep); box-shadow: inset 0 -3px 0 var(--ribbon); font-weight: 600; }
+.verb-sheet .wv-t[disabled] { opacity: 0.55; cursor: not-allowed; }
+.verb-sheet .ar-item { padding: 6px 0; border-top: 1px solid var(--rule); }
+.verb-sheet .ar-slots { display: flex; flex-wrap: wrap; gap: 6px; }
+.vb-said { margin-top: 8px; }
+.vb-said p { margin: 4px 0; padding: 6px 10px; background: #fbf6e8; border-left: 3px solid var(--ink-3); }
+.vb-done { display: flex; align-items: center; gap: 0.4em; margin: 0 0 8px; padding: 4px 10px; border: 1px solid var(--ok-ink); border-radius: var(--r-1); font-weight: 600; color: var(--ok-ink); }
+.vb-done svg { width: 1.2em; height: 1.2em; }
+.vb-notice-preview { display: flex; flex-direction: column; gap: 2px; margin: 0 0 8px; padding: 10px 12px; background: #fbf6e8; border: 2px solid var(--ink-3); border-radius: 2px; font-size: 1.1em; }
+.vb-notice-preview .en { font-size: 0.82em; color: var(--ink-2); }
+.vb-small { font-size: 0.85em; color: var(--ink-2); display: block; }
+.vb-far { display: block; font-size: 0.86em; color: var(--ink-3); font-style: italic; }
+.vb-where { display: block; font-size: 0.8em; color: var(--ink-3); }
+
+/* courier */
+.vb-table-wrap { overflow-x: auto; margin-bottom: 8px; }
+.vb-table { border-collapse: collapse; min-width: 100%; font-size: 0.92em; }
+.vb-table caption { text-align: left; font-weight: 600; margin-bottom: 4px; }
+.vb-table th, .vb-table td { border: 1px solid var(--rule); padding: 4px 6px; text-align: left; vertical-align: top; }
+.vb-table thead th { background: var(--paper-2); }
+
+/* repair */
+.vb-steps { list-style: none; margin: 6px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.vb-steps li { display: inline-flex; align-items: center; gap: 0.4em; }
+.vb-steps .vb-mark { display: inline-grid; place-items: center; width: 1.5em; height: 1.5em; border: 1px solid var(--ink-3); border-radius: 50%; font-size: 0.85em; }
+.vb-steps li.ok .vb-mark { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* network */
+.vb-basins, .vb-gates { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 6px; }
+.vb-basins li, .vb-gates li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 4px 6px; border: 1px solid var(--rule); border-radius: var(--r-1); }
+.vb-basins .vb-n, .vb-gates .vb-n { min-width: 9em; }
+.vb-meter { display: inline-flex; gap: 2px; }
+.vb-meter i { display: block; width: 18px; height: 12px; border: 1px solid var(--ink-3); background: transparent; }
+.vb-meter i.on { background: var(--river); border-color: var(--ink-2); }
+.vb-lv, .vb-state { font-weight: 600; }
+
+/* observe */
+.vb-machine { padding: 8px 10px; margin-bottom: 8px; border: 2px solid var(--ink-3); border-radius: var(--r-1); background: #fbf6e8; }
+.vb-phase { font-weight: 600; margin-bottom: 6px; }
+.vb-parts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; }
+.vb-parts li { display: flex; flex-direction: column; gap: 2px; padding: 4px 6px; border: 1px dashed var(--rule); }
+.vb-parts li.st-ring, .vb-parts li.st-turn, .vb-parts li.st-up { border-style: solid; border-color: var(--ink-2); }
+.vb-pattern { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; counter-reset: ph; }
+.vb-pattern li { counter-increment: ph; padding: 3px 8px; border: 1px solid var(--rule); border-radius: 999px; font-size: 0.9em; }
+.vb-pattern li::before { content: counter(ph) ". "; font-weight: 600; }
+.vb-pattern li.now { border: 2px solid var(--ink); font-weight: 600; }
+
+/* layers */
+.vb-plan { overflow-x: auto; margin: 6px 0; }
+.vb-plan svg { width: 100%; max-width: 640px; height: auto; display: block; }
+.vb-plan .vb-ground { fill: #efe3c6; }
+.vb-plan .vb-wall { fill: #9d8b66; }
+.vb-plan .vb-water { fill: #a9c4cf; }
+.vb-plan .vb-oldmark circle { fill: none; stroke: #7a4a1e; stroke-width: 2; stroke-dasharray: 3 2; }
+.vb-plan .vb-oldmark.seen circle { stroke-dasharray: none; }
+.vb-plan .vb-oldmark text { font: 700 10px Georgia, serif; fill: #261f15; stroke: #efe3c6; stroke-width: 3px; paint-order: stroke; }
+.vb-plan .vb-you { fill: #a83e27; stroke: #261f15; stroke-width: 1; }
+.vb-marks, .vb-hyps { margin: 4px 0 8px; padding-left: 1.5em; display: grid; gap: 6px; }
+.vb-marks li.ok::marker { content: '✓ '; }
+.vb-marks .vb-obs { display: block; margin-top: 2px; }
+.vb-hyps { list-style: none; padding-left: 0; }
+.vb-hyps li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 4px 6px; border: 1px solid var(--rule); border-radius: var(--r-1); }
+
+/* blocking */
+.vb-dirs { margin: 0 0 8px; padding-left: 1.5em; display: grid; gap: 4px; }
+.vb-dirs li.ok::marker { content: '✓ '; color: var(--ok-ink); }
+.vb-dirs li.no::marker { content: '✗ '; color: var(--danger-ink); }
+.vb-stage { display: grid; grid-template-columns: 56px minmax(0, 1fr) 56px; gap: 6px; align-items: stretch; margin-top: 6px; }
+.vb-grid { display: grid; grid-template-columns: repeat(var(--w), minmax(0, 1fr)); gap: 3px; padding: 4px; background: #d8c49c; border: 2px solid var(--ink-3); }
+.vb-wing { display: flex; flex-direction: column; gap: 4px; align-items: stretch; text-align: center; }
+.vb-cell { min-height: 44px; min-width: 0; padding: 2px; border: 1px solid var(--ink-3); background: #f3e6c4; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px; cursor: pointer; }
+.vb-wing .vb-cell { flex: 1; background: #e3d3ae; border-style: dashed; }
+.vb-cell.scen { background: repeating-linear-gradient(45deg, #9d8b66 0 4px, #b8a47e 4px 8px); cursor: not-allowed; }
+.vb-cell.walk { outline: 3px solid var(--ink); outline-offset: -3px; }
+.vb-cell:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 1px; }
+.vb-tok { display: inline-block; padding: 1px 4px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 0.85em; }
+.vb-tok.prop { border-radius: 2px; background: var(--paper); color: var(--ink); border: 1px solid var(--ink); }
+.vb-aud { text-align: center; }
+@media (max-width: 600px) {
+  .verb-sheet { max-height: 72vh; }
+  .vb-stage { grid-template-columns: 44px minmax(0, 1fr) 44px; }
+}
+
 /* ==== src/styles/66_words.css ==== */
 /* Words › Kept sentences, Words › Creatures met, and the dialogue's Keep tab
  * (src/ui/66_words_pages.js). */
@@ -34421,6 +34513,9 @@ RB.maps = (function () {
   'use strict';
   const compiled = {};
 
+  // content that adds to a map after it was compiled (expansion templates, src/engine/55b_verbs.js) asks for a fresh
+  // compile next time
+  function forget(id) { delete compiled[id]; }
   function compile(id) {
     if (compiled[id]) return compiled[id];
     const def = RB.content.maps[id];
@@ -34520,7 +34615,7 @@ RB.maps = (function () {
   function invalidate() {
     for (const k in compiled) delete compiled[k];
   }
-  return { compile, tileAt, blockedStatic, exitAt, shutDoorAt, invalidate };
+  return { compile, tileAt, blockedStatic, exitAt, shutDoorAt, invalidate, forget };
 })();
 
 
@@ -35249,7 +35344,7 @@ RB.world = (function () {
         if (tr.once && st.flags[onceKey]) continue;
         if (tr.once) st.flags[onceKey] = true;
         W.path = null;
-        RB.script.run(tr.scene);
+        RB.script.run(tr.scene, { trigger: tr });
         return;
       }
     }
@@ -37551,7 +37646,9 @@ RB.fieldweave = (function () {
     return def;
   }
   const get = (id) => DEFS[id] || null;
-  const list = () => Object.keys(DEFS).map((k) => DEFS[k]);
+  // the authored field puzzles; list(true) adds the exploration actions built from templates (src/engine/55b_verbs.js),
+  // which keep their own records, tests and checks
+  const list = (all) => Object.keys(DEFS).map((k) => DEFS[k]).filter((d) => all || !d.verb);
 
   // ---- records -----------------------------------------------------------------------------
   function disc(s) { return s.discovery || (s.discovery = RB.state.newCampaign().discovery); }
@@ -37604,9 +37701,11 @@ RB.fieldweave = (function () {
     const out = [];
     for (const id in DEFS) {
       const def = DEFS[id];
-      if (def.map !== mapId || !eligible(s, id)) continue;
+      // (an object may stand on another map than its puzzle's: connected mechanisms across rooms, expansion W13)
+      if ((def.map !== mapId && !(def.maps && def.maps.indexOf(mapId) >= 0)) || !eligible(s, id)) continue;
       for (const k in def.objects) {
         const o = def.objects[k];
+        if ((o.map || def.map) !== mapId) continue;
         if (o.if && !RB.state.test(s, o.if)) continue;
         out.push({ pz: id, key: k, o, x: o.x, y: o.y, w: o.w, h: o.h, def });
       }
@@ -37705,7 +37804,7 @@ RB.fieldweave = (function () {
       r.log.push(Object.assign({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() }, res.word ? { w: res.word } : {}, L ? { lang: L } : {}));
       if (r.log.length > LOG_MAX) r.log.splice(0, r.log.length - LOG_MAX);
       // an object that changed tells the map annotations about it
-      for (const k of changed) RB.bus.emit('world:changed', { map: def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });
+      for (const k of changed) RB.bus.emit('world:changed', { map: (def.keyMap && def.keyMap[k]) || (def.objects[k] && def.objects[k].map) || def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });
     }
     if (!r.done && match(r.state, def.complete)) commit(s, pz, rule, res);
     return res;
@@ -37849,6 +37948,648 @@ RB.fieldweave = (function () {
     define, get, list, rec, peek, stateOf, view, setHold, match, eligible, methodOf, objectsOn, near, dist,
     lookOf, observe, act, weave, arrange, applies, routine, reset, hint, hintLevel, familyOf, repair, FAMILY, PLAIN,
     _weaveRule: weaveRule, _actRule: actRule,
+  };
+})();
+
+
+/* ==== src/engine/55b_verbs.js ==== */
+/* Exploration actions (expansion P05; docs/future/plan/06_WORLD.md W9, W11–W17): templates that turn a compact
+ * description into a Field Inkweaving puzzle (src/engine/55_fieldweave.js: objects, a state, rules, an outcome, and
+ * its three layers kept apart) or a case (src/engine/59_cases.js: observations and the player's own hypotheses).
+ * No new engine: each template only writes the definitions those engines already run, and a few pure functions the
+ * screens (src/ui/57b_verbs.js) and the tests share.
+ *
+ *   notice    W9   compose a notice from supported pieces; people visibly follow what it says (placements on
+ *                  `puzzle.<id>.behaviour`); different valid notices work differently; unsuitable wording is
+ *                  understood as unclear and blocks nothing
+ *   courier   W11  plan several deliveries around who is where on each leg of the round (legs, not clocks);
+ *                  every plan that reaches every recipient works
+ *   repair    W12  inspect, read the instructions, use the tools the job supplies in order, test; a wrong step
+ *                  explains itself and changes nothing
+ *   network   W13  water (or air) across connected rooms, on several maps: change one gate, the levels settle
+ *                  (connected open basins agree, in one bounded pass); required ways stay reachable
+ *   observe   W14  a machine's pattern, watched (pausable, step by step) and adjusted; the diagram and the moving
+ *                  prop read the same state; no timing is ever asked for
+ *   follow    W14  an activity that follows written instructions step by step (folding, a recipe)
+ *   route     W15  redirect a creature with light, shade, sound or a sign; a complete way without a fight; a sound
+ *                  always has words and a visible cue
+ *   layers    W16  compare an old plan with today's place (the marks line up with the map); observations are
+ *                  made where they are; several readings may be valid
+ *   blocking  W17  place actors and props on a stage from directions (positions, entrances, exits, "next to
+ *                  them"); rehearse as often as you like; scenery cannot be stood in
+ *
+ * Fixtures (src/content/verbs/00_fixtures.js) are `fixture: true`: eligible and on the map only in a throwaway
+ * development session that sets the flag dev_verbs (?dev=verbs), never in a journey. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.hooks = RB.hooks || {};
+
+RB.verbs = (function () {
+  'use strict';
+  const KINDS = {};
+  const SPECS = {};
+  const FW = () => RB.fieldweave;
+  const clone = (o) => (o == null ? o : JSON.parse(JSON.stringify(o)));
+  const T = (en, jp) => ({ en, jp });
+  const DEV = 'dev_verbs';
+  const gateOf = (spec) => (spec.fixture ? DEV : spec.if || null);
+  const andIf = (a, b) => (a && b ? a + '&' + b : a || b || undefined);
+
+  function kind(name, impl) { KINDS[name] = impl; }
+  // define(kind, spec): check it, write its definitions, place it; returns the spec (with .errors, [] when sound)
+  function define(kindName, spec) {
+    const K = KINDS[kindName];
+    if (!K) throw new Error('verbs: unknown kind ' + kindName);
+    if (!spec || !spec.id) throw new Error('verbs: a ' + kindName + ' needs an id');
+    // (conditions name it as puzzle.<id>.<key> or case.<id>: an id with a dot would be read as a key)
+    if (/[^\w]/.test(spec.id)) throw new Error('verbs: an id is letters, digits and _ only: ' + spec.id);
+    spec.kind = kindName;
+    spec.errors = K.check ? K.check(spec) : [];
+    SPECS[spec.id] = spec;
+    const def = K.build ? K.build(spec) : null;
+    if (def) {
+      def.verb = kindName;
+      if (spec.fixture) { def.fixture = true; def.eligible = DEV; }
+      else if (spec.if) def.eligible = spec.if;
+      FW().define(def);
+    }
+    if (K.place) K.place(spec);
+    return spec;
+  }
+  const get = (id) => SPECS[id] || null;
+  const list = (kindName) => Object.keys(SPECS).map((k) => SPECS[k]).filter((x) => !kindName || x.kind === kindName);
+
+  // ---- placing things on the maps (content adds, never rewrites) ---------------------------------------------
+  // (a map compiled before something was added to it is compiled afresh next time)
+  function mapDef(id) { if (RB.maps && RB.maps.forget) RB.maps.forget(id); return RB.content && RB.content.maps ? RB.content.maps[id] : null; }
+  // a map's size from its definition (checks run while content loads, before anything is compiled)
+  function sizeOf(id) { const d = RB.content.maps[id]; if (!d || !d.terrain) return null; return { w: Math.max.apply(null, d.terrain.map((r) => r.length)), h: d.terrain.length }; }
+  // the prop you examine to open the action's sheet (one shared scene: the prop carries the id)
+  function addProp(spec, at, extra) {
+    const m = mapDef(at.map || spec.map);
+    if (!m) return;
+    m.props = m.props || [];
+    m.props.push(Object.assign({ p: at.prop || 'signblank', x: at.x, y: at.y, scene: 'vb.open', o: { vb: spec.id, part: at.part || null }, if: andIf(gateOf(spec), at.if) }, extra || {}));
+  }
+  function addNpc(spec, map, n) {
+    const m = mapDef(map);
+    if (!m) return;
+    m.npcs = m.npcs || [];
+    m.npcs.push(Object.assign({}, n, { if: andIf(gateOf(spec), n.if) }));
+  }
+
+  // ---- reachability on a map (navigation safety) ---------------------------------------------------------------
+  // Can every way out of `map` still be reached from `from` with `blocked` tiles taken (people standing, a crowd)?
+  // [] when so; otherwise the exits cut off.
+  function cutOff(map, from, blocked) {
+    let m;
+    try { m = RB.maps.compile(map); } catch (e) { return ['no map ' + map]; }
+    const bad = new Set((blocked || []).map((t) => t[0] + ',' + t[1]));
+    const free = (x, y) => x >= 0 && y >= 0 && x < m.w && y < m.h && !RB.maps.blockedStatic(m, x, y) && !bad.has(x + ',' + y);
+    const seen = new Set(), q = [];
+    for (const [x, y] of from) if (free(x, y)) { seen.add(x + ',' + y); q.push([x, y]); }
+    while (q.length) {
+      const [x, y] = q.shift();
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = x + dx, ny = y + dy, k = nx + ',' + ny;
+        if (!seen.has(k) && free(nx, ny)) { seen.add(k); q.push([nx, ny]); }
+      }
+    }
+    const out = [];
+    for (const e of m.exits) {
+      let ok = false;
+      for (let y = e.y; y < e.y + (e.h || 1) && !ok; y++) for (let x = e.x; x < e.x + (e.w || 1) && !ok; x++) if (seen.has(x + ',' + y)) ok = true;
+      if (!ok) out.push(e.to || e.x + ',' + e.y);
+    }
+    return out;
+  }
+  const around = (x, y, w, h) => { const out = []; for (let yy = y - 1; yy <= y + (h || 1); yy++) for (let xx = x - 1; xx <= x + (w || 1); xx++) if (yy === y - 1 || yy === y + (h || 1) || xx === x - 1 || xx === x + (w || 1)) out.push([xx, yy]); return out; };
+
+  // ---- the state space (W13, W15: every reachable state, bounded) -------------------------------------------------
+  // explore(def, acts, max): BFS over the states the named acts can reach from def.init; { states, edges, capped }
+  function explore(def, acts, max) {
+    max = max || 4096;
+    const key = (st) => JSON.stringify(Object.keys(st).sort().map((k) => [k, st[k]]));
+    const start = clone(def.init);
+    const states = new Map([[key(start), start]]);
+    const edges = new Map();
+    const q = [start];
+    while (q.length && states.size < max) {
+      const st = q.shift(), k0 = key(st), out = [];
+      for (const a of acts) {
+        const r = typeof a === 'function' ? null : FW()._actRule(def, st, a);
+        if (!r || !r.set) continue;
+        const patch = typeof r.set === 'function' ? r.set(clone(st), null) : r.set;
+        if (!patch) continue;
+        const next = Object.assign(clone(st), clone(patch));
+        const k = key(next);
+        out.push(k);
+        if (!states.has(k)) { states.set(k, next); q.push(next); }
+      }
+      edges.set(k0, out);
+    }
+    return { states, edges, capped: states.size >= max, key };
+  }
+  // from every reachable state, can some state where pred holds still be reached? (no softlock)
+  function alwaysReachable(ex, pred) {
+    const good = new Set([...ex.states].filter(([, st]) => pred(st)).map(([k]) => k));
+    // reverse closure from the good states
+    const rev = new Map();
+    for (const [k, outs] of ex.edges) for (const o of outs) { if (!rev.has(o)) rev.set(o, []); rev.get(o).push(k); }
+    const ok = new Set(good), q = [...good];
+    while (q.length) { const k = q.shift(); for (const p of rev.get(k) || []) if (!ok.has(p)) { ok.add(p); q.push(p); } }
+    return [...ex.states.keys()].filter((k) => !ok.has(k));
+  }
+
+  // ---- W9 · notices ------------------------------------------------------------------------------------------------
+  // spec: { id, map, x, y, prop, title, slots: [{ key, label, options: [{ id, jp, en }] }],
+  //         readings: [{ when: { key: id | [ids] }, behaviour, heard: { jp, en } }], unclear: { jp, en },
+  //         goal: [behaviours], start: 'none', people: { behaviour: [{ char, x, y, dir }] }, keepsake? }
+  function readingOf(spec, st) {
+    const filled = spec.slots.every((sl) => st[sl.key] != null);
+    if (!filled) return null;
+    for (const r of spec.readings) if (Object.keys(r.when).every((k) => [].concat(r.when[k]).indexOf(st[k]) >= 0)) return r;
+    return { behaviour: 'unclear', heard: spec.unclear || T('People read it, frown, and carry on as before.', '{読|よ}んだ {人|ひと} は {首|くび} を かしげて 、 {今|いま} まで どおり に した 。') };
+  }
+  const composed = (spec, st) => spec.slots.map((sl) => st[sl.key] || '').join('|');
+  // the notice's words as they stand (the slots' Japanese in order)
+  function noticeText(spec, st) {
+    const jp = [], en = [];
+    for (const sl of spec.slots) { const o = sl.options.find((x) => x.id === st[sl.key]); jp.push(o ? o.jp : '＿＿'); en.push(o ? o.en : '…'); }
+    return { jp: jp.join(' '), en: en.join(' ') };
+  }
+  kind('notice', {
+    check(spec) {
+      const e = [];
+      if (!spec.slots || !spec.slots.length) e.push('a notice needs pieces');
+      if (!spec.readings || !spec.readings.length) e.push('a notice needs readings');
+      if (!spec.goal || !spec.readings.some((r) => spec.goal.indexOf(r.behaviour) >= 0)) e.push('no reading reaches the goal');
+      const valid = new Set(spec.readings.map((r) => r.behaviour).concat(['unclear', spec.start || 'none']));
+      for (const b in spec.people || {}) if (!valid.has(b)) e.push('people for an unknown behaviour ' + b);
+      // words and movement agree: a behaviour people follow has people to show it, and the reading says it
+      for (const r of spec.readings) if (!r.heard || !r.heard.jp || !r.heard.en) e.push('reading ' + r.behaviour + ' has no words for what people understood');
+      return e;
+    },
+    build(spec) {
+      const init = { behaviour: spec.start || 'none', posted: '' };
+      const values = {};
+      for (const sl of spec.slots) { init[sl.key] = null; values[sl.key] = sl.options.map((o) => o.id); }
+      return {
+        id: spec.id, map: spec.map, region: spec.region || null,
+        objects: { board: { x: spec.x, y: spec.y, w: 2, name: spec.title, weave: false } },
+        init, values, arrange: spec.slots.map((sl) => sl.key), arrangeObj: 'board',
+        rules: [{
+          act: 'post',
+          // posting the same words again changes nothing (once); unclear words are posted too, and followed by no one
+          set: (st) => { const r = readingOf(spec, st); return r ? { behaviour: r.behaviour, posted: composed(spec, st) } : null; },
+          say: (b, a) => { const r = readingOf(spec, b); if (!r) return [T('The notice is not finished yet.', 'まだ {書|か}き{終|お}わって いない 。')]; return b.posted === composed(spec, b) ? [T('That notice is already up.', 'その {貼|は}り{紙|がみ} は もう {貼|は}って ある 。')] : [r.heard]; },
+        }],
+        complete: { behaviour: spec.goal },
+        methods: spec.readings.filter((r) => spec.goal.indexOf(r.behaviour) >= 0).map((r) => ({ id: 'notice:' + r.behaviour, if: { behaviour: r.behaviour } })),
+        reward: spec.keepsake ? { keepsake: spec.keepsake } : null,
+      };
+    },
+    place(spec) {
+      addProp(spec, { x: spec.x, y: spec.y, prop: spec.prop || 'noticeboard' });
+      let n = 0;
+      for (const b in spec.people || {}) for (const p of spec.people[b]) addNpc(spec, spec.map, { id: 'vbp_' + spec.id + '_' + (n++), char: p.char, x: p.x, y: p.y, dir: p.dir || 'down', talk: p.talk, if: 'puzzle.' + spec.id + '.behaviour=' + b });
+    },
+  });
+  // navigation safety (W9: unsuitable wording cannot softlock): for each behaviour, the people it places leave every
+  // way out reachable from in front of the board. [] when safe.
+  function noticeSafety(spec) {
+    const out = [];
+    const from = around(spec.x, spec.y, 2, 1);
+    for (const b of Object.keys(spec.people || {}).concat(['unclear'])) {
+      const tiles = (spec.people[b] || []).map((p) => [p.x, p.y]);
+      const cut = cutOff(spec.map, from, tiles);
+      if (cut.length) out.push(b + ' cuts off ' + cut.join(', '));
+    }
+    return out;
+  }
+
+  // ---- W11 · courier rounds ------------------------------------------------------------------------------------------
+  // spec: { id, map, x, y, prop, title, legs: [{ jp, en }], stops: { key: { jp, en, map } }, start,
+  //         recipients: { who: { name: { jp, en }, at: [stop for leg 0, leg 1, …] } },
+  //         parcels: [{ id, to, jp, en }] }
+  // A plan is one stop per leg. A parcel is delivered when the plan stands at its recipient's stop on a leg.
+  function courierCheck(spec, plan) {
+    const out = [];
+    for (const pc of spec.parcels) {
+      const r = spec.recipients[pc.to];
+      const leg = plan.findIndex((stop, i) => stop && r.at[i] === stop);
+      out.push({ parcel: pc.id, ok: leg >= 0, leg, where: leg >= 0 ? null : r.at.map((s0, i) => ({ leg: i, stop: s0 })) });
+    }
+    return { ok: out.every((x) => x.ok), parcels: out };
+  }
+  kind('courier', {
+    check(spec) {
+      const e = [];
+      for (const pc of spec.parcels || []) { const r = spec.recipients[pc.to]; if (!r) e.push('no recipient ' + pc.to); else if (r.at.length !== spec.legs.length) e.push(pc.to + ' has no place on every leg'); }
+      // several plans work: count them
+      const stops = Object.keys(spec.stops || {});
+      let ok = 0;
+      const walk = (i, plan) => { if (i === spec.legs.length) { if (courierCheck(spec, plan).ok) ok++; return; } for (const st of stops) walk(i + 1, plan.concat([st])); };
+      if (stops.length && spec.legs.length <= 6) walk(0, []);
+      spec.plans = ok;
+      if (!ok) e.push('no plan reaches every recipient');
+      return e;
+    },
+    build(spec) {
+      const init = { checked: '', delivered: false };
+      const values = {};
+      spec.legs.forEach((l, i) => { init['leg' + i] = null; values['leg' + i] = Object.keys(spec.stops); });
+      return {
+        id: spec.id, map: spec.map, objects: { desk: { x: spec.x, y: spec.y, name: spec.title, weave: false } },
+        init, values, arrange: spec.legs.map((l, i) => 'leg' + i), arrangeObj: 'desk',
+        rules: [{ act: 'go', set: (st) => (courierCheck(spec, spec.legs.map((l, i) => st['leg' + i])).ok ? { delivered: true } : null) }],
+        complete: { delivered: true },
+      };
+    },
+    place(spec) { addProp(spec, { x: spec.x, y: spec.y, prop: spec.prop || 'desk' }); },
+  });
+
+  // ---- W12 · repair jobs ----------------------------------------------------------------------------------------------
+  // spec: { id, map, x, y, prop, name, parts: { key: { jp, en } }, read: [{ jp, en }], tools: [{ id, jp, en }],
+  //         steps: [{ part, tool, done: { jp, en } }], ran: { jp, en } }
+  function repairSay(spec, st, tool, part) {
+    const s = spec.steps[st.step], P = spec.parts, tl = spec.tools.find((x) => x.id === tool);
+    if (!s) return T('It is already mended. Try it.', 'もう {直|なお}って いる 。 {動|うご}かして みよう 。');
+    if (s.part === part && s.tool === tool) return s.done;
+    if (spec.steps.slice(0, st.step).some((x) => x.part === part && x.tool === tool)) return T('That part is already done.', 'そこ は もう {終|お}わって いる 。');
+    if (s.part !== part && spec.steps.slice(st.step).some((x) => x.part === part)) return T('Not yet: the instructions start with the ' + P[s.part].en + '.', 'まだ だ 。 {先|さき} に ' + P[s.part].jp + ' だ 。');
+    return T('The ' + tl.en + ' does not suit the ' + P[part].en + '. Nothing is harmed.', P[part].jp + ' に ' + tl.jp + ' は {合|あ}わない 。 {何|なに} も {傷|いた}んで いない 。');
+  }
+  kind('repair', {
+    check(spec) {
+      const e = [];
+      const tools = new Set((spec.tools || []).map((t) => t.id));
+      for (const s of spec.steps || []) { if (!tools.has(s.tool)) e.push('step needs a tool the job does not supply: ' + s.tool); if (!spec.parts[s.part]) e.push('no part ' + s.part); if (!s.done) e.push('a step without words'); }
+      if (spec.needs) e.push('a repair job supplies its materials: no prerequisite items');
+      return e;
+    },
+    build(spec) {
+      const rules = [
+        { act: 'inspect', set: { inspected: true }, obs: 'inspected', say: () => spec.inspect ? [spec.inspect] : [] },
+        { act: 'read', set: { read: true }, obs: 'read', say: () => spec.read.slice() },
+        { act: 'test', set: (st) => (st.step >= spec.steps.length ? { ran: true } : null),
+          say: (b) => (b.step >= spec.steps.length ? [spec.ran || T('It runs.', '{動|うご}いた 。')] : [T('It still will not run. Something is left to do: the instructions say what.', 'まだ {動|うご}かない 。 {説明|せつめい} を {読|よ}めば 、 {何|なに} が {残|のこ}って いる か {分|わ}かる 。')]) },
+      ];
+      for (const t of spec.tools) for (const p in spec.parts) {
+        rules.push({ act: 'use:' + t.id + '@' + p, obj: 'machine',
+          set: (st) => { const s = spec.steps[st.step]; return s && s.part === p && s.tool === t.id ? { step: st.step + 1 } : null; },
+          say: (b) => [repairSay(spec, b, t.id, p)] });
+      }
+      return {
+        id: spec.id, map: spec.map, region: spec.region || null,
+        objects: { machine: { x: spec.x, y: spec.y, name: spec.name, weave: false } },
+        init: { step: 0, inspected: false, read: false, ran: false }, values: { step: spec.steps.map((s, i) => i).concat([spec.steps.length]) },
+        rules, complete: { ran: true }, after_acts: ['inspect', 'read', 'test'],
+        reward: spec.keepsake ? { keepsake: spec.keepsake } : null,
+      };
+    },
+    place(spec) { addProp(spec, { x: spec.x, y: spec.y, prop: spec.prop || 'cs_workbench' }); },
+  });
+
+  // ---- W13 · connected mechanisms ------------------------------------------------------------------------------------
+  // spec: { id, name, medium: 'water' | 'air', levels: 3, basins: { key: { map, x, y, prop, jp, en, level } },
+  //         gates: { key: { between: [a, b], map, x, y, prop, jp, en, open: bool } }, sources: [basins], drains: [basins],
+  //         required: [{ id, basin, max | min, jp, en }], goal: { basin: level } }
+  // Water settles in one pass (no iteration, so no cycle can run away): basins joined by open gates form a body; a
+  // body with a source is full, else one with a drain is empty, else it keeps its water, shared out evenly (rounded
+  // down). Connected open basins always agree.
+  function settle(spec, st) {
+    const keys = Object.keys(spec.basins);
+    const parent = {};
+    const find = (k) => (parent[k] === k ? k : (parent[k] = find(parent[k])));
+    for (const k of keys) parent[k] = k;
+    for (const g in spec.gates) if (st['g_' + g] === 'open') { const [a, b] = spec.gates[g].between; parent[find(a)] = find(b); }
+    const groups = {};
+    for (const k of keys) (groups[find(k)] = groups[find(k)] || []).push(k);
+    const L = spec.levels || 3, out = {};
+    for (const r in groups) {
+      const ms = groups[r];
+      let lv;
+      if (ms.some((k) => (spec.sources || []).indexOf(k) >= 0)) lv = L;
+      else if (ms.some((k) => (spec.drains || []).indexOf(k) >= 0)) lv = 0;
+      else lv = Math.floor(ms.reduce((a, k) => a + (+st['b_' + k] || 0), 0) / ms.length);
+      for (const k of ms) out['b_' + k] = lv;
+    }
+    return out;
+  }
+  const passable = (spec, st, r) => { const v = +st['b_' + r.basin] || 0; return (r.max == null || v <= r.max) && (r.min == null || v >= r.min); };
+  kind('network', {
+    check(spec) {
+      const e = [];
+      for (const g in spec.gates) for (const b of spec.gates[g].between) if (!spec.basins[b]) e.push('gate ' + g + ' joins an unknown basin ' + b);
+      return e;
+    },
+    build(spec) {
+      const init = {};
+      for (const b in spec.basins) init['b_' + b] = spec.basins[b].level || 0;
+      for (const g in spec.gates) init['g_' + g] = spec.gates[g].open ? 'open' : 'shut';
+      Object.assign(init, settle(spec, init));
+      const objects = {}, keyMap = {}, maps = [];
+      const add = (k, n) => { objects[k] = { map: n.map, x: n.x, y: n.y, name: T(n.en, n.jp), weave: n.weave ? undefined : false }; if (maps.indexOf(n.map) < 0) maps.push(n.map); };
+      for (const b in spec.basins) { add(b, spec.basins[b]); keyMap['b_' + b] = spec.basins[b].map; }
+      for (const g in spec.gates) { add(g, spec.gates[g]); keyMap['g_' + g] = spec.gates[g].map; }
+      const rules = [];
+      for (const g in spec.gates) {
+        const flip = (to) => (st) => { const n = Object.assign({}, st, { ['g_' + g]: to }); return Object.assign({ ['g_' + g]: to }, settle(spec, n)); };
+        const gj = spec.gates[g];
+        rules.push({ act: 'open:' + g, obj: g, if: { ['g_' + g]: 'shut' }, set: flip('open'), say: (b, a) => [moved(spec, b, a, T('You open the ' + gj.en + '.', gj.jp + ' を {開|あ}けた 。'))] });
+        rules.push({ act: 'shut:' + g, obj: g, if: { ['g_' + g]: 'open' }, set: flip('shut'), say: (b, a) => [moved(spec, b, a, T('You close the ' + gj.en + '.', gj.jp + ' を {閉|し}めた 。'))] });
+        if (gj.weave) rules.push({ weave: gj.weave, obj: g, set: (st) => flip(st['g_' + g] === 'open' ? 'shut' : 'open')(st), say: (b, a) => [moved(spec, b, a, T('The ' + gj.en + ' moves.', gj.jp + ' が {動|うご}いた 。'))] });
+      }
+      const goal = {};
+      for (const k in spec.goal || {}) goal['b_' + k] = spec.goal[k];
+      return { id: spec.id, map: Object.values(spec.basins)[0].map, maps, keyMap, objects, init, rules, complete: Object.keys(goal).length ? goal : null, noReset: !!spec.noReset };
+    },
+    place(spec) {
+      for (const b in spec.basins) if (spec.basins[b].prop) addProp(spec, Object.assign({ part: b }, spec.basins[b]));
+      for (const g in spec.gates) addProp(spec, Object.assign({ part: g, prop: 'lf_lever' }, spec.gates[g]));
+      for (const r of spec.required || []) for (const t of r.tiles || []) addProp(spec, { map: r.map, x: t[0], y: t[1], prop: r.prop || 'crate', part: r.id, if: 'puzzle.' + spec.id + '.b_' + r.basin + (r.max != null ? '>' + r.max : '<' + r.min) }, { scene: null, text: r.look || null, o: { vb: spec.id, part: r.id, barrier: true } });
+    },
+  });
+  // what the water did, in words: each basin whose level changed, near or far (the effect is traced, W13)
+  function moved(spec, b, a, first) {
+    const lines = [first];
+    for (const k in spec.basins) {
+      const d = (+a['b_' + k] || 0) - (+b['b_' + k] || 0);
+      if (!d) continue;
+      const n = spec.basins[k], far = n.map !== (RB.game && RB.game.s ? RB.game.s.map : n.map);
+      lines.push(T((far ? 'Somewhere off in the ' : 'The ') + n.en + (d > 0 ? ' fills' : ' drains') + ' (' + LEVEL_EN[a['b_' + k]] + ').', (far ? '{遠|とお}く で 、 ' : '') + n.jp + ' の {水|みず} が ' + (d > 0 ? '{増|ふ}えた' : '{減|へ}った') + ' 。'));
+    }
+    return { en: lines.map((l) => l.en).join(' '), jp: lines.map((l) => l.jp).join(' ') };
+  }
+  const LEVEL_EN = ['empty', 'low', 'half full', 'full', 'brimming'];
+  // the network's soundness over every reachable state: levels agree within each open body; every required way can
+  // always be opened again. { problems: [], states }
+  function networkSafety(spec) {
+    const def = FW().get(spec.id);
+    const acts = [];
+    for (const g in spec.gates) acts.push('open:' + g, 'shut:' + g);
+    const ex = explore(def, acts);
+    const problems = [];
+    for (const [k, st] of ex.states) {
+      const again = Object.assign({}, st, settle(spec, st));
+      if (Object.keys(again).some((x) => again[x] !== st[x])) problems.push('unsettled state ' + k);
+    }
+    for (const r of spec.required || []) {
+      const stuck = alwaysReachable(ex, (st) => passable(spec, st, r));
+      if (stuck.length) problems.push(r.id + ' cannot be reopened from ' + stuck.length + ' states');
+    }
+    return { problems, states: ex.states.size, capped: ex.capped };
+  }
+
+  // ---- W14 · observation-first mechanisms, and instructions to follow ---------------------------------------------
+  // spec: { id, map, x, y, prop, name, beat (ms), parts: [{ key, jp, en, states: { s: { jp, en } } }],
+  //         phases: { id: { jp, en, parts: { key: s } } }, base: [phase ids], adjustments: [{ id, jp, en, op, a, b }],
+  //         goal: [phase ids], clues: [{ id, phase, jp, en }] }
+  //   op 'swap' a b (two phases change places), 'remove' a, 'insert' a after b, 'replace' a with b
+  // The adjustments made, not the order they were made in, decide the pattern (each applies in the spec's order),
+  // so undoing and redoing never leaves a different machine.
+  function pattern(spec, adj) {
+    const on = String(adj || '').split(',').filter(Boolean);
+    let p = spec.base.slice();
+    for (const A of spec.adjustments) {
+      if (on.indexOf(A.id) < 0) continue;
+      if (A.op === 'swap') { const i = p.indexOf(A.a), j = p.indexOf(A.b); if (i >= 0 && j >= 0) { p[i] = A.b; p[j] = A.a; } }
+      else if (A.op === 'remove') p = p.filter((x) => x !== A.a);
+      else if (A.op === 'insert') { const j = p.indexOf(A.b); if (j >= 0 && p.indexOf(A.a) < 0) p.splice(j + 1, 0, A.a); }
+      else if (A.op === 'replace') p = p.map((x) => (x === A.a ? A.b : x));
+    }
+    return p;
+  }
+  // the phase shown at time t (ms) — the sheet's diagram and the prop on the map both draw from this
+  function phaseAt(spec, st, t) { const p = pattern(spec, st.adj); return p.length ? p[Math.floor(Math.max(0, t) / (spec.beat || 900)) % p.length] : null; }
+  kind('observe', {
+    check(spec) {
+      const e = [];
+      for (const id of spec.base) if (!spec.phases[id]) e.push('no phase ' + id);
+      for (const c of spec.clues || []) if (!spec.phases[c.phase]) e.push('a clue in an unknown phase ' + c.phase);
+      // the goal can be reached by some set of adjustments
+      const ids = spec.adjustments.map((a) => a.id);
+      let ok = false;
+      for (let m = 0; m < (1 << ids.length) && !ok; m++) { const adj = ids.filter((x, i) => m & (1 << i)).join(','); if (pattern(spec, adj).join() === spec.goal.join()) ok = true; }
+      if (!ok) e.push('no set of adjustments reaches the goal');
+      return e;
+    },
+    build(spec) {
+      const rules = spec.adjustments.map((A) => ({
+        act: 'adjust:' + A.id, obj: 'machine',
+        set: (st) => { const L = String(st.adj || '').split(',').filter(Boolean); const i = L.indexOf(A.id); if (i >= 0) L.splice(i, 1); else L.push(A.id); return { adj: L.join(',') }; },
+        say: (b, a) => [String(a.adj).split(',').indexOf(A.id) >= 0 ? T('You make the adjustment: ' + A.en + '.', A.jp + ' 。') : T('You undo it: ' + A.en + '.', A.jp + ' を {元|もと} に {戻|もど}した 。')],
+      }));
+      for (const c of spec.clues || []) rules.push({ act: 'note:' + c.id, obs: c.id });
+      return {
+        id: spec.id, map: spec.map, objects: { machine: { x: spec.x, y: spec.y, name: spec.name, weave: false } },
+        init: { adj: '' }, rules, complete: (st) => pattern(spec, st.adj).join() === spec.goal.join(),
+      };
+    },
+    place(spec) { addProp(spec, { x: spec.x, y: spec.y, prop: spec.prop || 'lf_wheel' }); },
+  });
+  // spec: { id, map, x, y, prop, name, steps: [{ jp, en, options: [{ id, jp, en, ok, why: { jp, en } }] }], done: { jp, en } }
+  kind('follow', {
+    check(spec) { return spec.steps.filter((s) => s.options.filter((o) => o.ok).length < 1).map(() => 'a step with no right action'); },
+    build(spec) {
+      const rules = [];
+      spec.steps.forEach((s, i) => s.options.forEach((o) => rules.push({ act: 'do:' + i + ':' + o.id, if: { step: i }, set: o.ok ? { step: i + 1 } : null, say: [o.ok ? (o.say || T('Done.', 'できた 。')) : o.why] })));
+      return { id: spec.id, map: spec.map, objects: { work: { x: spec.x, y: spec.y, name: spec.name, weave: false } }, init: { step: 0 }, values: { step: spec.steps.map((s, i) => i).concat([spec.steps.length]) }, rules, complete: { step: spec.steps.length } };
+    },
+    place(spec) { addProp(spec, { x: spec.x, y: spec.y, prop: spec.prop || 'table' }); },
+  });
+
+  // ---- W15 · creature routing ------------------------------------------------------------------------------------------
+  // spec: { id, map, creature: { enemy, at: { route: [x, y] | null } }, start, goal: [routes],
+  //         means: [{ id, obj: { key, x, y, prop, jp, en }, family | act, from: [routes], to, say: { jp, en }, fx, sound }] }
+  kind('route', {
+    check(spec) {
+      const e = [];
+      for (const m of spec.means) if (m.sound && (!m.say || !m.say.jp || !m.say.en || !m.fx)) e.push('a sound needs words and a visible cue: ' + m.id);
+      for (const r of [spec.start].concat(spec.means.map((m) => m.to))) if (!(r in spec.creature.at)) e.push('no place for route ' + r);
+      // a complete way without a fight
+      const seen = new Set([spec.start]), q = [spec.start];
+      while (q.length) { const r = q.shift(); for (const m of spec.means) if (m.from.indexOf(r) >= 0 && !seen.has(m.to)) { seen.add(m.to); q.push(m.to); } }
+      if (!spec.goal.some((g) => seen.has(g))) e.push('no way to the goal without a fight');
+      return e;
+    },
+    build(spec) {
+      const objects = {};
+      for (const m of spec.means) objects[m.obj.key] = { x: m.obj.x, y: m.obj.y, name: T(m.obj.en, m.obj.jp) };
+      const rules = spec.means.map((m) => Object.assign(m.family ? { weave: m.family } : { act: m.act }, { obj: m.obj.key, if: { route: m.from }, set: { route: m.to }, say: [m.say], fx: m.fx || null, obs: 'routed:' + m.id }));
+      return { id: spec.id, map: spec.map, objects, init: { route: spec.start }, values: { route: Object.keys(spec.creature.at) }, rules, complete: { route: spec.goal }, noReset: true };
+    },
+    place(spec) {
+      for (const m of spec.means) if (!spec.means.some((o) => o !== m && o.obj.key === m.obj.key && spec.means.indexOf(o) < spec.means.indexOf(m))) addProp(spec, { x: m.obj.x, y: m.obj.y, prop: m.obj.prop || 'lantern', part: m.obj.key });
+      const m = mapDef(spec.map);
+      if (!m) return;
+      m.foes = m.foes || [];
+      for (const r in spec.creature.at) {
+        const at = spec.creature.at[r];
+        if (at) m.foes.push({ id: 'vbf_' + spec.id + '_' + r, enemy: spec.creature.enemy, x: at[0], y: at[1], if: andIf(gateOf(spec), 'puzzle.' + spec.id + '.route=' + r) });
+      }
+    },
+  });
+
+  // ---- W16 · layered sites -------------------------------------------------------------------------------------------
+  // spec: { id (the case), map, title, question, plan: { x, y, prop, title, from: { jp, en },
+  //           marks: [{ id, x, y, jp, en, now: 'present'|'missing'|'moved', to: [x, y], obs: { jp, en } }] },
+  //         hypotheses: [{ id, label: { jp, en }, from: [mark ids], correct }], sufficient: [[mark ids]], near: 2 }
+  const clueId = (spec, mk) => spec.id + '.' + mk;
+  kind('layers', {
+    check(spec) {
+      const e = [];
+      const marks = new Set(spec.plan.marks.map((m) => m.id));
+      const m = sizeOf(spec.map);
+      if (!m) e.push('no map ' + spec.map);
+      for (const mk of spec.plan.marks) {
+        if (m && (mk.x < 0 || mk.y < 0 || mk.x >= m.w || mk.y >= m.h)) e.push('mark ' + mk.id + ' is off the map');
+        if (!mk.obs || !mk.obs.jp) e.push('mark ' + mk.id + ' has no observation');
+      }
+      for (const h of spec.hypotheses) for (const f of h.from || []) if (!marks.has(f)) e.push('hypothesis ' + h.id + ' rests on no mark ' + f);
+      if (!spec.hypotheses.some((h) => h.correct)) e.push('no valid reading');
+      return e;
+    },
+    build(spec) {
+      const C = RB.content;
+      for (const mk of spec.plan.marks) {
+        C.clues[clueId(spec, mk.id)] = { id: clueId(spec, mk.id), case: spec.id, kind: 'place', title: T(mk.en, mk.jp), source: { en: 'Here, compared with the old plan', map: spec.map }, jp: mk.obs.jp, en: mk.obs.en, sure: true, obs: { en: mk.obs.en }, lang: mk.lang || [] };
+      }
+      C.cases[spec.id] = {
+        id: spec.id, region: spec.region || null, title: spec.title, question: spec.question, verb: 'layers',
+        clues: spec.plan.marks.map((mk) => clueId(spec, mk.id)),
+        hypotheses: spec.hypotheses.map((h) => Object.assign({}, h, { from: (h.from || []).map((f) => clueId(spec, f)) })),
+        sufficient: (spec.sufficient || []).map((set) => set.map((f) => clueId(spec, f))),
+        hints: spec.hints || [], result: spec.result || null,
+      };
+      return null;
+    },
+    place(spec) {
+      addProp(spec, { x: spec.plan.x, y: spec.plan.y, prop: spec.plan.prop || 'noticeboard' });
+      const m = mapDef(spec.map);
+      if (!m) return;
+      m.triggers = m.triggers || [];
+      const r = spec.near == null ? 1 : spec.near;
+      for (const mk of spec.plan.marks) m.triggers.push({ id: 'vb_' + spec.id + '_' + mk.id, x: mk.x - r, y: mk.y - r, w: 2 * r + 1, h: 2 * r + 1, scene: 'vb.mark', vb: spec.id, mark: mk.id, if: andIf(gateOf(spec), 'case.' + spec.id + '&!clue.' + clueId(spec, mk.id)) });
+    },
+  });
+  // comparing at a mark's place: the observation, made where it is (once)
+  function compareAt(s, id, markId) {
+    const spec = SPECS[id];
+    if (!spec || !RB.cases) return null;
+    const mk = spec.plan.marks.find((x) => x.id === markId);
+    if (!mk) return null;
+    if (!RB.cases.known(s, id)) RB.cases.open(s, id);
+    const r = RB.cases.observe(s, clueId(spec, markId));
+    return { mark: mk, fresh: r === 'new' };
+  }
+  // concluding: a hypothesis the evidence supports; any valid reading resolves the case, kept as the player's own
+  function conclude(s, id, hid) {
+    const cd = RB.content.cases[id];
+    if (!cd || !RB.cases.choose(s, id, hid)) return { ok: false, why: 'unavailable' };
+    const h = cd.hypotheses.find((x) => x.id === hid);
+    if (!RB.cases.sufficient(s, id)) return { ok: false, why: 'evidence' };
+    if (!h.correct) { RB.cases.rule(s, id, hid); return { ok: false, why: 'mismatch', mismatch: h.mismatch || null }; }
+    RB.cases.resolve(s, id, 'reasoned');
+    return { ok: true, hypothesis: hid };
+  }
+
+  // ---- W17 · stage-blocking ------------------------------------------------------------------------------------------
+  // spec: { id, map, x, y, prop, name, stage: { w, h, scenery: [[x, y]], front: 'bottom' },
+  //         pieces: [{ id, jp, en, kind: 'actor'|'prop', pron?: { jp, en } }],
+  //         directions: [{ jp, en, want: { who, at: [x, y] } | { who, wing: 'left'|'right' } | { who, next: other, side? } }] }
+  // Stage left and right are the audience's (上手 kamite is the audience's right). Positions: 'x,y', 'wing:left',
+  // 'wing:right', or null (not placed).
+  function cellOf(v) { if (!v || /^wing:/.test(v)) return null; const [x, y] = v.split(',').map(Number); return [x, y]; }
+  function blockingCheck(spec, st) {
+    const scen = new Set((spec.stage.scenery || []).map((t) => t.join(',')));
+    const out = spec.directions.map((d) => {
+      const w = d.want, v = st[w.who];
+      let ok = false;
+      if (w.at) ok = v === w.at.join(',');
+      else if (w.wing) ok = v === 'wing:' + w.wing;
+      else if (w.next) { const a = cellOf(v), b = cellOf(st[w.next]); ok = !!(a && b && a[1] === b[1] && Math.abs(a[0] - b[0]) === 1 && (!w.side || (w.side === 'right' ? a[0] > b[0] : a[0] < b[0]))); }
+      return { ok, d };
+    });
+    const clash = [];
+    const used = {};
+    for (const p of spec.pieces) { const c = cellOf(st[p.id]); if (!c) continue; const k = c.join(','); if (scen.has(k)) clash.push(p.id); if (used[k]) clash.push(p.id); used[k] = p.id; }
+    return { ok: out.every((x) => x.ok) && !clash.length, directions: out, clash };
+  }
+  kind('blocking', {
+    check(spec) {
+      const e = [];
+      const ids = new Set(spec.pieces.map((p) => p.id));
+      const scen = new Set((spec.stage.scenery || []).map((t) => t.join(',')));
+      for (const d of spec.directions) {
+        if (!ids.has(d.want.who)) e.push('a direction for no piece ' + d.want.who);
+        if (d.want.at && scen.has(d.want.at.join(','))) e.push('a direction into the scenery');
+        if (d.want.next && !ids.has(d.want.next)) e.push('"next to" no piece ' + d.want.next);
+      }
+      return e;
+    },
+    build(spec) {
+      const init = { rehearsed: '', staged: false };
+      const values = {};
+      const cells = [];
+      for (let y = 0; y < spec.stage.h; y++) for (let x = 0; x < spec.stage.w; x++) cells.push(x + ',' + y);
+      for (const p of spec.pieces) { init[p.id] = null; values[p.id] = cells.concat(['wing:left', 'wing:right']); }
+      return {
+        id: spec.id, map: spec.map, objects: { stage: { x: spec.x, y: spec.y, name: spec.name, weave: false } },
+        init, values, arrange: spec.pieces.map((p) => p.id), arrangeObj: 'stage',
+        rules: [{ act: 'rehearse', set: (st) => (blockingCheck(spec, st).ok ? { staged: true } : null) }],
+        complete: { staged: true },
+      };
+    },
+    place(spec) { addProp(spec, { x: spec.x, y: spec.y, prop: spec.prop || 'co_stage' }); },
+  });
+  // the path a piece takes in rehearsal, from its wing to its place, around the scenery (cells; null when walled in)
+  function rehearsalPath(spec, from, to) {
+    const W = spec.stage.w, H = spec.stage.h;
+    const scen = new Set((spec.stage.scenery || []).map((t) => t.join(',')));
+    const start = from === 'wing:left' ? [-1, H - 1] : [W, H - 1];
+    const goal = cellOf(to);
+    if (!goal) return [];
+    const k = (p) => p.join(','), prev = new Map([[k(start), null]]), q = [start];
+    while (q.length) {
+      const c = q.shift();
+      if (c[0] === goal[0] && c[1] === goal[1]) { const out = []; let x = k(c); while (x) { out.unshift(x.split(',').map(Number)); x = prev.get(x); } return out; }
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const n = [c[0] + dx, c[1] + dy];
+        if (n[0] < 0 || n[1] < 0 || n[0] >= W || n[1] >= H || scen.has(k(n)) || prev.has(k(n))) continue;
+        prev.set(k(n), k(c)); q.push(n);
+      }
+    }
+    return null;
+  }
+
+  // ---- the shared scene and hooks --------------------------------------------------------------------------------
+  // a prop of an action, examined: its sheet (src/ui/57b_verbs.js)
+  RB.hooks.vb_open = async (a, ctx) => {
+    const pr = ctx && ctx.prop;
+    const id = (pr && pr.o && pr.o.vb) || a[0];
+    if (!id || !SPECS[id]) return;
+    if (RB.verbSheets && RB.verbSheets.open) { RB.ui.dialogue.hide(); await RB.verbSheets.open(id, { part: pr && pr.o ? pr.o.part : null }); }
+  };
+  // a marked place of a layered site, reached: compare it with the old plan, there
+  RB.hooks.vb_mark = async (a, ctx) => {
+    const tr = ctx && ctx.trigger, s = RB.game && RB.game.s;
+    if (!tr || !s) return;
+    const r = compareAt(s, tr.vb, tr.mark);
+    if (r && r.fresh) await RB.script.runInline([{ who: 'narr', jp: r.mark.obs.jp, en: r.mark.obs.en }]);
+  };
+  // (the two scenes, vb.open and vb.mark, are added with the world's tables: src/content/world/00_system.js)
+
+  return {
+    kind, define, get, list, KINDS, DEV,
+    cutOff, explore, alwaysReachable,
+    readingOf, noticeText, noticeSafety, composed,
+    courierCheck,
+    repairSay,
+    settle, passable, networkSafety, LEVEL_EN,
+    pattern, phaseAt,
+    compareAt, conclude, clueId,
+    blockingCheck, rehearsalPath, cellOf,
   };
 })();
 
@@ -40285,7 +41026,10 @@ RB.cases = (function () {
     r.stage = 'done';
     r.done = now();
     r.evidence = evidence(s, id);
-    const right = (cd.hypotheses || []).find((h) => h.correct);
+    // the recorded answer: the player's own when it is one of the valid readings (a case may have several,
+    // expansion W16), else the case's answer
+    const chosen = r.hypothesis ? (cd.hypotheses || []).find((h) => h.id === r.hypothesis) : null;
+    const right = chosen && chosen.correct ? chosen : (cd.hypotheses || []).find((h) => h.correct);
     if (right) r.hypothesis = right.id;
     if (cd.keepsake) RB.discovery.keepsake(s, cd.keepsake, { kind: 'case', id });
     if (cd.quest) RB.state.setQuest(s, cd.quest, 'done');
@@ -70542,6 +71286,414 @@ RB.weave = (function () {
   };
 })();
 RB.weaveFx = { draw: (c, env, t) => RB.weave.draw(c, env, t) };
+
+
+/* ==== src/ui/57b_verbs.js ==== */
+/* The exploration actions' sheets (expansion P05; the templates and rules in src/engine/55b_verbs.js). Examining an
+ * action's prop opens its sheet inside a scene (so the world, and every creature in it, waits: a quiet puzzle
+ * space). The sheet only asks the engines and shows what they decided; every change goes through
+ * RB.fieldweave (act / arrange) or RB.cases, and is autosaved like any field puzzle.
+ *
+ *   notice    the pieces, the notice as it reads, Post it, and what people understood
+ *   courier   who is where on each leg (the information to plan with), a stop for each leg, Check, Set out
+ *   repair    Look, Instructions, a tool and a part, Test; the steps done so far
+ *   network   every basin's water (near and far), the gates you can reach from here, the ways that must stay open
+ *   observe   the machine's parts in the phase shown, its pattern, Pause / Play / Step, notes, adjustments
+ *   follow    the step to follow, its actions, why a wrong one does not fit
+ *   route     where the creature is, this object, and Weave a word here (the Weave sheet, with its language step)
+ *   layers    the old plan over today's map, each mark compared where it is, the readings to conclude with
+ *   blocking  the stage, the wings, the directions; place each piece; Rehearse (it walks on, around the scenery)
+ *
+ * Shapes and words carry every meaning; colour only reinforces. Reduced motion: no autoplay, no walking on. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.verbSheets = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
+  const FW = () => RB.fieldweave, V = () => RB.verbs, S = () => RB.game.s;
+  const J = (x) => (x && x.jp ? RB.ui.jhtml(x.jp) : '');
+  const both = (x, cls) => (x ? '<span class="vb-l' + (cls ? ' ' + cls : '') + '"><span class="vb-jp">' + J(x) + '</span><span class="en">' + esc(x.en || '') + '</span></span>' : '');
+  const TITLE = { notice: 'A notice', courier: 'A courier\'s round', repair: 'A repair', network: 'Water across the rooms', observe: 'Watch the machine', follow: 'Follow the steps', route: 'Move it along', layers: 'The old plan and today', blocking: 'A rehearsal' };
+  const ICON = { notice: 'note', courier: 'letter', repair: 'tool', network: 'wave', observe: 'look', follow: 'note', route: 'stride', layers: 'map', blocking: 'companion' };
+  const reduced = () => !!(RB.game.reducedMotion && RB.game.reducedMotion());
+  let cur = null;
+
+  function open(id, o) {
+    const spec = V().get(id);
+    if (!spec || !S()) return Promise.resolve(null);
+    if (cur) close();
+    return new Promise((resolve) => {
+      const el = RB.ui.el('div', 'weave-sheet verb-sheet vb-' + spec.kind);
+      el.setAttribute('role', 'dialog');
+      el.setAttribute('aria-modal', 'true');
+      el.setAttribute('aria-labelledby', 'vb-title');
+      const layer = { el, name: 'verb' };
+      cur = { id, spec, el, layer, resolve, part: o && o.part, said: [], view: {}, t: 0, timer: null, closed: false };
+      if (spec.kind === 'layers' && RB.cases && !RB.cases.known(S(), id)) RB.cases.open(S(), id); // reading the plan starts the case
+      if (spec.kind === 'observe') { cur.view.play = !reduced(); tickObserve(); }
+      el.addEventListener('click', onClick);
+      layer.onCancel = () => close();
+      render();
+      RB.ui.pushLayer(layer);
+    });
+  }
+  function close() {
+    if (!cur || cur.closed) return;
+    const c = cur;
+    c.closed = true;
+    if (c.timer) clearTimeout(c.timer);
+    RB.ui.popLayer(c.layer);
+    cur = null;
+    c.resolve(FW().get(c.id) ? FW().peek(S(), c.id) : null);
+  }
+  // an act through the field puzzle engine: what it says is shown; an effective change is kept (autosave)
+  function act(name) {
+    const res = FW().act(S(), cur.id, name);
+    show(res);
+    return res;
+  }
+  function arrange(patch) {
+    const res = FW().arrange(S(), cur.id, patch);
+    if (res && res.effective && RB.save && RB.save.autosave) RB.save.autosave('progress');
+    return res;
+  }
+  function show(res) {
+    if (!res) return;
+    cur.said = (res.say || []).slice();
+    if (res.stale) cur.said = [{ en: 'That is settled now; it stays as it is.', jp: 'もう {終|お}わって いる 。 このまま に して おこう 。' }];
+    if (res.effective && RB.save && RB.save.autosave) RB.save.autosave('progress');
+    if (res.completed) cur.view.justDone = true;
+    RB.audio && RB.audio.sfx(res.completed ? 'confirm' : res.effective ? 'page' : 'cancel', { vol: 0.5 });
+  }
+
+  // ---- the frame -----------------------------------------------------------------------------------------------
+  function title(spec) {
+    const t = spec.title || spec.name || (spec.plan && spec.plan.title);
+    return t ? '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>' : esc(TITLE[spec.kind]);
+  }
+  function doneLine() {
+    const def = FW().get(cur.id), s = S();
+    const done = def ? FW().peek(s, cur.id).done : RB.cases && RB.cases.solved(s, cur.id);
+    if (!done) return '';
+    return '<p class="vb-done" role="status">' + I('done') + '<span>' + (cur.view.justDone ? 'Done.' : 'Done before; it stays as it is.') + '</span></p>';
+  }
+  function saidHtml() {
+    return '<div class="vb-said" aria-live="polite">' + (cur.said.length ? cur.said.map((l) => '<p>' + both(l) + '</p>').join('') : '') + '</div>';
+  }
+  function render(focusSel) {
+    if (!cur) return;
+    const spec = cur.spec, body = BODY[spec.kind] ? BODY[spec.kind](spec) : '';
+    cur.el.innerHTML = '<div class="wv-frame"><div class="wv-head"><h2 id="vb-title">' + I(ICON[spec.kind] || 'look') + '<span class="vb-title">' + title(spec) + '</span></h2>' +
+      '<button type="button" class="cbtn wv-cancel" data-a="close">' + I('back') + '<span>Close</span></button></div>' +
+      '<div class="wv-body">' + doneLine() + body + saidHtml() + '</div></div>';
+    if (focusSel) { const f = cur.el.querySelector(focusSel); if (f) f.focus({ preventScroll: true }); }
+  }
+  const radio = (group, value, on, inner, extra) => '<button type="button" class="wv-t" role="radio" data-g="' + esc(group) + '" data-v="' + esc(value) + '" aria-checked="' + !!on + '"' + (extra || '') + '>' + inner + '</button>';
+  const btn = (a, label, icon, extra, cls) => '<button type="button" class="pbtn' + (cls ? ' ' + cls : '') + '" data-a="' + esc(a) + '"' + (extra || '') + '>' + (icon ? I(icon) : '') + '<span>' + label + '</span></button>';
+
+  // ---- W9 · notice ----------------------------------------------------------------------------------------------
+  const BODY = {};
+  BODY.notice = (spec) => {
+    const st = FW().stateOf(S(), spec.id);
+    const txt = V().noticeText(spec, st);
+    return '<div class="vb-notice-preview" aria-label="The notice as it reads"><span class="vb-jp">' + J(txt) + '</span><span class="en">' + esc(txt.en) + '</span></div>' +
+      spec.slots.map((sl) => '<div class="ar-item"><div class="wv-lab">' + both(sl.label) + '</div><div class="ar-slots" role="radiogroup" aria-label="' + esc(sl.label.en) + '">' +
+        sl.options.map((op) => radio(sl.key, op.id, st[sl.key] === op.id, '<span class="vb-jp">' + J(op) + '</span><span class="en">' + esc(op.en) + '</span>')).join('') + '</div></div>').join('') +
+      '<div class="wv-foot">' + btn('post', 'Post it', 'note', spec.slots.every((sl) => st[sl.key]) ? '' : ' disabled') + '</div>';
+  };
+
+  // ---- W11 · courier ----------------------------------------------------------------------------------------------
+  BODY.courier = (spec) => {
+    const st = FW().stateOf(S(), spec.id);
+    const stop = (k) => spec.stops[k] || { en: k, jp: k };
+    let h = '<div class="vb-table-wrap"><table class="vb-table"><caption>Who is where on each leg of the round</caption><thead><tr><th scope="col">For</th>' +
+      spec.legs.map((l) => '<th scope="col">' + both(l) + '</th>').join('') + '</tr></thead><tbody>' +
+      spec.parcels.map((pc) => { const r = spec.recipients[pc.to]; return '<tr><th scope="row">' + both(r.name) + '<span class="vb-small">' + both({ jp: pc.jp, en: pc.en }) + '</span></th>' + r.at.map((k) => '<td>' + both(stop(k)) + '</td>').join('') + '</tr>'; }).join('') +
+      '</tbody></table></div>';
+    h += spec.legs.map((l, i) => '<div class="ar-item"><div class="wv-lab">' + both(l) + '</div><div class="ar-slots" role="radiogroup" aria-label="' + esc(l.en) + ' stop">' +
+      Object.keys(spec.stops).map((k) => radio('leg' + i, k, st['leg' + i] === k, '<span class="vb-jp">' + J(stop(k)) + '</span><span class="en">' + esc(stop(k).en) + '</span>')).join('') + '</div></div>').join('');
+    const plan = spec.legs.map((l, i) => st['leg' + i]);
+    h += '<div class="wv-foot">' + btn('check', 'Check the round', 'look', plan.every(Boolean) ? '' : ' disabled') + btn('go', 'Set out', 'journey', plan.every(Boolean) ? '' : ' disabled', 'primary') + '</div>';
+    if (cur.view.check) {
+      const c = V().courierCheck(spec, plan);
+      h += '<ul class="ar-list">' + c.parcels.map((p) => {
+        const pc = spec.parcels.find((x) => x.id === p.parcel), r = spec.recipients[pc.to];
+        return '<li class="' + (p.ok ? 'ok' : 'no') + '">' + esc(pc.en[0].toUpperCase() + pc.en.slice(1)) + ' for ' + esc(r.name.en) + ': ' + (p.ok ? 'delivered on the ' + esc(spec.legs[p.leg].en.toLowerCase()) + ' leg' : 'missed — ' + esc(r.name.en) + ' is ' + r.at.map((k, i) => 'at ' + stop(k).en + ' (' + spec.legs[i].en.toLowerCase() + ')').join(', ')) + '</li>';
+      }).join('') + '</ul>';
+    }
+    return h;
+  };
+
+  // ---- W12 · repair ------------------------------------------------------------------------------------------------
+  BODY.repair = (spec) => {
+    const st = FW().stateOf(S(), spec.id);
+    const tool = cur.view.tool || null;
+    let h = '<div class="wv-foot">' + btn('inspect', 'Look at it', 'look') + btn('read', 'Read the instructions', 'note') + '</div>';
+    h += '<ol class="vb-steps" aria-label="The steps">' + spec.steps.map((s0, i) => '<li class="' + (i < st.step ? 'ok' : '') + '">' + (i < st.step ? '<span class="vb-mark" aria-hidden="true">✓</span>' : '<span class="vb-mark" aria-hidden="true">' + (i + 1) + '</span>') + '<span>' + (i < st.step ? 'Done: ' : 'To do: ') + esc(spec.parts[s0.part].en) + '</span></li>').join('') + '</ol>';
+    h += '<div class="ar-item"><div class="wv-lab">The tools the job came with</div><div class="ar-slots" role="radiogroup" aria-label="Tool">' +
+      spec.tools.map((t) => radio('tool', t.id, tool === t.id, '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>')).join('') + '</div></div>';
+    h += '<div class="ar-item"><div class="wv-lab">Use it on</div><div class="ar-slots">' +
+      Object.keys(spec.parts).map((k) => '<button type="button" class="wv-t" data-a="use" data-part="' + esc(k) + '"' + (tool ? '' : ' disabled') + '><span class="vb-jp">' + J(spec.parts[k]) + '</span><span class="en">' + esc(spec.parts[k].en) + '</span></button>').join('') + '</div></div>';
+    h += '<div class="wv-foot">' + btn('test', 'Try it', 'done', '', 'primary') + '</div>';
+    return h;
+  };
+
+  // ---- W13 · network -------------------------------------------------------------------------------------------------
+  const mapName = (m) => { const d = RB.content.maps[m]; return d && d.name ? d.name.en : m; };
+  BODY.network = (spec) => {
+    const st = FW().stateOf(S(), spec.id), here = S().map, L = spec.levels || 3;
+    const lv = (k) => +st['b_' + k] || 0;
+    let h = '<div class="wv-lab">The water</div><ul class="vb-basins">' + Object.keys(spec.basins).map((k) => {
+      const b = spec.basins[k];
+      return '<li><span class="vb-n">' + both(b) + '<span class="vb-where">' + esc(b.map === here ? 'here' : mapName(b.map)) + '</span></span>' +
+        '<span class="vb-meter" role="img" aria-label="' + esc(V().LEVEL_EN[lv(k)]) + '">' + Array.from({ length: L }, (x, i) => '<i class="' + (i < lv(k) ? 'on' : '') + '"></i>').join('') + '</span><span class="vb-lv">' + esc(V().LEVEL_EN[lv(k)]) + '</span></li>';
+    }).join('') + '</ul>';
+    h += '<div class="wv-lab">The sluices</div><ul class="vb-gates">' + Object.keys(spec.gates).map((g) => {
+      const G = spec.gates[g], open = st['g_' + g] === 'open', reach = G.map === here;
+      return '<li><span class="vb-n">' + both(G) + '<span class="vb-where">' + esc(reach ? 'here' : mapName(G.map)) + '</span></span><span class="vb-state">' + (open ? 'Open' : 'Shut') + '</span>' +
+        (reach ? btn((open ? 'shut:' : 'open:') + g, open ? 'Close it' : 'Open it', open ? 'none' : 'key', ' data-gate="' + esc(g) + '"') : '<span class="vb-far">Out of reach from here</span>') + '</li>';
+    }).join('') + '</ul>';
+    if ((spec.required || []).length) h += '<div class="wv-lab">Ways that must stay open</div><ul class="ar-list">' + spec.required.map((r) => { const ok = V().passable(spec, st, r); return '<li class="' + (ok ? 'ok' : 'no') + '">' + both(r) + ' — ' + (ok ? 'passable' : 'under water') + '</li>'; }).join('') + '</ul>';
+    return h;
+  };
+
+  // ---- W14 · observe and follow ----------------------------------------------------------------------------------------
+  function tickObserve() {
+    if (!cur || cur.spec.kind !== 'observe') return;
+    if (cur.timer) clearTimeout(cur.timer);
+    if (!cur.view.play) return;
+    cur.timer = setTimeout(() => { if (!cur || !cur.view.play) return; cur.t += cur.spec.beat || 900; render(); tickObserve(); }, cur.spec.beat || 900);
+  }
+  BODY.observe = (spec) => {
+    const st = FW().stateOf(S(), spec.id), rec = FW().peek(S(), spec.id);
+    const ph = V().phaseAt(spec, st, cur.t), P = spec.phases[ph] || {};
+    const pat = V().pattern(spec, st.adj);
+    let h = '<div class="vb-machine" aria-live="off"><div class="vb-phase">' + both(P) + '</div><ul class="vb-parts">' +
+      spec.parts.map((p) => { const s0 = (P.parts || {})[p.key]; const w = p.states[s0] || { en: s0, jp: s0 }; return '<li class="st-' + esc(s0) + '"><span class="vb-n">' + both(p) + '</span><span class="vb-ps">' + both(w) + '</span></li>'; }).join('') + '</ul></div>';
+    h += '<ol class="vb-pattern" aria-label="The pattern, in order">' + pat.map((x, i) => '<li class="' + (x === ph ? 'now' : '') + '"' + (x === ph ? ' aria-current="step"' : '') + '>' + both(spec.phases[x]) + '</li>').join('') + '</ol>';
+    h += '<div class="wv-foot">' + btn('play', cur.view.play ? 'Pause' : 'Watch it run', cur.view.play ? 'none' : 'next', ' aria-pressed="' + !!cur.view.play + '"') + btn('step', 'Next movement', 'next') + '</div>';
+    const here = (spec.clues || []).filter((c) => c.phase === ph);
+    const seen = (spec.clues || []).filter((c) => rec.seen && rec.seen[c.id]);
+    if (here.length) h += '<div class="wv-foot">' + here.filter((c) => !(rec.seen && rec.seen[c.id])).map((c) => btn('note:' + c.id, 'Note what you see', 'note')).join('') + '</div>';
+    if (seen.length) h += '<div class="wv-lab">What you have noticed</div><ul class="ar-list">' + seen.map((c) => '<li class="unsure">' + both(c) + '</li>').join('') + '</ul>';
+    const on = String(st.adj || '').split(',').filter(Boolean);
+    h += '<div class="wv-lab">Adjustments</div><div class="ar-slots">' + spec.adjustments.map((A) => '<button type="button" class="wv-t" data-a="adjust:' + esc(A.id) + '" aria-pressed="' + (on.indexOf(A.id) >= 0) + '"><span class="vb-jp">' + J(A) + '</span><span class="en">' + esc(A.en) + (on.indexOf(A.id) >= 0 ? ' (made)' : '') + '</span></button>').join('') + '</div>';
+    return h;
+  };
+  BODY.follow = (spec) => {
+    const st = FW().stateOf(S(), spec.id);
+    if (st.step >= spec.steps.length) return '<p>' + both(spec.done) + '</p>';
+    const step = spec.steps[st.step];
+    return '<div class="wv-lab">Step ' + (st.step + 1) + ' of ' + spec.steps.length + '</div><div class="vb-notice-preview">' + both(step) + '</div><div class="ar-slots">' +
+      step.options.map((op) => '<button type="button" class="wv-t" data-a="do:' + st.step + ':' + esc(op.id) + '"><span class="vb-jp">' + J(op) + '</span><span class="en">' + esc(op.en) + '</span></button>').join('') + '</div>';
+  };
+
+  // ---- W15 · route ------------------------------------------------------------------------------------------------------
+  BODY.route = (spec) => {
+    const st = FW().stateOf(S(), spec.id);
+    const at = (spec.creature.say || {})[st.route];
+    const obj = cur.part && FW().get(spec.id).objects[cur.part];
+    return (at ? '<p class="vb-notice-preview">' + both(at) + '</p>' : '') + (obj ? '<div class="wv-look"><div class="wv-name">' + both(obj.name) + '</div></div>' : '') +
+      '<p class="muted small">Words woven here can move it along; nothing needs to be fought.</p><div class="wv-foot">' + btn('weave', 'Weave a word here', 'words', '', 'primary') + '</div>';
+  };
+
+  // ---- W16 · layers -------------------------------------------------------------------------------------------------------
+  BODY.layers = (spec) => {
+    const s = S(), view = cur.view.layer || 'both';
+    const seen = (mk) => RB.cases.observed(s, V().clueId(spec, mk.id));
+    let m;
+    try { m = RB.maps.compile(spec.map); } catch (e) { return ''; }
+    const k = 8, W = m.w * k, H = m.h * k;
+    let svg = '<rect width="' + W + '" height="' + H + '" class="vb-ground"/>';
+    for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) {
+      const t = m.tiles[y * m.w + x];
+      const cls = t && t.water ? 'vb-water' : RB.maps.blockedStatic(m, x, y) ? 'vb-wall' : null;
+      if (cls) svg += '<rect x="' + x * k + '" y="' + y * k + '" width="' + k + '" height="' + k + '" class="' + cls + '"/>';
+    }
+    if (view !== 'today') spec.plan.marks.forEach((mk, i) => {
+      svg += '<g class="vb-oldmark' + (seen(mk) ? ' seen' : '') + '" transform="translate(' + (mk.x * k + k / 2) + ',' + (mk.y * k + k / 2) + ')"><circle r="' + k * 1.1 + '"/><text y="4" text-anchor="middle">' + (i + 1) + '</text></g>';
+    });
+    if (s.map === spec.map) svg += '<path class="vb-you" d="M' + (s.x * k + k / 2) + ' ' + (s.y * k) + ' l5 8 h-10 z"/>';
+    let h = '<div class="ar-slots" role="radiogroup" aria-label="What the picture shows">' + radio('layer', 'both', view === 'both', '<span class="en">The old plan over today</span>') + radio('layer', 'today', view === 'today', '<span class="en">Today only</span>') + '</div>' +
+      '<div class="vb-plan"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc('The road today' + (view === 'today' ? '' : ', with the old plan\'s ' + spec.plan.marks.length + ' marks, numbered as in the list below') + (s.map === spec.map ? '. The triangle is you.' : '')) + '">' + svg + '</svg></div>';
+    h += '<p class="muted small">' + both(spec.plan.title) + '</p><ol class="vb-marks">' + spec.plan.marks.map((mk) => '<li class="' + (seen(mk) ? 'ok' : '') + '"><span class="vb-n">' + both(mk) + '</span>' + (seen(mk) ? '<span class="vb-obs">' + both(mk.obs) + '</span>' : '<span class="vb-far">Not compared yet: walk to it and look.</span>') + '</li>').join('') + '</ol>';
+    const hs = RB.cases.hyps(s, spec.id);
+    if (!hs.length) return h + '<div class="wv-lab">' + both(spec.question) + '</div><p class="muted small vb-nohyp">Compare a mark where it is first; then you can say what you think happened.</p>';
+    h += '<div class="wv-lab">' + both(spec.question) + '</div><ul class="vb-hyps">' + hs.map((x) => '<li>' + both(x.label) + (x.tried ? '<span class="vb-far">Tried: it does not fit what you saw.</span>' : '') + btn('conclude:' + x.id, 'Conclude this', 'done', RB.cases.solved(s, spec.id) ? ' disabled' : '') + '</li>').join('') + '</ul>';
+    return h;
+  };
+
+  // ---- W17 · blocking ------------------------------------------------------------------------------------------------------
+  BODY.blocking = (spec) => {
+    const st = FW().stateOf(S(), spec.id), sel = cur.view.sel || spec.pieces[0].id;
+    const scen = new Set((spec.stage.scenery || []).map((t) => t.join(',')));
+    const who = {};
+    for (const p of spec.pieces) if (st[p.id]) who[st[p.id]] = (who[st[p.id]] || []).concat([p]);
+    const token = (c) => (who[c] || []).map((p) => '<span class="vb-tok ' + p.kind + '">' + J(p) + '</span>').join('');
+    const cell = (c, label) => '<button type="button" class="vb-cell' + (scen.has(c) ? ' scen' : '') + '" data-cell="' + c + '"' + (scen.has(c) ? ' disabled aria-label="Scenery: nobody stands here"' : ' aria-label="' + esc(label + ((who[c] || []).length ? ': ' + who[c].map((p) => p.en).join(', ') : '')) + '"') + '>' + token(c) + '</button>';
+    let h = '<div class="wv-lab">Directions</div><ol class="vb-dirs">' + spec.directions.map((d, i) => { const r = cur.view.result && cur.view.result.directions[i]; return '<li class="' + (r ? (r.ok ? 'ok' : 'no') : '') + '">' + both(d) + '</li>'; }).join('') + '</ol>';
+    h += '<div class="wv-lab">Place</div><div class="ar-slots" role="radiogroup" aria-label="Piece to place">' + spec.pieces.map((p) => radio('piece', p.id, sel === p.id, '<span class="vb-jp">' + J(p) + '</span><span class="en">' + esc(p.en) + '</span>')).join('') + '</div>';
+    h += '<div class="vb-stage" style="--w:' + spec.stage.w + '"><div class="vb-wing">' + cell('wing:left', 'Shimote wing (the audience\'s left)') + '<span class="vb-small">' + RB.ui.jhtml('{下手|しもて}') + '</span></div><div class="vb-grid">';
+    for (let y = 0; y < spec.stage.h; y++) for (let x = 0; x < spec.stage.w; x++) h += cell(x + ',' + y, 'Stage, ' + (y === spec.stage.h - 1 ? 'front' : y === 0 ? 'back' : 'middle') + ' row, ' + (x + 1) + ' from the audience\'s left');
+    h += '</div><div class="vb-wing">' + cell('wing:right', 'Kamite wing (the audience\'s right)') + '<span class="vb-small">' + RB.ui.jhtml('{上手|かみて}') + '</span></div></div><p class="muted small vb-aud">The audience is here, in front of the stage.</p>';
+    h += '<div class="wv-foot">' + btn('rehearse', 'Rehearse', 'next', '', 'primary') + '</div>';
+    return h;
+  };
+  // the rehearsal: each placed piece walks on from its wing along its path, one after another
+  async function rehearse() {
+    const spec = cur.spec, st = FW().stateOf(S(), spec.id);
+    const res = V().blockingCheck(spec, st);
+    cur.view.result = res;
+    if (!reduced()) {
+      for (const p of spec.pieces) {
+        const v = st[p.id];
+        if (!v || /^wing:/.test(v)) continue;
+        // on from the nearer wing
+        const path = V().rehearsalPath(spec, V().cellOf(v)[0] < spec.stage.w / 2 ? 'wing:left' : 'wing:right', v) || [];
+        for (const c of path.slice(1, -1)) {
+          if (!cur) return;
+          const b = cur.el.querySelector('.vb-cell[data-cell="' + c.join(',') + '"]');
+          if (b) { b.classList.add('walk'); await new Promise((r) => setTimeout(r, 140)); b.classList.remove('walk'); }
+        }
+      }
+    }
+    if (!cur) return;
+    const r = act('rehearse');
+    if (!r.completed) {
+      cur.said = res.directions.filter((d) => !d.ok).map((d) => ({ en: 'Not as directed: "' + d.d.en + '"', jp: d.d.jp })).concat(res.clash.length ? [{ en: 'Two things cannot stand in one place, and nobody stands in the scenery.', jp: '{一|ひと}つ の {場所|ばしょ} に {二|ふた}つ は {置|お}けない 。' }] : []);
+      if (!cur.said.length) cur.said = [{ en: 'Not quite.', jp: 'もう {少|すこ}し 。' }];
+    } else cur.said = [{ en: 'Everyone is where the directions say. The rehearsal runs through.', jp: '{全員|ぜんいん} 、 {言|い}われた {場所|ばしょ} に いる 。 {稽古|けいこ} は うまく いった 。' }];
+    render();
+  }
+
+  // ---- input -------------------------------------------------------------------------------------------------------
+  async function onClick(e) {
+    if (!cur) return;
+    const b = e.target.closest('button');
+    if (!b || b.disabled) return;
+    const spec = cur.spec, s = S();
+    const keep = (sel) => render(sel);
+    if (b.dataset.a === 'close') { close(); return; }
+    if (b.dataset.g) {
+      const g = b.dataset.g, v = b.dataset.v;
+      if (spec.kind === 'repair' && g === 'tool') cur.view.tool = v;
+      else if (spec.kind === 'blocking' && g === 'piece') cur.view.sel = v;
+      else if (spec.kind === 'layers' && g === 'layer') cur.view.layer = v;
+      else { arrange({ [g]: v }); cur.view.check = false; }
+      RB.audio && RB.audio.sfx('page', { vol: 0.4 });
+      keep('[data-g="' + g + '"][data-v="' + v + '"]');
+      return;
+    }
+    if (b.dataset.cell) {
+      const piece = cur.view.sel || spec.pieces[0].id;
+      arrange({ [piece]: b.dataset.cell });
+      cur.view.result = null;
+      keep('[data-cell="' + b.dataset.cell + '"]');
+      return;
+    }
+    const a = b.dataset.a;
+    if (!a) return;
+    if (a === 'check') { cur.view.check = true; keep('[data-a="check"]'); return; }
+    if (a === 'use') { act('use:' + cur.view.tool + '@' + b.dataset.part); keep('[data-part="' + b.dataset.part + '"]'); return; }
+    if (a === 'play') { cur.view.play = !cur.view.play; tickObserve(); keep('[data-a="play"]'); return; }
+    if (a === 'step') { cur.view.play = false; tickObserve(); cur.t += spec.beat || 900; keep('[data-a="step"]'); return; }
+    if (a === 'weave') { close(); if (RB.weave && RB.weave.open) setTimeout(() => RB.weave.open(), 0); return; }
+    if (a === 'rehearse') { await rehearse(); return; }
+    if (/^conclude:/.test(a)) {
+      const r = V().conclude(s, spec.id, a.slice(9));
+      const h = RB.content.cases[spec.id].hypotheses.find((x) => x.id === a.slice(9));
+      cur.said = r.ok ? [{ en: 'That fits everything you saw.', jp: '{見|み}た こと と {全部|ぜんぶ} {合|あ}う 。' }]
+        : r.why === 'evidence' ? [{ en: 'You have not seen enough yet to say. Compare more of the marks.', jp: 'まだ {見|み}た こと が {足|た}りない 。 {他|ほか} の {印|しるし} も {比|くら}べよう 。' }]
+        : [h.mismatch || { en: 'That does not fit what you saw.', jp: '{見|み}た こと と {合|あ}わない 。' }];
+      if (r.ok) { cur.view.justDone = true; if (RB.save && RB.save.autosave) RB.save.autosave('progress'); }
+      keep();
+      return;
+    }
+    act(a);
+    keep('[data-a="' + a + '"]');
+  }
+
+  return { open, close, isOpen: () => !!cur, current: () => (cur ? { id: cur.id, kind: cur.spec.kind, t: cur.t, view: cur.view } : null) };
+})();
+
+
+/* ==== src/ui/57c_verbs_dev.js ==== */
+/* The exploration actions' development panel (expansion P05): only on a page opened with ?dev=verbs (or a test that
+ * sets window.__RB_DEV_VERBS__ before the game starts). It starts a throwaway session (never saved: offered only
+ * while no journey is loaded) with the flag dev_verbs, which alone brings the fixtures of
+ * src/content/verbs/00_fixtures.js onto the Lantern Road and the Saltglass road, and stands you beside one. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.verbsDev = (function () {
+  'use strict';
+  function allowed() {
+    try {
+      if (typeof window === 'undefined') return false;
+      if (window.__RB_DEV_VERBS__) return true;
+      return /[?&]dev=verbs\b/.test(window.location.search || '');
+    } catch (e) { return false; }
+  }
+  // where to stand for a fixture: beside its prop (the first gate, lamp or plan for the ones with several)
+  function spotOf(spec) {
+    if (spec.kind === 'network') { const g = spec.gates[Object.keys(spec.gates)[0]]; return { map: g.map, x: g.x, y: g.y }; }
+    if (spec.kind === 'route') { const m = spec.means[0].obj; return { map: spec.map, x: m.x, y: m.y }; }
+    if (spec.kind === 'layers') return { map: spec.map, x: spec.plan.x, y: spec.plan.y };
+    return { map: spec.map, x: spec.x, y: spec.y };
+  }
+  function freeBeside(map, x, y) {
+    let m;
+    try { m = RB.maps.compile(map); } catch (e) { return { x, y: y + 1, dir: 'up' }; }
+    for (const [dx, dy, dir] of [[0, 1, 'up'], [-1, 0, 'right'], [1, 0, 'left'], [0, -1, 'down'], [2, 0, 'left'], [0, 2, 'up']]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx >= 0 && ny >= 0 && nx < m.w && ny < m.h && !RB.maps.blockedStatic(m, nx, ny)) return { x: nx, y: ny, dir };
+    }
+    return { x, y: y + 1, dir: 'up' };
+  }
+  async function go(id) {
+    const cur = RB.save && RB.save.current && RB.save.current();
+    if (cur && cur.slot != null) return null; // a journey is loaded: never risk an autosave over it
+    const spec = RB.verbs.get(id);
+    if (!spec) return null;
+    const at = spotOf(spec), f = freeBeside(at.map, at.x, at.y);
+    if (!RB.game.s || RB.game.mode() !== 'world' || !RB.game.s.flags.dev_verbs) {
+      const s = RB.game.debugStart(at.map, f.x, f.y, { flags: { dev_verbs: true, departed: true, ch2_done: true } });
+      s.edition = 2;
+      for (const w of ['mamoru', 'mizu', 'hikari', 'kaze', 'nawa', 'ishi', 'suzu', 'koe']) if (s.words.indexOf(w) < 0) s.words.push(w);
+      await new Promise((r) => setTimeout(r, 300));
+    } else await RB.game.transition(at.map, f.x, f.y, f.dir);
+    if (RB.test && RB.test.place) RB.test.place(f.x, f.y, f.dir);
+    return f;
+  }
+  function panel() {
+    if (!allowed() || typeof document === 'undefined') return null;
+    let el = document.getElementById('vb-dev');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'vb-dev';
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Exploration action fixtures (development)');
+    el.style.cssText = 'position:fixed;right:8px;top:8px;z-index:99999;background:rgba(28,37,48,0.94);color:#eee;font:13px sans-serif;padding:8px;border:1px solid #567;border-radius:6px;max-width:300px;max-height:90vh;overflow:auto;display:grid;gap:6px';
+    const css = document.createElement('style');
+    css.textContent = '#vb-dev button{font:13px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:28px;padding:2px 8px;text-align:left}#vb-dev.min>*:not(#vb-toggle){display:none}';
+    document.head.appendChild(css);
+    el.innerHTML = '<button type="button" id="vb-toggle">Exploration fixtures (dev): hide</button>' +
+      RB.verbs.list().filter((v) => v.fixture).map((v) => '<button type="button" data-vb="' + v.id + '">' + v.kind + ' · ' + v.id + '</button>').join('');
+    document.body.appendChild(el);
+    el.addEventListener('click', (e) => {
+      const x = e.target.closest('[data-vb]');
+      if (x) go(x.dataset.vb);
+      if (e.target.id === 'vb-toggle') { el.classList.toggle('min'); e.target.textContent = 'Exploration fixtures (dev): ' + (el.classList.contains('min') ? 'show' : 'hide'); }
+    });
+    return el;
+  }
+  if (typeof window !== 'undefined' && typeof document !== 'undefined' && allowed()) {
+    let tries = 0;
+    const open = () => { if (window.__RB_READY__ === true && document.body) panel(); else if (++tries < 300) setTimeout(open, 100); };
+    setTimeout(open, 0);
+  }
+  return { allowed, panel, go, spotOf };
+})();
 
 
 /* ==== src/ui/58_keepsakes.js ==== */
@@ -153203,6 +154355,234 @@ var RB = (globalThis.RB = globalThis.RB || {});
 })();
 
 
+/* ==== src/content/verbs/00_fixtures.js ==== */
+/* Exploration actions' fixtures (expansion P05; the templates in src/engine/55b_verbs.js). One small, complete
+ * example of each, on the Lantern Road and the Saltglass road, for the tests and for review on a development page
+ * (?dev=verbs). All `fixture: true`: their props, people and creatures appear, and their puzzles count, only in a
+ * throwaway session that sets the flag dev_verbs; a journey never meets them. The new chapters write the real ones
+ * (Manybridge's notices and locks, the Cloudroad's relay, Playhouse Row's rehearsals). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function () {
+  'use strict';
+  const V = RB.verbs;
+  const T = (en, jp) => ({ en, jp });
+
+  // ---- W9 · a notice by the road: where to queue ---------------------------------------------------------------
+  V.define('notice', {
+    id: 'vb_notice', fixture: true, map: 'rw.road', x: 26, y: 12, region: 'reedwake',
+    title: T('A notice for the queue', '{並|なら}ぶ {人|ひと} へ の {貼|は}り{紙|がみ}'),
+    slots: [
+      { key: 'where', label: T('Where', 'どこ'), options: [
+        { id: 'left', jp: '{左|ひだり} に', en: 'on the left' },
+        { id: 'right', jp: '{右|みぎ} に', en: 'on the right' },
+        { id: 'road', jp: '{道|みち} に', en: 'on the road' },
+      ] },
+      { key: 'do', label: T('What to do', '{何|なに} を する'), options: [
+        { id: 'line', jp: '{並|なら}んで ください', en: 'please line up' },
+        { id: 'run', jp: '{走|はし}って ください', en: 'please run' },
+        { id: 'wait', jp: '{待|ま}って ください', en: 'please wait' },
+      ] },
+    ],
+    readings: [
+      { when: { where: 'left', do: ['line', 'wait'] }, behaviour: 'queue_left', heard: T('People read it and line up along the left of the board. The way in front is clear.', '{読|よ}んだ {人|ひと} たち が 、 {貼|は}り{紙|がみ} の {左|ひだり} に {並|なら}んだ 。 {前|まえ} が {通|とお}れる よう に なった 。') },
+      { when: { where: 'right', do: ['line', 'wait'] }, behaviour: 'queue_right', heard: T('People read it and line up to the right of the board, toward the bend. The way in front is clear.', '{読|よ}んだ {人|ひと} たち が 、 {貼|は}り{紙|がみ} の {右|みぎ} に {並|なら}んだ 。 {前|まえ} が {通|とお}れる よう に なった 。') },
+      { when: { where: 'road', do: ['line', 'wait'] }, behaviour: 'on_road', heard: T('People line up out on the road itself. They did what it said; carts will have to go round them.', '{人|ひと} たち は {道|みち} の {上|うえ} に {並|なら}んだ 。 {言|い}われた とおり だ が 、 {荷車|にぐるま} は {通|とお}り にくい 。') },
+    ],
+    unclear: T('People read it, look at one another, and stay where they were.', '{読|よ}んだ {人|ひと} たち は {顔|かお} を {見合|みあ}わせて 、 そのまま だ 。'),
+    goal: ['queue_left', 'queue_right'],
+    people: {
+      none: [{ char: 'tobi', x: 25, y: 13 }, { char: 'sota', x: 26, y: 13, dir: 'up' }, { char: 'daigo', x: 28, y: 13, dir: 'left' }],
+      unclear: [{ char: 'tobi', x: 25, y: 13 }, { char: 'sota', x: 26, y: 13, dir: 'up' }, { char: 'daigo', x: 28, y: 13, dir: 'left' }],
+      queue_left: [{ char: 'tobi', x: 24, y: 13, dir: 'right' }, { char: 'sota', x: 23, y: 13, dir: 'right' }, { char: 'daigo', x: 22, y: 13, dir: 'right' }],
+      queue_right: [{ char: 'tobi', x: 29, y: 13, dir: 'left' }, { char: 'sota', x: 30, y: 13, dir: 'left' }, { char: 'daigo', x: 30, y: 14, dir: 'up' }],
+      on_road: [{ char: 'tobi', x: 24, y: 10 }, { char: 'sota', x: 25, y: 10 }, { char: 'daigo', x: 26, y: 10 }],
+    },
+  });
+
+  // ---- W11 · a courier's round of three stops -------------------------------------------------------------------
+  V.define('courier', {
+    id: 'vb_courier', fixture: true, map: 'rw.road', x: 3, y: 3,
+    title: T('The courier\'s round', '{配達|はいたつ} の {順番|じゅんばん}'),
+    legs: [T('First', '{最初|さいしょ}'), T('Next', '{次|つぎ}'), T('Last', '{最後|さいご}')],
+    stops: {
+      square: T('the village square', '{村|むら} の {広場|ひろば}'),
+      tea: T('the teahouse', '{茶屋|ちゃや}'),
+      harbour: T('the harbour', '{港|みなと}'),
+      inn: T('the inn', '{宿|やど}'),
+    },
+    recipients: {
+      hana: { name: T('Hana', 'ハナ'), at: ['tea', 'tea', 'square'] },
+      tetsu: { name: T('Tetsu', 'テツ'), at: ['harbour', 'inn', 'inn'] },
+      fuku: { name: T('Fuku', 'フク'), at: ['harbour', 'harbour', 'square'] },
+    },
+    parcels: [
+      { id: 'letter', to: 'hana', jp: '{手紙|てがみ}', en: 'a letter' },
+      { id: 'parcel', to: 'tetsu', jp: '{小包|こづつみ}', en: 'a parcel' },
+      { id: 'medicine', to: 'fuku', jp: '{薬|くすり}', en: 'medicine' },
+    ],
+  });
+
+  // ---- W12 · mending a road lamp ------------------------------------------------------------------------------------
+  V.define('repair', {
+    id: 'vb_repair', fixture: true, map: 'rw.road', x: 2, y: 5,
+    name: T('A road lamp that will not light', '{点|つ}かない {道|みち} の {灯|あか}り'),
+    inspect: T('The glass is sooty, the wick is ragged, and the oil well is dry.', 'ガラス が {黒|くろ}く {汚|よご}れて いる 。 {芯|しん} は ぼろぼろ で 、 {油|あぶら} も ない 。'),
+    parts: { glass: T('glass', 'ガラス'), wick: T('wick', '{芯|しん}'), well: T('oil well', '{油|あぶら} の {入|い}れ{物|もの}') },
+    read: [
+      T('1. Wipe the glass with the cloth.', '{一|いち} 、 {布|ぬの} で ガラス を {拭|ふ}く 。'),
+      T('2. Trim the wick with the scissors.', '{二|に} 、 はさみ で {芯|しん} を {切|き}る 。'),
+      T('3. Pour oil into the oil well.', '{三|さん} 、 {油|あぶら} を {入|い}れ{物|もの} に {入|い}れる 。'),
+    ],
+    tools: [
+      { id: 'cloth', jp: '{布|ぬの}', en: 'cloth' },
+      { id: 'scissors', jp: 'はさみ', en: 'scissors' },
+      { id: 'oil', jp: '{油|あぶら}', en: 'oil' },
+    ],
+    steps: [
+      { part: 'glass', tool: 'cloth', done: T('You wipe the soot away. The glass is clear.', 'ガラス を {拭|ふ}いた 。 きれい に なった 。') },
+      { part: 'wick', tool: 'scissors', done: T('You trim the wick square.', '{芯|しん} を まっすぐ に {切|き}った 。') },
+      { part: 'well', tool: 'oil', done: T('You pour the oil in, slowly.', 'ゆっくり {油|あぶら} を {入|い}れた 。') },
+    ],
+    ran: T('The lamp lights, steady and bright.', '{灯|あか}り が {点|つ}いた 。 {明|あか}るい 。'),
+  });
+
+  // ---- W13 · water across two roads ------------------------------------------------------------------------------
+  V.define('network', {
+    id: 'vb_network', fixture: true, medium: 'water', levels: 3,
+    basins: {
+      pond: { map: 'rw.road', x: 10, y: 2, jp: '{池|いけ}', en: 'pond', level: 3 },
+      ditch: { map: 'rw.road', x: 9, y: 6, jp: '{用水路|ようすいろ}', en: 'channel', level: 0 },
+      ford: { map: 'sg.road', x: 21, y: 16, jp: '{浅瀬|あさせ}', en: 'ford', level: 0 },
+      outflow: { map: 'sg.road', x: 13, y: 12, jp: '{排水口|はいすいこう}', en: 'outflow', level: 0 },
+    },
+    gates: {
+      g1: { between: ['pond', 'ditch'], map: 'rw.road', x: 11, y: 4, jp: '{池|いけ} の {水門|すいもん}', en: 'pond sluice', open: false },
+      g2: { between: ['ditch', 'ford'], map: 'sg.road', x: 16, y: 13, jp: '{浅瀬|あさせ} の {水門|すいもん}', en: 'ford sluice', open: true, weave: 'water' },
+      g3: { between: ['ford', 'outflow'], map: 'sg.road', x: 12, y: 13, jp: '{排水|はいすい} の {水門|すいもん}', en: 'outflow sluice', open: true },
+    },
+    sources: ['pond'], drains: ['outflow'],
+    required: [{ id: 'crossing', basin: 'ford', max: 1, map: 'sg.road', tiles: [[18, 15], [19, 15]], jp: '{浅瀬|あさせ} を {渡|わた}る {道|みち}', en: 'the way across the ford', look: T('The ford is under water. Nobody can cross here now.', '{浅瀬|あさせ} が {水|みず} の {下|した} だ 。 {今|いま} は {渡|わた}れない 。') }],
+    goal: { ditch: 3, ford: [0, 1] },
+  });
+
+  // ---- W14 · a striking clock to watch, and a paper boat to fold ---------------------------------------------------
+  V.define('observe', {
+    id: 'vb_observe', fixture: true, map: 'rw.road', x: 8, y: 2, beat: 900,
+    name: T('The roadside bell clock', '{道|みち} の {鐘|かね} の {時計|とけい}'),
+    parts: [
+      { key: 'wheel', jp: '{車|くるま}', en: 'wheel', states: { turn: T('turning', '{回|まわ}って いる'), still: T('still', '{止|と}まって いる') } },
+      { key: 'hammer', jp: '{槌|つち}', en: 'hammer', states: { down: T('down', '{下|した}'), up: T('raised', '{上|うえ}'), stuck: T('stuck up', '{上|うえ} で {止|と}まって いる') } },
+      { key: 'bell', jp: '{鐘|かね}', en: 'bell', states: { quiet: T('quiet', '{静|しず}か'), ring: T('ringing', '{鳴|な}って いる'), dull: T('a dull knock', 'こつん と {鈍|にぶ}い {音|おと}') } },
+    ],
+    phases: {
+      turn: { jp: '{車|くるま} が {回|まわ}る', en: 'the wheel turns', parts: { wheel: 'turn', hammer: 'down', bell: 'quiet' } },
+      lift: { jp: '{槌|つち} が {上|あ}がる', en: 'the hammer rises', parts: { wheel: 'still', hammer: 'up', bell: 'quiet' } },
+      strike: { jp: '{槌|つち} が {鐘|かね} を {打|う}つ', en: 'the hammer strikes the bell', parts: { wheel: 'still', hammer: 'down', bell: 'ring' } },
+      knock: { jp: '{槌|つち} が {台|だい} を {打|う}つ', en: 'the hammer falls on the frame', parts: { wheel: 'still', hammer: 'down', bell: 'dull' } },
+      stuck: { jp: '{槌|つち} が {止|と}まる', en: 'the hammer sticks', parts: { wheel: 'still', hammer: 'stuck', bell: 'quiet' } },
+    },
+    base: ['turn', 'knock', 'lift', 'stuck'],
+    adjustments: [
+      { id: 'order', op: 'swap', a: 'knock', b: 'lift', jp: '{槌|つち} の {順番|じゅんばん} を {入|い}れ{替|か}える', en: 'change the order of the hammer\'s cams' },
+      { id: 'oil', op: 'remove', a: 'stuck', jp: '{留|と}め{金|がね} に {油|あぶら} を さす', en: 'oil the catch' },
+      { id: 'ring', op: 'replace', a: 'knock', b: 'strike', jp: '{鐘|かね} の {位置|いち} を {直|なお}す', en: 'move the bell to where the hammer falls' },
+    ],
+    goal: ['turn', 'lift', 'strike'],
+    clues: [
+      { id: 'falls_first', phase: 'knock', jp: '{槌|つち} は {上|あ}がる {前|まえ} に {落|お}ちて いる 。', en: 'The hammer falls before it has risen.' },
+      { id: 'misses', phase: 'knock', jp: '{槌|つち} は {鐘|かね} に {届|とど}かず 、 {台|だい} を {打|う}つ 。', en: 'The hammer falls short of the bell and hits the frame.' },
+      { id: 'catch_dry', phase: 'stuck', jp: '{留|と}め{金|がね} が {乾|かわ}いて いて 、 {槌|つち} が {上|うえ} で {止|と}まる 。', en: 'The catch is dry: the hammer sticks at the top.' },
+    ],
+  });
+  V.define('follow', {
+    id: 'vb_follow', fixture: true, map: 'rw.road', x: 9, y: 4,
+    name: T('Folding a paper boat', '{紙|かみ} の {船|ふね} を {折|お}る'),
+    steps: [
+      { jp: '{紙|かみ} を {半分|はんぶん} に {折|お}って ください 。', en: 'Fold the paper in half.', options: [
+        { id: 'half', ok: true, jp: '{半分|はんぶん} に {折|お}る', en: 'Fold it in half' },
+        { id: 'corner', jp: '{角|かど} を {折|お}る', en: 'Fold a corner', why: T('Not yet: in half first.', 'まだ だ 。 {先|さき} に {半分|はんぶん} に {折|お}る 。') },
+        { id: 'open', jp: '{広|ひろ}げる', en: 'Open it out', why: T('It is already open. Fold it in half.', 'もう {広|ひろ}がって いる 。 {半分|はんぶん} に {折|お}ろう 。') },
+      ] },
+      { jp: '{上|うえ} の {角|かど} を {両方|りょうほう} {下|した} に {折|お}って ください 。', en: 'Fold both top corners down.', options: [
+        { id: 'corners', ok: true, jp: '{両方|りょうほう} の {角|かど} を {下|した} に {折|お}る', en: 'Fold both corners down' },
+        { id: 'onecorner', jp: '{角|かど} を {一|ひと}つ だけ {折|お}る', en: 'Fold one corner', why: T('Both corners, the direction says.', '{両方|りょうほう} の {角|かど} だ 。') },
+      ] },
+      { jp: '{下|した} の {部分|ぶぶん} を {上|うえ} に {折|お}って 、 {開|ひら}いて ください 。', en: 'Fold the bottom up, then open it out.', options: [
+        { id: 'open', ok: true, jp: '{下|した} を {上|うえ} に {折|お}って {開|ひら}く', en: 'Fold the bottom up and open it' },
+        { id: 'half', jp: 'もう {一度|いちど} {半分|はんぶん} に {折|お}る', en: 'Fold it in half again', why: T('The bottom edge goes up, then you open it.', '{下|した} の {部分|ぶぶん} を {上|うえ} に {折|お}って から 、 {開|ひら}く 。') },
+      ] },
+    ],
+    done: T('A small paper boat.', '{小|ちい}さな {紙|かみ} の {船|ふね} が できた 。'),
+  });
+
+  // ---- W15 · a fog wisp at the ford, moved without a fight ---------------------------------------------------------
+  V.define('route', {
+    id: 'vb_route', fixture: true, map: 'sg.road',
+    creature: { enemy: 'sg.fogwisp', at: { block: [18, 20], shade: [16, 18], away: null }, say: {
+      block: T('A fog wisp hangs in front of the way down, thick and cold.', '{霧|きり} の {精|せい} が 、 {下|くだ}る {道|みち} の {前|まえ} に {漂|ただよ}って いる 。'),
+      shade: T('The fog wisp rests in the shade by the wall. The way down is clear.', '{霧|きり} の {精|せい} は {壁|かべ} の {陰|かげ} に いる 。 {道|みち} は {通|とお}れる 。'),
+      away: T('The fog wisp has gone off down the road.', '{霧|きり} の {精|せい} は {道|みち} の {向|む}こう へ {去|さ}った 。'),
+    } },
+    start: 'block', goal: ['shade', 'away'],
+    means: [
+      { id: 'light', family: 'light', from: ['block'], to: 'shade', obj: { key: 'lamp', x: 22, y: 18, prop: 'lantern', jp: '{灯|あか}り', en: 'lamp' },
+        say: T('The lamp flares. The fog wisp shrinks from the light and drifts into the shade by the wall.', '{灯|あか}り が {明|あか}るく なった 。 {霧|きり} の {精|せい} は {光|ひかり} を {嫌|きら}って 、 {壁|かべ} の {陰|かげ} へ {流|なが}れた 。'), fx: 'light' },
+      { id: 'bell', family: 'bell', from: ['block', 'shade'], to: 'away', obj: { key: 'bellpost', x: 15, y: 17, prop: 'cs_bellpost', jp: '{鈴|すず} の {柱|はしら}', en: 'bell post' }, sound: true,
+        say: T('The bell rings out, clear. The fog wisp trembles with each ring and drifts away down the road.', '{鈴|すず} が {澄|す}んだ {音|おと} で {鳴|な}った 。 {霧|きり} の {精|せい} は {音|おと} に {震|ふる}えて 、 {道|みち} の {向|む}こう へ {去|さ}った 。'), fx: 'ring' },
+    ],
+  });
+
+  // ---- W16 · the old plan of the Lantern Road ------------------------------------------------------------------------
+  V.define('layers', {
+    id: 'vb_layers', fixture: true, map: 'rw.road', near: 1,
+    title: T('The well on the old plan', '{古|ふる}い {地図|ちず} の {井戸|いど}'),
+    question: T('What happened to the well the old plan shows?', '{古|ふる}い {地図|ちず} に ある {井戸|いど} は どう なった の か 。'),
+    plan: {
+      x: 20, y: 12, prop: 'noticeboard', title: T('The road, drawn fifty years ago', '{五十年|ごじゅうねん} {前|まえ} の {道|みち} の {地図|ちず}'),
+      marks: [
+        { id: 'well', x: 7, y: 12, jp: '{井戸|いど}', en: 'a well', now: 'missing', obs: T('Where the plan shows a well, there is only a ring of flat stones, level with the ground.', '{地図|ちず} で は {井戸|いど} の {場所|ばしょ} だ が 、 {平|たい}らな {石|いし} が {丸|まる} く {並|なら}んで いる だけ だ 。') },
+        { id: 'stone', x: 14, y: 8, jp: '{道|みち}しるべ', en: 'a waystone', now: 'present', obs: T('The waystone is still here, and its base is made of the same flat stones, newer than the rest.', '{道|みち}しるべ は {今|いま} も ある 。 {台|だい} は {同|おな}じ {平|たい}らな {石|いし} で 、 {他|ほか} より {新|あたら}しい 。') },
+        { id: 'trough', x: 24, y: 8, jp: '{水|みず} {飲|の}み {場|ば}', en: 'a drinking trough', now: 'moved', obs: T('No trough here now; there are marks in the ground where one stood.', '{今|いま} は {水|みず} {飲|の}み {場|ば} が ない 。 {地面|じめん} に {置|お}いて あった {跡|あと} が ある 。') },
+      ],
+    },
+    hypotheses: [
+      { id: 'filled', label: T('The well was filled in, and its stones reused for the waystone\'s base.', '{井戸|いど} は {埋|う}められて 、 その {石|いし} が {道|みち}しるべ の {台|だい} に なった 。'), from: ['well', 'stone'], correct: true },
+      { id: 'covered', label: T('The well is still there, covered over with flat stones.', '{井戸|いど} は {今|いま} も あって 、 {平|たい}らな {石|いし} で ふた を して ある 。'), from: ['well'], correct: true },
+      { id: 'never', label: T('There never was a well: the plan is wrong.', '{井戸|いど} は {最初|さいしょ} から なかった 。 {地図|ちず} が {間違|まちが}って いる 。'), from: ['well'], mismatch: T('The ring of stones says something stood there.', '{丸|まる} く {並|なら}んだ {石|いし} が 、 {何|なに} か が あった こと を {示|しめ}して いる 。') },
+    ],
+    sufficient: [['well', 'stone'], ['well', 'trough']],
+  });
+
+  // ---- W17 · a rehearsal on the road's little stage ---------------------------------------------------------------
+  V.define('blocking', {
+    id: 'vb_blocking', fixture: true, map: 'rw.road', x: 17, y: 13,
+    name: T('A rehearsal by the road', '{道|みち} {端|ばた} の {稽古|けいこ}'),
+    stage: { w: 5, h: 3, scenery: [[0, 0], [4, 0]] },
+    pieces: [
+      { id: 'hana', kind: 'actor', jp: 'ハナ', en: 'Hana' },
+      { id: 'tetsu', kind: 'actor', jp: 'テツ', en: 'Tetsu' },
+      { id: 'lantern', kind: 'prop', jp: '{提灯|ちょうちん}', en: 'paper lantern' },
+    ],
+    directions: [
+      { jp: 'ハナ さん は {舞台|ぶたい} の {真|ま}ん{中|なか} 、 {一番|いちばん} {前|まえ} に {立|た}って ください 。', en: 'Hana, stand in the middle of the stage, right at the front.', want: { who: 'hana', at: [2, 2] } },
+      { jp: '{提灯|ちょうちん} は その {隣|となり} に {置|お}いて ください 。', en: 'Put the lantern next to her.', want: { who: 'lantern', next: 'hana' } },
+      { jp: 'テツ さん は {上手|かみて} で {待|ま}って いて ください 。', en: 'Tetsu, wait in the wings on the kamite side (the audience\'s right).', want: { who: 'tetsu', wing: 'right' } },
+    ],
+  });
+})();
+
+
+/* ==== src/content/verbs/01_lex.js ==== */
+/* Words of the exploration actions' fixtures (src/content/verbs/00_fixtures.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.lex.add(RB.lex.parseTable(`
+ぼろぼろ|ぼろぼろ|adj-na|E|worn to rags, frayed
+用水路|ようすいろ|n|A|an irrigation channel, a water channel
+排水口|はいすいこう|n|A|a drain, an outflow
+こつん|こつん|adv|I|with a small knock (the sound of something hard tapping)
+`), 'verbs');
+
+
 /* ==== src/content/wordplay/00_lex.js ==== */
 /* Lexicon for companion shiritori (src/content/wordplay/): the words the table's
  * labels, the companions' lines, the reflections and the thoughts use that the
@@ -154326,10 +155706,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.relations = C.relations || {};
   C.roadEvents = C.roadEvents || {};
   C.sealed = C.sealed || {};
-  // "Have you seen…?" runs as a conversation of its own (src/ui/53w_whereabouts.js)
+  // "Have you seen…?" runs as a conversation of its own (src/ui/53w_whereabouts.js); an exploration action's prop
+  // opens its sheet, and a layered site's marked place compares it with the old plan (src/engine/55b_verbs.js)
   RB.script.add(`
 @scene wb.ask
 !hook wb_ask
+
+@scene vb.open
+!hook vb_open
+
+@scene vb.mark
+!hook vb_mark
 `, 'world/00_system.js');
 })(RB.content);
 

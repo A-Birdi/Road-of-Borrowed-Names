@@ -41,7 +41,8 @@ const faceNpc = (p) => p.evaluate(() => {
   assert(ta.app !== 'none' && ta.body !== 'none', 'no gesture suppression on #app/body (' + ta.app + ')');
   assert(ta.none.every((n) => /world|tp-move|tp-run|tp-act/.test(String(n))), 'touch-action:none only on the world canvas and touch controls: ' + JSON.stringify(ta.none));
   const hud = await p.evaluate(() => ({
-    menus: Array.from(document.querySelectorAll('button')).filter((x) => x.offsetParent && /menu/i.test(x.textContent + ' ' + (x.getAttribute('aria-label') || ''))).length,
+    // (the HUD's button has been "Ledger" since C-58: the Wayfarer's Ledger is the menu)
+    menus: Array.from(document.querySelectorAll('button')).filter((x) => x.offsetParent && /menu|ledger/i.test(x.textContent + ' ' + (x.getAttribute('aria-label') || ''))).length,
     tp: !!document.querySelector('.touchpad .tp-move') && getComputedStyle(document.querySelector('.touchpad')).display !== 'none',
     bulb: document.querySelector('.hud .bulb').getAttribute('aria-pressed'),
   }));

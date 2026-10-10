@@ -256,7 +256,10 @@ RB.cases = (function () {
     r.stage = 'done';
     r.done = now();
     r.evidence = evidence(s, id);
-    const right = (cd.hypotheses || []).find((h) => h.correct);
+    // the recorded answer: the player's own when it is one of the valid readings (a case may have several,
+    // expansion W16), else the case's answer
+    const chosen = r.hypothesis ? (cd.hypotheses || []).find((h) => h.id === r.hypothesis) : null;
+    const right = chosen && chosen.correct ? chosen : (cd.hypotheses || []).find((h) => h.correct);
     if (right) r.hypothesis = right.id;
     if (cd.keepsake) RB.discovery.keepsake(s, cd.keepsake, { kind: 'case', id });
     if (cd.quest) RB.state.setQuest(s, cd.quest, 'done');

@@ -6,6 +6,9 @@ RB.maps = (function () {
   'use strict';
   const compiled = {};
 
+  // content that adds to a map after it was compiled (expansion templates, src/engine/55b_verbs.js) asks for a fresh
+  // compile next time
+  function forget(id) { delete compiled[id]; }
   function compile(id) {
     if (compiled[id]) return compiled[id];
     const def = RB.content.maps[id];
@@ -105,5 +108,5 @@ RB.maps = (function () {
   function invalidate() {
     for (const k in compiled) delete compiled[k];
   }
-  return { compile, tileAt, blockedStatic, exitAt, shutDoorAt, invalidate };
+  return { compile, tileAt, blockedStatic, exitAt, shutDoorAt, invalidate, forget };
 })();

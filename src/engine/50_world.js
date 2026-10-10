@@ -636,7 +636,7 @@ RB.world = (function () {
         if (tr.once && st.flags[onceKey]) continue;
         if (tr.once) st.flags[onceKey] = true;
         W.path = null;
-        RB.script.run(tr.scene);
+        RB.script.run(tr.scene, { trigger: tr });
         return;
       }
     }

@@ -70,7 +70,9 @@ RB.fieldweave = (function () {
     return def;
   }
   const get = (id) => DEFS[id] || null;
-  const list = () => Object.keys(DEFS).map((k) => DEFS[k]);
+  // the authored field puzzles; list(true) adds the exploration actions built from templates (src/engine/55b_verbs.js),
+  // which keep their own records, tests and checks
+  const list = (all) => Object.keys(DEFS).map((k) => DEFS[k]).filter((d) => all || !d.verb);
 
   // ---- records -----------------------------------------------------------------------------
   function disc(s) { return s.discovery || (s.discovery = RB.state.newCampaign().discovery); }
@@ -123,9 +125,11 @@ RB.fieldweave = (function () {
     const out = [];
     for (const id in DEFS) {
       const def = DEFS[id];
-      if (def.map !== mapId || !eligible(s, id)) continue;
+      // (an object may stand on another map than its puzzle's: connected mechanisms across rooms, expansion W13)
+      if ((def.map !== mapId && !(def.maps && def.maps.indexOf(mapId) >= 0)) || !eligible(s, id)) continue;
       for (const k in def.objects) {
         const o = def.objects[k];
+        if ((o.map || def.map) !== mapId) continue;
         if (o.if && !RB.state.test(s, o.if)) continue;
         out.push({ pz: id, key: k, o, x: o.x, y: o.y, w: o.w, h: o.h, def });
       }
@@ -224,7 +228,7 @@ RB.fieldweave = (function () {
       r.log.push(Object.assign({ r: rule.act || rule.weave, k: res.key || null, t: Date.now() }, res.word ? { w: res.word } : {}, L ? { lang: L } : {}));
       if (r.log.length > LOG_MAX) r.log.splice(0, r.log.length - LOG_MAX);
       // an object that changed tells the map annotations about it
-      for (const k of changed) RB.bus.emit('world:changed', { map: def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });
+      for (const k of changed) RB.bus.emit('world:changed', { map: (def.keyMap && def.keyMap[k]) || (def.objects[k] && def.objects[k].map) || def.map, prop: pz + '.' + k, state: after[k], puzzle: pz });
     }
     if (!r.done && match(r.state, def.complete)) commit(s, pz, rule, res);
     return res;

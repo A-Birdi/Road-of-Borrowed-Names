@@ -8,9 +8,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.relations = C.relations || {};
   C.roadEvents = C.roadEvents || {};
   C.sealed = C.sealed || {};
-  // "Have you seen…?" runs as a conversation of its own (src/ui/53w_whereabouts.js)
+  // "Have you seen…?" runs as a conversation of its own (src/ui/53w_whereabouts.js); an exploration action's prop
+  // opens its sheet, and a layered site's marked place compares it with the old plan (src/engine/55b_verbs.js)
   RB.script.add(`
 @scene wb.ask
 !hook wb_ask
+
+@scene vb.open
+!hook vb_open
+
+@scene vb.mark
+!hook vb_mark
 `, 'world/00_system.js');
 })(RB.content);
