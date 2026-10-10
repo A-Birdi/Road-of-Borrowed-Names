@@ -5,16 +5,16 @@
 // off, a kanji the pad doesn't know, kana/kanji twins (入り口), the chart's
 // kanji, the Settings control, kana practice staying kana, and layout at
 // 320 px / 200 % text. Strokes are real KanjiVG references (RB.recog.reference)
-// injected with the pad's test hook. A kanji outside the game is 弦, one of
+// injected with the pad's test hook. A kanji outside the game is 郁, one of
 // the Tomoe entries of kanji the game does not use
 // (tests/fixtures/recog/tomoe-unknown.json, LGPL, test-only).
 // Usage: node tests/e2e/pad_kanji.mjs [filter]
 import fs from 'node:fs';
 import { serve, launch, page } from './lib.mjs';
 
-// 弦 (not in the game) as Tomoe entered it, in the pad's 0..1 box
+// 郁 (not in the game) as Tomoe entered it (弦 was, until Chapter 9's 上弦 brought it in), in the pad's 0..1 box
 const TOMOE_U = JSON.parse(fs.readFileSync(new URL('../fixtures/recog/tomoe-unknown.json', import.meta.url), 'utf8'));
-const GEN = TOMOE_U.chars.find((c) => c.ch === '弦').strokes.map((st) => st.map(([x, y], i) => ({ x: 0.1 + 0.8 * x / TOMOE_U.box, y: 0.1 + 0.8 * y / TOMOE_U.box, t: i * 16 })));
+const GEN = TOMOE_U.chars.find((c) => c.ch === '郁').strokes.map((st) => st.map(([x, y], i) => ({ x: 0.1 + 0.8 * x / TOMOE_U.box, y: 0.1 + 0.8 * y / TOMOE_U.box, t: i * 16 })));
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -166,7 +166,7 @@ await test('kana only (Foundations): kana unchanged; 水 gets a plain "looks lik
 });
 
 // ---------------------------------------------------------------------------
-await test('a kanji outside the game (弦): kana reading off: said plainly, no kana guesses; kanji reading on: not sure, the closest kanji to pick from, no Confirm until one is chosen', async () => {
+await test('a kanji outside the game (郁): kana reading off: said plainly, no kana guesses; kanji reading on: not sure, the closest kanji to pick from, no Confirm until one is chosen', async () => {
   for (const [profile, off] of [['E', false], ['F', true]]) {
     const { p, errors, ctx } = await openPad(phone(390, 844), profile);
     await p.evaluate((g) => __write(g), GEN);

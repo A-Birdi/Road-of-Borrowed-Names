@@ -50,6 +50,23 @@ now Chapter 8, gains three new kinds of creature.
 | Records: stamps for the chapter, the ports and the voyage; the travel log; illustrations for P16 | K1, K2 | records | Done: the island's stamps and stand; Sazanami's stand and "everyone helped"; the licence, every port by sea, East Landing rebuilt, the island in your own boat; the travel log in the Records' volume. Illustrations are P16's (F-39) |
 | Tests: unit; browser (sailing by keyboard and touch, repairs, the crew sailing with a story situation, naming, the shells without voice); the route through Chapter 9 with and without the boat; every phase of the island; every companion's reunion | playbook P11 | `tests/` | Chapter 9: unit ko_ch9 181/0, ko_side 108/0, browser kotonoha 7/0, the route by ferry. The sea: unit sea_licence 64/0, sea_ports 53/0; browser sailing 2/0, licence 2/0, ports 2/0. The route with the boat and touch sailing are P11's phase end |
 
+## Phase end
+
+Run on clean copies of 45442cb (the whole unit suite, the browser suites and the route) and of 190cb80 (after the
+fixes: the unit suite again and the browser suites they touched); logs kept outside the repository. Details in
+VALIDATION.md "The expansion, P11's phase end".
+
+| Check | Result |
+|---|---|
+| The route through Chapters 1–9 at F with Ren, by the ferry (Chapter 5 fixture, twelve-chapter edition) | Reached `ko_done` in 245 site visits (321 s); one bodiless speaker (the Gardener, by design: a voice before it is seen), one walk-in (Ren at the reunion) |
+| The route with the boat | Not driven by the route tool (it takes the ferry). Covered instead by unit `sea_licence` 64/0 and `sea_ports` 53/0 (the island reached in your own boat is its first landing and ends the licence) and the browser `licence`, `ports` and `sailing` suites |
+| Sailing by touch (new this phase end) | browser `sailing` 3/0: on a phone with touch, the chart and the sail setting tapped, the boat steered east by holding the movement pad, the strip clear of the pad, nothing sideways |
+| Unit suite, first run (45442cb) | 40,141 passed, 15 failed: fonts and the recogniser's data missing the chapter's 41 new kanji; five staged gestures outside their person's vocabulary; two press reactions pushed off first place (F-85); the scene manifest out of date |
+| Unit suite after the fixes (190cb80) | **40,163 passed, 0 failed** |
+| Browser suites (28 on 45442cb; 10 again on 190cb80) | All pass but two, both test fixes: `encounters` failed about one run in three (Unravel can draw an ordering task, F-87; the helper now answers it; then 10/0 four times), and `pad_kanji` used 弦 as "a kanji outside the game", which Chapter 9's 上弦 brought in (now 郁; 8/0) |
+| Taught tools | あらゆる was never taught in Chapter 9; Otoha teaches it as she opens the hollow (F-86; ko_ch9 182/0) |
+| A person playing Chapter 9, with and without the boat | Not done (XP67, a human check) |
+
 ## Rules kept
 
 - S1, S5: the island holds what is lost by ordinary means (forgotten words, unsent letters, what the sea carried

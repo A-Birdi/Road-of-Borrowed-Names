@@ -646,7 +646,7 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP63 Kotonoha's side stories (F-74): Ao's lessons, Kihei's letter with three lasting ends each shown before it is chosen, the leaf with your name by background, the census, the tide calendar; the companions' moments (F-75), each once with one Bond event; the rumour told several ways on the mainland; the island's stamps and stand. U ko_side 108/0 (scenes played through the real runner), quest_guide 71/0, records 143/0, company 268/0, dialect 7,272/0; B kotonoha 7/0 (Kihei's choice in its scene, the moon stones drawn).
 - [v] XP64 Every new Japanese line of Chapters 8–9 self-reviewed in the ledger (corrections listed in the ledger's references); never claimed as native-reviewed. U review_ledger 2/0.
 - [v] XP65 A Licence for the Open Sea, sailing (sail yourself or let the crew sail; sea situations; repairs; the travel log; the cabin), and the ports Sazanami and East Landing. U sea_licence 64/0, sea_ports 53/0; B sailing 2/0, licence 2/0, ports 2/0; C self-reviewed (F-76–F-84). Fishing at the new stations moves to P15 (F-82).
-- [ ] XP66 P11's phase end on a clean copy. B, C, U.
+- [v] XP66 P11's phase end on a clean copy. U 40,163/0 (190cb80, after fixing 15 failures found on 45442cb); B every suite run passes after two test fixes (encounters' ordering task F-87; pad_kanji's outside kanji), sailing 3/0 with touch; route F/Ren to `ko_done` by ferry (245 visits); the route with the boat covered by unit and browser suites, not driven; C あらゆる taught (F-86), F-85 (VALIDATION.md "The expansion, P11's phase end").
 - [ ] XP67 A person playing Chapter 9, with and without the boat. H.
 
 ## Evidence index (see VALIDATION.md for commands and dates)

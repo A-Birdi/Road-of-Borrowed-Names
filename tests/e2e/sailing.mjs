@@ -191,6 +191,50 @@ STEP('ashore');
   await p.close();
 });
 
+await test('by touch on a phone: the chart and the sail tapped, the boat steered with the movement pad held', async () => {
+  const { p, errors } = await page(b, url, { viewport: { width: 390, height: 844 }, touch: true, mobile: true, dpr: 2 });
+  await start(p);
+  await p.evaluate(() => { RB.game.settings.touch = 'on'; RB.game.applySettings(); });
+  const boat = await p.evaluate(() => RB.content.maps['sg.harbor'].props.find((q) => q.scene === 'sea.boat'));
+  await p.evaluate((b) => { RB.script.run('sea.boat', { prop: b }); }, boat);
+  await toChoice(p);
+  await pick(p, /Open the chart/);
+  await p.waitForSelector('.sea-dest[data-to=manybridge]');
+  const tap = async (sel) => { const r = await p.locator(sel).first().boundingBox(); await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2); };
+  await tap('.sea-dest[data-to=manybridge]');
+  await p.waitForSelector('.sea-mode[data-mode=self]');
+  await tap('.sea-mode[data-mode=self]');
+  await p.waitForFunction(() => RB.world.W.map && RB.world.W.map.id === 'sea.coast' && RB.game.mode() === 'world', null, { timeout: 15000 });
+  await settle(p);
+  await p.evaluate(() => { RB.game.s.sea.voyage.sits = []; });
+  await p.waitForSelector('.sea-strip:not(.hidden) .sea-trim');
+  await p.waitForSelector('.touchpad .tp-move', { state: 'visible' });
+  // the sail: tap the setting that is not the current one
+  const before = await p.evaluate(() => RB.game.s.sea.trim | 0);
+  const other = before === 2 ? 0 : 2;
+  await tap('.sea-trim[data-trim="' + other + '"]');
+  await p.waitForFunction((k) => (RB.game.s.sea.trim | 0) === k, other, { timeout: 3000 });
+  await p.waitForFunction((k) => document.querySelector('.sea-trim[data-trim="' + k + '"]').getAttribute('aria-pressed') === 'true', other, { timeout: 3000 });
+  // the strip and the movement pad side by side, neither over the other, nothing sideways
+  const boxes = await p.evaluate(() => { const r = (sel) => { const b = document.querySelector(sel).getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom }; }; return { strip: r('.sea-strip'), pad: r('.touchpad .tp-move'), w: innerWidth, sw: document.documentElement.scrollWidth }; });
+  const overlap = (a, c) => a.l < c.r && c.l < a.r && a.t < c.b && c.t < a.b;
+  assert(!overlap(boxes.strip, boxes.pad) && boxes.sw <= boxes.w + 1, 'the strip clear of the pad, no sideways scroll: ' + JSON.stringify(boxes));
+  // steer: hold the pad's right side (a touch held, not a tap) and the boat moves east
+  const from = await where(p);
+  const pad = await p.locator('.touchpad .tp-move').boundingBox();
+  const cdp = await p.context().newCDPSession(p);
+  const pt = { x: Math.round(pad.x + pad.width * 0.85), y: Math.round(pad.y + pad.height / 2) };
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [pt] });
+  await p.waitForTimeout(900);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await p.waitForTimeout(300);
+  const to = await where(p);
+  assert(to.map === 'sea.coast' && to.x > from.x && to.y === from.y && await p.evaluate(() => RB.world.W.player.dir === 'right'), 'held to the right, she sails east: ' + JSON.stringify([from, to]));
+  assert(await p.evaluate(() => RB.game.s.sea.voyage.steps >= 1), 'the voyage counts the steps made by touch');
+  assert(!errors.length, 'no page errors: ' + errors.join(' | '));
+  await p.close();
+});
+
 console.log(`\n${pass} passed, ${fail} failed`);
 await b.close();
 srv.close();

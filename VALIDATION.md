@@ -4102,3 +4102,44 @@ drawn). Language: the ports' lines self-reviewed in the ledger.
 
 **Not verified:** Firefox; the foldable; a person playing Chapter 9 (XP67); audible voices for the shells (local
 Japanese voices are optional and none is installed in the test browser).
+
+## The expansion, P11's phase end (2026-10-10; C-81; docs/future/work/P11_SEA.md; REQUIREMENTS.md XP66)
+
+On clean copies of the branch (git archive, no working-tree files), logs kept outside the repository.
+
+**The route.** `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch5_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren
+'ko_done@lf.|lf2.|sg.|ko.@ko_main'` on 45442cb: F with Ren from the Chapter 5 fixture through Lanternfall (Chapter 8)
+and Kotonoha (Chapter 9) by Tetsu's ferry reached `ko_done` in 245 site visits (321 s); 201 interactions met, all in
+the story; one bodiless speaker (the Gardener's voice before it is seen, by design) and one walk-in (Ren at the
+reunion). The route driver takes the ferry; **the route with the boat is not driven end to end**. It is covered by
+unit `sea_licence` 64/0 and `sea_ports` 53/0 and the browser `licence`, `ports` and `sailing` suites, which is code
+and browser evidence, not a played route.
+
+**Unit suite.** On 45442cb: 40,141 passed, 15 failed. The failures: `book_type` (the font subsets lacked the chapter's
+new kanji; re-subset from the recorded sources), `recog-coverage` and `recog` (KanjiVG data for 41 new kanji fetched
+and converted; four whole-word readings curated: 只, 澪, 忍, 豹), `conversation_continuity` (five staged gestures outside
+their person's vocabulary, restaged), `press` (two press reactions pushed off first place by later talk options;
+F-85), `scene_manifest` (regenerated). Then `kanji_chart` (the chart now holds the new kanji: nine meanings reworded,
+只今, 澪標 and the counter 隻 entered) and `review_ledger` (the new あらゆる lines). On 190cb80: **40,163 passed, 0
+failed**.
+
+**Browser.** On 45442cb, 28 suites: `kotonoha` 7/0, `sailing` 2/0, `licence` 2/0, `ports` 2/0, `keepers` 4/0,
+`manybridge` 3/0, `manybridge2` 4/0, `combat_ui` 7/0, `battle_group`, `battle_backdrops` 38/0, `battle_creatures_b`
+26/0, `company`, `dialect_kansai`, `perform` 3/0, `ui` 14/0, `play_ui` 7/0, `records`, `book`, `battle_settings` 6/0,
+`expedition` 91/0, `audio_zones` 4/0, `audit_fixes` 8/0, `pad_kanji`, `kanji_chart`, `quest_guide`, `cases` 11/0,
+`fishing` 10/0, `travel_rules` 10/0 pass; `encounters` 9/1. Its Tactics Board step failed about one run in three:
+Unravel can draw an ordering task (an old Chapter 2 sentence, an Atlas sign), and the test only answered choice
+buttons (F-87; the helper now answers an ordering task from its pieces; the step alone 8/8, the file 10/0 twice on
+the working tree). On 190cb80: `kotonoha` 7/0, `book` 15/0, `kanji_chart` 8/0, `records` 7/0, `encounters` 10/0,
+`sailing` 2/0, `licence` 2/0, `ports` 2/0 pass; `pad_kanji` 7/1: its "kanji outside the game" was 弦, which
+Chapter 9's 上弦 brought into the game (now 郁, still outside it; 8/0 on the working tree). A new `sailing` test
+plays the boat by touch on a phone: the chart and the sail setting tapped, the boat steered east by holding the
+movement pad (a touch held through the browser's touch events, not a tap), the strip clear of the pad, no sideways
+scroll; `sailing` 3/0 on the working tree.
+
+**Language.** Chapter 9 never taught あらゆる (mod_arayuru, the chapter's modifier); Otoha teaches it as she opens the
+hollow, with each companion's line and Suzu's Kansai version (F-86; `ko_ch9` 182/0, `dialect` 7,391/0). The lines
+self-reviewed in the ledger.
+
+**Not verified:** a person playing Chapter 9 with and without the boat (XP67); Firefox; the foldable; a real phone's
+touch (only emulated touch in headless Chromium).
