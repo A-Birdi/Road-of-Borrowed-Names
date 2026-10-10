@@ -77,6 +77,16 @@ mb_take: {次|つぎ} 。 {潮硝子|しおがらす} の {干物|ひもの} 、
 ?(comp=mio) comp[smile]: {舟|ふね} が ちゃんと {着|つ}く と 、 なんだか ほっと する ね 。 || It's such a relief when the barge gets there properly.
 ?(comp=ren) comp[shy]: {私|わたし} が {言|い}って いたら 、 {舟|ふね} は {今頃|いまごろ} {海|うみ} の {上|うえ} です 。 …… {方向|ほうこう} は 、 {苦手|にがて} な ので 。 || If I'd been the one saying it, the barge would be at sea by now. …Directions aren't my strength.
 ?(comp=suzu) comp[laugh]: 「{言|い}われた {通|とお}り に しか {行|い}かない 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい ね 。 || "Only where it's told." Like an actor who sticks to the script.
+# Growth (C-74's schedule, 10_modifiers.js): それぞれ, "each, respectively", learned from the barges: each load its own
+# place, so each of you a ward fitted to what comes at you. A scene, not a pop-up; once.
+?(!mod_sorezore) mb_take: {荷|に} に は それぞれ 、 {自分|じぶん} の {行|い}き{先|さき} が ある 。 {一|ひと}つ の {言|い}い{方|かた} で 、 {全部|ぜんぶ} は {送|おく}れねえ よ 。 || Every load has its own place to go. You can't send the lot with one way of saying it.
+?(!mod_sorezore&comp=nao) comp[think]: それぞれ の {荷|に} に 、 それぞれ の {行|い}き{先|さき} か 。 …… {守|まも}る の も {同|おな}じ だ な 。 {一人|ひとり} ずつ 、 {来|く}る もの に {合|あ}わせて 。 || Each load, its own place. …Protecting's the same. One at a time, fitted to what's coming.
+?(!mod_sorezore&comp=mio) comp[think]: {薬|くすり} も それぞれ よ 。 {同|おな}じ {熱|ねつ} でも 、 {人|ひと} に よって {違|ちが}う {薬|くすり} を {出|だ}す の 。 {守|まも}る の も 、 きっと そう ね 。 || Medicine's the same. Even for the same fever, different people get different remedies. Protecting must be like that too.
+?(!mod_sorezore&comp=ren) comp[think]: {灯|ひ} も 、 それぞれ の {道|みち} を {照|て}らします 。 {一|ひと}つ の {灯|ひ} で {全部|ぜんぶ} を {照|て}らす より 、 {確|たし}か です 。 …… {守|まも}り も 、 {同|おな}じ でしょう 。 || Lanterns each light their own road. Surer than one light for everything. …Wards must be the same.
+?(!mod_sorezore&comp=suzu) comp[think]: {舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある の よ 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせれば いい わ 。 || On stage, every actor has the lines that suit them. Protecting can be fitted one at a time too.
+?(!mod_sorezore) narr: {言葉|ことば} が {一|ひと}つ 、 {形|かたち} に なった 。 「それぞれ を {守|まも}る」 。 {二人|ふたり} それぞれ の {前|まえ} に 、 {来|く}る {一撃|いちげき} に {合|あ}わせた {守|まも}り を 。 || A phrase takes shape: それぞれ を 守る, "protect each one": a ward before each of you, fitted to the blow coming at that one.
+?(!mod_sorezore) !teach mod_sorezore
+?(!mod_sorezore) !set mod_sorezore
 mb_take: {今日|きょう} の {舟|ふね} は {迷|まよ}わなかった 。 なら 、 {前|まえ} の {三|みっ}つ は どこ へ {行|い}った ？ …… {札場|ふだば} で {聞|き}いて くれ 。 ヘイジ さん が {届|とど}け{出|で}を {出|だ}してる 。 || Today's barges didn't get lost. So where did the three before go? …Ask at the Tally Exchange. Heiji's lodged a complaint.
 !quest mb_main 2
 !journal {舟|ふね} は {言|い}われた {通|とお}り に {着|つ}いた 。 {前|まえ} の {三|みっ}つ の {荷|に} は ？ {札場|ふだば} へ 。 || The barges went where they were told. And the three loads before? To the Tally Exchange.
@@ -147,6 +157,7 @@ mb_sen: {一番|いちばん} の {橋|はし} は 、 この {札場|ふだば}
 ?(comp=suzu) comp[think]: {一番|いちばん} {古|ふる}い {名前|なまえ} を {知|し}ってる の は 、 {一番|いちばん} {古|ふる}い {人|ひと} か 、 {一番|いちばん} {古|ふる}い {紙|かみ} ね 。 || Whoever knows the oldest name: the oldest person, or the oldest paper.
 mb_sen: {札場|ふだば} の {下|した} に 、 {宛先不明|あてさきふめい} の {手紙|てがみ} を {預|あず}かる {係|かかり} が あります 。 ヨシ さん に {聞|き}いて みて ください 。 {古|ふる}い {宛名|あてな} なら 、 あそこ が {一番|いちばん} です 。 || Under the Exchange there's the office that keeps undeliverable letters. Ask Yoshi. For old addresses, there's nowhere better.
 !quest mb_main 3
+!note mb_three_causes
 !journal {米|こめ} は {東|ひがし} の {蔵|くら} に あった 。 {橋|はし} の {名前|なまえ} は 「{一番|いちばん} の {橋|はし}」 から {消|き}えて いる 。 {宛先不明|あてさきふめい} の {係|かかり} へ 。 || The rice was in the east storehouse. The bridges' names are fading from "bridge number one". To the dead-letter office.
 
 @scene mb.gonta_first

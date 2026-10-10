@@ -22,6 +22,9 @@ RB.dialect.add('kansai', `
 @ mb/21_scenes_main [mb.route_table]
 = 「{言|い}われた {通|とお}り に しか {行|い}かない 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい ね 。 || "Only where it's told." Like an actor who sticks to the script.
 > 「{言|い}われた {通|とお}り に しか {行|い}かへん 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい や な 。 || "Only goes where it's told." Like an actor who sticks to the script.
+@ mb/21_scenes_main [mb.route_table]
+= {舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある の よ 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせれば いい わ 。 || On stage, every actor has the lines that suit them. Protecting can be fitted one at a time too.
+> {舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある ねん 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせたら ええ ねん 。 || On stage, every actor's got the lines that suit 'em. Protecting can be fitted one at a time too.
 @ mb/21_scenes_main [mb.sen_dispute]
 = {舞台|ぶたい} でも ね 、 {間|ま} が {一番|いちばん} {難|むずか}しい の 。 {何|なに} も {言|い}わない で {待|ま}つ と 、 {相手|あいて} が {本音|ほんね} を {言|い}う こと が ある わ 。 || On stage, the pause is the hardest thing. Wait without saying anything, and sometimes the other person says what they really mean.
 > {舞台|ぶたい} でも な 、 {間|ま} が {一番|いちばん} {難|むずか}しい ねん 。 {何|なん} も {言|い}わんと {待|ま}って たら 、 {相手|あいて} が {本音|ほんね} {言|い}う こと が ある ねん で 。 || On stage, see, the pause is the hardest bit. Say nothin' and wait, and sometimes the other one says what they really mean.

@@ -35,6 +35,9 @@ turns out, were cut upstream in Blockprint Row, where Chapter 4 begins.
 | Side content owned by P08: the Bridge-Name Census (begun; finished in P09), the Rival Noodle Stalls, Boatman's Riddles (repeatable, a Distraction), the Lost Contract | R1 side quests | scenes and quests | Built: census (seven bridges, F-38), noodle stalls, Kansuke's riddles (a Distraction), the Lost Contract |
 | Companion seeds: Nao's dead-letter bundle; Ren's lantern-guild mark on the plaques; Mio's and Suzu's lines in the city (their seeds are Chapter 4's) | 14_COMPANIONS | scenes | Built: `mb.nao_bundle`, `mb.ren_mark`; Mio's and Suzu's lines throughout |
 | Music: Manybridge's palette (shamisen-led, brisker than Saltglass) for the city, the Undercroft and a battle a step above Saltglass's | R1 Theme, C-22 | `src/audio` | Built: four songs (`37_songs_mb.js`), zone `manybridge` (F-35) |
+| Growth on C-74's schedule: それぞれ ("each one", Protect fitted to each), learned in a scene at the canal board after the second job | 10_modifiers.js schedule | `21_scenes_main.js` (`mod_sorezore`) | Built; unit `mb_ch3` |
+| Records and the notebook: the chapter and region stamps with a stand in the Exchange district; the honest note on the name (八百八橋, labelled real); the three causes | K1, R1 inspiration | `40_records.js`, `05_data.js` | Built (F-39: the travel-volume pages are P16 art) |
+| Wanderers (E3): the canal porter who fends off creatures blocking his barge; the busker by the theatre | R1 unique encounters | — | Moved to P09, with the river and Playhouse Row |
 | The automated route through Chapter 3 at F with Ren; a browser test of routing and the dispute | playbook P08 evidence | `tests/e2e/`, `tests/unit/` | Browser `manybridge` 3/3; the automated route: in progress |
 
 ## Side content across Manybridge (assigned; none disappears)

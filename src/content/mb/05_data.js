@@ -89,4 +89,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'bun', hairColor: 2, cloth: ['#8a7a4a', '#6e623a', '#e8e0cc'], shape: 'apron', acc: ['basket'] },
     portrait: { eyes: 'soft', style: 'bun', collar: 'apron', bg: '#36301e' },
   });
+
+  // ---- notebook (the honest label the plan asks for: Manybridge is fictional) -----------------------------------------
+  C.notes = C.notes || {};
+  C.notes.mb_yaobashi = {
+    title: { jp: '{八百橋|やおばし} と いう {名前|なまえ}', en: 'The name "Eight Hundred Bridges"' }, fiction: false,
+    jp: '{江戸|えど} {時代|じだい} の {大坂|おおさか} は 、 {橋|はし} が {多|おお}くて 「{八百八橋|はっぴゃくやばし}」 と {呼|よ}ばれた 。 {八百橋|やおばし} は 、 その {呼|よ}び{名|な} を {借|か}りた {作|つく}り{話|ばなし} の {町|まち} 。',
+    en: 'Edo-period Osaka had so many bridges that it was nicknamed "the eight hundred and eight bridges" (八百八橋, happyaku-ya-bashi); 八百 means "very many" as much as "eight hundred". Manybridge is a fictional city that borrows the nickname, not a picture of Osaka.',
+  };
+  C.notes.mb_three_causes = {
+    title: { jp: '{米|こめ} の {行方|ゆくえ}', en: 'Where the rice went' }, fiction: true,
+    jp: '{札|ふだ} の {条件|じょうけん} の {読|よ}み{違|ちが}い 、 {隠|かく}した {失敗|しっぱい} 、 そして {白|しろ}く なった {橋|はし} の {札|ふだ} 。',
+    en: 'Three causes tangled together at the Exchange: a tally\'s condition read two ways ("full" is not "shut"), a porter hiding a mistake, and a blank plaque at the turn. Only the last was the Hush (fiction).',
+  };
 })(RB.content);

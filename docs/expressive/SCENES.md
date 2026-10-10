@@ -1379,20 +1379,20 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `mb.daigo_east` | src/content/mb/20_scenes_arrive.js:69 | ambient | 1 | daigo |  | npc sg.harbor daigo [ed>=2&ch2_done&!mb_arrived&!post] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
 | `mb.north_washed` | src/content/mb/20_scenes_arrive.js:73 | ambient | 6 | comp×4 narr×2 | 4 cond, comp:mio/nao/ren/suzu | trigger sg.road [ed>=2&ch2_done&!mb2_done] |  | Performed (H) | 6 lines, 1 speaker |
 | `mb.arrive` | src/content/mb/20_scenes_arrive.js:84 | main | 9 | comp×4 narr×3 mb_take pc | 4 cond, comp:mio/nao/ren/suzu | enter mb.pier [!mb_arrived]; call← mb.ferry_east |  | Performed (H) | 9 lines, 3 speakers, expressions surprise, recruit/depart/chapter |
-| `mb.exchange_first` | src/content/mb/20_scenes_arrive.js:114 | ambient | 7 | comp×4 narr×3 | 5 cond, comp:mio/nao/ren/suzu | enter mb.exchange [!mb_exchange_seen] |  | Performed (H) | 7 lines, 1 speaker |
-| `mb.pier_sign` | src/content/mb/20_scenes_arrive.js:128 | ambient | 1 | narr |  | prop mb.pier sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.sign_city` | src/content/mb/20_scenes_arrive.js:131 | ambient | 1 | narr |  | prop mb.exchange sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.mailbox` | src/content/mb/20_scenes_arrive.js:134 | ambient | 2 | narr comp | 1 cond, comp:nao | prop mb.exchange mailbox | prop mailbox | Quiet (H) | short (2 lines): a greeting or repeat remark |
-| `mb.door_locked` | src/content/mb/20_scenes_arrive.js:138 | ambient | 1 | narr |  | locked-door mb.pier; locked-door mb.exchange; +1 more |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.door_ferryoffice` | src/content/mb/20_scenes_arrive.js:141 | ambient | 1 | narr |  | locked-door mb.pier |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.door_kura` | src/content/mb/20_scenes_arrive.js:144 | ambient | 1 | narr |  | locked-door mb.kura |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.door_kayo` | src/content/mb/20_scenes_arrive.js:147 | ambient | 2 | narr×2 | 1 cond | locked-door mb.exchange |  | Quiet (H) | narration only (2 lines): stillness and the place carry it |
-| `mb.take_idle` | src/content/mb/20_scenes_arrive.js:151 | ambient | 1 | mb_take |  | npc mb.pier mb_take |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.take_city` | src/content/mb/20_scenes_arrive.js:154 | ambient | 2 | mb_take×2 | 1 cond | npc mb.exchange mb_take |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
-| `mb.take_after` | src/content/mb/20_scenes_arrive.js:158 | ambient | 1 | mb_take |  | npc mb.pier mb_take [mb1_done]; npc mb.exchange mb_take [mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.kayo_idle` | src/content/mb/20_scenes_arrive.js:161 | ambient | 1 | mb_kayo |  | npc mb.exchange mb_kayo [!mb_ichi_lost\|mb_ichi_found] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.kayo_after` | src/content/mb/20_scenes_arrive.js:164 | ambient | 1 | mb_kayo |  | npc mb.exchange mb_kayo [!mb_ichi_lost\|mb_ichi_found & mb_ichi_found] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.ichi_after` | src/content/mb/20_scenes_arrive.js:167 | ambient | 1 | mb_ichi |  | npc mb.exchange mb_ichi [mb_ichi_found] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.exchange_first` | src/content/mb/20_scenes_arrive.js:115 | ambient | 7 | comp×4 narr×3 | 5 cond, comp:mio/nao/ren/suzu | enter mb.exchange [!mb_exchange_seen] |  | Performed (H) | 7 lines, 1 speaker |
+| `mb.pier_sign` | src/content/mb/20_scenes_arrive.js:129 | ambient | 1 | narr |  | prop mb.pier sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.sign_city` | src/content/mb/20_scenes_arrive.js:132 | ambient | 1 | narr |  | prop mb.exchange sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.mailbox` | src/content/mb/20_scenes_arrive.js:135 | ambient | 2 | narr comp | 1 cond, comp:nao | prop mb.exchange mailbox | prop mailbox | Quiet (H) | short (2 lines): a greeting or repeat remark |
+| `mb.door_locked` | src/content/mb/20_scenes_arrive.js:139 | ambient | 1 | narr |  | locked-door mb.pier; locked-door mb.exchange; +1 more |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.door_ferryoffice` | src/content/mb/20_scenes_arrive.js:142 | ambient | 1 | narr |  | locked-door mb.pier |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.door_kura` | src/content/mb/20_scenes_arrive.js:145 | ambient | 1 | narr |  | locked-door mb.kura |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.door_kayo` | src/content/mb/20_scenes_arrive.js:148 | ambient | 2 | narr×2 | 1 cond | locked-door mb.exchange |  | Quiet (H) | narration only (2 lines): stillness and the place carry it |
+| `mb.take_idle` | src/content/mb/20_scenes_arrive.js:152 | ambient | 1 | mb_take |  | npc mb.pier mb_take |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.take_city` | src/content/mb/20_scenes_arrive.js:155 | ambient | 2 | mb_take×2 | 1 cond | npc mb.exchange mb_take |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
+| `mb.take_after` | src/content/mb/20_scenes_arrive.js:159 | ambient | 1 | mb_take |  | npc mb.pier mb_take [mb1_done]; npc mb.exchange mb_take [mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.kayo_idle` | src/content/mb/20_scenes_arrive.js:162 | ambient | 1 | mb_kayo |  | npc mb.exchange mb_kayo [!mb_ichi_lost\|mb_ichi_found] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.kayo_after` | src/content/mb/20_scenes_arrive.js:165 | ambient | 1 | mb_kayo |  | npc mb.exchange mb_kayo [!mb_ichi_lost\|mb_ichi_found & mb_ichi_found] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.ichi_after` | src/content/mb/20_scenes_arrive.js:168 | ambient | 1 | mb_ichi |  | npc mb.exchange mb_ichi [mb_ichi_found] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
 | `mb.fujiko_first` | src/content/mb/21_scenes_main.js:15 | side:mb_main | 10 | mb_fujiko×5 comp×4 pc | 4 cond, comp:mio/nao/ren/suzu | npc mb.fujiya mb_fujiko [quest.mb_main!=2\|mb_dispute_done & quest.mb_main=0] |  | Performed (H) | 10 lines, 3 speakers, expressions angry |
 | `mb.fujiko_route` | src/content/mb/21_scenes_main.js:34 | ambient | 1 | mb_fujiko |  | npc mb.fujiya mb_fujiko [quest.mb_main!=2\|mb_dispute_done & quest.mb_main=1] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
 | `mb.fujiko_idle` | src/content/mb/21_scenes_main.js:37 | ambient | 1 | mb_fujiko |  | npc mb.fujiya mb_fujiko [quest.mb_main!=2\|mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
@@ -1402,43 +1402,43 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `mb.fujiya_tallybook` | src/content/mb/21_scenes_main.js:49 | ambient | 2 | narr×2 | 3 cond | prop mb.fujiya desk | prop desk | Quiet (H) | narration only (2 lines): stillness and the place carry it |
 | `mb.porters_take` | src/content/mb/21_scenes_main.js:57 | ambient | 2 | mb_take×2 | 1 cond | npc mb.porters mb_take [!mb1_done] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `mb.porters_rules` | src/content/mb/21_scenes_main.js:61 | ambient | 1 | narr |  | prop mb.porters sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.route_table` | src/content/mb/21_scenes_main.js:64 | side:mb_main | 10 | mb_take×4 comp×4 narr×2 | 6 cond, comp:mio/nao/ren/suzu | prop mb.porters mb_canaltable | prop mb_canaltable | Performed (H) | 10 lines, 2 speakers, expressions shy/laugh |
-| `mb.sen_first` | src/content/mb/21_scenes_main.js:84 | ambient | 2 | mb_sen×2 |  | npc mb.tally mb_sen |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
-| `mb.board_outside` | src/content/mb/21_scenes_main.js:89 | ambient | 2 | narr×2 |  | prop mb.exchange noticeboard | prop noticeboard | Quiet (H) | narration only (2 lines): stillness and the place carry it |
-| `mb.board_rice` | src/content/mb/21_scenes_main.js:93 | ambient | 2 | narr×2 |  | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (2 lines): stillness and the place carry it |
-| `mb.board_fish` | src/content/mb/21_scenes_main.js:100 | ambient | 1 | narr |  | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.board_passage` | src/content/mb/21_scenes_main.js:103 | ambient | 1 | narr |  | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.board_lost` | src/content/mb/21_scenes_main.js:106 | ambient | 2 | narr×2 | 1 cond | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (2 lines): stillness and the place carry it |
-| `mb.fujiko_tally` | src/content/mb/21_scenes_main.js:110 | ambient | 1 | mb_fujiko |  | npc mb.tally mb_fujiko [quest.mb_main=2&!mb_dispute_done] |  | Quiet (H) | short (1 line), expression angry carried by the portrait: a greeting or repeat remark |
-| `mb.heiji_tally` | src/content/mb/21_scenes_main.js:113 | ambient | 1 | mb_heiji |  | npc mb.tally mb_heiji [quest.mb_main=2&!mb_dispute_done] |  | Quiet (H) | short (1 line), expression angry carried by the portrait: a greeting or repeat remark |
-| `mb.sen_dispute` | src/content/mb/21_scenes_main.js:116 | ambient | 7 | comp×4 mb_sen×2 narr | 4 cond, comp:mio/nao/ren/suzu | npc mb.tally mb_sen [quest.mb_main=2&!mb_dispute_done] |  | Performed (H) | 7 lines, 2 speakers |
-| `mb.dispute_after` | src/content/mb/21_scenes_main.js:131 | side:mb_main | 13 | mb_sen×4 comp×4 narr×2 mb_gonta mb_fujiko mb_heiji | 8 cond, comp:mio/nao/ren/suzu | call← mb.sen_dispute |  | Performed (H) | 13 lines, 5 speakers, expressions sad/surprise |
-| `mb.gonta_first` | src/content/mb/21_scenes_main.js:152 | ambient | 2 | mb_gonta comp | 1 cond, comp:nao | npc mb.exchange mb_gonta [!mb_dispute_done] |  | Performed (H) | 2 lines, 2 speakers |
-| `mb.gonta_wait` | src/content/mb/21_scenes_main.js:156 | ambient | 1 | mb_gonta |  | npc mb.exchange mb_gonta [!mb_dispute_done & quest.mb_main>=2] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.gonta_work` | src/content/mb/21_scenes_main.js:159 | ambient | 1 | mb_gonta |  | npc mb.exchange mb_gonta [mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.gonta_after` | src/content/mb/21_scenes_main.js:162 | ambient | 1 | mb_gonta |  | npc mb.exchange mb_gonta [mb_dispute_done & mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.heiji_first` | src/content/mb/21_scenes_main.js:165 | ambient | 1 | mb_heiji |  | npc mb.kura mb_heiji [!mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.heiji_work` | src/content/mb/21_scenes_main.js:168 | ambient | 1 | mb_heiji |  | npc mb.kura mb_heiji [mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.heiji_after` | src/content/mb/21_scenes_main.js:171 | ambient | 1 | mb_heiji |  | npc mb.kura mb_heiji [mb_dispute_done & mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.sen_census` | src/content/mb/21_scenes_main.js:174 | ambient | 2 | mb_sen×2 | 2 cond | npc mb.tally mb_sen [quest.mb_main>=3] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
-| `mb.sen_after` | src/content/mb/21_scenes_main.js:179 | ambient | 1 | mb_sen |  | npc mb.tally mb_sen [mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.deadletter_desk` | src/content/mb/21_scenes_main.js:182 | ambient | 1 | narr |  | prop mb.deadletter desk | prop desk | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.yoshi_idle` | src/content/mb/21_scenes_main.js:185 | ambient | 1 | mb_yoshi |  | npc mb.deadletter mb_yoshi |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.yoshi_letter` | src/content/mb/21_scenes_main.js:188 | side:mb_main | 6 | mb_yoshi×5 narr | 2 cond, comp:nao | npc mb.deadletter mb_yoshi [quest.mb_main>=3&!mb_ev_letter] | give:mb_letter (A forty-year-old letter) | Performed (H) | 6 lines, 1 speaker, object handled (1) |
-| `mb.nao_bundle` | src/content/mb/21_scenes_main.js:207 | side:mb_main | 5 | mb_yoshi×3 comp×2 |  | call← mb.yoshi_letter |  | Performed (H) | 5 lines, 2 speakers, expressions surprise |
-| `mb.uno_rest` | src/content/mb/21_scenes_main.js:219 | ambient | 2 | mb_uno×2 | 1 choice | npc mb.inn mb_uno |  | Performed (H) | 2 lines, 1 speaker, 1 choice |
-| `mb.uno_evening` | src/content/mb/21_scenes_main.js:229 | ambient | 8 | comp×4 mb_uno×2 mb_kayo×2 | 4 cond, comp:mio/nao/ren/suzu | npc mb.inn mb_uno [quest.mb_main=4&!mb_night] |  | Performed (H) | 8 lines, 3 speakers |
-| `mb.night_pier` | src/content/mb/21_scenes_main.js:245 | ambient | 1 | narr |  | trigger mb.exchange [mb_night&!mb_ichi_found] |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.kansuke_night` | src/content/mb/21_scenes_main.js:249 | ambient | 3 | mb_kansuke×2 comp | 1 cond, comp:ren | npc mb.kura mb_kansuke [mb_night&!mb_ichi_found] |  | Performed (H) | 3 lines, 2 speakers |
-| `mb.ichi_found` | src/content/mb/21_scenes_main.js:257 | ambient | 8 | comp×4 mb_ichi×3 pc | 4 cond, comp:mio/nao/ren/suzu | npc mb.kura mb_ichi [mb_night&!mb_ichi_found] |  | Performed (H) | 8 lines, 3 speakers, expressions sad |
-| `mb.morning_after` | src/content/mb/21_scenes_main.js:274 | side:mb_main | 6 | comp×4 mb_kayo mb_ichi | 4 cond, comp:mio/nao/ren/suzu | call← mb.ichi_found |  | Performed (H) | 6 lines, 3 speakers |
-| `mb.matsu_first` | src/content/mb/21_scenes_main.js:287 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.lock_rules` | src/content/mb/21_scenes_main.js:291 | ambient | 1 | narr |  | prop mb.lockhouse sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.hatch_closed` | src/content/mb/21_scenes_main.js:294 | ambient | 1 | narr |  | prop mb.lockhouse sg_hatch [!mb_passage] | prop sg_hatch | Quiet (H) | narration only (1 line): stillness and the place carry it |
-| `mb.matsu_negotiate` | src/content/mb/21_scenes_main.js:297 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu [quest.mb_main>=5] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.passage_after` | src/content/mb/21_scenes_main.js:304 | side:mb_main | 5 | mb_matsu×3 narr mb_sen | 3 cond | call← mb.matsu_negotiate |  | Performed (H) | 5 lines, 2 speakers |
-| `mb.matsu_passage` | src/content/mb/21_scenes_main.js:315 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu [mb_passage] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
-| `mb.matsu_after` | src/content/mb/21_scenes_main.js:318 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu [mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.route_table` | src/content/mb/21_scenes_main.js:64 | side:mb_main | 16 | comp×8 mb_take×5 narr×3 | 11 cond, comp:mio/nao/ren/suzu | prop mb.porters mb_canaltable | prop mb_canaltable | Performed (H) | 16 lines, 2 speakers, expressions shy/laugh |
+| `mb.sen_first` | src/content/mb/21_scenes_main.js:94 | ambient | 2 | mb_sen×2 |  | npc mb.tally mb_sen |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
+| `mb.board_outside` | src/content/mb/21_scenes_main.js:99 | ambient | 2 | narr×2 |  | prop mb.exchange noticeboard | prop noticeboard | Quiet (H) | narration only (2 lines): stillness and the place carry it |
+| `mb.board_rice` | src/content/mb/21_scenes_main.js:103 | ambient | 2 | narr×2 |  | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (2 lines): stillness and the place carry it |
+| `mb.board_fish` | src/content/mb/21_scenes_main.js:110 | ambient | 1 | narr |  | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.board_passage` | src/content/mb/21_scenes_main.js:113 | ambient | 1 | narr |  | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.board_lost` | src/content/mb/21_scenes_main.js:116 | ambient | 2 | narr×2 | 1 cond | prop mb.tally noticeboard | prop noticeboard | Quiet (H) | narration only (2 lines): stillness and the place carry it |
+| `mb.fujiko_tally` | src/content/mb/21_scenes_main.js:120 | ambient | 1 | mb_fujiko |  | npc mb.tally mb_fujiko [quest.mb_main=2&!mb_dispute_done] |  | Quiet (H) | short (1 line), expression angry carried by the portrait: a greeting or repeat remark |
+| `mb.heiji_tally` | src/content/mb/21_scenes_main.js:123 | ambient | 1 | mb_heiji |  | npc mb.tally mb_heiji [quest.mb_main=2&!mb_dispute_done] |  | Quiet (H) | short (1 line), expression angry carried by the portrait: a greeting or repeat remark |
+| `mb.sen_dispute` | src/content/mb/21_scenes_main.js:126 | ambient | 7 | comp×4 mb_sen×2 narr | 4 cond, comp:mio/nao/ren/suzu | npc mb.tally mb_sen [quest.mb_main=2&!mb_dispute_done] |  | Performed (H) | 7 lines, 2 speakers |
+| `mb.dispute_after` | src/content/mb/21_scenes_main.js:141 | side:mb_main | 13 | mb_sen×4 comp×4 narr×2 mb_gonta mb_fujiko mb_heiji | 8 cond, comp:mio/nao/ren/suzu | call← mb.sen_dispute |  | Performed (H) | 13 lines, 5 speakers, expressions sad/surprise |
+| `mb.gonta_first` | src/content/mb/21_scenes_main.js:163 | ambient | 2 | mb_gonta comp | 1 cond, comp:nao | npc mb.exchange mb_gonta [!mb_dispute_done] |  | Performed (H) | 2 lines, 2 speakers |
+| `mb.gonta_wait` | src/content/mb/21_scenes_main.js:167 | ambient | 1 | mb_gonta |  | npc mb.exchange mb_gonta [!mb_dispute_done & quest.mb_main>=2] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.gonta_work` | src/content/mb/21_scenes_main.js:170 | ambient | 1 | mb_gonta |  | npc mb.exchange mb_gonta [mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.gonta_after` | src/content/mb/21_scenes_main.js:173 | ambient | 1 | mb_gonta |  | npc mb.exchange mb_gonta [mb_dispute_done & mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.heiji_first` | src/content/mb/21_scenes_main.js:176 | ambient | 1 | mb_heiji |  | npc mb.kura mb_heiji [!mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.heiji_work` | src/content/mb/21_scenes_main.js:179 | ambient | 1 | mb_heiji |  | npc mb.kura mb_heiji [mb_dispute_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.heiji_after` | src/content/mb/21_scenes_main.js:182 | ambient | 1 | mb_heiji |  | npc mb.kura mb_heiji [mb_dispute_done & mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.sen_census` | src/content/mb/21_scenes_main.js:185 | ambient | 2 | mb_sen×2 | 2 cond | npc mb.tally mb_sen [quest.mb_main>=3] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
+| `mb.sen_after` | src/content/mb/21_scenes_main.js:190 | ambient | 1 | mb_sen |  | npc mb.tally mb_sen [mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.deadletter_desk` | src/content/mb/21_scenes_main.js:193 | ambient | 1 | narr |  | prop mb.deadletter desk | prop desk | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.yoshi_idle` | src/content/mb/21_scenes_main.js:196 | ambient | 1 | mb_yoshi |  | npc mb.deadletter mb_yoshi |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.yoshi_letter` | src/content/mb/21_scenes_main.js:199 | side:mb_main | 6 | mb_yoshi×5 narr | 2 cond, comp:nao | npc mb.deadletter mb_yoshi [quest.mb_main>=3&!mb_ev_letter] | give:mb_letter (A forty-year-old letter) | Performed (H) | 6 lines, 1 speaker, object handled (1) |
+| `mb.nao_bundle` | src/content/mb/21_scenes_main.js:218 | side:mb_main | 5 | mb_yoshi×3 comp×2 |  | call← mb.yoshi_letter |  | Performed (H) | 5 lines, 2 speakers, expressions surprise |
+| `mb.uno_rest` | src/content/mb/21_scenes_main.js:230 | ambient | 2 | mb_uno×2 | 1 choice | npc mb.inn mb_uno |  | Performed (H) | 2 lines, 1 speaker, 1 choice |
+| `mb.uno_evening` | src/content/mb/21_scenes_main.js:240 | ambient | 8 | comp×4 mb_uno×2 mb_kayo×2 | 4 cond, comp:mio/nao/ren/suzu | npc mb.inn mb_uno [quest.mb_main=4&!mb_night] |  | Performed (H) | 8 lines, 3 speakers |
+| `mb.night_pier` | src/content/mb/21_scenes_main.js:256 | ambient | 1 | narr |  | trigger mb.exchange [mb_night&!mb_ichi_found] |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.kansuke_night` | src/content/mb/21_scenes_main.js:260 | ambient | 3 | mb_kansuke×2 comp | 1 cond, comp:ren | npc mb.kura mb_kansuke [mb_night&!mb_ichi_found] |  | Performed (H) | 3 lines, 2 speakers |
+| `mb.ichi_found` | src/content/mb/21_scenes_main.js:268 | ambient | 8 | comp×4 mb_ichi×3 pc | 4 cond, comp:mio/nao/ren/suzu | npc mb.kura mb_ichi [mb_night&!mb_ichi_found] |  | Performed (H) | 8 lines, 3 speakers, expressions sad |
+| `mb.morning_after` | src/content/mb/21_scenes_main.js:285 | side:mb_main | 6 | comp×4 mb_kayo mb_ichi | 4 cond, comp:mio/nao/ren/suzu | call← mb.ichi_found |  | Performed (H) | 6 lines, 3 speakers |
+| `mb.matsu_first` | src/content/mb/21_scenes_main.js:298 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.lock_rules` | src/content/mb/21_scenes_main.js:302 | ambient | 1 | narr |  | prop mb.lockhouse sign | prop sign | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.hatch_closed` | src/content/mb/21_scenes_main.js:305 | ambient | 1 | narr |  | prop mb.lockhouse sg_hatch [!mb_passage] | prop sg_hatch | Quiet (H) | narration only (1 line): stillness and the place carry it |
+| `mb.matsu_negotiate` | src/content/mb/21_scenes_main.js:308 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu [quest.mb_main>=5] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.passage_after` | src/content/mb/21_scenes_main.js:315 | side:mb_main | 5 | mb_matsu×3 narr mb_sen | 3 cond | call← mb.matsu_negotiate |  | Performed (H) | 5 lines, 2 speakers |
+| `mb.matsu_passage` | src/content/mb/21_scenes_main.js:326 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu [mb_passage] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
+| `mb.matsu_after` | src/content/mb/21_scenes_main.js:329 | ambient | 1 | mb_matsu |  | npc mb.lockhouse mb_matsu [mb1_done] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
 | `mb.plaque_minato` | src/content/mb/22_scenes_side.js:9 | side:mb_census | 4 | narr×4 | 4 cond, comp:ren | prop mb.pier mb_plaque | prop mb_plaque | Quiet (H) | a frame around 1 called scene; its own narration only (4 lines): stillness and the place carry it |
 | `mb.plaque_fuda` | src/content/mb/22_scenes_side.js:23 | side:mb_census | 4 | narr×4 | 3 cond | prop mb.exchange mb_plaque | prop mb_plaque | Quiet (H) | narration only (4 lines): stillness and the place carry it |
 | `mb.plaque_naka` | src/content/mb/22_scenes_side.js:36 | side:mb_census | 4 | narr×4 | 3 cond | prop mb.exchange mb_plaque | prop mb_plaque | Quiet (H) | narration only (4 lines): stillness and the place carry it |
@@ -1543,7 +1543,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 
 | id | source | storyline | lines | speakers | branches | entry points | objects | class | reason |
 |---|---|---|---:|---|---|---|---|---|---|
-| `rb.stand` | src/content/records/00_stamps.js:77 | ambient | 0 |  |  | prop rw.village rb_stampstand [ed>=2]; prop sg.harbor rb_stampstand [ed>=2]; +3 more; code src/engine/58b_records.js:70 | prop rb_stampstand | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
+| `rb.stand` | src/content/records/00_stamps.js:77 | ambient | 0 |  |  | prop rw.village rb_stampstand [ed>=2]; prop sg.harbor rb_stampstand [ed>=2]; +4 more; code src/engine/58b_records.js:70 | prop rb_stampstand | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
 
 ### Roadside practice (3)
 

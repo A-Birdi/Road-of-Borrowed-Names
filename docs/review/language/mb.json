@@ -539,6 +539,42 @@
   "jp": "「{言|い}われた {通|とお}り に しか {行|い}かない 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい ね 。",
   "en": "\"Only where it's told.\" Like an actor who sticks to the script."
  },
+ "scene:mb.route_table#ujcsi6": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, the modifier's own definition (10_modifiers.js: それぞれ, fitted to each target) and the lexicon (P08, the それぞれ growth scene)",
+  "jp": "{荷|に} に は それぞれ 、 {自分|じぶん} の {行|い}き{先|さき} が ある 。 {一|ひと}つ の {言|い}い{方|かた} で 、 {全部|ぜんぶ} は {送|おく}れねえ よ 。",
+  "en": "Every load has its own place to go. You can't send the lot with one way of saying it."
+ },
+ "scene:mb.route_table#1x6c3nd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, the modifier's own definition (10_modifiers.js: それぞれ, fitted to each target) and the lexicon (P08, the それぞれ growth scene)",
+  "jp": "それぞれ の {荷|に} に 、 それぞれ の {行|い}き{先|さき} か 。 …… {守|まも}る の も {同|おな}じ だ な 。 {一人|ひとり} ずつ 、 {来|く}る もの に {合|あ}わせて 。",
+  "en": "Each load, its own place. …Protecting's the same. One at a time, fitted to what's coming."
+ },
+ "scene:mb.route_table#13q07l5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, the modifier's own definition (10_modifiers.js: それぞれ, fitted to each target) and the lexicon (P08, the それぞれ growth scene)",
+  "jp": "{薬|くすり} も それぞれ よ 。 {同|おな}じ {熱|ねつ} でも 、 {人|ひと} に よって {違|ちが}う {薬|くすり} を {出|だ}す の 。 {守|まも}る の も 、 きっと そう ね 。",
+  "en": "Medicine's the same. Even for the same fever, different people get different remedies. Protecting must be like that too."
+ },
+ "scene:mb.route_table#1prxztb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, the modifier's own definition (10_modifiers.js: それぞれ, fitted to each target) and the lexicon (P08, the それぞれ growth scene)",
+  "jp": "{灯|ひ} も 、 それぞれ の {道|みち} を {照|て}らします 。 {一|ひと}つ の {灯|ひ} で {全部|ぜんぶ} を {照|て}らす より 、 {確|たし}か です 。 …… {守|まも}り も 、 {同|おな}じ でしょう 。",
+  "en": "Lanterns each light their own road. Surer than one light for everything. …Wards must be the same."
+ },
+ "scene:mb.route_table#t20e9x": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, the modifier's own definition (10_modifiers.js: それぞれ, fitted to each target) and the lexicon (P08, the それぞれ growth scene)",
+  "jp": "{舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある の よ 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせれば いい わ 。",
+  "en": "On stage, every actor has the lines that suit them. Protecting can be fitted one at a time too."
+ },
+ "scene:mb.route_table#mmxfer": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead line by line against its English, each companion's established speech, the modifier's own definition (10_modifiers.js: それぞれ, fitted to each target) and the lexicon (P08, the それぞれ growth scene)",
+  "jp": "{言葉|ことば} が {一|ひと}つ 、 {形|かたち} に なった 。 「それぞれ を {守|まも}る」 。 {二人|ふたり} それぞれ の {前|まえ} に 、 {来|く}る {一撃|いちげき} に {合|あ}わせた {守|まも}り を 。",
+  "en": "A phrase takes shape: それぞれ を 守る, \"protect each one\": a ward before each of you, fitted to the blow coming at that one."
+ },
  "scene:mb.route_table#x2xpal": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
@@ -3262,6 +3298,30 @@
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
   "jp": "{下|した} の {門|もん} を {開|あ}けなければ 、 {上|うえ} の {門|もん} は {閉|し}まらない 。",
   "en": ""
+ },
+ "notes:mb_yaobashi#1erpuwy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{江戸|えど} {時代|じだい} の {大坂|おおさか} は 、 {橋|はし} が {多|おお}くて 「{八百八橋|はっぴゃくやばし}」 と {呼|よ}ばれた 。 {八百橋|やおばし} は 、 その {呼|よ}び{名|な} を {借|か}りた {作|つく}り{話|ばなし} の {町|まち} 。",
+  "en": "Edo-period Osaka had so many bridges that it was nicknamed \"the eight hundred and eight bridges\" (八百八橋, happyaku-ya-bashi); 八百 means \"very many\" as much as \"eight hundred\". Manybridge is a fictional city that borrows the nickname, not a picture of Osaka."
+ },
+ "notes:mb_yaobashi#12xf58i": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{八百橋|やおばし} と いう {名前|なまえ}",
+  "en": "The name \"Eight Hundred Bridges\""
+ },
+ "notes:mb_three_causes#w797a1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{札|ふだ} の {条件|じょうけん} の {読|よ}み{違|ちが}い 、 {隠|かく}した {失敗|しっぱい} 、 そして {白|しろ}く なった {橋|はし} の {札|ふだ} 。",
+  "en": "Three causes tangled together at the Exchange: a tally's condition read two ways (\"full\" is not \"shut\"), a porter hiding a mistake, and a blank plaque at the turn. Only the last was the Hush (fiction)."
+ },
+ "notes:mb_three_causes#5buq34": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{米|こめ} の {行方|ゆくえ}",
+  "en": "Where the rice went"
  },
  "quests:mb_main#5826iv": {
   "status": "self-reviewed",

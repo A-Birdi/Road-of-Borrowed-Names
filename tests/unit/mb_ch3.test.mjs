@@ -199,4 +199,25 @@ export default async (t) => {
   t.ok(['masa', 'masu'].every((w) => C.challenges['mb.noodle_' + w] && C.scenes['mb.' + w]), 'the rival stalls: a notice for each');
   t.ok(C.mbRiddles.length === 6 && C.mbRiddles.every((r, i) => C.challenges['mb.riddle_' + (i + 1)]) && RB.pastimes.get('mb_riddles'), 'Boatman\'s Riddles: six riddles, a pastime of its own');
   t.ok(C.quests.mb_lc && C.challenges['mb.lc_plan'] && C.scenes['mb.lc_wall'] && C.scenes['mb.zenzo_contract'], 'the Lost Contract: the plan, the wall, the agreement');
+  // the Exchange's offers (R1, A46/A48): at the counter, after the dispute; one condition that cannot be kept, at each profile
+  const off = C.challenges['mb.offers'];
+  t.ok(off && ['F', 'E', 'I', 'A'].every((k) => off.tiers[k] && off.tiers[k][0].options.filter((o) => o.ok).length === 1 && off.tiers[k][0].options.every((o) => o.ok || o.why)),
+    'the Exchange\'s offers: one condition that cannot be kept, at four profiles, every other answer with its reason');
+  const counter = C.maps['mb.tally'].props.find((p) => p.scene === 'mb.offers');
+  const offCmds = C.scenes['mb.offers'].cmds;
+  t.ok(counter && offCmds.some((c) => c.op === 'challenge' && c.args[0] === 'mb.offers') && offCmds.some((c) => c.op === 'end' && c.if === '!mb_dispute_done'), 'and they wait for the dispute to be over');
+  // growth on C-74's schedule: それぞれ is learned in Chapter 3, once, at the canal board after the second job
+  const rt = C.scenes['mb.route_table'].cmds;
+  t.ok(rt.some((c) => c.op === 'teach' && c.args[0] === 'mod_sorezore' && c.if === '!mod_sorezore') && rt.some((c) => c.op === 'set' && c.args[0] === 'mod_sorezore') && RB.grammar.get('mod_sorezore'),
+    'それぞれ is taught at the canal board, once, with its grammar card');
+  const s8 = RB.state.newCampaign({}); s8.edition = 2; t.ok(!RB.phase.knows(s8, 'mod_sorezore'), 'not known before');
+  s8.flags.mod_sorezore = true; t.ok(RB.phase.knows(s8, 'mod_sorezore'), 'and known after the scene');
+  // records and the notebook
+  t.ok(C.stamps['ch.mb1'] && C.stamps['side.mb1'] && C.stampStands.manybridge && C.maps['mb.exchange'].props.some((p) => p.p === 'rb_stampstand' && p.o.stand === 'manybridge' && p.if === 'ed>=2'),
+    'Manybridge\'s stamps and their stand (twelve-chapter journeys)');
+  const s9 = RB.state.newCampaign({}); s9.edition = 2; s9.flags.mb1_done = true;
+  t.ok(RB.stampBook.earned(s9, 'ch.mb1') && !RB.stampBook.earned(s9, 'side.mb1'), 'the chapter stamp with the story; the region stamp waits for every side story');
+  for (const q of Object.keys(C.quests).filter((id) => C.quests[id].chapter === 'mb1' && !C.quests[id].main)) s9.quests[q] = { stage: 9, done: true };
+  t.ok(RB.stampBook.earned(s9, 'side.mb1'), 'and is earned once they are all done');
+  t.ok(C.notes.mb_yaobashi && C.notes.mb_yaobashi.fiction === false && C.notes.mb_three_causes && C.notes.mb_three_causes.fiction === true, 'the notebook: the name\'s real origin (labelled), and the three causes');
 };

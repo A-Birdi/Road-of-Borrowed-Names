@@ -11,6 +11,30 @@
   "jp": "{倉庫|そうこ} の {地下|ちか} の {水|みず} を {抜|ぬ}く",
   "en": "Drain the Flood Cellars and open the outflow door."
  },
+ "stamp:ch.mb1#5826iv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{八百|はっぴゃく} の {橋|はし}",
+  "en": "Eight Hundred Bridges"
+ },
+ "stamp:ch.mb1#1gkwds8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{第|だい}3{章|しょう}",
+  "en": "Chapter 3: the main story."
+ },
+ "stamp:side.mb1#1r08ul8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{八百橋|やおばし} の {頼|たの}み",
+  "en": "Manybridge: everyone helped"
+ },
+ "stamp:side.mb1#ehvl4b": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{第|だい}3{章|しょう} の {寄|よ}り{道|みち}",
+  "en": "Every side story in Chapter 3 that your journey could have."
+ },
  "stamp:ch.rw#carm31": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",
@@ -382,6 +406,12 @@
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",
   "jp": "{三|みっ}つ の {調査|ちょうさ}",
   "en": "Survey all three areas of the Unwritten Atlas."
+ },
+ "stand:manybridge#1m8l1ea": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against its English, the existing chapter stamps' wording (Saltglass's), the lexicon, and for the Osaka note the attested nickname 八百八橋 (はっぴゃくやばし) and the Edo-period spelling 大坂 (P08 records and notebook)",
+  "jp": "{八百橋|やおばし}",
+  "en": "Manybridge"
  },
  "stand:reedwake#carm31": {
   "status": "self-reviewed",

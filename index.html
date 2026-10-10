@@ -77950,6 +77950,7 @@ RB.ui.records = (function () {
     ear: 'M14 14 Q20 6 27 13 Q30 20 23 24 Q20 27 22 31 M18 17 Q21 14 23 18',
     path: 'M10 32 Q14 22 20 20 Q27 18 30 8 M14 30 L12 28 M28 12 L31 9',
     stairs: 'M8 31 H15 V25 H21 V19 H27 V13 H33 M8 31 V34 M33 13 V9',
+    plaque: 'M11 13 H29 V28 H11 Z M15 13 L20 8 L25 13 M15 18 H25 M15 23 H25',
     koma: 'M20 7 L28 11 L31 32 H9 L12 11 Z M16 18 H24 M20 18 V28 M16 23 H24',
     card: 'M11 9 H29 V33 H11 Z M15 13 a3 3 0 1 0 0.1 0 M14 24 q6 -6 12 0 M14 28 h12',
   };
@@ -146858,6 +146859,9 @@ RB.dialect.add('kansai', `
 @ mb/21_scenes_main [mb.route_table]
 = 「{言|い}われた {通|とお}り に しか {行|い}かない 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい ね 。 || "Only where it's told." Like an actor who sticks to the script.
 > 「{言|い}われた {通|とお}り に しか {行|い}かへん 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい や な 。 || "Only goes where it's told." Like an actor who sticks to the script.
+@ mb/21_scenes_main [mb.route_table]
+= {舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある の よ 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせれば いい わ 。 || On stage, every actor has the lines that suit them. Protecting can be fitted one at a time too.
+> {舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある ねん 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせたら ええ ねん 。 || On stage, every actor's got the lines that suit 'em. Protecting can be fitted one at a time too.
 @ mb/21_scenes_main [mb.sen_dispute]
 = {舞台|ぶたい} でも ね 、 {間|ま} が {一番|いちばん} {難|むずか}しい の 。 {何|なに} も {言|い}わない で {待|ま}つ と 、 {相手|あいて} が {本音|ほんね} を {言|い}う こと が ある わ 。 || On stage, the pause is the hardest thing. Wait without saying anything, and sometimes the other person says what they really mean.
 > {舞台|ぶたい} でも な 、 {間|ま} が {一番|いちばん} {難|むずか}しい ねん 。 {何|なん} も {言|い}わんと {待|ま}って たら 、 {相手|あいて} が {本音|ほんね} {言|い}う こと が ある ねん で 。 || On stage, see, the pause is the hardest bit. Say nothin' and wait, and sometimes the other one says what they really mean.
@@ -153581,6 +153585,8 @@ RB.lex.add(RB.lex.parseTable(`
 約定|やくじょう|n|A|agreement, compact (old-fashioned)
 約定書|やくじょうしょ|n|A|a written agreement (old-fashioned)
 以内|いない|n|I|within (a period or amount)
+大坂|おおさか|name|A|Ōsaka (its Edo-period spelling)
+八百八橋|はっぴゃくやばし|n|A|"the eight hundred and eight bridges": old Ōsaka's nickname
 両家|りょうけ|n|A|both houses, both families
 木目|もくめ|n|I|the grain of wood
 版木|はんぎ|n|I|printing woodblock
@@ -153941,6 +153947,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'bun', hairColor: 2, cloth: ['#8a7a4a', '#6e623a', '#e8e0cc'], shape: 'apron', acc: ['basket'] },
     portrait: { eyes: 'soft', style: 'bun', collar: 'apron', bg: '#36301e' },
   });
+
+  // ---- notebook (the honest label the plan asks for: Manybridge is fictional) -----------------------------------------
+  C.notes = C.notes || {};
+  C.notes.mb_yaobashi = {
+    title: { jp: '{八百橋|やおばし} と いう {名前|なまえ}', en: 'The name "Eight Hundred Bridges"' }, fiction: false,
+    jp: '{江戸|えど} {時代|じだい} の {大坂|おおさか} は 、 {橋|はし} が {多|おお}くて 「{八百八橋|はっぴゃくやばし}」 と {呼|よ}ばれた 。 {八百橋|やおばし} は 、 その {呼|よ}び{名|な} を {借|か}りた {作|つく}り{話|ばなし} の {町|まち} 。',
+    en: 'Edo-period Osaka had so many bridges that it was nicknamed "the eight hundred and eight bridges" (八百八橋, happyaku-ya-bashi); 八百 means "very many" as much as "eight hundred". Manybridge is a fictional city that borrows the nickname, not a picture of Osaka.',
+  };
+  C.notes.mb_three_causes = {
+    title: { jp: '{米|こめ} の {行方|ゆくえ}', en: 'Where the rice went' }, fiction: true,
+    jp: '{札|ふだ} の {条件|じょうけん} の {読|よ}み{違|ちが}い 、 {隠|かく}した {失敗|しっぱい} 、 そして {白|しろ}く なった {橋|はし} の {札|ふだ} 。',
+    en: 'Three causes tangled together at the Exchange: a tally\'s condition read two ways ("full" is not "shut"), a porter hiding a mistake, and a blank plaque at the turn. Only the last was the Hush (fiction).',
+  };
 })(RB.content);
 
 
@@ -154692,6 +154711,7 @@ mb_take: どっち だ よ ！ {札|ふだ} が {真|ま}っ{白|しろ} で 、
 !gesture pc point 13,0
 pc: {町|まち} の {中|なか} で 、 {話|はなし} を {聞|き}こう 。 || Let's ask around in town.
 !quest mb_main start
+!note mb_yaobashi
 !journal {東|ひがし} の {運河|うんが} の {町|まち} 、 {八百橋|やおばし} へ 。 {橋|はし} の {名前|なまえ} が {消|き}えて いる 。 || East to the canal city of Manybridge. The bridges' names are fading.
 
 @scene mb.exchange_first
@@ -154832,6 +154852,16 @@ mb_take: {次|つぎ} 。 {潮硝子|しおがらす} の {干物|ひもの} 、
 ?(comp=mio) comp[smile]: {舟|ふね} が ちゃんと {着|つ}く と 、 なんだか ほっと する ね 。 || It's such a relief when the barge gets there properly.
 ?(comp=ren) comp[shy]: {私|わたし} が {言|い}って いたら 、 {舟|ふね} は {今頃|いまごろ} {海|うみ} の {上|うえ} です 。 …… {方向|ほうこう} は 、 {苦手|にがて} な ので 。 || If I'd been the one saying it, the barge would be at sea by now. …Directions aren't my strength.
 ?(comp=suzu) comp[laugh]: 「{言|い}われた {通|とお}り に しか {行|い}かない 」 。 {台本|だいほん} {通|どお}り の {役者|やくしゃ} みたい ね 。 || "Only where it's told." Like an actor who sticks to the script.
+# Growth (C-74's schedule, 10_modifiers.js): それぞれ, "each, respectively", learned from the barges: each load its own
+# place, so each of you a ward fitted to what comes at you. A scene, not a pop-up; once.
+?(!mod_sorezore) mb_take: {荷|に} に は それぞれ 、 {自分|じぶん} の {行|い}き{先|さき} が ある 。 {一|ひと}つ の {言|い}い{方|かた} で 、 {全部|ぜんぶ} は {送|おく}れねえ よ 。 || Every load has its own place to go. You can't send the lot with one way of saying it.
+?(!mod_sorezore&comp=nao) comp[think]: それぞれ の {荷|に} に 、 それぞれ の {行|い}き{先|さき} か 。 …… {守|まも}る の も {同|おな}じ だ な 。 {一人|ひとり} ずつ 、 {来|く}る もの に {合|あ}わせて 。 || Each load, its own place. …Protecting's the same. One at a time, fitted to what's coming.
+?(!mod_sorezore&comp=mio) comp[think]: {薬|くすり} も それぞれ よ 。 {同|おな}じ {熱|ねつ} でも 、 {人|ひと} に よって {違|ちが}う {薬|くすり} を {出|だ}す の 。 {守|まも}る の も 、 きっと そう ね 。 || Medicine's the same. Even for the same fever, different people get different remedies. Protecting must be like that too.
+?(!mod_sorezore&comp=ren) comp[think]: {灯|ひ} も 、 それぞれ の {道|みち} を {照|て}らします 。 {一|ひと}つ の {灯|ひ} で {全部|ぜんぶ} を {照|て}らす より 、 {確|たし}か です 。 …… {守|まも}り も 、 {同|おな}じ でしょう 。 || Lanterns each light their own road. Surer than one light for everything. …Wards must be the same.
+?(!mod_sorezore&comp=suzu) comp[think]: {舞台|ぶたい} でも 、 {役者|やくしゃ} それぞれ に {合|あ}う {台詞|せりふ} が ある の よ 。 {守|まも}る の も 、 {一人|ひとり} ずつ {合|あ}わせれば いい わ 。 || On stage, every actor has the lines that suit them. Protecting can be fitted one at a time too.
+?(!mod_sorezore) narr: {言葉|ことば} が {一|ひと}つ 、 {形|かたち} に なった 。 「それぞれ を {守|まも}る」 。 {二人|ふたり} それぞれ の {前|まえ} に 、 {来|く}る {一撃|いちげき} に {合|あ}わせた {守|まも}り を 。 || A phrase takes shape: それぞれ を 守る, "protect each one": a ward before each of you, fitted to the blow coming at that one.
+?(!mod_sorezore) !teach mod_sorezore
+?(!mod_sorezore) !set mod_sorezore
 mb_take: {今日|きょう} の {舟|ふね} は {迷|まよ}わなかった 。 なら 、 {前|まえ} の {三|みっ}つ は どこ へ {行|い}った ？ …… {札場|ふだば} で {聞|き}いて くれ 。 ヘイジ さん が {届|とど}け{出|で}を {出|だ}してる 。 || Today's barges didn't get lost. So where did the three before go? …Ask at the Tally Exchange. Heiji's lodged a complaint.
 !quest mb_main 2
 !journal {舟|ふね} は {言|い}われた {通|とお}り に {着|つ}いた 。 {前|まえ} の {三|みっ}つ の {荷|に} は ？ {札場|ふだば} へ 。 || The barges went where they were told. And the three loads before? To the Tally Exchange.
@@ -154902,6 +154932,7 @@ mb_sen: {一番|いちばん} の {橋|はし} は 、 この {札場|ふだば}
 ?(comp=suzu) comp[think]: {一番|いちばん} {古|ふる}い {名前|なまえ} を {知|し}ってる の は 、 {一番|いちばん} {古|ふる}い {人|ひと} か 、 {一番|いちばん} {古|ふる}い {紙|かみ} ね 。 || Whoever knows the oldest name: the oldest person, or the oldest paper.
 mb_sen: {札場|ふだば} の {下|した} に 、 {宛先不明|あてさきふめい} の {手紙|てがみ} を {預|あず}かる {係|かかり} が あります 。 ヨシ さん に {聞|き}いて みて ください 。 {古|ふる}い {宛名|あてな} なら 、 あそこ が {一番|いちばん} です 。 || Under the Exchange there's the office that keeps undeliverable letters. Ask Yoshi. For old addresses, there's nowhere better.
 !quest mb_main 3
+!note mb_three_causes
 !journal {米|こめ} は {東|ひがし} の {蔵|くら} に あった 。 {橋|はし} の {名前|なまえ} は 「{一番|いちばん} の {橋|はし}」 から {消|き}えて いる 。 {宛先不明|あてさきふめい} の {係|かかり} へ 。 || The rice was in the east storehouse. The bridges' names are fading from "bridge number one". To the dead-letter office.
 
 @scene mb.gonta_first
@@ -156100,6 +156131,36 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     conclusions: [{ id: 'named', when: { proc: 'done' }, result: 'win', text: { en: 'The bridge has its name: Musubi Bridge, the bridge that ties the city.' }, flags: { mb_bridge_named: true } }],
   };
+})(RB.content);
+
+
+/* ==== src/content/mb/40_records.js ==== */
+/* Manybridge's records (expansion P08; 09_RECORDS.md K1): its chapter stamp and its region stamp ("everyone helped"),
+ * pressed at a stand a few steps from where the ferry passengers come up into the city (free ground, cutting off
+ * nothing: tests/unit/records). Twelve-chapter journeys only. The chapter's travel-volume pages (the arrival under the
+ * bridges, the Exchange in uproar, the Nameless Bridge given its name) are illustrated sequences: art work for P16
+ * under AC-1 (F-39). A page counts as witnessed from the scene it shows, so a journey played before the art exists
+ * keeps its pages. */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (en, jp) => ({ en, jp });
+  C.stamps = C.stamps || {};
+  C.stampStands = C.stampStands || {};
+  C.stampStands.manybridge = { map: 'mb.exchange', x: 25, y: 40, title: T('Manybridge', '{八百橋|やおばし}') };
+  // every side story of the chapter this journey could have, finished
+  const sidesDone = (s) => {
+    const qs = Object.keys(C.quests).filter((id) => C.quests[id].chapter === 'mb1' && !C.quests[id].main);
+    return qs.length > 0 && qs.every((id) => (C.questOnly && C.questOnly[id] && !RB.state.test(s, C.questOnly[id])) || (s.quests[id] && s.quests[id].done));
+  };
+  C.stamps['ch.mb1'] = { id: 'ch.mb1', family: 'chapter', chapter: 'mb1', title: T('Eight Hundred Bridges', '{八百|はっぴゃく} の {橋|はし}'),
+    criteria: T('Chapter 3: the main story.', '{第|だい}3{章|しょう}'), hidden: true, when: 'ed>=2&mb1_done', stand: 'manybridge',
+    design: { shape: 'round', motif: 'plaque', ink: '#2c3e6a' } };
+  C.stamps['side.mb1'] = { id: 'side.mb1', family: 'region', chapter: 'mb1', title: T('Manybridge: everyone helped', '{八百橋|やおばし} の {頼|たの}み'),
+    criteria: T('Every side story in Chapter 3 that your journey could have.', '{第|だい}3{章|しょう} の {寄|よ}り{道|みち}'), hidden: true,
+    when: (s) => RB.edition.of(s) >= 2 && sidesDone(s), stand: 'manybridge', design: { shape: 'square', motif: 'plaque', ink: '#2c3e6a' } };
+  const m = C.maps['mb.exchange'];
+  m.props = (m.props || []).concat([{ p: 'rb_stampstand', x: 25, y: 40, scene: 'rb.stand', o: { stand: 'manybridge' }, if: 'ed>=2' }]);
 })(RB.content);
 
 

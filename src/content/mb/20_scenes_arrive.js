@@ -109,6 +109,7 @@ mb_take: どっち だ よ ！ {札|ふだ} が {真|ま}っ{白|しろ} で 、
 !gesture pc point 13,0
 pc: {町|まち} の {中|なか} で 、 {話|はなし} を {聞|き}こう 。 || Let's ask around in town.
 !quest mb_main start
+!note mb_yaobashi
 !journal {東|ひがし} の {運河|うんが} の {町|まち} 、 {八百橋|やおばし} へ 。 {橋|はし} の {名前|なまえ} が {消|き}えて いる 。 || East to the canal city of Manybridge. The bridges' names are fading.
 
 @scene mb.exchange_first

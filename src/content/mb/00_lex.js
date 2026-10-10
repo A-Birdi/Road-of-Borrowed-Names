@@ -53,6 +53,8 @@ RB.lex.add(RB.lex.parseTable(`
 約定|やくじょう|n|A|agreement, compact (old-fashioned)
 約定書|やくじょうしょ|n|A|a written agreement (old-fashioned)
 以内|いない|n|I|within (a period or amount)
+大坂|おおさか|name|A|Ōsaka (its Edo-period spelling)
+八百八橋|はっぴゃくやばし|n|A|"the eight hundred and eight bridges": old Ōsaka's nickname
 両家|りょうけ|n|A|both houses, both families
 木目|もくめ|n|I|the grain of wood
 版木|はんぎ|n|I|printing woodblock
