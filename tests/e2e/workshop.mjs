@@ -156,6 +156,37 @@ await test('the workshop is listed in Words › Ways to practise and opens; ever
   await ctx.close();
 });
 
+await test('Words › Mastery: an exam in one way of answering (Choose), every question right first time: a star; the page says stars unlock nothing', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, 'E');
+  await p.evaluate(() => { RB.ui.menu.open('words'); });
+  await p.waitForSelector('#folio-page');
+  await p.evaluate(() => { const b = [...document.querySelectorAll('[data-sub], .subbtn')].find((x) => /Mastery/.test(x.textContent)); if (b) b.click(); });
+  await p.waitForSelector('[data-exam="kana:h:ka"][data-mode="choice"]');
+  const note = await p.evaluate(() => document.querySelector('.ms-note').textContent);
+  assert(/don't unlock anything/.test(note), 'the page says so: ' + note);
+  await p.click('[data-exam="kana:h:ka"][data-mode="choice"]');
+  for (let i = 0; i < 5; i++) {
+    await p.waitForSelector('.chal .mc .btn');
+    // the right option: the kana, in the script the prompt names, that its romaji names
+    await p.evaluate(() => {
+      const pr = document.querySelector('.chal-prompt').textContent;
+      const m = pr.match(/\(([a-z]+)\)|“([a-z]+)”/);
+      const rom = m && (m[1] || m[2]);
+      const kata = /katakana/.test(pr);
+      const bs = [...document.querySelectorAll('.chal .mc .btn')];
+      const b = bs.find((x) => { const c = x.textContent.trim(); return RB.kana.romaji(c) === rom && (kata ? RB.kana.isKata(c) : RB.kana.isHira(c)); }) || bs[0];
+      b.click();
+    });
+    await p.waitForSelector('.fbwrap .fb-go, .fbwrap[data-fb=no]');
+    if (await p.$('.fbwrap[data-fb=no]')) throw new Error('a wrong option was picked: ' + await p.evaluate(() => document.querySelector('.chal-prompt').textContent));
+    await p.click('.fbwrap .fb-go');
+  }
+  await p.waitForFunction(() => RB.records.has(RB.game.s, 'stars', 'kana:h:ka|choice'), null, { timeout: 10000 });
+  assert(!errors.length, errors.join('; '));
+  await ctx.close();
+});
+
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);

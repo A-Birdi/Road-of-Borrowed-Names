@@ -3512,6 +3512,18 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .pbtn.hkeep[aria-pressed="true"] { background: var(--paper-2); border-color: var(--vermilion); box-shadow: inset 0 -3px 0 var(--vermilion); font-weight: 600; }
 .pbtn.hkeep[aria-pressed="true"] svg { color: var(--vermilion); fill: rgba(168, 62, 39, 0.28); }
 .pbtn.hkeep { align-self: start; }
+/* Mastery and What I can do (src/ui/66b_mastery.js): stars side by side, none above another; never red */
+.ms-note { font-size: 0.92em; }
+.ms-stars { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
+.ms-star { min-height: 44px; gap: 4px; }
+.ms-star .mk { font-size: 1.15em; line-height: 1; }
+.ms-star.on .mk { color: var(--gold, #b8862b); }
+.ms-list { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.ms-it { border: 1px solid var(--line, rgba(80, 60, 30, 0.35)); border-radius: 4px; padding: 2px 6px; background: transparent; min-height: 32px; }
+.ms-item { margin: 6px 0; padding: 6px 8px; border-left: 3px solid var(--line, rgba(80, 60, 30, 0.35)); }
+.ms-ev { margin: 4px 0; padding-left: 1.1em; }
+.ms-cando .cd-notyet .t { opacity: 0.85; }
+.ms-jp { white-space: nowrap; }
 
 /* ==== src/styles/70_discovery.css ==== */
 /* Field discovery: the Weave sheet and its world label (src/ui/57_weave.js),
@@ -52422,9 +52434,9 @@ RB.tasks = (function () {
     return step;
   }
 
-  // Resolve a challenge's steps for the current profile.
-  function stepsOf(ch) {
-    const p = profile();
+  // Resolve a challenge's steps for the current profile (or, for the Grow route, opts.profile: L18).
+  function stepsOf(ch, opts) {
+    const p = (opts && opts.profile) || profile();
     if (ch.tiers) {
       for (let l = LV[p]; l >= 0; l--) {
         const key = Object.keys(LV).find((k) => LV[k] === l);
@@ -52466,6 +52478,7 @@ RB.meter = (function () {
     const c = String(ctx || '');
     if (!c) return 'activity';
     if (c.startsWith('battle:')) return 'battle';
+    if (c.startsWith('stretch:')) return 'stretch';
     if (c.startsWith('weave:')) return 'field';
     if (c.startsWith('practice:')) return 'activity';
     if (c === 'practice') return 'practice';
@@ -52727,6 +52740,229 @@ RB.forge = (function () {
     return profile === 'A' ? 'ime' : profile === 'I' ? 'fine' : 'build';
   }
   return { prepare, piecesMatch, outcome, words, RUNGS, startRung };
+})();
+
+
+/* ==== src/learn/60_exams.js ==== */
+/* Mastery exams and stars (expansion L3; Robin's C-13, C-41, C-75; docs/future/plan/05_LANGUAGE.md).
+ *
+ * Groups come from the content: kana rows, kanji by theme (the ones met), the words of each region (the ones met),
+ * and grammar families (the points met). A group is offered once most of it has been met. An exam is up to ten fresh
+ * questions over the group in ONE input type (Write, Choose, Type, or Listen where the device has a Japanese voice).
+ * Hints stay available. Each question is a fixed slot that keeps its first committed answer:
+ *   independent  right first time, with no counting help (src/learn/40_evidence.js COUNTING)
+ *   assisted     right, with counting help (or the answer was shown)
+ *   missed       a wrong first answer, even if put right afterwards
+ * The star (per input type) needs fewer than 30% of the exam's questions assisted or missed, together: in ten, two may
+ * be either and three can't. A retake gives fresh questions for just the assisted and missed slots; the whole exam
+ * stays the measure. An exam that falls short is kept honestly as "completed with help".
+ *
+ * Stars are flair, just for the player: they unlock nothing (no item, route, illustration, Bond or stamp).
+ * s.records.stars['<group>|<mode>'] = { t, n, indep }; s.learn.exams['<group>|<mode>'] = { slots, t, star, tries }. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.exams = (function () {
+  'use strict';
+  const MAX = 10, MIN = 5, OFFER = 0.6, LIMIT = 0.3;
+  const MODES = [
+    { id: 'hand', en: 'Write', jp: '{書|か}く' },
+    { id: 'choice', en: 'Choose', jp: '{選|えら}ぶ' },
+    { id: 'ime', en: 'Type', jp: '{打|う}つ' },
+    { id: 'listen', en: 'Listen (device voice)', jp: '{聞|き}く' },
+  ];
+  const ROWS = { a: 'あいうえお', ka: 'かきくけこ', sa: 'さしすせそ', ta: 'たちつてと', na: 'なにぬねの', ha: 'はひふへほ', ma: 'まみむめも', ya: 'やゆよ', ra: 'らりるれろ', wa: 'わをん', ga: 'がぎぐげご', za: 'ざじずぜぞ', da: 'だぢづでど', ba: 'ばびぶべぼ', pa: 'ぱぴぷぺぽ' };
+  const REGIONS = { core: 'Everyday words', ch1: 'Reedwake', ch2: 'Saltglass', ch3: 'Cinder Orchard', ch4: 'Snowbell', ch5: 'Lanternfall', ch6: 'The Still Archive' };
+  // grammar families (L3: "requests", "conditions"…), from the game's own grammar points (src/lang/40_grammar.js)
+  const FAMILIES = {
+    particles: { en: 'Particles', ids: ['prt_wa', 'prt_ga', 'prt_wo', 'prt_ni', 'prt_de', 'prt_he', 'prt_to', 'prt_mo', 'prt_no', 'prt_kara_made', 'prt_ya', 'prt_ka', 'prt_yo_ne'] },
+    verbs: { en: 'Verb forms', ids: ['v_masu', 'v_masu_forms', 'v_nai', 'v_ta', 'v_te', 'v_te_iru', 'v_tai', 'v_volitional', 'v_potential'] },
+    requests: { en: 'Requests and permission', ids: ['v_te_kudasai', 'v_naide_kudasai', 'v_mashou', 'v_temo_ii', 'v_nakereba', 'keigo_kenjo', 'register_polite_plain'] },
+    reasons: { en: 'Reasons and contrasts', ids: ['conj_kara', 'conj_node', 'conj_kedo_ga', 'noni', 'prt_shi', 'temo', 'tame'] },
+    conditions: { en: 'Conditions and time', ids: ['cond_tara', 'cond_ba', 'cond_to', 'cond_nara', 'toki', 'mae_ato', 'v_te_kara', 'v_nagara'] },
+    certainty: { en: 'Certainty and hearsay', ids: ['sou_look', 'sou_hear', 'you_mitai', 'rashii', 'hazu', 'kamo', 'deshou', 'wake'] },
+    states: { en: 'Doing, leaving, finishing', ids: ['te_shimau', 'te_oku', 'te_aru', 'te_miru', 'giving', 'te_giving', 'passive', 'causative'] },
+  };
+  const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+  const items = (s) => (s && s.learn && s.learn.items) || {};
+  const seen = (s, id) => !!(items(s)[id] && items(s)[id].seen > 0);
+
+  // ---- groups ------------------------------------------------------------------------------------------------
+  function groups(s) {
+    const out = [];
+    for (const k in ROWS) {
+      const h = Array.from(ROWS[k]);
+      out.push({ id: 'kana:h:' + k, kind: 'kana', en: 'Hiragana: the ' + h[0] + ' row', jp: h.join(''), items: h.map((c) => 'k:' + c) });
+      const t = h.map((c) => RB.kana.toKata(c));
+      out.push({ id: 'kana:k:' + k, kind: 'kana', en: 'Katakana: the ' + t[0] + ' row', jp: t.join(''), items: t.map((c) => 'k:' + c) });
+    }
+    if (RB.kanjiInfo) {
+      const met = RB.kanjiInfo.met(s);
+      for (const th of RB.kanjiInfo.themes()) {
+        const chars = RB.kanjiInfo.byTheme(th.id).map((e) => e.ch).filter((c) => met.has(c)).slice(0, 15);
+        if (chars.length >= MIN) out.push({ id: 'kanji:' + th.id, kind: 'kanji', en: 'Kanji: ' + th.en, jp: th.jp, items: chars.map((c) => 'j:' + c) });
+      }
+    }
+    if (RB.lex) {
+      const by = {};
+      for (const id in items(s)) {
+        if (id.slice(0, 2) !== 'v:' || !seen(s, id)) continue;
+        const e = (RB.lex.bySurface(id.slice(2)) || [])[0];
+        const src = e && [].concat(e.src || [])[0];
+        if (REGIONS[src]) (by[src] = by[src] || []).push(id);
+      }
+      for (const src in by) for (let p = 0; p * 15 < by[src].length; p++) {
+        const part = by[src].slice(p * 15, p * 15 + 15);
+        if (part.length >= MIN) out.push({ id: 'words:' + src + (p ? ':' + (p + 1) : ''), kind: 'words', en: 'Words: ' + REGIONS[src] + (p ? ' (' + (p + 1) + ')' : ''), jp: '', items: part });
+      }
+    }
+    for (const k in FAMILIES) {
+      const ids = FAMILIES[k].ids.filter((g) => RB.grammar && RB.grammar.get(g)).map((g) => 'g:' + g);
+      if (ids.length >= MIN) out.push({ id: 'grammar:' + k, kind: 'grammar', en: 'Grammar: ' + FAMILIES[k].en, jp: '', items: ids });
+    }
+    return out;
+  }
+  // how much of a group has been met; offered from OFFER (60%)
+  function metShare(s, g) {
+    if (g.kind === 'kana') {
+      const taught = s.learn.profile !== 'F' || s.learn.kanaKnown === 'both' || (s.learn.kanaKnown === 'hira' && g.id.indexOf(':h:') > 0);
+      if (taught) return 1;
+      return g.items.filter((id) => RB.learn.kanaKnown(id.slice(2))).length / g.items.length;
+    }
+    if (g.kind === 'kanji' || g.kind === 'words') return 1; // built from what was met
+    return g.items.filter((id) => seen(s, id)).length / g.items.length;
+  }
+  const offered = (s, g) => metShare(s, g) >= OFFER;
+
+  // ---- questions -------------------------------------------------------------------------------------------
+  // a fresh question for an item in an input type, or null when the item has none in that type. `n` varies it.
+  function question(s, id, mode, n) {
+    const k = id.slice(0, 1), v = id.slice(2);
+    const write = mode === 'hand' || mode === 'ime';
+    if (mode === 'listen') {
+      const e = k === 'v' ? RB.tasks.findWord(v) : null;
+      if (!e) return null;
+      const r = RB.util.rng(RB.util.hashStr(id + '|' + n));
+      const wrong = r.shuffle(RB.tasks.kanaWordIndex().filter((x) => x.m !== e.m && x.pos === e.pos)).slice(0, 3);
+      return { kind: 'listen', item: id, transcript: { jp: e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w, en: e.m }, prompt: { en: 'What does the word mean?' }, options: [{ en: e.m, ok: true }].concat(wrong.map((w) => ({ en: w.m, ok: false, why: { en: 'That would be ' + (w.w !== w.r ? w.w + '（' + w.r + '）' : w.w) + '.' } }))) };
+    }
+    if (k === 'k') return RB.tasks.kanaStep(v, { bare: n % 2 === 1 });
+    if (k === 'j') {
+      const info = RB.kanjiInfo && RB.kanjiInfo.get(v);
+      const w = info && (info.words || [])[n % Math.max(1, (info.words || []).length)];
+      if (!w) return null;
+      if (write) return { kind: 'write', item: id, answer: v, accept: [v], mode: 'exact', script: 'any', single: true, prompt: { en: 'Write the kanji in ' + w.r + ' (“' + w.m + '”).' }, explain: { en: (w.w !== w.r ? w.w + '（' + w.r + '）' : w.w) + ' — ' + w.m + '.' } };
+      const pool = RB.util.rng(RB.util.hashStr(id + n)).shuffle((RB.kanjiInfo.all ? RB.kanjiInfo.all() : []).filter((e) => e.ch !== v && (e.words || []).length)).slice(0, 3);
+      return { kind: 'choose', item: id, prompt: { en: 'Which kanji is in ' + w.r + ' (“' + w.m + '”)?' }, options: [{ jp: '{' + v + '|' + (info.readings[0] || w.r) + '}', ok: true }].concat(pool.map((e) => ({ jp: '{' + e.ch + '|' + (e.readings[0] || '') + '}', ok: false, why: { en: e.ch + ' is in ' + (e.words[0].r) + ' (“' + e.words[0].m + '”).' } }))) };
+    }
+    if (k === 'v') {
+      const st = RB.tasks.vocabStep(v, { recall: write });
+      if (!st || (write && st.kind !== 'write')) return null;
+      return st;
+    }
+    if (k === 'g') {
+      const ds = RB.content.drills.filter((d) => d.item === id || (Array.isArray(d.item) && d.item.indexOf(id) >= 0)).filter((d) => !write || d.kind === 'write');
+      if (!ds.length) return null;
+      return JSON.parse(JSON.stringify(ds[n % ds.length]));
+    }
+    return null;
+  }
+  // can a group be examined in a mode: enough items have a question of that kind
+  function modeOk(s, g, mode) {
+    if (mode === 'listen' && !(RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0)) return false;
+    return g.items.filter((id) => question(s, id, mode, 0)).length >= MIN;
+  }
+
+  // ---- results -----------------------------------------------------------------------------------------------
+  const ex = (s) => (isObj(s.learn.exams) ? s.learn.exams : (s.learn.exams = {}));
+  const key = (gid, mode) => gid + '|' + mode;
+  // a slot's result from the runner's result object
+  function slotOf(res) {
+    if (!res || res.cancelled) return null;
+    if (res.firstTry === false) return 'missed';
+    if (res.revealed || res.assisted || (res.help && RB.evidence.COUNTING[res.help])) return 'assisted';
+    return 'independent';
+  }
+  // the star rule (C-75): fewer than 30% assisted or missed, together
+  function judge(slots) {
+    const n = slots.length;
+    const off = slots.filter((x) => x.r !== 'independent').length;
+    return { n, off, indep: n - off, star: n >= MIN && off / n < LIMIT };
+  }
+  // which items an exam asks: up to ten, the ones met first, in a stable shuffle per sitting
+  function plan(s, g, mode) {
+    const r = RB.util.rng(RB.util.hashStr(g.id + mode + (ex(s)[key(g.id, mode)] ? ex(s)[key(g.id, mode)].tries : 0)));
+    const ids = r.shuffle(g.items.filter((id) => question(s, id, mode, 0))).sort((a, b) => (seen(s, b) ? 1 : 0) - (seen(s, a) ? 1 : 0)).slice(0, MAX);
+    return ids;
+  }
+  // record a finished sitting: slots [{ item, r }]; a retake replaces only the slots it re-asked
+  function finish(s, g, mode, slots, retake) {
+    const k = key(g.id, mode);
+    const prev = ex(s)[k];
+    let all = slots;
+    if (retake && prev) all = prev.slots.map((x) => slots.find((y) => y.item === x.item) || x);
+    const j = judge(all);
+    const rec = { slots: all, t: Date.now(), star: j.star, tries: ((prev && prev.tries) || 0) + 1 };
+    ex(s)[k] = rec;
+    let newStar = false;
+    if (j.star) newStar = RB.records.award(s, 'stars', k, { n: j.n, indep: j.indep });
+    return Object.assign({ newStar, rec }, j);
+  }
+  // the slots a retake asks again: the assisted and missed ones
+  function retakeItems(s, g, mode) {
+    const rec = ex(s)[key(g.id, mode)];
+    return rec ? rec.slots.filter((x) => x.r !== 'independent').map((x) => x.item) : [];
+  }
+  function state(s, g, mode) {
+    const k = key(g.id, mode);
+    const rec = ex(s)[k];
+    return { star: RB.records.has(s, 'stars', k), sat: !!rec, helped: !!rec && !RB.records.has(s, 'stars', k), retake: rec ? retakeItems(s, g, mode).length : 0, rec };
+  }
+  return { MODES, MAX, MIN, LIMIT, groups, offered, metShare, question, modeOk, slotOf, judge, plan, finish, retakeItems, state, key, FAMILIES };
+})();
+
+
+/* ==== src/learn/70_grow.js ==== */
+/* Growth offered, never imposed: the Grow route (expansion L18; Robin [R0, R1]; docs/future/plan/05_LANGUAGE.md).
+ * A task can be offered one level up: "This one uses a form you haven't learned yet. It will teach it first. Try it?"
+ * Accepting teaches before relying (each step's teaching card first), then runs that level's version; it is recorded as
+ * stretch evidence (place "stretch") and never changes the campaign's level. Declining returns the player to where
+ * they were, with no record of it at all. For Advanced, growth is nuance, genres and other perspectives, written as a
+ * task's own `stretchA` steps: never an invented level above Advanced.
+ *   RB.grow.next(profile)            the level one up, or 'A+' (Advanced's own stretch), or null
+ *   RB.grow.stepsFor(ch, profile)    that level's steps for a challenge, or null when it has none
+ *   RB.grow.offer(id, o)             asks, then runs it; { declined } | { ok, results } | { cancelled } */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.grow = (function () {
+  'use strict';
+  const UP = { F: 'E', E: 'I', I: 'A', A: 'A+' };
+  const next = (p) => UP[p] || null;
+  function stepsFor(ch, p) {
+    const n = next(p);
+    if (!ch || !n) return null;
+    if (n === 'A+') return ch.stretchA ? ch.stretchA.map((st) => RB.tasks.prepare(st)) : null;
+    return ch.tiers && ch.tiers[n] ? RB.tasks.stepsOf(ch, { profile: n }) : null;
+  }
+  async function offer(id, o) {
+    o = o || {};
+    const ch = RB.content.challenges[id];
+    const s = RB.game.s;
+    if (!ch || !s) return { declined: true };
+    const steps = stepsFor(ch, s.learn.profile);
+    if (!steps || !steps.length) return { declined: true };
+    const ask = 'This one uses a form you haven\'t learned yet. It will teach it first. Try it?';
+    const pick = RB.test && RB.test.auto ? (o.accept === false ? 1 : 0) : await RB.ui.confirm(ask, ['Try it', 'Not now']);
+    if (pick !== 0) return { declined: true };
+    const results = [];
+    for (const st of steps) {
+      if (st.teach && RB.challenge.teachCard) await RB.challenge.teachCard(st.teach);
+      const r = await RB.challenge.runStep(st, { ctxTag: 'stretch:' + id, cancelLabel: 'Back for now' });
+      if (r.cancelled) return { cancelled: true, results };
+      results.push(r);
+    }
+    return { ok: true, results };
+  }
+  return { next, stepsFor, offer };
 })();
 
 
@@ -69873,7 +70109,9 @@ RB.kanjiChart = (function () {
           '<button type="button" class="pbtn primary" data-kc="practise">' + I('practice') + '<span>Practise writing it</span></button>' +
           (canUse ? '<button type="button" class="pbtn" data-kc="use">' + I('done') + '<span>Use in my answer</span></button>' : '') +
         '</div>' +
-        (pick && !canUse ? '<p class="muted small">This pad reads kana only right now; choose <b>Kanji or kana</b> under Read as to write kanji in your answer.</p>' : '');
+        (pick && !canUse ? '<p class="muted small">This pad reads kana only right now; choose <b>Kanji or kana</b> under Read as to write kanji in your answer.</p>' : '') +
+        // L4: the kanji's own page of evidence (browsing only; a pick sheet keeps to the answer at hand)
+        (!pick && isKanji(ch) && RB.ui.mastery && s ? '<section class="kc-record"><h3>Your record</h3>' + RB.ui.mastery.itemHtml(s, 'j:' + ch) + '</section>' : '');
       stopDemo = RB.lessons.demo(body.querySelector('canvas'), ch);
       fr.leaf.scrollTop = 0;
       live.textContent = spoken(ch) + ', ' + n + ' strokes';
@@ -71475,6 +71713,174 @@ RB.ui.wordsPages = (function () {
     });
   }
   return { bmHtml, crHtml, moveTitle, drawArt, show };
+})();
+
+
+/* ==== src/ui/66b_mastery.js ==== */
+/* Words › Mastery and Words › What I can do (expansion L3, L4, L5): the learning record shown honestly.
+ *  - Mastery: groups (kana rows, kanji by theme, a region's words, grammar families) once most of each is met; four
+ *    stars side by side (Write, Choose, Type, Listen where a device voice exists), none above another; an exam in one
+ *    input type; "completed with help" kept honestly; a retake of just the assisted and missed questions.
+ *  - Each item has a page: an evidence profile with its denominators, never a single percentage, never red.
+ *  - What I can do: abilities shown by evidence in different situations, with help noted.
+ * Stars are just for the player: they unlock nothing (Robin, C-13). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.ui = RB.ui || {};
+RB.ui.mastery = (function () {
+  'use strict';
+  const esc = RB.util.esc;
+  const I = (n) => RB.ui.folio.icon(n);
+  const J = (m) => RB.ui.jhtml(m);
+  const X = () => RB.exams;
+  const V = { open: null, item: null };
+  const MODE_EN = { hand: 'Write', choice: 'Choose', ime: 'Type', listen: 'Listen' };
+  const PLACE_EN = { story: 'the story', battle: 'battles', field: 'field puzzles', activity: 'activities', practice: 'practice', atlas: 'the Atlas', exam: 'exams' };
+
+  // ---- an item's page (L4) -------------------------------------------------------------------------------
+  function labelOf(id) {
+    const k = id.slice(0, 1), v = id.slice(2);
+    if (k === 'g') { const g = RB.grammar.get(v); return g ? esc(g.title) : esc(v); }
+    if (k === 'v') { const e = RB.tasks.findWord(v); return e ? J(e.w !== e.r ? '{' + e.w + '|' + e.r + '}' : e.w) + ' <span class="muted small">' + esc(e.m) + '</span>' : esc(v); }
+    if (k === 'j') { const inf = RB.kanjiInfo && RB.kanjiInfo.get(v); return J(inf && inf.readings[0] ? '{' + v + '|' + inf.readings[0] + '}' : v); }
+    if (k === 'k') return '<span lang="ja">' + esc(v) + '</span>';
+    return esc(v);
+  }
+  function itemHtml(s, id) {
+    const k = id.slice(0, 1), v = id.slice(2);
+    let h = '<div class="ms-item"><div class="t">' + labelOf(id) + '</div>';
+    if (k === 'j') {
+      const K = s.learn.kanji && s.learn.kanji[v];
+      if (!K) return h + '<p class="muted small">Not met in an answer yet.</p></div>';
+      const words = Object.entries(K.words).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      h += '<p class="small">Met in ' + words.map(([w, n]) => '<span lang="ja">' + esc(w) + '</span> ×' + n).join(', ') + '.</p>' +
+        '<p class="small">Handwritten in an answer: ' + (K.hand ? K.handOk + ' of ' + K.hand + ' on your own' : 'not practised yet') + (K.practice ? ' · in the chart: ' + K.practice.memory + ' from memory, ' + K.practice.traced + ' traced' : '') + '.</p>' +
+        '<p class="muted small">Each reading counts on its own: meeting this kanji in one word says nothing about its other readings.</p>';
+      return h + '</div>';
+    }
+    const p = RB.evidence.profile(s, id);
+    if (!p) return h + '<p class="muted small">Not met in an answer yet.</p></div>';
+    const m = p.modes;
+    const row = (lab, x) => (x.tries ? x.independent + ' of ' + x.tries + ' on your own' : 'not practised');
+    h += '<ul class="ms-ev small">' +
+      '<li><b>Recognised:</b> ' + (p.recogRecent.of ? p.recogRecent.ok + ' of the last ' + p.recogRecent.of + ' times asked' : 'not asked yet') + '</li>' +
+      '<li><b>Used in a sentence:</b> ' + row('', m.construct) + '</li>' +
+      '<li><b>Typed:</b> ' + row('', m.typed) + ' · <b>Handwritten:</b> ' + row('', m.hand) + '</li>' +
+      (m.listen.tries ? '<li><b>Listening practice (device voice):</b> ' + row('', m.listen) + '</li>' : '') +
+      '<li><b>Where:</b> ' + (p.contexts.length ? p.contexts.map((c) => esc(PLACE_EN[c] || c)).join(', ') : 'nowhere on your own yet') + (p.transfer ? ' · used in a new kind of place ' + p.transfer + ' time' + (p.transfer > 1 ? 's' : '') : '') + '</li>' +
+      (p.helped ? '<li class="muted">With help: ' + p.helped + ' of the recent attempts (that\'s fine)</li>' : '') +
+      '</ul>' + (p.limited ? '<p class="muted small">Limited evidence so far.</p>' : '');
+    return h + '</div>';
+  }
+
+  // ---- Mastery (L3) --------------------------------------------------------------------------------------
+  function masteryHtml(s) {
+    const G = X().groups(s).filter((g) => X().offered(s, g));
+    const voice = !!(RB.voice && RB.voice.status && RB.voice.status().localJaCount > 0);
+    const modes = X().MODES.filter((m) => m.id !== 'listen' || voice);
+    let h = '<p class="ms-note">These stars are just for you: a way to see what you\'ve grasped. They don\'t unlock anything. A star in one way of answering is as bright as in any other. ' +
+      'An exam is up to ten questions in one way of answering; hints stay available. A star needs fewer than 3 in 10 answered with help or after a first miss.</p>';
+    if (!G.length) return h + '<p class="muted">Groups appear here once you have met most of their words, kana or kanji.</p>';
+    const kinds = [['kana', 'Kana'], ['kanji', 'Kanji'], ['words', 'Words'], ['grammar', 'Grammar']];
+    for (const [k, en] of kinds) {
+      const L = G.filter((g) => g.kind === k);
+      if (!L.length) continue;
+      h += '<h3>' + esc(en) + '</h3><ul class="entries ms-groups">';
+      for (const g of L) {
+        const any = modes.some((m) => X().state(s, g, m.id).star);
+        h += '<li class="entry"><span class="mark">' + (any ? '★' : I('practice')) + '</span><div><div class="t">' + esc(g.en) + (g.jp ? ' <span lang="ja" class="small ms-jp">' + J(g.jp) + '</span>' : '') + '</div><div class="ms-stars" role="group" aria-label="Stars for ' + esc(g.en) + '">';
+        for (const m of modes) {
+          const ok = X().modeOk(s, g, m.id);
+          const st = X().state(s, g, m.id);
+          const mark = st.star ? '★' : st.helped ? '◐' : '☆';
+          const what = st.star ? 'Star' : st.helped ? 'Completed with help' : 'Not taken';
+          h += '<button class="pbtn ms-star' + (st.star ? ' on' : '') + '" data-exam="' + esc(g.id) + '" data-mode="' + m.id + '"' + (ok ? '' : ' disabled') + ' aria-label="' + esc(m.en + ': ' + what + (ok ? (st.retake && !st.star ? ', retake ' + st.retake : st.star ? '' : ', take the exam') : ', no questions of this kind')) + '">' +
+            '<span class="mk" aria-hidden="true">' + mark + '</span><span>' + esc(MODE_EN[m.id]) + '</span>' + (st.retake && !st.star ? '<span class="small"> · retake ' + st.retake + '</span>' : '') + '</button>';
+        }
+        h += '</div><button class="pbtn quiet small" data-open="' + esc(g.id) + '" aria-expanded="' + (V.open === g.id) + '">' + (V.open === g.id ? 'Hide' : 'Show') + ' its ' + g.items.length + '</button>';
+        if (V.open === g.id) h += '<div class="ms-list">' + g.items.map((id) => '<button class="ms-it" data-item="' + esc(id) + '">' + labelOf(id) + '</button>').join('') + '</div>' + (V.item && g.items.indexOf(V.item) >= 0 ? itemHtml(s, V.item) : '');
+        h += '</div></li>';
+      }
+      h += '</ul>';
+    }
+    return h;
+  }
+  async function runExam(s, gid, mode, again) {
+    const g = X().groups(s).find((x) => x.id === gid);
+    if (!g) return;
+    const st = X().state(s, g, mode);
+    const retake = !st.star && st.retake > 0;
+    const ids = retake ? X().retakeItems(s, g, mode) : X().plan(s, g, mode);
+    const tries = st.rec ? st.rec.tries : 0;
+    const slots = [];
+    for (let i = 0; i < ids.length; i++) {
+      const q = X().question(s, ids[i], mode, tries + i + 1);
+      if (!q) continue;
+      q.title = (retake ? 'Retake · ' : 'Exam · ') + g.en + ' (' + (i + 1) + '/' + ids.length + ')';
+      const r = await RB.challenge.runStep(q, { ctxTag: 'exam', mode: mode === 'listen' ? undefined : mode, cancelLabel: 'Stop the exam (nothing is kept)' });
+      const res = X().slotOf(r);
+      if (!res) return; // stopped: nothing recorded for the exam (the answers given stay in the learning record)
+      slots.push({ item: ids[i], r: res });
+    }
+    const out = X().finish(s, g, mode, slots, retake);
+    const msg = out.star ? (out.newStar ? 'A star: ' : 'Your star stands: ') + out.indep + ' of ' + out.n + ' on your own.' : 'Completed with help: ' + out.off + ' of ' + out.n + ' needed help or a second try. You can retake just those.';
+    RB.ui.notice(msg, 'info');
+    if (again) again();
+  }
+
+  // ---- What I can do (L5) -----------------------------------------------------------------------------------
+  function canDoState(s, st) {
+    const places = new Set();
+    let ok = 0, helped = 0;
+    for (const id of st.items) {
+      const it = s.learn.items[id];
+      if (!it) continue;
+      for (const p of it.okIn || []) places.add(p);
+      ok += Object.values(it.ev || {}).reduce((a, b) => a + b, 0);
+      helped += (it.log || []).filter((e) => e.h).length;
+    }
+    return { places: places.size, ok, helped, status: places.size >= 2 ? 'shown' : ok ? 'begun' : 'notyet' };
+  }
+  function canDoHtml(s) {
+    const T = RB.content.canDoThemes || [], L = RB.content.canDo || [];
+    let h = '<p class="ms-note">Things you have shown you can do with Japanese, from your own answers in different situations. Inspired by the "can-do" statements of Japanese teaching; not a test, a level or a certificate.</p>';
+    for (const th of T) {
+      const list = L.filter((x) => x.theme === th.id);
+      h += '<h3>' + esc(th.en) + ' <span lang="ja" class="small">' + J(th.jp) + '</span></h3><ul class="entries ms-cando">';
+      for (const st of list) {
+        const c = canDoState(s, st);
+        const mark = c.status === 'shown' ? I('done') : c.status === 'begun' ? I('next') : '';
+        h += '<li class="entry cd-' + c.status + '"><span class="mark">' + mark + '</span><div><div class="t">' + esc(st.en) + '</div><div class="small muted">' +
+          (c.status === 'shown' ? 'Shown in ' + c.places + ' kinds of place' : c.status === 'begun' ? 'Begun: shown once' : 'Not yet: try it when it comes up') + (c.helped ? ' · with help ' + c.helped + ' time' + (c.helped > 1 ? 's' : '') + ' (that\'s fine)' : '') + '</div></div></li>';
+      }
+      h += '</ul>';
+    }
+    return h;
+  }
+
+  function wire(el, s, api) {
+    el.onclick = async (e) => {
+      const ex = e.target.closest('[data-exam]');
+      if (ex && !ex.disabled) { ex.disabled = true; try { await runExam(s, ex.dataset.exam, ex.dataset.mode, () => api && api.render && api.render()); } finally { ex.disabled = false; } return; }
+      const op = e.target.closest('[data-open]');
+      if (op) { V.open = V.open === op.dataset.open ? null : op.dataset.open; V.item = null; if (api && api.render) api.render(); return; }
+      const it = e.target.closest('[data-item]');
+      if (it) { V.item = V.item === it.dataset.item ? null : it.dataset.item; if (api && api.render) api.render(); }
+    };
+  }
+  if (RB.ui.menu && RB.ui.menu.addPage) {
+    RB.ui.menu.addPage('words', {
+      id: 'mastery', en: 'Mastery', jp: '{習熟|しゅうじゅく}',
+      count: (s) => Object.keys((s.records && s.records.stars) || {}).length,
+      html: masteryHtml, wire,
+    });
+    RB.ui.menu.addPage('words', {
+      id: 'cando', en: 'What I can do', jp: 'できる こと',
+      count: (s) => (RB.content.canDo || []).filter((x) => canDoState(s, x).status === 'shown').length,
+      html: canDoHtml, wire,
+    });
+  }
+  return { itemHtml, masteryHtml, canDoHtml, canDoState, runExam, labelOf };
 })();
 
 
@@ -150459,6 +150865,104 @@ koji: お{急|いそ}ぎ なら 、 {一|ひと}つ {前|まえ} の {便|びん
 ~ {急|いそ}いで いる なら 、 その {前|まえ} の {船|ふね} に {乗|の}って ね 。 || If you're in a hurry, take the boat before that one.
 narr: {聞|き}き{返|かえ}す の は {失敗|しっぱい} で は ありません 。 {話|はなし} を {分|わ}かる ため の 、 {立派|りっぱ} な {日本語|にほんご} です 。 || Asking back is not failing. It is good Japanese, used to understand.
 `, 'workshop/ask');
+})(RB.content);
+
+
+/* ==== src/content/workshop/20_cando.js ==== */
+/* "Things I Can Do" (expansion L5, A58): abilities, not scores. Each statement names the learning items whose evidence
+ * shows it (src/learn/40_evidence.js); it is "shown" once those were used successfully, without counting help, in two
+ * or more kinds of place, "begun" after one. Grouped as the Hall of a Hundred Tales' ten themes. Inspired by the can-do
+ * descriptions of Japanese teaching (the Japan Foundation's approach), named as inspiration only: never a
+ * certification, never a JLPT level (spec line 170). */
+var RB = (globalThis.RB = globalThis.RB || {});
+(function (C) {
+  'use strict';
+  const T = (id, en, jp) => ({ id, en, jp });
+  C.canDoThemes = [
+    T('ways', 'Directions, signs and asking again', '{道|みち} と {張|は}り{紙|がみ}'),
+    T('giving', 'Who gives what to whom', 'あげる ・ もらう'),
+    T('time', 'Sequence and timing', '{順番|じゅんばん} と {時|とき}'),
+    T('asking', 'Requests, permission and intention', 'お{願|ねが}い'),
+    T('reasons', 'Reasons and contrasts', '{理由|りゆう}'),
+    T('conditions', 'Conditions and exceptions', 'もし'),
+    T('reference', 'What is meant, without saying it', '{省略|しょうりゃく}'),
+    T('reports', 'Reports, evidence and uncertainty', '{伝|つた}える'),
+    T('register', 'Register and relationship', '{丁寧|ていねい}さ'),
+    T('everyday', 'Everyday things', '{毎日|まいにち}'),
+  ];
+  const S = (id, theme, en, items) => ({ id, theme, en, items });
+  C.canDo = [
+    // directions, signs, asking again
+    S('read_signs', 'ways', 'I can read simple signs and labels', ['v:入口', 'v:出口', 'v:右', 'v:左', 'g:prt_ni', 'g:prt_he']),
+    S('follow_dir', 'ways', 'I can follow simple directions', ['v:右', 'v:左', 'v:まっすぐ', 'g:v_te', 'g:prt_wo']),
+    S('give_dir', 'ways', 'I can tell someone which way to go', ['g:v_te_kudasai', 'v:右', 'v:左', 'g:prt_ni']),
+    S('ask_again', 'ways', 'I can ask someone to say it again, slower or more simply', ['c:ask_back']),
+    S('notice_simple', 'ways', 'I can explain a notice in simpler words', ['c:ws_paraphrase', 'v:入口', 'g:prt_kara_made']),
+    S('where_is', 'ways', 'I can ask where something is', ['g:exist_aru_iru', 'g:qword_ka_mo', 'g:kosoado']),
+    // giving
+    S('send', 'giving', 'I can say who sends something to whom', ['g:prt_ni', 'g:prt_wo', 'g:prt_ga']),
+    S('receive', 'giving', 'I can say what I or someone else received', ['g:giving']),
+    S('favour', 'giving', 'I can thank someone for a favour done for me', ['g:te_giving']),
+    S('gift', 'giving', 'I can offer a small gift and say why', ['g:giving', 'g:conj_kara']),
+    S('borrow', 'giving', 'I can ask to borrow something and promise to return it', ['g:v_temo_ii', 'g:giving']),
+    S('deliver', 'giving', 'I can hand something over with the right words', ['g:v_te_kudasai', 'g:giving']),
+    // time
+    S('order_events', 'time', 'I can tell what happened first and next', ['g:v_te_kara', 'g:mae_ato']),
+    S('when', 'time', 'I can say when something happens', ['g:toki', 'g:prt_ni']),
+    S('until', 'time', 'I can say from when and until when', ['g:prt_kara_made']),
+    S('while', 'time', 'I can say two things happen at once', ['g:v_nagara']),
+    S('already', 'time', 'I can say something is already done, or done ahead', ['g:te_shimau', 'g:te_oku']),
+    S('plans', 'time', 'I can talk about plans and intentions', ['g:tsumori', 'g:v_volitional']),
+    // asking
+    S('request', 'asking', 'I can ask someone to do something politely', ['g:v_te_kudasai']),
+    S('dont', 'asking', 'I can ask someone not to do something', ['g:v_naide_kudasai']),
+    S('may_i', 'asking', 'I can ask permission', ['g:v_temo_ii']),
+    S('suggest', 'asking', 'I can suggest doing something together', ['g:v_mashou', 'g:v_volitional']),
+    S('want', 'asking', 'I can say what I want to do', ['g:v_tai']),
+    S('must', 'asking', 'I can say what has to be done', ['g:v_nakereba']),
+    // reasons
+    S('because', 'reasons', 'I can give a reason', ['g:conj_kara', 'g:conj_node']),
+    S('but', 'reasons', 'I can set two things against each other', ['g:conj_kedo_ga']),
+    S('even_though', 'reasons', 'I can say something happened in spite of something else', ['g:noni', 'g:temo']),
+    S('reasons_add', 'reasons', 'I can give more than one reason', ['g:prt_shi']),
+    S('compare', 'reasons', 'I can compare two things', ['g:comp_yori_hou']),
+    S('purpose', 'reasons', 'I can say what something is for', ['g:tame']),
+    // conditions
+    S('if', 'conditions', 'I can say what happens if', ['g:cond_tara', 'g:cond_ba', 'g:cond_to']),
+    S('if_so', 'conditions', 'I can pick up what someone said with "if that\'s so"', ['g:cond_nara']),
+    S('only', 'conditions', 'I can say "only" and "nothing but"', ['g:prt_dake_shika']),
+    S('even', 'conditions', 'I can say "even" for something unexpected', ['g:prt_sae', 'g:prt_mo']),
+    S('decide', 'conditions', 'I can say what was decided', ['g:koto_ni_suru', 'g:koto_ni_naru']),
+    S('change', 'conditions', 'I can say how something came to be', ['g:you_ni_naru', 'g:adj_naru']),
+    // reference
+    S('this_that', 'reference', 'I can point to things near and far', ['g:kosoado']),
+    S('left_out', 'reference', 'I can follow who is meant when it isn\'t said', ['c:ws_reference']),
+    S('the_one', 'reference', 'I can describe a person or thing with a whole clause', ['g:relative_clause']),
+    S('nominal', 'reference', 'I can turn an action into a thing to talk about', ['g:nominalizer']),
+    S('explain_n', 'reference', 'I can explain or ask about a situation', ['g:n_desu']),
+    S('topic', 'reference', 'I can mark what I am talking about', ['g:prt_wa', 'g:prt_ga']),
+    // reports
+    S('hearsay', 'reports', 'I can pass on something I heard', ['g:sou_hear']),
+    S('seems', 'reports', 'I can say how something looks to me', ['g:sou_look', 'g:you_mitai']),
+    S('rumour', 'reports', 'I can pass on a rumour as a rumour', ['g:rashii']),
+    S('should_be', 'reports', 'I can say what should be so', ['g:hazu']),
+    S('maybe', 'reports', 'I can say what might be so', ['g:kamo', 'g:deshou']),
+    S('quote', 'reports', 'I can say what someone said', ['g:prt_tte']),
+    // register
+    S('polite_plain', 'register', 'I can speak politely or plainly, as fits', ['g:register_polite_plain']),
+    S('humble', 'register', 'I can make a very polite request', ['g:keigo_kenjo']),
+    S('respect', 'register', 'I can understand respectful speech about others', ['g:keigo_sonkei']),
+    S('soft_no', 'register', 'I can refuse politely without saying no outright', ['g:indirectness']),
+    S('casual', 'register', 'I can follow casual, contracted speech', ['g:casual_contractions']),
+    S('endings', 'register', 'I can hear what sentence endings add', ['g:sentence_final', 'g:prt_yo_ne']),
+    // everyday
+    S('numbers', 'everyday', 'I can count things and pay', ['g:counters']),
+    S('describe', 'everyday', 'I can describe things', ['g:adj_i', 'g:adj_na', 'g:adj_te']),
+    S('can_do', 'everyday', 'I can say what I can and can\'t do', ['g:v_potential']),
+    S('experience', 'everyday', 'I can say what I have done before', ['g:v_koto_ga_aru']),
+    S('too_much', 'everyday', 'I can say something is too much, or easy or hard to do', ['g:v_sugiru', 'g:v_yasui_nikui']),
+    S('try', 'everyday', 'I can say I\'ll try something', ['g:te_miru']),
+  ];
 })(RB.content);
 
 

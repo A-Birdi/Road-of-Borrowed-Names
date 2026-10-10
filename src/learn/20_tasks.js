@@ -232,9 +232,9 @@ RB.tasks = (function () {
     return step;
   }
 
-  // Resolve a challenge's steps for the current profile.
-  function stepsOf(ch) {
-    const p = profile();
+  // Resolve a challenge's steps for the current profile (or, for the Grow route, opts.profile: L18).
+  function stepsOf(ch, opts) {
+    const p = (opts && opts.profile) || profile();
     if (ch.tiers) {
       for (let l = LV[p]; l >= 0; l--) {
         const key = Object.keys(LV).find((k) => LV[k] === l);

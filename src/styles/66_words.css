@@ -106,3 +106,15 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .pbtn.hkeep[aria-pressed="true"] { background: var(--paper-2); border-color: var(--vermilion); box-shadow: inset 0 -3px 0 var(--vermilion); font-weight: 600; }
 .pbtn.hkeep[aria-pressed="true"] svg { color: var(--vermilion); fill: rgba(168, 62, 39, 0.28); }
 .pbtn.hkeep { align-self: start; }
+/* Mastery and What I can do (src/ui/66b_mastery.js): stars side by side, none above another; never red */
+.ms-note { font-size: 0.92em; }
+.ms-stars { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
+.ms-star { min-height: 44px; gap: 4px; }
+.ms-star .mk { font-size: 1.15em; line-height: 1; }
+.ms-star.on .mk { color: var(--gold, #b8862b); }
+.ms-list { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.ms-it { border: 1px solid var(--line, rgba(80, 60, 30, 0.35)); border-radius: 4px; padding: 2px 6px; background: transparent; min-height: 32px; }
+.ms-item { margin: 6px 0; padding: 6px 8px; border-left: 3px solid var(--line, rgba(80, 60, 30, 0.35)); }
+.ms-ev { margin: 4px 0; padding-left: 1.1em; }
+.ms-cando .cd-notyet .t { opacity: 0.85; }
+.ms-jp { white-space: nowrap; }

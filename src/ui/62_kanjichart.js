@@ -213,7 +213,9 @@ RB.kanjiChart = (function () {
           '<button type="button" class="pbtn primary" data-kc="practise">' + I('practice') + '<span>Practise writing it</span></button>' +
           (canUse ? '<button type="button" class="pbtn" data-kc="use">' + I('done') + '<span>Use in my answer</span></button>' : '') +
         '</div>' +
-        (pick && !canUse ? '<p class="muted small">This pad reads kana only right now; choose <b>Kanji or kana</b> under Read as to write kanji in your answer.</p>' : '');
+        (pick && !canUse ? '<p class="muted small">This pad reads kana only right now; choose <b>Kanji or kana</b> under Read as to write kanji in your answer.</p>' : '') +
+        // L4: the kanji's own page of evidence (browsing only; a pick sheet keeps to the answer at hand)
+        (!pick && isKanji(ch) && RB.ui.mastery && s ? '<section class="kc-record"><h3>Your record</h3>' + RB.ui.mastery.itemHtml(s, 'j:' + ch) + '</section>' : '');
       stopDemo = RB.lessons.demo(body.querySelector('canvas'), ch);
       fr.leaf.scrollTop = 0;
       live.textContent = spoken(ch) + ', ' + n + ' strokes';

@@ -14,10 +14,10 @@
 | The task families, each with a worked example at all four levels | L8–L17, L17b | `src/content/workshop/10_families.js`; Words › Ways to practise › The workshop (`src/ui/64_workshop.js`) | Done |
 | Asking back: a hard line can carry a simpler version (`~ JP \|\| EN` after it); the dialogue box offers Ask back | L12 | `src/engine/70_script.js`, `src/ui/20_dialogue.js` | Done |
 | Optional listening with a text route that is never help | L16 | the runner's listen step | Done |
-| Mastery exams and stars | L3, C-13, C-75 | — | Next |
-| Word, kanji and kana pages | L4 | — | Next |
-| What I can do | L5 | — | Next |
-| The Grow route | L18 | the workshop offers any level (stretch labelled); the region tasks come with the chapters | Partly |
+| Mastery exams and stars: groups from the content, one input type per exam, first committed answer per slot, the 30% rule (assisted or missed together), retakes of just those slots, "completed with help" kept; stars unlock nothing | L3, C-13, C-75 | `src/learn/60_exams.js`; Words › Mastery (`src/ui/66b_mastery.js`) | Done |
+| Word, kanji and kana pages: an evidence profile with denominators, never a single percentage, never red; kanji pages on the chart's entries | L4 | `src/ui/66b_mastery.js` (`itemHtml`); `src/ui/62_kanjichart.js` | Done |
+| What I can do: 60 statements in ten themes, shown by independent use in two kinds of place, help noted | L5 | `src/content/workshop/20_cando.js`; Words › What I can do | Done |
+| The Grow route: one level up, offered, taught first, recorded as stretch, the level never changed, declining leaves no trace; Advanced grows by a task's own `stretchA` | L18 | `src/learn/70_grow.js`; the workshop offers any level | Done (the chapters offer it in their tasks) |
 
 ## Contracts
 
@@ -52,3 +52,7 @@ The rung chosen is remembered (device setting `forgeRung`); the starting rung fo
 | The workshop and task families in the browser | `node tests/e2e/workshop.mjs` | 5/0 |
 | Validator (forge and listen steps, grammar ids) | `node tools/validate.mjs` | no errors |
 | Review ledger (the workshop's 267 lines, self-reviewed) | `node tests/run-unit.mjs review_ledger` | 2/0 |
+| Exams, stars, can-do | `node tests/run-unit.mjs exams` | 113/0 |
+| The Grow route | `node tests/run-unit.mjs grow` | 6/0 |
+| A Mastery exam in the browser (Choose, a star) | `node tests/e2e/workshop.mjs` | 6/0 (with the five above) |
+| The kanji chart with records | `node tests/e2e/kanji_chart.mjs` | 8/0 |

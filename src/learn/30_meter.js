@@ -21,6 +21,7 @@ RB.meter = (function () {
     const c = String(ctx || '');
     if (!c) return 'activity';
     if (c.startsWith('battle:')) return 'battle';
+    if (c.startsWith('stretch:')) return 'stretch';
     if (c.startsWith('weave:')) return 'field';
     if (c.startsWith('practice:')) return 'activity';
     if (c === 'practice') return 'practice';
