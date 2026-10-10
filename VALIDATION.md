@@ -4021,3 +4021,34 @@ creatures, side stories and companions), `combat_fairness`, `combat_curve`, `cre
 - U the full suite: **35,932 passed, 0 failed**.
 
 **Not verified:** Firefox; the foldable; a person playing Chapter 7 or weighing a telling (XP59).
+
+## The expansion, P11 so far: Lanternfall as Chapter 8 and Kotonoha, Chapter 9 (2026-10-10; C-81; docs/future/work/P11_SEA.md; REQUIREMENTS.md XP60–XP64)
+
+**Unit** (on 375ba3f and after): `ko_ch9` **181/0** (the frame and Lanternfall's handover, the ferry, leaf returning,
+the exhibition's 27 combinations, the shells, the Root Hollows, the Gardener's conclusions, phases, music, creatures),
+`ko_side` **108/0** (the side stories and companions played through the real scene runner with dialogue stubbed),
+`quest_guide` **71/0**, `records` **143/0**, `company` **268/0**, `dialect` **7,272/0**, `expansion_rules` **11/0**,
+`kr_ch7` **123/0**, `encounters` **184/0**, `combat_golden` **2/0**, `creatures_a` **110/0**, `creatures_b` **1,074/0**,
+`combat_fairness` **799/0**, `travel` **486/0**, `chart` **53/0**, `seams` **12/0**, `edition` **87/0**,
+`overworld_geometry` **3/0**, `fixtures_campaign` **477/0**, `review_ledger` **2/0**, `audio_zones` **821/0**.
+
+**Browser.** `tests/e2e/kotonoha.mjs` **7/0** on the working tree after 375ba3f (the exhibition's panels at E and A, the
+shells, the Wind Stone at F, phone width, Kihei's lasting choice in its scene, the moon stones drawn); on a clean copy of
+375ba3f, `kotonoha` **5/0** (the version committed there) and `keepers` **4/0**. `manybridge` **3/0** on 2d168ae.
+
+**Routes** (clean copies, F with Ren, twelve-chapter edition):
+- From the Chapter 6 fixture on ac57333: **kr_done** in 349 visits (744 s), **ch5_done** in 99 (88 s); the island leg
+  stopped at once because the route allowed only Lanternfall's and the island's maps (the ferry leaves from Saltglass).
+- From the new Chapter 8 fixture with Saltglass allowed (ac57333): **stuck** at the Gardener (188 visits). The automated
+  player played the Gardener's conversation as a battle because a creature leads it, so it ran out its nine rounds and the
+  scene asked to come back later (F-73). Fixed in src/engine/99_test.js (test code's player only).
+- On 375ba3f: **reached ko_done in 242 visits** (218 s), with the island's side stories done along the way. The
+  Chapter 7, 8 and 9 states are kept as fixtures (tests/fixtures/campaign/F-ren-kr_done.json, F-ren-ch5_done.json,
+  F-ren-ko_done.json).
+
+**Language.** Every new line self-reviewed in the ledger, with corrections listed in its references (Chapter 9's
+island and story; the side stories and companions: 三つも年下, 山盛り, okurigana on 黒い/白い, the craft leaf's "first
+sold", numerals spaced from counters, the ゑ task on こゑ). Self-review only.
+
+**Not verified:** Firefox; the foldable; a person playing Chapter 9 (XP67); audible voices for the shells (local
+Japanese voices are optional and none is installed in the test browser).

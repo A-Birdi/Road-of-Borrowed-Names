@@ -8,7 +8,10 @@
 //     it would mean said that way and which clue points elsewhere; placed right, the reconstruction is kept;
 //  3. the Wind Stone in its scene at F: only the leaves carried are offered; a wrong place is explained and the leaf
 //     stays in hand to try again; the right place sends it home;
-//  4. at phone width both sheets stack and the page never scrolls sideways.
+//  4. at phone width both sheets stack and the page never scrolls sideways;
+//  5. The Sailor's Last Letter in its scene: each lasting end is described before it is chosen, "think again" goes
+//     back to the choice, and the end chosen lasts (Kihei gone from the tide pools, the letter framed by Mitsu's
+//     door); the island's new props (the moon stones, the frame) drawn on their maps with no page errors.
 // Usage: node tests/e2e/kotonoha.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
 
@@ -179,6 +182,49 @@ await test('phone width: the exhibition and the shells stack, nothing scrolls si
   await click(p, '.sh-cancel');
   assert((await told(p, '__sh')) === 'cancel', 'Come back later');
   assert(!errors.length, 'no page errors: ' + errors.join(' | '));
+  await p.close();
+});
+
+await test('the sailor\'s letter in its scene: each end shown first, "think again", the chosen end lasts on the map', async () => {
+  const { p, errors } = await page(b, url, { viewport: { width: 1180, height: 860 } });
+  await start(p, { profile: 'E', map: 'ko.tidepools', x: 12, y: 19, inv: { ko_kihei_letter: 1 }, flags: { ko_kihei_met: true, ko_lowtide: true } });
+  await p.evaluate(() => { RB.game.s.quests.ko_kihei = { stage: 2, done: false }; RB.world.refreshActors(); window.__sc = false; RB.script.run('ko.kihei_choose').then(() => { window.__sc = true; }); });
+  const menu = async () => { for (let i = 0; i < 30 && !(await p.$('.choices:not(.hidden) .choice')); i++) { await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await p.waitForTimeout(80); } return p.$$eval('.choices:not(.hidden) .choice', (xs) => xs.map((x) => x.textContent)); };
+  const first = await menu();
+  assert(first.length === 4 && first.some((t) => /Mitsu/.test(t)) && first.some((t) => /wind/.test(t)) && first.some((t) => /back to Kihei/.test(t)) && first.some((t) => /Not now/.test(t)), 'four ways: ' + first.join(' / '));
+  await p.locator('.choices .choice').filter({ hasText: /on the wind/ }).click();
+  const shownEnd = await p.evaluate(() => [...document.querySelectorAll('.dialogue, .dlg, .textbox, body')].map((e) => e.textContent).join(' '));
+  assert(/Mitsu never knows/.test(shownEnd) || /goes with it/.test(shownEnd), 'the end is described before it is chosen');
+  const second = await menu();
+  assert(second.some((t) => /Think again/.test(t)), 'with a way to think again: ' + second.join(' / '));
+  await p.locator('.choices .choice').filter({ hasText: /Think again/ }).click();
+  const again = await menu();
+  assert(again.length === 4, 'back to the four ways');
+  await p.locator('.choices .choice').filter({ hasText: /Give it to Mitsu/ }).click();
+  await menu();
+  await p.locator('.choices .choice').filter({ hasText: /Give it to her/ }).click();
+  for (let i = 0; i < 40 && !(await p.evaluate(() => window.__sc)); i++) { await p.evaluate(() => { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); }); await p.waitForTimeout(80); }
+  const st = await p.evaluate(() => { RB.world.refreshActors(); return { done: RB.game.s.quests.ko_kihei && RB.game.s.quests.ko_kihei.done, mitsu: !!RB.game.s.flags.ko_kihei_mitsu, letter: RB.game.s.inv.ko_kihei_letter || 0, kihei: !!(RB.world.W.npcs || []).find((a) => a.id === 'ko_kihei') }; });
+  assert(st.done && st.mitsu && !st.letter && !st.kihei, 'given to Mitsu; Kihei gone from the pools: ' + JSON.stringify(st));
+  // the lodging house: the frame by the door is drawn
+  await p.evaluate(() => RB.game.transition('ko.lodge', 4, 6, 'up', {}));
+  await p.waitForTimeout(400);
+  const frame = await p.evaluate(() => RB.world.W.map.id === 'ko.lodge' && !!RB.content.maps['ko.lodge'].props.find((q) => q.p === 'ko_frame' && RB.state.test(RB.game.s, q.if)));
+  assert(frame, 'the frame stands by Mitsu\'s door');
+  assert(!errors.length, 'no page errors: ' + errors.join(' | '));
+  await p.close();
+});
+
+await test('the island\'s new props are drawn: the moon stones on four maps, with no page errors', async () => {
+  const { p, errors } = await page(b, url, { viewport: { width: 1180, height: 860 } });
+  for (const [map, x, y] of [['ko.shore', 3, 15], ['ko.village', 34, 16], ['ko.terraces', 24, 13], ['ko.tidepools', 31, 19]]) {
+    await start(p, { map, x, y, flags: { ko_lowtide: true } });
+    await p.evaluate(() => { RB.game.s.quests.ko_tide = { stage: 0, done: false }; RB.world.refreshActors && RB.world.refreshActors(); });
+    await p.waitForTimeout(500);
+    const vis = await p.evaluate((map) => RB.content.maps[map].props.filter((q) => q.p === 'ko_moonstone' && RB.state.test(RB.game.s, q.if)).length, map);
+    assert(vis === 1, map + ': its moon stone lies there (' + vis + ')');
+  }
+  assert(!errors.length, 'no page errors while drawing: ' + errors.join(' | '));
   await p.close();
 });
 

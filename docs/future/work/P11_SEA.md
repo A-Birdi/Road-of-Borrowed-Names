@@ -27,28 +27,28 @@ now Chapter 8, gains three new kinds of creature.
 
 | Part | Source | Where | State |
 |---|---|---|---|
-| The chapter order: Lanternfall as Chapter 8 leads to Kotonoha (Chapter 9) by Saltglass's public ferry; the road to the Still Archive waits for Chapter 11 in twelve-chapter journeys | 10_STORY, R4 | `src/content/ko/01_region.js` | To do |
-| **A Licence for the Open Sea**, five stages: the deal (Ōmi; Fuku's hull or another), the yards (favours, the sail-maker, naming the boat in kana), sea trials (Tetsu's sea words, Shiori's tide book, a trial voyage), the licence (a document and an interview; retry at once), the maiden voyage (Sazanami, East Landing, the island's hint) | W7 | `src/content/sea/` | To do |
-| **Sailing**: the sea chart of ports reached; sail yourself (an untimed top-down sea, steer, set the sail to the wind) or let the crew sail; both switchable; nothing sinks, runs out or pursues | W7 | `src/engine/` + `src/ui/` (sea mode), `src/content/sea/` | To do |
-| Sea situations (seeded): a hail to answer, fog and the lighthouse signal, floating cargo's label, a creature on deck, a sea bird's message, a seal on the rocks; unique first-time ones per route; story ones interrupt the crew's sailing | W7, S2 | `src/content/sea/` | To do |
-| Something goes wrong on board: mend it now (the part and what to do with it, in words) or in port; until then the boat is a little slower; calm lines, never a warning | W7, C-43 | sea mode | To do |
-| The travel log: an entry per voyage (route, sights, words, people), a section of the travel volume | W7, K2 | records | To do |
-| The cabin: keepsakes, the travel volume, the Distractions corner, a bunk, the companion and the pet; no upkeep | W8 | a map | To do |
-| Sazanami: net-mending and the fish market's numbers, a tide-pool school where the player teaches, a fishing station | R6 | `src/content/sea/` | To do |
-| East Landing: rebuilt over visits (repair jobs, notices, a negotiation with the old owners); the finished landing a new port | R6 | `src/content/sea/` | To do |
-| Kotonoha: the shore, the village, the tree's terraces, the keepers' hall; early (boat), Chapter 9 and after-the-ending phases, progress kept | R4 | `src/content/ko/` | To do |
-| Leaf returning (transfer): read a leaf, work out where it was lost, return it; the place changes | R4, A32, W1 | `src/content/ko/` | To do |
-| Shell messages: reconstruct who said what to whom (read, and optionally listen) | R4, A53, A5 | `src/content/ko/` | To do |
-| The tellings exhibition: the island's legend from four tellers, a panel each, no single right version, each choice explained | R4, A49 | `RB.tellings`, `src/content/ko/` | To do |
-| The Root Hollows: leaves in air currents; restoring a leaf's word reshapes the passages; the separation by the tide (a solvable scare) | R4, A11, 10_STORY §8 | `src/content/ko/` | To do |
-| The Gardener of Unsent Words: a social and folklore encounter (ask back, compare tellings, decide which leaves to return) | R4, E7/E8 | `src/content/ko/` | To do |
-| Five creatures: Leafling, Driftword Jelly, Tidepool Mirror, Conch Echo, Sand Lantern; wanderers: a keeper's apprentice, a lost sailor's echo | R4 | interim art (F-36) | To do |
-| Side quests: The Apprentice Who Cannot Read, The Sailor's Last Letter (permanent outcomes), The Leaf That Is Your Name, The Keepers' Census, The Tide Calendar | R4 | `src/content/ko/` | To do |
-| Companions on the island: Nao's astray letter, Mio's labels without bottles, Ren's oldest lanterns in the sand, Suzu's unsent reply and the sea-cave stage; each companion's reunion after the separation | 14_COMPANIONS, S14 | `src/content/ko/` | To do |
-| Lanternfall as Chapter 8: three new kinds (Notice-Board Mimic, Queue Spirit, Ledger Weevil), twelve-chapter journeys only | E23 | `src/content/lf2/` | To do |
-| Music: the sea, the ports, the island (koto harmonics, a bowed instrument, wind chimes), its battle and the Gardener | R4 Theme, C-22 | `src/audio` | To do |
-| Records: stamps for the chapter, the ports and the voyage; the travel log; illustrations for P16 | K1, K2 | records | To do |
-| Tests: unit; browser (sailing by keyboard and touch, repairs, the crew sailing with a story situation, naming, the shells without voice); the route through Chapter 9 with and without the boat; every phase of the island; every companion's reunion | playbook P11 | `tests/` | To do |
+| The chapter order: Lanternfall as Chapter 8 leads to Kotonoha (Chapter 9) by Saltglass's public ferry; the road to the Still Archive waits for Chapter 11 in twelve-chapter journeys | 10_STORY, R4 | `src/content/ko/01_region.js` | Done (F-69, F-70) |
+| **A Licence for the Open Sea**, five stages: the deal (Ōmi; Fuku's hull or another), the yards (favours, the sail-maker, naming the boat in kana), sea trials (Tetsu's sea words, Shiori's tide book, a trial voyage), the licence (a document and an interview; retry at once), the maiden voyage (Sazanami, East Landing, the island's hint) | W7 | `src/content/sea/` | To do (P11b) |
+| **Sailing**: the sea chart of ports reached; sail yourself (an untimed top-down sea, steer, set the sail to the wind) or let the crew sail; both switchable; nothing sinks, runs out or pursues | W7 | `src/engine/` + `src/ui/` (sea mode), `src/content/sea/` | To do (P11c) |
+| Sea situations (seeded): a hail to answer, fog and the lighthouse signal, floating cargo's label, a creature on deck, a sea bird's message, a seal on the rocks; unique first-time ones per route; story ones interrupt the crew's sailing | W7, S2 | `src/content/sea/` | To do (P11c) |
+| Something goes wrong on board: mend it now (the part and what to do with it, in words) or in port; until then the boat is a little slower; calm lines, never a warning | W7, C-43 | sea mode | To do (P11c) |
+| The travel log: an entry per voyage (route, sights, words, people), a section of the travel volume | W7, K2 | records | To do (P11c) |
+| The cabin: keepsakes, the travel volume, the Distractions corner, a bunk, the companion and the pet; no upkeep | W8 | a map | To do (P11c) |
+| Sazanami: net-mending and the fish market's numbers, a tide-pool school where the player teaches, a fishing station | R6 | `src/content/sea/` | To do (P11d) |
+| East Landing: rebuilt over visits (repair jobs, notices, a negotiation with the old owners); the finished landing a new port | R6 | `src/content/sea/` | To do (P11d) |
+| Kotonoha: the shore, the village, the tree's terraces, the keepers' hall; early (boat), Chapter 9 and after-the-ending phases, progress kept | R4 | `src/content/ko/` | Done: shore, village (hall, Otoha's house, lodging house), terraces, crown, tide pools, sea cave; early, Chapter 9, after and postgame lines |
+| Leaf returning (transfer): read a leaf, work out where it was lost, return it; the place changes | R4, A32, W1 | `src/content/ko/` | Done: eight leaves, the Wind Stone, a line back on the mainland |
+| Shell messages: reconstruct who said what to whom (read, and optionally listen) | R4, A53, A5 | `src/content/ko/` | Done (`RB.shells`) |
+| The tellings exhibition: the island's legend from four tellers, a panel each, no single right version, each choice explained | R4, A49 | `RB.tellings`, `src/content/ko/` | Done (panels, F-72) |
+| The Root Hollows: leaves in air currents; restoring a leaf's word reshapes the passages; the separation by the tide (a solvable scare) | R4, A11, 10_STORY §8 | `src/content/ko/` | Done |
+| The Gardener of Unsent Words: a social and folklore encounter (ask back, compare tellings, decide which leaves to return) | R4, E7/E8 | `src/content/ko/` | Done |
+| Five creatures: Leafling, Driftword Jelly, Tidepool Mirror, Conch Echo, Sand Lantern; wanderers: a keeper's apprentice, a lost sailor's echo | R4 | interim art (F-36) | Done (and Ao, Kihei) |
+| Side quests: The Apprentice Who Cannot Read, The Sailor's Last Letter (permanent outcomes), The Leaf That Is Your Name, The Keepers' Census, The Tide Calendar | R4 | `src/content/ko/` | Done (F-74) |
+| Companions on the island: Nao's astray letter, Mio's labels without bottles, Ren's oldest lanterns in the sand, Suzu's unsent reply and the sea-cave stage; each companion's reunion after the separation | 14_COMPANIONS, S14 | `src/content/ko/` | Done (F-75); the reunions in the Root Hollows |
+| Lanternfall as Chapter 8: three new kinds (Notice-Board Mimic, Queue Spirit, Ledger Weevil), twelve-chapter journeys only | E23 | `src/content/lf2/` | Done |
+| Music: the sea, the ports, the island (koto harmonics, a bowed instrument, wind chimes), its battle and the Gardener | R4 Theme, C-22 | `src/audio` | The island done (five songs); the sea and the ports to do |
+| Records: stamps for the chapter, the ports and the voyage; the travel log; illustrations for P16 | K1, K2 | records | The island's stamps and stand done; the ports', the voyage's and the travel log to do |
+| Tests: unit; browser (sailing by keyboard and touch, repairs, the crew sailing with a story situation, naming, the shells without voice); the route through Chapter 9 with and without the boat; every phase of the island; every companion's reunion | playbook P11 | `tests/` | Chapter 9: unit ko_ch9 181/0 and ko_side 108/0, browser kotonoha 7/0, the route by ferry; the boat, sailing and the ports to do |
 
 ## Rules kept
 
