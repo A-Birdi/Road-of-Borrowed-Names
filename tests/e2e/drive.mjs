@@ -342,7 +342,25 @@ export function install() {
       const sig = sigOf();
       let best = null;
       const X = explore();
-      for (const st of allSites(opts.prefix)) {
+      const sites = allSites(opts.prefix);
+      // travel (a scene whose only offer is a warp it has already made) is worth taking only when the place it
+      // reaches, or somewhere walkable from there, still has something left to do: otherwise a boat and its return
+      // trip look like progress for ever
+      const workAt = new Set();
+      const keyOf = (st) => sig + '|' + st.kind + '|' + st.map + '|' + st.scene + '|' + (st.n ? st.n.id : st.pr ? st.pr.x + ',' + st.pr.y : st.ex ? st.ex.x + ',' + st.ex.y : st.tr ? st.tr.x + ',' + st.tr.y : st.f ? st.f.id : '');
+      for (const st of sites) {
+        const k = keyOf(st);
+        if (tried.has(k) || fruitless.has(progOf() + '|' + k.slice(sig.length))) continue;
+        const g = gain(st.scene, opts.main, st);
+        const travelOnly = !g.main && !g.other && S().seen[st.scene] && provides(st.scene).warps.length;
+        if ((g.main || g.other || g.unseen) && !travelOnly) workAt.add(st.map);
+      }
+      const reachesWork = (mid) => {
+        const seen = new Set([mid]), q = [mid];
+        while (q.length) { const m = q.shift(); if (workAt.has(m)) return true; for (const ex of exitsOf(m)) if (!seen.has(ex.to)) { seen.add(ex.to); q.push(ex.to); } }
+        return false;
+      };
+      for (const st of sites) {
         // several sites can share a scene (three doors, one scene): key by place too
         const where = st.n ? st.n.id : st.pr ? st.pr.x + ',' + st.pr.y : st.ex ? st.ex.x + ',' + st.ex.y : st.tr ? st.tr.x + ',' + st.tr.y : st.f ? st.f.id : '';
         const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene + '|' + where;
@@ -350,6 +368,7 @@ export function install() {
         const g = gain(st.scene, opts.main, st);
         const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
         if (!tier) continue;
+        if (tier === 1 && S().seen[st.scene] && provides(st.scene).warps.length && !provides(st.scene).warps.some((m) => C.maps[m] && reachesWork(m))) continue;
         const rs = reachSite(X, st);
         if (!rs) continue;
         const r = pathTo(X, rs.id);
