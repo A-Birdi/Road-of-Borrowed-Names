@@ -371,6 +371,11 @@ RB.render = (function () {
     // staged or idle body language (src/engine/52_staging.js): a pose key, a drawn facing, a small offset
     // (a half-step, a hop); not while a turn pivots, so the turn still shows
     let sf = !isFoe && (!vw || !vw.turn) && RB.staging ? RB.staging.frameOf(a, t, still, vw ? vw.frame : fr0) : null;
+    // a complete action from the performance library (src/engine/67a_perform.js), for a person content gives one
+    if (!isFoe && RB.perform && ((a.def && a.def.perform) || a._pfOnce)) {
+      const pf = RB.perform.frameOf(a, t, still);
+      if (pf) sf = pf;
+    }
     // the world proof's purposeful actions (development only, src/engine/67_worldacts.js): a pose and a facing
     if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.active(RB.world.W.map) && RB.worldLook.opts.kit) {
       const af = RB.worldActs.frameOf(a, t, still);
@@ -583,6 +588,7 @@ RB.render = (function () {
     if (W.comp) list.push({ z: W.comp.fy * TS + TS - 0.1, draw: () => drawActor(c, W.comp, t) });
     list.push({ z: W.player.fy * TS + TS, draw: () => drawActor(c, W.player, t) });
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
+    if (RB.perform) RB.perform.push(list, c, ax, ay, t); // what a person's action puts beside them (67a_perform.js)
     if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks
     if (KIT && RB.worldActs) RB.worldActs.push(list, c, m, env, t); // the rod and float, the baskets
     list.sort((a, b) => a.z - b.z);

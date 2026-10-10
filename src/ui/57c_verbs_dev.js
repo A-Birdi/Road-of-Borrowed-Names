@@ -44,6 +44,18 @@ RB.verbsDev = (function () {
     if (RB.test && RB.test.place) RB.test.place(f.x, f.y, f.dir);
     return f;
   }
+  // the performance library's gallery (src/content/world/10_perform_gallery.js)
+  async function gallery() {
+    const cur = RB.save && RB.save.current && RB.save.current();
+    if (cur && cur.slot != null) return null;
+    // (the road's own arrival scenes are marked seen: the gallery is about the people at work)
+    const flags = { dev_perform: true, departed: true, ch2_done: true };
+    for (const ev of (RB.content.maps['sg.road'] || {}).onEnter || []) flags['enter:sg.road:' + ev.scene] = true;
+    const s = RB.game.debugStart('sg.road', 20, 11, { flags });
+    s.edition = 2;
+    await new Promise((r) => setTimeout(r, 300));
+    return s;
+  }
   function panel() {
     if (!allowed() || typeof document === 'undefined') return null;
     let el = document.getElementById('vb-dev');
@@ -57,11 +69,13 @@ RB.verbsDev = (function () {
     css.textContent = '#vb-dev button{font:13px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:28px;padding:2px 8px;text-align:left}#vb-dev.min>*:not(#vb-toggle){display:none}';
     document.head.appendChild(css);
     el.innerHTML = '<button type="button" id="vb-toggle">Exploration fixtures (dev): hide</button>' +
+      '<button type="button" data-pf="1">Performance gallery (seven people at work)</button>' +
       RB.verbs.list().filter((v) => v.fixture).map((v) => '<button type="button" data-vb="' + v.id + '">' + v.kind + ' · ' + v.id + '</button>').join('');
     document.body.appendChild(el);
     el.addEventListener('click', (e) => {
       const x = e.target.closest('[data-vb]');
       if (x) go(x.dataset.vb);
+      if (e.target.closest('[data-pf]')) gallery();
       if (e.target.id === 'vb-toggle') { el.classList.toggle('min'); e.target.textContent = 'Exploration fixtures (dev): ' + (el.classList.contains('min') ? 'show' : 'hide'); }
     });
     return el;
@@ -71,5 +85,5 @@ RB.verbsDev = (function () {
     const open = () => { if (window.__RB_READY__ === true && document.body) panel(); else if (++tries < 300) setTimeout(open, 100); };
     setTimeout(open, 0);
   }
-  return { allowed, panel, go, spotOf };
+  return { allowed, panel, go, spotOf, gallery };
 })();
