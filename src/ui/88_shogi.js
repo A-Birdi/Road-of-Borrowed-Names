@@ -347,5 +347,24 @@ RB.ui.shogi = (function () {
       render(); return;
     }
   }
+  // ---- a place's game: Fuku at her bench (src/content/pastimes/20_scenes.js) -----------------------------------------
+  RB.hooks = RB.hooks || {};
+  RB.hooks.pt_fuku_bench = async () => { await RB.script.run('pt.fuku_bench'); };
+  // after the scene has let go of the screen, the board opens with the person who offered it
+  RB.hooks.pt_play = async (a) => {
+    const kind = a && a[0], who = a && a[1];
+    if (!kind) return;
+    const t0 = Date.now();
+    const tick = () => {
+      if (!RB.game || !RB.game.s) return;
+      if (!RB.script.isRunning() && RB.game.mode() === 'world') {
+        RB.activity.launch(kind, { source: 'world-prop', with: who }).then((r) => { if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(r.why, 'info'); });
+        return;
+      }
+      if (Date.now() - t0 < 4000) setTimeout(tick, 40);
+    };
+    setTimeout(tick, 0);
+  };
+
   return { run, state: () => (V ? { view: V.view, kind: V.kind, g: V.g, level: V.level, solved: !!V.solved, thinking: V.thinking } : null), close };
 })();

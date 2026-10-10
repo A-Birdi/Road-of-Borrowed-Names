@@ -7,7 +7,9 @@
  * notebook, guide, items, settings, save).
  *
  * Later systems add pages without editing this file: addPage('journey' |
- * 'words' | 'map', def) (see docs/ADDENDUM_CONTRACTS.md). */
+ * 'words' | 'map', def) (see docs/ADDENDUM_CONTRACTS.md), and a tab of their
+ * own with addSection(def), shown only where def.available(s) says so (the
+ * twelve-chapter edition's Distractions, K7/K10). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.menu = (function () {
@@ -31,6 +33,7 @@ RB.ui.menu = (function () {
     practice: ['words', 'practice'], letters: ['words', 'letters'], compare: ['words', 'compare'], // practice suite B pages
     fishing: ['journey', 'fishing'], // A Quiet Cast's Fishing notes (src/ui/86_fishing_notes.js)
     stamps: ['journey', 'stamps'], volume: ['journey', 'volume'], // the journey's records (src/ui/66c_records.js)
+    distractions: ['distractions'], pastimes: ['distractions'], // the pastimes' tab (src/ui/68b_distractions.js)
     settings: '@settings', save: '@save',
   };
   // pages added by later systems: journey views, words pages, map views
@@ -39,6 +42,12 @@ RB.ui.menu = (function () {
   const EXT = { journey: [], words: [], map: [] };
   function addPage(section, def) { const L = EXT[section]; const i = L.findIndex((d) => d.id === def.id); if (i >= 0) L[i] = def; else L.push(def); }
   const extOf = (section, id) => EXT[section].find((d) => d.id === id);
+  // tabs added by later systems: { id, en, jp, icon, available?(s), render(A, B, two, api), back?(api) → handled,
+  // sub?(view, sub) }; each keeps its own view state in view[id]
+  const XSEC = [];
+  function addSection(def) { const i = XSEC.findIndex((d) => d.id === def.id); if (i >= 0) XSEC[i] = def; else XSEC.push(def); view[def.id] = view[def.id] || {}; }
+  const xsec = (id) => XSEC.find((d) => d.id === id) || null;
+  const sectionsFor = (s) => SECTIONS.concat(XSEC.filter((d) => { try { return !d.available || d.available(s); } catch (e) { return false; } }));
   const avail = (d, s) => !d.available || d.available(s);
   // what an added page may do: re-render (keeping scroll), close, go elsewhere
   function api(section) { return { s: RB.game.s, view: view[section], remember, render: () => { remember(); render(); }, close, go, two: F().wide() }; }
@@ -87,7 +96,10 @@ RB.ui.menu = (function () {
     layer.onAction = (act) => { if (act === 'menu') { close(); return true; } return false; };
     RB.ui.pushLayer(layer);
     if (a && a !== '@settings' && a !== '@save') { view.section = a[0]; applySub(a[0], a[1]); }
-    tabsApi = F().tabs(fr.tabslot, SECTIONS, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'The Wayfarer\'s Ledger', panelId: 'folio-page' });
+    // a tab this journey does not have (another journey's, or not yet offered) opens the Journey instead
+    const secs = sectionsFor(RB.game.s);
+    if (!secs.some((x) => x.id === view.section)) { view.section = 'journey'; view.journey.view = 'quests'; }
+    tabsApi = F().tabs(fr.tabslot, secs, view.section, (id) => { remember(); view.section = id; render(); }, { label: 'The Wayfarer\'s Ledger', panelId: 'folio-page' });
     render();
     if (typeof matchMedia !== 'undefined') {
       mq = matchMedia(RB.ui.folio.WIDE);
@@ -130,6 +142,8 @@ RB.ui.menu = (function () {
     if (view.section === 'journey' && j.view !== 'quests') { remember(); j.view = 'quests'; render(); return; }
     if (view.section === 'map' && view.map.view !== 'chart') { remember(); view.map.view = 'chart'; render(); return; }
     if (view.section === 'company' && RB.ui.company && RB.ui.company.back && RB.ui.company.back(api('company'))) return;
+    const xs = xsec(view.section);
+    if (xs && xs.back && xs.back(api(view.section))) return;
     close();
   }
   function go(section, sub) {
@@ -144,10 +158,12 @@ RB.ui.menu = (function () {
     if (section === 'words') view.words.sub = sub || view.words.sub;
     if (section === 'map') view.map.view = sub || 'chart';
     if (section === 'company' && sub) view.company.page = sub;
+    const xs = xsec(section);
+    if (xs) { if (xs.sub) xs.sub(view[section], sub); else if (sub) view[section].page = sub; }
   }
   function key() {
     const s = view.section;
-    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : s === 'map' ? view.map.view : s === 'company' ? view.company.page || '' : '');
+    return s + ':' + (s === 'journey' ? view.journey.view : s === 'words' ? view.words.sub || 'index' : s === 'map' ? view.map.view : s === 'company' ? view.company.page || '' : (view[s] && view[s].page) || '');
   }
   function remember() {
     if (!fr) return;
@@ -159,7 +175,8 @@ RB.ui.menu = (function () {
   function render() {
     stopDemo(); stopDemo = () => {};
     const s = RB.game.s;
-    const sec = SECTIONS.find((x) => x.id === view.section);
+    const sec = sectionsFor(s).find((x) => x.id === view.section) || SECTIONS[0];
+    if (sec.id !== view.section) view.section = sec.id;
     const comp = s.comp && RB.content.chars[s.comp];
     fr.setTitle(RB.ui.label(sec.jp, sec.en), esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime));
     const two = F().wide();
@@ -168,7 +185,8 @@ RB.ui.menu = (function () {
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + (turn ? ' turn' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
       '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
-    ({ journey, words, satchel, map, company })[view.section](A, B, two);
+    const builtIn = { journey, words, satchel, map, company }[view.section];
+    if (builtIn) builtIn(A, B, two); else xsec(view.section).render(A, B, two, api(view.section));
     if (bookStyle()) runningHeads(A, B, two, sec, s, comp);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
@@ -837,7 +855,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, restyle, isBook: () => !!bookStyle(), isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => !!bookStyle(), isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits

@@ -66,6 +66,7 @@ RB.ui.folio = (function () {
     none: '<circle cx="12" cy="12" r="8.5" stroke-dasharray="2.4 3"/><path d="M9 12h6"/>',
     // the quest marker (the amber diamond in the world and on the chart)
     follow: '<path d="M12 3l6 7.5-6 7.5-6-7.5z"/><path d="M12 10.5v4"/><path d="M8.5 21h7"/>',
+    pastimes: '<path d="M8 3.5l4 2 1.2 10.5H2.8L4 5.5z"/><path d="M14.5 7.5l5.5 1-2 12.5-5.5-1"/><path d="M16.5 12.5l1.5 2.5"/>',
   };
   function icon(name, title) {
     const d = P[name] || P.pouch;

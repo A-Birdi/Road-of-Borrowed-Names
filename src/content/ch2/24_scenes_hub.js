@@ -319,6 +319,7 @@ fuku[worry]: {春|はる} に 、 {具合|ぐあい} が {悪|わる}い のに 
 
 @scene sg.bench_fuku
 narr: {古|ふる}い ベンチ 。 {端|はし} に 、 {将棋|しょうぎ} の {駒|こま} が {一|ひと}つ {置|お}き{忘|わす}れられて いる 。 「{歩|ふ}」 。 || An old bench. A single shōgi piece has been left at one end: a pawn.
+?(ed>=2&quest.sg_seaglass=done) !hook pt_fuku_bench
 
 @scene sg.fuku_boat
 # Staged: Fuku looks out to sea, where the boat went every morning, and shakes her head over the lost name.

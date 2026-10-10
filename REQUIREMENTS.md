@@ -586,9 +586,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP17 Six-chapter battles and the campaign unchanged. C F/Ren PASS (15.0 min) on 6f300ce; U unit 28,748/0; B combat_ui 7/0, battle_group 6/0, battle_party 14/0, battle_settings 10/0, companion_turn 4/0, battle_cycle stable.
 - [ ] XP18 A person playing the encounter fixtures (`?dev=enc`). H.
 
-## The expansion, P05 the living world and exploration actions (C-81; docs/future/work/P05_WORLD.md) — under way
+## The expansion, P05 the living world and exploration actions (C-81; docs/future/work/P05_WORLD.md)
 - [v] XP19 Routines that move only on coming back (three transitions away, a story flag, a rest), never within a town, never mid-conversation, never on a load; one person, one place; pins; change beats kept until seen; "Have you seen…?" with four kinds of answer and no omniscience; notes, not markers; last seen kept (twelve-chapter journeys only); road events deferred and offered once a visit; sealed places noticed and opened. U town 87/0; B world_living 4/0.
 - [v] XP20 Exploration actions as templates over Field Inkweaving and the case engine (W9, W11–W17), each with a fixture: notices people follow, courier rounds, repairs, connected water across maps (every required way always reopenable), observation and instructions, creature routing without a fight, layered sites with several valid readings, stage-blocking. U verbs 116/0; B verbs 5/0 (captures docs/screenshots/verbs/).
+- [v] XP21 The performance library (V5): sixteen complete actions on the pose layer (anticipation to return), interruption that restarts from the anticipation, lazy validation of anchors and props, profession suggestions; the proof kit's dressing safe on every map. U perform 85/0, worldkit 10/0; B perform 3/0 (captures docs/screenshots/perform/).
+- [v] XP22 P05's phase end: the browser suites (world_living, verbs, perform, departures, known, fieldweave, cases, world, world_slice, settings, folio, play_ui, ui) all pass; C F/Ren PASS (15.3 min) on b5311b6; U the unit suite's three failures on that snapshot fixed (the map census, a fixture over a fishing stand, the handwriting reading table) and the suite re-run on the fixed code (VALIDATION.md "P06").
+- [ ] XP23 A person walking the living world's fixtures and the performance gallery (`?dev=verbs`, `?dev=perform`). H.
+
+## The expansion, P06 records, replay, New Game+ and pastimes (C-81; docs/future/work/P06_RECORDS.md) — under way
+- [v] XP24 The Road Stamp Book with its stands, the travel volume with veils, the traveller's seal, read-only replay, New Game+ with the ending companion's farewell, all only in twelve-chapter journeys (F-21). U records 102/0; B records 5/0 (captures docs/screenshots/records/).
+- [v] XP25 Shogi (C12): real rules (perft matches the published counts), handicaps, a three-level partner, the ladder (eight lessons, hasami shogi, the small board, mini-shogi, shogi), mate-in-one puzzles; Show moves, Why?, Take back (a finished game taken back comes off the record, F-22); promotion always asked; every piece with its reading; a first-win stamp. U shogi 64/0; B shogi 5/0 (captures docs/screenshots/shogi/).
+- [v] XP26 The Distractions tab (K7, K10; F-23): twelve-chapter journeys only; the games met, each with its page (art, how to play, where, records), Play with your companion, shiritori's card moved from Company, fishing's page once the survey has begun; Fuku's bench (F-24); reading never makes a record, and older saves load unchanged. U distractions 19/0, fixtures_campaign 148/0; B distractions 4/0 (captures docs/screenshots/distractions/).
+- [ ] XP27 A newcomer to shogi playing the ladder (the plan names Robin as the right first player). H.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

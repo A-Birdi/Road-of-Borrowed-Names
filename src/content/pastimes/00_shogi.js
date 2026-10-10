@@ -29,8 +29,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // the pastime: Fuku teaches it on Saltglass's hill bench; a companion plays it on a travel board anywhere safe
   if (RB.pastimes) RB.pastimes.define('shogi', {
-    title: T('Shogi', '{将棋|しょうぎ}'), kind: 'game', activity: 'shogi', companion: true, art: 'shogi',
+    order: 20, title: T('Shogi', '{将棋|しょうぎ}'), kind: 'game', activity: 'shogi', companion: true, art: 'shogi',
     venue: T('Fuku\'s bench, on the hill above Saltglass harbour', '{潮硝子|しおがらす} の {丘|おか} の ベンチ'),
+    anywhere: T('Or anywhere safe with your companion, on their travel board.', '{道連|みちづ}れ と なら 、 {安全|あんぜん} な {場所|ばしょ} で どこ でも'),
     met: (s) => RB.edition.of(s) >= 2 && !!((s.visited && s.visited['sg.harbor']) || (s.practice && s.practice.shogi && Object.keys(s.practice.shogi.games || {}).length)),
     blurb: T('Two armies of wedge-shaped pieces on a nine-by-nine board. A captured piece changes sides and can be dropped back into play: nothing is ever quite out of the game.', '{取|と}った {駒|こま} は {自分|じぶん} の {駒|こま} に なる 。'),
     howto: [
@@ -40,11 +41,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T('Attack the king so it has nowhere safe to go, and the game is yours: checkmate.', '{玉|ぎょく} が {詰|つ}めば {勝|か}ち 。'),
     ],
     records: (s) => {
-      const r = RB.pastimes.rec(s, 'shogi');
-      if (!r) return [];
+      // read only: looking at the page never makes a record
+      const r = Object.assign(RB.pastimes.fresh('shogi'), (s.practice && s.practice.shogi) || {});
       const out = [{ en: 'Pieces met', value: Object.keys(r.lessons).length + ' of ' + C.shogi.lessons.length }, { en: 'Puzzles solved', value: Object.keys(r.tsume).length + ' of ' + C.shogi.tsume.length }];
       const names = { hasami: 'Hasami shogi', small: 'The small board', mini: 'Mini-shogi', full: 'Shogi' };
-      for (const k in names) if (r.games[k]) out.push({ en: names[k], value: (r.wins[k] || 0) + ' won of ' + r.games[k] });
+      for (const k in names) if (r.games[k]) out.push({ en: names[k], value: (r.wins[k] || 0) + ' won of ' + r.games[k], total: true });
       return out;
     },
   });

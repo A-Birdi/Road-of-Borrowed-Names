@@ -138,25 +138,48 @@ RB.ui.wordplay = RB.ui.wordplay || {};
     }
     return h + '</section>';
   }
+  // the card's buttons, wherever the card is shown (Company, or Distractions in a twelve-chapter journey)
+  async function cardClick(b, s, api, source) {
+    const act = b.dataset.wpAct;
+    if (act === 'play' || act === 'resume') { await U.launch({ source: source || 'company', resume: act === 'resume' }); return; }
+    if (act === 'end') {
+      const c = await RB.ui.confirm('End the waiting match without a result? Its chain is kept in Review a saved chain. No win or loss is recorded.', ['End it', 'Keep it']);
+      if (c === 0) { WP().abandon(s, 'abandoned'); await U.saveNow(s); api.render(); }
+      return;
+    }
+    if (act === 'rules') { await U.rulesSheet(); return; }
+    if (act === 'review') { await U.records(s); api.render(); return; }
+    if (act === 'receipt') { await U.records(s, b.dataset.id); api.render(); return; }
+    if (act === 'reflect') {
+      // the conversation about the game belongs to Company: from elsewhere, it is opened there
+      if (source && source !== 'company') { api.go('company', 'companion'); return; }
+      const sc = U.reflectionScene(s);
+      if (sc && RB.content.scenes[sc]) await RB.ui.companyPages.converse(api, () => RB.script.run(sc));
+    }
+  }
+  U.cardClick = cardClick;
+  // In a twelve-chapter journey the games live on the Distractions tab (K7): Company keeps a pointer, and the
+  // conversation about a game when one is waiting
+  const elsewhere = (s) => !!(RB.recordsUI && RB.recordsUI.inCampaign(s));
+  function pointer(s, comp) {
+    const c = chr(comp);
+    let h = '<section class="co-detail wp-card" aria-label="Wordplay"><p class="muted">' + I('talk') + esc('Shiritori with ' + (c ? c.name.en : comp) + ', and the other games you can play together, are on the Distractions tab.') + '</p>' +
+      '<button class="pbtn" data-co-sec="wordplay" data-wp-act="distractions">' + I('pastimes') + 'Open Distractions</button>';
+    const rf = WP().reflection(s);
+    if (rf) {
+      const safe = RB.company.safeHere();
+      h += '<div class="co-pending wp-reflect" role="note">' + I('talk') + '<span>A conversation is available: ' + lab('reflectTitle') + (rf.st === 'deferred' ? ' <span class="muted small">(you said not now)</span>' : '') + '</span>' +
+        '<button class="pbtn" data-co-sec="wordplay" data-wp-act="reflect"' + (safe.ok ? '' : ' disabled') + '>' + I('talk') + 'Talk now</button></div>';
+    }
+    return h + '</section>';
+  }
   if (RB.ui.companyPages && RB.ui.companyPages.addSection) {
     RB.ui.companyPages.addSection({
       id: 'wordplay', order: 60,
-      html: (s, comp, V) => (comp && comp === s.comp ? card(s, comp, V) : ''),
+      html: (s, comp, V) => (comp && comp === s.comp ? (elsewhere(s) ? pointer(s, comp) : card(s, comp, V)) : ''),
       click: async (b, s, api) => {
-        const act = b.dataset.wpAct;
-        if (act === 'play' || act === 'resume') { await U.launch({ source: 'company', resume: act === 'resume' }); return; }
-        if (act === 'end') {
-          const c = await RB.ui.confirm('End the waiting match without a result? Its chain is kept in Review a saved chain. No win or loss is recorded.', ['End it', 'Keep it']);
-          if (c === 0) { WP().abandon(s, 'abandoned'); await U.saveNow(s); api.render(); }
-          return;
-        }
-        if (act === 'rules') { await U.rulesSheet(); return; }
-        if (act === 'review') { await U.records(s); api.render(); return; }
-        if (act === 'receipt') { await U.records(s, b.dataset.id); api.render(); return; }
-        if (act === 'reflect') {
-          const sc = U.reflectionScene(s);
-          if (sc && RB.content.scenes[sc]) await RB.ui.companyPages.converse(api, () => RB.script.run(sc));
-        }
+        if (b.dataset.wpAct === 'distractions') { api.go('distractions', 'shiritori'); return; }
+        return cardClick(b, s, api, 'company');
       },
     });
   }

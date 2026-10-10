@@ -19,6 +19,7 @@ RB.lex.add(RB.lex.parseTable(`
 詰将棋|つめしょうぎ|n|A|a shogi mating puzzle
 詰み|つみ|n|I|checkmate
 詰む|つむ|v5m|A|to be checkmated (in shogi)
+詰|つめ|n|A|mate (in shogi); short for 詰将棋, a mating puzzle
 王手|おうて|n|A|check (in shogi: the king is attacked)
 千日手|せんにちて|n|A|a draw by repetition (in shogi)
 本将棋|ほんしょうぎ|n|A|shogi proper, the full game
@@ -32,4 +33,7 @@ RB.lex.add(RB.lex.parseTable(`
 RB.lex.add(RB.lex.parseTable(`
 圭|けい|n|A|a jade tablet; in shogi, the face of a promoted knight (as a piece it is read なりけい)
 杏|あんず|n|A|apricot; in shogi, the face of a promoted lance (as a piece it is read なりきょう)
+`), 'pastimes');
+RB.lex.add(RB.lex.parseTable(`
+寂しがる|さびしがる|v5r|I|to feel lonely, to miss company
 `), 'pastimes');

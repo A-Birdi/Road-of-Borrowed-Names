@@ -3801,3 +3801,42 @@ edition 1); the fixtures play only on `?dev=enc`.
   "Menu"; since C-58 the HUD's button says "Ledger"). The test was corrected; **all ok**. Not a game defect.
 
 **Not verified:** Firefox; the foldable; a person playing the encounter fixtures.
+
+## The expansion, P05: the living world (2026-10-10; C-81; docs/future/work/P05_WORLD.md; REQUIREMENTS.md XP19–XP22)
+
+**What changed:** the town engine (routines, change beats, "Have you seen…?", road events, sealed places), the
+exploration actions W9 and W11–W17 as templates with fixtures, the performance library (sixteen actions) with
+profession suggestions, the proof kit's dressing checked on every map. The tables the world reads ship empty; the
+fixtures appear only on `?dev=verbs` and `?dev=perform`.
+
+**Checks (phase end, on b5311b6):**
+- U `town` **87/0**, `verbs` **116/0**, `perform` **85/0**, `worldkit` **10/0**.
+- B `world_living` **4/0**, `verbs` **5/0**, `perform` **3/0**, `departures` all ok, `known` all passed, `fieldweave`
+  **89/89**, `cases` all passed, `world` **12/0**, `world_slice` **5/0**, `settings` all ok, `folio` all ok, `play_ui`
+  all ok, `ui` **14/0**.
+- C `node tests/e2e/matrix.mjs F ren 1`: **PASS**, all six chapters and an Atlas expedition (15.3 min).
+- U the full unit suite on that snapshot: 29,174 passed, **3 failed**: the map census counted gated additions (already
+  fixed in 6d6a50a), a development fixture's trigger covered a fishing stand (a mark can now name its own area), and
+  the handwriting reading table was stale (regenerated with `tools/kanjiread.mjs`). The suite re-run on the fixed code
+  is below.
+
+**Not verified:** Firefox; the foldable; a person walking the fixtures and the gallery.
+
+## The expansion, P06: records, shogi and Distractions so far (2026-10-10; C-81; docs/future/work/P06_RECORDS.md; REQUIREMENTS.md XP24–XP26)
+
+**What changed:** the Road Stamp Book, stands, travel volume, seal, read-only replay and New Game+ (twelve-chapter
+journeys only, F-21); the pastime registry; shogi's ladder with puzzles; Fuku's bench; the Ledger's Distractions tab
+(a sixth tab only in twelve-chapter journeys; shiritori's card moves there from Company; fishing's page once the
+survey has begun). Pastime records are made at first play, so loading never changes a save (F-23).
+
+**Checks:**
+- U `records` **102/0**, `shogi` **64/0**, `distractions` **19/0**, `fixtures_campaign` **148/0**, `book_type`
+  **60/0**, `recog-coverage` **15/0**, `fishing` **670/0**, `verbs` **116/0**; `node tools/validate.mjs`: no errors;
+  `node tools/review_ledger.mjs`: 522 lines, none without an entry (self-review only).
+- B `records` **5/0**; `shogi` **5/0** (a lesson, puzzles with promotion asked, mini-shogi with Why? and Take back, a
+  win recorded and taken back, hasami, a handicap game at phone width); `distractions` **4/0** (five tabs unchanged
+  in a six-chapter journey; the sixth tab, Play with Mio and back to the Ledger, Company's pointer; phone; Fuku's
+  bench in both editions).
+- U the full unit suite on the code with all of the above: **29,383 passed, 0 failed**.
+
+**Not verified:** Firefox; the foldable; a newcomer to shogi playing the ladder.

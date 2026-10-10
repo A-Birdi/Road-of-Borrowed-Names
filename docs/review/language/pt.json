@@ -1,4 +1,82 @@
 {
+ "scene:pt.fuku_bench#nkubp5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{家|いえ} の {方|ほう} から 、 フク さん が {降|お}りて くる 。",
+  "en": "Fuku comes down the path from her house."
+ },
+ "scene:pt.fuku_bench#k8dila": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "その {歩|ふ} 、 イサム さん と {指|さ}して いた {頃|ころ} の {忘|わす}れ{物|もの} な の 。",
+  "en": "That pawn was left behind from when Isamu and I used to play."
+ },
+ "scene:pt.fuku_bench#1l9pxxs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{相手|あいて} が いない と 、 {駒|こま} が {寂|さび}しがる わ 。 {一局|いっきょく} 、 どう ？ {初|はじ}めて なら 、 {教|おし}えて あげる 。",
+  "en": "The pieces get lonely with no one to play. A game? If it's your first time, I'll teach you."
+ },
+ "scene:pt.fuku_bench:choice#kc2ly2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{お願|ねが}い します 。",
+  "en": "Yes, please."
+ },
+ "scene:pt.fuku_bench:choice#1amva02": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{今|いま} は いい です 。",
+  "en": "Not just now."
+ },
+ "scene:pt.fuku_bench#p92dss": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "じゃあ 、 {駒|こま} を {並|なら}べましょう 。",
+  "en": "Then let's set out the pieces."
+ },
+ "scene:pt.fuku_bench#1ejigsd": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "いつ でも どうぞ 。 {私|わたし} は たいてい {家|いえ} に いる から 。",
+  "en": "Any time. I'm usually at home."
+ },
+ "pastime:shiritori:page#pzn4uy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "しりとり",
+  "en": "Shiritori"
+ },
+ "pastime:shiritori:page#4dyyt0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{宿|やど} や {茶屋|ちゃや} で {休|やす}む とき",
+  "en": "At a quiet rest stop with your companion: an inn, the teahouse, a hut or a camp."
+ },
+ "pastime:shiritori:page#1hr9wim": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{前|まえ} の {言葉|ことば} の {最後|さいご} の {音|おと} から {始|はじ}める 。",
+  "en": "A word game as old as the road: each word begins with the sound the last one ended on."
+ },
+ "pastime:shiritori:page#1iori5t": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{最後|さいご} の {音|おと} で {始|はじ}まる {言葉|ことば} を {言|い}う 。",
+  "en": "Your companion says a word. Answer with a word that begins with its last sound."
+ },
+ "pastime:shiritori:page#19kivz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "「ん」 で {終|お}わったら {負|ま}け 。",
+  "en": "Nothing can follow a word that ends in ん: whoever says one loses."
+ },
+ "pastime:shiritori:page#u1j9xf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{同|おな}じ {言葉|ことば} は {一度|いちど} だけ 。",
+  "en": "No word twice in one game. Suggestions are there if you want them, and never count against you."
+ },
  "pastime:shogi:page#1mqltok": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
@@ -10,6 +88,12 @@
   "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
   "jp": "{潮硝子|しおがらす} の {丘|おか} の ベンチ",
   "en": "Fuku's bench, on the hill above Saltglass harbour"
+ },
+ "pastime:shogi:page#x6qmnb": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{道連|みちづ}れ と なら 、 {安全|あんぜん} な {場所|ばしょ} で どこ でも",
+  "en": "Or anywhere safe with your companion, on their travel board."
  },
  "pastime:shogi:page#1biqfg7": {
   "status": "self-reviewed",
@@ -40,6 +124,42 @@
   "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
   "jp": "{玉|ぎょく} が {詰|つ}めば {勝|か}ち 。",
   "en": "Attack the king so it has nowhere safe to go, and the game is yours: checkmate."
+ },
+ "pastime:fishing:page#oandp5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{静|しず}か な {釣|つ}り",
+  "en": "A quiet cast"
+ },
+ "pastime:fishing:page#ym6xuf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
+  "jp": "{三|みっ}つ の {釣|つ}り{場|ば}",
+  "en": "At Yasu's three stations: the Reedwake riverbank, the pond by the Lantern Road and the Saltglass quay, once the survey has begun."
+ },
+ "pastime:fishing:page#ix6eke": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{魚|さかな} を {見|み}る {静|しず}か な {時間|じかん} 。",
+  "en": "A peaceful pastime: nine fish to meet, each drawn in your Fishing notes the first time you see one."
+ },
+ "pastime:fishing:page#cd53jh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{釣|つ}り{場|ば} に {立|た}つ 。",
+  "en": "Stand at a fishing stand by the water and choose to fish."
+ },
+ "pastime:fishing:page#1jxu454": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{水|みず} を {見|み}て 、 {待|ま}つ 。",
+  "en": "Read the water, choose where to cast, and wait."
+ },
+ "pastime:fishing:page#a9ahtx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, Fuku's established speech (sg.fuku_* scenes) and textbook grammar (P06)",
+  "jp": "{初|はじ}めて {見|み}た {魚|さかな} は ノート に {描|か}かれる 。",
+  "en": "A fish seen for the first time is drawn in your notes, with where and with whom."
  },
  "pastime:shogi#1ytgjt4": {
   "status": "self-reviewed",

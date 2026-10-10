@@ -2,9 +2,9 @@
  * Distractions tab (src/ui/68b_distractions.js), and one record per game kept with the save's practice record
  * (RB.practice namespaces), which New Game+ carries (F-03; RB.ngplus.PASTIMES).
  *
- *   RB.pastimes.define(id, { title, kind: 'game' | 'festival', activity (an RB.activity kind), companion (a game your
- *     companion can play anywhere safe), venue: { en, jp } (where it is played otherwise), met(s), records(s) →
- *     [{ en, value }], howto: [{ jp, en }], art (the page's key art) })
+ *   RB.pastimes.define(id, { title, kind: 'game' | 'festival', order (the index's order), activity (an RB.activity
+ *     kind), companion (a game your companion can play anywhere safe), venue: { en, jp } (where it is played),
+ *     met(s), records(s) → [{ en, value }], blurb: { jp, en }, howto: [{ jp, en }], art (the page's key art) })
  * Records are personal: never ranked, never a currency, and nothing in the story needs a win (G15). Points in a card
  * game are points, never stakes. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -16,13 +16,14 @@ RB.pastimes = (function () {
   function define(id, d) { if (!DEFS[id]) ORDER.push(id); DEFS[id] = Object.assign({ id, kind: 'game' }, d); return DEFS[id]; }
   const get = (id) => DEFS[id] || null;
   // every pastime this traveller has met (the index lists these; the rest stay unknown until met)
-  const met = (s) => ORDER.map((id) => DEFS[id]).filter((d) => { try { return !d.met || d.met(s); } catch (e) { return false; } });
-  const all = () => ORDER.map((id) => DEFS[id]);
+  const all = () => ORDER.map((id) => DEFS[id]).sort((a, b) => (a.order || 50) - (b.order || 50));
+  const met = (s) => all().filter((d) => { try { return !d.met || d.met(s); } catch (e) { return false; } });
   // a pastime's own record in the save (created on first use)
   function rec(s, key) {
     const p = RB.practice && RB.practice.of(s);
     if (!p) return null;
     if (!p[key] || typeof p[key] !== 'object') p[key] = fresh(key);
+    else { const f = fresh(key); for (const k in f) if (!(k in p[key])) p[key][k] = f[k]; }
     return p[key];
   }
   const FRESH = {
@@ -31,8 +32,8 @@ RB.pastimes = (function () {
     karuta: () => ({ v: 1, games: 0, best: 0, cards: {}, active: null }),
   };
   const fresh = (k) => (FRESH[k] ? FRESH[k]() : { v: 1 });
-  // the practice record knows them (older saves gain them empty), and New Game+ carries them
-  if (RB.practice && RB.practice.addNamespace) for (const k in FRESH) RB.practice.addNamespace(k, FRESH[k], (x) => { if (!x || typeof x !== 'object') return FRESH[k](); for (const f in FRESH[k]()) if (!(f in x)) x[f] = FRESH[k]()[f]; x.active = null; return x; });
+  // a record is made on first use only, so loading a save never changes it (older saves stay exactly as they were);
+  // New Game+ carries those that exist
   if (RB.ngplus && RB.ngplus.PASTIMES) for (const k in FRESH) if (RB.ngplus.PASTIMES.indexOf(k) < 0) RB.ngplus.PASTIMES.push(k);
   // a game finished: its result in the record (wins by kind; a best that only ever rises)
   function result(s, key, kind, won, score) {

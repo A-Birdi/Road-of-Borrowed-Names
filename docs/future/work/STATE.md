@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-10 (C-81; P02, P03 and P04 done; P05 under way).
+**Updated:** 2026-10-10 (C-81; P02 to P05 done; P06 under way).
 
 **Latest explicit authorisation:** Robin, 2026-10-10, after the fidelity study, recorded as **C-81**: "continue your
 World Proof into full Expansion plan at large. Do your best to implement the *entire* expansion plan without consulting
@@ -34,8 +34,8 @@ byte for byte).
 | P02 · foundations | **Done.** The edition field, display map and development switch; records, seeded streams, story phases, the result envelope and the one New Game+ carryover; validator rules (empty exception list) and the review ledger; fixtures; spec amendments (§20); the quick wins E5, E21, C-14, C-58, L19; load budget measured. Foundations 66/0, older-save fixtures 142/0, previews 597/0; pad suites 13/0 and 15/0; F/Ren PASS with fixtures (14.9 min) | [P02_FOUNDATIONS.md](P02_FOUNDATIONS.md) |
 | P03 · learning evidence and task families | **Done.** The evidence log, help by category, day-aware spacing, sentence forging, the task families and the workshop, Ask back, listening, Mastery exams and stars, item pages, What I can do, the Grow route. Evidence 24/0, exams 113/0, grow 6/0; workshop in the browser 6/0, kanji chart 8/0 | [P03_LEARNING.md](P03_LEARNING.md) |
 | P04 · encounters | **Done.** The actor model (1,710 recorded battles held), one shared exchange, Wait, conditions, guests, arrivals, objectives, procedures, conversations and machines, two-move turns, Hushes, order numbers, modifier words, companion plans and growth, help offers, outcome sets, the Tactics Board, five in two rows. Encounters 184/0, modifiers 127/0; browser suites pass (encounters 10/0); invariance 640 identical; F/Ren PASS (15.0 min); unit 28,748/0 | [P04_ENCOUNTERS.md](P04_ENCOUNTERS.md) |
-| P05 · living world | **Under way.** Done: the town engine (routines, change beats, "Have you seen…?", road events, sealed places; town 87/0, world_living 4/0) and the exploration actions W9, W11–W17 (verbs 116/0, browser 5/0). Next: the performance library (V5) and profession behaviours, the record | [P05_WORLD.md](P05_WORLD.md) |
-| P06 · records, replay, New Game+, pastimes, the book everywhere | Not started | — |
+| P05 · living world | **Done.** The town engine (routines, change beats, "Have you seen…?", road events, sealed places), the exploration actions W9, W11–W17, the performance library (sixteen actions) and profession suggestions, the proof kit's dressing checked on every map. Town 87/0, verbs 116/0, perform 85/0, worldkit 10/0; browser suites all pass; F/Ren PASS (15.3 min); the phase-end unit run's three failures fixed (P06_RECORDS.md) | [P05_WORLD.md](P05_WORLD.md) |
+| P06 · records, replay, New Game+, pastimes, the book everywhere | **Under way.** Done: the Road Stamp Book and stands, the travel volume, the seal, read-only replay, New Game+ with the farewell (records 102/0, browser 5/0); the pastime registry; shogi's whole ladder with puzzles (shogi 64/0, browser 5/0); Fuku's bench; the Distractions tab (distractions 19/0, browser 4/0). Next: hanafuda, karuta, shiritori's themes, festival support, the book shell on the remaining pages | [P06_RECORDS.md](P06_RECORDS.md) |
 | P07 · expeditions and a pilot | Not started | — |
 | P08–P13 · the six new chapters | Not started | — |
 | P14–P17 · integration, postgame, art pass, closure | Not started | — |

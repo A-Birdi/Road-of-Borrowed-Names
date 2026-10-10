@@ -20,8 +20,9 @@ maps are unchanged; the records browser test checks it.
 | Watch it again: read-only replay that changes nothing in the journey | K6 tiers 1–2 | `src/ui/66c_records.js` (`watch`) | Done (tier 3 stays gated) |
 | New Game+: one carryover, the ending companion's farewell, the slot chosen with confirmations | K9, S4 | `src/ui/66d_ngplus.js`, `src/content/records/10_ngplus.js`, the Inn Ledger | Done |
 | The pastime registry and records (personal, never ranked, carried by New Game+) | K7, C12, F-03 | `src/engine/72c_pastimes.js` (`RB.pastimes`) | Done |
-| Shogi: the ladder (eight lessons, hasami shogi, the small board, mini-shogi, shogi with handicaps), mate-in-one puzzles, Show moves, Why?, Take back, three levels, no clock | C12 | `src/engine/72b_shogi.js` (`RB.shogi`, `RB.hasami`), `src/content/pastimes/`, `src/ui/88_shogi.js`, `src/styles/65_pastimes.css` | Done (the bench at Saltglass and the Distractions page next) |
-| The Distractions tab: one page per pastime, where to play, records, Play with your companion | K7, K10 | — | Next |
+| Shogi: the ladder (eight lessons, hasami shogi, the small board, mini-shogi, shogi with handicaps), mate-in-one puzzles, Show moves, Why?, Take back, three levels, no clock | C12 | `src/engine/72b_shogi.js` (`RB.shogi`, `RB.hasami`), `src/content/pastimes/`, `src/ui/88_shogi.js`, `src/styles/65_pastimes.css` | Done |
+| Fuku's bench: after her nameplate she walks down and offers a game; the board opens with her | C12, K7 | `src/content/pastimes/20_scenes.js`, the hooks in `src/ui/88_shogi.js`; one gated line in `sg.bench_fuku` | Done (F-24) |
+| The Distractions tab: an index of the games met, one page per game round its key art (what it is, how to play, where, records), Play with your companion; shiritori's card moves here from Company; fishing's page once the survey has begun | K7, K10 | `src/ui/50_menu.js` (`addSection`), `src/ui/68b_distractions.js`, `src/content/pastimes/10_registry.js`, `src/ui/87_wordplay_links.js` | Done (F-23) |
 | Hanafuda (koi-koi), karuta, shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
 | The book shell on the remaining pages | U03–U05 | — | Next |
 
@@ -48,7 +49,8 @@ maps are unchanged; the records browser test checks it.
 ## Lead's decisions (11_CONTRADICTIONS.md part F)
 
 F-21 where the records appear before the release; F-22 shogi's piece orientation, Take back on a finished game, and
-stamps after Take back.
+stamps after Take back; F-23 the Distractions tab (what it lists, where the companion's games live, when a record is
+made); F-24 when Fuku offers a game.
 
 ## Found and fixed on the way
 
@@ -56,6 +58,9 @@ stamps after Take back.
   test is right that nothing should): a mark can now name its own area.
 - The P05 phase-end unit run (on b5311b6) had three failures, all fixed since: the map census now leaves out gated
   additions (6d6a50a), the fixture above, and the handwriting reading table regenerated.
+- The pastime records were first registered as practice namespaces, which filled them in on load: the save-fixture
+  test caught older saves changing. They are now made at first play, and reading a page makes nothing (F-23).
+- Fishing in this game is Yasu's postgame survey; its page appears only then, matching the fishing engine's rule.
 
 ## Checks so far
 
@@ -66,7 +71,10 @@ stamps after Take back.
 | Shogi's rules, engine, lessons, puzzles, hasami, words | `node tests/run-unit.mjs shogi` | 64/0 |
 | Shogi in the browser: ladder, lesson, puzzles with promotion, mini-shogi with Why? and Take back, a win recorded and taken back, hasami, handicap at phone width | `node tests/e2e/shogi.mjs` | 5/0 (captures `docs/screenshots/shogi/`) |
 | Fonts and handwriting cover every displayed kanji | `book_type`, `recog-coverage` | 60/0, 15/0 |
-| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 502 lines, 0 without an entry |
+| The tab's gating, the index, records never made by reading, older saves unchanged, Fuku's gate, the Japanese | `node tests/run-unit.mjs distractions` | 19/0 |
+| Save fixtures load exactly as they were | `node tests/run-unit.mjs fixtures_campaign` | 148/0 |
+| Distractions in the browser: five tabs in a six-chapter journey; the sixth tab, a page, Play with Mio and back to the Ledger; Company's pointer; phone index/page/back; Fuku's bench in both editions | `node tests/e2e/distractions.mjs` | 4/0 (captures `docs/screenshots/distractions/`) |
+| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 522 lines, 0 without an entry |
 
 **Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own
 playtest note).
