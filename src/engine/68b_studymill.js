@@ -19,7 +19,7 @@ RB.studyMill = (function () {
   const TS = 32;
   const MAP = 'rw.millroad';
   // the scene's extent in world art px (the map's own coordinates; the camera stays near the mill's door)
-  const X0 = -128, Y0 = -224, W = 864, H = 768;
+  const X0 = -192, Y0 = -224, W = 1000, H = 768;
   const SUN = { x: -0.62, y: -0.7, z: 0.6 }; // towards the sun: upper left, a little in front
   { const l = Math.hypot(SUN.x, SUN.y, SUN.z); SUN.x /= l; SUN.y /= l; SUN.z /= l; }
 
@@ -61,7 +61,15 @@ RB.studyMill = (function () {
       const wx = x + X0, wy = y + Y0, tx = Math.floor(wx / TS), ty = Math.floor(wy / TS), ch = T(tx, ty);
       let m = 0;
       // under the forest it is grass too: the canopy's shadow darkens it (no tile edges)
-      if (ch === '^') m = 5;
+      if (ch === '^') {
+        // the ridge's edges wander: where a neighbour is open ground, grass bites into the rock by a noisy depth
+        const fx = wx - tx * TS, fy = wy - ty * TS, cl = (a, b2) => T(a, b2) === '^';
+        let d = 99;
+        if (!cl(tx - 1, ty)) d = Math.min(d, fx);
+        if (!cl(tx + 1, ty)) d = Math.min(d, TS - 1 - fx);
+        if (!cl(tx, ty - 1)) d = Math.min(d, fy);
+        m = d < 1 + vnoise(wx, wy, 6, 33) * 7 ? 0 : 5;
+      }
       if (ch === '~') {
         // the bank bites into the water tile where a neighbour is land, by a wobbling width
         const fx = wx - tx * TS, fy = wy - ty * TS;
@@ -147,9 +155,11 @@ RB.studyMill = (function () {
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x, wx = x + X0, wy = y + Y0, m = mat[i];
       if (m === 1) {
-        const v = fbm(wx, wy, 16, 61, 2) + (vnoise(wx, wy, 3, 62) - 0.5) * 0.1;
-        let L = v < 0.4 ? 4 : v < 0.6 ? 5 : 6;
-        if (lvl[i] > 5 && fbm(wx, wy, 7, 63, 1) > 0.7) L = 7; // worn smooth along the middle
+        // packed earth: one mid tone with small clusters a step lighter or darker (grit, little hollows),
+        // and paler worn spots down the middle where feet go
+        const v = vnoise(wx, wy, 4, 61) + (vnoise(wx, wy, 2, 62) - 0.5) * 0.35;
+        let L = v < 0.3 ? 4 : v > 0.74 ? 6 : 5;
+        if (lvl[i] > 6 && vnoise(wx, wy, 9, 63) > 0.62) L = Math.min(7, L + 1);
         let up = 0, down = 0;
         for (let k = 1; k <= 3; k++) { if (!up && !isPath(x, y - k)) up = k; if (!down && !isPath(x, y + k)) down = k; }
         if (up === 1 || up === 2) L = up === 1 ? 2 : 3;
@@ -166,10 +176,17 @@ RB.studyMill = (function () {
         const d = lvl[i];
         g.set(x, y, RAMP.water[d < 5 ? 5 : d < 9 ? 4 : 3]); // the bed; the moving surface is drawn over it
       } else if (m === 5) {
-        // the ridge's face: layered stone, lit from the upper left
-        const sh = Math.floor(vnoise(wx, 0, 9, 81) * 6), band = Math.floor((wy + sh) / 7);
-        const v = 4 + (hash(Math.floor(wx / 9), band, 82) - 0.5) * 2.2 + ((wy + sh) % 7 === 0 ? -2 : 0);
-        g.set(x, y, St[clamp(Math.round(v), 1, 7)]);
+        // the ridge's face: warm layered rock in ledges, each block lit along its top, a dark joint beneath,
+        // cracks down it, darker toward the foot
+        const sh = Math.floor(vnoise(wx, 0, 11, 81) * 5), yy = wy + sh, band = Math.floor(yy / 8), inb = yy - band * 8;
+        const bx = Math.floor((wx + band * 7) / (10 + Math.floor(hash(band, 0, 83) * 8)));
+        let v = 4.4 + (hash(bx, band, 82) - 0.5) * 1.8;
+        if (inb === 0) v += 1.8; else if (inb === 1) v += 0.8; else if (inb === 7) v = 1.2;
+        if (hash(bx, band, 84) > 0.8 && (wx + band * 3) % 11 === 0) v = 1.4; // a crack
+        const below = mat[Math.min(H - 1, y + 3) * W + x] !== 5;
+        if (below) v -= 1.2;
+        const c0 = K.mixc(St[clamp(Math.round(v), 1, 8)], D[clamp(Math.round(v), 1, 8)], 0.45);
+        g.set(x, y, c0);
       }
     }
     // grass leaning over the path's edges: blades from the grass side reaching 2–3 px onto the earth
@@ -476,6 +493,24 @@ RB.studyMill = (function () {
     }
   }
 
+  // the map's boulder (rw.millroad's rock at tile 5, 11): weathered stone, lit on its upper left, moss on its crown
+  function makeRock() {
+    const w = 26, h = 18, b = new Buf(w, h), St = RAMP.stone, G = RAMP.grass;
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const dx = (x + 0.5 - 13) / 12, dy = (y + 0.5 - 11) / 8.5;
+      const top = dy < 0 ? dx * dx + dy * dy * 1.3 : dx * dx + dy * dy * 0.7;
+      if (top + (hash(x >> 1, y >> 1, 730) - 0.5) * 0.12 > 1) continue;
+      const nz = Math.sqrt(Math.max(0, 1 - Math.min(1, top)));
+      const l = Math.max(0, -dx * 0.6 - dy * 0.7 + nz * 0.5);
+      let v = 2 + l * 5 + (hash(x >> 1, y, 731) - 0.5) * 1.2;
+      if (y > 14) v -= 1;
+      let c = K.mixc(St[clamp(Math.round(v), 1, 8)], RAMP.dirt[clamp(Math.round(v), 1, 8)], 0.25);
+      if (dy < -0.45 && fbm(x, y, 4, 732, 2) > 0.5) c = G[clamp(Math.round(3 + l * 4), 2, 7)]; // moss on its crown
+      b.set(x, y, c);
+    }
+    return { cv: b.canvas(), w, h };
+  }
+
   function build() {
     rows = RB.content.maps[MAP].terrain;
     const S = { X0, Y0, W, H, TS };
@@ -486,7 +521,12 @@ RB.studyMill = (function () {
     buildTrees(S);
     S.house = RB.studyHouse.build();
     buildPlants(S);
+    S.rock = Object.assign(makeRock(), { x: 5 * TS + 16, y: 11 * TS + 26 });
     buildShadows(S);
+    for (let y = -3; y <= 3; y++) for (let x = -12; x <= 16; x++) if (((x - 3) / 14) ** 2 + (y / 3.4) ** 2 <= 1) {
+      const i = (S.rock.y + y - Y0) * W + (S.rock.x + x - X0);
+      if (i >= 0 && i < W * H) S.shadowA[i] = Math.max(S.shadowA[i], 0.6);
+    }
     { // the mill's own shadow, and a dark line of contact along its foot
       const poly = K.inPoly(S.house.shadow.map(([x, y]) => [x - X0, y - Y0]));
       for (let y = 84 - Y0; y < 172 - Y0; y++) for (let x = 405 - X0; x < 466 - X0; x++) {
@@ -526,6 +566,8 @@ RB.studyMill = (function () {
       if (dx > bw || dy > bh || dx + v.w < 0 || dy + v.h < 0) continue;
       list.push({ z: pl.y, draw: () => c.drawImage(v.frames[leanAt(pl.x, tm) + 1], dx, dy) });
     }
+    const Rk = S.rock;
+    list.push({ z: Rk.y, draw: () => c.drawImage(Rk.cv, Rk.x - (Rk.w >> 1) - cam.x, Rk.y - Rk.h + 2 - cam.y) });
     const Hs = S.house;
     list.push({ z: Hs.mill.z, draw: () => c.drawImage(Hs.mill.cv, Hs.mill.x - cam.x, Hs.mill.y - cam.y) });
     list.push({ z: Hs.lean.z, draw: () => c.drawImage(Hs.lean.cv, Hs.lean.x - cam.x, Hs.lean.y - cam.y) });

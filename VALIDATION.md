@@ -3710,3 +3710,37 @@ the creatures and party half size).
 
 **Not changed:** the game's own battles. At most three creatures appear today (Hard). Five, for C-76's set pieces,
 may widen the framing a little, as Robin allowed; that is future work.
+
+## C-80 checks recorded (2026-10-10)
+
+- U `node tests/run-unit.mjs` on e19d43a (the battle framing fix): **27,450/0**.
+
+## The fidelity study: Suzu at the Mill (2026-10-10; P01_STUDY.md; REQUIREMENTS.md WP11)
+
+**What changed:**
+- `src/engine/68a_studykit.js`, `68b_studymill.js`, `68c_studyhouse.js`, `68d_study.js`, `68e_studysuzu.js`, all new
+  and development only.
+- `src/engine/60_render.js`: `getOverride()`, so the study can return to whatever was on screen.
+- `src/engine/65_worldlook.js`: the study's entry in the panel; the far view yields to the study as to a battle.
+- Tests: `tests/e2e/study.mjs` (new), `tests/e2e/study_captures.mjs` (new; evidence in
+  `docs/screenshots/world/study/`).
+
+**Checks:**
+- B `node tests/e2e/study.mjs`: **4/0**, on the build of f761049 and again on the final build of this commit.
+- B `node tests/e2e/world.mjs`: **12/0**, on the same two builds.
+- U `node tests/run-unit.mjs` on f761049 (the study's first pass): **27,450/0**.
+- Reviewed by eye by the lead at every step, at 2–12× zoom, on desktop, wide and phone sizes. The first passes showed
+  problems that were redone before the evidence was taken:
+  - grass that read as static;
+  - a forest floor in tile squares;
+  - water in fat blocks;
+  - a wheel that read as a ship's helm;
+  - a door shorter than Suzu;
+  - see-through gaps in her hair;
+  - a gap at her waist when she breathed;
+  - speckled hair shading;
+  - the scene's edge visible on a 2048 screen.
+- Measured headless, software raster: 1.8–14 ms a frame depending on the camera and size, 60 frames a second in the
+  recordings, 0.8–1.3 s to build the scene on opening (P01_STUDY.md "Measurements").
+
+**Not verified:** Firefox; the foldable; Robin's eye.

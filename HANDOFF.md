@@ -208,6 +208,11 @@
     numbers, and six smaller questions. Record: docs/future/work/P01_WORLD.md. Waiting on Robin's answer; P02 waits
     for it. To try the proof: open `index.html?dev=world`; at the title the panel offers Visit Reedwake and Visit
     Saltglass (never saved).
+    **Robin's answer (C-80):** the direction is solid; push the detail toward the mockup and Octopath Traveler, with a
+    nearer camera; battles keep their own framing (fixed). **The fidelity study** Robin asked for is built: Suzu
+    redrawn from scratch alone at the Mill, rendered by the game with her idle and the scenery moving (panel: "Study:
+    Suzu at the Mill", or `index.html?dev=world&study=mill`). Record: docs/future/work/P01_STUDY.md. Waiting on
+    Robin's view of it.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet
     at a time, no parallel writers or second model; each packet with tests and rendered evidence; F/Ren cadence.
   - **The audit's eight defects were fixed on 2026-10-07** at Robin's request (part D; C-35 left the learning-record

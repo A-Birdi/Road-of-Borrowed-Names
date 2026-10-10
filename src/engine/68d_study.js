@@ -16,10 +16,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.study = (function () {
   'use strict';
   const allowed = () => !!(RB.worldLook && RB.worldLook.allowed && RB.worldLook.allowed());
-  const opts = { light: true, focus: true, bloom: true, motion: true, life: true, close: false };
-  // the game's own camera, or a closer one (about two thirds as many tiles across) for looking at the detail
-  const closeView = (cw, ch) => ({ w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * 0.68, h: (ch < 520 ? 8 : 12) * 0.68 });
-  function applyView() { if (RB.render && RB.render.setView) RB.render.setView(on && opts.close ? closeView : null); }
+  const opts = { light: true, focus: true, bloom: true, motion: true, life: true, close: false, portrait: false };
+  // the game's own camera; a closer one (about two thirds as many tiles across) for the detail; a portrait of Suzu
+  const viewOf = (k) => (cw, ch) => ({ w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * k, h: (ch < 520 ? 8 : 12) * k });
+  const closeView = viewOf(0.68), portraitView = viewOf(0.34);
+  function applyView() { if (RB.render && RB.render.setView) RB.render.setView(!on ? null : opts.portrait ? portraitView : opts.close ? closeView : null); }
   const stat = { buildMs: 0, frames: 0, frameMs: 0, lastMs: 0 };
   let S = null, on = false, prev = null, ui = null, t0 = 0;
   // the camera: the door of the mill a little above the middle, Suzu below it (world art px)
@@ -28,7 +29,8 @@ RB.study = (function () {
 
   function draw(c, bw, bh, t) {
     const a = typeof performance !== 'undefined' ? performance.now() : 0;
-    const cam = { x: Math.round(FOCUS.x - bw / 2), y: Math.round(FOCUS.y - bh / 2) };
+    const fc = opts.portrait ? { x: SUZU.x, y: SUZU.y - 30 } : FOCUS;
+    const cam = { x: Math.round(fc.x - bw / 2), y: Math.round(fc.y - bh / 2) };
     c.fillStyle = '#10161c';
     c.fillRect(0, 0, bw, bh);
     const tt = t - t0;
@@ -174,7 +176,7 @@ RB.study = (function () {
     ui.setAttribute('aria-label', 'Fidelity study (development)');
     ui.style.cssText = 'position:fixed;right:8px;bottom:8px;z-index:99999;background:rgba(20,26,34,0.86);color:#eee;font:12px sans-serif;padding:6px 8px;border:1px solid #567;border-radius:6px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;max-width:94vw';
     const B = (k, label) => '<button type="button" data-k="' + k + '" aria-pressed="true" style="font:12px sans-serif;color:#f4f0e6;background:#34485c;border:1px solid #7a90a6;border-radius:4px;min-height:26px;padding:1px 7px">' + label + '</button>';
-    ui.innerHTML = '<span style="margin-right:4px">Study: Suzu at the Mill</span>' + B('light', 'Light') + B('focus', 'Focus') + B('bloom', 'Bloom') + B('motion', 'Motion') + B('life', 'Life') + B('close', 'Close') +
+    ui.innerHTML = '<span style="margin-right:4px">Study: Suzu at the Mill</span>' + B('light', 'Light') + B('focus', 'Focus') + B('bloom', 'Bloom') + B('motion', 'Motion') + B('life', 'Life') + B('close', 'Close') + B('portrait', 'Portrait') +
       '<button type="button" id="study-close" style="font:12px sans-serif;color:#fff;background:#7a3a3a;border:1px solid #c88;border-radius:4px;min-height:26px;padding:1px 7px">Close</button>';
     document.body.appendChild(ui);
     ui.addEventListener('click', (e) => {
@@ -198,5 +200,5 @@ RB.study = (function () {
     }
   }
 
-  return { open, close, set, opts, isOpen: () => on, stats: () => Object.assign({}, stat, { avgMs: stat.frames ? stat.frameMs / stat.frames : 0 }), scene: () => S, FOCUS };
+  return { open, close, set, opts, isOpen: () => on, t0: () => t0, stats: () => Object.assign({}, stat, { avgMs: stat.frames ? stat.frameMs / stat.frames : 0 }), scene: () => S, FOCUS };
 })();
