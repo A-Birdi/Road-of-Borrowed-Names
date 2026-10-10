@@ -238,23 +238,23 @@ mb_uno: おはよう 。 {朝|あさ} ご{飯|はん} は {潮硝子|しおが�
 :end
 
 @scene mb.uno_evening
-# Staged: you sit down to supper at the inn; the door bangs open; Kayo, out of breath, a lantern in her hand; Uno
+# Staged: you sit down to supper at the inn; the door bangs open; Haru, out of breath, a lantern in her hand; Uno
 # stands; your companion is already on their feet; you pick up your things.
 mb_uno: {夕飯|ゆうはん} {出来|でき}てる よ 。 {座|すわ}って ── || Supper's ready. Sit yourselves ──
 !shake 1
-mb_kayo: イチ が …… うち の イチ が 、 {帰|かえ}って {来|こ}ない ん です ！ {橋|はし} を {数|かぞ}えに {行|い}く 、 って {言|い}った きり …… ！ || Ichi — my Ichi hasn't come home! He said he was going to count the bridges, and then…!
+mb_haru: イチ が …… うち の イチ が 、 {帰|かえ}って {来|こ}ない ん です ！ {橋|はし} を {数|かぞ}えに {行|い}く 、 って {言|い}った きり …… ！ || Ichi — my Ichi hasn't come home! He said he was going to count the bridges, and then…!
 mb_uno: {暗|くら}く なった のに …… {運河|うんが} の {方|ほう} かい ？ || And it's dark already… Down by the canals?
-mb_kayo: {白|しろ}い {蔵|くら} の {並|なら}び の {方|ほう} へ 。 {船頭|せんどう} の カンスケ さん の {舟|ふね} を {見|み}に よく {行|い}く ん です 。 || Towards Warehouse Row. He often goes to look at Kansuke the boatman's boat.
+mb_haru: {白|しろ}い {蔵|くら} の {並|なら}び の {方|ほう} へ 。 {船頭|せんどう} の カンスケ さん の {舟|ふね} を {見|み}に よく {行|い}く ん です 。 || Towards Warehouse Row. He often goes to look at Kansuke the boatman's boat.
 ?(comp=nao) comp: {行|い}く ぞ 。 {子供|こども} の {足|あし} なら 、 まだ {遠|とお}く は ない 。 || Let's go. On a child's legs, he can't have got far.
 ?(comp=mio) comp: {一緒|いっしょ} に {探|さが}します 。 {大丈夫|だいじょうぶ} 、 きっと {見|み}つかります 。 || We'll help you look. It'll be all right, we'll find him.
 ?(comp=ren) comp: {灯|ひ} を {持|も}って いきます 。 {暗|くら}い {水辺|みずべ} で は 、 {灯|ひ} が {目印|めじるし} に なる 。 || I'll bring the lamp. By dark water, a light is something to find your way to.
 ?(comp=suzu) comp: {行|い}きましょう 。 …… {大|おお}きな {声|こえ} で {呼|よ}ぶ の は 、 {私|わたし} の {得意|とくい} よ 。 || Let's go. …Calling out loud is my speciality.
 !set mb_night mb_ichi_lost
 !warp mb.exchange 6 31 down
-!journal {夜|よる} 。 カヨ さん の {息子|むすこ} イチ が 、 {運河|うんが} で {迷子|まいご} に なった 。 {蔵|くら} の {並|なら}び へ 。 || Night. Kayo's son Ichi is lost by the canals. To Warehouse Row.
+!journal {夜|よる} 。 ハル さん の {息子|むすこ} イチ が 、 {運河|うんが} で {迷子|まいご} に なった 。 {蔵|くら} の {並|なら}び へ 。 || Night. Haru's son Ichi is lost by the canals. To Warehouse Row.
 
 @scene mb.night_pier
-narr: …… {渡|わた}し{場|ば} の {方|ほう} じゃ ない 。 カヨ さん は 、 {蔵|くら} の {並|なら}び と {言|い}って いた 。 {東|ひがし} の {道|みち} だ 。 || …Not the pier. Kayo said Warehouse Row. The east road.
+narr: …… {渡|わた}し{場|ば} の {方|ほう} じゃ ない 。 ハル さん は 、 {蔵|くら} の {並|なら}び と {言|い}って いた 。 {東|ひがし} の {道|みち} だ 。 || …Not the pier. Haru said Warehouse Row. The east road.
 !warp mb.exchange 22 38 up
 
 @scene mb.kansuke_night
@@ -283,10 +283,10 @@ mb_ichi: {一番|いちばん} の {橋|はし} は 、 「{結|むす}ぶ」 {�
 !call mb.morning_after
 
 @scene mb.morning_after
-# Staged: dawn over the Exchange; Kayo holds Ichi; she bows deeply; Ichi waves; your companion's line; morning light.
+# Staged: dawn over the Exchange; Haru holds Ichi; she bows deeply; Ichi waves; your companion's line; morning light.
 !unset mb_night
-mb_kayo: …… ありがとう ございました 。 {本当|ほんとう} に 、 ありがとう …… 。 || …Thank you. Thank you, truly…
-!gesture mb_kayo nod pc
+mb_haru: …… ありがとう ございました 。 {本当|ほんとう} に 、 ありがとう …… 。 || …Thank you. Thank you, truly…
+!gesture mb_haru nod pc
 mb_ichi: {橋|はし} に {名前|なまえ} が あったら 、 {迷|まよ}わなかった の に 。 || If the bridges had names, I wouldn't have got lost.
 ?(comp=nao) comp[think]: …… {子供|こども} が {帰|かえ}れない {町|まち} は 、 だめ だ 。 {一番|いちばん} の {橋|はし} 、 {行|い}く ぞ 。 || …A city a child can't find his way home in is no good. To the first bridge.
 ?(comp=mio) comp[think]: {荷物|にもつ} だけ じゃ ない ん だ ね 。 {名前|なまえ} が {消|き}える と 、 {人|ひと} も {帰|かえ}れなく なる 。 || It's not just cargo. When the names go, people can't get home either.

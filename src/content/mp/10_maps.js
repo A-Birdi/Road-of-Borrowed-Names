@@ -33,7 +33,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 2, y: 2, w: 9, h: 5, roof: 'tile', door: 4, windows: [1, 2, 6, 7], to: 'mp.workshop', spawn: [6, 7], lit: true, sign: true, signX: 2 },
       { type: 'house', x: 11, y: 3, w: 5, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 2, y: 12, w: 8, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 6], to: 'mp.pressroom', spawn: [5, 7], lit: true },
-      { type: 'house', x: 10, y: 25, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mp.blockprint', locked: 'mp.door_kanta' },
+      { type: 'house', x: 10, y: 25, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mp.blockprint', locked: 'mp.door_sanpei' },
       { type: 'house', x: 26, y: 2, w: 10, h: 5, roof: 'slate', door: 5, windows: [1, 2, 7, 8], to: 'mp.guild', spawn: [6, 7], lit: true, sign: true, signX: 2 },
       { type: 'house', x: 37, y: 3, w: 6, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 30, y: 22, w: 7, h: 4, roof: 'tile', door: null },
@@ -53,7 +53,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'flowerpot', x: 25, y: 7 }, { p: 'mailbox', x: 33, y: 8, scene: 'mp.guild_box' },
     ],
     npcs: [
-      { id: 'mp_kanta', x: 7, y: 8, dir: 'down', if: '!mp_sobe_met', talk: 'mp.kanta_first' },
+      { id: 'mp_sanpei', x: 7, y: 8, dir: 'down', if: '!mp_sobe_met', talk: 'mp.sanpei_first' },
       { id: 'mp_kakeru', x: 30, y: 9, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.kakeru_after' }, { scene: 'mp.kakeru' }] },
       { id: 'mp_tokube', x: 26, y: 12, dir: 'left', if: '!mb2_done', talk: 'mp.tokube' },
       { id: 'mp_miyo', x: 13, y: 29, dir: 'up', if: 'mp_sobe_met', talk: [{ if: 'quest.mp_apprentice=done', scene: 'mp.miyo_after' }, { if: 'quest.mp_apprentice=1', scene: 'mp.miyo_teach' }, { scene: 'mp.miyo_first' }] },
@@ -173,7 +173,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mp_typecase', x: 1, y: 2 }, { p: 'mp_typecase', x: 2, y: 2 }, { p: 'mp_typecase', x: 9, y: 2 }, { p: 'mp_typecase', x: 10, y: 2 },
       { p: 'ink', x: 7, y: 3 }, { p: 'table', x: 8, y: 5, scene: 'mp.press_proofs' }, { p: 'laundry', x: 1, y: 6 },
     ],
-    npcs: [{ id: 'mp_kanta', x: 7, y: 5, dir: 'left', if: 'mp_sobe_met', talk: [{ if: 'mb2_done', scene: 'mp.kanta_after' }, { scene: 'mp.kanta_press' }] }],
+    npcs: [{ id: 'mp_sanpei', x: 7, y: 5, dir: 'left', if: 'mp_sobe_met', talk: [{ if: 'mb2_done', scene: 'mp.sanpei_after' }, { scene: 'mp.sanpei_press' }] }],
   });
   // the courier guild hall: the courier board, the letter racks
   interior('mp.guild', T('The Courier Guild', '{飛脚|ひきゃく} の {組合|くみあい}'), 13, 9, 6, 'mp.blockprint', [31, 7], {

@@ -7,15 +7,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene mp.arrive
-# Staged: up the Cross Canal past the drying racks; sheets hang on the lines, blank; Kanta runs to meet you.
+# Staged: up the Cross Canal past the drying racks; sheets hang on the lines, blank; Sanpei runs to meet you.
 !set mp_arrived
 !chapter mb2
 !gesture pc lookroad up
 narr: {運河|うんが} を {上|のぼ}る と 、 {紙|かみ} と {墨|すみ} の {匂|にお}い が {強|つよ}く なった 。 {干|ほ}し{場|ば} の {綱|つな} に 、 {刷|す}った {紙|かみ} が {何百枚|なんびゃくまい} も {下|さ}がって いる 。 || Up the canal, the smell of paper and ink grows stronger. Hundreds of printed sheets hang from the drying lines.
 !card {第四章|だいよんしょう} ・ {版木|はんぎ} と {灯|あか}り || Chapter 4 — Manybridge: Blockprint and Footlights
 narr: …… {近|ちか}づく と 、 {分|わ}かる 。 {紙|かみ} は 、 どれ も {白|しろ}い 。 {刷|す}った はず の {字|じ} が 、 ない 。 || …Closer, you see it: every sheet is white. The letters that were printed on them are gone.
-!look mp_kanta pc
-mp_kanta: こっち です ！ {親方|おやかた} の {仕事場|しごとば} は 、 こっち ！ || This way! The master's workshop is this way!
+!look mp_sanpei pc
+mp_sanpei: こっち です ！ {親方|おやかた} の {仕事場|しごとば} は 、 こっち ！ || This way! The master's workshop is this way!
 ?(comp=nao) comp[think]: {刷|す}った {先|さき} から {白|しろ}く なる の か 。 …… {配達|はいたつ} する {前|まえ} に {消|き}える {手紙|てがみ} だ な 。 || They're going blank as fast as they're printed. …Letters that vanish before they're even delivered.
 ?(comp=mio) comp[worry]: {全部|ぜんぶ} …… {白|しろ}い 。 {誰|だれ} か が 、 {一枚|いちまい} ずつ {心|こころ} を {込|こ}めて {刷|す}った のに 。 || All of them… white. Someone printed every one of these with care.
 ?(comp=ren) comp[surprise]: {灯籠|とうろう} の {名札|なふだ} を {刷|す}る {所|ところ} も 、 この {辺|あた}り の はず です 。 …… {急|いそ}ぎましょう 。 || The place that prints the lantern name slips must be round here too. …Let's hurry.
@@ -23,12 +23,12 @@ mp_kanta: こっち です ！ {親方|おやかた} の {仕事場|しごとば
 !quest mp_main start
 !journal {版木|はんぎ} の {通|とお}り 。 {刷|す}った {紙|かみ} が {白|しろ}く なって いく 。 {宗兵衛|そうべえ} の {仕事場|しごとば} へ 。 || Blockprint Row. Printed sheets are going blank. To Sōbē's workshop.
 
-@scene mp.kanta_first
+@scene mp.sanpei_first
 !faceplayer
-mp_kanta: {親方|おやかた} が {待|ま}って います 。 {中|なか} へ どうぞ ！ || The master's waiting. Go on in!
+mp_sanpei: {親方|おやかた} が {待|ま}って います 。 {中|なか} へ どうぞ ！ || The master's waiting. Go on in!
 
 @scene mp.sobe_first
-# Staged: Sōbē at his desk among the racks; he turns a block in his hands; Kanta hovers at the door.
+# Staged: Sōbē at his desk among the racks; he turns a block in his hands; Sanpei hovers at the door.
 !faceplayer
 mp_sobe: …… {八百橋|やおばし} の {橋|はし} に {名前|なまえ} を {戻|もど}した の は 、 あんた たち か 。 {礼|れい} を {言|い}う 。 || …So you're the ones who gave the bridges their names back. My thanks.
 !gesture mp_sobe present pc prop=paper
@@ -40,7 +40,7 @@ mp_sobe: {版木|はんぎ} が {白|しろ}ければ 、 {刷|す}った {物|�
 ?(comp=suzu) comp: {番付|ばんづけ} が {刷|す}れない と 、 {芝居小屋|しばいごや} も {困|こま}る わ ね 。 || If the playbills can't be printed, the playhouse is in trouble too.
 mp_sobe: {新|あたら}しく {彫|ほ}った {版木|はんぎ} なら 、 まだ {字|じ} が {残|のこ}る 。 {組|く}んだ ばかり の {活字|かつじ} も だ 。 …… {川開|かわびら}き の {知|し}らせ を 、 {一枚|いちまい} {刷|す}って みて くれない か 。 {世話役|せわやく} の トミ さん が 、 {待|ま}って いる 。 || A newly cut block still holds its letters. So does type that's just been set. …Would you try printing one notice for the Opening of the River? Tomi of the festival committee is waiting on it.
 ?(comp=suzu) comp[smile]: {川開|かわびら}き ！ {花火|はなび} の {上|あ}がる 、 あの お{祭|まつ}り ね 。 || The Opening of the River! The festival with the fireworks.
-mp_sobe: {刷|す}り{場|ば} は {隣|となり} だ 。 カンタ が {手伝|てつだ}う 。 {何|なに} を どう {書|か}く か は 、 あんた の {好|す}き に して くれ 。 || The press room is next door. Kanta will help. What you write and how is up to you.
+mp_sobe: {刷|す}り{場|ば} は {隣|となり} だ 。 サンペイ が {手伝|てつだ}う 。 {何|なに} を どう {書|か}く か は 、 あんた の {好|す}き に して くれ 。 || The press room is next door. Sanpei will help. What you write and how is up to you.
 !set mp_sobe_met
 !set mp_press_open
 !quest mp_main 1
@@ -98,15 +98,15 @@ narr: {刷|す}り{台|だい} 。 {活字|かつじ} の {箱|はこ} と 、 {
 narr: {刷|す}り{上|あ}がった {紙|かみ} が 、 {乾|かわ}く の を {待|ま}って いる 。 || Freshly printed sheets wait to dry.
 ?(press_printed) narr: あなた の {刷|す}った {一枚|いちまい} も 、 その {中|なか} に ある 。 || Yours is among them.
 
-@scene mp.kanta_press
+@scene mp.sanpei_press
 !faceplayer
-?(quest.mp_main=1&!press_notice) mp_kanta: {刷|す}り{台|だい} の {横|よこ} に 、 {活字|かつじ} の {箱|はこ} が あります 。 {一行|いちぎょう} ずつ 、 {好|す}き な {版|はん} を {選|えら}んで ください ！ || The type cases are beside the press. Choose the block you like for each line!
+?(quest.mp_main=1&!press_notice) mp_sanpei: {刷|す}り{台|だい} の {横|よこ} に 、 {活字|かつじ} の {箱|はこ} が あります 。 {一行|いちぎょう} ずつ 、 {好|す}き な {版|はん} を {選|えら}んで ください ！ || The type cases are beside the press. Choose the block you like for each line!
 ?(quest.mp_main=1&!press_notice) !end
-mp_kanta: {刷|す}り{台|だい} は 、 いつ でも {使|つか}って いい って 、 {親方|おやかた} が 。 {話|はなし} でも {知|し}らせ でも ！ || The master says you can use the press any time. Stories or notices!
+mp_sanpei: {刷|す}り{台|だい} は 、 いつ でも {使|つか}って いい って 、 {親方|おやかた} が 。 {話|はなし} でも {知|し}らせ でも ！ || The master says you can use the press any time. Stories or notices!
 
-@scene mp.kanta_after
+@scene mp.sanpei_after
 !faceplayer
-mp_kanta: {刷|す}った {物|もの} に 、 {字|じ} が ちゃんと {残|のこ}る 。 {当|あ}たり{前|まえ} の こと が 、 こんな に うれしい なんて 。 || What we print keeps its letters. I never knew something so ordinary could make me so happy.
+mp_sanpei: {刷|す}った {物|もの} に 、 {字|じ} が ちゃんと {残|のこ}る 。 {当|あ}たり{前|まえ} の こと が 、 こんな に うれしい なんて 。 || What we print keeps its letters. I never knew something so ordinary could make me so happy.
 
 @scene mp.pressboard
 narr: {刷|す}り{場|ば} の {前|まえ} の {掲示板|けいじばん} 。 {刷|す}り{物|もの} が {留|と}めて ある 。 || The board outside the press room, with prints pinned to it.
@@ -154,8 +154,8 @@ narr: {組合|くみあい} の {郵便箱|ゆうびんばこ} 。 {投|な}げ{
 @scene mp.sign_blockprint
 narr: 「{版木|はんぎ} の {通|とお}り 。 {南|みなみ} に {札場|ふだば} 、 {東|ひがし} に {芝居|しばい} の {通|とお}り 。」 || "Blockprint Row. South to the Tally Exchange; east to Playhouse Row."
 
-@scene mp.door_kanta
-narr: カンタ と ミヨ の {家|いえ} 。 {戸|と} は {閉|し}まって いる 。 || Kanta and Miyo's house. The door is shut.
+@scene mp.door_sanpei
+narr: サンペイ と ミヨ の {家|いえ} 。 {戸|と} は {閉|し}まって いる 。 || Sanpei and Miyo's house. The door is shut.
 
 @scene mp.door_locked
 narr: {戸|と} は {閉|し}まって いる 。 || The door is shut.

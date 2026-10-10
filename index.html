@@ -155268,9 +155268,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 0, hair: 'long', hairColor: 4, cloth: ['#6a5a4a', '#524436', '#c8b490'], shape: 'robe', acc: ['glasses', 'scarf'], scarfCol: '#8a6a4a', age: 'old' },
     portrait: { eyes: 'soft', style: 'long', age: 'old', acc: ['glasses'], bg: '#30281e' },
   });
-  // Kayo and her son Ichi, who is lost one night in the canals (and found).
-  ch('mb_kayo', {
-    name: { en: 'Kayo', jp: 'カヨ' }, voice: { pitch: 1.02 },
+  // Haru and her son Ichi, who is lost one night in the canals (and found).
+  ch('mb_haru', {
+    name: { en: 'Haru', jp: 'ハル' }, voice: { pitch: 1.02 },
     look: { skin: 4, hair: 'braid', hairColor: 1, cloth: ['#8a6a8a', '#6a506a', '#e8d8b8'], shape: 'apron', acc: ['basket'] },
     portrait: { eyes: 'soft', style: 'braid', collar: 'apron', bg: '#33263a' },
   });
@@ -155451,7 +155451,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 35, y: 12, w: 6, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 50, y: 12, w: 5, h: 4, roof: 'tile', wall: 'stone', door: 2, windows: [0, 4], to: 'mb.lockhouse', spawn: [5, 7], lit: true },
       { type: 'house', x: 3, y: 26, w: 9, h: 5, roof: 'tile', door: 4, windows: [1, 2, 6, 7], chimney: true, to: 'mb.inn', spawn: [6, 8], lit: true, sign: true, signX: 2 },
-      { type: 'house', x: 33, y: 26, w: 6, h: 3, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mb.exchange', locked: 'mb.door_kayo' },
+      { type: 'house', x: 33, y: 26, w: 6, h: 3, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mb.exchange', locked: 'mb.door_haru' },
       { type: 'house', x: 44, y: 26, w: 7, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 3, y: 35, w: 7, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 36, y: 35, w: 7, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 5], to: 'mb.exchange', locked: 'mb.door_locked' },
@@ -155484,7 +155484,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mb_take', x: 20, y: 17, dir: 'down', talk: [{ if: 'mb1_done', scene: 'mb.take_after' }, { scene: 'mb.take_city' }] },
       { id: 'mb_masa', x: 16, y: 25, dir: 'down', talk: 'mb.masa' },
       { id: 'mb_masu', x: 22, y: 25, dir: 'down', talk: 'mb.masu' },
-      { id: 'mb_kayo', x: 36, y: 30, dir: 'down', if: '!mb_ichi_lost|mb_ichi_found', talk: [{ if: 'mb_ichi_found', scene: 'mb.kayo_after' }, { scene: 'mb.kayo_idle' }] },
+      { id: 'mb_haru', x: 36, y: 30, dir: 'down', if: '!mb_ichi_lost|mb_ichi_found', talk: [{ if: 'mb_ichi_found', scene: 'mb.haru_after' }, { scene: 'mb.haru_idle' }] },
       { id: 'mb_ichi', x: 37, y: 31, dir: 'left', if: 'mb_ichi_found', talk: 'mb.ichi_after' },
     ],
     exits: [
@@ -156099,7 +156099,7 @@ narr: {渡|わた}し{場|ば} の {事務所|じむしょ} 。 {今|いま} は
 @scene mb.door_kura
 narr: {白|しろ}い {壁|かべ} の {蔵|くら} 。 {重|おも}い {戸|と} に {錠|じょう} が かかって いる 。 || A white-walled storehouse. A lock hangs on the heavy door.
 
-@scene mb.door_kayo
+@scene mb.door_haru
 narr: {小|ちい}さな {家|いえ} 。 {中|なか} から 、 {子供|こども} の {笑|わら}い{声|ごえ} が {聞|き}こえる 。 || A small house. A child's laughter comes from inside.
 ?(mb_ichi_found) narr: {戸|と} の {前|まえ} に 、 {小|ちい}さな {草履|ぞうり} が {揃|そろ}えて {置|お}いて ある 。 || A small pair of sandals has been set neatly by the door.
 
@@ -156113,11 +156113,11 @@ mb_take: {藤屋|ふじや} の {米|こめ} 、 {今週|こんしゅう} で {�
 @scene mb.take_after
 mb_take: {札|ふだ} が {読|よ}める って 、 いい な ！ {荷|に} が {真|ま}っ{直|す}ぐ {着|つ}く ！ || Plaques you can read — what a thing! The cargo goes straight there!
 
-@scene mb.kayo_idle
-mb_kayo: うち の イチ 、 {橋|はし} を {数|かぞ}える の が {好|す}き なん です 。 {名前|なまえ} が {消|き}えて 、 {寂|さび}しがって います 。 || My Ichi loves counting the bridges. Now the names are gone, he misses them.
+@scene mb.haru_idle
+mb_haru: うち の イチ 、 {橋|はし} を {数|かぞ}える の が {好|す}き なん です 。 {名前|なまえ} が {消|き}えて 、 {寂|さび}しがって います 。 || My Ichi loves counting the bridges. Now the names are gone, he misses them.
 
-@scene mb.kayo_after
-mb_kayo: あの {夜|よる} は 、 {本当|ほんとう} に ありがとう ございました 。 イチ は もう 、 {一人|ひとり} で {川|かわ} の そば に {行|い}きません 。 …… たぶん 。 || Thank you so much, for that night. Ichi doesn't go near the canal alone any more. …I think.
+@scene mb.haru_after
+mb_haru: あの {夜|よる} は 、 {本当|ほんとう} に ありがとう ございました 。 イチ は もう 、 {一人|ひとり} で {川|かわ} の そば に {行|い}きません 。 …… たぶん 。 || Thank you so much, for that night. Ichi doesn't go near the canal alone any more. …I think.
 
 @scene mb.ichi_after
 mb_ichi: {橋|はし} の {名前|なまえ} 、 {全部|ぜんぶ} {覚|おぼ}えた よ ！ {八百|はっぴゃく} は まだ だ けど ！ || I learned all the bridges' names! Not all eight hundred yet!
@@ -156365,23 +156365,23 @@ mb_uno: おはよう 。 {朝|あさ} ご{飯|はん} は {潮硝子|しおが�
 :end
 
 @scene mb.uno_evening
-# Staged: you sit down to supper at the inn; the door bangs open; Kayo, out of breath, a lantern in her hand; Uno
+# Staged: you sit down to supper at the inn; the door bangs open; Haru, out of breath, a lantern in her hand; Uno
 # stands; your companion is already on their feet; you pick up your things.
 mb_uno: {夕飯|ゆうはん} {出来|でき}てる よ 。 {座|すわ}って ── || Supper's ready. Sit yourselves ──
 !shake 1
-mb_kayo: イチ が …… うち の イチ が 、 {帰|かえ}って {来|こ}ない ん です ！ {橋|はし} を {数|かぞ}えに {行|い}く 、 って {言|い}った きり …… ！ || Ichi — my Ichi hasn't come home! He said he was going to count the bridges, and then…!
+mb_haru: イチ が …… うち の イチ が 、 {帰|かえ}って {来|こ}ない ん です ！ {橋|はし} を {数|かぞ}えに {行|い}く 、 って {言|い}った きり …… ！ || Ichi — my Ichi hasn't come home! He said he was going to count the bridges, and then…!
 mb_uno: {暗|くら}く なった のに …… {運河|うんが} の {方|ほう} かい ？ || And it's dark already… Down by the canals?
-mb_kayo: {白|しろ}い {蔵|くら} の {並|なら}び の {方|ほう} へ 。 {船頭|せんどう} の カンスケ さん の {舟|ふね} を {見|み}に よく {行|い}く ん です 。 || Towards Warehouse Row. He often goes to look at Kansuke the boatman's boat.
+mb_haru: {白|しろ}い {蔵|くら} の {並|なら}び の {方|ほう} へ 。 {船頭|せんどう} の カンスケ さん の {舟|ふね} を {見|み}に よく {行|い}く ん です 。 || Towards Warehouse Row. He often goes to look at Kansuke the boatman's boat.
 ?(comp=nao) comp: {行|い}く ぞ 。 {子供|こども} の {足|あし} なら 、 まだ {遠|とお}く は ない 。 || Let's go. On a child's legs, he can't have got far.
 ?(comp=mio) comp: {一緒|いっしょ} に {探|さが}します 。 {大丈夫|だいじょうぶ} 、 きっと {見|み}つかります 。 || We'll help you look. It'll be all right, we'll find him.
 ?(comp=ren) comp: {灯|ひ} を {持|も}って いきます 。 {暗|くら}い {水辺|みずべ} で は 、 {灯|ひ} が {目印|めじるし} に なる 。 || I'll bring the lamp. By dark water, a light is something to find your way to.
 ?(comp=suzu) comp: {行|い}きましょう 。 …… {大|おお}きな {声|こえ} で {呼|よ}ぶ の は 、 {私|わたし} の {得意|とくい} よ 。 || Let's go. …Calling out loud is my speciality.
 !set mb_night mb_ichi_lost
 !warp mb.exchange 6 31 down
-!journal {夜|よる} 。 カヨ さん の {息子|むすこ} イチ が 、 {運河|うんが} で {迷子|まいご} に なった 。 {蔵|くら} の {並|なら}び へ 。 || Night. Kayo's son Ichi is lost by the canals. To Warehouse Row.
+!journal {夜|よる} 。 ハル さん の {息子|むすこ} イチ が 、 {運河|うんが} で {迷子|まいご} に なった 。 {蔵|くら} の {並|なら}び へ 。 || Night. Haru's son Ichi is lost by the canals. To Warehouse Row.
 
 @scene mb.night_pier
-narr: …… {渡|わた}し{場|ば} の {方|ほう} じゃ ない 。 カヨ さん は 、 {蔵|くら} の {並|なら}び と {言|い}って いた 。 {東|ひがし} の {道|みち} だ 。 || …Not the pier. Kayo said Warehouse Row. The east road.
+narr: …… {渡|わた}し{場|ば} の {方|ほう} じゃ ない 。 ハル さん は 、 {蔵|くら} の {並|なら}び と {言|い}って いた 。 {東|ひがし} の {道|みち} だ 。 || …Not the pier. Haru said Warehouse Row. The east road.
 !warp mb.exchange 22 38 up
 
 @scene mb.kansuke_night
@@ -156410,10 +156410,10 @@ mb_ichi: {一番|いちばん} の {橋|はし} は 、 「{結|むす}ぶ」 {�
 !call mb.morning_after
 
 @scene mb.morning_after
-# Staged: dawn over the Exchange; Kayo holds Ichi; she bows deeply; Ichi waves; your companion's line; morning light.
+# Staged: dawn over the Exchange; Haru holds Ichi; she bows deeply; Ichi waves; your companion's line; morning light.
 !unset mb_night
-mb_kayo: …… ありがとう ございました 。 {本当|ほんとう} に 、 ありがとう …… 。 || …Thank you. Thank you, truly…
-!gesture mb_kayo nod pc
+mb_haru: …… ありがとう ございました 。 {本当|ほんとう} に 、 ありがとう …… 。 || …Thank you. Thank you, truly…
+!gesture mb_haru nod pc
 mb_ichi: {橋|はし} に {名前|なまえ} が あったら 、 {迷|まよ}わなかった の に 。 || If the bridges had names, I wouldn't have got lost.
 ?(comp=nao) comp[think]: …… {子供|こども} が {帰|かえ}れない {町|まち} は 、 だめ だ 。 {一番|いちばん} の {橋|はし} 、 {行|い}く ぞ 。 || …A city a child can't find his way home in is no good. To the first bridge.
 ?(comp=mio) comp[think]: {荷物|にもつ} だけ じゃ ない ん だ ね 。 {名前|なまえ} が {消|き}える と 、 {人|ひと} も {帰|かえ}れなく なる 。 || It's not just cargo. When the names go, people can't get home either.
@@ -157833,13 +157833,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'shaved', hairColor: 6, cloth: ['#3a3a44', '#2a2a32', '#c8b890'], shape: 'apron', acc: ['headband'], bandCol: '#c8b890', age: 'old' },
     portrait: { eyes: 'sharp', style: 'shaved', age: 'old', acc: ['headband'], bandCol: '#c8b890', bg: '#22222a' },
   });
-  // Kanta: Sōbē's apprentice, ink to the elbows, the boy who ran to the Exchange with a blank block.
-  ch('mp_kanta', {
-    name: { en: 'Kanta', jp: 'カンタ' }, voice: { pitch: 1.22 }, size: 'child',
+  // Sanpei: Sōbē's apprentice, ink to the elbows, the boy who ran to the Exchange with a blank block.
+  ch('mp_sanpei', {
+    name: { en: 'Sanpei', jp: 'サンペイ' }, voice: { pitch: 1.22 }, size: 'child',
     look: { skin: 2, hair: 'short', hairColor: 0, cloth: ['#4a5a7a', '#3a4862', '#d8d0bc'], shape: 'apron', acc: [] },
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#26304a' },
   });
-  // Miyo: Kanta's little sister, who wants to set type and is told she is too small (The Apprentice Printer).
+  // Miyo: Sanpei's little sister, who wants to set type and is told she is too small (The Apprentice Printer).
   ch('mp_miyo', {
     name: { en: 'Miyo', jp: 'ミヨ' }, voice: { pitch: 1.34 }, size: 'child',
     look: { skin: 2, hair: 'bob', hairColor: 0, cloth: ['#a8584a', '#86443a', '#efe2c8'], shape: 'tunic', acc: [] },
@@ -158049,7 +158049,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 2, y: 2, w: 9, h: 5, roof: 'tile', door: 4, windows: [1, 2, 6, 7], to: 'mp.workshop', spawn: [6, 7], lit: true, sign: true, signX: 2 },
       { type: 'house', x: 11, y: 3, w: 5, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 2, y: 12, w: 8, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 6], to: 'mp.pressroom', spawn: [5, 7], lit: true },
-      { type: 'house', x: 10, y: 25, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mp.blockprint', locked: 'mp.door_kanta' },
+      { type: 'house', x: 10, y: 25, w: 6, h: 4, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mp.blockprint', locked: 'mp.door_sanpei' },
       { type: 'house', x: 26, y: 2, w: 10, h: 5, roof: 'slate', door: 5, windows: [1, 2, 7, 8], to: 'mp.guild', spawn: [6, 7], lit: true, sign: true, signX: 2 },
       { type: 'house', x: 37, y: 3, w: 6, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 30, y: 22, w: 7, h: 4, roof: 'tile', door: null },
@@ -158069,7 +158069,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'flowerpot', x: 25, y: 7 }, { p: 'mailbox', x: 33, y: 8, scene: 'mp.guild_box' },
     ],
     npcs: [
-      { id: 'mp_kanta', x: 7, y: 8, dir: 'down', if: '!mp_sobe_met', talk: 'mp.kanta_first' },
+      { id: 'mp_sanpei', x: 7, y: 8, dir: 'down', if: '!mp_sobe_met', talk: 'mp.sanpei_first' },
       { id: 'mp_kakeru', x: 30, y: 9, dir: 'left', talk: [{ if: 'mb2_done', scene: 'mp.kakeru_after' }, { scene: 'mp.kakeru' }] },
       { id: 'mp_tokube', x: 26, y: 12, dir: 'left', if: '!mb2_done', talk: 'mp.tokube' },
       { id: 'mp_miyo', x: 13, y: 29, dir: 'up', if: 'mp_sobe_met', talk: [{ if: 'quest.mp_apprentice=done', scene: 'mp.miyo_after' }, { if: 'quest.mp_apprentice=1', scene: 'mp.miyo_teach' }, { scene: 'mp.miyo_first' }] },
@@ -158189,7 +158189,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'mp_typecase', x: 1, y: 2 }, { p: 'mp_typecase', x: 2, y: 2 }, { p: 'mp_typecase', x: 9, y: 2 }, { p: 'mp_typecase', x: 10, y: 2 },
       { p: 'ink', x: 7, y: 3 }, { p: 'table', x: 8, y: 5, scene: 'mp.press_proofs' }, { p: 'laundry', x: 1, y: 6 },
     ],
-    npcs: [{ id: 'mp_kanta', x: 7, y: 5, dir: 'left', if: 'mp_sobe_met', talk: [{ if: 'mb2_done', scene: 'mp.kanta_after' }, { scene: 'mp.kanta_press' }] }],
+    npcs: [{ id: 'mp_sanpei', x: 7, y: 5, dir: 'left', if: 'mp_sobe_met', talk: [{ if: 'mb2_done', scene: 'mp.sanpei_after' }, { scene: 'mp.sanpei_press' }] }],
   });
   // the courier guild hall: the courier board, the letter racks
   interior('mp.guild', T('The Courier Guild', '{飛脚|ひきゃく} の {組合|くみあい}'), 13, 9, 6, 'mp.blockprint', [31, 7], {
@@ -158412,8 +158412,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the census, continued ----------------------------------------------------------------------------------------
   const BRIDGES = {
-    hangi: { clue: T('Kanta: "It\'s in front of the master\'s workshop. The blocks go over it. Woodblock Bridge!"', '「{親方|おやかた} の {仕事場|しごとば} の {前|まえ} の {橋|はし} 。 {版木|はんぎ} を {運|はこ}ぶ から 、 {版木橋|はんぎばし} ！」'), name: '{版木橋|はんぎばし}', kana: 'はんぎばし', en: 'Woodblock Bridge',
-      near: ['{墨橋|すみばし}', 'すみばし', 'Kanta names it for the woodblocks carried over it: {版木橋|はんぎばし}.'], third: ['{幕橋|まくばし}', 'まくばし'] },
+    hangi: { clue: T('Sanpei: "It\'s in front of the master\'s workshop. The blocks go over it. Woodblock Bridge!"', '「{親方|おやかた} の {仕事場|しごとば} の {前|まえ} の {橋|はし} 。 {版木|はんぎ} を {運|はこ}ぶ から 、 {版木橋|はんぎばし} ！」'), name: '{版木橋|はんぎばし}', kana: 'はんぎばし', en: 'Woodblock Bridge',
+      near: ['{墨橋|すみばし}', 'すみばし', 'Sanpei names it for the woodblocks carried over it: {版木橋|はんぎばし}.'], third: ['{幕橋|まくばし}', 'まくばし'] },
     sumi: { clue: T('Kakeru: "The ink-makers wash their brushes under it, so the water\'s black. Ink Bridge."', '「{墨屋|すみや} が {下|した} で {筆|ふで} を {洗|あら}う から 、 {水|みず} が {黒|くろ}い 。 {墨橋|すみばし} だ 。」'), name: '{墨橋|すみばし}', kana: 'すみばし', en: 'Ink Bridge',
       near: ['{版木橋|はんぎばし}', 'はんぎばし', 'The water under it is black with ink: {墨|すみ}. {墨橋|すみばし}.'], third: ['{中橋|なかばし}', 'なかばし'] },
     maku: { clue: T('Hayashi: "They wash the theatre\'s curtain and hang it on this bridge to dry. Curtain Bridge, see?"', '「{芝居小屋|しばいごや} の {幕|まく} を {洗|あら}って 、 この {橋|はし} に {干|ほ}す ん だ 。 だから {幕橋|まくばし} 。」'), name: '{幕橋|まくばし}', kana: 'まくばし', en: 'Curtain Bridge',
@@ -158489,15 +158489,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.script.add(`
 @scene mp.arrive
-# Staged: up the Cross Canal past the drying racks; sheets hang on the lines, blank; Kanta runs to meet you.
+# Staged: up the Cross Canal past the drying racks; sheets hang on the lines, blank; Sanpei runs to meet you.
 !set mp_arrived
 !chapter mb2
 !gesture pc lookroad up
 narr: {運河|うんが} を {上|のぼ}る と 、 {紙|かみ} と {墨|すみ} の {匂|にお}い が {強|つよ}く なった 。 {干|ほ}し{場|ば} の {綱|つな} に 、 {刷|す}った {紙|かみ} が {何百枚|なんびゃくまい} も {下|さ}がって いる 。 || Up the canal, the smell of paper and ink grows stronger. Hundreds of printed sheets hang from the drying lines.
 !card {第四章|だいよんしょう} ・ {版木|はんぎ} と {灯|あか}り || Chapter 4 — Manybridge: Blockprint and Footlights
 narr: …… {近|ちか}づく と 、 {分|わ}かる 。 {紙|かみ} は 、 どれ も {白|しろ}い 。 {刷|す}った はず の {字|じ} が 、 ない 。 || …Closer, you see it: every sheet is white. The letters that were printed on them are gone.
-!look mp_kanta pc
-mp_kanta: こっち です ！ {親方|おやかた} の {仕事場|しごとば} は 、 こっち ！ || This way! The master's workshop is this way!
+!look mp_sanpei pc
+mp_sanpei: こっち です ！ {親方|おやかた} の {仕事場|しごとば} は 、 こっち ！ || This way! The master's workshop is this way!
 ?(comp=nao) comp[think]: {刷|す}った {先|さき} から {白|しろ}く なる の か 。 …… {配達|はいたつ} する {前|まえ} に {消|き}える {手紙|てがみ} だ な 。 || They're going blank as fast as they're printed. …Letters that vanish before they're even delivered.
 ?(comp=mio) comp[worry]: {全部|ぜんぶ} …… {白|しろ}い 。 {誰|だれ} か が 、 {一枚|いちまい} ずつ {心|こころ} を {込|こ}めて {刷|す}った のに 。 || All of them… white. Someone printed every one of these with care.
 ?(comp=ren) comp[surprise]: {灯籠|とうろう} の {名札|なふだ} を {刷|す}る {所|ところ} も 、 この {辺|あた}り の はず です 。 …… {急|いそ}ぎましょう 。 || The place that prints the lantern name slips must be round here too. …Let's hurry.
@@ -158505,12 +158505,12 @@ mp_kanta: こっち です ！ {親方|おやかた} の {仕事場|しごとば
 !quest mp_main start
 !journal {版木|はんぎ} の {通|とお}り 。 {刷|す}った {紙|かみ} が {白|しろ}く なって いく 。 {宗兵衛|そうべえ} の {仕事場|しごとば} へ 。 || Blockprint Row. Printed sheets are going blank. To Sōbē's workshop.
 
-@scene mp.kanta_first
+@scene mp.sanpei_first
 !faceplayer
-mp_kanta: {親方|おやかた} が {待|ま}って います 。 {中|なか} へ どうぞ ！ || The master's waiting. Go on in!
+mp_sanpei: {親方|おやかた} が {待|ま}って います 。 {中|なか} へ どうぞ ！ || The master's waiting. Go on in!
 
 @scene mp.sobe_first
-# Staged: Sōbē at his desk among the racks; he turns a block in his hands; Kanta hovers at the door.
+# Staged: Sōbē at his desk among the racks; he turns a block in his hands; Sanpei hovers at the door.
 !faceplayer
 mp_sobe: …… {八百橋|やおばし} の {橋|はし} に {名前|なまえ} を {戻|もど}した の は 、 あんた たち か 。 {礼|れい} を {言|い}う 。 || …So you're the ones who gave the bridges their names back. My thanks.
 !gesture mp_sobe present pc prop=paper
@@ -158522,7 +158522,7 @@ mp_sobe: {版木|はんぎ} が {白|しろ}ければ 、 {刷|す}った {物|�
 ?(comp=suzu) comp: {番付|ばんづけ} が {刷|す}れない と 、 {芝居小屋|しばいごや} も {困|こま}る わ ね 。 || If the playbills can't be printed, the playhouse is in trouble too.
 mp_sobe: {新|あたら}しく {彫|ほ}った {版木|はんぎ} なら 、 まだ {字|じ} が {残|のこ}る 。 {組|く}んだ ばかり の {活字|かつじ} も だ 。 …… {川開|かわびら}き の {知|し}らせ を 、 {一枚|いちまい} {刷|す}って みて くれない か 。 {世話役|せわやく} の トミ さん が 、 {待|ま}って いる 。 || A newly cut block still holds its letters. So does type that's just been set. …Would you try printing one notice for the Opening of the River? Tomi of the festival committee is waiting on it.
 ?(comp=suzu) comp[smile]: {川開|かわびら}き ！ {花火|はなび} の {上|あ}がる 、 あの お{祭|まつ}り ね 。 || The Opening of the River! The festival with the fireworks.
-mp_sobe: {刷|す}り{場|ば} は {隣|となり} だ 。 カンタ が {手伝|てつだ}う 。 {何|なに} を どう {書|か}く か は 、 あんた の {好|す}き に して くれ 。 || The press room is next door. Kanta will help. What you write and how is up to you.
+mp_sobe: {刷|す}り{場|ば} は {隣|となり} だ 。 サンペイ が {手伝|てつだ}う 。 {何|なに} を どう {書|か}く か は 、 あんた の {好|す}き に して くれ 。 || The press room is next door. Sanpei will help. What you write and how is up to you.
 !set mp_sobe_met
 !set mp_press_open
 !quest mp_main 1
@@ -158580,15 +158580,15 @@ narr: {刷|す}り{台|だい} 。 {活字|かつじ} の {箱|はこ} と 、 {
 narr: {刷|す}り{上|あ}がった {紙|かみ} が 、 {乾|かわ}く の を {待|ま}って いる 。 || Freshly printed sheets wait to dry.
 ?(press_printed) narr: あなた の {刷|す}った {一枚|いちまい} も 、 その {中|なか} に ある 。 || Yours is among them.
 
-@scene mp.kanta_press
+@scene mp.sanpei_press
 !faceplayer
-?(quest.mp_main=1&!press_notice) mp_kanta: {刷|す}り{台|だい} の {横|よこ} に 、 {活字|かつじ} の {箱|はこ} が あります 。 {一行|いちぎょう} ずつ 、 {好|す}き な {版|はん} を {選|えら}んで ください ！ || The type cases are beside the press. Choose the block you like for each line!
+?(quest.mp_main=1&!press_notice) mp_sanpei: {刷|す}り{台|だい} の {横|よこ} に 、 {活字|かつじ} の {箱|はこ} が あります 。 {一行|いちぎょう} ずつ 、 {好|す}き な {版|はん} を {選|えら}んで ください ！ || The type cases are beside the press. Choose the block you like for each line!
 ?(quest.mp_main=1&!press_notice) !end
-mp_kanta: {刷|す}り{台|だい} は 、 いつ でも {使|つか}って いい って 、 {親方|おやかた} が 。 {話|はなし} でも {知|し}らせ でも ！ || The master says you can use the press any time. Stories or notices!
+mp_sanpei: {刷|す}り{台|だい} は 、 いつ でも {使|つか}って いい って 、 {親方|おやかた} が 。 {話|はなし} でも {知|し}らせ でも ！ || The master says you can use the press any time. Stories or notices!
 
-@scene mp.kanta_after
+@scene mp.sanpei_after
 !faceplayer
-mp_kanta: {刷|す}った {物|もの} に 、 {字|じ} が ちゃんと {残|のこ}る 。 {当|あ}たり{前|まえ} の こと が 、 こんな に うれしい なんて 。 || What we print keeps its letters. I never knew something so ordinary could make me so happy.
+mp_sanpei: {刷|す}った {物|もの} に 、 {字|じ} が ちゃんと {残|のこ}る 。 {当|あ}たり{前|まえ} の こと が 、 こんな に うれしい なんて 。 || What we print keeps its letters. I never knew something so ordinary could make me so happy.
 
 @scene mp.pressboard
 narr: {刷|す}り{場|ば} の {前|まえ} の {掲示板|けいじばん} 。 {刷|す}り{物|もの} が {留|と}めて ある 。 || The board outside the press room, with prints pinned to it.
@@ -158636,8 +158636,8 @@ narr: {組合|くみあい} の {郵便箱|ゆうびんばこ} 。 {投|な}げ{
 @scene mp.sign_blockprint
 narr: 「{版木|はんぎ} の {通|とお}り 。 {南|みなみ} に {札場|ふだば} 、 {東|ひがし} に {芝居|しばい} の {通|とお}り 。」 || "Blockprint Row. South to the Tally Exchange; east to Playhouse Row."
 
-@scene mp.door_kanta
-narr: カンタ と ミヨ の {家|いえ} 。 {戸|と} は {閉|し}まって いる 。 || Kanta and Miyo's house. The door is shut.
+@scene mp.door_sanpei
+narr: サンペイ と ミヨ の {家|いえ} 。 {戸|と} は {閉|し}まって いる 。 || Sanpei and Miyo's house. The door is shut.
 
 @scene mp.door_locked
 narr: {戸|と} は {閉|し}まって いる 。 || The door is shut.
@@ -159147,7 +159147,7 @@ narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひ�
 
 @scene mp.chapter_end
 # Staged: fade; the next morning on Playhouse Row: lanterns coming down, boats going upstream for the first time this
-# year; Kanta with the morning's broadsheet; Kakeru with the courier's news; Sōbē's blocks are cut again.
+# year; Sanpei with the morning's broadsheet; Kakeru with the courier's news; Sōbē's blocks are cut again.
 !fade out
 !set mb2_done
 !quest mp_main done
@@ -159155,7 +159155,7 @@ narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひ�
 !fade in
 narr: {次|つぎ} の {朝|あさ} 。 {川|かわ} を 、 {舟|ふね} が {上|のぼ}って いく 。 {今年|ことし} {初|はじ}めて 、 {葦|あし}ノ{瀬|せ} の {方|ほう} へ 。 || The next morning. Boats are going up the river: for the first time this year, toward Reedwake.
 narr: {川開|かわびら}き が {終|お}わって 、 {川|かわ} の {道|みち} が {開|ひら}いた 。 || The Opening is over, and the river road is open.
-narr: カンタ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」 || Kanta comes running, waving a printed sheet. "Broadsheet! This morning's broadsheet!"
+narr: サンペイ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」 || Sanpei comes running, waving a printed sheet. "Broadsheet! This morning's broadsheet!"
 !note mp_kawaraban
 narr: 「{川開|かわびら}き 、 {無事|ぶじ} {終|お}わる 。 {芝居小屋|しばいごや} の {台本|だいほん} 、 {名前|なまえ} {戻|もど}る 。 {旅|たび} の {者|もの} {二人|ふたり} 、 {奈落|ならく} より {帰|かえ}る 。」 || "The Opening ends safely. The playhouse's script has its names again. Two travellers return from the Understage."
 ?(press_printed) narr: {隅|すみ} に 、 {小|ちい}さく ： 「{刷|す}り{場|ば} の {話|はなし} 、 {町|まち} で {評判|ひょうばん} 。」 || In the corner, in small type: "The press room's story: the talk of the town."
@@ -159461,7 +159461,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
-  // the people elsewhere who take part: Sen (the census), Sōbē (the apprentice), Kanta (the ghostwriter's evidence)
+  // the people elsewhere who take part: Sen (the census), Sōbē (the apprentice), Sanpei (the ghostwriter's evidence)
   const npcIn = (id) => { for (const m in C.maps) { const n = (C.maps[m].npcs || []).find((x) => x.id === id && Array.isArray(x.talk)); if (n) return n; } return null; };
   const sen = npcIn('mb_sen');
   if (sen) {
@@ -159472,8 +159472,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   const sobe = npcIn('mp_sobe');
   if (sobe) sobe.talk.unshift({ if: 'quest.mp_apprentice=1', scene: 'mp.sobe_miyo' });
-  const kanta = npcIn('mp_kanta');
-  if (kanta) kanta.talk.unshift({ if: 'quest.mp_ghost=1&!mp_ghost_kanta', scene: 'mp.ghost_kanta' });
+  const sanpei = npcIn('mp_sanpei');
+  if (sanpei) sanpei.talk.unshift({ if: 'quest.mp_ghost=1&!mp_ghost_sanpei', scene: 'mp.ghost_sanpei' });
 })(RB.content);
 
 RB.script.add(`
@@ -159496,7 +159496,7 @@ mb_sen: お{礼|れい} に 、 {刷|す}り{場|ば} で {刷|す}った {町|�
 ?(mb_pl_hangi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {近|ちか}く で 、 カンタ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。 || Nearby, Kanta goes over the bridge with an armful of woodblocks.
+narr: {近|ちか}く で 、 サンペイ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。 || Nearby, Sanpei goes over the bridge with an armful of woodblocks.
 !challenge mb.census_hangi
 !set mb_pl_hangi
 !var mp_census + 1
@@ -159561,22 +159561,22 @@ mp_shinobu: …… {持|も}って いって 。 わたし が {持|も}って �
 !give mp_manuscript
 :later
 
-@scene mp.ghost_kanta
+@scene mp.ghost_sanpei
 !faceplayer
-mp_kanta: リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつ も シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。 || Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press.
-mp_kanta: {親方|おやかた} は 、 {知|し}って いて {黙|だま}って いる みたい だけど 。 || The master knows and keeps quiet about it, I think.
-!set mp_ghost_kanta
-!journal カンタ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。 || Kanta says it is always Shinobu who brings the manuscripts.
+mp_sanpei: リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつ も シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。 || Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press.
+mp_sanpei: {親方|おやかた} は 、 {知|し}って いて {黙|だま}って いる みたい だけど 。 || The master knows and keeps quiet about it, I think.
+!set mp_ghost_sanpei
+!journal サンペイ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。 || Sanpei says it is always Shinobu who brings the manuscripts.
 
 @scene mp.shinobu_evidence
 !faceplayer
 ?(!item.mp_manuscript) mp_shinobu: {机|つくえ} の {原稿|げんこう} 、 {見|み}て くれた ？ {日付|ひづけ} が {入|はい}って いる の 。 || Did you look at the manuscripts on my desk? They're dated.
-?(!mp_ghost_kanta) mp_shinobu: {刷|す}り{場|ば} の カンタ くん に も 、 {聞|き}いて みて 。 || Ask Kanta at the press, too.
-?(item.mp_manuscript&mp_ghost_kanta) mp_shinobu: …… リュウスイ の {家|いえ} は 、 {通|とお}り の {向|む}こう 。 わたし も {行|い}く わ 。 {怖|こわ}い けど 。 || …Ryūsui's house is across the street. I'll come too. I'm scared, but I'll come.
+?(!mp_ghost_sanpei) mp_shinobu: {刷|す}り{場|ば} の サンペイ くん に も 、 {聞|き}いて みて 。 || Ask Sanpei at the press, too.
+?(item.mp_manuscript&mp_ghost_sanpei) mp_shinobu: …… リュウスイ の {家|いえ} は 、 {通|とお}り の {向|む}こう 。 わたし も {行|い}く わ 。 {怖|こわ}い けど 。 || …Ryūsui's house is across the street. I'll come too. I'm scared, but I'll come.
 
 @scene mp.ryusui
 !faceplayer
-!if quest.mp_ghost=1&item.mp_manuscript&mp_ghost_kanta -> meet
+!if quest.mp_ghost=1&item.mp_manuscript&mp_ghost_sanpei -> meet
 ?(mp_ghost_broker) mp_ryusui: {直|なお}す ところ を {言|い}う の は 、 {書|か}く より {易|やさ}しい 。 …… {少|すこ}し だけ な 。 || Saying what to fix is easier than writing. …A little.
 ?(mp_ghost_broker) !end
 mp_ryusui: …… {何|なん} の {用|よう} だ 。 {私|わたし} は {忙|いそが}しい 。 {次|つぎ} の {本|ほん} を {書|か}いて いる ところ で ね 。 || …What do you want? I'm busy. I'm in the middle of writing my next book.
@@ -159610,7 +159610,7 @@ mp_ryusui: …… {何|なん} の {用|よう} だ 。 {私|わたし} は {忙
 # ---- The Apprentice Printer ----
 @scene mp.miyo_first
 !faceplayer
-?(!mp_miyo_met) mp_miyo: お{兄|にい}ちゃん の カンタ は 、 {刷|す}り{場|ば} で {働|はたら}いて いる の 。 わたし も {刷|す}り{師|し} に なりたい 。 でも {親方|おやかた} は 、 「まだ {早|はや}い」 って 。 || My brother Kanta works at the press. I want to be a printer too. But the master says I'm too young.
+?(!mp_miyo_met) mp_miyo: お{兄|にい}ちゃん の サンペイ は 、 {刷|す}り{場|ば} で {働|はたら}いて いる の 。 わたし も {刷|す}り{師|し} に なりたい 。 でも {親方|おやかた} は 、 「まだ {早|はや}い」 って 。 || My brother Sanpei works at the press. I want to be a printer too. But the master says I'm too young.
 ?(!mp_miyo_met) mp_miyo: …… {活字|かつじ} の {並|なら}べ{方|かた} 、 {教|おし}えて くれる ？ {組|く}めたら 、 {親方|おやかた} に {見|み}せる の ！ || …Will you show me how type is set? If I can set a forme, I'll show the master!
 ?(!mp_miyo_met) !quest mp_apprentice start
 ?(!mp_miyo_met) !set mp_miyo_met
@@ -159635,7 +159635,7 @@ mp_miyo: {親方|おやかた} に 、 {見|み}せて くれた ？ {仕事場|
 narr: ミヨ の {組|く}んだ {版|はん} を 、 {宗兵衛|そうべえ} に {見|み}せた 。 || You show Sōbē the forme Miyo set.
 mp_sobe: …… {行|ぎょう} が {揃|そろ}って いる 。 {逆|さか}さま も {正|ただ}しい 。 {誰|だれ} が {組|く}んだ ？ || …The lines are even. The type is the right way round, backwards. Who set this?
 mp_sobe: ミヨ か 。 {教|おし}えた の は 、 あんた だ な 。 {教|おし}え{方|かた} が いい 。 {説明|せつめい} が {正|ただ}しい と 、 {手|て} も {正|ただ}しく {動|うご}く 。 || Miyo. And you taught her. You teach well: when the explanation is right, the hands move right.
-mp_sobe: {明日|あした} から 、 {刷|す}り{場|ば} に {来|こ}い と {言|い}って くれ 。 カンタ の {隣|となり} で 。 || Tell her to come to the press from tomorrow. Next to Kanta.
+mp_sobe: {明日|あした} から 、 {刷|す}り{場|ば} に {来|こ}い と {言|い}って くれ 。 サンペイ の {隣|となり} で 。 || Tell her to come to the press from tomorrow. Next to Sanpei.
 !quest mp_apprentice done
 !journal ミヨ は {刷|す}り{場|ば} の {見習|みなら}い に なった 。 || Miyo is an apprentice at the press now.
 
@@ -159847,7 +159847,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         R(['happy', 'home'], '{家|いえ} に {帰|かえ}る {話|はなし} は いい ね 。 {宿屋|やどや} が {言|い}う の も {変|へん} だ けど 。', 'Stories about getting home are nice. An odd thing for an innkeeper to say.'),
         R([], '{読|よ}んだ よ 。 {宿|やど} の お{客|きゃく}さん に も {見|み}せて おく ね 。', 'I read it. I\'ll show the guests too.'),
       ] },
-      { id: 'mb_kayo', npc: 'mb_kayo', map: 'mb.exchange', where: T('The Exchange district, Manybridge'), if: 'mb_ichi_found', rules: [
+      { id: 'mb_haru', npc: 'mb_haru', map: 'mb.exchange', where: T('The Exchange district, Manybridge'), if: 'mb_ichi_found', rules: [
         R(['child'], '{女|おんな} の {子|こ} が {橋|はし} を {数|かぞ}える {話|はなし} …… うち の イチ みたい です 。 {寝|ね}る {前|まえ} に {読|よ}んで あげて います 。', 'A little girl counting bridges… just like my Ichi. I read it to him at bedtime.'),
         R(['kind:notice', 'children'], 'お{子|こ}さん は {大人|おとな} と {一緒|いっしょ} に 、 と {書|か}いて くれて 、 ありがとう ございます 。', 'Thank you for writing "children with a grown-up".'),
         R(['kind:notice', 'lost'], '{迷子|まいご} の {知|し}らせ を {見|み}る と 、 あの {夜|よる} を {思|おも}い{出|だ}します 。 …… {見|み}つかります よう に 。', 'A notice about something lost takes me back to that night. …I hope it\'s found.'),
@@ -159904,8 +159904,8 @@ RB.script.add(`
 @scene mp.rx_mb_uno
 !hook press_react mb_uno
 
-@scene mp.rx_mb_kayo
-!hook press_react mb_kayo
+@scene mp.rx_mb_haru
+!hook press_react mb_haru
 
 @scene mp.rx_mb_yoshi
 !hook press_react mb_yoshi
@@ -160442,7 +160442,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     id: 'mp.ghost', kind: 'social', name: { jp: '{代筆|だいひつ} の {貸|か}し', en: 'A Ghostwriter\'s Debt' },
     rules: { wait: true },
     // the automated runs' route: the manuscript, the press's word, Wait (his fear), then the shared name
-    autoRoute: ['s:manuscript', 's:kanta', 'wait', 's:both_names'],
+    autoRoute: ['s:manuscript', 's:sanpei', 'wait', 's:both_names'],
     social: {
       parties: [
         { aid: 'n:ryusui', name: { jp: 'リュウスイ', en: 'Ryūsui' }, stance: 'heated', wants: { en: 'To keep his name, and his readers.' } },
@@ -160452,7 +160452,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         g1: { by: 'n:ryusui', jp: 'あの {話|はなし} は 、 {私|わたし} の {名前|なまえ} で {出|で}た 。 {私|わたし} の もの だ 。', en: 'Those stories came out under my name. They are mine.' },
         g2: { by: 'n:ryusui', jp: '{借金|しゃっきん} は {私|わたし} が {払|はら}った 。 {話|はなし} は 、 その {代|か}わり だ 。', en: 'I paid her debt. The stories were in return.' },
         g3: { by: 'manuscript', jp: '{原稿|げんこう} は {春|はる} 、 シノブ の {字|じ} 。 {本|ほん} は {夏|なつ} 。', en: 'The manuscript: spring, in Shinobu\'s hand. The book: summer.', hidden: true },
-        g4: { by: 'n:kanta', jp: '{原稿|げんこう} を {刷|す}り{場|ば} に {持|も}って {来|き}た の は 、 いつ も シノブ さん でした 。', en: 'Kanta: "It was always Shinobu who brought the manuscripts to the press."', hidden: true },
+        g4: { by: 'n:sanpei', jp: '{原稿|げんこう} を {刷|す}り{場|ば} に {持|も}って {来|き}た の は 、 いつ も シノブ さん でした 。', en: 'Sanpei: "It was always Shinobu who brought the manuscripts to the press."', hidden: true },
         g5: { by: 'n:ryusui', jp: '…… {十年|じゅうねん} {前|まえ} から 、 {一行|いちぎょう} も {書|か}けない ん だ 。', en: '…For ten years I haven\'t been able to write a line.', hidden: true },
       },
       understanding: 3,
@@ -160462,8 +160462,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { id: 'manuscript', kind: 'evidence', label: say('この {原稿|げんこう} の {日付|ひづけ} を {見|み}て ください 。', 'Show the manuscript\'s date'), once: true,
           task: task('g:v_te_kudasai', 'Which asks him to look at the manuscript\'s date?', 'この {原稿|げんこう} の {日付|ひづけ} を {見|み}て ください 。', 'この {原稿|げんこう} の {名前|なまえ} を {消|け}して ください 。', 'That asks him to erase the name.', 'この {原稿|げんこう} の {日付|ひづけ} を {書|か}いて ください 。', 'That asks him to write a date on it.'),
           effect: { reveal: 'g3', understanding: 1 }, says: { en: 'Ryūsui takes the pages. Spring, in her hand. His book came out in summer. He sets them down very carefully.' } },
-        { id: 'kanta', kind: 'evidence', label: say('{刷|す}り{場|ば} の カンタ さん も 、 {覚|おぼ}えて います 。', 'Say Kanta at the press remembers who brought them'), once: true,
-          task: task('g:prt_mo', 'Which says Kanta at the press remembers too?', '{刷|す}り{場|ば} の カンタ さん も 、 {覚|おぼ}えて います 。', '{刷|す}り{場|ば} の カンタ さん は 、 {忘|わす}れて います 。', 'That says Kanta has forgotten.', '{刷|す}り{場|ば} の カンタ さん も 、 {書|か}いて います 。', 'That says Kanta writes too.'),
+        { id: 'sanpei', kind: 'evidence', label: say('{刷|す}り{場|ば} の サンペイ さん も 、 {覚|おぼ}えて います 。', 'Say Sanpei at the press remembers who brought them'), once: true,
+          task: task('g:prt_mo', 'Which says Sanpei at the press remembers too?', '{刷|す}り{場|ば} の サンペイ さん も 、 {覚|おぼ}えて います 。', '{刷|す}り{場|ば} の サンペイ さん は 、 {忘|わす}れて います 。', 'That says Sanpei has forgotten.', '{刷|す}り{場|ば} の サンペイ さん も 、 {書|か}いて います 。', 'That says Sanpei writes too.'),
           effect: { reveal: 'g4', understanding: 1 }, says: { en: 'Shinobu looks up for the first time. "He remembers? He was so small then."' } },
         { id: 'ask_debt', kind: 'ask', label: say('{借金|しゃっきん} は 、 もう {返|かえ}し{終|お}わって います か 。', 'Ask whether the debt is paid off'), once: true,
           task: task('g:v_ta', 'Which asks whether the debt is already paid off?', '{借金|しゃっきん} は 、 もう {返|かえ}し{終|お}わって います か 。', '{借金|しゃっきん} は 、 まだ {借|か}りて います か 。', 'That asks whether she is still borrowing.', '{借金|しゃっきん} は 、 いくら でした か 。', 'That asks how much it was.'),

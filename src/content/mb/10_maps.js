@@ -79,7 +79,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { type: 'house', x: 35, y: 12, w: 6, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 50, y: 12, w: 5, h: 4, roof: 'tile', wall: 'stone', door: 2, windows: [0, 4], to: 'mb.lockhouse', spawn: [5, 7], lit: true },
       { type: 'house', x: 3, y: 26, w: 9, h: 5, roof: 'tile', door: 4, windows: [1, 2, 6, 7], chimney: true, to: 'mb.inn', spawn: [6, 8], lit: true, sign: true, signX: 2 },
-      { type: 'house', x: 33, y: 26, w: 6, h: 3, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mb.exchange', locked: 'mb.door_kayo' },
+      { type: 'house', x: 33, y: 26, w: 6, h: 3, roof: 'tile', wall: 'wood', door: 2, windows: [0, 4], to: 'mb.exchange', locked: 'mb.door_haru' },
       { type: 'house', x: 44, y: 26, w: 7, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 3, y: 35, w: 7, h: 4, roof: 'tile', door: null },
       { type: 'house', x: 36, y: 35, w: 7, h: 4, roof: 'tile', wall: 'wood', door: 3, windows: [1, 5], to: 'mb.exchange', locked: 'mb.door_locked' },
@@ -112,7 +112,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'mb_take', x: 20, y: 17, dir: 'down', talk: [{ if: 'mb1_done', scene: 'mb.take_after' }, { scene: 'mb.take_city' }] },
       { id: 'mb_masa', x: 16, y: 25, dir: 'down', talk: 'mb.masa' },
       { id: 'mb_masu', x: 22, y: 25, dir: 'down', talk: 'mb.masu' },
-      { id: 'mb_kayo', x: 36, y: 30, dir: 'down', if: '!mb_ichi_lost|mb_ichi_found', talk: [{ if: 'mb_ichi_found', scene: 'mb.kayo_after' }, { scene: 'mb.kayo_idle' }] },
+      { id: 'mb_haru', x: 36, y: 30, dir: 'down', if: '!mb_ichi_lost|mb_ichi_found', talk: [{ if: 'mb_ichi_found', scene: 'mb.haru_after' }, { scene: 'mb.haru_idle' }] },
       { id: 'mb_ichi', x: 37, y: 31, dir: 'left', if: 'mb_ichi_found', talk: 'mb.ichi_after' },
     ],
     exits: [

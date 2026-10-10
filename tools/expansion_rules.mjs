@@ -7,7 +7,8 @@
 //     scene's chapter from its id's prefix, C.chapterOfPrefix; post-story scenes, '.post' or '_post' in the id, are
 //     free);
 //  5. concepts: a challenge's declared concepts (responses, constructions, modifiers) are taught by its chapter;
-//  6. no task needs hearing: a listening step carries a transcript.
+//  6. no task needs hearing: a listening step carries a transcript;
+//  8. a new chapter's person never shares a Japanese name with anyone else in the game (two Hayates would read as one).
 // opts.grandfather: { tiers, unknown, fiction } exceptions that predate the rules; opts.unknownTok: Map token -> where.
 export function expansionRules(RB, C, opts = {}) {
   const GF = Object.assign({ tiers: [], unknown: [], fiction: [] }, opts.grandfather || {});
@@ -57,5 +58,10 @@ export function expansionRules(RB, C, opts = {}) {
   for (const id in C.challenges) for (const k in C.challenges[id].tiers || {}) C.challenges[id].tiers[k].forEach((st, i) => gram(st, 'challenge ' + id + '[' + k + '][' + i + ']'));
   const listen = (st, where) => { if (st && st.kind === 'listen' && !(st.transcript && st.transcript.jp)) E(where + ': a listening step needs a transcript (no task may need hearing)'); };
   for (const id in C.challenges) for (const k in C.challenges[id].tiers || {}) C.challenges[id].tiers[k].forEach((st, i) => listen(st, 'challenge ' + id + '[' + k + '][' + i + ']'));
+  // 8. names: a new chapter's people (ids under C.chapterOfPrefix) are each the only one called what they are called
+  const plain = (n) => String(n || '').replace(/\{([^|}]+)\|[^}]*\}/g, '$1').replace(/\s+/g, '');
+  const byName = {};
+  for (const id in C.chars || {}) { const n = C.chars[id].name && plain(C.chars[id].name.jp); if (n) (byName[n] = byName[n] || []).push(id); }
+  for (const n in byName) if (byName[n].length > 1 && byName[n].some((id) => chOf(id))) E('people ' + byName[n].join(', ') + ' share the name ' + n + ' (a new chapter\'s person needs a name of their own)');
   return { errors, found };
 }

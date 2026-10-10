@@ -61,9 +61,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 0, hair: 'long', hairColor: 4, cloth: ['#6a5a4a', '#524436', '#c8b490'], shape: 'robe', acc: ['glasses', 'scarf'], scarfCol: '#8a6a4a', age: 'old' },
     portrait: { eyes: 'soft', style: 'long', age: 'old', acc: ['glasses'], bg: '#30281e' },
   });
-  // Kayo and her son Ichi, who is lost one night in the canals (and found).
-  ch('mb_kayo', {
-    name: { en: 'Kayo', jp: 'カヨ' }, voice: { pitch: 1.02 },
+  // Haru and her son Ichi, who is lost one night in the canals (and found).
+  ch('mb_haru', {
+    name: { en: 'Haru', jp: 'ハル' }, voice: { pitch: 1.02 },
     look: { skin: 4, hair: 'braid', hairColor: 1, cloth: ['#8a6a8a', '#6a506a', '#e8d8b8'], shape: 'apron', acc: ['basket'] },
     portrait: { eyes: 'soft', style: 'braid', collar: 'apron', bg: '#33263a' },
   });

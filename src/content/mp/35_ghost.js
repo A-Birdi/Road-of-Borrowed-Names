@@ -26,7 +26,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     id: 'mp.ghost', kind: 'social', name: { jp: '{代筆|だいひつ} の {貸|か}し', en: 'A Ghostwriter\'s Debt' },
     rules: { wait: true },
     // the automated runs' route: the manuscript, the press's word, Wait (his fear), then the shared name
-    autoRoute: ['s:manuscript', 's:kanta', 'wait', 's:both_names'],
+    autoRoute: ['s:manuscript', 's:sanpei', 'wait', 's:both_names'],
     social: {
       parties: [
         { aid: 'n:ryusui', name: { jp: 'リュウスイ', en: 'Ryūsui' }, stance: 'heated', wants: { en: 'To keep his name, and his readers.' } },
@@ -36,7 +36,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         g1: { by: 'n:ryusui', jp: 'あの {話|はなし} は 、 {私|わたし} の {名前|なまえ} で {出|で}た 。 {私|わたし} の もの だ 。', en: 'Those stories came out under my name. They are mine.' },
         g2: { by: 'n:ryusui', jp: '{借金|しゃっきん} は {私|わたし} が {払|はら}った 。 {話|はなし} は 、 その {代|か}わり だ 。', en: 'I paid her debt. The stories were in return.' },
         g3: { by: 'manuscript', jp: '{原稿|げんこう} は {春|はる} 、 シノブ の {字|じ} 。 {本|ほん} は {夏|なつ} 。', en: 'The manuscript: spring, in Shinobu\'s hand. The book: summer.', hidden: true },
-        g4: { by: 'n:kanta', jp: '{原稿|げんこう} を {刷|す}り{場|ば} に {持|も}って {来|き}た の は 、 いつ も シノブ さん でした 。', en: 'Kanta: "It was always Shinobu who brought the manuscripts to the press."', hidden: true },
+        g4: { by: 'n:sanpei', jp: '{原稿|げんこう} を {刷|す}り{場|ば} に {持|も}って {来|き}た の は 、 いつ も シノブ さん でした 。', en: 'Sanpei: "It was always Shinobu who brought the manuscripts to the press."', hidden: true },
         g5: { by: 'n:ryusui', jp: '…… {十年|じゅうねん} {前|まえ} から 、 {一行|いちぎょう} も {書|か}けない ん だ 。', en: '…For ten years I haven\'t been able to write a line.', hidden: true },
       },
       understanding: 3,
@@ -46,8 +46,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { id: 'manuscript', kind: 'evidence', label: say('この {原稿|げんこう} の {日付|ひづけ} を {見|み}て ください 。', 'Show the manuscript\'s date'), once: true,
           task: task('g:v_te_kudasai', 'Which asks him to look at the manuscript\'s date?', 'この {原稿|げんこう} の {日付|ひづけ} を {見|み}て ください 。', 'この {原稿|げんこう} の {名前|なまえ} を {消|け}して ください 。', 'That asks him to erase the name.', 'この {原稿|げんこう} の {日付|ひづけ} を {書|か}いて ください 。', 'That asks him to write a date on it.'),
           effect: { reveal: 'g3', understanding: 1 }, says: { en: 'Ryūsui takes the pages. Spring, in her hand. His book came out in summer. He sets them down very carefully.' } },
-        { id: 'kanta', kind: 'evidence', label: say('{刷|す}り{場|ば} の カンタ さん も 、 {覚|おぼ}えて います 。', 'Say Kanta at the press remembers who brought them'), once: true,
-          task: task('g:prt_mo', 'Which says Kanta at the press remembers too?', '{刷|す}り{場|ば} の カンタ さん も 、 {覚|おぼ}えて います 。', '{刷|す}り{場|ば} の カンタ さん は 、 {忘|わす}れて います 。', 'That says Kanta has forgotten.', '{刷|す}り{場|ば} の カンタ さん も 、 {書|か}いて います 。', 'That says Kanta writes too.'),
+        { id: 'sanpei', kind: 'evidence', label: say('{刷|す}り{場|ば} の サンペイ さん も 、 {覚|おぼ}えて います 。', 'Say Sanpei at the press remembers who brought them'), once: true,
+          task: task('g:prt_mo', 'Which says Sanpei at the press remembers too?', '{刷|す}り{場|ば} の サンペイ さん も 、 {覚|おぼ}えて います 。', '{刷|す}り{場|ば} の サンペイ さん は 、 {忘|わす}れて います 。', 'That says Sanpei has forgotten.', '{刷|す}り{場|ば} の サンペイ さん も 、 {書|か}いて います 。', 'That says Sanpei writes too.'),
           effect: { reveal: 'g4', understanding: 1 }, says: { en: 'Shinobu looks up for the first time. "He remembers? He was so small then."' } },
         { id: 'ask_debt', kind: 'ask', label: say('{借金|しゃっきん} は 、 もう {返|かえ}し{終|お}わって います か 。', 'Ask whether the debt is paid off'), once: true,
           task: task('g:v_ta', 'Which asks whether the debt is already paid off?', '{借金|しゃっきん} は 、 もう {返|かえ}し{終|お}わって います か 。', '{借金|しゃっきん} は 、 まだ {借|か}りて います か 。', 'That asks whether she is still borrowing.', '{借金|しゃっきん} は 、 いくら でした か 。', 'That asks how much it was.'),

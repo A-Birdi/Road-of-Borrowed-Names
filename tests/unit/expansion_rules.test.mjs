@@ -39,6 +39,8 @@ export default async (t) => {
   t.ok(has(/mb\.early \(mb1\): uses mod_both, taught later \(kr\)/) && !has(/mb\.ok/), 'a concept used before it is taught is an error');
   t.ok(has(/mb\.hear\[F\]\[0\]: a listening step needs a transcript/), 'a listening step without a transcript is an error');
   t.eq(r.errors.length, 6, 'and nothing else: ' + r.errors.join(' | '));
+  const names = expansionRules(RB, { chapterOfPrefix: { mb: 'mb1' }, chars: { kanta: { name: { jp: 'カンタ' } }, mb_kanta: { name: { jp: 'カンタ' } }, mb_sen: { name: { jp: 'セン' } }, a_old: { name: { jp: 'キヨ' } }, b_old: { name: { jp: 'キヨ' } } } }, {});
+  t.eq(names.errors, ['people kanta, mb_kanta share the name カンタ (a new chapter\'s person needs a name of their own)'], 'a new chapter\'s person sharing an older one\'s name is an error (two older people sharing one is left alone)');
   const g = expansionRules(RB, C, { grandfather: { tiers: ['mb.three'] }, unknownTok: new Map() });
   t.ok(!g.errors.some((e) => /mb\.three/.test(e)) && g.found.tiers.indexOf('mb.three') >= 0, 'a named exception is allowed, and still listed');
 };

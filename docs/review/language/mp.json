@@ -53,9 +53,9 @@
   "jp": "{版木|はんぎ} の {通|とお}り 。 {刷|す}った {紙|かみ} が {白|しろ}く なって いく 。 {宗兵衛|そうべえ} の {仕事場|しごとば} へ 。",
   "en": "Blockprint Row. Printed sheets are going blank. To Sōbē's workshop."
  },
- "scene:mp.kanta_first#1gs2ahv": {
+ "scene:mp.sanpei_first#1gs2ahv": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{親方|おやかた} が {待|ま}って います 。 {中|なか} へ どうぞ ！",
   "en": "The master's waiting. Go on in!"
  },
@@ -113,11 +113,11 @@
   "jp": "{川開|かわびら}き ！ {花火|はなび} の {上|あ}がる 、 あの お{祭|まつ}り ね 。",
   "en": "The Opening of the River! The festival with the fireworks."
  },
- "scene:mp.sobe_first#nim8ok": {
+ "scene:mp.sobe_first#gwzttn": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "{刷|す}り{場|ば} は {隣|となり} だ 。 カンタ が {手伝|てつだ}う 。 {何|なに} を どう {書|か}く か は 、 あんた の {好|す}き に して くれ 。",
-  "en": "The press room is next door. Kanta will help. What you write and how is up to you."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "{刷|す}り{場|ば} は {隣|となり} だ 。 サンペイ が {手伝|てつだ}う 。 {何|なに} を どう {書|か}く か は 、 あんた の {好|す}き に して くれ 。",
+  "en": "The press room is next door. Sanpei will help. What you write and how is up to you."
  },
  "scene:mp.sobe_first#1cwlttt": {
   "status": "self-reviewed",
@@ -251,21 +251,21 @@
   "jp": "あなた の {刷|す}った {一枚|いちまい} も 、 その {中|なか} に ある 。",
   "en": "Yours is among them."
  },
- "scene:mp.kanta_press#fb8udl": {
+ "scene:mp.sanpei_press#fb8udl": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{刷|す}り{台|だい} の {横|よこ} に 、 {活字|かつじ} の {箱|はこ} が あります 。 {一行|いちぎょう} ずつ 、 {好|す}き な {版|はん} を {選|えら}んで ください ！",
   "en": "The type cases are beside the press. Choose the block you like for each line!"
  },
- "scene:mp.kanta_press#54mbc0": {
+ "scene:mp.sanpei_press#54mbc0": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{刷|す}り{台|だい} は 、 いつ でも {使|つか}って いい って 、 {親方|おやかた} が 。 {話|はなし} でも {知|し}らせ でも ！",
   "en": "The master says you can use the press any time. Stories or notices!"
  },
- "scene:mp.kanta_after#3sjhn": {
+ "scene:mp.sanpei_after#3sjhn": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{刷|す}った {物|もの} に 、 {字|じ} が ちゃんと {残|のこ}る 。 {当|あ}たり{前|まえ} の こと が 、 こんな に うれしい なんて 。",
   "en": "What we print keeps its letters. I never knew something so ordinary could make me so happy."
  },
@@ -401,11 +401,11 @@
   "jp": "「{版木|はんぎ} の {通|とお}り 。 {南|みなみ} に {札場|ふだば} 、 {東|ひがし} に {芝居|しばい} の {通|とお}り 。」",
   "en": "\"Blockprint Row. South to the Tally Exchange; east to Playhouse Row.\""
  },
- "scene:mp.door_kanta#vdj78y": {
+ "scene:mp.door_sanpei#7t0vn9": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "カンタ と ミヨ の {家|いえ} 。 {戸|と} は {閉|し}まって いる 。",
-  "en": "Kanta and Miyo's house. The door is shut."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "サンペイ と ミヨ の {家|いえ} 。 {戸|と} は {閉|し}まって いる 。",
+  "en": "Sanpei and Miyo's house. The door is shut."
  },
  "scene:mp.door_locked#vbg28i": {
   "status": "self-reviewed",
@@ -1613,11 +1613,11 @@
   "jp": "{川開|かわびら}き が {終|お}わって 、 {川|かわ} の {道|みち} が {開|ひら}いた 。",
   "en": "The Opening is over, and the river road is open."
  },
- "scene:mp.chapter_end#13n4r0v": {
+ "scene:mp.chapter_end#198woiq": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "カンタ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」",
-  "en": "Kanta comes running, waving a printed sheet. \"Broadsheet! This morning's broadsheet!\""
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "サンペイ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」",
+  "en": "Sanpei comes running, waving a printed sheet. \"Broadsheet! This morning's broadsheet!\""
  },
  "scene:mp.chapter_end#1kn2dc1": {
   "status": "self-reviewed",
@@ -2267,11 +2267,11 @@
   "jp": "{橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。",
   "en": "The bridge's plaque is blank. Only the grain of the wood shows."
  },
- "scene:mp.plaque_hangi#1jmmh9w": {
+ "scene:mp.plaque_hangi#110kdoj": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "{近|ちか}く で 、 カンタ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。",
-  "en": "Nearby, Kanta goes over the bridge with an armful of woodblocks."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "{近|ちか}く で 、 サンペイ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。",
+  "en": "Nearby, Sanpei goes over the bridge with an armful of woodblocks."
  },
  "scene:mp.plaque_hangi#13hhup3": {
   "status": "self-reviewed",
@@ -2417,23 +2417,23 @@
   "jp": "…… {持|も}って いって 。 わたし が {持|も}って いて も 、 {誰|だれ} も {見|み}ない から 。",
   "en": "…Take it. While I keep it, nobody sees it."
  },
- "scene:mp.ghost_kanta#iyxex3": {
+ "scene:mp.ghost_sanpei#iyxex3": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつ も シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。",
   "en": "Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press."
  },
- "scene:mp.ghost_kanta#1ojaxw8": {
+ "scene:mp.ghost_sanpei#1ojaxw8": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{親方|おやかた} は 、 {知|し}って いて {黙|だま}って いる みたい だけど 。",
   "en": "The master knows and keeps quiet about it, I think."
  },
- "scene:mp.ghost_kanta#c9vxsl": {
+ "scene:mp.ghost_sanpei#1cvf0qq": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "カンタ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。",
-  "en": "Kanta says it is always Shinobu who brings the manuscripts."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "サンペイ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。",
+  "en": "Sanpei says it is always Shinobu who brings the manuscripts."
  },
  "scene:mp.shinobu_evidence#10hay8h": {
   "status": "self-reviewed",
@@ -2441,11 +2441,11 @@
   "jp": "{机|つくえ} の {原稿|げんこう} 、 {見|み}て くれた ？ {日付|ひづけ} が {入|はい}って いる の 。",
   "en": "Did you look at the manuscripts on my desk? They're dated."
  },
- "scene:mp.shinobu_evidence#16rbsxm": {
+ "scene:mp.shinobu_evidence#f2qu3h": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "{刷|す}り{場|ば} の カンタ くん に も 、 {聞|き}いて みて 。",
-  "en": "Ask Kanta at the press, too."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "{刷|す}り{場|ば} の サンペイ くん に も 、 {聞|き}いて みて 。",
+  "en": "Ask Sanpei at the press, too."
  },
  "scene:mp.shinobu_evidence#m7c9u4": {
   "status": "self-reviewed",
@@ -2525,11 +2525,11 @@
   "jp": "{書|か}いて いる わ 。 {名前|なまえ} は まだ ない けど 。",
   "en": "I'm writing. Still without a name on it."
  },
- "scene:mp.miyo_first#hlk30j": {
+ "scene:mp.miyo_first#1nz7lly": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "お{兄|にい}ちゃん の カンタ は 、 {刷|す}り{場|ば} で {働|はたら}いて いる の 。 わたし も {刷|す}り{師|し} に なりたい 。 でも {親方|おやかた} は 、 「まだ {早|はや}い」 って 。",
-  "en": "My brother Kanta works at the press. I want to be a printer too. But the master says I'm too young."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "お{兄|にい}ちゃん の サンペイ は 、 {刷|す}り{場|ば} で {働|はたら}いて いる の 。 わたし も {刷|す}り{師|し} に なりたい 。 でも {親方|おやかた} は 、 「まだ {早|はや}い」 って 。",
+  "en": "My brother Sanpei works at the press. I want to be a printer too. But the master says I'm too young."
  },
  "scene:mp.miyo_first#h7qqkl": {
   "status": "self-reviewed",
@@ -2585,11 +2585,11 @@
   "jp": "ミヨ か 。 {教|おし}えた の は 、 あんた だ な 。 {教|おし}え{方|かた} が いい 。 {説明|せつめい} が {正|ただ}しい と 、 {手|て} も {正|ただ}しく {動|うご}く 。",
   "en": "Miyo. And you taught her. You teach well: when the explanation is right, the hands move right."
  },
- "scene:mp.sobe_miyo#2rwr8b": {
+ "scene:mp.sobe_miyo#9n5dw2": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
-  "jp": "{明日|あした} から 、 {刷|す}り{場|ば} に {来|こ}い と {言|い}って くれ 。 カンタ の {隣|となり} で 。",
-  "en": "Tell her to come to the press from tomorrow. Next to Kanta."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "{明日|あした} から 、 {刷|す}り{場|ば} に {来|こ}い と {言|い}って くれ 。 サンペイ の {隣|となり} で 。",
+  "en": "Tell her to come to the press from tomorrow. Next to Sanpei."
  },
  "scene:mp.sobe_miyo#balhs3": {
   "status": "self-reviewed",

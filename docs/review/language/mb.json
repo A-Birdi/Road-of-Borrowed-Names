@@ -299,15 +299,15 @@
   "jp": "{白|しろ}い {壁|かべ} の {蔵|くら} 。 {重|おも}い {戸|と} に {錠|じょう} が かかって いる 。",
   "en": "A white-walled storehouse. A lock hangs on the heavy door."
  },
- "scene:mb.door_kayo#d40obi": {
+ "scene:mb.door_haru#d40obi": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{小|ちい}さな {家|いえ} 。 {中|なか} から 、 {子供|こども} の {笑|わら}い{声|ごえ} が {聞|き}こえる 。",
   "en": "A small house. A child's laughter comes from inside."
  },
- "scene:mb.door_kayo#16qnl77": {
+ "scene:mb.door_haru#16qnl77": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "{戸|と} の {前|まえ} に 、 {小|ちい}さな {草履|ぞうり} が {揃|そろ}えて {置|お}いて ある 。",
   "en": "A small pair of sandals has been set neatly by the door."
  },
@@ -335,15 +335,15 @@
   "jp": "{札|ふだ} が {読|よ}める って 、 いい な ！ {荷|に} が {真|ま}っ{直|す}ぐ {着|つ}く ！",
   "en": "Plaques you can read — what a thing! The cargo goes straight there!"
  },
- "scene:mb.kayo_idle#1foqbsu": {
+ "scene:mb.haru_idle#1foqbsu": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "うち の イチ 、 {橋|はし} を {数|かぞ}える の が {好|す}き なん です 。 {名前|なまえ} が {消|き}えて 、 {寂|さび}しがって います 。",
   "en": "My Ichi loves counting the bridges. Now the names are gone, he misses them."
  },
- "scene:mb.kayo_after#bfp0tq": {
+ "scene:mb.haru_after#bfp0tq": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
   "jp": "あの {夜|よる} は 、 {本当|ほんとう} に ありがとう ございました 。 イチ は もう 、 {一人|ひとり} で {川|かわ} の そば に {行|い}きません 。 …… たぶん 。",
   "en": "Thank you so much, for that night. Ichi doesn't go near the canal alone any more. …I think."
  },
@@ -1013,17 +1013,17 @@
   "jp": "{行|い}きましょう 。 …… {大|おお}きな {声|こえ} で {呼|よ}ぶ の は 、 {私|わたし} の {得意|とくい} よ 。",
   "en": "Let's go. …Calling out loud is my speciality."
  },
- "scene:mb.uno_evening#wi5gb1": {
+ "scene:mb.uno_evening#1l6k6n0": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
-  "jp": "{夜|よる} 。 カヨ さん の {息子|むすこ} イチ が 、 {運河|うんが} で {迷子|まいご} に なった 。 {蔵|くら} の {並|なら}び へ 。",
-  "en": "Night. Kayo's son Ichi is lost by the canals. To Warehouse Row."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "{夜|よる} 。 ハル さん の {息子|むすこ} イチ が 、 {運河|うんが} で {迷子|まいご} に なった 。 {蔵|くら} の {並|なら}び へ 。",
+  "en": "Night. Haru's son Ichi is lost by the canals. To Warehouse Row."
  },
- "scene:mb.night_pier#bgs4jb": {
+ "scene:mb.night_pier#1e5dq2q": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Nao, Mio, Ren and Suzu in Chapters 1-2; Suzu's Kansai versions against docs/dialect/suzu_kansai.md), the Manybridge brief (07_REGIONS R1) and the game's lexicon; corrected in review: the reading of 約定書, two phrasings and four English glosses (P08)",
-  "jp": "…… {渡|わた}し{場|ば} の {方|ほう} じゃ ない 。 カヨ さん は 、 {蔵|くら} の {並|なら}び と {言|い}って いた 。 {東|ひがし} の {道|みち} だ 。",
-  "en": "…Not the pier. Kayo said Warehouse Row. The east road."
+  "ref": "self-reviewed by the lead: the same lines as before with two people renamed so no name is shared with an older character: Chapter 3's Kayo is now Haru (ハル; the long quests have a Kayo) and Chapter 4's Kanta is now Sanpei (サンペイ; Snowbell has a Kanta); nothing else changed (P08, P09)",
+  "jp": "…… {渡|わた}し{場|ば} の {方|ほう} じゃ ない 。 ハル さん は 、 {蔵|くら} の {並|なら}び と {言|い}って いた 。 {東|ひがし} の {道|みち} だ 。",
+  "en": "…Not the pier. Haru said Warehouse Row. The east road."
  },
  "scene:mb.kansuke_night#bupw9z": {
   "status": "self-reviewed",

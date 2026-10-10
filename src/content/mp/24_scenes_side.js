@@ -5,7 +5,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
   'use strict';
-  // the people elsewhere who take part: Sen (the census), Sōbē (the apprentice), Kanta (the ghostwriter's evidence)
+  // the people elsewhere who take part: Sen (the census), Sōbē (the apprentice), Sanpei (the ghostwriter's evidence)
   const npcIn = (id) => { for (const m in C.maps) { const n = (C.maps[m].npcs || []).find((x) => x.id === id && Array.isArray(x.talk)); if (n) return n; } return null; };
   const sen = npcIn('mb_sen');
   if (sen) {
@@ -16,8 +16,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   }
   const sobe = npcIn('mp_sobe');
   if (sobe) sobe.talk.unshift({ if: 'quest.mp_apprentice=1', scene: 'mp.sobe_miyo' });
-  const kanta = npcIn('mp_kanta');
-  if (kanta) kanta.talk.unshift({ if: 'quest.mp_ghost=1&!mp_ghost_kanta', scene: 'mp.ghost_kanta' });
+  const sanpei = npcIn('mp_sanpei');
+  if (sanpei) sanpei.talk.unshift({ if: 'quest.mp_ghost=1&!mp_ghost_sanpei', scene: 'mp.ghost_sanpei' });
 })(RB.content);
 
 RB.script.add(`
@@ -40,7 +40,7 @@ mb_sen: お{礼|れい} に 、 {刷|す}り{場|ば} で {刷|す}った {町|�
 ?(mb_pl_hangi) !end
 narr: {橋|はし} の {札|ふだ} は {真|ま}っ{白|しろ} だ 。 {木目|もくめ} だけ が {見|み}える 。 || The bridge's plaque is blank. Only the grain of the wood shows.
 ?(!quest.mp_census) !end
-narr: {近|ちか}く で 、 カンタ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。 || Nearby, Kanta goes over the bridge with an armful of woodblocks.
+narr: {近|ちか}く で 、 サンペイ が {版木|はんぎ} を {抱|かか}えて {渡|わた}って いく 。 || Nearby, Sanpei goes over the bridge with an armful of woodblocks.
 !challenge mb.census_hangi
 !set mb_pl_hangi
 !var mp_census + 1
@@ -105,22 +105,22 @@ mp_shinobu: …… {持|も}って いって 。 わたし が {持|も}って �
 !give mp_manuscript
 :later
 
-@scene mp.ghost_kanta
+@scene mp.ghost_sanpei
 !faceplayer
-mp_kanta: リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつ も シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。 || Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press.
-mp_kanta: {親方|おやかた} は 、 {知|し}って いて {黙|だま}って いる みたい だけど 。 || The master knows and keeps quiet about it, I think.
-!set mp_ghost_kanta
-!journal カンタ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。 || Kanta says it is always Shinobu who brings the manuscripts.
+mp_sanpei: リュウスイ さん の {原稿|げんこう} ？ {持|も}って {来|く}る の は 、 いつ も シノブ さん です よ 。 リュウスイ さん は 、 {刷|す}り{場|ば} に {来|き}た こと が ない です 。 || Ryūsui's manuscripts? Shinobu always brings them. Ryūsui's never once been to the press.
+mp_sanpei: {親方|おやかた} は 、 {知|し}って いて {黙|だま}って いる みたい だけど 。 || The master knows and keeps quiet about it, I think.
+!set mp_ghost_sanpei
+!journal サンペイ は 、 {原稿|げんこう} を {持|も}って {来|く}る の は いつ も シノブ だ と {言|い}った 。 || Sanpei says it is always Shinobu who brings the manuscripts.
 
 @scene mp.shinobu_evidence
 !faceplayer
 ?(!item.mp_manuscript) mp_shinobu: {机|つくえ} の {原稿|げんこう} 、 {見|み}て くれた ？ {日付|ひづけ} が {入|はい}って いる の 。 || Did you look at the manuscripts on my desk? They're dated.
-?(!mp_ghost_kanta) mp_shinobu: {刷|す}り{場|ば} の カンタ くん に も 、 {聞|き}いて みて 。 || Ask Kanta at the press, too.
-?(item.mp_manuscript&mp_ghost_kanta) mp_shinobu: …… リュウスイ の {家|いえ} は 、 {通|とお}り の {向|む}こう 。 わたし も {行|い}く わ 。 {怖|こわ}い けど 。 || …Ryūsui's house is across the street. I'll come too. I'm scared, but I'll come.
+?(!mp_ghost_sanpei) mp_shinobu: {刷|す}り{場|ば} の サンペイ くん に も 、 {聞|き}いて みて 。 || Ask Sanpei at the press, too.
+?(item.mp_manuscript&mp_ghost_sanpei) mp_shinobu: …… リュウスイ の {家|いえ} は 、 {通|とお}り の {向|む}こう 。 わたし も {行|い}く わ 。 {怖|こわ}い けど 。 || …Ryūsui's house is across the street. I'll come too. I'm scared, but I'll come.
 
 @scene mp.ryusui
 !faceplayer
-!if quest.mp_ghost=1&item.mp_manuscript&mp_ghost_kanta -> meet
+!if quest.mp_ghost=1&item.mp_manuscript&mp_ghost_sanpei -> meet
 ?(mp_ghost_broker) mp_ryusui: {直|なお}す ところ を {言|い}う の は 、 {書|か}く より {易|やさ}しい 。 …… {少|すこ}し だけ な 。 || Saying what to fix is easier than writing. …A little.
 ?(mp_ghost_broker) !end
 mp_ryusui: …… {何|なん} の {用|よう} だ 。 {私|わたし} は {忙|いそが}しい 。 {次|つぎ} の {本|ほん} を {書|か}いて いる ところ で ね 。 || …What do you want? I'm busy. I'm in the middle of writing my next book.
@@ -154,7 +154,7 @@ mp_ryusui: …… {何|なん} の {用|よう} だ 。 {私|わたし} は {忙
 # ---- The Apprentice Printer ----
 @scene mp.miyo_first
 !faceplayer
-?(!mp_miyo_met) mp_miyo: お{兄|にい}ちゃん の カンタ は 、 {刷|す}り{場|ば} で {働|はたら}いて いる の 。 わたし も {刷|す}り{師|し} に なりたい 。 でも {親方|おやかた} は 、 「まだ {早|はや}い」 って 。 || My brother Kanta works at the press. I want to be a printer too. But the master says I'm too young.
+?(!mp_miyo_met) mp_miyo: お{兄|にい}ちゃん の サンペイ は 、 {刷|す}り{場|ば} で {働|はたら}いて いる の 。 わたし も {刷|す}り{師|し} に なりたい 。 でも {親方|おやかた} は 、 「まだ {早|はや}い」 って 。 || My brother Sanpei works at the press. I want to be a printer too. But the master says I'm too young.
 ?(!mp_miyo_met) mp_miyo: …… {活字|かつじ} の {並|なら}べ{方|かた} 、 {教|おし}えて くれる ？ {組|く}めたら 、 {親方|おやかた} に {見|み}せる の ！ || …Will you show me how type is set? If I can set a forme, I'll show the master!
 ?(!mp_miyo_met) !quest mp_apprentice start
 ?(!mp_miyo_met) !set mp_miyo_met
@@ -179,7 +179,7 @@ mp_miyo: {親方|おやかた} に 、 {見|み}せて くれた ？ {仕事場|
 narr: ミヨ の {組|く}んだ {版|はん} を 、 {宗兵衛|そうべえ} に {見|み}せた 。 || You show Sōbē the forme Miyo set.
 mp_sobe: …… {行|ぎょう} が {揃|そろ}って いる 。 {逆|さか}さま も {正|ただ}しい 。 {誰|だれ} が {組|く}んだ ？ || …The lines are even. The type is the right way round, backwards. Who set this?
 mp_sobe: ミヨ か 。 {教|おし}えた の は 、 あんた だ な 。 {教|おし}え{方|かた} が いい 。 {説明|せつめい} が {正|ただ}しい と 、 {手|て} も {正|ただ}しく {動|うご}く 。 || Miyo. And you taught her. You teach well: when the explanation is right, the hands move right.
-mp_sobe: {明日|あした} から 、 {刷|す}り{場|ば} に {来|こ}い と {言|い}って くれ 。 カンタ の {隣|となり} で 。 || Tell her to come to the press from tomorrow. Next to Kanta.
+mp_sobe: {明日|あした} から 、 {刷|す}り{場|ば} に {来|こ}い と {言|い}って くれ 。 サンペイ の {隣|となり} で 。 || Tell her to come to the press from tomorrow. Next to Sanpei.
 !quest mp_apprentice done
 !journal ミヨ は {刷|す}り{場|ば} の {見習|みなら}い に なった 。 || Miyo is an apprentice at the press now.
 

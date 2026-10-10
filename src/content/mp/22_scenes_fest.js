@@ -304,7 +304,7 @@ narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひ�
 
 @scene mp.chapter_end
 # Staged: fade; the next morning on Playhouse Row: lanterns coming down, boats going upstream for the first time this
-# year; Kanta with the morning's broadsheet; Kakeru with the courier's news; Sōbē's blocks are cut again.
+# year; Sanpei with the morning's broadsheet; Kakeru with the courier's news; Sōbē's blocks are cut again.
 !fade out
 !set mb2_done
 !quest mp_main done
@@ -312,7 +312,7 @@ narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひ�
 !fade in
 narr: {次|つぎ} の {朝|あさ} 。 {川|かわ} を 、 {舟|ふね} が {上|のぼ}って いく 。 {今年|ことし} {初|はじ}めて 、 {葦|あし}ノ{瀬|せ} の {方|ほう} へ 。 || The next morning. Boats are going up the river: for the first time this year, toward Reedwake.
 narr: {川開|かわびら}き が {終|お}わって 、 {川|かわ} の {道|みち} が {開|ひら}いた 。 || The Opening is over, and the river road is open.
-narr: カンタ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」 || Kanta comes running, waving a printed sheet. "Broadsheet! This morning's broadsheet!"
+narr: サンペイ が {刷|す}り{物|もの} を {振|ふ}りながら {走|はし}って くる 。 「{瓦版|かわらばん} ！ {今朝|けさ} の {瓦版|かわらばん} だ よ ！」 || Sanpei comes running, waving a printed sheet. "Broadsheet! This morning's broadsheet!"
 !note mp_kawaraban
 narr: 「{川開|かわびら}き 、 {無事|ぶじ} {終|お}わる 。 {芝居小屋|しばいごや} の {台本|だいほん} 、 {名前|なまえ} {戻|もど}る 。 {旅|たび} の {者|もの} {二人|ふたり} 、 {奈落|ならく} より {帰|かえ}る 。」 || "The Opening ends safely. The playhouse's script has its names again. Two travellers return from the Understage."
 ?(press_printed) narr: {隅|すみ} に 、 {小|ちい}さく ： 「{刷|す}り{場|ば} の {話|はなし} 、 {町|まち} で {評判|ひょうばん} 。」 || In the corner, in small type: "The press room's story: the talk of the town."

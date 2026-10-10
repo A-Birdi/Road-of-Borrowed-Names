@@ -108,7 +108,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         R(['happy', 'home'], '{家|いえ} に {帰|かえ}る {話|はなし} は いい ね 。 {宿屋|やどや} が {言|い}う の も {変|へん} だ けど 。', 'Stories about getting home are nice. An odd thing for an innkeeper to say.'),
         R([], '{読|よ}んだ よ 。 {宿|やど} の お{客|きゃく}さん に も {見|み}せて おく ね 。', 'I read it. I\'ll show the guests too.'),
       ] },
-      { id: 'mb_kayo', npc: 'mb_kayo', map: 'mb.exchange', where: T('The Exchange district, Manybridge'), if: 'mb_ichi_found', rules: [
+      { id: 'mb_haru', npc: 'mb_haru', map: 'mb.exchange', where: T('The Exchange district, Manybridge'), if: 'mb_ichi_found', rules: [
         R(['child'], '{女|おんな} の {子|こ} が {橋|はし} を {数|かぞ}える {話|はなし} …… うち の イチ みたい です 。 {寝|ね}る {前|まえ} に {読|よ}んで あげて います 。', 'A little girl counting bridges… just like my Ichi. I read it to him at bedtime.'),
         R(['kind:notice', 'children'], 'お{子|こ}さん は {大人|おとな} と {一緒|いっしょ} に 、 と {書|か}いて くれて 、 ありがとう ございます 。', 'Thank you for writing "children with a grown-up".'),
         R(['kind:notice', 'lost'], '{迷子|まいご} の {知|し}らせ を {見|み}る と 、 あの {夜|よる} を {思|おも}い{出|だ}します 。 …… {見|み}つかります よう に 。', 'A notice about something lost takes me back to that night. …I hope it\'s found.'),
@@ -165,8 +165,8 @@ RB.script.add(`
 @scene mp.rx_mb_uno
 !hook press_react mb_uno
 
-@scene mp.rx_mb_kayo
-!hook press_react mb_kayo
+@scene mp.rx_mb_haru
+!hook press_react mb_haru
 
 @scene mp.rx_mb_yoshi
 !hook press_react mb_yoshi

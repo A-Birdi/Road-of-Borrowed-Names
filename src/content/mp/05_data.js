@@ -12,13 +12,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     look: { skin: 3, hair: 'shaved', hairColor: 6, cloth: ['#3a3a44', '#2a2a32', '#c8b890'], shape: 'apron', acc: ['headband'], bandCol: '#c8b890', age: 'old' },
     portrait: { eyes: 'sharp', style: 'shaved', age: 'old', acc: ['headband'], bandCol: '#c8b890', bg: '#22222a' },
   });
-  // Kanta: Sōbē's apprentice, ink to the elbows, the boy who ran to the Exchange with a blank block.
-  ch('mp_kanta', {
-    name: { en: 'Kanta', jp: 'カンタ' }, voice: { pitch: 1.22 }, size: 'child',
+  // Sanpei: Sōbē's apprentice, ink to the elbows, the boy who ran to the Exchange with a blank block.
+  ch('mp_sanpei', {
+    name: { en: 'Sanpei', jp: 'サンペイ' }, voice: { pitch: 1.22 }, size: 'child',
     look: { skin: 2, hair: 'short', hairColor: 0, cloth: ['#4a5a7a', '#3a4862', '#d8d0bc'], shape: 'apron', acc: [] },
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#26304a' },
   });
-  // Miyo: Kanta's little sister, who wants to set type and is told she is too small (The Apprentice Printer).
+  // Miyo: Sanpei's little sister, who wants to set type and is told she is too small (The Apprentice Printer).
   ch('mp_miyo', {
     name: { en: 'Miyo', jp: 'ミヨ' }, voice: { pitch: 1.34 }, size: 'child',
     look: { skin: 2, hair: 'bob', hairColor: 0, cloth: ['#a8584a', '#86443a', '#efe2c8'], shape: 'tunic', acc: [] },

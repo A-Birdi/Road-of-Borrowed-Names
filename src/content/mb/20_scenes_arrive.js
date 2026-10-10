@@ -145,7 +145,7 @@ narr: {渡|わた}し{場|ば} の {事務所|じむしょ} 。 {今|いま} は
 @scene mb.door_kura
 narr: {白|しろ}い {壁|かべ} の {蔵|くら} 。 {重|おも}い {戸|と} に {錠|じょう} が かかって いる 。 || A white-walled storehouse. A lock hangs on the heavy door.
 
-@scene mb.door_kayo
+@scene mb.door_haru
 narr: {小|ちい}さな {家|いえ} 。 {中|なか} から 、 {子供|こども} の {笑|わら}い{声|ごえ} が {聞|き}こえる 。 || A small house. A child's laughter comes from inside.
 ?(mb_ichi_found) narr: {戸|と} の {前|まえ} に 、 {小|ちい}さな {草履|ぞうり} が {揃|そろ}えて {置|お}いて ある 。 || A small pair of sandals has been set neatly by the door.
 
@@ -159,11 +159,11 @@ mb_take: {藤屋|ふじや} の {米|こめ} 、 {今週|こんしゅう} で {�
 @scene mb.take_after
 mb_take: {札|ふだ} が {読|よ}める って 、 いい な ！ {荷|に} が {真|ま}っ{直|す}ぐ {着|つ}く ！ || Plaques you can read — what a thing! The cargo goes straight there!
 
-@scene mb.kayo_idle
-mb_kayo: うち の イチ 、 {橋|はし} を {数|かぞ}える の が {好|す}き なん です 。 {名前|なまえ} が {消|き}えて 、 {寂|さび}しがって います 。 || My Ichi loves counting the bridges. Now the names are gone, he misses them.
+@scene mb.haru_idle
+mb_haru: うち の イチ 、 {橋|はし} を {数|かぞ}える の が {好|す}き なん です 。 {名前|なまえ} が {消|き}えて 、 {寂|さび}しがって います 。 || My Ichi loves counting the bridges. Now the names are gone, he misses them.
 
-@scene mb.kayo_after
-mb_kayo: あの {夜|よる} は 、 {本当|ほんとう} に ありがとう ございました 。 イチ は もう 、 {一人|ひとり} で {川|かわ} の そば に {行|い}きません 。 …… たぶん 。 || Thank you so much, for that night. Ichi doesn't go near the canal alone any more. …I think.
+@scene mb.haru_after
+mb_haru: あの {夜|よる} は 、 {本当|ほんとう} に ありがとう ございました 。 イチ は もう 、 {一人|ひとり} で {川|かわ} の そば に {行|い}きません 。 …… たぶん 。 || Thank you so much, for that night. Ichi doesn't go near the canal alone any more. …I think.
 
 @scene mb.ichi_after
 mb_ichi: {橋|はし} の {名前|なまえ} 、 {全部|ぜんぶ} {覚|おぼ}えた よ ！ {八百|はっぴゃく} は まだ だ けど ！ || I learned all the bridges' names! Not all eight hundred yet!
