@@ -197,7 +197,10 @@ await test('the chart by edition: Manybridge and the ferry route only in a twelv
   const six = await chartOf(1);
   assert(!six.labels.includes('Manybridge') && six.curves === 0 && !/ferry/.test(six.note), 'a six-chapter chart is as it was: ' + JSON.stringify(six));
   const twelve = await chartOf(2);
-  assert(twelve.labels.includes('Manybridge') && twelve.curves >= 1 && /ferry routes/.test(twelve.note) && twelve.dots === six.dots + 1, 'a twelve-chapter chart: Manybridge across the sea: ' + JSON.stringify(twelve));
+  // one more place on the chart for each place only the twelve-chapter edition has (Manybridge; since P10 also the
+  // Keepers' Road, unexplored here)
+  const extra = await p.evaluate(() => Object.values(RB.content.places).filter((x) => x.edition === 2).length);
+  assert(twelve.labels.includes('Manybridge') && twelve.curves >= 1 && /ferry routes/.test(twelve.note) && twelve.dots === six.dots + extra, 'a twelve-chapter chart: Manybridge across the sea (' + extra + ' places of its own): ' + JSON.stringify(twelve));
   assert(!errors.length && !requests.length, 'no errors, no network: ' + errors.concat(requests).join(' | '));
   await ctx.close();
 });
