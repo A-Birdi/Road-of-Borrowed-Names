@@ -1,7 +1,7 @@
 # P05 · The living world, exploration actions and the performance library
 
 *Expansion packet P05 (playbook "P05 · Build the living world and reusable performance library"; plan
-[06_WORLD.md](../plan/06_WORLD.md) W1–W6, W9–W17; playbook V4/V5). Authorised by Robin's C-81. Under way.*
+[06_WORLD.md](../plan/06_WORLD.md) W1–W6, W9–W17; playbook V4/V5). Authorised by Robin's C-81. Done.*
 
 ## What P05 builds
 
@@ -15,8 +15,8 @@
 | W6 return keys | Sealed places visible from the start with an in-world hint, listed in Known details once noticed, opened when the word or mechanic they need is known | Done |
 | W9, W11–W17 exploration actions | Templates over Field Inkweaving and the case engine, each with a fixture and its sheet | Done |
 | Quiet puzzle spaces | The world waits while a sheet is open; no roaming creature where something is examined (checked) | Done |
-| V5 the performance library | A registry of complete actions (anticipation, motion, contact, follow-through, return) generalising the world proof's three, with props, anchors, interruption and a validator | Next |
-| V5 profession behaviours, V6 environment kits | Repeated profession actions and the base kits before regional variants | Next |
+| V5 the performance library | A registry of complete actions (anticipation, motion, contact, follow-through, return) generalising the world proof's three, with props, anchors, interruption and a validator | Done: sixteen actions |
+| V5 profession behaviours, V6 environment kits | Repeated profession actions and the base kits before regional variants | Done: suggestions by profession; the proof kit's dressing checked safe on every map |
 
 The tables the world reads (`RB.content.towns`, `relations`, `roadEvents`, `sealed`) ship empty: the new chapters
 fill them, so a six-chapter journey meets none of it. The exploration actions' fixtures appear only in a throwaway
@@ -59,6 +59,17 @@ at the top of its section in the file. Pure functions the screens and tests shar
 | layers | W16 | a valid reading concluded | marks on the map; hypotheses rest on marks; at least one valid reading |
 | blocking | W17 | a rehearsal that matches | directions for real pieces; none into the scenery |
 
+### The performance library (src/engine/67a_perform.js)
+
+`RB.perform.define(id, { phases: [{ name: 'anticipation' | 'motion' | 'contact' | 'follow' | 'return', frames, pose,
+props }], anchors, traits, interrupt })` registers a complete action on the pose layer. Sixteen ship: fish, fold and
+sell (external), sweep, sort, carry, tie, tend, read, grind, point the way, consider, laugh, offer, thanks, a mistake.
+A person with `perform` on their placement works through rounds; anyone who speaks to them is answered after the
+action yields (it restarts from its anticipation, never mid-motion); `perform <npc> <act>` plays one in a scene.
+`RB.perform.check(map)` validates anchors and props on a map (lazily, once content is loaded); `WORK` and
+`suggest(class)` propose actions by profession. The gallery (`?dev=perform`, the flag `dev_perform`) puts seven
+people on the Saltglass road.
+
 ## Lead's decisions (11_CONTRADICTIONS.md part F)
 
 F-13 what a routine tick counts and does; F-14 when "Have you seen…?" appears; F-15 one road event offer per visit;
@@ -73,6 +84,9 @@ readings in a layered site; F-20 where the fixtures live.
   it): checks now read a map's size from its definition, and adding to a map forgets its compiled copy.
 - `tests/e2e/play_ui.mjs` had been failing since P02 (the HUD's button became "Ledger" with C-58); the test was
   corrected.
+- The performance library: validating an action when it was defined failed because the content's prop kinds load
+  later (validation is now lazy); an action interrupted mid-round resumed mid-motion (it now restarts from its
+  anticipation); the tie action named anchors that did not exist.
 
 ## Checks so far
 
@@ -86,5 +100,16 @@ readings in a layered site; F-20 where the fixtures live.
 | Settings, Known details, the folio, play | `settings`, `known`, `folio`, `play_ui` | all ok, all passed, all ok, all ok |
 | Validator | `node tools/validate.mjs` | no errors |
 | The unit suite (after the town engine) | `node tests/run-unit.mjs` | 28,838/0 |
+| The performance library | `node tests/run-unit.mjs perform` | 85/0 |
+| Its gallery in the browser (anticipation to return, interruption, reduced motion, phone) | `node tests/e2e/perform.mjs` | 3/0 (captures `docs/screenshots/perform/`) |
+| The proof kit's dressing on every map | `node tests/run-unit.mjs worldkit` | 10/0 |
 
-**Not verified yet:** the phase-end F/Ren run; Firefox; the foldable; a person using the sheets.
+### Phase end (snapshot b5311b6)
+
+| Check | Result |
+|---|---|
+| Browser suites: world_living, verbs, perform, departures, known, fieldweave, cases, world, world_slice, settings, folio, play_ui, ui | all pass (4/0, 5/0, 3/0, all ok, all passed, 89/89, all passed, 12/0, 5/0, all ok, all ok, all ok, 14/0) |
+| F/Ren (`node tests/e2e/matrix.mjs F ren 1`) | PASS: all six chapters and an Atlas expedition, 15.3 min |
+| The unit suite | 29,174 passed, 3 failed: the map census counted gated additions (fixed in 6d6a50a), a development fixture's trigger covered a fishing stand, and the handwriting reading table was stale. All three fixed; the suite on the fixed code is in P06_RECORDS.md |
+
+**Not verified yet:** Firefox; the foldable; a person using the sheets.

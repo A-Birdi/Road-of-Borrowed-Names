@@ -515,7 +515,8 @@ RB.verbs = (function () {
       if (!m) return;
       m.triggers = m.triggers || [];
       const r = spec.near == null ? 1 : spec.near;
-      for (const mk of spec.plan.marks) m.triggers.push({ id: 'vb_' + spec.id + '_' + mk.id, x: mk.x - r, y: mk.y - r, w: 2 * r + 1, h: 2 * r + 1, scene: 'vb.mark', vb: spec.id, mark: mk.id, if: andIf(gateOf(spec), 'case.' + spec.id + '&!clue.' + clueId(spec, mk.id)) });
+      // a mark's place: the square round it, or its own area where that square would cover another place's tile
+      for (const mk of spec.plan.marks) m.triggers.push({ id: 'vb_' + spec.id + '_' + mk.id, ...(mk.area || { x: mk.x - r, y: mk.y - r, w: 2 * r + 1, h: 2 * r + 1 }), scene: 'vb.mark', vb: spec.id, mark: mk.id, if: andIf(gateOf(spec), 'case.' + spec.id + '&!clue.' + clueId(spec, mk.id)) });
     },
   });
   // comparing at a mark's place: the observation, made where it is (once)

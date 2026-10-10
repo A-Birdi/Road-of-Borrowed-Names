@@ -1,0 +1,86 @@
+/* Pastimes (expansion P06, C12; src/ui/88_shogi.js and the other games): a wooden board drawn in code, pieces as
+   the five-sided wedges of a real set with each kanji's reading above it. Their pieces point toward you, as on a real
+   board; the kanji stay upright so the readings can be read (F-22). Promoted pieces in red, as real sets print them. */
+.sg-folio .leaf { width: 100%; max-width: 1040px; justify-self: center; }
+.sg-with { font-size: 0.8em; font-weight: 400; color: var(--on-cloth-2); margin-left: 0.4em; }
+/* the board with its hands; beside it on a wide page, below it on a narrow one: what to do next and the partner's words */
+.sg-play { display: grid; gap: 4px 20px; grid-template-columns: minmax(0, 1fr); }
+.sg-side { min-width: 0; }
+@media (min-width: 900px) {
+  .sg-play { grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+  .sg-side { padding-top: 8px; }
+}
+.sg-intro { margin: 0 0 10px; }
+.sg-ladder { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.sg-rung { padding: 8px 2px 10px; border-bottom: 1px solid var(--rule); display: grid; gap: 4px; }
+.sg-rung p { margin: 0; }
+.sg-rt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3em 0.7em; font-weight: 600; }
+.sg-rt .en { font-weight: 400; color: var(--ink-2); font-size: 0.9em; }
+.sg-n { display: inline-grid; place-items: center; width: 1.7em; height: 1.7em; border-radius: 50%; border: 1px solid var(--ink-3); font-size: 0.85em; font-weight: 600; align-self: center; }
+.sg-acts { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; margin-top: 6px; }
+.sg-acts .opt { display: inline-flex; gap: 0.35em; align-items: center; min-height: var(--tap); }
+.sg-level { border: 0; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.sg-level legend { font-weight: 600; margin-bottom: 4px; }
+.sg-level .opt { display: inline-flex; gap: 0.35em; align-items: center; min-height: var(--tap); }
+.sg-top { display: flex; flex-wrap: wrap; gap: 0.3em 0.6em; align-items: baseline; margin-bottom: 6px; font-weight: 600; }
+.sg-top .en { font-weight: 400; color: var(--ink-2); }
+.sg-status { margin: 8px 0 4px; min-height: 1.6em; }
+.sg-check { color: var(--danger-ink); }
+.sg-why { margin: 6px 0; padding: 6px 10px; border-left: 3px solid var(--ribbon); background: var(--paper-2); display: grid; gap: 2px; }
+.sg-why .en { color: var(--ink-2); font-size: 0.92em; }
+.sg-ask { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0; padding: 8px 10px; border: 1px solid var(--ribbon); border-radius: var(--r-1); }
+.sg-ask .en, .sg-hand .en { color: var(--ink-2); font-size: 0.88em; }
+
+/* the board */
+.sg-wrap { --wood: #e6c27e; --wood-2: #d9b066; --line: #5b3b16; --face: #f6e3b4; --pc-ink: #1d140a; --pc-red: #a51d12;
+  display: grid; gap: 2px; justify-content: center; margin: 6px 0; }
+.sg-files { display: grid; grid-template-columns: repeat(var(--cols), 1fr); width: var(--bw); font-size: 0.72em; color: var(--ink-2); text-align: center; font-variant-numeric: tabular-nums; }
+.sg-mid { display: flex; gap: 3px; align-items: stretch; }
+.sg-ranks { display: grid; grid-template-rows: repeat(var(--rows), 1fr); font-size: 0.72em; color: var(--ink-2); align-items: center; }
+.sg-wrap { --bw: min(calc(100vw - 72px), 470px, calc(var(--cols) * 76px), calc((100vh - 270px) * var(--cols) / var(--rows) * 11 / 12)); }
+.sg-files, .sg-board { width: var(--bw); }
+.sg-board { container-type: inline-size; display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 1px; background: var(--line); border: 2px solid var(--line); box-shadow: 0 2px 5px rgba(60, 35, 5, 0.3); }
+.sg-sq { position: relative; aspect-ratio: 11 / 12; padding: 0; margin: 0; border: 0; background: linear-gradient(135deg, var(--wood), var(--wood-2)); display: grid; place-items: center; cursor: pointer; font: inherit; color: inherit; }
+.sg-sq:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: -3px; z-index: 1; }
+.sg-sq.last { background: #f1d896; }
+.sg-sq.sel { background: #d39a3e; }
+.sg-sq.chk { box-shadow: inset 0 0 0 3px var(--danger-ink); }
+.sg-sq.tgt::after { content: ''; position: absolute; width: 28%; aspect-ratio: 1; border-radius: 50%; background: var(--ok-ink); opacity: 0.6; pointer-events: none; }
+.sg-sq.tgt:has(.sg-pc)::after { width: 86%; background: transparent; border: 3px solid var(--ok-ink); opacity: 0.8; }
+
+/* a piece: the wedge, the kanji, its reading */
+.sg-pc { width: 84%; height: 92%; display: grid; place-items: end center; padding-bottom: 6%; box-sizing: border-box;
+  clip-path: polygon(50% 0, 86% 16%, 100% 100%, 0 100%, 14% 16%); background: linear-gradient(180deg, var(--face), #e4c98a);
+  color: var(--pc-ink); font-size: calc(100cqi / var(--cols) * 0.38); line-height: 1; font-weight: 600; }
+.sg-pc.gote { clip-path: polygon(0 0, 100% 0, 86% 84%, 50% 100%, 14% 84%); place-items: start center; padding: 6% 0 0; background: linear-gradient(0deg, #f0d9a0, #d8b876); }
+.sg-pc.prom { color: var(--pc-red); }
+.sg-pc ruby { ruby-position: over; }
+.sg-pc rt { font-size: 0.52em; font-weight: 400; letter-spacing: -0.02em; }
+
+/* pieces in hand */
+.sg-hand { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; min-height: 44px; margin: 4px 0; padding: 4px 6px; border-radius: var(--r-1); background: var(--paper-2); }
+.sg-hl { font-size: 0.85em; margin-right: 4px; }
+.sg-hp { position: relative; width: 40px; height: 46px; padding: 0; border: 1px solid transparent; border-radius: 4px; background: transparent; display: grid; place-items: center; cursor: pointer; container-type: inline-size; --cols: 1; }
+.sg-hp .sg-pc { --face: #f6e3b4; color: #1d140a; }
+.sg-hp.sel { border-color: var(--ribbon); background: rgba(193, 138, 42, 0.3); }
+.sg-hp:disabled { cursor: default; opacity: 0.9; }
+.sg-cnt { position: absolute; right: -4px; bottom: -2px; font-size: 0.75em; font-weight: 700; background: var(--paper); border-radius: 6px; padding: 0 3px; }
+
+/* how a piece moves (the lessons) */
+.sg-lesson { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; }
+.sg-diag { display: grid; grid-template-columns: repeat(5, 24px); grid-auto-rows: 26px; background: #e6c27e; border: 1px solid #5b3b16; container-type: inline-size; --cols: 5; }
+.sg-diag > span { position: relative; border-right: 1px solid rgba(91, 59, 22, 0.45); border-bottom: 1px solid rgba(91, 59, 22, 0.45); display: grid; place-items: center; }
+.sg-diag .me .sg-pc { width: 92%; height: 96%; --face: #f6e3b4; color: #1d140a; font-size: 11px; }
+.sg-diag .step::after { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #2d5f28; }
+.sg-diag .jump::after { content: ''; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #2d5f28; box-sizing: border-box; }
+.sg-diag .slide::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #2d5f28; box-shadow: 0 0 0 3px rgba(45, 95, 40, 0.3); }
+.sg-diag .slide.end::after { width: 0; height: 0; border-radius: 0; background: none; box-shadow: none; content: '…'; color: #2d5f28; font-weight: 700; }
+.sg-diagw { margin: 4px 0 0; max-width: 130px; }
+@media (max-width: 480px) {
+  .sg-lesson { grid-template-columns: 1fr; }
+  .sg-diagw { max-width: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sg-sq.last .sg-pc { animation: sg-land 220ms ease-out; }
+  @keyframes sg-land { from { transform: translateY(-6%); } to { transform: none; } }
+}

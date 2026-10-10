@@ -1,0 +1,72 @@
+# P06 · Records, replay, New Game+, pastimes and the book everywhere
+
+*Playbook P06 ("Complete records, replay and pastime foundations"); plan [09_RECORDS.md](../plan/09_RECORDS.md)
+K1–K10, [08_CULTURE.md](../plan/08_CULTURE.md) C12, [02_FOUNDATIONS.md](../plan/02_FOUNDATIONS.md) S3–S4; playbook
+§15A U02–U05. Authorised by Robin's C-81. Under way.*
+
+Everything here appears only in journeys of the twelve-chapter edition, and on the Main Menu only with the
+development switch (`?edition=12`) until the edition ships (F-21). A six-chapter journey's Ledger, title screen and
+maps are unchanged; the records browser test checks it.
+
+## What P06 builds
+
+| Part | Source | Where | State |
+|---|---|---|---|
+| The Road Stamp Book: families (chapters, side stories, the Atlas, pastimes, milestones, language), criteria in words, pressed at a town's stand or on the spot, never withdrawn | K1 | `src/engine/58b_records.js` (`RB.stampBook`), `src/content/records/00_stamps.js`, `zz_stamps_lang.js`; the page in `src/ui/66c_records.js` | Done |
+| Stamp stands in five towns, as props, placed where they cut off nothing | K1 | `src/content/records/00_stamps.js`, `05_stand.js` | Done |
+| The travel volume: pages witnessed in the story, veiled until reached | K2, K5 | `RB.volume`; the page | Done (the new chapters add their pages) |
+| The traveller's seal: frame, style, kana; on every witnessed page | K3 | `RB.seal` | Done |
+| Viewing in the Ledger and on the Main Menu; veils kept by the device; reveal a chapter after a confirmation | K4, K5 | `src/ui/66c_records.js` (`menuVolume`), `src/ui/30_title.js` | Done |
+| Watch it again: read-only replay that changes nothing in the journey | K6 tiers 1–2 | `src/ui/66c_records.js` (`watch`) | Done (tier 3 stays gated) |
+| New Game+: one carryover, the ending companion's farewell, the slot chosen with confirmations | K9, S4 | `src/ui/66d_ngplus.js`, `src/content/records/10_ngplus.js`, the Inn Ledger | Done |
+| The pastime registry and records (personal, never ranked, carried by New Game+) | K7, C12, F-03 | `src/engine/72c_pastimes.js` (`RB.pastimes`) | Done |
+| Shogi: the ladder (eight lessons, hasami shogi, the small board, mini-shogi, shogi with handicaps), mate-in-one puzzles, Show moves, Why?, Take back, three levels, no clock | C12 | `src/engine/72b_shogi.js` (`RB.shogi`, `RB.hasami`), `src/content/pastimes/`, `src/ui/88_shogi.js`, `src/styles/65_pastimes.css` | Done (the bench at Saltglass and the Distractions page next) |
+| The Distractions tab: one page per pastime, where to play, records, Play with your companion | K7, K10 | — | Next |
+| Hanafuda (koi-koi), karuta, shiritori's new themes, festival game support | C12, C10/C11 | — | Next |
+| The book shell on the remaining pages | U03–U05 | — | Next |
+
+## Shogi
+
+- **Rules.** Real shogi: drops and their limits (二歩, 打ち歩詰め, no piece where it could never move), promotion
+  optional in the zone and forced where needed, no move that leaves your king in check, mate, 千日手 (four times the
+  same position). Perft from the start matches the published counts: shogi 30 / 900 / 25,470; mini-shogi 14 / 181 /
+  2,512 / 35,401.
+- **Handicaps** (駒落ち): lance, bishop, rook, two pieces; the giver moves first, as in real handicap games.
+- **The partner** is whoever the launch names (Fuku at her bench), else your companion. Three levels (Gentle, Steady,
+  Thoughtful): a small search with a time budget, deterministic in a given position; about a second a move at most on
+  the full board.
+- **On screen.** Every piece shows its kanji with its reading; promoted pieces in red; their pieces point toward you
+  with upright kanji (F-22). Show moves (on by default), Why? (the partner's last move in a sentence, in Japanese with
+  readings and in English), Take back. Promotion is always asked. A lesson draws how its piece moves (dots, lines,
+  rings) beside a one-move puzzle. A wrong try at a puzzle leaves the board as it was and says why.
+- **Records.** Lessons met, puzzles solved, games and wins by board; Take back on a finished game takes its result off
+  again (F-22). The stamp "A first win at the board" for a win on the small board, mini-shogi or shogi.
+- **Words.** 25 shogi words added to the dictionary (`src/content/pastimes/01_lex.js`); the handwriting data and the
+  embedded fonts now include 桂, 龍 and the promoted faces 圭 and 杏 (made with the project's tools:
+  `tools/kanjivg/fetch.mjs`, `convert.mjs`, `tools/kanjiread.mjs`, `tools/fonts/subset.py`).
+
+## Lead's decisions (11_CONTRADICTIONS.md part F)
+
+F-21 where the records appear before the release; F-22 shogi's piece orientation, Take back on a finished game, and
+stamps after Take back.
+
+## Found and fixed on the way
+
+- The layered site's stone mark covered the Lantern Road's fishing stand tile (a development fixture, but the fishing
+  test is right that nothing should): a mark can now name its own area.
+- The P05 phase-end unit run (on b5311b6) had three failures, all fixed since: the map census now leaves out gated
+  additions (6d6a50a), the fixture above, and the handwriting reading table regenerated.
+
+## Checks so far
+
+| Check | Command | Result |
+|---|---|---|
+| Stamps, volume, seal, replay, New Game+ | `node tests/run-unit.mjs records` | 102/0 |
+| The same in the browser | `node tests/e2e/records.mjs` | 5/0 (captures `docs/screenshots/records/`) |
+| Shogi's rules, engine, lessons, puzzles, hasami, words | `node tests/run-unit.mjs shogi` | 64/0 |
+| Shogi in the browser: ladder, lesson, puzzles with promotion, mini-shogi with Why? and Take back, a win recorded and taken back, hasami, handicap at phone width | `node tests/e2e/shogi.mjs` | 5/0 (captures `docs/screenshots/shogi/`) |
+| Fonts and handwriting cover every displayed kanji | `book_type`, `recog-coverage` | 60/0, 15/0 |
+| Review ledger (self-review only; no native review is claimed) | `node tools/review_ledger.mjs` | 502 lines, 0 without an entry |
+
+**Not verified yet:** Firefox; the foldable; a newcomer to shogi playing the ladder (Robin, by the plan's own
+playtest note).

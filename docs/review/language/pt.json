@@ -1,0 +1,260 @@
+{
+ "pastime:shogi:page#1mqltok": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{将棋|しょうぎ}",
+  "en": "Shogi"
+ },
+ "pastime:shogi:page#f3dgiv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{潮硝子|しおがらす} の {丘|おか} の ベンチ",
+  "en": "Fuku's bench, on the hill above Saltglass harbour"
+ },
+ "pastime:shogi:page#1biqfg7": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{取|と}った {駒|こま} は {自分|じぶん} の {駒|こま} に なる 。",
+  "en": "Two armies of wedge-shaped pieces on a nine-by-nine board. A captured piece changes sides and can be dropped back into play: nothing is ever quite out of the game."
+ },
+ "pastime:shogi:page#17a45wr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手|いって} ずつ {駒|こま} を {動|うご}かす 。",
+  "en": "Take turns moving one piece. Each kind of piece moves its own way; the lessons show each one."
+ },
+ "pastime:shogi:page#11f8bef": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{取|と}った {駒|こま} は {持|も}ち{駒|ごま} 。 {空|あ}いて いる ところ に {打|う}てる 。",
+  "en": "Land on a piece of theirs to capture it. It goes into your hand, and on a later turn you may drop it on any empty square instead of moving."
+ },
+ "pastime:shogi:page#vvepod": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{奥|おく} の {三|さん} {段|だん} に {入|はい}る と {成|な}れる 。",
+  "en": "Reach the far three ranks and most pieces may promote: they turn over and move differently."
+ },
+ "pastime:shogi:page#17a83ug": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{玉|ぎょく} が {詰|つ}めば {勝|か}ち 。",
+  "en": "Attack the king so it has nowhere safe to go, and the game is yours: checkmate."
+ },
+ "pastime:shogi#1ytgjt4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{歩|ふ} は {前|まえ} に {一|ひと}つ {進|すす}む 。 {取|と}る の も {前|まえ} 。",
+  "en": "The pawn steps straight forward, one square, and takes the same way. Take the pawn in front of it."
+ },
+ "pastime:shogi#gmvsi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{香車|きょうしゃ} は {前|まえ} に どこ まで も {進|すす}める 。 {後|うし}ろ に は {戻|もど}れない 。",
+  "en": "The lance runs straight forward as far as it likes, but never back. Take the pawn up its file."
+ },
+ "pastime:shogi#7vcfss": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{桂馬|けいま} は {二|ふた}つ {前|まえ} 、 {一|ひと}つ {横|よこ} に {跳|と}ぶ 。",
+  "en": "The knight jumps: two forward and one to the side, over anything in the way. Jump onto the pawn."
+ },
+ "pastime:shogi#2do3q4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{銀|ぎん} は {前|まえ} と {斜|なな}め に {一|ひと}つ {進|すす}む 。",
+  "en": "The silver steps one square forward or diagonally, five ways in all, but never straight to the side or straight back. Take the pawn diagonally ahead."
+ },
+ "pastime:shogi#16ue5o2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{金|きん} は {斜|なな}め {後|うし}ろ {以外|いがい} に {一|ひと}つ {動|うご}く 。",
+  "en": "The gold steps one square any way but diagonally back. Take the pawn beside it."
+ },
+ "pastime:shogi#1l5kpq1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{角|かく} は {斜|なな}め に どこ まで も {進|すす}む 。",
+  "en": "The bishop slides diagonally as far as the way is clear. Take the pawn in the far corner."
+ },
+ "pastime:shogi#1cod03j": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{飛車|ひしゃ} は {縦|たて} と {横|よこ} に どこ まで も {進|すす}む 。",
+  "en": "The rook slides straight along a rank or a file as far as the way is clear. Move it up its file."
+ },
+ "pastime:shogi#10fhg53": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{玉|ぎょく} は どの {方向|ほうこう} に も {一|ひと}つ {進|すす}む 。",
+  "en": "The king steps one square any way. Keep it safe: if it is caught, the game is lost. Take the pawn next to it."
+ },
+ "pastime:shogi#1ena15p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手詰|いってづ}め 。 {持|も}ち{駒|ごま} の {金|きん} で 。",
+  "en": "Mate in one: a gold from your hand."
+ },
+ "pastime:shogi#1btl4uw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手詰|いってづ}め 。 {玉|ぎょく} は {隅|すみ} に いる 。",
+  "en": "Mate in one: the king is in the corner."
+ },
+ "pastime:shogi#zs2yo8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手詰|いってづ}め 。 {本将棋|ほんしょうぎ} の {盤|ばん} で 。",
+  "en": "Mate in one, on the full board."
+ },
+ "pastime:shogi#14nqyo9": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手詰|いってづ}め 。 {飛車|ひしゃ} で 。",
+  "en": "Mate in one: the rook. The king's own pawns hem it in."
+ },
+ "pastime:shogi#vnv6nf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手詰|いってづ}め 。 {持|も}ち{駒|ごま} の {桂馬|けいま} で 。",
+  "en": "Mate in one: a knight from your hand. Only a knight can jump past the king's guards."
+ },
+ "pastime:shogi#1a08186": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{一手詰|いってづ}め 。 {歩|ふ} が {成|な}れば 、 {金|きん} の よう に {動|うご}く 。",
+  "en": "Mate in one: the pawn. A pawn that promotes moves like a gold."
+ },
+ "pastime:shogi:board#1x2emn0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{玉|ぎょく}",
+  "en": "King"
+ },
+ "pastime:shogi:board#y4g66e": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{飛車|ひしゃ}",
+  "en": "Rook"
+ },
+ "pastime:shogi:board#tcxkex": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{角|かく}",
+  "en": "Bishop"
+ },
+ "pastime:shogi:board#zaifbi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{金|きん}",
+  "en": "Gold general"
+ },
+ "pastime:shogi:board#1m2tchg": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{銀|ぎん}",
+  "en": "Silver general"
+ },
+ "pastime:shogi:board#xb2qxw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{桂馬|けいま}",
+  "en": "Knight"
+ },
+ "pastime:shogi:board#hht16s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{香車|きょうしゃ}",
+  "en": "Lance"
+ },
+ "pastime:shogi:board#fnh2qx": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{歩|ふ}",
+  "en": "Pawn"
+ },
+ "pastime:shogi:board#z7pt9f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{龍|りゅう}",
+  "en": "Dragon (promoted rook)"
+ },
+ "pastime:shogi:board#1w2ik2h": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{馬|うま}",
+  "en": "Horse (promoted bishop)"
+ },
+ "pastime:shogi:board#8djsjo": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{成銀|なりぎん}",
+  "en": "Promoted silver"
+ },
+ "pastime:shogi:board#1e04qtw": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{成桂|なりけい}",
+  "en": "Promoted knight"
+ },
+ "pastime:shogi:board#1ka72ki": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{成香|なりきょう}",
+  "en": "Promoted lance"
+ },
+ "pastime:shogi:board#1tssb4n": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "と",
+  "en": "Tokin (promoted pawn)"
+ },
+ "pastime:shogi:board#asedlr": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{小|ちい}さな {盤|ばん}",
+  "en": "The small board"
+ },
+ "pastime:shogi:board#kulzqs": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{五五将棋|ごごしょうぎ}",
+  "en": "Mini-shogi (5×5)"
+ },
+ "pastime:shogi:board#1mqltok": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{将棋|しょうぎ}",
+  "en": "Shogi"
+ },
+ "pastime:shogi:board#14qkoo8": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{平手|ひらて}",
+  "en": "Even"
+ },
+ "pastime:shogi:board#1po958q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{香落|きょうお}ち",
+  "en": "Lance handicap"
+ },
+ "pastime:shogi:board#8egc75": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{角落|かくお}ち",
+  "en": "Bishop handicap"
+ },
+ "pastime:shogi:board#1oliyvm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{飛車落|ひしゃお}ち",
+  "en": "Rook handicap"
+ },
+ "pastime:shogi:board#1wkj40s": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{二枚落|にまいお}ち",
+  "en": "Two-piece handicap"
+ }
+}

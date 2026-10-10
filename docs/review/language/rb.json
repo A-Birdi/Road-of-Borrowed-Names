@@ -167,6 +167,18 @@
   "jp": "しりとり を {最後|さいご} まで",
   "en": "Finish a game of shiritori with your companion."
  },
+ "stamp:pt.shogi#w7yf9i": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{将棋|しょうぎ} で {初|はじ}めて {勝|か}つ",
+  "en": "A first win at the board"
+ },
+ "stamp:pt.shogi#1h4civh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
+  "jp": "{将棋|しょうぎ} で {一回|いっかい} {勝|か}つ",
+  "en": "Win a game of shogi: on the small board, at mini-shogi, or at shogi itself."
+ },
  "stamp:pt.fishing#oandp5": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon and standard textbook grammar (P05/P06)",

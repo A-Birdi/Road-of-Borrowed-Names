@@ -183,7 +183,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       x: 20, y: 12, prop: 'noticeboard', title: T('The road, drawn fifty years ago', '{五十年|ごじゅうねん} {前|まえ} の {道|みち} の {地図|ちず}'),
       marks: [
         { id: 'well', x: 7, y: 12, jp: '{井戸|いど}', en: 'a well', now: 'missing', obs: T('Where the plan shows a well, there is only a ring of flat stones, level with the ground.', '{地図|ちず} で は {井戸|いど} の {場所|ばしょ} だ が 、 {平|たい}らな {石|いし} が {丸|まる} く {並|なら}んで いる だけ だ 。') },
-        { id: 'stone', x: 14, y: 8, jp: '{道|みち}しるべ', en: 'a waystone', now: 'present', obs: T('The waystone is still here, and its base is made of the same flat stones, newer than the rest.', '{道|みち}しるべ は {今|いま} も ある 。 {台|だい} は {同|おな}じ {平|たい}らな {石|いし} で 、 {他|ほか} より {新|あたら}しい 。') },
+        { id: 'stone', x: 14, y: 8, area: { x: 12, y: 7, w: 3, h: 3 }, jp: '{道|みち}しるべ', en: 'a waystone', now: 'present', obs: T('The waystone is still here, and its base is made of the same flat stones, newer than the rest.', '{道|みち}しるべ は {今|いま} も ある 。 {台|だい} は {同|おな}じ {平|たい}らな {石|いし} で 、 {他|ほか} より {新|あたら}しい 。') },
         { id: 'trough', x: 24, y: 8, jp: '{水|みず} {飲|の}み {場|ば}', en: 'a drinking trough', now: 'moved', obs: T('No trough here now; there are marks in the ground where one stood.', '{今|いま} は {水|みず} {飲|の}み {場|ば} が ない 。 {地面|じめん} に {置|お}いて あった {跡|あと} が ある 。') },
       ],
     },

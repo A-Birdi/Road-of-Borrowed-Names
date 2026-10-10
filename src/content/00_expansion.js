@@ -17,7 +17,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     yn: 'yn',    // Steamhollow, Chapter 11
   };
   // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
-  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb'];
+  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt'];
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
   C.reveals = C.reveals || {};
 })(RB.content);
