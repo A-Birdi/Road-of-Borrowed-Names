@@ -191,4 +191,27 @@ RB.lex.add(RB.lex.parseTable(`
 ても||prt|I|even if (after the て form: 降っても, even if it rains)
 木札|きふだ|n|I|a wooden tag, a wooden ticket
 一年中|いちねんじゅう|n|E|all year round
+# ---- wing 7: what was left unsaid ------------------------------------------------------------------------------------
+第七幕|だいななまく|n|I|the seventh act
+マヨイガ||n|A|a mayoiga: the "wandering house" of Tōno legend, found only by those not looking for it|Real: told in the Tōno Monogatari (1910).
+遠野|とおの|n|A|Tōno, a mountain district in northern Japan, home of many legends
+山奥|やまおく|n|I|deep in the mountains
+山彦|やまびこ|n|A|an echo in the mountains (once thought to be a spirit answering)
+川辺|かわべ|n|I|a riverbank, the waterside
+座敷|ざしき|n|I|a tatami room for guests, a parlour
+障子|しょうじ|n|I|a sliding door of paper on a wooden frame
+勝手口|かってぐち|n|A|the kitchen door, the back door
+膳|ぜん|n|A|a small lacquer tray-table for one person's meal
+椀|わん|n|I|a (lacquer) bowl for soup or rice
+櫛|くし|n|I|a comb
+手鏡|てかがみ|n|I|a hand mirror
+羽織|はおり|n|I|a haori, a short jacket worn over a kimono
+前者|ぜんしゃ|n|A|the former (of two just mentioned)
+後者|こうしゃ|n|A|the latter (of two just mentioned)
+下調べ|したしらべ|n|A|preparation, looking into something beforehand
+就寝|しゅうしん|n|A|going to bed (formal)
+弱める|よわめる|v1|I|to weaken, to turn down (a fire)
+飼う|かう|v5u|E|to keep (an animal)
+田中|たなか|n|E|Tanaka (a common family name)
+探さねば|さがさねば|exp|A|(old, literary) if one does not search (= 探さなければ)
 `));

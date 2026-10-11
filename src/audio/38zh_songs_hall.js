@@ -239,4 +239,36 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 7: THE HOUSE THAT REMEMBERS
+  // An empty house that remembers. The koto plays the family's tune whole; in B it plays the same tune with notes left
+  // out, and the shō holds the harmony underneath so that the ear supplies what is missing (the wing's theme in sound);
+  // A2 has the shakuhachi join the koto for the whole tune again. An old house creaks once in a while and the stream
+  // drips past. Leaving notes out, never adding instruments or speed, is the change (C-22).
+  const MEMORY = '5 - - - 4 - 3 - | 1 - - - - - . . | 3 - 4 - 5 - 6 - | 1 - - - - - . . | 4 - - - 2 - 7, - | 2 - - - - - . . | 3 - 2 - 1 - 7, - | 1 - - - - - . .';
+  const GAPS = '5 - - - . . 3 - | . . . . . . . . | 3 - . . 5 - . . | 1 - - - - - . . | . . . . 2 - 7, - | 2 - - - - - . . | 3 - . . 1 - . . | . . . . . . . .';
+  S('hall_w7', {
+    title: 'The House That Remembers',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 7 of the Hall: an empty house deep in the snowy mountains of Tōno (C aeolian, 62). The koto plays the family\'s tune whole; in B it plays the same tune with notes left out while the shō holds the harmony, so that the ear supplies what is missing; in A2 the shakuhachi joins the koto for the whole tune. The old house creaks now and then and the stream drips past.',
+    key: 'C', mode: 'aeolian', bpm: 62, loopFrom: 1,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.46, rv: 0.5 },
+      flute: { i: 'shakuhachi', o: 4, v: 0.36, rv: 0.5, pan: 0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.2, rv: 0.35 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.14, rv: 0.5 },
+      creak: { perc: true, v: 0.14, rv: 0.6 },
+      drip: { perc: true, v: 0.14, rv: 0.7 },
+    },
+    echo: { beats: 1, fb: 0.24, mix: 0.2 },
+    all: { bass: '0 - - - 4 - - -', creak: '........|........|...c....|........', drip: '......d.|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 1 6 6 7 7 1 1', koto: MEMORY },
+      B: { bars: 8, ch: '1 1 6 6 7 7 1 1', koto: GAPS, pad: '0+4' },
+      A2: { bars: 8, ch: '1 1 6 6 7 7 1 1', koto: MEMORY, flute: MEMORY, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
 })(RB.audio);

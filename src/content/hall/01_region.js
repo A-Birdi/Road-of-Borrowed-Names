@@ -88,6 +88,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w6);
 
+  // wing 7: a great house deep in the mountains of Tōno at the first snow, black gate and grey thatch, dark cedars,
+  // mist in the valley, and inside, red lacquer trays and black bowls laid out for guests who never come
+  TL.PAL.hall_w7 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#4a5a4a', '#566856', '#3e4c3e', '#667866'], dirt: ['#6a6258', '#7a7268', '#585048', '#8c847a'],
+    stone: ['#7a7e82', '#929699', '#5e6266'], water: ['#3a5a6a', '#4a6c7c', '#7a9aaa', '#d8e4ea'],
+    wood: ['#2e2622', '#3c322c', '#221c18', '#544640'], leaf: ['#2a3e32', '#34483a', '#405646', '#1e2e24'],
+    flower: ['#b8302a', '#f0ece4', '#2a2a2a', '#d8b860'], roof: ['#6a645a', '#58524a', '#46423a', '#7e786c'],
+    sky: '#c8ccd0', dark: '#101210',
+  });
+  TL.addRamps(TL.PAL.hall_w7);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -244,4 +255,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_otsuta', { name: { en: 'Otsuta', jp: 'オツタ' }, voice: { pitch: 1.08 },
     look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#4a5a4a', '#3a4a3a', '#e0d8c0'], shape: 'robe', acc: [] },
     portrait: { eyes: 'round', style: 'long', acc: [], bg: '#161e16' } });
+
+  // ---- the tales' people: wing 7, The House That Remembers -----------------------------------------------------------
+  // Owan (they/them), the red lacquer bowl of the wandering house, in human shape as the tales of such things tell it,
+  // who keeps the house's memories; Magoroku (he/him), from the village below, who has come looking for the house to
+  // carry off its treasures.
+  ch('hall_owan', { name: { en: 'Owan', jp: 'オワン' }, voice: { pitch: 1.18 }, size: 'child',
+    look: { skin: 1, hair: 'bob', hairColor: 0, cloth: ['#a82a24', '#86221c', '#1e1a18'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'bob', acc: [], bg: '#241010' } });
+  ch('hall_magoroku', { name: { en: 'Magoroku', jp: 'マゴロク' }, voice: { pitch: 0.88 },
+    look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#5a5a4a', '#48483a', '#d0c8a8'], shape: 'tunic', acc: ['headband'], bandCol: '#8a8a7a' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#8a8a7a', bg: '#1a1a14' } });
 })(RB.content);

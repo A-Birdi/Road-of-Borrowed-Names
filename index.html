@@ -9339,18 +9339,30 @@ RB.grammar = (function () {
       `Both give a cause. A noun + の, or a plain form, followed by おかげで credits the cause for a good result ("thanks to"); followed by せいで, it blames the cause for a bad one. Using せいで for something good, or おかげで for something bad, sounds wrong or sarcastic.`,
       [['{雨|あめ}の おかげで、{畑|はたけ}が {元気|げんき}に なった。', 'Thanks to the rain, the fields came back to life.'],
         ['{雨|あめ}の せいで、{祭|まつ}りが {中止|ちゅうし}に なった。', 'Because of the rain, the festival was called off.']]),
-    P('baai', 'I', '～場合（は） (in the case of; if)',
-      `Plain form, or a noun + の, followed by 場合（は） names the case a rule or an instruction covers: "if it happens that…". It is the word of notices and rules; for one event that has already happened, use ～たら instead.`,
+    P('baai', 'I', '～{場合|ばあい}（は） (in the case of; if)',
+      `Plain form, or a noun + の, followed by {場合|ばあい}（は） names the case a rule or an instruction covers: "if it happens that…". It is the word of notices and rules; for one event that has already happened, use ～たら instead.`,
       [['{雨|あめ}の {場合|ばあい}は、{中止|ちゅうし}です。', 'In case of rain, it is called off.'],
         ['{遅|おく}れる {場合|ばあい}は、{知|し}らせて ください。', 'If you are going to be late, please let us know.']]),
-    P('igai', 'I', '～以外 / ただし / ～を除いて (except)',
-      `A noun + 以外 means "other than"; 以外は picks out everything but it. ただし begins a new sentence that states an exception to the one before ("however, …"). ～を除いて is the formal "except for", in notices and rules.`,
+    P('igai', 'I', '～{以外|いがい} / ただし / ～を{除|のぞ}いて (except)',
+      `A noun + {以外|いがい} means "other than"; {以外|いがい}は picks out everything but it. ただし begins a new sentence that states an exception to the one before ("however, …"). ～を{除|のぞ}いて is the formal "except for", in notices and rules.`,
       [['{日曜|にちよう}{以外|いがい}は、{毎日|まいにち} {開|あ}いて いる。', 'It is open every day except Sunday.'],
         ['{子供|こども}は ただ。ただし、{荷物|にもつ}が あれば {一文|いちもん}。', 'Children cross free. However, with a load, one mon.']]),
-    P('kagiri', 'A', '～限り / ～ない限り (as long as / unless)',
-      `A plain form + 限り means "as long as (this holds)"; the negative ～ない限り means "unless": the result stands until the condition is met. It sounds firm, and is common in rules and resolutions.`,
+    P('kagiri', 'A', '～{限|かぎ}り / ～ない{限|かぎ}り (as long as / unless)',
+      `A plain form + {限|かぎ}り means "as long as (this holds)"; the negative ～ない{限|かぎ}り means "unless": the result stands until the condition is met. It sounds firm, and is common in rules and resolutions.`,
       [['{雨|あめ}が {降|ふ}らない {限|かぎ}り、{祭|まつ}りは {行|おこな}われる。', 'Unless it rains, the festival will be held.'],
         ['{私|わたし}が {関守|せきもり}で ある {限|かぎ}り、この {決|き}まりは {変|か}えない。', 'As long as I am keeper, this rule will not change.']]),
+    P('no_pronoun', 'E', 'の for "the one" ({赤|あか}いの, さっきの)',
+      `After an adjective or a clause, の can stand for a thing both speakers already have in mind, like "the one" in English: {赤|あか}いの, "the red one"; {昨日|きのう}{買|か}ったの, "the one I bought yesterday"; さっきの, "the one from just now". The noun itself is left out because it is understood.`,
+      [['{赤|あか}いのを {取|と}って。', 'Pass me the red one.'],
+        ['さっきのより、こっちのほうが {大|おお}きい。', 'This one is bigger than the one from before.']]),
+    P('omission', 'I', 'Leaving out what is understood',
+      `Japanese leaves out whatever the listener can supply: the subject, the object, even the verb. 「{食|た}べた？」「まだ。」 needs no "you" or "it". Who did what to whom is recovered from the situation, from politeness and giving verbs, and from what was said before; when it cannot be, ask.`,
+      [['（ご{飯|はん}、）{食|た}べた？ ―― まだ。', '(Have you) eaten? ―― Not yet.'],
+        ['{沸|わ}いたら、{弱|よわ}めて。', 'When (the kettle) boils, turn (the fire) down.']]),
+    P('rei_no', 'A', '{例|れい}の / {前者|ぜんしゃ}・{後者|こうしゃ} (the one we both know; the former, the latter)',
+      `{例|れい}の + noun points to something speaker and listener both know without naming it: {例|れい}の{件|けん}, "that matter (you know the one)". {前者|ぜんしゃ} and {後者|こうしゃ}, "the former" and "the latter", pick between two things just mentioned, in writing and careful speech.`,
+      [['{例|れい}の{物|もの}は、{蔵|くら}に しまって ある。', 'The thing (you know the one) is put away in the storehouse.'],
+        ['{櫛|くし}と {笛|ふえ}が ある。{前者|ぜんしゃ}は {祖母|そぼ}の、{後者|こうしゃ}は {父|ちち}の {物|もの}だ。', 'There are a comb and a flute. The former was Grandmother\'s, the latter Father\'s.']]),
     P('tame', 'I', '～ために (in order to; for)',
       `Dictionary form + ために means "in order to", when the subject controls the action. Noun + の + ために means "for (the sake of)". After a past form or a noun of cause it can also mean "because of".`,
       [['{橋|はし}を {直|なお}す ために、{木|き}を {集|あつ}めた。', 'We gathered wood to repair the bridge.'],
@@ -10636,41 +10648,41 @@ RB.kanjiRead = {
     '喫きつ;営えい;嗅か;嘆なげ;嘘うそ;嘩か;噂うわさ;噌そ;噛か;器うつわ;噴ふ;囁ささや;囃はや;四よん,し,よ,よっ;回かい,まわ;因いん;団だん;困こま;囲かこ;図ず;固かた;国くに;園えん;土ど,つち;在あ;圭けい;地ち,じ;坂さか,ざか;坊ぼう;垂た;型かた;垣かき,がき;埃ほこり;埋う;城しろ;執と;基き;堀ぼり,ほり;堂どう;堅かた;' +
     '堪こた;堰せき;報むく;場ば;塊かたまり;塔とう;塗ぬ;塚つか;塞ふさ;塩しお;塵ちり;境さかい;墓はか;増ふ,ま;墟きょ;墨すみ;壁かべ;壇だん;壊こわ;士し;壮そう;声こえ,ごえ;売う;壺つぼ;変か,へん;夏なつ;夕ゆう;外そと,はず,ほか;多おお;夜よ,よる;夢ゆめ;大おお,だい,たい;天てん;太ふと;夫おっと;央おう;失うしな,な;奇き;奈な;奏そう;' +
     '契けい;套とう;奢おご;奥おく;奪うば;女おんな;奴やつ;好す,この;妙みょう;妥だ;妹いもうと;妻つま;姉あね,ねえ;始はじ;姓せい;姜きょう;姪めい;姿すがた;娘むすめ;婆ばあ;婉えん;婚こん;婦ふ;婿むこ;嫁とつ;嫌きら,いや;嬉うれ;嬢じょう;子こ;字じ;存ぞん;季き;孤こ;学まな;孫まご;守まも,もり,も;安やす;完かん;宗そう;官かん;' +
-    '宙ちゅう;定さだ;宛あて,あ;宝たから;実じつ,み,まこと,みの;客きゃく;室しつ;宮みや;害がい;宴うたげ;宵よい;家いえ,け,うち,が;容よう;宿しゅく,やど,じゅく;寂さび;寄よ;密みつ;寒さむ;寝ね;察さっ;寧ねい;審しん;寸すん;寺てら;対たい;寿す;封ふう;専せん;射しゃ;将しょう;尊そん;尋たず;導みちび;小ちい;少すく,すこ;尚しょう;尺しゃく;尻しり;尽つ;尾お,び;' +
-    '局きょく;居い,きい;屈くつ;届とど;屋や;屏びょう;屑くず;屓き;展てん;層そう;履は;山やま;岩いわ;岬みさき;岸ぎし,きし;峠とうげ;峰みね;島じま,しま;崖がけ;崩くず;嵌は;嵐あらし;川かわ;巡めぐ;工く;左ひだり;差さ;己こ;巻ま;巾きん;市いち;布ぬの;帆ほ;希き;師し;席せき;帯お,おび,たい;帰かえ;帳ちょう,とばり;常じょう;' +
-    '帽ぼう;幅はば;幕まく;幟のぼり;干ほ,ひ;平ひら,たい;年ねん,とし;幸さいわ,しあわ;幹みき;幽ゆう;幾いく;庁ちょう;広ひろ;庇かば;床とこ,ゆか;序じょ;底そこ;店みせ;度ど,たび;座ざ,すわ;庫こ;庭にわ;廃はい;廊ろう;延の;建た;弁べん;式しき;弓ゆみ;引ひ,び;弟おとうと;弦げん;弧こ;弱よわ;張は,ば,ぱ;強つよ,し;弾ひ;当とう,あ;形けい,かたち;彫ほ;' +
-    '影かげ;彷ほう;役やく;彼かれ;彿ふつ;往ゆ;待ま;律りち,りつ;後あと,ご,うし,のち;従したが;得え;御おん,お;復ふく;微び;徳とく;心こころ;必かなら;忍にん,しの;忘わす;忙いそが;応こた;快かい;念ねん;怒いか,おこ;怖こわ;思おも;急きゅう,いそ,せ;性しょう;怪あや;怯おび;恋こい;恐おそ;恥は;恨うら;恩おん;息いき;恵え;悔くや;悟ご;患かん;' +
-    '悩なや;悪わる;悲かな;情なさ;惑まど;惜お;想そう;意い;愚おろ;愛あい;感かん;慈じ;態たい;慌あわ;慎つつし;慢まん;慣な;慮りょ;慰なぐさ;慶よろこ;憎にく;憧あこが;憩けい;憶おく;懐なつ,ふところ;懲こ,ご;懸けん,か;成な;我われ;戚せき;戦たたか;戸と;戻もど;房ふさ;所しょ,ところ;扇あお,おうぎ;扉とびら;手て;才さい;打う;' +
-    '払はら,ぱら;扱あつか;批ひ;承うけたまわ;技わざ;投な;抗あらが;折お,おり;抜ぬ;抱いだ,かか,だ;抵てい;押お;担かつ;拍はく;拒こば;拓たく;拗す;招まね;拝はい;拠こ;括かつ;拭ふ;拶さつ;拾ひろ;持も;指ゆび,さ;按あん;挙あ;挟はさ;挨あい;挫ざ;振ふ;挽ひ;捌さば;捏こ;捕つか;捨す;据す;捲まく;捻ねん;' +
-    '掃は;授じゅ;排はい;掘ほ;掛か;掟おきて;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;揚あ;換か;握にぎ;援えん;揺ゆ;損そん,そこ,ぞん;搾しぼ;摘てき;摩ま;摺す;撃げき;撒ま;撞つ;撫な;撮と;操そう;擦す,こす;攣つ;攫さら;支ささ;改あらた;攻こう;' +
-    '放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;易やさ,やす;昔むかし;星ほし;映うつ,は;春はる;昧まい;' +
-    '昨さく;是これ;昼ひる;時じ,とき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か;最さい,も;月がつ,つき,げつ;有あ;服ふく;朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;机つくえ;杉すぎ;' +
-    '杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,さかずき,ぱい;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;柱はしら;柳やなぎ;柵さく;査さ;柿かき,がき;栄えい;栓せん;栗くり,ぐり;栞しおり;校こう;株かぶ;根ね;格かく;' +
-    '桁げた;桂りけい;桃もも;案あん;桐きり;桜さくら;桟さん;桶おけ;梁はり;梅うめ;梨なし;梯はし;械かい;棄き;棋ぎ;棒ぼう;棚たな,だな;森もり;棹さお;椀わん;椅い;植う;検けん;楔くさび;楠くす;業わざ;極ごく;楼ろう;楽らく,たの;構かま;槌つち;様さま,よう;槽そう;樋どい;標しるべ;模も;権けん;横よこ;樹じゅ;樽たる;' +
-    '橋はし,ばし;橙だいだい;機き,はた;櫂かい;櫓やぐら,ろ;欄らん;欠か;次つぎ;欲ほ;歌うた;歓かん;止と,ど,や;正ただ;此こ;歩ある,ふ;歪ゆが;歯は;歳さい,とし;歴れき;死し;残のこ;殴なぐ;段だん;殺ころ;殻から;殿どの;母はは,かあ;毎まい;毒どく;比くら;毛け;毯たん;氏し;民みん;気き,け;水すい,みず;氷こおり,ごおり;永えい;汁しる;求もと;' +
-    '汗あせ;汚きたな,よご;江え;池いけ;汰た;汲く;決き,けっ;沈しず;沓くつ;沖おき;沙さ;没ぼつ;沢さわ;河が;沸わ;油あぶら;治なお;沼ぬま;沿そ,ぞ;況きょう;泉いずみ;泊と;法ほう;泡あわ;波なみ;泣な;泥どろ;注そそ,つ;泳およ;洒じゃ;洗あら;洞ほら;洪こう;活かつ;派は;流なが;浅あさ;浜はま;浮う;浴あ;' +
-    '海うみ;浸つ,ひた;消け,き;涙なみだ;液えき;涸か;涼すず;淀よど;淡あわ;深ふか;混こ,ま;淹い;添そ;清きよ;渇かわ;済す,ず;渋しぶ;減へ;渡わた;渦うず;温あたた,あった,ぬく;測はか;港みなと;渾こん;湖みずうみ;湧わ;湯ゆ;湿しめ;満まん,み;源げん;準じゅん;溜た,だ;溝みぞ;溢あふ;溶と;溺おぼ;滅ほろ;滑すべ,なめ;滝たき;滲にじ;' +
-    '滴したた;漁りょう;漂ただよ;漏も;演えん,や;漕こ;漢かん;漣さざなみ;漫まん;漱すす;潜ひそ,もぐ;潮しお;潰つぶ;澄す;澪みお;激はげ;濁にご;濃こ;濡ぬ;濯たく;瀬せ;火ひ,び;灯ひ,あか,とも,び;灰はい,ばい;災わざわ;炉ろ;炊た;炎ほのお;炭すみ;点てん,つ,とも;為ため;烏からす;焙あぶ;焚た;無な;焦あせ,こ;然しか;焼や;煎せん;煙けむり,けむ;' +
-    '煤すす;照て;煮に;煽あお;熊くま;熟う;熱ねつ,あつ;熾おき;燃も;燕つばめ;爪つめ,づめ;父ちち,とう;爺じい;片かた,けら;版はん,ばん;牙きば;牛うし;牡ぼ;牢ろう;物もの,ぶつ;特とく;犬いぬ;犯はん;状じょう;狂くる;狐きつね;狙ねら;独ひと;狭せま;狸たぬき;猪いのしし;猫ねこ;猶ゆう;猿さる;獄ごく;獣けもの;獲と;玄げん;率そつ,りつ;玉だま,ぎょく,たま;' +
-    '王おう;玻は;珍めずら;珠たま;現あらわ;理ことわり;琴こと;瑕きず;瑠る;璃り;璧へき;瓦かわら;瓶びん,かめ;甘あま;生しょう,い,う,お;産う;用よう,もち;田た;由ゆう;甲かぶと;申もう;男おとこ;町まち;画かく;界かい;畑はたけ;留と,ど,とど;畝うね;略りゃく;番ばん;異い;畳たたみ,たた;疑うたが;疲つか;病やまい;症しょう;痒かゆ;痛いた;痩や;痴ち;' +
-    '療りょう;癒いや;癖くせ;発た;登のぼ;白しろ,しら;百ひゃく;的てき;皆みな,みんな;皮かわ;皿さら;盃さかずき;盆ぼん;盗ぬす;盛も;監かん;盤ばん;目め;直なお,す;相あい,そう;盾たて;省かえり,はぶ;眉まゆ;看み;真ま;眠ねむ;眩まぶ;眺なが;眼がん;着き,つ;督とく;睨にら;瞬まばた;矛ほこ;矢や;知し;短みじか;石いし;砂すな;研けん;' +
-    '破やぶ,わ;硝しょう;硫い;硬かた;硯すずり;碑ひ,いしぶみ;碗わん;確たし;磁じ;磨みが;示しめ;礼れい;社やしろ;祈いの;祖そ;祝いわ;神かみ;祠ほこら;票ひょう;祭まつ;禁きん;福ふく;秀しゅう;私わたくし,わたし;秋あき;秒びょう;秘ひ;秤びん;秩ちつ;移うつ;程てい;種たね;稲いね;稼かせ;稽けい;稿こう;穀こく;積つ;穏おだ;穫かく;' +
-    '穴あな;究きゅう;空そら,から,あ,す;突つ;窓まど;窪くぼ;窯かま,がま;窺うかが;立た,たて;竜りゅう;章しょう;童わらし;端はし,ばた;競きそ;竹たけ;竿さお,ざお;笑わら;笛ふえ;笠かさ;符ふ;第だい;筆ふで;筈はず;等とう;筋すじ;筏いかだ;筒つつ;答こた;筧かけい;箋せん;箒ほうき;算さん,そろ;管くだ;箱はこ,ばこ;箸はし;節ふし;範はん;築きず;簡かん;簾れん,すだれ;' +
-    '簿ぼ;籠かご;米こめ;粉こな,こ;粋いき;粒つぶ;粗あら;粘ねば;粛しゅく;粧しょう;精せい;糊のり;糖とう;糧かて;糸いと;約やく;紅べに;紋もん;納おさ;紐ひも;純じゅん;紙かみ,がみ;紛まぎ;素す;索さく;紫むらさき;細ほそ,こま;紹しょう;終お;組くみ,く,ぐみ;絆きずな;経きょう,た,へ;結むす,ゆ;絞しぼ;絡から;給きゅう;絨じゅう;統とう;絵え;絶た;' +
-    '継つ;続つづ;維い;綱つな,づな;網あみ;綴つづ,と;綺き;綿わた,めん;緊きん;緑みどり;緒お;線せん;緞どん;締し;編あ;緩ゆる;練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮ちぢ;繁はん;繋つな;繍しゅう;織お;繕つくろ;繰く;缶かん;罅ひび;罠わな;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;罵ば;羊ひつじ;美うつく;' +
-    '群む;羨うらや;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの,もん;耐た;耳みみ;聞き;職しょく;肉にく;肌はだ;肝かん;肩かた;育そだ;肺はい;胃い;背せ;胴どう;胸むね;能あた;脂あぶら;脅おど;脇わき;脈みゃく;脚あし;脱ぬ;腐くさ;腕うで;腰こし;腹はら,なか;膏こう;膝ひざ;膨ふく;膳ぜん;臓ぞう;' +
-    '自じ;臭くさ,にお;至いた;致ち;臼うす;興こう;舌した,ぜつ;舗ほ;舞ま;舟ふな,ふね,ぶね;航こう;舳へ;舵かじ;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芒すすき;芝しば;芯しん;花はな,ばな;芸げい;芽め;苔こけ;苗なえ;苛いら;若わか;苦くる,く,にが;英えい;茂しげ;茎くき;茨いばら;茶ちゃ;草くさ,ぐさ;荒あ,あら;荷に;菊きく;菓か;' +
-    '菖しょう;菜な;萎しお;萩はぎ;落お;葉は,ば;葛かずら,くず;葦あし,よし;蒲ぶ;蒸む;蓋ふた,ぶた;蓑みの;蔓つる;蔵くら,ぐら;蕎そ;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;藤ふじ;藻そう;蘇よみがえ;蘭らん;虎とら;虚むな;虫むし;虹にじ;蛇へび;蛍ほたる;蛙かえる,がえる,かわず;蛛も;蛸たこ;蛾が;蜂はち;蜘く;蜜みつ;蝉せみ;蝋ろう;' +
-    '蝕むしば;蝶ちょう;螺ら;蟹かに,がに;血ち;衆しゅう;行ぎょう,い,おこな,ゆ;術じゅつ;街かい;衛え;衝つい;衣い;表ひょう,おもて,あらわ;袂たもと;袈け;袋ふくろ,ぶくろ;袖そで;被ひ;裁さば;裂さ;装しょう;裏うら;裕ゆう;補おぎな;裟さ;裸はだか;裾すそ;複ふく;褒ほ;褪あ;襟えり;襲おそ;西にし;要よう,い;覆おお;見み;規き;視し;覗のぞ;覚おぼ,さ;' +
-    '覧らん;親おや,した;観み;角かく,かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい,はか;討とう;訓くん;託たく;記しる;訪おとず,たず;設せつ,もう;許ゆる;訳わけ;診み;証しょう,あか,あかし;評ひょう;詞し;試ため;詩し;詫わ;詰つ,つめ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たん;誘さそ;語ご,かた;誠まこと;誤あやま;説せつ;読よ;誰だれ;' +
-    '課か;調しら;談だん;請う;諍いさか;論ろん;諦あきら;諾だく;謎なぞ;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;護ご;谷たに;豆まめ;豊ゆた;豚ぶた;象ぞう;豹ひょう;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;資し;賊ぞく;賑にぎ;賛さん;賢かしこ;' +
-    '質たち;賭か;贅ぜい;贈おく;贔ひい;赤あか,か;走はし;起お;超こ;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路みち;跳と,は;踊おど;踏ふ,ぶ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;轆ろく;轤ろ;辛から,つら;辞や;農のう;辺あた,へん;辻つじ;込こ;辿たど;' +
-    '迎むか;近ちか;返かえ;迫せま;述の;迷まよ;追お;退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,かよ,どお;逝ゆ;速はや;造ぞう,づく;逢あ;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが,たが;遠とお,どお;遡さかのぼ;遣づか;遥はる;適てき;選えら;避さ;那な;邪じゃ;部ぶ,べ;' +
-    '郭かく;郵ゆう;郷きょう;都みやこ;配くば;酒さけ;酔よ;酷ひど;酸す;釈しゃく;釉くすり;里り,さと;重おも,かさ;野の;量りょう,はか;金きん,かね,がね;釘くぎ;釜かま;針はり;釣つ;鈍にぶ;鈴すず,りん;鉄てつ;鉛えん;鉢はち;鉤かぎ;銀ぎん;銅どう;銘めい;銭ぜに,せん;鋏はさみ;鋤すき;鋭するど;鋳い;鋸のこぎり;錆さ,さび;錘おもり;錠じょう;錨いかり;録ろく;' +
-    '鍋なべ;鍮ちゅう;鍵かぎ;鎌かま;鎖くさり;鎮しず;鏡かがみ;鐘かね,がね;長なが,おさ;門もん;閂かんぬき;閃せん;閉へい,し,と;開ひら,あ;間かん,ま,あいだ;閘こう;関せき,かん,かか;閲えつ;闇やみ;防ふせ;阻はば;降お,ふ;限かぎ;院いん;除よ,の,のぞ;陰かげ;陸おか,りく;険けわ;陽よう;隅すみ;階かい;随ずい;隔かく;隙すき;際ぎわ,さい;隠かく;隣となり;隻せき;雀すずめ;雁かり;' +
-    '集あつ,つど;雇やと;雑ざつ;離はな;難むずか;雨あま,あめ;雪ゆき;雫しずく;雲くも;零れい,ぜろ;雷かみなり;電でん;震ふる;霊れい;霜しも;霧きり;露つゆ;青あお,さお;静しず;非あら;面めん,つら;革かわ;靴くつ;鞄かばん;鞋あい;鞍くら;音おと,ね;響ひび;頁ぺーじ;頂いただ;頃ころ,ごろ;項こう;順じゅん;須す;預あず;頑がん;頬ほお;頭とう,あたま,かしら;頷うなず;頼たの,たよ;' +
-    '題だい;額がく,ひたい;顔かお,がお;願ねが;類るい;顧かえり;風かぜ,ふう;飛と;食く,た;飯はん,めし;飲の;飴あめ;飼か;飽あ;飾かざ;餅もち;餉げ;餌えさ;館かん,がたりのやかた,やかた;首くび;香が,かお;馬うま;駄だ;駅えき;駆か;駒こま,ごま;駕か;騒さわ;験けん;騙だま;騰とう;驚おどろ;骨ほね;髄ずい;高たか;髪かみ;鬘かつら;鬼おに;魂たましい;魔ま;' +
-    '魚さかな,ざかな;鮭さけ;鯉こい;鯖さば;鯛たい;鯨くじら;鯵あじ;鱗りん;鳥とり;鳩はと;鳳ほう;鳴な;鴎かもめ;鶏にわとり;鶯うぐいす;鶴つる,づる;鹸けん;鹿しか;麓ふもと;麗れい;麦むぎ;麹こうじ;麻あさ;黄き;黒くろ;黙だま;黴かび;鼓つづみ;鼻はな;齢れい;龍りゅう;',
+    '宙ちゅう;定さだ;宛あて,あ;宝たから;実じつ,み,まこと,みの;客きゃく;室しつ;宮みや;害がい;宴うたげ;宵よい;家いえ,け,うち,が;容よう;宿しゅく,やど,じゅく;寂さび;寄よ;密みつ;寒さむ;寝ね;察さっ;寧ねい;審しん;寸すん;寺てら;対たい;寿す;封ふう;専せん;射しゃ;将しょう;尊そん;尋たず;導みちび;小ちい;少すく,すこ;尚しょう;就しゅう;尺しゃく;尻しり;尽つ;' +
+    '尾お,び;局きょく;居い,きい;屈くつ;届とど;屋や;屏びょう;屑くず;屓き;展てん;層そう;履は;山やま;岩いわ;岬みさき;岸ぎし,きし;峠とうげ;峰みね;島じま,しま;崖がけ;崩くず;嵌は;嵐あらし;川かわ;巡めぐ;工く;左ひだり;差さ;己こ;巻ま;巾きん;市いち;布ぬの;帆ほ;希き;師し;席せき;帯お,おび,たい;帰かえ;帳ちょう,とばり;' +
+    '常じょう;帽ぼう;幅はば;幕まく;幟のぼり;干ほ,ひ;平ひら,たい;年ねん,とし;幸さいわ,しあわ;幹みき;幽ゆう;幾いく;庁ちょう;広ひろ;庇かば;床とこ,ゆか;序じょ;底そこ;店みせ;度ど,たび;座ざ,すわ;庫こ;庭にわ;廃はい;廊ろう;延の;建た;弁べん;式しき;弓ゆみ;引ひ,び;弟おとうと;弦げん;弧こ;弱よわ;張は,ば,ぱ;強つよ,し;弾ひ;当とう,あ;形けい,かたち;' +
+    '彦びこ;彫ほ;影かげ;彷ほう;役やく;彼かれ;彿ふつ;往ゆ;待ま;律りち,りつ;後あと,ご,うし,のち;従したが;得え;御おん,お;復ふく;微び;徳とく;心こころ;必かなら;忍にん,しの;忘わす;忙いそが;応こた;快かい;念ねん;怒いか,おこ;怖こわ;思おも;急きゅう,いそ,せ;性しょう;怪あや;怯おび;恋こい;恐おそ;恥は;恨うら;恩おん;息いき;恵え;悔くや;' +
+    '悟ご;患かん;悩なや;悪わる;悲かな;情なさ;惑まど;惜お;想そう;意い;愚おろ;愛あい;感かん;慈じ;態たい;慌あわ;慎つつし;慢まん;慣な;慮りょ;慰なぐさ;慶よろこ;憎にく;憧あこが;憩けい;憶おく;懐なつ,ふところ;懲こ,ご;懸けん,か;成な;我われ;戚せき;戦たたか;戸と;戻もど;房ふさ;所しょ,ところ;扇あお,おうぎ;扉とびら;手て;' +
+    '才さい;打う;払はら,ぱら;扱あつか;批ひ;承うけたまわ;技わざ;投な;抗あらが;折お,おり;抜ぬ;抱いだ,かか,だ;抵てい;押お;担かつ;拍はく;拒こば;拓たく;拗す;招まね;拝はい;拠こ;括かつ;拭ふ;拶さつ;拾ひろ;持も;指ゆび,さ;按あん;挙あ;挟はさ;挨あい;挫ざ;振ふ;挽ひ;捌さば;捏こ;捕つか;捨す;据す;' +
+    '捲まく;捻ねん;掃は;授じゅ;排はい;掘ほ;掛か;掟おきて;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;揚あ;換か;握にぎ;援えん;揺ゆ;損そん,そこ,ぞん;搾しぼ;摘てき;摩ま;摺す;撃げき;撒ま;撞つ;撫な;撮と;操そう;擦す,こす;攣つ;攫さら;支ささ;' +
+    '改あらた;攻こう;放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;易やさ,やす;昔むかし;星ほし;映うつ,は;' +
+    '春はる;昧まい;昨さく;是これ;昼ひる;時じ,とき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か;最さい,も;月がつ,つき,げつ;有あ;服ふく;朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;' +
+    '机つくえ;杉すぎ;杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,さかずき,ぱい;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;柱はしら;柳やなぎ;柵さく;査さ;柿かき,がき;栄えい;栓せん;栗くり,ぐり;栞しおり;校こう;株かぶ;' +
+    '根ね;格かく;桁げた;桂りけい;桃もも;案あん;桐きり;桜さくら;桟さん;桶おけ;梁はり;梅うめ;梨なし;梯はし;械かい;棄き;棋ぎ;棒ぼう;棚たな,だな;森もり;棹さお;椀わん;椅い;植う;検けん;楔くさび;楠くす;業わざ;極ごく;楼ろう;楽らく,たの;構かま;槌つち;様さま,よう;槽そう;樋どい;標しるべ;模も;権けん;横よこ;' +
+    '樹じゅ;樽たる;橋はし,ばし;橙だいだい;機き,はた;櫂かい;櫓やぐら,ろ;櫛くし;欄らん;欠か;次つぎ;欲ほ;歌うた;歓かん;止と,ど,や;正ただ;此こ;歩ある,ふ;歪ゆが;歯は;歳さい,とし;歴れき;死し;残のこ;殴なぐ;段だん;殺ころ;殻から;殿どの;母はは,かあ;毎まい;毒どく;比くら;毛け;毯たん;氏し;民みん;気き,け;水すい,みず;氷こおり,ごおり;' +
+    '永えい;汁しる;求もと;汗あせ;汚きたな,よご;江え;池いけ;汰た;汲く;決き,けっ;沈しず;沓くつ;沖おき;沙さ;没ぼつ;沢さわ;河が;沸わ;油あぶら;治なお;沼ぬま;沿そ,ぞ;況きょう;泉いずみ;泊と;法ほう;泡あわ;波なみ;泣な;泥どろ;注そそ,つ;泳およ;洒じゃ;洗あら;洞ほら;洪こう;活かつ;派は;流なが;浅あさ;' +
+    '浜はま;浮う;浴あ;海うみ;浸つ,ひた;消け,き;涙なみだ;液えき;涸か;涼すず;淀よど;淡あわ;深ふか;混こ,ま;淹い;添そ;清きよ;渇かわ;済す,ず;渋しぶ;減へ;渡わた;渦うず;温あたた,あった,ぬく;測はか;港みなと;渾こん;湖みずうみ;湧わ;湯ゆ;湿しめ;満まん,み;源げん;準じゅん;溜た,だ;溝みぞ;溢あふ;溶と;溺おぼ;滅ほろ;' +
+    '滑すべ,なめ;滝たき;滲にじ;滴したた;漁りょう;漂ただよ;漏も;演えん,や;漕こ;漢かん;漣さざなみ;漫まん;漱すす;潜ひそ,もぐ;潮しお;潰つぶ;澄す;澪みお;激はげ;濁にご;濃こ;濡ぬ;濯たく;瀬せ;火ひ,び;灯ひ,あか,とも,び;灰はい,ばい;災わざわ;炉ろ;炊た;炎ほのお;炭すみ;点てん,つ,とも;為ため;烏からす;焙あぶ;焚た;無な;焦あせ,こ;然しか;' +
+    '焼や;煎せん;煙けむり,けむ;煤すす;照て;煮に;煽あお;熊くま;熟う;熱ねつ,あつ;熾おき;燃も;燕つばめ;爪つめ,づめ;父ちち,とう;爺じい;片かた,けら;版はん,ばん;牙きば;牛うし;牡ぼ;牢ろう;物もの,ぶつ;特とく;犬いぬ;犯はん;状じょう;狂くる;狐きつね;狙ねら;独ひと;狭せま;狸たぬき;猪いのしし;猫ねこ;猶ゆう;猿さる;獄ごく;獣けもの;獲と;' +
+    '玄げん;率そつ,りつ;玉だま,ぎょく,たま;王おう;玻は;珍めずら;珠たま;現あらわ;理ことわり;琴こと;瑕きず;瑠る;璃り;璧へき;瓦かわら;瓶びん,かめ;甘あま;生しょう,い,う,お;産う;用よう,もち;田た;由ゆう;甲かぶと;申もう;男おとこ;町まち;画かく;界かい;畑はたけ;留と,ど,とど;畝うね;略りゃく;番ばん;異い;畳たたみ,たた;疑うたが;疲つか;病やまい;症しょう;痒かゆ;' +
+    '痛いた;痩や;痴ち;療りょう;癒いや;癖くせ;発た;登のぼ;白しろ,しら;百ひゃく;的てき;皆みな,みんな;皮かわ;皿さら;盃さかずき;盆ぼん;盗ぬす;盛も;監かん;盤ばん;目め;直なお,す;相あい,そう;盾たて;省かえり,はぶ;眉まゆ;看み;真ま;眠ねむ;眩まぶ;眺なが;眼がん;着き,つ;督とく;睨にら;瞬まばた;矛ほこ;矢や;知し;短みじか;' +
+    '石いし;砂すな;研けん;破やぶ,わ;硝しょう;硫い;硬かた;硯すずり;碑ひ,いしぶみ;碗わん;確たし;磁じ;磨みが;示しめ;礼れい;社やしろ;祈いの;祖そ;祝いわ;神かみ;祠ほこら;票ひょう;祭まつ;禁きん;福ふく;秀しゅう;私わたくし,わたし;秋あき;秒びょう;秘ひ;秤びん;秩ちつ;移うつ;程てい;種たね;稲いね;稼かせ;稽けい;稿こう;穀こく;' +
+    '積つ;穏おだ;穫かく;穴あな;究きゅう;空そら,から,あ,す;突つ;窓まど;窪くぼ;窯かま,がま;窺うかが;立た,たて;竜りゅう;章しょう;童わらし;端はし,ばた;競きそ;竹たけ;竿さお,ざお;笑わら;笛ふえ;笠かさ;符ふ;第だい;筆ふで;筈はず;等とう;筋すじ;筏いかだ;筒つつ;答こた;筧かけい;箋せん;箒ほうき;算さん,そろ;管くだ;箱はこ,ばこ;箸はし;節ふし;範はん;' +
+    '築きず;簡かん;簾れん,すだれ;簿ぼ;籠かご;米こめ;粉こな,こ;粋いき;粒つぶ;粗あら;粘ねば;粛しゅく;粧しょう;精せい;糊のり;糖とう;糧かて;糸いと;約やく;紅べに;紋もん;納おさ;紐ひも;純じゅん;紙かみ,がみ;紛まぎ;素す;索さく;紫むらさき;細ほそ,こま;紹しょう;終お;組くみ,く,ぐみ;絆きずな;経きょう,た,へ;結むす,ゆ;絞しぼ;絡から;給きゅう;絨じゅう;' +
+    '統とう;絵え;絶た;継つ;続つづ;維い;綱つな,づな;網あみ;綴つづ,と;綺き;綿わた,めん;緊きん;緑みどり;緒お;線せん;緞どん;締し;編あ;緩ゆる;練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮ちぢ;繁はん;繋つな;繍しゅう;織お;繕つくろ;繰く;缶かん;罅ひび;罠わな;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;' +
+    '罵ば;羊ひつじ;美うつく;群む;羨うらや;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの,もん;耐た;耳みみ;聞き;職しょく;肉にく;肌はだ;肝かん;肩かた;育そだ;肺はい;胃い;背せ;胴どう;胸むね;能あた;脂あぶら;脅おど;脇わき;脈みゃく;脚あし;脱ぬ;腐くさ;腕うで;腰こし;腹はら,なか;膏こう;膝ひざ;' +
+    '膨ふく;膳ぜん;臓ぞう;自じ;臭くさ,にお;至いた;致ち;臼うす;興こう;舌した,ぜつ;舗ほ;舞ま;舟ふな,ふね,ぶね;航こう;舳へ;舵かじ;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芒すすき;芝しば;芯しん;花はな,ばな;芸げい;芽め;苔こけ;苗なえ;苛いら;若わか;苦くる,く,にが;英えい;茂しげ;茎くき;茨いばら;茶ちゃ;草くさ,ぐさ;荒あ,あら;' +
+    '荷に;菊きく;菓か;菖しょう;菜な;萎しお;萩はぎ;落お;葉は,ば;葛かずら,くず;葦あし,よし;蒲ぶ;蒸む;蓋ふた,ぶた;蓑みの;蔓つる;蔵くら,ぐら;蕎そ;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;藤ふじ;藻そう;蘇よみがえ;蘭らん;虎とら;虚むな;虫むし;虹にじ;蛇へび;蛍ほたる;蛙かえる,がえる,かわず;蛛も;蛸たこ;蛾が;蜂はち;蜘く;' +
+    '蜜みつ;蝉せみ;蝋ろう;蝕むしば;蝶ちょう;螺ら;蟹かに,がに;血ち;衆しゅう;行ぎょう,い,おこな,ゆ;術じゅつ;街かい;衛え;衝つい;衣い;表ひょう,おもて,あらわ;袂たもと;袈け;袋ふくろ,ぶくろ;袖そで;被ひ;裁さば;裂さ;装しょう;裏うら;裕ゆう;補おぎな;裟さ;裸はだか;裾すそ;複ふく;褒ほ;褪あ;襟えり;襲おそ;西にし;要よう,い;覆おお;見み;規き;' +
+    '視し;覗のぞ;覚おぼ,さ;覧らん;親おや,した;観み;角かく,かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい,はか;討とう;訓くん;託たく;記しる;訪おとず,たず;設せつ,もう;許ゆる;訳わけ;診み;証しょう,あか,あかし;評ひょう;詞し;試ため;詩し;詫わ;詰つ,つめ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たん;誘さそ;語ご,かた;誠まこと;誤あやま;' +
+    '説せつ;読よ;誰だれ;課か;調しら;談だん;請う;諍いさか;論ろん;諦あきら;諾だく;謎なぞ;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;護ご;谷たに;豆まめ;豊ゆた;豚ぶた;象ぞう;豹ひょう;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;資し;賊ぞく;' +
+    '賑にぎ;賛さん;賢かしこ;質たち;賭か;贅ぜい;贈おく;贔ひい;赤あか,か;走はし;起お;超こ;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路みち;跳と,は;踊おど;踏ふ,ぶ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;轆ろく;轤ろ;辛から,つら;辞や;農のう;辺あた,へん;' +
+    '辻つじ;込こ;辿たど;迎むか;近ちか;返かえ;迫せま;述の;迷まよ;追お;退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,かよ,どお;逝ゆ;速はや;造ぞう,づく;逢あ;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが,たが;遠とお,どお;遡さかのぼ;遣づか;遥はる;適てき;選えら;避さ;' +
+    '那な;邪じゃ;部ぶ,べ;郭かく;郵ゆう;郷きょう;都みやこ;配くば;酒さけ;酔よ;酷ひど;酸す;釈しゃく;釉くすり;里り,さと;重おも,かさ;野の;量りょう,はか;金きん,かね,がね;釘くぎ;釜かま;針はり;釣つ;鈍にぶ;鈴すず,りん;鉄てつ;鉛えん;鉢はち;鉤かぎ;銀ぎん;銅どう;銘めい;銭ぜに,せん;鋏はさみ;鋤すき;鋭するど;鋳い;鋸のこぎり;錆さ,さび;錘おもり;' +
+    '錠じょう;錨いかり;録ろく;鍋なべ;鍮ちゅう;鍵かぎ;鎌かま;鎖くさり;鎮しず;鏡かがみ;鐘かね,がね;長なが,おさ;門もん;閂かんぬき;閃せん;閉へい,し,と;開ひら,あ;間かん,ま,あいだ;閘こう;関せき,かん,かか;閲えつ;闇やみ;防ふせ;阻はば;降お,ふ;限かぎ;院いん;除よ,の,のぞ;陰かげ;陸おか,りく;険けわ;陽よう;隅すみ;階かい;随ずい;隔かく;隙すき;際ぎわ,さい;障しょう;隠かく;' +
+    '隣となり;隻せき;雀すずめ;雁かり;集あつ,つど;雇やと;雑ざつ;離はな;難むずか;雨あま,あめ;雪ゆき;雫しずく;雲くも;零れい,ぜろ;雷かみなり;電でん;震ふる;霊れい;霜しも;霧きり;露つゆ;青あお,さお;静しず;非あら;面めん,つら;革かわ;靴くつ;鞄かばん;鞋あい;鞍くら;音おと,ね;響ひび;頁ぺーじ;頂いただ;頃ころ,ごろ;項こう;順じゅん;須す;預あず;頑がん;' +
+    '頬ほお;頭とう,あたま,かしら;頷うなず;頼たの,たよ;題だい;額がく,ひたい;顔かお,がお;願ねが;類るい;顧かえり;風かぜ,ふう;飛と;食く,た;飯はん,めし;飲の;飴あめ;飼か;飽あ;飾かざ;餅もち;餉げ;餌えさ;館かん,がたりのやかた,やかた;首くび;香が,かお;馬うま;駄だ;駅えき;駆か;駒こま,ごま;駕か;騒さわ;験けん;騙だま;騰とう;驚おどろ;骨ほね;髄ずい;高たか;髪かみ;' +
+    '鬘かつら;鬼おに;魂たましい;魔ま;魚さかな,ざかな;鮭さけ;鯉こい;鯖さば;鯛たい;鯨くじら;鯵あじ;鱗りん;鳥とり;鳩はと;鳳ほう;鳴な;鴎かもめ;鶏にわとり;鶯うぐいす;鶴つる,づる;鹸けん;鹿しか;麓ふもと;麗れい;麦むぎ;麹こうじ;麻あさ;黄き;黒くろ;黙だま;黴かび;鼓つづみ;鼻はな;齢れい;龍りゅう;',
   w: {
     '典': '古典|こてん',
     '操': '操作|そうさ',
@@ -11553,7 +11565,7 @@ RB.recogData = {
     'ヮ': 'AyEAz0A5T A1gA-BB8_CCGCD1CD7B-9B5-BzRBpKBguBJD',
     'ー': 'AaYArZCil',
   },
-  rad: '・一一一一一一一一一一一一一一丨丶丶丶丿丿乙乙乙乙龜亅亅亅亅二二二二二亠亠亠亠人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人八八八八八入人八八八八八八八冂冂冂冂冖冖冖氷氷氷氷氷氷几几几几几凵凵凵刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀力力力力力力力力力力力力力力力力力勹勹匕匕匕匚匸匸匸十十十十十十十十十卩卩卩卩卩卩厂厂厂厶厶又丿又又又又又又口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口囗囗囗囗囗囗囗囗囗囗土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土士士土土土夂夂夕夕夕夕夕大大大大大大大大大大大大大大女女女女女女女女女女女女女女女女女女女女女女女子子子子子子子宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀寸寸寸寸寸寸寸寸寸寸寸小小小尸尸尸尸尸尸尸尸尸尸尸尸尸尸尸山山山山山山山山山山山巛巛工工工己己巾巾巾巾巾巾巾巾巾巾巾巾巾巾巾干干干干干幺幺广广广广广广广广广广广广广廴廴廾弋弓弓弓弓弓弓弓弓弓小彡彡彡彳彳彳彳彳彳彳彳彳彳彳彳彳彳心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心戈戈戈戈戸戸戸戸戸戸手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手支攴攴攴攴攴攴攴攴攴攴攴攴攴文齊文文斗斗斗斤斤方方方方方方无日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日曰曰曰曰曰曰月肉肉肉月肉月木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木欠欠欠欠欠止止止止止齒止止歹歹殳殳殳殳殳毋毋母比毛毛氏氏气水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水火火火火火火火火火火火火火火火火火火火火火火火火火火火火火爪父父片片牙牛牛牛牛牛犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬玄玄玉玉玉玉玉玉玉玉玉玉玉玉瓦瓦甘生生用田日日日田田田田田田田田田田田疋疒疒疒疒疒疒疒疒疒疒癶癶白白白白皮皿皿皿皿皿皿皿目目目目目目目目目目目目目目目目矛矢矢矢石石石石石石石石石石石石石示示示示示示示示示示示示禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾穴穴穴穴穴穴穴穴立龍立立立立竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹米米米米米米聿米米米米米糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸缶缶网网网网网网羊羊羊羊羊羽羽羽羽老老老而耳耳耳肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉自自至至臼臼舌人舛舟舟舟舟舟舟舟艮色艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸虍虍虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫血血行行行行行衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣襾襾襾見見見見見見見見角角角言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言谷豆豆豕豕豸貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝赤走走走走走足足足足足足足足身車車車車車車車車車車車車車辛辛辰辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶邑邑邑邑邑邑邑酉酉酉酉酉釆釆里里里里金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金長門門門門門門門門門門阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜隹隹隹隹隹隹隹隹雨雨雨雨雨雨雨雨雨雨雨雨青青非面革革革革革音音頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁風飛食食食食食食食食食食食首香馬馬馬馬馬馬馬馬馬馬馬骨骨高髟髟鬼鬼鬼魚魚魚魚魚魚魚魚鳥鳥鳥鳥鳥鳥鳥鳥鹵鹿鹿鹿麥麥麻黄黑黑黒鼓鼻齒龍',
+  rad: '・一一一一一一一一一一一一一一丨丶丶丶丿丿乙乙乙乙龜亅亅亅亅二二二二二亠亠亠亠人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人八八八八八入人八八八八八八八冂冂冂冂冖冖冖氷氷氷氷氷氷几几几几几凵凵凵刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀力力力力力力力力力力力力力力力力力勹勹匕匕匕匚匸匸匸十十十十十十十十十卩卩卩卩卩卩厂厂厂厶厶又丿又又又又又又口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口囗囗囗囗囗囗囗囗囗囗土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土士士土土土夂夂夕夕夕夕夕大大大大大大大大大大大大大大女女女女女女女女女女女女女女女女女女女女女女女子子子子子子子宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀寸寸寸寸寸寸寸寸寸寸寸小小小尢尸尸尸尸尸尸尸尸尸尸尸尸尸尸尸山山山山山山山山山山山巛巛工工工己己巾巾巾巾巾巾巾巾巾巾巾巾巾巾巾干干干干干幺幺广广广广广广广广广广广广广廴廴廾弋弓弓弓弓弓弓弓弓弓小彡彡彡彡彳彳彳彳彳彳彳彳彳彳彳彳彳彳心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心戈戈戈戈戸戸戸戸戸戸手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手支攴攴攴攴攴攴攴攴攴攴攴攴攴文齊文文斗斗斗斤斤方方方方方方无日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日曰曰曰曰曰曰月肉肉肉月肉月木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木欠欠欠欠欠止止止止止齒止止歹歹殳殳殳殳殳毋毋母比毛毛氏氏气水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水火火火火火火火火火火火火火火火火火火火火火火火火火火火火火爪父父片片牙牛牛牛牛牛犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬玄玄玉玉玉玉玉玉玉玉玉玉玉玉瓦瓦甘生生用田日日日田田田田田田田田田田田疋疒疒疒疒疒疒疒疒疒疒癶癶白白白白皮皿皿皿皿皿皿皿目目目目目目目目目目目目目目目目矛矢矢矢石石石石石石石石石石石石石示示示示示示示示示示示示禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾穴穴穴穴穴穴穴穴立龍立立立立竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹米米米米米米聿米米米米米糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸缶缶网网网网网网羊羊羊羊羊羽羽羽羽老老老而耳耳耳肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉自自至至臼臼舌人舛舟舟舟舟舟舟舟艮色艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸虍虍虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫血血行行行行行衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣襾襾襾見見見見見見見見角角角言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言谷豆豆豕豕豸貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝赤走走走走走足足足足足足足足身車車車車車車車車車車車車車辛辛辰辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶邑邑邑邑邑邑邑酉酉酉酉酉釆釆里里里里金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金長門門門門門門門門門門阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜隹隹隹隹隹隹隹隹雨雨雨雨雨雨雨雨雨雨雨雨青青非面革革革革革音音頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁風飛食食食食食食食食食食食首香馬馬馬馬馬馬馬馬馬馬馬骨骨高髟髟鬼鬼鬼魚魚魚魚魚魚魚魚鳥鳥鳥鳥鳥鳥鳥鳥鹵鹿鹿鹿麥麥麻黄黑黑黒鼓鼻齒龍',
   k: [
     '々BXLgkelV0WuTs BNVyfyejhhigjTwSw BKTxuoojn',
     '一ATlph-e-dxg',
@@ -11992,6 +12004,7 @@ RB.recogData = {
     '小Bd9img_g_fjegab A3QbtWs CKsqsmt',
     '少Bafikg2g1ejac A_efkbnSt CDnsnno CDyflbpSzQuPq',
     '尚Badhkg- Aq_nmkn CIkdnYr Akghjh3h2 An81e1f1ekhhjgoewdwcmcc A__iik0 BFH-ehjct BKf6e',
+    '就A0-ikgs AU60f0e AhBhjjv Aiv6dhids Apx2e A3bhkg-eicb Ak2dpZq BIkms Bcmzfze B0Bhkf0b6YxanZl B2Whkg9imliugidhZ CKOlljm',
     '尺A4klg0f0ehhhjbx A_v1e1e A9shjgsc3avXs BNXxyxyuq',
     '尻Aq4pg4e3eijdr Azp7e6d Axthjfwd5awYu BeShkfubxXtVp BBnmh_ahjb8holjthkeia',
     '尽A4elhzfzeijcu A941f1e A9mhjfscyZuXq Ba185qm BPSolln BFavmsp',
@@ -12075,6 +12088,7 @@ RB.recogData = {
     '弾AdTkhucjhcx AfSye AhAgjdtyejggieyctdlbc BQXmq Bp1mr CUYfkaq BSWhjl1 BUEzezdhkb1 BZVxexe Bc69d BMHng0ezdoh Bythjg9g8',
     '当BYxjkgwgw ApRnnlo CPXcoWs Apqnh6e5eihike1d0 Arr9f9e AqUmh5f5e',
     '形Aibmh8c ATjmgzdzdog Ax-higqeydsap BOxhkg1g2g1 CSwfianUq CbpejbnPs CmOelWqWnVm',
+    '彦Baair A1K4f3e BBMknin Byfflbt ArVmg0ezeyf A1mgqcuaqZo B5uejZkMo CAvfjYlKp COmckVmEq',
     '彫AkFhjhse9dvau Ang9cjjg3g2g3fjfhac Azpyf BBGijf0 Awc1e AyVhkiv A1xveev A5atf CUcfjalTo CdWejYnRo CfcflZnNt',
     '影AkBijj2 ApJ8cjhhkd0 ArB9d Aul5d BDChq AYq4e4e Ap2ku AtR6chjeo Ayj3e BB6higyehcd Ar2ekZp BWblkil CZlgjbkSq CYTbnTp CYwgjZnPt',
     '彷A4dgiZqVr A94gjaqP0 Awkg0g0 Bu7ijgv BJxlg1e0dnh BxDqlpjija2aycjbb ByqeqXzYtXp',
@@ -12401,6 +12415,7 @@ RB.recogData = {
     '機ARp8d Aq0ikg6g5g6 As6ayYx Az0oq BVZgjaumm BcbgiV0hhub BeWlo CDVfkasnm CSwgielUyihtb CRTmp BFIng1d1cpg BZmcwYs BdJoo Bkrikjxjxo2ouqpkhgY CVLemZqYoXn CD4nm',
     '櫂AWu7f AuOikg6g5g6 AyBYzWy A3Spq BLO0fihg_ BfudlYm BqDejclTo B8mzfihg_ CRGclXm CbcfjcjUm BhyfjdlVr BbJhkgyfx CCJfkan BbK1g0f B7igxgw BdDzfyf BdOzfzf Bdb2f1e',
     '櫓AWy-d AzVikg6g7g6 A3KYzVx A8Zoo BmYfkcmVq BkyyehiXr BT8k2 BT-0e0ehkcy B0Thz BZOyfxe BbFxfwe BUVembm BlXkp B9Mlp CVClkkm BbZk6 BdHwfwfhjc3 Bgs-e Bil7e',
+    '櫛AVDmg1d AuNilg5g6g5 AyBawV0 A1jpq BXGemYq BXOxe BeEko CGwcoZp CFM1e CS3Zp BeQcl BPCh6g6 BLnkhxeh6 BSnwe BSzwe BS-wf BTIwe CAXlhsdjifyexeldc CCFhjg7g6',
     '欄AVAkh3d Asihkg4g4g4 As3bxWz AyJoq BJhhjg3g4g3 BM9ueige0 BNFuf BNPtf B5Lhjhy B8nydiig5g4g5eibc B-cye CASxf Bea5d BbHjv Bei7chjct BgV4d BiJ2e Byuhig5g4 BxdaqWp B6Emkll',
     '欠BGEfmbraqZo A_klgydydihfjXq BXlerZvUsUq BZf97qm',
     '次AdXnkll AVyjftL BcOgkbrTx BQrmg9Zhifiao Bh2gkfnauYrWn Bh-56ro',
@@ -13231,6 +13246,7 @@ RB.recogData = {
     '隔Ae9lgsdjhXy Ax9moirfldkdgee Agrhig4g3g4 BTu0f0e BT5ikit BXVxewdhjdr Bcp-c BLxhjgxgx BPN2d1dkhhkg0gzgiegcc BoxelZo B5wiqtg Be1kg5d BzRhjgw',
     '隙AWZkgxdjigiV1 As5npjtgmekeicf Abhhmg5g5g5 Bwkhlg7 Bd-fjclVp CFJpomo BUJj1 BV2yfyehid0 BZaxfwe BbR_e BzJhlf4ehcb BdIgjclVp CJapolp',
     '際AWalgsdjhgkXw Apbmoiqfleidgcf AYIhjg5g4g5 BOjgjekXs BTtsehhgjWyaoYm BOunm BC7nn B5MwejibpWr Btankwvnl BV85f BFH3f2f Bqmhkg5fifgbc BNyfjdkVr CESpomo',
+    '障AZ3kgucjhgjYy AwSmoirflekdhdf AdShjg3g4g3 BtLhign BOt2f1e Barlq CDgcs BBW9f9e BShijj0 BV8xexehkdx BZf_d BdD7d A-lnh1e1esh Bxfhkg5',
     '隠AdQkguejhgjXz AyBmphrgkejdgdf Ae-hjg4g4g4 B_9eiajMl BSLlq BoTmq CPbdmZo BNUyfyeijc1 BPLxfxe BPWwfwe BHDaw BWUnsqnphrfjdcc Bqujlihhe CR3mlkn',
     '隣AYHlgtdjigjXw As1mnjrfmdjdidf Abihkg4f4g4 BQUnp CL3elan BJv3f2e BtLiig0g0 BoZYsUp Byn7z BSnbqXr BUarfhhemUxZmYl BIpmn BzI5d B2jht Bnc0f0f CKyhig2g2',
     '隻A70gjbmUt Azhhjg- Bkrfkco A1P5e4d Bathjg4 A3G1e1e A3Q2e1d A3Z6e5e A3jlh-bjhhiYpVpToRm A7F1p0psk',
@@ -20881,6 +20897,38 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 7: THE HOUSE THAT REMEMBERS
+  // An empty house that remembers. The koto plays the family's tune whole; in B it plays the same tune with notes left
+  // out, and the shō holds the harmony underneath so that the ear supplies what is missing (the wing's theme in sound);
+  // A2 has the shakuhachi join the koto for the whole tune again. An old house creaks once in a while and the stream
+  // drips past. Leaving notes out, never adding instruments or speed, is the change (C-22).
+  const MEMORY = '5 - - - 4 - 3 - | 1 - - - - - . . | 3 - 4 - 5 - 6 - | 1 - - - - - . . | 4 - - - 2 - 7, - | 2 - - - - - . . | 3 - 2 - 1 - 7, - | 1 - - - - - . .';
+  const GAPS = '5 - - - . . 3 - | . . . . . . . . | 3 - . . 5 - . . | 1 - - - - - . . | . . . . 2 - 7, - | 2 - - - - - . . | 3 - . . 1 - . . | . . . . . . . .';
+  S('hall_w7', {
+    title: 'The House That Remembers',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 7 of the Hall: an empty house deep in the snowy mountains of Tōno (C aeolian, 62). The koto plays the family\'s tune whole; in B it plays the same tune with notes left out while the shō holds the harmony, so that the ear supplies what is missing; in A2 the shakuhachi joins the koto for the whole tune. The old house creaks now and then and the stream drips past.',
+    key: 'C', mode: 'aeolian', bpm: 62, loopFrom: 1,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.46, rv: 0.5 },
+      flute: { i: 'shakuhachi', o: 4, v: 0.36, rv: 0.5, pan: 0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.2, rv: 0.35 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.14, rv: 0.5 },
+      creak: { perc: true, v: 0.14, rv: 0.6 },
+      drip: { perc: true, v: 0.14, rv: 0.7 },
+    },
+    echo: { beats: 1, fb: 0.24, mix: 0.2 },
+    all: { bass: '0 - - - 4 - - -', creak: '........|........|...c....|........', drip: '......d.|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 1 6 6 7 7 1 1', koto: MEMORY },
+      B: { bars: 8, ch: '1 1 6 6 7 7 1 1', koto: GAPS, pad: '0+4' },
+      A2: { bars: 8, ch: '1 1 6 6 7 7 1 1', koto: MEMORY, flute: MEMORY, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
 })(RB.audio);
 
 
@@ -21008,9 +21056,9 @@ RB.audio = RB.audio || {};
     // the Hall of a Hundred Tales (38zh_songs_hall.js), postgame in the twelve-chapter edition: each wing its own song;
     // its creatures fight to the Atlas's themes, the other post-story place
     hall: {
-      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6'], prefixes: ['hall.'],
+      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7'], prefixes: ['hall.'],
       battle: 'battle_atlas', boss: 'boss_atlas', route: null,
-      songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6'],
+      songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7'],
     },
   };
   // Moods shared by every zone (investigation, rest, wonder, grief, the Hush,
@@ -156626,6 +156674,45 @@ RB.dialect.add('kansai', `
 @ hall/hall.w6.end [hall.w6.end]
 = {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
 > {第|だい}{六幕|ろくまく} 、 {幕|まく} や ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける ん や わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
+@ hall/hall.w7.f1_first [hall.w7.f1_first]
+= {第|だい}{七幕|ななまく} は 、 {誰|だれ} も {出|で}て こない {芝居|しばい} ね 。 {台詞|せりふ} の ない {役|やく} が 、 {一番|いちばん} {難|むずか}しい の よ 。 || Act seven: a play where nobody comes on. The part with no lines is the hardest.
+> {第|だい}{七幕|ななまく} は 、 {誰|だれ} も {出|で}て こない {芝居|しばい} や な 。 {台詞|せりふ} の ない {役|やく} が 、 {一番|いちばん} {難|むずか}しい ん や で 。 || Act seven: a play where nobody comes on. The part with no lines is the hardest.
+@ hall/hall.w7.f2_first [hall.w7.f2_first]
+= …… {誰|だれ} も いない のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する 。 || …There's nobody here, but it feels as if I can hear someone talking.
+> …… {誰|だれ} も おらへん のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する わ 。 || …There's nobody here, but it feels as if I can hear someone talking.
+@ hall/hall.w7.f3_first [hall.w7.f3_first]
+= {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} を する の よ ね 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
+> {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} や 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} する ん や で 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
+@ hall/hall.w7.owan [hall.w7.owan]
+= {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+> {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない な 。 {読|よ}んだら {分|わ}かる ん やろ か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+@ hall/hall.w7.t1 [hall.w7.t1]
+= {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一度|いちど} も {出|で}て こない {話|はなし} 。 {粋|いき} だ わ 。 || A tale where the most important one never once comes on stage. Very stylish.
+> {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一回|いっかい} も {出|で}て こない {話|はなし} 。 {粋|いき} や わ 。 || A tale where the most important one never once comes on stage. Very stylish.
+@ hall/hall.w7.h1 [hall.w7.h1]
+= {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+> {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+@ hall/hall.w7.t3 [hall.w7.t3]
+= 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}って いる か で {決|き}まる ん だ ね 。 || Are or sore: which one you say depends on what the other person knows.
+> 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}ってる か で {決|き}まる ん や な 。 || Are or sore: which one you say depends on what the other person knows.
+@ hall/hall.w7.c_kettle [hall.w7.c_kettle]
+= {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かる 。 {毎日|まいにち} の こと だ から だ ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+> {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}ったら {分|わ}かる 。 {毎日|まいにち} の こと や から な 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+@ hall/hall.w7.t6 [hall.w7.t6]
+= {古|ふる}い {手紙|てがみ} は 、 {役|やく} の {下調|したしら}べ で {何度|なんど} も {読|よ}んだ わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I've read plenty of old letters preparing for parts. Leave it to me. What am I looking for?
+> {古|ふる}い {手紙|てがみ} は 、 {役|やく} の {下調|したしら}べ で {何回|なんかい} も {読|よ}んだ で 。 {任|まか}せとき 。 {何|なに} を {探|さが}したら ええ ？ || I've read plenty of old letters preparing for parts. Leave it to me. What am I looking for?
+@ hall/hall.w7.m_comb [hall.w7.m_comb]
+= {手紙|てがみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the letter said again?
+> {手紙|てがみ} の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the letter said again?
+@ hall/hall.w7.m_comb [hall.w7.m_comb]
+= {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん だ ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} だ 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+> {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん や な 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} や 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+@ hall/hall.w7.b_rl [hall.w7.b_rl]
+= 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる ね 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+> 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる な 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+@ hall/hall.w7.end [hall.w7.end]
+= {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
+> {第|だい}{七幕|ななまく} 、 {幕|まく} や ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もん や で 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
 `, 'hall');
 
 
@@ -162056,6 +162143,29 @@ RB.lex.add(RB.lex.parseTable(`
 ても||prt|I|even if (after the て form: 降っても, even if it rains)
 木札|きふだ|n|I|a wooden tag, a wooden ticket
 一年中|いちねんじゅう|n|E|all year round
+# ---- wing 7: what was left unsaid ------------------------------------------------------------------------------------
+第七幕|だいななまく|n|I|the seventh act
+マヨイガ||n|A|a mayoiga: the "wandering house" of Tōno legend, found only by those not looking for it|Real: told in the Tōno Monogatari (1910).
+遠野|とおの|n|A|Tōno, a mountain district in northern Japan, home of many legends
+山奥|やまおく|n|I|deep in the mountains
+山彦|やまびこ|n|A|an echo in the mountains (once thought to be a spirit answering)
+川辺|かわべ|n|I|a riverbank, the waterside
+座敷|ざしき|n|I|a tatami room for guests, a parlour
+障子|しょうじ|n|I|a sliding door of paper on a wooden frame
+勝手口|かってぐち|n|A|the kitchen door, the back door
+膳|ぜん|n|A|a small lacquer tray-table for one person's meal
+椀|わん|n|I|a (lacquer) bowl for soup or rice
+櫛|くし|n|I|a comb
+手鏡|てかがみ|n|I|a hand mirror
+羽織|はおり|n|I|a haori, a short jacket worn over a kimono
+前者|ぜんしゃ|n|A|the former (of two just mentioned)
+後者|こうしゃ|n|A|the latter (of two just mentioned)
+下調べ|したしらべ|n|A|preparation, looking into something beforehand
+就寝|しゅうしん|n|A|going to bed (formal)
+弱める|よわめる|v1|I|to weaken, to turn down (a fire)
+飼う|かう|v5u|E|to keep (an animal)
+田中|たなか|n|E|Tanaka (a common family name)
+探さねば|さがさねば|exp|A|(old, literary) if one does not search (= 探さなければ)
 `));
 
 
@@ -162149,6 +162259,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sky: '#b8bcc0', dark: '#16140f',
   });
   TL.addRamps(TL.PAL.hall_w6);
+
+  // wing 7: a great house deep in the mountains of Tōno at the first snow, black gate and grey thatch, dark cedars,
+  // mist in the valley, and inside, red lacquer trays and black bowls laid out for guests who never come
+  TL.PAL.hall_w7 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#4a5a4a', '#566856', '#3e4c3e', '#667866'], dirt: ['#6a6258', '#7a7268', '#585048', '#8c847a'],
+    stone: ['#7a7e82', '#929699', '#5e6266'], water: ['#3a5a6a', '#4a6c7c', '#7a9aaa', '#d8e4ea'],
+    wood: ['#2e2622', '#3c322c', '#221c18', '#544640'], leaf: ['#2a3e32', '#34483a', '#405646', '#1e2e24'],
+    flower: ['#b8302a', '#f0ece4', '#2a2a2a', '#d8b860'], roof: ['#6a645a', '#58524a', '#46423a', '#7e786c'],
+    sky: '#c8ccd0', dark: '#101210',
+  });
+  TL.addRamps(TL.PAL.hall_w7);
 
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
@@ -162306,6 +162427,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_otsuta', { name: { en: 'Otsuta', jp: 'オツタ' }, voice: { pitch: 1.08 },
     look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#4a5a4a', '#3a4a3a', '#e0d8c0'], shape: 'robe', acc: [] },
     portrait: { eyes: 'round', style: 'long', acc: [], bg: '#161e16' } });
+
+  // ---- the tales' people: wing 7, The House That Remembers -----------------------------------------------------------
+  // Owan (they/them), the red lacquer bowl of the wandering house, in human shape as the tales of such things tell it,
+  // who keeps the house's memories; Magoroku (he/him), from the village below, who has come looking for the house to
+  // carry off its treasures.
+  ch('hall_owan', { name: { en: 'Owan', jp: 'オワン' }, voice: { pitch: 1.18 }, size: 'child',
+    look: { skin: 1, hair: 'bob', hairColor: 0, cloth: ['#a82a24', '#86221c', '#1e1a18'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'bob', acc: [], bg: '#241010' } });
+  ch('hall_magoroku', { name: { en: 'Magoroku', jp: 'マゴロク' }, voice: { pitch: 0.88 },
+    look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#5a5a4a', '#48483a', '#d0c8a8'], shape: 'tunic', acc: ['headband'], bandCol: '#8a8a7a' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#8a8a7a', bg: '#1a1a14' } });
 })(RB.content);
 
 
@@ -167876,6 +168008,827 @@ narr: {朝|あさ} の {霧|きり} が {畳|たた}まれる よう に {薄|�
 })(RB.content);
 
 
+/* ==== src/content/hall/29_w7_maps.js ==== */
+/* The Hall of a Hundred Tales, wing 7, The House That Remembers (a real legend: the マヨイガ, the wandering house of
+ * the mountains of Tōno, told in the Tōno Monogatari; the house's family and Owan are invented): the floors and the
+ * wing (expansion P15; plan 04_DUNGEONS.md D9). Its theme: what was left unsaid (leaving out what is understood;
+ * こ・そ・あ; の for "the one"; at the top 例の, 前者 and 後者).
+ *   1 · The Black Gate (hall.w7f1): the tale in four pictures in the side room (t1), the things left behind in the
+ *       entrance hall, each hung under the note that means it without naming it (t2), the sayings on the garden
+ *       stones, one wrong (t3, a counterexample hall); a bench.
+ *   2 · The Rooms Within (hall.w7f2): the kitchen memo that names nothing, done in its order (t4), the lantern in the
+ *       dark room (t5, paper; it floats), the letter in the storehouse in your companion's hands and the one keepsake
+ *       it means (t6, an information gap), the riddle stone (t7, a reprieve); a bench, a spring, a resting place.
+ *   3 · The Parlour by the Stream (hall.w7f3): the bowls by the stream, fetched as the house asks for "the one"
+ *       (t8), Magoroku and Owan (t9, a mediation), and leaving the house (t10, the capstone).
+ * Each floor's way on is closed by a sacred rope until every trial on it is done; the pattern (hall.w7.pat) chooses
+ * the notes on the hooks, the memo, the keepsake the letter means and the bowls the house asks for. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, B) {
+  'use strict';
+  const K = C.hallKit, T = K.T, W = 'w7';
+  const AMB = { dark: 0.2, playerLight: 54, weather: 'snow', tint: 'rgba(160,170,190,0.10)' };
+
+  // ==== floor 1: The Black Gate ============================================================================================
+  // The black gate in the mist, the front garden, the side room with its scroll, the entrance hall where visitors'
+  // forgotten things lie on the boards under four hooks with notes, and the garden stones to the north-west.
+  const ITEMS = { umbrella: [22, 10], jacket: [24, 10], lantern: [26, 10], book: [28, 10], teacup: [22, 8] };
+  const HOOKS = { h1: [22, 6], h2: [24, 6], h3: [26, 6], h4: [28, 6] };
+  C.hallW7 = { ITEMS, HOOKS };
+  const ITEMPROP = { umbrella: 'hall_umbrella', jacket: 'ko_basket', lantern: 'lantern', book: 'bookpile', teacup: 'teaset' };
+  C.maps['hall.w7f1'] = Object.assign({}, K.base(W), {
+    name: T('The Black Gate', '{黒|くろ}い {門|もん}'),
+    ambient: AMB,
+    terrain: B.build(34, 24, 'x', (k) => {
+      k.rect(13, 18, 9, 5, '.');                 // where you come in, through the black gate
+      k.rect(4, 6, 27, 12, '.');                 // the front garden
+      k.rect(16, 1, 2, 21, ':');                 // the path north, into the house, and south
+      k.rect(1, 8, 6, 5, '_');                   // west: the side room (the story room)
+      k.rect(21, 6, 9, 6, '_');                  // east: the entrance hall
+      k.rect(4, 2, 11, 4, '.');                  // north-west: the garden stones
+      k.scatter('Q', 5, 1691, [5, 13, 8, 4], '.'); k.scatter(',', 8, 1692, [20, 13, 9, 4], '.');
+      k.rect(16, 1, 2, 21, ':');
+    }),
+    props: [].concat(
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      [
+        { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w7.t1' }, ...K.andon(5, 9, W, 't1'),
+        { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
+        // the things left behind (gone once hung up) and the four hooks with their notes
+        ...Object.keys(ITEMS).map((i) => Object.assign({ p: ITEMPROP[i], x: ITEMS[i][0], y: ITEMS[i][1], scene: 'hall.w7.i_' + i, if: '!xp_hall_w7_f0_hung_' + i }, ITEMPROP[i] === 'lantern' ? { light: 20, o: { lit: true } } : {})),
+        ...Object.keys(HOOKS).map((h) => ({ p: 'signblank', x: HOOKS[h][0], y: HOOKS[h][1], scene: 'hall.w7.' + h })),
+        ...K.andon(29, 11, W, 't2'),
+        // the garden stones, and the one that asks
+        { p: 'signblank', x: 5, y: 3, scene: 'hall.w7.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w7.card2' },
+        { p: 'signblank', x: 9, y: 3, scene: 'hall.w7.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w7.card4' },
+        { p: 'stone_marker', x: 13, y: 3, scene: 'hall.w7.t3' }, ...K.andon(14, 2, W, 't3'),
+        K.lit(15, 10), K.lit(19, 10),
+      ]),
+    npcs: [
+      { id: 'hall_owan', x: 25, y: 8, dir: 'down', talk: [{ scene: 'hall.w7.owan' }] },
+    ],
+    foes: [],
+    exits: [{ x: 16, y: 1, w: 1, h: 1, to: 'hall.w7f2', sp: 'from_below', dir: 'up', if: 'hall.w7.f0.clear' }],
+    onEnter: [{ scene: 'hall.w7.f1_first', if: '!hall_w7_f1_seen' }],
+    spawn: { default: [17, 21, 'up'], entry: [17, 21, 'up'] },
+  });
+
+  // ==== floor 2: The Rooms Within ==========================================================================================
+  // The house's corridor running north; the kitchen to the west with its memo on the post; the dark room above it
+  // where a paper lantern drifts; the stone-floored storehouse to the east with the letter, three keepsakes and the
+  // family altar; the inner garden with the riddle stone, a tatami room to rest in, and the courtyard well.
+  const KITCHEN = { kettle: [7, 17], hearth: [9, 16], teapot: [13, 16], tray: [13, 18], shutters: [7, 14], lamp: [11, 14], brazier: [6, 19], door: [12, 20] };
+  const KPROP = { kettle: 'pot', hearth: 'sb_irori', teapot: 'teaset', tray: 'fw_tray', shutters: 'hall_screen', brazier: 'kr_jar', door: 'door' };
+  const KEEP = { comb: [26, 18], flute: [28, 18], mirror: [29, 15] };
+  const KEEPPROP = { comb: 'chest', flute: 'shelf', mirror: 'sa_cabinet' };
+  Object.assign(C.hallW7, { KITCHEN, KEEP });
+  C.maps['hall.w7f2'] = Object.assign({}, K.base(W), {
+    name: T('The Rooms Within', '{奥|おく} の {部屋|へや}'),
+    ambient: Object.assign({}, AMB, { dark: 0.34, weather: null, tint: 'rgba(90,70,60,0.14)' }),
+    terrain: B.build(36, 26, 'x', (k) => {
+      k.rect(15, 21, 8, 5, '_');                 // where you come in
+      k.rect(17, 2, 2, 20, '_');                 // the corridor north
+      k.rect(5, 14, 10, 7, '_');                 // west: the kitchen
+      k.rect(15, 16, 2, 2, '_');                 //   its doorway
+      k.rect(5, 6, 10, 6, '_');                  // north-west: the dark room
+      k.rect(15, 8, 2, 2, '_');                  //   its doorway
+      k.rect(22, 14, 9, 7, '+');                 // east: the storehouse
+      k.rect(19, 16, 3, 2, '_');                 //   its doorway
+      k.rect(4, 2, 9, 4, '.');                   // the inner garden: the riddle stone
+      k.rect(13, 5, 4, 1, ':');                  //   its path (below the rope)
+      k.rect(28, 2, 6, 5, 'm');                  // north-east: a tatami room to rest in
+      k.rect(19, 5, 9, 1, '_');                  //   its passage (below the rope)
+      k.rect(7, 21, 7, 4, '.');                  // south-west: the courtyard well
+      k.rect(13, 22, 3, 2, '.');
+    }),
+    props: [].concat(
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      [
+        { p: 'well', x: 9, y: 22, scene: 'hall.w7.spring' },
+        // the kitchen: the memo on the post, and everything it might mean
+        { p: 'fw_postnote', x: 5, y: 14, scene: 'hall.w7.memo' },
+        ...Object.keys(KPROP).map((c) => ({ p: KPROP[c], x: KITCHEN[c][0], y: KITCHEN[c][1], scene: 'hall.w7.c_' + c })),
+        { p: 'deadlantern', x: KITCHEN.lamp[0], y: KITCHEN.lamp[1], scene: 'hall.w7.c_lamp', if: '!xp_hall_w7_f1_did_lamp' },
+        { p: 'lantern', x: KITCHEN.lamp[0], y: KITCHEN.lamp[1], scene: 'hall.w7.c_lamp', if: 'xp_hall_w7_f1_did_lamp', light: 30, o: { lit: true } },
+        ...K.andon(5, 20, W, 't4'),
+        // the storehouse: the letter, three keepsakes, the family altar
+        { p: 'desk', x: 23, y: 15, scene: 'hall.w7.t6' }, ...K.andon(22, 20, W, 't6'),
+        ...Object.keys(KEEP).map((g) => ({ p: KEEPPROP[g], x: KEEP[g][0], y: KEEP[g][1], scene: 'hall.w7.m_' + g })),
+        { p: 'shrine', x: 27, y: 14 },
+        // the dark room (t5), the riddle stone (t7)
+        ...K.andon(6, 7, W, 't5'),
+        { p: 'kr_stele', x: 6, y: 3, scene: 'hall.w7.t7' }, ...K.andon(8, 2, W, 't7'),
+        // the tatami room (a delver may be waiting)
+        { p: 'teaset', x: 30, y: 3 }, { p: 'bench', x: 29, y: 5 },
+      ]),
+    npcs: [
+      { id: 'hall_owan2', char: 'hall_owan', x: 25, y: 19, dir: 'up', talk: [{ scene: 'hall.w7.owan2' }] },
+    ],
+    foes: [
+      { id: 'b1', enemy: 'kr.chochin', encounter: 'hall.w7.lantern', scene: 'hall.w7.t5', x: 10, y: 8, patrol: 1, bg: 'keepers', intro: { jp: '{暗|くら}い {部屋|へや} の {奥|おく} で 、 {古|ふる}い {提灯|ちょうちん} が {一|ひと}つ 、 {目|め} を {開|あ}けた 。', en: 'At the back of the dark room, an old paper lantern opens one eye.' }, settle: { jp: '{提灯|ちょうちん} は 、 {満足|まんぞく} そう に {目|め} を {閉|と}じた 。', en: 'The lantern closes its eye, content.' } },
+    ],
+    exits: [{ x: 17, y: 2, w: 1, h: 1, to: 'hall.w7f3', sp: 'from_below', dir: 'up', if: 'hall.w7.f1.clear' }],
+    onEnter: [{ scene: 'hall.w7.f2_first', if: '!hall_w7_f2_seen' }],
+    spawn: { default: [18, 24, 'up'], entry: [18, 24, 'up'], from_below: [18, 24, 'up'] },
+  });
+
+  // ==== floor 3: The Parlour by the Stream =================================================================================
+  // The best room, laid for guests, opening onto a garden where a stream runs past the bottom of the house; four
+  // bowls on the bank; Owan by the water, Magoroku in the parlour, and the little gate out by the stream.
+  const BOWLS = { rl: [8, 6], rs: [11, 6], bl: [21, 6], bs: [24, 6] };
+  Object.assign(C.hallW7, { BOWLS });
+  C.maps['hall.w7f3'] = Object.assign({}, K.base(W), {
+    name: T('The Parlour by the Stream', '{川辺|かわべ} の {座敷|ざしき}'),
+    ambient: Object.assign({}, AMB, { dark: 0.24, weather: 'snow' }),
+    terrain: B.build(32, 24, 'x', (k) => {
+      k.rect(11, 18, 11, 6, '_');                // where you come in
+      k.rect(4, 9, 24, 9, 'm');                  // the parlour
+      k.rect(4, 5, 24, 4, '.');                  // the garden by the stream
+      k.rect(2, 2, 28, 3, '~');                  // the stream
+      k.scatter(',', 6, 1701, [5, 7, 22, 1], '.');
+    }),
+    props: [].concat(
+      K.furniture(W, 2, { ret: [13, 22], bench: [20, 22] }),
+      [
+        { p: 'cr_gate', x: 16, y: 5, scene: 'hall.w7.t10' },
+        ...Object.keys(BOWLS).map((b) => ({ p: 'kr_jar', x: BOWLS[b][0], y: BOWLS[b][1], scene: 'hall.w7.b_' + b, if: '!xp_hall_w7_f2_got_' + b })),
+        ...K.andon(26, 7, W, 't8'),
+        { p: 'fw_tray', x: 8, y: 11 }, { p: 'fw_tray', x: 10, y: 11 }, { p: 'fw_tray', x: 12, y: 11 },
+        { p: 'kr_scroll', x: 5, y: 9 }, { p: 'pot', x: 23, y: 11 },
+        ...K.andon(26, 16, W, 't9'),
+        K.lit(6, 16), K.lit(25, 13),
+      ]),
+    npcs: [
+      { id: 'hall_owan3', char: 'hall_owan', x: 14, y: 7, dir: 'down', talk: [{ scene: 'hall.w7.owan3' }] },
+      { id: 'hall_magoroku', x: 18, y: 13, dir: 'left', talk: [{ scene: 'hall.w7.t9' }] },
+    ],
+    foes: [], exits: [],
+    onEnter: [{ scene: 'hall.w7.f3_first', if: '!hall_w7_f3_seen' }],
+    spawn: { default: [16, 22, 'up'], entry: [16, 22, 'up'], from_below: [16, 22, 'up'] },
+  });
+
+  // ==== the wing ==========================================================================================================
+  if (RB.hall) RB.hall.wing(W, {
+    n: 7, title: T('The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'),
+    theme: T('What was left unsaid: leaving out what is understood; this, that and "the one"; the thing you both know.', '{言|い}わなくて も {分|わ}かる こと'),
+    folklore: { en: 'Based on a real legend: the マヨイガ, the "wandering house" of the mountains of Tōno in northern Japan, told in the Tōno Monogatari (1910). Someone lost in the hills comes on a grand house with its gate open, red and black bowls laid out and a kettle on the boil, and nobody there; one who takes nothing and goes home finds a bowl come floating down the stream after them. The house\'s family and Owan are invented.' },
+    music: 'hall_w7', hearth: C.hallHearths.w7, patterns: 2,
+    grow: { en: 'reference and omission: の for "the one" and leaving out what is understood (and, at the top, 例の, 前者 and 後者).' },
+    floors: [
+      { id: 'f1', map: 'hall.w7f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Black Gate', '{黒|くろ}い {門|もん}'),
+        stations: { w7_b1: { kind: 'bench', map: 'hall.w7f1', x: 20, y: 20 } } },
+      { id: 'f2', map: 'hall.w7f2', entry: { x: 18, y: 24, dir: 'up' }, name: T('The Rooms Within', '{奥|おく} の {部屋|へや}'),
+        stations: { w7_b2: { kind: 'bench', map: 'hall.w7f2', x: 21, y: 23 }, w7_sp: { kind: 'spring', map: 'hall.w7f2', x: 9, y: 22 } } },
+      { id: 'f3', map: 'hall.w7f3', entry: { x: 16, y: 22, dir: 'up' }, name: T('The Parlour by the Stream', '{川辺|かわべ} の {座敷|ざしき}'),
+        stations: { w7_b3: { kind: 'bench', map: 'hall.w7f3', x: 20, y: 22 } }, procedures: ['hall_w7_leave'] },
+    ],
+    delvers: { f2: { map: 'hall.w7f2', x: 31, y: 4, dir: 'left' } },
+    trials: [
+      { id: 't1', floor: 0, kind: 'story', title: T('The tale in four pictures', '{四|よっ}つ の {絵|え}') },
+      { id: 't2', floor: 0, kind: 'mechanism', title: T('The things left behind', '{忘|わす}れ{物|もの}') },
+      { id: 't3', floor: 0, kind: 'counterexample', title: T('The garden stones', '{庭|にわ} の {石|いし}') },
+      { id: 't4', floor: 1, kind: 'mechanism', title: T('The kitchen memo', '{台所|だいどころ} の {覚|おぼ}え{書|が}き') },
+      { id: 't5', floor: 1, kind: 'encounter', title: T('The lantern in the dark room', '{暗|くら}い {部屋|へや} の {提灯|ちょうちん}') },
+      { id: 't6', floor: 1, kind: 'infogap', title: T('The letter in the storehouse', '{蔵|くら} の {手紙|てがみ}') },
+      { id: 't7', floor: 1, kind: 'riddle', reprieve: true, title: T('The riddle stone', 'なぞなぞ の {石|いし}') },
+      { id: 't8', floor: 2, kind: 'mechanism', title: T('The bowls by the stream', '{川辺|かわべ} の {椀|わん}') },
+      { id: 't9', floor: 2, kind: 'social', title: T('Magoroku and Owan', 'マゴロク と オワン') },
+      { id: 't10', floor: 2, kind: 'capstone', title: T('Leaving the house', '{家|いえ} を {出|で}る') },
+    ],
+  });
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/hall/30_w7_learning.js ==== */
+/* The Hall of a Hundred Tales, wing 7, The House That Remembers: the language tasks and encounters (expansion P15; plan
+ * 04_DUNGEONS.md D9; scenes in 31_w7_scenes.js). The theme: what was left unsaid (leaving out what is understood;
+ * こ・そ・あ; の for "the one"; at Advanced 例の, 前者 and 後者). Every task has its four levels and an Advanced
+ * stretch.
+ *   hall.w7.story      the tale in four pictures, back in order (A38)
+ *   hall.w7.story_q    what the house had laid out, and who it gave to (optional)
+ *   hall.w7.counter0/1 the sayings on the garden stones: the one that breaks the rule (A34)
+ *   hall.w7.ask        asking your companion which keepsake the letter means (A12)
+ *   hall.w7.riddle     the riddle stone (a reprieve)
+ *   encounters: hall.w7.lantern (the lantern in the dark room: paper; it floats), hall.w7.greed (Magoroku and Owan: a
+ *   mediation), hall.w7.leave (leaving the house: the capstone procedure). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const OR = (o) => Object.assign({ kind: 'order' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const e = (en, ok, why) => Object.assign({ en, ok: !!ok }, why ? { why: { en: why } } : {});
+  const say = (jp, en) => ({ jp, en });
+
+  // ---- the story room ----------------------------------------------------------------------------------------------------
+  const P1 = '{昔|むかし} 、 {遠野|とおの} の {山奥|やまおく} で 、 {一人|ひとり} の {娘|むすめ} が {道|みち} に {迷|まよ}った',
+    P2 = '{黒|くろ}い {門|もん} の {大|おお}きな {家|いえ} が あった が 、 {誰|だれ} も いなかった',
+    P3 = '{座敷|ざしき} に は {赤|あか}い {膳|ぜん} と {黒|くろ}い {椀|わん} が {並|なら}び 、 {鉄瓶|てつびん} の {湯|ゆ} が {沸|わ}いて いた',
+    P4 = '{娘|むすめ} は {何|なに} も {取|と}らず に {帰|かえ}った 。 すると 、 {赤|あか}い {椀|わん} が {一|ひと}つ 、 {川|かわ} を {流|なが}れて きた';
+  C.hallW7Tale = { P1, P2, P3, P4 };
+  const FT = ['むかし 、 やま の おく で 、 むすめ が みち に まよった', 'くろい もん の おおきな いえ が あった 。 でも 、 だれ も いなかった',
+    'へや に は あかい おぜん と くろい おわん が あって 、 おゆ が わいて いた', 'むすめ は なにも とらない で かえった 。 すると 、 あかい おわん が かわ を ながれて きた'];
+  C.hallW7TaleF = FT;
+  C.challenges['hall.w7.story'] = { title: T('{覚|おぼ}えて いる {家|いえ}', 'The House That Remembers'), tiers: {
+    F: [OR({ item: 'v:家', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+      orderHint: { en: 'Lost in the mountains; a big house with nobody in it; the room laid out and the water on the boil; home with nothing, and a bowl down the river.' } })],
+    E: [OR({ item: 'v:椀', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'First the girl lost, then the empty house, then what was laid out inside, then what came after her.' } })],
+    I: [OR({ item: 'g:omission', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'The tale never says who laid out the bowls or who boiled the water: it leaves that out, and so does the house.' } })],
+    A: [OR({ item: 'g:omission', prompt: { en: 'Order the pictures; the turn is the one with すると in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'Everything is laid out and nobody is there; すると brings the turn: what she did not take came after her.' } })],
+  },
+  stretchA: [ch({ item: 'g:omission', ctx: { jp: P4 + ' 。', en: '' }, prompt: { en: 'The tale never says who sent the bowl down the river. Why might it leave that out?' },
+    options: [e('Because the listener supplies it: the house, the only one who could have; saying so would make the house a person, and the tale keeps it a mystery.', 1),
+      e('Because the bowl fell in by accident.', 0, 'The tale ties the bowl to her taking nothing: すると.'),
+      e('Because the girl sent it to herself.', 0, 'She had taken nothing with her.')] })] };
+  C.challenges['hall.w7.story_q'] = { title: T('{話|はなし} の {後|あと} で', 'After the tale'), optional: true, tiers: {
+    F: [ch({ item: 'v:家', ctx: { jp: FT[1] + ' 。', en: '' }, prompt: { en: 'Who was in the big house?' },
+      options: [e('Nobody.', 1), e('An old woman.', 0, 'だれ も いなかった: nobody was there.'), e('A family having dinner.', 0, 'Nobody was there.')] })],
+    E: [ch({ item: 'v:椀', ctx: { jp: P3 + ' 。', en: '' }, prompt: { en: 'What was laid out in the parlour?' },
+      options: [e('Red trays and black bowls, with water boiling in an iron kettle.', 1), e('Gold coins.', 0, '膳 and 椀: trays and bowls.'), e('Nothing at all.', 0, 'The room was laid out, as if for guests.')] })],
+    I: [ch({ item: 'g:omission', ctx: { jp: P4 + ' 。', en: '' }, prompt: { en: 'What happened after she went home?' },
+      options: [e('A red bowl came floating down the river to her.', 1), e('She went back for a bowl.', 0, '何も取らずに: she took nothing.'), e('The house followed her.', 0, 'A bowl came, by the river.')] })],
+    A: [ch({ item: 'g:omission', ctx: { jp: P2 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'What is the tale suggesting?' },
+      options: [e('That the house gave to the one who took nothing: what is not grasped comes of itself.', 1), e('That the house was haunted and dangerous.', 0, 'Nothing harms her; something is given.'), e('That she stole a bowl.', 0, '何も取らずに: she took nothing.')] })],
+  } };
+
+  // ---- the sayings on the garden stones: the one that breaks the rule (A34) ----------------------------------------------
+  // F: こ for what is by the speaker, そ for what is by the listener, あ for what is far from both. E: の for "the one"
+  // (な-adjectives take な before it; い-adjectives join it directly). I: あ for what both know; そ for what only the
+  // speaker knows. A: 例の needs something both know; 前者 picks the first of two.
+  C.hallW7Cards = {};
+  function counter(F, E, I, A, pat) {
+    C.hallW7Cards[pat] = { F, E, I, A };
+    const mk = (item, list, prompt) => ch({ item, ctx: { jp: list.map((x, i) => (i + 1) + ' 、 ' + x[0]).join(' ／ '), en: '' }, prompt: { en: prompt }, options: list.map((x, i) => o(String(i + 1) + ' 、 ' + x[0], x[1], x[2])) });
+    return {
+      F: [mk('g:kosoado', F, 'Three sayings use こ, そ and あ for where the thing is. Which one breaks the rule?')],
+      E: [mk('g:no_pronoun', E, 'Three sayings use の for "the one" correctly. Which one breaks the rule?')],
+      I: [mk('g:kosoado', I, 'Three sayings use そ and あ for what the listener knows, or doesn\'t. Which one breaks the rule?')],
+      A: [mk('g:rei_no', A, 'Three sayings use 例の, 前者 and 後者 correctly. Which is the counterexample?')],
+    };
+  }
+  const C0 = counter(
+    [['（ じぶん の て の ほん を みせて ） これ は わたし の ほん です', 0, 'これ: the thing by the speaker. Correct.'], ['（ あいて の もって いる もの を さして ） それ は なん です か', 0, 'それ: the thing by the listener. Correct.'], ['（ じぶん の て の かさ を みせて ） あれ は わたし の かさ です', 1, 'The umbrella is in the speaker\'s own hand: これ, not あれ.'], ['（ とおく を さして ） あそこ に いえ が あります', 0, 'あそこ: far from both. Correct.']],
+    [['{赤|あか}い の を ください', 0, 'の for "the one": the red one. Correct.'], ['{昨日|きのう} {買|か}った の は 、 これ です', 0, 'Correct.'], ['{静|しず}か の が いい', 1, 'A な-adjective needs な before の: {静|しず}か な の が いい.'], ['この {傘|かさ} は 、 {私|わたし} の です', 0, 'の after a noun: mine. Correct.']],
+    [['{昨日|きのう} の {話|はなし} 、 あれ 、 どう なった ？', 0, 'Something both know: あれ. Correct.'], ['{駅|えき} で {友達|ともだち} に {会|あ}った 。 その {人|ひと} は {医者|いしゃ} だ', 0, 'Someone the listener has never met: その. Correct.'], ['{町|まち} で {古|ふる}い {本屋|ほんや} を {見|み}つけた 。 あの {店|みせ} は {安|やす}い よ', 1, 'The listener has never heard of the shop: その {店|みせ}. あの points to something both know.'], ['（ {手紙|てがみ} で ） こちら は {雪|ゆき} です 。 そちら は どう です か', 0, 'こちら where the writer is, そちら where the reader is: correct.']],
+    [['{例|れい} の {件|けん} 、 {考|かんが}えて くれた ？', 0, 'Both know which matter: correct.'], ['{櫛|くし} と {笛|ふえ} が ある 。 {前者|ぜんしゃ} は {祖母|そぼ} の {物|もの} だ', 0, 'The former: the comb. Correct.'], ['{初|はじ}めて {会|あ}った {人|ひと} に 、 「 {例|れい} の {物|もの} 、 {持|も}って きました か 」 と {聞|き}いた', 1, 'The counterexample: 例の needs something both already know, and a stranger shares nothing with you yet. Name it instead.'], ['{兄|あに} と {姉|あね} が いる 。 {後者|こうしゃ} は {医者|いしゃ} だ', 0, 'The latter: the elder sister. Correct.']], 0);
+  const C1 = counter(
+    [['（ みせ の ひと の て の パン を さして ） それ を ください', 0, 'The bread is by the listener: それ. Correct.'], ['（ じぶん の へや で ） ここ は わたし の へや です', 0, 'Correct.'], ['（ とおく の くつ を さして ） これ は だれ の くつ です か', 1, 'The shoes are far from you both: あれ, not これ.'], ['（ とおく を みて ） あの やま は たかい です', 0, 'Correct.']],
+    [['{大|おお}きい の と {小|ちい}さい の 、 どっち ？', 0, 'Correct.'], ['さっき の は 、 どこ ？', 0, 'さっき + の: the one from before. Correct.'], ['{好|す}き な の を {取|と}って', 0, 'Correct.'], ['{古|ふる}い な の を {捨|す}てた', 1, 'An い-adjective joins の directly: {古|ふる}い の を {捨|す}てた.']],
+    [['A ： {鍵|かぎ} 、 どこ ？ B ： {机|つくえ} の {上|うえ} 。', 0, 'Everything understood is left out: correct.'], ['{去年|きょねん} {一緒|いっしょ} に {行|い}った {宿|やど} 、 あそこ 、 また {行|い}きたい ね', 0, 'A place both remember: あそこ. Correct.'], ['{昨日|きのう} 、 {田中|たなか} と いう {人|ひと} に {会|あ}った 。 あの {人|ひと} 、 {面白|おもしろ}い よ', 1, 'The listener has never met Tanaka: その {人|ひと}, not あの.'], ['（ {電話|でんわ} で ） そちら に は 、 {何時|なんじ} に {着|つ}きます か', 0, 'Correct.']],
+    [['{例|れい} の {話|はなし} 、 もう {聞|き}いた ？', 0, 'Correct.'], ['{電車|でんしゃ} と バス が ある 。 {後者|こうしゃ} の {方|ほう} が {安|やす}い', 0, 'The latter: the bus. Correct.'], ['{犬|いぬ} と {猫|ねこ} を {飼|か}って いる 。 {前者|ぜんしゃ} は よく {吠|ほ}える', 0, 'The former: the dog. Correct.'], ['{本|ほん} が {一冊|いっさつ} ある 。 {前者|ぜんしゃ} は {古|ふる}い', 1, 'The counterexample: 前者 picks the first of two, and here there is only one book. その {本|ほん} は {古|ふる}い.']], 1);
+  const cardStretch = [ch({ item: 'g:rei_no', ctx: { jp: '{例|れい} の {物|もの} を {持|も}って きて 。 ／ {櫛|くし} を {持|も}って きて 。', en: '' }, prompt: { en: 'What does 例の物 do that 櫛 doesn\'t?' },
+    options: [e('It counts on the listener already knowing which thing, and keeps it unnamed: between the two of you, or from anyone else listening.', 1), e('Nothing: it is only more polite.', 0, 'It is not about politeness but about what both already know.'), e('It means any old thing.', 0, 'The opposite: one particular thing both know.')] })];
+  C.challenges['hall.w7.counter0'] = { title: T('{庭|にわ} の {石|いし}', 'The garden stones'), tiers: C0, stretchA: cardStretch };
+  C.challenges['hall.w7.counter1'] = { title: T('{庭|にわ} の {石|いし}', 'The garden stones'), tiers: C1, stretchA: cardStretch };
+
+  // ---- asking which keepsake the letter means (A12) -----------------------------------------------------------------------
+  C.challenges['hall.w7.ask'] = { title: T('{蔵|くら} の {手紙|てがみ}', 'The letter in the storehouse'), tiers: {
+    F: [ch({ item: 'g:kosoado', prompt: { en: 'You want to know which thing the letter means. What do you ask?' },
+      options: [o('てがみ は 、 どれ の こと です か 。', 1), o('てがみ は 、 だれ が かきました か 。', 0, 'That asks who wrote it.'), o('てがみ は 、 いつ きました か 。', 0, 'That asks when it came.')] })],
+    E: [ch({ item: 'g:no_pronoun', prompt: { en: 'You want to know which of the things in the storehouse the letter means. What do you ask?' },
+      options: [o('{手紙|てがみ} が {言|い}って いる の は 、 {蔵|くら} の どれ です か 。', 1), o('{手紙|てがみ} は 、 {蔵|くら} の どこ に あった ん です か 。', 0, 'That asks where the letter was found.'), o('{蔵|くら} に は 、 {手紙|てがみ} が {何枚|なんまい} あります か 。', 0, 'That asks how many letters there are.')] })],
+    I: [ch({ item: 'g:omission', prompt: { en: 'You want to know what the letter means by the thing it never names. What do you ask?' },
+      options: [o('{手紙|てがみ} で 、 {名前|なまえ} を {書|か}いて いない {物|もの} は 、 {何|なん} の こと です か 。', 1), o('{手紙|てがみ} に は 、 {誰|だれ} の {名前|なまえ} が {書|か}いて あります か 。', 0, 'That asks whose names are in it.'), o('{手紙|てがみ} を {書|か}いた {人|ひと} は 、 {何|なん} と いう {名前|なまえ} です か 。', 0, 'That asks the writer\'s name.')] })],
+    A: [ch({ item: 'g:keigo_kenjo', prompt: { en: 'Ask, politely, what the letter refers to.' },
+      options: [o('{恐|おそ}れ{入|い}ります が 、 この {手紙|てがみ} が {指|さ}して いる {物|もの} は 、 どちら か 、 お{教|おし}え いただけます か 。', 1), o('この {手紙|てがみ} を 、 {頂|いただ}いて も よろしい でしょう か 。', 0, 'That asks whether you may keep the letter.'), o('{手紙|てがみ} を お{書|か}き に なった の は 、 どなた でしょう か 。', 0, 'That asks who wrote it.')] })],
+  },
+  stretchA: [ch({ item: 'g:rei_no', ctx: { jp: '{櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: '' }, prompt: { en: 'Which is to go before the altar, and how do you know?' },
+    options: [e('The comb: 前者, "the former", is the first of the two just named.', 1), e('The flute: 前者 means "the one in front".', 0, '前者 is the one named first, not the one standing in front.'), e('Both.', 0, '前者 picks one of the two.')] })] };
+
+  // ---- the riddle stone (a reprieve) -----------------------------------------------------------------------------------------
+  C.challenges['hall.w7.riddle'] = { title: T('なぞなぞ の {石|いし}', 'The riddle stone'), tiers: {
+    F: [ch({ item: 'g:kosoado', ctx: { jp: 'いつも いっしょ に いる けど 、 くらい ところ で は いなく なる 。 なあに ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('かげ', 1), o('ともだち', 0, 'A friend stays with you in the dark.'), o('かぜ', 0, 'The wind is not always with you.')] })],
+    E: [ch({ item: 'g:omission', ctx: { jp: '{呼|よ}ぶ と 、 {同|おな}じ {言葉|ことば} で {答|こた}える 。 でも 、 {姿|すがた} は {見|み}えない 。 {山|やま} に いる もの 、 {何|なん} だ ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{山彦|やまびこ}', 1), o('{狐|きつね}', 0, 'A fox has its own voice, and can be seen.'), o('{鳥|とり}', 0, 'A bird sings its own song.')] })],
+    I: [ch({ item: 'g:omission', ctx: { jp: '{取|と}ろう と する と {逃|に}げて いき 、 {取|と}らず に {帰|かえ}る と {川|かわ} を {流|なが}れて くる 。 {何|なん} だ ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{赤|あか}い {椀|わん}', 1), o('{魚|さかな}', 0, 'A fish does not come to those who leave it alone.'), o('{木|こ}の{葉|は}', 0, 'Leaves float down whether you reach for them or not.')] })],
+    A: [ch({ item: 'g:omission', ctx: { jp: '{見|み}えて いる のに 、 {誰|だれ} も {住|す}んで いない 。 {探|さが}せば {見|み}つからず 、 {探|さが}さねば {現|あらわ}れる 。 {何|なに} か 。', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('マヨイガ', 1), o('{雲|くも}', 0, 'Clouds are there whether you look or not.'), o('{虹|にじ}', 0, 'A rainbow does not hide from those who seek it.')] })],
+  },
+  stretchA: [ch({ item: 'g:omission', ctx: { jp: '{探|さが}せば {見|み}つからず 、 {探|さが}さねば {現|あらわ}れる 。', en: '' }, prompt: { en: 'The riddle never says who is searching. Who is it?' },
+    options: [e('Anyone at all: leaving out the subject makes it a rule for whoever searches, as in a proverb.', 1), e('Only the girl in the tale.', 0, 'With no subject named, it holds for anyone.'), e('The house.', 0, 'The house is what is searched for.')] })] };
+
+  // ---- t5: the lantern in the dark room (paper; it floats) ---------------------------------------------------------------------
+  C.encounters = C.encounters || {};
+  const LAMP = { enemy: 'kr.chochin', name: say('{古|ふる}い {提灯|ちょうちん}', 'Old lantern'), conditions: ['paper', 'airborne'], knots: 2, music: 'battle_atlas' };
+  C.encounters['hall.w7.lantern'] = {
+    id: 'hall.w7.lantern', kind: 'battle', name: say('{暗|くら}い {部屋|へや} の {提灯|ちょうちん}', 'The lantern in the dark room'),
+    lead: Object.assign({}, LAMP, { knots: 3 }),
+    group: { normal: [LAMP], hard: [LAMP, LAMP] },
+    rules: { wait: true, conditions: true },
+  };
+
+  // ---- t9: Magoroku and Owan (a mediation) ------------------------------------------------------------------------------------
+  function task(item, en, ok, w1, why1, w2, why2) {
+    const low = ch({ item, prompt: { en }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }] });
+    const high = ch({ item, prompt: { en: en + ' (Read them closely: two are near.)' }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }, { jp: w2, ok: false, why: { en: why2 } }] });
+    return { F: low, E: low, I: high, A: high };
+  }
+  C.encounters['hall.w7.greed'] = {
+    id: 'hall.w7.greed', kind: 'social', name: say('マゴロク と オワン', 'Magoroku and Owan'),
+    rules: { wait: true },
+    autoRoute: ['s:calm', 's:forwhom', 'wait', 's:askhouse'],
+    social: {
+      parties: [
+        { aid: 'n:magoroku', name: say('マゴロク', 'Magoroku'), stance: 'heated', wants: { en: 'To carry off something valuable from the house, and not to say why.' } },
+        { aid: 'n:owan', name: say('オワン', 'Owan'), stance: 'heated', wants: { en: 'That nothing be carried off from the house.' } },
+      ],
+      claims: {
+        take: { by: 'n:magoroku', jp: '{要|い}る ん だ 。 {持|も}って {帰|かえ}る 。 {止|と}めて も {無駄|むだ} だ 。', en: 'Magoroku: "I need it. I\'m taking it home. Don\'t bother trying to stop me."' },
+        rule: { by: 'n:owan', jp: 'この {家|いえ} から {物|もの} を {持|も}ち{出|だ}した {人|ひと} は 、 {二度|にど} と {来|こ}られない よ 。', en: 'Owan: "Anyone who carries things out of this house can never come back."' },
+        need: { by: 'n:magoroku', jp: '…… おふくろ が {寝込|ねこ}んで いる 。 {米|こめ} も {薬|くすり} も 、 もう {買|か}えない ん だ 。', en: 'Magoroku: "…My mother\'s laid up in bed. We can\'t buy rice or medicine any more."', hidden: true },
+      },
+      understanding: 3,
+      gesture: { name: say('{膳|ぜん} の {前|まえ} に {座|すわ}る', 'Sit down at a laid tray'), desc: 'Sit down at one of the trays the house has laid, as a guest would.', effect: { stance: { 'n:owan': 'listening' } }, once: true, says: { en: 'You kneel at a tray. Somewhere in the house the kettle sings, and Owan\'s shoulders come down.' } },
+      unravelTip: { en: 'Nothing is knotted. What is missing is what Magoroku leaves out: what he needs, and for whom.' },
+      actions: [
+        { id: 'calm', kind: 'restate', label: say('マゴロク さん は {何|なに} か が {要|い}る 。 オワン は 、 この {家|いえ} を {守|まも}りたい 。 そう です ね 。', 'Say back what each of them wants'),
+          task: task('g:omission', 'Which says back what each of them wants?', 'マゴロク さん は {何|なに} か が {要|い}る 。 オワン は 、 この {家|いえ} を {守|まも}りたい 。 そう です ね 。', 'マゴロク さん は 、 この {家|いえ} に {住|す}みたい ん です ね 。', 'He wants something from it, not to live in it.', 'オワン は 、 {物|もの} を {全部|ぜんぶ} あげたい ん です ね 。', 'Owan wants nothing taken.'),
+          cases: [{ when: { stance: { 'n:magoroku': 'heated' } }, effect: { stance: { 'n:magoroku': 'listening' } }, says: { en: 'Magoroku lets go of the gold sake cup he had picked up. "…Something like that."' } },
+            { when: { stance: { 'n:owan': 'heated' } }, effect: { stance: { 'n:owan': 'listening' } }, says: { en: 'Owan stops pulling the sliding doors shut. "…Yes."' } }],
+          says: { en: 'They are already listening.' } },
+        { id: 'forwhom', kind: 'ask', label: say('{誰|だれ} の ため に 、 {要|い}る ん です か 。', 'Ask who it is for'), once: true, when: { stance: { 'n:magoroku': 'listening' } },
+          task: task('g:omission', 'Which asks who he needs it for?', '{誰|だれ} の ため に 、 {要|い}る ん です か 。', '{何|なに} が {食|た}べたい ん です か 。', 'That asks what he wants to eat.', 'いつ {来|き}た ん です か 。', 'That asks when he came.'),
+          effect: { reveal: 'need', understanding: 1 }, says: { en: 'Magoroku is quiet for a long time. "…My mother. She\'s been in bed since the summer. We\'ve no rice left, and no money for medicine."' } },
+        { id: 'askhouse', kind: 'propose', label: say('{持|も}って {帰|かえ}る の で は なく 、 お{母|かあ}さん の ため に 、 この {家|いえ} に {頼|たの}んで みません か 。', 'Propose asking the house, for his mother, instead of taking'), when: { claims: ['need'] },
+          task: task('g:te_giving', 'Which proposes asking the house, for his mother, instead of taking?', '{持|も}って {帰|かえ}る の で は なく 、 お{母|かあ}さん の ため に 、 この {家|いえ} に {頼|たの}んで みません か 。', '{全部|ぜんぶ} 、 {持|も}って {帰|かえ}りましょう 。', 'That takes everything.', 'お{母|かあ}さん の こと は 、 {忘|わす}れましょう 。', 'That asks him to forget her.'),
+          effect: { flag: 'asked' }, says: { en: 'Magoroku puts the cup back on its tray, kneels, and bows to the empty room. "…For my mother. Please." Owan watches him, and nods.' } },
+        { id: 'blunt', kind: 'propose', label: say('{泥棒|どろぼう} は 、 {帰|かえ}れ 。', 'Call him a thief and tell him to go'), lasting: true, means: { en: 'You will call him a thief.' },
+          task: task('v:泥棒', 'Which calls him a thief and tells him to go?', '{泥棒|どろぼう} は 、 {帰|かえ}れ 。', 'まず 、 {座|すわ}って ください 。', 'That invites him to sit.', 'お{茶|ちゃ} を {飲|の}みません か 。', 'That offers tea.'),
+          effect: { stance: { 'n:magoroku': 'leaving' } }, says: { en: 'Magoroku goes red, then white. He throws the cup down on its tray and stamps out into the snow.' } },
+      ],
+      responses: {
+        water: { effect: { stance: { 'n:magoroku': 'listening' } }, says: { en: 'You pour him a cup from the kettle. He drinks it like a man who has walked a long way.' } },
+        unravel: { says: { en: 'Nothing here is knotted. Listen for what Magoroku leaves out.' } },
+      },
+      wait: { when: { stance: { 'n:magoroku': 'listening' } }, effect: { reveal: 'need' }, says: { en: 'Magoroku says, to nobody, "She used to make rice like this. Before."' } },
+      drift: [{ when: { all: [{ rounds: 3 }, { stance: { 'n:magoroku': 'heated' } }] }, once: true, effect: { stance: { 'n:magoroku': 'listening', 'n:owan': 'listening' } }, says: { en: 'From the kitchen comes the smell of rice on the boil. Magoroku\'s stomach growls, loudly. Owan almost laughs, and he sits down hard.' } }],
+      companion: {
+        nao: [{ id: 'nao_carry', name: say('{頼|たの}まれた {物|もの}', 'What is asked for'), desc: 'Nao, who carries only what people ask to be carried, says so.', once: true, effect: { understanding: 1, stance: { 'n:magoroku': 'listening' } }, says: { en: 'Nao: "I carry what people ask me to carry. Never what I take. The difference is the whole job." Magoroku looks at the cup in his hand.' } }],
+        mio: [{ id: 'mio_medicine', name: say('{薬|くすり} の {話|はなし}', 'Ask about the medicine'), desc: 'Mio asks, as a healer would, what the trouble is.', once: true, effect: { understanding: 1 }, says: { en: 'Mio: "You said you need something. Is somebody ill? I can tell you what to give them, at least." Magoroku\'s face changes.' } }],
+        ren: [{ id: 'ren_memory', name: say('{家|いえ} の {記憶|きおく}', 'What a house remembers'), desc: 'Ren speaks of houses that remember their last kindness.', once: true, effect: { understanding: 1, stance: { 'n:owan': 'listening' } }, says: { en: 'Ren: "The lamp-keepers say an empty house remembers the last kindness done in it, and keeps it like a lamp." Owan\'s hands go still.' } }],
+        suzu: [{ id: 'suzu_ending', name: say('{別|べつ} の {結末|けつまつ}', 'Another ending'), desc: 'Suzu offers the story a better ending.', once: true, effect: { understanding: 1 }, says: { en: 'Suzu: "In every telling, the greedy neighbour finds nothing. Wouldn\'t it be something if, just once, he asked instead?"' } }],
+      },
+    },
+    conclusions: [
+      { id: 'left', when: { left: 'n:magoroku' }, result: 'end', text: { en: 'Magoroku has gone out into the snow. He has nowhere else to look; he will be back. You can try again.' } },
+      { id: 'asked', when: { flag: 'asked' }, result: 'win', text: { en: 'Magoroku has asked, instead of taking.' } },
+    ],
+  };
+
+  // ---- t10: leaving the house (the capstone) -----------------------------------------------------------------------------------
+  function hear(item, fJp, jp, en, ok, w1, why1, w2, why2) {
+    const opts = (two) => [{ en: ok, ok: true }, { en: w1, ok: false, why: { en: why1 } }].concat(two ? [{ en: w2, ok: false, why: { en: why2 } }] : []);
+    return { F: ch({ item, ctx: { jp: fJp, en: '' }, prompt: { en }, options: opts(false) }), E: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(false) }), I: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(true) }), A: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(true) }) };
+  }
+  const A = (id, jp, en, more) => Object.assign({ id, label: { jp, en } }, more);
+  const vals = (x) => { const out = {}; for (const k in x) out[k] = { jp: x[k][0], en: x[k][1] }; return out; };
+  const WHERE = vals({ parlour: ['{座敷|ざしき}', 'the parlour'], hall: ['{玄関|げんかん}', 'the entrance hall'], gate: ['{門|もん}', 'the gate'], mist: ['{霧|きり} の {中|なか}', 'in the mist'], home: ['{川辺|かわべ}', 'the riverbank'] });
+  C.encounters['hall.w7.leave'] = {
+    id: 'hall.w7.leave', kind: 'procedure', name: say('{家|いえ} を {出|で}る', 'Leaving the house'),
+    rules: { wait: true },
+    procedure: {
+      id: 'hall_w7_leave', version: 1, restart: 'stable',
+      machine: { where: 'parlour' },
+      show: [{ key: 'where', label: say('{今|いま}', 'Now'), values: WHERE }],
+      done: { en: 'You have left the house, and something has come after you down the stream.' },
+      steps: [
+        { id: 'g1', stable: true, text: say('オワン ： 「 {好|す}き な の を 、 {持|も}って いって いい よ 。 どれ でも 。 」', 'Owan: "You can take whichever one you like. Any of them."'),
+          task: hear('g:no_pronoun', 'オワン ： 「 すき な の を 、 もって いって いい よ 。 」', 'オワン ： 「 {好|す}き な の を 、 {持|も}って いって いい よ 。 どれ でも 。 」', 'What does Owan offer?',
+            'To take any one thing you like.', 'To stay the night.', 'の is "the one": any thing you like.', 'To take everything.', 'One, whichever you like.'),
+          actions: [
+            A('decline', '{何|なに} も {取|と}らず に 、 お{礼|れい} を {言|い}う', 'Take nothing, and say thank you', { ok: true, set: { where: 'hall' }, means: { en: 'You thank the house, and take nothing.' }, result: { en: 'Owan looks at you for a long moment, then smiles, and walks with you to the entrance hall.' } }),
+            A('take', '{金|きん} の {盃|さかずき} を {取|と}る', 'Take the gold sake cup', { means: { en: 'You reach for the gold sake cup.' }, wrong: { en: 'The house goes very quiet. You put the cup back. Owan says nothing at all.' } }),
+          ] },
+        { id: 'g2', stable: true, text: say('{声|こえ} ： 「 {行|い}ってらっしゃい 。 {帰|かえ}って きたら 、 『 お{帰|かえ}り 』 って {言|い}う から ね 。 」', 'A voice: "Off you go. When you come back, I\'ll say \'welcome home\'."'),
+          task: hear('g:omission', 'こえ ： 「 いってらっしゃい 。 かえって きたら 、 『 おかえり 』 って いう から ね 。 」', '{声|こえ} ： 「 {行|い}ってらっしゃい 。 {帰|かえ}って きたら 、 『 お{帰|かえ}り 』 って {言|い}う から ね 。 」', 'Who will say "welcome home", and to whom?',
+            'The voice of the house, to you, when you come back.', 'You, to the house.', 'The one who says it is the one speaking; you are the one coming back.', 'Owan, to Magoroku.', 'Nobody named: the speaker, to you.'),
+          actions: [
+            A('reply', '「 {行|い}って きます 」 と {答|こた}える', 'Answer, "I\'m off, then"', { ok: true, set: { where: 'gate' }, means: { en: 'You answer the empty house: "I\'m off, then."' }, result: { en: 'Somewhere far inside, someone laughs softly, the way people do when they have been waiting a long time to hear that.' } }),
+            A('silent', '{黙|だま}って {出|で}る', 'Leave without a word', { means: { en: 'You go to leave without a word.' }, wrong: { en: 'You stop at the step. Somewhere in the house, someone is still waiting for an answer.' } }),
+          ] },
+        { id: 'g3', stable: true, text: say('{子供|こども} の {声|こえ} ： 「 また {来|き}て ね 。 {今度|こんど} は 、 {探|さが}さない で 。 」', 'A child\'s voice: "Come again. Next time, don\'t look."'),
+          task: hear('g:omission', 'こども の こえ ： 「 また きて ね 。 こんど は 、 さがさない で 。 」', '{子供|こども} の {声|こえ} ： 「 また {来|き}て ね 。 {今度|こんど} は 、 {探|さが}さない で 。 」', 'Don\'t look for what?',
+            'For the house: it is found only by those who are not looking.', 'For the child.', 'The child is not hiding; the house is what is found.', 'For the gold cup.', 'The cup stays; the house is what comes and goes.'),
+          actions: [
+            A('promise', '{探|さが}さず に 、 また {来|く}る と {約束|やくそく} する', 'Promise to come again, without looking for it', { ok: true, set: { where: 'mist' }, means: { en: 'You promise to come again, and not to look.' }, result: { en: 'The black gate closes behind you without a sound. When you turn, there is only mist, and snow on the cedars.' } }),
+            A('map', '{地図|ちず} に {道|みち} を {書|か}いて おく', 'Mark the way on a map to find it again', { means: { en: 'You take out a brush to mark the way.' }, wrong: { en: 'The ink will not take on the paper. Some places are not for finding.' } }),
+          ] },
+        { id: 'g4', stable: true, text: say('オワン の {声|こえ} ： 「 それ 、 あの {人|ひと} に 。 お{米|こめ} が {減|へ}らない から 。 」', 'Owan\'s voice: "That\'s for him. The rice in it never runs out."'),
+          task: hear('g:kosoado', 'オワン の こえ ： 「 それ 、 あの ひと に 。 」', 'オワン の {声|こえ} ： 「 それ 、 あの {人|ひと} に 。 お{米|こめ} が {減|へ}らない から 。 」', 'Who is "あの人", the one the bowl is for?',
+            'Magoroku, for his mother: the one you both know needs rice.', 'You.', 'あの人 is someone both of you know, not you yourself.', 'The girl in the tale.', 'The tale is long ago; あの人 is someone you both met today.'),
+          actions: [
+            A('give', '{椀|わん} を 、 マゴロク の {家|いえ} に {届|とど}ける', 'Take the bowl to Magoroku\'s house', { ok: true, set: { where: 'home' }, means: { en: 'A red bowl comes turning down the stream. You lift it out and carry it down to Magoroku\'s house.' }, result: { en: 'Magoroku\'s mother holds the red bowl in both hands. "It was full of rice," Magoroku says, "and it still is."' } }),
+            A('keep', '{椀|わん} を {自分|じぶん} の {物|もの} に する', 'Keep the bowl yourself', { means: { en: 'You go to keep the bowl for yourself.' }, wrong: { en: 'The bowl slips from your hands back into the stream, and turns there, waiting, until you understand who it is for.' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'You have left the house as it hoped.' } }],
+  };
+})(RB.content);
+
+
+/* ==== src/content/hall/31_w7_scenes.js ==== */
+/* The Hall of a Hundred Tales, wing 7, The House That Remembers: the scenes (expansion P15; plan 04_DUNGEONS.md D9; maps
+ * in 29_w7_maps.js, tasks and encounters in 30_w7_learning.js). Each trial sets its floor's own flag and tells the
+ * Hall; what a trial shows follows the level its task is set at (the profile, or one up on the Grow route); the
+ * pattern (hall.w7.pat) chooses the notes on the hooks, the memo, the keepsake the letter means and the bowls the house
+ * asks for. Owan they/them (and never names themself: the house leaves its own name out), Magoroku he/him. Suzu's lines
+ * have Kansai versions (src/content/dialect/kansai_99_hall.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const K = C.hallKit, W = 'w7', L = K.lv(W), both = L.both;
+  const TALE = C.hallW7Tale, FT = C.hallW7TaleF;
+  const nest = (x) => x.replace(/「/g, '『').replace(/」/g, '』');
+  const LV = (fn) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].map((t) => fn(p, t))).join('');
+  const LV3 = (fn) => [0, 1].flatMap((p) => [['EF', 0], ['E', 1], ['IA', 2]].map(([t, i]) => fn(p, t, i))).join('');
+  let out = `
+@scene hall.w7.f1_first
+!set hall_w7_f1_seen
+narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {雪|ゆき} の {降|ふ}り{始|はじ}めた {山奥|やまおく} だった 。 {霧|きり} の {中|なか} に 、 {黒|くろ}い {門|もん} が {開|ひら}いて いる 。 || Through the paper screen: deep in the mountains, the first snow falling. In the mist a black gate stands open.
+?(comp=nao) comp: {配達|はいたつ} で {山|やま} を {歩|ある}く と 、 たまに こういう {門|もん} を {見|み}る 。 {二度目|にどめ} は 、 {見|み}つからない ん だ 。 || Walking the mountains on my rounds, you sometimes see a gate like this. You never find it a second time.
+?(comp=mio) comp: {誰|だれ} の {家|いえ} かしら 。 {煙|けむり} は {出|で}て いる のに 、 {人|ひと} の {気配|けはい} が しない わ 。 || Whose house is it? There's smoke rising, but no sense of anyone.
+?(comp=ren) comp: マヨイガ 、 です ね 。 {灯守|ひもり} の {古|ふる}い {話|はなし} に も {出|で}て きます 。 {何|なに} も {取|と}らない の が 、 {礼儀|れいぎ} だ と 。 || A mayoiga. It comes up in the lamp-keepers' old tales too. Taking nothing is the courtesy, they say.
+?(comp=suzu) comp: {第|だい}{七幕|ななまく} は 、 {誰|だれ} も {出|で}て こない {芝居|しばい} ね 。 {台詞|せりふ} の ない {役|やく} が 、 {一番|いちばん} {難|むずか}しい の よ 。 || Act seven: a play where nobody comes on. The part with no lines is the hardest.
+?(!comp) narr: {門|もん} の {向|む}こう で 、 {鉄瓶|てつびん} が {鳴|な}って いる 。 || Beyond the gate, an iron kettle is singing.
+
+@scene hall.w7.f2_first
+!set hall_w7_f2_seen
+narr: {家|いえ} の {奥|おく} へ {続|つづ}く {廊下|ろうか} 。 どの {部屋|へや} に も 、 {今|いま} まで {誰|だれ} か が いた よう な {温|ぬく}もり が ある 。 || A corridor leading into the house. Every room is warm, as if someone had been there a moment ago.
+?(comp) comp: …… {誰|だれ} も いない のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する 。 || …There's nobody here, but it feels as if I can hear someone talking.
+
+@scene hall.w7.f3_first
+!set hall_w7_f3_seen
+narr: {座敷|ざしき} の {向|む}こう を 、 {川|かわ} が {流|なが}れて いる 。 {膳|ぜん} が {三|みっ}つ 、 {客|きゃく} を {待|ま}って いる 。 {座敷|ざしき} の {真|ま}ん{中|なか} に 、 {知|し}らない {男|おとこ} が {立|た}って いた 。 || Beyond the parlour a stream runs by. Three trays wait for guests. In the middle of the parlour stands a man you don't know.
+?(comp=nao) comp: {勝手|かって} に {入|はい}って きた {口|くち} だ な 。 {人|ひと} の こと は {言|い}えない が 。 || He's let himself in. Not that we can talk.
+?(comp=mio) comp: あの {人|ひと} 、 {顔色|かおいろ} が {悪|わる}い わ 。 {何日|なんにち} も {食|た}べて いない みたい 。 || That man looks pale. As if he hasn't eaten in days.
+?(comp=ren) comp: {何|なに} か を {探|さが}して いる {目|め} です 。 …… {探|さが}す {人|ひと} に は 、 {見|み}つからない {家|いえ} の はず なのに 。 || Those are searching eyes. …And this is meant to be a house no searcher finds.
+?(comp=suzu) comp: {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} を する の よ ね 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
+
+@scene hall.w7.bench1
+!hook hall_station w7_b1
+
+@scene hall.w7.bench2
+!hook hall_station w7_b2
+
+@scene hall.w7.bench3
+!hook hall_station w7_b3
+
+@scene hall.w7.spring
+narr: {中庭|なかにわ} の {井戸|いど} 。 {水|みず} が 、 {雪|ゆき} の {光|ひかり} を {映|うつ}して いる 。 || The courtyard well. The water holds the light of the snow.
+!hook hall_station w7_sp
+
+@scene hall.w7.owan
+!faceplayer hall_owan
+!if hall.w7.t2 -> done
+hall_owan: いらっしゃい 。 この {家|いえ} の {椀|わん} だ よ 。 {昔|むかし} の {人|ひと} が {置|お}いて いった {物|もの} が 、 {片付|かたづ}かない の 。 {札|ふだ} の {下|した} に 、 {掛|か}けて あげて 。 || Welcome. (I'm) this house's bowl. The things people left behind long ago never got put away. Hang each one under its note.
+?(comp) comp: {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+!end
+:done
+hall_owan: {全部|ぜんぶ} 、 {元|もと} の {所|ところ} 。 {家|いえ} が 、 {少|すこ}し {思|おも}い{出|だ}した みたい 。 || All back where they belong. The house seems to remember a little.
+
+@scene hall.w7.owan2
+!faceplayer hall_owan2
+hall_owan: {台所|だいどころ} の {覚|おぼ}え{書|が}き は 、 おばあさん の {字|じ} 。 {蔵|くら} の {手紙|てがみ} は 、 お{父|とう}さん の 。 {二人|ふたり} と も 、 {大事|だいじ} な こと ほど {書|か}かない {人|ひと} だった 。 || The kitchen memo is in the grandmother's hand; the letter in the storehouse, the father's. Both of them left out the things that mattered most.
+`;
+
+  // ---- t1: the story room ----------------------------------------------------------------------------------------------
+  const E_PANELS = [TALE.P1, TALE.P2, TALE.P3, TALE.P4].map(nest);
+  const F_PANELS = FT.map(nest);
+  const PANEL_EN = ['Long ago, deep in the mountains of Tōno, a girl lost her way.', 'There was a great house with a black gate, but nobody was there.', 'In the parlour red trays and black bowls were laid out, and water was boiling in an iron kettle.', 'The girl took nothing and went home. Then a red bowl came floating down the river.'];
+  out += '\n@scene hall.w7.t1' + K.taskTrial({ w: W, k: 0, t: 't1',
+    intro: ['narr: {脇|わき} の {部屋|へや} の {床|とこ} の {間|ま} に 、 {絵巻|えまき} が {掛|か}けて ある 。 || A picture scroll hangs in the alcove of the side room.']
+      .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
+      ['narr: {障子|しょうじ} の {隙間|すきま} から {雪|ゆき} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || Snow blows in through a gap in the paper door, and the pictures slip out of order.']),
+    task: 'hall.w7.story',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w7.story_q',
+      '?(comp=nao) comp: {何|なに} も {取|と}らず に {帰|かえ}った {人|ひと} の ところ へ 、 {向|む}こう から {届|とど}いた 。 {一番|いちばん} {確|たし}か な {配達|はいたつ} だ な 。 || It reached the one who took nothing, all on its own. The surest delivery there is.',
+      '?(comp=mio) comp: {誰|だれ} が {椀|わん} を {流|なが}した の か 、 {話|はなし} は {言|い}わない のね 。 {言|い}わなくて も 、 {分|わ}かる けど 。 || The tale never says who sent the bowl down the river. Not that it needs to.',
+      '?(comp=ren) comp: {欲|ほ}しがらない {人|ひと} に だけ 、 {家|いえ} は {与|あた}える 。 {灯|ひ} も 、 {少|すこ}し {似|に}て います 。 || The house gives only to those who don\'t grasp. Light is a little like that.',
+      '?(comp=suzu) comp: {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一度|いちど} も {出|で}て こない {話|はなし} 。 {粋|いき} だ わ 。 || A tale where the most important one never once comes on stage. Very stylish.'],
+    later: 'narr: {絵|え} は 、 {後|あと} で {並|なら}べ{直|なお}せる 。 || You can put the pictures in order later.',
+    done: 'narr: {絵巻|えまき} は 、 {元|もと} の {順番|じゅんばん} で {掛|か}かって いる 。 || The scroll hangs in its proper order.' });
+
+  // ---- t2: the things left behind, each hung under the note that means it --------------------------------------------------
+  const ITEM = { umbrella: ['{傘|かさ}', 'the umbrella'], jacket: ['{羽織|はおり}', 'the padded jacket'], lantern: ['{提灯|ちょうちん}', 'the paper lantern'], book: ['{本|ほん}', 'the book'], teacup: ['{湯呑|ゆの}み', 'the teacup'] };
+  const NOTE = {
+    umbrella: ['あめ が やんだ から 、 もう いらない 。', '{雨|あめ} が やんだ から 、 もう {要|い}らない 。 {置|お}いて いきます 。', 'やんだ ので 、 もう {要|い}りません 。 {次|つぎ} に {降|ふ}られた {方|かた} が 、 お{使|つか}い ください 。', 'It\'s stopped raining, so I don\'t need it any more.'],
+    jacket: ['さむかったら 、 きて ね 。', '{寒|さむ}かったら 、 {着|き}て ね 。 {返|かえ}さなくて いい から 。', '{冷|ひ}える {晩|ばん} は 、 {肩|かた} に かけて お{行|い}き 。 {返|かえ}す に は {及|およ}ばない よ 。', 'If you\'re cold, put it on.'],
+    lantern: ['くらく なったら 、 つかって ね 。', '{暗|くら}く なったら 、 {使|つか}って ね 。', '{足元|あしもと} が {見|み}えなく なったら 、 {灯|とも}して お{行|い}き 。', 'Once it\'s dark, use it.'],
+    book: ['よみおわった から 、 かえします 。', '{読|よ}み{終|お}わった から 、 {返|かえ}します 。', '{最後|さいご} まで {読|よ}みました ので 、 お{返|かえ}し します 。 {続|つづ}き が あれば 、 また {貸|か}して ください 。', 'I\'ve finished reading it, so I\'m giving it back.'],
+    teacup: ['のみおわったら 、 あらって 、 ここ に おいて ね 。', '{飲|の}み{終|お}わったら 、 {洗|あら}って 、 ここ に {置|お}いて ね 。', '{冷|さ}めない うち に どうぞ 。 {済|す}んだら 、 {洗|あら}って {伏|ふ}せて おいて ください 。', 'When you\'ve finished drinking, wash it and leave it here.'],
+  };
+  const HOOKN = { 0: { h1: 'book', h2: 'umbrella', h3: 'lantern', h4: 'jacket' }, 1: { h1: 'lantern', h2: 'teacup', h3: 'jacket', h4: 'book' } };
+  const HOLDI = (i) => 'xp_hall_w7_f0_hold_' + i, HUNG = (i) => 'xp_hall_w7_f0_hung_' + i, HOOKED = (h) => 'xp_hall_w7_f0_hook_' + h;
+  const HOOKS = ['h1', 'h2', 'h3', 'h4'];
+  for (const i of Object.keys(ITEM)) out += `
+@scene hall.w7.i_${i}
+!unset ${Object.keys(ITEM).map(HOLDI).join(' ')}
+!set ${HOLDI(i)}
+narr: {床|ゆか} の 「 ${ITEM[i][0]} 」 を {拾|ひろ}った 。 || You pick up ${ITEM[i][1]} from the boards.
+`;
+  for (const h of HOOKS) {
+    out += `
+@scene hall.w7.${h}
+narr: {鉤|かぎ} の {下|した} に 、 {古|ふる}い {書|か}き{付|つ}け 。 || Under a hook, an old note.
+`;
+    out += LV3((p, t, i) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${NOTE[HOOKN[p][h]][i]} 」 || "${NOTE[HOOKN[p][h]][3]}"\n`);
+    out += `!if ${HOOKED(h)} -> done
+!if ${Object.keys(ITEM).map(HOLDI).join('|')} -> try
+!end
+:try
+!if hall.w7.pat=1 -> p1
+!if ${HOLDI(HOOKN[0][h])} -> right0
+!goto wrong
+:p1
+!if ${HOLDI(HOOKN[1][h])} -> right1
+:wrong
+narr: {掛|か}けよう と して 、 {手|て} を {止|と}めた 。 この {書|か}き{付|つ}け が {言|い}って いる の は 、 これ で は ない よう だ 。 || You go to hang it, and stop. This note doesn't seem to mean that.
+!end
+`;
+    for (const p of [0, 1]) out += `:right${p}
+narr: 「 ${ITEM[HOOKN[p][h]][0]} 」 を {鉤|かぎ} に {掛|か}けた 。 || You hang ${ITEM[HOOKN[p][h]][1]} on the hook.
+!unset ${Object.keys(ITEM).map(HOLDI).join(' ')}
+!set ${HUNG(HOOKN[p][h])} ${HOOKED(h)}
+!goto check
+`;
+    out += `:check
+!if ${HOOKS.map(HOOKED).join('&')} -> all
+!refresh
+!end
+:all
+narr: {忘|わす}れ{物|もの} が 、 {全部|ぜんぶ} {元|もと} の {鉤|かぎ} に {戻|もど}った 。 || Everything left behind is back on its hook.
+?(comp) comp: {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+${K.mark(W, 0, 't2')}
+!end
+:done
+?(hall.w7.pat=0) narr: 「 ${ITEM[HOOKN[0][h]][0]} 」 が 、 {鉤|かぎ} に {掛|か}かって いる 。 || ${ITEM[HOOKN[0][h]][1][0].toUpperCase() + ITEM[HOOKN[0][h]][1].slice(1)} hangs on the hook.
+?(hall.w7.pat=1) narr: 「 ${ITEM[HOOKN[1][h]][0]} 」 が 、 {鉤|かぎ} に {掛|か}かって いる 。 || ${ITEM[HOOKN[1][h]][1][0].toUpperCase() + ITEM[HOOKN[1][h]][1].slice(1)} hangs on the hook.
+`;
+  }
+
+  // ---- t3: the garden stones ------------------------------------------------------------------------------------------------
+  const CE = {
+    0: { F: ['(Showing the book in your hand) This is my book.', '(Pointing at what the other person holds) What is that?', '(Showing the umbrella in your hand) That over there is my umbrella.', '(Pointing far off) There is a house over there.'],
+      E: ['The red one, please.', 'The one I bought yesterday is this.', 'The quiet-no one (no な) is best.', 'This umbrella is mine.'],
+      I: ['That thing from yesterday: how did it go?', 'I met a friend at the station. That person (whom you don\'t know) is a doctor.', 'I found an old bookshop in town. That shop (we both know) is cheap.', '(In a letter) Here it\'s snowing. How is it there?'],
+      A: ['Have you thought about that matter (you know the one)?', 'There\'s a comb and a flute. The former was Grandmother\'s.', 'You asked someone you\'d just met, "Did you bring the thing (you know the one)?"', 'I have an elder brother and an elder sister. The latter is a doctor.'] },
+    1: { F: ['(Pointing at the bread in the shopkeeper\'s hand) That one, please.', '(In your own room) This is my room.', '(Pointing at shoes far away) Whose shoes are these?', '(Looking far off) That mountain is high.'],
+      E: ['The big one or the small one: which?', 'Where\'s the one from earlier?', 'Take the one you like.', 'I threw out the old-na one (with a needless な).'],
+      I: ['A: The key? B: On the desk.', 'That inn we went to last year: I\'d like to go there again.', 'I met someone called Tanaka yesterday. That person (we both know) is fun.', '(On the phone) What time will you get there?'],
+      A: ['Have you heard about that (you know what)?', 'There\'s a train and a bus. The latter is cheaper.', 'I keep a dog and a cat. The former barks a lot.', 'There\'s one book. The former is old.'] },
+  };
+  out += '\n@scene hall.w7.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
+    intro: ['narr: {庭|にわ} の {石|いし} に 、 {四|よっ}つ の {言葉|ことば} が {刻|きざ}んで ある 。 {一番|いちばん} {奥|おく} の {石|いし} に は 、 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || Four sayings are carved on the garden stones. The stone at the back says: "One alone is wrong."'],
+    task: { 0: 'hall.w7.counter0', 1: 'hall.w7.counter1' },
+    after: ['narr: {間違|まちが}った {言葉|ことば} の {上|うえ} に 、 {雪|ゆき} が {積|つ}もって {消|け}した 。 || Snow settles on the wrong saying until it is gone.', '?(comp) comp: 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}って いる か で {決|き}まる ん だ ね 。 || Are or sore: which one you say depends on what the other person knows.'],
+    later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
+    done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
+  for (let i = 0; i < 4; i++) {
+    out += `\n@scene hall.w7.card${i + 1}\nnarr: {苔|こけ} むした {庭|にわ} の {石|いし} 。 {言葉|ことば} が {刻|きざ}んで ある 。 || A mossy garden stone, carved with a saying.\n`;
+    out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${nest(C.hallW7Cards[p][t][i][0])} 」 || "${CE[p][t][i]}"\n`);
+  }
+
+  // ---- t4: the kitchen memo that names nothing ---------------------------------------------------------------------------------
+  const STEPS = { 0: ['kettle', 'hearth', 'teapot', 'tray'], 1: ['shutters', 'lamp', 'brazier', 'door'] };
+  const MEMO = {
+    0: { F: 'ひ に かけて 、 わいたら よわめて 、 そそいで 、 だして 。', E: '{火|ひ} に かけて 、 {沸|わ}いたら {弱|よわ}めて 。 それから {注|そそ}いで 、 {出|だ}して 。', I: '{火|ひ} に かけて おいて 。 {沸|わ}いたら {弱|よわ}めて 、 {冷|さ}めない うち に {注|そそ}いで 、 お{客|きゃく} さん に {出|だ}して 。', A: '{火|ひ} に かけ 、 {沸|わ}き{次第|しだい} {弱|よわ}め 、 {冷|さ}めぬ うち に {注|そそ}いで お{出|だ}し する こと 。', en: 'Put (it) on the fire; when (it) boils, turn (it) down; then pour (it), and serve (it).' },
+    1: { F: 'くらく なる まえ に しめて 、 つけて 、 ひえて きたら たして 、 さいご に かけて 。', E: '{暗|くら}く なる {前|まえ} に {閉|し}めて 。 それから {点|つ}けて 、 {冷|ひ}えて きたら {足|た}して 。 {最後|さいご} に {掛|か}けて 。', I: '{日|ひ} が {暮|く}れる {前|まえ} に {閉|し}めて おいて 。 {点|つ}けたら 、 {冷|ひ}えて きた とき に {足|た}して 、 {寝|ね}る {前|まえ} に {掛|か}けて 。', A: '{日暮|ひぐ}れ {前|まえ} に {閉|し}め 、 {点|つ}け 、 {冷|ひ}え{込|こ}み {次第|しだい} {足|た}し 、 {就寝|しゅうしん} {前|まえ} に {掛|か}ける こと 。', en: 'Before dark, shut (them); then light (it); when it turns cold, add (some); last thing, bolt (it).' },
+  };
+  const THING = { kettle: ['{鉄瓶|てつびん}', 'the iron kettle', '{鉄瓶|てつびん} を {火|ひ} に かけた 。', 'You put the iron kettle on the fire.'],
+    hearth: ['{囲炉裏|いろり}', 'the hearth', '{湯|ゆ} が {沸|わ}いた 。 {火|ひ} を {弱|よわ}めた 。', 'The water boils. You turn the fire down.'],
+    teapot: ['{急須|きゅうす}', 'the teapot', '{急須|きゅうす} に {湯|ゆ} を {注|そそ}いだ 。', 'You pour the water into the teapot.'],
+    tray: ['お{盆|ぼん}', 'the tray', 'お{茶|ちゃ} を お{盆|ぼん} に {載|の}せて 、 {客間|きゃくま} に {出|だ}した 。', 'You set the tea on the tray and take it through to the guest room.'],
+    shutters: ['{雨戸|あまど}', 'the storm shutters', '{雨戸|あまど} を {閉|し}めた 。', 'You slide the storm shutters shut.'],
+    lamp: ['{行灯|あんどん}', 'the lamp', '{行灯|あんどん} に {火|ひ} を {点|つ}けた 。', 'You light the lamp.'],
+    brazier: ['{火鉢|ひばち}', 'the brazier', '{火鉢|ひばち} に {炭|すみ} を {足|た}した 。', 'You add charcoal to the brazier.'],
+    door: ['{勝手口|かってぐち}', 'the back door', '{勝手口|かってぐち} に {閂|かんぬき} を {掛|か}けた 。', 'You slide the bolt across the back door.'] };
+  const DID = (c) => 'xp_hall_w7_f1_did_' + c;
+  const ALLDONE = [0, 1].map((p) => 'hall.w7.pat=' + p + '&' + STEPS[p].map(DID).join('&')).join('|');
+  out += `
+@scene hall.w7.memo
+!set xp_hall_w7_f1_memo
+narr: {台所|だいどころ} の {柱|はしら} の {覚|おぼ}え{書|が}き 。 おばあさん の {字|じ} だ 。 {何|なに} を する の か 、 {物|もの} の {名前|なまえ} が {一|ひと}つ も {書|か}いて ない 。 || A memo on the kitchen post, in the grandmother's hand. It says what to do, but never names a single thing.
+`;
+  out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${MEMO[p][t]} 」 || "${MEMO[p].en}"\n`);
+  for (const c of Object.keys(THING)) {
+    out += `
+@scene hall.w7.c_${c}
+narr: ${THING[c][0]} 。 || ${THING[c][1][0].toUpperCase() + THING[c][1].slice(1)}.
+!if !xp_hall_w7_f1_memo -> unread
+!if ${DID(c)} -> did
+!if hall.w7.pat=1 -> p1
+`;
+    for (const p of [0, 1]) {
+      const idx = STEPS[p].indexOf(c);
+      out += (p === 1 ? ':p1\n' : '') + (idx < 0 ? '!goto none\n' : (idx > 0 ? `!if !${DID(STEPS[p][idx - 1])} -> early\n` : '') + '!goto do\n');
+    }
+    out += `:do
+narr: ${THING[c][2]} || ${THING[c][3]}
+!set ${DID(c)}
+!if ${ALLDONE} -> all
+!refresh
+!end
+:all
+narr: {覚|おぼ}え{書|が}き の {通|とお}り に 、 {全部|ぜんぶ} {済|す}んだ 。 {台所|だいどころ} が 、 {満足|まんぞく} そう に {静|しず}か に なった 。 || Everything on the memo is done, in its order. The kitchen goes quiet, as if satisfied.
+?(comp) comp: {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かる 。 {毎日|まいにち} の こと だ から だ ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+${K.mark(W, 1, 't4')}
+!end
+:early
+narr: {待|ま}って 。 {覚|おぼ}え{書|が}き の {順番|じゅんばん} で は 、 これ は まだ {先|さき} だ 。 || Wait. By the memo's order, that comes later.
+!end
+:none
+narr: {覚|おぼ}え{書|が}き に は 、 これ の こと は {書|か}いて ない よう だ 。 || The memo doesn't seem to mean this.
+!end
+:unread
+narr: {台所|だいどころ} の {柱|はしら} に 、 {覚|おぼ}え{書|が}き が {貼|は}って ある 。 {先|さき} に {読|よ}もう 。 || There's a memo pinned to the kitchen post. Read it first.
+!end
+:did
+narr: これ は もう {済|す}んだ 。 || That's done already.
+`;
+  }
+
+  // ---- t5: the lantern in the dark room -----------------------------------------------------------------------------------------
+  out += `
+@scene hall.w7.t5
+narr: {暗|くら}い {部屋|へや} に 、 {提灯|ちょうちん} の {明|あ}かり が {静|しず}か に {灯|とも}った 。 || In the dark room, the lantern's light settles, steady.
+${K.mark(W, 1, 't5')}
+`;
+
+  // ---- t6: the letter in the storehouse and the keepsake it means (in your companion's hands; alone, Owan reads it) --------
+  const TOLD = {
+    0: { F: 'くし と ふえ が 、 くら に しまって ある 。 くし の ほう を 、 ぶつだん に おいて ほしい 。', E: '{櫛|くし} と {笛|ふえ} が 、 {蔵|くら} に しまって ある 。 {櫛|くし} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{櫛|くし} と {笛|ふえ} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{櫛|くし} と {笛|ふえ} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: 'A comb and a flute are put away in the storehouse; one of them is to go before the family altar.' },
+    1: { F: 'ふえ と くし が 、 くら に しまって ある 。 ふえ の ほう を 、 ぶつだん に おいて ほしい 。', E: '{笛|ふえ} と {櫛|くし} が 、 {蔵|くら} に しまって ある 。 {笛|ふえ} の {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', I: '{笛|ふえ} と {櫛|くし} が {蔵|くら} に しまって ある 。 {先|さき} に {書|か}いた {方|ほう} を 、 {仏壇|ぶつだん} に {供|そな}えて ほしい 。', A: '{笛|ふえ} と {櫛|くし} は {蔵|くら} に {納|おさ}めて ある 。 {前者|ぜんしゃ} を {仏壇|ぶつだん} に {供|そな}えて ほしい 。', en: 'A flute and a comb are put away in the storehouse; one of them is to go before the family altar.' },
+  };
+  out += `
+@scene hall.w7.t6
+!if hall.w7.t6 -> done
+!if xp_hall_w7_f1_asked -> told
+narr: {蔵|くら} の {机|つくえ} に 、 お{父|とう}さん の {手紙|てがみ} 。 {大事|だいじ} な {所|ところ} が 、 {湿気|しっけ} で {滲|にじ}んで いる 。 || On the storehouse desk lies the father's letter. The part that matters has run in the damp.
+?(comp=nao) comp: {滲|にじ}んだ {手紙|てがみ} なら 、 {任|まか}せて くれ 。 {何|なに} が {知|し}りたい ？ || Leave a smudged letter to me. What do you want to know?
+?(comp=mio) comp: {私|わたし} が {読|よ}む わ 。 {古|ふる}い {帳面|ちょうめん} は 、 {慣|な}れて いる の 。 {何|なに} を {調|しら}べる ？ || I'll read it. I'm used to old notebooks. What are we looking for?
+?(comp=ren) comp: {私|わたし} が {読|よ}みましょう 。 {何|なに} を {知|し}りたい です か ？ || I'll read it. What would you like to know?
+?(comp=suzu) comp: {古|ふる}い {手紙|てがみ} は 、 {役|やく} の {下調|したしら}べ で {何度|なんど} も {読|よ}んだ わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I've read plenty of old letters preparing for parts. Leave it to me. What am I looking for?
+?(!comp) hall_owan: {読|よ}んで あげる 。 この {家|いえ} の {手紙|てがみ} だ から 。 {何|なに} が {知|し}りたい ？ || I'll read it for you. It's this house's letter. What do you want to know?
+!hook hall_challenge hall.w7.ask
+!if var._res=0 -> later
+!set xp_hall_w7_f1_asked
+:told
+`;
+  out += LV((p, t) => `?(${both(L[t], 'hall.w7.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en}"\n`);
+  out += `!end
+:later
+narr: {手紙|てがみ} を {机|つくえ} に {戻|もど}した 。 || You put the letter back on the desk.
+!end
+:done
+narr: {手紙|てがみ} は 、 {机|つくえ} の {上|うえ} で {畳|たた}まれて いる 。 || The letter lies folded on the desk.
+`;
+  const KEEP = { comb: ['{櫛|くし}', 'the comb', 0], flute: ['{笛|ふえ}', 'the flute', 1], mirror: ['{手鏡|てかがみ}', 'the hand mirror', -1] };
+  for (const g of Object.keys(KEEP)) {
+    out += `
+@scene hall.w7.m_${g}
+!if hall.w7.t6 -> done
+narr: ${KEEP[g][0]} 。 || ${KEEP[g][1][0].toUpperCase() + KEEP[g][1].slice(1)}.
+!if !xp_hall_w7_f1_asked -> unknown
+${KEEP[g][2] >= 0 ? '!if hall.w7.pat=' + KEEP[g][2] + ' -> right\n' : ''}narr: {手紙|てがみ} が {言|い}って いる の は 、 これ で は ない よう だ 。 || The letter doesn't seem to mean this one.
+?(comp) comp: {手紙|てがみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the letter said again?
+!end
+${KEEP[g][2] >= 0 ? `:right
+narr: ${KEEP[g][0]} を 、 {仏壇|ぶつだん} の {前|まえ} に そっと {供|そな}えた 。 || You set ${KEEP[g][1]} gently before the family altar.
+?(comp) comp: {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん だ ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} だ 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+${K.mark(W, 1, 't6')}
+!end
+` : ''}:unknown
+narr: {手紙|てがみ} が どれ の こと を {言|い}って いる の か 、 まだ {分|わ}からない 。 {先|さき} に {読|よ}んで もらおう 。 || You don't know yet which one the letter means. Have it read first.
+!end
+:done
+narr: ${KEEP[g][0]} 。 {蔵|くら} の {中|なか} は 、 {静|しず}か だ 。 || ${KEEP[g][1][0].toUpperCase() + KEEP[g][1].slice(1)}. The storehouse is quiet.
+`;
+  }
+
+  // ---- t7: the riddle stone ----------------------------------------------------------------------------------------------------
+  out += '\n@scene hall.w7.t7' + K.taskTrial({ w: W, k: 1, t: 't7',
+    intro: ['narr: {苔|こけ} むした {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {解|と}けた {者|もの} は 、 {一度|いちど} だけ 、 {帰|かえ}って また {来|く}る こと が できる 。 」 || Words cut into a mossy stone: "Whoever solves this may once go home and come back."'],
+    task: 'hall.w7.riddle',
+    after: ['narr: {石|いし} の {字|じ} の {上|うえ} で 、 {雪|ゆき} が {光|ひか}った 。 || The snow glints on the carving.'],
+    later: 'narr: {答|こた}え は 、 {急|いそ}がなくて いい 。 || There\'s no hurry for the answer.',
+    done: 'narr: {石|いし} は 、 {答|こた}え を {覚|おぼ}えて いる 。 || The stone remembers the answer.' });
+
+  // ---- t8: the bowls by the stream, fetched as the house asks for "the one" ----------------------------------------------------
+  const BOWL = { rl: ['{大|おお}きな {赤|あか}い {椀|わん}', 'a big red bowl'], rs: ['{小|ちい}さな {赤|あか}い {椀|わん}', 'a small red bowl'], bl: ['{大|おお}きな {黒|くろ}い {椀|わん}', 'a big black bowl'], bs: ['{小|ちい}さな {黒|くろ}い {椀|わん}', 'a small black bowl'] };
+  const REQ = {
+    0: [['rl', 'おおきくて あかい の を とって 。', '{大|おお}きくて {赤|あか}い の を {取|と}って 。', '{赤|あか}い の を {取|と}って 。 {大|おお}きい {方|ほう} ね 。', 'Fetch the big red one.'],
+      ['rs', 'おなじ いろ の 、 ちいさい の を とって 。', '{同|おな}じ {色|いろ} の 、 {小|ちい}さい の を {取|と}って 。', 'さっき の と {同|おな}じ {色|いろ} で 、 もっと {小|ちい}さい の を 。', 'Now the small one, the same colour.'],
+      ['bl', 'さっき と ちがう いろ の 、 おおきい の を とって 。', 'さっき と {違|ちが}う {色|いろ} の 、 {大|おお}きい の を {取|と}って 。', '{今度|こんど} は 、 {最初|さいしょ} の と {大|おお}きさ が {同|おな}じ で 、 {色|いろ} が {違|ちが}う の を 。', 'Now the big one of the other colour.']],
+    1: [['bs', 'ちいさくて くろい の を とって 。', '{小|ちい}さくて {黒|くろ}い の を {取|と}って 。', '{黒|くろ}い の を {取|と}って 。 {小|ちい}さい {方|ほう} ね 。', 'Fetch the small black one.'],
+      ['rs', 'おなじ おおきさ の 、 あかい の を とって 。', '{同|おな}じ {大|おお}きさ の 、 {赤|あか}い の を {取|と}って 。', 'さっき の と {大|おお}きさ が {同|おな}じ で 、 {色|いろ} が {違|ちが}う の を 。', 'Now the red one, the same size.'],
+      ['bl', 'さいしょ と おなじ いろ の 、 おおきい の を とって 。', '{最初|さいしょ} と {同|おな}じ {色|いろ} の 、 {大|おお}きい の を {取|と}って 。', '{最後|さいご} は 、 {一番|いちばん} {初|はじ}め の と {同|おな}じ {色|いろ} で 、 {大|おお}きい の を 。', 'Last, the big one, the colour of the first.']],
+  };
+  const GOT = (b) => 'xp_hall_w7_f2_got_' + b;
+  const STEP = (p, k) => (k === 0 ? '!' + GOT(REQ[p][0][0]) : GOT(REQ[p][k - 1][0]) + '&!' + GOT(REQ[p][k][0]));
+  const ASKS = [0, 1].flatMap((p) => [0, 1, 2].flatMap((k) => [['EF', 1], ['E', 2], ['IA', 3]].map(([t, i]) => `?(${both(L[t], 'hall.w7.pat=' + p + '&' + STEP(p, k))}) hall_owan: 「 ${REQ[p][k][i]} 」 || "${REQ[p][k][4]}"\n`))).join('');
+  const ALLGOT = [0, 1].map((p) => 'hall.w7.pat=' + p + '&' + REQ[p].map((r) => GOT(r[0])).join('&')).join('|');
+  out += `
+@scene hall.w7.owan3
+!faceplayer hall_owan3
+!if hall.w7.t8 -> done
+hall_owan: {川辺|かわべ} の {椀|わん} を 、 {言|い}う {順|じゅん} に {取|と}って きて ほしい の 。 || Fetch me the bowls by the stream, in the order I ask.
+${ASKS}!end
+:done
+hall_owan: {三|みっ}つ と も 、 {揃|そろ}った 。 {家族|かぞく} の {分|ぶん} 。 || All three, together. One for each of the family.
+`;
+  for (const b of Object.keys(BOWL)) {
+    const conds = [0, 1].map((p) => { const k = REQ[p].findIndex((r) => r[0] === b); return k < 0 ? null : 'hall.w7.pat=' + p + '&' + STEP(p, k); }).filter(Boolean);
+    out += `
+@scene hall.w7.b_${b}
+narr: ${BOWL[b][0]} 。 || ${BOWL[b][1][0].toUpperCase() + BOWL[b][1].slice(1)}.
+${conds.length ? '!if ' + conds.join('|') + ' -> take\n' : ''}hall_owan: その {椀|わん} じゃ ない よ 。 もう {一度|いちど} {言|い}う ね 。 || Not that one. I'll say it again.
+${ASKS}!end
+:take
+narr: ${BOWL[b][0]} を {拾|ひろ}い{上|あ}げた 。 || You pick up ${BOWL[b][1]}.
+!set ${GOT(b)}
+!if ${ALLGOT} -> all
+${ASKS}!refresh
+!end
+:all
+narr: オワン が 、 {三|みっ}つ の {椀|わん} を {膳|ぜん} に {並|なら}べた 。 「 それ で 、 {全部|ぜんぶ} 。 」 || Owan sets the three bowls on a tray. "That's all of them."
+?(comp) comp: 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる ね 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+${K.mark(W, 2, 't8')}
+!end
+`;
+  }
+
+  // ---- t9: Magoroku and Owan --------------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w7.t9
+!faceplayer hall_magoroku
+!if hall.w7.t9 -> after
+hall_magoroku: この {家|いえ} の {物|もの} を 、 {一|ひと}つ {持|も}って {帰|かえ}る 。 {文句|もんく} は {言|い}わせない 。 || I'm taking one thing from this house home with me. Nobody's going to stop me.
+!encounter hall.w7.greed
+!if var._enc=asked -> asked
+narr: {開|ひら}いた {障子|しょうじ} から 、 {雪|ゆき} が {吹|ふ}き{込|こ}んで くる 。 マゴロク は 、 {行|い}く {所|ところ} も なく 、 また {戻|もど}って くる だろう 。 || Snow blows in through the open door. Magoroku has nowhere else to go; he will be back.
+!end
+:asked
+hall_owan: …… {分|わ}かった 。 {頼|たの}まれた なら 、 {考|かんが}える 。 || …All right. Since I've been asked, I'll think about it.
+${K.mark(W, 2, 't9')}
+!end
+:after
+hall_magoroku: {頼|たの}んで みた 。 …… {後|あと} は 、 {待|ま}つ だけ だ 。 || I've asked. …Now I just wait.
+`;
+
+  // ---- t10: leaving the house ---------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w7.t10
+!if hall.w7.t10 -> after
+!if !hall.w7.t8 -> wait
+!if !hall.w7.t9 -> wait
+narr: {川辺|かわべ} の {小|ちい}さな {門|もん} 。 ここ から 、 {家|いえ} を {出|で}る 。 || The little gate by the stream. This is the way out of the house.
+!encounter hall.w7.leave
+!if var._res=0 -> later
+!set xp_hall_w7_f2_t10
+!hook hall_trial w7 t10
+!if var._res=1 -> finale
+!refresh
+!end
+:finale
+!call hall.w7.end
+!end
+:wait
+narr: {家|いえ} は 、 まだ {何|なに} か を {待|ま}って いる よう だ 。 || The house still seems to be waiting for something.
+?(!hall.w7.t8) narr: {川辺|かわべ} の {椀|わん} が 、 まだ {揃|そろ}って いない 。 || The bowls by the stream aren't gathered yet.
+?(!hall.w7.t9) narr: {座敷|ざしき} で 、 マゴロク が {金|きん} の {盃|さかずき} を {握|にぎ}って いる 。 || In the parlour, Magoroku is clutching a gold sake cup.
+!end
+:later
+narr: オワン が 、 {門|もん} の {側|そば} で {待|ま}って いる 。 || Owan waits by the gate.
+!end
+:after
+narr: {門|もん} の {向|む}こう は 、 {霧|きり} と {雪|ゆき} だけ だ 。 || Beyond the gate there is only mist and snow.
+
+@scene hall.w7.end
+narr: それ から 、 マゴロク の {家|いえ} の {米|こめ} は 、 {何年|なんねん} {経|た}って も {減|へ}らなかった と いう 。 || And after that, they say, the rice in Magoroku's house never ran low, however many years went by.
+hall_owan: {誰|だれ} か が {来|く}る と 、 {家|いえ} は {思|おも}い{出|だ}す 。 {誰|だれ} も {言|い}わなかった こと も 、 {全部|ぜんぶ} 。 || When someone comes, the house remembers. Even the things nobody said.
+?(comp=nao) comp: {宛名|あてな} の ない {手紙|てがみ} も 、 {読|よ}めば {誰|だれ} {宛|あ}て か {分|わ}かる こと が ある 。 {今日|きょう} は 、 そういう {日|ひ} だった な 。 || Even a letter with no address on it: read it, and sometimes you know who it's for. Today was that kind of day.
+?(comp=mio) comp[happy]: {言|い}わなかった こと を 、 {聞|き}き{取|と}る 。 {患者|かんじゃ} さん の {話|はなし} も 、 {同|おな}じ よ 。 || Hearing what wasn't said. It's the same with patients.
+?(comp=ren) comp: {灯|ひ} が {七|なな}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {三|みっ}つ です 。 || Seven lights back. Three to go.
+?(comp=suzu) comp: {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
+narr: {雪|ゆき} が {畳|たた}まれる よう に {止|や}んで 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The snow folds away into stillness, and when you look up you are by the hall's hearth.
+!set hall_w7_done
+!hook hall_finish
+`;
+
+  RB.script.add(out);
+})(RB.content);
+
+
 /* ==== src/content/hall/40_records.js ==== */
 /* The Hall of a Hundred Tales: its records (expansion P15; plan 04_DUNGEONS.md D9 Rewards; 09_RECORDS.md K1). A stamp
  * for each tale relit, pressed as soon as the wing is done (no stand: the Hall is its own place); hidden until then,
@@ -167899,6 +168852,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(4, T('The Borrowed Umbrella', '{借|か}りた {傘|かさ}'), '#4a6a8a');
   C.hallStamp(5, T('The Two Wells', '{二|ふた}つ の {井戸|いど}'), '#5a6a3a');
   C.hallStamp(6, T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'), '#9a3a22');
+  C.hallStamp(7, T('The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'), '#3a2e2a');
 })(RB.content);
 
 

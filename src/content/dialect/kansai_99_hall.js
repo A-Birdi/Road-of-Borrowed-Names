@@ -272,4 +272,43 @@ RB.dialect.add('kansai', `
 @ hall/hall.w6.end [hall.w6.end]
 = {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
 > {第|だい}{六幕|ろくまく} 、 {幕|まく} や ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける ん や わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
+@ hall/hall.w7.f1_first [hall.w7.f1_first]
+= {第|だい}{七幕|ななまく} は 、 {誰|だれ} も {出|で}て こない {芝居|しばい} ね 。 {台詞|せりふ} の ない {役|やく} が 、 {一番|いちばん} {難|むずか}しい の よ 。 || Act seven: a play where nobody comes on. The part with no lines is the hardest.
+> {第|だい}{七幕|ななまく} は 、 {誰|だれ} も {出|で}て こない {芝居|しばい} や な 。 {台詞|せりふ} の ない {役|やく} が 、 {一番|いちばん} {難|むずか}しい ん や で 。 || Act seven: a play where nobody comes on. The part with no lines is the hardest.
+@ hall/hall.w7.f2_first [hall.w7.f2_first]
+= …… {誰|だれ} も いない のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する 。 || …There's nobody here, but it feels as if I can hear someone talking.
+> …… {誰|だれ} も おらへん のに 、 {誰|だれ} か の {話|はな}し{声|ごえ} が {聞|き}こえる よう な {気|き}が する わ 。 || …There's nobody here, but it feels as if I can hear someone talking.
+@ hall/hall.w7.f3_first [hall.w7.f3_first]
+= {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} を する の よ ね 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
+> {出|で}た ！ {欲張|よくば}り な {隣|となり} の {人|ひと} や 。 この {役|やく} 、 {昔話|むかしばなし} で は {大抵|たいてい} {損|そん} する ん や で 。 || There he is! The greedy neighbour. In the old tales, that part usually comes off worst.
+@ hall/hall.w7.owan [hall.w7.owan]
+= {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない ね 。 {読|よ}めば {分|わ}かる の かな 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+> {札|ふだ} に は 、 {何|なに} の こと か 、 {書|か}いて ない な 。 {読|よ}んだら {分|わ}かる ん やろ か 。 || The notes don't say what they mean. I suppose you can tell by reading them.
+@ hall/hall.w7.t1 [hall.w7.t1]
+= {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一度|いちど} も {出|で}て こない {話|はなし} 。 {粋|いき} だ わ 。 || A tale where the most important one never once comes on stage. Very stylish.
+> {一番|いちばん} {大事|だいじ} な {人|ひと} が 、 {一回|いっかい} も {出|で}て こない {話|はなし} 。 {粋|いき} や わ 。 || A tale where the most important one never once comes on stage. Very stylish.
+@ hall/hall.w7.h1 [hall.w7.h1]
+= {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}めば {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん だ ね 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+> {何|なに} の こと か {書|か}いて ない のに 、 {読|よ}んだら {分|わ}かる 。 {書|か}いた {人|ひと} も 、 {分|わ}かる と {思|おも}って {書|か}いた ん や な 。 || None of them says what it means, and yet you can tell. Whoever wrote them trusted the reader to know.
+@ hall/hall.w7.t3 [hall.w7.t3]
+= 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}って いる か で {決|き}まる ん だ ね 。 || Are or sore: which one you say depends on what the other person knows.
+> 「 あれ 」 も 「 それ 」 も 、 {相手|あいて} が {何|なに} を {知|し}ってる か で {決|き}まる ん や な 。 || Are or sore: which one you say depends on what the other person knows.
+@ hall/hall.w7.c_kettle [hall.w7.c_kettle]
+= {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}つ と {分|わ}かる 。 {毎日|まいにち} の こと だ から だ ね 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+> {何|なに} を 、 と は {一言|ひとこと} も {書|か}いて ない のに 、 {台所|だいどころ} に {立|た}ったら {分|わ}かる 。 {毎日|まいにち} の こと や から な 。 || It never once says what, and yet standing in the kitchen you know. Because it's the same every day.
+@ hall/hall.w7.t6 [hall.w7.t6]
+= {古|ふる}い {手紙|てがみ} は 、 {役|やく} の {下調|したしら}べ で {何度|なんど} も {読|よ}んだ わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I've read plenty of old letters preparing for parts. Leave it to me. What am I looking for?
+> {古|ふる}い {手紙|てがみ} は 、 {役|やく} の {下調|したしら}べ で {何回|なんかい} も {読|よ}んだ で 。 {任|まか}せとき 。 {何|なに} を {探|さが}したら ええ ？ || I've read plenty of old letters preparing for parts. Leave it to me. What am I looking for?
+@ hall/hall.w7.m_comb [hall.w7.m_comb]
+= {手紙|てがみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the letter said again?
+> {手紙|てがみ} の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the letter said again?
+@ hall/hall.w7.m_comb [hall.w7.m_comb]
+= {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん だ ね 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} だ 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+> {名前|なまえ} を {書|か}かなくて も 、 {家族|かぞく} に は {分|わ}かった ん や な 。 {分|わ}かる {人|ひと} に {向|む}けて {書|か}いた {手紙|てがみ} や 。 || Even without naming it, the family would have known. It was written for someone who would understand.
+@ hall/hall.w7.b_rl [hall.w7.b_rl]
+= 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる ね 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+> 「 {赤|あか}い の 」 「 さっき の 」 。 {名前|なまえ} を {言|い}わなくて も 、 {話|はなし} の {流|なが}れ で {分|わ}かる な 。 || "The red one", "the one from before": no names needed, the conversation carries it.
+@ hall/hall.w7.end [hall.w7.end]
+= {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
+> {第|だい}{七幕|ななまく} 、 {幕|まく} や ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もん や で 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
 `, 'hall');

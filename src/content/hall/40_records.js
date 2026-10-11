@@ -20,4 +20,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(4, T('The Borrowed Umbrella', '{借|か}りた {傘|かさ}'), '#4a6a8a');
   C.hallStamp(5, T('The Two Wells', '{二|ふた}つ の {井戸|いど}'), '#5a6a3a');
   C.hallStamp(6, T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'), '#9a3a22');
+  C.hallStamp(7, T('The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'), '#3a2e2a');
 })(RB.content);
