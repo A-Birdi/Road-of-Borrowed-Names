@@ -1,13 +1,14 @@
 /* The Cloudroad, Chapter 10: creatures and encounters (expansion P12; plan R2, E3 wanderers, E6 objectives, E8 social
  * and folklore, E26 silencing; docs/future/work/P12_CLOUDROAD.md).
  *   cr.waystone     Waystone Imp (道標小僧): turns the signposts round and reads them wrong (a False promise, put right by
- *                   reading the sign yourself); Gust.
+ *                   reading the sign yourself); a Strike.
  *   cr.echo         Runner's Echo (走り木霊): says the last message back with one thing changed, the way a message
  *                   garbles down a line of mouths (a Mirror); a Strike.
- *   cr.ox           Cloud Ox (雲牛): a cloud lying across the road in the shape of an ox; slow, Gathering, then a Sweep.
+ *   cr.ox           Cloud Ox (雲牛): a cloud lying across the road in the shape of an ox; slow: a Sweep, then it gathers
+ *                   itself again (Re-tying).
  *   cr.fogporter    Fog Porter (霧担ぎ): a porter made of fog that carries off whatever isn't tied down; in its own
  *                   encounter (cr.fog_papers) it goes for your travel papers (protect the document, E6).
- *   cr.packlantern  Pack-Lantern (背負い提灯): a paper lantern trudging under a porter's frame; Heat, a Sweep, Re-tying.
+ *   cr.packlantern  Pack-Lantern (背負い提灯): a paper lantern trudging under a porter's frame; Heat, a Strike, Re-tying.
  *   cr.moth         Blankpage Moth (白紙蛾): its dust blanks out writing: a Hush on the modifiers for two exchanges
  *                   (E26), and a Chill. Near the Barrier, where the names on travel papers have gone blank.
  *   cr.courier      The Courier Who Never Arrived (届かずの飛脚): the last courier's echo at the hut on the pass, still
@@ -48,7 +49,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   EN('cr.waystone', {
     name: T('Waystone Imp', '{道標|みちしるべ}{小僧|こぞう}'), art: 'golem', artOpts: { col: '#8a9094' }, look: { custom: 'golem', col: '#8a9094' }, knots: 2, pool: POOL,
-    pattern: ['lie', 'gust', 'rest'],
+    pattern: ['lie', 'strike', 'rest'],
     // its trick: turning the signpost round, and reading it out wrong
     intents: {
       lie: { power: 1, target: 'rand',
@@ -90,7 +91,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: T('The echo says the message back right, once, and runs on up the road into the mist, lighter.', '{木霊|こだま} は {一度|いちど} だけ {伝言|でんごん} を {正|ただ}しく {言|い}い{返|かえ}し 、 {軽|かる}く なって {霧|きり} の {坂|さか} を {駆|か}け{上|あ}がって いった 。') });
   EN('cr.ox', {
     name: T('Cloud Ox', '{雲牛|くもうし}'), art: 'blot', artOpts: { col: '#dfe4e8' }, look: { custom: 'blot', col: '#dfe4e8' }, knots: 3, pool: POOL,
-    pattern: ['rest', 'charge', 'sweep'],
+    pattern: ['rest', 'sweep', 'mend'],
     intro: T('A cloud in the shape of an ox, lying across the road and chewing on the fog. When it gets up, the road shakes.', '{牛|うし} の {形|かたち} を した {雲|くも} が 、 {道|みち} に {寝|ね}そべって {霧|きり} を {噛|か}んで いる 。 {立|た}ち{上|あ}がる と 、 {道|みち} が {揺|ゆ}れる 。'),
     settle: T('The ox heaves itself up, unhurried, and wanders off the road, becoming fog again over the gorge.', '{牛|うし} は のっそり と {立|た}ち{上|あ}がり 、 {道|みち} を {外|はず}れて 、 {谷|たに} の {上|うえ} で また {霧|きり} に {戻|もど}った 。') });
   EN('cr.fogporter', {
@@ -100,11 +101,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: T('The porter sets its pole down, empty-handed, and thins away into the slope.', '{霧担|きりかつ}ぎ は {手|て}ぶら で {天秤棒|てんびんぼう} を {下|お}ろし 、 {坂|さか} に {薄|うす}れて {消|き}えた 。') });
   EN('cr.packlantern', {
     name: T('Pack-Lantern', '{背負|しょ}い{提灯|ぢょうちん}'), art: 'lantern', artOpts: { col: '#e08a4a' }, look: { custom: 'lanternghost', col: '#e08a4a' }, knots: 3, pool: POOL,
-    pattern: ['heat', 'sweep', 'mend'],
+    pattern: ['heat', 'strike', 'mend'],
     intro: T('A paper lantern trudging up the road under a porter\'s frame, its load lashed on with straw rope. It is very hot inside, and it swings its pack when it turns.', '{背負|しょ}い{子|こ} を {背負|せお}った {提灯|ちょうちん} が 、 {坂|さか} を {登|のぼ}って {来|く}る 。 {中|なか} は とても {熱|あつ}く 、 {振|ふ}り{向|む}く と {荷|に} が {振|ふ}り{回|まわ}される 。'),
     settle: T('The lantern sets its frame down by the road, cools to an ember glow, and stays there like a waymark.', '{提灯|ちょうちん} は {背負|しょ}い{子|こ} を {道端|みちばた} に {下|お}ろし 、 {熾火|おきび} ほど に {冷|さ}めて 、 {目印|めじるし} の よう に そこ に {残|のこ}った 。') });
   EN('cr.moth', {
-    name: T('Blankpage Moth', '{白紙蛾|はくしが}'), art: 'moth', artOpts: { col: '#eeeae0' }, look: { custom: 'moth', col: '#eeeae0' }, knots: 2, pool: POOL, bg: 'cloudtop',
+    name: T('Blankpage Moth', '{白紙蛾|はくしが}'), art: 'blot', artOpts: { col: '#eeeae0' }, look: { custom: 'moth', col: '#eeeae0' }, knots: 2, pool: POOL, bg: 'cloudtop',
     pattern: ['silence:mods', 'chill', 'rest'],
     // its dust blanks out writing: for two exchanges your modifiers say nothing (E26); a bell or a voice ends it
     intents: { 'silence:mods': { family: 'modifiers', rounds: 2 } },
@@ -177,7 +178,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   Object.assign(C.reviewEnemies = C.reviewEnemies || {}, { 'cr.waystone': 'cr', 'cr.echo': 'cr', 'cr.ox': 'cr', 'cr.fogporter': 'cr', 'cr.packlantern': 'cr', 'cr.moth': 'cr', 'cr.courier': 'cr' });
   if (RB.creaturesA && RB.creaturesA.auditEnemy) {
     const note = 'interim: a Cloudroad creature (P12) drawn on an existing family with its own palette; its own family is P16 art work (AC-1, C-82)';
-    for (const [id, art] of [['cr.waystone', 'golem'], ['cr.echo', 'echo'], ['cr.ox', 'blot'], ['cr.fogporter', 'wisp'], ['cr.moth', 'moth'], ['cr.courier', 'echo']]) RB.creaturesA.auditEnemy(id, art, 'incomplete', note);
+    // the Blankpage Moth is drawn on the blot family for now (pale paper, like a blank page): the moth family has no Hush
+    for (const [id, art] of [['cr.waystone', 'golem'], ['cr.echo', 'echo'], ['cr.ox', 'blot'], ['cr.fogporter', 'wisp'], ['cr.moth', 'blot'], ['cr.courier', 'echo']]) RB.creaturesA.auditEnemy(id, art, 'incomplete', note);
   }
 
   // ---- the Fog Porter and your travel papers (E6: keep the document) ------------------------------------------------

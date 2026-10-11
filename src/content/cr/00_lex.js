@@ -59,9 +59,9 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- the people and the road's life --------------------------------------------------------------------------------
 おいら|おいら|pn|E|I, me (casual, old-fashioned; a young man's word)
 馬子|まご|n|A|a pack-horse driver
-駕籠|かご|n|I|a palanquin (a carried seat)
+駕籠|かご|n|I|a palanquin, a seat carried on poles
 手綱|たづな|n|I|reins
-鞍|くら|n|I|a saddle
+鞍|くら|n|I|a horse's saddle
 草鞋|わらじ|n|I|straw sandals
 松葉屋|まつばや|name|E|the Matsuba (an inn at Nakayama; fictional)
 竹屋|たけや|name|E|the Take (an inn at Nakayama; fictional)
@@ -136,7 +136,7 @@ RB.lex.add(RB.lex.parseTable(`
 天秤棒|てんびんぼう|n|A|a carrying pole (across the shoulders)
 憧れ|あこがれ|n|I|a longing, a dream
 手ぶら|てぶら|n|I|empty-handed
-捻挫|ねんざ|n|I|a sprain
+捻挫|ねんざ|n|I|a sprained foot or wrist
 掻き|かき|n|I|scraping, clearing (雪掻き: clearing snow)
 掻き分ける|かきわける|v1|I|to push aside, to make one's way through
 旅回り|たびまわり|n|A|touring (旅回りの一座: a touring company)
@@ -144,9 +144,10 @@ RB.lex.add(RB.lex.parseTable(`
 曲がりくねる|まがりくねる|v5r|I|to wind, to twist and turn
 松葉|まつば|n|I|pine needles
 板下|いたした|name|A|"Itashita", a forged station seal (坂 carved 板; fictional)
+露|つゆ|n|I|dew, morning water on the grass
 露下|つゆした|name|A|"Tsuyushita", a forged station seal (霧 carved 露; fictional)
 毎冬|まいふゆ|n|I|every winter
-法被|はっぴ|n|I|a happi coat (a short coat with a crest)
+法被|はっぴ|n|I|a happi coat, a short coat with a crest worn for work or festivals
 温泉|おんせん|n|E|a hot spring
 湧く|わく|v5k|I|to well up, to spring (water)
 湯治場|とうじば|n|A|a hot-spring resort (for cures)
@@ -154,7 +155,7 @@ RB.lex.add(RB.lex.parseTable(`
 灯火|とうか|n|A|a lamp, lamplight (formal)
 照り返し|てりかえし|n|I|glare, reflected light
 熾火|おきび|n|A|embers
-牢|ろう|n|A|a jail, a cell
+牢|ろう|n|A|a jail, a prison cell
 状箱|じょうばこ|n|A|a letter box (carried by couriers)|Real history: the relay couriers' box.
 納経帳|のうきょうちょう|n|A|a pilgrim's book (for temple seals and calligraphy)|Real custom.
 葛|かずら|n|A|a vine (葛の橋: a vine bridge)|Real history: kazurabashi.

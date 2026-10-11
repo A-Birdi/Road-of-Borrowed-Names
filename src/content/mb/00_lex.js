@@ -47,9 +47,9 @@ RB.lex.add(RB.lex.parseTable(`
 # ---- the Exchange's disputes, the old papers -------------------------------------------------------------------------
 関わる|かかわる|v5r|I|to be involved (in), to have to do (with)
 仲裁|ちゅうさい|n|A|mediation, refereeing a dispute
-中継|ちゅうけい|n|I|relay (a station that passes things on)
+中継|ちゅうけい|n|I|a relay, passing a message on (a station that passes things on)
 先々代|せんせんだい|n|A|the head of the house two generations back
-拓本|たくほん|n|A|a rubbing (paper and ink pressed over an inscription)
+拓本|たくほん|n|A|a rubbing, a copy of writing carved in stone (paper and ink pressed over an inscription)
 約定|やくじょう|n|A|agreement, compact (old-fashioned)
 約定書|やくじょうしょ|n|A|a written agreement (old-fashioned)
 以内|いない|n|I|within (a period or amount)

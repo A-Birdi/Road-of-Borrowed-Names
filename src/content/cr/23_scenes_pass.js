@@ -269,7 +269,7 @@ cr_heisuke: ソノ の {宿|やど} へ {行|い}って 、 {頭|あたま} を 
 @scene cr.end
 # The chapter's end: the relay runs again; the bridge mended and the ledge cleared by the stations' people.
 narr: {雲路|くもじ} の {最後|さいご} の {便|びん} は 、 {五十年|ごじゅうねん} {遅|おく}れて {届|とど}いた 。 || The Cloudroad's last post arrived fifty years late.
-narr: その {夜|よる} から 、 {継|つ}ぎ{飛脚|びきゃく} が また {宿場|しゅくば} から {宿場|しゅくば} へ {走|はし}り{出|だ}した 。 {雨|あめ} で {流|なが}れた {橋|はし} も 、 {崖道|がけみち} の {大岩|おおいわ} も 、 {宿場|しゅくば} の {人|ひと} たち が {直|なお}した 。 || From that night the relay ran again, station to station. The people of the stations mended the washed-out bridge and cleared the great rock from the ledge.
+narr: その {夜|よる} から 、 {継|つ}ぎ{飛脚|びきゃく} が また {宿場|しゅくば} から {宿場|しゅくば} へ {走|はし}り{出|だ}した 。 {宿場|しゅくば} の {人|ひと} たち は 、 {雨|あめ} で {流|なが}れた {橋|はし} を {直|なお}し 、 {崖道|がけみち} の {大岩|おおいわ} を {片付|かたづ}けた 。 || From that night the relay ran again, station to station. The people of the stations mended the washed-out bridge and cleared the great rock from the ledge.
 !set cr_bridge_mended
 !set cr_ledge_cleared
 !quest cr_main done

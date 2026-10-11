@@ -110,6 +110,8 @@ export const CURATED = {
   姜: 'きょう', 尾: 'お,び', 味: 'み,あじ',
   // whole-word readings the split can't share out: 只今 ただいま, 澪標 みおつくし, 堪忍袋, 海豹 あざらし
   只: 'ただ', 澪: 'みお', 忍: 'にん,しの', 豹: 'ひょう',
+  // the Cloudroad (P12): 暖簾 のれん and 大袈裟 おおげさ read as whole words; 袈裟 is けさ on its own
+  簾: 'れん,すだれ', 袈: 'け', 裟: 'さ',
   // 守: the ～守 compounds (灯守, 木守, 関守, 灯台守) each count once and outnumber
   // 守る, though 守る is the word the game uses most (a battle response)
   守: 'まも',

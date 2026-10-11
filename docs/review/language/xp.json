@@ -1349,6 +1349,18 @@
   "jp": "〜て の {仲間|なかま}",
   "en": "A family of endings"
  },
+ "atlas:commissions#1sfek95": {
+  "status": "self-reviewed",
+  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
+  "jp": "リン （{地図|ちず} {作|づく}り）",
+  "en": "Rin, the mapmaker"
+ },
+ "atlas:commissions#36n0h4": {
+  "status": "self-reviewed",
+  "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
+  "jp": "{間違|まちが}った {地図|ちず}",
+  "en": "The wrong map"
+ },
  "atlas:commissions#1cmywas": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, te_miru), the Atlas's own terms (地図師, 灯籠) and each companion's established speech (P07)",

@@ -130,7 +130,7 @@ narr: {番所|ばんしょ} の {前|まえ} の {長椅子|ながいす} 。 {�
 @scene cr.gonza
 !faceplayer
 !if cr_passed -> after
-cr_gonza: {手形|てがた} は {番所|ばんしょ} で ウジエ {様|さま} に 。 {門|もん} は 、 それ から だ 。 || Papers to Lady Ujie in the office. The gate comes after.
+cr_gonza: {手形|てがた} は {番所|ばんしょ} で ウジエ {様|さま} に 。 {門|もん} は 、 それ から だ 。 || Papers to Master Ujie in the office. The gate comes after.
 !end
 :after
 cr_gonza: {通|とお}られよ 。 {峠|とうげ} は {雪|ゆき} だ 。 {気|き} を つけて 。 || Pass. There's snow on the pass. Take care.
@@ -198,10 +198,10 @@ cr_sumi[smile]: そう 、 それ が {偽物|にせもの} 。 {前|まえ} の
 cr_sumi: では 、 {名前|なまえ} と 、 {行|い}き{先|さき} と 、 {目的|もくてき} を 。 || Now: your names, where you're going, and why.
 !challenge cr.papers_fill
 !set cr_seals_checked
-cr_sumi: これ で {手形|てがた} は {整|ととの}いました 。 …… でも 、 {名前|なまえ} が {消|き}えた {紙|かみ} です 。 ウジエ {様|さま} が どう {判断|はんだん} される か 。 {奥|おく} へ どうぞ 。 || The papers are in order now. …But they are papers whose names faded once. What Lady Ujie will decide, I can't say. Please go through.
+cr_sumi: これ で {手形|てがた} は {整|ととの}いました 。 …… でも 、 {名前|なまえ} が {消|き}えた {紙|かみ} です 。 ウジエ {様|さま} が どう {判断|はんだん} される か 。 {奥|おく} へ どうぞ 。 || The papers are in order now. …But they are papers whose names faded once. What Master Ujie will decide, I can't say. Please go through.
 !end
 :done
-cr_sumi: {手形|てがた} は {整|ととの}って います 。 あと は ウジエ {様|さま} に 。 || The papers are in order. The rest is for Lady Ujie.
+cr_sumi: {手形|てがた} は {整|ととの}って います 。 あと は ウジエ {様|さま} に 。 || The papers are in order. The rest is for Master Ujie.
 
 @scene cr.sumi_after
 !faceplayer

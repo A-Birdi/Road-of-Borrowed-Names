@@ -58,7 +58,8 @@ RB.audio = RB.audio || {};
 
   // ================================================================== THE HIGH PASS
   const PS_A = '5 - - - - - 3 - | 5 - 6 - 5 - - - | 3 - - - 2 - 1 - | 2 - - - - - . . | ' + RELAY + ' | 7, - 1 - 2 - 3 - | 1 - - - - - . .';
-  const PS_A_CH = '1P 1P 4 5 1P 6 7 1P';
+  const PS_A_CH = '1P 1P 4 5 1P 5 7 1P';
+  const PS_B_CH = '1P 1P 4 5 1P 6 7 1P';
   const PS_B = '1 - - - . . . . | 5, - - - . . . . | 4, - - - . . . . | 5, - - - . . . . | 1 - - - . . . . | 3 - - - . . . . | 2 - - - 7, - - - | 1 - - - - - . .';
   S('cr_pass', {
     title: 'Above the Cloud',
@@ -67,7 +68,7 @@ RB.audio = RB.audio || {};
     notes: 'The High Pass (E aeolian, 66): a lonely flute at altitude. The shinobue alone, long notes with the wind between them; a held sho chord and a bowed drone for the cold; no footfall and no bells, the pack horses turned back long ago. B is the koto, one note a bar like snow settling; A2 brings the flute back an octave higher.',
     key: 'E', mode: 'aeolian', bpm: 66, loopFrom: 1,
     tracks: {
-      lead: { i: 'shinobue', o: 4, v: 0.56, rv: 0.6, dl: 0.2 },
+      lead: { i: 'shinobue', o: 5, v: 0.56, rv: 0.6, dl: 0.2 },
       koto: { i: 'koto', o: 4, v: 0.42, rv: 0.55, pan: -0.2 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.24, rv: 0.5 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
@@ -76,7 +77,7 @@ RB.audio = RB.audio || {};
     sections: {
       intro: { bars: 2, ch: '1P 1P' },
       A: { bars: 8, ch: PS_A_CH, lead: PS_A },
-      B: { bars: 8, ch: PS_A_CH, koto: PS_B },
+      B: { bars: 8, ch: PS_B_CH, koto: PS_B },
     },
     form: ['intro', 'A', 'B', { s: 'A', o: { lead: 1 } }],
   });
@@ -84,6 +85,9 @@ RB.audio = RB.audio || {};
   // ================================================================== THE COURIER'S HUT
   const HT_A = '1 - - - 2 - 1 - | 7, - - - - - . . | ' + RELAY + ' | 4 - 3 - 2 - 1 - | 2 - - - - - . . | 1 - - - - - . . | . . . . . . . .';
   const HT_A_CH = '1P 7 1P 2 4 2 1P 1P';
+  // B: the motif again, further off, and the rin alone between
+  const HT_B = '. . . . . . . . | 5 - - - 4 - 3 - | 2 - - - - - . . | . . . . . . . . | ' + RELAY + ' | 7, - - - - - . . | 1 - - - - - . .';
+  const HT_B_CH = '1P 4 2 1P 1P 2 7 1P';
   S('cr_hut', {
     title: 'The Courier\'s Hut',
     kind: 'area',
@@ -97,15 +101,15 @@ RB.audio = RB.audio || {};
       bell: { perc: true, v: 0.3, rv: 0.7 },
     },
     all: { low: '0', pad: '0+2', bell: 'i.......|........' },
-    sections: { A: { bars: 8, ch: HT_A_CH, lead: HT_A } },
-    form: ['A'],
+    sections: { A: { bars: 8, ch: HT_A_CH, lead: HT_A }, B: { bars: 8, ch: HT_B_CH, lead: HT_B } },
+    form: ['A', 'B'],
   });
 
   // ================================================================== BATTLE
   const BC_A = '1 - 2 - 3 - 5 - | 3 - 2 - 1 - 5, - | 6, - 7, - 1 - 2 - | 3 - - - - - . . | 5 - 6 - 5 - 3 - | 2 - 3 - 5 - 3 - | 2 - 1 - 7, - 1 - | 1 - - - - - . .';
   const BC_A_CH = '1 5 6 1 4 5 7 1';
   const BC_B = "5 - - 3 5 - 6 - | 5 - - - 3 - - - | 4 - - 2 4 - 5 - | 3 - - - 2 - - - | 1' - - 6 5 - 3 - | 5 - - - 6 - - - | 5 - 3 - 2 - 3 - | 1 - - - - - . .";
-  const BC_B_CH = '1 4 2 5 6 4 5 1';
+  const BC_B_CH = '1 4 2 3 6 4 5 1';
   const BC_B_LOW = '1 - - - - - - - | 4, - - - - - - - | 2 - - - - - - - | 5, - - - - - - - | 6, - - - - - - - | 4, - - - - - - - | 5, - - - - - - - | 1 - - - - - - -';
   const BC_C = "1' - 2' - 3' - 5' - | 3' - 2' - - - . . | 1' - 2' - 3' - 5' - | 3' - 2' - 1' - 7 - | 6 - - - 5 - 3 - | 2 - 3 - 5 - 6 - | 5 - 3 - 2 - 3 - | 1 - - - - - . .";
   const BC_C_CH = '1P 1P 6 7 4 5 7 1';
@@ -117,7 +121,7 @@ RB.audio = RB.audio || {};
     key: 'E', mode: 'dorian', bpm: 118, loopFrom: 1,
     tracks: {
       lead: { i: 'shakuhachi', o: 4, v: 0.68, rv: 0.22 },
-      hi: { i: 'shinobue', o: 4, v: 0.6, rv: 0.25, pan: 0.12 },
+      hi: { i: 'shinobue', o: 5, v: 0.6, rv: 0.25, pan: 0.12 },
       low: { i: 'bowed', o: 3, v: 0.56, rv: 0.25, pan: -0.15 },
       ost: { i: 'shamisen', o: 3, pat: true, v: 0.4, rv: 0.12, pan: -0.25 },
       arp: { i: 'koto', o: 4, pat: true, v: 0.32, rv: 0.25, pan: 0.3 },
@@ -139,7 +143,7 @@ RB.audio = RB.audio || {};
       C: { bars: 8, ch: BC_C_CH, hi: BC_C, low: BC_B_LOW, pad: '0+2+4', taiko: 'Z..z..Z.|Z.zz.zZz' },
       B2: { bars: 8, ch: BC_B_CH, hi: BC_B, low: BC_B_LOW, arp: { n: "0 2 1' 2", u: 0.25 } },
     },
-    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { hi: 'shakuhachi' }, o: { hi: 0 } }],
+    form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { hi: 'shakuhachi' }, o: { hi: -1 } }],
   });
 
   // ================================================================== THE COURIER WHO NEVER ARRIVED
@@ -147,7 +151,8 @@ RB.audio = RB.audio || {};
   const BO_A = '1 - 2 - 3 - 5 - | 3 - 2 - - - . . | 4 - 5 - 6 - 5 - | 4 - 3 - - - . . | 3 - 4 - 5 - 1\' - | 7 - 6 - 5 - 4 - | 3 - 2 - 1 - 7, - | 1 - - - - - . .';
   const BO_A_CH = '1 5 4 1 6 4 7 1';
   const BO_B = "5 - - - 6 - 5 - | 3 - - - 5 - - - | 6 - - - 5 - 3 - | 2 - - - - - . . | 5 - - - 6 - 1' - | 6 - 5 - 3 - - - | 2 - 3 - 5 - 3 - | 2 - - - - - . .";
-  const BO_B_CH = '1 4 2 5 1 4 7 5';
+  const BO_B_CH = '1 4 6 5 6 4 7 5';
+  const BO_B_LOW = '1 - - - - - - - | 4, - - - - - - - | 6, - - - - - - - | 5, - - - - - - - | 6, - - - - - - - | 4, - - - - - - - | 5, - - - - - - - | 1 - - - - - - -';
   const BO_C = RELAY + ' | ' + RELAY + ' | ' + RELAY + ' | 1 - 2 - 3 - 2 - | 1 - - - - - . .';
   const BO_C_CH = '1P 1P 1P 1P 1P 1P 7 1P';
   S('boss_cr', {
@@ -175,9 +180,9 @@ RB.audio = RB.audio || {};
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null },
       A: { bars: 8, ch: BO_A_CH, lead: BO_A },
-      B: { bars: 8, ch: BO_B_CH, hi: BO_B, low: BC_B_LOW },
+      B: { bars: 8, ch: BO_B_CH, hi: BO_B, low: BO_B_LOW },
       C: { bars: 8, ch: BO_C_CH, lead: BO_C, pad: '0+2' },
     },
-    form: ['intro', 'A', 'B', 'C', { s: 'A', i: { lead: 'shinobue' } }],
+    form: ['intro', 'A', 'B', 'C', { s: 'A', i: { lead: 'shinobue' } }, { s: 'B', i: { hi: 'shakuhachi' }, o: { hi: -1 } }],
   });
 })(RB.audio);

@@ -97,7 +97,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('cr_genji', {
     name: { en: 'Genji', jp: 'ゲンジ' }, voice: { pitch: 0.72 },
     look: { skin: 3, hair: 'wrap', hairColor: 5, cloth: ['#5a4632', '#463626', '#c0a880'], shape: 'tunic', acc: ['headband', 'beard'], bandCol: '#d8ccb0', age: 'old' },
-    portrait: { eyes: 'narrow', style: 'wrap', beard: true, age: 'old', bg: '#221a12' },
+    portrait: { eyes: 'narrow', style: 'wrap', beard: true, age: 'old', browCol: '#6a645c', bg: '#221a12' },
   });
   // Chika: keeps the station's medicine chest for travellers taken ill with the height; her labels are old and faded.
   ch('cr_chika', {
