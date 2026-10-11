@@ -262,9 +262,8 @@
     P17, run its packets VS00–VS07, and stop at the listening gallery for Robin (no whole-game synthesis, no final
     cast, no purchases; hosted routes without existing access go into one consolidated request). Then Robin's
     review at completion (XP100).
-    Still to do from P14/P15: the chained route from a new journey in one uninterrupted run (XP79: one run reached 16 of
-    17 legs, and the last leg from its own state reached the ending once the driver kept to the Archive's sites; the
-    rerun with that leg corrected is pending) and a complete browser run. Routes for the new chapters from fixtures:
+    The chained route from a new journey is done (XP79: one uninterrupted run, all 17 legs, 2,433 site visits, to the
+    ending, no problems). Still to do: the complete browser run (P17). Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.

@@ -4273,7 +4273,17 @@ driver's choice of sites, not the game: **from the run's own yn_done state, with
 errors, every main quest done (`sa_main`, `sa_clerk` done; the side quests left open are ones the route never aims at).
 The route's last leg is now `ch6_done@sa.@sa_main` (`tests/e2e/pursue.mjs`, with the reason beside it). So the whole
 journey has been driven from a new game to the ending through the game's own play, in one run plus one resumed leg
-from that run's own state; an uninterrupted run with the corrected last leg is recorded below when it ends.
+from that run's own state.
+
+**XP79 done: the twelve chapters in one uninterrupted run.** The same command on a clean export of 5a51943 (its own
+`index.html`, built to the same SHA-256 as the repository's), profile F with Ren, from the title screen's new journey
+to the ending without a break: all **17 legs**, **2,433 site visits in 65 minutes** (Chapter 1 159, Chapter 2 51,
+Manybridge 194 and 239, Chapter 3 696, Chapter 4 93, the Keepers' Road 349, Chapter 5 100, Kotonoha 274, the Cloudroad
+25, 74 and 4, Steamhollow 0, 73, 56 and 11, the Archive 35); flags post, postgame and ch6_done; **0 problems, 0 page
+errors, nothing lost**; 293 interactions met across every chapter (write 50, choose 219, order 12, forge 7, relay 5).
+The commits after 5a51943 change only how sheets order their answers on screen, which the automated runs never open
+(the test driver answers them directly). (An earlier attempt of this run was cut off in Chapter 3 by a restart of the
+machine it ran on, not by the game.)
 
 **story_ch4's F/Mio/go failure, root cause (the test harness, fixed).** The run that failed (see "The expansion, P16 —
 P16b, P16d" below) stopped at "back downstairs": one step from the upstairs room's floor onto its stairs. Run alone it
