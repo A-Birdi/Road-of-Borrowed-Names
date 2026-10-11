@@ -64,8 +64,8 @@ RB.ui.menu = (function () {
   };
   let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
   let lastSec = null; // the section last drawn: a change of section turns the page (the book)
-  // the book interface (Settings › Display › The Wayfarer's Ledger): 'book', 'flat' or null for the classic folio
-  const bookStyle = () => { const v = RB.game.settings && RB.game.settings.ledgerStyle; return v === 'book' || v === 'flat' ? v : null; };
+  // the book (Settings › Display › The Wayfarer's Ledger): 'book' or 'flat' (the classic folio was retired in U06)
+  const bookStyle = () => (RB.game.settings && RB.game.settings.ledgerStyle === 'flat' ? 'flat' : 'book');
   let sheet = null; // the Save & Load sheet, when open over the folio
 
   // ---- open / close -------------------------------------------------------------------
@@ -80,7 +80,7 @@ RB.ui.menu = (function () {
     if (RB.game.mode() !== 'world' && RB.game.mode() !== 'dialogue') return;
     RB.game.pushMode('menu');
     RB.audio && RB.audio.sfx('menu_open');
-    if (bookStyle() && RB.bookType) RB.bookType.install(); // the preview's type, if the idle start hasn't made it yet
+    if (RB.bookType) RB.bookType.install(); // the book's type, if the idle start hasn't made it yet
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
     fr.foot.innerHTML =
@@ -181,14 +181,14 @@ RB.ui.menu = (function () {
     const comp = s.comp && RB.content.chars[s.comp];
     fr.setTitle(RB.ui.label(sec.jp, sec.en), esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime));
     const two = F().wide();
-    const turn = bookStyle() && lastSec && lastSec !== view.section;
+    const turn = lastSec && lastSec !== view.section;
     lastSec = view.section;
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + (turn ? ' turn' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
       '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
     const builtIn = { journey, words, satchel, map, company }[view.section];
     if (builtIn) builtIn(A, B, two); else xsec(view.section).render(A, B, two, api(view.section));
-    if (bookStyle()) runningHeads(A, B, two, sec, s, comp);
+    runningHeads(A, B, two, sec, s, comp);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
@@ -211,7 +211,7 @@ RB.ui.menu = (function () {
   // Settings › Display changed the Ledger's look while it is open: redraw it in the new style
   function restyle() {
     if (!layer || !fr) return;
-    if (bookStyle() && RB.bookType) RB.bookType.install();
+    if (RB.bookType) RB.bookType.install();
     fr.setBook(bookStyle());
     lastSec = null;
     remember();
@@ -260,7 +260,7 @@ RB.ui.menu = (function () {
     let h = '<div class="qguide">';
     if (gm === 'full') {
       const on = G.followed(s) === x.id;
-      if (bookStyle()) h += '<div class="ph small-ph qway">' + I('follow') + ' The way there</div>';
+      h += '<div class="ph small-ph qway">' + I('follow') + ' The way there</div>';
       h += '<div class="follow-row"><button class="pbtn follow' + (on ? ' on' : '') + '" data-follow="' + x.id + '" aria-pressed="' + on + '">' + I('follow') + '<span>' + gl(on ? 'following' : 'follow') + '</span></button>' +
         '<span class="muted small">' + esc(on ? (G.chosen(s) ? 'Markers in the world and on the Map show the way to its next step. Press again to stop.' : 'Followed as the main road: markers show the way to its next step. Press to stop.') : 'Markers will show the way to this quest’s next step instead.') + '</span></div>';
       if (on) {
@@ -734,14 +734,9 @@ RB.ui.menu = (function () {
     }
     h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
     const selX = inv.find((x) => x.id === S.sel);
-    if (bookStyle()) {
-      // the book: the study faces the folio (on a phone, it heads the page)
-      if (two) { A.innerHTML = h; B.innerHTML = appearanceStudy(s) + (selX ? itemDetail(selX, s) : '<p class="muted">Choose something you carry to look at it closely.</p>'); }
-      else A.innerHTML = appearanceStudy(s) + h;
-    } else {
-      A.innerHTML = h;
-      B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
-    }
+    // the study faces the folio (on a phone, it heads the page)
+    if (two) { A.innerHTML = h; B.innerHTML = appearanceStudy(s) + (selX ? itemDetail(selX, s) : '<p class="muted">Choose something you carry to look at it closely.</p>'); }
+    else A.innerHTML = appearanceStudy(s) + h;
     drawPreviews(A, s); drawPreviews(B, s);
     // a polite announcement of what changed (the page itself is redrawn)
     let live = fr.el.querySelector('.eq-live');
@@ -911,7 +906,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => !!bookStyle(), isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits

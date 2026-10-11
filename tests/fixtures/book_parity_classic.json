@@ -1,0 +1,101 @@
+{
+ "journal": {
+  "list": [
+   "button|data-folio-close=|Close",
+   "button|data-follow=sg_main|Following",
+   "button|data-id=company|Company",
+   "button|data-id=journey|Journey",
+   "button|data-id=map|Map",
+   "button|data-id=satchel|Satchel",
+   "button|data-id=words|Words",
+   "button|data-jv=history|Dialogue history",
+   "button|data-jv=keepsakes|Keepsakes",
+   "button|data-jv=quests|Quests & notes",
+   "button|data-nudge=sg_main|Show a nudge 1 of 3",
+   "button|data-q=rw_depart|Completedふたり の 名前なまえ Two Names",
+   "button|data-q=rw_labels|Completed嵐あらし の あと の ラベル Labels After the Storm",
+   "button|data-q=rw_mill|Completed呼よび返かえす 水車すいしゃ小屋ごや The Mill That Calls Back",
+   "button|data-q=sg_cove|Side request入いり江え へ の 道みち The Way to the Cove東ひがし の 崖がけ の 道みち の 道標みちしるべ を 直なおそう。Put the signpost right at the east end of the main street, where the cliff path begins.",
+   "button|data-q=sg_main|Main road · Following食くい違ちがう ラベル Labels That Disagree「返送へんそう」された 名前なまえ が どこ へ 行いく の か 突つき止とめよう。Find out where the \"returned\" names are taken — go deeper into the archive.",
+   "button|data-q=sg_seaglass|Side request海うみ ガラス の 名札なふだ A Nameplate of Sea Glassフク の 夫おっと の 船ふね の 名前なまえ を 誰だれ も 思おもい出だせない。どこ か に 記録きろく は ない だろう か。Nobody can remember the name of Fuku's husband's boat. Is there a record of it somewhere — perhaps where names have been \"returned\"?",
+   "button|data-util=save|Save & Load",
+   "button|data-util=settings|Settings",
+   "summary||Completed 3"
+  ],
+  "words": 164
+ },
+ "companion": {
+  "list": [
+   "button|data-co-act=memories|Shared memories",
+   "button|data-co-act=mind|Ask what's on her mind",
+   "button|data-co-act=place|Talk about this place",
+   "button|data-co-act=speech|Ask her to talk as she does backstage (Kansai-ben)",
+   "button|data-co-sec=wordplay data-wp-act=play|Play shiritori",
+   "button|data-co-sec=wordplay data-wp-act=review|Review a saved chain",
+   "button|data-co-sec=wordplay data-wp-act=rules|Rules",
+   "button|data-cp=companion|Companion",
+   "button|data-cp=memories|Shared memories",
+   "button|data-cp=pet|Pet",
+   "button|data-folio-close=|Close",
+   "button|data-id=company|Company",
+   "button|data-id=journey|Journey",
+   "button|data-id=map|Map",
+   "button|data-id=satchel|Satchel",
+   "button|data-id=words|Words",
+   "button|data-suzu-speech-set=kansai|Kansai-ben 関西弁かんさいべん",
+   "button|data-suzu-speech-set=standard|Standard Japanese 標準語ひょうじゅんご",
+   "button|data-util=save|Save & Load",
+   "button|data-util=settings|Settings"
+  ],
+  "words": 26
+ },
+ "memories": {
+  "list": [
+   "button|data-co-filter=all|All 1",
+   "button|data-co-filter=discoveries|Discoveries 0",
+   "button|data-co-filter=pets|Pets 0",
+   "button|data-co-filter=reflections|Reflections 0",
+   "button|data-co-filter=together|Together 1",
+   "button|data-co-recall=story:recruit|Recollect",
+   "button|data-cp=companion|Companion",
+   "button|data-cp=memories|Shared memories",
+   "button|data-cp=pet|Pet",
+   "button|data-folio-close=|Close",
+   "button|data-id=company|Company",
+   "button|data-id=journey|Journey",
+   "button|data-id=map|Map",
+   "button|data-id=satchel|Satchel",
+   "button|data-id=words|Words",
+   "button|data-util=save|Save & Load",
+   "button|data-util=settings|Settings"
+  ],
+  "words": 11
+ },
+ "pet": {
+  "list": [
+   "button|data-cp=companion|Companion",
+   "button|data-cp=memories|Shared memories",
+   "button|data-cp=pet|Pet",
+   "button|data-folio-close=|Close",
+   "button|data-id=company|Company",
+   "button|data-id=journey|Journey",
+   "button|data-id=map|Map",
+   "button|data-id=satchel|Satchel",
+   "button|data-id=words|Words",
+   "button|data-pet-choose=cat|Selected",
+   "button|data-pet-choose=|Select",
+   "button|data-pet-choose=|Travel without a pet",
+   "button|data-pet-greet=|Greet together with Suzu",
+   "button|data-pet-pat=|Pat Samson",
+   "button|data-pet-rename=cat|Rename",
+   "button|data-pet-reset=|Reset to Koma",
+   "button|data-pet-sel=cat|Samson コマCatTravelling with you",
+   "button|data-util=save|Save & Load",
+   "button|data-util=settings|Settings",
+   "input|data-pet-look=calico|",
+   "input|data-pet-look=ginger|",
+   "input|data-pet-look=gray|"
+  ],
+  "words": 1
+ }
+}

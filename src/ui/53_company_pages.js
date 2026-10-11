@@ -164,14 +164,12 @@ RB.ui.companyPages = (function () {
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
-    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js). The book keeps
-    // the asking with the choice it changes, under one heading; the classic folio lists it with the other talk
+    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js); the asking sits
+    // with the choice it changes, under one heading
     const sp = comp === 'suzu' && RB.ui.suzuSpeech;
-    const book = RB.ui.menu && RB.ui.menu.isBook && RB.ui.menu.isBook();
     const ask = sp ? (() => { const tl = sp.talkLabel(); return actionRow('speech', 'talk', tl.en, tl.jp, ''); })() : '';
-    if (sp && !book) h += ask;
     h += '</ul>';
-    if (sp) h += sp.companyHtml(s, book ? '<ul class="co-acts co-ask">' + ask + '</ul>' : '');
+    if (sp) h += sp.companyHtml(s, '<ul class="co-acts co-ask">' + ask + '</ul>');
     return h;
   }
   function questDetail(s, comp, c) {

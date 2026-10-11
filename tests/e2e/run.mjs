@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const full = process.argv.includes('--full');
 let suites = [
-  ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['equipment.mjs'], ['characters.mjs'], ['play_ui.mjs'], ['world_view.mjs'], ['world_fixes.mjs'], ['encounters.mjs'], ['departures.mjs'], ['walk_round.mjs'], ['props_balance.mjs'], ['sequence_manual.mjs', '--quick'], ['quest_guide.mjs'], ['fieldweave.mjs'], ['mill_road.mjs'], ['keepsakes.mjs'], ['backdrops.mjs'], ['title_ledger.mjs'], ['create.mjs'], ['prologue.mjs'], ['interludes.mjs'], ['learning_ui.mjs'], ['pad_kanji.mjs'], ['kanji_chart.mjs'], ['combat_ui.mjs'], ['combat_small.mjs'], ['battle_anim.mjs'], ['battle_group.mjs'], ['companion_turn.mjs'], ['playtest_repairs.mjs'], ['battle_presentation.mjs'], ['battle_party.mjs'], ['battle_creatures_b.mjs'], ['battle_backdrops.mjs'], ['battle_pets_overworld.mjs', '--battles-only'], ['battle_cycle.mjs'], ['battle_overlap.mjs'], ['battle_settings.mjs'], ['bookmarks.mjs'], ['pets.mjs'], ['town_animals.mjs'], ['lighthouse_top.mjs'], ['pets_greet.mjs'], ['pets_weave.mjs'], ['pets_gallery.mjs'], ['audio.check.mjs'],
+  ['ui.mjs'], ['systems.mjs'], ['settings.mjs'], ['folio.mjs'], ['equipment.mjs'], ['characters.mjs'], ['play_ui.mjs'], ['world_view.mjs'], ['world_fixes.mjs'], ['encounters.mjs'], ['departures.mjs'], ['walk_round.mjs'], ['props_balance.mjs'], ['sequence_manual.mjs', '--quick'], ['quest_guide.mjs'], ['fieldweave.mjs'], ['mill_road.mjs'], ['keepsakes.mjs'], ['backdrops.mjs'], ['title_ledger.mjs'], ['create.mjs'], ['prologue.mjs'], ['interludes.mjs'], ['learning_ui.mjs'], ['pad_kanji.mjs'], ['kanji_chart.mjs'], ['combat_ui.mjs'], ['combat_small.mjs'], ['battle_anim.mjs'], ['battle_group.mjs'], ['companion_turn.mjs'], ['playtest_repairs.mjs'], ['battle_presentation.mjs'], ['battle_party.mjs'], ['battle_creatures_b.mjs'], ['battle_backdrops.mjs'], ['battle_pets_overworld.mjs', '--battles-only'], ['battle_cycle.mjs'], ['battle_overlap.mjs'], ['battle_settings.mjs'], ['bookmarks.mjs'], ['book.mjs'], ['book_surfaces.mjs'], ['pets.mjs'], ['town_animals.mjs'], ['lighthouse_top.mjs'], ['pets_greet.mjs'], ['pets_weave.mjs'], ['pets_gallery.mjs'], ['audio.check.mjs'],
   ['shift_load_regression.mjs', '--origin'], ['shift_load_regression.mjs'], // hotfix regressions (http origin, file://)
   ['travel_rules.mjs'], // quick travel: open air yes; buildings, dungeons, story locks and conversations say why not
   full ? ['story_ch1.mjs'] : ['story_ch1.mjs', 'F', 'mio'],
@@ -22,6 +22,8 @@ let suites = [
   ['atlas.check.mjs'],
   // the Hall of a Hundred Tales (P15): the card with its furigana, the chip, the sheet, the reprieve, suspend and resume
   ['hall.mjs'], ['postgame.mjs'],
+  // the travel volume's pages painted in the art pass (P16): every page through the volume's viewer at three sizes
+  ['sequence_p16.mjs'],
   // the companion ending extensions and The Pages We Keep (all four companions; captures to tests/e2e/out/pages)
   ['pages_ending.mjs'],
   // companionship: Company › Companion and Shared memories, invitations, reflections, rest (addendum §6–9, §19)

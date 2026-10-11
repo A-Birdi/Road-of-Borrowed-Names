@@ -1,5 +1,6 @@
-/* The Wayfarer's Ledger as a book (expansion plan docs/future/plan/15_INTERFACE.md; playbook §15A, packet U01).
- * A preview: Settings › Display › The Wayfarer's Ledger ('book' or 'flat'); the classic folio is untouched.
+/* The Wayfarer's Ledger as a book (expansion plan docs/future/plan/15_INTERFACE.md; playbook §15A, packets U01–U06).
+ * Settings › Display › The Wayfarer's Ledger: 'book' or 'flat'. Since U06 (C-79, F-142) it is the only Ledger: the
+ * classic folio's look is the base these rules finish, and every other page and surface wears the same family.
  *
  * "Open a well-used, personally kept Wayfarer's Ledger: repaired indigo cloth, a believable spine and page stack,
  * quiet ink typography, an amber place ribbon, and a few meaningful inserts. The object has depth; the words remain
@@ -163,9 +164,12 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
   .folio.book { width: 100vw; height: calc(100 * var(--vh)); border-radius: 0; padding: max(54px, calc(env(safe-area-inset-top) + 48px)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
   .folio.book .folio-head { top: max(6px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); }
   /* all five in one row, none under a scroll arrow: the icon above its word */
-  .folio.book .tabrail { padding: 4px 2px 0; }
+  .folio.book .tabrail { padding: 4px 0 0; }
   .folio.book .ptab { flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; padding: 6px 0.3em 7px; font-size: 0.82em; letter-spacing: 0; }
-  .folio.book .ptab + .ptab { margin-left: 3px; }
+  .folio.book .ptab + .ptab { margin-left: 2px; }
+  /* the outermost faces stop at the rail's edges, so the row never scrolls by the faces' few pixels */
+  .folio.book .ptab:first-of-type::before { left: 0; }
+  .folio.book .ptab:last-of-type::before { right: 0; }
   .folio.book .leaf { padding: 16px 16px 24px 18px; }
 }
 /* the narrowest phones (folded cover screens) */
@@ -208,7 +212,7 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 /* a section's contents: ink words, the open one underlined; no pills */
 .folio.book .subnav { display: flex; flex-wrap: wrap; gap: 0 1.5em; border-bottom: 0; margin: 0 0 12px; }
 .folio.book .subbtn {
-  padding: 0; margin: 0; min-height: var(--tap); background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+  padding: 0; margin: 0; min-height: var(--tap); min-width: var(--tap); justify-content: center; background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
   color: var(--ink-3); font-family: var(--type-latin-reading); font-weight: 600; font-size: 1em; justify-content: flex-start; text-align: left;
 }
 .folio.book .subbtn svg { display: none; }
@@ -428,3 +432,89 @@ body.high-contrast .folio.book .co-thought::before { color: var(--ink); }
 .folio.book .as-worn li { display: grid; grid-template-columns: minmax(6em, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; }
 .folio.book .as-k { font-size: 0.82em; color: var(--ink-2); }
 .folio.book .as-v .en { color: var(--ink-2); font-style: italic; }
+
+/* ---- U05: the remaining surfaces in the book's family ---------------------------------------------------------
+ * Title, confirmations, help, writing prompts, battle slips, notices and the chapter cards (playbook §15A U05).
+ * One rule for all of them: whatever is shown over the world speaks through the five type roles; an aside is an
+ * inserted slip (lighter paper, a folded corner); a question that asks for a decision is a sheet with a deckled top;
+ * labels are small capitals, not shouting capitals; danger is a seal and its words, never colour alone. Geometry
+ * that input depends on (the writing pad, the answer field, the response cards' hit areas, the pad's tools) is not
+ * touched: only type, paper and marks change. */
+/* (one level under the body, where the roles are already resolved: on the body itself the roles, which end in these
+   lists, and these lists would name each other) */
+body.book-ui #app {
+  --serif: var(--type-latin-reading);
+  --en-font: var(--type-latin-reading);
+  --ui-font: var(--type-ui);
+  --jp-font: var(--type-jp-body);
+  font-family: var(--type-ui);
+}
+/* labels: small capitals in the display face */
+body.book-ui .help .mean .lab, body.book-ui .toast .kind, body.book-ui .chal .slip-lab, body.book-ui .readas .big .cap,
+body.book-ui .cand .cap, body.book-ui .pad-compose .pad-lab, body.book-ui .order-line .pad-lab, body.book-ui .it-label,
+body.book-ui .aimtag, body.book-ui .rcard .rc-tgt, body.book-ui .rcard .rc-new, body.book-ui .cb-foe.group .fs-h,
+body.book-ui .cb-queued .cq-t, body.book-ui .lsheet.pb .slip-lab, body.book-ui .pb-hdr .kind, body.book-ui .wv-lab,
+body.book-ui .ks-display .lab, body.book-ui .fp-note .lab, body.book-ui .pace-lab, body.book-ui .title .rec .kind,
+body.book-ui .manage .mg-h, body.book-ui .cr-sheet .cr-kick {
+  text-transform: none; font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.06em;
+}
+/* the title: the masthead in the display face, the menu's entries in small capitals on a leaf of the same paper */
+body.book-ui .title h1 { font-family: var(--type-latin-display); font-weight: 500; }
+body.book-ui .title .mast-jp .jline { font-family: var(--type-jp-heading); }
+body.book-ui .tmenu { background-image: var(--bk-tooth); border-radius: 2px; }
+body.book-ui .tm .lbl { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; }
+body.book-ui .tm .sub { font-family: var(--type-latin-reading); font-style: italic; }
+/* a decision: a sheet with a deckled top; the proposed action in ink, the safe one plain; danger sealed */
+body.book-ui .csheet { position: relative; border-radius: 2px; border-top-width: 1px; background-image: var(--bk-tooth); padding-top: 22px; }
+body.book-ui .csheet::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -5px; height: 6px; pointer-events: none;
+  background:
+    radial-gradient(circle at 5px 6px, var(--paper) 4.6px, transparent 5px) 0 0 / 11px 6px repeat-x,
+    radial-gradient(circle at 3px 7px, var(--paper) 4.2px, transparent 4.6px) 6px 1px / 17px 6px repeat-x;
+}
+body.book-ui .csheet::after { content: ""; position: absolute; left: 18px; right: 18px; top: 9px; height: 2px; background: var(--ribbon); opacity: 0.85; pointer-events: none; }
+body.book-ui .csheet.danger::after { background: var(--danger-ink); }
+body.book-ui .csheet .q { font-family: var(--type-latin-reading); font-size: 1.08em; }
+body.book-ui .csheet .pbtn { border-radius: 2px; }
+body.book-ui .pbtn.danger::before, body.book-ui .btn.danger::before {
+  content: ""; display: inline-block; width: 0.62em; height: 0.62em; margin-right: 0.45em; border-radius: 2px; vertical-align: 0.02em;
+  background: var(--vermilion); box-shadow: inset 0 0 0 1.5px rgba(255, 235, 220, 0.35); transform: rotate(5deg); flex: none;
+}
+/* asides: word help, a keyword's card, notices and toasts are slips (lighter paper, a folded corner) */
+body.book-ui .help, body.book-ui .kwcard, body.book-ui .notice, body.book-ui .toast {
+  background-color: var(--bk-slip); background-image: var(--bk-tooth); border-radius: 2px;
+}
+body.book-ui .notice, body.book-ui .toast { position: relative; }
+body.book-ui .help::after, body.book-ui .kwcard::after, body.book-ui .notice::after, body.book-ui .toast::after {
+  content: ""; position: absolute; top: -1px; right: -1px; width: 14px; height: 14px; pointer-events: none;
+  background: linear-gradient(225deg, rgba(20, 22, 38, 0.55) 50%, var(--paper-3) 50%);
+}
+body.book-ui .help .hw { font-family: var(--type-jp-heading); }
+body.book-ui .help .mean { font-family: var(--type-latin-reading); }
+body.book-ui .kwcard h3 { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.04em; }
+body.book-ui .toast .en { font-family: var(--type-latin-reading); font-style: italic; }
+/* the chapter cards and place names: the Japanese in the heading face, the English in the display face's italic */
+body.book-ui .banner .jline, body.book-ui .place .jline { font-family: var(--type-jp-heading); }
+body.book-ui .banner .en, body.book-ui .place .en { font-family: var(--type-latin-display); font-style: italic; }
+/* writing prompts and battle slips: the task slip and the answer slips take the book's papers and type; the pad,
+   the field and the cards keep their geometry */
+body.book-ui .chal .slip { border-radius: 2px; background-image: var(--bk-tooth); }
+body.book-ui .chal-task { background-color: var(--bk-slip) !important; }
+body.book-ui .chal :lang(ja), body.book-ui .chal .jline, body.book-ui .combat-ui :lang(ja), body.book-ui .combat-ui .jline { font-family: var(--type-jp-body); }
+body.book-ui .rcard { border-radius: 2px; }
+/* flat: no texture */
+body.book-flat .csheet, body.book-flat .help, body.book-flat .kwcard, body.book-flat .notice, body.book-flat .toast,
+body.book-flat .tmenu, body.book-flat .chal .slip { background-image: none; }
+body.book-flat .csheet::before { display: none; }
+body.high-contrast.book-ui .csheet, body.high-contrast.book-ui .help, body.high-contrast.book-ui .kwcard,
+body.high-contrast.book-ui .notice, body.high-contrast.book-ui .toast, body.high-contrast.book-ui .chal .slip { background-image: none !important; }
+
+/* ---- U06: every other folio (settings, the workshop, the pastimes' tables, expeditions, the Hall's cards, the sea
+ * chart, the Inn Ledger…) is a sheet of the same book: the paper's tooth, the heading in the display face's small
+ * capitals on the cloth, section heads in the display face. Their layouts are their own (a sheet, not two leaves). */
+body.book-ui .folio:not(.book) .leaf { background-image: var(--bk-tooth); border-radius: 2px; }
+body.book-ui .folio:not(.book) .folio-head h2 { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-weight: 600; }
+body.book-ui .folio:not(.book) .folio-head h2 :lang(ja), body.book-ui .folio:not(.book) .folio-head h2 .jline { font-family: var(--type-jp-heading); font-variant: normal; letter-spacing: 0.04em; }
+body.book-ui .folio:not(.book) .leaf h3, body.book-ui .folio:not(.book) .leaf .ph { font-family: var(--type-latin-display); }
+body.book-ui .folio:not(.book) .cbtn { font-family: var(--type-ui); }
+body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.book) .leaf { background-image: none; }

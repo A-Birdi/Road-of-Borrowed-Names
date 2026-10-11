@@ -183,8 +183,8 @@ RB.ui.settings = (function () {
       h += audioRows();
     } else if (g === 'display') {
       h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.') +
-        radios('ledgerStyle', 'The Wayfarer\'s Ledger (preview)', [['classic', 'Classic folio'], ['book', 'The book'], ['flat', 'The book, flat']], null,
-          'A preview of the new book look, shown on Journey and Company and in dialogue. It changes only how things look; nothing in your journey changes. "Flat" keeps the book\'s type and pages without depth or motion.');
+        radios('ledgerStyle', 'The Wayfarer\'s Ledger', [['book', 'The book'], ['flat', 'The book, flat']], null,
+          'How the Ledger, the dialogue and every other page are drawn. It changes only how things look; nothing in your journey changes. "Flat" keeps the book\'s type and pages without texture, depth or motion.');
     } else if (g === 'storage') {
       const ss = RB.save.status();
       h += '<p class="' + (ss.mode === 'session' ? 'note-slip bad' : 'note-slip') + '">' + esc(ss.mode === 'idb' ? 'Saving to this browser (IndexedDB).' : ss.mode === 'local' ? 'Saving to this browser (localStorage fallback).' : 'Session only: nothing persists after closing.') + '</p>' +

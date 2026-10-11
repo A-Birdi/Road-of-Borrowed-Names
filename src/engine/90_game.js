@@ -46,10 +46,11 @@ RB.game = (function () {
       hideTotals: false,         // shiritori win/loss totals (stage receipts stay visible)
       fishSeconds: false,        // fishing pace: a numeric seconds display beside the line
       fishWait: true,            // fishing: the short waiting animation before a bite
-      // the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A): a preview Robin can switch on;
-      // 'classic' the folio as it was, 'book', or 'flat' (the book without depth, texture or motion).
-      // Presentation only: nothing about the journey changes. (Older records lack it: 'classic'.)
-      ledgerStyle: 'classic',
+      // the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A U01–U06): 'book', or 'flat' (the
+      // book without depth, texture or motion). Presentation only: nothing about the journey changes. The classic folio
+      // was retired when the book reached every page (U06; C-79, F-142): an older record's 'classic', or none, reads
+      // as 'book'.
+      ledgerStyle: 'book',
       // the edition new journeys begin in (src/engine/05a_edition.js; the development switch until the release):
       // '6' or '12' (older records lack it: six chapters)
       edition: '6',
@@ -119,6 +120,9 @@ RB.game = (function () {
   function onAction(a, e) {
     const m = mode();
     if (a === 'help' && G.playing) { RB.ui.help.toggle(); return; }
+    // an open word-help card is dismissed before anything else acts, in the world too (Back never opens the Ledger
+    // from under it)
+    if (a === 'cancel' && RB.ui.help && RB.ui.help.isOpen && RB.ui.help.isOpen()) { RB.ui.help.hide(true); return; }
     if (m === 'world') {
       if (a === 'ok') RB.world.interact();
       else if (a === 'menu' || a === 'cancel') RB.ui.menu.open();
@@ -168,10 +172,12 @@ RB.game = (function () {
     document.documentElement.classList.toggle('text-large', +st.textScale >= 1.4);
     document.body.classList.toggle('high-contrast', st.contrast === 'high');
     document.body.classList.toggle('reduced-motion', !!st.reducedMotion);
-    // the book interface's dialogue strip and Ledger follow the preview setting (src/styles/90_book.css)
-    document.body.classList.toggle('book-ui', st.ledgerStyle === 'book' || st.ledgerStyle === 'flat');
+    // the book (src/styles/90_book.css): every page, the dialogue and what is shown over the world; 'flat' drops its
+    // texture, depth and motion. (A record from before U06 may still say 'classic': that is the book now.)
+    if (st.ledgerStyle !== 'flat') st.ledgerStyle = 'book';
+    document.body.classList.add('book-ui');
     document.body.classList.toggle('book-flat', st.ledgerStyle === 'flat');
-    if (st.ledgerStyle === 'book' || st.ledgerStyle === 'flat') warmBookType();
+    warmBookType();
     document.body.classList.toggle('lead-ja', st.lead === 'ja');
     document.body.classList.toggle('ui-ja', st.uiLang === 'ja');
     const touch = st.touch === 'on' || (st.touch === 'auto' && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches);
@@ -197,8 +203,8 @@ RB.game = (function () {
     applySettings();
     return RB.save.saveSettings(G.settings);
   }
-  // The book preview's embedded type (src/ui/13_booktype.js): made into fonts once, when the browser is idle after
-  // start-up, so the Ledger's first opening doesn't wait on it. The classic look never calls this.
+  // The book's embedded type (src/ui/13_booktype.js): made into fonts once, when the browser is idle after start-up,
+  // so the first page drawn in it doesn't wait on it.
   let bookTypeWarm = false;
   function warmBookType() {
     if (bookTypeWarm || !RB.bookType) return;

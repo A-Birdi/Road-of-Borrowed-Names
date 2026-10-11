@@ -5265,8 +5265,9 @@ mark.pb-fixed { background: rgba(45, 95, 40, 0.14); color: inherit; border-botto
 .help .note.dia { border-left: 3px solid var(--ribbon); padding-left: 6px; }
 
 /* ==== src/styles/90_book.css ==== */
-/* The Wayfarer's Ledger as a book (expansion plan docs/future/plan/15_INTERFACE.md; playbook §15A, packet U01).
- * A preview: Settings › Display › The Wayfarer's Ledger ('book' or 'flat'); the classic folio is untouched.
+/* The Wayfarer's Ledger as a book (expansion plan docs/future/plan/15_INTERFACE.md; playbook §15A, packets U01–U06).
+ * Settings › Display › The Wayfarer's Ledger: 'book' or 'flat'. Since U06 (C-79, F-142) it is the only Ledger: the
+ * classic folio's look is the base these rules finish, and every other page and surface wears the same family.
  *
  * "Open a well-used, personally kept Wayfarer's Ledger: repaired indigo cloth, a believable spine and page stack,
  * quiet ink typography, an amber place ribbon, and a few meaningful inserts. The object has depth; the words remain
@@ -5430,9 +5431,12 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
   .folio.book { width: 100vw; height: calc(100 * var(--vh)); border-radius: 0; padding: max(54px, calc(env(safe-area-inset-top) + 48px)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
   .folio.book .folio-head { top: max(6px, env(safe-area-inset-top)); right: max(8px, env(safe-area-inset-right)); }
   /* all five in one row, none under a scroll arrow: the icon above its word */
-  .folio.book .tabrail { padding: 4px 2px 0; }
+  .folio.book .tabrail { padding: 4px 0 0; }
   .folio.book .ptab { flex: 1 1 0; min-width: max-content; flex-direction: column; gap: 1px; padding: 6px 0.3em 7px; font-size: 0.82em; letter-spacing: 0; }
-  .folio.book .ptab + .ptab { margin-left: 3px; }
+  .folio.book .ptab + .ptab { margin-left: 2px; }
+  /* the outermost faces stop at the rail's edges, so the row never scrolls by the faces' few pixels */
+  .folio.book .ptab:first-of-type::before { left: 0; }
+  .folio.book .ptab:last-of-type::before { right: 0; }
   .folio.book .leaf { padding: 16px 16px 24px 18px; }
 }
 /* the narrowest phones (folded cover screens) */
@@ -5475,7 +5479,7 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 /* a section's contents: ink words, the open one underlined; no pills */
 .folio.book .subnav { display: flex; flex-wrap: wrap; gap: 0 1.5em; border-bottom: 0; margin: 0 0 12px; }
 .folio.book .subbtn {
-  padding: 0; margin: 0; min-height: var(--tap); background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+  padding: 0; margin: 0; min-height: var(--tap); min-width: var(--tap); justify-content: center; background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
   color: var(--ink-3); font-family: var(--type-latin-reading); font-weight: 600; font-size: 1em; justify-content: flex-start; text-align: left;
 }
 .folio.book .subbtn svg { display: none; }
@@ -5695,6 +5699,92 @@ body.high-contrast .folio.book .co-thought::before { color: var(--ink); }
 .folio.book .as-worn li { display: grid; grid-template-columns: minmax(6em, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; }
 .folio.book .as-k { font-size: 0.82em; color: var(--ink-2); }
 .folio.book .as-v .en { color: var(--ink-2); font-style: italic; }
+
+/* ---- U05: the remaining surfaces in the book's family ---------------------------------------------------------
+ * Title, confirmations, help, writing prompts, battle slips, notices and the chapter cards (playbook §15A U05).
+ * One rule for all of them: whatever is shown over the world speaks through the five type roles; an aside is an
+ * inserted slip (lighter paper, a folded corner); a question that asks for a decision is a sheet with a deckled top;
+ * labels are small capitals, not shouting capitals; danger is a seal and its words, never colour alone. Geometry
+ * that input depends on (the writing pad, the answer field, the response cards' hit areas, the pad's tools) is not
+ * touched: only type, paper and marks change. */
+/* (one level under the body, where the roles are already resolved: on the body itself the roles, which end in these
+   lists, and these lists would name each other) */
+body.book-ui #app {
+  --serif: var(--type-latin-reading);
+  --en-font: var(--type-latin-reading);
+  --ui-font: var(--type-ui);
+  --jp-font: var(--type-jp-body);
+  font-family: var(--type-ui);
+}
+/* labels: small capitals in the display face */
+body.book-ui .help .mean .lab, body.book-ui .toast .kind, body.book-ui .chal .slip-lab, body.book-ui .readas .big .cap,
+body.book-ui .cand .cap, body.book-ui .pad-compose .pad-lab, body.book-ui .order-line .pad-lab, body.book-ui .it-label,
+body.book-ui .aimtag, body.book-ui .rcard .rc-tgt, body.book-ui .rcard .rc-new, body.book-ui .cb-foe.group .fs-h,
+body.book-ui .cb-queued .cq-t, body.book-ui .lsheet.pb .slip-lab, body.book-ui .pb-hdr .kind, body.book-ui .wv-lab,
+body.book-ui .ks-display .lab, body.book-ui .fp-note .lab, body.book-ui .pace-lab, body.book-ui .title .rec .kind,
+body.book-ui .manage .mg-h, body.book-ui .cr-sheet .cr-kick {
+  text-transform: none; font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.06em;
+}
+/* the title: the masthead in the display face, the menu's entries in small capitals on a leaf of the same paper */
+body.book-ui .title h1 { font-family: var(--type-latin-display); font-weight: 500; }
+body.book-ui .title .mast-jp .jline { font-family: var(--type-jp-heading); }
+body.book-ui .tmenu { background-image: var(--bk-tooth); border-radius: 2px; }
+body.book-ui .tm .lbl { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; }
+body.book-ui .tm .sub { font-family: var(--type-latin-reading); font-style: italic; }
+/* a decision: a sheet with a deckled top; the proposed action in ink, the safe one plain; danger sealed */
+body.book-ui .csheet { position: relative; border-radius: 2px; border-top-width: 1px; background-image: var(--bk-tooth); padding-top: 22px; }
+body.book-ui .csheet::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -5px; height: 6px; pointer-events: none;
+  background:
+    radial-gradient(circle at 5px 6px, var(--paper) 4.6px, transparent 5px) 0 0 / 11px 6px repeat-x,
+    radial-gradient(circle at 3px 7px, var(--paper) 4.2px, transparent 4.6px) 6px 1px / 17px 6px repeat-x;
+}
+body.book-ui .csheet::after { content: ""; position: absolute; left: 18px; right: 18px; top: 9px; height: 2px; background: var(--ribbon); opacity: 0.85; pointer-events: none; }
+body.book-ui .csheet.danger::after { background: var(--danger-ink); }
+body.book-ui .csheet .q { font-family: var(--type-latin-reading); font-size: 1.08em; }
+body.book-ui .csheet .pbtn { border-radius: 2px; }
+body.book-ui .pbtn.danger::before, body.book-ui .btn.danger::before {
+  content: ""; display: inline-block; width: 0.62em; height: 0.62em; margin-right: 0.45em; border-radius: 2px; vertical-align: 0.02em;
+  background: var(--vermilion); box-shadow: inset 0 0 0 1.5px rgba(255, 235, 220, 0.35); transform: rotate(5deg); flex: none;
+}
+/* asides: word help, a keyword's card, notices and toasts are slips (lighter paper, a folded corner) */
+body.book-ui .help, body.book-ui .kwcard, body.book-ui .notice, body.book-ui .toast {
+  background-color: var(--bk-slip); background-image: var(--bk-tooth); border-radius: 2px;
+}
+body.book-ui .notice, body.book-ui .toast { position: relative; }
+body.book-ui .help::after, body.book-ui .kwcard::after, body.book-ui .notice::after, body.book-ui .toast::after {
+  content: ""; position: absolute; top: -1px; right: -1px; width: 14px; height: 14px; pointer-events: none;
+  background: linear-gradient(225deg, rgba(20, 22, 38, 0.55) 50%, var(--paper-3) 50%);
+}
+body.book-ui .help .hw { font-family: var(--type-jp-heading); }
+body.book-ui .help .mean { font-family: var(--type-latin-reading); }
+body.book-ui .kwcard h3 { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.04em; }
+body.book-ui .toast .en { font-family: var(--type-latin-reading); font-style: italic; }
+/* the chapter cards and place names: the Japanese in the heading face, the English in the display face's italic */
+body.book-ui .banner .jline, body.book-ui .place .jline { font-family: var(--type-jp-heading); }
+body.book-ui .banner .en, body.book-ui .place .en { font-family: var(--type-latin-display); font-style: italic; }
+/* writing prompts and battle slips: the task slip and the answer slips take the book's papers and type; the pad,
+   the field and the cards keep their geometry */
+body.book-ui .chal .slip { border-radius: 2px; background-image: var(--bk-tooth); }
+body.book-ui .chal-task { background-color: var(--bk-slip) !important; }
+body.book-ui .chal :lang(ja), body.book-ui .chal .jline, body.book-ui .combat-ui :lang(ja), body.book-ui .combat-ui .jline { font-family: var(--type-jp-body); }
+body.book-ui .rcard { border-radius: 2px; }
+/* flat: no texture */
+body.book-flat .csheet, body.book-flat .help, body.book-flat .kwcard, body.book-flat .notice, body.book-flat .toast,
+body.book-flat .tmenu, body.book-flat .chal .slip { background-image: none; }
+body.book-flat .csheet::before { display: none; }
+body.high-contrast.book-ui .csheet, body.high-contrast.book-ui .help, body.high-contrast.book-ui .kwcard,
+body.high-contrast.book-ui .notice, body.high-contrast.book-ui .toast, body.high-contrast.book-ui .chal .slip { background-image: none !important; }
+
+/* ---- U06: every other folio (settings, the workshop, the pastimes' tables, expeditions, the Hall's cards, the sea
+ * chart, the Inn Ledger…) is a sheet of the same book: the paper's tooth, the heading in the display face's small
+ * capitals on the cloth, section heads in the display face. Their layouts are their own (a sheet, not two leaves). */
+body.book-ui .folio:not(.book) .leaf { background-image: var(--bk-tooth); border-radius: 2px; }
+body.book-ui .folio:not(.book) .folio-head h2 { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; font-weight: 600; }
+body.book-ui .folio:not(.book) .folio-head h2 :lang(ja), body.book-ui .folio:not(.book) .folio-head h2 .jline { font-family: var(--type-jp-heading); font-variant: normal; letter-spacing: 0.04em; }
+body.book-ui .folio:not(.book) .leaf h3, body.book-ui .folio:not(.book) .leaf .ph { font-family: var(--type-latin-display); }
+body.book-ui .folio:not(.book) .cbtn { font-family: var(--type-ui); }
+body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.book) .leaf { background-image: none; }
 </style>
 </head>
 <body>
@@ -56986,10 +57076,11 @@ RB.game = (function () {
       hideTotals: false,         // shiritori win/loss totals (stage receipts stay visible)
       fishSeconds: false,        // fishing pace: a numeric seconds display beside the line
       fishWait: true,            // fishing: the short waiting animation before a bite
-      // the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A): a preview Robin can switch on;
-      // 'classic' the folio as it was, 'book', or 'flat' (the book without depth, texture or motion).
-      // Presentation only: nothing about the journey changes. (Older records lack it: 'classic'.)
-      ledgerStyle: 'classic',
+      // the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A U01–U06): 'book', or 'flat' (the
+      // book without depth, texture or motion). Presentation only: nothing about the journey changes. The classic folio
+      // was retired when the book reached every page (U06; C-79, F-142): an older record's 'classic', or none, reads
+      // as 'book'.
+      ledgerStyle: 'book',
       // the edition new journeys begin in (src/engine/05a_edition.js; the development switch until the release):
       // '6' or '12' (older records lack it: six chapters)
       edition: '6',
@@ -57059,6 +57150,9 @@ RB.game = (function () {
   function onAction(a, e) {
     const m = mode();
     if (a === 'help' && G.playing) { RB.ui.help.toggle(); return; }
+    // an open word-help card is dismissed before anything else acts, in the world too (Back never opens the Ledger
+    // from under it)
+    if (a === 'cancel' && RB.ui.help && RB.ui.help.isOpen && RB.ui.help.isOpen()) { RB.ui.help.hide(true); return; }
     if (m === 'world') {
       if (a === 'ok') RB.world.interact();
       else if (a === 'menu' || a === 'cancel') RB.ui.menu.open();
@@ -57108,10 +57202,12 @@ RB.game = (function () {
     document.documentElement.classList.toggle('text-large', +st.textScale >= 1.4);
     document.body.classList.toggle('high-contrast', st.contrast === 'high');
     document.body.classList.toggle('reduced-motion', !!st.reducedMotion);
-    // the book interface's dialogue strip and Ledger follow the preview setting (src/styles/90_book.css)
-    document.body.classList.toggle('book-ui', st.ledgerStyle === 'book' || st.ledgerStyle === 'flat');
+    // the book (src/styles/90_book.css): every page, the dialogue and what is shown over the world; 'flat' drops its
+    // texture, depth and motion. (A record from before U06 may still say 'classic': that is the book now.)
+    if (st.ledgerStyle !== 'flat') st.ledgerStyle = 'book';
+    document.body.classList.add('book-ui');
     document.body.classList.toggle('book-flat', st.ledgerStyle === 'flat');
-    if (st.ledgerStyle === 'book' || st.ledgerStyle === 'flat') warmBookType();
+    warmBookType();
     document.body.classList.toggle('lead-ja', st.lead === 'ja');
     document.body.classList.toggle('ui-ja', st.uiLang === 'ja');
     const touch = st.touch === 'on' || (st.touch === 'auto' && typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches);
@@ -57137,8 +57233,8 @@ RB.game = (function () {
     applySettings();
     return RB.save.saveSettings(G.settings);
   }
-  // The book preview's embedded type (src/ui/13_booktype.js): made into fonts once, when the browser is idle after
-  // start-up, so the Ledger's first opening doesn't wait on it. The classic look never calls this.
+  // The book's embedded type (src/ui/13_booktype.js): made into fonts once, when the browser is idle after start-up,
+  // so the first page drawn in it doesn't wait on it.
   let bookTypeWarm = false;
   function warmBookType() {
     if (bookTypeWarm || !RB.bookType) return;
@@ -62679,10 +62775,10 @@ RB.ui.folio = (function () {
 
 
 /* ==== src/ui/13_booktype.js ==== */
-/* The book preview's embedded type (expansion U02; data/fonts/README.md).
+/* The book's embedded type (expansion U02; data/fonts/README.md).
  * The font files travel inside the page as an inert JSON block (<script type="application/json" id="rb-type">,
- * written by tools/build.mjs). When the preview is on, install() turns them into FontFaces from their bytes: no URL
- * is loaded and nothing is fetched. The classic look never calls it, so it pays nothing beyond the page's size.
+ * written by tools/build.mjs). Once the game is idle after start-up, install() turns them into FontFaces from their bytes: no URL
+ * is loaded and nothing is fetched.
  * Each face keeps today's system fonts behind it in the style sheet (src/styles/90_book.css), so if the block is
  * missing or a face fails to load, the text still draws. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -77301,8 +77397,8 @@ RB.ui.menu = (function () {
   };
   let layer = null, fr = null, tabsApi = null, mq = null, stopDemo = () => {};
   let lastSec = null; // the section last drawn: a change of section turns the page (the book)
-  // the book interface (Settings › Display › The Wayfarer's Ledger): 'book', 'flat' or null for the classic folio
-  const bookStyle = () => { const v = RB.game.settings && RB.game.settings.ledgerStyle; return v === 'book' || v === 'flat' ? v : null; };
+  // the book (Settings › Display › The Wayfarer's Ledger): 'book' or 'flat' (the classic folio was retired in U06)
+  const bookStyle = () => (RB.game.settings && RB.game.settings.ledgerStyle === 'flat' ? 'flat' : 'book');
   let sheet = null; // the Save & Load sheet, when open over the folio
 
   // ---- open / close -------------------------------------------------------------------
@@ -77317,7 +77413,7 @@ RB.ui.menu = (function () {
     if (RB.game.mode() !== 'world' && RB.game.mode() !== 'dialogue') return;
     RB.game.pushMode('menu');
     RB.audio && RB.audio.sfx('menu_open');
-    if (bookStyle() && RB.bookType) RB.bookType.install(); // the preview's type, if the idle start hasn't made it yet
+    if (RB.bookType) RB.bookType.install(); // the book's type, if the idle start hasn't made it yet
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;
     fr.foot.innerHTML =
@@ -77418,14 +77514,14 @@ RB.ui.menu = (function () {
     const comp = s.comp && RB.content.chars[s.comp];
     fr.setTitle(RB.ui.label(sec.jp, sec.en), esc(s.player.name) + (comp ? ' &amp; ' + esc(comp.name.en) : '') + ' · ' + RB.util.fmtTime(s.playtime));
     const two = F().wide();
-    const turn = bookStyle() && lastSec && lastSec !== view.section;
+    const turn = lastSec && lastSec !== view.section;
     lastSec = view.section;
     fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + (turn ? ' turn' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
       '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
     const [A, B] = fr.box.querySelectorAll('.leaf');
     const builtIn = { journey, words, satchel, map, company }[view.section];
     if (builtIn) builtIn(A, B, two); else xsec(view.section).render(A, B, two, api(view.section));
-    if (bookStyle()) runningHeads(A, B, two, sec, s, comp);
+    runningHeads(A, B, two, sec, s, comp);
     const sc = view.scroll[key()];
     if (sc) { A.scrollTop = sc[0]; B.scrollTop = sc[1]; }
   }
@@ -77448,7 +77544,7 @@ RB.ui.menu = (function () {
   // Settings › Display changed the Ledger's look while it is open: redraw it in the new style
   function restyle() {
     if (!layer || !fr) return;
-    if (bookStyle() && RB.bookType) RB.bookType.install();
+    if (RB.bookType) RB.bookType.install();
     fr.setBook(bookStyle());
     lastSec = null;
     remember();
@@ -77497,7 +77593,7 @@ RB.ui.menu = (function () {
     let h = '<div class="qguide">';
     if (gm === 'full') {
       const on = G.followed(s) === x.id;
-      if (bookStyle()) h += '<div class="ph small-ph qway">' + I('follow') + ' The way there</div>';
+      h += '<div class="ph small-ph qway">' + I('follow') + ' The way there</div>';
       h += '<div class="follow-row"><button class="pbtn follow' + (on ? ' on' : '') + '" data-follow="' + x.id + '" aria-pressed="' + on + '">' + I('follow') + '<span>' + gl(on ? 'following' : 'follow') + '</span></button>' +
         '<span class="muted small">' + esc(on ? (G.chosen(s) ? 'Markers in the world and on the Map show the way to its next step. Press again to stop.' : 'Followed as the main road: markers show the way to its next step. Press to stop.') : 'Markers will show the way to this quest’s next step instead.') + '</span></div>';
       if (on) {
@@ -77971,14 +78067,9 @@ RB.ui.menu = (function () {
     }
     h += '<p class="muted small">Important items cannot be sold or used up. Nothing essential can be lost.</p>';
     const selX = inv.find((x) => x.id === S.sel);
-    if (bookStyle()) {
-      // the book: the study faces the folio (on a phone, it heads the page)
-      if (two) { A.innerHTML = h; B.innerHTML = appearanceStudy(s) + (selX ? itemDetail(selX, s) : '<p class="muted">Choose something you carry to look at it closely.</p>'); }
-      else A.innerHTML = appearanceStudy(s) + h;
-    } else {
-      A.innerHTML = h;
-      B.innerHTML = selX ? itemDetail(selX, s) : '<p class="muted">Choose something to look at it closely.</p>';
-    }
+    // the study faces the folio (on a phone, it heads the page)
+    if (two) { A.innerHTML = h; B.innerHTML = appearanceStudy(s) + (selX ? itemDetail(selX, s) : '<p class="muted">Choose something you carry to look at it closely.</p>'); }
+    else A.innerHTML = appearanceStudy(s) + h;
     drawPreviews(A, s); drawPreviews(B, s);
     // a polite announcement of what changed (the page itself is redrawn)
     let live = fr.el.querySelector('.eq-live');
@@ -78148,7 +78239,7 @@ RB.ui.menu = (function () {
 
   function settingsStandalone() { return RB.ui.settings.open(); }
 
-  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => !!bookStyle(), isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
+  return { open, close, closeAll, settingsStandalone, addPage, addSection, restyle, isBook: () => true, isOpen: () => !!layer, current: () => ({ section: view.section, journey: view.journey.view, words: view.words.sub, map: view.map.view, company: view.company.page }) };
 })();
 
 // the project's credit (Robin's request, 2026-10-06): at the end of the story and at the top of About & credits
@@ -78433,14 +78524,12 @@ RB.ui.companyPages = (function () {
     if (rest) h += actionRow('rest', 'rest', 'Rest together', '{一緒|いっしょ} に {休|やす}む', 'a quiet moment here');
     h += actionRow('memories', 'journey', 'Shared memories', '{思|おも}い{出|で}', '');
     if (qi) h += actionRow('quest', qi.done ? 'done' : 'side', 'Personal quest details', '{自分|じぶん} の {道|みち}', '', ' aria-expanded="' + (V.detail === 'quest') + '"');
-    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js). The book keeps
-    // the asking with the choice it changes, under one heading; the classic folio lists it with the other talk
+    // how Suzu speaks: ask her in the world, or the plain choice below (src/ui/56_suzu_speech.js); the asking sits
+    // with the choice it changes, under one heading
     const sp = comp === 'suzu' && RB.ui.suzuSpeech;
-    const book = RB.ui.menu && RB.ui.menu.isBook && RB.ui.menu.isBook();
     const ask = sp ? (() => { const tl = sp.talkLabel(); return actionRow('speech', 'talk', tl.en, tl.jp, ''); })() : '';
-    if (sp && !book) h += ask;
     h += '</ul>';
-    if (sp) h += sp.companyHtml(s, book ? '<ul class="co-acts co-ask">' + ask + '</ul>' : '');
+    if (sp) h += sp.companyHtml(s, '<ul class="co-acts co-ask">' + ask + '</ul>');
     return h;
   }
   function questDetail(s, comp, c) {
@@ -79211,8 +79300,8 @@ RB.ui.settings = (function () {
       h += audioRows();
     } else if (g === 'display') {
       h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.') +
-        radios('ledgerStyle', 'The Wayfarer\'s Ledger (preview)', [['classic', 'Classic folio'], ['book', 'The book'], ['flat', 'The book, flat']], null,
-          'A preview of the new book look, shown on Journey and Company and in dialogue. It changes only how things look; nothing in your journey changes. "Flat" keeps the book\'s type and pages without depth or motion.');
+        radios('ledgerStyle', 'The Wayfarer\'s Ledger', [['book', 'The book'], ['flat', 'The book, flat']], null,
+          'How the Ledger, the dialogue and every other page are drawn. It changes only how things look; nothing in your journey changes. "Flat" keeps the book\'s type and pages without texture, depth or motion.');
     } else if (g === 'storage') {
       const ss = RB.save.status();
       h += '<p class="' + (ss.mode === 'session' ? 'note-slip bad' : 'note-slip') + '">' + esc(ss.mode === 'idb' ? 'Saving to this browser (IndexedDB).' : ss.mode === 'local' ? 'Saving to this browser (localStorage fallback).' : 'Session only: nothing persists after closing.') + '</p>' +

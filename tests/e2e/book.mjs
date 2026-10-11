@@ -1,8 +1,10 @@
-// U01: the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A), a preview behind Settings ›
-// Display › The Wayfarer's Ledger. Checked here, against the built index.html in Chromium, with a fixture shaped like
-// Robin's save (Saltglass, Suzu, Samson the cat, the main road followed):
-//  - the classic folio stays the default and keeps its behaviour;
-//  - the book offers exactly the classic folio's controls and actions on Journey and Company (UI-A04);
+// U01–U06: the Wayfarer's Ledger as a book (expansion plan 15_INTERFACE; playbook §15A), the only Ledger since U06
+// (C-79, F-142; Settings › Display › The Wayfarer's Ledger: the book or the book, flat). Checked here, against the built
+// index.html in Chromium, with a fixture shaped like Robin's save (Saltglass, Suzu, Samson the cat, the main road
+// followed):
+//  - the book is the Ledger for everyone: a new profile and a record that still says 'classic' both open it;
+//  - the book offers exactly the classic folio's controls and actions on Journey and Company (UI-A04), checked
+//    against the classic folio's own list recorded before it was retired (tests/fixtures/book_parity_classic.json);
 //  - the section tabs sit across the top at every width, in the classic folio's look (Robin, 2026-10-09) (UI-A03);
 //  - opening, turning sections and pages, restyling and closing never change the journey (UI-A12, UI-A19);
 //  - text and controls rest on a flat plane: no transform on the leaves or their contents at rest (UI-A02);
@@ -14,9 +16,11 @@
 //    who travels is in the running head, and Suzu's speech (asking and choosing) is one group (Robin, 2026-10-09);
 //  - the Journey's "Next" says one destination once (UI-A06);
 //  - the dialogue strip keeps its speaker and its manual Next (UI-A13);
-//  - the preview's type: each role in its embedded face, nothing fetched, and the classic folio makes none (UI-A11).
+//  - the book's type: each role in its embedded face, nothing fetched (UI-A11).
 // Usage: node tests/e2e/book.mjs
-import { serve, launch, page } from './lib.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { serve, launch, page, root } from './lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -55,35 +59,36 @@ const ACTIONS = () => {
 // what the journey holds that browsing must never change (progress, records, choices, the followed quest)
 const PROGRESS = () => JSON.stringify((({ chapter, flags, vars, quests, inv, equip, words, company, discovery, awarded, atlas, map, x, y, comp }) =>
   ({ chapter, flags, vars, quests, inv, equip, words, company, discovery, awarded, atlas, map, x, y, comp, items: RB.game.s.learn.items, follow: RB.questGuide.followed(RB.game.s) }))(RB.game.s));
-// everything else, without play time, to compare the book with the classic folio
+// everything else, without play time, to compare the book with the book, flat
 const SNAP = () => JSON.stringify(Object.assign({}, RB.game.s, { playtime: 0 }));
 // let finite animations finish (the world's endless ones are left alone)
 const settle = (p) => p.evaluate(() => Promise.all(document.getAnimations().filter((a) => a.effect && a.effect.getComputedTiming().iterations !== Infinity).map((a) => a.finished.catch(() => null))));
 
-await test('the classic folio is the default and keeps its behaviour', async () => {
+await test('the book is the Ledger for everyone: a new profile, and a record that still says classic', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
   const def = await p.evaluate(() => RB.game.settings.ledgerStyle);
-  assert(def === 'classic', 'default ledgerStyle: ' + def);
+  assert(def === 'book', 'default ledgerStyle: ' + def);
   await p.evaluate(FIXTURE, null);
   await open(p, 'journal');
-  const o = await p.evaluate(() => ({ book: !!document.querySelector('.folio.book'), ui: document.body.classList.contains('book-ui') }));
-  assert(!o.book && !o.ui, 'classic: ' + JSON.stringify(o));
-  // Up/Down on a classic tab do nothing (only Left/Right move, as before)
-  await p.focus('.ptab[aria-selected="true"]');
-  await p.keyboard.press('ArrowDown');
-  const sel = await p.evaluate(() => document.querySelector('.ptab[aria-selected="true"]').dataset.id);
-  assert(sel === 'journey', 'ArrowDown moved a classic tab to ' + sel);
+  let o = await p.evaluate(() => ({ book: !!document.querySelector('.folio.book'), ui: document.body.classList.contains('book-ui') }));
+  assert(o.book && o.ui, 'a new profile: ' + JSON.stringify(o));
+  // a settings record from before U06
+  await p.evaluate(() => { RB.ui.menu.close(); RB.game.settings.ledgerStyle = 'classic'; RB.game.applySettings(); RB.ui.menu.open('journal'); });
+  o = await p.evaluate(() => ({ style: RB.game.settings.ledgerStyle, book: !!document.querySelector('.folio.book'), ui: document.body.classList.contains('book-ui') }));
+  assert(o.style === 'book' && o.book && o.ui, 'a record that says classic: ' + JSON.stringify(o));
+  // the settings offer the book and the book, flat
+  const opts = await p.evaluate(() => { RB.ui.menu.close(); RB.ui.settings.open(); const t = [...document.querySelectorAll('[data-g], .subbtn, button')].find((e) => /Display/.test(e.textContent) && e.offsetParent); if (t) t.click(); return [...document.querySelectorAll('input[data-set="ledgerStyle"]')].map((e) => e.value); });
+  assert(opts.join() === 'book,flat', 'the Ledger\'s looks offered: ' + opts.join());
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
 
-await test('the book offers exactly the classic folio\'s controls and actions (Journey, Company)', async () => {
+await test('the book offers exactly the classic folio\'s controls and actions (Journey, Company), as recorded before it was retired', async () => {
+  const classic = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/book_parity_classic.json'), 'utf8'));
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
-  await p.evaluate(FIXTURE, null);
-  const read = async () => { const r = {}; for (const w of ['journal', 'companion', 'memories', 'pet']) { await open(p, w); await p.waitForTimeout(150); r[w] = await p.evaluate(ACTIONS); } return r; };
-  const classic = await read();
-  await p.evaluate(() => { RB.game.settings.ledgerStyle = 'book'; RB.game.applySettings(); });
-  const book = await read();
+  await p.evaluate(FIXTURE, 'book');
+  const book = {};
+  for (const w of ['journal', 'companion', 'memories', 'pet']) { await open(p, w); await p.waitForTimeout(150); book[w] = await p.evaluate(ACTIONS); }
   for (const w of Object.keys(classic)) {
     const a = classic[w].list.join('\n'), c = book[w].list.join('\n');
     if (a !== c) {
@@ -151,12 +156,12 @@ async function browse(style, restyle) {
   return { before, after, pBefore, pAfter, errors };
 }
 await test('opening, turning, restyling and closing never change the journey', async () => {
-  const c = await browse(null, false), k = await browse('book', true);
-  // no progress, record, choice or followed quest moves; and the book changes nothing the classic folio does not
+  const c = await browse('flat', false), k = await browse('book', true);
+  // no progress, record, choice or followed quest moves; and the book changes nothing its flat look does not
   assert(k.pBefore === k.pAfter, 'the journey\'s progress changed while browsing the book');
-  assert(c.pBefore === c.pAfter, 'the journey\'s progress changed while browsing the classic folio');
+  assert(c.pBefore === c.pAfter, 'the journey\'s progress changed while browsing the book, flat');
   const delta = (r) => { const a = JSON.parse(r.before), z = JSON.parse(r.after), out = []; for (const key of new Set([...Object.keys(a), ...Object.keys(z)])) if (JSON.stringify(a[key]) !== JSON.stringify(z[key])) out.push(key); return out.sort().join(','); };
-  assert(delta(c) === delta(k), 'the book changes other parts of the state than the classic folio: classic [' + delta(c) + '] book [' + delta(k) + ']');
+  assert(delta(c) === delta(k), 'the book changes other parts of the state than the book, flat: flat [' + delta(c) + '] book [' + delta(k) + ']');
   assert(!c.errors.length && !k.errors.length, c.errors.concat(k.errors).join('; '));
 });
 
@@ -218,15 +223,19 @@ await test('closing hands the world back at once; the closing book cannot be use
 
 await test('Settings switches the Ledger\'s look while it is open', async () => {
   const { p, errors, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
-  await p.evaluate(FIXTURE, null);
+  await p.evaluate(FIXTURE, 'book');
   await open(p, 'journal');
   await p.click('.folio-foot [data-util="settings"]');
   await p.waitForTimeout(200);
   await p.evaluate(() => { const t = [...document.querySelectorAll('[data-g], .subbtn, button')].find((e) => /Display/.test(e.textContent) && e.offsetParent); if (t) t.click(); });
   await p.waitForTimeout(200);
+  await p.click('input[data-set="ledgerStyle"][value="flat"]');
+  await p.waitForTimeout(200);
+  let o = await p.evaluate(() => ({ style: RB.game.settings.ledgerStyle, flat: !!document.querySelector('.folio.book.book-flat'), ui: document.body.classList.contains('book-flat') }));
+  assert(o.style === 'flat' && o.flat && o.ui, 'after choosing the book, flat: ' + JSON.stringify(o));
   await p.click('input[data-set="ledgerStyle"][value="book"]');
   await p.waitForTimeout(200);
-  const o = await p.evaluate(() => ({ style: RB.game.settings.ledgerStyle, book: !!document.querySelector('.folio.book'), ui: document.body.classList.contains('book-ui') }));
+  o = await p.evaluate(() => ({ style: RB.game.settings.ledgerStyle, book: !!document.querySelector('.folio.book:not(.book-flat)'), ui: document.body.classList.contains('book-ui') && !document.body.classList.contains('book-flat') }));
   assert(o.style === 'book' && o.book && o.ui, 'after choosing the book: ' + JSON.stringify(o));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
@@ -342,19 +351,8 @@ await test('the dialogue strip keeps its speaker and its manual Next', async () 
   await ctx.close();
 });
 
-await test('the preview\'s type: each role in its embedded face, nothing fetched; the classic folio makes none', async () => {
+await test('the book\'s type: each role in its embedded face, nothing fetched', async () => {
   const RB_FACES = () => [...document.fonts].filter((f) => /^"?RB /.test(f.family)).map((f) => f.family.replace(/"/g, '') + ' ' + f.weight + ' ' + f.style + ' ' + f.status);
-  // classic: the faces are in the page but never named, so never decoded
-  {
-    const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
-    await p.evaluate(FIXTURE, null);
-    await open(p, 'journal');
-    await p.waitForTimeout(500);
-    const faces = await p.evaluate(RB_FACES);
-    assert(faces.length === 0 && !(await p.evaluate(() => RB.bookType.installed())), 'classic makes no font of the preview: ' + faces.join('; '));
-    assert(!errors.length && !requests.length, errors.concat(requests).join('; '));
-    await ctx.close();
-  }
   const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1440, height: 900 } });
   await p.evaluate(FIXTURE, 'book');
   const first = (q) => p.evaluate((q) => { const e = document.querySelector(q); return e ? getComputedStyle(e).fontFamily.split(',')[0].replace(/"/g, '').trim() : 'none: ' + q; }, q);
