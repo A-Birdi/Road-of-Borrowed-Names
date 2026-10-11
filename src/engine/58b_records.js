@@ -91,16 +91,35 @@ RB.volume = (function () {
   'use strict';
   const EXTRA = {}; // pages content adds (later chapters, side stories, the Hall …)
   function add(p) { EXTRA[p.id] = p; return p; }
-  // every page: the illustrated sequences, then pages content added
+  // A page's chapter is an old chapter's number (1–6, the six-chapter sequences), a chapter key of the twelve ('mb1',
+  // 'kr' …) or 'post' (after the story: the guardians, the Hall's tales, the settlement). The volume belongs to the
+  // twelve-chapter edition (F-21), so its headings number the chapters in that story order: Cinder Orchard's pages are
+  // Chapter 5's there, not Chapter 3's.
+  const OLDKEY = { 1: 'rw', 2: 'sg', 3: 'co', 4: 'sb', 5: 'lf', 6: 'sa' };
+  function keyOf(p) {
+    const c = p && p.chapter;
+    if (!c) return null;
+    return typeof c === 'string' ? c : OLDKEY[c] || null;
+  }
+  // the number shown: 0 the prologue, 1–12 the chapters in story order, 13 after the story
+  function numberOf(p) {
+    const k = keyOf(p);
+    if (!k) return 0;
+    if (k === 'post') return 13;
+    const i = RB.edition ? RB.edition.ORDER.indexOf(k) : -1;
+    return i >= 0 ? i + 1 : typeof p.chapter === 'number' ? p.chapter : 0;
+  }
+  // every page: the illustrated sequences, then pages content added; in story order
   function pages() {
     const out = [];
     if (RB.sequence && RB.sequence.ids) for (const id of RB.sequence.ids()) {
       const d = RB.sequence.get(id);
-      if (!d || d.devOnly) continue;
-      out.push({ id, seq: id, scene: d.scene || null, chapter: d.chapter || 0, title: d.title, kind: d.kind || (d.chapter ? 'chapter' : 'prologue'), comp: d.comp || null, special: !!d.special, memory: !!d.memory });
+      if (!d || d.devOnly || d.page === false) continue;
+      out.push(Object.assign({ id, seq: id, scene: d.scene || null, chapter: d.chapter || 0, title: d.title, kind: d.kind || (d.chapter ? 'chapter' : 'prologue'), comp: d.comp || null, special: !!d.special, memory: !!d.memory }, d.flag ? { flag: d.flag } : {}, d.criteria ? { criteria: d.criteria } : {}));
     }
     for (const id in EXTRA) out.push(Object.assign({ kind: 'side' }, EXTRA[id]));
-    return out;
+    for (const p of out) { p.key = keyOf(p); p.no = numberOf(p); }
+    return out.map((p, i) => [p, i]).sort((a, b) => a[0].no - b[0].no || a[1] - b[1]).map((x) => x[0]);
   }
   const page = (id) => pages().find((p) => p.id === id) || null;
   // the moment happened in this campaign (a skipped sequence still counts: s.seq records every viewing; an older
@@ -116,8 +135,8 @@ RB.volume = (function () {
   // a chapter's story is finished (by its old number, or a new chapter's key)
   function chapterDone(s, ch) {
     if (!s || !ch) return false;
-    const key = typeof ch === 'number' ? { 1: 'rw', 2: 'sg', 3: 'co', 4: 'sb', 5: 'lf', 6: 'sa' }[ch] : ch;
-    const flag = { rw: 'ch1_done', sg: 'ch2_done', mb1: 'mb1_done', mb2: 'mb2_done', co: 'ch3_done', sb: 'ch4_done', kr: 'kr_done', lf: 'ch5_done', ko: 'ko_done', cr: 'cr_done', yn: 'yn_done', sa: 'postgame' }[key];
+    const key = typeof ch === 'number' ? OLDKEY[ch] : ch;
+    const flag = { rw: 'ch1_done', sg: 'ch2_done', mb1: 'mb1_done', mb2: 'mb2_done', co: 'ch3_done', sb: 'ch4_done', kr: 'kr_done', lf: 'ch5_done', ko: 'ko_done', cr: 'cr_done', yn: 'yn_done', sa: 'postgame', post: 'postgame' }[key];
     return !!(flag && s.flags && s.flags[flag]);
   }
   // viewable inside this campaign (R2 §6)
@@ -133,8 +152,17 @@ RB.volume = (function () {
   function criteria(p) {
     if (p.criteria) return p.criteria;
     if (p.kind === 'prologue') return { en: 'The prologue: every journey.', jp: '{序章|じょしょう}' };
-    if (p.comp) return { en: 'A moment with one companion, in Chapter ' + p.chapter + '.', jp: '{第|だい}' + p.chapter + '{章|しょう}' };
-    return { en: 'Chapter ' + p.chapter + ': the main story.', jp: '{第|だい}' + p.chapter + '{章|しょう}' };
+    const n = numberOf(p);
+    if (n > 12) return { en: 'After the story.', jp: '{物語|ものがたり} の {後|あと}' };
+    if (p.comp) return { en: 'A moment with one companion, in Chapter ' + n + '.', jp: '{第|だい}' + n + '{章|しょう}' };
+    return { en: 'Chapter ' + n + ': the main story.', jp: '{第|だい}' + n + '{章|しょう}' };
+  }
+  // a chapter group's heading (0 the prologue, 13 after the story)
+  function heading(n) {
+    n = +n || 0;
+    if (!n) return { en: 'Prologue', jp: '{序章|じょしょう}' };
+    if (n > 12) return { en: 'After the story', jp: '{物語|ものがたり} の {後|あと}' };
+    return { en: 'Chapter ' + n, jp: '{第|だい}' + n + '{章|しょう}' };
   }
   // ---- the Main Menu (K4, K5): everything, veiled until revealed; the Continue save's marks ----------------------
   // prefs: the device's viewing preference { unveiled: { id: true }, showAll: bool }; saves: [state…] read-only
@@ -170,7 +198,7 @@ RB.volume = (function () {
       return neg ? !v : v;
     }));
   }
-  return { add, pages, page, witnessed, viewable, chapterDone, revealSpecial, criteria, menuState, beats, fixtureTest };
+  return { add, pages, page, witnessed, viewable, chapterDone, revealSpecial, criteria, heading, keyOf, numberOf, menuState, beats, fixtureTest };
 })();
 
 RB.seal = (function () {

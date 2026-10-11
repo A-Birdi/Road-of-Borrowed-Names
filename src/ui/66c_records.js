@@ -136,9 +136,10 @@ RB.ui.records = (function () {
     const pages = RB.volume.pages();
     let h = '<h3>' + I('book') + ' The travel volume</h3>' + sealBlock(s) + (V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '');
     const byCh = {};
-    for (const p of pages) (byCh[p.chapter] = byCh[p.chapter] || []).push(p);
+    for (const p of pages) (byCh[p.no] = byCh[p.no] || []).push(p);
     for (const ch of Object.keys(byCh).sort((a, b) => a - b)) {
-      h += '<h4 class="rb-fam">' + (+ch ? RB.ui.jhtml('{第|だい}' + ch + '{章|しょう}') + ' <span class="en">Chapter ' + ch + '</span>' : RB.ui.jhtml('{序章|じょしょう}') + ' <span class="en">Prologue</span>') + '</h4><ul class="rb-pages">';
+      const hd = RB.volume.heading(ch);
+      h += '<h4 class="rb-fam">' + RB.ui.jhtml(hd.jp) + ' <span class="en">' + esc(hd.en) + '</span></h4><ul class="rb-pages">';
       for (const p of byCh[ch]) {
         const ok = RB.volume.viewable(s, p), w = RB.volume.witnessed(s, p);
         if (!ok) {
@@ -228,13 +229,13 @@ RB.ui.records = (function () {
     function render() {
       const pages = RB.volume.pages();
       const byCh = {};
-      for (const p of pages) (byCh[p.chapter] = byCh[p.chapter] || []).push(p);
+      for (const p of pages) (byCh[p.no] = byCh[p.no] || []).push(p);
       let h = '<section class="leaf rb-menu"><p class="muted small">Every illustration is here. Those no journey has reached yet are veiled until you choose to see them.</p>' +
         '<label class="opt"><input type="checkbox" data-a="showall"' + (prefs.showAll ? ' checked' : '') + '><span>Show all illustrations unveiled</span></label>';
       for (const ch of Object.keys(byCh).sort((a, b) => a - b)) {
         const L = byCh[ch];
         const anyVeiled = L.some((p) => RB.volume.menuState(p, prefs, saves.map((x) => x.s)).veiled);
-        h += '<h4 class="rb-fam">' + (+ch ? 'Chapter ' + ch : 'Prologue') + (anyVeiled ? ' <button type="button" class="pbtn small" data-a="revealch" data-ch="' + ch + '">Reveal this chapter…</button>' : '') + '</h4><ul class="rb-pages">';
+        h += '<h4 class="rb-fam">' + esc(RB.volume.heading(ch).en) + (anyVeiled ? ' <button type="button" class="pbtn small" data-a="revealch" data-ch="' + ch + '">Reveal this chapter…</button>' : '') + '</h4><ul class="rb-pages">';
         for (const p of L) {
           const st = RB.volume.menuState(p, prefs, saves.map((x) => x.s));
           if (st.veiled) {
@@ -258,10 +259,11 @@ RB.ui.records = (function () {
       if (!b) return;
       const a = b.dataset.a;
       if (a === 'reveal' || a === 'revealch') {
-        const ch = a === 'revealch' ? +b.dataset.ch : RB.volume.page(b.dataset.page).chapter;
-        const r = await RB.ui.confirm('This shows a moment from ' + (ch ? 'Chapter ' + ch : 'the prologue') + '. Reveal ' + (a === 'revealch' ? 'the whole chapter' : 'it') + '?', ['Reveal', 'Keep it veiled']);
+        const ch = a === 'revealch' ? +b.dataset.ch : RB.volume.page(b.dataset.page).no;
+        const where = !ch ? 'the prologue' : ch > 12 ? 'after the story' : 'Chapter ' + ch;
+        const r = await RB.ui.confirm('This shows a moment from ' + where + '. Reveal ' + (a === 'revealch' ? (ch > 12 ? 'them all' : 'the whole chapter') : 'it') + '?', ['Reveal', 'Keep it veiled']);
         if (r !== 0) return;
-        for (const p of RB.volume.pages()) if (a === 'revealch' ? p.chapter === ch : p.id === b.dataset.page) prefs.unveiled[p.id] = true;
+        for (const p of RB.volume.pages()) if (a === 'revealch' ? p.no === ch : p.id === b.dataset.page) prefs.unveiled[p.id] = true;
         await RB.game.saveSettings(); render(); return;
       }
       if (a === 'reveil') { delete prefs.unveiled[b.dataset.page]; await RB.game.saveSettings(); render(); return; }

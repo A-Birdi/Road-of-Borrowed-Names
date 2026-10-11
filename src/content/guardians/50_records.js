@@ -36,7 +36,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the travel volume's page of each guardian (K2; H1): witnessed when it settles, revealable before
   if (RB.volume) for (const k of Object.keys(D)) {
     const st = C.stamps['gd.' + k];
-    RB.volume.add({ id: 'gd.' + k, chapter: 12, kind: 'guardian', special: true, flag: 'gd.' + k, title: st.title, plate: st.title.jp,
+    RB.volume.add({ id: 'gd.' + k, chapter: 'post', kind: 'guardian', special: true, flag: 'gd.' + k, title: st.title, plate: st.title.jp,
       criteria: { en: 'An old guardian, awake after the story: settled.', jp: '{古|ふる}い {守|まも}り{手|て}' } });
   }
 })(RB.content);

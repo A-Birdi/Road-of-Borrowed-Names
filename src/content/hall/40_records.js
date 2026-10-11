@@ -31,7 +31,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const NUM = ['{一|いち}', '{二|に}', '{三|さん}', '{四|よん}', '{五|ご}', '{六|ろく}', '{七|なな}', '{八|はち}', '{九|きゅう}', '{十|じゅう}'];
   if (RB.volume) for (let n = 1; n <= 10; n++) {
     const st = C.stamps['hall.w' + n];
-    RB.volume.add({ id: 'hall.w' + n, chapter: 12, kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, plate: st.title.jp,
+    RB.volume.add({ id: 'hall.w' + n, chapter: 'post', kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, plate: st.title.jp,
       criteria: { en: n === 10 ? 'The Hall of a Hundred Tales: the hundredth tale, your own, told.' : 'The Hall of a Hundred Tales: the ' + ORD[n - 1] + ' tale told.', jp: '{百物語|ひゃくものがたり} の {館|やかた} ・ {第|だい}' + NUM[n - 1] + ' の {話|はなし}' } });
   }
 

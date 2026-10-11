@@ -82,8 +82,12 @@ await test('a twelve-chapter journey: a stamp pressed at its stand; the seal; a 
   await p.waitForTimeout(200);
   assert(await p.evaluate(() => { const d = RB.game.s.player.seal; return d && d.frame === 'square' && d.kana === 'ル'; }), 'the seal is kept');
   // a page before its moment: only its criteria
-  const veiled = await p.evaluate(() => [...document.querySelectorAll('.rb-pg.veiled')].map((x) => x.textContent));
-  assert(veiled.length > 0 && veiled.every((t) => /Chapter \d/.test(t)), 'pages not yet reached show only their criteria');
+  // (every veiled page's text is its criteria, and a special page's Reveal button; after the story the criteria name
+  // the guardian, tale or festival, not a chapter)
+  const veiled = await p.evaluate(() => [...document.querySelectorAll('.rb-pg.veiled')].map((x) => x.textContent.replace('Reveal…', '').trim()));
+  const crit = await p.evaluate(() => RB.volume.pages().filter((q) => !RB.volume.viewable(RB.game.s, q)).map((q) => RB.volume.criteria(q).en));
+  assert(veiled.length > 0 && veiled.length === crit.length && veiled.every((t, i) => t === crit[i]), 'pages not yet reached show only their criteria');
+  assert(veiled.some((t) => /Chapter 5: the main story/.test(t)) && !veiled.some((t) => /Chapter 3: the main story/.test(t)), 'numbered in the twelve-chapter story order (Cinder Orchard is Chapter 5)');
   assert(await p.evaluate(() => !document.querySelector('.rb-pg.veiled canvas')), 'never their picture');
   // a chapter finished: its page viewable; witnessed carries the seal
   await p.evaluate(() => { RB.game.s.seq['ch1.bridge'] = { n: 1, h: [] }; RB.ui.menu.close(); RB.ui.menu.open('volume'); });

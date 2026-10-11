@@ -4234,6 +4234,30 @@ mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
 before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
 
+## The expansion, P15 — phase end (P15h)
+
+**On a clean copy of 3f0841e** (`git archive`, nothing else in it): the whole unit suite **51,426 passed, 0 failed**,
+including `postgame_phase` **161/0** (the hundred-trial manifest; every wing through going in, defeat, the emergency
+retreat, the reprieve, the suspend point and completion with nobody a delver could be; the guardians' policy; the
+settlement's progression; the pastimes; nothing after the story gating anything outside its own content; no empty port,
+placeholder wing or "coming soon"), `guardians` 66/0 (with the three conversations' help), `encounters` 184/0.
+
+**Found and fixed after it** (working tree): the travel volume numbered its chapters by the six-chapter edition, so in a
+twelve-chapter journey (the only kind that has the volume, F-21) Cinder Orchard's pages sat under "Chapter 3" and
+said "Chapter 3: the main story"; pages are now grouped and described in the twelve-chapter story order (Cinder
+Orchard 5, Snowbell 6, Lanternfall 8, the Archive 12), and the guardians', tales' and festival's pages sit under their
+own heading, "After the story" (F-140). `records` **223/0** (pins the numbering and the order), `guardians` 66/0,
+`hall_w10` 131/0, `settle` 79/0. Browser `tests/e2e/records.mjs` **7/0**: its check that veiled pages show only their
+criteria had assumed every criteria names a chapter, which stopped being true when P15 added the pages after the
+story; it now compares each veiled page with its own criteria, and checks that Cinder Orchard is Chapter 5.
+
+**The chapters chained from a new journey (XP79), first attempt** (`PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren
+twelve`, the clean copy with the route's twelve-chapter legs): Chapter 1 in 159 site visits, Chapter 2 in 51, then it
+waited for ever in Manybridge at the boat-naming sheet of A Licence for the Open Sea (side quest), which had no
+automated path (every other sheet of its kind has one). The hook now names the boat at once in an automated run (the
+old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The second attempt is recorded below
+when it ends.
+
 ## The expansion, P15 — P15g done: A Quiet Cast's coast and the boat's destination after the story
 
 **On a copy of the working tree's git-visible files (the coast complete, before three last touches below):** the whole

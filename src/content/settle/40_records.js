@@ -20,7 +20,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.stamps = C.stamps || {};
   C.stamps['as.village'] = { id: 'as.village', family: 'region', title: T('A Village with Names', '{名前|なまえ} の ある {村|むら}'), hidden: true, stand: null,
     when: 'ed>=2&as_fest_done', criteria: T('A new village, helped to become a place.', '{新|あたら}しい {村|むら}'), design: { shape: 'square', motif: 'path', ink: '#5a7a3a' } };
-  if (RB.volume) RB.volume.add({ id: 'as.festival', chapter: 12, kind: 'settlement', special: true, flag: 'as_fest_done', title: T('The First Festival', '{最初|さいしょ} の {祭|まつ}り'), plate: '{最初|さいしょ} の {祭|まつ}り',
+  if (RB.volume) RB.volume.add({ id: 'as.festival', chapter: 'post', kind: 'settlement', special: true, flag: 'as_fest_done', title: T('The First Festival', '{最初|さいしょ} の {祭|まつ}り'), plate: '{最初|さいしょ} の {祭|まつ}り',
     criteria: { en: 'A new village\'s first festival night.', jp: '{新|あたら}しい {村|むら} の {最初|さいしょ} の {祭|まつ}り' } });
   C.items = C.items || {};
   C.items.as_kasa = { name: T('Planting hat', '{田植|たう}え の {笠|かさ}'), desc: 'A sedge hat from the villagers of Ashihara Shinden, the kind worn for planting rice. A keepsake: it changes only how you look.', slot: 'cosmetic', acc: 'hat', wear: { hatCol: '#c8a860' } };

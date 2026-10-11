@@ -76,6 +76,14 @@ export default async (t) => {
   {
     const pages = V.pages();
     t.ok(pages.length >= 14 && pages.some((p) => p.kind === 'prologue'), 'every illustrated sequence is a page (' + pages.length + ')');
+    // the volume is the twelve-chapter edition's: its chapters are numbered in that story order (P16)
+    const co = pages.find((p) => p.chapter === 3), sb = pages.find((p) => p.chapter === 4), lf = pages.find((p) => p.chapter === 5);
+    t.eq([V.page('ch1.bridge').no, co.no, sb.no, lf.no], [1, 5, 6, 8], 'Reedwake 1, Cinder Orchard 5, Snowbell 6, Lanternfall 8');
+    t.eq(V.criteria(co).en, 'Chapter 5: the main story.', 'and its criteria say so');
+    t.ok(pages.every((p, i) => !i || pages[i - 1].no <= p.no), 'pages in story order');
+    const post = pages.filter((p) => p.key === 'post');
+    t.ok(post.length >= 20 && post.every((p) => p.no === 13 && V.criteria(p).en), 'the guardians, the Hall\'s tales and the festival after the story (' + post.length + ')');
+    t.eq(V.heading(13).en, 'After the story', 'under their own heading');
     const s = camp();
     const p1 = V.page('ch1.bridge'), p2 = V.page('ch2.notice'), p5 = V.page('ch5.bell');
     t.ok(V.witnessed(s, V.page('prologue')), 'the prologue: every journey');

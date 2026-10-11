@@ -246,8 +246,13 @@
     `src/content/pastimes/60_postgame.js`, `src/ui/88_shogi.js`; unit `pastimes_post`); **P15g is done** with A Quiet
     Cast's coast (Sazanami's rocks and the boat, six fish, twelve situations: `src/content/fishing/70_coast.js`,
     `src/content/zz_coast.js`) and the boat's destination after the story, the One-Pine Islet (F-138; unit `fishing`,
-    `pastimes_post`; browser `tests/e2e/fishing_coast.mjs`); next: P15h (tests and phase end), the chained route (XP79)
-    and a complete browser run. Routes for the new chapters from fixtures:
+    `pastimes_post`; browser `tests/e2e/fishing_coast.mjs`); **P15h is done: the postgame's phase end** (unit
+    `postgame_phase`; the clean copy of 3f0841e 51,426/0; F-139, F-140). **P16, the art pass, is under way**
+    (docs/future/work/P16_ART.md once written): the census first, then the interim creatures' own families, the travel
+    volume's missing paintings (the six new chapters, the guardians, the Hall's tales, the festival), the interim
+    regional kits and the yukata, and the book family carried to dialogue, title, help, prompts and slips (U05, U06).
+    Still to do from P14/P15: the chained route from a new journey (XP79; its first attempt stopped at the boat-naming
+    sheet, fixed) and a complete browser run. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.

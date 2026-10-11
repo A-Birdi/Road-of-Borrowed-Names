@@ -4,6 +4,8 @@
 // six chapters and one Atlas expedition.
 // Usage: node tests/e2e/pursue.mjs [profile] [comp|none] [legs] [startMap x y] [flags] [words]
 //   legs: "ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>…" (flag@mapPrefix@mainQuest)
+// The twelve chapters chained from a new journey (expansion P14, XP79): PURSUE_EDITION=2 with the legs of
+// LEGS12 below, e.g.  PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve
 // From a campaign fixture instead of a new campaign (expansion P08): PURSUE_FROM=<fixture.json> starts there, as the
 // save would load (RB.save.migrate), and PURSUE_EDITION=2 plays it in the twelve-chapter edition, e.g.
 //   PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'
@@ -15,7 +17,15 @@ import { install } from './drive.mjs';
 // six chapters, then (after the ending returns you to Reedwake) one complete
 // Unwritten Atlas expedition, started from the Lantern Hall
 const ALL = 'ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>ch3_done@co.@co_main>ch4_done@sb.@sb_lamp>ch5_done@lf.@lf_main>ch6_done@sa.@sa_main>atlas_restore_1@rw.hall|atlas.@';
-const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = process.argv.slice(2);
+// the twelve-chapter edition's chapters in order (each leg's map prefixes are where that chapter's story goes)
+const LEGS12 = ['ch1_done@rw.@rw_mill', 'ch2_done@sg.@sg_main', 'mb1_done@sg.|mb.@mb_main', 'mb2_done@mb.|mp.@mp_main',
+  'ch3_done@rw.|sg.|mb.|mp.|co.@co_main', 'ch4_done@co.|sb.@sb_lamp', 'kr_done@sb.|kr.@kr_main', 'ch5_done@kr.|lf.|lf2.@lf_main',
+  'ko_done@lf.|lf2.|sg.|ko.@ko_main', 'cr_called@ko.|sg.|lf.|lf2.@cr_main', 'cr_passed@sg.|lf.|lf2.|cr.@cr_main', 'cr_done@sg.|lf.|lf2.|cr.@cr_main',
+  'yn_called@cr.|lf.|lf2.|sg.@yn_main', 'yn_vents_open@cr.|yn.@yn_main', 'yn_kettle_settled@cr.|yn.@yn_main', 'yn_done@cr.|yn.@yn_main',
+  'ch6_done@yn.|cr.|lf.|lf2.|kr.|sg.|rw.|sa.@sa_main'].join('>');
+const argv = process.argv.slice(2);
+if (argv[2] === 'twelve') argv[2] = LEGS12;
+const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = argv;
 const fromFixture = process.env.PURSUE_FROM ? JSON.parse(fs.readFileSync(path.resolve(root, process.env.PURSUE_FROM), 'utf8')) : null;
 const edition = +(process.env.PURSUE_EDITION || 0) || null;
 const legs = legsArg.split('>').map((l) => { const [flag, prefix, main] = l.split('@'); return { flag, prefix, main, fullLog: !!process.env.PURSUE_LOG }; });
@@ -42,7 +52,8 @@ await p.evaluate(async (a) => {
   } });
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
-  const s = a.fixture ? RB.game.debugStart(a.fixture.map, a.fixture.x, a.fixture.y, {}) : RB.game.debugStart(a.startMap, +a.sx, +a.sy, { comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags });
+  // (PURSUE_EDITION=2 with no fixture: a new journey of the twelve-chapter edition, from the title screen's start)
+  const s = a.fixture ? RB.game.debugStart(a.fixture.map, a.fixture.x, a.fixture.y, {}) : RB.game.debugStart(a.startMap, +a.sx, +a.sy, Object.assign({ comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags }, a.edition ? { edition: a.edition } : {}));
   if (a.fixture) {
     // the fixture's campaign, loaded as its save would be, in place of the session's new one
     const m = RB.save.migrate(JSON.parse(JSON.stringify(a.fixture)));

@@ -324,7 +324,10 @@ RB.sail = (function () {
   RB.hooks.sail_name = async (a) => {
     const s = S(), q = of(s);
     const keep = a[0] === 'keep' ? 'ちどり' : null;
-    const name = RB.ui.sail && RB.ui.sail.nameBoat ? await RB.ui.sail.nameBoat(s, { keep, current: (q.boat && q.boat.name) || '' }) : null;
+    // an automated run names the boat at once (the old name when offered, else はやて) and logs it
+    const auto = RB.test && RB.test.auto ? keep || 'はやて' : null;
+    if (auto) RB.test.log.push({ t: 'activity', kind: 'sail_name', auto });
+    const name = auto || (RB.ui.sail && RB.ui.sail.nameBoat ? await RB.ui.sail.nameBoat(s, { keep, current: (q.boat && q.boat.name) || '' }) : null);
     if (!name) { s.vars._res = 0; return; }
     q.boat = Object.assign({}, q.boat || {}, { name });
     s.vars.sea_kept = keep && name === keep ? 1 : 0;

@@ -43673,16 +43673,35 @@ RB.volume = (function () {
   'use strict';
   const EXTRA = {}; // pages content adds (later chapters, side stories, the Hall …)
   function add(p) { EXTRA[p.id] = p; return p; }
-  // every page: the illustrated sequences, then pages content added
+  // A page's chapter is an old chapter's number (1–6, the six-chapter sequences), a chapter key of the twelve ('mb1',
+  // 'kr' …) or 'post' (after the story: the guardians, the Hall's tales, the settlement). The volume belongs to the
+  // twelve-chapter edition (F-21), so its headings number the chapters in that story order: Cinder Orchard's pages are
+  // Chapter 5's there, not Chapter 3's.
+  const OLDKEY = { 1: 'rw', 2: 'sg', 3: 'co', 4: 'sb', 5: 'lf', 6: 'sa' };
+  function keyOf(p) {
+    const c = p && p.chapter;
+    if (!c) return null;
+    return typeof c === 'string' ? c : OLDKEY[c] || null;
+  }
+  // the number shown: 0 the prologue, 1–12 the chapters in story order, 13 after the story
+  function numberOf(p) {
+    const k = keyOf(p);
+    if (!k) return 0;
+    if (k === 'post') return 13;
+    const i = RB.edition ? RB.edition.ORDER.indexOf(k) : -1;
+    return i >= 0 ? i + 1 : typeof p.chapter === 'number' ? p.chapter : 0;
+  }
+  // every page: the illustrated sequences, then pages content added; in story order
   function pages() {
     const out = [];
     if (RB.sequence && RB.sequence.ids) for (const id of RB.sequence.ids()) {
       const d = RB.sequence.get(id);
-      if (!d || d.devOnly) continue;
-      out.push({ id, seq: id, scene: d.scene || null, chapter: d.chapter || 0, title: d.title, kind: d.kind || (d.chapter ? 'chapter' : 'prologue'), comp: d.comp || null, special: !!d.special, memory: !!d.memory });
+      if (!d || d.devOnly || d.page === false) continue;
+      out.push(Object.assign({ id, seq: id, scene: d.scene || null, chapter: d.chapter || 0, title: d.title, kind: d.kind || (d.chapter ? 'chapter' : 'prologue'), comp: d.comp || null, special: !!d.special, memory: !!d.memory }, d.flag ? { flag: d.flag } : {}, d.criteria ? { criteria: d.criteria } : {}));
     }
     for (const id in EXTRA) out.push(Object.assign({ kind: 'side' }, EXTRA[id]));
-    return out;
+    for (const p of out) { p.key = keyOf(p); p.no = numberOf(p); }
+    return out.map((p, i) => [p, i]).sort((a, b) => a[0].no - b[0].no || a[1] - b[1]).map((x) => x[0]);
   }
   const page = (id) => pages().find((p) => p.id === id) || null;
   // the moment happened in this campaign (a skipped sequence still counts: s.seq records every viewing; an older
@@ -43698,8 +43717,8 @@ RB.volume = (function () {
   // a chapter's story is finished (by its old number, or a new chapter's key)
   function chapterDone(s, ch) {
     if (!s || !ch) return false;
-    const key = typeof ch === 'number' ? { 1: 'rw', 2: 'sg', 3: 'co', 4: 'sb', 5: 'lf', 6: 'sa' }[ch] : ch;
-    const flag = { rw: 'ch1_done', sg: 'ch2_done', mb1: 'mb1_done', mb2: 'mb2_done', co: 'ch3_done', sb: 'ch4_done', kr: 'kr_done', lf: 'ch5_done', ko: 'ko_done', cr: 'cr_done', yn: 'yn_done', sa: 'postgame' }[key];
+    const key = typeof ch === 'number' ? OLDKEY[ch] : ch;
+    const flag = { rw: 'ch1_done', sg: 'ch2_done', mb1: 'mb1_done', mb2: 'mb2_done', co: 'ch3_done', sb: 'ch4_done', kr: 'kr_done', lf: 'ch5_done', ko: 'ko_done', cr: 'cr_done', yn: 'yn_done', sa: 'postgame', post: 'postgame' }[key];
     return !!(flag && s.flags && s.flags[flag]);
   }
   // viewable inside this campaign (R2 §6)
@@ -43715,8 +43734,17 @@ RB.volume = (function () {
   function criteria(p) {
     if (p.criteria) return p.criteria;
     if (p.kind === 'prologue') return { en: 'The prologue: every journey.', jp: '{序章|じょしょう}' };
-    if (p.comp) return { en: 'A moment with one companion, in Chapter ' + p.chapter + '.', jp: '{第|だい}' + p.chapter + '{章|しょう}' };
-    return { en: 'Chapter ' + p.chapter + ': the main story.', jp: '{第|だい}' + p.chapter + '{章|しょう}' };
+    const n = numberOf(p);
+    if (n > 12) return { en: 'After the story.', jp: '{物語|ものがたり} の {後|あと}' };
+    if (p.comp) return { en: 'A moment with one companion, in Chapter ' + n + '.', jp: '{第|だい}' + n + '{章|しょう}' };
+    return { en: 'Chapter ' + n + ': the main story.', jp: '{第|だい}' + n + '{章|しょう}' };
+  }
+  // a chapter group's heading (0 the prologue, 13 after the story)
+  function heading(n) {
+    n = +n || 0;
+    if (!n) return { en: 'Prologue', jp: '{序章|じょしょう}' };
+    if (n > 12) return { en: 'After the story', jp: '{物語|ものがたり} の {後|あと}' };
+    return { en: 'Chapter ' + n, jp: '{第|だい}' + n + '{章|しょう}' };
   }
   // ---- the Main Menu (K4, K5): everything, veiled until revealed; the Continue save's marks ----------------------
   // prefs: the device's viewing preference { unveiled: { id: true }, showAll: bool }; saves: [state…] read-only
@@ -43752,7 +43780,7 @@ RB.volume = (function () {
       return neg ? !v : v;
     }));
   }
-  return { add, pages, page, witnessed, viewable, chapterDone, revealSpecial, criteria, menuState, beats, fixtureTest };
+  return { add, pages, page, witnessed, viewable, chapterDone, revealSpecial, criteria, heading, keyOf, numberOf, menuState, beats, fixtureTest };
 })();
 
 RB.seal = (function () {
@@ -53063,7 +53091,10 @@ RB.sail = (function () {
   RB.hooks.sail_name = async (a) => {
     const s = S(), q = of(s);
     const keep = a[0] === 'keep' ? 'ちどり' : null;
-    const name = RB.ui.sail && RB.ui.sail.nameBoat ? await RB.ui.sail.nameBoat(s, { keep, current: (q.boat && q.boat.name) || '' }) : null;
+    // an automated run names the boat at once (the old name when offered, else はやて) and logs it
+    const auto = RB.test && RB.test.auto ? keep || 'はやて' : null;
+    if (auto) RB.test.log.push({ t: 'activity', kind: 'sail_name', auto });
+    const name = auto || (RB.ui.sail && RB.ui.sail.nameBoat ? await RB.ui.sail.nameBoat(s, { keep, current: (q.boat && q.boat.name) || '' }) : null);
     if (!name) { s.vars._res = 0; return; }
     q.boat = Object.assign({}, q.boat || {}, { name });
     s.vars.sea_kept = keep && name === keep ? 1 : 0;
@@ -81624,9 +81655,10 @@ RB.ui.records = (function () {
     const pages = RB.volume.pages();
     let h = '<h3>' + I('book') + ' The travel volume</h3>' + sealBlock(s) + (V.status ? '<p class="sr" role="status">' + esc(V.status) + '</p>' : '');
     const byCh = {};
-    for (const p of pages) (byCh[p.chapter] = byCh[p.chapter] || []).push(p);
+    for (const p of pages) (byCh[p.no] = byCh[p.no] || []).push(p);
     for (const ch of Object.keys(byCh).sort((a, b) => a - b)) {
-      h += '<h4 class="rb-fam">' + (+ch ? RB.ui.jhtml('{第|だい}' + ch + '{章|しょう}') + ' <span class="en">Chapter ' + ch + '</span>' : RB.ui.jhtml('{序章|じょしょう}') + ' <span class="en">Prologue</span>') + '</h4><ul class="rb-pages">';
+      const hd = RB.volume.heading(ch);
+      h += '<h4 class="rb-fam">' + RB.ui.jhtml(hd.jp) + ' <span class="en">' + esc(hd.en) + '</span></h4><ul class="rb-pages">';
       for (const p of byCh[ch]) {
         const ok = RB.volume.viewable(s, p), w = RB.volume.witnessed(s, p);
         if (!ok) {
@@ -81716,13 +81748,13 @@ RB.ui.records = (function () {
     function render() {
       const pages = RB.volume.pages();
       const byCh = {};
-      for (const p of pages) (byCh[p.chapter] = byCh[p.chapter] || []).push(p);
+      for (const p of pages) (byCh[p.no] = byCh[p.no] || []).push(p);
       let h = '<section class="leaf rb-menu"><p class="muted small">Every illustration is here. Those no journey has reached yet are veiled until you choose to see them.</p>' +
         '<label class="opt"><input type="checkbox" data-a="showall"' + (prefs.showAll ? ' checked' : '') + '><span>Show all illustrations unveiled</span></label>';
       for (const ch of Object.keys(byCh).sort((a, b) => a - b)) {
         const L = byCh[ch];
         const anyVeiled = L.some((p) => RB.volume.menuState(p, prefs, saves.map((x) => x.s)).veiled);
-        h += '<h4 class="rb-fam">' + (+ch ? 'Chapter ' + ch : 'Prologue') + (anyVeiled ? ' <button type="button" class="pbtn small" data-a="revealch" data-ch="' + ch + '">Reveal this chapter…</button>' : '') + '</h4><ul class="rb-pages">';
+        h += '<h4 class="rb-fam">' + esc(RB.volume.heading(ch).en) + (anyVeiled ? ' <button type="button" class="pbtn small" data-a="revealch" data-ch="' + ch + '">Reveal this chapter…</button>' : '') + '</h4><ul class="rb-pages">';
         for (const p of L) {
           const st = RB.volume.menuState(p, prefs, saves.map((x) => x.s));
           if (st.veiled) {
@@ -81746,10 +81778,11 @@ RB.ui.records = (function () {
       if (!b) return;
       const a = b.dataset.a;
       if (a === 'reveal' || a === 'revealch') {
-        const ch = a === 'revealch' ? +b.dataset.ch : RB.volume.page(b.dataset.page).chapter;
-        const r = await RB.ui.confirm('This shows a moment from ' + (ch ? 'Chapter ' + ch : 'the prologue') + '. Reveal ' + (a === 'revealch' ? 'the whole chapter' : 'it') + '?', ['Reveal', 'Keep it veiled']);
+        const ch = a === 'revealch' ? +b.dataset.ch : RB.volume.page(b.dataset.page).no;
+        const where = !ch ? 'the prologue' : ch > 12 ? 'after the story' : 'Chapter ' + ch;
+        const r = await RB.ui.confirm('This shows a moment from ' + where + '. Reveal ' + (a === 'revealch' ? (ch > 12 ? 'them all' : 'the whole chapter') : 'it') + '?', ['Reveal', 'Keep it veiled']);
         if (r !== 0) return;
-        for (const p of RB.volume.pages()) if (a === 'revealch' ? p.chapter === ch : p.id === b.dataset.page) prefs.unveiled[p.id] = true;
+        for (const p of RB.volume.pages()) if (a === 'revealch' ? p.no === ch : p.id === b.dataset.page) prefs.unveiled[p.id] = true;
         await RB.game.saveSettings(); render(); return;
       }
       if (a === 'reveil') { delete prefs.unveiled[b.dataset.page]; await RB.game.saveSettings(); render(); return; }
@@ -164016,7 +164049,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the travel volume's page of each guardian (K2; H1): witnessed when it settles, revealable before
   if (RB.volume) for (const k of Object.keys(D)) {
     const st = C.stamps['gd.' + k];
-    RB.volume.add({ id: 'gd.' + k, chapter: 12, kind: 'guardian', special: true, flag: 'gd.' + k, title: st.title, plate: st.title.jp,
+    RB.volume.add({ id: 'gd.' + k, chapter: 'post', kind: 'guardian', special: true, flag: 'gd.' + k, title: st.title, plate: st.title.jp,
       criteria: { en: 'An old guardian, awake after the story: settled.', jp: '{古|ふる}い {守|まも}り{手|て}' } });
   }
 })(RB.content);
@@ -173809,7 +173842,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const NUM = ['{一|いち}', '{二|に}', '{三|さん}', '{四|よん}', '{五|ご}', '{六|ろく}', '{七|なな}', '{八|はち}', '{九|きゅう}', '{十|じゅう}'];
   if (RB.volume) for (let n = 1; n <= 10; n++) {
     const st = C.stamps['hall.w' + n];
-    RB.volume.add({ id: 'hall.w' + n, chapter: 12, kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, plate: st.title.jp,
+    RB.volume.add({ id: 'hall.w' + n, chapter: 'post', kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, plate: st.title.jp,
       criteria: { en: n === 10 ? 'The Hall of a Hundred Tales: the hundredth tale, your own, told.' : 'The Hall of a Hundred Tales: the ' + ORD[n - 1] + ' tale told.', jp: '{百物語|ひゃくものがたり} の {館|やかた} ・ {第|だい}' + NUM[n - 1] + ' の {話|はなし}' } });
   }
 
@@ -197975,7 +198008,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.stamps = C.stamps || {};
   C.stamps['as.village'] = { id: 'as.village', family: 'region', title: T('A Village with Names', '{名前|なまえ} の ある {村|むら}'), hidden: true, stand: null,
     when: 'ed>=2&as_fest_done', criteria: T('A new village, helped to become a place.', '{新|あたら}しい {村|むら}'), design: { shape: 'square', motif: 'path', ink: '#5a7a3a' } };
-  if (RB.volume) RB.volume.add({ id: 'as.festival', chapter: 12, kind: 'settlement', special: true, flag: 'as_fest_done', title: T('The First Festival', '{最初|さいしょ} の {祭|まつ}り'), plate: '{最初|さいしょ} の {祭|まつ}り',
+  if (RB.volume) RB.volume.add({ id: 'as.festival', chapter: 'post', kind: 'settlement', special: true, flag: 'as_fest_done', title: T('The First Festival', '{最初|さいしょ} の {祭|まつ}り'), plate: '{最初|さいしょ} の {祭|まつ}り',
     criteria: { en: 'A new village\'s first festival night.', jp: '{新|あたら}しい {村|むら} の {最初|さいしょ} の {祭|まつ}り' } });
   C.items = C.items || {};
   C.items.as_kasa = { name: T('Planting hat', '{田植|たう}え の {笠|かさ}'), desc: 'A sedge hat from the villagers of Ashihara Shinden, the kind worn for planting rice. A keepsake: it changes only how you look.', slot: 'cosmetic', acc: 'hat', wear: { hatCol: '#c8a860' } };
