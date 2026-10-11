@@ -355,6 +355,8 @@ narr: {灯籠|とうろう} は 、 {待|ま}って くれる 。 || The lamp wi
 
 # ---- the tale's end ------------------------------------------------------------------------------------------------
 @scene hall.w1.end
+!sequence hall.w1 begin
+!shot tale
 narr: {最後|さいご} の {旅人|たびびと} が 、 {北|きた} の {道|みち} に {消|き}えた 。 {灯籠|とうろう} の {火|ひ} が 、 {一度|いちど} 、 {大|おお}きく {揺|ゆ}れる 。 || The last traveller disappears up the north road. The lamp's flame sways once, high.
 hall_lamp: もう {一度|いちど} 、 {言|い}って ください 。 …… ええ 、 {聞|き}こえました よ 。 ありがとう 。 || Please say it again. …Yes, I heard you. Thank you.
 ?(hall.w1.t9) hall_genza: …… {女房|にょうぼう} が {言|い}って いた {声|こえ} だ 。 {二度|にど} {聞|き}け 、 と 。 || …That's the voice my wife spoke of. Ask twice, she said.
@@ -362,6 +364,7 @@ hall_lamp: もう {一度|いちど} 、 {言|い}って ください 。 ……
 ?(comp=mio) comp[happy]: {分|わ}からない とき に 、 {分|わ}からない と {言|い}える 。 それ だけ で 、 {誰|だれ} も {迷|まよ}わない のね 。 || Saying "I don't understand" when you don't. That alone, and nobody gets lost.
 ?(comp=ren) comp: {灯|ひ} が {一|ひと}つ 、 {戻|もど}りました 。 {百|ひゃく} の うち の 、 {一|ひと}つ 。 {悪|わる}く ない {始|はじ}まり です 。 || One light back. One of a hundred. Not a bad beginning.
 ?(comp=suzu) comp: {第|だい}{一幕|いちまく} 、 {幕|まく} ！ {聞|き}き{返|かえ}す {勇気|ゆうき} の {話|はなし} 。 {拍手|はくしゅ} を どうぞ 。 || End of act one! A tale about the courage to ask again. Applause, please.
+!sequence hall.w1 end
 narr: {灯|ひ} の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The lamplight folds small, and when you look up you are by the hall's hearth.
 !set hall_w1_done
 !hook hall_finish

@@ -349,6 +349,8 @@ narr: {盃|さかずき} は 、 {台|だい} の {上|うえ} で {待|ま}っ�
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w2.end
+!sequence hall.w2 begin
+!shot tale
 narr: {雨|あめ} が {止|や}んだ 。 {行列|ぎょうれつ} の {提灯|ちょうちん} が 、 {鳥居|とりい} の {奥|おく} へ {一|ひと}つ ずつ {消|き}えて いく 。 || The rain stops. One by one the procession's lanterns vanish beyond the torii.
 hall_kozue: {傘|かさ} を {貸|か}して くれた {人|ひと} の こと 、 {忘|わす}れません 。 {弟|おとうと} の こと も 、 よろしく 。 || I won't forget the one who lent me an umbrella. Look after my little brother for me.
 narr: {次|つぎ} の {朝|あさ} 、 サヨ の {家|いえ} の {前|まえ} に 、 {栗|くり} の {籠|かご} が {置|お}いて あった 。 {札|ふだ} に は 、 {小|ちい}さな {狐|きつね} の {足跡|あしあと} 。 || The next morning a basket of chestnuts sits at Sayo's door. On its tag, a small fox's footprint.
@@ -356,6 +358,7 @@ narr: {次|つぎ} の {朝|あさ} 、 サヨ の {家|いえ} の {前|まえ}
 ?(comp=mio) comp[happy]: {誰|だれ} が {誰|だれ} に 、 {何|なに} を 。 {全部|ぜんぶ} {分|わ}かる と 、 {優|やさ}しい {話|はなし} だった のね 。 || Who gave what to whom. Once you know all of it, it was a gentle tale.
 ?(comp=ren) comp: {灯|ひ} が {二|ふた}つ 、 {戻|もど}りました 。 {借|か}りた {物|もの} を {返|かえ}す の も 、 {灯|ひ} を {守|まも}る の と {同|おな}じ です ね 。 || Two lights back. Returning what you borrowed is a kind of lamp-keeping too.
 ?(comp=suzu) comp: {第|だい}{二幕|にまく} 、 {幕|まく} ！ {貸|か}し{借|か}り は 、 {全部|ぜんぶ} {返|かえ}した 。 {拍手|はくしゅ} ！ || End of act two! Every loan paid back. Applause!
+!sequence hall.w2 end
 narr: {雨上|あまあ}がり の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The after-rain light folds small, and when you look up you are by the hall's hearth.
 !set hall_w2_done
 !hook hall_finish

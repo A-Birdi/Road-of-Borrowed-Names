@@ -200,7 +200,7 @@ export default async (t) => {
     // the travel volume: a page per tale, witnessed when told, revealable by confirmation (viewable, never witnessed)
     const s = nine(fresh(), 0);
     const pg = RB.volume.page('hall.w9');
-    t.ok(pg && pg.special && pg.plate && !RB.volume.viewable(s, pg) && !RB.volume.witnessed(s, pg), 'the ninth tale\'s page: veiled before it is told');
+    t.ok(pg && pg.special && pg.seq === 'hall.w9' && RB.sequence.get(pg.seq) && !RB.volume.viewable(s, pg) && !RB.volume.witnessed(s, pg), 'the ninth tale\'s page: painted, veiled before it is told');
     RB.volume.revealSpecial(s, 'hall.w9');
     t.ok(RB.volume.viewable(s, pg) && !RB.volume.witnessed(s, pg), 'revealed by confirmation: viewable, never witnessed');
     s.flags.hall_w9_done = true;

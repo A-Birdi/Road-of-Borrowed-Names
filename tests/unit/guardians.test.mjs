@@ -188,7 +188,7 @@ export default async (t) => {
   {
     const s = fresh();
     const pg = RB.volume.page('gd.mb');
-    t.ok(pg && pg.special && pg.plate && !RB.volume.viewable(s, pg) && !RB.volume.witnessed(s, pg), 'the Bridge Founder\'s page: veiled before it settles');
+    t.ok(pg && pg.special && pg.seq === 'gd.mb' && RB.sequence.get(pg.seq) && !RB.volume.viewable(s, pg) && !RB.volume.witnessed(s, pg), 'the Bridge Founder\'s page: painted, veiled before it settles');
     RB.volume.revealSpecial(s, 'gd.mb');
     t.ok(RB.volume.viewable(s, pg) && !RB.volume.witnessed(s, pg), 'revealed by confirmation without winning: viewable, never witnessed (H1)');
     s.flags['gd.mb'] = true;

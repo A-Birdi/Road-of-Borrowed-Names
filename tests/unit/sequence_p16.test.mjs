@@ -5,7 +5,8 @@
 //   focal area and its safe areas (wide, narrow, a phone on its side);
 // - the scripts: the sequence begins and ends in its scene, every !shot names a shot (and phase) of it, every
 //   composition is used, and nothing inside moves the world (no warp, encounter, battle or hook) or shakes it;
-// - the volume: each page is in the travel volume under its chapter, numbered in the twelve-chapter story order.
+// - the volume: each page is in the travel volume under its chapter, numbered in the twelve-chapter story order (13:
+//   after the story), and painted by its own sequence (no interim plate).
 // Drawing itself is the browser's (tests/e2e/sequence_p16.mjs).
 import { load } from '../lib/load.mjs';
 
@@ -16,6 +17,11 @@ export const PAGES = [
   ['ko.garden', 'ko.gardener', 'ko'], ['ko.end', 'ko.end', 'ko'],
   ['cr.summit', 'cr.summit_first', 'cr'], ['cr.letter', 'cr.deliver', 'cr'], ['cr.relay', 'cr.end', 'cr'],
   ['yn.kettle', 'yn.kettle', 'yn'], ['yn.end', 'yn.end', 'yn'],
+  // after the story: the old guardians' places, the Hall's ten tales, the settlement's first festival (pages of the volume
+  // through their records' entries)
+  ...['rw', 'sg', 'co', 'sb', 'lf', 'mb', 'cr', 'yn', 'ko'].map((k) => ['gd.' + k, 'gd.' + k, 'post']),
+  ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => ['hall.w' + n, 'hall.w' + n + '.end', 'post']),
+  ['as.festival', 'as.festival', 'post'],
 ];
 
 export default async (t) => {
@@ -54,7 +60,7 @@ export default async (t) => {
     t.eq(Object.keys(d.shots).filter((k) => !used.has(k)), [], id + ': every composition is used');
     t.ok(ins.some((c) => c.op === 'say'), id + ': the scene\'s lines are shown over it');
     // the volume
-    const pg = V.page(id);
-    t.ok(pg && pg.key === key && pg.no === RB.edition.ORDER.indexOf(key) + 1, id + ': in the volume under Chapter ' + (RB.edition.ORDER.indexOf(key) + 1));
+    const pg = V.page(id), no = key === 'post' ? 13 : RB.edition.ORDER.indexOf(key) + 1;
+    t.ok(pg && pg.key === key && pg.no === no && pg.seq === id, id + ': in the volume under ' + V.heading(no).en + ', painted by its sequence');
   }
 };

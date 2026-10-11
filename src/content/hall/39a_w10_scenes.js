@@ -412,6 +412,8 @@ narr: {二人|ふたり} は 、 {話|はなし} の {続|つづ}き を {待|�
 narr: {百番目|ひゃくばんめ} の {灯|ひ} が 、 {静|しず}か に {燃|も}えて いる 。 || The hundredth lantern burns quietly.
 
 @scene hall.w10.end
+!sequence hall.w10 begin
+!shot tale
 narr: {百番目|ひゃくばんめ} の {灯|ひ} が 、 {静|しず}か に {燃|も}え{上|あ}がった 。 {館|やかた} じゅう の {灯|ひ} が 、 {一斉|いっせい} に {明|あか}るく なる 。 || The hundredth lantern flames up quietly. Every light in the Hall brightens at once.
 narr: {百話目|ひゃくわめ} の {後|あと} に は 、 {何|なに} か が {現|あらわ}れる と いう 。 {壁|かべ} に {映|うつ}った の は 、 {話|はなし} を {語|かた}り{終|お}えた $name の {影|かげ} だった 。 || They say something appears after the hundredth tale. What appears on the wall is the shadow of $name, the teller, the tale told.
 hall_soan: そう か 。 {現|あらわ}れる の は 、 {語|かた}り{手|て} {自身|じしん} だった か 。 || So. What appears is the teller.
@@ -421,6 +423,7 @@ hall_kohaku: {師匠|ししょう} 、 {一緒|いっしょ} に {帰|かえ}り
 ?(comp=ren) comp: {百|ひゃく} の {灯|ひ} が 、 {全部|ぜんぶ} {戻|もど}りました 。 …… ウシオ に も 、 {見|み}せたかった です 。 || All hundred lights are back. …I wish Ushio could have seen it.
 ?(comp=suzu) comp: {百幕|ひゃくまく} 、 {大入|おおい}り {満員|まんいん} 。 …… いい {芝居|しばい} だった わ 。 || A hundred acts, a full house. …A fine show.
 ?(!comp) narr: {一人|ひとり} で {語|かた}った {話|はなし} だ が 、 {聞|き}いて いた {者|もの} は {大勢|おおぜい} いた 。 || You told it alone, but a great many were listening.
+!sequence hall.w10 end
 narr: {灯|ひ} の {光|ひかり} が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The lantern light folds away, and when you look up you are by the hall's hearth.
 !set hall_w10_done
 !hook hall_finish

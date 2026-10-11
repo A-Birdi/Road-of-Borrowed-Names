@@ -413,12 +413,15 @@ narr: {井戸|いど} の {周|まわ}り で 、 {皆|みな} が {次|つぎ} 
 narr: {井戸|いど} の {水|みず} が 、 {空|そら} を {映|うつ}して いる 。 || The water in the well reflects the sky.
 
 @scene hall.w5.end
+!sequence hall.w5 begin
+!shot tale
 narr: {夕方|ゆうがた} 、 {東|ひがし} の {家|いえ} と {西|にし} の {家|いえ} が 、 {同|おな}じ {鍋|なべ} で {夕飯|ゆうはん} を {作|つく}った 。 {水|みず} は 、 {二|ふた}つ の {井戸|いど} から {半分|はんぶん} ずつ 。 || In the evening the east house and the west house cook supper in one pot, with water from both wells, half and half.
 hall_kero: {井|い} の {中|なか} の {蛙|かわず} 、 {大海|たいかい} を {知|し}らず 。 でも 、 {二|ふた}つ の {井戸|いど} の {仲直|なかなお}り は 、 {知|し}って いる よ 。 || The frog in the well knows nothing of the great sea. But it knows two wells making up.
 ?(comp=nao) comp: {両方|りょうほう} から {水|みず} を {汲|く}む 。 {両方|りょうほう} へ {手紙|てがみ} を {届|とど}ける 。 {同|おな}じ こと だ な 。 || Water from both. Letters to both. The same thing.
 ?(comp=mio) comp[happy]: から 、 のに 、 おかげ 、 せい 。 {理由|りゆう} の {言|い}い{方|かた} {一|ひと}つ で 、 {喧嘩|けんか} に も {仲直|なかなお}り に も なる のね 。 || Because, even though, thanks to, because of. One way of giving a reason, and it's a quarrel; another, and it's making up.
 ?(comp=ren) comp: {灯|ひ} が {五|いつ}つ 、 {戻|もど}りました 。 {半分|はんぶん} まで {来|き}ました ね 。 || Five lights back. We're halfway.
 ?(comp=suzu) comp: {第|だい}{五幕|ごまく} 、 {幕|まく} ！ {悪役|あくやく} なし の {大団円|だいだんえん} よ 。 {拍手|はくしゅ} ！ || End of act five! A happy ending with no villain. Applause!
+!sequence hall.w5 end
 narr: {夕餉|ゆうげ} の {湯気|ゆげ} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The steam of supper folds small, and when you look up you are by the hall's hearth.
 !set hall_w5_done
 !hook hall_finish

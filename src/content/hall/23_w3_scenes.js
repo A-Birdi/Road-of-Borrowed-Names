@@ -464,6 +464,8 @@ narr: シノ は 、 {綱|つな} を {握|にぎ}った まま {待|ま}って 
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w3.end
+!sequence hall.w3 begin
+!shot tale
 narr: {鐘|かね} の {声|こえ} が 、 {谷|たに} を {下|くだ}って いく 。 {村|むら} の {戸|と} が 、 {一|ひと}つ 、 また {一|ひと}つ と {開|ひら}いた 。 || The bell's voice rolls down the valley. In the village, the doors open, one, then another.
 hall_shino: おじいちゃん 、 {聞|き}こえた かな 。 || Grandpa, I wonder if you heard.
 narr: {坂|さか} の {下|した} の {家|いえ} で 、 ジンベエ が {目|め} を {閉|と}じた まま 、 {笑|わら}った 。 || In the house below the slope, Jinbei smiles with his eyes still closed.
@@ -472,6 +474,7 @@ hall_mame: {夜|よる} は {終|お}わった 。 でも 、 また {来|く}�
 ?(comp=mio) comp[happy]: {前|まえ} に 、 {後|あと} で 、 まで 、 までに 。 {全部|ぜんぶ} 、 {間|ま}に{合|あ}う ため の {言葉|ことば} だった のね 。 || Before, after, until, by. They were all words for being in time.
 ?(comp=ren) comp: {灯|ひ} が {三|みっ}つ 、 {戻|もど}りました 。 {夜|よる} を {終|お}わらせる の も 、 {灯守|ひもり} の {仕事|しごと} です ね 。 || Three lights back. Ending a night is lamp-keepers' work too.
 ?(comp=suzu) comp: {第|だい}{三幕|さんまく} 、 {幕|まく} ！ {出|で} の きっかけ を {一度|いちど} も {外|はず}さなかった わ 。 {拍手|はくしゅ} ！ || End of act three! Not one cue missed. Applause!
+!sequence hall.w3 end
 narr: {朝|あさ} の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning light folds small, and when you look up you are by the hall's hearth.
 !set hall_w3_done
 !hook hall_finish

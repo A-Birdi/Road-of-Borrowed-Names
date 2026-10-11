@@ -393,6 +393,8 @@ narr: オマツ が 、 {筆|ふで} を {持|も}った まま {待|ま}って 
 narr: {帳面|ちょうめん} の {墨|すみ} は 、 もう {乾|かわ}いて いる 。 || The ink in the ledger is already dry.
 
 @scene hall.w8.end
+!sequence hall.w8 begin
+!shot tale
 narr: {朝日|あさひ} の {中|なか} を 、 ヒサ が {帰|かえ}って きた 。 {隣|となり} に は 、 {箱|はこ} を {抱|かか}えた {年寄|としよ}り の {旅人|たびびと} が いる 。 || Hisa comes back through the morning sun. Beside them is an old traveller with the box in his arms.
 hall_kichibei: {十年|じゅうねん} {前|まえ} に {預|あず}けた {箱|はこ} を 、 この {子|こ} が {届|とど}けて くれた 。 {中|なか} の {手紙|てがみ} は 、 この {宿|やど} へ の お{礼|れい} だ 。 {戻|もど}ったら {渡|わた}す つもり だった 。 || This child brought me the box I left here ten years ago. The letter inside is my thanks to this inn. I meant to hand it over when I came back.
 hall_hisa: {誰|だれ} も {聞|き}かなかった から 、 {言|い}わなかった 。 …… ごめん なさい 。 || Nobody asked, so I didn't say. …Sorry.
@@ -400,6 +402,7 @@ hall_hisa: {誰|だれ} も {聞|き}かなかった から 、 {言|い}わな�
 ?(comp=mio) comp[happy]: らしい 、 そう だ 、 に {違|ちが}いない 。 {言葉|ことば} {一|ひと}つ で 、 どの くらい {確|たし}か か まで {伝|つた}わる のね 。 || Seems, I hear, must be. One word, and it carries how sure you are.
 ?(comp=ren) comp: {灯|ひ} が {八|やっ}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {二|ふた}つ です 。 || Eight lights back. Two to go.
 ?(comp=suzu) comp: {第|だい}{八幕|はちまく} 、 {幕|まく} ！ {犯人|はんにん} の いない {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない わ 。 || End of act eight! A whodunit with no culprit. Not bad at all.
+!sequence hall.w8 end
 narr: {朝|あさ} の {雪|ゆき} {明|あ}かり が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning snowlight folds away, and when you look up you are by the hall's hearth.
 !set hall_w8_done
 !hook hall_finish

@@ -129,7 +129,10 @@ narr: ${g.place[0]} 。 {古|ふる}い {守|まも}り{手|て} が 、 まだ 
 !if var._res=0 -> unsettled
 !set gd.${k}
 !hook guardian_won ${k}
+!sequence gd.${k} begin
+!shot won
 narr: ${g.won}
+!sequence gd.${k} end
 !give gd_${k}_keepsake
 !autosave progress
 !end

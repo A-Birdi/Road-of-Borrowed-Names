@@ -448,12 +448,15 @@ hall_myoshin: {来年|らいねん} も 、 {返|かえ}しに {来|き}て く�
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w4.end
+!sequence hall.w4 begin
+!shot tale
 narr: {雨|あめ} の {中|なか} を 、 ゴサク が {帰|かえ}って いく 。 {頭|あたま} の {上|うえ} で 、 {赤|あか}い {傘|かさ} が {誇|ほこ}らしげ に {開|ひら}いて いる 。 || Gosaku goes home through the rain, the red umbrella open proudly over his head.
 hall_myoshin: {貸|か}した {物|もの} は 、 {返|かえ}って くる と {嬉|うれ}しい 。 {返|かえ}って こなくて も 、 {待|ま}つ の は {悪|わる}く ない 。 || It's good when something lent comes back. Even when it doesn't, waiting isn't so bad.
 ?(comp=nao) comp: {一年|いちねん} {遅|おく}れ の {配達|はいたつ} か 。 …… {届|とど}いた なら 、 それ で いい 。 || A delivery a year late. …If it arrived, that's enough.
 ?(comp=mio) comp[happy]: {頼|たの}む 、 {許|ゆる}す 、 つもり 。 {全部|ぜんぶ} 、 {相手|あいて} を {思|おも}う {言葉|ことば} だった のね 。 || Asking, allowing, meaning to. They were all words for thinking of the other person.
 ?(comp=ren) comp: {灯|ひ} が {四|よっ}つ 、 {戻|もど}りました 。 {借|か}りた {物|もの} も 、 {返|かえ}す つもり の {心|こころ} も 、 {灯|ひ} の よう な もの です ね 。 || Four lights back. A borrowed thing and the will to return it are something like a light too.
 ?(comp=suzu) comp: {第|だい}{四幕|よんまく} 、 {幕|まく} ！ {主役|しゅやく} の {傘|かさ} に 、 {大|おお}きな {拍手|はくしゅ} を ！ || End of act four! A big hand for our lead, the umbrella!
+!sequence hall.w4 end
 narr: {雨|あめ} の {音|おと} が {畳|たた}まれる よう に {遠|とお}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The sound of the rain folds away into the distance, and when you look up you are by the hall's hearth.
 !set hall_w4_done
 !hook hall_finish

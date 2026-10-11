@@ -247,6 +247,8 @@ as_mitsue: いつ でも {声|こえ} を かけて ください 。 || Just say
 !music as_festival
 !fade out
 !fade in
+!sequence as.festival begin
+!shot night
 narr: {日|ひ} が {暮|く}れた 。 {葦原|あしはら}{新田|しんでん} の {最初|さいしょ} の {祭|まつ}り が {始|はじ}まる 。 || The sun has gone down. Ashihara Shinden's first festival begins.
 ?(var.as_lan=street) narr: {提灯|ちょうちん} が 、 {道|みち} に {沿|そ}って {村|むら} の {端|はし} から {端|はし} まで {灯|とも}って いる 。 || Lanterns burn along the road, from one end of the village to the other.
 ?(var.as_lan=canal) narr: {提灯|ちょうちん} が 、 {水路|すいろ} に {沿|そ}って {並|なら}び 、 {水|みず} に {映|うつ}って {揺|ゆ}れて いる 。 || Lanterns line the channel, their reflections wavering in the water.
@@ -256,6 +258,7 @@ as_mitsue: {葦原|あしはら}{新田|しんでん} 。 …… {今日|きょ�
 ?(as_kotoe) narr: コトエ の {生徒|せいと} たち が 、 {覚|おぼ}えた ばかり の {字|じ} で {書|か}いた {紙|かみ} を {持|も}って 、 {歌|うた} を {歌|うた}う 。 {紙|かみ} に は 、 {村|むら} の {道|みち} の {名前|なまえ} 。 || Kotoe's pupils sing, holding up paper with the letters they've only just learned: the names of the village's roads.
 ?(as_kotoe) as_kotoe: {自分|じぶん} の {住|す}んで いる {道|みち} の {名前|なまえ} が 、 {最初|さいしょ} に {覚|おぼ}えた {字|じ} です 。 {一生|いっしょう} {忘|わす}れません よ 。 || The name of the road they live on was the first thing they learned to write. They'll never forget it.
 as_mohei: さあ さあ 、 {今夜|こんや} は {全部|ぜんぶ} {只|ただ} だ ！ {持|も}って {行|い}きな ！ || Come on, come on, tonight everything's free! Take what you like!
+!shot fire
 narr: それから 、 {皆|みんな} で {踊|おど}った 。 ヨシゾウ と タキ が {並|なら}んで 、 ショウ が {鍋|なべ} を {叩|たた}いて {拍子|ひょうし} を {取|と}る 。 ナツ の {赤|あか}ちゃん は 、 {騒|さわ}ぎ の {真|ま}ん{中|なか} で ぐっすり {眠|ねむ}って いる 。 || Then everyone dances. Yoshizō and Taki side by side; Shō beating time on a cooking pot; Natsu's baby fast asleep in the middle of it all.
 ?(comp=nao) comp: {俺|おれ} 、 この {村|むら} の {最初|さいしょ} の {手紙|てがみ} も 、 {最後|さいご} の {手紙|てがみ} も 、 {届|とど}けたい な 。 || I'd like to deliver this village's first letter. And its last one too, someday.
 ?(comp=mio) comp: {皆|みんな} 、 いい {顔|かお} を して いる わ 。 {薬|くすり} より {効|き}く {顔|かお} 。 || Everyone looks so well. Better than any medicine.
@@ -263,7 +266,9 @@ narr: それから 、 {皆|みんな} で {踊|おど}った 。 ヨシゾウ �
 ?(comp=suzu) comp: {客|きゃく} も {役者|やくしゃ} も {同|おな}じ {人|ひと} 。 こういう {舞台|ぶたい} が 、 {一番|いちばん} {好|す}き かも しれない わ 。 || The audience and the cast are the same people. I think I might like this kind of stage best of all.
 ?(!comp) narr: {誰|だれ} か が {手|て} を {引|ひ}いて 、 {踊|おど}り の {輪|わ} に {入|い}れて くれた 。 || Someone takes your hand and pulls you into the circle of dancers.
 narr: {最後|さいご} に 、 {皆|みんな} で {焚|た}き{火|び} を {囲|かこ}んだ 。 || Last of all, everyone sits round the fire.
+!shot fire gift
 as_mitsue: これ を 。 {村|むら} の {皆|みんな} から です 。 {田植|たう}え の {時|とき} に かぶる {笠|かさ} です けど 、 {旅|たび} に も いい でしょう 。 || This is for you, from all of us. It's the hat we wear for planting, but it'll do for travelling too.
+!sequence as.festival end
 !give as_kasa
 !set as_fest_done
 !quest as_main done

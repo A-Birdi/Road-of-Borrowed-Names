@@ -433,12 +433,15 @@ narr: イブキ が 、 {門|もん} の {横|よこ} で {次|つぎ} の {合�
 narr: {門|もん} の {提灯|ちょうちん} が 、 {朝|あさ} の {光|ひかり} に {薄|うす}れて いく 。 || The gate's lantern pales in the morning light.
 
 @scene hall.w6.end
+!sequence hall.w6 begin
+!shot tale
 narr: {朝|あさ} 、 オツタ が {峠|とうげ} を {上|のぼ}って {戻|もど}って きた 。 {赤|あか}ん{坊|ぼう} は 、 {腕|うで} の {中|なか} で {眠|ねむ}って いる 。 {熱|ねつ} は {下|さ}がった 。 || In the morning Otsuta comes back up the pass. The baby is asleep in her arms; the fever has broken.
 hall_kihei: {札|ふだ} の {一番|いちばん} {下|した} の {一行|いちぎょう} 、 {良|よ}い {字|じ} じゃ 。 …… {決|き}まり は {変|か}わる 。 {変|か}わって {良|よ}い 。 {変|か}わらん の は 、 {何|なん} の ため の {決|き}まり か 、 だけ じゃ 。 || The bottom line on the board: a good hand. …Rules change, and so they should. The only thing that doesn't is what they're for.
 ?(comp=nao) comp: {宛先|あてさき} の ない {手紙|てがみ} は {届|とど}けない 。 ただし 、 {困|こま}って いる {人|ひと} の {手紙|てがみ} は 、 {何|なん} と して でも {届|とど}ける 。 {配達|はいたつ} の {決|き}まり も 、 {同|おな}じ だ 。 || No address, no delivery. Except a letter from someone in trouble: that gets there, whatever it takes. The delivery rules are the same.
 ?(comp=mio) comp[happy]: なら 、 たら 、 ても 、 ただし 。 {決|き}まり の {言葉|ことば} は {冷|つめ}たく {聞|き}こえる けど 、 {使|つか}う {人|ひと} {次第|しだい} で 、 {温|あたた}かく も なる のね 。 || If, when, even if, except. The words of rules sound cold, but in the right hands they can be warm.
 ?(comp=ren) comp: {灯|ひ} が {六|むっ}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {四|よっ}つ です 。 || Six lights back. Four to go.
 ?(comp=suzu) comp: {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
+!sequence hall.w6 end
 narr: {朝|あさ} の {霧|きり} が {畳|たた}まれる よう に {薄|うす}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning mist folds thin, and when you look up you are by the hall's hearth.
 !set hall_w6_done
 !hook hall_finish

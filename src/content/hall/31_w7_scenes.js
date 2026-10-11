@@ -376,12 +376,15 @@ narr: オワン が 、 {門|もん} の {側|そば} で {待|ま}って いる
 narr: {門|もん} の {向|む}こう は 、 {霧|きり} と {雪|ゆき} だけ だ 。 || Beyond the gate there is only mist and snow.
 
 @scene hall.w7.end
+!sequence hall.w7 begin
+!shot tale
 narr: それ から 、 マゴロク の {家|いえ} の {米|こめ} は 、 {何年|なんねん} {経|た}って も {減|へ}らなかった と いう 。 || And after that, they say, the rice in Magoroku's house never ran low, however many years went by.
 hall_owan: {誰|だれ} か が {来|く}る と 、 {家|いえ} は {思|おも}い{出|だ}す 。 {誰|だれ} も {言|い}わなかった こと も 、 {全部|ぜんぶ} 。 || When someone comes, the house remembers. Even the things nobody said.
 ?(comp=nao) comp: {宛名|あてな} の ない {手紙|てがみ} も 、 {読|よ}めば {誰|だれ} {宛|あ}て か {分|わ}かる こと が ある 。 {今日|きょう} は 、 そういう {日|ひ} だった な 。 || Even a letter with no address on it: read it, and sometimes you know who it's for. Today was that kind of day.
 ?(comp=mio) comp[happy]: {言|い}わなかった こと を 、 {聞|き}き{取|と}る 。 {患者|かんじゃ} さん の {話|はなし} も 、 {同|おな}じ よ 。 || Hearing what wasn't said. It's the same with patients.
 ?(comp=ren) comp: {灯|ひ} が {七|なな}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {三|みっ}つ です 。 || Seven lights back. Three to go.
 ?(comp=suzu) comp: {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
+!sequence hall.w7 end
 narr: {雪|ゆき} が {畳|たた}まれる よう に {止|や}んで 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The snow folds away into stillness, and when you look up you are by the hall's hearth.
 !set hall_w7_done
 !hook hall_finish

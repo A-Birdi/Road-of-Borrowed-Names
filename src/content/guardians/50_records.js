@@ -2,9 +2,9 @@
  * an essential). For each: a stamp (K1) in its own family, pressed when the guardian settles and carrying the honest
  * record of the win (src/engine/98g_guardians.js); a page in the travel volume (K2), witnessed when it settles and
  * revealable before then by confirmation (H1: then viewable, never witnessed); a keepsake to wear. Hidden until won,
- * with spoiler-safe words; nothing asks for a setting, an input mode, going without help or a time (C-13). The
- * pages' paintings come with the art pass (P16); until then an interim plate. Hidden criteria name no place, so a
- * journey still under way learns nothing of the regions to come. */
+ * with spoiler-safe words; nothing asks for a setting, an input mode, going without help or a time (C-13). Each
+ * page is the painting of the place just after it settles (sequence gd.<key>, src/ui/43n_seq_post.js; P16). Hidden
+ * criteria name no place, so a journey still under way learns nothing of the regions to come. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function (C) {
@@ -36,7 +36,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // the travel volume's page of each guardian (K2; H1): witnessed when it settles, revealable before
   if (RB.volume) for (const k of Object.keys(D)) {
     const st = C.stamps['gd.' + k];
-    RB.volume.add({ id: 'gd.' + k, chapter: 'post', kind: 'guardian', special: true, flag: 'gd.' + k, title: st.title, plate: st.title.jp,
+    RB.volume.add({ id: 'gd.' + k, chapter: 'post', kind: 'guardian', special: true, flag: 'gd.' + k, title: st.title, seq: 'gd.' + k, scene: 'gd.' + k,
       criteria: { en: 'An old guardian, awake after the story: settled.', jp: '{古|ふる}い {守|まも}り{手|て}' } });
   }
 })(RB.content);

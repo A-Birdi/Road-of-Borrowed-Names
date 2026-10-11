@@ -26,12 +26,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(10, T('The Hundredth Tale', '{百話目|ひゃくわめ} の {話|はなし}'), '#b8862a');
 
   // the travel volume's page of each tale (D9 Rewards, K2): witnessed when the tale is told, or revealed beforehand by
-  // confirmation (then viewable, never witnessed or completed: H1); an interim plate until the art pass paints it (P16)
+  // confirmation (then viewable, never witnessed or completed: H1); its painting is the tale as an ink-and-wash picture scroll
+  // (sequence hall.w<n>, src/ui/43n_seq_post.js; P16)
   const ORD = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
   const NUM = ['{一|いち}', '{二|に}', '{三|さん}', '{四|よん}', '{五|ご}', '{六|ろく}', '{七|なな}', '{八|はち}', '{九|きゅう}', '{十|じゅう}'];
   if (RB.volume) for (let n = 1; n <= 10; n++) {
     const st = C.stamps['hall.w' + n];
-    RB.volume.add({ id: 'hall.w' + n, chapter: 'post', kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, plate: st.title.jp,
+    RB.volume.add({ id: 'hall.w' + n, chapter: 'post', kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, seq: 'hall.w' + n, scene: 'hall.w' + n + '.end',
       criteria: { en: n === 10 ? 'The Hall of a Hundred Tales: the hundredth tale, your own, told.' : 'The Hall of a Hundred Tales: the ' + ORD[n - 1] + ' tale told.', jp: '{百物語|ひゃくものがたり} の {館|やかた} ・ {第|だい}' + NUM[n - 1] + ' の {話|はなし}' } });
   }
 

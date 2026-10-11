@@ -2517,6 +2517,18 @@
    "painted": true,
    "plate": false
   },
+  "mb2.press": {
+   "no": 4,
+   "key": "mb2",
+   "painted": true,
+   "plate": false
+  },
+  "mb2.fireworks": {
+   "no": 4,
+   "key": "mb2",
+   "painted": true,
+   "plate": false
+  },
   "ch3.assembly": {
    "no": 5,
    "key": "co",
@@ -2553,6 +2565,18 @@
    "painted": true,
    "plate": false
   },
+  "kr.vigil": {
+   "no": 7,
+   "key": "kr",
+   "painted": true,
+   "plate": false
+  },
+  "kr.dawn": {
+   "no": 7,
+   "key": "kr",
+   "painted": true,
+   "plate": false
+  },
   "ch5.bell": {
    "no": 8,
    "key": "lf",
@@ -2562,6 +2586,48 @@
   "ch5.boat": {
    "no": 8,
    "key": "lf",
+   "painted": true,
+   "plate": false
+  },
+  "ko.garden": {
+   "no": 9,
+   "key": "ko",
+   "painted": true,
+   "plate": false
+  },
+  "ko.end": {
+   "no": 9,
+   "key": "ko",
+   "painted": true,
+   "plate": false
+  },
+  "cr.summit": {
+   "no": 10,
+   "key": "cr",
+   "painted": true,
+   "plate": false
+  },
+  "cr.letter": {
+   "no": 10,
+   "key": "cr",
+   "painted": true,
+   "plate": false
+  },
+  "cr.relay": {
+   "no": 10,
+   "key": "cr",
+   "painted": true,
+   "plate": false
+  },
+  "yn.kettle": {
+   "no": 11,
+   "key": "yn",
+   "painted": true,
+   "plate": false
+  },
+  "yn.end": {
+   "no": 11,
+   "key": "yn",
    "painted": true,
    "plate": false
   },
@@ -2580,122 +2646,122 @@
   "gd.rw": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.sg": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.co": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.sb": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.lf": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.mb": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.cr": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.yn": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "gd.ko": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w1": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w2": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w3": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w4": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w5": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w6": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w7": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w8": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w9": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "hall.w10": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   },
   "as.festival": {
    "no": 13,
    "key": "post",
-   "painted": false,
-   "plate": true
+   "painted": true,
+   "plate": false
   }
  },
  "cosmetics": {
@@ -3959,16 +4025,10 @@
   ],
   "creatures": 105,
   "creaturesInterim": 46,
-  "volumePages": 36,
-  "volumePainted": 16,
-  "volumePlates": 20,
-  "chaptersWithoutPages": [
-   "mb2",
-   "kr",
-   "ko",
-   "cr",
-   "yn"
-  ],
+  "volumePages": 47,
+  "volumePainted": 47,
+  "volumePlates": 0,
+  "chaptersWithoutPages": [],
   "cosmetics": 27,
   "characters": 263,
   "problems": [
