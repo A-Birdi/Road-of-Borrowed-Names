@@ -63,7 +63,7 @@ RB.stampBook = (function () {
       const d = S()[id];
       const st = pressed(s, id) ? 'pressed' : earned(s, id) && d.stand ? 'ready' : 'open';
       const rec = st === 'pressed' ? (s.records.stamps[id] || {}) : null;
-      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, veiled: st === 'open' && !!d.hidden });
+      out.push({ id, d, state: st, at: rec ? rec.at : null, t: rec ? rec.t : null, rec, veiled: st === 'open' && !!d.hidden });
     }
     return out;
   }

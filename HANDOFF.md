@@ -238,8 +238,10 @@
     Chapter 11's fixture to `ch6_done`); **P15a–d are done: the Hall of a Hundred Tales, its engine, the way in, all
     ten wings, the rewards for all ten (Tsuru's last conversation and keepsake, the travel volume's pages, the
     wing's note) and its browser test `tests/e2e/hall.mjs`** (docs/future/work/P15_POSTGAME.md; decisions F-118 to
-    F-133; VALIDATION.md "The expansion, P15"); next: P15e–g (the old guardians, Ashihara Shinden, returns and
-    pastimes), P15h, the chained route (XP79) and a complete browser run. Routes for the new chapters from fixtures:
+    F-133; VALIDATION.md "The expansion, P15"); **P15e is done: the nine old guardians** (`src/content/guardians/`,
+    shrines in `src/content/zz_guardians.js`, the honest record in `src/engine/98g_guardians.js`; F-135; unit
+    `guardians`); next: P15f (Ashihara Shinden, `src/content/settle/`), P15g (returns and pastimes), P15h, the chained
+    route (XP79) and a complete browser run. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.

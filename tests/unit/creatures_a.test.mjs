@@ -26,8 +26,9 @@ export default async (t) => {
   const only = (globalThis.process && process.env.CA_FAM) || null; // (while authoring: one family)
   // 36 from the inventory, plus P08's six Undercroft creatures, P09's five Understage creatures, five of P10's
   // Keepers' Road creatures, four of its twelve-chapter Cinder/Snowbell creatures, P11's three twelve-chapter
-  // Lanternfall creatures, five of Kotonoha's and six of the Cloudroad's drawn on these families in the interim (F-36)
-  t.eq(mine.length, 76, 'the inventory\'s 36 enemies, the eleven interim Manybridge creatures, five of the Keepers\' Road\'s, four of the twelve-chapter Cinder and Snowbell ones, three of its Lanternfall ones, five of Kotonoha\'s, six of the Cloudroad\'s and six of Steamhollow\'s use these ten families');
+  // Lanternfall creatures, five of Kotonoha's, six of the Cloudroad's, six of Steamhollow's and eight of P15e's old
+  // guardians (the Bell's Maker is drawn on the Lanternfall keeper's rig) drawn on these families in the interim (F-36)
+  t.eq(mine.length, 84, 'the inventory\'s 36 enemies, the eleven interim Manybridge creatures, five of the Keepers\' Road\'s, four of the twelve-chapter Cinder and Snowbell ones, three of its Lanternfall ones, five of Kotonoha\'s, six of the Cloudroad\'s, six of Steamhollow\'s and eight of the old guardians use these ten families');
 
   // the rules' results a move of each kind produces (a fixture per kind, as RB.combatLogic.foeAct would)
   const RESULT = {

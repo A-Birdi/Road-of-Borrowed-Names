@@ -44,4 +44,7 @@ export const KNOWN_AT = {
   'yn.steamwisp': CH6, 'yn.pebbles': CH6, 'yn.toad': CH6, 'yn.lostguest': CH6, 'yn.towelthief': CH6, 'yn.chochin': CH6, 'yn.kettle': CH6,
   'mp.kuroko': MB2, 'mp.moth': MB2, 'mp.imp': MB2, 'mp.golem': MB2, 'mp.naraku': MB2,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
+  // the old guardians (P15e): their shrines appear only after the story (ed>=2&postgame), so every word is known
+  'gd.founder': CH6, 'gd.headoffice': CH6, 'gd.firstfire': CH6, 'gd.sisterstar': CH6, 'gd.maker': CH6, 'gd.bridgefounder': CH6,
+  'gd.oxelder': CH6, 'gd.kettlemother': CH6, 'gd.firstkeeper': CH6,
 };

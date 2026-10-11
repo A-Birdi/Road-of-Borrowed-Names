@@ -4234,6 +4234,30 @@ mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
 before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
 
+## The expansion, P15 — P15e done (the old guardians)
+
+**Clean copy of 961cd19 (the Hall complete):** the whole unit suite **50,150 passed, 0 failed**.
+
+**The old guardians, on a copy of the working tree's git-visible files:** the whole unit suite **50,467 passed, 3
+failed**; all three were the creature-art rigs' rules about the new creatures, not the guardians themselves: four
+guardians used moves their interim drawing family has no animation for (the First Fire's Heat and Sweep on the golem,
+the Founder's Gust on the echo, the Kettle's Mother's Heat on the golem, the Elder's Call and Gathering on the cloud
+blot), the count of creatures on those families is pinned (now 84 with eight guardians on them), and the Bell's
+Maker (on the Lanternfall keeper's rig) had no audit row. Fixed: the First Fire drawn on the Kiln Warden's own
+family, the Founder re-ties instead of gusting, the Mother gathers instead of heating, the Elder's herd comes up the
+path on a schedule (a rope or stone holds it) and the Sister Star's lights come as her knots loosen (a bell calls
+them home), the count raised with its reason, the audit row added. After the fixes, on the working tree:
+`creatures_a` + `creatures_a_restyle` 110/0, `creatures_b` 1,166/0, `combat_fairness` 892/0, `guardians` **66/0**
+(the nine won by the whole-game driver's player model at Relaxed, Standard and Demanding with Mio and with Ren; a blunt
+word ends each argument, which can be met again; the procedures' wrong actions shown and not taken and their steps
+kept after a step back; help after a defeat; the shrines placed only after the story, free and reachable; the scenes'
+"not now", fall, win with the honest record on the stamp and the keepsake once; the stamp book's note; the travel
+volume's pages), `records` 216/0, `kanji` 640/0, validator no errors, the language ledger with no line unreviewed
+(self-review: kana-only lines that wrote 葉 as は, which reads as the particle, now はっぱ; 車 alone for the
+waterwheel now 水車; the pass named by its own name, 雲路峠). The encounter platform now lets a party leave a
+conversation a creature leads (no earlier encounter combined the two); `encounters` 184/0, `yn_ch11` 183/0,
+`kr_ch7` 123/0, `ko_ch9` 182/0, `cr_ch10` 146/0, `mb_ch3` 76/0 after it. No browser test of the guardians yet.
+
 ## The expansion, P15 (the Hall of a Hundred Tales) — P15a–d done (ten wings, the rewards, the browser test); P15e–h to come
 
 **Wings 8–10 and the rewards for all ten.** Wing 8 (4bfa701): a clean copy's whole unit suite **49,378 passed, 0

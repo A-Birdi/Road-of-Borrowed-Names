@@ -31,6 +31,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     'ko.sandlantern': { disposition: 'meets standard (reverified)', note: 'interim (P11, F-36): Kotonoha\'s Sand Lantern on the lantern family in sand and pale stone; Shroud, Heat and Re-tying as the lantern family; its own half-buried stone body is P16 art work (AC-1, C-82)' },
     'cr.packlantern': { disposition: 'meets standard (reverified)', note: 'interim (P12, F-36): the Cloudroad\'s Pack-Lantern on the lantern family in ember orange; Heat, Strike and Re-tying as the lantern family; its porter\'s frame and lashed load are P16 art work (AC-1, C-82)' },
     'yn.chochin': { disposition: 'meets standard (reverified)', note: 'interim (P13, F-36): Steamhollow\'s Stray Lantern on the lantern family in festival orange; False promise, Heat and Re-tying as the lantern family; its own festival-lantern body is P16 art work (AC-1, C-82)' },
+    'gd.maker': { disposition: 'meets standard (reverified)', note: 'interim (P15e, F-36): the Bell\'s Maker, an old guardian met in conversation (it never acts in battle), on the Drowned Bell keeper\'s rig in scorched bronze; its own figure in a leather apron with a hammer is P16 art work (AC-1, C-82)' },
     'kr.chochin': { disposition: 'meets standard (reverified)', note: 'interim (P10, F-36): the Keepers\' Road\'s chōchin-obake on the lantern family in warm paper amber; Shroud and Strike as the lantern family; its own split-rib grin is P16 art work (AC-1, C-82)' },
   };
   const ALLOWED = ['upgraded', 'meets standard (reverified)', 'incomplete'];

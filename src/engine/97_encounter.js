@@ -394,10 +394,9 @@ RB.encounter = (function () {
       const R = rules(impl);
       R.endRound(st, enemy);
       if (st.log.length && st.log[st.log.length - 1].t === 'revive') { st.log.pop(); revived = true; }
-    } else {
-      st.round++;
-      if (E && E.social) socialClose(st);
-    }
+    } else st.round++;
+    // someone leaving a conversation goes at its close, whether or not a creature leads it (P15e: the guardians')
+    if (E && E.social) socialClose(st);
     if (E) {
       if (st.over === 'win' && E.def.settleWins === false) st.over = null;
       if (st.over !== 'lose') {

@@ -667,6 +667,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP82 The Hall's rewards: per wing a lantern, a stamp, the travel volume's page (witnessed when told; revealable by confirmation, then viewable, never witnessed; an interim plate until P16 paints it), the companions' reflections and the optional truthful note on the card; for all ten, Keeper Tsuru's last conversation and the Lantern of the Hundred, given once. U `hall_w10`; B `hall`.
 - [v] XP83 Every new Japanese line of the Hall self-reviewed in the ledger (`docs/review/language/hall.json`), every wing's card text with furigana; never claimed as native-reviewed. U review_ledger, `hall_w10`.
 - [ ] XP84 A person playing the Hall. H.
+- [v] XP85 The old guardians (P15e): nine, one per region, awake only after the story in a twelve-chapter journey, each built round one family (two of conditions, two of arrivals, two procedures under pressure, three arguments), five knots at most; every one won by the automated player at every tactical setting with two companions; a blunt word ends an argument another way and it can be met again; a procedure's wrong action shown and not taken, its steps kept after stepping back; help offered after a defeat; the shrines free and reachable. U `guardians` 66/0, `creatures_a`, `creatures_b`, `combat_fairness`.
+- [v] XP86 The guardians' rewards: a stamp with the honest record (meetings, tactical setting) shown plainly in the stamp book, a cosmetic keepsake given once, a travel-volume page (revealable before winning: viewable, never witnessed); hidden criteria name no place; every new Japanese line self-reviewed in the ledger (`docs/review/language/gd.json`), never claimed as native-reviewed. U `guardians`, `records`, review_ledger.
+- [ ] XP87 A person meeting the old guardians. H.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
