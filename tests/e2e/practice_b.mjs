@@ -538,7 +538,10 @@ await test('layouts: 320×640, 390×844 and 844×390 by touch, 1280×800, and 20
     // it is switched off for the large-text desktop pass so the layout itself is what is tested.
     await start(p, { input: 'choice', text: k, bulb: !(k > 1 && !touch) });
     const problems = [];
-    const check = async (scope, name) => { const a = await audit(p, scope); if (!clean(a)) { problems.push(name + ' ' + JSON.stringify(a)); await shot(p, 'problem_' + name.replace(/\W+/g, '_') + '_' + tag); } const bk = await bareKanji(p, scope); if (bk.length) problems.push(name + ' kanji without readings: ' + bk.join(' / ')); };
+    // measured at rest: the book's opening and page-turn animations scale the leaves while they run (a control
+    // caught mid-turn reads a few pixels short of its 44)
+    const atRest = () => p.evaluate(() => Promise.all(document.getAnimations().filter((x) => x.effect && x.effect.getComputedTiming().iterations !== Infinity).map((x) => x.finished.catch(() => null))));
+    const check = async (scope, name) => { await atRest(); const a = await audit(p, scope); if (!clean(a)) { problems.push(name + ' ' + JSON.stringify(a)); await shot(p, 'problem_' + name.replace(/\W+/g, '_') + '_' + tag); } const bk = await bareKanji(p, scope); if (bk.length) problems.push(name + ' kanji without readings: ' + bk.join(' / ')); };
     await launchAct(p, 'letters');
     await p.waitForSelector('.pb-tray .pb-card');
     await check('.pb-tray', 'tray');

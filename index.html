@@ -2110,7 +2110,9 @@ body.high-contrast :is(.chal, .lsheet, .combat-ui) { --pad-paper: #ffffff; }
 .chal-frame::before { content: ""; position: absolute; inset: 4px; border: 1px dashed var(--thread); border-radius: 7px; opacity: 0.55; pointer-events: none; }
 .chal-head { position: relative; z-index: 2; flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-height: var(--tap); padding: 2px 2px 6px; }
 .chal-title { margin: 0; flex: 1 1 10em; min-width: 0; font-family: var(--serif); font-weight: 600; font-size: 1.15em; letter-spacing: 0.01em; color: var(--on-cloth); overflow-wrap: anywhere; }
-.chal-head .cbtn { flex: none; margin-left: auto; }
+.chal-head .cbtn { flex: 0 1 auto; max-width: 100%; margin-left: auto; }
+/* with the largest text on a phone the way back wraps inside the screen instead of running past it */
+.chal-head .cbtn > span { min-width: 0; overflow-wrap: anywhere; }
 /* one scroll surface for the whole task; the writing canvas never scrolls it */
 .chal-body {
   position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; min-width: 0;

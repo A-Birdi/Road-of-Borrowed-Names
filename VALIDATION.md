@@ -4323,6 +4323,16 @@ the bad move last in 7 of 23; relay: the faithful way first in 7 of 12 parts; te
 in a working order, the best way first in 2 of 7). The automated runs never open these sheets (the test driver answers
 them directly), so the chained route and the story tests are unaffected.
 
+**Found while running the touched suites (fixed).** (1) `hall.mjs` still looked for the travel volume's interim plate
+of a Hall tale, which the art pass replaced with its painting (P16c); it now checks the painted page (the thumbnail
+drawn, over half its pixels inked; the title with readings; no plate left): **4/0**. (2) `practice_b.mjs`'s layout
+check read the Words "Contents" button at 39 px on a 320 px phone: at rest it is 44 px (no zoom or transform above
+it, probed); the check measured the book mid-opening, so it now waits for the page's finite animations to finish
+before measuring. With that, the same check reached the letter's writing step at 390 px with 200 % text, where the
+sheet's way back ("Back to the letter") ran past the screen's edge (to x = 413): the challenge sheet's header button
+was fixed-width (`flex: none`); it now shrinks to the screen and its label wraps (`src/styles/60_learning.css`).
+`practice_b.mjs` **6/0**.
+
 **The complete browser run gathers every functional suite.** Twenty-five of the expansion's own browser suites (the
 world proof and its slice, the living world, actions and performances, the workshop, the records, Distractions and
 the pastimes, the festival's corner and games, the pilot expedition, the Atlas's board, Manybridge's two chapters, the

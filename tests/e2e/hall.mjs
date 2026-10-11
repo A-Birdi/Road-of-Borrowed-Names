@@ -7,7 +7,7 @@
 //  3. suspend and resume: the game closes to the title, loading the slot resumes exactly there once, and the
 //     suspend point is then gone (never a seventh save);
 //  4. the tenth door sealed until nine lanterns are relit; a told wing's truthful note on its card; the travel volume's
-//     interim plate for a revealed tale.
+//     painted page for a revealed tale.
 // Usage: node tests/e2e/hall.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
 
@@ -190,7 +190,7 @@ await test('suspend: the title, then loading resumes exactly there, once', async
   await p.close();
 });
 
-await test('the tenth door, a told wing\'s note on its card, the volume\'s interim plate', async () => {
+await test('the tenth door, a told wing\'s note on its card, the volume\'s painted page', async () => {
   const { p, errors } = await page(b, url, { viewport: { width: 1180, height: 820 } });
   await start(p, { told: 8, x: 24, y: 14 });
   let carded = false;
@@ -205,12 +205,20 @@ await test('the tenth door, a told wing\'s note on its card, the volume\'s inter
   let note = null;
   await scene(p, 'hall.door_w8', { onCard: async () => { note = await p.evaluate(() => document.querySelector('.hall-card').textContent.replace(/\s+/g, ' ')); await p.click('.hall-folio [data-a=no]'); } });
   assert(note && /Your note/.test(note) && /Grow route, Standard tactics, at Elementary: 31 answers; help used: 2 conceptual, 1 answer-narrowing, 0 answer supplied/.test(note) && /opens and closes nothing/.test(note), 'the told wing\'s truthful note: ' + (note || '').slice(0, 400));
-  // the travel volume: a tale revealed by confirmation shows its interim plate, with furigana
+  // the travel volume: a tale revealed by confirmation shows its page, painted in the art pass (P16c; it was an interim
+  // plate before), with its title in furigana
   await p.evaluate(() => { RB.volume.revealSpecial(RB.game.s, 'hall.w9'); RB.ui.menu.open('volume'); });
-  await p.waitForSelector('.rb-plate', { timeout: 8000 });
-  const pl = await p.evaluate(() => ({ n: document.querySelectorAll('.rb-plate').length, rt: document.querySelectorAll('.rb-plate rt').length, veiled: document.querySelectorAll('.rb-pg.veiled').length }));
-  const bare = await bareKanji(p, '.rb-plate');
-  assert(pl.n >= 1 && pl.rt > 0 && bare.length === 0, 'the revealed tale\'s interim plate, its title with furigana: ' + JSON.stringify(pl) + ' ' + JSON.stringify(bare));
+  const seq = await p.evaluate(() => RB.volume.page('hall.w9').seq);
+  assert(seq, 'the tale\'s page has its painting');
+  await p.waitForSelector('canvas.rb-thumb[data-seq="' + seq + '"]', { timeout: 8000 });
+  const pl = await p.evaluate((seq) => {
+    const c = document.querySelector('canvas.rb-thumb[data-seq="' + seq + '"]'), li = c.closest('.rb-pg');
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let ink = 0; for (let i = 3; i < d.length; i += 4) if (d[i] > 0) ink++;
+    return { ink, of: c.width * c.height, rt: li.querySelectorAll('.rb-pg-t rt').length, plates: document.querySelectorAll('.rb-plate').length };
+  }, seq);
+  const bare = await bareKanji(p, '.rb-pg-t');
+  assert(pl.ink > pl.of * 0.5 && pl.rt > 0 && !pl.plates && bare.length === 0, 'the revealed tale\'s painted page, its title with furigana: ' + JSON.stringify(pl) + ' ' + JSON.stringify(bare));
   assert(await p.evaluate(() => !RB.volume.witnessed(RB.game.s, RB.volume.page('hall.w9'))), 'revealed, the page is viewable but not witnessed');
   assert(errors.length === 0, 'no page errors: ' + errors.join(' | '));
   await p.close();
