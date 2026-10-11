@@ -250,11 +250,21 @@
     `postgame_phase`; the clean copy of 3f0841e 51,426/0; F-139, F-140). **P16, the art pass, is under way**
     (docs/future/work/P16_ART.md): **P16a done** (the census, `tools/art_census.mjs`); **P16c done** (the travel volume's
     33 missing paintings: the six new chapters' 13 pages and the 20 after the story, `src/ui/43g_seq_paint.js` …
-    `43n_seq_post.js`; F-141; unit `sequence_p16` 363/0, browser `sequence_p16` 41/0 + 62/0). Next: U05/U06 (the book
-    family carried to dialogue, title, help, prompts, battle slips and confirmations), the interim creatures' own
-    families (P16b), the interim regional kits, the yukata cut and the hood in Harmony (P16d).
-    Still to do from P14/P15: the chained route from a new journey (XP79; its first attempt stopped at the boat-naming
-    sheet, fixed) and a complete browser run. Routes for the new chapters from fixtures:
+    `43n_seq_post.js`; F-141; unit `sequence_p16` 363/0, browser `sequence_p16` 41/0 + 62/0); **U05/U06 done** (the book
+    on every surface, the classic folio retired with a parity baseline; F-142; then the small-screen defects the suite
+    found, F-143); **P16b done** (the 46 interim creatures each on a family of its own, on the creature kit
+    `src/ui/78u_creature_kit.js` and `78v`…`78z_kit_*.js`, with their map figures drawn from the same drawings; unit
+    `creatures_c`, browser `tests/e2e/creatures_c.mjs`; F-143); **P16d done** (the nine regional kits' 63 props reviewed and
+    the weak ones redrawn, the yukata's cut, the hood on the Harmony code bust; F-144). The census now reads 0 interim
+    maps, 0 borrowed creatures, 0 interim volume plates (`node tools/art_census.mjs --check`). Next: P17 (closure:
+    language, accessibility, speed, a complete browser run), then **VA-1, the voice audition, queued last (C-83)**:
+    Robin's package is in docs/future/voice/ (the addendum, sections 01–18, and its templates); start it only after
+    P17, run its packets VS00–VS07, and stop at the listening gallery for Robin (no whole-game synthesis, no final
+    cast, no purchases; hosted routes without existing access go into one consolidated request). Then Robin's
+    review at completion (XP100).
+    Still to do from P14/P15: the chained route from a new journey in one uninterrupted run (XP79: one run reached 16 of
+    17 legs, and the last leg from its own state reached the ending once the driver kept to the Archive's sites; the
+    rerun with that leg corrected is pending) and a complete browser run. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.

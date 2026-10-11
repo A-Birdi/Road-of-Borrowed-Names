@@ -1,11 +1,12 @@
 /* Steamhollow's props (expansion P13): steam rising from the rock (it drifts; nothing blocks), a passage choked with
  * steam, a valve wheel on an iron pipe (shut or open), a hot pool (steaming, or run cool once used), a wooden footbath
  * (足湯), a bath's doorway curtain (暖簾) with ゆ on it in the side's colour (indigo for the men's, red for the women's,
- * brown for the reserved bath, 貸切), the egg steam box (蒸し場) with its baskets, the guild's water divider (湯分け)
- * with its old water clock, a bamboo spout (筧) ticking into a stone basin, a bamboo partition between the baths, the
- * valve's lost handle and the water clock's jammed float. Each has a flat 16-px drawing (the fallback, as every prop)
- * and its art-resolution version in the world's prop style (light from the upper left, an ink outline on what can be
- * looked at, a soft contact shadow). Interim regional assets under AC-1 (C-82): finished in the art pass (P16). */
+ * brown for the reserved bath, 貸切), the egg steam box (蒸し場) with its baskets, the guild's water divider (湯分け) with its
+ * old water clock, a bamboo spout (筧) ticking into a stone basin, a bamboo partition between the baths, the valve's
+ * lost handle and the water clock's jammed float. Each has a flat 16-px drawing (the fallback, as every prop) and its
+ * art-resolution version in the world's prop style (light from the upper left, an ink outline on what can be looked at,
+ * a soft contact shadow). Regional assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally,
+ * internally reviewed): kept as drawn. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

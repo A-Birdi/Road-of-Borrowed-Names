@@ -716,7 +716,7 @@
   "cr.oiwake": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 3,
    "states": 4
@@ -724,7 +724,7 @@
   "cr.leg1": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 4
@@ -732,7 +732,7 @@
   "cr.suginoki": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 10,
    "npcs": 5,
    "states": 4
@@ -740,7 +740,7 @@
   "cr.leg2": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 4
@@ -748,7 +748,7 @@
   "cr.sakashita": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 3,
    "states": 4
@@ -756,7 +756,7 @@
   "cr.leg3": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 2,
    "npcs": 1,
    "states": 4
@@ -764,7 +764,7 @@
   "cr.nakayama": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 5,
    "states": 4
@@ -772,7 +772,7 @@
   "cr.leg4": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 4
@@ -780,7 +780,7 @@
   "cr.umagaeshi": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 3,
    "states": 4
@@ -788,7 +788,7 @@
   "cr.leg5": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 4
@@ -796,7 +796,7 @@
   "cr.kirishita": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 4,
    "states": 3
@@ -804,7 +804,7 @@
   "cr.barrier": {
    "region": "cloudroad",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 2,
    "states": 1
@@ -812,7 +812,7 @@
   "cr.above": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 2,
    "npcs": 0,
    "states": 1
@@ -820,7 +820,7 @@
   "cr.kumoi": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 4,
    "states": 1
@@ -828,7 +828,7 @@
   "cr.oiwake_post": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 1,
    "states": 0
@@ -836,7 +836,7 @@
   "cr.saka_inn": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 2,
    "states": 0
@@ -844,7 +844,7 @@
   "cr.kirishita_inn": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 0,
    "states": 0
@@ -852,7 +852,7 @@
   "cr.barrier_office": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 6,
    "states": 0
@@ -860,7 +860,7 @@
   "cr.pass1": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 1
@@ -868,7 +868,7 @@
   "cr.pass2": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 1
@@ -876,7 +876,7 @@
   "cr.pass3": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 4,
    "npcs": 0,
    "states": 1
@@ -884,7 +884,7 @@
   "cr.hut": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 4,
    "npcs": 1,
    "states": 1
@@ -892,7 +892,7 @@
   "cr.summit": {
    "region": "cloudtop",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 4,
    "npcs": 1,
    "states": 0
@@ -900,7 +900,7 @@
   "el.landing": {
    "region": "saltglass",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 4,
    "states": 0
@@ -924,7 +924,7 @@
   "hall.foyer": {
    "region": "hall",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 75,
    "npcs": 1,
    "states": 0
@@ -932,7 +932,7 @@
   "hall.w1f1": {
    "region": "hall_w1",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 24,
    "npcs": 1,
    "states": 0
@@ -940,7 +940,7 @@
   "hall.w1f2": {
    "region": "hall_w1",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 32,
    "npcs": 6,
    "states": 0
@@ -948,7 +948,7 @@
   "hall.w1f3": {
    "region": "hall_w1",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 17,
    "npcs": 2,
    "states": 0
@@ -956,7 +956,7 @@
   "hall.w2f1": {
    "region": "hall_w2",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 27,
    "npcs": 0,
    "states": 0
@@ -964,7 +964,7 @@
   "hall.w2f2": {
    "region": "hall_w2",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 23,
    "npcs": 36,
    "states": 0
@@ -972,7 +972,7 @@
   "hall.w2f3": {
    "region": "hall_w2",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 20,
    "npcs": 2,
    "states": 0
@@ -980,7 +980,7 @@
   "hall.w3f1": {
    "region": "hall_w3",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 27,
    "npcs": 1,
    "states": 0
@@ -988,7 +988,7 @@
   "hall.w3f2": {
    "region": "hall_w3",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 32,
    "npcs": 7,
    "states": 0
@@ -996,7 +996,7 @@
   "hall.w3f3": {
    "region": "hall_w3",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 13,
    "npcs": 7,
    "states": 0
@@ -1004,7 +1004,7 @@
   "hall.w4f1": {
    "region": "hall_w4",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 24,
    "npcs": 5,
    "states": 0
@@ -1012,7 +1012,7 @@
   "hall.w4f2": {
    "region": "hall_w4",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 27,
    "npcs": 6,
    "states": 0
@@ -1020,7 +1020,7 @@
   "hall.w4f3": {
    "region": "hall_w4",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 13,
    "npcs": 4,
    "states": 0
@@ -1028,7 +1028,7 @@
   "hall.w5f1": {
    "region": "hall_w5",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 28,
    "npcs": 3,
    "states": 0
@@ -1036,7 +1036,7 @@
   "hall.w5f2": {
    "region": "hall_w5",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 26,
    "npcs": 6,
    "states": 0
@@ -1044,7 +1044,7 @@
   "hall.w5f3": {
    "region": "hall_w5",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 13,
    "npcs": 5,
    "states": 0
@@ -1052,7 +1052,7 @@
   "hall.w6f1": {
    "region": "hall_w6",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 24,
    "npcs": 6,
    "states": 0
@@ -1060,7 +1060,7 @@
   "hall.w6f2": {
    "region": "hall_w6",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 30,
    "npcs": 10,
    "states": 0
@@ -1068,7 +1068,7 @@
   "hall.w6f3": {
    "region": "hall_w6",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 20,
    "npcs": 2,
    "states": 0
@@ -1076,7 +1076,7 @@
   "hall.w7f1": {
    "region": "hall_w7",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 28,
    "npcs": 1,
    "states": 0
@@ -1084,7 +1084,7 @@
   "hall.w7f2": {
    "region": "hall_w7",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 31,
    "npcs": 7,
    "states": 0
@@ -1092,7 +1092,7 @@
   "hall.w7f3": {
    "region": "hall_w7",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 18,
    "npcs": 2,
    "states": 0
@@ -1100,7 +1100,7 @@
   "hall.w8f1": {
    "region": "hall_w8",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 29,
    "npcs": 1,
    "states": 0
@@ -1108,7 +1108,7 @@
   "hall.w8f2": {
    "region": "hall_w8",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 23,
    "npcs": 7,
    "states": 0
@@ -1116,7 +1116,7 @@
   "hall.w8f3": {
    "region": "hall_w8",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 19,
    "npcs": 3,
    "states": 0
@@ -1124,7 +1124,7 @@
   "hall.w9f1": {
    "region": "hall_w9",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 28,
    "npcs": 5,
    "states": 0
@@ -1132,7 +1132,7 @@
   "hall.w9f2": {
    "region": "hall_w9",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 34,
    "npcs": 7,
    "states": 0
@@ -1140,7 +1140,7 @@
   "hall.w9f3": {
    "region": "hall_w9",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 5,
    "states": 0
@@ -1148,7 +1148,7 @@
   "hall.w10f1": {
    "region": "hall_w10",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 38,
    "npcs": 1,
    "states": 0
@@ -1156,7 +1156,7 @@
   "hall.w10f2": {
    "region": "hall_w10",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 35,
    "npcs": 7,
    "states": 0
@@ -1164,7 +1164,7 @@
   "hall.w10f3": {
    "region": "hall_w10",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 17,
    "npcs": 2,
    "states": 0
@@ -1172,7 +1172,7 @@
   "ko.shore": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 22,
    "npcs": 1,
    "states": 0
@@ -1180,7 +1180,7 @@
   "ko.village": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 15,
    "npcs": 6,
    "states": 0
@@ -1188,7 +1188,7 @@
   "ko.hall": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 24,
    "npcs": 2,
    "states": 0
@@ -1196,7 +1196,7 @@
   "ko.otoha": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 0,
    "states": 0
@@ -1204,7 +1204,7 @@
   "ko.lodge": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 11,
    "npcs": 1,
    "states": 0
@@ -1212,7 +1212,7 @@
   "ko.terraces": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 15,
    "npcs": 0,
    "states": 0
@@ -1220,7 +1220,7 @@
   "ko.crown": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 10,
    "npcs": 0,
    "states": 0
@@ -1228,7 +1228,7 @@
   "ko.tidepools": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 11,
    "npcs": 2,
    "states": 0
@@ -1236,7 +1236,7 @@
   "ko.seacave": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 0,
    "states": 0
@@ -1244,7 +1244,7 @@
   "ko.roots1": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 0,
    "states": 0
@@ -1252,7 +1252,7 @@
   "ko.roots2": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 0,
    "states": 0
@@ -1260,7 +1260,7 @@
   "ko.roots3": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 0,
    "states": 0
@@ -1268,7 +1268,7 @@
   "ko.garden": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 0,
    "states": 0
@@ -1276,7 +1276,7 @@
   "kr.foot": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 2,
    "states": 0
@@ -1284,7 +1284,7 @@
   "kr.steps": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 10,
    "npcs": 1,
    "states": 0
@@ -1292,7 +1292,7 @@
   "kr.fox": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 4,
    "states": 0
@@ -1300,7 +1300,7 @@
   "kr.ridge": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 3,
    "states": 0
@@ -1308,7 +1308,7 @@
   "kr.lodge": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 5,
    "states": 0
@@ -1316,7 +1316,7 @@
   "kr.hall": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 0,
    "states": 0
@@ -1324,7 +1324,7 @@
   "kr.descent": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 1,
    "states": 0
@@ -1332,7 +1332,7 @@
   "kr.foot_inn": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 1,
    "states": 0
@@ -1340,7 +1340,7 @@
   "kr.kame": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 4,
    "npcs": 1,
    "states": 0
@@ -1348,7 +1348,7 @@
   "kr.lodge_in": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 1,
    "states": 0
@@ -1356,7 +1356,7 @@
   "kr.hisae": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 0,
    "states": 0
@@ -1364,7 +1364,7 @@
   "kr.cave1": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 13,
    "npcs": 0,
    "states": 0
@@ -1372,7 +1372,7 @@
   "kr.cave2": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 10,
    "npcs": 0,
    "states": 0
@@ -1380,7 +1380,7 @@
   "kr.cave3": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 4,
    "npcs": 0,
    "states": 0
@@ -1388,7 +1388,7 @@
   "kr.vigil": {
    "region": "keepers",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 2,
    "states": 0
@@ -1412,7 +1412,7 @@
   "mb.pier": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 1,
    "states": 0
@@ -1420,7 +1420,7 @@
   "mb.exchange": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 28,
    "npcs": 7,
    "states": 1
@@ -1428,7 +1428,7 @@
   "mb.kura": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 18,
    "npcs": 5,
    "states": 1
@@ -1436,7 +1436,7 @@
   "mb.tally": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 3,
    "states": 0
@@ -1444,7 +1444,7 @@
   "mb.fujiya": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 11,
    "npcs": 1,
    "states": 0
@@ -1452,7 +1452,7 @@
   "mb.porters": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 1,
    "states": 0
@@ -1460,7 +1460,7 @@
   "mb.inn": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 1,
    "states": 0
@@ -1468,7 +1468,7 @@
   "mb.deadletter": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 1,
    "states": 0
@@ -1476,7 +1476,7 @@
   "mb.lockhouse": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 1,
    "states": 0
@@ -1484,7 +1484,7 @@
   "mb.under1": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 18,
    "npcs": 0,
    "states": 0
@@ -1492,7 +1492,7 @@
   "mb.under2": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 17,
    "npcs": 0,
    "states": 0
@@ -1500,7 +1500,7 @@
   "mb.under3": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 0,
    "states": 0
@@ -1508,7 +1508,7 @@
   "mb.firstbridge": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 15,
    "npcs": 1,
    "states": 1
@@ -1516,7 +1516,7 @@
   "mp.blockprint": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 20,
    "npcs": 4,
    "states": 0
@@ -1524,7 +1524,7 @@
   "mp.playhouse": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 34,
    "npcs": 8,
    "states": 2
@@ -1532,7 +1532,7 @@
   "mp.workshop": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 1,
    "states": 0
@@ -1540,7 +1540,7 @@
   "mp.pressroom": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 1,
    "states": 0
@@ -1548,7 +1548,7 @@
   "mp.guild": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 0,
    "states": 0
@@ -1556,7 +1556,7 @@
   "mp.theatre": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 17,
    "npcs": 3,
    "states": 0
@@ -1564,7 +1564,7 @@
   "mp.committee": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 1,
    "states": 0
@@ -1572,7 +1572,7 @@
   "mp.festhall": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 4,
    "states": 0
@@ -1580,7 +1580,7 @@
   "mp.tenement": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 1,
    "states": 0
@@ -1588,7 +1588,7 @@
   "mp.under1": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 15,
    "npcs": 0,
    "states": 0
@@ -1596,7 +1596,7 @@
   "mp.under2": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 12,
    "npcs": 0,
    "states": 0
@@ -1604,7 +1604,7 @@
   "mp.under3": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 11,
    "npcs": 0,
    "states": 0
@@ -1612,7 +1612,7 @@
   "mp.bottom": {
    "region": "manybridge",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 1,
    "states": 1
@@ -1620,7 +1620,7 @@
   "ko.grove": {
    "region": "kotonoha",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 0,
    "states": 0
@@ -1636,7 +1636,7 @@
   "sea.coast": {
    "region": "sea",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 3,
    "npcs": 0,
    "states": 0
@@ -1644,7 +1644,7 @@
   "sea.cabin": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 5,
    "npcs": 0,
    "states": 0
@@ -1652,7 +1652,7 @@
   "mb.yard": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 10,
    "npcs": 2,
    "states": 0
@@ -1676,7 +1676,7 @@
   "yn.descent": {
    "region": "steamhollow",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 8,
    "npcs": 1,
    "states": 0
@@ -1684,7 +1684,7 @@
   "yn.upper": {
    "region": "steamhollow",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 8,
    "states": 1
@@ -1692,7 +1692,7 @@
   "yn.lower": {
    "region": "steamhollow",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 5,
    "states": 1
@@ -1700,7 +1700,7 @@
   "yn.terraces": {
    "region": "steamhollow",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 1,
    "states": 1
@@ -1708,7 +1708,7 @@
   "yn.north": {
    "region": "steamhollow",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 2,
    "npcs": 0,
    "states": 0
@@ -1716,7 +1716,7 @@
   "yn.kami": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 4,
    "states": 0
@@ -1724,7 +1724,7 @@
   "yn.kami_bath": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 0,
    "states": 0
@@ -1732,7 +1732,7 @@
   "yn.shimo": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 3,
    "states": 0
@@ -1740,7 +1740,7 @@
   "yn.shimo_bath": {
    "region": "steamhollow",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 0,
    "states": 0
@@ -1748,7 +1748,7 @@
   "yn.dispensary": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 1,
    "states": 0
@@ -1756,7 +1756,7 @@
   "yn.guild": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 1,
    "states": 0
@@ -1764,7 +1764,7 @@
   "yn.playhouse": {
    "region": "interior",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 9,
    "npcs": 3,
    "states": 0
@@ -1772,7 +1772,7 @@
   "yn.vents1": {
    "region": "yn_vents",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 15,
    "npcs": 0,
    "states": 0
@@ -1780,7 +1780,7 @@
   "yn.vents2": {
    "region": "yn_vents",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 14,
    "npcs": 0,
    "states": 0
@@ -1788,7 +1788,7 @@
   "yn.vents3": {
    "region": "yn_vents",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 0,
    "states": 0
@@ -1796,7 +1796,7 @@
   "yn.kettle": {
    "region": "yn_vents",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 7,
    "npcs": 0,
    "states": 1
@@ -1804,7 +1804,7 @@
   "sea.islet": {
    "region": "sea",
    "edition": 2,
-   "kit": "interim",
+   "kit": "final",
    "props": 6,
    "npcs": 0,
    "states": 0
@@ -1812,39 +1812,39 @@
  },
  "regions": {
   "cr": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/cr/02_art.js"
   },
   "el": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/el/02_art.js"
   },
   "hall": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/hall/02_art.js"
   },
   "ko": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/ko/02_art.js"
   },
   "kr": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/kr/02_art.js"
   },
   "mb": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/mb/02_art.js"
   },
   "mp": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/mp/02_art.js"
   },
   "sea": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/sea/02_art.js"
   },
   "yn": {
-   "kit": "interim",
+   "kit": "final",
    "file": "src/content/yn/02_art.js"
   }
  },
@@ -2060,16 +2060,16 @@
    "own": true
   },
   "co.shard": {
-   "family": "echo",
+   "family": "co_shard",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "co.mole": {
-   "family": "golem",
+   "family": "co_mole",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "co.imp": {
    "family": "lantern",
@@ -2078,28 +2078,28 @@
    "own": true
   },
   "cr.waystone": {
-   "family": "golem",
+   "family": "cr_waystone",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "cr.echo": {
-   "family": "echo",
+   "family": "cr_echo",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "cr.ox": {
-   "family": "blot",
+   "family": "cr_ox",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "cr.fogporter": {
-   "family": "wisp",
+   "family": "cr_fogporter",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "cr.packlantern": {
    "family": "lantern",
@@ -2108,94 +2108,94 @@
    "own": true
   },
   "cr.moth": {
-   "family": "blot",
+   "family": "cr_moth",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "cr.courier": {
-   "family": "echo",
+   "family": "cr_courier",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.founder": {
-   "family": "echo",
+   "family": "gd_founder",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.headoffice": {
-   "family": "clerk",
+   "family": "gd_headoffice",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.firstfire": {
-   "family": "warden",
+   "family": "gd_firstfire",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.sisterstar": {
-   "family": "wisp",
+   "family": "gd_sisterstar",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.maker": {
-   "family": "lf_keeper",
+   "family": "gd_maker",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.bridgefounder": {
-   "family": "golem",
+   "family": "gd_bridgefounder",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.oxelder": {
-   "family": "blot",
+   "family": "gd_oxelder",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.kettlemother": {
-   "family": "golem",
+   "family": "gd_kettlemother",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "gd.firstkeeper": {
-   "family": "echo",
+   "family": "gd_firstkeeper",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "ko.leafling": {
-   "family": "wisp",
+   "family": "ko_leafling",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "ko.jelly": {
-   "family": "blot",
+   "family": "ko_jelly",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "ko.mirror": {
-   "family": "echo",
+   "family": "ko_mirror",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "ko.echo": {
-   "family": "echo",
+   "family": "ko_echo",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "ko.sandlantern": {
    "family": "lantern",
@@ -2204,10 +2204,10 @@
    "own": true
   },
   "ko.gardener": {
-   "family": "echo",
+   "family": "ko_gardener",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "kr.wick": {
    "family": "moth",
@@ -2216,10 +2216,10 @@
    "own": true
   },
   "kr.sandal": {
-   "family": "blot",
+   "family": "kr_sandal",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "kr.chochin": {
    "family": "lantern",
@@ -2228,40 +2228,40 @@
    "own": true
   },
   "kr.moss": {
-   "family": "golem",
+   "family": "kr_moss",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "kr.shadow": {
-   "family": "echo",
+   "family": "kr_shadow",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "kr.hyakuwa": {
-   "family": "echo",
+   "family": "kr_hyakuwa",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "lf.mimic": {
-   "family": "clerk",
+   "family": "lf_mimic",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "lf.queue": {
-   "family": "wisp",
+   "family": "lf_queue",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "lf.weevil": {
-   "family": "moth",
+   "family": "lf_weevil",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mb.crab": {
    "family": "crab",
@@ -2270,40 +2270,40 @@
    "own": true
   },
   "mb.snail": {
-   "family": "golem",
+   "family": "mb_snail",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mb.beetle": {
-   "family": "moth",
+   "family": "mb_beetle",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mb.tangle": {
-   "family": "blot",
+   "family": "mb_tangle",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mb.barge": {
-   "family": "golem",
+   "family": "mb_barge",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mb.bridge": {
-   "family": "golem",
+   "family": "mb_bridge",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mp.kuroko": {
-   "family": "wisp",
+   "family": "mp_kuroko",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mp.moth": {
    "family": "moth",
@@ -2312,10 +2312,10 @@
    "own": true
   },
   "mp.imp": {
-   "family": "blot",
+   "family": "mp_imp",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "mp.golem": {
    "family": "golem",
@@ -2324,16 +2324,16 @@
    "own": true
   },
   "mp.naraku": {
-   "family": "golem",
+   "family": "mp_naraku",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "sb.bat": {
-   "family": "moth",
+   "family": "sb_bat",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "sb.hare": {
    "family": "sb_snowfox",
@@ -2342,52 +2342,52 @@
    "own": true
   },
   "sb.starling": {
-   "family": "wisp",
+   "family": "sb_starling",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.steamwisp": {
-   "family": "wisp",
+   "family": "yn_steamwisp",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.pebbles": {
-   "family": "golem",
+   "family": "yn_pebbles",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.toad": {
-   "family": "blot",
+   "family": "yn_toad",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.lostguest": {
-   "family": "echo",
+   "family": "yn_lostguest",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.towelthief": {
-   "family": "moth",
+   "family": "yn_towelthief",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.chochin": {
-   "family": "lantern",
+   "family": "yn_chochin",
    "boss": false,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "yn.kettle": {
-   "family": "golem",
+   "family": "yn_kettle",
    "boss": true,
-   "disposition": "incomplete",
-   "own": false
+   "disposition": "upgraded",
+   "own": true
   },
   "atlas.stray": {
    "family": "wisp",
@@ -2875,7 +2875,7 @@
    "sprite": true,
    "portrait": true,
    "battler": true,
-   "harmony": "not shown: not a player option"
+   "harmony": "drawn"
   },
   "gd_ko_keepsake": {
    "acc": "leaf",
@@ -2889,7 +2889,7 @@
    "sprite": true,
    "portrait": true,
    "battler": true,
-   "harmony": "not shown: held in the hand by the pose (Ren)"
+   "harmony": "not shown: carried in the hand, below the crop (Ren's lamp is in her pose)"
   },
   "lq_tenugui": {
    "acc": "scarf",
@@ -4011,28 +4011,16 @@
  },
  "summary": {
   "maps": 226,
-  "mapsOnInterimKits": 130,
-  "regionsInterim": [
-   "cr",
-   "el",
-   "hall",
-   "ko",
-   "kr",
-   "mb",
-   "mp",
-   "sea",
-   "yn"
-  ],
+  "mapsOnInterimKits": 0,
+  "regionsInterim": [],
   "creatures": 105,
-  "creaturesInterim": 46,
+  "creaturesInterim": 0,
   "volumePages": 47,
   "volumePainted": 47,
   "volumePlates": 0,
   "chaptersWithoutPages": [],
   "cosmetics": 27,
   "characters": 263,
-  "problems": [
-   "cosmetic gd_yn_keepsake (hood) is worn by the traveller but the Harmony bust calls it \"not a player option\""
-  ]
+  "problems": []
  }
 }

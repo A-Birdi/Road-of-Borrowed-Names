@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "rbn-speech-line-1",
+  "lineId": "audition.suzu.reassurance.fixture",
+  "caseId": "EXAMPLE_ONLY",
+  "source": {
+    "kind": "illustrative_fixture",
+    "repository": null,
+    "commit": null,
+    "path": null,
+    "locator": null,
+    "spoilerLevel": "none"
+  },
+  "speakerId": "suzu",
+  "voiceProfile": "suzu_candidate_01",
+  "language": "ja-JP",
+  "dialectVariant": "standard",
+  "playerVoiceType": null,
+  "purpose": "audition",
+  "displayText": "大丈夫。一緒に考えよう。",
+  "spokenText": "大丈夫。一緒に考えよう。",
+  "translationEn": "It’s all right. Let’s think it through together.",
+  "delivery": {
+    "intent": "reassure",
+    "energy": "gentle",
+    "direction": "Private reassurance, not a stage performance. Keep the first sentence steady; make the invitation warm.",
+    "pace": "natural",
+    "subtext": "She wants the listener to feel accompanied, not dismissed.",
+    "beats": [],
+    "vocalEvents": []
+  },
+  "pronunciationOverrides": [],
+  "context": {
+    "listener": "player",
+    "situation": "The listener is uncertain; she wants to help.",
+    "previousLine": null,
+    "nextLine": null,
+    "audibleContext": false
+  },
+  "providerExtensions": {},
+  "production": {
+    "status": "example_only",
+    "spokenTextSha256": "1809e18c1eac6674d4c409a412c809cad7a462fed7bd466d957f92f88aea884c",
+    "allowParaphrase": false,
+    "allowAddedSpeech": false,
+    "publicationApproved": false
+  }
+}

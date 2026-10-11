@@ -449,7 +449,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   function geomShop(w, h, vb, near) {
     const S = stage(w, h, vb), { s, lay } = S;
     // her portrait's bottom; where the sheet leaves only a band (a phone on its side) her face stays in it
-    const ay0 = Math.round(near ? vb + s(4) : vb * 0.78 + s(10)), ay = Math.max(ay0, 98);
+    const ay0 = Math.round(near ? vb + Math.min(s(4), 4) : vb * 0.78 + s(10)), ay = Math.max(ay0, 98);
     const back = near ? Math.round(vb * 0.9) : ay - s(10);       // the counter line (under the sheet in a band)
     const band = ay > ay0;
     const ax = Math.round(w * (lay === 'narrow' ? 0.56 : near ? (band ? 0.36 : 0.5) : 0.56));

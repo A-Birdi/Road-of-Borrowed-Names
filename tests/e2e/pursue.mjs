@@ -22,7 +22,9 @@ const LEGS12 = ['ch1_done@rw.@rw_mill', 'ch2_done@sg.@sg_main', 'mb1_done@sg.|mb
   'ch3_done@rw.|sg.|mb.|mp.|co.@co_main', 'ch4_done@co.|sb.@sb_lamp', 'kr_done@sb.|kr.@kr_main', 'ch5_done@kr.|lf.|lf2.@lf_main',
   'ko_done@lf.|lf2.|sg.|ko.@ko_main', 'cr_called@ko.|sg.|lf.|lf2.@cr_main', 'cr_passed@sg.|lf.|lf2.|cr.@cr_main', 'cr_done@sg.|lf.|lf2.|cr.@cr_main',
   'yn_called@cr.|lf.|lf2.|sg.@yn_main', 'yn_vents_open@cr.|yn.@yn_main', 'yn_kettle_settled@cr.|yn.@yn_main', 'yn_done@cr.|yn.@yn_main',
-  'ch6_done@yn.|cr.|lf.|lf2.|kr.|sg.|rw.|sa.@sa_main'].join('>');
+  // the Archive's own sites only: with Steamhollow's still open, the driver kept going back to its baths and valves
+  // (repeatable scenes it counts as unseen) and never left; from yn_done the Archive's sites alone reach the end
+  'ch6_done@sa.@sa_main'].join('>');
 const argv = process.argv.slice(2);
 if (argv[2] === 'twelve') argv[2] = LEGS12;
 const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = argv;

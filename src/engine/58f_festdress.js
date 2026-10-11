@@ -2,7 +2,9 @@
  * night of the Opening of the River, on Manybridge's festival maps, the traveller and the companion wear yukata: the
  * robe cut, a summer cotton print in each one's own colours, the trim as the obi. The road sprite and the dialogue
  * portrait only: no battle figure or Harmony bust (the festival has no fight), and nothing is kept: the next morning,
- * or anywhere else, everyone is dressed as before. Interim art under AC-1 (C-82); the finished cut is P16's. */
+ * or anywhere else, everyone is dressed as before. The cut (P16d, implemented provisionally under AC-1): on the road
+ * sprite a print of small morning-glory florets in the obi's colour, a wide obi, and at the back its bow
+ * (src/engine/32_spriteart.js, garmentFB). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.festDress = (function () {

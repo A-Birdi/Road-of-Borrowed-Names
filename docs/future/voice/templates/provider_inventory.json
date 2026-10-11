@@ -1,0 +1,238 @@
+{
+  "status": "not_tested",
+  "checkedForDocument": "2026-10-11",
+  "configurations": [
+    {
+      "configurationId": "voicevox",
+      "label": "VOICEVOX character voices",
+      "purpose": "Local; select a licensed voice and its available styles.",
+      "documentationIds": [
+        "S03",
+        "S14"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    },
+    {
+      "configurationId": "voicevox_nemo",
+      "label": "VOICEVOX Nemo",
+      "purpose": "Separate character-free casting route; do not collapse it into the first entry.",
+      "documentationIds": [
+        "S04"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    },
+    {
+      "configurationId": "aivis",
+      "label": "AivisSpeech",
+      "purpose": "Local engine plus an explicitly identified model, speaker and style.",
+      "documentationIds": [
+        "S05"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    },
+    {
+      "configurationId": "qwen",
+      "label": "Qwen3-TTS",
+      "purpose": "Use an instruction-capable configuration; separately label any voice-design/consistency subtrial.",
+      "documentationIds": [
+        "S06"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    },
+    {
+      "configurationId": "gemini",
+      "label": "Gemini-TTS",
+      "purpose": "Hosted production-time synthesis; pin exact API/model and voice.",
+      "documentationIds": [
+        "S07"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    },
+    {
+      "configurationId": "elevenlabs",
+      "label": "ElevenLabs",
+      "purpose": "Hosted production-time synthesis; use a Japanese-capable expressive model.",
+      "documentationIds": [
+        "S08"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    },
+    {
+      "configurationId": "azure",
+      "label": "Azure Speech",
+      "purpose": "Include because it was also proposed; styles/roles are voice-specific.",
+      "documentationIds": [
+        "S09"
+      ],
+      "availability": "not_checked_in_claude_environment",
+      "modelId": null,
+      "versionOrWeightsHash": null,
+      "candidateVoices": {},
+      "verifiedCapabilities": {},
+      "credentialStatus": "not_requested",
+      "rightsStatus": "not_checked",
+      "budgetApproval": null,
+      "outputCount": 0,
+      "limitations": []
+    }
+  ],
+  "baseline": {
+    "configurationId": "device_local_japanese",
+    "platformRequiredForWindowsClaim": "Windows",
+    "actualVoiceURI": null,
+    "actualVoiceName": null,
+    "status": "not_recorded"
+  },
+  "sources": [
+    {
+      "id": "S01",
+      "title": "Project baseline: local Japanese voice module",
+      "url": "https://github.com/A-Birdi/Road-of-Borrowed-Names/blob/ed3a862bb9add078115fbdf76a98735f6792b0c0/src/audio/50_voice.js",
+      "note": "Read through the GitHub connector at this fixed revision. Later code may differ; re-audit at execution."
+    },
+    {
+      "id": "S02",
+      "title": "Browser local voice identification",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisVoice/localService",
+      "note": "Local-service flag; device/browser exposure is not universal."
+    },
+    {
+      "id": "S03",
+      "title": "VOICEVOX Engine documentation",
+      "url": "https://github.com/VOICEVOX/voicevox_engine",
+      "note": "Voice/style enumeration, audio query, synthesis, accent phrases and dictionary controls."
+    },
+    {
+      "id": "S04",
+      "title": "VOICEVOX Nemo",
+      "url": "https://voicevox.hiroshiba.jp/nemo/",
+      "note": "Character-free voice route; separate casting/model terms still need inspection."
+    },
+    {
+      "id": "S05",
+      "title": "AivisSpeech Engine documentation",
+      "url": "https://github.com/Aivis-Project/AivisSpeech-Engine",
+      "note": "Style and tempo dynamics; documented incompatibilities with VOICEVOX control fields."
+    },
+    {
+      "id": "S06",
+      "title": "Qwen3-TTS documentation and model table",
+      "url": "https://github.com/QwenLM/Qwen3-TTS",
+      "note": "Japanese, instruction-capable variants, custom voices and voice-design workflows."
+    },
+    {
+      "id": "S07",
+      "title": "Gemini speech-generation documentation",
+      "url": "https://ai.google.dev/gemini-api/docs/speech-generation",
+      "note": "Speech metadata/style and voice identity controls; version-specific request format."
+    },
+    {
+      "id": "S08",
+      "title": "ElevenLabs speech best practices",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices",
+      "note": "Model-specific tags, voice selection and pronunciation support; do not mix versions."
+    },
+    {
+      "id": "S09",
+      "title": "Azure SSML voice/style/role documentation",
+      "url": "https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-voice",
+      "note": "Styles/roles available only for supported voices; unsupported settings can be ignored."
+    },
+    {
+      "id": "S10",
+      "title": "Browser autoplay handling",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/Media/Guides/Autoplay",
+      "note": "Playback may require user activation; handle rejected playback promises."
+    },
+    {
+      "id": "S11",
+      "title": "CSP media-src",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/media-src",
+      "note": "Optional same-origin media delivery must be permitted by the actual policy."
+    },
+    {
+      "id": "S12",
+      "title": "CSP connect-src",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy/connect-src",
+      "note": "Manifest/fetch requests need their own narrow policy permission."
+    },
+    {
+      "id": "S13",
+      "title": "GitHub Pages limits",
+      "url": "https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits",
+      "note": "Published site size and bandwidth constraints; recheck before a full voice deployment."
+    },
+    {
+      "id": "S14",
+      "title": "VOICEVOX terms",
+      "url": "https://voicevox.hiroshiba.jp/term/",
+      "note": "Credit and individual voice-library terms; not a blanket clearance for every voice."
+    },
+    {
+      "id": "S15",
+      "title": "Azure language and voice availability",
+      "url": "https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts",
+      "note": "Verify the actual Japanese voice, language, styles and roles."
+    },
+    {
+      "id": "S16",
+      "title": "ElevenLabs TTS capabilities",
+      "url": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech",
+      "note": "Japanese-capable models; exact model selection to be verified at execution."
+    }
+  ]
+}

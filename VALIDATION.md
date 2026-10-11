@@ -4255,8 +4255,68 @@ story; it now compares each veiled page with its own criteria, and checks that C
 twelve`, the clean copy with the route's twelve-chapter legs): Chapter 1 in 159 site visits, Chapter 2 in 51, then it
 waited for ever in Manybridge at the boat-naming sheet of A Licence for the Open Sea (side quest), which had no
 automated path (every other sheet of its kind has one). The hook now names the boat at once in an automated run (the
-old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The second attempt is recorded below
-when it ends.
+old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
+"The expansion, P17".
+
+## The expansion, P17 — closure (in progress)
+
+**The chapters chained from a new journey (XP79).** `PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve` on a
+copy of the working tree taken during P16 (its own `index.html`), profile F with Ren, from the title screen's new journey. One run
+reached **16 of the 17 legs**: Chapter 1 in 159 site visits, Chapter 2 in 51, Manybridge's first part (mb1_done) 194, its
+second (mb2_done) 239, Chapter 3 696, Chapter 4 93, the Keepers' Road (kr_done) 349, Chapter 5 100, Kotonoha (ko_done) 274,
+the Cloudroad's call 25, the pass 74, its end 4, Steamhollow's call 0 (already given), the vents 73, the Kettle 56, its end
+11: 2,398 site visits in 66 minutes, no page errors. The last leg (yn_done → the end, ch6_done) then failed twice: the
+driver was allowed every map from Steamhollow to the Archive, and it kept going back to Steamhollow's baths and valves
+(repeatable scenes it counts as unseen) until its limit of 900 visits, with the Archive's story at stage 2. That is the
+driver's choice of sites, not the game: **from the run's own yn_done state, with the leg kept to the Archive's sites
+(`sa.`), the ending was reached in 35 site visits (63 s)**, flags post, postgame and ch6_done set, 0 problems, 0 page
+errors, every main quest done (`sa_main`, `sa_clerk` done; the side quests left open are ones the route never aims at).
+The route's last leg is now `ch6_done@sa.@sa_main` (`tests/e2e/pursue.mjs`, with the reason beside it). So the whole
+journey has been driven from a new game to the ending through the game's own play, in one run plus one resumed leg
+from that run's own state; an uninterrupted run with the corrected last leg is recorded below when it ends.
+
+## The expansion, P16 — P16b, P16d and the book's small-screen fixes (P16 done)
+
+**What changed.** P16b: the 46 creatures drawn on a borrowed family in the interim each have a family of their own on
+the creature kit (`src/ui/78u_creature_kit.js`; `78v_kit_manybridge.js`, `78w_kit_road.js`, `78x_kit_sea_cloud.js`,
+`78y_kit_steam.js`, `78z_kit_guardians.js`; moved by `src/content/zz_creatures_c.js`), and their map figures are the
+same drawings at rest at the map's scale. P16d: the nine regional kits' 63 props reviewed on prop sheets, the weak ones
+redrawn (the Cloudroad's packhorse, the Understage's lanterns and stage lift, the noodle stall's sign); the yukata's cut
+on the road sprite; the hood on the Harmony code bust; the spectacle keepsake's chain on road sprite, portrait and
+battle figure. The book's small-screen defects found by the first third of the suite (F-143): the phone dialogue (full
+width, the portrait pinned on the paper, the line below the name however it wraps, Keep on the paper), the creation
+slip's summary, cloth buttons, the worn list, the Following mark, Submit kept in view with its field above the software
+keyboard, a closing Ledger's copy removed when a new one opens; the near shop shot of Chapter 2's plate held within the
+sheet's line. F-143, F-144; docs/future/work/P16_ART.md.
+
+**Browser, first third of the default suite on the build before these fixes** (`node tests/e2e/run.mjs --part=1/3`):
+23 of 31 scripts passed; the eight that failed were the defects above (equipment ×4 checks, play_ui, sequence_manual ×2,
+quest_guide, keepsakes ×2, create, learning_ui ×2, kanji_chart). **The same scripts on the fixed build** (index.html
+built after the fixes, then each script on its own): sequence_manual `--quick` 0 failed, quest_guide 0, keepsakes 0,
+create 382/0, learning_ui 15/0, kanji_chart 8/0, book 0, book_surfaces 0, folio 0, characters 0; equipment and play_ui
+each still had one failure on that build (the spectacle chain's battle figure; the phone sheet standing up into the
+world), fixed after it and run again below.
+
+**Unit, working tree.** The whole suite **51,941 passed, 1 failed** (`equip`: the spectacle chain's colour key did not
+end in "Col"; renamed `glassChainCol`; `equip` 466/0 after). `creatures_a` + `creatures_a_restyle` + `creatures_b` +
+`creatures_c` **1,423/0**; `creatures_c` alone **194/0** (all 46 drawing with their own families, none shared; every
+move kind × normal, reduced, warded and softened through the sequencer: every result once, in order, at the contact;
+every pose of every kit family draws; 6–12 idle drawings; an audit record in its own words; ≤ 140 frames a family and
+the largest frame × 140 under 48 MiB; each map figure its own drawing). The content validator: no errors. The census
+`--check`: 0 maps on interim kits, 0 creatures on a borrowed family, 47 of 47 volume pages painted.
+
+**Browser, the creatures in battle** (`tests/e2e/creatures_c.mjs --quick`, one from each kit file and the moth):
+**7/0** (silence, heat, flood, sweep, charge and lie performed with their own drawings, each result once, the display
+equal to the rules).
+
+**Browser, on the final P16 build** (`index.html` built after every fix above; rebuilt afterwards from the same source
+to the same SHA-256, 5b7091dc…): equipment **0 failed** (every keepsake now changes the battle figure on at least 3 of
+4 looks, the spectacle chain included), play_ui **0 failed** (the phone sheet stays on the paper), festival 0, book 0,
+book_surfaces 0, sequence_manual `--quick` 0, encounters 10/0, world_view 0, creatures_c `--quick` 7/0. `story_ch4.mjs`
+(eight configurations): **seven passed and one failed**: in F/Mio/go the player stayed in the inn's upstairs room at
+"back downstairs" (one step to the stairs after the quiet stretch's morning), and the rest of that run's checks failed
+from the wrong map. The same configuration run again on its own passed 52/52. Its cause is looked into in the P17 section,
+not set aside as a flake.
 
 ## The expansion, P16 — P16a and P16c done (the census; the travel volume's paintings)
 

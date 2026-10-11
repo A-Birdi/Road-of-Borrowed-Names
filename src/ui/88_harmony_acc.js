@@ -8,7 +8,7 @@
  *   chest     satchel or sash strap, bell, pin, patches, the cape's front
  *   scarf     the wrap round the neck and its tail
  *   glasses   frames and lenses (under the fringe, over the face)
- *   headAcc   hat, cap, headband, ribbon, flower, leaf, quill, pencil
+ *   headAcc   hood, hat, cap, headband, ribbon, flower, leaf, quill, pencil
  *   earN      the near earring, under the near ear
  *
  * Sides follow the source: the ribbon, flower, leaf, quill and Nao's pencil
@@ -222,6 +222,26 @@ RB.harmonyKit = RB.harmonyKit || {};
     const Mb = HK.metalMat(GOLD);
     for (const [x, y, k] of [[4, -24, 4], [5, -24, 3], [3, -23, 4], [4, -23, 3], [5, -23, 3], [6, -23, 2], [4, -22, 2], [5, -22, 1]]) put(L, hx + x, hy + y, Mb, k);
   };
+  // the hood (the Kettle's Mother's keepsake): soft cloth over the crown and down onto the shoulders, framing the face
+  // in an opening turned toward the light; folds at the throat, the rim of the opening in shadow where it turns in
+  A.hood = function (c) {
+    const L = c.S.L('headAcc');
+    const R = mat('hood', c.look.hoodCol || '#b8b2aa', { n: 6, at: 3, step: 0.07 });
+    const hx = c.hx, hy = c.hy;
+    hideHairUnder(c, -20);
+    const open = (x, y) => HK.inEll(x, y, 2.4, 3.6, 15.4, 19.2);
+    for (let Y = hy - 32; Y <= hy + 30; Y++) for (let X = hx - 32; X <= hx + 32; X++) {
+      const x = X + 0.5 - hx, y = Y + 0.5 - hy;
+      // the crown's dome, and below it the drape widening onto the shoulders
+      const inside = HK.inEll(x, y, 0.6, -5, 23, 26) || (y > 4 && y < 29 && Math.abs(x - 1) < 23 + (y - 4) * 0.42);
+      if (!inside || open(x, y)) continue;
+      let k = x < -10 ? 4 : x < 6 ? 3 : 2;
+      if (y < -20 && x < -2) k = 5;                              // the light on the crown
+      if (HK.inEll(x, y, 2.4, 3.6, 17.6, 21.4)) k = Math.max(0, k - 2); // the rim turning in
+      if (y > 18 && ((x * 3 + y) % 9 + 9) % 9 < 2) k = Math.max(0, k - 1); // folds gathering at the throat
+      put(L, X, Y, R, k);
+    }
+  };
   // a bow: two loops tipped up and out (the near one toward the light), folding into a knot, tails behind
   const BOW = [
     '...444...........33...',
@@ -306,6 +326,7 @@ RB.harmonyKit = RB.harmonyKit || {};
     for (const a of ['satchel', 'atlas_sash', 'patches', 'bell', 'atlas_pin', 'cape']) if (has(a)) A[a](c);
     if (has('scarf')) A.scarf(c);
     if (has('glasses')) A.glasses(c);
+    if (has('hood')) A.hood(c);
     for (const a of ['hat', 'cap', 'headband', 'ribbon', 'flower', 'leaf', 'atlas_quill', 'pencil']) if (has(a)) A[a](c);
     if (has('earrings')) A.earrings(c, 'near');
     for (const a of acc) {
@@ -316,5 +337,5 @@ RB.harmonyKit = RB.harmonyKit || {};
   }
   HK.acc = A; HK.drawAcc = drawAll;
   // Accessories this module draws; the rest are deliberately not shown in a bust (with the reason).
-  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', atlas_compass: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'held in the hand by the pose (Ren)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron' };
+  HK.ACC_NOT_SHOWN = { atlas_lamplet: 'hangs at the hip, below the crop', atlas_compass: 'hangs at the hip, below the crop', bottles: 'carried at the hip, below the crop (Mio holds one in her pose)', lamp: 'carried in the hand, below the crop (Ren\'s lamp is in her pose)', beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', toolbelt: 'not carried', apronstrap: 'part of the apron' };
 })(RB.harmonyKit);

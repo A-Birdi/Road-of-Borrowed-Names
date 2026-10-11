@@ -28,7 +28,10 @@ export default async (t) => {
   // Keepers' Road creatures, four of its twelve-chapter Cinder/Snowbell creatures, P11's three twelve-chapter
   // Lanternfall creatures, five of Kotonoha's, six of the Cloudroad's, six of Steamhollow's and eight of P15e's old
   // guardians (the Bell's Maker is drawn on the Lanternfall keeper's rig) drawn on these families in the interim (F-36)
-  t.eq(mine.length, 84, 'the inventory\'s 36 enemies, the eleven interim Manybridge creatures, five of the Keepers\' Road\'s, four of the twelve-chapter Cinder and Snowbell ones, three of its Lanternfall ones, five of Kotonoha\'s, six of the Cloudroad\'s, six of Steamhollow\'s and eight of the old guardians use these ten families');
+  // (P16b moves the interim ones onto drawings of their own on the creature kit, tests/unit/creatures_c.test.mjs: the
+  // count here is the ten families' share plus those moved, and stays 84)
+  const from = RB.content.creaturesCFrom || {}, moved = Object.keys(from).filter((id) => FAM.indexOf(from[id]) >= 0).length;
+  t.eq(mine.length + moved, 84, 'the inventory\'s 36 enemies, the eleven interim Manybridge creatures, five of the Keepers\' Road\'s, four of the twelve-chapter Cinder and Snowbell ones, three of its Lanternfall ones, five of Kotonoha\'s, six of the Cloudroad\'s, six of Steamhollow\'s and eight of the old guardians use these ten families or (moved in the art pass) their own drawings (' + mine.length + ' + ' + moved + ')');
 
   // the rules' results a move of each kind produces (a fixture per kind, as RB.combatLogic.foeAct would)
   const RESULT = {

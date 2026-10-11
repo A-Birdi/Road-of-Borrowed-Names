@@ -15,7 +15,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // key: [the guardian, its stamp's motif and ink, its keepsake]
   const D = {
     rw: ['gd.founder', 'wave', '#6a7a4a', T('The founder\'s miller\'s cap', '{粉屋|こなや} の {帽子|ぼうし}'), 'Flour-white and patched, older than the village. The founder\'s voice left it between the millstones.', 'cap', { capCol: '#e6dcc4' }],
-    sg: ['gd.headoffice', 'seal', '#2a3a4c', T('Head Office spectacles', '{本局|ほんきょく} の {眼鏡|めがね}'), 'Left in the top drawer "for the next clerk".', 'glasses', { glassCol: '#5a6a7a' }],
+    sg: ['gd.headoffice', 'seal', '#2a3a4c', T('Head Office spectacles', '{本局|ほんきょく} の {眼鏡|めがね}'), 'Left in the top drawer "for the next clerk".', 'glasses', { glassCol: '#5a6a7a', glassChainCol: '#c8a858' }],
     co: ['gd.firstfire', 'firework', '#b04a22', T('Ember scarf', '{熾火|おきび} {色|いろ} の {襟巻|えりま}き'), 'Dyed the colour of the First Fire, and somehow always a little warm.', 'scarf', { scarfCol: '#c4502a', scarfStripe: '#f0a050' }],
     sb: ['gd.sisterstar', 'lantern', '#4a5a8a', T('Star earrings', '{星|ほし} の {耳飾|みみかざ}り'), 'Two chips of starlight the Sister Star left on the observatory floor.', 'earrings', { earCol: '#eef0ff' }],
     lf: ['gd.maker', 'bell', '#7a5a2a', T('The maker\'s little bell', '{鋳物師|いもじ} の {小鈴|こすず}'), 'A little bronze bell that rings the same low note as the Drowned Bell.', 'bell', { bellCol: '#9a7a3a' }],

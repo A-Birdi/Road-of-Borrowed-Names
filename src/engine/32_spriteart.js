@@ -386,6 +386,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (obi && up) { b.rect(16, bt - 2, 8, 5, A[1]); b.rect(16, bt - 2, 8, 1, A[2]); b.rect(21, bt - 1, 3, 4, A[0]); b.rect(19, bt - 2, 2, 5, A[0]); b.px(17, bt - 1, A[2]); }
     if (obi && !up) { b.line(16, bt - 1, 23, bt + 1, A[0]); }
     if (sh === 'dress') { const bx = up ? 17 : 22; b.rect(bx, bt - 1, 5, 3, A[1]); b.px(bx + 2, bt, A[0]); b.px(bx, bt - 1, A[2]); b.rect(bx + 1, bt + 2, 1, 4, A[1]); b.rect(bx + 3, bt + 2, 1, 3, A[0]); }
+    // the festival night's yukata (58f_festdress.js, F-44): a summer cotton print scattered over the robe in the
+    // obi's colour (small morning-glory florets), a wide obi, and at the back its bow
+    if (look.yukata && sh === 'robe') {
+      const lo = low - 3, fl = (x, y) => { b.px(x, y, A[1]); b.px(x - 1, y + 1, A[1]); b.px(x + 1, y + 1, A[0]); b.px(x, y + 2, A[0]); b.px(x, y + 1, A[2]); };
+      for (let y = t + 3, r = 0; y < lo; y += 6, r++) for (let x = 14 + (r % 2) * 3; x < 26; x += 6) {
+        if (y + 2 >= bt - 3 && y <= bt + 3) continue;
+        if (!up && y < t + 6 && x > 15 && x < 24) continue;
+        fl(x + (y > low - 4 ? sway : 0), y);
+      }
+      b.rect(12, bt - 2, 16, 4, A[1]); b.rect(12, bt - 2, 16, 1, A[2]); b.rect(12, bt + 1, 16, 1, A[0]); b.rect(26, bt - 2, 2, 4, A[0]);
+      if (up) { b.rect(14, bt - 4, 12, 7, A[1]); b.rect(14, bt - 4, 12, 1, A[2]); b.rect(18, bt - 4, 4, 8, A[0]); b.rect(19, bt - 3, 2, 6, A[2]); b.rect(14, bt + 3, 4, 3, A[1]); b.rect(22, bt + 3, 4, 3, A[0]); }
+      else { b.rect(12, bt, 16, 1, IVORY[2]); b.px(21, bt, IVORY[3]); }
+    }
     // collars (front) and the back seam
     if (!up) {
       if (sh === 'coat') {

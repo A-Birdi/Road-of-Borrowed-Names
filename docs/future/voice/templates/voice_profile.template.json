@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "rbn-voice-profile-1",
+  "status": "uncast",
+  "profileId": null,
+  "speakerId": null,
+  "playerVoiceType": null,
+  "canonicalIdentitySource": null,
+  "castingTarget": {
+    "apparentAge": null,
+    "vocalPresentation": null,
+    "resonance": null,
+    "texture": null,
+    "baselinePace": null,
+    "baselineDialect": null
+  },
+  "candidate": {
+    "configurationId": null,
+    "modelId": null,
+    "voiceId": null,
+    "neutralStyleId": null,
+    "supportedStyleMap": {},
+    "referenceAudio": null
+  },
+  "rightsRecord": null,
+  "screeningTakes": [],
+  "robinApproved": false
+}

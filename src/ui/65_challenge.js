@@ -586,6 +586,12 @@ RB.challenge = (function () {
         const a = document.activeElement;
         if (!a || !wrap.contains(a) || !RB.input.isTextTarget(a)) return;
         reveal(a);
+        // and its Submit with it, as far as the field itself stays in view
+        const sub = wrap.querySelector('[data-a=submit]');
+        if (sub && sub.offsetParent && sub.isConnected) {
+          const br = body.getBoundingClientRect(), r = sub.getBoundingClientRect(), ar = a.getBoundingClientRect();
+          if (r.bottom > br.bottom) body.scrollTop += Math.max(0, Math.min(r.bottom - br.bottom + 8, ar.top - br.top - 8));
+        }
       }
       function syncVV() {
         if (!vv) return;

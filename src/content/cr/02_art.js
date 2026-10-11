@@ -1,10 +1,11 @@
 /* The Cloudroad's props (expansion P12): a station's everlasting lamp (常夜灯) dark or lit, a palanquin (駕籠) for the
  * shortcuts between stations, the great cedar of Suginoki with its sacred rope, a bridge washed out over a stream, a
- * landslide's rocks, a pack horse with its load, a fog bank, the Mist Barrier's roofed gate (shut or open), and the last
- * courier's letter box (状箱) in the snow. Each has a flat 16-px drawing (the fallback, as every prop) and its
+ * landslide's rocks, a pack horse with its load, a fog bank, the Mist Barrier's roofed gate (shut or open), and the
+ * last courier's letter box (状箱) in the snow. Each has a flat 16-px drawing (the fallback, as every prop) and its
  * art-resolution version in the world's prop style (light from the upper left, hue-shifted ramps, an ink outline on
- * what can be looked at, a soft contact shadow). A lit lamp gives light through the lit instance's `light`. Interim
- * regional assets under AC-1 (C-82): finished in the art pass (P16). */
+ * what can be looked at, a soft contact shadow). A lit lamp gives light through the lit instance's `light`. Regional
+ * assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally, internally reviewed): the
+ * packhorse redrawn (a barrel body, a long head, jointed legs, its pack saddle on a blanket). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -161,19 +162,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ink: true,
     shadow: () => [16, 30, 18, 3, 0.3],
     draw(g, M, v, f) {
-      const H = HORSE;
-      // legs
-      for (const lx of [-2, 4, 22, 28]) { R(g, lx, 12, 4, 18, H[1]); R(g, lx, 28, 4, 2, '#1e1610'); }
-      // body, neck, head
-      ell(g, 14, 8, 20, 10, H[2]); ell(g, 10, 5, 14, 6, H[3]);
-      poly(g, [[28, 4], [36, -10], [42, -8], [36, 8]], H[2]);
-      poly(g, [[36, -10], [46, -6], [46, 0], [38, -2]], H[2]); R(g, 43, -6, 3, 3, '#1e1610');
-      R(g, 37, -14 + (f === 1 ? 1 : 0), 3, 5, H[1]);
-      // the mane and the tail
-      line(g, 30, 0, 36, -10, H[0], 2); line(g, -6, 4, -10, 16 + (f === 2 ? 1 : 0), H[0], 3);
-      // the pack saddle and two bundles
-      R(g, 4, -6, 22, 6, ST[2]); R(g, 4, -6, 22, 2, ST[3]);
-      R(g, -2, -2, 10, 14, ST[1]); R(g, 22, -2, 10, 14, ST[1]); line(g, 3, -2, 3, 12, ST[0], 1); line(g, 27, -2, 27, 12, ST[0], 1);
+      const H = HORSE, hoof = '#1e1610', step = f === 1 ? 1 : f === 3 ? -1 : 0;
+      // the far legs, darker, behind the body
+      const leg = (x, top, lean, c) => { poly(g, [[x - 2, top], [x + 3, top], [x + 2 + lean, top + 9], [x + 2 + lean, 27], [x - 1 + lean, 27], [x - 1 + lean, top + 9]], c); R(g, x - 2 + lean, 27, 5, 3, hoof); };
+      leg(0, 10, -step, H[0]); leg(25, 10, step, H[0]);
+      // the barrel of the body, the haunch and the chest, lit from the upper left
+      ell(g, 14, 8, 19, 9, H[2]); ell(g, 2, 7, 9, 9, H[2]); ell(g, 27, 7, 8, 9, H[2]);
+      ell(g, 10, 4, 14, 4, H[3]); ell(g, 2, 3, 5, 4, H[3]); ell(g, 12, 15, 16, 2.5, H[1]);
+      // the near legs
+      leg(4, 11, step, H[1]); leg(29, 11, -step, H[1]);
+      // the neck rising forward to the head; the head long, the muzzle darker, an ear up
+      poly(g, [[27, 0], [33, -12], [38, -15], [41, -10], [36, 6], [29, 9]], H[2]);
+      poly(g, [[33, -12], [37, -16], [40, -12], [35, -6]], H[3]);
+      poly(g, [[36, -15], [44, -11], [48, -4], [46, -1], [41, -2], [37, -8]], H[2]);
+      poly(g, [[44, -8], [48, -4], [46, -1], [43, -3]], H[1]);
+      R(g, 39, -11, 2, 2, hoof); R(g, 39, -11, 1, 1, '#c8b8a0');
+      poly(g, [[36, -16], [37, -21 + (f === 2 ? 1 : 0)], [39, -16]], H[1]);
+      // the mane along the neck and the tail
+      for (let k = 0; k < 5; k++) R(g, 30 + k * 1.4, -1 - k * 2.6, 2, 3, H[0]);
+      line(g, -4, 2, -7, 12 + (f === 2 ? 1 : 0), H[0], 3); line(g, -6, 10, -6, 17, H[0], 2);
+      // the pack saddle on a blanket, two straw bundles roped either side
+      R(g, 4, -2, 22, 4, '#7a3a2e'); R(g, 4, -2, 22, 1, '#9a5a4a');
+      R(g, 6, -8, 18, 6, ST[2]); R(g, 6, -8, 18, 2, ST[3]); R(g, 6, -3, 18, 1, ST[0]);
+      for (const bx of [-1, 21]) { R(g, bx, -4, 10, 13, ST[2]); R(g, bx, -4, 10, 2, ST[3]); R(g, bx + 9, -4, 1, 13, ST[0]); R(g, bx, 3, 10, 1, ST[0]); }
+      line(g, 15, -8, 15, 12, '#5a4a30', 1);
     },
   });
   // A fog bank (霧): a wall of white over the edge of the road, drifting; nothing to see through it.

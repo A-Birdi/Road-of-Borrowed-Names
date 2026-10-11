@@ -1,7 +1,7 @@
 /* East Landing's props (expansion P11d): silt banked up in the old channel (a pale sand bar over the water, gone once
- * the channel is dug) and a broken run of jetty planks (blocking, until the jetty is mended). A flat 16-px drawing
- * (the fallback, as every prop) and its art-resolution version in the world's prop style. Interim regional assets
- * under AC-1 (C-82): finished in the art pass (P16). */
+ * the channel is dug) and a broken run of jetty planks (blocking, until the jetty is mended). A flat 16-px drawing (the
+ * fallback, as every prop) and its art-resolution version in the world's prop style. Regional assets under AC-1 (C-82),
+ * reviewed in the art pass (P16d; implemented provisionally, internally reviewed): kept as drawn. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

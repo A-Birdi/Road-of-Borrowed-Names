@@ -974,6 +974,8 @@ RB.battlers = (function () {
           const fc = flat(look.glassCol || '#4a3e48', { max: 2 });
           K.C(H([hr[0] * 0.7, 0.4, hr[2] * 0.82]), H([hr[0] * 1.05, 0.3, -0.3]), 0.55, 0.55, fc, GRP.acc);
           K.C(H([hr[0] * 0.34, 0.1, hr[2] * 1.06]), H([hr[0] * 0.72, 0.4, hr[2] * 0.84]), 0.55, 0.55, fc, GRP.acc);
+          // a spectacle chain (a keepsake's): from each arm's end down and round behind the neck
+          if (look.glassChainCol) { const cc = flat(look.glassChainCol, { max: 2 }); for (const sx of [1, -1]) chain([H([sx * hr[0] * 1.06, 0.2, -0.4]), H([sx * hr[0] * 1.02, -hr[1] * 0.55, -hr[2] * 0.8]), H([sx * hr[0] * 0.55, -hr[1] * 1.0, -hr[2] * 1.12]), H([0, -hr[1] * 1.08, -hr[2] * 1.18])], 0.75, 0.75, cc); }
           break;
         }
         case 'headband': {

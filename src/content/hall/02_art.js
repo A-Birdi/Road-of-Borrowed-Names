@@ -1,13 +1,13 @@
 /* The Hall of a Hundred Tales: its props (expansion P15). A sacred rope between two posts that closes a floor's way on
- * until every trial on it is done (しめ縄: it blocks; gone once the floor is cleared); the paper floor lantern (行灯)
- * that each trial lights (dark, or lit); the paper screen at the back of each alcove through which a wing is entered
- * (dark, or glowing once the wing's hearth has been reached); a four-armed wooden signpost (道しるべ); and a closed
- * oiled-paper umbrella (番傘) leaning in a little wooden stand, lent and left behind (wing 2); a small stone Jizō with a
- * red bib by the path, and an incense clock (香時計), a lacquered tray of ash with a line of incense burning along
- * its marked hours, showing how far the night has gone (wing 3). Each has a
- * flat 16-px drawing (the fallback, as every prop) and its art-resolution version in the world's prop style (light from
- * the upper left, an ink outline on what can be looked at, a soft contact shadow). Interim assets under AC-1 (C-82):
- * finished in the art pass (P16). */
+ * until every trial on it is done (しめ縄: it blocks; gone once the floor is cleared); the paper floor lantern (行灯) that
+ * each trial lights (dark, or lit); the paper screen at the back of each alcove through which a wing is entered (dark,
+ * or glowing once the wing's hearth has been reached); a four-armed wooden signpost (道しるべ); and a closed oiled-paper
+ * umbrella (番傘) leaning in a little wooden stand, lent and left behind (wing 2); a small stone Jizō with a red bib by
+ * the path, and an incense clock (香時計), a lacquered tray of ash with a line of incense burning along its marked hours,
+ * showing how far the night has gone (wing 3). Each has a flat 16-px drawing (the fallback, as every prop) and its
+ * art-resolution version in the world's prop style (light from the upper left, an ink outline on what can be looked at,
+ * a soft contact shadow). Regional assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally,
+ * internally reviewed): kept as drawn. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

@@ -1,8 +1,8 @@
-/* The sea's props (expansion P11b): the mark off Saltglass point that a sea trial rounds, a float banded red and
- * white with a short pole and a pennant, riding the swell (still with reduced motion). A flat 16-px drawing (the
- * fallback, as every prop) and its art-resolution version in the world's prop style (light from the upper left, an
- * ink outline, a soft ring of disturbed water instead of a contact shadow). Interim regional asset under AC-1 (C-82):
- * finished in the art pass (P16). */
+/* The sea's props (expansion P11b): the mark off Saltglass point that a sea trial rounds, a float banded red and white
+ * with a short pole and a pennant, riding the swell (still with reduced motion). A flat 16-px drawing (the fallback, as
+ * every prop) and its art-resolution version in the world's prop style (light from the upper left, an ink outline, a
+ * soft ring of disturbed water instead of a contact shadow). Regional assets under AC-1 (C-82), reviewed in the art
+ * pass (P16d; implemented provisionally, internally reviewed): kept as drawn. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

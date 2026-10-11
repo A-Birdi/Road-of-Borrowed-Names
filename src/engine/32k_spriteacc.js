@@ -133,14 +133,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
           b.px(x + 1, y, hi);
         }
         b.rect(17, y + 2, 6, 1, fc);
+        // a spectacle chain (a keepsake's): from the arms' ends down beside the jaw to the collar
+        if (look.glassChainCol) { const cc = look.glassChainCol, cd = shade(cc, -1); for (const [x, dx] of [[11, 1], [28, -1]]) { for (let j = 0; j < 7; j++) b.px(x, y + 3 + j, j % 2 ? cd : cc); b.px(x + dx, y + 10, cc); b.px(x + dx * 2, y + 11, cd); } }
       } else if (v === 'up') {
         if (L !== 'head') return;
         b.px(9, y + 2, fc); b.px(30, y + 2, fc); // the ends of the arms behind the ears
+        // the chain looping down behind the neck
+        if (look.glassChainCol) { const cc = look.glassChainCol, cd = shade(cc, -1); for (let x = 9; x <= 30; x++) { const u = (x - 19.5) / 10.5; b.px(x, Math.round(y + 3 + 8 * (1 - u * u)), x % 2 ? cd : cc); } }
       } else {
         if (L !== 'face') return;
         b.rect(24, y, 4, 1, fc); b.rect(23, y + 1, 1, 4, fc); b.rect(28, y + 1, 1, 4, fc); b.rect(24, y + 5, 4, 1, fc);
         b.px(24, y, hi);
         b.rect(19, y + 2, 4, 1, fc);
+        // the chain from behind the ear down the neck
+        if (look.glassChainCol) { const cc = look.glassChainCol, cd = shade(cc, -1); for (let j = 0; j < 9; j++) b.px(18 - (j > 5 ? 1 : 0), y + 3 + j, j % 2 ? cd : cc); b.px(16, y + 12, cc); }
       }
     },
     headband(b, look, p, g, v, L) {

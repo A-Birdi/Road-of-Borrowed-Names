@@ -234,6 +234,8 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 .folio.book .entry.followed, .folio.book button.entry.followed[aria-current="true"] { box-shadow: inset 4px 0 0 var(--ribbon); padding-left: 0.9em; }
 .folio.book .entry > .mark { color: var(--ink-3); }
 .folio.book .entry .kind { display: block; font-size: 0.72em; letter-spacing: 0.09em; margin-bottom: 0.2em; }
+/* small capitals run wide: on a narrow page at large text the mark may go to its own line, and break if it must */
+.folio.book .entry .ftag { white-space: normal; overflow-wrap: anywhere; }
 /* each request: its Japanese title, the English title beneath it, then (on one page) its step, quieter */
 .folio.book .entry .t { display: block; }
 .folio.book .entry .t > .jline { font-size: 1.1em; }
@@ -388,13 +390,37 @@ body.book-ui .dlg .who::before {
   content: ""; position: absolute; left: 1px; top: 0.42em; width: 11px; height: 11px; border-radius: 2px; pointer-events: none;
   background: var(--vermilion); box-shadow: inset 0 0 0 1.5px rgba(255, 235, 220, 0.35); transform: rotate(5deg);
 }
+/* Keep sits on the paper too, at the sheet's top right: a quiet mark, not a second tab */
+body.book-ui .dlg-keep {
+  grid-area: sheet; align-self: start; justify-self: end; z-index: 3; margin: 2px 6px 0 0;
+  background: none; border: 1px solid transparent; border-radius: 2px; box-shadow: none;
+}
+body.book-ui .dlg-keep:hover { background: rgba(193, 138, 42, 0.12); }
+body.book-ui .dlg-keep.kept { background: none; box-shadow: inset 0 -3px 0 var(--vermilion); }
+body.book-ui .dlg.has-keep:not(.narration):not(.noname) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 18px), 50px); }
 body.book-ui .dlg .who .nm { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.06em; }
-body.book-ui .dlg:not(.narration):not(.noname) .txt { padding-top: 2.5em; }
+body.book-ui .dlg:not(.narration):not(.noname) .txt { padding-top: calc(var(--who-h, 1.5em) + 18px); }
 body.book-ui .dlg .txt { font-family: var(--type-latin-reading); }
 body.book-ui .dlg .main :lang(ja), body.book-ui .dlg .sub :lang(ja) { font-family: var(--type-jp-body); }
 body.book-ui .dlg.narration .dlg-sheet { background-color: var(--bk-slip); }
 body.book-ui .dlg .ctrl { background: none; border-top: 1px solid rgba(168, 150, 108, 0.5); }
 body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; background: var(--paper-2); }
+/* phones: the sheet runs the full width along the bottom edge; the portrait is a small picture pinned on the paper
+   beside the speaker's name, so nothing of the sheet stands up into the world above it */
+@media (max-width: 599px) {
+  body.book-ui .dlg { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sheet"; }
+  body.book-ui .dlg .portrait {
+    grid-area: sheet; align-self: start; justify-self: start; z-index: 3; margin: 8px 0 0 10px;
+    --por-target: 48px; width: var(--por-size, 48px); height: var(--por-size, 48px); border-width: 3px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  body.book-ui .dlg-tab { margin: 10px 16px 0; }
+  body.book-ui .dlg:not(.noportrait):not(.narration) .dlg-tab { margin-left: 70px; }
+  body.book-ui .dlg-sheet { border-radius: 0; }
+  body.book-ui .dlg:not(.narration):not(.noname) .txt { padding-top: calc(var(--who-h, 1.5em) + 14px); }
+  body.book-ui .dlg.has-keep:not(.narration):not(.noname) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 14px), 50px); }
+  body.book-ui .dlg:not(.noportrait):not(.narration) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 14px), 68px); }
+  body.book-ui .dlg-keep { margin-right: 2px; }
+}
 
 /* ---- flat: the same type and pages, without texture, depth or motion ----------------------------------------- */
 .folio.book.book-flat { animation: bk-fade 140ms backwards; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); background-image: var(--cloth-weave); transform: none; }
@@ -429,8 +455,9 @@ body.high-contrast .folio.book .co-thought::before { color: var(--ink); }
 .folio.book .as-figs canvas[data-dir="face"] { width: 96px; height: 96px; border-radius: 50%; box-shadow: 0 0 0 2px var(--paper-edge), 0 2px 4px rgba(60, 35, 5, 0.2); background: #e8dcc0; }
 .folio.book .as-figs canvas[data-dir="down"], .folio.book .as-figs canvas[data-dir="battle"] { width: auto; height: 116px; }
 .folio.book .as-worn { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
-.folio.book .as-worn li { display: grid; grid-template-columns: minmax(6em, auto) minmax(0, 1fr); gap: 10px; align-items: baseline; }
-.folio.book .as-k { font-size: 0.82em; color: var(--ink-2); }
+.folio.book .as-worn li { display: flex; flex-wrap: wrap; gap: 0 10px; align-items: baseline; }
+.folio.book .as-k { font-size: 0.82em; color: var(--ink-2); flex: 0 0 7.3em; }
+.folio.book .as-v { flex: 1 1 9em; min-width: 0; overflow-wrap: anywhere; } /* on a narrow page (or large text) the value goes below its slot */
 .folio.book .as-v .en { color: var(--ink-2); font-style: italic; }
 
 /* ---- U05: the remaining surfaces in the book's family ---------------------------------------------------------
@@ -465,6 +492,9 @@ body.book-ui .tmenu { background-image: var(--bk-tooth); border-radius: 2px; }
 body.book-ui .tm .lbl { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.05em; }
 body.book-ui .tm .sub { font-family: var(--type-latin-reading); font-style: italic; }
 /* a decision: a sheet with a deckled top; the proposed action in ink, the safe one plain; danger sealed */
+/* the creation slip's summary line runs longer in the book's faces: two lines at most while the slip is compact
+   (Inspect shows it whole) */
+body.book-ui .cr-sheet:not(.expanded) .cr-sub { -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; max-height: 2.6em; overflow: hidden; }
 body.book-ui .csheet { position: relative; border-radius: 2px; border-top-width: 1px; background-image: var(--bk-tooth); padding-top: 22px; }
 body.book-ui .csheet::before {
   content: ""; position: absolute; left: 0; right: 0; top: -5px; height: 6px; pointer-events: none;
@@ -517,4 +547,8 @@ body.book-ui .folio:not(.book) .folio-head h2 { font-family: var(--type-latin-di
 body.book-ui .folio:not(.book) .folio-head h2 :lang(ja), body.book-ui .folio:not(.book) .folio-head h2 .jline { font-family: var(--type-jp-heading); font-variant: normal; letter-spacing: 0.04em; }
 body.book-ui .folio:not(.book) .leaf h3, body.book-ui .folio:not(.book) .leaf .ph { font-family: var(--type-latin-display); }
 body.book-ui .folio:not(.book) .cbtn { font-family: var(--type-ui); }
+/* the book's faces run wider: on a narrow screen at large text a cloth button's label wraps inside the button rather
+   than pushing it past the edge */
+body.book-ui .folio-head > .cbtn, body.book-ui .folio-foot .cbtn { max-width: 100%; flex-shrink: 1; }
+body.book-ui .cbtn > span { min-width: 0; overflow-wrap: anywhere; }
 body.book-flat .folio:not(.book) .leaf, body.high-contrast.book-ui .folio:not(.book) .leaf { background-image: none; }

@@ -14,7 +14,8 @@ export function serve(port = 0) {
   return new Promise((resolve) => {
     const srv = http.createServer((req, res) => {
       let p = decodeURIComponent(req.url.split('?')[0]);
-      if (p === '/') p = '/index.html';
+      // RB_PAGE=zz_dev.html points a run at a scratch build (never committed) while a suite reads index.html
+      if (p === '/') p = '/' + (process.env.RB_PAGE || 'index.html');
       const f = path.join(root, p);
       if (!f.startsWith(root) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); res.end(); return; }
       const type = f.endsWith('.html') ? 'text/html; charset=utf-8' : 'application/octet-stream';

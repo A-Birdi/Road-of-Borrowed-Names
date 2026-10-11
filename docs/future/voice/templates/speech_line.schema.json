@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rbn:speech-line:1",
+  "title": "RBN audition speech line; provider-independent, not an API request",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "lineId",
+    "caseId",
+    "source",
+    "speakerId",
+    "voiceProfile",
+    "language",
+    "dialectVariant",
+    "playerVoiceType",
+    "purpose",
+    "displayText",
+    "spokenText",
+    "translationEn",
+    "delivery",
+    "pronunciationOverrides",
+    "context",
+    "providerExtensions",
+    "production"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": "rbn-speech-line-1"
+    },
+    "lineId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "caseId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "kind",
+        "repository",
+        "commit",
+        "path",
+        "locator",
+        "spoilerLevel"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "game_line",
+            "noncanonical_audition_fixture",
+            "illustrative_fixture"
+          ]
+        },
+        "repository": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locator": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spoilerLevel": {
+          "enum": [
+            "none",
+            "early",
+            "later",
+            "sealed"
+          ]
+        }
+      }
+    },
+    "speakerId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "voiceProfile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "const": "ja-JP"
+    },
+    "dialectVariant": {
+      "type": "string",
+      "minLength": 1
+    },
+    "playerVoiceType": {
+      "enum": [
+        "a",
+        "b",
+        null
+      ]
+    },
+    "purpose": {
+      "enum": [
+        "audition",
+        "narrative",
+        "explicit_readback"
+      ]
+    },
+    "displayText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "spokenText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "translationEn": {
+      "type": "string"
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "intent",
+        "energy",
+        "direction",
+        "pace",
+        "subtext",
+        "beats",
+        "vocalEvents"
+      ],
+      "properties": {
+        "intent": {
+          "type": "string"
+        },
+        "energy": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "string"
+        },
+        "pace": {
+          "type": "string"
+        },
+        "subtext": {
+          "type": "string"
+        },
+        "beats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "anchorText",
+              "instruction"
+            ],
+            "properties": {
+              "anchorText": {
+                "type": "string"
+              },
+              "instruction": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "vocalEvents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "anchorText",
+              "event",
+              "required"
+            ],
+            "properties": {
+              "anchorText": {
+                "type": "string"
+              },
+              "event": {
+                "type": "string"
+              },
+              "required": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "pronunciationOverrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "surface",
+          "readingKana",
+          "reason",
+          "evidence",
+          "reviewStatus"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "surface": {
+            "type": "string"
+          },
+          "readingKana": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reviewStatus": {
+            "enum": [
+              "self_checked",
+              "human_checked",
+              "unverified"
+            ]
+          },
+          "accentAnnotation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "required": [
+        "listener",
+        "situation",
+        "previousLine",
+        "nextLine",
+        "audibleContext"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "listener": {
+          "type": "string"
+        },
+        "situation": {
+          "type": "string"
+        },
+        "previousLine": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nextLine": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "audibleContext": {
+          "const": false
+        }
+      }
+    },
+    "providerExtensions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    },
+    "production": {
+      "type": "object",
+      "required": [
+        "status",
+        "spokenTextSha256",
+        "allowParaphrase",
+        "allowAddedSpeech",
+        "publicationApproved"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "example_only",
+            "prepared",
+            "generated",
+            "qa_failed",
+            "awaiting_robin",
+            "selected"
+          ]
+        },
+        "spokenTextSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "allowParaphrase": {
+          "const": false
+        },
+        "allowAddedSpeech": {
+          "const": false
+        },
+        "publicationApproved": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

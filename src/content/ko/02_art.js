@@ -1,11 +1,11 @@
-/* Kotonoha's props (expansion P11): a drift of written leaves on the sand, a keeper's gathering basket, a stone
- * lantern half-buried in sand (dark or lit), a great conch on its rock, the great camphor's trunk among its roots, an
+/* Kotonoha's props (expansion P11): a drift of written leaves on the sand, a keeper's gathering basket, a stone lantern
+ * half-buried in sand (dark or lit), a great conch on its rock, the great camphor's trunk among its roots, an
  * exhibition panel in the keepers' hall (blank, or showing the telling chosen for it), a rack of drying nets, the tide
- * calendar's standing stone, a tangle of roots across a passage in the Root Hollows, a current of drifting leaves,
- * and (P11f) a moon stone from the calendar's ring and Kihei's letter in its frame.
- * Each has a flat 16-px drawing (the fallback, as every prop) and its art-resolution version in the world's prop style
- * (light from the upper left, hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow).
- * Interim regional assets under AC-1 (C-82): finished in the art pass (P16). */
+ * calendar's standing stone, a tangle of roots across a passage in the Root Hollows, a current of drifting leaves, and
+ * (P11f) a moon stone from the calendar's ring and Kihei's letter in its frame. Each has a flat 16-px drawing (the
+ * fallback, as every prop) and its art-resolution version in the world's prop style (light from the upper left,
+ * hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow). Regional assets under AC-1
+ * (C-82), reviewed in the art pass (P16d; implemented provisionally, internally reviewed): kept as drawn. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

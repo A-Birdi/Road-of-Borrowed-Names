@@ -80,6 +80,8 @@ RB.ui.menu = (function () {
     if (RB.game.mode() !== 'world' && RB.game.mode() !== 'dialogue') return;
     RB.game.pushMode('menu');
     RB.audio && RB.audio.sfx('menu_open');
+    // a book still closing (its inert copy, below) goes at once: there is never more than one Ledger on screen
+    document.querySelectorAll('.folio-scrim.closing').forEach((x) => x.remove());
     if (RB.bookType) RB.bookType.install(); // the book's type, if the idle start hasn't made it yet
     fr = F().frame({ onClose: close, closeLabel: 'Close', book: bookStyle() });
     lastSec = null;

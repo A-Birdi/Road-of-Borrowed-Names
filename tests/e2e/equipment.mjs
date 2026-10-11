@@ -290,7 +290,7 @@ const helpers = (p) => p.evaluate(() => {
   // a keepsake's detail shows how it looks (drawn previews, front/side/back and portrait)
   await p.click('[data-it="lf_ferry_cap"]');
   const pv = await p.evaluate(() => {
-    const cvs = Array.from(document.querySelectorAll('.leaf-b canvas[data-prev]'));
+    const cvs = Array.from(document.querySelectorAll('.leaf-b .wear-prev canvas[data-prev]')); // (the appearance study beside it draws the look as it is)
     const bt = cvs.find((cv) => cv.dataset.dir === 'battle');
     return { n: cvs.length, views: cvs.map((cv) => cv.dataset.dir).join(','), caps: Array.from(document.querySelectorAll('.leaf-b .wp span')).map((x) => x.textContent).join(','),
       drawn: cvs.every((cv) => Array.from(EQT.data(cv)).some((v, i) => i % 4 === 3 && v > 0)), note: document.querySelector('.leaf-b .wear-prev').textContent,

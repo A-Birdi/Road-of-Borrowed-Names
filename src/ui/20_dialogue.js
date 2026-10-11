@@ -51,6 +51,9 @@ RB.ui.dialogue = (function () {
     // a line longer than the sheet: Next first shows the rest, then advances
     box.querySelector('.txt').addEventListener('scroll', syncMore, { passive: true });
     if (typeof ResizeObserver !== 'undefined') new ResizeObserver(syncMore).observe(box.querySelector('.txt'));
+    // the book look sets the speaker's name on the paper: the line starts below it, however the name wraps
+    const tab = box.querySelector('.dlg-tab');
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => box.style.setProperty('--who-h', tab.offsetHeight + 'px')).observe(tab);
     box.querySelector('.b-log').onclick = () => RB.ui.menu.open('log');
     box.querySelector('.b-voice').onclick = () => speak(true);
     box.querySelector('.b-tr').onclick = () => { showSub = !showSub; renderSub(); syncCtrl(); };

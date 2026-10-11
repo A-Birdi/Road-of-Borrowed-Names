@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "rbn-voice-result-1",
+  "status": "template_not_generated",
+  "caseId": null,
+  "configurationId": null,
+  "modelId": null,
+  "modelVersion": null,
+  "voiceId": null,
+  "styleId": null,
+  "lineId": null,
+  "sourceCommit": null,
+  "spokenTextSha256": null,
+  "requestSha256": null,
+  "takeKind": null,
+  "attempt": 0,
+  "audioOriginalPath": null,
+  "audioReviewPath": null,
+  "audioSha256": null,
+  "actualDurationSeconds": null,
+  "generationSeconds": null,
+  "cost": null,
+  "supportedControls": [],
+  "unsupportedControls": [],
+  "postProcessing": [],
+  "lexicalCheck": {
+    "status": "not_checked",
+    "method": null,
+    "issues": []
+  },
+  "listeningReview": {
+    "status": "not_listened",
+    "reviewer": null,
+    "languageQualification": null
+  },
+  "scores": {
+    "pronunciation": null,
+    "prosody": null,
+    "identityFit": null,
+    "delivery": null,
+    "cleanliness": null,
+    "weightedTotal": null
+  },
+  "rightsStatus": "not_checked",
+  "repairOf": null,
+  "repairReason": null,
+  "robinSelection": null
+}

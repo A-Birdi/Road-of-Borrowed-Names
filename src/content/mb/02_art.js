@@ -1,9 +1,9 @@
 /* Manybridge's props (expansion P08): a bridge's name plaque, a canal barge, the lock vault under the lock-keeper's
  * house, the noodle stalls, the porters' canal table and a bricked-up door. Each has a flat 16-px drawing (the
- * fallback, as every prop) and its art-resolution version (draw2) in the world's prop style
- * (src/engine/26–28_*.js): light from the upper left, hue-shifted ramps, an ink outline on what can be looked at,
- * a soft contact shadow, cached sprites. Interim regional assets under AC-1 (C-82): the region's material kit is
- * finished in the game-wide art pass (P16). */
+ * fallback, as every prop) and its art-resolution version (draw2) in the world's prop style (src/engine/26–28_*.js):
+ * light from the upper left, hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow, cached
+ * sprites. Regional assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally, internally
+ * reviewed): the noodle stall's sign made a single brush stroke (it read as a letter). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -159,7 +159,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let k = 0; k < 3; k++) { const sx = 68 + k * 6 + ((f + k) % 3) - 1; R(g, sx, -16 - k * 3, 2, 4, 'rgba(250,248,240,0.55)'); }
       for (let k = 0; k < 3; k++) { ell(g, 22 + k * 3, -1 - k * 3, 8, 2.5, PP[3]); ell(g, 22 + k * 3, -1.5 - k * 3, 7, 1.6, PP[4]); }
       // the sign on a post at the left end
-      post(g, -2, -20, 3, 22, w5); R(g, -6, -30, 12, 14, PP[3]); R(g, -6, -30, 12, 1, PP[4]); R(g, -3, -27, 1, 8, INK[2]); R(g, 1, -27, 1, 8, INK[2]); R(g, -2, -24, 4, 1, INK[2]);
+      post(g, -2, -20, 3, 22, w5); R(g, -6, -30, 12, 14, PP[3]); R(g, -6, -30, 12, 1, PP[4]); R(g, -1, -27, 2, 9, INK[2]); R(g, -4, -26, 2, 2, INK[2]);
     },
   });
 

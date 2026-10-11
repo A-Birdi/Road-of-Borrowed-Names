@@ -210,10 +210,10 @@ RB.harmonyContract = (function () {
     atlas_compass: 'hangs at the hip, below the ink band crop',
     atlas_lamplet: 'hangs at the hip, below the ink band crop',
     bottles: 'companion-only (Mio); carried at the hip, below the crop — her vial is part of her painted frames',
-    lamp: 'companion-only (Ren); held in their painted frames',
+    lamp: 'carried in the hand, below the crop (Ren\'s lamp is in her painted frames)',
     patches: 'companion-only (Ren); part of their painted coat',
     pencil: 'companion-only (Nao); part of their painted frames',
-    beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'not a player option', toolbelt: 'not carried', apronstrap: 'part of the apron',
+    beard: 'not a player option', cane: 'not carried by any party member', basket: 'not carried', book: 'not carried', hood: 'a keepsake (the Kettle\'s Mother\'s hood) not yet painted for this kit: the code-drawn bust draws it; the painted file is on the art register (P16)', toolbelt: 'not carried', apronstrap: 'part of the apron',
   };
   // The accessory files a look needs: [{ acc, file, slot }] in no particular order; unknown → { missing }.
   function accFiles(look) {

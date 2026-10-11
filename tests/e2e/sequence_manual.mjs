@@ -386,7 +386,7 @@ for (const [tag, vp, dpr] of [['1280x720', { width: 1280, height: 720 }, 1], ['3
   await waitSel(p, '[data-co-ref="seq"]', { timeout: 5000 });
   await p.click('[data-co-ref="seq"]');
   await waitSel(p, '.seq-view .slip', { timeout: 5000 });
-  const r0 = await p.evaluate(() => ({ v: RB.sequence.viewState(), cap: document.querySelector('.seq-view .txt').textContent, menu: !!document.querySelector('.folio-scrim, .folio') && !!document.querySelector('.co-page') }));
+  const r0 = await p.evaluate(() => ({ v: RB.sequence.viewState(), cap: document.querySelector('.seq-view .txt').textContent, menu: !!document.querySelector('.folio-scrim:not(.closing) .co-page') }));
   ok(r0.v && r0.v.seq === 'ch2.plate' && r0.v.n === 5 && /registry card/.test(r0.cap) && !r0.menu, 'Watch it again: the folio steps aside and the same beats play again from the first');
   for (let i = 0; i < 4; i++) { await p.waitForFunction(() => RB.sequence.viewState() && RB.sequence.viewState().state !== 'entering'); await p.click('.seq-view [data-a=next]'); }
   const r1 = await p.evaluate(() => ({ v: RB.sequence.viewState(), cap: document.querySelector('.seq-view .txt').textContent }));

@@ -1,9 +1,10 @@
-/* The Keepers' Road's props (expansion P10): the stone lantern (石灯籠) dark or lit, a fallen cedar across the steps,
- * an inscribed stele, the vigil's ledge of wicks, the etoki teller's scroll on its stand, the oil cache's jar and the
+/* The Keepers' Road's props (expansion P10): the stone lantern (石灯籠) dark or lit, a fallen cedar across the steps, an
+ * inscribed stele, the vigil's ledge of wicks, the etoki teller's scroll on its stand, the oil cache's jar and the
  * shuttered hall's roped door. Each has a flat 16-px drawing (the fallback, as every prop) and its art-resolution
- * version in the world's prop style (light from the upper left, hue-shifted ramps, an ink outline on what can be
- * looked at, a soft contact shadow). A lit lantern gives light through the prop's `light` (set on the lit
- * instance). Interim regional assets under AC-1 (C-82): finished in the art pass (P16). */
+ * version in the world's prop style (light from the upper left, hue-shifted ramps, an ink outline on what can be looked
+ * at, a soft contact shadow). A lit lantern gives light through the prop's `light` (set on the lit instance). Regional
+ * assets under AC-1 (C-82), reviewed in the art pass (P16d; implemented provisionally, internally reviewed): kept as
+ * drawn. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

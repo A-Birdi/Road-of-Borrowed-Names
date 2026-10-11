@@ -1,8 +1,9 @@
-/* Manybridge, Chapter 4's props (expansion P09): the printing press, a theatre banner (のぼり), a type case, the
- * trap lift under the stage (せり), the counterweights, and a festival lantern string. Each has a flat 16-px drawing
- * (the fallback, as every prop) and its art-resolution version (draw2) in the world's prop style (light from the
- * upper left, hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow). Interim regional
- * assets under AC-1 (C-82): finished in the art pass (P16). */
+/* Manybridge, Chapter 4's props (expansion P09): the printing press, a theatre banner (のぼり), a type case, the trap lift
+ * under the stage (せり), the counterweights, and a festival lantern string. Each has a flat 16-px drawing (the fallback,
+ * as every prop) and its art-resolution version (draw2) in the world's prop style (light from the upper left,
+ * hue-shifted ramps, an ink outline on what can be looked at, a soft contact shadow). Regional assets under AC-1
+ * (C-82), reviewed in the art pass (P16d; implemented provisionally, internally reviewed): the festival lanterns made
+ * round paper chōchin, the stage lift given its frame, ladder and lit boards. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -119,9 +120,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ink: true,
     draw(g, M, v) {
       const w5 = M.wood;
-      R(g, 0, 0, 64, 64, '#141010');
-      if (v) { R(g, 4, -4, 56, 60, w5[2]); for (let y = 2; y < 56; y += 9) { R(g, 4, y, 56, 1, w5[0]); R(g, 4, y + 1, 56, 1, w5[4]); } }
-      else { R(g, 6, 6, 52, 52, '#0a0808'); for (let y = 12; y < 56; y += 9) R(g, 8, y, 48, 1, '#1e1814'); }
+      // the frame in the stage floor: heavy timbers, lit on their upper and left edges, iron at the corners
+      R(g, 0, 0, 64, 64, w5[1]); R(g, 0, 0, 64, 2, w5[4]); R(g, 0, 0, 2, 64, w5[3]); R(g, 62, 0, 2, 64, w5[0]); R(g, 0, 62, 64, 2, w5[0]);
+      for (const [x, y] of [[0, 0], [56, 0], [0, 56], [56, 56]]) { R(g, x, y, 8, 8, IR[2]); R(g, x, y, 8, 1, IR[4]); R(g, x + 3, y + 3, 2, 2, IR[0]); }
+      if (v) {
+        // raised: the platform's boards stand proud, lit, with a rope rail at the back
+        R(g, 5, -4, 54, 62, w5[2]);
+        for (let y = -2; y < 56; y += 9) { R(g, 5, y, 54, 1, w5[0]); R(g, 5, y + 1, 54, 1, w5[4]); }
+        R(g, 5, -4, 54, 1, w5[4]); R(g, 58, -4, 1, 62, w5[0]);
+        R(g, 5, -6, 54, 1, '#a08a6a');
+      } else {
+        // lowered: a well into the dark, a ladder going down, a faint light far below
+        R(g, 6, 6, 52, 52, '#0a0808');
+        R(g, 6, 6, 52, 6, '#1e1814'); R(g, 6, 6, 4, 52, '#161210');
+        for (let y = 14; y < 56; y += 7) R(g, 24, y, 16, 2, '#3a2c20');
+        R(g, 23, 10, 2, 46, '#2e2218'); R(g, 39, 10, 2, 46, '#2e2218');
+        R(g, 28, 50, 8, 4, '#3a3020');
+      }
       line(g, 2, 2, 2, 62, IR[2], 2); line(g, 62, 2, 62, 62, IR[2], 2);
     },
   });
@@ -145,12 +160,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     f: (t, o) => (o.still || still() ? 0 : Math.floor(t / 500) % 2),
     ink: false,
     draw(g, M, v, f) {
-      line(g, 0, -30, 96, -30, '#3a2e24', 1);
+      // a cord between the posts, sagging a little; on it, round paper lanterns (chōchin): ribbed bodies, lacquered
+      // caps, warm where they are lit, alternately madder and plain paper
+      for (let x = 0; x <= 96; x += 2) R(g, x, -31 + Math.round(Math.sin((x / 96) * Math.PI) * 3), 2, 1, '#3a2e24');
       for (let i = 0; i < 4; i++) {
-        const x = 8 + i * 24, y = -28 + (i % 2 && f ? 1 : 0);
-        R(g, x + 6, y, 1, 3, '#3a2e24');
-        R(g, x, y + 3, 14, 16, v ? GL[3] : PP[2]); R(g, x, y + 3, 14, 2, v ? GL[4] : PP[3]); R(g, x + 13, y + 3, 1, 16, v ? GL[1] : PP[0]);
-        R(g, x + 2, y + 2, 10, 1, '#2a2024'); R(g, x + 2, y + 19, 10, 1, '#2a2024');
+        const cx = 15 + i * 22, y = -28 + Math.round(Math.sin(((cx - 0) / 96) * Math.PI) * 3) + (i % 2 && f ? 1 : 0);
+        const body = v ? (i % 2 ? MADDER : GL) : (i % 2 ? MADDER : PP);
+        R(g, cx - 1, y, 1, 3, '#3a2e24');
+        ell(g, cx, y + 12, 8, 9, body[2]);
+        ell(g, cx - 2, y + 10, 4.5, 5.5, body[3]); ell(g, cx - 3, y + 9, 2, 3, body[4]);
+        for (let k = -6; k <= 6; k += 3) { const hw = Math.round(8 * Math.sqrt(Math.max(0, 1 - (k / 9) ** 2))); R(g, cx - hw, y + 12 + k, hw * 2, 1, body[1]); }
+        R(g, cx - 4, y + 2, 8, 2, '#2a2024'); R(g, cx - 4, y + 2, 8, 1, '#4a3e40');
+        R(g, cx - 4, y + 21, 8, 2, '#2a2024');
+        if (v) { R(g, cx - 1, y + 23, 2, 2, GL[3]); }
       }
     },
   });

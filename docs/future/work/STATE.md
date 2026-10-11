@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-11 (C-81; P02 to P15 done; P16, the art pass, under way).
+**Updated:** 2026-10-11 (C-81; P02 to P16 done; P17, the closure, next).
 
 **Latest explicit authorisation:** Robin, 2026-10-10, after the fidelity study, recorded as **C-81**: "continue your
 World Proof into full Expansion plan at large. Do your best to implement the *entire* expansion plan without consulting
@@ -12,7 +12,8 @@ the playbook's order, one packet at a time, each with tests and evidence; the le
 and logs it in `docs/future/plan/11_CONTRADICTIONS.md` part F. P18 (the full matrix, any release) still waits for
 Robin. The fidelity study is a test, not a standard. **C-82** (the same day): Robin's art amendment AC-1, "only consider it when we're working on more
 art"; digest in `docs/future/plan/AC1_ART.md`, applied from the next art work (each new region's kit, P16). (Earlier: C-78 adopted the playbook's order; C-79 accepted the
-book interface; C-80 the world proof's direction.) Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
+book interface; C-80 the world proof's direction.) **C-83** (2026-10-11): Robin's voice audition VA-1 is queued as the last task, after P17's closure, and does not
+interrupt it (`docs/future/voice/`). Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
 
 **Model and tools:** one implementation model, checked at the start of the work (reported to Robin in the
 conversation, not recorded here by project rule); no second model, no parallel writers. Node 22, the project's
@@ -46,8 +47,9 @@ byte for byte).
 | P13 · Steamhollow, Chapter 11 | **Done.** The valley and its two inns, arrangements and house rules, the baths by pronouns, the Steam Vents and the Kettle Below, the mediation and 全体, Mio's and Suzu's crossroads. Phase end on a clean copy of 4ebac95: unit 46,074/0; browser suites pass; the route reached `yn_done` | [P13_STEAMHOLLOW.md](P13_STEAMHOLLOW.md) |
 | P14 · twelve chapters joined, four epilogues | **Done** (an internal milestone, not a release). The Archive approach drained, the four epilogues and romance moments, the New Game+ farewell per companion; `sa2_ch12`; `archive12` 4/0; the route from `yn_done` reached `ch6_done` (635 visits). The chain from a new journey (XP79) is still to run whole | [P14_INTEGRATION.md](P14_INTEGRATION.md) |
 | P15 · the postgame | **Done.** The Hall of a Hundred Tales (ten wings, Tsuru's last conversation), the nine old guardians, Ashihara Shinden, the returns and companions' beats, the remaining pastimes (shogi's two places, the coast's fishing, the One-Pine Islet). Phase end: `postgame_phase` 161/0; unit 51,426/0 on a clean copy of 3f0841e | [P15_POSTGAME.md](P15_POSTGAME.md) |
-| P16 · the art pass | **Under way.** Done: the census (P16a); the travel volume's 33 missing paintings (P16c, F-141). To do: U05/U06; the interim creatures' own families (P16b); the interim regional kits, the yukata cut and the hood in Harmony (P16d) | [P16_ART.md](P16_ART.md) |
+| P16 · the art pass | **Done** (implemented provisionally, internally reviewed): the census (P16a); the 46 interim creatures' own families and map figures (P16b, F-143); the travel volume's 33 missing paintings (P16c, F-141); the nine regional kits reviewed, the yukata's cut, the hood on the Harmony code bust (P16d, F-144); U05/U06, the book everywhere (P16e, F-142, F-143). Census: 0 interim maps, 0 borrowed creatures, 0 interim plates. Robin's review at completion (XP100) | [P16_ART.md](P16_ART.md) |
 | P17 · closing the registers | Not started | — |
+| VA-1 · the voice audition (C-83) | **Queued last**, after P17; not started. Robin's package is in `docs/future/voice/` (the addendum and its templates); packets VS00–VS07 stop at a listening gallery for Robin, with no whole-game synthesis or final cast | — |
 
 **Pending Robin gates:** none until the end (C-81). Robin will review the whole expansion at completion, the
 fidelity study included.

@@ -42,6 +42,7 @@ RB.portraits = (function () {
       scarfCol: look.scarfCol, ribbonCol: look.ribbonCol, hatCol: look.hatCol, wrapCol: look.wrapCol, hoodCol: look.hoodCol,
       bandCol: look.bandCol, flowerCol: look.flowerCol, capeCol: look.capeCol, sashCol: look.sashCol,
       earCol: look.earCol, capCol: look.capCol, leafCol: look.leafCol, scarfStripe: look.scarfStripe, bellCol: look.bellCol, cordCol: look.cordCol,
+      glassCol: look.glassCol, glassChainCol: look.glassChainCol,
     };
   }
   const EXPR_ALIAS = { surprised: 'surprise', thinking: 'think', happy: 'smile', neutral: 'neutral' };
@@ -490,6 +491,11 @@ RB.portraits = (function () {
   // glint: 0…3 a light crossing the lenses, or null for the resting highlight }.
   function glasses(b, p, C, g) {
     const fc = p.glassCol || '#2e2a30', dy = (g && g.dy) || 0;
+    // a spectacle chain (a keepsake's): from the arms' ends down beside the jaw and out of the frame at the collar
+    if (p.glassChainCol) {
+      const cc = p.glassChainCol, cd = mix(cc, '#2a2024', 0.4);
+      for (const [x0, dir] of [[28, -1], [66, 1]]) for (let j = 0; j < 44; j++) { const x = Math.round(x0 + dir * Math.sin(j / 44 * Math.PI) * 3 + (j > 30 ? dir * (j - 30) * 0.4 : 0)); b.px(x, 43 + dy + j, j % 3 === 2 ? cd : cc); }
+    }
     const top = mix(fc, C.sk[1], 0.45);
     for (const cx of [37, 59]) {
       const y = 39 + dy;
