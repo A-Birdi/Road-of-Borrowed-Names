@@ -1,7 +1,8 @@
-/* The development switch for the twelve-chapter edition (expansion S4; the lead's decision F-01 under C-81).
- * Until the release, new journeys are six-chapter; this setting lets new journeys begin in the twelve-chapter edition
- * while it is being built, so it can be played and reviewed. It changes nothing about a journey already begun: every
- * save keeps its own edition. (Device setting `edition`: 6 | 12; `?edition=12` on the address does the same.) */
+/* The development switch for the twelve-chapter edition (expansion S4; the lead's decision F-01 under C-81), used
+ * while the edition was being built: new journeys were six-chapter unless it was on. Since the edition shipped (C-84)
+ * the row is not shown (new journeys are twelve-chapter); it returns only in a build with `RB.edition._ship(false)`.
+ * It never changed a journey already begun: every save keeps its own edition. (Device setting `edition`: 6 | 12;
+ * `?edition=12` on the address does the same.) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {

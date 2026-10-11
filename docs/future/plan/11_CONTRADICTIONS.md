@@ -513,6 +513,28 @@ committed).
   - *Devices.* No Windows machine and no Firefox are available to automation here; both are recorded as missing or
     untested, never inferred.
 
+### C-84 · The twelve-chapter edition ships in the build (C-54 applies)
+**Decided** (2026-10-11). Robin, before the voice work: "ensure the new additions are all updated to the live build for
+the expansion plan. The voice addendum is meant to be completely afterward." Asked what "the live build" should mean
+for the edition (every addition was already in `index.html`, but new journeys began six-chapter unless the development
+switch was on), Robin chose **"Fully ship it (C-54 applies)"** over keeping it behind the setting or making it the
+default while leaving old saves alone.
+- **New journeys are twelve-chapter** (`RB.edition` `SHIPPED`, the release step of playbook A04); the development
+  switch ("Edition for new journeys", `?edition=12`) is gone from Settings, since there is nothing left to switch.
+- **An edition-1 save is an old one (C-54, S4).** Its slot in the Inn Ledger says "From the six-chapter edition".
+  Continue or Load on it first explains that the journey begins again as New Game+: a fresh start without satchel
+  equipment or items; what comes along (settings, the learning record and stars, stamps and seals, the illustrations
+  witnessed, pastime records, noted words and kept sentences; the traveller's name, pronouns and look). **"Not now"
+  (the safe answer, focused first) leaves the save byte for byte as it was:** it is read, never claimed or written.
+- **"Begin New Game+"** goes through the one carryover (K9) and the slot choice of C-66: its own slot (replacing it,
+  after a confirmation) or another (an occupied one erased only after its own confirmation); the farewell is that
+  journey's companion's, or the solo one when no companion was chosen yet. The Inn Ledger's New Game+ plays the same
+  farewell for a finished six-chapter journey.
+- **Robin's own six-chapter campaign:** nothing changes in the browser's saves when the new build opens; continuing
+  that journey now offers New Game+ (Robin's C-02 and C-54), and "Not now" keeps it exactly as it is.
+- **Unchanged:** P18's final matrix (F/E/I/A × four companions) and any publication, deployment or merge still wait for
+  Robin's word; "the live build" is the game file on the task branch. VA-1 (C-83) starts only after P17.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -636,6 +658,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | The whole expansion | Authorised without consulting (P02 to P17); the lead decides open details and records them; the fidelity study is a test, not the standard; Robin reviews at the end | C-81 |
 | Art work | The AC-1 amendment governs art work only: internal evidence-backed decisions, the Mill as an experiment, camera for play, the AC-A01–A20 checklist; libraries and release still under Robin's standing rules | C-82 |
 | The voice audition | VA-1, the last queued task after P17: seven providers auditioned, a listening gallery for Robin, no whole-game synthesis or final cast until Robin chooses; the game stays complete offline, voice files optional | C-83 |
+| The twelve-chapter edition | Shipped in the build: new journeys are twelve-chapter; an old six-chapter save explains its fresh start first and begins New Game+ only if accepted ("Not now" leaves it byte for byte); P18's matrix and any publication still wait | C-84 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

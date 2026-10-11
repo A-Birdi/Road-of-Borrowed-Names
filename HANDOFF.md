@@ -218,9 +218,9 @@
     standard (Robin will give feedback later). P02 to P17 are to be built in the playbook's order without consulting
     Robin; the lead decides what the plan leaves open and logs it in docs/future/plan/11_CONTRADICTIONS.md part F;
     Robin reviews it all at completion. **C-82:** Robin's art amendment AC-1 applies to art work only
-    (digest: docs/future/plan/AC1_ART.md). P18 (the full matrix, any release) still waits for Robin. The twelve-chapter
-    edition stays behind its development switch (Settings › Edition for new journeys, or `?edition=12`) until the
-    release, so Robin's saves are never changed. **P02 (foundations), P03 (learning evidence, task families,
+    (digest: docs/future/plan/AC1_ART.md). P18 (the full matrix, any release) still waits for Robin. **C-84 (Robin, 2026-10-11): the twelve-chapter edition ships in the build**: new journeys are twelve-chapter;
+    an old six-chapter save explains its fresh start first and begins New Game+ only if accepted ("Not now" leaves it
+    byte for byte); the development switch is gone. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
     (a hatch there, twelve-chapter journeys after Chapter 2), are done, as are the Atlas's commissions (a board in the Lantern Hall), delvers (people from the journey

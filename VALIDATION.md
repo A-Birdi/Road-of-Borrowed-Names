@@ -4297,6 +4297,22 @@ step and the inn downstairs a moment later; with the fix (after its 260 ms the h
 step to land, so an exit then shows as the transition that `idle()` already waits for) it reports the inn at once
 at 0, 400 and 900 ms. The game itself never refused the step.
 
+**The twelve-chapter edition ships in the build (Robin's C-84).** `RB.edition` is shipped: new journeys are
+twelve-chapter, and the Settings row "Edition for new journeys" is gone. The old-save path C-54 and S4 describe was
+planned but had no caller until now (the check `isOld` existed; nothing used it while the edition was unshipped):
+`RB.game.loadCampaign` now reads an edition-1 save without claiming or writing it and hands it to
+`RB.ui.ngplus.fromOld`, which explains the fresh start (safe answer "Not now", focused first) and, if accepted, runs
+the existing New Game+ slot choice, confirmation, farewell and carryover; the Inn Ledger marks such a slot "From the
+six-chapter edition", and its own New Game+ plays an old journey's farewell too. New browser test
+`tests/e2e/old_saves.mjs` (in the default run), with the campaign fixtures (an edition-1 journey at Chapter 2 with Ren;
+the same before a companion was chosen; a finished one): **4/4**: a new journey is twelve-chapter and Settings has no
+edition row; the slot is marked; Continue explains first; "Not now" returns to the title with every record in the
+game's database identical, as text, to before; accepting in its own slot asks first, Ren's farewell plays, and the new
+journey is edition 2, New Game+ 1, from the start, the traveller and learning record carried, nothing else; from
+before a companion, the solo farewell plays into slot 2 and slot 1 stays exactly as it was. Unit `foundations` 67/0
+and `fixtures_campaign` 573/0, updated for the shipped default (each still checks the pre-ship state with
+`_ship(false)`). The whole unit suite on the shipped default: **51,943 passed, 0 failed**.
+
 **Robin's report: the letters' answers in order (fixed).** Robin: picking who each letter is for, "the answers are
 basically all ordered top to bottom - letter 1 is option 1, letter 2 is option 2". The letters activity
 (`src/ui/75_activities.js`, used by Reedwake's soaked letters, Saltglass's letters without addresses, the Cinder

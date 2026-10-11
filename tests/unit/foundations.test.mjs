@@ -12,8 +12,12 @@ export default async (t) => {
   {
     const s = RB.state.newCampaign();
     t.eq(s.edition, 1, 'a campaign is six-chapter unless told otherwise');
-    t.eq(E.forNew(), 1, 'without the development switch, new journeys are six-chapter (the edition ships at the release)');
-    t.ok(!E.shipped() && !E.isOld(s), 'until it ships, no save is an "old edition" save');
+    // shipped (C-84): new journeys are twelve-chapter and an edition-1 campaign is an old one; before (_ship(false)),
+    // new journeys were six-chapter without the development switch and no save was old
+    t.ok(E.shipped() && E.forNew() === 2 && E.isOld(s), 'shipped: new journeys are twelve-chapter; an edition-1 campaign is an "old edition" one');
+    E._ship(false);
+    t.ok(E.forNew() === 1 && !E.isOld(s), 'before it shipped: new journeys six-chapter (without the switch), no save old');
+    E._ship(true);
     RB.edition.setChapter(s, '3');
     t.ok(s.chapter === 3 && s.chapterKey === 'co' && E.number(s) === 3, 'edition 1: Cinder Orchard is Chapter 3, as it always was');
     s.edition = 2;
@@ -28,9 +32,7 @@ export default async (t) => {
     t.ok(RB.state.test(old, 'chap=lf') && !RB.state.test(old, 'ed>=2'), 'edition 1 at Chapter 5 is at Lanternfall');
     t.eq(E.ORDER.length, 12, 'twelve chapters');
     for (const k of E.ORDER) t.ok(E.TITLES[k] && E.TITLES[k].en && E.DONE[k], 'chapter ' + k + ' has a title and a done flag');
-    E._ship(true);
-    t.ok(E.isOld(old) && E.forNew() === 2 && !E.isOld(s), 'once shipped: edition-1 saves are old, new journeys twelve-chapter');
-    E._ship(false);
+    t.ok(E.isOld(old) && E.forNew() === 2 && !E.isOld(s), 'shipped: edition-1 saves are old, new journeys twelve-chapter');
   }
 
   // ---- an older save on load: empty records, edition 1, nothing else touched --------------------------------------
@@ -154,6 +156,6 @@ export default async (t) => {
     t.ok(!n.words.length && !Object.keys(n.inv).length && !n.equip.cosmetic && !n.atlas.cosmetics.length, 'never: story words, items, keepsakes worn, Atlas cosmetics');
     t.ok(!Object.keys(n.company.bond).length && !n.company.pet && !Object.keys(n.discovery.keepsakes).length && !Object.keys(n.discovery.known).length && !Object.keys(n.creatures).length, 'never: Bond, the pet, keepsakes, Known details, creatures met');
     t.ok(s.comp === 'ren' && s.flags.postgame && s.inv.rw_ribbon === 1, 'the origin is not touched');
-    t.eq(n.edition, 1, 'the new journey takes the build\'s edition for new journeys');
+    t.eq(n.edition, 2, 'the new journey takes the build\'s edition for new journeys (twelve chapters since C-84)');
   }
 };

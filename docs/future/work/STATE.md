@@ -3,7 +3,7 @@
 *The expansion's work state (playbook template, adapted). HANDOFF.md stays the project's front door; this file is
 the short, current answer to "where exactly are we?" for the authorised packets. Update it at every checkpoint.*
 
-**Updated:** 2026-10-11 (C-81; P02 to P16 done; P17, the closure, next).
+**Updated:** 2026-10-11 (C-81; P02 to P16 done; the edition shipped, C-84; P17, the closure, under way; VA-1 after it).
 
 **Latest explicit authorisation:** Robin, 2026-10-10, after the fidelity study, recorded as **C-81**: "continue your
 World Proof into full Expansion plan at large. Do your best to implement the *entire* expansion plan without consulting
@@ -13,7 +13,9 @@ and logs it in `docs/future/plan/11_CONTRADICTIONS.md` part F. P18 (the full mat
 Robin. The fidelity study is a test, not a standard. **C-82** (the same day): Robin's art amendment AC-1, "only consider it when we're working on more
 art"; digest in `docs/future/plan/AC1_ART.md`, applied from the next art work (each new region's kit, P16). (Earlier: C-78 adopted the playbook's order; C-79 accepted the
 book interface; C-80 the world proof's direction.) **C-83** (2026-10-11): Robin's voice audition VA-1 is queued as the last task, after P17's closure, and does not
-interrupt it (`docs/future/voice/`). Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
+interrupt it (`docs/future/voice/`). **C-84** (2026-10-11): the twelve-chapter edition ships in the build (Robin: "Fully ship it (C-54
+applies)"): new journeys are twelve-chapter; an old six-chapter save explains its fresh start and begins New Game+ only
+if accepted. Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
 
 **Model and tools:** one implementation model, checked at the start of the work (reported to Robin in the
 conversation, not recorded here by project rule); no second model, no parallel writers. Node 22, the project's

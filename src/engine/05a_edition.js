@@ -5,10 +5,11 @@
  * `s.chapter` keep their meaning, so no existing scene changes: the new chapters are told apart by a chapter key
  * (`s.chapterKey`), and the number a player sees comes from the story order below.
  *
- * Until the release (A04; P18), the build Robin plays stays six-chapter: new journeys are edition 1 unless the
- * development switch is on (Settings, "Edition for new journeys", or `?edition=12`), and saves are never converted
- * (lead's decisions F-01, F-02). The edition-1 notice of C-54 (an old save begins New Game+) applies only once the
- * edition ships (`SHIPPED`).
+ * Shipped (Robin, 2026-10-11, C-84: "Fully ship it (C-54 applies)"): new journeys are twelve-chapter, and an edition-1
+ * save is recognised as old: continuing or loading it first explains that the journey begins again as New Game+
+ * (C-54; src/ui/66d_ngplus.js `fromOld`), and nothing in it changes unless the player accepts. Saves are never
+ * converted in place (F-02). Before C-84 the build stayed six-chapter behind a development switch (F-01); `_ship(false)`
+ * still gives that state to tests of the edition-1 paths.
  *
  * Conditions: `ed>=2` (the campaign's edition), `chap>=mb1` / `chap=kr` (the story's position in the twelve-chapter
  * order; an edition-1 campaign is placed by its old chapter number). */
@@ -17,8 +18,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.edition = (function () {
   'use strict';
   const SIX = 1, TWELVE = 2;
-  // The twelve-chapter edition becomes the default for new journeys only at the release (playbook A04).
-  let SHIPPED = false;
+  // The twelve-chapter edition is the default for new journeys (C-84; it was the release step of playbook A04).
+  let SHIPPED = true;
   // story order of the twelve chapters, by key (playbook §02)
   const ORDER = ['rw', 'sg', 'mb1', 'mb2', 'co', 'sb', 'kr', 'lf', 'ko', 'cr', 'yn', 'sa'];
   // the six-chapter edition's numbers, and the key each one keeps in the twelve

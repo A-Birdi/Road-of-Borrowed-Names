@@ -255,6 +255,14 @@ RB.game = (function () {
       try { const ls = await RB.save.list(); if (ls[slot - 1] && ls[slot - 1].suspendNewer) { which = 'suspend'; resumed = true; } } catch (e) { /* the save as asked */ }
     }
     try { r = await RB.save.read(slot, which); } catch (err) { keepJourney(); throw err; }
+    // a journey from the six-chapter edition, now that the twelve-chapter one has shipped (C-54, C-84): it cannot
+    // continue, so loading it explains the fresh start first and offers New Game+ from it; until the player accepts,
+    // nothing is written (the save is read, never claimed or changed)
+    if (RB.edition && RB.edition.isOld(r.state) && RB.ui && RB.ui.ngplus && RB.ui.ngplus.fromOld) {
+      const began = await RB.ui.ngplus.fromOld(r.state, slot);
+      if (!began) keepJourney();
+      return began;
+    }
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
       const c = await RB.ui.confirm(

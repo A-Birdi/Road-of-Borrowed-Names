@@ -28,7 +28,9 @@ export default async (t) => {
     const was = JSON.parse(before);
     for (const k of Object.keys(was)) t.eq(JSON.stringify(back[k]), JSON.stringify(was[k]), f + ': ' + k + ' is exactly as it was');
     t.eq(E.number(m), was.chapter, f + ': it still shows as Chapter ' + was.chapter);
-    t.ok(!E.isOld(m), f + ': until the edition ships it is an ordinary save');
+    E._ship(false);
+    t.ok(!E.isOld(m), f + ': before the edition shipped it was an ordinary save');
+    E._ship(true);
     t.eq(JSON.stringify(RB.save.migrate(JSON.parse(JSON.stringify(m)))), JSON.stringify(m), f + ': loading it again changes nothing');
     // the save as it was written loads unchanged too: records added since are only added, empty
     const cur = RB.save.migrate(JSON.parse(JSON.stringify(saved)));
@@ -47,6 +49,6 @@ export default async (t) => {
         t.eq(JSON.stringify(n.learn.items), JSON.stringify(m.learn.items), f + ': and carries the learning record unchanged');
         t.ok(m.flags.postgame && m.chapter === was.chapter, f + ': the finished save itself is not touched');
       }
-    } finally { E._ship(false); }
+    } finally { E._ship(true); }
   }
 };

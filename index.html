@@ -22306,10 +22306,11 @@ RB.state = (function () {
  * `s.chapter` keep their meaning, so no existing scene changes: the new chapters are told apart by a chapter key
  * (`s.chapterKey`), and the number a player sees comes from the story order below.
  *
- * Until the release (A04; P18), the build Robin plays stays six-chapter: new journeys are edition 1 unless the
- * development switch is on (Settings, "Edition for new journeys", or `?edition=12`), and saves are never converted
- * (lead's decisions F-01, F-02). The edition-1 notice of C-54 (an old save begins New Game+) applies only once the
- * edition ships (`SHIPPED`).
+ * Shipped (Robin, 2026-10-11, C-84: "Fully ship it (C-54 applies)"): new journeys are twelve-chapter, and an edition-1
+ * save is recognised as old: continuing or loading it first explains that the journey begins again as New Game+
+ * (C-54; src/ui/66d_ngplus.js `fromOld`), and nothing in it changes unless the player accepts. Saves are never
+ * converted in place (F-02). Before C-84 the build stayed six-chapter behind a development switch (F-01); `_ship(false)`
+ * still gives that state to tests of the edition-1 paths.
  *
  * Conditions: `ed>=2` (the campaign's edition), `chap>=mb1` / `chap=kr` (the story's position in the twelve-chapter
  * order; an edition-1 campaign is placed by its old chapter number). */
@@ -22318,8 +22319,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.edition = (function () {
   'use strict';
   const SIX = 1, TWELVE = 2;
-  // The twelve-chapter edition becomes the default for new journeys only at the release (playbook A04).
-  let SHIPPED = false;
+  // The twelve-chapter edition is the default for new journeys (C-84; it was the release step of playbook A04).
+  let SHIPPED = true;
   // story order of the twelve chapters, by key (playbook §02)
   const ORDER = ['rw', 'sg', 'mb1', 'mb2', 'co', 'sb', 'kr', 'lf', 'ko', 'cr', 'yn', 'sa'];
   // the six-chapter edition's numbers, and the key each one keeps in the twelve
@@ -57350,6 +57351,14 @@ RB.game = (function () {
       try { const ls = await RB.save.list(); if (ls[slot - 1] && ls[slot - 1].suspendNewer) { which = 'suspend'; resumed = true; } } catch (e) { /* the save as asked */ }
     }
     try { r = await RB.save.read(slot, which); } catch (err) { keepJourney(); throw err; }
+    // a journey from the six-chapter edition, now that the twelve-chapter one has shipped (C-54, C-84): it cannot
+    // continue, so loading it explains the fresh start first and offers New Game+ from it; until the player accepts,
+    // nothing is written (the save is read, never claimed or changed)
+    if (RB.edition && RB.edition.isOld(r.state) && RB.ui && RB.ui.ngplus && RB.ui.ngplus.fromOld) {
+      const began = await RB.ui.ngplus.fromOld(r.state, slot);
+      if (!began) keepJourney();
+      return began;
+    }
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
       const c = await RB.ui.confirm(
@@ -65073,6 +65082,7 @@ RB.ui.title = (function () {
         '<p class="rec-meta">' + esc(played(m.playtime)) + ' · ' + (s.manual ? 'saved ' + esc(fmtDate(m.savedAt)) : 'autosave only, ' + esc(fmtDate(s.auto && s.auto.savedAt))) + '</p>';
       if (s.autoNewer && s.manual) notes.push('<p class="rec-note">' + I('side') + ' Newer autosave: ' + esc(fmtDate(s.auto.savedAt)) + '</p>');
       if (s.suspendNewer) notes.push('<p class="rec-note">' + I('side') + ' Suspended in the Hall of a Hundred Tales (' + esc(fmtDate(s.suspend.savedAt)) + '): loading resumes there.</p>');
+      if (RB.edition && RB.edition.isOldMeta(m)) notes.push('<p class="rec-note old">' + I('side') + ' From the six-chapter edition: loading it begins New Game+ (your records and illustrations come with you).</p>');
       if (current && cur.readOnly) notes.push('<p class="rec-note warn">' + I('warn') + ' Read-only in this tab: another tab owns this journey. Save to another slot instead.</p>');
     }
     const kind = '<p class="kind">Slot ' + n + (m && m.chapter && !s.empty && !s.corrupt ? ' · Chapter ' + m.chapter : '') + (m && m.post && !s.corrupt ? ' · after the story' : '') +
@@ -66071,8 +66081,9 @@ RB.ui.create = (function () {
     RB.game.setBase('create');
     const from = await offerCarryover();
     if (from) {
-      // the ending journey's companion says goodbye (C-66; twelve-chapter journeys, F-21)
-      if (RB.ui.ngplus && RB.recordsUI && RB.recordsUI.inCampaign(from)) await RB.ui.ngplus.farewell(from);
+      // the ending journey's companion says goodbye (C-66; twelve-chapter journeys, F-21, and since C-84 a journey from
+      // the six-chapter edition too, with the solo farewell if no companion was chosen)
+      if (RB.ui.ngplus && RB.recordsUI && (RB.recordsUI.inCampaign(from) || (RB.edition && RB.edition.isOld(from)))) await RB.ui.ngplus.farewell(from);
       const s = carry(from);
       RB.render.setOverride(null);
       await RB.game.startNewCampaign(slot, s);
@@ -79677,10 +79688,11 @@ RB.ui.settings = (function () {
 
 
 /* ==== src/ui/55e_edition.js ==== */
-/* The development switch for the twelve-chapter edition (expansion S4; the lead's decision F-01 under C-81).
- * Until the release, new journeys are six-chapter; this setting lets new journeys begin in the twelve-chapter edition
- * while it is being built, so it can be played and reviewed. It changes nothing about a journey already begun: every
- * save keeps its own edition. (Device setting `edition`: 6 | 12; `?edition=12` on the address does the same.) */
+/* The development switch for the twelve-chapter edition (expansion S4; the lead's decision F-01 under C-81), used
+ * while the edition was being built: new journeys were six-chapter unless it was on. Since the edition shipped (C-84)
+ * the row is not shown (new journeys are twelve-chapter); it returns only in a build with `RB.edition._ship(false)`.
+ * It never changed a journey already begun: every save keeps its own edition. (Device setting `edition`: 6 | 12;
+ * `?edition=12` on the address does the same.) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 (function () {
@@ -85099,7 +85111,9 @@ RB.ui.records = (function () {
  * own (the finished story leaves the slot) or another (erasing what it held, after its own confirmation; an empty
  * one asks nothing). Whichever you choose, the farewell is the ending journey's companion's (C-66), and it is only
  * spoken: nothing in the ending journey changes. The Inn Ledger's New Game+ (src/ui/40_create.js) plays the same
- * farewell. */
+ * farewell. A journey from the six-chapter edition, loaded once the twelve-chapter one shipped (C-54, C-84), comes
+ * here too (`fromOld`): the fresh start is explained first, and it is begun the same way, with that journey's own
+ * farewell (the solo one if no companion was chosen yet). */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.ui.ngplus = (function () {
@@ -85120,7 +85134,8 @@ RB.ui.ngplus = (function () {
     finally { RB.ui.dialogue.hide(); RB.game.popMode('dialogue'); RB.game.s = keep; }
   }
   // which slot: [{ slot, label, origin, empty }] → the chosen slot, or null
-  function chooseSlot(list, origin) {
+  function chooseSlot(list, origin, o) {
+    o = o || {};
     return new Promise((resolve) => {
       let close = null;
       const fr = RB.ui.folio.frame({ cls: 'folio-ngplus', onClose: () => close(null) });
@@ -85128,7 +85143,7 @@ RB.ui.ngplus = (function () {
       fr.box.innerHTML = '<section class="leaf cr-ngplus"><p id="ngp-d">The new journey carries your learning record and stars, stamps and seals, the illustrations you witnessed, your pastime records, noted words, kept sentences and your traveller as they are. Story, companion, quests and items start fresh.</p><ul class="ng-list">' +
         list.map((x) => {
           const m = x.meta || {};
-          const what = x.empty ? 'Empty' : x.slot === origin ? 'This journey (finished): the new one takes its place' : (m.name || 'A journey') + (m.comp ? ' & ' + m.comp : '') + (m.chapter ? ', Chapter ' + m.chapter : '') + ': erased';
+          const what = x.empty ? 'Empty' : x.slot === origin ? (o.old ? 'This journey (six-chapter edition): the new one takes its place' : 'This journey (finished): the new one takes its place') : (m.name || 'A journey') + (m.comp ? ' & ' + m.comp : '') + (m.chapter ? ', Chapter ' + m.chapter : '') + ': erased';
           return '<li><button type="button" class="ng-opt" data-slot="' + x.slot + '"><span class="mk">' + I(x.empty ? 'journey' : x.slot === origin ? 'lantern' : 'warn') + '</span><span class="t">Slot ' + x.slot + '</span><span class="d">' + esc(what) + '</span></button></li>';
         }).join('') + '</ul></section>';
       const layer = { el: fr.scrim, name: 'ngplus-slot' };
@@ -85138,19 +85153,22 @@ RB.ui.ngplus = (function () {
       RB.ui.pushLayer(layer);
     });
   }
-  // the whole step, from a finished journey `from` (kept in slot `origin`, or none)
-  async function begin(from, origin) {
-    if (!from || !(from.flags && from.flags.postgame)) return false;
+  // the whole step, from a finished journey `from` (kept in slot `origin`, or none); `o.old`: a journey from the
+  // six-chapter edition, finished or not (C-54), which can only go on as New Game+
+  async function begin(from, origin, o) {
+    o = o || {};
+    if (!from || !(o.old || (from.flags && from.flags.postgame))) return false;
     const list = await RB.save.list();
-    const slot = await chooseSlot(list, origin);
+    const slot = await chooseSlot(list, origin, o);
     if (slot == null) return false;
     const x = list[slot - 1];
     if (!x.empty) {
       const msg = slot === origin
-        ? 'The new journey will be kept in slot ' + slot + ' in place of this finished one. What carries goes with you; the finished story itself will no longer be in the slot.'
+        ? (o.old ? 'The new journey will be kept in slot ' + slot + ' in place of this six-chapter one. What carries goes with you; the old journey itself will no longer be in the slot.'
+          : 'The new journey will be kept in slot ' + slot + ' in place of this finished one. What carries goes with you; the finished story itself will no longer be in the slot.')
         : 'Slot ' + slot + ' holds ' + ((x.meta && x.meta.name) ? x.meta.name + '\'s journey' : 'a journey') + '. Starting the new journey there erases it and its autosaves.';
       const r = await RB.ui.confirm(msg, [slot === origin ? 'Begin here' : 'Erase and begin', 'Choose again'], { danger: slot !== origin });
-      if (r !== 0) return begin(from, origin);
+      if (r !== 0) return begin(from, origin, o);
     }
     await farewell(from);
     if (!x.empty) await RB.save.del(slot);
@@ -85158,6 +85176,14 @@ RB.ui.ngplus = (function () {
     if (RB.ui.menu && RB.ui.menu.isOpen && RB.ui.menu.isOpen()) RB.ui.menu.close();
     await RB.game.startNewCampaign(slot, s);
     return true;
+  }
+  // A journey from the six-chapter edition, continued or loaded once the twelve-chapter one has shipped (C-54, C-84):
+  // it says so first; "Not now" leaves the save exactly as it was. Called by RB.game.loadCampaign; true once the new
+  // journey has begun.
+  async function fromOld(from, origin) {
+    const r = await RB.ui.confirm('This journey began in the six-chapter edition. The road now runs through twelve chapters, so it cannot go on from here: it begins again at the start, as New Game+ \u2014 a fresh start, without satchel equipment or items. What comes with you: your settings, your learning record and stars, stamps and seals, the illustrations you witnessed, your pastime records, noted words and kept sentences; your name, pronouns and appearance stay as they are. Nothing in this saved journey changes unless you begin.', ['Begin New Game+\u2026', 'Not now']);
+    if (r !== 0) return false; // "Not now" (the safe answer, focused first; Escape) or closed
+    return begin(from, origin, { old: true });
   }
   // offered once when the story ends (the story settles with the journey finished)
   async function offer(s) {
@@ -85170,7 +85196,7 @@ RB.ui.ngplus = (function () {
     const s = RB.game && RB.game.s;
     if (s && s.flags && s.flags.postgame && !s.flags.ngp_offered && RB.recordsUI.inCampaign(s) && e && e.mode === 'world') setTimeout(() => { if (RB.game.mode() === 'world') offer(s); }, 400);
   });
-  return { farewell, chooseSlot, begin, offer };
+  return { farewell, chooseSlot, begin, offer, fromOld };
 })();
 
 
