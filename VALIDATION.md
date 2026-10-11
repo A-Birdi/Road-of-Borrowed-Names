@@ -4287,6 +4287,19 @@ step and the inn downstairs a moment later; with the fix (after its 260 ms the h
 step to land, so an exit then shows as the transition that `idle()` already waits for) it reports the inn at once
 at 0, 400 and 900 ms. The game itself never refused the step.
 
+**Robin's report: the letters' answers in order (fixed).** Robin: picking who each letter is for, "the answers are
+basically all ordered top to bottom - letter 1 is option 1, letter 2 is option 2". The letters activity
+(`src/ui/75_activities.js`, used by Reedwake's soaked letters, Saltglass's letters without addresses, the Cinder
+Orchard's festival invitations and Snowbell's letters with no names) showed the letters in their written order and
+the recipients in one fixed order; Reedwake's and Snowbell's were written in step, so letter n was always for the
+person in row n. The letters now come in a shuffled order and the recipients are dealt again for each letter, seeded
+by the activity, the letter and the review clock as the challenge's choices are (the order holds while a letter is
+open, so showing its translation does not deal again, and changes from one sitting to the next). New browser test
+`tests/e2e/letters_order.mjs` (all four activities, two sittings each, every letter delivered with the mouse): on the
+build before the fix **0/4** (Reedwake and Snowbell: the right recipient in rows 1, 2, 3… for letters 1, 2, 3…;
+Saltglass and the Orchard: the same list for every letter); on the fixed build **4/4** (for example Reedwake's right
+recipients at rows 1, 5, 5, 4, 3 and then 5, 4, 4, 2, 4 in a second sitting). It is in the default run.
+
 **The complete browser run gathers every functional suite.** Twenty-five of the expansion's own browser suites (the
 world proof and its slice, the living world, actions and performances, the workshop, the records, Distractions and
 the pastimes, the festival's corner and games, the pilot expedition, the Atlas's board, Manybridge's two chapters, the

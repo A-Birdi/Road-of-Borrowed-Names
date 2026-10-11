@@ -116,8 +116,16 @@ RB.activities = (function () {
   function letters(a) {
     return new Promise((resolve) => {
       const P = panel(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en));
-      const list = a.letters.slice();
+      // Authors list letters and recipients in step (letter 1 for the first person, and so on), so neither order may
+      // be shown as written: the letters come in a shuffled order and the recipients are dealt again for each letter.
+      // Seeded by the activity, the letter and the review clock, as the challenge's choices are: the order holds
+      // while a letter is open (showing the translation redraws it) and changes from one sitting to the next.
+      const dealt = (key) => { let turn = 0; try { turn = RB.learn.clock(); } catch (e) { turn = 0; } return RB.util.rng(RB.util.hashStr(key + '#' + turn)); };
+      const list = dealt('letters|' + a.title.en).shuffle(a.letters);
       let i = 0, showEn = showEnDefault(), assisted = false, firstTry = true, mistakes = 0;
+      let recips = [];
+      const deal = () => { recips = dealt('recipients|' + a.title.en + '|' + i + '|' + list[i].to).shuffle(a.recipients); };
+      deal();
       function render() {
         const L = list[i];
         const t = tier(L.text);
@@ -128,7 +136,7 @@ RB.activities = (function () {
         P.body.innerHTML = '<p class="muted small act-lead">' + (lead ? (lead.jp ? RB.ui.jhtml(lead.jp) + ' ' : '') + esc(lead.en) : 'The address is missing. Read the letter: who is it for?') + '</p>' +
           '<article class="letter" aria-label="The letter">' + RB.learnUi.icon('letter') + '<div class="letter-jp">' + RB.ui.jhtml(t.jp) + '</div>' + (showEn ? '<div class="act-en">' + esc(RB.script.enVars(t.en)) + '</div>' : '') + '</article>' +
           (showEn ? '' : '<div class="act-tr">' + trButton() + '</div>') +
-          '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + a.recipients.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +
+          '<h3>' + RB.learnUi.icon('companion') + '<span>Deliver to…</span></h3><ul class="entries recips">' + recips.map((r) => '<li><button class="entry recip" data-to="' + r.id + '"><span class="mark">' + RB.learnUi.icon('here') + '</span><span class="body"><span class="t">' + esc(r.name.en) + ' ' + RB.ui.jhtml(r.name.jp) + '</span><span class="d">' + RB.ui.jhtml(tier(r.desc).jp) + (showEn ? '<span class="en">' + esc(tier(r.desc).en) + '</span>' : '') + '</span></span></button></li>').join('') + '</ul>' +
           '<div class="fbwrap" aria-live="polite"></div>';
         P.foot.innerHTML = '';
       }
@@ -146,7 +154,7 @@ RB.activities = (function () {
           b.classList.add('on');
           fbSet(fb, 'ok', 'Delivered.', why ? (why.jp ? '<div class="fb-jp">' + RB.ui.jhtml(why.jp) + '</div>' : '') + '<div>' + esc(why.en) + '</div>' : '');
           P.foot.innerHTML = '<span class="spacer"></span>' + goBtn('data-next', i < list.length - 1 ? 'Next letter' : 'Done');
-          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else render(); };
+          P.foot.querySelector('[data-next]').onclick = () => { i++; firstTry = true; assisted = false; showEn = showEnDefault(); if (i >= list.length) { RB.ui.popLayer(P.lay); resolve({ ok: true, mistakes }); } else { deal(); render(); } };
           P.body.querySelectorAll('[data-to]').forEach((x) => (x.disabled = true));
           P.foot.querySelector('[data-next]').focus({ preventScroll: true });
         } else {
