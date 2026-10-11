@@ -17,6 +17,7 @@ driver. They are not anyone's own save. Each is the campaign state as it stood a
 | `F-ren-ch5_done.json` | Lanternfall finished, twelve-chapter edition (its Chapter 8) |
 | `F-ren-ko_done.json` | Kotonoha finished, twelve-chapter edition (its Chapter 9), reached by the public ferry |
 | `F-ren-cr_done.json` | the Cloudroad finished, twelve-chapter edition (its Chapter 10), from `F-ren-ko_done.json` |
+| `F-ren-yn_done.json` | Steamhollow finished, twelve-chapter edition (its Chapter 11), from `F-ren-cr_done.json` |
 
 The twelve-chapter ones are written by `tests/e2e/pursue.mjs` with `PURSUE_FIXTURES=1 PURSUE_FROM=<the previous one>
 PURSUE_EDITION=2` (expansion P08–P12); their `edition` is 2.

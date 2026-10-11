@@ -68,7 +68,7 @@ export function install() {
     const sp = (C.maps[ex.to].spawn || {})[ex.sp || 'default'];
     return sp ? [sp[0], sp[1]] : null;
   }
-  function explore() {
+  function explore(from) {
     const W = RB.world.W;
     const reach = {}; // map -> Map(tileKey -> entry id)
     const entries = [];
@@ -91,7 +91,8 @@ export function install() {
       }
       q.push(id);
     };
-    add(W.map.id, W.player.x, W.player.y, null, null);
+    if (from) add(from.map, from.x, from.y, null, null);
+    else add(W.map.id, W.player.x, W.player.y, null, null);
     while (q.length) {
       const id = q.shift(), e = entries[id], R = reach[e.map];
       for (const ex of exitsOf(e.map)) {
@@ -263,7 +264,7 @@ export function install() {
   const provCache = {};
   function provides(id, depth) {
     if (provCache[id]) return provCache[id];
-    const out = { flags: [], quests: [], items: [], words: [], warps: [] };
+    const out = { flags: [], quests: [], items: [], words: [], warps: [], unsets: [] };
     // a creature placed with an authored encounter (expansion P04): what its conclusions set
     if (id.startsWith('enc:')) {
       const d = C.encounters && C.encounters[id.slice(4)];
@@ -275,6 +276,7 @@ export function install() {
       for (const c of sc.cmds) {
         const a = c.args || [];
         if (c.op === 'set') out.flags.push(...a);
+        else if (c.op === 'unset') out.unsets.push(...a);
         else if (c.op === 'quest') out.quests.push([a[0], a[1] || 'start']);
         else if (c.op === 'give') out.items.push(a[0]);
         else if (c.op === 'word') out.words.push(a[0]);
@@ -387,13 +389,41 @@ export function install() {
         return Infinity;
       };
       const reachesWork = (mid) => hopsToWork(mid) < Infinity;
+      // a switch (a scene that can clear a flag: a shutter turned back, a valve shut) is worth using when the state
+      // it leaves would open the way to work that cannot be reached now; tried on the flags alone, then put back
+      const workNow = new Set();
+      for (const st of sites) { const g = gain(st.scene, opts.main, st); if ((g.main || g.other) && reachSite(X, st)) workNow.add(keyOf(st)); }
+      const opensWork = (st) => {
+        const pv = provides(st.scene);
+        if (!pv.unsets.length) return false;
+        // (from where the switch is used: the way on is looked for from there)
+        const at = reachSite(X, st);
+        if (!at || !at.tile) return false;
+        const F = S().flags, change = {};
+        for (const f of pv.unsets) if (F[f]) change[f] = undefined;
+        for (const f of pv.flags) if (!F[f] && !(f in change)) change[f] = true;
+        if (!Object.keys(change).length) return false;
+        const was = {};
+        for (const f in change) { was[f] = F[f]; if (change[f]) F[f] = true; else delete F[f]; }
+        let opens = false;
+        try {
+          const X2 = explore({ map: st.map, x: at.tile[0], y: at.tile[1] });
+          for (const s2 of allSites(opts.prefix)) {
+            if (workNow.has(keyOf(s2)) || s2.scene === st.scene) continue;
+            const g = gain(s2.scene, opts.main, s2);
+            if ((g.main || g.other) && reachSite(X2, s2)) { opens = true; break; }
+          }
+        } finally { for (const f in was) { if (was[f]) F[f] = was[f]; else delete F[f]; } }
+        return opens;
+      };
       for (const st of sites) {
         // several sites can share a scene (three doors, one scene): key by place too
         const where = st.n ? st.n.id : st.pr ? st.pr.x + ',' + st.pr.y : st.ex ? st.ex.x + ',' + st.ex.y : st.tr ? st.tr.x + ',' + st.tr.y : st.f ? st.f.id : '';
         const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene + '|' + where;
         if (tried.has(key) || fruitless.has(progOf() + '|' + key.slice(sig.length))) continue;
         const g = gain(st.scene, opts.main, st);
-        const tier = g.main ? 3 : g.other ? 2 : g.unseen || g.again ? 1 : 0;
+        let tier = g.main ? 3 : g.other ? 2 : g.unseen || g.again ? 1 : 0;
+        if (tier < 2 && opensWork(st)) tier = 2;
         if (!tier) continue;
         if (tier === 1 && S().seen[st.scene] && provides(st.scene).warps.length && !provides(st.scene).warps.some((m) => C.maps[m] && reachesWork(m))) continue;
         const rs = reachSite(X, st);
