@@ -144,4 +144,33 @@ RB.lex.add(RB.lex.parseTable(`
 裸|はだか|n|I|naked, bare
 沓|くつ|n|A|(an old word) shoes, footwear
 囃す|はやす|v5s|A|to accompany (a dance or a festival) with drums and flutes
+# ---- wing 5: reasons and contrasts -------------------------------------------------------------------------------------
+第五幕|だいごまく|n|I|the fifth act
+井|い|n|A|(an old word) a well, as in 井の中の蛙 (the frog in the well)
+大海|たいかい|n|A|the great sea, as in 井の中の蛙、大海を知らず (the frog in the well knows nothing of the great sea)|Real: a proverb for a narrow view of the world.
+井戸掘り|いどほり|n|I|well-digging; a well-digger
+井戸替え|いどがえ|n|A|well-cleaning: a village emptying and scouring its well together|Real: a summer custom of old Japanese towns and villages, held around Tanabata.
+日照り|ひでり|n|I|drought, a long dry spell
+涸れる|かれる|v1|I|to dry up (of a well or a spring)
+臭う|におう|v5u|I|to smell (bad), to stink
+苦み|にがみ|n|I|bitterness (the taste)
+餌|えさ|n|E|feed, food (for animals)
+犬小屋|いぬごや|n|E|a dog kennel
+三日|みっか|n|E|three days; the third (of the month)
+鋸|のこぎり|n|I|a saw
+虫食い|むしくい|n|I|worm-eaten, eaten by insects
+蝉|せみ|n|I|a cicada
+重症|じゅうしょう|n|I|a serious case (of an illness)
+入り込む|はいりこむ|v5m|I|to get into, to find a way in
+仲良し|なかよし|n|E|good friends; being on good terms
+大勢|おおぜい|n|I|many people, a crowd
+定番|ていばん|n|I|the usual, the standard (choice)
+力仕事|ちからしごと|n|I|heavy work, physical labour
+手先|てさき|n|I|the fingers; skill with the hands
+夕餉|ゆうげ|n|A|(literary) the evening meal, supper
+お神酒|おみき|n|A|sake offered to the gods|Real: poured at shrines and at a well's rim when it is cleaned or blessed.
+じゃった||exp|I|(old people's speech) was (= だった)
+聞かん|きかん|exp|I|(older) doesn't listen, won't obey (= 聞かない); 言うことを聞かん: won't do as it's told
+汲まねば|くまねば|exp|A|(old, literary) if one does not draw (water) (= 汲まなければ)
+見がち|みがち|exp|A|apt to look (見る + 〜がち: tending to)
 `));

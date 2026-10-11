@@ -185,4 +185,46 @@ RB.dialect.add('kansai', `
 @ hall/hall.w4.end [hall.w4.end]
 = {第|だい}{四幕|よんまく} 、 {幕|まく} ！ {主役|しゅやく} の {傘|かさ} に 、 {大|おお}きな {拍手|はくしゅ} を ！ || End of act four! A big hand for our lead, the umbrella!
 > {第|だい}{四幕|よんまく} 、 {幕|まく} や ！ {主役|しゅやく} の {傘|かさ} に 、 {大|おお}きな {拍手|はくしゅ} 、 たのむ で ！ || End of act four! A big hand for our lead, the umbrella!
+@ hall/hall.w5.f1_first [hall.w5.f1_first]
+= {第|だい}{五幕|ごまく} は 、 {二|ふた}つ の {家|いえ} の {話|はなし} ね 。 {家|いえ} {同士|どうし} の {喧嘩|けんか} は 、 {芝居|しばい} の {定番|ていばん} よ 。 || Act five: a tale of two houses. A feud between houses is a stage favourite.
+> {第|だい}{五幕|ごまく} は 、 {二|ふた}つ の {家|いえ} の {話|はなし} や な 。 {家|いえ} {同士|どうし} の {喧嘩|けんか} は 、 {芝居|しばい} の {定番|ていばん} や で 。 || Act five: a tale of two houses. A feud between houses is a stage favourite.
+@ hall/hall.w5.f2_first [hall.w5.f2_first]
+= {苦|にが}い {井戸|いど} 、 か 。 {誰|だれ} の せい か より 、 {何|なに} が {理由|りゆう} か を {知|し}りたい ね 。 || The bitter well. Never mind whose fault; I'd like to know what the reason is.
+> {苦|にが}い {井戸|いど} 、 か 。 {誰|だれ} の せい か より 、 {何|なに} が {理由|りゆう} か 、 {知|し}りたい な 。 || The bitter well. Never mind whose fault; I'd like to know what the reason is.
+@ hall/hall.w5.f3_first [hall.w5.f3_first]
+= {大詰|おおづ}め の {舞台|ぶたい} は 、 {広場|ひろば} ね 。 {両家|りょうけ} {揃|そろ}い{踏|ぶ}み よ 。 || The final scene is set in the square. Both houses on stage together.
+> {大詰|おおづ}め の {舞台|ぶたい} は 、 {広場|ひろば} や な 。 {両家|りょうけ} {揃|そろ}い{踏|ぶ}み や で 。 || The final scene is set in the square. Both houses on stage together.
+@ hall/hall.w5.t1 [hall.w5.t1]
+= {悪役|あくやく} の いない {喧嘩|けんか} は 、 {演|や}る の が {一番|いちばん} {難|むずか}しい の よ 。 || A quarrel with no villain is the hardest kind to play.
+> {悪役|あくやく} の いない {喧嘩|けんか} は 、 {演|や}る の が {一番|いちばん} {難|むずか}しい ん や で 。 || A quarrel with no villain is the hardest kind to play.
+@ hall/hall.w5.e_bucket [hall.w5.e_bucket]
+= ここ に は 、 {困|こま}った こと が {見|み}えて いる だけ 。 どうして そう なった か 、 {誰|だれ} か に {聞|き}いて みよう 。 || Here the trouble only shows. Let's ask someone why it happens.
+> ここ に は 、 {困|こま}った こと が {見|み}えてる だけ や 。 なんで そう なった か 、 {誰|だれ} か に {聞|き}いて みよ か 。 || Here the trouble only shows. Let's ask someone why it happens.
+@ hall/hall.w5.c_pulley [hall.w5.c_pulley]
+= {桶|おけ} を {叩|たた}いて も 、 {桶|おけ} は {上|あ}がらない もん ね 。 || Banging the bucket would never have brought it up.
+> {桶|おけ} を {叩|たた}いて も 、 {桶|おけ} は {上|あ}がらへん もん な 。 || Banging the bucket would never have brought it up.
+@ hall/hall.w5.t3 [hall.w5.t3]
+= {理由|りゆう} が {合|あ}わない と 、 {話|はなし} が {全部|ぜんぶ} おかしく なる から ね 。 || When the reason doesn't fit, the whole story goes wrong.
+> {理由|りゆう} が {合|あ}わへん と 、 {話|はなし} が {全部|ぜんぶ} おかしく なる から な 。 || When the reason doesn't fit, the whole story goes wrong.
+@ hall/hall.w5.to_drink [hall.w5.to_drink]
+= {東|ひがし} だ から {甘|あま}い 、 {西|にし} だ から {苦|にが}い 、 じゃ ない ん だ ね 。 {理由|りゆう} を {最後|さいご} まで {読|よ}まない と 。 || It's not "east, so sweet" and "west, so bitter". You have to read the reason to the end.
+> {東|ひがし} や から {甘|あま}い 、 {西|にし} や から {苦|にが}い 、 ちゃう ん や な 。 {理由|りゆう} を {最後|さいご} まで {読|よ}まへん と あかん で 。 || It's not "east, so sweet" and "west, so bitter". You have to read the reason to the end.
+@ hall/hall.w5.t6 [hall.w5.t6]
+= {古|ふる}い {台本|だいほん} を {読|よ}む の は 、 {慣|な}れてる わ 。 {任|まか}せて 。 {何|なに} を {見|み}る ？ || I'm used to reading old scripts. Leave it to me. What am I looking for?
+> {古|ふる}い {台本|だいほん} を {読|よ}む の は 、 {慣|な}れてる で 。 {任|まか}せとき 。 {何|なに} を {見|み}たら ええ ？ || I'm used to reading old scripts. Leave it to me. What am I looking for?
+@ hall/hall.w5.m_willow [hall.w5.m_willow]
+= {記録|きろく} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the record said again?
+> {記録|きろく} の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the record said again?
+@ hall/hall.w5.m_willow [hall.w5.m_willow]
+= {理由|りゆう} が {分|わ}かれば 、 {直|なお}し {方|かた} も {分|わ}かる 。 {誰|だれ} の せい でも なかった ね 。 || Know the reason and you know the remedy. It was nobody's fault after all.
+> {理由|りゆう} が {分|わ}かったら 、 {直|なお}し {方|かた} も {分|わ}かる 。 {誰|だれ} の せい でも なかった ん や な 。 || Know the reason and you know the remedy. It was nobody's fault after all.
+@ hall/hall.w5.t8_board [hall.w5.t8_board]
+= {誰|だれ} に {何|なに} が できる か 、 {理由|りゆう} を {聞|き}いて から {決|き}めよう 。 || Let's hear everyone's reasons before we decide who does what.
+> {誰|だれ} に {何|なに} が できる か 、 {理由|りゆう} を {聞|き}いて から {決|き}めよ か 。 || Let's hear everyone's reasons before we decide who does what.
+@ hall/hall.w5.h_kota [hall.w5.h_kota]
+= できない {理由|りゆう} を {聞|き}けば 、 できる こと も {分|わ}かる 。 {上手|うま}く {分|わ}けられた ね 。 || Hear why someone can't, and you learn what they can. Nicely shared out.
+> できへん {理由|りゆう} を {聞|き}いたら 、 できる こと も {分|わ}かる 。 {上手|うま}い こと {分|わ}けられた な 。 || Hear why someone can't, and you learn what they can. Nicely shared out.
+@ hall/hall.w5.end [hall.w5.end]
+= {第|だい}{五幕|ごまく} 、 {幕|まく} ！ {悪役|あくやく} なし の {大団円|だいだんえん} よ 。 {拍手|はくしゅ} ！ || End of act five! A happy ending with no villain. Applause!
+> {第|だい}{五幕|ごまく} 、 {幕|まく} や ！ {悪役|あくやく} なし の {大団円|だいだんえん} や で 。 {拍手|はくしゅ} 、 たのむ で ！ || End of act five! A happy ending with no villain. Applause!
 `, 'hall');

@@ -8,8 +8,10 @@
  * The Bell Before Dawn: the last hour of the night in a mountain village, the shakuhachi in the old in-scale, the koto
  * counting steps one by one, a low temple bell tolling every few bars, and in the middle a soft drum, the tanuki's (E
  * phrygian, 66). Wing 4, The Borrowed Umbrella: a peddler's walking tune in the rainy season, the shamisen picking along
- * the road under the shinobue, rain dripping from the eaves and a hand drum keeping the walk (A dorian, 80).
- * Postgame and the twelve-chapter edition only. Notation: see 30_songs.js. */
+ * the road under the shinobue, rain dripping from the eaves and a hand drum keeping the walk (A dorian, 80). Wing 5,
+ * The Two Wells: a late-summer village with two voices that answer each other across it, the biwa for the east house
+ * and the shakuhachi for the west, a single drip deep in a well, and cicadas far off (D aeolian, 70). Postgame and the
+ * twelve-chapter edition only. Notation: see 30_songs.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -172,6 +174,37 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: ROAD, pick: PICK },
       B: { bars: 8, ch: '4 4 1 1 7 7 1 1', koto: '1 - - - 4 - 5 - | 6 - - - - - . . | 5 - - - 3 - 1 - | 3 - - - - - . . | 4 - - - 2 - 7, - | 5, - - - - - . . | 1 - 3 - 5 - 3 - | 1 - - - - - . .' },
       A2: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: ROAD, pick: PICK, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+
+  // ================================================================== WING 5: THE TWO WELLS
+  // Two houses, two voices. In A the biwa (the east house) states a phrase and the shakuhachi (the west) answers it,
+  // the same rhythm with the opposite turn, a contrast rather than an echo; in B they overlap for the first time, a
+  // phrase each, under a held shō; A2 lets them finish each other's phrases. A water drip sounds deep in the well every
+  // other bar. The making-up is in the tune, never a louder or faster arrangement (C-22).
+  const EAST = '5 - - - 3 - 1 - | 2 - - - - - . . | .:8 | .:8 | 5 - - - 6 - 5 - | 3 - - - - - . . | .:8 | .:8';
+  const WEST = '.:8 | .:8 | 1 - - - 3 - 5 - | 4 - - - - - . . | .:8 | .:8 | 1 - - - 7, - 1 - | 3 - - - - - . .';
+  S('hall_w5', {
+    title: 'The Two Wells',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 5 of the Hall: a village at the end of summer with a well at either end (D aeolian, 70). Two voices for two houses: the biwa (the east) states a phrase, the shakuhachi (the west) answers with the same rhythm and the opposite turn, a contrast rather than an echo. In B they overlap for the first time under a held shō; in A2 each finishes the other\'s phrase. A single water drip sounds deep in a well every other bar, and cicadas sing far off.',
+    key: 'D', mode: 'aeolian', bpm: 70, loopFrom: 1,
+    tracks: {
+      east: { i: 'biwa', o: 4, v: 0.48, rv: 0.4, pan: 0.25 },
+      west: { i: 'shakuhachi', o: 4, v: 0.5, rv: 0.45, pan: -0.25 },
+      bass: { i: 'koto', o: 3, pat: true, bass: true, v: 0.22, rv: 0.35 },
+      drip: { perc: true, v: 0.18, rv: 0.7 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.14, rv: 0.5 },
+    },
+    echo: { beats: 1, fb: 0.22, mix: 0.2 },
+    all: { bass: '0 - - - 4 - - -', drip: '......d.|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', east: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 1 4 4 6 6 1 1', east: EAST, west: WEST },
+      B: { bars: 8, ch: '6 6 7 7 1 1 5 5', east: '3 - - - 1 - 6, - | 1 - - - - - . . | 2 - - - 4 - 2 - | 2 - - - - - . . | 5 - - - 3 - 1 - | 1 - - - - - . . | 5 - - - 7 - 5 - | 5 - - - - - . .', west: '.:8 | 3 - 1 - 3 - - - | .:8 | 4 - 2 - 4 - - - | .:8 | 3 - 5 - 3 - - - | .:8 | 2 - 5, - 2 - - -', pad: '0+4' },
+      A2: { bars: 8, ch: '1 1 4 4 6 6 1 1', east: EAST, west: WEST, dyn: 0.85 },
     },
     form: ['intro', 'A', 'B', 'A2'],
   });

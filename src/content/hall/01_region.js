@@ -67,6 +67,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w4);
 
+  // wing 5: a village at the end of summer, two wells at either end of it, dry yellow grass, a weeping willow over the
+  // west well, the water dark and cold
+  TL.PAL.hall_w5 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#8a9a52', '#9aac5e', '#748446', '#acbc6e'], dirt: ['#9a8460', '#ac9670', '#826e4e', '#bea882'],
+    stone: ['#8a8a80', '#a2a298', '#6e6e66'], water: ['#2e4a5a', '#3c5a6c', '#6a8a9a', '#c0d4dc'],
+    wood: ['#6a5038', '#7e6046', '#52402c', '#96785a'], leaf: ['#4a6a3a', '#5a7c44', '#6e9054', '#3a5230'],
+    flower: ['#e8c048', '#f0e8d0', '#d8683a', '#e89aa8'], sky: '#d8d0b0', dark: '#1e1c14',
+  });
+  TL.addRamps(TL.PAL.hall_w5);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -176,4 +186,24 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_kaede', { name: { en: 'Kaede', jp: 'カエデ' }, voice: { pitch: 1.04 },
     look: { skin: 1, hair: 'ponytail', hairColor: 1, cloth: ['#4a5a6a', '#3a4654', '#d8c8a0'], shape: 'tunic', acc: ['hat'], hatCol: '#8a7a5a' },
     portrait: { eyes: 'round', style: 'ponytail', acc: ['hat'], hatCol: '#8a7a5a', bg: '#1a2028' } });
+
+  // ---- the tales' people: wing 5, The Two Wells ------------------------------------------------------------------------
+  // Osugi (she/her) of the east house and Mosuke (he/him) of the west house, old neighbours who blame each other for
+  // the bitter well; Kōta (he/him), Osugi's grandson, and Hatsu (she/her), Mosuke's granddaughter, who are friends;
+  // Kero (they/them), the frog who has lived in the west well longer than anyone, in human shape as the tales tell it.
+  ch('hall_osugi', { name: { en: 'Osugi', jp: 'オスギ' }, voice: { pitch: 0.82 },
+    look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#6a4a5a', '#563c48', '#e0d0b8'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'bun', age: 'old', acc: [], bg: '#221a1e' } });
+  ch('hall_mosuke', { name: { en: 'Mosuke', jp: 'モスケ' }, voice: { pitch: 0.76 },
+    look: { skin: 3, hair: 'short', hairColor: 6, cloth: ['#4a5a6a', '#3c4a58', '#d8ccb0'], shape: 'tunic', acc: ['headband'], bandCol: '#d8ccb0', age: 'old' },
+    portrait: { eyes: 'narrow', style: 'short', age: 'old', acc: ['headband'], bandCol: '#d8ccb0', bg: '#1a1e24' } });
+  ch('hall_kota', { name: { en: 'Kōta', jp: 'コウタ' }, voice: { pitch: 1.28 }, size: 'child',
+    look: { skin: 2, hair: 'spiky', hairColor: 1, cloth: ['#c8783a', '#a8602c', '#f0e0c0'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'spiky', acc: [], bg: '#2a2014' } });
+  ch('hall_hatsu', { name: { en: 'Hatsu', jp: 'ハツ' }, voice: { pitch: 1.3 }, size: 'child',
+    look: { skin: 2, hair: 'bob', hairColor: 1, cloth: ['#4a7a8a', '#3a6270', '#f0e0c0'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'bob', acc: [], bg: '#18242a' } });
+  ch('hall_kero', { name: { en: 'Kero', jp: 'ケロ' }, voice: { pitch: 1.16 }, size: 'child',
+    look: { skin: 1, hair: 'short', hairColor: 4, cloth: ['#4a7a3a', '#3a622e', '#d8e0a0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'short', acc: [], bg: '#1a2414' } });
 })(RB.content);
