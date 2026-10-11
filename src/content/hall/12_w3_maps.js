@@ -171,9 +171,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 3, title: T('The Bell Before Dawn', '{夜明|よあ}け {前|まえ} の {鐘|かね}'),
     theme: T('Sequence and timing: what comes first, before, after, until and by.', '{順番|じゅんばん} と {時|とき}'),
-    folklore: { en: 'An invented tale. Two things in it are real: temple bells were rung at dawn to tell the hour, three warning strikes (捨て鐘) before the hour was counted; and in the old tales a tanuki drums on its belly in the night.' },
+    folklore: { en: 'An invented tale. Two things in it are real: temple bells were rung at dawn to tell the hour, three warning strikes ({捨|す}て{鐘|がね}) before the hour was counted; and in the old tales a tanuki drums on its belly in the night.' },
     music: 'hall_w3', hearth: C.hallHearths.w3, patterns: 2,
-    grow: { en: 'while there is still time and the moment of an action: ～うちに and ～ところ (and, at the top, ～次第, "as soon as").' },
+    grow: { en: 'while there is still time and the moment of an action: ～うちに and ～ところ (and, at the top, ～{次第|しだい}, "as soon as").' },
     floors: [
       { id: 'f1', map: 'hall.w3f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Sleeping Village', '{眠|ねむ}る {村|むら}'),
         stations: { w3_b1: { kind: 'bench', map: 'hall.w3f1', x: 20, y: 20 } } },

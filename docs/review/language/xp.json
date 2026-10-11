@@ -1529,10 +1529,10 @@
   "jp": "{鶴|つる} の {恩返|おんがえ}し",
   "en": "The Crane's Return"
  },
- "expedition:hall_w9#6yskg0": {
+ "expedition:hall_w9#8w9hrd": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "「 だれ に 話す か 」",
+  "ref": "P15 Hall card text: readings added to the Japanese inside every wing's folklore label and Grow note ({狐|きつね}の{嫁入|よめい}り, {捨|す}て{鐘|がね}, {川留|かわど}め, {井|い}の{中|なか}の{蛙|かわず}{大海|たいかい}を{知|し}らず, {井戸|いど}{替|が}え, {関所|せきしょ}, {高札|こうさつ}, {横座|よこざ}, {百物語|ひゃくものがたり} and the grammar names), and wing 9's theme line 「{誰|だれ}に{話|はな}すか」. Self-review, not native review.",
+  "jp": "「 {誰|だれ} に {話|はな}す か 」",
   "en": "To whom are you speaking? Plain and polite speech, what you call people, and the words that raise others and lower yourself."
  },
  "map:hall.w9f1#z9go4k": {

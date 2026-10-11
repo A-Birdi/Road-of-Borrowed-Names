@@ -4234,7 +4234,27 @@ mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
 before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
 
-## The expansion, P15 (the Hall of a Hundred Tales) — work in progress, wings 1–7
+## The expansion, P15 (the Hall of a Hundred Tales) — P15a–d done (ten wings, the rewards, the browser test); P15e–h to come
+
+**Wings 8–10 and the rewards for all ten.** Wing 8 (4bfa701): a clean copy's whole unit suite **49,378 passed, 0
+failed**. Wing 9 (313de71) and wing 10 with the rewards (9dbe467), then the card's furigana fix and the browser test,
+on the working tree: every Hall unit test **1,111/0** (`hall_w1` … `hall_w10`; `hall_w10` 131/0 adds the sealed tenth
+door, the hundred-trial manifest with no duplicate id, Tsuru's last conversation and her keepsake given once, the
+travel volume's ten pages (viewable, never witnessed, when revealed), the wing's note, and a check that every wing's
+card has furigana on every kanji, including the Japanese inside its English notes), `audio_songs` 3,192/0,
+`dialect` 9,162/0, `kanji` 640/0, `lang` 394/0, `lexicon` 43/0, `records` 198/0, validator no errors, the language
+ledger with no line unreviewed.
+
+**Browser, the Hall itself (`node tests/e2e/hall.mjs`, 4/0 in four consecutive runs on the build of this commit; an earlier intermittent failure was the test's own fixture: a postgame journey that had not yet been made the story's one New Game+ offer, which then appeared mid-test).** The wing's card at the
+hearth (the tale, theme, folklore label and rules, every kanji with furigana; Grow chosen there kept; going in puts you
+on the first floor with the chip); a trial counted on the chip; the sheet (leave, suspend, stay; the reprieve only once
+earned); the reprieve spent and the card's "go back to where you left off" returning you to the very tile with what you
+had done; suspend to the title and loading the slot resuming exactly there once, the suspend point then gone and no
+extra save; the tenth door sealed at eight lanterns and open at nine; a told wing's truthful note on its card; the
+travel volume's interim plate for a revealed tale. The test found that every wing's folklore label and Grow note
+showed Japanese without furigana (since wing 1), and wing 9's theme line too; fixed (F-134).
+
+## The expansion, P15 (the Hall of a Hundred Tales) — wings 1–7 (earlier record)
 
 **Clean copy of fa4aa6f (wings 1–6).** `tools/validate.mjs` no errors; the whole unit suite **48,606 passed, 1 failed**:
 the grammar check found kanji outside furigana in the titles and notes of the three grammar points wing 6 added. Fixed

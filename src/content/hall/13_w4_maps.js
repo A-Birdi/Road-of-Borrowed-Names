@@ -169,7 +169,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 4, title: T('The Borrowed Umbrella', '{借|か}りた {傘|かさ}'),
     theme: T('Asking, being allowed, meaning to, and being misunderstood.', '{頼|たの}む 、 {許|ゆる}す 、 つもり'),
-    folklore: { en: 'An invented tale in the style of real folktales. Two things in it are real: the karakasa, an old umbrella that grows into a spirit and hops on its one leg, from Japanese folklore; and the river closures (川留め) of the old highways, when a crossing was shut by notice until the flood fell.' },
+    folklore: { en: 'An invented tale in the style of real folktales. Two things in it are real: the karakasa, an old umbrella that grows into a spirit and hops on its one leg, from Japanese folklore; and the river closures ({川留|かわど}め) of the old highways, when a crossing was shut by notice until the flood fell.' },
     music: 'hall_w4', hearth: C.hallHearths.w4, patterns: 2,
     grow: { en: 'asking without naming the thing, and permission and duty said politely: indirect requests, ～なければならない and ～なくてもいい (and, at the top, the humble ways to ask).' },
     floors: [

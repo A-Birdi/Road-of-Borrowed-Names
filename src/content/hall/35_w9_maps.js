@@ -168,8 +168,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== the wing ==========================================================================================================
   if (RB.hall) RB.hall.wing(W, {
     n: 9, title: T('The Crane\'s Return', '{鶴|つる} の {恩返|おんがえ}し'),
-    theme: T('To whom are you speaking? Plain and polite speech, what you call people, and the words that raise others and lower yourself.', '「 だれ に 話す か 」'),
-    folklore: { en: 'A real folktale, told all over Japan: 鶴の恩返し, "the crane returns a kindness". An old man frees a crane from a trap; a young woman comes to the old couple\'s door in the snow, weaves cloth of wonderful beauty and asks never to be watched at the loom; when they look, they see a crane weaving from her own feathers, and she must leave. The seats at the hearth (横座, 客座, かか座, 木尻) are a real custom of old farmhouses, with names that vary from place to place.' },
+    theme: T('To whom are you speaking? Plain and polite speech, what you call people, and the words that raise others and lower yourself.', '「 {誰|だれ} に {話|はな}す か 」'),
+    folklore: { en: 'A real folktale, told all over Japan: {鶴|つる}の{恩返|おんがえ}し, "the crane returns a kindness". An old man frees a crane from a trap; a young woman comes to the old couple\'s door in the snow, weaves cloth of wonderful beauty and asks never to be watched at the loom; when they look, they see a crane weaving from her own feathers, and she must leave. The seats at the hearth ({横座|よこざ}, {客座|きゃくざ}, かか{座|ざ}, {木尻|きじり}) are a real custom of old farmhouses, with names that vary from place to place.' },
     music: 'hall_w9', hearth: C.hallHearths.w9, patterns: 2,
     grow: { en: 'who you speak to and about: what to call people and your own family, ～てくださる and ～ていただく (and, at the top, ～させていただく).' },
     floors: [

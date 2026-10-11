@@ -150,7 +150,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 10, title: T('The Hundredth Tale', '{百話目|ひゃくわめ} の {話|はなし}'),
     theme: T('The unwritten journey: everything the other tales taught, together, and the tale is yours.', '「 {百話目|ひゃくわめ} 」'),
-    folklore: { en: 'Your own journey, told back. The custom behind the Hall is real: at a 百物語 gathering a hundred strange tales were told by a hundred lights, one put out after each, and legend held that something appeared after the hundredth. The keepers who relit their lights instead, and the night their last keeper stopped at ninety-nine, are the game\'s own.' },
+    folklore: { en: 'Your own journey, told back. The custom behind the Hall is real: at a {百物語|ひゃくものがたり} gathering a hundred strange tales were told by a hundred lights, one put out after each, and legend held that something appeared after the hundredth. The keepers who relit their lights instead, and the night their last keeper stopped at ninety-nine, are the game\'s own.' },
     music: 'hall_w10', hearth: C.hallHearths.w10, patterns: 2,
     grow: { en: 'everything the nine tales taught, and the turns between them: ～からこそ and ～ものの (and, at the top, the keepers\' old written style).' },
     floors: [

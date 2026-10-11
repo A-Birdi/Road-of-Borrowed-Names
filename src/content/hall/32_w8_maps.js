@@ -156,7 +156,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     theme: T('Whose account? What was seen, what was heard, what someone was told, and what was only guessed.', '「 そうだ 」 と 「 らしい 」'),
     folklore: { en: 'An invented tale, set at an inn on an old highway of the kind where travellers left things in the innkeeper\'s keeping. The fox that gets the blame belongs to a real habit of old Japanese rumour: when something went missing at night, people said a fox had done it.' },
     music: 'hall_w8', hearth: C.hallHearths.w8, patterns: 2,
-    grow: { en: 'how sure you are and where you heard it: ～はずだ, ～ようだ and ～らしい (and, at the top, ～に違いない and ～とのことだ).' },
+    grow: { en: 'how sure you are and where you heard it: ～はずだ, ～ようだ and ～らしい (and, at the top, ～に{違|ちが}いない and ～とのことだ).' },
     floors: [
       { id: 'f1', map: 'hall.w8f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Inn at Nightfall', '{夜|よる} の {宿|やど}'),
         stations: { w8_b1: { kind: 'bench', map: 'hall.w8f1', x: 20, y: 20 } } },

@@ -21,6 +21,8 @@ RB.ui.hall = (function () {
   const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   const PROF = { F: 'Foundations', E: 'Elementary', I: 'Intermediate', A: 'Advanced' };
   const TAC = { relaxed: 'Relaxed', normal: 'Standard', hard: 'Demanding' };
+  // English that carries Japanese words with their furigana ({漢字|かんじ}): the folklore label and the Grow note
+  const mixed = (t) => (RB.learnUi && RB.learnUi.mixed ? RB.learnUi.mixed(t) : esc(String(t || '').replace(/\{([^|}]+)\|[^}]*\}/g, '$1')));
 
   // ---- the wing's card -----------------------------------------------------------------------------------------------
   function cardHtml(w, s, pick) {
@@ -36,21 +38,22 @@ RB.ui.hall = (function () {
       'You can suspend anywhere outside a battle and resume exactly there.',
       'Every creature is in plain sight. Help is always there, and nothing gets harder after a mistake.',
     ];
-    const radio = (name, val, label, sub) => '<label class="hall-opt"><input type="radio" name="' + name + '" value="' + val + '"' + (pick[name] === val ? ' checked' : '') + '> <span>' + esc(label) + '</span>' + (sub ? '<span class="muted small"> ' + esc(sub) + '</span>' : '') + '</label>';
+    // sub: already HTML (the Grow note carries Japanese with its furigana)
+    const radio = (name, val, label, sub) => '<label class="hall-opt"><input type="radio" name="' + name + '" value="' + val + '"' + (pick[name] === val ? ' checked' : '') + '> <span>' + esc(label) + '</span>' + (sub ? '<span class="muted small"> ' + sub + '</span>' : '') + '</label>';
     const growNext = RB.grow ? RB.grow.next(s.learn.profile) : null;
     return '<div class="xp-card hall-card">' +
       '<p class="xp-kind">' + esc('The ' + ordinal(d.n) + ' lantern of the Hall: entirely optional') + '</p>' +
       row('Tale', RB.ui.jhtml(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span>') +
       row('Language', (d.theme.jp ? '<span class="jp">' + RB.ui.jhtml(d.theme.jp) + '</span> ' : '') + esc(d.theme.en)) +
-      row('Folklore', esc(d.folklore.en)) +
+      row('Folklore', mixed(d.folklore.en)) +
       row('Size', esc(d.floors.length + ' floors, ' + n + ' trials.')) +
       row('Counted', esc(counted + ' of ' + n + ' trials' + (r && r.done ? ': the lantern is relit.' : '.'))) +
       (H().note(s, w) ? row('Your note', esc(noteText(H().note(s, w)))) : '') +
       row('Rules', '<ul class="xp-rules">' + rules.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>') +
       '<fieldset class="hall-choices"><legend>' + esc('Your choices for this wing (changed only here, at the hearth)') + '</legend>' +
       row('Profile', esc((PROF[s.learn.profile] || s.learn.profile) + ': your journey\'s, as everywhere.')) +
-      row('Route', radio('route', 'consolidate', 'Consolidate', 'Use what you already have.') +
-        radio('route', 'grow', 'Grow', growNext ? (growNext === 'A+' ? 'Nuance, genres and other perspectives: ' : 'A step up, taught first: ') + (d.grow ? d.grow.en : '') : '')) +
+      row('Route', radio('route', 'consolidate', 'Consolidate', esc('Use what you already have.')) +
+        radio('route', 'grow', 'Grow', growNext ? esc(growNext === 'A+' ? 'Nuance, genres and other perspectives: ' : 'A step up, taught first: ') + (d.grow ? mixed(d.grow.en) : '') : '')) +
       row('Tactics', radio('tactics', 'relaxed', TAC.relaxed) + radio('tactics', 'normal', TAC.normal) + radio('tactics', 'hard', TAC.hard)) +
       '</fieldset>' +
       (r && r.held ? '<p class="note-slip">' + I('here') + ' ' + esc('A floor is waiting exactly as you left it.') + '</p>' : '') +

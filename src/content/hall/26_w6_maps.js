@@ -164,9 +164,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 6, title: T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'),
     theme: T('Conditions and exceptions: if, when, even if, except and unless.', '「 なら 」 と 「 ただし 」'),
-    folklore: { en: 'An invented tale. Two things in it are real: the barrier stations (関所) on the old highways, where travellers showed their papers and paid; and the notice boards (高札) that set out a place\'s rules in public, so that anyone could read them.' },
+    folklore: { en: 'An invented tale. Two things in it are real: the barrier stations ({関所|せきしょ}) on the old highways, where travellers showed their papers and paid; and the notice boards ({高札|こうさつ}) that set out a place\'s rules in public, so that anyone could read them.' },
     music: 'hall_w6', hearth: C.hallHearths.w6, patterns: 2,
-    grow: { en: 'rules and their exceptions: ～場合, ただし and ～以外 (and, at the top, ～限り, ～さえ～ば, ～を除いて).' },
+    grow: { en: 'rules and their exceptions: ～{場合|ばあい}, ただし and ～{以外|いがい} (and, at the top, ～{限|かぎ}り, ～さえ～ば, ～を{除|のぞ}いて).' },
     floors: [
       { id: 'f1', map: 'hall.w6f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Toll House at Noon', '{昼|ひる} の {関所|せきしょ}'),
         stations: { w6_b1: { kind: 'bench', map: 'hall.w6f1', x: 20, y: 20 } } },

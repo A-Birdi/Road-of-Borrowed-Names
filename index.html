@@ -10684,7 +10684,7 @@ RB.kanjiRead = {
     '扇あお,おうぎ;扉とびら;手て;才さい;打う;払はら,ぱら;扱あつか;批ひ;承うけたまわ;技わざ;投な;抗あらが;折お,おり;抜ぬ;抱いだ,かか,だ;抵てい;押お;担かつ;拍はく;拒こば;拓たく;拗す;拙せつ;招まね;拝はい;拠こ;括かつ;拭ふ;拶さつ;拾ひろ;持も;指ゆび,さ;按あん;挙あ;挟はさ;挨あい;挫ざ;振ふ;挽ひ;捌さば;' +
     '捏こ;捕つか;捨す;据す;捲まく;捻ねん;掃は;授じゅ;排はい;掘ほ;掛か;掟おきて;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;揚あ;換か;握にぎ;援えん;揺ゆ;損そん,そこ,ぞん;搾しぼ;摘てき;摩ま;摺す;撃げき;撒ま;撞つ;撫な;撮と;操そう;' +
     '擦す,こす;攣つ;攫さら;支ささ;改あらた;攻こう;放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,もん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;' +
-    '易やさ,やす;昔むかし;星ほし;映うつ,は;春はる;昧まい;昨さく;是これ;昼ひる;時じ,とき,どき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か;最さい,も;月がつ,つき,げつ;有あ;服ふく;朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;' +
+    '易やさ,やす;昔むかし;星ほし;映うつ,は;春はる;昧まい;昨さく;是これ;昼ひる;時じ,とき,どき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か,が;最さい,も;月がつ,つき,げつ;有あ;服ふく;朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;' +
     '末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;机つくえ;杉すぎ;杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,さかずき,ぱい;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;柱はしら;柳やなぎ;柵さく;査さ;柿かき,がき;栄えい;栓せん;' +
     '栗くり,ぐり;栞しおり;校こう;株かぶ;根ね;格かく;桁げた;桂りけい;桃もも;案あん;桐きり;桜さくら;桟さん;桶おけ;梁はり;梅うめ;梨なし;梯はし;械かい;棄き;棋ぎ;棒ぼう;棚たな,だな;森もり;棹さお;椀わん;椅い;植う;検けん;楔くさび;楠くす;業わざ;極ごく;楼ろう;楽らく,たの;構かま;槌つち;様さま,よう;槽そう;樋どい;' +
     '標しるべ;模も;権けん;横よこ;樹じゅ;樽たる;橋はし,ばし;橙だいだい;機き,はた;櫂かい;櫓やぐら,ろ;櫛くし;欄らん;欠か;次つぎ;欲よく,ほ;歌うた;歓かん;止と,ど,や;正ただ;此こ;歩ある,ふ;歪ゆが;歯は;歳さい,とし;歴れき;死し;残のこ;殴なぐ;段だん;殺ころ;殻から;殿との,どの;母はは,かあ;毎まい;毒どく;比くら;毛け;毯たん;氏し;' +
@@ -114539,6 +114539,8 @@ RB.ui.hall = (function () {
   const I = (n) => (RB.ui.folio ? RB.ui.folio.icon(n) : '');
   const PROF = { F: 'Foundations', E: 'Elementary', I: 'Intermediate', A: 'Advanced' };
   const TAC = { relaxed: 'Relaxed', normal: 'Standard', hard: 'Demanding' };
+  // English that carries Japanese words with their furigana ({漢字|かんじ}): the folklore label and the Grow note
+  const mixed = (t) => (RB.learnUi && RB.learnUi.mixed ? RB.learnUi.mixed(t) : esc(String(t || '').replace(/\{([^|}]+)\|[^}]*\}/g, '$1')));
 
   // ---- the wing's card -----------------------------------------------------------------------------------------------
   function cardHtml(w, s, pick) {
@@ -114554,21 +114556,22 @@ RB.ui.hall = (function () {
       'You can suspend anywhere outside a battle and resume exactly there.',
       'Every creature is in plain sight. Help is always there, and nothing gets harder after a mistake.',
     ];
-    const radio = (name, val, label, sub) => '<label class="hall-opt"><input type="radio" name="' + name + '" value="' + val + '"' + (pick[name] === val ? ' checked' : '') + '> <span>' + esc(label) + '</span>' + (sub ? '<span class="muted small"> ' + esc(sub) + '</span>' : '') + '</label>';
+    // sub: already HTML (the Grow note carries Japanese with its furigana)
+    const radio = (name, val, label, sub) => '<label class="hall-opt"><input type="radio" name="' + name + '" value="' + val + '"' + (pick[name] === val ? ' checked' : '') + '> <span>' + esc(label) + '</span>' + (sub ? '<span class="muted small"> ' + sub + '</span>' : '') + '</label>';
     const growNext = RB.grow ? RB.grow.next(s.learn.profile) : null;
     return '<div class="xp-card hall-card">' +
       '<p class="xp-kind">' + esc('The ' + ordinal(d.n) + ' lantern of the Hall: entirely optional') + '</p>' +
       row('Tale', RB.ui.jhtml(d.title.jp) + ' <span class="en">' + esc(d.title.en) + '</span>') +
       row('Language', (d.theme.jp ? '<span class="jp">' + RB.ui.jhtml(d.theme.jp) + '</span> ' : '') + esc(d.theme.en)) +
-      row('Folklore', esc(d.folklore.en)) +
+      row('Folklore', mixed(d.folklore.en)) +
       row('Size', esc(d.floors.length + ' floors, ' + n + ' trials.')) +
       row('Counted', esc(counted + ' of ' + n + ' trials' + (r && r.done ? ': the lantern is relit.' : '.'))) +
       (H().note(s, w) ? row('Your note', esc(noteText(H().note(s, w)))) : '') +
       row('Rules', '<ul class="xp-rules">' + rules.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>') +
       '<fieldset class="hall-choices"><legend>' + esc('Your choices for this wing (changed only here, at the hearth)') + '</legend>' +
       row('Profile', esc((PROF[s.learn.profile] || s.learn.profile) + ': your journey\'s, as everywhere.')) +
-      row('Route', radio('route', 'consolidate', 'Consolidate', 'Use what you already have.') +
-        radio('route', 'grow', 'Grow', growNext ? (growNext === 'A+' ? 'Nuance, genres and other perspectives: ' : 'A step up, taught first: ') + (d.grow ? d.grow.en : '') : '')) +
+      row('Route', radio('route', 'consolidate', 'Consolidate', esc('Use what you already have.')) +
+        radio('route', 'grow', 'Grow', growNext ? esc(growNext === 'A+' ? 'Nuance, genres and other perspectives: ' : 'A step up, taught first: ') + (d.grow ? mixed(d.grow.en) : '') : '')) +
       row('Tactics', radio('tactics', 'relaxed', TAC.relaxed) + radio('tactics', 'normal', TAC.normal) + radio('tactics', 'hard', TAC.hard)) +
       '</fieldset>' +
       (r && r.held ? '<p class="note-slip">' + I('here') + ' ' + esc('A floor is waiting exactly as you left it.') + '</p>' : '') +
@@ -163356,7 +163359,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     theme: T('Finding the way: directions, signs, which turning, asking again.', '{道|みち} を {聞|き}く ・ {教|おし}える'),
     folklore: { en: 'Invented for this hall, in the manner of an old wayside tale.' },
     music: 'hall_w1', hearth: HEARTH.w1, patterns: 2,
-    grow: { en: 'giving directions with ～と (曲がると、橋が見えます) and asking politely again (もう一度、お願いします).' },
+    grow: { en: 'giving directions with ～と ({曲|ま}がると、{橋|はし}が{見|み}えます) and asking politely again (もう{一度|いちど}、お{願|ねが}いします).' },
     floors: [
       { id: 'f1', map: 'hall.w1f1', entry: { x: 18, y: 23, dir: 'up' }, name: T('The Crossroads at Dusk', '{夕暮|ゆうぐ}れ の {辻|つじ}'),
         stations: { w1_b1: { kind: 'bench', map: 'hall.w1f1', x: 21, y: 21 } } },
@@ -163536,7 +163539,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 2, title: T('The Fox\'s Wedding', '{狐|きつね} の {嫁入|よめい}り'),
     theme: T('Who does what, from whom to whom: particles; giving, lending and borrowing.', '{誰|だれ} が {誰|だれ} に'),
-    folklore: { en: 'A real image: 狐の嫁入り, "a fox\'s wedding", is still the name for rain falling while the sun shines, and was once the name for lines of foxfire in the hills, said to light a fox bride\'s way. The tale is the hall\'s own.' },
+    folklore: { en: 'A real image: {狐|きつね}の{嫁入|よめい}り, "a fox\'s wedding", is still the name for rain falling while the sun shines, and was once the name for lines of foxfire in the hills, said to light a fox bride\'s way. The tale is the hall\'s own.' },
     music: 'hall_w2', hearth: C.hallHearths.w2, patterns: 2,
     grow: { en: 'who did it for whom: ～てあげる, ～てくれる and ～てもらう (and, at the top, the humble and respectful ways to give).' },
     floors: [
@@ -163738,9 +163741,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 3, title: T('The Bell Before Dawn', '{夜明|よあ}け {前|まえ} の {鐘|かね}'),
     theme: T('Sequence and timing: what comes first, before, after, until and by.', '{順番|じゅんばん} と {時|とき}'),
-    folklore: { en: 'An invented tale. Two things in it are real: temple bells were rung at dawn to tell the hour, three warning strikes (捨て鐘) before the hour was counted; and in the old tales a tanuki drums on its belly in the night.' },
+    folklore: { en: 'An invented tale. Two things in it are real: temple bells were rung at dawn to tell the hour, three warning strikes ({捨|す}て{鐘|がね}) before the hour was counted; and in the old tales a tanuki drums on its belly in the night.' },
     music: 'hall_w3', hearth: C.hallHearths.w3, patterns: 2,
-    grow: { en: 'while there is still time and the moment of an action: ～うちに and ～ところ (and, at the top, ～次第, "as soon as").' },
+    grow: { en: 'while there is still time and the moment of an action: ～うちに and ～ところ (and, at the top, ～{次第|しだい}, "as soon as").' },
     floors: [
       { id: 'f1', map: 'hall.w3f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Sleeping Village', '{眠|ねむ}る {村|むら}'),
         stations: { w3_b1: { kind: 'bench', map: 'hall.w3f1', x: 20, y: 20 } } },
@@ -163938,7 +163941,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 4, title: T('The Borrowed Umbrella', '{借|か}りた {傘|かさ}'),
     theme: T('Asking, being allowed, meaning to, and being misunderstood.', '{頼|たの}む 、 {許|ゆる}す 、 つもり'),
-    folklore: { en: 'An invented tale in the style of real folktales. Two things in it are real: the karakasa, an old umbrella that grows into a spirit and hops on its one leg, from Japanese folklore; and the river closures (川留め) of the old highways, when a crossing was shut by notice until the flood fell.' },
+    folklore: { en: 'An invented tale in the style of real folktales. Two things in it are real: the karakasa, an old umbrella that grows into a spirit and hops on its one leg, from Japanese folklore; and the river closures ({川留|かわど}め) of the old highways, when a crossing was shut by notice until the flood fell.' },
     music: 'hall_w4', hearth: C.hallHearths.w4, patterns: 2,
     grow: { en: 'asking without naming the thing, and permission and duty said politely: indirect requests, ～なければならない and ～なくてもいい (and, at the top, the humble ways to ask).' },
     floors: [
@@ -164130,7 +164133,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 5, title: T('The Two Wells', '{二|ふた}つ の {井戸|いど}'),
     theme: T('Reasons and contrasts: because, so, but, even though, thanks to and because of.', '「 から 」 と 「 のに 」'),
-    folklore: { en: 'An invented tale. Two things in it are real: the proverb 井の中の蛙大海を知らず, "the frog in the well knows nothing of the great sea"; and the well-cleaning (井戸替え), when a town emptied and scrubbed its wells together, in Edo on the seventh day of the seventh month.' },
+    folklore: { en: 'An invented tale. Two things in it are real: the proverb {井|い}の{中|なか}の{蛙|かわず}{大海|たいかい}を{知|し}らず, "the frog in the well knows nothing of the great sea"; and the well-cleaning ({井戸|いど}{替|が}え), when a town emptied and scrubbed its wells together, in Edo on the seventh day of the seventh month.' },
     music: 'hall_w5', hearth: C.hallHearths.w5, patterns: 2,
     grow: { en: 'credit and blame, and contrast said formally: ～おかげで and ～せいで (and, at the top, ～からこそ, ～にもかかわらず, ～ものの).' },
     floors: [
@@ -167745,9 +167748,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 6, title: T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'),
     theme: T('Conditions and exceptions: if, when, even if, except and unless.', '「 なら 」 と 「 ただし 」'),
-    folklore: { en: 'An invented tale. Two things in it are real: the barrier stations (関所) on the old highways, where travellers showed their papers and paid; and the notice boards (高札) that set out a place\'s rules in public, so that anyone could read them.' },
+    folklore: { en: 'An invented tale. Two things in it are real: the barrier stations ({関所|せきしょ}) on the old highways, where travellers showed their papers and paid; and the notice boards ({高札|こうさつ}) that set out a place\'s rules in public, so that anyone could read them.' },
     music: 'hall_w6', hearth: C.hallHearths.w6, patterns: 2,
-    grow: { en: 'rules and their exceptions: ～場合, ただし and ～以外 (and, at the top, ～限り, ～さえ～ば, ～を除いて).' },
+    grow: { en: 'rules and their exceptions: ～{場合|ばあい}, ただし and ～{以外|いがい} (and, at the top, ～{限|かぎ}り, ～さえ～ば, ～を{除|のぞ}いて).' },
     floors: [
       { id: 'f1', map: 'hall.w6f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Toll House at Noon', '{昼|ひる} の {関所|せきしょ}'),
         stations: { w6_b1: { kind: 'bench', map: 'hall.w6f1', x: 20, y: 20 } } },
@@ -168625,7 +168628,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     theme: T('What was left unsaid: leaving out what is understood; this, that and "the one"; the thing you both know.', '{言|い}わなくて も {分|わ}かる こと'),
     folklore: { en: 'Based on a real legend: the マヨイガ, the "wandering house" of the mountains of Tōno in northern Japan, told in the Tōno Monogatari (1910). Someone lost in the hills comes on a grand house with its gate open, red and black bowls laid out and a kettle on the boil, and nobody there; one who takes nothing and goes home finds a bowl come floating down the stream after them. The house\'s family and Owan are invented.' },
     music: 'hall_w7', hearth: C.hallHearths.w7, patterns: 2,
-    grow: { en: 'reference and omission: の for "the one" and leaving out what is understood (and, at the top, 例の, 前者 and 後者).' },
+    grow: { en: 'reference and omission: の for "the one" and leaving out what is understood (and, at the top, {例|れい}の, {前者|ぜんしゃ} and {後者|こうしゃ}).' },
     floors: [
       { id: 'f1', map: 'hall.w7f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Black Gate', '{黒|くろ}い {門|もん}'),
         stations: { w7_b1: { kind: 'bench', map: 'hall.w7f1', x: 20, y: 20 } } },
@@ -169439,7 +169442,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     theme: T('Whose account? What was seen, what was heard, what someone was told, and what was only guessed.', '「 そうだ 」 と 「 らしい 」'),
     folklore: { en: 'An invented tale, set at an inn on an old highway of the kind where travellers left things in the innkeeper\'s keeping. The fox that gets the blame belongs to a real habit of old Japanese rumour: when something went missing at night, people said a fox had done it.' },
     music: 'hall_w8', hearth: C.hallHearths.w8, patterns: 2,
-    grow: { en: 'how sure you are and where you heard it: ～はずだ, ～ようだ and ～らしい (and, at the top, ～に違いない and ～とのことだ).' },
+    grow: { en: 'how sure you are and where you heard it: ～はずだ, ～ようだ and ～らしい (and, at the top, ～に{違|ちが}いない and ～とのことだ).' },
     floors: [
       { id: 'f1', map: 'hall.w8f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Inn at Nightfall', '{夜|よる} の {宿|やど}'),
         stations: { w8_b1: { kind: 'bench', map: 'hall.w8f1', x: 20, y: 20 } } },
@@ -170283,8 +170286,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== the wing ==========================================================================================================
   if (RB.hall) RB.hall.wing(W, {
     n: 9, title: T('The Crane\'s Return', '{鶴|つる} の {恩返|おんがえ}し'),
-    theme: T('To whom are you speaking? Plain and polite speech, what you call people, and the words that raise others and lower yourself.', '「 だれ に 話す か 」'),
-    folklore: { en: 'A real folktale, told all over Japan: 鶴の恩返し, "the crane returns a kindness". An old man frees a crane from a trap; a young woman comes to the old couple\'s door in the snow, weaves cloth of wonderful beauty and asks never to be watched at the loom; when they look, they see a crane weaving from her own feathers, and she must leave. The seats at the hearth (横座, 客座, かか座, 木尻) are a real custom of old farmhouses, with names that vary from place to place.' },
+    theme: T('To whom are you speaking? Plain and polite speech, what you call people, and the words that raise others and lower yourself.', '「 {誰|だれ} に {話|はな}す か 」'),
+    folklore: { en: 'A real folktale, told all over Japan: {鶴|つる}の{恩返|おんがえ}し, "the crane returns a kindness". An old man frees a crane from a trap; a young woman comes to the old couple\'s door in the snow, weaves cloth of wonderful beauty and asks never to be watched at the loom; when they look, they see a crane weaving from her own feathers, and she must leave. The seats at the hearth ({横座|よこざ}, {客座|きゃくざ}, かか{座|ざ}, {木尻|きじり}) are a real custom of old farmhouses, with names that vary from place to place.' },
     music: 'hall_w9', hearth: C.hallHearths.w9, patterns: 2,
     grow: { en: 'who you speak to and about: what to call people and your own family, ～てくださる and ～ていただく (and, at the top, ～させていただく).' },
     floors: [
@@ -171242,7 +171245,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 10, title: T('The Hundredth Tale', '{百話目|ひゃくわめ} の {話|はなし}'),
     theme: T('The unwritten journey: everything the other tales taught, together, and the tale is yours.', '「 {百話目|ひゃくわめ} 」'),
-    folklore: { en: 'Your own journey, told back. The custom behind the Hall is real: at a 百物語 gathering a hundred strange tales were told by a hundred lights, one put out after each, and legend held that something appeared after the hundredth. The keepers who relit their lights instead, and the night their last keeper stopped at ninety-nine, are the game\'s own.' },
+    folklore: { en: 'Your own journey, told back. The custom behind the Hall is real: at a {百物語|ひゃくものがたり} gathering a hundred strange tales were told by a hundred lights, one put out after each, and legend held that something appeared after the hundredth. The keepers who relit their lights instead, and the night their last keeper stopped at ninety-nine, are the game\'s own.' },
     music: 'hall_w10', hearth: C.hallHearths.w10, patterns: 2,
     grow: { en: 'everything the nine tales taught, and the turns between them: ～からこそ and ～ものの (and, at the top, the keepers\' old written style).' },
     floors: [

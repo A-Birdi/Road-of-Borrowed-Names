@@ -161,7 +161,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 5, title: T('The Two Wells', '{二|ふた}つ の {井戸|いど}'),
     theme: T('Reasons and contrasts: because, so, but, even though, thanks to and because of.', '「 から 」 と 「 のに 」'),
-    folklore: { en: 'An invented tale. Two things in it are real: the proverb 井の中の蛙大海を知らず, "the frog in the well knows nothing of the great sea"; and the well-cleaning (井戸替え), when a town emptied and scrubbed its wells together, in Edo on the seventh day of the seventh month.' },
+    folklore: { en: 'An invented tale. Two things in it are real: the proverb {井|い}の{中|なか}の{蛙|かわず}{大海|たいかい}を{知|し}らず, "the frog in the well knows nothing of the great sea"; and the well-cleaning ({井戸|いど}{替|が}え), when a town emptied and scrubbed its wells together, in Edo on the seventh day of the seventh month.' },
     music: 'hall_w5', hearth: C.hallHearths.w5, patterns: 2,
     grow: { en: 'credit and blame, and contrast said formally: ～おかげで and ～せいで (and, at the top, ～からこそ, ～にもかかわらず, ～ものの).' },
     floors: [

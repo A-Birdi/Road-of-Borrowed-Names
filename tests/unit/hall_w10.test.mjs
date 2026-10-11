@@ -89,6 +89,17 @@ export default async (t) => {
   t.ok(/real/.test(w10.folklore.en) && /百物語/.test(w10.folklore.en) && /own journey/.test(w10.folklore.en), 'the folklore note: your own journey, and the real custom behind the Hall');
   const tl = C.encounters['hall.w10.tale'];
   t.ok(tl && tl.procedure.steps.length === 4 && tl.procedure.steps.every((st) => st.actions.filter((a) => a.ok).length === 1 && st.actions.some((a) => !a.ok && a.wrong)), 'the hundredth tale: four questions, each with one fitting answer and one that is not');
+  // every wing's card text: its title, theme and trial titles valid Japanese with furigana, and its English notes
+  // (the folklore label, the Grow note) carrying any Japanese word with its reading ({漢字|かんじ})
+  {
+    const bad = [];
+    const bare = (en) => /[\u4e00-\u9fff\u3005]/.test(String(en || '').replace(/\{[^|}]+\|[^}]+\}/g, ''));
+    for (const d of H.list()) {
+      for (const [k, jp] of [['title', d.title.jp], ['theme', d.theme.jp]].concat(d.trials.map((x) => [x.id, x.title.jp]))) if (jp && RB.jp.validate(jp).length) bad.push(d.id + ' ' + k + ': ' + jp);
+      for (const [k, en] of [['folklore', d.folklore && d.folklore.en], ['grow', d.grow && d.grow.en]]) if (bare(en)) bad.push(d.id + ' ' + k + ' has kanji without a reading');
+    }
+    t.eq(bad, [], 'every wing\'s card: furigana on every kanji, in its Japanese and in the Japanese inside its English notes');
+  }
   t.ok(C.items.hall_lantern && C.items.hall_lantern.slot === 'cosmetic' && C.items.hall_lantern.acc === 'lamp', 'the keepsake is a cosmetic: a hand lantern that changes only how you look');
 
   // ---- the trials, end to end -----------------------------------------------------------------------------------------

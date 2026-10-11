@@ -215,7 +215,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     theme: T('Finding the way: directions, signs, which turning, asking again.', '{道|みち} を {聞|き}く ・ {教|おし}える'),
     folklore: { en: 'Invented for this hall, in the manner of an old wayside tale.' },
     music: 'hall_w1', hearth: HEARTH.w1, patterns: 2,
-    grow: { en: 'giving directions with ～と (曲がると、橋が見えます) and asking politely again (もう一度、お願いします).' },
+    grow: { en: 'giving directions with ～と ({曲|ま}がると、{橋|はし}が{見|み}えます) and asking politely again (もう{一度|いちど}、お{願|ねが}いします).' },
     floors: [
       { id: 'f1', map: 'hall.w1f1', entry: { x: 18, y: 23, dir: 'up' }, name: T('The Crossroads at Dusk', '{夕暮|ゆうぐ}れ の {辻|つじ}'),
         stations: { w1_b1: { kind: 'bench', map: 'hall.w1f1', x: 21, y: 21 } } },

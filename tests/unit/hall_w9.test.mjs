@@ -79,7 +79,7 @@ export default async (t) => {
   t.ok(['register_polite_plain', 'address_terms', 'keigo_sonkei', 'keigo_kenjo', 'te_giving', 'te_kudasaru', 'sasete_itadaku', 'indirectness'].every((g) => RB.grammar.get(g)), 'what it practises is grammar the game teaches');
   const fw = C.encounters['hall.w9.farewell'];
   t.ok(fw && fw.procedure.steps.length === 4 && fw.procedure.steps.every((st) => st.actions.filter((a) => a.ok).length === 1 && st.actions.some((a) => !a.ok && a.wrong)), 'the farewell: four people, each with one fitting answer and one that is not');
-  t.ok(/横座/.test(w9.folklore.en) && /real custom/.test(w9.folklore.en) && /鶴の恩返し/.test(w9.folklore.en) && /real folktale/i.test(w9.folklore.en), 'the folklore note labels the tale and the hearth seats as real');
+  t.ok(/\{横座\|よこざ\}/.test(w9.folklore.en) && /real custom/.test(w9.folklore.en) && /\{鶴\|つる\}の\{恩返\|おんがえ\}し/.test(w9.folklore.en) && /real folktale/i.test(w9.folklore.en), 'the folklore note labels the tale and the hearth seats as real');
 
   // ---- the trials, end to end -----------------------------------------------------------------------------------------
   const SLIPHEAR = { 0: { s1: 'otoku', s2: 'gensuke', s3: 'envoy', s4: 'sabu', s5: 'otoku' }, 1: { s1: 'gensuke', s2: 'envoy', s3: 'sabu', s4: 'otoku', s5: 'sabu' } };

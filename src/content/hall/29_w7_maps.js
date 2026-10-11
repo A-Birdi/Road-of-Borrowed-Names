@@ -163,7 +163,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     theme: T('What was left unsaid: leaving out what is understood; this, that and "the one"; the thing you both know.', '{言|い}わなくて も {分|わ}かる こと'),
     folklore: { en: 'Based on a real legend: the マヨイガ, the "wandering house" of the mountains of Tōno in northern Japan, told in the Tōno Monogatari (1910). Someone lost in the hills comes on a grand house with its gate open, red and black bowls laid out and a kettle on the boil, and nobody there; one who takes nothing and goes home finds a bowl come floating down the stream after them. The house\'s family and Owan are invented.' },
     music: 'hall_w7', hearth: C.hallHearths.w7, patterns: 2,
-    grow: { en: 'reference and omission: の for "the one" and leaving out what is understood (and, at the top, 例の, 前者 and 後者).' },
+    grow: { en: 'reference and omission: の for "the one" and leaving out what is understood (and, at the top, {例|れい}の, {前者|ぜんしゃ} and {後者|こうしゃ}).' },
     floors: [
       { id: 'f1', map: 'hall.w7f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Black Gate', '{黒|くろ}い {門|もん}'),
         stations: { w7_b1: { kind: 'bench', map: 'hall.w7f1', x: 20, y: 20 } } },

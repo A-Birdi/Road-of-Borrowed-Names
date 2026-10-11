@@ -151,7 +151,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   if (RB.hall) RB.hall.wing(W, {
     n: 2, title: T('The Fox\'s Wedding', '{狐|きつね} の {嫁入|よめい}り'),
     theme: T('Who does what, from whom to whom: particles; giving, lending and borrowing.', '{誰|だれ} が {誰|だれ} に'),
-    folklore: { en: 'A real image: 狐の嫁入り, "a fox\'s wedding", is still the name for rain falling while the sun shines, and was once the name for lines of foxfire in the hills, said to light a fox bride\'s way. The tale is the hall\'s own.' },
+    folklore: { en: 'A real image: {狐|きつね}の{嫁入|よめい}り, "a fox\'s wedding", is still the name for rain falling while the sun shines, and was once the name for lines of foxfire in the hills, said to light a fox bride\'s way. The tale is the hall\'s own.' },
     music: 'hall_w2', hearth: C.hallHearths.w2, patterns: 2,
     grow: { en: 'who did it for whom: ～てあげる, ～てくれる and ～てもらう (and, at the top, the humble and respectful ways to give).' },
     floors: [

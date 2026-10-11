@@ -663,6 +663,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP78 The route F/Ren from Chapter 11's fixture through Chapter 12 to `ch6_done` (635 site visits, 281 interactions, all in the story); its two "bodiless" speakers are a scene marked speakerless on purpose (VALIDATION.md "The expansion, P14").
 - [ ] XP79 The chapters' routes chained from a new journey in one run (each has run from its own fixture; the chain has not). R.
 - [ ] XP80 A person playing Chapter 12 and the endings. H.
+- [v] XP81 The Hall of a Hundred Tales (P15a–d): ten wings of ten trials each (one hundred trial ids, none twice), each wing's trials end to end in both patterns, right and wrong, its Grow route, each companion and alone, and every floor reachable with its rope up and down; the tenth door sealed until nine are relit. U `hall_w1` … `hall_w10` 1,111/0; B `hall` 4/0 (VALIDATION.md "The expansion, P15").
+- [v] XP82 The Hall's rewards: per wing a lantern, a stamp, the travel volume's page (witnessed when told; revealable by confirmation, then viewable, never witnessed; an interim plate until P16 paints it), the companions' reflections and the optional truthful note on the card; for all ten, Keeper Tsuru's last conversation and the Lantern of the Hundred, given once. U `hall_w10`; B `hall`.
+- [v] XP83 Every new Japanese line of the Hall self-reviewed in the ledger (`docs/review/language/hall.json`), every wing's card text with furigana; never claimed as native-reviewed. U review_ledger, `hall_w10`.
+- [ ] XP84 A person playing the Hall. H.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
