@@ -119,6 +119,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w9);
 
+  // wing 10: the Hall itself long ago, lamplit gold on old dark wood, a road of memory under a lantern-coloured sky
+  TL.PAL.hall_w10 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#6a7a4a', '#7a8a56', '#586840', '#8a9a62'], dirt: ['#8a6a46', '#9c7a52', '#76583a', '#ae8c62'],
+    stone: ['#7a7470', '#928a84', '#5e5854'], water: ['#3a5468', '#4a6478', '#7a94a6', '#d8e2ea'],
+    wood: ['#3c2a1e', '#4e3828', '#2a1e16', '#66482e'], leaf: ['#3a4a2e', '#465838', '#526644', '#2c3a22'],
+    flower: ['#e8a840', '#f4e8d0', '#c8402e', '#8a6ac0'], roof: ['#4a3e34', '#3c322a', '#2e2620', '#5c4e42'],
+    sky: '#d8a860', dark: '#140e0a',
+  });
+  TL.addRamps(TL.PAL.hall_w10);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -333,4 +343,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_envoy', { name: { en: 'The lord\'s messenger', jp: '{使|つか}い の {者|もの}' }, voice: { pitch: 0.86 },
     look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#2a2a3a', '#20202e', '#c8c0b0'], shape: 'robe', acc: [] },
     portrait: { eyes: 'narrow', style: 'short', acc: [], bg: '#101018' } });
+
+  // ---- the tales' people: wing 10, The Hundredth Tale ----------------------------------------------------------------
+  // Sōan (he/him), the Hall's last keeper, who stopped the Hundred at ninety-nine; Kohaku (they/them), his apprentice,
+  // who wanted it finished. Seen in the tenth lantern's light, as they were on that night long ago.
+  ch('hall_soan', { name: { en: 'Sōan', jp: 'ソウアン' }, voice: { pitch: 0.7 },
+    look: { skin: 2, hair: 'shaved', hairColor: 6, cloth: ['#4a4038', '#3a322c', '#e0c890'], shape: 'robe', acc: ['lamp'], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: ['lamp'], bg: '#1a140e' } });
+  ch('hall_kohaku', { name: { en: 'Kohaku', jp: 'コハク' }, voice: { pitch: 1.14 },
+    look: { skin: 1, hair: 'ponytail', hairColor: 1, cloth: ['#7a5a2a', '#5e4420', '#f0e0c0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'ponytail', acc: [], bg: '#1e160c' } });
 })(RB.content);

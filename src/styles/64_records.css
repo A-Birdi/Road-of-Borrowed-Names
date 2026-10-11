@@ -20,6 +20,7 @@
 .rb-pg { display: flex; flex-direction: column; gap: 6px; }
 .rb-frame { position: relative; border: 6px solid #f6efdc; box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 4px rgba(0,0,0,0.15); background: #e8dcc0; line-height: 0; }
 .rb-thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; display: block; max-width: 100%; }
+.rb-plate { display: flex; align-items: center; justify-content: center; padding: 0.5em; text-align: center; background: var(--paper-2); color: var(--ink); border: 1px solid var(--paper-edge); font-size: 0.95em; line-height: 1.6; }
 .rb-mark { position: absolute; right: 2px; bottom: 2px; line-height: 0; }
 .rb-mark .rb-seal { width: 28px; height: 28px; }
 .rb-pg-t { display: flex; flex-direction: column; gap: 3px; align-items: flex-start; }

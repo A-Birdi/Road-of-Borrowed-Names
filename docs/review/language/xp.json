@@ -1565,6 +1565,66 @@
   "jp": "{機|はた} の {音|おと}",
   "en": "The Sound of the Loom"
  },
+ "expedition:hall_w10#1w7olz": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{来|き}た {道|みち}",
+  "en": "The Road Behind"
+ },
+ "expedition:hall_w10#1guq8l4": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{灯|ひ} の {回廊|かいろう}",
+  "en": "The Lantern Gallery"
+ },
+ "expedition:hall_w10#h3ht5d": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{白紙|はくし} の {頁|ページ}",
+  "en": "The Unwritten Page"
+ },
+ "expedition:hall_w10#zclfz9": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{百話目|ひゃくわめ} の {話|はなし}",
+  "en": "The Hundredth Tale"
+ },
+ "expedition:hall_w10#45wet9": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "「 {百話目|ひゃくわめ} 」",
+  "en": "The unwritten journey: everything the other tales taught, together, and the tale is yours."
+ },
+ "map:hall.w10f1#1w7olz": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{来|き}た {道|みち}",
+  "en": "The Road Behind"
+ },
+ "map:hall.w10f2#1guq8l4": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{灯|ひ} の {回廊|かいろう}",
+  "en": "The Lantern Gallery"
+ },
+ "map:hall.w10f2#iss2q4": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{隅|すみ} の {苔|こけ} {灯籠|どうろう} が 、 {根|ね} を {張|は}った まま {動|うご}き{出|だ}した 。",
+  "en": "The moss lantern in the corner starts to move, its roots still in the floor."
+ },
+ "map:hall.w10f2#wc74z0": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{苔|こけ} {灯籠|どうろう} は 、 {静|しず}か に {灯|ひ} を {点|とも}した 。",
+  "en": "The moss lantern quietly lights its flame."
+ },
+ "map:hall.w10f3#h3ht5d": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
+  "jp": "{白紙|はくし} の {頁|ページ}",
+  "en": "The Unwritten Page"
+ },
  "encounter:xp.cellars_sluice#1tepwnb": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",

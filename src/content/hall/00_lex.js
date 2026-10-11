@@ -296,4 +296,23 @@ RB.lex.add(RB.lex.parseTable(`
 欲|よく|n|I|greed, desire; 欲を出す: to get greedy
 薄明かり|うすあかり|n|I|dim light; the first light of dawn
 朝焼け|あさやけ|n|I|the red glow of sunrise
+# ---- wing 10: the hundredth tale ---------------------------------------------------------------------------------------
+百話目|ひゃくわめ|n|I|the hundredth tale (of a 百物語 gathering)
+原|はら|n|I|a plain, an open field (葦の原: reed beds)
+憎い|にくい|adj-i|I|hateful; (of something done well) admirably clever, "you have to hand it to them"
+年老いる|としおいる|v1|A|to grow old
+道中記|どうちゅうき|n|A|a record of a journey, a travel diary
+道標|みちしるべ|n|I|a waystone, a signpost
+小雨|こさめ|n|I|light rain, drizzle
+灯芯|とうしん|n|I|a lamp wick
+漆|うるし|n|I|lacquer
+炉端|ろばた|n|A|the fireside, beside the hearth
+漆箱|うるしばこ|n|A|a lacquered box
+北壁|きたかべ|n|A|the north wall
+出会う|であう|v5u|E|to meet (by chance), to come across
+起こる|おこる|v5r|E|to happen
+生涯|しょうがい|n|A|a lifetime; 生涯の仲間: a companion for life
+百幕|ひゃくまく|n|I|a hundred acts (of a play)
+在り処|ありか|n|A|whereabouts, where something is kept
+火種|ひだね|n|I|an ember, a live coal
 `));

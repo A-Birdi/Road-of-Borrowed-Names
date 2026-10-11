@@ -333,4 +333,33 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 10: THE HUNDREDTH TALE
+  // The Hall's own tune, which has played in the foyer all along, told back: in A the koto plays it alone, plainly, as
+  // a story begins; in B the shakuhachi remembers the road, as the foyer's B does; in A2 the koto and the biwa tell it
+  // together over the held shō, and a single temple bell sounds once every eight bars, a lantern lit somewhere. The
+  // weight is in the retelling, never in loudness or speed (C-22).
+  S('hall_w10', {
+    title: 'The Hundredth Tale',
+    kind: 'area',
+    motifs: ['road'],
+    notes: 'Wing 10 of the Hall: the Hall itself long ago, and your own journey (D dorian, 64). The foyer\'s tune told back: the koto alone in A, the shakuhachi remembering the road in B, the koto and the biwa together over the shō in A2, with a single bell once every eight bars.',
+    key: 'D', mode: 'dorian', bpm: 64, loopFrom: 1,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.46, rv: 0.55 },
+      lead: { i: 'biwa', o: 3, v: 0.42, rv: 0.45 },
+      flute: { i: 'shakuhachi', o: 4, v: 0.46, rv: 0.5 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.16, rv: 0.5 },
+      bell: { perc: true, v: 0.16, rv: 0.7 },
+    },
+    echo: { beats: 1, fb: 0.25, mix: 0.25 },
+    all: { bell: 'i.......|........|........|........|........|........|........|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '.:8 | . . . . 5 - - -' },
+      A: { bars: 8, ch: '1 4 2 1 3 5 1 1', koto: HALL_A },
+      B: { bars: 8, ch: '4 4 1 1 2 2 5 5', flute: '5, - 3 - 2 - 1 - | 2 - - - - - . . | 3 - 2 - 1 - 6, - | 1 - - - - - . . | 5, - 3 - 2 - 1 - | 2 - - - - - . . | 2 - - - 1 - - - | 1 - - - - - . .' },
+      A2: { bars: 8, ch: '1 4 2 1 3 5 1 1', koto: HALL_A, lead: HALL_A, pad: '0+4', dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
 })(RB.audio);

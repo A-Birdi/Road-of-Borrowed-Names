@@ -65,7 +65,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { p: 'lantern', x: 45, y: 13, light: 34, o: { lit: true } }, { p: 'lantern', x: 45, y: 8, light: 34, o: { lit: true } },
         { p: 'mat', x: 1, y: 10 },
       ]),
-    npcs: [],
+    // Keeper Tsuru, by the tenth hearth once the Hundred is told (D9 Rewards: her last conversation, in 39a_w10_scenes.js)
+    npcs: [{ id: 'tsuru_hall', char: 'tsuru', x: 26, y: 15, dir: 'left', if: 'hall.w10', talk: [{ scene: 'hall.tsuru_final' }] }],
     exits: [{ x: 0, y: 10, w: 1, h: 2, to: 'kr.hall', sp: 'from_foyer', dir: 'left' }],
     onEnter: [{ scene: 'hall.foyer_first', if: '!hall_foyer_seen' }],
     spawn: { default: [1, 10, 'right'], from_door: [1, 10, 'right'], w1: [8, 7, 'up'], w2: [16, 7, 'up'], w3: [24, 7, 'up'], w4: [32, 7, 'up'], w5: [40, 7, 'up'], w6: [8, 14, 'down'], w7: [16, 14, 'down'], w10: [24, 14, 'down'], w8: [32, 14, 'down'], w9: [40, 14, 'down'] },

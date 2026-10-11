@@ -392,4 +392,46 @@ RB.dialect.add('kansai', `
 @ hall/hall.w9.end [hall.w9.end]
 = {第|だい}{九幕|きゅうまく} 、 {幕|まく} 。 …… {泣|な}かせる {芝居|しばい} だった わ 。 || End of act nine. …That one got me.
 > {第|だい}{九幕|きゅうまく} 、 {幕|まく} 。 …… {泣|な}かせる {芝居|しばい} やった わ 。 || End of act nine. …That one got me.
+@ hall/hall.w10.f1_first [hall.w10.f1_first]
+= {最終幕|さいしゅうまく} の {舞台|ぶたい} は 、 {私|わたし} たち の {旅|たび} 。 {演出|えんしゅつ} 、 {憎|にく}い わ ね 。 || The last act is set on our own journey. Whoever staged this knows what they're doing.
+> {最終幕|さいしゅうまく} の {舞台|ぶたい} は 、 うちら の {旅|たび} 。 {演出|えんしゅつ} 、 {憎|にく}い な あ 。 || The last act is set on our own journey. Whoever staged this knows what they're doing.
+@ hall/hall.w10.f2_first [hall.w10.f2_first]
+= {九|ここの}つ の {灯|ひ} 、 {全部|ぜんぶ} {見覚|みおぼ}え が ある ね 。 || All nine lights look familiar.
+> {九|ここの}つ の {灯|ひ} 、 {全部|ぜんぶ} {見覚|みおぼ}え が ある な 。 || All nine lights look familiar.
+@ hall/hall.w10.f3_first [hall.w10.f3_first]
+= {大詰|おおづ}め の {大詰|おおづ}め ね 。 {客席|きゃくせき} は 、 {満員|まんいん} よ 。 || The very last scene. And a full house.
+> {大詰|おおづ}め の {大詰|おおづ}め や な 。 {客席|きゃくせき} は 、 {満員|まんいん} や で 。 || The very last scene. And a full house.
+@ hall/hall.w10.t1 [hall.w10.t1]
+= {主役|しゅやく} は あなた 。 {脇役|わきやく} は {私|わたし} 。 {悪|わる}く ない {配役|はいやく} よ 。 || You in the lead, me in support. Not bad casting.
+> {主役|しゅやく} は あんた 。 {脇役|わきやく} は うち 。 ええ {配役|はいやく} や わ 。 || You in the lead, me in support. Not bad casting.
+@ hall/hall.w10.t2_board [hall.w10.t2_board]
+= {札|ふだ} を 、 {通|とお}った {順|じゅん} に {道標|みちしるべ} へ {置|お}いて いこう 。 || Let's set the tablets on the waystones in the order we passed through.
+> {札|ふだ} を 、 {通|とお}った {順|じゅん} に {道標|みちしるべ} へ {置|お}いて みよ か 。 || Let's set the tablets on the waystones in the order we passed through.
+@ hall/hall.w10.st1 [hall.w10.st1]
+= {一|ひと}つ {一|ひと}つ は {寄|よ}り{道|みち} みたい だった けど 、 {並|なら}べる と ちゃんと {道|みち} に なって いる ね 。 || Each one felt like a detour at the time, but laid out together they make a road.
+> {一|ひと}つ {一|ひと}つ は {寄|よ}り{道|みち} みたい やった けど 、 {並|なら}べたら ちゃんと {道|みち} に なって いる な 。 || Each one felt like a detour at the time, but laid out together they make a road.
+@ hall/hall.w10.t3 [hall.w10.t3]
+= {全部|ぜんぶ} 、 どこ か で {一度|いちど} {習|なら}った こと だ 。 {忘|わす}れて ない もの だ ね 。 || Every one of them something we learned somewhere along the way. We haven't forgotten.
+> {全部|ぜんぶ} 、 どこ か で {一回|いっかい} {習|なら}った こと や 。 ちゃんと {覚|おぼ}えて いる もん や な 。 || Every one of them something we learned somewhere along the way. We haven't forgotten.
+@ hall/hall.w10.to_w1 [hall.w10.to_w1]
+= {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん だ ね 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
+> {道|みち} を {聞|き}く の も 、 {断|ことわ}る の も 、 {人|ひと} の {話|はなし} を {伝|つた}える の も 、 {全部|ぜんぶ} この {館|やかた} で {練習|れんしゅう} した ん や な 。 || Asking the way, saying no, passing on what someone said: we practised all of it in this Hall.
+@ hall/hall.w10.t6 [hall.w10.t6]
+= {古|ふる}い {台本|だいほん} の {字|じ} に {似|に}て いる わ 。 {読|よ}んで あげる 。 {何|なに} が {知|し}りたい ？ || It looks like the writing in old scripts. I'll read it for you. What do you want to know?
+> {古|ふる}い {台本|だいほん} の {字|じ} に {似|に}て いる わ 。 {任|まか}せとき 。 {何|なに} が {知|し}りたい ん ？ || It looks like the writing in old scripts. I'll read it for you. What do you want to know?
+@ hall/hall.w10.k_box [hall.w10.k_box]
+= {書|か}き{付|つ}け の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+> {書|か}き{付|つ}け の {言葉|ことば} 、 もう {一回|いっかい} {言|い}う ？ {任|まか}せとき 。 || Shall I say what the note said again?
+@ hall/hall.w10.k_box [hall.w10.k_box]
+= {止|や}めた {人|ひと} たち が 、 {続|つづ}き を {待|ま}って いた ん だ ね 。 || The ones who stopped were waiting for someone to go on.
+> {止|や}めた {人|ひと} たち が 、 {続|つづ}き を {待|ま}って いた ん や な 。 || The ones who stopped were waiting for someone to go on.
+@ hall/hall.w10.pg4 [hall.w10.pg4]
+= {自分|じぶん} の {旅|たび} を 、 {自分|じぶん} の {言葉|ことば} で {書|か}く 。 …… {最初|さいしょ} の {頃|ころ} は 、 {考|かんが}えられなかった ね 。 || Writing your own journey in your own words. …Back at the start, you couldn't have imagined it.
+> {自分|じぶん} の {旅|たび} を 、 {自分|じぶん} の {言葉|ことば} で {書|か}く 。 …… {最初|さいしょ} の {頃|ころ} から は 、 {想像|そうぞう} も つかへん な 。 || Writing your own journey in your own words. …Back at the start, you couldn't have imagined it.
+@ hall/hall.w10.end [hall.w10.end]
+= {百幕|ひゃくまく} 、 {大入|おおい}り {満員|まんいん} 。 …… いい {芝居|しばい} だった わ 。 || A hundred acts, a full house. …A fine show.
+> {百幕|ひゃくまく} 、 {大入|おおい}り {満員|まんいん} 。 …… ええ {芝居|しばい} やった わ 。 || A hundred acts, a full house. …A fine show.
+@ hall/hall.tsuru_final [hall.tsuru_final]
+= ツル さん 、 {帰|かえ}り の {道中|どうちゅう} 、 {退屈|たいくつ} は させません よ 。 || Keeper Tsuru, I won't let you be bored on the way home.
+> ツル さん 、 {帰|かえ}り の {道中|どうちゅう} は 、 うち が {盛|も}り{上|あ}げる で 。 || Keeper Tsuru, I won't let you be bored on the way home.
 `, 'hall');

@@ -45,6 +45,7 @@ RB.ui.hall = (function () {
       row('Folklore', esc(d.folklore.en)) +
       row('Size', esc(d.floors.length + ' floors, ' + n + ' trials.')) +
       row('Counted', esc(counted + ' of ' + n + ' trials' + (r && r.done ? ': the lantern is relit.' : '.'))) +
+      (H().note(s, w) ? row('Your note', esc(noteText(H().note(s, w)))) : '') +
       row('Rules', '<ul class="xp-rules">' + rules.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul>') +
       '<fieldset class="hall-choices"><legend>' + esc('Your choices for this wing (changed only here, at the hearth)') + '</legend>' +
       row('Profile', esc((PROF[s.learn.profile] || s.learn.profile) + ': your journey\'s, as everywhere.')) +
@@ -54,6 +55,12 @@ RB.ui.hall = (function () {
       '</fieldset>' +
       (r && r.held ? '<p class="note-slip">' + I('here') + ' ' + esc('A floor is waiting exactly as you left it.') + '</p>' : '') +
       '</div>';
+  }
+  // the wing's optional, truthful note (D9 Rewards; L2's help categories), for the player alone: never a gate
+  function noteText(nt) {
+    const h = nt.help || {};
+    return 'Last told on the ' + (nt.route === 'grow' ? 'Grow' : 'Consolidate') + ' route, ' + (TAC[nt.tactics] || nt.tactics) + ' tactics, at ' + (PROF[nt.profile] || nt.profile || '?') + ': ' +
+      (nt.answers || 0) + ' answers; help used: ' + (h.conceptual || 0) + ' conceptual, ' + (h.constrain || 0) + ' answer-narrowing, ' + (h.supplied || 0) + ' answer supplied. For you alone; it opens and closes nothing.';
   }
   const ordinal = (n) => ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'][n - 1] || n + 'th';
   let CARD = null;
@@ -214,5 +221,5 @@ RB.ui.hall = (function () {
   };
   RB.hooks.hall_station = async (a) => { if (RB.hooks.xp_station) await RB.hooks.xp_station(a); };
   RB.hooks.hall_sheet = async () => { await sheet(); };
-  return { card, cardHtml, goIn, leave, suspend, sheet, sync };
+  return { card, cardHtml, noteText, goIn, leave, suspend, sheet, sync };
 })();

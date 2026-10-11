@@ -23,4 +23,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(7, T('The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'), '#3a2e2a');
   C.hallStamp(8, T('Three Witnesses at the Inn', '{宿|やど} の {三人|さんにん} の {証人|しょうにん}'), '#3a4a6a');
   C.hallStamp(9, T('The Crane\'s Return', '{鶴|つる} の {恩返|おんがえ}し'), '#8a2a2a');
+  C.hallStamp(10, T('The Hundredth Tale', '{百話目|ひゃくわめ} の {話|はなし}'), '#b8862a');
+
+  // the travel volume's page of each tale (D9 Rewards, K2): witnessed when the tale is told, or revealed beforehand by
+  // confirmation (then viewable, never witnessed or completed: H1); an interim plate until the art pass paints it (P16)
+  const ORD = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+  const NUM = ['{一|いち}', '{二|に}', '{三|さん}', '{四|よん}', '{五|ご}', '{六|ろく}', '{七|なな}', '{八|はち}', '{九|きゅう}', '{十|じゅう}'];
+  if (RB.volume) for (let n = 1; n <= 10; n++) {
+    const st = C.stamps['hall.w' + n];
+    RB.volume.add({ id: 'hall.w' + n, chapter: 12, kind: 'hall', special: true, flag: 'hall_w' + n + '_done', title: st.title, plate: st.title.jp,
+      criteria: { en: n === 10 ? 'The Hall of a Hundred Tales: the hundredth tale, your own, told.' : 'The Hall of a Hundred Tales: the ' + ORD[n - 1] + ' tale told.', jp: '{百物語|ひゃくものがたり} の {館|やかた} ・ {第|だい}' + NUM[n - 1] + ' の {話|はなし}' } });
+  }
+
+  // the keepsake Keeper Tsuru gives when the Hundred is told (D9 Rewards: a commemorative cosmetic)
+  C.items = C.items || {};
+  C.items.hall_lantern = { name: T('Lantern of the Hundred', '{百|ひゃく} の {灯|ひ} の {提灯|ちょうちん}'), desc: 'The Hall\'s last hand lantern, from Keeper Tsuru when the hundredth tale was told. A keepsake to carry; it changes only how you look.', slot: 'cosmetic', acc: 'lamp' };
 })(RB.content);

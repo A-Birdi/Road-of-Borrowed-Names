@@ -111,8 +111,9 @@ RB.ui.records = (function () {
 
   // ---- Journey › Travel volume ----------------------------------------------------------------------------------
   function thumb(p, cast, test) {
-    const def = RB.sequence.get(p.seq);
-    if (!def) return '';
+    const def = p.seq ? RB.sequence.get(p.seq) : null;
+    // a page whose painting is still to come (the Hall's tales, P16) shows its interim plate: the title, brushed
+    if (!def) return p.plate ? '<div class="rb-thumb rb-plate" aria-hidden="true"><span lang="ja">' + RB.ui.jhtml(p.plate) + '</span></div>' : '';
     const shot = Object.keys(def.shots)[0];
     const ph = def.shots[shot].phases;
     const phase = Array.isArray(ph) ? (ph[ph.length - 1] || [])[0] || (ph[ph.length - 1] || {}).id : Object.keys(ph || {}).pop();
