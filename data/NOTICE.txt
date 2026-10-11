@@ -29,7 +29,7 @@ Changes:    The embedded stroke data (RB.recogData; src/recog/10_strokedata.js i
             distributed under the same licence, CC BY-SA 3.0.
 
 ------------------------------------------------------------------------
-Fonts (the book interface's type: The Wayfarer's Ledger preview)
+Fonts (the book interface's type: The Wayfarer's Ledger)
 ------------------------------------------------------------------------
 Fonts:      Vollkorn (roman and italic), version 5.001
             BIZ UDPGothic (regular and bold), version 1.051

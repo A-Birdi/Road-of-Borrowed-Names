@@ -1,5 +1,5 @@
 // Runs the browser test scripts against the built index.html, one after another,
-// and prints a summary. Usage: node tests/e2e/run.mjs [--full] [--skip=a.mjs,…] [--part=k/n]
+// and prints a summary. Usage: node tests/e2e/run.mjs [--full | --extra] [--skip=a.mjs,…] [--part=k/n]
 //   default: UI, systems, audio, per-chapter story tests (one or two
 //            configurations each), an Atlas expedition, and one whole-game run
 //   --full:  per-chapter story tests in all their configurations and the
@@ -61,7 +61,21 @@ let suites = [
   ['harmony_raster.mjs'],
   ['harmony_appearance.mjs'], // HX66: every hairstyle, cut, accessory and keepsake on the painted kit; stress pairs; equip, unequip, save/load, slot switch
   ['portrait_dev.mjs'], // the portrait viewer (?dev=portraits): refused normally, sizes by the game's fit, no keys to the title
+  // the expansion's own suites (P01–P15), each run at its phase end and gathered here at P17 so that a complete run
+  // covers them: the world proof, the living world and its actions, the workshop, the records, the pastimes, the
+  // Distractions tab, the pilot expedition and the Atlas's board, then the six new chapters, the sea and the ports
+  ['world.mjs'], ['world_slice.mjs'], ['world_living.mjs'], ['verbs.mjs'], ['perform.mjs'], ['workshop.mjs'], ['records.mjs'],
+  ['distractions.mjs'], ['hanafuda.mjs'], ['karuta.mjs'], ['shogi.mjs'], ['festival.mjs'], ['festival_games.mjs'], ['expedition.mjs'], ['atlas_board.mjs'],
+  ['manybridge.mjs'], ['manybridge2.mjs'], ['keepers.mjs'], ['licence.mjs'], ['sailing.mjs'], ['ports.mjs'], ['kotonoha.mjs'],
+  ['cloudroad.mjs'], ['steamhollow.mjs'], ['archive12.mjs'],
   full ? ['matrix.mjs'] : ['pursue.mjs', 'E', 'mio'],
+];
+// --extra: the long functional checks kept out of the default run for their length (the battle addendum's creatures,
+// geometry and invariance, the Harmony flourish, the illustrated sequences of Chapters 3–6, the animated portraits,
+// the overworld figures, the audit fixes); P17's closure runs them once with `--extra`
+if (process.argv.includes('--extra')) suites = [
+  ['creatures_a.mjs'], ['battle_geometry.mjs'], ['battle_invariance.mjs'], ['harmony_cutin.mjs'], ['sequence_chapters.mjs'],
+  ['sequence_chapters_56.mjs'], ['sequence_dev.mjs'], ['portrait_anim.mjs'], ['overworld_figures.mjs'], ['audit_fixes.mjs'],
 ];
 // --skip=a.mjs,b.mjs leaves those scripts out; --part=k/n runs the k-th of n equal slices of what is left (a long
 // suite split across several runs, e.g. under a time limit per run)

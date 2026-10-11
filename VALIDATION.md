@@ -4275,6 +4275,28 @@ The route's last leg is now `ch6_done@sa.@sa_main` (`tests/e2e/pursue.mjs`, with
 journey has been driven from a new game to the ending through the game's own play, in one run plus one resumed leg
 from that run's own state; an uninterrupted run with the corrected last leg is recorded below when it ends.
 
+**story_ch4's F/Mio/go failure, root cause (the test harness, fixed).** The run that failed (see "The expansion, P16 —
+P16b, P16d" below) stopped at "back downstairs": one step from the upstairs room's floor onto its stairs. Run alone it
+passed five times out of five, so it was not left as a flake. `RB.test.step` (src/engine/99_test.js) started the
+step, waited a fixed 260 ms and then called `idle()`, which waits for scenes and transitions but not for a walk in
+progress; when the page's frames come late (that run overlapped several gigabytes of scratch files being deleted on
+the same disk), the step had not landed when the test looked, every later check ran on the wrong map, and the step
+landed afterwards. Shown on purpose with a scratch probe that delays every frame while timers keep running, on the
+same room and stairs: with frames 400 ms or 900 ms late the old helper reported the upstairs room straight after the
+step and the inn downstairs a moment later; with the fix (after its 260 ms the helper waits, up to 5 s, for the
+step to land, so an exit then shows as the transition that `idle()` already waits for) it reports the inn at once
+at 0, 400 and 900 ms. The game itself never refused the step.
+
+**The complete browser run gathers every functional suite.** Twenty-five of the expansion's own browser suites (the
+world proof and its slice, the living world, actions and performances, the workshop, the records, Distractions and
+the pastimes, the festival's corner and games, the pilot expedition, the Atlas's board, Manybridge's two chapters, the
+Keepers' Road, the licence, sailing, the ports, Kotonoha, the Cloudroad, Steamhollow, the Archive) had each run at
+its phase end but never been added to `tests/e2e/run.mjs`; they are now in its default list, and `--extra` runs the
+older addenda's long functional checks (creatures A, battle geometry and invariance, the Harmony flourish, the
+sequences of Chapters 3–6, the sequence viewer, the animated portraits, the overworld figures, the audit fixes).
+Scripts that only make captures, videos or contact sheets, the drivers and libraries, and the measurement scripts
+(`perf`, `load_budget`, `battle_budget`, `pets_perf`, run on their own for speed) stay out of it.
+
 ## The expansion, P16 — P16b, P16d and the book's small-screen fixes (P16 done)
 
 **What changed.** P16b: the 46 creatures drawn on a borrowed family in the interim each have a family of their own on

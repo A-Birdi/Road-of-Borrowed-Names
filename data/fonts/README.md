@@ -1,7 +1,8 @@
 # The book interface's type
 
-The fonts the Wayfarer's Ledger preview (Settings › Display) draws its text in. Expansion packet U02; the record is
-[docs/future/work/U02_TYPE.md](../../docs/future/work/U02_TYPE.md).
+The fonts the Wayfarer's Ledger (the book interface) draws its text in. Expansion packet U02; the record is
+[docs/future/work/U02_TYPE.md](../../docs/future/work/U02_TYPE.md). Since U05/U06 (F-142) the book is the Ledger
+for everyone, so these faces are used on every surface the book covers.
 
 | Role | Face | Files |
 |---|---|---|
@@ -29,9 +30,9 @@ are called "RB Vollkorn", "RB UD Gothic P", "RB UD Gothic" and "RB Shippori Minc
 **How the game carries them.**
 - `tools/build.mjs` puts the subsets into `index.html` as an inert JSON block (`<script type="application/json"
   id="rb-type">`). It refuses to build if a file's SHA-256 differs from `fonts.json`.
-- `src/ui/13_booktype.js` turns them into fonts from those bytes, only when the preview is on. No URL is loaded and
-  nothing is fetched.
-- The classic look never makes them, and the block adds no measurable start-up time (U02 record).
+- `src/ui/13_booktype.js` turns them into fonts from those bytes once the game is idle after start-up. No URL is
+  loaded and nothing is fetched.
+- The block adds no measurable start-up time (U02 record; the faces are installed after start-up, not before it).
 - Every font list in `src/styles/90_book.css` keeps today's system fonts behind the embedded face. So a character
   missing from a subset still draws, in the system's own font.
 

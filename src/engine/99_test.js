@@ -233,6 +233,10 @@ RB.test = (function () {
     p.dir = dir;
     RB.world._tryMove(dir);
     await wait(260);
+    // a starved frame loop can hold the step past any fixed wait (idle() does not wait for a walk): let it land; an
+    // exit it reaches then shows as the transition mode, which idle() does wait for
+    const t0 = Date.now();
+    while (RB.world.W.player && RB.world.W.player.mv && Date.now() - t0 < 5000) await wait(20);
     await idle();
   }
   return {
