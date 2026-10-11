@@ -234,7 +234,11 @@ mp_tomi: {任|まか}せて ！ {一番|いちばん} いい {場所|ばしょ} 
 !walkto pc 24 24 down
 !set mp_fireworks
 !music fireworks
+# Illustrated (src/ui/43i_seq_mb2.js): the first flower and the cheer; the two of you at the rail; the great willow.
+!sequence mb2.fireworks begin
+!shot bloom
 narr: ひゅう 、 と {細|ほそ}い {音|おと} が {上|あ}がって 、 {夜空|よぞら} に {最初|さいしょ} の {花|はな} が {開|ひら}いた 。 || A thin whistle climbs, and the first flower opens in the night sky.
+!shot bloom cheer
 narr: {八百|はっぴゃく} の {橋|はし} の {上|うえ} から 、 {一斉|いっせい} に {声|こえ} が {上|あ}がる 。 「たまや ！」 || From all eight hundred bridges at once, a cry goes up: "Tamaya!"
 !note mp_tamaya
 !look comp pc
@@ -244,44 +248,58 @@ narr: {八百|はっぴゃく} の {橋|はし} の {上|うえ} から 、 {一
 !if comp=suzu -> suzu
 !goto close
 :nao
+!shot two
 comp: …… {花火|はなび} って の は 、 {名前|なまえ} が ない な 。 {上|あ}がって 、 {消|き}えて 、 それ で {終|お}わり だ 。 || …Fireworks don't have names, do they. Up, gone, and that's that.
 comp: でも 、 {誰|だれ} も {怒|おこ}らない 。 {消|き}える の を {分|わ}かって いて 、 {見|み}に {来|く}る ん だ から 。 || But nobody gets angry. They come knowing it'll fade.
+!shot two think
 comp[think]: {奈落|ならく} で 、 {俺|おれ} は {怒|おこ}って いた 。 {自分|じぶん} の {荷物|にもつ} でも ない のに 。 {役者|やくしゃ} の {役|やく} なんて 、 {俺|おれ} に は {関係|かんけい} ない のに 。 || Down in the Understage I was angry. It wasn't my parcel. An actor's part has nothing to do with me.
 !choice
 * {関係|かんけい} ある よ 。 {一緒|いっしょ} に {怒|おこ}って くれて 、 うれしかった 。 || It does. I was glad you were angry with me. -> nao_a
 * {誰|だれ} か の ため に {怒|おこ}る の は 、 いい こと だ よ 。 || Being angry for someone else is a good thing. -> nao_b
 :nao_a
+!shot two smile
 comp[smile]: …… そう か 。 じゃあ 、 {配達|はいたつ} {先|さき} が {一|ひと}つ {増|ふ}えた って こと に して おく 。 || …Is that so. Then I'll call it one more address on my round.
 !goto close
 :nao_b
+!shot two smile
 comp[smile]: {人|ひと} の ため に {怒|おこ}れる {奴|やつ} と {歩|ある}く の は 、 {悪|わる}く ない 。 …… お{互|たが}い に な 。 || Walking with someone who gets angry for other people. Not bad. …Goes both ways.
 !goto close
 :mio
+!shot two
 comp[smile]: きれい …… 。 {花火|はなび} の {色|いろ} は 、 {薬|くすり} の {材料|ざいりょう} と {同|おな}じ {物|もの} から {作|つく}る ん です よ 。 {銅|どう} は {青|あお} 、 {塩|しお} は {黄色|きいろ} 。 || Beautiful… Firework colours come from the same things as medicines. Copper for blue, salt for yellow.
+!shot two think
 comp[think]: {奈落|ならく} で 、 わたし 、 {怒|おこ}って いました 。 {患者|かんじゃ} でも ない {人|ひと} の ため に 。 {薬屋|くすりや} は {怒|おこ}っちゃ いけない と 、 {思|おも}って いた のに 。 || In the Understage I was angry. For people who aren't even my patients. And I thought an apothecary must never get angry.
 !choice
 * {怒|おこ}る こと も 、 {薬|くすり} に なる かも しれない 。 || Maybe anger can be a medicine too. -> mio_a
 * {怒|おこ}って くれて 、 {役者|やくしゃ} さん たち は {助|たす}かった よ 。 || Your anger helped the actors. -> mio_b
 :mio_a
+!shot two smile
 comp[smile]: …… {量|りょう} を {間違|まちが}えなければ 、 です ね 。 {覚|おぼ}えて おきます 。 || …As long as the dose is right. I'll remember that.
 !goto close
 :mio_b
+!shot two smile
 comp[smile]: はい 。 …… {次|つぎ} も 、 {一緒|いっしょ} に {怒|おこ}って ください ね 。 || Yes. …Next time too, be angry alongside me.
 !goto close
 :ren
+!shot two
 comp: {花火|はなび} は 、 {灯|あか}り の {一番|いちばん} {短|みじか}い {形|かたち} です ね 。 {灯守|ひもり} と して は 、 {少|すこ}し {悔|くや}しい くらい {明|あか}るい 。 || Fireworks are the shortest-lived kind of light. As a lamp-keeper, I'm almost jealous of how bright they are.
+!shot two think
 comp[think]: {奈落|ならく} で 、 わたし は {怒|おこ}って いました 。 {灯守|ひもり} は {静|しず}か で いる べき だ と 、 {師匠|ししょう} に {教|おそ}わった のに 。 || In the Understage I was angry. My teacher taught me a lamp-keeper should stay calm.
 !choice
 * {静|しず}か な {怒|いか}り も ある よ 。 || There's such a thing as quiet anger. -> ren_a
 * {人|ひと} の ため に {怒|おこ}る の は 、 {灯|あか}り を {守|まも}る の と {同|おな}じ だ よ 。 || Being angry for others is like guarding a light. -> ren_b
 :ren_a
+!shot two smile
 comp[smile]: …… {静|しず}か な {怒|いか}り 。 いい {言葉|ことば} です 。 {書|か}いて おきます 。 || …Quiet anger. A good phrase. I'll write it down.
 !goto close
 :ren_b
+!shot two smile
 comp[smile]: {守|まも}る ため の {怒|いか}り 、 です か 。 …… それ なら 、 {師匠|ししょう} も {許|ゆる}して くれる でしょう 。 || Anger in order to guard. …Then my teacher would allow it.
 !goto close
 :suzu
+!shot two
 comp[smile]: {川開|かわびら}き の {花火|はなび} 。 {昔|むかし} は 、 {舞台|ぶたい} の {袖|そで} から {見|み}て いた の 。 {客席|きゃくせき} から {見|み}る の は 、 {初|はじ}めて かも 。 || The Opening's fireworks. I used to watch them from the wings. This might be my first time watching from the audience.
+!shot two think
 comp[think]: {奈落|ならく} で 、 わたし 、 {本気|ほんき} で {怒|おこ}って いた わ 。 {知|し}らない {役者|やくしゃ} たち の ため に 。 || In the Understage I was truly angry. For actors I don't even know.
 ?(mp_ev_koume) comp[think]: …… {自分|じぶん} の {手紙|てがみ} は 、 まだ {読|よ}んで も いない のに 。 || …When I haven't even read my own letter yet.
 !choice
@@ -289,15 +307,20 @@ comp[think]: {奈落|ならく} で 、 わたし 、 {本気|ほんき} で {�
 * [mp_ev_koume] その {手紙|てがみ} は 、 {読|よ}める {時|とき} に {読|よ}めば いい 。 || Read that letter when you're ready. -> suzu_b
 * [!mp_ev_koume] {一緒|いっしょ} に {怒|おこ}って くれて 、 ありがとう 。 || Thank you for being angry alongside me. -> suzu_c
 :suzu_a
+!shot two smile
 comp[smile]: …… {芝居|しばい} が {好|す}き だから 、 か 。 そう ね 。 まだ 、 {好|す}き みたい 。 || …Because I love the theatre, you mean. Yes. It seems I still do.
 !goto close
 :suzu_b
+!shot two smile
 comp[smile]: …… うん 。 {幕|まく} が {下|お}りたら 、 {読|よ}む わ 。 {今夜|こんや} は まだ 、 {花火|はなび} の {番|ばん} 。 || …Mm. I'll read it after the curtain. Tonight is still the fireworks' turn.
 !goto close
 :suzu_c
+!shot two smile
 comp[smile]: お{礼|れい} は {要|い}らない わ 。 {相方|あいかた} でしょう ？ || No thanks needed. We're partners, aren't we?
 :close
+!shot sky
 narr: {大|おお}きな {花火|はなび} が {開|ひら}いて 、 {光|ひかり} が {川|かわ} へ {降|ふ}って いく 。 {名前|なまえ} の {戻|もど}った {町|まち} に 、 {声|こえ} が {響|ひび}く 。 || A great firework opens and its light rains down into the river. Voices ring out across a city with its names returned.
+!sequence mb2.fireworks end
 !hook co_bond fest:fireworks
 !hook co_remember together fireworks
 !call mp.chapter_end

@@ -246,16 +246,26 @@ narr: {峠|とうげ} の {道標|みちしるべ} 。 「{灯落|ひおち} ま
 # (S15: the Hush is old; resolve to end it).
 !set kr_done
 !gesture pc lookroad left
+# Illustrated (src/ui/43j_seq_kr.js): the lit road behind; the valley ahead and the companion's resolve.
+!sequence kr.dawn begin
+!shot road
 narr: {峠|とうげ} から {振|ふ}り{返|かえ}る と 、 {灯守|ひもり} の {道|みち} の {灯籠|とうろう} が 、 {麓|ふもと} まで {一|ひと}つ {残|のこ}らず {点|つ}いて いた 。 || From the pass you look back: every lantern on the keepers' road is lit, all the way down to the foot.
+!shot valley
 narr: {前|まえ} に は 、 {灯落|ひおち} の {谷|たに} が {見|み}える 。 || Ahead, Lanternfall's valley.
+!shot valley comp
 ?(comp=nao) comp: しじま は 、 {俺|おれ} たち が {生|う}まれる {前|まえ} から あった 。 {灯守|ひもり} が {何代|なんだい} も かけて {守|まも}った もの を 、 {黙|だま}って {消|け}して きた 。 || The shijima was here before we were born. It's been quietly putting out what the keepers spent generations keeping.
+?(comp=nao) !shot valley resolve
 ?(comp=nao) comp[closed]: …… {届|とど}け{先|さき} は 、 {決|き}まった な 。 {終|お}わらせ に {行|い}く ぞ 。 || …Well, that settles where we're delivering. We're going to finish it.
 ?(comp=mio) comp: {一人|ひとり} で {灯|ひ} を {守|まも}って いた ヒサエ さん 。 {何十年|なんじゅうねん} も 、 {誰|だれ} も {来|こ}ない {道|みち} で 。 || Hisae, keeping her lamp alone. For decades, on a road no one came up.
+?(comp=mio) !shot valley resolve
 ?(comp=mio) comp[closed]: もう 、 {誰|だれ} も あんな {風|ふう} に {一人|ひとり} に しない 。 …… {終|お}わらせましょう 。 || No one should be left alone like that again. …Let's end this.
 ?(comp=ren) comp: {灯守|ひもり} は 、 {何百年|なんびゃくねん} も しじま と {向|む}き{合|あ}って きた ん です ね 。 {私|わたし} たち の {前|まえ} に も 、 ずっと 。 || The keepers have faced the shijima for hundreds of years. Long before us.
+?(comp=ren) !shot valley resolve
 ?(comp=ren) comp[closed]: …… {私|わたし} は 、 その {最後|さいご} の {灯守|ひもり} に は なりません 。 {終|お}わらせる {灯守|ひもり} に なります 。 || …I won't be the last of the keepers. I'll be the one who ends it.
 ?(comp=suzu) comp: {百年|ひゃくねん} {続|つづ}いた {芝居|しばい} にも 、 {千秋楽|せんしゅうらく} は ある の よ 。 || Even a play that's run a hundred years has a closing night.
+?(comp=suzu) !shot valley resolve
 ?(comp=suzu) comp[closed]: {幕|まく} を {下|お}ろし に {行|い}きましょう 。 …… {今度|こんど} は 、 {私|わたし} たち の {手|て} で 。 || Let's go and bring the curtain down. …With our own hands, this time.
+!sequence kr.dawn end
 !quest kr_main done
 !journal {灯守|ひもり} の {道|みち} に 、 {灯|ひ} が {戻|もど}った 。 しじま は 、 {思|おも}って いた より ずっと {古|ふる}い 。 {灯落|ひおち} へ {下|くだ}ろう 。 || The keepers' road is lit again. The shijima is far older than anyone thought. On down to Lanternfall.
 !autosave

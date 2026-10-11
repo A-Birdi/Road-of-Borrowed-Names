@@ -143,19 +143,28 @@ narr: {灯守|ひもり} の {記録|きろく} 。 しじま の {三|みっ}�
 # The vigil (R8): ninety-nine wicks, a story at each, the room darkening; Hisae and Kikyō tell; the companion takes a
 # turn (Suzu tells with Kikyō in her route). At the ninety-ninth, the Hundredth Tale.
 !set kr_vigil_begun
+# Illustrated (src/ui/43j_seq_kr.js): the room of wicks; Hisae; the last wick and the dark gathering.
+!sequence kr.vigil begin
+!shot room
 narr: {灯明|とうみょう} の {間|ま} 。 {壁|かべ} に {沿|そ}って 、 {芯|しん} が {九十九|きゅうじゅうきゅう} {本|ほん} 。 || The Room of Wicks. Ninety-nine wicks along the walls.
+!shot hisae
 kr_hisae: {灯守|ひもり} は 、 {年|とし} に {一度|いちど} 、 ここ で {夜|よ}{通|どお}し {話|はなし} を した 。 {一|ひと}つ {話|はな}す たび に 、 {芯|しん} を {一本|いっぽん} {消|け}す 。 || Once a year the keepers told stories here all night. With each story, one wick is put out.
 kr_hisae: {九十九|きゅうじゅうきゅう} の {話|はなし} を したら 、 {夜|よ} が {明|あ}ける 。 {百|ひゃく} {番目|ばんめ} は 、 {語|かた}らない 。 それ が {決|き}まり さ 。 || After ninety-nine, the dawn comes. The hundredth is not told. That's the rule.
 !fade out
+!shot hisae out
 narr: ヒサエ が {語|かた}り 、 キキョウ が {語|かた}り 、 {芯|しん} が {一本|いっぽん} 、 また {一本|いっぽん} と {消|き}えて いく 。 || Hisae tells, Kikyō tells, and the wicks go out, one and then another.
 ?(comp=nao) narr: ナオ は 、 {届|とど}かなかった {手紙|てがみ} の {話|はなし} を {一|ひと}つ {語|かた}った 。 {誰|だれ} の {手紙|てがみ} か は 、 {言|い}わなかった 。 || Nao tells a story about a letter that never arrived. Whose letter, they don't say.
 ?(comp=mio) narr: ミオ は 、 {母|はは} から {聞|き}いた {薬草|やくそう} の {話|はなし} を {語|かた}った 。 {途中|とちゅう} で {少|すこ}し 、 {声|こえ} が {詰|つ}まった 。 || Mio tells a story about herbs, one her mother told. Halfway through, her voice catches a little.
 ?(comp=ren) narr: レン は 、 {灯|ひ} の {名前|なまえ} を {一|ひと}つ ずつ {唱|とな}える {話|はなし} を 、 {静|しず}か に {語|かた}った 。 || Ren quietly tells a story of lamps' names, recited one by one.
 ?(comp=suzu) narr: スズ は 、 キキョウ と {掛|か}け{合|あ}い で {語|かた}った 。 {笑|わら}い{声|ごえ} が 、 {暗|くら}い {部屋|へや} に {響|ひび}いた 。 || Suzu tells a tale with Kikyō, trading lines like a double act. Laughter rings in the dark room.
 !fade in
+!shot last
 narr: {九十八|きゅうじゅうはち} {本目|ほんめ} が {消|き}えた 。 {残|のこ}る {芯|しん} は 、 {一本|いっぽん} 。 || The ninety-eighth goes out. One wick is left.
+!shot last kikyo
 kr_kikyo: {九十九|きゅうじゅうきゅう} {番目|ばんめ} は 、 {灯守|ひもり} の {見習|みなら}い の {話|はなし} 。 {見習|みなら}い は 、 {東|ひがし} の {灯|ひ} を {点|とも}し …… || The ninety-ninth is the tale of the keepers' apprentice. The apprentice lit the east lamp…
+!shot last gather
 narr: その {時|とき} 、 {部屋|へや} の {隅|すみ} の {闇|やみ} が 、 {集|あつ}まり{始|はじ}めた 。 || Just then the dark in the corner of the room begins to gather.
+!sequence kr.vigil end
 !encounter kr.hyakuwa
 !set kr_vigil_done
 !unset kr_night

@@ -81,8 +81,8 @@ RB.seqPaint = (function () {
       }
     }
   }
-  // a pool of light as ordered dither (a pixel is lit where the falloff beats the Bayer threshold), so it reads as
-  // pixel light rather than rings; cached per radius, colour and strength (a quantised to 1/20)
+  // a pool of light in four soft bands, their edges dithered (no gradients, no visible dot mesh); cached per radius,
+  // colour and strength (a quantised to 1/20)
   function glow(c, x, y, r, rgb, a) {
     r = Math.round(r);
     if (r <= 0 || a <= 0) return;
@@ -90,12 +90,15 @@ RB.seqPaint = (function () {
     if (aq <= 0) return;
     const sp = RB.seqKit.small('glow|' + r + '|' + (rgb || '') + '|' + aq, () => {
       const cv = RB.seqKit.mk(r * 2 + 1, r * 2 + 1), g = cv.getContext('2d'), p = P();
-      g.fillStyle = 'rgba(' + (rgb || '255,200,120') + ',0.5)';
+      const st = [1, 2, 3, 4].map((l) => 'rgba(' + (rgb || '255,200,120') + ',' + ((aq * l) / 4).toFixed(3) + ')');
       for (let j = -r; j <= r; j++) for (let i = -r; i <= r; i++) {
         const d = Math.hypot(i, j) / r;
         if (d >= 1) continue;
-        const f = (1 - d) * (1 - d) * aq * 2.2;
-        if (f > p.bayer(i + r, j + r)) g.fillRect(i + r, j + r, 1, 1);
+        const f = (1 - d) * (1 - d) * 4 + (p.bayer(i + r, j + r) - 0.5) * 0.9;
+        const l = Math.max(0, Math.min(4, Math.floor(f)));
+        if (!l) continue;
+        g.fillStyle = st[l - 1];
+        g.fillRect(i + r, j + r, 1, 1);
       }
       return { cv };
     });

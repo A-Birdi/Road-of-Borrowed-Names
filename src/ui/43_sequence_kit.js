@@ -129,11 +129,13 @@ RB.seqKit = (function () {
   // optionally mirrored (only for people whose drawing is symmetric enough: the caller decides).
   // ext: rows to continue the bust below its frame (its bottom row repeated, so a torso cut by a shorter
   // sheet never shows a hard edge); the anchor stays at the portrait's own bottom.
+  // (who may also be { id, fest: true }: that person in the festival night's yukata, whenever the picture is shown)
   function bust(who, expr, fr, g, flip, ext) {
-    const id = typeof who === 'string' ? who : 'pc|' + JSON.stringify(who.look);
+    const id = typeof who === 'string' ? who : who.id ? who.id + (who.fest ? '|fest' : '') : 'pc|' + JSON.stringify(who.look);
     ext = Math.max(0, Math.round(ext || 0));
     return small('bust|' + id + '|' + (expr || 'neutral') + '|' + (fr ? JSON.stringify(fr) : '') + '|' + gkey(g) + '|' + (flip ? 1 : 0) + '|' + ext, () => {
-      const sj = typeof who === 'string' ? RB.portraits.subject(who) : RB.portraits.subject('pc', who.look);
+      let sj = typeof who === 'string' ? RB.portraits.subject(who) : who.id ? RB.portraits.subject(who.id) : RB.portraits.subject('pc', who.look);
+      if (sj && who && who.id && who.fest && RB.festDress && !/\|yukata$/.test(sj.key)) sj = Object.assign({}, sj, { key: sj.key + '|yukata', p: RB.festDress.portrait(sj.p, who.id) });
       const f = sj && RB.portraits.frame(sj, expr || 'neutral', fr || null);
       if (!f) return null;
       let cv = mk(f.width, f.height);
