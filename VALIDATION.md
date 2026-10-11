@@ -4234,6 +4234,33 @@ mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
 before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
 
+## The expansion, P15 — P15f done (Ashihara Shinden), and the postgame's browser test
+
+**On a copy of the working tree's git-visible files (the settlement complete, before the guardians' step-back change
+below):** the whole unit suite **50,641 passed, 0 failed**. Along the way the suites the settlement touches caught: the
+village's songs first sat below the shinobue's range and held the tonic over the dominant (fixed: the flute an octave
+up, the chord under that bar the tonic; `audio_songs` 3,232/0); the settlement's first routine table broke the living
+world's "shipped tables are empty" check (now: empty but for the settlement, whose maps only a twelve-chapter journey
+reaches; `town` 88/0); a named arrival point on the Lantern Road changed that six-chapter map's recorded geometry
+(replaced by an arrival tile on the settlement's side; `overworld_geometry` 3/0); seven settlers shared names with
+earlier people (renamed: Mitsue, Yoshizō, Taki, Shō, Natsu, Kotoe, Mohei). `settle` **79/0** (the way in only after the
+story; each part in order, two journeys choosing differently getting different villages; both quarrels settled both
+ways and ended bluntly; every resident in exactly one place at every stage and slot, pinned while their quarrel waits;
+every person and thing to use reachable at every stage; growing buildings blocking only once they stand; the tasks'
+levels and answers; no money, no upkeep), `kanji` 638/0, `dialect` 9,251/0, `records` 218/0, `quest` 92/0, `chart`
+53/0, `encounters` 184/0, `world` 13/0, `reach` 11/0, validator no errors, the language ledger with no line unreviewed
+(self-review fixes: a pedlar's 持ってきな, "bring it", now 持っていきな, "take it"; 隣 alone for neighbours now 隣同士).
+
+**Browser (`node tests/e2e/postgame.mjs`, 2/0 on the build of this commit).** The founder's shrine absent in the mill
+during the story and there after it; waking the guardian and "Not now" (nothing counted); facing it (the encounter
+screen names the Founder's Voice) and stepping back (the meeting counted, nothing given, back on the map); the stamp
+book's "Old guardians" heading with furigana and the founder's stamp reading "Settled on your second meeting, on
+Standard.", no bare kanji. The test found that a boss can never be stepped back from, so an optional guardian had no
+"Step back": guardians' encounters now say `canFlee` (`guardians` 66/0 after). The settlement: no path off the Lantern
+Road during the story, one after it; arriving; the three ways named in the real language-task screen, their
+signposts, the post box, and the school standing and in the way. Screenshots looked at: the village after naming
+(thatched houses, signposts, post box, notice board, residents, the school) and the stamp book.
+
 ## The expansion, P15 — P15e done (the old guardians)
 
 **Clean copy of 961cd19 (the Hall complete):** the whole unit suite **50,150 passed, 0 failed**.

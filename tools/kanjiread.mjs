@@ -116,6 +116,8 @@ export const CURATED = {
   唄: 'うた', 舗: 'ほ',
   // the Hall (P15): 田舎 いなか reads as a whole word; 拙者 せっしゃ and 稲穂 いなほ do not split by the rules
   舎: 'しゃ', 拙: 'せつ', 穂: 'ほ',
+  // Ashihara Shinden (P15f): 厄介 やっかい reads as a whole word (the sound change やく → やっ)
+  厄: 'やく',
   // 守: the ～守 compounds (灯守, 木守, 関守, 灯台守) each count once and outnumber
   // 守る, though 守る is the word the game uses most (a battle response)
   守: 'まも',

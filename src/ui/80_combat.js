@@ -1501,7 +1501,8 @@ RB.combat = (function () {
     RB.render.setOverride(draw);
     // an ordinary battle of the six-chapter game uses none of the platform's new rules (ordinaryRules: {})
     st = st0 || L().init(enemy, s, Object.assign({}, opts, { group: members.slice(1), rules: ENC().ordinaryRules(s) }));
-    st.noFlee = !!opts.noFlee || !!enemy.boss || !!st.noFlee;
+    // a boss can't be stepped back from, except an optional one whose encounter says so (P15e: the old guardians)
+    st.noFlee = !!opts.noFlee || (!!enemy.boss && !(st.enc && st.enc.def.canFlee)) || !!st.noFlee;
     // an expedition with persistent condition sorts what each loss of resolve came from (D2)
     if (RB.expedition) RB.expedition.battleStart(st, s);
     showIntentEn = false;

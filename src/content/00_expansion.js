@@ -17,7 +17,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     yn: 'yn',    // Steamhollow, Chapter 11
   };
   // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
-  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv', 'co2', 'sb2', 'lf2', 'sa2', 'hall', 'gd'];
+  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv', 'co2', 'sb2', 'lf2', 'sa2', 'hall', 'gd', 'as'];
   // creatures the expansion adds to a six-chapter region (their ids keep the region's prefix): reviewed under these
   C.reviewEnemies = C.reviewEnemies || {};
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)

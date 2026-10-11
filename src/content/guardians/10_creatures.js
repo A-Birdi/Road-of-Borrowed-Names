@@ -158,7 +158,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- conditions: the First Fire (made of flame: water weakens it, earth buries it, wind and flame feed it) -------
   const EMBER = { enemy: 'co.ember', conditions: ['flame'] };
   C.encounters['gd.co'] = {
-    id: 'gd.co', kind: 'battle', name: say('{最初|さいしょ} の {火|ひ}', 'The First Fire'), story: true, guardian: 'co',
+    id: 'gd.co', kind: 'battle', name: say('{最初|さいしょ} の {火|ひ}', 'The First Fire'), story: true, canFlee: true, guardian: 'co',
     lead: { enemy: 'gd.firstfire', conditions: ['flame'] },
     group: { normal: [EMBER], hard: [EMBER, EMBER] },
     rules: { wait: true, conditions: true },
@@ -170,7 +170,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const LIGHT = { enemy: 'sb.starling', knots: 1 };
   const DOWN = say('{小|ちい}さな {星|ほし} が 、 {後|あと} から {降|お}りて くる 。', 'A little light is coming down after her.');
   C.encounters['gd.sb'] = {
-    id: 'gd.sb', kind: 'battle', name: say('{姉星|あねぼし}', 'The Sister Star'), story: true, guardian: 'sb', setPiece: true, capacity: 4,
+    id: 'gd.sb', kind: 'battle', name: say('{姉星|あねぼし}', 'The Sister Star'), story: true, canFlee: true, guardian: 'sb', setPiece: true, capacity: 4,
     lead: { enemy: 'gd.sisterstar' },
     rules: { wait: true, conditions: true },
     arrivals: [{ enemy: LIGHT, leadBelow: 3, prevent: ['bell'], say: DOWN }, { enemy: LIGHT, leadBelow: 2, prevent: ['bell'], say: DOWN }, { enemy: LIGHT, leadBelow: 1, prevent: ['bell'], say: DOWN }],
@@ -182,7 +182,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- arrivals: the Cloud Ox Elder (the herd comes up the path behind it; a rope across the path holds it back) ----
   const CALF = { enemy: 'cr.ox', pattern: ['strike', 'rest'] };
   C.encounters['gd.cr'] = {
-    id: 'gd.cr', kind: 'battle', name: say('{雲牛|くもうし} の {長老|ちょうろう}', 'The Cloud Ox Elder'), story: true, guardian: 'cr', setPiece: true, capacity: 4,
+    id: 'gd.cr', kind: 'battle', name: say('{雲牛|くもうし} の {長老|ちょうろう}', 'The Cloud Ox Elder'), story: true, canFlee: true, guardian: 'cr', setPiece: true, capacity: 4,
     lead: { enemy: 'gd.oxelder' },
     rules: { wait: true, conditions: true },
     arrivals: [2, 4, 6].map((after) => ({ enemy: CALF, after, prevent: ['bind', 'anchor'], say: say('{坂|さか} を {登|のぼ}って くる {蹄|ひづめ} の {音|おと} 。', 'Hooves on the slope: more of the herd is coming up the path.') })),
@@ -194,7 +194,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- conditions: the Kettle's Mother (wet through: ice freezes her still, and a stone cracks the ice) ------------
   const WISP = { enemy: 'yn.steamwisp', conditions: ['airborne'] };
   C.encounters['gd.yn'] = {
-    id: 'gd.yn', kind: 'battle', name: say('{釜|かま} の {母|はは}', 'The Kettle\'s Mother'), story: true, guardian: 'yn',
+    id: 'gd.yn', kind: 'battle', name: say('{釜|かま} の {母|はは}', 'The Kettle\'s Mother'), story: true, canFlee: true, guardian: 'yn',
     lead: { enemy: 'gd.kettlemother', conditions: ['wet'] },
     group: { normal: [WISP], hard: [WISP, WISP] },
     rules: { wait: true, conditions: true },

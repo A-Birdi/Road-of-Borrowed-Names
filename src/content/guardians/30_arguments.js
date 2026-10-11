@@ -20,7 +20,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Head Office (Saltglass) -----------------------------------------------------------------------------------------
   C.encounters['gd.sg'] = {
-    id: 'gd.sg', kind: 'social', name: say('{本局|ほんきょく}', 'The Head Office'), story: true, guardian: 'sg',
+    id: 'gd.sg', kind: 'social', name: say('{本局|ほんきょく}', 'The Head Office'), story: true, canFlee: true, guardian: 'sg',
     lead: { enemy: 'gd.headoffice' },
     rules: { wait: true },
     autoRoute: ['s:restate', 's:ask', 'wait', 's:ledger', 's:copy'],
@@ -75,7 +75,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Bell's Maker (Lanternfall) --------------------------------------------------------------------------------------
   C.encounters['gd.lf'] = {
-    id: 'gd.lf', kind: 'social', name: say('{鐘|かね} の {鋳物師|いもじ}', 'The Bell\'s Maker'), story: true, guardian: 'lf',
+    id: 'gd.lf', kind: 'social', name: say('{鐘|かね} の {鋳物師|いもじ}', 'The Bell\'s Maker'), story: true, canFlee: true, guardian: 'lf',
     lead: { enemy: 'gd.maker' },
     rules: { wait: true },
     autoRoute: ['s:restate', 's:why', 'wait', 's:record', 's:keep'],
@@ -130,7 +130,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- the Bridge Founder (Manybridge) --------------------------------------------------------------------------------------
   C.encounters['gd.mb'] = {
-    id: 'gd.mb', kind: 'social', name: say('{橋|はし} の {開祖|かいそ}', 'The Bridge Founder'), story: true, guardian: 'mb',
+    id: 'gd.mb', kind: 'social', name: say('{橋|はし} の {開祖|かいそ}', 'The Bridge Founder'), story: true, canFlee: true, guardian: 'mb',
     lead: { enemy: 'gd.bridgefounder' },
     rules: { wait: true },
     autoRoute: ['s:restate', 's:carved', 'wait', 's:carve', 's:map'],

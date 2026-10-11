@@ -125,6 +125,12 @@ RB.audio = RB.audio || {};
       battle: 'battle_atlas', boss: 'boss_atlas', route: null,
       songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7', 'hall_w8', 'hall_w9', 'hall_w10'],
     },
+    // Ashihara Shinden, the new settlement (38zs_songs_settle.js), postgame in the twelve-chapter edition: no creatures
+    ashihara: {
+      chapter: 12, edition: 2, postgame: true, regions: ['ashihara'], prefixes: ['as.'],
+      battle: 'battle_atlas', boss: 'boss_atlas', route: null,
+      songs: ['ashihara', 'as_festival'],
+    },
   };
   // Moods shared by every zone (investigation, rest, wonder, grief, the Hush,
   // the companions' own themes, the ending): allowed on any map.

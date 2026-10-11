@@ -27,7 +27,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['ひ が くれる まえ に 、 すいもん を しめて おけ 。 よる の かわ は 、 すいしゃ を ながす 。', '{日|ひ} が {暮|く}れる {前|まえ} に 、 {水門|すいもん} を {閉|し}めて おけ 。 {夜|よる} の {川|かわ} は 、 {水車|すいしゃ} を {流|なが}す 。', '"Before the sun goes down, have the sluice shut. The river at night carries mills away."'],
   ];
   C.encounters['gd.rw'] = {
-    id: 'gd.rw', kind: 'battle', name: say('{初代|しょだい} の {声|こえ}', 'The Founder\'s Voice'), story: true, guardian: 'rw',
+    id: 'gd.rw', kind: 'battle', name: say('{初代|しょだい} の {声|こえ}', 'The Founder\'s Voice'), story: true, canFlee: true, guardian: 'rw',
     lead: { enemy: 'gd.founder' },
     rules: { wait: true },
     procedure: {
@@ -81,7 +81,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ];
   const SHELF = vals({ loose: ['{散|ち}らばって いる', 'loose'], read: ['{届|とど}いた {棚|たな}', 'delivered'], wait: ['{待|ま}つ {棚|たな}', 'waiting'], back: ['{返|かえ}す {棚|たな}', 'to go back'], told: ['{読|よ}み{上|あ}げた', 'read aloud'] });
   C.encounters['gd.ko'] = {
-    id: 'gd.ko', kind: 'battle', name: say('{最初|さいしょ} の {葉守|はもり}', 'The First Keeper'), story: true, guardian: 'ko',
+    id: 'gd.ko', kind: 'battle', name: say('{最初|さいしょ} の {葉守|はもり}', 'The First Keeper'), story: true, canFlee: true, guardian: 'ko',
     lead: { enemy: 'gd.firstkeeper', conditions: ['rooted'] },
     group: { normal: ['ko.leafling'], hard: ['ko.leafling', 'ko.leafling'] },
     rules: { wait: true, conditions: true },

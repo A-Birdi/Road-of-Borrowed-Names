@@ -21,7 +21,7 @@ let suites = [
   ...(full ? [0, 1, 2, 3, 4].map((i) => ['story_ch6.mjs', String(i)]) : [['story_ch6.mjs', '2']]),
   ['atlas.check.mjs'],
   // the Hall of a Hundred Tales (P15): the card with its furigana, the chip, the sheet, the reprieve, suspend and resume
-  ['hall.mjs'],
+  ['hall.mjs'], ['postgame.mjs'],
   // the companion ending extensions and The Pages We Keep (all four companions; captures to tests/e2e/out/pages)
   ['pages_ending.mjs'],
   // companionship: Company › Companion and Shared memories, invitations, reflections, rest (addendum §6–9, §19)

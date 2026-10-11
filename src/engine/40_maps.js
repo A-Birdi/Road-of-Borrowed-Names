@@ -38,7 +38,8 @@ RB.maps = (function () {
     const shut = []; // doors of buildings you cannot enter: solid, and they say so
     const structs = (def.structs || []).map((s) => Object.assign({}, s));
     for (const s of structs) {
-      for (let yy = s.y; yy < s.y + s.h; yy++)
+      // a building that only stands once a place has grown (`grow` with its `if`, P15f) blocks only when it is there
+      if (!(s.grow && s.if)) for (let yy = s.y; yy < s.y + s.h; yy++)
         for (let xx = s.x; xx < s.x + s.w; xx++) if (xx >= 0 && yy >= 0 && xx < w && yy < h) block[yy * w + xx] = 1;
       if (s.door != null) {
         const dx = s.x + s.door, dy = s.y + s.h - 1;
@@ -87,6 +88,7 @@ RB.maps = (function () {
       const pw = p.w || pd.w, ph = p.h || pd.h;
       if (x >= p.x && x < p.x + pw && y >= p.y && y < p.y + ph && RB.state.test(s, p.if)) return true;
     }
+    for (const b of m.structs) if (b.grow && b.if && x >= b.x && x < b.x + b.w && y >= b.y && y < b.y + b.h && RB.state.test(s, b.if)) return true;
     return false;
   }
   function exitAt(m, x, y) {
