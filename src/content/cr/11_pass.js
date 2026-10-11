@@ -27,7 +27,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the road: up from the bottom left, five turns, out at the top right
       k.path([[3, 33], [3, 28], [22, 28], [22, 22], [5, 22], [5, 16], [22, 16], [22, 10], [5, 10], [5, 4], [24, 4], [24, 0]], '+', 2);
       // the detour round the slide on the second turn: a goat path out across the scree and back
-      k.path([[24, 29], [26, 29], [26, 22], [24, 22]], ':', 1);
+      k.path([[23, 29], [26, 29], [26, 22], [24, 22]], ':', 1);
       k.scatter('R', 10, 1101, [0, 0, 28, 34], '^');
     }),
     props: [

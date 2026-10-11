@@ -290,7 +290,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       k.ragged('top', '^', 3, 1001).ragged('bottom', '^', 3, 1002);
       k.rect(0, 12, 36, 2, '=');
       // the barrier's fence of grey palings across the saddle; the road through the gate
-      k.rect(20, 3, 1, 18, 'f'); k.rect(20, 12, 1, 2, '=');
+      k.rect(20, 0, 1, 24, 'f'); k.rect(20, 12, 1, 2, '=');
       k.scatter(';', 8, 1003, [0, 15, 18, 5], '.');
     }),
     structs: [
