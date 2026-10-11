@@ -21,6 +21,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Head Office (Saltglass) -----------------------------------------------------------------------------------------
   C.encounters['gd.sg'] = {
     id: 'gd.sg', kind: 'social', name: say('{本局|ほんきょく}', 'The Head Office'), story: true, canFlee: true, guardian: 'sg',
+    // help after a defeat (E19), as every story encounter offers: what the argument is about, then a way through
+    help: { explain: { en: 'The Head Office is not angry with you. It is an office that has had no clerks for a very long time, and it has forgotten what its seal was for. Find out when a clerk last came.' },
+      suggest: { en: 'Say its rule back to it, ask when a clerk last came, and wait for it to say what its work was for; then show it the harbour post\'s book, and offer a copy kept at the post in place of the seal.' } },
     lead: { enemy: 'gd.headoffice' },
     rules: { wait: true },
     autoRoute: ['s:restate', 's:ask', 'wait', 's:ledger', 's:copy'],
@@ -76,6 +79,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Bell's Maker (Lanternfall) --------------------------------------------------------------------------------------
   C.encounters['gd.lf'] = {
     id: 'gd.lf', kind: 'social', name: say('{鐘|かね} の {鋳物師|いもじ}', 'The Bell\'s Maker'), story: true, canFlee: true, guardian: 'lf',
+    help: { explain: { en: 'The Maker wants to break the Drowned Bell because it was cast in a hurry, in a single night of the flood year. What the Maker never learned is whether it did anyone any good.' },
+      suggest: { en: 'Say the wish back, ask why it was cast in one night, and wait; then tell the Maker what the town\'s record says the bell did that night, and ask for it to be kept.' } },
     lead: { enemy: 'gd.maker' },
     rules: { wait: true },
     autoRoute: ['s:restate', 's:why', 'wait', 's:record', 's:keep'],
@@ -131,6 +136,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- the Bridge Founder (Manybridge) --------------------------------------------------------------------------------------
   C.encounters['gd.mb'] = {
     id: 'gd.mb', kind: 'social', name: say('{橋|はし} の {開祖|かいそ}', 'The Bridge Founder'), story: true, canFlee: true, guardian: 'mb',
+    help: { explain: { en: 'The Founder wants every bridge but the first taken down, because nobody can read the name carved on the first one any more. It is afraid of being forgotten.' },
+      suggest: { en: 'Say the plan back, ask about the carved name, and wait; then offer to recut the name if the other bridges may stay, or to draw the first bridge at the very top of Manybridge\'s map.' } },
     lead: { enemy: 'gd.bridgefounder' },
     rules: { wait: true },
     autoRoute: ['s:restate', 's:carved', 'wait', 's:carve', 's:map'],
