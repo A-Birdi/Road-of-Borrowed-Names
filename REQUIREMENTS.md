@@ -649,6 +649,13 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP66 P11's phase end on a clean copy. U 40,163/0 (190cb80, after fixing 15 failures found on 45442cb); B every suite run passes after two test fixes (encounters' ordering task F-87; pad_kanji's outside kanji), sailing 3/0 with touch; route F/Ren to `ko_done` by ferry (245 visits); the route with the boat covered by unit and browser suites, not driven; C あらゆる taught (F-86), F-85 (VALIDATION.md "The expansion, P11's phase end").
 - [ ] XP67 A person playing Chapter 9, with and without the boat. H.
 
+## The expansion, P12 the Cloudroad, Chapter 10 (C-81; docs/future/work/P12_CLOUDROAD.md; VALIDATION.md "The expansion, P12")
+- [v] XP68 The Cloudroad in twelve-chapter journeys: the call, seven post stations and their lamps, route reports with source and certainty, the weather by explicit phases, route planning, the relay (say what you know as surely as you know it), travel papers and the Mist Barrier's interview, staying behind (surety; the solo stretch; no stand-in), Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end; ごとに taught. U cr_ch10 146/0; B cloudroad 4/0.
+- [v] XP69 The chapter's six creatures and two wanderers on existing art families (interim, F-36), five side stories (one with three lasting ends), the companions' beats on the restored relay, five songs, the records. U cr_ch10, creatures_b, audio; B audio_zones 91/0, records 7/0.
+- [v] XP70 Every new Japanese line of Chapter 10 self-reviewed in the ledger (1,382; corrections in the ledger's reference); never claimed as native-reviewed. U review_ledger.
+- [v] XP71 P12's phase end on a clean copy. U 43,709/0 (aa5fa0e, after fixing 31 failures on the working tree), 43,761/0 on 7917e94; B 12 suites pass; route F/Ren from the Kotonoha fixture to `cr_done` after two map fixes the route found (the High Pass's goat path, the Barrier's fence; U chapter_reach 4/0) (VALIDATION.md "The expansion, P12").
+- [ ] XP72 A person playing Chapter 10. H.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).

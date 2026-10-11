@@ -4143,3 +4143,48 @@ self-reviewed in the ledger.
 
 **Not verified:** a person playing Chapter 9 with and without the boat (XP67); Firefox; the foldable; a real phone's
 touch (only emulated touch in headless Chromium).
+
+## The expansion, P12: the Cloudroad, Chapter 10, and its phase end (2026-10-11; C-81; docs/future/work/P12_CLOUDROAD.md; REQUIREMENTS.md XP68–XP72)
+
+**Unit suite.** On the working tree at the end of P12e: 43,497 passed, 31 failed. The failures: the creatures' own
+deliveries on their art families (`creatures_b`: the Cloudroad's patterns moved onto deliveries each family draws),
+the fairness table, three audio checks (an instrument below its range, two clashing sustained notes), the font
+subsets and the recogniser's data (the chapter's new kanji: re-subset; KanjiVG fetched and converted; 簾, 袈 and 裟
+curated in `tools/kanjiread.mjs`), the kanji chart's "Other" over its 8% (meanings and themes added), a prop name the
+quest guide did not know (cr_satchel and four others), Genji's brows too close to his hair (contrast 0.18; a brow
+colour of his own), and the review ledger. After the fixes: **43,709 passed, 0 failed**. The chapter's own test,
+`cr_ch10`, 146/0 (synthetic campaigns through the real scene runner: the relay, the plans, the closures by phase,
+staying behind, the High Pass, the courier, the side stories, the companions, the records).
+
+**Clean copy (aa5fa0e, git archive).** `tools/validate.mjs`: no errors (lexicon-conflict warnings only, as before).
+Unit: 43,709/0. Browser: `cloudroad` 4/0 (the relay sheet, the route plan, staying behind: nobody follows above the
+cloud while the companion waits), `kotonoha` 7/0, `keepers` 4/0, `encounters` 10/0, `records` 7/0, `book` 15/0,
+`kanji_chart` 8/0, `quest_guide` all pass, `dialect_kansai` all pass, `travel_rules` 10/0, `battle_backdrops` 38/0,
+`audio_zones` 91/0.
+
+**The route, and what it found.** `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node
+tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_passed@sg.|lf.|lf2.|cr.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.
+On aa5fa0e it reached `cr_called` (25 visits) and `cr_passed` (74), then **stuck** at the foot of the High Pass: no
+site offered progress. Walking every map from its spawn showed why: on the Switchbacks the goat path round the slide
+was not joined to the road at its lower end (a path drawn one tile short), so the pass could not be climbed until the
+slide was cleared, which is done from above. A real player would have been stopped there. The same check found that
+the Mist Barrier's fence stopped short of the cliffs, leaving a way round the checkpoint. Both fixed (3d831a4), and
+`tests/unit/chapter_reach.test.mjs` now walks every Cloudroad map in four story states (on the way up the Barrier
+holds and nothing else is out of reach; fetching proof; through the Barrier with the slide still down; the chapter
+done): 4/0. On a clean copy of 3d831a4 the route reached `cr_called` (25 visits), `cr_passed` (74) and **`cr_done`
+(4 more site visits; about three minutes in all)**, 223 interactions met, all in the story (22 in Chapter 10). It reported one bodiless
+speaker (the courier's echo, speaking in the hut's doorway before his encounter, with no figure on the map): he now
+stands in the doorway until he has handed on the post (the next commit). The two walk-ins are meant (Ren at the
+reunion in the Barrier's office; Jinpachi bringing Ren's message from Hisae). `F-ren-cr_done.json` is the campaign
+at the chapter's end, for Chapter 11's route.
+
+**After the fixes, on a clean copy of 7917e94 (the hut's figure and the fixture):**
+validator no errors; the whole unit suite **43,761 passed, 0 failed** (`fixtures_campaign` 525/0 with the new
+fixture, `cr_ch10` 146/0, `chapter_reach` 4/0, `conversation_continuity` 1,732/0); browser `cloudroad` 4/0.
+
+**Language.** Every new line of Chapter 10 (1,382 in `docs/review/language/cr.json`) self-reviewed against the
+lexicon and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md; corrections listed in the
+ledger's reference (Ujie is he/him; the chapter's end; contractions joined). Self-review, not native review.
+
+**Not verified.** A person playing Chapter 10 (the relay's sheets, the plans, the solo stretch by feel); Firefox and
+Safari; real phones and tablets; the music by ear.

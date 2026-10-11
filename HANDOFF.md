@@ -231,9 +231,11 @@
     Chapters 3–4 as 5–6) is done (phase end in VALIDATION.md "The expansion, P10"; F/Ren PASS, unit 35,932/0); P11
     (Kotonoha and the sea: Lanternfall as Chapter 8, Kotonoha as Chapter 9, the licence, sailing and two ports) is
     done (phase end in VALIDATION.md "The expansion, P11's phase end"; route F/Ren to `ko_done`, unit 40,163/0);
-    P12 (the Cloudroad, Chapter 10) is under way (docs/future/work/P12_CLOUDROAD.md). Routes for the new chapters from fixtures:
-    `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`
-    and `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`.
+    P12 (the Cloudroad, Chapter 10) is done (phase end in VALIDATION.md "The expansion, P12"; route F/Ren to `cr_done`,
+    unit 43,709/0); P13 (Steamhollow, Chapter 11) is under way (docs/future/work/P13_STEAMHOLLOW.md). Routes for the new chapters from fixtures:
+    `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
+    `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
+    and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.
     Development pages: `?dev=enc` (encounter fixtures), `?dev=verbs` (exploration actions). Current state:
     docs/future/work/STATE.md.
   - **Working method the playbook asks for, once a scope is named:** one implementation model writing, one packet

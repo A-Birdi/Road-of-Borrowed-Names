@@ -69,7 +69,7 @@ Road stays in mist until Steamhollow is behind the party (F-69, unchanged).
 | Companions: Mio (altitude, the dispensary's labels; Kikue's message), Ren (relights the lanterns; the Keepers' Road lit), Suzu (the inns' tricks; her reply to Koume by the relay) | 14_COMPANIONS, S14 | `27_scenes_comp.js` | Done (P12e): each once on the restored relay, one Bond each (`cr:beat`) |
 | Music: shakuhachi and koto with a walking rhythm, a lonely flute at altitude, pack-horse bells; battle, the pass, the hut, the boss | R2 Theme, C-22 | `src/audio/38x_songs_cr.js` | Done (P12e): five songs; the battle and boss themes between Kotonoha's and the Archive's in the ladder |
 | Records: the chapter stamps and stand, the Seven Seals, the relay passed on as given; illustrations for P16 | K1 | `40_records.js` | Done (P12e); the illustrated pages are P16 art work |
-| Tests: unit; browser (relay and planning sheets, the surety stretch); the route through Chapter 10 | playbook P12 | `tests/` | See the phase end below |
+| Tests: unit; browser (relay and planning sheets, the surety stretch); the route through Chapter 10 | playbook P12 | `tests/` | Done: `cr_ch10` 146/0, `chapter_reach` 4/0, browser `cloudroad` 4/0, the route to `cr_done` (phase end below) |
 
 ## Rules kept
 
@@ -82,3 +82,14 @@ Road stays in mist until Steamhollow is behind the party (F-69, unchanged).
   papers (通行手形). The Cloudroad itself, its stations and its people are fiction.
 - The Courier Who Never Arrived rhymes with Nao's story; nobody says so (S14).
 - Every line of new Japanese through the review ledger (self-review only).
+
+## Phase end (2026-10-11)
+
+Unit 43,709/0 on a clean copy (31 failures found and fixed on the working tree first); validator clean; twelve
+browser suites pass. The route from the Kotonoha fixture stuck at the foot of the High Pass: the goat path round the
+slide on the Switchbacks did not join the road at its lower end, so the pass could not be climbed before the slide was
+cleared from above. Walking every map from its spawn also showed the Mist Barrier's fence stopping short of the
+cliffs. Both fixed, with a test that walks every map of the chapter in four story states (`chapter_reach`); the route
+then reached `cr_done`, and the courier's echo now stands in the hut's doorway (the route's speaker check). The
+campaign at the chapter's end is `tests/fixtures/campaign/F-ren-cr_done.json`. Details: VALIDATION.md "The expansion,
+P12"; REQUIREMENTS.md XP68–XP72. Not verified: a person playing the chapter; other browsers; real devices.
