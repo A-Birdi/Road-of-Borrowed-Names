@@ -1,5 +1,7 @@
-/* The world proof's regional kit (expansion P01, W02; docs/future/work/P01_WORLD.md "W02"): Reedwake's materials
- * and dressing, drawn only by the proof (src/engine/65_worldlook.js, ?dev=world) and only on the slice's maps.
+/* The regional kit (expansion P01, W02; docs/future/work/P01_WORLD.md "W02"): each region's ground dressing, low
+ * growth, birds and rails, drawn with the light (src/engine/65_worldlook.js) on every outdoor map (Robin's C-86).
+ * Reedwake's and Saltglass's briefs are the proof's own; every other region's is taken from its palette, with growth
+ * only where its grass is green (no flowers on snow, ash or paper) and lily pads only in fresh water.
  * Nothing here changes a tile, a collision, a prop or a person; it draws.
  *
  *   ground   baked once into the map's static layer after its tiles: grass in sunlit and shaded patches, tufts,
@@ -38,7 +40,32 @@ RB.worldKit = (function () {
     deepWater: '#18568f', pad: null, padFlower: null, blade: ['#4a7a3c', '#6c9a4c', '#a8c468'],
     pave: '#d9c39a', paveAmt: 0.28, bird: 'gull', rail: 'chain',
   };
-  const briefOf = (m) => BRIEF[m.region] || BRIEF.reedwake;
+  // Every other region: its palette's grass and water, deepened and warmed the way Reedwake's brief is
+  const BIRD = { reedwake: 'duck', ashihara: 'duck', lanternfall: 'duck', manybridge: 'duck', saltglass: 'gull', sazanami: 'gull', sea: 'gull', kotonoha: 'gull' };
+  const FRESH = { reedwake: 1, ashihara: 1, lanternfall: 1, manybridge: 1, keepers: 1, cinder: 1 };
+  const RAIL = { saltglass: 'chain', sazanami: 'chain', sea: 'chain' };
+  // the kit's own drawings of reeds, lampposts, stalls and the broken span: drawn for the river and coast country
+  const KIT_PROPS = { reedwake: 1, saltglass: 1, ashihara: 1, sazanami: 1 };
+  const isGreen = (hex) => { const [r, g, b] = rgb(hex); return g > r + 6 && g > b + 6 && r + g + b < 600; };
+  function derive(region) {
+    const pal = RB.tiles.PAL[region] || RB.tiles.PAL.reedwake, sh = RB.tiles.shift, gr = pal.grass, fl = pal.flower || [];
+    const growth = isGreen(gr[1]) && isGreen(gr[2]);
+    return {
+      sunGrass: sh(gr[2], 2), deepGrass: sh(gr[3], -2), clover: [sh(gr[3], -1), gr[0], gr[2]],
+      flowers: fl.length ? fl.map((f) => [f, sh(f, -2)]) : BRIEF.reedwake.flowers,
+      deepWater: sh(pal.water[0], -3), blade: [sh(gr[3], -1), gr[0], sh(gr[2], 1)],
+      pad: growth && FRESH[region] ? [sh(pal.leaf[3], -1), pal.leaf[0], pal.leaf[2], sh(pal.leaf[2], 2)] : null, padFlower: ['#fff4f4', '#f4b8c8'],
+      bird: BIRD[region] || null, rail: RAIL[region] || 'rope', growth, green: growth,
+    };
+  }
+  BRIEF.reedwake.growth = BRIEF.saltglass.growth = true;
+  BRIEF.reedwake.green = BRIEF.saltglass.green = true;
+  function briefOf(m) {
+    const r = (m && m.region) || 'reedwake';
+    if (!BRIEF[r]) BRIEF[r] = derive(r);
+    return BRIEF[r];
+  }
+  const propFor = (m, kind) => (KIT_PROPS[m.region] ? PROPS[kind] : null) || null;
 
   // ---- ground --------------------------------------------------------------------------------------------------
   const GRASS = { grass: 1, flowers: 1, tallgrass: 1 };
@@ -50,57 +77,96 @@ RB.worldKit = (function () {
     const a = h(xi, yi) + (h(xi + 1, yi) - h(xi, yi)) * u, b = h(xi, yi + 1) + (h(xi + 1, yi + 1) - h(xi, yi + 1)) * u;
     return a + (b - a) * v;
   }
+  // the same noise over a whole layer, its lattice computed once (W×H art px)
+  function lattice(cell, seed, W, H) {
+    const nx = Math.ceil(W / cell) + 2, ny = Math.ceil(H / cell) + 2, L = new Float64Array(nx * ny);
+    for (let b = 0; b < ny; b++) for (let a = 0; a < nx; a++) L[b * nx + a] = (hh(a, b, seed) & 1023) / 1023;
+    return (x, y) => {
+      const fx = x / cell, fy = y / cell, xi = Math.floor(fx), yi = Math.floor(fy), xf = fx - xi, yf = fy - yi;
+      const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), o = yi * nx + xi;
+      const h00 = L[o], h10 = L[o + 1], h01 = L[o + nx], h11 = L[o + nx + 1];
+      const a = h00 + (h10 - h00) * u, b = h01 + (h11 - h01) * u;
+      return a + (b - a) * v;
+    };
+  }
   const lerp3 = (d, o, c, t) => { d[o] += (c[0] - d[o]) * t; d[o + 1] += (c[1] - d[o + 1]) * t; d[o + 2] += (c[2] - d[o + 2]) * t; };
+  const stat = { dressMs: 0 };
   function dressGround(c, m, g) {
+    const t0 = performance.now();
+    try { dress(c, m, g); } finally { stat.dressMs = Math.round(performance.now() - t0); }
+  }
+  function dress(c, m, g) {
     const B = briefOf(m), cv = c.canvas, W = cv.width, H = cv.height;
     const tileAt = (tx, ty) => m.tiles[Math.max(0, Math.min(m.h - 1, ty)) * m.w + Math.max(0, Math.min(m.w - 1, tx))];
     const img = c.getImageData(0, 0, W, H), d = img.data;
     const SUN = rgb(B.sunGrass), DEEP = rgb(B.deepGrass), WATER = rgb(B.deepWater);
-    // the tone field on a 2-px grid: broad sunlit and shaded patches, a finer clumping inside them
-    const TW = Math.ceil(W / 2), TH = Math.ceil(H / 2), tone = new Int8Array(TW * TH);
-    for (let y = 0; y < TH; y++)
-      for (let x = 0; x < TW; x++) {
-        const n = vnoise(x * 2, y * 2, 52, 501) * 0.6 + vnoise(x * 2, y * 2, 16, 502) * 0.4;
-        tone[y * TW + x] = n > 0.62 ? 1 : n < 0.34 ? -1 : 0;
-      }
-    for (let py = 0; py < H; py++) {
-      const ty = Math.floor(py / ATS) - g.y;
-      for (let px = 0; px < W; px++) {
-        const tx = Math.floor(px / ATS) - g.x, t = tileAt(tx, ty), o = (py * W + px) * 4;
-        const r = d[o], gg = d[o + 1], b = d[o + 2];
-        if (GRASS[t.id]) {
-          if (!(gg > r + 8 && gg > b + 8)) continue; // only the grass itself, not a path's spill or a flower
-          const k = tone[(py >> 1) * TW + (px >> 1)];
-          if (k > 0) lerp3(d, o, SUN, 0.14);
-          else if (k < 0) lerp3(d, o, DEEP, 0.17);
-        } else if ((t.water && t.id !== 'darkwater') || ((t.id === 'bridgeH' || t.id === 'bridgeV') && b > r + 24 && b >= gg)) {
-          // deeper river: the darker the pixel, the more it takes the deep blue (the banks' foam stays light)
-          const L = (r + gg + b) / 765;
-          if (L < 0.8) lerp3(d, o, WATER, 0.74 * (1 - L * 0.45));
-        } else if (B.pave && (t.id === 'road' || t.id === 'stonefloor') && !(r < 40 && gg < 40)) {
-          // sandstone warmed by the sun (Saltglass's streets and quay); the joints stay darker
-          const L = (r + gg + b) / 765;
-          lerp3(d, o, rgb(B.pave), B.paveAmt * (0.6 + L * 0.6));
+    // where the grass is not green (snow, ash, paper), its own colours mark it
+    const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake, GR = (pal.grassR || []).concat(pal.grass).map(rgb);
+    const isGrass = B.green ? (r, gg, b) => gg > r + 8 && gg > b + 8 : (r, gg, b) => { for (const q of GR) if (Math.abs(q[0] - r) + Math.abs(q[1] - gg) + Math.abs(q[2] - b) < 54) return true; return false; };
+    // the tone field on a 2-px grid: broad sunlit and shaded patches, a finer clumping inside them (the same values
+    // as vnoise, from lattices computed once for the layer, and only where there is grass)
+    const N52 = lattice(52, 501, W, H), N16 = lattice(16, 502, W, H), N11 = lattice(11, 78, W, H), N4 = lattice(4, 79, W, H);
+    const PAVE = B.pave ? rgb(B.pave) : null, RIM = [34, 30, 44];
+    const isRoad = (tx, ty) => tileAt(tx, ty).id === 'road';
+    // grass that is a lawn, not a lone planter or a tree's square set in the paving (the creep would smear it)
+    const lawn = (tx, ty) => {
+      if (!GRASS[tileAt(tx, ty).id]) return false;
+      let n = 0;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (GRASS[tileAt(tx + dx, ty + dy).id]) n++;
+      return n >= 2;
+    };
+    // first the ground's own colour: grass in patches, deeper water, warmed paving
+    for (let ty = -g.y; ty < m.h + g.y; ty++)
+      for (let tx = -g.x; tx < m.w + g.x; tx++) {
+        const t = tileAt(tx, ty), X0 = (tx + g.x) * ATS, Y0 = (ty + g.y) * ATS;
+        const grass = !!GRASS[t.id], water = !!(t.water && t.id !== 'darkwater'), bridge = t.id === 'bridgeH' || t.id === 'bridgeV';
+        const pave = !!(PAVE && (t.id === 'road' || t.id === 'stonefloor'));
+        if (!grass && !water && !bridge && !pave) continue;
+        for (let ly = 0; ly < ATS; ly++) {
+          const py = Y0 + ly;
+          for (let lx = 0; lx < ATS; lx++) {
+            const px = X0 + lx, o = (py * W + px) * 4, r = d[o], gg = d[o + 1], b = d[o + 2];
+            if (grass) {
+              if (!isGrass(r, gg, b)) continue; // only the grass itself, not a path's spill or a flower
+              const n = N52((px >> 1) * 2, (py >> 1) * 2) * 0.6 + N16((px >> 1) * 2, (py >> 1) * 2) * 0.4;
+              if (n > 0.62) lerp3(d, o, SUN, 0.14);
+              else if (n < 0.34) lerp3(d, o, DEEP, 0.17);
+            } else if (water || (bridge && b > r + 24 && b >= gg)) {
+              // deeper river: the darker the pixel, the more it takes the deep blue (the banks' foam stays light)
+              const L = (r + gg + b) / 765;
+              if (L < 0.8) lerp3(d, o, WATER, 0.74 * (1 - L * 0.45));
+            } else if (pave && !(r < 40 && gg < 40)) {
+              // sandstone warmed by the sun (Saltglass's streets and quay); the joints stay darker
+              const L = (r + gg + b) / 765;
+              lerp3(d, o, PAVE, B.paveAmt * (0.6 + L * 0.6));
+            }
+          }
         }
-        if (t.id === 'road') {
-          // the square's edge: grass creeps over the outer cobbles in a ragged, clumped line, carrying the grass's
-          // own texture across (mirrored from beyond the edge), with a dark rim where it overhangs the stones
-          const lx = px % ATS, ly = py % ATS, X0 = px - lx, Y0 = py - ly;
-          const edge = (dx, dy) => !!GRASS[tileAt(tx + dx, ty + dy).id];
-          let depth = 99, sx = 0, sy = 0;
-          if (edge(0, -1) && ly < depth) { depth = ly; sx = px; sy = Y0 - 1 - ly; }
-          if (edge(0, 1) && ATS - 1 - ly < depth) { depth = ATS - 1 - ly; sx = px; sy = Y0 + ATS + (ATS - 1 - ly); }
-          if (edge(-1, 0) && lx < depth) { depth = lx; sx = X0 - 1 - lx; sy = py; }
-          if (edge(1, 0) && ATS - 1 - lx < depth) { depth = ATS - 1 - lx; sx = X0 + ATS + (ATS - 1 - lx); sy = py; }
-          if (depth > 14) continue;
-          const reach = 2 + Math.round(vnoise(px, py, 11, 78) * 9 + vnoise(px, py, 4, 79) * 3);
-          if (depth < reach && sx >= 0 && sy >= 0 && sx < W && sy < H) {
-            const so = (sy * W + sx) * 4;
-            d[o] = d[so]; d[o + 1] = d[so + 1]; d[o + 2] = d[so + 2];
-          } else if (depth === reach || depth === reach + 1) lerp3(d, o, [34, 30, 44], depth === reach ? 0.38 : 0.18);
-        }
       }
-    }
+    // then the square's edge: grass creeps over the outer cobbles in a ragged, clumped line, carrying the grass's
+    // own texture across (mirrored from beyond the edge), with a dark rim where it overhangs the stones
+    for (let ty = -g.y; ty < m.h + g.y; ty++)
+      for (let tx = -g.x; tx < m.w + g.x; tx++) {
+        if (!isRoad(tx, ty)) continue;
+        const eN = lawn(tx, ty - 1), eS = lawn(tx, ty + 1), eW = lawn(tx - 1, ty), eE = lawn(tx + 1, ty);
+        if (!eN && !eS && !eW && !eE) continue;
+        const X0 = (tx + g.x) * ATS, Y0 = (ty + g.y) * ATS;
+        for (let ly = 0; ly < ATS; ly++)
+          for (let lx = 0; lx < ATS; lx++) {
+            const px = X0 + lx, py = Y0 + ly, o = (py * W + px) * 4;
+            let depth = 99, sx = 0, sy = 0;
+            if (eN && ly < depth) { depth = ly; sx = px; sy = Y0 - 1 - ly; }
+            if (eS && ATS - 1 - ly < depth) { depth = ATS - 1 - ly; sx = px; sy = Y0 + ATS + (ATS - 1 - ly); }
+            if (eW && lx < depth) { depth = lx; sx = X0 - 1 - lx; sy = py; }
+            if (eE && ATS - 1 - lx < depth) { depth = ATS - 1 - lx; sx = X0 + ATS + (ATS - 1 - lx); sy = py; }
+            if (depth > 14) continue;
+            const reach = 2 + Math.round(N11(px, py) * 9 + N4(px, py) * 3);
+            if (depth < reach && sx >= 0 && sy >= 0 && sx < W && sy < H) {
+              const so = (sy * W + sx) * 4;
+              d[o] = d[so]; d[o + 1] = d[so + 1]; d[o + 2] = d[so + 2];
+            } else if (depth === reach || depth === reach + 1) lerp3(d, o, RIM, depth === reach ? 0.38 : 0.18);
+          }
+      }
     c.putImageData(img, 0, 0);
     // small things on the open grass: tufts, clover, flower clusters (never under a prop or a building's footprint)
     const covered = new Set();
@@ -111,7 +177,7 @@ RB.worldKit = (function () {
     for (let ty = -g.y; ty < m.h + g.y; ty++)
       for (let tx = -g.x; tx < m.w + g.x; tx++) {
         const t = tileAt(tx, ty);
-        if (!GRASS[t.id] || covered.has(tx + ',' + ty)) continue;
+        if (!B.growth || !GRASS[t.id] || covered.has(tx + ',' + ty)) continue;
         const X = (tx + g.x) * ATS, Y = (ty + g.y) * ATS, h0 = hh(tx, ty, 300);
         // tufts: a few blades each, a darker root and a sunlit tip
         const nT = 3 + (h0 % 4);
@@ -312,11 +378,13 @@ RB.worldKit = (function () {
   const STRUCTS = {};
   function house(c, x, y, pal, t, o) {
     const base = RB.props.STRUCT2.house;
-    base(c, x, y, pal, t, Object.assign({}, o, { lit: true }));
-    const key = 'wk-hbox|' + o.w + '|' + o.h + '|' + (o.windows || []).join('.') + '|' + (o.door == null ? '-' : o.door) + '|' + (o.x | 0) + '|' + (o.y | 0);
+    base(c, x, y, pal, t, Object.assign({}, o, { lit: o.lit !== false })); // lit within, unless the place is dark
+    const m = RB.world && RB.world.W && RB.world.W.map, B = briefOf(m);
+    if (!B.growth) return;
+    const key = 'wk-hbox|' + (m ? m.region : '') + '|' + o.w + '|' + o.h + '|' + (o.windows || []).join('.') + '|' + (o.door == null ? '-' : o.door) + '|' + (o.x | 0) + '|' + (o.y | 0);
     const cv = K.cached(key, () => K.make(o.w * ATS + 16, 30, (g) => {
       g.translate(8, 0);
-      const B = BRIEF.reedwake, wood = ramp('#8a5a36', 0.45, 0.35);
+      const wood = ramp((pal.wood && pal.wood[0]) || '#8a5a36', 0.45, 0.35);
       for (const wx of o.windows || []) {
         const bx = wx * ATS + 3, by = 21;
         // the box
@@ -352,6 +420,7 @@ RB.worldKit = (function () {
   // of a door (the 3×2 approach), never at or beside anyone's place or anything you can use, never on a spawn.
   function shrubs(m) {
     if (m.kitShrubs) return m.kitShrubs;
+    if (!briefOf(m).growth) return (m.kitShrubs = []);
     const keep = new Set(), mark = (x, y, r) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) keep.add((x + dx) + ',' + (y + dy)); };
     for (const p of m.props) { const pd = RB.props.P[p.p]; const pw = p.w || (pd && pd.w) || 1, ph = p.h || (pd && pd.h) || 1; for (let y = p.y; y < p.y + ph; y++) for (let x = p.x; x < p.x + pw; x++) mark(x, y, p.scene || p.text ? 1 : 0); }
     for (const st of m.structs) {
@@ -378,9 +447,10 @@ RB.worldKit = (function () {
     m.kitShrubs = out;
     return out;
   }
-  function shrubArt(pal, v) {
-    return K.cached('wk-shrub|' + v, () => K.make(40, 34, (g) => {
-      const M = K.mat(pal), B = BRIEF.reedwake, fern = v % 3 === 0;
+  function shrubArt(pal, v, B) {
+    B = B || BRIEF.reedwake;
+    return K.cached('wk-shrub|' + v + '|' + B.flowers[0][0] + '|' + pal.leaf[0], () => K.make(40, 34, (g) => {
+      const M = K.mat(pal), fern = v % 3 === 0;
       const L = v % 4 === 1 ? M.leaf.map((c) => mix(c, '#c8d060', 0.1)) : M.leaf;
       if (fern) {
         // fronds fanning out from the root
@@ -446,7 +516,7 @@ RB.worldKit = (function () {
     // the water's long axis: a river's channel (ducks swim up and down it) or a sea's breadth (gulls ride across it)
     const B = briefOf(m), water = [];
     for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) { const t = m.tiles[y * m.w + x]; if (t.water && t.id !== 'darkwater') water.push([x, y]); }
-    if (water.length > 30) {
+    if (water.length > 30 && B.bird) {
       const xs = water.map((w) => w[0]).sort((a, b) => a - b), ys = water.map((w) => w[1]).sort((a, b) => a - b);
       const x0 = xs[0], x1 = xs[xs.length - 1], y0 = ys[0], y1 = ys[ys.length - 1];
       if (x1 - x0 > y1 - y0) for (let i = 0; i < 4; i++) out.push({ kind: 'bird', axis: 'x', i, y: y0 + 2.5 + i * 1.7, a0: x0 + 2 + i * 7, span: x1 - x0 - 6 });
@@ -477,7 +547,7 @@ RB.worldKit = (function () {
     for (const sh of shrubs(m)) {
       const X = env.ax(sh.x * 16), Y = env.ay(sh.y * 16);
       if (X < -40 || Y < -40 || X > env.bw + 40 || Y > env.bh + 40) continue;
-      list.push({ z: (sh.y + 1) * 16 - 1, draw: () => c.drawImage(shrubArt(pal, sh.v), X - 4, Y) });
+      list.push({ z: (sh.y + 1) * 16 - 1, draw: () => c.drawImage(shrubArt(pal, sh.v, briefOf(m)), X - 4, Y) });
     }
     const B = briefOf(m), s = RB.game.s, broken = new Set();
     for (const p of m.props) if (p.p === 'water' && (!p.if || RB.state.test(s, p.if))) broken.add(p.x + ',' + p.y);
@@ -548,8 +618,8 @@ RB.worldKit = (function () {
   // the low growth as things the sun's shadows know about (src/engine/65_worldlook.js casts them)
   function casters(m) {
     const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake;
-    return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v), x - 4, y) }));
+    return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v, briefOf(m)), x - 4, y) }));
   }
 
-  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, vnoise };
+  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, briefOf, propFor, vnoise, stats: () => Object.assign({}, stat) };
 })();

@@ -25434,7 +25434,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // flush(): blit a pending row strip now (the renderer may call it at the end
   // of a static-layer build; otherwise a microtask does it).
-  RB.tileArt = { kit, STYLE, flush };
+  // a map's wall style as its walls are drawn (timber and plaster, or stone): by which floors it has more of, then
+  // its region's (the light's room windows, src/engine/65_worldlook.js, go only on timber walls)
+  function wallStyleOf(m) {
+    let st = mapStyles.get(m);
+    if (st) return st;
+    let tim = 0, sto = 0;
+    for (const t of m.tiles) { const k = kindOf(t); if (k === 'wood' || k === 'tatami' || k === 'carpet') tim++; else if (k === 'stone' || k === 'paper' || k === 'glass' || k === 'road') sto++; }
+    const pal = TL.PAL[m.region] || TL.PAL.reedwake;
+    return tim + sto === 0 ? Object.assign({}, BASE_STYLE, STYLE[nameOf(pal)] || {}).wall : sto > tim ? 'stone' : 'timber';
+  }
+  RB.tileArt = { kit, STYLE, flush, wallStyleOf };
 })();
 
 
@@ -44529,14 +44539,17 @@ RB.render = (function () {
   }
   // Field of view: about 12 tiles across on phones, 17 on tablets, 21 on
   // desktops (8–12 tall). A tile is 32 art pixels, each artPx device pixels.
-  // The world proof (src/engine/65_worldlook.js, development only) may ask for a wider view through setView:
-  // a function of the window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
+  // The light (src/engine/65_worldlook.js) may ask for a wider view outdoors through setView: a function of the
+  // window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
+  // A change of view only resizes: the static layer is in art pixels whatever the view, and drawWorld rebuilds it
+  // only if the new view needs a wider margin, so leaving a battle (the game's own framing) for a wider outdoor view
+  // does not rebuild the map's art, its shadows or its dressing.
   let viewTarget = null;
   function setView(fn) {
     fn = typeof fn === 'function' ? fn : null;
     if (fn === viewTarget) return;
     viewTarget = fn;
-    if (canvas) { resize(); invalidate(); }
+    if (canvas) { resize(); particles = []; }
   }
   function resize() {
     cssW = window.innerWidth;
@@ -44683,8 +44696,8 @@ RB.render = (function () {
         else legacy(c, () => t.draw(c, px / ART, py / ART, pal, RB.tiles.hh(x, y), nb));
       }
     if (RB.tileArt && RB.tileArt.flush) RB.tileArt.flush(); // tile art batches its output per row
-    // the world proof's kit (development only, src/engine/66_worldkit.js): its ground dressing, baked in once
-    if (RB.worldLook && RB.worldLook.active(m) && RB.worldLook.opts.kit && RB.worldKit) RB.worldKit.dressGround(c, m, g);
+    // the regional kit with the light (src/engine/66_worldkit.js): its ground dressing outdoors, baked in once
+    if (RB.worldLook && RB.worldLook.kitOn(m)) RB.worldKit.dressGround(c, m, g);
     m.staticLayer = cv;
     m.margin = g;
     m.apronProps = ext ? buildApronProps(m, g) : [];
@@ -44874,7 +44887,7 @@ RB.render = (function () {
       if (pf) sf = pf;
     }
     // the world proof's purposeful actions (development only, src/engine/67_worldacts.js): a pose and a facing
-    if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.active(RB.world.W.map) && RB.worldLook.opts.kit) {
+    if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.allowed() && RB.worldLook.kitOn(RB.world.W.map)) {
       const af = RB.worldActs.frameOf(a, t, still);
       if (af) sf = af;
     }
@@ -44902,7 +44915,7 @@ RB.render = (function () {
       return;
     }
     const { art: art0, bob, dy, ox } = artFor(a, t, isFoe);
-    // in the world proof (development only, src/engine/65_worldlook.js) a person standing in shade is shaded
+    // with the light (src/engine/65_worldlook.js) a person standing in shade is shaded
     const L = art0 && RB.worldLook && RB.worldLook.active(RB.world.W.map) ? RB.worldLook : null;
     const art = L ? L.shaded(RB.world.W.map, a, art0) : art0;
     if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x + ox, fy - RB.sprites.ANCHOR.y + bob + dy);
@@ -44990,9 +45003,10 @@ RB.render = (function () {
     if (Y1 < bh) band(0, Y1, 0, Y1 + D, 0, Y1, bw, bh - Y1);
   }
 
-  // What the world proof's layers read from the renderer: the mapping, the view, the people and their art.
+  // What the light's layers read from the renderer: the mapping, the view, the place's ambience (night: the map's
+  // own, or a darkness deep enough that no sun reaches), the people and their art.
   function lookEnv(m, W, still) {
-    const amb = ambientOf(m);
+    const amb = ambientOf(m), a = amb.ambient || {};
     const actors = () => {
       const out = [W.player];
       if (W.comp) out.push(W.comp);
@@ -45006,7 +45020,7 @@ RB.render = (function () {
       if (!r.art) return null;
       return { cv: r.art, fx: ax(a.fx * TS) + ATS / 2 + r.ox, fy: ay(a.fy * TS) + ATS - 2 };
     };
-    return { ax, ay, bw, bh, cam, TS, ART, ATS, still, buf, night: !!(amb.night || (amb.ambient && amb.ambient.dark)), actors, artOf };
+    return { ax, ay, bw, bh, cam, TS, ART, ATS, still, buf, amb: a, night: !!(amb.night || (+a.dark || 0) >= 0.3), mapNight: !!amb.night, actors, artOf };
   }
   function drawWorld(t) {
     const W = RB.world.W;
@@ -45036,11 +45050,11 @@ RB.render = (function () {
         c.fillRect(sx + ((RB.tiles.hh(x, y, 3) + o) % 12) * ART, sy + (5 + (RB.tiles.hh(x, y, 4) % 6)) * ART, 3 * ART, ART);
         if (ph < 1) { c.fillStyle = pal.water[3] + '90'; c.fillRect(sx + (RB.tiles.hh(x, y, 5) % 13) * ART, sy + 11 * ART, 2 * ART, ART); }
       }
-    // the world proof (development only, src/engine/65_worldlook.js): its cast shadows on the ground
+    // the light (src/engine/65_worldlook.js): a room's windows on its walls, then the cast shadows on the ground
     const L = RB.worldLook && RB.worldLook.active(m) ? RB.worldLook : null;
     const env = L ? lookEnv(m, W, still) : null;
-    if (L) L.ground(c, m, W, t, env);
-    const KIT = L && L.opts.kit && RB.worldKit ? RB.worldKit : null; // the proof's own art for some kinds
+    if (L) { L.walls(c, m, t, env); L.ground(c, m, W, t, env); }
+    const KIT = L && L.kitOn(m) ? RB.worldKit : null; // the regional kit's own art for some kinds, outdoors
     // y-sorted drawables
     const s = RB.game.s;
     const list = [];
@@ -45064,7 +45078,7 @@ RB.render = (function () {
       const lx = p.x * TS - cam.x, ly = p.y * TS - cam.y;
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const opts = Object.assign({ cx: p.x, cy: p.y, still }, p.o || {});
-      const d2 = (KIT && KIT.PROPS[p.p]) || pd.draw2;
+      const d2 = (KIT && KIT.propFor(m, p.p)) || pd.draw2;
       list.push({
         z: (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
         draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
@@ -45075,7 +45089,7 @@ RB.render = (function () {
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const pd = RB.props.P[p.p];
       const opts = { cx: p.x, cy: p.y, still };
-      const d2 = (KIT && KIT.PROPS[p.p]) || pd.draw2;
+      const d2 = (KIT && KIT.propFor(m, p.p)) || pd.draw2;
       list.push({ z: (p.y + 1) * TS - 0.5, draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
     }
     for (const n of W.npcs) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
@@ -45087,8 +45101,8 @@ RB.render = (function () {
     if (m.def.sea && RB.sailDraw) RB.sailDraw.push(list, c, ax, ay, t); // the boat under the traveller at sea (src/ui/89v_sail.js)
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     if (RB.perform) RB.perform.push(list, c, ax, ay, t); // what a person's action puts beside them (67a_perform.js)
-    if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks
-    if (KIT && RB.worldActs) RB.worldActs.push(list, c, m, env, t); // the rod and float, the baskets
+    if (KIT) KIT.pushDecor(list, c, m, env, t); // the kit's low growth, birds and rails, where nobody walks
+    if (KIT && RB.worldActs && L.allowed()) RB.worldActs.push(list, c, m, env, t); // the proof's rod and float, the baskets (development only)
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
     if (L) L.illuminate(c, m, W, t, env);
@@ -45171,6 +45185,9 @@ RB.render = (function () {
       hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick(p.x * 1.7 + p.y * 2.3));
     }
     for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
+    // what else gives light with the light on (src/engine/65_worldlook.js): fires and lamps the darkness did not count,
+    // and the daylight at a dark room's windows
+    if (RB.worldLook && RB.worldLook.active(m)) for (const h of RB.worldLook.holes(m, { amb, night: !!ambientOf(m).night || dark >= 0.3, mapNight: !!ambientOf(m).night })) hole(h.x, h.y, h.r + flick(h.x * 0.11 + h.y * 0.07));
     lctx.globalCompositeOperation = 'source-over';
     c.drawImage(light, 0, 0);
   }
@@ -46575,23 +46592,28 @@ RB.creatures = (function () {
 
 
 /* ==== src/engine/65_worldlook.js ==== */
-/* The world proof (expansion P01): a development-only presentation of a few maps (the slice), to prove the
- * visual method before any of it reaches the game. Not reachable in normal play: nothing here does anything
- * unless the page was opened with ?dev=world (or a test set window.__RB_DEV_WORLD__ before the game started).
- * Nothing is saved, nothing changes a map's tiles, collisions, exits, people or story; it only draws.
+/* Light and shadow on the maps. Begun as the world proof (expansion P01: a development view of two maps), made the
+ * game's own look on every map by Robin's choice (C-86: "Every exterior, all chapters", and rooms lit by what they
+ * hold: "Light sources can come from windows, candles or other light fixtures"). Nothing here changes a map's
+ * tiles, collisions, exits, people or story, and nothing is saved; it only draws. Settings → "Light and shadow" turns
+ * it off (the game's flat picture, as before).
  *
- * Three layers, each switchable for comparison (docs/future/work/P01_WORLD.md, the art contract):
- *   base         the materials and forms (the slice's kit: ground, buildings, foliage, water dressing);
- *   illumination authored ambient light, the sun's cast shadows, local lights;
- *   atmosphere   glow on emissive things only, haze, water glints, optional softness at the screen's edges.
- * And the camera: the far view frames a town the way the target plates do (about 45 tiles across at
- * 1440×900), always at a whole number of device pixels per art pixel. Rooms keep the near view.
+ * Three layers (docs/future/work/P01_WORLD.md, the art contract, AC-1):
+ *   base         the region's materials (src/engine/66_worldkit.js: ground dressing, low growth, birds, rails) outdoors;
+ *                indoors the windows a room's building has on its outside, drawn on its walls;
+ *   illumination outdoors each region's own sun: cast shadows (one mask per map, cached) and an ambient grade; at night
+ *                or in the dark, the lamps cast them; indoors the light that comes in at the windows by day, and the
+ *                lamps, candles, hearths and stoves, each casting shadows away from itself, the rest of the room dimmer;
+ *   atmosphere   glow on things that give light, a sunlit haze, glints on open water, optional soft view edges.
+ * The camera: outdoors the view may sit a little wider than the game's own where the screen allows a whole number of
+ * device pixels per art pixel (never as far as the proof's far view, Robin's C-80); rooms and battles keep the game's.
  *
- *   RB.worldLook.allowed()        -> true only on a dev page (or a test that asked for it)
- *   RB.worldLook.active(m)        -> the proof applies to this map (allowed, switched on, in the slice)
- *   RB.worldLook.opts             -> { on, view: 'far'|'near', kit, light, atmos, soft }
+ *   RB.worldLook.allowed()        -> a development page (?dev=world, or a test's switch): the panel, the far view
+ *   RB.worldLook.active(m)        -> light and shadow apply to this map now
+ *   RB.worldLook.opts             -> { on, view: 'mid'|'far'|'near', kit, light, atmos, soft }
  *   RB.worldLook.set(o)           -> change switches; re-applies the camera; redraws
- *   RB.worldLook.SLICE            -> the maps the proof covers, with their region's settings */
+ *   RB.worldLook.cfg(m)           -> what a map is lit as: { region, sun } outdoors, { indoor: true } in a room
+ *   RB.worldLook.SUNS / SLICE     -> each region's sun; the proof's two maps (its development features) */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.worldLook = (function () {
@@ -46603,41 +46625,110 @@ RB.worldLook = (function () {
       return /[?&]dev=world\b/.test(window.location.search || '');
     } catch (e) { return false; }
   }
-  const opts = { on: true, view: 'far', kit: true, light: true, atmos: true, soft: false };
+  // the player's setting (on unless turned off; an older record lacks it)
+  function enabled() {
+    const s = RB.game && RB.game.settings;
+    return !(s && s.worldLight === false);
+  }
+  const dev = allowed();
+  const opts = { on: true, view: dev ? 'far' : 'mid', kit: true, light: true, atmos: true, soft: false };
   const opts_ = opts; // (for code where a local is named opts)
 
-  // The slice: the maps the proof draws, and each one's light. Sun: the direction cast shadows fall (art px of
-  // shadow per art px of height, x and y), its colour and the shade's colour; ambient grade as data.
-  const SLICE = {
-    'rw.village': { region: 'reedwake', sun: { dx: 0.66, dy: 0.3, key: '255,206,128', shade: '52,40,104', mul: '146,128,196', shadow: 0.72, grade: 0.24 } },
-    // Saltglass reuses the method: the same sun from the upper left, a little lower and warmer over the sea
-    'sg.harbor': { region: 'saltglass', sun: { dx: 0.7, dy: 0.32, key: '255,198,120', shade: '44,40,104', mul: '140,130,200', shadow: 0.7, grade: 0.24 } },
+  // ---- each region's sun ----------------------------------------------------------------------------------------
+  // dx, dy: where a cast shadow falls (art px of shadow per art px of height; the sun stands to the upper left, so
+  // shadows fall down and to the right, longer where the sun is low); key: the sunlight's colour; shade, mul: the
+  // shade's colour (on a person, on the ground); shadow: how dark a shadow is; grade: how strongly the light colours
+  // the view. A region's weather and darkness soften these (stateOf).
+  const SUNS = {
+    // Reedwake and Saltglass: the proof's own (W01, W05)
+    reedwake: { dx: 0.66, dy: 0.3, key: '255,206,128', shade: '52,40,104', mul: '146,128,196', shadow: 0.72, grade: 0.24 },
+    saltglass: { dx: 0.7, dy: 0.32, key: '255,198,120', shade: '44,40,104', mul: '140,130,200', shadow: 0.7, grade: 0.24 },
+    // the settlement on the old Reedwake plain: the same country, a little later in the day
+    ashihara: { dx: 0.72, dy: 0.32, key: '255,200,124', shade: '54,40,102', mul: '148,128,194', shadow: 0.72, grade: 0.25 },
+    // the coast and the open sea: a higher sun, paler and bluer shade
+    sazanami: { dx: 0.6, dy: 0.28, key: '255,214,150', shade: '40,48,110', mul: '138,140,204', shadow: 0.68, grade: 0.22 },
+    sea: { dx: 0.55, dy: 0.26, key: '255,226,170', shade: '36,52,112', mul: '136,146,206', shadow: 0.62, grade: 0.2 },
+    // the Cinder Orchard in autumn: a low golden sun, long shadows, plum shade
+    cinder: { dx: 0.84, dy: 0.37, key: '255,182,104', shade: '70,36,72', mul: '170,122,168', shadow: 0.72, grade: 0.28 },
+    // Snowbell: a low pale winter sun, long blue shadows on the snow
+    snowbell: { dx: 0.9, dy: 0.42, key: '255,236,208', shade: '40,62,124', mul: '150,172,218', shadow: 0.62, grade: 0.14 },
+    // Lanternfall: a soft lavender afternoon
+    lanternfall: { dx: 0.64, dy: 0.3, key: '255,210,168', shade: '56,40,104', mul: '152,136,200', shadow: 0.66, grade: 0.22 },
+    // Manybridge's canals: a high midday sun between the houses, short shadows
+    manybridge: { dx: 0.52, dy: 0.26, key: '255,214,150', shade: '48,42,100', mul: '146,134,196', shadow: 0.7, grade: 0.22 },
+    // the Keepers' Road through the mountain woods
+    keepers: { dx: 0.74, dy: 0.34, key: '255,204,140', shade: '44,46,96', mul: '140,138,190', shadow: 0.7, grade: 0.22 },
+    // Kotonoha: a high island sun, teal shade
+    kotonoha: { dx: 0.48, dy: 0.24, key: '255,232,176', shade: '30,60,104', mul: '130,156,200', shadow: 0.7, grade: 0.22 },
+    // the Cloudroad: thin, clear mountain air; above the clouds, colder and brighter still
+    cloudroad: { dx: 0.62, dy: 0.3, key: '255,230,190', shade: '44,56,120', mul: '146,156,212', shadow: 0.66, grade: 0.18 },
+    cloudtop: { dx: 0.6, dy: 0.3, key: '255,244,222', shade: '50,72,136', mul: '160,178,224', shadow: 0.6, grade: 0.14 },
+    // Steamhollow: the valley's steam softens everything
+    steamhollow: { dx: 0.58, dy: 0.28, key: '255,208,164', shade: '64,46,90', mul: '166,140,186', shadow: 0.58, grade: 0.2 },
+    // the mountain under the Archive, and its still world
+    sa_mount: { dx: 0.8, dy: 0.38, key: '244,232,214', shade: '46,52,96', mul: '150,156,196', shadow: 0.56, grade: 0.12 },
+    sa_still: { dx: 0.5, dy: 0.3, key: '226,226,255', shade: '40,40,90', mul: '150,150,206', shadow: 0.46, grade: 0.12 },
+    // the Hall's tales and anything else: a mild afternoon
+    hall: { dx: 0.62, dy: 0.3, key: '255,214,160', shade: '50,44,100', mul: '150,140,196', shadow: 0.6, grade: 0.16 },
   };
-  const cfg = (m) => (m && SLICE[m.id]) || null;
-  function active(m) {
-    return allowed() && opts.on && !!cfg(m);
+  for (const k in SUNS) SUNS[k].id = k;
+  const sunFor = (region) => SUNS[region] || (region && /^hall/.test(region) ? SUNS.hall : null) || SUNS.hall;
+  // The proof's two maps: its development features (the working people, the visits) stay there
+  const SLICE = { 'rw.village': { region: 'reedwake', sun: SUNS.reedwake }, 'sg.harbor': { region: 'saltglass', sun: SUNS.saltglass } };
+
+  // What a map is lit as (cached on the compiled map): a room or a walled place indoors, anything else outdoors under
+  // its region's sun. A map may opt out (def.look === false).
+  function cfg(m) {
+    if (!m) return null;
+    if (m.lookCfg !== undefined) return m.lookCfg;
+    let c;
+    if (m.def && m.def.look === false) c = null;
+    else if (RB.render && RB.render.enclosed && RB.render.enclosed(m)) c = { indoor: true, region: m.region };
+    else c = SLICE[m.id] || { region: m.region, sun: sunFor(m.region) };
+    m.lookCfg = c;
+    return c;
   }
+  function active(m) {
+    return !!(opts.on && enabled() && cfg(m));
+  }
+  const indoor = (m) => !!(cfg(m) || {}).indoor;
+  // the regional kit (ground dressing, low growth, birds, rails): outdoors only
+  const kitOn = (m) => !!(opts.kit && RB.worldKit && active(m) && !indoor(m));
 
   // ---- the camera ------------------------------------------------------------------------------------------------
-  // Tiles across by width class, scaled from the near view's 12/17/21 (and 8/12 tall); the renderer then picks a
-  // whole number of device pixels per art pixel, so the far view lands where the device allows: 45 tiles across
-  // at 1440×900 (one device pixel per art pixel), 40 at 2048×1046 on a 1.25 screen, 17.6 on a 375-px phone.
-  const FAR = 1.71;
+  // The game's own view is about 12/17/21 tiles across (8–12 tall), at a whole number of device pixels per art pixel.
+  // Outdoors the view may widen by about a third, but only where the screen gives a whole-pixel step no more than
+  // half as many tiles again (1920×1080: 30 tiles rather than 20; 2560×1440: 27); otherwise, and on phones, it stays
+  // the game's own. The proof's far view (about 45 tiles at 1440×900) is kept for the development page only.
+  const FAR = 1.71, MID = 1.3;
+  const baseView = (cw, ch) => ({ w: cw < 700 ? 12 : cw < 1100 ? 17 : 21, h: ch < 520 ? 8 : 12 });
   function farView(cw, ch) {
-    return { w: (cw < 700 ? 12 : cw < 1100 ? 17 : 21) * FAR, h: (ch < 520 ? 8 : 12) * FAR };
+    const b = baseView(cw, ch);
+    return { w: b.w * FAR, h: b.h * FAR };
   }
-  // A battle keeps the game's own framing (Robin, C-80: the crowded battle read distant in the far view), and so
-  // does the fidelity study (src/engine/68d_study.js); the far view comes back when the world is in play again.
+  function artPxFor(cw, ch, t) {
+    const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) || 1;
+    let a = Math.max(1, Math.round((Math.min(cw / t.w, ch / t.h) * dpr) / 32));
+    if (a > 1 && (cw * dpr) / (a * 32) < t.w * 0.8) a--;
+    return a;
+  }
+  function midView(cw, ch) {
+    const b = baseView(cw, ch);
+    if (cw < 700) return b;
+    const want = { w: b.w * MID, h: b.h * MID }, a0 = artPxFor(cw, ch, b), a1 = artPxFor(cw, ch, want);
+    return a1 < a0 && a0 / a1 <= 1.5 ? want : b;
+  }
+  // A battle keeps the game's own framing (Robin, C-80), and so does the fidelity study (src/engine/68d_study.js)
   const inBattle = () => !!(RB.game && RB.game.mode && (RB.game.mode() === 'combat' || RB.game.mode() === 'study'));
   function applyCamera() {
     if (!RB.render || !RB.render.setView) return;
     const m = RB.world && RB.world.W && RB.world.W.map;
-    const far = active(m) && opts.view === 'far' && !inBattle() && !(RB.render.enclosed && RB.render.enclosed(m));
-    RB.render.setView(far ? farView : null);
+    const out = active(m) && !inBattle() && !indoor(m) && !(RB.render.enclosed && RB.render.enclosed(m));
+    RB.render.setView(!out || opts.view === 'near' ? null : opts.view === 'far' && dev ? farView : midView);
   }
   function set(o) {
     o = o || {};
-    // the static layer is redrawn only when what it holds changes (the proof itself, or its kit)
+    // the static layer is redrawn only when what it holds changes (the look itself, or its kit)
     const restatic = ('on' in o && o.on !== opts.on) || ('kit' in o && o.kit !== opts.kit);
     Object.assign(opts, o);
     applyCamera();
@@ -46646,10 +46737,18 @@ RB.worldLook = (function () {
   }
   const listeners = [];
   function onChange(f) { listeners.push(f); }
+  // Settings changed: the camera again, and the static layer (it holds the kit) when the setting itself changed
+  let lastEnabled = null;
+  function applySetting() {
+    const e = enabled();
+    if (lastEnabled !== null && e !== lastEnabled && RB.render && RB.render.invalidate) RB.render.invalidate();
+    lastEnabled = e;
+    applyCamera();
+  }
 
   if (typeof window !== 'undefined' && RB.bus && RB.bus.on) {
-    RB.bus.on('map:enter', () => { if (allowed()) applyCamera(); });
-    RB.bus.on('mode:change', () => { if (allowed()) applyCamera(); });
+    RB.bus.on('map:enter', () => applyCamera());
+    RB.bus.on('mode:change', () => applyCamera());
   }
 
   // ---- shared helpers ------------------------------------------------------------------------------------------
@@ -46657,34 +46756,130 @@ RB.worldLook = (function () {
   const ctx2 = (cv) => cv.getContext('2d', { willReadFrequently: true });
   const hh = (x, y, k) => RB.tiles.hh(x, y, k);
   const canBlur = (() => { try { return typeof document !== 'undefined' && 'filter' in document.createElement('canvas').getContext('2d'); } catch (e) { return false; } })();
-  // the sun of this map in its present state (null at night or indoors: no cast shadows then)
-  function sunOf(m, env) {
+  const OVERCAST = { rain: 1, snow: 1, mist: 1 };
+  // The light now: outdoors the region's sun, weakened by weather and by a darkening (at night, or a dark enough
+  // place, no sun at all: the lamps cast the shadows then); indoors the room's light by day or by night.
+  function stateOf(m, env) {
     const c = cfg(m);
-    if (!c || !c.sun || (env && env.night)) return null;
-    return c.sun;
+    if (!c) return null;
+    const amb = (env && env.amb) || {}, dark = +amb.dark || 0, night = !!(env && env.night);
+    // a room is dark by night only (the map's own night, or a scene's): a dim room by day still has daylight at its windows
+    if (c.indoor) return { indoor: true, night: !!(env && env.mapNight), dark };
+    if (night || !c.sun) return { night: true, dark };
+    let k = 1;
+    if (dark > 0) k *= 1 - Math.min(1, dark / 0.3) * 0.55;
+    if (OVERCAST[amb.weather]) k *= 0.68;
+    if (amb.tint) k *= 0.9;
+    return { sun: c.sun, k, dark };
+  }
+  function sunOf(m, env) {
+    const st = stateOf(m, env);
+    return st && st.sun ? st.sun : null;
   }
 
-  // ---- illumination: the sun's cast shadows ---------------------------------------------------------------------
-  // Every standing thing casts its own silhouette onto the ground, sheared away from the sun: a point h art px above
+  // ---- the things that give light ------------------------------------------------------------------------------
+  // A prop that gives light (its own `light`, or one of these, which the darkness did not count but a room does: a
+  // stove's fire, a kiln's mouth, an oven, the festival's lanterns, the workshop's lamps); its flame's height above
+  // the floor (art px) sets how long the shadows it casts are.
+  const SOURCE = { stove: 26, kiln: 30, lf_oven: 26, mp_lanterns: 30, fw_clamppost: 26, fw_armlamp: 26, sg_lamproom: 30, co_kilnwall: 26 };
+  const LOWFIRE = { campfire: 1, sb_irori: 1, stove: 1, kiln: 1, lf_oven: 1, co_furnace: 1, lf_grate: 1, co_kilnwall: 1 };
+  const TINY = { sparkle: 1, echo: 1 };
+  // what is visible now among things shown only in some story states (the cached layers depend on it)
+  function visSig(m) {
+    if (!m.lookCond) {
+      m.lookCond = [];
+      for (const st of m.structs) if (st.if) m.lookCond.push(st);
+      for (const p of m.props) if (p.if) m.lookCond.push(p);
+    }
+    const s = RB.game.s;
+    let sig = '';
+    for (const o of m.lookCond) sig += RB.state.test(s, o.if) ? '1' : '0';
+    return sig;
+  }
+  function emitters(m) {
+    const s = RB.game.s, out = [];
+    for (const p of m.props) {
+      const pd = RB.props.P[p.p];
+      if (!pd) continue;
+      const r = p.light || pd.light || SOURCE[p.p];
+      if (!r) continue;
+      if (p.if && !RB.state.test(s, p.if)) continue;
+      if (p.o && p.o.lit === false) continue;
+      const pw = p.w || pd.w || 1, ph = p.h || pd.h || 1;
+      out.push({ p, x: p.x + pw / 2, y: p.y + ph - 0.15, r, he: LOWFIRE[p.p] ? 14 : TINY[p.p] ? 10 : 40, s: TINY[p.p] ? 0.4 : 1, R: Math.max(2.5, (r / 16) * 1.9), extra: !(p.light || pd.light) });
+    }
+    return out;
+  }
+
+  // ---- windows in a room ----------------------------------------------------------------------------------------
+  // A room entered from a building outside has that building's windows: the ones on its front, in the room's front
+  // wall, and as many at the back, in the back wall (where the daylight falls across the floor). Placed by the same
+  // fraction of the wall's length as outside; only on timber walls with their face showing.
+  let linkIndex = null;
+  function links() {
+    if (linkIndex) return linkIndex;
+    linkIndex = {};
+    const maps = (RB.content && RB.content.maps) || {};
+    for (const id in maps) for (const st of maps[id].structs || []) if (st.to && st.windows && st.windows.length && !linkIndex[st.to]) linkIndex[st.to] = { w: st.w, windows: st.windows.slice() };
+    return linkIndex;
+  }
+  const isWall = (m, x, y) => x < 0 || y < 0 || x >= m.w || y >= m.h || m.tiles[y * m.w + x].id === 'wall';
+  function windowsOf(m) {
+    if (m.lookWin) return m.lookWin;
+    const L = links()[m.id], out = [];
+    m.lookWin = out;
+    if (!L || !RB.render.enclosed(m)) return out;
+    // the back wall: in each column the lowest wall with only wall above it and floor below; the front: the
+    // bottom row's walls with floor above
+    const back = [], front = [];
+    for (let x = 0; x < m.w; x++) {
+      let y = 0;
+      while (y < m.h - 1 && isWall(m, x, y + 1)) y++;
+      if (y < m.h / 2 && !isWall(m, x, y + 1)) back.push([x, y]);
+      const fy = m.h - 1;
+      if (isWall(m, x, fy) && !isWall(m, x, fy - 1)) front.push([x, fy]);
+    }
+    const timber = () => { const k = RB.tileArt && RB.tileArt.wallStyleOf ? RB.tileArt.wallStyleOf(m) : 'timber'; return k === 'timber'; };
+    if (!timber()) return out;
+    const place = (row, isBack) => {
+      if (row.length < 3) return;
+      const x0 = row[0][0], x1 = row[row.length - 1][0], span = x1 - x0 + 1, used = new Set();
+      for (const wx of L.windows) {
+        const f = (wx + 0.5) / L.w, x = Math.round(x0 + f * span - 0.5);
+        const cell = row.find((c) => c[0] === x);
+        if (!cell || used.has(x)) continue;
+        used.add(x);
+        out.push({ x, y: cell[1], back: isBack });
+      }
+    };
+    place(back, true);
+    place(front, false);
+    return out;
+  }
+
+  // ---- illumination: cast shadows ---------------------------------------------------------------------------------
+  // Every standing thing casts its own silhouette onto the ground, sheared away from the light: a point h art px above
   // the thing's ground contact lands (dx·k·h, dy·k·h) from it. k is how much of a sprite's drawn height is height
-  // (the rest of a roof or a crown is depth, in this view). The silhouettes are gathered into one mask per map
-  // (cached with the static layer), softened once and stepped into a core and a penumbra, so shadows stay crisp
-  // pixel clusters and overlapping shadows never darken twice. People's shadows are made the same way per frame
-  // of art (cached) and joined with the map's before the mask is laid on the ground.
+  // (the rest of a roof or a crown is depth, in this view). Under the sun every shadow falls the same way; from a lamp
+  // or a window each falls away from it, longer the nearer the thing stands to a low flame. The silhouettes are
+  // gathered into one mask per map (cached with the static layer and the story's visible things), softened once and
+  // stepped into a core and a penumbra, so shadows stay crisp pixel clusters and overlapping shadows never darken
+  // twice. People's shadows are made the same way per frame of art (cached) and joined with the map's.
   const HEIGHT = {
     tree: 0.8, orchard: 0.8, pine: 0.85, deadtree: 0.8, bush: 0.5, reeds: 0.4, rock: 0.45, stump: 0.45,
     lantern: 0.95, deadlantern: 0.95, lamppost: 0.95, well: 0.6, noticeboard: 0.8, sign: 0.85, signblank: 0.85,
     cart: 0.55, hay: 0.55, barrel: 0.65, crate: 0.65, laundry: 0.85, bench: 0.45, flowerpot: 0.55, teaset: 0.4,
-    stone_marker: 0.8, fence: 0.7,
+    stone_marker: 0.8, fence: 0.7, shelf: 0.9, counter: 0.5, desk: 0.5, chair: 0.6, table: 0.45, bed: 0.3, bookpile: 0.5,
   };
-  const NONE = { water: 1, pier: 1, boat: 1, exitmat: 1, sparkle: 1, echo: 1 };
+  const NONE = { water: 1, pier: 1, boat: 1, exitmat: 1, sparkle: 1, echo: 1, rug: 1, mat: 1, sb_futon: 1, sb_irori: 1 };
   function heightOf(kind, pd) {
     if (NONE[kind]) return 0;
     if (HEIGHT[kind] != null) return HEIGHT[kind];
     return pd && pd.block === false ? 0 : 0.6;
   }
   const STRUCT_H = { house: 66, tower: 120 };
-  const stat = { masks: 0 };
+  const stat = { masks: 0, rooms: 0, maskMs: 0 };
+  const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
   // keep only the opaque part of a sprite (its own soft contact shadow and halos are not the thing)
   function solidify(g, w, h) {
     const img = g.getImageData(0, 0, w, h), d = img.data;
@@ -46717,14 +46912,14 @@ RB.worldLook = (function () {
   }
   // project a silhouette (already solid, in the shade colour) from src onto g; baseY is the ground contact's row in
   // src; (gx, gy) is where src's top-left would be drawn upright
-  function project(g, src, baseY, k, sun, gx, gy) {
-    const dx = sun.dx * k, dy = sun.dy * k;
+  function project(g, src, baseY, k, sun, gx, gy, w) {
+    const dx = sun.dx * k, dy = sun.dy * k, sw = w || src.width;
     g.save();
     g.beginPath(); // only what stands above its contact casts
     g.setTransform(1, 0, -dx, -dy, gx + dx * baseY, gy + baseY + dy * baseY);
-    g.rect(0, 0, src.width, baseY);
+    g.rect(0, 0, sw, baseY);
     g.clip();
-    g.drawImage(src, 0, 0);
+    g.drawImage(src, 0, 0, sw, baseY, 0, 0, sw, baseY);
     g.restore();
   }
   let scratch = null, sg = null;
@@ -46736,7 +46931,9 @@ RB.worldLook = (function () {
     sg.imageSmoothingEnabled = false;
     return sg;
   }
-  // draw one thing into the scratch, keep its silhouette, cast it into the map's mask
+  // draw one thing into the scratch and cast its silhouette into the map's mask. (A sprite's own faint contact shadow
+  // comes along: what lies above the contact is at most a faint penumbra at the shadow's root, where it falls
+  // anyway, so the per-sprite thresholding the proof did is skipped: it was a quarter of the mask's cost.)
   function castThing(mg, draw, w, h, ox, oy, baseY, k, sun, gx, gy) {
     const g = scratchFor(w, h);
     draw(g, ox, oy);
@@ -46744,32 +46941,67 @@ RB.worldLook = (function () {
     g.fillStyle = '#000';
     g.fillRect(0, 0, w, h);
     g.globalCompositeOperation = 'source-over';
-    solidify(g, w, h);
-    const piece = mk(w, h);
-    piece.getContext('2d').drawImage(scratch, 0, 0, w, h, 0, 0, w, h);
-    project(mg, piece, baseY, k, sun, gx - ox, gy - oy);
+    project(mg, scratch, baseY, k, sun, gx - ox, gy - oy, w);
   }
+  // The light that falls most strongly on a place (tile units), among a set of point lights; null if none reaches.
+  // Each light: x, y (its foot on the floor), he (the flame's height, art px), s (strength), R (reach, tiles).
+  function strongest(lights, fx, fy) {
+    let best = null, bi = 0.2;
+    for (const L of lights) {
+      const d = Math.hypot(fx - L.x, fy - L.y), I = L.s * (1 - d / L.R);
+      if (I > bi) { bi = I; best = L; }
+    }
+    return best;
+  }
+  // the direction and length of a shadow cast from a point light (art px per art px of height); null right under it.
+  // A window is a broad light high in the wall: its shadows fall into the room, short, leaning a little away from it.
+  function castFrom(L, fx, fy) {
+    const vx = fx - L.x, vy = fy - L.y, d = Math.hypot(vx, vy);
+    if (L.win) return { dx: Math.max(-0.26, Math.min(0.26, vx * 0.09)), dy: 0.42 };
+    if (d < 0.35) return null;
+    const len = Math.max(0.22, Math.min(0.95, (d * 32) / L.he));
+    return { dx: (vx / d) * len, dy: (vy / d) * len };
+  }
+  // the lights that cast shadows here now: at night or in the dark the lamps; in a room by day, also its back windows
+  function castLights(m, st) {
+    const out = [];
+    for (const e of emitters(m)) if (e.r >= 24 && !TINY[e.p.p]) out.push(e);
+    if (st.indoor && !st.night) for (const w of windowsOf(m)) if (w.back) out.push({ x: w.x + 0.5, y: w.y + 1, he: 64, s: 1.05, R: 8.5, win: true });
+    return out;
+  }
+  const ROOM_SHADE = '118,96,112';
   // the map's shadow mask, the size of its static layer (built lazily, dropped with it)
   function shadowsOf(m, env) {
-    const sun = sunOf(m, env);
-    if (!sun || !m.staticLayer) return null;
-    const key = m.staticLayer;
-    if (m.look && m.look.key === key && m.look.sun === sun) return m.look;
-    const TS = 16, ATS = 32, gm = m.margin || { x: 0, y: 0 };
+    const st = stateOf(m, env);
+    if (!st || !m.staticLayer) return null;
+    const sun = st.sun || null;
+    const mode = sun ? 'sun:' + sun.id : (st.indoor ? 'room:' : 'lamps:') + (st.night ? 'n' : 'd');
+    const key = m.staticLayer, sig = visSig(m);
+    if (m.look && m.look.key === key && m.look.mode === mode && m.look.sig === sig) return m.look.empty ? null : m.look;
+    const lights = sun ? null : castLights(m, st);
+    if (!sun && !lights.length) { m.look = { key, mode, sig, empty: true }; return null; }
+    const ATS = 32, gm = m.margin || { x: 0, y: 0 }, t0 = now();
     const W = m.staticLayer.width, H = m.staticLayer.height;
     const cv = mk(W, H), mg = ctx2(cv);
     mg.imageSmoothingEnabled = false;
     const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake;
     const s = RB.game.s;
     const at = (x, y) => [(x + gm.x) * ATS, (y + gm.y) * ATS];
+    // the direction a thing's shadow falls, standing at (fx, fy): the sun's, or away from the light strongest there
+    const dirAt = (fx, fy, self) => {
+      if (sun) return sun;
+      const L = strongest(lights.filter((l) => l.p !== self), fx, fy);
+      return L ? castFrom(L, fx, fy) : null;
+    };
     // A building is a box on its footprint (the wall's eaves overhang a little): its shadow is the footprint swept
-    // away from the sun by its height, the roof's hips trimming the far corners.
+    // away from the sun by its height, the roof's hips trimming the far corners. (Only under the sun: by lamplight a
+    // house's own lit windows are the light.)
     mg.fillStyle = '#000';
-    for (const st of m.structs) {
-      if (st.if && !RB.state.test(s, st.if)) continue;
-      const [gx, gy] = at(st.x, st.y);
-      const H = STRUCT_H[st.type || 'house'] || 64, sx = sun.dx * H, sy = sun.dy * H, hip = 10;
-      const X0 = gx - 6, X1 = gx + st.w * ATS + 6, Y0 = gy + 6, Y1 = gy + st.h * ATS - 2;
+    if (sun) for (const stc of m.structs) {
+      if (stc.if && !RB.state.test(s, stc.if)) continue;
+      const [gx, gy] = at(stc.x, stc.y);
+      const Hh = STRUCT_H[stc.type || 'house'] || 64, sx = sun.dx * Hh, sy = sun.dy * Hh, hip = 10;
+      const X0 = gx - 6, X1 = gx + stc.w * ATS + 6, Y0 = gy + 6, Y1 = gy + stc.h * ATS - 2;
       mg.beginPath();
       mg.moveTo(X0, Y0); mg.lineTo(X1, Y0);
       mg.lineTo(X1 + sx - hip, Y0 + sy); mg.lineTo(X1 + sx, Y0 + sy + hip);
@@ -46778,6 +47010,7 @@ RB.worldLook = (function () {
       mg.closePath();
       mg.fill();
     }
+    const kitArt = kitOn(m) && RB.worldKit;
     const things = m.props.concat(m.apronProps || []);
     for (const p of things) {
       if (p.if && !RB.state.test(s, p.if)) continue;
@@ -46786,64 +47019,107 @@ RB.worldLook = (function () {
       const k = heightOf(p.p, pd);
       if (!k) continue;
       const pw = p.w || pd.w || 1, ph = p.h || pd.h || 1;
+      const dir = dirAt(p.x + pw / 2, p.y + ph - 0.1, p);
+      if (!dir) continue;
       const w = pw * ATS + 96, h = ph * ATS + 120, ox = 48, oy = 96;
       const [gx, gy] = at(p.x, p.y);
-      const opts = Object.assign({ cx: p.x, cy: p.y, still: true }, p.o || {});
-      const d2 = (opts_.kit && RB.worldKit && RB.worldKit.PROPS[p.p]) || pd.draw2;
-      castThing(mg, (g, x, y) => d2(g, x, y, pal, 0, opts), w, h, ox, oy, oy + ph * ATS - 3, k, sun, gx, gy);
+      const o = Object.assign({ cx: p.x, cy: p.y, still: true }, p.o || {});
+      const d2 = (kitArt && RB.worldKit.propFor(m, p.p)) || pd.draw2;
+      castThing(mg, (g, x, y) => d2(g, x, y, pal, 0, o), w, h, ox, oy, oy + ph * ATS - 3, k, dir, gx, gy);
     }
     // the kit's low growth casts too
-    if (opts_.kit && RB.worldKit) for (const k of RB.worldKit.casters(m)) {
-      const [gx, gy] = at(k.x, k.y);
-      castThing(mg, k.draw, 96, 120, 48, 96, 96 + ATS - 3, k.k, sun, gx, gy);
+    if (kitArt) for (const kc of RB.worldKit.casters(m)) {
+      const dir = dirAt(kc.x + 0.5, kc.y + 0.9, null);
+      if (!dir) continue;
+      const [gx, gy] = at(kc.x, kc.y);
+      castThing(mg, kc.draw, 96, 120, 48, 96, 96 + ATS - 3, kc.k, dir, gx, gy);
+    }
+    // in a room, shadows lie on the floor only, never over its walls
+    if (st.indoor) {
+      mg.save();
+      mg.globalCompositeOperation = 'destination-out';
+      mg.fillStyle = '#000';
+      for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) if (isWall(m, x, y)) mg.fillRect((x + gm.x) * ATS, (y + gm.y) * ATS, ATS, ATS);
+      mg.restore();
     }
     const img = stepMask(cv, 2);
-    tintMask(mg, W, H, sun.mul);
+    const mul = sun ? sun.mul : ROOM_SHADE;
+    tintMask(mg, W, H, mul);
     // the steps at the people's feet, on a 4-px grid, so a person standing in shade is shaded
     const cw = Math.ceil(W / 4), chh = Math.ceil(H / 4), lvl = new Uint8Array(cw * chh);
     for (let y = 0; y < chh; y++) for (let x = 0; x < cw; x++) { const a = img.data[(Math.min(H - 1, y * 4 + 2) * W + Math.min(W - 1, x * 4 + 2)) * 4 + 3]; lvl[y * cw + x] = a >= 255 ? 2 : a ? 1 : 0; }
-    m.look = { key, sun, cv, lvl, cw, ch: chh, gm };
+    m.look = { key, mode, sig, sun, lights, cv, lvl, cw, ch: chh, gm, shade: sun ? sun.shade : ROOM_SHADE, mul };
     stat.masks++;
+    stat.maskMs = Math.round(now() - t0);
+    stat.maskMs = Math.round(now() - t0);
     return m.look;
   }
-  // a person's shadow for one frame of art (cached per art canvas)
+  // a person's shadow for one frame of art, from one direction (cached per art canvas and direction)
   const actorCache = new WeakMap();
-  function actorShadow(art, sun) {
-    let e = actorCache.get(art);
-    if (e && e.sun === sun) return e;
+  function actorShadow(art, dir, mul) {
+    let byDir = actorCache.get(art);
+    if (!byDir) { byDir = new Map(); actorCache.set(art, byDir); }
+    const key = dir.key || dir.id || dir.dx + ',' + dir.dy;
+    let e = byDir.get(key);
+    if (e) return e;
     const A = RB.sprites.ANCHOR, k = 0.85;
     const w = art.width, h = art.height;
-    const dx = sun.dx * k, dy = sun.dy * k;
-    const W = Math.ceil(w + dx * A.y) + 4, H = Math.ceil(dy * A.y) + 6;
+    const dx = dir.dx * k, dy = dir.dy * k;
+    const L = Math.floor(Math.min(0, dx * A.y)) - 2, T = Math.floor(Math.min(0, dy * A.y)) - 4;
+    const W = Math.ceil(w + Math.abs(dx) * A.y) + 6, H = Math.ceil(Math.abs(dy) * A.y) + 10;
     const cv = mk(W, H), g = ctx2(cv);
     const src = mk(w, h), s2 = ctx2(src);
     s2.drawImage(art, 0, 0);
     s2.globalCompositeOperation = 'source-in'; s2.fillStyle = '#000'; s2.fillRect(0, 0, w, h);
     solidify(s2, w, h);
-    project(g, src, A.y, k, sun, 0, -A.y + 2);
+    project(g, src, A.y, k, dir, -L, -A.y + 2 - T);
     stepMask(cv, 1);
-    tintMask(g, W, H, sun.mul);
-    e = { cv, sun, ox: -A.x, oy: -2 };
-    actorCache.set(art, e);
+    tintMask(g, W, H, mul);
+    e = { cv, ox: -A.x + L, oy: -2 + T };
+    if (byDir.size > 24) byDir.clear();
+    byDir.set(key, e);
     return e;
   }
-  // The ground pass: the map's shade laid once by multiplication (cool, keeps the ground's own hue), then each
-  // person's shadow where the map's shade is not already (a person in shade casts no second shadow), through a
-  // small patch each, so the frame never pays for a second full-screen composite.
+  // a person's shadow direction by lamplight or window light, rounded to one of 16 bearings and 3 lengths
+  const QDIR = new Map();
+  function quantDir(d) {
+    const a = Math.round((Math.atan2(d.dy, d.dx) / (Math.PI * 2)) * 16) & 15, l = Math.hypot(d.dx, d.dy), li = l < 0.45 ? 0 : l < 0.8 ? 1 : 2;
+    const key = a + '|' + li;
+    let q = QDIR.get(key);
+    if (!q) { const len = [0.35, 0.62, 0.95][li], ang = (a / 16) * Math.PI * 2; q = { dx: Math.cos(ang) * len, dy: Math.sin(ang) * len, key: 'q' + key }; QDIR.set(key, q); }
+    return q;
+  }
+  // how strongly shadows show now: under the sun its own strength (weather and darkness soften it); in a room by
+  // day the windows' soft light; by lamplight a little more
+  function shadowAlpha(st, L) {
+    if (L.sun) return L.sun.shadow * (st.k == null ? 1 : st.k);
+    if (st.indoor) return st.night ? 0.5 : 0.44;
+    return 0.5;
+  }
+  // The ground pass: the map's shade laid once by multiplication (keeps the ground's own hue), then each person's
+  // shadow where the map's shade is not already (a person in shade casts no second shadow), through a small patch
+  // each, so the frame never pays for a second full-screen composite.
   let patch = null, pg = null;
   function ground(c, m, W, t, env) {
     if (!opts.light) return;
     const L = shadowsOf(m, env);
     if (!L) return;
-    const sun = L.sun, X0 = env.ax(-L.gm.x * 16), Y0 = env.ay(-L.gm.y * 16);
+    const st = stateOf(m, env), X0 = env.ax(-L.gm.x * 16), Y0 = env.ay(-L.gm.y * 16);
+    m.lookK = st.k == null ? 1 : st.k; // (for a person standing in shade, drawn after)
     c.save();
     c.globalCompositeOperation = 'multiply';
-    c.globalAlpha = sun.shadow;
+    c.globalAlpha = shadowAlpha(st, L);
     c.drawImage(L.cv, X0, Y0);
     for (const a of env.actors()) {
       const art = env.artOf(a, t);
       if (!art) continue;
-      const sh = actorShadow(art.cv, sun), x = art.fx + sh.ox, y = art.fy + sh.oy, w = sh.cv.width, h = sh.cv.height;
+      let dir = L.sun;
+      if (!dir) {
+        const fx = a.fx + 0.5, fy = a.fy + 0.95, src = strongest(L.lights, fx, fy), d = src && castFrom(src, fx, fy);
+        if (!d) continue;
+        dir = quantDir(d);
+      }
+      const sh = actorShadow(art.cv, dir, L.mul), x = art.fx + sh.ox, y = art.fy + sh.oy, w = sh.cv.width, h = sh.cv.height;
       if (x > env.bw || y > env.bh || x + w < 0 || y + h < 0) continue;
       if (!patch || patch.width < w || patch.height < h) { patch = mk(Math.max(w, 96), Math.max(h, 48)); pg = ctx2(patch); }
       pg.globalCompositeOperation = 'source-over';
@@ -46857,7 +47133,7 @@ RB.worldLook = (function () {
   }
   // how deep in shade a person's feet are (0, 0.5, 1)
   function shadeAt(m, a) {
-    if (!opts.light || !m.look) return 0;
+    if (!opts.light || !m.look || m.look.empty || !m.look.lvl) return 0;
     const L = m.look, gx = ((a.fx + L.gm.x) * 32 + 16) >> 2, gy = ((a.fy + L.gm.y) * 32 + 28) >> 2;
     if (gx < 0 || gy < 0 || gx >= L.cw || gy >= L.ch) return 0;
     return L.lvl[gy * L.cw + gx] / 2;
@@ -46865,35 +47141,136 @@ RB.worldLook = (function () {
   let tint = null, tg = null;
   function shaded(m, a, art) {
     const amt = shadeAt(m, a);
-    if (!amt || !m.look) return art;
+    if (!amt || !m.look || !m.look.lvl) return art;
     if (!tint || tint.width < art.width || tint.height < art.height) { tint = mk(Math.max(art.width, 48), Math.max(art.height, 64)); tg = ctx2(tint); }
     tg.globalCompositeOperation = 'source-over';
     tg.clearRect(0, 0, tint.width, tint.height);
     tg.drawImage(art, 0, 0);
     tg.globalCompositeOperation = 'source-atop';
-    tg.fillStyle = 'rgba(' + m.look.sun.shade + ',' + (amt * m.look.sun.shadow * 0.42).toFixed(3) + ')';
+    const strength = m.look.sun ? m.look.sun.shadow * (m.lookK == null ? 1 : m.lookK) : 0.5;
+    tg.fillStyle = 'rgba(' + m.look.shade + ',' + (amt * strength * 0.42).toFixed(3) + ')';
     tg.fillRect(0, 0, art.width, art.height);
     return tint;
   }
 
+  // ---- illumination: a room's light ------------------------------------------------------------------------------
+  // A room is a little dimmer than the day outside, except where its light falls: daylight through each back window
+  // in a shaft across the floor (slanting the way the sun stands), a softer patch inside each front window, a warm
+  // pool round each lamp, candle and fire. The floor darkens a little where it meets the walls. One map-sized layer
+  // (cached with the static layer), laid over everything by multiplication once a frame. By night the windows give
+  // only a faint cool light and the room is darker but for its lamps; in a dark place the darkness itself is the
+  // game's, and this only warms the pools.
+  function roomOf(m, st) {
+    const key = m.staticLayer, mode = (st.night ? 'n' : 'd') + (st.dark >= 0.25 ? 'k' : ''), sig = visSig(m);
+    if (m.lookRoom && m.lookRoom.key === key && m.lookRoom.mode === mode && m.lookRoom.sig === sig) return m.lookRoom.cv;
+    const ATS = 32, W = m.staticLayer.width, H = m.staticLayer.height, gm = m.margin || { x: 0, y: 0 };
+    const cv = mk(W, H), g = cv.getContext('2d');
+    const em = emitters(m), wins = windowsOf(m), any = em.length || wins.length;
+    // the room's own level: a lit room by day, by night, or a dark place (its darkness is drawn by the game)
+    g.fillStyle = 'rgb(' + (st.dark >= 0.25 ? '236,230,226' : st.night ? (any ? '164,162,188' : '190,188,206') : any ? '204,192,180' : '226,218,208') + ')';
+    g.fillRect(0, 0, W, H);
+    g.globalCompositeOperation = 'lighter';
+    const P = (x, y) => [(x + gm.x) * ATS, (y + gm.y) * ATS];
+    // the windows' light falls on the floor (and the wall round each window), never across the side walls
+    g.save();
+    g.beginPath();
+    for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) if (!isWall(m, x, y)) { const [X, Y] = P(x, y); g.rect(X, Y, ATS, ATS); }
+    for (const w of wins) { const [X, Y] = P(w.x, w.y); g.rect(X - 26, Y - 26, 84, 84); }
+    g.clip();
+    for (const w of wins) {
+      const [X, Y] = P(w.x, w.y);
+      if (w.back) {
+        // the shaft: from the window's sill down across the floor, widening, slanting down and to the right
+        const top = Y + ATS, len = st.night ? 70 : 118, x0 = X + 3, x1 = X + 29, sl = 0.32;
+        const gr = g.createLinearGradient(0, top, 0, top + len);
+        const col = st.night ? '90,104,150' : '255,236,200';
+        gr.addColorStop(0, 'rgba(' + col + ',' + (st.night ? 0.22 : 0.62) + ')');
+        gr.addColorStop(0.55, 'rgba(' + col + ',' + (st.night ? 0.1 : 0.3) + ')');
+        gr.addColorStop(1, 'rgba(' + col + ',0)');
+        g.fillStyle = gr;
+        g.beginPath();
+        g.moveTo(x0, top); g.lineTo(x1, top);
+        g.lineTo(x1 + len * sl + 12, top + len); g.lineTo(x0 + len * sl - 8, top + len);
+        g.closePath();
+        g.fill();
+        // the wall round the window catches its light
+        const wr = g.createRadialGradient(X + 16, Y + 14, 2, X + 16, Y + 14, 40);
+        wr.addColorStop(0, 'rgba(' + col + ',' + (st.night ? 0.12 : 0.34) + ')');
+        wr.addColorStop(1, 'rgba(' + col + ',0)');
+        g.fillStyle = wr;
+        g.fillRect(X - 26, Y - 26, 84, 84);
+      } else {
+        // a front window: a soft patch on the floor just inside it
+        const cx = X + 16, cy = Y - 6, r = 46;
+        const pr = g.createRadialGradient(cx, cy, 2, cx, cy, r);
+        const col = st.night ? '80,94,140' : '255,234,198';
+        pr.addColorStop(0, 'rgba(' + col + ',' + (st.night ? 0.14 : 0.4) + ')');
+        pr.addColorStop(1, 'rgba(' + col + ',0)');
+        g.fillStyle = pr;
+        g.fillRect(cx - r, cy - r, r * 2, r * 2);
+      }
+    }
+    g.restore();
+    for (const e of em) {
+      const [X, Y] = P(e.x, e.y - 0.35), R = e.R * ATS;
+      const gr = g.createRadialGradient(X, Y, 0, X, Y, R);
+      gr.addColorStop(0, 'rgba(255,206,150,' + (0.62 * e.s).toFixed(3) + ')');
+      gr.addColorStop(0.45, 'rgba(255,196,140,' + (0.28 * e.s).toFixed(3) + ')');
+      gr.addColorStop(1, 'rgba(255,190,130,0)');
+      g.fillStyle = gr;
+      g.fillRect(X - R, Y - R, R * 2, R * 2);
+    }
+    // the floor's edge along the walls
+    g.globalCompositeOperation = 'multiply';
+    const E = 10;
+    for (let y = 0; y < m.h; y++)
+      for (let x = 0; x < m.w; x++) {
+        if (isWall(m, x, y)) continue;
+        const [X, Y] = P(x, y);
+        const band = (x0, y0, x1, y1, rx, ry, rw, rh) => {
+          const gr = g.createLinearGradient(x0, y0, x1, y1);
+          gr.addColorStop(0, 'rgb(196,188,196)');
+          gr.addColorStop(1, 'rgb(255,255,255)');
+          g.fillStyle = gr;
+          g.fillRect(rx, ry, rw, rh);
+        };
+        if (isWall(m, x, y - 1)) band(0, Y, 0, Y + E, X, Y, ATS, E);
+        if (isWall(m, x - 1, y)) band(X, 0, X + E, 0, X, Y, E, ATS);
+        if (isWall(m, x + 1, y)) band(X + ATS, 0, X + ATS - E, 0, X + ATS - E, Y, E, ATS);
+      }
+    m.lookRoom = { key, mode, sig, cv };
+    stat.rooms++;
+    return cv;
+  }
+
   // ---- illumination: the ambient grade --------------------------------------------------------------------------
-  // The sun's colour laid softly over everything (warm light, cool shade), a little brighter toward the sun's side
-  // of the view and a little cooler away from it. At night the game's own darkness runs; the grade then only cools.
-  // Two cheap passes (soft-light cost three times as much, measured): the sun's colour by overlay (warm light,
-  // deeper warm shade), then a plain wash toward the sun's side and a cool one away from it.
+  // Outdoors the sun's colour laid softly over everything (warm light, cool shade), a little brighter toward the sun's
+  // side of the view and a little cooler away from it; at night only a cooling (the game's own darkness runs). Two
+  // cheap passes (soft-light cost three times as much, measured). Indoors the room's light, then a faint warmth.
   function illuminate(c, m, W, t, env) {
     if (!opts.light) return;
-    const sun = sunOf(m, env), bw = env.bw, bh = env.bh;
+    const st = stateOf(m, env), bw = env.bw, bh = env.bh;
+    if (!st) return;
     c.save();
-    if (sun) {
+    if (st.indoor) {
+      if (m.staticLayer) {
+        const gm = m.margin || { x: 0, y: 0 };
+        c.globalCompositeOperation = 'multiply';
+        c.drawImage(roomOf(m, st), env.ax(-gm.x * 16), env.ay(-gm.y * 16));
+      }
       c.globalCompositeOperation = 'overlay';
-      c.fillStyle = 'rgba(' + sun.key + ',' + sun.grade + ')';
+      c.fillStyle = st.night ? 'rgba(70,84,150,0.14)' : 'rgba(255,214,170,0.1)';
+      c.fillRect(0, 0, bw, bh);
+    } else if (st.sun) {
+      const sun = st.sun, k = st.k;
+      c.globalCompositeOperation = 'overlay';
+      c.fillStyle = 'rgba(' + sun.key + ',' + (sun.grade * (0.4 + 0.6 * k)).toFixed(3) + ')';
       c.fillRect(0, 0, bw, bh);
       c.globalCompositeOperation = 'source-over';
       const g = c.createLinearGradient(0, 0, bw, bh);
-      g.addColorStop(0, 'rgba(' + sun.key + ',0.12)');
+      g.addColorStop(0, 'rgba(' + sun.key + ',' + (0.12 * k).toFixed(3) + ')');
       g.addColorStop(0.5, 'rgba(' + sun.key + ',0)');
-      g.addColorStop(1, 'rgba(' + sun.mul + ',0.1)');
+      g.addColorStop(1, 'rgba(' + sun.mul + ',' + (0.1 * k).toFixed(3) + ')');
       c.fillStyle = g;
       c.fillRect(0, 0, bw, bh);
     } else {
@@ -46903,9 +47280,63 @@ RB.worldLook = (function () {
     }
     c.restore();
   }
+  // The darkness's extra openings (src/engine/60_render.js drawLighting): what gives light in a room that the
+  // darkness did not count before (a stove's fire, the festival's lanterns), and daylight at a dark room's windows.
+  function holes(m, env) {
+    if (!opts.light || !active(m)) return [];
+    const st = stateOf(m, env), out = [];
+    if (!st) return out;
+    for (const e of emitters(m)) if (e.extra) out.push({ x: e.p.x * 16 + 8, y: e.p.y * 16 + 2, r: e.r });
+    if (st.indoor && !st.night) for (const w of windowsOf(m)) out.push(w.back ? { x: w.x * 16 + 8 + 10, y: (w.y + 2) * 16, r: 30 } : { x: w.x * 16 + 8, y: w.y * 16 - 4, r: 22 });
+    return out;
+  }
+
+  // ---- base: a room's windows ----------------------------------------------------------------------------------
+  // A shoji window in the wall's plaster: a timber frame, the paper's lattice, the paper bright with the day behind
+  // it (warm at the top where the sun is), or dim and blue at night. Drawn each frame over the static layer, under
+  // everything that stands in the room.
+  const winCache = new Map();
+  function windowArt(pal, night) {
+    const k = (pal.wood || []).join() + '|' + night;
+    let cv = winCache.get(k);
+    if (cv) return cv;
+    cv = mk(26, 19);
+    const g = cv.getContext('2d'), wd = pal.woodR || pal.wood;
+    const R = (x, y, w, h, col) => { g.fillStyle = col; g.fillRect(x, y, w, h); };
+    R(0, 0, 26, 19, wd[0]);
+    R(1, 1, 24, 17, wd[1] || wd[0]);
+    for (let y = 2; y < 17; y++) {
+      const u = (y - 2) / 15;
+      const day = [Math.round(252 - u * 14), Math.round(244 - u * 18), Math.round(222 - u * 26)];
+      const nt = [Math.round(82 - u * 14), Math.round(92 - u * 14), Math.round(126 - u * 12)];
+      const c3 = night ? nt : day;
+      R(2, y, 22, 1, 'rgb(' + c3.join(',') + ')');
+    }
+    // the lattice (kumiko): three bars down, one across
+    const bar = night ? 'rgba(30,26,40,0.85)' : (wd[2] || wd[0]);
+    for (const x of [7, 13, 19]) R(x, 2, 1, 15, bar);
+    R(2, 9, 22, 1, bar);
+    if (!night) { R(3, 3, 3, 1, 'rgba(255,255,255,0.75)'); R(3, 4, 1, 2, 'rgba(255,255,255,0.5)'); }
+    R(0, 18, 26, 1, wd[0]);
+    winCache.set(k, cv);
+    return cv;
+  }
+  function walls(c, m, t, env) {
+    if (!opts.light || !opts.kit) return;
+    const st = stateOf(m, env);
+    if (!st || !st.indoor) return;
+    const wins = windowsOf(m);
+    if (!wins.length) return;
+    const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake, art = windowArt(pal, st.night);
+    for (const w of wins) {
+      const X = env.ax(w.x * 16) + 3, Y = env.ay(w.y * 16) + 5;
+      if (X < -40 || Y < -40 || X > env.bw + 40 || Y > env.bh + 40) continue;
+      c.drawImage(art, X, Y);
+    }
+  }
 
   // ---- atmosphere ---------------------------------------------------------------------------------------------
-  // Glow only on authored emissive things (lit windows, lanterns), a sunlit haze, glints on open water, and an
+  // Glow only on things that give light (lit windows, lanterns, fires), a sunlit haze, glints on open water, and an
   // optional softening of the view's top and bottom edges (off the play space). Nothing here moves with reduced
   // motion; flicker comes from each light's own position, never a random stream.
   const glowCache = new Map();
@@ -46923,33 +47354,47 @@ RB.worldLook = (function () {
     glowCache.set(k, cv);
     return cv;
   }
-  function glows(c, m, t, env) {
+  function glows(c, m, t, env, st) {
     const s = RB.game.s, night = !!env.night, still = env.still;
-    const day = night ? 1 : 0.42;
+    const day = night ? 1 : st && st.indoor ? 0.62 : 0.42;
     const flick = (ph) => (still ? 1 : 0.9 + 0.1 * Math.sin(t / 340 + ph) + 0.05 * Math.sin(t / 97 + ph * 3));
     c.save();
     c.globalCompositeOperation = 'screen';
-    for (const st of m.structs) {
-      if (st.if && !RB.state.test(s, st.if)) continue;
-      for (const wx of st.windows || []) {
-        const x = env.ax((st.x + wx) * 16 + 8), y = env.ay((st.y + st.h) * 16 - 11);
+    for (const stc of m.structs) {
+      if (stc.if && !RB.state.test(s, stc.if)) continue;
+      for (const wx of stc.windows || []) {
+        const x = env.ax((stc.x + wx) * 16 + 8), y = env.ay((stc.y + stc.h) * 16 - 11);
         if (x < -40 || y < -40 || x > env.bw + 40 || y > env.bh + 40) continue;
-        const a = day * flick(st.x * 1.3 + wx);
+        const a = day * flick(stc.x * 1.3 + wx);
         c.globalAlpha = Math.min(1, a);
         const sp = glowSprite(20, '255,196,110');
         c.drawImage(sp, x - 20, y - 20);
       }
     }
-    for (const p of m.props) {
-      const pd = RB.props.P[p.p];
-      if (!pd || !(pd.light || p.light)) continue;
-      if (p.if && !RB.state.test(s, p.if)) continue;
-      if (p.o && p.o.lit === false) continue;
-      const x = env.ax(p.x * 16 + 8), y = env.ay(p.y * 16 + 1);
-      if (x < -60 || y < -60 || x > env.bw + 60 || y > env.bh + 60) continue;
-      c.globalAlpha = Math.min(1, day * 0.9 * flick(p.x * 1.7 + p.y * 2.3));
+    for (const e of emitters(m)) {
+      const p = e.p;
+      const x = env.ax(p.x * 16 + 8), y = env.ay(p.y * 16 + (LOWFIRE[p.p] ? 8 : 1));
+      if (x < -140 || y < -140 || x > env.bw + 140 || y > env.bh + 140) continue;
+      const f = flick(p.x * 1.7 + p.y * 2.3);
+      c.globalAlpha = Math.min(1, day * 0.9 * e.s * f);
       const sp = glowSprite(26, '255,206,128');
       c.drawImage(sp, x - 26, y - 26);
+      // indoors, and outdoors by night, the light the flame throws round it
+      if ((st && st.indoor) || night) {
+        const R = Math.round(Math.min(120, e.R * 26)), pool = glowSprite(R, '255,176,96');
+        c.globalAlpha = Math.min(1, (night ? 0.3 : 0.22) * e.s * f);
+        c.drawImage(pool, x - R, y + 10 - R);
+      }
+    }
+    // a room's windows by day: the paper lit from behind
+    if (st && st.indoor && !st.night) {
+      c.globalAlpha = 0.5;
+      const sp = glowSprite(18, '255,240,210');
+      for (const w of windowsOf(m)) {
+        const x = env.ax(w.x * 16 + 8), y = env.ay(w.y * 16 + 7);
+        if (x < -40 || y < -40 || x > env.bw + 40 || y > env.bh + 40) continue;
+        c.drawImage(sp, x - 18, y - 18);
+      }
     }
     c.restore();
   }
@@ -46973,15 +47418,14 @@ RB.worldLook = (function () {
       }
     c.restore();
   }
-  function haze(c, m, env) {
-    const sun = sunOf(m, env);
-    if (!sun) return;
-    const bw = env.bw, bh = env.bh, R = Math.hypot(bw, bh) * 0.55;
+  function haze(c, m, env, st) {
+    if (!st || !st.sun) return;
+    const sun = st.sun, k = st.k, bw = env.bw, bh = env.bh, R = Math.hypot(bw, bh) * 0.55;
     c.save();
     c.globalCompositeOperation = 'screen';
     const g = c.createRadialGradient(-bw * 0.06, -bh * 0.1, 0, -bw * 0.06, -bh * 0.1, R);
-    g.addColorStop(0, 'rgba(' + sun.key + ',0.3)');
-    g.addColorStop(0.45, 'rgba(' + sun.key + ',0.1)');
+    g.addColorStop(0, 'rgba(' + sun.key + ',' + (0.3 * k).toFixed(3) + ')');
+    g.addColorStop(0.45, 'rgba(' + sun.key + ',' + (0.1 * k).toFixed(3) + ')');
     g.addColorStop(1, 'rgba(' + sun.key + ',0)');
     c.fillStyle = g;
     c.fillRect(0, 0, Math.min(bw, R), Math.min(bh, R));
@@ -47013,25 +47457,28 @@ RB.worldLook = (function () {
   }
   function atmosphere(c, m, W, t, env) {
     if (!opts.atmos) return;
-    glints(c, m, t, env);
-    glows(c, m, t, env);
-    haze(c, m, env);
+    const st = stateOf(m, env);
+    if (!st) return;
+    if (!st.indoor) glints(c, m, t, env);
+    glows(c, m, t, env, st);
+    haze(c, m, env, st);
     if (opts.soft && env.buf) softEdges(c, env.buf, env);
   }
 
-  // ---- a battle that starts in the slice --------------------------------------------------------------------------
-  // The slice's light carries into the battle's backdrop (composed from the same place by src/ui/76_battle_places.js):
+  // ---- a battle that starts outdoors ----------------------------------------------------------------------------
+  // The region's light carries into the battle's backdrop (composed from the same place by src/ui/76_battle_places.js):
   // the same grade, laid on the backdrop only, before the stage draws anyone, so combatants, faces and every reading
   // surface keep their own colours (V3). Night and story states follow the map's own alternatives.
-  function nightOf(m) {
+  function ambOf(m) {
     const s = RB.game && RB.game.s;
-    for (const a of (m.def && m.def.alt) || []) if (s && RB.state.test(s, a.if)) return !!(a.night || (a.ambient && a.ambient.dark));
-    return false;
+    for (const a of (m.def && m.def.alt) || []) if (s && RB.state.test(s, a.if)) return { amb: a.ambient || {}, night: !!a.night };
+    return { amb: (m.def && m.def.ambient) || {}, night: !!(m.def && m.def.night) };
   }
   function battleGrade(c, w, h) {
     const m = RB.world && RB.world.W && RB.world.W.map;
-    if (!active(m) || !opts.light) return;
-    illuminate(c, m, RB.world.W, 0, { bw: w, bh: h, night: nightOf(m) });
+    if (!active(m) || !opts.light || indoor(m)) return;
+    const a = ambOf(m), night = a.night || (+a.amb.dark || 0) >= 0.3;
+    illuminate(c, m, RB.world.W, 0, { bw: w, bh: h, night, amb: a.amb });
   }
 
   // ---- the development panel (only on a dev page) ---------------------------------------------------------------
@@ -47101,13 +47548,19 @@ RB.worldLook = (function () {
     setTimeout(open, 0);
   }
 
-  return { allowed, active, cfg, opts, set, onChange, SLICE, farView, FAR, ground, shaded, shadeAt, illuminate, atmosphere, battleGrade, heightOf, panel, stats: () => Object.assign({}, stat) };
+  return {
+    allowed, enabled, active, indoor, kitOn, cfg, opts, set, onChange, applySetting, SUNS, SLICE, farView, midView, FAR, MID,
+    ground, shaded, shadeAt, illuminate, atmosphere, walls, holes, battleGrade, heightOf, windowsOf, emitters, castLights, stateOf, sunOf, panel,
+    stats: () => Object.assign({}, stat),
+  };
 })();
 
 
 /* ==== src/engine/66_worldkit.js ==== */
-/* The world proof's regional kit (expansion P01, W02; docs/future/work/P01_WORLD.md "W02"): Reedwake's materials
- * and dressing, drawn only by the proof (src/engine/65_worldlook.js, ?dev=world) and only on the slice's maps.
+/* The regional kit (expansion P01, W02; docs/future/work/P01_WORLD.md "W02"): each region's ground dressing, low
+ * growth, birds and rails, drawn with the light (src/engine/65_worldlook.js) on every outdoor map (Robin's C-86).
+ * Reedwake's and Saltglass's briefs are the proof's own; every other region's is taken from its palette, with growth
+ * only where its grass is green (no flowers on snow, ash or paper) and lily pads only in fresh water.
  * Nothing here changes a tile, a collision, a prop or a person; it draws.
  *
  *   ground   baked once into the map's static layer after its tiles: grass in sunlit and shaded patches, tufts,
@@ -47146,7 +47599,32 @@ RB.worldKit = (function () {
     deepWater: '#18568f', pad: null, padFlower: null, blade: ['#4a7a3c', '#6c9a4c', '#a8c468'],
     pave: '#d9c39a', paveAmt: 0.28, bird: 'gull', rail: 'chain',
   };
-  const briefOf = (m) => BRIEF[m.region] || BRIEF.reedwake;
+  // Every other region: its palette's grass and water, deepened and warmed the way Reedwake's brief is
+  const BIRD = { reedwake: 'duck', ashihara: 'duck', lanternfall: 'duck', manybridge: 'duck', saltglass: 'gull', sazanami: 'gull', sea: 'gull', kotonoha: 'gull' };
+  const FRESH = { reedwake: 1, ashihara: 1, lanternfall: 1, manybridge: 1, keepers: 1, cinder: 1 };
+  const RAIL = { saltglass: 'chain', sazanami: 'chain', sea: 'chain' };
+  // the kit's own drawings of reeds, lampposts, stalls and the broken span: drawn for the river and coast country
+  const KIT_PROPS = { reedwake: 1, saltglass: 1, ashihara: 1, sazanami: 1 };
+  const isGreen = (hex) => { const [r, g, b] = rgb(hex); return g > r + 6 && g > b + 6 && r + g + b < 600; };
+  function derive(region) {
+    const pal = RB.tiles.PAL[region] || RB.tiles.PAL.reedwake, sh = RB.tiles.shift, gr = pal.grass, fl = pal.flower || [];
+    const growth = isGreen(gr[1]) && isGreen(gr[2]);
+    return {
+      sunGrass: sh(gr[2], 2), deepGrass: sh(gr[3], -2), clover: [sh(gr[3], -1), gr[0], gr[2]],
+      flowers: fl.length ? fl.map((f) => [f, sh(f, -2)]) : BRIEF.reedwake.flowers,
+      deepWater: sh(pal.water[0], -3), blade: [sh(gr[3], -1), gr[0], sh(gr[2], 1)],
+      pad: growth && FRESH[region] ? [sh(pal.leaf[3], -1), pal.leaf[0], pal.leaf[2], sh(pal.leaf[2], 2)] : null, padFlower: ['#fff4f4', '#f4b8c8'],
+      bird: BIRD[region] || null, rail: RAIL[region] || 'rope', growth, green: growth,
+    };
+  }
+  BRIEF.reedwake.growth = BRIEF.saltglass.growth = true;
+  BRIEF.reedwake.green = BRIEF.saltglass.green = true;
+  function briefOf(m) {
+    const r = (m && m.region) || 'reedwake';
+    if (!BRIEF[r]) BRIEF[r] = derive(r);
+    return BRIEF[r];
+  }
+  const propFor = (m, kind) => (KIT_PROPS[m.region] ? PROPS[kind] : null) || null;
 
   // ---- ground --------------------------------------------------------------------------------------------------
   const GRASS = { grass: 1, flowers: 1, tallgrass: 1 };
@@ -47158,57 +47636,96 @@ RB.worldKit = (function () {
     const a = h(xi, yi) + (h(xi + 1, yi) - h(xi, yi)) * u, b = h(xi, yi + 1) + (h(xi + 1, yi + 1) - h(xi, yi + 1)) * u;
     return a + (b - a) * v;
   }
+  // the same noise over a whole layer, its lattice computed once (W×H art px)
+  function lattice(cell, seed, W, H) {
+    const nx = Math.ceil(W / cell) + 2, ny = Math.ceil(H / cell) + 2, L = new Float64Array(nx * ny);
+    for (let b = 0; b < ny; b++) for (let a = 0; a < nx; a++) L[b * nx + a] = (hh(a, b, seed) & 1023) / 1023;
+    return (x, y) => {
+      const fx = x / cell, fy = y / cell, xi = Math.floor(fx), yi = Math.floor(fy), xf = fx - xi, yf = fy - yi;
+      const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), o = yi * nx + xi;
+      const h00 = L[o], h10 = L[o + 1], h01 = L[o + nx], h11 = L[o + nx + 1];
+      const a = h00 + (h10 - h00) * u, b = h01 + (h11 - h01) * u;
+      return a + (b - a) * v;
+    };
+  }
   const lerp3 = (d, o, c, t) => { d[o] += (c[0] - d[o]) * t; d[o + 1] += (c[1] - d[o + 1]) * t; d[o + 2] += (c[2] - d[o + 2]) * t; };
+  const stat = { dressMs: 0 };
   function dressGround(c, m, g) {
+    const t0 = performance.now();
+    try { dress(c, m, g); } finally { stat.dressMs = Math.round(performance.now() - t0); }
+  }
+  function dress(c, m, g) {
     const B = briefOf(m), cv = c.canvas, W = cv.width, H = cv.height;
     const tileAt = (tx, ty) => m.tiles[Math.max(0, Math.min(m.h - 1, ty)) * m.w + Math.max(0, Math.min(m.w - 1, tx))];
     const img = c.getImageData(0, 0, W, H), d = img.data;
     const SUN = rgb(B.sunGrass), DEEP = rgb(B.deepGrass), WATER = rgb(B.deepWater);
-    // the tone field on a 2-px grid: broad sunlit and shaded patches, a finer clumping inside them
-    const TW = Math.ceil(W / 2), TH = Math.ceil(H / 2), tone = new Int8Array(TW * TH);
-    for (let y = 0; y < TH; y++)
-      for (let x = 0; x < TW; x++) {
-        const n = vnoise(x * 2, y * 2, 52, 501) * 0.6 + vnoise(x * 2, y * 2, 16, 502) * 0.4;
-        tone[y * TW + x] = n > 0.62 ? 1 : n < 0.34 ? -1 : 0;
-      }
-    for (let py = 0; py < H; py++) {
-      const ty = Math.floor(py / ATS) - g.y;
-      for (let px = 0; px < W; px++) {
-        const tx = Math.floor(px / ATS) - g.x, t = tileAt(tx, ty), o = (py * W + px) * 4;
-        const r = d[o], gg = d[o + 1], b = d[o + 2];
-        if (GRASS[t.id]) {
-          if (!(gg > r + 8 && gg > b + 8)) continue; // only the grass itself, not a path's spill or a flower
-          const k = tone[(py >> 1) * TW + (px >> 1)];
-          if (k > 0) lerp3(d, o, SUN, 0.14);
-          else if (k < 0) lerp3(d, o, DEEP, 0.17);
-        } else if ((t.water && t.id !== 'darkwater') || ((t.id === 'bridgeH' || t.id === 'bridgeV') && b > r + 24 && b >= gg)) {
-          // deeper river: the darker the pixel, the more it takes the deep blue (the banks' foam stays light)
-          const L = (r + gg + b) / 765;
-          if (L < 0.8) lerp3(d, o, WATER, 0.74 * (1 - L * 0.45));
-        } else if (B.pave && (t.id === 'road' || t.id === 'stonefloor') && !(r < 40 && gg < 40)) {
-          // sandstone warmed by the sun (Saltglass's streets and quay); the joints stay darker
-          const L = (r + gg + b) / 765;
-          lerp3(d, o, rgb(B.pave), B.paveAmt * (0.6 + L * 0.6));
+    // where the grass is not green (snow, ash, paper), its own colours mark it
+    const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake, GR = (pal.grassR || []).concat(pal.grass).map(rgb);
+    const isGrass = B.green ? (r, gg, b) => gg > r + 8 && gg > b + 8 : (r, gg, b) => { for (const q of GR) if (Math.abs(q[0] - r) + Math.abs(q[1] - gg) + Math.abs(q[2] - b) < 54) return true; return false; };
+    // the tone field on a 2-px grid: broad sunlit and shaded patches, a finer clumping inside them (the same values
+    // as vnoise, from lattices computed once for the layer, and only where there is grass)
+    const N52 = lattice(52, 501, W, H), N16 = lattice(16, 502, W, H), N11 = lattice(11, 78, W, H), N4 = lattice(4, 79, W, H);
+    const PAVE = B.pave ? rgb(B.pave) : null, RIM = [34, 30, 44];
+    const isRoad = (tx, ty) => tileAt(tx, ty).id === 'road';
+    // grass that is a lawn, not a lone planter or a tree's square set in the paving (the creep would smear it)
+    const lawn = (tx, ty) => {
+      if (!GRASS[tileAt(tx, ty).id]) return false;
+      let n = 0;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (GRASS[tileAt(tx + dx, ty + dy).id]) n++;
+      return n >= 2;
+    };
+    // first the ground's own colour: grass in patches, deeper water, warmed paving
+    for (let ty = -g.y; ty < m.h + g.y; ty++)
+      for (let tx = -g.x; tx < m.w + g.x; tx++) {
+        const t = tileAt(tx, ty), X0 = (tx + g.x) * ATS, Y0 = (ty + g.y) * ATS;
+        const grass = !!GRASS[t.id], water = !!(t.water && t.id !== 'darkwater'), bridge = t.id === 'bridgeH' || t.id === 'bridgeV';
+        const pave = !!(PAVE && (t.id === 'road' || t.id === 'stonefloor'));
+        if (!grass && !water && !bridge && !pave) continue;
+        for (let ly = 0; ly < ATS; ly++) {
+          const py = Y0 + ly;
+          for (let lx = 0; lx < ATS; lx++) {
+            const px = X0 + lx, o = (py * W + px) * 4, r = d[o], gg = d[o + 1], b = d[o + 2];
+            if (grass) {
+              if (!isGrass(r, gg, b)) continue; // only the grass itself, not a path's spill or a flower
+              const n = N52((px >> 1) * 2, (py >> 1) * 2) * 0.6 + N16((px >> 1) * 2, (py >> 1) * 2) * 0.4;
+              if (n > 0.62) lerp3(d, o, SUN, 0.14);
+              else if (n < 0.34) lerp3(d, o, DEEP, 0.17);
+            } else if (water || (bridge && b > r + 24 && b >= gg)) {
+              // deeper river: the darker the pixel, the more it takes the deep blue (the banks' foam stays light)
+              const L = (r + gg + b) / 765;
+              if (L < 0.8) lerp3(d, o, WATER, 0.74 * (1 - L * 0.45));
+            } else if (pave && !(r < 40 && gg < 40)) {
+              // sandstone warmed by the sun (Saltglass's streets and quay); the joints stay darker
+              const L = (r + gg + b) / 765;
+              lerp3(d, o, PAVE, B.paveAmt * (0.6 + L * 0.6));
+            }
+          }
         }
-        if (t.id === 'road') {
-          // the square's edge: grass creeps over the outer cobbles in a ragged, clumped line, carrying the grass's
-          // own texture across (mirrored from beyond the edge), with a dark rim where it overhangs the stones
-          const lx = px % ATS, ly = py % ATS, X0 = px - lx, Y0 = py - ly;
-          const edge = (dx, dy) => !!GRASS[tileAt(tx + dx, ty + dy).id];
-          let depth = 99, sx = 0, sy = 0;
-          if (edge(0, -1) && ly < depth) { depth = ly; sx = px; sy = Y0 - 1 - ly; }
-          if (edge(0, 1) && ATS - 1 - ly < depth) { depth = ATS - 1 - ly; sx = px; sy = Y0 + ATS + (ATS - 1 - ly); }
-          if (edge(-1, 0) && lx < depth) { depth = lx; sx = X0 - 1 - lx; sy = py; }
-          if (edge(1, 0) && ATS - 1 - lx < depth) { depth = ATS - 1 - lx; sx = X0 + ATS + (ATS - 1 - lx); sy = py; }
-          if (depth > 14) continue;
-          const reach = 2 + Math.round(vnoise(px, py, 11, 78) * 9 + vnoise(px, py, 4, 79) * 3);
-          if (depth < reach && sx >= 0 && sy >= 0 && sx < W && sy < H) {
-            const so = (sy * W + sx) * 4;
-            d[o] = d[so]; d[o + 1] = d[so + 1]; d[o + 2] = d[so + 2];
-          } else if (depth === reach || depth === reach + 1) lerp3(d, o, [34, 30, 44], depth === reach ? 0.38 : 0.18);
-        }
       }
-    }
+    // then the square's edge: grass creeps over the outer cobbles in a ragged, clumped line, carrying the grass's
+    // own texture across (mirrored from beyond the edge), with a dark rim where it overhangs the stones
+    for (let ty = -g.y; ty < m.h + g.y; ty++)
+      for (let tx = -g.x; tx < m.w + g.x; tx++) {
+        if (!isRoad(tx, ty)) continue;
+        const eN = lawn(tx, ty - 1), eS = lawn(tx, ty + 1), eW = lawn(tx - 1, ty), eE = lawn(tx + 1, ty);
+        if (!eN && !eS && !eW && !eE) continue;
+        const X0 = (tx + g.x) * ATS, Y0 = (ty + g.y) * ATS;
+        for (let ly = 0; ly < ATS; ly++)
+          for (let lx = 0; lx < ATS; lx++) {
+            const px = X0 + lx, py = Y0 + ly, o = (py * W + px) * 4;
+            let depth = 99, sx = 0, sy = 0;
+            if (eN && ly < depth) { depth = ly; sx = px; sy = Y0 - 1 - ly; }
+            if (eS && ATS - 1 - ly < depth) { depth = ATS - 1 - ly; sx = px; sy = Y0 + ATS + (ATS - 1 - ly); }
+            if (eW && lx < depth) { depth = lx; sx = X0 - 1 - lx; sy = py; }
+            if (eE && ATS - 1 - lx < depth) { depth = ATS - 1 - lx; sx = X0 + ATS + (ATS - 1 - lx); sy = py; }
+            if (depth > 14) continue;
+            const reach = 2 + Math.round(N11(px, py) * 9 + N4(px, py) * 3);
+            if (depth < reach && sx >= 0 && sy >= 0 && sx < W && sy < H) {
+              const so = (sy * W + sx) * 4;
+              d[o] = d[so]; d[o + 1] = d[so + 1]; d[o + 2] = d[so + 2];
+            } else if (depth === reach || depth === reach + 1) lerp3(d, o, RIM, depth === reach ? 0.38 : 0.18);
+          }
+      }
     c.putImageData(img, 0, 0);
     // small things on the open grass: tufts, clover, flower clusters (never under a prop or a building's footprint)
     const covered = new Set();
@@ -47219,7 +47736,7 @@ RB.worldKit = (function () {
     for (let ty = -g.y; ty < m.h + g.y; ty++)
       for (let tx = -g.x; tx < m.w + g.x; tx++) {
         const t = tileAt(tx, ty);
-        if (!GRASS[t.id] || covered.has(tx + ',' + ty)) continue;
+        if (!B.growth || !GRASS[t.id] || covered.has(tx + ',' + ty)) continue;
         const X = (tx + g.x) * ATS, Y = (ty + g.y) * ATS, h0 = hh(tx, ty, 300);
         // tufts: a few blades each, a darker root and a sunlit tip
         const nT = 3 + (h0 % 4);
@@ -47420,11 +47937,13 @@ RB.worldKit = (function () {
   const STRUCTS = {};
   function house(c, x, y, pal, t, o) {
     const base = RB.props.STRUCT2.house;
-    base(c, x, y, pal, t, Object.assign({}, o, { lit: true }));
-    const key = 'wk-hbox|' + o.w + '|' + o.h + '|' + (o.windows || []).join('.') + '|' + (o.door == null ? '-' : o.door) + '|' + (o.x | 0) + '|' + (o.y | 0);
+    base(c, x, y, pal, t, Object.assign({}, o, { lit: o.lit !== false })); // lit within, unless the place is dark
+    const m = RB.world && RB.world.W && RB.world.W.map, B = briefOf(m);
+    if (!B.growth) return;
+    const key = 'wk-hbox|' + (m ? m.region : '') + '|' + o.w + '|' + o.h + '|' + (o.windows || []).join('.') + '|' + (o.door == null ? '-' : o.door) + '|' + (o.x | 0) + '|' + (o.y | 0);
     const cv = K.cached(key, () => K.make(o.w * ATS + 16, 30, (g) => {
       g.translate(8, 0);
-      const B = BRIEF.reedwake, wood = ramp('#8a5a36', 0.45, 0.35);
+      const wood = ramp((pal.wood && pal.wood[0]) || '#8a5a36', 0.45, 0.35);
       for (const wx of o.windows || []) {
         const bx = wx * ATS + 3, by = 21;
         // the box
@@ -47460,6 +47979,7 @@ RB.worldKit = (function () {
   // of a door (the 3×2 approach), never at or beside anyone's place or anything you can use, never on a spawn.
   function shrubs(m) {
     if (m.kitShrubs) return m.kitShrubs;
+    if (!briefOf(m).growth) return (m.kitShrubs = []);
     const keep = new Set(), mark = (x, y, r) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) keep.add((x + dx) + ',' + (y + dy)); };
     for (const p of m.props) { const pd = RB.props.P[p.p]; const pw = p.w || (pd && pd.w) || 1, ph = p.h || (pd && pd.h) || 1; for (let y = p.y; y < p.y + ph; y++) for (let x = p.x; x < p.x + pw; x++) mark(x, y, p.scene || p.text ? 1 : 0); }
     for (const st of m.structs) {
@@ -47486,9 +48006,10 @@ RB.worldKit = (function () {
     m.kitShrubs = out;
     return out;
   }
-  function shrubArt(pal, v) {
-    return K.cached('wk-shrub|' + v, () => K.make(40, 34, (g) => {
-      const M = K.mat(pal), B = BRIEF.reedwake, fern = v % 3 === 0;
+  function shrubArt(pal, v, B) {
+    B = B || BRIEF.reedwake;
+    return K.cached('wk-shrub|' + v + '|' + B.flowers[0][0] + '|' + pal.leaf[0], () => K.make(40, 34, (g) => {
+      const M = K.mat(pal), fern = v % 3 === 0;
       const L = v % 4 === 1 ? M.leaf.map((c) => mix(c, '#c8d060', 0.1)) : M.leaf;
       if (fern) {
         // fronds fanning out from the root
@@ -47554,7 +48075,7 @@ RB.worldKit = (function () {
     // the water's long axis: a river's channel (ducks swim up and down it) or a sea's breadth (gulls ride across it)
     const B = briefOf(m), water = [];
     for (let y = 0; y < m.h; y++) for (let x = 0; x < m.w; x++) { const t = m.tiles[y * m.w + x]; if (t.water && t.id !== 'darkwater') water.push([x, y]); }
-    if (water.length > 30) {
+    if (water.length > 30 && B.bird) {
       const xs = water.map((w) => w[0]).sort((a, b) => a - b), ys = water.map((w) => w[1]).sort((a, b) => a - b);
       const x0 = xs[0], x1 = xs[xs.length - 1], y0 = ys[0], y1 = ys[ys.length - 1];
       if (x1 - x0 > y1 - y0) for (let i = 0; i < 4; i++) out.push({ kind: 'bird', axis: 'x', i, y: y0 + 2.5 + i * 1.7, a0: x0 + 2 + i * 7, span: x1 - x0 - 6 });
@@ -47585,7 +48106,7 @@ RB.worldKit = (function () {
     for (const sh of shrubs(m)) {
       const X = env.ax(sh.x * 16), Y = env.ay(sh.y * 16);
       if (X < -40 || Y < -40 || X > env.bw + 40 || Y > env.bh + 40) continue;
-      list.push({ z: (sh.y + 1) * 16 - 1, draw: () => c.drawImage(shrubArt(pal, sh.v), X - 4, Y) });
+      list.push({ z: (sh.y + 1) * 16 - 1, draw: () => c.drawImage(shrubArt(pal, sh.v, briefOf(m)), X - 4, Y) });
     }
     const B = briefOf(m), s = RB.game.s, broken = new Set();
     for (const p of m.props) if (p.p === 'water' && (!p.if || RB.state.test(s, p.if))) broken.add(p.x + ',' + p.y);
@@ -47656,10 +48177,10 @@ RB.worldKit = (function () {
   // the low growth as things the sun's shadows know about (src/engine/65_worldlook.js casts them)
   function casters(m) {
     const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake;
-    return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v), x - 4, y) }));
+    return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v, briefOf(m)), x - 4, y) }));
   }
 
-  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, vnoise };
+  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, briefOf, propFor, vnoise, stats: () => Object.assign({}, stat) };
 })();
 
 
@@ -47787,7 +48308,7 @@ RB.worldActs = (function () {
   function working(a) {
     const m = RB.world && RB.world.W && RB.world.W.map;
     if (!kindOf(a, m) || !a.look || a.look.custom) return false;
-    return !!(RB.worldLook && RB.worldLook.active(m) && RB.worldLook.opts.kit);
+    return !!(RB.worldLook && RB.worldLook.allowed() && RB.worldLook.active(m) && RB.worldLook.opts.kit);
   }
 
   // ---- the person's frame: a pose key and a drawn facing (the renderer's artFor asks this first) -------------
@@ -57123,6 +57644,8 @@ RB.game = (function () {
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,
+      // light and shadow on the maps (src/engine/65_worldlook.js, C-86): presentation only (older records: On)
+      worldLight: true,
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
@@ -57280,6 +57803,7 @@ RB.game = (function () {
     document.body.classList.toggle('touch', touch);
     document.body.classList.toggle('touch-left', st.touchHand === 'left');
     document.body.classList.toggle('touch-large', st.touchSize === 'large');
+    if (RB.worldLook && RB.worldLook.applySetting) RB.worldLook.applySetting();
     applyAudio();
   }
   function applyAudio() {
@@ -79385,6 +79909,7 @@ RB.ui.settings = (function () {
       h += audioRows();
     } else if (g === 'display') {
       h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.') +
+        sw('worldLight', 'Light and shadow', 'Sunlight, cast shadows and lamplight on every map, and daylight through a room\'s windows. Off gives a flatter picture that is quicker to draw; nothing in your journey changes.') +
         radios('ledgerStyle', 'The Wayfarer\'s Ledger', [['book', 'The book'], ['flat', 'The book, flat']], null,
           'How the Ledger, the dialogue and every other page are drawn. It changes only how things look; nothing in your journey changes. "Flat" keeps the book\'s type and pages without texture, depth or motion.');
     } else if (g === 'storage') {

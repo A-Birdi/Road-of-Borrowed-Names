@@ -121,7 +121,7 @@ RB.worldActs = (function () {
   function working(a) {
     const m = RB.world && RB.world.W && RB.world.W.map;
     if (!kindOf(a, m) || !a.look || a.look.custom) return false;
-    return !!(RB.worldLook && RB.worldLook.active(m) && RB.worldLook.opts.kit);
+    return !!(RB.worldLook && RB.worldLook.allowed() && RB.worldLook.active(m) && RB.worldLook.opts.kit);
   }
 
   // ---- the person's frame: a pose key and a drawn facing (the renderer's artFor asks this first) -------------

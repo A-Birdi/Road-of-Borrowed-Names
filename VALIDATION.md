@@ -4369,6 +4369,55 @@ sequences of Chapters 3–6, the sequence viewer, the animated portraits, the ov
 Scripts that only make captures, videos or contact sheets, the drivers and libraries, and the measurement scripts
 (`perf`, `load_budget`, `battle_budget`, `pets_perf`, run on their own for speed) stay out of it.
 
+**The twelve chapters on the shipped build's own default (C-84, C-85).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs
+F ren twelve` (the journey takes the edition the build itself gives a new journey, `RB.edition.forNew()`, as the
+creation wizard does) on a clean export of 75875c6 with its own `index.html`, profile F with Ren, from the title
+screen's new journey: **all 17 legs, 2,433 site visits in 64 minutes (3,862 s), to the ending** (flags post, postgame,
+ch6_done); **0 problems, 0 page errors, nothing lost**; 293 interactions met (write 50, choose 219, order 12, forge 7,
+relay 5); every chapter's main quest done. The same legs and visit counts as XP79's run. It ran before light and
+shadow came in (below), so it is redone on the lit build.
+
+**Found by the complete run's first part (fixed).** Part 1 of `tests/e2e/run.mjs` on 6f8b6fa (the shipped edition,
+before the light) passed `systems`, `settings`, `folio`, `equipment`, `characters`, `play_ui`, `world_view`,
+`world_fixes` and `encounters`, and failed four tests of `ui.mjs`: its save-and-reload tests built journeys with
+`RB.state.newCampaign({})`, which is the six-chapter edition, so once the twelve-chapter edition shipped every reload
+correctly met the old-save notice (C-84) instead of continuing. The tests now build journeys in the edition a new
+journey has in this build; the New Game+ test also steps through Ren's farewell, which plays before the new journey
+begins (it had waited for the journey without advancing the dialogue). `ui.mjs`: 13 of 14 on the fixed tests, then the
+fourteenth on its own 1/1. That run was stopped there: the light below changes every map, so the complete run is
+redone on the lit build.
+
+**Light and shadow on every map (Robin's C-86).** The World Proof's light, cast shadows, atmosphere and ground
+dressing are the game's look on every map (`src/engine/65_worldlook.js`, `src/engine/66_worldkit.js`; hooks in
+`src/engine/60_render.js`; Settings → Display → "Light and shadow", `worldLight`, On by default). Outdoors each region
+has its own sun (`SUNS`); weather and a light darkness soften it; at night or in a dark enough place the lamps cast.
+Rooms take the windows of the building they are entered from (both walls, by fraction, timber walls only), with
+daylight shafts and short shadows into the room by day, warm pools and shadows from lamps, hearths and stoves, a dimmer
+room and darker floor edges, dark windows and lamp shadows only by night; shadows never over a wall. The regional kit
+takes each region's colours from its palette (growth only on green grass, lily pads in fresh water, gulls on the
+coast); its grass no longer creeps over paving from a lone planter (found in Manybridge's captures: it smeared the
+round bushes). The camera widens outdoors only where a screen allows a whole-pixel step of at most 1.5× (30 tiles at
+1920×1080; the game's own at 1440×900 and on phones); a change of view no longer rebuilds the map's art (it had: every
+battle would have ended with the shadows and dressing built again; probed, then tested).
+- Browser `world.mjs` (rewritten for the shipped light: the flag no longer needed, Off pixel-identical to every layer
+  off, the camera at 1920×1080 and a phone, a battle and back without a rebuild, at night the lamps cast): **13/0** in
+  three runs on the scratch build; one earlier run, made while the unit suite loaded the machine, had one failure whose
+  output was not kept (it did not recur).
+- Browser `world_light.mjs` (new, in the default run): **3/0**: all **226 maps** lit (105 outdoors, each under its
+  region's own sun or, for the Hall's wings, the Hall's; 121 rooms) and drawn with no page error;
+  the teahouse's windows (two at the back, two at the front), its shadows on the floor only, by night only its stove
+  casting; no room has windows its building lacks or on stone walls; the dim Lantern Hall keeps its daylight; the
+  lights the darkness did not count open it; Off builds and draws nothing.
+- Cost, headless software Chromium at 1440×900 (recorded, not thresholds): steady frames about 3 → 6–9 ms on the
+  biggest towns; a big town's first frame (art, dressing and shadows built) 0.45–0.85 s, against 0.15–0.43 s with the
+  light off, made while the screen is dark between maps (`RB.render.prewarm`); the dressing rewritten tile by tile with
+  its noise lattices computed once (Saltglass's harbour 498 → 403 ms, the Exchange 517 → 64 ms) and the mask's
+  per-sprite thresholding dropped.
+- Unit, the whole suite on the lit source: **51,943 passed, 0 failed**. Validator: no errors.
+- Captures for Robin (`node tests/e2e/light_captures.mjs` from the built `index.html`): 45 in `docs/screenshots/light/`
+  (every region, fourteen rooms, two nights, three places with the light Off, the wide view, a phone), reviewed by the
+  lead on contact sheets. Status: implemented provisionally, internally reviewed (AC-1).
+
 ## The expansion, P16 — P16b, P16d and the book's small-screen fixes (P16 done)
 
 **What changed.** P16b: the 46 creatures drawn on a borrowed family in the interim each have a family of their own on

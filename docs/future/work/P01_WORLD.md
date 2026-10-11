@@ -1,8 +1,15 @@
 # P01 · The world proof: Reedwake, then Saltglass
 
 *Milestone record (playbook P01, V1–V6). Authorised by Robin's C-79 (2026-10-09): "I think it's an improvement -
-you may proceed." The proof is **development only**: it draws only when the page is opened with `?dev=world`, and
-then only on the slice's maps. Robin's game, saves, story and every test of the game are unaffected.*
+you may proceed." The proof was **development only** while it was built: it drew only when the page was opened with
+`?dev=world`, and then only on the slice's maps.*
+
+> **Since C-86 (2026-10-11)** the proof's light, cast shadows, atmosphere and ground dressing are the game's own look
+> on every map of the twelve chapters and the postgame: each outdoor region under its own sun, rooms lit by their
+> windows, lamps, candles, hearths and stoves, a slightly wider outdoor view only where a screen allows it, and a
+> Settings switch ("Light and shadow") for the flat picture. The far view, the panel and the working people (W03)
+> remain on the development page. Captures: `docs/screenshots/light/` (`tests/e2e/light_captures.mjs`); tests:
+> `tests/e2e/world.mjs`, `tests/e2e/world_light.mjs`. The record below is the proof as it was built.
 
 Source: `src/engine/65_worldlook.js` (the proof), hooks in `src/engine/60_render.js`. Tests: `tests/e2e/world.mjs`.
 Captures: `tests/e2e/world_captures.mjs` → `docs/screenshots/world/`.

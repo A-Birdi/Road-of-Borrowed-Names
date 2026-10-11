@@ -1675,5 +1675,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // flush(): blit a pending row strip now (the renderer may call it at the end
   // of a static-layer build; otherwise a microtask does it).
-  RB.tileArt = { kit, STYLE, flush };
+  // a map's wall style as its walls are drawn (timber and plaster, or stone): by which floors it has more of, then
+  // its region's (the light's room windows, src/engine/65_worldlook.js, go only on timber walls)
+  function wallStyleOf(m) {
+    let st = mapStyles.get(m);
+    if (st) return st;
+    let tim = 0, sto = 0;
+    for (const t of m.tiles) { const k = kindOf(t); if (k === 'wood' || k === 'tatami' || k === 'carpet') tim++; else if (k === 'stone' || k === 'paper' || k === 'glass' || k === 'road') sto++; }
+    const pal = TL.PAL[m.region] || TL.PAL.reedwake;
+    return tim + sto === 0 ? Object.assign({}, BASE_STYLE, STYLE[nameOf(pal)] || {}).wall : sto > tim ? 'stone' : 'timber';
+  }
+  RB.tileArt = { kit, STYLE, flush, wallStyleOf };
 })();

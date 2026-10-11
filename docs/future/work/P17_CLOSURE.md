@@ -22,6 +22,8 @@ status. Its exit: a candidate whose focused evidence is complete enough to justi
 | The whole unit and content suite | `node tests/run-unit.mjs` | **51,943 passed, 0 failed** (on 5a51943; the later commits change interface order and tests only, each with its own suites run) |
 | Speed | `tests/e2e/load_budget.mjs`, `tests/e2e/perf.mjs` on a quiet machine | see below |
 | The twelve chapters from a new journey | `PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve` (XP79) | **one uninterrupted run: 17 of 17 legs, 2,433 site visits in 65 minutes, to the ending (post, postgame, ch6_done); 0 problems, 0 page errors** |
+| The same on the shipped build's own default (C-84, C-85) | `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` (the edition the build gives a new journey) on a clean export of 75875c6 | **17 of 17 legs, 2,433 site visits in 64 minutes, to the ending; 0 problems, 0 page errors; 293 interactions met**; redone on the lit build (C-86) |
+| Light and shadow on every map (C-86) | `tests/e2e/world.mjs`, `tests/e2e/world_light.mjs`; captures `node tests/e2e/light_captures.mjs` → `docs/screenshots/light/` | world 13/0, world_light 3/0 (all 226 maps lit and drawn, no page error); Robin's review at completion |
 
 ## UI-A01–UI-A20 (§15A, U07)
 
@@ -66,3 +68,4 @@ Nothing is "deferred forever": each item says who closes it and when.
 | The Kettle's Mother's hood on the painted Harmony bust | Drawn on the road sprite, the portrait, the battle figure and the code-drawn bust (`A.hood`, P16d). The painted kit has no file for it yet: the contract lists it among the worn things not shown in a painted bust, with that reason (`src/ui/88_harmony_contract.js`, `NOT_SHOWN`), so the painted bust is drawn without it. The painted file joins the next painted-asset batch (docs/harmony/ASSET_BRIEF.md) |
 | The phone tab row at 320 px with the largest text | It scrolls behind its arrows, as designed for that width (UI-A15); every tab stays reachable by arrow, swipe and keyboard |
 | VA-1, the voice audition (C-83) | **Queued after P17**; not started |
+| Light and shadow on real devices (C-86) | Frame cost measured in headless software Chromium only (steady frames about 3 → 6–9 ms at 1440×900; a big town's first frame 0.45–0.85 s, inside the transition's dark screen); Settings → "Light and shadow" Off is the flat picture. Real phones and GPUs: P18's matrix and Robin's devices |

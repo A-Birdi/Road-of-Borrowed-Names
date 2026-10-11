@@ -183,6 +183,7 @@ RB.ui.settings = (function () {
       h += audioRows();
     } else if (g === 'display') {
       h += preview() + slider('textScale', 'Text size', st.textScale, 0.85, 1.5, 0.05, pct) + sw('contrast', 'High contrast', null) + sw('reducedMotion', 'Reduce motion', 'Removes sliding and bouncing; changes still show immediately.') +
+        sw('worldLight', 'Light and shadow', 'Sunlight, cast shadows and lamplight on every map, and daylight through a room\'s windows. Off gives a flatter picture that is quicker to draw; nothing in your journey changes.') +
         radios('ledgerStyle', 'The Wayfarer\'s Ledger', [['book', 'The book'], ['flat', 'The book, flat']], null,
           'How the Ledger, the dialogue and every other page are drawn. It changes only how things look; nothing in your journey changes. "Flat" keeps the book\'s type and pages without texture, depth or motion.');
     } else if (g === 'storage') {

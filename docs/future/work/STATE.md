@@ -16,7 +16,10 @@ book interface; C-80 the world proof's direction.) **C-83** (2026-10-11): Robin'
 interrupt it (`docs/future/voice/`). **C-85** (2026-10-11): the order of the last steps is the twelve-chapter campaign shown playable in the shipped build,
 then VA-1, then the full test matrix (not before). **C-84** (2026-10-11): the twelve-chapter edition ships in the build (Robin: "Fully ship it (C-54
 applies)"): new journeys are twelve-chapter; an old six-chapter save explains its fresh start and begins New Game+ only
-if accepted. Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
+if accepted. **C-86** (2026-10-11): light and shadow on every map (the World Proof's light, shadows, atmosphere and
+ground dressing outdoors under each region's own sun; rooms lit by their windows, lamps, candles, hearths and stoves;
+Settings → "Light and shadow" for the flat picture), done before VA-1 with captures for Robin (`docs/screenshots/light/`).
+Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
 
 **Model and tools:** one implementation model, checked at the start of the work (reported to Robin in the
 conversation, not recorded here by project rule); no second model, no parallel writers. Node 22, the project's
@@ -51,7 +54,7 @@ byte for byte).
 | P14 · twelve chapters joined, four epilogues | **Done** (an internal milestone, not a release). The Archive approach drained, the four epilogues and romance moments, the New Game+ farewell per companion; `sa2_ch12`; `archive12` 4/0; the route from `yn_done` reached `ch6_done` (635 visits). The chain from a new journey (XP79) is still to run whole | [P14_INTEGRATION.md](P14_INTEGRATION.md) |
 | P15 · the postgame | **Done.** The Hall of a Hundred Tales (ten wings, Tsuru's last conversation), the nine old guardians, Ashihara Shinden, the returns and companions' beats, the remaining pastimes (shogi's two places, the coast's fishing, the One-Pine Islet). Phase end: `postgame_phase` 161/0; unit 51,426/0 on a clean copy of 3f0841e | [P15_POSTGAME.md](P15_POSTGAME.md) |
 | P16 · the art pass | **Done** (implemented provisionally, internally reviewed): the census (P16a); the 46 interim creatures' own families and map figures (P16b, F-143); the travel volume's 33 missing paintings (P16c, F-141); the nine regional kits reviewed, the yukata's cut, the hood on the Harmony code bust (P16d, F-144); U05/U06, the book everywhere (P16e, F-142, F-143). Census: 0 interim maps, 0 borrowed creatures, 0 interim plates. Robin's review at completion (XP100) | [P16_ART.md](P16_ART.md) |
-| P17 · closing the registers | Not started | — |
+| P17 · closing the registers | **Under way**: the language ledger, the furigana and offline checks, the whole unit suite and the chained twelve chapters done; the shipped edition (C-84) and light and shadow everywhere (C-86) are in; the complete browser run, speed on a quiet machine and the final review set are redone on the lit build | [P17_CLOSURE.md](P17_CLOSURE.md) |
 | VA-1 · the voice audition (C-83) | **Queued last**, after P17; not started. Robin's package is in `docs/future/voice/` (the addendum and its templates); packets VS00–VS07 stop at a listening gallery for Robin, with no whole-game synthesis or final cast | — |
 
 **Pending Robin gates:** none until the end (C-81). Robin will review the whole expansion at completion, the

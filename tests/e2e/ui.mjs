@@ -1,4 +1,6 @@
-// UI, handwriting and persistence tests against the built index.html in Chromium.
+// UI, handwriting and persistence tests against the built index.html in Chromium. Journeys made here for saving and
+// loading take the edition a new journey has in this build (RB.edition.forNew(): twelve chapters since C-84), so a
+// reload continues them; old six-chapter saves have their own suite (old_saves.mjs).
 // Usage: node tests/e2e/ui.mjs [filter]
 import { serve, launch, page, chromium, companionTurn } from './lib.mjs';
 
@@ -51,7 +53,7 @@ await test('save, reload, continue; copy independence; delete removes recovery',
   const ctx = await b.newContext({ viewport: { width: 1200, height: 800 } });
   let { p, errors } = await page(b, url, { context: ctx });
   await p.evaluate(async () => {
-    const s = RB.state.newCampaign({ profile: 'I' });
+    const s = RB.state.newCampaign({ profile: 'I', edition: RB.edition.forNew() });
     s.player.name = 'Saver';
     await RB.game.startNewCampaign(2, s);
     RB.game.s.flags.test_marker = 1;
@@ -95,7 +97,7 @@ await test('save, reload, continue; copy independence; delete removes recovery',
 await test('overwrite confirmation and slot UI actions', async () => {
   const ctx = await b.newContext();
   const { p } = await page(b, url, { context: ctx });
-  await p.evaluate(async () => { const s = RB.state.newCampaign({}); s.map = 'rw.road'; s.player.name = 'Old'; await RB.save.writeSlot(1, s, {}); });
+  await p.evaluate(async () => { const s = RB.state.newCampaign({ edition: RB.edition.forNew() }); s.map = 'rw.road'; s.player.name = 'Old'; await RB.save.writeSlot(1, s, {}); });
   await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
   await p.click('text=New Game');
   // a used slot's overwrite lives in its Manage area
@@ -133,7 +135,7 @@ await test('storage refused -> session-only, honest banner', async () => {
 await test('cross-tab: second tab is warned and can open read-only', async () => {
   const ctx = await b.newContext();
   const A = await page(b, url, { context: ctx });
-  await A.p.evaluate(async () => { const s = RB.state.newCampaign({}); s.player.name = 'Tabby'; await RB.game.startNewCampaign(5, s); await RB.save.manualSave(5); });
+  await A.p.evaluate(async () => { const s = RB.state.newCampaign({ edition: RB.edition.forNew() }); s.player.name = 'Tabby'; await RB.game.startNewCampaign(5, s); await RB.save.manualSave(5); });
   const B = await page(b, url, { context: ctx });
   const pending = B.p.evaluate(() => RB.game.loadCampaign(5, 'manual'));
   await B.p.waitForSelector('[role=alertdialog]', { timeout: 5000 });
@@ -154,7 +156,7 @@ await test('pre-departure recovery point and load of both states', async () => {
   const ctx = await b.newContext();
   const { p, errors } = await page(b, url, { context: ctx });
   const r = await p.evaluate(async () => {
-    const s = RB.state.newCampaign({});
+    const s = RB.state.newCampaign({ edition: RB.edition.forNew() });
     await RB.game.startNewCampaign(6, s);
     RB.game.s.flags.rw_hall_gather = true;
     RB.game.s.provisional = 'ren';
@@ -482,7 +484,7 @@ await test('New Game+ carries the learning record and the traveller, not lore, k
   const ctx = await b.newContext();
   const { p, errors } = await page(b, url, { context: ctx });
   await p.evaluate(async () => {
-    const s = RB.state.newCampaign({ profile: 'I' });
+    const s = RB.state.newCampaign({ profile: 'I', edition: RB.edition.forNew() });
     s.player.name = 'Veteran'; s.comp = 'ren'; s.flags.postgame = true; s.flags.ch3_done = true; s.map = 'rw.hall'; s.x = 5; s.y = 6;
     s.learn.items['k:あ'] = { id: 'k:あ', box: 4, seen: 9, ok: 9, bad: 0, streak: 5, last: 1, lastOk: 1, due: 9, cool: 0, modes: { recog: 1, recall: 2, hand: 6, assisted: 0 }, ctx: [] };
     s.notebook.push({ kind: 'lore', id: 'rw_hush', t: 1 });
@@ -494,6 +496,13 @@ await test('New Game+ carries the learning record and the traveller, not lore, k
   await p.click('.slot[data-slot="2"] [data-a=start]');
   await p.waitForSelector('[role=alertdialog]');
   await p.click('[role=alertdialog] >> text=New Game+ from slot 1');
+  // the journey's companion says goodbye first (src/ui/40_create.js); then the new journey begins
+  let said = 0;
+  for (let i = 0; i < 400 && !(await p.evaluate(() => RB.game.G.playing === true && !RB.ui.dialogue.isOpen())); i++) {
+    if (await p.evaluate(() => RB.ui.dialogue.isOpen())) { said++; await p.evaluate(() => RB.ui.dialogue.advance(true)); }
+    await p.waitForTimeout(50);
+  }
+  assert(said > 0, 'Ren\'s farewell should play');
   await p.waitForFunction(() => RB.game.G.playing === true);
   const n = await p.evaluate(() => { const s = RB.game.s; return { comp: s.comp, post: !!s.flags.postgame, ch3: !!s.flags.ch3_done, a: s.learn.items['k:あ'] && s.learn.items['k:あ'].box, nb: s.notebook.length, ribbon: s.inv.rw_ribbon, plane: s.inv.rw_plane || 0, ng: s.ngplus, map: s.map, name: s.player.name }; });
   // (until 2026-10-10 lore notes and cosmetic keepsakes carried; Robin's C-66 ends both)

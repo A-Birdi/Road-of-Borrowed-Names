@@ -32,14 +32,17 @@ RB.render = (function () {
   }
   // Field of view: about 12 tiles across on phones, 17 on tablets, 21 on
   // desktops (8–12 tall). A tile is 32 art pixels, each artPx device pixels.
-  // The world proof (src/engine/65_worldlook.js, development only) may ask for a wider view through setView:
-  // a function of the window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
+  // The light (src/engine/65_worldlook.js) may ask for a wider view outdoors through setView: a function of the
+  // window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
+  // A change of view only resizes: the static layer is in art pixels whatever the view, and drawWorld rebuilds it
+  // only if the new view needs a wider margin, so leaving a battle (the game's own framing) for a wider outdoor view
+  // does not rebuild the map's art, its shadows or its dressing.
   let viewTarget = null;
   function setView(fn) {
     fn = typeof fn === 'function' ? fn : null;
     if (fn === viewTarget) return;
     viewTarget = fn;
-    if (canvas) { resize(); invalidate(); }
+    if (canvas) { resize(); particles = []; }
   }
   function resize() {
     cssW = window.innerWidth;
@@ -186,8 +189,8 @@ RB.render = (function () {
         else legacy(c, () => t.draw(c, px / ART, py / ART, pal, RB.tiles.hh(x, y), nb));
       }
     if (RB.tileArt && RB.tileArt.flush) RB.tileArt.flush(); // tile art batches its output per row
-    // the world proof's kit (development only, src/engine/66_worldkit.js): its ground dressing, baked in once
-    if (RB.worldLook && RB.worldLook.active(m) && RB.worldLook.opts.kit && RB.worldKit) RB.worldKit.dressGround(c, m, g);
+    // the regional kit with the light (src/engine/66_worldkit.js): its ground dressing outdoors, baked in once
+    if (RB.worldLook && RB.worldLook.kitOn(m)) RB.worldKit.dressGround(c, m, g);
     m.staticLayer = cv;
     m.margin = g;
     m.apronProps = ext ? buildApronProps(m, g) : [];
@@ -377,7 +380,7 @@ RB.render = (function () {
       if (pf) sf = pf;
     }
     // the world proof's purposeful actions (development only, src/engine/67_worldacts.js): a pose and a facing
-    if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.active(RB.world.W.map) && RB.worldLook.opts.kit) {
+    if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.allowed() && RB.worldLook.kitOn(RB.world.W.map)) {
       const af = RB.worldActs.frameOf(a, t, still);
       if (af) sf = af;
     }
@@ -405,7 +408,7 @@ RB.render = (function () {
       return;
     }
     const { art: art0, bob, dy, ox } = artFor(a, t, isFoe);
-    // in the world proof (development only, src/engine/65_worldlook.js) a person standing in shade is shaded
+    // with the light (src/engine/65_worldlook.js) a person standing in shade is shaded
     const L = art0 && RB.worldLook && RB.worldLook.active(RB.world.W.map) ? RB.worldLook : null;
     const art = L ? L.shaded(RB.world.W.map, a, art0) : art0;
     if (art) c.drawImage(art, fx - RB.sprites.ANCHOR.x + ox, fy - RB.sprites.ANCHOR.y + bob + dy);
@@ -493,9 +496,10 @@ RB.render = (function () {
     if (Y1 < bh) band(0, Y1, 0, Y1 + D, 0, Y1, bw, bh - Y1);
   }
 
-  // What the world proof's layers read from the renderer: the mapping, the view, the people and their art.
+  // What the light's layers read from the renderer: the mapping, the view, the place's ambience (night: the map's
+  // own, or a darkness deep enough that no sun reaches), the people and their art.
   function lookEnv(m, W, still) {
-    const amb = ambientOf(m);
+    const amb = ambientOf(m), a = amb.ambient || {};
     const actors = () => {
       const out = [W.player];
       if (W.comp) out.push(W.comp);
@@ -509,7 +513,7 @@ RB.render = (function () {
       if (!r.art) return null;
       return { cv: r.art, fx: ax(a.fx * TS) + ATS / 2 + r.ox, fy: ay(a.fy * TS) + ATS - 2 };
     };
-    return { ax, ay, bw, bh, cam, TS, ART, ATS, still, buf, night: !!(amb.night || (amb.ambient && amb.ambient.dark)), actors, artOf };
+    return { ax, ay, bw, bh, cam, TS, ART, ATS, still, buf, amb: a, night: !!(amb.night || (+a.dark || 0) >= 0.3), mapNight: !!amb.night, actors, artOf };
   }
   function drawWorld(t) {
     const W = RB.world.W;
@@ -539,11 +543,11 @@ RB.render = (function () {
         c.fillRect(sx + ((RB.tiles.hh(x, y, 3) + o) % 12) * ART, sy + (5 + (RB.tiles.hh(x, y, 4) % 6)) * ART, 3 * ART, ART);
         if (ph < 1) { c.fillStyle = pal.water[3] + '90'; c.fillRect(sx + (RB.tiles.hh(x, y, 5) % 13) * ART, sy + 11 * ART, 2 * ART, ART); }
       }
-    // the world proof (development only, src/engine/65_worldlook.js): its cast shadows on the ground
+    // the light (src/engine/65_worldlook.js): a room's windows on its walls, then the cast shadows on the ground
     const L = RB.worldLook && RB.worldLook.active(m) ? RB.worldLook : null;
     const env = L ? lookEnv(m, W, still) : null;
-    if (L) L.ground(c, m, W, t, env);
-    const KIT = L && L.opts.kit && RB.worldKit ? RB.worldKit : null; // the proof's own art for some kinds
+    if (L) { L.walls(c, m, t, env); L.ground(c, m, W, t, env); }
+    const KIT = L && L.kitOn(m) ? RB.worldKit : null; // the regional kit's own art for some kinds, outdoors
     // y-sorted drawables
     const s = RB.game.s;
     const list = [];
@@ -567,7 +571,7 @@ RB.render = (function () {
       const lx = p.x * TS - cam.x, ly = p.y * TS - cam.y;
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const opts = Object.assign({ cx: p.x, cy: p.y, still }, p.o || {});
-      const d2 = (KIT && KIT.PROPS[p.p]) || pd.draw2;
+      const d2 = (KIT && KIT.propFor(m, p.p)) || pd.draw2;
       list.push({
         z: (p.y + ph) * TS - (pd.block === false ? 12 : 0) - 0.5,
         draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)),
@@ -578,7 +582,7 @@ RB.render = (function () {
       if (lx < -64 || ly < -64 || lx > bw / ART + 64 || ly > bh / ART + 80) continue;
       const pd = RB.props.P[p.p];
       const opts = { cx: p.x, cy: p.y, still };
-      const d2 = (KIT && KIT.PROPS[p.p]) || pd.draw2;
+      const d2 = (KIT && KIT.propFor(m, p.p)) || pd.draw2;
       list.push({ z: (p.y + 1) * TS - 0.5, draw: d2 ? () => d2(c, ax(p.x * TS), ay(p.y * TS), pal, t, opts) : () => legacy(c, () => pd.draw(c, lx, ly, pal, t, opts)) });
     }
     for (const n of W.npcs) list.push({ z: n.fy * TS + TS, draw: () => drawActor(c, n, t) });
@@ -590,8 +594,8 @@ RB.render = (function () {
     if (m.def.sea && RB.sailDraw) RB.sailDraw.push(list, c, ax, ay, t); // the boat under the traveller at sea (src/ui/89v_sail.js)
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     if (RB.perform) RB.perform.push(list, c, ax, ay, t); // what a person's action puts beside them (67a_perform.js)
-    if (KIT) KIT.pushDecor(list, c, m, env, t); // the proof's ducks and rails, where nobody walks
-    if (KIT && RB.worldActs) RB.worldActs.push(list, c, m, env, t); // the rod and float, the baskets
+    if (KIT) KIT.pushDecor(list, c, m, env, t); // the kit's low growth, birds and rails, where nobody walks
+    if (KIT && RB.worldActs && L.allowed()) RB.worldActs.push(list, c, m, env, t); // the proof's rod and float, the baskets (development only)
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
     if (L) L.illuminate(c, m, W, t, env);
@@ -674,6 +678,9 @@ RB.render = (function () {
       hole(p.x * TS + 8, p.y * TS + 2, (p.light || pd.light) + flick(p.x * 1.7 + p.y * 2.3));
     }
     for (const st of m.structs) if (st.lit || ambientOf(m).night) (st.windows || []).forEach((wx) => hole((st.x + wx) * TS + 8, (st.y + st.h) * TS - 10, 18));
+    // what else gives light with the light on (src/engine/65_worldlook.js): fires and lamps the darkness did not count,
+    // and the daylight at a dark room's windows
+    if (RB.worldLook && RB.worldLook.active(m)) for (const h of RB.worldLook.holes(m, { amb, night: !!ambientOf(m).night || dark >= 0.3, mapNight: !!ambientOf(m).night })) hole(h.x, h.y, h.r + flick(h.x * 0.11 + h.y * 0.07));
     lctx.globalCompositeOperation = 'source-over';
     c.drawImage(light, 0, 0);
   }

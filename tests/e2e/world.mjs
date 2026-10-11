@@ -1,9 +1,12 @@
-// The world proof (expansion P01; src/engine/65_worldlook.js; docs/future/work/P01_WORLD.md), against the built
-// index.html in Chromium, with a synthetic session (never a real save):
-//  - without ?dev=world nothing changes: the proof is not allowed, the view is the game's own, and a frame of the
-//    village is pixel-identical to one drawn with the proof present but switched off;
-//  - with it, the village uses the far view (45 tiles across at 1440×900, whole device pixels per art pixel), a
-//    room keeps the near view, and leaving the room brings the far view back;
+// The world proof (expansion P01; src/engine/65_worldlook.js; docs/future/work/P01_WORLD.md), made the game's own
+// light and shadow on every map (C-86), against the built index.html in Chromium, with a synthetic session (never a
+// real save):
+//  - without ?dev=world the light is on (the development panel is not): the village and a room are lit, the view at
+//    1440×900 is the game's own, and Settings → "Light and shadow" Off gives the flat picture, pixel-identical to
+//    every layer switched off; outdoors on a wide screen the view sits a little wider (30 tiles at 1920×1080), rooms
+//    and phones keep the game's own;
+//  - on a dev page the village uses the proof's far view (45 tiles across at 1440×900, whole device pixels per art
+//    pixel), a room keeps the near view, and leaving the room brings the far view back;
 //  - in the far view a tap still lands on the tile under the finger, and walls still stop the player.
 // Usage: node tests/e2e/world.mjs
 import { serve, launch, page } from './lib.mjs';
@@ -40,27 +43,85 @@ const frameHash = (p) => p.evaluate(() => {
   return x.toString(16) + ':' + cv.width + 'x' + cv.height;
 });
 
-await test('without ?dev=world the game is unchanged: not allowed, the near view, the same pixels as the proof switched off', async () => {
+await test('the light is the game\'s own look (C-86): the village and a room lit without a flag, the game\'s own view at 1440×900; Settings "Light and shadow" Off is the flat picture, the same pixels as every layer off', async () => {
   const { p, ctx, errors, requests } = await page(b, url, { viewport: { width: 1440, height: 900 } });
   await square(p);
   await p.waitForTimeout(300);
-  assert(await p.evaluate(() => RB.worldLook.allowed() === false && RB.worldLook.active(RB.world.W.map) === false), 'the proof must not be allowed without the flag');
+  assert(await p.evaluate(() => RB.worldLook.allowed() === false && RB.worldLook.active(RB.world.W.map) === true && !RB.worldLook.indoor(RB.world.W.map)), 'the light should apply in the village without the flag (and the development page should not)');
+  assert(!(await p.$('#wl-dev')), 'no development panel without the flag');
   const t = await tiles(p);
-  assert(t.w === 22.5 && t.px === 64, 'the near view at 1440×900 is 22.5 tiles at 64 css px: ' + JSON.stringify(t));
+  assert(t.w === 22.5 && t.px === 64, 'the game\'s own view at 1440×900 is 22.5 tiles at 64 css px: ' + JSON.stringify(t));
   assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
-  // the same held moment drawn three ways in this page: as the game; with the proof allowed but switched off;
-  // allowed, on, near view and every layer off. All three must be the same pixels.
+  // the same held moment drawn three ways: lit; with Settings' switch Off; lit again with every layer off. The last
+  // two must be the same pixels (Off is the flat picture), and the first must differ
   await settled(p);
   await p.clock.install();
   await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
-  const plain = await frameHash(p);
-  await p.evaluate(() => { window.__RB_DEV_WORLD__ = true; RB.worldLook.set({ on: false }); });
-  const off = await frameHash(p);
-  await p.evaluate(() => RB.worldLook.set({ on: true, view: 'near', kit: false, light: false, atmos: false, soft: false }));
+  const lit = await frameHash(p);
+  await p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); });
+  assert(await p.evaluate(() => RB.worldLook.active(RB.world.W.map) === false), 'Off should switch the light off');
+  const flat = await frameHash(p);
+  await p.evaluate(() => { RB.game.settings.worldLight = true; RB.game.applySettings(); RB.worldLook.set({ on: true, view: 'near', kit: false, light: false, atmos: false, soft: false }); });
   const bare = await frameHash(p);
-  assert(plain === off, 'a frame with the proof switched off differs from the game: ' + plain + ' vs ' + off);
-  assert(plain === bare, 'a frame with every layer off and the near view differs from the game: ' + plain + ' vs ' + bare);
+  assert(flat === bare, 'Light and shadow Off differs from every layer off: ' + flat + ' vs ' + bare);
+  assert(lit !== flat, 'the light should change the picture');
+  await p.evaluate(() => RB.worldLook.set({ on: true, view: 'mid', kit: true, light: true, atmos: true, soft: false }));
+  // a room is lit too (its own light: indoors), in the game's own view
+  await p.evaluate(() => RB.world.enter('rw.tea'));
+  await p.waitForTimeout(200);
+  const room = await p.evaluate(() => ({ active: RB.worldLook.active(RB.world.W.map), indoor: RB.worldLook.indoor(RB.world.W.map), windows: RB.worldLook.windowsOf(RB.world.W.map).length }));
+  assert(room.active && room.indoor && room.windows > 0, 'the teahouse should be lit as a room with windows: ' + JSON.stringify(room));
+  assert((await tiles(p)).w === 22.5, 'a room keeps the game\'s own view');
+  // the setting is offered in Settings → Display, on by default, and saves
+  await p.evaluate(() => RB.ui.settings.open());
+  await p.waitForSelector('.folio-settings');
+  await p.evaluate(() => { for (const x of document.querySelectorAll('.folio-settings [data-sec], .folio-settings .ptab, .folio-settings button')) if (/^\s*Display/i.test(x.textContent)) { x.click(); break; } });
+  await p.waitForSelector('[data-sw="worldLight"]');
+  assert(await p.evaluate(() => document.querySelector('[data-sw="worldLight"]').checked), 'Light and shadow should be On by default');
+  await p.click('[data-sw="worldLight"]');
+  await p.waitForFunction(() => RB.game.settings.worldLight === false);
+  await p.click('[data-sw="worldLight"]');
+  await p.waitForFunction(() => RB.game.settings.worldLight === true);
+  assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
   await ctx.close();
+});
+
+await test('the nearer camera (C-80): outdoors at 1920×1080 the view widens to 30 tiles; a battle, a room, and the village with the light off keep the game\'s 20 (after a battle the map\'s art is not rebuilt); a phone keeps the game\'s own', async () => {
+  const { p, ctx, errors } = await page(b, url, { viewport: { width: 1920, height: 1080 } });
+  await square(p);
+  await p.waitForTimeout(300);
+  let t = await tiles(p);
+  assert(t.w === 30, 'outdoors at 1920×1080: ' + JSON.stringify(t));
+  // a battle keeps the game's own framing; afterwards the wider view returns without rebuilding the map's art
+  const bt = await p.evaluate(() => {
+    RB.render.frame(5000);
+    const m = RB.world.W.map, layer = m.staticLayer, masks = RB.worldLook.stats().masks;
+    RB.game.pushMode('combat'); RB.render.frame(5100);
+    const during = RB.render.viewSize().w / 16;
+    RB.game.popMode('combat'); RB.render.frame(5200);
+    return { during, after: RB.render.viewSize().w / 16, same: m.staticLayer === layer, rebuilt: RB.worldLook.stats().masks - masks };
+  });
+  assert(bt.during === 20 && bt.after === 30 && bt.same && bt.rebuilt === 0, 'a battle and back: ' + JSON.stringify(bt));
+  await p.evaluate(() => RB.world.enter('rw.tea'));
+  await p.waitForTimeout(200);
+  t = await tiles(p);
+  assert(t.w === 20, 'a room at 1920×1080 keeps the game\'s own view: ' + JSON.stringify(t));
+  await p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); RB.world.enter('rw.village', 22, 18, 'down'); });
+  await p.waitForTimeout(200);
+  t = await tiles(p);
+  assert(t.w === 20, 'with the light off the village keeps the game\'s own view: ' + JSON.stringify(t));
+  assert(!errors.length, 'errors: ' + errors.join('; '));
+  await ctx.close();
+  const ph = await page(b, url, { viewport: { width: 375, height: 667 }, dpr: 3, mobile: true, touch: true });
+  await square(ph.p);
+  await ph.p.waitForTimeout(300);
+  const own = await ph.p.evaluate(() => { const v = RB.render.viewSize(); return +(v.w / 16).toFixed(2); });
+  await ph.p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); });
+  await ph.p.waitForTimeout(200);
+  const flat = await ph.p.evaluate(() => { const v = RB.render.viewSize(); return +(v.w / 16).toFixed(2); });
+  assert(own === flat, 'a phone keeps the game\'s own view: ' + own + ' vs ' + flat);
+  assert(!ph.errors.length, 'errors: ' + ph.errors.join('; '));
+  await ph.ctx.close();
 });
 
 await test('?dev=world: the village in the far view, a room in the near view, the far view again outside', async () => {
@@ -106,7 +167,7 @@ for (const v of [{ tag: '1440×900', viewport: { width: 1440, height: 900 }, dpr
   });
 }
 
-await test('W01 layers: each switches on its own; the shadow mask is built once; shade reaches a person; reduced motion holds still; night casts no sun shadows', async () => {
+await test('W01 layers: each switches on its own; the shadow mask is built once; shade reaches a person; reduced motion holds still; at night no sun, the lamps cast', async () => {
   const { p, ctx, errors, requests } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
   await square(p);
   await settled(p);
@@ -143,12 +204,12 @@ await test('W01 layers: each switches on its own; the shadow mask is built once;
   assert(r1 === r2, 'reduced motion: the frame changed between two instants: ' + r1 + ' vs ' + r2);
   assert(!errors.length && !requests.length, 'errors/requests: ' + errors.concat(requests).join('; '));
   await ctx.close();
-  // night: the game's own darkness and lights; the proof adds glow, never sun shadows
+  // night: the game's own darkness and lights; no sun shadows, the lanterns cast them (away from each lamp)
   const n = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
   await n.p.evaluate(() => { RB.game.debugStart('rw.village', 22, 18, { comp: 'suzu', flags: { departed: true, rw_night: true } }); });
   await n.p.waitForTimeout(600);
-  const look = await n.p.evaluate(() => ({ mask: !!RB.world.W.map.look, masks: RB.worldLook.stats().masks }));
-  assert(!look.mask && look.masks === 0, 'no sun shadows at night: ' + JSON.stringify(look));
+  const look = await n.p.evaluate(() => { const L = RB.world.W.map.look || {}; return { mode: L.mode, sun: !!L.sun, lights: (L.lights || []).length }; });
+  assert(/^lamps:n/.test(look.mode || '') && !look.sun && look.lights > 0, 'at night no sun, the lamps cast: ' + JSON.stringify(look));
   assert(!n.errors.length, 'errors: ' + n.errors.join('; '));
   await n.ctx.close();
 });
@@ -331,16 +392,17 @@ await test('W03: talking to Yasu mid-cast opens the game\'s own conversation, an
 // ---- W05: Saltglass, the method reused ----------------------------------------------------------------------------
 const harbour = (p, extra) => p.evaluate((extra) => { RB.game.debugStart('sg.harbor', 30, 22, { comp: 'suzu', flags: Object.assign({ departed: true, ch1_done: true, sg_arrived: true }, extra || {}) }); }, extra || null);
 
-await test('W05 Saltglass: without the flag the harbour is the game\'s own pixels; with it the far view, its own brief (no lily pads), collisions unchanged, low growth only in safe places', async () => {
+await test('W05 Saltglass: Light and shadow Off is the harbour\'s flat picture; on a dev page the far view, its own brief (no lily pads), collisions unchanged, low growth only in safe places', async () => {
   const { p, ctx, errors, requests } = await page(b, url, { viewport: { width: 1440, height: 900 } });
   await harbour(p);
   await settled(p);
   await p.clock.install();
   await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
-  const plain = await frameHash(p);
-  await p.evaluate(() => { window.__RB_DEV_WORLD__ = true; RB.worldLook.set({ on: false }); });
+  await p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); });
+  const flat = await frameHash(p);
+  await p.evaluate(() => { RB.game.settings.worldLight = true; RB.game.applySettings(); RB.worldLook.set({ on: false }); });
   const off = await frameHash(p);
-  assert(plain === off, 'the harbour with the proof switched off differs from the game');
+  assert(flat === off, 'the harbour with Light and shadow Off differs from the light switched off');
   await ctx.close();
   const q = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
   await harbour(q.p);

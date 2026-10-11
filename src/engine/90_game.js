@@ -27,6 +27,8 @@ RB.game = (function () {
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,
+      // light and shadow on the maps (src/engine/65_worldlook.js, C-86): presentation only (older records: On)
+      worldLight: true,
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
@@ -184,6 +186,7 @@ RB.game = (function () {
     document.body.classList.toggle('touch', touch);
     document.body.classList.toggle('touch-left', st.touchHand === 'left');
     document.body.classList.toggle('touch-large', st.touchSize === 'large');
+    if (RB.worldLook && RB.worldLook.applySetting) RB.worldLook.applySetting();
     applyAudio();
   }
   function applyAudio() {
