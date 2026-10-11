@@ -109,7 +109,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'kr_toro', x: 9, y: 11 }, { p: 'kr_toro', x: 20, y: 11 },
       { p: 'cr_satchel', x: 15, y: 11, if: 'cr_courier_done&!cr_message_taken', scene: 'cr.satchel' },
     ],
-    npcs: [],
+    // the courier's echo in the hut's doorway until he has handed on the post (the route run's speaker check)
+    npcs: [{ id: 'cr_genta', x: 15, y: 11, dir: 'down', if: '!cr_courier_done', talk: 'cr.courier' }],
     exits: [
       { x: 0, y: 12, w: 1, h: 2, to: 'cr.pass3', sp: 'from_east', dir: 'left' },
       { x: 29, y: 12, w: 1, h: 2, to: 'cr.summit', sp: 'from_west', dir: 'right', if: 'cr_courier_done' },

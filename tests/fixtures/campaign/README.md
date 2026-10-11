@@ -16,9 +16,10 @@ driver. They are not anyone's own save. Each is the campaign state as it stood a
 | `F-ren-kr_done.json` | the Keepers' Road finished, twelve-chapter edition (its Chapter 7), from `F-ren-ch4_done.json` |
 | `F-ren-ch5_done.json` | Lanternfall finished, twelve-chapter edition (its Chapter 8) |
 | `F-ren-ko_done.json` | Kotonoha finished, twelve-chapter edition (its Chapter 9), reached by the public ferry |
+| `F-ren-cr_done.json` | the Cloudroad finished, twelve-chapter edition (its Chapter 10), from `F-ren-ko_done.json` |
 
 The twelve-chapter ones are written by `tests/e2e/pursue.mjs` with `PURSUE_FIXTURES=1 PURSUE_FROM=<the previous one>
-PURSUE_EDITION=2` (expansion P08–P11); their `edition` is 2.
+PURSUE_EDITION=2` (expansion P08–P12); their `edition` is 2.
 
 `tests/unit/fixtures_campaign.test.mjs` loads them as an older save would be loaded (the expansion's fields
 removed), and checks that nothing they hold changes. Regenerate them only when the save shape changes on purpose.
