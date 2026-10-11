@@ -26,7 +26,7 @@ const t0 = Date.now();
 async function start(o = {}) {
   await p.evaluate((o) => {
     if (RB.ui.menu.isOpen()) RB.ui.menu.closeAll ? RB.ui.menu.closeAll() : RB.ui.menu.close();
-    const s = RB.game.debugStart('rw.village', 30, 30, { dir: 'up', comp: o.comp || 'mio' });
+    const s = RB.game.debugStart('rw.village', 30, 30, { edition: RB.edition.forNew(), dir: 'up', comp: o.comp || 'mio' });
     RB.game.settings.textSpeed = 'instant';
     RB.game.settings.keepsakeCounts = true;
     s.visited = {}; for (const m of o.visited || ['rw.village']) s.visited[m] = true;

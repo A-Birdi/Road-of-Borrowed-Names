@@ -64,7 +64,7 @@ async function open(v) {
 // notes already seen so nothing covers the cards
 async function cove(p, x, y, dir, o) {
   await p.evaluate(([x, y, dir, o]) => {
-    const s = RB.game.debugStart('sg.cove', x, y, { dir, comp: 'suzu', flags: { ch1_done: true, departed: true } });
+    const s = RB.game.debugStart('sg.cove', x, y, { edition: RB.edition.forNew(), dir, comp: 'suzu', flags: { ch1_done: true, departed: true } });
     s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.learn.assist = 'normal'; s.learn.difficulty = 'normal';
     s.words = ['mamoru', 'iyasu', 'hikari'];
     s.tips = { harmony: 1, harmonyFull: 1, cturn: 1, group: 1 };
@@ -467,7 +467,7 @@ for (const v of VIEWS) {
     const { p, ctx, errors } = await open(v);
     // the mill, the loft lit: the Mill Echo waits at the millstone (Chapter 1, no companion yet)
     await p.evaluate(() => {
-      const s = RB.game.debugStart('rw.mill1', 7, 9, { dir: 'up', flags: { rw_loft_done: true, rw_mill_open: true } });
+      const s = RB.game.debugStart('rw.mill1', 7, 9, { edition: RB.edition.forNew(), dir: 'up', flags: { rw_loft_done: true, rw_mill_open: true } });
       s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.words = ['mizu', 'iyasu', 'mamoru'];
       s.tips = { harmony: 1, harmonyFull: 1, cturn: 1, group: 1 };
       for (const k of ['strike', 'sweep', 'shroud', 'rest', 'heat', 'charge', 'lie', 'mirror', 'plea']) s.tips['intent:' + k] = 1;

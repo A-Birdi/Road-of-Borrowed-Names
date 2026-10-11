@@ -30,6 +30,9 @@ const inline = args.includes('--inline');
 const origin = args.includes('--origin');
 const mode = inline ? 'inline-session-only' : origin ? 'http-origin' : 'file-navigation';
 const fixture = JSON.parse(await fs.readFile(opt('--fixture', path.join(root, 'tests/fixtures/shift_load_legacy.json')), 'utf8'));
+// The legacy fields are what this checks; the journey is marked with the edition this build's journeys have, so it
+// loads (a six-chapter save is offered New Game+ instead since C-84, which tests/e2e/old_saves.mjs checks)
+if (fixture.edition == null || fixture.edition < 2) fixture.edition = 2;
 const html = await fs.readFile(htmlPath, 'utf8');
 
 // stable origin: one server for the whole run (same port → same IndexedDB origin across reloads)
@@ -216,7 +219,7 @@ try {
     assert.equal(await page.evaluate(() => RB.game.mode()), 'world'); await spyWorld(); await checkWorldVisible(); await page.keyboard.press('ShiftLeft'); await checkLive();
   }, { seed: false });
   await test('New campaign API clears a prior title override itself', async () => {
-    await page.evaluate(async () => { RB.ui.title.hide(); const s = RB.state.newCampaign({ profile: 'E' }); RB.game.settings.textSpeed = 'instant'; await RB.game.startNewCampaign(2, s); });
+    await page.evaluate(async () => { RB.ui.title.hide(); const s = RB.state.newCampaign({ edition: RB.edition.forNew(), profile: 'E' }); RB.game.settings.textSpeed = 'instant'; await RB.game.startNewCampaign(2, s); });
     await settleWorld(); // presses Enter through the opening until the world is settled
     await spyWorld(); await checkWorldVisible(); await checkLive();
   });

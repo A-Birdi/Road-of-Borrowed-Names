@@ -61,7 +61,7 @@ async function open(v) {
 // a session-only Chapter 2 campaign with Suzu on a map (never a real save)
 async function campaign(p, map, x, y, dir) {
   await p.evaluate(([map, x, y, dir]) => {
-    const s = RB.game.debugStart(map, x, y, { dir, comp: 'suzu', flags: { ch1_done: true, departed: true } });
+    const s = RB.game.debugStart(map, x, y, { edition: RB.edition.forNew(), dir, comp: 'suzu', flags: { ch1_done: true, departed: true } });
     s.learn.kanaKnown = 'both'; s.learn.profile = 'E'; s.words = ['mamoru', 'iyasu', 'hikari'];
     RB.game.settings.input = 'choice'; RB.game.settings.textSpeed = 'instant';
   }, [map, x, y, dir]);

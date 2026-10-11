@@ -163,7 +163,7 @@ async function reloadVia(p, slot) {
 async function postgame(p, comp, o) {
   await p.evaluate(([comp, o]) => {
     const flags = { rw_echo_done: true, departed: true, rw_koji_back: true, rw_hall_gather: true, bridge_fixed: true, ch1_done: true, ch2_done: true, ch3_done: true, ch4_done: true, ch5_done: true, lf_bell_rung: true, post: true, postgame: true, ch6_done: true, sa_done: true, sa_ren_took: true, sa_ren_decided: true, co_suzu_done: true };
-    const s = RB.game.debugStart('rw.village', 21, 10, { comp, profile: 'F', flags, dir: 'up' });
+    const s = RB.game.debugStart('rw.village', 21, 10, { edition: RB.edition.forNew(), comp, profile: 'F', flags, dir: 'up' });
     RB.game.settings.textSpeed = 'instant';
     s.atlas.unlocked = true; s.seen['rw.atlas_intro'] = true;
     const q = { nao: 'lf_nao', mio: 'lf_mio', ren: 'ren_ushio', suzu: 'co_suzu' }[comp];
@@ -229,7 +229,7 @@ if (want('endings')) for (const comp of ['nao', 'mio', 'ren', 'suzu']) {
   await p.evaluate((comp) => {
     const flags = { rw_echo_done: true, departed: true, rw_koji_back: true, rw_hall_gather: true, bridge_fixed: true, ch1_done: true, ch2_done: true, ch3_done: true, ch4_done: true, ch5_done: true, lf_bell_rung: true,
       end_mem_return: true, end_archive_library: true, end_kasane_trial: true, sa_ren_took: true, sa_ren_decided: true, co_suzu_done: true, sa_hush_down: true };
-    const s = RB.game.debugStart('sa.road', 3, 22, { comp, profile: 'E', flags, dir: 'down' });
+    const s = RB.game.debugStart('sa.road', 3, 22, { edition: RB.edition.forNew(), comp, profile: 'E', flags, dir: 'down' });
     RB.game.settings.textSpeed = 'instant';
     s.learn.kanaKnown = 'both';
     s.quests.sa_main = { stage: 6, done: false };
@@ -426,7 +426,7 @@ if (want('shots')) {
     const r = await fresh();
     const p = r.p;
     await p.evaluate((comp) => {
-      const s = RB.game.debugStart('rw.village', 22, 12, { comp, profile: 'E', flags: { departed: true, bridge_fixed: true, rw_koji_back: true, lf_bell_rung: true, sa_ren_took: true, co_suzu_done: true }, dir: 'down' });
+      const s = RB.game.debugStart('rw.village', 22, 12, { edition: RB.edition.forNew(), comp, profile: 'E', flags: { departed: true, bridge_fixed: true, rw_koji_back: true, lf_bell_rung: true, sa_ren_took: true, co_suzu_done: true }, dir: 'down' });
       RB.game.settings.textSpeed = 'instant'; s.learn.kanaKnown = 'both';
       s.quests[{ nao: 'lf_nao', suzu: 'co_suzu' }[comp]] = { stage: 9, done: true };
       window.__plan = { reply: comp === 'nao' ? 'walk' : 'onstage' };

@@ -62,7 +62,7 @@ const addScene = (p, src) => p.evaluate((src) => { delete RB.content.scenes['wt.
 async function startScene(p, o) {
   o = o || {};
   await p.evaluate((o) => {
-    const s = RB.game.debugStart('rw.hall', 5, 6, { comp: o.comp || 'nao' });
+    const s = RB.game.debugStart('rw.hall', 5, 6, { edition: RB.edition.forNew(), comp: o.comp || 'nao' });
     s.player.name = o.name || 'Aki'; s.player.nameJp = o.nameJp || 'アキ';
     s.learn.profile = 'E'; s.learn.kanaKnown = 'both';
     RB.game.settings.textSpeed = 'instant';
@@ -365,7 +365,7 @@ await test('Kept sentences: your own words stay plain text; keyboard; practice r
 await test('readable inscriptions: a signpost (a scene) and a miller\'s notice (a line on the prop) are kept with what they were written on; a link opens the entry', async () => {
   const { p, errors, ctx } = await page(b, url, DESK);
   // facing the village signpost, read it with the action key
-  await p.evaluate(() => { const s = RB.game.debugStart('rw.village', 23, 22, { dir: 'up' }); s.learn.profile = 'E'; RB.game.settings.textSpeed = 'instant'; RB.game.applySettings(); });
+  await p.evaluate(() => { const s = RB.game.debugStart('rw.village', 23, 22, { edition: RB.edition.forNew(), dir: 'up' }); s.learn.profile = 'E'; RB.game.settings.textSpeed = 'instant'; RB.game.applySettings(); });
   await wait(p, 300);
   await p.keyboard.press('KeyZ');
   await p.waitForFunction(() => RB.ui.dialogue.isOpen(), null, { timeout: 5000 });
@@ -455,7 +455,7 @@ const pageText = (p, id) => p.evaluate((id) => { const d = document.createElemen
 await test('Creatures met: registered only when met, per placement; observations only as they happen; nothing of a later phase or plea before it; a settled observation; art with a text alternative; no counts', async () => {
   const { p, errors, ctx } = await page(b, url, DESK);
   await helpers(p);
-  await p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, {}); s.learn.profile = 'E'; s.learn.kanaKnown = 'both'; RB.game.settings.textSpeed = 'instant'; RB.game.applySettings(); });
+  await p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, { edition: RB.edition.forNew() }); s.learn.profile = 'E'; s.learn.kanaKnown = 'both'; RB.game.settings.textSpeed = 'instant'; RB.game.applySettings(); });
   const n0 = await p.evaluate(() => ({ met: Object.keys(RB.game.s.creatures).length, defined: Object.keys(RB.content.enemies).length, foes: RB.world.W.foes.length }));
   assert(n0.met === 0 && n0.defined > 40 && n0.foes > 0, 'foes on the map and ' + n0.defined + ' definitions loaded, none registered ' + JSON.stringify(n0));
   await p.evaluate(() => RB.ui.menu.open('creatures'));

@@ -23,7 +23,7 @@ async function seedSix(p, emptyLast) {
     for (let i = 0; i < 6; i++) {
       if (emptyLast && i === 5) continue;
       const [m, x, y, c] = maps[i];
-      const s = RB.game.debugStart(m, x, y, { comp: c, profile: 'E', flags: { departed: true } });
+      const s = RB.game.debugStart(m, x, y, { edition: RB.edition.forNew(), comp: c, profile: 'E', flags: { departed: true } });
       s.player.name = names[i]; s.chapter = i + 1; s.playtime = 1800 * (i + 1) + 77;
       await new Promise((r) => setTimeout(r, 90));
       await RB.save.writeSlot(i + 1, s, { force: true, thumb: RB.render.thumbnail() });

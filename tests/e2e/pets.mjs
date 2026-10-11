@@ -47,7 +47,7 @@ async function world(p, map, x, y, o) {
   o = o || {};
   await p.evaluate(async ([map, x, y, o]) => {
     const f = Object.assign({ rw_arrived: true, rw_road_lit: true, rw_echo_done: true, departed: true, ch1_done: true }, o.flags || {});
-    RB.game.debugStart(map, x, y, { comp: o.comp === undefined ? 'mio' : o.comp, flags: f, dir: o.dir || 'down' });
+    RB.game.debugStart(map, x, y, { edition: RB.edition.forNew(), comp: o.comp === undefined ? 'mio' : o.comp, flags: f, dir: o.dir || 'down' });
     RB.game.settings.textSpeed = 'instant';
     RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
     await new Promise((r) => setTimeout(r, 250));
@@ -223,7 +223,7 @@ for (const sp of SPECIES) {
     for (const reduce of [false, true]) {
       const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
       await p.evaluate(([sp, comp, reduce]) => {
-        const s = RB.game.debugStart('rw.millroad', 10, 22, { comp });
+        const s = RB.game.debugStart('rw.millroad', 10, 22, { edition: RB.edition.forNew(), comp });
         s.learn.profile = 'E'; s.learn.kanaKnown = 'both'; s.words = ['mamoru', 'mizu', 'hikari'];
         s.tips = Object.assign({ harmony: 1, harmonyFull: 1 }, ...['strike', 'sweep', 'rest', 'heat', 'shroud', 'charge'].map((k) => ({ ['intent:' + k]: 1 })), ...s.words.map((w) => ({ ['word:' + w]: 1 })));
         RB.game.settings.input = 'choice'; RB.game.settings.textSpeed = 'normal';
@@ -301,7 +301,7 @@ for (const sp of SPECIES) {
     }
     // no pet: nothing drawn, no slot
     const { p, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
-    await p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, { comp: 'mio' }); s.learn.profile = 'E'; RB.game.settings.textSpeed = 'instant'; RB.game.startBattle('rw.dustmoth', {}); });
+    await p.evaluate(() => { const s = RB.game.debugStart('rw.millroad', 10, 22, { edition: RB.edition.forNew(), comp: 'mio' }); s.learn.profile = 'E'; RB.game.settings.textSpeed = 'instant'; RB.game.startBattle('rw.dustmoth', {}); });
     await wait(p, 1500);
     const none = await p.evaluate(() => ({ pet: RB.battlePets.stats(), slot: RB.battleStage.lay() && RB.battleStage.lay().pet }));
     assert(none.pet.on === false && !none.slot, 'no pet: no slot, nothing drawn');
@@ -429,7 +429,7 @@ for (const sp of SPECIES) {
   await test(sp + ': vignette — cause, one interaction, meeting, invitation, naming, memory once, selection, save and reload', async () => {
     const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
     await p.evaluate(async (V) => {
-      const st = RB.state.newCampaign({ profile: 'E' });
+      const st = RB.state.newCampaign({ edition: RB.edition.forNew(), profile: 'E' });
       Object.assign(st, { chapter: V.chapter || 2, comp: V.comp, map: V.map, x: V.start[0], y: V.start[1], dir: 'left' });
       for (const q in V.quests || {}) st.quests[q] = { stage: V.quests[q] };
       Object.assign(st.flags, { rw_arrived: true, rw_road_lit: true, departed: true, ch1_done: true }, V.flags);

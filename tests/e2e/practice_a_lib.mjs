@@ -21,7 +21,7 @@ export async function start(p, o = {}) {
   await p.evaluate((o) => {
     if (RB.ui.menu.isOpen()) RB.ui.menu.close();
     const at = o.at === 'desk' ? ['sg.inn', 9, 6, 'down'] : o.at === 'village' ? ['rw.village', 22, 30, 'up'] : ['rw.hall', 8, 2, 'right'];
-    const s = RB.game.debugStart(at[0], at[1], at[2], { comp: o.comp || 'mio', dir: at[3], flags: Object.assign({ ch1_done: true, departed: true, rw_echo_done: true, rw_hall_gather: true }, o.flags || {}) });
+    const s = RB.game.debugStart(at[0], at[1], at[2], { edition: RB.edition.forNew(), comp: o.comp || 'mio', dir: at[3], flags: Object.assign({ ch1_done: true, departed: true, rw_echo_done: true, rw_hall_gather: true }, o.flags || {}) });
     RB.game.settings.textSpeed = 'instant';
     RB.game.settings.input = o.input || 'hand';
     RB.game.settings.textScale = o.text || 1;

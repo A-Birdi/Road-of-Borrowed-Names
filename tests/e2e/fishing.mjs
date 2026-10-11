@@ -46,7 +46,7 @@ async function start(p, o) {
     const at = o.at || [S.stand.x, S.stand.y, S.stand.dir];
     const seen = {};
     for (const m of ['rw.village', 'rw.road', 'sg.harbor']) for (const ev of (RB.content.maps[m].onEnter || [])) seen['enter:' + m + ':' + ev.scene] = true;
-    const s = RB.game.debugStart(o.map || S.map, at[0], at[1], { dir: at[2], comp: o.comp === undefined ? 'nao' : o.comp, flags: Object.assign({ postgame: true, rw_echo_done: true, departed: true, rw_arrived: true, rw_mill_open: true, rw_road_lit: true, bridge_fixed: true }, seen, o.flags || {}) });
+    const s = RB.game.debugStart(o.map || S.map, at[0], at[1], { edition: RB.edition.forNew(), dir: at[2], comp: o.comp === undefined ? 'nao' : o.comp, flags: Object.assign({ postgame: true, rw_echo_done: true, departed: true, rw_arrived: true, rw_mill_open: true, rw_road_lit: true, bridge_fixed: true }, seen, o.flags || {}) });
     s.seen = Object.assign(s.seen || {}, { 'rw.village_first': true });
     RB.game.settings.textSpeed = 'instant';
     RB.game.settings.input = o.input || 'choice';

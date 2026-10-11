@@ -65,7 +65,7 @@ async function start(p, o) {
     RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
     if (o.pet) { RB.pets.meet(s, o.pet); RB.pets.select(s, o.pet); }
     RB.world.refreshActors();
-    await new Promise((r) => setTimeout(r, 1000)); // past the map's settling-in moment
+    { const W = RB.world.W, t0 = performance.now(); while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50)); } // past the map's settling-in moment (game time: a big map's first frame, which builds its light, or a loaded machine, puts it behind the clock)
   }, Object.assign({ base: BASE, slow: SLOW }, o));
 }
 

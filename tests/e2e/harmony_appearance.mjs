@@ -488,7 +488,7 @@ async function helpers(p) {
 
   // a session-only debug campaign at the mill (where the development viewer stages its encounter), with a look
   const campaign = (look, give) => p.evaluate(({ look, give, COMP }) => {
-    const s = RB.game.debugStart('rw.mill1', 7, 9, { comp: COMP, flags: { rw_gears: true } });
+    const s = RB.game.debugStart('rw.mill1', 7, 9, { edition: RB.edition.forNew(), comp: COMP, flags: { rw_gears: true } });
     s.learn.profile = 'E'; s.learn.kanaKnown = 'both'; s.words = ['mamoru', 'mizu', 'iyasu'];
     s.tips = { harmony: 1, harmonyFull: 1, cturn: 1, group: 1 };
     for (const k of ['strike', 'sweep', 'shroud', 'rest', 'heat', 'charge', 'lie', 'mirror', 'plea']) s.tips['intent:' + k] = 1;

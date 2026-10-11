@@ -115,7 +115,7 @@ async function shot(name) { if (SHOTS) await p.screenshot({ path: path.join(outD
 
 const t0 = Date.now();
 await p.evaluate(([prof, comp, mod, seed, via]) => {
-  RB.game.debugStart('rw.hall', 5, 5, { comp, profile: prof, flags: { post: true } });
+  RB.game.debugStart('rw.hall', 5, 5, { edition: RB.edition.forNew(), comp, profile: prof, flags: { post: true } });
   RB.game.settings.textSpeed = 'instant';
   RB.atlas._debug.flags.chooseMod = mod;
   if (seed != null) RB.atlas._debug.flags.seed = +seed;

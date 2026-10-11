@@ -19,7 +19,7 @@ const wait = (ms) => p.waitForTimeout(ms);
 await p.evaluate(() => {
   const flags = { departed: false, rw_gears: true, rw_arrived: true, rw_echo_done: false };
   for (const id of ['rw.mill1', 'rw.mill2', 'rw.mill0']) for (const ev of RB.content.maps[id].onEnter || []) flags['enter:' + id + ':' + ev.scene] = true;
-  const s = RB.game.debugStart('rw.mill1', 3, 3, { comp: 'mio', dir: 'up', flags });
+  const s = RB.game.debugStart('rw.mill1', 3, 3, { edition: RB.edition.forNew(), comp: 'mio', dir: 'up', flags });
   s.seen['rw.m1_enter'] = true;
   RB.game.settings.textSpeed = 'instant';
   // this check is about getting between floors: the floors' creatures are sent away as each floor is entered
@@ -63,7 +63,7 @@ assert(!pitSeen.length, 'no pet scene was started by walking through (' + pitSee
 
 // ---- B. slot isolation ------------------------------------------------------------------------------------------------------
 const slots = await p.evaluate(async () => {
-  const A = RB.game.debugStart('rw.village', 22, 30, { comp: 'nao', flags: { departed: true, ch1_done: true, rw_echo_done: true, ch2_done: true } });
+  const A = RB.game.debugStart('rw.village', 22, 30, { edition: RB.edition.forNew(), comp: 'nao', flags: { departed: true, ch1_done: true, rw_echo_done: true, ch2_done: true } });
   A.player.name = 'Slot One';
   RB.pets.meet(A, 'cat', { map: 'rw.village' }); RB.pets.select(A, 'cat'); A.company.pets.cat.name = 'ミケ';
   RB.company.sync(A, 'live');
@@ -72,7 +72,7 @@ const slots = await p.evaluate(async () => {
   RB.bookmarks.keep(A, A.backlog[A.backlog.length - 1]);
   RB.creatures.meet(A, ['rw.dustmoth'], { where: { map: 'rw.millroad' } });
   await RB.save.writeSlot(1, A, { force: true });
-  const B = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'mio', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true } });
+  const B = RB.game.debugStart('sg.harbor', 20, 22, { edition: RB.edition.forNew(), comp: 'mio', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true } });
   B.player.name = 'Slot Two';
   RB.company.sync(B, 'live');
   await RB.save.writeSlot(2, B, { force: true });

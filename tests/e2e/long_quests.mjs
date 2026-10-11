@@ -68,7 +68,7 @@ function installSetup() {
   window.LQSetup = async function (o, map, x, y, extra) {
     RB.test.enable({ battle: 'unravel', choose: () => 0 });
     const flags = Object.assign({}, o.FX5, extra || {});
-    const s = RB.game.debugStart(map, x, y, { comp: o.comp, profile: o.profile, flags });
+    const s = RB.game.debugStart(map, x, y, { edition: RB.edition.forNew(), comp: o.comp, profile: o.profile, flags });
     s.learn.kanaKnown = 'both';
     s.chapter = 5;
     s.words = o.WORDS.slice();
@@ -149,7 +149,7 @@ const LINE_B = async (o) => {
 // Orchard Road. It is written to slot 1 and loaded through the real save code.
 const OLD_SAVE = async (o) => {
   RB.test.enable({ battle: 'unravel', choose: () => 0 });
-  const st = RB.state.newCampaign({ profile: o.profile });
+  const st = RB.state.newCampaign({ edition: RB.edition.forNew(), profile: o.profile });
   const flags = {};
   for (const k in o.FX5) if (/^(rw_|departed|ch1_done|sg_|ch2_done)/.test(k)) flags[k] = true;
   Object.assign(st, { chapter: 3, comp: o.comp, map: 'co.road', x: 3, y: 11, dir: 'right', flags, words: o.WORDS.slice(0, 6) });

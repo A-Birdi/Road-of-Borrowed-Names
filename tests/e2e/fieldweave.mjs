@@ -63,7 +63,7 @@ const said = (k) => p.evaluate((k) => { const b = RB.game.s.backlog.slice(window
 async function start(map, x, y, dir, o = {}) {
   await p.evaluate(({ map, x, y, dir, o }) => {
     if (RB.weave.isOpen()) RB.weave.close();
-    const s = RB.game.debugStart(map, x, y, { dir, comp: o.comp === undefined ? 'mio' : o.comp, flags: o.flags || {} });
+    const s = RB.game.debugStart(map, x, y, { edition: RB.edition.forNew(), dir, comp: o.comp === undefined ? 'mio' : o.comp, flags: o.flags || {} });
     s.learn.kanaKnown = 'both'; s.learn.profile = o.profile || 'E';
     s.words = (o.words || []).slice();
     RB.game.settings.input = o.input || 'choice';

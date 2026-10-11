@@ -87,15 +87,23 @@ if (part) {
   const size = Math.ceil(suites.length / n);
   suites = suites.slice((k - 1) * size, k * size);
 }
+// --list prints the scripts this selection would run, and runs none
+if (process.argv.includes('--list')) { for (const [file, ...args] of suites) console.log([file, ...args].join(' ')); process.exit(0); }
+// each script has a time limit (--limit=minutes, default 40): a script that hangs (waiting on a sheet nobody answers)
+// is stopped and counted as failed instead of holding up the rest of the run
+const limitMin = +((process.argv.find((a) => a.startsWith('--limit=')) || '').slice(8)) || 40;
 const results = [];
 for (const [file, ...args] of suites) {
   const t0 = Date.now();
+  let timedOut = false;
   const code = await new Promise((resolve) => {
     const ch = spawn(process.execPath, [path.join(here, file), ...args], { stdio: 'inherit' });
-    ch.on('close', resolve);
+    const timer = setTimeout(() => { timedOut = true; ch.kill('SIGKILL'); }, limitMin * 60000);
+    ch.on('close', (c) => { clearTimeout(timer); resolve(c); });
   });
-  results.push({ name: [file, ...args].join(' '), ok: code === 0, s: Math.round((Date.now() - t0) / 1000) });
-  console.log((code === 0 ? '== PASS ' : '== FAIL ') + [file, ...args].join(' ') + ' (' + results[results.length - 1].s + ' s)\n');
+  const ok = code === 0 && !timedOut;
+  results.push({ name: [file, ...args].join(' ') + (timedOut ? ' (stopped after ' + limitMin + ' min)' : ''), ok, s: Math.round((Date.now() - t0) / 1000) });
+  console.log((ok ? '== PASS ' : '== FAIL ') + results[results.length - 1].name + ' (' + results[results.length - 1].s + ' s)\n');
 }
 console.log('\nSummary:');
 for (const r of results) console.log('  ' + (r.ok ? 'PASS' : 'FAIL') + '  ' + r.name + '  ' + r.s + ' s');

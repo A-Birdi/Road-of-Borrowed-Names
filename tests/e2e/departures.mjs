@@ -27,10 +27,12 @@ let { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } 
 const ALL = { rw_arrived: true, rw_road_lit: true, rw_met_tsuru: true, rw_met_ren: true, rw_letters_done: true, rw_bottles_done: true, rw_lanterns_done: true, rw_suzu_told: true, rw_hana_cups: true };
 async function start(map, x, y, flags, dir) {
   await p.evaluate(async ([map, x, y, flags, dir]) => {
-    const s = RB.game.debugStart(map, x, y, { dir: dir || 'up', flags });
+    // the journey takes the edition a new one has in this build (it is saved and loaded below; a six-chapter save
+    // would be offered New Game+ instead, as tests/e2e/old_saves.mjs checks)
+    const s = RB.game.debugStart(map, x, y, { dir: dir || 'up', flags, edition: RB.edition.forNew() });
     RB.game.settings.textSpeed = 'instant';
     s.quests.rw_labels = { stage: 1, done: false, t: Date.now() };
-    await new Promise((r) => setTimeout(r, 1200)); // past the map's settling-in moment
+    { const W = RB.world.W, t0 = performance.now(); while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50)); } // past the map's settling-in moment (game time: a big map's first frame, which builds its light, or a loaded machine, puts it behind the clock)
   }, [map, x, y, flags, dir]);
 }
 async function drain() {

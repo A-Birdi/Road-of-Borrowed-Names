@@ -53,7 +53,7 @@ async function helpers(p) {
       const d = RB.content.maps[map] || {};
       const seen = {};
       for (const ev of d.onEnter || []) seen['enter:' + map + ':' + ev.scene] = true;
-      const s = RB.game.debugStart(map, x, y, { comp: o.comp || null, flags: Object.assign({}, seen, o.flags || {}) });
+      const s = RB.game.debugStart(map, x, y, { edition: RB.edition.forNew(), comp: o.comp || null, flags: Object.assign({}, seen, o.flags || {}) });
       s.chapter = o.chapter || 2;
       RB.company.sync(s, 'live');
       RB.company.refresh(s);

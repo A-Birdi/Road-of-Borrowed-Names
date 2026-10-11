@@ -44,7 +44,7 @@ async function start(p, map, x, y, flags, quests, extra) {
     for (const [q, v] of quests) { RB.state.setQuest(s, q, v); s.quests[q].t = (t += 1000); }
     if (extra && extra.travel) s.travel = extra.travel;
     RB.questMarks.refresh();
-    await new Promise((r) => setTimeout(r, 1300)); // past the map's settling-in moment
+    { const W = RB.world.W, t0 = performance.now(); while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50)); } // past the map's settling-in moment (game time: a big map's first frame, which builds its light, or a loaded machine, puts it behind the clock)
   }, [map, x, y, flags, quests, extra || null]);
 }
 const marks = (p) => p.evaluate(() => RB.questMarks.marks());
