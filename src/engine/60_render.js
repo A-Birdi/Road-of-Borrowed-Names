@@ -601,6 +601,7 @@ RB.render = (function () {
     if (fromHeight(m)) RB.below.drawLights(c, m, belowEnv(m, t)); // the lights far below, through the night
     drawWeather(c, m, t);
     if (L) L.atmosphere(c, m, W, t, env);
+    drawGrade(c, m);
     for (const e of W.emotes) {
       const a = RB.world.actorById(e.who);
       if (a) drawEmote(c, a, e.kind);
@@ -620,6 +621,18 @@ RB.render = (function () {
     if (ov) return ov;
     for (const a of m.def.alt || []) if (s && RB.state.test(s, a.if)) return a;
     return { ambient: m.def.ambient || {}, night: m.def.night };
+  }
+  // The final grade (expansion P14; 10_STORY §6a, S15): colour drained from the world by `ambient.drain` (0..1), over
+  // the light, the weather and the atmosphere, under the emotes and the followed quest's marks (they keep their
+  // colour). The world canvas only: the book, the dialogue and the writing pad are never graded. Presentation only.
+  function drawGrade(c, m) {
+    const d = Math.min(1, +((ambientOf(m).ambient || {}).drain) || 0);
+    if (d <= 0) return;
+    c.save();
+    c.globalCompositeOperation = 'saturation';
+    c.fillStyle = `rgba(128,128,128,${d})`;
+    c.fillRect(0, 0, bw, bh);
+    c.restore();
   }
   function drawLighting(c, m, W, t) {
     const amb = ambientOf(m).ambient || {};
@@ -710,6 +723,16 @@ RB.render = (function () {
         c.fillStyle = 'rgba(240,236,220,0.75)';
         c.fillRect(p.x, p.y, 6, 4);
         c.fillStyle = 'rgba(90,80,70,0.35)'; c.fillRect(p.x + 1, p.y + 1, 4, 1);
+      } else if (kind === 'names') {
+        // the last chapter's road in a twelve-chapter journey (expansion P14, S15): lanterns' name slips peeled off and
+        // drifting uphill, a written stroke on each, turning slowly; with reduced motion they hang where they are
+        if (!reduced) { p.y -= 0.35 * p.v; p.x += Math.sin(t / 1100 + p.p) * 0.45; }
+        const tall = (Math.sin(t / 900 + p.p * 2) + 1) / 2 > 0.5;
+        const w = tall ? 3 : 5, h = tall ? 7 : 4;
+        c.fillStyle = 'rgba(236,230,212,0.7)';
+        c.fillRect(p.x, p.y, w, h);
+        c.fillStyle = 'rgba(70,62,58,0.45)';
+        if (tall) c.fillRect(p.x + 1, p.y + 1, 1, h - 2); else c.fillRect(p.x + 1, p.y + 1, w - 2, 1);
       }
       if (p.y > bh + 8) { p.y = -8; p.x = prand() * bw; }
       if (p.y < -12) { p.y = bh + 4; p.x = prand() * bw; }

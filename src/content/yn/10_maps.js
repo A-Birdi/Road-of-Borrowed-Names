@@ -121,7 +121,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'yn_divider', x: 32, y: 24, scene: 'yn.divider' },
       { p: 'lamppost', x: 24, y: 17 }, { p: 'lamppost', x: 32, y: 14 }, { p: 'lamppost', x: 18, y: 17 }, { p: 'lamppost', x: 2, y: 12 },
       steam(29, 6), steam(28, 22), steam(14, 24), steam(37, 24), steam(22, 4),
-      { p: 'stairs', x: 37, y: 26, scene: 'yn.vents_door' },
+      // the stone steps down behind the spring house: the grille's notice until Aki opens it, then a way down
+      { p: 'stairs', x: 37, y: 26, if: '!yn_vents_open', scene: 'yn.vents_door' },
+      { p: 'stairs', x: 37, y: 26, if: 'yn_vents_open' },
     ],
     npcs: [
       { id: 'mp_tokube', x: 11, y: 18, dir: 'up', if: '!yn_tokube_gone', talk: [{ if: 'yn_done', scene: 'yn.tokube_after' }, { if: 'yn_tokube_done', scene: 'yn.tokube_idle' }, { scene: 'yn.tokube' }] },
@@ -132,6 +134,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 19, y: 0, w: 2, h: 1, to: 'yn.upper', sp: 'from_lower', dir: 'up' },
       { x: 39, y: 15, w: 1, h: 2, to: 'yn.terraces', sp: 'from_lower', dir: 'right' },
+      { x: 37, y: 26, w: 1, h: 1, to: 'yn.vents1', sp: 'from_lower', dir: 'down', if: 'yn_vents_open' },
     ],
     triggers: [{ x: 25, y: 15, w: 1, h: 2, scene: 'yn.bridge_quarrel', if: 'yn_rooms_done&yn_shimo_heard&!yn_quarrel' }],
     onEnter: [{ scene: 'yn.lower_first', if: '!yn_lower_seen' }],

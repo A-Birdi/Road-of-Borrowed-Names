@@ -286,6 +286,10 @@ function labelLines(RB) {
   if (ks) L(ks.name, 'keepsakes.pages_suzu.name', 'a keepsake name');
   const relic = C.atlas && C.atlas.relics && C.atlas.relics.mask_suzu;
   if (relic) L(relic.name, 'atlas.relics.mask_suzu.name', 'an item name');
+  // the last chapter's name-calling step (expansion P14, src/content/sa2/10_approach.js): her name among look-alikes,
+  // written kana to choose from, not speech
+  const nm = C.challenges && C.challenges['sa2.name_suzu'];
+  if (nm) for (const k in nm.tiers) for (const st of nm.tiers[k]) for (const o of st.options || []) L(o, 'challenges.sa2.name_suzu.' + k, 'her written name among look-alikes (a reading step, not speech)');
   const w = C.words && C.words.suzu;
   if (w) { L(w, 'words.suzu', 'the inscription word 鈴 (bell), not Suzu'); if (w.jpK) L({ jp: w.jpK }, 'words.suzu.jpK', 'the inscription word 鈴 (bell), not Suzu'); if (w.lex) L({ jp: w.lex }, 'words.suzu.lex', 'the inscription word 鈴 (bell), not Suzu'); }
   if (RB.pets && RB.pets.meeting) for (const sp in RB.pets.meeting) { /* titles and texts: narration */ }

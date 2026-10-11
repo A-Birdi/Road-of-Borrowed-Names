@@ -167,7 +167,7 @@ RB.audio = RB.audio || {};
       shime: { perc: true, v: 0.46, pan: 0.2 },
       clap: { perc: true, v: 0.45, pan: -0.25 },
     },
-    all: { riff: NB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z.z.z.zz', shime: 'eeeeeeee|e.e.e.e.', clap: '..y...y.|..y.y.y.' },
+    all: { riff: NB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z...z.zz', shime: 'e.eeeee.|e.e.e.e.', clap: '..y...y.|..y.y.y.' },
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null },
       A: { bars: 8, ch: NB_A_CH, lead: NB_A },

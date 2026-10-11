@@ -41,7 +41,9 @@ nao: {明日|あした} は 、 ツル の {所|ところ} へ {行|い}こう �
 nao: それ に 、 {五日|いつか} に {一度|いちど} は {潮硝子|しおがらす} {回|まわ}り の {配達|はいたつ} が ある 。 {暇|ひま} なら 、 {荷物|にもつ} を {半分|はんぶん} {持|も}て 。 || And every fifth day there's the Saltglass round. If you're free, carry half the parcels.
 
 @scene end.nao.c
+?(ed>=2) !call sa2.end_nao
 narr: ナオ は {鞄|かばん} を {肩|かた} に {掛|か}け{直|なお}し 、 {癖|くせ} で {橋|はし} の {両端|りょうはし} を {確|たし}かめた 。 それから 、 {少|すこ}し {笑|わら}った 。 || Nao shoulders the satchel again and, out of habit, checks both ends of the bridge. Then gives a small laugh.
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.nao
 !hook pages_end_done
 
@@ -81,7 +83,9 @@ mio: ツル さん が {灯|あか}り{堂|どう} で {何|なに}か {見|み}
 mio: それ から 、 {約束|やくそく} を {一|ひと}つ 。 {疲|つか}れたら 、 {先|さき} に {言|い}う 。 わたし も 、 あなた も 。 || And one promise. Whoever gets tired says so first. Me, and you.
 
 @scene end.mio.c
+?(ed>=2) !call sa2.end_mio
 narr: ミオ は {戸口|とぐち} の {札|ふだ} を 、 {指|ゆび} で {少|すこ}し だけ {直|なお}した 。 もう {十分|じゅうぶん} まっすぐ だった のに 。 || Mio straightens the sign on the door by a hair with one finger. It was already perfectly straight.
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.mio
 !hook pages_end_done
 
@@ -121,8 +125,10 @@ ren: ツル さん が 、 {何|なに}か {見|み}せたい もの が ある 
 ren: {朝|あさ} の {灯|ひ} の {見回|みまわ}り に も 、 {付|つ}き{合|あ}って ください 。 {地図|ちず} を {持|も}って くれれば 、 {昼|ひる} まで に は {帰|かえ}れます 。 || And come on the morning lamp rounds with me. If you carry the map, we will be back by noon.
 
 @scene end.ren.c
+?(ed>=2) !call sa2.end_ren
 narr: レン は {磨|みが}き{終|お}えた {二|ふた}つ の {灯|ひ} に {火|ひ} を {入|い}れ 、 {灯|あか}り{堂|どう} の {戸口|とぐち} の {両側|りょうがわ} に {一|ひと}つ ずつ {置|お}いた 。 || Ren lights the two polished lamps and sets one on each side of the Lantern Hall door.
 ren: {一|ひと}つ は あなた の {分|ぶん} です 。 {遅|おそ}く {帰|かえ}って きて も 、 {見|み}える よう に 。 || One of them is yours. So you can see it, even if you come home late.
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.ren
 !hook pages_end_done
 
@@ -164,7 +170,9 @@ suzu[closed]: …… {主役|しゅやく} って {書|か}いた けど 、 あ
 suzu: {次|つぎ} の {幕|まく} は 、 ツル さん の {灯|あか}り{堂|どう} から {始|はじ}まる らしい よ 。 それ と 、 {雨|あめ} の {日|ひ} は ハナ の {茶屋|ちゃや} で {小|ちい}さな {芝居|しばい} 。 あなた は {見|み}てる だけ で いい 。 || The next act starts at Tsuru's Lantern Hall, apparently. And on rainy days, a little play at Hana's teahouse. You only have to watch.
 
 @scene end.suzu.c
+?(ed>=2) !call sa2.end_suzu
 narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さいご} の {頁|ページ} に {一行|いちぎょう} {書|か}き{足|た}した 。 「 {預|あず}け{物|もの} 、 リボン {一本|いっぽん} 。 {返却|へんきゃく} 、 {次|つぎ} の {幕|まく} 。 {必|かなら}ず 。 」 || Suzu opens her ledger and adds a line on the last page: "Left in safekeeping: one ribbon. To be returned: next act. Without fail."
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.suzu
 !hook pages_end_done
 

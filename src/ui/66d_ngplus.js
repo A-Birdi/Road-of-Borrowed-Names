@@ -15,7 +15,8 @@ RB.ui.ngplus = (function () {
   // context (names and looks), read only.
   async function farewell(from) {
     if (!from) return;
-    const lines = ((RB.content.ngFarewell || {})[from.comp] || []).concat(RB.content.ngFarewellEnd ? [RB.content.ngFarewellEnd] : []);
+    const F = RB.content.ngFarewell || {};
+    const lines = (F[from.comp] || F.solo || []).concat(RB.content.ngFarewellEnd ? [].concat(RB.content.ngFarewellEnd) : []);
     if (!lines.length) return;
     const keep = RB.game.s;
     RB.game.s = from;

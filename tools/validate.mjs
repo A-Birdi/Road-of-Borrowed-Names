@@ -225,6 +225,14 @@ for (const id in C.maps) {
   }
   for (const t of def.triggers || []) ref(t.scene, 'map ' + id + ' trigger');
   for (const ev of def.onEnter || []) ref(ev.scene, 'map ' + id + ' onEnter');
+  // conditions have no grouping: '&' binds tighter than '|', and a parenthesis is read as part of a term, so
+  // "a&(b|c)" would quietly mean "(a&b) or c" (found in P14's first draft)
+  const condOk = (c, w) => { if (typeof c === 'string' && /[()]/.test(c)) E('map ' + id + ': ' + w + ' condition "' + c + '" has a parenthesis; conditions have no grouping (write the alternatives out)'); };
+  for (const ex of def.exits || []) condOk(ex.if, 'exit to ' + ex.to);
+  for (const p of def.props || []) condOk(p.if, 'prop ' + p.p);
+  for (const n of def.npcs || []) { condOk(n.if, 'npc ' + n.id); for (const tk of Array.isArray(n.talk) ? n.talk : []) condOk(tk.if, 'npc ' + n.id + ' talk'); }
+  for (const tr of def.triggers || []) condOk(tr.if, 'trigger ' + tr.scene);
+  for (const ev of def.onEnter || []) condOk(ev.if, 'onEnter ' + ev.scene);
   // an enter event that may repeat (once: false) runs again after every scene on the map: without a condition the
   // scene itself ends, it would play forever (found in P13's baths)
   for (const ev of def.onEnter || []) if (ev.once === false && !ev.if) E('map ' + id + ': onEnter ' + ev.scene + ' repeats (once: false) with no condition, so it would play again after every scene');

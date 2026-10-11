@@ -34,8 +34,8 @@ RB.audio = RB.audio || {};
       songs: ['sg_road', 'saltglass', 'drowned_archive'],
       cues: ['sg_confession', 'sg_counter', 'sg_letters', 'sg_lighthouse'],
     },
-    // the twelve-chapter edition's Manybridge (37_songs_mb.js): its chapter number is the twelve-chapter one; it joins
-    // the intensity ladder when the edition's whole ladder is re-tiered (C-22, P14)
+    // the twelve-chapter edition's Manybridge (37_songs_mb.js): its chapter number is the twelve-chapter one; the
+    // twelve-chapter intensity ladder (C-22, re-tiered in P14) is checked in tests/unit/audio_zones.test.mjs
     manybridge: {
       chapter: 3, edition: 2, regions: ['manybridge'], prefixes: ['mb.', 'mp.'],
       battle: 'battle_manybridge', boss: 'boss_manybridge', route: null,
@@ -110,7 +110,7 @@ RB.audio = RB.audio || {};
     still: {
       chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],
       battle: 'battle_still', boss: 'boss_hush', route: 'sa_road',
-      songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories'],
+      songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories', 'sa_thin', 'sa_drone'],
       cues: ['sa_kasane', 'sa_toya'],
     },
     atlas: { // the post-game Unwritten Atlas

@@ -3,8 +3,9 @@
  *
  * The palette the plan gives the city: shamisen-led and brisker than Saltglass, hand drums and a taiko pulse,
  * wooden clappers (拍子木) as a cue. Intensity: a step above Saltglass (a few more beats per minute, a busier
- * ostinato, the clappers on top of the drums), still one score with the road motif under it. The twelve-chapter
- * ladder as a whole (C-22) is checked when every new zone has its themes (P14). */
+ * ostinato, the clappers on top of the drums), still one score with the road motif under it. In the twelve-chapter
+ * ladder (C-22, re-tiered in P14) the boss sits below the Understage's and Cinder Orchard's (now Chapter 5): its drums
+ * thinned for that (tests/unit/audio_zones.test.mjs). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -144,7 +145,7 @@ RB.audio = RB.audio || {};
       shime: { perc: true, v: 0.46, pan: 0.2 },
       kan: { perc: true, v: 0.42, pan: -0.25 },
     },
-    all: { riff: BB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z.z.z.zz', shime: 'eeeeeeee|e.e.e.e.', kan: '..q...q.|..q.y.q.' },
+    all: { riff: BB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z...z..z', shime: 'e.ee.ee.|e.e.e.e.', kan: '..q...q.|..q.y.q.' },
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null },
       A: { bars: 8, ch: BB_A_CH, lead: BB_A },

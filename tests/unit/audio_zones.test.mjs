@@ -125,6 +125,18 @@ export default async (t) => {
     t.ok(k.bpm > lo.bpm && k.score > lo.score, `Kotonoha's ${kind} theme is a step above Lanternfall's (score ${lo.score.toFixed(2)} -> ${k.score.toFixed(2)})`);
     t.ok(k.bpm < hi.bpm && k.score < hi.score, `and below the Archive's (score ${k.score.toFixed(2)} -> ${hi.score.toFixed(2)})`);
   }
+  // the twelve-chapter ladder (C-22, re-tiered in P14): in the twelve-chapter order every region's battle and boss
+  // themes are a step above the region before (Manybridge's two chapters share their battle theme)
+  const TWELVE = ['reedwake', 'saltglass', 'manybridge', 'understage', 'cinder', 'snowbell', 'keepers', 'lanternfall', 'kotonoha', 'cloudroad', 'steamhollow', 'still'];
+  if (TWELVE.every((z) => Z[z])) for (const kind of ['battle', 'boss']) {
+    let prev = null;
+    for (const zid of TWELVE) {
+      const id = Z[zid][kind], m = intensity(_.compile(songs[id]));
+      t.log(`12-ch ${kind.padEnd(6)} ${zid.padEnd(12)} ${id.padEnd(20)} ${fmtIntensity(m)}`);
+      if (prev) t.ok(prev.id === id ? m.score === prev.m.score : m.score > prev.m.score, `twelve chapters: ${kind} intensity rises from ${prev.zid} (${prev.m.score.toFixed(2)}) to ${zid} (${m.score.toFixed(2)})`);
+      prev = { zid, id, m };
+    }
+  }
   const rows = { battle: [], boss: [] };
   for (const [zid, z] of order) {
     for (const kind of ['battle', 'boss']) {

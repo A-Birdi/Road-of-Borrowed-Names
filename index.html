@@ -19227,8 +19227,9 @@ RB.audio = RB.audio || {};
  *
  * The palette the plan gives the city: shamisen-led and brisker than Saltglass, hand drums and a taiko pulse,
  * wooden clappers (拍子木) as a cue. Intensity: a step above Saltglass (a few more beats per minute, a busier
- * ostinato, the clappers on top of the drums), still one score with the road motif under it. The twelve-chapter
- * ladder as a whole (C-22) is checked when every new zone has its themes (P14). */
+ * ostinato, the clappers on top of the drums), still one score with the road motif under it. In the twelve-chapter
+ * ladder (C-22, re-tiered in P14) the boss sits below the Understage's and Cinder Orchard's (now Chapter 5): its drums
+ * thinned for that (tests/unit/audio_zones.test.mjs). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -19368,7 +19369,7 @@ RB.audio = RB.audio || {};
       shime: { perc: true, v: 0.46, pan: 0.2 },
       kan: { perc: true, v: 0.42, pan: -0.25 },
     },
-    all: { riff: BB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z.z.z.zz', shime: 'eeeeeeee|e.e.e.e.', kan: '..q...q.|..q.y.q.' },
+    all: { riff: BB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z...z..z', shime: 'e.ee.ee.|e.e.e.e.', kan: '..q...q.|..q.y.q.' },
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null },
       A: { bars: 8, ch: BB_A_CH, lead: BB_A },
@@ -19987,7 +19988,7 @@ RB.audio = RB.audio || {};
       shime: { perc: true, v: 0.46, pan: 0.2 },
       clap: { perc: true, v: 0.45, pan: -0.25 },
     },
-    all: { riff: NB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z.z.z.zz', shime: 'eeeeeeee|e.e.e.e.', clap: '..y...y.|..y.y.y.' },
+    all: { riff: NB_RIFF, ost: "0 2 0' 2 0 2 0' 2", bass: '0 0 - 0 0 - 0 -', pad: '0+2+4', taiko: 'z..z..z.|z...z.zz', shime: 'e.eeeee.|e.e.e.e.', clap: '..y...y.|..y.y.y.' },
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null },
       A: { bars: 8, ch: NB_A_CH, lead: NB_A },
@@ -20430,17 +20431,21 @@ RB.audio = RB.audio || {};
   // ================================================================== BATTLE
   // F dorian, 119 (the Cloudroad's is 118, the Archive's 120): the shamisen hard and bright; koto arpeggios; geta
   const BY_A = "1 - 2 - 3 - 5 - | 4 - 3 - 1 - 5, - | 1 - 3 - 5 - 6 - | 5 - - - - - . . | 5 - 6 - 1' - 6 - | 5 - 3 - 2 - 3 - | 2 - 1 - 7, - 2 - | 1 - - - - - . .";
-  const BY_A_CH = '1 4 1 1 1 1 7 1';
+  const BY_A_CH = '1 4 1 1 1 1 5D 1';
   const BY_B = "5 - - 3 5 - 6 - | 4 - - - 2 - - - | 3 - - 1 3 - 4 - | 5 - - - 3 - - - | 1' - - 6 5 - 3 - | 4 - - - 6 - - - | 5 - 4 - 2 - 4 - | 5 - - - - - . .";
-  const BY_B_CH = '1 7 1 3 4 4 7 3';
+  const BY_B_CH = '1 7 1 3 4D 4 7D 3';
   const BY_B_LOW = '1 - - - - - - - | 7, - - - - - - - | 1 - - - - - - - | 3 - - - - - - - | 4, - - - - - - - | 4, - - - - - - - | 7, - - - - - - - | 3 - - - - - - -';
   const BY_C = "5 - 6 - 1' - 6 - | 5 - 3 - - - . . | 5 - 6 - 1' - 6 - | 5 - 3 - 4 - 5 - | 3 - - - 1 - 3 - | 4 - 3 - 1 - 4 - | 5 - 4 - 2 - 4 - | 1 - - - - - . .";
   const BY_C_CH = '1P 1P 1P 1 1 4 7 1';
+  // the shamisen's answers in B (off the beat, chord tones) and its stabs in C; the bowed bass under A
+  const BY_A_LOW = '1 - - - - - - - | 4, - - - - - - - | 1 - - - - - - - | 5, - - - - - - - | 1 - - - - - - - | 3 - - - - - - - | 7, - - - - - - - | 1 - - - - - - -';
+  const BY_B_ANS = ". . 5 - . . 3 - | . . 4 - . . 7, - | . . 1' - . . 5 - | . . 3 - . . 5 - | . . 4 - . . 6 - | . . 1' - . . 6 - | . . 2 - . . 4 - | . . 3 - - - . .";
+  const BY_C_STAB = "1 . 1 . . . 5, . | 1 . 1 . . . 5, . | 1 . 1 . . . 5, . | 1 . 3 . . . 5 . | 1 . 3 . . . 5 . | 4 . 6 . . . 1' . | 7, . 2 . . . 4 . | 1 . . . . . . .";
   S('battle_yn', {
     title: 'Inkweaving — Hot Water',
     kind: 'battle',
     motifs: ['yu'],
-    notes: 'Chapter 11 battle (F dorian, 119; the Cloudroad\'s is 118, the Archive\'s 120). The shamisen leads, struck hard; the koto runs arpeggios like water over stones; ōdaiko and shime-daiko in a bathhouse rhythm with the hyōshigi clacking like geta on wet stone. B is the shinobue over a bowed bass; C throws the steam motif up twice over open fifths, the vents blowing.',
+    notes: 'Chapter 11 battle (F dorian, 119; the Cloudroad\'s is 118, the Archive\'s 120). The shamisen leads, struck hard; the koto runs arpeggios in sixteenths like water over stones; ōdaiko and shime-daiko in a bathhouse rhythm, pushed off the beat, with the hyōshigi clacking like geta on wet stone. B is the shinobue over a bowed bass; C throws the steam motif up twice over open fifths, the vents blowing.',
     key: 'F', mode: 'dorian', bpm: 119, loopFrom: 1,
     tracks: {
       lead: { i: 'shamisen', o: 4, v: 0.66, rv: 0.2 },
@@ -20454,15 +20459,15 @@ RB.audio = RB.audio || {};
       geta: { perc: true, v: 0.36, pan: -0.25 },
     },
     all: {
-      arp: "0 2 1' 2 0 2 1' 2", bass: '0 - - 0 - 0 0 -', pad: '0+2+4',
-      taiko: 'Z..z..Z.|Z..zZ.zz', shime: 'eeEeeeEe|eeeeEeee', geta: '..y..y..|..y.yy.y',
+      arp: { n: "0 2 1' 2", u: 0.25 }, bass: '0 0 - 0 - 0 0 0', pad: '0+1+2+4',
+      taiko: 'Z.zz.zZz|Z.zzZzzz', shime: 'eeEeeeEe|eEeeEeEe', geta: '.yy.yy.y|.yy.yy.y',
     },
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null, arp: null, taiko: 'Z..z..Z.|Z.z.ZzZZ' },
-      A: { bars: 8, ch: BY_A_CH, lead: BY_A },
-      B: { bars: 8, ch: BY_B_CH, hi: BY_B, low: BY_B_LOW },
-      C: { bars: 8, ch: BY_C_CH, hi: BY_C, low: BY_B_LOW, pad: '0+4', taiko: 'Z..z..Z.|Z.zz.zZz' },
-      B2: { bars: 8, ch: BY_B_CH, hi: BY_B, low: BY_B_LOW, arp: { n: "0 2 1' 2", u: 0.25 } },
+      A: { bars: 8, ch: BY_A_CH, lead: BY_A, low: BY_A_LOW },
+      B: { bars: 8, ch: BY_B_CH, hi: BY_B, low: BY_B_LOW, lead: BY_B_ANS },
+      C: { bars: 8, ch: BY_C_CH, hi: BY_C, low: BY_B_LOW, lead: BY_C_STAB, pad: '0+4', taiko: 'Z..z..Z.|Z.zz.zZz' },
+      B2: { bars: 8, ch: BY_B_CH, hi: BY_B, low: BY_B_LOW, lead: BY_B_ANS, arp: { n: "0 2 1' 2", u: 0.25 } },
     },
     form: ['intro', 'A', 'B', 'C', { s: 'B2', i: { hi: 'shakuhachi' }, o: { hi: -1 } }],
   });
@@ -20472,17 +20477,20 @@ RB.audio = RB.audio || {};
   // lid; the steam motif tries to rise and keeps falling back, until C, where it settles
   const KB_RIFF = '1 1 5, 1 1 1 5, 1 | 1 1 3 1 7, 7, 5, 7,';
   const KB_A = "1 - 3 - 5 - 6 - | 5 - 3 - - - . . | 1 - 3 - 5 - 6 - | 5 - 3 - 1 - - - | 4 - 5 - 6 - 5 - | 4 - 3 - - - . . | 3 - 4 - 5 - 7, - | 1 - - - - - . .";
-  const KB_A_CH = '1 1 1 1 4 4 7 1';
+  const KB_A_CH = '1 1 1 1 4 4 5D 1';
+  const KB_A_LOW = '1 - - - - - - - | 1 - - - - - - - | 1 - - - - - - - | 1 - - - - - - - | 4, - - - - - - - | 4, - - - - - - - | 7, - - - - - - - | 1 - - - - - - -';
   const KB_B = "5 - - - 6 - 5 - | 3 - - - 5 - - - | 6 - - - 5 - 3 - | 4 - - - - - . . | 5 - - - 6 - 1' - | 6 - 5 - 3 - - - | 4 - 3 - 4 - 5 - | 5 - - - - - . .";
   const KB_B_CH = '1 1 4 4 6 1 7 3';
   const KB_B_LOW = '1 - - - - - - - | 1 - - - - - - - | 4, - - - - - - - | 4, - - - - - - - | 6, - - - - - - - | 1 - - - - - - - | 7, - - - - - - - | 3 - - - - - - -';
   const KB_C = YU + ' | ' + YU + ' | ' + YU + ' | 3 - 2 - 1 - 2 - | 1 - - - - - . .';
   const KB_C_CH = '1P 1P 1P 1P 1P 1P 7 1P';
+  const KB_B_ANS = ". . 5 - . . 3 - | . . 1' - . . 5 - | . . 4 - . . 6 - | . . 1' - . . 4 - | . . 6 - . . 3 - | . . 5 - . . 1' - | . . 7 - . . 2' - | . . 3 - - - . .";
+  const KB_C_STAB = "1 . 3 . . . 5 . | 1 . 3 . . . 5 . | 1 . 3 . . . 5 . | 1 . 3 . . . 5 . | 1 . 3 . . . 5 . | 1 . 3 . . . 5 . | 7, . 2 . . . 4 . | 1 . . . . . . .";
   S('yn_kettle', {
     title: 'The Kettle Below',
     kind: 'boss',
     motifs: ['yu'],
-    notes: 'The Kettle Below (C# aeolian, 151; the Cloudroad\'s boss is 150, the Archive\'s 152): the spring\'s old spirit, frightened rather than cruel. A koto riff rattles like a kettle lid, the ōdaiko and shime-daiko press, the hyōshigi clatters; the shakuhachi climbs the steam motif and falls back again and again. B is the shinobue breathless over a bowed bass; C is the steam motif three times over open fifths, rising and settling until the riff stops shaking.',
+    notes: 'The Kettle Below (C# aeolian, 151; the Cloudroad\'s boss is 150, the Archive\'s 152): the spring\'s old spirit, frightened rather than cruel. A koto riff rattles like a kettle lid over a cluster on the shō, the ōdaiko and shime-daiko press off the beat, the hyōshigi clatters; the shakuhachi climbs the steam motif and falls back again and again. B is the shinobue breathless over a bowed bass; C is the steam motif three times over open fifths, rising and settling until the riff stops shaking.',
     key: 'C#', mode: 'aeolian', bpm: 151, loopFrom: 1,
     tracks: {
       riff: { i: 'koto', o: 3, v: 0.58, rv: 0.15, pan: -0.2 },
@@ -20496,16 +20504,94 @@ RB.audio = RB.audio || {};
       clap: { perc: true, v: 0.42, pan: -0.25 },
     },
     all: {
-      riff: KB_RIFF, bass: '0 0 - 0 0 - 0 -', pad: '0+2+4',
-      taiko: 'Z..z..Z.|Z.z.Z.zZ', shime: 'eeEeeeEe|e.eEe.ee', clap: '..y...y.|..y.y.y.',
+      riff: KB_RIFF, bass: '0 0 - 0 0 - 0 0', pad: '0+1+2+4',
+      taiko: 'Z.zz.zZz|Z.zzZzzZ', shime: 'eeEeeeEe|eEeEe.ee', clap: '..y.y.y.|..y.yyy.',
     },
     sections: {
       intro: { bars: 2, ch: '1 1', pad: null },
-      A: { bars: 8, ch: KB_A_CH, lead: KB_A },
-      B: { bars: 8, ch: KB_B_CH, hi: KB_B, low: KB_B_LOW },
-      C: { bars: 8, ch: KB_C_CH, lead: KB_C, pad: '0+4' },
+      A: { bars: 8, ch: KB_A_CH, lead: KB_A, low: KB_A_LOW },
+      B: { bars: 8, ch: KB_B_CH, hi: KB_B, low: KB_B_LOW, lead: KB_B_ANS },
+      C: { bars: 8, ch: KB_C_CH, lead: KB_C, hi: KB_C_STAB, pad: '0+4' },
     },
     form: ['intro', 'A', 'B', 'C', { s: 'A', i: { lead: 'shinobue' }, o: { lead: 1 } }, { s: 'B', i: { hi: 'shakuhachi' }, o: { hi: -1 } }],
+  });
+})(RB.audio);
+
+
+/* ==== src/audio/38z_songs_sa2.js ==== */
+/* The last chapter's road in a twelve-chapter journey (expansion P14; 10_STORY.md §6a, sealed S15): the score thins as
+ * the party climbs. The Archive road keeps its own tune (sa_road's A, the road motif) with the ensemble taken away a
+ * layer at a time, the last return in fragments; at the gate and in the Reading Room only a low drone and a held shō
+ * remain, with the road motif far down on the koto and the Hush motif once on glass. Inside, the Archive's own themes
+ * play as they always have. Six-chapter journeys hear nothing new. Notation: see 30_songs.js. */
+var RB = (globalThis.RB = globalThis.RB || {});
+RB.audio = RB.audio || {};
+
+(function (A) {
+  'use strict';
+  const _ = (A._ = A._ || {});
+  function S(id, def) {
+    def.id = id;
+    def.chapter = 12;
+    def.edition = 2;
+    _.songDefs[id] = def;
+  }
+
+  // ================================================================== THE ROAD, THINNING
+  // sa_road's tune (B minor) slowed to 88: the shakuhachi over a biwa drone and a held shō; no drums, no arpeggio. B is
+  // the Archive's order on glass (the Hush motif), the koto gone; the last A keeps only the first bar of each pair.
+  const SAR_A = '5, - 3 - - 2 1 - | 2 - - - 4 - 3 - | 2 - - - 1 - 7, - | 1 - - - - - . . | 3 - - - 5 - 6 - | 5 - - - 3 - 2 - | 1 - - - 2 - 3 - | 2 - - - - - . .';
+  const SAR_A_CH = '1 7 5 1 3 4 6 5';
+  const THIN = '5, - 3 - - 2 1 - | .:8 | 2 - - - 1 - 7, - | .:8 | 3 - - - 5 - 6 - | .:8 | 1 - - - 2 - 3 - | .:8';
+  const GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - - - - - | .:8';
+  S('sa_thin', {
+    title: 'The Archive Road, Thinning',
+    kind: 'area',
+    motifs: ['road', 'hush'],
+    notes: 'The last climb in a twelve-chapter journey (B minor, 88): the Archive road\'s own tune on shakuhachi, over a biwa drone and a held shō, with the drums, the shamisen and the koto arpeggio taken away. B sets the Hush motif on glass with nothing under it but the drone; the last A keeps only every other bar of the tune, the rest left silent.',
+    key: 'B', mode: 'aeolian', bpm: 88, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.62, rv: 0.4 },
+      glass: { i: 'glass', o: 5, v: 0.7, rv: 0.6, pan: -0.15 },
+      drone: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.3, rv: 0.35 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.22, rv: 0.5 },
+    },
+    echo: { beats: 0.75, fb: 0.3, mix: 0.3 },
+    all: { drone: '0 - - - - - - -', pad: '0+4' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', lead: '1 - - - - - - - | 7, - - - 5, - - -' },
+      A: { bars: 8, ch: SAR_A_CH, lead: SAR_A },
+      B: { bars: 8, ch: '1 1 1 1 1 1 1 1', glass: GLASS, pad: '0' },
+      A2: { bars: 8, ch: SAR_A_CH, lead: THIN, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+
+  // ================================================================== UNDER THE ARCHIVE
+  // B minor, 60: a bowed drone and a held shō; the road motif far down on the koto, twice in eight bars; the Hush motif
+  // once on glass; nothing keeps time.
+  const LOW = '5, - 3 - 2 - 1 - | 2 - - - - - - - | .:8 | .:8 | 5, - 3 - 2 - 1 - | 2 - - - - - - - | .:8 | .:8';
+  const HUSH = '.:8 | .:8 | 5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | .:8 | .:8';
+  S('sa_drone', {
+    title: 'Under the Archive',
+    kind: 'area',
+    motifs: ['road', 'hush'],
+    notes: 'The Archive\'s gate and its Reading Room in a twelve-chapter journey, before the Hush is settled (B minor, 60): the score thinned to a bowed drone and a held shō. Under it the road motif, the game\'s main theme, far down on the koto, twice in eight bars; in B the Hush motif once on glass, and the koto answers it with the road motif. Nothing keeps time.',
+    key: 'B', mode: 'aeolian', bpm: 60, loopFrom: 1,
+    tracks: {
+      low: { i: 'koto', o: 3, v: 0.46, rv: 0.6, dl: 0.3 },
+      glass: { i: 'glass', o: 5, v: 0.6, rv: 0.65, pan: 0.2 },
+      bow: { i: 'bowed', o: 2, hold: true, v: 0.24, rv: 0.5 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.18, rv: 0.55 },
+    },
+    all: { bow: '0', pad: '0+4' },
+    sections: {
+      intro: { bars: 2, ch: '1 1' },
+      A: { bars: 8, ch: '1 1 1 1 1 1 1 1', low: LOW },
+      B: { bars: 8, ch: '1 1 1 1 1 1 1 1', glass: HUSH, low: '.:8 | .:8 | .:8 | .:8 | 5, - 3 - 2 - 1 - | 2 - - - - - - - | .:8 | .:8' },
+      A2: { bars: 8, ch: '1 1 1 1 1 1 1 1', low: LOW, dyn: 0.8 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
   });
 })(RB.audio);
 
@@ -20547,8 +20633,8 @@ RB.audio = RB.audio || {};
       songs: ['sg_road', 'saltglass', 'drowned_archive'],
       cues: ['sg_confession', 'sg_counter', 'sg_letters', 'sg_lighthouse'],
     },
-    // the twelve-chapter edition's Manybridge (37_songs_mb.js): its chapter number is the twelve-chapter one; it joins
-    // the intensity ladder when the edition's whole ladder is re-tiered (C-22, P14)
+    // the twelve-chapter edition's Manybridge (37_songs_mb.js): its chapter number is the twelve-chapter one; the
+    // twelve-chapter intensity ladder (C-22, re-tiered in P14) is checked in tests/unit/audio_zones.test.mjs
     manybridge: {
       chapter: 3, edition: 2, regions: ['manybridge'], prefixes: ['mb.', 'mp.'],
       battle: 'battle_manybridge', boss: 'boss_manybridge', route: null,
@@ -20623,7 +20709,7 @@ RB.audio = RB.audio || {};
     still: {
       chapter: 6, regions: ['still', 'sa_mount', 'sa_still'], prefixes: ['sa.'],
       battle: 'battle_still', boss: 'boss_hush', route: 'sa_road',
-      songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories'],
+      songs: ['sa_road', 'sa_road_home', 'still_archive', 'sa_memories', 'sa_thin', 'sa_drone'],
       cues: ['sa_kasane', 'sa_toya'],
     },
     atlas: { // the post-game Unwritten Atlas
@@ -44266,6 +44352,7 @@ RB.render = (function () {
     if (fromHeight(m)) RB.below.drawLights(c, m, belowEnv(m, t)); // the lights far below, through the night
     drawWeather(c, m, t);
     if (L) L.atmosphere(c, m, W, t, env);
+    drawGrade(c, m);
     for (const e of W.emotes) {
       const a = RB.world.actorById(e.who);
       if (a) drawEmote(c, a, e.kind);
@@ -44285,6 +44372,18 @@ RB.render = (function () {
     if (ov) return ov;
     for (const a of m.def.alt || []) if (s && RB.state.test(s, a.if)) return a;
     return { ambient: m.def.ambient || {}, night: m.def.night };
+  }
+  // The final grade (expansion P14; 10_STORY §6a, S15): colour drained from the world by `ambient.drain` (0..1), over
+  // the light, the weather and the atmosphere, under the emotes and the followed quest's marks (they keep their
+  // colour). The world canvas only: the book, the dialogue and the writing pad are never graded. Presentation only.
+  function drawGrade(c, m) {
+    const d = Math.min(1, +((ambientOf(m).ambient || {}).drain) || 0);
+    if (d <= 0) return;
+    c.save();
+    c.globalCompositeOperation = 'saturation';
+    c.fillStyle = `rgba(128,128,128,${d})`;
+    c.fillRect(0, 0, bw, bh);
+    c.restore();
   }
   function drawLighting(c, m, W, t) {
     const amb = ambientOf(m).ambient || {};
@@ -44375,6 +44474,16 @@ RB.render = (function () {
         c.fillStyle = 'rgba(240,236,220,0.75)';
         c.fillRect(p.x, p.y, 6, 4);
         c.fillStyle = 'rgba(90,80,70,0.35)'; c.fillRect(p.x + 1, p.y + 1, 4, 1);
+      } else if (kind === 'names') {
+        // the last chapter's road in a twelve-chapter journey (expansion P14, S15): lanterns' name slips peeled off and
+        // drifting uphill, a written stroke on each, turning slowly; with reduced motion they hang where they are
+        if (!reduced) { p.y -= 0.35 * p.v; p.x += Math.sin(t / 1100 + p.p) * 0.45; }
+        const tall = (Math.sin(t / 900 + p.p * 2) + 1) / 2 > 0.5;
+        const w = tall ? 3 : 5, h = tall ? 7 : 4;
+        c.fillStyle = 'rgba(236,230,212,0.7)';
+        c.fillRect(p.x, p.y, w, h);
+        c.fillStyle = 'rgba(70,62,58,0.45)';
+        if (tall) c.fillRect(p.x + 1, p.y + 1, 1, h - 2); else c.fillRect(p.x + 1, p.y + 1, w - 2, 1);
       }
       if (p.y > bh + 8) { p.y = -8; p.x = prand() * bw; }
       if (p.y < -12) { p.y = bh + 4; p.x = prand() * bw; }
@@ -80732,7 +80841,8 @@ RB.ui.ngplus = (function () {
   // context (names and looks), read only.
   async function farewell(from) {
     if (!from) return;
-    const lines = ((RB.content.ngFarewell || {})[from.comp] || []).concat(RB.content.ngFarewellEnd ? [RB.content.ngFarewellEnd] : []);
+    const F = RB.content.ngFarewell || {};
+    const lines = (F[from.comp] || F.solo || []).concat(RB.content.ngFarewellEnd ? [].concat(RB.content.ngFarewellEnd) : []);
     if (!lines.length) return;
     const keep = RB.game.s;
     RB.game.s = from;
@@ -115547,7 +115657,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     yn: 'yn',    // Steamhollow, Chapter 11
   };
   // other new content whose Japanese goes through the review ledger (docs/review/language/), not tied to a chapter
-  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv', 'co2', 'sb2', 'lf2'];
+  C.reviewPrefixes = ['ws', 'rb', 'ngp', 'vb', 'pt', 'xp', 'dv', 'co2', 'sb2', 'lf2', 'sa2'];
   // creatures the expansion adds to a six-chapter region (their ids keep the region's prefix): reviewed under these
   C.reviewEnemies = C.reviewEnemies || {};
   // terms a chapter introduces: no earlier chapter's scene may name them (post-story scenes excepted)
@@ -155405,6 +155515,40 @@ RB.dialect.add('kansai', `
 `);
 
 
+/* ==== src/content/dialect/kansai_99_sa2.js ==== */
+/* Suzu's Kansai-ben: the last chapter in a twelve-chapter journey (expansion P14): the hushed voice at the gate, her
+ * arc's ending (the play's opening night) and the ending's romance moment. Format and rules: src/lang/85_dialect.js,
+ * docs/dialect/suzu_kansai.md. "=" the standard line as authored (the key: its Japanese); ">" the Kansai version. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.dialect.add('kansai', `
+@ sa2/sa2.hushed [sa2.hushed]
+= …… || …
+> =
+@ sa2/sa2.hushed [sa2.hushed]
+= …… {出|で}た ！ {声|こえ} 、 {出|で}た ！ …… もう 、 {台詞|せりふ} が {飛|と}んだ {役者|やくしゃ} の {気分|きぶん} 。 {二度|にど} と ごめん よ 。 || …It's back! My voice, it's back! …That felt like an actor whose lines have gone. Never again, thank you.
+> …… {出|で}た ！ {声|こえ} 、 {出|で}た ！ …… もう 、 {台詞|せりふ} が {飛|と}んだ {役者|やくしゃ} の {気分|きぶん} や 。 {二度|にど} と ごめん や で 。 || …It's back! My voice, it's back! …That felt like an actor whose lines have gone. Never again, thank you.
+@ sa2/sa2.end_suzu [sa2.end_suzu]
+= コウメ から {手紙|てがみ} 。 {初日|しょにち} は {八百橋|やおばし} の {芝居町|しばいまち} で やれ って 。 {一座|いちざ} が 、 {客席|きゃくせき} を {埋|う}めて くれる って 。 || A letter from Koume. She says to open in Manybridge's Playhouse Row. The troupe will fill the seats.
+> コウメ から {手紙|てがみ} や 。 {初日|しょにち} は {八百橋|やおばし} の {芝居町|しばいまち} で やれ って 。 {一座|いちざ} が 、 {客席|きゃくせき} を {埋|う}めて くれる ん やて 。 || A letter from Koume. She says to open in Manybridge's Playhouse Row. The troupe will fill the seats.
+@ sa2/sa2.end_suzu [sa2.end_suzu]
+= {初日|しょにち} は 、 {八百橋|やおばし} の {芝居町|しばいまち} が いい な 。 あそこ の {客|きゃく} は 、 {笑|わら}い{方|かた} を {知|し}ってる 。 || Opening night: Manybridge's Playhouse Row, I think. The audience there knows how to laugh.
+> {初日|しょにち} は 、 {八百橋|やおばし} の {芝居町|しばいまち} が ええ な 。 あそこ の {客|きゃく} は 、 {笑|わら}い{方|かた} を {知|し}ってる ねん 。 || Opening night: Manybridge's Playhouse Row, I think. The audience there knows how to laugh.
+@ sa2/sa2.end_suzu [sa2.end_suzu]
+= もちろん 、 {相方|あいかた} は あなた よ 。 {台詞|せりふ} は 、 まだ {一行|いちぎょう} も ない けど 。 || Your part's my partner, of course. Not that you've got a single line yet.
+> もちろん 、 {相方|あいかた} は あんた や で 。 {台詞|せりふ} は 、 まだ {一行|いちぎょう} も あらへん けど 。 || Your part's my partner, of course. Not that you've got a single line yet.
+@ sa2/sa2.romance [sa2.romance]
+= …… うん 。 {台詞|せりふ} なし で いい 。 {一番|いちばん} {効|き}く {場面|ばめん} だ から 。 || …Mm. No lines needed. It's the scene that lands hardest.
+> …… うん 。 {台詞|せりふ} なし で ええ 。 {一番|いちばん} {効|き}く {場面|ばめん} や から 。 || …Mm. No lines needed. It's the scene that lands hardest.
+@ sa2/sa2.romance [sa2.romance]
+= …… うん 。 {今|いま} の は 、 {台本|だいほん} に {書|か}かない 。 {二人|ふたり} だけ の {場面|ばめん} 。 || …Mm. That one's not going in the script. A scene just for the two of us.
+> …… うん 。 {今|いま} の は 、 {台本|だいほん} に {書|か}かへん 。 {二人|ふたり} だけ の {場面|ばめん} や 。 || …Mm. That one's not going in the script. A scene just for the two of us.
+@ sa2/sa2.romance [sa2.romance]
+= {相方|あいかた} は {並|なら}んで {立|た}つ もの よ 。 {舞台|ぶたい} でも 、 {道|みち} でも 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に ね 。 || Partners stand side by side. On stage, and on the road. …All the way, together.
+> {相方|あいかた} は {並|なら}んで {立|た}つ もん や 。 {舞台|ぶたい} でも 、 {道|みち} でも 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に な 。 || Partners stand side by side. On stage, and on the road. …All the way, together.
+`, 'sa2');
+
+
 /* ==== src/content/dialect/kansai_99_yn.js ==== */
 /* Suzu's Kansai-ben: Steamhollow, Chapter 11 of a twelve-chapter journey (expansion P13). The call, the inns and baths,
    * the town, the vents and the Kettle, the mediation, her crossroads with the troupe, the night apart, the books shown
@@ -175817,7 +175961,9 @@ nao: {明日|あした} は 、 ツル の {所|ところ} へ {行|い}こう �
 nao: それ に 、 {五日|いつか} に {一度|いちど} は {潮硝子|しおがらす} {回|まわ}り の {配達|はいたつ} が ある 。 {暇|ひま} なら 、 {荷物|にもつ} を {半分|はんぶん} {持|も}て 。 || And every fifth day there's the Saltglass round. If you're free, carry half the parcels.
 
 @scene end.nao.c
+?(ed>=2) !call sa2.end_nao
 narr: ナオ は {鞄|かばん} を {肩|かた} に {掛|か}け{直|なお}し 、 {癖|くせ} で {橋|はし} の {両端|りょうはし} を {確|たし}かめた 。 それから 、 {少|すこ}し {笑|わら}った 。 || Nao shoulders the satchel again and, out of habit, checks both ends of the bridge. Then gives a small laugh.
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.nao
 !hook pages_end_done
 
@@ -175857,7 +176003,9 @@ mio: ツル さん が {灯|あか}り{堂|どう} で {何|なに}か {見|み}
 mio: それ から 、 {約束|やくそく} を {一|ひと}つ 。 {疲|つか}れたら 、 {先|さき} に {言|い}う 。 わたし も 、 あなた も 。 || And one promise. Whoever gets tired says so first. Me, and you.
 
 @scene end.mio.c
+?(ed>=2) !call sa2.end_mio
 narr: ミオ は {戸口|とぐち} の {札|ふだ} を 、 {指|ゆび} で {少|すこ}し だけ {直|なお}した 。 もう {十分|じゅうぶん} まっすぐ だった のに 。 || Mio straightens the sign on the door by a hair with one finger. It was already perfectly straight.
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.mio
 !hook pages_end_done
 
@@ -175897,8 +176045,10 @@ ren: ツル さん が 、 {何|なに}か {見|み}せたい もの が ある 
 ren: {朝|あさ} の {灯|ひ} の {見回|みまわ}り に も 、 {付|つ}き{合|あ}って ください 。 {地図|ちず} を {持|も}って くれれば 、 {昼|ひる} まで に は {帰|かえ}れます 。 || And come on the morning lamp rounds with me. If you carry the map, we will be back by noon.
 
 @scene end.ren.c
+?(ed>=2) !call sa2.end_ren
 narr: レン は {磨|みが}き{終|お}えた {二|ふた}つ の {灯|ひ} に {火|ひ} を {入|い}れ 、 {灯|あか}り{堂|どう} の {戸口|とぐち} の {両側|りょうがわ} に {一|ひと}つ ずつ {置|お}いた 。 || Ren lights the two polished lamps and sets one on each side of the Lantern Hall door.
 ren: {一|ひと}つ は あなた の {分|ぶん} です 。 {遅|おそ}く {帰|かえ}って きて も 、 {見|み}える よう に 。 || One of them is yours. So you can see it, even if you come home late.
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.ren
 !hook pages_end_done
 
@@ -175940,7 +176090,9 @@ suzu[closed]: …… {主役|しゅやく} って {書|か}いた けど 、 あ
 suzu: {次|つぎ} の {幕|まく} は 、 ツル さん の {灯|あか}り{堂|どう} から {始|はじ}まる らしい よ 。 それ と 、 {雨|あめ} の {日|ひ} は ハナ の {茶屋|ちゃや} で {小|ちい}さな {芝居|しばい} 。 あなた は {見|み}てる だけ で いい 。 || The next act starts at Tsuru's Lantern Hall, apparently. And on rainy days, a little play at Hana's teahouse. You only have to watch.
 
 @scene end.suzu.c
+?(ed>=2) !call sa2.end_suzu
 narr: スズ は {帳簿|ちょうぼ} を {開|ひら}いて 、 {最後|さいご} の {頁|ページ} に {一行|いちぎょう} {書|か}き{足|た}した 。 「 {預|あず}け{物|もの} 、 リボン {一本|いっぽん} 。 {返却|へんきゃく} 、 {次|つぎ} の {幕|まく} 。 {必|かなら}ず 。 」 || Suzu opens her ledger and adds a line on the last page: "Left in safekeeping: one ribbon. To be returned: next act. Without fail."
+?(ed>=2&bond>=trusted) !call sa2.romance
 !call end.pet.suzu
 !hook pages_end_done
 
@@ -181405,41 +181557,317 @@ var RB = (globalThis.RB = globalThis.RB || {});
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
+  // P14 (10_STORY.md §9a, sealed S13): each companion has unfinished work where the ending left them, so cannot come;
+  // the lanterns brighten and the road folds back to the morning in Reedwake; goodbye for now, never forever; and the
+  // memories (what you learned, your stars, the illustrations) come with you. A short solo version for a journey ended
+  // before a companion was chosen.
   C.ngFarewell = {
     nao: [
       { who: 'nao', jp: 'また {最初|さいしょ} から か 。 …… {悪|わる}く ない 。', en: 'From the beginning again, huh. …Not bad.' },
+      { who: 'nao', jp: '{俺|おれ} は 、 {一緒|いっしょ} に は {行|い}けない 。 {鞄|かばん} に 、 まだ {届|とど}けて ない {手紙|てがみ} が ある 。 {書|か}き{直|なお}す {宛名|あてな} も 。', en: 'I can\'t come with you. There are letters in the satchel I haven\'t delivered yet. Addresses to rewrite, too.' },
       { who: 'nao', jp: '{道|みち} は {覚|おぼ}えて いる だろう 。 {言葉|ことば} も な 。', en: 'You remember the road. The words, too.' },
-      { who: 'nao', jp: '{向|む}こう で も 、 ちゃんと {届|とど}けろ よ 。 {自分|じぶん} の {名前|なまえ} を 。', en: 'Over there, deliver it properly. Your own name.' },
+      { who: 'nao', jp: '…… {泣|な}く な よ 。 {俺|おれ} も {泣|な}かない 。 また な 。 {向|む}こう で も 、 ちゃんと {届|とど}けろ よ 。 {自分|じぶん} の {名前|なまえ} を 。', en: '…Don\'t cry. I won\'t either. See you. Over there, deliver it properly. Your own name.' },
     ],
     mio: [
       { who: 'mio', jp: '{行|い}って しまう の ね 。', en: 'So you\'re going.' },
+      { who: 'mio', jp: '{私|わたし} は {一緒|いっしょ} に {行|い}けない の 。 {棚|たな} に 、 まだ {札|ふだ} の ない {瓶|びん} が ある し 、 {断|ことわ}り{方|かた} の {練習|れんしゅう} も {途中|とちゅう} だ から 。', en: 'I can\'t come with you. There are still jars on my shelves without labels, and I\'m only halfway through learning to say no.' },
       { who: 'mio', jp: '{大丈夫|だいじょうぶ} 。 {覚|おぼ}えた こと は 、 {消|き}えない から 。', en: 'It\'s all right. What you learned won\'t fade.' },
-      { who: 'mio', jp: '…… また 、 どこ か の {道|みち} で 。', en: '…Until another road, somewhere.' },
+      { who: 'mio', jp: '…… {泣|な}いて ない わ よ 。 {風|かぜ} の せい 。 …… また 、 どこ か の {道|みち} で 。', en: '…I\'m not crying. It\'s the wind. …Until another road, somewhere.' },
     ],
     ren: [
       { who: 'ren', jp: '{新|あたら}しい ページ を {開|ひら}く の です ね 。', en: 'You\'re opening a new page, then.' },
+      { who: 'ren', jp: 'わたし は 、 ここ に {残|のこ}ります 。 {名前|なまえ} を {呼|よ}び{戻|もど}す {灯|ひ} が 、 まだ たくさん あります 。 {師匠|ししょう} の {教|おし}え も 、 {一晩|ひとばん} に {一|ひと}つ ずつ 、 {誰|だれ} か に {伝|つた}えたい 。', en: 'I\'ll stay here. There are still many lamps whose names need calling back. And my teacher\'s sayings: I\'d like to pass them on to someone, one a night.' },
       { who: 'ren', jp: '{前|まえ} の ページ は {消|き}えません 。 {紙|かみ} の {下|した} に 、 ちゃんと {残|のこ}って います 。', en: 'The pages before don\'t disappear. They stay, under the paper.' },
-      { who: 'ren', jp: 'どうか 、 お{元気|げんき} で 。', en: 'Please, take care.' },
+      { who: 'ren', jp: '…… {迷|まよ}わない で ください ね 。 わたし が {言|い}う の も {何|なん} です が 。 どうか 、 お{元気|げんき} で 。 また 、 お{会|あ}い しましょう 。', en: '…Don\'t get lost, all right? Coming from me, I know. Please, take care. Let\'s meet again.' },
     ],
     suzu: [
       { who: 'suzu', jp: 'もう {次|つぎ} の {幕|まく} ？', en: 'The next act, already?' },
-      { who: 'suzu', jp: '…… いい わ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}して あげる 。', en: '…All right. I\'ll send you off with applause.' },
-      { who: 'suzu', jp: '{次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あなた よ 。', en: 'On the next stage too, the lead is you.' },
+      { who: 'suzu', jp: '{私|わたし} は {行|い}けない わ 。 {芝居|しばい} の {台本|だいほん} が 、 まだ {書|か}き{終|お}わって ない し 、 {一座|いちざ} の {初日|しょにち} も {近|ちか}い の 。', en: 'I can\'t come. The script still isn\'t finished, and the troupe\'s opening night is close.' },
+      { who: 'suzu', jp: '…… いい わ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}して あげる 。 {泣|な}く の は 、 {幕|まく} が {下|お}りて から に する 。', en: '…All right. I\'ll send you off with applause. I\'ll save the crying for after the curtain.' },
+      { who: 'suzu', jp: '{次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あなた よ 。 …… また ね 、 {相方|あいかた} 。', en: 'On the next stage too, the lead is you. …See you, partner.' },
+    ],
+    solo: [
+      { who: 'narr', jp: '{遠|とお}く で 、 {誰|だれ} か が {手|て} を {振|ふ}った {気|き} が した 。', en: 'Far off, someone seems to wave.' },
     ],
   };
-  C.ngFarewellEnd = { who: 'narr', jp: '{新|あたら}しい {旅|たび} が 、 {始|はじ}まる 。', en: 'A new journey begins.' };
+  C.ngFarewellEnd = [
+    { who: 'narr', jp: '{道|みち} の {灯|ひ} が 、 {一|ひと}つ ずつ {明|あか}るく なる 。 {道|みち} が {後|うし}ろ へ {折|お}り{返|かえ}して 、 {葦|あし}ノ{瀬|せ} に {着|つ}いた {朝|あさ} へ {続|つづ}いて いく 。', en: 'The lanterns along the road brighten one by one. The road folds back on itself, to the morning you first came to Reedwake.' },
+    { who: 'narr', jp: '{覚|おぼ}えた {言葉|ことば} 、 {星|ほし} 、 {見|み}た {絵|え} は 、 {一緒|いっしょ} に {持|も}って {行|い}ける 。', en: 'The words you learned, your stars and the illustrations you saw: they come with you.' },
+    { who: 'narr', jp: '{新|あたら}しい {旅|たび} が 、 {始|はじ}まる 。', en: 'A new journey begins.' },
+  ];
   if (RB.dialect && RB.dialect.add) RB.dialect.add('kansai', `
-@ records/10_ngplus:31 [ngplus.farewell]
+@ records/10_ngplus [ngplus.farewell]
 = もう {次|つぎ} の {幕|まく} ？ || The next act, already?
 > もう {次|つぎ} の {幕|まく} なん ？ || The next act, already?
-@ records/10_ngplus:32 [ngplus.farewell]
-= …… いい わ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}して あげる 。 || …All right. I'll send you off with applause.
-> …… ええ よ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}したる 。 || …All right. I'll send you off with applause.
-@ records/10_ngplus:33 [ngplus.farewell]
-= {次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あなた よ 。 || On the next stage too, the lead is you.
-> {次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あんた や で 。 || On the next stage too, the lead's you.
+@ records/10_ngplus [ngplus.farewell]
+= {私|わたし} は {行|い}けない わ 。 {芝居|しばい} の {台本|だいほん} が 、 まだ {書|か}き{終|お}わって ない し 、 {一座|いちざ} の {初日|しょにち} も {近|ちか}い の 。 || I can't come. The script still isn't finished, and the troupe's opening night is close.
+> {私|わたし} は {行|い}かれへん わ 。 {芝居|しばい} の {台本|だいほん} が 、 まだ {書|か}き{終|お}わって へん し 、 {一座|いちざ} の {初日|しょにち} も {近|ちか}い ねん 。 || I can't come. The script still isn't finished, and the troupe's opening night is close.
+@ records/10_ngplus [ngplus.farewell]
+= …… いい わ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}して あげる 。 {泣|な}く の は 、 {幕|まく} が {下|お}りて から に する 。 || …All right. I'll send you off with applause. I'll save the crying for after the curtain.
+> …… ええ よ 。 {拍手|はくしゅ} で {送|おく}り{出|だ}したる 。 {泣|な}く の は 、 {幕|まく} が {下|お}りて から に する わ 。 || …All right. I'll send you off with applause. I'll save the crying for after the curtain.
+@ records/10_ngplus [ngplus.farewell]
+= {次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あなた よ 。 …… また ね 、 {相方|あいかた} 。 || On the next stage too, the lead is you. …See you, partner.
+> {次|つぎ} の {舞台|ぶたい} で も 、 {主役|しゅやく} は あんた や で 。 …… ほな また な 、 {相方|あいかた} 。 || On the next stage too, the lead's you. …See you, partner.
 `);
 })(RB.content);
+
+
+/* ==== src/content/sa2/00_lex.js ==== */
+/* The last chapter in a twelve-chapter journey (expansion P14): the words its new lines use, and the look-alike
+ * misreadings of the companions' names in the name-calling step (not words). Format: w|r|pos|lv|meaning|note. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.lex.add(RB.lex.parseTable(`
+転送先|てんそうさき|n|A|a forwarding address
+半歩|はんぽ|n|I|half a step
+キス|キス|vs|I|a kiss
+宛先|あてさき|n|I|the address (where a letter is going)
+欄|らん|n|I|a space or box on a form (for writing in)
+# ---- look-alike misreadings in the name-calling step (not words) ---------------------------------------------------
+メオ|メオ|exp|F|(not a word: ナオ misread, メ for ナ)
+ナホ|ナホ|exp|F|(not a word: ナオ misread, ホ for オ)
+ナヲ|ナヲ|exp|I|(not a word: ナオ written with ヲ)
+ノオ|ノオ|exp|I|(not a word: ナオ misread, ノ for ナ)
+シオ|シオ|exp|F|(not a word as a name here: ミオ misread, シ for ミ)
+ミヲ|ミヲ|exp|F|(not a word: ミオ written with ヲ)
+ミォ|ミォ|exp|I|(not a word: ミオ with a small ォ)
+ニオ|ニオ|exp|I|(not a word: ミオ misread, ニ for ミ)
+レソ|レソ|exp|F|(not a word: レン misread, ソ for ン)
+しン|しン|exp|F|(not a word: レン misread, hiragana し for レ)
+ソン|ソン|exp|I|(not a word: レン misread, ソ for レ)
+レシ|レシ|exp|I|(not a word: レン misread, シ for ン)
+ヌズ|ヌズ|exp|F|(not a word: スズ misread, ヌ for ス)
+スヅ|スヅ|exp|F|(not a word: スズ written with ヅ)
+ヌス|ヌス|exp|I|(not a word: スズ misread)
+ズス|ズス|exp|I|(not a word: スズ with its sounds swapped)
+`));
+
+
+/* ==== src/content/sa2/10_approach.js ==== */
+/* The last chapter's road in a twelve-chapter journey (expansion P14; docs/future/work/P14_INTEGRATION.md; plan
+ * 10_STORY.md §6a, sealed S15): the land feels the Hush more heavily near its source. Presentation and one short scene
+ * only; the canon events of the chapter are unchanged, and six-chapter journeys see nothing new.
+ *
+ *  - colour drains map by map (`ambient.drain`, the renderer's final grade: src/engine/60_render.js), from the Archive
+ *    road to the Heart; the Last Lamp Hut keeps its warmth; once the Hush is settled the colour is back;
+ *  - lanterns' name slips peel off and drift uphill on the road and at the camp (weather `names`);
+ *  - the score thins (src/audio/38z_songs_sa2.js): the Archive road's tune with its ensemble taken away, then at the gate
+ *    and in the Reading Room a drone with the road motif under it; inside, the Archive's own themes as always;
+ *  - at the gate, for a few lines, the companion's voice is hushed, and comes back when you call their name
+ *    (sa2.hushed; never permanent, nobody harmed, no separation). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const BEFORE = 'ed>=2&!sa_hush_down';
+  const on = () => { const s = RB.game && RB.game.s; return !!(s && RB.state.test(s, BEFORE)); };
+  // the map's own ambience, read through: drained (and its weather replaced) only before the Hush is settled
+  function drain(id, level, weather) {
+    const m = C.maps[id];
+    if (!m) return;
+    const base = m.ambient || {};
+    m.ambient = {
+      get weather() { return on() && weather ? weather : base.weather; },
+      get tint() { return base.tint; },
+      get dark() { return base.dark; },
+      get darkCol() { return base.darkCol; },
+      get playerLight() { return base.playerLight; },
+      get sea() { return base.sea; },
+      get drain() { return on() ? level : 0; },
+    };
+  }
+  // the road up from the valley, the camp, then the Archive room by room (the hut stays warm)
+  drain('sa.road', 0.2, 'names');
+  drain('sa.camp', 0.3, 'names');
+  drain('sa.gate', 0.45);
+  drain('sa.reading', 0.55);
+  drain('sa.stacks', 0.65);
+  drain('sa.conduits', 0.72);
+  drain('sa.memories', 0.6);
+  drain('sa.study', 0.78);
+  drain('sa.heart', 0.85);
+  C.sa2Drain = { 'sa.road': 0.2, 'sa.camp': 0.3, 'sa.gate': 0.45, 'sa.reading': 0.55, 'sa.stacks': 0.65, 'sa.conduits': 0.72, 'sa.memories': 0.6, 'sa.study': 0.78, 'sa.heart': 0.85 };
+
+  // the score, thinning
+  const music = (id, song, cond) => { const m = C.maps[id]; if (!m) return; const cur = Array.isArray(m.music) ? m.music : m.music ? [{ id: m.music }] : []; m.music = [{ if: cond, id: song }].concat(cur); };
+  music('sa.road', 'sa_thin', BEFORE + '&!sa_descent');
+  music('sa.gate', 'sa_drone', BEFORE);
+  music('sa.reading', 'sa_drone', BEFORE);
+
+  // the hushed voice, at the gate, right after its first sight (with a companion; never while they are away)
+  const gate = C.maps['sa.gate'];
+  if (gate) gate.onEnter = (gate.onEnter || []).concat([{ scene: 'sa2.hushed', if: BEFORE + '&seen.sa.gate_first&!sa2_voice_back&comp' }]);
+
+  // calling the companion back by name: a reading step, their name among look-alikes (F and E in kana with the
+  // English; I and A with the near ones closer)
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const NAME = {
+    nao: ['ナオ', ['メオ', 'ナホ'], ['ナヲ', 'ノオ']],
+    mio: ['ミオ', ['シオ', 'ミヲ'], ['ミォ', 'ニオ']],
+    ren: ['レン', ['レソ', 'しン'], ['ソン', 'レシ']],
+    suzu: ['スズ', ['ヌズ', 'スヅ'], ['ヌス', 'ズス']],
+  };
+  for (const [who, [ok, low, high]] of Object.entries(NAME)) {
+    const item = 'c:sa2_name_' + who;
+    const opts = (ws, why) => [{ jp: ok, ok: true }].concat(ws.map((w) => ({ jp: w, ok: false, why: { en: why } })));
+    const prompt = { en: 'Call their name. Which is it?' };
+    C.challenges['sa2.name_' + who] = { title: T('{名前|なまえ} を {呼|よ}ぶ', 'Calling their name'), tiers: {
+      F: [ch({ item, prompt, options: opts(low.slice(0, 1), 'A look-alike: look at each stroke.') })],
+      E: [ch({ item, prompt, options: opts(low, 'A look-alike: look at each stroke.') })],
+      I: [ch({ item, prompt, options: opts(high, 'Close, but not their name.') })],
+      A: [ch({ item, prompt, options: opts(low.concat(high).slice(0, 3), 'Close, but not their name.') })],
+    } };
+  }
+})(RB.content);
+
+
+/* ==== src/content/sa2/20_scenes.js ==== */
+/* The last chapter in a twelve-chapter journey (expansion P14; docs/future/work/P14_INTEGRATION.md): the hushed voice at
+ * the Archive's gate (10_STORY.md §6a, sealed S15), each companion's second arc reaching its ending at the bridge
+ * (14_COMPANIONS.md §2 step 7, sealed S14), and the ending's romance moment (10_STORY.md §7a; C-63, C-67).
+ *
+ * The arcs' endings are called from inside the companion's ending (src/content/pages/20_ending.js, end.<comp>.c), only
+ * in a twelve-chapter journey; what each says depends on what the journey really holds (the crossroads kept or not).
+ *   Nao   a forwarding address, written for the first time; you choose where it is.
+ *   Mio   her shelves' honest labels, and the one jar with none, for whatever she hasn't decided yet.
+ *   Ren   the answer to Hisae: a keeper who walks the road, as the order once did.
+ *   Suzu  her play's opening night, and the troupe that will fill the seats.
+ * The romance moment: the player's choice, holding hands or a kiss, or standing together as the closest of friends;
+ * the companion's yes in their own voice; Bond the same either way; offered when the bond is close (trusted or more).
+ * Suzu's lines have Kansai versions (src/content/dialect/kansai_99_sa2.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.script.add(`
+@scene sa2.hushed
+# At the gate, near the Hush's source: the wind stops, the water goes silent, and for a few lines the companion's voice
+# is gone. Their mouth moves; nothing comes. You call their name, and it comes back. Never permanent; nobody is hurt.
+!set sa2_hushed
+!music -
+narr: {風|かぜ} が {止|や}んだ 。 {水|みず} の {音|おと} も 、 {自分|じぶん} の {足音|あしおと} も 、 {聞|き}こえない 。 || The wind drops. The water, your own footsteps: you can hear nothing.
+?(comp=nao) !gesture comp aside
+?(comp=mio) !gesture comp lowered
+?(comp=ren) !gesture comp lowered
+?(comp=suzu) !gesture comp aside
+comp: …… || …
+?(comp=nao) narr: ナオ の {口|くち} が {動|うご}いた 。 {声|こえ} が 、 {出|で}ない 。 ナオ は {喉|のど} に {手|て} を {当|あ}てた 。 || Nao's mouth moves. No voice comes. Nao puts a hand to their throat.
+?(comp=mio) narr: ミオ の {口|くち} が {動|うご}いた 。 {声|こえ} が 、 {出|で}ない 。 ミオ は {胸|むね} に {手|て} を {当|あ}てた 。 || Mio's mouth moves. No voice comes. Mio puts a hand to her chest.
+?(comp=ren) narr: レン の {口|くち} が {動|うご}いた 。 {声|こえ} が 、 {出|で}ない 。 レン は {灯|ひ} を {強|つよ}く {握|にぎ}った 。 || Ren's mouth moves. No voice comes. Ren grips the lamp tight.
+?(comp=suzu) narr: スズ の {口|くち} が {動|うご}いた 。 {声|こえ} が 、 {出|で}ない 。 スズ は {笑|わら}おう と して 、 {途中|とちゅう} で やめた 。 || Suzu's mouth moves. No voice comes. She tries to laugh, and stops halfway.
+narr: {声|こえ} が 、 {名前|なまえ} の よう に {取|と}られて しまった 。 …… {名前|なまえ} を {呼|よ}べば 、 {届|とど}く かも しれない 。 || The voice has been taken, the way names are. …If you call their name, it might reach.
+:call
+?(comp=nao) !challenge sa2.name_nao
+?(comp=mio) !challenge sa2.name_mio
+?(comp=ren) !challenge sa2.name_ren
+?(comp=suzu) !challenge sa2.name_suzu
+!if var._res=0 -> again
+!goto back
+:again
+narr: もう {一度|いちど} 。 {名前|なまえ} は 、 {一|ひと}つ だけ 。 || Once more. There is only one name.
+!goto call
+:back
+!set sa2_voice_back
+narr: {名前|なまえ} を {呼|よ}んだ 。 {自分|じぶん} の {声|こえ} が 、 {聞|き}こえた 。 || You call their name. You can hear your own voice.
+?(comp=nao) nao[closed]: …… {聞|き}こえた 。 {名前|なまえ} だけ は 、 ちゃんと {届|とど}いた 。 …… {一番|いちばん} {大事|だいじ} な {郵便|ゆうびん} だ な 。 || …I heard it. My name, at least, got through. …The most important post there is.
+?(comp=mio) mio[closed]: …… {聞|き}こえました 。 {名前|なまえ} を {呼|よ}んで もらう と 、 {声|こえ} って {戻|もど}る ん です ね 。 {薬|くすり} に は 、 できない こと です 。 || …I heard it. When someone calls your name, your voice comes back. That's something no medicine can do.
+?(comp=ren) ren[closed]: …… {名前|なまえ} を {呼|よ}ばれました 。 {灯|ひ} と {同|おな}じ です 。 {名前|なまえ} を {呼|よ}べば 、 {灯|ひ} は {応|こた}える 。 …… ありがとう ございます 。 || …You called my name. It's the same as a lamp: call its name, and it answers. …Thank you.
+?(comp=suzu) suzu[surprise]: …… {出|で}た ！ {声|こえ} 、 {出|で}た ！ …… もう 、 {台詞|せりふ} が {飛|と}んだ {役者|やくしゃ} の {気分|きぶん} 。 {二度|にど} と ごめん よ 。 || …It's back! My voice, it's back! …That felt like an actor whose lines have gone. Never again, thank you.
+narr: {遠|とお}く で 、 {水|みず} の {音|おと} が {戻|もど}って きた 。 || Far off, the sound of water comes back.
+!music sa_drone
+!journal {書庫|しょこ} の {門|もん} で 、 {相棒|あいぼう} の {声|こえ} が {一度|いちど} {消|き}えた 。 {名前|なまえ} を {呼|よ}んだら 、 {戻|もど}った 。 || At the Archive's gate your companion's voice was gone for a moment. When you called their name, it came back.
+
+@scene sa2.end_nao
+# Nao's ending (S14): a forwarding address, the first they have ever written; the player chooses where it is.
+?(comp=nao) !gesture comp present pc prop=tags hold
+nao: …… それ と 、 もう {一枚|いちまい} 。 || …And one more.
+narr: ナオ は {新|あたら}しい ラベル に 、 {自分|じぶん} の {名前|なまえ} を {書|か}いた 。 {宛先|あてさき} の {欄|らん} は 、 {空|あ}いて いる 。 || Nao writes their own name on a fresh label. The space for the address is empty.
+nao: {転送先|てんそうさき} だ 。 {手紙|てがみ} が {俺|おれ} を {追|お}いかけて {来|こ}られる よう に 。 …… {今|いま} まで 、 {一度|いちど} も {書|か}いた こと が ない 。 || A forwarding address. So letters can catch up with me. …I've never once written one.
+?(cr_nao_crossroads) nao: サキチ さん に {言|い}われた 。 {届|とど}く {場所|ばしょ} が ない と 、 {待|ま}つ {方|ほう} が {疲|つか}れる って 。 || Sakichi told me. With nowhere for letters to reach, it's the one waiting who wears out.
+nao: どこ に する か 、 $name が {決|き}めて くれ 。 || You decide where.
+!choice
+* {葦|あし}ノ{瀬|せ} の {灯|あか}り{堂|どう} || The Lantern Hall in Reedwake -> hall
+* {霧下|きりした} の {宿|しゅく} || The station at Kirishita -> station
+* $name の {所|ところ} || Wherever you are -> you
+:hall
+!hook co_note nao_address hall
+nao: {灯|あか}り{堂|どう} か 。 ツル さん なら 、 {手紙|てがみ} を なくさない 。 …… {毎朝|まいあさ} 、 {読|よ}み{上|あ}げられそう だ けど な 。 || The Lantern Hall. Tsuru won't lose a letter. …Though she'll probably read them out every morning.
+!goto done
+:station
+!hook co_note nao_address station
+nao: {霧下|きりした} か 。 …… サキチ さん の {棚|たな} に 、 また {俺|おれ} の {段|だん} が できる な 。 {今度|こんど} は 、 ちゃんと {取|と}り に {行|い}く 。 || Kirishita. …There'll be a shelf for me at Sakichi's again. This time I'll actually go and collect them.
+!goto done
+:you
+!hook co_note nao_address you
+nao[shy]: …… $name の {所|ところ} 。 {住所|じゅうしょ} は 、 {書|か}かなくて いい な 。 {俺|おれ} が {知|し}ってる から 。 || …Wherever you are. No need to write the address. I know it.
+:done
+?(comp=nao) !gesture comp nod pc
+narr: ナオ は ラベル を 、 {鞄|かばん} の {内側|うちがわ} に {貼|は}った 。 || Nao sticks the label inside the satchel.
+nao[smile]: これ で 、 {俺|おれ} に も {届|とど}く 。 || Now things can reach me too.
+
+@scene sa2.end_mio
+# Mio's ending (S14): her own shelves, an honest label on every one; the one jar with no label, kept for whatever she
+# hasn't decided yet.
+narr: {棚|たな} の {札|ふだ} に は 、 {効|き}く こと と 、 {効|き}かない こと が 、 {両方|りょうほう} {書|か}いて ある 。 || Each label on the shelves says what the remedy does, and what it doesn't.
+?(yn_mio_back) mio: キクエ さん の {札|ふだ} の {真似|まね} です 。 …… {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかります 。 || I copied Kikue's labels. …Honest labels take a long time to write.
+?(!yn_mio_back) mio: {正直|しょうじき} な {札|ふだ} は 、 {書|か}く の に {時間|じかん} が かかります 。 でも 、 {嘘|うそ} の {札|ふだ} より 、 {夜|よる} よく {眠|ねむ}れます 。 || Honest labels take a long time to write. But I sleep better than I would with lying ones.
+?(comp=mio) !gesture comp point up
+narr: {棚|たな} の {一番|いちばん} {奥|おく} に 、 {札|ふだ} の ない {瓶|びん} が {一|ひと}つ ある 。 || At the very back of the shelf there is one jar with no label.
+mio: これ は 、 その まま 。 {決|き}めて いない こと の {場所|ばしょ} です 。 …… {中身|なかみ} は 、 だいぶ {減|へ}りました 。 || That one stays as it is. A place for what I haven't decided yet. …There's a lot less in it now.
+?(yn_mio_back) mio[smile]: {一番|いちばん} {古|ふる}い {紙|かみ} は 、 もう {入|はい}って いません 。 {返事|へんじ} を しました から 。 || The oldest scrap isn't in there any more. I answered it.
+?(!yn_mio_back) mio[smile]: いつか 、 {全部|ぜんぶ} に {返事|へんじ} を します 。 {急|いそ}がず に 。 || One day I'll answer all of them. Without hurrying.
+
+@scene sa2.end_ren
+# Ren's ending (S14): the answer to Hisae, a keeper who walks the road as the order once did; the relay will carry it.
+?(comp=ren) !gesture comp present pc
+narr: レン は {懐|ふところ} から 、 {封|ふう} を した {手紙|てがみ} を {出|だ}した 。 {宛名|あてな} は 「 {灯守|ひもり} の {道|みち} 、 ヒサエ {様|さま} 」 。 || Ren takes a sealed letter from inside their robe. It is addressed: "The Keepers' Road, to Hisae."
+?(kr_ren_crossroads) ren: ヒサエ さん へ の {返事|へんじ} です 。 {灯守|ひもり} の {道|みち} の {番|ばん} に は 、 なりません 。 …… でも 、 {道|みち} を {歩|ある}く {灯守|ひもり} に なります 。 {昔|むかし} の {灯守|ひもり} が 、 そう して いた よう に 。 || My answer to Hisae. I won't stay as the keeper of the Keepers' Road. …But I'll be a keeper who walks the road, the way the keepers once did.
+?(!kr_ren_crossroads) ren: {灯守|ひもり} の {道|みち} の ヒサエ さん に 、 {手紙|てがみ} を {書|か}きました 。 {道|みち} を {歩|ある}く {灯守|ひもり} に なります 、 と 。 {昔|むかし} の {灯守|ひもり} が 、 そう して いた よう に 。 || I've written to Hisae on the Keepers' Road. That I'll be a keeper who walks the road, the way the keepers once did.
+ren: {継|つ}ぎ{飛脚|びきゃく} に {頼|たの}んで もらえます か 。 …… わたし が {持|も}って {行|い}く と 、 {迷|まよ}う ので 。 || Could you ask the relay to take it? …If I carry it myself, I'll get lost.
+?(comp=ren) !gesture comp handover pc
+?(comp=ren) !gesture pc receive comp
+narr: {手紙|てがみ} は 、 {灯|ひ} の {温|ぬく}もり で {少|すこ}し {温|あたた}かかった 。 || The letter is a little warm from the lamp.
+
+@scene sa2.end_suzu
+# Suzu's ending (S14): the play's opening night in Manybridge's Playhouse Row; the troupe will fill the seats; her
+# partner is you.
+?(yn_suzu_books) suzu: コウメ から {手紙|てがみ} 。 {初日|しょにち} は {八百橋|やおばし} の {芝居町|しばいまち} で やれ って 。 {一座|いちざ} が 、 {客席|きゃくせき} を {埋|う}めて くれる って 。 || A letter from Koume. She says to open in Manybridge's Playhouse Row. The troupe will fill the seats.
+?(!yn_suzu_books) suzu: {初日|しょにち} は 、 {八百橋|やおばし} の {芝居町|しばいまち} が いい な 。 あそこ の {客|きゃく} は 、 {笑|わら}い{方|かた} を {知|し}ってる 。 || Opening night: Manybridge's Playhouse Row, I think. The audience there knows how to laugh.
+?(comp=suzu) !gesture comp point pc
+suzu[laugh]: もちろん 、 {相方|あいかた} は あなた よ 。 {台詞|せりふ} は 、 まだ {一行|いちぎょう} も ない けど 。 || Your part's my partner, of course. Not that you've got a single line yet.
+
+@scene sa2.romance
+# The ending's romance moment (10_STORY §7a; C-63, C-67): offered when the bond is close; the player's choice, a hand
+# held or a kiss, or standing together as the closest of friends. The companion's yes in their own voice; nothing
+# explicit; Bond the same either way (nothing here awards it).
+narr: {最後|さいご} の {光|ひかり} が 、 {川|かわ} の {上|うえ} から {消|き}えて いく 。 {二人|ふたり} の {間|あいだ} は 、 {半歩|はんぽ} しか ない 。 || The last light is leaving the river. There is only half a step between the two of you.
+!choice
+* {手|て} を つなぐ || Hold hands -> hand
+* キス を する || A kiss -> kiss
+* {一番|いちばん} の {友|とも} と して 、 {隣|となり} に {立|た}つ || Stand side by side, as the closest of friends -> friend
+:hand
+!hook co_note end_romance hand
+?(comp=nao) nao[shy]: …… ああ 。 {離|はな}す な よ 。 {出口|でぐち} は 、 {確|たし}かめなくて いい 。 || …Yeah. Don't let go. No need to check the exits.
+?(comp=mio) mio[smile]: …… はい 。 {手|て} 、 {温|あたた}かい です ね 。 {今日|きょう} は 、 {薬|くすり} の {匂|にお}い が しない 。 || …Yes. Your hand's warm. And today it doesn't smell of medicine.
+?(comp=ren) ren[smile]: …… はい 。 {迷子|まいご} に ならない よう に 、 で は なくて 。 そう したい から です 。 || …Yes. Not so that I don't get lost. Because I want to.
+?(comp=suzu) suzu[shy]: …… うん 。 {台詞|せりふ} なし で いい 。 {一番|いちばん} {効|き}く {場面|ばめん} だ から 。 || …Mm. No lines needed. It's the scene that lands hardest.
+narr: {日|ひ} が {沈|しず}む まで 、 {二人|ふたり} は {手|て} を つないで いた 。 || You hold hands until the sun is down.
+!end
+:kiss
+!hook co_note end_romance kiss
+?(comp=nao) nao[shy]: …… {聞|き}く な よ 。 …… いい 。 || …Don't ask. …Yes.
+?(comp=mio) mio[shy]: …… はい 。 {私|わたし} も 、 そう したかった です 。 || …Yes. I wanted that too.
+?(comp=ren) ren[shy]: …… はい 。 {師匠|ししょう} の {教|おし}え に は 、 ない こと です けど 。 || …Yes. It isn't in any of my teacher's sayings, mind.
+?(comp=suzu) suzu[shy]: …… うん 。 {今|いま} の は 、 {台本|だいほん} に {書|か}かない 。 {二人|ふたり} だけ の {場面|ばめん} 。 || …Mm. That one's not going in the script. A scene just for the two of us.
+narr: {短|みじか}い キス 。 {川|かわ} の {音|おと} だけ が 、 {聞|き}いて いた 。 || A brief kiss. Only the river is listening.
+!end
+:friend
+!hook co_note end_romance friend
+?(comp=nao) nao[smile]: ああ 。 {隣|となり} が {一番|いちばん} {歩|ある}きやすい 。 {相棒|あいぼう} 。 || Yeah. Beside you is the easiest place to walk. Partner.
+?(comp=mio) mio[smile]: はい 。 {隣|となり} に いて くれる の が 、 {一番|いちばん} {安心|あんしん} します 。 || Yes. Having you beside me is what makes me feel safest.
+?(comp=ren) ren[smile]: {一番|いちばん} の {友|とも} 。 …… {灯|ひ} の {名前|なまえ} より 、 {大事|だいじ} に {覚|おぼ}えて おきます 。 || My closest friend. …I'll keep that more carefully than any lamp's name.
+?(comp=suzu) suzu[laugh]: {相方|あいかた} は {並|なら}んで {立|た}つ もの よ 。 {舞台|ぶたい} でも 、 {道|みち} でも 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に ね 。 || Partners stand side by side. On stage, and on the road. …All the way, together.
+narr: {二人|ふたり} は {並|なら}んで 、 {日|ひ} が {沈|しず}む の を {見|み}て いた 。 || Side by side, you watch the sun go down.
+`, 'sa2/scenes');
 
 
 /* ==== src/content/sb2/00_lex.js ==== */
@@ -186270,7 +186698,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'yn_divider', x: 32, y: 24, scene: 'yn.divider' },
       { p: 'lamppost', x: 24, y: 17 }, { p: 'lamppost', x: 32, y: 14 }, { p: 'lamppost', x: 18, y: 17 }, { p: 'lamppost', x: 2, y: 12 },
       steam(29, 6), steam(28, 22), steam(14, 24), steam(37, 24), steam(22, 4),
-      { p: 'stairs', x: 37, y: 26, scene: 'yn.vents_door' },
+      // the stone steps down behind the spring house: the grille's notice until Aki opens it, then a way down
+      { p: 'stairs', x: 37, y: 26, if: '!yn_vents_open', scene: 'yn.vents_door' },
+      { p: 'stairs', x: 37, y: 26, if: 'yn_vents_open' },
     ],
     npcs: [
       { id: 'mp_tokube', x: 11, y: 18, dir: 'up', if: '!yn_tokube_gone', talk: [{ if: 'yn_done', scene: 'yn.tokube_after' }, { if: 'yn_tokube_done', scene: 'yn.tokube_idle' }, { scene: 'yn.tokube' }] },
@@ -186281,6 +186711,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     exits: [
       { x: 19, y: 0, w: 2, h: 1, to: 'yn.upper', sp: 'from_lower', dir: 'up' },
       { x: 39, y: 15, w: 1, h: 2, to: 'yn.terraces', sp: 'from_lower', dir: 'right' },
+      { x: 37, y: 26, w: 1, h: 1, to: 'yn.vents1', sp: 'from_lower', dir: 'down', if: 'yn_vents_open' },
     ],
     triggers: [{ x: 25, y: 15, w: 1, h: 2, scene: 'yn.bridge_quarrel', if: 'yn_rooms_done&yn_shimo_heard&!yn_quarrel' }],
     onEnter: [{ scene: 'yn.lower_first', if: '!yn_lower_seen' }],
