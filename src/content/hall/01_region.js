@@ -36,6 +36,26 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w1);
 
+  // wing 2: a hill meadow in a sun-shower, the grass bright and wet, red torii, foxfire in the rain's shine
+  TL.PAL.hall_w2 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#6a9a52', '#7aac5e', '#58864a', '#8ebc6c'], dirt: ['#8a7458', '#9c8668', '#746048', '#ae987a'],
+    stone: ['#8a8a82', '#a2a29a', '#6e6e68'], water: ['#6a9ab4', '#7cacc4', '#a8cede', '#f0f6f8'],
+    wood: ['#a8382c', '#c04a36', '#82281e', '#d8684c'], leaf: ['#3e6a3a', '#4a7c44', '#5e9054', '#2e5230'],
+    flower: ['#f0c84a', '#f4f0e0', '#d84a3a', '#f0a8b8'], sky: '#c8dce8', dark: '#1a2420',
+  });
+  TL.addRamps(TL.PAL.hall_w2);
+
+  // wing 3: a mountain village in the last hour of the night, indigo going grey, dew on the grass, the temple's bell
+  // tower dark on the ridge and one lantern climbing to it
+  TL.PAL.hall_w3 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#3a4a5a', '#465868', '#2e3c4a', '#566a7a'], dirt: ['#5a5650', '#6c6860', '#4a4640', '#7e7a70'],
+    stone: ['#6a6e78', '#82868e', '#52565e'], water: ['#2e4458', '#3c566c', '#6a8aa0', '#c8d8e4'],
+    wood: ['#4a3a30', '#5c483a', '#382a22', '#76604c'], leaf: ['#26343e', '#2e3e4a', '#3a4c58', '#1c2830'],
+    flower: ['#d8c890', '#c8ccd8', '#a8584a', '#e0d8b0'], roof: ['#2a2a34', '#20202a', '#16161e', '#3e3e4a'],
+    sky: '#1a2230', dark: '#080a10',
+  });
+  TL.addRamps(TL.PAL.hall_w3);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -65,4 +85,57 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_lamp', { name: { en: 'The lamp', jp: '{灯籠|とうろう}' }, bodiless: true, voice: { pitch: 0.92 },
     look: { custom: 'spirit', col: '#e8c06a' },
     portrait: { skin: ['#f0dca8', '#d8c088'], hair: ['#8a6a3a', '#a07e4a', '#c89a5a'], cloth: ['#c8a050', '#a8843c', '#f0d890'], style: 'long', eyes: 'soft', acc: ['hood'], hoodCol: '#c8a050', bg: '#1a140c' } });
+
+  // ---- the tales' people: wing 2, The Fox's Wedding (foxes in human shape, as the old tales tell it) ----------------
+  // Kozue (she/her), the fox bride; Gin (he/him), the white fox who marries her; Toku (she/her), the old go-between;
+  // Konta (he/him), the bride's little brother; Sayo (she/her), the village girl who lent the bride her umbrella; a
+  // lantern-bearer and a porter (they/them).
+  ch('hall_kozue', { name: { en: 'Kozue', jp: 'コズエ' }, voice: { pitch: 1.1 },
+    look: { skin: 1, hair: 'long', hairColor: 3, cloth: ['#f4f0e6', '#dcd6c8', '#c8382c'], shape: 'robe', acc: ['hat'], hatCol: '#f4f0e6' },
+    portrait: { eyes: 'narrow', style: 'long', acc: ['hat'], hatCol: '#f4f0e6', bg: '#2a2018' } });
+  ch('hall_gin', { name: { en: 'Gin', jp: 'ギン' }, voice: { pitch: 0.94 },
+    look: { skin: 1, hair: 'short', hairColor: 6, cloth: ['#2a2a32', '#1e1e26', '#c8c8d0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'narrow', style: 'short', acc: [], bg: '#1c1c24' } });
+  ch('hall_toku', { name: { en: 'Toku', jp: 'トク' }, voice: { pitch: 0.8 },
+    look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#5a3a4a', '#462c3a', '#d8b878'], shape: 'robe', acc: ['cane'], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'bun', age: 'old', acc: [], bg: '#241a20' } });
+  ch('hall_konta', { name: { en: 'Konta', jp: 'コンタ' }, voice: { pitch: 1.36 }, size: 'child',
+    look: { skin: 2, hair: 'short', hairColor: 3, cloth: ['#c8783a', '#a8602c', '#f0e0c0'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'short', acc: [], bg: '#2a2014' } });
+  ch('hall_sayo', { name: { en: 'Sayo', jp: 'サヨ' }, voice: { pitch: 1.2 },
+    look: { skin: 2, hair: 'braid', hairColor: 1, cloth: ['#4a6a8a', '#3a5470', '#e8dcc0'], shape: 'apron', acc: [] },
+    portrait: { eyes: 'round', style: 'braid', collar: 'apron', bg: '#1e2a36' } });
+  ch('hall_bearer', { name: { en: 'The lantern-bearer', jp: '{提灯持|ちょうちんも}ち' }, voice: { pitch: 1.0 },
+    look: { skin: 2, hair: 'short', hairColor: 3, cloth: ['#e8e0d0', '#ccc4b2', '#c8382c'], shape: 'tunic', acc: ['lamp'] },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['lamp'], bg: '#2a2018' } });
+  ch('hall_porter', { name: { en: 'The porter', jp: '{荷物持|にもつも}ち' }, voice: { pitch: 0.9 },
+    look: { skin: 3, hair: 'short', hairColor: 3, cloth: ['#7a6a4a', '#625438', '#e0d4b8'], shape: 'tunic', acc: ['headband'], bandCol: '#e0d4b8' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#e0d4b8', bg: '#241e14' } });
+
+  // ---- the tales' people: wing 3, The Bell Before Dawn ---------------------------------------------------------------
+  // Jinbei (he/him), the old bell-ringer, ill in bed; Shino (she/her), his granddaughter, who rings the dawn bell for the
+  // first time; the temple's priest (he/him); Mataji (he/him), the night watchman with his clappers; Sukezō (he/him), a
+  // fisherman on his way down to the boats; Mame (she/her), a mother tanuki, and Kobu (they/them), her lost cub, both in
+  // human shape, as the old tales tell it.
+  ch('hall_jinbei', { name: { en: 'Jinbei', jp: 'ジンベエ' }, voice: { pitch: 0.76 },
+    look: { skin: 2, hair: 'short', hairColor: 6, cloth: ['#4a4a5a', '#3a3a48', '#d8d0c0'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'soft', style: 'short', age: 'old', acc: [], bg: '#161a24' } });
+  ch('hall_shino', { name: { en: 'Shino', jp: 'シノ' }, voice: { pitch: 1.18 },
+    look: { skin: 2, hair: 'braid', hairColor: 1, cloth: ['#3a5a7a', '#2c4660', '#e8dcc0'], shape: 'apron', acc: ['lamp'] },
+    portrait: { eyes: 'round', style: 'braid', collar: 'apron', acc: ['lamp'], bg: '#18202c' } });
+  ch('hall_osho', { name: { en: 'The priest', jp: '{和尚|おしょう}さん' }, voice: { pitch: 0.86 },
+    look: { skin: 2, hair: 'shaved', hairColor: 6, cloth: ['#2a2a2e', '#1e1e22', '#c8a050'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: [], bg: '#1a1a1e' } });
+  ch('hall_mataji', { name: { en: 'Mataji', jp: 'マタジ' }, voice: { pitch: 0.92 },
+    look: { skin: 3, hair: 'short', hairColor: 3, cloth: ['#5a4a3a', '#46382c', '#d8c8a0'], shape: 'tunic', acc: ['headband'], bandCol: '#d8c8a0' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#d8c8a0', bg: '#1e1a14' } });
+  ch('hall_sukezo', { name: { en: 'Sukezō', jp: 'スケゾウ' }, voice: { pitch: 0.88 },
+    look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#3a5a6a', '#2c4652', '#e0d4b8'], shape: 'tunic', acc: ['hat'], hatCol: '#a89060' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['hat'], hatCol: '#a89060', bg: '#14202a' } });
+  ch('hall_mame', { name: { en: 'Mame', jp: 'マメ' }, voice: { pitch: 1.02 },
+    look: { skin: 2, hair: 'bun', hairColor: 3, cloth: ['#7a5a3a', '#62482e', '#e8d8b8'], shape: 'robe', acc: ['hat'], hatCol: '#c8a868' },
+    portrait: { eyes: 'round', style: 'bun', acc: ['hat'], hatCol: '#c8a868', bg: '#221a12' } });
+  ch('hall_kobu', { name: { en: 'Kobu', jp: 'コブ' }, voice: { pitch: 1.4 }, size: 'child',
+    look: { skin: 2, hair: 'short', hairColor: 3, cloth: ['#8a6a44', '#705436', '#e8d8b8'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'short', acc: [], bg: '#221a12' } });
 })(RB.content);

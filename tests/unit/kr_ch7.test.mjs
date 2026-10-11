@@ -183,7 +183,9 @@ export default async (t) => {
   {
     const hall = C.maps['kr.hall'];
     t.ok(hall.exits.length === 1 && hall.exits[0].to === 'kr.ridge', 'the shuttered hall: no way in, only the way back to the ridge');
-    t.ok(cmds('kr.hall_door').every((c) => c.op === 'say'), 'its door only says it is shut ("the hundredth was never told"); the postgame opens it (P15)');
+    // (P15: with Tsuru's key ledger, after the story, the door opens into the Hall of a Hundred Tales)
+    const door = cmds('kr.hall_door');
+    t.ok(door.filter((c) => c.op === 'if').length === 1 && door.find((c) => c.op === 'if').args.join(' ').indexOf('hall_ledger') >= 0 && door.some((c) => c.op === 'call' && c.args[0] === 'hall.door_open') && door.filter((c) => !['say', 'if', 'end', 'label', 'call'].includes(c.op)).length === 0, 'its door only says it is shut ("the hundredth was never told") until the postgame\'s key ledger opens it (P15)');
     t.ok(ops('kr.subete').includes('set:mod_subete') && ops('kr.subete').includes('teach:mod_subete'), 'C-74: すべて, Protect covering both, taught in a story scene');
     t.ok(C.stamps['ch.kr'].stand === 'keepers' && test(camp({ flags: ['kr_done'] }), C.stamps['ch.kr'].when) && !test(camp({ edition: 1, flags: ['kr_done'] }), C.stamps['ch.kr'].when), 'the chapter stamp: twelve-chapter journeys, once the chapter is over, at the keepers\' stand');
     t.ok(['kr.shrine1', 'kr.shrine2', 'kr.shrine3'].every((id) => C.stamps[id]), 'the three shrine seals');

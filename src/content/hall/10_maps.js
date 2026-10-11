@@ -23,8 +23,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C, K) {
   'use strict';
   const T = (en, jp) => ({ en, jp });
-  const HALL = { region: 'hall', music: 'hall', edition: 2, noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Hall of a Hundred Tales' }, indoor: true };
-  const W1 = { region: 'hall_w1', music: 'hall_w1', edition: 2, noTravel: true, noCheckpoint: true, travelKind: 'dungeon', travelPlace: { en: 'the Hall of a Hundred Tales' }, expedition: 'hall_w1' };
+  // (on the route chart the Hall is a place of the Keepers' Road, above whose ridge it stands)
+  const HALL = { region: 'hall', music: 'hall', edition: 2, place: 'keepers', noTravel: true, travelKind: 'dungeon', travelPlace: { en: 'the Hall of a Hundred Tales' }, indoor: true };
+  const W1 = { region: 'hall_w1', music: 'hall_w1', edition: 2, place: 'keepers', noTravel: true, noCheckpoint: true, travelKind: 'dungeon', travelPlace: { en: 'the Hall of a Hundred Tales' }, expedition: 'hall_w1' };
   const lit = (x, y, cond, scene) => Object.assign({ p: 'kr_toro', x, y, light: 34, o: { lit: true } }, cond ? { if: cond } : {}, scene ? { scene } : {});
   // a trial's own lantern: dark until the trial is done
   const andon = (x, y, w, t) => [

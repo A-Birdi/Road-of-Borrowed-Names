@@ -98,7 +98,8 @@ RB.ui.dialogue = (function () {
   // a door); the rest are staging bugs. See tests/e2e/pursue.mjs.
   function auditSpeaker(line) {
     const who = line.who;
-    if (!who || who === 'narr' || who === 'pc' || !RB.render.worldVisible()) return;
+    // (a voice the scene declares off-screen, !speakerless, is meant: not reported)
+    if (!who || who === 'narr' || who === 'pc' || line.offscreen || !RB.render.worldVisible()) return;
     const W = RB.world.W;
     if (W.comp && (who === 'comp' || who === W.comp.id)) return;
     // present under any of their placements (hana_out is Hana)

@@ -1103,6 +1103,60 @@
   "jp": "{灯|ひ} の {辻|つじ}",
   "en": "The Lamp's Crossroads"
  },
+ "expedition:hall_w2#14wvvgh": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{日照|ひで}り{雨|あめ} の {野|の}",
+  "en": "The Sun-Shower Meadow"
+ },
+ "expedition:hall_w2#1ng2xlu": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{行列|ぎょうれつ} の {道|みち}",
+  "en": "The Procession Road"
+ },
+ "expedition:hall_w2#1cspr06": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{鳥居|とりい} の {下|した}",
+  "en": "Beneath the Torii"
+ },
+ "expedition:hall_w2#1qpi0se": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{狐|きつね} の {嫁入|よめい}り",
+  "en": "The Fox's Wedding"
+ },
+ "expedition:hall_w2#l18wca": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{誰|だれ} が {誰|だれ} に",
+  "en": "Who does what, from whom to whom: particles; giving, lending and borrowing."
+ },
+ "map:hall.w2f1#14wvvgh": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{日照|ひで}り{雨|あめ} の {野|の}",
+  "en": "The Sun-Shower Meadow"
+ },
+ "map:hall.w2f2#1ng2xlu": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{行列|ぎょうれつ} の {道|みち}",
+  "en": "The Procession Road"
+ },
+ "map:hall.w2f2#15yae7u": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{雨|あめ} の {中|なか} で 、 {青|あお}い {火|ひ} が {揺|ゆ}れて いる 。 {狐火|きつねび} だ 。",
+  "en": "A blue flame sways in the rain. Foxfire."
+ },
+ "map:hall.w2f3#1cspr06": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 2 (The Fox's Wedding): self-reviewed against the lexicon, grammar notes (に/から with もらう and 借りる, あげる/くれる by direction, ～てあげる/～てくれる/～てもらう), the counterexample cards checked one wrong card per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: nested quotation inside narration (「…「…」…」 → 『』 within); Ren's plain 狐らしい (→ 狐らしいですね, her polite register); 傘が貸し、栗が返し (→ 傘が貸しで、栗がお返し); 借りた物が返り (→ 戻り); 棒引き (writes a debt off, not repays it → 全部返した); the procession's English pronouns per person (Toku and Kozue she, Gin he, the bearer and porter they).",
+  "jp": "{鳥居|とりい} の {下|した}",
+  "en": "Beneath the Torii"
+ },
  "encounter:xp.cellars_sluice#1tepwnb": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",

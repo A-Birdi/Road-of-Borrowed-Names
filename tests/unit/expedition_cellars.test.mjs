@@ -31,7 +31,8 @@ export default async (t) => {
   for (const sc of ['xp.cellars_hatch', 'xp.cellars_board', 'xp.cellars_bench', 'xp.cellars_lamp', 'xp.cellars_spring', 'xp.cellars_sluice', 'xp.cellars_ladder', 'xp.cellars_outflow', 'xp.cellars_leave', 'xp.cellars_yasu']) t.ok(!!C.scenes[sc], 'scene ' + sc);
   // story dungeons keep their checkpoints (D5): no map but the cellars' belongs to an expedition
   const owned = Object.keys(C.maps).filter((id) => X.owner(id));
-  t.eq(owned.sort(), ['rw.cellar1', 'rw.cellar2'], 'only the cellars\' floors are an expedition\'s; every story map keeps the checkpoint rule');
+  // (the Hall of a Hundred Tales' wings are expeditions too, P15: none of them a story map)
+  t.eq(owned.filter((id) => !id.startsWith('hall.')).sort(), ['rw.cellar1', 'rw.cellar2'], 'only the cellars\' floors (and the Hall\'s wings) are an expedition\'s; every story map keeps the checkpoint rule');
   // the cellars are the twelve-chapter edition's only: no way in from the six-chapter world but the gated hatch
   const into = Object.keys(C.maps).filter((id) => !/^rw\.cellar/.test(id)).flatMap((id) => (C.maps[id].exits || []).filter((e) => /^rw\.cellar/.test(e.to)).map((e) => id));
   t.ok(!into.length && C.maps['rw.cellar1'].edition === 2 && C.maps['rw.cellar2'].edition === 2, 'no exit from any other map leads into the cellars; both floors are marked as the expansion\'s (' + into.join(', ') + ')');

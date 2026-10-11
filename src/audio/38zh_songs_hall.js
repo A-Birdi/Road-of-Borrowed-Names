@@ -2,8 +2,10 @@
  * language theme"). The foyer: an old wooden hall at night, a biwa walking slowly under a held shō, the koto answering
  * now and then like a lantern being lit across the room (D dorian, 64). Wing 1, The Lamp at the Crossroads: a hill road
  * at dusk, the shakuhachi asking a phrase and the koto answering it back the same, a little changed (the tale's "say it
- * again"), over a soft taiko step that walks and stops (A minor pentatonic feel, aeolian, 76). Postgame and the
- * twelve-chapter edition only. Notation: see 30_songs.js. */
+ * again"), over a soft taiko step that walks and stops (A minor pentatonic feel, aeolian, 76). Wing 2, The Fox's
+ * Wedding: rain falling through sunshine on a meadow, a procession walking by, the shinobue carrying a wedding tune and
+ * the koto passing each phrase on to the next player, as a gift is handed down a line (G major pentatonic, 72). Postgame
+ * and the twelve-chapter edition only. Notation: see 30_songs.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -38,7 +40,7 @@ RB.audio = RB.audio || {};
     sections: {
       intro: { bars: 2, ch: '1 1', koto: '.:8 | . . . . 5 - - -' },
       A: { bars: 8, ch: '1 4 2 1 3 5 1 1', lead: HALL_A, koto: HALL_KOTO },
-      B: { bars: 8, ch: '4 4 1 1 2 2 5 5', flute: '5, - 3 - 2 - 1 - | 2 - - - - - . . | 3 - 2 - 1 - 6, - | 1 - - - - - . . | 5, - 3 - 2 - 1 - | 2 - - - 3 - - - | 2 - - - 1 - - - | 1 - - - - - . .' },
+      B: { bars: 8, ch: '4 4 1 1 2 2 5 5', flute: '5, - 3 - 2 - 1 - | 2 - - - - - . . | 3 - 2 - 1 - 6, - | 1 - - - - - . . | 5, - 3 - 2 - 1 - | 2 - - - - - . . | 2 - - - 1 - - - | 1 - - - - - . .' },
       A2: { bars: 8, ch: '1 4 2 1 3 5 1 1', lead: HALL_A, koto: HALL_KOTO, dyn: 0.85 },
     },
     form: ['intro', 'A', 'B', 'A2'],
@@ -47,8 +49,8 @@ RB.audio = RB.audio || {};
   // ================================================================== WING 1: THE LAMP AT THE CROSSROADS
   // The tale's "say it again": every phrase of the shakuhachi is answered by the koto with the same notes, the last one
   // changed. The taiko steps on the first beat, walks two bars and stops for two, like someone stopping to ask.
-  const ASK = '3 - 5 - 6 - - - | .:8 | 6 - 5 - 3 - - - | .:8 | 2 - 3 - 5 - - - | .:8 | 3 - 2 - 1 - - - | .:8';
-  const AGAIN = '.:8 | 3 - 5 - 6 - 1\' - | .:8 | 6 - 5 - 3 - 2 - | .:8 | 2 - 3 - 5 - 6 - | .:8 | 3 - 2 - 1 - - -';
+  const ASK = '3 - 5 - 1\' - - - | .:8 | 6 - 5 - 3 - - - | .:8 | 2 - 3 - 5 - - - | .:8 | 3 - 2 - 1 - - - | .:8';
+  const AGAIN = '.:8 | 3 - 5 - 1\' - 2\' - | .:8 | 6 - 5 - 3 - 2 - | .:8 | 2 - 3 - 5 - 4 - | .:8 | 3 - 2 - 1 - - -';
   S('hall_w1', {
     title: 'The Lamp at the Crossroads',
     kind: 'area',
@@ -59,16 +61,49 @@ RB.audio = RB.audio || {};
       lead: { i: 'shakuhachi', o: 4, v: 0.56, rv: 0.45 },
       koto: { i: 'koto', o: 4, v: 0.46, rv: 0.5, pan: 0.2 },
       bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.28, rv: 0.35 },
-      taiko: { i: 'taiko', drum: true, v: 0.3 },
+      taiko: { perc: true, v: 0.3, rv: 0.35 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.16, rv: 0.5 },
     },
     echo: { beats: 0.75, fb: 0.25, mix: 0.22 },
-    all: { bass: '0 - - - 4 - - -', taiko: 'x - - - - - - - | x - - - - - - - | .:8 | .:8' },
+    all: { bass: '0 - - - 4 - - -', taiko: 'z.......|z.......|........|........' },
     sections: {
       intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
       A: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: ASK, koto: AGAIN },
-      B: { bars: 8, ch: '4 4 1 1 7 7 1 1', koto: ASK, lead: AGAIN, pad: '0+4' },
+      B: { bars: 8, ch: '1 1 4 4 7 7 1 1', koto: ASK, lead: AGAIN, pad: '0+4' },
       A2: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: ASK, koto: AGAIN, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+
+  // ================================================================== WING 2: THE FOX'S WEDDING
+  // A sun-shower over a meadow and a procession walking through it. The shinobue sings a phrase; the koto takes its last
+  // notes and carries them on, as a gift is handed from one person to the next (the wing's "who gives what to whom").
+  // Under it the kotsuzumi marks the procession's slow step, small bells shake far off now and then, and the rain falls
+  // in single drops. Intensity is in the tune, never a faster step (C-22).
+  const VOW = '1 - 2 - 3 - 5 - | 6 - 5 - 3 - - - | 5 - 3 - 2 - 1 - | 2 - - - - - . . | 3 - 5 - 6 - 1\' - | 6 - 5 - 3 - - - | 2 - 3 - 2 - 1 - | 1 - - - - - . .';
+  const PASS = '.:8 | . . . . 3 - 5 - | .:8 | . . . . 5 - 6 - | .:8 | . . . . 3 - 2 - | .:8 | . . . . 1 - - -';
+  const PASS_B = '.:8 | . . . . 1 - 2 - | .:8 | . . . . 3 - 2 - | .:8 | . . . . 3 - 5 - | .:8 | . . . . 2 - - -';
+  S('hall_w2', {
+    title: 'The Fox\'s Wedding',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 2 of the Hall: rain falling through sunshine on a meadow, and a wedding procession walking through it (G major pentatonic, 72). The shinobue carries the wedding tune; at the end of every other bar the koto takes up its last notes and carries them on, as a gift passed down a line of hands. A kotsuzumi marks the procession\'s slow step, small bells shake somewhere far off, and the rain falls in single drops. B lets the shō in under a quieter flute, the procession passing under the torii.',
+    key: 'G', mode: 'ionian', bpm: 72, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shinobue', o: 5, v: 0.48, rv: 0.45 },
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.24, rv: 0.35 },
+      drum: { perc: true, v: 0.26, rv: 0.4 },
+      rain: { perc: true, v: 0.16, rv: 0.6 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.15, rv: 0.5 },
+    },
+    echo: { beats: 0.75, fb: 0.22, mix: 0.2 },
+    all: { bass: '0 - - - 4 - - -', drum: 'm.......|....m...|m.......|..j.....', rain: '..d....d|.....d..|.d......|....d..d' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '5, - - - 1 - - - | 3 - - - - - - -' },
+      A: { bars: 8, ch: '1 1 4 5 1 4 5 1', lead: VOW, koto: PASS },
+      B: { bars: 8, ch: '4 4 1 1 6 6 5 5', lead: '6 - - - 5 - 3 - | 1 - - - - - . . | 3 - - - 2 - 1 - | 3 - - - - - . . | 3 - - - 2 - 1 - | 6, - - - - - . . | 5, - 6, - 1 - 2 - | 2 - - - - - . .', koto: PASS_B, pad: '0+4' },
+      A2: { bars: 8, ch: '1 1 4 5 1 4 5 1', lead: VOW, koto: PASS, dyn: 0.85 },
     },
     form: ['intro', 'A', 'B', 'A2'],
   });

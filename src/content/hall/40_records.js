@@ -15,4 +15,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
       when: 'ed>=2&hall.w' + n, stand: null, design: { shape: 'hexagon', motif: 'lantern', ink: ink || '#8a5a1e' } });
   };
   C.hallStamp(1, T('The Lamp at the Crossroads', '{辻|つじ} の {灯籠|とうろう}'), '#2a4a5e');
+  C.hallStamp(2, T('The Fox\'s Wedding', '{狐|きつね} の {嫁入|よめい}り'), '#b0402a');
 })(RB.content);

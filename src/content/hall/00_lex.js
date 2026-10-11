@@ -49,4 +49,41 @@ RB.lex.add(RB.lex.parseTable(`
 差し伸べる|さしのべる|v1|A|to hold out, extend (a hand)
 案山子|かかし|n|I|a scarecrow
 地蔵|じぞう|n|I|Jizō, a wayside stone statue (a guardian of travellers and children)|Real: the stone Jizō figures found along roads all over Japan.
+# ---- wing 2: who gives what to whom ------------------------------------------------------------------------------------
+嫁入り|よめいり|n|I|a bride's going to her husband's home; a wedding
+狐の嫁入り|きつねのよめいり|n|I|"a fox's wedding": rain falling while the sun shines; also lines of foxfire seen at night|Real: a folk name still used for a sun-shower.
+鳥居|とりい|n|E|a torii, the gateway of a shrine
+狐火|きつねび|n|I|foxfire: a ghostly light in the hills, once blamed on foxes|Real folklore.
+日照り雨|ひでりあめ|n|A|rain while the sun is shining, a sun-shower
+祝い|いわい|n|E|a celebration; a gift for a celebration
+贈り物|おくりもの|n|E|a present, a gift
+荷物持ち|にもつもち|n|I|a porter, the one who carries the luggage
+提灯持ち|ちょうちんもち|n|I|a lantern-bearer (walking ahead with the lantern)
+お礼|おれい|n|E|thanks; a thank-you gift
+姉ちゃん|ねえちゃん|n|E|big sister (casual, a child's word)
+宮司|ぐうじ|n|A|the chief priest of a shrine
+三々九度|さんさんくど|n|A|san-san-kudo: the wedding rite of three cups, each drunk in three sips|Real custom (simplified in this tale).
+受け取る|うけとる|v5r|E|to receive, to accept
+長机|ながづくえ|n|I|a long table
+境内|けいだい|n|I|the grounds of a shrine or temple
+照る|てる|v5r|E|to shine (of the sun)
+雨粒|あまつぶ|n|E|a raindrop
+お宮|おみや|n|E|a (small) shrine
+式|しき|n|E|a ceremony (here, the wedding)
+雨水|あまみず|n|E|rainwater
+しずく||n|E|a drop (of water)
+一籠|ひとかご|n|I|one basketful
+一同|いちどう|n|A|all (of a group), everyone (on a card: 村一同, from all the village)
+結う|ゆう|v5u|A|to tie up, to do up (hair)
+座席表|ざせきひょう|n|I|a seating plan
+雨上がり|あまあがり|n|E|just after the rain
+結婚式|けっこんしき|n|E|a wedding (ceremony)
+恩返し|おんがえし|n|I|repaying a kindness|Real: the theme of many folk tales (the crane's, the sparrow's).
+雀|すずめ|n|E|a sparrow
+嫁ぐ|とつぐ|v5g|A|to marry (into a husband's family)
+夕立|ゆうだち|n|I|a sudden evening shower
+照り|てり|n|A|sunshine (as in 照り雨, rain in sunshine)
+空模様|そらもよう|n|I|the look of the sky, the weather
+花曇り|はなぐもり|n|A|the hazy cloud of cherry-blossom season
+五月雨|さみだれ|n|A|the early-summer rains (the old name)
 `));

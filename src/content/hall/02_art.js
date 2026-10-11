@@ -1,7 +1,10 @@
 /* The Hall of a Hundred Tales: its props (expansion P15). A sacred rope between two posts that closes a floor's way on
  * until every trial on it is done (しめ縄: it blocks; gone once the floor is cleared); the paper floor lantern (行灯)
  * that each trial lights (dark, or lit); the paper screen at the back of each alcove through which a wing is entered
- * (dark, or glowing once the wing's hearth has been reached); and a four-armed wooden signpost (道しるべ). Each has a
+ * (dark, or glowing once the wing's hearth has been reached); a four-armed wooden signpost (道しるべ); and a closed
+ * oiled-paper umbrella (番傘) leaning in a little wooden stand, lent and left behind (wing 2); a small stone Jizō with a
+ * red bib by the path, and an incense clock (香時計), a lacquered tray of ash with a line of incense burning along
+ * its marked hours, showing how far the night has gone (wing 3). Each has a
  * flat 16-px drawing (the fallback, as every prop) and its art-resolution version in the world's prop style (light from
  * the upper left, an ink outline on what can be looked at, a soft contact shadow). Interim assets under AC-1 (C-82):
  * finished in the art pass (P16). */
@@ -31,6 +34,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   def('hall_signpost', {}, (c, x, y) => {
     px(c, x + 7, y - 10, 2, 24, '#6e4c36'); px(c, x + 1, y - 8, 14, 3, '#8a6448'); px(c, x + 2, y - 2, 12, 3, '#8a6448');
+  });
+  def('hall_umbrella', {}, (c, x, y) => {
+    px(c, x + 3, y + 10, 10, 4, '#5a3e2c');
+    px(c, x + 6, y - 8, 4, 18, '#9c3834'); px(c, x + 7, y - 8, 1, 18, '#c05a44'); px(c, x + 7, y - 11, 2, 3, '#3a281c');
+  });
+  def('hall_jizo', {}, (c, x, y) => {
+    px(c, x + 4, y + 10, 8, 4, '#5e5a52'); px(c, x + 5, y - 2, 6, 12, '#888c88'); px(c, x + 5, y - 6, 6, 5, '#949890');
+    px(c, x + 5, y + 2, 6, 3, '#c8382c');
+  });
+  def('hall_incense', {}, (c, x, y, p, t, o) => {
+    const h = (o && o.h) || 0;
+    px(c, x + 1, y + 4, 14, 8, '#3e1418'); px(c, x + 2, y + 5, 12, 6, '#b3a78a');
+    for (let i = 0; i < 4; i++) px(c, x + 3 + i * 3, y + 7, 2, 1, i < h ? '#857a66' : '#5a3e2c');
+    px(c, x + 3 + Math.min(h, 3) * 3, y + 6, 1, 1, '#ffbf5c');
   });
 
   // ---- art resolution (32 px a tile) -------------------------------------------------------------------------------
@@ -113,6 +130,58 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(g, -2, -12, 20, 6, W[0]); R(g, -2, -12, 20, 1, W[3]); line(g, 0, -9, 14, -9, '#2a2420', 1);
       R(g, 16, -2, 20, 6, W[0]); R(g, 16, -2, 20, 1, W[3]); line(g, 19, 1, 32, 1, '#2a2420', 1);
       ell(g, 16, 30, 6, 2, W[2]);
+    },
+  });
+  // A closed oiled-paper umbrella (番傘): the folded red paper in long ribs down a bamboo shaft, a black-bound tip, the
+  // handle standing in a low wooden stand, as if someone had left it there meaning to come back for it.
+  art('hall_umbrella', {
+    box: [-4, -44, 40, 80],
+    ink: true,
+    shadow: () => [16, 30, 9, 3, 0.3],
+    draw(g, M) {
+      const W = WOOD(M), LQ = K.FIX.lacquer;
+      R(g, 6, 22, 20, 8, W[1]); R(g, 6, 22, 20, 1, W[3]); R(g, 8, 24, 16, 2, W[2]);
+      R(g, 15, 14, 2, 10, W[2]);
+      // the folded canopy: a long narrow spindle of red paper, darker in its folds
+      for (let i = 0; i < 36; i++) {
+        const y = -32 + i, half = i < 6 ? 1 + (i >> 1) : i > 28 ? Math.max(1, 5 - ((i - 28) >> 1)) : 5;
+        R(g, 16 - half, y, half * 2, 1, LQ[2]); R(g, 16 - half, y, 1, 1, LQ[1]); R(g, 15, y, 1, 1, LQ[1]); R(g, 17, y, 1, 1, LQ[3]);
+      }
+      R(g, 13, -20, 6, 2, '#2a2420'); R(g, 13, -6, 6, 1, LQ[1]);
+      R(g, 15, -38, 2, 6, '#2a2420');
+    },
+  });
+  // A wayside Jizō (地蔵): a small round-headed stone figure on a plinth, a red cloth bib, moss at its feet, the kind
+  // that stands at village edges looking after travellers and children.
+  art('hall_jizo', {
+    box: [-4, -32, 40, 68],
+    ink: true,
+    shadow: () => [16, 30, 9, 3, 0.3],
+    draw(g, M) {
+      const ST = M.stone || ['#6a6e78', '#82868e', '#52565e'];
+      R(g, 7, 22, 18, 8, ST[2]); R(g, 7, 22, 18, 1, ST[1]);
+      R(g, 10, 0, 12, 22, ST[0]); R(g, 10, 0, 3, 22, ST[1]); R(g, 20, 0, 2, 22, ST[2]);
+      ell(g, 16, -6, 7, 7, ST[0]); ell(g, 14, -8, 3, 3, ST[1]);
+      R(g, 13, -6, 2, 1, '#2a2420'); R(g, 17, -6, 2, 1, '#2a2420');
+      R(g, 9, 4, 14, 7, '#c8382c'); R(g, 9, 4, 14, 2, '#e05a44'); R(g, 15, 11, 2, 2, '#a02a22');
+      R(g, 8, 28, 4, 2, '#3e5a3a'); R(g, 21, 28, 3, 2, '#3e5a3a');
+    },
+  });
+  // The incense clock (香時計): a black lacquered tray of pale ash, a line of incense laid along it with four brass
+  // pins for the hours; the burned part grey, the glowing tip at the hour the night has reached (o.h, 0 to 3).
+  art('hall_incense', {
+    box: [-4, -12, 40, 48],
+    v: (o) => Math.max(0, Math.min(3, (o && o.h) || 0)),
+    f: (t, o) => (o && (o.still || still()) ? 0 : Math.floor(t / 420) % 2),
+    ink: true,
+    shadow: () => [16, 28, 13, 3, 0.3],
+    draw(g, M, v, f) {
+      const LQ = K.FIX.lacquer, BR = K.FIX.brass;
+      R(g, 2, 8, 28, 18, LQ[1]); R(g, 2, 8, 28, 2, LQ[3]); R(g, 2, 24, 28, 2, LQ[0]);
+      R(g, 4, 11, 24, 12, PP[1]); R(g, 4, 11, 24, 2, PP[0]);
+      for (let i = 0; i < 4; i++) { R(g, 6 + i * 6, 15, 4, 2, i < v ? PP[0] : '#5a3e2c'); R(g, 6 + i * 6, 13, 1, 2, BR[3]); }
+      const tx = 6 + v * 6;
+      R(g, tx, 14, 2, 2, f ? GL[3] : GL[2]); R(g, tx, 10, 1, 4, 'rgba(220,220,230,0.35)');
     },
   });
 })();

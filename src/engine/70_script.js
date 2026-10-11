@@ -225,7 +225,7 @@ RB.script = (function () {
             // someone still walking to their place speaks once they are there
             await RB.world.whenArrived(who, 3000);
           }
-          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line, simple: c.simple || null });
+          await RB.ui.dialogue.say({ who, expr: c.expr, jp: c.jp, en: c.en, sceneId: sc.id, line: c.line, simple: c.simple || null, offscreen: !!(ctx.offscreenAll || (ctx.offscreen && ctx.offscreen.has(who))) });
           // the reader moved on: every gesture cued for this line settles at its hold or its end
           if (RB.staging) RB.staging.settle('advance');
           break;

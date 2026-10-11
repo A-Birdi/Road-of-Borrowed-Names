@@ -245,6 +245,10 @@ RB.grammar = (function () {
       `ところ after a verb marks a point in an action: dictionary form + ところ "about to", ～ているところ "in the middle of", past form + ところ "have just (done)".`,
       [['{今|いま}、{出|で}かける ところです。', "I'm just about to go out."],
         ['ちょうど {着|つ}いた ところだ。', "I've just arrived."]]),
+    P('uchi_ni', 'I', '～うちに (while it is still …)',
+      `A dictionary form, a ～ている form, an adjective, or a noun + の, followed by うちに, means "while (that state still holds)": do it before it changes. After a negative, ～ないうちに means "before … happens".`,
+      [['{暗|くら}い うちに {出|で}かけよう。', "Let's set off while it's still dark."],
+        ['{雨|あめ}が {降|ふ}らない うちに {帰|かえ}ろう。', "Let's get home before it rains."]]),
 
     // ---- adjectives -----------------------------------------------------------------
     P('adj_i', 'E', 'い-adjectives',
@@ -469,6 +473,10 @@ RB.grammar = (function () {
       `A どころか B means "far from A, (actually) B", or "not only not A, but B". B is often the opposite of what was expected, or something more extreme.`,
       [['{雨|あめ}は {止|や}むどころか、{強|つよ}く なった。', 'Far from stopping, the rain grew heavier.'],
         ['{礼|れい}どころか、{返事|へんじ}も ない。', "Never mind thanks — there isn't even a reply."]]),
+    P('shidai', 'A', '～{次第|しだい} (as soon as)',
+      `The ます stem + {次第|しだい} means "as soon as …, (then at once)". It is formal, used for arrangements and announcements, and never for something that has already happened. After a noun, {次第|しだい} means "depending on".`,
+      [['{着|つ}き{次第|しだい}、お{知|し}らせ します。', "I'll let you know as soon as I arrive."],
+        ['{天気|てんき}{次第|しだい}です。', 'It depends on the weather.']]),
     P('adv_kara_koso', 'A', '～からこそ (precisely because)',
       `～からこそ stresses a reason: "precisely because …". It often defends something that might look like a reason for the opposite.`,
       [['{大切|たいせつ}な {記憶|きおく}だからこそ、{消|け}しては いけない。', "It's precisely because the memory is precious that it mustn't be erased."]]),
