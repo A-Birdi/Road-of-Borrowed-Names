@@ -73898,6 +73898,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *                                                            eave line and the dark under it
  *   RB.seqPaint.slip(c, x, y, w, h, o)                       a paper slip with brush marks (never letters)
  *   RB.seqPaint.marks(c, x, y, h, n, k, col, seed)           a column of brush marks written down to k (0..1)
+ *   RB.seqPaint.grass(L, top, y1, M, o) / clouds(g, w, o) / crown(L, cx, cy, rw, rh, M, o)   outdoor materials
  *   RB.seqPaint.layer(w, h)                                  a pxkit layer that takes constant shades as 0..1 too
  *   RB.seqPaint.cam(w, vb, o)                                a pinhole camera for a shot built as a small place: the
  *                                                            water or ground is Y = 0, the camera at (0, o.ch, 0)
@@ -73911,6 +73912,7 @@ RB.seqPaint = (function () {
   'use strict';
   const P = () => RB.pxkit;
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const lerp = (a, b, k) => a + (b - a) * k;
   const R = (c, x, y, w, h, col) => { if (w <= 0 || h <= 0) return; if (col) c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
 
   function stars(g, x, y, w, h, n, seed, warmEvery) {
@@ -74039,6 +74041,60 @@ RB.seqPaint = (function () {
     }
   }
 
+  // Grass into a layer between a top edge top(x) and the bottom: a quiet base that darkens toward us, tufts of short
+  // blades (lighter tips, darker roots) in clusters, a few flowers where o.flowers; no uniform speckle.
+  function grass(L, top, y1, M, o) {
+    o = o || {};
+    const p = P(), rnd = p.rnd(o.seed || 17), w = L.w;
+    L.fill(0, 0, w, y1, (x, y) => y >= top(x), M, (x, y) => clamp((o.base == null ? 0.5 : o.base) - (y - top(x)) / Math.max(1, y1 - top(x)) * 0.25 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+    // tufts gather in clumps (a few dozen centres), thinning out between them, more of them toward us
+    const n = Math.round((w * (y1 - top(w / 2))) / (o.density || 320)), centres = [];
+    for (let i = 0; i < Math.max(4, Math.round(n / 7)); i++) { const x = rnd() * w; centres.push([x, top(x) + Math.pow(rnd(), 0.7) * (y1 - top(x))]); }
+    for (let i = 0; i < n; i++) {
+      const c0 = centres[Math.floor(rnd() * centres.length)], spread = 4 + (c0[1] - top(c0[0])) * 0.12;
+      const x = Math.round(c0[0] + (rnd() - 0.5) * spread * 4), t0 = top(x), y = Math.round(clamp(c0[1] + (rnd() - 0.5) * spread, t0, y1));
+      const near = (y - t0) / Math.max(1, y1 - t0), hgt = Math.max(1, Math.round((1 + near * 4) * (o.blade || 1)));
+      for (let b = -1; b <= 1; b++) {
+        if (rnd() < 0.3) continue;
+        L.line(x + b * Math.max(1, Math.round(near * 2)), y, x + b * Math.max(1, Math.round(near * 2)) + (b === 0 ? 0 : b), y - hgt, M, Math.min(M.n - 1, Math.round((0.5 + rnd() * 0.22) * M.n)));
+        L.dot(x + b * Math.max(1, Math.round(near * 2)), y, M, 1);
+      }
+      if (o.flowers && rnd() < 0.04) L.dot(x, y - hgt, o.flowers, Math.min(o.flowers.n - 1, 2 + Math.floor(rnd() * 2)));
+    }
+  }
+  // Clouds straight onto a canvas: clustered soft masses, lit from above-left (a light top, a shaded underside), edges
+  // dithered; o: { n, seed, y0, y1, light, shade, scale }
+  function clouds(g, w, o) {
+    o = o || {};
+    const p = P(), rnd = p.rnd(o.seed || 31), sc = o.scale || 1;
+    for (let i = 0; i < (o.n || 4); i++) {
+      const cx = rnd() * w, cy = lerp(o.y0 || 10, o.y1 || 60, rnd()), parts = 4 + Math.floor(rnd() * 4), rw = (20 + rnd() * 30) * sc;
+      const blobs = [];
+      for (let j = 0; j < parts; j++) blobs.push([cx + (j - parts / 2) * rw * 0.5 + (rnd() - 0.5) * rw * 0.3, cy - Math.sin((j / Math.max(1, parts - 1)) * Math.PI) * rw * 0.35, rw * (0.45 + rnd() * 0.25)]);
+      const x0 = Math.floor(cx - rw * parts * 0.4), x1 = Math.ceil(cx + rw * parts * 0.4), y0 = Math.floor(cy - rw), y1 = Math.ceil(cy + rw * 0.4);
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+        let inside = 0, top = 0;
+        for (const [bx, by, r] of blobs) { const d = Math.hypot(x - bx, (y - by) * 1.6) / r; if (d < 1) { inside = Math.max(inside, 1 - d); top = Math.max(top, (by - y) / r); } }
+        if (inside <= 0 || y > cy + rw * 0.25) continue;
+        if (inside < 0.18 && p.bayer(x, y) > inside * 5) continue;
+        g.fillStyle = top > 0.15 ? (o.light || '#ffffff') : y > cy ? (o.shade || '#c8d0e0') : (o.mid || '#e8ecf4');
+        g.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+  // A tree's crown as leaf masses round branches: dark inner pockets, lit clusters on the upper left, a few sky gaps
+  function crown(L, cx, cy, rw, rh, M, o) {
+    o = o || {};
+    const p = P(), rnd = p.rnd(o.seed || 47), masses = [];
+    const n = o.n || 9, size = o.size || (n > 12 ? 0.16 : 0.3);
+    for (let i = 0; i < n; i++) { const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()); masses.push([cx + Math.cos(a) * r * rw * 0.75, cy + Math.sin(a) * r * rh * 0.7, rw * (size + rnd() * size * 0.8)]); }
+    masses.sort((a, b) => a[1] - b[1]);
+    for (const [mx, my, r] of masses) L.ell(mx, my, r, r * 0.78, M, (x, y) => {
+      const lit = ((cx - x) / rw + (cy - y) / rh) * 0.35 + ((mx - x) / r + (my - y) / r) * 0.22;
+      const clump = (((Math.round(x * 0.5) * 7 + Math.round(y * 0.5) * 13) % 11) < 3) ? 0.1 : 0;
+      return clamp(0.42 + lit + clump + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999);
+    });
+  }
   // A pxkit layer that also takes a constant shade as 0..1 (the kit itself reads a plain number as a ramp index):
   // rect/ell/fill/poly/seg/path wrap it in a function, line/dot turn it into the step it means.
   function layer(w, h, ox, oy) {
@@ -74083,7 +74139,7 @@ RB.seqPaint = (function () {
     };
   }
 
-  return { stars, water, glints, rings, glow, lantern, planks, roof, slip, marks, cam, layer };
+  return { stars, water, glints, rings, glow, lantern, planks, roof, slip, marks, cam, layer, grass, clouds, crown };
 })();
 
 
@@ -75348,6 +75404,671 @@ var RB = (globalThis.RB = globalThis.RB || {});
   RB.sequence.define('kr.dawn', {
     title: { en: 'Dawn at the pass', jp: '{峠|とうげ} の {夜明|よあ}け' }, chapter: 'kr', scene: 'kr.chapter_end',
     shots: { road, valley },
+  });
+})();
+
+
+/* ==== src/ui/43k_seq_ko.js ==== */
+/* Kotonoha, Chapter 9 of the twelve: the travel volume's pages (expansion P16; AC-1).
+ *
+ * ko.garden — the Garden of Unsent Words once the Gardener has settled (`ko.gardener`, src/content/ko/22_scenes_story.js,
+ * from its settling to the companion's word; the conversation itself is the world's).
+ *   garden  under the tree's heart: the roots woven overhead into a vault, countless leaves hung from them on threads
+ *           like paper lanterns, each faintly lit; the tall shape of the roots sinking back into the weave, the wind
+ *           stopping and the leaves in the air coming down one by one onto their threads
+ *   leaves  the two of you under the hanging leaves: you from behind, your companion turned to you in their light
+ * ko.end — the chapter's end at the Wind Stone (`ko.end`).
+ *   stone   Otoha by the Wind Stone on the island's crown, the great tree behind her breathing, leaves falling slowly
+ *   north   she looks north: over the strait the far mountains, and high up among them a pale point; a few leaves
+ *           like torn pages drifting from that way
+ * No letters, kana or kanji are drawn: the leaves carry a stroke or two of ink, never characters. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const Q = RB.seqKit, { R, mk, clamp, ease, lerp, cached, stage } = Q;
+  const SP = RB.seqPaint;
+  const P = () => RB.pxkit;
+  const sub = (k, a, b) => clamp((k - a) / (b - a), 0, 1);
+
+  const LEAF = { mul: [0.8, 0.86, 0.78], add: [6, 12, 6], rim: { side: 'r', col: '#f0f0b0', k: [0.42, 0.18], below: 0.85 } };
+  const DAY = { mul: [0.98, 0.96, 0.92], add: [6, 4, 0], rim: { side: 'l', col: '#fff0d0', k: [0.4, 0.18], below: 0.85 } };
+
+  // ==== ko.garden · the root vault and its hanging leaves ===========================================================
+  function geomGarden(w, h, vb) { const S = stage(w, h, vb); return Object.assign(S, { narrow: S.lay === 'narrow' }); }
+  // the leaves: [x, y (where it hangs), thread length, size, tint, seed] in buffer units, seeded
+  function leavesOf(G) {
+    return Q.small('ko.leaves|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const rnd = P().rnd(37), out = [];
+      for (let i = 0; i < 120; i++) {
+        const depth = rnd(), x = rnd() * G.w, top = G.vb * (0.03 + (1 - depth) * 0.12) + Math.sin(x / (G.w * 0.12)) * G.s(8);
+        out.push({ x, top, len: G.vb * (0.06 + rnd() * 0.42) * (0.5 + depth * 0.5), sz: Math.max(2, Math.round(G.s(2 + depth * 5))), tint: rnd(), depth, seed: i });
+      }
+      return out.sort((a, b) => a.depth - b.depth);
+    });
+  }
+  function gardenStatic(G) {
+    return cached('ko.garden|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      Q.bandsIn(g, 0, 0, w, h, ['#0a1410', '#0e1c16', '#12241c', '#182c22', '#1e3428', '#24402e'], 0.45);
+      const L = SP.layer(w, h);
+      // the root vault: thick roots arching overhead and coming down at the sides, woven, with dark gaps between
+      const root = p.mat('#5a4a36', { n: 7, at: 3, step: 0.08 }), rnd = p.rnd(23);
+      for (let i = 0; i < 14; i++) {
+        const x0 = -s(20) + rnd() * w * 0.3, x1 = w * 0.7 + rnd() * w * 0.4, sag = G.vb * (0.05 + rnd() * 0.2), thick = s(6 + rnd() * 10);
+        const pts = []; for (let j = 0; j <= 20; j++) { const u = j / 20; pts.push([lerp(x0, x1, u), sag * Math.sin(Math.PI * u) - s(4) + Math.sin(u * 9 + i) * s(3), thick * (0.6 + 0.4 * Math.sin(Math.PI * u))]); }
+        L.path(pts, thick, root, (x, y) => clamp(0.55 - (y / (G.vb * 0.3)) * 0.2 + (((Math.round(x) + Math.round(y) * 2) % 9) === 0 ? -0.18 : 0) + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+      }
+      // the roots coming down the sides into the floor
+      for (const side of [0, 1]) for (let i = 0; i < 5; i++) {
+        const x = side ? w - s(10 + i * 14) : s(10 + i * 14), lean = (side ? -1 : 1) * s(6);
+        L.path([[x, -s(4), s(12)], [x + lean, G.vb * 0.5, s(10)], [x + lean * 2, h, s(14)]], s(12), root, (xx, yy) => clamp(0.4 + (side ? -0.08 : 0.06) + (((Math.round(yy) + i * 7) % 11) === 0 ? -0.2 : 0), 0.02, 0.999));
+      }
+      // the floor: moss and fallen leaves, a little light on it
+      const moss = p.mat('#3a5a36', { n: 6, at: 3, step: 0.08 });
+      SP.grass(L, (x) => G.vb * 0.78 + Math.sin(x / (w * 0.1)) * s(4), h, moss, { seed: 13, base: 0.42, density: 120 });
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      // the leaves' light lying on the moss, and leaves fallen there
+      for (let i = 0; i < 9; i++) SP.glow(g, Math.round(w * (0.08 + i * 0.11)), Math.round(G.vb * 0.84), s(26), '200,230,150', 0.16);
+      const rf = p.rnd(31);
+      for (let i = 0; i < 26; i++) { const x = Math.round(rf() * w), y = Math.round(G.vb * 0.8 + rf() * (h - G.vb * 0.8)); g.fillStyle = i % 2 ? '#a8b880' : '#c0b07a'; g.fillRect(x, y, s(3), Math.max(1, s(1.5))); }
+      return { cv };
+    });
+  }
+  // one leaf hanging on its thread at (x, y): a pale oval with a midrib and a stroke of ink, glowing faintly
+  function leaf(c, x, y, sz, tint, glowA, seed) {
+    const col = tint < 0.33 ? ['#c8d8a0', '#e8f0c0'] : tint < 0.66 ? ['#d8c890', '#f0e4b8'] : ['#b8d0a8', '#dcecc8'];
+    if (glowA > 0) SP.glow(c, x, y, Math.round(sz * 2.4), '230,240,170', glowA);
+    for (let j = -sz; j <= sz; j++) {
+      const half = Math.round(Math.sqrt(Math.max(0, 1 - (j / sz) ** 2)) * sz * 0.55);
+      R(c, x - half, y + j, half * 2 + 1, 1, j < 0 ? col[1] : col[0]);
+    }
+    R(c, x, y - sz + 1, 1, sz * 2 - 1, 'rgba(90,110,60,0.7)');
+    if (sz >= 4) { c.fillStyle = 'rgba(40,30,30,0.75)'; c.fillRect(x + 1, y - 1 + (seed % 3) - 1, Math.max(1, Math.round(sz * 0.3)), 1); }
+  }
+  const garden = {
+    phases: [['settle', 1600]],
+    safe: { wide: 'the hanging leaves under the root vault, above the sheet', narrow: 'the leaves in the upper half', land: 'the leaves' },
+    draw(c, w, h, t, st) {
+      const G = geomGarden(w, h, st.vb), { s } = G, still = st.still;
+      c.drawImage(gardenStatic(G).cv, 0, 0);
+      const k = st.at('settle'), e = ease(k);
+      // the tall shape of roots sinking back into the weave at the middle
+      const sinkH = Math.round(lerp(G.vb * 0.62, 0, e));
+      if (sinkH > 2) {
+        const cx = Math.round(w * 0.5), base = Math.round(G.vb * 0.8);
+        c.fillStyle = '#4a3c2c';
+        for (let y = base - sinkH; y < base; y++) { const half = Math.round(s(10) + (y - (base - sinkH)) * 0.18); c.fillRect(cx - half, y, half * 2, 1); }
+        c.fillStyle = '#e8f0c0'; c.fillRect(cx - s(3), base - sinkH + s(6), s(6), s(3)); // its lantern of a face, last to go
+      }
+      // the leaves: those still in the air come down onto their threads one after another as the wind stops
+      const Lv = leavesOf(G);
+      for (const L0 of Lv) {
+        const landed = sub(e, (L0.seed % 10) * 0.07, (L0.seed % 10) * 0.07 + 0.3);
+        const sway = still ? 0 : Math.sin(t / (900 + L0.seed * 13) + L0.seed) * s(1.5) * (1 - landed * 0.6);
+        const drift = (1 - landed) * s(20) * Math.sin(L0.seed * 1.7);
+        const y = L0.top + L0.len + (1 - ease(landed)) * -s(16), x = L0.x + sway + drift;
+        c.fillStyle = 'rgba(160,170,130,0.5)'; c.fillRect(Math.round(L0.x), Math.round(L0.top), 1, Math.max(1, Math.round((y - L0.top) * landed)));
+        leaf(c, Math.round(x), Math.round(y), L0.sz, L0.tint, 0.08 + 0.1 * L0.depth, L0.seed);
+      }
+    },
+    focus(w, h, vb) { return { x: Math.round(w * 0.15), y: Math.round(vb * 0.05), w: Math.round(w * 0.7), h: Math.round(vb * 0.7) }; },
+  };
+  const leaves = {
+    phases: [['turn', 800]],
+    safe: { wide: 'your companion\'s face under the leaves, above the sheet', narrow: 'their face in the upper half', land: 'their face' },
+    draw(c, w, h, t, st) {
+      const G = geomGarden(w, h, st.vb), { s } = G, still = st.still;
+      c.drawImage(gardenStatic(G).cv, 0, 0);
+      for (const L0 of leavesOf(G)) {
+        const sway = still ? 0 : Math.sin(t / (900 + L0.seed * 13) + L0.seed) * s(1.5);
+        c.fillStyle = 'rgba(160,170,130,0.5)'; c.fillRect(Math.round(L0.x), Math.round(L0.top), 1, Math.round(L0.len));
+        leaf(c, Math.round(L0.x + sway), Math.round(L0.top + L0.len), L0.sz, L0.tint, 0.1 + 0.1 * L0.depth, L0.seed);
+      }
+      const W = Math.round(clamp(s(118), 80, 160));
+      const pb = Q.back(st.cast.pc || {}, W, { light: 'r' });
+      const bx = Math.round(w * (G.narrow ? 0.28 : 0.26)), by = Math.round(st.vb + s(G.narrow ? 90 : 80));
+      if (pb) c.drawImage(pb.cv, bx - pb.ax, by - pb.ay);
+      const comp = st.cast.comp;
+      if (comp) {
+        const kt = st.at('turn');
+        const expr = st.test('comp=mio') ? 'smile' : st.test('comp=suzu') ? 'smile2' : 'neutral';
+        const b = Q.bust(comp.id, kt > 0.3 ? expr : 'neutral', kt > 0.3 ? { look: [-1, 0], head: [-1, 0] } : { look: [0, -1] }, LEAF, false, 200);
+        const cx = Math.round(w * (G.narrow ? 0.7 : 0.66) + (1 - ease(kt)) * s(6)), cy = Math.max(Math.round(st.vb + s(10)), 98);
+        if (b) c.drawImage(b.cv, cx - b.ax, cy - b.ay);
+      }
+    },
+    focus(w, h, vb) { const G = geomGarden(w, h, vb), cx = Math.round(w * (G.narrow ? 0.7 : 0.66)), cy = Math.max(Math.round(vb + G.s(10)), 98); return { x: cx - 34, y: cy - 92, w: 68, h: Math.min(vb - 2, cy - 30) - (cy - 92) }; },
+  };
+  RB.sequence.define('ko.garden', {
+    title: { en: 'The Garden of Unsent Words', jp: '{出|だ}されなかった {言葉|ことば} の {庭|にわ}' }, chapter: 'ko', scene: 'ko.gardener',
+    shots: { garden, leaves },
+  });
+
+  // ==== ko.end · the Wind Stone, and the way north ===================================================================
+  function geomCrown(w, h, vb) { const S = stage(w, h, vb); return Object.assign(S, { narrow: S.lay === 'narrow' }); }
+  function crownStatic(G, north) {
+    return cached('ko.crown|' + G.w + 'x' + G.h + '|' + G.vb + '|' + (north ? 1 : 0), () => {
+      const { w, h, s } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      Q.bandsIn(g, 0, 0, w, h, north ? ['#5a7aac', '#7090bc', '#8aa6cc', '#a8bed8', '#c6d4e2', '#dce4ea'] : ['#6a8ec0', '#82a2cc', '#9cb6d8', '#b8cce4', '#d0dee8'], 0.45);
+      SP.clouds(g, w, { n: north ? 5 : 4, seed: north ? 71 : 73, y0: s(10), y1: G.vb * 0.3, scale: G.Z, light: '#ffffff', mid: '#eef0f6', shade: '#c4cce0' });
+      const L = SP.layer(w, h);
+      if (north) {
+        // the far mountains in two ranges, ridged, the pale point among the highest; the strait; the island's shoulder
+        const farer = p.mat('#8a98b4', { n: 7, at: 3, step: 0.06 }), far = p.mat('#6a7c9c', { n: 7, at: 3, step: 0.07 }), sea = p.mat('#4a7aa0', { n: 7, at: 3, step: 0.07 });
+        const r1 = (x) => G.vb * 0.3 - Math.abs(Math.sin(x / (w * 0.11) + 2)) * s(34) + Math.sin(x / (w * 0.035)) * s(4);
+        L.fill(0, 0, w, h, (x, y) => y > r1(x), farer, (x, y) => clamp(0.55 + (((Math.round(x) + Math.round(y * 2)) % 9) < 2 && y - r1(x) < s(16) ? 0.18 : 0) - (y - r1(x)) / h * 0.4 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        const r2 = (x) => G.vb * 0.44 + Math.sin(x / (w * 0.15) + 1) * s(10) + Math.sin(x / (w * 0.05)) * s(3);
+        L.fill(0, 0, w, h, (x, y) => y > r2(x), far, (x, y) => clamp(0.5 - (y - r2(x)) / h * 0.3 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        SP.water(L, 0, Math.round(G.vb * 0.52), w, h, sea, { band: Math.max(3, s(4)), deep: 0.25, seed: 9, lit: (x, y) => clamp(1 - Math.abs(x - w * 0.6) / (w * 0.3), 0, 1) * 0.2 });
+        const grassM = p.mat('#5a7a44', { n: 7, at: 3, step: 0.08 }), flowers = p.mat('#e8e0f0', { n: 4, at: 2 });
+        SP.grass(L, (x) => G.vb * 0.72 + (x / w) * s(18) + Math.sin(x / (w * 0.08)) * s(3), h, grassM, { seed: 5, flowers, density: 90 });
+        // a wind-bent pine on the shoulder at the right
+        const bark = p.mat('#4a3a2c', { n: 6, at: 3, step: 0.08 }), pine = p.mat('#2e4a34', { n: 7, at: 3, step: 0.08 });
+        const px = Math.round(w * 0.86), py = Math.round(G.vb * 0.78);
+        L.path([[px, py, s(6)], [px - s(6), py - s(30), s(4)], [px - s(18), py - s(52), s(3)]], s(5), bark, 0.45);
+        SP.crown(L, px - s(22), py - s(56), s(34), s(14), pine, { n: 6, seed: 3 });
+        SP.crown(L, px - s(4), py - s(36), s(24), s(10), pine, { n: 5, seed: 4 });
+      } else {
+        // the sea along the horizon at the left; the crown's grass rising to the tree; the Wind Stone on a worn path
+        const sea = p.mat('#4a82aa', { n: 7, at: 3, step: 0.07 }), trunk = p.mat('#6a5038', { n: 7, at: 3, step: 0.08 }), leafM = p.mat('#4a7a3a', { n: 7, at: 3, step: 0.08 });
+        const grassM = p.mat('#6a8a48', { n: 7, at: 3, step: 0.08 }), stoneM = p.mat('#8a8a84', { n: 7, at: 3, step: 0.07 }), path = p.mat('#a89a78', { n: 6, at: 3, step: 0.08 }), flowers = p.mat('#f0e8a8', { n: 4, at: 2 });
+        SP.water(L, 0, Math.round(G.vb * 0.62), Math.round(w * 0.5), Math.round(G.vb * 0.7), sea, { band: Math.max(2, s(3)), deep: 0.2, seed: 21 });
+        const tx = Math.round(w * (G.narrow ? 0.66 : 0.7)), ty = Math.round(G.vb * 0.66);
+        // the trunk with its buttress roots spreading into the grass, bark in long vertical clusters
+        L.fill(tx - s(50), s(10), tx + s(50), ty + s(10), (x, y) => Math.abs(x - tx) < s(20) + Math.max(0, y - ty + s(40)) ** 2 / s(60), trunk, (x, y) => clamp(0.62 - (x - tx + s(20)) / s(60) * 0.55 + (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0) + (((Math.round(y) + Math.round(x) * 3) % 17) === 0 ? -0.1 : 0), 0.02, 0.999));
+        SP.crown(L, tx, Math.round(G.vb * 0.14), Math.round(w * 0.42), Math.round(G.vb * 0.26), leafM, { n: 40, seed: 11 });
+        SP.grass(L, (x) => G.vb * 0.66 + Math.sin(x / (w * 0.2)) * s(6) - (x > tx - s(60) ? s(4) : 0), h, grassM, { seed: 7, flowers, density: 80 });
+        const sx = Math.round(w * (G.narrow ? 0.16 : 0.16)), sy = Math.round(G.vb * 0.74);
+        L.fill(0, sy - s(4), w, h, (x, y) => Math.abs(x - lerp(sx, w * 0.45, (y - sy) / (h - sy))) < s(8) + (y - sy) * 0.25 && y > sy, path, (x, y) => clamp(0.55 + (p.bayer(x, y) - 0.5) * 0.12, 0.02, 0.999));
+        L.stone([[sx - s(14), sy], [sx - s(10), sy - s(44)], [sx + s(2), sy - s(52)], [sx + s(12), sy - s(38)], [sx + s(15), sy]], stoneM, { face: 4, bevel: Math.max(2, s(3)), seam: true });
+      }
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      return { cv };
+    });
+  }
+  // leaves falling (or drifting from the north): a few small pale ovals turning as they come
+  function falling(c, G, t, still, n, seed, from) {
+    const rnd = P().rnd(seed);
+    for (let i = 0; i < n; i++) {
+      const x0 = rnd() * G.w, sp = 0.4 + rnd() * 0.6, ph = rnd();
+      const u = still ? ph : ((t / (9000 / sp)) + ph) % 1;
+      const x = from === 'north' ? lerp(G.w * (0.5 + rnd() * 0.3), x0 - G.w * 0.3, u) : x0 + Math.sin(u * 6 + i) * G.s(8);
+      const y = from === 'north' ? lerp(G.vb * 0.25, G.vb * 0.9, u) : lerp(-G.s(10), G.vb, u);
+      const turn = Math.floor((u * 40 + i) % 4);
+      c.fillStyle = from === 'north' ? '#ece6d4' : i % 2 ? '#c8d8a0' : '#e0d494';
+      if (turn < 2) c.fillRect(Math.round(x), Math.round(y), 3, 2); else c.fillRect(Math.round(x), Math.round(y), 1, 2);
+    }
+  }
+  const stone = {
+    phases: [['breathe', 1200]],
+    safe: { wide: 'Otoha\'s face by the stone, the tree behind, above the sheet', narrow: 'her face in the upper half', land: 'her face' },
+    draw(c, w, h, t, st) {
+      const G = geomCrown(w, h, st.vb), { s } = G;
+      c.drawImage(crownStatic(G, false).cv, 0, 0);
+      falling(c, G, t, st.still, 18, 7, 'tree');
+      const kb = st.at('breathe');
+      const b = Q.bust('ko_otoha', kb > 0.3 ? 'smile' : 'neutral', kb > 0.3 ? { look: [1, -1] } : null, DAY, false, 200);
+      const bx = Math.round(w * (G.narrow ? 0.4 : 0.38)), by = Math.max(Math.round(st.vb + s(10)), 98);
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
+    },
+    focus(w, h, vb) { const G = geomCrown(w, h, vb), bx = Math.round(w * (G.narrow ? 0.4 : 0.38)), by = Math.max(Math.round(vb + G.s(10)), 98); return { x: bx - 34, y: by - 92, w: 68, h: Math.min(vb - 2, by - 30) - (by - 92) }; },
+  };
+  const north = {
+    phases: [['look', 1200]],
+    safe: { wide: 'the far mountains and the pale point above the sheet', narrow: 'the mountains in the upper half', land: 'the mountains' },
+    draw(c, w, h, t, st) {
+      const G = geomCrown(w, h, st.vb), { s } = G;
+      c.drawImage(crownStatic(G, true).cv, 0, 0);
+      // the pale point high in the mountains (somewhere very high: never named)
+      const kl = ease(st.at('look')), px = Math.round(w * 0.62), py = Math.round(st.vb * 0.16);
+      R(c, px, py, Math.max(1, s(2)), Math.max(1, s(2)), '#f4f2ec');
+      SP.glow(c, px, py, Math.round(s(14) * (0.6 + 0.4 * kl)), '255,255,245', 0.25 * kl);
+      falling(c, G, t, st.still, 10, 13, 'north');
+      // Otoha from behind at the lower left, looking that way
+      const W = Math.round(clamp(s(104), 70, 140));
+      const ob = Q.back((RB.content.chars.ko_otoha || {}).look || {}, W, { light: 'l' });
+      if (ob) c.drawImage(ob.cv, Math.round(w * (G.narrow ? 0.26 : 0.2)) - ob.ax, Math.round(st.vb + s(G.narrow ? 84 : 74)) - ob.ay);
+    },
+    focus(w, h, vb) { return { x: Math.round(w * 0.45), y: Math.round(vb * 0.06), w: Math.round(w * 0.34), h: Math.round(vb * 0.4) }; },
+  };
+  RB.sequence.define('ko.end', {
+    title: { en: 'Leaves from the north', jp: '{北|きた} から {来|き}た {葉|は}' }, chapter: 'ko', scene: 'ko.end',
+    shots: { stone, north },
+  });
+})();
+
+
+/* ==== src/ui/43l_seq_cr.js ==== */
+/* The Cloudroad, Chapter 10 of the twelve: the travel volume's pages (expansion P16; AC-1).
+ *
+ * cr.summit — the pass (`cr.summit_first`, src/content/cr/23_scenes_pass.js).
+ *   clouds  out onto the pass: a sea of cloud on every side, the road you climbed and its stations all under it, the
+ *           far peaks standing out of it like islands; the cloud moving slowly
+ *   steam   far down to the north-east, a break in the cloud and white steam rising out of a valley in several plumes
+ * cr.letter — the last post delivered (`cr.deliver`).
+ *   letter  Heisuke at Sakashita with the oiled-paper letter open in his hands, reading; then the long silence
+ * cr.relay — the relay running again (`cr.end`).
+ *   relay   night on the mountain: the seven stations' lamps lit from the foot to the pass, and between two of them a
+ *           courier's lantern on the move
+ * No letters, kana or kanji are drawn: the letter's lines are brush marks. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const Q = RB.seqKit, { R, mk, clamp, ease, lerp, cached, stage } = Q;
+  const SP = RB.seqPaint;
+  const P = () => RB.pxkit;
+  const look = (id) => (RB.content.chars[id] || {}).look || {};
+  const skin = (id) => Q.skinOf(look(id));
+
+  const HIGH = { mul: [0.96, 0.98, 1.02], add: [6, 8, 14], rim: { side: 'l', col: '#fff4e0', k: [0.42, 0.2], below: 0.85 } };
+  const ROOM = { mul: [0.9, 0.82, 0.74], add: [12, 6, 0], rim: { side: 'r', col: '#ffc890', k: [0.42, 0.18], below: 0.85 } };
+
+  // ==== cr.summit · the sea of cloud =================================================================================
+  function geomSummit(w, h, vb) { const S = stage(w, h, vb); return Object.assign(S, { narrow: S.lay === 'narrow', sea: Math.round(vb * 0.5) }); }
+  function summitStatic(G, east) {
+    return cached('cr.summit|' + G.w + 'x' + G.h + '|' + G.vb + '|' + (east ? 1 : 0), () => {
+      const { w, h, s, sea } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      Q.bandsIn(g, 0, 0, w, sea + s(10), ['#3a6ab0', '#4a7ab8', '#5e8cc4', '#7aa2d0', '#98b8dc', '#b8cce4'], 0.45);
+      const L = SP.layer(w, h), rnd = p.rnd(east ? 83 : 81);
+      // far peaks standing out of the cloud, snow on their upper faces
+      const rock = p.mat('#5a6478', { n: 7, at: 3, step: 0.07 }), snow = p.mat('#e8eef6', { n: 6, at: 4, step: 0.05 });
+      const gx = Math.round(w * (G.narrow ? 0.62 : 0.7));
+      for (let i = 0; i < 6; i++) {
+        const px = rnd() * w, ph = s(30 + rnd() * 60), pw = ph * (0.9 + rnd() * 0.8), base = sea + s(6);
+        if (east && Math.abs(px - gx) < pw + s(30)) continue; // (the sky over the break stays open for the steam)
+        L.fill(px - pw, base - ph, px + pw, base, (x, y) => y > base - ph + Math.abs(x - px) * (ph / pw) + Math.sin(x * 0.3) * 1.5, rock, (x, y) => clamp((x < px ? 0.6 : 0.3) + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+        L.fill(px - pw, base - ph, px + pw, base, (x, y) => y > base - ph + Math.abs(x - px) * (ph / pw) && y < base - ph * 0.55 + Math.sin(x * 0.7) * 3, snow, (x, y) => clamp(x < px ? 0.8 : 0.45, 0.02, 0.999));
+      }
+      // the near ground of the pass: rock and dry grass at the bottom edge, the stone on it at the side
+      const ground = p.mat('#6a6252', { n: 7, at: 3, step: 0.08 }), grassM = p.mat('#8a8a5a', { n: 6, at: 3, step: 0.08 });
+      L.fill(0, 0, w, h, (x, y) => y > G.vb * 0.86 + Math.sin(x / (w * 0.07)) * s(4), ground, (x, y) => clamp(0.5 + (((x * 7 + y * 3) % 13) < 3 ? 0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.1, 0.02, 0.999));
+      SP.grass(L, (x) => G.vb * 0.86 + Math.sin(x / (w * 0.07)) * s(4) + s(2), h, grassM, { seed: 19, density: 1400, blade: 1.4 });
+      const boulder = p.mat('#7a7468', { n: 7, at: 3, step: 0.07 });
+      for (const [bx, bw2] of [[0.06, 22], [0.5, 14], [0.9, 26]]) { const x = Math.round(w * bx), y = Math.round(G.vb * 0.9); L.stone([[x - s(bw2), y + s(10)], [x - s(bw2 * 0.7), y - s(bw2 * 0.5)], [x + s(bw2 * 0.3), y - s(bw2 * 0.7)], [x + s(bw2), y - s(bw2 * 0.2)], [x + s(bw2), y + s(10)]], boulder, { face: 4, bevel: Math.max(2, s(3)), seam: true }); }
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      return { cv };
+    });
+  }
+  // the cloud sea: rows of rounded cloud tops lit from above, moving slowly (still: held)
+  function cloudSea(c, G, t, still, gap) {
+    const { w, s, sea } = G, rnd = P().rnd(5), rows = 7;
+    for (let r = 0; r < rows; r++) {
+      const y = sea + r * s(8) + Math.round(r * r * 1.2), sc = 0.6 + r * 0.25, speed = (r + 1) * 0.004, n = Math.round(w / (s(30) * sc)) + 2;
+      for (let i = 0; i < n; i++) {
+        const x0 = ((i * s(30) * sc + (still ? 0 : t * speed) + rnd() * s(20)) % (w + s(40) * sc)) - s(20) * sc;
+        if (gap && Math.abs(x0 - gap.x) < gap.r * (1 - r / rows) && r < 3) continue;
+        const rr = s(16) * sc * (0.8 + rnd() * 0.4);
+        for (let j = -rr; j <= 0; j++) { const half = Math.round(Math.sqrt(Math.max(0, 1 - (j / rr) ** 2)) * rr * 1.4); c.fillStyle = j < -rr * 0.55 ? '#ffffff' : j < -rr * 0.2 ? '#eef2f8' : '#d4dcea'; c.fillRect(Math.round(x0 - half), Math.round(y + j), half * 2, 1); }
+      }
+      c.fillStyle = '#d4dcea'; c.fillRect(0, y, w, s(10));
+    }
+  }
+  const clouds = {
+    phases: [['drift', 1400]],
+    safe: { wide: 'the sea of cloud and the peaks above the sheet', narrow: 'the cloud sea in the upper half', land: 'the cloud sea' },
+    draw(c, w, h, t, st) {
+      const G = geomSummit(w, h, st.vb);
+      c.drawImage(summitStatic(G, false).cv, 0, 0);
+      cloudSea(c, G, t + ease(st.at('drift')) * 800, st.still, null);
+      // redraw the near ground over the clouds (the pass you stand on)
+      const near = cached('cr.near|' + w + 'x' + h + '|' + st.vb, () => { const cv = mk(w, h), g = cv.getContext('2d'); g.drawImage(summitStatic(G, false).cv, 0, Math.round(st.vb * 0.82), w, h, 0, Math.round(st.vb * 0.82), w, h); return { cv }; });
+      c.drawImage(near.cv, 0, 0);
+    },
+    focus(w, h, vb) { return { x: 0, y: Math.round(vb * 0.25), w, h: Math.round(vb * 0.55) }; },
+  };
+  const steam = {
+    phases: [['rise', 1400]],
+    safe: { wide: 'the break in the cloud and the steam above the sheet', narrow: 'the steam in the upper half', land: 'the steam' },
+    draw(c, w, h, t, st) {
+      const G = geomSummit(w, h, st.vb), { s, sea } = G, still = st.still;
+      c.drawImage(summitStatic(G, true).cv, 0, 0);
+      const gx = Math.round(w * (G.narrow ? 0.62 : 0.7)), gap = { x: gx, r: s(70) };
+      // the valley under the break: dark green slopes far below
+      R(c, gx - s(40), sea + s(2), s(80), s(14), '#3a4e3e');
+      R(c, gx - s(24), sea + s(8), s(48), s(10), '#2e4032');
+      cloudSea(c, G, t, still, gap);
+      // the plumes: columns of white rising and leaning with the wind, each its own pace
+      const kr = ease(st.at('rise'));
+      for (let i = 0; i < 5; i++) {
+        const bx = gx - s(30) + i * s(15), ht = s(40 + (i % 3) * 18) * (0.3 + 0.7 * kr), rnd = P().rnd(90 + i);
+        for (let j = 0; j < 20; j++) {
+          const u = j / 20, y = sea + s(10) - u * ht, lean = u * u * s(18), wob = still ? 0 : Math.sin(t / 700 + i + u * 6) * s(2) * u;
+          const r = Math.max(1, Math.round(s(3) + u * s(6)));
+          c.fillStyle = 'rgba(250,250,252,' + (0.75 - u * 0.55).toFixed(2) + ')';
+          c.fillRect(Math.round(bx + lean + wob - r + rnd() * 2), Math.round(y), r * 2, Math.max(1, Math.round(ht / 20)));
+        }
+      }
+      // the two of you small on the pass's edge, from behind
+      const W = Math.round(clamp(s(90), 60, 120));
+      const pb = Q.back(st.cast.pc || {}, W, { light: 'l' });
+      if (pb) c.drawImage(pb.cv, Math.round(w * 0.24) - pb.ax, Math.round(st.vb + s(64)) - pb.ay);
+      const comp = st.cast.comp;
+      if (comp) { const cb = Q.back(comp.look, Math.round(W * 0.95), { light: 'l' }); if (cb) c.drawImage(cb.cv, Math.round(w * 0.24 + W * 0.85) - cb.ax, Math.round(st.vb + s(68)) - cb.ay); }
+    },
+    focus(w, h, vb) { const G = geomSummit(w, h, vb), gx = Math.round(w * (G.narrow ? 0.62 : 0.7)); return { x: gx - G.s(50), y: Math.max(0, G.sea - G.s(80)), w: G.s(100), h: Math.min(vb - 2, G.sea + G.s(20)) - Math.max(0, G.sea - G.s(80)) }; },
+  };
+  RB.sequence.define('cr.summit', {
+    title: { en: 'Above the sea of cloud', jp: '{雲|くも} の {海|うみ}' }, chapter: 'cr', scene: 'cr.summit_first',
+    shots: { clouds, steam },
+  });
+
+  // ==== cr.letter · Heisuke and the letter ===========================================================================
+  const letter = {
+    phases: [['open', 900], ['quiet', 1200]],
+    safe: { wide: 'Heisuke\'s face and the letter above the sheet', narrow: 'his face in the upper half', land: 'his face' },
+    draw(c, w, h, t, st) {
+      const S = stage(w, h, st.vb), { s } = S, narrow = S.lay === 'narrow';
+      // the station's front room: dark beams, a paper door warm with the hearth, the courier's box on the step
+      const B = cached('cr.room|' + w + 'x' + h + '|' + st.vb, () => {
+        const cv = mk(w, h), g = cv.getContext('2d'), p = P();
+        g.imageSmoothingEnabled = false;
+        const L = SP.layer(w, h), wall = p.mat('#6a5a46', { n: 7, at: 3, step: 0.07 }), beam = p.mat('#3a2a20', { n: 6, at: 3, step: 0.08 }), paper = p.mat('#e8dcc0', { n: 6, at: 4, step: 0.05 });
+        L.rect(0, 0, w, h, wall, (x, y) => clamp(0.45 - Math.abs(x - w * 0.3) / w * 0.3 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        Q.shoji(L, Math.round(w * 0.04), Math.round(st.vb * 0.06), Math.round(w * 0.36), Math.round(st.vb * 0.7), (n) => s(n) * 2, paper, beam, 0.7);
+        L.rect(0, Math.round(st.vb * 0.04), w, s(6), beam, 0.5);
+        for (const x of [Math.round(w * 0.42), Math.round(w * 0.96)]) L.rect(x, 0, s(7), h, beam, (xx) => (xx < x + s(2) ? 0.6 : 0.28));
+        L.outline();
+        g.drawImage(L.canvas(), 0, 0);
+        SP.glow(g, Math.round(w * 0.22), Math.round(st.vb * 0.4), Math.round(w * 0.3), '255,210,150', 0.3);
+        return { cv };
+      });
+      c.drawImage(B.cv, 0, 0);
+      const ko = st.at('open'), kq = st.at('quiet');
+      const b = Q.bust('cr_heisuke', kq > 0.4 ? 'sad2' : 'neutral', kq > 0.4 ? null : { look: [0, 1], head: [0, 1] }, ROOM, false, 200);
+      const bx = Math.round(w * (narrow ? 0.56 : 0.62)), by = Math.max(Math.round(st.vb + s(12)), 100);
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
+      // the letter opened out in his hands: a long sheet of oiled paper, columns of fading brush marks
+      const e = ease(ko), LW = Math.round(clamp(s(54), 34, 80) * (0.4 + 0.6 * e)), LH = Math.round(clamp(s(40), 26, 60));
+      const lx = bx - Math.round(LW / 2), ly = by - 18;
+      R(c, lx, ly, LW, LH, '#e2d4b0'); R(c, lx, ly + LH - 1, LW, 1, '#b8a682'); R(c, lx + LW - 1, ly, 1, LH, '#c8b690');
+      for (let i = 0; i < Math.max(1, Math.round(LW / 7)); i++) SP.marks(c, lx + LW - 4 - i * 7, ly + 3, LH - 6, 4, 1, i < 2 ? '#3a2e2a' : 'rgba(58,46,42,0.5)', 30 + i);
+      const sk = skin('cr_heisuke'), sl = (look('cr_heisuke').cloth || ['#5a4a3a'])[0];
+      const hl = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'R', angle: -1.1, skin: sk, sleeve: sl });
+      const hr = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'L', angle: -2.0, skin: sk, sleeve: sl });
+      if (hl) c.drawImage(hl.cv, Math.round(lx + 1 - hl.ax), Math.round(ly + LH * 0.7 - hl.ay));
+      if (hr) c.drawImage(hr.cv, Math.round(lx + LW - 1 - hr.ax), Math.round(ly + LH * 0.7 - hr.ay));
+    },
+    focus(w, h, vb) { const S = stage(w, h, vb), narrow = S.lay === 'narrow', bx = Math.round(w * (narrow ? 0.56 : 0.62)), by = Math.max(Math.round(vb + S.s(12)), 100); return { x: bx - 34, y: by - 92, w: 68, h: Math.min(vb - 2, by - 24) - (by - 92) }; },
+  };
+  RB.sequence.define('cr.letter', {
+    title: { en: 'A letter fifty years late', jp: '{五十年|ごじゅうねん} {遅|おく}れ の {手紙|てがみ}' }, chapter: 'cr', scene: 'cr.deliver',
+    shots: { letter },
+  });
+
+  // ==== cr.relay · the seven lamps at night ============================================================================
+  const relay = {
+    phases: [['light', 1500]],
+    safe: { wide: 'the mountain with its seven lamps above the sheet', narrow: 'the lamps in the upper half', land: 'the lamps' },
+    draw(c, w, h, t, st) {
+      const S = stage(w, h, st.vb), { s } = S, still = st.still, vb = st.vb;
+      const B = cached('cr.night|' + w + 'x' + h + '|' + vb, () => {
+        const cv = mk(w, h), g = cv.getContext('2d'), p = P();
+        g.imageSmoothingEnabled = false;
+        Q.bandsIn(g, 0, 0, w, h, ['#060a18', '#0a1024', '#0e1630', '#141c3a', '#1a2444'], 0.45);
+        SP.stars(g, 0, 0, w, Math.round(vb * 0.5), 60, 77, 7);
+        const L = SP.layer(w, h), m = p.mat('#1e2638', { n: 6, at: 3, step: 0.08 }), m2 = p.mat('#161c2c', { n: 5, at: 2, step: 0.08 }), snow = p.mat('#8a96b4', { n: 6, at: 3, step: 0.07 });
+        const ridge = (x) => vb * 0.18 + Math.abs(x - w * 0.55) * 0.42 + Math.sin(x / (w * 0.07)) * s(10) + Math.sin(x / (w * 0.023)) * s(3) - Math.max(0, s(30) - Math.abs(x - w * 0.3) * 0.4);
+        L.fill(0, 0, w, h, (x, y) => y > ridge(x), m, (x, y) => clamp(0.45 - (y - ridge(x)) / h * 0.3 + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+        L.fill(0, 0, w, h, (x, y) => y > ridge(x) && y < ridge(x) + s(10) + Math.sin(x * 0.4) * 2, snow, 0.5);
+        L.fill(0, 0, w, h, (x, y) => y > vb * 0.7 + Math.sin(x / (w * 0.09) + 2) * s(6), m2, (x, y) => clamp(0.4 + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+        // the foot of the road: the first station's village, its roofs and a few lit windows; cedars against the slope
+        const tile = p.mat('#20242e', { n: 5, at: 2, step: 0.08 }), cedar = p.mat('#101820', { n: 4, at: 2 }), rr = p.rnd(55);
+        for (let i = 0; i < 7; i++) { const x = Math.round(w * (0.04 + i * 0.05)), y = Math.round(vb * (0.84 + (i % 2) * 0.03)); SP.roof(L, x - s(10), x + s(10), y - s(6), s(6), tile, { course: 2 }); L.rect(x - s(8), y, s(16), s(8), m2, 0.3); }
+        for (let i = 0; i < 30; i++) { const x = rr() * w, y = vb * (0.66 + rr() * 0.2), ht = s(8 + rr() * 10); L.fill(x - ht * 0.3, y - ht, x + ht * 0.3, y, (xx, yy) => Math.abs(xx - x) <= ht * 0.3 * (yy - (y - ht)) / ht, cedar, 0.5); }
+        L.outline();
+        g.drawImage(L.canvas(), 0, 0);
+        for (let i = 0; i < 7; i += 2) R(g, Math.round(w * (0.04 + i * 0.05)) - 2, Math.round(vb * (0.84 + (i % 2) * 0.03)) + s(3), Math.max(2, s(3)), Math.max(1, s(2)), '#ffc870');
+        return { cv };
+      });
+      c.drawImage(B.cv, 0, 0);
+      // the seven stations from the foot (lower left) to the pass (the summit), each lamp lit in turn on this line
+      const kl = st.at('light');
+      const pts = [];
+      for (let i = 0; i < 7; i++) { const u = i / 6; pts.push([lerp(w * 0.14, w * 0.55, u) + Math.sin(u * 9) * s(26), lerp(vb * 0.82, vb * 0.2, Math.pow(u, 0.9))]); }
+      c.fillStyle = 'rgba(160,150,140,0.35)';
+      for (let i = 1; i < 7; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.round(Math.hypot(b[0] - a[0], b[1] - a[1])); for (let j = 0; j < n; j += 3) c.fillRect(Math.round(lerp(a[0], b[0], j / n)), Math.round(lerp(a[1], b[1], j / n)), 1, 1); }
+      pts.forEach(([x, y], i) => {
+        const on = still ? 1 : clamp(kl * 7 - i, 0, 1);
+        if (on <= 0) { R(c, x - 1, y - 1, 3, 3, '#3a3a44'); return; }
+        R(c, x - s(3), y - s(2), s(6), s(4), '#3a2e26'); // the station's roof
+        R(c, x - 1, y, Math.max(2, s(2)), Math.max(2, s(2)), '#ffd080');
+        SP.glow(c, x, y, Math.round(s(14) * on), '255,190,100', 0.3 * on);
+      });
+      // a courier's lantern on the move between the third and the fourth station
+      if (kl >= 1 || still) {
+        const u = still ? 0.5 : ((t / 7000) % 1), a = pts[2], b = pts[3];
+        const x = lerp(a[0], b[0], u), y = lerp(a[1], b[1], u) - s(2) + (still ? 0 : Math.abs(Math.sin(t / 160)) * -1);
+        R(c, x, y, Math.max(1, s(1.5)), Math.max(2, s(2)), '#ffe0a0');
+        SP.glow(c, x, y, s(8), '255,200,120', 0.3);
+      }
+    },
+    focus(w, h, vb) { return { x: Math.round(w * 0.08), y: Math.round(vb * 0.14), w: Math.round(w * 0.6), h: Math.round(vb * 0.74) }; },
+  };
+  RB.sequence.define('cr.relay', {
+    title: { en: 'The relay runs again', jp: '{継|つ}ぎ{飛脚|びきゃく} が また {走|はし}る' }, chapter: 'cr', scene: 'cr.end',
+    shots: { relay },
+  });
+})();
+
+
+/* ==== src/ui/43m_seq_yn.js ==== */
+/* Steamhollow, Chapter 11 of the twelve: the travel volume's pages (expansion P16; AC-1).
+ *
+ * yn.kettle — the Kettle Below settled (`yn.kettle`, src/content/yn/23_scenes_vents.js, after the encounter).
+ *   pool    the Kettle's chamber: a cavern of wet rock round a pool, the great iron-dark shape in it the size of a
+ *           house; the bubbles going out one by one and the shape settling to the bottom, the water clearing, the
+ *           steam rising quietly
+ * yn.end — the chapter's last night (`yn.end`).
+ *   valley  every lantern in the valley lit: the two inns either side of the river, the red bridge between them with
+ *           guests of both inns crossing in yukata, steam from the baths and the river
+ *   ridge   above it all the north ridge, black under the stars and silent; your companion's resolve
+ * No letters, kana or kanji are drawn: noren and lanterns carry colour, never characters. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function () {
+  'use strict';
+  const Q = RB.seqKit, { R, mk, clamp, ease, lerp, cached, stage } = Q;
+  const SP = RB.seqPaint;
+  const P = () => RB.pxkit;
+  const look = (id) => (RB.content.chars[id] || {}).look || {};
+
+  const NIGHT = { mul: [0.74, 0.7, 0.82], add: [8, 4, 16], rim: { side: 'r', col: '#ffb070', k: [0.42, 0.2], below: 0.85 } };
+  const FEST = { mul: [0.6, 0.54, 0.6], add: [14, 6, 4], rim: { side: 't', col: '#ffb070', k: [0.42, 0.2] } };
+
+  // ==== yn.kettle · the Kettle's chamber ==========================================================================
+  function geomPool(w, h, vb) { const S = stage(w, h, vb); return Object.assign(S, { narrow: S.lay === 'narrow', wl: Math.round(vb * 0.56) }); }
+  function poolStatic(G) {
+    return cached('yn.pool|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s, wl } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      g.fillStyle = '#0e1214'; g.fillRect(0, 0, w, h);
+      const L = SP.layer(w, h), rock = p.mat('#4a4a46', { n: 7, at: 3, step: 0.08 }), wet = p.mat('#3a4442', { n: 6, at: 3, step: 0.08 }), mineral = p.mat('#a89a6a', { n: 6, at: 3, step: 0.08 });
+      // the cavern: rock walls closing in from both sides and overhead, wet and streaked with mineral where water ran
+      const rim = (x) => s(30) + Math.sin(x / (w * 0.09)) * s(10) + Math.abs(x - w / 2) * 0.12;
+      // the back wall of the chamber, dim, in broken slabs, warmer low down where the pool's heat lights it
+      const back = p.mat('#3a3634', { n: 7, at: 3, step: 0.08 });
+      L.fill(0, 0, w, wl, () => true, back, (x, y) => clamp(0.2 + (y / wl) * 0.2 + (((Math.round(x / s(9)) * 7 + Math.round(y / s(6)) * 3) % 5) === 0 ? 0.08 : 0) + ((Math.round(y) % s(6)) === 0 ? -0.08 : 0) + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+      L.fill(0, 0, w, wl, (x, y) => y < rim(x), rock, (x, y) => clamp(0.3 + (rim(x) - y) / s(60) * -0.1 + (((Math.round(x * 0.5) * 7 + Math.round(y * 0.5) * 3) % 11) < 2 ? 0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.1, 0.02, 0.999));
+      for (const side of [-1, 1]) {
+        const edge = (y) => (side < 0 ? s(70) + Math.sin(y / s(16)) * s(8) : w - s(70) - Math.sin(y / s(14)) * s(8));
+        L.fill(0, 0, w, h, (x, y) => (side < 0 ? x < edge(y) : x > edge(y)), rock, (x, y) => clamp(0.42 + (side < 0 ? 0.08 : -0.06) + (((Math.round(y * 0.5) * 5 + Math.round(x * 0.5)) % 9) < 2 ? 0.1 : 0) + (p.bayer(x, y) - 0.5) * 0.1, 0.02, 0.999));
+        for (let i = 0; i < 4; i++) { const x = side < 0 ? s(20 + i * 12) : w - s(20 + i * 12); L.seg(x, rim(x), x + side * s(4), wl, Math.max(1, s(2)), mineral, 0.5); }
+      }
+      // the pool: dark green water, lit from below where the Kettle's heat is
+      const water = p.mat('#2a4a46', { n: 7, at: 3, step: 0.08 });
+      SP.water(L, 0, wl, w, h, water, { band: Math.max(3, s(4)), deep: 0.3, seed: 33, lit: (x, y) => clamp(1 - Math.hypot(x - w / 2, (y - wl - s(30)) * 2) / (w * 0.35), 0, 1) * 0.3 });
+      // the edge stones round the pool, wet
+      L.fill(0, 0, w, h, (x, y) => y >= wl - s(3) && y < wl + s(2), wet, 0.7);
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      return { cv };
+    });
+  }
+  // the Kettle: a great iron-dark rounded shape with a lid's rim and a spout's stub, sinking by `sink` (0..1)
+  function kettle(c, G, sink, t, still) {
+    const { w, s, wl } = G, cx = Math.round(w / 2), r = s(G.narrow ? 46 : 60);
+    const art = Q.small('yn.kettle|' + r, () => {
+      const p = P(), W = r * 3, H = Math.round(r * 2.2), L = SP.layer(W, H), iron = p.mat('#3a3436', { n: 7, at: 3, step: 0.07 }), rust = p.mat('#6a4434', { n: 5, at: 2 });
+      L.ell(W / 2, H * 0.62, r * 1.25, r * 0.85, iron, p.sphere(W / 2 - r * 0.4, H * 0.4, r * 1.25, r * 0.85, { amb: 0.25 }));
+      L.ell(W / 2, H * 0.3, r * 0.75, r * 0.18, iron, 0.66);
+      L.ell(W / 2, H * 0.26, r * 0.2, r * 0.12, iron, 0.8);
+      L.seg(W / 2 + r * 1.1, H * 0.5, W / 2 + r * 1.45, H * 0.36, r * 0.18, iron, 0.45);
+      for (let i = 0; i < 9; i++) L.dot(W / 2 - r + i * r * 0.25, H * 0.62 + Math.sin(i) * r * 0.3, rust, 2);
+      L.outline();
+      return { cv: L.canvas(), W, H };
+    });
+    const y0 = Math.round(wl - art.H * 0.62 + sink * art.H * 0.3), vis = Math.max(0, Math.round(wl - y0));
+    SP.glow(c, cx, wl + s(10), Math.round(r * 1.6), '255,150,90', 0.22 * (1 - sink * 0.6));
+    if (vis > 0) c.drawImage(art.cv, 0, 0, art.W, vis, cx - Math.round(art.W / 2), y0, art.W, vis);
+    // under the water, its shape seen through it (darker, wavering)
+    const below = Math.min(art.H - vis, Math.round(G.h - wl));
+    if (below > 0) { c.globalAlpha = 0.35 + 0.3 * sink; for (let j = 0; j < below; j += 2) { const off = still ? 0 : Math.round(Math.sin(t / 400 + j / 6) * 1); c.drawImage(art.cv, 0, vis + j, art.W, 2, cx - Math.round(art.W / 2) + off, wl + j, art.W, 2); } c.globalAlpha = 1; }
+  }
+  const pool = {
+    phases: [['calm', 1600]],
+    safe: { wide: 'the Kettle in its pool above the sheet', narrow: 'the Kettle in the upper half', land: 'the Kettle' },
+    draw(c, w, h, t, st) {
+      const G = geomPool(w, h, st.vb), { s, wl } = G, still = st.still;
+      c.drawImage(poolStatic(G).cv, 0, 0);
+      const k = ease(st.at('calm'));
+      kettle(c, G, k, t, still);
+      // the bubbles going out one by one; then only a slow one now and then
+      const rnd = P().rnd(41);
+      for (let i = 0; i < 18; i++) {
+        const gone = i / 18 < k;
+        const x = w / 2 + (rnd() - 0.5) * s(170), ph = rnd();
+        if (gone && !(i === 3 && !still && ((t / 3000 + ph) % 1) < 0.15)) continue;
+        const r = Math.max(1, Math.round(s(2 + rnd() * 3)));
+        c.fillStyle = 'rgba(220,240,230,0.6)'; c.fillRect(Math.round(x - r), wl - r, r * 2, 1); c.fillRect(Math.round(x - r + 1), wl - r - 1, r * 2 - 2, 1);
+      }
+      // steam rising slowly from the whole pool: soft columns that thin as they climb
+      for (let i = 0; i < 6; i++) {
+        const bx = w * (0.2 + i * 0.12), u0 = still ? 0.4 : ((t / 6000 + i * 0.17) % 1);
+        for (let j = 0; j < 6; j++) { const u = (u0 + j / 6) % 1, y = wl - u * st.vb * 0.5, x = bx + Math.sin(u * 5 + i) * s(8); SP.glow(c, x, y, Math.round(s(6) + u * s(10)), '230,236,234', (1 - u) * (0.3 + 0.3 * (1 - k))); }
+      }
+      SP.glints(c, 0, wl + s(2), w, s(30), t, 14, 43, '200,240,220', still);
+    },
+    focus(w, h, vb) { const G = geomPool(w, h, vb), r = G.s(G.narrow ? 46 : 60); return { x: Math.round(w / 2 - r * 1.5), y: Math.round(G.wl - r * 1.4), w: r * 3, h: Math.round(Math.min(vb - 2, G.wl + G.s(10)) - (G.wl - r * 1.4)) }; },
+  };
+  RB.sequence.define('yn.kettle', {
+    title: { en: 'The Kettle Below, quiet', jp: '{釜|かま}の{主|ぬし} が {静|しず}まる' }, chapter: 'yn', scene: 'yn.kettle',
+    shots: { pool },
+  });
+
+  // ==== yn.end · the valley's lanterns, and the silent ridge ========================================================
+  function geomValley(w, h, vb) { const S = stage(w, h, vb); return Object.assign(S, { narrow: S.lay === 'narrow' }); }
+  function valleyStatic(G) {
+    return cached('yn.valley|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+      const { w, h, s, vb } = G, p = P();
+      const cv = mk(w, h), g = cv.getContext('2d');
+      g.imageSmoothingEnabled = false;
+      Q.bandsIn(g, 0, 0, w, h, ['#080a18', '#0c1022', '#12162c', '#1a1c34', '#24223a'], 0.45);
+      SP.stars(g, 0, 0, w, Math.round(vb * 0.25), 30, 23, 0);
+      const L = SP.layer(w, h);
+      // the valley's sides, black against the sky; the river down the middle, the two inns either side
+      const hill = p.mat('#141820', { n: 5, at: 2, step: 0.08 });
+      L.fill(0, 0, w, h, (x, y) => y > vb * 0.18 + Math.abs(x - w / 2) * -0.2 + Math.abs(x - w / 2) * Math.abs(x - w / 2) / w * 0.9, hill, (x, y) => clamp(0.4 + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999));
+      const river = p.mat('#1e2a40', { n: 6, at: 3, step: 0.08 });
+      SP.water(L, Math.round(w * 0.36), Math.round(vb * 0.7), Math.round(w * 0.64), h, river, { band: Math.max(3, s(4)), deep: 0.1, seed: 7 });
+      // the inns: big wooden buildings, two storeys, deep eaves, rows of lit paper windows
+      const wood = p.mat('#3a2a24', { n: 7, at: 3, step: 0.08 }), tile = p.mat('#22242e', { n: 6, at: 3, step: 0.08 }), paper = p.mat('#ffc878', { n: 5, at: 3, step: 0.08 });
+      for (const side of [-1, 1]) {
+        const x0 = side < 0 ? -s(10) : Math.round(w * 0.64), x1 = side < 0 ? Math.round(w * 0.36) : w + s(10), base = Math.round(vb * 0.74);
+        for (let f = 0; f < 2; f++) {
+          const top = base - s(34) * (f + 1), inset = f * s(12) * (side < 0 ? 1 : -1);
+          L.rect(Math.min(x0, x1) + (side < 0 ? 0 : -inset), top, Math.abs(x1 - x0) - Math.abs(inset), s(34), wood, (x, y) => clamp(0.4 + (((Math.round(x) % s(10)) === 0) ? -0.15 : 0), 0.02, 0.999));
+          for (let x = Math.min(x0, x1) + s(6) + (side < 0 ? 0 : -inset); x < Math.max(x0, x1) - s(12) - (side < 0 ? Math.abs(inset) : 0); x += s(14)) L.rect(x, top + s(8), s(9), s(14), paper, (xx, yy) => clamp(0.6 + ((Math.round(yy) % 4) === 0 ? -0.2 : 0) + ((Math.round(xx) % 4) === 0 ? -0.2 : 0), 0.02, 0.999));
+          SP.roof(L, Math.min(x0, x1) - s(6) + (side < 0 ? 0 : -inset), Math.max(x0, x1) + s(6) - (side < 0 ? Math.abs(inset) : 0), top - s(10), s(10), tile, { course: Math.max(2, s(3)) });
+        }
+      }
+      // the red bridge across the river between them
+      const red = p.mat('#a83a2a', { n: 7, at: 3, step: 0.08 }), bx0 = Math.round(w * 0.3), bx1 = Math.round(w * 0.7), by = Math.round(vb * 0.74), rise = s(14);
+      L.fill(bx0, by - rise - s(16), bx1, by + s(6), (x, y) => { const u = (x - bx0) / (bx1 - bx0); const top = by - Math.sin(Math.PI * u) * rise; return y >= top && y < top + s(5); }, red, (x, y) => 0.55);
+      L.fill(bx0, by - rise - s(16), bx1, by, (x, y) => { const u = (x - bx0) / (bx1 - bx0); const top = by - Math.sin(Math.PI * u) * rise - s(9); return Math.abs(y - top) < 1.2; }, red, 0.75);
+      for (let x = bx0 + s(4); x < bx1; x += s(14)) { const u = (x - bx0) / (bx1 - bx0); const top = by - Math.sin(Math.PI * u) * rise; L.rect(x, top - s(9), Math.max(2, s(2)), s(9), red, 0.6); }
+      L.outline();
+      g.drawImage(L.canvas(), 0, 0);
+      return { cv, bx0, bx1, by, rise };
+    });
+  }
+  const PEOPLE = ['yn_oritsu', 'yn_tahei', 'yn_aki', 'yn_rokubei'];
+  const valley = {
+    phases: [['light', 1500]],
+    safe: { wide: 'the lit valley and the bridge above the sheet', narrow: 'the bridge in the upper half', land: 'the bridge' },
+    draw(c, w, h, t, st) {
+      const G = geomValley(w, h, st.vb), { s } = G, still = st.still;
+      const B = valleyStatic(G);
+      c.drawImage(B.cv, 0, 0);
+      const kl = st.at('light');
+      // the lanterns strung along both inns' eaves and the bridge, lighting in a wave from the bridge outward
+      const rows = [];
+      for (let i = 0; i < 14; i++) rows.push([w * (0.02 + i * 0.024), st.vb * 0.58 + Math.sin(i * 0.7) * s(2)]);
+      for (let i = 0; i < 14; i++) rows.push([w * (0.66 + i * 0.024), st.vb * 0.58 + Math.sin(i * 0.7) * s(2)]);
+      for (let i = 0; i < 6; i++) { const u = (i + 0.5) / 6; rows.push([lerp(B.bx0, B.bx1, u), B.by - Math.sin(Math.PI * u) * B.rise - s(14)]); }
+      rows.forEach(([x, y], i) => {
+        const d = Math.abs(x - w / 2) / (w / 2), on = still ? 1 : clamp(kl * 1.6 - d, 0, 1);
+        SP.lantern(c, Math.round(x), Math.round(y), Math.max(2, s(3)), Math.max(3, s(6)), on > 0.5, t, still);
+      });
+      // guests of both inns crossing the bridge in yukata (in the inns' own colours)
+      PEOPLE.forEach((id, i) => {
+        const lk = Object.assign({}, look(id), { shape: 'robe', cloth: i % 2 ? ['#e8e0d0', '#c8bea8', '#3a4e8a'] : ['#2e3a5e', '#222c48', '#d8a838'] });
+        const u = still ? 0.2 + i * 0.2 : (((t / 9000) + i * 0.25) % 1), x = lerp(B.bx0 + s(10), B.bx1 - s(10), i % 2 ? 1 - u : u);
+        const top = B.by - Math.sin(Math.PI * ((x - B.bx0) / (B.bx1 - B.bx0))) * B.rise;
+        const f = Q.figure(lk, i % 2 ? 'left' : 'right', still ? 'i0' : 'w' + (Math.floor(t / 200 + i) % 4), 0.42, FEST);
+        if (f) c.drawImage(f.cv, Math.round(x - f.ax), Math.round(top - f.ay));
+      });
+      // steam rising from the baths behind the inns and from the river
+      for (let i = 0; i < 8; i++) {
+        const bx = w * (0.06 + i * 0.125), u0 = still ? 0.3 : ((t / 7000 + i * 0.13) % 1);
+        for (let j = 0; j < 5; j++) { const u = (u0 + j / 5) % 1, y = st.vb * 0.62 - u * st.vb * 0.4, x = bx + Math.sin(u * 4 + i) * s(10); SP.glow(c, x, y, Math.round(s(8) + u * s(10)), '220,214,226', (1 - u) * 0.28); }
+      }
+      SP.glints(c, Math.round(w * 0.36), Math.round(st.vb * 0.76), Math.round(w * 0.28), s(30), t, 18, 57, '255,190,120', still);
+    },
+    focus(w, h, vb) { return { x: Math.round(w * 0.25), y: Math.round(vb * 0.3), w: Math.round(w * 0.5), h: Math.round(vb * 0.5) }; },
+  };
+  const ridge = {
+    phases: [['up', 1200], ['comp', 800]],
+    safe: { wide: 'the silent ridge and your companion\'s face above the sheet', narrow: 'their face and the ridge in the upper half', land: 'their face' },
+    draw(c, w, h, t, st) {
+      const G = geomValley(w, h, st.vb), { s } = G;
+      const B = cached('yn.ridge|' + w + 'x' + h + '|' + st.vb, () => {
+        const cv = mk(w, h), g = cv.getContext('2d'), p = P();
+        g.imageSmoothingEnabled = false;
+        Q.bandsIn(g, 0, 0, w, h, ['#04060e', '#080a16', '#0c0e1e', '#121428', '#1a1a30'], 0.45);
+        SP.stars(g, 0, 0, w, Math.round(st.vb * 0.4), 70, 29, 9);
+        const L = SP.layer(w, h), m = p.mat('#0a0c14', { n: 4, at: 1 });
+        L.fill(0, 0, w, h, (x, y) => y > st.vb * 0.42 - Math.abs(Math.sin(x / (w * 0.13) + 1)) * s(40) + Math.sin(x / (w * 0.04)) * s(4), m, 0.5);
+        L.outline();
+        g.drawImage(L.canvas(), 0, 0);
+        // the valley's lantern glow along the bottom edge
+        for (let i = 0; i < 6; i++) SP.glow(g, Math.round(w * (0.1 + i * 0.16)), Math.round(st.vb * 0.98), s(40), '255,170,90', 0.18);
+        return { cv };
+      });
+      c.drawImage(B.cv, 0, 0);
+      const comp = st.cast.comp, kc = st.at('comp');
+      if (comp && kc > 0) {
+        const b = Q.bust(comp.id, 'closed', null, NIGHT, false, 200);
+        const cx = Math.round(w * (G.narrow ? 0.66 : 0.64) + (1 - ease(kc)) * s(8)), cy = Math.max(Math.round(st.vb + s(10)), 98);
+        if (b) c.drawImage(b.cv, cx - b.ax, cy - b.ay);
+      }
+    },
+    focus(w, h, vb) { const G = geomValley(w, h, vb), cx = Math.round(w * (G.narrow ? 0.66 : 0.64)), cy = Math.max(Math.round(vb + G.s(10)), 98); return { x: cx - 34, y: cy - 92, w: 68, h: Math.min(vb - 2, cy - 30) - (cy - 92) }; },
+  };
+  RB.sequence.define('yn.end', {
+    title: { en: 'Every lantern in the valley', jp: '{谷|たに} の {提灯|ちょうちん}' }, chapter: 'yn', scene: 'yn.end',
+    shots: { valley, ridge },
   });
 })();
 
@@ -153396,12 +154117,17 @@ narr: {宛名|あてな} は 、 {薄|うす}れ かけた {字|じ} で 「{坂
 
 @scene cr.summit_first
 !set cr_summit_seen
+# Illustrated (src/ui/43l_seq_cr.js): the sea of cloud; the steam far to the north-east.
+!sequence cr.summit begin
+!shot clouds
 narr: {峠|とうげ} に {出|で}た 。 {四方|しほう} が {雲|くも} の {海|うみ} だ 。 {登|のぼ}って {来|き}た {道|みち} も 、 {宿場|しゅくば} も 、 みんな {白|しろ}い {下|した} に ある 。 || You come out on the pass. Cloud sea on every side; the road you climbed and all the stations are somewhere under the white.
+!shot steam
 narr: {北東|ほくとう} の {遥|はる}か {下|した} に 、 {雲|くも} の {切|き}れ{目|め} が ある 。 {谷|たに} から 、 {白|しろ}い {湯気|ゆげ} が {何本|なんぼん} も {立|た}ち{上|のぼ}って いる 。 || Far below to the north-east there's a gap in the cloud. White steam rises from a valley in many columns.
 ?(comp=nao) comp: {湯気|ゆげ} …… {温泉|おんせん} か 。 {西|にし} で {聞|き}いた こと が ある 。 {湯|ゆ} の {谷|たに} の {話|はなし} 。 || Steam… Hot springs? I heard of it in the west. A valley of hot water.
 ?(comp=mio) comp: {湯気|ゆげ} の {谷|たに} 。 …… {薬湯|くすりゆ} の {本|ほん} で {読|よ}んだ {所|ところ} かも しれません 。 || A valley of steam. …It might be the place I read about in a book on medicinal baths.
 ?(comp=ren) comp: {師匠|ししょう} の {地図|ちず} に も 、 {湯気|ゆげ} の {印|しるし} が ありました 。 …… {行|い}って みる {価値|かち} は あります 。 || My master's map had a steam mark there too. …It would be worth going.
 ?(comp=suzu) comp: {湯治場|とうじば} ね ！ {旅|たび} の {一座|いちざ} の {憧|あこが}れ よ 。 {次|つぎ} の {幕|まく} は 、 あそこ かしら 。 || A spa! Every touring company's dream. Is that where the next act is?
+!sequence cr.summit end
 
 @scene cr.summit_view
 narr: {腰掛|こしか}け から 、 {雲|くも} の {海|うみ} が {見|み}える 。 {風|かぜ} が {雲|くも} を {動|うご}かす と 、 {下|した} の {宿場|しゅくば} の {灯|ひ} が 、 {一瞬|いっしゅん} だけ {見|み}えた 。 || From the bench you can see the cloud sea. When the wind moves the cloud, the lamps of the stations below show for a moment.
@@ -153421,23 +154147,32 @@ narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。
 # chapter's end follows (cr.end).
 !faceplayer
 cr_heisuke: …… {何|なん} だ 、 その {箱|はこ} は 。 {継|つ}ぎ{飛脚|びきゃく} の {封|ふう} …… ？ || …What's that box? The relay's seal…?
+# Illustrated (src/ui/43l_seq_cr.js): the letter in Heisuke's hands.
+!sequence cr.letter begin
+!shot letter
 narr: {状箱|じょうばこ} を {渡|わた}す と 、 ヘイスケ は {手紙|てがみ} を {開|ひら}いて 、 {長|なが}い {間|あいだ} {黙|だま}って いた 。 || You hand him the box. Heisuke opens the letter, and for a long time says nothing.
 cr_heisuke: 「{弟|おとうと} へ 。 {母|かあ}さん の {薬代|くすりだい} を 、 {飛脚|ひきゃく} に {託|たく}す 。 {春|はる} に は {帰|かえ}る 。 {兄|あに} 」 …… || "To my younger brother. I'm sending Mother's medicine money by the courier. I'll be home in spring. Your brother." …
 cr_heisuke: {郵便|ゆうびん} の {金|かね} と いう の は 、 これ だった の か 。 ゲンタ は {逃|に}げた ん じゃ ない 。 {五十年|ごじゅうねん} 、 {峠|とうげ} で これ を {守|まも}って いた 。 || So this was the post money. Genta didn't run. For fifty years he kept it safe on the pass.
+!shot letter quiet
 cr_heisuke: {親父|おやじ} は 、 {死|し}ぬ まで ゲンタ を {恨|うら}んで いた 。 {俺|おれ} も 、 {親父|おやじ} の {話|はなし} を そのまま {人|ひと} に {話|はな}して きた 。 …… {聞|き}いた {話|はなし} を 、 {見|み}た {話|はなし} の よう に な 。 || My father hated Genta till the day he died. And I've been telling his story just as he told it. …A story I heard, told as if I'd seen it.
 ?(comp=nao) comp: …… {届|とど}いて よかった 。 {遅|おそ}すぎる {手紙|てがみ} なんて 、 ない 。 たぶん 。 || …I'm glad it arrived. There's no such thing as a letter too late. Probably.
 ?(comp=mio) comp: お{母|かあ}さま の {薬代|くすりだい} …… 。 {五十年|ごじゅうねん} {前|まえ} の {薬|くすり} の {話|はなし} が 、 {今|いま} {届|とど}く なんて 。 || Your mother's medicine money… Word of medicine from fifty years ago, arriving now.
 ?(comp=ren) comp: {名前|なまえ} が {戻|もど}りました ね 。 {宿場|しゅくば} の {灯|ひ} と {一緒|いっしょ} に 、 ゲンタ さん の {名前|なまえ} も 。 || A name's been given back. Along with the stations' lamps, Genta's name.
 ?(comp=suzu) comp: {五十年|ごじゅうねん} がかり の {幕切|まくぎ}れ ね 。 …… {台本|だいほん} どおり じゃ なかった けど 、 いい {芝居|しばい} だった わ 。 || A final curtain fifty years in the making. …Not as the script had it, but a good play.
 cr_heisuke: ソノ の {宿|やど} へ {行|い}って 、 {頭|あたま} を {下|さ}げて {来|こ}なければ 。 {財布|さいふ} の {金|かね} を どう する か も 、 ソノ と {決|き}める 。 …… {後|あと} で 、 {一緒|いっしょ} に {来|き}て くれる か 。 || I must go to Sono's inn and bow my head. And decide with Sono what to do with the money in the purse. …Will you come with me, later?
+!sequence cr.letter end
 !take cr_message
 !set cr_delivered
 !call cr.end
 
 @scene cr.end
 # The chapter's end: the relay runs again; the bridge mended and the ledge cleared by the stations' people.
+# Illustrated (src/ui/43l_seq_cr.js): the seven lamps at night, the relay running.
+!sequence cr.relay begin
+!shot relay
 narr: {雲路|くもじ} の {最後|さいご} の {便|びん} は 、 {五十年|ごじゅうねん} {遅|おく}れて {届|とど}いた 。 || The Cloudroad's last post arrived fifty years late.
 narr: その {夜|よる} から 、 {継|つ}ぎ{飛脚|びきゃく} が また {宿場|しゅくば} から {宿場|しゅくば} へ {走|はし}り{出|だ}した 。 {宿場|しゅくば} の {人|ひと} たち は 、 {雨|あめ} で {流|なが}れた {橋|はし} を {直|なお}し 、 {崖道|がけみち} の {大岩|おおいわ} を {片付|かたづ}けた 。 || From that night the relay ran again, station to station. The people of the stations mended the washed-out bridge and cleared the great rock from the ledge.
+!sequence cr.relay end
 !set cr_bridge_mended
 !set cr_ledge_cleared
 !quest cr_main done
@@ -177344,11 +178079,16 @@ ko_gardener: {近|ちか}ごろ 、 {上|うえ} から {落|お}ちて くる {
 !if var._res=0 -> again
 !set ko_gardener_done
 !refresh
+# Illustrated (src/ui/43k_seq_ko.js): the roots settling, the leaves coming down onto their threads; the two of you.
+!sequence ko.garden begin
+!shot garden
 narr: {根|ね} の {形|かたち} が 、 {静|しず}か に {元|もと} の {編|あ}み{目|め} に {戻|もど}った 。 {風|かぜ} が {止|や}み 、 {宙|ちゅう} の {葉|は} が 、 {一枚|いちまい} ずつ {枝|えだ} に {帰|かえ}って いく 。 || The shape settles back into woven roots. The wind drops, and the leaves in the air go back to their branches, one by one.
+!shot leaves
 ?(comp=nao) comp: {出|だ}す {手紙|てがみ} と 、 {出|だ}さない {手紙|てがみ} 。 …… {仕分|しわ}け は 、 {終|お}わった な 。 || Letters to send and letters not to. …The sorting's done.
 ?(comp=mio) comp[smile]: {言|い}わない {方|ほう} が いい {言葉|ことば} も 、 ある の よ ね 。 {薬|くすり} と {同|おな}じ 。 {量|りょう} の {問題|もんだい} 。 || Some words are better left unsaid, aren't they. Like medicine: it's a matter of the dose.
 ?(comp=ren) comp: {灯|ひ} を {消|け}す の も 、 {灯守|ひもり} の {仕事|しごと} です 。 {庭守|にわもり} も 、 きっと {同|おな}じ です ね 。 || Putting a light out is part of a keeper's work too. A gardener's as well, I expect.
 ?(comp=suzu) comp: {言|い}わない {台詞|せりふ} が ある から 、 {言|い}う {台詞|せりふ} が {生|い}きる の よ 。 {名|めい}{演出|えんしゅつ} だった わ 。 || It's the lines you don't say that make the ones you do say count. Beautifully directed.
+!sequence ko.garden end
 !quest ko_main 7
 !journal {庭守|にわもり} と {話|はな}した 。 {木|き} は {静|しず}か に なった 。 {村|むら} の オトハ に {知|し}らせよう 。 || You spoke with the Gardener, and the tree is quiet. Tell Otoha in the village.
 !autosave
@@ -177366,14 +178106,19 @@ narr: {根|ね} の {編|あ}み{目|め} は 、 {静|しず}か だ 。 {吊|�
 # The chapter's end: Otoha at the Wind Stone; the leaves falling gently now; Nami offers the boat back; the leaves like
 # torn pages, she says, came from the north, over the mountains, from somewhere high (S5: indirect, never explained).
 !faceplayer
+# Illustrated (src/ui/43k_seq_ko.js): Otoha at the Wind Stone; then the way north.
+!sequence ko.end begin
+!shot stone
 ko_otoha[smile]: {木|き} が 、 {息|いき} を して います 。 {葉|は} の {落|お}ち{方|かた} が 、 {昔|むかし} の よう に {戻|もど}った 。 || The tree is breathing. The leaves fall the way they used to.
 ko_otoha: {庭守|にわもり} に {会|あ}った の です ね 。 …… わたし の {祖母|そぼ} も 、 その {祖母|そぼ} も 、 {会|あ}った こと が ない 。 {葉守|はもり} を {代表|だいひょう} して 、 お{礼|れい} を {言|い}います 。 || You met the Gardener. …Neither my grandmother nor hers ever did. On behalf of all the keepers: thank you.
 !gesture ko_otoha lookroad up
+!shot north
 ko_otoha: ただ 、 {一|ひと}つ 。 {紙|かみ} の {切|き}れ{端|はし} の よう な {葉|は} は 、 {北|きた} から {来|き}ました 。 {山|やま} の 、 ずっと {上|うえ} の {方|ほう} から 。 …… {何|なに} が ある の か 、 わたし に は {分|わ}かりません 。 || Just one thing. The leaves like torn pages came from the north. From far up in the mountains. …What is up there, I couldn't say.
 ?(comp=nao) comp: {北|きた} の {山|やま} …… 。 {灯落|ひおち} の {上|うえ} か 。 || The northern mountains… Above Lanternfall.
 ?(comp=mio) comp[think]: {山|やま} の {上|うえ} …… {書庫|しょこ} の {方|ほう} ね 。 || Up in the mountains… The Archive's way.
 ?(comp=ren) comp[think]: {師匠|ししょう} が {行|い}った {方|ほう} です 。 …… {繋|つな}がって いる の かも しれません 。 || The way my master went. …It may all be connected.
 ?(comp=suzu) comp: {最終|さいしゅう} {幕|まく} の {舞台|ぶたい} から 、 {紙吹雪|かみふぶき} が {先|さき} に {届|とど}いた って わけ ね 。 || So the confetti from the final act's stage got here ahead of us.
+!sequence ko.end end
 !quest ko_main done
 !set ko_done
 !travel kotonoha
@@ -204295,8 +205040,12 @@ narr: {上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って
 !if var._res=0 -> again
 !set yn_kettle_settled
 !refresh
+# Illustrated (src/ui/43m_seq_yn.js): the bubbles going out, the Kettle settling.
+!sequence yn.kettle begin
+!shot pool
 narr: {湯|ゆ} の {泡|あわ} が 、 {一|ひと}つ ずつ {消|き}えて いく 。 {釜|かま} は {湯|ゆ} の {底|そこ} に {沈|しず}み 、 {静|しず}か に {湯気|ゆげ} を {吐|は}いた 。 {温|あたた}かい 、 ちょうど いい {湯気|ゆげ} だった 。 || The bubbles fade one by one. The Kettle sinks to the bottom and quietly breathes out steam: warm steam, just right.
 ?(yn_aki_met) yn_aki: …… {湯|ゆ} の {顔色|かおいろ} が 、 {戻|もど}った 。 {十年|じゅうねん} ぶり の {顔|かお} よ 。 || …The water's colour has come back. A face I haven't seen in ten years.
+!sequence yn.kettle end
 !quest yn_main 6
 !set yn_evening
 !journal {釜|かま}の{主|ぬし} は {落|お}ち{着|つ}いた 。 {上|うえ} の {言|い}い{争|あらそ}い と 、 {尾根|おね} の {静|しず}けさ に {挟|はさ}まれて 、 {怯|おび}えて いた の だ 。 {明日|あした} の {朝|あさ} 、 {寄合所|よりあいじょ} で {話|はな}し{合|あ}い が ある 。 || The Kettle Below has settled. It was frightened, caught between the quarrel above and the silence from the ridge. Tomorrow morning there's a meeting at the guild hall.
@@ -204386,12 +205135,18 @@ yn_rokubei: {上|かみ}の{湯|ゆ} だけ でも 、 {下|しも}の{湯|ゆ} 
 @scene yn.end
 # The chapter's end: the vow, after the walk (yn.walk). The valley out in yukata, the lanterns lit, the north road open;
 # above it, the silent mountain and the road to the Archive.
+# Illustrated (src/ui/43m_seq_yn.js): the lit valley and the bridge; the silent ridge and the companion's resolve.
+!sequence yn.end begin
+!shot valley
 narr: {谷|たに} の {提灯|ちょうちん} が {全部|ぜんぶ} {点|つ}いた 。 {赤|あか}い {橋|はし} の {上|うえ} を 、 {上|かみ}の{湯|ゆ} の {客|きゃく} と {下|しも}の{湯|ゆ} の {客|きゃく} が 、 {同|おな}じ {下駄|げた} の {音|おと} で {歩|ある}いて いる 。 || Every lantern in the valley is lit. On the red bridge, guests of the Upper House and the Lower House walk with the same clack of wooden sandals.
+!shot ridge
 narr: {北|きた} の {尾根|おね} の {上|うえ} は 、 {今夜|こんや} も {音|おと} が ない 。 || Above the north ridge, tonight as every night, there is no sound.
+!shot ridge comp
 ?(comp=nao) comp[closed]: …… {最後|さいご} まで {走|はし}る 。 {届|とど}ける {先|さき} が 、 {静|しず}か すぎて も な 。 お{前|まえ} と {一緒|いっしょ} に 。 || …I'll run it to the end. Even if the place we're delivering to is too quiet. With you.
 ?(comp=mio) comp: {怖|こわ}い です 。 でも 、 {怖|こわ}い と {言|い}える {人|ひと} が {隣|となり} に いる 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に {行|い}きます 。 || I'm afraid. But there's someone beside me I can say so to. …I'll go with you to the end.
 ?(comp=ren) comp: {名前|なまえ} を {奪|うば}われた {灯|ひ} が 、 あの {上|うえ} に ある なら 。 {全部|ぜんぶ} 、 {呼|よ}び{戻|もど}します 。 {約束|やくそく} です 。 || If the lamps whose names were taken are up there, I'll call every one of them back. That's a promise.
 ?(comp=suzu) comp: {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
+!sequence yn.end end
 !set yn_done
 !quest yn_main done
 !travel steamhollow

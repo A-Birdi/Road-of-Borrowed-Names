@@ -228,12 +228,17 @@ narr: {宛名|あてな} は 、 {薄|うす}れ かけた {字|じ} で 「{坂
 
 @scene cr.summit_first
 !set cr_summit_seen
+# Illustrated (src/ui/43l_seq_cr.js): the sea of cloud; the steam far to the north-east.
+!sequence cr.summit begin
+!shot clouds
 narr: {峠|とうげ} に {出|で}た 。 {四方|しほう} が {雲|くも} の {海|うみ} だ 。 {登|のぼ}って {来|き}た {道|みち} も 、 {宿場|しゅくば} も 、 みんな {白|しろ}い {下|した} に ある 。 || You come out on the pass. Cloud sea on every side; the road you climbed and all the stations are somewhere under the white.
+!shot steam
 narr: {北東|ほくとう} の {遥|はる}か {下|した} に 、 {雲|くも} の {切|き}れ{目|め} が ある 。 {谷|たに} から 、 {白|しろ}い {湯気|ゆげ} が {何本|なんぼん} も {立|た}ち{上|のぼ}って いる 。 || Far below to the north-east there's a gap in the cloud. White steam rises from a valley in many columns.
 ?(comp=nao) comp: {湯気|ゆげ} …… {温泉|おんせん} か 。 {西|にし} で {聞|き}いた こと が ある 。 {湯|ゆ} の {谷|たに} の {話|はなし} 。 || Steam… Hot springs? I heard of it in the west. A valley of hot water.
 ?(comp=mio) comp: {湯気|ゆげ} の {谷|たに} 。 …… {薬湯|くすりゆ} の {本|ほん} で {読|よ}んだ {所|ところ} かも しれません 。 || A valley of steam. …It might be the place I read about in a book on medicinal baths.
 ?(comp=ren) comp: {師匠|ししょう} の {地図|ちず} に も 、 {湯気|ゆげ} の {印|しるし} が ありました 。 …… {行|い}って みる {価値|かち} は あります 。 || My master's map had a steam mark there too. …It would be worth going.
 ?(comp=suzu) comp: {湯治場|とうじば} ね ！ {旅|たび} の {一座|いちざ} の {憧|あこが}れ よ 。 {次|つぎ} の {幕|まく} は 、 あそこ かしら 。 || A spa! Every touring company's dream. Is that where the next act is?
+!sequence cr.summit end
 
 @scene cr.summit_view
 narr: {腰掛|こしか}け から 、 {雲|くも} の {海|うみ} が {見|み}える 。 {風|かぜ} が {雲|くも} を {動|うご}かす と 、 {下|した} の {宿場|しゅくば} の {灯|ひ} が 、 {一瞬|いっしゅん} だけ {見|み}えた 。 || From the bench you can see the cloud sea. When the wind moves the cloud, the lamps of the stations below show for a moment.
@@ -253,23 +258,32 @@ narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。
 # chapter's end follows (cr.end).
 !faceplayer
 cr_heisuke: …… {何|なん} だ 、 その {箱|はこ} は 。 {継|つ}ぎ{飛脚|びきゃく} の {封|ふう} …… ？ || …What's that box? The relay's seal…?
+# Illustrated (src/ui/43l_seq_cr.js): the letter in Heisuke's hands.
+!sequence cr.letter begin
+!shot letter
 narr: {状箱|じょうばこ} を {渡|わた}す と 、 ヘイスケ は {手紙|てがみ} を {開|ひら}いて 、 {長|なが}い {間|あいだ} {黙|だま}って いた 。 || You hand him the box. Heisuke opens the letter, and for a long time says nothing.
 cr_heisuke: 「{弟|おとうと} へ 。 {母|かあ}さん の {薬代|くすりだい} を 、 {飛脚|ひきゃく} に {託|たく}す 。 {春|はる} に は {帰|かえ}る 。 {兄|あに} 」 …… || "To my younger brother. I'm sending Mother's medicine money by the courier. I'll be home in spring. Your brother." …
 cr_heisuke: {郵便|ゆうびん} の {金|かね} と いう の は 、 これ だった の か 。 ゲンタ は {逃|に}げた ん じゃ ない 。 {五十年|ごじゅうねん} 、 {峠|とうげ} で これ を {守|まも}って いた 。 || So this was the post money. Genta didn't run. For fifty years he kept it safe on the pass.
+!shot letter quiet
 cr_heisuke: {親父|おやじ} は 、 {死|し}ぬ まで ゲンタ を {恨|うら}んで いた 。 {俺|おれ} も 、 {親父|おやじ} の {話|はなし} を そのまま {人|ひと} に {話|はな}して きた 。 …… {聞|き}いた {話|はなし} を 、 {見|み}た {話|はなし} の よう に な 。 || My father hated Genta till the day he died. And I've been telling his story just as he told it. …A story I heard, told as if I'd seen it.
 ?(comp=nao) comp: …… {届|とど}いて よかった 。 {遅|おそ}すぎる {手紙|てがみ} なんて 、 ない 。 たぶん 。 || …I'm glad it arrived. There's no such thing as a letter too late. Probably.
 ?(comp=mio) comp: お{母|かあ}さま の {薬代|くすりだい} …… 。 {五十年|ごじゅうねん} {前|まえ} の {薬|くすり} の {話|はなし} が 、 {今|いま} {届|とど}く なんて 。 || Your mother's medicine money… Word of medicine from fifty years ago, arriving now.
 ?(comp=ren) comp: {名前|なまえ} が {戻|もど}りました ね 。 {宿場|しゅくば} の {灯|ひ} と {一緒|いっしょ} に 、 ゲンタ さん の {名前|なまえ} も 。 || A name's been given back. Along with the stations' lamps, Genta's name.
 ?(comp=suzu) comp: {五十年|ごじゅうねん} がかり の {幕切|まくぎ}れ ね 。 …… {台本|だいほん} どおり じゃ なかった けど 、 いい {芝居|しばい} だった わ 。 || A final curtain fifty years in the making. …Not as the script had it, but a good play.
 cr_heisuke: ソノ の {宿|やど} へ {行|い}って 、 {頭|あたま} を {下|さ}げて {来|こ}なければ 。 {財布|さいふ} の {金|かね} を どう する か も 、 ソノ と {決|き}める 。 …… {後|あと} で 、 {一緒|いっしょ} に {来|き}て くれる か 。 || I must go to Sono's inn and bow my head. And decide with Sono what to do with the money in the purse. …Will you come with me, later?
+!sequence cr.letter end
 !take cr_message
 !set cr_delivered
 !call cr.end
 
 @scene cr.end
 # The chapter's end: the relay runs again; the bridge mended and the ledge cleared by the stations' people.
+# Illustrated (src/ui/43l_seq_cr.js): the seven lamps at night, the relay running.
+!sequence cr.relay begin
+!shot relay
 narr: {雲路|くもじ} の {最後|さいご} の {便|びん} は 、 {五十年|ごじゅうねん} {遅|おく}れて {届|とど}いた 。 || The Cloudroad's last post arrived fifty years late.
 narr: その {夜|よる} から 、 {継|つ}ぎ{飛脚|びきゃく} が また {宿場|しゅくば} から {宿場|しゅくば} へ {走|はし}り{出|だ}した 。 {宿場|しゅくば} の {人|ひと} たち は 、 {雨|あめ} で {流|なが}れた {橋|はし} を {直|なお}し 、 {崖道|がけみち} の {大岩|おおいわ} を {片付|かたづ}けた 。 || From that night the relay ran again, station to station. The people of the stations mended the washed-out bridge and cleared the great rock from the ledge.
+!sequence cr.relay end
 !set cr_bridge_mended
 !set cr_ledge_cleared
 !quest cr_main done

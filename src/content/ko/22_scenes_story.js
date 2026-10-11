@@ -317,11 +317,16 @@ ko_gardener: {近|ちか}ごろ 、 {上|うえ} から {落|お}ちて くる {
 !if var._res=0 -> again
 !set ko_gardener_done
 !refresh
+# Illustrated (src/ui/43k_seq_ko.js): the roots settling, the leaves coming down onto their threads; the two of you.
+!sequence ko.garden begin
+!shot garden
 narr: {根|ね} の {形|かたち} が 、 {静|しず}か に {元|もと} の {編|あ}み{目|め} に {戻|もど}った 。 {風|かぜ} が {止|や}み 、 {宙|ちゅう} の {葉|は} が 、 {一枚|いちまい} ずつ {枝|えだ} に {帰|かえ}って いく 。 || The shape settles back into woven roots. The wind drops, and the leaves in the air go back to their branches, one by one.
+!shot leaves
 ?(comp=nao) comp: {出|だ}す {手紙|てがみ} と 、 {出|だ}さない {手紙|てがみ} 。 …… {仕分|しわ}け は 、 {終|お}わった な 。 || Letters to send and letters not to. …The sorting's done.
 ?(comp=mio) comp[smile]: {言|い}わない {方|ほう} が いい {言葉|ことば} も 、 ある の よ ね 。 {薬|くすり} と {同|おな}じ 。 {量|りょう} の {問題|もんだい} 。 || Some words are better left unsaid, aren't they. Like medicine: it's a matter of the dose.
 ?(comp=ren) comp: {灯|ひ} を {消|け}す の も 、 {灯守|ひもり} の {仕事|しごと} です 。 {庭守|にわもり} も 、 きっと {同|おな}じ です ね 。 || Putting a light out is part of a keeper's work too. A gardener's as well, I expect.
 ?(comp=suzu) comp: {言|い}わない {台詞|せりふ} が ある から 、 {言|い}う {台詞|せりふ} が {生|い}きる の よ 。 {名|めい}{演出|えんしゅつ} だった わ 。 || It's the lines you don't say that make the ones you do say count. Beautifully directed.
+!sequence ko.garden end
 !quest ko_main 7
 !journal {庭守|にわもり} と {話|はな}した 。 {木|き} は {静|しず}か に なった 。 {村|むら} の オトハ に {知|し}らせよう 。 || You spoke with the Gardener, and the tree is quiet. Tell Otoha in the village.
 !autosave
@@ -339,14 +344,19 @@ narr: {根|ね} の {編|あ}み{目|め} は 、 {静|しず}か だ 。 {吊|�
 # The chapter's end: Otoha at the Wind Stone; the leaves falling gently now; Nami offers the boat back; the leaves like
 # torn pages, she says, came from the north, over the mountains, from somewhere high (S5: indirect, never explained).
 !faceplayer
+# Illustrated (src/ui/43k_seq_ko.js): Otoha at the Wind Stone; then the way north.
+!sequence ko.end begin
+!shot stone
 ko_otoha[smile]: {木|き} が 、 {息|いき} を して います 。 {葉|は} の {落|お}ち{方|かた} が 、 {昔|むかし} の よう に {戻|もど}った 。 || The tree is breathing. The leaves fall the way they used to.
 ko_otoha: {庭守|にわもり} に {会|あ}った の です ね 。 …… わたし の {祖母|そぼ} も 、 その {祖母|そぼ} も 、 {会|あ}った こと が ない 。 {葉守|はもり} を {代表|だいひょう} して 、 お{礼|れい} を {言|い}います 。 || You met the Gardener. …Neither my grandmother nor hers ever did. On behalf of all the keepers: thank you.
 !gesture ko_otoha lookroad up
+!shot north
 ko_otoha: ただ 、 {一|ひと}つ 。 {紙|かみ} の {切|き}れ{端|はし} の よう な {葉|は} は 、 {北|きた} から {来|き}ました 。 {山|やま} の 、 ずっと {上|うえ} の {方|ほう} から 。 …… {何|なに} が ある の か 、 わたし に は {分|わ}かりません 。 || Just one thing. The leaves like torn pages came from the north. From far up in the mountains. …What is up there, I couldn't say.
 ?(comp=nao) comp: {北|きた} の {山|やま} …… 。 {灯落|ひおち} の {上|うえ} か 。 || The northern mountains… Above Lanternfall.
 ?(comp=mio) comp[think]: {山|やま} の {上|うえ} …… {書庫|しょこ} の {方|ほう} ね 。 || Up in the mountains… The Archive's way.
 ?(comp=ren) comp[think]: {師匠|ししょう} が {行|い}った {方|ほう} です 。 …… {繋|つな}がって いる の かも しれません 。 || The way my master went. …It may all be connected.
 ?(comp=suzu) comp: {最終|さいしゅう} {幕|まく} の {舞台|ぶたい} から 、 {紙吹雪|かみふぶき} が {先|さき} に {届|とど}いた って わけ ね 。 || So the confetti from the final act's stage got here ahead of us.
+!sequence ko.end end
 !quest ko_main done
 !set ko_done
 !travel kotonoha

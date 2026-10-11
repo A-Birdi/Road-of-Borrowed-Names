@@ -13,6 +13,9 @@ export const PAGES = [
   ['mb1.named', 'mb.bridge_named', 'mb1'], ['mb1.dusk', 'mb.chapter_end', 'mb1'],
   ['mb2.press', 'mp.sobe_printed', 'mb2'], ['mb2.fireworks', 'mp.fireworks', 'mb2'],
   ['kr.vigil', 'kr.vigil_begin', 'kr'], ['kr.dawn', 'kr.chapter_end', 'kr'],
+  ['ko.garden', 'ko.gardener', 'ko'], ['ko.end', 'ko.end', 'ko'],
+  ['cr.summit', 'cr.summit_first', 'cr'], ['cr.letter', 'cr.deliver', 'cr'], ['cr.relay', 'cr.end', 'cr'],
+  ['yn.kettle', 'yn.kettle', 'yn'], ['yn.end', 'yn.end', 'yn'],
 ];
 
 export default async (t) => {

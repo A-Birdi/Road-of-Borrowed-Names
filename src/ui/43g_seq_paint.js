@@ -17,6 +17,7 @@
  *                                                            eave line and the dark under it
  *   RB.seqPaint.slip(c, x, y, w, h, o)                       a paper slip with brush marks (never letters)
  *   RB.seqPaint.marks(c, x, y, h, n, k, col, seed)           a column of brush marks written down to k (0..1)
+ *   RB.seqPaint.grass(L, top, y1, M, o) / clouds(g, w, o) / crown(L, cx, cy, rw, rh, M, o)   outdoor materials
  *   RB.seqPaint.layer(w, h)                                  a pxkit layer that takes constant shades as 0..1 too
  *   RB.seqPaint.cam(w, vb, o)                                a pinhole camera for a shot built as a small place: the
  *                                                            water or ground is Y = 0, the camera at (0, o.ch, 0)
@@ -30,6 +31,7 @@ RB.seqPaint = (function () {
   'use strict';
   const P = () => RB.pxkit;
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const lerp = (a, b, k) => a + (b - a) * k;
   const R = (c, x, y, w, h, col) => { if (w <= 0 || h <= 0) return; if (col) c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
 
   function stars(g, x, y, w, h, n, seed, warmEvery) {
@@ -158,6 +160,60 @@ RB.seqPaint = (function () {
     }
   }
 
+  // Grass into a layer between a top edge top(x) and the bottom: a quiet base that darkens toward us, tufts of short
+  // blades (lighter tips, darker roots) in clusters, a few flowers where o.flowers; no uniform speckle.
+  function grass(L, top, y1, M, o) {
+    o = o || {};
+    const p = P(), rnd = p.rnd(o.seed || 17), w = L.w;
+    L.fill(0, 0, w, y1, (x, y) => y >= top(x), M, (x, y) => clamp((o.base == null ? 0.5 : o.base) - (y - top(x)) / Math.max(1, y1 - top(x)) * 0.25 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+    // tufts gather in clumps (a few dozen centres), thinning out between them, more of them toward us
+    const n = Math.round((w * (y1 - top(w / 2))) / (o.density || 320)), centres = [];
+    for (let i = 0; i < Math.max(4, Math.round(n / 7)); i++) { const x = rnd() * w; centres.push([x, top(x) + Math.pow(rnd(), 0.7) * (y1 - top(x))]); }
+    for (let i = 0; i < n; i++) {
+      const c0 = centres[Math.floor(rnd() * centres.length)], spread = 4 + (c0[1] - top(c0[0])) * 0.12;
+      const x = Math.round(c0[0] + (rnd() - 0.5) * spread * 4), t0 = top(x), y = Math.round(clamp(c0[1] + (rnd() - 0.5) * spread, t0, y1));
+      const near = (y - t0) / Math.max(1, y1 - t0), hgt = Math.max(1, Math.round((1 + near * 4) * (o.blade || 1)));
+      for (let b = -1; b <= 1; b++) {
+        if (rnd() < 0.3) continue;
+        L.line(x + b * Math.max(1, Math.round(near * 2)), y, x + b * Math.max(1, Math.round(near * 2)) + (b === 0 ? 0 : b), y - hgt, M, Math.min(M.n - 1, Math.round((0.5 + rnd() * 0.22) * M.n)));
+        L.dot(x + b * Math.max(1, Math.round(near * 2)), y, M, 1);
+      }
+      if (o.flowers && rnd() < 0.04) L.dot(x, y - hgt, o.flowers, Math.min(o.flowers.n - 1, 2 + Math.floor(rnd() * 2)));
+    }
+  }
+  // Clouds straight onto a canvas: clustered soft masses, lit from above-left (a light top, a shaded underside), edges
+  // dithered; o: { n, seed, y0, y1, light, shade, scale }
+  function clouds(g, w, o) {
+    o = o || {};
+    const p = P(), rnd = p.rnd(o.seed || 31), sc = o.scale || 1;
+    for (let i = 0; i < (o.n || 4); i++) {
+      const cx = rnd() * w, cy = lerp(o.y0 || 10, o.y1 || 60, rnd()), parts = 4 + Math.floor(rnd() * 4), rw = (20 + rnd() * 30) * sc;
+      const blobs = [];
+      for (let j = 0; j < parts; j++) blobs.push([cx + (j - parts / 2) * rw * 0.5 + (rnd() - 0.5) * rw * 0.3, cy - Math.sin((j / Math.max(1, parts - 1)) * Math.PI) * rw * 0.35, rw * (0.45 + rnd() * 0.25)]);
+      const x0 = Math.floor(cx - rw * parts * 0.4), x1 = Math.ceil(cx + rw * parts * 0.4), y0 = Math.floor(cy - rw), y1 = Math.ceil(cy + rw * 0.4);
+      for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+        let inside = 0, top = 0;
+        for (const [bx, by, r] of blobs) { const d = Math.hypot(x - bx, (y - by) * 1.6) / r; if (d < 1) { inside = Math.max(inside, 1 - d); top = Math.max(top, (by - y) / r); } }
+        if (inside <= 0 || y > cy + rw * 0.25) continue;
+        if (inside < 0.18 && p.bayer(x, y) > inside * 5) continue;
+        g.fillStyle = top > 0.15 ? (o.light || '#ffffff') : y > cy ? (o.shade || '#c8d0e0') : (o.mid || '#e8ecf4');
+        g.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+  // A tree's crown as leaf masses round branches: dark inner pockets, lit clusters on the upper left, a few sky gaps
+  function crown(L, cx, cy, rw, rh, M, o) {
+    o = o || {};
+    const p = P(), rnd = p.rnd(o.seed || 47), masses = [];
+    const n = o.n || 9, size = o.size || (n > 12 ? 0.16 : 0.3);
+    for (let i = 0; i < n; i++) { const a = rnd() * Math.PI * 2, r = Math.sqrt(rnd()); masses.push([cx + Math.cos(a) * r * rw * 0.75, cy + Math.sin(a) * r * rh * 0.7, rw * (size + rnd() * size * 0.8)]); }
+    masses.sort((a, b) => a[1] - b[1]);
+    for (const [mx, my, r] of masses) L.ell(mx, my, r, r * 0.78, M, (x, y) => {
+      const lit = ((cx - x) / rw + (cy - y) / rh) * 0.35 + ((mx - x) / r + (my - y) / r) * 0.22;
+      const clump = (((Math.round(x * 0.5) * 7 + Math.round(y * 0.5) * 13) % 11) < 3) ? 0.1 : 0;
+      return clamp(0.42 + lit + clump + (p.bayer(x, y) - 0.5) * 0.08, 0.02, 0.999);
+    });
+  }
   // A pxkit layer that also takes a constant shade as 0..1 (the kit itself reads a plain number as a ramp index):
   // rect/ell/fill/poly/seg/path wrap it in a function, line/dot turn it into the step it means.
   function layer(w, h, ox, oy) {
@@ -202,5 +258,5 @@ RB.seqPaint = (function () {
     };
   }
 
-  return { stars, water, glints, rings, glow, lantern, planks, roof, slip, marks, cam, layer };
+  return { stars, water, glints, rings, glow, lantern, planks, roof, slip, marks, cam, layer, grass, clouds, crown };
 })();

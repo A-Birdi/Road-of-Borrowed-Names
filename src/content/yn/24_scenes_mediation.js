@@ -68,12 +68,18 @@ yn_rokubei: {上|かみ}の{湯|ゆ} だけ でも 、 {下|しも}の{湯|ゆ} 
 @scene yn.end
 # The chapter's end: the vow, after the walk (yn.walk). The valley out in yukata, the lanterns lit, the north road open;
 # above it, the silent mountain and the road to the Archive.
+# Illustrated (src/ui/43m_seq_yn.js): the lit valley and the bridge; the silent ridge and the companion's resolve.
+!sequence yn.end begin
+!shot valley
 narr: {谷|たに} の {提灯|ちょうちん} が {全部|ぜんぶ} {点|つ}いた 。 {赤|あか}い {橋|はし} の {上|うえ} を 、 {上|かみ}の{湯|ゆ} の {客|きゃく} と {下|しも}の{湯|ゆ} の {客|きゃく} が 、 {同|おな}じ {下駄|げた} の {音|おと} で {歩|ある}いて いる 。 || Every lantern in the valley is lit. On the red bridge, guests of the Upper House and the Lower House walk with the same clack of wooden sandals.
+!shot ridge
 narr: {北|きた} の {尾根|おね} の {上|うえ} は 、 {今夜|こんや} も {音|おと} が ない 。 || Above the north ridge, tonight as every night, there is no sound.
+!shot ridge comp
 ?(comp=nao) comp[closed]: …… {最後|さいご} まで {走|はし}る 。 {届|とど}ける {先|さき} が 、 {静|しず}か すぎて も な 。 お{前|まえ} と {一緒|いっしょ} に 。 || …I'll run it to the end. Even if the place we're delivering to is too quiet. With you.
 ?(comp=mio) comp: {怖|こわ}い です 。 でも 、 {怖|こわ}い と {言|い}える {人|ひと} が {隣|となり} に いる 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に {行|い}きます 。 || I'm afraid. But there's someone beside me I can say so to. …I'll go with you to the end.
 ?(comp=ren) comp: {名前|なまえ} を {奪|うば}われた {灯|ひ} が 、 あの {上|うえ} に ある なら 。 {全部|ぜんぶ} 、 {呼|よ}び{戻|もど}します 。 {約束|やくそく} です 。 || If the lamps whose names were taken are up there, I'll call every one of them back. That's a promise.
 ?(comp=suzu) comp: {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
+!sequence yn.end end
 !set yn_done
 !quest yn_main done
 !travel steamhollow

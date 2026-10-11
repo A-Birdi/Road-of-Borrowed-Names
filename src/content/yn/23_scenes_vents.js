@@ -145,8 +145,12 @@ narr: {上|うえ} から 、 {怒鳴|どな}り{声|ごえ} が {降|ふ}って
 !if var._res=0 -> again
 !set yn_kettle_settled
 !refresh
+# Illustrated (src/ui/43m_seq_yn.js): the bubbles going out, the Kettle settling.
+!sequence yn.kettle begin
+!shot pool
 narr: {湯|ゆ} の {泡|あわ} が 、 {一|ひと}つ ずつ {消|き}えて いく 。 {釜|かま} は {湯|ゆ} の {底|そこ} に {沈|しず}み 、 {静|しず}か に {湯気|ゆげ} を {吐|は}いた 。 {温|あたた}かい 、 ちょうど いい {湯気|ゆげ} だった 。 || The bubbles fade one by one. The Kettle sinks to the bottom and quietly breathes out steam: warm steam, just right.
 ?(yn_aki_met) yn_aki: …… {湯|ゆ} の {顔色|かおいろ} が 、 {戻|もど}った 。 {十年|じゅうねん} ぶり の {顔|かお} よ 。 || …The water's colour has come back. A face I haven't seen in ten years.
+!sequence yn.kettle end
 !quest yn_main 6
 !set yn_evening
 !journal {釜|かま}の{主|ぬし} は {落|お}ち{着|つ}いた 。 {上|うえ} の {言|い}い{争|あらそ}い と 、 {尾根|おね} の {静|しず}けさ に {挟|はさ}まれて 、 {怯|おび}えて いた の だ 。 {明日|あした} の {朝|あさ} 、 {寄合所|よりあいじょ} で {話|はな}し{合|あ}い が ある 。 || The Kettle Below has settled. It was frightened, caught between the quarrel above and the silence from the ridge. Tomorrow morning there's a meeting at the guild hall.
