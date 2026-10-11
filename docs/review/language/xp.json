@@ -1049,6 +1049,60 @@
   "jp": "{染|し}み は {薄|うす}く なって 、 {水|みず} と {一緒|いっしょ} に {流|なが}れて いった 。",
   "en": "The blot thins and runs away with the water."
  },
+ "expedition:hall_w1#1f1d3ev": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{夕暮|ゆうぐ}れ の {辻|つじ}",
+  "en": "The Crossroads at Dusk"
+ },
+ "expedition:hall_w1#qbky0c": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{灯籠|とうろう} の {道|みち}",
+  "en": "The Lantern Road"
+ },
+ "expedition:hall_w1#1dif6hr": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{灯|ひ} の {辻|つじ}",
+  "en": "The Lamp's Crossroads"
+ },
+ "expedition:hall_w1#zwwfj0": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{辻|つじ} の {灯籠|とうろう}",
+  "en": "The Lamp at the Crossroads"
+ },
+ "expedition:hall_w1#wwfvn8": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{道|みち} を {聞|き}く ・ {教|おし}える",
+  "en": "Finding the way: directions, signs, which turning, asking again."
+ },
+ "map:hall.w1f1#1f1d3ev": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{夕暮|ゆうぐ}れ の {辻|つじ}",
+  "en": "The Crossroads at Dusk"
+ },
+ "map:hall.w1f2#qbky0c": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{灯籠|とうろう} の {道|みち}",
+  "en": "The Lantern Road"
+ },
+ "map:hall.w1f2#18tg9zh": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{霧|きり} の {中|なか} を 、 {提灯|ちょうちん} が {勝手|かって} に {漂|ただよ}って いる 。",
+  "en": "Paper lanterns drift through the mist on their own."
+ },
+ "map:hall.w1f3#1dif6hr": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, foyer and wing 1 (The Lamp at the Crossroads): self-reviewed against the lexicon, grammar notes (に/を with directions, ～と cannot end in a request), and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: a stiff passive (地図は相棒の手に取られた → 相棒が地図を手に取った); 外れ…外れた repeated (→ 道から離れた); 君 in a line any companion speaks (→ 読んで、歩いて、見つけた); 待ってる split as 待って る (→ 待っている); a hint's ～たら or ～ら (→ ～たら). Self-review, not native review.",
+  "jp": "{灯|ひ} の {辻|つじ}",
+  "en": "The Lamp's Crossroads"
+ },
  "encounter:xp.cellars_sluice#1tepwnb": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",

@@ -168,7 +168,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ];
   C.maps['rw.hall'].npcs = [
     { id: 'tsuru', x: 5, y: 4, dir: 'down', if: 'rw_echo_done', talk: [
-      { if: 'post&!seen.rw.atlas_intro', scene: 'rw.atlas_intro' }, { if: 'post', scene: 'rw.tsuru_post' },
+      { if: 'post&!seen.rw.atlas_intro', scene: 'rw.atlas_intro' }, { if: 'post&ed>=2&kr_done&!hall_ledger', scene: 'hall.tsuru_ledger' }, { if: 'post', scene: 'rw.tsuru_post' },
       { if: 'departed', scene: 'rw.tsuru_after' }, { if: 'rw_hall_gather', scene: 'rw.hall_tsuru' }, { scene: 'rw.tsuru_evening' }] },
     { id: 'nao', x: 2, y: 5, dir: 'right', if: 'rw_hall_gather&!departed', talk: 'rw.hall_nao' },
     { id: 'mio', x: 8, y: 5, dir: 'left', if: 'rw_hall_gather&!departed', talk: 'rw.hall_mio' },

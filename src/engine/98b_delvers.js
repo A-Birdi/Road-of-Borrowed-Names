@@ -68,7 +68,9 @@ RB.delvers = (function () {
       where.run.dvGuide = true; // the next fork's sign names both roads (src/atlas/50_run.js)
       return { kind: 'guide', atlas: true };
     }
-    return { kind: 'rest', gave: rest(s, 4) };
+    // in the Hall of a Hundred Tales a delver is rarer and their help goes further (D9: "rarer and stronger here")
+    const hall = where && where.kind === 'expedition' && X.get(where.exp) && X.get(where.exp).kind === 'hall';
+    return { kind: 'rest', gave: rest(s, hall ? 6 : 4) };
   }
   // a remembered moment: a little more rest (never more than full)
   function bonus(s, id) { return DEFS[id] ? { kind: 'rest', gave: rest(s, 4) } : null; }

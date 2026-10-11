@@ -756,6 +756,7 @@ RB.ui.title = (function () {
       body = '<p class="rec-place">' + (m.placeJp ? RB.ui.jhtml(m.placeJp) + ' ' : '') + '<span class="en">' + esc(m.place) + '</span></p>' +
         '<p class="rec-meta">' + esc(played(m.playtime)) + ' · ' + (s.manual ? 'saved ' + esc(fmtDate(m.savedAt)) : 'autosave only, ' + esc(fmtDate(s.auto && s.auto.savedAt))) + '</p>';
       if (s.autoNewer && s.manual) notes.push('<p class="rec-note">' + I('side') + ' Newer autosave: ' + esc(fmtDate(s.auto.savedAt)) + '</p>');
+      if (s.suspendNewer) notes.push('<p class="rec-note">' + I('side') + ' Suspended in the Hall of a Hundred Tales (' + esc(fmtDate(s.suspend.savedAt)) + '): loading resumes there.</p>');
       if (current && cur.readOnly) notes.push('<p class="rec-note warn">' + I('warn') + ' Read-only in this tab: another tab owns this journey. Save to another slot instead.</p>');
     }
     const kind = '<p class="kind">Slot ' + n + (m && m.chapter && !s.empty && !s.corrupt ? ' · Chapter ' + m.chapter : '') + (m && m.post && !s.corrupt ? ' · after the story' : '') +

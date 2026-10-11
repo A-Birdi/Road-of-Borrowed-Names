@@ -222,9 +222,13 @@ narr: {尾根|おね} の {上|うえ} に 、 {大|おお}きな {古|ふる}�
 ?(comp=suzu) comp: {幕|まく} が {下|お}りた まま の {小屋|こや} ね 。 …… {何|なん} の {芝居|しばい} を して いた の かしら 。 || A theatre with its curtain left down. …I wonder what they used to play here.
 
 @scene kr.hall_door
+!if hall_ledger -> open
 narr: {重|おも}い {戸|と} 。 しめ{縄|なわ} が {張|は}って ある 。 {押|お}して も 、 {動|うご}かない 。 || A heavy door with a sacred rope across it. It won't move.
 narr: {戸|と} に {札|ふだ} 。 「{百話目|ひゃくわめ} は 、 {語|かた}られず 。」 || A plaque on the door: "The hundredth was never told."
 ?(prof=A) narr: 「{語|かた}られず」 は 、 「{語|かた}られなかった」 と いう {意味|いみ} 。 || 語られず means "was not told".
+!end
+:open
+!call hall.door_open
 
 @scene kr.hall_lantern
 narr: {館|やかた} の {前|まえ} の {灯籠|とうろう} 。 {名札|なふだ} に は 、 {何|なに} も {彫|ほ}って いない 。 || A lantern before the hall. Its plate has nothing cut on it.

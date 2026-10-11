@@ -243,6 +243,11 @@ RB.game = (function () {
   async function loadCampaign(slot, which) {
     RB.bus.emit('campaign:changing', { to: 'load', slot });
     let r;
+    // suspended in the Hall of a Hundred Tales (D9) after the save being loaded: resume exactly there, once
+    let resumed = false;
+    if (which !== 'predeparture' && which !== 'suspend') {
+      try { const ls = await RB.save.list(); if (ls[slot - 1] && ls[slot - 1].suspendNewer) { which = 'suspend'; resumed = true; } } catch (e) { /* the save as asked */ }
+    }
     try { r = await RB.save.read(slot, which); } catch (err) { keepJourney(); throw err; }
     const claim = await RB.save.claim(slot);
     if (claim === 'busy') {
@@ -267,7 +272,8 @@ RB.game = (function () {
     RB.input.clearHeld();
     RB.render.setOverride(null);
     RB.ui.hud.show();
-    RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : 'Loaded.', 'info');
+    if (which === 'suspend') { try { await RB.save.dropSuspend(slot); } catch (e) { /* kept: resumed again next time */ } }
+    RB.ui.notice(which === 'auto' ? 'Continued from the latest autosave.' : which === 'predeparture' ? 'Restored the point before departure.' : which === 'suspend' ? (resumed ? 'Resumed where you suspended in the Hall.' : 'Resumed.') : 'Loaded.', 'info');
     return true;
   }
   // A load that did not happen (cancelled, or the save could not be read) after the campaign
@@ -415,7 +421,7 @@ RB.game = (function () {
       G.s.resolve.pc = G.s.resolve.max;
       G.s.resolve.comp = G.s.resolve.max;
       await transition(cp.map, cp.x, cp.y, cp.dir, { inScript: true });
-      RB.ui.notice(xp ? 'The expedition starts again from its entrance. Everything you learned is still with you, and so is the map.' : 'You wake at the last safe place you passed. Everything you learned is still with you.', 'info');
+      RB.ui.notice(xp ? xp.note || 'The expedition starts again from its entrance. Everything you learned is still with you, and so is the map.' : 'You wake at the last safe place you passed. Everything you learned is still with you.', 'info');
     }
     if (res === 'flee') RB.ui.notice('You stepped back from the encounter.', 'info');
     return res;

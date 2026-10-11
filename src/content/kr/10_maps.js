@@ -273,7 +273,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { x: 14, y: 21, w: 2, h: 1, to: 'kr.ridge', sp: 'from_hall', dir: 'down' },
     ],
     onEnter: [{ scene: 'kr.hall_first', if: '!kr_hall_seen' }],
-    spawn: { default: [14, 20, 'up'], from_ridge: [14, 20, 'up'] },
+    // (after the story, with Tsuru's key ledger, the door opens into the Hall of a Hundred Tales: src/content/hall/)
+    spawn: { default: [14, 20, 'up'], from_ridge: [14, 20, 'up'], from_foyer: [14, 12, 'down'] },
   });
 
   // ---- the Pass, and the way down (峠) -------------------------------------------------------------------------------

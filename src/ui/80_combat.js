@@ -1388,8 +1388,8 @@ RB.combat = (function () {
   // group for the difficulty (Relaxed: always one), or an explicit opts.group
   function groupOf(enemyId, opts) {
     const s = RB.game.s;
-    if (opts.group) return [enemyId].concat(opts.group).slice(0, (L().DIFF[s.learn.difficulty] || L().DIFF.normal).maxFoes);
-    return L().groupFor(enemyId, opts.place, s.learn.difficulty);
+    if (opts.group) return [enemyId].concat(opts.group).slice(0, (L().DIFF[RB.hall ? RB.hall.tactics(s) : s.learn.difficulty] || L().DIFF.normal).maxFoes);
+    return L().groupFor(enemyId, opts.place, RB.hall ? RB.hall.tactics(s) : s.learn.difficulty);
   }
   // ---- help in a story battle (E19) ---------------------------------------------------------------------------
   // After a defeat the companion offers, escalating: explain the pattern, suggest an answer, point at suitable

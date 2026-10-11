@@ -662,8 +662,11 @@ RB.challenge = (function () {
   async function run(id, ctx) {
     const ch = RB.content.challenges[id];
     if (!ch) { console.warn('missing challenge', id); return { ok: true }; }
+    // ctx.steps: the steps to run instead of the profile's (the Hall's Grow route: a level up, recorded as stretch)
+    const given = ctx && Array.isArray(ctx.steps) ? ctx.steps : null;
+    const tag = ctx && ctx.stretch ? 'stretch:' + id : id;
     if (RB.test && RB.test.auto) {
-      RB.tasks.stepsOf(ch).forEach((st, i) => {
+      (given || RB.tasks.stepsOf(ch)).forEach((st, i) => {
         const r = RB.test.solveStep(st, 'challenge ' + id + '[' + i + ']');
         if (st.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(st, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }
       });
@@ -673,13 +676,13 @@ RB.challenge = (function () {
     RB.game.pushMode('challenge');
     try {
       if (ch.intro) await RB.ui.card(ch.intro.jp || '', ch.intro.en || '');
-      const steps = RB.tasks.stepsOf(ch);
+      const steps = given || RB.tasks.stepsOf(ch);
       const results = [];
       for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         step.title = step.title || (ch.title ? ch.title.en + (steps.length > 1 ? ' (' + (i + 1) + '/' + steps.length + ')' : '') : '');
         if (step.teach && !RB.learn.introduced([].concat(step.item)[0])) await teachCard(step.teach);
-        const r = await runStep(step, { ctxTag: id, cancelLabel: 'Come back later' });
+        const r = await runStep(step, { ctxTag: tag, cancelLabel: 'Come back later' });
         if (r.cancelled) return { ok: false, cancelled: true };
         // a forged sentence changes the scene by what was said (L7): its reply's result, for the scene to read
         if (step.kind === 'forge' && RB.forge) { const o = RB.forge.outcome(step, r); RB.game.s.vars._forge = o && o.result ? o.result : 0; }

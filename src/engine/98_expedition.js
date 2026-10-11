@@ -125,8 +125,9 @@ RB.expedition = (function () {
     if (rule === 'checkpoint') return null;
     const floor = rule === 'floor' ? d.floors[e.floor] : d.floors[0];
     if (rule === 'entrance') restart(s);
-    else { full(s); }
-    return floor ? { map: floor.map, x: floor.entry.x, y: floor.entry.y, dir: floor.entry.dir || 'down' } : null;
+    else { if (rule === 'floor' && d.resetFloor) d.resetFloor(s, e.floor); full(s); }
+    const note = rule === 'floor' ? 'This floor starts again from its first room. Earlier floors stay done, and everything you learned is still with you.' : null;
+    return floor ? { map: floor.map, x: floor.entry.x, y: floor.entry.y, dir: floor.entry.dir || 'down', note } : null;
   }
 
   // ---- stations: places, never things carried -----------------------------------------------------------------------

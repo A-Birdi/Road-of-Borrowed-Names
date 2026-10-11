@@ -276,7 +276,7 @@ RB.combatLogic = (function () {
   // after the lead `enemy`; cut to the difficulty's maximum.
   function init(enemy, s, opts) {
     opts = opts || {};
-    const d = DIFF[s.learn.difficulty] || DIFF.normal;
+    const d = DIFF[RB.hall ? RB.hall.tactics(s) : s.learn.difficulty] || DIFF.normal;
     const comp = s.comp || null;
     const C = RB.content || {};
     // an authored set piece may hold more creatures than the setting's usual group (E12; up to five), never on

@@ -38,6 +38,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.encounter = (function () {
   'use strict';
   const L = () => RB.combatLogic;
+  // the tactical setting in force (a Hall wing's own while in it: src/engine/98h_hall.js)
+  const tac = (s) => (RB.hall ? RB.hall.tactics(s) : s.learn.difficulty);
   const clone = (x) => (x == null ? x : JSON.parse(JSON.stringify(x)));
   const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
   // the rules to run: the caller's set, else the live ones (with whatever wrappers are installed)
@@ -86,7 +88,7 @@ RB.encounter = (function () {
   }
   // an encounter with no creatures in it (a conversation, a machine): the party and the people or the object
   function bare(s, rules0) {
-    const d = L().DIFF[s.learn.difficulty] || L().DIFF.normal;
+    const d = L().DIFF[tac(s)] || L().DIFF.normal;
     const comp = s.comp || null;
     const max = Math.max(4, s.resolve.max + ((d.resolve || 12) - 12));
     return {
@@ -106,10 +108,10 @@ RB.encounter = (function () {
   }
   // the arrivals of this encounter, drawn before it begins and kept with it (E2). Relaxed: never a hostile arrival.
   function schedule(def, s) {
-    if (s.learn.difficulty === 'relaxed') return [];
+    if (tac(s) === 'relaxed') return [];
     const out = [];
     for (const a of def.arrivals || []) out.push({ enemy: a.enemy, after: a.after, leadBelow: a.leadBelow, prevent: a.prevent || null, say: a.say || null, knots: a.knots, state: 'waiting' });
-    if (s.learn.difficulty === 'hard') for (const a of def.extras || []) out.push({ enemy: a.enemy, after: a.after, leadBelow: a.leadBelow, prevent: a.prevent || null, say: a.say || null, knots: a.knots, state: 'waiting', extra: true });
+    if (tac(s) === 'hard') for (const a of def.extras || []) out.push({ enemy: a.enemy, after: a.after, leadBelow: a.leadBelow, prevent: a.prevent || null, say: a.say || null, knots: a.knots, state: 'waiting', extra: true });
     // a zone's table (an eligible dungeon encounter): 0–2 arrivals, drawn once from the campaign's own stream
     const T = def.arrivalTable;
     if (T && RB.streams && s.id) {
@@ -131,7 +133,7 @@ RB.encounter = (function () {
     const rules0 = Object.assign({}, def.rules || {});
     let st;
     if (def.lead) {
-      st = L().init(creature(def.lead), s, { group: groupOf(def, s.learn.difficulty), rules: rules0, maxFoes: def.setPiece ? def.capacity || 5 : null });
+      st = L().init(creature(def.lead), s, { group: groupOf(def, tac(s)), rules: rules0, maxFoes: def.setPiece ? def.capacity || 5 : null });
     } else st = bare(s, rules0);
     st.enc = {
       id: def.id, def, kind, flags: {}, outcome: null, conclusion: null, arrived: 0, prevented: 0,

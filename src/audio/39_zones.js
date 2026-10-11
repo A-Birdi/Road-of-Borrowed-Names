@@ -118,6 +118,13 @@ RB.audio = RB.audio || {};
       battle: 'battle_atlas', boss: 'boss_atlas',
       songs: ['atlas'],
     },
+    // the Hall of a Hundred Tales (38zh_songs_hall.js), postgame in the twelve-chapter edition: each wing its own song;
+    // its creatures fight to the Atlas's themes, the other post-story place
+    hall: {
+      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1'], prefixes: ['hall.'],
+      battle: 'battle_atlas', boss: 'boss_atlas', route: null,
+      songs: ['hall', 'hall_w1'],
+    },
   };
   // Moods shared by every zone (investigation, rest, wonder, grief, the Hush,
   // the companions' own themes, the ending): allowed on any map.

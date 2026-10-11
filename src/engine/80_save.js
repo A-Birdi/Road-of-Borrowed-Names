@@ -203,6 +203,7 @@ RB.save = (function () {
       const r = rows.find((x) => x && x.slot === i);
       const autos = rec.filter((x) => x && x.slot === i && x.kind === 'auto').sort((a, b) => b.savedAt - a.savedAt);
       const pre = rec.find((x) => x && x.slot === i && x.kind === 'predeparture');
+      const sus = rec.find((x) => x && x.slot === i && x.kind === 'suspend');
       const corrupt = r && (!r.state || validate(r.state).length > 0);
       out.push({
         slot: i,
@@ -215,6 +216,10 @@ RB.save = (function () {
         auto: autos[0] ? { savedAt: autos[0].savedAt, meta: autos[0].meta } : null,
         autoNewer: !!(autos[0] && (!r || autos[0].savedAt > r.meta.savedAt)),
         pre: pre ? { savedAt: pre.savedAt, meta: pre.meta } : null,
+        // suspended in the Hall of a Hundred Tales: resumed from there when it is the newest
+        suspend: sus ? { savedAt: sus.savedAt, meta: sus.meta } : null,
+        // (written after the save it suspends from, so a tie in the clock goes to the suspend point)
+        suspendNewer: !!(sus && (!r || sus.savedAt >= r.meta.savedAt) && (!autos[0] || sus.savedAt >= autos[0].savedAt)),
         rev: r ? r.rev : 0,
       });
     }
@@ -266,7 +271,8 @@ RB.save = (function () {
     if (battling() && st === RB.game.s) throw new Error(IN_BATTLE);
     const clean = trimForSave(RB.util.deepClone(st));
     const now = Date.now();
-    const key = kind === 'predeparture' ? slot + ':predeparture' : slot + ':auto:' + now;
+    // one predeparture point and one suspend point per slot (the Hall's suspend, D9: replaced, never a seventh save)
+    const key = kind === 'predeparture' ? slot + ':predeparture' : kind === 'suspend' ? slot + ':suspend' : slot + ':auto:' + now;
     const rec = { key, slot, kind, savedAt: now, meta: metaOf(clean), thumb: thumb || null, state: clean };
     if (mode === 'idb') {
       await tx(['recovery'], 'readwrite', async (t) => {
@@ -292,7 +298,7 @@ RB.save = (function () {
 
   async function read(slot, which) {
     let rec;
-    if (which === 'auto' || which === 'predeparture') {
+    if (which === 'auto' || which === 'predeparture' || which === 'suspend') {
       const all = (await kvAll('recovery')).filter((r) => r && r.slot === slot && r.kind === which).sort((a, b) => b.savedAt - a.savedAt);
       rec = all[0];
     } else rec = await kvGet('slots', slot);
@@ -324,6 +330,18 @@ RB.save = (function () {
       for (const k of [...mem.keys()]) if (k === 'slots:' + slot || k.startsWith('recovery:' + slot + ':')) mem.delete(k);
     }
     if (chan) chan.postMessage({ type: 'deleted', slot, tab: tabId });
+  }
+
+  // a suspend point is used once: resuming from it removes it (the journey goes on saving as usual)
+  async function dropSuspend(slot) {
+    const key = slot + ':suspend';
+    if (mode === 'idb') await tx(['recovery'], 'readwrite', async (t) => { t.objectStore('recovery').delete(key); });
+    else if (mode === 'local') localStorage.removeItem(LS_PREFIX + 'recovery:' + key);
+    else mem.delete('recovery:' + key);
+  }
+  async function suspend() {
+    if (current.slot == null || current.readOnly || battling()) return null;
+    return writeRecovery(current.slot, RB.game.s, 'suspend', RB.render && RB.render.thumbnail ? RB.render.thumbnail() : null);
   }
 
   async function copy(from, to) {
@@ -448,7 +466,7 @@ RB.save = (function () {
 
   return {
     detect, status, requestPersist, list, read, writeSlot, writeRecovery, del, copy, validate, migrate, addMigration,
-    loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave,
+    loadSettings, saveSettings, claim, takeOver, releaseLock, setReadOnly, setCurrent, manualSave, autosave, suspend, dropSuspend,
     ConflictError, SLOTS, current: () => current, _mode: () => mode, skippedInBattle: () => skippedInBattle,
   };
 })();
