@@ -169,7 +169,8 @@ RB.fishStage = (function () {
       shore: () => Math.round(AH * 0.3),            // far bank's water line
       // the near bank's top edge at x (art px): level, then rounding down into the water
       // the near bank runs across the whole width at every site (you face the water); the quay is straight
-      bankY: (x) => Math.round(AH * 0.8 + (dress === 'harbor' ? 0 : Math.sin(x / 23) * 1.5 + Math.sin(x / 61) * 2)),
+      // (the boat's gunwale is straight like the quay; the rocks at Sazanami are rougher than a bank)
+      bankY: (x) => Math.round(AH * 0.8 + (dress === 'harbor' || dress === 'deck' ? 0 : dress === 'rocks' ? Math.sin(x / 9) * 2.5 + Math.sin(x / 37) * 3 : Math.sin(x / 23) * 1.5 + Math.sin(x / 61) * 2)),
       bankX: () => AW,
       pc: () => ({ x: Math.round(AW * 0.3), y: AH - 7 }),
       comp: () => ({ x: Math.round(AW * 0.12), y: AH - 15 }),
@@ -211,6 +212,22 @@ RB.fishStage = (function () {
           R(xFar, yFar - 1, wFar, 1, Wd[3]);
         }
         R(AW * 0.7, shore + 12, 22, 5, Wd[1]); R(AW * 0.7 + 2, shore + 10, 18, 3, Wd[2]); R(AW * 0.7 + 9, shore + 2, 1, 9, Wd[0]);
+      } else if (dress === 'rocks' || dress === 'deck') {
+        // the coast (P15g): open sea to the horizon; at Sazanami a pine-topped headland closes the bay on the left, from
+        // the boat the One-Pine Islet lies off to the right, its one pine leaning
+        R(0, Math.round(shore * 0.9), AW, 2, RB.propKit.mix(W[1], '#ffffff', 0.25));
+        R(0, shore - 2, AW, 2, W[3]);
+        const ell = (cx, cy, rx, ry, c) => RB.propKit.ell(g, Math.round(cx), Math.round(cy), Math.round(rx), Math.round(ry), c);
+        if (dress === 'rocks') {
+          for (let x = 0; x < AW * 0.34; x++) { const k = x / (AW * 0.34), h = Math.round((1 - k * k) * 22 + Math.sin(x / 5) * 2); R(x, shore - h, 1, h + 4, k < 0.9 ? St[0] : St[1]); R(x, shore - h, 1, 1, St[2]); }
+          for (let i = 0; i < 6; i++) { const x = AW * 0.03 + i * AW * 0.045, base = shore - 18 + i * 3; R(x, base - 6, 1, 7, Tr[0]); ell(x, base - 9, 6, 3, Lf[0]); ell(x - 1, base - 10, 4, 2, Lf[1]); }
+          for (let i = 0; i < 5; i++) { const x = AW * (0.5 + i * 0.1) + r() * 8, y = shore + 8 + r() * AH * 0.3, w = 5 + r() * 4, h = 2 + r() * 2; ell(x, y - h * 0.4, w, h, RB.propKit.mix(St[0], '#1c2428', 0.5)); R(x - 3, y - h - 1, 4, 1, St[1]); R(x - w, y, w * 2, 1, W[3]); }
+        } else {
+          const ix = Math.round(AW * 0.74);
+          ell(ix, shore + 3, AW * 0.13, 7, P5('sand')[0] || St[1]); ell(ix, shore + 1, AW * 0.1, 5, Gr[1]);
+          for (let k = 0; k < 16; k++) R(ix + 4 + k * 0.4, shore - 4 - k, 2, 1, Tr[0]);
+          ell(ix + 10, shore - 22, 12, 4, Lf[0]); ell(ix + 8, shore - 23, 8, 3, Lf[1]); ell(ix + 13, shore - 19, 9, 3, Lf[3]);
+        }
       } else {
         // the far bank: grass, trees, and (river) reeds and the bridge, (pond) dense trees and shade
         R(0, shore - 12, AW, 12, Gr[1]);
@@ -251,7 +268,16 @@ RB.fishStage = (function () {
       for (let x = 0; x < G.bankX(); x++) {
         const y0 = G.bankY(x);
         if (y0 >= AH) continue;
-        if (dress === 'harbor') {
+        if (dress === 'deck') {
+          // the boat's gunwale and side: planks running lengthwise, a lit rail, the hull darker below
+          for (let y = y0; y < AH; y++) R(x, y, 1, 1, y - y0 < 3 ? Wd[3] : ((y - y0) % 6 === 0 ? Wd[0] : (y - y0) < 9 ? Wd[2] : Wd[1]));
+          if (x % 28 === 0) R(x, y0 + 3, 2, AH - y0 - 3, Wd[0]);
+        } else if (dress === 'rocks') {
+          // dark wet rock with lighter faces and cracks, barnacle flecks at the water line
+          const mx = RB.propKit.mix, dk = mx(St[0], '#1c2428', 0.55), md = mx(St[1], '#1c2428', 0.4), lt = mx(St[2], '#1c2428', 0.2);
+          for (let y = y0; y < AH; y++) R(x, y, 1, 1, ((x * 5 + y * 11) % 17 === 0) ? lt : ((x + y * 3) % 23 === 0 ? dk : (y - y0) < 4 ? md : ((Math.floor(x / 9) + Math.floor((y - y0) / 6)) & 1 ? dk : mx(dk, md, 0.4))));
+          if ((x * 7) % 13 === 0) R(x, y0, 1, 1, '#e8e4d8');
+        } else if (dress === 'harbor') {
           // dressed stone: courses of blocks, a lit coping edge, a dark line where it meets the water
           for (let y = y0; y < AH; y++) { const row = Math.floor((y - y0) / 7), col = Math.floor((x + (row & 1) * 6) / 12); R(x, y, 1, 1, ((y - y0) % 7 === 0 || (x + (row & 1) * 6) % 12 === 0) ? St[0] : (row + col) & 1 ? St[1] : St[2]); }
           R(x, y0, 1, 2, RB.propKit.mix(St[2], '#ffffff', 0.25));
@@ -263,7 +289,7 @@ RB.fishStage = (function () {
         R(x, y0 - 1, 1, 1, W[3]);
       }
       // reed tufts along the bank's edge (left of you and further right), clear in front of you
-      if (dress !== 'harbor') for (let i = 0; i < 26; i++) { const x = (i < 9 ? AW * 0.01 + i * 4 : AW * 0.52 + (i - 9) * 7) + (i % 3), y = G.bankY(x); if (x < AW && y < AH) { const h = 8 + (i * 5) % 8; R(x, y - h, 1, h + 2, Rd[i & 1]); R(x, y - h - 2, 1, 3, Rd[3]); } }
+      if (dress === 'river' || dress === 'pond') for (let i = 0; i < 26; i++) { const x = (i < 9 ? AW * 0.01 + i * 4 : AW * 0.52 + (i - 9) * 7) + (i % 3), y = G.bankY(x); if (x < AW && y < AH) { const h = 8 + (i * 5) % 8; R(x, y - h, 1, h + 2, Rd[i & 1]); R(x, y - h - 2, 1, 3, Rd[3]); } }
       bg = document.createElement('canvas'); bg.width = AW; bg.height = AH;
       bg.getContext('2d').drawImage(art, 0, 0);
       bgKey = key;
@@ -519,13 +545,15 @@ RB.fishStage = (function () {
       if (sg.obstacle === 'reeds') reeds(sg.side === 'left' ? F.x - 24 : F.x + 8);
       if (sg.obstacle === 'branch') { for (let i = 0; i < 26; i++) R(F.x + 6 + i, F.y - 26 + i * 0.9, 2, 1, Tr[0]); for (let i = 0; i < 9; i++) R(F.x + 10 + i * 3, F.y - 22 + i * 3, 3, 3, Lf[i % 3]); }
       if (sg.obstacle === 'post') { R(F.x - 22, F.y - 22, 5, 26, Wd[1]); R(F.x - 22, F.y - 22, 5, 1, Wd[3]); R(F.x - 21, F.y - 22, 1, 26, Wd[2]); ring(F.x - 20, F.y + 3, 5, 0.6); }
-      if (sg.snag) { R(F.x + 4, F.y - 1, 9, 1, Tr[0]); R(F.x + 8, F.y - 2, 1, 1, Tr[1]); R(F.x + 6, F.y - 2, 2, 1, '#e8e4d8'); }
+      if (sg.snag === 'weed') { for (let i = 0; i < 7; i++) { const x = F.x + 2 + i * 2; for (let k = 0; k < 6 + (i % 3) * 2; k++) R(x + Math.round(Math.sin(k / 2 + i) * 1.2), F.y + 1 - k, 1, 1, Lf[(i + k) % 3]); } R(F.x + 6, F.y - 2, 2, 1, '#e8e4d8'); }
+      else if (sg.snag) { R(F.x + 4, F.y - 1, 9, 1, Tr[0]); R(F.x + 8, F.y - 2, 1, 1, Tr[1]); R(F.x + 6, F.y - 2, 2, 1, '#e8e4d8'); }
+      if (sg.obstacle === 'rock') { const St = P5('stone'), x0 = sg.side === 'left' ? F.x - 30 : F.x + 10; for (let i = 0; i < 20; i++) { const h = Math.round(Math.sin((i / 19) * Math.PI) * 14); R(x0 + i, F.y + 2 - h, 1, h + 2, i < 7 ? St[1] : St[0]); } R(x0 + 4, F.y - 10, 5, 1, St[2]); ring(x0 + 10, F.y + 3, 12, 0.5); }
       if (sg.ripple && !reduce() && (t | 0) % 1600 < 30) ripples.push({ x: F.x + 10, y: F.y + 2, r: 9, t0: t, ms: 1400 });
       if (sg.ripple && reduce()) ring(F.x + 10, F.y + 2, 7, 0.6);
       if (sg.branchOver) { for (let i = 0; i < AW * 0.3; i++) R(F.x - AW * 0.15 + i, F.y - 30 + Math.sin(i / 9) * 2, 1, 2, Tr[0]); for (let i = 0; i < 12; i++) R(F.x - AW * 0.12 + i * 6, F.y - 28, 4, 4, Lf[i % 3]); reeds(F.x + 12); reeds(F.x + 26); }
       if (sg.notice) { const x = Math.round(AW * 0.36), y = G.bankY(x) - 22; R(x, y, 12, 9, '#d8c89a'); R(x, y, 12, 1, '#f0e4c0'); R(x + 5, y + 9, 2, 10, Wd[0]); }
       if (sg.tub) { const p = G.tub(); R(p.x - 9, p.y - 7, 18, 7, Wd[1]); R(p.x - 8, p.y - 7, 16, 2, P5('water')[2]); R(p.x - 9, p.y - 7, 18, 1, Wd[3]); R(Math.round(AW * 0.42), AH - 12, 20, 8, '#c8b088'); }
-      if (sg.neighbour) { const x0 = AW - 2, y0 = Math.round(AH * 0.28); g.strokeStyle = 'rgba(240,236,224,0.7)'; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(F.x + 30, F.y - 30, F.x + 20, F.y); g.stroke(); R(F.x + 19, F.y - 3, 3, 3, '#3a8a5a'); rodLine(AW - 1, Math.round(AH * 0.55), x0, y0); }
+      if (sg.neighbour) { const L = sg.neighbour === 'left', x0 = L ? 2 : AW - 2, y0 = Math.round(AH * 0.28), d = L ? -1 : 1; g.strokeStyle = 'rgba(240,236,224,0.7)'; g.beginPath(); g.moveTo(x0, y0); g.quadraticCurveTo(F.x + 30 * d, F.y - 30, F.x + 20 * d, F.y); g.stroke(); R(F.x + 20 * d - 1, F.y - 3, 3, 3, '#3a8a5a'); rodLine(L ? 1 : AW - 1, Math.round(AH * 0.55), x0, y0); }
       if (sg.markers) {
         const a = { x: Math.round(AW * 0.44), y: Math.round(AH * 0.4) }, b = { x: Math.round(AW * 0.72), y: Math.round(AH * 0.38) };
         for (const m of [a, b]) { R(m.x - 2, m.y - 6, 5, 6, '#c83a2e'); R(m.x - 2, m.y - 6, 5, 1, '#e86a5a'); R(m.x, m.y - 12, 1, 6, '#2a2430'); ring(m.x, m.y + 1, 5, 0.5); }
@@ -698,8 +726,8 @@ RB.fishStage = (function () {
     // the text equivalent of the stage (its accessible name), by phase
     function text() {
       const parts = [];
-      const nm = S ? S.name.en : 'the water';
-      parts.push('You stand at ' + nm + ' with a rod' + (ST.ribbon ? ' (a ribbon tied on it)' : '') + '.');
+      const nm = S ? (/^The /.test(S.name.en) ? 'the ' + S.name.en.slice(4) : S.name.en) : 'the water';
+      parts.push((dress === 'deck' ? 'You sit in the stern of the boat, off the One-Pine Islet, with a rod' : 'You stand at ' + nm + ' with a rod') + (ST.ribbon ? ' (a ribbon tied on it)' : '') + '.');
       if (comp) parts.push(RB.content.chars[comp].name.en + ' is ' + ({ settle: 'settling in nearby', notes: 'getting the notes ready', watch: 'watching the float', splash: 'reacting to the splash', lean: 'leaning in to look', respond: 'answering', rest: 'resting nearby' }[ST.compBeh] || 'nearby') + '.');
       if (pet) parts.push('Your ' + ({ cat: 'cat', dog: 'dog', bird: 'small bird', tanuki: 'tanuki' }[pet.species] || 'pet') + ' ' + ({ cat: 'sits on the dry bank, following the float with its eyes', dog: 'sits by you, ears up', bird: 'hops along the bank, turning toward the ripples', tanuki: 'copies how you sit, a moment late' }[pet.species]) + '.');
       const P = ST.patch && S && S.patches.find((p) => p.id === ST.patch);

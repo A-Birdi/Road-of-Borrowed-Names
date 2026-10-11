@@ -4234,6 +4234,37 @@ mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
 before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
 
+## The expansion, P15 — P15g done: A Quiet Cast's coast and the boat's destination after the story
+
+**On a copy of the working tree's git-visible files (the coast complete, before three last touches below):** the whole
+unit suite **51,265 passed, 0 failed**. `fishing` **1,085/0** with its pins moved and said why (five sites, the first
+three then the coast's two; fifteen fish, nine in the first book and six in the coast's; thirty situations, 120 task
+variants, every one's accepted forms checked as the first eighteen's; a six-chapter journey keeping three stations,
+nine fish and its notes exactly; the milestones at 1, 3, 6 and 9 with the coast's spread at all six, each once; all 105
+pairs of silhouettes distinct; each coast station placed on a water tile, its stand reachable and nothing walkable
+changed), `pastimes_post` **39/0** (adds: the coast stations' scenes with Yasu's note before the survey and straight to
+the choices after; the One-Pine Islet on the chart only after the story in a twelve-chapter journey, its water round
+the sea map's islet with the pine, the boat at its jetty, the first landing once, the stone read and the boat's name
+carved beside the Chidori-maru or in a clear space, left for another time, Fuku's word only when the boat was hers),
+`sea_ports` 53/0, `sea_licence` 64/0, `practice_core` 66/0, `pace_calibration` 70/0, `pace_noclock` 19/0,
+`distractions` 19/0, `festival` 14/0, `foundations` 67/0, validator no errors, the language ledger with no line
+unreviewed (the coast's fishing content now in it under `coast`). The three last touches, after the copy was taken
+(the patches' English names made to read in "You mean to cast at the …", the stage's sentence lowercasing a site's
+"The", the islet rounded and given the pine prop): `fishing` 1,085/0, `pastimes_post` 39/0, `travel_rules` 699/0 again
+on the working tree.
+
+**Browser, on the build of this commit:** `tests/e2e/fishing_coast.mjs` **4/0** (standing at each coast station is
+being at it; facing the stake and pressing Enter opens its scene, and Cast opens that station's stage; all twelve coast
+situations drawn with their text on the canvas; the six fish observed; a six-chapter journey's notes with nine fish
+and no coast; from Saltglass after the story the chart lists the One-Pine Islet, the crew sails there, the first
+landing, the stone's reading answered in the real task screen and the name carved, and from the islet's jetty the
+chart lists the way home); `tests/e2e/fishing.mjs` **11/0** (the first three stations unchanged: a complete catch with
+real clicks, repair, survey, reload, all sixteen companion × pet pairs, layouts, keyboard and touch, reduced motion,
+pace). Captures looked at: the rocks (a dark wet rock edge, the headland with pines on the left, rocks in the water),
+the boat (the gunwale's planks, the islet with its pine off to the right), the rock, weed and children's-line
+situations, the red sea bream and the rockfish observed, the chart with the islet, and the islet itself (sand rim,
+grass, the pine, the stone, the jetty with the boat and the fishing stake). The art pass (P16) may redraw any of it.
+
 ## The expansion, P15 — P15g in progress: the returns and the companions' beats done; shogi's two places
 
 **On a copy of the working tree's git-visible files (the returns and the companions' beats complete, before the

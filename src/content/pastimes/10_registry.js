@@ -32,10 +32,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   RB.pastimes.define('fishing', {
     order: 90, title: T('A quiet cast', '{静|しず}か な {釣|つ}り'), kind: 'game', activity: 'fishing', companion: false, art: 'fishing',
-    venue: T('At Yasu\'s three stations: the Reedwake riverbank, the pond by the Lantern Road and the Saltglass quay, once the survey has begun.', '{三|みっ}つ の {釣|つ}り{場|ば}'),
+    venue: T('At Yasu\'s three stations, the Reedwake riverbank, the pond by the Lantern Road and the Saltglass quay, once the survey has begun; and on the coast, the rocks at Sazanami and the boat off the One-Pine Islet.', '{五|いつ}つ の {釣|つ}り{場|ば}'),
     // Yasu's survey begins once the journey has reached its end (the fishing engine's own rule)
     met: (s) => ed2(s) && !!RB.fishing && (!!(s.flags && s.flags.postgame) || RB.fishing.distinct(s) > 0),
-    blurb: T('A peaceful pastime: nine fish to meet, each drawn in your Fishing notes the first time you see one.', '{魚|さかな} を {見|み}る {静|しず}か な {時間|じかん} 。'),
+    blurb: T('A peaceful pastime: fifteen fish to meet, nine in the rivers, pond and harbour and six on the coast, each drawn in your Fishing notes the first time you see one.', '{魚|さかな} を {見|み}る {静|しず}か な {時間|じかん} 。'),
     howto: [
       T('Stand at one of the stations and choose to fish.', '{釣|つ}り{場|ば} に {立|た}つ 。'),
       T('Read the water, choose where to cast, and wait.', '{水|みず} を {見|み}て 、 {待|ま}つ 。'),

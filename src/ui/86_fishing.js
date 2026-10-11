@@ -485,7 +485,8 @@ RB.ui.fishing = (function () {
     if (ms.indexOf('first') >= 0) h += '<p class="fp-ms">' + I('fish') + 'Fishing notes are open in your Journey — this is the first drawing.</p>';
     if (ms.indexOf('survey') >= 0) h += '<p class="fp-ms">' + I('done') + 'Yasu\'s survey is complete: three kinds recorded and left for him at the station. A <b>rod ribbon</b> is tied on (Fishing notes can take it off).</p>';
     if (ms.indexOf('frame') >= 0) h += '<p class="fp-ms">' + I('keepsake') + 'Six kinds: a <b>framed waterside illustration</b> joins your Practice mementos.</p>';
-    if (ms.indexOf('spread') >= 0) h += '<p class="fp-ms">' + I('book') + 'All nine: the catalogue spread is complete. When you like, you can look back over it' + (C.att.comp ? ' together' : '') + '.</p>';
+    if (ms.indexOf('spread') >= 0) h += '<p class="fp-ms">' + I('book') + 'All nine of the first three waters: the catalogue spread is complete. When you like, you can look back over it' + (C.att.comp ? ' together' : '') + '.</p>';
+    if (ms.indexOf('coast') >= 0) h += '<p class="fp-ms">' + I('book') + 'All six of the coast: its own spread is complete in your Fishing notes.</p>';
     if (out.memory) h += '<p class="fp-ms muted small">A shared memory was kept (Company › Shared memories).</p>';
     if (say && C.att.comp) h += '<blockquote class="fp-say"><span class="who">' + esc(RB.content.chars[C.att.comp].name.en) + '</span>' + J(say.jp) + '<span class="en">' + esc(say.en) + '</span></blockquote>';
     const sv = C.saved === 'saved' ? 'Saved.' : C.saved === 'session' ? 'Kept for this browser session only (this browser is not keeping saves).' : 'Recorded in this journey; save from the folio to keep it.';
@@ -612,11 +613,11 @@ RB.ui.fishing = (function () {
   RB.practice.addActivity({
     id: 'fishing', order: 10, icon: 'fish',
     en: 'A Quiet Cast — fishing for Yasu\'s survey', jp: '{静|しず}か な {釣|つ}り',
-    where: { en: 'Three stations: the Reedwake riverbank below the bridge, the pond by the Lantern Road, and the Saltglass quay', jp: '{葦|あし}ノ{瀬|せ} の {川岸|かわぎし} ・ {灯|ひ}の{道|みち} の {池|いけ} ・ {潮|しお}{硝子|がらす} の {波止場|はとば}' },
+    where: { en: 'Three stations: the Reedwake riverbank below the bridge, the pond by the Lantern Road, and the Saltglass quay (and in a twelve-chapter journey two on the coast: the rocks at Sazanami, and the boat off the One-Pine Islet)', jp: '{葦|あし}ノ{瀬|せ} の {川岸|かわぎし} ・ {灯|ひ}の{道|みち} の {池|いけ} ・ {潮|しお}{硝子|がらす} の {波止場|はとば}' },
     available: (s) => !!(s && s.flags && s.flags.postgame),
     here: (s) => !!F.siteHere(s),
     safe: () => F.worldSafe(),
-    note: (s) => (!s.flags.postgame ? 'Yasu\'s survey begins once the journey has reached its end.' : F.siteHere(s) ? '' : 'Go to one of the three stations, then begin.'),
+    note: (s) => (!s.flags.postgame ? 'Yasu\'s survey begins once the journey has reached its end.' : F.siteHere(s) ? '' : 'Go to one of the stations (' + F.stationList(s) + '), then begin.'),
     begin: (ctx) => RB.activity.launch('fishing', Object.assign({ site: F.siteHere(RB.game.s) }, ctx || {}, { source: 'words' })),
   });
 

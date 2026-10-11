@@ -243,9 +243,11 @@
     `guardians`); **P15f is done: Ashihara Shinden, the new settlement** (`src/content/settle/`; F-136; unit `settle`);
     **P15g: the returns and the companions' postgame beats are done** (`src/content/returns/`; F-137; unit `returns`),
     and shogi's two places (Snowbell's abandoned game as a puzzle at its place, Fuku and Isamu at the hill bench:
-    `src/content/pastimes/60_postgame.js`, `src/ui/88_shogi.js`; unit `pastimes_post`); next: the rest of P15g (A Quiet
-    Cast's two new stations, Sazanami and the boat, and the boat's postgame destination), P15h, the chained route
-    (XP79) and a complete browser run. Routes for the new chapters from fixtures:
+    `src/content/pastimes/60_postgame.js`, `src/ui/88_shogi.js`; unit `pastimes_post`); **P15g is done** with A Quiet
+    Cast's coast (Sazanami's rocks and the boat, six fish, twelve situations: `src/content/fishing/70_coast.js`,
+    `src/content/zz_coast.js`) and the boat's destination after the story, the One-Pine Islet (F-138; unit `fishing`,
+    `pastimes_post`; browser `tests/e2e/fishing_coast.mjs`); next: P15h (tests and phase end), the chained route (XP79)
+    and a complete browser run. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.

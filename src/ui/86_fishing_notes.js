@@ -7,7 +7,8 @@
  * only on request, a broad hint at the waters it lives in.
  *
  * Also: Yasu's survey line, the rod ribbon (on/off: it only changes the rod in
- * fishing), the framed waterside illustration, the nine-fish spread, and the
+ * fishing), the framed waterside illustration, the nine-fish spread (and in a
+ * twelve-chapter journey the coast's six: src/content/fishing/70_coast.js), and the
  * Practice mementos source (RB.practice.addMementoSource; suite A renders it).
  *
  *   RB.ui.fishingNotes.html(s, o) / paint(el)   (also used inside the activity) */
@@ -21,7 +22,7 @@ RB.ui.fishingNotes = (function () {
   const J = (t) => (t ? RB.ui.jhtml(t) : '');
   const T = (k) => F.text(k);
   const L = (k) => '<span class="jt-wrap">' + J(T(k).jp) + '</span> <span class="en">' + esc(T(k).en) + '</span>';
-  const view = { sel: null, spread: false, hints: {} };
+  const view = { sel: null, spread: false, coast: false, hints: {} };
   const showCounts = () => RB.game.settings.keepsakeCounts !== false;
 
   function firstLine(s, e) {
@@ -55,10 +56,10 @@ RB.ui.fishingNotes = (function () {
     let h = '';
     if (!o.compact) h += '<h3>' + I('fish') + L('notes') + (showCounts() ? ' <span class="count">' + c.known + ' of ' + c.total + ' recorded</span>' : '') + '</h3>';
     h += '<p class="small">' + L('survey') + ': ' + (M.survey ? 'complete — three kinds recorded and left at the station for Yasu.' : M.intro ? (showCounts() ? c.survey + ' of 3 different fish recorded.' : 'three different fish to record.') : 'Yasu, on the Reedwake pier, has a small favour to ask (after the journey\'s end).') + '</p>';
-    if (!o.compact) h += '<p class="muted small">Stations: the Reedwake riverbank below the bridge, the pond by the Lantern Road, the Saltglass quay. Every fish is let go into the same water.</p>';
+    if (!o.compact) h += '<p class="muted small">Stations: ' + esc(F.stationList(s)) + '. Every fish is let go into the same water.</p>';
     // the catalogue, by site (unseen: the same outline for all)
     h += '<div class="fn-grid">';
-    for (const sid of F.SITE_ORDER) {
+    for (const sid of F.siteOrder(s)) {
       const S = F.site(sid);
       h += '<div class="fn-site"><div class="fn-shead">' + J(S.name.jp) + ' <span class="en">' + esc(S.name.en) + '</span></div><div class="fn-cells">';
       for (const e of list.filter((x) => x.def && x.def.site === sid)) {
@@ -73,14 +74,16 @@ RB.ui.fishingNotes = (function () {
     const sel = list.find((e) => e.id === view.sel);
     if (sel && !o.noDetail) h += entryHtml(s, sel);
     // finite mementos: the ribbon, the framed illustration, the spread
-    if (M.survey || M.frame || M.spread) {
+    if (M.survey || M.frame || M.spread || M.coast) {
       h += '<div class="fn-ms"><h4>' + I('keepsake') + 'Practice mementos</h4>';
       if (M.survey) h += '<p>' + L('ribbon') + ' — tied on the rod in fishing. <button class="pbtn small" data-fn-ribbon aria-pressed="' + F.ribbon(s) + '">' + (F.ribbon(s) ? 'Take it off' : 'Tie it on') + '</button></p>';
       if (M.frame) h += '<div class="fn-frame"><canvas class="fn-framecv" width="160" height="96" role="img" aria-label="A framed drawing of the waterside with the first six fish you recorded"></canvas><p>' + L('frame') + '</p></div>';
       if (M.spread) h += '<p>' + L('spread') + ' <button class="pbtn small" data-fn-spread aria-expanded="' + view.spread + '">' + (view.spread ? 'Close the spread' : 'Open the spread') + '</button>' +
         (M.reflection && (M.reflection.shared || M.reflection.solo) ? ' <span class="muted small">(looked back over' + (M.reflection.shared ? ' together' : '') + ')</span>' : '') + '</p>';
+      if (M.coast) h += '<p>' + L('coast') + ' <button class="pbtn small" data-fn-coast aria-expanded="' + view.coast + '">' + (view.coast ? 'Close the spread' : 'Open the spread') + '</button></p>';
       h += '</div>';
-      if (M.spread && view.spread) h += '<div class="fn-spread" role="group" aria-label="The nine-fish spread">' + F.FISH_ORDER.map((id) => '<figure><span class="fn-plate" data-plate="' + id + '"></span><figcaption lang="ja">' + esc(F.fish(id).jp) + '</figcaption></figure>').join('') + '</div>';
+      if (M.coast && view.coast) h += '<div class="fn-spread" role="group" aria-label="The coast\'s spread">' + F.book('coast').map((id) => '<figure><span class="fn-plate" data-plate="' + id + '"></span><figcaption lang="ja">' + esc(F.fish(id).jp) + '</figcaption></figure>').join('') + '</div>';
+      if (M.spread && view.spread) h += '<div class="fn-spread" role="group" aria-label="The nine-fish spread">' + F.book('first').map((id) => '<figure><span class="fn-plate" data-plate="' + id + '"></span><figcaption lang="ja">' + esc(F.fish(id).jp) + '</figcaption></figure>').join('') + '</div>';
     }
     if (!o.compact) h += '<p class="muted small"><button class="pbtn small quiet" data-fn-counts>' + (showCounts() ? 'Hide counts' : 'Show counts') + '</button> (also Settings › Display)</p>';
     return h;
@@ -136,12 +139,13 @@ RB.ui.fishingNotes = (function () {
           paint(B);
         }
         const click = (e) => {
-          const b = e.target.closest('[data-fn-sel],[data-fn-hint],[data-fn-ribbon],[data-fn-spread],[data-fn-counts]');
+          const b = e.target.closest('[data-fn-sel],[data-fn-hint],[data-fn-ribbon],[data-fn-spread],[data-fn-coast],[data-fn-counts]');
           if (!b) return;
           if (b.dataset.fnSel) view.sel = view.sel === b.dataset.fnSel ? null : b.dataset.fnSel;
           else if (b.dataset.fnHint) view.hints[b.dataset.fnHint] = true;
           else if (b.hasAttribute('data-fn-ribbon')) F.ribbon(s, !F.ribbon(s));
           else if (b.hasAttribute('data-fn-spread')) view.spread = !view.spread;
+          else if (b.hasAttribute('data-fn-coast')) view.coast = !view.coast;
           else if (b.hasAttribute('data-fn-counts')) { RB.game.settings.keepsakeCounts = !showCounts(); try { RB.game.saveSettings && RB.game.saveSettings(); } catch (er) { /* settings save is best effort */ } }
           api.render();
         };

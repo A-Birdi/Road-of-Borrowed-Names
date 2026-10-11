@@ -1019,11 +1019,11 @@
   "jp": "{静|しず}か な {釣|つ}り",
   "en": "A quiet cast"
  },
- "pastime:fishing:page#ym6xuf": {
+ "pastime:fishing:page#17b1sag": {
   "status": "self-reviewed",
-  "ref": "self-reviewed by the lead against the game's lexicon and textbook grammar (P06)",
-  "jp": "{三|みっ}つ の {釣|つ}り{場|ば}",
-  "en": "At Yasu's three stations: the Reedwake riverbank, the pond by the Lantern Road and the Saltglass quay, once the survey has begun."
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{五|いつ}つ の {釣|つ}り{場|ば}",
+  "en": "At Yasu's three stations, the Reedwake riverbank, the pond by the Lantern Road and the Saltglass quay, once the survey has begun; and on the coast, the rocks at Sazanami and the boat off the One-Pine Islet."
  },
  "pastime:fishing:page#ix6eke": {
   "status": "self-reviewed",

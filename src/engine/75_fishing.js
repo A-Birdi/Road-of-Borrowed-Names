@@ -13,6 +13,12 @@
  *   RB.fishing.entries(s) / counts(s)    the catalogue (Fishing notes)
  *   RB.fishing.remark(s, comp, kind, seed)  one authored remark (or null)
  *
+ * The coast (expansion P15g, F-82): two more stations in a twelve-chapter journey, Sazanami's rocks and the boat
+ * at the One-Pine Islet, with six more fish. A site or fish with `edition: 2` belongs to that journey only (a
+ * six-chapter journey keeps its three stations and nine fish exactly); a fish with `book: 'coast'` is on the coast's
+ * own spread. The milestones keep their meaning: the nine-fish spread is the first nine (book 'first'); the coast's
+ * spread ('coast') is all six of the coast's.
+ *
  * Species are chosen when the cast is committed (Cast pressed) and frozen in
  * fishing.active: correctness, timing, neatness, companion, pet and animation
  * cannot change them. A per-site seeded queue of unseen species makes the first
@@ -29,7 +35,7 @@ RB.fishing = (function () {
   const SITE_ORDER = [];
   const LIMITS = { recent: 50, situations: 12, count: 9999 };
   const PROFILES = ['F', 'E', 'I', 'A'];
-  const MS = ['first', 'survey', 'frame', 'spread'];
+  const MS = ['first', 'survey', 'frame', 'spread', 'coast'];
   const now = () => Date.now();
 
   // ---- content registries ----------------------------------------------------------------------
@@ -87,7 +93,14 @@ RB.fishing = (function () {
     return q;
   }
   const known = (s, id) => !!st(s).observed[id];
-  const distinct = (s) => FISH_ORDER.filter((id) => known(s, id)).length;
+  // what this journey has: a twelve-chapter journey has the coast's stations and fish as well
+  const inGame = (s, d) => !d || !d.edition || !(RB.edition && RB.edition.of) || RB.edition.of(s) >= d.edition;
+  const siteOrder = (s) => SITE_ORDER.filter((id) => inGame(s, SITES[id]));
+  const fishOrder = (s) => FISH_ORDER.filter((id) => inGame(s, FISH[id]));
+  const bookOf = (id) => (FISH[id] && FISH[id].book) || 'first';
+  const book = (b) => FISH_ORDER.filter((id) => bookOf(id) === b);
+  // different fish recorded (in one book, if named)
+  const distinct = (s, b) => FISH_ORDER.filter((id) => known(s, id) && (!b || bookOf(id) === b)).length;
 
   // ---- where you may fish (§3.2) -----------------------------------------------------------------
   // The player stands at the site's station (on its tile or one step away from it).
@@ -114,13 +127,18 @@ RB.fishing = (function () {
     if (W && W.player && (W.foes || []).some((f) => Math.abs(f.x - W.player.x) + Math.abs(f.y - W.player.y) <= 6)) return { ok: false, why: 'Not with a creature close by.' };
     return { ok: true };
   }
+  // the stations this journey has, in words (three in a six-chapter journey, five in a twelve-chapter one)
+  function stationList(s) {
+    const n = siteOrder(s).map((id) => { const en = SITES[id].name.en; return /^The /.test(en) ? 'the ' + en.slice(4) : 'the ' + en; });
+    return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n.join('');
+  }
   function eligible(s, ctx) {
     ctx = ctx || {};
     if (!s) return { ok: false, why: 'Not in a campaign.' };
     if (!s.flags || !s.flags.postgame) return { ok: false, why: 'Yasu\'s survey begins once the journey has reached its end.' };
     const sid = ctx.site || siteHere(s);
     const S = sid && SITES[sid];
-    if (!S) return { ok: false, why: 'Fishing is offered at its three stations: the Reedwake riverbank, the pond by the Lantern Road and the Saltglass quay.' };
+    if (!S) return { ok: false, why: 'Fishing is offered at its stations: ' + stationList(s) + '.' };
     if (s.map !== S.map) return { ok: false, why: 'Go to the station first.' };
     if (siteHere(s) !== sid) return { ok: false, why: 'Stand at the station first.' };
     if (ctx.skipWorld) return { ok: true, site: sid };
@@ -287,7 +305,9 @@ RB.fishing = (function () {
     mark('first');
     if (n >= 3) mark('survey', { ribbon: true });
     if (n >= 6) mark('frame');
-    if (n >= 9) mark('spread');
+    // the spreads: the first nine (Yasu's three waters), and the coast's six
+    if (distinct(s, 'first') >= book('first').length) mark('spread');
+    if (book('coast').length && distinct(s, 'coast') >= book('coast').length) mark('coast');
     // a first completed outing together is a shared memory (no bond)
     let memory = null;
     if (a.comp && s.comp === a.comp && RB.company && RB.company.memory) {
@@ -338,7 +358,7 @@ RB.fishing = (function () {
   // ---- the catalogue (§8.1) ------------------------------------------------------------------------------------
   function entries(s) {
     const F = st(s);
-    const list = FISH_ORDER.map((id) => {
+    const list = fishOrder(s).map((id) => {
       const o = F.observed[id];
       return { id, def: FISH[id], known: !!o, count: o ? o.count : 0, first: o ? o.first : null };
     });
@@ -347,8 +367,8 @@ RB.fishing = (function () {
     return list;
   }
   function counts(s) {
-    const n = distinct(s);
-    return { known: n, total: FISH_ORDER.length, catches: st(s).catches | 0, survey: Math.min(3, n) };
+    const all = fishOrder(s), n = all.filter((id) => known(s, id)).length;
+    return { known: n, total: all.length, catches: st(s).catches | 0, survey: Math.min(3, distinct(s)), coast: distinct(s, 'coast'), coastTotal: all.filter((id) => bookOf(id) === 'coast').length };
   }
 
   // ---- companion remarks (§8.3) -------------------------------------------------------------------------------------
@@ -381,7 +401,7 @@ RB.fishing = (function () {
   return {
     LIMITS, PROFILES, MS, SITES, FISH, SITU, FISH_ORDER, SITE_ORDER,
     addSite, addFish, addSituation, addRemarks, addText, text, site, fish, situation, situationsAt, patchOf,
-    st, queue, known, distinct, siteHere, worldSafe, eligible, preview, pickSituation, attendance,
+    st, queue, known, distinct, inGame, siteOrder, fishOrder, bookOf, book, stationList, siteHere, worldSafe, eligible, preview, pickSituation, attendance,
     beginCast, setPhase, abandon, commitCatch, reflect, intro, ribbon, entries, counts, remark, memoryText, content,
   };
 })();

@@ -1,4 +1,100 @@
 {
+ "scene:sea.islet_arrive#admp4f": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{沖|おき} の {小島|こじま} 。 {松|まつ} が {一本|いっぽん} 、 {風|かぜ} に {傾|かたむ}いて {立|た}って いる 。 {他|ほか} に は 、 {石|いし} が {一|ひと}つ と 、 {小|ちい}さな {桟橋|さんばし} だけ 。",
+  "en": "The islet out at sea. One pine stands there, leaning in the wind. Apart from it, a single stone and a small jetty."
+ },
+ "scene:sea.islet_arrive#1dy9tkv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{地図|ちず} に は 、 {点|てん} {一|ひと}つ で {描|か}いて ある {島|しま} だ 。 {来|き}て みる と 、 {点|てん} より は {大|おお}きい な 。",
+  "en": "On the chart it's a single dot. Up close it's a bit bigger than a dot."
+ },
+ "scene:sea.islet_arrive#4w7hvn": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{誰|だれ} も いない {島|しま} です ね 。 …… たまに は 、 いい です 。",
+  "en": "An island with nobody on it. …Now and then, that's nice."
+ },
+ "scene:sea.islet_arrive#h0xali": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "この {松|まつ} が 、 {灯台|とうだい} の {代|か}わり だった の かも しれません 。 {昔|むかし} の {船|ふね} に とって 。",
+  "en": "Perhaps this pine was a lighthouse, of a kind. For the boats of long ago."
+ },
+ "scene:sea.islet_arrive#1b23t1w": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{舞台|ぶたい} も {客|きゃく} も ない {島|しま} 。 …… {松|まつ} が {一本|いっぽん} 、 {主役|しゅやく} ね 。",
+  "en": "An island with no stage and no audience. …One pine, playing the lead."
+ },
+ "scene:sea.islet_stone#flqvae": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{平|たい}らな {石|いし} に 、 {船|ふね} の {名前|なまえ} が {幾|いく}つ も {彫|ほ}って ある 。 {一番|いちばん} {古|ふる}い {字|じ} は 、 {波|なみ} に {削|けず}られて {浅|あさ}く なって いる 。",
+  "en": "A flat stone carved with the names of boats. The oldest letters are worn shallow by the waves."
+ },
+ "scene:sea.islet_stone#rye3gt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{千鳥丸|ちどりまる} 。 {桟橋|さんばし} に {繋|つな}いで ある {船|ふね} は 、 {昔|むかし} 、 この {名前|なまえ} で ここ に {来|き}た の だ 。",
+  "en": "The Chidori-maru. The boat tied up at the jetty came here once before, under that name."
+ },
+ "scene:sea.islet_stone:choice#1yddlxl": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "$boat {丸|まる} と {彫|ほ}る",
+  "en": "Carve your boat's name"
+ },
+ "scene:sea.islet_stone:choice#1tpkljf": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{今|いま} は {彫|ほ}らない",
+  "en": "Not now"
+ },
+ "scene:sea.islet_stone#1d1db06": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{千鳥丸|ちどりまる} の {隣|となり} に 、 $boat {丸|まる} と {彫|ほ}った 。",
+  "en": "Beside the Chidori-maru, you carve your boat's name."
+ },
+ "scene:sea.islet_stone#1l8fbhv": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{空|あ}いて いる ところ に 、 $boat {丸|まる} と {彫|ほ}った 。",
+  "en": "In a clear space, you carve your boat's name."
+ },
+ "scene:sea.islet_stone#w860cm": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{石|いし} は 、 また {今度|こんど} {読|よ}もう 。",
+  "en": "You can read the stone another time."
+ },
+ "scene:sea.islet_stone#gezi0l": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "$boat {丸|まる} の {名前|なまえ} も 、 {他|ほか} の {名前|なまえ} の {間|あいだ} に {並|なら}んで いる 。",
+  "en": "Your boat's name stands among the others now."
+ },
+ "scene:sea.fuku_islet#1wg7jgp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{一本松|いっぽんまつ} の {島|しま} へ {行|い}った の ？ …… {石|いし} に 、 {名前|なまえ} が あった でしょう 。",
+  "en": "You went to the one-pine island? …There was a name on the stone, wasn't there."
+ },
+ "scene:sea.fuku_islet#hj6568": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{結婚|けっこん} した {年|とし} の {夏|なつ} に 、 {二人|ふたり} で {行|い}った の よ 。 {来年|らいねん} も {来|く}る って 、 あの {人|ひと} が {彫|ほ}った の 。 {結局|けっきょく} 、 {一度|いちど} きり だった けど 。",
+  "en": "We went there together the summer we married. He carved that we'd come again the next year. In the end it was just the once."
+ },
+ "scene:sea.fuku_islet#4f0028": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{千鳥丸|ちどりまる} が 、 また あそこ へ {行|い}って くれた の ね 。 ありがとう 。",
+  "en": "So the Chidori-maru went there again. Thank you."
+ },
  "scene:sea.boat#ehjtfs": {
   "status": "self-reviewed",
   "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
@@ -1522,6 +1618,36 @@
   "ref": "P11 self-review: Sazanami and East Landing, and the maiden voyage (the hamlet, Isaku, Uki's market and post, Yone's net, the tide-pool school; Genroku, the notice, the volunteers, the channel, the planks, the bell; the mailbag, the leaves in the nets, the island by boat; Suzu's Kansai lines): 郵便袋 as one word, 空っぽだから, the Seto house's granddaughter (孫娘), 考え直そう, 張られるまで, 東の渡し場には…船が, box counts 三箱 さんはこ and 六箱 ろっぱこ",
   "jp": "{自分|じぶん} の {船|ふね} で 、 {西|にし} の {島|しま} に {着|つ}いた 。 {外海|そとうみ} の {免状|めんじょう} の {旅|たび} は 、 ここ まで 。",
   "en": "In my own boat, to the island out west. The licence's journey ends here."
+ },
+ "challenges:sea.islet_stone#1m0h0gp": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{石|いし} の {名前|なまえ}",
+  "en": "The names on the stone"
+ },
+ "challenges:sea.islet_stone#zialn3": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "ちどりまる 、 なつ 、 ここ に きた 。",
+  "en": ""
+ },
+ "challenges:sea.islet_stone#894uw0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{千鳥丸|ちどりまる} 。 {夏|なつ} 、 {二人|ふたり} で {来|き}た 。",
+  "en": ""
+ },
+ "challenges:sea.islet_stone#16efmho": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{千鳥丸|ちどりまる} 。 {妻|つま} と {来|き}た 。 {来年|らいねん} も {二人|ふたり} で {来|く}る つもり だ 。",
+  "en": ""
+ },
+ "challenges:sea.islet_stone#1swmry0": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{千鳥丸|ちどりまる} 。 {妻|つま} と {来|き}た 。 この {島|しま} の {松|まつ} が {一本|いっぽん} で {立|た}って いられる の は 、 {根|ね} が {深|ふか}い から こそ だ 。 {帰|かえ}る {港|みなと} が ある から こそ 、 {沖|おき} へ {出|で}られる 。",
+  "en": ""
  },
  "challenges:sea.hail#odt08t": {
   "status": "self-reviewed",
@@ -3352,6 +3478,12 @@
   "ref": "P11 self-review: the sea (sailing, the chart, docking, the crew, the cabin, the voyage's situations and their tasks): direction-aware first-voyage lines, a hedged-humble distractor in place of a malformed one, 灯 for the light in the fog, the rudder's 留め具 (not 栓) and ぐらつかない",
   "jp": "{船室|せんしつ}",
   "en": "The Cabin"
+ },
+ "maps:sea.islet#1chybyi": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, A Quiet Cast's coast and the One-Pine Islet): each line read in full against the lexicon, the grammar points' notes and the first eighteen situations' patterns (the notes' rules restated at I and A, one right reading, every wrong one explained, accepted forms as the first nine's), Fuku's lines about the Chidori-maru (Chapter 2, the licence quest) and Sazanami's children",
+  "jp": "{一本松|いっぽんまつ} の {小島|こじま}",
+  "en": "The One-Pine Islet"
  },
  "items:sea_timber_note#7tn5k7": {
   "status": "self-reviewed",

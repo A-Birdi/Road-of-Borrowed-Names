@@ -35,3 +35,9 @@ RB.dialect.add('kansai', `
 = …… {次|つぎ} の {幕|まく} 、 {楽|たの}しみ ね 。 || …I'm looking forward to the next act.
 > …… {次|つぎ} の {幕|まく} 、 {楽|たの}しみ や な 。 || …I'm looking forward to the next act.
 `, 'returns_c');
+
+RB.dialect.add('kansai', `
+@ fishing/sea.islet_arrive [sea.islet_arrive]
+= {舞台|ぶたい} も {客|きゃく} も ない {島|しま} 。 …… {松|まつ} が {一本|いっぽん} 、 {主役|しゅやく} ね 。 || An island with no stage and no audience. …One pine, playing the lead.
+> {舞台|ぶたい} も {客|きゃく} も ない {島|しま} や 。 …… {松|まつ} が {一本|いっぽん} 、 {主役|しゅやく} や な 。 || An island with no stage and no audience. …One pine, playing the lead.
+`, 'coast');

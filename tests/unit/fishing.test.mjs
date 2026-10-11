@@ -1,5 +1,6 @@
 // A Quiet Cast (Practice addendum §5, §6, §8, §21; docs/practice/fishing.md):
-// the roster, sites and patches; all 72 task variants (accepted forms, readings,
+// the roster, sites and patches (and, in a twelve-chapter journey only, the
+// coast's two stations and six fish: P15g, F-82); all 120 task variants (accepted forms, readings,
 // meanings, explanations, Foundations preparation); discovery queues, manual
 // patches, bags and Look for this fish; species frozen at the cast; idempotent
 // commits and the watermark across a save round-trip; milestones once; no bond;
@@ -17,9 +18,20 @@ export default async (t) => {
   const camp = (o) => { const s = RB.state.newCampaign({}); s.map = 'rw.village'; s.x = 33; s.y = 20; s.flags.postgame = true; Object.assign(s, o || {}); RB.game.s = s; return s; };
 
   // ---- the roster (§5.3) and the sites (§5.2) --------------------------------------------------------------------------
-  const ROSTER = { 'fish.reedwake.current': ['オイカワ', 'カワムツ', 'ウグイ'], 'fish.reedwake.quiet': ['ギンブナ', 'コイ', 'モツゴ'], 'fish.saltglass.harbor': ['マハゼ', 'ボラ', 'マアジ'] };
-  t.eq(F.SITE_ORDER.slice(), Object.keys(ROSTER), 'three sites with the stable semantic ids');
-  t.eq(F.FISH_ORDER.length, 9, 'exactly nine fish');
+  const ROSTER = { 'fish.reedwake.current': ['オイカワ', 'カワムツ', 'ウグイ'], 'fish.reedwake.quiet': ['ギンブナ', 'コイ', 'モツゴ'], 'fish.saltglass.harbor': ['マハゼ', 'ボラ', 'マアジ'],
+    'fish.sazanami.rocks': ['メジナ', 'カサゴ', 'キュウセン'], 'fish.boat': ['サバ', 'イサキ', 'マダイ'] };
+  t.eq(F.SITE_ORDER.slice(), Object.keys(ROSTER), 'five sites with the stable semantic ids (the first three, then the coast\'s two)');
+  t.eq(F.FISH_ORDER.length, 15, 'fifteen fish: nine, and the coast\'s six');
+  t.eq([F.book('first').length, F.book('coast').length], [9, 6], 'the first nine in one book, the coast\'s six in its own');
+  {
+    const six = RB.state.newCampaign({ edition: 1 }), twelve = RB.state.newCampaign({ edition: 2 });
+    t.eq(F.siteOrder(six), Object.keys(ROSTER).slice(0, 3), 'a six-chapter journey has exactly its three stations');
+    t.eq([F.fishOrder(six).length, F.counts(six).total, F.entries(six).length], [9, 9, 9], 'and its nine fish, nothing more in its notes');
+    t.eq([F.siteOrder(twelve).length, F.counts(twelve).total, F.counts(twelve).coastTotal], [5, 15, 6], 'a twelve-chapter journey has five stations and fifteen fish');
+    t.ok(F.SITE_ORDER.slice(3).every((id) => F.site(id).edition === 2 && F.site(id).book === 'coast') && F.book('coast').every((id) => F.fish(id).edition === 2), 'the coast\'s stations and fish are the twelve-chapter edition\'s');
+    t.ok(/three|Saltglass quay\.$/.test(F.stationList(six)) || F.stationList(six).split(', ').length === 2, 'the stations in words: ' + F.stationList(six));
+    t.ok(/Sazanami/.test(F.stationList(twelve)) && /One-Pine Islet/.test(F.stationList(twelve)) && !/Sazanami/.test(F.stationList(six)), 'the twelve-chapter list names the coast\'s stations, the six-chapter one does not');
+  }
   for (const sid in ROSTER) {
     const S = F.site(sid);
     t.eq(S.species.map((id) => F.fish(id).jp).sort(), ROSTER[sid].slice().sort(), sid + ': its three catalogue entries are the roster\'s (' + ROSTER[sid].join('・') + ')');
@@ -35,9 +47,10 @@ export default async (t) => {
   }
 
   // ---- the eighteen situations × four profiles (§6.2, §6.3) -----------------------------------------------------------
-  const IDS = ['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'Q01', 'Q02', 'Q03', 'Q04', 'Q05', 'Q06', 'H01', 'H02', 'H03', 'H04', 'H05', 'H06'];
-  t.eq(Object.keys(F.SITU).sort(), IDS.slice().sort(), 'exactly the eighteen authored situations');
-  const SITE_OF = { C: 'fish.reedwake.current', Q: 'fish.reedwake.quiet', H: 'fish.saltglass.harbor' };
+  const IDS = ['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'Q01', 'Q02', 'Q03', 'Q04', 'Q05', 'Q06', 'H01', 'H02', 'H03', 'H04', 'H05', 'H06',
+    'R01', 'R02', 'R03', 'R04', 'R05', 'R06', 'B01', 'B02', 'B03', 'B04', 'B05', 'B06'];
+  t.eq(Object.keys(F.SITU).sort(), IDS.slice().sort(), 'exactly the thirty authored situations (eighteen, and the coast\'s twelve)');
+  const SITE_OF = { C: 'fish.reedwake.current', Q: 'fish.reedwake.quiet', H: 'fish.saltglass.harbor', R: 'fish.sazanami.rocks', B: 'fish.boat' };
   let variants = 0, writes = 0, chooses = 0, orders = 0, forms = 0;
   for (const id of IDS) {
     const sit = F.situation(id);
@@ -80,7 +93,7 @@ export default async (t) => {
       if (prof === 'E' && k.kind === 'write') t.ok(Array.from(plain(k.answer)).length <= 6, w + ': a short expression, 1–6 kana');
     }
   }
-  t.eq(variants, 72, '72 task variants (18 × F/E/I/A) — ' + writes + ' write, ' + chooses + ' choose, ' + orders + ' order; ' + forms + ' accepted forms checked');
+  t.eq(variants, 120, '120 task variants (30 × F/E/I/A) — ' + writes + ' write, ' + chooses + ' choose, ' + orders + ' order; ' + forms + ' accepted forms checked');
   // two answers that genuinely fit are both accepted (Q04, Advanced)
   t.ok(F.situation('Q04').tasks.A.options.filter((o) => o.ok).length === 2, 'Q04 (Advanced): both sensible readings of “anywhere but the reed side” are accepted');
   // Foundations with a few taught kana: RB.tasks.prepare blanks one taught kana, and that kana is accepted
@@ -188,8 +201,8 @@ export default async (t) => {
       got.push([F.distinct(s), r.milestones.join('+')]);
     }
     const ms = got.filter((g) => g[1]).map((g) => g[0] + ':' + g[1]);
-    t.eq(ms, ['1:first', '3:survey', '6:frame', '9:spread'], 'milestones exactly at 1, 3, 6 and 9 different fish, each once');
-    t.ok(['fish:first', 'fish:survey', 'fish:frame', 'fish:spread'].every((k) => s.awarded[k]), 'finite milestones go through RB.state.once');
+    t.eq(ms, ['1:first', '3:survey', '6:frame', '9:spread', '15:coast'], 'milestones exactly at 1, 3, 6 and 9 different fish (the nine-fish spread), and the coast\'s spread with its six, each once');
+    t.ok(['fish:first', 'fish:survey', 'fish:frame', 'fish:spread', 'fish:coast'].every((k) => s.awarded[k]), 'finite milestones go through RB.state.once');
     const more = F.beginCast(s, { site: 'fish.reedwake.current', how: 'patch', patch: 'open', attend: { comp: 'ren', pet: null } });
     t.eq(F.commitCatch(s, more.seq, { result: ok1() }).milestones, [], 'later catches give no milestone again');
     t.eq(JSON.stringify(s.company.bond), bond0, 'no bond from fishing, ever');
@@ -200,7 +213,7 @@ export default async (t) => {
     const mem = RB.practice.mementos(s).filter((m) => m.source === 'fishing').map((m) => m.id);
     t.eq(mem, ['fish:ribbon', 'fish:frame'], 'the Practice mementos source lists the rod ribbon and the framed illustration');
     t.ok(F.ribbon(s) === true && F.ribbon(s, false) === false && F.ribbon(s) === false, 'the ribbon can be taken off (cosmetic only)');
-    t.ok(events.length === 10, 'one fishing:catch event per committed catch (no discovery:resolved)');
+    t.ok(events.length === 16, 'one fishing:catch event per committed catch (no discovery:resolved)');
     t.ok(F.st(s).recentAttempts.length <= F.LIMITS.recent, 'recent attempt details are bounded (' + F.LIMITS.recent + ')');
     // no companion present: no memory, the reflection is the solo version
     const s2 = camp({ comp: 'mio' });
@@ -299,7 +312,7 @@ export default async (t) => {
       const v = A.iou(renders[i][1], renders[j][1]);
       if (v > worst) { worst = v; pair = renders[i][0] + '/' + renders[j][0]; }
     }
-    t.ok(worst < 0.9, 'all 36 pairs of silhouettes differ (largest overlap ' + worst.toFixed(2) + ', ' + pair + ')');
+    t.ok(worst < 0.9, 'all ' + (renders.length * (renders.length - 1) / 2) + ' pairs of silhouettes differ (largest overlap ' + worst.toFixed(2) + ', ' + pair + ')');
     const plates = F.FISH_ORDER.map((id) => A.render(F.fish(id), { view: 'plate' }));
     t.ok(plates.every((r) => r.w > 40 && r.h > 10 && r.mask.some((m) => m)), 'every fish has a catalogue plate');
     const bl = A.blank({ len: 64 });

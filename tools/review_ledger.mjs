@@ -50,6 +50,14 @@ export function lines(RB) {
   if (C.festival) walk('pt.festival', 'pastime:festival', C.festival, new Set());
   if (RB.festival) for (const g of RB.festival.list()) walk('pt.festival', 'pastime:festival:' + g.id, g, new Set());
   if (RB.hanafuda) walk('pt.hanafuda', 'pastime:hanafuda:cards', { deck: RB.hanafuda.DECK, months: RB.hanafuda.MONTHS, kinds: RB.hanafuda.KINDS, yaku: RB.hanafuda.YAKU }, new Set());
+  // A Quiet Cast's coast (P15g): the twelve-chapter edition's stations, fish and situations (the first nine and their
+  // eighteen situations came with the Practice addendum, which keeps its own review notes: docs/practice/fishing.md)
+  if (RB.fishing) {
+    const coast = (d) => d && d.edition === 2;
+    for (const id of RB.fishing.SITE_ORDER) if (coast(RB.fishing.SITES[id])) walk('coast.' + id, 'fishing:site:' + id, RB.fishing.SITES[id], new Set());
+    for (const id of RB.fishing.FISH_ORDER) if (coast(RB.fishing.FISH[id])) walk('coast.' + id, 'fishing:fish:' + id, RB.fishing.FISH[id], new Set());
+    for (const id in RB.fishing.SITU) if (coast(RB.fishing.SITES[RB.fishing.SITU[id].site])) walk('coast.' + id, 'fishing:situation:' + id, RB.fishing.SITU[id], new Set());
+  }
   if (RB.shogi) walk('pt.shogi', 'pastime:shogi:board', { names: RB.shogi.NAMES, promoted: RB.shogi.PROMOTED, variants: RB.shogi.VARIANTS, handicaps: RB.shogi.HANDICAPS }, new Set());
   // the expeditions (P07): each definition (its card), its floors' maps, and its encounters
   if (RB.expedition) for (const d of RB.expedition.list()) {

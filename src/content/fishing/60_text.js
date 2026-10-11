@@ -34,6 +34,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ribbon: { jp: '{竿|さお} の リボン', en: 'Rod ribbon' },
     frame: { jp: '{額|がく} に {入|い}れた {水辺|みずべ} の {絵|え}', en: 'Framed waterside illustration' },
     spread: { jp: '{九|きゅう}{種類|しゅるい} の {見開|みひら}き', en: 'The nine-fish spread' },
+    coast: { jp: '{海辺|うみべ} の {六|ろく}{種類|しゅるい} の {見開|みひら}き', en: 'The coast\'s spread: six fish' },
     reflect: { jp: '{一緒|いっしょ} に {振|ふ}り{返|かえ}る', en: 'Look back together' },
     reflectSolo: { jp: '{記録|きろく} を {振|ふ}り{返|かえ}る', en: 'Look back over the notes' },
     first: { jp: '{初|はじ}めて の {記録|きろく}', en: 'First record' },

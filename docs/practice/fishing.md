@@ -346,6 +346,18 @@ lateral band, three orange stripes, a deep body, barbels, an upturned mouth, a g
 dorsal fins and sucker disc, a mullet's separated dorsals, a jack's line of scutes); they
 are art, not captions, and should also be looked at by someone who knows the fish.
 
+**The coast's six (expansion P15g, F-82; twelve-chapter journeys only; `src/content/fishing/70_coast.js`)** follow the
+same rule: names, readings, a common English name and a survey line, no biological claim. [F10]–[F15] are to be
+checked with the same access: mejina (largescale blackfish), kasago (marbled rockfish), kyūsen (multicolorfin
+rainbowfish, a wrasse) at Sazanami's rocks; saba (chub mackerel), isaki (chicken grunt), madai (red sea bream) from the
+boat off the One-Pine Islet. Their drawings use general features (the blackfish's deep dark body and small mouth, the
+rockfish's big head, spiny dorsal and upturned mouth with pale mottling, the wrasse's long low dorsal and two stripes,
+the mackerel's wavy dark back bars and deep fork, the grunt's dark stripes, the bream's deep red body with pale blue
+spots) and should be looked at by someone who knows the fish. The two stations: Sazanami's rocks, stand (34,19) facing
+south, the stake in the water at (34,20) (a water tile: nothing walkable changes); the boat at the One-Pine Islet's
+jetty, stand (9,12) facing west, the stake the boat's stern line is tied to at (8,12) (a water tile). The stage gained
+two dresses (rocks, the boat's deck) and three situation drawings (a rock, weed, a neighbour's line from the left).
+
 ## 10. Bounded decisions taken (§22.2)
 
 * Station tiles as in §2 (reasons there); the pond for quiet water.
