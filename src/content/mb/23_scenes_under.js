@@ -153,12 +153,18 @@ pc: {名前|なまえ} を {返|かえ}しに {来|き}た 。 || We've come to 
 # all over the city, the plaques' first letters come back (heard as a murmur); the companion's line; Sen's register.
 !set mb_bridge_named
 !refresh
+# Illustrated (src/ui/43h_seq_mb1.js): the name spoken, the spans lying down and the rails lit; the plaque; the bank.
+!sequence mb1.named begin
+!shot spans
 narr: 「{結|むす}び{橋|ばし}」 。 {名前|なまえ} を {呼|よ}ぶ と 、 {灰色|はいいろ} の {影|かげ} は {静|しず}か に {水|みず} に {沈|しず}み 、 {三|みっ}つ の {橋桁|はしげた} が {向|む}こう {岸|ぎし} まで {並|なら}んだ 。 || "Musubi Bridge." At the name, the grey shape sinks quietly into the water, and the three spans lie end to end to the far bank.
+!shot plaque
 narr: {橋|はし} の {札|ふだ} に 、 {字|じ} が {戻|もど}って いる 。 {遠|とお}く 、 {上|うえ} の {町|まち} から 、 {人|ひと} の {声|こえ} が かすか に {聞|き}こえる 。 「{読|よ}める ぞ ！」 || Letters have come back to the bridge's plaque. Far above, faintly, voices in the city: "I can read it!"
+!shot bank
 ?(comp=nao) comp[smile]: …… {届|とど}いた な 。 {四十年|よんじゅうねん} {遅|おく}れ の {宛名|あてな} が 。 || …It got there. An address forty years late.
 ?(comp=mio) comp[smile]: {町|まち} の {人|ひと} たち 、 これ で {帰|かえ}り{道|みち} が {分|わ}かる ね 。 イチ くん も 。 || Now the people up there can find their way home. Ichi too.
 ?(comp=ren) comp[smile]: {橋|はし} も {灯|ひ} も 、 {名前|なまえ} を {呼|よ}ばれて 、 {初|はじ}めて {道|みち} に なる 。 …… {覚|おぼ}えて おきます 。 || A bridge, a lantern: called by name, they become a road. …I'll remember that.
 ?(comp=suzu) comp[laugh]: {名台詞|めいぜりふ} は 、 {名前|なまえ} {一|ひと}つ で {十分|じゅうぶん} ね 。 {幕|まく} ！ || The best line was just a name. Curtain!
+!sequence mb1.named end
 !quest mb_main 7
 !journal {一番|いちばん} の {橋|はし} の {名前|なまえ} は 「{結|むす}び{橋|ばし}」 。 {町|まち} の {札|ふだ} が {読|よ}める よう に なった 。 {札場|ふだば} の セン に {伝|つた}えよう 。 || The first bridge's name is Musubi Bridge. The city's plaques can be read again. Tell Sen at the Tally Exchange.
 !warp mb.lockhouse 5 5 down
@@ -171,16 +177,25 @@ narr: {橋|はし} の {札|ふだ} に 、 {字|じ} が {戻|もど}って い
 ?(mb_matsu_letter) mb_matsu: …… {聞|き}こえた よ 。 {下|した} から 、 {橋|はし} の {名前|なまえ} が 。 {四十年|よんじゅうねん} ぶり に 。 || …I heard it. From below, the bridge's name. For the first time in forty years.
 ?(!mb_matsu_letter) mb_matsu: …… {下|した} から 、 {懐|なつ}かしい {名前|なまえ} が {聞|き}こえた 。 {礼|れい} を {言|い}う よ 。 || …I heard a name I know, from below. I owe you thanks.
 !warp mb.exchange 52 18 down
+# Illustrated (src/ui/43h_seq_mb1.js): the canal at dusk, Sen with the register, Sanpei with the blank block.
+!sequence mb1.dusk begin
+!shot dusk
 narr: {夕暮|ゆうぐ}れ の {八百橋|やおばし} 。 {荷舟|にぶね} が {走|はし}り 、 {船頭|せんどう} が {橋|はし} の {名前|なまえ} を {呼|よ}び{合|あ}って いる 。 {札場|ふだば} の {板|いた} に 、 {札|ふだ} が {次々|つぎつぎ} {掛|か}かって いく 。 || Manybridge at dusk. Barges run; boatmen call out the bridges' names to each other. Tally after tally goes up on the Exchange's boards.
+!shot sen
 mb_sen: {帳面|ちょうめん} の {一番|いちばん} に 、 「{結|むす}び{橋|ばし}」 と {書|か}きました 。 …… {二番|にばん} から {先|さき} も 、 {少|すこ}し ずつ {字|じ} が {戻|もど}って います 。 || I've written "Musubi Bridge" at number one in the register. …From number two on, the letters are coming back too, bit by bit.
+!shot sen odd
 mb_sen: ただ …… {札|ふだ} を {彫|ほ}り{直|なお}す {版木|はんぎ} の {方|ほう} が 、 {変|へん} なん です 。 || Only… something's odd with the woodblocks the plaques are cut from.
+!shot block
 narr: {人込|ひとご}み を {分|わ}けて 、 {墨|すみ} で {手|て} を {汚|よご}した {少年|しょうねん} が {走|はし}って くる 。 {手|て} に は 、 {真|ま}っ{白|しろ} な {版木|はんぎ} 。 || Pushing through the crowd comes a boy with ink-stained hands, carrying a woodblock worn completely blank.
+!shot block cry
 narr: 「{親方|おやかた} の {版木|はんぎ} が 、 {棚|たな} の {上|うえ} で {白|しろ}く なって いく ん です ！ {札|ふだ} の {版木|はんぎ} も 、 {灯籠|とうろう} の {名札|なふだ} の {版木|はんぎ} も ！」 || "The master's woodblocks are going blank on the racks! The blocks for the plaques, and the ones for the lantern name slips too!"
+!shot block comp
 ?(comp=nao) comp: {版木|はんぎ} …… {刷|す}る {元|もと} が {消|き}えたら 、 {刷|す}った もの も {全部|ぜんぶ} だ 。 || Woodblocks… If the source is going, everything printed from it goes too.
 ?(comp=mio) comp[surprise]: {灯籠|とうろう} の {名札|なふだ} も ？ それ じゃ 、 どの {道|みち} も …… 。 || The lantern name slips too? Then every road…
 ?(comp=ren) comp[surprise]: {灯籠|とうろう} の {名札|なふだ} を {刷|す}る {所|ところ} が 、 ここ に ある の です か 。 …… {行|い}かなければ 。 || The place that prints the lantern name slips is here? …Then we have to go.
 ?(comp=suzu) comp: {刷|す}り{物|もの} の {通|とお}り 、 {版木|はんぎ} の {町|まち} 。 {川上|かわかみ} ね 。 {次|つぎ} の {幕|まく} は 、 そこ よ 。 || Blockprint Row, upriver. That's where the next act is.
 pc: {村|むら} {一|ひと}つ の {話|はなし} じゃ ない 。 {名前|なまえ} が 、 {刷|す}る {所|ところ} から {消|き}えて いる 。 || This isn't one village's trouble. The names are fading at the place they're printed.
+!sequence mb1.dusk end
 !set mb1_done
 !quest mb_main done
 !journal {八百橋|やおばし} の {橋|はし} に {名前|なまえ} が {戻|もど}った 。 でも 、 {川上|かわかみ} の {版木|はんぎ} が {白|しろ}く なって いる 。 || Manybridge's bridges have their names back. But upriver, the printers' woodblocks are going blank.

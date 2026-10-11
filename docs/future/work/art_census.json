@@ -1,0 +1,3978 @@
+{
+ "generated": "tools/art_census.mjs",
+ "maps": {
+  "rw.village": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 41,
+   "npcs": 13,
+   "states": 1
+  },
+  "rw.hall": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 12,
+   "npcs": 5,
+   "states": 0
+  },
+  "rw.tea": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 12,
+   "npcs": 3,
+   "states": 0
+  },
+  "rw.apoth": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 10,
+   "npcs": 1,
+   "states": 0
+  },
+  "rw.warehouse": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 13,
+   "npcs": 1,
+   "states": 0
+  },
+  "rw.carpenter": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "rw.house1": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "rw.house2": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "rw.ferry": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 5,
+   "npcs": 0,
+   "states": 0
+  },
+  "rw.road": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 15,
+   "npcs": 15,
+   "states": 0
+  },
+  "rw.millroad": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 15,
+   "npcs": 5,
+   "states": 0
+  },
+  "rw.mill1": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 0,
+   "states": 0
+  },
+  "rw.mill2": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "rw.mill0": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.road": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 18,
+   "npcs": 7,
+   "states": 0
+  },
+  "sg.harbor": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 90,
+   "npcs": 15,
+   "states": 1
+  },
+  "sg.office": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 2,
+   "states": 0
+  },
+  "sg.inn": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 15,
+   "npcs": 3,
+   "states": 0
+  },
+  "sg.warehouse": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 14,
+   "npcs": 1,
+   "states": 0
+  },
+  "sg.glass": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "sg.lighthouse": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 8,
+   "npcs": 2,
+   "states": 0
+  },
+  "sg.lighthouse_top": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 46,
+   "npcs": 1,
+   "states": 1
+  },
+  "sg.tidehut": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 1,
+   "states": 0
+  },
+  "sg.isamu": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.cove": {
+   "region": "saltglass",
+   "edition": 1,
+   "kit": "final",
+   "props": 7,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.da_entry": {
+   "region": "archive",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.da_stacks": {
+   "region": "archive",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.da_reading": {
+   "region": "archive",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.da_sluice": {
+   "region": "archive",
+   "edition": 1,
+   "kit": "final",
+   "props": 17,
+   "npcs": 0,
+   "states": 0
+  },
+  "sg.da_vault": {
+   "region": "archive",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 1,
+   "states": 0
+  },
+  "co.road": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 18,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.village": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 59,
+   "npcs": 11,
+   "states": 0
+  },
+  "co.eve": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 49,
+   "npcs": 14,
+   "states": 0
+  },
+  "co.festival": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 57,
+   "npcs": 14,
+   "states": 0
+  },
+  "co.hall": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 12,
+   "npcs": 1,
+   "states": 0
+  },
+  "co.inn": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 14,
+   "npcs": 3,
+   "states": 0
+  },
+  "co.glass": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 13,
+   "npcs": 3,
+   "states": 0
+  },
+  "co.pottery": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "co.post": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 2,
+   "states": 0
+  },
+  "co.terraces": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 32,
+   "npcs": 4,
+   "states": 0
+  },
+  "co.ume": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.upper": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 18,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.oldworks": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 14,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.icehouse": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.kiln": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 16,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.kiln_core": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.lookout": {
+   "region": "cinder",
+   "edition": 1,
+   "kit": "final",
+   "props": 19,
+   "npcs": 0,
+   "states": 0
+  },
+  "sb.road": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 15,
+   "npcs": 2,
+   "states": 0
+  },
+  "sb.hamlet": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 35,
+   "npcs": 19,
+   "states": 0
+  },
+  "sb.inn": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 16,
+   "npcs": 17,
+   "states": 0
+  },
+  "sb.inn_room": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 5,
+   "npcs": 0,
+   "states": 0
+  },
+  "sb.post": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 1,
+   "states": 0
+  },
+  "sb.hoshino": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "sb.goatshed": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 8,
+   "npcs": 5,
+   "states": 0
+  },
+  "sb.sachi": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 1,
+   "states": 0
+  },
+  "sb.fuki": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "sb.obs_path": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 20,
+   "npcs": 0,
+   "states": 0
+  },
+  "sb.obs_hall": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 18,
+   "npcs": 0,
+   "states": 0
+  },
+  "sb.obs_charts": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 17,
+   "npcs": 0,
+   "states": 0
+  },
+  "sb.obs_gallery": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 14,
+   "npcs": 0,
+   "states": 0
+  },
+  "sb.obs_dome": {
+   "region": "snowbell",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.road": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.town": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 26,
+   "npcs": 8,
+   "states": 0
+  },
+  "lf.gardens": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 21,
+   "npcs": 5,
+   "states": 0
+  },
+  "lf.sluice": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 17,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.records": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 2,
+   "states": 0
+  },
+  "lf.council": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.clerks": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.inn": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 13,
+   "npcs": 2,
+   "states": 0
+  },
+  "lf.cafe": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.bakery": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.ferry": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "lf.tokuji": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.stacks": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 13,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.tower_top": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.tower_upper": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 31,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.tower_mid": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 138,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.tower_low": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 27,
+   "npcs": 0,
+   "states": 0
+  },
+  "lf.bellhall": {
+   "region": "lanternfall",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 0,
+   "states": 0
+  },
+  "sa.road": {
+   "region": "sa_mount",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 0,
+   "states": 0
+  },
+  "sa.camp": {
+   "region": "sa_mount",
+   "edition": 1,
+   "kit": "final",
+   "props": 10,
+   "npcs": 5,
+   "states": 0
+  },
+  "sa.hut": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "sa.gate": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 12,
+   "npcs": 4,
+   "states": 0
+  },
+  "sa.reading": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 38,
+   "npcs": 6,
+   "states": 0
+  },
+  "sa.stacks": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 18,
+   "npcs": 0,
+   "states": 0
+  },
+  "sa.conduits": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 15,
+   "npcs": 0,
+   "states": 0
+  },
+  "sa.memories": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 19,
+   "npcs": 2,
+   "states": 0
+  },
+  "sa.study": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 11,
+   "npcs": 0,
+   "states": 0
+  },
+  "sa.heart": {
+   "region": "sa_still",
+   "edition": 1,
+   "kit": "final",
+   "props": 6,
+   "npcs": 2,
+   "states": 0
+  },
+  "cr.oiwake": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 3,
+   "states": 4
+  },
+  "cr.leg1": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 4
+  },
+  "cr.suginoki": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 10,
+   "npcs": 5,
+   "states": 4
+  },
+  "cr.leg2": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 4
+  },
+  "cr.sakashita": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 3,
+   "states": 4
+  },
+  "cr.leg3": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 2,
+   "npcs": 1,
+   "states": 4
+  },
+  "cr.nakayama": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 5,
+   "states": 4
+  },
+  "cr.leg4": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 4
+  },
+  "cr.umagaeshi": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 3,
+   "states": 4
+  },
+  "cr.leg5": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 4
+  },
+  "cr.kirishita": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 4,
+   "states": 3
+  },
+  "cr.barrier": {
+   "region": "cloudroad",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 2,
+   "states": 1
+  },
+  "cr.above": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 2,
+   "npcs": 0,
+   "states": 1
+  },
+  "cr.kumoi": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 4,
+   "states": 1
+  },
+  "cr.oiwake_post": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "cr.saka_inn": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 2,
+   "states": 0
+  },
+  "cr.kirishita_inn": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 0,
+   "states": 0
+  },
+  "cr.barrier_office": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 6,
+   "states": 0
+  },
+  "cr.pass1": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 1
+  },
+  "cr.pass2": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 1
+  },
+  "cr.pass3": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 4,
+   "npcs": 0,
+   "states": 1
+  },
+  "cr.hut": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 4,
+   "npcs": 1,
+   "states": 1
+  },
+  "cr.summit": {
+   "region": "cloudtop",
+   "edition": 2,
+   "kit": "interim",
+   "props": 4,
+   "npcs": 1,
+   "states": 0
+  },
+  "el.landing": {
+   "region": "saltglass",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 4,
+   "states": 0
+  },
+  "rw.cellar1": {
+   "region": "reedwake",
+   "edition": 2,
+   "kit": "final",
+   "props": 32,
+   "npcs": 6,
+   "states": 0
+  },
+  "rw.cellar2": {
+   "region": "reedwake",
+   "edition": 2,
+   "kit": "final",
+   "props": 41,
+   "npcs": 6,
+   "states": 0
+  },
+  "hall.foyer": {
+   "region": "hall",
+   "edition": 2,
+   "kit": "interim",
+   "props": 75,
+   "npcs": 1,
+   "states": 0
+  },
+  "hall.w1f1": {
+   "region": "hall_w1",
+   "edition": 2,
+   "kit": "interim",
+   "props": 24,
+   "npcs": 1,
+   "states": 0
+  },
+  "hall.w1f2": {
+   "region": "hall_w1",
+   "edition": 2,
+   "kit": "interim",
+   "props": 32,
+   "npcs": 6,
+   "states": 0
+  },
+  "hall.w1f3": {
+   "region": "hall_w1",
+   "edition": 2,
+   "kit": "interim",
+   "props": 17,
+   "npcs": 2,
+   "states": 0
+  },
+  "hall.w2f1": {
+   "region": "hall_w2",
+   "edition": 2,
+   "kit": "interim",
+   "props": 27,
+   "npcs": 0,
+   "states": 0
+  },
+  "hall.w2f2": {
+   "region": "hall_w2",
+   "edition": 2,
+   "kit": "interim",
+   "props": 23,
+   "npcs": 36,
+   "states": 0
+  },
+  "hall.w2f3": {
+   "region": "hall_w2",
+   "edition": 2,
+   "kit": "interim",
+   "props": 20,
+   "npcs": 2,
+   "states": 0
+  },
+  "hall.w3f1": {
+   "region": "hall_w3",
+   "edition": 2,
+   "kit": "interim",
+   "props": 27,
+   "npcs": 1,
+   "states": 0
+  },
+  "hall.w3f2": {
+   "region": "hall_w3",
+   "edition": 2,
+   "kit": "interim",
+   "props": 32,
+   "npcs": 7,
+   "states": 0
+  },
+  "hall.w3f3": {
+   "region": "hall_w3",
+   "edition": 2,
+   "kit": "interim",
+   "props": 13,
+   "npcs": 7,
+   "states": 0
+  },
+  "hall.w4f1": {
+   "region": "hall_w4",
+   "edition": 2,
+   "kit": "interim",
+   "props": 24,
+   "npcs": 5,
+   "states": 0
+  },
+  "hall.w4f2": {
+   "region": "hall_w4",
+   "edition": 2,
+   "kit": "interim",
+   "props": 27,
+   "npcs": 6,
+   "states": 0
+  },
+  "hall.w4f3": {
+   "region": "hall_w4",
+   "edition": 2,
+   "kit": "interim",
+   "props": 13,
+   "npcs": 4,
+   "states": 0
+  },
+  "hall.w5f1": {
+   "region": "hall_w5",
+   "edition": 2,
+   "kit": "interim",
+   "props": 28,
+   "npcs": 3,
+   "states": 0
+  },
+  "hall.w5f2": {
+   "region": "hall_w5",
+   "edition": 2,
+   "kit": "interim",
+   "props": 26,
+   "npcs": 6,
+   "states": 0
+  },
+  "hall.w5f3": {
+   "region": "hall_w5",
+   "edition": 2,
+   "kit": "interim",
+   "props": 13,
+   "npcs": 5,
+   "states": 0
+  },
+  "hall.w6f1": {
+   "region": "hall_w6",
+   "edition": 2,
+   "kit": "interim",
+   "props": 24,
+   "npcs": 6,
+   "states": 0
+  },
+  "hall.w6f2": {
+   "region": "hall_w6",
+   "edition": 2,
+   "kit": "interim",
+   "props": 30,
+   "npcs": 10,
+   "states": 0
+  },
+  "hall.w6f3": {
+   "region": "hall_w6",
+   "edition": 2,
+   "kit": "interim",
+   "props": 20,
+   "npcs": 2,
+   "states": 0
+  },
+  "hall.w7f1": {
+   "region": "hall_w7",
+   "edition": 2,
+   "kit": "interim",
+   "props": 28,
+   "npcs": 1,
+   "states": 0
+  },
+  "hall.w7f2": {
+   "region": "hall_w7",
+   "edition": 2,
+   "kit": "interim",
+   "props": 31,
+   "npcs": 7,
+   "states": 0
+  },
+  "hall.w7f3": {
+   "region": "hall_w7",
+   "edition": 2,
+   "kit": "interim",
+   "props": 18,
+   "npcs": 2,
+   "states": 0
+  },
+  "hall.w8f1": {
+   "region": "hall_w8",
+   "edition": 2,
+   "kit": "interim",
+   "props": 29,
+   "npcs": 1,
+   "states": 0
+  },
+  "hall.w8f2": {
+   "region": "hall_w8",
+   "edition": 2,
+   "kit": "interim",
+   "props": 23,
+   "npcs": 7,
+   "states": 0
+  },
+  "hall.w8f3": {
+   "region": "hall_w8",
+   "edition": 2,
+   "kit": "interim",
+   "props": 19,
+   "npcs": 3,
+   "states": 0
+  },
+  "hall.w9f1": {
+   "region": "hall_w9",
+   "edition": 2,
+   "kit": "interim",
+   "props": 28,
+   "npcs": 5,
+   "states": 0
+  },
+  "hall.w9f2": {
+   "region": "hall_w9",
+   "edition": 2,
+   "kit": "interim",
+   "props": 34,
+   "npcs": 7,
+   "states": 0
+  },
+  "hall.w9f3": {
+   "region": "hall_w9",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 5,
+   "states": 0
+  },
+  "hall.w10f1": {
+   "region": "hall_w10",
+   "edition": 2,
+   "kit": "interim",
+   "props": 38,
+   "npcs": 1,
+   "states": 0
+  },
+  "hall.w10f2": {
+   "region": "hall_w10",
+   "edition": 2,
+   "kit": "interim",
+   "props": 35,
+   "npcs": 7,
+   "states": 0
+  },
+  "hall.w10f3": {
+   "region": "hall_w10",
+   "edition": 2,
+   "kit": "interim",
+   "props": 17,
+   "npcs": 2,
+   "states": 0
+  },
+  "ko.shore": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 22,
+   "npcs": 1,
+   "states": 0
+  },
+  "ko.village": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 15,
+   "npcs": 6,
+   "states": 0
+  },
+  "ko.hall": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 24,
+   "npcs": 2,
+   "states": 0
+  },
+  "ko.otoha": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.lodge": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "ko.terraces": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 15,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.crown": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 10,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.tidepools": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 11,
+   "npcs": 2,
+   "states": 0
+  },
+  "ko.seacave": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.roots1": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.roots2": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.roots3": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 0,
+   "states": 0
+  },
+  "ko.garden": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 0,
+   "states": 0
+  },
+  "kr.foot": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 2,
+   "states": 0
+  },
+  "kr.steps": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 10,
+   "npcs": 1,
+   "states": 0
+  },
+  "kr.fox": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 4,
+   "states": 0
+  },
+  "kr.ridge": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 3,
+   "states": 0
+  },
+  "kr.lodge": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 5,
+   "states": 0
+  },
+  "kr.hall": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "kr.descent": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "kr.foot_inn": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 1,
+   "states": 0
+  },
+  "kr.kame": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 4,
+   "npcs": 1,
+   "states": 0
+  },
+  "kr.lodge_in": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "kr.hisae": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 0,
+   "states": 0
+  },
+  "kr.cave1": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 13,
+   "npcs": 0,
+   "states": 0
+  },
+  "kr.cave2": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 10,
+   "npcs": 0,
+   "states": 0
+  },
+  "kr.cave3": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 4,
+   "npcs": 0,
+   "states": 0
+  },
+  "kr.vigil": {
+   "region": "keepers",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 2,
+   "states": 0
+  },
+  "lq.koharu": {
+   "region": "reedwake",
+   "edition": 1,
+   "kit": "final",
+   "props": 9,
+   "npcs": 1,
+   "states": 0
+  },
+  "lq.koharu_hut": {
+   "region": "interior",
+   "edition": 1,
+   "kit": "final",
+   "props": 7,
+   "npcs": 0,
+   "states": 0
+  },
+  "mb.pier": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 1,
+   "states": 0
+  },
+  "mb.exchange": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 28,
+   "npcs": 7,
+   "states": 1
+  },
+  "mb.kura": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 18,
+   "npcs": 5,
+   "states": 1
+  },
+  "mb.tally": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 3,
+   "states": 0
+  },
+  "mb.fujiya": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 11,
+   "npcs": 1,
+   "states": 0
+  },
+  "mb.porters": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "mb.inn": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 1,
+   "states": 0
+  },
+  "mb.deadletter": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 1,
+   "states": 0
+  },
+  "mb.lockhouse": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "mb.under1": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 18,
+   "npcs": 0,
+   "states": 0
+  },
+  "mb.under2": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 17,
+   "npcs": 0,
+   "states": 0
+  },
+  "mb.under3": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 0,
+   "states": 0
+  },
+  "mb.firstbridge": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 15,
+   "npcs": 1,
+   "states": 1
+  },
+  "mp.blockprint": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 20,
+   "npcs": 4,
+   "states": 0
+  },
+  "mp.playhouse": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 34,
+   "npcs": 8,
+   "states": 2
+  },
+  "mp.workshop": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 1,
+   "states": 0
+  },
+  "mp.pressroom": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 1,
+   "states": 0
+  },
+  "mp.guild": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 0,
+   "states": 0
+  },
+  "mp.theatre": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 17,
+   "npcs": 3,
+   "states": 0
+  },
+  "mp.committee": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "mp.festhall": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 4,
+   "states": 0
+  },
+  "mp.tenement": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 1,
+   "states": 0
+  },
+  "mp.under1": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 15,
+   "npcs": 0,
+   "states": 0
+  },
+  "mp.under2": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 12,
+   "npcs": 0,
+   "states": 0
+  },
+  "mp.under3": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 11,
+   "npcs": 0,
+   "states": 0
+  },
+  "mp.bottom": {
+   "region": "manybridge",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 1,
+   "states": 1
+  },
+  "ko.grove": {
+   "region": "kotonoha",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "co.festival_yearly": {
+   "region": "cinder",
+   "edition": 2,
+   "kit": "final",
+   "props": 59,
+   "npcs": 6,
+   "states": 0
+  },
+  "sea.coast": {
+   "region": "sea",
+   "edition": 2,
+   "kit": "interim",
+   "props": 3,
+   "npcs": 0,
+   "states": 0
+  },
+  "sea.cabin": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 5,
+   "npcs": 0,
+   "states": 0
+  },
+  "mb.yard": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 10,
+   "npcs": 2,
+   "states": 0
+  },
+  "as.village": {
+   "region": "ashihara",
+   "edition": 2,
+   "kit": "final",
+   "props": 36,
+   "npcs": 19,
+   "states": 0
+  },
+  "sz.hamlet": {
+   "region": "sazanami",
+   "edition": 2,
+   "kit": "final",
+   "props": 19,
+   "npcs": 5,
+   "states": 0
+  },
+  "yn.descent": {
+   "region": "steamhollow",
+   "edition": 2,
+   "kit": "interim",
+   "props": 8,
+   "npcs": 1,
+   "states": 0
+  },
+  "yn.upper": {
+   "region": "steamhollow",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 8,
+   "states": 1
+  },
+  "yn.lower": {
+   "region": "steamhollow",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 5,
+   "states": 1
+  },
+  "yn.terraces": {
+   "region": "steamhollow",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 1,
+   "states": 1
+  },
+  "yn.north": {
+   "region": "steamhollow",
+   "edition": 2,
+   "kit": "interim",
+   "props": 2,
+   "npcs": 0,
+   "states": 0
+  },
+  "yn.kami": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 4,
+   "states": 0
+  },
+  "yn.kami_bath": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "yn.shimo": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 3,
+   "states": 0
+  },
+  "yn.shimo_bath": {
+   "region": "steamhollow",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 0,
+   "states": 0
+  },
+  "yn.dispensary": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 1,
+   "states": 0
+  },
+  "yn.guild": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 1,
+   "states": 0
+  },
+  "yn.playhouse": {
+   "region": "interior",
+   "edition": 2,
+   "kit": "interim",
+   "props": 9,
+   "npcs": 3,
+   "states": 0
+  },
+  "yn.vents1": {
+   "region": "yn_vents",
+   "edition": 2,
+   "kit": "interim",
+   "props": 15,
+   "npcs": 0,
+   "states": 0
+  },
+  "yn.vents2": {
+   "region": "yn_vents",
+   "edition": 2,
+   "kit": "interim",
+   "props": 14,
+   "npcs": 0,
+   "states": 0
+  },
+  "yn.vents3": {
+   "region": "yn_vents",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  },
+  "yn.kettle": {
+   "region": "yn_vents",
+   "edition": 2,
+   "kit": "interim",
+   "props": 7,
+   "npcs": 0,
+   "states": 1
+  },
+  "sea.islet": {
+   "region": "sea",
+   "edition": 2,
+   "kit": "interim",
+   "props": 6,
+   "npcs": 0,
+   "states": 0
+  }
+ },
+ "regions": {
+  "cr": {
+   "kit": "interim",
+   "file": "src/content/cr/02_art.js"
+  },
+  "el": {
+   "kit": "interim",
+   "file": "src/content/el/02_art.js"
+  },
+  "hall": {
+   "kit": "interim",
+   "file": "src/content/hall/02_art.js"
+  },
+  "ko": {
+   "kit": "interim",
+   "file": "src/content/ko/02_art.js"
+  },
+  "kr": {
+   "kit": "interim",
+   "file": "src/content/kr/02_art.js"
+  },
+  "mb": {
+   "kit": "interim",
+   "file": "src/content/mb/02_art.js"
+  },
+  "mp": {
+   "kit": "interim",
+   "file": "src/content/mp/02_art.js"
+  },
+  "sea": {
+   "kit": "interim",
+   "file": "src/content/sea/02_art.js"
+  },
+  "yn": {
+   "kit": "interim",
+   "file": "src/content/yn/02_art.js"
+  }
+ },
+ "creatures": {
+  "rw.reedling": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "rw.dustmoth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "rw.inkblot": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "rw.mill_echo": {
+   "family": "echo",
+   "boss": true,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.crab": {
+   "family": "crab",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.crane": {
+   "family": "crane",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.blot": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.fogwisp": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.moth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.golem": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.letter": {
+   "family": "sg_letter",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sg.tideclerk": {
+   "family": "clerk",
+   "boss": true,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "co.moth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "co.soot": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "co.golem": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "co.ember": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "co.warden": {
+   "family": "warden",
+   "boss": true,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sb.fox": {
+   "family": "sb_snowfox",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "sb.wisp": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sb.ghost": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "sb.moth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sb.golem": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sb.boss": {
+   "family": "sb_frostlamp",
+   "boss": true,
+   "disposition": null,
+   "own": true
+  },
+  "lf.blot": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "lf.mote": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "lf.stamp": {
+   "family": "clerk",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "lf.conduit": {
+   "family": "lf_conduit",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "lf.wraith": {
+   "family": "bell",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "lf.keeper": {
+   "family": "lf_keeper",
+   "boss": true,
+   "disposition": null,
+   "own": true
+  },
+  "sa.crane": {
+   "family": "crane",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sa.wraith": {
+   "family": "hush",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "sa.ghost": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "sa.moth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sa.echo": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "sa.hush": {
+   "family": "sa_hush",
+   "boss": true,
+   "disposition": null,
+   "own": true
+  },
+  "co.shard": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "co.mole": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "co.imp": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "cr.waystone": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "cr.echo": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "cr.ox": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "cr.fogporter": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "cr.packlantern": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "cr.moth": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "cr.courier": {
+   "family": "echo",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.founder": {
+   "family": "echo",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.headoffice": {
+   "family": "clerk",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.firstfire": {
+   "family": "warden",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.sisterstar": {
+   "family": "wisp",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.maker": {
+   "family": "lf_keeper",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.bridgefounder": {
+   "family": "golem",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.oxelder": {
+   "family": "blot",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.kettlemother": {
+   "family": "golem",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "gd.firstkeeper": {
+   "family": "echo",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "ko.leafling": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "ko.jelly": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "ko.mirror": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "ko.echo": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "ko.sandlantern": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "ko.gardener": {
+   "family": "echo",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "kr.wick": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "meets",
+   "own": true
+  },
+  "kr.sandal": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "kr.chochin": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": "meets",
+   "own": true
+  },
+  "kr.moss": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "kr.shadow": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "kr.hyakuwa": {
+   "family": "echo",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "lf.mimic": {
+   "family": "clerk",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "lf.queue": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "lf.weevil": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mb.crab": {
+   "family": "crab",
+   "boss": false,
+   "disposition": "meets",
+   "own": true
+  },
+  "mb.snail": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mb.beetle": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mb.tangle": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mb.barge": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mb.bridge": {
+   "family": "golem",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mp.kuroko": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mp.moth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "meets",
+   "own": true
+  },
+  "mp.imp": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "mp.golem": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "meets",
+   "own": true
+  },
+  "mp.naraku": {
+   "family": "golem",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "sb.bat": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "sb.hare": {
+   "family": "sb_snowfox",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "sb.starling": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.steamwisp": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.pebbles": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.toad": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.lostguest": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.towelthief": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.chochin": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "yn.kettle": {
+   "family": "golem",
+   "boss": true,
+   "disposition": "incomplete",
+   "own": false
+  },
+  "atlas.stray": {
+   "family": "wisp",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.moth": {
+   "family": "moth",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.blot": {
+   "family": "blot",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.crane": {
+   "family": "crane",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.milestone": {
+   "family": "golem",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.lamp": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "atlas.echo": {
+   "family": "echo",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.toll": {
+   "family": "clerk",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.crab": {
+   "family": "crab",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.fox": {
+   "family": "fox",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "atlas.mothlamp": {
+   "family": "lantern",
+   "boss": false,
+   "disposition": null,
+   "own": true
+  },
+  "atlas.echotoll": {
+   "family": "clerk",
+   "boss": false,
+   "disposition": "upgraded",
+   "own": true
+  },
+  "atlas.cartographer": {
+   "family": "atlas_cartographer",
+   "boss": true,
+   "disposition": null,
+   "own": true
+  },
+  "atlas.bell": {
+   "family": "bell",
+   "boss": true,
+   "disposition": null,
+   "own": true
+  },
+  "atlas.gate": {
+   "family": "golem",
+   "boss": true,
+   "disposition": "upgraded",
+   "own": true
+  }
+ },
+ "volume": {
+  "prologue": {
+   "no": 0,
+   "key": null,
+   "painted": true,
+   "plate": false
+  },
+  "ch1.bridge": {
+   "no": 1,
+   "key": "rw",
+   "painted": true,
+   "plate": false
+  },
+  "ch2.notice": {
+   "no": 2,
+   "key": "sg",
+   "painted": true,
+   "plate": false
+  },
+  "ch2.plate": {
+   "no": 2,
+   "key": "sg",
+   "painted": true,
+   "plate": false
+  },
+  "mb1.named": {
+   "no": 3,
+   "key": "mb1",
+   "painted": true,
+   "plate": false
+  },
+  "mb1.dusk": {
+   "no": 3,
+   "key": "mb1",
+   "painted": true,
+   "plate": false
+  },
+  "ch3.assembly": {
+   "no": 5,
+   "key": "co",
+   "painted": true,
+   "plate": false
+  },
+  "ch3.firebreaks": {
+   "no": 5,
+   "key": "co",
+   "painted": true,
+   "plate": false
+  },
+  "ch4.lamp": {
+   "no": 6,
+   "key": "sb",
+   "painted": true,
+   "plate": false
+  },
+  "ch4.reply": {
+   "no": 6,
+   "key": "sb",
+   "painted": true,
+   "plate": false
+  },
+  "ch4.inn": {
+   "no": 6,
+   "key": "sb",
+   "painted": true,
+   "plate": false
+  },
+  "ch4.morning": {
+   "no": 6,
+   "key": "sb",
+   "painted": true,
+   "plate": false
+  },
+  "ch5.bell": {
+   "no": 8,
+   "key": "lf",
+   "painted": true,
+   "plate": false
+  },
+  "ch5.boat": {
+   "no": 8,
+   "key": "lf",
+   "painted": true,
+   "plate": false
+  },
+  "ch6.toya": {
+   "no": 12,
+   "key": "sa",
+   "painted": true,
+   "plate": false
+  },
+  "ch6.ren": {
+   "no": 12,
+   "key": "sa",
+   "painted": true,
+   "plate": false
+  },
+  "gd.rw": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.sg": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.co": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.sb": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.lf": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.mb": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.cr": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.yn": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "gd.ko": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w1": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w2": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w3": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w4": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w5": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w6": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w7": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w8": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w9": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "hall.w10": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  },
+  "as.festival": {
+   "no": 13,
+   "key": "post",
+   "painted": false,
+   "plate": true
+  }
+ },
+ "cosmetics": {
+  "rw_ribbon": {
+   "acc": "ribbon",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "rw_catbell": {
+   "acc": "bell",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "sg_glass_earrings": {
+   "acc": "earrings",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "co_straw_hat": {
+   "acc": "hat",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "co_leaf_pin": {
+   "acc": "leaf",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "co_glass_beads": {
+   "acc": "earrings",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "sb_scarf": {
+   "acc": "scarf",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "lf_ferry_cap": {
+   "acc": "cap",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_rw_keepsake": {
+   "acc": "cap",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_sg_keepsake": {
+   "acc": "glasses",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_co_keepsake": {
+   "acc": "scarf",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_sb_keepsake": {
+   "acc": "earrings",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_lf_keepsake": {
+   "acc": "bell",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_mb_keepsake": {
+   "acc": "headband",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_cr_keepsake": {
+   "acc": "cape",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "gd_yn_keepsake": {
+   "acc": "hood",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "not shown: not a player option"
+  },
+  "gd_ko_keepsake": {
+   "acc": "leaf",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "hall_lantern": {
+   "acc": "lamp",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "not shown: held in the hand by the pose (Ren)"
+  },
+  "lq_tenugui": {
+   "acc": "scarf",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "as_kasa": {
+   "acc": "hat",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "atlas_cos_sash": {
+   "acc": "atlas_sash",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "atlas_cos_pin": {
+   "acc": "atlas_pin",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "atlas_cos_lamplet": {
+   "acc": "atlas_lamplet",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "not shown: hangs at the hip, below the crop"
+  },
+  "atlas_cos_quill": {
+   "acc": "atlas_quill",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "atlas_cos_flower": {
+   "acc": "flower",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "atlas_cos_cape": {
+   "acc": "cape",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "drawn"
+  },
+  "atlas_cos_compass": {
+   "acc": "atlas_compass",
+   "sprite": true,
+   "portrait": true,
+   "battler": true,
+   "harmony": "not shown: hangs at the hip, below the crop"
+  }
+ },
+ "characters": {
+  "nao": {
+   "look": true,
+   "portrait": true
+  },
+  "mio": {
+   "look": true,
+   "portrait": true
+  },
+  "ren": {
+   "look": true,
+   "portrait": true
+  },
+  "suzu": {
+   "look": true,
+   "portrait": true
+  },
+  "tsuru": {
+   "look": true,
+   "portrait": true
+  },
+  "hana": {
+   "look": true,
+   "portrait": true
+  },
+  "koji": {
+   "look": true,
+   "portrait": true
+  },
+  "kasane": {
+   "look": true,
+   "portrait": true
+  },
+  "narr": {
+   "look": false,
+   "portrait": false
+  },
+  "cs_hama": {
+   "look": true,
+   "portrait": true
+  },
+  "cs_seto": {
+   "look": true,
+   "portrait": true
+  },
+  "oto": {
+   "look": true,
+   "portrait": true
+  },
+  "bunta": {
+   "look": true,
+   "portrait": true
+  },
+  "kiku": {
+   "look": true,
+   "portrait": true
+  },
+  "yasu": {
+   "look": true,
+   "portrait": true
+  },
+  "mame": {
+   "look": true,
+   "portrait": true
+  },
+  "sae": {
+   "look": true,
+   "portrait": true
+  },
+  "tomo": {
+   "look": true,
+   "portrait": true
+  },
+  "echo": {
+   "look": true,
+   "portrait": true
+  },
+  "mochi": {
+   "look": true,
+   "portrait": true
+  },
+  "omi": {
+   "look": true,
+   "portrait": true
+  },
+  "wataru": {
+   "look": true,
+   "portrait": true
+  },
+  "tamae": {
+   "look": true,
+   "portrait": true
+  },
+  "tetsu": {
+   "look": true,
+   "portrait": true
+  },
+  "shiori": {
+   "look": true,
+   "portrait": true
+  },
+  "genzo": {
+   "look": true,
+   "portrait": true
+  },
+  "asahi": {
+   "look": true,
+   "portrait": true
+  },
+  "kiyo": {
+   "look": true,
+   "portrait": true
+  },
+  "sota": {
+   "look": true,
+   "portrait": true
+  },
+  "fuku": {
+   "look": true,
+   "portrait": true
+  },
+  "daigo": {
+   "look": true,
+   "portrait": true
+  },
+  "tobi": {
+   "look": true,
+   "portrait": true
+  },
+  "nagisa": {
+   "look": true,
+   "portrait": true
+  },
+  "sg_clerk": {
+   "look": true,
+   "portrait": true
+  },
+  "hiro": {
+   "look": true,
+   "portrait": true
+  },
+  "co_tokiwa": {
+   "look": true,
+   "portrait": true
+  },
+  "co_ume": {
+   "look": true,
+   "portrait": true
+  },
+  "co_goro": {
+   "look": true,
+   "portrait": true
+  },
+  "co_tamotsu": {
+   "look": true,
+   "portrait": true
+  },
+  "co_nobu": {
+   "look": true,
+   "portrait": true
+  },
+  "co_sayo": {
+   "look": true,
+   "portrait": true
+  },
+  "co_kotaro": {
+   "look": true,
+   "portrait": true
+  },
+  "co_fusa": {
+   "look": true,
+   "portrait": true
+  },
+  "co_shino": {
+   "look": true,
+   "portrait": true
+  },
+  "co_isao": {
+   "look": true,
+   "portrait": true
+  },
+  "co_asa": {
+   "look": true,
+   "portrait": true
+  },
+  "co_heita": {
+   "look": true,
+   "portrait": true
+  },
+  "co_tomoe": {
+   "look": true,
+   "portrait": true
+  },
+  "co_goat": {
+   "look": true,
+   "portrait": true
+  },
+  "co_warden": {
+   "look": true,
+   "portrait": true
+  },
+  "hoshino": {
+   "look": true,
+   "portrait": true
+  },
+  "yae": {
+   "look": true,
+   "portrait": true
+  },
+  "sousuke": {
+   "look": true,
+   "portrait": true
+  },
+  "tetsuji": {
+   "look": true,
+   "portrait": true
+  },
+  "natsume": {
+   "look": true,
+   "portrait": true
+  },
+  "fuki": {
+   "look": true,
+   "portrait": true
+  },
+  "kanta": {
+   "look": true,
+   "portrait": true
+  },
+  "chiyo": {
+   "look": true,
+   "portrait": true
+  },
+  "rokuta": {
+   "look": true,
+   "portrait": true
+  },
+  "sachi": {
+   "look": true,
+   "portrait": true
+  },
+  "denji": {
+   "look": true,
+   "portrait": true
+  },
+  "hayate": {
+   "look": true,
+   "portrait": true
+  },
+  "sb_lampvoice": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_tadashi": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_hayato": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_yae": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_tokuji": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_tsuya": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_kohei": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_kinu": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_masaru": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_ritsu": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_setsu": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_nagi": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_kei": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_shu": {
+   "look": true,
+   "portrait": true
+  },
+  "lf_toya": {
+   "look": true,
+   "portrait": true
+  },
+  "umi": {
+   "look": true,
+   "portrait": true
+  },
+  "akari": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_oyone": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_isamu": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_clerk": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_tsuzuri": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_ushio": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_tae": {
+   "look": true,
+   "portrait": true
+  },
+  "sa_reader": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_kanbe": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_tome": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_jinpachi": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_ine": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_sada": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_kosuke": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_sono": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_heisuke": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_yahei": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_otaki": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_seibe": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_tatsu": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_rin": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_genji": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_chika": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_matazo": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_sakichi": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_sue": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_ujie": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_sumi": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_gonza": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_shizu": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_koma": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_oshika": {
+   "look": true,
+   "portrait": true
+  },
+  "cr_genta": {
+   "look": false,
+   "portrait": true
+  },
+  "cr_ginji": {
+   "look": true,
+   "portrait": true
+  },
+  "fw_fumi": {
+   "look": true,
+   "portrait": true
+  },
+  "el_genroku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_otami": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_genza": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_child": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_traveller": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_lamp": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kozue": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_gin": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_toku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_konta": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_sayo": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_bearer": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_porter": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_jinbei": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_shino": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_osho": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_mataji": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_sukezo": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_mame": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kobu": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_gosaku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_myoshin": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_karakasa": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_oume": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_otake": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kyubei": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kaede": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_osugi": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_mosuke": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kota": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_hatsu": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kero": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kihei": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_ibuki": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_ofuku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_hanbei": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_koun": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_momo": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_otsuta": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_owan": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_magoroku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_omatsu": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_saki": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_tosuke": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_gonroku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_hisa": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kichibei": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_yosaku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_otoku": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_musume": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_sabu": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_gensuke": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_envoy": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_soan": {
+   "look": true,
+   "portrait": true
+  },
+  "hall_kohaku": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_otoha": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_nami": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_ao": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_hamaji": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_mitsu": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_tokio": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_koyomi": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_nana": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_yoshino": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_kihei": {
+   "look": true,
+   "portrait": true
+  },
+  "ko_gardener": {
+   "look": false,
+   "portrait": true
+  },
+  "kr_hisae": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_aya": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_kumazo": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_shozo": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_kame": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_hinata": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_kai": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_juzo": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_iwa": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_seiji": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_kikyo": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_mokichi": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_fuyu": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_sora": {
+   "look": true,
+   "portrait": true
+  },
+  "kr_hyakuwa": {
+   "look": true,
+   "portrait": true
+  },
+  "lq_chigusa": {
+   "look": true,
+   "portrait": true
+  },
+  "lq_kayo": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_fujiko": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_gonta": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_sen": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_heiji": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_matsu": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_kansuke": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_masa": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_masu": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_yoshi": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_haru": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_ichi": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_zenzo": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_take": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_uno": {
+   "look": true,
+   "portrait": true
+  },
+  "mb_bridgespirit": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_sobe": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_sanpei": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_miyo": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_manbe": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_saku": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_tomi": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_shinobu": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_ryusui": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_kakeru": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_tokube": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_genta": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_hayashi": {
+   "look": true,
+   "portrait": true
+  },
+  "mp_naraku": {
+   "look": true,
+   "portrait": true
+  },
+  "sea_kajiro": {
+   "look": true,
+   "portrait": true
+  },
+  "sea_nui": {
+   "look": true,
+   "portrait": true
+  },
+  "as_mitsue": {
+   "look": true,
+   "portrait": true
+  },
+  "as_yoshizo": {
+   "look": true,
+   "portrait": true
+  },
+  "as_taki": {
+   "look": true,
+   "portrait": true
+  },
+  "as_sho": {
+   "look": true,
+   "portrait": true
+  },
+  "as_natsu": {
+   "look": true,
+   "portrait": true
+  },
+  "as_kotoe": {
+   "look": true,
+   "portrait": true
+  },
+  "as_mohei": {
+   "look": true,
+   "portrait": true
+  },
+  "sz_isaku": {
+   "look": true,
+   "portrait": true
+  },
+  "sz_yone": {
+   "look": true,
+   "portrait": true
+  },
+  "sz_uki": {
+   "look": true,
+   "portrait": true
+  },
+  "sz_mina": {
+   "look": true,
+   "portrait": true
+  },
+  "sz_riku": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_oritsu": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_tokuzo": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_okiyo": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_tahei": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_kane": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_zenroku": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_rokubei": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_aki": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_tama": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_onatsu": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_kihachi": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_toki": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_senta": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_heikichi": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_kikue": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_koume": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_shinza": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_bunkichi": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_kume": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_yoshimatsu": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_ginnojo": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_kanae": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_yasuke": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_oshige": {
+   "look": true,
+   "portrait": true
+  },
+  "yn_tsuneji": {
+   "look": true,
+   "portrait": true
+  }
+ },
+ "summary": {
+  "maps": 226,
+  "mapsOnInterimKits": 130,
+  "regionsInterim": [
+   "cr",
+   "el",
+   "hall",
+   "ko",
+   "kr",
+   "mb",
+   "mp",
+   "sea",
+   "yn"
+  ],
+  "creatures": 105,
+  "creaturesInterim": 46,
+  "volumePages": 36,
+  "volumePainted": 16,
+  "volumePlates": 20,
+  "chaptersWithoutPages": [
+   "mb2",
+   "kr",
+   "ko",
+   "cr",
+   "yn"
+  ],
+  "cosmetics": 27,
+  "characters": 263,
+  "problems": [
+   "cosmetic gd_yn_keepsake (hood) is worn by the traveller but the Harmony bust calls it \"not a player option\""
+  ]
+ }
+}
