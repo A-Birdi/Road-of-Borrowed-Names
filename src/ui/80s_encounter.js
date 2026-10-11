@@ -157,6 +157,26 @@ RB.encScreen = (function () {
     return '<section class="enc-log" aria-live="polite" aria-label="What has happened"><h3>' + I('history') + '<span>So far</span></h3><ol>' + log.slice(-8).map((l) =>
       '<li class="' + (l.none ? 'none' : '') + (l.who === 'pc' ? ' you' : l.who === 'comp' ? ' comp' : '') + '">' + (l.jp ? '<span class="el-jp">' + RB.ui.jhtml(l.jp) + '</span> ' : '') + '<span class="el-en">' + esc(l.en) + '</span></li>').join('') + '</ol></section>';
   }
+  // Where a card is shown. Procedures and conversations are written in the order that solves them (the right step
+  // first; the move that ends a talk badly last), so their cards are dealt (RB.learnUi.deal): each gets a rank from
+  // the encounter's deal (taken when it opens) and its own step and id, so the layout holds from one exchange to the
+  // next and a new step is dealt afresh. A labelled shortcut (Resolve, the companion's gesture) stays first,
+  // the general responses (Unravel, words, Wait) after. Only the view changes: each card keeps its index (`data-i`)
+  // in the rules' own list, which the rules, the automated player and the tests read in written order. The battle
+  // screen (src/ui/80_combat.js), where an encounter with someone present is played, deals its cards the same way.
+  const deals = new WeakMap(); // encounter → its deal (presentation only: never in the encounter's state or a save)
+  function shownOrder(st, cards) {
+    const E0 = st.enc;
+    if (!E0) return cards.map((c, i) => i);
+    if (!deals.has(E0)) deals.set(E0, RB.learnUi.deal('encounter|' + ((E0.def && E0.def.id) || '')));
+    const D = deals.get(E0);
+    const rank = (c) => D.rank(c.id, c.step);
+    const idx = cards.map((c, i) => i);
+    const lead = idx.filter((i) => cards[i].kind === 'resolve' || cards[i].kind === 'gesture');
+    const dealt = idx.filter((i) => cards[i].kind === 'proc' || cards[i].kind === 'social').sort((x, y) => rank(cards[x]) - rank(cards[y]));
+    const rest = idx.filter((i) => lead.indexOf(i) < 0 && dealt.indexOf(i) < 0);
+    return lead.concat(dealt, rest);
+  }
   function choose(st, fr, log) {
     return new Promise((resolve) => {
       const s = RB.game.s;
@@ -164,7 +184,7 @@ RB.encScreen = (function () {
       const kind = st.enc.social ? 'conversation' : 'machine';
       fr.setTitle(RB.ui.jhtml(st.enc.def.name.jp || '') + ' ' + esc(st.enc.def.name.en), kind === 'machine' ? '' : 'Exchange ' + (st.round + 1));
       fr.leaf.innerHTML = '<div class="enc-grid">' + '<div class="enc-col">' + peopleHtml(st) + machineHtml(st) + agreementHtml(st) + recordHtml(st) + '</div>' +
-        '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + cards.map(cardHtml).join('') + '</div></section></div></div>';
+        '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + shownOrder(st, cards).map((i) => cardHtml(cards[i], i)).join('') + '</div></section></div></div>';
       fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong step sends the machine back; misreading the notice only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
       let done = false;
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
@@ -188,5 +208,5 @@ RB.encScreen = (function () {
       setTimeout(() => b.focus({ preventScroll: true }), 0);
     });
   }
-  return { start, current: () => cur };
+  return { start, current: () => cur, shownOrder };
 })();

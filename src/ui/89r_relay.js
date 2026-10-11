@@ -3,7 +3,7 @@
  *   1. Who the message is for, and each part of it: what you have of it (what you saw, what someone told you, what the
  *      signs suggest, a rumour), in Japanese with its readings (the English a tap away).
  *   2. For each part, how you will say it: a few ways, each a different certainty (said plainly, と言っていました,
- *      そうです, らしい, ようです…). Nothing is marked until it is said.
+ *      そうです, らしい, ようです…), in a dealt order (they are written faithful first). Nothing is marked until it is said.
  *   3. "Pass it on": each part is shown with what it told the listener, and why, calmly. A part said with more
  *      certainty than you had is marked so (the station will act on it); one said with less is noted. Then Continue.
  * In the test driver's automated runs every part is said faithfully at once (no screen). */
@@ -23,6 +23,8 @@ RB.ui.relay = (function () {
     if (!d) return Promise.resolve({ cancelled: true });
     return new Promise((resolve) => {
       const said = {}, shownEn = {};
+      // the ways to say a part are written faithful first: dealt for this opening (RB.learnUi.deal), kept on redraws
+      const D = RB.learnUi.deal('relay|' + id);
       let result = null;
       const fr = RB.learnUi.sheet({ cls: 'activity rl-sheet', title: J(d.title.jp) + ' ' + esc(d.title.en) });
       const lay = { el: fr.scrim, name: 'relay' };
@@ -34,7 +36,7 @@ RB.ui.relay = (function () {
       const ps = () => R.parts(d, S());
 
       function partHtml(p, i) {
-        const os = R.optsAt(p, prof());
+        const os = D.order(R.optsAt(p, prof()), (o) => o.id, p.id);
         const r = result && result.byPart[p.id];
         const opts = os.map((o) => {
           const on = said[p.id] === o.id;

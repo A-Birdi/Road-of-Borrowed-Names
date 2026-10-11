@@ -46,6 +46,12 @@ RB.ui.tellings = (function () {
       const marks = {}, read = {};
       let order = [], choice = null, shownEn = {};
       const picks = {};
+      // the chips of an order and the ways to act are written in the order that works or the best first: shown dealt
+      // for this opening (RB.learnUi.deal); an order's chips never start out in an order that already works
+      const D = RB.learnUi.deal('tellings|' + id);
+      let chipOrder = d.answer.kind === 'order' ? D.order(d.answer.items, (x) => x.id) : [];
+      for (let k = 0; k < chipOrder.length && T.judge(d, chipOrder.map((x) => x.id)).ok; k++) chipOrder = chipOrder.slice(1).concat(chipOrder.slice(0, 1));
+      const optOrder = d.answer.options ? D.order(d.answer.options, (o) => o.id) : [];
       const fr = RB.learnUi.sheet({ cls: 'activity tl-sheet', title: J(d.title.jp) + ' ' + esc(d.title.en) });
       const lay = { el: fr.scrim, name: 'tellings' };
       RB.learnUi.guardTaps(fr.leaf);
@@ -89,13 +95,13 @@ RB.ui.tellings = (function () {
         }
         if (d.answer.kind === 'order') {
           const items = d.answer.items;
-          const chips = items.map((x) => { const i = order.indexOf(x.id); return '<button class="tl-chip" data-x="' + esc(x.id) + '" aria-pressed="' + (i >= 0) + '">' + (i >= 0 ? '<span class="tl-n">' + (i + 1) + '</span>' : '') + J(x.jp) + ' <span class="tl-chipen">' + esc(x.en) + '</span></button>'; }).join('');
+          const chips = chipOrder.map((x) => { const i = order.indexOf(x.id); return '<button class="tl-chip" data-x="' + esc(x.id) + '" aria-pressed="' + (i >= 0) + '">' + (i >= 0 ? '<span class="tl-n">' + (i + 1) + '</span>' : '') + J(x.jp) + ' <span class="tl-chipen">' + esc(x.en) + '</span></button>'; }).join('');
           return '<p>' + J(d.question.jp) + '<br><span class="muted">' + esc(d.question.en) + '</span></p><div class="tl-chips" role="group" aria-label="Tap them in order">' + chips + '</div>' +
             '<p class="tl-order" aria-live="polite">' + (order.length ? order.map((xid, i) => (i + 1) + '. ' + esc(items.find((x) => x.id === xid).en)).join('  ') : 'Tap them in the order you will light them.') + '</p>' +
             '<p><button class="pbtn tl-clear"' + (order.length ? '' : ' disabled') + '>Start the order again</button></p>';
         }
         return '<p>' + J(d.question.jp) + '<br><span class="muted">' + esc(d.question.en) + '</span></p><div class="tl-opts" role="radiogroup">' +
-          d.answer.options.map((o) => '<button class="tl-opt" role="radio" data-o="' + esc(o.id) + '" aria-checked="' + (choice === o.id) + '">' + J(o.jp) + '<span class="tl-chipen">' + esc(o.en) + '</span></button>').join('') + '</div>';
+          optOrder.map((o) => '<button class="tl-opt" role="radio" data-o="' + esc(o.id) + '" aria-checked="' + (choice === o.id) + '">' + J(o.jp) + '<span class="tl-chipen">' + esc(o.en) + '</span></button>').join('') + '</div>';
       }
       function render() {
         const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : d.answer.kind === 'panels' ? d.answer.panels.every((pn) => picks[pn.id]) : !!choice;

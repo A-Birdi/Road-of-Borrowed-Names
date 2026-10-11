@@ -64,7 +64,7 @@ let suites = [
   // the expansion's own suites (P01–P15), each run at its phase end and gathered here at P17 so that a complete run
   // covers them: the world proof, the living world and its actions, the workshop, the records, the pastimes, the
   // Distractions tab, the pilot expedition and the Atlas's board, then the six new chapters, the sea and the ports
-  ['world.mjs'], ['world_slice.mjs'], ['world_living.mjs'], ['verbs.mjs'], ['perform.mjs'], ['workshop.mjs'], ['records.mjs'], ['letters_order.mjs'],
+  ['world.mjs'], ['world_slice.mjs'], ['world_living.mjs'], ['verbs.mjs'], ['perform.mjs'], ['workshop.mjs'], ['records.mjs'], ['letters_order.mjs'], ['answer_order.mjs'],
   ['distractions.mjs'], ['hanafuda.mjs'], ['karuta.mjs'], ['shogi.mjs'], ['festival.mjs'], ['festival_games.mjs'], ['expedition.mjs'], ['atlas_board.mjs'],
   ['manybridge.mjs'], ['manybridge2.mjs'], ['keepers.mjs'], ['licence.mjs'], ['sailing.mjs'], ['ports.mjs'], ['kotonoha.mjs'],
   ['cloudroad.mjs'], ['steamhollow.mjs'], ['archive12.mjs'],

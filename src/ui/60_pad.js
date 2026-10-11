@@ -133,7 +133,19 @@ RB.learnUi = (function () {
     const un = (x) => x.replace(/&(amp|lt|gt|quot|#39);/g, (m, k) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" })[k]);
     return String(t || '').split(/(\{[^|}]+\|[^}]+\})/).map((part, i) => (i % 2 ? RB.ui.jhtml(part) : esc(un(part)))).join('');
   }
-  return { ICONS, icon, guardTaps, sheet, fbHead, mixed };
+  // Where answers sit on a sheet that lists them as written. Authors put the right answer first, or write the
+  // answers in step with the questions (Robin: "letter 1 is option 1, letter 2 is option 2"), so a sheet shows them
+  // dealt: one deal per opening, seeded by the sheet's key and the review clock as the challenge's choices are, so the
+  // order holds while the sheet is open (a redraw keeps it) and changes from one sitting to the next.
+  //   const D = deal('relay|' + id); D.order(part.options, (o) => o.id, part.id)
+  function deal(key) {
+    let turn = 0;
+    try { turn = RB.learn.clock(); } catch (e) { turn = 0; }
+    const seed = RB.util.hashStr(String(key) + '#' + turn);
+    const rank = (id, group) => RB.util.rng(RB.util.hashStr(String(id) + '|' + (group || '') + '|' + seed))();
+    return { seed, rank, order: (list, idOf, group) => list.map((x) => [rank(idOf(x), group), x]).sort((a, b) => a[0] - b[0]).map((p) => p[1]) };
+  }
+  return { ICONS, icon, guardTaps, sheet, fbHead, mixed, deal };
 })();
 
 RB.pad = (function () {

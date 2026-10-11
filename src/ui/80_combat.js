@@ -841,7 +841,8 @@ RB.combat = (function () {
         const focusedI = document.activeElement && ui.resp.contains(document.activeElement) ? document.activeElement.getAttribute('data-i') : null;
         const modRow = mods.length ? '<div class="cb-mods" role="group" aria-label="Reach: modifiers">' + '<span class="mods-h">' + I('words') + '<span>Reach</span></span>' + mods.map((m) => '<button type="button" class="mod-chip' + (tg.mod === m.id ? ' on' : '') + '" data-mod="' + m.id + '" aria-pressed="' + (tg.mod === m.id) + '"' + (m.hushed ? ' disabled title="' + esc(m.hushed) + '"' : ' title="' + esc(m.family.role + ': ' + m.family.does) + '"') + '>' + RB.ui.jhtml(m.family.jp) + '</button>').join('') + '</div>' : '';
         const canAsk = st.enc && st.compId && (st.enc.def.story || ENC().helpOffer(s, st.enc.def) > 0);
-        ui.resp.innerHTML = modRow + '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
+        // an encounter's procedure and conversation cards are shown dealt, each keeping its index (RB.encScreen.shownOrder)
+        ui.resp.innerHTML = modRow + '<div class="rcards">' + RB.encScreen.shownOrder(st, cards).map((i) => cardHtml(cards[i], i, hi)).join('') + '</div>' +
           (canAsk ? '<button class="cbtn" data-askhelp>' + I('companion') + '<span>Ask ' + esc(compName()) + ' for help</span></button>' : '') +
           (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
         if (focusedI != null) { const b = ui.resp.querySelector('[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }

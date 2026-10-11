@@ -134,6 +134,10 @@ RB.verbSheets = (function () {
     return h;
   };
 
+  // tools, parts and the ways to follow a step are written in the order that solves them: shown dealt, one deal per
+  // opening of the sheet (RB.learnUi.deal), kept on every redraw
+  const dealOf = () => cur.deal || (cur.deal = RB.learnUi.deal('verbs|' + cur.spec.id));
+
   // ---- W12 · repair ------------------------------------------------------------------------------------------------
   BODY.repair = (spec) => {
     const st = FW().stateOf(S(), spec.id);
@@ -141,9 +145,9 @@ RB.verbSheets = (function () {
     let h = '<div class="wv-foot">' + btn('inspect', 'Look at it', 'look') + btn('read', 'Read the instructions', 'note') + '</div>';
     h += '<ol class="vb-steps" aria-label="The steps">' + spec.steps.map((s0, i) => '<li class="' + (i < st.step ? 'ok' : '') + '">' + (i < st.step ? '<span class="vb-mark" aria-hidden="true">✓</span>' : '<span class="vb-mark" aria-hidden="true">' + (i + 1) + '</span>') + '<span>' + (i < st.step ? 'Done: ' : 'To do: ') + esc(spec.parts[s0.part].en) + '</span></li>').join('') + '</ol>';
     h += '<div class="ar-item"><div class="wv-lab">The tools the job came with</div><div class="ar-slots" role="radiogroup" aria-label="Tool">' +
-      spec.tools.map((t) => radio('tool', t.id, tool === t.id, '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>')).join('') + '</div></div>';
+      dealOf().order(spec.tools, (t) => t.id).map((t) => radio('tool', t.id, tool === t.id, '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>')).join('') + '</div></div>';
     h += '<div class="ar-item"><div class="wv-lab">Use it on</div><div class="ar-slots">' +
-      Object.keys(spec.parts).map((k) => '<button type="button" class="wv-t" data-a="use" data-part="' + esc(k) + '"' + (tool ? '' : ' disabled') + '><span class="vb-jp">' + J(spec.parts[k]) + '</span><span class="en">' + esc(spec.parts[k].en) + '</span></button>').join('') + '</div></div>';
+      dealOf().order(Object.keys(spec.parts), (k) => k, 'parts').map((k) => '<button type="button" class="wv-t" data-a="use" data-part="' + esc(k) + '"' + (tool ? '' : ' disabled') + '><span class="vb-jp">' + J(spec.parts[k]) + '</span><span class="en">' + esc(spec.parts[k].en) + '</span></button>').join('') + '</div></div>';
     h += '<div class="wv-foot">' + btn('test', 'Try it', 'done', '', 'primary') + '</div>';
     return h;
   };
@@ -195,7 +199,7 @@ RB.verbSheets = (function () {
     if (st.step >= spec.steps.length) return '<p>' + both(spec.done) + '</p>';
     const step = spec.steps[st.step];
     return '<div class="wv-lab">Step ' + (st.step + 1) + ' of ' + spec.steps.length + '</div><div class="vb-notice-preview">' + both(step) + '</div><div class="ar-slots">' +
-      step.options.map((op) => '<button type="button" class="wv-t" data-a="do:' + st.step + ':' + esc(op.id) + '"><span class="vb-jp">' + J(op) + '</span><span class="en">' + esc(op.en) + '</span></button>').join('') + '</div>';
+      dealOf().order(step.options, (op) => op.id, 'step ' + st.step).map((op) => '<button type="button" class="wv-t" data-a="do:' + st.step + ':' + esc(op.id) + '"><span class="vb-jp">' + J(op) + '</span><span class="en">' + esc(op.en) + '</span></button>').join('') + '</div>';
   };
 
   // ---- W15 · route ------------------------------------------------------------------------------------------------------

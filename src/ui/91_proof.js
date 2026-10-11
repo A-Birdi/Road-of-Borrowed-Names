@@ -120,6 +120,8 @@ RB.ui.proof = (function () {
       const s = RB.game.s;
       let sel = -1, showEn = U.showEnDefault(), mistakes = 0, assisted = false, found = false, busy = false;
       const S = U.sheet(J(d.title.jp) + ' ' + esc(d.title.en), replay ? 'Practice (checked before)' : '', { cls: 'pb-proof', closeLabel: 'Back to the tray' });
+      // the findings are written right one first: shown dealt for this opening (RB.learnUi.deal), each keeping its index
+      const findOrder = t.find ? RB.learnUi.deal('proof|' + (d.id || d.title.en)).order(t.find.options.map((o, i) => i), (i) => i) : [];
       function render() {
         let h = '<section class="pb-purpose"><div class="slip-lab">What this notice is for</div><p>' + esc(t.purpose.en) + '</p><p class="jp">' + J(t.purpose.jp) + '</p></section>';
         h += '<div class="pb-sheet"><section class="pb-notice-wrap" aria-label="The notice"><div class="slip-lab">' + bi(t.notice.title) + '</div>' + noticeHtml(t, sel) +
@@ -127,7 +129,7 @@ RB.ui.proof = (function () {
           '<section class="pb-evidence" aria-label="The evidence"><div class="slip-lab">The evidence</div>' + t.evidence.map(evidenceHtml).join('') + '</section></div>';
         if (t.find) {
           h += '<section class="pb-find"><div class="slip-lab">Your finding</div><p>' + esc(t.find.prompt.en) + ' <span class="jp">' + J(t.find.prompt.jp) + '</span></p><div class="mc pb-find-opts" role="group" aria-label="Choices">' +
-            t.find.options.map((o, i) => '<button class="btn choice" data-pb-find="' + i + '">' + (o.jp ? J(o.jp) : '') + '<span class="enline">' + esc(o.en) + '</span></button>').join('') + '</div></section>';
+            findOrder.map((i) => t.find.options[i]).map((o, n) => '<button class="btn choice" data-pb-find="' + findOrder[n] + '">' + (o.jp ? J(o.jp) : '') + '<span class="enline">' + esc(o.en) + '</span></button>').join('') + '</div></section>';
         } else {
           h += '<section class="pb-find"><div class="slip-lab">Your finding</div><p class="small">' + (t.notice.segs.length > 1 ? 'Tap the part of the notice that disagrees with the evidence, then confirm. ' : '') + 'If the evidence cannot settle it, say so instead.</p><div class="row-acts">' +
             (t.notice.segs.length > 1 ? '<button class="pbtn primary" data-pb-mark' + (sel < 0 ? ' disabled' : '') + '>' + I('look') + '<span>This part disagrees</span></button>' : '') +

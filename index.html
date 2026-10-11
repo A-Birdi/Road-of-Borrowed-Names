@@ -80751,6 +80751,10 @@ RB.verbSheets = (function () {
     return h;
   };
 
+  // tools, parts and the ways to follow a step are written in the order that solves them: shown dealt, one deal per
+  // opening of the sheet (RB.learnUi.deal), kept on every redraw
+  const dealOf = () => cur.deal || (cur.deal = RB.learnUi.deal('verbs|' + cur.spec.id));
+
   // ---- W12 · repair ------------------------------------------------------------------------------------------------
   BODY.repair = (spec) => {
     const st = FW().stateOf(S(), spec.id);
@@ -80758,9 +80762,9 @@ RB.verbSheets = (function () {
     let h = '<div class="wv-foot">' + btn('inspect', 'Look at it', 'look') + btn('read', 'Read the instructions', 'note') + '</div>';
     h += '<ol class="vb-steps" aria-label="The steps">' + spec.steps.map((s0, i) => '<li class="' + (i < st.step ? 'ok' : '') + '">' + (i < st.step ? '<span class="vb-mark" aria-hidden="true">✓</span>' : '<span class="vb-mark" aria-hidden="true">' + (i + 1) + '</span>') + '<span>' + (i < st.step ? 'Done: ' : 'To do: ') + esc(spec.parts[s0.part].en) + '</span></li>').join('') + '</ol>';
     h += '<div class="ar-item"><div class="wv-lab">The tools the job came with</div><div class="ar-slots" role="radiogroup" aria-label="Tool">' +
-      spec.tools.map((t) => radio('tool', t.id, tool === t.id, '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>')).join('') + '</div></div>';
+      dealOf().order(spec.tools, (t) => t.id).map((t) => radio('tool', t.id, tool === t.id, '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>')).join('') + '</div></div>';
     h += '<div class="ar-item"><div class="wv-lab">Use it on</div><div class="ar-slots">' +
-      Object.keys(spec.parts).map((k) => '<button type="button" class="wv-t" data-a="use" data-part="' + esc(k) + '"' + (tool ? '' : ' disabled') + '><span class="vb-jp">' + J(spec.parts[k]) + '</span><span class="en">' + esc(spec.parts[k].en) + '</span></button>').join('') + '</div></div>';
+      dealOf().order(Object.keys(spec.parts), (k) => k, 'parts').map((k) => '<button type="button" class="wv-t" data-a="use" data-part="' + esc(k) + '"' + (tool ? '' : ' disabled') + '><span class="vb-jp">' + J(spec.parts[k]) + '</span><span class="en">' + esc(spec.parts[k].en) + '</span></button>').join('') + '</div></div>';
     h += '<div class="wv-foot">' + btn('test', 'Try it', 'done', '', 'primary') + '</div>';
     return h;
   };
@@ -80812,7 +80816,7 @@ RB.verbSheets = (function () {
     if (st.step >= spec.steps.length) return '<p>' + both(spec.done) + '</p>';
     const step = spec.steps[st.step];
     return '<div class="wv-lab">Step ' + (st.step + 1) + ' of ' + spec.steps.length + '</div><div class="vb-notice-preview">' + both(step) + '</div><div class="ar-slots">' +
-      step.options.map((op) => '<button type="button" class="wv-t" data-a="do:' + st.step + ':' + esc(op.id) + '"><span class="vb-jp">' + J(op) + '</span><span class="en">' + esc(op.en) + '</span></button>').join('') + '</div>';
+      dealOf().order(step.options, (op) => op.id, 'step ' + st.step).map((op) => '<button type="button" class="wv-t" data-a="do:' + st.step + ':' + esc(op.id) + '"><span class="vb-jp">' + J(op) + '</span><span class="en">' + esc(op.en) + '</span></button>').join('') + '</div>';
   };
 
   // ---- W15 · route ------------------------------------------------------------------------------------------------------
@@ -81773,7 +81777,19 @@ RB.learnUi = (function () {
     const un = (x) => x.replace(/&(amp|lt|gt|quot|#39);/g, (m, k) => ({ amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" })[k]);
     return String(t || '').split(/(\{[^|}]+\|[^}]+\})/).map((part, i) => (i % 2 ? RB.ui.jhtml(part) : esc(un(part)))).join('');
   }
-  return { ICONS, icon, guardTaps, sheet, fbHead, mixed };
+  // Where answers sit on a sheet that lists them as written. Authors put the right answer first, or write the
+  // answers in step with the questions (Robin: "letter 1 is option 1, letter 2 is option 2"), so a sheet shows them
+  // dealt: one deal per opening, seeded by the sheet's key and the review clock as the challenge's choices are, so the
+  // order holds while the sheet is open (a redraw keeps it) and changes from one sitting to the next.
+  //   const D = deal('relay|' + id); D.order(part.options, (o) => o.id, part.id)
+  function deal(key) {
+    let turn = 0;
+    try { turn = RB.learn.clock(); } catch (e) { turn = 0; }
+    const seed = RB.util.hashStr(String(key) + '#' + turn);
+    const rank = (id, group) => RB.util.rng(RB.util.hashStr(String(id) + '|' + (group || '') + '|' + seed))();
+    return { seed, rank, order: (list, idOf, group) => list.map((x) => [rank(idOf(x), group), x]).sort((a, b) => a[0] - b[0]).map((p) => p[1]) };
+  }
+  return { ICONS, icon, guardTaps, sheet, fbHead, mixed, deal };
 })();
 
 RB.pad = (function () {
@@ -86795,14 +86811,14 @@ RB.activities = (function () {
     return new Promise((resolve) => {
       const P = panel(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en));
       // Authors list letters and recipients in step (letter 1 for the first person, and so on), so neither order may
-      // be shown as written: the letters come in a shuffled order and the recipients are dealt again for each letter.
-      // Seeded by the activity, the letter and the review clock, as the challenge's choices are: the order holds
-      // while a letter is open (showing the translation redraws it) and changes from one sitting to the next.
-      const dealt = (key) => { let turn = 0; try { turn = RB.learn.clock(); } catch (e) { turn = 0; } return RB.util.rng(RB.util.hashStr(key + '#' + turn)); };
-      const list = dealt('letters|' + a.title.en).shuffle(a.letters);
+      // be shown as written (RB.learnUi.deal): the letters come dealt, and the recipients are dealt again for each
+      // letter; the order holds while a letter is open (showing the translation redraws it) and changes from one
+      // sitting to the next.
+      const D = RB.learnUi.deal('letters|' + a.title.en);
+      const list = D.order(a.letters, (L) => L.to);
       let i = 0, showEn = showEnDefault(), assisted = false, firstTry = true, mistakes = 0;
       let recips = [];
-      const deal = () => { recips = dealt('recipients|' + a.title.en + '|' + i + '|' + list[i].to).shuffle(a.recipients); };
+      const deal = () => { recips = D.order(a.recipients, (r) => r.id, 'letter ' + i); };
       deal();
       function render() {
         const L = list[i];
@@ -102376,7 +102392,8 @@ RB.combat = (function () {
         const focusedI = document.activeElement && ui.resp.contains(document.activeElement) ? document.activeElement.getAttribute('data-i') : null;
         const modRow = mods.length ? '<div class="cb-mods" role="group" aria-label="Reach: modifiers">' + '<span class="mods-h">' + I('words') + '<span>Reach</span></span>' + mods.map((m) => '<button type="button" class="mod-chip' + (tg.mod === m.id ? ' on' : '') + '" data-mod="' + m.id + '" aria-pressed="' + (tg.mod === m.id) + '"' + (m.hushed ? ' disabled title="' + esc(m.hushed) + '"' : ' title="' + esc(m.family.role + ': ' + m.family.does) + '"') + '>' + RB.ui.jhtml(m.family.jp) + '</button>').join('') + '</div>' : '';
         const canAsk = st.enc && st.compId && (st.enc.def.story || ENC().helpOffer(s, st.enc.def) > 0);
-        ui.resp.innerHTML = modRow + '<div class="rcards">' + cards.map((c, i) => cardHtml(c, i, hi)).join('') + '</div>' +
+        // an encounter's procedure and conversation cards are shown dealt, each keeping its index (RB.encScreen.shownOrder)
+        ui.resp.innerHTML = modRow + '<div class="rcards">' + RB.encScreen.shownOrder(st, cards).map((i) => cardHtml(cards[i], i, hi)).join('') + '</div>' +
           (canAsk ? '<button class="cbtn" data-askhelp>' + I('companion') + '<span>Ask ' + esc(compName()) + ' for help</span></button>' : '') +
           (st.noFlee ? '' : '<button class="cbtn flee" data-flee>' + I('back') + '<span>Step back from this encounter</span></button>');
         if (focusedI != null) { const b = ui.resp.querySelector('[data-i="' + focusedI + '"]'); if (b) b.focus({ preventScroll: true }); }
@@ -103525,6 +103542,26 @@ RB.encScreen = (function () {
     return '<section class="enc-log" aria-live="polite" aria-label="What has happened"><h3>' + I('history') + '<span>So far</span></h3><ol>' + log.slice(-8).map((l) =>
       '<li class="' + (l.none ? 'none' : '') + (l.who === 'pc' ? ' you' : l.who === 'comp' ? ' comp' : '') + '">' + (l.jp ? '<span class="el-jp">' + RB.ui.jhtml(l.jp) + '</span> ' : '') + '<span class="el-en">' + esc(l.en) + '</span></li>').join('') + '</ol></section>';
   }
+  // Where a card is shown. Procedures and conversations are written in the order that solves them (the right step
+  // first; the move that ends a talk badly last), so their cards are dealt (RB.learnUi.deal): each gets a rank from
+  // the encounter's deal (taken when it opens) and its own step and id, so the layout holds from one exchange to the
+  // next and a new step is dealt afresh. A labelled shortcut (Resolve, the companion's gesture) stays first,
+  // the general responses (Unravel, words, Wait) after. Only the view changes: each card keeps its index (`data-i`)
+  // in the rules' own list, which the rules, the automated player and the tests read in written order. The battle
+  // screen (src/ui/80_combat.js), where an encounter with someone present is played, deals its cards the same way.
+  const deals = new WeakMap(); // encounter → its deal (presentation only: never in the encounter's state or a save)
+  function shownOrder(st, cards) {
+    const E0 = st.enc;
+    if (!E0) return cards.map((c, i) => i);
+    if (!deals.has(E0)) deals.set(E0, RB.learnUi.deal('encounter|' + ((E0.def && E0.def.id) || '')));
+    const D = deals.get(E0);
+    const rank = (c) => D.rank(c.id, c.step);
+    const idx = cards.map((c, i) => i);
+    const lead = idx.filter((i) => cards[i].kind === 'resolve' || cards[i].kind === 'gesture');
+    const dealt = idx.filter((i) => cards[i].kind === 'proc' || cards[i].kind === 'social').sort((x, y) => rank(cards[x]) - rank(cards[y]));
+    const rest = idx.filter((i) => lead.indexOf(i) < 0 && dealt.indexOf(i) < 0);
+    return lead.concat(dealt, rest);
+  }
   function choose(st, fr, log) {
     return new Promise((resolve) => {
       const s = RB.game.s;
@@ -103532,7 +103569,7 @@ RB.encScreen = (function () {
       const kind = st.enc.social ? 'conversation' : 'machine';
       fr.setTitle(RB.ui.jhtml(st.enc.def.name.jp || '') + ' ' + esc(st.enc.def.name.en), kind === 'machine' ? '' : 'Exchange ' + (st.round + 1));
       fr.leaf.innerHTML = '<div class="enc-grid">' + '<div class="enc-col">' + peopleHtml(st) + machineHtml(st) + agreementHtml(st) + recordHtml(st) + '</div>' +
-        '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + cards.map(cardHtml).join('') + '</div></section></div></div>';
+        '<div class="enc-col">' + logHtml(log) + '<section class="enc-choices" aria-label="What you can do"><h3>' + I('words') + '<span>What will you do?</span></h3><div class="rcards">' + shownOrder(st, cards).map((i) => cardHtml(cards[i], i)).join('') + '</div></section></div></div>';
       fr.foot.innerHTML = '<span class="muted small">' + esc(kind === 'machine' ? 'A wrong step sends the machine back; misreading the notice only means trying again.' : 'Nothing is timed. It will come to an end, one way or another.') + '</span>';
       let done = false;
       const fin = (v) => { if (done) return; done = true; fr.el.onclick = null; resolve(v); };
@@ -103556,7 +103593,7 @@ RB.encScreen = (function () {
       setTimeout(() => b.focus({ preventScroll: true }), 0);
     });
   }
-  return { start, current: () => cur };
+  return { start, current: () => cur, shownOrder };
 })();
 
 
@@ -120760,6 +120797,12 @@ RB.ui.tellings = (function () {
       const marks = {}, read = {};
       let order = [], choice = null, shownEn = {};
       const picks = {};
+      // the chips of an order and the ways to act are written in the order that works or the best first: shown dealt
+      // for this opening (RB.learnUi.deal); an order's chips never start out in an order that already works
+      const D = RB.learnUi.deal('tellings|' + id);
+      let chipOrder = d.answer.kind === 'order' ? D.order(d.answer.items, (x) => x.id) : [];
+      for (let k = 0; k < chipOrder.length && T.judge(d, chipOrder.map((x) => x.id)).ok; k++) chipOrder = chipOrder.slice(1).concat(chipOrder.slice(0, 1));
+      const optOrder = d.answer.options ? D.order(d.answer.options, (o) => o.id) : [];
       const fr = RB.learnUi.sheet({ cls: 'activity tl-sheet', title: J(d.title.jp) + ' ' + esc(d.title.en) });
       const lay = { el: fr.scrim, name: 'tellings' };
       RB.learnUi.guardTaps(fr.leaf);
@@ -120803,13 +120846,13 @@ RB.ui.tellings = (function () {
         }
         if (d.answer.kind === 'order') {
           const items = d.answer.items;
-          const chips = items.map((x) => { const i = order.indexOf(x.id); return '<button class="tl-chip" data-x="' + esc(x.id) + '" aria-pressed="' + (i >= 0) + '">' + (i >= 0 ? '<span class="tl-n">' + (i + 1) + '</span>' : '') + J(x.jp) + ' <span class="tl-chipen">' + esc(x.en) + '</span></button>'; }).join('');
+          const chips = chipOrder.map((x) => { const i = order.indexOf(x.id); return '<button class="tl-chip" data-x="' + esc(x.id) + '" aria-pressed="' + (i >= 0) + '">' + (i >= 0 ? '<span class="tl-n">' + (i + 1) + '</span>' : '') + J(x.jp) + ' <span class="tl-chipen">' + esc(x.en) + '</span></button>'; }).join('');
           return '<p>' + J(d.question.jp) + '<br><span class="muted">' + esc(d.question.en) + '</span></p><div class="tl-chips" role="group" aria-label="Tap them in order">' + chips + '</div>' +
             '<p class="tl-order" aria-live="polite">' + (order.length ? order.map((xid, i) => (i + 1) + '. ' + esc(items.find((x) => x.id === xid).en)).join('  ') : 'Tap them in the order you will light them.') + '</p>' +
             '<p><button class="pbtn tl-clear"' + (order.length ? '' : ' disabled') + '>Start the order again</button></p>';
         }
         return '<p>' + J(d.question.jp) + '<br><span class="muted">' + esc(d.question.en) + '</span></p><div class="tl-opts" role="radiogroup">' +
-          d.answer.options.map((o) => '<button class="tl-opt" role="radio" data-o="' + esc(o.id) + '" aria-checked="' + (choice === o.id) + '">' + J(o.jp) + '<span class="tl-chipen">' + esc(o.en) + '</span></button>').join('') + '</div>';
+          optOrder.map((o) => '<button class="tl-opt" role="radio" data-o="' + esc(o.id) + '" aria-checked="' + (choice === o.id) + '">' + J(o.jp) + '<span class="tl-chipen">' + esc(o.en) + '</span></button>').join('') + '</div>';
       }
       function render() {
         const ready = d.answer.kind === 'order' ? order.length === d.answer.items.length : d.answer.kind === 'panels' ? d.answer.panels.every((pn) => picks[pn.id]) : !!choice;
@@ -121101,7 +121144,7 @@ RB.ui.press = (function () {
  *   1. Who the message is for, and each part of it: what you have of it (what you saw, what someone told you, what the
  *      signs suggest, a rumour), in Japanese with its readings (the English a tap away).
  *   2. For each part, how you will say it: a few ways, each a different certainty (said plainly, と言っていました,
- *      そうです, らしい, ようです…). Nothing is marked until it is said.
+ *      そうです, らしい, ようです…), in a dealt order (they are written faithful first). Nothing is marked until it is said.
  *   3. "Pass it on": each part is shown with what it told the listener, and why, calmly. A part said with more
  *      certainty than you had is marked so (the station will act on it); one said with less is noted. Then Continue.
  * In the test driver's automated runs every part is said faithfully at once (no screen). */
@@ -121121,6 +121164,8 @@ RB.ui.relay = (function () {
     if (!d) return Promise.resolve({ cancelled: true });
     return new Promise((resolve) => {
       const said = {}, shownEn = {};
+      // the ways to say a part are written faithful first: dealt for this opening (RB.learnUi.deal), kept on redraws
+      const D = RB.learnUi.deal('relay|' + id);
       let result = null;
       const fr = RB.learnUi.sheet({ cls: 'activity rl-sheet', title: J(d.title.jp) + ' ' + esc(d.title.en) });
       const lay = { el: fr.scrim, name: 'relay' };
@@ -121132,7 +121177,7 @@ RB.ui.relay = (function () {
       const ps = () => R.parts(d, S());
 
       function partHtml(p, i) {
-        const os = R.optsAt(p, prof());
+        const os = D.order(R.optsAt(p, prof()), (o) => o.id, p.id);
         const r = result && result.byPart[p.id];
         const opts = os.map((o) => {
           const on = said[p.id] === o.id;
@@ -122172,6 +122217,8 @@ RB.ui.proof = (function () {
       const s = RB.game.s;
       let sel = -1, showEn = U.showEnDefault(), mistakes = 0, assisted = false, found = false, busy = false;
       const S = U.sheet(J(d.title.jp) + ' ' + esc(d.title.en), replay ? 'Practice (checked before)' : '', { cls: 'pb-proof', closeLabel: 'Back to the tray' });
+      // the findings are written right one first: shown dealt for this opening (RB.learnUi.deal), each keeping its index
+      const findOrder = t.find ? RB.learnUi.deal('proof|' + (d.id || d.title.en)).order(t.find.options.map((o, i) => i), (i) => i) : [];
       function render() {
         let h = '<section class="pb-purpose"><div class="slip-lab">What this notice is for</div><p>' + esc(t.purpose.en) + '</p><p class="jp">' + J(t.purpose.jp) + '</p></section>';
         h += '<div class="pb-sheet"><section class="pb-notice-wrap" aria-label="The notice"><div class="slip-lab">' + bi(t.notice.title) + '</div>' + noticeHtml(t, sel) +
@@ -122179,7 +122226,7 @@ RB.ui.proof = (function () {
           '<section class="pb-evidence" aria-label="The evidence"><div class="slip-lab">The evidence</div>' + t.evidence.map(evidenceHtml).join('') + '</section></div>';
         if (t.find) {
           h += '<section class="pb-find"><div class="slip-lab">Your finding</div><p>' + esc(t.find.prompt.en) + ' <span class="jp">' + J(t.find.prompt.jp) + '</span></p><div class="mc pb-find-opts" role="group" aria-label="Choices">' +
-            t.find.options.map((o, i) => '<button class="btn choice" data-pb-find="' + i + '">' + (o.jp ? J(o.jp) : '') + '<span class="enline">' + esc(o.en) + '</span></button>').join('') + '</div></section>';
+            findOrder.map((i) => t.find.options[i]).map((o, n) => '<button class="btn choice" data-pb-find="' + findOrder[n] + '">' + (o.jp ? J(o.jp) : '') + '<span class="enline">' + esc(o.en) + '</span></button>').join('') + '</div></section>';
         } else {
           h += '<section class="pb-find"><div class="slip-lab">Your finding</div><p class="small">' + (t.notice.segs.length > 1 ? 'Tap the part of the notice that disagrees with the evidence, then confirm. ' : '') + 'If the evidence cannot settle it, say so instead.</p><div class="row-acts">' +
             (t.notice.segs.length > 1 ? '<button class="pbtn primary" data-pb-mark' + (sel < 0 ? ' disabled' : '') + '>' + I('look') + '<span>This part disagrees</span></button>' : '') +

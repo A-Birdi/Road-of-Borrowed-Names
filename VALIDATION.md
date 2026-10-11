@@ -4300,6 +4300,29 @@ build before the fix **0/4** (Reedwake and Snowbell: the right recipient in rows
 Saltglass and the Orchard: the same list for every letter); on the fixed build **4/4** (for example Reedwake's right
 recipients at rows 1, 5, 5, 4, 3 and then 5, 4, 4, 2, 4 in a second sitting). It is in the default run.
 
+**Every other sheet that listed answers as written (the same fault, found by an audit and fixed).** After Robin's
+report the whole interface was searched for answer lists shown in their written order (anything through the shared
+challenge sheet was already dealt; dialogue choices, which have no right answer, were left alone). Found and fixed,
+each now dealt by one helper (`RB.learnUi.deal`: one deal per opening, from the sheet's key and the review clock):
+encounters run as **procedures** (the machines, every Hall trial, the guardians, the locks and sluices: the right
+action was the first card in all 100 steps of all 27 procedures) and as **conversations** (the Hall wings, mediation, the disputes:
+the cards came in solving order, and the move that ends a talk badly was last in most), on both screens that play
+them (the encounter sheet and the battle screen, `RB.encScreen.shownOrder`, each card keeping its index in the rules'
+list, so the rules, the automated player and the other tests still read the written order; a labelled shortcut,
+Resolve or the companion's gesture, stays first); the Cloudroad **relay** (the faithful way to say each part was
+first in all 44 lists); the proofreading tray's **"find"** step (the right finding first in all 9 tiers that have one); the
+**tellings** (the Keepers' Road cave's chips were shown in the only order that works; the best way to act was first in
+five of seven); and the development-only actions page's follow and repair fixtures. Left as they are, with the reason:
+lists whose right answer already sits in no pattern (the shells, the case hypotheses, the filing sheet), a notice's
+parts (a sentence keeps its order) and the festival games, karuta, the Atlas and the creation quiz (already dealt).
+New browser test `tests/e2e/answer_order.mjs` (in the default run) opens every one of them in the built game: **5/5**
+(procedures: all 27 opened, the right action first in 19 at the test's clock; over every procedure step and 200
+clock values the right action is first 49.2 % of the time, as it should be with two options in nearly every step;
+talks: 28 sets, 2 in written order,
+the bad move last in 7 of 23; relay: the faithful way first in 7 of 12 parts; tellings: the cave's chips never start
+in a working order, the best way first in 2 of 7). The automated runs never open these sheets (the test driver answers
+them directly), so the chained route and the story tests are unaffected.
+
 **The complete browser run gathers every functional suite.** Twenty-five of the expansion's own browser suites (the
 world proof and its slice, the living world, actions and performances, the workshop, the records, Distractions and
 the pastimes, the festival's corner and games, the pilot expedition, the Atlas's board, Manybridge's two chapters, the

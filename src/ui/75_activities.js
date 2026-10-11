@@ -117,14 +117,14 @@ RB.activities = (function () {
     return new Promise((resolve) => {
       const P = panel(RB.ui.jhtml(a.title.jp) + ' ' + esc(a.title.en));
       // Authors list letters and recipients in step (letter 1 for the first person, and so on), so neither order may
-      // be shown as written: the letters come in a shuffled order and the recipients are dealt again for each letter.
-      // Seeded by the activity, the letter and the review clock, as the challenge's choices are: the order holds
-      // while a letter is open (showing the translation redraws it) and changes from one sitting to the next.
-      const dealt = (key) => { let turn = 0; try { turn = RB.learn.clock(); } catch (e) { turn = 0; } return RB.util.rng(RB.util.hashStr(key + '#' + turn)); };
-      const list = dealt('letters|' + a.title.en).shuffle(a.letters);
+      // be shown as written (RB.learnUi.deal): the letters come dealt, and the recipients are dealt again for each
+      // letter; the order holds while a letter is open (showing the translation redraws it) and changes from one
+      // sitting to the next.
+      const D = RB.learnUi.deal('letters|' + a.title.en);
+      const list = D.order(a.letters, (L) => L.to);
       let i = 0, showEn = showEnDefault(), assisted = false, firstTry = true, mistakes = 0;
       let recips = [];
-      const deal = () => { recips = dealt('recipients|' + a.title.en + '|' + i + '|' + list[i].to).shuffle(a.recipients); };
+      const deal = () => { recips = D.order(a.recipients, (r) => r.id, 'letter ' + i); };
       deal();
       function render() {
         const L = list[i];
