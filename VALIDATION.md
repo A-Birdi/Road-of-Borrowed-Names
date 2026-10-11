@@ -4413,6 +4413,12 @@ per art pixel, or the window), so at 1440×900 and on phones nothing resizes, as
 passes; `world.mjs` 13/0 (its clocks now pause 2 s ahead instead of 50 ms, which a machine busy with the chained run
 overshot: "Cannot fast-forward to the past" in two of its tests, a harness margin, not the game), `world_light.mjs`
 4/0. Part 1 was stopped there and is run again on the fixed build.
+
+**The twelve chapters on the lit build.** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on a clean export of
+38928f5 (light and shadow everywhere, the leak and shrub fixes; its own `index.html`, the repository's SHA-256), profile
+F with Ren, from the title screen's new journey: **all 17 legs, 2,433 site visits in 78 minutes (4,668 s; part of the
+complete run shared the machine), to the ending; 0 problems, 0 page errors**; 293 interactions met; the same legs and
+visit counts as before the light. The only change after 38928f5 is when the renderer resizes (c14725e above).
 - Browser `world.mjs` (rewritten for the shipped light: the flag no longer needed, Off pixel-identical to every layer
   off, the camera at 1920×1080 and a phone, a battle and back without a rebuild, at night the lamps cast): **13/0** in
   three runs on the scratch build; one earlier run, made while the unit suite loaded the machine, had one failure whose
