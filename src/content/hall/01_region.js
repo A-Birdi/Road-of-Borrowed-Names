@@ -56,6 +56,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w3);
 
+  // wing 4: the rainy season in a river valley, grey-green and wet, hydrangeas blue and violet by every wall, the river
+  // brown and high
+  TL.PAL.hall_w4 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#4e6a50', '#5a7a5c', '#425a44', '#6a8a68'], dirt: ['#6a5e4c', '#7a6e5a', '#58503e', '#8c806a'],
+    stone: ['#727a7a', '#8a9292', '#5a6262'], water: ['#6a5a3e', '#7a6a4a', '#9a8a68', '#c8bc9c'],
+    wood: ['#5a4a3a', '#6c5a46', '#46382c', '#86725a'], leaf: ['#2e4a3a', '#385a46', '#466c54', '#22382c'],
+    flower: ['#6a7ac8', '#9a7ac0', '#c8d0e8', '#7aa0d0'], roof: ['#3a4048', '#2e343c', '#22282e', '#4e5660'],
+    sky: '#8a96a0', dark: '#14181c',
+  });
+  TL.addRamps(TL.PAL.hall_w4);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -138,4 +149,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_kobu', { name: { en: 'Kobu', jp: 'コブ' }, voice: { pitch: 1.4 }, size: 'child',
     look: { skin: 2, hair: 'short', hairColor: 3, cloth: ['#8a6a44', '#705436', '#e8d8b8'], shape: 'tunic', acc: [] },
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#221a12' } });
+
+  // ---- the tales' people: wing 4, The Borrowed Umbrella --------------------------------------------------------------
+  // Gosaku (he/him), the peddler who borrowed an umbrella on a stormy night and could not bring it back for a year;
+  // Myōshin (she/her), the nun of the mountain temple who lent it; the umbrella itself, grown into a karakasa spirit
+  // (they/them); Gosaku's neighbours Oume (she/her), Otake (she/her) and Kyūbei (he/him), and Kaede (they/them), a
+  // traveller sheltering in the village.
+  ch('hall_gosaku', { name: { en: 'Gosaku', jp: 'ゴサク' }, voice: { pitch: 0.96 },
+    look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#5a6a4a', '#465438', '#d8c8a0'], shape: 'tunic', acc: ['hat', 'satchel'], hatCol: '#b8a070' },
+    portrait: { eyes: 'round', style: 'short', acc: ['hat'], hatCol: '#b8a070', bg: '#1e2418' } });
+  ch('hall_myoshin', { name: { en: 'Myōshin', jp: 'ミョウシン' }, voice: { pitch: 0.84 },
+    look: { skin: 2, hair: 'wrap', hairColor: 6, cloth: ['#4a4a52', '#3a3a42', '#e8e4d8'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'soft', style: 'wrap', age: 'old', acc: [], bg: '#1c1c22' } });
+  ch('hall_karakasa', { name: { en: 'The umbrella', jp: '{唐傘|からかさ}' }, voice: { pitch: 1.24 },
+    look: { custom: 'spirit', col: '#c8584a' },
+    portrait: { skin: ['#e8b0a0', '#d09080'], hair: ['#8a2a22', '#a8382c', '#c8584a'], cloth: ['#c8584a', '#a8382c', '#f0d8b0'], style: 'long', eyes: 'round', acc: ['hood'], hoodCol: '#c8584a', bg: '#2a1a18' } });
+  ch('hall_oume', { name: { en: 'Oume', jp: 'オウメ' }, voice: { pitch: 1.0 },
+    look: { skin: 3, hair: 'bun', hairColor: 1, cloth: ['#6a7a4a', '#566438', '#e0d4b8'], shape: 'apron', acc: ['headband'], bandCol: '#e0d4b8' },
+    portrait: { eyes: 'narrow', style: 'bun', collar: 'apron', acc: ['headband'], bandCol: '#e0d4b8', bg: '#202418' } });
+  ch('hall_otake', { name: { en: 'Otake', jp: 'オタケ' }, voice: { pitch: 1.1 },
+    look: { skin: 2, hair: 'bun', hairColor: 3, cloth: ['#7a5a6a', '#644856', '#e8d8c8'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'soft', style: 'bun', acc: [], bg: '#241c20' } });
+  ch('hall_kyubei', { name: { en: 'Kyūbei', jp: 'キュウベエ' }, voice: { pitch: 0.78 },
+    look: { skin: 2, hair: 'shaved', hairColor: 6, cloth: ['#5a5040', '#463e30', '#d8ccb0'], shape: 'robe', acc: ['cane'], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: [], bg: '#1e1a14' } });
+  ch('hall_kaede', { name: { en: 'Kaede', jp: 'カエデ' }, voice: { pitch: 1.04 },
+    look: { skin: 1, hair: 'ponytail', hairColor: 1, cloth: ['#4a5a6a', '#3a4654', '#d8c8a0'], shape: 'tunic', acc: ['hat'], hatCol: '#8a7a5a' },
+    portrait: { eyes: 'round', style: 'ponytail', acc: ['hat'], hatCol: '#8a7a5a', bg: '#1a2028' } });
 })(RB.content);

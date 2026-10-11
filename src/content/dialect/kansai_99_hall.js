@@ -1,5 +1,6 @@
 /* Suzu's Kansai-ben: the Hall of a Hundred Tales (expansion P15): the key ledger, the foyer, wing 1 (The Lamp at
- * the Crossroads) and wing 2 (The Fox's Wedding). Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md. "=" the standard line as
+ * the Crossroads) wing 2 (The Fox's Wedding), wing 3 (The Bell Before Dawn) and wing 4 (The Borrowed
+ * Umbrella). Format and rules: src/lang/85_dialect.js, docs/dialect/suzu_kansai.md. "=" the standard line as
  * authored (the key: its Japanese); ">" the Kansai version. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -91,4 +92,97 @@ RB.dialect.add('kansai', `
 @ hall/hall.w2.end [hall.w2.end]
 = {第|だい}{二幕|にまく} 、 {幕|まく} ！ {貸|か}し{借|か}り は 、 {全部|ぜんぶ} {返|かえ}した 。 {拍手|はくしゅ} ！ || End of act two! Every loan paid back. Applause!
 > {第|だい}{二幕|にまく} 、 {幕|まく} や ！ {貸|か}し{借|か}り は 、 {全部|ぜんぶ} {返|かえ}した で 。 {拍手|はくしゅ} ！ || End of act two! Every loan paid back. Applause!
+@ hall/hall.w3.f1_first [hall.w3.f1_first]
+= {第|だい}{三幕|さんまく} は 、 {夜|よる} の {舞台|ぶたい} ね 。 {幕|まく} が {上|あ}がる の は 、 {夜明|よあ}け {前|まえ} 。 || Act three: a night stage. The curtain goes up before dawn.
+> {第|だい}{三幕|さんまく} は 、 {夜|よる} の {舞台|ぶたい} や な 。 {幕|まく} が {上|あ}がる の は 、 {夜明|よあ}け {前|まえ} や 。 || Act three: a night stage. The curtain goes up before dawn.
+@ hall/hall.w3.f2_first [hall.w3.f2_first]
+= {一緒|いっしょ} に {登|のぼ}ろう 。 {順番|じゅんばん} に 、 {一|ひと}つ ずつ 。 || We'll climb with you. In order, one thing at a time.
+> {一緒|いっしょ} に {登|のぼ}ろ か 。 {順番|じゅんばん} に 、 {一|ひと}つ ずつ や 。 || We'll climb with you. In order, one thing at a time.
+@ hall/hall.w3.f3_first [hall.w3.f3_first]
+= お{囃子|はやし} が {入|はい}った わ 。 {大詰|おおづ}め ね 。 || The drums have come in. This is the final scene.
+> お{囃子|はやし} が {入|はい}った で 。 {大詰|おおづ}め や な 。 || The drums have come in. This is the final scene.
+@ hall/hall.w3.t1 [hall.w3.t1]
+= {代役|だいやく} の {初舞台|はつぶたい} ね 。 {一番|いちばん} {緊張|きんちょう} する やつ よ 。 || An understudy's first night. The most nerve-racking kind.
+> {代役|だいやく} の {初舞台|はつぶたい} や な 。 {一番|いちばん} {緊張|きんちょう} する やつ や で 。 || An understudy's first night. The most nerve-racking kind.
+@ hall/hall.w3.t2_note [hall.w3.t2_note]
+= {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 {違|ちが}う かも しれない 。 {前|まえ} と {後|あと} を よく {見|み}よう 。 || The order it's written in may not be the order to do it in. Watch for before and after.
+> {書|か}いて ある {順|じゅん} と 、 やる {順|じゅん} は 、 ちゃう かも しれへん 。 {前|まえ} と {後|あと} を よう {見|み}よ か 。 || The order it's written in may not be the order to do it in. Watch for before and after.
+@ hall/hall.w3.c_water [hall.w3.c_water]
+= {書|か}いて ある {順|じゅん} じゃ なくて 、 {前|まえ} と {後|あと} で {決|き}まる {順|じゅん} 。 {上手|うま}く いった ね 。 || Not the order it was written in, but the order before and after make. Well done.
+> {書|か}いて ある {順|じゅん} や なくて 、 {前|まえ} と {後|あと} で {決|き}まる {順|じゅん} や 。 {上手|うま}い こと いった な 。 || Not the order it was written in, but the order before and after make. Well done.
+@ hall/hall.w3.t3 [hall.w3.t3]
+= {鐘撞|かねつ}き は 、 {前|まえ} と {後|あと} を {間違|まちが}えたら {仕事|しごと} に ならない から ね 。 || A bell-ringer who mixes up before and after is out of a job.
+> {鐘撞|かねつ}き は 、 {前|まえ} と {後|あと} を {間違|まちが}えたら {仕事|しごと} に ならへん から な 。 || A bell-ringer who mixes up before and after is out of a job.
+@ hall/hall.w3.h_jizo [hall.w3.h_jizo]
+= {急|いそ}がなくて いい 。 {線香|せんこう} は 、 まだ ある 。 || No need to hurry. There's more incense.
+> {急|いそ}がん で ええ 。 {線香|せんこう} は 、 まだ ある で 。 || No need to hurry. There's more incense.
+@ hall/hall.w3.h_jizo [hall.w3.h_jizo]
+= {前|まえ} に 、 {後|あと} で 、 {間|ま}に{合|あ}った 。 {時計|とけい} と {仲良|なかよ}く なった {気分|きぶん} だ ね 。 || Before, after, in time. I feel like the clock and I are friends now.
+> {前|まえ} に 、 {後|あと} で 、 {間|ま}に{合|あ}った で 。 {時計|とけい} と {仲良|なかよ}く なった {気分|きぶん} や な 。 || Before, after, in time. I feel like the clock and I are friends now.
+@ hall/hall.w3.t6 [hall.w3.t6]
+= {香盤表|こうばんひょう} みたい な もん ね 。 {任|まか}せて 。 {何|なに} を {見|み}る ？ || It's like a running order. Leave it to me. What am I looking for?
+> {香盤表|こうばんひょう} みたい な もん や な 。 {任|まか}せとき 。 {何|なに} を {見|み}る ん ？ || It's like a running order. Leave it to me. What am I looking for?
+@ hall/hall.w3.t6_h1 [hall.w3.t6_h1]
+= {暦|こよみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say the almanac's words again?
+> {暦|こよみ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}お か ？ || Shall I say the almanac's words again?
+@ hall/hall.w3.t6_h1 [hall.w3.t6_h1]
+= これ で 、 {村|むら} の {人|ひと} も {鐘|かね} の {時|とき} が {分|わ}かる 。 || Now the village will know the bell's hour too.
+> これ で 、 {村|むら} の {人|ひと} も {鐘|かね} の {時|とき} が {分|わ}かる な 。 || Now the village will know the bell's hour too.
+@ hall/hall.w3.w_osho [hall.w3.w_osho]
+= {見|み}た {順番|じゅんばん} に {並|なら}べたら 、 {最後|さいご} の {場所|ばしょ} に いる はず だ 。 || Put the sightings in order, and the cub should be where it was seen last.
+> {見|み}た {順番|じゅんばん} に {並|なら}べたら 、 {最後|さいご} の {場所|ばしょ} に おる はず や 。 || Put the sightings in order, and the cub should be where it was seen last.
+@ hall/hall.w3.hide_steps [hall.w3.hide_steps]
+= {一番|いちばん} {最後|さいご} に {見|み}た の は 、 {誰|だれ} だった ？ || Who saw it last?
+> {一番|いちばん} {最後|さいご} に {見|み}た ん は 、 {誰|だれ} やった ？ || Who saw it last?
+@ hall/hall.w3.hide_steps [hall.w3.hide_steps]
+= {大丈夫|だいじょうぶ} 。 お{母|かあ}さん の ところ へ {帰|かえ}ろう 。 || It's all right. Let's get you back to your mother.
+> {大丈夫|だいじょうぶ} や 。 お{母|かあ}さん の とこ へ {帰|かえ}ろ な 。 || It's all right. Let's get you back to your mother.
+@ hall/hall.w3.end [hall.w3.end]
+= {第|だい}{三幕|さんまく} 、 {幕|まく} ！ {出|で} の きっかけ を {一度|いちど} も {外|はず}さなかった わ 。 {拍手|はくしゅ} ！ || End of act three! Not one cue missed. Applause!
+> {第|だい}{三幕|さんまく} 、 {幕|まく} や ！ {出|で} の きっかけ 、 {一度|いちど} も {外|はず}さへんかった で 。 {拍手|はくしゅ} ！ || End of act three! Not one cue missed. Applause!
+@ hall/hall.w4.f1_first [hall.w4.f1_first]
+= {第|だい}{四幕|よんまく} は 、 {雨|あめ} の {舞台|ぶたい} ね 。 {今度|こんど} の {主役|しゅやく} は 、 {傘|かさ} そのもの らしい わ よ 。 || Act four: a rainy stage. This time the lead is the umbrella itself, I hear.
+> {第|だい}{四幕|よんまく} は 、 {雨|あめ} の {舞台|ぶたい} や な 。 {今度|こんど} の {主役|しゅやく} は 、 {傘|かさ} そのもの らしい で 。 || Act four: a rainy stage. This time the lead is the umbrella itself, I hear.
+@ hall/hall.w4.f2_first [hall.w4.f2_first]
+= {一年|いちねん} {前|まえ} 、 ゴサク さん は ここ で {足止|あしど}め された ん だ ね 。 || A year ago, this is where Gosaku was stopped.
+> {一年|いちねん} {前|まえ} 、 ゴサク さん は ここ で {足止|あしど}め された ん や な 。 || A year ago, this is where Gosaku was stopped.
+@ hall/hall.w4.f3_first [hall.w4.f3_first]
+= {出|で}た わ ね 、 {主役|しゅやく} が 。 {舞台|ぶたい} {袖|そで} で {拗|す}ねてる みたい だ けど 。 || There's our lead. Sulking in the wings, by the look of it.
+> {出|で}た で 、 {主役|しゅやく} が 。 {舞台|ぶたい} {袖|そで} で {拗|す}ねてる みたい や けど 。 || There's our lead. Sulking in the wings, by the look of it.
+@ hall/hall.w4.t1 [hall.w4.t1]
+= {小道具|こどうぐ} が {勝手|かって} に {帰|かえ}る なんて 、 {一座|いちざ} なら {大騒|おおさわ}ぎ よ 。 || A prop going home by itself? The troupe would be in uproar.
+> {小道具|こどうぐ} が {勝手|かって} に {帰|かえ}る なんて 、 {一座|いちざ} やったら {大騒|おおさわ}ぎ や で 。 || A prop going home by itself? The troupe would be in uproar.
+@ hall/hall.w4.n_oume [hall.w4.n_oume]
+= {何|なに} を {頼|たの}んで いた か 、 もう {一度|いちど} {聞|き}いて みよう 。 || Let's hear again what they were asking for.
+> {何|なに} を {頼|たの}んで いた か 、 もう {一度|いちど} {聞|き}いて みよ か 。 || Let's hear again what they were asking for.
+@ hall/hall.w4.n_oume [hall.w4.n_oume]
+= はっきり {言|い}わない {頼|たの}み も 、 {聞|き}けば {分|わ}かる もの だ ね 。 || Even a request nobody says outright makes sense once you listen.
+> はっきり {言|い}わへん {頼|たの}み も 、 {聞|き}いたら {分|わ}かる もん や な 。 || Even a request nobody says outright makes sense once you listen.
+@ hall/hall.w4.t3 [hall.w4.t3]
+= {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならない から ね 。 || Ask the wrong way and there's no trade at all.
+> {頼|たの}み {方|かた} を {間違|まちが}えたら 、 {商売|しょうばい} に ならへん から な 。 || Ask the wrong way and there's no trade at all.
+@ hall/hall.w4.t4_diary [hall.w4.t4_diary]
+= {行|い}く つもり だった {道|みち} じゃ なくて 、 {本当|ほんとう} に {行|い}った {道|みち} を {辿|たど}ろう 。 || Not the way he meant to go: the way he really went.
+> {行|い}く つもり やった {道|みち} や なくて 、 {本当|ほんとう} に {行|い}った {道|みち} を {辿|たど}ろ か 。 || Not the way he meant to go: the way he really went.
+@ hall/hall.w4.f3_ferry [hall.w4.f3_ferry]
+= {行|い}く つもり の {道|みち} と 、 {本当|ほんとう} に {行|い}った {道|みち} 。 {一年|いちねん} {前|まえ} の ゴサク さん に 、 {追|お}い{付|つ}いた ね 。 || The way he meant and the way he went. We've caught up with Gosaku as he was a year ago.
+> {行|い}く つもり の {道|みち} と 、 {本当|ほんとう} に {行|い}った {道|みち} 。 {一年|いちねん} {前|まえ} の ゴサク さん に 、 {追|お}い{付|つ}いた な 。 || The way he meant and the way he went. We've caught up with Gosaku as he was a year ago.
+@ hall/hall.w4.t6 [hall.w4.t6]
+= {張|は}り{紙|がみ} を {読|よ}む の は 、 {旅回|たびまわ}り の {基本|きほん} よ 。 {任|まか}せて 。 {何|なに} を {見|み}る ？ || Reading posted notices is basic touring. Leave it to me. What am I looking for?
+> {張|は}り{紙|がみ} を {読|よ}む の は 、 {旅回|たびまわ}り の {基本|きほん} や で 。 {任|まか}せとき 。 {何|なに} を {見|み}る ん ？ || Reading posted notices is basic touring. Leave it to me. What am I looking for?
+@ hall/hall.w4.x_bridge [hall.w4.x_bridge]
+= {高札|こうさつ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say the notice's words again?
+> {高札|こうさつ} の {言葉|ことば} 、 もう {一度|いちど} {言|い}お か ？ || Shall I say the notice's words again?
+@ hall/hall.w4.x_bridge [hall.w4.x_bridge]
+= {渡|わた}って も いい {所|ところ} から 、 {渡|わた}る 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった だろう ね 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
+> {渡|わた}って も ええ {所|ところ} から 、 {渡|わた}る ん や 。 {一年|いちねん} {前|まえ} の ゴサク さん も 、 そう したかった やろ な 。 || We cross where crossing is allowed. Gosaku would have wanted to, a year ago.
+@ hall/hall.w4.t8_rules [hall.w4.t8_rules]
+= しなければ ならない こと 、 して も いい こと 、 して は いけない こと 。 {分|わ}けて {覚|おぼ}えよう 。 || What we must do, what we may do, what we mustn't. Let's keep them apart.
+> せな あかん こと 、 して も ええ こと 、 したら あかん こと 。 {分|わ}けて {覚|おぼ}えよ か 。 || What we must do, what we may do, what we mustn't. Let's keep them apart.
+@ hall/hall.w4.r_door [hall.w4.r_door]
+= {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り 。 これ なら 、 {誰|だれ} に も {叱|しか}られない ね 。 || All by the rules. Nobody can scold us now.
+> {全部|ぜんぶ} 、 {決|き}まり の {通|とお}り や 。 これ やったら 、 {誰|だれ} に も {叱|しか}られへん な 。 || All by the rules. Nobody can scold us now.
+@ hall/hall.w4.end [hall.w4.end]
+= {第|だい}{四幕|よんまく} 、 {幕|まく} ！ {主役|しゅやく} の {傘|かさ} に 、 {大|おお}きな {拍手|はくしゅ} を ！ || End of act four! A big hand for our lead, the umbrella!
+> {第|だい}{四幕|よんまく} 、 {幕|まく} や ！ {主役|しゅやく} の {傘|かさ} に 、 {大|おお}きな {拍手|はくしゅ} 、 たのむ で ！ || End of act four! A big hand for our lead, the umbrella!
 `, 'hall');

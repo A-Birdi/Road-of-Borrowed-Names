@@ -29,9 +29,12 @@ async function settle(p) {
 await test('fast travel from the map tab to every known hub', async () => {
   const { p, errors } = await page(b, url);
   const hubs = await p.evaluate(() => {
-    const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'mio', flags: { departed: true } });
-    for (const id in RB.content.places) if (RB.content.places[id].hub) s.travel[id] = true;
-    return Object.keys(RB.content.places).filter((id) => RB.content.places[id].hub);
+    // a twelve-chapter journey, so every hub of both editions is on the chart (a six-chapter one hides the rest)
+    const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'mio', edition: 2, flags: { departed: true } });
+    const ed = RB.edition ? RB.edition.of(s) : 1;
+    const hubs = Object.keys(RB.content.places).filter((id) => RB.content.places[id].hub && (RB.content.places[id].edition || 1) <= ed);
+    for (const id of hubs) s.travel[id] = true;
+    return hubs;
   });
   assert(hubs.length >= 5, 'at least five hubs: ' + hubs.join(','));
   for (const id of hubs) {

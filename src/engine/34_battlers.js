@@ -1091,10 +1091,10 @@ RB.battlers = (function () {
           break;
         }
         case 'atlas_lamplet': lantern(Pl([8.4, 3.6, -1])); break;
-        case 'atlas_compass': { // a brass case on a cord at the left hip, its face turned outward
-          K.S(Pl([-8.4, 3.4, -1.2]), 1.7, Mt.gold, GRP.acc);
-          K.S(Pl([-8.6, 3.4, -2.2]), 1.1, flat('#e8e0c8', { min: 2 }), GRP.acc);
-          K.S(Pl([-8.7, 2.9, -2.9]), 0.4, flat('#a83e27', { min: 2 }), GRP.acc);
+        case 'atlas_compass': { // a brass case on a cord at the left hip, hung toward the back so the figure seen from behind shows it past the arm and the skirt
+          K.S(Pl([-9, 3.4, -3.2]), 2.1, Mt.gold, GRP.acc);
+          K.S(Pl([-9.2, 3.4, -4.4]), 1.4, flat('#e8e0c8', { min: 2 }), GRP.acc);
+          K.S(Pl([-9.3, 2.8, -5.2]), 0.5, flat('#a83e27', { min: 2 }), GRP.acc);
           break;
         }
         case 'atlas_quill': K.C(H([-hr[0] * 0.66, hr[1] * 0.42, -hr[2] * 0.58]), H([-hr[0] * 1.02 + hsw * 0.3, hr[1] * 1.3, -hr[2] * 0.9]), 1.1, 0.5, flat('#f4f0e0', { min: 2 }), GRP.acc); break;

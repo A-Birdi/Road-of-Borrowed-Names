@@ -83,6 +83,30 @@
   "jp": "{百物語|ひゃくものがたり} の {館|やかた}",
   "en": "The Hall of a Hundred Tales: a tale relit."
  },
+ "stamp:hall.w3#hfvatl": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{夜明|よあ}け {前|まえ} の {鐘|かね}",
+  "en": "The Bell Before Dawn"
+ },
+ "stamp:hall.w3#1g7xn2x": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{百物語|ひゃくものがたり} の {館|やかた}",
+  "en": "The Hall of a Hundred Tales: a tale relit."
+ },
+ "stamp:hall.w4#7ei7jq": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{借|か}りた {傘|かさ}",
+  "en": "The Borrowed Umbrella"
+ },
+ "stamp:hall.w4#1g7xn2x": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{百物語|ひゃくものがたり} の {館|やかた}",
+  "en": "The Hall of a Hundred Tales: a tale relit."
+ },
  "stamp:ch.ko#qbndxa": {
   "status": "self-reviewed",
   "ref": "P11 self-review: Kotonoha's side stories (Ao's lessons, Kihei's letter and its three ends, the leaf with your name, the census, the tide calendar), the companions on the island (Nao's letter, Mio's labels, Ren's lanterns in the old kana spelling, Suzu's reply and the sea-cave stage), the rumour on the mainland, the island's stamps. Corrections: 三つも年下, 山盛り as one word, 黒い/白い with their okurigana, the craft leaf's task says first sold (not first made), the census and calendar tasks' numerals spaced from their counters, the cave lantern's ゑ task on こゑ (a clean old spelling)",

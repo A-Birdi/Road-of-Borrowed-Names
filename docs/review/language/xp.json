@@ -1157,6 +1157,114 @@
   "jp": "{鳥居|とりい} の {下|した}",
   "en": "Beneath the Torii"
  },
+ "expedition:hall_w3#18eye73": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{眠|ねむ}る {村|むら}",
+  "en": "The Sleeping Village"
+ },
+ "expedition:hall_w3#56rp4l": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{夜|よる} の {坂道|さかみち}",
+  "en": "The Night Slope"
+ },
+ "expedition:hall_w3#w6ev8w": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{鐘楼|しょうろう}",
+  "en": "The Bell Tower"
+ },
+ "expedition:hall_w3#hfvatl": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{夜明|よあ}け {前|まえ} の {鐘|かね}",
+  "en": "The Bell Before Dawn"
+ },
+ "expedition:hall_w3#1caker9": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{順番|じゅんばん} と {時|とき}",
+  "en": "Sequence and timing: what comes first, before, after, until and by."
+ },
+ "map:hall.w3f1#18eye73": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{眠|ねむ}る {村|むら}",
+  "en": "The Sleeping Village"
+ },
+ "map:hall.w3f2#56rp4l": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{夜|よる} の {坂道|さかみち}",
+  "en": "The Night Slope"
+ },
+ "map:hall.w3f2#5bd8ws": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{霧|きり} の {中|なか} 、 {灯籠|とうろう} の {周|まわ}り を 、 {白|しろ}い {蛾|が} が {回|まわ}って いる 。",
+  "en": "In the mist, white moths circle the stone lantern."
+ },
+ "map:hall.w3f3#w6ev8w": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 3 (The Bell Before Dawn): self-reviewed against the lexicon, grammar notes (～てから, ～前に with the dictionary form and ～後で with the past, まで for what lasts and までに for a deadline, ～うちに, ～ところ, ～次第 never for the past), each note, slate and sighting checked to give one order or one hour per pattern, the counterexample sayings one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: Mio's invented memory replaced by 怖くても、行くのよね; 夜が初めから始まった (→ 夜はまた最初からだ); 夜の鐘の前に (the priest's line, dropped); 井戸の方へ入っていく (→ 歩いていく); 本日の撞く時刻 (→ 本日、鐘を撞く時刻); 出の合図 (→ 出のきっかけ); the F tiles given ある晩 and 灯を持って like the others; the bell's 'ring now' made the decision, the strokes counted after.",
+  "jp": "{鐘楼|しょうろう}",
+  "en": "The Bell Tower"
+ },
+ "expedition:hall_w4#qa0mpp": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "ゴサク の {村|むら}",
+  "en": "Gosaku's Village"
+ },
+ "expedition:hall_w4#111ddai": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{川留|かわど}め の {川|かわ}",
+  "en": "The Closed River"
+ },
+ "expedition:hall_w4#1eupzo0": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{山寺|やまでら}",
+  "en": "The Mountain Temple"
+ },
+ "expedition:hall_w4#7ei7jq": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{借|か}りた {傘|かさ}",
+  "en": "The Borrowed Umbrella"
+ },
+ "expedition:hall_w4#1gukzh3": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{頼|たの}む 、 {許|ゆる}す 、 つもり",
+  "en": "Asking, being allowed, meaning to, and being misunderstood."
+ },
+ "map:hall.w4f1#qa0mpp": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "ゴサク の {村|むら}",
+  "en": "Gosaku's Village"
+ },
+ "map:hall.w4f2#111ddai": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{川留|かわど}め の {川|かわ}",
+  "en": "The Closed River"
+ },
+ "map:hall.w4f2#aoqfxz": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{増|ふ}えた {水|みず} の {中|なか} で 、 {葦|あし} が {生|い}き{物|もの} の よう に {揺|ゆ}れて いる 。",
+  "en": "In the risen water, the reeds sway like living things."
+ },
+ "map:hall.w4f3#1eupzo0": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 4 (The Borrowed Umbrella): self-reviewed against the lexicon, grammar notes (～てください and ～てもらえますか; requests said without naming the thing, each pointing to one item only; ～てもいい, ～てはいけない, ～なければならない, ～なくてもいい; ～つもり after the dictionary form for an intention and after the past for a belief; humble お～する, いただく, 伺う, 拝見する for one's own side), each diary page, notice and set of rules checked to give one way, one crossing and one set of duties per pattern, the counterexample cards one wrong per level and pattern, and docs/dialect/suzu_kansai.md for Suzu's Kansai versions. Corrections before entry: the neighbours' names written in Latin letters inside a Japanese line (→ オウメ, オタケ, キュウベエ, カエデ); a split ～てる (待って る → 待ってる, 立って る, 拗ねて る); 出たわね spaced as words; one explanation of お読みになる simplified; the watchman-style name clash (Riku → Kaede, a name another chapter already uses).",
+  "jp": "{山寺|やまでら}",
+  "en": "The Mountain Temple"
+ },
  "encounter:xp.cellars_sluice#1tepwnb": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",

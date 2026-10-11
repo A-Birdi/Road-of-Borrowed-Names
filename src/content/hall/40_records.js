@@ -16,4 +16,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
   C.hallStamp(1, T('The Lamp at the Crossroads', '{辻|つじ} の {灯籠|とうろう}'), '#2a4a5e');
   C.hallStamp(2, T('The Fox\'s Wedding', '{狐|きつね} の {嫁入|よめい}り'), '#b0402a');
+  C.hallStamp(3, T('The Bell Before Dawn', '{夜明|よあ}け {前|まえ} の {鐘|かね}'), '#3a3a6a');
+  C.hallStamp(4, T('The Borrowed Umbrella', '{借|か}りた {傘|かさ}'), '#4a6a8a');
 })(RB.content);

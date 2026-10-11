@@ -4,8 +4,12 @@
  * at dusk, the shakuhachi asking a phrase and the koto answering it back the same, a little changed (the tale's "say it
  * again"), over a soft taiko step that walks and stops (A minor pentatonic feel, aeolian, 76). Wing 2, The Fox's
  * Wedding: rain falling through sunshine on a meadow, a procession walking by, the shinobue carrying a wedding tune and
- * the koto passing each phrase on to the next player, as a gift is handed down a line (G major pentatonic, 72). Postgame
- * and the twelve-chapter edition only. Notation: see 30_songs.js. */
+ * the koto passing each phrase on to the next player, as a gift is handed down a line (G major pentatonic, 72). Wing 3,
+ * The Bell Before Dawn: the last hour of the night in a mountain village, the shakuhachi in the old in-scale, the koto
+ * counting steps one by one, a low temple bell tolling every few bars, and in the middle a soft drum, the tanuki's (E
+ * phrygian, 66). Wing 4, The Borrowed Umbrella: a peddler's walking tune in the rainy season, the shamisen picking along
+ * the road under the shinobue, rain dripping from the eaves and a hand drum keeping the walk (A dorian, 80).
+ * Postgame and the twelve-chapter edition only. Notation: see 30_songs.js. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -104,6 +108,70 @@ RB.audio = RB.audio || {};
       A: { bars: 8, ch: '1 1 4 5 1 4 5 1', lead: VOW, koto: PASS },
       B: { bars: 8, ch: '4 4 1 1 6 6 5 5', lead: '6 - - - 5 - 3 - | 1 - - - - - . . | 3 - - - 2 - 1 - | 3 - - - - - . . | 3 - - - 2 - 1 - | 6, - - - - - . . | 5, - 6, - 1 - 2 - | 2 - - - - - . .', koto: PASS_B, pad: '0+4' },
       A2: { bars: 8, ch: '1 1 4 5 1 4 5 1', lead: VOW, koto: PASS, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+
+  // ================================================================== WING 3: THE BELL BEFORE DAWN
+  // The last hour of the night. The shakuhachi sings in the in-scale (1, ♭2, 4, 5, ♭6), the koto counts the steps up
+  // the slope in plain eighths, one, two, three, four, and a low bell tolls on the first beat of every fourth bar. In B
+  // the koto takes the tune and a soft drum comes in under it, pon, pon: the tanuki in the cedars. The tune's own climb
+  // gives the hour its weight, never a faster step (C-22).
+  const NIGHT = '1 - - - 2 - 1 - | 5 - - - 4 - - - | 6 - - - 5 - 4 - | 1 - - - - - . . | 4 - - - 2 - 1 - | 2 - - - - - . . | 4 - 5 - 6 - 5 - | 1 - - - - - . .';
+  const STEPS = '.:8 | 1 . 2 . 4 . 5 . | .:8 | 1 . 2 . 4 . 5 . | .:8 | 2 . 4 . 2 . 1 . | .:8 | 1 . 2 . 4 . 5 .';
+  const TOLL = '1 - - - - - - - | .:8 | .:8 | .:8 | 1 - - - - - - - | .:8 | .:8 | .:8';
+  S('hall_w3', {
+    title: 'The Bell Before Dawn',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 3 of the Hall: the last hour of the night in a mountain village (E phrygian, 66). The shakuhachi sings in the old in-scale; between its phrases the koto counts the steps up the slope, one, two, three, four, and a low temple bell tolls on the first beat of every fourth bar. In B the koto takes the tune and a soft drum comes in beneath it, pon, pon, the tanuki in the cedars holding the night back; A2 brings the flute back a little quieter, as the sky begins to grey.',
+    key: 'E', mode: 'phrygian', bpm: 66, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.54, rv: 0.5 },
+      koto: { i: 'koto', o: 4, v: 0.4, rv: 0.45, pan: 0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.24, rv: 0.35 },
+      bell: { i: 'toll', o: 2, v: 0.3, rv: 0.7 },
+      drum: { perc: true, v: 0.24, rv: 0.45 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.14, rv: 0.5 },
+    },
+    echo: { beats: 1, fb: 0.25, mix: 0.22 },
+    all: { bass: '0 - - - 4 - - -' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 . 2 . 4 . 5 . | .:8', bell: '1 - - - - - - - | .:8' },
+      A: { bars: 8, ch: '1 1 6 6 7 7 1 1', lead: NIGHT, koto: STEPS, bell: TOLL },
+      B: { bars: 8, ch: '6 6 7 7 1 1 7 7', bell: TOLL, koto: '6 - - - 5 - - - | 1 - - - - - . . | 2 - 4 - 2 - 1 - | 2 - - - - - . . | 1 - 2 - 4 - 5 - | 5 - - - - - . . | 4 - - - 2 - - - | 1 - - - - - . .', drum: 'l.......|....l...|l.......|l...l...', pad: '0+4' },
+      A2: { bars: 8, ch: '1 1 6 6 7 7 1 1', lead: NIGHT, koto: STEPS, bell: TOLL, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
+
+  // ================================================================== WING 4: THE BORROWED UMBRELLA
+  // A peddler's road in the rainy season. The shinobue walks the tune; the shamisen picks along under it, off the beat,
+  // like a pack bumping on a back; rain drips in single drops and a hand drum keeps the walking pace. B gives the tune
+  // to the koto, for the year of waiting, and brings the flute back for the way home (C-22: the tune, not the tempo).
+  const ROAD = '1 - - - 3 - 5 - | 4 - 3 - 1 - - - | 5 - - - 4 - 1 - | 4 - - - - - . . | 4 - - - 5 - 4 - | 7, - - - - - . . | 1 - 3 - 4 - 5 - | 1 - - - - - . .';
+  const PICK = '. 1 . 5 . 1 . 5 | . 1 . 3 . 1 . 5 | . 4 . 1 . 4 . 1 | . 4 . 1 . 4 . 6 | . 7, . 4 . 7, . 2 | . 7, . 4 . 7, . 2 | . 1 . 5 . 1 . 3 | . 1 . 5 . 1 . 5';
+  S('hall_w4', {
+    title: 'The Borrowed Umbrella',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 4 of the Hall: a peddler\'s road in the rainy season (A dorian, 80). The shinobue walks the tune; under it the shamisen picks off the beat, like a pack bumping on a back; rain drips in single drops from the eaves and a hand drum keeps the walking pace. B hands the tune to the koto, a year of waiting at the temple gate, and A2 brings the flute back for the way home.',
+    key: 'A', mode: 'dorian', bpm: 80, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shinobue', o: 5, v: 0.46, rv: 0.4 },
+      pick: { i: 'shamisen', o: 3, v: 0.34, rv: 0.3, pan: 0.2 },
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.22, rv: 0.35 },
+      drum: { perc: true, v: 0.22, rv: 0.35 },
+      rain: { perc: true, v: 0.15, rv: 0.6 },
+    },
+    echo: { beats: 0.5, fb: 0.2, mix: 0.18 },
+    all: { bass: '0 - - - 4 - - -', drum: 'p...p...|p...p.p.', rain: '...d....|.d.....d|.....d..|..d.....' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', pick: '. 1 . 5 . 1 . 5 | . 1 . 3 . 1 . 5' },
+      A: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: ROAD, pick: PICK },
+      B: { bars: 8, ch: '4 4 1 1 7 7 1 1', koto: '1 - - - 4 - 5 - | 6 - - - - - . . | 5 - - - 3 - 1 - | 3 - - - - - . . | 4 - - - 2 - 7, - | 5, - - - - - . . | 1 - 3 - 5 - 3 - | 1 - - - - - . .' },
+      A2: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: ROAD, pick: PICK, dyn: 0.85 },
     },
     form: ['intro', 'A', 'B', 'A2'],
   });

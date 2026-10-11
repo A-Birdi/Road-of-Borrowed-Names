@@ -1,7 +1,8 @@
 /* The Hall of a Hundred Tales: lexicon (expansion P15; plan 04_DUNGEONS.md D9). Format: w|r|pos|lv|meaning|note
  * (docs/CONTENT.md). The hall, its order of lantern-keepers and its wings are the game's own (marked fictional); the
  * custom of 百物語 is real and its entry says so. Wing 1, The Lamp at the Crossroads: finding the way (directions,
- * signs, ordinals, asking again). */
+ * signs, ordinals, asking again). Wing 2, The Fox's Wedding: who gives what to whom. Wing 3, The Bell Before Dawn:
+ * sequence and timing. Wing 4, The Borrowed Umbrella: requests, permission, intention. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.lex.add(RB.lex.parseTable(`
@@ -86,4 +87,61 @@ RB.lex.add(RB.lex.parseTable(`
 空模様|そらもよう|n|I|the look of the sky, the weather
 花曇り|はなぐもり|n|A|the hazy cloud of cherry-blossom season
 五月雨|さみだれ|n|A|the early-summer rains (the old name)
+# ---- wing 3: sequence and timing ---------------------------------------------------------------------------------------
+第三幕|だいさんまく|n|I|the third act
+吠える|ほえる|v1|E|to bark
+撞く|つく|v5k|I|to strike (a temple bell, with its swinging beam)
+撞き終わる|つきおわる|v5r|I|to finish striking (the bell)
+腹鼓|はらつづみ|n|A|drumming on one's belly (what a tanuki does in the old tales)|Real folklore: the tanuki's belly-drum.
+お囃子|おはやし|n|I|the drums and flutes that accompany a festival or a play
+大詰め|おおづめ|n|A|the final scene; the last stage of something
+香時計|こうどけい|n|A|an incense clock (a line of incense burning along marked hours)|Real: incense clocks were used in Japan to measure time.
+線香|せんこう|n|E|a stick of incense
+山寺|やまでら|n|I|a mountain temple
+寝返り|ねがえり|n|I|turning over in one's sleep
+緊張|きんちょう|n|E|nerves, tension
+万事|ばんじ|n|A|everything, all things
+夜更け|よふけ|n|I|late at night, the depth of the night
+一番鶏|いちばんどり|n|I|the first cock-crow of the morning (the first rooster to crow)
+二番鶏|にばんどり|n|I|the second cock-crow
+前掛け|まえかけ|n|I|an apron; the cloth bib on a Jizō statue
+香盤表|こうばんひょう|n|A|a running order (in the theatre: who is on when)
+先立つ|さきだつ|v5t|A|to go before, to precede (〜に先立って: before)
+夜回り|よまわり|n|I|a night watchman's round; the night watchman
+子狸|こだぬき|n|I|a tanuki cub
+宵|よい|n|A|early evening (宵の口: just after dark)
+潜り込む|もぐりこむ|v5m|I|to crawl into, to slip in under
+コケコッコー||int|F|cock-a-doodle-doo
+明かす|あかす|v5s|A|to pass (the night) until dawn; to reveal
+我|われ|pn|A|I (old and formal, as in riddles)
+数珠|じゅず|n|I|a Buddhist rosary (prayer beads)
+# ---- wing 4: requests, permission, intention ---------------------------------------------------------------------------
+紫陽花|あじさい|n|I|hydrangea
+梅雨|つゆ|n|E|the rainy season (early summer)
+第四幕|だいよんまく|n|I|the fourth act
+山門|さんもん|n|A|a temple's main gate
+拗ねる|すねる|v1|I|to sulk
+近所|きんじょ|n|E|the neighbourhood; neighbours
+行商人|ぎょうしょうにん|n|I|a peddler, a travelling seller
+雫|しずく|n|I|a drop (of water)
+蓑|みの|n|I|a straw raincoat|Real: the old straw rain cape of Japanese farmers and travellers.
+裸足|はだし|n|E|barefoot
+傾げる|かしげる|v1|I|to tilt (one's head)
+びしょびしょ||adv|E|soaking wet
+撮る|とる|v5r|E|to take (a photo)
+本堂|ほんどう|n|I|the main hall of a temple
+履物|はきもの|n|I|footwear
+清める|きよめる|v1|I|to purify, to cleanse
+手水|ちょうず|n|A|water for rinsing the hands (at a temple or shrine)
+手水鉢|ちょうずばち|n|A|a stone water basin for rinsing the hands|Real: found at the entrance of temples and shrines.
+漱ぐ|すすぐ|v5g|A|to rinse (the mouth)
+沓脱石|くつぬぎいし|n|A|the stone before a veranda where shoes are left|Real: a feature of old Japanese houses and temples.
+ぽつ||adv|F|drip (the sound of a single drop)
+川留め|かわどめ|n|A|a river closure: a crossing shut by notice in a flood|Real: a custom of the old highways.
+凌ぐ|しのぐ|v5g|A|to keep off (rain); to endure
+経る|へる|v1|A|to pass (time), to go through
+紫|むらさき|n|E|purple
+裸|はだか|n|I|naked, bare
+沓|くつ|n|A|(an old word) shoes, footwear
+囃す|はやす|v5s|A|to accompany (a dance or a festival) with drums and flutes
 `));
