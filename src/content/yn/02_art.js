@@ -224,9 +224,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     box: [-4, -12, 40, 48],
     ink: true,
     draw(g, M) {
-      ell(g, 16, 26, 14, 5, M.dirt[1]);
+      // (the material kit may have no dirt ramp: the vents' silt as the fallback)
+      const D = M.dirt || ['#4a4038', '#5a4e44', '#3a322c', '#6a5e52'];
+      ell(g, 16, 26, 14, 5, D[1]);
       R(g, 15, -6, 3, 28, BR[1]); ell(g, 16, 20, 7, 5, BR[2]); ell(g, 14, 18, 4, 2, BR[3]);
-      ell(g, 16, 27, 12, 3, M.dirt[2]);
+      ell(g, 16, 27, 12, 3, D[2]);
     },
   });
 })();

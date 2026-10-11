@@ -146,7 +146,8 @@ await test('New Game+ from the end: the slot, the farewell, a new journey with t
     if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
     await p.waitForTimeout(120);
   }
-  assert(said.length >= 3 && said.slice(0, -1).every((l) => l.who === 'mio'), 'the ending journey\'s companion says goodbye: ' + said.map((l) => l.who + ': ' + l.en).join(' / '));
+  // (the companion's lines, then the narration of the road folding back: P14's farewell, F-112)
+  assert(said.filter((l) => l.who === 'mio').length >= 3 && said.every((l) => l.who === 'mio' || l.who === 'narr'), 'the ending journey\'s companion says goodbye: ' + said.map((l) => l.who + ': ' + l.en).join(' / '));
   const n = await p.evaluate(() => ({ ng: RB.game.s.ngplus, comp: RB.game.s.comp, stamp: !!RB.game.s.records.stamps['ch.rw'], seq: !!RB.game.s.seq['ch1.bridge'], slot: RB.save.current().slot, done: !!RB.game.s.flags.postgame }));
   assert(n.ng === 1 && !n.comp && n.stamp && n.seq && n.slot === 2 && !n.done, 'a new journey in slot 2, with the stamps and the volume, not the story: ' + JSON.stringify(n));
   assert(!errors.length, 'no errors: ' + errors.join(' | '));
@@ -187,7 +188,7 @@ await test('New Game+ into another journey\'s slot: asked first; Choose again ch
     if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));
     await p.waitForTimeout(120);
   }
-  assert(said.length >= 3 && said.slice(0, -1).every((l) => l.who === 'mio'), 'the farewell is the ending journey\'s companion\'s (Mio), not the erased one\'s (Ren): ' + said.map((l) => l.who).join(','));
+  assert(said.filter((l) => l.who === 'mio').length >= 3 && said.every((l) => l.who === 'mio' || l.who === 'narr'), 'the farewell is the ending journey\'s companion\'s (Mio), not the erased one\'s (Ren): ' + said.map((l) => l.who).join(','));
   const after = await p.evaluate(async (ids) => {
     const rd = async (n) => { try { return (await RB.save.read(n, 'manual')).state; } catch (e) { return null; } };
     const one = await rd(1), three = await rd(3);
