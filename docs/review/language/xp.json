@@ -1505,6 +1505,66 @@
   "jp": "{朝|あさ} の {座敷|ざしき}",
   "en": "The Morning Room"
  },
+ "expedition:hall_w9#z9go4k": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{雪|ゆき} の {村|むら}",
+  "en": "The Village in the Snow"
+ },
+ "expedition:hall_w9#3bdwt6": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{老夫婦|ろうふうふ} の {家|いえ}",
+  "en": "The Old Couple's House"
+ },
+ "expedition:hall_w9#he0c87": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{機|はた} の {音|おと}",
+  "en": "The Sound of the Loom"
+ },
+ "expedition:hall_w9#3u85wf": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{鶴|つる} の {恩返|おんがえ}し",
+  "en": "The Crane's Return"
+ },
+ "expedition:hall_w9#6yskg0": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "「 だれ に 話す か 」",
+  "en": "To whom are you speaking? Plain and polite speech, what you call people, and the words that raise others and lower yourself."
+ },
+ "map:hall.w9f1#z9go4k": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{雪|ゆき} の {村|むら}",
+  "en": "The Village in the Snow"
+ },
+ "map:hall.w9f2#3bdwt6": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{老夫婦|ろうふうふ} の {家|いえ}",
+  "en": "The Old Couple's House"
+ },
+ "map:hall.w9f2#tmk3kx": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{窓|まど} の {隙間|すきま} から 、 {白|しろ}い {霜|しも} が {入|はい}って きた 。",
+  "en": "White frost creeps in through a gap in the window."
+ },
+ "map:hall.w9f2#1teteci": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{霜|しも} は 、 {囲炉裏|いろり} の {火|ひ} に {溶|と}けて {消|き}えた 。",
+  "en": "The frost melts away in the warmth of the hearth."
+ },
+ "map:hall.w9f3#he0c87": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
+  "jp": "{機|はた} の {音|おと}",
+  "en": "The Sound of the Loom"
+ },
  "encounter:xp.cellars_sluice#1tepwnb": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",

@@ -114,8 +114,8 @@ export const CURATED = {
   簾: 'れん,すだれ', 袈: 'け', 裟: 'さ',
   // Steamhollow (P13): 子守唄 こもりうた and 老舗 しにせ read as whole words
   唄: 'うた', 舗: 'ほ',
-  // the Hall (P15): 田舎 いなか reads as a whole word
-  舎: 'しゃ',
+  // the Hall (P15): 田舎 いなか reads as a whole word; 拙者 せっしゃ and 稲穂 いなほ do not split by the rules
+  舎: 'しゃ', 拙: 'せつ', 穂: 'ほ',
   // 守: the ～守 compounds (灯守, 木守, 関守, 灯台守) each count once and outnumber
   // 守る, though 守る is the word the game uses most (a battle response)
   守: 'まも',

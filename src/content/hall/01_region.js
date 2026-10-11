@@ -109,6 +109,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w8);
 
+  // wing 9: an old farmhouse in deep snow, a hearth's amber on smoked beams, white paper doors, a crane's black and red
+  TL.PAL.hall_w9 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#e4e8ec', '#eef0f2', '#d2d8de', '#f8f8f8'], dirt: ['#7a6656', '#8c7664', '#665446', '#a08a76'],
+    stone: ['#7e8288', '#969aa0', '#62666c'], water: ['#3e5a6a', '#4e6c7c', '#7e9aaa', '#dce8ee'],
+    wood: ['#4a3426', '#5c4230', '#36261c', '#76563e'], leaf: ['#33443c', '#3e5048', '#4a5e54', '#26342e'],
+    flower: ['#c8282a', '#f6f2ea', '#1e1e22', '#d8b070'], roof: ['#5a5246', '#4a443a', '#3a352e', '#6c6456'],
+    sky: '#b4bcc6', dark: '#121214',
+  });
+  TL.addRamps(TL.PAL.hall_w9);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -300,4 +310,27 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_kichibei', { name: { en: 'Kichibei', jp: 'キチベエ' }, voice: { pitch: 0.78 },
     look: { skin: 3, hair: 'short', hairColor: 6, cloth: ['#4a4a5a', '#3c3c4a', '#d8d0c0'], shape: 'robe', acc: ['hat'], hatCol: '#c8b890', age: 'old' },
     portrait: { eyes: 'narrow', style: 'short', age: 'old', acc: ['hat'], hatCol: '#c8b890', bg: '#14141c' } });
+
+  // ---- the tales' people: wing 9, The Crane's Return ---------------------------------------------------------------
+  // Yosaku (he/him), the old man who freed the crane; Otoku (she/her), his wife; the young woman (she/her) who comes to
+  // their door in the snow, and never gives a name; Sabu (they/them), the neighbours' child; Gensuke (he/him), the
+  // cloth merchant in the town below; the lord's messenger (he/him).
+  ch('hall_yosaku', { name: { en: 'Yosaku', jp: 'ヨサク' }, voice: { pitch: 0.74 },
+    look: { skin: 3, hair: 'shaved', hairColor: 6, cloth: ['#5a5048', '#4a4038', '#d8ccb4'], shape: 'tunic', acc: ['hat'], hatCol: '#b8a070', age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: ['hat'], hatCol: '#b8a070', bg: '#1a1612' } });
+  ch('hall_otoku', { name: { en: 'Otoku', jp: 'オトク' }, voice: { pitch: 0.9 },
+    look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#4a3a44', '#3c2e38', '#e4d8c4'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'bun', age: 'old', acc: [], bg: '#1a1218' } });
+  ch('hall_musume', { name: { en: 'The young woman', jp: '{娘|むすめ}' }, voice: { pitch: 1.16 },
+    look: { skin: 1, hair: 'long', hairColor: 0, cloth: ['#f2eee6', '#d8d2c6', '#c8282a'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'narrow', style: 'long', acc: [], bg: '#1e1a1c' } });
+  ch('hall_sabu', { name: { en: 'Sabu', jp: 'サブ' }, voice: { pitch: 1.34 }, size: 'child',
+    look: { skin: 2, hair: 'spiky', hairColor: 1, cloth: ['#4a5a7a', '#3a4a66', '#e8dcc8'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'spiky', acc: [], bg: '#121826' } });
+  ch('hall_gensuke', { name: { en: 'Gensuke', jp: 'ゲンスケ' }, voice: { pitch: 0.96 },
+    look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#3a4a3a', '#2e3c2e', '#e0d8c0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'narrow', style: 'short', acc: [], bg: '#121a12' } });
+  ch('hall_envoy', { name: { en: 'The lord\'s messenger', jp: '{使|つか}い の {者|もの}' }, voice: { pitch: 0.86 },
+    look: { skin: 2, hair: 'short', hairColor: 1, cloth: ['#2a2a3a', '#20202e', '#c8c0b0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'narrow', style: 'short', acc: [], bg: '#101018' } });
 })(RB.content);

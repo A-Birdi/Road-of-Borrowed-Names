@@ -303,4 +303,34 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'C', 'A2'],
   });
+
+  // ================================================================== WING 9: THE CRANE'S RETURN
+  // An old farmhouse in deep snow and a loom that never stops. The koto plays the tune plainly, as family speaks; in
+  // B the shakuhachi plays the same tune in long, formal notes, as a guest speaks; in A2 the two play it together.
+  // Under it all the loom keeps its own time, ton, ton, karari, once every two bars. The farewell is in the voicing,
+  // never in loudness or speed (C-22).
+  const WEAVE = '5 - - - 3 - 1 - | 2 - 4 - 5 - - - | 6 - - - 5 - 4 - | 2 - 1 - 7, - - - | 1 - - - 3 - 5 - | 4 - - - 6 - 5 - | 5 - 4 - 3 - 2 - | 1 - - - - - . .';
+  const FORMAL = '5 - - - - - 3 - | 4 - - - 2 - - - | 1 - - - - - 6, - | 7, - - - - - . . | 3 - - - 5 - - - | 6 - - - 5 - 4 - | 3 - 2 - - - 7, - | 1 - - - - - - -';
+  S('hall_w9', {
+    title: 'The Crane\'s Return',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 9 of the Hall: an old farmhouse in deep snow, where a stranger weaves at night (D aeolian, 60). The koto plays the tune plainly, the way family talks; in B the shakuhachi plays it again in long, formal notes, the way a guest talks; in A2 they play it together. The loom keeps its own time underneath, ton, ton, karari, once every two bars.',
+    key: 'D', mode: 'aeolian', bpm: 60, loopFrom: 1,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
+      flute: { i: 'shakuhachi', o: 4, v: 0.38, rv: 0.55, pan: 0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.18, rv: 0.35 },
+      loom: { perc: true, v: 0.16, rv: 0.45 },
+    },
+    echo: { beats: 1, fb: 0.22, mix: 0.2 },
+    all: { bass: '0 - - - 4 - - -', loom: 'w.w.c...|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 4 6 7 1 4 7 1', koto: WEAVE },
+      B: { bars: 8, ch: '1 4 6 7 1 4 7 1', flute: FORMAL },
+      A2: { bars: 8, ch: '1 4 6 7 1 4 7 1', koto: WEAVE, flute: FORMAL, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
 })(RB.audio);

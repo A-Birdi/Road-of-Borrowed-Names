@@ -350,4 +350,46 @@ RB.dialect.add('kansai', `
 @ hall/hall.w8.end [hall.w8.end]
 = {第|だい}{八幕|はちまく} 、 {幕|まく} ！ {犯人|はんにん} の いない {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない わ 。 || End of act eight! A whodunit with no culprit. Not bad at all.
 > {第|だい}{八幕|はちまく} 、 {幕|まく} や ！ {犯人|はんにん} の おらへん {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない で 。 || End of act eight! A whodunit with no culprit. Not bad at all.
+@ hall/hall.w9.f1_first [hall.w9.f1_first]
+= {第|だい}{九幕|きゅうまく} は 、 {鶴|つる} の {恩返|おんがえ}し 。 これ は {泣|な}ける {話|はなし} よ 。 || Act nine: The Crane's Return. This one's a weepie.
+> {第|だい}{九幕|きゅうまく} は 、 {鶴|つる} の {恩返|おんがえ}し 。 これ は {泣|な}ける {話|はなし} や で 。 || Act nine: The Crane's Return. This one's a weepie.
+@ hall/hall.w9.f2_first [hall.w9.f2_first]
+= {囲炉裏|いろり} の {席|せき} に も 、 {決|き}まり が ある みたい だ ね 。 || Even the seats round the hearth seem to have rules.
+> {囲炉裏|いろり} の {席|せき} に も 、 {決|き}まり が ある みたい や な 。 || Even the seats round the hearth seem to have rules.
+@ hall/hall.w9.f3_first [hall.w9.f3_first]
+= いよいよ {大詰|おおづ}め ね 。 {覗|のぞ}く か 、 {覗|のぞ}かない か 。 || The final act at last. To look, or not to look.
+> いよいよ {大詰|おおづ}め や な 。 {覗|のぞ}く か 、 {覗|のぞ}かへん か 。 || The final act at last. To look, or not to look.
+@ hall/hall.w9.t1 [hall.w9.t1]
+= {約束|やくそく} を {破|やぶ}る {場面|ばめん} 、 {毎回|まいかい} 「 やめて 」 って {言|い}いたく なる の よ ね 。 || Every time we reach the part where they break the promise, I want to shout "don't".
+> {約束|やくそく} を {破|やぶ}る {場面|ばめん} 、 {毎回|まいかい} 「 やめて 」 って {言|い}いたく なる わ 。 || Every time we reach the part where they break the promise, I want to shout "don't".
+@ hall/hall.w9.to_otoku [hall.w9.to_otoku]
+= {奥|おく}さん に は {普通|ふつう} に 、 {子供|こども} に は {優|やさ}しく 、 {店|みせ} の {人|ひと} に は {丁寧|ていねい} に 、 {殿|との}さま の {使|つか}い に は うんと {丁寧|ていねい} に 。 {同|おな}じ {人|ひと} が 、 {四|よっ}つ の {話|はな}し{方|かた} を して いた ね 。 || Plain with his wife, gentle with a child, polite with the shopkeeper, very polite with the lord's man. One man, four ways of talking.
+> {奥|おく}さん に は {普通|ふつう} に 、 {子供|こども} に は {優|やさ}しく 、 {店|みせ} の {人|ひと} に は {丁寧|ていねい} に 、 {殿|との}さま の {使|つか}い に は うんと {丁寧|ていねい} に 。 {同|おな}じ {人|ひと} や のに 、 {話|はな}し{方|かた} が {四|よっ}つ も あった な 。 || Plain with his wife, gentle with a child, polite with the shopkeeper, very polite with the lord's man. One man, four ways of talking.
+@ hall/hall.w9.t3 [hall.w9.t3]
+= {言葉|ことば} は {合|あ}って いて も 、 {相手|あいて} を {間違|まちが}える と {失礼|しつれい} に なる ん だ ね 。 || The words can be right and still be rude, if they're aimed at the wrong person.
+> {言葉|ことば} は {合|あ}って いて も 、 {相手|あいて} を {間違|まちが}えたら {失礼|しつれい} に なる ん や な 。 || The words can be right and still be rude, if they're aimed at the wrong person.
+@ hall/hall.w9.t4_board [hall.w9.t4_board]
+= {名札|なふだ} を 、 {今夜|こんや} の {席|せき} に {置|お}いて いこう 。 || Let's set each name tag on tonight's seat.
+> {名札|なふだ} を 、 {今夜|こんや} の {席|せき} に {置|お}いて みよ か 。 || Let's set each name tag on tonight's seat.
+@ hall/hall.w9.seat_yokoza [hall.w9.seat_yokoza]
+= お{客|きゃく}さん は {客座|きゃくざ} 。 …… {今夜|こんや} の あの {人|ひと} は 、 まだ お{客|きゃく}さん なん だ ね 。 || The guest takes the guest's seat. …Tonight she is still a guest.
+> お{客|きゃく}さん は {客座|きゃくざ} 。 …… {今夜|こんや} の あの {人|ひと} は 、 まだ お{客|きゃく}さん なん や な 。 || The guest takes the guest's seat. …Tonight she is still a guest.
+@ hall/hall.w9.seat_yokoza [hall.w9.seat_yokoza]
+= {木尻|きじり} に {座|すわ}る の は 、 {家族|かぞく} に なった しるし だ ね 。 || Sitting by the firewood is a sign she has become family.
+> {木尻|きじり} に {座|すわ}る の は 、 {家族|かぞく} に なった しるし や な 。 || Sitting by the firewood is a sign she has become family.
+@ hall/hall.w9.t6 [hall.w9.t6]
+= {頼|たの}み なら 、 {私|わたし} が {聞|き}いて おいた わ 。 {何|なに} が {知|し}りたい ？ || I heard her request. What do you want to know?
+> {頼|たの}み なら 、 うち が {聞|き}いた で 。 {何|なに} が {知|し}りたい ん ？ || I heard her request. What do you want to know?
+@ hall/hall.w9.d_meal [hall.w9.d_meal]
+= {頼|たの}み の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what she asked again?
+> {頼|たの}み の {言葉|ことば} 、 もう {一回|いっかい} {言|い}う ？ {任|まか}せとき 。 || Shall I say what she asked again?
+@ hall/hall.w9.d_meal [hall.w9.d_meal]
+= {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する {方法|ほうほう} だ ね 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
+> {頼|たの}まれた こと を して 、 {頼|たの}まれて いない こと は しない 。 それ も 、 {相手|あいて} を {大事|だいじ} に する やり{方|かた} や な 。 || Doing what you're asked, and nothing you're not: that's a way of caring for someone, too.
+@ hall/hall.w9.post_hearth [hall.w9.post_hearth]
+= {同|おな}じ {注文|ちゅうもん} が 、 {門|もん} で は {仰|おお}せ 、 {店|みせ} で は ご{注文|ちゅうもん} 、 {家|いえ} で は 「 {欲|ほ}しい そう だ 」 に なった 。 {言葉|ことば} は 、 {相手|あいて} に {合|あ}わせて {着替|きが}える ん だ ね 。 || The same order was a decree at the gate, a commission at the shop and "he wants" at home. Words change their clothes to suit the listener.
+> {同|おな}じ {注文|ちゅうもん} が 、 {門|もん} で は {仰|おお}せ 、 {店|みせ} で は ご{注文|ちゅうもん} 、 {家|いえ} で は 「 {欲|ほ}しい そう だ 」 に なった 。 {言葉|ことば} は 、 {相手|あいて} に {合|あ}わせて {着替|きが}える ん や な 。 || The same order was a decree at the gate, a commission at the shop and "he wants" at home. Words change their clothes to suit the listener.
+@ hall/hall.w9.end [hall.w9.end]
+= {第|だい}{九幕|きゅうまく} 、 {幕|まく} 。 …… {泣|な}かせる {芝居|しばい} だった わ 。 || End of act nine. …That one got me.
+> {第|だい}{九幕|きゅうまく} 、 {幕|まく} 。 …… {泣|な}かせる {芝居|しばい} やった わ 。 || End of act nine. …That one got me.
 `, 'hall');

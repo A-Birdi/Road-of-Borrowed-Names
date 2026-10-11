@@ -231,4 +231,69 @@ RB.lex.add(RB.lex.parseTable(`
 掻く|かく|v5k|I|to scratch; to rake (ash, snow)
 睨み合う|にらみあう|v5u|I|to glare at each other
 被る|かぶる|v5r|E|to put on (a hat); to be covered with (snow)
+# ---- wing 9: to whom are you speaking ----------------------------------------------------------------------------------
+鶴|つる|n|E|a crane (the bird)
+恩返し|おんがえし|n|I|repaying a kindness; 鶴の恩返し, "the crane returns a kindness", a folktale told all over Japan
+罠|わな|n|I|a trap, a snare
+機|はた|n|I|a loom
+機織り|はたおり|n|I|weaving (at a loom)
+織る|おる|v5r|I|to weave
+反物|たんもの|n|I|a bolt of cloth (for a kimono)
+一反|いったん|n|I|one bolt (of cloth)
+二反|にたん|n|I|two bolts (of cloth)
+覗く|のぞく|v5k|I|to peep, to look in (through a gap)
+殿|との|n|I|a lord (殿さま: his lordship)
+使い|つかい|n|I|a messenger; an errand
+庄屋|しょうや|n|A|the village head (in old Japan)
+横座|よこざ|n|A|the master's seat at a farmhouse hearth, facing the earthen floor (a real custom; names vary by region)
+客座|きゃくざ|n|A|the guest's seat at a farmhouse hearth
+かか座|かかざ|n|A|the wife's seat at a farmhouse hearth, on the kitchen side
+木尻|きじり|n|A|the seat at a farmhouse hearth by the firewood, for the youngest or whoever tends the fire
+座布団|ざぶとん|n|E|a floor cushion
+土間|どま|n|I|the earthen-floored entrance of an old house
+新月|しんげつ|n|I|the new moon
+納める|おさめる|v1|I|to deliver (to a lord); to pay (a tax)
+仰せ|おおせ|n|A|(respectful) a command; what a superior says
+拙者|せっしゃ|pn|A|(old, of a samurai) I, myself (humble)
+申し伝える|もうしつたえる|v1|A|(humble) to pass a message on
+達者|たっしゃ|adj-na|I|in good health; 達者でね: take care of yourself
+他人行儀|たにんぎょうぎ|adj-na|A|formal and distant, as if with a stranger
+遠方|えんぽう|n|A|a distant place
+怒鳴る|どなる|v5r|I|to shout, to bellow
+絵馬|えま|n|I|a wooden prayer board hung at a shrine
+親方|おやかた|n|I|a master (of a trade); a boss
+師匠|ししょう|n|I|a teacher, a master (of an art)
+芋|いも|n|E|a potato, a sweet potato
+焼き芋|やきいも|n|E|a roast sweet potato
+おっかあ||n|I|(old, rustic) mum, mother
+繁盛|はんじょう|vs|A|thriving, doing good business
+取引|とりひき|n|I|business, dealings
+笠|かさ|n|I|a broad straw hat
+稲穂|いなほ|n|I|an ear of rice
+柳|やなぎ|n|I|a willow
+敬語|けいご|n|I|polite and honorific language
+謙譲語|けんじょうご|n|A|humble language (words that lower yourself)
+夜通し|よどおし|adv|A|all night long
+絶やす|たやす|v5s|A|to let (a fire) go out; to let die out
+見知らぬ|みしらぬ|pn|A|unfamiliar, strange (person)
+一夜|いちや|n|A|one night
+麓|ふもと|n|I|the foot (of a mountain or hill)
+評判|ひょうばん|n|I|reputation; the talk of (the town)
+都|みやこ|n|I|the capital
+第九幕|だいきゅうまく|n|I|the ninth act
+老夫婦|ろうふうふ|n|A|an elderly married couple
+商い|あきない|n|I|trade, business
+お宅|おたく|n|I|(polite) someone's home
+ミイ||name|E|Mii (a little girl's name)
+山田|やまだ|n|E|Yamada (a common family name)
+一家|いっか|n|I|a household, a family
+カラリ||adv|I|(sound) a light clack; トントンカラリ: the sound of a loom
+くべる||v1|I|to put (wood) on a fire
+一箇所|いっかしょ|n|I|one place, one spot
+命じる|めいじる|v1|I|to order, to command
+突く|つく|v5k|I|to thrust; 手を突く: to put your hands to the floor (to bow)
+私ども|わたしども|pn|A|(humble) we, my household
+欲|よく|n|I|greed, desire; 欲を出す: to get greedy
+薄明かり|うすあかり|n|I|dim light; the first light of dawn
+朝焼け|あさやけ|n|I|the red glow of sunrise
 `));
