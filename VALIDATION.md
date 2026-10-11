@@ -4405,7 +4405,14 @@ maps: 54 masks and 42 room lights kept, 151 MB of canvas, and 18 old map layers 
 with the map's art (the same probe: 1 mask, 2 room lights, 3 MB), and `world_light.mjs` checks it after all 226 maps.
 Also found in that review: the kit's knee-high shrubs, now on every green region, could hide a small creature (or a
 person's feet) standing just behind one; a shrub now thins while anyone, creatures included, stands within a tile and a
-half behind it (the tall pieces' reveal rule), tested.
+half behind it (the tall pieces' reveal rule), tested. Found by the complete run's part 1 on 38928f5: `world_view.mjs`
+failed on the phone ("camera unchanged when the dialogue opens", 118.5,25 → 118.5,55, and after it closes): entering
+a map the light handed the renderer its view, which on a phone is the game's own, and the renderer resized anyway, so
+the camera was still easing when the dialogue opened. A view now resizes only when it changes the view (device pixels
+per art pixel, or the window), so at 1440×900 and on phones nothing resizes, as before the light: `world_view.mjs`
+passes; `world.mjs` 13/0 (its clocks now pause 2 s ahead instead of 50 ms, which a machine busy with the chained run
+overshot: "Cannot fast-forward to the past" in two of its tests, a harness margin, not the game), `world_light.mjs`
+4/0. Part 1 was stopped there and is run again on the fixed build.
 - Browser `world.mjs` (rewritten for the shipped light: the flag no longer needed, Off pixel-identical to every layer
   off, the camera at 1920×1080 and a phone, a battle and back without a rebuild, at night the lamps cast): **13/0** in
   three runs on the scratch build; one earlier run, made while the unit suite loaded the machine, had one failure whose

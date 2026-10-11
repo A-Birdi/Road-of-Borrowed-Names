@@ -56,7 +56,7 @@ await test('the light is the game\'s own look (C-86): the village and a room lit
   // two must be the same pixels (Off is the flat picture), and the first must differ
   await settled(p);
   await p.clock.install();
-  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 2000)); // (a margin: a loaded machine can take longer than a moment to get there)
   const lit = await frameHash(p);
   await p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); });
   assert(await p.evaluate(() => RB.worldLook.active(RB.world.W.map) === false), 'Off should switch the light off');
@@ -172,7 +172,7 @@ await test('W01 layers: each switches on its own; the shadow mask is built once;
   await square(p);
   await settled(p);
   await p.clock.install();
-  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 2000)); // (a margin: a loaded machine can take longer than a moment to get there)
   const set = (o) => p.evaluate((o) => RB.worldLook.set(Object.assign({ on: true, view: 'far', kit: false, light: false, atmos: false, soft: false }, o)), o);
   await set({});
   const bare = await frameHash(p);
@@ -296,7 +296,7 @@ await test('W02 kit: collisions unchanged; low growth only in safe places; the d
   // (b may be true if someone else stands behind that clump; only a is required)
   // kit on and off are different pictures
   await p.clock.install();
-  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 2000)); // (a margin: a loaded machine can take longer than a moment to get there)
   await p.evaluate(() => RB.worldLook.set({ kit: true }));
   const on = await frameHash(p);
   await p.evaluate(() => RB.worldLook.set({ kit: false }));
@@ -311,7 +311,7 @@ await test('W03 actions: Yasu fishes and Tomo folds, in place; outcomes from has
   await square(p);
   await settled(p);
   await p.clock.install();
-  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 2000)); // (a margin: a loaded machine can take longer than a moment to get there)
   // a full round of each, sampled every 100 ms: poses vary, the right ones appear, nobody moves or turns
   const r = await p.evaluate(() => {
     const W = RB.world.W, out = {};
@@ -397,7 +397,7 @@ await test('W05 Saltglass: Light and shadow Off is the harbour\'s flat picture; 
   await harbour(p);
   await settled(p);
   await p.clock.install();
-  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 2000)); // (a margin: a loaded machine can take longer than a moment to get there)
   await p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); });
   const flat = await frameHash(p);
   await p.evaluate(() => { RB.game.settings.worldLight = true; RB.game.applySettings(); RB.worldLook.set({ on: false }); });
@@ -437,7 +437,7 @@ await test('W05 Kiyo sells fish at her stall: every step\'s pose, nobody moves, 
   await harbour(p);
   await settled(p);
   await p.clock.install();
-  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 50));
+  await p.clock.pauseAt(await p.evaluate(() => Date.now() + 2000)); // (a margin: a loaded machine can take longer than a moment to get there)
   const r = await p.evaluate(() => {
     const W = RB.world.W, a = W.npcs.find((n) => n.id === 'kiyo');
     const before = JSON.stringify([a.x, a.y, a.fx, a.fy, a.dir]);

@@ -34,27 +34,37 @@ RB.render = (function () {
   // desktops (8–12 tall). A tile is 32 art pixels, each artPx device pixels.
   // The light (src/engine/65_worldlook.js) may ask for a wider view outdoors through setView: a function of the
   // window's CSS size giving {w, h} tiles. Without it the view is exactly as above.
-  // A change of view only resizes: the static layer is in art pixels whatever the view, and drawWorld rebuilds it
-  // only if the new view needs a wider margin, so leaving a battle (the game's own framing) for a wider outdoor view
-  // does not rebuild the map's art, its shadows or its dressing.
+  // A change of view resizes only when it changes the view (at 1440×900 and on phones the light's view is the
+  // game's own, and the camera must not ease after a resize it did not need), and never rebuilds the static layer:
+  // that is in art pixels whatever the view, and drawWorld rebuilds it only if a new view needs a wider margin, so
+  // leaving a battle (the game's own framing) for a wider outdoor view keeps the map's art, shadows and dressing.
   let viewTarget = null;
   function setView(fn) {
     fn = typeof fn === 'function' ? fn : null;
     if (fn === viewTarget) return;
     viewTarget = fn;
-    if (canvas) { resize(); particles = []; }
+    if (!canvas) return;
+    const v = measure(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1);
+    if (v.artPx === artPx && v.cssW === cssW && v.cssH === cssH && (window.devicePixelRatio || 1) === dpr) return;
+    resize();
+    particles = [];
+  }
+  // device pixels per art pixel for a window, from the view asked for (or the game's own)
+  function measure(w, h, d) {
+    const vt = viewTarget && viewTarget(w, h);
+    const targetW = vt ? vt.w : w < 700 ? 12 : w < 1100 ? 17 : 21;
+    const targetH = vt ? vt.h : h < 520 ? 8 : 12;
+    const tileDev = Math.min(w / targetW, h / targetH) * d;
+    let a = Math.max(1, Math.round(tileDev / ATS));
+    // never show much less than the intended view: step down if rounding up cost > 20 %
+    if (a > 1 && (w * d) / (a * ATS) < targetW * 0.8) a--;
+    return { artPx: a, cssW: w, cssH: h };
   }
   function resize() {
     cssW = window.innerWidth;
     cssH = window.innerHeight;
     dpr = window.devicePixelRatio || 1;
-    const vt = viewTarget && viewTarget(cssW, cssH);
-    const targetW = vt ? vt.w : cssW < 700 ? 12 : cssW < 1100 ? 17 : 21;
-    const targetH = vt ? vt.h : cssH < 520 ? 8 : 12;
-    const tileDev = Math.min(cssW / targetW, cssH / targetH) * dpr;
-    artPx = Math.max(1, Math.round(tileDev / ATS));
-    // never show much less than the intended view: step down if rounding up cost > 20 %
-    if (artPx > 1 && (cssW * dpr) / (artPx * ATS) < targetW * 0.8) artPx--;
+    artPx = measure(cssW, cssH, dpr).artPx;
     canvas.width = Math.round(cssW * dpr);
     canvas.height = Math.round(cssH * dpr);
     bw = Math.ceil(canvas.width / artPx);
