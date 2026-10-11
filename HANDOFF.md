@@ -232,7 +232,12 @@
     (Kotonoha and the sea: Lanternfall as Chapter 8, Kotonoha as Chapter 9, the licence, sailing and two ports) is
     done (phase end in VALIDATION.md "The expansion, P11's phase end"; route F/Ren to `ko_done`, unit 40,163/0);
     P12 (the Cloudroad, Chapter 10) is done (phase end in VALIDATION.md "The expansion, P12"; route F/Ren to `cr_done`,
-    unit 43,709/0); P13 (Steamhollow, Chapter 11) is under way (docs/future/work/P13_STEAMHOLLOW.md). Routes for the new chapters from fixtures:
+    unit 43,709/0); P13 (Steamhollow, Chapter 11) is done (phase end in VALIDATION.md "The expansion, P13"; route F/Ren to
+    `yn_done`, unit 46,074/0 on a clean copy); P14 (the twelve chapters joined, four epilogues, the farewell) is done but
+    for one test, the chapters' routes chained from a new journey (VALIDATION.md "The expansion, P14"; route F/Ren from
+    Chapter 11's fixture to `ch6_done`); **P15 (the Hall of a Hundred Tales) is under way: the engine, the way in and
+    wings 1–7 are built, tested and reviewed** (docs/future/work/P15_POSTGAME.md; decisions F-118 to F-130; VALIDATION.md
+    "The expansion, P15"); next: wings 8–10, the Hall's browser test, then P15e–g. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.

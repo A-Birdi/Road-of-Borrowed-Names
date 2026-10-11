@@ -4188,3 +4188,67 @@ ledger's reference (Ujie is he/him; the chapter's end; contractions joined). Sel
 
 **Not verified.** A person playing Chapter 10 (the relay's sheets, the plans, the solo stretch by feel); Firefox and
 Safari; real phones and tablets; the music by ear.
+
+## The expansion, P13 (Steamhollow, Chapter 11) — phase end
+
+**Unit, clean copy of 4ebac95 (git archive).** The whole suite **46,074 passed, 0 failed** (`yn_ch11` the chapter's own
+test; `chapter_reach` walking the Steam Vents). Two runs on the working tree before it found and fixed 50, then 4,
+failures (the chapter's lexicon and kanji data, the ledger, two unreachable props).
+
+**Browser, same clean copy.** `steamhollow` 5/0 (the front desk, the baths by pronouns with they/them asked once and
+kept, the Steam Vents one valve at a time, the mediation and its phone width), `cloudroad` 4/0, `audio_zones` 91/0,
+`book` 15/0, `kotonoha` 7/0, `keepers` 4/0, `encounters` 10/0, `travel_rules` 10/0, `battle_backdrops` 38/0,
+`kanji_chart` 8/0. `records` was 5/2 there (the test read the farewell's narration from the wrong place); fixed in
+9d085b6 and **7/0** on 81d41f7 (below).
+
+**The route.** `PURSUE_FROM=tests/fixtures/campaign/F-ren-cr_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren
+'yn_called@cr.|lf.|lf2.|sg.@yn_main>yn_vents_open@cr.|yn.@yn_main>…>yn_done@cr.|yn.@yn_main'` (the last run also named
+`yn_kettle_settled` between the two, in the same form) on 3339174 (after the driver learned to turn a switch
+back when that opens the way to work): reached `yn_called`, `yn_vents_open` (73 site visits, 148 s),
+`yn_kettle_settled` (56, 97 s) and **`yn_done`** (11, 14 s); 265 interactions met, all in the story (42 in Chapter 11);
+six walk-ins, all meant (Ren into the two baths, the epilogue gatherings). `F-ren-yn_done.json` is the campaign at the
+chapter's end, for Chapter 12's route. Earlier attempts stuck twice; both were the driver (it would not turn a valve
+back), not the chapter.
+
+**Language.** Every new line of Chapter 11 self-reviewed in `docs/review/language/yn.json` (corrections in its
+reference). Self-review, not native review.
+
+**Not verified.** A person playing Chapter 11; Firefox and Safari; real phones; the music by ear.
+
+## The expansion, P14 (twelve chapters joined, four epilogues) — phase end
+
+**Unit.** `sa2_ch12` (the drained approach and its states, the epilogues per companion, romance answered both ways, the
+New Game+ farewell per companion and solo, the edition boundary) is part of every full run since; the whole suite on
+the working tree at 5802f5a was 46,393/1 (the records test, fixed in 9d085b6).
+
+**Browser, on 81d41f7 (today's build, which carries P14 unchanged).** `archive12` **4/0** (the drained approach far greyer
+before the Hush is settled, six-chapter journeys unchanged; the hushed voice; the arc's ending then the romance moment
+as chosen; the New Game+ farewell), `records` **7/0**, `steamhollow` **5/0**.
+
+**The route through Chapter 12.** From `F-ren-yn_done.json`, on the pre-Hall build (3339174 plus the P14 commits up to
+9d085b6, run 04:39): reached **`ch6_done` in 635 site visits (about 40 minutes)**, 281 interactions met, all in the story
+(16 in Chapter 12). It reported two speakers with no figure on the map (Tōya and Kasane at the memories shelf): that
+scene is marked `!speakerless` on purpose (voices heard from a memory, nobody seen); the route driver does not read the
+mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings in four towns).
+
+**Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
+before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
+
+## The expansion, P15 (the Hall of a Hundred Tales) — work in progress, wings 1–7
+
+**Clean copy of fa4aa6f (wings 1–6).** `tools/validate.mjs` no errors; the whole unit suite **48,606 passed, 1 failed**:
+the grammar check found kanji outside furigana in the titles and notes of the three grammar points wing 6 added. Fixed
+in 81d41f7 (with wing 7's three points written the same way); `lang_grammar` 6/0.
+
+**On 81d41f7 (wings 1–7), the suites a wing touches, run on the working tree:** every Hall test **756/0** (`hall_w1` …
+`hall_w7`: each wing's ten trials end to end in both patterns, right and wrong, the Grow route, each companion and
+alone, and every floor walked from its entry with the rope up and down), `audio` 4,137/0 (every wing's song through
+the lint), `dialect` 8,872/0, `kanji` 641/0, validator no errors, the language ledger with no line unreviewed.
+
+**Browser.** A full run (`node tests/e2e/run.mjs`) on the wing 3–5 builds stopped at its 90-minute limit inside
+`audio.check`, with 44 suites passed and 3 failed: `fieldweave` (passes alone, as before), and two tests behind P04's
+encounter screens, fixed in fa4aa6f (F-129: the badge label now carries the acting order; the six-card response list
+scrolls) and passing alone. A complete browser run, and a browser test of the Hall itself, are still to do.
+
+**Language.** Wings 1–7 self-reviewed in `docs/review/language/hall.json`, corrections in each wing's reference.
+Self-review, not native review.

@@ -655,6 +655,14 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP70 Every new Japanese line of Chapter 10 self-reviewed in the ledger (1,382; corrections in the ledger's reference); never claimed as native-reviewed. U review_ledger.
 - [v] XP71 P12's phase end on a clean copy. U 43,709/0 (aa5fa0e, after fixing 31 failures on the working tree), 43,761/0 on 7917e94; B 12 suites pass; route F/Ren from the Kotonoha fixture to `cr_done` after two map fixes the route found (the High Pass's goat path, the Barrier's fence; U chapter_reach 4/0) (VALIDATION.md "The expansion, P12").
 - [ ] XP72 A person playing Chapter 10. H.
+- [v] XP73 Steamhollow, Chapter 11, in twelve-chapter journeys: the descent and the valley, the arrangements (rooms, house rules, the baths by pronouns with they/them asked once and kept, steam cooking), the salesman and the complaint, the Steam Vents, the Kettle Below, the mediation and 全体; its creatures, side stories, companions, records and music. U `yn_ch11`, `chapter_reach`; B `steamhollow` 5/0 (VALIDATION.md "The expansion, P13").
+- [v] XP74 Every new Japanese line of Chapter 11 self-reviewed in the ledger (`docs/review/language/yn.json`); never claimed as native-reviewed. U review_ledger.
+- [v] XP75 P13's phase end on a clean copy: U 46,074/0 (4ebac95); B ten suites pass there, `records` 7/0 after its fix (9d085b6, run on 81d41f7); route F/Ren from the Cloudroad fixture to `yn_done` (3339174), fixture `F-ren-yn_done.json` saved.
+- [ ] XP76 A person playing Chapter 11. H.
+- [v] XP77 The twelve chapters joined (P14): Chapter 12's drained approach in twelve-chapter journeys (six-chapter journeys unchanged), four arc endings, the epilogue per companion, romance answered both ways, the New Game+ farewell per companion and solo. U `sa2_ch12`; B `archive12` 4/0 and `records` 7/0 on 81d41f7.
+- [v] XP78 The route F/Ren from Chapter 11's fixture through Chapter 12 to `ch6_done` (635 site visits, 281 interactions, all in the story); its two "bodiless" speakers are a scene marked speakerless on purpose (VALIDATION.md "The expansion, P14").
+- [ ] XP79 The chapters' routes chained from a new journey in one run (each has run from its own fixture; the chain has not). R.
+- [ ] XP80 A person playing Chapter 12 and the endings. H.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
