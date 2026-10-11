@@ -1445,6 +1445,66 @@
   "jp": "{川辺|かわべ} の {座敷|ざしき}",
   "en": "The Parlour by the Stream"
  },
+ "expedition:hall_w8#1mhog7s": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{夜|よる} の {宿|やど}",
+  "en": "The Inn at Nightfall"
+ },
+ "expedition:hall_w8#19kxvm3": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{雪|ゆき} の {庭|にわ}",
+  "en": "The Snowy Yard"
+ },
+ "expedition:hall_w8#olddcx": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{朝|あさ} の {座敷|ざしき}",
+  "en": "The Morning Room"
+ },
+ "expedition:hall_w8#1o9tkoq": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{宿|やど} の {三人|さんにん} の {証人|しょうにん}",
+  "en": "Three Witnesses at the Inn"
+ },
+ "expedition:hall_w8#12ru6vm": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "「 そうだ 」 と 「 らしい 」",
+  "en": "Whose account? What was seen, what was heard, what someone was told, and what was only guessed."
+ },
+ "map:hall.w8f1#1mhog7s": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{夜|よる} の {宿|やど}",
+  "en": "The Inn at Nightfall"
+ },
+ "map:hall.w8f2#19kxvm3": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{雪|ゆき} の {庭|にわ}",
+  "en": "The Snowy Yard"
+ },
+ "map:hall.w8f2#rjqfv9": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{雪|ゆき} の {中|なか} から 、 {白|しろ}い {狐|きつね} が {顔|かお} を {出|だ}した 。",
+  "en": "A white fox looks out of the snow."
+ },
+ "map:hall.w8f2#kkeb8x": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{狐|きつね} は 、 {足跡|あしあと} も {残|のこ}さず に {雪|ゆき} の {中|なか} へ {消|き}えた 。",
+  "en": "The fox vanishes into the snow without leaving a single print."
+ },
+ "map:hall.w8f3#olddcx": {
+  "status": "self-reviewed",
+  "ref": "P15 Hall of a Hundred Tales, wing 8 (Three Witnesses at the Inn): self-reviewed source attribution (見た／聞いた／らしい／そうだ／ようだ／に違いない／とのこと), witness choices reworded to この証言は、あり得る／無理がある, comp line 場所を見ると違う, the t5 fox line, Omatsu's polite 何が知りたいですか, Gonroku's footwear line 下駄を履いているらしい, the back-door spot, the hall_w8 song loop and a chord clash. Self-review, not native review.",
+  "jp": "{朝|あさ} の {座敷|ざしき}",
+  "en": "The Morning Room"
+ },
  "encounter:xp.cellars_sluice#1tepwnb": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead against the game's lexicon, src/lang/40_grammar.js (te_aru, v_te_iru, v_te_kudasai, te_oku), each companion's and Yasu's established speech, and textbook grammar (P07)",

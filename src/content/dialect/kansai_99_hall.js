@@ -311,4 +311,43 @@ RB.dialect.add('kansai', `
 @ hall/hall.w7.end [hall.w7.end]
 = {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
 > {第|だい}{七幕|ななまく} 、 {幕|まく} や ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もん や で 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
+@ hall/hall.w8.f1_first [hall.w8.f1_first]
+= {第|だい}{八幕|はちまく} は 、 {推理|すいり} の {芝居|しばい} ね 。 {証人|しょうにん} が {三人|さんにん} 、 {話|はなし} が {三|みっ}つ 。 {面白|おもしろ}く なり そう 。 || Act eight: a detective play. Three witnesses, three stories. This should be good.
+> {第|だい}{八幕|はちまく} は 、 {推理|すいり} の {芝居|しばい} や な 。 {証人|しょうにん} が {三人|さんにん} 、 {話|はなし} が {三|みっ}つ 。 {面白|おもしろ}く なり そう や わ 。 || Act eight: a detective play. Three witnesses, three stories. This should be good.
+@ hall/hall.w8.f2_first [hall.w8.f2_first]
+= {証人|しょうにん} が {立|た}って いた {場所|ばしょ} に {行|い}けば 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる ね 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+> {証人|しょうにん} が {立|た}ってた {場所|ばしょ} に {行|い}ったら 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる な 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+@ hall/hall.w8.f3_first [hall.w8.f3_first]
+= {大詰|おおづ}め の {前|まえ} の {言|い}い{争|あらそ}い 。 {推理|すいり} {劇|げき} の {定番|ていばん} よ 。 || An argument before the final scene. Every whodunit has one.
+> {大詰|おおづ}め の {前|まえ} の {言|い}い{争|あらそ}い や 。 {推理|すいり} {劇|げき} の {定番|ていばん} や で 。 || An argument before the final scene. Every whodunit has one.
+@ hall/hall.w8.t1 [hall.w8.t1]
+= {証人|しょうにん} が {三人|さんにん} 、 {誰|だれ} も {嘘|うそ} は ついて ない 。 でも {誰|だれ} も {全部|ぜんぶ} は {知|し}らない 。 {上手|じょうず} な {脚本|きゃくほん} ね 。 || Three witnesses, none of them lying, none of them knowing it all. Clever writing.
+> {証人|しょうにん} が {三人|さんにん} 、 {誰|だれ} も {嘘|うそ} は ついて ない 。 でも {誰|だれ} も {全部|ぜんぶ} は {知|し}らへん 。 {上手|じょうず} な {脚本|きゃくほん} や な 。 || Three witnesses, none of them lying, none of them knowing it all. Clever writing.
+@ hall/hall.w8.to_seen [hall.w8.to_seen]
+= {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いない ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+> {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みたら 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って ない な 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+@ hall/hall.w8.t3 [hall.w8.t3]
+= どれ だけ {確|たし}か か を {言|い}い{間違|まちが}える と 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から ね 。 || Get how sure you are wrong, and nobody can trust any of it.
+> どれ だけ {確|たし}か か を {言|い}い{間違|まちが}えたら 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から な 。 || Get how sure you are wrong, and nobody can trust any of it.
+@ hall/hall.w8.p_kitchen [hall.w8.p_kitchen]
+= {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も ある 。 {嘘|うそ} じゃ なくて 、 {思|おも}い{込|こ}み だ ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+> {本人|ほんにん} が {確|たし}か や と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}たら {違|ちが}う こと も ある 。 {嘘|うそ} や なくて 、 {思|おも}い{込|こ}み や な 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+@ hall/hall.w8.t6 [hall.w8.t6]
+= {子供|こども} の {字|じ} は 、 {子役|こやく} の {台本|だいほん} で {慣|な}れてる わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I'm used to children's writing from the child actors' scripts. Leave it to me. What am I looking for?
+> {子供|こども} の {字|じ} は 、 {子役|こやく} の {台本|だいほん} で {慣|な}れてる で 。 {任|まか}せとき 。 {何|なに} を {探|さが}したら ええ ？ || I'm used to children's writing from the child actors' scripts. Leave it to me. What am I looking for?
+@ hall/hall.w8.r_east [hall.w8.r_east]
+= {書|か}き{置|お}き の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+> {書|か}き{置|お}き の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the note said again?
+@ hall/hall.w8.r_east [hall.w8.r_east]
+= 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん だ ね 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+> 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} や 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん や な 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+@ hall/hall.w8.t8_board [hall.w8.t8_board]
+= {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
+> {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて みよ か 。 || Let's set each name tag by the prints that match.
+@ hall/hall.w8.pr1 [hall.w8.pr1]
+= {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせる と 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった ね 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+> {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせたら 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった な 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+@ hall/hall.w8.end [hall.w8.end]
+= {第|だい}{八幕|はちまく} 、 {幕|まく} ！ {犯人|はんにん} の いない {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない わ 。 || End of act eight! A whodunit with no culprit. Not bad at all.
+> {第|だい}{八幕|はちまく} 、 {幕|まく} や ！ {犯人|はんにん} の おらへん {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない で 。 || End of act eight! A whodunit with no culprit. Not bad at all.
 `, 'hall');

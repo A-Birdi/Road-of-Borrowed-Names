@@ -8965,6 +8965,11 @@ RB.lex = (function () {
 どんなに||adv|I|however (much); how (very)
 どれほど||adv|A|how much, to what extent
 だめ||adj-na|E|no good; not allowed|Also written {駄目|だめ}.
+子供|こども|n|F|child
+せい||n|E|fault, cause (usually of something bad)|〜のせいで = because of (blame).
+場合|ばあい|n|E|case, situation|〜{場合|ばあい}は = in cases where….
+中止|ちゅうし|vs|E|calling off; cancellation
+以外|いがい|n|I|except, other than
 `));
 
   // Katakana loanwords used in the kana lessons and around the world
@@ -9338,19 +9343,19 @@ RB.grammar = (function () {
     P('okage_sei', 'I', '～おかげで / ～せいで (thanks to / because of)',
       `Both give a cause. A noun + の, or a plain form, followed by おかげで credits the cause for a good result ("thanks to"); followed by せいで, it blames the cause for a bad one. Using せいで for something good, or おかげで for something bad, sounds wrong or sarcastic.`,
       [['{雨|あめ}の おかげで、{畑|はたけ}が {元気|げんき}に なった。', 'Thanks to the rain, the fields came back to life.'],
-        ['{雨|あめ}の せいで、{祭|まつ}りが {中止|ちゅうし}に なった。', 'Because of the rain, the festival was called off.']]),
+        ['{雨|あめ}の せい で、{祭|まつ}りが {中止|ちゅうし} に なった。', 'Because of the rain, the festival was called off.']]),
     P('baai', 'I', '～{場合|ばあい}（は） (in the case of; if)',
       `Plain form, or a noun + の, followed by {場合|ばあい}（は） names the case a rule or an instruction covers: "if it happens that…". It is the word of notices and rules; for one event that has already happened, use ～たら instead.`,
-      [['{雨|あめ}の {場合|ばあい}は、{中止|ちゅうし}です。', 'In case of rain, it is called off.'],
-        ['{遅|おく}れる {場合|ばあい}は、{知|し}らせて ください。', 'If you are going to be late, please let us know.']]),
+      [['{雨|あめ}の {場合|ばあい} は、{中止|ちゅうし} です。', 'In case of rain, it is called off.'],
+        ['{遅|おく}れる {場合|ばあい} は、{知|し}らせて ください。', 'If you are going to be late, please let us know.']]),
     P('igai', 'I', '～{以外|いがい} / ただし / ～を{除|のぞ}いて (except)',
       `A noun + {以外|いがい} means "other than"; {以外|いがい}は picks out everything but it. ただし begins a new sentence that states an exception to the one before ("however, …"). ～を{除|のぞ}いて is the formal "except for", in notices and rules.`,
-      [['{日曜|にちよう}{以外|いがい}は、{毎日|まいにち} {開|あ}いて いる。', 'It is open every day except Sunday.'],
-        ['{子供|こども}は ただ。ただし、{荷物|にもつ}が あれば {一文|いちもん}。', 'Children cross free. However, with a load, one mon.']]),
+      [['{日曜|にちよう} {以外|いがい} は、{毎日|まいにち} {開|あ}いて いる。', 'It is open every day except Sunday.'],
+        ['{子供|こども} は ただ。ただし、{荷物|にもつ}が あれば {一|いち} {文|もん}。', 'Children cross free. However, with a load, one mon.']]),
     P('kagiri', 'A', '～{限|かぎ}り / ～ない{限|かぎ}り (as long as / unless)',
       `A plain form + {限|かぎ}り means "as long as (this holds)"; the negative ～ない{限|かぎ}り means "unless": the result stands until the condition is met. It sounds firm, and is common in rules and resolutions.`,
-      [['{雨|あめ}が {降|ふ}らない {限|かぎ}り、{祭|まつ}りは {行|おこな}われる。', 'Unless it rains, the festival will be held.'],
-        ['{私|わたし}が {関守|せきもり}で ある {限|かぎ}り、この {決|き}まりは {変|か}えない。', 'As long as I am keeper, this rule will not change.']]),
+      [['{雨|あめ}が {降|ふ}らない {限|かぎ}り、{祭|まつ}りは {行|おこな}われる 。', 'Unless it rains, the festival will be held.'],
+        ['{私|わたし}が {関守|せきもり} で ある {限|かぎ}り、この {決|き}まりは {変|か}えない。', 'As long as I am keeper, this rule will not change.']]),
     P('no_pronoun', 'E', 'の for "the one" ({赤|あか}いの, さっきの)',
       `After an adjective or a clause, の can stand for a thing both speakers already have in mind, like "the one" in English: {赤|あか}いの, "the red one"; {昨日|きのう}{買|か}ったの, "the one I bought yesterday"; さっきの, "the one from just now". The noun itself is left out because it is understood.`,
       [['{赤|あか}いのを {取|と}って。', 'Pass me the red one.'],
@@ -9361,8 +9366,16 @@ RB.grammar = (function () {
         ['{沸|わ}いたら、{弱|よわ}めて。', 'When (the kettle) boils, turn (the fire) down.']]),
     P('rei_no', 'A', '{例|れい}の / {前者|ぜんしゃ}・{後者|こうしゃ} (the one we both know; the former, the latter)',
       `{例|れい}の + noun points to something speaker and listener both know without naming it: {例|れい}の{件|けん}, "that matter (you know the one)". {前者|ぜんしゃ} and {後者|こうしゃ}, "the former" and "the latter", pick between two things just mentioned, in writing and careful speech.`,
-      [['{例|れい}の{物|もの}は、{蔵|くら}に しまって ある。', 'The thing (you know the one) is put away in the storehouse.'],
-        ['{櫛|くし}と {笛|ふえ}が ある。{前者|ぜんしゃ}は {祖母|そぼ}の、{後者|こうしゃ}は {父|ちち}の {物|もの}だ。', 'There are a comb and a flute. The former was Grandmother\'s, the latter Father\'s.']]),
+      [['{例|れい}の {物|もの} は、{蔵|くら} に しまって ある。', 'The thing (you know the one) is put away in the storehouse.'],
+        ['{櫛|くし} と {笛|ふえ} が ある。{前者|ぜんしゃ} は {祖母|そぼ}の、{後者|こうしゃ} は {父|ちち}の {物|もの}だ。', 'There are a comb and a flute. The former was Grandmother\'s, the latter Father\'s.']]),
+    P('ni_chigainai', 'A', '～に{違|ちが}いない (must be)',
+      `A plain form (a noun or な-adjective without だ) + に{違|ちが}いない says the speaker is all but certain, from the evidence: "it must be". It is stronger than はず and far stronger than かもしれない, so it cannot sit beside "I'm not sure".`,
+      [['この {足跡|あしあと} は、{子供|こども} の もの に {違|ちが}いない。', 'These footprints must be a child\'s.'],
+        ['{灯|ひ} が {点|つ}いて いる。{誰|だれ} か いる に {違|ちが}いない。', 'The light is on. Someone must be in.']]),
+    P('to_no_koto', 'A', '～とのことだ / ～によると (I am told; according to)',
+      `～とのことだ passes on what someone else said, formally: "I am told that…". ～によると (or ～の{話|はなし}では) names the source. Neither can report what the speaker knows at first hand.`,
+      [['{手紙|てがみ} に よると、{来週|らいしゅう} {着|つ}く との こと だ。', 'According to the letter, they arrive next week.'],
+        ['{医者|いしゃ} の {話|はなし} では、すぐ {治|なお}る との こと です。', 'The doctor says it will soon get better.']]),
     P('tame', 'I', '～ために (in order to; for)',
       `Dictionary form + ために means "in order to", when the subject controls the action. Noun + の + ために means "for (the sake of)". After a past form or a noun of cause it can also mean "because of".`,
       [['{橋|はし}を {直|なお}す ために、{木|き}を {集|あつ}めた。', 'We gathered wood to repair the bridge.'],
@@ -10655,7 +10668,7 @@ RB.kanjiRead = {
     '悟ご;患かん;悩なや;悪わる;悲かな;情なさ;惑まど;惜お;想そう;意い;愚おろ;愛あい;感かん;慈じ;態たい;慌あわ;慎つつし;慢まん;慣な;慮りょ;慰なぐさ;慶よろこ;憎にく;憧あこが;憩けい;憶おく;懐なつ,ふところ;懲こ,ご;懸けん,か;成な;我われ;戚せき;戦たたか;戸と;戻もど;房ふさ;所しょ,ところ;扇あお,おうぎ;扉とびら;手て;' +
     '才さい;打う;払はら,ぱら;扱あつか;批ひ;承うけたまわ;技わざ;投な;抗あらが;折お,おり;抜ぬ;抱いだ,かか,だ;抵てい;押お;担かつ;拍はく;拒こば;拓たく;拗す;招まね;拝はい;拠こ;括かつ;拭ふ;拶さつ;拾ひろ;持も;指ゆび,さ;按あん;挙あ;挟はさ;挨あい;挫ざ;振ふ;挽ひ;捌さば;捏こ;捕つか;捨す;据す;' +
     '捲まく;捻ねん;掃は;授じゅ;排はい;掘ほ;掛か;掟おきて;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;揚あ;換か;握にぎ;援えん;揺ゆ;損そん,そこ,ぞん;搾しぼ;摘てき;摩ま;摺す;撃げき;撒ま;撞つ;撫な;撮と;操そう;擦す,こす;攣つ;攫さら;支ささ;' +
-    '改あらた;攻こう;放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;易やさ,やす;昔むかし;星ほし;映うつ,は;' +
+    '改あらた;攻こう;放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,もん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;易やさ,やす;昔むかし;星ほし;映うつ,は;' +
     '春はる;昧まい;昨さく;是これ;昼ひる;時じ,とき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か;最さい,も;月がつ,つき,げつ;有あ;服ふく;朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;' +
     '机つくえ;杉すぎ;杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,さかずき,ぱい;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;柱はしら;柳やなぎ;柵さく;査さ;柿かき,がき;栄えい;栓せん;栗くり,ぐり;栞しおり;校こう;株かぶ;' +
     '根ね;格かく;桁げた;桂りけい;桃もも;案あん;桐きり;桜さくら;桟さん;桶おけ;梁はり;梅うめ;梨なし;梯はし;械かい;棄き;棋ぎ;棒ぼう;棚たな,だな;森もり;棹さお;椀わん;椅い;植う;検けん;楔くさび;楠くす;業わざ;極ごく;楼ろう;楽らく,たの;構かま;槌つち;様さま,よう;槽そう;樋どい;標しるべ;模も;権けん;横よこ;' +
@@ -10671,18 +10684,18 @@ RB.kanjiRead = {
     '築きず;簡かん;簾れん,すだれ;簿ぼ;籠かご;米こめ;粉こな,こ;粋いき;粒つぶ;粗あら;粘ねば;粛しゅく;粧しょう;精せい;糊のり;糖とう;糧かて;糸いと;約やく;紅べに;紋もん;納おさ;紐ひも;純じゅん;紙かみ,がみ;紛まぎ;素す;索さく;紫むらさき;細ほそ,こま;紹しょう;終お;組くみ,く,ぐみ;絆きずな;経きょう,た,へ;結むす,ゆ;絞しぼ;絡から;給きゅう;絨じゅう;' +
     '統とう;絵え;絶た;継つ;続つづ;維い;綱つな,づな;網あみ;綴つづ,と;綺き;綿わた,めん;緊きん;緑みどり;緒お;線せん;緞どん;締し;編あ;緩ゆる;練れん;縁えん,ふち;縄なわ;縛しば;縞しま;縦たて;縫ぬ;縮ちぢ;繁はん;繋つな;繍しゅう;織お;繕つくろ;繰く;缶かん;罅ひび;罠わな;罪つみ;置お;罰ばち,ばっ,ばつ;署しょ;' +
     '罵ば;羊ひつじ;美うつく;群む;羨うらや;義ぎ;羽は,はね;翌よく;習なら;翻ほん;老ろう;考かんが;者もの,もん;耐た;耳みみ;聞き;職しょく;肉にく;肌はだ;肝かん;肩かた;育そだ;肺はい;胃い;背せ;胴どう;胸むね;能あた;脂あぶら;脅おど;脇わき;脈みゃく;脚あし;脱ぬ;腐くさ;腕うで;腰こし;腹はら,なか;膏こう;膝ひざ;' +
-    '膨ふく;膳ぜん;臓ぞう;自じ;臭くさ,にお;至いた;致ち;臼うす;興こう;舌した,ぜつ;舗ほ;舞ま;舟ふな,ふね,ぶね;航こう;舳へ;舵かじ;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芒すすき;芝しば;芯しん;花はな,ばな;芸げい;芽め;苔こけ;苗なえ;苛いら;若わか;苦くる,く,にが;英えい;茂しげ;茎くき;茨いばら;茶ちゃ;草くさ,ぐさ;荒あ,あら;' +
-    '荷に;菊きく;菓か;菖しょう;菜な;萎しお;萩はぎ;落お;葉は,ば;葛かずら,くず;葦あし,よし;蒲ぶ;蒸む;蓋ふた,ぶた;蓑みの;蔓つる;蔵くら,ぐら;蕎そ;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;藤ふじ;藻そう;蘇よみがえ;蘭らん;虎とら;虚むな;虫むし;虹にじ;蛇へび;蛍ほたる;蛙かえる,がえる,かわず;蛛も;蛸たこ;蛾が;蜂はち;蜘く;' +
-    '蜜みつ;蝉せみ;蝋ろう;蝕むしば;蝶ちょう;螺ら;蟹かに,がに;血ち;衆しゅう;行ぎょう,い,おこな,ゆ;術じゅつ;街かい;衛え;衝つい;衣い;表ひょう,おもて,あらわ;袂たもと;袈け;袋ふくろ,ぶくろ;袖そで;被ひ;裁さば;裂さ;装しょう;裏うら;裕ゆう;補おぎな;裟さ;裸はだか;裾すそ;複ふく;褒ほ;褪あ;襟えり;襲おそ;西にし;要よう,い;覆おお;見み;規き;' +
-    '視し;覗のぞ;覚おぼ,さ;覧らん;親おや,した;観み;角かく,かど,つの;解と,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい,はか;討とう;訓くん;託たく;記しる;訪おとず,たず;設せつ,もう;許ゆる;訳わけ;診み;証しょう,あか,あかし;評ひょう;詞し;試ため;詩し;詫わ;詰つ,つめ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たん;誘さそ;語ご,かた;誠まこと;誤あやま;' +
-    '説せつ;読よ;誰だれ;課か;調しら;談だん;請う;諍いさか;論ろん;諦あきら;諾だく;謎なぞ;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;護ご;谷たに;豆まめ;豊ゆた;豚ぶた;象ぞう;豹ひょう;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;資し;賊ぞく;' +
-    '賑にぎ;賛さん;賢かしこ;質たち;賭か;贅ぜい;贈おく;贔ひい;赤あか,か;走はし;起お;超こ;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路みち;跳と,は;踊おど;踏ふ,ぶ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;轆ろく;轤ろ;辛から,つら;辞や;農のう;辺あた,へん;' +
-    '辻つじ;込こ;辿たど;迎むか;近ちか;返かえ;迫せま;述の;迷まよ;追お;退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,かよ,どお;逝ゆ;速はや;造ぞう,づく;逢あ;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが,たが;遠とお,どお;遡さかのぼ;遣づか;遥はる;適てき;選えら;避さ;' +
-    '那な;邪じゃ;部ぶ,べ;郭かく;郵ゆう;郷きょう;都みやこ;配くば;酒さけ;酔よ;酷ひど;酸す;釈しゃく;釉くすり;里り,さと;重おも,かさ;野の;量りょう,はか;金きん,かね,がね;釘くぎ;釜かま;針はり;釣つ;鈍にぶ;鈴すず,りん;鉄てつ;鉛えん;鉢はち;鉤かぎ;銀ぎん;銅どう;銘めい;銭ぜに,せん;鋏はさみ;鋤すき;鋭するど;鋳い;鋸のこぎり;錆さ,さび;錘おもり;' +
-    '錠じょう;錨いかり;録ろく;鍋なべ;鍮ちゅう;鍵かぎ;鎌かま;鎖くさり;鎮しず;鏡かがみ;鐘かね,がね;長なが,おさ;門もん;閂かんぬき;閃せん;閉へい,し,と;開ひら,あ;間かん,ま,あいだ;閘こう;関せき,かん,かか;閲えつ;闇やみ;防ふせ;阻はば;降お,ふ;限かぎ;院いん;除よ,の,のぞ;陰かげ;陸おか,りく;険けわ;陽よう;隅すみ;階かい;随ずい;隔かく;隙すき;際ぎわ,さい;障しょう;隠かく;' +
-    '隣となり;隻せき;雀すずめ;雁かり;集あつ,つど;雇やと;雑ざつ;離はな;難むずか;雨あま,あめ;雪ゆき;雫しずく;雲くも;零れい,ぜろ;雷かみなり;電でん;震ふる;霊れい;霜しも;霧きり;露つゆ;青あお,さお;静しず;非あら;面めん,つら;革かわ;靴くつ;鞄かばん;鞋あい;鞍くら;音おと,ね;響ひび;頁ぺーじ;頂いただ;頃ころ,ごろ;項こう;順じゅん;須す;預あず;頑がん;' +
-    '頬ほお;頭とう,あたま,かしら;頷うなず;頼たの,たよ;題だい;額がく,ひたい;顔かお,がお;願ねが;類るい;顧かえり;風かぜ,ふう;飛と;食く,た;飯はん,めし;飲の;飴あめ;飼か;飽あ;飾かざ;餅もち;餉げ;餌えさ;館かん,がたりのやかた,やかた;首くび;香が,かお;馬うま;駄だ;駅えき;駆か;駒こま,ごま;駕か;騒さわ;験けん;騙だま;騰とう;驚おどろ;骨ほね;髄ずい;高たか;髪かみ;' +
-    '鬘かつら;鬼おに;魂たましい;魔ま;魚さかな,ざかな;鮭さけ;鯉こい;鯖さば;鯛たい;鯨くじら;鯵あじ;鱗りん;鳥とり;鳩はと;鳳ほう;鳴な;鴎かもめ;鶏にわとり;鶯うぐいす;鶴つる,づる;鹸けん;鹿しか;麓ふもと;麗れい;麦むぎ;麹こうじ;麻あさ;黄き;黒くろ;黙だま;黴かび;鼓つづみ;鼻はな;齢れい;龍りゅう;',
+    '膨ふく;膳ぜん;臓ぞう;自じ;臭くさ,にお;至いた;致ち;臼うす;興こう;舌した,ぜつ;舎しゃ;舗ほ;舞ま;舟ふな,ふね,ぶね;航こう;舳へ;舵かじ;舷げん;船ふね,ぶね;艘そう;良よ;色いろ;芋いも;芒すすき;芝しば;芯しん;花はな,ばな;芸げい;芽め;苔こけ;苗なえ;苛いら;若わか;苦くる,く,にが;英えい;茂しげ;茎くき;茨いばら;茶ちゃ;草くさ,ぐさ;' +
+    '荒あ,あら;荷に;菊きく;菓か;菖しょう;菜な;萎しお;萩はぎ;落お;葉は,ば;葛かずら,くず;葦あし,よし;蒲ぶ;蒸む;蓋ふた,ぶた;蓑みの;蔓つる;蔵くら,ぐら;蕎そ;薄うす;薙な;薪まき;薬くすり,ぐすり;藁わら;藍あい;藤ふじ;藻そう;蘇よみがえ;蘭らん;虎とら;虚むな;虫むし;虹にじ;蛇へび;蛍ほたる;蛙かえる,がえる,かわず;蛛も;蛸たこ;蛾が;蜂はち;' +
+    '蜘く;蜜みつ;蝉せみ;蝋ろう;蝕むしば;蝶ちょう;螺ら;蟹かに,がに;血ち;衆しゅう;行ぎょう,い,おこな,ゆ;術じゅつ;街かい;衛え;衝つい;衣い;表ひょう,おもて,あらわ;袂たもと;袈け;袋ふくろ,ぶくろ;袖そで;被かぶ;裁さば;裂さ;装しょう;裏うら;裕ゆう;補おぎな;裟さ;裸はだか;裾すそ;複ふく;褒ほ;褪あ;襖ふすま;襟えり;襲おそ;西にし;要よう,い;覆おお;' +
+    '見み;規き;視し;覗のぞ;覚おぼ,さ;覧らん;親おや,した;観み;角かく,かど,つの;解と,ど,ほど;触さわ,ふ;言こと,い,ごと;訂てい;計けい,はか;討とう;訓くん;託たく;記しる;訪おとず,たず;設せつ,もう;許ゆる;訳わけ;診み;証しょう,あか,あかし;評ひょう;詞し;試ため;詩し;詫わ;詰つ,つめ;話はなし,はな,ばなし;該がい;詳くわ;誇ほこ;誌し;認みと;誓ちか;誕たん;誘さそ;語ご,かた;' +
+    '誠まこと;誤あやま;説せつ;読よ;誰だれ;課か;調しら;談だん;請う;諍いさか;論ろん;諦あきら;諾だく;謎なぞ;謙けん;謝あやま;識しき;譜ふ;警けい;議ぎ;譲ゆず;護ご;谷たに;豆まめ;豊ゆた;豚ぶた;象ぞう;豹ひょう;貝かい,がい;負お,ま;財さい;貨か;責せ;貯た;貴き;買か;貸か;費ひ;貼は;賃ちん;' +
+    '資し;賊ぞく;賑にぎ;賛さん;賢かしこ;質たち;賭か;贅ぜい;贈おく;贔ひい;赤あか,か;走はし;起お;超こ;越こ,ご;趣しゅ;足あし,た;距きょ;跡あと;路みち;跳と,は;踊おど;踏ふ,ぶ;蹴け;身み;車くるま;軋きし;軒けん,のき;軟なん;転ころ;軸じく;軽かる;載の;輝かがや;輩はい;輪わ;轆ろく;轤ろ;辛から,つら;辞や;' +
+    '農のう;辺あた,へん;辻つじ;込こ;辿たど;迎むか;近ちか;返かえ;迫せま;述の;迷まよ;追お;退しりぞ;送おく;逃に;逆ぎゃく,さか;透す;途と;這は;通つう,とお,かよ,どお;逝ゆ;速はや;造ぞう,づく;逢あ;連つ,つら;週しゅう;進すす;逸そ;遅おく,おそ;遊あそ;運うん,はこ;過す,あやま;道みち;達たつ;違ちが,たが;遠とお,どお;遡さかのぼ;遣づか;遥はる;適てき;' +
+    '選えら;避さ;那な;邪じゃ;部ぶ,べ;郭かく;郵ゆう;郷きょう;都みやこ;配くば;酒さけ;酔よ;酷ひど;酸す;釈しゃく;釉くすり;里り,さと;重おも,かさ;野の;量りょう,はか;金きん,かね,がね;釘くぎ;釜かま;針はり;釣つ;鈍にぶ;鈴すず,りん;鉄てつ;鉛えん;鉢はち;鉤かぎ;銀ぎん;銅どう;銘めい;銭ぜに,せん;鋏はさみ;鋤すき;鋭するど;鋳い;鋸のこぎり;' +
+    '錆さ,さび;錘おもり;錠じょう;錨いかり;録ろく;鍋なべ;鍮ちゅう;鍵かぎ;鎌かま;鎖くさり;鎮しず;鏡かがみ;鐘かね,がね;長なが,おさ;門もん;閂かんぬき;閃せん;閉へい,し,と;開ひら,あ;間かん,ま,あいだ;閘こう;関せき,かん,かか;閲えつ;闇やみ;防ふせ;阻はば;降お,ふ;限かぎ;院いん;除よ,の,のぞ;陰かげ;陸おか,りく;険けわ;陽よう;隅すみ;階かい;随ずい;隔かく;隙すき;際ぎわ,さい;' +
+    '障しょう;隠かく;隣となり;隻せき;雀すずめ;雁かり;集あつ,つど;雇やと;雑ざつ;離はな;難むずか;雨あま,あめ;雪ゆき;雫しずく;雲くも;零れい,ぜろ;雷かみなり;電でん;震ふる;霊れい;霜しも;霧きり;露つゆ;青あお,さお;静しず;非あら;面めん,つら;革かわ;靴くつ;鞄かばん;鞋あい;鞍くら;音おと,ね;響ひび;頁ぺーじ;頂いただ;頃ころ,ごろ;項こう;順じゅん;須す;' +
+    '預あず;頑がん;頬ほお;頭とう,あたま,かしら;頷うなず;頼たの,たよ;題だい;額がく,ひたい;顔かお,がお;願ねが;類るい;顧かえり;風かぜ,ふう;飛と;食く,た;飯はん,めし;飲の;飴あめ;飼か;飽あ;飾かざ;餅もち;餉げ;餌えさ;館かん,がたりのやかた,やかた;首くび;香が,かお;馬うま;駄だ;駅えき;駆か;駒こま,ごま;駕か;騒さわ;験けん;騙だま;騰とう;驚おどろ;骨ほね;髄ずい;' +
+    '高たか;髪かみ;鬘かつら;鬼おに;魂たましい;魔ま;魚さかな,ざかな;鮭さけ;鯉こい;鯖さば;鯛たい;鯨くじら;鯵あじ;鰭ひれ;鱗りん;鳥とり;鳩はと;鳳ほう;鳴な;鴎かもめ;鶏にわとり;鶯うぐいす;鶴つる,づる;鹸けん;鹿しか;麓ふもと;麗れい;麦むぎ;麹こうじ;麻あさ;黄き;黒くろ;黙だま;黴かび;鼓つづみ;鼻はな;齢れい;龍りゅう;',
   w: {
     '典': '古典|こてん',
     '操': '操作|そうさ',
@@ -11565,7 +11578,7 @@ RB.recogData = {
     'ヮ': 'AyEAz0A5T A1gA-BB8_CCGCD1CD7B-9B5-BzRBpKBguBJD',
     'ー': 'AaYArZCil',
   },
-  rad: '・一一一一一一一一一一一一一一丨丶丶丶丿丿乙乙乙乙龜亅亅亅亅二二二二二亠亠亠亠人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人八八八八八入人八八八八八八八冂冂冂冂冖冖冖氷氷氷氷氷氷几几几几几凵凵凵刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀力力力力力力力力力力力力力力力力力勹勹匕匕匕匚匸匸匸十十十十十十十十十卩卩卩卩卩卩厂厂厂厶厶又丿又又又又又又口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口囗囗囗囗囗囗囗囗囗囗土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土士士土土土夂夂夕夕夕夕夕大大大大大大大大大大大大大大女女女女女女女女女女女女女女女女女女女女女女女子子子子子子子宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀寸寸寸寸寸寸寸寸寸寸寸小小小尢尸尸尸尸尸尸尸尸尸尸尸尸尸尸尸山山山山山山山山山山山巛巛工工工己己巾巾巾巾巾巾巾巾巾巾巾巾巾巾巾干干干干干幺幺广广广广广广广广广广广广广廴廴廾弋弓弓弓弓弓弓弓弓弓小彡彡彡彡彳彳彳彳彳彳彳彳彳彳彳彳彳彳心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心戈戈戈戈戸戸戸戸戸戸手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手支攴攴攴攴攴攴攴攴攴攴攴攴攴文齊文文斗斗斗斤斤方方方方方方无日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日曰曰曰曰曰曰月肉肉肉月肉月木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木欠欠欠欠欠止止止止止齒止止歹歹殳殳殳殳殳毋毋母比毛毛氏氏气水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水火火火火火火火火火火火火火火火火火火火火火火火火火火火火火爪父父片片牙牛牛牛牛牛犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬玄玄玉玉玉玉玉玉玉玉玉玉玉玉瓦瓦甘生生用田日日日田田田田田田田田田田田疋疒疒疒疒疒疒疒疒疒疒癶癶白白白白皮皿皿皿皿皿皿皿目目目目目目目目目目目目目目目目矛矢矢矢石石石石石石石石石石石石石示示示示示示示示示示示示禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾穴穴穴穴穴穴穴穴立龍立立立立竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹米米米米米米聿米米米米米糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸缶缶网网网网网网羊羊羊羊羊羽羽羽羽老老老而耳耳耳肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉自自至至臼臼舌人舛舟舟舟舟舟舟舟艮色艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸虍虍虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫血血行行行行行衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣襾襾襾見見見見見見見見角角角言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言谷豆豆豕豕豸貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝赤走走走走走足足足足足足足足身車車車車車車車車車車車車車辛辛辰辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶邑邑邑邑邑邑邑酉酉酉酉酉釆釆里里里里金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金長門門門門門門門門門門阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜隹隹隹隹隹隹隹隹雨雨雨雨雨雨雨雨雨雨雨雨青青非面革革革革革音音頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁風飛食食食食食食食食食食食首香馬馬馬馬馬馬馬馬馬馬馬骨骨高髟髟鬼鬼鬼魚魚魚魚魚魚魚魚鳥鳥鳥鳥鳥鳥鳥鳥鹵鹿鹿鹿麥麥麻黄黑黑黒鼓鼻齒龍',
+  rad: '・一一一一一一一一一一一一一一丨丶丶丶丿丿乙乙乙乙龜亅亅亅亅二二二二二亠亠亠亠人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人人八八八八八入人八八八八八八八冂冂冂冂冖冖冖氷氷氷氷氷氷几几几几几凵凵凵刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀刀力力力力力力力力力力力力力力力力力勹勹匕匕匕匚匸匸匸十十十十十十十十十卩卩卩卩卩卩厂厂厂厶厶又丿又又又又又又口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口口囗囗囗囗囗囗囗囗囗囗土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土土士士土土土夂夂夕夕夕夕夕大大大大大大大大大大大大大大女女女女女女女女女女女女女女女女女女女女女女女子子子子子子子宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀宀寸寸寸寸寸寸寸寸寸寸寸小小小尢尸尸尸尸尸尸尸尸尸尸尸尸尸尸尸山山山山山山山山山山山巛巛工工工己己巾巾巾巾巾巾巾巾巾巾巾巾巾巾巾干干干干干幺幺广广广广广广广广广广广广广廴廴廾弋弓弓弓弓弓弓弓弓弓小彡彡彡彡彳彳彳彳彳彳彳彳彳彳彳彳彳彳心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心心戈戈戈戈戸戸戸戸戸戸手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手手支攴攴攴攴攴攴攴攴攴攴攴攴攴文齊文文斗斗斗斤斤方方方方方方无日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日日曰曰曰曰曰曰月肉肉肉月肉月木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木木欠欠欠欠欠止止止止止齒止止歹歹殳殳殳殳殳毋毋母比毛毛氏氏气水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水水火火火火火火火火火火火火火火火火火火火火火火火火火火火火火爪父父片片牙牛牛牛牛牛犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬犬玄玄玉玉玉玉玉玉玉玉玉玉玉玉瓦瓦甘生生用田日日日田田田田田田田田田田田疋疒疒疒疒疒疒疒疒疒疒癶癶白白白白皮皿皿皿皿皿皿皿目目目目目目目目目目目目目目目目矛矢矢矢石石石石石石石石石石石石石示示示示示示示示示示示示禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾禾穴穴穴穴穴穴穴穴立龍立立立立竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹竹米米米米米米聿米米米米米糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸糸缶缶网网网网网网羊羊羊羊羊羽羽羽羽老老老而耳耳耳肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉肉自自至至臼臼舌人人舛舟舟舟舟舟舟舟艮色艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸艸虍虍虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫虫血血行行行行行衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣衣襾襾襾見見見見見見見見角角角言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言言谷豆豆豕豕豸貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝貝赤走走走走走足足足足足足足足身車車車車車車車車車車車車車辛辛辰辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶辶邑邑邑邑邑邑邑酉酉酉酉酉釆釆里里里里金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金金長門門門門門門門門門門阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜阜隹隹隹隹隹隹隹隹雨雨雨雨雨雨雨雨雨雨雨雨青青非面革革革革革音音頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁頁風飛食食食食食食食食食食食首香馬馬馬馬馬馬馬馬馬馬馬骨骨高髟髟鬼鬼鬼魚魚魚魚魚魚魚魚魚鳥鳥鳥鳥鳥鳥鳥鳥鹵鹿鹿鹿麥麥麻黄黑黑黒鼓鼻齒龍',
   k: [
     '々BXLgkelV0WuTs BNVyfyejhhigjTwSw BKTxuoojn',
     '一ATlph-e-dxg',
@@ -12898,6 +12911,7 @@ RB.recogData = {
     '臼BSBfjXoQp Aiohlj6i6 Ap05e Bmskg3djie-d9 Boykg1e AvY9e8e',
     '興AzadmYn Adeijixix Akcsd AoEsc BEbhjg3g2 BH20cjhh4g4 BNIue BPAhiis BSbrefr BWAof CAHtfihd1c0 B-ntf B9Gsf AVjog8e7d2h BDnfkblPr Bxluqpp',
     '舌ByTejXkDr AaUog7d6dzg Baqhlg0gz A0Nijm5 A5V4e3ehjY2 BCPzfye',
+    '舎BVUgjelWvUtSr BXFwvwvqo A4_zfye BZGhkg4 Ap6mg7e6e A5aijk0 A-jzeyehjcw BFqxfwe',
     '舗A1DencqTv A4jnllm AhH8d A3Ehig1 AY0mg9c Ahfkz Amo2dhjds AqQ0e Bauxfweog BgBhjg5g4 Bjc9djhh6g5ejcc Bjqwfwe Bj5wfwe B5Hhkg6g5g6 CPQnm',
     '舞BA5gibnUs A6P6f5e AaJog1e1f1eph A8Bhih1 BT1hkg0 Bp8hjf2 CAEhjd3 Ai23f2f3f A3YcpWr A63udhielZqYqXnXm Awynm Bqj4d Bo0hjgt BUq3f3f B9Ihjg3g2',
     '舟Babfjbp A9thjgsf-dvbr BBIwfwelhg3f2g3fiehZd BZImq BbMhjgy AXEpg1e2e1erh',
@@ -13001,6 +13015,7 @@ RB.recogData = {
     '複Anaop AaGmgyZihghU0Py AyNhjg1g0 BJ8Zq A5Fqq BmYcqZr Bk3-c BeLhkiz Bhn4cjghje0 Bjd6d BlU3e BnHgjbnWr BqnxdihfiapWqWoYk Bj55zpl',
     '褒Baahigo AkHmg6e6eqg A9wgiYrSt Azwgig4 BVlku BZB7chidp BeS4e BJ-4f3f BxDhjg2 BgNblWm CD8nlll BZmejWpGu BDtiwyT CLBekXn BiOysyr',
     '褪Aj-pq AU-lhyciggiUwRv AtEhlg1g0 BBbgiao A0Aoq ByXzdihe- Byk0e Byzzd Bu8ilg8g8hhigqX Cg2fjYn CEAqpps BM5mkkl BLipm BGxjhociicokpXo BDwpgxjxjvg',
+    '襖Aq0op AYbnfxbihhhUyPy AyQhjg0gz BJ-fiao A3Zrr Bwndmam BVlhjhygy Bau-ckhhjgygy B-geiWk BjYlk CFcfkck Bh15e B0Zhig2 By3ekYn B7bpm BKYng0fzfnh B00hjenaqYnVm B2qzxol',
     '襟Ae4ps ARklhxbjiVyRx ArZhjg2g1 BDIfjao AySop BGO3e Badhwgw BaqboXn Bhhmm B12lh0e CIahjg- CG5cpVo CL_orml BZZwfwf BKQ7f7f B03hjf6fhbc BdHgjckTq CLHpnlo',
     '襲A_Lhm And8e AwAin BM8dn Abu0fze Aujhjg2 Ax-ueigh4ehde Azyve AyMwf Brk0e BmWhihszehien Boa0f Bobhigzijmiuflfhc Br7xf BsCxe BsIzf BbKijgn Arrmh3e3eoh BWRdkalNq BI1hwuW CClZq BiQ3yok',
     '西AkJ2f2e2f Afbjkj0iz Akj-e9dphiigjczcz BJqhuevbqao BoRhlg-hmiikhqflf AvY8f8e',
@@ -13339,6 +13354,7 @@ RB.recogData = {
     '鯛Av4fkcoWt AsnudihUz Ab2imi6 AfS4djggke6 Azuhjg2 Ai54d Amh0e AeNdu AqGjt A3sls BFTmp Bamiigxf6cybr BeBxexdkhg4h5g4dkac Boe5d B8uhjg0 Bm-8e Bqklz Bt_xdjhew B1Dvf',
     '鯨Av6gicnVu AuTweihR1 Ab6iji5 AhD5bkhhld1 A43hjgz Ai77d Ak04d Aa0ev Aobis A5ajs BItlr B8ihjhr Bau0f0ekh Bm2kz BqS6dhjdr Bvn4e B--hjg_eicb BqrcpYs CW-mojp',
     '鯵ApFgjbpWs AkKxeVw ATYk- AW06cjhglc4 As8h5 Aaa4e AcV1e AXbemdo Ahnku Aw6mt A-flnjm Bz-fkUvfi9Z CFImljm BUH3e2e B2AepasYpXo B7Ryynl B7ganTp CF4fjblQp CTrdkXnJq',
+    '鰭AsgcsWt ApOwdihW1 AaQj7 Ab_8bihhkc3 Azyhkg0 Afk7d Afw6e Achdx AqHjw A5blu BKcmu BcX5e ByThjg1 BUDkh-atg CWIgjSxVqVn CTGgicjSo By1hrjjzgkehd BiLk8 Blm_eghd6 Blx-e BrF4e',
     '鱗AseflcnWr Aq4vdhhT1 AYei- AaN5cihd8 Auphjg0 AcG4d AeA2e AXXdv Ahkis Aw3js A-dkr Bahnp CUaelbl BSO2f2f B1tiigzfz B1_WrVn B5a5v BefgjdlWr BbMsfhhekT0ZmZk BSzmp B565e B_Cgu BuOyfxf CRjhjg3g3',
     '鳥BVVdlYm A4khkg1g0 A9u5bnghkdy A93_c A8V-b A-M4d3d A8r4d3dnhijflX2cjad AlBex A7Ikkjn BUonp Bsbkkkm',
     '鳩AuPhjfzd4bwXs AVDmg2afxexgpjjogidhb B8gelao Bk4hjg1g1 BoU5chjd0 Bod4d Boo3d Bozzeyd BnR9dkhhiglazdjcd Be_er BpKko B2ulo CF_lo',
@@ -20929,6 +20945,38 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 8: THREE WITNESSES AT THE INN
+  // A snowbound inn and three accounts of one night. The same short phrase is told three times by three voices (the
+  // koto, the shamisen, the shakuhachi), each telling it a little differently, as the witnesses do; in A2 the three
+  // are laid over each other, and the phrase they share sounds plain at last. The hyōshigi of the night watch goes
+  // round once every four bars. The puzzle is in the voicing, never in loudness or speed (C-22).
+  const TOLD = '1 - 3 - 5 - - - | 4 - 3 - 2 - . . | 1 - 3 - 5 - - - | 6 - 5 - 3 - . .';
+  const TOLD2 = '1 - 2 - 3 - - - | 3 - 2 - 1 - . . | 1 - 3 - 5 - - - | 4 - 3 - 2 - . .';
+  S('hall_w8', {
+    title: 'Three Witnesses at the Inn',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 8 of the Hall: an inn on the old highway, snowed in for the night (G mixolydian, 68). One short phrase is told three times by three voices, the koto, the shamisen and the shakuhachi, each a little differently, as the witnesses tell the night; in A2 the three are laid over each other and the phrase they share comes through. The night watch\'s clappers go round once every four bars.',
+    key: 'G', mode: 'mixolydian', bpm: 68, loopFrom: 1,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.45, pan: -0.25 },
+      sham: { i: 'shamisen', o: 4, v: 0.36, rv: 0.35, pan: 0.25 },
+      flute: { i: 'shakuhachi', o: 4, v: 0.4, rv: 0.5 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.2, rv: 0.35 },
+      watch: { perc: true, v: 0.18, rv: 0.5 },
+    },
+    echo: { beats: 1, fb: 0.2, mix: 0.18 },
+    all: { bass: '0 - - - 4 - - -', watch: 'y.......|........|........|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 4 1 4 1 4 1 4', koto: TOLD + ' | ' + TOLD },
+      B: { bars: 8, ch: '1 4 1 4 1 4 1 4', sham: TOLD2 + ' | ' + TOLD2 },
+      C: { bars: 8, ch: '1 4 1 4 1 4 1 4', flute: TOLD + ' | ' + TOLD },
+      A2: { bars: 8, ch: '1 4 1 4 1 4 1 4', koto: TOLD + ' | ' + TOLD, sham: TOLD2 + ' | ' + TOLD2, flute: TOLD + ' | ' + TOLD, dyn: 0.8 },
+    },
+    form: ['intro', 'A', 'B', 'C', 'A2'],
+  });
 })(RB.audio);
 
 
@@ -21056,9 +21104,9 @@ RB.audio = RB.audio || {};
     // the Hall of a Hundred Tales (38zh_songs_hall.js), postgame in the twelve-chapter edition: each wing its own song;
     // its creatures fight to the Atlas's themes, the other post-story place
     hall: {
-      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7'], prefixes: ['hall.'],
+      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7', 'hall_w8'], prefixes: ['hall.'],
       battle: 'battle_atlas', boss: 'boss_atlas', route: null,
-      songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7'],
+      songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6', 'hall_w7', 'hall_w8'],
     },
   };
   // Moods shared by every zone (investigation, rest, wonder, grief, the Hush,
@@ -156713,6 +156761,45 @@ RB.dialect.add('kansai', `
 @ hall/hall.w7.end [hall.w7.end]
 = {第|だい}{七幕|ななまく} 、 {幕|まく} ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もの よ 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
 > {第|だい}{七幕|ななまく} 、 {幕|まく} や ！ {台詞|せりふ} の ない {場面|ばめん} ほど 、 お{客|きゃく} は {聞|き}き{入|い}る もん や で 。 || End of act seven! The scenes with no lines are the ones audiences lean in for.
+@ hall/hall.w8.f1_first [hall.w8.f1_first]
+= {第|だい}{八幕|はちまく} は 、 {推理|すいり} の {芝居|しばい} ね 。 {証人|しょうにん} が {三人|さんにん} 、 {話|はなし} が {三|みっ}つ 。 {面白|おもしろ}く なり そう 。 || Act eight: a detective play. Three witnesses, three stories. This should be good.
+> {第|だい}{八幕|はちまく} は 、 {推理|すいり} の {芝居|しばい} や な 。 {証人|しょうにん} が {三人|さんにん} 、 {話|はなし} が {三|みっ}つ 。 {面白|おもしろ}く なり そう や わ 。 || Act eight: a detective play. Three witnesses, three stories. This should be good.
+@ hall/hall.w8.f2_first [hall.w8.f2_first]
+= {証人|しょうにん} が {立|た}って いた {場所|ばしょ} に {行|い}けば 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる ね 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+> {証人|しょうにん} が {立|た}ってた {場所|ばしょ} に {行|い}ったら 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる な 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+@ hall/hall.w8.f3_first [hall.w8.f3_first]
+= {大詰|おおづ}め の {前|まえ} の {言|い}い{争|あらそ}い 。 {推理|すいり} {劇|げき} の {定番|ていばん} よ 。 || An argument before the final scene. Every whodunit has one.
+> {大詰|おおづ}め の {前|まえ} の {言|い}い{争|あらそ}い や 。 {推理|すいり} {劇|げき} の {定番|ていばん} や で 。 || An argument before the final scene. Every whodunit has one.
+@ hall/hall.w8.t1 [hall.w8.t1]
+= {証人|しょうにん} が {三人|さんにん} 、 {誰|だれ} も {嘘|うそ} は ついて ない 。 でも {誰|だれ} も {全部|ぜんぶ} は {知|し}らない 。 {上手|じょうず} な {脚本|きゃくほん} ね 。 || Three witnesses, none of them lying, none of them knowing it all. Clever writing.
+> {証人|しょうにん} が {三人|さんにん} 、 {誰|だれ} も {嘘|うそ} は ついて ない 。 でも {誰|だれ} も {全部|ぜんぶ} は {知|し}らへん 。 {上手|じょうず} な {脚本|きゃくほん} や な 。 || Three witnesses, none of them lying, none of them knowing it all. Clever writing.
+@ hall/hall.w8.to_seen [hall.w8.to_seen]
+= {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いない ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+> {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みたら 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って ない な 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+@ hall/hall.w8.t3 [hall.w8.t3]
+= どれ だけ {確|たし}か か を {言|い}い{間違|まちが}える と 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から ね 。 || Get how sure you are wrong, and nobody can trust any of it.
+> どれ だけ {確|たし}か か を {言|い}い{間違|まちが}えたら 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から な 。 || Get how sure you are wrong, and nobody can trust any of it.
+@ hall/hall.w8.p_kitchen [hall.w8.p_kitchen]
+= {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も ある 。 {嘘|うそ} じゃ なくて 、 {思|おも}い{込|こ}み だ ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+> {本人|ほんにん} が {確|たし}か や と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}たら {違|ちが}う こと も ある 。 {嘘|うそ} や なくて 、 {思|おも}い{込|こ}み や な 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+@ hall/hall.w8.t6 [hall.w8.t6]
+= {子供|こども} の {字|じ} は 、 {子役|こやく} の {台本|だいほん} で {慣|な}れてる わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I'm used to children's writing from the child actors' scripts. Leave it to me. What am I looking for?
+> {子供|こども} の {字|じ} は 、 {子役|こやく} の {台本|だいほん} で {慣|な}れてる で 。 {任|まか}せとき 。 {何|なに} を {探|さが}したら ええ ？ || I'm used to children's writing from the child actors' scripts. Leave it to me. What am I looking for?
+@ hall/hall.w8.r_east [hall.w8.r_east]
+= {書|か}き{置|お}き の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+> {書|か}き{置|お}き の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the note said again?
+@ hall/hall.w8.r_east [hall.w8.r_east]
+= 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん だ ね 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+> 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} や 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん や な 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+@ hall/hall.w8.t8_board [hall.w8.t8_board]
+= {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
+> {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて みよ か 。 || Let's set each name tag by the prints that match.
+@ hall/hall.w8.pr1 [hall.w8.pr1]
+= {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせる と 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった ね 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+> {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせたら 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった な 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+@ hall/hall.w8.end [hall.w8.end]
+= {第|だい}{八幕|はちまく} 、 {幕|まく} ！ {犯人|はんにん} の いない {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない わ 。 || End of act eight! A whodunit with no culprit. Not bad at all.
+> {第|だい}{八幕|はちまく} 、 {幕|まく} や ！ {犯人|はんにん} の おらへん {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない で 。 || End of act eight! A whodunit with no culprit. Not bad at all.
 `, 'hall');
 
 
@@ -162166,6 +162253,23 @@ RB.lex.add(RB.lex.parseTable(`
 飼う|かう|v5u|E|to keep (an animal)
 田中|たなか|n|E|Tanaka (a common family name)
 探さねば|さがさねば|exp|A|(old, literary) if one does not search (= 探さなければ)
+# ---- wing 8: whose account ------------------------------------------------------------------------------------------
+第八幕|だいはちまく|n|I|the eighth act
+女中|じょちゅう|n|I|a maid (at an inn or a house)
+床の間|とこのま|n|I|the alcove in a tatami room, where a scroll hangs
+襖|ふすま|n|I|a sliding door of heavy paper between rooms
+釣瓶|つるべ|n|A|a well bucket on a rope
+隣村|となりむら|n|I|the next village
+田舎|いなか|n|E|the countryside
+何色|なにいろ|n|E|what colour
+寝不足|ねぶそく|n|I|lack of sleep
+拝借|はいしゃく|vs|A|(humble) borrowing
+鰭|ひれ|n|A|a fin; 尾ひれが付く: (a story) gets exaggerated as it is passed on
+ぎしっ||adv|I|(sound) a single creak
+強張る|こわばる|v5r|A|to stiffen, to go tight
+掻く|かく|v5k|I|to scratch; to rake (ash, snow)
+睨み合う|にらみあう|v5u|I|to glare at each other
+被る|かぶる|v5r|E|to put on (a hat); to be covered with (snow)
 `));
 
 
@@ -162270,6 +162374,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     sky: '#c8ccd0', dark: '#101210',
   });
   TL.addRamps(TL.PAL.hall_w7);
+
+  // wing 8: a highway inn snowed in for the night, lamplight on old cedar, the yard white and trodden, blue shadow
+  TL.PAL.hall_w8 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#dce2e8', '#e8ecf0', '#c8d0d8', '#f4f6f8'], dirt: ['#8a7a68', '#9c8c78', '#766858', '#ae9e8a'],
+    stone: ['#8a8e94', '#a2a6ac', '#6e7278'], water: ['#4a6a7a', '#5a7c8c', '#8aa6b4', '#e4eef2'],
+    wood: ['#6a4a32', '#7e5a3e', '#523826', '#987052'], leaf: ['#3a4a44', '#465850', '#546860', '#2c3a34'],
+    flower: ['#e8b850', '#f4ece0', '#c84a3a', '#a8b8c8'], roof: ['#4a4440', '#3c3834', '#2e2a28', '#5e5854'],
+    sky: '#9aa6b4', dark: '#12141a',
+  });
+  TL.addRamps(TL.PAL.hall_w8);
 
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
@@ -162438,6 +162552,30 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_magoroku', { name: { en: 'Magoroku', jp: 'マゴロク' }, voice: { pitch: 0.88 },
     look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#5a5a4a', '#48483a', '#d0c8a8'], shape: 'tunic', acc: ['headband'], bandCol: '#8a8a7a' },
     portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#8a8a7a', bg: '#1a1a14' } });
+
+  // ---- the tales' people: wing 8, Three Witnesses at the Inn ----------------------------------------------------------
+  // Omatsu (she/her), who keeps the inn on the pass; the three witnesses: Saki (she/her), the inn's maid, Tōsuke
+  // (he/him), a pedlar stopping the night, and Gonroku (he/him), an old guest who knows every rumour; Hisa
+  // (they/them), Omatsu's grandchild, whom nobody thought to ask; Kichibei (he/him), the old traveller who left a box at
+  // the inn years ago.
+  ch('hall_omatsu', { name: { en: 'Omatsu', jp: 'オマツ' }, voice: { pitch: 0.92 },
+    look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#5a3a4a', '#482e3c', '#e8dcc8'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'bun', age: 'old', acc: [], bg: '#1e141a' } });
+  ch('hall_saki', { name: { en: 'Saki', jp: 'サキ' }, voice: { pitch: 1.14 },
+    look: { skin: 1, hair: 'bun', hairColor: 1, cloth: ['#3a5a7a', '#2e4a64', '#f0e8d8'], shape: 'robe', acc: ['headband'], bandCol: '#f0e8d8' },
+    portrait: { eyes: 'round', style: 'bun', acc: ['headband'], bandCol: '#f0e8d8', bg: '#121c26' } });
+  ch('hall_tosuke', { name: { en: 'Tōsuke', jp: 'トウスケ' }, voice: { pitch: 0.94 },
+    look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#6a6a3a', '#56562e', '#d8d0a8'], shape: 'tunic', acc: ['hat'], hatCol: '#a89060' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['hat'], hatCol: '#a89060', bg: '#1c1c10' } });
+  ch('hall_gonroku', { name: { en: 'Gonroku', jp: 'ゴンロク' }, voice: { pitch: 0.72 },
+    look: { skin: 2, hair: 'shaved', hairColor: 6, cloth: ['#4a3e34', '#3c322a', '#d0c4b0'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: [], bg: '#18140f' } });
+  ch('hall_hisa', { name: { en: 'Hisa', jp: 'ヒサ' }, voice: { pitch: 1.3 }, size: 'child',
+    look: { skin: 1, hair: 'spiky', hairColor: 1, cloth: ['#8a4a2a', '#703a20', '#f0e0c8'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'spiky', acc: [], bg: '#24160e' } });
+  ch('hall_kichibei', { name: { en: 'Kichibei', jp: 'キチベエ' }, voice: { pitch: 0.78 },
+    look: { skin: 3, hair: 'short', hairColor: 6, cloth: ['#4a4a5a', '#3c3c4a', '#d8d0c0'], shape: 'robe', acc: ['hat'], hatCol: '#c8b890', age: 'old' },
+    portrait: { eyes: 'narrow', style: 'short', age: 'old', acc: ['hat'], hatCol: '#c8b890', bg: '#14141c' } });
 })(RB.content);
 
 
@@ -168829,6 +168967,838 @@ narr: {雪|ゆき} が {畳|たた}まれる よう に {止|や}んで 、 {気
 })(RB.content);
 
 
+/* ==== src/content/hall/32_w8_maps.js ==== */
+/* The Hall of a Hundred Tales, wing 8, Three Witnesses at the Inn (an invented tale): the floors and the wing
+ * (expansion P15; plan 04_DUNGEONS.md D9). Its theme: whose account? Reports, evidence and uncertainty (what was
+ * seen, what was heard, what someone was told and what was only guessed: ～そうだ, ～らしい, ～ようだ and ～みたいだ,
+ * ～はずだ, ～かもしれない, ～でしょう; at the top ～に違いない and ～とのことだ).
+ *   1 · The Inn at Nightfall (hall.w8f1): the tale in four pictures in the back room (t1), what each witness said,
+ *       sorted by how they know it (t2), the sayings on the inn's scrolls, one wrong (t3, a counterexample hall); a
+ *       bench.
+ *   2 · The Snowy Yard (hall.w8f2): the witnesses' places (the kitchen window, the stairs, the back door), each account weighed against what can be seen or heard
+ *       from there (t4), the snow fox (t5, wet), Hisa's note in your companion's hands and the one road it points to
+ *       (t6, an information gap), the riddle stone (t7, a reprieve); a bench, a spring, a resting place.
+ *   3 · The Morning Room (hall.w8f3): the footprints in the snow, each named from the evidence (t8), Saki and Gonroku
+ *       (t9, a mediation), and the inn's record of the night (t10, the capstone).
+ * Each floor's way on is closed by a sacred rope until every trial on it is done; the pattern (hall.w8.pat) chooses
+ * the accounts, which of them hold, the road in Hisa's note and the prints' places. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, B) {
+  'use strict';
+  const K = C.hallKit, T = K.T, W = 'w8';
+  const AMB = { dark: 0.3, playerLight: 60, weather: 'snow', tint: 'rgba(120,140,190,0.12)' };
+
+  // ==== floor 1: The Inn at Nightfall ======================================================================================
+  // The inn's front path in the snow; the back room with its scroll; the front room where Omatsu has written down what
+  // each witness said on five slips, and four trays to sort them into; the scrolls along the north wall.
+  const SLIPS = { s1: [22, 7], s2: [24, 7], s3: [26, 7], s4: [28, 7], s5: [23, 9] };
+  const TRAYS = { seen: [22, 11], heard: [24, 11], told: [26, 11], guess: [28, 11] };
+  C.hallW8 = { SLIPS, TRAYS };
+  C.maps['hall.w8f1'] = Object.assign({}, K.base(W), {
+    name: T('The Inn at Nightfall', '{夜|よる} の {宿|やど}'),
+    ambient: AMB,
+    terrain: B.build(34, 24, 'x', (k) => {
+      k.rect(13, 18, 9, 5, '.');                 // where you come in, through the snow
+      k.rect(4, 6, 27, 12, '.');                 // the inn's front yard
+      k.rect(16, 1, 2, 21, ':');                 // the path north, and south
+      k.rect(1, 8, 6, 5, '_');                   // west: the back room (the story room)
+      k.rect(21, 6, 9, 7, '_');                  // east: the front room, the accounts
+      k.rect(4, 2, 11, 4, '_');                  // north-west: the scrolls along the corridor
+      k.scatter(',', 6, 1711, [5, 13, 9, 4], '.');
+      k.rect(16, 1, 2, 21, ':');
+    }),
+    props: [].concat(
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      [
+        { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w8.t1' }, ...K.andon(5, 9, W, 't1'),
+        { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } },
+        // the five slips (gone once sorted) and the four trays
+        ...Object.keys(SLIPS).map((s) => ({ p: 'fw_postnote', x: SLIPS[s][0], y: SLIPS[s][1], scene: 'hall.w8.' + s, if: '!xp_hall_w8_f0_put_' + s })),
+        ...Object.keys(TRAYS).map((t) => ({ p: 'fw_tray', x: TRAYS[t][0], y: TRAYS[t][1], scene: 'hall.w8.to_' + t })),
+        ...K.andon(29, 12, W, 't2'), { p: 'sb_irori', x: 26, y: 9 },
+        // the scrolls, and the one that asks
+        { p: 'signblank', x: 5, y: 3, scene: 'hall.w8.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w8.card2' },
+        { p: 'signblank', x: 9, y: 3, scene: 'hall.w8.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w8.card4' },
+        { p: 'kr_scroll', x: 13, y: 3, scene: 'hall.w8.t3' }, ...K.andon(14, 2, W, 't3'),
+        K.lit(15, 10), K.lit(19, 10),
+      ]),
+    npcs: [
+      { id: 'hall_omatsu', x: 25, y: 12, dir: 'up', talk: [{ scene: 'hall.w8.omatsu' }] },
+    ],
+    foes: [],
+    exits: [{ x: 16, y: 1, w: 1, h: 1, to: 'hall.w8f2', sp: 'from_below', dir: 'up', if: 'hall.w8.f0.clear' }],
+    onEnter: [{ scene: 'hall.w8.f1_first', if: '!hall_w8_f1_seen' }],
+    spawn: { default: [17, 21, 'up'], entry: [17, 21, 'up'] },
+  });
+
+  // ==== floor 2: The Snowy Yard ============================================================================================
+  // The yard behind the inn under snow: the kitchen window, the foot of the stairs and the back door, each a
+  // witness's place; the alcove where the box stood, with Hisa's note in its place; three roads out of the yard (east
+  // to the next village, west up to the pass teahouse, north to the mountain shrine); the riddle stone, a corner to
+  // rest in, and the well.
+  const SPOTS = { kitchen: [7, 16], stairs: [12, 16], backdoor: [26, 15] };
+  const ROADS = { east: [31, 12], west: [4, 12], shrine: [24, 7] };
+  Object.assign(C.hallW8, { SPOTS, ROADS });
+  C.maps['hall.w8f2'] = Object.assign({}, K.base(W), {
+    name: T('The Snowy Yard', '{雪|ゆき} の {庭|にわ}'),
+    ambient: Object.assign({}, AMB, { dark: 0.36 }),
+    terrain: B.build(36, 26, 'x', (k) => {
+      k.rect(15, 21, 8, 5, '.');                 // where you come in
+      k.rect(4, 7, 28, 13, '.');                 // the yard
+      k.rect(17, 2, 2, 20, ':');                 // the path north
+      k.rect(4, 2, 9, 4, '.');                   // north-west: the riddle stone
+      k.rect(13, 5, 4, 1, ':');                  //   its path (below the rope)
+      k.rect(28, 2, 6, 5, '_');                  // north-east: a corner of the inn to rest in
+      k.rect(19, 5, 9, 1, ':');                  //   its path (below the rope)
+      k.rect(7, 21, 7, 4, '.');                  // south-west: the well
+      k.rect(13, 22, 3, 2, '.');
+      k.scatter('Q', 5, 1721, [5, 8, 6, 3], '.');
+      k.rect(17, 2, 2, 20, ':');
+    }),
+    props: [].concat(
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      [
+        { p: 'well', x: 9, y: 22, scene: 'hall.w8.spring' },
+        // the witnesses' places
+        { p: 'hall_screen', x: SPOTS.kitchen[0], y: SPOTS.kitchen[1], scene: 'hall.w8.p_kitchen' },
+        { p: 'fw_slipscreen', x: SPOTS.stairs[0], y: SPOTS.stairs[1], scene: 'hall.w8.p_stairs' },
+        { p: 'door', x: SPOTS.backdoor[0], y: SPOTS.backdoor[1], scene: 'hall.w8.p_backdoor' },
+        ...K.andon(10, 18, W, 't4'),
+        // the alcove and Hisa's note; the three roads out of the yard
+        { p: 'chest', x: 21, y: 17, scene: 'hall.w8.t6' }, ...K.andon(23, 18, W, 't6'),
+        ...Object.keys(ROADS).map((r) => ({ p: 'cr_gate', x: ROADS[r][0], y: ROADS[r][1], scene: 'hall.w8.r_' + r })),
+        // the snow fox's corner (t5), the riddle stone (t7)
+        ...K.andon(6, 12, W, 't5'),
+        { p: 'kr_stele', x: 6, y: 3, scene: 'hall.w8.t7' }, ...K.andon(8, 2, W, 't7'),
+        // the resting corner (a delver may be waiting)
+        { p: 'teaset', x: 30, y: 3 }, { p: 'bench', x: 29, y: 5 },
+      ]),
+    npcs: [
+      { id: 'hall_omatsu2', char: 'hall_omatsu', x: 20, y: 19, dir: 'up', talk: [{ scene: 'hall.w8.omatsu2' }] },
+    ],
+    foes: [
+      { id: 'b1', enemy: 'sb.fox', encounter: 'hall.w8.fox', scene: 'hall.w8.t5', x: 9, y: 12, patrol: 1, bg: 'snowbell', intro: { jp: '{雪|ゆき} の {中|なか} から 、 {白|しろ}い {狐|きつね} が {顔|かお} を {出|だ}した 。', en: 'A white fox looks out of the snow.' }, settle: { jp: '{狐|きつね} は 、 {足跡|あしあと} も {残|のこ}さず に {雪|ゆき} の {中|なか} へ {消|き}えた 。', en: 'The fox vanishes into the snow without leaving a single print.' } },
+    ],
+    exits: [{ x: 17, y: 2, w: 1, h: 1, to: 'hall.w8f3', sp: 'from_below', dir: 'up', if: 'hall.w8.f1.clear' }],
+    onEnter: [{ scene: 'hall.w8.f2_first', if: '!hall_w8_f2_seen' }],
+    spawn: { default: [18, 24, 'up'], entry: [18, 24, 'up'], from_below: [18, 24, 'up'] },
+  });
+
+  // ==== floor 3: The Morning Room ==========================================================================================
+  // The inn's best room at first light, its doors open on the snowy garden: four sets of prints in the snow, the
+  // evidence board and four name tags; Saki and Gonroku at odds by the brazier; Omatsu's ledger on its desk.
+  const PRINTS = { pr1: [7, 6], pr2: [11, 6], pr3: [20, 6], pr4: [24, 6] };
+  const TAGS = { tosuke: [6, 13], gonroku: [8, 13], saki: [10, 13], hisa: [12, 13] };
+  Object.assign(C.hallW8, { PRINTS, TAGS });
+  C.maps['hall.w8f3'] = Object.assign({}, K.base(W), {
+    name: T('The Morning Room', '{朝|あさ} の {座敷|ざしき}'),
+    ambient: Object.assign({}, AMB, { dark: 0.12, tint: 'rgba(230,220,200,0.10)' }),
+    terrain: B.build(32, 24, 'x', (k) => {
+      k.rect(11, 18, 11, 6, '_');                // where you come in
+      k.rect(4, 9, 24, 9, 'm');                  // the morning room
+      k.rect(4, 4, 24, 5, '.');                  // the garden under snow
+    }),
+    props: [].concat(
+      K.furniture(W, 2, { ret: [13, 22], bench: [20, 22] }),
+      [
+        { p: 'desk', x: 20, y: 11, scene: 'hall.w8.t10' },
+        ...Object.keys(PRINTS).map((pr) => ({ p: 'pet_spot', x: PRINTS[pr][0], y: PRINTS[pr][1], scene: 'hall.w8.' + pr })),
+        { p: 'noticeboard', x: 8, y: 10, scene: 'hall.w8.t8_board' }, ...K.andon(4, 10, W, 't8'),
+        ...Object.keys(TAGS).map((g) => ({ p: 'signblank', x: TAGS[g][0], y: TAGS[g][1], scene: 'hall.w8.tag_' + g, if: '!xp_hall_w8_f2_named_' + g })),
+        { p: 'sb_irori', x: 16, y: 14 },
+        ...K.andon(26, 16, W, 't9'),
+        K.lit(6, 16), K.lit(25, 10),
+      ]),
+    npcs: [
+      { id: 'hall_omatsu3', char: 'hall_omatsu', x: 22, y: 12, dir: 'left', talk: [{ scene: 'hall.w8.omatsu3' }] },
+      { id: 'hall_saki', x: 15, y: 13, dir: 'right', talk: [{ scene: 'hall.w8.t9' }] },
+      { id: 'hall_gonroku', x: 19, y: 15, dir: 'left', talk: [{ scene: 'hall.w8.t9' }] },
+    ],
+    foes: [], exits: [],
+    onEnter: [{ scene: 'hall.w8.f3_first', if: '!hall_w8_f3_seen' }],
+    spawn: { default: [16, 22, 'up'], entry: [16, 22, 'up'], from_below: [16, 22, 'up'] },
+  });
+
+  // ==== the wing ==========================================================================================================
+  if (RB.hall) RB.hall.wing(W, {
+    n: 8, title: T('Three Witnesses at the Inn', '{宿|やど} の {三人|さんにん} の {証人|しょうにん}'),
+    theme: T('Whose account? What was seen, what was heard, what someone was told, and what was only guessed.', '「 そうだ 」 と 「 らしい 」'),
+    folklore: { en: 'An invented tale, set at an inn on an old highway of the kind where travellers left things in the innkeeper\'s keeping. The fox that gets the blame belongs to a real habit of old Japanese rumour: when something went missing at night, people said a fox had done it.' },
+    music: 'hall_w8', hearth: C.hallHearths.w8, patterns: 2,
+    grow: { en: 'how sure you are and where you heard it: ～はずだ, ～ようだ and ～らしい (and, at the top, ～に違いない and ～とのことだ).' },
+    floors: [
+      { id: 'f1', map: 'hall.w8f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Inn at Nightfall', '{夜|よる} の {宿|やど}'),
+        stations: { w8_b1: { kind: 'bench', map: 'hall.w8f1', x: 20, y: 20 } } },
+      { id: 'f2', map: 'hall.w8f2', entry: { x: 18, y: 24, dir: 'up' }, name: T('The Snowy Yard', '{雪|ゆき} の {庭|にわ}'),
+        stations: { w8_b2: { kind: 'bench', map: 'hall.w8f2', x: 21, y: 23 }, w8_sp: { kind: 'spring', map: 'hall.w8f2', x: 9, y: 22 } } },
+      { id: 'f3', map: 'hall.w8f3', entry: { x: 16, y: 22, dir: 'up' }, name: T('The Morning Room', '{朝|あさ} の {座敷|ざしき}'),
+        stations: { w8_b3: { kind: 'bench', map: 'hall.w8f3', x: 20, y: 22 } }, procedures: ['hall_w8_record'] },
+    ],
+    delvers: { f2: { map: 'hall.w8f2', x: 31, y: 4, dir: 'left' } },
+    trials: [
+      { id: 't1', floor: 0, kind: 'story', title: T('The tale in four pictures', '{四|よっ}つ の {絵|え}') },
+      { id: 't2', floor: 0, kind: 'mechanism', title: T('How each one knows', '{見|み}た か 、 {聞|き}いた か') },
+      { id: 't3', floor: 0, kind: 'counterexample', title: T('The inn\'s scrolls', '{宿|やど} の {掛|か}け{軸|じく}') },
+      { id: 't4', floor: 1, kind: 'mechanism', title: T('The witnesses\' places', '{証人|しょうにん} の {場所|ばしょ}') },
+      { id: 't5', floor: 1, kind: 'encounter', title: T('The snow fox', '{雪|ゆき} の {狐|きつね}') },
+      { id: 't6', floor: 1, kind: 'infogap', title: T('Hisa\'s note', 'ヒサ の {書|か}き{置|お}き') },
+      { id: 't7', floor: 1, kind: 'riddle', reprieve: true, title: T('The riddle stone', 'なぞなぞ の {石|いし}') },
+      { id: 't8', floor: 2, kind: 'mechanism', title: T('The footprints in the snow', '{雪|ゆき} の {足跡|あしあと}') },
+      { id: 't9', floor: 2, kind: 'social', title: T('Saki and Gonroku', 'サキ と ゴンロク') },
+      { id: 't10', floor: 2, kind: 'capstone', title: T('The record of the night', '{夜|よる} の {記録|きろく}') },
+    ],
+  });
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/hall/33_w8_learning.js ==== */
+/* The Hall of a Hundred Tales, wing 8, Three Witnesses at the Inn: the language tasks and encounters (expansion P15;
+ * plan 04_DUNGEONS.md D9; scenes in 34_w8_scenes.js). The theme: whose account? (what was seen, heard, told or
+ * guessed: ～そうだ for looks and for hearsay, ～らしい, ～ようだ and ～みたいだ, ～はずだ, ～かもしれない, ～でしょう;
+ * at Advanced ～に違いない and ～とのことだ). Every task has its four levels and an Advanced stretch.
+ *   hall.w8.story      the tale in four pictures, back in order (A38)
+ *   hall.w8.story_q    how each witness knew, and how sure they were (optional)
+ *   hall.w8.counter0/1 the sayings on the inn's scrolls: the one that breaks the rule (A34)
+ *   hall.w8.ask        asking your companion where Hisa's note says they went (A12)
+ *   hall.w8.riddle     the riddle stone (a reprieve)
+ *   encounters: hall.w8.fox (the snow fox: wet), hall.w8.quarrel (Saki and Gonroku: a mediation), hall.w8.record (the
+ *   record of the night: the capstone procedure). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const OR = (o) => Object.assign({ kind: 'order' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const e = (en, ok, why) => Object.assign({ en, ok: !!ok }, why ? { why: { en: why } } : {});
+  const say = (jp, en) => ({ jp, en });
+
+  // ---- the story room ----------------------------------------------------------------------------------------------------
+  const P1 = '{雪|ゆき} の {夜|よる} 、 {峠|とうげ} の {宿|やど} から 、 {預|あず}かり{物|もの} の {箱|はこ} が {消|き}えた',
+    P2 = '{女中|じょちゅう} は 「 {影|かげ} を {見|み}た 」 と {言|い}い 、 {行商人|ぎょうしょうにん} は 「 {足音|あしおと} が {聞|き}こえた 」 と {言|い}った',
+    P3 = '{年寄|としよ}り の {客|きゃく} は 「 {狐|きつね} の {仕業|しわざ} らしい 」 と {言|い}った',
+    P4 = '{三人|さんにん} の {話|はなし} を {合|あ}わせる と 、 {小|ちい}さな {足跡|あしあと} が {一|ひと}つ {見|み}えて きた';
+  C.hallW8Tale = { P1, P2, P3, P4 };
+  const FT = ['ゆき の よる 、 やど から はこ が きえた', 'じょちゅう は 「 かげ を みた 」 、 しょうにん は 「 あしおと が きこえた 」 と いった',
+    'としより の きゃく は 「 きつね の せい らしい 」 と いった', 'みんな の はなし を あわせる と 、 ちいさい あしあと が みえて きた'];
+  C.hallW8TaleF = FT;
+  C.challenges['hall.w8.story'] = { title: T('{宿|やど} の {三人|さんにん} の {証人|しょうにん}', 'Three Witnesses at the Inn'), tiers: {
+    F: [OR({ item: 'v:宿', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+      orderHint: { en: 'The box gone; what two people saw and heard; what the old guest guessed; and what all of it together showed.' } })],
+    E: [OR({ item: 'v:足跡', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'First the loss, then the two who saw and heard, then the one who guessed, then the accounts put together.' } })],
+    I: [OR({ item: 'g:rashii', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'What was seen and heard comes before the rumour (らしい); only when the three are laid side by side does the answer show.' } })],
+    A: [OR({ item: 'g:ni_chigainai', prompt: { en: 'Order the pictures; the turn is the one where the accounts are put together.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'No single witness had it; 合わせると, putting them together, is the turn.' } })],
+  },
+  stretchA: [ch({ item: 'g:ni_chigainai', ctx: { jp: P3 + ' 。 ／ 「 {狐|きつね} の {仕業|しわざ} に {違|ちが}いない 」', en: '' }, prompt: { en: 'The old guest said らしい. What would に違いない change?' },
+    options: [e('らしい passes on a rumour or a guess and keeps a distance from it; に違いない claims near-certainty, which nothing he saw or heard supports.', 1),
+      e('Nothing: both mean "perhaps".', 0, 'に違いない is close to "it must be".'),
+      e('に違いない would mean he saw the fox.', 0, 'It claims certainty; it says nothing of seeing.')] })] };
+  C.challenges['hall.w8.story_q'] = { title: T('{話|はなし} の {後|あと} で', 'After the tale'), optional: true, tiers: {
+    F: [ch({ item: 'v:箱', ctx: { jp: FT[0] + ' 。', en: '' }, prompt: { en: 'What went missing?' },
+      options: [e('A box left at the inn.', 1), e('A traveller.', 0, 'はこ: a box.'), e('The snow.', 0, 'It was a snowy night; a box went missing.')] })],
+    E: [ch({ item: 'v:足音', ctx: { jp: P2 + ' 。', en: '' }, prompt: { en: 'How did the maid and the pedlar each know?' },
+      options: [e('The maid saw a shadow; the pedlar heard footsteps.', 1), e('Both saw the thief.', 0, 'One saw a shadow, the other only heard.'), e('Both were told by the old guest.', 0, '見た and 聞こえた: their own eyes and ears.')] })],
+    I: [ch({ item: 'g:rashii', ctx: { jp: P3 + ' 。', en: '' }, prompt: { en: 'How sure is the old guest?' },
+      options: [e('Not sure at all: らしい, he is going on rumour.', 1), e('Certain: he saw the fox.', 0, 'らしい is a guess or a rumour.'), e('He is sure it was the maid.', 0, 'He blames a fox.')] })],
+    A: [ch({ item: 'g:ni_chigainai', ctx: { jp: P2 + ' 。 ' + P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'What is the tale suggesting?' },
+      options: [e('That no single account was the truth, but each held a piece: sorting what was seen from what was heard and what was guessed is what found it.', 1), e('That witnesses always lie.', 0, 'Each told what they knew, in their own way.'), e('That the fox did it.', 0, 'The fox was only a rumour.')] })],
+  } };
+
+  // ---- the sayings on the inn's scrolls: the one that breaks the rule (A34) -----------------------------------------------
+  // F: かもしれない and でしょう are not certainty (たぶん and かならず pull against each other). E: the "looks" そう cannot
+  // follow a noun; after you know, you do not say it looks. I: ようだ, はずだ and らしい need evidence from outside; you do
+  // not infer your own name. A: に違いない cannot sit beside "not sure"; とのことだ passes on what someone else said.
+  C.hallW8Cards = {};
+  function counter(F, E, I, A, pat) {
+    C.hallW8Cards[pat] = { F, E, I, A };
+    const mk = (item, list, prompt) => ch({ item, ctx: { jp: list.map((x, i) => (i + 1) + ' 、 ' + x[0]).join(' ／ '), en: '' }, prompt: { en: prompt }, options: list.map((x, i) => o(String(i + 1) + ' 、 ' + x[0], x[1], x[2])) });
+    return {
+      F: [mk('g:kamo', F, 'Three sayings say how sure they are in a way that holds together. Which one breaks the rule?')],
+      E: [mk('g:sou_look', E, 'Three sayings use そう ("looks" and "I hear") correctly. Which one breaks the rule?')],
+      I: [mk('g:you_mitai', I, 'Three sayings use ようだ, はずだ and らしい the way they work. Which one breaks the rule?')],
+      A: [mk('g:ni_chigainai', A, 'Three sayings use に違いない and とのことだ correctly. Which is the counterexample?')],
+    };
+  }
+  const C0 = counter(
+    [['あした は あめ かも しれない', 0, 'Correct.'], ['あの ひと は せんせい でしょう', 0, 'Correct.'], ['たぶん 、 かならず くる', 1, 'たぶん (probably) and かならず (certainly) pull against each other: たぶん くる でしょう.'], ['くも が くろい から 、 あめ が ふる かも しれない', 0, 'Correct.']],
+    [['この ケーキ は おいし そう だ', 0, 'Looks delicious: correct.'], ['{雨|あめ} が {降|ふ}り そう だ', 0, 'Looks like rain: correct.'], ['{先生|せんせい} そう だ', 1, 'The "looks" そう cannot follow a noun: {先生|せんせい} の よう だ (or {先生|せんせい} らしい).'], ['{明日|あした} は {雨|あめ} だ そう だ', 0, 'Hearsay after だ: correct.']],
+    [['{電気|でんき} が {消|き}えて いる 。 {留守|るす} の よう だ', 0, 'Inference from what you see: correct.'], ['{三時|さんじ} に {出|で}た から 、 もう {着|つ}いた はず だ', 0, 'Correct.'], ['{窓|まど} の {外|そと} が {濡|ぬ}れて いる 。 {雨|あめ} が {降|ふ}った らしい', 0, 'Correct.'], ['{食|た}べて みたら 、 おいし そう だった', 1, 'After tasting, you know: おいしかった. そう is for how a thing looks before you know.']],
+    [['この {足跡|あしあと} は 、 {子供|こども} の もの に {違|ちが}いない', 0, 'Correct.'], ['{手紙|てがみ} に よる と 、 {来週|らいしゅう} {着|つ}く と の こと だ', 0, 'Correct.'], ['{確|たし}か で は ない が 、 {犯人|はんにん} は {彼|かれ} に {違|ちが}いない', 1, 'The counterexample: に違いない is near-certainty, and "it isn\'t certain" contradicts it: {彼|かれ} かも しれない.'], ['{噂|うわさ} に よる と 、 {狐|きつね} が {出|で}る らしい', 0, 'Correct.']], 0);
+  const C1 = counter(
+    [['かぜ を ひいた かも しれない', 0, 'Correct.'], ['あした は はれる でしょう', 0, 'Correct.'], ['きっと 、 たぶん くる', 1, 'きっと (surely) and たぶん (probably) pull against each other; one is enough: きっと くる.'], ['そら が あかい から 、 あした は はれる でしょう', 0, 'Correct.']],
+    [['{今|いま} に も {泣|な}き そう な {顔|かお}', 0, 'Correct.'], ['{田舎|いなか} は {静|しず}か だ そう だ', 0, 'Hearsay after だ: correct.'], ['（ {表紙|ひょうし} を {見|み}て ） この {本|ほん} は {面白|おもしろ}い そう だ', 1, 'Looking at the cover, you judge by appearance: {面白|おもしろ}そう だ. {面白|おもしろ}い そう だ means someone told you so.'], ['{午後|ごご} から {晴|は}れる そう だ', 0, 'Correct.']],
+    [['{誰|だれ} も いない みたい だ', 0, 'Correct.'], ['{鍵|かぎ} は {机|つくえ} の {上|うえ} に ある はず だ', 0, 'Correct.'], ['{彼|かれ} は {来|こ}ない らしい', 0, 'Correct.'], ['{私|わたし} の {名前|なまえ} は 、 {田中|たなか} らしい', 1, 'You know your own name; らしい is for what you gather from outside: {私|わたし} の {名前|なまえ} は {田中|たなか} です.']],
+    [['{宿|やど} の {者|もの} に よる と 、 {明日|あした} は {雪|ゆき} と の こと だ', 0, 'Correct.'], ['これ だけ {証拠|しょうこ} が あれば 、 {彼|かれ} に {違|ちが}いない', 0, 'Correct.'], ['{医者|いしゃ} の {話|はなし} で は 、 {一週間|いっしゅうかん} で {治|なお}る と の こと だ', 0, 'Correct.'], ['{私|わたし} は {昨日|きのう} 、 {熱|ねつ} が あった と の こと だ', 1, 'The counterexample: とのことだ passes on what someone else said, and you know your own fever at first hand: {昨日|きのう} 、 {熱|ねつ} が あった.']], 1);
+  const cardStretch = [ch({ item: 'g:to_no_koto', ctx: { jp: '{明日|あした} は {雪|ゆき} だ そう だ 。 ／ {宿|やど} の {者|もの} に よる と 、 {明日|あした} は {雪|ゆき} と の こと だ 。', en: '' }, prompt: { en: 'Both pass on what someone said. What does the second add?' },
+    options: [e('It names the source (によると) and passes the news on formally (とのことだ), as in a letter or a report; そうだ is the everyday way.', 1), e('The second is the speaker\'s own guess.', 0, 'Both report what someone else said.'), e('The second is more certain.', 0, 'It is more formal, not more certain.')] })];
+  C.challenges['hall.w8.counter0'] = { title: T('{宿|やど} の {掛|か}け{軸|じく}', 'The inn\'s scrolls'), tiers: C0, stretchA: cardStretch };
+  C.challenges['hall.w8.counter1'] = { title: T('{宿|やど} の {掛|か}け{軸|じく}', 'The inn\'s scrolls'), tiers: C1, stretchA: cardStretch };
+
+  // ---- asking where Hisa's note says they went (A12) ---------------------------------------------------------------------
+  C.challenges['hall.w8.ask'] = { title: T('ヒサ の {書|か}き{置|お}き', 'Hisa\'s note'), tiers: {
+    F: [ch({ item: 'g:sou_hear', prompt: { en: 'You want to know where Hisa went, from the note. What do you ask?' },
+      options: [o('ヒサ は 、 どこ へ いきました か 。', 1), o('ヒサ は 、 なに を たべました か 。', 0, 'That asks what Hisa ate.'), o('はこ は 、 いくら です か 。', 0, 'That asks what the box cost.')] })],
+    E: [ch({ item: 'g:sou_hear', prompt: { en: 'You want to know where, by the note, Hisa went. What do you ask?' },
+      options: [o('{書|か}き{置|お}き に よる と 、 ヒサ は どこ へ {行|い}った ん です か 。', 1), o('{書|か}き{置|お}き は 、 いつ {見|み}つけた ん です か 。', 0, 'That asks when the note was found.'), o('ヒサ は 、 {何時|なんじ} に {寝|ね}た ん です か 。', 0, 'That asks when Hisa went to bed.')] })],
+    I: [ch({ item: 'g:you_mitai', prompt: { en: 'You want to know whether the note says where Hisa took the box. What do you ask?' },
+      options: [o('ヒサ が {箱|はこ} を {持|も}って {行|い}った {先|さき} は 、 {書|か}き{置|お}き に {書|か}いて あります か 。', 1), o('ヒサ は 、 {箱|はこ} を {盗|ぬす}んだ ん です か 。', 0, 'That accuses Hisa of stealing it.'), o('{書|か}き{置|お}き の {字|じ} は 、 {上手|じょうず} です か 。', 0, 'That asks whether the handwriting is good.')] })],
+    A: [ch({ item: 'g:keigo_kenjo', prompt: { en: 'Ask, politely, how the note gives Hisa\'s destination.' },
+      options: [o('{恐|おそ}れ{入|い}ります が 、 {書|か}き{置|お}き に は 、 ヒサ さん の {行|ゆ}き{先|さき} が どう {書|か}かれて いる か 、 お{教|おし}え いただけます か 。', 1), o('{書|か}き{置|お}き を 、 {拝借|はいしゃく} して も よろしい でしょう か 。', 0, 'That asks to borrow the note.'), o('ヒサ さん は 、 {必|かなら}ず {戻|もど}られる に {違|ちが}いありません 。', 0, 'That reassures; it asks nothing.')] })],
+  },
+  stretchA: [ch({ item: 'g:ni_chigainai', ctx: { jp: '{茶屋|ちゃや} の {灯|ひ} が {一晩中|ひとばんじゅう} {点|つ}いて いた から 、 {持|も}ち{主|ぬし} は {峠|とうげ} の {茶屋|ちゃや} に いる に {違|ちが}いない 。', en: '' }, prompt: { en: 'How sure is Hisa, and on what?' },
+    options: [e('Very sure (に違いない), from what they saw: the teahouse light burning all night.', 1), e('Not sure at all: に違いない is a guess.', 0, 'に違いない is close to certainty.'), e('Sure, because someone told them.', 0, 'The reason given is the light they saw.')] })] };
+
+  // ---- the riddle stone (a reprieve) -----------------------------------------------------------------------------------------
+  C.challenges['hall.w8.riddle'] = { title: T('なぞなぞ の {石|いし}', 'The riddle stone'), tiers: {
+    F: [ch({ item: 'g:you_mitai', ctx: { jp: 'みえない けど 、 いる の が わかる 。 き の は を ゆらす もの 、 なあに ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('かぜ', 1), o('とり', 0, 'A bird can be seen.'), o('ひと', 0, 'People can be seen.')] })],
+    E: [ch({ item: 'v:足跡', ctx: { jp: '{姿|すがた} は {見|み}えない が 、 {雪|ゆき} の {上|うえ} に {印|しるし} を {残|のこ}して いく 。 {朝|あさ} {見|み}る と 、 {誰|だれ} が {来|き}た か {分|わ}かる 。 {何|なん} だ ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{足跡|あしあと}', 1), o('{影|かげ}', 0, 'A shadow leaves nothing on the snow.'), o('{声|こえ}', 0, 'A voice leaves no mark.')] })],
+    I: [ch({ item: 'g:rashii', ctx: { jp: '{見|み}た {人|ひと} は いない のに 、 {誰|だれ} もが {知|し}って いる 。 {話|はな}す {人|ひと} が {変|か}わる たび に 、 {少|すこ}し ずつ {大|おお}きく なる 。 {何|なん} だ ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{噂|うわさ}', 1), o('{雪|ゆき}だるま', 0, 'A snowman grows by rolling, and everyone can see it.'), o('{子供|こども}', 0, 'Children grow, but someone has always seen them.')] })],
+    A: [ch({ item: 'g:to_no_koto', ctx: { jp: '{口|くち} から {口|くち} へ と {渡|わた}る うち に 、 {尾|お} が {付|つ}き {鰭|ひれ} が {付|つ}く 。 さて 、 {何|なに} か 。', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{噂話|うわさばなし}', 1), o('{魚|さかな}', 0, 'A fish has its tail and fins from the start.'), o('{凧|たこ}', 0, 'A kite\'s tail is tied on by hand.')] })],
+  },
+  stretchA: [ch({ item: 'g:to_no_koto', ctx: { jp: '{尾|お} が {付|つ}き {鰭|ひれ} が {付|つ}く 。', en: '' }, prompt: { en: 'What does 尾ひれが付く mean, said of a story?' },
+    options: [e('That it gets exaggerated as it is passed on, gaining details nobody saw: exactly what a rumour of a fox does.', 1), e('That it becomes a fish story about the sea.', 0, 'The tail and fins are a figure for additions.'), e('That it gets shorter.', 0, 'It gains things, not loses them.')] })] };
+
+  // ---- t5: the snow fox (wet) ---------------------------------------------------------------------------------------------------
+  C.encounters = C.encounters || {};
+  const FOX = { enemy: 'sb.fox', name: say('{雪|ゆき} の {狐|きつね}', 'Snow fox'), conditions: ['wet'], knots: 2, music: 'battle_atlas' };
+  C.encounters['hall.w8.fox'] = {
+    id: 'hall.w8.fox', kind: 'battle', name: say('{雪|ゆき} の {狐|きつね}', 'The snow fox'),
+    lead: Object.assign({}, FOX, { knots: 3 }),
+    group: { normal: [FOX], hard: [FOX, FOX] },
+    rules: { wait: true, conditions: true },
+  };
+
+  // ---- t9: Saki and Gonroku (a mediation) ------------------------------------------------------------------------------------
+  function task(item, en, ok, w1, why1, w2, why2) {
+    const low = ch({ item, prompt: { en }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }] });
+    const high = ch({ item, prompt: { en: en + ' (Read them closely: two are near.)' }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }, { jp: w2, ok: false, why: { en: why2 } }] });
+    return { F: low, E: low, I: high, A: high };
+  }
+  C.encounters['hall.w8.quarrel'] = {
+    id: 'hall.w8.quarrel', kind: 'social', name: say('サキ と ゴンロク', 'Saki and Gonroku'),
+    rules: { wait: true },
+    autoRoute: ['s:calm', 's:size', 'wait', 's:child'],
+    social: {
+      parties: [
+        { aid: 'n:saki', name: say('サキ', 'Saki'), stance: 'heated', wants: { en: 'To be believed: she saw what she saw, and it was no fox.' } },
+        { aid: 'n:gonroku', name: say('ゴンロク', 'Gonroku'), stance: 'heated', wants: { en: 'For everyone to agree it was a fox, as it always has been in the stories.' } },
+      ],
+      claims: {
+        saw: { by: 'n:saki', jp: '{確|たし}か に {影|かげ} を {見|み}ました 。 {狐|きつね} なんか じゃ ありません 。', en: 'Saki: "I did see a shadow. It was no fox."' },
+        fox: { by: 'n:gonroku', jp: '{狐|きつね} に {決|き}まって おる 。 {村|むら} の {者|もの} も 、 {皆|みな} そう {言|い}って おる 。', en: 'Gonroku: "A fox, for certain. Everyone in the village says so."' },
+        size: { by: 'n:saki', jp: '…… {影|かげ} は 、 {小|ちい}さかった ん です 。 {子供|こども} くらい の 。 {言|い}う と 、 {笑|わら}われる と {思|おも}って 。', en: 'Saki: "…The shadow was small. About the size of a child. I thought I\'d be laughed at if I said so."', hidden: true },
+      },
+      understanding: 3,
+      gesture: { name: say('{二人|ふたり} に お{茶|ちゃ} を {注|つ}ぐ', 'Pour them both some tea'), desc: 'Pour each of them a cup from the kettle on the brazier.', effect: { stance: { 'n:saki': 'listening', 'n:gonroku': 'listening' } }, once: true, says: { en: 'You pour two cups. Holding something warm, they both stop talking for a moment.' } },
+      unravelTip: { en: 'Nothing is knotted. What is tangled is what was seen and what was only said.' },
+      actions: [
+        { id: 'calm', kind: 'restate', label: say('サキ さん は {見|み}た こと を 、 ゴンロク さん は {聞|き}いた {話|はなし} を {言|い}って いる ん です ね 。', 'Say back how each of them knows'),
+          task: task('g:sou_hear', 'Which says back how each of them knows?', 'サキ さん は {見|み}た こと を 、 ゴンロク さん は {聞|き}いた {話|はなし} を {言|い}って いる ん です ね 。', 'お{二人|ふたり} と も 、 {狐|きつね} を {見|み}た ん です ね 。', 'Neither of them saw a fox.', 'お{二人|ふたり} と も 、 {何|なに} も {見|み}て いない ん です ね 。', 'Saki did see something.'),
+          cases: [{ when: { stance: { 'n:saki': 'heated' } }, effect: { stance: { 'n:saki': 'listening' } }, says: { en: 'Saki\'s shoulders come down. "Yes. I saw it. With my own eyes."' } },
+            { when: { stance: { 'n:gonroku': 'heated' } }, effect: { stance: { 'n:gonroku': 'listening' } }, says: { en: 'Gonroku clears his throat. "…Well. I didn\'t see it myself, as such."' } }],
+          says: { en: 'They are already listening.' } },
+        { id: 'size', kind: 'ask', label: say('{影|かげ} は 、 どの くらい の {大|おお}きさ でした か 。', 'Ask how big the shadow was'), once: true, when: { stance: { 'n:saki': 'listening' } },
+          task: task('g:you_mitai', 'Which asks how big the shadow was?', '{影|かげ} は 、 どの くらい の {大|おお}きさ でした か 。', '{影|かげ} は 、 {何色|なにいろ} でした か 。', 'A shadow has no colour to speak of; its size is what tells.', '{狐|きつね} は 、 {何匹|なんびき} いました か 。', 'That assumes there were foxes.'),
+          effect: { reveal: 'size', understanding: 1 }, says: { en: 'Saki hesitates. "…Small. About the size of a child. I didn\'t say, in case you all laughed."' } },
+        { id: 'child', kind: 'propose', label: say('{子供|こども} くらい の {影|かげ} なら 、 {狐|きつね} で は なく 、 ヒサ だった の かも しれません ね 。', 'Propose that the shadow may have been Hisa'), when: { claims: ['size'] },
+          task: task('g:kamo', 'Which suggests, without claiming certainty, that it may have been Hisa?', '{子供|こども} くらい の {影|かげ} なら 、 {狐|きつね} で は なく 、 ヒサ だった の かも しれません ね 。', '{影|かげ} は 、 ヒサ に {違|ちが}いありません 。 ヒサ が {盗|ぬす}んだ ん です 。', 'That claims certainty, and accuses.', '{影|かげ} は 、 {狐|きつね} だった そう です 。', 'That repeats the rumour.'),
+          effect: { flag: 'agreed' }, says: { en: 'Gonroku is quiet, then laughs at himself. "A child, not a fox. I suppose the stories don\'t know everything." Saki smiles at last.' } },
+        { id: 'blunt', kind: 'propose', label: say('{見|み}て も いない こと を 、 {言|い}わない で ください 。', 'Tell Gonroku not to talk about what he didn\'t see'), lasting: true, means: { en: 'You will tell Gonroku to stop talking about things he never saw.' },
+          task: task('v:噂', 'Which tells him not to talk about what he didn\'t see?', '{見|み}て も いない こと を 、 {言|い}わない で ください 。', 'もう {少|すこ}し 、 {話|はなし} を {聞|き}かせて ください 。', 'That invites him to say more.', 'お{茶|ちゃ} が {入|はい}りました よ 。', 'That offers tea.'),
+          effect: { stance: { 'n:gonroku': 'leaving' } }, says: { en: 'Gonroku goes red. "In my day the young listened to their elders," he says, and stalks off to his room.' } },
+      ],
+      responses: {
+        water: { effect: { stance: { 'n:gonroku': 'listening' } }, says: { en: 'You top up Gonroku\'s cup. He grunts his thanks.' } },
+        unravel: { says: { en: 'Nothing here is knotted. Sort what was seen from what was said.' } },
+      },
+      wait: { when: { stance: { 'n:saki': 'listening' } }, effect: { reveal: 'size' }, says: { en: 'Saki says, mostly to herself, "It was so small, though."' } },
+      drift: [{ when: { all: [{ rounds: 3 }, { stance: { 'n:gonroku': 'heated' } }] }, once: true, effect: { stance: { 'n:saki': 'listening', 'n:gonroku': 'listening' } }, says: { en: 'Omatsu sets down the morning rice between them. "Eat first. Quarrel after." Neither of them can argue with that.' } }],
+      companion: {
+        nao: [{ id: 'nao_post', name: say('{伝言|でんごん} の {話|はなし}', 'How messages change'), desc: 'Nao, who has carried messages through many mouths, says what happens to them.', once: true, effect: { understanding: 1, stance: { 'n:gonroku': 'listening' } }, says: { en: 'Nao: "A message that passes through three mouths arrives as three messages. That\'s why I carry them written." Gonroku looks at his hands.' } }],
+        mio: [{ id: 'mio_symptom', name: say('{症状|しょうじょう} と {噂|うわさ}', 'Symptoms and rumours'), desc: 'Mio explains how a healer weighs what she sees against what she is told.', once: true, effect: { understanding: 1 }, says: { en: 'Mio: "When I treat someone, what I see comes first and what the neighbours say comes last. Saki saw; that counts."' } }],
+        ren: [{ id: 'ren_lamp', name: say('{灯|ひ} の {証|あかし}', 'What a lamp shows'), desc: 'Ren speaks of what lamplight can and cannot show.', once: true, effect: { understanding: 1, stance: { 'n:saki': 'listening' } }, says: { en: 'Ren: "A lamp in a corridor makes any shape look larger than it is. A shadow that was small by lamplight was smaller still." Saki nods.' } }],
+        suzu: [{ id: 'suzu_fox', name: say('{狐|きつね} の {役|やく}', 'The fox\'s part'), desc: 'Suzu talks about how the fox always gets cast as the villain.', once: true, effect: { understanding: 1 }, says: { en: 'Suzu: "In every play the fox gets the blame, because nobody ever asks the fox. Shall we ask somebody else this time?"' } }],
+      },
+    },
+    conclusions: [
+      { id: 'left', when: { left: 'n:gonroku' }, result: 'end', text: { en: 'Gonroku has gone off to his room in a huff. He will be back for breakfast; you can try again.' } },
+      { id: 'agreed', when: { flag: 'agreed' }, result: 'win', text: { en: 'Saki and Gonroku agree: it may well have been Hisa.' } },
+    ],
+  };
+
+  // ---- t10: the record of the night (the capstone) ----------------------------------------------------------------------------
+  function hear(item, fJp, jp, en, ok, w1, why1, w2, why2) {
+    const opts = (two) => [{ en: ok, ok: true }, { en: w1, ok: false, why: { en: why1 } }].concat(two ? [{ en: w2, ok: false, why: { en: why2 } }] : []);
+    return { F: ch({ item, ctx: { jp: fJp, en: '' }, prompt: { en }, options: opts(false) }), E: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(false) }), I: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(true) }), A: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(true) }) };
+  }
+  const A = (id, jp, en, more) => Object.assign({ id, label: { jp, en } }, more);
+  const vals = (x) => { const out = {}; for (const k in x) out[k] = { jp: x[k][0], en: x[k][1] }; return out; };
+  const PAGE = vals({ blank: ['{白紙|はくし}', 'blank'], one: ['{一行|いちぎょう}', 'one line'], two: ['{二行|にぎょう}', 'two lines'], three: ['{三行|さんぎょう}', 'three lines'], done: ['{書|か}き{終|お}えた', 'written'] });
+  C.encounters['hall.w8.record'] = {
+    id: 'hall.w8.record', kind: 'procedure', name: say('{夜|よる} の {記録|きろく}', 'The record of the night'),
+    rules: { wait: true },
+    procedure: {
+      id: 'hall_w8_record', version: 1, restart: 'stable',
+      machine: { page: 'blank' },
+      show: [{ key: 'page', label: say('{宿|やど} の {帳面|ちょうめん}', 'The inn\'s ledger'), values: PAGE }],
+      done: { en: 'The night is written down as it was: what was seen, what was heard, what was said and what was guessed.' },
+      steps: [
+        { id: 'r1', stable: true, text: say('サキ ： 「 {台所|だいどころ} から 、 {小|ちい}さな {影|かげ} を {見|み}ました 。 」', 'Saki: "From the kitchen, I saw a small shadow."'),
+          task: hear('g:sou_hear', 'サキ ： 「 だいどころ から 、 ちいさな かげ を みました 。 」', 'サキ ： 「 {台所|だいどころ} から 、 {小|ちい}さな {影|かげ} を {見|み}ました 。 」', 'How does Saki know about the shadow?',
+            'She saw it herself.', 'Someone told her.', 'She says 見ました: with her own eyes.', 'She guessed it.', 'She is not guessing; she saw.'),
+          actions: [
+            A('seen', '「 サキ は 、 {小|ちい}さな {影|かげ} を {見|み}た と {言|い}う 」 と {書|か}く', 'Write: "Saki says she saw a small shadow."', { ok: true, set: { page: 'one' }, means: { en: 'You write down what Saki saw, as she saw it.' }, result: { en: 'The first line goes down in Omatsu\'s careful hand, dictated by you.' } }),
+            A('thief', '「 {泥棒|どろぼう} が {入|はい}った 」 と {書|か}く', 'Write: "A thief got in."', { means: { en: 'You go to write that a thief got in.' }, wrong: { en: 'Omatsu stops the brush. "Nobody saw a thief. Only a shadow."' } }),
+          ] },
+        { id: 'r2', stable: true, text: say('トウスケ ： 「 {階段|かいだん} で 、 {足音|あしおと} が {聞|き}こえた 。 」', 'Tōsuke: "I heard footsteps on the stairs."'),
+          task: hear('g:sou_hear', 'トウスケ ： 「 かいだん で 、 あしおと が きこえた 。 」', 'トウスケ ： 「 {階段|かいだん} で 、 {足音|あしおと} が {聞|き}こえた 。 」', 'How does Tōsuke know about the footsteps?',
+            'He heard them; he did not see anyone.', 'He saw someone on the stairs.', 'He says 聞こえた: only heard.', 'He climbed the stairs himself.', 'He heard the steps; he did not make them.'),
+          actions: [
+            A('heard', '「 {夜中|よなか} 、 {階段|かいだん} で {足音|あしおと} が した そう だ 」 と {書|か}く', 'Write: "There were footsteps on the stairs in the night, we are told."', { ok: true, set: { page: 'two' }, means: { en: 'You write down what Tōsuke heard, as heard.' }, result: { en: 'The second line: what was heard, and by whom.' } }),
+            A('climbed', '「 トウスケ が {階段|かいだん} を {上|のぼ}った 」 と {書|か}く', 'Write: "Tōsuke went up the stairs."', { means: { en: 'You go to write that Tōsuke went up the stairs.' }, wrong: { en: 'Tōsuke protests. "I heard someone. I never said it was me!"' } }),
+          ] },
+        { id: 'r3', stable: true, text: say('ゴンロク ： 「 {狐|きつね} の {仕業|しわざ} じゃ と 、 {村|むら} の {者|もの} が {言|い}って おる 。 」', 'Gonroku: "The villagers say it was a fox\'s doing."'),
+          task: hear('g:rashii', 'ゴンロク ： 「 きつね の せい だ と 、 むら の ひと が いって いる 。 」', 'ゴンロク ： 「 {狐|きつね} の {仕業|しわざ} じゃ と 、 {村|むら} の {者|もの} が {言|い}って おる 。 」', 'Where does the fox come from?',
+            'From what the villagers say: a rumour.', 'From what Gonroku saw.', 'He says the villagers say so.', 'From the footprints.', 'The prints say nothing of a fox.'),
+          actions: [
+            A('rumour', '「 {狐|きつね} の {仕業|しわざ} と いう {噂|うわさ} も ある が 、 {確|たし}か で は ない 」 と {書|か}く', 'Write: "There is talk of a fox, but nothing certain."', { ok: true, set: { page: 'three' }, means: { en: 'You write the rumour down as a rumour.' }, result: { en: 'Gonroku reads it over your shoulder, and for once does not argue.' } }),
+            A('fox', '「 {狐|きつね} が {箱|はこ} を {盗|ぬす}んだ 」 と {書|か}く', 'Write: "A fox stole the box."', { means: { en: 'You go to write that a fox stole the box.' }, wrong: { en: 'Saki shakes her head. "Nobody saw a fox. Write what people said, not what they guessed."' } }),
+          ] },
+        { id: 'r4', stable: true, text: say('ヒサ の {書|か}き{置|お}き ： 「 {箱|はこ} の {人|ひと} に 、 {届|とど}けて くる ね 。 」', 'Hisa\'s note: "I\'m taking it to the box\'s owner."'),
+          task: hear('g:you_mitai', 'ヒサ の かきおき ： 「 はこ の ひと に 、 とどけて くる ね 。 」', 'ヒサ の {書|か}き{置|お}き ： 「 {箱|はこ} の {人|ひと} に 、 {届|とど}けて くる ね 。 」', 'What does the note tell you about the box?',
+            'Hisa took it to give it to its owner.', 'Hisa stole it.', 'The note says 届けてくる: to deliver it.', 'Hisa lost it.', 'Hisa took it on purpose, to deliver.'),
+          actions: [
+            A('note', '「 ヒサ が {届|とど}け に {行|い}った よう だ 。 {書|か}き{置|お}き が あった 」 と {書|か}く', 'Write: "It seems Hisa went to deliver it; there was a note."', { ok: true, set: { page: 'done' }, means: { en: 'You write what the note shows, with the note as its evidence.' }, result: { en: 'Omatsu blots the page. Outside, small footsteps come crunching up the path, and a big pair beside them.' } }),
+            A('stole', '「 ヒサ が {箱|はこ} を {盗|ぬす}んだ 」 と {書|か}く', 'Write: "Hisa stole the box."', { means: { en: 'You go to write that Hisa stole the box.' }, wrong: { en: 'Omatsu puts her hand over the page. "Read the note again. Delivering is not stealing."' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'The record of the night is written.' } }],
+  };
+})(RB.content);
+
+
+/* ==== src/content/hall/34_w8_scenes.js ==== */
+/* The Hall of a Hundred Tales, wing 8, Three Witnesses at the Inn: the scenes (expansion P15; plan 04_DUNGEONS.md D9;
+ * maps in 32_w8_maps.js, tasks and encounters in 33_w8_learning.js). Each trial sets its floor's own flag and tells
+ * the Hall; what a trial shows follows the level its task is set at (the profile, or one up on the Grow route); the
+ * pattern (hall.w8.pat) chooses the accounts on the slips, which accounts hold at the witnesses' places, the road in
+ * Hisa's note and the prints' places. Omatsu and Saki she/her, Tōsuke, Gonroku and Kichibei he/him, Hisa they/them.
+ * Suzu's lines have Kansai versions (src/content/dialect/kansai_99_hall.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const K = C.hallKit, W = 'w8', L = K.lv(W), both = L.both;
+  const TALE = C.hallW8Tale, FT = C.hallW8TaleF;
+  const nest = (x) => x.replace(/「/g, '『').replace(/」/g, '』');
+  const cap = (x) => x[0].toUpperCase() + x.slice(1);
+  const LV = (fn) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].map((t) => fn(p, t))).join('');
+  const LV3 = (fn) => [0, 1].flatMap((p) => [['EF', 0], ['E', 1], ['IA', 2]].map(([t, i]) => fn(p, t, i))).join('');
+  const LVN3 = (fn) => [['EF', 0], ['E', 1], ['IA', 2]].map(([t, i]) => fn(t, i)).join('');
+  let out = `
+@scene hall.w8.f1_first
+!set hall_w8_f1_seen
+narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {雪|ゆき} に {埋|う}もれた {街道|かいどう} の {宿|やど} だった 。 {窓|まど} に {灯|ひ} が {点|つ}いて いる のに 、 {中|なか} は {妙|みょう} に {静|しず}か だ 。 || Through the paper screen: an inn on the old highway, buried in snow. Its windows are lit, but inside it is strangely quiet.
+?(comp=nao) comp: {宿|やど} で {物|もの} が {無|な}くなる と 、 {一晩|ひとばん} で {話|はなし} が {三倍|さんばい} に なる 。 {配達|はいたつ} で {何度|なんど} も {見|み}た 。 || When something goes missing at an inn, the story triples overnight. I've seen it on my rounds a dozen times.
+?(comp=mio) comp: {何|なに} か あった みたい ね 。 {皆|みな} 、 {顔|かお} が {強張|こわば}って いる わ 。 || Something seems to have happened. Everyone's faces are tight.
+?(comp=ren) comp: {雪|ゆき} の {夜|よる} の {宿|やど} は 、 {灯|ひ} が {一番|いちばん} {大事|だいじ} な {場所|ばしょ} です 。 …… {何|なに} か {失|な}くした {人|ひと} の {顔|かお} が {見|み}えます 。 || A snowbound inn is where light matters most. …I can see the faces of people who've lost something.
+?(comp=suzu) comp: {第|だい}{八幕|はちまく} は 、 {推理|すいり} の {芝居|しばい} ね 。 {証人|しょうにん} が {三人|さんにん} 、 {話|はなし} が {三|みっ}つ 。 {面白|おもしろ}く なり そう 。 || Act eight: a detective play. Three witnesses, three stories. This should be good.
+?(!comp) narr: {雪|ゆき} を {踏|ふ}む {自分|じぶん} の {足音|あしおと} だけ が 、 {大|おお}きく {聞|き}こえる 。 || Only your own footsteps in the snow sound loud.
+
+@scene hall.w8.f2_first
+!set hall_w8_f2_seen
+narr: {宿|やど} の {裏|うら} の {庭|にわ} 。 {夜|よる} の {間|あいだ} に {積|つ}もった {雪|ゆき} に 、 {誰|だれ} か が {歩|ある}いた {跡|あと} が {残|のこ}って いる 。 || The yard behind the inn. In the snow that fell overnight, someone's tracks remain.
+?(comp) comp: {証人|しょうにん} が {立|た}って いた {場所|ばしょ} に {行|い}けば 、 {本当|ほんとう} に {見|み}えた か 、 {聞|き}こえた か 、 {確|たし}かめられる ね 。 || If we go to where each witness was, we can check whether they really could have seen or heard it.
+
+@scene hall.w8.f3_first
+!set hall_w8_f3_seen
+narr: {朝|あさ} の {座敷|ざしき} 。 {開|あ}けた {障子|しょうじ} の {向|む}こう 、 {雪|ゆき} の {庭|にわ} に {足跡|あしあと} が {四|よっ}つ {並|なら}んで いる 。 {火鉢|ひばち} の {側|そば} で 、 サキ と ゴンロク が {睨|にら}み{合|あ}って いる 。 || The morning room. Beyond the open doors, four sets of prints cross the snowy garden. By the brazier, Saki and Gonroku are glaring at each other.
+?(comp=nao) comp: {朝|あさ} から {喧嘩|けんか} か 。 {寝不足|ねぶそく} の {顔|かお} だ な 、 {二人|ふたり} と も 。 || Quarrelling first thing. They both look short on sleep.
+?(comp=mio) comp: {足跡|あしあと} は 、 {嘘|うそ} を つかない わ 。 {人|ひと} の {話|はなし} より 、 {先|さき} に {見|み}て みましょう 。 || Footprints don't lie. Let's look at them before we listen to anyone.
+?(comp=ren) comp: {雪|ゆき} は 、 {夜|よる} の {間|あいだ} の こと を {全部|ぜんぶ} {覚|おぼ}えて います 。 {読|よ}み{方|かた} さえ {分|わ}かれば 。 || The snow remembers everything that happened in the night, if you know how to read it.
+?(comp=suzu) comp: {大詰|おおづ}め の {前|まえ} の {言|い}い{争|あらそ}い 。 {推理|すいり} {劇|げき} の {定番|ていばん} よ 。 || An argument before the final scene. Every whodunit has one.
+
+@scene hall.w8.bench1
+!hook hall_station w8_b1
+
+@scene hall.w8.bench2
+!hook hall_station w8_b2
+
+@scene hall.w8.bench3
+!hook hall_station w8_b3
+
+@scene hall.w8.spring
+narr: {裏庭|うらにわ} の {井戸|いど} 。 {釣瓶|つるべ} の {縄|なわ} に 、 {霜|しも} が {付|つ}いて いる 。 || The back-yard well. There is frost on the bucket rope.
+!hook hall_station w8_sp
+
+@scene hall.w8.omatsu
+!faceplayer hall_omatsu
+!if hall.w8.t2 -> done
+hall_omatsu: {十年|じゅうねん} {預|あず}かって いた {箱|はこ} が 、 {一晩|ひとばん} で {消|き}えました 。 {皆|みな} の {話|はなし} を {紙|かみ} に {書|か}いた けれど 、 {見|み}た {話|はなし} と {聞|き}いた {話|はなし} が 、 ごちゃまぜ で 。 {分|わ}けて もらえます か 。 || A box I'd kept for ten years has vanished overnight. I wrote down what everyone said, but what they saw and what they only heard are all jumbled. Would you sort them?
+!end
+:done
+hall_omatsu: {見|み}た こと 、 {聞|き}こえた こと 、 {聞|き}いた {話|はなし} 、 {思|おも}った こと 。 {分|わ}ける と 、 {少|すこ}し {見|み}えて きます ね 。 || What was seen, what was heard, what was told, what was guessed. Sorted, it starts to make sense.
+
+@scene hall.w8.omatsu2
+!faceplayer hall_omatsu2
+hall_omatsu: {箱|はこ} の {置|お}いて あった {床|とこ} の {間|ま} に 、 {紙|かみ} が {一枚|いちまい} 。 {孫|まご} の ヒサ の {字|じ} です 。 {私|わたし} の {目|め} で は 、 もう {細|こま}かい {字|じ} が {読|よ}めなくて 。 || Where the box stood in the alcove, there's a sheet of paper. My grandchild Hisa's hand. My eyes can't manage small writing any more.
+
+@scene hall.w8.omatsu3
+!faceplayer hall_omatsu3
+!if hall.w8.t10 -> done
+hall_omatsu: {宿|やど} の {帳面|ちょうめん} に 、 {昨夜|ゆうべ} の こと を {書|か}き{残|のこ}して おきたい の です 。 {本当|ほんとう} の こと だけ を 。 || I want to set down last night in the inn's ledger. Only what's true.
+!end
+:done
+hall_omatsu: {帳面|ちょうめん} に は 、 {見|み}た こと と {聞|き}いた こと が 、 {分|わ}けて {書|か}いて あります 。 {十年|じゅうねん} {後|ご} に {読|よ}んで も 、 {分|わ}かる よう に 。 || The ledger keeps what was seen and what was heard apart, so that it will still make sense in ten years.
+`;
+
+  // ---- t1: the story room ----------------------------------------------------------------------------------------------
+  const E_PANELS = [TALE.P1, TALE.P2, TALE.P3, TALE.P4].map(nest);
+  const F_PANELS = FT.map(nest);
+  const PANEL_EN = ['One snowy night, a box left in safekeeping vanished from the inn on the pass.', 'The maid said, "I saw a shadow"; the pedlar said, "I heard footsteps."', 'The old guest said, "It seems to be a fox\'s doing."', 'Putting the three accounts together, a single set of small footprints came into view.'];
+  out += '\n@scene hall.w8.t1' + K.taskTrial({ w: W, k: 0, t: 't1',
+    intro: ['narr: {奥|おく} の {部屋|へや} に 、 {絵巻|えまき} が {掛|か}けて ある 。 || A picture scroll hangs in the back room.']
+      .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
+      ['narr: {戸|と} の {隙間|すきま} から {雪|ゆき} {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A snowy draught blows in through the door, and the pictures slip out of order.']),
+    task: 'hall.w8.story',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w8.story_q',
+      '?(comp=nao) comp: {一人|ひとり} の {話|はなし} だけ を {信|しん}じる と 、 {間違|まちが}える 。 {三人|さんにん} {分|ぶん} を {並|なら}べて 、 {初|はじ}めて {見|み}える 。 || Believe one account alone and you go wrong. Lay all three side by side, and it shows.',
+      '?(comp=mio) comp: {見|み}た 、 {聞|き}こえた 、 らしい 。 {同|おな}じ {夜|よる} の {話|はなし} でも 、 {確|たし}かさ が {全然|ぜんぜん} {違|ちが}う のね 。 || Saw, heard, seems. The same night, but how sure each one is couldn\'t be more different.',
+      '?(comp=ren) comp: {狐|きつね} の {話|はなし} が 、 {一番|いちばん} {大|おお}きな {声|こえ} でした ね 。 {一番|いちばん} {確|たし}か で は ない のに 。 || The fox story was the loudest, wasn\'t it. Though it was the least certain.',
+      '?(comp=suzu) comp: {証人|しょうにん} が {三人|さんにん} 、 {誰|だれ} も {嘘|うそ} は ついて ない 。 でも {誰|だれ} も {全部|ぜんぶ} は {知|し}らない 。 {上手|じょうず} な {脚本|きゃくほん} ね 。 || Three witnesses, none of them lying, none of them knowing it all. Clever writing.'],
+    later: 'narr: {絵|え} は 、 {後|あと} で {並|なら}べ{直|なお}せる 。 || You can put the pictures in order later.',
+    done: 'narr: {絵巻|えまき} は 、 {元|もと} の {順番|じゅんばん} で {掛|か}かって いる 。 || The scroll hangs in its proper order.' });
+
+  // ---- t2: what each witness said, sorted by how they know it ------------------------------------------------------------------
+  const KIND = { seen: ['{見|み}た こと', 'what was seen'], heard: ['{聞|き}こえた こと', 'what was heard'], told: ['{人|ひと} から {聞|き}いた こと', 'what someone was told'], guess: ['{思|おも}った こと', 'what was only guessed'] };
+  const SLIP = {
+    0: {
+      s1: ['seen', 'サキ ： 「 だいどころ から 、 ちいさい かげ を みた 。 」', 'サキ ： 「 {台所|だいどころ} から 、 {小|ちい}さい {影|かげ} を {見|み}ました 。 」', 'サキ ： 「 {台所|だいどころ} の {窓|まど} から 、 {床|とこ} の {間|ま} の {前|まえ} を {通|とお}る {小|ちい}さな {影|かげ} が 、 {確|たし}か に {見|み}えました 。 」', 'Saki: "From the kitchen, I saw a small shadow."'],
+      s2: ['heard', 'トウスケ ： 「 かいだん で 、 あしおと が きこえた 。 」', 'トウスケ ： 「 {階段|かいだん} で 、 {足音|あしおと} が {聞|き}こえた 。 」', 'トウスケ ： 「 {夜中|よなか} に 、 {階段|かいだん} が きしむ {音|おと} が {二度|にど} 、 {聞|き}こえた ん だ 。 」', 'Tōsuke: "I heard footsteps on the stairs."'],
+      s3: ['told', 'ゴンロク ： 「 むら の ひと に よる と 、 この へん に きつね が でる そう だ 。 」', 'ゴンロク ： 「 {村|むら} の {人|ひと} に よる と 、 この {辺|へん} に は {狐|きつね} が {出|で}る そう だ 。 」', 'ゴンロク ： 「 {村|むら} の {者|もの} の {話|はなし} で は 、 この {辺|あた}り に は {昔|むかし} から {狐|きつね} が {出|で}る と の こと じゃ 。 」', 'Gonroku: "The villagers say foxes come round here."'],
+      s4: ['guess', 'ゴンロク ： 「 きつね が もって いった の かも しれない 。 」', 'ゴンロク ： 「 {狐|きつね} が {持|も}って いった の かも しれない 。 」', 'ゴンロク ： 「 どう やら 、 {狐|きつね} の {仕業|しわざ} らしい の う 。 」', 'Gonroku: "Maybe a fox took it."'],
+      s5: ['seen', 'オマツ ： 「 ねる まえ に 、 はこ は とこのま に あった 。 みた よ 。 」', 'オマツ ： 「 {寝|ね}る {前|まえ} に 、 {箱|はこ} は {床|とこ} の {間|ま} に ありました 。 この {目|め} で {見|み}ました 。 」', 'オマツ ： 「 {休|やす}む {前|まえ} に {見|み}{回|まわ}った とき 、 {箱|はこ} は {確|たし}か に {床|とこ} の {間|ま} に ありました 。 」', 'Omatsu: "Before bed, the box was in the alcove. I saw it."'] },
+    1: {
+      s1: ['heard', 'サキ ： 「 うら の と が あく おと が きこえた 。 」', 'サキ ： 「 {裏|うら} の {戸|と} が {開|あ}く {音|おと} が {聞|き}こえました 。 」', 'サキ ： 「 {明|あ}け{方|がた} 、 {裏|うら} の {戸|と} が そっと {開|あ}く {音|おと} が 、 {確|たし}か に {聞|き}こえました 。 」', 'Saki: "I heard the back door open."'],
+      s2: ['seen', 'トウスケ ： 「 にわ に 、 ちいさい あしあと を みた 。 」', 'トウスケ ： 「 {庭|にわ} に 、 {小|ちい}さい {足跡|あしあと} を {見|み}た 。 」', 'トウスケ ： 「 {朝|あさ} 、 {雪|ゆき} の {庭|にわ} に {小|ちい}さな {足跡|あしあと} が {続|つづ}いて いる の を 、 この {目|め} で {見|み}た 。 」', 'Tōsuke: "I saw small footprints in the yard."'],
+      s3: ['told', 'サキ ： 「 おかみさん が 、 はこ は だいじ だ って いって た 。 」', 'サキ ： 「 おかみ さん が 、 {箱|はこ} は {大事|だいじ} な {物|もの} だ と {言|い}って いました 。 」', 'サキ ： 「 おかみ さん から 、 あの {箱|はこ} は {人|ひと} から の {預|あず}かり{物|もの} だ と {聞|き}いて います 。 」', 'Saki: "The landlady told me the box is precious."'],
+      s4: ['told', 'ゴンロク ： 「 きのう 、 となり の むら に たびびと が きた そう だ 。 」', 'ゴンロク ： 「 {昨日|きのう} 、 {隣|となり} の {村|むら} に {旅人|たびびと} が {来|き}た そう だ 。 」', 'ゴンロク ： 「 {行商人|ぎょうしょうにん} の {話|はなし} に よる と 、 {昨日|きのう} {隣村|となりむら} に {年寄|としよ}り の {旅人|たびびと} が {着|つ}いた と の こと じゃ 。 」', 'Gonroku: "They say a traveller came to the next village yesterday."'],
+      s5: ['guess', 'トウスケ ： 「 こども が もって いった みたい だ 。 」', 'トウスケ ： 「 {子供|こども} が {持|も}って いった みたい だ 。 」', 'トウスケ ： 「 あの {足跡|あしあと} の {大|おお}きさ から する と 、 {子供|こども} が {持|も}ち{出|だ}した よう だ な 。 」', 'Tōsuke: "It looks as if a child took it."'] },
+  };
+  const SLIPS = ['s1', 's2', 's3', 's4', 's5'];
+  const HOLDS = (s) => 'xp_hall_w8_f0_hold_' + s, PUT = (s) => 'xp_hall_w8_f0_put_' + s;
+  for (const sl of SLIPS) {
+    out += `
+@scene hall.w8.${sl}
+narr: オマツ が {書|か}いた {紙|かみ} 。 || A slip in Omatsu's hand.
+`;
+    out += LV3((p, t, i) => `?(${both(L[t], 'hall.w8.pat=' + p)}) narr: 「 ${nest(SLIP[p][sl][i + 1])} 」 || "${SLIP[p][sl][4]}"\n`);
+    out += `!unset ${SLIPS.map(HOLDS).join(' ')}
+!set ${HOLDS(sl)}
+narr: {紙|かみ} を {手|て} に {取|と}った 。 || You pick up the slip.
+`;
+  }
+  for (const k of Object.keys(KIND)) {
+    const ok = [0, 1].flatMap((p) => SLIPS.filter((sl) => SLIP[p][sl][0] === k).map((sl) => [p, sl]));
+    out += `
+@scene hall.w8.to_${k}
+narr: {箱|はこ} に 「 ${KIND[k][0]} 」 と {書|か}いて ある 。 || A tray marked "${KIND[k][1]}".
+${ok.map(([p, sl]) => '!if hall.w8.pat=' + p + '&' + HOLDS(sl) + ' -> ok_' + sl + '_' + p).join('\n')}
+!if ${SLIPS.map(HOLDS).join('|')} -> no
+!end
+:no
+narr: {入|い}れよう と して 、 {手|て} を {止|と}めた 。 この {言|い}い{方|かた} は 、 この {箱|はこ} に は {合|あ}わない 。 || You go to put it in, and stop. The way it is said doesn't fit this tray.
+!end
+`;
+    for (const [p, sl] of ok) out += `:ok_${sl}_${p}
+narr: {紙|かみ} を 「 ${KIND[k][0]} 」 の {箱|はこ} に {入|い}れた 。 || You put the slip in the tray for ${KIND[k][1]}.
+!unset ${HOLDS(sl)}
+!set ${PUT(sl)}
+!goto check
+`;
+    out += `:check
+!if ${SLIPS.map(PUT).join('&')} -> all
+!refresh
+!end
+:all
+narr: {五枚|ごまい} の {紙|かみ} が 、 {四|よっ}つ の {箱|はこ} に {分|わ}けられた 。 || The five slips are sorted into the four trays.
+?(comp) comp: {見|み}た 、 {聞|き}こえた 、 {聞|き}いた 、 {思|おも}った 。 {分|わ}けて みる と 、 {狐|きつね} の {話|はなし} は {一枚|いちまい} も 「 {見|み}た 」 に {入|はい}って いない ね 。 || Seen, heard, told, guessed. Sorted, not one slip about the fox is in "seen".
+${K.mark(W, 0, 't2')}
+!end
+`;
+  }
+
+  // ---- t3: the inn's scrolls ---------------------------------------------------------------------------------------------------
+  const CE = {
+    0: { F: ['It might rain tomorrow.', 'That person is probably a teacher.', 'Probably, certainly, (they) will come.', 'The clouds are dark, so it might rain.'],
+      E: ['This cake looks delicious.', 'It looks like rain.', 'Teacher-sou da (a form that doesn\'t exist).', 'I hear it will rain tomorrow.'],
+      I: ['The lights are off. It seems nobody is home.', 'They left at three, so they should have arrived by now.', 'The ground outside the window is wet. It seems to have rained.', 'When I tasted it, it looked delicious.'],
+      A: ['These prints must be a child\'s.', 'According to the letter, they arrive next week.', 'It isn\'t certain, but the culprit must be him.', 'Rumour has it a fox appears.'] },
+    1: { F: ['I may have caught a cold.', 'It will probably be fine tomorrow.', 'Surely, probably, (they) will come.', 'The sky is red, so it will probably be fine tomorrow.'],
+      E: ['A face about to burst into tears.', 'I hear the countryside is quiet.', '(Looking at the cover) I hear this book is interesting.', 'I hear it will clear up in the afternoon.'],
+      I: ['It seems nobody is here.', 'The key should be on the desk.', 'It seems he isn\'t coming.', 'My name, it seems, is Tanaka.'],
+      A: ['According to the inn, it is to snow tomorrow.', 'With this much evidence, it must be him.', 'The doctor says it will heal in a week.', 'I am told I had a fever yesterday.'] },
+  };
+  out += '\n@scene hall.w8.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
+    intro: ['narr: {廊下|ろうか} の {掛|か}け{軸|じく} に 、 {四|よっ}つ の {言葉|ことば} 。 {一番|いちばん} {奥|おく} の {軸|じく} に は 、 「 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 と ある 。 || Four sayings on the corridor\'s hanging scrolls. The last scroll reads: "One alone is wrong."'],
+    task: { 0: 'hall.w8.counter0', 1: 'hall.w8.counter1' },
+    after: ['narr: {間違|まちが}った {言葉|ことば} の {墨|すみ} が 、 すうっと {薄|うす}れて {消|き}えた 。 || The ink of the wrong saying fades away.', '?(comp) comp: どれ だけ {確|たし}か か を {言|い}い{間違|まちが}える と 、 {話|はなし} が {全部|ぜんぶ} {信用|しんよう} できなく なる から ね 。 || Get how sure you are wrong, and nobody can trust any of it.'],
+    later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
+    done: 'narr: {掛|か}け{軸|じく} は 、 もう {何|なに} も {問|と}わない 。 || The scrolls ask nothing more.' });
+  for (let i = 0; i < 4; i++) {
+    out += `\n@scene hall.w8.card${i + 1}\nnarr: {古|ふる}い {掛|か}け{軸|じく} 。 {言葉|ことば} が {書|か}いて ある 。 || An old hanging scroll, with a saying on it.\n`;
+    out += LV((p, t) => `?(${both(L[t], 'hall.w8.pat=' + p)}) narr: 「 ${nest(C.hallW8Cards[p][t][i][0])} 」 || "${CE[p][t][i]}"\n`);
+  }
+
+  // ---- t4: the witnesses' places --------------------------------------------------------------------------------------------------
+  const CLAIM = {
+    kitchen: ['サキ ： 「 だいどころ の まど から 、 とこのま の まえ を とおる かげ を みた 。 」', 'サキ ： 「 {台所|だいどころ} の {窓|まど} から 、 {床|とこ} の {間|ま} の {前|まえ} を {通|とお}る {影|かげ} を {見|み}ました 。 」', 'サキ ： 「 {台所|だいどころ} の {窓|まど} から 、 {床|とこ} の {間|ま} の {前|まえ} を {横切|よこぎ}る {影|かげ} が 、 {確|たし}か に {見|み}えました 。 」', 'Saki: "From the kitchen window I saw a shadow pass in front of the alcove."'],
+    stairs: ['トウスケ ： 「 かいだん が 、 ぎしぎし なる おと が きこえた 。 」', 'トウスケ ： 「 {階段|かいだん} が ぎしぎし {鳴|な}る {音|おと} が {聞|き}こえた 。 」', 'トウスケ ： 「 {夜中|よなか} に 、 {階段|かいだん} の きしむ {音|おと} が {二度|にど} {聞|き}こえた ん だ 。 」', 'Tōsuke: "I heard the stairs creak."'],
+    backdoor: ['オマツ ： 「 ねる まえ に 、 うら の と に かんぬき を かけた 。 そと から は 、 だれ も はいれない 。 」', 'オマツ ： 「 {寝|ね}る {前|まえ} に 、 {裏|うら} の {戸|と} に {閂|かんぬき} を {掛|か}けました 。 {外|そと} から は 、 {誰|だれ} も {入|はい}れない はず です 。 」', 'オマツ ： 「 {休|やす}む {前|まえ} に {裏|うら} の {戸|と} に {閂|かんぬき} を {掛|か}けました から 、 {外|そと} から {入|はい}れた {者|もの} は いない はず です 。 」', 'Omatsu: "Before bed I barred the back door, so nobody can have got in from outside."'],
+  };
+  const SEE = {
+    kitchen: { 0: ['{台所|だいどころ} の {窓|まど} から {覗|のぞ}く と 、 {襖|ふすま} が {開|あ}いて いて 、 {床|とこ} の {間|ま} が よく {見|み}える 。', 'From the kitchen window, the sliding doors are open and the alcove is in plain view.'], 1: ['{台所|だいどころ} の {窓|まど} から {覗|のぞ}く と 、 {廊下|ろうか} の {灯|ひ} の {向|む}こう に 、 {床|とこ} の {間|ま} が {見|み}える 。', 'From the kitchen window, past the corridor lamp, you can see the alcove.'] },
+    stairs: { 0: ['{階段|かいだん} に {乗|の}る と 、 ぎしっ と {大|おお}きな {音|おと} が した 。', 'You step on the stairs: a loud creak.'], 1: ['{階段|かいだん} に {乗|の}って も 、 {音|おと} は {少|すこ}し も しない 。 {張|は}り{替|か}えた ばかり の {板|いた} だ 。', 'You step on the stairs: not a sound. The boards are new.'] },
+    backdoor: { 0: ['{裏|うら} の {戸|と} の {閂|かんぬき} は 、 {折|お}れて いて {掛|か}からない 。', 'The back door\'s bar is broken; it won\'t hold.'], 1: ['{閂|かんぬき} は しっかり して いる 。 {内側|うちがわ} から しか {外|はず}せない 。', 'The bar is sound. It can only be lifted from inside.'] },
+  };
+  const HOLDSUP = { 0: { kitchen: true, stairs: true, backdoor: false }, 1: { kitchen: true, stairs: false, backdoor: true } };
+  const SPOTS = ['kitchen', 'stairs', 'backdoor'];
+  const JUDGED = (s) => 'xp_hall_w8_f1_judged_' + s;
+  for (const sp of SPOTS) {
+    out += `
+@scene hall.w8.p_${sp}
+!if ${JUDGED(sp)} -> done
+`;
+    out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${nest(CLAIM[sp][i])} 」 || "${CLAIM[sp][3]}"\n`);
+    out += [0, 1].map((p) => `?(hall.w8.pat=${p}) narr: ${SEE[sp][p][0]} || ${SEE[sp][p][1]}\n`).join('');
+    out += `!choice
+* この {証言|しょうげん} は 、 あり{得|え}る || This account could be true. -> holds
+* この {証言|しょうげん} に は 、 {無理|むり} が ある || This account can't be right. -> cannot
+:holds
+${[0, 1].filter((p) => HOLDSUP[p][sp]).map((p) => '!if hall.w8.pat=' + p + ' -> right').join('\n')}
+!goto wrong
+:cannot
+${[0, 1].filter((p) => !HOLDSUP[p][sp]).map((p) => '!if hall.w8.pat=' + p + ' -> right').join('\n')}
+:wrong
+narr: もう {一度|いちど} 、 ここ から {見|み}える もの 、 {聞|き}こえる もの を {確|たし}かめよう 。 || Check once more what can be seen and heard from here.
+!end
+:right
+narr: {証言|しょうげん} と 、 ここ で {確|たし}かめた こと が 、 {帳面|ちょうめん} に {並|なら}んだ 。 || The account and what you found here go side by side in your notes.
+!set ${JUDGED(sp)}
+!if ${SPOTS.map(JUDGED).join('&')} -> all
+!refresh
+!end
+:all
+narr: {三|みっ}つ の {証言|しょうげん} を 、 {全部|ぜんぶ} {確|たし}かめた 。 || All three accounts are checked.
+?(comp) comp: {本人|ほんにん} が {確|たし}か だ と {思|おも}って いて も 、 {場所|ばしょ} を {見|み}る と {違|ちが}う こと も ある 。 {嘘|うそ} じゃ なくて 、 {思|おも}い{込|こ}み だ ね 。 || Even when someone is sure, the place itself can show otherwise. Not a lie: a mistaken belief.
+${K.mark(W, 1, 't4')}
+!end
+:done
+narr: この {証言|しょうげん} は 、 もう {確|たし}かめた 。 || You've already checked this account.
+`;
+  }
+
+  // ---- t5: the snow fox -------------------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w8.t5
+narr: {狐|きつね} の {去|さ}った {跡|あと} に は 、 {足跡|あしあと} が {一|ひと}つ も {残|のこ}って いない 。 {雪|ゆき} の {上|うえ} の {小|ちい}さな {足跡|あしあと} は 、 {狐|きつね} の もの で は ない 。 || Where the fox went, not a single print remains. The small prints in the snow are not a fox's.
+${K.mark(W, 1, 't5')}
+`;
+
+  // ---- t6: Hisa's note and the road it points to (in your companion's hands; alone, Omatsu has it read) ---------------------------
+  const TOLD = {
+    0: { F: 'となり の むら に 、 はこ の ひと が いる って きいた 。 とどけて くる 。', E: '{隣|となり} の {村|むら} に 、 {箱|はこ} の {人|ひと} が いる って {聞|き}いた 。 {届|とど}けて くる ね 。', I: '{箱|はこ} を {預|あず}けた {人|ひと} が 、 {隣|となり} の {村|むら} に {来|き}て いる そう だ 。 {届|とど}けて きます 。', A: '{行商人|ぎょうしょうにん} の {話|はなし} に よる と 、 {箱|はこ} の {持|も}ち{主|ぬし} は {隣村|となりむら} に {着|つ}いた と の こと 。 {届|とど}けて まいります 。', en: 'Hisa\'s note: they heard the box\'s owner is in the next village, and have gone to take it to them.' },
+    1: { F: 'はこ の ひと は 、 とうげ の ちゃや に いる みたい 。 とどけて くる 。', E: '{箱|はこ} の {人|ひと} は 、 {峠|とうげ} の {茶屋|ちゃや} に いる みたい 。 {届|とど}けて くる ね 。', I: '{箱|はこ} を {預|あず}けた {人|ひと} は 、 {峠|とうげ} の {茶屋|ちゃや} に いる らしい 。 {届|とど}けて きます 。', A: '{茶屋|ちゃや} の {灯|ひ} が {一晩中|ひとばんじゅう} {点|つ}いて いた から 、 {持|も}ち{主|ぬし} は {峠|とうげ} の {茶屋|ちゃや} に いる に {違|ちが}いない 。 {届|とど}けて まいります 。', en: 'Hisa\'s note: the box\'s owner seems to be at the teahouse on the pass, and Hisa has gone to take it there.' },
+  };
+  out += `
+@scene hall.w8.t6
+!if hall.w8.t6 -> done
+!if xp_hall_w8_f1_asked -> told
+narr: {箱|はこ} の {置|お}いて あった {所|ところ} に 、 {小|ちい}さな {字|じ} の {書|か}き{置|お}き 。 {雪|ゆき} {解|ど}け の {水|みず} で 、 {半分|はんぶん} {滲|にじ}んで いる 。 || Where the box stood, a note in small writing, half run with snowmelt.
+?(comp=nao) comp: {子供|こども} の {字|じ} だ な 。 {読|よ}める よ 。 {何|なに} を {知|し}りたい ？ || A child's hand. I can read it. What do you want to know?
+?(comp=mio) comp: {私|わたし} が {読|よ}む わ 。 {滲|にじ}んで いて も 、 {大丈夫|だいじょうぶ} 。 {何|なに} を {調|しら}べる ？ || I'll read it. Smudged is fine. What are we looking for?
+?(comp=ren) comp: {私|わたし} が {読|よ}みましょう 。 {何|なに} を {知|し}りたい です か ？ || I'll read it. What would you like to know?
+?(comp=suzu) comp: {子供|こども} の {字|じ} は 、 {子役|こやく} の {台本|だいほん} で {慣|な}れてる わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I'm used to children's writing from the child actors' scripts. Leave it to me. What am I looking for?
+?(!comp) hall_omatsu: ヒサ の {字|じ} です 。 {一緒|いっしょ} に {読|よ}んで ください 。 {何|なに} が {知|し}りたい です か ？ || It's Hisa's writing. Read it with me. What would you like to know?
+!hook hall_challenge hall.w8.ask
+!if var._res=0 -> later
+!set xp_hall_w8_f1_asked
+:told
+`;
+  out += LV((p, t) => `?(${both(L[t], 'hall.w8.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en}"\n`);
+  out += `!end
+:later
+narr: {書|か}き{置|お}き を 、 {元|もと} の {所|ところ} に {戻|もど}した 。 || You put the note back where it was.
+!end
+:done
+narr: {書|か}き{置|お}き は 、 {畳|たた}んで しまって ある 。 || The note has been folded and put away.
+`;
+  const ROAD = { east: ['{隣|となり} の {村|むら} へ {続|つづ}く {東|ひがし} の {道|みち}', 'the east road to the next village', 0], west: ['{峠|とうげ} の {茶屋|ちゃや} へ {上|のぼ}る {西|にし} の {道|みち}', 'the west road up to the pass teahouse', 1], shrine: ['{山|やま} の {祠|ほこら} へ {続|つづ}く {北|きた} の {道|みち}', 'the north path to the mountain shrine', -1] };
+  for (const r of Object.keys(ROAD)) {
+    out += `
+@scene hall.w8.r_${r}
+!if hall.w8.t6 -> done
+narr: ${ROAD[r][0]} 。 || ${cap(ROAD[r][1])}.
+!if !xp_hall_w8_f1_asked -> unknown
+${ROAD[r][2] >= 0 ? '!if hall.w8.pat=' + ROAD[r][2] + ' -> right\n' : ''}narr: ヒサ の {書|か}き{置|お}き の {行|ゆ}き{先|さき} は 、 こっち で は ない よう だ 。 || Hisa's note doesn't seem to point this way.
+?(comp) comp: {書|か}き{置|お}き の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the note said again?
+!end
+${ROAD[r][2] >= 0 ? `:right
+narr: {雪|ゆき} の {上|うえ} に 、 {小|ちい}さな {足跡|あしあと} が こっち へ {続|つづ}いて いる 。 ヒサ が {帰|かえ}り に {迷|まよ}わない よう 、 {道|みち} の {入|い}り{口|ぐち} に {提灯|ちょうちん} を {掛|か}けた 。 || In the snow, small footprints lead this way. You hang a lantern at the head of the road, so Hisa won't lose the way back.
+?(comp) comp: 「 そう だ 」 も 「 らしい 」 も 、 {人|ひと} から {聞|き}いた {話|はなし} 。 でも 、 ヒサ は それ を {信|しん}じて {歩|ある}いて いった ん だ ね 。 || Whether it's そうだ or らしい, it's something Hisa heard. And Hisa trusted it, and walked.
+${K.mark(W, 1, 't6')}
+!end
+` : ''}:unknown
+narr: ヒサ が どこ へ {行|い}った の か 、 まだ {分|わ}からない 。 {先|さき} に {書|か}き{置|お}き を {読|よ}もう 。 || You don't know yet where Hisa went. Read the note first.
+!end
+:done
+narr: ${ROAD[r][0]} 。 {雪|ゆき} が {静|しず}か に {降|ふ}って いる 。 || ${cap(ROAD[r][1])}. Snow is falling quietly.
+`;
+  }
+
+  // ---- t7: the riddle stone ----------------------------------------------------------------------------------------------------
+  out += '\n@scene hall.w8.t7' + K.taskTrial({ w: W, k: 1, t: 't7',
+    intro: ['narr: {雪|ゆき} を {被|かぶ}った {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {解|と}けた {者|もの} は 、 {一度|いちど} だけ 、 {帰|かえ}って また {来|く}る こと が できる 。 」 || Words cut into a snow-capped stone: "Whoever solves this may once go home and come back."'],
+    task: 'hall.w8.riddle',
+    after: ['narr: {石|いし} の {上|うえ} の {雪|ゆき} が 、 さらさら と {落|お}ちた 。 || The snow on the stone slides off with a whisper.'],
+    later: 'narr: {答|こた}え は 、 {急|いそ}がなくて いい 。 || There\'s no hurry for the answer.',
+    done: 'narr: {石|いし} は 、 {答|こた}え を {覚|おぼ}えて いる 。 || The stone remembers the answer.' });
+
+  // ---- t8: the footprints in the snow --------------------------------------------------------------------------------------------
+  const WEAR = { tosuke: 'boots', gonroku: 'geta', saki: 'zori', hisa: 'sandals' };
+  const WHO = { tosuke: ['トウスケ', 'Tōsuke'], gonroku: ['ゴンロク', 'Gonroku'], saki: ['サキ', 'Saki'], hisa: ['ヒサ', 'Hisa'] };
+  const PRINT = { boots: ['{大|おお}きな {藁|わら} の {長靴|ながぐつ} の {跡|あと}', 'the prints of big straw boots'], geta: ['{下駄|げた} の {歯|は} の {跡|あと}', 'the marks of geta teeth'], sandals: ['{小|ちい}さな {草鞋|わらじ} の {跡|あと}', 'the prints of small straw sandals'], zori: ['{草履|ぞうり} の {跡|あと}', 'the prints of zōri'] };
+  const PRINTK = { 0: { pr1: 'boots', pr2: 'geta', pr3: 'sandals', pr4: 'zori' }, 1: { pr1: 'zori', pr2: 'sandals', pr3: 'boots', pr4: 'geta' } };
+  const EVID = {
+    tosuke: ['トウスケ さん は 、 わら の ながぐつ を はいて いた 。 サキ が みた 。', 'トウスケ さん は {藁|わら} の {長靴|ながぐつ} を {履|は}いて いた 。 サキ が {見|み}た そう だ 。', '{今朝|けさ} 、 トウスケ さん が {藁|わら} の {長靴|ながぐつ} を {履|は}いて いる の を 、 サキ が {見|み}た と の こと 。', 'Tōsuke was wearing straw boots: Saki saw him.'],
+    gonroku: ['ゴンロク さん は 、 げた を はいて いる らしい 。 ろうか で おと が した 。', 'ゴンロク さん は {下駄|げた} を {履|は}いて いる らしい 。 {廊下|ろうか} で カラコロ と {音|おと} が した 。', '{廊下|ろうか} で カラコロ と {下駄|げた} の {音|おと} が した から 、 ゴンロク さん は {下駄|げた} の よう だ 。', 'Gonroku seems to wear geta: they clattered in the corridor.'],
+    saki: ['サキ は 、 ぞうり で ゆき かき を した 。', 'サキ は 、 {草履|ぞうり} で {雪|ゆき} かき を した そう だ 。', 'おかみ さん の {話|はなし} で は 、 サキ は {草履|ぞうり} の まま {雪|ゆき} かき を した と の こと 。', 'Saki cleared the snow in zōri, the landlady says.'],
+    hisa: ['こども の わらじ は 、 ちいさい はず 。', '{子供|こども} の {草鞋|わらじ} は 、 {小|ちい}さい はず だ 。', 'ヒサ は まだ {子供|こども} だ から 、 {草鞋|わらじ} の {跡|あと} は {小|ちい}さい に {違|ちが}いない 。', 'A child\'s straw sandals should leave small prints.'],
+  };
+  const HOLDN = (w) => 'xp_hall_w8_f2_hold_' + w, NAMED = (w) => 'xp_hall_w8_f2_named_' + w, PRN = (pr) => 'xp_hall_w8_f2_print_' + pr;
+  const PRS = ['pr1', 'pr2', 'pr3', 'pr4'];
+  out += `
+@scene hall.w8.t8_board
+narr: {座敷|ざしき} の {板|いた} に 、 {皆|みな} の {履|は}き{物|もの} に ついて の {話|はなし} が {貼|は}って ある 。 || On the board in the morning room, notes on everyone's footwear are pinned up.
+`;
+  for (const w of Object.keys(EVID)) out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${EVID[w][i]} 」 || "${EVID[w][3]}"\n`);
+  out += `?(comp&!hall.w8.t8) comp: {名札|なふだ} を 、 {合|あ}う {足跡|あしあと} に {置|お}いて いこう 。 || Let's set each name tag by the prints that match.
+`;
+  for (const w of Object.keys(WHO)) out += `
+@scene hall.w8.tag_${w}
+!unset ${Object.keys(WHO).map(HOLDN).join(' ')}
+!set ${HOLDN(w)}
+narr: 「 ${WHO[w][0]} 」 の {名札|なふだ} を {取|と}った 。 || You take the name tag "${WHO[w][1]}".
+`;
+  for (const pr of PRS) {
+    out += `
+@scene hall.w8.${pr}
+`;
+    out += [0, 1].map((p) => `?(hall.w8.pat=${p}) narr: ${PRINT[PRINTK[p][pr]][0]} 。 || ${cap(PRINT[PRINTK[p][pr]][1])}.\n`).join('');
+    out += `!if ${PRN(pr)} -> done
+!if ${Object.keys(WHO).map(HOLDN).join('|')} -> try
+!end
+:try
+`;
+    const rights = [0, 1].map((p) => { const w = Object.keys(WEAR).find((x) => WEAR[x] === PRINTK[p][pr]); return [p, w]; });
+    out += rights.map(([p, w]) => `!if hall.w8.pat=${p}&${HOLDN(w)} -> r_${w}`).join('\n') + '\n';
+    out += `narr: {名札|なふだ} を {置|お}こう と して 、 {手|て} を {止|と}めた 。 {板|いた} の {話|はなし} と 、 {跡|あと} が {合|あ}わない 。 || You go to set the tag down, and stop. The prints don't match what the board says.
+!end
+`;
+    for (const w of [...new Set(rights.map((r) => r[1]))]) out += `:r_${w}
+narr: 「 ${WHO[w][0]} 」 の {名札|なふだ} を 、 {跡|あと} の {横|よこ} に {置|お}いた 。 || You set "${WHO[w][1]}" beside the prints.
+!unset ${HOLDN(w)}
+!set ${NAMED(w)} ${PRN(pr)}
+!goto check
+`;
+    out += `:check
+!if ${PRS.map(PRN).join('&')} -> all
+!refresh
+!end
+:all
+narr: {四|よっ}つ の {足跡|あしあと} に 、 {四|よっ}つ の {名前|なまえ} 。 {小|ちい}さな {草鞋|わらじ} の {跡|あと} は 、 {裏|うら} の {戸|と} から {出|で}て 、 {道|みち} の {方|ほう} へ {続|つづ}いて いる 。 || Four sets of prints, four names. The small sandal prints lead out of the back door and away down the road.
+?(comp) comp: {見|み}た {話|はなし} 、 {聞|き}こえた {話|はなし} 、 {聞|き}いた {話|はなし} 。 {全部|ぜんぶ} {合|あ}わせる と 、 {雪|ゆき} の {上|うえ} で {一|ひと}つ に なった ね 。 || What was seen, heard and told: put together, it all comes to one thing in the snow.
+${K.mark(W, 2, 't8')}
+!end
+:done
+narr: {跡|あと} の {横|よこ} に 、 {名札|なふだ} が {置|お}いて ある 。 || A name tag sits beside the prints.
+`;
+  }
+
+  // ---- t9: Saki and Gonroku --------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w8.t9
+!if hall.w8.t9 -> after
+hall_gonroku: {狐|きつね} じゃ 。 {昔|むかし} から 、 {物|もの} が {消|き}えれば {狐|きつね} と {決|き}まって おる 。 || A fox. Since time out of mind, when a thing goes missing, it's a fox.
+hall_saki: {狐|きつね} なんか じゃ ありません ！ {私|わたし} は 、 {見|み}た ん です 。 || It was no fox! I saw it.
+!encounter hall.w8.quarrel
+!if var._enc=agreed -> agreed
+narr: ゴンロク は {部屋|へや} へ {戻|もど}って しまった 。 サキ は 、 {火鉢|ひばち} の {灰|はい} を {黙|だま}って {掻|か}いて いる 。 || Gonroku has gone back to his room. Saki rakes the brazier ash in silence.
+!end
+:agreed
+hall_saki: …… ゴンロク さん 、 {大|おお}きな {声|こえ} を {出|だ}して 、 すみません でした 。 || …Gonroku-san, I'm sorry I raised my voice.
+hall_gonroku: いや 、 わし も {見|み}て も おらん こと を {言|い}い{過|す}ぎた 。 || No, I said too much about something I never saw.
+${K.mark(W, 2, 't9')}
+!end
+:after
+hall_saki: {小|ちい}さな {影|かげ} 。 {今|いま} {思|おも}えば 、 ヒサ の {背丈|せたけ} でした 。 || A small shadow. Thinking back, it was just Hisa's height.
+`;
+
+  // ---- t10: the record of the night -------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w8.t10
+!if hall.w8.t10 -> after
+!if !hall.w8.t8 -> wait
+!if !hall.w8.t9 -> wait
+narr: {宿|やど} の {帳面|ちょうめん} 。 オマツ が {筆|ふで} を {取|と}って 、 {待|ま}って いる 。 || The inn's ledger. Omatsu has the brush in hand, waiting.
+!encounter hall.w8.record
+!if var._res=0 -> later
+!set xp_hall_w8_f2_t10
+!hook hall_trial w8 t10
+!if var._res=1 -> finale
+!refresh
+!end
+:finale
+!call hall.w8.end
+!end
+:wait
+narr: {帳面|ちょうめん} に {書|か}く に は 、 まだ {早|はや}い よう だ 。 || It seems too soon to write anything in the ledger.
+?(!hall.w8.t8) narr: {庭|にわ} の {足跡|あしあと} が 、 まだ {誰|だれ} の もの か {分|わ}かって いない 。 || Nobody yet knows whose prints are in the garden.
+?(!hall.w8.t9) narr: サキ と ゴンロク が 、 まだ {睨|にら}み{合|あ}って いる 。 || Saki and Gonroku are still glaring at each other.
+!end
+:later
+narr: オマツ が 、 {筆|ふで} を {持|も}った まま {待|ま}って いる 。 || Omatsu waits, brush in hand.
+!end
+:after
+narr: {帳面|ちょうめん} の {墨|すみ} は 、 もう {乾|かわ}いて いる 。 || The ink in the ledger is already dry.
+
+@scene hall.w8.end
+narr: {朝日|あさひ} の {中|なか} を 、 ヒサ が {帰|かえ}って きた 。 {隣|となり} に は 、 {箱|はこ} を {抱|かか}えた {年寄|としよ}り の {旅人|たびびと} が いる 。 || Hisa comes back through the morning sun. Beside them is an old traveller with the box in his arms.
+hall_kichibei: {十年|じゅうねん} {前|まえ} に {預|あず}けた {箱|はこ} を 、 この {子|こ} が {届|とど}けて くれた 。 {中|なか} の {手紙|てがみ} は 、 この {宿|やど} へ の お{礼|れい} だ 。 {戻|もど}ったら {渡|わた}す つもり だった 。 || This child brought me the box I left here ten years ago. The letter inside is my thanks to this inn. I meant to hand it over when I came back.
+hall_hisa: {誰|だれ} も {聞|き}かなかった から 、 {言|い}わなかった 。 …… ごめん なさい 。 || Nobody asked, so I didn't say. …Sorry.
+?(comp=nao) comp: {見|み}た 、 {聞|き}いた 、 {聞|き}かされた 。 {手紙|てがみ} に その {三|みっ}つ を {分|わ}けて {書|か}く {人|ひと} は 、 {信用|しんよう} できる 。 || Saw, heard, was told. Someone who keeps those three apart in a letter can be trusted.
+?(comp=mio) comp[happy]: らしい 、 そう だ 、 に {違|ちが}いない 。 {言葉|ことば} {一|ひと}つ で 、 どの くらい {確|たし}か か まで {伝|つた}わる のね 。 || Seems, I hear, must be. One word, and it carries how sure you are.
+?(comp=ren) comp: {灯|ひ} が {八|やっ}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {二|ふた}つ です 。 || Eight lights back. Two to go.
+?(comp=suzu) comp: {第|だい}{八幕|はちまく} 、 {幕|まく} ！ {犯人|はんにん} の いない {推理|すいり} {劇|げき} 、 {案外|あんがい} {悪|わる}く ない わ 。 || End of act eight! A whodunit with no culprit. Not bad at all.
+narr: {朝|あさ} の {雪|ゆき} {明|あ}かり が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning snowlight folds away, and when you look up you are by the hall's hearth.
+!set hall_w8_done
+!hook hall_finish
+`;
+
+  RB.script.add(out);
+})(RB.content);
+
+
 /* ==== src/content/hall/40_records.js ==== */
 /* The Hall of a Hundred Tales: its records (expansion P15; plan 04_DUNGEONS.md D9 Rewards; 09_RECORDS.md K1). A stamp
  * for each tale relit, pressed as soon as the wing is done (no stand: the Hall is its own place); hidden until then,
@@ -168853,6 +169823,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(5, T('The Two Wells', '{二|ふた}つ の {井戸|いど}'), '#5a6a3a');
   C.hallStamp(6, T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'), '#9a3a22');
   C.hallStamp(7, T('The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'), '#3a2e2a');
+  C.hallStamp(8, T('Three Witnesses at the Inn', '{宿|やど} の {三人|さんにん} の {証人|しょうにん}'), '#3a4a6a');
 })(RB.content);
 
 

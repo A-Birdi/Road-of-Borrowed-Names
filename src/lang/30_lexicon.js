@@ -1877,6 +1877,11 @@ RB.lex = (function () {
 どんなに||adv|I|however (much); how (very)
 どれほど||adv|A|how much, to what extent
 だめ||adj-na|E|no good; not allowed|Also written {駄目|だめ}.
+子供|こども|n|F|child
+せい||n|E|fault, cause (usually of something bad)|〜のせいで = because of (blame).
+場合|ばあい|n|E|case, situation|〜{場合|ばあい}は = in cases where….
+中止|ちゅうし|vs|E|calling off; cancellation
+以外|いがい|n|I|except, other than
 `));
 
   // Katakana loanwords used in the kana lessons and around the world

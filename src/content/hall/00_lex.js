@@ -214,4 +214,21 @@ RB.lex.add(RB.lex.parseTable(`
 飼う|かう|v5u|E|to keep (an animal)
 田中|たなか|n|E|Tanaka (a common family name)
 探さねば|さがさねば|exp|A|(old, literary) if one does not search (= 探さなければ)
+# ---- wing 8: whose account ------------------------------------------------------------------------------------------
+第八幕|だいはちまく|n|I|the eighth act
+女中|じょちゅう|n|I|a maid (at an inn or a house)
+床の間|とこのま|n|I|the alcove in a tatami room, where a scroll hangs
+襖|ふすま|n|I|a sliding door of heavy paper between rooms
+釣瓶|つるべ|n|A|a well bucket on a rope
+隣村|となりむら|n|I|the next village
+田舎|いなか|n|E|the countryside
+何色|なにいろ|n|E|what colour
+寝不足|ねぶそく|n|I|lack of sleep
+拝借|はいしゃく|vs|A|(humble) borrowing
+鰭|ひれ|n|A|a fin; 尾ひれが付く: (a story) gets exaggerated as it is passed on
+ぎしっ||adv|I|(sound) a single creak
+強張る|こわばる|v5r|A|to stiffen, to go tight
+掻く|かく|v5k|I|to scratch; to rake (ash, snow)
+睨み合う|にらみあう|v5u|I|to glare at each other
+被る|かぶる|v5r|E|to put on (a hat); to be covered with (snow)
 `));

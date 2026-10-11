@@ -21,4 +21,5 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(5, T('The Two Wells', '{二|ふた}つ の {井戸|いど}'), '#5a6a3a');
   C.hallStamp(6, T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'), '#9a3a22');
   C.hallStamp(7, T('The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'), '#3a2e2a');
+  C.hallStamp(8, T('Three Witnesses at the Inn', '{宿|やど} の {三人|さんにん} の {証人|しょうにん}'), '#3a4a6a');
 })(RB.content);

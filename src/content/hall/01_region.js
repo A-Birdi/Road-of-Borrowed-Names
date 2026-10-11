@@ -99,6 +99,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w7);
 
+  // wing 8: a highway inn snowed in for the night, lamplight on old cedar, the yard white and trodden, blue shadow
+  TL.PAL.hall_w8 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#dce2e8', '#e8ecf0', '#c8d0d8', '#f4f6f8'], dirt: ['#8a7a68', '#9c8c78', '#766858', '#ae9e8a'],
+    stone: ['#8a8e94', '#a2a6ac', '#6e7278'], water: ['#4a6a7a', '#5a7c8c', '#8aa6b4', '#e4eef2'],
+    wood: ['#6a4a32', '#7e5a3e', '#523826', '#987052'], leaf: ['#3a4a44', '#465850', '#546860', '#2c3a34'],
+    flower: ['#e8b850', '#f4ece0', '#c84a3a', '#a8b8c8'], roof: ['#4a4440', '#3c3834', '#2e2a28', '#5e5854'],
+    sky: '#9aa6b4', dark: '#12141a',
+  });
+  TL.addRamps(TL.PAL.hall_w8);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -266,4 +276,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_magoroku', { name: { en: 'Magoroku', jp: 'マゴロク' }, voice: { pitch: 0.88 },
     look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#5a5a4a', '#48483a', '#d0c8a8'], shape: 'tunic', acc: ['headband'], bandCol: '#8a8a7a' },
     portrait: { eyes: 'narrow', style: 'short', acc: ['headband'], bandCol: '#8a8a7a', bg: '#1a1a14' } });
+
+  // ---- the tales' people: wing 8, Three Witnesses at the Inn ----------------------------------------------------------
+  // Omatsu (she/her), who keeps the inn on the pass; the three witnesses: Saki (she/her), the inn's maid, Tōsuke
+  // (he/him), a pedlar stopping the night, and Gonroku (he/him), an old guest who knows every rumour; Hisa
+  // (they/them), Omatsu's grandchild, whom nobody thought to ask; Kichibei (he/him), the old traveller who left a box at
+  // the inn years ago.
+  ch('hall_omatsu', { name: { en: 'Omatsu', jp: 'オマツ' }, voice: { pitch: 0.92 },
+    look: { skin: 2, hair: 'bun', hairColor: 6, cloth: ['#5a3a4a', '#482e3c', '#e8dcc8'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'bun', age: 'old', acc: [], bg: '#1e141a' } });
+  ch('hall_saki', { name: { en: 'Saki', jp: 'サキ' }, voice: { pitch: 1.14 },
+    look: { skin: 1, hair: 'bun', hairColor: 1, cloth: ['#3a5a7a', '#2e4a64', '#f0e8d8'], shape: 'robe', acc: ['headband'], bandCol: '#f0e8d8' },
+    portrait: { eyes: 'round', style: 'bun', acc: ['headband'], bandCol: '#f0e8d8', bg: '#121c26' } });
+  ch('hall_tosuke', { name: { en: 'Tōsuke', jp: 'トウスケ' }, voice: { pitch: 0.94 },
+    look: { skin: 3, hair: 'short', hairColor: 1, cloth: ['#6a6a3a', '#56562e', '#d8d0a8'], shape: 'tunic', acc: ['hat'], hatCol: '#a89060' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['hat'], hatCol: '#a89060', bg: '#1c1c10' } });
+  ch('hall_gonroku', { name: { en: 'Gonroku', jp: 'ゴンロク' }, voice: { pitch: 0.72 },
+    look: { skin: 2, hair: 'shaved', hairColor: 6, cloth: ['#4a3e34', '#3c322a', '#d0c4b0'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'shaved', age: 'old', acc: [], bg: '#18140f' } });
+  ch('hall_hisa', { name: { en: 'Hisa', jp: 'ヒサ' }, voice: { pitch: 1.3 }, size: 'child',
+    look: { skin: 1, hair: 'spiky', hairColor: 1, cloth: ['#8a4a2a', '#703a20', '#f0e0c8'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'spiky', acc: [], bg: '#24160e' } });
+  ch('hall_kichibei', { name: { en: 'Kichibei', jp: 'キチベエ' }, voice: { pitch: 0.78 },
+    look: { skin: 3, hair: 'short', hairColor: 6, cloth: ['#4a4a5a', '#3c3c4a', '#d8d0c0'], shape: 'robe', acc: ['hat'], hatCol: '#c8b890', age: 'old' },
+    portrait: { eyes: 'narrow', style: 'short', age: 'old', acc: ['hat'], hatCol: '#c8b890', bg: '#14141c' } });
 })(RB.content);

@@ -271,4 +271,36 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 8: THREE WITNESSES AT THE INN
+  // A snowbound inn and three accounts of one night. The same short phrase is told three times by three voices (the
+  // koto, the shamisen, the shakuhachi), each telling it a little differently, as the witnesses do; in A2 the three
+  // are laid over each other, and the phrase they share sounds plain at last. The hyōshigi of the night watch goes
+  // round once every four bars. The puzzle is in the voicing, never in loudness or speed (C-22).
+  const TOLD = '1 - 3 - 5 - - - | 4 - 3 - 2 - . . | 1 - 3 - 5 - - - | 6 - 5 - 3 - . .';
+  const TOLD2 = '1 - 2 - 3 - - - | 3 - 2 - 1 - . . | 1 - 3 - 5 - - - | 4 - 3 - 2 - . .';
+  S('hall_w8', {
+    title: 'Three Witnesses at the Inn',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 8 of the Hall: an inn on the old highway, snowed in for the night (G mixolydian, 68). One short phrase is told three times by three voices, the koto, the shamisen and the shakuhachi, each a little differently, as the witnesses tell the night; in A2 the three are laid over each other and the phrase they share comes through. The night watch\'s clappers go round once every four bars.',
+    key: 'G', mode: 'mixolydian', bpm: 68, loopFrom: 1,
+    tracks: {
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.45, pan: -0.25 },
+      sham: { i: 'shamisen', o: 4, v: 0.36, rv: 0.35, pan: 0.25 },
+      flute: { i: 'shakuhachi', o: 4, v: 0.4, rv: 0.5 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.2, rv: 0.35 },
+      watch: { perc: true, v: 0.18, rv: 0.5 },
+    },
+    echo: { beats: 1, fb: 0.2, mix: 0.18 },
+    all: { bass: '0 - - - 4 - - -', watch: 'y.......|........|........|........' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 4 1 4 1 4 1 4', koto: TOLD + ' | ' + TOLD },
+      B: { bars: 8, ch: '1 4 1 4 1 4 1 4', sham: TOLD2 + ' | ' + TOLD2 },
+      C: { bars: 8, ch: '1 4 1 4 1 4 1 4', flute: TOLD + ' | ' + TOLD },
+      A2: { bars: 8, ch: '1 4 1 4 1 4 1 4', koto: TOLD + ' | ' + TOLD, sham: TOLD2 + ' | ' + TOLD2, flute: TOLD + ' | ' + TOLD, dyn: 0.8 },
+    },
+    form: ['intro', 'A', 'B', 'C', 'A2'],
+  });
 })(RB.audio);
