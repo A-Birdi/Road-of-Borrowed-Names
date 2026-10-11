@@ -197,3 +197,15 @@ Made by `node tests/e2e/portrait_shots.mjs --before <index.html of eb0cb4b>` in 
 | Each companion's lead-in cue for every tag, then the settled loop and its blink | [Nao](portraits/cues_nao.png) · [Mio](portraits/cues_mio.png) · [Ren](portraits/cues_ren.png) · [Suzu](portraits/cues_suzu.png) |
 | Idle-loop motions of the player and 12 NPCs | [image](portraits/idle_npcs.png) |
 | A conversation in real time (12 lines of sa.kasane_meet, 640×360) | [video](portraits/conversation.webm) · [still](portraits/conversation_still.png) |
+
+## The last chapter's road in a twelve-chapter journey (expansion P14, F-108)
+
+Captured on a clean copy of 5802f5a in headless Chromium (1180×820). The colour drains map by map before the Hush is
+settled; the name slips drift uphill on the road; the dialogue buttons keep their colour. Implemented provisionally;
+not yet seen by Robin.
+
+| Shot | Image |
+|---|---|
+| The Archive road, twelve-chapter journey, before the Hush is settled (drain 0.2, name slips) | [image](archive12/road_twelve_before.png) |
+| The Archive's gate, twelve-chapter journey, before (drain 0.45) · once settled · a six-chapter journey's gate | [before](archive12/gate_twelve_before.png) · [settled](archive12/gate_twelve_settled.png) · [six chapters](archive12/gate_six.png) |
+| The Reading Room, twelve-chapter journey, before (drain 0.55) | [image](archive12/reading_twelve_before.png) |

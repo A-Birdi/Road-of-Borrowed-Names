@@ -284,9 +284,12 @@ export function install() {
     }
     return (provCache[id] = out);
   }
+  // flags seen set and then cleared during the current pursuit (a valve shut again, a shutter turned back): setting
+  // one again is a way back to a state already visited, worth less than anything new (see gain)
+  let dropped = new Set();
   function gain(id, mainQuest, st) {
     const s = S(), p = provides(id);
-    let main = 0, other = 0;
+    let main = 0, other = 0, again = 0;
     for (const [q, st] of p.quests) {
       const cur = s.quests[q];
       // a finished quest is never advanced again (a scene that names a stage of it, guarded by its own conditions,
@@ -294,7 +297,7 @@ export function install() {
       const newer = !cur || (!cur.done && (st === 'done' || (st !== 'start' && +st > cur.stage)));
       if (newer) { if (q === mainQuest) main++; else other++; }
     }
-    for (const f of p.flags) if (!s.flags[f]) other++;
+    for (const f of p.flags) if (!s.flags[f]) { if (dropped.has(f)) again++; else other++; }
     for (const it of p.items) if (!s.inv[it]) other++;
     for (const w of p.words) if (!s.words.includes(w)) other++;
     // travel scenes (a boat, a ladder) stay useful: they reach other maps
@@ -302,8 +305,8 @@ export function install() {
     // the run (via hooks), so each of their sites is worth one try per state
     const atlas = st && st.map.startsWith('atlas.');
     // (an encounter's creature is worth meeting only for what its conclusions set: roaming ones are left alone)
-    if (id.startsWith('enc:')) return { main, other, unseen: false };
-    return { main, other, unseen: atlas || !s.seen[id] || p.warps.some((m) => m !== RB.world.W.map.id) };
+    if (id.startsWith('enc:')) return { main, other, again: 0, unseen: false };
+    return { main, other, again, unseen: atlas || !s.seen[id] || p.warps.some((m) => m !== RB.world.W.map.id) };
   }
   // all sites on maps with the given prefix
   function allSites(prefix) {
@@ -346,8 +349,12 @@ export function install() {
     const progOf = () => sigOf().split('|').slice(0, 5).join('|') + '|' + SEEN_TESTED.filter((id) => S().seen[id]).join(',');
     const log = [];
     let lastScene = null;
+    dropped = new Set();
+    let held = Object.keys(S().flags).filter((f) => S().flags[f]);
     for (let i = 0; i < max; i++) {
       await T.idle(60000);
+      for (const f of held) if (!S().flags[f]) dropped.add(f);
+      held = Object.keys(S().flags).filter((f) => S().flags[f]);
       if (S().flags[target]) return { ok: true, steps: i, log: opts.fullLog ? log : log.slice(-25) };
       const here = RB.world.W.map.id;
       const sig = sigOf();
@@ -364,7 +371,7 @@ export function install() {
         if (tried.has(k) || fruitless.has(progOf() + '|' + k.slice(sig.length))) continue;
         const g = gain(st.scene, opts.main, st);
         const travelOnly = !g.main && !g.other && S().seen[st.scene] && provides(st.scene).warps.length;
-        if ((g.main || g.other || g.unseen) && !travelOnly) workAt.add(st.map);
+        if ((g.main || g.other || g.unseen || g.again) && !travelOnly) workAt.add(st.map);
       }
       // the ways on from a map: its exits, and the places its travel scenes (stairs, lifts, boats) take you
       const travelTo = {};
@@ -386,7 +393,7 @@ export function install() {
         const key = sig + '|' + st.kind + '|' + st.map + '|' + st.scene + '|' + where;
         if (tried.has(key) || fruitless.has(progOf() + '|' + key.slice(sig.length))) continue;
         const g = gain(st.scene, opts.main, st);
-        const tier = g.main ? 3 : g.other ? 2 : g.unseen ? 1 : 0;
+        const tier = g.main ? 3 : g.other ? 2 : g.unseen || g.again ? 1 : 0;
         if (!tier) continue;
         if (tier === 1 && S().seen[st.scene] && provides(st.scene).warps.length && !provides(st.scene).warps.some((m) => C.maps[m] && reachesWork(m))) continue;
         const rs = reachSite(X, st);
