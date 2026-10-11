@@ -183,13 +183,14 @@ function judge(tag, L, opts) {
   ok(await p.isHidden('.cr-next') && await p.isVisible('[data-a=go]'), 'the last step offers Begin instead of Next');
   await p.click('[data-a=go]');
   await p.waitForFunction(() => RB.game.G.playing === true && (RB.game.mode() === 'dialogue' || RB.game.mode() === 'world'), null, { timeout: 15000 });
-  const s = await p.evaluate(() => ({ player: RB.game.s.player, learn: { profile: RB.game.s.learn.profile, assist: RB.game.s.learn.assist, difficulty: RB.game.s.learn.difficulty, kana: RB.game.s.learn.kanaKnown }, input: RB.game.settings.input, map: RB.game.s.map, layers: document.querySelectorAll('.folio-create').length }));
+  const s = await p.evaluate(() => ({ edition: RB.game.s.edition, player: RB.game.s.player, learn: { profile: RB.game.s.learn.profile, assist: RB.game.s.learn.assist, difficulty: RB.game.s.learn.difficulty, kana: RB.game.s.learn.kanaKnown }, input: RB.game.settings.input, map: RB.game.s.map, layers: document.querySelectorAll('.folio-create').length }));
   const L = s.player.look;
   ok(s.player.name === 'Aki' && s.player.nameJp === 'アキ' && s.player.bg === 'student', 'campaign: name, Japanese name, background ' + JSON.stringify([s.player.name, s.player.nameJp, s.player.bg]));
   ok(JSON.stringify(s.player.pron) === JSON.stringify({ they: 'xe', them: 'xem', their: 'xyr', theirs: 'xyrs', self: 'xemself', plural: false }), 'campaign: custom pronouns ' + JSON.stringify(s.player.pron));
   ok(L.skin === 4 && L.hair === 'bun' && L.hairColor === 3 && L.outfit === 2 && L.shape === 'coat' && L.acc.join() === 'glasses,hat', 'campaign: look ' + JSON.stringify(L));
   ok(s.learn.profile === 'I' && s.learn.assist === 'assist' && s.learn.difficulty === 'hard' && s.learn.kana === 'both' && s.input === 'choice', 'campaign: profile, assist, difficulty, input ' + JSON.stringify(s.learn) + ' ' + s.input);
   ok(s.map === 'rw.road' && s.layers === 0, 'the creation folio is gone and the story has begun');
+  ok(s.edition === 2, 'the journey begun from the wizard is twelve-chapter, the edition the build gives new journeys (C-84): ' + s.edition);
   ok(!errors.length, 'no page errors ' + errors.join('; '));
   ok(!requests.length, 'no network requests ' + requests.join(', '));
   await ctx.close();

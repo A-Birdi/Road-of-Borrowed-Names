@@ -5,7 +5,8 @@
 // Usage: node tests/e2e/pursue.mjs [profile] [comp|none] [legs] [startMap x y] [flags] [words]
 //   legs: "ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>…" (flag@mapPrefix@mainQuest)
 // The twelve chapters chained from a new journey (expansion P14, XP79): PURSUE_EDITION=2 with the legs of
-// LEGS12 below, e.g.  PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve
+// LEGS12 below, e.g.  PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve; since the edition shipped (C-84),
+// PURSUE_EDITION=new takes the edition the build gives a new journey instead of naming one
 // From a campaign fixture instead of a new campaign (expansion P08): PURSUE_FROM=<fixture.json> starts there, as the
 // save would load (RB.save.migrate), and PURSUE_EDITION=2 plays it in the twelve-chapter edition, e.g.
 //   PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'
@@ -29,7 +30,8 @@ const argv = process.argv.slice(2);
 if (argv[2] === 'twelve') argv[2] = LEGS12;
 const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = argv;
 const fromFixture = process.env.PURSUE_FROM ? JSON.parse(fs.readFileSync(path.resolve(root, process.env.PURSUE_FROM), 'utf8')) : null;
-const edition = +(process.env.PURSUE_EDITION || 0) || null;
+// PURSUE_EDITION=new: the edition this build gives a new journey (RB.edition.forNew(), as the creation wizard does)
+const edition = process.env.PURSUE_EDITION === 'new' ? 'new' : +(process.env.PURSUE_EDITION || 0) || null;
 const legs = legsArg.split('>').map((l) => { const [flag, prefix, main] = l.split('@'); return { flag, prefix, main, fullLog: !!process.env.PURSUE_LOG }; });
 const { srv, url } = await serve();
 const b = await launch();
@@ -55,12 +57,12 @@ await p.evaluate(async (a) => {
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
   // (PURSUE_EDITION=2 with no fixture: a new journey of the twelve-chapter edition, from the title screen's start)
-  const s = a.fixture ? RB.game.debugStart(a.fixture.map, a.fixture.x, a.fixture.y, {}) : RB.game.debugStart(a.startMap, +a.sx, +a.sy, Object.assign({ comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags }, a.edition ? { edition: a.edition } : {}));
+  const s = a.fixture ? RB.game.debugStart(a.fixture.map, a.fixture.x, a.fixture.y, {}) : RB.game.debugStart(a.startMap, +a.sx, +a.sy, Object.assign({ comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags }, a.edition ? { edition: a.edition === 'new' ? RB.edition.forNew() : a.edition } : {}));
   if (a.fixture) {
     // the fixture's campaign, loaded as its save would be, in place of the session's new one
     const m = RB.save.migrate(JSON.parse(JSON.stringify(a.fixture)));
     for (const k of Object.keys(s)) delete s[k];
-    Object.assign(s, m, a.edition ? { edition: a.edition } : {});
+    Object.assign(s, m, a.edition ? { edition: a.edition === 'new' ? RB.edition.forNew() : a.edition } : {});
     Object.assign(s.flags, flags);
     RB.world.enter(s.map, s.x, s.y, s.dir || 'down');
   }
@@ -98,6 +100,7 @@ const fin = await p.evaluate(() => ({
   difficulty: RB.game.s.learn.difficulty,
   compActs: RB.test.log.filter((l) => l.t === 'battle').reduce((m, l) => { for (const k in l.acts || {}) m[k] = (m[k] || 0) + l.acts[k]; return m; }, {}),
   quests: Object.fromEntries(Object.entries(RB.game.s.quests).map(([k, q]) => [k, q.done ? 'done' : q.stage])),
+  edition: RB.game.s.edition,
   flags: ['post', 'postgame', 'ch6_done'].filter((f) => RB.game.s.flags[f]),
   absent: (RB.test.absentSpeakers || []).map((x) => x.who + ' @ ' + x.map + ' (' + (x.scene || '?') + '): ' + x.en),
   nightLeaks: RB.test.nightLeaks || [],
