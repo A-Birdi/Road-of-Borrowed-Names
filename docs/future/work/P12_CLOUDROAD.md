@@ -35,7 +35,7 @@ Road stays in mist until Steamhollow is behind the party (F-69, unchanged).
 
 | | Station | Reading | Who keeps it | What happens there |
 |---|---|---|---|---|
-| 1 | 麓宿 | ふもとじゅく, Fumoto | the relay master; an innkeeper | the relay explained; the first board; the first lantern relit; the Seven Seals start |
+| 1 | 追分宿 | おいわけじゅく, Oiwake (where the road divides) | the relay master; an innkeeper | the relay explained; the first board; the first lantern relit; the Seven Seals start |
 | 2 | 杉ノ木宿 | すぎのきじゅく, Suginoki | a teahouse; porters | the cedar avenue; the first carried message |
 | 3 | 坂下宿 | さかしたじゅく, Sakashita | the inn of the last courier's family | the stories of the last courier begin to disagree |
 | 4 | 中山宿 | なかやまじゅく, Nakayama | two rival inns; the mapmaker | the inns' dispute over a guest; the wrong map |
@@ -49,27 +49,27 @@ Road stays in mist until Steamhollow is behind the party (F-69, unchanged).
 
 | Item | Source | Where | Status |
 |---|---|---|---|
-| Chapter 10's call after Kotonoha: a garbled relayed message on landing, Yae's first-hand account at Lanternfall; the Lantern Road's way up onto the old highway | 10_STORY, S3 | `src/content/cr/` | Planned (P12a) |
-| Seven post stations, the legs between them, the Mist Barrier, station 7; region, palette (cedar green, slate grey, cloud white, ember orange of station lanterns), place, zones, chart | R2 | `src/content/cr/` | Planned (P12a) |
-| Shortcuts: each reached station is a travel point; dense decisions rather than repeated walking | R2 risks, playbook | travel | Planned (P12a) |
-| Route reports at each station with their source (saw it, heard it, rumour) and certainty; weather and closures by explicit phases (never a clock) | R2, A8, A52 | `RB.relay` | Planned (P12b) |
-| Route planning: choose the next leg from the reports, the weather phase and the party; any reasonable plan gets through, a better-read plan avoids a detour | R2, A14, A52 | `RB.relay`, UI | Planned (P12b) |
-| The relay: carry a message and repeat it with the certainty you actually have; the next station acts on what you said; overstatement sends help the wrong way, a recoverable side consequence | R2, A8 | `RB.relay`, UI | Planned (P12b) |
-| Travel papers: fill and check them; spot a forged stamp; all four profiles | R2, A48 | `src/content/cr/` | Planned (P12c) |
-| The Mist Barrier interview: explain your purpose in suitably formal Japanese (a negotiation, E8; role and register, A41) | R2, E8 | encounter | Planned (P12c) |
-| Staying behind: one traveller stays as surety (an old, non-violent custom); the companion volunteers; the player fetches proof from station 7 alone and comes back; tuned for one, no techniques, no replacement fighter | 10_STORY §8, playbook | engine + content | Planned (P12c) |
-| Nao's crossroads woven into the wait: Sakichi at station 6 asks Nao to keep the post; Nao says no to Sakichi's face; the night apart (the last relay leg run alone, the porch at night: kajika frogs, wind in the cedars, a horse bell far below) | 14_COMPANIONS, S14 | `src/content/cr/` | Planned (P12c) |
-| The High Pass and the Courier's Hut: switchbacks, a landslide detour, a rope bridge, a snow shelter, a rest hut with limited uses and checkpoints | R2, D1, D2 | `src/content/cr/` | Planned (P12d) |
-| The Courier Who Never Arrived (届かずの飛脚): an argument chain; the account changes each round; track which version is supported; the message delivered | R2, E8, A24 | encounter | Planned (P12d) |
-| ごとに taught in the story, station by station | 03_ENCOUNTERS growth | story scene | Planned (P12d) |
-| Creatures: Fog Porter (a "protect the document" objective), Waystone Imp (turns signposts), Cloud Ox, Runner's Echo (repeats the last thing said, garbled), Pack-Lantern, Blankpage Moth (Hush-adjacent; silences modifiers for a few rounds, E26) | R2, E6, E26 | interim art (F-36) | Planned (P12e) |
-| Wanderers: a pilgrim (helps against what blocks the shrine path; Kotonoha's rumour in a pilgrim's version, F-75), a smuggler (helps against the checkpoint's creatures, then asks a favour) | R2 | `src/content/cr/` | Planned (P12e) |
-| Road events: a stranded courier; a pack horse on a ledge | R2, W5, A18 | `src/content/cr/` | Planned (P12e) |
-| Side quests: The Seven Seals, The Inn That Lost Its Guest Book, The Mapmaker's Wrong Map (a Cartographer commission), The Pilgrim's Errand, The Last Courier's Family (permanent outcomes) | R2, E17 | `src/content/cr/` | Planned (P12e) |
-| Companions: Mio (altitude sickness, the post-station dispensary's labels; Kikue's message on the relay), Ren (relights the station lanterns; word on the relay that the Keepers' Road is lit), Suzu (the inns' tricks, the road's stories; sends her reply to Koume by the relay) | 14_COMPANIONS, S14 | `src/content/cr/` | Planned (P12e) |
-| Music: shakuhachi and koto with a walking rhythm, a lonely flute at altitude, pack-horse bells; battle, the pass, the boss; the night apart's cue for Nao | R2 Theme, C-22 | `src/audio` | Planned (P12e) |
-| Records: the Seven Seals stand, chapter stamps; illustrations for P16 | K1 | records | Planned (P12e) |
-| Tests: unit (reports, relay, papers, solo stretch, Nao's scenes, phases); browser (planning and relay sheets, papers, the surety stretch); the route through Chapter 10 | playbook P12 | `tests/` | Planned |
+| Chapter 10's call after Kotonoha: a garbled relayed message on landing, Yae's first-hand account at Lanternfall; the Lantern Road's way up onto the old highway | 10_STORY, S3 | `src/content/cr/20_scenes_call.js` | Done (P12a): Jinpachi at Saltglass's harbour and Lanternfall (whichever comes first), Yae's account, the waystone at the Lantern Road's top end |
+| Seven post stations, the legs between them, the Mist Barrier, station 7; region, palette, place, zones, chart | R2 | `src/content/cr/01_region.js`, `10_maps.js` | Done (P12a): seven stations, five legs (main road through the gorge, old road round above), the Barrier, the road above the cloud, four interiors; two palettes (cloudroad, cloudtop); the place on the chart after `ko_done` |
+| Shortcuts: each reached station is a travel point; dense decisions rather than repeated walking | R2 risks, playbook | travel | Done (P12a): the palanquin (駕籠) at every station with its lamp lit, to any lit station |
+| Route reports at each station with their source and certainty; weather and closures by explicit phases (never a clock) | R2, A8, A52 | `src/content/cr/31_reports.js`, `10_maps.js` | Done (P12b): five plans of three to four reports (saw, told, rumour, signs, notice, map), each with its reading task; `var.cr_phase` 2–6 set by the story (cloud, rain, fog, clearing, snow); the washed-out bridge, the ledge's rockfall and the fog bank shut a road where they are, the way round always open |
+| Route planning: choose the next leg from the reports; any reasonable plan gets through, a better-read plan avoids a detour | R2, A14, A52 | the tellings engine as a plan (`72k_tellings.js`, `89k_tellings.js`) | Done (P12b): F-88 |
+| The relay: carry a message and repeat it with the certainty you have; the next station acts on what you said; overstatement sends help the wrong way, a recoverable side consequence | R2, A8 | `src/engine/72r_relay.js`, `src/ui/89r_relay.js` | Done (P12b): five messages; four side consequences each put right by talking to whoever acted on it (F-89) |
+| Travel papers: fill and check them; spot a forged stamp; all four profiles | R2, A48 | `32_barrier_learning.js` | Done (P12c) |
+| The Mist Barrier interview in suitably formal Japanese | R2, E8, A41 | `32_barrier_learning.js`, `22_scenes_barrier.js` | Done (P12c): Ujie's questions; humble 参ります against honorific いらっしゃる for oneself |
+| Staying behind: one traveller stays as surety; the companion volunteers; the player fetches proof from station 7 alone and comes back; no techniques, no replacement | 10_STORY §8, playbook | `src/engine/58s_surety.js` | Done (P12c): F-90 |
+| Nao's crossroads woven into the wait; the night apart | 14_COMPANIONS, S14 | `22_scenes_barrier.js`, `40_company.js` | Done (P12c): Sakichi at Kirishita; Nao's answer to his face; the last leg run alone; the porch, kajika frogs; a kept memory and a Bond event |
+| The High Pass and the Courier's Hut: switchbacks, a landslide detour, a rope bridge, a snow shelter with limited rests and a checkpoint | R2, D1, D2 | `11_pass.js`, `23_scenes_pass.js`, `34_pass_learning.js` | Done (P12d): F-91 |
+| The Courier Who Never Arrived (届かずの飛脚): an argument chain; the account changes each round; track which version is supported; the message delivered | R2, E8, A24 | `33_creatures.js`, `23_scenes_pass.js` | Done (P12d): F-92 |
+| ごとに taught in the story | 03_ENCOUNTERS growth | `cr.goto` | Done (P12d): Ine, after the first message: the relay changes runner at every station (宿ごとに) |
+| Creatures: Fog Porter (protect the document), Waystone Imp, Cloud Ox, Runner's Echo, Pack-Lantern, Blankpage Moth (silences modifiers, E26) | R2, E6, E26 | `33_creatures.js` | Done (P12e): interim art on existing families (F-36; F-93) |
+| Wanderers: a pilgrim (Kotonoha's rumour in a pilgrim's version, F-75), a smuggler (then asks a favour) | R2 | `33_creatures.js`, `26_scenes_side.js` | Done (P12e): Oshika on the shrine path; Ginji above the Barrier, and his parcel for Chika (F-94) |
+| Road events: a stranded courier; a pack horse on a ledge | R2, W5, A18 | `21_scenes_stations.js` | Done (P12a–b): Matazō at the ford; the pack horse backed off the ledge |
+| Side quests: The Seven Seals, The Inn That Lost Its Guest Book, The Mapmaker's Wrong Map (a Cartographer commission), The Pilgrim's Errand, The Last Courier's Family (permanent outcomes) | R2, E17 | `25_side.js`, `26_scenes_side.js`, `35_side_learning.js` | Done (P12e): F-94, F-95 |
+| Companions: Mio (altitude, the dispensary's labels; Kikue's message), Ren (relights the lanterns; the Keepers' Road lit), Suzu (the inns' tricks; her reply to Koume by the relay) | 14_COMPANIONS, S14 | `27_scenes_comp.js` | Done (P12e): each once on the restored relay, one Bond each (`cr:beat`) |
+| Music: shakuhachi and koto with a walking rhythm, a lonely flute at altitude, pack-horse bells; battle, the pass, the hut, the boss | R2 Theme, C-22 | `src/audio/38x_songs_cr.js` | Done (P12e): five songs; the battle and boss themes between Kotonoha's and the Archive's in the ladder |
+| Records: the chapter stamps and stand, the Seven Seals, the relay passed on as given; illustrations for P16 | K1 | `40_records.js` | Done (P12e); the illustrated pages are P16 art work |
+| Tests: unit; browser (relay and planning sheets, the surety stretch); the route through Chapter 10 | playbook P12 | `tests/` | See the phase end below |
 
 ## Rules kept
 
