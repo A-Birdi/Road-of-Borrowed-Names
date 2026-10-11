@@ -92,7 +92,7 @@ narr: {谷|たに} を {渡|わた}る {吊|つ}り{橋|ばし} が 、 {風|か
 ?(comp=nao) comp: {吊|つ}り{橋|ばし} か 。 …… {下|した} は {見|み}る な よ 。 || A rope bridge. …Don't look down.
 ?(comp=mio) comp: {小屋|こや} が ある なら 、 {休|やす}めます ね 。 {薪|まき} が {残|のこ}って いる と いい けど 。 || If there's a shelter we can rest. I hope there's firewood left.
 ?(comp=ren) comp: {橋|はし} の {袂|たもと} に 、 {札|ふだ} が あります 。 {先|さき} に {読|よ}みましょう 。 || There's a notice at the bridge's end. Let's read it first.
-?(comp=suzu) comp: {揺|ゆ}れる {舞台|ぶたい} は {慣|な}れて る けど 、 {谷|たに} の {上|うえ} は {初|はじ}めて よ 。 || I'm used to a stage that wobbles, but not one over a gorge.
+?(comp=suzu) comp: {揺|ゆ}れる {舞台|ぶたい} は {慣|な}れてる けど 、 {谷|たに} の {上|うえ} は {初|はじ}めて よ 。 || I'm used to a stage that wobbles, but not one over a gorge.
 !autosave
 
 @scene cr.bridge
@@ -186,7 +186,7 @@ narr: {壁|かべ} に 、 {墨|すみ} の {書|か}き{付|つ}け 。 「{雪
 ?(comp=nao) comp: …… {封|ふう} が {切|き}れて いない 。 {飛脚|ひきゃく} は 、 {便|びん} を {捨|す}てて {逃|に}げたり しない 。 {捨|す}てる くらい なら 、 {抱|だ}いて {寝|ね}る 。 || …The seal's not broken. A courier doesn't drop the post and run. He'd sooner sleep with it in his arms.
 ?(comp=mio) comp: {草鞋|わらじ} を {乾|かわ}かそう と して いた ん です ね 。 {濡|ぬ}れた {足|あし} で {雪|ゆき} の {中|なか} に いたら 、 {凍傷|とうしょう} に なります から 。 || He was trying to dry his sandals. Wet feet in the snow means frostbite.
 ?(comp=ren) comp: {壁|かべ} の {字|じ} 、 カンベエ さん の {帳面|ちょうめん} の {字|じ} と {同|おな}じ {手|て} です 。 ゲンタ さん が {自分|じぶん} で {書|か}いた もの です 。 || The writing on the wall is the same hand as in Kanbe's ledger. Genta wrote it himself.
-?(comp=suzu) comp: {舞台|ぶたい} の {小道具|こどうぐ} が 、 {全部|ぜんぶ} {揃|そろ}って る わ 。 {誰|だれ} か が 、 {台詞|せりふ} を {忘|わす}れた まま {立|た}って いる みたい 。 || All the props are in place. As if someone's standing there having forgotten his lines.
+?(comp=suzu) comp: {舞台|ぶたい} の {小道具|こどうぐ} が 、 {全部|ぜんぶ} {揃|そろ}ってる わ 。 {誰|だれ} か が 、 {台詞|せりふ} を {忘|わす}れた まま {立|た}って いる みたい 。 || All the props are in place. As if someone's standing there having forgotten his lines.
 !checkpoint
 !autosave
 
@@ -241,6 +241,7 @@ narr: {腰掛|こしか}け から 、 {雲|くも} の {海|うみ} が {見|�
 
 @scene cr.summit_stone
 narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。 {此処|ここ} より {北東|ほくとう} 、 {湯|ゆ} の {谷|たに} 。」 || The stone on the pass: "The Cloudroad Pass. From here, north-east: the valley of hot springs."
+?(item.cr_pilgrimbook&!cr_pilgrim_rubbed) !call cr.pilgrim_rub
 
 @scene cr.summit_east
 ?(!cr_done) narr: {北東|ほくとう} へ {下|くだ}る {道|みち} 。 {先|さき} に 、 {飛脚|ひきゃく} の {便|びん} を {届|とど}けよう 。 || The way down to the north-east. First, the courier's post needs delivering.
@@ -275,6 +276,9 @@ narr: その {夜|よる} から 、 {継|つ}ぎ{飛脚|びきゃく} が ま�
 !set cr_done
 !travel cloudroad
 !journal {最後|さいご} の {飛脚|ひきゃく} の {便|びん} を 、 {坂下宿|さかしたじゅく} に {届|とど}けた 。 {継|つ}ぎ{飛脚|びきゃく} が また {走|はし}って いる 。 {峠|とうげ} の {北東|ほくとう} に は 、 {湯気|ゆげ} の {谷|たに} が ある 。 || You delivered the last courier's post to Sakashita, and the relay runs again. North-east of the pass lies a valley of steam.
-!toast {第十章|だいじっしょう} {完|かん} || Chapter 10 complete
+?(comp=mio) !call cr.mio_kikue
+?(comp=ren) !call cr.ren_lit
+?(comp=suzu) !call cr.suzu_reply
+!toast {第十章|だいじゅっしょう} {完|かん} || Chapter 10 complete
 !autosave
 `);

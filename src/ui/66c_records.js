@@ -45,6 +45,12 @@ RB.ui.records = (function () {
     firework: 'M20 20 L20 7 M20 20 L30 11 M20 20 L33 21 M20 20 L28 31 M20 20 L12 31 M20 20 L7 21 M20 20 L10 11',
     koma: 'M20 7 L28 11 L31 32 H9 L12 11 Z M16 18 H24 M20 18 V28 M16 23 H24',
     card: 'M11 9 H29 V33 H11 Z M15 13 a3 3 0 1 0 0.1 0 M14 24 q6 -6 12 0 M14 28 h12',
+    // the Cloudroad's (P12): a peak over a line of cloud; a station seal; a folded letter. And Kotonoha's scroll
+    // (P11), which until now fell back to the path.
+    mountain: 'M6 28 L16 12 L21 19 L25 14 L34 28 Z M8 32 Q13 29 18 32 T28 32 T36 32',
+    seal: 'M10 10 H30 V30 H10 Z M14 15 H26 M20 15 V26 M14 20 H26 M15 26 H25',
+    letter: 'M8 12 H32 V29 H8 Z M8 12 L20 22 L32 12 M8 29 L17 20 M32 29 L23 20',
+    scroll: 'M12 9 H28 M12 31 H28 M14 9 V31 M26 9 V31 M17 14 H23 M17 19 H23 M17 24 H22',
   };
   function stampSvg(d, state, label) {
     const ink = state === 'pressed' ? d.design.ink : '#8a7a62';

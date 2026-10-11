@@ -47,7 +47,13 @@ RB.atlasCommissions = (function () {
     { id: 'endings', client: T('Tsuru', 'ツル'), title: T('A family of endings', '〜て の {仲間|なかま}'),
       aim: T('The lantern shades on this road carry one family of endings: doing it all, doing it ahead, leaving it so, trying it. Each new one is shown before it is asked.'),
       topic: { id: 'theme:endings', title: T('Doing, leaving, finishing: 〜て しまう, 〜て おく, 〜て ある, 〜て みる'), items: ['g:te_shimau', 'g:te_oku', 'g:te_aru', 'g:te_miru'] }, prefer: 'lanterns' },
+    // Rin's, once her Cloudroad map is right (P12, The Mapmaker's Wrong Map: a Cartographer commission); `if` keeps a
+    // commission off the board until the journey has earned it
+    { id: 'wrongmap', if: 'quest.cr_map=done', client: T('Rin, the mapmaker', 'リン （{地図|ちず} {作|づく}り）'), title: T('The wrong map', '{間違|まちが}った {地図|ちず}'),
+      aim: T('Rin is drawing the Atlas\'s roads the way she now draws the Cloudroad: what was walked in one colour, what was only told in another. Read each report for how it was known.'),
+      topic: { id: 'theme:wrongmap', title: T('How it was known: と言っていました, そうだ, らしい, ようだ'), items: ['g:cr_to_itte', 'g:sou_hear', 'g:rashii', 'g:you_mitai'] }, prefer: 'doors' },
   ];
+  const earned = (s, t) => !t.if || !!(s && RB.state && RB.state.test(s, t.if));
   const themed = (id) => THEMED.find((t) => t.id === id) || null;
 
   // ---- the board's offers -----------------------------------------------------------------------------------------
@@ -85,7 +91,7 @@ RB.atlasCommissions = (function () {
   function offers(s) {
     const out = [];
     for (const t of practiceTopics(s)) out.push({ kind: 'practice', id: t.id, title: t.title, aim: T('Built round what the evidence shows you find hardest: ' + t.title.en + '. The words inside still follow your weakest items, within this topic only.'), topic: t, prefer: null, area: null });
-    for (const t of THEMED) out.push({ kind: 'themed', id: 'themed:' + t.id, title: t.title, client: t.client, aim: t.aim, topic: t.topic, prefer: t.prefer, area: null, done: ((rec(s) || {}).done || {})['themed:' + t.id] || 0 });
+    for (const t of THEMED) if (earned(s, t)) out.push({ kind: 'themed', id: 'themed:' + t.id, title: t.title, client: t.client, aim: t.aim, topic: t.topic, prefer: t.prefer, area: null, done: ((rec(s) || {}).done || {})['themed:' + t.id] || 0 });
     for (const a in AREAS) out.push({ kind: 'survey', id: 'survey:' + a, title: T('Survey: ' + AREAS[a].title.en, AREAS[a].title.jp), client: T('The Cartographer', '{地図師|ちずし}'), aim: T('Walk ' + AREAS[a].title.en.toLowerCase() + ' and check each room against the old route description. The corridors are never redrawn: you mark what you verified.'), topic: null, prefer: null, area: a, done: surveyed(s).indexOf(a) >= 0 ? 1 : 0 });
     return out;
   }
@@ -180,7 +186,7 @@ RB.atlasCommissions = (function () {
     return out;
   }
 
-  return { LENGTHS, AREAS, THEMED, LANDMARKS, areaOf, themed, practiceTopics, weakness, offers, commission, topicItems, stepFor, topicStep, landmarkStep, finished, peek, rec, surveyed };
+  return { LENGTHS, AREAS, THEMED, LANDMARKS, areaOf, themed, earned, practiceTopics, weakness, offers, commission, topicItems, stepFor, topicStep, landmarkStep, finished, peek, rec, surveyed };
 })();
 
 // ---- the board in the Lantern Hall, its scenes, the compass and the stamp ------------------------------------------

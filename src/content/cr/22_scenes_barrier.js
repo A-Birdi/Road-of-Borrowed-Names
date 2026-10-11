@@ -165,7 +165,7 @@ cr_ujie: {残|のこ}る {方|かた} は 、 {番所|ばんしょ} で お{預|
 cr_ujie: {申|もう}し{訳|わけ} ございません 。 {決|き}まり で ございます 。 …… {雲居|くもい} は 、 {霧|きり} の {上|うえ} 。 {道|みち} は {一本|いっぽん} で ございます 。 || I am sorry. It is the rule. …Kumoi is above the mist. There is one road.
 :go
 ?(comp=nao) comp: {行|い}って {来|こ}い 。 …… {戻|もど}って {来|く}る {奴|やつ} を {待|ま}つ の は 、 {悪|わる}く ない 。 || Go on. …Waiting for someone who'll come back isn't so bad.
-?(comp=mio) comp[smile]: {行|い}って らっしゃい 。 {寒|さむ}い から 、 これ を 。 …… {生姜|しょうが} の {飴|あめ} です 。 || Off you go. It's cold, so take this. …A ginger sweet.
+?(comp=mio) comp[smile]: {行|い}ってらっしゃい 。 {寒|さむ}い から 、 これ を 。 …… {生姜|しょうが} の {飴|あめ} です 。 || Off you go. It's cold, so take this. …A ginger sweet.
 ?(comp=ren) comp: {道|みち} は {一本|いっぽん} です 。 …… それ でも 、 {灯|ひ} の ある {方|ほう} へ {行|い}って ください ね 。 || There's one road. …Even so, keep to the lit side.
 ?(comp=suzu) comp: {一人|ひとり} {芝居|しばい} の {稽古|けいこ} だ と {思|おも}って 。 {幕|まく} が {下|お}りる {前|まえ} に {戻|もど}って {来|き}て よ 。 || Think of it as rehearsing a one-person show. Be back before the curtain comes down.
 !set cr_apart

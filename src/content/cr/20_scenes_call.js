@@ -138,6 +138,7 @@ cr_kanbe: {上|うえ} の {宿|しゅく} から 、 {伝言|でんごん} が 
 @scene cr.kanbe_after
 !faceplayer
 cr_kanbe: {継|つ}ぎ{飛脚|びきゃく} が 、 また {走|はし}って いる 。 {帳面|ちょうめん} が {足|た}りなく なって きた わい 。 || The relay's running again. I'm running out of ledger.
+?(cr_family_relay) cr_kanbe: ゲンタ の {銭|ぜに} で 、 {若|わか}い {衆|しゅう} の {草鞋|わらじ} と {笠|かさ} を {揃|そろ}えた 。 {背中|せなか} に は 、 ゲンタ の {印|しるし} だ 。 || With Genta's coins I've kitted the young ones out with sandals and hats. On their backs, Genta's mark.
 
 @scene cr.post_ledger
 narr: {問屋場|といやば} の {帳面|ちょうめん} 。 {五十年|ごじゅうねん} {前|まえ} の ページ で 、 {字|じ} が {止|と}まって いる 。 {最後|さいご} の {行|ぎょう} に は 、 「ゲンタ 、 {峠|とうげ} {越|ご}え 。 {未着|みちゃく}」 。 || The relay office's ledger. The writing stops on a page fifty years old. The last line: "Genta, over the pass. Not arrived."
@@ -151,9 +152,11 @@ narr: {宛先|あてさき} ごと に {仕分|しわ}けた {棚|たな} 。 {�
 !if cr_st2 -> later
 cr_tome: いらっしゃい 。 {雲路|くもじ} を {登|のぼ}る の ？ {宿場|しゅくば} の {掲示板|けいじばん} に 、 {道|みち} の {様子|ようす} が {書|か}いて ある わ 。 {全部|ぜんぶ} {本当|ほんとう} か は 、 {知|し}らない けど 。 || Welcome. Climbing the Cloudroad? The notice board has how the road is. Whether it's all true, I couldn't say.
 cr_tome: {旅人|たびびと} は みんな 、 {違|ちが}う {話|はなし} を {持|も}って {来|く}る の よ 。 {半分|はんぶん} {信|しん}じて おく の が 、 ちょうど いい わ 。 || Every traveller brings a different story. Believing half of each is about right.
+!call cr.seals_start
 !end
 :later
 cr_tome: {上|うえ} から {来|き}た {飛脚|ひきゃく} が 、 {道|みち} の {話|はなし} を {正|ただ}しく {持|も}って {来|く}る よう に なった の 。 {誰|だれ} か さん の おかげ ね 。 || The runners coming down have started bringing the road's news right. Thanks to someone, I think.
+!call cr.seals_start
 
 @scene cr.tome_after
 !faceplayer

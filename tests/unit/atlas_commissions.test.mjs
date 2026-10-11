@@ -23,7 +23,10 @@ export default async (t) => {
   t.ok(practice.length >= 2 && practice[0].topic.items.indexOf('g:v_te_kudasai') >= 0, 'the weakest group met comes first as a practice topic: ' + practice.map((o) => o.title.en).join(' | '));
   t.ok(practice.every((o) => o.topic.items.indexOf('g:prt_wa') < 0) || practice.findIndex((o) => o.topic.items.indexOf('g:prt_wa') >= 0) > 0, 'a strong group never comes before a weak one');
   t.ok(practice.every((o) => o.topic.items.some((id) => s.learn.items[id])), 'every practice topic rests on evidence: nothing never answered is called weak (' + practice.map((o) => o.id).join(', ') + ')');
-  t.eq(offers.filter((o) => o.kind === 'themed').length, K.THEMED.length, 'every themed commission is on the board');
+  t.eq(offers.filter((o) => o.kind === 'themed').length, K.THEMED.filter((x) => !x.if).length, 'every themed commission the journey has earned is on the board (one with a condition waits for it)');
+  t.ok(!offers.some((o) => o.id === 'themed:wrongmap'), 'Rin\'s commission waits for her map to be put right (P12)');
+  const sMap = JSON.parse(JSON.stringify(s)); sMap.quests = Object.assign({}, sMap.quests, { cr_map: { stage: 0, done: true } });
+  t.ok(K.offers(sMap).some((o) => o.id === 'themed:wrongmap'), 'once The Mapmaker\'s Wrong Map is done, Rin\'s commission is on the board');
   t.eq(offers.filter((o) => o.kind === 'survey').map((o) => o.area), Object.keys(K.AREAS), 'a survey for each area');
   t.ok(!s.atlas.commissions, 'reading the board makes no record');
   const c0 = K.commission(practice[0], 'short');

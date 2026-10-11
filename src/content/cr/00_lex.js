@@ -87,6 +87,94 @@ RB.lex.add(RB.lex.parseTable(`
 此処|ここ|n|A|(old writing) here
 是|これ|n|A|(old writing) this
 云ふ|いふ|exp|A|(classical) to say, to be called (today 言う)
+# ---- the pass, the hut, the side stories (P12d–e) -----------------------------------------------------------------
+いっぱく|いっぱく|n|E|one night's stay (一泊)
+一泊|いっぱく|n|E|one night's stay
+いん|いん|n|E|a seal, a stamp (印)
+印帳|いんちょう|n|I|a seal book (a little book for collecting station or temple seals)
+くれむつ|くれむつ|n|A|(old timekeeping) dusk (暮れ六つ)
+てがた|てがた|n|I|travel papers, a pass (手形)
+手形|てがた|n|I|travel papers, a pass (通行手形)|Real history: papers for the Edo-period highways.
+なきゃ|なきゃ|exp|I|(casual) if there isn't; 〜なきゃ: must (= なければ)
+のっそり|のっそり|adv|A|slowly and heavily, lumberingly
+ふかし|ふかし|exp|A|(classical) is deep (= 深い)
+深し|ふかし|exp|A|(classical) is deep (= 深い)
+深き|ふかき|exp|A|(classical) deep, before a noun (= 深い)
+近し|ちかし|exp|A|(classical) is near (= 近い)
+無き|なき|exp|A|(classical) without, there being no (= ない)
+在らず|あらず|exp|A|(classical) is not (= ない)
+在れば|あれば|exp|A|(classical writing) if there is (= あれば)
+通ず|つうず|exp|A|(classical) to lead to, to go through (= 通じる)
+足る|たる|v5r|A|(classical) to be enough (〜に足る: worth …)
+証す|あかす|v5s|A|to prove, to vouch for
+否|いな|n|A|(literary) no
+ふくれっ面|ふくれっつら|n|I|a sulky face, a pout
+つづら|つづら|n|A|a climbing vine (九十九折り: a road that winds like one)|Real word: つづらおり.
+キクエ|キクエ|name|E|Kikue (a healer at the springs beyond the pass; fictional)
+一区間|ひとくかん|n|I|one stage, one leg (of a route)
+区間|くかん|n|I|a section, a stage (of a route)
+一大事|いちだいじ|n|I|a serious matter, a disaster
+一存|いちぞん|n|A|one's own discretion (私の一存では: on my own authority alone)
+一席|いっせき|n|I|a (single) performance, a turn (of storytelling)
+一言一句|いちごんいっく|n|A|every single word
+三人目|さんにんめ|n|E|the third person
+上戸|じょうご|n|A|(笑い上戸) someone who laughs easily
+両手|りょうて|n|E|both hands
+丸太|まるた|n|I|a log
+但し|ただし|conj|I|however, provided that
+何十通|なんじゅっつう|n|I|dozens of (letters)
+偽物|にせもの|n|I|a fake, a forgery
+出発地|しゅっぱつち|n|I|place of departure
+参道|さんどう|n|I|the approach to a shrine
+名主|なぬし|n|A|a village headman (Edo period)|Real history.
+回りましょ|まわりましょ|exp|E|(casual) let's go round (= 回りましょう)
+国中|くにじゅう|n|I|the whole country
+土砂|どしゃ|n|I|earth and sand; a landslide's debris
+堂々|どうどう|adv|I|openly, boldly
+大岩|おおいわ|n|I|a great rock, a boulder
+大石|おおいし|n|I|a large stone
+天秤棒|てんびんぼう|n|A|a carrying pole (across the shoulders)
+憧れ|あこがれ|n|I|a longing, a dream
+手ぶら|てぶら|n|I|empty-handed
+捻挫|ねんざ|n|I|a sprain
+掻き|かき|n|I|scraping, clearing (雪掻き: clearing snow)
+掻き分ける|かきわける|v1|I|to push aside, to make one's way through
+旅回り|たびまわり|n|A|touring (旅回りの一座: a touring company)
+暖簾|のれん|n|I|a shop curtain (hung at an entrance, with the shop's name)
+曲がりくねる|まがりくねる|v5r|I|to wind, to twist and turn
+松葉|まつば|n|I|pine needles
+板下|いたした|name|A|"Itashita", a forged station seal (坂 carved 板; fictional)
+露下|つゆした|name|A|"Tsuyushita", a forged station seal (霧 carved 露; fictional)
+毎冬|まいふゆ|n|I|every winter
+法被|はっぴ|n|I|a happi coat (a short coat with a crest)
+温泉|おんせん|n|E|a hot spring
+湧く|わく|v5k|I|to well up, to spring (water)
+湯治場|とうじば|n|A|a hot-spring resort (for cures)
+薬湯|くすりゆ|n|A|a medicinal bath
+灯火|とうか|n|A|a lamp, lamplight (formal)
+照り返し|てりかえし|n|I|glare, reflected light
+熾火|おきび|n|A|embers
+牢|ろう|n|A|a jail, a cell
+状箱|じょうばこ|n|A|a letter box (carried by couriers)|Real history: the relay couriers' box.
+納経帳|のうきょうちょう|n|A|a pilgrim's book (for temple seals and calligraphy)|Real custom.
+葛|かずら|n|A|a vine (葛の橋: a vine bridge)|Real history: kazurabashi.
+蔓|つる|n|I|a vine, a tendril
+薬代|くすりだい|n|I|the cost of medicine
+袂|たもと|n|I|the foot (of a bridge); a kimono sleeve
+見物|けんぶつ|n|I|sightseeing, seeing the sights
+訳|わけ|n|I|a reason; 訳あり: with a story behind it
+身元|みもと|n|I|one's identity, one's background
+遥か|はるか|adv|I|far, far away
+酷い|ひどい|adj-i|I|terrible, severe (also written ひどい)
+銭|ぜに|n|I|a coin; (old) money
+霜焼け|しもやけ|n|I|chilblains
+鞍部|あんぶ|n|A|a saddle (the low point of a ridge)
+風情|ふぜい|n|A|charm, elegance; atmosphere
+高札|こうさつ|n|A|a public notice board (Edo period)|Real history.
+鱗粉|りんぷん|n|A|the dust of scales on a moth's wings
+白紙蛾|はくしが|name|I|the Blankpage Moth (a creature; fictional)
+雲牛|くもうし|name|I|the Cloud Ox (a creature; fictional)
+霧担ぎ|きりかつぎ|name|I|the Fog Porter (a creature; fictional)
 # ---- colloquial forms as spoken on the road ------------------------------------------------------------------------
 通らん|とおらん|exp|I|(casual) won't go that way (= 通らない)
 通さん|とおさん|exp|I|(casual) won't let through (= 通さない)

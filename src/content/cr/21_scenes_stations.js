@@ -377,6 +377,7 @@ cr_tatsu: {崖道|がけみち} なら 、 おととい {通|とお}った 。 {
 @scene cr.rin
 !faceplayer
 cr_rin: {地図|ちず} {作|づく}り の リン です 。 {雲路|くもじ} の {新|あたら}しい {地図|ちず} を {作|つく}って います 。 {崖道|がけみち} が {一番|いちばん} {近|ちか}い はず です 。 …… その {辺|あた}り は 、 {古|ふる}い {絵図|えず} を {写|うつ}した ん です けど 。 || I'm Rin, a mapmaker. I'm making a new map of the Cloudroad. The ledge should be the shortest way. …I copied that part from an old sketch-map, though.
+!call cr.map_start
 
 @scene cr.rin_after
 !faceplayer
@@ -516,6 +517,8 @@ narr: {上|うえ} の {尾根|おね} は 、 {白|しろ}い {霧|きり} に 
 @scene cr.sue
 !faceplayer
 cr_sue: まあ 、 {霧|きり} の {中|なか} を よく {来|き}た わ ね 。 {上|あ}がって {温|あたた}まって 。 サキチ さん は 、 {毎晩|まいばん} {灯|ひ} の {番|ばん} を して いる の よ 。 || My, you came through the fog. Come in and warm up. Sakichi keeps watch over the lamp every night.
+?(cr_genta_heard|cr_sono_met) cr_sue: ゲンタ さん の {話|はなし} ？ ここ の {年寄|としよ}り は 、 {霧|きり} の {中|なか} で {狐|きつね} に {化|ば}かされた って {言|い}う わ 。 {峠|とうげ} の {霧|きり} は 、 {狐|きつね} の {仕業|しわざ} だ って 。 || Genta's story? The old folk here say a fox bewitched him in the fog. That the fog on the pass is a fox's doing.
+?(cr_genta_heard|cr_sono_met) !set cr_fox_heard
 
 @scene cr.sue_after
 !faceplayer

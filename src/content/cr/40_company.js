@@ -1,7 +1,8 @@
 /* The Cloudroad, Chapter 10: the companion (expansion P12; plan R2 and 14_COMPANIONS.md). Two bond events within the
  * existing Bond table (RB.company.award through !hook co_bond, once a journey each):
  *   cr:surety  the reunion at the Mist Barrier, after the companion stayed as surety (every companion: cr.barrier_back);
- *   cr:night   Nao's night apart ended on Kirishita's porch, the answer given to Sakichi's face (cr.porch_nao).
+ *   cr:night   Nao's night apart ended on Kirishita's porch, the answer given to Sakichi's face (cr.porch_nao);
+ *   cr:beat    Mio's, Ren's and Suzu's Chapter 10 beats on the restored relay (27_scenes_comp.js).
  * Nao's night is also a kept memory (!hook co_remember together cr_porch, in the scene's last lines), with Nao's own
  * words for What We Keep. Twelve-chapter journeys only: the scenes are in Chapter 10. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -10,7 +11,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const T = (jp, en) => ({ jp, en });
   const CC = C.company;
-  CC.bondEvents = Object.assign(CC.bondEvents || {}, { 'cr:surety': 1, 'cr:night': 1 });
+  CC.bondEvents = Object.assign(CC.bondEvents || {}, { 'cr:surety': 1, 'cr:night': 1, 'cr:beat': 1 });
   CC.mem.cr_porch = {
     kind: 'together', title: T('{霧下|きりした} の {縁側|えんがわ}', 'The porch at Kirishita'), place: T('{雲路|くもじ}', 'The Cloudroad'),
     text: T('{霧下|きりした} の {縁側|えんがわ} で 、 {夜|よる} の {沢|さわ} の {音|おと} を {聞|き}いた 。', 'On the porch at Kirishita you listened to the stream at night.'),
