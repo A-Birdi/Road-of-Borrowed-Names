@@ -535,6 +535,19 @@ default while leaving old saves alone.
 - **Unchanged:** P18's final matrix (F/E/I/A × four companions) and any publication, deployment or merge still wait for
   Robin's word; "the live build" is the game file on the task branch. VA-1 (C-83) starts only after P17.
 
+### C-85 · The order of the last steps: the campaign playable, then the voice audition, then the matrix
+**Decided** (2026-10-11). Robin: "Do not run the full test matrix until after the voice addendum is addressed. The
+voice addendum should not be addressed until the full 12-chapter campaign is playable as it has been in development."
+- **First:** the whole twelve-chapter campaign plays in the shipped build exactly as it did behind the development
+  switch (C-84). Shown, not assumed: every twelve-chapter gate reads the journey's own edition (`ed>=2`), never the
+  switch (the one place that read the switch, the records menu, also reads "shipped"); a journey begun from the real
+  creation wizard is twelve-chapter (`tests/e2e/create.mjs`); the twelve chapters driven to the ending from a new
+  journey given the edition the build itself chooses (`PURSUE_EDITION=new`); the default browser suite on the
+  shipped build. P17's closure finishes alongside.
+- **Then VA-1** (C-83), its packets VS00–VS07, stopping at the listening gallery for Robin.
+- **Then the full test matrix** (P18's F/E/I/A × four companions, `tests/e2e/run.mjs --full` with `matrix.mjs`), not
+  before; the default browser suite (one whole-game route) is not the matrix.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -659,6 +672,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | Art work | The AC-1 amendment governs art work only: internal evidence-backed decisions, the Mill as an experiment, camera for play, the AC-A01–A20 checklist; libraries and release still under Robin's standing rules | C-82 |
 | The voice audition | VA-1, the last queued task after P17: seven providers auditioned, a listening gallery for Robin, no whole-game synthesis or final cast until Robin chooses; the game stays complete offline, voice files optional | C-83 |
 | The twelve-chapter edition | Shipped in the build: new journeys are twelve-chapter; an old six-chapter save explains its fresh start first and begins New Game+ only if accepted ("Not now" leaves it byte for byte); P18's matrix and any publication still wait | C-84 |
+| The last steps | The twelve-chapter campaign shown playable in the shipped build, then VA-1, then the full test matrix (not before) | C-85 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

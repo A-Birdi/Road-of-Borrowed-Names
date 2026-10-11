@@ -1,7 +1,9 @@
 # VA-1 · The end-of-project Japanese voice audition (queued, not started)
 
 Robin sent this package on 2026-10-11 as a future end-stage instruction. **It is the last queued task:** it starts
-only after the currently authorised expansion, art and closure work (P02–P17), and it does not interrupt them. The
+only after the currently authorised expansion, art and closure work (P02–P17), and it does not interrupt them. Robin's
+C-85 sets the order around it: the whole twelve-chapter campaign shown playable in the shipped build (C-84) first, then
+VA-1, and only after VA-1 the full test matrix. The
 decision and the lead's reconciliations with the standing rules are in
 [../plan/11_CONTRADICTIONS.md](../plan/11_CONTRADICTIONS.md) C-83.
 

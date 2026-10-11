@@ -13,7 +13,8 @@ and logs it in `docs/future/plan/11_CONTRADICTIONS.md` part F. P18 (the full mat
 Robin. The fidelity study is a test, not a standard. **C-82** (the same day): Robin's art amendment AC-1, "only consider it when we're working on more
 art"; digest in `docs/future/plan/AC1_ART.md`, applied from the next art work (each new region's kit, P16). (Earlier: C-78 adopted the playbook's order; C-79 accepted the
 book interface; C-80 the world proof's direction.) **C-83** (2026-10-11): Robin's voice audition VA-1 is queued as the last task, after P17's closure, and does not
-interrupt it (`docs/future/voice/`). **C-84** (2026-10-11): the twelve-chapter edition ships in the build (Robin: "Fully ship it (C-54
+interrupt it (`docs/future/voice/`). **C-85** (2026-10-11): the order of the last steps is the twelve-chapter campaign shown playable in the shipped build,
+then VA-1, then the full test matrix (not before). **C-84** (2026-10-11): the twelve-chapter edition ships in the build (Robin: "Fully ship it (C-54
 applies)"): new journeys are twelve-chapter; an old six-chapter save explains its fresh start and begins New Game+ only
 if accepted. Plan: `docs/future/plan/` draft 9; playbook: `docs/future/playbook/`.
 
