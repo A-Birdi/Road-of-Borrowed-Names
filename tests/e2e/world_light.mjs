@@ -2,6 +2,7 @@
 // index.html in Chromium, with synthetic sessions (never a real save):
 //  - every map of the twelve chapters and the postgame is lit: outdoors under its region's own sun (each region in
 //    SUNS has its own), indoors as a room; a frame draws on each with no page error (first-frame cost recorded);
+//    what the light builds for a map (its shadows, its room's light) goes when the map's art goes;
 //  - a room has windows only if the building it is entered from has them, and only on timber walls; its shadows
 //    fall into the room and never over a wall; by night its windows give no shadows, and a dim room by day keeps
 //    its daylight;
@@ -30,7 +31,7 @@ const ENTER = (id, flags) => {
   return RB.world.W.map;
 };
 
-await test('every map is lit: outdoors under its region\'s own sun, indoors as a room; a frame draws on each with no page error', async () => {
+await test('every map is lit: outdoors under its region\'s own sun, indoors as a room; a frame draws on each with no page error; what the light built is let go with each map\'s art', async () => {
   const { p, ctx, errors } = await page(b, url, DESK);
   const r = await p.evaluate((ENTER) => {
     const enter = new Function('return ' + ENTER)();
@@ -54,6 +55,15 @@ await test('every map is lit: outdoors under its region\'s own sun, indoors as a
       out.slow.push([id, Math.round(ms)]);
     }
     for (const k in out.regions) out.regions[k] = [...out.regions[k]];
+    // what the light built is let go with each map's art: only the last maps visited keep any
+    out.kept = { layers: 0, masks: 0, rooms: 0, decor: 0 };
+    for (const id of Object.keys(RB.content.maps)) {
+      const m = RB.maps.compile(id);
+      if (m.staticLayer) out.kept.layers++;
+      if (m.look && m.look.cv) out.kept.masks++;
+      if (m.lookRoom) out.kept.rooms++;
+      if (m.kitDecor) out.kept.decor++;
+    }
     out.slow.sort((a, b) => b[1] - a[1]);
     out.slow = out.slow.slice(0, 5);
     out.suns = Object.keys(RB.worldLook.SUNS);
@@ -68,6 +78,7 @@ await test('every map is lit: outdoors under its region\'s own sun, indoors as a
     assert(suns.length === 1 && suns[0] === want, region + ' should be lit by ' + want + ': ' + suns.join(','));
   }
   assert(Object.keys(r.regions).length >= 18, 'regions outdoors: ' + Object.keys(r.regions).join(', '));
+  assert(r.kept.layers <= 2 && r.kept.masks <= 2 && r.kept.rooms <= 2 && r.kept.decor <= 2, 'after every map, the light\'s layers of maps left behind should be let go: ' + JSON.stringify(r.kept));
   assert(!errors.length, 'page errors: ' + errors.slice(0, 5).join('; '));
   await ctx.close();
 });

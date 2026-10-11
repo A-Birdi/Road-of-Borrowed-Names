@@ -197,7 +197,9 @@ RB.render = (function () {
     staticDirty = false;
     staticMaps = staticMaps.filter((o) => o !== m);
     staticMaps.push(m);
-    while (staticMaps.length > 2) { const old = staticMaps.shift(); old.staticLayer = null; old.apronProps = null; }
+    // an older map's art goes, and with it everything the light built on it (its shadows, its room's light, the
+    // kit's list keyed to that art), or each map visited would stay in memory
+    while (staticMaps.length > 2) { const old = staticMaps.shift(); old.staticLayer = null; old.apronProps = null; old.look = null; old.lookRoom = null; old.kitDecor = null; }
   }
 
   // The camera never moves because a panel opened or closed: the dialogue

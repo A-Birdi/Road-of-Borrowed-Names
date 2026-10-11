@@ -4398,7 +4398,11 @@ takes each region's colours from its palette (growth only on green grass, lily p
 coast); its grass no longer creeps over paving from a lone planter (found in Manybridge's captures: it smeared the
 round bushes). The camera widens outdoors only where a screen allows a whole-pixel step of at most 1.5× (30 tiles at
 1920×1080; the game's own at 1440×900 and on phones); a change of view no longer rebuilds the map's art (it had: every
-battle would have ended with the shadows and dressing built again; probed, then tested).
+battle would have ended with the shadows and dressing built again; probed, then tested). Found in review before the
+complete run: what the light built for a map (its shadow mask, its room's light, the kit's list, which held the map's
+old art) was kept after the renderer let the map's art go, so every map visited stayed in memory (a probe through 60
+maps: 54 masks and 42 room lights kept, 151 MB of canvas, and 18 old map layers held by the kit's list); they now go
+with the map's art (the same probe: 1 mask, 2 room lights, 3 MB), and `world_light.mjs` checks it after all 226 maps.
 - Browser `world.mjs` (rewritten for the shipped light: the flag no longer needed, Off pixel-identical to every layer
   off, the camera at 1920×1080 and a phone, a battle and back without a rebuild, at night the lamps cast): **13/0** in
   three runs on the scratch build; one earlier run, made while the unit suite loaded the machine, had one failure whose
