@@ -1325,6 +1325,66 @@
   "jp": "いい の よ 、 また {後|あと} で 。 {卵|たまご} は {逃|に}げない わ 。",
   "en": "That's fine, later then. The eggs won't run off."
  },
+ "scene:yn.tama_buns#4ysjh9": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{卵|たまご} の {次|つぎ} は 、 {温泉|おんせん}まんじゅう 。 {蒸|む}し{場|ば} の {湯気|ゆげ} で {蒸|む}す の 。 {作|つく}って みる ？",
+  "en": "After the eggs, spring buns. We steam them over the vent. Want to try?"
+ },
+ "scene:yn.tama_buns:choice#1xxlb43": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{作|つく}って みる",
+  "en": "Give it a try"
+ },
+ "scene:yn.tama_buns:choice#hdmixl": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "また {今度|こんど}",
+  "en": "Another time"
+ },
+ "scene:yn.tama_buns#r6i052": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "ほら 、 ふっくら ！ {箱|はこ} に {詰|つ}めて おいた から 、 {持|も}って {行|い}きな 。 {旅|たび} の {途中|とちゅう} で {食|た}べて ね 。",
+  "en": "Look at that, nice and plump! I've packed them in a box for you to take. Eat them on the road."
+ },
+ "scene:yn.tama_buns#1ppqyi5": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "…… {箱|はこ} ごと {走|はし}れる {土産|みやげ} は 、 {一番|いちばん} いい {土産|みやげ} だ 。",
+  "en": "…A souvenir you can run with, box and all, is the best kind."
+ },
+ "scene:yn.tama_buns#j7h6zg": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{蓋|ふた} を {開|あ}けない の が 、 {一番|いちばん} {難|むずか}しかった です 。 {薬|くすり} を {煎|せん}じる {時|とき} と {同|おな}じ です ね 。",
+  "en": "Not lifting the lid was the hardest part. Same as brewing medicine."
+ },
+ "scene:yn.tama_buns#w6mn5h": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{六|むっ}つ 。 …… {道|みち} の {途中|とちゅう} で 、 {一|ひと}つ ずつ {食|た}べましょう 。 {迷|まよ}って も 、 {食|た}べる もの は あります 。",
+  "en": "Six. …One each on the road, now and then. Even if we get lost, we'll have something to eat."
+ },
+ "scene:yn.tama_buns#8n554x": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{一座|いちざ} の {差|さ}し{入|い}れ に したい くらい 。 …… {全部|ぜんぶ} は あげない けど 。",
+  "en": "I'd almost give them to the troupe as a backstage treat. …Not all of them, mind."
+ },
+ "scene:yn.tama_buns#ymzs0u": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "いい の よ 。 また {今度|こんど} ね 。",
+  "en": "That's fine. Another time, then."
+ },
+ "scene:yn.tama_buns#1derot3": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "いい の よ 。 {卵|たまご} は {届|とど}けて くれた ？ {尾根|おね} の {人|ひと} たち 、 {待|ま}ってる から 。",
+  "en": "That's fine. Did you take the eggs round? The folk from the ridge are waiting."
+ },
  "scene:yn.tama_idle#o43kii": {
   "status": "self-reviewed",
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
@@ -1924,6 +1984,12 @@
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
   "jp": "{弁|べん} を {戻|もど}す 。 {湯気|ゆげ} は {上|うえ} の {通|とお}り{道|みち} へ {戻|もど}り 、 {下|した} が {晴|は}れた 。",
   "en": "You turn the valve back. The steam returns to the upper passage, and the lower clears."
+ },
+ "scene:yn.shutter_end#m6ik19": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: the Channel's end wheels (yn.shutter_end), checked against the lexicon",
+  "jp": "{通|とお}り{道|みち} の {端|はし} に 、 {小|ちい}さな {弁|べん} の {輪|わ} が ある 。 {管|くだ} が 、 {真|ま}ん{中|なか} の {部屋|へや} の {大|おお}きな {弁|べん} に つながって いる 。",
+  "en": "At the end of the passage there's a small valve wheel. Its pipe runs to the big valve in the middle chamber."
  },
  "scene:yn.float#1jvi1yd": {
   "status": "self-reviewed",
@@ -4583,6 +4649,12 @@
   "jp": "{湯|ゆ} の {取|と}り{決|き}め",
   "en": "The spring agreement"
  },
+ "items:yn_buns#u3ydxu": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{温泉|おんせん}まんじゅう",
+  "en": "Spring buns"
+ },
  "items:yn_eggs#13e7nea": {
   "status": "self-reviewed",
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
@@ -4918,6 +4990,144 @@
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",
   "jp": "{殻|から} を {剥|む}く",
   "en": "Peel them"
+ },
+ "encounter:yn.buns#u3ydxu": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{温泉|おんせん}まんじゅう",
+  "en": "Spring buns"
+ },
+ "encounter:yn.buns#qp3l7l": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "まんじゅう",
+  "en": "The buns"
+ },
+ "encounter:yn.buns#19ch0ip": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{生地|きじ}",
+  "en": "dough"
+ },
+ "encounter:yn.buns#1u8s47m": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{丸|まる}めた {生地|きじ}",
+  "en": "balls of dough"
+ },
+ "encounter:yn.buns#pgvu21": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "あん {入|い}り",
+  "en": "filled"
+ },
+ "encounter:yn.buns#1j5wfgc": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{籠|かご} の {中|なか}",
+  "en": "in the basket"
+ },
+ "encounter:yn.buns#1crzeby": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{蒸|む}し{上|あ}がり",
+  "en": "steamed"
+ },
+ "encounter:yn.buns#1laux1x": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{一|いち} 、 {生地|きじ} を {小|ちい}さく {丸|まる}めて ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#won4i1": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "いち 、 きじ を ちいさく まるめて ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#pvq3zs": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{生地|きじ} を {丸|まる}める",
+  "en": "Roll the dough into balls"
+ },
+ "encounter:yn.buns#1eqi7ho": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{生地|きじ} を {薄|うす}く {伸|の}ばす",
+  "en": "Roll it out thin"
+ },
+ "encounter:yn.buns#k21d0a": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{二|に} 、 あん を {生地|きじ} で {包|つつ}んで ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#1jhvyu8": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "に 、 あん を きじ で つつんで ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#1jw6s01": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "あん を {包|つつ}む",
+  "en": "Wrap the paste inside"
+ },
+ "encounter:yn.buns#1yha2x8": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "あん を {上|うえ} に {乗|の}せる",
+  "en": "Put the paste on top"
+ },
+ "encounter:yn.buns#wt1gup": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{三|さん} 、 {蒸|む}し{場|ば} の {籠|かご} に 、 {間|あいだ} を {空|あ}けて {並|なら}べて ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#bm940v": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "さん 、 むしば の かご に 、 あいだ を あけて ならべて ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#b4khsc": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{間|あいだ} を {空|あ}けて {並|なら}べる",
+  "en": "Lay them with space between"
+ },
+ "encounter:yn.buns#1uw82hr": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "くっつけて {並|なら}べる",
+  "en": "Pack them tight together"
+ },
+ "encounter:yn.buns#onvmin": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{四|よん} 、 {湯気|ゆげ} が {出|で}て いる {間|あいだ} は 、 {蓋|ふた} を {開|あ}けないで ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#io5ucp": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "よん 、 ゆげ が でて いる あいだ は 、 ふた を あけないで ください 。",
+  "en": ""
+ },
+ "encounter:yn.buns#13ftbu": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{蓋|ふた} を して {待|ま}つ",
+  "en": "Keep the lid on and wait"
+ },
+ "encounter:yn.buns#1idw04l": {
+  "status": "self-reviewed",
+  "ref": "P13 self-review, addendum: Tama's second recipe card, spring buns (yn.buns, yn.tama_buns, the item), checked against the lexicon and grammar notes, Suzu's Kansai version against docs/dialect/suzu_kansai.md",
+  "jp": "{蓋|ふた} を {開|あ}けて {見|み}る",
+  "en": "Lift the lid to look"
  },
  "encounter:yn.complaint#1s9lrvr": {
   "status": "self-reviewed",

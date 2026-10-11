@@ -121,6 +121,7 @@ export default async (t) => {
       const s2 = await side({ pron: 'they', comp }, pickEn(sideOf === 2 ? 'women' : 'reserved'));
       t.ok(!s2.flags.yn_bath_apart, comp + ' is in the same bath when you choose theirs');
     }
+    t.ok(['yn.bath_kami', 'yn.bath_shimo'].every((id) => ops(id).includes('call:yn.bath_scene')) && !['yn.kami_bath', 'yn.shimo_bath'].some((id) => (C.maps[id].onEnter || []).some((x) => x.scene === 'yn.bath_scene')), 'the curtain\'s scene plays the bath as you step in (no enter event to repeat it after every scene)');
     t.ok(C.maps['yn.kami_bath'].noCompanion === '!yn_apart&!yn_bath_apart' && C.maps['yn.shimo_bath'].noCompanion === '!yn_apart&!yn_bath_apart', 'apart, the companion is not drawn in your bath');
     // the comfort setting: the bath itself told in a sentence, the conversation the same
     // (settings live on the game's G; RB.game.settings is a getter)
@@ -154,7 +155,7 @@ export default async (t) => {
     }
     return st;
   };
-  for (const id of ['yn.rooms', 'yn.cook']) {
+  for (const id of ['yn.rooms', 'yn.cook', 'yn.buns']) {
     const P = C.encounters[id].procedure;
     t.ok(P.steps.every((st) => st.actions.filter((a) => a.ok).length === 1 && st.actions.some((a) => !a.ok) && st.stable), id + ': one right action a step, at least one wrong one, every step a stable point');
     t.ok(P.steps.every((st) => ['F', 'E', 'I', 'A'].every((p) => st.task[p] && st.task[p].options.filter((o) => o.ok).length === 1)), id + ': a language step at every profile, one right answer each');
@@ -356,9 +357,14 @@ export default async (t) => {
     await run('yn.ginnojo');
     t.ok(qs(s, 'yn_actor') === 'done' && asked.includes('yn.actor_line') && has(/prompter/), 'his punchline back; Suzu to prompt him from the wings');
     await run('yn.tama', { enc: enc('done') });
-    t.ok(s.flags.yn_eggs_done && s.inv.yn_eggs === 3 && qs(s, 'yn_eggs') === 0, 'three spring eggs, and three people to give them to');
+    t.ok(s.flags.yn_eggs_cooked && s.inv.yn_eggs === 3 && qs(s, 'yn_eggs') === 0, 'three spring eggs, and three people to give them to');
     for (const [map, who] of [['yn.descent', 'yn_yasuke'], ['yn.lower', 'yn_tsuneji'], ['yn.kami', 'yn_oshige']]) await run(talkTo(s, map, who));
     t.ok(qs(s, 'yn_eggs') === 'done' && !s.inv.yn_eggs, 'eggs for everyone');
+    t.eq(talkTo(s, 'yn.upper', 'yn_tama'), 'yn.tama_buns', 'then Tama\'s second card: spring buns');
+    await run('yn.tama_buns', { pick: pickEn('Another time') });
+    t.ok(!s.flags.yn_buns_cooked && encs.length === 0, 'another time: nothing made, nothing lost');
+    await run('yn.tama_buns', { pick: pickEn('Give it a try'), enc: enc('done') });
+    t.ok(s.flags.yn_buns_cooked && s.inv.yn_buns === 1 && encs.includes('yn.buns') && talkTo(s, 'yn.upper', 'yn_tama') === 'yn.tama_idle', 'the buns steamed over the vent, a box to take on the road');
     await run('yn.kanae', { pick: pickEn('Read') });
     t.ok(qs(s, 'yn_poet') === 'done' && asked.includes('yn.story_order') && has(/The Spring That Went Cold/), 'the footbath poet\'s story room, read and put in order');
   }

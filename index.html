@@ -43232,7 +43232,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *
  * Two condition heads:
  *   pron=she | he | they | custom   the player's pronouns as set at the start (an object is custom)
- *   bathview=summarised | shown      the device's comfort setting for bathing scenes (Settings › Story: shown, or told
+ *   bathview=summarised | shown      the device's comfort setting for bathing scenes (Settings › Learning & Challenge, beside Grave outcomes: shown, or told
  *                                    in a sentence). Presentation only: what happens, and what follows, is the same.
  * And one hook: `!hook bath_soak <n>`, a long soak that restores a little resolve to both of you (a hot pool in the
  * Steam Vents restores some and then runs cool: the map's own state says which pool is spent). */
@@ -155575,6 +155575,9 @@ RB.dialect.add('kansai', `
 @ yn/yn.confess [yn.confess]
 = ねえ 。 {一座|いちざ} に {戻|もど}らない って {決|き}めた の 、 {後悔|こうかい} して ない わ よ 。 {元手|もとで} が かかり{過|す}ぎてる って {言|い}った けど 。 …… {本当|ほんとう} は 、 {一緒|いっしょ} に {舞台|ぶたい} に {立|た}ちたい {人|ひと} に 、 {久|ひさ}しぶり に {会|あ}えた から よ 。 || Listen. I don't regret deciding not to go back to the troupe. I said the investment was too great. …The truth is, it's the first time in ages I've met someone I want to share a stage with.
 > なあ 。 {一座|いちざ} に {戻|もど}らへん って {決|き}めた の 、 {後悔|こうかい} して へん で 。 {元手|もとで} が かかり{過|す}ぎてる って {言|い}うた けど 。 …… ほんま は 、 {一緒|いっしょ} に {舞台|ぶたい} に {立|た}ちたい {人|ひと} に 、 {久|ひさ}しぶり に {会|お}うた から や 。 || Listen. I don't regret deciding not to go back to the troupe. I said the investment was too great. …The truth is, it's the first time in ages I've met someone I want to share a stage with.
+@ yn/yn.tama_buns [yn.tama_buns]
+= {一座|いちざ} の {差|さ}し{入|い}れ に したい くらい 。 …… {全部|ぜんぶ} は あげない けど 。 || I'd almost give them to the troupe as a backstage treat. …Not all of them, mind.
+> {一座|いちざ} の {差|さ}し{入|い}れ に したい くらい や 。 …… {全部|ぜんぶ} は あげへん けど な 。 || I'd almost give them to the troupe as a backstage treat. …Not all of them, mind.
 @ yn/company [company.mem.yn_garden.keep]
 = {元手|もとで} が かかり{過|す}ぎてる って {言|い}った けど 、 {本当|ほんとう} は {一緒|いっしょ} に {立|た}ちたかった だけ よ 。 || I said the investment was too great. Really, I just wanted to stand on a stage with you.
 > {元手|もとで} が かかり{過|す}ぎてる って {言|い}うた けど 、 ほんま は {一緒|いっしょ} に {立|た}ちたかった だけ や 。 || I said the investment was too great. Really, I just wanted to stand on a stage with you.
@@ -185521,6 +185524,11 @@ RB.lex.add(RB.lex.parseTable(`
 着方|きかた|n|I|the way of wearing (clothes)
 裾|すそ|n|I|the hem (of a kimono or yukata)
 左側|ひだりがわ|n|E|the left side
+丸める|まるめる|v1|I|to roll into a ball
+蒸す|むす|v5s|I|to steam (food)
+蒸し上がり|むしあがり|n|A|done steaming, fresh from the steamer
+ふっくら|ふっくら|adv|I|plump, soft and puffed up
+温泉まんじゅう|おんせんまんじゅう|n|I|a spring bun: a steamed bun with sweet bean paste, a classic of hot-spring towns|Real: often steamed with the spring's own steam, and sold boxed as a souvenir.
 右側|みぎがわ|n|E|the right side
 捲る|まくる|v5r|I|to roll up, to tuck up (a sleeve or hem)
 浸す|ひたす|v5s|I|to soak, to dip in water
@@ -186133,6 +186141,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('yn_yukata', { name: T('{浴衣|ゆかた}', 'A yukata'), key: true, desc: 'A light cotton robe lent by the inn, indigo with white steam curls. Left side over right, always (right over left is for the dead).' });
   it('yn_ledger', { name: T('{湯分|ゆわ}け の {帳面|ちょうめん}', 'The guild\'s water ledger'), key: true, desc: 'The bath-keepers\' record of the spring\'s flow and how it is divided between the two houses: by the hour, by an old water clock.' });
   it('yn_agreement', { name: T('{湯|ゆ} の {取|と}り{決|き}め', 'The spring agreement'), key: true, desc: 'The agreement the two houses, the guild and the town signed together, in words you helped choose. A copy for you, folded small.' });
+  it('yn_buns', { name: T('{温泉|おんせん}まんじゅう', 'Spring buns'), desc: 'A little wooden box of buns steamed over the spring\'s vent, with sweet bean paste inside. A spring town\'s classic souvenir (a real custom).' });
   it('yn_eggs', { name: T('{温泉卵|おんせんたまご}', 'Spring eggs'), desc: 'Eggs slow-cooked in the spring: the white barely set, the yolk soft. Eaten with a little broth, or given away.' });
 })(RB.content);
 
@@ -186219,7 +186228,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'yn_rokubei', x: 24, y: 18, dir: 'left', if: '!yn_rokubei_met', talk: 'yn.rokubei_first' },
-      { id: 'yn_tama', x: 15, y: 18, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.tama_after' }, { if: 'yn_eggs_done', scene: 'yn.tama_idle' }, { scene: 'yn.tama' }] },
+      { id: 'yn_tama', x: 15, y: 18, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.tama_after' }, { if: 'yn_eggs_cooked&!yn_buns_cooked', scene: 'yn.tama_buns' }, { if: 'yn_eggs_cooked', scene: 'yn.tama_idle' }, { scene: 'yn.tama' }] },
       { id: 'yn_kihachi', x: 34, y: 12, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.kihachi_after' }, { scene: 'yn.kihachi' }] },
       { id: 'yn_toki', x: 2, y: 13, dir: 'right', talk: [{ if: 'yn_done', scene: 'yn.toki_after' }, { scene: 'yn.toki' }] },
       { id: 'yn_senta', x: 26, y: 20, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.senta_after' }, { scene: 'yn.senta' }] },
@@ -186372,7 +186381,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       steam(4, 3), steam(9, 2),
     ],
     exits: [{ x: 7, y: 9, to: 'yn.kami', tx: 7, ty: 7, dir: 'down' }],
-    onEnter: [{ scene: 'yn.bath_scene', once: false }],
+    // (the bath itself is played by the curtain's scene as you step in: an enter event that may repeat would play it
+    // again after every scene in the bath)
     spawn: { default: [7, 8, 'up'] },
   });
   // the Lower House's lobby (下の湯): loud, warm; the house rules on one short board; the way out back to the open-air
@@ -186409,7 +186419,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       steam(5, 3), steam(10, 2), steam(8, 5),
     ],
     exits: [{ x: 1, y: 9, w: 1, h: 1, to: 'yn.shimo', tx: 12, ty: 3, dir: 'left' }],
-    onEnter: [{ scene: 'yn.bath_scene', once: false }],
+    // (the bath itself is played by the curtain's scene as you step in)
     spawn: { default: [2, 9, 'right'] },
   };
   // Kikue's dispensary (薬処): jars with honest labels, a futon for a patient, a stove
@@ -186888,6 +186898,7 @@ narr: {階段|かいだん} の {下|した} の {小|ちい}さな {部屋|へ�
 !if !yn_rooms_done -> guests
 !call yn.bath_side
 !warp yn.kami_bath 7 8 up
+!call yn.bath_scene
 !end
 :guests
 yn_okiyo: {申|もう}し{訳|わけ} ございません 。 お{風呂|ふろ} は 、 お{泊|と}まり の お{客|きゃく}さま だけ で ございます 。 || I'm terribly sorry. The baths are for staying guests only.
@@ -186895,6 +186906,7 @@ yn_okiyo: {申|もう}し{訳|わけ} ございません 。 お{風呂|ふろ} 
 @scene yn.bath_shimo
 !call yn.bath_side
 !warp yn.shimo_bath 2 9 right
+!call yn.bath_scene
 
 @scene yn.bath_side
 # Which bath: she/her the women's, he/him the men's; they/them and custom choose once, kept (C-56). The companion's
@@ -187200,7 +187212,7 @@ narr: {熱|あつ}い 。 でも 、 すぐ に {足|あし} の {裏|うら} �
 
 @scene yn.steambox
 narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|い}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。 || The stone steam box. Eggs in bamboo baskets sway in the steam.
-?(!yn_eggs_done) narr: タマ さん に {聞|き}けば 、 {作|つく}り{方|かた} を {教|おし}えて くれる そう だ 。 || Ask Tama and she'll show you how, they say.
+?(!yn_eggs_cooked) narr: タマ さん に {聞|き}けば 、 {作|つく}り{方|かた} を {教|おし}えて くれる そう だ 。 || Ask Tama and she'll show you how, they say.
 
 @scene yn.tama
 # Tama's recipe card: spring eggs (温泉卵), no timer: a procedure (yn.cook). The result feeds scenes, not a stat.
@@ -187208,7 +187220,7 @@ narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} �
 yn_tama: {温泉卵|おんせんたまご} 、 {作|つく}って みる ？ {作|つく}り{方|かた} は 、 この {札|ふだ} の とおり 。 {急|いそ}がなくて いい の よ 。 {卵|たまご} は {待|ま}って くれる から 。 || Want to try making spring eggs? The method's on this card. No hurry. The eggs will wait for you.
 !encounter yn.cook
 !if var._res=0 -> later
-!set yn_eggs_done
+!set yn_eggs_cooked
 !give yn_eggs 3
 yn_tama: {上手|じょうず} ！ {白身|しろみ} が とろっと して 、 {黄身|きみ} が しっとり 。 {三|みっ}つ 、 {持|も}って {行|い}きな 。 || Well done! The white's just set and the yolk is soft. Take three with you.
 yn_tama: …… ねえ 、 {尾根|おね} から {来|き}た {人|ひと} たち に 、 {一|ひと}つ ずつ {届|とど}けて くれない ？ ヤスケ さん 、 ツネジ さん 、 オシゲ さん 。 {温|あたた}かい もの を {食|た}べる と 、 {声|こえ} が {出|で}る よう に なる から 。 || …Say, would you take one each to the folk from the ridge? Yasuke, Tsuneji and Oshige. Eat something warm and your voice comes back.
@@ -187220,6 +187232,28 @@ yn_tama: …… ねえ 、 {尾根|おね} から {来|き}た {人|ひと} た�
 !end
 :later
 yn_tama: いい の よ 、 また {後|あと} で 。 {卵|たまご} は {逃|に}げない わ 。 || That's fine, later then. The eggs won't run off.
+
+@scene yn.tama_buns
+# Tama's second card: spring buns (温泉まんじゅう) steamed over the vent, no timer (yn.buns). A box to take away.
+!faceplayer
+yn_tama: {卵|たまご} の {次|つぎ} は 、 {温泉|おんせん}まんじゅう 。 {蒸|む}し{場|ば} の {湯気|ゆげ} で {蒸|む}す の 。 {作|つく}って みる ？ || After the eggs, spring buns. We steam them over the vent. Want to try?
+!choice
+* {作|つく}って みる || Give it a try -> make
+* また {今度|こんど} || Another time -> later
+:make
+!encounter yn.buns
+!if var._res=0 -> later
+!set yn_buns_cooked
+!give yn_buns
+yn_tama: ほら 、 ふっくら ！ {箱|はこ} に {詰|つ}めて おいた から 、 {持|も}って {行|い}きな 。 {旅|たび} の {途中|とちゅう} で {食|た}べて ね 。 || Look at that, nice and plump! I've packed them in a box for you to take. Eat them on the road.
+?(comp=nao) comp[smile]: …… {箱|はこ} ごと {走|はし}れる {土産|みやげ} は 、 {一番|いちばん} いい {土産|みやげ} だ 。 || …A souvenir you can run with, box and all, is the best kind.
+?(comp=mio) comp[smile]: {蓋|ふた} を {開|あ}けない の が 、 {一番|いちばん} {難|むずか}しかった です 。 {薬|くすり} を {煎|せん}じる {時|とき} と {同|おな}じ です ね 。 || Not lifting the lid was the hardest part. Same as brewing medicine.
+?(comp=ren) comp[laugh]: {六|むっ}つ 。 …… {道|みち} の {途中|とちゅう} で 、 {一|ひと}つ ずつ {食|た}べましょう 。 {迷|まよ}って も 、 {食|た}べる もの は あります 。 || Six. …One each on the road, now and then. Even if we get lost, we'll have something to eat.
+?(comp=suzu) comp[laugh]: {一座|いちざ} の {差|さ}し{入|い}れ に したい くらい 。 …… {全部|ぜんぶ} は あげない けど 。 || I'd almost give them to the troupe as a backstage treat. …Not all of them, mind.
+!end
+:later
+?(yn_eggs_done) yn_tama: いい の よ 。 また {今度|こんど} ね 。 || That's fine. Another time, then.
+?(!yn_eggs_done) yn_tama: いい の よ 。 {卵|たまご} は {届|とど}けて くれた ？ {尾根|おね} の {人|ひと} たち 、 {待|ま}ってる から 。 || That's fine. Did you take the eggs round? The folk from the ridge are waiting.
 
 @scene yn.tama_idle
 !faceplayer
@@ -188385,6 +188419,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *                 of booking, and a guest told no, politely. A wrong room is put right on the spot (every step is a
  *                 stable point), never a restart.
  *   yn.cook       Tama's recipe card (a procedure): spring eggs, step by step, no timer (the eggs wait three songs).
+ *   yn.buns       her second card: spring buns steamed over the vent (the lid stays on: nothing is timed).
  *   yn.complaint  Zenroku at the Lower House: everything he says is something else (〜んですけど…); what he means, and
  *                 what he cannot bring himself to say (the ridge folk next door weep at night).
  *   yn.salesman   Tokube's tonic: the polite-refusal training ground (〜はちょっと…); with Mio, her honest rejection of
@@ -188520,6 +188555,49 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ],
     },
     conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Three spring eggs, just right.' } }],
+  };
+
+  // ---- Tama's second card: spring buns (温泉まんじゅう), steamed over the vent, no timer -----------------------------
+  // (real: buns steamed with hot-spring steam are a classic of spring towns, and a box of them the classic souvenir)
+  const BUN = vals({ dough: ['{生地|きじ}', 'dough'], balls: ['{丸|まる}めた {生地|きじ}', 'balls of dough'], wrapped: ['あん {入|い}り', 'filled'], laid: ['{籠|かご} の {中|なか}', 'in the basket'], steamed: ['{蒸|む}し{上|あ}がり', 'steamed'] });
+  C.encounters['yn.buns'] = {
+    id: 'yn.buns', kind: 'procedure', name: say('{温泉|おんせん}まんじゅう', 'Spring buns'),
+    rules: { wait: true },
+    procedure: {
+      id: 'yn_buns', version: 1, restart: 'stable',
+      machine: { bun: 'dough' },
+      show: [{ key: 'bun', label: say('まんじゅう', 'The buns'), values: BUN }],
+      done: { en: 'Six spring buns, round and white and smelling faintly of the spring, packed in a little wooden box.' },
+      steps: [
+        { id: 'b1', stable: true, text: say('{一|いち} 、 {生地|きじ} を {小|ちい}さく {丸|まる}めて ください 。', '1. Roll the dough into small balls.'),
+          task: CARD('いち 、 きじ を ちいさく まるめて ください 。', '{一|いち} 、 {生地|きじ} を {小|ちい}さく {丸|まる}めて ください 。', 'What does the card say to do first?', 'Roll the dough into small balls.', 'Roll the dough out thin.', 'まるめて: into balls, not flat.'),
+          actions: [
+            A('roll', '{生地|きじ} を {丸|まる}める', 'Roll the dough into balls', { ok: true, set: { bun: 'balls' }, means: { en: 'You roll the dough into small balls.' }, result: { en: 'Six little balls of dough in a row on the board.' } }),
+            A('flat', '{生地|きじ} を {薄|うす}く {伸|の}ばす', 'Roll it out thin', { means: { en: 'You roll the dough out flat and thin.' }, wrong: { en: 'Tama laughs. "That\'s for noodles! Small and round, like this." She rolls one to show you.' } }),
+          ] },
+        { id: 'b2', stable: true, text: say('{二|に} 、 あん を {生地|きじ} で {包|つつ}んで ください 。', '2. Wrap the bean paste in the dough.'),
+          task: CARD('に 、 あん を きじ で つつんで ください 。', '{二|に} 、 あん を {生地|きじ} で {包|つつ}んで ください 。', 'What goes where?', 'The sweet bean paste goes inside, wrapped in the dough.', 'The paste goes on top of the dough.', 'つつんで: wrapped inside.'),
+          actions: [
+            A('wrap', 'あん を {包|つつ}む', 'Wrap the paste inside', { ok: true, set: { bun: 'wrapped' }, means: { en: 'You fold each ball of dough round a spoonful of sweet bean paste.' }, result: { en: 'Six round buns, sealed at the bottom with a pinch.' } }),
+            A('top', 'あん を {上|うえ} に {乗|の}せる', 'Put the paste on top', { means: { en: 'You put a spoonful of paste on top of each ball.' }, wrong: { en: 'The paste slides off onto the board. "Inside," Tama says, "so it keeps warm all the way home."' } }),
+          ] },
+        { id: 'b3', stable: true, text: say('{三|さん} 、 {蒸|む}し{場|ば} の {籠|かご} に 、 {間|あいだ} を {空|あ}けて {並|なら}べて ください 。', '3. Lay them in the steam box\'s basket with space between them.'),
+          task: hear('v:並べる', 'さん 、 むしば の かご に 、 あいだ を あけて ならべて ください 。', '{三|さん} 、 {蒸|む}し{場|ば} の {籠|かご} に 、 {間|あいだ} を {空|あ}けて {並|なら}べて ください 。', 'How do they go in the basket?',
+            'With space between them.', 'Packed tight together.', 'あいだ を あけて: leave space between.', 'All in one pile.', 'ならべて: side by side, in a row.'),
+          actions: [
+            A('space', '{間|あいだ} を {空|あ}けて {並|なら}べる', 'Lay them with space between', { ok: true, set: { bun: 'laid' }, means: { en: 'You set the buns in the bamboo basket, a finger\'s width apart.' }, result: { en: 'The basket goes over the vent. Steam rises round it.' } }),
+            A('tight', 'くっつけて {並|なら}べる', 'Pack them tight together', { means: { en: 'You pack the buns in side by side, touching.' }, wrong: { en: '"They swell in the steam," Tama says, spacing them out. "Packed tight, you get one big bun."' } }),
+          ] },
+        { id: 'b4', stable: true, text: say('{四|よん} 、 {湯気|ゆげ} が {出|で}て いる {間|あいだ} は 、 {蓋|ふた} を {開|あ}けないで ください 。', '4. While the steam is rising, don\'t open the lid.'),
+          task: hear('g:v_naide_kudasai', 'よん 、 ゆげ が でて いる あいだ は 、 ふた を あけないで ください 。', '{四|よん} 、 {湯気|ゆげ} が {出|で}て いる {間|あいだ} は 、 {蓋|ふた} を {開|あ}けないで ください 。', 'What must you not do while they steam?',
+            'Open the lid.', 'Keep the lid on.', 'あけないで ください: please don\'t open it.', 'Add more water.', 'The card is about the lid.'),
+          actions: [
+            A('wait', '{蓋|ふた} を して {待|ま}つ', 'Keep the lid on and wait', { ok: true, set: { bun: 'steamed' }, means: { en: 'You leave the lid on and wait while the steam does its work.' }, result: { en: 'Tama lifts the lid at last: the buns have swelled, white and shining.' } }),
+            A('peek', '{蓋|ふた} を {開|あ}けて {見|み}る', 'Lift the lid to look', { means: { en: 'You lift the lid to see how they\'re doing.' }, wrong: { en: 'The steam rushes out. Tama puts the lid back. "Peek, and they go flat. They\'ll be done when they\'re done."' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Six spring buns, a box of them to take with you.' } }],
   };
 
   // ---- Zenroku's complaint ------------------------------------------------------------------------------------------

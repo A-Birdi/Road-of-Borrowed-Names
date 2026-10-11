@@ -127,7 +127,7 @@ narr: {熱|あつ}い 。 でも 、 すぐ に {足|あし} の {裏|うら} �
 
 @scene yn.steambox
 narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} に {入|い}った {卵|たまご} が 、 {湯気|ゆげ} の {中|なか} で {揺|ゆ}れて いる 。 || The stone steam box. Eggs in bamboo baskets sway in the steam.
-?(!yn_eggs_done) narr: タマ さん に {聞|き}けば 、 {作|つく}り{方|かた} を {教|おし}えて くれる そう だ 。 || Ask Tama and she'll show you how, they say.
+?(!yn_eggs_cooked) narr: タマ さん に {聞|き}けば 、 {作|つく}り{方|かた} を {教|おし}えて くれる そう だ 。 || Ask Tama and she'll show you how, they say.
 
 @scene yn.tama
 # Tama's recipe card: spring eggs (温泉卵), no timer: a procedure (yn.cook). The result feeds scenes, not a stat.
@@ -135,7 +135,7 @@ narr: {石|いし} の {蒸|む}し{場|ば} 。 {竹|たけ} の {籠|かご} �
 yn_tama: {温泉卵|おんせんたまご} 、 {作|つく}って みる ？ {作|つく}り{方|かた} は 、 この {札|ふだ} の とおり 。 {急|いそ}がなくて いい の よ 。 {卵|たまご} は {待|ま}って くれる から 。 || Want to try making spring eggs? The method's on this card. No hurry. The eggs will wait for you.
 !encounter yn.cook
 !if var._res=0 -> later
-!set yn_eggs_done
+!set yn_eggs_cooked
 !give yn_eggs 3
 yn_tama: {上手|じょうず} ！ {白身|しろみ} が とろっと して 、 {黄身|きみ} が しっとり 。 {三|みっ}つ 、 {持|も}って {行|い}きな 。 || Well done! The white's just set and the yolk is soft. Take three with you.
 yn_tama: …… ねえ 、 {尾根|おね} から {来|き}た {人|ひと} たち に 、 {一|ひと}つ ずつ {届|とど}けて くれない ？ ヤスケ さん 、 ツネジ さん 、 オシゲ さん 。 {温|あたた}かい もの を {食|た}べる と 、 {声|こえ} が {出|で}る よう に なる から 。 || …Say, would you take one each to the folk from the ridge? Yasuke, Tsuneji and Oshige. Eat something warm and your voice comes back.
@@ -147,6 +147,28 @@ yn_tama: …… ねえ 、 {尾根|おね} から {来|き}た {人|ひと} た�
 !end
 :later
 yn_tama: いい の よ 、 また {後|あと} で 。 {卵|たまご} は {逃|に}げない わ 。 || That's fine, later then. The eggs won't run off.
+
+@scene yn.tama_buns
+# Tama's second card: spring buns (温泉まんじゅう) steamed over the vent, no timer (yn.buns). A box to take away.
+!faceplayer
+yn_tama: {卵|たまご} の {次|つぎ} は 、 {温泉|おんせん}まんじゅう 。 {蒸|む}し{場|ば} の {湯気|ゆげ} で {蒸|む}す の 。 {作|つく}って みる ？ || After the eggs, spring buns. We steam them over the vent. Want to try?
+!choice
+* {作|つく}って みる || Give it a try -> make
+* また {今度|こんど} || Another time -> later
+:make
+!encounter yn.buns
+!if var._res=0 -> later
+!set yn_buns_cooked
+!give yn_buns
+yn_tama: ほら 、 ふっくら ！ {箱|はこ} に {詰|つ}めて おいた から 、 {持|も}って {行|い}きな 。 {旅|たび} の {途中|とちゅう} で {食|た}べて ね 。 || Look at that, nice and plump! I've packed them in a box for you to take. Eat them on the road.
+?(comp=nao) comp[smile]: …… {箱|はこ} ごと {走|はし}れる {土産|みやげ} は 、 {一番|いちばん} いい {土産|みやげ} だ 。 || …A souvenir you can run with, box and all, is the best kind.
+?(comp=mio) comp[smile]: {蓋|ふた} を {開|あ}けない の が 、 {一番|いちばん} {難|むずか}しかった です 。 {薬|くすり} を {煎|せん}じる {時|とき} と {同|おな}じ です ね 。 || Not lifting the lid was the hardest part. Same as brewing medicine.
+?(comp=ren) comp[laugh]: {六|むっ}つ 。 …… {道|みち} の {途中|とちゅう} で 、 {一|ひと}つ ずつ {食|た}べましょう 。 {迷|まよ}って も 、 {食|た}べる もの は あります 。 || Six. …One each on the road, now and then. Even if we get lost, we'll have something to eat.
+?(comp=suzu) comp[laugh]: {一座|いちざ} の {差|さ}し{入|い}れ に したい くらい 。 …… {全部|ぜんぶ} は あげない けど 。 || I'd almost give them to the troupe as a backstage treat. …Not all of them, mind.
+!end
+:later
+?(yn_eggs_done) yn_tama: いい の よ 。 また {今度|こんど} ね 。 || That's fine. Another time, then.
+?(!yn_eggs_done) yn_tama: いい の よ 。 {卵|たまご} は {届|とど}けて くれた ？ {尾根|おね} の {人|ひと} たち 、 {待|ま}ってる から 。 || That's fine. Did you take the eggs round? The folk from the ridge are waiting.
 
 @scene yn.tama_idle
 !faceplayer

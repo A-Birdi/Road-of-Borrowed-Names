@@ -69,6 +69,11 @@ RB.lex.add(RB.lex.parseTable(`
 着方|きかた|n|I|the way of wearing (clothes)
 裾|すそ|n|I|the hem (of a kimono or yukata)
 左側|ひだりがわ|n|E|the left side
+丸める|まるめる|v1|I|to roll into a ball
+蒸す|むす|v5s|I|to steam (food)
+蒸し上がり|むしあがり|n|A|done steaming, fresh from the steamer
+ふっくら|ふっくら|adv|I|plump, soft and puffed up
+温泉まんじゅう|おんせんまんじゅう|n|I|a spring bun: a steamed bun with sweet bean paste, a classic of hot-spring towns|Real: often steamed with the spring's own steam, and sold boxed as a souvenir.
 右側|みぎがわ|n|E|the right side
 捲る|まくる|v5r|I|to roll up, to tuck up (a sleeve or hem)
 浸す|ひたす|v5s|I|to soak, to dip in water

@@ -134,12 +134,16 @@ export default async (t) => {
 
   // ---------------------------------------------------------------- outside the set: kanji the game does not use
   // Real hand-entered kanji the game does not use (Tomoe, tests/fixtures/recog/tomoe-unknown.json).
-  // The odd-numbered half was used to choose the kanji confidence margin; this is the other half.
+  // The odd-numbered half was used to choose the kanji confidence margin; this is the other half. As chapters are
+  // added, some of these become kanji the game displays (Steamhollow's 按, 罵, 轤…): those are no longer unknown, and a
+  // hint or a confident reading naming them is right, so they are left out here.
   const U = JSON.parse(fs.readFileSync(path.join(root, 'tests', 'fixtures', 'recog', 'tomoe-unknown.json'), 'utf8'));
+  const GAME = new Set(R.supported({ kanji: true }));
   let un = 0, likeKana = 0, confMix = 0, hintUnk = 0;
-  const confWrong = [];
+  const confWrong = [], nowGame = [];
   U.chars.forEach((c, i) => {
     if (i % 2 === 1) return;
+    if (GAME.has(c.ch)) { nowGame.push(c.ch); return; }
     const s = c.strokes.map((st) => st.map(([x, y]) => ({ x, y })));
     const box = { w: U.box, h: U.box };
     const a = R.recognize(s, { box, script: 'any' });
@@ -150,6 +154,7 @@ export default async (t) => {
     if (m.status === 'confident') { confMix++; confWrong.push(`${c.ch}→${top(m)}`); }
     if (a.kanjiLike) t.ok(a.sizeHint === null, `kanji-like ${c.ch}: no size hint`);
   });
+  t.log(`now game kanji, left out (${nowGame.length}): ${nowGame.join(' ')}`);
   t.log(`kanji the game does not use (Tomoe, n=${un}): kana pad: kanji-like ${pct(likeKana, un)}, named as a game kanji by the hint ${pct(hintUnk, un)}; kana+kanji pad: read 'confident' as a game kanji ${pct(confMix, un)} (${confWrong.join(' ') || 'none'})`);
   t.ok((likeKana + hintUnk) / un >= 0.9, 'kana pad: a kanji outside the set is said to be a kanji (kanji-like or a hint) >= 90%');
   t.ok(hintUnk / un <= 0.2, 'kana pad: the hint names a game kanji for an unknown one <= 20% (it resembles one: 較/軟)');

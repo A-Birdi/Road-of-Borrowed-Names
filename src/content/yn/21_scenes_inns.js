@@ -129,6 +129,7 @@ narr: {階段|かいだん} の {下|した} の {小|ちい}さな {部屋|へ�
 !if !yn_rooms_done -> guests
 !call yn.bath_side
 !warp yn.kami_bath 7 8 up
+!call yn.bath_scene
 !end
 :guests
 yn_okiyo: {申|もう}し{訳|わけ} ございません 。 お{風呂|ふろ} は 、 お{泊|と}まり の お{客|きゃく}さま だけ で ございます 。 || I'm terribly sorry. The baths are for staying guests only.
@@ -136,6 +137,7 @@ yn_okiyo: {申|もう}し{訳|わけ} ございません 。 お{風呂|ふろ} 
 @scene yn.bath_shimo
 !call yn.bath_side
 !warp yn.shimo_bath 2 9 right
+!call yn.bath_scene
 
 @scene yn.bath_side
 # Which bath: she/her the women's, he/him the men's; they/them and custom choose once, kept (C-56). The companion's

@@ -167,6 +167,9 @@ RB.dialect.add('kansai', `
 @ yn/yn.confess [yn.confess]
 = ねえ 。 {一座|いちざ} に {戻|もど}らない って {決|き}めた の 、 {後悔|こうかい} して ない わ よ 。 {元手|もとで} が かかり{過|す}ぎてる って {言|い}った けど 。 …… {本当|ほんとう} は 、 {一緒|いっしょ} に {舞台|ぶたい} に {立|た}ちたい {人|ひと} に 、 {久|ひさ}しぶり に {会|あ}えた から よ 。 || Listen. I don't regret deciding not to go back to the troupe. I said the investment was too great. …The truth is, it's the first time in ages I've met someone I want to share a stage with.
 > なあ 。 {一座|いちざ} に {戻|もど}らへん って {決|き}めた の 、 {後悔|こうかい} して へん で 。 {元手|もとで} が かかり{過|す}ぎてる って {言|い}うた けど 。 …… ほんま は 、 {一緒|いっしょ} に {舞台|ぶたい} に {立|た}ちたい {人|ひと} に 、 {久|ひさ}しぶり に {会|お}うた から や 。 || Listen. I don't regret deciding not to go back to the troupe. I said the investment was too great. …The truth is, it's the first time in ages I've met someone I want to share a stage with.
+@ yn/yn.tama_buns [yn.tama_buns]
+= {一座|いちざ} の {差|さ}し{入|い}れ に したい くらい 。 …… {全部|ぜんぶ} は あげない けど 。 || I'd almost give them to the troupe as a backstage treat. …Not all of them, mind.
+> {一座|いちざ} の {差|さ}し{入|い}れ に したい くらい や 。 …… {全部|ぜんぶ} は あげへん けど な 。 || I'd almost give them to the troupe as a backstage treat. …Not all of them, mind.
 @ yn/company [company.mem.yn_garden.keep]
 = {元手|もとで} が かかり{過|す}ぎてる って {言|い}った けど 、 {本当|ほんとう} は {一緒|いっしょ} に {立|た}ちたかった だけ よ 。 || I said the investment was too great. Really, I just wanted to stand on a stage with you.
 > {元手|もとで} が かかり{過|す}ぎてる って {言|い}うた けど 、 ほんま は {一緒|いっしょ} に {立|た}ちたかった だけ や 。 || I said the investment was too great. Really, I just wanted to stand on a stage with you.

@@ -36,23 +36,23 @@ Archive road's camp and the Last Lamp Hut (`yn_done`); the north fork above the 
 
 | Item | Source | Where | Status |
 |---|---|---|---|
-| The way down from the pass; the valley's maps (the descent, the upper and lower town, the bridge and the market, the river terraces, the north road), interiors (the two inns' lobbies and baths, the dispensary, the guild hall, the playhouse) | R3 | `src/content/yn/` | Planned (P13a) |
-| Region, palette (cedar and lacquer, steam white, sulphur yellow, persimmon dusk), place, zones, music (koto and shamisen, geta on stone, a deep drone for the vents) | R3 | `src/content/yn/`, `src/audio` | Planned (P13a) |
-| Rooms for the newcomers: reservations with conflicting needs, a change, a polite refusal (A44, A46) | R3 | an activity on the encounter platform | Planned (P13b) |
-| House rules from signs and staff, different at each inn (A42); real customs labelled | R3, C13 | challenges, scenes | Planned (P13b) |
-| The baths follow pronouns (C-56): she/her the women's, he/him the men's, they/them and custom choose once (men's, women's or the reserved bath, 貸切風呂) and the choice is kept; Nao and Ren choose in character; towel-wrapped, nonsexual; the partition talk; a comfort setting (shown / summarised) | R3, C13, C-56 | scenes, settings | Planned (P13b) |
-| Steam cooking (温泉卵, steamed buns): follow a recipe card, no timer | R3 | an activity | Planned (P13b) |
-| The persistent seller of cures: the polite-refusal training ground, and Mio's honest rejection of a fraud (S4) | R3, C14, S4 | social encounter | Planned (P13c) |
-| A guest complaint | R3 | social encounter | Planned (P13c) |
-| The Steam Vents: connected airflow (open a vent, the steam shifts elsewhere), hot pools that restore a little and run cool after use, checkpoints | R3, A11, D2 | `src/content/yn/` | Planned (P13d) |
-| The Kettle Below (釜の主): settled, not defeated | R3, S4 | encounter | Planned (P13d) |
-| The mediation: the Upper House, the Lower House, the guild and the spring; several authored conclusions, some preserving disagreement; the written agreement the player helps word (A17) | R3, E8, S4 | social encounter | Planned (P13e) |
-| 全体 taught in the story: a valley that has to agree as a whole | 03_ENCOUNTERS growth | story scene | Planned (P13e) |
-| Creatures: Steam Wisp, Pebble Stack, Towel Thief (protect), Sulphur Toad, Lost Guest, one more; a wanderer (a bath-keeper) | R3 | interim art (F-36) | Planned (P13f) |
-| Side quests: The Masseur's Lost Words, A Wedding Party's Booking, The Retired Actor, Eggs for Everyone, The Footbath Poet (a short-story room, A38) | R3 | `src/content/yn/` | Planned (P13f) |
-| Companions: Mio's crossroads (Kikue's dispensary) and night apart; Suzu's crossroads (the troupe, Koume, the books shown openly) and night apart; Nao's and Ren's quarrel made up the same evening (an apology scene, C16); a bath scene, an evening walk in yukata, a quiet confession per companion | 14_COMPANIONS, S4, S14 | scenes | Planned (P13g) |
-| Records: chapter stamps and stand; illustrations for P16 | K1 | records | Planned (P13g) |
-| Tests: unit; browser (reservations, the bath choice and its comfort setting, cooking, the vents, the mediation); the route through Chapter 11 | playbook P13 | `tests/` | Planned |
+| The way down from the pass; the valley's maps (the descent, the upper and lower town, the bridge and the market, the river terraces, the north road), interiors (the two inns' lobbies and baths, the dispensary, the guild hall, the playhouse) | R3 | `src/content/yn/` | Done (P13a): sixteen maps; the curtains' scene plays the bath as you step in |
+| Region, palette (cedar and lacquer, steam white, sulphur yellow, persimmon dusk), place, zones, music (koto and shamisen, geta on stone, a deep drone for the vents) | R3 | `src/content/yn/`, `src/audio` | Done (P13a): the steamhollow and vents palettes; area, evening, vents and Kettle music |
+| Rooms for the newcomers: reservations with conflicting needs, a change, a polite refusal (A44, A46) | R3 | an activity on the encounter platform | Done (P13b): the front desk, `yn.rooms` (a procedure; a wrong room put right on the spot) |
+| House rules from signs and staff, different at each inn (A42); real customs labelled | R3, C13 | challenges, scenes | Done (P13b): each inn's board and staff; `yn.rules_kami`, `yn.rules_shimo` |
+| The baths follow pronouns (C-56): she/her the women's, he/him the men's, they/them and custom choose once (men's, women's or the reserved bath, 貸切風呂) and the choice is kept; Nao and Ren choose in character; towel-wrapped, nonsexual; the partition talk; a comfort setting (shown / summarised) | R3, C13, C-56 | scenes, settings | Done (P13b): `src/engine/58y_baths.js` (F-97); Settings › Learning & Challenge › Bathing scenes |
+| Steam cooking (温泉卵, steamed buns): follow a recipe card, no timer | R3 | an activity | Done (P13b): Tama's two recipe cards, spring eggs (`yn.cook`) and spring buns (`yn.buns`) |
+| The persistent seller of cures: the polite-refusal training ground, and Mio's honest rejection of a fraud (S4) | R3, C14, S4 | social encounter | Done (P13c): `yn.salesman`; Mio's honest refusal |
+| A guest complaint | R3 | social encounter | Done (P13c): `yn.complaint` (Zenroku: what he means, and what he cannot say) |
+| The Steam Vents: connected airflow (open a vent, the steam shifts elsewhere), hot pools that restore a little and run cool after use, checkpoints | R3, A11, D2 | `src/content/yn/` | Done (P13d): three floors and the Kettle's chamber (F-103) |
+| The Kettle Below (釜の主): settled, not defeated | R3, S4 | encounter | Done (P13d): a conversation, every end reachable, none a defeat |
+| The mediation: the Upper House, the Lower House, the guild and the spring; several authored conclusions, some preserving disagreement; the written agreement the player helps word (A17) | R3, E8, S4 | social encounter | Done (P13e): `yn.mediation` (F-105); the agreement written in words the player helps choose |
+| 全体 taught in the story: a valley that has to agree as a whole | 03_ENCOUNTERS growth | story scene | Done (P13e): `yn.zentai`, from the agreement's last line |
+| Creatures: Steam Wisp, Pebble Stack, Towel Thief (protect), Sulphur Toad, Lost Guest, one more; a wanderer (a bath-keeper) | R3 | interim art (F-36) | Done (P13f): seven creatures (the Stray Lantern the sixth, the Kettle Below the boss) and Aki in the channel (F-104) |
+| Side quests: The Masseur's Lost Words, A Wedding Party's Booking, The Retired Actor, Eggs for Everyone, The Footbath Poet (a short-story room, A38) | R3 | `src/content/yn/` | Done (P13f, F-106) |
+| Companions: Mio's crossroads (Kikue's dispensary) and night apart; Suzu's crossroads (the troupe, Koume, the books shown openly) and night apart; Nao's and Ren's quarrel made up the same evening (an apology scene, C16); a bath scene, an evening walk in yukata, a quiet confession per companion | 14_COMPANIONS, S4, S14 | scenes | Done (P13g, F-100, F-102) |
+| Records: chapter stamps and stand; illustrations for P16 | K1 | records | Done (P13g); the illustrated pages are P16 art work |
+| Tests: unit; browser (reservations, the bath choice and its comfort setting, cooking, the vents, the mediation); the route through Chapter 11 | playbook P13 | `tests/` | Done: `yn_ch11` (unit), `chapter_reach` (Steamhollow's vents), `tests/e2e/steamhollow.mjs` (browser), the route (see the phase end) |
 
 ## Rules kept
 

@@ -7,7 +7,7 @@
  *
  * Two condition heads:
  *   pron=she | he | they | custom   the player's pronouns as set at the start (an object is custom)
- *   bathview=summarised | shown      the device's comfort setting for bathing scenes (Settings › Story: shown, or told
+ *   bathview=summarised | shown      the device's comfort setting for bathing scenes (Settings › Learning & Challenge, beside Grave outcomes: shown, or told
  *                                    in a sentence). Presentation only: what happens, and what follows, is the same.
  * And one hook: `!hook bath_soak <n>`, a long soak that restores a little resolve to both of you (a hot pool in the
  * Steam Vents restores some and then runs cool: the map's own state says which pool is spent). */

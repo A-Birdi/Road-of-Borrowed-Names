@@ -225,6 +225,9 @@ for (const id in C.maps) {
   }
   for (const t of def.triggers || []) ref(t.scene, 'map ' + id + ' trigger');
   for (const ev of def.onEnter || []) ref(ev.scene, 'map ' + id + ' onEnter');
+  // an enter event that may repeat (once: false) runs again after every scene on the map: without a condition the
+  // scene itself ends, it would play forever (found in P13's baths)
+  for (const ev of def.onEnter || []) if (ev.once === false && !ev.if) E('map ' + id + ': onEnter ' + ev.scene + ' repeats (once: false) with no condition, so it would play again after every scene');
   for (const h of def.hold || []) ref(h.scene, 'map ' + id + ' hold');
   for (const f of def.foes || []) { if (!C.enemies[f.enemy]) E('map ' + id + ': foe uses unknown enemy ' + f.enemy); if (!walk(f.x, f.y)) E('map ' + id + ': foe ' + f.id + ' on blocked tile'); if (f.scene) ref(f.scene, 'map ' + id + ' foe'); }
   // an encounter's backdrop and lines follow its place: a creature placed

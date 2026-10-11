@@ -79,7 +79,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     npcs: [
       { id: 'yn_rokubei', x: 24, y: 18, dir: 'left', if: '!yn_rokubei_met', talk: 'yn.rokubei_first' },
-      { id: 'yn_tama', x: 15, y: 18, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.tama_after' }, { if: 'yn_eggs_done', scene: 'yn.tama_idle' }, { scene: 'yn.tama' }] },
+      { id: 'yn_tama', x: 15, y: 18, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.tama_after' }, { if: 'yn_eggs_cooked&!yn_buns_cooked', scene: 'yn.tama_buns' }, { if: 'yn_eggs_cooked', scene: 'yn.tama_idle' }, { scene: 'yn.tama' }] },
       { id: 'yn_kihachi', x: 34, y: 12, dir: 'down', talk: [{ if: 'yn_done', scene: 'yn.kihachi_after' }, { scene: 'yn.kihachi' }] },
       { id: 'yn_toki', x: 2, y: 13, dir: 'right', talk: [{ if: 'yn_done', scene: 'yn.toki_after' }, { scene: 'yn.toki' }] },
       { id: 'yn_senta', x: 26, y: 20, dir: 'up', talk: [{ if: 'yn_done', scene: 'yn.senta_after' }, { scene: 'yn.senta' }] },
@@ -232,7 +232,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       steam(4, 3), steam(9, 2),
     ],
     exits: [{ x: 7, y: 9, to: 'yn.kami', tx: 7, ty: 7, dir: 'down' }],
-    onEnter: [{ scene: 'yn.bath_scene', once: false }],
+    // (the bath itself is played by the curtain's scene as you step in: an enter event that may repeat would play it
+    // again after every scene in the bath)
     spawn: { default: [7, 8, 'up'] },
   });
   // the Lower House's lobby (下の湯): loud, warm; the house rules on one short board; the way out back to the open-air
@@ -269,7 +270,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       steam(5, 3), steam(10, 2), steam(8, 5),
     ],
     exits: [{ x: 1, y: 9, w: 1, h: 1, to: 'yn.shimo', tx: 12, ty: 3, dir: 'left' }],
-    onEnter: [{ scene: 'yn.bath_scene', once: false }],
+    // (the bath itself is played by the curtain's scene as you step in)
     spawn: { default: [2, 9, 'right'] },
   };
   // Kikue's dispensary (薬処): jars with honest labels, a futon for a patient, a stove

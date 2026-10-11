@@ -4,6 +4,7 @@
  *                 of booking, and a guest told no, politely. A wrong room is put right on the spot (every step is a
  *                 stable point), never a restart.
  *   yn.cook       Tama's recipe card (a procedure): spring eggs, step by step, no timer (the eggs wait three songs).
+ *   yn.buns       her second card: spring buns steamed over the vent (the lid stays on: nothing is timed).
  *   yn.complaint  Zenroku at the Lower House: everything he says is something else (〜んですけど…); what he means, and
  *                 what he cannot bring himself to say (the ridge folk next door weep at night).
  *   yn.salesman   Tokube's tonic: the polite-refusal training ground (〜はちょっと…); with Mio, her honest rejection of
@@ -139,6 +140,49 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ],
     },
     conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Three spring eggs, just right.' } }],
+  };
+
+  // ---- Tama's second card: spring buns (温泉まんじゅう), steamed over the vent, no timer -----------------------------
+  // (real: buns steamed with hot-spring steam are a classic of spring towns, and a box of them the classic souvenir)
+  const BUN = vals({ dough: ['{生地|きじ}', 'dough'], balls: ['{丸|まる}めた {生地|きじ}', 'balls of dough'], wrapped: ['あん {入|い}り', 'filled'], laid: ['{籠|かご} の {中|なか}', 'in the basket'], steamed: ['{蒸|む}し{上|あ}がり', 'steamed'] });
+  C.encounters['yn.buns'] = {
+    id: 'yn.buns', kind: 'procedure', name: say('{温泉|おんせん}まんじゅう', 'Spring buns'),
+    rules: { wait: true },
+    procedure: {
+      id: 'yn_buns', version: 1, restart: 'stable',
+      machine: { bun: 'dough' },
+      show: [{ key: 'bun', label: say('まんじゅう', 'The buns'), values: BUN }],
+      done: { en: 'Six spring buns, round and white and smelling faintly of the spring, packed in a little wooden box.' },
+      steps: [
+        { id: 'b1', stable: true, text: say('{一|いち} 、 {生地|きじ} を {小|ちい}さく {丸|まる}めて ください 。', '1. Roll the dough into small balls.'),
+          task: CARD('いち 、 きじ を ちいさく まるめて ください 。', '{一|いち} 、 {生地|きじ} を {小|ちい}さく {丸|まる}めて ください 。', 'What does the card say to do first?', 'Roll the dough into small balls.', 'Roll the dough out thin.', 'まるめて: into balls, not flat.'),
+          actions: [
+            A('roll', '{生地|きじ} を {丸|まる}める', 'Roll the dough into balls', { ok: true, set: { bun: 'balls' }, means: { en: 'You roll the dough into small balls.' }, result: { en: 'Six little balls of dough in a row on the board.' } }),
+            A('flat', '{生地|きじ} を {薄|うす}く {伸|の}ばす', 'Roll it out thin', { means: { en: 'You roll the dough out flat and thin.' }, wrong: { en: 'Tama laughs. "That\'s for noodles! Small and round, like this." She rolls one to show you.' } }),
+          ] },
+        { id: 'b2', stable: true, text: say('{二|に} 、 あん を {生地|きじ} で {包|つつ}んで ください 。', '2. Wrap the bean paste in the dough.'),
+          task: CARD('に 、 あん を きじ で つつんで ください 。', '{二|に} 、 あん を {生地|きじ} で {包|つつ}んで ください 。', 'What goes where?', 'The sweet bean paste goes inside, wrapped in the dough.', 'The paste goes on top of the dough.', 'つつんで: wrapped inside.'),
+          actions: [
+            A('wrap', 'あん を {包|つつ}む', 'Wrap the paste inside', { ok: true, set: { bun: 'wrapped' }, means: { en: 'You fold each ball of dough round a spoonful of sweet bean paste.' }, result: { en: 'Six round buns, sealed at the bottom with a pinch.' } }),
+            A('top', 'あん を {上|うえ} に {乗|の}せる', 'Put the paste on top', { means: { en: 'You put a spoonful of paste on top of each ball.' }, wrong: { en: 'The paste slides off onto the board. "Inside," Tama says, "so it keeps warm all the way home."' } }),
+          ] },
+        { id: 'b3', stable: true, text: say('{三|さん} 、 {蒸|む}し{場|ば} の {籠|かご} に 、 {間|あいだ} を {空|あ}けて {並|なら}べて ください 。', '3. Lay them in the steam box\'s basket with space between them.'),
+          task: hear('v:並べる', 'さん 、 むしば の かご に 、 あいだ を あけて ならべて ください 。', '{三|さん} 、 {蒸|む}し{場|ば} の {籠|かご} に 、 {間|あいだ} を {空|あ}けて {並|なら}べて ください 。', 'How do they go in the basket?',
+            'With space between them.', 'Packed tight together.', 'あいだ を あけて: leave space between.', 'All in one pile.', 'ならべて: side by side, in a row.'),
+          actions: [
+            A('space', '{間|あいだ} を {空|あ}けて {並|なら}べる', 'Lay them with space between', { ok: true, set: { bun: 'laid' }, means: { en: 'You set the buns in the bamboo basket, a finger\'s width apart.' }, result: { en: 'The basket goes over the vent. Steam rises round it.' } }),
+            A('tight', 'くっつけて {並|なら}べる', 'Pack them tight together', { means: { en: 'You pack the buns in side by side, touching.' }, wrong: { en: '"They swell in the steam," Tama says, spacing them out. "Packed tight, you get one big bun."' } }),
+          ] },
+        { id: 'b4', stable: true, text: say('{四|よん} 、 {湯気|ゆげ} が {出|で}て いる {間|あいだ} は 、 {蓋|ふた} を {開|あ}けないで ください 。', '4. While the steam is rising, don\'t open the lid.'),
+          task: hear('g:v_naide_kudasai', 'よん 、 ゆげ が でて いる あいだ は 、 ふた を あけないで ください 。', '{四|よん} 、 {湯気|ゆげ} が {出|で}て いる {間|あいだ} は 、 {蓋|ふた} を {開|あ}けないで ください 。', 'What must you not do while they steam?',
+            'Open the lid.', 'Keep the lid on.', 'あけないで ください: please don\'t open it.', 'Add more water.', 'The card is about the lid.'),
+          actions: [
+            A('wait', '{蓋|ふた} を して {待|ま}つ', 'Keep the lid on and wait', { ok: true, set: { bun: 'steamed' }, means: { en: 'You leave the lid on and wait while the steam does its work.' }, result: { en: 'Tama lifts the lid at last: the buns have swelled, white and shining.' } }),
+            A('peek', '{蓋|ふた} を {開|あ}けて {見|み}る', 'Lift the lid to look', { means: { en: 'You lift the lid to see how they\'re doing.' }, wrong: { en: 'The steam rushes out. Tama puts the lid back. "Peek, and they go flat. They\'ll be done when they\'re done."' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'Six spring buns, a box of them to take with you.' } }],
   };
 
   // ---- Zenroku's complaint ------------------------------------------------------------------------------------------

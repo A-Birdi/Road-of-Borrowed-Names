@@ -27,5 +27,6 @@ var RB = (globalThis.RB = globalThis.RB || {});
   it('yn_yukata', { name: T('{浴衣|ゆかた}', 'A yukata'), key: true, desc: 'A light cotton robe lent by the inn, indigo with white steam curls. Left side over right, always (right over left is for the dead).' });
   it('yn_ledger', { name: T('{湯分|ゆわ}け の {帳面|ちょうめん}', 'The guild\'s water ledger'), key: true, desc: 'The bath-keepers\' record of the spring\'s flow and how it is divided between the two houses: by the hour, by an old water clock.' });
   it('yn_agreement', { name: T('{湯|ゆ} の {取|と}り{決|き}め', 'The spring agreement'), key: true, desc: 'The agreement the two houses, the guild and the town signed together, in words you helped choose. A copy for you, folded small.' });
+  it('yn_buns', { name: T('{温泉|おんせん}まんじゅう', 'Spring buns'), desc: 'A little wooden box of buns steamed over the spring\'s vent, with sweet bean paste inside. A spring town\'s classic souvenir (a real custom).' });
   it('yn_eggs', { name: T('{温泉卵|おんせんたまご}', 'Spring eggs'), desc: 'Eggs slow-cooked in the spring: the white barely set, the yolk soft. Eaten with a little broth, or given away.' });
 })(RB.content);
