@@ -173,4 +173,22 @@ RB.lex.add(RB.lex.parseTable(`
 聞かん|きかん|exp|I|(older) doesn't listen, won't obey (= 聞かない); 言うことを聞かん: won't do as it's told
 汲まねば|くまねば|exp|A|(old, literary) if one does not draw (water) (= 汲まなければ)
 見がち|みがち|exp|A|apt to look (見る + 〜がち: tending to)
+# ---- wing 6: conditions and exceptions -------------------------------------------------------------------------------
+第六幕|だいろくまく|n|I|the sixth act
+名場面|めいばめん|n|I|a famous scene (in a play or film)
+二文|にもん|n|I|two mon (old coins)
+例外|れいがい|n|I|an exception
+反物|たんもの|n|A|a bolt of cloth (for kimono)
+夕闇|ゆうやみ|n|A|dusk, the dark of evening
+日曜|にちよう|n|E|Sunday
+日没|にちぼつ|n|A|sunset (in notices and records)
+有無|うむ|n|A|whether or not (there is one): 荷の有無にかかわらず, whether or not there is a load
+番小屋|ばんごや|n|A|a guard hut, a watch hut
+避難小屋|ひなんごや|n|I|a mountain shelter hut
+行商|ぎょうしょう|n|I|peddling, selling from door to door
+赤ん坊|あかんぼう|n|E|a baby
+除く|のぞく|v5k|I|to leave out, to except (～を除いて: except for)
+ても||prt|I|even if (after the て form: 降っても, even if it rains)
+木札|きふだ|n|I|a wooden tag, a wooden ticket
+一年中|いちねんじゅう|n|E|all year round
 `));

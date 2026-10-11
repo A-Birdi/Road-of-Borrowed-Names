@@ -227,4 +227,49 @@ RB.dialect.add('kansai', `
 @ hall/hall.w5.end [hall.w5.end]
 = {第|だい}{五幕|ごまく} 、 {幕|まく} ！ {悪役|あくやく} なし の {大団円|だいだんえん} よ 。 {拍手|はくしゅ} ！ || End of act five! A happy ending with no villain. Applause!
 > {第|だい}{五幕|ごまく} 、 {幕|まく} や ！ {悪役|あくやく} なし の {大団円|だいだんえん} や で 。 {拍手|はくしゅ} 、 たのむ で ！ || End of act five! A happy ending with no villain. Applause!
+@ hall/hall.w6.f1_first [hall.w6.f1_first]
+= {第|だい}{六幕|ろくまく} は 、 {関所|せきしょ} の {場|ば} ね 。 {関所|せきしょ} の {芝居|しばい} に は 、 {名場面|めいばめん} が {多|おお}い の よ 。 || Act six: the barrier scene. Barrier plays are full of famous scenes.
+> {第|だい}{六幕|ろくまく} は 、 {関所|せきしょ} の {場|ば} や な 。 {関所|せきしょ} の {芝居|しばい} に は 、 {名場面|めいばめん} が {多|おお}い ん や で 。 || Act six: the barrier scene. Barrier plays are full of famous scenes.
+@ hall/hall.w6.f2_first [hall.w6.f2_first]
+= {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さない と 。 でも 、 {決|き}まり が ある みたい だ ね 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+> {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さへん と 。 でも 、 {決|き}まり が ある みたい や な 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+@ hall/hall.w6.f3_first [hall.w6.f3_first]
+= {幕|まく} が {上|あ}がる と 、 {門|もん} の {前|まえ} に {母|はは} と {子|こ} 。 {泣|な}かせる {場面|ばめん} の {始|はじ}まり よ 。 || Curtain up on a mother and child before the gate. The start of a tear-jerker.
+> {幕|まく} が {上|あ}がったら 、 {門|もん} の {前|まえ} に {母|はは} と {子|こ} 。 {泣|な}かせる {場面|ばめん} の {始|はじ}まり や で 。 || Curtain up on a mother and child before the gate. The start of a tear-jerker.
+@ hall/hall.w6.ibuki [hall.w6.ibuki]
+= {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう 。 {例外|れいがい} が {多|おお}そう だ 。 || Let's read the board first. Looks like lots of exceptions.
+> {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう や 。 {例外|れいがい} が {多|おお}そう や で 。 || Let's read the board first. Looks like lots of exceptions.
+@ hall/hall.w6.t1 [hall.w6.t1]
+= {最後|さいご} の {一行|いちぎょう} を {書|か}かない {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じて いる の ね 。 || A script that leaves out its last line. It trusts its actors.
+> {最後|さいご} の {一行|いちぎょう} を {書|か}かへん {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じてる ん や な 。 || A script that leaves out its last line. It trusts its actors.
+@ hall/hall.w6.n_ofuku [hall.w6.n_ofuku]
+= {決|き}まり の {通|とお}り 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさなくて よかった 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+> {決|き}まり の {通|とお}り や 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさへん で よかった わ 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+@ hall/hall.w6.t3 [hall.w6.t3]
+= {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から ね 。 || When the condition doesn't fit, the whole saying comes out backwards.
+> {条件|じょうけん} が {合|あ}わへん と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から な 。 || When the condition doesn't fit, the whole saying comes out backwards.
+@ hall/hall.w6.l_foot [hall.w6.l_foot]
+= 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさなくて よかった 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+> 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさへん で よかった わ 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+@ hall/hall.w6.t6 [hall.w6.t6]
+= {滲|にじ}んだ {台本|だいほん} なら 、 {何度|なんど} も {読|よ}んだ わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I've read plenty of smudged scripts. Leave it to me. What am I looking for?
+> {滲|にじ}んだ {台本|だいほん} やったら 、 {何度|なんど} も {読|よ}んだ で 。 {任|まか}せとき 。 {何|なに} を {探|さが}したら ええ ？ || I've read plenty of smudged scripts. Leave it to me. What am I looking for?
+@ hall/hall.w6.x_momo [hall.w6.x_momo]
+= {帳面|ちょうめん} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the ledger said again?
+> {帳面|ちょうめん} の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the ledger said again?
+@ hall/hall.w6.x_momo [hall.w6.x_momo]
+= {夜|よる} は {通|とお}さない 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった ね 。 || Nobody after dark, except in one case. Good thing we read it.
+> {夜|よる} は {通|とお}さへん 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった な 。 || Nobody after dark, except in one case. Good thing we read it.
+@ hall/hall.w6.t8_board [hall.w6.t8_board]
+= どの {場合|ばあい} に 、 {何|なに} を する の か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}そう 。 || Which case calls for what. Let's find what goes together.
+> どの {場合|ばあい} に 、 {何|なに} を する ん か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}して みよ か 。 || Which case calls for what. Let's find what goes together.
+@ hall/hall.w6.h1 [hall.w6.h1]
+= {雨|あめ} なら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} だ ね 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+> {雨|あめ} やったら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} や な 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+@ hall/hall.w6.otsuta [hall.w6.otsuta]
+= …… イブキ と {話|はな}そう 。 || …Let's talk to Ibuki.
+> …… イブキ と {話|はな}して みよ か 。 || …Let's talk to Ibuki.
+@ hall/hall.w6.end [hall.w6.end]
+= {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
+> {第|だい}{六幕|ろくまく} 、 {幕|まく} や ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける ん や わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
 `, 'hall');

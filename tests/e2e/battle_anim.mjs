@@ -134,6 +134,10 @@ const center = (p, sel) => p.evaluate((s) => { const e = document.querySelector(
 async function cardAt(p, match) {
   const i = await p.evaluate((m) => { const c = [...document.querySelectorAll('.rcard')].find((x) => !x.disabled && new RegExp(m, 'i').test(x.textContent.replace(/\s+/g, ' '))); return c ? c.getAttribute('data-i') : null; }, match);
   assert(i != null, 'no enabled response card matching ' + match);
+  // the response list scrolls: with six cards (a pointed 守る for each of you, and a ready technique) the last one
+  // sits below the fold at 1280×800, and a player scrolls to it before pressing it
+  await p.evaluate((n) => document.querySelector('.rcard[data-i="' + n + '"]').scrollIntoView({ block: 'nearest' }), i);
+  await wait(p, 80);
   return center(p, '.rcard[data-i="' + i + '"]');
 }
 // Choose a response with the mouse and answer it: 'choice' (the right option), 'type'

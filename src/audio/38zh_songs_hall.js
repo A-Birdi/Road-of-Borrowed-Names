@@ -208,4 +208,35 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 6: THE TOLL THAT CHANGED
+  // A mountain pass in late autumn. The shakuhachi plays the toll as it began, one plain phrase; in B the koto takes the
+  // same phrase and keeps adding to it, a turn here and a grace there, as the board filled with conditions; A2 gives the
+  // plain phrase back, the rule behind them all. The hyōshigi knocks once every two bars, the gate's bar going down, and
+  // the wind brushes through. The change is in the tune, never in a louder or faster arrangement (C-22).
+  const PLAIN = '5 - - - 4 - 3 - | 1 - - - - - . . | 3 - 4 - 5 - 6 - | 5 - - - - - . . | 4 - - - 2 - 7, - | 1 - - - - - . . | 3 - 2 - 1 - 7, - | 1 - - - - - . .';
+  const ADDED = '3 - 4 5 6 - 5 - | 5 - - - - - . . | 5 4 3 - 4 3 2 - | 1 - - - - - . . | 5 - 4 3 2 - 3 - | 5 - - - - - . . | 4 - 2 - 4 5 4 - | 2 - - - - - . .';
+  S('hall_w6', {
+    title: 'The Toll That Changed',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 6 of the Hall: a mountain pass in late autumn (E dorian, 74). The shakuhachi plays the toll as it began, one plain phrase; in B the koto takes the phrase and keeps adding to it, a turn here and a grace there, as the board filled with conditions; A2 gives the plain phrase back. The hyōshigi knocks once every two bars, the gate bar coming down, and a brush of wind goes through.',
+    key: 'E', mode: 'dorian', bpm: 74, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.5, rv: 0.45 },
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.22, rv: 0.35 },
+      clap: { perc: true, v: 0.2, rv: 0.5 },
+      wind: { perc: true, v: 0.12, rv: 0.6 },
+    },
+    echo: { beats: 1, fb: 0.2, mix: 0.18 },
+    all: { bass: '0 - - - 4 - - -', clap: 'y.......|........', wind: '....b...|........|........|b.......' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: PLAIN },
+      B: { bars: 8, ch: '4 4 1 1 3 3 7 7', koto: ADDED },
+      A2: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: PLAIN, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
 })(RB.audio);

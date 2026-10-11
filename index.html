@@ -9339,6 +9339,18 @@ RB.grammar = (function () {
       `Both give a cause. A noun + の, or a plain form, followed by おかげで credits the cause for a good result ("thanks to"); followed by せいで, it blames the cause for a bad one. Using せいで for something good, or おかげで for something bad, sounds wrong or sarcastic.`,
       [['{雨|あめ}の おかげで、{畑|はたけ}が {元気|げんき}に なった。', 'Thanks to the rain, the fields came back to life.'],
         ['{雨|あめ}の せいで、{祭|まつ}りが {中止|ちゅうし}に なった。', 'Because of the rain, the festival was called off.']]),
+    P('baai', 'I', '～場合（は） (in the case of; if)',
+      `Plain form, or a noun + の, followed by 場合（は） names the case a rule or an instruction covers: "if it happens that…". It is the word of notices and rules; for one event that has already happened, use ～たら instead.`,
+      [['{雨|あめ}の {場合|ばあい}は、{中止|ちゅうし}です。', 'In case of rain, it is called off.'],
+        ['{遅|おく}れる {場合|ばあい}は、{知|し}らせて ください。', 'If you are going to be late, please let us know.']]),
+    P('igai', 'I', '～以外 / ただし / ～を除いて (except)',
+      `A noun + 以外 means "other than"; 以外は picks out everything but it. ただし begins a new sentence that states an exception to the one before ("however, …"). ～を除いて is the formal "except for", in notices and rules.`,
+      [['{日曜|にちよう}{以外|いがい}は、{毎日|まいにち} {開|あ}いて いる。', 'It is open every day except Sunday.'],
+        ['{子供|こども}は ただ。ただし、{荷物|にもつ}が あれば {一文|いちもん}。', 'Children cross free. However, with a load, one mon.']]),
+    P('kagiri', 'A', '～限り / ～ない限り (as long as / unless)',
+      `A plain form + 限り means "as long as (this holds)"; the negative ～ない限り means "unless": the result stands until the condition is met. It sounds firm, and is common in rules and resolutions.`,
+      [['{雨|あめ}が {降|ふ}らない {限|かぎ}り、{祭|まつ}りは {行|おこな}われる。', 'Unless it rains, the festival will be held.'],
+        ['{私|わたし}が {関守|せきもり}で ある {限|かぎ}り、この {決|き}まりは {変|か}えない。', 'As long as I am keeper, this rule will not change.']]),
     P('tame', 'I', '～ために (in order to; for)',
       `Dictionary form + ために means "in order to", when the subject controls the action. Noun + の + ために means "for (the sake of)". After a past form or a noun of cause it can also mean "because of".`,
       [['{橋|はし}を {直|なお}す ために、{木|き}を {集|あつ}めた。', 'We gathered wood to repair the bridge.'],
@@ -10619,7 +10631,7 @@ RB.kanjiRead = {
     '信しん;修しゅう;俵ひょう,びょう;俺おれ;倉くら,ぐら;個こ;倍ばい;倒たお;候こう;借か;値あたい;偉えら;健けな;側がわ,そば;偶ぐう;偽にせ,いつわ;傘かさ;備そな;催さい;傷きず,いた;傾かし,かたむ;働はたら;像ぞう;僕ぼく;僚りょう;僧ぞう;儀ぎ;儂わし;償つぐな;優やさ;儲もう;元もと;兄あに,にい;先さき;光ひか,ひかり;免めん;入い,はい;全すべ,まった;八はち,や,やっ;公こう;' +
     '六ろく,む,むっ;共とも;兵べ;具ぐ;典てん;内うち;円えん;冊さつ;再さい,ふたた;冗じょう;写うつ;冥みょう;冬ふゆ;冴さ;冷さ,つめ,ひ;凌しの;凍い,こお,こご;凝こ;几き;処しょ,こ,どころ;凧たこ;凪なぎ;凰おう;凹へこ;出で,だ;函かん;刀かたな,とう;刃は;分ぶん,ふん,わ;切き,ぎ;刈か;列れつ;初はつ,はじ;判はん;別べつ,わか;利き;到とう;制せい;刷す,ず;刺さ;' +
     '刻きざ;則そく;削けず;前まえ;剣けん;剥は,む;副ふく;割わり,わ;劇げき;力ちから;功こう;加くわ;助たす;努ど;励はげ;労ろう;効き;勇ゆう;勉べん;動うご;勘かん;務つと;勝か,が;募ぼ;勢いきお;勧すす;匂にお;包つつ;化か,ば;北きた;匙さじ;匠しょう;匹ひき,びき;区く;医い;十じゅう,とお;千せん;午ご;半はん,なか;卓たく;' +
-    '協きょう;南みなみ;単たん;博はく;印しるし,いん;危あぶ;即そく;却きゃく;卵たまご;卸おろ;厚あつ;原げん,はら;厳きび;去さ;参まい;又また;及およ;友とも,ゆう;双ふた;反はん;収おさ;取と;受う;口くち,ぐち;古ふる;句く;叩たた;只ただ;叫さけ;召め;可か;台だい;叱しか;史し;右みぎ;叶かな;号ごう;司し;各かく;合あ;' +
+    '協きょう;南みなみ;単たん;博はく;印しるし,いん;危あぶ;即そく;却きゃく;卵たまご;卸おろ;厚あつ;原げん,はら;厳きび;去さ;参まい;又また;及およ;友とも,ゆう;双ふた;反はん,たん;収おさ;取と;受う;口くち,ぐち;古ふる;句く;叩たた;只ただ;叫さけ;召め;可か;台だい;叱しか;史し;右みぎ;叶かな;号ごう;司し;各かく;合あ;' +
     '吊つ;同おな;名めい,な;吐は;向む;君きみ;吠ほ;否いな;含ふく;吸す;吹ふ;呂ろ;告つ;呑の;呟つぶや;周まわ;呪のろ;味み,あじ;呼よ;命いのち;和わ;咲さ;咳せき;品しな;員いん;唄うた;唇くちびる;唐から;唱とな;唸うな;商しょう;問と;啓けい;善ぜん;喉のど;喋しゃべ;喜よろこ;喧けん;喩ゆ;喪くも;' +
     '喫きつ;営えい;嗅か;嘆なげ;嘘うそ;嘩か;噂うわさ;噌そ;噛か;器うつわ;噴ふ;囁ささや;囃はや;四よん,し,よ,よっ;回かい,まわ;因いん;団だん;困こま;囲かこ;図ず;固かた;国くに;園えん;土ど,つち;在あ;圭けい;地ち,じ;坂さか,ざか;坊ぼう;垂た;型かた;垣かき,がき;埃ほこり;埋う;城しろ;執と;基き;堀ぼり,ほり;堂どう;堅かた;' +
     '堪こた;堰せき;報むく;場ば;塊かたまり;塔とう;塗ぬ;塚つか;塞ふさ;塩しお;塵ちり;境さかい;墓はか;増ふ,ま;墟きょ;墨すみ;壁かべ;壇だん;壊こわ;士し;壮そう;声こえ,ごえ;売う;壺つぼ;変か,へん;夏なつ;夕ゆう;外そと,はず,ほか;多おお;夜よ,よる;夢ゆめ;大おお,だい,たい;天てん;太ふと;夫おっと;央おう;失うしな,な;奇き;奈な;奏そう;' +
@@ -10631,7 +10643,7 @@ RB.kanjiRead = {
     '悩なや;悪わる;悲かな;情なさ;惑まど;惜お;想そう;意い;愚おろ;愛あい;感かん;慈じ;態たい;慌あわ;慎つつし;慢まん;慣な;慮りょ;慰なぐさ;慶よろこ;憎にく;憧あこが;憩けい;憶おく;懐なつ,ふところ;懲こ,ご;懸けん,か;成な;我われ;戚せき;戦たたか;戸と;戻もど;房ふさ;所しょ,ところ;扇あお,おうぎ;扉とびら;手て;才さい;打う;' +
     '払はら,ぱら;扱あつか;批ひ;承うけたまわ;技わざ;投な;抗あらが;折お,おり;抜ぬ;抱いだ,かか,だ;抵てい;押お;担かつ;拍はく;拒こば;拓たく;拗す;招まね;拝はい;拠こ;括かつ;拭ふ;拶さつ;拾ひろ;持も;指ゆび,さ;按あん;挙あ;挟はさ;挨あい;挫ざ;振ふ;挽ひ;捌さば;捏こ;捕つか;捨す;据す;捲まく;捻ねん;' +
     '掃は;授じゅ;排はい;掘ほ;掛か;掟おきて;採と;探さが,さぐ;接つ,は;控ひか;推すい;掲かか;掴つか;掻か;揃そろ;揉も;描か,えが;提さ;揚あ;換か;握にぎ;援えん;揺ゆ;損そん,そこ,ぞん;搾しぼ;摘てき;摩ま;摺す;撃げき;撒ま;撞つ;撫な;撮と;操そう;擦す,こす;攣つ;攫さら;支ささ;改あらた;攻こう;' +
-    '放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日ひ,にち,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;易やさ,やす;昔むかし;星ほし;映うつ,は;春はる;昧まい;' +
+    '放はな,ほう;故こ;救すく;敗はい;教おし,おそ;散ち;敬けい;数すう,かず,かぞ;整ととの;敵てき,がたき;敷し;文ぶん,ふみ;斉せい;斎さい;斐い;斗ご;料りょう;斜なな;断ことわ;新あたら;方かた,ほう,がた;施せ;旅たび;旋せん;族ぞく;旗はた;既すで;日にち,ひ,か,び;旦だん;旧きゅう;旨むね;早はや;昇のぼ;明あ,あか;易やさ,やす;昔むかし;星ほし;映うつ,は;春はる;昧まい;' +
     '昨さく;是これ;昼ひる;時じ,とき;晩ばん;普ふ;景けい;晴は;晶しょう;暇ひま;暑あつ;暖あたた;暗くら;暦こよみ;暮く;暴あば;曇くも;曖あい;曜よう;曰いわ;曲ま;更さら;書か,が;替か;最さい,も;月がつ,つき,げつ;有あ;服ふく;朔さく;望ぼう,もち,のぞ;朝あさ;期き;木き,こ,ぎ;未いま;末まつ,すえ;本ほん,もと;札ふだ;朱しゅ;机つくえ;杉すぎ;' +
     '杏あんず;材ざい;村むら;杖つえ;束たば;条じょう;来き,く,こ;杭くい;杯はい,さかずき,ぱい;東ひがし;杼ひ;松まつ;板いた;枕まくら;林はやし;枚まい;果は;枝えだ;枠わく;枯か;架か;柄がら;某なにがし;染し,そ;柔やわ;柚ゆ;柝き;柱はしら;柳やなぎ;柵さく;査さ;柿かき,がき;栄えい;栓せん;栗くり,ぐり;栞しおり;校こう;株かぶ;根ね;格かく;' +
     '桁げた;桂りけい;桃もも;案あん;桐きり;桜さくら;桟さん;桶おけ;梁はり;梅うめ;梨なし;梯はし;械かい;棄き;棋ぎ;棒ぼう;棚たな,だな;森もり;棹さお;椀わん;椅い;植う;検けん;楔くさび;楠くす;業わざ;極ごく;楼ろう;楽らく,たの;構かま;槌つち;様さま,よう;槽そう;樋どい;標しるべ;模も;権けん;横よこ;樹じゅ;樽たる;' +
@@ -20838,6 +20850,37 @@ RB.audio = RB.audio || {};
     },
     form: ['intro', 'A', 'B', 'A2'],
   });
+
+  // ================================================================== WING 6: THE TOLL THAT CHANGED
+  // A mountain pass in late autumn. The shakuhachi plays the toll as it began, one plain phrase; in B the koto takes the
+  // same phrase and keeps adding to it, a turn here and a grace there, as the board filled with conditions; A2 gives the
+  // plain phrase back, the rule behind them all. The hyōshigi knocks once every two bars, the gate's bar going down, and
+  // the wind brushes through. The change is in the tune, never in a louder or faster arrangement (C-22).
+  const PLAIN = '5 - - - 4 - 3 - | 1 - - - - - . . | 3 - 4 - 5 - 6 - | 5 - - - - - . . | 4 - - - 2 - 7, - | 1 - - - - - . . | 3 - 2 - 1 - 7, - | 1 - - - - - . .';
+  const ADDED = '3 - 4 5 6 - 5 - | 5 - - - - - . . | 5 4 3 - 4 3 2 - | 1 - - - - - . . | 5 - 4 3 2 - 3 - | 5 - - - - - . . | 4 - 2 - 4 5 4 - | 2 - - - - - . .';
+  S('hall_w6', {
+    title: 'The Toll That Changed',
+    kind: 'area',
+    motifs: [],
+    notes: 'Wing 6 of the Hall: a mountain pass in late autumn (E dorian, 74). The shakuhachi plays the toll as it began, one plain phrase; in B the koto takes the phrase and keeps adding to it, a turn here and a grace there, as the board filled with conditions; A2 gives the plain phrase back. The hyōshigi knocks once every two bars, the gate bar coming down, and a brush of wind goes through.',
+    key: 'E', mode: 'dorian', bpm: 74, loopFrom: 1,
+    tracks: {
+      lead: { i: 'shakuhachi', o: 4, v: 0.5, rv: 0.45 },
+      koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
+      bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.22, rv: 0.35 },
+      clap: { perc: true, v: 0.2, rv: 0.5 },
+      wind: { perc: true, v: 0.12, rv: 0.6 },
+    },
+    echo: { beats: 1, fb: 0.2, mix: 0.18 },
+    all: { bass: '0 - - - 4 - - -', clap: 'y.......|........', wind: '....b...|........|........|b.......' },
+    sections: {
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      A: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: PLAIN },
+      B: { bars: 8, ch: '4 4 1 1 3 3 7 7', koto: ADDED },
+      A2: { bars: 8, ch: '1 1 4 4 7 7 1 1', lead: PLAIN, dyn: 0.85 },
+    },
+    form: ['intro', 'A', 'B', 'A2'],
+  });
 })(RB.audio);
 
 
@@ -20965,9 +21008,9 @@ RB.audio = RB.audio || {};
     // the Hall of a Hundred Tales (38zh_songs_hall.js), postgame in the twelve-chapter edition: each wing its own song;
     // its creatures fight to the Atlas's themes, the other post-story place
     hall: {
-      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5'], prefixes: ['hall.'],
+      chapter: 12, edition: 2, postgame: true, regions: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6'], prefixes: ['hall.'],
       battle: 'battle_atlas', boss: 'boss_atlas', route: null,
-      songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5'],
+      songs: ['hall', 'hall_w1', 'hall_w2', 'hall_w3', 'hall_w4', 'hall_w5', 'hall_w6'],
     },
   };
   // Moods shared by every zone (investigation, rest, wonder, grief, the Hush,
@@ -156538,6 +156581,51 @@ RB.dialect.add('kansai', `
 @ hall/hall.w5.end [hall.w5.end]
 = {第|だい}{五幕|ごまく} 、 {幕|まく} ！ {悪役|あくやく} なし の {大団円|だいだんえん} よ 。 {拍手|はくしゅ} ！ || End of act five! A happy ending with no villain. Applause!
 > {第|だい}{五幕|ごまく} 、 {幕|まく} や ！ {悪役|あくやく} なし の {大団円|だいだんえん} や で 。 {拍手|はくしゅ} 、 たのむ で ！ || End of act five! A happy ending with no villain. Applause!
+@ hall/hall.w6.f1_first [hall.w6.f1_first]
+= {第|だい}{六幕|ろくまく} は 、 {関所|せきしょ} の {場|ば} ね 。 {関所|せきしょ} の {芝居|しばい} に は 、 {名場面|めいばめん} が {多|おお}い の よ 。 || Act six: the barrier scene. Barrier plays are full of famous scenes.
+> {第|だい}{六幕|ろくまく} は 、 {関所|せきしょ} の {場|ば} や な 。 {関所|せきしょ} の {芝居|しばい} に は 、 {名場面|めいばめん} が {多|おお}い ん や で 。 || Act six: the barrier scene. Barrier plays are full of famous scenes.
+@ hall/hall.w6.f2_first [hall.w6.f2_first]
+= {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さない と 。 でも 、 {決|き}まり が ある みたい だ ね 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+> {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さへん と 。 でも 、 {決|き}まり が ある みたい や な 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+@ hall/hall.w6.f3_first [hall.w6.f3_first]
+= {幕|まく} が {上|あ}がる と 、 {門|もん} の {前|まえ} に {母|はは} と {子|こ} 。 {泣|な}かせる {場面|ばめん} の {始|はじ}まり よ 。 || Curtain up on a mother and child before the gate. The start of a tear-jerker.
+> {幕|まく} が {上|あ}がったら 、 {門|もん} の {前|まえ} に {母|はは} と {子|こ} 。 {泣|な}かせる {場面|ばめん} の {始|はじ}まり や で 。 || Curtain up on a mother and child before the gate. The start of a tear-jerker.
+@ hall/hall.w6.ibuki [hall.w6.ibuki]
+= {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう 。 {例外|れいがい} が {多|おお}そう だ 。 || Let's read the board first. Looks like lots of exceptions.
+> {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう や 。 {例外|れいがい} が {多|おお}そう や で 。 || Let's read the board first. Looks like lots of exceptions.
+@ hall/hall.w6.t1 [hall.w6.t1]
+= {最後|さいご} の {一行|いちぎょう} を {書|か}かない {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じて いる の ね 。 || A script that leaves out its last line. It trusts its actors.
+> {最後|さいご} の {一行|いちぎょう} を {書|か}かへん {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じてる ん や な 。 || A script that leaves out its last line. It trusts its actors.
+@ hall/hall.w6.n_ofuku [hall.w6.n_ofuku]
+= {決|き}まり の {通|とお}り 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさなくて よかった 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+> {決|き}まり の {通|とお}り や 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさへん で よかった わ 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+@ hall/hall.w6.t3 [hall.w6.t3]
+= {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から ね 。 || When the condition doesn't fit, the whole saying comes out backwards.
+> {条件|じょうけん} が {合|あ}わへん と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から な 。 || When the condition doesn't fit, the whole saying comes out backwards.
+@ hall/hall.w6.l_foot [hall.w6.l_foot]
+= 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさなくて よかった 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+> 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさへん で よかった わ 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+@ hall/hall.w6.t6 [hall.w6.t6]
+= {滲|にじ}んだ {台本|だいほん} なら 、 {何度|なんど} も {読|よ}んだ わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I've read plenty of smudged scripts. Leave it to me. What am I looking for?
+> {滲|にじ}んだ {台本|だいほん} やったら 、 {何度|なんど} も {読|よ}んだ で 。 {任|まか}せとき 。 {何|なに} を {探|さが}したら ええ ？ || I've read plenty of smudged scripts. Leave it to me. What am I looking for?
+@ hall/hall.w6.x_momo [hall.w6.x_momo]
+= {帳面|ちょうめん} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the ledger said again?
+> {帳面|ちょうめん} の {言葉|ことば} 、 もう {一回|いっかい} {言|い}おう か ？ || Shall I say what the ledger said again?
+@ hall/hall.w6.x_momo [hall.w6.x_momo]
+= {夜|よる} は {通|とお}さない 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった ね 。 || Nobody after dark, except in one case. Good thing we read it.
+> {夜|よる} は {通|とお}さへん 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった な 。 || Nobody after dark, except in one case. Good thing we read it.
+@ hall/hall.w6.t8_board [hall.w6.t8_board]
+= どの {場合|ばあい} に 、 {何|なに} を する の か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}そう 。 || Which case calls for what. Let's find what goes together.
+> どの {場合|ばあい} に 、 {何|なに} を する ん か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}して みよ か 。 || Which case calls for what. Let's find what goes together.
+@ hall/hall.w6.h1 [hall.w6.h1]
+= {雨|あめ} なら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} だ ね 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+> {雨|あめ} やったら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} や な 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+@ hall/hall.w6.otsuta [hall.w6.otsuta]
+= …… イブキ と {話|はな}そう 。 || …Let's talk to Ibuki.
+> …… イブキ と {話|はな}して みよ か 。 || …Let's talk to Ibuki.
+@ hall/hall.w6.end [hall.w6.end]
+= {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
+> {第|だい}{六幕|ろくまく} 、 {幕|まく} や ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける ん や わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
 `, 'hall');
 
 
@@ -161950,6 +162038,24 @@ RB.lex.add(RB.lex.parseTable(`
 聞かん|きかん|exp|I|(older) doesn't listen, won't obey (= 聞かない); 言うことを聞かん: won't do as it's told
 汲まねば|くまねば|exp|A|(old, literary) if one does not draw (water) (= 汲まなければ)
 見がち|みがち|exp|A|apt to look (見る + 〜がち: tending to)
+# ---- wing 6: conditions and exceptions -------------------------------------------------------------------------------
+第六幕|だいろくまく|n|I|the sixth act
+名場面|めいばめん|n|I|a famous scene (in a play or film)
+二文|にもん|n|I|two mon (old coins)
+例外|れいがい|n|I|an exception
+反物|たんもの|n|A|a bolt of cloth (for kimono)
+夕闇|ゆうやみ|n|A|dusk, the dark of evening
+日曜|にちよう|n|E|Sunday
+日没|にちぼつ|n|A|sunset (in notices and records)
+有無|うむ|n|A|whether or not (there is one): 荷の有無にかかわらず, whether or not there is a load
+番小屋|ばんごや|n|A|a guard hut, a watch hut
+避難小屋|ひなんごや|n|I|a mountain shelter hut
+行商|ぎょうしょう|n|I|peddling, selling from door to door
+赤ん坊|あかんぼう|n|E|a baby
+除く|のぞく|v5k|I|to leave out, to except (～を除いて: except for)
+ても||prt|I|even if (after the て form: 降っても, even if it rains)
+木札|きふだ|n|I|a wooden tag, a wooden ticket
+一年中|いちねんじゅう|n|E|all year round
 `));
 
 
@@ -162032,6 +162138,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     flower: ['#e8c048', '#f0e8d0', '#d8683a', '#e89aa8'], sky: '#d8d0b0', dark: '#1e1c14',
   });
   TL.addRamps(TL.PAL.hall_w5);
+
+  // wing 6: a mountain pass in late autumn, maples red against grey stone, mist in the valley below, the toll house of
+  // old dark wood with its rule board under the eaves
+  TL.PAL.hall_w6 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#7a7a4a', '#8a8a56', '#66663e', '#9c9a66'], dirt: ['#7a6a56', '#8c7c66', '#665846', '#9e8e78'],
+    stone: ['#7e8084', '#96989c', '#64666a'], water: ['#5a7a8a', '#6a8c9c', '#9ab4c0', '#e0e8ec'],
+    wood: ['#4a3628', '#5c4432', '#38281e', '#765a44'], leaf: ['#a83a24', '#c04e2c', '#d8783a', '#82301e'],
+    flower: ['#e8a83a', '#f0e0c8', '#c84a2a', '#d8c8a0'], roof: ['#3a3430', '#2e2a26', '#24201c', '#4e4640'],
+    sky: '#b8bcc0', dark: '#16140f',
+  });
+  TL.addRamps(TL.PAL.hall_w6);
 
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
@@ -162162,6 +162279,33 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_kero', { name: { en: 'Kero', jp: 'ケロ' }, voice: { pitch: 1.16 }, size: 'child',
     look: { skin: 1, hair: 'short', hairColor: 4, cloth: ['#4a7a3a', '#3a622e', '#d8e0a0'], shape: 'robe', acc: [] },
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#1a2414' } });
+
+  // ---- the tales' people: wing 6, The Toll That Changed --------------------------------------------------------------
+  // Kihei (he/him), the old keeper of the toll gate on the pass, laid up with his back; Ibuki (they/them), the young
+  // keeper keeping it in his place by the board; travellers Ofuku (she/her), a medicine seller, Hanbei (he/him), a
+  // merchant, Kōun (they/them), a pilgrim, and Momo (she/her), a child of the pass village; Otsuta (she/her), who comes
+  // down the pass at nightfall with her baby in a fever.
+  ch('hall_kihei', { name: { en: 'Kihei', jp: 'キヘエ' }, voice: { pitch: 0.74 },
+    look: { skin: 3, hair: 'short', hairColor: 6, cloth: ['#5a4a3a', '#46382c', '#d8c8a8'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'short', age: 'old', acc: [], bg: '#1e1810' } });
+  ch('hall_ibuki', { name: { en: 'Ibuki', jp: 'イブキ' }, voice: { pitch: 1.06 },
+    look: { skin: 2, hair: 'ponytail', hairColor: 0, cloth: ['#3a4a5a', '#2e3c4a', '#e0d4b8'], shape: 'tunic', acc: ['headband'], bandCol: '#a83a24' },
+    portrait: { eyes: 'narrow', style: 'ponytail', acc: ['headband'], bandCol: '#a83a24', bg: '#141c24' } });
+  ch('hall_ofuku', { name: { en: 'Ofuku', jp: 'オフク' }, voice: { pitch: 1.12 },
+    look: { skin: 1, hair: 'bun', hairColor: 1, cloth: ['#7a3a4a', '#622e3c', '#f0e0c8'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'bun', acc: [], bg: '#241418' } });
+  ch('hall_hanbei', { name: { en: 'Hanbei', jp: 'ハンベエ' }, voice: { pitch: 0.9 },
+    look: { skin: 2, hair: 'short', hairColor: 2, cloth: ['#6a5a3a', '#54482e', '#e0d0a8'], shape: 'tunic', acc: ['hat'], hatCol: '#8a7048' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['hat'], hatCol: '#8a7048', bg: '#1e1a10' } });
+  ch('hall_koun', { name: { en: 'Kōun', jp: 'コウウン' }, voice: { pitch: 0.98 },
+    look: { skin: 2, hair: 'shaved', hairColor: 1, cloth: ['#d8d0c0', '#bab2a2', '#5a5048'], shape: 'robe', acc: ['hat'], hatCol: '#c8b890' },
+    portrait: { eyes: 'narrow', style: 'shaved', acc: ['hat'], hatCol: '#c8b890', bg: '#22201c' } });
+  ch('hall_momo', { name: { en: 'Momo', jp: 'モモ' }, voice: { pitch: 1.32 }, size: 'child',
+    look: { skin: 1, hair: 'bob', hairColor: 1, cloth: ['#d8784a', '#b8603a', '#f0e0c0'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'bob', acc: [], bg: '#2a1a12' } });
+  ch('hall_otsuta', { name: { en: 'Otsuta', jp: 'オツタ' }, voice: { pitch: 1.08 },
+    look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#4a5a4a', '#3a4a3a', '#e0d8c0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'long', acc: [], bg: '#161e16' } });
 })(RB.content);
 
 
@@ -166851,6 +166995,887 @@ narr: {夕餉|ゆうげ} の {湯気|ゆげ} が {畳|たた}まれる よう �
 })(RB.content);
 
 
+/* ==== src/content/hall/26_w6_maps.js ==== */
+/* The Hall of a Hundred Tales, wing 6, The Toll That Changed (an invented tale; the barrier stations of the old
+ * highways, 関所, and the notice boards that set out their rules, 高札, are real): the floors and the wing (expansion
+ * P15; plan 04_DUNGEONS.md D9). Its theme: conditions and exceptions (～と, ～ば, ～たら and ～なら; ～ても; on the
+ * Grow route ～場合, ただし and ～以外; at the top ～限り, ～さえ～ば, ～を除いて).
+ *   1 · The Toll House at Noon (hall.w6f1): the tale in four pictures in Kihei's room (t1), the toll board and four
+ *       travellers, each given the tag the board says they owe (t2), the waymarkers' sayings on conditions, one wrong
+ *       (t3, a counterexample hall); a bench.
+ *   2 · The Pass at Dusk (hall.w6f2): the pass's five lanterns lit by the rule and today's sky (t4), the mist on the
+ *       pass (t5, mist; the porters fly), Kihei's ledger in your companion's hands and the one traveller it lets go on
+ *       after dark (t6, an information gap), the riddle stone (t7, a reprieve); a bench, a spring, a resting place.
+ *   3 · The Gate at Nightfall (hall.w6f3): the help board, each case hung beside what the toll house does for it
+ *       (t8), Ibuki and Otsuta at the shut gate (t9, a mediation), and the night at the gate (t10, the capstone).
+ * Each floor's way on is closed by a sacred rope until every trial on it is done; the pattern (hall.w6.pat) chooses
+ * the travellers' circumstances, the lantern rule, the ledger's night rule and the help board's cases. */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C, B) {
+  'use strict';
+  const K = C.hallKit, T = K.T, W = 'w6';
+  const AMB = { dark: 0.14, playerLight: 50, weather: 'leaves', tint: 'rgba(200,120,70,0.10)' };
+
+  // ==== floor 1: The Toll House at Noon ===================================================================================
+  // The toll house by the road (Kihei's room inside it), the toll board under the eaves with the box of tags beside
+  // it, four travellers waiting their turn, and the waymarkers on the old road to the north-west.
+  const TAGS = { free: [23, 7], one: [25, 7], two: [27, 7] };
+  const WAIT = { ofuku: [22, 14], hanbei: [25, 14], koun: [28, 14], momo: [24, 16] };
+  C.hallW6 = { TAGS, WAIT };
+  C.maps['hall.w6f1'] = Object.assign({}, K.base(W), {
+    name: T('The Toll House at Noon', '{昼|ひる} の {関所|せきしょ}'),
+    ambient: AMB,
+    terrain: B.build(34, 24, 'x', (k) => {
+      k.rect(13, 18, 9, 5, '.');                 // where you come in
+      k.rect(4, 6, 27, 12, '.');                 // the yard before the toll house
+      k.rect(16, 1, 2, 21, ':');                 // the road north up the pass, and south
+      k.rect(4, 11, 27, 2, ':');                 // the lane east and west
+      k.rect(1, 8, 6, 5, '_');                   // west: the toll house, Kihei's room (the story room)
+      k.rect(4, 2, 11, 4, '.');                  // north-west: the waymarkers
+      k.scatter('T', 4, 1661, [7, 6, 6, 3], '.'); k.scatter(',', 10, 1662, [4, 13, 26, 4], '.');
+      k.rect(16, 1, 2, 21, ':'); k.rect(4, 11, 27, 2, ':');
+    }),
+    props: [].concat(
+      K.furniture(W, 0, { ret: [14, 20], bench: [20, 20], gate: [16, 4], stairs: [17, 1] }),
+      [
+        { p: 'kr_scroll', x: 2, y: 9, scene: 'hall.w6.t1' }, ...K.andon(5, 9, W, 't1'),
+        { p: 'lantern', x: 1, y: 8, light: 28, o: { lit: true } }, { p: 'sb_futon', x: 2, y: 11 },
+        // the toll board and the box of tags
+        { p: 'noticeboard', x: 20, y: 7, scene: 'hall.w6.board' },
+        ...Object.keys(TAGS).map((g) => ({ p: 'fw_indexbox', x: TAGS[g][0], y: TAGS[g][1], scene: 'hall.w6.tag_' + g })),
+        ...K.andon(29, 8, W, 't2'),
+        // the waymarkers, and the stone that asks
+        { p: 'signblank', x: 5, y: 3, scene: 'hall.w6.card1' }, { p: 'signblank', x: 7, y: 3, scene: 'hall.w6.card2' },
+        { p: 'signblank', x: 9, y: 3, scene: 'hall.w6.card3' }, { p: 'signblank', x: 11, y: 3, scene: 'hall.w6.card4' },
+        { p: 'stone_marker', x: 13, y: 3, scene: 'hall.w6.t3' }, ...K.andon(14, 2, W, 't3'),
+        K.lit(15, 10), K.lit(19, 10),
+      ]),
+    npcs: [
+      { id: 'hall_kihei', x: 4, y: 11, dir: 'left', talk: [{ scene: 'hall.w6.kihei' }] },
+      { id: 'hall_ibuki', x: 21, y: 9, dir: 'down', talk: [{ scene: 'hall.w6.ibuki' }] },
+      ...Object.keys(WAIT).map((w) => ({ id: 'hall_' + w, x: WAIT[w][0], y: WAIT[w][1], dir: 'up', talk: [{ scene: 'hall.w6.n_' + w }], if: '!xp_hall_w6_f0_served_' + w })),
+    ],
+    foes: [],
+    exits: [{ x: 16, y: 1, w: 1, h: 1, to: 'hall.w6f2', sp: 'from_below', dir: 'up', if: 'hall.w6.f0.clear' }],
+    onEnter: [{ scene: 'hall.w6.f1_first', if: '!hall_w6_f1_seen' }],
+    spawn: { default: [17, 21, 'up'], entry: [17, 21, 'up'] },
+  });
+
+  // ==== floor 2: The Pass at Dusk ===========================================================================================
+  // The road climbing the pass, over a stream by a plank bridge; five stone lanterns along it (the foot, the bend, the
+  // bridge, the shrine, the top), the lighting rule on its post and the festival notice; the shelter hut where Kihei's
+  // ledger is kept, and three travellers waiting to go on up after dark.
+  const LAMPS = { foot: [16, 19], bend: [19, 17], bridge: [16, 15], shrine: [23, 10], top: [19, 7] };
+  const NIGHT = { momo: [14, 8], koun: [22, 7], hanbei: [14, 10] };
+  Object.assign(C.hallW6, { LAMPS, NIGHT });
+  C.maps['hall.w6f2'] = Object.assign({}, K.base(W), {
+    name: T('The Pass at Dusk', '{夕暮|ゆうぐ}れ の {峠|とうげ}'),
+    ambient: Object.assign({}, AMB, { dark: 0.3, tint: 'rgba(120,70,90,0.14)' }),
+    terrain: B.build(36, 26, 'x', (k) => {
+      k.rect(15, 21, 8, 5, '.');                 // where you come in
+      k.rect(5, 6, 26, 15, '.');                 // the slopes either side of the road
+      k.rect(5, 13, 26, 2, '~');                 // the stream across the pass
+      k.rect(17, 2, 2, 20, ':');                 // the road up the pass
+      k.rect(17, 13, 2, 2, 'B');                 //   and its plank bridge
+      k.rect(4, 2, 9, 4, '.');                   // north-west: the riddle stone
+      k.rect(13, 5, 4, 1, ':');                  //   its path (below the rope)
+      k.rect(28, 2, 6, 5, '.');                  // north-east: the resting place
+      k.rect(19, 5, 9, 1, ':');                  //   its path (below the rope)
+      k.rect(7, 21, 7, 4, '.');                  // south-west: the spring
+      k.rect(13, 22, 3, 2, '.');
+      k.scatter('Q', 6, 1671, [6, 16, 8, 4], '.');
+      k.scatter(';', 10, 1673, [6, 6, 8, 6], '.');
+      k.rect(17, 2, 2, 11, ':'); k.rect(17, 15, 2, 7, ':');
+    }),
+    props: [].concat(
+      K.furniture(W, 1, { ret: [16, 23], bench: [21, 23], gate: [17, 4], stairs: [18, 2] }),
+      [
+        { p: 'well', x: 9, y: 22, scene: 'hall.w6.spring' },
+        // the five lanterns (dark until lit), the lighting rule and the festival notice
+        ...Object.keys(LAMPS).flatMap((l) => [
+          { p: 'deadlantern', x: LAMPS[l][0], y: LAMPS[l][1], scene: 'hall.w6.l_' + l, if: '!xp_hall_w6_f1_lit_' + l },
+          { p: 'lantern', x: LAMPS[l][0], y: LAMPS[l][1], scene: 'hall.w6.l_' + l, if: 'xp_hall_w6_f1_lit_' + l, light: 34, o: { lit: true } }]),
+        { p: 'shrine', x: 24, y: 9 },
+        { p: 'hall_signpost', x: 14, y: 19, scene: 'hall.w6.t4_rule' }, { p: 'sign', x: 21, y: 19, scene: 'hall.w6.sky' },
+        ...K.andon(14, 17, W, 't4'),
+        // the shelter hut: Kihei's ledger
+        { p: 'desk', x: 26, y: 17, scene: 'hall.w6.t6' }, ...K.andon(29, 17, W, 't6'),
+        // the riddle stone (t7)
+        { p: 'kr_stele', x: 6, y: 3, scene: 'hall.w6.t7' }, ...K.andon(8, 2, W, 't7'),
+        ...K.andon(6, 8, W, 't5'),
+        // the resting place (a delver may be waiting)
+        { p: 'teaset', x: 30, y: 3 }, { p: 'bench', x: 29, y: 5 },
+      ]),
+    npcs: [
+      { id: 'hall_ibuki2', char: 'hall_ibuki', x: 25, y: 19, dir: 'up', talk: [{ scene: 'hall.w6.ibuki2' }] },
+      // the one the ledger lets go on has gone up the pass once the trial is done
+      ...Object.keys(NIGHT).map((w) => Object.assign({ id: 'hall_' + w + '2', char: 'hall_' + w, x: NIGHT[w][0], y: NIGHT[w][1], dir: 'down', talk: [{ scene: 'hall.w6.x_' + w }] },
+        w === 'momo' ? { if: '!hall.w6.t6|hall.w6.pat=1' } : w === 'koun' ? { if: '!hall.w6.t6|hall.w6.pat=0' } : {})),
+    ],
+    foes: [
+      { id: 'b1', enemy: 'cr.fogporter', encounter: 'hall.w6.mist', scene: 'hall.w6.t5', x: 9, y: 9, patrol: 1, bg: 'mistpass', intro: { jp: '{霧|きり} の {中|なか} から 、 {荷|に} を {担|かつ}いだ {影|かげ} が {浮|う}かんで きた 。', en: 'Out of the mist floats a shape with a load on its back.' }, settle: { jp: '{霧|きり} が {晴|は}れて 、 {影|かげ} は {谷|たに} へ {流|なが}れて いった 。', en: 'The mist lifts, and the shape drifts away down into the valley.' } },
+    ],
+    exits: [{ x: 17, y: 2, w: 1, h: 1, to: 'hall.w6f3', sp: 'from_below', dir: 'up', if: 'hall.w6.f1.clear' }],
+    onEnter: [{ scene: 'hall.w6.f2_first', if: '!hall_w6_f2_seen' }],
+    spawn: { default: [18, 24, 'up'], entry: [18, 24, 'up'], from_below: [18, 24, 'up'] },
+  });
+
+  // ==== floor 3: The Gate at Nightfall ======================================================================================
+  // The gate at the top of the pass as night comes on: the help board on the guard hut's wall with its four empty
+  // hooks and the five case boards fallen in the wind, Ibuki at the shut gate and Otsuta with her baby before it.
+  const HOOKS = { h1: [6, 10], h2: [8, 10], h3: [10, 10], h4: [12, 10] };
+  const CASES = { rain: [6, 14], dark: [8, 14], sick: [10, 14], lost: [12, 14], cold: [14, 14] };
+  Object.assign(C.hallW6, { HOOKS, CASES });
+  C.maps['hall.w6f3'] = Object.assign({}, K.base(W), {
+    name: T('The Gate at Nightfall', '{日暮|ひぐ}れ の {門|もん}'),
+    ambient: Object.assign({}, AMB, { dark: 0.42, playerLight: 62, tint: 'rgba(40,40,80,0.16)' }),
+    terrain: B.build(32, 24, 'x', (k) => {
+      k.rect(11, 18, 11, 6, '.');                // where you come in
+      k.rect(4, 7, 24, 12, '.');                 // the gate yard
+      k.rect(15, 2, 3, 6, ':');                  // the road up to the gate
+      k.rect(11, 2, 11, 3, '+');                 // the gate's stone footing
+      k.scatter(';', 8, 1681, [20, 14, 7, 4], '.');
+      k.rect(15, 2, 3, 6, ':');
+    }),
+    props: [].concat(
+      K.furniture(W, 2, { ret: [13, 22], bench: [20, 22] }),
+      [
+        { p: 'cr_gate', x: 16, y: 3, scene: 'hall.w6.t10' },
+        { p: 'noticeboard', x: 8, y: 8, scene: 'hall.w6.t8_board' }, ...K.andon(4, 8, W, 't8'),
+        ...Object.keys(HOOKS).map((h) => ({ p: 'signblank', x: HOOKS[h][0], y: HOOKS[h][1], scene: 'hall.w6.' + h })),
+        ...Object.keys(CASES).map((c) => ({ p: 'sign', x: CASES[c][0], y: CASES[c][1], scene: 'hall.w6.pl_' + c, if: '!xp_hall_w6_f2_hung_' + c })),
+        ...K.andon(26, 8, W, 't9'),
+        { p: 'sb_irori', x: 22, y: 12 },
+        K.lit(13, 5), K.lit(20, 5),
+      ]),
+    npcs: [
+      { id: 'hall_ibuki3', char: 'hall_ibuki', x: 18, y: 7, dir: 'down', talk: [{ scene: 'hall.w6.t9' }] },
+      { id: 'hall_otsuta', x: 14, y: 8, dir: 'up', talk: [{ scene: 'hall.w6.otsuta' }], if: '!hall.w6.t9' },
+    ],
+    foes: [], exits: [],
+    onEnter: [{ scene: 'hall.w6.f3_first', if: '!hall_w6_f3_seen' }],
+    spawn: { default: [16, 22, 'up'], entry: [16, 22, 'up'], from_below: [16, 22, 'up'] },
+  });
+
+  // ==== the wing ==========================================================================================================
+  if (RB.hall) RB.hall.wing(W, {
+    n: 6, title: T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'),
+    theme: T('Conditions and exceptions: if, when, even if, except and unless.', '「 なら 」 と 「 ただし 」'),
+    folklore: { en: 'An invented tale. Two things in it are real: the barrier stations (関所) on the old highways, where travellers showed their papers and paid; and the notice boards (高札) that set out a place\'s rules in public, so that anyone could read them.' },
+    music: 'hall_w6', hearth: C.hallHearths.w6, patterns: 2,
+    grow: { en: 'rules and their exceptions: ～場合, ただし and ～以外 (and, at the top, ～限り, ～さえ～ば, ～を除いて).' },
+    floors: [
+      { id: 'f1', map: 'hall.w6f1', entry: { x: 17, y: 21, dir: 'up' }, name: T('The Toll House at Noon', '{昼|ひる} の {関所|せきしょ}'),
+        stations: { w6_b1: { kind: 'bench', map: 'hall.w6f1', x: 20, y: 20 } } },
+      { id: 'f2', map: 'hall.w6f2', entry: { x: 18, y: 24, dir: 'up' }, name: T('The Pass at Dusk', '{夕暮|ゆうぐ}れ の {峠|とうげ}'),
+        stations: { w6_b2: { kind: 'bench', map: 'hall.w6f2', x: 21, y: 23 }, w6_sp: { kind: 'spring', map: 'hall.w6f2', x: 9, y: 22 } } },
+      { id: 'f3', map: 'hall.w6f3', entry: { x: 16, y: 22, dir: 'up' }, name: T('The Gate at Nightfall', '{日暮|ひぐ}れ の {門|もん}'),
+        stations: { w6_b3: { kind: 'bench', map: 'hall.w6f3', x: 20, y: 22 } }, procedures: ['hall_w6_watch'] },
+    ],
+    delvers: { f2: { map: 'hall.w6f2', x: 31, y: 4, dir: 'left' } },
+    trials: [
+      { id: 't1', floor: 0, kind: 'story', title: T('The tale in four pictures', '{四|よっ}つ の {絵|え}') },
+      { id: 't2', floor: 0, kind: 'mechanism', title: T('The toll board', '{通行料|つうこうりょう} の {札|ふだ}') },
+      { id: 't3', floor: 0, kind: 'counterexample', title: T('The waymarkers', '{道標|みちしるべ}') },
+      { id: 't4', floor: 1, kind: 'mechanism', title: T('The lanterns of the pass', '{峠|とうげ} の {灯籠|とうろう}') },
+      { id: 't5', floor: 1, kind: 'encounter', title: T('The mist on the pass', '{峠|とうげ} の {霧|きり}') },
+      { id: 't6', floor: 1, kind: 'infogap', title: T('Kihei\'s ledger', 'キヘエ の {帳面|ちょうめん}') },
+      { id: 't7', floor: 1, kind: 'riddle', reprieve: true, title: T('The riddle stone', 'なぞなぞ の {石|いし}') },
+      { id: 't8', floor: 2, kind: 'mechanism', title: T('The help board', '{助|たす}け の {札|ふだ}') },
+      { id: 't9', floor: 2, kind: 'social', title: T('Ibuki and Otsuta', 'イブキ と オツタ') },
+      { id: 't10', floor: 2, kind: 'capstone', title: T('The night at the gate', '{門|もん} の {夜|よる}') },
+    ],
+  });
+})(RB.content, RB.mapkit);
+
+
+/* ==== src/content/hall/27_w6_learning.js ==== */
+/* The Hall of a Hundred Tales, wing 6, The Toll That Changed: the language tasks and encounters (expansion P15; plan
+ * 04_DUNGEONS.md D9; scenes in 28_w6_scenes.js). The theme: conditions and exceptions (～と, ～ば, ～たら, ～なら; ～ても;
+ * ～場合, ただし, ～以外; at Advanced ～限り, ～さえ～ば, ～を除いて). Every task has its four levels and an Advanced
+ * stretch.
+ *   hall.w6.story      the tale in four pictures, back in order (A38)
+ *   hall.w6.story_q    what the board filled up with, and the rule that was never written (optional)
+ *   hall.w6.counter0/1 the waymarkers' sayings on conditions: the one that breaks the rule (A34)
+ *   hall.w6.ask        asking your companion what Kihei's ledger says about going on after dark (A12)
+ *   hall.w6.riddle     the riddle stone (a reprieve)
+ *   encounters: hall.w6.mist (the mist on the pass: the porters fly, in mist), hall.w6.night (Ibuki and Otsuta at the
+ *   shut gate: a mediation), hall.w6.watch (the night at the gate: the capstone procedure). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const T = (jp, en) => ({ jp, en });
+  const ch = (o) => Object.assign({ kind: 'choose' }, o);
+  const OR = (o) => Object.assign({ kind: 'order' }, o);
+  const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
+  const e = (en, ok, why) => Object.assign({ en, ok: !!ok }, why ? { why: { en: why } } : {});
+  const say = (jp, en) => ({ jp, en });
+
+  // ---- the story room ----------------------------------------------------------------------------------------------------
+  const P1 = '{昔|むかし} 、 {峠|とうげ} の {関所|せきしょ} の {通行料|つうこうりょう} は 、 {誰|だれ} でも {一文|いちもん} だった',
+    P2 = 'ある {雨|あめ} の {日|ひ} 、 {関守|せきもり} は 「 {雨|あめ} なら 、 {帰|かえ}り に {払|はら}えば いい 」 と {決|き}まり を {足|た}した',
+    P3 = '{決|き}まり は {年|とし} ごと に {増|ふ}え 、 {札|ふだ} は 「 ただし 」 と 「 なら 」 で いっぱい に なった',
+    P4 = '{最後|さいご} の {決|き}まり だけ は 、 どこ に も {書|か}いて なかった';
+  C.hallW6Tale = { P1, P2, P3, P4 };
+  const FT = ['むかし 、 とうげ の せきしょ は 、 だれ でも いちもん だった', 'ある あめ の ひ 、 せきもり は 「 あめ なら 、 かえり に はらえば いい 」 と いった',
+    'きまり は ふえて 、 ふだ は 「 でも 」 と 「 なら 」 で いっぱい に なった', 'さいご の きまり だけ は 、 どこ に も かいて なかった'];
+  C.hallW6TaleF = FT;
+  C.challenges['hall.w6.story'] = { title: T('{変|か}わった {通行料|つうこうりょう}', 'The Toll That Changed'), tiers: {
+    F: [OR({ item: 'v:決まり', prompt: { en: 'Put the four pictures of the tale back in order.' }, tiles: [FT[2], FT[0], FT[3], FT[1]], answer: FT,
+      orderHint: { en: 'One coin for everyone; then a rule for rainy days; then rule after rule; and one rule written nowhere.' } })],
+    E: [OR({ item: 'v:通行料', prompt: { en: 'Put the four pictures back in order.' }, tiles: [P3, P1, P4, P2], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'First the toll as it began, then the first rule added, then the board filling up, then the rule that was never written.' } })],
+    I: [OR({ item: 'g:cond_nara', prompt: { en: 'Order the pictures so that each follows from the one before.' }, tiles: [P4, P2, P1, P3], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'The plain toll; the first condition (なら: if that is your case); the conditions and exceptions piling up (ただし); and, last, the one rule outside them all.' } })],
+    A: [OR({ item: 'g:igai', prompt: { en: 'Order the pictures; the turn is the one with だけ in it.' }, tiles: [P2, P4, P3, P1], answer: [P1, P2, P3, P4],
+      orderHint: { en: 'Every hard case became a written exception; だけ sets apart the one rule that was never written down.' } })],
+  },
+  stretchA: [ch({ item: 'g:cond_nara', ctx: { jp: P2 + ' 。 ／ 「 {雨|あめ} が {降|ふ}ったら 、 {帰|かえ}り に {払|はら}えば いい 」', en: '' }, prompt: { en: 'The keeper said 雨なら. What would 雨が降ったら change?' },
+    options: [e('なら takes the traveller\'s case as given ("if it is raining, as it is for you"), the way a rule answers a case; 降ったら looks ahead to the rain coming, one thing after another in time.', 1),
+      e('Nothing: they are the same.', 0, 'Both are "if", but なら answers a situation already in front of you.'),
+      e('雨なら means "only if it rains tomorrow".', 0, 'It answers the case at hand.')] })] };
+  C.challenges['hall.w6.story_q'] = { title: T('{話|はなし} の {後|あと} で', 'After the tale'), optional: true, tiers: {
+    F: [ch({ item: 'v:一文', ctx: { jp: FT[0] + ' 。', en: '' }, prompt: { en: 'How much was the toll at first?' },
+      options: [e('One mon, for everyone.', 1), e('Two mon.', 0, 'いちもん: one mon.'), e('Nothing.', 0, 'It was one mon, for everyone.')] })],
+    E: [ch({ item: 'v:決まり', ctx: { jp: P2 + ' 。', en: '' }, prompt: { en: 'What rule did the keeper add one rainy day?' },
+      options: [e('In rain, a traveller could pay on the way back.', 1), e('Nobody could cross in the rain.', 0, '帰りに払えばいい: paying on the way back is enough.'), e('The toll went up in the rain.', 0, 'Nothing about more.')] })],
+    I: [ch({ item: 'g:igai', ctx: { jp: P3 + ' 。', en: '' }, prompt: { en: 'What did the board fill up with?' },
+      options: [e('Exceptions (ただし, "however") and conditions (なら, "if"), one for each hard case over the years.', 1), e('The prices of goods.', 0, 'It is the toll board.'), e('The keepers\' names.', 0, 'ただし and なら: rules.')] })],
+    A: [ch({ item: 'g:igai', ctx: { jp: P3 + ' 。 ' + P4 + ' 。', en: '' }, prompt: { en: 'What is the tale suggesting about the last rule?' },
+      options: [e('That the rule that mattered most stood behind all the written exceptions, and could not be written as one more condition.', 1), e('That the keeper forgot to write it.', 0, 'The tale sets it apart, as the one rule behind the others.'), e('That there were no more rules.', 0, 'There was one more: it was simply never written.')] })],
+  } };
+
+  // ---- the waymarkers' sayings on conditions: the one that breaks the rule (A34) ------------------------------------------
+  // F: a condition with と or たら must lead where it naturally would. E: ～ば after an い-adjective or a verb; な-adjectives
+  // and nouns take なら. I: と cannot end in a request; ても needs a result against the condition. A: ～ない限り, ～さえ～ば
+  // and ～を除いて must say what they mean.
+  C.hallW6Cards = {};
+  function counter(F, E, I, A, pat) {
+    C.hallW6Cards[pat] = { F, E, I, A };
+    const mk = (item, list, prompt) => ch({ item, ctx: { jp: list.map((x, i) => (i + 1) + ' 、 ' + x[0]).join(' ／ '), en: '' }, prompt: { en: prompt }, options: list.map((x, i) => o(String(i + 1) + ' 、 ' + x[0], x[1], x[2])) });
+    return {
+      F: [mk('g:cond_to', F, 'Three sayings give a condition that leads where it should. Which one breaks the rule?')],
+      E: [mk('g:cond_ba', E, 'Three sayings make a condition correctly. Which one breaks the rule?')],
+      I: [mk('g:cond_tara', I, 'Three sayings use と, たら, ても and 場合 the way they work. Which one breaks the rule?')],
+      A: [mk('g:kagiri', A, 'Three sayings use ～限り, ～さえ～ば and ～を除いて correctly. Which is the counterexample?')],
+    };
+  }
+  const C0 = counter(
+    [['はる に なる と 、 さくら が さく', 0, 'Spring comes, the cherries flower: a natural result with と. Correct.'], ['あめ が ふったら 、 かさ を さす', 0, 'Correct.'], ['よる に なる と 、 そら が あかるく なる', 1, 'Night does not make the sky bright: よる に なる と 、 そら が くらく なる.'], ['みぎ に まがる と 、 せきしょ が ある', 0, 'と for what you find: correct.']],
+    [['{安|やす}ければ 、 {買|か}う', 0, 'An い-adjective: {安|やす}い → {安|やす}ければ. Correct.'], ['{時間|じかん} が あれば 、 {行|い}きます', 0, 'Correct.'], ['{静|しず}かければ 、 {眠|ねむ}れる', 1, 'A な-adjective has no ければ: {静|しず}か なら (or {静|しず}か で あれば).'], ['{雨|あめ} なら 、 {中止|ちゅうし} です', 0, 'A noun + なら: correct.']],
+    [['{峠|とうげ} に {着|つ}いたら 、 {知|し}らせて ください', 0, 'たら can end in a request: correct.'], ['{雨|あめ} が {降|ふ}って も 、 {行|い}きます', 0, 'ても, even if: correct.'], ['{峠|とうげ} に {着|つ}く と 、 {知|し}らせて ください', 1, 'と gives a natural or habitual result and cannot end in a request: {着|つ}いたら.'], ['{安|やす}くて も 、 {要|い}らない', 0, 'Correct.']],
+    [['{雨|あめ} が {降|ふ}らない {限|かぎ}り 、 {祭|まつ}り は {行|おこな}われる', 0, 'Unless it rains: correct.'], ['{名前|なまえ} さえ {書|か}けば 、 {誰|だれ} でも {通|とお}れる', 0, 'さえ…ば: this alone is enough. Correct.'], ['{日曜|にちよう} を {除|のぞ}いて 、 {毎日|まいにち} {開|あ}いて いる', 0, 'Correct.'], ['{薬|くすり} さえ {飲|の}めば 、 {熱|ねつ} が {上|あ}がる', 1, 'The counterexample: さえ…ば names the one thing that is enough for a hoped-for result, and nobody hopes for a rising fever. {薬|くすり} さえ {飲|の}めば 、 {熱|ねつ} は {下|さ}がる.']], 0);
+  const C1 = counter(
+    [['なつ に なる と 、 あつく なる', 0, 'Correct.'], ['おなか が すいたら 、 ごはん を たべる', 0, 'Correct.'], ['ふゆ に なる と 、 ゆき が とける', 1, 'Winter does not melt the snow: はる に なる と 、 ゆき が とける.'], ['この みち を いく と 、 はし が ある', 0, 'Correct.']],
+    [['{暇|ひま} なら 、 {手伝|てつだ}って', 0, 'A な-adjective + なら: correct.'], ['{寒|さむ}ければ 、 {窓|まど} を {閉|し}めて ください', 0, 'Correct.'], ['{子供|こども} ければ 、 ただ です', 1, 'A noun has no ければ: {子供|こども} なら (or {子供|こども} で あれば).'], ['{荷物|にもつ} が あれば 、 {二文|にもん} です', 0, 'Correct.']],
+    [['{分|わ}からない {場合|ばあい} は 、 {聞|き}いて ください', 0, 'A case in a rule: correct.'], ['{何度|なんど} {読|よ}んで も 、 {分|わ}からない', 0, 'Correct.'], ['{子供|こども} {以外|いがい} は 、 {一文|いちもん} です', 0, 'Correct.'], ['{雨|あめ} が {降|ふ}って も 、 {傘|かさ} を さす', 1, 'ても needs a result that goes against the condition, and rain is why you put up an umbrella: {雨|あめ} が {降|ふ}ったら 、 {傘|かさ} を さす.']],
+    [['{私|わたし} が {関守|せきもり} で ある {限|かぎ}り 、 {門|もん} は {守|まも}る', 0, 'As long as: correct.'], ['{道|みち} さえ {分|わ}かれば 、 {一人|ひとり} で {行|い}ける', 0, 'Correct.'], ['{祭|まつ}り の {日|ひ} を {除|のぞ}いて 、 {祠|ほこら} の {灯|ひ} は {灯|とも}さない', 0, 'Correct.'], ['{雪|ゆき} が {降|ふ}らない {限|かぎ}り 、 {峠|とうげ} は {通|とお}れない', 1, 'The counterexample: ～ない限り means "unless", so this says the pass is shut unless it snows, the opposite of how snow and passes go. {雪|ゆき} が {降|ふ}らない {限|かぎ}り 、 {峠|とうげ} は {通|とお}れる.']], 1);
+  const cardStretch = [ch({ item: 'g:kagiri', ctx: { jp: '{雨|あめ} が {降|ふ}らなければ 、 {祭|まつ}り は {行|おこな}われる 。 ／ {雨|あめ} が {降|ふ}らない {限|かぎ}り 、 {祭|まつ}り は {行|おこな}われる 。', en: '' }, prompt: { en: 'What does ～ない限り add?' },
+    options: [e('It makes the festival a firm, standing plan that only rain can stop: the condition becomes the one exception, rather than one of two possibilities.', 1), e('Nothing: it is only more formal.', 0, 'It is firmer, too: the plan stands unless.'), e('It means the festival is held only if it rains.', 0, 'The opposite: unless it rains.')] })];
+  C.challenges['hall.w6.counter0'] = { title: T('{道標|みちしるべ}', 'The waymarkers'), tiers: C0, stretchA: cardStretch };
+  C.challenges['hall.w6.counter1'] = { title: T('{道標|みちしるべ}', 'The waymarkers'), tiers: C1, stretchA: cardStretch };
+
+  // ---- asking what Kihei's ledger says about going on after dark (A12) -------------------------------------------------------
+  C.challenges['hall.w6.ask'] = { title: T('キヘエ の {帳面|ちょうめん}', 'Kihei\'s ledger'), tiers: {
+    F: [ch({ item: 'g:cond_tara', prompt: { en: 'You want to know who may go on up the pass once it is dark. What do you ask?' },
+      options: [o('くらく なったら 、 だれ が とおれます か 。', 1), o('くらく なったら 、 なに を たべます か 。', 0, 'That asks what people eat after dark.'), o('あさ に なったら 、 どこ へ いきます か 。', 0, 'That asks about the morning.')] })],
+    E: [ch({ item: 'g:cond_tara', prompt: { en: 'You want to know whom the keeper may let through once it is dark. What do you ask?' },
+      options: [o('{暗|くら}く なったら 、 {誰|だれ} を {通|とお}して も いい ん です か 。', 1), o('{暗|くら}く なる {前|まえ} に 、 {誰|だれ} が {来|き}ました か 。', 0, 'That asks who came before dark.'), o('{暗|くら}い {道|みち} は 、 {好|す}き です か 。', 0, 'That asks whether they like dark roads.')] })],
+    I: [ch({ item: 'g:baai', prompt: { en: 'You want to know whether the ledger gives any case when someone may go on after dark. What do you ask?' },
+      options: [o('{日|ひ} が {暮|く}れた {後|あと} でも {通|とお}して いい {場合|ばあい} は 、 {帳面|ちょうめん} に {書|か}いて あります か 。', 1), o('{日|ひ} が {暮|く}れたら 、 {帳面|ちょうめん} を {書|か}かなくて も いい ん です か 。', 0, 'That asks whether the ledger need not be kept after dark.'), o('{帳面|ちょうめん} に は 、 {通行料|つうこうりょう} が いくら か {書|か}いて あります か 。', 0, 'That asks what the toll is.')] })],
+    A: [ch({ item: 'g:keigo_kenjo', prompt: { en: 'Ask, politely, in what cases the ledger allows travel after sunset.' },
+      options: [o('{恐|おそ}れ{入|い}ります が 、 {日没|にちぼつ} {後|ご} に {通行|つうこう} が {認|みと}められる の は 、 どの よう な {場合|ばあい} か 、 お{教|おし}え いただけます か 。', 1), o('{日没|にちぼつ} {後|ご} は 、 {帳面|ちょうめん} を {拝見|はいけん} して は いけません か 。', 0, 'That asks whether you may not look at the ledger after sunset.'), o('{通行|つうこう} の {際|さい} は 、 {必|かなら}ず お{知|し}らせ いたします 。', 0, 'That promises to tell them when you pass.')] })],
+  },
+  stretchA: [ch({ item: 'g:kagiri', ctx: { jp: '{日没|にちぼつ} {後|ご} の {通行|つうこう} は {認|みと}めない 。 ただし 、 {提灯|ちょうちん} を {持|も}つ {者|もの} は 、 この {限|かぎ}り で は ない 。', en: '' }, prompt: { en: 'What does この限りではない say, at the end of the rule?' },
+    options: [e('That the rule just stated does not apply to them: the formal way a notice sets out an exception after ただし.', 1), e('That the doctor\'s road has no end.', 0, '限り here is the limit of the rule, not of a road.'), e('That they may cross only once.', 0, 'It lifts the rule for them; it sets no number.')] })] };
+
+  // ---- the riddle stone (a reprieve) -----------------------------------------------------------------------------------------
+  C.challenges['hall.w6.riddle'] = { title: T('なぞなぞ の {石|いし}', 'The riddle stone'), tiers: {
+    F: [ch({ item: 'g:cond_to', ctx: { jp: 'あける と 、 とおれる 。 しめる と 、 とおれない 。 なあに ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('もん', 1), o('まど', 0, 'You open a window, but you do not walk through it.'), o('はし', 0, 'A bridge is never shut.')] })],
+    E: [ch({ item: 'g:cond_ba', ctx: { jp: '{払|はら}えば {通|とお}れて 、 {払|はら}わなければ {通|とお}れない 。 {峠|とうげ} に ある もの 、 {何|なん} だ ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{関所|せきしょ}', 1), o('{茶屋|ちゃや}', 0, 'At a teahouse you pay to eat, not to pass.'), o('{橋|はし}', 0, 'A bridge lets you over for nothing.')] })],
+    I: [ch({ item: 'g:temo', ctx: { jp: '{雨|あめ} が {降|ふ}って も {傘|かさ} を ささない 。 {晴|は}れて も {休|やす}まない 。 {一年中|いちねんじゅう} 、 {峠|とうげ} に {立|た}って いる もの 、 {何|なん} だ ？', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{道標|みちしるべ}', 1), o('{関守|せきもり}', 0, 'The keeper goes in out of the rain.'), o('{旅人|たびびと}', 0, 'A traveller moves on.')] })],
+    A: [ch({ item: 'g:kagiri', ctx: { jp: '{通|とお}す {限|かぎ}り {減|へ}らず 、 {止|と}める {限|かぎ}り {溢|あふ}れる 。 {人|ひと} の {情|なさ}け に も {似|に}た もの 、 {何|なに} か 。', en: '' }, prompt: { en: 'What is it?' },
+      options: [o('{川|かわ}', 1), o('{池|いけ}', 0, 'A pond lets nothing through.'), o('{雪|ゆき}', 0, 'Snow is not let through, nor stopped.')] })],
+  },
+  stretchA: [ch({ item: 'g:kagiri', ctx: { jp: '{通|とお}す {限|かぎ}り {減|へ}らず 、 {止|と}める {限|かぎ}り {溢|あふ}れる 。 {人|ひと} の {情|なさ}け に も {似|に}た もの 。', en: '' }, prompt: { en: 'Why is a river like kindness, in the riddle?' },
+    options: [e('Both stay as they are only while they are let through: a river passed on never runs short, and dammed it floods; kindness kept back by a rule builds up the same way, which is what happens at Kihei\'s gate.', 1), e('Both are cold.', 0, 'The riddle is about letting through.'), e('Both run downhill.', 0, 'The riddle compares letting through with holding back.')] })] };
+
+  // ---- t5: the mist on the pass (the porters fly; in mist) --------------------------------------------------------------------
+  C.encounters = C.encounters || {};
+  const FOG = { enemy: 'cr.fogporter', name: say('{霧|きり} の {運|はこ}び{手|て}', 'Mist porter'), conditions: ['airborne'], knots: 2, music: 'battle_atlas' };
+  C.encounters['hall.w6.mist'] = {
+    id: 'hall.w6.mist', kind: 'battle', name: say('{峠|とうげ} の {霧|きり}', 'The mist on the pass'),
+    lead: Object.assign({}, FOG, { knots: 3 }),
+    group: { normal: [FOG], hard: [FOG, FOG] },
+    rules: { wait: true, conditions: true }, field: ['mist'],
+  };
+
+  // ---- t9: Ibuki and Otsuta at the shut gate (a mediation) -------------------------------------------------------------------
+  function task(item, en, ok, w1, why1, w2, why2) {
+    const low = ch({ item, prompt: { en }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }] });
+    const high = ch({ item, prompt: { en: en + ' (Read them closely: two are near.)' }, options: [{ jp: ok, ok: true }, { jp: w1, ok: false, why: { en: why1 } }, { jp: w2, ok: false, why: { en: why2 } }] });
+    return { F: low, E: low, I: high, A: high };
+  }
+  C.encounters['hall.w6.night'] = {
+    id: 'hall.w6.night', kind: 'social', name: say('イブキ と オツタ', 'Ibuki and Otsuta'),
+    rules: { wait: true },
+    autoRoute: ['s:calm', 's:exception', 'wait', 's:through'],
+    social: {
+      parties: [
+        { aid: 'n:ibuki', name: say('イブキ', 'Ibuki'), stance: 'heated', wants: { en: 'To keep the gate exactly as the board says, so that nobody can say they let Kihei down.' } },
+        { aid: 'n:otsuta', name: say('オツタ', 'Otsuta'), stance: 'heated', wants: { en: 'To get her baby over the pass to the doctor tonight.' } },
+      ],
+      claims: {
+        rule: { by: 'n:ibuki', jp: '{鐘|かね} が {鳴|な}ったら 、 {門|もん} は {開|あ}けない 。 {例外|れいがい} は ない 。 {私|わたし} が そう {書|か}いた 。', en: 'Ibuki: "Once the bell has rung, the gate stays shut. No exceptions. I wrote that myself."' },
+        need: { by: 'n:otsuta', jp: '{熱|ねつ} が {下|さ}がらない ん です 。 {朝|あさ} まで {待|ま}ったら 、 この {子|こ} は …… 。', en: 'Otsuta: "The fever won\'t come down. If we wait till morning, this child…"' },
+        last: { by: 'n:ibuki', jp: '…… キヘエ さん は 、 いつも 「 {困|こま}って いる {者|もの} は 、 {通|とお}して やれ 」 と {言|い}って いた 。 でも 、 どこ に も {書|か}いて ない 。', en: 'Ibuki: "…Kihei always used to say, \'Let anyone in trouble through.\' But it isn\'t written anywhere."', hidden: true },
+      },
+      understanding: 3,
+      gesture: { name: say('{赤|あか}ん{坊|ぼう} の {額|ひたい} に {手|て} を {当|あ}てる', 'Lay a hand on the baby\'s forehead'), desc: 'Lay the back of your hand on the baby\'s forehead, as anyone would.', effect: { stance: { 'n:otsuta': 'listening' } }, once: true, says: { en: 'The baby is burning hot. Otsuta watches your face, and for a moment she breathes.' } },
+      unravelTip: { en: 'Nothing is knotted. What is tangled is a rule written in fear, and a rule never written at all.' },
+      actions: [
+        { id: 'calm', kind: 'restate', label: say('お{二人|ふたり} と も 、 {大事|だいじ} な もの を {守|まも}ろう と して いる ん です ね 。', 'Say back what each of them is protecting'),
+          task: task('g:cond_tara', 'Which says back what both of them are doing?', 'お{二人|ふたり} と も 、 {大事|だいじ} な もの を {守|まも}ろう と して いる ん です ね 。', '{決|き}まり なんて 、 {守|まも}らなくて も いい ん です ね 。', 'That says rules need not be kept; neither of them thinks so.', 'お{二人|ふたり} と も 、 {早|はや}く {寝|ね}たい ん です ね 。', 'Nobody here is thinking of sleep.'),
+          cases: [{ when: { stance: { 'n:ibuki': 'heated' } }, effect: { stance: { 'n:ibuki': 'listening' } }, says: { en: 'Ibuki\'s grip on the bar loosens a little. "…Yes. The gate. Kihei trusted me with it."' } },
+            { when: { stance: { 'n:otsuta': 'heated' } }, effect: { stance: { 'n:otsuta': 'listening' } }, says: { en: 'Otsuta stops pleading and holds the baby closer. "…Yes."' } }],
+          says: { en: 'They are already listening.' } },
+        { id: 'exception', kind: 'ask', label: say('{鐘|かね} の {後|あと} でも 、 {通|とお}して いい {場合|ばあい} は ありません か 。', 'Ask whether there is any case for opening after the bell'), once: true, when: { stance: { 'n:ibuki': 'listening' } },
+          task: task('g:baai', 'Which asks whether there is any case when the gate may open after the bell?', '{鐘|かね} の {後|あと} でも 、 {通|とお}して いい {場合|ばあい} は ありません か 。', '{鐘|かね} の {前|まえ} なら 、 {通|とお}れました か 。', 'That asks about before the bell, which is past.', '{門|もん} は 、 {何時|なんじ} に {開|あ}きます か 。', 'That asks when the gate opens in the morning.'),
+          effect: { reveal: 'last', understanding: 1 }, says: { en: 'Ibuki is quiet for a long moment. "…Kihei always said, \'Let anyone in trouble through.\' He never wrote it down. I was afraid to, without him."' } },
+        { id: 'through', kind: 'propose', label: say('「 {困|こま}って いる {者|もの} は 、 {通|とお}して やれ 」 が キヘエ さん の {決|き}まり なら 、 {今夜|こんや} は その {場合|ばあい} です 。', 'Propose that tonight is the case Kihei\'s rule was for'), when: { claims: ['last'] },
+          task: task('g:cond_nara', 'Which says that, if that is Kihei\'s rule, tonight is its case?', '「 {困|こま}って いる {者|もの} は 、 {通|とお}して やれ 」 が キヘエ さん の {決|き}まり なら 、 {今夜|こんや} は その {場合|ばあい} です 。', '{困|こま}って いない {人|ひと} だけ 、 {通|とお}して ください 。', 'That lets through only those who are not in trouble.', '{決|き}まり を {全部|ぜんぶ} {消|け}して ください 。', 'That throws out every rule, not just the one written in fear.'),
+          effect: { flag: 'through' }, says: { en: 'Ibuki looks at the bar, and at the baby, and lifts the bar. "Go. Down the far side, the doctor\'s is the house with the red lantern. I\'ll leave ours lit for you."' } },
+        { id: 'blunt', kind: 'propose', label: say('{決|き}まり なんて 、 どう でも いい 。 {門|もん} を {開|あ}けて 。', 'Tell Ibuki the rules don\'t matter'), lasting: true, means: { en: 'You will tell Ibuki their rules don\'t matter.' },
+          task: task('v:決まり', 'Which tells Ibuki the rules don\'t matter?', '{決|き}まり なんて 、 どう でも いい 。 {門|もん} を {開|あ}けて 。', '{決|き}まり を 、 もう {一度|いちど} {読|よ}んで みましょう 。', 'That is gentle; it asks to read them again.', 'キヘエ さん に 、 {聞|き}いて みましょう か 。', 'That suggests asking Kihei.'),
+          effect: { stance: { 'n:ibuki': 'leaving' } }, says: { en: 'Ibuki\'s face shuts like the gate. They go into the guard hut and slide the door to. Otsuta sinks down by the gate with her baby.' } },
+      ],
+      responses: {
+        water: { effect: { stance: { 'n:otsuta': 'listening' } }, says: { en: 'You wet a cloth and lay it on the baby\'s forehead. Otsuta nods her thanks, unable to speak.' } },
+        unravel: { says: { en: 'Nothing here is knotted. Listen for the rule nobody wrote.' } },
+      },
+      wait: { when: { stance: { 'n:ibuki': 'listening' } }, effect: { reveal: 'last' }, says: { en: 'Ibuki says, half to themself, "Kihei would have opened it. He always said: anyone in trouble."' } },
+      drift: [{ when: { all: [{ rounds: 3 }, { stance: { 'n:ibuki': 'heated' } }] }, once: true, effect: { stance: { 'n:ibuki': 'listening', 'n:otsuta': 'listening' } }, says: { en: 'The baby\'s crying goes thin and quiet, which is worse. Ibuki hears it too, and lets go of the bar.' } }],
+      companion: {
+        nao: [{ id: 'nao_urgent', name: say('{急|いそ}ぎ の {手紙|てがみ}', 'Urgent letters'), desc: 'Nao, who has carried letters through barriers at night, says how.', once: true, effect: { understanding: 1, stance: { 'n:ibuki': 'listening' } }, says: { en: 'Nao: "Every barrier I\'ve passed at night had a rule for urgent letters. A sick child is more urgent than any letter." Ibuki looks at Nao.' } }],
+        mio: [{ id: 'mio_fever', name: say('{熱|ねつ} を {診|み}る', 'Look at the fever'), desc: 'Mio looks at the baby as a healer would.', once: true, effect: { understanding: 1, stance: { 'n:otsuta': 'listening' } }, says: { en: 'Mio checks the baby\'s breathing and the colour of its lips. "This is a real fever. She\'s right to go tonight."' } }],
+        ren: [{ id: 'ren_order', name: say('{灯守|ひもり} の {決|き}まり', 'The lamp-keepers\' rule'), desc: 'Ren speaks of the order\'s own rules.', once: true, effect: { understanding: 1, stance: { 'n:ibuki': 'listening' } }, says: { en: 'Ren: "The lamp-keepers\' rule book has a hundred rules. The first page says: all of these give way to someone in need." Ibuki\'s hand leaves the bar.' } }],
+        suzu: [{ id: 'suzu_play', name: say('{門番|もんばん} の {芝居|しばい}', 'The gatekeeper in the play'), desc: 'Suzu remembers the play everyone knows about a gate.', once: true, effect: { understanding: 1 }, says: { en: 'Suzu: "There\'s a play about a barrier keeper who knows the rule and lets them through anyway. Audiences cry every night. It\'s the keeper they cry for."' } }],
+      },
+    },
+    conclusions: [
+      { id: 'shut', when: { left: 'n:ibuki' }, result: 'end', text: { en: 'Ibuki has shut themself in the guard hut. Otsuta waits by the gate; you can try again.' } },
+      { id: 'through', when: { flag: 'through' }, result: 'win', text: { en: 'The gate opens for Otsuta and her baby.' } },
+    ],
+  };
+
+  // ---- t10: the night at the gate (the capstone) ------------------------------------------------------------------------------
+  function hear(item, fJp, jp, en, ok, w1, why1, w2, why2) {
+    const opts = (two) => [{ en: ok, ok: true }, { en: w1, ok: false, why: { en: why1 } }].concat(two ? [{ en: w2, ok: false, why: { en: why2 } }] : []);
+    return { F: ch({ item, ctx: { jp: fJp, en: '' }, prompt: { en }, options: opts(false) }), E: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(false) }), I: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(true) }), A: ch({ item, ctx: { jp, en: '' }, prompt: { en }, options: opts(true) }) };
+  }
+  const A = (id, jp, en, more) => Object.assign({ id, label: { jp, en } }, more);
+  const vals = (x) => { const out = {}; for (const k in x) out[k] = { jp: x[k][0], en: x[k][1] }; return out; };
+  const HOUR = vals({ bell: ['{鐘|かね} が {鳴|な}った', 'the bell has rung'], late: ['{夜更|よふ}け', 'late in the night'], small: ['{真夜中|まよなか} {過|す}ぎ', 'past midnight'], dawn: ['{夜明|よあ}け', 'dawn'], kept: ['{朝|あさ}', 'morning'] });
+  C.encounters['hall.w6.watch'] = {
+    id: 'hall.w6.watch', kind: 'procedure', name: say('{門|もん} の {夜|よる}', 'The night at the gate'),
+    rules: { wait: true },
+    procedure: {
+      id: 'hall_w6_watch', version: 1, restart: 'stable',
+      machine: { hour: 'bell' },
+      show: [{ key: 'hour', label: say('{夜|よる}', 'The night'), values: HOUR }],
+      done: { en: 'The night is kept, and the gate opens on the morning.' },
+      steps: [
+        { id: 'g1', stable: true, text: say('イブキ ： 「 {鐘|かね} が {鳴|な}ったら 、 {門|もん} を {閉|し}める 。 ただし 、 {峠|とうげ} に まだ {誰|だれ} か いる {場合|ばあい} は 、 {門|もん} に {提灯|ちょうちん} を {掛|か}けて おく 。 」', 'Ibuki: "When the bell rings, we shut the gate. But if anyone is still out on the pass, we hang a lantern on it."'),
+          task: hear('g:baai', 'イブキ ： 「 とうげ に まだ だれ か いたら 、 もん に ちょうちん を かけて おく 。 」', 'イブキ ： 「 {鐘|かね} が {鳴|な}ったら 、 {門|もん} を {閉|し}める 。 ただし 、 {峠|とうげ} に まだ {誰|だれ} か いる {場合|ばあい} は 、 {門|もん} に {提灯|ちょうちん} を {掛|か}けて おく 。 」', 'What do you do if someone is still out on the pass?',
+            'Hang a lantern on the gate.', 'Leave the gate open.', 'The gate is shut either way; the lantern is the exception.', 'Ring the bell again.', 'The bell has rung; the lantern is for whoever is still out.'),
+          actions: [
+            A('hang', 'オツタ の ため に 、 {門|もん} に {提灯|ちょうちん} を {掛|か}ける', 'Hang a lantern on the gate for Otsuta', { ok: true, set: { hour: 'late' }, means: { en: 'Otsuta is still on the far side of the pass. You hang a lantern on the gate.' }, result: { en: 'The lantern sways on its hook, a small light on the black pass. Somewhere below, Otsuta will see it.' } }),
+            A('shut', '{門|もん} を {閉|し}めて 、 {寝|ね}る', 'Shut the gate and go to bed', { means: { en: 'You go to shut up for the night.' }, wrong: { en: 'Ibuki catches your arm. "Otsuta\'s still out there. The lantern first."' } }),
+          ] },
+        { id: 'g2', stable: true, text: say('ハンベエ ： 「 {朝|あさ} の {市|いち} に {間|ま}に{合|あ}いたい ん だ 。 {通|とお}して くれ 。 」 イブキ ： 「 {急|いそ}いで いる だけ なら 、 {朝|あさ} まで {待|ま}って もらう 。 」', 'Hanbei: "I want to make the morning market. Let me through." Ibuki: "If you\'re only in a hurry, you wait till morning."'),
+          task: hear('g:cond_nara', 'イブキ ： 「 いそいで いる だけ なら 、 あさ まで まって もらう 。 」', 'ハンベエ ： 「 {朝|あさ} の {市|いち} に {間|ま}に{合|あ}いたい ん だ 。 {通|とお}して くれ 。 」 イブキ ： 「 {急|いそ}いで いる だけ なら 、 {朝|あさ} まで {待|ま}って もらう 。 」', 'What does Ibuki say about Hanbei?',
+            'Being only in a hurry is no reason to open at night: he waits till morning.', 'He may go if he pays two mon.', 'Nothing on the board sells the night.', 'He must go back down the pass.', 'He only has to wait.'),
+          actions: [
+            A('rest', 'ハンベエ に 、 {朝|あさ} まで {奥|おく} で {休|やす}んで もらう', 'Let Hanbei sleep in the guard hut till morning', { ok: true, set: { hour: 'small' }, means: { en: 'You offer Hanbei a corner of the guard hut until morning.' }, result: { en: 'Hanbei grumbles, then snores. He will make the market anyway; it is downhill.' } }),
+            A('let', 'ハンベエ を {通|とお}す', 'Let Hanbei through', { means: { en: 'You reach for the bar.' }, wrong: { en: 'Ibuki shakes their head. "Being in a hurry isn\'t the same as being in trouble."' } }),
+          ] },
+        { id: 'g3', stable: true, text: say('{木|き}こり ： 「 {霧|きり} で {道|みち} に {迷|まよ}って 、 {足|あし} を くじいた 。 」 イブキ ： 「 {困|こま}って いる {人|ひと} なら 、 {夜|よる} でも {通|とお}す 。 キヘエ さん なら 、 そう する 。 」', 'A woodcutter: "I lost my way in the mist and twisted my ankle." Ibuki: "Someone in trouble, we let through, even at night. Kihei would."'),
+          task: hear('g:cond_nara', 'イブキ ： 「 こまって いる ひと なら 、 よる でも とおす 。 」', '{木|き}こり ： 「 {霧|きり} で {道|みち} に {迷|まよ}って 、 {足|あし} を くじいた 。 」 イブキ ： 「 {困|こま}って いる {人|ひと} なら 、 {夜|よる} でも {通|とお}す 。 キヘエ さん なら 、 そう する 。 」', 'What does Ibuki decide about the woodcutter?',
+            'He is in trouble, so the gate opens for him, night or not.', 'He must wait till morning like Hanbei.', 'Hanbei was only in a hurry; the woodcutter is hurt.', 'He must pay double for the night.', 'Nobody in trouble is charged.'),
+          actions: [
+            A('open', '{門|もん} を {開|あ}けて 、 {木|き}こり を {火|ひ} の {側|そば} に {連|つ}れて くる', 'Open the gate and bring the woodcutter to the fire', { ok: true, set: { hour: 'dawn' }, means: { en: 'You lift the bar and help the woodcutter in to the hearth.' }, result: { en: 'The woodcutter sits by the fire with his ankle bound. Outside, the sky over the pass is going grey.' } }),
+            A('wait', '{朝|あさ} まで {外|そと} で {待|ま}って もらう', 'Tell him to wait outside till morning', { means: { en: 'You go to tell him to wait outside.' }, wrong: { en: 'Ibuki is already lifting the bar. "On a twisted ankle, in the mist? No."' } }),
+          ] },
+        { id: 'g4', stable: true, text: say('キヘエ ： 「 {決|き}まり は 、 {人|ひと} の ため に ある 。 {人|ひと} が {決|き}まり の ため に ある ん じゃ ない 。 」', 'Kihei: "Rules are there for people. People aren\'t there for rules."'),
+          task: hear('v:決まり', 'キヘエ ： 「 きまり は 、 ひと の ため に ある 。 」', 'キヘエ ： 「 {決|き}まり は 、 {人|ひと} の ため に ある 。 {人|ひと} が {決|き}まり の ため に ある ん じゃ ない 。 」', 'What does Kihei say rules are for?',
+            'For people; people are not for rules.', 'For the keeper\'s pay.', 'He says nothing about pay.', 'For being changed every day.', 'He says what they are for, not how often they change.'),
+          actions: [
+            A('write', '「 {困|こま}って いる {者|もの} は 、 {通|とお}して やれ 」 と {札|ふだ} に {書|か}き{足|た}す', 'Write "Let anyone in trouble through" on the board', { ok: true, set: { hour: 'kept' }, means: { en: 'You take the brush and write the last rule at the foot of the board.' }, result: { en: 'Kihei reads it, and nods. Ibuki crosses out the line they wrote last night, the one that said no exceptions.' } }),
+            A('erase', '{決|き}まり を {全部|ぜんぶ} {消|け}す', 'Wipe every rule off the board', { means: { en: 'You reach to wipe the board clean.' }, wrong: { en: 'Kihei laughs. "Then how would anyone know what the toll is? Keep them. Just add the one I never wrote."' } }),
+          ] },
+      ],
+    },
+    conclusions: [{ id: 'done', when: { proc: 'done' }, result: 'win', text: { en: 'The night at the gate is kept.' } }],
+  };
+})(RB.content);
+
+
+/* ==== src/content/hall/28_w6_scenes.js ==== */
+/* The Hall of a Hundred Tales, wing 6, The Toll That Changed: the scenes (expansion P15; plan 04_DUNGEONS.md D9; maps in
+ * 26_w6_maps.js, tasks and encounters in 27_w6_learning.js). Each trial sets its floor's own flag and tells the Hall;
+ * what a trial shows follows the level its task is set at (the profile, or one up on the Grow route); the pattern
+ * (hall.w6.pat) chooses the travellers' circumstances, the lantern rule, the ledger's night rule and the help board's
+ * cases. Kihei and Hanbei he/him, Ibuki and Kōun they/them, Ofuku, Momo and Otsuta she/her. Suzu's lines have Kansai
+ * versions (src/content/dialect/kansai_99_hall.js). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+(function (C) {
+  'use strict';
+  const K = C.hallKit, W = 'w6', L = K.lv(W), both = L.both;
+  const TALE = C.hallW6Tale, FT = C.hallW6TaleF;
+  const nest = (x) => x.replace(/「/g, '『').replace(/」/g, '』');
+  const LV = (fn) => [0, 1].flatMap((p) => ['F', 'E', 'I', 'A'].map((t) => fn(p, t))).join('');
+  const LV3 = (fn) => [0, 1].flatMap((p) => [['EF', 0], ['E', 1], ['IA', 2]].map(([t, i]) => fn(p, t, i))).join('');
+  const LVN = (fn) => ['F', 'E', 'I', 'A'].map((t) => fn(t)).join('');
+  const LVN3 = (fn) => [['EF', 0], ['E', 1], ['IA', 2]].map(([t, i]) => fn(t, i)).join('');
+  let out = `
+@scene hall.w6.f1_first
+!set hall_w6_f1_seen
+narr: {紙|かみ} の {戸|と} を {抜|ぬ}ける と 、 {秋|あき} の {峠|とうげ} の {麓|ふもと} だった 。 {紅葉|もみじ} の {下|した} に 、 {古|ふる}い {関所|せきしょ} が ある 。 || Through the paper screen: the foot of a mountain pass in autumn. Under the maples stands an old toll gate.
+?(comp=nao) comp: {関所|せきしょ} は 、 {何度|なんど} も {通|とお}った 。 {毎回|まいかい} 、 {決|き}まり が {少|すこ}し ずつ {違|ちが}う ん だ 。 || I've been through plenty of barriers. The rules are a little different every time.
+?(comp=mio) comp: {通行料|つうこうりょう} 、 ね 。 {薬|くすり} の {行商|ぎょうしょう} の {人|ひと} たち は 、 {関所|せきしょ} の {話|はなし} ばかり して いた わ 。 || Tolls. The travelling medicine sellers never talked about anything but barriers.
+?(comp=ren) comp: {関守|せきもり} も 、 {灯守|ひもり} と {同|おな}じ です 。 {決|き}まり を {守|まも}る の が 、 {仕事|しごと} です 。 || A barrier keeper is like a lamp-keeper. Keeping the rules is the job.
+?(comp=suzu) comp: {第|だい}{六幕|ろくまく} は 、 {関所|せきしょ} の {場|ば} ね 。 {関所|せきしょ} の {芝居|しばい} に は 、 {名場面|めいばめん} が {多|おお}い の よ 。 || Act six: the barrier scene. Barrier plays are full of famous scenes.
+?(!comp) narr: {冷|つめ}たい {風|かぜ} が 、 {峠|とうげ} から {吹|ふ}き{下|お}ろして くる 。 || A cold wind blows down off the pass.
+
+@scene hall.w6.f2_first
+!set hall_w6_f2_seen
+narr: {峠|とうげ} の {道|みち} は 、 {夕暮|ゆうぐ}れ の {中|なか} を {上|のぼ}って いく 。 {道|みち} に {沿|そ}って 、 {火|ひ} の {入|はい}って いない {灯籠|とうろう} が {並|なら}んで いる 。 || The road climbs the pass into the dusk. Along it stand stone lanterns, none of them lit.
+?(comp) comp: {暗|くら}く なる {前|まえ} に 、 {灯籠|とうろう} を {灯|とも}さない と 。 でも 、 {決|き}まり が ある みたい だ ね 。 || We should light the lanterns before it's dark. But there seems to be a rule.
+
+@scene hall.w6.f3_first
+!set hall_w6_f3_seen
+narr: {峠|とうげ} の {上|うえ} の {門|もん} 。 {日|ひ} が {沈|しず}んで 、 {鐘|かね} が {鳴|な}った 。 {門|もん} の {前|まえ} に 、 {赤|あか}ん{坊|ぼう} を {抱|だ}いた {女|おんな} の {人|ひと} が {立|た}って いる 。 || The gate at the top of the pass. The sun has set and the bell has rung. Before the gate stands a woman with a baby in her arms.
+?(comp=nao) comp: …… {急|いそ}ぎ の {用|よう} が ある {顔|かお} だ 。 || …That's the face of someone with an urgent errand.
+?(comp=mio) comp: あの {子|こ} 、 {熱|ねつ} が ある わ 。 {顔|かお} が {赤|あか}い 。 || That baby has a fever. Look how flushed it is.
+?(comp=ren) comp: {鐘|かね} の {後|あと} の {門|もん} 。 {関守|せきもり} に とって 、 {一番|いちばん} {難|むずか}しい {時間|じかん} です 。 || The gate after the bell: the hardest hour for a keeper.
+?(comp=suzu) comp: {幕|まく} が {上|あ}がる と 、 {門|もん} の {前|まえ} に {母|はは} と {子|こ} 。 {泣|な}かせる {場面|ばめん} の {始|はじ}まり よ 。 || Curtain up on a mother and child before the gate. The start of a tear-jerker.
+
+@scene hall.w6.bench1
+!hook hall_station w6_b1
+
+@scene hall.w6.bench2
+!hook hall_station w6_b2
+
+@scene hall.w6.bench3
+!hook hall_station w6_b3
+
+@scene hall.w6.spring
+narr: {峠|とうげ} の {途中|とちゅう} の {湧|わ}き{水|みず} 。 {落|お}ち{葉|ば} が {一枚|いちまい} 、 {浮|う}かんで いる 。 || A spring partway up the pass, a single fallen leaf floating on it.
+!hook hall_station w6_sp
+
+@scene hall.w6.kihei
+!faceplayer hall_kihei
+!if hall.w6.t1 -> after
+hall_kihei: {腰|こし} を {痛|いた}めて な 。 {関所|せきしょ} は 、 イブキ に {任|まか}せて ある 。 …… {真面目|まじめ} すぎる の が 、 {玉|たま} に {瑕|きず} じゃ が な 。 || I've done my back in. I've left the gate to Ibuki. …Too conscientious by half, that one.
+!end
+:after
+hall_kihei: {絵|え} の {通|とお}り じゃ 。 {札|ふだ} は 、 {増|ふ}える {一方|いっぽう} で な 。 || Just like the pictures. The board only ever grows.
+
+@scene hall.w6.ibuki
+!faceplayer hall_ibuki
+!if hall.w6.t2 -> done
+hall_ibuki: キヘエ さん の {代|か}わり に 、 {関所|せきしょ} を {守|まも}って いる 。 {札|ふだ} の {決|き}まり の {通|とお}り に 、 {一人|ひとり} ずつ {木札|きふだ} を {渡|わた}して 。 {箱|はこ} は そこ 。 || I'm keeping the gate in Kihei's place. Give each traveller the wooden tag the board says they owe. The box is there.
+?(comp) comp: {札|ふだ} の {決|き}まり 、 {先|さき} に {読|よ}もう 。 {例外|れいがい} が {多|おお}そう だ 。 || Let's read the board first. Looks like lots of exceptions.
+!end
+:done
+hall_ibuki: {全部|ぜんぶ} 、 {札|ふだ} の {通|とお}り 。 {間違|まちが}い は ない 。 …… キヘエ さん が {戻|もど}る まで 、 {間違|まちが}えられない ん だ 。 || All by the board. No mistakes. …I can't make any, till Kihei's back.
+
+@scene hall.w6.ibuki2
+!faceplayer hall_ibuki2
+hall_ibuki: {灯籠|とうろう} の {決|き}まり は 、 {柱|はしら} の {札|ふだ} に ある 。 {夜|よる} の {決|き}まり は 、 キヘエ さん の {帳面|ちょうめん} に 。 {小屋|こや} の {机|つくえ} の {上|うえ} だ 。 || The lantern rule is on the board on the post. The night rules are in Kihei's ledger, on the desk in the hut.
+`;
+
+  // ---- t1: the story room ----------------------------------------------------------------------------------------------
+  const E_PANELS = [TALE.P1, TALE.P2, TALE.P3, TALE.P4].map(nest);
+  const F_PANELS = FT.map(nest);
+  const PANEL_EN = ['Long ago the toll at the pass was one mon, for anyone at all.', 'One rainy day the keeper added a rule: "In rain, you may pay on the way back."', 'Every year the rules grew, until the board was full of "however" and "if".', 'Only the last rule was written nowhere at all.'];
+  out += '\n@scene hall.w6.t1' + K.taskTrial({ w: W, k: 0, t: 't1',
+    intro: ['narr: キヘエ の {部屋|へや} の {壁|かべ} に 、 {絵巻|えまき} が {掛|か}けて ある 。 || A picture scroll hangs on the wall of Kihei\'s room.']
+      .concat(...[0, 1, 2, 3].map((i) => ['?(' + L.EF + ') narr: 「 ' + F_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"', '?(' + L.NOTF + ') narr: 「 ' + E_PANELS[i] + ' 。 」 || "' + PANEL_EN[i] + '"']),
+      ['narr: {峠|とうげ} の {風|かぜ} が {吹|ふ}き{込|こ}んで 、 {絵|え} の {順番|じゅんばん} が {乱|みだ}れた 。 || A gust off the pass blows in, and the pictures slip out of order.']),
+    task: 'hall.w6.story',
+    after: ['narr: {絵巻|えまき} が 、 {元|もと} の {順番|じゅんばん} に {戻|もど}った 。 || The scroll is back in its order.', '!challenge hall.w6.story_q',
+      '?(comp=nao) comp: {決|き}まり が {増|ふ}えた {数|かず} だけ 、 {困|こま}った {人|ひと} が {来|き}た ん だ 。 {悪|わる}い こと じゃ ない 。 || Every rule added is someone in trouble who came by. That\'s no bad thing.',
+      '?(comp=mio) comp: 「 ただし 」 の {一|ひと}つ {一|ひと}つ に 、 {誰|だれ} か の {雨|あめ} の {日|ひ} が ある のね 。 || Behind every "however" there\'s somebody\'s rainy day.',
+      '?(comp=ren) comp: {書|か}かれて いない {決|き}まり が 、 {一番|いちばん} {大事|だいじ} な こと も あります 。 || Sometimes the most important rule is the unwritten one.',
+      '?(comp=suzu) comp: {最後|さいご} の {一行|いちぎょう} を {書|か}かない {台本|だいほん} 。 {役者|やくしゃ} を {信|しん}じて いる の ね 。 || A script that leaves out its last line. It trusts its actors.'],
+    later: 'narr: {絵|え} は 、 {後|あと} で {並|なら}べ{直|なお}せる 。 || You can put the pictures in order later.',
+    done: 'narr: {絵巻|えまき} は 、 {元|もと} の {順番|じゅんばん} で {掛|か}かって いる 。 || The scroll hangs in its proper order.' });
+
+  // ---- t2: the toll board and four travellers ---------------------------------------------------------------------------------
+  const RULE = [
+    ['ひとり いちもん 。', '{一人|ひとり} {一文|いちもん} 。', '{通行料|つうこうりょう} は 、 {一人|ひとり} {一文|いちもん} 。', '{通行料|つうこうりょう} は 、 {一人|ひとり} に つき {一文|いちもん} と する 。', 'One mon a head.'],
+    ['にもつ が あれば 、 にもん 。', '{荷物|にもつ} が あれば 、 {二文|にもん} 。', '{荷物|にもつ} の ある {場合|ばあい} は 、 {二文|にもん} 。', '{荷|に} を {負|お}う {者|もの} は 、 {二文|にもん} と する 。', 'With a load, two mon.'],
+    ['こども は ただ 。 でも 、 にもつ が あれば いちもん 。', '{子供|こども} は ただ 。 でも 、 {荷物|にもつ} が あれば {一文|いちもん} 。', '{子供|こども} は ただ 。 ただし 、 {荷物|にもつ} の ある {場合|ばあい} は {一文|いちもん} 。', '{子供|こども} は {無料|むりょう} と する 。 ただし 、 {荷|に} を {負|お}う {場合|ばあい} に {限|かぎ}り 、 {一文|いちもん} と する 。', 'Children go free; but with a load, one mon.'],
+    ['とうげ の むら の ひと は 、 にもつ が あって も ただ 。', '{峠|とうげ} の {村|むら} の {人|ひと} は 、 {荷物|にもつ} が あって も ただ 。', '{峠|とうげ} の {村|むら} の {者|もの} は 、 {荷物|にもつ} が あって も ただ 。', '{峠|とうげ} の {村|むら} の {者|もの} は 、 {荷|に} の {有無|うむ} に かかわらず 、 {無料|むりょう} と する 。', 'People of the pass village go free, even with a load.'],
+  ];
+  const TIX = { free: ['ただ の {木札|きふだ}', 'the free tag'], one: ['{一文|いちもん} の {木札|きふだ}', 'the one-mon tag'], two: ['{二文|にもん} の {木札|きふだ}', 'the two-mon tag'] };
+  const ANS = { 0: { ofuku: 'two', hanbei: 'free', koun: 'one', momo: 'one' }, 1: { ofuku: 'free', hanbei: 'two', koun: 'two', momo: 'free' } };
+  const WHO = { ofuku: ['オフク', 'Ofuku', 'her', 'ありがとう 。 {峠|とうげ} の {上|うえ} で 、 また {会|あ}いましょう 。', 'Thank you. See you at the top of the pass.'],
+    hanbei: ['ハンベエ', 'Hanbei', 'him', '{助|たす}かる よ 。', 'Much obliged.'],
+    koun: ['コウウン', 'Kōun', 'them', 'ありがとう ございます 。', 'Thank you.'],
+    momo: ['モモ', 'Momo', 'her', 'ありがとう ！', 'Thank you!'] };
+  const SIT = {
+    ofuku: { 0: ['くすり の はこ を せおって いる の 。 ふもと の まち から きた わ 。', '{薬|くすり} の {箱|はこ} を {背負|せお}って いる の 。 {麓|ふもと} の {町|まち} から {来|き}た わ 。', '{麓|ふもと} の {町|まち} から {来|き}た の 。 {背中|せなか} の {薬箱|くすりばこ} が {重|おも}くて ね 。', 'I\'ve come up from the town below, with a medicine box on my back.'],
+      1: ['とうげ の むら に すんで いる の 。 にもつ は ない わ 。', '{峠|とうげ} の {村|むら} に {住|す}んで いる の 。 {荷物|にもつ} は ない わ 。', '{峠|とうげ} の {村|むら} で {薬屋|くすりや} を して いる の 。 {売|う}り{物|もの} は 、 {全部|ぜんぶ} {売|う}れて しまった わ 。', 'I live in the pass village, and I\'ve nothing to carry: I sold the lot.'] },
+    hanbei: { 0: ['とうげ の むら の もの だ 。 こめ を はこんで いる 。', '{峠|とうげ} の {村|むら} の {者|もの} だ 。 {米|こめ} を {運|はこ}んで いる 。', '{生|う}まれ も {育|そだ}ち も {峠|とうげ} の {村|むら} だ 。 {背中|せなか} の {米|こめ} は 、 {村|むら} の {祭|まつ}り の {分|ぶん} だ よ 。', 'I\'m from the pass village, carrying rice for the village festival.'],
+      1: ['まち の しょうにん だ 。 にもつ が たくさん ある 。', '{町|まち} の {商人|しょうにん} だ 。 {荷物|にもつ} が たくさん ある 。', '{麓|ふもと} の {町|まち} から 、 {反物|たんもの} を {売|う}り に {来|き}た 。 {荷|に} が {重|おも}くて {大変|たいへん} だ 。', 'I\'m a merchant from the town, with a heavy load of cloth to sell.'] },
+    koun: { 0: ['たび の とちゅう です 。 にもつ は ありません 。', '{旅|たび} の {途中|とちゅう} です 。 {荷物|にもつ} は ありません 。', '{遠|とお}く の お{寺|てら} から {歩|ある}いて {来|き}ました 。 {持|も}ち{物|もの} は 、 この {杖|つえ} だけ です 。', 'I\'m a pilgrim from far away, with nothing to carry but this staff.'],
+      1: ['たび の とちゅう です 。 おきょう の はこ を せおって います 。', '{旅|たび} の {途中|とちゅう} です 。 お{経|きょう} の {箱|はこ} を {背負|せお}って います 。', '{遠|とお}く の お{寺|てら} まで 、 お{経|きょう} を {届|とど}ける {途中|とちゅう} です 。 {箱|はこ} が {重|おも}くて 。', 'I\'m a pilgrim on the road, carrying a box of sutras to a temple far away.'] },
+    momo: { 0: ['まち から きた の 。 かご に くり が いっぱい ！', '{町|まち} から {来|き}た の 。 {籠|かご} に {栗|くり} が いっぱい ！', '{麓|ふもと} の {町|まち} から 、 おばあちゃん の {家|いえ} まで {栗|くり} を {届|とど}ける の 。 {籠|かご} が {重|おも}い の 。', 'I came from the town, with a basket full of chestnuts for Grandma!'],
+      1: ['おかあさん に あい に いく の 。 なにも もって ない よ 。', 'お{母|かあ}さん に {会|あ}い に {行|い}く の 。 {何|なに} も {持|も}って ない よ 。', 'お{母|かあ}さん が {峠|とうげ} の {向|む}こう で {待|ま}って いる の 。 {荷物|にもつ} は 、 {先|さき} に {送|おく}った よ 。', 'I\'m going to see my mother over the pass. I\'m not carrying anything!'] },
+  };
+  const HOLD = (g) => 'xp_hall_w6_f0_hold_' + g, SERVED = (w) => 'xp_hall_w6_f0_served_' + w;
+  out += `
+@scene hall.w6.board
+narr: {軒下|のきした} の {札|ふだ} 。 {墨|すみ} の {字|じ} が 、 {何度|なんど} も {書|か}き{足|た}されて いる 。 || The board under the eaves, written over and added to many times in ink.
+`;
+  for (const r of RULE) out += LVN((t) => `?(${L[t]}) narr: 「 ${r['FEIA'.indexOf(t)]} 」 || "${r[4]}"\n`);
+  for (const g of Object.keys(TIX)) out += `
+@scene hall.w6.tag_${g}
+!unset ${Object.keys(TIX).map(HOLD).join(' ')}
+!set ${HOLD(g)}
+narr: {箱|はこ} から 、 「 ${TIX[g][0]} 」 を {取|と}った 。 || You take ${TIX[g][1]} from the box.
+`;
+  for (const w of Object.keys(SIT)) {
+    const [jp, en, obj, thx, thxEn] = WHO[w];
+    out += `
+@scene hall.w6.n_${w}
+!faceplayer hall_${w}
+!if ${SERVED(w)} -> done
+!if ${Object.keys(TIX).map(HOLD).join('|')} -> give
+`;
+    out += LV3((p, t, i) => `?(${both(L[t], 'hall.w6.pat=' + p)}) hall_${w}: 「 ${SIT[w][p][i]} 」 || "${SIT[w][p][3]}"\n`);
+    out += `!end
+:give
+!if hall.w6.pat=1 -> p1
+!if ${HOLD(ANS[0][w])} -> right
+!goto wrong
+:p1
+!if ${HOLD(ANS[1][w])} -> right
+:wrong
+hall_ibuki: {待|ま}って 。 その {木札|きふだ} で {合|あ}って いる か 、 {札|ふだ} の {決|き}まり を もう {一度|いちど} {読|よ}んで 。 || Wait. Read the board again: is that the right tag?
+!end
+:right
+narr: {木札|きふだ} を ${jp} に {渡|わた}した 。 ${jp} は {木札|きふだ} の {通|とお}り に {払|はら}って 、 {峠|とうげ} へ {向|む}かった 。 || You give ${en} the tag. ${en} pays what it says and sets off up the pass.
+hall_${w}: ${thx} || ${thxEn}
+!unset ${Object.keys(TIX).map(HOLD).join(' ')}
+!set ${SERVED(w)}
+!if ${Object.keys(SIT).map(SERVED).join('&')} -> all
+!refresh
+!end
+:all
+narr: {四人|よにん} と も 、 {札|ふだ} の {決|き}まり の {通|とお}り に {払|はら}って 、 {峠|とうげ} を {上|のぼ}って いった 。 || All four have paid what the board says and gone on up the pass.
+?(comp) comp: {決|き}まり の {通|とお}り 。 「 ても 」 と 「 ただし 」 を {見落|みお}とさなくて よかった 。 || All by the board. Good thing we didn't miss the "even if" and the "however".
+${K.mark(W, 0, 't2')}
+!end
+:done
+hall_${w}: ${thx} || ${thxEn}
+`;
+  }
+
+  // ---- t3: the waymarkers and their stone -----------------------------------------------------------------------------------
+  const CE = {
+    0: { F: ['When spring comes, the cherries flower.', 'If it rains, put up an umbrella.', 'When night comes, the sky grows bright.', 'Turn right and there is the barrier station.'],
+      E: ['If it\'s cheap, I\'ll buy it.', 'If I have time, I\'ll go.', 'If quiet-kereba (a form that doesn\'t exist), I can sleep.', 'If it rains, it\'s called off.'],
+      I: ['When you reach the pass, let me know.', 'Even if it rains, I\'ll go.', 'Whenever you reach the pass, let me know.', 'Even if it\'s cheap, I don\'t want it.'],
+      A: ['Unless it rains, the festival will be held.', 'As long as you write your name, anyone may pass.', 'Open every day except Sunday.', 'If only you take the medicine, the fever will rise.'] },
+    1: { F: ['When summer comes, it gets hot.', 'When I\'m hungry, I eat.', 'When winter comes, the snow melts.', 'Go along this road and there\'s a bridge.'],
+      E: ['If you\'re free, help me.', 'If you\'re cold, please shut the window.', 'If child-kereba (a form that doesn\'t exist), it\'s free.', 'With a load, it\'s two mon.'],
+      I: ['If you don\'t understand, please ask.', 'However many times I read it, I don\'t understand.', 'Everyone but children pays one mon.', 'Even if it rains, I put up my umbrella.'],
+      A: ['As long as I am keeper, I will guard the gate.', 'As long as I know the way, I can go alone.', 'Except on festival days, the shrine lamp is not lit.', 'Unless it snows, the pass cannot be crossed.'] },
+  };
+  out += '\n@scene hall.w6.t3' + K.taskTrial({ w: W, k: 0, t: 't3',
+    intro: ['narr: {古|ふる}い {道標|みちしるべ} が {四|よっ}つ {並|なら}び 、 その {先|さき} の {石|いし} に {字|じ} が {刻|きざ}んで ある 。 「 {四|よっ}つ の {言葉|ことば} の うち 、 {一|ひと}つ だけ が {間違|まちが}って いる 。 」 || Four old waymarkers stand in a row, and on the stone beyond them is carved: "Of the four sayings, one alone is wrong."'],
+    task: { 0: 'hall.w6.counter0', 1: 'hall.w6.counter1' },
+    after: ['narr: {間違|まちが}った {言葉|ことば} が 、 {峠|とうげ} の {風|かぜ} に {消|き}えた 。 || The wrong saying blows away on the wind off the pass.', '?(comp) comp: {条件|じょうけん} が {合|あ}わない と 、 {言葉|ことば} が {全部|ぜんぶ} {逆|さか}さま に なる から ね 。 || When the condition doesn\'t fit, the whole saying comes out backwards.'],
+    later: 'narr: {言葉|ことば} を {一|ひと}つ ずつ {読|よ}んで から 、 また {来|こ}よう 。 || Read the sayings one by one, then come back.',
+    done: 'narr: {石|いし} の {字|じ} は 、 もう {何|なに} も {問|と}わない 。 || The carving asks nothing more.' });
+  for (let i = 0; i < 4; i++) {
+    out += `\n@scene hall.w6.card${i + 1}\nnarr: {古|ふる}い {道標|みちしるべ} 。 {昔|むかし} の {言葉|ことば} が {刻|きざ}んで ある 。 || An old waymarker, carved with an old saying.\n`;
+    out += LV((p, t) => `?(${both(L[t], 'hall.w6.pat=' + p)}) narr: 「 ${C.hallW6Cards[p][t][i][0]} 」 || "${CE[p][t][i]}"\n`);
+  }
+
+  // ---- t4: the lanterns of the pass --------------------------------------------------------------------------------------------
+  const LRULE = {
+    0: { F: 'とうろう は ぜんぶ ともす 。 でも 、 かぜ が つよい ひ は 、 はし の とうろう だけ は ともさない 。', E: '{灯籠|とうろう} は {全部|ぜんぶ} {灯|とも}す 。 でも 、 {風|かぜ} が {強|つよ}い {日|ひ} は 、 {橋|はし} の {灯籠|とうろう} だけ は {灯|とも}さない 。', I: '{灯籠|とうろう} は {全部|ぜんぶ} {灯|とも}す 。 ただし 、 {風|かぜ} の {強|つよ}い {場合|ばあい} は 、 {橋|はし} の {灯籠|とうろう} を {除|のぞ}く 。', A: '{峠|とうげ} の {灯籠|とうろう} は {全|すべ}て {灯|とも}す こと 。 ただし 、 {橋|はし} の {灯籠|とうろう} は 、 {風|かぜ} の {強|つよ}い {日|ひ} を {除|のぞ}いて {灯|とも}す こと 。', en: 'Light every lantern; but on a windy day, leave the bridge lantern dark.' },
+    1: { F: 'とうろう は ぜんぶ ともす 。 でも 、 ほこら の とうろう は 、 まつり の ひ しか ともさない 。', E: '{灯籠|とうろう} は {全部|ぜんぶ} {灯|とも}す 。 でも 、 {祠|ほこら} の {灯籠|とうろう} は 、 お{祭|まつ}り の {日|ひ} しか {灯|とも}さない 。', I: '{灯籠|とうろう} は {全部|ぜんぶ} {灯|とも}す 。 ただし 、 {祠|ほこら} の {灯籠|とうろう} は 、 {祭|まつ}り の {日|ひ} {以外|いがい} は {灯|とも}さない 。', A: '{峠|とうげ} の {灯籠|とうろう} は {全|すべ}て {灯|とも}す こと 。 ただし 、 {祠|ほこら} の {灯籠|とうろう} は 、 {祭|まつ}り の {日|ひ} で ない {限|かぎ}り 、 {灯|とも}さない こと 。', en: 'Light every lantern; but the shrine lantern only on a festival day.' },
+  };
+  const DARK = { 0: 'bridge', 1: 'shrine' };
+  const LAMPS = ['foot', 'bend', 'bridge', 'shrine', 'top'];
+  const LIT = (l) => 'xp_hall_w6_f1_lit_' + l;
+  const NEED = (p) => LAMPS.filter((l) => l !== DARK[p]).map(LIT).join('&');
+  out += `
+@scene hall.w6.t4_rule
+!set xp_hall_w6_f1_read
+narr: {柱|はしら} の {札|ふだ} 。 キヘエ の {字|じ} で 、 {灯籠|とうろう} の {灯|とも}し{方|かた} が {書|か}いて ある 。 || The board on the post: how the lanterns are to be lit, in Kihei's hand.
+`;
+  out += LV((p, t) => `?(${both(L[t], 'hall.w6.pat=' + p)}) narr: 「 ${LRULE[p][t]} 」 || "${LRULE[p].en}"\n`);
+  out += `
+@scene hall.w6.sky
+narr: {峠|とうげ} の {祭|まつ}り の {知|し}らせ 。 「 {祭|まつ}り は {明日|あした} 。 」 || A notice for the pass festival: "The festival is tomorrow."
+?(hall.w6.pat=0) narr: {見上|みあ}げる と 、 {谷|たに} から {強|つよ}い {風|かぜ} が {吹|ふ}き{上|あ}げて いる 。 {紅葉|もみじ} が {舞|ま}い{上|あ}がる 。 || Looking up: a strong wind is blowing up out of the valley, and maple leaves whirl into the air.
+?(hall.w6.pat=1) narr: {見上|みあ}げる と 、 {風|かぜ} は ない 。 {紅葉|もみじ} が 、 まっすぐ {落|お}ちて くる 。 || Looking up: there is no wind. The maple leaves fall straight down.
+`;
+  for (const l of LAMPS) {
+    const no = [0, 1].filter((p) => DARK[p] === l);
+    out += `
+@scene hall.w6.l_${l}
+!if ${LIT(l)} -> lit
+!if !xp_hall_w6_f1_read -> unread
+${no.map((p) => '!if hall.w6.pat=' + p + ' -> no').join('\n')}
+narr: {灯籠|とうろう} に {火|ひ} を {入|い}れた 。 || You light the lantern.
+!set ${LIT(l)}
+!if hall.w6.pat=0&${NEED(0)}|hall.w6.pat=1&${NEED(1)} -> all
+!refresh
+!end
+:all
+narr: {峠|とうげ} の {灯籠|とうろう} が 、 {決|き}まり の {通|とお}り に {灯|とも}った 。 || The pass's lanterns are lit, just as the rule says.
+?(comp) comp: 「 {全部|ぜんぶ} {灯|とも}す 」 で も 、 「 ただし 」 が {一|ひと}つ 。 {例外|れいがい} を {見落|みお}とさなくて よかった 。 || "Light them all", with one "however". Good thing we didn't miss the exception.
+${K.mark(W, 1, 't4')}
+!end
+:no
+narr: {火|ひ} を {入|い}れよう と して 、 {手|て} を {止|と}めた 。 {決|き}まり と {今日|きょう} の {空|そら} を 、 もう {一度|いちど} {確|たし}かめよう 。 || You go to light it, and stop. Check the rule, and today's sky, once more.
+!end
+:unread
+narr: {灯籠|とうろう} の {灯|とも}し{方|かた} に は 、 {決|き}まり が ある らしい 。 {先|さき} に {柱|はしら} の {札|ふだ} を {読|よ}もう 。 || There seems to be a rule for lighting the lanterns. Read the board on the post first.
+!end
+:lit
+narr: {灯籠|とうろう} の {火|ひ} が 、 {夕闇|ゆうやみ} に {揺|ゆ}れて いる 。 || The lantern's flame wavers in the dusk.
+`;
+  }
+
+  // ---- t5: the mist on the pass ----------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w6.t5
+narr: {霧|きり} が {晴|は}れて 、 {峠|とうげ} の {道|みち} が {見|み}えた 。 || The mist clears, and the road up the pass shows again.
+${K.mark(W, 1, 't5')}
+`;
+
+  // ---- t6: Kihei's ledger and the one traveller it lets go on after dark (in your companion's hands; alone, Ibuki reads it) --
+  const TOLD = {
+    0: { F: 'くらく なったら 、 ちょうちん を もって いない ひと は 、 とおさない 。', E: '{暗|くら}く なったら 、 {提灯|ちょうちん} を {持|も}って いない {人|ひと} は 、 {通|とお}さない 。', I: '{日|ひ} が {暮|く}れたら 、 {提灯|ちょうちん} の ない {場合|ばあい} は {通|とお}さない 。 {一人|ひとり} でも 、 {提灯|ちょうちん} が あれば {通|とお}して よい 。', A: '{日没|にちぼつ} {後|ご} の {通行|つうこう} は 、 {提灯|ちょうちん} を {持|も}つ {者|もの} に {限|かぎ}る 。 {人数|にんずう} は {問|と}わない 。', en: 'After dark, nobody goes on without a lantern; with one, even alone, they may.' },
+    1: { F: 'くらく なったら 、 ひとり で は とおさない 。 ふたり いじょう なら 、 とおして いい 。', E: '{暗|くら}く なったら 、 {一人|ひとり} で は {通|とお}さない 。 {二人|ふたり} {以上|いじょう} なら 、 {通|とお}して いい 。', I: '{日|ひ} が {暮|く}れたら 、 {一人|ひとり} の {場合|ばあい} は {通|とお}さない 。 {二人|ふたり} {以上|いじょう} なら 、 {提灯|ちょうちん} が なくて も {通|とお}して よい 。', A: '{日没|にちぼつ} {後|ご} は 、 {二人|ふたり} {以上|いじょう} で ない {限|かぎ}り 、 {通行|つうこう} を {認|みと}めない 。 {提灯|ちょうちん} の {有無|うむ} は {問|と}わない 。', en: 'After dark, nobody goes on alone; two or more may, lantern or not.' },
+  };
+  out += `
+@scene hall.w6.t6
+!if hall.w6.t6 -> done
+!if xp_hall_w6_f1_asked -> told
+narr: {避難小屋|ひなんごや} の {机|つくえ} に 、 キヘエ の {帳面|ちょうめん} 。 {夜|よる} の {決|き}まり の {頁|ページ} は 、 {雨漏|あまも}り で {滲|にじ}んで いる 。 || On the shelter hut's desk lies Kihei's ledger. The page of night rules has run where the roof leaked.
+?(comp=nao) comp: {滲|にじ}んだ {字|じ} なら 、 {任|まか}せて くれ 。 {雨|あめ} に {濡|ぬ}れた {宛名|あてな} を 、 {何百|なんびゃく} と {読|よ}んで きた 。 {何|なに} が {知|し}りたい ？ || Leave smudged writing to me. I've read hundreds of rain-soaked addresses. What do you want to know?
+?(comp=mio) comp: {私|わたし} が {読|よ}む わ 。 {滲|にじ}んだ {処方|しょほう} も 、 {読|よ}み{慣|な}れて いる の 。 {何|なに} を {調|しら}べる ？ || I'll read it. I'm used to smudged prescriptions. What are we looking for?
+?(comp=ren) comp: {灯守|ひもり} の {帳面|ちょうめん} と 、 {書|か}き{方|かた} が {似|に}て います 。 {私|わたし} が {読|よ}みましょう 。 {何|なに} を ？ || It's kept like a lamp-keeper's ledger. I'll read it. What for?
+?(comp=suzu) comp: {滲|にじ}んだ {台本|だいほん} なら 、 {何度|なんど} も {読|よ}んだ わ 。 {任|まか}せて 。 {何|なに} を {探|さが}す ？ || I've read plenty of smudged scripts. Leave it to me. What am I looking for?
+?(!comp) hall_ibuki: {私|わたし} が {読|よ}む 。 キヘエ さん の {字|じ} なら 、 {読|よ}める 。 {何|なに} を {調|しら}べる ？ || I'll read it. I can read Kihei's hand. What are we looking up?
+!hook hall_challenge hall.w6.ask
+!if var._res=0 -> later
+!set xp_hall_w6_f1_asked
+:told
+`;
+  out += LV((p, t) => `?(${both(L[t], 'hall.w6.pat=' + p)}) narr: 「 ${TOLD[p][t]} 」 || "${TOLD[p].en}"\n`);
+  out += `!end
+:later
+narr: {帳面|ちょうめん} を {机|つくえ} に {戻|もど}した 。 || You put the ledger back on the desk.
+!end
+:done
+narr: {帳面|ちょうめん} は 、 {夜|よる} の {決|き}まり の {頁|ページ} で {開|ひら}いた まま だ 。 || The ledger lies open at the page of night rules.
+`;
+  const ALLOW = { momo: 0, koun: 1 };
+  const NIGHTSIT = {
+    momo: ['むら に かえる の 。 おじいちゃん の ちょうちん を もって いる よ 。 ひとり で だいじょうぶ 。', '{村|むら} に {帰|かえ}る の 。 おじいちゃん の {提灯|ちょうちん} を {持|も}って いる よ 。 {一人|ひとり} で {大丈夫|だいじょうぶ} 。', '{峠|とうげ} の {上|うえ} の {村|むら} に {帰|かえ}る ところ な の 。 おじいちゃん の {提灯|ちょうちん} が ある から 、 {一人|ひとり} でも {平気|へいき} だ よ 。', 'I\'m going home to the village. I\'ve got Grandpa\'s lantern, so I\'m fine on my own.', 'ありがとう ！ おやすみ なさい ！', 'Thank you! Good night!', 'モモ', 'Momo'],
+    koun: ['もう ひとり の じゅんれい と いっしょ です 。 ちょうちん は 、 かぜ で きえて しまいました 。', 'もう {一人|ひとり} の {巡礼|じゅんれい} と {一緒|いっしょ} です 。 {提灯|ちょうちん} は 、 {風|かぜ} で {消|き}えて しまいました 。', '{連|つ}れ の {巡礼|じゅんれい} と {二人|ふたり} です 。 あいにく 、 {提灯|ちょうちん} の {火|ひ} は {風|かぜ} に {消|け}されて しまいました が 。', 'There are two of us pilgrims. Our lantern blew out in the wind, I\'m afraid.', 'ありがとう ございます 。 {二人|ふたり} で 、 {足元|あしもと} に {気|き}を {付|つ}けて {行|い}きます 。', 'Thank you. We\'ll mind our step, the two of us.', 'コウウン', 'Kōun'],
+    hanbei: ['あさ の いち に まにあいたい 。 ひとり だ 。 ちょうちん は ない 。', '{朝|あさ} の {市|いち} に {間|ま}に{合|あ}いたい 。 {一人|ひとり} だ 。 {提灯|ちょうちん} は ない 。', '{朝|あさ} の {市|いち} に {間|ま}に{合|あ}わない と {困|こま}る ん だ 。 {連|つ}れ も {提灯|ちょうちん} も ない が 、 {急|いそ}いで いる 。', 'I want to make the morning market. I\'m on my own, and I\'ve no lantern.', '', '', 'ハンベエ', 'Hanbei'],
+  };
+  for (const w of Object.keys(NIGHTSIT)) {
+    const s = NIGHTSIT[w];
+    out += `
+@scene hall.w6.x_${w}
+!faceplayer hall_${w}2
+!if hall.w6.t6 -> done
+`;
+    out += LVN3((t, i) => `?(${L[t]}) hall_${w}: 「 ${s[i]} 」 || "${s[3]}"\n`);
+    out += `!if !xp_hall_w6_f1_asked -> unknown
+${w in ALLOW ? '!if hall.w6.pat=' + ALLOW[w] + ' -> right\n' : ''}narr: キヘエ の {帳面|ちょうめん} の {決|き}まり で は 、 {今|いま} は {通|とお}せない 。 || By the rule in Kihei's ledger, you can't let them through now.
+?(comp) comp: {帳面|ちょうめん} の {言葉|ことば} 、 もう {一度|いちど} {言|い}おう か ？ || Shall I say what the ledger said again?
+!end
+${w in ALLOW ? `:right
+narr: {帳面|ちょうめん} の {決|き}まり の {通|とお}り 、 ${s[6]} を {峠|とうげ} の {上|うえ} へ {通|とお}した 。 || As the ledger allows, you let ${s[7]} go on up the pass.
+hall_${w}: ${s[4]} || ${s[5]}
+?(comp) comp: {夜|よる} は {通|とお}さない 。 ただし 、 {一|ひと}つ だけ {例外|れいがい} が ある 。 {読|よ}んで よかった ね 。 || Nobody after dark, except in one case. Good thing we read it.
+${K.mark(W, 1, 't6')}
+!end
+` : ''}:unknown
+narr: {暗|くら}く なったら 、 {誰|だれ} を {通|とお}して いい の か 、 まだ {分|わ}からない 。 キヘエ の {帳面|ちょうめん} を {読|よ}んで もらおう 。 || You don't know yet whom you may let on after dark. Have Kihei's ledger read first.
+!end
+:done
+narr: {峠|とうげ} は もう {暗|くら}い 。 {灯籠|とうろう} の {灯|ひ} が 、 {道|みち} を {照|て}らして いる 。 || The pass is dark now. The lanterns light the road.
+`;
+  }
+
+  // ---- t7: the riddle stone ----------------------------------------------------------------------------------------------------
+  out += '\n@scene hall.w6.t7' + K.taskTrial({ w: W, k: 1, t: 't7',
+    intro: ['narr: {苔|こけ} むした {石|いし} に 、 {字|じ} が {彫|ほ}って ある 。 「 {解|と}けた {者|もの} は 、 {一度|いちど} だけ 、 {帰|かえ}って また {来|く}る こと が できる 。 」 || Words cut into a mossy stone: "Whoever solves this may once go home and come back."'],
+    task: 'hall.w6.riddle',
+    after: ['narr: {石|いし} の {字|じ} が 、 {夕日|ゆうひ} に {光|ひか}った 。 || The carving shines in the setting sun.'],
+    later: 'narr: {答|こた}え は 、 {急|いそ}がなくて いい 。 || There\'s no hurry for the answer.',
+    done: 'narr: {石|いし} は 、 {答|こた}え を {覚|おぼ}えて いる 。 || The stone remembers the answer.' });
+
+  // ---- t8: the help board, each case hung beside what the toll house does for it -------------------------------------------------
+  const CASE = {
+    rain: ['あめ なら', '{雨|あめ} が {降|ふ}ったら', '{雨|あめ} の {場合|ばあい} は', 'If it rains'],
+    dark: ['くらく なったら', '{暗|くら}く なったら', '{日|ひ} が {暮|く}れた {場合|ばあい} は', 'Once it is dark'],
+    sick: ['ぐあい が わるければ', '{具合|ぐあい} が {悪|わる}ければ', '{具合|ぐあい} の {悪|わる}い {場合|ばあい} は', 'If someone is unwell'],
+    lost: ['みち に まよったら', '{道|みち} に {迷|まよ}ったら', '{道|みち} に {迷|まよ}った {場合|ばあい} は', 'If someone is lost'],
+    cold: ['さむければ', '{寒|さむ}ければ', '{寒|さむ}さ の {厳|きび}しい {場合|ばあい} は', 'If it is cold'],
+  };
+  const DOES = {
+    rain: ['かさ を かす', '{傘|かさ} を {貸|か}す', '{傘|かさ} を {貸|か}す こと', 'lend an umbrella'],
+    dark: ['ちょうちん を もたせる', '{提灯|ちょうちん} を {持|も}たせる', '{提灯|ちょうちん} を {持|も}たせる こと', 'give them a lantern'],
+    sick: ['くすり を のませる', '{薬|くすり} を {飲|の}ませる', '{薬|くすり} を {飲|の}ませる こと', 'give them medicine'],
+    lost: ['みち を かいて わたす', '{道|みち} を {描|か}いて {渡|わた}す', '{道|みち} を {描|か}いて {渡|わた}す こと', 'draw them the way'],
+    cold: ['いろり に あたらせる', '{囲炉裏|いろり} に {当|あ}たらせる', '{囲炉裏|いろり} に {当|あ}たらせる こと', 'sit them by the hearth'],
+  };
+  const HOOKR = { 0: { h1: 'dark', h2: 'sick', h3: 'rain', h4: 'lost' }, 1: { h1: 'cold', h2: 'rain', h3: 'sick', h4: 'dark' } };
+  const HOLDC = (c) => 'xp_hall_w6_f2_holdc_' + c, HUNG = (c) => 'xp_hall_w6_f2_hung_' + c, HOOKED = (h) => 'xp_hall_w6_f2_hook_' + h;
+  out += `
+@scene hall.w6.t8_board
+narr: {番小屋|ばんごや} の {壁|かべ} の 「 {助|たす}け の {札|ふだ} 」 。 {風|かぜ} で 、 {場合|ばあい} を {書|か}いた {板|いた} が {外|はず}れて {落|お}ちて いる 。 {鉤|かぎ} に {残|のこ}って いる の は 、 {関所|せきしょ} が する こと だけ だ 。 || The "help board" on the guard hut wall. The wind has knocked down the boards naming each case; only what the toll house does is left on the hooks.
+?(comp&!hall.w6.t8) comp: どの {場合|ばあい} に 、 {何|なに} を する の か 。 {合|あ}う {組|く}み{合|あ}わせ を {探|さが}そう 。 || Which case calls for what. Let's find what goes together.
+`;
+  for (const c of Object.keys(CASE)) {
+    out += `
+@scene hall.w6.pl_${c}
+narr: {風|かぜ} で {落|お}ちた {板|いた} 。 || A board the wind knocked down.
+`;
+    out += LVN3((t, i) => `?(${L[t]}) narr: 「 ${CASE[c][i]} 」 || "${CASE[c][3]}"\n`);
+    out += `!unset ${Object.keys(CASE).map(HOLDC).join(' ')}
+!set ${HOLDC(c)}
+narr: {板|いた} を {拾|ひろ}った 。 || You pick up the board.
+`;
+  }
+  const HOOKS = ['h1', 'h2', 'h3', 'h4'];
+  for (const h of HOOKS) {
+    out += `
+@scene hall.w6.${h}
+`;
+    out += LV3((p, t, i) => `?(${both(L[t], 'hall.w6.pat=' + p)}) narr: 「 …… 、 ${DOES[HOOKR[p][h]][i]} 」 || "…, ${DOES[HOOKR[p][h]][3]}"\n`);
+    out += `!if ${HOOKED(h)} -> done
+!if ${Object.keys(CASE).map(HOLDC).join('|')} -> try
+!end
+:try
+!if hall.w6.pat=1 -> p1
+!if ${HOLDC(HOOKR[0][h])} -> right0
+!goto wrong
+:p1
+!if ${HOLDC(HOOKR[1][h])} -> right1
+:wrong
+narr: {板|いた} を {掛|か}けよう と して 、 {手|て} を {止|と}めた 。 この {場合|ばあい} に 、 これ は {合|あ}わない 。 || You go to hang the board, and stop. That case doesn't go with this.
+!end
+`;
+    for (const p of [0, 1]) out += `:right${p}
+narr: {板|いた} を {鉤|かぎ} に {掛|か}けた 。 || You hang the board on the hook.
+!unset ${Object.keys(CASE).map(HOLDC).join(' ')}
+!set ${HUNG(HOOKR[p][h])} ${HOOKED(h)}
+!goto check
+`;
+    out += `:check
+!if ${HOOKS.map(HOOKED).join('&')} -> all
+!refresh
+!end
+:all
+narr: 「 {助|たす}け の {札|ふだ} 」 が 、 {元|もと} に {戻|もど}った 。 || The help board is whole again.
+?(comp) comp: {雨|あめ} なら {傘|かさ} 、 {暗|くら}く なったら {提灯|ちょうちん} 。 {決|き}まり と いう より 、 {親切|しんせつ} の {一覧|いちらん} だ ね 。 || An umbrella if it rains, a lantern once it's dark. Less a list of rules than a list of kindnesses.
+${K.mark(W, 2, 't8')}
+!end
+:done
+narr: {板|いた} が {掛|か}かって いる 。 || The board hangs in its place.
+`;
+  }
+
+  // ---- t9: Ibuki and Otsuta ----------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w6.otsuta
+!faceplayer hall_otsuta
+hall_otsuta: お{願|ねが}い です 。 この {子|こ} を 、 {峠|とうげ} の {向|む}こう の お{医者|いしゃ} に …… 。 || Please. This child, to the doctor over the pass…
+?(comp) comp: …… イブキ と {話|はな}そう 。 || …Let's talk to Ibuki.
+
+@scene hall.w6.t9
+!faceplayer hall_ibuki3
+!if hall.w6.t9 -> after
+hall_ibuki: {鐘|かね} は もう {鳴|な}った 。 {門|もん} は 、 {朝|あさ} まで {開|あ}けない 。 そう {札|ふだ} に {書|か}いた 。 || The bell has rung. The gate stays shut till morning. I wrote it on the board.
+!encounter hall.w6.night
+!if var._enc=through -> through
+narr: {番小屋|ばんごや} の {戸|と} は {閉|し}まった まま だ 。 オツタ は 、 {門|もん} の {前|まえ} で {赤|あか}ん{坊|ぼう} を {揺|ゆ}すって いる 。 || The guard hut's door stays shut. Otsuta rocks her baby by the gate.
+!end
+:through
+narr: {門|もん} が {開|あ}いた 。 オツタ は {深|ふか}く {頭|あたま} を {下|さ}げて 、 {暗|くら}い {峠|とうげ} を {下|くだ}って いった 。 || The gate opens. Otsuta bows deeply and goes down into the dark on the far side.
+hall_ibuki: …… 「 {例外|れいがい} は ない 」 と {書|か}いた の は 、 {私|わたし} だ 。 {怖|こわ}かった ん だ 。 {間違|まちが}える の が 。 || …I'm the one who wrote "no exceptions". I was afraid. Of getting it wrong.
+${K.mark(W, 2, 't9')}
+!end
+:after
+hall_ibuki: {門|もん} に 、 {提灯|ちょうちん} を {掛|か}けて おこう 。 オツタ さん が 、 {帰|かえ}り に {迷|まよ}わない よう に 。 || Let's hang a lantern on the gate, so Otsuta doesn't lose her way back.
+`;
+
+  // ---- t10: the night at the gate -------------------------------------------------------------------------------------------------
+  out += `
+@scene hall.w6.t10
+!if hall.w6.t10 -> after
+!if !hall.w6.t8 -> wait
+!if !hall.w6.t9 -> wait
+narr: {夜|よる} が {来|き}た 。 イブキ と {二人|ふたり} で 、 {門|もん} の {番|ばん} を する 。 || Night has come. You keep the gate with Ibuki.
+!encounter hall.w6.watch
+!if var._res=0 -> later
+!set xp_hall_w6_f2_t10
+!hook hall_trial w6 t10
+!if var._res=1 -> finale
+!refresh
+!end
+:finale
+!call hall.w6.end
+!end
+:wait
+narr: {門|もん} の {前|まえ} は 、 まだ {落|お}ち{着|つ}かない 。 || Things at the gate haven't settled yet.
+?(!hall.w6.t8) narr: 「 {助|たす}け の {札|ふだ} 」 の {板|いた} が 、 まだ {地面|じめん} に {落|お}ちて いる 。 || The help board's case boards are still lying on the ground.
+?(!hall.w6.t9) narr: オツタ が 、 {閉|し}まった {門|もん} の {前|まえ} で {赤|あか}ん{坊|ぼう} を {抱|だ}いて いる 。 || Otsuta stands at the shut gate, holding her baby.
+!end
+:later
+narr: イブキ が 、 {門|もん} の {横|よこ} で {次|つぎ} の {合図|あいず} を {待|ま}って いる 。 || Ibuki waits by the gate for the next word.
+!end
+:after
+narr: {門|もん} の {提灯|ちょうちん} が 、 {朝|あさ} の {光|ひかり} に {薄|うす}れて いく 。 || The gate's lantern pales in the morning light.
+
+@scene hall.w6.end
+narr: {朝|あさ} 、 オツタ が {峠|とうげ} を {上|のぼ}って {戻|もど}って きた 。 {赤|あか}ん{坊|ぼう} は 、 {腕|うで} の {中|なか} で {眠|ねむ}って いる 。 {熱|ねつ} は {下|さ}がった 。 || In the morning Otsuta comes back up the pass. The baby is asleep in her arms; the fever has broken.
+hall_kihei: {札|ふだ} の {一番|いちばん} {下|した} の {一行|いちぎょう} 、 {良|よ}い {字|じ} じゃ 。 …… {決|き}まり は {変|か}わる 。 {変|か}わって {良|よ}い 。 {変|か}わらん の は 、 {何|なん} の ため の {決|き}まり か 、 だけ じゃ 。 || The bottom line on the board: a good hand. …Rules change, and so they should. The only thing that doesn't is what they're for.
+?(comp=nao) comp: {宛先|あてさき} の ない {手紙|てがみ} は {届|とど}けない 。 ただし 、 {困|こま}って いる {人|ひと} の {手紙|てがみ} は 、 {何|なん} と して でも {届|とど}ける 。 {配達|はいたつ} の {決|き}まり も 、 {同|おな}じ だ 。 || No address, no delivery. Except a letter from someone in trouble: that gets there, whatever it takes. The delivery rules are the same.
+?(comp=mio) comp[happy]: なら 、 たら 、 ても 、 ただし 。 {決|き}まり の {言葉|ことば} は {冷|つめ}たく {聞|き}こえる けど 、 {使|つか}う {人|ひと} {次第|しだい} で 、 {温|あたた}かく も なる のね 。 || If, when, even if, except. The words of rules sound cold, but in the right hands they can be warm.
+?(comp=ren) comp: {灯|ひ} が {六|むっ}つ 、 {戻|もど}りました 。 {残|のこ}り は 、 {四|よっ}つ です 。 || Six lights back. Four to go.
+?(comp=suzu) comp: {第|だい}{六幕|ろくまく} 、 {幕|まく} ！ {門番|もんばん} が {門|もん} を {開|あ}ける {場面|ばめん} は 、 {何度|なんど} {見|み}て も {泣|な}ける わ 。 || End of act six! The scene where the gatekeeper opens the gate makes me cry every time.
+narr: {朝|あさ} の {霧|きり} が {畳|たた}まれる よう に {薄|うす}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning mist folds thin, and when you look up you are by the hall's hearth.
+!set hall_w6_done
+!hook hall_finish
+`;
+
+  RB.script.add(out);
+})(RB.content);
+
+
 /* ==== src/content/hall/40_records.js ==== */
 /* The Hall of a Hundred Tales: its records (expansion P15; plan 04_DUNGEONS.md D9 Rewards; 09_RECORDS.md K1). A stamp
  * for each tale relit, pressed as soon as the wing is done (no stand: the Hall is its own place); hidden until then,
@@ -166873,6 +167898,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.hallStamp(3, T('The Bell Before Dawn', '{夜明|よあ}け {前|まえ} の {鐘|かね}'), '#3a3a6a');
   C.hallStamp(4, T('The Borrowed Umbrella', '{借|か}りた {傘|かさ}'), '#4a6a8a');
   C.hallStamp(5, T('The Two Wells', '{二|ふた}つ の {井戸|いど}'), '#5a6a3a');
+  C.hallStamp(6, T('The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'), '#9a3a22');
 })(RB.content);
 
 

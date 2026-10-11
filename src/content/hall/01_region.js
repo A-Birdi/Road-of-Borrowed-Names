@@ -77,6 +77,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   TL.addRamps(TL.PAL.hall_w5);
 
+  // wing 6: a mountain pass in late autumn, maples red against grey stone, mist in the valley below, the toll house of
+  // old dark wood with its rule board under the eaves
+  TL.PAL.hall_w6 = Object.assign({}, TL.PAL.hall, {
+    grass: ['#7a7a4a', '#8a8a56', '#66663e', '#9c9a66'], dirt: ['#7a6a56', '#8c7c66', '#665846', '#9e8e78'],
+    stone: ['#7e8084', '#96989c', '#64666a'], water: ['#5a7a8a', '#6a8c9c', '#9ab4c0', '#e0e8ec'],
+    wood: ['#4a3628', '#5c4432', '#38281e', '#765a44'], leaf: ['#a83a24', '#c04e2c', '#d8783a', '#82301e'],
+    flower: ['#e8a83a', '#f0e0c8', '#c84a2a', '#d8c8a0'], roof: ['#3a3430', '#2e2a26', '#24201c', '#4e4640'],
+    sky: '#b8bcc0', dark: '#16140f',
+  });
+  TL.addRamps(TL.PAL.hall_w6);
+
   // ---- the tales' people: wing 1 ------------------------------------------------------------------------------------
   // Otami: in the tale, the old woman who kept the crossroads lamp. Hard of hearing; asked everyone to say it again.
   ch('hall_otami', {
@@ -206,4 +217,31 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ch('hall_kero', { name: { en: 'Kero', jp: 'ケロ' }, voice: { pitch: 1.16 }, size: 'child',
     look: { skin: 1, hair: 'short', hairColor: 4, cloth: ['#4a7a3a', '#3a622e', '#d8e0a0'], shape: 'robe', acc: [] },
     portrait: { eyes: 'round', style: 'short', acc: [], bg: '#1a2414' } });
+
+  // ---- the tales' people: wing 6, The Toll That Changed --------------------------------------------------------------
+  // Kihei (he/him), the old keeper of the toll gate on the pass, laid up with his back; Ibuki (they/them), the young
+  // keeper keeping it in his place by the board; travellers Ofuku (she/her), a medicine seller, Hanbei (he/him), a
+  // merchant, Kōun (they/them), a pilgrim, and Momo (she/her), a child of the pass village; Otsuta (she/her), who comes
+  // down the pass at nightfall with her baby in a fever.
+  ch('hall_kihei', { name: { en: 'Kihei', jp: 'キヘエ' }, voice: { pitch: 0.74 },
+    look: { skin: 3, hair: 'short', hairColor: 6, cloth: ['#5a4a3a', '#46382c', '#d8c8a8'], shape: 'robe', acc: [], age: 'old' },
+    portrait: { eyes: 'narrow', style: 'short', age: 'old', acc: [], bg: '#1e1810' } });
+  ch('hall_ibuki', { name: { en: 'Ibuki', jp: 'イブキ' }, voice: { pitch: 1.06 },
+    look: { skin: 2, hair: 'ponytail', hairColor: 0, cloth: ['#3a4a5a', '#2e3c4a', '#e0d4b8'], shape: 'tunic', acc: ['headband'], bandCol: '#a83a24' },
+    portrait: { eyes: 'narrow', style: 'ponytail', acc: ['headband'], bandCol: '#a83a24', bg: '#141c24' } });
+  ch('hall_ofuku', { name: { en: 'Ofuku', jp: 'オフク' }, voice: { pitch: 1.12 },
+    look: { skin: 1, hair: 'bun', hairColor: 1, cloth: ['#7a3a4a', '#622e3c', '#f0e0c8'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'bun', acc: [], bg: '#241418' } });
+  ch('hall_hanbei', { name: { en: 'Hanbei', jp: 'ハンベエ' }, voice: { pitch: 0.9 },
+    look: { skin: 2, hair: 'short', hairColor: 2, cloth: ['#6a5a3a', '#54482e', '#e0d0a8'], shape: 'tunic', acc: ['hat'], hatCol: '#8a7048' },
+    portrait: { eyes: 'narrow', style: 'short', acc: ['hat'], hatCol: '#8a7048', bg: '#1e1a10' } });
+  ch('hall_koun', { name: { en: 'Kōun', jp: 'コウウン' }, voice: { pitch: 0.98 },
+    look: { skin: 2, hair: 'shaved', hairColor: 1, cloth: ['#d8d0c0', '#bab2a2', '#5a5048'], shape: 'robe', acc: ['hat'], hatCol: '#c8b890' },
+    portrait: { eyes: 'narrow', style: 'shaved', acc: ['hat'], hatCol: '#c8b890', bg: '#22201c' } });
+  ch('hall_momo', { name: { en: 'Momo', jp: 'モモ' }, voice: { pitch: 1.32 }, size: 'child',
+    look: { skin: 1, hair: 'bob', hairColor: 1, cloth: ['#d8784a', '#b8603a', '#f0e0c0'], shape: 'tunic', acc: [] },
+    portrait: { eyes: 'round', style: 'bob', acc: [], bg: '#2a1a12' } });
+  ch('hall_otsuta', { name: { en: 'Otsuta', jp: 'オツタ' }, voice: { pitch: 1.08 },
+    look: { skin: 2, hair: 'long', hairColor: 1, cloth: ['#4a5a4a', '#3a4a3a', '#e0d8c0'], shape: 'robe', acc: [] },
+    portrait: { eyes: 'round', style: 'long', acc: [], bg: '#161e16' } });
 })(RB.content);

@@ -226,11 +226,11 @@ await test('intent badges: one per creature at its slot, marked where names repe
     const S = await IB(p);
     const geo = await p.evaluate(() => ({ hits: RB.battleStage.stats().hits, stage: (() => { const r = document.querySelector('.combat-ui > .cb-stage').getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; })(), slips: [...document.querySelectorAll('.cb-foe .fs')].map((x) => ({ i: +x.dataset.foe, mark: (x.querySelector('.ib-m') || {}).textContent || '' })) }));
     const tag = vp.width + 'x' + vp.height + ': ';
-    const marks = S.badges.map((x) => x.label.match(/ ([A-C]): about to/)).map((m) => m && m[1]);
+    const marks = S.badges.map((x) => x.label.match(/ ([A-C])(?:, acts \w+)?: about to/)).map((m) => m && m[1]);
     assert(marks.every(Boolean) && new Set(marks).size === 3, tag + 'three creatures of one name: each badge says which (A, B, C): ' + JSON.stringify(S.badges.map((x) => x.label)));
     for (const bd of S.badges) {
       const sl = geo.slips.find((x) => x.i === bd.i);
-      assert(sl && bd.label.includes(' ' + sl.mark + ':'), tag + 'the badge and the slip of creature ' + bd.i + ' carry the same mark');
+      assert(sl && new RegExp(' ' + sl.mark + '(?:, acts \\w+)?: ').test(bd.label), tag + 'the badge and the slip of creature ' + bd.i + ' carry the same mark');
       assert(bd.w >= 44 && bd.h >= 44, tag + 'a 44 px target: ' + JSON.stringify(bd));
       assert(bd.x >= geo.stage.x - 1 && bd.x + bd.w <= geo.stage.x + geo.stage.w + 1 && bd.y >= geo.stage.y - 1 && bd.y + bd.h <= geo.stage.y + geo.stage.h + 1, tag + 'inside the scene: ' + JSON.stringify({ bd, stage: geo.stage }));
       if (!S.rail) { const h = geo.hits.find((q) => q.i === bd.i); const cx = bd.x + bd.w / 2; assert(cx >= h.x - 40 && cx <= h.x + h.w + 40, tag + 'over its own creature: ' + JSON.stringify({ bd, h })); }
