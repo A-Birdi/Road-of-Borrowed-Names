@@ -248,9 +248,11 @@
     `src/content/zz_coast.js`) and the boat's destination after the story, the One-Pine Islet (F-138; unit `fishing`,
     `pastimes_post`; browser `tests/e2e/fishing_coast.mjs`); **P15h is done: the postgame's phase end** (unit
     `postgame_phase`; the clean copy of 3f0841e 51,426/0; F-139, F-140). **P16, the art pass, is under way**
-    (docs/future/work/P16_ART.md once written): the census first, then the interim creatures' own families, the travel
-    volume's missing paintings (the six new chapters, the guardians, the Hall's tales, the festival), the interim
-    regional kits and the yukata, and the book family carried to dialogue, title, help, prompts and slips (U05, U06).
+    (docs/future/work/P16_ART.md): **P16a done** (the census, `tools/art_census.mjs`); **P16c done** (the travel volume's
+    33 missing paintings: the six new chapters' 13 pages and the 20 after the story, `src/ui/43g_seq_paint.js` …
+    `43n_seq_post.js`; F-141; unit `sequence_p16` 363/0, browser `sequence_p16` 41/0 + 62/0). Next: U05/U06 (the book
+    family carried to dialogue, title, help, prompts, battle slips and confirmations), the interim creatures' own
+    families (P16b), the interim regional kits, the yukata cut and the hood in Harmony (P16d).
     Still to do from P14/P15: the chained route from a new journey (XP79; its first attempt stopped at the boat-naming
     sheet, fixed) and a complete browser run. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,

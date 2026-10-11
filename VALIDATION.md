@@ -4258,6 +4258,29 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The second attempt is recorded below
 when it ends.
 
+## The expansion, P16 — P16a and P16c done (the census; the travel volume's paintings)
+
+**What changed.** The art census (`tools/art_census.mjs`; `docs/future/work/art_census.json`; contact sheets per region
+in `docs/screenshots/p16/census/`). The travel volume's 33 missing paintings: the six new chapters' 13 pages
+(`src/ui/43h_seq_mb1.js` … `43m_seq_yn.js`, on the shared kit `43g_seq_paint.js`) and the 20 after the story
+(`src/ui/43n_seq_post.js`: the nine old guardians' places, the Hall's ten tales as ink-and-wash scrolls, the first
+festival), each wired into its scene and linked from the volume (F-141). docs/future/work/P16_ART.md.
+
+**Unit, working tree after 736401d.** `sequence_p16` **363/0** (all 33 pages: registry, phases ≤ 1.6 s, focal and safe
+areas, the scripts with nothing inside that moves the world, every composition used, each page in the volume under its
+heading and painted by its own sequence); `sequence` (with `sequence_ch56`) 499/0; `records` 223/0; `guardians` 66/0;
+`hall` (all ten wings) 1,111/0; `settle` 79/0; the content validator: no errors. The census `--check`: 47 of 47 volume
+pages painted, 0 interim plates; it still reports one known gap (the hood keepsake in Harmony, P16d).
+
+**Browser, today's build.** `tests/e2e/sequence_p16.mjs` on the 13 chapter pages **41/0** (earlier today) and on the 20
+pages after the story **62/0**: each page played through the volume's own viewer with real clicks on Next at 1280×720
+(Mio), 390×844 (Nao) and 844×390 (Suzu), every beat shown, the focal area above the sheet and inside the frame once
+each one-time action has played, the campaign untouched, no page error; every composition reached; reduced motion
+holding at once. Evidence stills (1280×720, as seen in the viewer): `docs/screenshots/sequences/p16/`.
+
+**Not done.** P16b (the 46 interim creatures' own families), P16d (the interim regional kits, the yukata cut, the hood in
+Harmony), P16e (U05/U06). A person looking at the pages (Robin's review at completion).
+
 ## The expansion, P15 — P15g done: A Quiet Cast's coast and the boat's destination after the story
 
 **On a copy of the working tree's git-visible files (the coast complete, before three last touches below):** the whole
