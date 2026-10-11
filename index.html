@@ -48103,12 +48103,25 @@ RB.worldKit = (function () {
     m.kitDecor = { key: m.staticLayer, list: out };
     return out;
   }
+  // whoever stands where a knee-high shrub could hide their feet: people, the companion, and the creatures (a small
+  // creature just behind a shrub must stay in sight, or the road would hide what it holds)
+  function standing() {
+    const W = RB.world && RB.world.W;
+    if (!W) return [];
+    return [W.player, W.comp].concat(W.npcs || [], W.extras || [], W.leavers || [], W.foes || []).filter(Boolean);
+  }
   function pushDecor(list, c, m, env, t) {
-    const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake;
+    const pal = RB.tiles.PAL[m.region] || RB.tiles.PAL.reedwake, who = standing();
     for (const sh of shrubs(m)) {
       const X = env.ax(sh.x * 16), Y = env.ay(sh.y * 16);
       if (X < -40 || Y < -40 || X > env.bw + 40 || Y > env.bh + 40) continue;
-      list.push({ z: (sh.y + 1) * 16 - 1, draw: () => c.drawImage(shrubArt(pal, sh.v, briefOf(m)), X - 4, Y) });
+      // thinned while anyone stands just behind it (the same reveal rule as the tall pieces)
+      const thin = who.some((a) => { const dy = sh.y - a.fy; return dy > 0 && dy <= 1.5 && Math.abs(a.fx - sh.x) < 1; });
+      list.push({ z: (sh.y + 1) * 16 - 1, draw: () => {
+        if (thin) c.globalAlpha = 0.4;
+        c.drawImage(shrubArt(pal, sh.v, briefOf(m)), X - 4, Y);
+        if (thin) c.globalAlpha = 1;
+      } });
     }
     const B = briefOf(m), s = RB.game.s, broken = new Set();
     for (const p of m.props) if (p.p === 'water' && (!p.if || RB.state.test(s, p.if))) broken.add(p.x + ',' + p.y);
@@ -48182,7 +48195,7 @@ RB.worldKit = (function () {
     return shrubs(m).map((sh) => ({ x: sh.x, y: sh.y, k: 0.45, draw: (g, x, y) => g.drawImage(shrubArt(pal, sh.v, briefOf(m)), x - 4, y) }));
   }
 
-  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, BRIEF, briefOf, propFor, vnoise, stats: () => Object.assign({}, stat) };
+  return { dressGround, PROPS, STRUCTS, pushDecor, casters, shrubs, decor, someoneBehind, standing, BRIEF, briefOf, propFor, vnoise, stats: () => Object.assign({}, stat) };
 })();
 
 

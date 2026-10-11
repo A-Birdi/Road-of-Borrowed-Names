@@ -23,7 +23,7 @@ status. Its exit: a candidate whose focused evidence is complete enough to justi
 | Speed | `tests/e2e/load_budget.mjs`, `tests/e2e/perf.mjs` on a quiet machine | see below |
 | The twelve chapters from a new journey | `PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve` (XP79) | **one uninterrupted run: 17 of 17 legs, 2,433 site visits in 65 minutes, to the ending (post, postgame, ch6_done); 0 problems, 0 page errors** |
 | The same on the shipped build's own default (C-84, C-85) | `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` (the edition the build gives a new journey) on a clean export of 75875c6 | **17 of 17 legs, 2,433 site visits in 64 minutes, to the ending; 0 problems, 0 page errors; 293 interactions met**; redone on the lit build (C-86) |
-| Light and shadow on every map (C-86) | `tests/e2e/world.mjs`, `tests/e2e/world_light.mjs`; captures `node tests/e2e/light_captures.mjs` → `docs/screenshots/light/` | world 13/0, world_light 3/0 (all 226 maps lit and drawn, no page error); Robin's review at completion |
+| Light and shadow on every map (C-86) | `tests/e2e/world.mjs`, `tests/e2e/world_light.mjs`; captures `node tests/e2e/light_captures.mjs` → `docs/screenshots/light/` | world 13/0, world_light 4/0 (all 226 maps lit and drawn, no page error); Robin's review at completion |
 
 ## UI-A01–UI-A20 (§15A, U07)
 

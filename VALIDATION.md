@@ -4403,15 +4403,19 @@ complete run: what the light built for a map (its shadow mask, its room's light,
 old art) was kept after the renderer let the map's art go, so every map visited stayed in memory (a probe through 60
 maps: 54 masks and 42 room lights kept, 151 MB of canvas, and 18 old map layers held by the kit's list); they now go
 with the map's art (the same probe: 1 mask, 2 room lights, 3 MB), and `world_light.mjs` checks it after all 226 maps.
+Also found in that review: the kit's knee-high shrubs, now on every green region, could hide a small creature (or a
+person's feet) standing just behind one; a shrub now thins while anyone, creatures included, stands within a tile and a
+half behind it (the tall pieces' reveal rule), tested.
 - Browser `world.mjs` (rewritten for the shipped light: the flag no longer needed, Off pixel-identical to every layer
   off, the camera at 1920×1080 and a phone, a battle and back without a rebuild, at night the lamps cast): **13/0** in
   three runs on the scratch build; one earlier run, made while the unit suite loaded the machine, had one failure whose
   output was not kept (it did not recur).
-- Browser `world_light.mjs` (new, in the default run): **3/0**: all **226 maps** lit (105 outdoors, each under its
+- Browser `world_light.mjs` (new, in the default run): **4/0**: all **226 maps** lit (105 outdoors, each under its
   region's own sun or, for the Hall's wings, the Hall's; 121 rooms) and drawn with no page error;
   the teahouse's windows (two at the back, two at the front), its shadows on the floor only, by night only its stove
   casting; no room has windows its building lacks or on stone walls; the dim Lantern Hall keeps its daylight; the
-  lights the darkness did not count open it; Off builds and draws nothing.
+  lights the darkness did not count open it; Off builds and draws nothing; a shrub thins for a person or a creature
+  behind it.
 - Cost, headless software Chromium at 1440×900 (recorded, not thresholds): steady frames about 3 → 6–9 ms on the
   biggest towns; a big town's first frame (art, dressing and shadows built) 0.45–0.85 s, against 0.15–0.43 s with the
   light off, made while the screen is dark between maps (`RB.render.prewarm`); the dressing rewritten tile by tile with

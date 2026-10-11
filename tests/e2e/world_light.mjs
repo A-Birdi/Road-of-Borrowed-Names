@@ -7,7 +7,8 @@
 //    fall into the room and never over a wall; by night its windows give no shadows, and a dim room by day keeps
 //    its daylight;
 //  - a dark place's lamps the darkness did not count before (a stove, the festival lanterns) now open it;
-//  - with Settings' "Light and shadow" Off, none of it is drawn and nothing is built.
+//  - with Settings' "Light and shadow" Off, none of it is drawn and nothing is built;
+//  - the kit's knee-high shrubs never hide anyone: a person or a creature just behind one thins it.
 // Usage: node tests/e2e/world_light.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -169,6 +170,40 @@ await test('lamps the darkness did not count now open it; with "Light and shadow
   assert(r.found, 'expected a dark place with a stove, kiln or festival lantern');
   assert(r.extra > 0 && r.holes >= r.extra, 'the extra lights open the darkness in ' + r.found + ': ' + JSON.stringify(r));
   assert(r.off.active === false && r.off.look === false && r.off.masks === 0, 'Off builds and draws nothing: ' + JSON.stringify(r.off));
+  assert(!errors.length, 'page errors: ' + errors.join('; '));
+  await ctx.close();
+});
+
+await test('the kit\'s low growth never hides anyone: a person or a creature just behind a shrub thins it', async () => {
+  const { p, ctx, errors } = await page(b, url, DESK);
+  const r = await p.evaluate((ENTER) => {
+    const enter = new Function('return ' + ENTER)();
+    const m = enter('rw.village');
+    RB.render.frame(5000);
+    const W = RB.world.W, sh = RB.worldKit.shrubs(m)[0];
+    const env = { ax: (v) => v, ay: (v) => v, bw: 1e6, bh: 1e6 };
+    const alphaOf = () => {
+      const seen = [], c = document.createElement('canvas').getContext('2d');
+      c.drawImage = function () { seen.push(c.globalAlpha); };
+      const list = [];
+      RB.worldKit.pushDecor(list, c, m, env, 0);
+      list[RB.worldKit.shrubs(m).indexOf(sh)].draw();
+      return seen[0];
+    };
+    const open = alphaOf();
+    const foe = { id: 'probe', fx: sh.x, fy: sh.y - 1 };
+    W.foes.push(foe);
+    const creature = alphaOf();
+    W.foes.splice(W.foes.indexOf(foe), 1);
+    const pl = W.player, keep = [pl.fx, pl.fy];
+    pl.fx = sh.x; pl.fy = sh.y - 1.2;
+    const person = alphaOf();
+    pl.fx = sh.x; pl.fy = sh.y - 3;
+    const far = alphaOf();
+    pl.fx = keep[0]; pl.fy = keep[1];
+    return { open, creature, person, far };
+  }, ENTER.toString());
+  assert(r.open === 1 && r.far === 1 && r.creature < 1 && r.person < 1, 'shrub reveal: ' + JSON.stringify(r));
   assert(!errors.length, 'page errors: ' + errors.join('; '));
   await ctx.close();
 });
