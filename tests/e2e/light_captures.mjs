@@ -2,7 +2,7 @@
 // outdoor maps per region of the twelve chapters and the postgame, rooms lit by their windows, lamps and fires,
 // two nights, the same places with "Light and shadow" Off beside them, the wider outdoor view on a 1920×1080 screen
 // and a phone. Synthetic sessions (never a real save); the arrival scenes are passed and creatures held off so the
-// place itself shows. Writes WebP files and an index to docs/screenshots/light/.
+// place itself shows (each from the middle of the map unless a place is named). Writes WebP files and an index to docs/screenshots/light/.
 // Usage: node tests/e2e/light_captures.mjs
 import fs from 'node:fs';
 import path from 'node:path';
@@ -35,8 +35,12 @@ async function shoot(set, viewport, opts) {
       const def = RB.content.maps[map], m = RB.maps.compile(map);
       let X = x, Y = y;
       if (X == null) {
+        // the middle of the map where one can stand (it frames the place better than an arrival at its edge)
         const sp = def.spawn || {}, k = Object.keys(sp)[0];
         [X, Y] = k && Array.isArray(sp[k]) ? sp[k] : [m.w >> 1, m.h >> 1];
+        const cx = m.w >> 1, cy = m.h >> 1;
+        search: for (let r = 0; r < 6; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++)
+          if (!RB.maps.blockedStatic(m, cx + dx, cy + dy) && !RB.maps.exitAt(m, cx + dx, cy + dy)) { X = cx + dx; Y = cy + dy; break search; }
       }
       const f = Object.assign({}, DONE, extra || {});
       for (const ev of def.onEnter || []) f['enter:' + map + ':' + ev.scene] = true;
