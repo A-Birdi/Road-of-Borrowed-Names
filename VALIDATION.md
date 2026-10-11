@@ -4234,6 +4234,38 @@ mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
 before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
 
+## The expansion, P15 — P15g in progress: the returns and the companions' beats done; shogi's two places
+
+**On a copy of the working tree's git-visible files (the returns and the companions' beats complete, before the
+shogi places):** the whole unit suite **50,798 passed, 1 failed**: `travel_rules` pins the story-locked maps, and two
+new maps had been given an authored lock (this year's festival night, rightly one like the story's; the deepest grove,
+which is under Kotonoha's roots and now a dungeon like the garden it opens from). The pin now names four story locks
+with the reason; `travel_rules` 697/0 after. `returns` **69/0** (every return's person and thing only after the story
+in a twelve-chapter journey, none in a six-chapter one or during the story, the Snowbell board read line for line
+against the original; the grove's contents by each of the Archive's endings, the leaf read, a leaf left to each of
+the three, kept for later when not written, Otoha afterwards; the yearly festival's way in, its real exits, the
+story's night unchanged, Hiro's count over five nights with Suzu and the line without her, Suzu in the crowd only when
+she is not with you, the three stalls; Akari's letter and a later time; the objections and the councillor once;
+Sanpei's editions for each thing done and none for things not done; tea at the old barrier, one Gonza at a time; the
+festival hall's visitors only with their companion and never on one spot; the double act's three bits, the troupe
+gone in the morning and Tomi's line only if they came; Nao's week letter and a letter to each of Hiro, Tsuru and
+Hisae, the reply only after leaving and coming again, the forwarding address's extra line, nothing to send yet; Kikue's
+jar; the night walk and "another time"; every new person, thing and way out reachable; every task at four levels
+with one right answer, or two or more where you choose, and every wrong one explained). `dialect` 9,328/0, `kanji`
+638/0, `lexicon` 43/0, `records` 218/0, `distractions` 19/0, validator no errors, the language ledger with no line
+unreviewed (self-review fixes: a headline's 刻み直さる now 刻み直される; 賛成致しかねます now 賛成しかねます, 致す not being
+taught; 案 given its reading; Ren and Hisae's walk starting from the road's foot, so the lamps are lit in their order).
+
+**Shogi's two places (on the working tree):** `shogi` 66/0 (the inn's abandoned game checked as a mate in one with the
+rest), `pastimes_post` **18/0** (the inn's table and the hill bench read exactly as before in a six-chapter journey,
+during the story, and while Isamu is not home or Fuku's nameplate not back; after the story the guest's last words and
+the board to finish, "leave it be", and the finished game; the puzzle is a quiet position whose mate is the gold
+dropped in front of the king; Isamu at the bench, and a game with him, with Fuku, or just watching). The kanji chart's
+spot check caught 王 gaining a word of its own (so a new theme) when the finished puzzle's king was written 王; it is
+now 玉, as mate puzzles write the defending king, and 王 is unchanged (`kanji` 638/0). The board opening straight onto
+a place's puzzle (and the ladder listing it only once solved there) is in `src/ui/88_shogi.js`; no browser test of it
+yet.
+
 ## The expansion, P15 — P15f done (Ashihara Shinden), and the postgame's browser test
 
 **On a copy of the working tree's git-visible files (the settlement complete, before the guardians' step-back change

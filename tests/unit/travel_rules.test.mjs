@@ -5,8 +5,9 @@
 //   Unwritten Atlas's generated maps. No map has noTravel without one.
 // - The classification itself: the owner's beach (the Fishers' Cove) and the
 //   other open-air maps that used to be closed are open; buildings are
-//   interiors; dungeons name the whole place; three story locks remain (the
-//   dusk assembly, the festival night, and the open sea while a voyage is under way).
+//   interiors; dungeons name the whole place; four story locks remain (the
+//   dusk assembly, the festival night and after the story each year's, and the open sea while a voyage is
+//   under way).
 // - The rule the validator applies (RB.travel.problems, called for every map
 //   by tools/validate.mjs): unclassified maps, reasons without English,
 //   travel fields on open maps, interiors left open, unknown kinds, and any
@@ -53,7 +54,7 @@ export default async (t) => {
   // dungeons, each named as a whole
   const site = { 'rw.mill1': 'the Old Mill', 'rw.mill0': 'the Old Mill', 'rw.mill2': 'the Old Mill', 'sg.da_entry': 'the Drowned Archive', 'sg.da_vault': 'the Drowned Archive', 'co.kiln': 'the Great Kiln', 'co.kiln_core': 'the Great Kiln', 'sb.obs_hall': 'the Observatory', 'sb.obs_dome': 'the Observatory', 'lf.stacks': 'the Basement Stacks', 'lf.tower_top': 'the bell tower', 'lf.bellhall': 'the bell tower', 'sa.reading': 'the Still Archive', 'sa.heart': 'the Still Archive' };
   for (const id in site) { t.eq(TR.kindOf(C.maps[id]), 'dungeon', id + ' is a dungeon'); t.eq(TR.placeIn(C.maps[id]), site[id], id + ' is named ' + site[id]); }
-  t.eq((by.story || []).sort(), ['co.eve', 'co.festival', 'sea.coast'], 'the story locks are the dusk assembly, the festival night and the open sea (bring the boat into a port, or let the crew sail)');
+  t.eq((by.story || []).sort(), ['co.eve', 'co.festival', 'co.festival_yearly', 'sea.coast'], 'the story locks are the dusk assembly, the festival night (and, after the story, each year\'s) and the open sea (bring the boat into a port, or let the crew sail)');
   t.eq(by.expedition || [], [], 'no authored map is an expedition (only the Atlas generates them)');
 
   // ---- 3. the validator's rule (synthetic maps) -----------------------------------------------------

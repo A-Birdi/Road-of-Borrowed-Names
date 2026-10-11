@@ -145,4 +145,7 @@ RB.lex.add(RB.lex.parseTable(`
 三匹|さんびき|n|E|three (small animals, fish)
 だるま||n|I|a daruma doll (red, round, rights itself when knocked over)
 みに||exp|E|(go) to see (見に: the purpose of going)
+# after the story (60_postgame.js)
+一勝|いっしょう|n|I|one win
+見学|けんがく|vs|I|watching to learn; a study visit
 `), 'pastimes');

@@ -23,6 +23,7 @@ RB.ui.shogi = (function () {
     title: { en: 'Shogi', jp: '{将棋|しょうぎ}' },
     // a companion game needs the companion with you; a place game (Fuku at her bench) needs only a quiet moment
     eligible: (s, ctx) => {
+      if (ctx && ctx.tsume) return RB.activity.safe ? RB.activity.safe({}) : { ok: true }; // a place's puzzle: solved alone
       if (!(ctx && ctx.with) && !s.comp) return { ok: false, why: 'There is nobody to play with here.' };
       return RB.activity.safe ? RB.activity.safe(ctx && ctx.with ? {} : { companion: true }) : { ok: true };
     },
@@ -36,18 +37,20 @@ RB.ui.shogi = (function () {
       const ctx = (session && session.ctx) || {};
       const who = ctx.with || s.comp || 'fuku';
       const fr = RB.ui.folio.frame({ cls: 'sg-folio', onClose: () => leave(), closeLabel: 'Leave', closeIcon: 'back' });
-      fr.setTitle(RB.ui.label('{将棋|しょうぎ}', 'Shogi') + ' <span class="sg-with">' + esc('with ' + (RB.content.chars[who] ? RB.content.chars[who].name.en : 'Fuku')) + '</span>', '');
+      fr.setTitle(RB.ui.label('{将棋|しょうぎ}', 'Shogi') + (ctx.tsume ? '' : ' <span class="sg-with">' + esc('with ' + (RB.content.chars[who] ? RB.content.chars[who].name.en : 'Fuku')) + '</span>'), '');
       fr.box.innerHTML = '<div class="leaf sg-leaf" tabindex="-1"></div>';
       V = { session, s, with: who, fr, leaf: fr.box.firstChild, view: 'ladder', resolve, level: 1, show: true, sel: null, ask: null, said: null, thinking: false };
       V.layer = { el: fr.scrim, name: 'shogi', noAutofocus: true, onCancel: () => leave() };
       V.leaf.addEventListener('click', onClick);
       V.leaf.addEventListener('change', (e) => { const lv = e.target.closest && e.target.closest('input[name="sg-level"]'); if (lv && V) V.level = +lv.value; });
       RB.ui.pushLayer(V.layer);
-      render();
+      // a place's puzzle (Snowbell's abandoned game) opens straight onto its board, and leaving it closes the board
+      const T = ctx.tsume && RB.content.shogi.tsume.find((x) => x.id === ctx.tsume);
+      if (T) { V.direct = true; startTsume(T.id); } else render();
     });
   }
   function close() { if (!V) return; RB.ui.popLayer(V.layer); const r = V.resolve; V = null; r({ ok: true }); }
-  function leave() { if (!V) return; if (V.view === 'ladder') close(); else { V.view = 'ladder'; V.g = null; V.said = null; render(); } }
+  function leave() { if (!V) return; if (V.view === 'ladder' || V.direct) close(); else { V.view = 'ladder'; V.g = null; V.said = null; render(); } }
   const rec = () => RB.pastimes.rec(S(), 'shogi');
 
   // ---- the ladder ---------------------------------------------------------------------------------------------
@@ -59,17 +62,19 @@ RB.ui.shogi = (function () {
     { id: 'full', n: 5, title: { en: 'Shogi', jp: '{本将棋|ほんしょうぎ}' }, d: 'The real game. Your partner can give a handicap, playing without some pieces, so you can win.' },
     { id: 'tsume', n: 0, title: { en: 'Puzzles: mate in one', jp: '{詰将棋|つめしょうぎ}' }, d: 'Checkmate in a single move.' },
   ];
+  // the ladder's puzzles: a place's puzzle (one with \`place\`) joins them once it has been solved where it was found
+  const listed = (r) => RB.content.shogi.tsume.filter((T) => !T.place || r.tsume[T.id]);
   function ladder() {
     const r = rec();
     const wins = (k) => (r.wins[k] || 0), games = (k) => (r.games[k] || 0);
     let h = '<p class="sg-intro">Each rung is a game of its own; nobody has to climb to the top. Show moves, Why? and Take back are always there and never count against you.</p><ol class="sg-ladder">';
     for (const g of RUNGS) {
       const note = g.id === 'lessons' ? Object.keys(r.lessons).length + ' of ' + RB.content.shogi.lessons.length + ' met'
-        : g.id === 'tsume' ? Object.keys(r.tsume).length + ' of ' + RB.content.shogi.tsume.length + ' solved'
+        : g.id === 'tsume' ? listed(r).filter((T) => r.tsume[T.id]).length + ' of ' + listed(r).length + ' solved'
         : games(g.id) ? wins(g.id) + ' won of ' + games(g.id) : 'Not played yet';
       h += '<li class="sg-rung"><div class="sg-rt">' + (g.n ? '<span class="sg-n">' + g.n + '</span>' : '<span class="sg-n">' + RB.ui.jhtml('{詰|つめ}') + '</span>') + '<span class="vb-jp">' + J(g.title) + '</span><span class="en">' + esc(g.title.en) + '</span></div><p class="small">' + esc(g.d) + '</p><p class="muted small">' + esc(note) + '</p>' +
         (g.id === 'lessons' ? '<div class="sg-acts">' + RB.content.shogi.lessons.map((L) => '<button type="button" class="pbtn small" data-a="lesson" data-id="' + L.id + '">' + (r.lessons[L.id] ? '✓ ' : '') + RB.ui.jhtml(SG().NAMES[L.piece].jp) + '</button>').join('') + '</div>'
-          : g.id === 'tsume' ? '<div class="sg-acts">' + RB.content.shogi.tsume.map((T, i) => '<button type="button" class="pbtn small" data-a="tsume" data-id="' + T.id + '">' + (r.tsume[T.id] ? '✓ ' : '') + 'Puzzle ' + (i + 1) + '</button>').join('') + '</div>'
+          : g.id === 'tsume' ? '<div class="sg-acts">' + listed(r).map((T, i) => '<button type="button" class="pbtn small" data-a="tsume" data-id="' + T.id + '">' + (r.tsume[T.id] ? '✓ ' : '') + 'Puzzle ' + (i + 1) + '</button>').join('') + '</div>'
           : g.id === 'full' ? '<div class="sg-acts">' + ['two', 'rook', 'bishop', 'lance', 'none'].map((hc) => '<button type="button" class="pbtn small" data-a="play" data-v="full" data-hc="' + hc + '">' + RB.ui.jhtml(SG().HANDICAPS[hc].label.jp) + ' <span class="en">' + esc(SG().HANDICAPS[hc].label.en) + '</span></button>').join('') + '</div>'
           : '<div class="sg-acts"><button type="button" class="pbtn" data-a="play" data-v="' + g.id + '">' + I('next') + '<span>Play</span></button></div>') + '</li>';
     }
@@ -283,7 +288,7 @@ RB.ui.shogi = (function () {
     return '<div class="sg-top"><span class="vb-jp">' + RB.ui.jhtml('{詰将棋|つめしょうぎ}') + '</span> <span class="en">Mate in one</span></div><p class="sg-why">' + RB.ui.jhtml(V.T.say.jp) + '<span class="en">' + esc(V.T.say.en) + '</span></p>' +
       '<div class="sg-play"><div class="sg-bcol">' + handHtml(g, 1, false) + boardHtml(g, { sel: V.sel, targets }) + handHtml(g, 0, true) + '</div><div class="sg-side">' + askHtml() +
       '<p class="sg-status" role="status">' + (V.solved ? '<b>' + RB.ui.jhtml('{詰|つ}み') + '</b> Checkmate. Solved.' : V.said ? esc(V.said) : 'Find the move that leaves the king no way out.') + '</p>' +
-      '<div class="sg-acts">' + (V.solved ? '<button type="button" class="pbtn primary" data-a="ladder">Back to the ladder</button>' : '<button type="button" class="pbtn small" data-a="reset">Start again</button>') + '</div>' + '</div></div>';
+      '<div class="sg-acts">' + (V.solved ? '<button type="button" class="pbtn primary" data-a="ladder">' + (V.direct ? 'Leave the board' : 'Back to the ladder') + '</button>' : '<button type="button" class="pbtn small" data-a="reset">Start again</button>') + '</div>' + '</div></div>';
   }
   function tsumeClick(r, c) {
     if (V.solved) return;
@@ -306,7 +311,7 @@ RB.ui.shogi = (function () {
     const n = SG().play(V.g, m);
     const st = SG().status(n);
     V.sel = null; V.drop = null; V.ask = null;
-    if (st.over && st.winner === 0) { V.g = n; V.solved = true; V.said = null; rec().tsume[V.T.id] = Date.now(); if (RB.stampBook) RB.stampBook.settle(S()); }
+    if (st.over && st.winner === 0) { V.g = n; V.solved = true; V.said = null; rec().tsume[V.T.id] = Date.now(); if (V.T.place) S().flags['pt_tsume_' + V.T.id] = true; if (RB.stampBook) RB.stampBook.settle(S()); }
     else V.said = SG().inCheck(n, 1) ? 'Check, but the king can still get away. Look for the move that closes every escape.' : 'That is not check. The king must be attacked, with nowhere to go.';
     render();
   }
@@ -332,7 +337,7 @@ RB.ui.shogi = (function () {
     if (a === 'lesson') return startLesson(b.dataset.id);
     if (a === 'tsume') return startTsume(b.dataset.id);
     if (a === 'play') return b.dataset.v === 'hasami' ? startGame('hasami') : startGame(b.dataset.v, b.dataset.hc);
-    if (a === 'ladder') { V.view = 'ladder'; render(); return; }
+    if (a === 'ladder') { if (V.direct) return close(); V.view = 'ladder'; render(); return; }
     if (a === 'reset') return V.view === 'lesson' ? startLesson(V.L.id) : startTsume(V.T.id);
     if (a === 'again') return startGame(V.kind, V.hc);
     if (a === 'show') { V.show = b.checked; render(); return; }
@@ -368,5 +373,22 @@ RB.ui.shogi = (function () {
     setTimeout(tick, 0);
   };
 
-  return { run, state: () => (V ? { view: V.view, kind: V.kind, g: V.g, level: V.level, solved: !!V.solved, thinking: V.thinking } : null), close };
+  // !hook pt_tsume <id>: a place's puzzle, opened after the scene has let go of the screen
+  RB.hooks.pt_tsume = async (a) => {
+    const id = a && a[0];
+    if (!id) return;
+    if (RB.test && RB.test.auto) { RB.test.log.push({ t: 'activity', kind: 'shogi', tsume: id, skipped: 'auto' }); return; }
+    const t0 = Date.now();
+    const tick = () => {
+      if (!RB.game || !RB.game.s) return;
+      if (!RB.script.isRunning() && RB.game.mode() === 'world') {
+        RB.activity.launch('shogi', { source: 'world-prop', tsume: id }).then((r) => { if (r && !r.ok && r.why && r.why !== 'The campaign changed.') RB.ui.notice(r.why, 'info'); });
+        return;
+      }
+      if (Date.now() - t0 < 4000) setTimeout(tick, 40);
+    };
+    setTimeout(tick, 0);
+  };
+
+  return { run, state: () => (V ? { view: V.view, kind: V.kind, g: V.g, level: V.level, solved: !!V.solved, thinking: V.thinking, tsume: V.T ? V.T.id : null, direct: !!V.direct } : null), close };
 })();

@@ -6551,6 +6551,12 @@
   "jp": "{届|とど}かぬ {言葉|ことば} の {庭|にわ}",
   "en": "The Garden of Unsent Words"
  },
+ "maps:ko.grove#13x148z": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, the returns and the companions' beats): each line read in full against the lexicon, the grammar points' notes, sealed S8/S14 and the characters' existing lines (Hiro's twenty festivals, the keepers' register of lamp names, Sakichi's shelf, Kikue's unlabelled jar, Koume's promise to see the act); fixed: a headline's 刻み直さる now 刻み直される, 賛成致しかねます now 賛成しかねます (致す is not taught), 案 given its reading, the night walk made to start from the road's foot, Suzu's 待ってる contracted as her other Kansai lines are",
+  "jp": "{一番|いちばん} {奥|おく} の {森|もり}",
+  "en": "The Deepest Grove"
+ },
  "enemies:ko.leafling#1u7n38g": {
   "status": "self-reviewed",
   "ref": "P11 self-review: Kotonoha, Chapter 9 (the call, the crossing, the island, the leaves, the tellings and shells, the Root Hollows, the Gardener) and Lanternfall's twelve-chapter lines (lf2)",

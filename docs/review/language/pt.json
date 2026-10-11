@@ -41,6 +41,126 @@
   "jp": "いつ でも どうぞ 。 {私|わたし} は たいてい {家|いえ} に いる から 。",
   "en": "Any time. I'm usually at home."
  },
+ "scene:pt.sb_inn_table#y63u38": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{盤|ばん} の {上|うえ} は 、 {前|まえ} に {見|み}た とき の まま だ 。 {転|ころ}がって いる {駒|こま} は 、 {金|きん} 。",
+  "en": "The board is just as it was when you saw it before. The piece that rolled off is a gold."
+ },
+ "scene:pt.sb_inn_table#6c92cy": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "その {一局|いっきょく} ？ {冬|ふゆ} に {泊|と}まった お{客|きゃく}さん が 、 {雪|ゆき} の {止|や}んだ {朝|あさ} に {急|いそ}いで {出|で}て {行|い}った の 。 「 {次|つぎ} の {一手|いって} で {詰|つ}む 」 って {言|い}い{残|のこ}して ね 。",
+  "en": "That game? A guest who stayed the winter left in a hurry the morning the snow stopped. \"It's mate on the next move,\" they said on the way out."
+ },
+ "scene:pt.sb_inn_table#1cjlnvh": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{誰|だれ} も {片付|かたづ}けられない の よ 。 {続|つづ}き が {気|き}に なって 。",
+  "en": "Nobody can bring themselves to clear it away. We all want to know how it ends."
+ },
+ "scene:pt.sb_inn_table:choice#qp8bk2": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{続|つづ}き を {指|さ}す",
+  "en": "Finish the game"
+ },
+ "scene:pt.sb_inn_table:choice#hh59bz": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "そっと して おく",
+  "en": "Leave it be"
+ },
+ "scene:pt.sb_inn_table#gxm911": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{盤|ばん} は 、 また {誰|だれ} か を {待|ま}って いる 。",
+  "en": "The board goes on waiting for someone."
+ },
+ "scene:pt.sb_inn_table#dqgfso": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6); the opponent's king in a mate puzzle written 玉, as puzzles write it",
+  "jp": "{玉|ぎょく} の {前|まえ} に 、 {打|う}った {金|きん} が {立|た}って いる 。 {一局|いっきょく} は 、 {終|お}わった 。",
+  "en": "The gold you dropped stands in front of the king. The game is over."
+ },
+ "scene:pt.sb_inn_table#ys7k8p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{本当|ほんとう} に {一手|いって} で {詰|つ}んだ ん だ ね 。 あの お{客|きゃく}さん 、 {嘘|うそ} は {言|い}って なかった 。 …… {片付|かたづ}ける の 、 もう {少|すこ}し {後|あと} に しよう かな 。",
+  "en": "So it really was mate in one. That guest wasn't lying. …I think I'll leave clearing it away a little longer."
+ },
+ "scene:pt.bench_two#13e137p": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "ベンチ に {盤|ばん} を {広|ひろ}げて 、 イサム さん が {座|すわ}って いる 。 {家|いえ} の {方|ほう} から 、 フク さん も {降|お}りて くる 。",
+  "en": "Isamu sits at the bench with the board laid out. Fuku is coming down the path from her house."
+ },
+ "scene:pt.bench_two#ntxzly": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{帰|かえ}って から は 、 {毎朝|まいあさ} ここ で {一局|いっきょく} だ 。 {網|あみ} の {繕|つくろ}い は 、 {昼|ひる} から で いい 。",
+  "en": "Since I came home it's been a game here every morning. The nets can wait till the afternoon."
+ },
+ "scene:pt.bench_two#1unnb9q": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{五年|ごねん} {分|ぶん} 、 {負|ま}け が たまって いる の よ 。 この {人|ひと} 。",
+  "en": "He has five years of losing to make up, this one."
+ },
+ "scene:pt.bench_two#njtkya": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "…… まだ {一勝|いっしょう} も して いない 。",
+  "en": "…I haven't won one yet."
+ },
+ "scene:pt.bench_two#2hrm1v": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "ベンチ に {忘|わす}れて いた {歩|ふ} も 、 やっと {盤|ばん} に {戻|もど}った わ 。",
+  "en": "And the pawn that was left on the bench is back on the board at last."
+ },
+ "scene:pt.bench_two#k3q9dq": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "お{前|まえ} さん も {指|さ}す か ？ {俺|おれ} と でも 、 フク さん と でも 。",
+  "en": "You playing too? With me, or with Fuku."
+ },
+ "scene:pt.bench_two:choice#1jam8z5": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "イサム さん と {指|さ}す",
+  "en": "Play Isamu"
+ },
+ "scene:pt.bench_two:choice#16imyom": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "フク さん と {指|さ}す",
+  "en": "Play Fuku"
+ },
+ "scene:pt.bench_two:choice#a7ews1": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{今|いま} は {見|み}て いる",
+  "en": "Just watch for now"
+ },
+ "scene:pt.bench_two#1rd7eco": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "よし 。 {手加減|てかげん} は …… {少|すこ}し だけ な 。",
+  "en": "Right. I'll go easy on you… a little."
+ },
+ "scene:pt.bench_two#p5ptc4": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "じゃあ 、 イサム さん は {見学|けんがく} ね 。",
+  "en": "Then Isamu can watch and learn."
+ },
+ "scene:pt.bench_two#1yo8lqt": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{駒|こま} の {音|おと} が 、 {港|みなと} の {波|なみ} の {音|おと} に {混|ま}じる 。 {今朝|けさ} も 、 フク さん が {勝|か}った 。",
+  "en": "The click of the pieces mixes with the sound of the harbour's waves. This morning, too, Fuku wins."
+ },
  "challenges:pt.kuji_hanabi#1xnjriv": {
   "status": "self-reviewed",
   "ref": "self-reviewed by the lead line by line against its English, the cast's established speech (Sōbē, Manbē, Tomi, Miyo, Sakutarō, Shinobu, Ryūsui and the returning Manybridge cast), Suzu's Kansai versions against docs/dialect/suzu_kansai.md, the Manybridge brief (07_REGIONS R1), the press's block grammar (topic, setting, want, trouble, turn, ending; notice what, when, where, ask), the festival games' two tiers (kana-only and kanji) and the game's lexicon; corrected in review: 一日 → 三日 (press idle), 川の中は → 川の中じゃ, 言葉の書いた → 言葉を書いた, ASCII colons → ：, Kansuke's riddle 7 reworded, the distractors 参りください → ぜひ参ってください and 迷わないために → 迷わないように, the apprentice quest's title, the kuroko's line ('いる' こと に なった), 長堀 read ながほり, お面 を かぶる (P09)",
@@ -1012,6 +1132,12 @@
   "ref": "self-reviewed by the lead against the game's lexicon, standard shogi terminology (piece names, handicap names, 一手詰め) and textbook grammar (P06)",
   "jp": "{一手詰|いってづ}め 。 {歩|ふ} が {成|な}れば 、 {金|きん} の よう に {動|うご}く 。",
   "en": "Mate in one: the pawn. A pawn that promotes moves like a gold."
+ },
+ "pastime:shogi#ylthws": {
+  "status": "self-reviewed",
+  "ref": "self-reviewed (P15g, shogi's two places after the story): each line read in full against the lexicon, the shogi lessons' terms (王/玉, 金, 持ち駒, 一手詰め, 指す) and the speakers' existing lines (Yae's inn talk in Chapter 4; Fuku's bench and Isamu's five years away in Chapters 2 and 6)",
+  "jp": "{雪鈴|ゆきすず} の {宿|やど} に {残|のこ}された {一局|いっきょく} 。 {盤|ばん} から {転|ころ}がった {金|きん} が {持|も}ち{駒|ごま} 。 {一手詰|いってづ}め 。",
+  "en": "The game left at the Snowbell inn. The gold that rolled off the board is in your hand: mate in one."
  },
  "pastime:karuta#o4dg4a": {
   "status": "self-reviewed",

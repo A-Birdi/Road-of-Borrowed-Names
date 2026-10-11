@@ -241,7 +241,11 @@
     F-133; VALIDATION.md "The expansion, P15"); **P15e is done: the nine old guardians** (`src/content/guardians/`,
     shrines in `src/content/zz_guardians.js`, the honest record in `src/engine/98g_guardians.js`; F-135; unit
     `guardians`); **P15f is done: Ashihara Shinden, the new settlement** (`src/content/settle/`; F-136; unit `settle`);
-    next: P15g (returns and pastimes), P15h, the chained route (XP79) and a complete browser run. Routes for the new chapters from fixtures:
+    **P15g: the returns and the companions' postgame beats are done** (`src/content/returns/`; F-137; unit `returns`),
+    and shogi's two places (Snowbell's abandoned game as a puzzle at its place, Fuku and Isamu at the hill bench:
+    `src/content/pastimes/60_postgame.js`, `src/ui/88_shogi.js`; unit `pastimes_post`); next: the rest of P15g (A Quiet
+    Cast's two new stations, Sazanami and the boat, and the boat's postgame destination), P15h, the chained route
+    (XP79) and a complete browser run. Routes for the new chapters from fixtures:
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'`,
     `PURSUE_FROM=tests/fixtures/campaign/F-ren-mb1_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb2_done@mb.|mp.@mp_main'`
     and (Chapter 10) `PURSUE_FROM=tests/fixtures/campaign/F-ren-ko_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'cr_called@ko.|sg.|lf.|lf2.@cr_main>cr_done@sg.|lf.|lf2.|cr.@cr_main'`.
