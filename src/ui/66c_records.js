@@ -29,6 +29,7 @@ RB.ui.records = (function () {
 
   // ---- a stamp's design (SVG: a shape, a motif, an ink; pictures, never characters) ---------------------------------
   const MOTIF = {
+    steam: 'M14 31 C9 25 18 21 13 15 C10 11 14 8 14 8 M22 31 C17 25 26 21 21 15 C18 11 22 8 22 8 M30 31 C25 25 34 21 29 15 M8 33 H32',
     bridge: 'M8 26 Q20 12 32 26 M8 26 H32 M12 26 V30 M28 26 V30',
     wave: 'M6 22 Q11 16 16 22 T26 22 T36 22 M6 28 Q11 22 16 28 T26 28 T36 28',
     leaf: 'M20 8 C30 14 30 26 20 32 C10 26 10 14 20 8 Z M20 10 V31',

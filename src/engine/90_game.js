@@ -22,6 +22,8 @@ RB.game = (function () {
       // battle presentation (battle addendum §14.2): its own speed, never derived from Text speed
       // (an older record lacks them: Normal / Adaptive / Adaptive)
       battleAnim: 'normal', battleControls: 'adaptive', intentDisplay: 'adaptive', compPlan: 'ask', outcomeView: 'shown', townHints: 'on',
+      // bathing scenes at the hot springs (expansion P13, R3): shown, or told in a sentence (older records: shown)
+      bathScenes: 'shown',
       // Harmony portrait flourish (Harmony addendum §7.4): the paired portrait as a technique starts; presentation
       // only — Off suppresses that layer alone (older records lack it: On)
       harmonyFlourish: true,

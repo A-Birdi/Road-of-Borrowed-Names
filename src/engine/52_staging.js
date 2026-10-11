@@ -463,6 +463,8 @@ RB.staging = (function () {
     night: { ambient: { dark: 0.55, darkCol: '12,16,44', playerLight: 52 }, night: true },
     night_in: { ambient: { dark: 0.42, darkCol: '18,16,40', playerLight: 58, tint: 'rgba(40,30,80,0.10)' }, night: true },
     dusk: { ambient: { dark: 0.25, darkCol: '40,24,40', tint: 'rgba(120,60,40,0.10)', playerLight: 48 }, night: false },
+    // first light (expansion P13: Mio's dawn at the terrace footbath)
+    dawn: { ambient: { dark: 0.16, darkCol: '52,48,80', tint: 'rgba(210,170,180,0.10)', playerLight: 34 }, night: false },
   };
   function ambience(preset) {
     const sc = st.scene;

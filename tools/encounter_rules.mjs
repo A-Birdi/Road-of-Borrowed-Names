@@ -12,7 +12,7 @@
 export function encounterRules(RB, C, { jcheck, checkStep, E }) {
   const L = RB.combatLogic;
   const KINDS = ['battle', 'social', 'procedure', 'study'];
-  const WHEN = new Set(['all', 'any', 'not', 'settled', 'down', 'standing', 'left', 'rounds', 'flag', 'noFlag', 'arrived', 'prevented', 'comp', 'proc', 'machine', 'stance', 'claims', 'understanding', 'used', 'knots']);
+  const WHEN = new Set(['all', 'any', 'not', 'settled', 'down', 'standing', 'left', 'rounds', 'flag', 'noFlag', 'arrived', 'prevented', 'comp', 'proc', 'machine', 'stance', 'claims', 'understanding', 'used', 'knots', 'state']);
   const STANCES = new Set(['listening', 'heated', 'closed', 'leaving']);
   const text = (o, where) => { if (o && typeof o === 'object' && o.jp != null) jcheck(o.jp, where); };
   const tiered = (o, where) => {

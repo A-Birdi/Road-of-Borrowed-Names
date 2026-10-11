@@ -163,6 +163,8 @@ RB.ui.settings = (function () {
         radios('compPlan', 'Your companion\'s turn', [['ask', 'Ask me'], ['protect', 'Protect'], ['reveal', 'Reveal'], ['press', 'Press the opening']], null, 'Ask me opens your companion\'s menu each exchange. With a plan, they act on it by themselves, in their own way (Nao still reads, Ren still wards), and the menu opens only when they have nothing of that kind.') +
         // (expansion E17, C-65: how a grave outcome is told; it never changes what happened or what follows)
         radios('outcomeView', 'Grave outcomes', [['shown', 'Shown'], ['summarised', 'Summarised']], null, 'Rarely, a side story can end badly for someone in it. Shown tells it as it happens, with restraint; Summarised tells it in a sentence. What happened, and the talk with your companion afterwards, are the same either way.') +
+        // (expansion P13, R3: towel-wrapped and nonsexual either way; presentation only)
+        radios('bathScenes', 'Bathing scenes', [['shown', 'Shown'], ['summarised', 'Summarised']], null, 'At the hot springs, a bath is part of the stay. Shown describes the bath (towels on, warm and funny); Summarised tells the bath itself in a sentence. The conversation, and what follows, are the same either way.') +
         // (Harmony addendum §7.4: the portrait layer only — the technique, its stage performance and the banner stay)
         sw('harmonyFlourish', 'Harmony portrait flourish', 'A short paired portrait of you and your companion as a coordinated technique begins. Off keeps the technique, its performance on the stage and its name at the top.') +
         radios('questGuide', 'Quest guidance', [['full', 'Markers and hints'], ['hints', 'Hints only (no markers)'], ['off', 'Off (objectives only)']], null,

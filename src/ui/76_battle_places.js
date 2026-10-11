@@ -97,7 +97,7 @@ RB.battlePlaces = (function () {
   const CODEOF = { meadow: 'g', sand: 's', snow: 'n', ash: 'a', paper: 'q', stone: 'o', earth: 'p', parch: 'q' };
   const GROUNDOF = { grass: 'meadow', flowers: 'meadow', tallgrass: 'meadow', field: 'meadow', sand: 'sand', snow: 'snow', ice: 'snow', ash: 'ash', paper: 'paper', stonefloor: 'stone', path: 'earth', road: 'earth', atlas_sketch: 'parch', wood: 'earth', carpet: 'stone', tatami: 'stone', glass: 'stone' };
   // region of the tile palette for a backdrop family (colours of the same world)
-  const FAMREGION = { mill: 'reedwake', kiln: 'cinder', archive: 'archive', observatory: 'snowbell', belltower: 'lanternfall', still: 'sa_still', atlas: 'atlas', undercroft: 'manybridge', understage: 'manybridge', keepers: 'keepers', keepers_cave: 'keepers', kotonoha: 'kotonoha', kotonoha_cave: 'kotonoha', cloudroad: 'cloudroad', cloudtop: 'cloudtop', cloudroad_hut: 'cloudtop' };
+  const FAMREGION = { mill: 'reedwake', kiln: 'cinder', archive: 'archive', observatory: 'snowbell', belltower: 'lanternfall', still: 'sa_still', atlas: 'atlas', undercroft: 'manybridge', understage: 'manybridge', keepers: 'keepers', keepers_cave: 'keepers', kotonoha: 'kotonoha', kotonoha_cave: 'kotonoha', cloudroad: 'cloudroad', cloudtop: 'cloudtop', cloudroad_hut: 'cloudtop', steamhollow: 'steamhollow', yn_vents: 'yn_vents' };
 
   // ---- scale (backdrop px, before the actors' whole-number scale) --------------------------------
   const COL = 24;          // a map column at the horizon, out of doors and in halls
@@ -378,6 +378,8 @@ RB.battlePlaces = (function () {
     cloudroad: ['leaves', 'pebbles', 'stone', 'tufts', 'logs'],
     cloudtop: ['snow', 'pebbles', 'stone', 'tufts'],
     cloudroad_hut: ['papers', 'storage', 'candles', 'cobweb', 'rope'],
+    steamhollow: ['leaves', 'pebbles', 'stone', 'tufts', 'puddle'],
+    yn_vents: ['stone', 'puddle', 'pebbles', 'cobweb'],
     atlas: ['tufts', 'pebbles', 'stone', 'pages'],
     stillOut: ['pages', 'pebbles', 'stone'],
   };
@@ -1240,6 +1242,8 @@ RB.battlePlaces = (function () {
     cloudroad: { n: 9, col: 'rgba(236,240,240,0.4)', size: 3, vx: 0.006, vy: 0.001, wob: 12 },
     cloudtop: { n: 16, col: 'rgba(255,255,255,0.8)', size: 2, vx: -0.004, vy: 0.008, wob: 10 },
     cloudroad_hut: { n: 7, col: 'rgba(230,226,214,0.3)', size: 1, vx: 0.001, vy: 0.003, wob: 4 },
+    steamhollow: { n: 10, col: 'rgba(246,244,238,0.4)', size: 3, vx: 0.002, vy: -0.006, wob: 10 },
+    yn_vents: { n: 9, col: 'rgba(240,236,220,0.35)', size: 2, vx: 0.001, vy: -0.007, wob: 8 },
   };
   // How much the scenery quiets itself now (0 calm … 1 still): while you read,
   // choose and write; and for a moment when a blow lands (a result is placed).

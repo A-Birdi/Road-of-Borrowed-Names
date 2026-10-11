@@ -190,6 +190,8 @@ RB.encounter = (function () {
         case 'understanding': ok = !!E.social && E.social.understanding >= v; break;
         case 'used': ok = !!E.social && [].concat(v).every((id) => (E.social.used[id] || 0) > 0); break;
         case 'knots': ok = Object.keys(v).every((r) => { const i = foeIndex(st, r); return i >= 0 && st.foes[i].knots <= v[r]; }); break;
+        // the campaign outside the encounter (expansion P13: evidence found earlier, an item carried): a condition string
+        case 'state': ok = !!(RB.game && RB.game.s) && RB.state.test(RB.game.s, v); break;
         default: throw new Error('unknown encounter condition ' + k);
       }
       if (!ok) return false;
