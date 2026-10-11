@@ -90,8 +90,8 @@ RB.dialect.add('kansai', `
 = {一座|いちざ} {全体|ぜんたい} で {一|ひと}つ の {芝居|しばい} 。 {舞台|ぶたい} の {基本|きほん} よ 。 || The whole company, one play. That's stagecraft one-oh-one.
 > {一座|いちざ} {全体|ぜんたい} で {一|ひと}つ の {芝居|しばい} 。 {舞台|ぶたい} の {基本|きほん} や で 。 || The whole company, one play. That's stagecraft one-oh-one.
 @ yn/yn.end [yn.end]
-= {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客席|きゃくせき} でも {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
-> {最後|さいご} の {幕|まく} や な 。 …… {相方|あいかた} が おる なら 、 どんな {客席|きゃくせき} でも {立|た}てる わ 。 {行|い}こ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
+= {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
+> {最後|さいご} の {幕|まく} や な 。 …… {相方|あいかた} が おる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}こ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
 @ yn/yn.bunkichi [yn.bunkichi]
 = {台詞|せりふ} が {戻|もど}った {役者|やくしゃ} の {顔|かお} ね 。 {見|み}れば {分|わ}かる わ 。 || That's the face of an actor who's got his lines back. I'd know it anywhere.
 > {台詞|せりふ} が {戻|もど}った {役者|やくしゃ} の {顔|かお} や な 。 {見|み}たら {分|わ}かる わ 。 || That's the face of an actor who's got his lines back. I'd know it anywhere.
@@ -121,7 +121,7 @@ RB.dialect.add('kansai', `
 > =
 @ yn/yn.suzu_evening [yn.suzu_evening]
 = $name 。 {先|さき} に {寝|ね}て て 。 {私|わたし} 、 {少|すこ}し {風|かぜ} に {当|あ}たって くる から 。 || $name. Go to bed. I'm going to get some air.
-> $name 。 {先|さき} に {寝|ね}とき 。 {私|わたし} 、 ちょっと {風|かぜ} に {当|あ}たって くる さかい 。 || $name. Go to bed. I'm going to get some air.
+> $name 。 {先|さき} に {寝|ね}とき 。 {私|わたし} 、 ちょっと {風|かぜ} に {当|あ}たって くる から 。 || $name. Go to bed. I'm going to get some air.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = …… {見|み}つかっちゃった 。 {寝|ね}て て って {言|い}った のに 。 || …Caught. I told you to go to sleep.
 > …… {見|み}つかってもうた 。 {寝|ね}とき って {言|い}うた のに 。 || …Caught. I told you to go to sleep.
@@ -136,10 +136,10 @@ RB.dialect.add('kansai', `
 > {戻|もど}ったら 、 {全部|ぜんぶ} {戻|もど}って くる 。 …… それ を 、 {一晩|ひとばん} だけ {想像|そうぞう} したかった ねん 。 {断|ことわ}る {前|まえ} に 、 ちゃんと 。 || If I went back, I'd have all of it again. …I wanted one night just to imagine it. Properly, before I say no.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = うん 。 {断|ことわ}る 。 …… {次|つぎ} の {幕|まく} の {相方|あいかた} は 、 もう {決|き}めて ある から 。 || Yes. I'm saying no. …I've already chosen my partner for the next act.
-> うん 。 {断|ことわ}る 。 …… {次|つぎ} の {幕|まく} の {相方|あいかた} は 、 もう {決|き}めてる さかい 。 || Yes. I'm saying no. …I've already chosen my partner for the next act.
+> うん 。 {断|ことわ}る 。 …… {次|つぎ} の {幕|まく} の {相方|あいかた} は 、 もう {決|き}めてる ねん 。 || Yes. I'm saying no. …I've already chosen my partner for the next act.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = …… ありがと 。 そう {言|い}って くれる {人|ひと} だ から 、 {離|はな}れられない の よ 。 || …Thanks. It's because you'd say that, that I can't leave.
-> …… おおきに 。 そう {言|い}うて くれる {人|ひと} や から 、 {離|はな}れられへん ねん 。 || …Thanks. It's because you'd say that, that I can't leave.
+> …… ありがとう 。 そう {言|い}うて くれる {人|ひと} や から 、 {離|はな}れられへん ねん 。 || …Thanks. It's because you'd say that, that I can't leave.
 @ yn/yn.suzu_garden [yn.suzu_garden]
 = {元手|もとで} が かかり{過|す}ぎてる の 。 ここ まで の {旅|たび} 、 ぜんぶ {投資|とうし} よ 。 {今|いま} {降|お}りたら 、 {大損|おおぞん} 。 || The investment's too great. This whole journey's been an investment. Get off now and I'd lose everything.
 > {元手|もとで} が かかり{過|す}ぎてる ねん 。 ここ まで の {旅|たび} 、 ぜんぶ {投資|とうし} や 。 {今|いま} {降|お}りたら 、 {大損|おおぞん} や 。 || The investment's too great. This whole journey's been an investment. Get off now and I'd lose everything.

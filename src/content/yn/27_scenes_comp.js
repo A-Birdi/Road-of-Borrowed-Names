@@ -84,8 +84,8 @@ mio[closed]: {大丈夫|だいじょうぶ} です 。 {本当|ほんとう} に
 :out
 !set yn_mio_night
 !set yn_apart
-!hook comp_away night
 !hook co_bond yn:crossroads
+!hook comp_away night
 narr: {薬処|くすりどころ} の {戸|と} が 、 {静|しず}か に {閉|し}まった 。 || The dispensary door closes quietly behind you.
 !journal ミオ は {薬処|くすりどころ} に {残|のこ}った 。 キクエ さん に 、 {店|みせ} を {継|つ}がない か と {言|い}われた の だ 。 {今夜|こんや} は {町|まち} で {過|す}ごし 、 {階段|かいだん} の {下|した} の {部屋|へや} で {休|やす}もう 。 || Mio stayed at the dispensary: Kikue asked her to take it on. Spend the evening in town, then rest in the room under the stairs.
 
@@ -146,8 +146,8 @@ suzu[closed]: $name 。 {先|さき} に {寝|ね}て て 。 {私|わたし} �
 !set yn_suzu_crossroads
 !set yn_suzu_night
 !set yn_apart
-!hook comp_away night
 !hook co_bond yn:crossroads
+!hook comp_away night
 !journal スズ の {一座|いちざ} が 、 {湯|ゆ}ノ{谷|たに} に {来|き}て いた 。 コウメ に {昔|むかし} の {芸|げい} に {戻|もど}って と {言|い}われ 、 スズ は {一人|ひとり} で {出|で}て {行|い}った 。 {階段|かいだん} の {下|した} の {部屋|へや} で {休|やす}もう 。 || Suzu's troupe is in Steamhollow. Koume asked her to come back to their old act, and Suzu went out alone. Rest in the room under the stairs.
 
 @scene yn.suzu_garden

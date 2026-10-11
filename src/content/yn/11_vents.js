@@ -8,7 +8,7 @@
  * old tool nook, where the far valve's handle lies, and fills the passage to the hot pool; the far valve, with its
  * handle, clears the stair down. In the Channel (yn.vents2) a shutter sends the steam into the upper corridor or the
  * lower one (yn_shutter), so you cross the middle chamber and change it. Nothing here can trap you: every valve and the
- * shutter can be turned back from where you stand.
+ * shutter can be turned back from where you stand (the shutter has a wheel at each end of the Channel as well).
  *
  * Hot pools (D2): three, each restoring a little (`!hook bath_soak`) and then running cool (yn_pool<n>_used); a
  * checkpoint at the second. The Kettle Below waits in its chamber (yn.kettle); its encounter is in 33_creatures.js. */
@@ -82,6 +82,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { p: 'yn_steamwall', x: 25, y: 4, h: 2, if: '!yn_shutter' },
       { p: 'yn_valve', x: 19, y: 15, if: '!yn_shutter', scene: 'yn.shutter' },
       { p: 'yn_valve', x: 19, y: 15, if: 'yn_shutter', o: { open: true }, scene: 'yn.shutter' },
+      // a wheel at each end on the same pipe, so the shutter can be turned back from whichever side you come in
+      // (the player can leave by the Kettle's chamber with the shutter set and come back down from the Valve Hall)
+      { p: 'yn_valve', x: 4, y: 18, if: '!yn_shutter', scene: 'yn.shutter_end' },
+      { p: 'yn_valve', x: 4, y: 18, if: 'yn_shutter', o: { open: true }, scene: 'yn.shutter_end' },
+      { p: 'yn_valve', x: 29, y: 5, if: '!yn_shutter', scene: 'yn.shutter_end' },
+      { p: 'yn_valve', x: 29, y: 5, if: 'yn_shutter', o: { open: true }, scene: 'yn.shutter_end' },
       { p: 'yn_float', x: 16, y: 18, if: '!yn_float_found', scene: 'yn.float' },
       steam(17, 10), steam(24, 5), steam(6, 19),
     ].concat(pool(2, 16, 13)),

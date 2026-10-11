@@ -7,7 +7,7 @@ RB.script.add(`
 @scene yn.bunkichi
 # Bunkichi, the masseur: works by touch and by his teacher's song, whose words he has lost.
 !faceplayer
-!if quest.yn_masseur=0&yn_verse1&yn_verse2&yn_verse3 -> song
+!if quest.yn_masseur=1 -> song
 !if quest.yn_masseur=0 -> wait
 yn_bunkichi: {按摩|あんま} の ブンキチ で ござい 。 …… {肩|かた} が {凝|こ}って おいで だ ね 。 {足音|あしおと} で {分|わ}かる 。 || Bunkichi the masseur, at your service. …Your shoulders are stiff. I can tell by your footsteps.
 yn_bunkichi: {師匠|ししょう} は 、 {揉|も}み ながら {歌|うた} を {歌|うた}った 。 {節|ふし} は {手|て} が {覚|おぼ}えて いる 。 だが 、 {言葉|ことば} を {忘|わす}れて しまって ね 。 {歌|うた} の ない {按摩|あんま} は 、 {手|て} だけ が {急|いそ}ぐ 。 || My teacher sang as he worked. My hands remember the tune. But I've lost the words. Without the song, the hands rush.

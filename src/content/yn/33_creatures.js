@@ -68,7 +68,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         text: {
           F: { jp: 'へや …… わたし の へや は 、 どこ ？ ふだ に 「たけ 」 って かいて ある けど 。', en: 'My room… where is my room? The tag says "take", but…' },
           E: { jp: '{部屋|へや} が {分|わ}からない ん です 。 {札|ふだ} に 「{竹|たけ} の {間|ま} 」 と {書|か}いて ある ん です が …… 。', en: 'I can\'t find my room. The tag says "Bamboo room", but…' },
-          I: { jp: '{部屋|へや} を {忘|わす}れて しまった ん です 。 {札|ふだ} は ある のに 、 {読|よ}めない ん です 。 {何|なん} と {書|か}いて あります か 。', en: 'I\'ve forgotten my room. I have the tag, even though I can\'t read it. What does it say?' },
+          I: { jp: '{部屋|へや} を {忘|わす}れて しまった ん です 。 {札|ふだ} は ある のに 、 {読|よ}めない ん です 。 {何|なん} と {書|か}いて あります か 。', en: 'I\'ve forgotten my room. I have the tag, but I can\'t read it. What does it say?' },
           A: { jp: '{恐|おそ}れ{入|い}ります が 、 わたくし の {部屋|へや} は 、 どちら で ございましょう 。 {札|ふだ} を お{読|よ}み いただけます か 。', en: 'I beg your pardon, but which might my room be? Would you be so kind as to read my tag?' },
         },
         answer: {
@@ -87,7 +87,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     settle: T('The towel folds itself neatly over a rail and goes still, damp and content.', '{手拭|てぬぐ}い は {物干|ものほ}し に きちんと {掛|か}かって 、 {湿|しめ}った まま {満足|まんぞく} そう に {動|うご}かなく なった 。') });
   EN('yn.chochin', {
     name: T('Stray Lantern', '{迷|まよ}い{提灯|ぢょうちん}'), art: 'lantern', artOpts: { col: '#e8763a' }, look: { custom: 'lanternghost', col: '#e8763a' }, knots: 2, pool: POOL,
-    pattern: ['lie', 'heat', 'rest'],
+    pattern: ['lie', 'heat', 'mend', 'rest'],
     // what it says: the house rules, wrong; put right by the rules as you read them
     intents: {
       lie: { power: 1, target: 'rand',

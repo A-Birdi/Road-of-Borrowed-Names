@@ -80,7 +80,7 @@ narr: {下駄屋|げたや} の {店先|みせさき} 。 {桐|きり} の {台|
 # Toki lights the valley's lanterns at dusk, street by street (Ren's beat: the valley's lanterns).
 !faceplayer
 yn_toki: {夕方|ゆうがた} に なったら 、 {谷|たに} の {提灯|ちょうちん} を {全部|ぜんぶ} {点|つ}ける の が {私|わたし} の {仕事|しごと} 。 {百|ひゃく} と {八|や}つ 。 || At dusk it's my job to light every lantern in the valley. A hundred and eight.
-yn_toki: {湯気|ゆげ} の {日|ひ} は 、 {灯|ひ} が にじんで {見|み}える の 。 {遠|とお}く から {来|き}た {人|ひと} が 、 {迷|まよ}わない よう に 。 || On steamy days the lights blur, so I light them early. So people coming from far off don't lose their way.
+yn_toki: {湯気|ゆげ} の {日|ひ} は 、 {灯|ひ} が にじんで {見|み}える から 、 {早|はや}め に {点|つ}ける の 。 {遠|とお}く から {来|き}た {人|ひと} が 、 {迷|まよ}わない よう に 。 || On steamy days the lights blur, so I light them early. So people coming from far off don't lose their way.
 ?(comp=ren) comp[surprise]: {百八|ひゃくはち} ！ …… {全部|ぜんぶ} 、 {名前|なまえ} が ある ん です か ？ || A hundred and eight! …Does every one have a name?
 ?(comp=ren) yn_toki: {名前|なまえ} ？ …… {考|かんが}えた こと も なかった 。 {通|とお}り の {名前|なまえ} なら ある けど 。 || A name? …I've never thought about it. They have the streets' names.
 ?(comp=ren) comp[smile]: それ で {十分|じゅうぶん} です 。 {通|とお}り の {名前|なまえ} で {呼|よ}べば 、 {灯|ひ} は {応|こた}えます 。 || That's enough. Call them by the street's name and the lamps will answer.
@@ -108,7 +108,7 @@ yn_heikichi: {谷|たに} の {幅|はば} が {足|た}りない よ 。 || The
 
 @scene yn.heikichi_after
 !faceplayer
-yn_heikichi: {今|いま} は 、 {同|おな}じ {大|おお}きさ の {看板|かんばん} を {二枚|にまい} {書|か}いて いる 。 {下|しも}の{湯|ゆ} の {方|ほう} が 、 {一文字|ひともじ} {多|おお}い けど な 。 || Now I'm painting two signs the same size. The Lower House's has one more letter, mind.
+yn_heikichi: {今|いま} は 、 {同|おな}じ {大|おお}きさ の {看板|かんばん} を {二枚|にまい} {書|か}いて いる 。 {下|しも}の{湯|ゆ} の {方|ほう} が 、 {字|じ} が {太|ふと}い けど な 。 || Now I'm painting two signs the same size. The Lower House's letters are a bit bolder, mind.
 
 @scene yn.footbath
 !if yn_nao_quarrel&!yn_nao_madeup -> nao

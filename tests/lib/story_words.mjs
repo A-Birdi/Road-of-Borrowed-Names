@@ -40,6 +40,8 @@ export const KNOWN_AT = {
   'ko.leafling': OBS, 'ko.jelly': OBS, 'ko.mirror': OBS, 'ko.echo': OBS, 'ko.sandlantern': OBS, 'ko.gardener': CH6,
   // the Cloudroad (twelve-chapter Chapter 10, P12): opens once Kotonoha is done, after Lanternfall's words
   'cr.waystone': CH6, 'cr.echo': CH6, 'cr.ox': CH6, 'cr.fogporter': CH6, 'cr.packlantern': CH6, 'cr.moth': CH6, 'cr.courier': CH6,
+  // Steamhollow (twelve-chapter Chapter 11, P13): down from the Cloudroad Pass once that chapter is done
+  'yn.steamwisp': CH6, 'yn.pebbles': CH6, 'yn.toad': CH6, 'yn.lostguest': CH6, 'yn.towelthief': CH6, 'yn.chochin': CH6, 'yn.kettle': CH6,
   'mp.kuroko': MB2, 'mp.moth': MB2, 'mp.imp': MB2, 'mp.golem': MB2, 'mp.naraku': MB2,
   'sa.crane': CH6, 'sa.wraith': CH6, 'sa.ghost': CH6, 'sa.moth': CH6, 'sa.echo': CH6, 'sa.hush': CH6,
 };

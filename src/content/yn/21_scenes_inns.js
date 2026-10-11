@@ -68,7 +68,7 @@ yn_oritsu: {拝見|はいけん} して おりました 。 {断|ことわ}り {
 yn_oritsu: {階段|かいだん} の {下|した} に 、 {小|ちい}さな {部屋|へや} が ございます 。 {狭|せま}い ところ です が 、 お{使|つか}い ください 。 {手拭|てぬぐ}い と {浴衣|ゆかた} も 、 どうぞ 。 || There is a small room under the stairs. It is cramped, but please make use of it. And a towel and a yukata, if you please.
 !give yn_towel
 !give yn_yukata
-narr: {浴衣|ゆかた} は 、 {左|ひだり} の {前|まえ} を {上|うえ} に して {着|き}る 。 {右|みぎ} を {上|うえ} に する の は 、 {亡|な}くなった {人|ひと} の {着方|きかた} だ 。 （{本当|ほんとう} の {習|なら}わし ） || A yukata is worn left side over right. Right over left is how the dead are dressed. (A real custom.)
+narr: {浴衣|ゆかた} は 、 {左側|ひだりがわ} を {上|うえ} に {重|かさ}ねて {着|き}る 。 {右側|みぎがわ} を {上|うえ} に する の は 、 {亡|な}くなった {人|ひと} の {着方|きかた} だ 。 （{本当|ほんとう} の {習|なら}わし ） || A yukata is worn left side over right. Right over left is how the dead are dressed. (A real custom.)
 !quest yn_main 3
 !journal {上|かみ}の{湯|ゆ} の {帳場|ちょうば} を {手伝|てつだ}い 、 {階段|かいだん} の {下|した} の {部屋|へや} を もらった 。 {下|しも}の{湯|ゆ} の {話|はなし} も {聞|き}こう 。 || You helped at the Upper House's desk and were given the room under the stairs. Hear the Lower House's side too.
 !autosave
@@ -181,7 +181,7 @@ narr: どの {湯|ゆ} に {入|はい}る ？ （この {後|あと} も 、 {�
 !call yn.bath_beat
 !end
 :again
-?(comp=nao) comp: …… {寝|ね}る な よ 。 {湯|ゆ} の {中|なか} で {寝|ね}る やつ が 、 {一番|いちばん} {多|おお}い ん だ 。 || …Don't fall asleep. Falling asleep in the bath, that's the commonest mistake.
+?(comp=nao) comp: …… {寝|ね}る な よ 。 {湯|ゆ} の {中|なか} で {寝|ね}る の が 、 {一番|いちばん} {危|あぶ}ない ん だ 。 || …Don't fall asleep. Falling asleep in the bath is the most dangerous thing you can do.
 ?(comp=mio) comp[smile]: {長湯|ながゆ} は {禁物|きんもつ} です よ 。 {十分|じゅっぷん} くらい で 、 {一度|いちど} {上|あ}がりましょう 。 || Don't stay in too long. Ten minutes or so, then get out for a bit.
 ?(comp=ren) comp: {湯気|ゆげ} の {向|む}こう の {灯|ひ} が 、 また {丸|まる}い です 。 || The lamp beyond the steam is round again.
 ?(comp=suzu) comp[laugh]: ああ …… {極楽|ごくらく} 、 {極楽|ごくらく} 。 {一度|いちど} {言|い}って みたかった の 。 || Ahh… paradise, paradise. I always wanted to say that.

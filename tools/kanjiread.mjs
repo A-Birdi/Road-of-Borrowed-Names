@@ -112,6 +112,8 @@ export const CURATED = {
   只: 'ただ', 澪: 'みお', 忍: 'にん,しの', 豹: 'ひょう',
   // the Cloudroad (P12): 暖簾 のれん and 大袈裟 おおげさ read as whole words; 袈裟 is けさ on its own
   簾: 'れん,すだれ', 袈: 'け', 裟: 'さ',
+  // Steamhollow (P13): 子守唄 こもりうた and 老舗 しにせ read as whole words
+  唄: 'うた', 舗: 'ほ',
   // 守: the ～守 compounds (灯守, 木守, 関守, 灯台守) each count once and outnumber
   // 守る, though 守る is the word the game uses most (a battle response)
   守: 'まも',

@@ -82,6 +82,13 @@ RB.audio = RB.audio || {};
       battle: 'battle_cr', boss: 'boss_cr', route: null,
       songs: ['cloudroad', 'cr_pass', 'cr_hut'],
     },
+    // the twelve-chapter edition's Steamhollow, Chapter 11 (38y_songs_yn.js): koto and shamisen, geta on stone; its
+    // battle and boss themes sit a step above the Cloudroad's and below the Archive's
+    steamhollow: {
+      chapter: 11, edition: 2, regions: ['steamhollow', 'yn_vents'], prefixes: ['yn.'],
+      battle: 'battle_yn', boss: 'yn_kettle', route: null,
+      songs: ['steamhollow', 'yn_evening', 'yn_vents', 'yn_north'],
+    },
     cinder: {
       chapter: 3, regions: ['cinder'], prefixes: ['co.'],
       battle: 'battle_cinder', boss: 'boss_cinder', route: 'co_road',

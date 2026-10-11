@@ -24,7 +24,7 @@ RB.audio = RB.audio || {};
 
   // ================================================================== STEAMHOLLOW
   // G major, 96: the shamisen leads over a koto that keeps the step; geta on stone (hyōshigi) off the beat
-  const YN_A = YU + ' | 2 - 3 - 5 - 3 - | 2 - - - - - . . | ' + YU + " | 6 - 5 - 3 - 2 - | 3 - 2 - 1 - 2 - | 1 - - - - - . .";
+  const YN_A = YU + ' | 2 - 3 - 5 - 3 - | 2 - - - - - . . | ' + YU + " | 3 - 2 - 1 - 2 - | 1 - - - - - . .";
   const YN_A_CH = '1 1 5 5 1 6 5 1';
   const YN_B = '3 - - - 5 - 3 - | 2 - - - - - . . | 1 - - - 2 - 3 - | 5 - - - - - . . | 6 - - - 5 - 6 - | 1\' - - - - - . . | 7 - 6 - 5 - 6 - | 5 - - - - - . .';
   const YN_B_CH = '1 5 4 1 4 4 5 5';
@@ -88,10 +88,10 @@ RB.audio = RB.audio || {};
 
   // ================================================================== THE STEAM VENTS
   // C phrygian, 64: a deep drone; the biwa plucks the steam motif bent low; drips (the rin, muffled); no footfall
-  const VT_A = '1 - - - . . . . | 2 - 1 - - - . . | . . . . . . . . | 5 - - - - - . . | 5 - 6 - 1\' - 6 - | 5 - - - - - . . | 4 - 3 - 2 - - - | 1 - - - - - . .';
+  const VT_A = '1 - - - . . . . | 2 - 1 - - - . . | . . . . . . . . | 5 - - - - - . . | 5 - 6 - 1\' - 6 - | 5 - 3 - - - . . | 4 - 3 - 2 - - - | 1 - - - - - . .';
   const VT_A_CH = '1P 2 1P 5P 1P 1P 2 1P';
   const VT_B = '. . . . . . . . | 5, - - - . . . . | 1 - - - 2 - - - | 1 - - - . . . . | . . . . 5 - - - | 4 - 3 - - - . . | 2 - - - - - . . | 1 - - - - - . .';
-  const VT_B_CH = '1P 5P 1P 1P 5P 1P 2 1P';
+  const VT_B_CH = '1P 5P 2 1P 5P 1P 2 1P';
   S('yn_vents', {
     title: 'Under the Spring',
     kind: 'area',
@@ -101,7 +101,7 @@ RB.audio = RB.audio || {};
     tracks: {
       lead: { i: 'biwa', o: 3, v: 0.58, rv: 0.55 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.28, rv: 0.5 },
-      pad: { i: 'sho', o: 3, hold: true, fold: 'all', win: 3, v: 0.16, rv: 0.55 },
+      pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.16, rv: 0.55 },
       drip: { perc: true, v: 0.24, rv: 0.75 },
       drum: { perc: true, v: 0.3, rv: 0.5 },
     },
@@ -112,7 +112,7 @@ RB.audio = RB.audio || {};
 
   // ================================================================== THE NORTH ROAD
   // A aeolian, 58: the valley's noise falling away behind; the shinobue alone, longer and longer rests
-  const NR_A = '1 - - - - - . . | . . . . . . . . | 3 - - - - - . . | . . . . . . . . | 5 - - - 6 - - - | 5 - - - . . . . | 3 - - - - - . . | . . . . . . . .';
+  const NR_A = '1 - - - - - . . | . . . . . . . . | 3 - - - - - . . | . . . . . . . . | 5 - 6 - 1\' - 6 - | 5 - 3 - - - . . | 3 - - - - - . . | . . . . . . . .';
   const NR_A_CH = '1P 1P 3 3 1P 1P 1P 1P';
   const NR_B = '. . . . . . . . | 5 - - - - - . . | . . . . . . . . | . . . . . . . . | 3 - - - - - . . | . . . . . . . . | 1 - - - - - - - | . . . . . . . .';
   S('yn_north', {
@@ -208,6 +208,6 @@ RB.audio = RB.audio || {};
       B: { bars: 8, ch: KB_B_CH, hi: KB_B, low: KB_B_LOW },
       C: { bars: 8, ch: KB_C_CH, lead: KB_C, pad: '0+4' },
     },
-    form: ['intro', 'A', 'B', 'C', { s: 'A', i: { lead: 'shinobue' } }, { s: 'B', i: { hi: 'shakuhachi' }, o: { hi: -1 } }],
+    form: ['intro', 'A', 'B', 'C', { s: 'A', i: { lead: 'shinobue' }, o: { lead: 1 } }, { s: 'B', i: { hi: 'shakuhachi' }, o: { hi: -1 } }],
   });
 })(RB.audio);

@@ -73,7 +73,7 @@ narr: {北|きた} の {尾根|おね} の {上|うえ} は 、 {今夜|こん�
 ?(comp=nao) comp[closed]: …… {最後|さいご} まで {走|はし}る 。 {届|とど}ける {先|さき} が 、 {静|しず}か すぎて も な 。 お{前|まえ} と {一緒|いっしょ} に 。 || …I'll run it to the end. Even if the place we're delivering to is too quiet. With you.
 ?(comp=mio) comp: {怖|こわ}い です 。 でも 、 {怖|こわ}い と {言|い}える {人|ひと} が {隣|となり} に いる 。 …… {最後|さいご} まで 、 {一緒|いっしょ} に {行|い}きます 。 || I'm afraid. But there's someone beside me I can say so to. …I'll go with you to the end.
 ?(comp=ren) comp: {名前|なまえ} を {奪|うば}われた {灯|ひ} が 、 あの {上|うえ} に ある なら 。 {全部|ぜんぶ} 、 {呼|よ}び{戻|もど}します 。 {約束|やくそく} です 。 || If the lamps whose names were taken are up there, I'll call every one of them back. That's a promise.
-?(comp=suzu) comp: {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客席|きゃくせき} でも {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
+?(comp=suzu) comp: {最後|さいご} の {幕|まく} ね 。 …… {相方|あいかた} が いる なら 、 どんな {客|きゃく} の {前|まえ} でも {舞台|ぶたい} に {立|た}てる わ 。 {行|い}きましょ 。 || The last act, then. …With a partner, I can stand up in front of any house. Let's go.
 !set yn_done
 !quest yn_main done
 !travel steamhollow

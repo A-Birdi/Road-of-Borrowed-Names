@@ -68,6 +68,8 @@ RB.lex.add(RB.lex.parseTable(`
 下駄屋|げたや|n|I|a geta-maker, a shop selling wooden sandals
 着方|きかた|n|I|the way of wearing (clothes)
 裾|すそ|n|I|the hem (of a kimono or yukata)
+左側|ひだりがわ|n|E|the left side
+右側|みぎがわ|n|E|the right side
 捲る|まくる|v5r|I|to roll up, to tuck up (a sleeve or hem)
 浸す|ひたす|v5s|I|to soak, to dip in water
 # ---- the inns and the arrangements -------------------------------------------------------------------------------

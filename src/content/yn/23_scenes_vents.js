@@ -107,6 +107,11 @@ narr: {弁|べん} を {戻|もど}す 。 {湯気|ゆげ} は {上|うえ} の 
 !unset yn_shutter
 !refresh
 
+@scene yn.shutter_end
+# The shutter's wheel at either end of the Channel: the same pipe as the big valve in the middle chamber.
+narr: {通|とお}り{道|みち} の {端|はし} に 、 {小|ちい}さな {弁|べん} の {輪|わ} が ある 。 {管|くだ} が 、 {真|ま}ん{中|なか} の {部屋|へや} の {大|おお}きな {弁|べん} に つながって いる 。 || At the end of the passage there's a small valve wheel. Its pipe runs to the big valve in the middle chamber.
+!call yn.shutter
+
 @scene yn.float
 # The water clock's float, jammed in silt: why the division drifted. Evidence for the mediation (yn_float_found).
 narr: {湯樋|ゆどい} の {底|そこ} に 、 {真鍮|しんちゅう} の {浮|う}き が {泥|どろ} に {埋|う}まって いる 。 {細|ほそ}い {棒|ぼう} が 、 {上|うえ} の {方|ほう} へ {伸|の}びて いる 。 || At the bottom of the channel a brass float is buried in silt, a thin rod reaching up from it.
