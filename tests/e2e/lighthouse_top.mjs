@@ -56,7 +56,9 @@ async function start(p, o) {
     if (o.slow && !window.__slow) { window.__slow = true; const up = RB.world.update; RB.world.update = function (dt, c) { return up.call(this, dt / 4, c); }; }
     if (o.auto === false) RB.test.disable(); else RB.test.enable({ battle: 'unravel', choose: () => 0 });
     RB.test.departures = []; RB.test.twice = []; RB.test.extras = []; RB.test.absentSpeakers = [];
-    const s = RB.game.debugStart(o.map || 'sg.lighthouse', o.x == null ? 4 : o.x, o.y == null ? 7 : o.y, { comp: o.comp === undefined ? 'mio' : o.comp, flags: Object.assign({}, o.base, o.flags || {}), dir: o.dir || 'up' });
+    // (in the edition new journeys begin in: since the twelve-chapter edition shipped, a six-chapter save loads into
+    // the New Game+ offer instead, and step 5 loads one)
+    const s = RB.game.debugStart(o.map || 'sg.lighthouse', o.x == null ? 4 : o.x, o.y == null ? 7 : o.y, { comp: o.comp === undefined ? 'mio' : o.comp, flags: Object.assign({}, o.base, o.flags || {}), dir: o.dir || 'up', edition: RB.edition.forNew() });
     s.chapter = o.chapter || 2;
     s.quests.sg_main = { stage: o.stage == null ? 6 : o.stage, done: false, t: 1 };
     for (const k of o.seen || []) s.seen[k] = true;
