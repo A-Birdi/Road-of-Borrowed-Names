@@ -125,7 +125,8 @@ await test('word lottery: a word drawn; the forge opens on its sentence; putting
   await p.waitForSelector('.chal[data-kind=forge]');
   const st = await state(p, 'kuji');
   assert(!!st.word && st.busy, 'a word is drawn and the forge is open');
-  const slip = await p.$eval('.fv-slip', (e) => e.textContent);
+  // (read without the furigana: a drawn word with a kanji carries its reading in <rt>)
+  const slip = await p.$eval('.fv-slip', (e) => { const c = e.cloneNode(true); c.querySelectorAll('rt, rp').forEach((r) => r.remove()); return c.textContent; });
   const want = await p.evaluate((w) => RB.jp.plain(RB.content.festival.kuji.words.find((x) => x.id === w).word.jp), st.word);
   assert(slip.includes(want), 'the slip shows the word: ' + slip + ' / ' + want);
   const prompt = await p.$eval('.chal', (e) => e.textContent);

@@ -23,11 +23,14 @@ async function test(name, fn) {
 }
 const assert = (c, m) => { if (!c) throw new Error(m); };
 const noOverflow = (p) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
-// whatever the road says on arriving (a scene of the map's own): read through it, back to the world
+// whatever the road says on arriving (a scene of the map's own): read through it, back to the world. A Living World
+// road event's own task (the pedlar's wheel card on the Reedwake road) is set aside with "Come back later", as a player
+// may: it is not what this suite tests (tests/e2e/living_world.mjs plays them)
 async function settle(p) {
   for (let i = 0; i < 200; i++) {
-    const st = await p.evaluate(() => ({ mode: RB.game.mode(), dlg: RB.ui.dialogue.isOpen(), ch: document.querySelectorAll('.choice').length, sheet: !!document.querySelector('.verb-sheet') }));
+    const st = await p.evaluate(() => ({ mode: RB.game.mode(), dlg: RB.ui.dialogue.isOpen(), ch: document.querySelectorAll('.choice').length, sheet: !!document.querySelector('.verb-sheet'), later: !!document.querySelector('.chal [data-a="leave"]') }));
     if (st.sheet) return;
+    if (st.mode === 'challenge' && st.later) { await p.evaluate(() => document.querySelector('.chal [data-a="leave"]').click()); await p.waitForTimeout(120); continue; }
     if (st.mode === 'world' && !st.dlg && !st.ch) { await p.waitForTimeout(120); if (await p.evaluate(() => RB.game.mode() === 'world' && !RB.ui.dialogue.isOpen())) return; continue; }
     if (st.ch) await p.evaluate(() => document.querySelector('.choice').click());
     else if (st.dlg) await p.evaluate(() => RB.ui.dialogue.advance(true));

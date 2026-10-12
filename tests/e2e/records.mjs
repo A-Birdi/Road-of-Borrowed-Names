@@ -1,6 +1,7 @@
 // The journey's records on screen (expansion P06; src/ui/66c_records.js, 66d_ngplus.js), in Chromium on the built
 // game, with throwaway sessions:
-//  - a six-chapter journey: no Stamp book or Travel volume in the Journey; no Travel volume on the title;
+//  - a six-chapter journey: no Stamp book or Travel volume in the Journey; the title has the Travel volume, since
+//    the twelve-chapter edition shipped (C-84; F-21: on the Main Menu once the edition ships);
 //  - a twelve-chapter journey: the stamp book (a chapter's stamp ready, pressed at its town's stand), the travel
 //    volume (the seal designed and kept; a page veiled until its moment; "Watch it again" plays and changes
 //    nothing in the journey);
@@ -44,7 +45,8 @@ async function settle(p) {
 
 await test('a six-chapter journey: the Ledger and the title as they were', async () => {
   const { p, errors, requests, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
-  assert(!(await p.evaluate(() => !!document.querySelector('.title [data-a="volume"]'))), 'no Travel volume on the title');
+  // (the edition has shipped, so the Main Menu has the volume for everyone; F-21)
+  assert(await p.evaluate(() => !!document.querySelector('.title [data-a="volume"]') === !!(RB.edition.shipped && RB.edition.shipped())), 'the Travel volume on the title once the edition ships');
   await start(p, 1);
   await p.evaluate(() => RB.ui.menu.open('journey'));
   await p.waitForTimeout(250);
@@ -87,7 +89,10 @@ await test('a twelve-chapter journey: a stamp pressed at its stand; the seal; a 
   const veiled = await p.evaluate(() => [...document.querySelectorAll('.rb-pg.veiled')].map((x) => x.textContent.replace('Reveal…', '').trim()));
   const crit = await p.evaluate(() => RB.volume.pages().filter((q) => !RB.volume.viewable(RB.game.s, q)).map((q) => RB.volume.criteria(q).en));
   assert(veiled.length > 0 && veiled.length === crit.length && veiled.every((t, i) => t === crit[i]), 'pages not yet reached show only their criteria');
-  assert(veiled.some((t) => /Chapter 5: the main story/.test(t)) && !veiled.some((t) => /Chapter 3: the main story/.test(t)), 'numbered in the twelve-chapter story order (Cinder Orchard is Chapter 5)');
+  // Cinder Orchard's own pages (ch3.*, its six-chapter number) carry its twelve-chapter number; Manybridge's (mb1.*)
+  // are Chapter 3
+  const num = await p.evaluate(() => { const v = (re) => RB.volume.pages().filter((q) => re.test(q.id) && !RB.volume.viewable(RB.game.s, q)).map((q) => RB.volume.criteria(q).en); return { co: v(/^ch3\./), mb: v(/^mb1\./) }; });
+  assert(num.co.length && num.co.every((t) => /Chapter 5\b/.test(t)) && num.mb.length && num.mb.every((t) => /Chapter 3\b/.test(t)), 'numbered in the twelve-chapter story order (Cinder Orchard is Chapter 5, Manybridge Chapter 3): ' + JSON.stringify(num));
   assert(await p.evaluate(() => !document.querySelector('.rb-pg.veiled canvas')), 'never their picture');
   // a chapter finished: its page viewable; witnessed carries the seal
   await p.evaluate(() => { RB.game.s.seq['ch1.bridge'] = { n: 1, h: [] }; RB.ui.menu.close(); RB.ui.menu.open('volume'); });

@@ -4380,7 +4380,21 @@ at 1280×720 (internally reviewed under AC-1):
   branch of every spec: the first chapters' sequences, the prologue and the 34) on a scratch build of `abeb52a`:
   **2524 passed, 0 failed**.
 
-Parts 7–8 and `--extra` run next.
+Part 7/8 on `6a4a8fa` (the built `index.html`; docs only since): 12/16, every failure in a test, the game right each
+time, each fixed and rerun alone:
+- `verbs` (2 cases): the Living World's road events now meet you on the Reedwake road (the pedlar's wheel card, with
+  its own reading task), which the exercise suite's arrival helper did not expect; it now sets such a task aside with
+  the task's own "Come back later", as a player may (road events are tested in `living_world.mjs`): 5/0.
+- `workshop` (Mastery exam): the newer "complete the word" questions quote the English word before the romaji
+  ("somewhere" … (ko)); the helper took the first match, the English word, and clicked a wrong option. It now reads
+  the bracketed romaji first: 6/0.
+- `records` (2 cases): written before the edition shipped. The title has the Travel volume for everyone since it did
+  (F-21), and "Chapter 3: the main story" now rightly appears on Manybridge's pages (painted in P16); the checks
+  now ask for those: 7/0.
+- `festival_games` (word lottery): the slip was compared with its furigana in the text (お祭まつり), so it failed
+  whenever the draw had a kanji; read without the readings: 5/0 three times.
+
+Part 8 and `--extra` run next.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:

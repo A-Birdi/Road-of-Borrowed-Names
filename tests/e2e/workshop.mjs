@@ -171,8 +171,9 @@ await test('Words › Mastery: an exam in one way of answering (Choose), every q
     // the right option: the kana, in the script the prompt names, that its romaji names
     await p.evaluate(() => {
       const pr = document.querySelector('.chal-prompt').textContent;
-      const m = pr.match(/\(([a-z]+)\)|“([a-z]+)”/);
-      const rom = m && (m[1] || m[2]);
+      // the romaji in brackets first: a "complete the word" question quotes the English word before it
+      const m = pr.match(/\(([a-z]+)\)/) || pr.match(/“([a-z]+)”/);
+      const rom = m && m[1];
       const kata = /katakana/.test(pr);
       const bs = [...document.querySelectorAll('.chal .mc .btn')];
       const b = bs.find((x) => { const c = x.textContent.trim(); return RB.kana.romaji(c) === rom && (kata ? RB.kana.isKata(c) : RB.kana.isHira(c)); }) || bs[0];
