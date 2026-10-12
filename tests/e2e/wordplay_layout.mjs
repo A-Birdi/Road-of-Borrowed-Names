@@ -132,6 +132,8 @@ for (const vp of VPS) {
   // the Company card
   await p.evaluate(() => RB.ui.menu.open('companion'));
   await p.waitForSelector('.wp-card');
+  // measured once the book has opened (its opening animation scales the page by 0.965 on the way in)
+  await p.waitForFunction(() => { const f = document.querySelector('.folio'); return !!f && f.getAnimations({ subtree: true }).every((a) => a.playState !== 'running'); });
   await p.evaluate(() => document.querySelector('.wp-card').scrollIntoView());
   await p.waitForTimeout(100);
   const card = await p.evaluate(() => {

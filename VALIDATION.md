@@ -4334,7 +4334,52 @@ Part 4/8 on `711cc9e` (the rewritten final boss theme): 14/17. Each failure trac
   The two post-chapter talks now go where the person is and come back; talks during the story stay strict. Results:
   38 checks PASS; 53/53.
 
-Parts 5–8 and `--extra` run on `b4406d4`. No other heavy work runs beside them.
+Part 5/8 on `b4406d4`: 12/16, each failure traced:
+- `landmarks` (2 tiles): `sb.road` and `lf.gardens` changed walkable rows because Living World people now stand
+  there by routine; the fixture's rows were re-recorded with a note (`beac5ca`): 54/0.
+- `pace` (320×640 at 200 % text): the seconds label overflowed its row; it now wraps (`beac5ca`): 13/0.
+- `staging_chapters` stopped at the run's 40 minutes. Two of its cases were also wrong after the Living World:
+  Bunta and Heita had moved to their work places; both scenes now play there (`beac5ca`): 19/0 each. The suite
+  itself is too long for one 40-minute slot; after part 8 it is split by chapter and each piece run.
+- `sequence_world --quick`: 240 passed, 33 failed, every failure one of the 34 expansion sequences that had no spec
+  (a registered sequence without a run fails by design). Specs for all 34 were written (`49ae587`) and the harness
+  gained what they need: an encounter stand-in (the conclusion's flags), a Hall visit fixture, and, for a sequence
+  that ends in the dark, the snapshot after the scene's own fade.
+
+Part 6/8 on `beac5ca`: 15/16. `wordplay_layout` measured two Company › Wordplay buttons at 42 px during the book's
+opening animation (scale 0.965), the same race as `pets_greet`; it now measures once the book has opened: 63/0.
+
+**The 34 expansion sequences under HX52 (2026-10-12).** Every branch of every new spec, run on a scratch build of
+`d7efaae` plus the fixes below: 1803 passed, 1 failed; the failure was a real disagreement (the relay's seven lamps
+drawn lit while Kumoi's can be dark), fixed below and then passing. What the specs and their research found, all
+fixed and each checked in the browser (B) by its spec and, for pictures, by `sequence_p16.mjs --shots` stills read
+at 1280×720 (internally reviewed under AC-1):
+- *World bugs:* pets used the inverse of a map's companion rule and walked where companions are kept out (unit
+  check added, fails without the fix); a speaker who walked in and whose place the scene began (Jinpachi after the
+  Cloudroad) vanished beside you while a second figure walked in (engine fix; `departures.mjs` case 7 fails on the
+  previous build, passes now); Heisuke stood at his door and at Sono's inn at once; the Hall's wing endings showed
+  the world moving behind their pictures (each now fades out first and back in after the fold to the hearth); in
+  Nao's journey the night apart could be skipped and the chapter end with Nao away (the way up to the pass now
+  waits for the porch; unit checks).
+- *Pictures set where their scenes play:* Reedwake's guardian (the shrine moved up to the milling floor the page
+  paints); the press page (Sōbē's workshop, not the press room); Kotonoha's ending (the Keepers' Village with the
+  crown's tree behind); the First Bridge's guardian (the shrine moved to the bridge's foot).
+- *Pictures that showed something the world did not have:* the relay's lamps (each drawn as named); the
+  hundredth light in your hand before the Lantern is given (now the standing lamp and the teller's shadow); the
+  Lamp Room dark although its lamp burns (now lit); Manybridge's dusk crowd (Matsu and Sōbē, and Haru and Ichi when
+  absent); the valley's guests built from four named people (now anonymous); wing 1's extra travellers; the
+  Lanternfall bell's patina (bronze after it is rung).
+- *Hand-overs:* Heisuke's letter now leaves your bag with the picture's first line.
+- *Text and world:* the summit view and Ren's reply say six lamps when Kumoi's is dark; Aki, who says she will wait
+  by the Kettle, is there; Steamhollow's evening walk dresses the two of you in the inns' yukata as the text says
+  (C-46's limits kept: no battle figure, nothing kept; Manybridge unchanged); Sōbē holds out the block the picture
+  shows. Five new lines in all, each in the language self-review ledger.
+- Checked: U `pets` 378/0, `guardians` 66/0, `cr_ch10` 150/0, `yn_ch11` 193/0, `sequence_p16` 363/0, Hall units,
+  `review_ledger` 2/0, `scene_manifest` 1023/0; B `departures` all ok, `postgame` guardian case, `cloudroad` 4/0,
+  `steamhollow` 5/0, `sequence_p16` for each repainted page at three viewports. The whole `sequence_world` (every
+  branch of every spec) is being run again on `abeb52a`.
+
+Parts 7–8 and `--extra` run next.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:
