@@ -246,10 +246,16 @@
     `tests/e2e/verbs_journey.mjs`, `tests/unit/word_help.test.mjs`. Since then: the ledger entries, the font subsets
     and the recognizer done; the full unit run 54,681/0; the Keepers' Road's biwa reworked twice on Robin's ear (the
     storyteller's biwa, `I.biwa_tale` in `src/audio/10_synth.js`: an accent is a harder bachi stroke, the voice a
-    fifth softer; third version on Robin's listening page, awaiting their ear; precedes VA-1, not a ship blocker);
-    sequences on landscape phones keep their picture (`src/styles/51_sequence.css`). Next: the complete browser run
-    (parts 1–2 of 8 done, 3–8 and `--extra` on `dd29582`: `node tests/e2e/run.mjs --part=k/8`), the chain redone, then P17's
-    closure.
+    fifth softer; Robin: "All the alterations on those tracks pan out better") and the final boss theme rewritten as
+    its own piece (Robin: "great"; docs/AUDIO.md); sequences on landscape phones keep their picture
+    (`src/styles/51_sequence.css`); HX52 specs for the 34 expansion sequences (`tests/e2e/sequence_world_p16_*.mjs`)
+    and every picture/world disagreement they and their research found fixed (VALIDATION.md "The 34 expansion
+    sequences under HX52"): pets and a map's companion rule, one figure from speaking to its new place
+    (`src/engine/50_world.js` dismissExtras), Heisuke, the Hall's endings, Nao's night apart, four pictures re-set where
+    their scenes play, six that showed what the world did not have, Steamhollow's evening yukata (`58f_festdress.js`).
+    Next: the whole `sequence_world` again (running on `abeb52a`), the complete browser run's parts 7–8 and `--extra`
+    (`node tests/e2e/run.mjs --part=k/8`; parts 1–6 done and traced), then split `staging_chapters` by chapter in
+    `run.mjs` and run each piece, the chain redone, then P17's closure.
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
