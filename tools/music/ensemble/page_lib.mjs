@@ -31,22 +31,18 @@ window.__mtPlace = async function (id, entry, fi, from, seconds) {
   const segs = opts.segments.map((s) => Object.assign({}, s, { b: bufs[s.role], stopAt: s.until == null ? Infinity : s.until + ${XJ} + 0.01 }));
   const sr = 48000, n = out.length, oL = out.getChannelData(0), oR = out.getChannelData(1);
   // how the browser turns (when, offset) into frames: the exact read position interpolated ('linear') or rounded
-  // ('nearest'); or the source starting on the first whole frame at or after its start time and reading on from the offset
-  // rounded ('grid') or truncated ('gridFloor') to a frame. The best-fitting model is reported with its SNR.
-  const MODELS = ['linear', 'nearest', 'grid', 'gridFloor'];
+  // ('nearest'), or as Chromium does it (measured with a ramp buffer): the offset rounded to a frame, the start
+  // time honoured to the sub-sample by interpolation ('chromium'). The best-fitting model is reported with its SNR.
+  const MODELS = ['linear', 'nearest', 'chromium'];
   const at0 = (d, k) => (k >= 0 && k < d.length ? d[k] : 0);
+  const lin = (d, pos) => { const k = Math.floor(pos), f = pos - k; return k + 1 < d.length && k >= 0 ? d[k] * (1 - f) + d[k + 1] * f : 0; };
   const readSeg = (s, i, ch, m) => {
     const d = s.b.getChannelData(ch), t = i / sr;
-    if (m === 'grid' || m === 'gridFloor') {
-      const f0 = Math.ceil(s.when * sr - 1e-6), o = m === 'grid' ? Math.round(s.offset * sr) : Math.floor(s.offset * sr + 1e-6);
-      return i < f0 ? 0 : at0(d, o + (i - f0));
-    }
     if (t < s.when) return 0;
+    if (m === 'chromium') return lin(d, Math.round(s.offset * sr) + (i - s.when * sr));
     const pos = (s.offset + (t - s.when)) * sr;
-    if (m === 'linear') { const k = Math.floor(pos), f = pos - k; return k + 1 < d.length && k >= 0 ? d[k] * (1 - f) + d[k + 1] * f : 0; }
-    return at0(d, Math.round(pos));
+    return m === 'linear' ? lin(d, pos) : at0(d, Math.round(pos));
   };
-  const readM = (b, pos, ch) => { const d = b.getChannelData(ch), k = Math.floor(pos), f = pos - k; return k + 1 < d.length && k >= 0 ? d[k] * (1 - f) + d[k + 1] * f : 0; };
   const gainOf = (s, t) => { let g = 1; if (s.fadeIn && t < s.when + ${XJ}) g = Math.max(0, (t - s.when) / ${XJ}); if (s.until != null && t >= s.until) g *= Math.max(0, 1 - (t - s.until) / ${XJ}); return g; };
   const sigM = {}, errM = {}, maxM = {};
   for (const m of MODELS) { sigM[m] = 0; errM[m] = 0; maxM[m] = 0; }

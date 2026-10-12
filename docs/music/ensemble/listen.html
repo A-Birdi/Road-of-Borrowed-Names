@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ensemble pilot captures</title>
+<style>
+:root { --bg: #f7f3ea; --fg: #2b2620; --muted: #6d6458; --line: #d9cfbd; --accent: #7a3b2e; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root { --bg: #1d1a16; --fg: #ece5d8; --muted: #a99e8d; --line: #3d362d; --accent: #e0a08f; color-scheme: dark; } }
+body { background: var(--bg); color: var(--fg); font: 16px/1.55 Georgia, 'Times New Roman', serif; margin: 0; padding: 24px 16px 48px; }
+main { max-width: 760px; margin: 0 auto; }
+h1 { font-size: 1.6rem; margin: 0 0 .3rem; } h2 { font-size: 1.2rem; margin: 2rem 0 .4rem; border-bottom: 1px solid var(--line); padding-bottom: .2rem; }
+.note { border-left: 3px solid var(--accent); padding: .4rem .8rem; color: var(--fg); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.clip { display: grid; gap: .3rem; padding: .7rem 0; border-bottom: 1px dotted var(--line); }
+.clip .t { font-weight: bold; } .muted { color: var(--muted); font-size: .9rem; }
+audio { width: 100%; }
+</style></head><body><main>
+<h1>Ensemble pilot captures</h1>
+<p class="note"><b>Not listened to yet.</b> These excerpts were rendered by the game's own code, offline in Chromium, through its own
+audio graph at the default volumes. They are for Robin's listening review. Nobody has judged them by ear, and no
+statement here says they sound right.</p>
+<p class="muted">The measurements behind them (lengths, placement, levels, onsets, seams) are in qa/&lt;song&gt;.json and VALIDATION.md (MT-1).
+Each excerpt starting mid-cue was rendered with a few seconds of pre-roll, so notes already sounding are heard ringing as in play.
+Not here: a change of song while Ensemble plays (the offline renderer plays one cue at a time); that is heard only in the game.</p>
+<h2>Snowbell (the Snowbell area)</h2>
+<p class="muted">Original -20.0 LUFS over its first pass; Ensemble trimmed +2.97 dB to -20.0 LUFS through the same graph.</p>
+<div class="clip"><span class="t">The introduction, Original</span><span class="muted">Original · from 0.00 s of the cue · 24 s</span><audio controls preload="none" src="listen/snowbell.intro_original.opus"></audio></div>
+<div class="clip"><span class="t">The introduction, Ensemble</span><span class="muted">Ensemble · from 0.00 s of the cue · 24 s</span><audio controls preload="none" src="listen/snowbell.intro_ensemble.opus"></audio></div>
+<div class="clip"><span class="t">Original → Ensemble → Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)</span><span class="muted">Both performances · from 30.00 s of the cue · 24 s</span><audio controls preload="none" src="listen/snowbell.switch_mid_phrase.opus"></audio></div>
+<div class="clip"><span class="t">Ensemble across the join from the first pass to the steady cycle (at 6.00 s of the cue, 4 s in)</span><span class="muted">Ensemble · from 2.00 s of the cue · 12 s</span><audio controls preload="none" src="listen/snowbell.first_join.opus"></audio></div>
+<div class="clip"><span class="t">Ensemble across the first repeat (the end of the first pass into the loop, 8 s in)</span><span class="muted">Ensemble · from 86.50 s of the cue · 16 s</span><audio controls preload="none" src="listen/snowbell.first_repeat.opus"></audio><span class="muted">Rendered the same way, ensemble across the third repeat (8 s in) came out byte for byte the same as this excerpt: the recording repeats exactly, on the score's clock.</span></div>
+<div class="clip"><span class="t">The same repeat in the Original, for comparison</span><span class="muted">Original · from 275.50 s of the cue · 16 s</span><audio controls preload="none" src="listen/snowbell.repeat_original.opus"></audio></div>
+<h2>Inkweaving — Told Three Ways (the Keepers' Road battle)</h2>
+<p class="muted">Original -17.4 LUFS over its first pass; Ensemble trimmed +4.03 dB to -17.5 LUFS through the same graph.</p>
+<div class="clip"><span class="t">The introduction, Original</span><span class="muted">Original · from 0.00 s of the cue · 24 s</span><audio controls preload="none" src="listen/battle_keepers.intro_original.opus"></audio></div>
+<div class="clip"><span class="t">The introduction, Ensemble</span><span class="muted">Ensemble · from 0.00 s of the cue · 24 s</span><audio controls preload="none" src="listen/battle_keepers.intro_ensemble.opus"></audio></div>
+<div class="clip"><span class="t">Original → Ensemble → Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)</span><span class="muted">Both performances · from 30.00 s of the cue · 24 s</span><audio controls preload="none" src="listen/battle_keepers.switch_mid_phrase.opus"></audio></div>
+<div class="clip"><span class="t">Ensemble across the join from the first pass to the steady cycle (at 9.71 s of the cue, 4 s in)</span><span class="muted">Ensemble · from 5.71 s of the cue · 12 s</span><audio controls preload="none" src="listen/battle_keepers.first_join.opus"></audio></div>
+<div class="clip"><span class="t">Ensemble across the first repeat (the end of the first pass into the loop, 8 s in)</span><span class="muted">Ensemble · from 63.58 s of the cue · 16 s</span><audio controls preload="none" src="listen/battle_keepers.first_repeat.opus"></audio><span class="muted">Rendered the same way, ensemble across the third repeat (8 s in) came out byte for byte the same as this excerpt: the recording repeats exactly, on the score's clock.</span></div>
+<div class="clip"><span class="t">The same repeat in the Original, for comparison</span><span class="muted">Original · from 198.32 s of the cue · 16 s</span><audio controls preload="none" src="listen/battle_keepers.repeat_original.opus"></audio></div>
+</main></body></html>

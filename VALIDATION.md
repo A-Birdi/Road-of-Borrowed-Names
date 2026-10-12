@@ -4258,6 +4258,52 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
+## MT-1, the music performance: Original or Ensemble (Robin's MT-1, 2026-10-12)
+
+What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. Evidence, kept apart by kind:
+
+- **Implemented:** the setting and its status line (`src/ui/55_settings.js`, `src/engine/90_game.js`), the director
+  (`src/audio/22_ensemble.js`, hooks in `10_synth.js` and `20_sequencer.js`), the catalog and policy in the build
+  (`tools/build.mjs`, `tools/music/ensemble/manifest.mjs`), the production tools (`tools/music/ensemble/`), two
+  recordings in two formats (`assets/music/ensemble/`, with NOTICE.md and the TimGM6mb notices).
+- **U (source-tested)** `node tests/run-unit.mjs music_performance` — 55/0: the game's fingerprint equals the build
+  tool's for every song (MT-1's reference implementation); the cue clock (first pass, the repeat entering at L,
+  ten cycles on, a one-shot's end, an exact boundary); an unknown preference is Original; 17 refused asset paths
+  (traversal, encoded, other origins, query, fragment, backslash, other directories and extensions); the catalog's
+  runtime gate (pending, 100 ppm off, frames past the end); the manifest against the files and the current scores
+  (a stale fingerprint, an altered file, a path out of the directory and missing evidence each left out); the built
+  page's catalog equals the manifest's eligible tracks and its CSP says `connect-src 'self'`. The whole unit run:
+  53,246/0 (130 suites in one process).
+- **B (measured in Chromium, Playwright's headless shell 1194, Linux; not a device)** `node tools/music/ensemble/
+  verify.mjs` on the runtime with the seam fix (the context-replacement handling added after it touches no scheduling): both pilots `ready` (docs/music/ensemble/qa/snowbell.json, battle_keepers.json).
+  The table in docs/MUSIC_PERFORMANCE.md "Results": decoded lengths exact at 48 kHz and in proportion at 44.1 kHz; no
+  shift against the masters; the game's own scheduler bit-exact against a model of how Chromium reads (≥ 157 dB) from
+  the cue's start through the join and ten cycle boundaries and from odd starting points; no seam step larger than
+  either rendering alone; loudness through the game graph matched (Snowbell −19.99/−20.01 LUFS at +2.97 dB, the
+  Keepers' battle −17.41/−17.50 at +4.03 dB; MP3 within 0.3 LU at the same trim); onsets +3 and +4 ms; handovers never
+  above either performance alone and at most 0.72 LU below. Two Chromium behaviours found and designed around:
+  (1) a source started between frames is read interpolated for its whole length, so segments start on the frame
+  grid; (2) a fade's automation on a source's very first frame let that frame through at full level, a one-sample
+  tick at a seam, found by the browser suite (MT-T19), fixed (a segment is silent from creation), and re-measured.
+- **B** `node tests/e2e/music_performance.mjs` on the final build — 22/22, MT-1's register: settings and an older or
+  forged record (T01/T02), storage refused (T03), the control by key and click, kept on reload, at 360 px, its line
+  (T04/T06/T45), Original and unsupported songs fetching nothing (T07/T12), music off and muted (T08/T09), the
+  standalone file with no request at all (T10), the cold-cache handover and the return to the same player mid-phrase
+  with every segment at the clock's position (T11/T14/T15/T35), cue changes, a change while loading, re-entry from
+  the cache, memory under 128 MiB (T13/T21/T25/T38), rapid changes, a late decode, a stop mid-fade (T20/T22/T24), a
+  one-shot ending while its file is held (T23, fixture), 404, HTML, oversized, redirect, altered and never-arriving
+  files falling to MP3, every file missing, a stale score refused before any request (T26–T30/T44), a suspended
+  context and 44.1 kHz (T31/T33), a closed context replaced (T32), the seams offline (T16–T19), levels with the
+  music volume and ducking (T34/T36/T37), the warm Original's cost (T39: ×1.05 and ×0.97 offline), Snowbell in
+  ordinary play through the real menu (T41), a Keepers' Road battle through the battle's own sheet both ways and out
+  of it (T05/T42), a project sub-path with the built CSP (T43).
+- **Listened to: no.** Captures for Robin in docs/music/ensemble/listen.html (twelve excerpts rendered by the game's
+  code through its graph; the first and third repeats came out byte-identical). **H**: Robin's listening.
+- **Device-tested: no** (Chromium on Linux only; Safari's Opus, other browsers' MP3 lengths and phones untested; a
+  browser decoding another length is refused by the check and falls back). **Deployed: no** (C-87's gate; the deploy
+  must copy `assets/music/ensemble/`). **Rights:** the TimGM6mb (GPL-2) question is open for Robin (NOTICE.md).
+- Not covered by a test: a live capture of a cue transition with Ensemble (the offline renderer plays one cue).
+
 ## The expansion, P17 — closure (in progress)
 
 **The Living World across the journey (C-87; XP107; register `docs/future/work/LW1_ROLLOUT.md`).** What was run, on
@@ -4397,6 +4443,20 @@ time, each fixed and rerun alone:
 Part 8/8 on `8ffa64a`: **11/11**, the six new chapters' suites, the Archive in twelve chapters, and a whole-game run
 (`pursue.mjs E mio`, 1047 s). With parts 1–8 done, `staging_chapters` is split by chapter in `run.mjs` (`--ch=showcase`,
 `1`…`6`, `misc`: whole, it outgrew one script's 40 minutes); `--extra` and those pieces run next.
+
+`--extra` on `a857fd4`…`cb8c497` (the run spanned commits; each suite loads the built page when it starts): **7/10**,
+the three failures traced to tests the game had outgrown, fixed in the tests, each rerun alone on the current source:
+- `harmony_cutin`, setting: the flourish switch is no longer right after "What creatures are about to do"; three
+  Battles rows joined the group since (the companion's turn, grave outcomes, bathing scenes). It is now checked inside
+  the Battles group: PASS (`654288f`).
+- `portrait_anim`, five phone and narrow cases: below 600 px the book's dialogue portrait is the 48 px picture pinned
+  on the paper (U05/U06), not the older 64 px: all passed (`25a3ef3`).
+- `audit_fixes`, letters: the letters are dealt (task #205), so "the first letter goes to the first recipient" no
+  longer holds; the test delivers the letter actually shown, found by its text: 4/0 (`25a3ef3`).
+The seven that passed: `creatures_a` (188 s), `battle_geometry` (104 s), `battle_invariance` (640 configurations,
+24 fixtures, each identical across its presentation settings; 1905 s), `sequence_chapters` (259 s),
+`sequence_chapters_56` (394 s), `sequence_dev` (33 s), `overworld_figures` (16 s). Then `staging_chapters` by piece:
+`--ch=showcase` 66/0, `--ch=1` 698/0; the others follow.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:

@@ -280,7 +280,8 @@
      "modelSnrDb": 179.04,
      "snrByModel": {
       "linear": 179.02,
-      "nearest": 179.04
+      "nearest": 179.04,
+      "chromium": 179.04
      },
      "maxErr": 5.960464477539063e-8,
      "seams": [
@@ -327,7 +328,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -362,7 +364,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -397,7 +400,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -432,7 +436,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -467,7 +472,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -502,7 +508,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -537,7 +544,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -572,7 +580,8 @@
      "modelSnrDb": 160.6,
      "snrByModel": {
       "linear": 160.6,
-      "nearest": 160.6
+      "nearest": 160.6,
+      "chromium": 160.6
      },
      "maxErr": 4.2146891060400154e-8,
      "seams": [
@@ -590,15 +599,15 @@
      "segments": [
       {
        "when": 0.05,
-       "until": 4.815433,
+       "until": 4.8154375,
        "offset": 1.334567,
        "fadeIn": false,
        "role": "first"
       },
       {
-       "when": 4.815433,
-       "until": 93.315433,
-       "offset": 6.5,
+       "when": 4.8154375,
+       "until": 93.3154375,
+       "offset": 6.5000045,
        "fadeIn": true,
        "role": "loop"
       }
@@ -607,7 +616,8 @@
      "modelSnrDb": 328.78,
      "snrByModel": {
       "linear": 26.67,
-      "nearest": 328.78
+      "nearest": 328.78,
+      "chromium": 328.78
      },
      "maxErr": 0,
      "seams": []
@@ -618,7 +628,7 @@
      "segments": [
       {
        "when": 0.05,
-       "until": 85.33999999999999,
+       "until": 85.34,
        "offset": 9.71,
        "fadeIn": false,
        "role": "loop"
@@ -628,7 +638,8 @@
      "modelSnrDb": 331.08,
      "snrByModel": {
       "linear": 217.97,
-      "nearest": 331.08
+      "nearest": 331.08,
+      "chromium": 331.08
      },
      "maxErr": 0,
      "seams": []
@@ -639,7 +650,7 @@
      "segments": [
       {
        "when": 0.05,
-       "until": 36.14616500000004,
+       "until": 36.146166666666666,
        "offset": 58.90383499999996,
        "fadeIn": false,
        "role": "loop"
@@ -649,7 +660,8 @@
      "modelSnrDb": 333.22,
      "snrByModel": {
       "linear": 34.49,
-      "nearest": 333.22
+      "nearest": 333.22,
+      "chromium": 333.22
      },
      "maxErr": 0,
      "seams": []
@@ -733,8 +745,8 @@
     "linear"
    ],
    "loudness": {
-    "lufs": -20.008319159706083,
-    "diffLu": 0.015699260047142616
+    "lufs": -20.00831873262207,
+    "diffLu": 0.015699919027248654
    },
    "ok": true
   },
@@ -1013,7 +1025,8 @@
      "modelSnrDb": 175.78,
      "snrByModel": {
       "linear": 175.77,
-      "nearest": 175.78
+      "nearest": 175.78,
+      "chromium": 175.78
      },
      "maxErr": 4.564330511209352e-8,
      "seams": [
@@ -1060,7 +1073,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1095,7 +1109,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1130,7 +1145,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1165,7 +1181,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1200,7 +1217,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1235,7 +1253,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1270,7 +1289,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1305,7 +1325,8 @@
      "modelSnrDb": 157.71,
      "snrByModel": {
       "linear": 157.71,
-      "nearest": 157.71
+      "nearest": 157.71,
+      "chromium": 157.71
      },
      "maxErr": 4.564332002781295e-8,
      "seams": [
@@ -1323,15 +1344,15 @@
      "segments": [
       {
        "when": 0.05,
-       "until": 4.815433,
+       "until": 4.8154375,
        "offset": 1.334567,
        "fadeIn": false,
        "role": "first"
       },
       {
-       "when": 4.815433,
-       "until": 93.315433,
-       "offset": 6.5,
+       "when": 4.8154375,
+       "until": 93.3154375,
+       "offset": 6.5000045,
        "fadeIn": true,
        "role": "loop"
       }
@@ -1340,7 +1361,8 @@
      "modelSnrDb": 328.51,
      "snrByModel": {
       "linear": 26.66,
-      "nearest": 328.51
+      "nearest": 328.51,
+      "chromium": 328.51
      },
      "maxErr": 0,
      "seams": []
@@ -1351,7 +1373,7 @@
      "segments": [
       {
        "when": 0.05,
-       "until": 85.33999999999999,
+       "until": 85.34,
        "offset": 9.71,
        "fadeIn": false,
        "role": "loop"
@@ -1361,7 +1383,8 @@
      "modelSnrDb": 330.83,
      "snrByModel": {
       "linear": 217.97,
-      "nearest": 330.83
+      "nearest": 330.83,
+      "chromium": 330.83
      },
      "maxErr": 0,
      "seams": []
@@ -1372,7 +1395,7 @@
      "segments": [
       {
        "when": 0.05,
-       "until": 36.14616500000004,
+       "until": 36.146166666666666,
        "offset": 58.90383499999996,
        "fadeIn": false,
        "role": "loop"
@@ -1382,7 +1405,8 @@
      "modelSnrDb": 332.96,
      "snrByModel": {
       "linear": 34.52,
-      "nearest": 332.96
+      "nearest": 332.96,
+      "chromium": 332.96
      },
      "maxErr": 0,
      "seams": []
@@ -1466,9 +1490,9 @@
     "linear"
    ],
    "loudness": {
-    "lufs": -20.254269238075008,
-    "diffLu": 0.26164933841606697,
-    "peak": 0.5200395584106445,
+    "lufs": -20.254269469405486,
+    "diffLu": 0.2616506558106657,
+    "peak": 0.5200445652008057,
     "nan": false
    },
    "ok": true
@@ -1476,30 +1500,30 @@
  ],
  "calibration": {
   "window": "the first pass, 0 to 94.5 s, 48 kHz, default volumes, no ducking",
-  "originalLufs": -19.99261989965894,
-  "originalPeak": 0.3803454637527466,
+  "originalLufs": -19.99261881359482,
+  "originalPeak": 0.3803488314151764,
   "iterations": [
    {
     "trim": 1,
     "ensembleLufs": -22.786757485583724,
-    "diffLu": 2.7941375859247835
+    "diffLu": 2.794138671988904
    },
    {
-    "trim": 1.3794529087861194,
-    "ensembleLufs": -20.16739988618182,
-    "diffLu": 0.17477998652287852
+    "trim": 1.3794530812698218,
+    "ensembleLufs": -20.16739836731919,
+    "diffLu": 0.17477955372437037
    },
    {
-    "trim": 1.4074918171011237,
-    "ensembleLufs": -20.008319159706083,
-    "diffLu": 0.015699260047142616
+    "trim": 1.4074919229585632,
+    "ensembleLufs": -20.00831873262207,
+    "diffLu": 0.015699919027248654
    }
   ],
-  "trim": 1.4074918171011237,
-  "gainDb": 2.968917572447663,
-  "ensembleLufs": -20.008319159706083,
-  "diffLu": 0.015699260047142616,
-  "ensemblePeak": 0.5292264223098755,
+  "trim": 1.4074919229585632,
+  "gainDb": 2.9689182257132742,
+  "ensembleLufs": -20.00831873262207,
+  "diffLu": 0.015699919027248654,
+  "ensemblePeak": 0.5292243957519531,
   "nan": false,
   "clippedSamples": 0
  },
@@ -1563,7 +1587,7 @@
    ]
   ]
  },
- "onsetOk": false,
+ "onsetOk": true,
  "handovers": [
   {
    "at": 20.3,

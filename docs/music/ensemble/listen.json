@@ -1,0 +1,121 @@
+{
+ "generatedBy": "tools/music/ensemble/capture.mjs",
+ "renderedIn": "Chromium (Playwright headless), offline, through the game's own audio graph at default volumes",
+ "listenedTo": false,
+ "clips": [
+  {
+   "song": "snowbell",
+   "file": "listen/snowbell.intro_original.opus",
+   "title": "The introduction, Original",
+   "cueFrom": 0,
+   "seconds": 24,
+   "performance": "original",
+   "sha256": "e3f1c6cdef90c084ada261d9a1fb445f5addb2ac6d82aa00810bcb1da61c4190"
+  },
+  {
+   "song": "snowbell",
+   "file": "listen/snowbell.intro_ensemble.opus",
+   "title": "The introduction, Ensemble",
+   "cueFrom": 0,
+   "seconds": 24,
+   "performance": "ensemble",
+   "sha256": "a60686ba07dac2c8b88abff76358916cae2f15ef980f1194ca558f7b2eefbb64"
+  },
+  {
+   "song": "snowbell",
+   "file": "listen/snowbell.switch_mid_phrase.opus",
+   "title": "Original → Ensemble → Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)",
+   "cueFrom": 30,
+   "seconds": 24,
+   "performance": "both",
+   "sha256": "3afa8dc8be5811f24ec27742546345955de5be301e3068da64d6d7a100f52bb7"
+  },
+  {
+   "song": "snowbell",
+   "file": "listen/snowbell.first_join.opus",
+   "title": "Ensemble across the join from the first pass to the steady cycle (at 6.00 s of the cue, 4 s in)",
+   "cueFrom": 2,
+   "seconds": 12,
+   "performance": "ensemble",
+   "sha256": "3e250d6f2166b52e6154217d524c6eddd426359e333ce290062413d89b85330a"
+  },
+  {
+   "song": "snowbell",
+   "file": "listen/snowbell.first_repeat.opus",
+   "title": "Ensemble across the first repeat (the end of the first pass into the loop, 8 s in)",
+   "cueFrom": 86.5,
+   "seconds": 16,
+   "performance": "ensemble",
+   "sha256": "0b498f35319fdc7448f9e8b513a818a4fd1ef04f8d99c3c7fe905ebe3aaa9713",
+   "identicalTo": [
+    "Ensemble across the third repeat (8 s in)"
+   ]
+  },
+  {
+   "song": "snowbell",
+   "file": "listen/snowbell.repeat_original.opus",
+   "title": "The same repeat in the Original, for comparison",
+   "cueFrom": 275.5,
+   "seconds": 16,
+   "performance": "original",
+   "sha256": "e2051b63ad059c9c6543486b6c0953a9b7f8cd443efba9a4b19ced655775143f"
+  },
+  {
+   "song": "battle_keepers",
+   "file": "listen/battle_keepers.intro_original.opus",
+   "title": "The introduction, Original",
+   "cueFrom": 0,
+   "seconds": 24,
+   "performance": "original",
+   "sha256": "34dcce0b7cfc08245f54e7d9b7ef47da910325852db25bae0a636a7573590c74"
+  },
+  {
+   "song": "battle_keepers",
+   "file": "listen/battle_keepers.intro_ensemble.opus",
+   "title": "The introduction, Ensemble",
+   "cueFrom": 0,
+   "seconds": 24,
+   "performance": "ensemble",
+   "sha256": "77b8497780cdc19b186d009e4f522e18ca8dc49d97352ed79cebfea5f5ea49b0"
+  },
+  {
+   "song": "battle_keepers",
+   "file": "listen/battle_keepers.switch_mid_phrase.opus",
+   "title": "Original → Ensemble → Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)",
+   "cueFrom": 30,
+   "seconds": 24,
+   "performance": "both",
+   "sha256": "be86f0d23c9618c80b9511657f8450e6b632cd2fe374084ee2c5056573f36e97"
+  },
+  {
+   "song": "battle_keepers",
+   "file": "listen/battle_keepers.first_join.opus",
+   "title": "Ensemble across the join from the first pass to the steady cycle (at 9.71 s of the cue, 4 s in)",
+   "cueFrom": 5.710520833333334,
+   "seconds": 12,
+   "performance": "ensemble",
+   "sha256": "1cc80eea7cd493461ee644f7b0b44ebf87d6405fdaf0992b495267f9d4155848"
+  },
+  {
+   "song": "battle_keepers",
+   "file": "listen/battle_keepers.first_repeat.opus",
+   "title": "Ensemble across the first repeat (the end of the first pass into the loop, 8 s in)",
+   "cueFrom": 63.57894736842104,
+   "seconds": 16,
+   "performance": "ensemble",
+   "sha256": "66c01f630b3e8aaade599eeb1521e0d3eb304de1ed3c8966ad59ac6aae082b05",
+   "identicalTo": [
+    "Ensemble across the third repeat (8 s in)"
+   ]
+  },
+  {
+   "song": "battle_keepers",
+   "file": "listen/battle_keepers.repeat_original.opus",
+   "title": "The same repeat in the Original, for comparison",
+   "cueFrom": 198.31578947368416,
+   "seconds": 16,
+   "performance": "original",
+   "sha256": "ed552cb29da1d8890496a41746d5d53f4868fac604fad9a4db6ebfcf47b916e7"
+  }
+ ]
+}

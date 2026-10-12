@@ -253,9 +253,19 @@
     sequences under HX52"): pets and a map's companion rule, one figure from speaking to its new place
     (`src/engine/50_world.js` dismissExtras), Heisuke, the Hall's endings, Nao's night apart, four pictures re-set where
     their scenes play, six that showed what the world did not have, Steamhollow's evening yukata (`58f_festdress.js`).
-    Next: the whole `sequence_world` again (running on `abeb52a`), the complete browser run's parts 7–8 and `--extra`
-    (`node tests/e2e/run.mjs --part=k/8`; parts 1–6 done and traced), then split `staging_chapters` by chapter in
-    `run.mjs` and run each piece, the chain redone, then P17's closure.
+    Since then: `sequence_world` 2524/0; the complete browser run's parts 7–8 and `--extra` done and traced (every
+    failure a test the game had outgrown, fixed and rerun); `staging_chapters` split by chapter in `run.mjs`, its
+    pieces running (showcase, 1, 2 passed). **MT-1 (Robin's music performance, 2026-10-12): done in the build, not
+    deployed.** Settings › Audio › Music performance, Original (default) or Ensemble, in the title, Ledger and battle
+    settings, with a status line saying what actually plays; two pilot recordings (`snowbell`, `battle_keepers`) in
+    `assets/music/ensemble/` beside the page, made from the current score by `tools/music/ensemble/` and admitted by
+    the build only while their score fingerprint matches; the director in `src/audio/22_ensemble.js` keeps the
+    Original warm and hands over on the audio clock both ways. Design, results and limits: `docs/MUSIC_PERFORMANCE.md`;
+    decision F-145; captures for Robin's listening: `docs/music/ensemble/listen.html` (nobody has listened yet); the
+    rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
+    `tests/e2e/music_performance.mjs`. A new recording: the five steps in that doc, then rebuild.
+    Next: the remaining `staging_chapters` pieces, the chain redone, then P17's closure (speed, the final review set,
+    the night sweep), VA-1, P18, and only then the hosted page (its deploy must also copy `assets/music/ensemble/`).
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse

@@ -336,6 +336,15 @@ RB.audio = RB.audio || {};
     P.cue = null;
     announce();
   });
+  // a new audio context (the old one was closed): a cue whose player belongs to the old one is let go; the sequencer
+  // starts the wanted song on the new context and the cue hook adopts it (decoded buffers outlive their context)
+  _.hooks.init.push(() => {
+    if (P.cue && P.cue.player && P.cue.player.g && P.cue.player.g.ctx !== st.ctx) {
+      try { release(P.cue, 0); } catch (e) { /* its nodes went with the old context */ }
+      P.cue = null;
+    }
+    announce();
+  });
   _.hooks.mute.push(() => refresh(false));
   _.hooks.vol.push((bus) => { if (bus === 'master' || bus === 'music') refresh(false); });
 
@@ -395,12 +404,21 @@ RB.audio = RB.audio || {};
   // one stretch of a file, on the audio clock: from `when`, at `offset` seconds into the buffer, faded in over XJ (a
   // join or a cycle boundary) or not (the first stretch of a handover: the handover's own crossfade covers it), and
   // faded out over XJ from `until` (the next stretch starts there, on the same phase)
+  // Times are put on the context's frame grid, the offset moved by the same amount: a source started between frames is
+  // read interpolated for its whole length (Chromium, measured), which would dull the top of a cycle whose period is
+  // not a whole number of frames; on the grid it is read sample for sample, within half a frame of the clock.
   function segment(c, buf, when, offset, fadeIn, until) {
-    const ctx = st.ctx, s = ctx.createBufferSource(), g = ctx.createGain();
+    const ctx = st.ctx, s = ctx.createBufferSource(), g = ctx.createGain(), sr = ctx.sampleRate;
+    const w = Math.round(when * sr) / sr;
+    offset += w - when;
+    when = w;
+    if (until != null) until = Math.round(until * sr) / sr;
     s.buffer = buf;
     s.connect(g);
     g.connect(c.gain);
-    if (fadeIn) { g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(1, when + XJ); }
+    // (silent from creation: an automation event on the very frame the source starts can let that one frame through
+    // at the gain before it, measured in Chromium as a single full-level sample at the seam)
+    if (fadeIn) { g.gain.value = 0; g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(1, when + XJ); }
     if (until != null) { g.gain.setValueAtTime(1, until); g.gain.linearRampToValueAtTime(0, until + XJ); }
     s.start(when, Math.max(0, offset));
     if (until != null) s.stop(until + XJ + 0.01);
@@ -520,8 +538,8 @@ RB.audio = RB.audio || {};
   function release(c, fade) {
     c.gen = -1;
     if (c.abort) { try { c.abort.abort(); } catch (e) { /* ignore */ } }
-    const ctx = st.ctx;
-    if (ctx && c.gain) {
+    const ctx = c.gain ? c.gain.context : st.ctx; // (the cue's own context, which may not be the current one)
+    if (ctx && c.gain && ctx.state !== 'closed') {
       const now = ctx.currentTime, f = Math.max(0.02, fade || 0);
       c.gain.gain.cancelScheduledValues(now);
       c.gain.gain.setValueAtTime(c.gain.gain.value, now);
@@ -532,9 +550,9 @@ RB.audio = RB.audio || {};
       setTimeout(() => { for (const r of segs) { try { r.s.disconnect(); r.g.disconnect(); } catch (e) { /* ignore */ } } try { g.disconnect(); t.disconnect(); } catch (e) { /* ignore */ } }, (f + 0.2) * 1000);
     }
     // the warm Original was unheard: its room sends stop now, so nothing of it comes back through the open return
-    if (c.active && ctx) {
+    if (c.active && ctx && ctx.state !== 'closed') {
       try { c.player.wet.gain.cancelScheduledValues(ctx.currentTime); c.player.wet.gain.setTargetAtTime(0, ctx.currentTime, 0.01); } catch (e) { /* ignore */ }
-      if (st.g) { st.g.revGate.gain.cancelScheduledValues(ctx.currentTime); st.g.revGate.gain.setTargetAtTime(1, ctx.currentTime + 0.05, 0.05); }
+      if (st.g && st.ctx === ctx) { st.g.revGate.gain.cancelScheduledValues(ctx.currentTime); st.g.revGate.gain.setTargetAtTime(1, ctx.currentTime + 0.05, 0.05); }
     }
     for (const r of c.fmt ? [c.fmt.first, c.fmt.loop] : []) { const h = r && P.cache.get(r.sha256); if (h && h.refs > 0) h.refs--; }
     c.segs = [];

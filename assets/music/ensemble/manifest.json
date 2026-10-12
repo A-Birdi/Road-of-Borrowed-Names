@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "runtimeEnabled": false,
-  "coverage": "Pilot: . Every other song plays its Original.",
+  "runtimeEnabled": true,
+  "coverage": "Pilot: snowbell, battle_keepers. Every other song plays its Original.",
   "tracks": [
     {
       "songId": "snowbell",
-      "releaseStatus": "pending_production",
+      "releaseStatus": "ready",
       "fingerprintVersion": "mt1-score-v1",
       "scoreFingerprint": "sha256:d51d59d94bc7c565683a38f800c781d47a007ef30b54d4625626b3ef2cf1f614",
       "referenceCommit": "cb8c497c73eaf025d9bc6e78adbe05a782707bb7",
@@ -76,8 +76,8 @@
       },
       "evidence": {
         "scoreCompatibleWithCurrentBuild": true,
-        "scoreEventsPreserved": false,
-        "decodedAlignmentVerified": false,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
         "firstPassSeamVerified": true,
         "repeatedLoopVerified": true,
         "gameMixCalibrated": true,
@@ -90,7 +90,7 @@
     },
     {
       "songId": "battle_keepers",
-      "releaseStatus": "pending_production",
+      "releaseStatus": "ready",
       "fingerprintVersion": "mt1-score-v1",
       "scoreFingerprint": "sha256:2c3ef95bf838cd64294c1bab45d507d587fc861b51adbaacd776ff2501b1d037",
       "referenceCommit": "cb8c497c73eaf025d9bc6e78adbe05a782707bb7",
@@ -100,20 +100,72 @@
         "loop": true,
         "loopStartSec": 4.2105263157894735
       },
-      "assets": null,
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/battle_keepers/battle_keepers.first.9933f9a90df1c114.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "9933f9a90df1c114dc8fd05eb11850a012e319ee814014e8973f3aef4f3b9563",
+            "encodedBytes": 239362,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 494905,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 470905
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/battle_keepers/battle_keepers.first.d193938ae31ae0cc.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "d193938ae31ae0cc48cf3b99486ae64e55ff0e32729d3773922a692d96d660b7",
+            "encodedBytes": 248852,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 494905,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 470905
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/battle_keepers/battle_keepers.loop.fd60b2671eacc93e.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "fd60b2671eacc93e10f689e98c8b65b8877eb75ddf9ec3077dadb1c479ee2a4d",
+            "encodedBytes": 1467891,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 3281684,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 3257684,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/battle_keepers/battle_keepers.loop.5f4d6a1eaaf11ec0.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "5f4d6a1eaaf11ec073e2a80118482e2ac6b77732e88d20005f15d91fc877dcb1",
+            "encodedBytes": 1642196,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 3281684,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 3257684,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
       "mix": {
-        "profile": "pending",
-        "gainDb": null,
-        "roomBaked": null,
+        "profile": "pre_master_music_bus",
+        "gainDb": 4.031,
+        "roomBaked": true,
         "userVolumeBaked": false
       },
       "evidence": {
         "scoreCompatibleWithCurrentBuild": true,
-        "scoreEventsPreserved": false,
-        "decodedAlignmentVerified": false,
-        "firstPassSeamVerified": false,
-        "repeatedLoopVerified": false,
-        "gameMixCalibrated": false,
+        "scoreEventsPreserved": true,
+        "decodedAlignmentVerified": true,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
         "distributionProvenanceRecorded": true,
         "reportPaths": [
           "docs/music/ensemble/qa/battle_keepers.json"

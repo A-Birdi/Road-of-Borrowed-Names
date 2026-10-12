@@ -54,11 +54,6 @@ const until = (p, fn, arg, ms = 20000) => p.waitForFunction(fn, arg, { timeout: 
 const ensembleOn = (p, id, ms) => until(p, (id) => { const c = window.__cue(); return c.cue && c.cue.id === id && c.cue.active && c.cue.state === 'sounding'; }, id, ms);
 // the game's settings, as the player's choice (applied and saved by the game's own path)
 const choose = (p, v) => p.evaluate((v) => { RB.game.settings.musicPerformance = v; return RB.game.saveSettings(); }, v);
-// the clock's score position for a cue at a given audio time (the director's own mapping)
-const placementOk = (c) => {
-  // every segment reads the file where the clock is: first-pass offset = s0 + e; steady offset = l0 + phase
-  return c.cue.segments.length > 0;
-};
 
 // ---- settings --------------------------------------------------------------------------------------------------
 await test('MT-T01/T02 settings: Original by default and for an older record; an unknown value is Original, never a path', async () => {
@@ -112,6 +107,8 @@ await test('MT-T04/T06/T45 the control: real clicks and keys, exclusive, kept on
   await p.waitForFunction(() => RB.game.settings.musicPerformance === 'ensemble');
   const line = await p.evaluate(() => document.querySelector('[data-mp-status]').textContent);
   assert(/Ensemble selected|No music|Ensemble playing|Ensemble loads/.test(line) && /two tracks so far/.test(line), 'the line says what is chosen and how far Ensemble reaches: ' + line);
+  // (the choice is stored before the page is reloaded: the write is asynchronous)
+  await p.waitForFunction(async () => { const s = await RB.save.loadSettings(); return !!s && s.musicPerformance === 'ensemble'; }, null, { timeout: 5000, polling: 100 });
   await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
   const kept = await p.evaluate(() => ({ s: RB.game.settings.musicPerformance, a: RB.audio.performance() }));
   assert(kept.s === 'ensemble' && kept.a === 'ensemble', 'kept on reload: ' + JSON.stringify(kept));
@@ -120,8 +117,13 @@ await test('MT-T04/T06/T45 the control: real clicks and keys, exclusive, kept on
 });
 
 await test('MT-T03 storage refused: the choice applies for the session, nothing throws', async () => {
+  // the browser refuses every write once the page is up (as a full or blocked store would)
   const { p, errors } = await open();
-  await p.evaluate(() => { RB.save.saveSettings = () => Promise.reject(new Error('storage refused (test)')); });
+  await p.evaluate(() => {
+    const no = function () { throw new DOMException('refused (test)', 'QuotaExceededError'); };
+    IDBObjectStore.prototype.put = no; IDBObjectStore.prototype.add = no;
+    try { Storage.prototype.setItem = no; } catch (e) { /* ignore */ }
+  });
   await p.evaluate(() => RB.ui.settings.open());
   await p.waitForTimeout(300);
   await p.evaluate(() => { const g = document.querySelector('[data-grp="audio"]'); if (g) g.click(); });
@@ -285,28 +287,29 @@ await test('MT-T20/T22/T24 rapid changes: the latest wins, no gain jumps or orph
 });
 
 await test('MT-T23 a one-shot that ends while its recording loads stays ended (one completion, nothing replayed) — fixture', async () => {
-  // a fixture catalog for 'victory' (a 6 s one-shot) whose file arrives after the cue ended
-  let hold = null;
-  const { p } = await open({ route: async (route) => { if (/fixture/.test(route.request().url())) { await new Promise((r) => (hold = r)); } await route.continue(); } });
+  // a fixture catalog for 'victory' (a 6 s one-shot, fingerprinted as the game does) naming a real file, whose
+  // response is held until the cue has ended
+  let release = null;
+  const held = new Promise((r) => (release = r));
+  const { p } = await open();
   const first = await p.evaluate(async () => {
-    const real = RB.audio.ensembleCatalog.songs.snowbell.formats[0].first;
-    const _ = RB.audio._;
+    const real = RB.audio.ensembleCatalog.songs.snowbell.formats[0].first, _ = RB.audio._;
     const fp = 'sha256:' + Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(_.canonicalScore(_.getSong('victory')))))).map((x) => x.toString(16).padStart(2, '0')).join('');
-    const f = Object.assign({}, real, { url: real.url.replace(/(\.[a-z0-9]+)$/, '$1') + '' });
-    RB.audio.ensembleCatalog = { version: 1, songs: { victory: { releaseStatus: 'ready', fingerprint: fp, durationSec: 6, loop: false, loopStartSec: 0, trim: 1, formats: [{ codec: 'opus', type: 'audio/ogg; codecs="opus"', first: Object.assign({}, f, { url: f.url + '' }), loop: null }] } } };
+    RB.audio.ensembleCatalog = { version: 1, songs: { victory: { releaseStatus: 'ready', fingerprint: fp, durationSec: 6, loop: false, loopStartSec: 0, trim: 1, formats: [{ codec: 'opus', type: 'audio/ogg; codecs="opus"', first: real, loop: null }] } } };
     window.__ends = 0;
     RB.bus.on('audio:songend', (e) => { if (e.id === 'victory') window.__ends++; });
-    return f.url;
+    return real.url.slice(1); // ('./assets/…' → '/assets/…')
   });
-  // (route the first-pass file's URL through the hold)
-  await p.route((u) => u.href.endsWith(first.slice(1)), async (route) => { await new Promise((r) => (hold = r)); await route.continue(); });
+  let asked = 0;
+  await p.route((u) => u.pathname.endsWith(first), async (route) => { asked++; await held; try { await route.continue(); } catch (e) { /* the request was given up */ } });
   await p.evaluate(async () => { RB.game.settings.musicPerformance = 'ensemble'; RB.game.applySettings(); await RB.audio.init(); RB.audio.playSong('victory', { fade: 0 }); });
   await p.waitForTimeout(7500);
-  if (hold) hold();
+  release();
   await p.waitForTimeout(2500);
   const c = await cue(p);
   const ends = await p.evaluate(() => window.__ends);
-  assert(ends === 1 && !c.song && !c.cue && !c.player, 'one completion, nothing replayed: ' + JSON.stringify({ ends, c }));
+  assert(asked >= 1, 'the fixture\'s file was asked for while the one-shot played');
+  assert(ends === 1 && !c.song && !c.cue && !c.player, 'one completion, nothing replayed: ' + JSON.stringify({ ends, song: c.song, cue: c.cue, player: c.player }));
   await p.context().close();
 });
 
@@ -374,6 +377,22 @@ await test('MT-T31/T33 a suspended context pauses the clock (no wall-time jump);
   await p.waitForTimeout(800);
   const c = await cue(p);
   assert(c.cue.active && c.cue.state === 'sounding' && c.player.out < 0.01, 'resumed: the recording still owns the cue: ' + JSON.stringify(c.cue));
+  await p.context().close();
+});
+
+await test('MT-T32 a closed context is replaced: the old cue is let go, the recording comes back on the new context', async () => {
+  const { p, errors } = await open();
+  await choose(p, 'ensemble');
+  await p.evaluate(async () => { await RB.audio.init(); RB.audio.playSong('snowbell', { fade: 0 }); });
+  await ensembleOn(p, 'snowbell', 20000);
+  const old = await p.evaluate(async () => { const c = RB.audio._.st.ctx; await c.close(); return c.state; });
+  await p.evaluate(async () => { await RB.audio.init(); RB.audio.playSong('snowbell', { fade: 0, restart: true }); });
+  await p.waitForTimeout(300);
+  const fresh = await p.evaluate(() => ({ state: RB.audio._.st.ctx.state, cueCtx: RB.audio._.perf.cue && RB.audio._.perf.cue.player.g.ctx === RB.audio._.st.ctx }));
+  await ensembleOn(p, 'snowbell', 10000);
+  const c = await cue(p);
+  assert(old === 'closed' && fresh.state === 'running' && fresh.cueCtx && c.cue.active && c.cue.owner, 'a new context, the cue on it, the recording sounding: ' + JSON.stringify({ old, fresh, cue: c.cue }));
+  assert(!errors.length && !c.err, 'no error: ' + errors.join(' | ') + ' ' + c.err);
   await p.context().close();
 });
 
