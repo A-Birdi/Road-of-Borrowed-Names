@@ -41379,7 +41379,7 @@ RB.verbs = (function () {
       levels: ['empty', 'low', 'half full', 'full', 'brimming'],
     },
     steam: {
-      name: T('The steam', '{湯気|ゆげ}'), gates: T('The dampers', '{風|かぜ} の {弁|べん}'), title: T('Steam across the rooms', '{部屋|へや} を {渡|わた}る {湯気|ゆげ}'),
+      name: T('The steam', '{湯気|ゆげ}'), gates: T('The dampers', '{弁|べん}'), title: T('Steam across the rooms', '{部屋|へや} を {渡|わた}る {湯気|ゆげ}'),
       more: T('fills with steam', '{湯気|ゆげ} が {増|ふ}えた'), less: T('clears', '{湯気|ゆげ} が {減|へ}った'), shut: T('full of steam', '{湯気|ゆげ} で いっぱい'),
       levels: ['clear', 'a little steam', 'half full of steam', 'full of steam', 'thick with steam'],
     },
@@ -42240,7 +42240,10 @@ RB.questGuide = (function () {
     };
     const done = (list, how, extra) => {
       const t = uniq(list);
-      if (t.length > MAX_TARGETS) return Object.assign({ stage: k, targets: [], many: t, how: 'many' }, extra || {});
+      // places counted by who is there: a person whose routine has several places on a map (src/content/zzz_living/,
+      // only one of them in a journey at a time) is one place to mark, not several
+      const places = new Set(t.map((e) => e.kind === 'npc' ? e.map + '|' + e.who : e.key)).size;
+      if (places > MAX_TARGETS) return Object.assign({ stage: k, targets: [], many: t, how: 'many' }, extra || {});
       return Object.assign({ stage: k, targets: t, how }, extra || {});
     };
     const tryNeeds = (list) => {
@@ -211905,13 +211908,14 @@ RB.living = (function (C) {
     C.living.askers.push(person);
   }
   function beat(townId, b) { C.towns[townId].beats.push(b); C.living.beats.push(Object.assign({ town: townId }, b)); }
-  // a road's events; its stamp (family 'road') is pressed once every event on it has been solved (53_town roadDone)
+  // a road's events; its stamp (family 'road') is pressed once every event on it has been solved (53_town roadDone);
+  // its title names the road, its criteria name none (a hidden stamp's criteria name no later place)
   function road(id, o) {
     const D = Object.assign({ rate: 0.2 }, o);
     if (o.stamp) {
       const sid = 'road.' + id;
       C.stamps = C.stamps || {};
-      C.stamps[sid] = { id: sid, family: 'road', title: T(o.stamp.title[1], o.stamp.title[0]), criteria: T('Every event on ' + o.stamp.title[1] + ' seen through.', o.stamp.title[0] + ' の {出来事|できごと} を すべて {見|み}た'), hidden: true,
+      C.stamps[sid] = { id: sid, family: 'road', title: T(o.stamp.title[1], o.stamp.title[0]), criteria: T('Every event on one road seen through.', '{一|ひと}つ の {道|みち} の {出来事|できごと} を すべて {見|み}た'), hidden: true,
         when: (s) => { const r = s.world && s.world.roads && s.world.roads[id]; return !!(r && [D.unique].concat(D.variants || []).filter(Boolean).every((e) => r.solved[e.id])); },
         design: { shape: 'round', motif: o.stamp.motif || 'path', ink: o.stamp.ink || '#5a4a2a' } };
       D.stamp = sid;
@@ -216537,6 +216541,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
 スパナ|スパナ|n|A|a spanner, a wrench
 延びる|のびる|v1|A|to stretch out, to extend (a road, a wall)
 香|こう|n|A|incense (the powder or stick that is burned)
+切れる|きれる|v1|I|to break, to snap (a cord, a line); to be cut off
+沈める|しずめる|v1|I|to sink (something), to put under water
+破れる|やぶれる|v1|I|to tear, to be torn (paper, cloth)
+揃える|そろえる|v1|I|to make even, to set level with each other
+割れ目|われめ|n|A|a crack, a split
+継ぎ目|つぎめ|n|A|a joint, a seam (where two pieces meet)
+跳ね上がる|はねあがる|v5r|A|to spring up, to jump up
+走り書き|はしりがき|n|A|a scrawl, a note written in a hurry
+塗り込める|ぬりこめる|v1|A|to wall up, to plaster over (sealing something inside)
+流れ落ちる|ながれおちる|v1|A|to stream down, to run off
+ころころ|ころころ|adv|A|rolling over and over (something small and light)
+回り道|まわりみち|n|I|a roundabout way, a detour
+通り道|とおりみち|n|A|a way through, a passage
+入り|いり|n|A|setting (of the moon or sun: 月の入り, moonset); going in; the house, turnout (at a show)
+家|け|suf|A|the … family (after a family name: セト家, the Seto family)
+描く|かく|v5k|I|to draw (a picture, a line on a plan)
+間|ま|n|A|a room (in names: …の間, "the … Hall"); a pause, an interval
 `), 'verbs');
 
   // ==== W12 · repair jobs ==========================================================================================
@@ -216549,7 +216570,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       id: 'yn_vent_pipe', map: 'yn.vents1', region: 'steamhollow', if: VENT_GATE, x: 10, y: 16, prop: 'fw_ventpipe',
       name: T('A pipe that hisses', '{湯気|ゆげ} が {漏|も}れる {管|くだ}'),
       inspect: T('Steam hisses from a joint halfway down the pipe. The small valve on it is open, the old hemp wound round the joint has rotted to threads, and the clamp over it hangs loose.',
-        '{管|くだ} の {継|つ}ぎ{目|め} から 、 {湯気|ゆげ} が しゅうしゅう と {漏|も}れて いる 。 {小|ちい}さな {弁|べん} は {開|あ}いた まま だ 。 {継|つ}ぎ{目|め} に {巻|ま}いた {古|ふる}い {麻|あさ} は ぼろぼろ で 、 {留|と}め{金|がね} も {緩|ゆる}んで いる 。'),
+        '{管|くだ} の {途中|とちゅう} の {継|つ}ぎ{目|め} から 、 {湯気|ゆげ} が しゅうしゅう と {漏|も}れて いる 。 {小|ちい}さな {弁|べん} は {開|あ}いた まま だ 。 {継|つ}ぎ{目|め} に {巻|ま}いた {古|ふる}い {麻|あさ} は ぼろぼろ で 、 {留|と}め{金|がね} も {緩|ゆる}んで いる 。'),
       parts: { valve: T('small valve', '{小|ちい}さな {弁|べん}'), joint: T('joint', '{継|つ}ぎ{目|め}'), clamp: T('clamp', '{留|と}め{金|がね}') },
       read: [
         T('A bath-keepers\' card is tied to the pipe. It says:', '{管|くだ} に 、 {湯守|ゆもり} の {札|ふだ} が {結|むす}んで ある 。'),
@@ -216579,7 +216600,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     id: 'el_bell_care', map: 'el.landing', region: 'saltglass', if: 'ed>=2&el_done', x: 19, y: 9, prop: 'chest',
     name: T('The landing bell\'s stiff hanger', '{渡|わた}し{場|ば} の {鐘|かね} の {固|かた}い {金具|かなぐ}'),
     inspect: T('The bell rings, but it hardly swings: the iron hanger on the old post is stiff with thirty years of rust, and the old cord Genroku kept with it is close to breaking. Spray from the inlet has already dried white on its rim.',
-      '{鐘|かね} は {鳴|な}る が 、 ほとんど {揺|ゆ}れない 。 {古|ふる}い {柱|はしら} の {鉄|てつ} の {金具|かなぐ} は 、 {三十年|さんじゅうねん} の {錆|さび} で {固|かた}い 。 {一緒|いっしょ} に {仕舞|しま}って あった {古|ふる}い {紐|ひも} も 、 {切|き}れ そう だ 。 {縁|ふち} に は もう 、 {入|い}り{江|え} の {塩|しお} が {白|しろ}く {付|つ}いて いる 。'),
+      '{鐘|かね} は {鳴|な}る が 、 ほとんど {揺|ゆ}れない 。 {古|ふる}い {柱|はしら} の {鉄|てつ} の {金具|かなぐ} は 、 {三十年|さんじゅうねん} の {錆|さび} で {固|かた}い 。 {一緒|いっしょ} に {仕舞|しま}って あった {古|ふる}い {紐|ひも} も 、 {切|き}れ@切れる そう だ 。 {縁|ふち} に は もう 、 {入|い}り{江|え} の {塩|しお} が {白|しろ}く {付|つ}いて いる 。'),
     parts: { rim: T('rim', '{鐘|かね} の {縁|ふち}'), hanger: T('hanger', '{金具|かなぐ}'), cord: T('cord', '{紐|ひも}') },
     read: [
       T('A card in Genroku\'s small, cramped hand, kept with the bell for thirty years:', 'ゲンロク の {小|ちい}さな {字|じ} の {札|ふだ} 。 {三十年|さんじゅうねん} 、 {鐘|かね} と {一緒|いっしょ} に {仕舞|しま}って あった 。'),
@@ -216598,7 +216619,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { part: 'cord', tool: 'cord', done: T('You take off the worn cord and tie on the new one.', '{古|ふる}い {紐|ひも} を {外|はず}して 、 {新|あたら}しい {紐|ひも} を {結|むす}んだ 。') },
     ],
     ran: T('You pull the new cord. The bell swings freely now, and its clear note rings across the inlet and carries round the headland towards the harbour.',
-      '{新|あたら}しい {紐|ひも} を {引|ひ}く 。 {鐘|かね} は {大|おお}きく {揺|ゆ}れて 、 {澄|す}んだ {音|おと} が {入|い}り{江|え} に {響|ひび}く 。 {音|おと} は {岬|みさき} の {向|む}こう の {港|みなと} の {方|ほう} へ {届|とど}いて いった 。'),
+      '{新|あたら}しい {紐|ひも} を {引|ひ}く 。 {鐘|かね} は {大|おお}きく {揺|ゆ}れて 、 {澄|す}んだ {音|おと} が {入|い}り{江|え} に {響|ひび}く 。 {音|おと} は {岬|みさき} の {向|む}こう の {港|みなと} の {方|ほう} へ {流|なが}れて いった 。'),
   });
 
   // The Keepers' Road, the Shuttered Hall: the dark stone lantern at 23,16, mended by hand from Hisae's box beside it.
@@ -216611,7 +216632,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     parts: { box: T('light box', '{火袋|ひぶくろ}'), screen: T('paper screen', '{障子|しょうじ}'), dish: T('oil dish', '{油皿|あぶらざら}') },
     read: [
       T('A card in Hisae\'s hand lies in the box: how the keepers mend a lantern.', '{箱|はこ} の {中|なか} に 、 ヒサエ の {字|じ} の {札|ふだ} が ある 。 {灯守|ひもり} の {灯籠|とうろう} の {直|なお}し{方|かた} だ 。'),
-      T('1. Brush the old ash out of the light box.', '{一|いち} 、 {刷毛|はけ} で {火袋|ひぶくろ} の {灰|はい} を {払|はら}う 。'),
+      T('1. Brush the old ash out of the light box.', '{一|いち} 、 {刷毛|はけ} で {火袋|ひぶくろ} の {灰|はい} を {払|はら}う=(brush out) 。'),
       T('2. Paste new paper on the screen.', '{二|に} 、 {障子|しょうじ} に {新|あたら}しい {紙|かみ} を {貼|は}る 。'),
       T('3. Pour rapeseed oil into the dish and lay a new wick in it.', '{三|さん} 、 {油皿|あぶらざら} に {菜種|なたね} の {油|あぶら} を {入|い}れて 、 {新|あたら}しい {灯心|とうしん} を {置|お}く 。'),
     ],
@@ -216621,7 +216642,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'oil', jp: '{油|あぶら} と {灯心|とうしん}', en: 'oil and a wick' },
     ],
     steps: [
-      { part: 'box', tool: 'brush', done: T('You brush the ash out of the light box. The stone inside is clean and grey again.', '{刷毛|はけ} で {火袋|ひぶくろ} の {灰|はい} を {払|はら}った 。 {中|なか} の {石|いし} が きれい に なった 。') },
+      { part: 'box', tool: 'brush', done: T('You brush the ash out of the light box. The stone inside is clean and grey again.', '{刷毛|はけ} で {火袋|ひぶくろ} の {灰|はい} を {払|はら}った=(brushed out) 。 {中|なか} の {石|いし} が きれい に なった 。') },
       { part: 'screen', tool: 'paper', done: T('You paste new paper over the torn screen and smooth it flat.', '{破|やぶ}れた {障子|しょうじ} に {新|あたら}しい {紙|かみ} を {貼|は}って 、 {平|たい}ら に {伸|の}ばした 。') },
       { part: 'dish', tool: 'oil', done: T('You pour rapeseed oil into the dish and lay a new wick in it.', '{油皿|あぶらざら} に {菜種|なたね} の {油|あぶら} を {入|い}れて 、 {新|あたら}しい {灯心|とうしん} を {置|お}いた 。') },
     ],
@@ -216843,7 +216864,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     id: 'cr_cloud_ox', map: 'cr.leg4', region: 'cloudroad', if: CR_GATE,
     creature: { enemy: 'cr.ox', at: { block: [17, 11], shade: [23, 18], away: null }, say: {
       block: T('A Cloud Ox lies across the road in the narrow of the gorge, chewing on the fog. Genji\'s pack horse cannot get past it.', '{谷|たに} の {狭|せま}い {所|ところ} で 、 {雲牛|くもうし} が {道|みち} に {寝|ね}そべって 、 {霧|きり} を {噛|か}んで いる 。 ゲンジ の {馬|うま} は {通|とお}れない 。'),
-      shade: T('The Cloud Ox lies in the cliff\'s shadow at the mouth of the gorge, off the road. The way through is clear.', '{雲牛|くもうし} は {谷|たに} の {出口|でぐち} の {崖|がけ} の {陰|かげ} に いる 。 {道|みち} は {通|とお}れる 。'),
+      shade: T('The Cloud Ox lies in the cliff\'s shadow at the far end of the gorge, off the road. The way through is clear.', '{雲牛|くもうし} は {谷|たに} の {出口|でぐち} の {崖|がけ} の {陰|かげ} に いる 。 {道|みち} は {通|とお}れる 。'),
       away: T('The Cloud Ox has wandered off over the gorge and become fog again.', '{雲牛|くもうし} は {谷|たに} の {上|うえ} へ {行|い}って 、 また {霧|きり} に {戻|もど}った 。'),
     } },
     start: 'block', goal: ['shade', 'away'],
@@ -216853,7 +216874,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           '{灯|あか}り が {明|あか}るく なった 。 {光|ひかり} が {当|あ}たる と 、 {牛|うし} の {雲|くも} が {薄|うす}く なる 。 {牛|うし} は のっそり と {立|た}ち{上|あ}がって 、 {崖|がけ} の {陰|かげ} で また {寝|ね}そべった 。'), fx: 'light' },
       { id: 'bell', family: 'bell', from: ['block', 'shade'], to: 'away', obj: { key: 'bell', x: 12, y: 13, prop: 'cs_bellpost', jp: '{馬|うま} の {鈴|すず}', en: 'the horse bell' }, sound: true,
         say: T('The horse bell rings out, clear, again and again. The Cloud Ox lifts its head at every ring, gets up, wanders off the road and out over the gorge, and turns back into fog.',
-          '{馬|うま} の {鈴|すず} が 、 {何度|なんど} も {澄|す}んだ {音|おと} で {鳴|な}る 。 {雲牛|くもうし} は {鳴|な}る たび に {頭|あたま} を {上|あ}げ 、 {立|た}ち{上|あ}がって {道|みち} を {外|はず}れた 。 そして {谷|たに} の {上|うえ} で 、 また {霧|きり} に {戻|もど}った 。'), fx: 'ring' },
+          '{馬|うま} の {鈴|すず} が 、 {何度|なんど} も {澄|す}んだ {音|おと} で {鳴|な}る 。 {雲牛|くもうし} は {鳴|な}る たび@度 に {頭|あたま} を {上|あ}げ 、 {立|た}ち{上|あ}がって {道|みち} を {外|はず}れた 。 そして {谷|たに} の {上|うえ} で 、 また {霧|きり} に {戻|もど}った 。'), fx: 'ring' },
     ],
   });
   C.maps['cr.leg4'].props.push({ p: 'cr_horse', x: 10, y: 10, if: CR_GATE + '&puzzle.cr_cloud_ox.route=block', scene: 'cr.vb_horse_wait' });
@@ -216871,7 +216892,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     means: [
       { id: 'breeze', family: 'wind', from: ['block'], to: 'aside', obj: { key: 'current', x: 20, y: 13, prop: 'ko_current', jp: '{上|のぼ}る {風|かぜ}', en: 'the rising air' },
         say: T('A breeze gathers over the terrace. The Leafling, light as a draught, is lifted off the path, tumbles along, and comes down beside the heap of leaves at the far end.',
-          '{段|だん} の {上|うえ} に {風|かぜ} が {集|あつ}まる 。 {軽|かる}い {木|こ}の{葉|は}{童|わらし} は {道|みち} から {持|も}ち{上|あ}げられて 、 ころころ と {転|ころ}がり 、 {端|はし} の {葉|は} の {山|やま} の {横|よこ} に {下|お}りた 。'), fx: 'vane' },
+          '{段|だん} の {上|うえ} に {風|かぜ} が {集|あつ}まる 。 {軽|かる}い {木|こ}の{葉|は}{童|わらし} は {道|みち} から {持|も}ち{上|あ}げられて 、 ころころ と {転|ころ}がり 、 {端|はし} の {葉|は} の {山|やま} の {横|よこ} に {降|お}りた 。'), fx: 'vane' },
       { id: 'note', family: 'bell', from: ['block', 'aside'], to: 'away', obj: { key: 'bell', x: 16, y: 12, prop: 'sb_bellpost', jp: '{呼|よ}び{鈴|りん}', en: 'the keepers\' calling bell' }, sound: true,
         say: T('A clear note rings out over the terraces. The Leafling turns its leaf towards the sound and, for once, reads it out right: "Kaeru: go home." Then it lets the wind carry it off up the terraces.',
           '{澄|す}んだ {音|おと} が {段|だん} に {響|ひび}く 。 {木|こ}の{葉|は}{童|わらし} は {音|おと} の {方|ほう} に {葉|は} を {向|む}けて 、 {一度|いちど} だけ {正|ただ}しく {読|よ}んだ 。 「{帰|かえ}る」 。 そして 、 {風|かぜ} に {乗|の}って {上|うえ} の {段|だん} へ {飛|と}んで いった 。'), fx: 'ring' },
@@ -216890,7 +216911,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       x: 30, y: 24, prop: 'table', title: T('Warehouse Row, drawn sixty years ago', '{六十年|ろくじゅうねん} {前|まえ} の {蔵|くら} の {並|なら}び'),
       marks: [
         { id: 'landing', x: 37, y: 15, jp: '{荷揚|にあ}げ {場|ば}', en: 'a landing stage', now: 'missing',
-          obs: T('Where the plan shows a landing stage, the bank is a straight stone wall. Under the water you can just make out steps going down.', '{図|ず} で は {荷揚|にあ}げ {場|ば} だ が 、 {今|いま} は まっすぐ な {石|いし} の {岸|きし} だ 。 {水|みず} の {下|した} に 、 {下|くだ}って いく {石段|いしだん} が うっすら {見|み}える 。') },
+          obs: T('Where the plan shows a landing stage, the bank is a straight stone wall. Under the water you can just make out steps going down.', '{図|ず} で は {荷揚|にあ}げ {場|ば} だ が 、 {今|いま} は まっすぐな {石|いし} の {岸|きし} だ 。 {水|みず} の {下|した} に 、 {下|くだ}って いく {石段|いしだん} が うっすら {見|み}える 。') },
         { id: 'door', x: 37, y: 23, area: { x: 36, y: 23, w: 3, h: 2 }, jp: '{蔵|くら} の {戸|と}', en: 'the storehouse door', now: 'present',
           obs: T('Over the door, two crests are cut into the beam side by side: Zenzō\'s house and Fujiya. The plaster that covered them had been laid on with care.', '{戸|と} の {上|うえ} の {梁|はり} に 、 {紋|もん} が {二|ふた}つ {並|なら}んで {彫|ほ}って ある 。 ゼンゾウ の {家|いえ} と 、 {藤屋|ふじや} の {紋|もん} だ 。 その {上|うえ} の しっくい は 、 {丁寧|ていねい} に {塗|ぬ}って あった 。') },
         { id: 'fujiya', x: 29, y: 6, area: { x: 28, y: 6, w: 3, h: 1 }, jp: '{藤屋|ふじや} の {蔵|くら}', en: 'Fujiya\'s storehouse', now: 'present',
@@ -216921,7 +216942,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         { id: 'stakes', x: 15, y: 12, jp: '{水路|すいろ} の {杭|くい}', en: 'the channel\'s stakes', now: 'present',
           obs: T('The plan marks stakes along the edge of a deep channel. They are still here, black and worn down to stumps, and the new channel runs right beside them.', '{図|ず} に は 、 {深|ふか}い {水路|すいろ} の {縁|ふち} に {杭|くい} が {描|か}いて ある 。 {杭|くい} は {今|いま} も ここ に {残|のこ}って いて 、 {黒|くろ}く {短|みじか}く なって いる 。 {新|あたら}しい {水路|すいろ} は 、 その すぐ {横|よこ} を {通|とお}って いる 。') },
         { id: 'workshop', x: 9, y: 7, jp: '{鐘|かね} の {工房|こうぼう}', en: 'the bell workshop', now: 'missing',
-          obs: T('Where the plan shows the bell workshop there are flat foundation stones in the grass, and a ring of scorched earth where a furnace stood. A note in small letters on the plan: "The workshop keeps the breakwater."', '{図|ず} で は {鐘|かね} の {工房|こうぼう} の {場所|ばしょ} だ 。 {草|くさ} の {中|なか} に {平|たい}らな {土台|どだい} の {石|いし} と 、 {黒|くろ}く {焦|こ}げた {丸|まる} い {跡|あと} が ある 。 {図|ず} の {隅|すみ} に 、 {小|ちい}さな {字|じ} で 「{波除|なみよ}け の {手入|てい}れ は {工房|こうぼう} が する 」 と {書|か}いて ある 。') },
+          obs: T('Where the plan shows the bell workshop there are flat foundation stones in the grass, and a ring of scorched earth where a furnace stood. A note in small letters on the plan: "The workshop keeps the breakwater."', '{図|ず} で は {鐘|かね} の {工房|こうぼう} の {場所|ばしょ} だ 。 {草|くさ} の {中|なか} に {平|たい}らな {土台|どだい} の {石|いし} と 、 {黒|くろ}く {焦|こ}げた {丸|まる}い {炉|ろ} の {跡|あと} が ある 。 {図|ず} の {隅|すみ} に 、 {小|ちい}さな {字|じ} で 「{波除|なみよ}け の {手入|てい}れ は {工房|こうぼう} が する」 と {書|か}いて ある 。') },
       ],
     },
     hypotheses: [
@@ -216946,7 +216967,7 @@ narr: {上|うえ} の {池|いけ} 、 この {水路|すいろ} 、 {大閘門
 @scene yn.vb_air_board
 # The bath-keepers' board in the Channel: what the warm-air pipes should be set to.
 !gesture pc read
-narr: {湯守|ゆもり} の {板|いた} 。 {弁|べん} と {管|くだ} の {図|ず} に 、 {短|みじか}い {字|じ} が {添|そ}えて ある 。 || The bath-keepers' board: a drawing of the dampers and pipes, with a few words beside it.
+narr: {湯守|ゆもり} の {板|いた} 。 {弁|べん} と {管|くだ} の {図|ず} に 、 {短|みじか}い {言葉|ことば} が {添|そ}えて ある 。 || The bath-keepers' board: a drawing of the dampers and pipes, with a few words beside it.
 narr: 「{上|かみ}の{湯|ゆ} へ の {管|くだ} と {下|しも}の{湯|ゆ} へ の {管|くだ} は 、 {同|おな}じ {暖|あたた}かさ に する こと 。 どちら も {半分|はんぶん} 。 {煙突|えんとつ} の {下|した} に {湯気|ゆげ} を {溜|た}めない こと 。 {石段|いしだん} の {下|した} が {見|み}えなく なる 。」 || "Give the pipe to the Upper House and the pipe to the Lower House the same warmth: both at half. Do not let steam collect at the foot of the chimney, or the foot of the stair disappears in it."
 narr: {弁|べん} は 、 この {湯樋|ゆどい} に {二|ふた}つ 、 {弁|べん} の {間|ま} に {二|ふた}つ ある 。 {両方|りょうほう} の {宿|やど} に {同|おな}じ だけ 。 {湯分|ゆわ}け の {約束|やくそく} と {同|おな}じ だ 。 || There are two dampers here in the Channel and two in the Valve Hall. The same for both houses: like the agreement at the divider.
 
@@ -216955,7 +216976,7 @@ narr: {弁|べん} は 、 この {湯樋|ゆどい} に {二|ふた}つ 、 {�
 !gesture pc read
 narr: {石|いし} に 、 {葉守|はもり} の {字|じ} が {彫|ほ}って ある 。 || The keepers' writing is cut into the stone.
 narr: 「{大楠|おおくす} は 、 {根|ね} で {潮|しお} を {飲|の}む 。 {囁|ささや}き の {洞|ほら} と {回|まわ}り{道|みち} の {根|ね} の {池|いけ} に 、 {潮|しお} を {半分|はんぶん} ずつ {入|い}れる こと 。 {根|ね} の {橋|はし} は 、 {潮|しお} に {沈|しず}めない こと 。」 || "The great camphor drinks the tide through its roots. Let the tide into the root pools of the Whispering Hollow and the Long Way Round, half in each. Do not put the root bridge under the tide."
-narr: {根|ね} の {戸|と} は 、 {三|みっ}つ の {洞|ほら} に ある らしい 。 {結|むす}ぶ {言葉|ことば} で も 、 {動|うご}く そう だ 。 || There seem to be root gates in all three hollows. A binding word moves them too, they say.
+narr: {根|ね} の {戸|と} は 、 {三|みっ}つ の {洞|ほら} に ある らしい 。 {結|むす}ぶ {言葉|ことば} で も 、 {動|うご}く そう=(they say) だ 。 || There seem to be root gates in all three hollows. A binding word moves them too, they say.
 
 @scene hall.w3.vb_censer
 # Jinbei's old incense clock by the riddle stone (W14, part of the run): watched and adjusted in its sheet; solved, it
@@ -216982,7 +217003,7 @@ narr: 「{小|こ}ぜり 。 {合図|あいず} の {鈴|すず} が {鳴|な}�
 @scene cr.vb_horse_wait
 # One of Genji's pack horses, waiting at the gorge's mouth while a Cloud Ox lies across the road.
 narr: {荷|に} を {背負|せお}った {馬|うま} が 、 {谷|たに} の {入|い}り{口|ぐち} で {止|と}まって いる 。 {耳|みみ} を {後|うし}ろ に {倒|たお}して 、 {先|さき} へ {進|すす}もう と しない 。 || A horse with its load stands at the mouth of the gorge, ears laid back, and will not go on.
-narr: {首|くび} の {札|ふだ} に 「{馬返|うまがえ}し 、 ゲンジ」 。 {崖道|がけみち} は {馬|うま} の {道|みち} で は ない 。 {谷|たに} の {道|みち} しか ない のに 、 その {真|ま}ん{中|なか} に {大|おお}きな {白|しろ}い {影|かげ} が {寝|ね}そべって いる 。 || The tag on its neck says "Umagaeshi, Genji". The ledge is no road for horses; the gorge road is the only way, and a great white shape lies across the middle of it.
+narr: {首|くび} の {札|ふだ} に は 「{馬返|うまがえ}し 、 ゲンジ」 と ある 。 {崖道|がけみち} は {馬|うま} の {道|みち} で は ない 。 {谷|たに} の {道|みち} しか ない のに 、 その {真|ま}ん{中|なか} に {大|おお}きな {白|しろ}い {影|かげ} が {寝|ね}そべって いる 。 || The tag on its neck says "Umagaeshi, Genji". The ledge is no road for horses; the gorge road is the only way, and a great white shape lies across the middle of it.
 
 @scene kr.vb_hall_lamp
 # The Shuttered Hall's stone lantern, mended by hand.

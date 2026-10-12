@@ -51,7 +51,10 @@ export default async (t) => {
   };
   const run = async (id, o = {}) => { lines = []; asked = []; warps = []; choice = o.choice || 0; forge = o.forge || {}; fail = o.fail || {}; await RB.script.run(id); return lines; };
   const has = (re) => lines.some((l) => re.test(l.en) || re.test(l.jp));
-  const pick = (s, talk) => (typeof talk === 'string' ? talk : ((talk || []).find((x) => !x.if || S.test(s, x.if)) || {}).scene);
+  // the first thing someone says, looking past other once-only news that may come first (a town's change: the Living
+  // World, src/content/zzz_living/), so a return is found, or found missing, behind it
+  const news = (x) => /!seen\./.test(x.if || '') && !/^rt\./.test(x.scene || '');
+  const pick = (s, talk) => (typeof talk === 'string' ? talk : ((talk || []).find((x) => (!x.if || S.test(s, x.if)) && !news(x)) || {}).scene);
   const here = (s, map) => (C.maps[map].npcs || []).filter((n) => !n.if || S.test(s, n.if));
   const talkOf = (s, map, id) => { const n = here(s, map).find((x) => x.id === id || x.char === id); return n ? pick(s, n.talk) : null; };
   const propsOf = (s, map) => (C.maps[map].props || []).filter((p) => !p.if || S.test(s, p.if));

@@ -565,7 +565,10 @@ RB.questGuide = (function () {
     };
     const done = (list, how, extra) => {
       const t = uniq(list);
-      if (t.length > MAX_TARGETS) return Object.assign({ stage: k, targets: [], many: t, how: 'many' }, extra || {});
+      // places counted by who is there: a person whose routine has several places on a map (src/content/zzz_living/,
+      // only one of them in a journey at a time) is one place to mark, not several
+      const places = new Set(t.map((e) => e.kind === 'npc' ? e.map + '|' + e.who : e.key)).size;
+      if (places > MAX_TARGETS) return Object.assign({ stage: k, targets: [], many: t, how: 'many' }, extra || {});
       return Object.assign({ stage: k, targets: t, how }, extra || {});
     };
     const tryNeeds = (list) => {

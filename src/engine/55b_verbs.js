@@ -364,7 +364,7 @@ RB.verbs = (function () {
       levels: ['empty', 'low', 'half full', 'full', 'brimming'],
     },
     steam: {
-      name: T('The steam', '{湯気|ゆげ}'), gates: T('The dampers', '{風|かぜ} の {弁|べん}'), title: T('Steam across the rooms', '{部屋|へや} を {渡|わた}る {湯気|ゆげ}'),
+      name: T('The steam', '{湯気|ゆげ}'), gates: T('The dampers', '{弁|べん}'), title: T('Steam across the rooms', '{部屋|へや} を {渡|わた}る {湯気|ゆげ}'),
       more: T('fills with steam', '{湯気|ゆげ} が {増|ふ}えた'), less: T('clears', '{湯気|ゆげ} が {減|へ}った'), shut: T('full of steam', '{湯気|ゆげ} で いっぱい'),
       levels: ['clear', 'a little steam', 'half full of steam', 'full of steam', 'thick with steam'],
     },
