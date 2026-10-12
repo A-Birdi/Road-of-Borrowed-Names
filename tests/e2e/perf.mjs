@@ -63,7 +63,9 @@ out.menu = await p.evaluate(async () => {
     RB.ui.menu.close();
   }
   const ms = (performance.now() - t0) / N;
-  await new Promise((res) => setTimeout(res, 200));
+  // counted once the last close's motion is over (the book's inert closing copy goes at 230 ms; counted at 200 ms it
+  // read as 102 nodes more, on every build since the book: not a leak)
+  await new Promise((res) => setTimeout(res, 500));
   const nodes1 = document.getElementsByTagName('*').length;
   return { openClose: +ms.toFixed(1), domBefore: nodes0, domAfter: nodes1 };
 });

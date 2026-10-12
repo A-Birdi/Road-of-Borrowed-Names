@@ -4669,6 +4669,16 @@ hashes unchanged after. These are focused tests at the selected level from each 
 changed in Settings before the scene); they do not show that the campaign before them was played at that level (each
 was played at its fixture's own level: Ren F, Nao E, Mio I, Suzu A).
 
+**P17's speed checks, on a quiet machine after the campaigns (B, headless Chromium, software rendering; `index.html`
+e456645a…; nothing else running, load under 1.2).** `load_budget.mjs 3`: ready in 1,344 ms median at 1280×800 (1,317–
+1,403) and 1,482 ms at 390×844 (1,378–1,584); heap 93 and 82 MB (one phone run 98); the file 21.9 MB. `perf.mjs` at
+1280×800 and 390×844: a world frame 4.3–5.3 and 4.4–6.2 ms (Reedwake, Saltglass harbour, Cinder Orchard, Lanternfall,
+Snowbell, the Hall); a map's static layer 17–443 and 17–469 ms; the Ledger opened and closed twenty times 24.3 and 16.3
+ms each, the page's nodes 63 before and 63 after. perf had counted those nodes 200 ms after the last close and read 165
+on every build since the book (13fd5d6 and 2debb3c the same): the last close's inert copy is removed at 230 ms; counted
+again at 200 and 600 ms after each of three batches of twenty, 165 then 63 every time, so no leak; perf now counts at
+500 ms. These are a trend line between builds on this container, not a device's speed and not Firefox.
+
 ## MT-1, the music performance: Original or Ensemble (Robin's MT-1, 2026-10-12)
 
 What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. Evidence, kept apart by kind:

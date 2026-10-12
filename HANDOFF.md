@@ -274,17 +274,22 @@
     changed and asked again in one callback; now one copy per outside question (`tests/unit/quest_guide_live.test.mjs`);
     weather under the book moves at a quarter speed, recorded, not changed. Which build has LP-1 and how to tell an
     open page's build: VALIDATION.md "LP-1", "Which build has LP-1". Robin's device review is the open part.
-    **P18 is Plan B (Robin's C-89, 2026-10-12)**: four continuous twelve-chapter campaigns (F/Ren, E/Nao, I/Mio,
-    A/Suzu) through `node tests/e2e/matrix.mjs --twelve --fixtures --pairs …` on one fixed export (28cb216), plus
+    **P18 is Plan B (Robin's C-89, 2026-10-12), done:** the four continuous twelve-chapter campaigns (F/Ren, E/Nao,
+    I/Mio, A/Suzu) all PASS on one clean export of 2debb3c (17/17 milestones in order, to the ending, 0 problems; the
+    batch on 28cb216 failed by the launcher's own order check and is not counted), through
+    `node tests/e2e/matrix.mjs --twelve --fixtures --pairs …`; the sixteen namings 16/16 (on b11056e, from those
+    campaigns' own fixtures); P17's speed checks run on a quiet machine after them. Plus
     targeted tests: `tests/unit/answer_sweep.test.mjs` (every tier of every task, negative controls),
     `tests/e2e/naming_combos.mjs` (the sixteen companion × level namings at the gate, from each companion's own
     pre-Archive fixture in `tests/fixtures/p18/`), `tests/unit/profile_narration.test.mjs` and
     `tests/e2e/profile_narration.mjs` (the level-dependent narration's selection and rendering). The sixteen-run
     product stays in matrix.mjs, not run. Found and fixed on the way: the New Game+ offer could be made over a
     journey other than its own; a fill-in blank (［　］) could break across lines. Not to be reported as "sixteen
-    full campaigns", native-reviewed Japanese or real-device validation. Then (C-87's order, unchanged): P17's
-    speed checks on a quiet machine, VA-1 as Robin ordered it, and only when all of it passes the hosted page (its
-    deploy must also copy `assets/music/ensemble/`). State and results: VALIDATION.md "P18 — Plan B".
+    full campaigns", native-reviewed Japanese or real-device validation. Next (C-87's order, unchanged): VA-1 as
+    Robin ordered it, and only when all of it passes the hosted page (its deploy must also copy
+    `assets/music/ensemble/`). Open for Robin: LP-1 in Firefox and on the device (the corrected build untested
+    there), the weather's refresh-rate dependence (deferred, P17_CLOSURE). State and results: VALIDATION.md
+    "P18 — Plan B" and "LP-1".
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
