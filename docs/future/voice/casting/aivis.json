@@ -1,0 +1,140 @@
+{
+ "schemaVersion": "rbn-voice-casting-1",
+ "configurationId": "aivis",
+ "status": "uncast (TO-CHOOSE at VS02/VS03; nothing here has been heard)",
+ "pinned": {
+  "engineVersion": null,
+  "modelId": "AivisSpeech Engine <exact version>"
+ },
+ "howToFill": [
+  "1. Pin the exact engine/model above for the whole pass; a different version is a different candidate label.",
+  "2. For each role list up to three candidates (labels C01, C02, C03): {label, voice: <shape below>, rights: {status, terms, credit}, pickedBecause}. Candidates come from the pool; say why each was picked (e.g. from the provider’s description) and that it was not yet heard.",
+  "3. rights.status must start with \"ok\" (e.g. \"ok_private_audition\") only after the voice’s terms were read for synthetic acting of an original character; otherwise its cells stay blocked_rights.",
+  "4. The smoke check uses the narrator’s first candidate; the casting screen renders every candidate on the role’s two anchor lines; `selected` is set only after listening (Robin’s or a recorded listener’s), and discarded candidates move to `discarded` with a short reason."
+ ],
+ "voiceShape": {
+  "styleId": "<number from /speakers>",
+  "styleFor": {
+   "<delivery label>": "<a style id of the SAME model speaker>"
+  },
+  "modelUuid": "<AIVMX model uuid>",
+  "modelVersion": "<its version>"
+ },
+ "pool": "Installed AIVMX models (`node tools/voice/audition.mjs voices --config aivis`); each model’s licence is in its AIVM metadata and on AivisHub: record it in rights.terms.",
+ "roles": {
+  "narrator_female": {
+   "target": "One adult female storyteller across every tone (§06): not a screen reader, not a new character; an emotion change never replaces her voice.",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "suzu": {
+   "target": "Suzu: a travelling comedian and performer seeking company and a double act, not a would-be celebrity; the same identity for her standard and Kansai lines (§07).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "nao": {
+   "target": "Nao (they/them): cast by character fit, never by a pitch rule attached to pronouns (§07).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "mio": {
+   "target": "Mio: capable, confident care; not permanently shy (§07).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "ren": {
+   "target": "Ren (they/them): cast by character fit, never by a pitch rule attached to pronouns (§07).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "player_a": {
+   "target": "The player’s Voice A: a lighter, brighter natural adult voice; a stable casting identity, not a pitch preset, and no rule tying it to sex or pronouns (§03).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "player_b": {
+   "target": "The player’s Voice B: a lower, warmer natural adult voice; a stable casting identity, not a pitch preset, and no rule tying it to sex or pronouns (§03).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc01": {
+   "target": "Child girl; village child (§08 casting target). Bound to: Chiyo: a child (look.size child), a girl (\"her win\", Rokuta of Chiyo), the snow-sculpture contest at Snowbell. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc02": {
+   "target": "Child boy; village child on an errand (§08 casting target). Bound to: Ao: a child (look.size child; \"the only big child\", Nana three years younger), a boy (\"Ao takes a leaf from his basket\", narration), Kotonoha's leaf-picker. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc03": {
+   "target": "Adolescent girl; trainee messenger or apprentice (§08 casting target). Bound to: Audition persona, not a game character: the game has no adolescent girl whose age is established. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc04": {
+   "target": "Adolescent boy; workshop apprentice (§08 casting target). Bound to: Audition persona, not a game character: the game has no adolescent boy apprentice whose age is established. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc05": {
+   "target": "Young adult woman; stallholder (§08 casting target). Bound to: Audition persona, not a game character: no young woman stallholder's age is established in the game. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc06": {
+   "target": "Young adult man; courier or dock worker (§08 casting target). Bound to: Sōta: a fisher, Kiyo's son, \"worried about his nets\" (he/him); a young adult by family role (lives with his mother, who keeps him ashore), not by a stated age. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc07": {
+   "target": "Middle-aged woman; innkeeper or craftsperson (§08 casting target). Bound to: Kiyo: the fishmonger, Sōta's mother (she/her); middle-aged by family role, not by a stated age; a market stall rather than the profile's inn or craft. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc08": {
+   "target": "Middle-aged man; harbour official or clerk (§08 casting target). Bound to: Tokiwa: Cinder Orchard's recorder, keeper of the chronicle (a records clerk), he/him (\"Tokiwa says he's calling everyone\", Sayo); the chronicle's year in \"a different hand\" is his from his apprentice days twenty years before, so not young: middle age by role, not by a stated age. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc09": {
+   "target": "Older woman; retired teacher or keeper (§08 casting target). Bound to: Tsuru: Reedwake's lantern keeper, \"an old woman leaning on a cane\" (narration; look.age old). Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc10": {
+   "target": "Older man; fisher or boatwright (§08 casting target). Bound to: Tetsu: the ferryman (look.age old), \"this old man\" (Nao). Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc11": {
+   "target": "Adult nonbinary person; scholar, keeper or archivist (§08 casting target). Bound to: Kohaku: the Hall's last keeper's apprentice (they/them, documented in src/content/hall/01_region.js); an adult apprentice, age not stated. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  },
+  "npc12": {
+   "target": "Adult nonbinary person; artisan, host or traveller (§08 casting target). Bound to: Ibuki: the young keeper of the toll gate (they/them, documented in src/content/hall/01_region.js); a keeper rather than the profile's artisan, host or traveller, the nearest documented nonbinary adult with these two deliveries. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
+   "candidates": [],
+   "selected": null,
+   "discarded": []
+  }
+ }
+}

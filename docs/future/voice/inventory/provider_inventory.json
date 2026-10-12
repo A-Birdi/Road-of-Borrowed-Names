@@ -1,0 +1,184 @@
+{
+ "schemaVersion": "rbn-voice-provider-inventory-1",
+ "status": "not_tested: no configuration has produced audio",
+ "checkedOn": "2026-10-12",
+ "environment": "the cloud development container: Linux, 4 cores, 15 GB RAM, no GPU, ≈5.5 GB free disk, outbound HTTPS through a policy proxy",
+ "note": "availability is about access from this environment, not quality: an inaccessible provider is untested, not inferior. Details per configuration: docs/future/voice/VS02_SETUP_REQUEST.md.",
+ "configurations": [
+  {
+   "configurationId": "voicevox",
+   "label": "VOICEVOX character voices",
+   "documentationIds": [
+    "S03",
+    "S14"
+   ],
+   "availability": "blocked_access",
+   "reason": "Not runnable in the cloud environment: no Docker daemon, Docker Hub’s anonymous pull limit reached, GitHub release downloads and voicevox.hiroshiba.jp refused by the network policy. Runnable on Robin’s machine as a local job (no credential, no cost).",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "style id (per voice)",
+    "speedScale",
+    "intonationScale (overall inflection)",
+    "pitchScale",
+    "volumeScale",
+    "pre/post phoneme length",
+    "accent phrases / user dictionary (readings)"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "not_needed (local)",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  },
+  {
+   "configurationId": "voicevox_nemo",
+   "label": "VOICEVOX Nemo (character-free voices)",
+   "documentationIds": [
+    "S04"
+   ],
+   "availability": "blocked_access",
+   "reason": "Not runnable here: the Nemo site and its downloads refused; no Docker daemon. Runnable on Robin’s machine as a local job.",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "as VOICEVOX (same API family): style id, speed/intonation/pitch scales, user dictionary"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "not_needed (local)",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  },
+  {
+   "configurationId": "aivis",
+   "label": "AivisSpeech (AIVMX models)",
+   "documentationIds": [
+    "S05"
+   ],
+   "availability": "blocked_access",
+   "reason": "Not runnable here: no Docker daemon; AivisHub and Hugging Face (the first start downloads the default and BERT models from them) refused. Runnable on Robin’s machine as a local job.",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "style id (per model speaker)",
+    "intonationScale = the style's emotional strength, 0–2 (ignored for a Normal style)",
+    "tempoDynamicsScale 0–2",
+    "speedScale",
+    "kana = the reading text",
+    "pitchScale (degrades quality away from 0: left at 0)",
+    "pauseLength fields ignored"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "not_needed (local)",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  },
+  {
+   "configurationId": "qwen",
+   "label": "Qwen3-TTS 1.7B CustomVoice (instruction-capable)",
+   "documentationIds": [
+    "S06"
+   ],
+   "availability": "blocked_access",
+   "reason": "Local model: not sensible here (≈3.5–4 GB of weights + torch ≈ 8–10 GB peak against 5.5 GB free; Hugging Face/ModelScope weight hosts refused; no GPU) — prepared as tools/voice/qwen_local_job.py for a machine that can hold it. Hosted (DashScope): host refused, no key.",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "speaker (nine presets)",
+    "language",
+    "instruct (natural-language style, separate from text)"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "not_requested (DASHSCOPE_API_KEY for the hosted route)",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  },
+  {
+   "configurationId": "gemini",
+   "label": "Gemini-TTS",
+   "documentationIds": [
+    "S07"
+   ],
+   "availability": "blocked_access",
+   "reason": "Host reachable (generativelanguage.googleapis.com; texttospeech.googleapis.com for the Cloud TTS route) but no approved credential: the environment’s Google Cloud access token has no recorded project, account, purpose or spending limit, so it stays unused.",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "voice (prebuilt name or designed voice id)",
+    "speech_metadata.style (persona, emotion, pacing, accent; separate from the text)",
+    "inline vocal tags in the text (<laugh>, <sigh>, <short pause>…: not used, so nothing but the words is in the text)",
+    "Cloud TTS route: input.prompt (style instruction, \"we pass the unedited text\"), voice.model_name, audio_config.speaking_rate"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "needed: a project-specific GEMINI_API_KEY (or a Cloud TTS project and token), with a spending limit",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  },
+  {
+   "configurationId": "elevenlabs",
+   "label": "ElevenLabs",
+   "documentationIds": [
+    "S08",
+    "S16"
+   ],
+   "availability": "blocked_access",
+   "reason": "api.elevenlabs.io refused by the network policy; no key; an account/plan would be new terms (Robin’s decision).",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "voice id",
+    "model id",
+    "voice_settings (stability, similarity_boost, style, speed)",
+    "language_code",
+    "v3 audio tags inline in the text (not used)",
+    "pronunciation dictionaries (alias/phoneme rules; not configured here: verify for Japanese)"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "needed: ELEVENLABS_API_KEY on an account Robin approves",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  },
+  {
+   "configurationId": "azure",
+   "label": "Azure Speech (neural voices, SSML)",
+   "documentationIds": [
+    "S09",
+    "S15"
+   ],
+   "availability": "blocked_access",
+   "reason": "<region>.tts.speech.microsoft.com refused by the network policy; no key; an Azure subscription and Speech resource would be new terms (Robin’s decision).",
+   "modelId": null,
+   "versionOrWeightsHash": null,
+   "candidateVoices": {},
+   "documentedControls": [
+    "voice name",
+    "mstts:express-as style/styledegree/role (only where the voice lists them)",
+    "prosody rate/pitch",
+    "sub alias / phoneme (readings)"
+   ],
+   "verifiedCapabilities": {},
+   "credentialStatus": "needed: AZURE_SPEECH_KEY + AZURE_SPEECH_REGION for a Speech resource Robin approves",
+   "rightsStatus": "not_checked",
+   "budgetApproval": null,
+   "outputCount": 0,
+   "limitations": []
+  }
+ ]
+}

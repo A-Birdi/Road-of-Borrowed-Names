@@ -13,3 +13,5 @@ tools/kanjivg/.cache/
 # Approved deliveries move to art/harmony/source/<batch>/ with their PROVENANCE.md: committed, and the importer
 # regenerates assets/harmony/ from them byte for byte.
 art/harmony/incoming/
+# VA-1 audition output (requests, audio, results): never committed; delivered for listening, not published (C-83)
+voice-audition/
