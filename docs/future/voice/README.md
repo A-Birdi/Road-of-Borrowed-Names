@@ -1,4 +1,4 @@
-# VA-1 · The end-of-project Japanese voice audition (queued, not started)
+# VA-1 · The end-of-project Japanese voice audition (started 2026-10-12: VS00 done, VS01 next)
 
 Robin sent this package on 2026-10-11 as a future end-stage instruction. **It is the last queued task:** it starts
 only after the currently authorised expansion, art and closure work (P02–P17), and it does not interrupt them. Robin's
@@ -7,6 +7,7 @@ VA-1, and only after VA-1 the full test matrix. The
 decision and the lead's reconciliations with the standing rules are in
 [../plan/11_CONTRADICTIONS.md](../plan/11_CONTRADICTIONS.md) C-83.
 
+- [VS00_INTAKE.md](VS00_INTAKE.md): the intake (where the project stands, the speech code and its callers, the lines, the unknowns).
 - [VA1_ADDENDUM.md](VA1_ADDENDUM.md): the addendum (sections 01–18, §16 the packets VS00–VS07). The copy's only
   change is noted at its head.
 - `templates/`: the package's templates, unchanged: the audition matrix (83 directed cases and 14 neutral controls per
