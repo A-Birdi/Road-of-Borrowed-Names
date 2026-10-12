@@ -69,16 +69,17 @@ RB.audio = RB.audio || {};
     motifs: ['yu'],
     notes: 'Steamhollow at dusk and in the open-air bath (D major, 72): the koto plucks the steam motif slowly over a held sho chord; the shakuhachi answers in long breaths; a rin now and then, far off. B is the koto almost alone, one note at a time, like the drip from a bamboo spout.',
     key: 'D', mode: 'ionian', bpm: 72, loopFrom: 1,
-    tracks: {
+    // (+2 dB, and the intro's drones played up: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'koto', o: 4, v: 0.52, rv: 0.5 },
       breath: { i: 'shakuhachi', o: 4, v: 0.42, rv: 0.55, pan: 0.15 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.2, rv: 0.5 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.18, rv: 0.5 },
       bell: { perc: true, v: 0.22, rv: 0.7 },
-    },
+    }, 2),
     all: { pad: '0+2+4', low: '0', bell: 'i.......|........|........|........' },
     sections: {
-      intro: { bars: 2, ch: '1 1' },
+      intro: { bars: 2, ch: '1 1', dyn: 1.8 },
       A: { bars: 8, ch: EV_A_CH, lead: EV_A },
       B: { bars: 8, ch: EV_B_CH, lead: EV_B },
       A2: { bars: 8, ch: EV_A_CH, breath: EV_A },

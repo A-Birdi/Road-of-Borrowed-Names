@@ -17052,6 +17052,13 @@ RB.audio = RB.audio || {};
   const DEP_SUZU = ".:8 | .:8 | .:8 | .:8 | .:8 | .:8 | 1 1' 7 b7 6 - 5 - | 3 - - - 2 - 1 -";
   // shared with the zone files (31_… 36_)
   _.mat = { ARP4, ARP3, BASS4, BASS3, TRI, ROAD_A, ROAD_A_CH, ROAD_B, ROAD_B_CH, MINOR_B_CH, ROAD_C, ROAD_C_CH };
+  // a song's whole level raised (or lowered) by dB: every track's strip gain (its `v`), so the sound itself is the
+  // same, only louder. Used where a quiet piece opened below the game's range (tests/e2e/audio.check.mjs).
+  _.lift = function (tracks, dB) {
+    const k = Math.pow(10, dB / 20);
+    for (const t of Object.values(tracks)) t.v = +((t.v == null ? 0.7 : t.v) * k).toFixed(3);
+    return tracks;
+  };
   const COMPANION_TRACKS = () => ({
     nao: { i: 'pluck', o: 4, v: 0.75, rv: 0.25, pan: -0.2 },
     mio: { i: 'mallet', o: 5, v: 0.75, rv: 0.25, pan: 0.2 },
@@ -19782,7 +19789,8 @@ RB.audio = RB.audio || {};
     motifs: ['leaf'],
     notes: 'Kotonoha, the shore and the village (D dorian, 72): an island where lost words wash up. A bowed voice sings the leaf motif, up to the octave and slowly down; the koto answers high and sparse, like harmonics; glass for the wind chimes, a few high notes a bar; a brush on the off-beats for the tide. B is the koto alone, a note a bar; A2 brings the bowed voice back with the koto doubling it two octaves up.',
     key: 'D', mode: 'dorian', bpm: 72, loopFrom: 1,
-    tracks: {
+    // (+1.5 dB: it opened on the edge of the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'bowed', o: 4, v: 0.5, rv: 0.55 },
       hi: { i: 'koto', o: 5, v: 0.28, rv: 0.7, pan: 0.25 },
       chime: { i: 'glass', o: 4, pat: true, v: 0.15, rv: 0.85, pan: 0.35 },
@@ -19790,7 +19798,7 @@ RB.audio = RB.audio || {};
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.34 },
       tide: { perc: true, v: 0.16, rv: 0.6, pan: -0.2 },
-    },
+    }, 1.5),
     all: { koto: "0 . . 2 . . 1' .", chime: "2' . . . . 0' . . | . . 1' . . . . .", bass: '0 - - - - - - -', low: '0+2', tide: '....b...|........' },
     sections: {
       intro: { bars: 2, ch: '1 1', koto: null, bass: null },
@@ -20538,12 +20546,13 @@ RB.audio = RB.audio || {};
     motifs: ['relay'],
     notes: 'The High Pass (E aeolian, 66): a lonely flute at altitude. The shinobue alone, long notes with the wind between them; a held sho chord and a bowed drone for the cold; no footfall and no bells, the pack horses turned back long ago. B is the koto, one note a bar like snow settling; A2 brings the flute back an octave higher.',
     key: 'E', mode: 'aeolian', bpm: 66, loopFrom: 1,
-    tracks: {
+    // (+5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'shinobue', o: 5, v: 0.56, rv: 0.6, dl: 0.2 },
       koto: { i: 'koto', o: 4, v: 0.42, rv: 0.55, pan: -0.2 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.24, rv: 0.5 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
-    },
+    }, 5),
     all: { pad: '0+2+4', low: '0' },
     sections: {
       intro: { bars: 2, ch: '1P 1P' },
@@ -20731,16 +20740,17 @@ RB.audio = RB.audio || {};
     motifs: ['yu'],
     notes: 'Steamhollow at dusk and in the open-air bath (D major, 72): the koto plucks the steam motif slowly over a held sho chord; the shakuhachi answers in long breaths; a rin now and then, far off. B is the koto almost alone, one note at a time, like the drip from a bamboo spout.',
     key: 'D', mode: 'ionian', bpm: 72, loopFrom: 1,
-    tracks: {
+    // (+2 dB, and the intro's drones played up: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'koto', o: 4, v: 0.52, rv: 0.5 },
       breath: { i: 'shakuhachi', o: 4, v: 0.42, rv: 0.55, pan: 0.15 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.2, rv: 0.5 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.18, rv: 0.5 },
       bell: { perc: true, v: 0.22, rv: 0.7 },
-    },
+    }, 2),
     all: { pad: '0+2+4', low: '0', bell: 'i.......|........|........|........' },
     sections: {
-      intro: { bars: 2, ch: '1 1' },
+      intro: { bars: 2, ch: '1 1', dyn: 1.8 },
       A: { bars: 8, ch: EV_A_CH, lead: EV_A },
       B: { bars: 8, ch: EV_B_CH, lead: EV_B },
       A2: { bars: 8, ch: EV_A_CH, breath: EV_A },
@@ -20942,15 +20952,16 @@ RB.audio = RB.audio || {};
     motifs: ['road', 'hush'],
     notes: 'The Archive\'s gate and its Reading Room in a twelve-chapter journey, before the Hush is settled (B minor, 60): the score thinned to a bowed drone and a held shō. Under it the road motif, the game\'s main theme, far down on the koto, twice in eight bars; in B the Hush motif once on glass, and the koto answers it with the road motif. Nothing keeps time.',
     key: 'B', mode: 'aeolian', bpm: 60, loopFrom: 1,
-    tracks: {
+    // (+3 dB, and the intro's drones played up: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       low: { i: 'koto', o: 3, v: 0.46, rv: 0.6, dl: 0.3 },
       glass: { i: 'glass', o: 5, v: 0.6, rv: 0.65, pan: 0.2 },
       bow: { i: 'bowed', o: 2, hold: true, v: 0.24, rv: 0.5 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.18, rv: 0.55 },
-    },
+    }, 3),
     all: { bow: '0', pad: '0+4' },
     sections: {
-      intro: { bars: 2, ch: '1 1' },
+      intro: { bars: 2, ch: '1 1', dyn: 1.8 },
       A: { bars: 8, ch: '1 1 1 1 1 1 1 1', low: LOW },
       B: { bars: 8, ch: '1 1 1 1 1 1 1 1', glass: HUSH, low: '.:8 | .:8 | .:8 | .:8 | 5, - 3 - 2 - 1 - | 2 - - - - - - - | .:8 | .:8' },
       A2: { bars: 8, ch: '1 1 1 1 1 1 1 1', low: LOW, dyn: 0.8 },
@@ -20998,16 +21009,18 @@ RB.audio = RB.audio || {};
     motifs: ['road'],
     notes: 'The keepers\' old hall at night (D dorian, 64): the biwa walks the tune slowly under a held shō, and every other bar the koto answers from across the room, a note or two, like a lantern being lit somewhere else in the dark. B turns to the road motif on the shakuhachi, quietly, as if remembering the journey that brought you here.',
     key: 'D', mode: 'dorian', bpm: 64, loopFrom: 1,
-    tracks: {
+    // (+1.5 dB, and the intro given its koto in both bars over the biwa's low root: it opened below the game's range;
+    // tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'biwa', o: 3, v: 0.5, rv: 0.45 },
       koto: { i: 'koto', o: 5, v: 0.4, rv: 0.6, pan: 0.25, dl: 0.25 },
       flute: { i: 'shakuhachi', o: 4, v: 0.5, rv: 0.5 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.2, rv: 0.5 },
-    },
+    }, 1.5),
     echo: { beats: 1, fb: 0.25, mix: 0.25 },
     all: { pad: '0+4' },
     sections: {
-      intro: { bars: 2, ch: '1 1', koto: '.:8 | . . . . 5 - - -' },
+      intro: { bars: 2, ch: '1 1', lead: '1, - - - - - - - | 5, - - - - - - -', koto: '5, - - - 1 - - - | . . . . 5 - - -', dyn: 1.6 },
       A: { bars: 8, ch: '1 4 2 1 3 5 1 1', lead: HALL_A, koto: HALL_KOTO },
       B: { bars: 8, ch: '4 4 1 1 2 2 5 5', flute: '5, - 3 - 2 - 1 - | 2 - - - - - . . | 3 - 2 - 1 - 6, - | 1 - - - - - . . | 5, - 3 - 2 - 1 - | 2 - - - - - . . | 2 - - - 1 - - - | 1 - - - - - . .' },
       A2: { bars: 8, ch: '1 4 2 1 3 5 1 1', lead: HALL_A, koto: HALL_KOTO, dyn: 0.85 },
@@ -21122,14 +21135,15 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Wing 4 of the Hall: a peddler\'s road in the rainy season (A dorian, 80). The shinobue walks the tune; under it the shamisen picks off the beat, like a pack bumping on a back; rain drips in single drops from the eaves and a hand drum keeps the walking pace. B hands the tune to the koto, a year of waiting at the temple gate, and A2 brings the flute back for the way home.',
     key: 'A', mode: 'dorian', bpm: 80, loopFrom: 1,
-    tracks: {
+    // (+1 dB: it opened near the edge of the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'shinobue', o: 5, v: 0.46, rv: 0.4 },
       pick: { i: 'shamisen', o: 3, v: 0.34, rv: 0.3, pan: 0.2 },
       koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
       bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.22, rv: 0.35 },
       drum: { perc: true, v: 0.22, rv: 0.35 },
       rain: { perc: true, v: 0.15, rv: 0.6 },
-    },
+    }, 1),
     echo: { beats: 0.5, fb: 0.2, mix: 0.18 },
     all: { bass: '0 - - - 4 - - -', drum: 'p...p...|p...p.p.', rain: '...d....|.d.....d|.....d..|..d.....' },
     sections: {
@@ -21154,13 +21168,14 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Wing 5 of the Hall: a village at the end of summer with a well at either end (D aeolian, 70). Two voices for two houses: the biwa (the east) states a phrase, the shakuhachi (the west) answers with the same rhythm and the opposite turn, a contrast rather than an echo. In B they overlap for the first time under a held shō; in A2 each finishes the other\'s phrase. A single water drip sounds deep in a well every other bar, and cicadas sing far off.',
     key: 'D', mode: 'aeolian', bpm: 70, loopFrom: 1,
-    tracks: {
+    // (+2.5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       east: { i: 'biwa', o: 4, v: 0.48, rv: 0.4, pan: 0.25 },
       west: { i: 'shakuhachi', o: 4, v: 0.5, rv: 0.45, pan: -0.25 },
       bass: { i: 'koto', o: 3, pat: true, bass: true, v: 0.22, rv: 0.35 },
       drip: { perc: true, v: 0.18, rv: 0.7 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.14, rv: 0.5 },
-    },
+    }, 2.5),
     echo: { beats: 1, fb: 0.22, mix: 0.2 },
     all: { bass: '0 - - - 4 - - -', drip: '......d.|........' },
     sections: {
@@ -21216,14 +21231,15 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Wing 7 of the Hall: an empty house deep in the snowy mountains of Tōno (C aeolian, 62). The koto plays the family\'s tune whole; in B it plays the same tune with notes left out while the shō holds the harmony, so that the ear supplies what is missing; in A2 the shakuhachi joins the koto for the whole tune. The old house creaks now and then and the stream drips past.',
     key: 'C', mode: 'aeolian', bpm: 62, loopFrom: 1,
-    tracks: {
+    // (+2.5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       koto: { i: 'koto', o: 4, v: 0.46, rv: 0.5 },
       flute: { i: 'shakuhachi', o: 4, v: 0.36, rv: 0.5, pan: 0.2 },
       bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.2, rv: 0.35 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.14, rv: 0.5 },
       creak: { perc: true, v: 0.14, rv: 0.6 },
       drip: { perc: true, v: 0.14, rv: 0.7 },
-    },
+    }, 2.5),
     echo: { beats: 1, fb: 0.24, mix: 0.2 },
     all: { bass: '0 - - - 4 - - -', creak: '........|........|...c....|........', drip: '......d.|........' },
     sections: {
@@ -21248,13 +21264,14 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Wing 8 of the Hall: an inn on the old highway, snowed in for the night (G mixolydian, 68). One short phrase is told three times by three voices, the koto, the shamisen and the shakuhachi, each a little differently, as the witnesses tell the night; in A2 the three are laid over each other and the phrase they share comes through. The night watch\'s clappers go round once every four bars.',
     key: 'G', mode: 'mixolydian', bpm: 68, loopFrom: 1,
-    tracks: {
+    // (+3.5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       koto: { i: 'koto', o: 4, v: 0.44, rv: 0.45, pan: -0.25 },
       sham: { i: 'shamisen', o: 4, v: 0.36, rv: 0.35, pan: 0.25 },
       flute: { i: 'shakuhachi', o: 4, v: 0.4, rv: 0.5 },
       bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.2, rv: 0.35 },
       watch: { perc: true, v: 0.18, rv: 0.5 },
-    },
+    }, 3.5),
     echo: { beats: 1, fb: 0.2, mix: 0.18 },
     all: { bass: '0 - - - 4 - - -', watch: 'y.......|........|........|........' },
     sections: {
@@ -21280,16 +21297,17 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Wing 9 of the Hall: an old farmhouse in deep snow, where a stranger weaves at night (D aeolian, 60). The koto plays the tune plainly, the way family talks; in B the shakuhachi plays it again in long, formal notes, the way a guest talks; in A2 they play it together. The loom keeps its own time underneath, ton, ton, karari, once every two bars.',
     key: 'D', mode: 'aeolian', bpm: 60, loopFrom: 1,
-    tracks: {
+    // (+2.5 dB, and the intro played up: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       koto: { i: 'koto', o: 4, v: 0.44, rv: 0.5, pan: -0.2 },
       flute: { i: 'shakuhachi', o: 4, v: 0.38, rv: 0.55, pan: 0.2 },
       bass: { i: 'biwa', o: 2, pat: true, bass: true, v: 0.18, rv: 0.35 },
       loom: { perc: true, v: 0.16, rv: 0.45 },
-    },
+    }, 2.5),
     echo: { beats: 1, fb: 0.22, mix: 0.2 },
     all: { bass: '0 - - - 4 - - -', loom: 'w.w.c...|........' },
     sections: {
-      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -' },
+      intro: { bars: 2, ch: '1 1', koto: '1 - - - 5, - - - | 1 - - - - - - -', dyn: 1.5 },
       A: { bars: 8, ch: '1 4 6 7 1 4 7 1', koto: WEAVE },
       B: { bars: 8, ch: '1 4 6 7 1 4 7 1', flute: FORMAL },
       A2: { bars: 8, ch: '1 4 6 7 1 4 7 1', koto: WEAVE, flute: FORMAL, dyn: 0.85 },
@@ -21308,17 +21326,18 @@ RB.audio = RB.audio || {};
     motifs: ['road'],
     notes: 'Wing 10 of the Hall: the Hall itself long ago, and your own journey (D dorian, 64). The foyer\'s tune told back: the koto alone in A, the shakuhachi remembering the road in B, the koto and the biwa together over the shō in A2, with a single bell once every eight bars.',
     key: 'D', mode: 'dorian', bpm: 64, loopFrom: 1,
-    tracks: {
+    // (+1.5 dB, and the shō held from the first bar: it opened with 5 s of near-silence; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       koto: { i: 'koto', o: 4, v: 0.46, rv: 0.55 },
       lead: { i: 'biwa', o: 3, v: 0.42, rv: 0.45 },
       flute: { i: 'shakuhachi', o: 4, v: 0.46, rv: 0.5 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.16, rv: 0.5 },
       bell: { perc: true, v: 0.16, rv: 0.7 },
-    },
+    }, 1.5),
     echo: { beats: 1, fb: 0.25, mix: 0.25 },
     all: { bell: 'i.......|........|........|........|........|........|........|........' },
     sections: {
-      intro: { bars: 2, ch: '1 1', koto: '.:8 | . . . . 5 - - -' },
+      intro: { bars: 2, ch: '1 1', koto: '5, - - - 1 - - - | . . . . 5 - - -', pad: '0+4', dyn: 1.4 },
       A: { bars: 8, ch: '1 4 2 1 3 5 1 1', koto: HALL_A },
       B: { bars: 8, ch: '4 4 1 1 2 2 5 5', flute: '5, - 3 - 2 - 1 - | 2 - - - - - . . | 3 - 2 - 1 - 6, - | 1 - - - - - . . | 5, - 3 - 2 - 1 - | 2 - - - - - . . | 2 - - - 1 - - - | 1 - - - - - . .' },
       A2: { bars: 8, ch: '1 4 2 1 3 5 1 1', koto: HALL_A, lead: HALL_A, pad: '0+4', dyn: 0.85 },
@@ -21367,7 +21386,8 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Ashihara Shinden by day: a planting song (G major pentatonic, 84). The shinobue sings a plain five-note tune, the shamisen answers it lower, and a hand drum keeps the walk of people carrying seedlings; in A2 they sing it together.',
     key: 'G', mode: 'ionian', bpm: 84, loopFrom: 1,
-    tracks: TRACKS(),
+    // (+5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift(TRACKS(), 5),
     all: { bass: '0 - - - 2 - - -', drum: 'p...p.t.|p...p...' },
     sections: {
       intro: { bars: 2, ch: '1 1', sham: '1 - - - 5, - - - | 1 - - - - - . .' },
@@ -21384,7 +21404,8 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Ashihara Shinden\'s first festival night: the village\'s tune turned into a dance (G major pentatonic, 84, the same as by day). The flute calls a bar and the shamisen answers the next, the tune shared out between them, and the drum\'s walk becomes the dance\'s step; in B the shamisen sings the answering tune under the flute\'s calls; in A2 they play it whole together.',
     key: 'G', mode: 'ionian', bpm: 84, loopFrom: 1,
-    tracks: TRACKS(),
+    // (+1 dB: it opened near the edge of the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift(TRACKS(), 1),
     all: { bass: '0 - 2 - 0 - 2 -', drum: 'P.t.P.t.|P.t.p.t.' },
     sections: {
       intro: { bars: 2, ch: '1 1', flute: '1 - - - 5 - - - | 1\' - - - - - . .' },

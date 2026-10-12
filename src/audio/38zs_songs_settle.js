@@ -36,7 +36,8 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Ashihara Shinden by day: a planting song (G major pentatonic, 84). The shinobue sings a plain five-note tune, the shamisen answers it lower, and a hand drum keeps the walk of people carrying seedlings; in A2 they sing it together.',
     key: 'G', mode: 'ionian', bpm: 84, loopFrom: 1,
-    tracks: TRACKS(),
+    // (+5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift(TRACKS(), 5),
     all: { bass: '0 - - - 2 - - -', drum: 'p...p.t.|p...p...' },
     sections: {
       intro: { bars: 2, ch: '1 1', sham: '1 - - - 5, - - - | 1 - - - - - . .' },
@@ -53,7 +54,8 @@ RB.audio = RB.audio || {};
     motifs: [],
     notes: 'Ashihara Shinden\'s first festival night: the village\'s tune turned into a dance (G major pentatonic, 84, the same as by day). The flute calls a bar and the shamisen answers the next, the tune shared out between them, and the drum\'s walk becomes the dance\'s step; in B the shamisen sings the answering tune under the flute\'s calls; in A2 they play it whole together.',
     key: 'G', mode: 'ionian', bpm: 84, loopFrom: 1,
-    tracks: TRACKS(),
+    // (+1 dB: it opened near the edge of the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift(TRACKS(), 1),
     all: { bass: '0 - 2 - 0 - 2 -', drum: 'P.t.P.t.|P.t.p.t.' },
     sections: {
       intro: { bars: 2, ch: '1 1', flute: '1 - - - 5 - - - | 1\' - - - - - . .' },

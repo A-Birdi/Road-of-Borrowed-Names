@@ -151,6 +151,13 @@ RB.audio = RB.audio || {};
   const DEP_SUZU = ".:8 | .:8 | .:8 | .:8 | .:8 | .:8 | 1 1' 7 b7 6 - 5 - | 3 - - - 2 - 1 -";
   // shared with the zone files (31_… 36_)
   _.mat = { ARP4, ARP3, BASS4, BASS3, TRI, ROAD_A, ROAD_A_CH, ROAD_B, ROAD_B_CH, MINOR_B_CH, ROAD_C, ROAD_C_CH };
+  // a song's whole level raised (or lowered) by dB: every track's strip gain (its `v`), so the sound itself is the
+  // same, only louder. Used where a quiet piece opened below the game's range (tests/e2e/audio.check.mjs).
+  _.lift = function (tracks, dB) {
+    const k = Math.pow(10, dB / 20);
+    for (const t of Object.values(tracks)) t.v = +((t.v == null ? 0.7 : t.v) * k).toFixed(3);
+    return tracks;
+  };
   const COMPANION_TRACKS = () => ({
     nao: { i: 'pluck', o: 4, v: 0.75, rv: 0.25, pan: -0.2 },
     mio: { i: 'mallet', o: 5, v: 0.75, rv: 0.25, pan: 0.2 },

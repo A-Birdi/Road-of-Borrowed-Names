@@ -35,7 +35,8 @@ RB.audio = RB.audio || {};
     motifs: ['leaf'],
     notes: 'Kotonoha, the shore and the village (D dorian, 72): an island where lost words wash up. A bowed voice sings the leaf motif, up to the octave and slowly down; the koto answers high and sparse, like harmonics; glass for the wind chimes, a few high notes a bar; a brush on the off-beats for the tide. B is the koto alone, a note a bar; A2 brings the bowed voice back with the koto doubling it two octaves up.',
     key: 'D', mode: 'dorian', bpm: 72, loopFrom: 1,
-    tracks: {
+    // (+1.5 dB: it opened on the edge of the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'bowed', o: 4, v: 0.5, rv: 0.55 },
       hi: { i: 'koto', o: 5, v: 0.28, rv: 0.7, pan: 0.25 },
       chime: { i: 'glass', o: 4, pat: true, v: 0.15, rv: 0.85, pan: 0.35 },
@@ -43,7 +44,7 @@ RB.audio = RB.audio || {};
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
       bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.34 },
       tide: { perc: true, v: 0.16, rv: 0.6, pan: -0.2 },
-    },
+    }, 1.5),
     all: { koto: "0 . . 2 . . 1' .", chime: "2' . . . . 0' . . | . . 1' . . . . .", bass: '0 - - - - - - -', low: '0+2', tide: '....b...|........' },
     sections: {
       intro: { bars: 2, ch: '1 1', koto: null, bass: null },

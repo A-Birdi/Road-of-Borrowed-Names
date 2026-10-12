@@ -18,6 +18,16 @@ for (const profile of profiles) for (const comp of comps) {
     let want = null;
     T.enable({ battle: policy, choose: (opts) => { if (want) { const i = opts.findIndex((o) => want.test(o.en || '')); if (i >= 0) return i; } return 0; } });
     const s = RB.game.debugStart('co.road', 1, 11, { profile, comp, dir: 'right' });
+    // after the chapter Cinder's routines run (src/content/zzz_living/40_co.js): a resident may be at another of their
+    // places; talk to them where they are now, as a player asking after them would, then come back
+    const talkWhere = async (id) => {
+      if (RB.world.W.npcs.find((n) => n.id === id)) return T.talk(id);
+      const back = [RB.world.W.map.id, RB.world.W.player.x, RB.world.W.player.y];
+      // (a routine's further places are placements of their own, `<id>_r2`…, with char: id)
+      const m = RB.world.mapsWith(id)[0], n = m && RB.content.maps[m].npcs.find((q) => (q.char || q.id) === id && (!q.if || RB.state.test(s, q.if)));
+      if (!n) throw new Error('no NPC ' + id + ' anywhere');
+      await T.go(m, n.x, n.y, 'down'); await T.talk(n.id); await T.go(back[0], back[1], back[2], 'down');
+    };
     try {
     s.learn.kanaKnown = profile === 'F' ? 'none' : 'both';
     s.words = ['mamoru', 'mizu', 'hikari', 'iyasu', 'kaze', 'nawa'];
@@ -104,7 +114,7 @@ for (const profile of profiles) for (const comp of comps) {
     await T.go('co.village', 24, 20, 'up'); await T.talk('hiro');
     check('hiro gift', s.inv.co_glass_beads);
     s.flags.postgame = true; s.flags.end_mem_choose = true; s.flags.end_archive_library = true; s.flags.end_kasane_trial = true;
-    for (const n of ['co_sayo', 'co_goro', 'co_tamotsu', 'hiro', 'co_kotaro', 'co_heita']) await T.talk(n);
+    for (const n of ['co_sayo', 'co_goro', 'co_tamotsu', 'hiro', 'co_kotaro', 'co_heita']) await talkWhere(n);
     await T.go('co.hall', 6, 8, 'up'); await T.talk('co_tokiwa');
     } catch (e) { out.error = String(e && e.stack || e).slice(0, 600); }
     out.problems = T.problems;

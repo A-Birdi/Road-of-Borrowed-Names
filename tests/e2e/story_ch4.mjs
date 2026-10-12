@@ -33,6 +33,16 @@ for (const profile of profiles) for (const comp of comps) {
     const tk = async (id) => { try { await T.talk(id); } catch (e) { check('talk ' + id, false, e.message); } };
     const us = async (x, y) => { try { await T.use(x, y); } catch (e) { check('use ' + x + ',' + y, false, e.message); } };
     const at = () => W().map.id;
+    // after the chapter Snowbell's routines run (src/content/zzz_living/41_sb.js): a resident may be at another of
+    // their places; talk to them where they are now, as a player asking after them would, then come back
+    const tkWhere = async (id) => {
+      if (W().npcs.find((n) => n.id === id)) return tk(id);
+      const back = [at(), W().player.x, W().player.y];
+      // (a routine's further places are placements of their own, `<id>_r2`…, with char: id)
+      const m = RB.world.mapsWith(id)[0], n = m && RB.content.maps[m].npcs.find((q) => (q.char || q.id) === id && (!q.if || RB.state.test(s, q.if)));
+      if (!n) return check('talk ' + id, false, 'nowhere');
+      await T.go(m, n.x, n.y, 'down'); await tk(n.id); await T.go(back[0], back[1], back[2], 'down');
+    };
     await RB.script.run('sb.arrive'); await T.idle();
     check('chapter 4 set', s.chapter === 4);
     T.place(30, 13, 'right'); await T.step('right');
@@ -162,7 +172,7 @@ for (const profile of profiles) for (const comp of comps) {
     await T.go('sb.sachi', 4, 6, 'up'); await tk('sachi');
     await T.go('sb.inn', 8, 9, 'up'); await T.idle();
     check('evening ends at the inn', !s.flags.sb_evening && s.flags.sb_after);
-    await us(13, 3); await tk('natsume'); if (comp !== 'nao') await tk('nao');
+    await us(13, 3); await tkWhere('natsume'); if (comp !== 'nao') await tk('nao');
     // banter: talk to the companion a few times
     for (let i = 0; i < 6; i++) { RB.game.companionTalk(); await T.idle(); }
     // leave: next morning, road open
@@ -176,7 +186,7 @@ for (const profile of profiles) for (const comp of comps) {
     await T.go('sb.hamlet', 22, 30, 'up');
     for (const id of ['fuki', 'kanta', 'chiyo', 'rokuta', 'tetsuji', 'sachi', 'denji', 'hayate']) if (W().npcs.find((n) => n.id === id)) await tk(id);
     if (!s.flags.sb_hoshino_goes) await tk('hoshino');
-    await T.go('sb.inn', 8, 9, 'up'); await us(13, 3); await tk('natsume'); if (comp !== 'nao') await tk('nao');
+    await T.go('sb.inn', 8, 9, 'up'); await us(13, 3); await tkWhere('natsume'); if (comp !== 'nao') await tk('nao');
     await T.go('sb.post', 5, 6, 'up'); await us(7, 3);
     out.problems = T.problems.slice(0, 20);
     out.log = T.log.filter((l) => l.t === 'battle');

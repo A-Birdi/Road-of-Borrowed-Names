@@ -67,12 +67,13 @@ RB.audio = RB.audio || {};
     motifs: ['relay'],
     notes: 'The High Pass (E aeolian, 66): a lonely flute at altitude. The shinobue alone, long notes with the wind between them; a held sho chord and a bowed drone for the cold; no footfall and no bells, the pack horses turned back long ago. B is the koto, one note a bar like snow settling; A2 brings the flute back an octave higher.',
     key: 'E', mode: 'aeolian', bpm: 66, loopFrom: 1,
-    tracks: {
+    // (+5 dB: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       lead: { i: 'shinobue', o: 5, v: 0.56, rv: 0.6, dl: 0.2 },
       koto: { i: 'koto', o: 4, v: 0.42, rv: 0.55, pan: -0.2 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.24, rv: 0.5 },
       low: { i: 'bowed', o: 2, hold: true, v: 0.2, rv: 0.5 },
-    },
+    }, 5),
     all: { pad: '0+2+4', low: '0' },
     sections: {
       intro: { bars: 2, ch: '1P 1P' },

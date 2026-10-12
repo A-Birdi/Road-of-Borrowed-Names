@@ -57,15 +57,16 @@ RB.audio = RB.audio || {};
     motifs: ['road', 'hush'],
     notes: 'The Archive\'s gate and its Reading Room in a twelve-chapter journey, before the Hush is settled (B minor, 60): the score thinned to a bowed drone and a held shō. Under it the road motif, the game\'s main theme, far down on the koto, twice in eight bars; in B the Hush motif once on glass, and the koto answers it with the road motif. Nothing keeps time.',
     key: 'B', mode: 'aeolian', bpm: 60, loopFrom: 1,
-    tracks: {
+    // (+3 dB, and the intro's drones played up: it opened below the game's range; tests/e2e/audio.check.mjs)
+    tracks: _.lift({
       low: { i: 'koto', o: 3, v: 0.46, rv: 0.6, dl: 0.3 },
       glass: { i: 'glass', o: 5, v: 0.6, rv: 0.65, pan: 0.2 },
       bow: { i: 'bowed', o: 2, hold: true, v: 0.24, rv: 0.5 },
       pad: { i: 'sho', o: 4, hold: true, fold: 'all', win: 3, v: 0.18, rv: 0.55 },
-    },
+    }, 3),
     all: { bow: '0', pad: '0+4' },
     sections: {
-      intro: { bars: 2, ch: '1 1' },
+      intro: { bars: 2, ch: '1 1', dyn: 1.8 },
       A: { bars: 8, ch: '1 1 1 1 1 1 1 1', low: LOW },
       B: { bars: 8, ch: '1 1 1 1 1 1 1 1', glass: HUSH, low: '.:8 | .:8 | .:8 | .:8 | 5, - 3 - 2 - 1 - | 2 - - - - - - - | .:8 | .:8' },
       A2: { bars: 8, ch: '1 1 1 1 1 1 1 1', low: LOW, dyn: 0.8 },
