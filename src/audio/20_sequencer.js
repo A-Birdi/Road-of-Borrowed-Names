@@ -437,6 +437,7 @@ RB.audio = RB.audio || {};
     this.song = song;
     this.live = live;
     this.offset = when; // audio time of song-time 0 for the current cycle
+    this.anchor0 = when; // audio time of song-time 0 of the first pass: the cue's musical clock (22_ensemble.js)
     this.idx = 0;
     this.cycle = 0;
     this.ended = false;
@@ -445,9 +446,13 @@ RB.audio = RB.audio || {};
     this.rng = RB.util.rng(RB.util.hashStr(song.id));
     this.dry = amp(c, 1);
     this.wet = amp(c, 1);
-    this.dry.connect(g.music);
+    // the performance's own output: closed while an Ensemble recording sounds in this cue's place (the player goes
+    // on, unheard, so it can be revealed mid-phrase; 22_ensemble.js). Cue fades stay on dry/wet.
+    this.out = amp(c, 1);
+    this.dry.connect(this.out);
+    this.out.connect(g.music);
     this.wet.connect(g.revIn);
-    this.nodes = [this.dry, this.wet];
+    this.nodes = [this.dry, this.wet, this.out];
     this.echoIn = null;
     if (song.echo) {
       const d = c.createDelay(2);
@@ -583,6 +588,7 @@ RB.audio = RB.audio || {};
         if (p === cur) {
           cur = null;
           st.wantSong = null;
+          for (const f of _.hooks.cueStop) { try { f(0); } catch (e) { st.lastError = String(e && e.message); } }
           if (RB.bus) RB.bus.emit('audio:songend', { id: p.song.id });
         }
       }
@@ -627,6 +633,7 @@ RB.audio = RB.audio || {};
     players.push(p);
     ensureTimer();
     tick();
+    for (const f of _.hooks.cue) { try { f(p, fade); } catch (e) { st.lastError = String(e && e.message); } }
     return true;
   };
 
@@ -634,10 +641,14 @@ RB.audio = RB.audio || {};
     opts = opts || {};
     st.wantSong = null;
     if (!cur) return;
-    cur.stop(Math.max(0, opts.fade == null ? 800 : +opts.fade) / 1000);
+    const fade = Math.max(0, opts.fade == null ? 800 : +opts.fade) / 1000;
+    cur.stop(fade);
     cur = null;
     ensureTimer();
+    for (const f of _.hooks.cueStop) { try { f(fade); } catch (e) { st.lastError = String(e && e.message); } }
   };
+  // the cue sounding now (its Player), for the music performance's director (22_ensemble.js)
+  _.curPlayer = () => cur;
 
   A.currentSong = () => (cur ? cur.song.id : st.wantSong || null);
 

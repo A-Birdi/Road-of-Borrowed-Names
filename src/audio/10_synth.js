@@ -37,7 +37,7 @@ RB.audio = RB.audio || {};
     lastError: null,
   });
   _.DEFAULT_VOL = { master: 0.8, music: 0.7, sfx: 0.8, voice: 1 };
-  const hooks = (_.hooks = { init: [], mute: [], state: [] });
+  const hooks = (_.hooks = { init: [], mute: [], state: [], vol: [], cue: [], cueStop: [] });
   function fire(list, arg) {
     for (const f of list) {
       try { f(arg); } catch (e) { /* hooks must never break audio */ }
@@ -206,7 +206,12 @@ RB.audio = RB.audio || {};
     revHp.connect(revHp2);
     revHp2.connect(g.rev);
     g.rev.connect(revOut);
-    revOut.connect(g.music);
+    // the music room's return, through a gate the music performance owns (src/audio/22_ensemble.js): while an Ensemble
+    // recording, with its own room, sounds in the Original's place, the Original keeps playing into the room unheard
+    // (so the room is already full when it comes back) and only this return is closed
+    g.revGate = amp(ctx, 1);
+    revOut.connect(g.revGate);
+    g.revGate.connect(g.music);
 
     g.srev = ctx.createConvolver();
     g.srev.buffer = impulse(ctx, 1.5, 0.3, 99);
@@ -1231,6 +1236,7 @@ RB.audio = RB.audio || {};
     if (!g) return;
     if (bus === 'master') ramp(g.master.gain, st.muted ? 0 : v, 0.03);
     else ramp(g[bus].gain, v, 0.03);
+    fire(hooks.vol, bus);
   };
 
   A.setMuted = function (b) {

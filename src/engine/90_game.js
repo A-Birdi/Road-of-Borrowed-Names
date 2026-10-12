@@ -30,6 +30,9 @@ RB.game = (function () {
       // light and shadow on the maps (src/engine/65_worldlook.js, C-86): presentation only (older records: On)
       worldLight: true,
       vol: { master: 0.8, music: 0.55, sfx: 0.75, voice: 1 }, muted: false,
+      // music performance (MT-1, src/audio/22_ensemble.js): the procedural score, or a recorded Ensemble performance
+      // of it where one exists; a device preference (older records lack it: Original)
+      musicPerformance: 'original',
       voice: { auto: false, uri: null, rate: 0.95 }, lightbulb: true, input: 'hand',
       binds: null, touch: 'auto', strokePractice: false, romaji: true,
       // touch layout (older settings records lack these; the defaults keep the previous layout)
@@ -197,6 +200,9 @@ RB.game = (function () {
     RB.audio.setVolume('sfx', v.sfx);
     RB.audio.setVolume('voice', v.voice);
     RB.audio.setMuted(!!G.settings.muted);
+    // (anything but the two known values is Original: a stored value is never a path or a name)
+    if (G.settings.musicPerformance !== 'ensemble') G.settings.musicPerformance = 'original';
+    if (RB.audio.setPerformance) RB.audio.setPerformance(G.settings.musicPerformance);
     if (RB.voice) {
       if (G.settings.voice.uri) RB.voice.setVoice(G.settings.voice.uri);
       RB.voice.setRate(G.settings.voice.rate);

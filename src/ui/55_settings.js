@@ -203,7 +203,7 @@ RB.ui.settings = (function () {
     const st = RB.game.settings;
     const vs = RB.voice ? RB.voice.status() : { supported: false, localJaCount: 0, note: 'Speech synthesis is not available.' };
     const voices = RB.voice && RB.voice.japaneseVoices ? RB.voice.japaneseVoices() : [];
-    return slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) +
+    return slider('vol.master', 'Overall volume', st.vol.master, 0, 1, 0.05, pct) + slider('vol.music', 'Music', st.vol.music, 0, 1, 0.05, pct) + performanceRows() +
       slider('vol.sfx', 'Effects', st.vol.sfx, 0, 1, 0.05, pct) + slider('vol.voice', 'Voice', st.vol.voice, 0, 1, 0.05, pct) + sw('muted', 'Mute all sound') +
       '<h3>' + I('sound') + ' Japanese voice (optional)</h3><p class="small">' + esc(vs.note || '') + '</p>' +
       (voices.length ? '<div class="field"><label class="lab" for="vsel">Voice</label><select id="vsel" data-voice>' + voices.map((v) => '<option value="' + esc(v.voiceURI) + '"' + (st.voice.uri === v.voiceURI ? ' selected' : '') + '>' + esc(v.name) + '</option>').join('') + '</select></div>' +
@@ -211,6 +211,38 @@ RB.ui.settings = (function () {
         slider('voice.rate', 'Speech rate', st.voice.rate, 0.6, 1.3, 0.05, (v) => v.toFixed(2) + '×') : '<p class="note-slip">No Japanese voice is installed on this device, so nothing will be spoken. Everything works without it.</p>') +
       '<p class="muted small">Voices are your device\'s own speech synthesis, labelled as such. They are not recorded actors and not a pronunciation authority.</p>';
   }
+
+  // Music performance (MT-1, src/audio/22_ensemble.js): offered once the game has at least one Ensemble recording.
+  // The line under it says what is actually playing, which can differ from what is chosen.
+  function performanceRows() {
+    const n = RB.audio && RB.audio.ensembleSongs ? RB.audio.ensembleSongs().length : 0;
+    if (!n) return '';
+    return radios('musicPerformance', 'Music performance', [['original', 'Original'], ['ensemble', 'Ensemble']], null,
+      'The same melodies and arrangements, with a different instrumental sound. Ensemble recordings load when available; Original works offline.') +
+      '<p class="muted small mp-status" data-mp-status role="status" aria-live="polite">' + esc(performanceLine()) + '</p>';
+  }
+  function performanceLine() {
+    const s = RB.audio && RB.audio.performanceStatus ? RB.audio.performanceStatus() : null;
+    if (!s) return '';
+    const kept = s.pref === 'ensemble' ? 'Ensemble' : 'Original';
+    const line = {
+      off: 'Music off · ' + kept + ' remembered',
+      none: 'No music playing',
+      original: 'Original playing',
+      ensemble: 'Ensemble playing',
+      loading: 'Original playing while Ensemble loads',
+      unsupported: 'Ensemble selected · Original playing for this track',
+      standalone: 'Ensemble selected · Original playing in this standalone copy',
+      failed: 'Ensemble selected · Original playing; recording unavailable',
+      'original-only': 'Ensemble selected · Original playing',
+    }[s.state] || '';
+    const n = s.available;
+    return line + (s.pref === 'ensemble' && n ? ' — Ensemble is available for ' + (n === 1 ? 'one track' : n === 2 ? 'two tracks' : n + ' tracks') + ' so far.' : '');
+  }
+  if (RB.bus) RB.bus.on('audio:performance', () => {
+    const el = fr && fr.box && fr.box.querySelector('[data-mp-status]');
+    if (el) el.textContent = performanceLine();
+  });
 
   // ---- behaviour (unchanged persistence: apply now, save now; sliders debounce) --------------
   function wire(L) {
@@ -298,6 +330,7 @@ RB.ui.settings = (function () {
   const IN_BATTLE = {
     battleAnim: 1, textSpeed: 1, reducedMotion: 1,
     'vol.master': 1, 'vol.music': 1, 'vol.sfx': 1, 'vol.voice': 1, muted: 1, petSounds: 1, 'voice.rate': 1,
+    musicPerformance: 1, // (how the music sounds: MT-1)
     lead: 1, secondary: 1, spacing: 1, lightbulb: 1, romaji: 1,
     textScale: 1, contrast: 1,
     battleControls: 1, intentDisplay: 1, petBattle: 1, compPlan: 1,
