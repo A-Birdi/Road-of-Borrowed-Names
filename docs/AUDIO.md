@@ -312,7 +312,7 @@ All the new and re-orchestrated songs (`songList()` reports `chapter` and
 | 6 | `sa_memories` | Set-Down Memories | area | B minor | 58 | 4/4 | 99 s | 99 s | road | 2.15 |
 | 6 | `finale` | Which Promises We Keep | area (re-orch.) | D minor → major | 92 | 4/4 | 104 s | 104 s | road, hush | 4.40 |
 | 6 | `battle_still` | Inkweaving — Every Name | battle | B minor | 120 | 4/4 | 68 s | 64 s | road, hush | 9.72 |
-| 6 | `boss_hush` | Nothing Left to Shelve | boss | F phrygian | 152 | 4/4 | 73 s | 69 s | road, hush | 9.93 |
+| 6 | `boss_hush` | Nothing Left to Shelve (rewritten 2026-10-12, Robin) | boss | F phrygian → aeolian | 156 | 4/4 | 65 s | 62 s | road, hush | 12.28 |
 | 6 | `sa_kasane` | The Keeper | scene | F lydian | 60 | 4/4 | 96 s | 96 s | road, hush | 2.04 |
 | 6 | `sa_toya` | The Note, Read Again | scene | D | 63 | 4/4 | 91 s | 91 s | road, hush | 2.19 |
 | A | `battle_atlas` | Inkweaving — Unwritten | battle | A mixolydian | 112 | 7/8 | 68 s | 64 s | road, hush | 7.56 |
@@ -363,7 +363,7 @@ layers/4.
 | 3 | `boss_cinder` | 142 | 13.73 | 4.20 | 14.5 % | 6.96 | 9.27 |
 | 4 | `boss_snowbell` | 144 | 13.23 | 4.49 | 17.3 % | 7.08 | 9.46 |
 | 5 | `boss_lanternfall` | 148 | 13.94 | 4.73 | 13.7 % | 7.37 | 9.72 |
-| 6 | `boss_hush` | 152 | 13.42 | 5.45 | 13.5 % | 7.13 | 9.93 |
+| 6 | `boss_hush` | 156 | 18.95 | 6.26 | 14.9 % | 9.00 | 12.28 |
 
 The test asserts, chapter by chapter for the battle themes: score, tempo,
 note density and percussion weight strictly rise, dissonance and layering do
@@ -632,3 +632,67 @@ and the Archive; the town's parts one at a time (bass, shamisen, drums, pad,
 flute), so the "drum" can be named if it is still there; and the boss
 theme, which the owner has not reached yet.
 
+
+## Owner feedback, 2026-10-12: the Keepers' Road's biwa
+
+Robin heard the Keepers' Road's battle and area themes (not the Hundredth Tale) as led by "a dense ..oboe?". That
+was the full biwa's sawari, a buzz rung for about two seconds through a band at 1.8 kHz under every note of slow
+themes. Their target was "a storyteller's instrument with a forceful accent available," rather than "a permanently
+forceful buzzing instrument."
+
+The storyteller's biwa (`I.biwa_tale` in `src/audio/10_synth.js`, used only in `38_songs_kr.js`) is the same lute
+model with:
+- a rounder string;
+- a sawari held back to about a sixth of the full biwa's late buzz, higher and half as long;
+- the plectrum's stroke on the skin.
+
+A first version struck the full biwa on a written accent (`5!`). On a second hearing that accent rang as "that
+singular bad pitch" at 14 s in the cave and the Hall themes: bar 5, where its sharper pitch drop and two-second
+buzz ran over the next note. In the battle it seemed to sound under most notes. The voice also peaked a little
+above the full biwa's.
+
+The current version:
+- an accent is the bachi struck hard on the skin, with the string, tuning and buzz unchanged;
+- the voice is about a fifth softer;
+- the accents in the cave, the Hall and the battle's A section are gone.
+
+Measured (A) on each biwa part alone: peaks 22–24 % under the second version, and no accented note above 1.25×
+its neighbours' level. `audio_instruments` (B) checks the accent's tuning, buzz and level. Robin approved the third
+version by ear.
+
+## Owner feedback, 2026-10-12: the final boss, rewritten
+
+Robin asked for the fight against the Hush to be "more.. intense": "a unique, intense and conclusive final battle
+theme", "its own track, rather than deriving from the same underlying theme all of the boss tracks typically do".
+The opening was very good. From about 29 s to 47 s it sounded "like a hymn or a fairy tale or a singsong style
+lullaby". At 152 bpm that is exactly C and D of the old `boss_hush`: the lydian thinning, then the road theme in
+F major on shakuhachi and shinobue.
+
+The new `boss_hush` (156 bpm, `src/audio/35_songs_ch6.js`) keeps the intro and the opening's material: the riff,
+the Hush motif on glass against koto, and the road motif falling on shakuhachi. It replaces the shared boss engine
+(a shamisen ostinato and the common taiko pattern) with its own:
+- bowed strings, in eighths in A and B and in sixteenths from C on;
+- biwa stabs;
+- a galloping 3+3+2 on ōdaiko and shime-daiko;
+- the big drum, and a temple toll at the turns;
+- a small choir.
+
+The new sections:
+- **C, the Hush takes the voices.** The choir sings the Hush motif a bar a note up to its raised fourth, glass and
+  koto play it in canon and then in eighths, the road motif tries twice and is cut off, and the drums thin to a
+  heartbeat that quickens into a roll.
+- **D and E, the last stand.** A melody of its own in F minor, leaping a fourth and a fifth in 3+3+2, sung by the
+  choir with shakuhachi and later shinobue. Under it the bass falls F, E♭, D♭, C, and the cello plays the Hush
+  motif with its fourth made natural, then the road motif.
+- **The end.** An aeolian cadence (D♭, E♭, F) struck by the toll. No major key.
+
+What was checked:
+- `audio_songs` (U): ranges, harmony lint, motif quotes and a loop of 62 s pass.
+- `audio_zones` (U): intensity 12.28, now clearly the top of both ladders (the next is Steamhollow's 9.91).
+- Levels, rendered through the game's graph (A): RMS −16.7 to −19.7 dB against the old −17.2 to −21.0. Peak at most
+  0.554 against the old 0.56 (the last stand is played at 0.9 so that it stays there).
+- Render cost (A), in 6–8 s windows on the busy test machine: about 1.3× the old theme's, more in the last stand.
+  The CPU table above predates the rewrite. The sixteenths are kept to C–E because they are the costliest part (the
+  strings, then the shime).
+
+Robin has the recording to judge by ear.

@@ -6,9 +6,9 @@
  * fifths, nothing human in it. Notation: see 30_songs.js.
  *
  * Intensity, the last step: the busiest battle, every drum of the kit, the
- * Hush's colour inside the fight; the final boss moves through the whole
- * ensemble, has it taken away instrument by instrument, and gives it back.
- * Still a chamber group: no choir of hundreds, no brass. */
+ * Hush's colour inside the fight; the final boss is a piece of its own (since
+ * 2026-10-12, on Robin's ear: see it below), with bowed strings, a small choir
+ * and a temple toll that no other fight has. No brass. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -165,51 +165,108 @@ RB.audio = RB.audio || {};
   });
 
   // ============================================================ FINAL BOSS
+  // The last fight is a piece of its own (Robin, 2026-10-12: "a unique, intense and conclusive final battle theme";
+  // the earlier version thinned into lydian glass and then sang the road theme in F major on two flutes, from about
+  // 29 s, which read "like a singsong lullaby"). It keeps the opening Robin liked (the sterile intro, the riff, the
+  // Hush motif on glass, the road motif falling on shakuhachi) over its own engine, which no other boss uses: bowed
+  // strings in sixteenths, biwa stabs and a galloping 3+3+2 on the drums, the big drum and a temple toll. Then the
+  // Hush takes the voices (C), and the last stand has a melody of its own, sung (D, E), in minor to the end: an
+  // aeolian cadence (bVI, bVII, i) struck by the toll.
   const BOS6_RIFF = '1 5, 1 2 3 2 1 5, | 1 5, 1 2 4 3 2 1';
   const BOS6_A_CH = '1 2 1 2 6 7 2 2';
   const BOS6_HUSH = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 1 - - - - - - - | .:8 | .:8 | .:8 | .:8';
   const BOS6_A_KOTO = '.:8 | .:8 | .:8 | .:8 | 3 - - - 5 - - - | 3 - - - 4 - 3 - | 2 - - - - - - - | .:8';
   const BOS6_B = '5, - 3 - - 2 1 - | 2 - - - - - - - | 5, - 3 - - 2 1 - | 7, - - - - - - - | 1 - 3 - 5 - 6 - | 5 - 4 - 3 - 2 - | 3 - - - 1 - - - | 2 - - - - - - -';
   const BOS6_B_CH = '1 2 1 7 6 4 1 2';
-  const BOS6_C_GLASS = '5, - 1 - 2 - 3 - | 4 - - - - - - - | 5, - 1 - 2 - 3 - | 4 - - - - - - -';
-  const BOS6_C_RIFF = '1 5, 1 2 3 2 1 5, | 1 . 1 . . . . . | 1 . . . . . . . | .:8';
-  const BOS6_D_LOW = '5, - 1 - 2 - 3 - | 4 - - - 3 - - - | 2 - - - - - - - | 1 - - - - - - - | 5, - 1 - 2 - 3 - | 3 - - - 2 - - - | 2 - - - 5, - - - | 1 - - - - - - -';
+  // the Hush cutting in, in eighths, at the end of each half of B
+  const BOS6_B_GLASS = '.:8 | .:8 | .:8 | . . . 5, 1 2 3 #4 | .:8 | .:8 | .:8 | . . . 5, 1 2 3 #4';
+  // C, the Hush takes the voices: its motif sung a bar a note, played in canon and then in eighths; the road motif
+  // tries twice and is cut off; the drums thin to a heartbeat that quickens into a roll
+  const BOS6_C_CH = '1P 1P 2P 2P 1P 1P 2P 5P';
+  const BOS6_C_CHOIR = '5, - - - - - - - | 1 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | #4 - - - - - - - | - - - - - - - - | - - - - - - - - | - - - - . . . .';
+  const BOS6_C_GLASS = '5, - 1 - 2 - 3 - | #4 - - - - - - - | .:8 | .:8 | 5, 1 2 3 #4 - 5, 1 | 2 3 #4 - 5, 1 2 3 | #4 - 5, 1 2 3 #4 - | #4 - - - . . . .';
+  const BOS6_C_LOW = '.:8 | .:8 | 5, - 1 - 2 - 3 - | #4 - - - - - - - | .:8 | .:8 | 5, 1 2 3 #4 - 5, 1 | 2 3 #4 - . . . .';
+  const BOS6_C_CUT = '.:8 | .:8 | 5, - 3 - . . . . | .:8 | .:8 | .:8 | 5, - 3 - . . . . | .:8';
+  // D and E, the last stand (F aeolian): a melody of its own, leaping (a fourth, a fifth), in 3+3+2, over a bass
+  // that falls F, E-flat, D-flat, C; E climbs higher and ends on the cadence. The cello carries the Hush motif with
+  // its fourth natural (answered, as the finale will have it) and the road motif under the climb.
+  const BOS6_D_CH = '1 7 4 5M 1 7 6:0.5 7:0.5 1';
+  const BOS6_D = "1 - - 5 - - 1' - | 7 - - 6 - - 5 - | 4 - - 6 - - 5 4 | 5 - - - #7, - - - | 1 - - 5 - - 1' - | 2' - - 1' - - 7 - | 3' - - - 2' - - - | 1' - - - - - . .";
+  const BOS6_D_HI = ".:8 | .:8 | .:8 | .:8 | 1 - - 5 - - 1' - | 2' - - 1' - - 7 - | 3' - - - 2' - - - | 1' - - - - - . .";
+  const BOS6_D_CELLO = '1 - - - - - - - | 7, - - - - - - - | 6, - - - - - - - | 5, - - - - - - - | 1 - - - - - - - | 2 - - - - - - - | 3 - - - 2 - - - | 1 - - - - - - -';
+  const BOS6_D_GLASS = '.:8 | .:8 | .:8 | . . . 5, 1 2 3 #4 | .:8 | .:8 | .:8 | .:8';
+  const BOS6_E_CH = '4 7 1 5M 6:0.5 7:0.5 7 6:0.5 7:0.5 1P';
+  const BOS6_E = "4 - - 6 - - 1' - | 2' - - 1' - - 6 - | 5 - - 1' - - 7 6 | 5 - - - #7, - - - | 3' - - - 2' - - - | 1' - - - 7 - 6 - | 5 - - - 6 - 7 - | 1' - - - - - - -";
+  const BOS6_E_CELLO = '5, - 1 - 2 - 3 - | 4 - - - - - - - | .:8 | .:8 | 5, - 3 - - 2 1 - | 2 - - - - - - - | 6, - - - 7, - - - | 1 - - - - - - -';
+  // the strings' sixteenths (soft while the Hush works, then full) and the drums, bar by bar
+  // (the strings in eighths in A and B and in sixteenths from C, the shime in sixteenths in C's roll and in E: the
+  // drive grows, and the sixteenths cost CPU only where they count)
+  const soft = (p) => p.split(' ').map((x) => x + '?').join(' ');
+  const SAW_P = '0 0 1 0 0 0 1 0 0 0 1 0 2 1 0 1', SAW = '0 0 1 0 2 0 1 0 0 0 1 0 2 1 0 2', SAW8 = '0 0 1 0 0 1 2 1';
+  const bars = (...b) => b.join(' | ');
+  const SAW_C = bars(...Array(4).fill(soft(SAW_P)), ...Array(4).fill(SAW_P));
+  const SAW_E = bars(...Array(7).fill(SAW), '0! - - - - - - - - - - - - - - -');
+  const GALLOP = 'Z.zZ.zZ.|Z.zZ.zZZ';
+  const SHIME16 = 'EeeeeeEeeeeeEeee', SHIME8 = 'Eee.Eee.|EeeEeeEe', BASS332 = '0! . . 0 . . 0 .';
+  const TAIKO_C = 'Z...............|Z.......Z.......|Z.......Z.......|Z...Z...Z...Z...|Z...Z...Z...Z...|Z.Z.Z.Z.Z.Z.Z.Z.|Z.Z.Z.Z.ZzZzZzZz|zzzzzzzzZZZZZZZZ';
+  const SHIME_C = '................|................|................|................|e...e...e...e...|e.e.e.e.e.e.e.e.|eeeeeeeeeeeeeeee|EEEEEEEEEEEEEEEE';
+  const TOLL_AT = (k) => Array.from({ length: 8 }, (x, i) => (k.includes(i + 1) ? '1 - - - - - - -' : '.:8')).join(' | ');
 
   S('boss_hush', {
     title: 'Nothing Left to Shelve',
     kind: 'boss',
     motifs: ['road', 'hush'],
-    notes: 'The last fight (F phrygian, 152), against the Hush itself. It opens sterile — glass ticks and a shō — then the whole ensemble arrives: a biwa riff, shamisen chords, ōdaiko, shime-daiko, the noh drums, chappa; the Hush motif on glass against koto, the road motif falling on shakuhachi. C is the Hush working: F lydian over open fifths, the drums stop, the riff thins to single notes and then to nothing, until for a moment only glass and ticks are left. D gives it all back: F major, every drum, shime-daiko in sixteenths, the road theme on shakuhachi and shinobue while the Hush motif sounds beneath with a natural fourth that resolves — the finale’s answer, heard first here.',
-    key: 'F', mode: 'phrygian', bpm: 152, loopFrom: 1,
+    notes: 'The last fight (F phrygian, then F aeolian, 156), against the Hush itself, and a piece of its own: no other boss has its engine (bowed strings in sixteenths, biwa stabs, a galloping 3+3+2 on ōdaiko and shime-daiko, the big drum, a temple toll at the turns). It opens sterile, glass ticks and a shō; then the riff and the drums arrive, the Hush motif on glass against koto, and the road motif falls on shakuhachi and shinobue while the Hush cuts in. C is the Hush taking the voices: a choir sings its motif a bar a note up to the raised fourth, glass and koto play it in canon and then in eighths, the road motif tries twice and is cut off, and the drums thin to a heartbeat that quickens into a roll. D and E are the last stand, in F minor: a melody of its own, sung by the choir with shakuhachi and later shinobue, leaping a fourth and a fifth in 3+3+2 over a bass falling F, E-flat, D-flat, C; under it the cello plays the Hush motif with its fourth made natural, then the road motif; it ends on an aeolian cadence (D-flat, E-flat, F) struck by the toll, and the fight goes round again.',
+    key: 'F', mode: 'phrygian', bpm: 156, loopFrom: 1,
     tracks: {
-      lead: { i: 'shakuhachi', o: 4, v: 0.72, rv: 0.22 },
-      hi: { i: 'shinobue', o: 5, v: 0.45, rv: 0.25, pan: 0.2 },
-      glass: { i: 'glass', o: 5, v: 0.9, rv: 0.4, pan: 0.2 },
+      lead: { i: 'shakuhachi', o: 4, v: 0.7, rv: 0.22 },
+      hi: { i: 'shinobue', o: 5, v: 0.42, rv: 0.25, pan: 0.2 },
+      choir: { i: 'choir', o: 4, v: 0.46, rv: 0.35, pan: -0.05 },
+      glass: { i: 'glass', o: 5, v: 0.85, rv: 0.4, pan: 0.2 },
       koto: { i: 'koto', o: 5, v: 0.5, rv: 0.3, pan: -0.2 },
-      low: { i: 'koto', o: 3, v: 0.4, rv: 0.3, pan: -0.25 },
-      riff: { i: 'biwa', o: 3, v: 0.52, rv: 0.12, pan: -0.15 },
-      ost: { i: 'shamisen', o: 3, pat: true, v: 0.3, rv: 0.1, pan: 0.25 },
+      low: { i: 'koto', o: 3, v: 0.42, rv: 0.3, pan: -0.25 },
+      cello: { i: 'bowed', o: 3, v: 0.5, rv: 0.25, pan: -0.1 },
+      riff: { i: 'biwa', o: 3, v: 0.5, rv: 0.12, pan: -0.15 },
+      saw: { i: 'bowed', o: 2, pat: true, v: 0.27, rv: 0.15, pan: 0.15 },
+      stab: { i: 'biwa', o: 3, pat: true, v: 0.36, rv: 0.12, pan: 0.25 },
+      voices: { i: 'choir', o: 4, hold: true, fold: 'all', win: 0, v: 0.25, rv: 0.4 },
       sho: { i: 'sho', o: 4, hold: true, fold: 'all', win: 0, v: 0.55, rv: 0.35 },
-      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.64 },
-      taiko: { perc: true, v: 0.54 },
-      shime: { perc: true, v: 0.34, pan: 0.15 },
+      bass: { i: 'bass', o: 2, pat: true, bass: true, v: 0.62 },
+      toll: { i: 'toll', o: 2, v: 0.44, rv: 0.5 },
+      big: { perc: true, v: 0.44 },
+      taiko: { perc: true, v: 0.52 },
+      shime: { perc: true, v: 0.32, pan: 0.15 },
       noh: { perc: true, v: 0.4, pan: -0.1 },
       tick: { perc: true, v: 0.4, pan: 0.3 },
     },
     all: {
-      riff: BOS6_RIFF, ost: '. 0+2 . . . 0+2 . 0+1', bass: "0 0 0' 0 0 0 0' 0", sho: M.TRI,
-      taiko: 'Z..z..Z.|Z.zzZzZz', shime: 'eeEeeEee', noh: '....q...|m...q.qm', tick: 'v.......|........|v.......|........',
+      riff: BOS6_RIFF, bass: "0 0 0' 0 0 0 0' 0", sho: M.TRI, saw: SAW8, stab: '0+2! . . 0+2 . . 0+2 .',
+      taiko: GALLOP, shime: SHIME8, big: 'O.......|........|........|........', noh: '....q...|m...q.qm',
+      tick: 'v.......|........|v.......|........',
     },
     sections: {
-      intro: { bars: 2, ch: '1P 1P', riff: null, ost: null, bass: null, taiko: null, shime: null, noh: null, tick: 'g.g.g.g.|g.g.gggg' },
-      A: { bars: 8, ch: BOS6_A_CH, glass: BOS6_HUSH, koto: BOS6_A_KOTO },
-      B: { bars: 8, ch: BOS6_B_CH, lead: BOS6_B, hi: BOS6_B },
-      C: { bars: 4, mode: 'lydian', ch: '1P 1P 2P 1P', glass: BOS6_C_GLASS, riff: BOS6_C_RIFF, ost: null, bass: '0 - - - - - - -', sho: '0+1', taiko: 'Z..z..Z.|Z.......|........|........', shime: 'eeEeeEee|e.e.e.e.|e.......|........', noh: 'q.......|........|........|........', tick: 'g.g.g.g.' },
-      D: { bars: 8, mode: 'ionian', ch: M.ROAD_A_CH, lead: M.ROAD_A, hi: M.ROAD_A, low: BOS6_D_LOW, riff: null, ost: '. 0+1+2 . . . 0+1+2 . .', taiko: 'Z..z..Z.|Z.zzZzZZ', shime: { n: 'eeeeEeeeeeeeEeee', u: 0.25 }, tick: 'v.......|........|........|........' },
-      A2: { bars: 8, ch: BOS6_A_CH, glass: BOS6_HUSH, koto: BOS6_A_KOTO, lead: '.:8 | .:8 | .:8 | .:8 | .:8 | .:8 | .:8 | .:8' },
-      B2: { bars: 8, ch: BOS6_B_CH, lead: BOS6_B, glass: BOS6_HUSH, taiko: 'Z..z..Z.|Z.zzZzZZ' },
+      intro: { bars: 2, ch: '1P 1P', riff: null, saw: null, stab: null, bass: null, taiko: null, shime: null, big: null, noh: null, tick: 'g.g.g.g.|g.g.gggg' },
+      A: { bars: 8, ch: BOS6_A_CH, glass: BOS6_HUSH, koto: BOS6_A_KOTO, stab: null, toll: TOLL_AT([1]) },
+      B: { bars: 8, ch: BOS6_B_CH, lead: BOS6_B, hi: BOS6_B, glass: BOS6_B_GLASS, voices: M.TRI, stab: null, toll: TOLL_AT([1]) },
+      C: {
+        bars: 8, ch: BOS6_C_CH, choir: BOS6_C_CHOIR, glass: BOS6_C_GLASS, low: BOS6_C_LOW, lead: BOS6_C_CUT, riff: null, stab: null, bass: '0 - - - - - - -',
+        saw: { n: SAW_C, u: 0.25 }, taiko: { n: TAIKO_C, u: 0.25 }, shime: { n: SHIME_C, u: 0.25 }, tick: 'g.g.g.g.',
+        noh: '........|........|........|q.......|........|........|q...q...|q.q.qqqq', big: 'O.......|........|........|........|O.......|........|........|O...O.OO', toll: TOLL_AT([1, 5]),
+      },
+      D: {
+        bars: 8, mode: 'aeolian', ch: BOS6_D_CH, choir: BOS6_D, lead: BOS6_D, hi: BOS6_D_HI, cello: BOS6_D_CELLO, glass: BOS6_D_GLASS, voices: M.TRI, riff: null, sho: null,
+        saw: { n: SAW, u: 0.25 }, bass: BASS332, noh: 'q..m..q.|q.qm..qq', tick: 'V.......|........|........|........|V.......|........|........|....V...', toll: TOLL_AT([1, 5]),
+      },
+      E: {
+        bars: 8, mode: 'aeolian', ch: BOS6_E_CH, choir: BOS6_E, lead: BOS6_E, hi: BOS6_E, cello: BOS6_E_CELLO, voices: M.TRI, riff: null, sho: null,
+        saw: { n: SAW_E, u: 0.25 }, bass: bars(...Array(7).fill(BASS332), '0 - - - - - - -'), stab: bars(...Array(7).fill('0+2! . . 0+2 . . 0+2 .'), '0+2! . . . . . . .'),
+        taiko: 'Z.zZ.zZ.|Z.zZ.zZZ|Z.zZ.zZ.|Z.zZ.zZZ|Z.zZ.zZ.|Z.zZ.zZZ|ZzZzZzZZ|Z.......', shime: { n: bars(...Array(7).fill(SHIME16), 'E...............'), u: 0.25 },
+        big: 'O.......|........|O.......|........|O.......|........|O...O...|O.......', noh: 'q..m..q.|q.qm..qq|q..m..q.|q.qm..qq|q..m..q.|q.qm..qq|q.q.q.q.|Q.......',
+        tick: 'V.......|........|........|........|V.......|........|........|V.......', toll: TOLL_AT([1, 8]),
+      },
     },
-    form: ['intro', 'A', 'B', 'C', 'D', { s: 'A2', i: { riff: 'shamisen' }, o: { riff: 1 } }, 'B2'],
+    // (the last stand a little under full level: everything sounds at once there, and its peaks stay within the game's)
+    form: ['intro', 'A', 'B', 'C', { s: 'D', dyn: 0.9 }, { s: 'E', dyn: 0.9 }],
   });
 
   // ============================================================ STORY CUES
