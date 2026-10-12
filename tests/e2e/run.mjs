@@ -33,7 +33,8 @@ let suites = [
   ['addendum_integration.mjs'],
   // overworld actors: idle life in each chapter, Wataru and Omi (both routes x 4 companions), one performed
   // scene per chapter (docs/expressive/GESTURES.md §9); actor_workplaces.mjs (5 x 45 s) runs on its own
-  ['actor_life.mjs'], ['staging_chapters.mjs'], ['staging_wataru.mjs'],
+  // (staging_chapters by chapter: whole, it outgrew one script's 40-minute limit)
+  ['actor_life.mjs'], ...['showcase', '1', '2', '3', '4', '5', '6', 'misc'].map((c) => ['staging_chapters.mjs', '--ch=' + c]), ['staging_wataru.mjs'],
   // HX68: staged scenes started through the world from other sides, with tiles taken, actors absent, movement
   // interrupted, a key held, repeated and revisited; HX52: every illustrated sequence and the world agree (--full: all
   // branches and companions)
