@@ -65,6 +65,8 @@ for (const sp of SPECIES) {
       const before = await snap(p);
       await p.evaluate(() => RB.ui.menu.open('pet'));
       await p.waitForSelector('[data-pet-greet]');
+      // measured once the book has opened (its opening animation scales the page by 0.965 on the way in)
+      await p.waitForFunction(() => { const f = document.querySelector('.folio'); return !!f && f.getAnimations({ subtree: true }).every((a) => a.playState !== 'running'); });
       const bt = await p.evaluate(() => { const e = document.querySelector('[data-pet-greet]'); e.scrollIntoView({ block: 'center' }); const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, h: r.height, text: e.textContent }; });
       assert(bt.h >= 44 && /Greet together with/.test(bt.text), 'the Greet together control (44 px): ' + JSON.stringify(bt));
       await p.mouse.click(bt.x, bt.y);
