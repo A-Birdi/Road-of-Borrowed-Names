@@ -82,8 +82,9 @@ RB.ui.ngplus = (function () {
   async function offer(s) {
     if (!s || !RB.recordsUI.inCampaign(s) || !s.flags.postgame || s.flags.ngp_offered) return;
     s.flags.ngp_offered = true;
-    const r = await RB.ui.confirm('Your story is complete. Begin a new journey now with New Game+? You can also begin it later from Journey › Travel volume.', ['Not now', 'Begin New Game+…']);
-    if (r === 1) begin(s, RB.save.current ? RB.save.current().slot : null);
+    // (the proposed action first, the safe way out last: Back and the first focus choose "Not now")
+    const r = await RB.ui.confirm('Your story is complete. Begin a new journey now with New Game+? You can also begin it later from Journey › Travel volume.', ['Begin New Game+…', 'Not now']);
+    if (r === 0) begin(s, RB.save.current ? RB.save.current().slot : null);
   }
   if (RB.bus) RB.bus.on('story:settled', (e) => {
     const s = RB.game && RB.game.s;

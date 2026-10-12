@@ -324,7 +324,9 @@ export function install() {
       for (const ev of m.onEnter || []) out.push({ kind: 'enter', map: mid, ev, scene: ev.scene });
       for (const ex of comp(mid).exits) if (ex.locked) out.push({ kind: 'locked', map: mid, ex, scene: ex.locked });
     }
-    return out.filter((st) => st.scene && available(st));
+    // (not the exploration actions' sheets, vb.*: optional, they never move a story on, a player closes them, and
+    // tests/e2e/verbs_journey.mjs plays them; the driver would open one and wait on it)
+    return out.filter((st) => st.scene && !/^vb\./.test(st.scene) && available(st));
   }
   // state fingerprint (quest timestamps excluded: they change on every update)
   const sigOf = () => {

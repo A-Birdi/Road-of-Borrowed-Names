@@ -129,6 +129,9 @@ RB.game = (function () {
     // from under it)
     if (a === 'cancel' && RB.ui.help && RB.ui.help.isOpen && RB.ui.help.isOpen()) { RB.ui.help.hide(true); return; }
     if (m === 'world') {
+      // a sheet raised over the walking world (the New Game+ offer once the story settles) takes the keys, as it does
+      // everywhere else: Back answers it rather than opening the Ledger, OK presses its button, not what is behind it
+      if (RB.ui.topLayer && RB.ui.topLayer()) { RB.ui.onAction(a, e); return; }
       if (a === 'ok') RB.world.interact();
       else if (a === 'menu' || a === 'cancel') RB.ui.menu.open();
       else if (a === 'log') RB.ui.menu.open('log');

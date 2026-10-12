@@ -21,7 +21,7 @@ const FIXTURE = (o) => {
   if (o.scale) RB.game.settings.textScale = o.scale;
   if (o.uiLang) RB.game.settings.uiLang = o.uiLang;
   RB.game.applySettings();
-  const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'suzu', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true } });
+  const s = RB.game.debugStart('sg.harbor', 20, 22, { comp: 'suzu', flags: { departed: true, ch1_done: true, rw_echo_done: true, sg_arrived: true, sg_harbor_seen: true } }); // (the harbour's first look is long past at the end of Chapter 2)
   // a twelve-chapter journey, so the Ledger shows every page the expansion added (the travel volume, Distractions)
   s.edition = 2; s.player.name = 'Robin'; s.chapter = 2; s.playtime = 3 * 3600 + 27 * 60;
   s.quests = { rw_labels: { stage: 2, done: true, t: 1 }, rw_mill: { stage: 4, done: true, t: 2 }, rw_depart: { stage: 1, done: true, t: 3 }, sg_main: { stage: 8, done: false, t: 9 }, sg_cove: { stage: 1, done: false, t: 7 }, sg_seaglass: { stage: 1, done: false, t: 6 } };
@@ -118,7 +118,8 @@ for (const v of VIEWS) {
   await p.waitForFunction(() => !document.querySelector('.dlg .reveal-hide'));
   await ready(p);
   await shot(p, v.tag + '_dialogue.webp', 'UI-A13');
-  await p.evaluate(() => RB.ui.dialogue.advance(true));
+  // (a companion's aside may follow the line in the living world: read on through it, as a player would)
+  await p.evaluate(async () => { for (let i = 0; i < 40 && (RB.ui.dialogue.isOpen() || RB.script.isRunning()); i++) { if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 200)); } });
   await p.waitForFunction(() => !RB.ui.dialogue.isOpen() && !RB.script.isRunning(), null, { timeout: 8000 }).catch(() => problems.push('the line would not close'));
   await p.waitForTimeout(300);
   // a confirmation (danger sealed and named; the safe answer first)

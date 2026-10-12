@@ -214,6 +214,35 @@ const faceNpc = (p) => p.evaluate(() => {
   await ctx.close();
 }
 
+// a sheet raised over the walking world (the New Game+ offer, once the story settles, is one) takes the keys: Back
+// answers it with its safe choice instead of opening the Ledger, OK presses the focused button, not what is behind it
+{
+  const { p, ctx, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await p.evaluate(() => { const m = RB.content.maps['rw.village'], sp = m.spawn.default; RB.game.debugStart('rw.village', sp[0], sp[1], { comp: 'mio' }); });
+  await p.waitForTimeout(600);
+  const ask = () => p.evaluate(() => { window.__r = 'open'; RB.ui.confirm('A question over the world?', ['Go ahead', 'Not now']).then((r) => (window.__r = r)); });
+  await ask();
+  await p.waitForSelector('.csheet');
+  await p.waitForTimeout(250);
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(300);
+  const back = await p.evaluate(() => ({ r: window.__r, sheet: !!document.querySelector('.csheet'), mode: RB.game.mode(), ledger: RB.ui.menu.isOpen() }));
+  assert(back.r === 1 && !back.sheet && back.mode === 'world' && !back.ledger, 'over the walking world, Back answers a sheet with its safe choice and opens no Ledger: ' + JSON.stringify(back));
+  await ask();
+  await p.waitForSelector('.csheet');
+  await p.waitForTimeout(250);
+  await p.evaluate(() => document.querySelector('.csheet .pbtn').focus());
+  await p.keyboard.press('Enter');
+  await p.waitForTimeout(300);
+  const ok = await p.evaluate(() => ({ r: window.__r, sheet: !!document.querySelector('.csheet'), mode: RB.game.mode(), dlg: RB.ui.dialogue.isOpen() }));
+  assert(ok.r === 0 && !ok.sheet && ok.mode === 'world' && !ok.dlg, 'and OK presses the focused button, not the world behind it: ' + JSON.stringify(ok));
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(300);
+  assert(await p.evaluate(() => RB.ui.menu.isOpen()), 'with no sheet up, Back opens the Ledger as before');
+  assert(!errors.length, 'no page errors (sheet over the world) ' + errors.join('; '));
+  await ctx.close();
+}
+
 await b.close(); srv.close();
 console.log(fail ? fail + ' failed' : 'all ok');
 process.exit(fail ? 1 : 0);
