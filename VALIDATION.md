@@ -4600,13 +4600,17 @@ and `--pairs A/suzu 1`, started together (three campaigns at once on the shared 
 | E/Nao | **PASS** | 17/17 | 74.9 min | 2,775 | 446 (386 / 25 / 23 / 7 / 5) | 26 |
 | I/Mio | **PASS** | 17/17 | 75.0 min | 2,785 | 443 (403 / 16 / 12 / 7 / 5) | 33 |
 | A/Suzu | **PASS** | 17/17 | 75.2 min | 2,755 | 455 (416 / 16 / 11 / 7 / 5) | 27 |
+| F/Ren (19:42, alone) | **PASS** | 17/17 | 69.0 min | 2,683 | 474 (395 / 50 / 17 / 7 / 5) | 36 |
 
 Each: the shipped edition asserted (journey 2, a new journey 2), to the ending (`ch6_done`, the journey in the Lantern
 Hall's postgame), 8 battles, 0 problems, 0 page errors, nothing lost. The campaigns' start is the debug start on the
 road described above, not the title screen. Every milestone's state was written as a fixture in the export
 (`tests/fixtures/campaign/<P>-<comp>-<milestone>.json`), among them each companion's pre-Archive `yn_done` state for
-the naming tests. F/Ren on the same export: running. The LP-1 review's guide fix came after this build; these runs
-stay applicable to it (VALIDATION.md "LP-1", review checks: the driver never reads the guide).
+the naming tests (copied unchanged to `tests/fixtures/p18/`, with their provenance in its README). **All four of
+Plan B's continuous campaigns passed, on this one build.** The LP-1 review's guide fix (d26ce74) came after it; these
+runs keep their tested revision (2debb3c) and stay applicable to the fix (VALIDATION.md "LP-1", review checks: the
+driver never reads the guide, and nothing in the game acts on the guide's answers). They are four campaigns, not the
+sixteen-run product, and headless Chromium, not a real device.
 
 **F/Ren, on a clean export of 900efc5 (B).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on `git
 archive 900efc5` (its own `index.html`, sha256 1963d027…) with one test file replaced, `tests/e2e/drive.mjs` as in
