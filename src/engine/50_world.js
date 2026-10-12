@@ -758,11 +758,13 @@ RB.world = (function () {
       if (RB.staging) RB.staging.stepped(n); // now and then a pause after the step (a look round, a stretch)
     }
     if (RB.staging) RB.staging.tick(dt); // idle life, social ambience, reactions, the companion's presence
+    const quiet = atMechanism();
     for (const f of W.foes) {
       stepActor(f, dt);
       const calm = calmNow(f);
       const pat = f.def.patrol;
       if (!pat || f.mv || RB.game.mode() !== 'world') continue;
+      if (quiet) continue; // working a mechanism: the creatures keep still (W9–W17 "quiet puzzle spaces")
       f.wt = (f.wt || 900) - dt;
       if (f.wt > 0) continue;
       f.wt = 700 + wrand() * 900;
@@ -939,10 +941,25 @@ RB.world = (function () {
     });
     return true;
   }
+  // "Quiet puzzle spaces" (docs/future/plan/06_WORLD.md W9–W17): while you stand at a mechanism (an exploration
+  // action's prop or mark, or a prop content marks `mech: true`: the locks' cranks and tablets, the
+  // vents' valves, the Understage's machines, the root arches), within two tiles of it, the map's creatures keep
+  // still and none walks into you. You can still go to them.
+  function atMechanism() {
+    const p = W.player, st = s();
+    if (!W.map || !st) return false;
+    for (const pr of W.map.props) {
+      if (!(pr.mech || pr.scene === 'vb.open' || pr.scene === 'vb.mark')) continue;
+      if (pr.if && !RB.state.test(st, pr.if)) continue;
+      if (Math.max(Math.abs(pr.x - p.x), Math.abs(pr.y - p.y)) <= 2) return true;
+    }
+    return false;
+  }
   // Foes that walk into the player start a battle too (they are visible and avoidable).
   function checkFoeContact() {
     const p = W.player;
     if (!W.map || p.mv || !canEngage()) return false;
+    if (atMechanism()) return false;
     for (const f of W.foes) {
       if (f.mv || !f.def.aggro || calmNow(f)) continue;
       if (Math.abs(f.x - p.x) + Math.abs(f.y - p.y) === 1) return startFoe(f);

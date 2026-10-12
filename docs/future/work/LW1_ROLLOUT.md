@@ -72,6 +72,29 @@ staging them keeps them where it put them.
 An asker (`asks: true`) offers Talk / Have you seen…? only once their current talk has been heard; a scene not yet
 heard (the story's next step, a quest's) is said at once, never behind the question.
 
+### LW-07 · The exploration actions (W9–W17): the register, before filling the gaps
+A read of every place the plan names (2026-10-12). None of the journey's places used the templates of
+`src/engine/55b_verbs.js` (only the development fixtures did); each place had its own bespoke scenes, challenges or
+procedures. Status against the plan's description (Y done, P partly, N not):
+
+| Verb | Place | What exists | Status |
+|---|---|---|---|
+| W9 notices change behaviour | Ashihara Shinden | the well and market notices move the washing, Taki, Natsu and Mohei's stall (two valid notices place them differently) | **Y** |
+| | Manybridge's noodle stalls | a notice per stall is composed (forge), but only narration follows: no queue, nobody moves | P |
+| | Manybridge's lock | the rules are read; nothing is composed | N |
+| | Steamhollow's house rules | read and answered; nothing composed, nobody's behaviour changes | N |
+| W10 the press | Blockprint Row | compose, print, post; readers react in dialogue only; nothing in the world follows | P |
+| W11 courier planning | Manybridge barges / the Cloudroad relay / the sea mailbag | one delivery per sentence in a fixed order; a road choice per leg; two hand-overs in any order | P / P / N |
+| W12 repair jobs | East Landing / Steamhollow's vent pipes / restored lamps | jobs done by others offscreen; a single click; read-and-act | P / N / P |
+| W13 connected inkweaving | Undercroft Locks / Steam Vents / Root Hollows | linear per-map procedures; airflow within one map; a word-lock sequence | P |
+| W14 observation-first | the Understage / Hall wing 3 | instruction-following procedures; a scheduling puzzle | P |
+| W15 creature routing | Cloudroad pack horses / Kotonoha leaflings | a two-option menu with no language; battles | N |
+| W16 layered sites | the Lost Contract / East Landing | one text question, no plan laid over the place; nothing at East Landing | P / N |
+| W17 stage-blocking | Playhouse Row rehearsals | one of three ready blockings with a preview | P |
+
+The gap-fill puts real instances of the templates at these places (production gates, real people, the
+places' own maps), beside what each place already has, and is recorded here when done.
+
 ### Still to do in this rollout
 LW-03 routines for the main towns; LW-04 the relations table and askers; LW-05 change beats; LW-06 road events and
 return keys; LW-07 the verbs register; the production tests replacing the empty-registry expectations.

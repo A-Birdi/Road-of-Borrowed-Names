@@ -218,6 +218,21 @@ await test('LW-09: the smith\'s placement moves (same id) as the forge moves whi
   await ctx.close();
 });
 
+await test('quiet puzzle spaces: at the Undercroft\'s crank the creatures keep still and none walks into you; away from it they move again', async () => {
+  const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  await start(p, 'mb.under1', 9, 17, Object.assign({}, DONE, { ch2_done: true, mb_passage: true }));
+  await p.evaluate(() => { RB.world.W.quietUntil = 0; RB.test.place(9, 17, 'down'); });
+  const pos = () => p.evaluate(() => RB.world.W.foes.map((f) => f.x + ',' + f.y).join(' '));
+  const a = await pos(); await p.waitForTimeout(3500); const b2 = await pos();
+  assert(a && a === b2, 'beside the crank: the creatures keep still (' + a + ' → ' + b2 + ')');
+  await p.evaluate(() => RB.test.place(26, 3, 'down'));
+  let moved = false;
+  for (let i = 0; i < 12 && !moved; i++) { await p.waitForTimeout(500); moved = (await pos()) !== b2; }
+  assert(moved, 'away from it, they move again');
+  assert(!errors.length, 'no errors: ' + errors.join(' | '));
+  await ctx.close();
+});
+
 await b.close();
 srv.close();
 console.log(`\n${pass} passed, ${fail} failed`);

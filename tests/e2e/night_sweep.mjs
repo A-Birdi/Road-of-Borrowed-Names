@@ -75,22 +75,26 @@ for (const [map, label, flags, vars] of states) {
       let acc = 0, p90 = 0; for (let k = 0; k < 256; k++) { acc += hist[k]; if (acc >= n * 0.9) { p90 = k; break; } }
       // the player against the ground around them
       const pos = RB.render.tileToCss(RB.world.W.player.x, RB.world.W.player.y), k2 = W / cv.getBoundingClientRect().width;
-      const box = (x0, y0, w, h) => { let s2 = 0, c = 0; for (let y = Math.max(0, y0); y < Math.min(H, y0 + h); y += 2) for (let x = Math.max(0, x0); x < Math.min(W, x0 + w); x += 2) { s2 += Yv((y * W + x) * 4); c++; } return c ? s2 / c : 0; };
-      const vs = RB.render.viewSize(), t = Math.max(8, 16 * (cv.getBoundingClientRect().width / vs.w) * k2); // a tile, in canvas pixels
+      const box = (x0, y0, w, h) => { x0 = Math.floor(x0); y0 = Math.floor(y0); let s2 = 0, c = 0; for (let y = Math.max(0, y0); y < Math.min(H, y0 + h); y += 2) for (let x = Math.max(0, x0); x < Math.min(W, x0 + w); x += 2) { s2 += Yv((y * W + x) * 4); c++; } return c ? s2 / c : 0; };
+      const t = Math.max(8, Math.round(16 * RB.render.viewSize().scale * k2)); // a tile, in canvas pixels
       const px = pos.x * k2, py = pos.y * k2;
       const me = box(px + t * 0.25, py - t * 0.6, t * 0.5, t * 1.4);
       const ring = (box(px - t * 1.5, py - t, t * 1.2, t * 2) + box(px + t * 1.3, py - t, t * 1.2, t * 2)) / 2;
-      return { mean: Math.round(sum / n), crushed: Math.round((crushed / n) * 100), p90, dY: Math.round(Math.abs(me - ring)), night: !!amb.night, dark: (amb.ambient || {}).dark || 0, png: cv.toDataURL('image/png') };
+      // edge energy: how much a figure's outline and shading stand out (a sprite in its own light pool can match the
+      // ground's mean brightness and still read clearly)
+      const edges = (x0, y0, w, h) => { x0 = Math.floor(x0); y0 = Math.floor(y0); let s2 = 0, c = 0; for (let y = Math.max(0, y0); y < Math.min(H, y0 + h); y++) for (let x = Math.max(0, x0); x < Math.min(W - 1, x0 + w); x++) { s2 += Math.abs(Yv((y * W + x) * 4) - Yv((y * W + x + 1) * 4)); c++; } return c ? s2 / c : 0; };
+      const eMe = edges(px + t * 0.25, py - t * 0.6, t * 0.5, t * 1.4), eRing = (edges(px - t * 1.5, py - t, t * 1.2, t * 2) + edges(px + t * 1.3, py - t, t * 1.2, t * 2)) / 2;
+      return { mean: Math.round(sum / n), crushed: Math.round((crushed / n) * 100), p90, dY: Math.round(Math.abs(me - ring)), edge: +(eMe / Math.max(1, eRing)).toFixed(1), night: !!amb.night, dark: (amb.ambient || {}).dark || 0, png: cv.toDataURL('image/png') };
     }, [map, flags, vars, light]);
     pair[light ? 'on' : 'off'] = r;
   }
   const on = pair.on, off = pair.off;
   const flagsOut = [];
   if (on.mean < off.mean * 0.55 && on.mean < 40) flagsOut.push('the light swallows the picture');
-  if (on.dY < 10) flagsOut.push('the player is hard to pick out');
+  if (on.dY < 10 && on.edge < 1.5) flagsOut.push('the player is hard to pick out');
   if (on.night && on.mean > 140) flagsOut.push('a night that reads as day');
   if (on.crushed > 60) flagsOut.push('much of it crushed to black');
-  rows.push({ map, label, on: { mean: on.mean, crushed: on.crushed, p90: on.p90, dY: on.dY }, off: { mean: off.mean, crushed: off.crushed, p90: off.p90, dY: off.dY }, night: on.night, dark: on.dark, flags: flagsOut });
+  rows.push({ map, label, on: { mean: on.mean, crushed: on.crushed, p90: on.p90, dY: on.dY, edge: on.edge }, off: { mean: off.mean, crushed: off.crushed, p90: off.p90, dY: off.dY, edge: off.edge }, night: on.night, dark: on.dark, flags: flagsOut });
   shots.push({ name: map + ' · ' + label.replace(/ \(.*/, ''), on: on.png, off: off.png });
 }
 
@@ -113,10 +117,12 @@ for (let i = 0; i < shots.length; i += PER) {
 const md = ['# The night sweep: every night and dark state, light On and Off', '',
   'Made by `node tests/e2e/night_sweep.mjs` from the built `index.html` (synthetic sessions). Mean = mean brightness of the world',
   '(0–255); crushed = share of near-black pixels; p90 = the brightest tenth starts at; ΔY = how far the player stands out from',
-  'the ground beside them. Contact sheets `night_NN.webp`: each place with Light and shadow On above and Off below.', '',
-  '| Map | State | On: mean / crushed % / p90 / ΔY | Off: mean / crushed % / p90 / ΔY | Flags |', '|---|---|---|---|---|'];
+  'the ground beside them; edge = the player\'s outline and shading against the ground\'s (×; a figure in its own light pool',
+  'can match the ground\'s brightness and still read). Contact sheets `night_NN.webp`: each place with Light and shadow On',
+  'above and Off below. A flag is a prompt to look, not a verdict: each flagged sheet was looked at.', '',
+  '| Map | State | On: mean / crushed % / p90 / ΔY / edge | Off: mean / crushed % / p90 / ΔY / edge | Flags |', '|---|---|---|---|---|'];
 for (const r of rows) md.push(r.skipped ? '| ' + r.map + ' | ' + r.label + ' | — | — | condition not reproducible here |'
-  : '| ' + r.map + ' | ' + r.label + ' | ' + [r.on.mean, r.on.crushed, r.on.p90, r.on.dY].join(' / ') + ' | ' + [r.off.mean, r.off.crushed, r.off.p90, r.off.dY].join(' / ') + ' | ' + (r.flags.join('; ') || '—') + ' |');
+  : '| ' + r.map + ' | ' + r.label + ' | ' + [r.on.mean, r.on.crushed, r.on.p90, r.on.dY, r.on.edge].join(' / ') + ' | ' + [r.off.mean, r.off.crushed, r.off.p90, r.off.dY, r.off.edge].join(' / ') + ' | ' + (r.flags.join('; ') || '—') + ' |');
 fs.writeFileSync(path.join(OUT, 'README.md'), md.join('\n') + '\n');
 const flagged = rows.filter((r) => r.flags && r.flags.length);
 console.log(rows.length + ' states (' + rows.filter((r) => r.skipped).length + ' not reproduced), ' + flagged.length + ' flagged');
