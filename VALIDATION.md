@@ -4368,6 +4368,22 @@ level, by automation; the namings, whose challenge itself depends on the compani
 interface at all four levels (`naming_combos`). The other ten use the same tier selection and the same sheet as every
 challenge, so no further test was added for them; this is the reason, recorded as Robin asked.
 
+**The first Plan B batch, on a clean export of 28cb216 (B): failed by the launcher's own order check, then the check
+corrected.** `matrix.mjs --twelve --fixtures --pairs E/nao,I/mio 2` and `--pairs A/suzu 1` on `git archive 28cb216`
+(its `index.html` rebuilt to the same SHA-256, e6ab3aba…). E/Nao and I/Mio each reached **all 17 milestones, to the
+ending, in 87.8 and 88.4 minutes, on the shipped edition (journey 2, a new journey 2), 0 problems, 0 page errors**,
+and the launcher marked both **FAIL**: "on reaching cr_done, later milestones already set: yn_called". The check was
+too coarse, not the game: it looked at the flags once the driver came back from a leg, and Steamhollow's call
+(`yn.call`, staged at the next Cloudroad station, only once `cr_done` holds) is met within the same leg as the
+Cloudroad's end, so both were set by then. The check now records the order the game actually sets each milestone in
+(the journey's flags behind a recording proxy) and requires that order to be the route's, first to last; a later
+milestone may follow an earlier one within one leg but never precede it. Controls on the corrected check: the run with
+`ko_done` set before Chapter 1 fails ("set in the order ko_done > ch1_done", exit 1); from E/Nao's own `cr_passed` state
+(captured in this batch) the legs `cr_done > yn_called` pass, the recorder seeing `cr_done` set first (exit 0). A/Suzu
+was stopped after Chapter 4 (six milestones) rather than run to the same verdict. These runs stay recorded as failed
+by the launcher; none of them is counted as one of Plan B's four. All four are run again, on one export of the commit
+that carries the corrected check (`matrix.mjs` also keeps each run's whole output now, `MATRIX_LOG_DIR`).
+
 **F/Ren, on a clean export of 900efc5 (B).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on `git
 archive 900efc5` (its own `index.html`, sha256 1963d027…) with one test file replaced, `tests/e2e/drive.mjs` as in
 5ded08e (the driver leaves the optional exploration sheets, `vb.*`, alone; the run before it stalled waiting on one at

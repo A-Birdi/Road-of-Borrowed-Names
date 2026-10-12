@@ -93,6 +93,17 @@ if (TWELVE_ROUTE && !(ed.journey === ed.twelve && ed.forNew === ed.twelve && edi
 // the route is a whole campaign from its start: a fixture would begin it part-way through
 if (TWELVE_ROUTE && fromFixture) { console.log('NOT A WHOLE CAMPAIGN: the twelve-chapter route starts a new journey, not PURSUE_FROM'); ok = false; }
 const order = [];
+// the order the milestones are first set in, recorded as the game sets them (the journey's flags behind a recording
+// proxy; the game copies state as JSON, so nothing else notices it). A later milestone may follow an earlier one within
+// the same leg (the Cloudroad's end, then Steamhollow's call at the next station), but never come before it. A
+// milestone already set at the start (a preset flag, a fixture) counts as set first.
+await p.evaluate((ms) => {
+  const s = RB.game.s, want = new Set(ms);
+  const seq = (window.__milestones = ms.filter((f) => s.flags[f]));
+  const note = (t, k, v) => { if (v && !t[k] && want.has(k) && seq.indexOf(k) < 0) seq.push(k); };
+  s.flags = new Proxy(s.flags, { set(t, k, v) { note(t, k, v); t[k] = v; return true; }, defineProperty(t, k, d) { note(t, k, d.value); return Reflect.defineProperty(t, k, d); } });
+}, legs.map((l) => l.flag));
+const milestonesSet = () => p.evaluate(() => (window.__milestones || []).slice());
 for (const leg of ok ? legs : []) {
   const t1 = Date.now();
   const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900, fullLog: !!leg.fullLog }), leg).catch(async (e) => ({ ok: false, fail: String(e), map: await p.evaluate(() => RB.world.W.map.id).catch(() => null),
@@ -100,13 +111,13 @@ for (const leg of ok ? legs : []) {
     last: await p.evaluate(() => ({ ran: RBDrive.ran.slice(-15), mode: RB.game.mode(), activity: RB.activity && RB.activity.active() ? RB.activity.active().kind : null })).catch(() => null) }));
   out.push({ leg: leg.flag, ok: r.ok, steps: r.steps, seconds: Math.round((Date.now() - t1) / 1000), fail: r.fail, map: r.map, last: r.ok ? undefined : r.log });
   console.log((r.ok ? 'reached ' : 'STUCK   ') + leg.flag + ' in ' + r.steps + ' site visits (' + Math.round((Date.now() - t1) / 1000) + ' s)');
-  // the milestone sequence: on reaching a leg, no later leg's milestone may already be set (nothing reached out of
-  // order or skipped ahead)
+  // the milestone sequence: on reaching a leg, the milestones set so far are the route's own, first to last, in the
+  // order they were set (nothing out of order, nothing skipped), and this leg's is among them
   if (r.ok) {
-    const later = legs.slice(legs.indexOf(leg) + 1).map((l) => l.flag);
-    const early = await p.evaluate((fl) => fl.filter((f) => RB.game.s.flags[f]), later);
+    const seq = await milestonesSet();
     order.push(leg.flag);
-    if (early.length) { ok = false; console.log('OUT OF ORDER: on reaching ' + leg.flag + ', later milestones already set: ' + early.join(', ')); }
+    if (!seq.every((f, i) => legs[i] && f === legs[i].flag)) { ok = false; console.log('OUT OF ORDER: on reaching ' + leg.flag + ', the milestones were set in the order ' + seq.join(' > ')); }
+    else if (seq.indexOf(leg.flag) < 0) { ok = false; console.log('NOT SEEN SET: ' + leg.flag + ' holds but the recorder did not see it set'); }
   }
   // S7 (expansion): with PURSUE_FIXTURES=1, the campaign as it stands at each milestone becomes a state fixture
   // (tests/fixtures/campaign/), the real state a player would have there, for tests that start mid-story
@@ -154,8 +165,10 @@ console.log('companion actions taken: ' + JSON.stringify(fin.compActs));
 console.log('interactions met: ' + JSON.stringify(await p.evaluate(() => RB.meter.report(RB.game.s))));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
-if (order.length !== legs.length) ok = false;
+const setSeq = await milestonesSet().catch(() => []);
+if (order.length !== legs.length || setSeq.length !== legs.length) ok = false;
 console.log('milestones reached in order: ' + order.length + '/' + legs.length + (order.length ? ' (' + order.join(' > ') + ')' : ''));
+console.log('milestones in the order the game set them: ' + setSeq.length + '/' + legs.length + (setSeq.length ? ' (' + setSeq.join(' > ') + ')' : ''));
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));
 await b.close(); srv.close();
 process.exit(ok && !fin.problems.length && !errors.length && !lost.length ? 0 : 1);

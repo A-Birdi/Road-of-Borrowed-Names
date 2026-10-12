@@ -7,11 +7,12 @@
 //       legs explicitly, and must report that edition and reach all seventeen milestones in order
 //   node tests/e2e/matrix.mjs --twelve --pairs F/ren,E/nao,I/mio,A/suzu [parallel]   named pairs instead of the
 //       product (P18's four continuous campaigns, Robin's C-89); --fixtures writes each run's milestone states to
-//       tests/fixtures/campaign/ (PURSUE_FIXTURES=1)
+//       tests/fixtures/campaign/ (PURSUE_FIXTURES=1); MATRIX_LOG_DIR=<dir> keeps each run's whole output there
 // The full product (FEIA × nao,mio,ren,suzu: sixteen campaigns) stays available; nothing runs it by itself.
 // Every run is at the default settings, so the music plays its Original: the music performance (MT-1) is not a
 // dimension here, nor of the F/Ren chain (Robin's C-88); tests/e2e/music_performance.mjs covers both performances.
 import { spawn } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -47,6 +48,8 @@ async function runOne(j) {
     ch.stdout.on('data', (d) => (out += d));
     ch.stderr.on('data', (d) => (out += d));
     ch.on('close', (code) => {
+      // each run's whole output, kept where MATRIX_LOG_DIR says (the evidence outlives this table)
+      if (process.env.MATRIX_LOG_DIR) { fs.mkdirSync(process.env.MATRIX_LOG_DIR, { recursive: true }); fs.writeFileSync(path.join(process.env.MATRIX_LOG_DIR, j.pr + '-' + j.c + (twelve ? '-twelve' : '') + '.log'), out); }
       const reached = (out.match(/^reached +\S+/gm) || []).map((l) => l.split(/ +/)[1]);
       const legs = (out.match(/^(reached|STUCK) +\S+/gm) || []).map((l) => (l.startsWith('reached') ? '✓' : '✗') + l.split(/ +/)[1].replace('_done', ''));
       const lost = /"lost": \[\s*"/.test(out);
@@ -54,7 +57,7 @@ async function runOne(j) {
       const ed = (out.match(/^edition: .*$/m) || [''])[0];
       // all the expected milestones, in the expected order (pursue.mjs also refuses one reached out of order)
       const sequence = reached.length === expected.length && reached.every((f, i) => f === expected[i]);
-      const r = { profile: j.pr, comp: j.c, ok: code === 0 && sequence, sequence, edition: ed, legs: legs.join(' '), minutes: ((Date.now() - t0) / 60000).toFixed(1), lost, probs, tail: code === 0 && sequence ? '' : out.split('\n').filter((l) => /STUCK|"fail"|NOT THE SHIPPED|OUT OF ORDER|problems|pageErrors/.test(l)).slice(0, 6).join('\n     ') };
+      const r = { profile: j.pr, comp: j.c, ok: code === 0 && sequence, sequence, edition: ed, legs: legs.join(' '), minutes: ((Date.now() - t0) / 60000).toFixed(1), lost, probs, tail: code === 0 && sequence ? '' : out.split('\n').filter((l) => /STUCK|"fail"|NOT THE SHIPPED|NOT A WHOLE|OUT OF ORDER|NOT SEEN SET|problems|pageErrors/.test(l)).slice(0, 6).join('\n     ') };
       console.log((r.ok ? 'PASS ' : 'FAIL ') + j.pr + '/' + j.c + '  ' + r.legs + '  (' + r.minutes + ' min)' + (twelve ? '  [' + ed + ']' : '') + (r.tail ? '\n     ' + r.tail : ''));
       resolve(r);
     });
