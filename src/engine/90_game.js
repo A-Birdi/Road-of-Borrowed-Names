@@ -239,6 +239,7 @@ RB.game = (function () {
     setBase('world');
     const start = RB.content.start || { map: 'rw.home', x: 3, y: 3, dir: 'down', scene: null };
     RB.world.enter(start.map, start.x, start.y, start.dir);
+    if (RB.town) RB.town.visited(G.s, start.map); // (being in a town is a visit: its changes so far are seen)
     // A successful campaign entry owns world rendering, regardless of caller.
     RB.input.clearHeld();
     RB.render.setOverride(null);
@@ -285,6 +286,7 @@ RB.game = (function () {
     setBase('world');
     RB.maps.invalidate();
     RB.world.enter(G.s.map, G.s.x, G.s.y, G.s.dir);
+    if (RB.town) RB.town.visited(G.s, G.s.map); // (being in a town is a visit: its changes so far are seen)
     // Clear title/creation backdrops only after the saved map entered successfully.
     RB.input.clearHeld();
     RB.render.setOverride(null);
@@ -527,6 +529,7 @@ RB.game = (function () {
     G.playing = true;
     setBase('world');
     RB.world.enter(mapId, x, y, opts.dir || 'down');
+    if (RB.town) RB.town.visited(G.s, mapId); // (being in a town is a visit: its changes so far are seen)
     RB.ui.hud.show();
     return st;
   }

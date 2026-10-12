@@ -106,6 +106,10 @@ export default async (t) => {
   {
     const s = camp({ departed: true, ch1_done: true });
     const rw = () => T.changed(s).map((c) => c.town).filter((t) => t === 'reedwake');
+    s.flags.mb2_done = true;
+    t.eq(rw(), [], 'a town you have never been to has not "changed"');
+    delete s.flags.mb2_done;
+    T.visited(s, 'rw.village');
     t.eq(rw(), [], 'nothing changed yet');
     s.flags.ch2_done = true; s.flags.mb2_done = true;
     t.eq(rw(), ['reedwake'], 'after Saltglass and the festival elsewhere: Reedwake has changed');

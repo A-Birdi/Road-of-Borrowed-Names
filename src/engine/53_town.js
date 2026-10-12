@@ -115,12 +115,14 @@ RB.town = (function () {
     const T = towns()[id];
     return T ? (T.beats || []).filter((b) => RB.state.test(s, b.when)) : [];
   }
-  // A town whose active beats you have not yet been back to see: [{ town, name }] for the Journey's one-line hints
+  // A town whose active beats you have not yet been back to see: [{ town, name }] for the Journey's one-line hints.
+  // Only a town you have been to (a place you have never seen cannot have "changed since you were last there").
   function changed(s) {
     const R = rec(s);
     const out = [];
     for (const id in towns()) {
-      const seen = R.beats[id] || {};
+      if (!R.beats[id]) continue;
+      const seen = R.beats[id];
       if (beats(s, id).some((b) => !seen[b.id])) out.push({ town: id, name: towns()[id].name });
     }
     return out;
