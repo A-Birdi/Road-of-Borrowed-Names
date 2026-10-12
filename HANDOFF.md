@@ -254,8 +254,8 @@
     (`src/engine/50_world.js` dismissExtras), Heisuke, the Hall's endings, Nao's night apart, four pictures re-set where
     their scenes play, six that showed what the world did not have, Steamhollow's evening yukata (`58f_festdress.js`).
     Since then: `sequence_world` 2524/0; the complete browser run's parts 7–8 and `--extra` done and traced (every
-    failure a test the game had outgrown, fixed and rerun); `staging_chapters` split by chapter in `run.mjs`, its
-    pieces running (showcase, 1, 2 passed). **MT-1 (Robin's music performance, 2026-10-12): done in the build, not
+    failure a test the game had outgrown, fixed and rerun); `staging_chapters` split by chapter in `run.mjs`, every
+    piece passed (14,853 checks): **the complete browser run is done**. **MT-1 (Robin's music performance, 2026-10-12): done in the build, not
     deployed.** Settings › Audio › Music performance, Original (default) or Ensemble, in the title, Ledger and battle
     settings, with a status line saying what actually plays; two pilot recordings (`snowbell`, `battle_keepers`) in
     `assets/music/ensemble/` beside the page, made from the current score by `tools/music/ensemble/` and admitted by
@@ -265,7 +265,7 @@
     rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
     `tests/e2e/music_performance.mjs`; the chain and the full matrix run at Original only, never again with Ensemble
     (Robin's C-88). A new recording: the five steps in that doc, then rebuild.
-    Next: the remaining `staging_chapters` pieces, the chain redone, then P17's closure (speed, the final review set,
+    Next: the twelve-chapter chain redone on the final build, then P17's closure (speed, the final review set,
     the night sweep), VA-1, P18, and only then the hosted page (its deploy must also copy `assets/music/ensemble/`).
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are

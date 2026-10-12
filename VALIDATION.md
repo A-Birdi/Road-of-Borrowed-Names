@@ -4460,7 +4460,10 @@ the three failures traced to tests the game had outgrown, fixed in the tests, ea
 The seven that passed: `creatures_a` (188 s), `battle_geometry` (104 s), `battle_invariance` (640 configurations,
 24 fixtures, each identical across its presentation settings; 1905 s), `sequence_chapters` (259 s),
 `sequence_chapters_56` (394 s), `sequence_dev` (33 s), `overworld_figures` (16 s). Then `staging_chapters` by piece:
-`--ch=showcase` 66/0, `--ch=1` 698/0; the others follow.
+`--ch=showcase` 66/0, `--ch=1` 698/0, `--ch=2` 1,623/0, `--ch=3` 2,267/0, `--ch=4` 1,350/0, `--ch=5` 2,199/0 (rerun:
+the first attempt was cut off by its job's time limit, not by a failure), `--ch=6` 2,057/0, `--ch=misc` 3,593/0.
+**The complete browser run is done**: parts 1–8, `--extra` and `staging_chapters` by piece, every failure traced and
+the outgrown tests fixed and rerun.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:
