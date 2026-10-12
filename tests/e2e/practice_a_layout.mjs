@@ -6,7 +6,7 @@
 // focus starts on a control. Captures: docs/screenshots/practice_a/layout_*.png (a selection).
 // Usage: node tests/e2e/practice_a_layout.mjs [filter]
 import { serve, launch, page } from './lib.mjs';
-import { start, press, wait, overflow, smallTargets, shot, phone, drawMouse, PROOF_PAGE, proofSource } from './practice_a_lib.mjs';
+import { start, press, wait, overflow, smallTargets, shot, phone, drawMouse, PROOF_PAGE, proofSource, openMementos } from './practice_a_lib.mjs';
 
 const only = process.argv[2];
 const { srv, url } = await serve();
@@ -83,8 +83,7 @@ const STATES = {
   async mementos(p, c) {
     await deskOpen(p, c.text); await sixPages(p);
     await press(p, '[data-dk=leave]', HOW); await wait(p, 500);
-    await p.evaluate(() => RB.ui.menu.open('journey')); await p.waitForSelector('[data-jv=mementos]');
-    await press(p, '[data-jv=mementos]', HOW); await p.waitForSelector('.pm-grid'); await wait(p, 250);
+    await openMementos(p, HOW); await p.waitForSelector('.pm-grid'); await wait(p, 250);
     return '.folio';
   },
 };

@@ -286,9 +286,25 @@ export default async (t) => {
   }
 
   // ---- quiet puzzle spaces -----------------------------------------------------------------------------------------------
+  // Creatures keep still while you stand within two tiles of what an action works at (src/engine/50_world.js
+  // atMechanism), and none can be standing there already: no creature's round (its home ± its patrol) comes within two
+  // tiles of an action's prop that a journey can meet (the journey's own dungeons have their creatures).
   {
     const maps = new Set();
-    for (const v of V.list()) if (v.kind !== 'route') maps.add(v.map || (v.basins && Object.values(v.basins)[0].map));
-    for (const m of maps) t.ok(!(C.maps[m].foes || []).some((f) => f.patrol && !/^vbf_/.test(f.id)), m + ': no roaming creature where something is examined');
+    for (const v of V.list()) if (v.kind !== 'route') { if (v.map) maps.add(v.map); for (const b of Object.values(v.basins || {})) maps.add(b.map); }
+    for (const m of maps) {
+      const near = [];
+      for (const pr of C.maps[m].props || []) {
+        if (pr.scene !== 'vb.open' && pr.scene !== 'vb.mark') continue;
+        if (/dev_/.test(pr.if || '')) continue; // the development fixtures (behind the switch) are not a journey's
+        for (const f of C.maps[m].foes || []) {
+          if (/^vbf_/.test(f.id)) continue;
+          const hx = f.home ? f.home[0] : f.x, hy = f.home ? f.home[1] : f.y, pat = f.patrol || 0;
+          const gap = Math.max(Math.abs(pr.x - hx) - pat, Math.abs(pr.y - hy) - pat);
+          if (gap <= 2) near.push(f.id + ' by ' + pr.x + ',' + pr.y);
+        }
+      }
+      t.eq(near, [], m + ': no creature\'s round reaches where something is examined');
+    }
   }
 };

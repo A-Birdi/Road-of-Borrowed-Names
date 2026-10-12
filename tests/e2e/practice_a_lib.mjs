@@ -135,6 +135,25 @@ export async function press(p, sel, how) {
   else await p.mouse.click(pt.x, pt.y);
 }
 
+// Journey › Practice mementos, opened with real presses once the book has opened (a press mid-opening can miss). A
+// twelve-chapter journey groups the keepsakes, the practice mementos and the fishing notes under one Mementos entry,
+// whose pages are a row below it (K10, src/ui/50_menu.js): that entry first, then the page; a six-chapter journey
+// lists the page itself.
+export async function openMementos(p, how) {
+  const settled = () => p.waitForFunction(() => { const f = document.querySelector('.folio'); return !!f && f.getAnimations({ subtree: true }).every((a) => a.playState !== 'running'); });
+  await p.evaluate(() => RB.ui.menu.open('journey'));
+  await p.waitForSelector('.subnav [data-jv]');
+  await settled();
+  if (!(await p.$('[data-jv=mementos]'))) {
+    const group = await p.evaluate(() => { const b = [...document.querySelectorAll('.subnav [data-jv]')].find((x) => x.textContent.trim() === 'Mementos'); return b && b.dataset.jv; });
+    if (!group) throw new Error('no Mementos in the Journey');
+    await press(p, '.subnav [data-jv="' + group + '"]', how);
+    await p.waitForSelector('[data-jv=mementos]');
+    await settled();
+  }
+  await press(p, '[data-jv=mementos]', how);
+}
+
 // Anything wider than the screen under a root (rt and screen-reader text aside).
 export async function overflow(p, rootSel) {
   return p.evaluate((rs) => {

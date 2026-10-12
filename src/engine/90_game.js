@@ -366,6 +366,7 @@ RB.game = (function () {
       if (ev.if && !RB.state.test(G.s, ev.if)) continue;
       if (ev.once !== false && G.s.flags[key]) continue;
       G.s.flags[key] = true;
+      if (RB.town) RB.town.storyOnArrival(m.id);
       RB.script.run(ev.scene);
       return;
     }

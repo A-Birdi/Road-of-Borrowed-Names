@@ -43,7 +43,11 @@ export default async (t) => {
   const koji = C.maps['rw.tea'].npcs.find((n) => n.id === 'koji');
   const kojiFirst = (s) => (koji.talk.find((x) => !x.if || test(s, x.if)) || {}).scene;
   t.ok(kojiFirst(camp({ edition: 1, flags: ['rw_koji_back', 'post', 'mb2_done'] })) !== 'mp.river_koji', 'Kōji in a six-chapter journey: no boat down to Manybridge');
-  t.eq(kojiFirst(camp({ flags: ['rw_koji_back', 'mb2_done'] })), 'mp.river_koji', 'after the Opening, his boat goes down to Manybridge');
+  const kojiOn = camp({ flags: ['rw_koji_back', 'mb2_done'] });
+  kojiOn.quests.lq_fare = { stage: 2, done: false };
+  t.eq(kojiFirst(kojiOn), 'mp.river_koji', 'after the Opening, his boat goes down to Manybridge');
+  t.eq(kojiFirst(camp({ flags: ['rw_koji_back', 'mb2_done'] })), 'lq.fare_koji', 'and the boat does not take the place of the long road\'s fare: a journey that has not heard of it still can');
+  t.ok(koji.talk.findIndex((x) => x.scene === 'mp.river_koji') < koji.talk.findIndex((x) => x.scene === 'rw.koji_tea'), 'the boat comes before his everyday lines');
   const north = C.maps['sg.road'].exits.find((e) => e.to === 'co.road');
   t.ok(!test(camp({ flags: ['ch2_done', 'mb1_done'] }), north.if) && test(camp({ flags: ['ch2_done', 'mb1_done', 'mb2_done'] }), north.if), 'the road north from Saltglass mends at the chapter\'s end');
 

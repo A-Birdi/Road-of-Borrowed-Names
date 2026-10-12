@@ -42,7 +42,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { map: 'sz.hamlet', x: 21, y: 18, dir: 'down', perform: 'tally', line: ['{船|ふね} が {着|つ}いたら 、 すぐ {数|かぞ}える の ！ {台|だい} に {並|なら}べる {前|まえ} に ね 。', 'When a boat comes in, I count straight away! Before it goes out on the stall.'] },
     { map: 'sz.hamlet', x: 36, y: 8, dir: 'up', line: ['{郵便|ゆうびん} の {配達|はいたつ} ！ {手紙|てがみ} が {来|き}た {日|ひ} は 、 {市|いち} より {忙|いそが}しい の よ 。', 'Delivering the post! The days the letters come are busier than market days.'] },
   ] });
-  L.away('sazanami', 'sz_uki', { map: 'sz.hamlet', x: 29, y: 12, p: 'fw_note', line: ['{札|ふだ} 。 「{配達|はいたつ} {中|ちゅう} 。 {桟橋|さんばし} か 、 {家|いえ} を {回|まわ}って います 。 ウキ」', 'A card: "Out on my rounds. At the jetty, or going round the houses. —Uki"'] });
+  L.away('sazanami', 'sz_uki', { map: 'sz.hamlet', x: 29, y: 12, p: 'fw_note', line: ['{札|ふだ} 。 「{配達|はいたつ} {中|ちゅう} 。 {桟橋|さんばし} に いる か 、 {家|いえ} を {回|まわ}って います 。 ウキ」', 'A card: "Out on my rounds. At the jetty, or going round the houses. —Uki"'] });
   L.routine('sazanami', 'sz_mina', { base: 'sz.hamlet:sz_mina', pin: 'quest.sz_school=0', slots: [
     { map: 'sz.hamlet', x: 10, y: 14, dir: 'up', line: ['ヨネ ばあちゃん の {結|むす}び{方|かた} を 、 {見|み}て {覚|おぼ}えてる の 。 {速|はや}くて 、 ぜんぜん {見|み}えない けど 。', 'I\'m learning Granny Yone\'s knots by watching. She\'s so fast I can\'t see a thing, though.'] },
     { map: 'sz.hamlet', x: 27, y: 17, dir: 'down', line: ['{貝殻|かいがら} を {探|さが}してる の 。 {空|から}っぽ の だけ だ よ 。 {中|なか} に {誰|だれ} か いる の は 、 {取|と}らない ！', 'I\'m looking for shells. Only empty ones! If someone lives inside, I don\'t take it!'] },
@@ -57,7 +57,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.cold('sz_yone', ['{誰|だれ} が どこ に いる か なんて 、 この {目|め} じゃ {見|み}えない よ 。 {網|あみ} の {目|め} で {精一杯|せいいっぱい} さ 。', 'Who\'s where? These eyes can\'t see that far. The meshes of a net are as much as I can manage.']);
   L.usual('sz_yone', ['ヨネ さん は 、 {網|あみ} の {干|ほ}し{場|ば} か 、 {桟橋|さんばし} か 、 {網|あみ} の {小屋|こや} です よ 。', 'Yone? At the drying racks, or the jetty, or the net shed.']);
   L.usual('sz_uki', ['ウキ さん は 、 {市|いち} の {台|だい} か {桟橋|さんばし} です 。 {郵便|ゆうびん} の {日|ひ} は 、 {家|いえ} を {回|まわ}って います 。', 'Uki? Her stall, or the jetty. On post days she goes round the houses.']);
-  L.usual('sz_mina', ['ミナ なら 、 {潮|しお}だまり か 、 {網|あみ} の ところ か 、 {浜|はま} で {貝殻|かいがら} を {探|さが}して います 。', 'Mina? The tide pools, or by the nets, or on the shingle hunting shells.']);
+  L.usual('sz_mina', ['ミナ なら 、 {潮|しお}だまり か 、 {網|あみ} の ところ に います 。 {浜|はま} で {貝殻|かいがら} を {探|さが}して いる かも しれません 。', 'Mina? The tide pools, or by the nets. Or maybe on the shingle, hunting shells.']);
   L.usual('sz_isaku', ['イサク さん なら 、 {漣|さざなみ} の {桟橋|さんばし} の そば で {網|あみ} を {見|み}て います よ 。', 'Isaku? By the jetty at Sazanami, seeing to the nets.']);
   L.usual('sz_riku', ['リク なら 、 {岬|みさき} の {潮|しお}だまり に います よ 。', 'Riku? At the tide pools on the point.']);
 
@@ -110,10 +110,10 @@ sz_yone: {目|め} は {悪|わる}く なって も 、 {仕事|しごと} は 
 # ---- return keys (W6) ------------------------------------------------------------------------------------------------------
 @scene sz.lw_open_chest
 # Opened with それぞれ (learned in Manybridge): three different knots, each undone its own way.
-narr: {三|みっ}つ の {結|むす}び{目|め} は 、 {三|みっ}つ とも {違|ちが}う 。 {同|おな}じ やり{方|かた} で は 、 ほどけない 。 || Three knots, all different. Done one way, they will never come undone.
+narr: {三|みっ}つ の {結|むす}び{目|め} は 、 {三|みっ}つ とも {違|ちが}う 。 {同|おな}じ やり{方|かた} で は 、 ほどけない 。 || Three knots, all different. Try them all the same way, and none will come undone.
 narr: {今|いま} は 「それぞれ」 を {知|し}って いる 。 {一|ひと}つ {目|め} は {引|ひ}いて 、 {二|ふた}つ {目|め} は {押|お}して 、 {三|みっ}つ {目|め} は {回|まわ}して 。 それぞれ の やり{方|かた} で ほどく と 、 {蓋|ふた} が {開|あ}いた 。 || But now you know それぞれ: each its own. The first you pull, the second you push through, the third you turn. Each undone its own way, and the lid comes up.
 narr: {中|なか} に は 、 {木|き} の {網針|あばり} が {並|なら}んで いた 。 {平|ひら}たくて 、 {手|て} の {脂|あぶら} で {光|ひか}って いる 。 || Inside lie wooden netting needles in a row, flat and shining from years of hands.
-sz_yone[surprise]: おや 、 それ を {開|あ}けた の かい 。 {昔|むかし} の {網元|あみもと} の {箱|はこ} だ よ 。 「{結|むす}び{目|め} を それぞれ ほどける {者|もの} だけ が 、 {網|あみ} を {繕|つくろ}える 」 って ね 。 || My, you opened that? It's the old net-master's box. "Only one who can undo each knot its own way can mend a net," he used to say.
+sz_yone[surprise]: おや 、 それ を {開|あ}けた の かい 。 {昔|むかし} の {網元|あみもと} の {箱|はこ} だ よ 。 「{結|むす}び{目|め} を それぞれ ほどける {者|もの} だけ が 、 {網|あみ} を {繕|つくろ}える 」 って ね 。 || My, you opened that? It's the old net-master's box. "Only one who can undo each knot its own way can mend a net," as the saying went.
 sz_yone[smile]: {網針|あばり} は {箱|はこ} に {戻|もど}して おき な 。 {次|つぎ} に {開|あ}ける {子|こ} の ため に ね 。 || Put the needles back in the box. For the next youngster who opens it.
 ?(comp=nao) comp: {結|むす}び{目|め} {一|ひと}つ ずつ に 、 {宛先|あてさき} が ある みたい だ な 。 || As if each knot had its own address.
 ?(comp=mio) comp[smile]: {薬|くすり} と {同|おな}じ です ね 。 {一人|ひとり} {一人|ひとり} 、 {効|き}く もの が {違|ちが}う 。 || Like medicine. What works is different for each person.

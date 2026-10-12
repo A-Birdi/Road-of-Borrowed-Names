@@ -133,7 +133,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: [ch({ item: 'v:子供', ctx: { jp: 'やど の あんない ： 「かみのゆ は しずか 。 しものゆ は にぎやか 。 こども と いっしょ なら 、 しものゆ が いい です よ 。」', en: '' }, prompt: { en: 'The family has two small children. Which inn does the guide suggest?' }, options: [o('しものゆ', 1), o('かみのゆ', 0, 'こども と いっしょ なら 、 しものゆ: with children, the Lower House.')] })],
     E: [ch({ item: 'g:comp_yori_hou', ctx: { jp: '{宿|やど} の {案内|あんない} ： 「{上|かみ}の{湯|ゆ} は 、 {下|しも}の{湯|ゆ} より {静|しず}か です 。 {下|しも}の{湯|ゆ} の {方|ほう} が {賑|にぎ}やか で 、 {子供|こども} に {人気|にんき} が あります 。」', en: '' }, prompt: { en: 'Which inn is quieter, and which do children like?' }, options: [o('{上|かみ}の{湯|ゆ} が {静|しず}か 。 {子供|こども} に は {下|しも}の{湯|ゆ}', 1), o('{下|しも}の{湯|ゆ} が {静|しず}か 。 {子供|こども} に は {上|かみ}の{湯|ゆ}', 0, '上の湯 は 下の湯 より 静か: the Upper House is the quieter one.'), o('どちら も {同|おな}じ', 0, 'より and の方が compare them: they differ.')] })],
     I: [ch({ item: 'g:conj_node', ctx: { jp: '{宿|やど} の {案内|あんない} ： 「{上|かみ}の{湯|ゆ} は {決|き}まり が {多|おお}い ので 、 {静|しず}か に {休|やす}みたい {方|かた} に 。 {下|しも}の{湯|ゆ} は {決|き}まり が {少|すく}ない ので 、 {子供|こども} {連|づ}れ でも {気楽|きらく} です 。」', en: '' }, prompt: { en: 'Why does the guide suit the Lower House to families?' }, options: [o('{決|き}まり が {少|すく}ない ので 、 {気楽|きらく} だ から', 1), o('{決|き}まり が {多|おお}い ので 、 {安心|あんしん} だ から', 0, 'That is the Upper House, for those who want quiet.'), o('{部屋|へや} が {広|ひろ}い ので', 0, 'The guide gives the rules as the reason (ので).')] })],
-    A: [ch({ item: 'g:keigo_kenjo', ctx: { jp: '{宿|やど} の {案内|あんない} ： 「どちら も {良|よ}い お{宿|やど} で ございます が 、 お{子様|こさま} {連|づ}れ でしたら 、 {下|しも}の{湯|ゆ} の {方|ほう} が お{気楽|きらく} か と {存|ぞん}じます 。」', en: '' }, prompt: { en: 'How strongly does the guide recommend the Lower House?' }, options: [o('{控|ひか}えめ に すすめて いる 。 「〜か と {存|ぞん}じます」 は 、 {丁寧|ていねい} な 「{思|おも}います」', 1), o('{上|かみ}の{湯|ゆ} は {悪|わる}い 、 と {言|い}って いる', 0, 'どちらも良いお宿: both are good inns.'), o('{下|しも}の{湯|ゆ} に {泊|と}まらなければ ならない', 0, '〜かと存じます is a soft, humble "I think", not an order.')] })],
+    A: [ch({ item: 'g:keigo_kenjo', ctx: { jp: '{宿|やど} の {案内|あんない} ： 「どちら も {良|よ}い お{宿|やど} で ございます が 、 お{子様|こさま} {連|づ}れ でしたら 、 {下|しも}の{湯|ゆ} の {方|ほう} が {気楽|きらく} に お{過|す}ごし いただける か と {存|ぞん}じます 。」', en: '' }, prompt: { en: 'How strongly does the guide recommend the Lower House?' }, options: [o('{控|ひか}えめ に すすめて いる 。 「〜か と {存|ぞん}じます」 は 、 {丁寧|ていねい} な 「{思|おも}います」', 1), o('{上|かみ}の{湯|ゆ} は {悪|わる}い 、 と {言|い}って いる', 0, 'どちらも良いお宿: both are good inns.'), o('{下|しも}の{湯|ゆ} に {泊|と}まらなければ ならない', 0, '〜かと存じます is a soft, humble "I think", not an order.')] })],
   } };
 
   // ---- W6: return keys (the twelfth chapter and after) ----------------------------------------------------------------
@@ -149,7 +149,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.talk('yn.kami:yn_oshige', [{ if: 'lw_yn_bell_rung&!seen.yn.lw_oshige_bell_post', scene: 'yn.lw_oshige_bell_post' }]);
   L.talk('yn.guild:yn_rokubei', [{ if: 'lw_yn_spring_open&!seen.yn.lw_rokubei_spring_post', scene: 'yn.lw_rokubei_spring_post' }]);
   C.notes.lw_yn_ridgebell = { title: T('The ridge bell', '{尾根|おね} へ の {鐘|かね}'), fiction: true,
-    jp: '{尾根|おね} の {村|むら} と {谷|たに} は 、 {昔|むかし} から {鐘|かね} で {合図|あいず} を {送|おく}り{合|あ}って いた 。 {山|やま} の {静|しず}けさ が {晴|は}れて 、 {鐘|かね} の {音|おと} が また {届|とど}く よう に なった 。',
+    jp: '{尾根|おね} の {村|むら} と {谷|たに} は 、 {昔|むかし} から {鐘|かね} で {合図|あいず} を {送|おく}り{合|あ}って いた 。 {山|やま} の {静|しず}けさ が ほどけて 、 {鐘|かね} の {音|おと} が また {届|とど}く よう に なった 。',
     en: 'The ridge villages and the valley have long signalled to each other with bells. With the mountain\'s silence lifted, the bells carry again.' };
   C.notes.lw_yn_springhouse = { title: T('The spring house', '{泉|いずみ} の {小屋|こや}'), fiction: true,
     jp: '{湯|ゆ}ノ{谷|たに} の {湯|ゆ} が {最初|さいしょ} に {湧|わ}いた {場所|ばしょ} に は 、 {石|いし} の {湯船|ゆぶね} が ある 。 {縁|ふち} に は 、 {代々|だいだい} の {湯守|ゆもり} の {名前|なまえ} が {刻|きざ}んで ある 。 {一番|いちばん} {新|あたら}しい の は 、 ロクベエ 。',
@@ -188,7 +188,7 @@ narr: {道|みち} の {脇|わき} の {湯|ゆ} の {溜|た}まり に 、 {�
 narr: {通|とお}りがかり の {旅人|たびびと} が 、 {手|て} を {伸|の}ばした 。 「{一|ひと}つ ぐらい 、 いい だろう 」 。 || A passing traveller reaches for one. "Surely one won't hurt."
 !challenge yn.lw_eggs
 !if var._res=0 -> later
-narr: {札|ふだ} を {読|よ}んで {聞|き}かせる と 、 {旅人|たびびと} は {手|て} を {引|ひ}っ{込|こ}めた 。 「タマ さん の か 。 {下|した} の {蒸|む}し{場|ば} で {買|か}おう 。」 || You read the tag out, and the traveller draws back. "Tama's, is it? I'll buy one at the steam box down there."
+narr: {札|ふだ} を {読|よ}んで {聞|き}かせる と 、 {旅人|たびびと} は {手|て} を {引|ひ}っ{込|こ}めた 。 「タマ さん の か 。 {町|まち} の {蒸|む}し{場|ば} で {買|か}おう 。」 || You read the tag out, and the traveller draws back. "Tama's, is it? I'll buy one at the steam box in town."
 !hook road_done yn_descent eggs
 !end
 :later
@@ -196,7 +196,7 @@ narr: {旅人|たびびと} は {卵|たまご} を {一|ひと}つ {掴|つか}
 
 @scene yn.lw_road_descent_manners
 # Road event (W5, a variant): a first-timer puzzling over the bath rules
-narr: {初|はじ}めて {湯|ゆ}ノ{谷|たに} へ {行|い}く と いう {旅人|たびびと} が 、 {湯守|ゆもり} の {張|は}り{紙|がみ} の {前|まえ} で {首|くび} を かしげて いる 。 || A traveller on their way to Steamhollow for the first time is puzzling over a notice from the bath-keepers.
+narr: {初|はじ}めて {湯|ゆ}ノ{谷|たに} へ {行|い}く と いう {旅人|たびびと} が 、 {湯|ゆ} の {決|き}まり の {張|は}り{紙|がみ} の {前|まえ} で {首|くび} を かしげて いる 。 || A traveller on their way to Steamhollow for the first time is puzzling over a notice of the bath rules.
 narr: 「{湯|ゆ} の {決|き}まり 、 {読|よ}める かい ？ {手拭|てぬぐ}い は 、 {湯|ゆ} に {入|い}れて も いい の か な 。」 || "Can you read these bath rules? Can I take my towel in the water, I wonder?"
 !challenge yn.lw_manners
 !if var._res=0 -> later
@@ -237,7 +237,7 @@ yn_onatsu: {土産|みやげ} に 、 {山|やま} の {絵|え} の {手拭|て
 narr: {土産|みやげ} の {手拭|てぬぐ}い が {干|ほ}して ある 。 {北|きた} の {山|やま} と 、 {小|ちい}さな {灯|ひ} の {絵|え} 。 「{山|やま} の {書庫|しょこ} 、 {帰|かえ}り{道|みち} の {灯|ひ}」 と {染|そ}めて ある 。 || Souvenir towels hang drying: the north mountain and a little lamp, dyed with the words "The mountain's archive; a light for the way home."
 
 @scene yn.lw_bell_open_post
-narr: {山|やま} の {上|うえ} の {静|しず}けさ は 、 もう {晴|は}れた 。 {鐘|かね} を {打|う}つ と 、 {音|おと} が {谷|たに} を {登|のぼ}って いく 。 || The silence on the mountain has lifted. You strike the bell, and the sound climbs out of the valley.
+narr: {山|やま} の {上|うえ} の {静|しず}けさ は 、 もう ほどけた 。 {鐘|かね} を {打|う}つ と 、 {音|おと} が {谷|たに} を {登|のぼ}って いく 。 || The silence on the mountain has lifted. You strike the bell, and the sound climbs out of the valley.
 narr: しばらく して 、 {尾根|おね} の {上|うえ} から 、 {小|ちい}さな {鐘|かね} の {音|おと} が {返|かえ}って きた 。 {一|ひと}つ 、 また {一|ひと}つ 。 || After a while, from up on the ridge, small bells answer. One, then another.
 ?(comp=nao) comp: {返事|へんじ} だ 。 …… {届|とど}いた な 。 || A reply. …It got there.
 ?(comp=mio) comp[smile]: {村|むら} の {人|ひと} たち 、 {声|こえ} が {戻|もど}った ん です ね 。 || The villagers have their voices back.

@@ -162,7 +162,7 @@ async function reloadVia(p, slot) {
 // A post-story campaign in Reedwake whose ending passage has been had (or not: legacy).
 async function postgame(p, comp, o) {
   await p.evaluate(([comp, o]) => {
-    const flags = { rw_echo_done: true, departed: true, rw_koji_back: true, rw_hall_gather: true, bridge_fixed: true, ch1_done: true, ch2_done: true, ch3_done: true, ch4_done: true, ch5_done: true, lf_bell_rung: true, post: true, postgame: true, ch6_done: true, sa_done: true, sa_ren_took: true, sa_ren_decided: true, co_suzu_done: true };
+    const flags = { rw_echo_done: true, departed: true, rw_koji_back: true, rw_hall_gather: true, bridge_fixed: true, ch1_done: true, ch2_done: true, ch3_done: true, ch4_done: true, ch5_done: true, lf_bell_rung: true, post: true, postgame: true, ch6_done: true, sa_done: true, sa_ren_took: true, sa_ren_decided: true, co_suzu_done: true, ngp_offered: true }; // (New Game+'s offer has its own test: here it would cover the captures)
     const s = RB.game.debugStart('rw.village', 21, 10, { edition: RB.edition.forNew(), comp, profile: 'F', flags, dir: 'up' });
     RB.game.settings.textSpeed = 'instant';
     s.atlas.unlocked = true; s.seen['rw.atlas_intro'] = true;

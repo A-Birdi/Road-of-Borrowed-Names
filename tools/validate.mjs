@@ -516,6 +516,7 @@ let regTexts = 0;
     fishing: RB.fishing && RB.fishing.content(), // A Quiet Cast (docs/practice/fishing.md)
     press: C.press, // the press's blocks and readers (expansion P09; src/content/mp/30_press.js)
     festival: C.festival, // the festival games' words, prizes, lottery sentences and drum words (src/content/pastimes/5*_festival*.js)
+    living: { relations: C.relations, sealed: C.sealed, towns: C.towns }, // the Living World: asked-after and refusal lines, seal hints, change beats (src/content/zzz_living/)
   };
   for (const k in roots) walk(roots[k], k);
 }

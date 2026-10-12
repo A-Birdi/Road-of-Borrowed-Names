@@ -250,7 +250,9 @@ RB.town = (function () {
     if (!id) return null;
     const D = C().roadEvents[id];
     const R = rec(s);
+    if (D.when && !RB.state.test(s, D.when)) return null; // a road whose events start later (the Mill Road: after setting out)
     if (!arrival || arrival.to !== mapId || arrival.moves !== R.moves) return null; // walked here, this visit
+    if (arrival.story) return null; // the map's own story met you on arriving (a chapter's arrival): the road's waits
     const r = R.roads[id] || (R.roads[id] = { unique: null, solved: {}, offered: 0 });
     // An event is offered once per visit. The game asks again after every scene on the map (90_game.js afterScene
     // runs the enter events), so a second ask on the same transition is no new visit; nor is walking on to the
@@ -265,6 +267,9 @@ RB.town = (function () {
     const v = open[Math.floor(RB.streams.next(s, 'road:' + id) * open.length)];
     return v.scene;
   }
+  // a map's enter event (its story) runs on this arrival (90_game.js runEnterEvents): it is the visit's event, and a
+  // road's does not follow on its heels
+  function storyOnArrival(mapId) { if (arrival && arrival.to === mapId) arrival.story = true; }
   // a road event's scene says it is solved (`!hook road_done <road> <id>`)
   function roadDone(s, road, id) {
     const R = rec(s);
@@ -346,7 +351,7 @@ RB.town = (function () {
 
   return {
     rec, townOf, slotOf, tick, beforeEnter, rested, beats, changed, visited, whereabouts, askable, findable, usualPlaces, note, seen,
-    roadOf, roadEventAt, LINES,
+    roadOf, roadEventAt, storyOnArrival, LINES,
     roadDone, unfinished, sealedOn, canOpen, examine, noticed,
   };
 })();

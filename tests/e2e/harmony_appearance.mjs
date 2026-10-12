@@ -28,6 +28,8 @@ const t0 = Date.now();
 let pass = 0, fail = 0;
 const ok = (c, m) => { if (c) { pass++; console.log('ok   ' + m); } else { fail++; console.log('FAIL ' + m); } };
 const J = (v) => JSON.stringify(v);
+// a look as data: its keys in a fixed order (the registry is written with sorted keys, the game keeps the item's order)
+const canon = (v) => JSON.stringify(v, (k, x) => (x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map((q) => [q, x[q]])) : x));
 const secs = () => ((Date.now() - t0) / 1000).toFixed(0) + ' s';
 
 // ---- the registry -----------------------------------------------------------------------------------------------------
@@ -72,11 +74,14 @@ function expectFiles(look, keepsake) {
   }
   return out;
 }
-// does wearing the keepsake's colours change anything (a colour equal to its channel's default does not)
+// does wearing the keepsake's colours change the painted bust: only through its accessory's channel (CONTRACT.md §3.4:
+// glasses are never recoloured, a bell's metal is fixed; the registry's `channel`), only with a colour other than the
+// channel's default, and only when the bust shows the keepsake at all
 function wearChanges(id) {
   const k = KS[id];
   if (!k.wear) return null;
-  return Object.entries(k.wear).some(([f, v]) => !(k.channel && k.channel.field === f && String(k.channel.def).toLowerCase() === String(v).toLowerCase()));
+  const ch = k.visibleInBust && k.channel;
+  return !!ch && ch.field in k.wear && String(ch.def).toLowerCase() !== String(k.wear[ch.field]).toLowerCase();
 }
 const fixtures = [];
 function add(fx) {
@@ -281,7 +286,7 @@ async function helpers(p) {
     'the registry matches the game: ' + HAIR.length + ' hairstyles, ' + CA.ids.length + ' creation accessories, ' + Object.keys(KS).length + ' cosmetic keepsakes, companions ' + COMPS.join(', '));
   ok(J(game.states) === J(STATES) && game.native.standard.w === PAIR.standard.w && game.native.standard.h === PAIR.standard.h && game.native.compact.w === PAIR.compact.w && game.native.compact.h === PAIR.compact.h && game.approval === 'approved' && game.synthetic === false,
     'the shipped painted art is installed: ' + STATES.length + ' states, the ' + PAIR.standard.w + ' × ' + PAIR.standard.h + ' pair (compact ' + PAIR.compact.w + ' × ' + PAIR.compact.h + '), player kit ' + game.approval);
-  const kf = fixtures.filter((f) => f.keepsake), lookBad = kf.filter((f, i) => J(game.looks[i]) !== J(f.look)).map((f) => f.id);
+  const kf = fixtures.filter((f) => f.keepsake), lookBad = kf.filter((f, i) => canon(game.looks[i]) !== canon(f.look)).map((f) => f.id);
   ok(!lookBad.length, 'the registry\'s resolver gives exactly what RB.equip.lookWith gives, for all ' + kf.length + ' keepsake fixtures (same-place replacement, the keepsake\'s colours)' + (lookBad.length ? ': differ ' + lookBad.join(', ') : ''));
 
   // ---- coverage of the generated set ---------------------------------------------------------------------------------
@@ -400,7 +405,7 @@ async function helpers(p) {
     const notes = [];
     if (r.hat.length) notes.push('hat band: ' + r.hat.reduce((n, h) => n + h.hidden, 0) + ' hair px hidden over ' + r.hat.length + ' states');
     if (r.order.length) { const o0 = r.order[0], what = o0.what === 'arm' ? 'the brush arm' : o0.what === 'hair_front' ? 'the fringe' : o0.what; notes.push(what + ' over ' + o0.under.join('+') + ' at ' + r.order.length + ' states: unchanged in ' + r.order.reduce((n, o) => n + o.px, 0) + ' px' + (o0.armOnFace != null ? ', ' + Math.max(...r.order.filter((o) => o.comp === fx.comp && o.st === fx.beat).map((o) => o.armOnFace)) + ' arm px on the face at ' + fx.comp + ' ' + fx.beat : '')); }
-    if (fx.wear) notes.push('colours ' + (fx.wearChanges ? r.wear + ' px changed' : 'equal to the channel default'));
+    if (fx.wear) notes.push('colours ' + (fx.wearChanges ? r.wear + ' px changed' : (KS[fx.keepsake].channel && KS[fx.keepsake].channel.field in fx.wear ? 'equal to the channel default' : 'not a channel of the painted bust') + ' (' + r.wear + ' px changed)'));
     ok(good, tag + ': ' + r.comps + ' compositions painted at ' + PAIR.standard.w + ' × ' + PAIR.standard.h + (every ? ' (every state, and compact at peak)' : ' (peak)') + '; accessories in the plan and the bust ' + J(Object.fromEntries(Object.entries(r.acc).map(([a, by]) => [a, Math.max(...Object.values(by))]))) + (notes.length ? '; ' + notes.join('; ') : '') +
       (good ? '' : ' — ' + J({ bad: r.bad.slice(0, 4), errors: r.errors.slice(0, 3), fallbacks: r.fallbacks, log: r.fallbackLog, acc: accBad, wear: wearBad ? r.wear : undefined, hat: hatBad.slice(0, 2), order: orderBad.slice(0, 3) })));
   }

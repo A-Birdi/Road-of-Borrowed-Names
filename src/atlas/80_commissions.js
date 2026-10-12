@@ -197,8 +197,10 @@ RB.atlasCommissions = (function () {
   C.stamps = C.stamps || {};
   C.stamps['atlas.surveys'] = { id: 'atlas.surveys', family: 'dungeon', hidden: true, title: T('Every road surveyed', '{全|すべ}て の {道|みち} の {調査|ちょうさ}'), criteria: T('Survey all three areas of the Unwritten Atlas.', '{三|みっ}つ の {調査|ちょうさ}'),
     when: (s) => !!(RB.edition && RB.edition.of(s) >= 2 && RB.atlasCommissions && RB.atlasCommissions.surveyed(s).length === Object.keys(RB.atlasCommissions.AREAS).length), stand: null, design: { shape: 'round', motif: 'path', ink: '#2a4f8a' } };
+  // one step out from the back wall, right of the carpet (7–8,3): against the wall (7–8,2) it stood on the only tiles in
+  // front of Nao's wall card (7,1) and the practice lamps' rack (9,2), and hid the card; both are reached past it now
   const hall = C.maps['rw.hall'];
-  if (hall) hall.props = (hall.props || []).concat([{ p: 'noticeboard', x: 7, y: 2, scene: 'atlas.board', if: 'ed>=2&postgame' }]);
+  if (hall) hall.props = (hall.props || []).concat([{ p: 'noticeboard', x: 7, y: 3, scene: 'atlas.board', if: 'ed>=2&postgame' }]);
 })(RB.content);
 
 RB.script.add(`

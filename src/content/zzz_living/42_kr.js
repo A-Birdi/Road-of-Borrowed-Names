@@ -52,6 +52,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 散りて|ちりて|exp|A|having fallen, scattered (classical form of 散って)
 明らか|あきらか|adj-na|I|clear, bright
 散らす|ちらす|v5s|I|to scatter
+行き来|いきき|n|I|coming and going, traffic (between two places)
 `));
 
   // ---- the towns ----------------------------------------------------------------------------------------------------
@@ -60,7 +61,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- W2: routines ---------------------------------------------------------------------------------------------------
   L.routine('kr_foot', 'kr_aya', { base: 'kr.foot_inn:kr_aya', pin: 'quest.kr_inkstone&!quest.kr_inkstone=done', slots: [
-    { map: 'kr.foot', x: 10, y: 9, dir: 'down', perform: 'sweep', line: ['{表|おもて} を {掃|は}いて おかない と 、 {油|あぶら} の {荷|に} が {通|とお}る とき に {滑|すべ}る の よ 。', 'If I don\'t sweep the front, the oil loads slip when they come through.'] },
+    { map: 'kr.foot', x: 10, y: 9, dir: 'down', perform: 'sweep', line: ['{表|おもて} を {掃|は}いて おかない と 、 {油|あぶら} を {運|はこ}ぶ {人|ひと} が {通|とお}る とき に {滑|すべ}る の よ 。', 'If I don\'t sweep the front, the oil carriers slip when they come through.'] },
     { map: 'kr.foot', x: 8, y: 11, dir: 'up', line: ['{迎|むか}え の {灯|ひ} の {芯|しん} を {切|き}る の は 、 わたし の {仕事|しごと} に なった の 。 {数|かぞ}えたら 、 {今月|こんげつ} で {十二回目|じゅうにかいめ} 。', 'Trimming the Welcoming Light\'s wick is my job now. I counted: that\'s the twelfth time this month.'] },
   ] });
   L.away('kr_foot', 'kr_aya', { map: 'kr.foot_inn', x: 2, y: 3, p: 'fw_note', line: ['{帳場|ちょうば} の {横|よこ} に {書|か}き{置|お}き 。 「{表|おもて} に います 。 {大|おお}きな {声|こえ} で {呼|よ}んで ね 。 アヤ 」', 'A note by the counter: "Out front. Call loudly. —Aya"'] });
@@ -99,18 +100,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ---- W1: change beats ---------------------------------------------------------------------------------------------
   // already in the journey: Kotonoha's leaf home to the plate on the lantern at the pass, which Aya notices
   // (zz_ko_mainland.js), and Tsuru's reply waiting at the teahouse (kr/23_scenes_side.js)
-  L.beat('kr_foot', { id: 'leaf', when: 'ko_ret_kr', en: 'A leaf home to the plate on the lantern at the pass', jp: '{峠|とうげ} の {灯籠|とうろう} の {名札|なふだ}' });
-  L.beat('kr_foot', { id: 'reply', when: 'quest.kr_inkstone=1&kr_done', en: 'Tsuru\'s reply, held at the teahouse', jp: 'ツル の {返事|へんじ}' });
+  L.beat('kr_foot', { id: 'leaf', when: 'ko_ret_kr', en: 'A leaf home to the plate on the lantern at the pass', jp: '{峠|とうげ} の {灯籠|とうろう} の {名札|なふだ} に {帰|かえ}った {葉|は}' });
+  L.beat('kr_foot', { id: 'reply', when: 'quest.kr_inkstone=1&kr_done', en: 'Tsuru\'s reply, held at the teahouse', jp: '{茶屋|ちゃや} で {預|あず}かって いる ツル の {返事|へんじ}' });
   // new: Lanternfall's oil, in the jars from Cinder Orchard; its merchant says no for the first time
-  L.beat('kr_foot', { id: 'oil', when: 'ch5_done', en: 'Oil from Lanternfall by the teahouse', jp: '{灯落|ひおち} の {油|あぶら}' });
+  L.beat('kr_foot', { id: 'oil', when: 'ch5_done', en: 'Oil from Lanternfall outside the teahouse', jp: '{茶屋|ちゃや} の {前|まえ} に 、 {灯落|ひおち} の {油|あぶら}' });
   C.maps['kr.foot'].props.push({ p: 'kr_jar', x: 12, y: 8, if: 'beat.kr_foot.oil', scene: 'lf.lw_kr_oil_jars' }, { p: 'kr_jar', x: 13, y: 8, if: 'beat.kr_foot.oil', scene: 'lf.lw_kr_oil_jars' });
   L.talk('kr.foot_inn:kr_aya', [{ if: 'beat.kr_foot.oil&!seen.lf.lw_kr_oil_aya', scene: 'lf.lw_kr_oil_aya' }]);
   // new: shingles from Lanternfall for the lodge's roof
-  L.beat('kr_lodge', { id: 'shingles', when: 'ch5_done', en: 'New shingles from Lanternfall', jp: '{灯落|ひおち} の {屋根|やね} {板|いた}' });
+  L.beat('kr_lodge', { id: 'shingles', when: 'ch5_done', en: 'New shingles from Lanternfall', jp: '{灯落|ひおち} から {新|あたら}しい {屋根|やね} {板|いた}' });
   C.maps['kr.lodge'].props.push({ p: 'sb_woodpile', x: 3, y: 14, if: 'beat.kr_lodge.shingles', scene: 'lf.lw_kr_shingles' });
   L.talk('kr.lodge:kr_mokichi', [{ if: 'beat.kr_lodge.shingles&!seen.lf.lw_kr_shingles_mokichi', scene: 'lf.lw_kr_shingles_mokichi' }]);
   // new: Tsuru writes to Hisae with her teacher's inkstone
-  L.beat('kr_lodge', { id: 'tsuru', when: 'kr_inkstone_done', en: 'A letter from Reedwake on Hisae\'s table', jp: '{葦|あし}ノ{瀬|せ} から の {手紙|てがみ}' });
+  L.beat('kr_lodge', { id: 'tsuru', when: 'kr_inkstone_done', en: 'A letter from Reedwake by Hisae\'s table', jp: 'ヒサエ の {机|つくえ} の {横|よこ} に 、 {葦|あし}ノ{瀬|せ} から の {手紙|てがみ}' });
   C.maps['kr.hisae'].props.push({ p: 'fw_note', x: 7, y: 2, if: 'beat.kr_lodge.tsuru', scene: 'kr.lw_kr_tsuru_letter' });
   L.talk('kr.lodge:kr_hisae', [{ if: 'beat.kr_lodge.tsuru&!seen.kr.lw_kr_tsuru_hisae', scene: 'kr.lw_kr_tsuru_hisae' }]);
 
@@ -131,14 +132,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '{晴|は}れて いる のに {降|ふ}る {雨|あめ} を 、 「{狐|きつね} の {嫁入|よめい}り 」 と いう 。 {狐|きつね} が {人|ひと} に {見|み}られない よう に 、 {雨|あめ} に {隠|かく}れて {嫁入|よめい}り を する 、 と {言|い}われて きた 。',
     en: 'A sun shower, rain from a clear sky, is called kitsune no yomeiri, "the fox\'s wedding": the foxes, so the old saying goes, hold their wedding procession under cover of the rain so that no one sees them.' };
   C.notes.lw_kr_unkai = { title: T('A sea of clouds', '{雲海|うんかい}'), fiction: false,
-    jp: '{山|やま} の {上|うえ} から {見|み}る と 、 {谷|たに} を {埋|う}める {雲|くも} が {海|うみ} の よう に {見|み}える 。 {風|かぜ} の ない {晴|は}れた {夜|よる} の {後|あと} に {出|で}やすい ので 、 「{朝|あさ} の {雲海|うんかい} は {晴|は}れ 」 と {言|い}う 。',
-    en: 'From a mountain, cloud filling the valleys below looks like a sea: unkai. It forms most often after a still, clear night, so the saying goes that a morning sea of clouds means a fine day.' };
+    jp: '{山|やま} の {上|うえ} から {見|み}る と 、 {谷|たに} を {埋|う}める {雲|くも} が {海|うみ} の よう に {見|み}える 。 {風|かぜ} の ない {晴|は}れた {夜|よる} の {後|あと} に {出|で}やすい ので 、 {雲海|うんかい} の {出|で}た {日|ひ} は {晴|は}れる こと が {多|おお}い 。',
+    en: 'From a mountain, cloud filling the valleys below looks like a sea: unkai. It forms most often after a still, clear night, so a day that starts with a sea of clouds is usually fine.' };
 
   C.challenges['kr.lw_steps_rain'] = { title: TJ('{雨|あめ} の {石段|いしだん}', 'The steps in the rain'), tiers: {
     F: [ch({ item: 'v:端', ctx: { jp: 'ふだ ： 「あめ の ひ は 、 はし を あるく 。 まんなか は すべる 。」', en: '' }, prompt: { en: 'Where do you walk on a rainy day?' }, options: [o('はし', 1), o('まんなか', 0, 'まんなか は すべる: the middle is slippery.')] })],
     E: [ch({ item: 'v:苔', ctx: { jp: '{札|ふだ} ： 「{雨|あめ} の {日|ひ} は 、 {石段|いしだん} の {端|はし} を {歩|ある}いて ください 。 {真|ま}ん{中|なか} は {苔|こけ} で {滑|すべ}ります 。」', en: '' }, prompt: { en: 'Why not the middle?' }, options: [o('{苔|こけ} で {滑|すべ}る から', 1), o('{狭|せま}い から', 0, 'The sign gives the reason: {苔|こけ} で {滑|すべ}ります.'), o('{灯籠|とうろう} が ある から', 0, 'The sign gives the reason: the moss.')] })],
     I: [ch({ item: 'g:kr_ni_yoruto', ctx: { jp: 'クマゾウ ： 「{親父|おやじ} に よると 、 {昔|むかし} は {灯守|ひもり} が {毎朝|まいあさ} {苔|こけ} を {削|けず}って いた そう だ 。」', en: '' }, prompt: { en: 'Who says what?' }, options: [o('クマゾウ さん の お{父|とう}さん の {話|はなし} で は 、 {昔|むかし} {灯守|ひもり} が {苔|こけ} を {削|けず}って いた', 1), o('クマゾウ さん が {毎朝|まいあさ} {苔|こけ} を {削|けず}って いる', 0, '〜に よると: he is passing on his father\'s account of the old days.'), o('{灯守|ひもり} に よると 、 {苔|こけ} は {削|けず}らない', 0, 'The source is Kumazō\'s father.')] })],
-    A: [ch({ item: 'g:kr_classical', ctx: { jp: '{古|ふる}い {札|ふだ} ： 「{雨|あめ} の {日|ひ} 、 {段|だん} の {中|なか} を {行|ゆ}く べからず 。」', en: '' }, prompt: { en: 'The old sign (classical; べからず is the negative of べし): what does it say?' }, options: [o('{雨|あめ} の {日|ひ} は 、 {真|ま}ん{中|なか} を {歩|ある}いて は いけない', 1), o('{雨|あめ} の {日|ひ} は 、 {真|ま}ん{中|なか} を {歩|ある}く べき だ', 0, 'べからず is "must not".'), o('{雨|あめ} の {日|ひ} は 、 {石段|いしだん} を {使|つか}えない', 0, 'Only the middle of the steps is forbidden.')] })],
+    A: [ch({ item: 'g:kr_classical', ctx: { jp: '{古|ふる}い {札|ふだ} ： 「{雨|あめ} の {日|ひ} 、 {段|だん} の {真|ま}ん{中|なか} を {行|ゆ}く べからず 。」', en: '' }, prompt: { en: 'The old sign (classical; べからず is the negative of べし): what does it say?' }, options: [o('{雨|あめ} の {日|ひ} は 、 {真|ま}ん{中|なか} を {歩|ある}いて は いけない', 1), o('{雨|あめ} の {日|ひ} は 、 {真|ま}ん{中|なか} を {歩|ある}く べき だ', 0, 'べからず is "must not".'), o('{雨|あめ} の {日|ひ} は 、 {石段|いしだん} を {使|つか}えない', 0, 'Only the middle of the steps is forbidden.')] })],
   } };
   C.challenges['kr.lw_steps_marks'] = { title: TJ('{幹|みき} の {印|しるし}', 'The marks on the trunks'), tiers: {
     F: [ch({ item: 'v:残す', ctx: { jp: 'クマゾウ ： 「みき に ばつ が ある き は きる 。 まる が ある き は のこす 。」', en: '' }, prompt: { en: 'This tree has a まる. What happens to it?' }, options: [o('のこす', 1), o('きる', 0, 'ばつ means cut; まる means keep.')] })],
@@ -155,8 +156,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.challenges['kr.lw_fox_plank'] = { title: TJ('{浮|う}いた {板|いた}', 'The loose plank'), tiers: {
     F: [ch({ item: 'v:板', ctx: { jp: 'はりがみ ： 「むこう から さんまいめ の いた を ふまないで 。」', en: '' }, prompt: { en: 'Which plank must you not step on?' }, options: [o('むこう から さんまいめ', 1), o('こちら から さんまいめ', 0, 'むこう から: counted from the far side.')] })],
     E: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: '{貼|は}り{紙|がみ} ： 「{向|む}こう {側|がわ} から {三枚目|さんまいめ} の {板|いた} は 、 {踏|ふ}まないで ください 。 ショウゾウ 」', en: '' }, prompt: { en: 'What does the notice ask?' }, options: [o('{向|む}こう から {三枚目|さんまいめ} の {板|いた} を {踏|ふ}まない', 1), o('{三枚目|さんまいめ} の {板|いた} を {直|なお}す', 0, '{踏|ふ}まないで: don\'t step on it.'), o('{橋|はし} を {渡|わた}らない', 0, 'Only the one plank.')] })],
-    I: [ch({ item: 'g:te_oku', ctx: { jp: 'ショウゾウ ： 「{明日|あした} {直|なお}す 。 それ まで 、 {板|いた} に {赤|あか}い {布|ぬの} を {結|むす}んで おこう 。」', en: '' }, prompt: { en: 'What is the red cloth for?' }, options: [o('{直|なお}す まで 、 {危|あぶ}ない {板|いた} が {分|わ}かる よう に', 1), o('{狐|きつね} を {呼|よ}ぶ ため', 0, '〜て おこう: tied on in advance, until it is mended.'), o('{祭|まつ}り の {飾|かざ}り', 0, 'It marks the loose plank.')] })],
-    A: [ch({ item: 'g:adv_wake_dewa_nai', ctx: { jp: 'ショウゾウ ： 「{橋|はし} が {古|ふる}い わけ で は ない 。 {狐|きつね} が {夜|よる} に {板|いた} を {齧|かじ}る ん だ と 、 カメ が {言|い}う の さ 。」', en: '' }, prompt: { en: 'What is Shōzō saying, and how?' }, options: [o('{古|ふる}い から で は なく 、 {狐|きつね} の せい だ と カメ さん が {言|い}って いる', 1), o('{橋|はし} は とても {古|ふる}い', 0, '〜わけ で は ない: it is not that the bridge is old.'), o('ショウゾウ さん が {狐|きつね} を {見|み}た', 0, 'He is repeating Kame\'s telling, wryly.')] })],
+    I: [ch({ item: 'g:te_oku', ctx: { jp: 'ショウゾウ ： 「{明日|あした} {直|なお}します 。 それ まで 、 {板|いた} に {赤|あか}い {布|ぬの} を {結|むす}んで おきましょう 。」', en: '' }, prompt: { en: 'What is the red cloth for?' }, options: [o('{直|なお}す まで 、 {危|あぶ}ない {板|いた} が {分|わ}かる よう に', 1), o('{狐|きつね} を {呼|よ}ぶ ため', 0, '〜て おこう: tied on in advance, until it is mended.'), o('{祭|まつ}り の {飾|かざ}り', 0, 'It marks the loose plank.')] })],
+    A: [ch({ item: 'g:adv_wake_dewa_nai', ctx: { jp: 'ショウゾウ ： 「{橋|はし} が {古|ふる}い わけ で は ありません 。 {狐|きつね} が {夜|よる} に {板|いた} を {齧|かじ}る ん だ と 、 カメ さん が {言|い}う ん です よ 。」', en: '' }, prompt: { en: 'What is Shōzō saying, and how?' }, options: [o('{古|ふる}い から で は なく 、 {狐|きつね} の せい だ と カメ さん が {言|い}って いる', 1), o('{橋|はし} は とても {古|ふる}い', 0, '〜わけ で は ありません (polite 〜わけ で は ない): it is not that the bridge is old.'), o('ショウゾウ さん が {狐|きつね} を {見|み}た', 0, 'He is repeating Kame\'s telling, wryly.')] })],
   } };
   C.challenges['kr.lw_fox_yomeiri'] = { title: TJ('{狐|きつね} の {嫁入|よめい}り', 'The fox\'s wedding'), tiers: {
     F: [ch({ item: 'v:晴れる', ctx: { jp: 'ヒナタ ： 「はれて いる のに あめ ！ きつね の よめいり だ ！」', en: '' }, prompt: { en: 'What is the weather doing?' }, options: [o('はれて いて 、 あめ も ふって いる', 1), o('くもって いて 、 あめ が ふって いる', 0, 'はれて いる のに: it is sunny.')] })],
@@ -167,7 +168,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.challenges['kr.lw_fox_mist'] = { title: TJ('{霧|きり} の {橋|はし}', 'The bridge in the mist'), tiers: {
     F: [ch({ item: 'v:霧', ctx: { jp: 'ふだ ： 「きり の ひ は 、 きつね の ひ が みえて から わたる 。」', en: '' }, prompt: { en: 'When do you cross in mist?' }, options: [o('きつね の ひ が みえて から', 1), o('きり が はれる まえ に', 0, 'みえて から: once you can see the Fox Light.')] })],
     E: [ch({ item: 'g:prt_kara_made', ctx: { jp: '{札|ふだ} ： 「{霧|きり} の {日|ひ} は 、 {狐|きつね} の {灯|ひ} が {見|み}える まで {待|ま}つ こと 。 {見|み}えたら {渡|わた}って よい 。」', en: '' }, prompt: { en: 'What do you do?' }, options: [o('{灯|ひ} が {見|み}える まで {待|ま}って 、 それから {渡|わた}る', 1), o('すぐ {渡|わた}る', 0, '{見|み}える まで {待|ま}つ: wait until it shows.'), o('{灯|ひ} を {消|け}して から {渡|わた}る', 0, 'The light is what you wait for.')] })],
-    I: [ch({ item: 'g:cond_tara', ctx: { jp: 'ショウゾウ ： 「{灯|ひ} が ぼやけて {見|み}えたら 、 まだ {霧|きり} が {濃|こ}い 。 はっきり {見|み}えたら 、 {渡|わた}れ 。」', en: '' }, prompt: { en: 'The lamp shows sharp and clear. What now?' }, options: [o('{渡|わた}る', 1), o('まだ {待|ま}つ', 0, 'はっきり {見|み}えたら 、 {渡|わた}れ: clear means cross.'), o('{引|ひ}き{返|かえ}す', 0, 'Clear means cross.')] })],
+    I: [ch({ item: 'g:cond_tara', ctx: { jp: 'ショウゾウ ： 「{灯|ひ} が ぼやけて {見|み}えたら 、 まだ {霧|きり} が {濃|こ}い です 。 はっきり {見|み}えたら 、 {渡|わた}って ください 。」', en: '' }, prompt: { en: 'The lamp shows sharp and clear. What now?' }, options: [o('{渡|わた}る', 1), o('まだ {待|ま}つ', 0, 'はっきり {見|み}えたら 、 {渡|わた}って ください: clear means cross.'), o('{引|ひ}き{返|かえ}す', 0, 'Clear means cross.')] })],
     A: [ch({ item: 'g:kr_classical', ctx: { jp: '{古|ふる}い {碑|ひ} ： 「{霧|きり} {深|ふか}き {日|ひ} は 、 {灯|ひ} を {待|ま}つ べし 。」', en: '' }, prompt: { en: 'Classical: what must you do on a deep-mist day?' }, options: [o('{灯|ひ} を {待|ま}たなければ ならない', 1), o('{灯|ひ} を {待|ま}って は いけない', 0, 'べし: must.'), o('{灯|ひ} は {待|ま}たなくて いい', 0, 'べし is an obligation, not a permission.')] })],
   } };
   C.challenges['kr.lw_ridge_copy'] = { title: TJ('{写|うつ}し {間違|まちが}い', 'A copying slip'), tiers: {
@@ -222,7 +223,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     hint: ['{壁|かべ} に {古|ふる}い {札|ふだ} 。 「あらゆる {灯|ひ} の {芯|しん} 、 ここ に {納|おさ}む 」 。 {下|した} の {床板|ゆかいた} が {一枚|いちまい} だけ {新|あたら}しい 。 アヤ は 、 「あらゆる 」 と いう {灯|ひ} は {知|し}らない と {言|い}う 。', 'An old plaque on the wall: "Wicks for the あらゆる lamps, stored here." One floorboard beneath it is newer than the rest. Aya says she has never heard of a lamp called "Arayuru".'],
     openedLabel: ['{床|ゆか} の {下|した} の {灯心|とうしん}', 'The wicks under the floor'], after: { p: 'kr_wicks', scene: 'ko.lw_kr_wicks_after' } });
   C.notes.lw_kr_watch = { title: T('The keepers\' watch-place', '{灯守|ひもり} の {見張|みは}り{場|ば}'), fiction: true,
-    jp: '{紅葉|もみじ} の {尾根|おね} の {先|さき} の {岩|いわ} 。 {百歩|ひゃっぽ} ごと の {小|ちい}さな {石|いし} を {辿|たど}る と {着|つ}く 。 {麓|ふもと} から {峠|とうげ} まで 、 {道|みち} の {灯|ひ} が {全部|ぜんぶ} {見|み}える 。',
+    jp: '{紅葉|もみじ} の {尾根|おね} の {先|さき} の {岩|いわ} 。 {百歩|ひゃっぽ} ごと の {小|ちい}さな {石|いし} を {辿|たど}る と {着|つ}く 。 {麓|ふもと} の {迎|むか}え の {灯|ひ} から {峠|とうげ} まで 、 {道|みち} の {灯|ひ} が {全部|ぜんぶ} {見|み}える 。 {灯守|ひもり} は ここ から 、 {消|き}えた {灯|ひ} を {数|かぞ}えた 。',
     en: 'A rock past the end of the Maple Ridge, reached by small stones set a hundred paces apart. From it every lamp on the road can be seen, from the Welcoming Light at the foot to the pass: the keepers counted from here the lamps that had gone out.' };
   C.notes.lw_kr_toshin = { title: T('Rush wicks', '{灯心|とうしん}'), fiction: false,
     jp: '{灯心|とうしん} は 、 イグサ の {茎|くき} の {芯|しん} から {作|つく}る {灯|ひ} の {芯|しん} 。 {油|あぶら} を {吸|す}って 、 {長|なが}く {静|しず}か に {燃|も}える 。',
@@ -247,14 +248,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
 narr: {灰実|はいみ} の {焼|や}き{物|もの} の かめ に 、 {灯落|ひおち} の {油|あぶら} 。 {札|ふだ} に アヤ の {字|じ} で {数|かず} が {書|か}いて ある 。 「{三十|さんじゅう} 」 。 || Cinder Orchard jars, full of Lanternfall oil. A tag in Aya's hand gives the count: "Thirty."
 
 @scene lf.lw_kr_oil_aya
-kr_aya: {灯落|ひおち} の {油屋|あぶらや} さん が ね 、 {初|はじ}めて {値段|ねだん} に {文句|もんく} を {言|い}った の 。 「その {値|ね} で は {売|う}れません 」 って 。 || The oil merchant from Lanternfall argued over the price for the first time. "I can't sell at that price," he said.
+kr_aya: {灯落|ひおち} の {油屋|あぶらや} さん が ね 、 {初|はじ}めて {値段|ねだん} に {文句|もんく} を {言|い}った の 。 「その {値|ね} で は {売|う}れません 」 って 。 || The oil merchant from Lanternfall argued over the price for the first time: "I can't sell at that price."
 kr_aya[laugh]: …… {変|へん} な {話|はなし} だけど 、 {嬉|うれ}しかった わ 。 {前|まえ} は {何|なに} を {言|い}って も 「かしこまりました 」 だった から 。 || …Odd thing to be glad about, but I was. Before, whatever I said, it was always "Certainly."
 
 @scene lf.lw_kr_shingles
 narr: {新|あたら}しい {屋根|やね} {板|いた} が {積|つ}んで ある 。 {札|ふだ} に 「{灯落|ひおち} より 」 。 || A stack of new roof shingles. The tag: "From Lanternfall."
 
 @scene lf.lw_kr_shingles_mokichi
-kr_mokichi: {灯落|ひおち} から {屋根|やね} の {板|いた} が {上|あ}がって きました 。 {道|みち} が {両方|りょうほう} {開|あ}いた から です ね 。 || Shingles have come up from Lanternfall, now the road's open at both ends.
+kr_mokichi: {灯落|ひおち} から {屋根|やね} の {板|いた} が {上|あ}がって きました 。 {灯落|ひおち} と {行|い}き{来|き} できる よう に なった から です ね 。 || Shingles have come up from Lanternfall, now the road runs both ways.
 kr_mokichi[smile]: {雨|あめ} の {夜|よる} に 、 もう {桶|おけ} を {並|なら}べなくて いい ん です 。 || No more setting out buckets on rainy nights.
 
 @scene kr.lw_kr_tsuru_letter
@@ -280,7 +281,7 @@ narr: クマゾウ が {斧|おの} を {肩|かた} に 、 {杉|すぎ} の {�
 kr_kumazo: {今日|きょう} は {間引|まび}き だ 。 {印|しるし} の {読|よ}み{方|かた} 、 {分|わ}かる か 。 || Thinning today. Can you read the marks?
 !challenge kr.lw_steps_marks
 !if var._res=0 -> later
-kr_kumazo: {丸|まる} は {残|のこ}す 。 よし 。 …… これ で {杉|すぎ} の {灯|ひ} に 、 また {光|ひかり} が {届|とど}く 。 || The round ones stay. Good. …Now the light will reach the Cedar Light again.
+kr_kumazo: {丸|まる} は {残|のこ}す 。 よし 。 …… これ で {杉|すぎ} の {灯|ひ} が 、 また {道|みち} まで {届|とど}く 。 || The circled ones stay. Good. …Now the Cedar Light will reach the path again.
 !hook road_done kr_steps marks
 !end
 :later
@@ -298,10 +299,10 @@ narr: {巡礼|じゅんれい} たち は {札|ふだ} を {自分|じぶん} �
 
 @scene kr.lw_road_fox_plank
 narr: {狐橋|きつねばし} の {板|いた} が {一枚|いちまい} 、 {浮|う}いて いる 。 ショウゾウ が {貼|は}り{紙|がみ} を {持|も}って {来|き}た 。 || One of the Fox Bridge's planks has come loose. Shōzō arrives with a notice.
-kr_shozo: {字|じ} は {書|か}いた が 、 {子供|こども} たち が {読|よ}まない ん だ 。 {正|ただ}しく {読|よ}める か 、 {確|たし}かめて くれ 。 || I've written it, but the children won't read it. See whether it reads right.
+kr_shozo: {字|じ} は {書|か}きました が 、 {子供|こども} たち が {読|よ}んで くれない ん です 。 {正|ただ}しく {読|よ}める か 、 {確|たし}かめて もらえます か 。 || I've written it, but the children won't read it. Would you see whether it reads right?
 !challenge kr.lw_fox_plank
 !if var._res=0 -> later
-kr_shozo: {向|む}こう から {三枚目|さんまいめ} 。 よし 。 …… カメ に は 、 {狐|きつね} の せい に させて おこう 。 || Third from the far side. Good. …And let Kame blame the fox.
+kr_shozo: {向|む}こう から {三枚目|さんまいめ} 。 よし 。 …… カメ さん に は 、 {狐|きつね} の せい に させて おこう 。 || Third from the far side. Good. …And let Kame blame the fox.
 !hook road_done kr_fox plank
 !end
 :later
@@ -393,7 +394,7 @@ narr: {雲|くも} は やがて {崩|くず}れて 、 {谷|たに} へ {沈|�
 
 @scene cr.lw_kr_watch_open
 narr: 「{百歩|ひゃっぽ} ごと に {石|いし} 」 。 {百歩|ひゃっぽ} {歩|ある}く たび に 、 {石|いし} が {一|ひと}つ 。 || "A stone every hundred paces": one for each hundred steps.
-narr: {歩|ほ} を {数|かぞ}えて {紅葉|もみじ} の {中|なか} を {進|すす}む と 、 {百歩|ひゃっぽ} ごと に 、 {本当|ほんとう} に {小|ちい}さな {石|いし} が あった 。 {四|よっ}つ {目|め} の {石|いし} の {先|さき} で 、 {木|き} が {切|き}れた 。 || Counting your steps through the maples, you find them: a small stone at every hundred paces. Past the fourth, the trees open out.
+narr: {歩|ほ} を {数|かぞ}えて {紅葉|もみじ} の {中|なか} を {進|すす}む と 、 {百歩|ひゃっぽ} ごと に 、 {本当|ほんとう} に {小|ちい}さな {石|いし} が あった 。 {四|よっ}つ {目|め} の {石|いし} の {先|さき} で 、 {木|き} が {途切|とぎ}れた 。 || Counting your steps through the maples, you find them: a small stone at every hundred paces. Past the fourth, the trees open out.
 narr: {尾根|おね} の {先|さき} の {岩|いわ} の {上|うえ} 。 {麓|ふもと} の {迎|むか}え の {灯|ひ} から {峠|とうげ} まで 、 {道|みち} の {灯|ひ} が {全部|ぜんぶ} {見|み}える 。 {灯守|ひもり} は ここ から 、 {消|き}えた {灯|ひ} を {数|かぞ}えた の だ 。 || A rock at the ridge's end. From the Welcoming Light at the foot to the pass, every lamp on the road is in sight. From here, the keepers counted the lamps that had gone out.
 ?(comp=ren) comp: …… {全部|ぜんぶ} 、 {点|つ}いて います 。 {数|かぞ}える {必要|ひつよう} が ない の は 、 いい こと です ね 。 || …Every one is lit. A good thing, not to need counting.
 !note lw_kr_watch
@@ -403,7 +404,7 @@ narr: {百歩|ひゃっぽ} ごと の {石|いし} 。 その {先|さき} の 
 
 @scene ko.lw_kr_wicks_open
 narr: 「あらゆる {灯|ひ} の {芯|しん} 」 。 あらゆる は {灯|ひ} の {名前|なまえ} で は ない 。 「どんな {灯|ひ} でも 」 と いう {意味|いみ} だ 。 || "Wicks for あらゆる lamps." あらゆる isn't a lamp's name. It means "every kind of".
-kr_aya[surprise]: …… {名前|なまえ} じゃ なかった の ？ どこ か の {灯|ひ} の {物|もの} だ と {思|おも}って 、 {何年|なんねん} も {開|あ}けず に いた の に ！ || …It isn't a name? I thought they belonged to some lamp somewhere, and left them shut away for years!
+kr_aya[surprise]: …… {名前|なまえ} じゃ なかった の ？ どこ か の {灯|ひ} の {物|もの} だ と {思|おも}って 、 {何年|なんねん} も {開|あ}けず に いた のに ！ || …It isn't a name? I thought they belonged to some lamp somewhere, and left them shut away for years!
 narr: {床板|ゆかいた} を {外|はず}す と 、 {乾|かわ}いた {灯心|とうしん} の {束|たば} が 、 {紙|かみ} に {包|つつ}まれて {並|なら}んで いた 。 {石|いし} の {灯籠|とうろう} の {分|ぶん} 、 {提灯|ちょうちん} の {分|ぶん} 、 {灯明皿|とうみょうざら} の {分|ぶん} 。 || Under the board, bundles of dry rush wicks wrapped in paper, side by side: for the stone lanterns, for the paper lanterns, for the lamp dishes.
 kr_aya[laugh]: {数|かぞ}えて おく わ 。 …… {全部|ぜんぶ} 、 {数|かぞ}えて おく 。 || I'll count them. …Every last one.
 !note lw_kr_toshin

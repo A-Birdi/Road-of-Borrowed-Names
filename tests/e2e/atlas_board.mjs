@@ -62,7 +62,7 @@ async function start(p) {
 }
 // the board through its prop: choose an offer and a length, take it
 async function takeFromBoard(p, offer, length, shot) {
-  await p.evaluate(() => { RB.test.enable({ choose: () => 0 }); window.__u = RB.test.use(7, 2).catch((e) => { window.__uerr = String(e); }); });
+  await p.evaluate(() => { RB.test.enable({ choose: () => 0 }); window.__u = RB.test.use(7, 3).catch((e) => { window.__uerr = String(e); }); });
   await p.waitForSelector('.ab-folio [data-a="take"]');
   await p.check('input[name="ab-offer"][value="' + offer + '"]');
   await p.check('input[name="ab-len"][value="' + length + '"]');
@@ -189,7 +189,7 @@ await test('the Cartographer\'s Atlas page; the board at phone width', async () 
   await p.screenshot({ path: path.join(out, 'cartographer_phone.png') });
   await p.evaluate(() => RB.ui.menu.close());
   await p.evaluate(() => RB.test.idle(30000));
-  await p.evaluate(() => { RB.test.enable({ choose: () => 0 }); window.__u = RB.test.use(7, 2); });
+  await p.evaluate(() => { RB.test.enable({ choose: () => 0 }); window.__u = RB.test.use(7, 3); });
   await p.waitForSelector('.ab-folio [data-a="take"]');
   assert(await noOverflow(p), 'the board fits the phone');
   await p.screenshot({ path: path.join(out, 'board_phone.png') });

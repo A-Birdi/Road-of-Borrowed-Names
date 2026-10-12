@@ -20,7 +20,7 @@
  *     those who know them, and the people who can be asked after others (every placement of them, on maps given).
  *   L.beat(town, { id, when, en, jp }) — a change beat (W1); its content is conditioned on `beat.<town>.<id>` or on
  *     its own `when`.
- *   L.road(id, { maps, unique, variants, rate, stamp }) — road events (W5); L.seal(id, { map, x, y, p, needs, hint,
+ *   L.road(id, { maps, unique, variants, rate, stamp, when }) — road events (W5; none until `when` holds); L.seal(id, { map, x, y, p, needs, hint,
  *     opens, scene, openedLabel, after: { p, scene, o } }) — a return key (W6): a prop with the hint, examined
  *     through `!hook sealed`; `after` is what stands there once it is open (the sealed prop then goes).
  *   L.talk('map:id', [{ if, scene }]) — new talk at the head of a placement's list (in place: every routine slot of

@@ -18,7 +18,7 @@
 //  - a refused storage write leaves the art on screen marked unsaved and the pages as they were.
 // Captures: docs/screenshots/practice_a/desk_*.png. Usage: node tests/e2e/practice_a_desk.mjs
 import { serve, launch, page } from './lib.mjs';
-import { start, useSlot, interactAndChoose, drawMouse, drawTouch, press, wait, shot, phone, PROOF_PAGE, proofSource } from './practice_a_lib.mjs';
+import { start, useSlot, interactAndChoose, drawMouse, drawTouch, press, wait, shot, phone, PROOF_PAGE, proofSource, openMementos } from './practice_a_lib.mjs';
 
 const { srv, url } = await serve();
 const b = await launch();
@@ -223,9 +223,7 @@ async function writeAll(p, how) {
   await press(p, '[data-dk=leave]');
   await wait(p, 500);
   // the mementos page, the shelf, the pin
-  await p.evaluate(() => RB.ui.menu.open('journey'));
-  await p.waitForSelector('[data-jv=mementos]');
-  await press(p, '[data-jv=mementos]');
+  await openMementos(p);
   await p.waitForSelector('.pm-grid');
   const cells = await p.evaluate(() => [...document.querySelectorAll('.pm-cell')].map((c) => c.textContent.replace(/\s+/g, ' ')));
   assert(cells.length === 6 && cells.filter((c) => /Your handwriting/.test(c)).length === 5 && cells.filter((c) => /Typeset/.test(c)).length === 1, 'Practice mementos: the six pages, handwriting and typeset told apart');
@@ -243,8 +241,7 @@ async function writeAll(p, how) {
   await wait(p, 400);
   const back = await p.evaluate(() => ({ labels: RB.game.s.practice.deskPages.map((x) => x.label), saved: RB.game.s.practice.deskPages.every((x) => x.saved), strokes: RB.game.s.practice.deskPages[0].strokes[0].s.length, shelf: RB.game.s.practice.mementoDisplay.shelf }));
   assert(ok && back.labels.length === 6 && back.labels[0] === 'My first tree' && back.labels[3] === 'Rain, traced' && back.saved && back.strokes === 4 && back.shelf, 'after a reload: the six pages, their strokes, labels and shelf (' + JSON.stringify(back) + ')');
-  await p.evaluate(() => RB.ui.menu.open('journey'));
-  await press(p, '[data-jv=mementos]');
+  await openMementos(p);
   await p.waitForSelector('.pm-detail');
   // pin on Shared memories while a keepsake is on display: asked first
   const kid = await p.evaluate(() => { const s = RB.game.s; const id = Object.keys(RB.content.keepsakes).find((k) => RB.content.keepsakes[k].category !== 'shared'); s.discovery.keepsakes[id] = { map: 'rw.village' }; s.discovery.display = id; return id; });
@@ -333,8 +330,7 @@ async function writeAll(p, how) {
   await wait(p, 300);
   await press(p, '[data-dk=leave]');
   await wait(p, 500);
-  await p.evaluate(() => RB.ui.menu.open('journey'));
-  await press(p, '[data-jv=mementos]');
+  await openMementos(p);
   await p.waitForSelector('.pm-grid');
   const cell = await p.evaluate(() => { const c = [...document.querySelectorAll('.pm-cell')].find((x) => /Which door/.test(x.textContent)); return c ? c.textContent.replace(/\s+/g, ' ') : null; });
   assert(cell && /Proofreading page/.test(cell), 'Practice mementos lists the proofreading page from the "proof" source (' + src + '): ' + cell);

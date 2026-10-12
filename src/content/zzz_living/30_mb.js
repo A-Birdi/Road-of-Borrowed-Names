@@ -131,7 +131,7 @@ narr: {郵便|ゆうびん} {箱|ばこ} の {横|よこ} に 、 {新|あたら
 
 @scene sb.lw_mb_yoshi_north
 !faceplayer
-mb_yoshi: {雪鈴|ゆきすず} {宛|あ}て の {手紙|てがみ} が 、 ここ で {何年|なんねん} も {待|ま}って いた の 。 {北|きた} の {道|みち} が {通|とお}じた ので 、 {今朝|けさ} やっと {送|おく}り{出|だ}しました 。 || Letters addressed to Snowbell had waited here for years. With the north road through, I finally sent them off this morning.
+mb_yoshi: {雪鈴|ゆきすず} {宛|あ}て の {手紙|てがみ} が 、 ここ で {何年|なんねん} も {待|ま}って いた ん です 。 {北|きた} の {道|みち} が {通|とお}じた ので 、 {今朝|けさ} やっと {送|おく}り{出|だ}しました 。 || Letters addressed to Snowbell had waited here for years. With the north road through, I finally sent them off this morning.
 mb_yoshi: {宛先|あてさき} の {方|ほう} が 、 まだ そこ に いて くれれば いい の です けど 。 || I do hope the people they're for are still there.
 ?(comp=nao) comp: {何年|なんねん} {待|ま}って も 、 {手紙|てがみ} は {手紙|てがみ} だ 。 {届|とど}けば 、 {遅|おそ}すぎる こと は ない 。 || However many years it waits, a letter is still a letter. If it arrives, it isn't too late.
 
@@ -149,7 +149,7 @@ mb_yoshi: マツ さん に {頼|たの}んで 、 {下|した} の {橋|はし}
 narr: {結|むす}び{文|ぶみ} は ほどかれて 、 きれい に {重|かさ}ねて ある 。 {宛名|あてな} は みんな 「{結|むす}び{橋|ばし} の たもと」 。 || The knotted letters lie untied and neatly stacked, every one addressed "At the foot of Musubi Bridge".
 
 @scene sea.lw_mb_footing_open
-narr: {自分|じぶん} の {舟|ふね} を {港|みなと} から {回|まわ}して 、 {杭|くい} に {繋|つな}ぐ 。 {橋|はし} の {下|した} へ 、 そっと {漕|こ}ぎ{入|い}れた 。 || You bring your own boat round from the harbour, tie up at the post, and quietly row in under the bridge.
+narr: {自分|じぶん} の {舟|ふね} を {港|みなと} から {回|まわ}して 、 {橋|はし} の {下|した} へ そっと {漕|こ}ぎ{入|い}れ 、 {杭|くい} に {繋|つな}いだ 。 || You bring your own boat round from the harbour, row quietly in under the bridge, and tie up at the post.
 narr: {小|ちい}さな {戸|と} の {奥|おく} に 、 {石|いし} が {一枚|いちまい} 。 {橋|はし} を {架|か}けた {人|ひと} たち の {名前|なまえ} が 、 {橋|はし} の {名前|なまえ} と {並|なら}べて {彫|ほ}って ある 。 || Behind the little door, a single stone slab, carved with the names of the people who built the bridges, each beside its bridge.
 narr: 「{港橋|みなとばし} 、 {船大工|ふなだいく} の {組|くみ} 。 …… {結|むす}び{橋|ばし} 、 {名|な} を {知|し}らず 。」 || "Harbour Bridge: the shipwrights' crew. … Musubi Bridge: builder unknown."
 ?(comp=nao) comp: {橋|はし} に も 、 {差出人|さしだしにん} が いる わけ か 。 || So bridges have senders too.

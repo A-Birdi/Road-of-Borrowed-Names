@@ -223,8 +223,9 @@ await test('one complete catch from the world, with real clicks; the observation
   await p.waitForSelector('.fn-page');
   await click(p, '.fn-cell:not(.unseen)');
   await p.waitForTimeout(200);
-  const nt = await p.evaluate(() => ({ t: document.querySelector('.folio').textContent.replace(/\s+/g, ' '), cells: document.querySelectorAll('.fn-cell').length, unseen: document.querySelectorAll('.fn-cell.unseen').length }));
-  assert(nt.cells === 9 && nt.unseen === 8 && /1 of 9 recorded/.test(nt.t) && /First seen at Reedwake riverbank/.test(nt.t) && /with Nao and Koma the cat/.test(nt.t), 'Fishing notes: 9 entries, 8 unseen, first observation with who was there: ' + nt.t.slice(0, 400));
+  // a six-chapter journey's nine fish; a twelve-chapter journey adds the coast's six (two more stations)
+  const nt = await p.evaluate(() => ({ t: document.querySelector('.folio').textContent.replace(/\s+/g, ' '), cells: document.querySelectorAll('.fn-cell').length, unseen: document.querySelectorAll('.fn-cell.unseen').length, all: RB.edition.of(RB.game.s) >= 2 ? 15 : 9 }));
+  assert(nt.cells === nt.all && nt.unseen === nt.all - 1 && new RegExp('1 of ' + nt.all + ' recorded').test(nt.t) && /First seen at Reedwake riverbank/.test(nt.t) && /with Nao and Koma the cat/.test(nt.t), 'Fishing notes: ' + nt.all + ' entries, ' + (nt.all - 1) + ' unseen, first observation with who was there: ' + nt.t.slice(0, 400));
   await shot(p, 'notes_first');
   const names = await p.evaluate(() => [...document.querySelectorAll('.fn-cell.unseen')].map((c) => c.textContent).join(''));
   assert(!/[ァ-ヶ]/.test(names), 'unseen cells name nothing: ' + names);

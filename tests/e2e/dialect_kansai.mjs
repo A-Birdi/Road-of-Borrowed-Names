@@ -285,10 +285,16 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
   assert(lastK && histK.indexOf(await p.evaluate((jp) => window.__plain(jp), lastK.jp)) >= 0 && keptStd, 'History shows her lines in Kansai-ben; the campaign keeps them standard');
   await p.evaluate(() => RB.ui.menu.close());
   await wait(p, 200);
-  // shiritori: her invitation at the table (Company › Wordplay › Play, at the inn)
+  // shiritori: her invitation at the table (Company › Wordplay › Play, at the inn; in a twelve-chapter journey Company
+  // points to the Distractions tab, where the same card offers Play)
   await p.evaluate(() => { const r = RB.wordplay.rec(RB.game.s); if (r && r.firsts) r.firsts.invited = 0; RB.ui.menu.open('company'); });
   await p.waitForSelector('.co-page');
   await wait(p, 200);
+  if (await p.evaluate(() => !!document.querySelector('[data-co-sec="wordplay"][data-wp-act="distractions"]'))) {
+    await p.locator('[data-co-sec="wordplay"][data-wp-act="distractions"]').click();
+    await p.waitForFunction(() => RB.ui.menu.current().section === 'distractions' && !!document.querySelector('.ds-page'));
+    await wait(p, 200);
+  }
   const playBtn = await p.evaluate(() => { const b = document.querySelector('[data-co-sec="wordplay"][data-wp-act="play"]:not([disabled])'); if (b) b.scrollIntoView(); return !!b; });
   if (playBtn) {
     await p.locator('[data-co-sec="wordplay"][data-wp-act="play"]').click();
@@ -298,7 +304,7 @@ const sceneLines = (p, id, who) => p.evaluate(([id, who]) => RB.content.scenes[i
     assert(inv.got === inv.want && inv.en === inv.wantEn && !inv.bare.length, 'shiritori: her invitation in Kansai-ben (' + inv.got + ' / ' + inv.en + ')');
     await p.locator('.wp-prep [data-wp="leave"]').click().catch(() => {});
     await wait(p, 400);
-  } else assert(false, 'Company › Wordplay offers Play at the inn');
+  } else assert(false, 'Company › Wordplay (Distractions › Shiritori in a twelve-chapter journey) offers Play at the inn');
   await p.evaluate(() => RB.ui.menu.isOpen() && RB.ui.menu.close());
   await wait(p, 200);
   // the campaign is unchanged by all the switching (only the scenes played add to the history)

@@ -277,7 +277,7 @@ cr_yahei: {沢|さわ} の {橋|はし} なら 、 {流|なが}された よ 。
 cr_yahei: そう いや 、 {飛脚|ひきゃく} が {一人|ひとり} 、 まだ {着|つ}かない ん だ 。 {沢|さわ} に {落|お}ちた の かも しれない …… 。 いや 、 {分|わ}からん 。 || Come to think of it, one of the couriers still hasn't come in. Maybe he fell in the stream… No, I don't know.
 
 @scene cr.leg3_stone
-narr: {沢|さわ} の {近|ちか}く の {石|いし} 。 「{水|みず} {出|で}れば 、 {上|うえ} の {浅瀬|あさせ} を {渡|わた}る べし 。」 || A stone near the stream: "When the water is high, cross at the shallows above."
+narr: {沢|さわ} の {近|ちか}く の {石|いし} 。 「{水|みず} {出|い}づれば 、 {上|かみ} の {浅瀬|あさせ} を {渡|わた}る べし 。」 || A stone near the stream: "When the water is high, cross at the shallows above."
 
 @scene cr.matazo
 # The stranded courier (a road event): sheltering by the ford with a hurt foot and a dry satchel. Help him, and he is

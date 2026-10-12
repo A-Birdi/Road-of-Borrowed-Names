@@ -33,7 +33,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // Hamaji, the net-mender: the village racks (his placement), the shore's nets, a bowl at Mitsu's
   L.routine('kotonoha', 'ko_hamaji', { base: 'ko.village:ko_hamaji', slots: [
     { map: 'ko.shore', x: 27, y: 10, dir: 'up', perform: 'mend', line: ['{浜|はま} の {網|あみ} も {見|み}て おかん と な 。 {潮|しお} が {変|か}われば 、 {網|あみ} も {傷|いた}む 。', 'Got to see to the nets on the shore as well. When the tides change, the nets wear.'] },
-    { map: 'ko.lodge', x: 7, y: 6, dir: 'up', line: ['ミツ の {汁|しる} は 、 {六十年|ろくじゅうねん} {食|く}って も {飽|あ}きん 。 …… {本人|ほんにん} に は {言|い}う な よ 。', 'Sixty years of Mitsu\'s soup and I\'m not tired of it. …Don\'t tell her I said so.'] },
+    { map: 'ko.lodge', x: 7, y: 6, dir: 'up', line: ['ミツ の {汁|しる} は 、 {何年|なんねん} {食|く}って も {飽|あ}きん 。 …… {本人|ほんにん} に は {言|い}う な よ 。', 'Years of Mitsu\'s soup and I\'m not tired of it. …Don\'t tell her I said so.'] },
   ] });
   // Tokio, the census keeper: the census board (his placement), the hall's shelves, the tide line
   L.routine('kotonoha', 'ko_tokio', { base: 'ko.village:ko_tokio', slots: [
@@ -65,10 +65,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // registered: the tide pools' leaf from the Keepers' Road's lantern plate (ko/10_maps.js, kr_done): new on a return
   // only for whoever came early by their own boat, so the beat holds between such a visit and the chapter's start
   // (never before the island has been seen); and the grove of unclaimed names behind the garden (returns, postgame)
-  L.beat('kotonoha', { id: 'leaf_kr', when: 'ed>=2&ko_arrived&kr_done&!ko_ch9', en: 'A new leaf at the tide pools', jp: '{潮|しお}だまり の {葉|は}' });
-  L.beat('kotonoha', { id: 'grove', when: 'ed>=2&postgame', en: 'A grove behind the garden of roots', jp: '{根|ね} の {庭|にわ} の {奥|おく}' });
+  L.beat('kotonoha', { id: 'leaf_kr', when: 'ed>=2&ko_arrived&kr_done&!ko_ch9', en: 'A new leaf at the tide pools', jp: '{潮|しお}だまり の {新|あたら}しい {葉|は}' });
+  L.beat('kotonoha', { id: 'grove', when: 'ed>=2&postgame', en: 'A grove behind the garden under the roots', jp: '{根|ね} の {下|した} の {庭|にわ} の {奥|おく} の {森|もり}' });
   // added: the relay running again (the Cloudroad done): letters can leave the island now
-  L.beat('kotonoha', { id: 'mailbox', when: 'ed>=2&cr_done', en: 'A postbox by the path', jp: '{道|みち} の {郵便|ゆうびん} の {箱|はこ}' });
+  L.beat('kotonoha', { id: 'mailbox', when: 'ed>=2&cr_done', en: 'A postbox by the path', jp: '{道|みち} の {横|よこ} の {郵便|ゆうびん}{箱|ばこ}' });
   C.maps['ko.village'].props.push({ p: 'mailbox', x: 22, y: 27, if: 'beat.kotonoha.mailbox', scene: 'cr.lw_ko_mailbox' });
   L.talk('ko.village:ko_tokio', [{ if: 'beat.kotonoha.mailbox&!seen.cr.lw_ko_tokio_mail', scene: 'cr.lw_ko_tokio_mail' }]);
   // added: Steamhollow done: a footbath outside Mitsu's, after the valley's fashion
@@ -95,7 +95,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '{古|ふる}い {暦|こよみ} は 、 {潮|しお} ごと に {刻|きざ}み を {一|ひと}つ {入|い}れた 。 {刻|きざ}み を {追|お}えば 、 {次|つぎ} の {大潮|おおしお} が {分|わ}かる 。',
     en: 'The old calendar cut one notch for each tide; follow the notches and you can tell when the next spring tide comes. (Spring tides, 大潮, really do come twice a month, with the new and the full moon; the stone is the game\'s.)' };
   C.notes.lw_ko_first_leaf = { title: T('The first leaf', '{最初|さいしょ} の {葉|は}'), fiction: true,
-    jp: '{大楠|おおくす} の {根元|ねもと} の {籠|かご} の {輪|わ} の {下|した} に 、 {押|お}し{葉|ば} が {一枚|いちまい} 。 {字|じ} は 「{葉|は}」 だけ 。 {最初|さいしょ} の {葉守|はもり} たち が 、 {最初|さいしょ} に {拾|ひろ}った {葉|は} らしい 。',
+    jp: '{大楠|おおくす} の {根元|ねもと} の {籠|かご} の {輪|わ} の {下|した} に 、 {押|お}し{葉|ば} が {一枚|いちまい} 。 {字|じ} は 「{葉|は}」 だけ 。 {最初|さいしょ} の {葉守|はもり} たち が 、 {最初|さいしょ} に {拾|ひろ}った {葉|は} らしい 。 {葉|は} は {今|いま} も そこ に ある 。',
     en: 'Under the ring of baskets at the camphor\'s foot, one pressed leaf with a single character on it: 葉, "leaf". The first keepers\' first leaf, it seems. It stays where it was.' };
   C.notes.lw_ko_letter = { title: T('A letter fifty years late', '{五十年|ごじゅうねん} {遅|おく}れ の {手紙|てがみ}'), fiction: true,
     jp: '{島|しま} の {誰|だれ} か が 、 {雲|くも} の {上|うえ} の {宿|しゅく} へ {書|か}いた {手紙|てがみ} 。 {継|つ}ぎ{飛脚|びきゃく} が {途切|とぎ}れて 、 {出|だ}せなかった 。 {今|いま} は 、 ナミ の {舟|ふね} と {飛脚|ひきゃく} の {足|あし} で 、 {山|やま} を {越|こ}えて いく 。',
@@ -103,7 +103,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   L.scenes(`
 @scene cr.lw_ko_mailbox
-narr: {新|あたら}しい {郵便|ゆうびん} の {箱|はこ} 。 {札|ふだ} が {付|つ}いて いる 。 || A new postbox, with a card on it.
+narr: {新|あたら}しい {郵便|ゆうびん}{箱|ばこ} 。 {札|ふだ} が {付|つ}いて いる 。 || A new postbox, with a card on it.
 narr: 「{手紙|てがみ} は 、 ナミ が {舟|ふね} で {陸|りく} へ {運|はこ}びます 。 {山|やま} の {向|む}こう へ も 、 {継|つ}ぎ{飛脚|びきゃく} で {届|とど}きます 。」 || "Nami takes letters to the mainland by boat. Over the mountains too, by the relay."
 
 @scene cr.lw_ko_tokio_mail
@@ -113,7 +113,7 @@ ko_tokio: …… {帳面|ちょうめん} に は 、 {理由|りゆう} は {�
 
 @scene cr.lw_ko_mitsu_mail
 !faceplayer
-ko_mitsu[happy]: {郵便|ゆうびん} の {箱|はこ} 、 {見|み}た ？ {山|やま} の {上|うえ} の {道|みち} を {走|はし}る {飛脚|ひきゃく} さん が 、 {島|しま} の {手紙|てがみ} も {運|はこ}んで くれる ん です って 。 || Have you seen the postbox? The runners on the road over the mountains will carry the island's letters too, they say.
+ko_mitsu[happy]: {郵便|ゆうびん}{箱|ばこ} 、 {見|み}た ？ {山|やま} の {上|うえ} の {道|みち} を {走|はし}る {飛脚|ひきゃく} さん が 、 {島|しま} の {手紙|てがみ} も {運|はこ}んで くれる ん です って 。 || Have you seen the postbox? The runners on the road over the mountains will carry the island's letters too, they say.
 ko_mitsu: {陸|りく} から {来|き}た お{客|きゃく} さん たち に 、 やっと {返事|へんじ} が {書|か}ける わ 。 || I can finally write back to the guests who came from the mainland.
 
 @scene yn.lw_ko_footbath

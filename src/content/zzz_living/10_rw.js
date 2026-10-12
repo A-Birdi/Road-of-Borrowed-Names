@@ -16,7 +16,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   ] });
   L.routine('reedwake', 'kiku', { base: 'rw.house2:kiku', slots: [
     { map: 'rw.village', x: 13, y: 26, dir: 'up', line: ['{糸|いと} を お{日様|ひさま} に {当|あ}てて いる の 。 {色|いろ} が {落|お}ち{着|つ}く の よ 。', 'I\'m giving the thread some sun. It settles the colour.'] },
-    { map: 'rw.hall', x: 7, y: 3, dir: 'up', perform: 'read', line: ['ここ に {古|ふる}い {織|お}り{方|かた} の {本|ほん} が ある の 。 {目|め} が {疲|つか}れる けれど ね 。', 'There\'s a book of old weaving patterns here. Hard on the eyes, though.'] },
+    { map: 'rw.hall', x: 8, y: 6, dir: 'right', perform: 'read', line: ['ここ に {古|ふる}い {織|お}り{方|かた} の {本|ほん} が ある の 。 {目|め} が {疲|つか}れる けれど ね 。', 'There\'s a book of old weaving patterns here. Hard on the eyes, though.'] },
   ] });
   L.away('reedwake', 'kiku', { map: 'rw.house2', x: 6, y: 2, p: 'fw_note', line: ['{書|か}き{置|お}き 。 「{広場|ひろば} か {灯|あか}り{堂|どう} に います 。 キク」', 'A note: "On the green, or at the Lantern Hall. —Kiku"'] });
   L.routine('reedwake', 'mame', { base: 'rw.village:mame', slots: [

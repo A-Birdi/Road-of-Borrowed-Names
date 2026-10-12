@@ -13,10 +13,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const lh = C.maps['mb.lockhouse'];
   const matsu = lh && lh.npcs.find((n) => n.id === 'mb_matsu');
   if (matsu) matsu.talk.unshift({ if: 'mb2_done&mp_inv_matsu', scene: 'mp.fest_matsu' });
-  // Reedwake: once the river is open (F-40), Kōji's boat goes down to Manybridge (twelve-chapter journeys)
+  // Reedwake: once the river is open (F-40), Kōji's boat goes down to Manybridge (twelve-chapter journeys). It is
+  // offered in place of his everyday lines, not of what others' stories need from him (the long road's fare, lq/):
+  // first in his list, it was all he ever said again once the river opened
   const tea = C.maps['rw.tea'];
   const koji = tea && tea.npcs.find((n) => n.id === 'koji');
-  if (koji) koji.talk.unshift({ if: 'ed>=2&mb2_done', scene: 'mp.river_koji' });
+  if (koji) {
+    const own = koji.talk.findIndex((t) => t.scene === 'rw.koji_post' || t.scene === 'rw.koji_tea');
+    koji.talk.splice(own < 0 ? 0 : own, 0, { if: 'ed>=2&mb2_done', scene: 'mp.river_koji' });
+  }
   C.roads.push(['reedwake', 'manybridge', { sea: true, river: true, edition: 2, if: 'mb2_done', ferry: ['mp.river_koji', 'mp.river_up'] }]);
 })(RB.content);
 

@@ -66,7 +66,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.asks('el_genroku');
   L.cold('el_genroku', ['{人|ひと} の {噂|うわさ} は せん 。 {掃|は}く の で {忙|いそが}しい 。', 'I don\'t gossip. I\'m busy sweeping.']);
   L.usual('el_genroku', ['ゲンロク さん なら 、 {東|ひがし} の {渡|わた}し{場|ば} から {動|うご}きません よ 。 {掃|は}いて いる か 、 {舟|ふね} を {直|なお}して いる か 。', 'Genroku never leaves East Landing. Sweeping, or mending a boat.']);
-  L.usual('el_gonsuke', ['ゴンスケ さん は 、 {東|ひがし} の {渡|わた}し{場|ば} に {船|ふね} を {着|つ}けて います よ 。', 'Gonsuke? His boat\'s tied up at East Landing.']);
+  L.usual('el_gonsuke', ['ゴンスケ さん は 、 {東|ひがし} の {渡|わた}し{場|ば} に {船|ふね} を {着|つ}けて います よ 。', 'Gonsuke? At East Landing, with the boat tied up.']);
   L.usual('cs_seto', ['セト さん は 、 {丘|おか} の {上|うえ} の {家|いえ} の {前|まえ} に いる でしょう 。', 'Seto will be outside the house on the hill.']);
 
   // ---- change beats (W1) ---------------------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ narr: {鷺|さぎ} は {動|うご}かない 。 {近|ちか}づけば {睨|に�
 narr: でも 、 {今|いま} は {待|ま}つ こと を {知|し}って いる 。 {何|なに} も しない で 、 ただ {待|ま}った 。 || But now you know how to wait. You do nothing at all, and simply wait.
 narr: しばらく して 、 {鷺|さぎ} は {首|くび} を {縮|ちぢ}め 、 {入|い}り{江|え} の {向|む}こう へ {飛|と}んで いった 。 {杭|くい} の {鉄|てつ} の {輪|わ} に 、 {油紙|あぶらがみ} の {包|つつ}み が {挟|はさ}まって いた 。 || After a while the heron draws in its neck and flies off across the inlet. Wedged in the post's iron ring is a little packet in oiled paper.
 narr: {中|なか} は {古|ふる}い {時刻表|じこくひょう} 。 「{東|ひがし} の {渡|わた}し{場|ば} 　 {朝|あさ} と {夕|ゆう} 。 {船|ふね} の {前|まえ} に {鐘|かね} {三|みっ}つ 」 。 || Inside, an old timetable: "East Landing. Morning and evening. Three strokes of the bell before each boat."
-el_genroku: …… {最後|さいご} の {時刻表|じこくひょう} だ 。 {閉|と}じた {日|ひ} に 、 {誰|だれ} か が {杭|くい} に {挟|はさ}んだ の か 。 …… {掲示板|けいじばん} に {貼|は}って おけ 。 {昔|むかし} の {分|ぶん} と して な 。 || …The last timetable. Someone tucked it in the post the day we closed, eh. …Pin it on the board. For the old days' sake.
+el_genroku: …… {最後|さいご} の {時刻表|じこくひょう} だ 。 {閉|と}じた {日|ひ} に 、 {誰|だれ} か が {杭|くい} に {挟|はさ}んだ の か 。 …… {掲示板|けいじばん} に {貼|は}って おけ 。 {昔|むかし} の {思|おも}い{出|で} に な 。 || …The last timetable. Someone tucked it in the post the day we closed, eh. …Pin it on the board. For the old days' sake.
 !note el_lw_timetable
 
 @scene el.lw_heron_after

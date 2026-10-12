@@ -8,4 +8,9 @@ RB.lex.add(RB.lex.parseTable(`
 茜|あかね|n|A|madder (a plant whose root dyes cloth red)
 うっかり|うっかり|adv|I|carelessly, without thinking
 コハチ|コハチ|name|F|Kohachi, a pedlar on the Reedwake road (fictional)
+長屋|ながや|n|I|a row house, a tenement (one long building of rooms)
+立て込む|たてこむ|v5m|A|to be busy, to be crowded (立て込んでいる: things are hectic)
+個人|こじん|n|I|an individual, a private person
+延びる|のびる|v1|A|to stretch out, to extend (a road, a wall)
+何十|なんじゅう|n|I|dozens, scores (何十も: dozens of them)
 `));

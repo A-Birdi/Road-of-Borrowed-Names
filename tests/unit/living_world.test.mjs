@@ -77,6 +77,10 @@ export default async (t) => {
     t.eq(T.unfinished(s), ['rw_road'], 'leaving it unsolved: unfinished in the Journey');
     go(s, 'rw.village'); go(s, 'rw.road');
     t.eq(T.roadEventAt(s, 'rw.road'), 'sg.lw_road_rw_cart', 'offered again on the next visit: never lost');
+    go(s, 'rw.village'); go(s, 'rw.road'); T.storyOnArrival('rw.road');
+    t.eq(T.roadEventAt(s, 'rw.road'), null, 'an arrival the map\'s own story met (a chapter\'s arrival scene): the road\'s event waits');
+    go(s, 'rw.village'); go(s, 'rw.road');
+    t.eq(T.roadEventAt(s, 'rw.road'), 'sg.lw_road_rw_cart', 'and is there on the next walk');
     const s2 = camp({ departed: true }); s2.map = 'rw.road';
     t.eq(T.roadEventAt(s2, 'rw.road'), null, 'a load or a start on the road is no arrival: nothing');
     T.roadDone(s, 'rw_road', 'cart');

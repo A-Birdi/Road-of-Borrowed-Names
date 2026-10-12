@@ -99,10 +99,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.knows('cr_seibe', { cr_otaki: 'routine', cr_rin: 'routine', cr_tatsu: 'loose', cr_genji: 'loose', cr_kosuke: 'loose', cr_tome: 'loose' });
   L.asks('cr_rin');
   L.cold('cr_rin', ['{自分|じぶん} の {目|め} で {見|み}た こと しか 、 {言|い}わない こと に して います 。 {人|ひと} の {居場所|いばしょ} は 、 {見|み}て いません 。', 'I\'ve made it a rule to say only what I\'ve seen with my own eyes. I haven\'t seen where anyone is.']);
-  L.usual('cr_jinpachi', ['ジンパチ は 、 {走|はし}って いる か 、 {寝|ね}て いる か だ 。 {宿|しゅく} から {宿|しゅく} へ な 。', 'Jinpachi? Either running or asleep. Station to station.']);
-  L.usual('cr_ine', ['イネ さん は 、 {杉|すぎ}ノ{木|き} の {大杉|おおすぎ} の {下|した} の {茶屋|ちゃや} よ 。', 'Ine keeps the teahouse under the great cedar at Suginoki.']);
+  L.usual('cr_jinpachi', ['ジンパチ なら 、 {宿|しゅく} から {宿|しゅく} へ {走|はし}って いる か 、 {寝|ね}て いる か です よ 。', 'Jinpachi? Either running station to station, or asleep.']);
+  L.usual('cr_ine', ['イネ さん は 、 {杉|すぎ}ノ{木|き} の {大杉|おおすぎ} の {下|した} の {茶屋|ちゃや} です よ 。', 'Ine keeps the teahouse under the great cedar at Suginoki.']);
   L.usual('cr_sono', ['ソノ さん は 、 {坂下|さかした} の {飛脚宿|ひきゃくやど} です 。', 'Sono keeps the Courier\'s Inn at Sakashita.']);
-  L.usual('cr_sakichi', ['サキチ なら 、 {霧下|きりした} の {宿|やど} の {前|まえ} に いる だろう 。 {郵便|ゆうびん} の {箱|はこ} の そば だ 。', 'Sakichi? In front of the station house at Kirishita, by the post box.']);
+  L.usual('cr_sakichi', ['サキチ なら 、 {霧下|きりした} の {宿|やど} の {前|まえ} に いる だろう 。 {郵便箱|ゆうびんばこ} の そば だ 。', 'Sakichi? Likely out in front of the station house at Kirishita, by the post box.']);
 
   // ---- W1: change beats -------------------------------------------------------------------------------------------
   // registered: Jinpachi at each station with the valley's call (cr/10_maps.js: ed>=2&cr_done&!yn_called)
@@ -154,13 +154,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: 'カジカガエル は 、 {山|やま} の {沢|さわ} に {住|す}む {小|ちい}さな {蛙|かえる} 。 {夏|なつ} に 、 {笛|ふえ} の よう な {声|こえ} で {鳴|な}く 。',
     en: 'The kajika frog (カジカガエル) is a small frog of mountain streams, loved for its flute-like song in summer. (Real: poets have written about it for centuries.)' };
   C.notes.lw_cr_two_lines = { title: T('Two colours of line', '{二色|にしょく} の {線|せん}'), fiction: true,
-    jp: 'リン の {地図|ちず} で は 、 {赤|あか} の {線|せん} は {自分|じぶん} で {歩|ある}いた {道|みち} 、 {青|あお} の {線|せん} は {人|ひと} に {聞|き}いた {道|みち} 。',
-    en: 'On Rin\'s map a red line is a road she walked herself, a blue line one she was told about. Blue is not wrong: only not yet checked.' };
+    jp: 'リン の {地図|ちず} で は 、 {黒|くろ} の {線|せん} は {自分|じぶん} で {歩|ある}いた {道|みち} 、 {赤|あか} の {線|せん} は {人|ひと} に {聞|き}いた {道|みち} 。',
+    en: 'On Rin\'s map a black line is a road she walked herself, a red line one she was told about. Red is not wrong: only not yet checked.' };
   C.notes.lw_cr_cloud_ox = { title: T('The Cloud Ox', '{雲|くも} の {牛|うし}'), fiction: true,
     jp: '{雲|くも} の {牛|うし} は 、 {霧|きり} が {牛|うし} の {形|かたち} を した もの に すぎない 。 {人|ひと} を {食|く}う と いう の は 、 {噂|うわさ} だ 。',
     en: 'The Cloud Ox is only mist in the shape of an ox. That it eats people is a rumour. (The game\'s own creature.)' };
   C.notes.lw_cr_shelter = { title: T('The shelter\'s firewood', '{小屋|こや} の {薪|まき}'), fiction: true,
-    jp: '{峠|とうげ} の {避難小屋|ひなんごや} で は 、 {使|つか}った {薪|まき} は 、 {次|つぎ} の {人|ひと} の ため に {足|た}して おく 。',
+    jp: '{峠|とうげ} の {避難小屋|ひなんごや} で は 、 {使|つか}った {分|ぶん} の {薪|まき} は 、 {次|つぎ} の {人|ひと} の ため に {足|た}して おく 。',
     en: 'At the pass\'s snow shelter, the firewood you burn is put back for whoever comes next. (Leave a mountain hut as you found it: a real courtesy; this shelter is the game\'s.)' };
 
   C.challenges['cr.lw_runner'] = { title: J('{聞|き}いた まま', 'As it was heard'), tiers: {
@@ -234,14 +234,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       options: [o('{新|あたら}しい {杭|くい} 。 {石|いし} の {頃|ころ} に は 、 まだ {橋|はし} が なかった 。', 1), o('{古|ふる}い {石|いし} 。 {古|ふる}い {方|ほう} が {正|ただ}しい 。', 0, 'The stone was carved before there was a bridge.'), o('どちら も {同|おな}じ こと を {言|い}って いる 。', 0, 'One says the upper shallows, the other the bridge.')] })],
   } };
   C.challenges['cr.lw_kajika'] = { title: J('カジカ の {歌|うた}', 'The kajika\'s song'), tiers: {
-    F: [ch({ item: 'v:蛙', ctx: { jp: 'ふだ ： 「カジカ を とらないで 。 さわ の うた が きえる 。」', en: '' }, prompt: { en: 'The child has a jar of frogs. What does the sign ask?' },
+    F: [ch({ item: 'v:蛙', ctx: { jp: 'ふだ ： 「カジカ を とらないで 。 さわ の うた が きえる 。」', en: '' }, prompt: { en: 'The child has caught a frog in a jar. What does the sign ask?' },
       options: [o('カジカ を とらないで', 1), o('カジカ を たくさん とって', 0, 'とらないで: please don\'t catch them.')] })],
     E: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: '{札|ふだ} ： 「カジカ を {捕|と}らないで ください 。 {沢|さわ} の {歌|うた} が {消|き}えて しまいます 。」', en: '' }, prompt: { en: 'Why does the sign ask it?' },
       options: [o('{沢|さわ} の {歌|うた} が {消|き}えて しまう から', 1), o('カジカ が {噛|か}む から', 0, 'The reason is the song.'), o('{沢|さわ} が {危|あぶ}ない から', 0, 'The reason is the song.')] })],
     I: [ch({ item: 'g:cond_to', ctx: { jp: '{札|ふだ} ： 「カジカ が いなく なる と 、 {夏|なつ} の {沢|さわ} は {静|しず}か に なる 。」', en: '' }, prompt: { en: 'What happens if the frogs go?' },
-      options: [o('{夏|なつ} の {沢|さわ} が {静|しず}か に なる', 1), o('{沢|さわ} の {水|みず} が {増|ふ}える', 0, '〜となる: the stream goes quiet.'), o('{夏|なつ} が {来|こ}なく なる', 0, 'Summer still comes, only quieter.')] })],
+      options: [o('{夏|なつ} の {沢|さわ} が {静|しず}か に なる', 1), o('{沢|さわ} の {水|みず} が {増|ふ}える', 0, 'いなくなると: once they are gone, the stream goes quiet.'), o('{夏|なつ} が {来|こ}なく なる', 0, 'Summer still comes, only quieter.')] })],
     A: [ch({ item: 'g:indirectness', ctx: { jp: '{子|こ} ： 「…… {一匹|いっぴき} だけ でも 、 だめ かな 。 {家|うち} で {聞|き}きたい ん だ けど 。」', en: '' }, prompt: { en: 'What is the child asking, and what fits the sign\'s reason?' },
-      options: [o('{一匹|いっぴき} なら {持|も}って {帰|かえ}れる か と {聞|き}いて いる 。 「{沢|さわ} で {歌|うた} を {聞|き}きに {来|こ}よう」 と {答|こた}える 。', 1), o('もっと {捕|と}りたい と {言|い}って いる 。', 0, '一匹だけでも: even just one.'), o('{家|いえ} に {帰|かえ}りたい と {言|い}って いる 。', 0, 'They want to hear the frogs at home.')] })],
+      options: [o('{一匹|いっぴき} なら {持|も}って {帰|かえ}れる か と {聞|き}いて いる 。 「{歌|うた} は 、 {沢|さわ} に {聞|き}きに {来|く}れば いい」 と {答|こた}える 。', 1), o('もっと {捕|と}りたい と {言|い}って いる 。', 0, '一匹だけでも: even just one.'), o('{家|いえ} に {帰|かえ}りたい と {言|い}って いる 。', 0, 'They want to hear the frogs at home.')] })],
   } };
   C.challenges['cr.lw_logs'] = { title: J('{流|なが}れて くる {木|き}', 'Logs coming down'), tiers: {
     F: [ch({ item: 'v:昼', ctx: { jp: 'うえ から の こえ ： 「ひる まで 、 さわ に はいらないで ！」', en: '' }, prompt: { en: 'Until when should you stay out of the stream?' },
@@ -251,17 +251,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
     I: [ch({ item: 'g:uchi_ni', ctx: { jp: 'ヤヘイ ： 「{木|き} が {流|なが}れて いる うち は 、 {橋|はし} の {下|した} に も {寄|よ}らないで くれ 。」', en: '' }, prompt: { en: 'A traveller wants to fill a water bottle under the bridge. What do you say?' },
       options: [o('{木|き} が {流|なが}れて いる {間|あいだ} は 、 {橋|はし} の {下|した} に {寄|よ}らない で', 1), o('{橋|はし} の {下|した} なら {大丈夫|だいじょうぶ}', 0, '橋の下にも寄らないで: not even under the bridge.')] })],
     A: [ch({ item: 'g:cr_tono', ctx: { jp: 'ヤヘイ ： 「{坂下|さかした} の {衆|しゅう} に 、 {昼|ひる} まで は {沢|さわ} に {入|はい}る な 、 と {伝|つた}えて くれ 。」', en: '' }, prompt: { en: 'How do you pass it on, politely, at Sakashita?' },
-      options: [o('{昼|ひる} まで は {沢|さわ} に {入|はい}らない よう に 、 と の {伝言|でんごん} です 。', 1), o('{昼|ひる} から {沢|さわ} に {入|はい}れ 、 と の {伝言|でんごん} です 。', 0, 'まで: until noon, keep out.'), o('{沢|さわ} に {入|はい}る な 。', 0, 'Faithful, but a bare command: pass it on as a message, との伝言です.')] })],
+      options: [o('{昼|ひる} まで は {沢|さわ} に {入|はい}らない よう に 、 と の {伝言|でんごん} です 。', 1), o('{昼|ひる} から {沢|さわ} に {入|はい}れ 、 と の {伝言|でんごん} です 。', 0, 'まで: until noon, keep out.'), o('{沢|さわ} に {入|はい}る な 。', 0, 'A bare command, and it drops 昼まで: pass it on as a message, との伝言です.')] })],
   } };
   C.challenges['cr.lw_lines'] = { title: J('{二色|にしょく} の {線|せん}', 'Two colours of line'), tiers: {
-    F: [ch({ item: 'v:地図', ctx: { jp: 'ちず ： 「あか ＝ あるいた みち 。 あお ＝ きいた みち 。」 がけみち は あお 。', en: '' }, prompt: { en: 'Did Rin walk the ledge herself?' },
-      options: [o('あるいて いない 。 きいた だけ 。', 1), o('あるいた', 0, 'あお: a road she was told about.')] })],
-    E: [ch({ item: 'v:線', ctx: { jp: '{地図|ちず} ： 「{赤|あか} ＝ {歩|ある}いた {道|みち} 。 {青|あお} ＝ {聞|き}いた {道|みち} 。」 {本道|ほんどう} は {赤|あか} 、 {崖道|がけみち} は {青|あお} 。', en: '' }, prompt: { en: 'Which road on the map has someone actually walked?' },
-      options: [o('{本道|ほんどう}', 1), o('{崖道|がけみち}', 0, 'The ledge is blue: hearsay.')] })],
-    I: [ch({ item: 'g:rashii', ctx: { jp: '{旅人|たびびと} ： 「{崖道|がけみち} の {方|ほう} が {近|ちか}い らしい よ 。」 {地図|ちず} で は 、 {崖道|がけみち} は {青|あお} だ 。', en: '' }, prompt: { en: 'How sure is the traveller?' },
-      options: [o('{聞|き}いた だけ 。 {地図|ちず} も {聞|き}いた {話|はなし} だ 。', 1), o('{自分|じぶん} で {歩|ある}いて {確|たし}かめた', 0, 'らしい: they heard it.'), o('{地図|ちず} が {赤|あか} だ から {確|たし}か', 0, 'The ledge is blue.')] })],
-    A: [ch({ item: 'g:adv_wake_dewa_nai', ctx: { jp: 'リン の {書|か}き{込|こ}み ： 「{青|あお} の {線|せん} が {間違|まちが}い だ と いう わけ で は ない 。 {確|たし}かめて いない だけ だ 。」', en: '' }, prompt: { en: 'What does Rin\'s note say about the blue lines?' },
-      options: [o('{間違|まちが}い と は {限|かぎ}らない 。 まだ {確|たし}かめて いない だけ 。', 1), o('{青|あお} の {線|せん} は {全部|ぜんぶ} {間違|まちが}い だ 。', 0, 'わけではない denies exactly that.'), o('{青|あお} の {線|せん} は {確|たし}かめた {道|みち} だ 。', 0, '確かめていない: not checked.')] })],
+    F: [ch({ item: 'v:地図', ctx: { jp: 'ちず ： 「くろ ＝ あるいた みち 。 あか ＝ きいた みち 。」 がけみち は あか 。', en: '' }, prompt: { en: 'Did Rin walk the ledge herself?' },
+      options: [o('あるいて いない 。 きいた だけ 。', 1), o('あるいた', 0, 'あか: a road she was told about.')] })],
+    E: [ch({ item: 'v:線', ctx: { jp: '{地図|ちず} ： 「{黒|くろ} ＝ {歩|ある}いた {道|みち} 。 {赤|あか} ＝ {聞|き}いた {道|みち} 。」 {本道|ほんどう} は {黒|くろ} 、 {崖道|がけみち} は {赤|あか} 。', en: '' }, prompt: { en: 'Which road on the map has someone actually walked?' },
+      options: [o('{本道|ほんどう}', 1), o('{崖道|がけみち}', 0, 'The ledge is red: hearsay.')] })],
+    I: [ch({ item: 'g:rashii', ctx: { jp: '{旅人|たびびと} ： 「{崖道|がけみち} の {方|ほう} が {近|ちか}い らしい よ 。」 {地図|ちず} で は 、 {崖道|がけみち} は {赤|あか} だ 。', en: '' }, prompt: { en: 'How sure is the traveller?' },
+      options: [o('{聞|き}いた だけ 。 {地図|ちず} も {聞|き}いた {話|はなし} だ 。', 1), o('{自分|じぶん} で {歩|ある}いて {確|たし}かめた', 0, 'らしい: they heard it.'), o('{地図|ちず} が {黒|くろ} だ から {確|たし}か', 0, 'The ledge is red on the map: hearsay.')] })],
+    A: [ch({ item: 'g:adv_wake_dewa_nai', ctx: { jp: 'リン の {書|か}き{込|こ}み ： 「{赤|あか} の {線|せん} が {間違|まちが}い だ と いう わけ で は ない 。 {確|たし}かめて いない だけ だ 。」', en: '' }, prompt: { en: 'What does Rin\'s note say about the red lines?' },
+      options: [o('{間違|まちが}い と は {限|かぎ}らない 。 まだ {確|たし}かめて いない だけ 。', 1), o('{赤|あか} の {線|せん} は {全部|ぜんぶ} {間違|まちが}い だ 。', 0, 'わけではない denies exactly that.'), o('{赤|あか} の {線|せん} は {確|たし}かめた {道|みち} だ 。', 0, '確かめていない: not checked.')] })],
   } };
   C.challenges['cr.lw_stakes'] = { title: J('リン の {杭|くい}', 'Rin\'s stakes'), tiers: {
     F: [ch({ item: 'g:counters', ctx: { jp: 'ふだ ： 「10 ぽ ごと に くい を 1 ぽん 。」 くい が 3 ぼん ある 。', en: '' }, prompt: { en: 'How many paces from the start is the third stake?' },
@@ -393,7 +393,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['narr', '{足|あし} の {下|した} で 、 {石畳|いしだたみ} の {石|いし} が ぐらり と {動|うご}いた 。 {道標|みちしるべ} の {横|よこ} に 、 {赤|あか}い {布|ぬの} の {束|たば} と {札|ふだ} が ある 。', 'A paving stone rocks under your foot. By the waystone hang a bundle of red cloths and a card.'],
   ], [
     ['narr', '{赤|あか}い {布|ぬの} を {石|いし} の {横|よこ} に {結|むす}んだ 。 {遠|とお}く から でも 、 よく {見|み}える 。', 'You tie a red cloth by the stone. It shows from far off.'],
-  ], [['narr', '{石|いし} は {動|うご}いた まま だ 。 {誰|だれ} か が {足|あし} を {取|と}られない と いい が 。', 'The stone still rocks. You hope nobody turns an ankle on it.']], 'lw_cr_red_cloth');
+  ], [['narr', '{石|いし} は ぐらぐら した まま だ 。 {誰|だれ} か が {足|あし} を {取|と}られない と いい が 。', 'The stone still rocks. You hope nobody turns an ankle on it.']], 'lw_cr_red_cloth');
   ev('cr_leg2', 'pebbles', [
     ['narr', 'からから と 、 {上|うえ} から {小石|こいし} が {落|お}ちて くる {音|おと} 。 {黄色|きいろ}く なった {札|ふだ} が 、 {岩|いわ} に {貼|は}って ある 。', 'A rattle of pebbles coming down from above. A notice, gone yellow, is pasted to a rock.'],
   ], [
@@ -425,9 +425,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['cr_yahei', 'よし ！ {聞|き}こえた か ！ {助|たす}かった ぞ ！', 'Good! You heard me! Much obliged!'],
   ], [['narr', 'ヤヘイ の {声|こえ} は 、 {水|みず} の {音|おと} に {消|け}された 。', 'Yahei\'s voice is lost in the noise of the water.']]);
   ev('cr_leg4', 'lines', [
-    ['narr', '{二人|ふたり} の {旅人|たびびと} が 、 {地図|ちず} を {広|ひろ}げて {言|い}い{合|あ}って いる 。 {中山|なかやま} の リン の {地図|ちず} だ 。 {線|せん} が {赤|あか} と {青|あお} で {分|わ}けて ある 。', 'Two travellers are arguing over a map spread between them: Rin\'s, from Nakayama, its lines in red and blue.'],
+    ['narr', '{二人|ふたり} の {旅人|たびびと} が 、 {地図|ちず} を {広|ひろ}げて {言|い}い{合|あ}って いる 。 {中山|なかやま} の リン の {地図|ちず} だ 。 {線|せん} が {黒|くろ} と {赤|あか} で {分|わ}けて ある 。', 'Two travellers are arguing over a map spread between them: Rin\'s, from Nakayama, its lines in black and red.'],
   ], [
-    ['narr', '{赤|あか} の {線|せん} の {本道|ほんどう} を {指|さ}す と 、 {二人|ふたり} は {顔|かお} を {見合|みあ}わせて 、 {本道|ほんどう} を {行|い}く こと に した 。', 'You point to the red line of the main road. They look at each other, and decide on the main road.'],
+    ['narr', '{黒|くろ} の {線|せん} の {本道|ほんどう} を {指|さ}す と 、 {二人|ふたり} は {顔|かお} を {見合|みあ}わせて 、 {本道|ほんどう} を {行|い}く こと に した 。', 'You point to the black line of the main road. They look at each other, and decide on the main road.'],
   ], [['narr', '{二人|ふたり} は まだ {言|い}い{合|あ}って いる 。', 'They are still arguing.']], 'lw_cr_two_lines');
   ev('cr_leg4', 'stakes', [
     ['narr', '{道|みち} の {脇|わき} に 、 {細|ほそ}い {杭|くい} が {並|なら}んで いる 。 ところどころ 、 {抜|ぬ}けた {穴|あな} が ある 。 {一本|いっぽん} に 、 リン の {札|ふだ} 。', 'Thin stakes run along the roadside, with holes here and there where some have been pulled up. On one of them, a card from Rin.'],
@@ -442,7 +442,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['cr_genji', 'ほら な 。 {馬|うま} は {話|はなし} を {聞|き}く ん だ 。 {人|ひと} より も な 。', 'See? Horses listen. Better than people do.'],
   ], [['cr_genji', 'まあ いい 。 {風|かぜ} が {変|か}われば 、 {歩|ある}く さ 。', 'Never mind. Kuri will walk when the wind changes.']]);
   ev('cr_leg5', 'voice', [
-    ['narr', '{急|きゅう} に {霧|きり} が {降|お}りて きた 。 {白|しろ}い {中|なか} から 、 {声|こえ} が する 。', 'All at once the fog comes down. Out of the white, a voice.'],
+    ['narr', '{急|きゅう} に {霧|きり} が {降|お}りて きた 。 {真|ま}っ{白|しろ} な {中|なか} から 、 {声|こえ} が する 。', 'All at once the fog comes down. Out of the white, a voice.'],
     ['lw_cr_traveller', 'だれ か いません か ！ {道|みち} が {分|わ}からない ん です ！', 'Is anyone there? I can\'t find the road!'],
   ], [
     ['narr', '{声|こえ} を {頼|たよ}り に {近|ちか}づく と 、 {旅人|たびびと} の {影|かげ} が {見|み}えた 。 {一緒|いっしょ} に {道|みち} へ {戻|もど}った 。', 'Following the voice, you make out the traveller\'s shape, and bring them back to the road.'],
@@ -453,14 +453,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['lw_cr_hunter', '…… {噂|うわさ} か 。 {確|たし}か に 、 {人|ひと} の {骨|ほね} {一本|いっぽん} {見|み}た こと が ない 。 {帰|かえ}る と しよう 。', '…Just talk, eh. True enough, I never saw so much as a bone. I\'ll be off home.'],
   ], [['lw_cr_hunter', 'ふん 。 {見|み}つけたら 、 {仕留|しと}めて やる 。', 'Hmph. If I find it, I\'ll have it.']], 'lw_cr_cloud_ox');
   ev('cr_leg5', 'papers', [
-    ['narr', '{霧|きり} の {運|はこ}び{屋|や} が {落|お}として いった の か 、 {道|みち} に {手形|てがた} が {落|お}ちて いる 。 {少|すこ}し {先|さき} で 、 {旅人|たびびと} が {二人|ふたり} 、 {荷物|にもつ} を ひっくり{返|かえ}して いる 。', 'Travel papers lie on the road; the Fog Porter must have dropped them. A little further on, two travellers are turning out their bags.'],
+    ['narr', '{霧担|きりかつ}ぎ が {落|お}として いった の か 、 {道|みち} に {手形|てがた} が {落|お}ちて いる 。 {少|すこ}し {先|さき} で 、 {旅人|たびびと} が {二人|ふたり} 、 {荷物|にもつ} を ひっくり{返|かえ}して いる 。', 'Travel papers lie on the road: dropped by the Fog Porter, perhaps. A little further on, two travellers are turning out their bags.'],
   ], [
     ['narr', '{手形|てがた} を {持|も}ち{主|ぬし} に {返|かえ}す と 、 {深々|ふかぶか} と {頭|あたま} を {下|さ}げられた 。', 'You hand the papers back to their owner, who bows deeply.'],
-  ], [['narr', '{手形|てがた} は {拾|ひろ}って おいた 。 {次|つぎ} の {宿|しゅく} で 、 {誰|だれ} か が {探|さが}して いる だろう 。', 'You pick the papers up. Someone at the next station will be looking for them.']]);
+  ], [['narr', '{手形|てがた} は {拾|ひろ}って おいた 。 {次|つぎ} の {宿|しゅく} で 、 {誰|だれ} か が {探|さが}して いる だろう 。', 'You pick the papers up. Someone at the next station will probably be looking for them.']]);
   ev('cr_pass', 'shelter', [
     ['narr', '{避難小屋|ひなんごや} の {薪|まき} が 、 {少|すこ}し しか {残|のこ}って いない 。 {誰|だれ} か が {使|つか}った まま 、 {出|で}て いった らしい 。 {壁|かべ} に {札|ふだ} 。', 'The shelter\'s firewood is down to a few sticks. Someone used it and left, it seems. A card on the wall.'],
   ], [
-    ['narr', '{外|そと} の {枯|か}れ{枝|えだ} を {集|あつ}めて 、 {薪|まき} の {山|やま} を {足|た}した 。 {次|つぎ} の {人|ひと} は 、 {温|あたた}かい {夜|よる} を {過|す}ごせる 。', 'You gather dead wood outside and build the pile back up. Whoever comes next will have a warm night.'],
+    ['narr', '{外|そと} の {枯|か}れ{枝|えだ} を {集|あつ}めて 、 {薪|まき} の {山|やま} に {足|た}した 。 {次|つぎ} の {人|ひと} は 、 {温|あたた}かい {夜|よる} を {過|す}ごせる 。', 'You gather dead wood outside and build the pile back up. Whoever comes next will have a warm night.'],
   ], [['narr', '{薪|まき} の {山|やま} は {低|ひく}い まま だ 。', 'The woodpile stays low.']], 'lw_cr_shelter');
   ev('cr_pass', 'turns', [
     ['narr', '{九十九折|つづらお}り の {曲|ま}がり{角|かど} で 、 {子|こ} が {指|ゆび} を {折|お}って {数|かぞ}えて いる 。 {親|おや} は {後|うし}ろ で {息|いき} を {切|き}らして いる 。', 'At a turn of the switchbacks a child is counting on their fingers, a parent puffing along behind.'],
@@ -492,11 +492,11 @@ cr_kanbe: {継|つ}ぎ{飛脚|びきゃく} が 、 {輪|わ} に なった 。 
 cr_kanbe: {帳面|ちょうめん} が また {足|た}りん わい 。 …… {悪|わる}く ない 。 || Not enough ledger again. …Not bad.
 
 @scene yn.lw_cr_rin_sheet
-narr: リン の {新|あたら}しい {地図|ちず} 。 {峠|とうげ} の {先|さき} 、 {湯|ゆ}ノ{谷|たに} まで {線|せん} が {伸|の}びて いる 。 {全部|ぜんぶ} 、 {赤|あか} の {線|せん} だ 。 || Rin's new map. The line runs on past the pass, all the way down to Steamhollow. Every bit of it in red.
+narr: リン の {新|あたら}しい {地図|ちず} 。 {峠|とうげ} の {先|さき} 、 {湯|ゆ}ノ{谷|たに} まで {線|せん} が {伸|の}びて いる 。 {全部|ぜんぶ} 、 {黒|くろ} の {線|せん} だ 。 || Rin's new map. The line runs on past the pass, all the way down to Steamhollow. Every bit of it in black.
 
 @scene yn.lw_cr_rin_valley
 !faceplayer
-cr_rin: {湯|ゆ}ノ{谷|たに} まで 、 {自分|じぶん} の {足|あし} で {下|お}りて きました 。 {峠|とうげ} から {先|さき} は 、 {全部|ぜんぶ} {赤|あか} で {描|か}けます 。 || I walked down to Steamhollow on my own feet. From the pass onwards, I can draw it all in red.
+cr_rin: {湯|ゆ}ノ{谷|たに} まで 、 {自分|じぶん} の {足|あし} で {下|お}りて きました 。 {峠|とうげ} から {先|さき} は 、 {全部|ぜんぶ} {黒|くろ} で {描|か}けます 。 || I walked down to Steamhollow on my own feet. From the pass onwards, I can draw it all in black.
 cr_rin[smile]: {湯|ゆ} に も {入|はい}りました 。 {熱|あつ}さ は 、 {地図|ちず} に は {描|か}けません けど 。 || I had a bath too. Though you can't draw how hot it was on a map.
 
 @scene cr.lw_cr_tatsu_post
@@ -506,7 +506,7 @@ cr_tatsu: {松葉屋|まつばや} の {布団|ふとん} で {寝|ね}て 、 {
 
 @scene yn.lw_cr_inns_open
 !gesture pc observe prop:chest
-narr: {松葉屋|まつばや} の {鍵|かぎ} と 、 {竹屋|たけや} の {鍵|かぎ} 。 {片方|かたほう} ずつ で は なく 、 {宿場|しゅくば} {全体|ぜんたい} を {一|ひと}つ と して {回|まわ}す と 、 {箱|はこ} は {開|あ}いた 。 || The Matsuba's lock and the Take's. Not one and then the other: turned as one, for the whole station, and the box opens.
+narr: {松葉屋|まつばや} の {鍵|かぎ} と 、 {竹屋|たけや} の {鍵|かぎ} 。 {片方|かたほう} ずつ で は なく 、 {宿場|しゅくば} {全体|ぜんたい} の {鍵|かぎ} と して 、 {二|ふた}つ {一緒|いっしょ} に {回|まわ}す と 、 {箱|はこ} は {開|あ}いた 。 || The Matsuba's lock and the Take's. Not one and then the other: turned together, as the whole station's key, and the box opens.
 narr: {中|なか} に は 、 {古|ふる}い {寄合|よりあい} の {記録|きろく} 。 「{冬|ふゆ} の {間|あいだ} 、 {二軒|にけん} の {宿|やど} は 、 {風呂|ふろ} と {布団|ふとん} を {貸|か}し{借|か}り する こと 。」 || Inside, the association's old record: "Through the winter, the two inns shall lend each other baths and futons."
 narr: オタキ と セイベエ が {今|いま} {決|き}めた こと は 、 {昔|むかし} の {宿場|しゅくば} も {決|き}めて いた の だ 。 || What Otaki and Seibe have just agreed, the station once agreed before.
 !note lw_cr_inns
@@ -524,7 +524,7 @@ narr: {継|つ}ぎ{飛脚|びきゃく} の {道|みち} は 、 {昔|むかし}
 !note lw_cr_route
 
 @scene sa.lw_cr_route_after
-narr: {継|つ}ぎ{飛脚|びきゃく} の {道順|みちじゅん} の {掛|か}け{軸|じく} 。 {峠|とうげ} の {先|さき} の {名前|なまえ} も 、 {今|いま} は はっきり {読|よ}める 。 || The scroll of the relay's route. The names past the pass read clear and black now.
+narr: {継|つ}ぎ{飛脚|びきゃく} の {道順|みちじゅん} の {掛|か}け{軸|じく} 。 {峠|とうげ} の {先|さき} の {名前|なまえ} も 、 {今|いま} は はっきり {読|よ}める 。 || The scroll of the relay's route. The names past the pass can be read clearly now.
 
 @scene cr.lw_cr_held_open_post
 !gesture pc observe prop:chest

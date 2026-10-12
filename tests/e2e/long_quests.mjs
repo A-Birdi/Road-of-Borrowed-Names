@@ -27,15 +27,20 @@ const profile = argv.find((a) => /^[FEIA]$/.test(a)) || 'E';
 let fails = 0;
 const say = (ok, m) => { if (!ok) fails++; console.log((ok ? 'ok   ' : 'FAIL ') + m); };
 
-// A campaign at the start of chapter 5: every earlier chapter finished, the
-// Snowbell road open, the bell in Lanternfall not yet rung.
+// A campaign at the start of Lanternfall (the six-chapter edition's chapter 5): every earlier chapter finished, the
+// Snowbell road open, the bell in Lanternfall not yet rung. The journey is twelve-chapter, as a new one is: Manybridge's
+// two chapters (before Cinder Orchard) and the Keepers' Road (between Snowbell and Lanternfall) are finished too, or
+// their roads stay shut (Saltglass to the Orchard Road needs mb2_done; the lodge to the descent, kr_vigil_done; the
+// descent to the Lantern Road, kr_done).
 const FX5 = {
   rw_arrived: true, rw_road_lit: true, rw_met_tsuru: true, rw_mill_open: true, rw_echo_done: true, bridge_fixed: true, rw_koji_back: true,
   rw_evening: true, rw_hall_gather: true, departed: true, ch1_done: true,
   sg_arrived: true, sg_harbor_seen: true, sg_boss_done: true, sg_returned: true, sg_main_done: true, sg_road_open_seen: true, ch2_done: true,
+  mb_arrived: true, mb_main_done: true, mb1_done: true, mp_arrived: true, mp_main_done: true, mb2_done: true,
   co_restored: true, ch3_done: true, sb_arrived: true, sb_lamp_lit: true, ch4_done: true,
+  kr_arrived: true, kr_vigil_done: true, kr_main_done: true, kr_done: true,
 };
-const DONE = ['rw_labels', 'rw_mill', 'rw_depart', 'sg_main', 'co_main', 'sb_lamp'];
+const DONE = ['rw_labels', 'rw_mill', 'rw_depart', 'sg_main', 'mb_main', 'mp_main', 'co_main', 'sb_lamp', 'kr_main'];
 const WORDS = ['mamoru', 'mizu', 'hikari', 'iyasu', 'kaze', 'nawa', 'ishi', 'koori', 'tsuchi', 'honoo'];
 
 async function runFlow(b, url, name, comp, body) {

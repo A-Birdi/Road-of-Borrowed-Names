@@ -380,8 +380,11 @@ await test('keyboard: open the ledger from the title and close it; focus returns
   await p.waitForTimeout(150);
   const back = await p.evaluate(() => ({ a: document.activeElement.getAttribute('data-a'), help: !!document.querySelector('.help'), ledger: !!document.querySelector('.folio-ledger') }));
   assert(!back.ledger && back.a === 'load' && !back.help, 'after Escape: ' + JSON.stringify(back));
-  // Settings closing back to the title must not land on a Japanese word either
-  await p.keyboard.press('ArrowDown'); await p.keyboard.press('Enter');
+  // Settings closing back to the title must not land on a Japanese word either (the arrows go on past the travel
+  // volume, on the menu since the twelve-chapter edition shipped)
+  for (let i = 0; i < 4 && (await p.evaluate(() => document.activeElement.getAttribute('data-a'))) !== 'settings'; i++) await p.keyboard.press('ArrowDown');
+  assert((await p.evaluate(() => document.activeElement.getAttribute('data-a'))) === 'settings', 'arrows did not reach Settings');
+  await p.keyboard.press('Enter');
   await p.waitForSelector('.folio-settings');
   await p.keyboard.press('Escape'); await p.keyboard.press('Escape');
   await p.waitForTimeout(150);

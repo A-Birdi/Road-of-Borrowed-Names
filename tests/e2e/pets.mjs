@@ -364,9 +364,10 @@ for (const sp of SPECIES) {
     }
     await p.click('[data-pet-reset]');
     assert(await p.evaluate((sp) => RB.pets.record(RB.game.s, sp).name === RB.pets.species(sp).name, sp), 'Reset to default');
-    // pat: the preview animates, nothing is gained
+    // pat: the preview animates, nothing is gained (Reset drew the page again: its new preview may not have drawn its
+    // first frame yet, and has no count until it has)
     const before = await p.evaluate(() => JSON.stringify(RB.game.s.company.bond) + JSON.stringify(RB.game.s.inv) + JSON.stringify(RB.game.s.awarded));
-    const f0 = await p.evaluate(() => +document.querySelector('[data-pet-live]').dataset.frame);
+    const f0 = await p.evaluate(() => +(document.querySelector('[data-pet-live]').dataset.frame || 0));
     await p.click('[data-pet-pat]');
     await wait(p, 700);
     await shot(p, sp + '_company_pat');
@@ -403,6 +404,8 @@ for (const sp of SPECIES) {
       await q.evaluate(() => RB.ui.menu.open('pet'));
       await wait(q, 400);
       if (!(await q.evaluate(() => !!document.querySelector('.pet-detail')))) { await q.click('[data-pet-sel="' + sp + '"]'); await wait(q, 300); }
+      // measured once the book has opened (while it opens it is drawn a little smaller: scale 0.965 at first)
+      await q.waitForFunction(() => { const f = document.querySelector('.folio'); return !!f && f.getAnimations({ subtree: true }).every((a) => a.playState !== 'running'); });
       const land = await q.evaluate(() => {
         const l = document.querySelector('#folio-page .leaf');
         const small = [...document.querySelectorAll('#folio-page .pet-detail button, #folio-page .pet-card button, #folio-page .pet-look')].filter((e) => { const r = e.getBoundingClientRect(); return r.width && (r.height < 44 || r.width < 44); }).length;

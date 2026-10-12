@@ -132,6 +132,14 @@ RB.ui.title = (function () {
     }
     return out;
   }
+  // The middle of the gap between the title's column and the folio, as a fraction of the window's width (the scene
+  // fills the window); null when the title is not up. The column gap (40_title.css) is wider than the moon.
+  function foldGap() {
+    const mast = document.querySelector('.title .mast'), deck = document.querySelector('.title .deck');
+    if (!mast || !deck || !window.innerWidth) return null;
+    const a = mast.getBoundingClientRect(), d = deck.getBoundingClientRect();
+    return a.width && d.width && d.left > a.right ? (a.right + d.left) / 2 / window.innerWidth : null;
+  }
   function buildScene(w, h, el) {
     const K = RB.pxkit;
     const P = h > w * 1.15 ? PLAN.tall : PLAN.wide;
@@ -164,8 +172,10 @@ RB.ui.title = (function () {
       const cy = Math.round(hz * (0.56 + i * 0.07)), cx = Math.round(w * (L.tall ? 0.2 + i * 0.2 : 0.56 + (i % 2) * 0.16 + i * 0.05)), len = Math.round(w * (0.12 + (i % 3) * 0.05));
       R(cx - len / 2, cy, len, 2, '#2c2d52'); R(cx - len / 2 + 6, cy - 1, len - 16, 1, '#3e3c62'); R(cx - len / 2 + 10, cy + 2, len - 30, 1, '#232548');
     }
-    // the moon: a stepped halo and a crescent with a shaded limb and two faint maria
-    const moon = L.tall || side === 's' ? P.moon : side ? [0.72, 0.115] : [0.85, 0.27];
+    // the moon: a stepped halo and a crescent with a shaded limb and two faint maria (beside a short landscape's
+    // folio, which reaches nearly to the lintel, it hangs in the gap between the title's column and the folio: over
+    // the folio, a fifth row or Continue covered it)
+    const moon = L.tall || side === 's' ? P.moon : side ? [foldGap() || 0.72, 0.115] : [0.85, 0.27];
     const mx = Math.round(moon[0] * w), my = Math.round(moon[1] * h), mr = Math.max(6, Math.round(Math.min(w, h) * 0.018));
     c.drawImage(glowSprite(mr * 5, '200,210,240'), mx - mr * 5, my - mr * 5);
     for (let y = -mr; y <= mr; y++) for (let x = -mr; x <= mr; x++) {

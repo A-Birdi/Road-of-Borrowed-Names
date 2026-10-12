@@ -72,9 +72,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.knows('mp_kakeru', { mp_sobe: 'routine', mp_sanpei: 'routine', mp_miyo: 'routine', mp_tomi: 'routine', mp_manbe: 'routine', mp_shinobu: 'routine',
     mp_genta: 'loose', mp_hayashi: 'loose', mp_saku: 'loose', mb_sen: 'loose', mb_fujiko: 'loose', mb_yoshi: 'loose', mb_uno: 'loose', hana: 'loose' });
   L.asks('mp_sobe');
-  L.cold('mp_sobe', ['{人|ひと} の {居場所|いばしょ} だ ？ {版木|はんぎ} の {字|じ} なら {読|よ}める が 、 {人|ひと} の {足|あし} は {読|よ}めねえ よ 。 {仕事|しごと} の {邪魔|じゃま} だ 。', 'Where people are? I can read the letters on a block, not where folk wander off to. You\'re in the way of my work.']);
+  L.cold('mp_sobe', ['{人|ひと} の {居場所|いばしょ} だ ？ {版木|はんぎ} の {字|じ} なら {読|よ}める が 、 {人|ひと} の {行|い}き{先|さき} まで は {読|よ}めない よ 。 {仕事|しごと} の {邪魔|じゃま} だ 。', 'Where people are? I can read the letters on a block, not where folk wander off to. You\'re in the way of my work.']);
   L.usual('mp_sobe', ['{親方|おやかた} は {仕事場|しごとば} です よ 。 {朝|あさ} から {晩|ばん} まで 。', 'The master\'s in the workshop. Morning till night.']);
-  L.usual('mp_sanpei', ['サンペイ なら {刷|す}り{場|ば} だ よ 。 {手|て} が {墨|すみ} だらけ の 。', 'Sanpei? At the press, ink up to the elbows.']);
+  L.usual('mp_sanpei', ['サンペイ なら {刷|す}り{場|ば} だ よ 。 {手|て} を {墨|すみ} だらけ に して ね 。', 'Sanpei? At the press, ink up to the elbows.']);
   L.usual('mp_tomi', ['トミ さん は 、 {祭|まつ}り の {世話役|せわやく} の {所|ところ} か 、 {会所|かいしょ} です よ 。', 'Tomi? At the festival committee, or at the festival hall.']);
   L.usual('mp_manbe', ['マンベエ さん は 、 {芝居小屋|しばいごや} から {離|はな}れない よ 。', 'Manbē never strays far from the playhouse.']);
   L.usual('mp_shinobu', ['シノブ さん は 、 {長屋|ながや} の {部屋|へや} で {書|か}いて いる よ 。', 'Shinobu is writing, in the room in the tenement.']);
@@ -119,7 +119,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   L.scenes(`
 @scene kr.lw_mp_new_play_bill
-narr: {新|あたら}しい {幟|のぼり} 。 「{秋|あき} の {芝居|しばい} ・ {灯守|ひもり} の {道|みち} 。 {来|こ}なかった {見習|みなら}い の {話|はなし}」 。 || A new banner: "The autumn play: The Lamp-Keepers' Road. The tale of the apprentice who never came."
+narr: {新|あたら}しい {幟|のぼり} 。 「{秋|あき} の {芝居|しばい} ・ {灯守|ひもり} の {道|みち} 。 {灯守|ひもり} の {見習|みなら}い の {話|はなし}」 。 || A new banner: "The autumn play: The Lamp-Keepers' Road. The tale of the keepers' apprentice."
 
 @scene kr.lw_mp_manbe_play
 !faceplayer
@@ -144,7 +144,7 @@ mp_kakeru: {組合|くみあい} の {道中図|どうちゅうず} 、 {読|よ
 mp_kakeru: {壁|かべ} に {掛|か}けて おいて くれ 。 {新入|しんい}り に {見|み}せて 、 {自慢|じまん} する から よ 。 || Leave it up on the wall. I'll show it off to the new hands.
 
 @scene ko.lw_mp_iroha_open
-narr: あらゆる {字|じ} を 、 あらゆる {風|かぜ} から {守|まも}る 。 {葉守|はもり} の {言葉|ことば} を {思|おも}い{出|だ}して 、 {版|はん} に {墨|すみ} を {置|お}いた 。 || Guard every kind of word from every kind of wind. Remembering the leaf-keepers' words, you ink the block.
+narr: あらゆる {字|じ} を 、 あらゆる {風|かぜ} から {守|まも}る 。 {葉守|はもり} の {言葉|ことば} を {思|おも}い{出|だ}して 、 {版|はん} に {墨|すみ} を {置|お}いた 。 || Guard every kind of letter from every kind of wind. Remembering the leaf-keepers' words, you ink the block.
 !look mp_sanpei pc
 mp_sanpei: …… {消|き}えない ！ ひらがな も 、 カタカナ も 、 {漢字|かんじ} も 、 {全部|ぜんぶ} {残|のこ}ってる ！ || …It isn't fading! Hiragana, katakana, kanji, every one of them is still there!
 narr: {刷|す}り{上|あ}がった {紙|かみ} に は 、 {古|ふる}い {歌|うた} 。 「いろはにほへと 、 ちりぬるを ……」 。 かな を {一|ひと}つ ずつ 、 {一度|いちど} だけ {使|つか}った {歌|うた} だ 。 || On the printed sheet, an old poem: "Iro ha nihoheto, chirinuru wo…" A poem that uses every kana once, and only once.

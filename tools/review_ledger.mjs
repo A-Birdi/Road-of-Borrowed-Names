@@ -14,14 +14,17 @@ export function lines(RB) {
   const C = RB.content, pre = Object.assign({}, C.chapterOfPrefix || {});
   for (const x of C.reviewPrefixes || []) pre[x] = pre[x] || 'review';
   const prefixOf = (id) => String(id).split(/[._]/)[0];
+  // the Living World (C-87): its own notes and keepsakes (`lw_…`), and below, what it adds to the six-chapter regions
+  pre.lw = pre.lw || 'review';
   const out = [];
   const hash = (s) => { let h = 2166136261 >>> 0; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h.toString(36); };
   const add = (id, where, jp, en) => { if (!jp || !pre[prefixOf(id)]) return; out.push({ prefix: prefixOf(id), key: where + '#' + hash(jp), jp, en: en || '' }); };
-  for (const id in C.scenes) for (const c of C.scenes[id].cmds) {
-    if (c.op === 'say' || c.op === 'card' || c.op === 'journal' || c.op === 'toast') add(id, 'scene:' + id, c.jp, c.en);
-    if (c.simple) add(id, 'scene:' + id + ':simpler', c.simple.jp, c.simple.en);
-    if (c.op === 'choice') for (const o of c.opts) add(id, 'scene:' + id + ':choice', o.jp, o.en);
-  }
+  const sceneLines = (id, as) => { for (const c of C.scenes[id].cmds) {
+    if (c.op === 'say' || c.op === 'card' || c.op === 'journal' || c.op === 'toast') add(as, 'scene:' + id, c.jp, c.en);
+    if (c.simple) add(as, 'scene:' + id + ':simpler', c.simple.jp, c.simple.en);
+    if (c.op === 'choice') for (const o of c.opts) add(as, 'scene:' + id + ':choice', o.jp, o.en);
+  } };
+  for (const id in C.scenes) sceneLines(id, id);
   // every Japanese string under a content object: {jp} texts, and the strings of parts, tiles, answers and pieces
   const JA = /[\u3040-\u30ff\u4e00-\u9fff]/;
   const walk = (id, where, o, seen) => {
@@ -81,6 +84,14 @@ export function lines(RB) {
     walk('xp.atlas', 'atlas:commissions', { landmarks: K.LANDMARKS, areas: K.AREAS, themed: K.THEMED, lengths: K.LENGTHS }, new Set());
     for (const id of ['atlas.board', 'atlas.board.go', 'atlas.board.later']) if (C.scenes[id]) for (const c of C.scenes[id].cmds) if (c.op === 'say') add('xp.atlas', 'scene:' + id, c.jp, c.en);
   }
+  // the Living World in the six-chapter regions (`rw.lw_…`, `sg.lw_…`: their prefixes are not the expansion's), what
+  // people say when asked after someone or when they won't say, the sealed things' hints, and the towns' change beats
+  const LW = /(^|[._])lw_/, lwOnly = (id) => LW.test(id) && !pre[prefixOf(id)];
+  for (const id in C.scenes) if (lwOnly(id)) sceneLines(id, 'lw.' + id);
+  for (const kind of ['challenges', 'notes', 'items']) for (const id in C[kind] || {}) if (lwOnly(id)) walk('lw.' + id, kind + ':' + id, C[kind][id], new Set());
+  for (const p in C.relations || {}) walk('lw.rel', 'relations:' + p, C.relations[p], new Set());
+  for (const id in C.sealed || {}) walk('lw.seal', 'sealed:' + id, C.sealed[id], new Set());
+  for (const id in C.towns || {}) walk('lw.town', 'town:' + id, { beats: C.towns[id].beats }, new Set());
   return out;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {
