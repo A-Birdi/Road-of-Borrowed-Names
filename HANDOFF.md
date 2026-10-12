@@ -269,8 +269,11 @@
     the Quest Guide's state copies (the first open's half second), the grain baked (`tools/book_grain.mjs`), the
     spread's filter replaced by a shadow layer, the spread kept between pages, the tab rail's layouts consolidated,
     the world drawn on one frame in four under the book. `tests/e2e/ledger.mjs` (early and late journeys). Firefox
-    cannot be fetched here (network policy); `RB_BROWSER=firefox` runs a suite where it is installed. Robin's device
-    review is the open part.
+    cannot be fetched here (network policy; retried after Robin's review, still refused); `RB_BROWSER=firefox` runs a
+    suite where it is installed. Robin's review checks: the guide's shared copy of the journey was stale when asked,
+    changed and asked again in one callback; now one copy per outside question (`tests/unit/quest_guide_live.test.mjs`);
+    weather under the book moves at a quarter speed, recorded, not changed. Which build has LP-1 and how to tell an
+    open page's build: VALIDATION.md "LP-1", "Which build has LP-1". Robin's device review is the open part.
     **P18 is Plan B (Robin's C-89, 2026-10-12)**: four continuous twelve-chapter campaigns (F/Ren, E/Nao, I/Mio,
     A/Suzu) through `node tests/e2e/matrix.mjs --twelve --fixtures --pairs …` on one fixed export (28cb216), plus
     targeted tests: `tests/unit/answer_sweep.test.mjs` (every tier of every task, negative controls),

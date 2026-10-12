@@ -4352,6 +4352,83 @@ passes the rest. On the final code: `book` 15/0 (its flat-style check now includ
 If it is not, the next suspects are the opening's 3D perspective motion over the whole book and the grain's tiling
 cost, both kept here because the design asked for them and Chromium shows no problem with them.
 
+**Review checks (Robin, 2026-10-12, after 2debb3c).** Two narrow checks before closing LP-1; the campaigns were not
+restarted for them. The evidence kinds stay apart: correctness (U, B), the synchronous opening time and the frame
+intervals (B, measured, headless Chromium, recorded, not thresholds), and smoothness on a real device (not here).
+
+*1. The Quest Guide's snapshot, asked, changed and asked again in one callback: it was stale; fixed.* 2debb3c kept its
+copy of the live flags and seen scenes until a microtask; asked, then a flag or seen scene changed, then asked again
+in the same synchronous callback, the guide gave its first answer again, and the cached `targets` stored that stale
+answer under the changed journey's key, so it outlived the callback. The guide before LP-1 (13fd5d6) answers the
+changed journey. Found by comparing the two guides on cases discovered from the old guide's own conditions (U,
+scratch): 13 cases (set, set false, deleted; flags and seen scenes; early, Chapter 4 and late fixtures), 9 stale on
+2debb3c. Whether any production path asks, changes and asks again in one frame was not established; the fix makes
+the order irrelevant. **The fix (`src/engine/56_questguide.js`):** the copy lives for one question asked from outside
+(an analysis, targets, nudges, a way, the reachable places), with a depth count, and is dropped when that question
+returns; no Promise. A copy scoped to `analyse` alone was tried first and measured slower (first open 242 ms against
+107, because the way-finding walks scenes outside an analysis); scoping it to each outside question brought it back.
+- U `tests/unit/quest_guide_live.test.mjs` (new, 56 assertions, 8 cases: `sb_snow` with `postgame` set, `sb_evening`
+  set false and deleted, `seen.sb.sculpt_goat` set; `ren_ushio` with `seen.sa.gate_first` and
+  `seen.sa.ushio_grave` set; `ko_kihei` with `ko_lowtide` set false and deleted; Chapter 4 and late fixtures; each
+  case must change the answer; checked in the same callback for the analysis, the cached targets and the nudges, and
+  again in a later task): **passes on the fix and on 13fd5d6's guide; on 2debb3c's it fails 22 assertions (6 of the
+  8 cases)** (the two `ko_kihei` cases read the live journey directly and were never stale).
+- U, scratch comparison against 13fd5d6: 13 cases, **0 differ** (2debb3c: 9). Every open quest's targets, nudges and
+  way on all twelve campaign fixtures: **identical** to 13fd5d6's guide, the journey left as the old guide leaves it.
+- B `ledger.mjs`, a new check on the late journey: in one `evaluate`, targets asked, `seen.sa.ushio_grave` set,
+  asked again (targets and nudges match a fresh analysis of the changed journey), the journey put back unchanged.
+  **32/32** on index.html sha256 e456645a….
+- Measured (B, Chromium, synchronous Ledger opening, the late journey, five interleaved rounds per build while three
+  campaigns loaded the machine, so compared with each other only), first open / repeated opens, medians:
+  13fd5d6 517 / 98 ms, 2debb3c 110 / 34 ms, the fix 114 / 32 ms. `ledger.mjs` on the fix: first open 66–68 ms,
+  repeated 24–28 ms; frame p95 opening 17, turning 33, scrolling 17 ms.
+- The campaigns on 2debb3c stay applicable: their driver never reads the guide, and nothing in the game acts on the
+  guide's answers (markers, nudges and the Ledger only show them).
+
+*2. The world under the book in a weather scene: recorded, not changed.* Weather particles move by a fixed step per
+draw (`drawWeather`, `src/engine/60_render.js`): rain 8 px × its speed, snow 0.7, leaves 0.8, pages 0.5, embers 0.6,
+name slips 0.35, motes and fireflies a small drift. Drawn on one frame in four under the book, they move at a
+quarter of their speed as well as redrawing at a quarter of the rate. Fireworks, the fireflies' and motes' blinking,
+and everything that lives in the world's update (people, the pet, routines) run on time and only redraw less often.
+Measured (B, Chromium, Cloudroad at the rain phase, `cr.suginoki`, 1536×730 @125 %, the rain's own draws), fall
+speed and draws per second:
+
+| | world | opening (first 0.4 s) | browsing | closing (0.4 s) | after |
+|---|---|---|---|---|---|
+| 13fd5d6 (drawn every frame) | 484 px/s, 60 | 423, 35 | 390, 37 | 444, 43 | 481, 60 |
+| the fix (one in four) | 476, 59 | 102, 9 | 117, 13 | 443, 44 | 483, 60 |
+
+(On 13fd5d6 the frame rate itself fell under the book in this busy headless run, and the rain slowed with it.)
+Closing gives the world back at once: the book's 210 ms closing fade already plays over full-rate weather. What
+shows: at this size the book covers the screen but for a strip about 210 px wide on each side, under the scrim's
+darkening (rgba 0.42 at the centre to 0.80 at the edges); there the rain is faint 1 px streaks drifting at a quarter
+speed, snow and slips almost still; on a phone the book covers the screen. **No correctness problem:** the particles
+use their own random stream (nothing else reads it, `Math.random` untouched), nothing reads their positions, and a
+save made from the book takes its thumbnail from a world picture at most three frames old. **Not changed:** moving
+them by elapsed time would keep their speed but at 15 draws a second rain would jump 32 px between pictures (strobing
+dots, not streaks), arguably worse in the margin; drawing every frame when weather is on would bring the cost back.
+If Robin finds the slowed margin weather undesirable on the real device, the options are those two or drawing on
+one frame in two. Pre-existing and unchanged: the per-draw step makes weather speed follow the display's refresh rate
+(a 144 Hz screen draws rain 2.4 times as fast as a 60 Hz one; under the book it is then 36 draws a second at 0.6 of
+the 60 Hz speed).
+
+*Firefox, retried (19:5x UTC).* Still refused: Playwright 1.56.1's Firefox 1495 from `cdn.playwright.dev` (both
+paths) and `playwright.download.prss.microsoft.com` gets "CONNECT tunnel failed, response 403" from the environment's
+proxy. Nothing was reset or interrupted. The grain's benefit in Firefox stays **unmeasured**. Once those hosts are
+allowed: `node /opt/node22/lib/node_modules/playwright/cli.js install firefox`, then
+`RB_BROWSER=firefox node tests/e2e/ledger.mjs` (functional checks and MEASURED lines; headless Firefox on Linux is
+still not Robin's Windows GPU environment).
+
+*Which build has LP-1.* No hosted page has it: `main` holds only its README and the hosted playable page is updated
+only after everything passes (C-87). LP-1 is on the task branch from 7244e48; the guide fix is in the commit that adds
+this paragraph, whose `index.html` has sha256 `e456645a9e303d850d15f864a9721156f6a27b0db1ba41c7a1ef0438e49525d4`.
+A page already open keeps running what it loaded until it is reloaded. In the open page, the console line
+`[getComputedStyle(document.documentElement).getPropertyValue('--bk-tooth').includes('image/png'), /look\(/.test(String(RB.questGuide.nudges))]`
+gives `[true, true]` on this build, `[true, false]` on 7244e48–2debb3c and `[false, false]` before LP-1 (B: run on
+this build, 2debb3c and 13fd5d6; 7244e48 by its code). A journey is
+stored by the browser for the address it was played at, so it is there only when this build is opened at that same
+address (the same `index.html` path in the same local folder, for instance).
+
 ## P18 — Plan B (Robin's C-89, 2026-10-12): four continuous campaigns and targeted coverage (in progress)
 
 Robin replaced the sixteen continuous campaigns of this validation milestone with four (F/Ren, E/Nao, I/Mio, A/Suzu)
@@ -4477,6 +4554,24 @@ milestone may follow an earlier one within one leg but never precede it. Control
 was stopped after Chapter 4 (six milestones) rather than run to the same verdict. These runs stay recorded as failed
 by the launcher; none of them is counted as one of Plan B's four. All four are run again, on one export of the commit
 that carries the corrected check (`matrix.mjs` also keeps each run's whole output now, `MATRIX_LOG_DIR`).
+
+**Plan B's campaigns, on a clean export of 2debb3c (B).** A second batch, on an export of 13fd5d6, was cut off by a
+container restart before any run finished; it is not counted. Then `git archive 2debb3c` (its `index.html` rebuilt to
+the same SHA-256, 0e12998a…), `MATRIX_LOG_DIR=… node tests/e2e/matrix.mjs --twelve --fixtures --pairs E/nao,I/mio 2`
+and `--pairs A/suzu 1`, started together (three campaigns at once on the shared machine), 2026-10-12 18:27 UTC:
+
+| Run | Result | Milestones, in the order the game set them | Time | Site visits | Interactions met (choose / write / order / forge / relay) | Companion's actions |
+|---|---|---|---|---|---|---|
+| E/Nao | **PASS** | 17/17 | 74.9 min | 2,775 | 446 (386 / 25 / 23 / 7 / 5) | 26 |
+| I/Mio | **PASS** | 17/17 | 75.0 min | 2,785 | 443 (403 / 16 / 12 / 7 / 5) | 33 |
+| A/Suzu | **PASS** | 17/17 | 75.2 min | 2,755 | 455 (416 / 16 / 11 / 7 / 5) | 27 |
+
+Each: the shipped edition asserted (journey 2, a new journey 2), to the ending (`ch6_done`, the journey in the Lantern
+Hall's postgame), 8 battles, 0 problems, 0 page errors, nothing lost. The campaigns' start is the debug start on the
+road described above, not the title screen. Every milestone's state was written as a fixture in the export
+(`tests/fixtures/campaign/<P>-<comp>-<milestone>.json`), among them each companion's pre-Archive `yn_done` state for
+the naming tests. F/Ren on the same export: running. The LP-1 review's guide fix came after this build; these runs
+stay applicable to it (VALIDATION.md "LP-1", review checks: the driver never reads the guide).
 
 **F/Ren, on a clean export of 900efc5 (B).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on `git
 archive 900efc5` (its own `index.html`, sha256 1963d027…) with one test file replaced, `tests/e2e/drive.mjs` as in

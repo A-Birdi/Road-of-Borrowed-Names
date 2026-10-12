@@ -12,7 +12,9 @@
 //   - Settings opened over the book (a sheet over a sheet) closes back to the book, and Back then closes the book;
 //   - the world goes on living under the book (every frame updates it) but is drawn on one frame in four, and on
 //     every frame again once the book closes;
-//   - browsing every tab changes nothing of the journey; no page errors.
+//   - browsing every tab changes nothing of the journey; no page errors;
+//   - (late journey) the Quest Guide asked, the journey changed, asked again in the same callback: the second answer
+//     is the changed journey's (tests/unit/quest_guide_live.test.mjs covers more cases, set, false and deleted).
 //  Measured (reported, not judged here; a proxy in this engine, not Robin's Firefox on Windows): the first and a
 //  repeated opening's synchronous time, and frame intervals while opening, turning and scrolling.
 // Usage: node tests/e2e/ledger.mjs
@@ -139,6 +141,24 @@ for (const [label, fx] of FIXTURES) {
   const t7 = await now(p);
   await p.keyboard.press('Escape'); await wait(p, 400);
   ok((await state(p)) === before, label + ': browsing the book changed nothing of the journey');
+  // ---- the guide asked, the journey changed, asked again in the same callback: the second answer is the changed
+  // journey's (the per-analysis copy of the live flags and seen scenes is not reused), and the journey is put back
+  if (label === 'late') {
+    const g = await p.evaluate(() => {
+      const G = RB.questGuide, s = RB.game.s, q = 'ren_ushio', k = 'sa.ushio_grave', J = JSON.stringify;
+      if (!s.quests[q] || s.quests[q].done || s.seen[k]) return null;
+      const copy = JSON.parse(J(s)); copy.seen[k] = true;
+      const expect = J(G.analyse(q, copy));
+      const asked = J(G.targets(q, s)); G.nudges(q, s);
+      s.seen[k] = true;
+      const again = J(G.targets(q, s)), nudged = J(G.nudges(q, s).lines);
+      delete s.seen[k];
+      const restored = J(G.targets(q, s));
+      return { matters: asked !== expect, fresh: again === expect, nudgesFresh: nudged === J(G.nudges(q, copy).lines), restored: restored === asked };
+    });
+    ok(g && g.matters && g.fresh && g.nudgesFresh && g.restored, label + ': the Quest Guide asked again in the same callback answers the changed journey (' + JSON.stringify(g) + ')');
+    ok((await state(p)) === before, label + ': and the journey is as it was');
+  }
   // ---- reduced motion
   await p.evaluate(() => { RB.game.settings.reducedMotion = true; RB.game.applySettings(); });
   await p.keyboard.press('Escape'); await p.waitForSelector('.folio.book'); await wait(p, 50);
