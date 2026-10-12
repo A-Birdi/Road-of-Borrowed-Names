@@ -4320,8 +4320,21 @@ machine. Each failure was rerun alone and traced:
 - `pets` (tanuki: not restored within 3 s after a scene; a 30 s selector timeout) failed while the heavy renders
   ran. Alone: 20/0, unchanged.
 
-Parts 4–8 and `--extra` run on `711cc9e`, which carries the rewritten final boss theme. No other heavy work runs
-beside them.
+Part 4/8 on `711cc9e` (the rewritten final boss theme): 14/17. Each failure traced:
+- `audio.check`, 11 failures, the expansion's own songs, not today's changes. The check had not passed in full since
+  they arrived (a full run once stopped inside it). Ten songs opened 0.3–6.9 dB below the quietest original:
+  `cr_pass`, `yn_evening`, `sa_drone`, `hall`, `hall_w5`, `hall_w7`, `hall_w8`, `hall_w9`, `hall_w10`, `ashihara`.
+  `hall_w10` also opened with 5.15 s of near-silence. Fixed in the songs (`b4406d4`): `_.lift` raises a song's strip
+  gains, so only the level changes (+1.5 to +5 dB). The sparse intros are played up, and `hall_w10`'s shō is held
+  from the first bar. Three songs on the edge (`kotonoha`, `as_festival`, `hall_w4`) get +1 to +1.5 dB of margin.
+  Result: all audio checks passed (zone songs open −30.5 to −16.0 dB against the originals' −30.4 to −17.0; peak
+  max 0.556). U `audio_songs` 3237/0, `audio_zones` 1020/0.
+- `story_ch3 E nao` and `story_ch4 I ren go` looked for Gorō and Natsume in their story places after each chapter's
+  end. By design the Living World's routines now move them on from `after` (pins hold them while a quest needs them).
+  The two post-chapter talks now go where the person is and come back; talks during the story stay strict. Results:
+  38 checks PASS; 53/53.
+
+Parts 5–8 and `--extra` run on `b4406d4`. No other heavy work runs beside them.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:
