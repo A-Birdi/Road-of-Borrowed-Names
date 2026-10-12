@@ -4649,7 +4649,7 @@ space, leaving `［` and the space hanging past the box's edge (337 px in a 320 
 `RB.ui.jhtml` now keeps a blank together (`.jblank`, `white-space: nowrap`; `src/ui/10_ui.js`,
 `src/styles/10_legacy.css`), and the rendering test checks that every blank stays on one line: all ok.
 
-**The sixteen naming combinations (B, new `tests/e2e/naming_combos.mjs`; in progress).** Each case, in its own fresh
+**The sixteen naming combinations (B, new `tests/e2e/naming_combos.mjs`).** Each case, in its own fresh
 browser profile: that companion's pre-Archive fixture written to a slot, the page reloaded and Continue pressed on the
 title; Back to the Ledger, Settings › Learning, the Japanese level's radio clicked, then checked on the radio and in the
 journey; the driver (`RB.test` auto) only as far as the Archive road's arrival; then, the driver off, real arrow keys
@@ -4659,7 +4659,15 @@ look-alike clicked first (refused, "Not that one", the button spent); the name c
 voice back (`sa2_voice_back`), the companion's own reply, the journal line, the record of `c:sa2_name_<companion>`
 (right first time, or a miss), the same companion and level, the world on the gate, and no second asking on walking
 out and back in; the fixture file's hash unchanged. Developed on the older F/Ren fixture: Ren at F, E, I and A **4/4**
-(two right first time, two a look-alike first). The sixteen run once the four campaigns' fixtures exist.
+(two right first time, two a look-alike first). **The sixteen: 16 passed, 0 failed** (259 s), on a clean `git archive`
+of b11056e (`index.html` rebuilt to the same sha256, e456645a…, the build with the LP-1 review's guide fix), from the
+four campaigns' own pre-Archive states in `tests/fixtures/p18/` (written on 2debb3c; their README). Every case met its
+level's tier on the sheet (F two options, E three, I three, A four: e.g. Ren F レン/レソ, A レン/レソ/ソン/しン); the
+eight E and A cases refused a look-alike first and recorded the miss (seen 1, right 0, missed 1), the eight F and I
+cases right first time (seen 1, right 1); each companion answered with their own reply; all four fixture files'
+hashes unchanged after. These are focused tests at the selected level from each companion's own history (the level
+changed in Settings before the scene); they do not show that the campaign before them was played at that level (each
+was played at its fixture's own level: Ren F, Nao E, Mio I, Suzu A).
 
 ## MT-1, the music performance: Original or Ensemble (Robin's MT-1, 2026-10-12)
 
