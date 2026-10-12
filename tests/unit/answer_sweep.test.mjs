@@ -269,6 +269,18 @@ export default async (t) => {
     }
   }
 
+  // challenges met only with one companion, or only without one (a scene of a companion's, or a call under a companion
+  // condition): which tier a player meets there depends on both their level and their companion's history, so each
+  // must have its own tier at every level (their acceptance is judged above with every other challenge)
+  {
+    const compRe = /\b(comp|party|prov)\b|(^|[^a-z])(nao|mio|ren|suzu)_|[._](nao|mio|ren|suzu)(_|\b)/;
+    const met = new Set();
+    for (const id in C.scenes) for (const c of C.scenes[id].cmds || []) if (c.op === 'challenge' && (compRe.test(String(c.if || '')) || compRe.test(id))) for (const a of [].concat(c.id || c.arg || c.args || [])) if (C.challenges[a]) met.add(a);
+    const list = [...met].sort();
+    t.log('challenges met by companion (or companion history): ' + list.length + ' (' + list.join(', ') + ')');
+    t.eq(list.filter((id) => !C.challenges[id].tiers || LV.some((P) => !C.challenges[id].tiers[P])), [], 'each challenge met by companion has its own tier at every level');
+  }
+
   // ---- the report -------------------------------------------------------------------------------------------------
   const census = {};
   for (const f of found) { const k = f.reg + '.' + f.key + ' (' + classOf(f) + ')'; census[k] = (census[k] || 0) + 1; }

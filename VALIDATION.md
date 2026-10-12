@@ -4356,6 +4356,18 @@ over the game's own New Game+ offer, raised when a scene ends in a finished stor
 scratch build before 5ded08e) those checks **fail** (Back opened the Ledger behind the sheet; Enter did not press the
 focused button; "Begin New Game+…" was focused first; the stale offer appeared); on the fixed build they all pass.
 
+**Where the level meets the companion's history (a search, and what covers it).** No level-dependent scene line, and
+no map site, reads the companion or a companion's history (checked over the compiled scenes and maps). The level
+meets the companion only through challenges called in a companion's scenes or under a companion condition, found by a
+scan of every scene's `!challenge`: **14** today, the four namings and ten more: `lf.ch_nao_letter` (Nao),
+`lf.ch_recipe` and `lf.ch_mio_refuse` (Mio), `kr.name_ridge` and `sa.ren_reply` (Ren), `co.c_suzu` (only without
+Suzu), `rw.c_bottles` (Mio's first scene, before or without her), and the postgame returns `rt.nao_letter`,
+`rt.nao_send`, `rt.ren_saying`. `answer_sweep` now lists them and asserts each has its own tier at every level (their
+acceptance at every level is judged with every other challenge). A campaign meets those of its own companion at its own
+level, by automation; the namings, whose challenge itself depends on the companion, are the ones tested through the
+interface at all four levels (`naming_combos`). The other ten use the same tier selection and the same sheet as every
+challenge, so no further test was added for them; this is the reason, recorded as Robin asked.
+
 **F/Ren, on a clean export of 900efc5 (B).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on `git
 archive 900efc5` (its own `index.html`, sha256 1963d027…) with one test file replaced, `tests/e2e/drive.mjs` as in
 5ded08e (the driver leaves the optional exploration sheets, `vb.*`, alone; the run before it stalled waiting on one at
