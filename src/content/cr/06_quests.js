@@ -15,7 +15,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       T('{霧下宿|きりしたじゅく} は 、 {関所|せきしょ} の {下|した} の {最後|さいご} の {宿|しゅく} だ 。 {霧|きり} の {関|せき} へ {行|い}こう 。', 'Kirishita is the last station below the checkpoint. Go on to the Mist Barrier.'),
       T('{通行手形|つうこうてがた} の {名前|なまえ} が {消|き}えて いる 。 {関守|せきもり} に {話|はなし} を しよう 。', 'The names on your travel papers have gone blank. Speak to the keeper of the Barrier.'),
       T('{仲間|なかま} が {関所|せきしょ} に {残|のこ}って くれた 。 {一人|ひとり} で {雲居宿|くもいじゅく} へ {行|い}き 、 {証|あかし} を もらって {来|こ}よう 。', 'Your companion has stayed at the Barrier as surety. Go up alone to Kumoi Station and bring back proof.'),
-      T('{関所|せきしょ} を {二人|ふたり} で {越|こ}えた 。 {雲路峠|くもじとうげ} を {登|のぼ}ろう 。', 'Through the Barrier together. Climb the High Pass.'),
+      // (in Nao's journey the pass waits for the night at Kirishita: Nao on the porch)
+      Object.assign(T('{関所|せきしょ} を {二人|ふたり} で {越|こ}えた 。 {雲路峠|くもじとうげ} を {登|のぼ}ろう 。', 'Through the Barrier together. Climb the High Pass.'),
+        { atIf: [{ if: 'cr_nao_night', at: { map: 'cr.kirishita', npc: 'nao' } }] }),
       T('{峠|とうげ} の {上|うえ} の {飛脚|ひきゃく}{小屋|ごや} に 、 {誰|だれ} か が いる 。', 'Someone is at the courier\'s hut at the top of the pass.'),
       T('{最後|さいご} の {飛脚|ひきゃく} の {手紙|てがみ} を 、 {届|とど}ける べき {人|ひと} に {届|とど}けよう 。', 'Take the last courier\'s letter to the person it was meant for.'),
     ],

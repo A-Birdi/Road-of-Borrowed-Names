@@ -192,6 +192,9 @@ export default async (t) => {
     t.ok(ex && tr && !test(s, ex.if) && test(s, tr.if), 'while Nao waits at Kirishita, the way east to the pass is shut and the edge says so');
     await run('cr.kumoi_east');
     t.ok(has(/Nao is waiting at the inn at Kirishita/) && !has(/Not until you're through/), 'the reason given is Nao, not the Barrier');
+    s.vars._away = 'nao';
+    const g = RB.questGuide.targets('cr_main', s);
+    t.ok(g.targets.length === 1 && g.targets[0].map === 'cr.kirishita' && /Nao/.test(RB.questGuide.nextLines(g)[0].en), 'the quest guide points to Nao on the porch, not the pass (' + JSON.stringify(RB.questGuide.nextLines(g)) + ')');
     delete s.flags.cr_nao_night; s.flags.cr_nao_back = true;
     t.ok(test(s, ex.if) && !test(s, tr.if), 'after the night on the porch, the way is open');
     delete s.flags.cr_passed; delete s.flags.cr_nao_back;

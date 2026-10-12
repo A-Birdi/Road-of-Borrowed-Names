@@ -544,6 +544,9 @@ RB.questGuide = (function () {
       if (!at) return { stage: k, targets: [], how: 'concealed', mark: stage.mark };
       return Object.assign(authored(at, st, k), { mark: stage.mark });
     }
+    // a stage may name its place while a condition holds (atIf: [{ if, at }]): a story detour its own steps do not
+    // count, such as Nao's night at Kirishita, which the way up to the pass waits for
+    if (stage && stage.atIf && !opts.derive) { const a = stage.atIf.find((x) => RB.state.test(st, x.if)); if (a) return authored(a.at, st, k); }
     if (stage && stage.at && !opts.derive) return authored(stage.at, st, k);
     const ctx = { Q: qid, k, static: !!opts.static, memo: new Map() };
     const base = cloneSt(st);
