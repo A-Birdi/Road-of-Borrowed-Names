@@ -4304,6 +4304,8 @@ What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. 
 - **Device-tested: no** (Chromium on Linux only; Safari's Opus, other browsers' MP3 lengths and phones untested; a
   browser decoding another length is refused by the check and falls back). **Deployed: no** (C-87's gate; the deploy
   must copy `assets/music/ensemble/`). **Rights:** the TimGM6mb (GPL-2) question is open for Robin (NOTICE.md).
+- **B** regressions on the final build (MT-T46): `audio.check` all passed, `audio_suite` 5/5, `audio_zones` 91/0,
+  `audio_instruments` all passed, `settings` all ok, `battle_settings` 10/0, `title_ledger` 18/0.
 - Not covered by a test: a live capture of a cue transition with Ensemble (the offline renderer plays one cue).
 
 ## The expansion, P17 — closure (in progress)
