@@ -77996,8 +77996,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       Pn.accent(cx - u * 0.022, cy - u * 0.278, cx + u * 0.022, cy - u * 0.237, () => true, GOLD);
       Pn.fill(cx - u * 0.085, cy - u * 0.345, cx + u * 0.085, cy - u * 0.285, (x, y) => y > cy - u * 0.345 + Math.abs(x - cx) * 0.55 - Math.max(0, Math.abs(x - cx) - u * 0.06) * 0.9, 0.9);
       Pn.disc(cx, cy - u * 0.355, u * 0.013, 0.9);
-      // a traveller coming in from the left, and two far off on the other roads
-      Pn.figure(w * 0.24, vb * 0.86, vb * 0.06, 0.82); Pn.figure(w * 0.72, vb * 0.52, vb * 0.022, 0.55); Pn.figure(w * 0.33, vb * 0.53, vb * 0.018, 0.45); }, glow: [0.5, 0.36] },
+      // the last traveller, small and going away up the north road (the far road at the right), as the line has it
+      Pn.figure(w * 0.76, vb * 0.5, vb * 0.02, 0.5); }, glow: [0.5, 0.36] },
     2: { title: ['The Fox\'s Wedding', '{狐|きつね} の {嫁入|よめい}り'], paint(Pn, vb) { const { w } = Pn;
       Pn.hills(vb * 0.42, vb * 0.08, 0.3, 3, 0.2); Pn.disc(w * 0.82, vb * 0.18, vb * 0.07, 0.08);
       const tx = w * 0.78, ty = vb * 0.66; Pn.accent(tx - vb * 0.12, ty - vb * 0.34, tx + vb * 0.12, ty - vb * 0.3, () => true, VERMILION); Pn.accent(tx - vb * 0.09, ty - vb * 0.28, tx + vb * 0.09, ty - vb * 0.26, () => true, VERMILION); for (const dx of [-vb * 0.08, vb * 0.08]) Pn.accent(tx + dx - vb * 0.012, ty - vb * 0.3, tx + dx + vb * 0.012, ty, () => true, VERMILION);
