@@ -81,10 +81,12 @@ export default async (t) => {
       for (const p of PROF) for (const step of ch.tiers[p]) if (step.kind === 'choose') t.ok(step.options.filter((x) => x.ok).length === 1 && step.options.filter((x) => !x.ok).every((x) => x.why), k + ' ' + p + ': one right place, every other one explained');
       t.ok(ws.cmds.some((c) => c.op === 'choice' && c.opts.some((o) => o.if === 'item.ko_leaf_' + k && o.to === k)), k + ': offered at the Wind Stone only while carried');
       t.ok(ops('ko.sent_' + k).includes('take:ko_leaf_' + k) && ops('ko.sent_' + k).includes('set:ko_ret_' + k), k + ': sent home, kept');
-      // the place lost it, and gets it back: someone there says so, once (first, after a press reaction that is
-      // waiting to be heard: src/content/zzz_press_first.js)
-      const lead = (n) => n.talk.find((x) => !/^mp\.rx_/.test(x.scene || ''));
-      const back = Object.values(C.maps).some((m) => (m.npcs || []).some((n) => Array.isArray(n.talk) && lead(n) && lead(n).scene === 'ko.back_' + k && lead(n).if === 'ko_ret_' + k + '&!seen.ko.back_' + k));
+      // the place lost it, and gets it back: someone there says so, once, before anything they say more than once
+      // (other once-only news may come first: a press reaction waiting to be heard, src/content/zzz_press_first.js;
+      // a town's change, src/content/zzz_living/)
+      const once = (x) => /^mp\.rx_/.test(x.scene || '') || /!seen\./.test(x.if || '');
+      const ahead = (n) => { const i = n.talk.findIndex((x) => x.scene === 'ko.back_' + k); return i >= 0 && n.talk.slice(0, i).every(once) && n.talk[i].if === 'ko_ret_' + k + '&!seen.ko.back_' + k; };
+      const back = Object.values(C.maps).some((m) => (m.npcs || []).some((n) => Array.isArray(n.talk) && ahead(n)));
       t.ok(back && C.scenes['ko.back_' + k], k + ': back on the mainland, someone notices (once)');
     }
     // where each is found: a leaf is never offered twice, nor after it has gone home

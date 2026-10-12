@@ -12,10 +12,20 @@
  *   W13 network  mb_under_sluices  the Undercroft Locks, across the Upper Basin, the Channels and the Great Lock
  *                                  (mb.under1–3): the keeper's small sluices; a fourth tablet by the middle gate says
  *                                  what to aim for (both channel basins at half, the shallows below the Great Lock
- *                                  above water); several ways get there (mb1_done). (The Steam Vents' airflow is not
- *                                  here: the network template's words and sheet speak only of water.)
+ *                                  above water); several ways get there (mb1_done)
+ *                yn_vent_air       the Steam Vents (yn.vents1–2), in steam's own words: the bath-keepers' warm-air pipes,
+ *                                  a hub at the chimney's foot between the Kettle's breath, the two houses' pipes and
+ *                                  the lid to the sky; their board in the Channel asks for both houses at half with
+ *                                  the stair foot clear (yn_done)
+ *                ko_root_tide      Kotonoha, the Root Hollows (ko.roots1–3): the tide under the great camphor through
+ *                                  root gates in all three hollows (they answer a binding word too); the keepers' stone
+ *                                  asks for both root pools at half and the root bridge above the tide; the pools can
+ *                                  be filled round either side (ko_done)
  *   W14 observe  mp_koseri         the Understage, the Trap Room's east bay (mp.under1): the small lift rises without
  *                                  its cue and sinks back; Manbē's note says how it should go (mp_under_done)
+ *                hall_w3_censer    the Hall, wing 3, the Night Slope (hall.w3f2): Jinbei's old incense clock rings out
+ *                                  of order and goes out; part of the run (a mechanism of the floor, src/engine/
+ *                                  98h_hall.js), and solved it counts the floor's puzzle trial (t7) as the riddle does
  *   W15 route    cr_cloud_ox       the Cloudroad, the Ledge (cr.leg4): a Cloud Ox lies across the gorge road, and one
  *                                  of Genji's pack horses waits at the gorge's mouth (the ledge is no road for horses);
  *                                  light sends the ox into the cliff's shadow, the horse bell sends it off as fog (cr_done)
@@ -27,12 +37,13 @@
  *                                  silt up? (three readings fit) (el_done)
  *
  * People: none are placed (every action is worked through its prop); the creatures are the routes' own (vbf_*).
- * Quiet: every prop stands clear of the maps' patrolling creatures' rounds, and creatures keep still while you stand
- * at one (src/engine/50_world.js atMechanism).
+ * Quiet: every prop stands at least four tiles clear of every patrolling creature's round, and creatures keep still
+ * while you stand at one (src/engine/50_world.js atMechanism).
  *
- * Two things are not plain additions, and both are here on purpose:
+ * Not plain additions, on purpose:
  *  - the Shuttered Hall's lantern at 23,16 (src/content/kr/10_maps.js) is the lamp the repair restores: it stands
  *    while the job is undone and a lit one stands in its place after (only if it is still there, unconditioned);
+ *  - the incense clock opens through its own scene (hall.w3.vb_censer, which counts the trial) and is marked `mech`;
  *  - this folder (src/content/zzz_verbs/) loads after every region's, so the maps it places on are all there. */
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
@@ -57,6 +68,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ばね|ばね|n|A|a spring (a coil of metal that pushes back)
 スパナ|スパナ|n|A|a spanner, a wrench
 延びる|のびる|v1|A|to stretch out, to extend (a road, a wall)
+香|こう|n|A|incense (the powder or stick that is burned)
 `), 'verbs');
 
   // ==== W12 · repair jobs ==========================================================================================
@@ -90,7 +102,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       ran: T('You open the small valve again. The steam runs up the pipe towards the baths, and the joint holds: not a hiss.',
         '{小|ちい}さな {弁|べん} を また {開|あ}ける 。 {湯気|ゆげ} は {管|くだ} を {上|のぼ}って 、 {湯|ゆ} の {方|ほう} へ {流|なが}れて いく 。 {継|つ}ぎ{目|め} から は 、 もう {何|なに} も {漏|も}れない 。'),
     });
-    C.maps['yn.vents1'].props.push({ p: 'yn_steam', x: 11, y: 16, if: VENT_GATE + '&!puzzle.yn_vent_pipe=done' });
+    C.maps['yn.vents1'].props.push({ p: 'yn_steam', x: 9, y: 16, if: VENT_GATE + '&!puzzle.yn_vent_pipe=done' });
   });
 
   // East Landing: the landing's bell hangs again, but the old post's hanger is rusted stiff. Genroku's card was kept
@@ -192,6 +204,84 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
   C.maps['mb.under2'].props.push({ p: 'sign', x: 17, y: 5, if: UNDER_GATE, scene: 'mb.vb_tablet4' });
 
+  // The Steam Vents: the bath-keepers' warm-air pipes, with their hub at the foot of the chimney by the Valve Hall's
+  // stair. The Kettle's breath comes up in the Channel (a source); the chimney's lid lets steam out to the sky (a
+  // drain). The bath-keepers' board in the Channel (yn.vb_air_board) asks for the two houses' pipes equally warm, both
+  // at half, with no steam left at the chimney's foot (it fills the way along the foot of the stair). Two dampers in
+  // the Channel, two in the Valve Hall: fill the hub and one house's pipe from the Kettle, shut the Kettle off, share
+  // them with the other house's pipe (a third each, so half), close both houses' dampers, and let the hub out through
+  // the lid (or the same with the houses the other way round). The pipes steam where they come out, once warm.
+  whenMaps(['yn.vents1', 'yn.vents2'], () => {
+    V.define('network', {
+      id: 'yn_vent_air', region: 'steamhollow', if: VENT_GATE, medium: 'steam', levels: 3,
+      name: T('The bath-keepers\' warm-air pipes', '{湯守|ゆもり} の {暖|あたた}かい {風|かぜ} の {管|くだ}'),
+      basins: {
+        breath: { map: 'yn.vents2', x: 28, y: 2, jp: '{釜|かま} の {息|いき}', en: 'Kettle\'s breath', level: 3 },
+        hub: { map: 'yn.vents1', x: 5, y: 16, jp: '{煙突|えんとつ} の {下|した}', en: 'foot of the chimney', level: 0 },
+        kami: { map: 'yn.vents2', x: 15, y: 10, jp: '{上|かみ}の{湯|ゆ} へ の {管|くだ}', en: 'pipe to the Upper House', level: 0 },
+        shimo: { map: 'yn.vents1', x: 3, y: 17, jp: '{下|しも}の{湯|ゆ} へ の {管|くだ}', en: 'pipe to the Lower House', level: 0 },
+        sky: { map: 'yn.vents1', x: 4, y: 15, jp: '{空|そら} へ の {出口|でぐち}', en: 'outlet to the sky', level: 0 },
+      },
+      gates: {
+        da: { between: ['breath', 'hub'], map: 'yn.vents2', x: 14, y: 9, jp: '{釜|かま} の {息|いき} から {煙突|えんとつ} へ の {弁|べん}', en: 'damper from the Kettle\'s breath to the chimney', open: false },
+        db: { between: ['hub', 'kami'], map: 'yn.vents2', x: 16, y: 9, jp: '{煙突|えんとつ} から {上|かみ}の{湯|ゆ} へ の {弁|べん}', en: 'damper from the chimney to the Upper House', open: false },
+        dc: { between: ['hub', 'shimo'], map: 'yn.vents1', x: 2, y: 16, jp: '{煙突|えんとつ} から {下|しも}の{湯|ゆ} へ の {弁|べん}', en: 'damper from the chimney to the Lower House', open: false },
+        dd: { between: ['hub', 'sky'], map: 'yn.vents1', x: 2, y: 18, jp: '{煙突|えんとつ} の {蓋|ふた}', en: 'chimney lid', open: false },
+      },
+      sources: ['breath'], drains: ['sky'],
+      required: [{
+        id: 'stair', basin: 'hub', max: 1, map: 'yn.vents1', tiles: [[8, 16], [8, 17]], prop: 'yn_steamwall',
+        jp: '{石段|いしだん} の {下|した} の {通|とお}り{道|みち}', en: 'the way along the foot of the stair',
+        look: T('Steam from the foot of the chimney fills the way here. You cannot see through it.', '{煙突|えんとつ} の {下|した} から {湯気|ゆげ} が {出|で}て 、 ここ は {真|ま}っ{白|しろ} だ 。 {先|さき} が {見|み}えない 。'),
+      }],
+      goal: { kami: 2, shimo: 2, hub: [0, 1] },
+    });
+    C.maps['yn.vents2'].props.push(
+      { p: 'noticeboard', x: 18, y: 9, if: VENT_GATE, scene: 'yn.vb_air_board' },
+      { p: 'yn_steam', x: 15, y: 10, if: VENT_GATE + '&puzzle.yn_vent_air.b_kami>1' });
+    C.maps['yn.vents1'].props.push({ p: 'yn_steam', x: 3, y: 17, if: VENT_GATE + '&puzzle.yn_vent_air.b_shimo>1' });
+  });
+
+  // Kotonoha, the Root Hollows: the tide under the great camphor, through root gates on all three hollows. The sea
+  // comes in at the Tidal Hollow's east end (a source); a deep crack takes it away (a drain). The keepers' stone in the
+  // Tidal Hollow (ko.vb_tide_rule) says the camphor drinks the tide through its roots: half in each of its two root
+  // pools (the Whispering Hollow's and the Long Way Round's), and the root bridge above water. The channel meets both
+  // pools, and the pools meet each other, so the water can be brought round either way: fill the channel and one pool
+  // from the sea, shut the sea out, share them with the other pool (a third each, so half), close the channel off from
+  // that pool, and let the channel out through the crack. The root gates also answer a binding word. Each pool shows
+  // its water as it rises; the bridge goes under when the channel is more than low. (`ko_root_c` is always set once
+  // the chapter is done; it keeps these off the tiles where the chapter's own tide stands.)
+  const KO_GATE = 'ed>=2&ko_done&ko_root_c';
+  V.define('network', {
+    id: 'ko_root_tide', region: 'kotonoha', if: KO_GATE, medium: 'water', levels: 3,
+    name: T('The tide under the great camphor', '{大楠|おおくす} の {下|した} の {潮|しお}'),
+    basins: {
+      sea: { map: 'ko.roots2', x: 29, y: 11, jp: '{海|うみ} の {入|い}り{口|ぐち}', en: 'sea\'s way in', level: 3 },
+      channel: { map: 'ko.roots2', x: 10, y: 11, jp: '{潮|しお} の {洞|ほら} の {水路|すいろ}', en: 'Tidal Hollow\'s channel', level: 0 },
+      upper: { map: 'ko.roots1', x: 21, y: 2, jp: '{囁|ささや}き の {洞|ほら} の {根|ね} の {池|いけ}', en: 'root pool in the Whispering Hollow', level: 0 },
+      cup: { map: 'ko.roots3', x: 19, y: 21, jp: '{回|まわ}り{道|みち} の {根|ね} の {池|いけ}', en: 'root pool on the Long Way Round', level: 0 },
+      deep: { map: 'ko.roots2', x: 2, y: 13, jp: '{深|ふか}い {割|わ}れ{目|め}', en: 'deep crack', level: 0 },
+    },
+    gates: {
+      g1: { between: ['sea', 'channel'], map: 'ko.roots2', x: 28, y: 9, weave: 'bind', jp: '{海|うみ} と {水路|すいろ} の {間|あいだ} の {根|ね} の {戸|と}', en: 'root gate between the sea and the channel', open: false },
+      g2: { between: ['channel', 'upper'], map: 'ko.roots1', x: 19, y: 3, weave: 'bind', jp: '{水路|すいろ} から {囁|ささや}き の {洞|ほら} へ の {根|ね} の {戸|と}', en: 'root gate from the channel to the Whispering Hollow', open: false },
+      g3: { between: ['upper', 'cup'], map: 'ko.roots3', x: 21, y: 2, weave: 'bind', jp: '{囁|ささや}き の {洞|ほら} から {回|まわ}り{道|みち} へ の {根|ね} の {戸|と}', en: 'root gate from the Whispering Hollow to the Long Way Round', open: false },
+      g4: { between: ['cup', 'channel'], map: 'ko.roots3', x: 22, y: 21, weave: 'bind', jp: '{回|まわ}り{道|みち} から {水路|すいろ} へ の {根|ね} の {戸|と}', en: 'root gate from the Long Way Round to the channel', open: false },
+      g5: { between: ['channel', 'deep'], map: 'ko.roots2', x: 3, y: 13, weave: 'bind', jp: '{水路|すいろ} から {深|ふか}い {割|わ}れ{目|め} へ の {根|ね} の {戸|と}', en: 'root gate from the channel to the deep crack', open: false },
+    },
+    sources: ['sea'], drains: ['deep'],
+    required: [{
+      id: 'bridge', basin: 'channel', max: 1, map: 'ko.roots2', tiles: [[15, 10], [16, 10], [15, 11], [16, 11], [15, 12], [16, 12]], prop: 'lf_flood',
+      jp: '{根|ね} の {橋|はし}', en: 'the root bridge',
+      look: T('The tide is over the root bridge. Nobody can cross here now.', '{根|ね} の {橋|はし} が {潮|しお} の {下|した} だ 。 {今|いま} は {渡|わた}れない 。'),
+    }],
+    goal: { upper: 2, cup: 2, channel: [0, 1] },
+  });
+  // each root pool's water, a tile more for each level
+  [[20, 2], [21, 2], [22, 2]].forEach(([x, y], i) => C.maps['ko.roots1'].props.push({ p: 'water', x, y, if: KO_GATE + '&puzzle.ko_root_tide.b_upper>' + i }));
+  [[18, 21], [19, 21], [20, 21]].forEach(([x, y], i) => C.maps['ko.roots3'].props.push({ p: 'water', x, y, if: KO_GATE + '&puzzle.ko_root_tide.b_cup>' + i }));
+  C.maps['ko.roots2'].props.push({ p: 'ko_tidestone', x: 26, y: 8, if: KO_GATE, scene: 'ko.vb_tide_rule' });
+
   // ==== W14 · observation first ======================================================================================
 
   // The Understage, the Trap Room's east bay: the small lift. As it is, it rises with no cue and sinks back again; the
@@ -231,6 +321,50 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
   });
   C.maps['mp.under1'].props.push({ p: 'sign', x: 26, y: 7, if: STAGE_GATE, scene: 'mp.vb_koseri_note' });
+
+  // The Hall of a Hundred Tales, wing 3 (The Bell Before Dawn), the Night Slope (hall.w3f2): Jinbei's old incense
+  // clock in the grass by the riddle stone, below the rope. As it is, the bell that rings twice hangs on the first
+  // thread and the line of incense is broken before the third, so it rings twice, then once, then goes out; the words
+  // cut into its stand say once, twice, three times. Swap the bells and fill the break (heaping the powder higher only
+  // makes it flare). It is part of the run, not the journey: a mechanism of the floor (src/engine/98h_hall.js), so its
+  // state starts afresh with every visit and whenever the floor starts again, and is kept with a held floor. Solved,
+  // its own scene counts the floor's puzzle trial, t7, as the riddle stone does (the same lantern, the same reprieve);
+  // left alone it costs nothing, and the dawn bell stays the wing's capstone.
+  if (RB.hall && RB.hall.get('w3')) {
+    V.define('observe', {
+      id: 'hall_w3_censer', map: 'hall.w3f2', region: 'hall_w3', if: 'ed>=2&hall.visit', x: 11, y: 3, prop: 'hall_incense', beat: 1100,
+      name: T('Jinbei\'s old incense clock', 'ジンベエ の {古|ふる}い {香時計|こうどけい}'),
+      parts: [
+        { key: 'fire', jp: '{火|ひ}', en: 'glowing tip', states: { burning: T('moving along the line', '{線|せん} を {進|すす}んで いる'), out: T('gone out', '{消|き}えた') } },
+        { key: 'bell', jp: '{鈴|すず}', en: 'bells', states: { quiet: T('quiet', '{静|しず}か'), one: T('rings once', '{一度|いちど} {鳴|な}る'), two: T('rings twice', '{二度|にど} {鳴|な}る'), three: T('rings three times', '{三度|さんど} {鳴|な}る') } },
+        { key: 'line', jp: '{香|こう} の {線|せん}', en: 'line of incense', states: { whole: T('unbroken', '{続|つづ}いて いる'), gap: T('broken', '{切|き}れて いる'), heap: T('heaped high and flaring', '{高|たか}く {盛|も}られて 、 {燃|も}え{上|あ}がって いる') } },
+      ],
+      phases: {
+        start: { jp: '{線香|せんこう} の {先|さき} が {赤|あか}く {光|ひか}る', en: 'the tip of the incense glows red', parts: { fire: 'burning', bell: 'quiet', line: 'whole' } },
+        one: { jp: '{鈴|すず} が {一度|いちど} {鳴|な}る', en: 'a bell rings once', parts: { fire: 'burning', bell: 'one', line: 'whole' } },
+        two: { jp: '{鈴|すず} が {二度|にど} {鳴|な}る', en: 'a bell rings twice', parts: { fire: 'burning', bell: 'two', line: 'whole' } },
+        three: { jp: '{鈴|すず} が {三度|さんど} {鳴|な}る', en: 'a bell rings three times', parts: { fire: 'burning', bell: 'three', line: 'whole' } },
+        out: { jp: '{火|ひ} が {途中|とちゅう} で {消|き}える', en: 'the fire goes out partway', parts: { fire: 'out', bell: 'quiet', line: 'gap' } },
+        flare: { jp: '{香|こう} が {一度|いちど} に {燃|も}え{上|あ}がる', en: 'the incense flares up all at once', parts: { fire: 'burning', bell: 'quiet', line: 'heap' } },
+      },
+      base: ['start', 'two', 'one', 'out'],
+      adjustments: [
+        { id: 'swap', op: 'swap', a: 'two', b: 'one', jp: '{一|ひと}つ{目|め} と {二|ふた}つ{目|め} の {糸|いと} の {鈴|すず} を {掛|か}け{替|か}える', en: 'swap the bells on the first and second threads' },
+        { id: 'fill', op: 'replace', a: 'out', b: 'three', jp: '{切|き}れた {所|ところ} に {香|こう} の {粉|こな} を {足|た}す', en: 'fill the break in the line with incense powder' },
+        { id: 'heap', op: 'replace', a: 'start', b: 'flare', jp: '{香|こう} の {粉|こな} を {高|たか}く {盛|も}る', en: 'heap the powder higher' },
+      ],
+      goal: ['start', 'one', 'two', 'three'],
+      clues: [
+        { id: 'even', phase: 'start', jp: '{火|ひ} は ゆっくり 、 {同|おな}じ {速|はや}さ で {進|すす}んで いる 。', en: 'The fire moves slowly, at an even pace.' },
+        { id: 'first_two', phase: 'two', jp: '{最初|さいしょ} の {糸|いと} に 、 {二度|にど} {鳴|な}る {鈴|すず} が {下|さ}がって いる 。', en: 'The first thread carries the bell that rings twice.' },
+        { id: 'broken', phase: 'out', jp: '{香|こう} の {線|せん} が {途中|とちゅう} で {切|き}れて いて 、 {三|みっ}つ{目|め} の {糸|いと} まで {火|ひ} が {届|とど}かない 。', en: 'The line of incense is broken partway: the fire never reaches the third thread.' },
+      ],
+    });
+    RB.hall.mechanism('w3', 1, 'hall_w3_censer');
+    // it opens through the floor's own scene (which counts the trial), and creatures keep still while you stand at it
+    const pr = C.maps['hall.w3f2'].props.find((p) => p.o && p.o.vb === 'hall_w3_censer');
+    if (pr) Object.assign(pr, { scene: 'hall.w3.vb_censer', mech: true });
+  }
 
   // ==== W15 · creature routing =======================================================================================
 
@@ -340,6 +474,36 @@ var RB = (globalThis.RB = globalThis.RB || {});
 narr: {真|ま}ん{中|なか} の {門|もん} の {車輪|しゃりん} の {横|よこ} に 、 {四|よん} の {石板|せきばん} が ある 。 || Beside the middle gate's wheel there is a fourth tablet.
 narr: 「{朝|あさ} の {舟|ふね} が {出|で}る {前|まえ} に 、 {西|にし} と {東|ひがし} の {池|いけ} を 、 {半分|はんぶん} の {高|たか}さ に {揃|そろ}えて おく こと 。 {大閘門|だいこうもん} の {下|した} の {浅瀬|あさせ} は 、 {水|みず} に {沈|しず}めない こと 。」 || "Before the morning boats go out, set the west and east basins level, at half. Do not put the shallows below the Great Lock under water."
 narr: {上|うえ} の {池|いけ} 、 この {水路|すいろ} 、 {大閘門|だいこうもん} に 、 {小|ちい}さな {水門|すいもん} が ある らしい 。 || There seem to be small sluices at the Upper Basin, here in the Channels and at the Great Lock.
+
+@scene yn.vb_air_board
+# The bath-keepers' board in the Channel: what the warm-air pipes should be set to.
+!gesture pc read
+narr: {湯守|ゆもり} の {板|いた} 。 {弁|べん} と {管|くだ} の {図|ず} に 、 {短|みじか}い {字|じ} が {添|そ}えて ある 。 || The bath-keepers' board: a drawing of the dampers and pipes, with a few words beside it.
+narr: 「{上|かみ}の{湯|ゆ} へ の {管|くだ} と {下|しも}の{湯|ゆ} へ の {管|くだ} は 、 {同|おな}じ {暖|あたた}かさ に する こと 。 どちら も {半分|はんぶん} 。 {煙突|えんとつ} の {下|した} に {湯気|ゆげ} を {溜|た}めない こと 。 {石段|いしだん} の {下|した} が {見|み}えなく なる 。」 || "Give the pipe to the Upper House and the pipe to the Lower House the same warmth: both at half. Do not let steam collect at the foot of the chimney, or the foot of the stair disappears in it."
+narr: {弁|べん} は 、 この {湯樋|ゆどい} に {二|ふた}つ 、 {弁|べん} の {間|ま} に {二|ふた}つ ある 。 {両方|りょうほう} の {宿|やど} に {同|おな}じ だけ 。 {湯分|ゆわ}け の {約束|やくそく} と {同|おな}じ だ 。 || There are two dampers here in the Channel and two in the Valve Hall. The same for both houses: like the agreement at the divider.
+
+@scene ko.vb_tide_rule
+# The keepers' stone in the Tidal Hollow: what the root gates are for.
+!gesture pc read
+narr: {石|いし} に 、 {葉守|はもり} の {字|じ} が {彫|ほ}って ある 。 || The keepers' writing is cut into the stone.
+narr: 「{大楠|おおくす} は 、 {根|ね} で {潮|しお} を {飲|の}む 。 {囁|ささや}き の {洞|ほら} と {回|まわ}り{道|みち} の {根|ね} の {池|いけ} に 、 {潮|しお} を {半分|はんぶん} ずつ {入|い}れる こと 。 {根|ね} の {橋|はし} は 、 {潮|しお} に {沈|しず}めない こと 。」 || "The great camphor drinks the tide through its roots. Let the tide into the root pools of the Whispering Hollow and the Long Way Round, half in each. Do not put the root bridge under the tide."
+narr: {根|ね} の {戸|と} は 、 {三|みっ}つ の {洞|ほら} に ある らしい 。 {結|むす}ぶ {言葉|ことば} で も 、 {動|うご}く そう だ 。 || There seem to be root gates in all three hollows. A binding word moves them too, they say.
+
+@scene hall.w3.vb_censer
+# Jinbei's old incense clock by the riddle stone (W14, part of the run): watched and adjusted in its sheet; solved, it
+# counts the floor's puzzle trial (t7) as the riddle stone does.
+!if puzzle.hall_w3_censer=done -> open
+narr: ジンベエ の {古|ふる}い {香時計|こうどけい} 。 {台|だい} に 、 {字|じ} が {彫|ほ}って ある 。 || Jinbei's old incense clock. Words are cut into its stand.
+narr: 「{夜更|よふ}け に {一度|いちど} 、 {月|つき} の {入|い}り に {二度|にど} 、 {明|あ}け{方|がた} に {三度|さんど} 、 {鈴|すず} が {鳴|な}る 。」 || "At late night the bell rings once, at moonset twice, in the hour before dawn three times."
+:open
+!hook vb_open hall_w3_censer
+!if hall.w3.t7 -> end
+!if !puzzle.hall_w3_censer=done -> end
+narr: {鈴|すず} が 、 {一度|いちど} 、 {二度|にど} 、 {三度|さんど} と {順番|じゅんばん} に {鳴|な}った 。 {石|いし} の {横|よこ} の {灯籠|とうろう} に 、 {灯|ひ} が {入|はい}る 。 || The bell rings once, twice, three times, in order. The lantern by the stone lights.
+!set xp_hall_w3_f1_t7
+!hook hall_trial w3 t7
+!refresh
+:end
 
 @scene mp.vb_koseri_note
 # Manbē's note on the small lift in the Trap Room's east bay: how it should go.

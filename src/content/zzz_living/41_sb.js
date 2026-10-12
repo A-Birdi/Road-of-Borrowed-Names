@@ -29,7 +29,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ゴヘイ||name|F|Gohei (a name; a charcoal carrier on the Snowbell road)
 炭|すみ|n|E|charcoal
 斜面|しゃめん|n|I|a slope
-緩む|ゆるむ|v5u|I|to loosen, to slacken (of snow: to soften in the sun)
+緩む|ゆるむ|v5m|I|to loosen, to slacken (of snow: to soften in the sun)
 十三|じゅうさん|n|E|thirteen
 鼓|つづみ|n|A|a tsuzumi, a Japanese hand drum
 居眠り|いねむり|n|I|dozing off (sitting up)
@@ -56,7 +56,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { map: 'sb.hamlet', x: 41, y: 25, dir: 'left', line: ['デンジ じいちゃん と 、 {魚|さかな} を {待|ま}って いる ん だ 。 {一匹|いっぴき} も {来|こ}ない けど 、 じいちゃん は 「それ で いい 」 って 。', 'I\'m waiting for fish with Grandpa Denji. Not one has come, but he says that\'s fine.'] },
   ] });
   L.routine('snowbell', 'sachi', { base: 'sb.hamlet:sachi', pin: 'quest.sb_snow&!quest.sb_snow=done', slots: [
-    { map: 'sb.sachi', x: 1, y: 3, dir: 'up', line: ['{雪|ゆき} の {間|あいだ} に 、 {春|はる} の {着物|きもの} を {織|お}って おく の 。 {冬|ふゆ} の {仕事|しごと} よ 。', 'While the snow\'s down I weave the spring clothes. Winter work.'] },
+    { map: 'sb.sachi', x: 1, y: 3, dir: 'up', line: ['{雪|ゆき} が ある うち に 、 {春|はる} の {着物|きもの} を {織|お}って おく の 。 {冬|ふゆ} の {仕事|しごと} よ 。', 'While the snow\'s down I weave the spring clothes. Winter work.'] },
     { map: 'sb.post', x: 6, y: 4, dir: 'up', line: ['{手紙|てがみ} を {出|だ}し に {来|き}た の 。 {夫|おっと} に 、 カンタ の こと を {書|か}いた わ 。 {長|なが}く なって しまった 。', 'I came to post a letter. I wrote my husband all about Kanta. It got rather long.'] },
   ] });
 
@@ -67,7 +67,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.knows('sousuke', { hoshino: 'routine', sachi: 'routine', yae: 'routine', fuki: 'routine', kanta: 'loose', natsume: 'loose', tetsuji: 'loose', denji: 'loose', chiyo: 'loose', rokuta: 'loose', hayate: 'loose' });
   L.asks('tetsuji', ['sb.hamlet']);
   L.cold('tetsuji', ['{今|いま} {数|かぞ}えて いる ん だ 。 {話|はな}しかける な 。 …… ほら 、 {分|わ}からなく なった 。', 'I\'m counting. Don\'t talk to me. …There, now I\'ve lost count.']);
-  L.usual('natsume', ['ナツメ ちゃん は {宿|やど} か 、 ヤギ {小屋|ごや} か 、 ヤギ の {囲|かこ}い で {居眠|いねむ}り です ね 。', 'Natsume? The inn, or the goat shed, or dozing in the goat pen.']);
+  L.usual('natsume', ['ナツメ ちゃん は {宿|やど} か 、 ヤギ{小屋|ごや} で {居眠|いねむ}り か 、 ヤギ の {囲|かこ}い です ね 。', 'Natsume? The inn, or dozing in the goat shed, or out at the goat pen.']);
   L.usual('kanta', ['カンタ は {雪像|せつぞう} の そば か 、 {望遠鏡|ぼうえんきょう} の ところ か 、 デンジ さん の {隣|となり} です よ 。', 'Kanta? By the snow sculptures, or at the telescope, or sitting next to Denji.']);
   L.usual('sachi', ['サチ さん は {洗濯物|せんたくもの} の ところ か 、 {家|いえ} で {機|はた} を {織|お}って いる か 、 {郵便|ゆうびん}{小屋|ごや} です ね 。', 'Sachi? At her washing, or weaving at home, or at the post shelter.']);
   L.usual('tetsuji', ['テツジ さん なら 、 ヤギ の そば です 。 {数|かず} を {数|かぞ}えて います よ 。 いつも 。', 'Tetsuji? With the goats, counting them. Always.']);
@@ -106,7 +106,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     stamp: { title: ['{雪鈴|ゆきすず} の {坂道|さかみち}', 'the Snowbell Road'], motif: 'path', ink: '#4a6a8a' } });
   C.notes.lw_sb_avalanche = { title: T('Crossing an avalanche slope', '{雪崩|なだれ} の {斜面|しゃめん}'), fiction: false,
     jp: '{雪崩|なだれ} の {起|お}き そう な {斜面|しゃめん} は 、 {一人|ひとり} ずつ 、 {止|と}まらず に {渡|わた}る 。 {昼|ひる} に なる と {雪|ゆき} が {緩|ゆる}む ので 、 {朝|あさ} の うち に {渡|わた}る 。',
-    en: 'On a slope that may avalanche, people cross one at a time, so that if the snow comes down it catches only one and the others can dig; they keep moving, and cross early, before the midday sun softens the snow. (Real mountain practice; the sign on the Snowbell road is the game\'s.)' };
+    en: 'A slope where an avalanche may come down is crossed one at a time, without stopping. The snow loosens once midday comes, so it is crossed in the morning. (Real mountain practice; the sign on the Snowbell road is the game\'s.)' };
 
   C.challenges['sb.lw_slope'] = { title: TJ('{雪崩|なだれ} の {立|た}て{札|ふだ}', 'The avalanche sign'), tiers: {
     F: [ch({ item: 'v:一人', ctx: { jp: 'たてふだ ： 「なだれ に ちゅうい 。 ひとり ずつ わたる こと 。」', en: '' }, prompt: { en: 'How do you cross?' }, options: [o('ひとり ずつ', 1), o('ふたり いっしょ に', 0, 'ひとり ずつ: one at a time.')] })],
@@ -124,13 +124,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: [ch({ item: 'v:左', ctx: { jp: 'みちしるべ ： 「↑ ゆきすず 」 「← はいみ の さと 」 （みぎ の うで は ゆき の した）', en: '' }, prompt: { en: 'A traveller wants Cinder Orchard. Which way?' }, options: [o('ひだり', 1), o('うえ', 0, '↑ is ゆきすず.')] })],
     E: [ch({ item: 'v:腕', ctx: { jp: '{道標|みちしるべ} ： 「↑ {雪鈴|ゆきすず} 」 「→ {灯落|ひおち} 」 「← {灰実|はいみ} の {里|さと} 」 。 {旅人|たびびと} ： 「{灰実|はいみ} の {里|さと} へ {行|い}きたい ん です が 。」', en: '' }, prompt: { en: 'Which arm do you show the traveller?' }, options: [o('{左|ひだり} の {腕|うで}', 1), o('{右|みぎ} の {腕|うで}', 0, '→ is {灯落|ひおち}.'), o('{上|うえ} の {腕|うで}', 0, '↑ is {雪鈴|ゆきすず}.')] })],
     I: [ch({ item: 'g:sou_hear', ctx: { jp: '{旅人|たびびと} ： 「{灰実|はいみ} の {里|さと} は 、 {柿|かき} が {有名|ゆうめい} だ そう です ね 。」', en: '' }, prompt: { en: 'What has the traveller heard?' }, options: [o('{灰実|はいみ} の {里|さと} は {柿|かき} が {有名|ゆうめい} だ', 1), o('{灰実|はいみ} の {里|さと} に は {柿|かき} が ない', 0, 'そう です here: I hear that it is famous for them.'), o('{柿|かき} を {売|う}り に {行|い}く', 0, 'They are only passing on what they heard.')] })],
-    A: [ch({ item: 'g:omission', ctx: { jp: '{旅人|たびびと} ： 「{左|ひだり} 、 です か 。 …… {下|くだ}り {坂|ざか} 、 {長|なが}い です か 。」 あなた ： 「{半日|はんにち} くらい です 。」', en: '' }, prompt: { en: 'What did the traveller ask, leaving words out?' }, options: [o('{下|くだ}り {坂|ざか} は {長|なが}い か', 1), o('{左|ひだり} に {何|なに} が ある か', 0, '{左|ひだり} 、 です か only checks the way.'), o('{半日|はんにち} で {着|つ}く か', 0, '{半日|はんにち} was your answer.')] })],
+    A: [ch({ item: 'g:omission', ctx: { jp: '{旅人|たびびと} ： 「{左|ひだり} 、 です か 。 …… {下|くだ}り{坂|ざか} 、 {長|なが}い です か 。」 あなた ： 「{半日|はんにち} くらい です 。」', en: '' }, prompt: { en: 'What did the traveller ask, leaving words out?' }, options: [o('{下|くだ}り{坂|ざか} は {長|なが}い か', 1), o('{左|ひだり} に {何|なに} が ある か', 0, '{左|ひだり} 、 です か only checks the way.'), o('{半日|はんにち} で {着|つ}く か', 0, '{半日|はんにち} was your answer.')] })],
   } };
   C.challenges['sb.lw_snowshoes'] = { title: TJ('{祠|ほこら} の かんじき', 'The shrine\'s snowshoes'), tiers: {
     F: [ch({ item: 'v:使う', ctx: { jp: 'ほこら の ふだ ： 「かんじき 、 どうぞ つかって ください 。 かえり に もどして ください 。」', en: '' }, prompt: { en: 'May the traveller borrow the snowshoes?' }, options: [o('はい 。 でも 、 かえり に もどす', 1), o('いいえ', 0, 'どうぞ つかって ください: please use them.')] })],
     E: [ch({ item: 'g:igai', ctx: { jp: '{祠|ほこら} の {札|ふだ} ： 「かんじき は 、 どなた でも お{使|つか}い ください 。 ただし 、 {帰|かえ}り に {必|かなら}ず {戻|もど}す こと 。」', en: '' }, prompt: { en: 'What is the one condition?' }, options: [o('{帰|かえ}り に {必|かなら}ず {戻|もど}す', 1), o('{雪鈴|ゆきすず} の {人|ひと} だけ が {使|つか}える', 0, 'どなた でも: anyone.'), o('{使|つか}う {前|まえ} に {名前|なまえ} を {書|か}く', 0, 'ただし names only one condition: bring them back.')] })],
-    I: [ch({ item: 'g:v_temo_ii', ctx: { jp: '{旅人|たびびと} ： 「{二足|にそく} {借|か}りて も いい です か 。 {子|こ}ども の {分|ぶん} も …… 。」 {札|ふだ} ： 「{一人|ひとり} {一足|いっそく} まで 。」', en: '' }, prompt: { en: 'Can the traveller take a pair for their child too?' }, options: [o('{一人|ひとり} {一足|いっそく} だ から 、 {子|こ}ども の {分|ぶん} も いい', 1), o('だめ 。 {一足|いっそく} だけ', 0, 'The child is a person too: one pair each.'), o('{三足|さんそく} {借|か}りて いい', 0, '{一人|ひとり} {一足|いっそく} まで: one pair per person.')] })],
-    A: [ch({ item: 'g:sasete_itadaku', ctx: { jp: '{旅人|たびびと} ： 「では 、 {使|つか}わせて いただきます 。 {必|かなら}ず お{返|かえ}し します 。」', en: '' }, prompt: { en: 'How does the traveller put it?' }, options: [o('{使|つか}う {許|ゆる}し を いただいた こと に して 、 {丁寧|ていねい} に {使|つか}う', 1), o('{誰|だれ} か に {使|つか}わせる', 0, '〜させて いただく is humble: "with your leave, I will use them".'), o('もう {使|つか}わない', 0, 'They are about to use them, politely.')] })],
+    I: [ch({ item: 'g:v_temo_ii', ctx: { jp: '{旅人|たびびと} ： 「{二足|にそく} {借|か}りて も いい です か 。 {子|こ}ども の {分|ぶん} も …… 。」 {札|ふだ} ： 「{一人|ひとり} {一足|いっそく} まで 。」', en: '' }, prompt: { en: 'Can the traveller take a pair for their child too?' }, options: [o('{一人|ひとり} {一足|いっそく} だ から 、 {子|こ}ども の {分|ぶん} も いい', 1), o('だめ 。 {一足|いっそく} だけ', 0, 'The child is a person too: one pair each.'), o('{三足|さんぞく} {借|か}りて いい', 0, '{一人|ひとり} {一足|いっそく} まで: one pair per person.')] })],
+    A: [ch({ item: 'g:sasete_itadaku', ctx: { jp: '{旅人|たびびと} ： 「では 、 {使|つか}わせて いただきます 。 {必|かなら}ず お{返|かえ}し します 。」', en: '' }, prompt: { en: 'How does the traveller put it?' }, options: [o('{許|ゆる}し を もらって {使|つか}う 、 と {丁寧|ていねい} に {言|い}って いる', 1), o('{誰|だれ} か に {使|つか}わせる', 0, '〜させて いただく is humble: "with your leave, I will use them".'), o('もう {使|つか}わない', 0, 'They are about to use them, politely.')] })],
   } };
 
   // ---- W6: return keys ----------------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     en: 'A small stone lantern by the shrine on the Snowbell road, lit the keepers\' way: by calling its name. On a snowy day the bell is for the ear; this light is for the eye.' };
   C.notes.lw_sb_dead_letters = { title: T('The old postmaster\'s box', '{先代|せんだい} の {箱|はこ}'), fiction: true,
     jp: '{届|とど}けよう と して 、 あらゆる {手|て} を {尽|つ}くして も {届|とど}かなかった {手紙|てがみ} 。 {雪鈴|ゆきすず} の {先代|せんだい} の {郵便|ゆうびん}{屋|や} は 、 それ を {捨|す}てず に {箱|はこ} に {取|と}って おいた 。',
-    en: 'Letters that could not be delivered though every means was tried. Snowbell\'s old postmaster never threw them away: a letter that cannot be delivered is still a letter. Sōsuke means to try once more.' };
+    en: 'Letters that could not be delivered though every means was tried. Snowbell\'s old postmaster never threw them away, but kept them in a box.' };
   C.notes.lw_sb_dome_floor = { title: T('The star floor', '{星|ほし} の {床|ゆか}'), fiction: true,
     jp: '{天文台|てんもんだい} の {丸屋根|まるやね} の {床|ゆか} は 、 {全体|ぜんたい} で {一|ひと}つ の {星図|せいず} に なって いる 。 {鼓星|つづみぼし} の {形|かたち} 。 {真|ま}ん{中|なか} の {三|みっ}つ の {星|ほし} の {下|した} に 、 {建|た}てた {二人|ふたり} の {名前|なまえ} 。',
     en: 'The floor of the observatory dome is a single star map: seen whole, its tiles make 鼓星 (tsuzumiboshi, the hand-drum stars), an old Japanese name for Orion. Under the three stars of the belt, the two who built it cut their names. (The name is real; the floor is the game\'s.)' };

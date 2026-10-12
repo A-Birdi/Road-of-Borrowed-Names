@@ -267,7 +267,7 @@ mame: {持|も}って いる と 、 {悪|わる}い もの が ちょっと だ
 
 @scene rw.mame_post
 !faceplayer mame
-mame: {字|じ} 、 {練習|れんしゅう} した よ ！ {見|み}て ！ 「 まめ 」 ！ …… {西|にし} の {話|はなし} 、 {次|つぎ} は {何|なに} ？ || I practised writing! Look! "Mame"! …What's the next story from the west?
+mame: {字|じ} 、 {練習|れんしゅう} した よ ！ {見|み}て ！ 「 まめ@マメ 」 ！ …… {西|にし} の {話|はなし} 、 {次|つぎ} は {何|なに} ？ || I practised writing! Look! "Mame"! …What's the next story from the west?
 
 @scene rw.tomo_first
 !faceplayer tomo

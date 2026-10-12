@@ -30,14 +30,15 @@
  *                     (mb_dispute_done): four loads for three barge runs, three people on the move
  *       cr_vb_relay   the Cloudroad, Oiwake's relay office (cr.oiwake_post), once the relay is running again
  *                     (cr_done): four deliveries for three legs, three people on the move
+ *       (the sea's post round, sea_vb_post, is in 13_prod_d.js)
  *   W17 stage-blocking (kind `blocking`)
  *       mp_vb_stage   Playhouse Row's theatre (mp.theatre), Manbē's rehearsals after the first (mp_rehearsal_done):
  *                     the matinée's ferry scene, placed from his directions, rehearsed and revised freely; the
  *                     painted willow and the stone lantern are scenery nobody stands in.
  *
- * The Lower House's map is defined by src/content/yn/10_maps.js, which loads after this folder (verbs/ sorts before
- * yn/); its notice is defined the moment that map is (a one-time setter on the map table), so its board and guests are
- * placed on the real map. New townsfolk are defined here with their looks; no consumable rewards. */
+ * This folder (src/content/zzz_verbs/) loads after every region's and after zzz_living, so every map placed on is
+ * already defined (whenMap only checks that it is). New townsfolk are defined here with their looks; no consumable
+ * rewards. */
 var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
@@ -149,9 +150,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { when: { where: 'well', do: ['line', 'wait'] }, behaviour: 'well',
         heard: T('People read it and form one line running down toward the well. The foot of the bridge is clear.', '{読|よ}んだ {人|ひと} たち は 、 {井戸|いど} の {方|ほう} へ {一列|いちれつ} に {並|なら}んだ 。 {橋|はし} の {前|まえ} が {空|あ}いた 。') },
       { when: { where: 'bridge', do: ['line', 'wait'] }, behaviour: 'bridge',
-        heard: T('People do just what it says and line up in front of the bridge. Now the queue starts at its foot, and people crossing the bridge have to squeeze past it.', '{言|い}われた とおり 、 {人|ひと} たち は {橋|はし} の {前|まえ} に {並|なら}んだ 。 {橋|はし} を {渡|わた}って きた {人|ひと} は 、 {列|れつ} の {横|よこ} を {無理|むり} に {通|とお}って いる 。') },
+        heard: T('People do just what it says and line up in front of the bridge. Now the queue starts at its foot, and people crossing the bridge have to squeeze past it.', '{言|い}われた とおり=(just as) 、 {人|ひと} たち は {橋|はし} の {前|まえ} に {並|なら}んだ 。 {橋|はし} を {渡|わた}って きた {人|ひと} は 、 {列|れつ} の {横|よこ} を {無理|むり} に {通|とお}って いる 。') },
     ],
-    unclear: T('People read it, look at one another, and stay where they were, bunched round the foot of the bridge.', '{読|よ}んだ {人|ひと} たち は {顔|かお} を {見合|みあ}わせて 、 {橋|はし} の {前|まえ} に {集|あつ}まった まま だ 。'),
+    unclear: T('People read it and look at one another: where, and how, are they meant to line up? They stay where they were, bunched round the foot of the bridge.', '{読|よ}んだ {人|ひと} たち は {顔|かお} を {見合|みあ}わせた 。 どこ に どう {並|なら}べば いい の か 、 {分|わ}からない 。 {橋|はし} の {前|まえ} に {集|あつ}まった まま だ 。'),
     goal: ['front', 'well'],
     people: (() => {
       const crowd = [{ char: 'mb_vb_gosuke', x: 22, y: 23, dir: 'right' }, { char: 'mb_vb_otane', x: 25, y: 23, dir: 'left' }, { char: 'mb_vb_kinji', x: 24, y: 24, dir: 'up' }];
@@ -199,7 +200,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { when: { where: 'bank', do: ['line', 'turn'] }, behaviour: 'bank',
         heard: T('The boatmen read it and tie up along the bank, one behind the other. The middle of the canal is open for the boats coming out.', '{船頭|せんどう} たち は {読|よ}んで 、 {岸|きし} に {舟|ふね} を {寄|よ}せ 、 {一列|いちれつ} に {並|なら}んだ 。 {運河|うんが} の {真|ま}ん{中|なか} が {空|あ}いて 、 {出|で}る {舟|ふね} が {通|とお}れる 。') },
       { when: { where: 'gate', do: ['line', 'turn'] }, behaviour: 'gate',
-        heard: T('The boatmen do what it says and wait in front of the lock, where they already were. The mouth stays jammed: nothing can come out.', '{船頭|せんどう} たち は {言|い}われた とおり 、 {閘門|こうもん} の {前|まえ} で {待|ま}って いる 。 {前|まえ} と {同|おな}じ だ 。 {口|くち} が ふさがって 、 {出|で}る {舟|ふね} が {通|とお}れない 。') },
+        heard: T('The boatmen do what it says and wait in front of the lock, where they already were. The mouth stays jammed: nothing can come out.', '{船頭|せんどう} たち は {言|い}われた とおり=(just as) 、 {閘門|こうもん} の {前|まえ} で {待|ま}って いる 。 {前|まえ} と {同|おな}じ だ 。 {口|くち} が ふさがって 、 {出|で}る {舟|ふね} が {通|とお}れない 。') },
     ],
     unclear: T('The boatmen read it, puzzled, and stay jammed at the lock\'s mouth.', '{船頭|せんどう} たち は {読|よ}んで {首|くび} を かしげ 、 {閘門|こうもん} の {口|くち} に {詰|つ}まった まま だ 。'),
     goal: ['bridge', 'bank'],
@@ -236,7 +237,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { when: { time: ['after', 'night'], what: 'hearth' }, behaviour: 'hearth',
         heard: T('Guests coming out of the bath read it and go to sit by the hearth, talking softly. The way to the curtain is clear.', 'お{風呂|ふろ} から {出|で}た {客|きゃく} は 、 {囲炉裏|いろり} の そば に {座|すわ}って 、 {小|ちい}さな {声|こえ} で {話|はな}して いる 。 {暖簾|のれん} の {前|まえ} が {空|あ}いた 。') },
       { when: { time: ['after', 'before', 'night'], what: 'curtain' }, behaviour: 'curtain',
-        heard: T('The guests do just what it says: they wait in front of the curtain, dripping, exactly as before. Now it is the rule.', '{言|い}われた とおり 、 {客|きゃく} は {暖簾|のれん} の {前|まえ} で {待|ま}って いる 。 {前|まえ} と {同|おな}じ だ 。 {今度|こんど} は 、 それ が {決|き}まり に なって しまった 。') },
+        heard: T('The guests do just what it says: they wait in front of the curtain, exactly as before. Now it is the rule.', '{言|い}われた とおり=(just as) 、 {客|きゃく} は {暖簾|のれん} の {前|まえ} で {待|ま}って いる 。 {前|まえ} と {同|おな}じ だ 。 {今度|こんど} は 、 それ が {決|き}まり に なって しまった 。') },
       { when: { time: 'before', what: 'rinse' }, behaviour: 'rinse',
         heard: T('The guests nod: everyone rinses before getting in already. But the ones coming out still stand about in front of the curtain.', '{客|きゃく} は うなずいた 。 {入|はい}る {前|まえ} に {体|からだ} を {流|なが}す の は 、 もう みんな {知|し}って いる 。 でも 、 {出|で}て きた {人|ひと} は 、 まだ {暖簾|のれん} の {前|まえ} に いる 。') },
     ],
@@ -323,7 +324,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   V.define('courier', {
     id: 'cr_vb_relay', if: 'ed>=2&cr_done', map: 'cr.oiwake_post', x: 7, y: 3, prop: 'desk',
     title: T('The relay\'s round', '{継|つ}ぎ{飛脚|びきゃく} の {配達|はいたつ}'),
-    legs: [T('The first leg', '{最初|さいしょ} の {道|みち}'), T('The second leg', '{次|つぎ} の {道|みち}'), T('The last leg', '{最後|さいご} の {道|みち}')],
+    legs: [T('The first leg', '{最初|さいしょ} の {区間|くかん}'), T('The second leg', '{二番目|にばんめ} の {区間|くかん}'), T('The last leg', '{最後|さいご} の {区間|くかん}')],
     stops: {
       oiwake: T('Oiwake', '{追分|おいわけ}'),
       suginoki: T('Suginoki', '{杉|すぎ}ノ{木|き}'),
@@ -387,6 +388,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
 三毛|みけ|n|I|three-coloured (of a cat's coat: white, brown and black)
 昼休み|ひるやすみ|n|E|lunch break
 湯上がり|ゆあがり|n|I|just out of the bath (the warmth after bathing)
+空く|あく|v5k|E|to become empty, to come free (a place, a way)
+大した|たいした|exp|I|considerable (大したもんだ: that's quite something)
+ござ||n|A|a straw mat (spread on the ground to sit on)
+場所取り|ばしょとり|n|I|saving a spot (for fireworks, a festival)
+分|ぶん|n|I|a share, a portion (友達の分: for my friends too)
+飼い主|かいぬし|n|I|an (animal's) owner
+刷り場|すりば|n|A|the press room, where prints are made
+上手|かみて|n|A|kamite: stage left, the audience's right
+下手|しもて|n|A|shimote: stage right, the audience's left
+立ち話|たちばなし|n|I|a chat standing up (立ち話をする)
+当たり前|あたりまえ|adj-na|I|natural, only to be expected
 `), 'verbs');
 
   // ---- what the people say -------------------------------------------------------------------------------------------
@@ -398,28 +410,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
 ?(${q('none')}|${q('unclear')}) mb_vb_gosuke: まさ{屋|や} と ます{屋|や} 、 どっち の {列|れつ} か {分|わ}からない 。 {橋|はし} の {前|まえ} で {待|ま}って いる だけ だ 。 || Masaya's or Masuya's, I can't tell which line this is. I'm just waiting at the foot of the bridge.
 ?(${q('front')}) mb_vb_gosuke: {屋台|やたい} の {前|まえ} に {並|なら}ぶ の が 、 {一番|いちばん} {分|わ}かりやすい な 。 {湯気|ゆげ} も よく {見|み}える 。 || Lining up in front of the stall is clearest. You can see the steam, too.
 ?(${q('well')}) mb_vb_gosuke: {列|れつ} は {長|なが}い が 、 {橋|はし} の {前|まえ} は {空|あ}いて いる 。 {橋|はし} を {直|なお}す {大工|だいく} と して は 、 それ が {一番|いちばん} {嬉|うれ}しい 。 || The line's long, but the bridge is clear. As a carpenter who mends the bridges, that's what I like best.
-?(${q('bridge')}) mb_vb_gosuke: {橋|はし} の {前|まえ} に {並|なら}べ と {書|か}いて ある から {並|なら}んだ が …… {橋|はし} から {来|く}る {人|ひと} に 、 {何度|なんど} も ぶつかる 。 || It said to line up in front of the bridge, so I did… but people coming off it keep bumping into me.
+?(${q('bridge')}) mb_vb_gosuke: {橋|はし} の {前|まえ} に {並|なら}べ と {書|か}いて ある から {並|なら}んだ が …… {橋|はし} から {来|く}る {人|ひと} に 、 {何度|なんど} も ぶつかる 。 || It said to line up in front of the bridge, so I did… but I keep bumping into people coming off it.
 
 @scene mb.vb_otane
 !faceplayer
 ?(${q('none')}|${q('unclear')}) mb_vb_otane: {押|お}さないで よ 。 …… {誰|だれ} が {先|さき} か 、 もう {分|わ}からない わ 。 || Don't push. …Nobody knows who was first any more.
-?(${q('front')}) mb_vb_otane: まさ{屋|や} の {前|まえ} は まさ{屋|や} の {列|れつ} 。 {赤|あか}い のれん と {一緒|いっしょ} で 、 {間違|まちが}えない わ ね 。 || In front of Masaya is Masaya's line. With the red curtain too, nobody gets it wrong.
+?(${q('front')}) mb_vb_otane: まさ{屋|や} の {前|まえ} は まさ{屋|や} の {列|れつ} 。 {赤|あか}い のれん も ある から 、 {間違|まちが}えない わ ね 。 || In front of Masaya is Masaya's line. With the red curtain there too, nobody gets it wrong.
 ?(${q('well')}) mb_vb_otane: {井戸|いど} の {方|ほう} まで {並|なら}んで いる の 。 {水|みず} を {汲|く}む {人|ひと} と お{話|はなし} が できて 、 {退屈|たいくつ} しない わ 。 || The line goes right down toward the well. I can chat with the people drawing water, so I'm not bored.
-?(${q('bridge')}) mb_vb_otane: {言|い}われた とおり に {並|なら}んだ のに 、 {橋|はし} を {渡|わた}る {人|ひと} に {怒|おこ}られた わ 。 || I lined up just as it said, and someone crossing the bridge told me off.
+?(${q('bridge')}) mb_vb_otane: {言|い}われた とおり=(just as) に {並|なら}んだ のに 、 {橋|はし} を {渡|わた}る {人|ひと} に {怒|おこ}られた わ 。 || I lined up just as it said, and someone crossing the bridge told me off.
 
 @scene mb.vb_kinji
 !faceplayer
 ?(${q('none')}|${q('unclear')}) mb_vb_kinji: {札場|ふだば} の {昼休|ひるやす}み は {短|みじか}い ん です 。 でも 、 どこ に {並|なら}べば いい の か …… 。 || The Tally Exchange's lunch break is short. But where am I supposed to stand…
 ?(${q('front')}) mb_vb_kinji: ます{屋|や} の {前|まえ} に {並|なら}んで います 。 {青|あお}い のれん が {目印|めじるし} です 。 || I'm in line in front of Masuya. The blue curtain's the sign.
 ?(${q('well')}) mb_vb_kinji: {一列|いちれつ} だ と 、 {自分|じぶん} の {番|ばん} が {分|わ}かって 、 {安心|あんしん} します 。 || With one line, I know when my turn is coming. It's a relief.
-?(${q('bridge')}) mb_vb_kinji: {張|は}り{紙|がみ} の {言葉|ことば} は {正|ただ}しく {守|まも}りました 。 …… {場所|ばしょ} が {悪|わる}い だけ です 。 || I followed the notice to the letter. …It's just the place that's wrong.
+?(${q('bridge')}) mb_vb_kinji: {貼|は}り{紙|がみ} に {書|か}いて ある とおり=(just as) に {並|なら}びました 。 …… {場所|ばしょ} が {悪|わる}い だけ です 。 || I lined up exactly as the notice says. …It's just the place that's wrong.
 
 @scene mb.vb_torakichi
 # A boatman waiting for the lock (mb_vb_lock).
 !faceplayer
 ?(${lk('none')}|${lk('unclear')}) mb_vb_torakichi: {閘門|こうもん} が また {開|あ}いた と {聞|き}いて {来|き}た が 、 {舟|ふね} が {口|くち} で {詰|つ}まって 、 {誰|だれ} も {動|うご}けない 。 || I heard the lock was open again, so I came. But the boats are jammed at the mouth and nobody can move.
-?(${lk('gate')}) mb_vb_torakichi: {張|は}り{紙|がみ} に 「{閘門|こうもん} の {前|まえ} で 」 と ある 。 だから みんな ここ に いる 。 …… だから {詰|つ}まる ん だ 。 || The notice says "in front of the lock". So everyone's here. …That's why it's jammed.
-?(${lk('bridge')}) mb_vb_torakichi: {蔵橋|くらばし} の {手前|てまえ} で {待|ま}つ 。 {出|で}る {舟|ふね} が {先|さき} に {通|とお}れる から 、 {早|はや}く {回|まわ}る ん だ 。 || We wait this side of the Storehouse Bridge. Boats coming out get through first, so it all moves faster.
+?(${lk('gate')}) mb_vb_torakichi: {貼|は}り{紙|がみ} に 「{閘門|こうもん} の {前|まえ} で」 と ある 。 だから みんな ここ に いる 。 …… だから {詰|つ}まる ん だ 。 || The notice says "in front of the lock". So everyone's here. …That's why it's jammed.
+?(${lk('bridge')}) mb_vb_torakichi: {蔵橋|くらばし} の {手前|てまえ} で {待|ま}つ 。 {出|で}る {舟|ふね} が {先|さき} に {通|とお}れる から 、 {順番|じゅんばん} も {早|はや}く {回|まわ}って くる ん だ 。 || We wait this side of the Storehouse Bridge. Boats coming out get through first, so our turn comes round sooner.
 ?(${lk('bank')}) mb_vb_torakichi: {岸|きし} に {寄|よ}せて {一列|いちれつ} だ 。 {真|ま}ん{中|なか} が {空|あ}いて いれば 、 {出|で}る {舟|ふね} も {楽|らく} だ 。 || Pulled in to the bank, single file. With the middle open, boats coming out have it easy.
 
 @scene mb.vb_magobe
@@ -436,14 +448,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 @scene yn.vb_kamekichi
 !faceplayer
-?(${bt('none')}|${bt('unclear')}|${bt('rinse')}|${bt('curtain')}) yn_vb_kamekichi: {湯|ゆ} から {出|で}る と 、 つい ここ で {立|た}ち{話|ばな}し を して しまう 。 {後|うし}ろ の {人|ひと} が {入|はい}れない な 。 || Out of the bath, I always end up standing here talking. The people behind can't get in.
+?(${bt('none')}|${bt('unclear')}|${bt('rinse')}|${bt('curtain')}) yn_vb_kamekichi: {湯|ゆ} から {出|で}る と 、 つい ここ で {立|た}ち{話|ばなし} を して しまう 。 {後|うし}ろ の {人|ひと} が {入|はい}れない な 。 || Out of the bath, I always end up standing here talking. The people behind can't get in.
 ?(${bt('desk')}) yn_vb_kamekichi: {帳場|ちょうば} に {並|なら}んで {手拭|てぬぐ}い を {返|かえ}す 。 タヘエ さん が 「{次|つぎ} ！」 と {大|おお}きな {声|こえ} で {言|い}う の が 、 また {楽|たの}しい 。 || Queue at the desk and hand your towel back. And Tahei shouting "Next!" is half the fun.
 ?(${bt('hearth')}) yn_vb_kamekichi: {火|ひ} の そば で {静|しず}か に {温|あたた}まる 。 {湯|ゆ} の {後|あと} は 、 これ が {一番|いちばん} だ 。 || Warming up quietly by the fire. After the bath, there's nothing better.
 
 @scene yn.vb_tatsuzo
 !faceplayer
-?(${bt('none')}|${bt('unclear')}|${bt('curtain')}) yn_vb_tatsuzo: {体|からだ} から {湯気|ゆげ} が {出|で}て いる うち は 、 {寒|さむ}く ない 。 だから 、 ここ で いい か と {思|おも}って 。 || While I'm still steaming, I don't feel the cold. So I thought here would do.
-?(${bt('rinse')}) yn_vb_tatsuzo: {入|はい}る {前|まえ} に {流|なが}す の は 、 もちろん です よ 。 でも 、 {出|で}た {後|あと} の こと は {書|か}いて ない ね 。 || Rinsing before you get in? Of course. But it says nothing about after you come out.
+?(${bt('none')}|${bt('unclear')}|${bt('curtain')}) yn_vb_tatsuzo: {体|からだ} から {湯気|ゆげ} が {出|で}て いる うち@内 は 、 {寒|さむ}く ない 。 だから 、 ここ で いい か と {思|おも}って 。 || While I'm still steaming, I don't feel the cold. So I thought here would do.
+?(${bt('rinse')}) yn_vb_tatsuzo: {入|はい}る {前|まえ} に {流|なが}す の は 、 もちろん です よ 。 でも 、 {出|で}た {後|あと} の こと は {書|か}いて ありません ね 。 || Rinsing before you get in? Of course. But it says nothing about after you come out.
 ?(${bt('desk')}) yn_vb_tatsuzo: {濡|ぬ}れた {手拭|てぬぐ}い を {返|かえ}したら 、 {乾|かわ}いた の を くれました 。 いい {宿|やど} です 。 || I handed back my wet towel and got a dry one. A good inn.
 ?(${bt('hearth')}) yn_vb_tatsuzo: {暖簾|のれん} の {前|まえ} より 、 {囲炉裏|いろり} の そば の {方|ほう} が {暖|あたた}かい 。 {当|あ}たり{前|まえ} です ね 。 || It's warmer by the hearth than in front of the curtain. Of course it is.
 
@@ -456,14 +468,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
 @scene mp.vb_ohatsu
 !faceplayer
-?(printed.n_festival) mp_vb_ohatsu: ござ を {敷|し}いて おけば 、 {夜|よる} まで {誰|だれ} も {座|すわ}らない の 。 {場所|ばしょ} {取|と}り は 、 {祭|まつ}り の {楽|たの}しみ の {一|ひと}つ よ 。 || Lay a mat down and nobody takes the spot till evening. Claiming spots is half the fun of a festival.
-?(printed.n_play) mp_vb_ohatsu: {芝居|しばい} が {始|はじ}まる って 、 {刷|す}り{物|もの} に {書|か}いて あった の 。 {一番|いちばん} {乗|の}り は 、 あの {人|ひと} に {取|と}られちゃった けど 。 || The print said a play was opening. That fellow beat me to the front of the line, though.
+?(printed.n_festival) mp_vb_ohatsu: ござ を {敷|し}いて おけば 、 {夜|よる} まで {誰|だれ} も {座|すわ}らない の 。 {場所取|ばしょと}り は 、 {祭|まつ}り の {楽|たの}しみ の {一|ひと}つ よ 。 || Lay a mat down and nobody takes the spot till evening. Claiming spots is half the fun of a festival.
+?(printed.n_play) mp_vb_ohatsu: {芝居|しばい} が {始|はじ}まる って 、 {刷|す}り{物|もの} に {書|か}いて あった の 。 {一番|いちばん} {前|まえ} は 、 あの {人|ひと} に {取|と}られちゃった けど 。 || The print said a play was opening. That fellow beat me to the front of the line, though.
 ?(printed.n_soba) mp_vb_ohatsu: {長堀|ながほり} の {岸|きし} の {新|あたら}しい {蕎麦屋|そばや} …… ます{屋|や} さん の こと かしら 。 まあ 、 おいしければ どこ でも いい わ 。 || A new soba shop on the Long Canal… does it mean Masuya? Well, anywhere's fine if it's good.
 
 @scene mp.vb_rokuro
 !faceplayer
 ?(printed.n_festival) mp_vb_rokuro: {刷|す}り{物|もの} に 、 {長堀|ながほり} の {岸|きし} で {花火|はなび} って あった から 。 {友達|ともだち} の {分|ぶん} も 、 ござ で {取|と}って ある 。 || The print said fireworks on the Long Canal's bank. I've saved a mat's worth for my friends, too.
-?(printed.n_play) mp_vb_rokuro: {芝居小屋|しばいごや} の {前|まえ} に {並|なら}ぶ の は 、 {初|はじ}めて です 。 {刷|す}り{物|もの} を {読|よ}まなかったら 、 {来|こ}なかった な 。 || First time I've queued at the playhouse. If I hadn't read the print, I wouldn't have come.
+?(printed.n_play) mp_vb_rokuro: {芝居小屋|しばいごや} の {前|まえ} に {並|なら}ぶ の は 、 {初|はじ}めて だ 。 {刷|す}り{物|もの} を {読|よ}まなかったら 、 {来|こ}なかった な 。 || First time I've queued at the playhouse. If I hadn't read the print, I wouldn't have come.
 
 @scene mp.vb_ginta
 # A child who read the lost-cat notice and brought a cat to the press's board.

@@ -13,4 +13,10 @@ RB.lex.add(RB.lex.parseTable(`
 個人|こじん|n|I|an individual, a private person
 延びる|のびる|v1|A|to stretch out, to extend (a road, a wall)
 何十|なんじゅう|n|I|dozens, scores (何十も: dozens of them)
+マメ|マメ|name|F|Mame, a child in Reedwake (fictional)
+甕|かめ|n|A|a large earthenware jar (for oil, water, pickles)
+しかめる|しかめる|v1|A|to frown, to screw up (one's face)
+あったかい|あったかい|adj-i|I|warm (casual for 暖かい)
+読み終わる|よみおわる|v5r|I|to finish reading
+たまや|たまや|int|I|"Tamaya!", the cry at a fireworks display (after a famous Edo fireworks house)
 `));

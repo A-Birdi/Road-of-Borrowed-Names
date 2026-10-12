@@ -59,7 +59,7 @@ RB.script.add(`
 ?(comp=nao) !gesture comp strap
 ?(comp=nao) comp: {自分|じぶん} で {下|お}ろす {荷物|にもつ} が 、 {一番|いちばん} {軽|かる}く なる 。 …… {俺|おれ} も そう {思|おも}う 。 || A load you set down yourself ends up lightest. …I think so too.
 ?(comp=mio) !gesture comp chin
-?(comp=mio) comp[think]: {自分|じぶん} で {言|い}えたら 、 その {人|ひと} は {少|すこ}し {楽|らく} に なれる 。 …… でも 、 {無理|むり} に {言|い}わせる の は いや です 。 || If they can say it themselves, it'll be a little easier for them. …But I don't want to force it out of them.
+?(comp=mio) comp[think]: {自分|じぶん} で {言|い}えたら 、 その {人|ひと} は {少|すこ}し {楽|らく} に なれる 。 …… でも 、 {無理|むり} に {言|い}わせる の は いや@嫌 です 。 || If they can say it themselves, it'll be a little easier for them. …But I don't want to force it out of them.
 ?(comp=ren) !gesture comp nod pc
 ?(comp=ren) comp: {書|か}き{換|か}えた {手|て} で 、 {書|か}き{直|なお}す 。 それ が できれば 、 {一番|いちばん} {正確|せいかく} です 。 || The hand that changed it changes it back. If that's possible, it's the most accurate.
 ?(comp=suzu) !gesture comp laugh

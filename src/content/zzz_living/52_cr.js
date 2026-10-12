@@ -224,7 +224,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       options: [o('{上|うえ} の {紙|かみ} は {濡|ぬ}らさない で 。 {下|した} の {炭|すみ} は {濡|ぬ}れて も かまわない 。', 1), o('{上|うえ} も {下|した} も {濡|ぬ}らして は いけない 。', 0, 'まあ、いい: the lower one doesn\'t matter.'), o('{下|した} の {荷|に} を {上|うえ} に {積|つ}み{直|なお}して ほしい 。', 0, 'He says nothing about re-stacking.')] })],
   } };
   C.challenges['cr.lw_gauge'] = { title: J('{水|みず} の {目盛|めも}り', 'The water gauge'), tiers: {
-    F: [ch({ item: 'v:橋', ctx: { jp: 'くい ： 「みず が しろい せん より うえ なら 、 はし を わたる 。」 いま 、 みず は しろい せん より うえ 。', en: '' }, prompt: { en: 'How do you cross?' },
+    F: [ch({ item: 'v:橋', ctx: { jp: 'くい ： 「みず が しろい せん@線 より うえ なら 、 はし を わたる 。」 いま 、 みず は しろい せん@線 より うえ 。', en: '' }, prompt: { en: 'How do you cross?' },
       options: [o('はし を わたる', 1), o('あさせ を わたる', 0, 'The water is over the white line: the bridge.')] })],
     E: [ch({ item: 'g:comp_yori_hou', ctx: { jp: '{杭|くい} ： 「{水|みず} が {白|しろ}い {線|せん} より {高|たか}い {日|ひ} は 、 {浅瀬|あさせ} より {橋|はし} の {方|ほう} が {安全|あんぜん} です 。」 {今日|きょう} は {線|せん} より {高|たか}い 。', en: '' }, prompt: { en: 'Which way is safer today?' },
       options: [o('{橋|はし}', 1), o('{浅瀬|あさせ}', 0, '橋の方が安全: the bridge is safer.')] })],

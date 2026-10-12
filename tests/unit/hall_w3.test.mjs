@@ -209,6 +209,64 @@ export default async (t) => {
     }
   }
 
+  // ---- the old incense clock (W14, src/content/zzz_verbs/11_prod_b.js): a mechanism of the run --------------------------
+  // Watched and adjusted in its sheet; its state is the visit's (src/engine/98h_hall.js mechanism): it starts afresh
+  // with every visit and when the floor starts again, and is kept with a held floor. Solved, its scene counts the
+  // floor's puzzle trial (t7) as the riddle stone does; the riddle stone still counts it alone.
+  {
+    const FW = RB.fieldweave, id = 'hall_w3_censer';
+    const sheet = RB.verbSheets.open;
+    let opened = 0;
+    RB.verbSheets.open = async () => { opened++; return null; };
+    const adj = (s) => FW.stateOf(s, id).adj;
+    t.ok(RB.verbs.get(id) && RB.verbs.get(id).kind === 'observe' && w3.floors[1].mechanisms.includes(id) && X.get('hall_w3').mechanisms.includes(id), 'the incense clock is an observation puzzle and a mechanism of the second floor');
+    t.ok(C.maps['hall.w3f2'].props.some((p) => p.o && p.o.vb === id && p.scene === 'hall.w3.vb_censer' && p.mech), 'it opens through its own scene, as a mechanism (creatures keep still by it)');
+    const s = fresh();
+    t.ok(!FW.eligible(s, id), 'outside a visit it is not there');
+    await enterW3(s, { pat: 0 });
+    await RB.game.transition('hall.w3f2');
+    t.ok(FW.eligible(s, id), 'in a visit it is');
+    FW.act(s, id, 'adjust:swap');
+    t.eq(adj(s), 'swap', 'an adjustment made');
+    H.resetFloor(s, 'w3', 1);
+    t.eq([adj(s), FW.peek(s, id).virtual], ['', true], 'the floor starts again: the clock as it was found');
+    FW.act(s, id, 'adjust:heap');
+    t.ok(!FW.peek(s, id).done, 'heaping the powder does not mend it');
+    await run('hall.w3.vb_censer');
+    t.ok(opened === 1 && !H.trialDone(s, 'w3', 't7') && has(/rings once, at moonset twice/), 'the stand\'s words, the sheet, and nothing counted while it is wrong');
+    FW.act(s, id, 'adjust:heap'); FW.act(s, id, 'adjust:fill'); FW.act(s, id, 'adjust:swap');
+    t.ok(FW.peek(s, id).done, 'the bells swapped and the break filled: once, twice, three times');
+    await run('hall.w3.vb_censer');
+    t.ok(H.trialDone(s, 'w3', 't7') && s.flags.xp_hall_w3_f1_t7 && H.visitOf(s).reprieve === 1, 'solved: it counts the floor\'s puzzle trial, with its reprieve, like the riddle');
+    t.ok(!has(/rings once, at moonset twice/) && has(/in order/), 'opened again once solved: no stand text, the bell rings in order');
+    await RB.ui.hall.leave(false);
+    t.ok(!(s.discovery && s.discovery.puzzles[id]), 'leaving the wing: the clock\'s state goes with the visit');
+    await enterW3(s, { pat: 0 });
+    await RB.game.transition('hall.w3f2');
+    t.ok(!FW.peek(s, id).done && adj(s) === '', 'the next visit finds it as it was found');
+    // held with a reprieve: kept exactly
+    const s3 = fresh();
+    await enterW3(s3, { pat: 0 });
+    await RB.game.transition('hall.w3f2');
+    await run('hall.w3.t7');
+    FW.act(s3, id, 'adjust:fill');
+    H.retreat(s3, { keep: true });
+    t.ok(!(s3.discovery && s3.discovery.puzzles[id]) && H.wrec(s3, 'w3').held.puzzles[id], 'leaving with the reprieve: the clock is held with the floor');
+    const back = H.enter(s3, 'w3', { held: true });
+    t.ok(back && back.held && adj(s3) === 'fill', 'and comes back exactly as it was');
+    H.retreat(s3, {});
+    // the riddle stone alone still counts t7
+    const s4 = fresh();
+    await enterW3(s4, { pat: 1 });
+    await RB.game.transition('hall.w3f2');
+    await run('hall.w3.t7');
+    t.ok(H.trialDone(s4, 'w3', 't7') && !(s4.discovery && s4.discovery.puzzles[id] && s4.discovery.puzzles[id].done), 'the riddle stone still counts the trial without the clock');
+    await run('hall.w3.vb_censer');
+    t.ok(H.visitOf(s4).reprieve === 1, 'and the clock, opened after, counts nothing twice');
+    await RB.ui.hall.leave(false);
+    RB.verbSheets.open = sheet;
+  }
+
   // ---- reachability -----------------------------------------------------------------------------------------------------
   {
     const D4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];

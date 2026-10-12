@@ -44,7 +44,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // ---- W2: routines -----------------------------------------------------------------------------------------------
-  // Nagi, the lamplighter: the avenue (Nagi's placement), the garden shrine's lamp, the Records Hall's old street names
+  // Nagi, the lamplighter: the avenue (Nagi's placement), the garden shrine's lamp, the Records Hall's old street names.
+  // Nagi is Kei's mother, she/her (Kei's お母さん / "Mum… she laughed", ch5/20_town.js lf.kei_after, lf.kei_post)
   C.maps['lf.gardens'].props.push({ p: 'lantern', x: 27, y: 10, o: { lit: true }, scene: 'lf.lw_shrine_lamp' });
   L.routine('lanternfall', 'lf_nagi', { base: 'lf.town:lf_nagi', slots: [
     { map: 'lf.gardens', x: 27, y: 11, dir: 'up', perform: 'tend', line: ['{祠|ほこら} の {灯|あか}り も 、 わたし の {仕事|しごと} 。 {毎晩|まいばん} 、 {湖|みずうみ} の {方|ほう} を {照|て}らす の 。', 'The shrine\'s lamp is my job too. Every night it shines out over the lake.'] },
@@ -102,16 +103,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.road('lf_road', { maps: ['lf.road'],
     unique: { id: 'oil', scene: 'lf.lw_road_oil' },
     variants: [{ id: 'notice', scene: 'lf.lw_road_notice' }, { id: 'bench', scene: 'lf.lw_road_bench' }, { id: 'lantern', scene: 'lf.lw_road_lantern' }],
-    stamp: { title: ['{灯落|ひおち}{坂|ざか}', 'the Lantern Road'], ink: '#4a4a8a' } });
+    stamp: { title: ['{灯|ひ} の {道|みち}', 'the Lantern Road'], ink: '#4a4a8a' } });
   C.notes.lw_lf_oil = { title: T('Lamp oil', '{灯|あか}り の {油|あぶら}'), fiction: false,
     jp: '{昔|むかし} の {行灯|あんどん} は 、 {菜種油|なたねあぶら} を {燃|も}やして いた 。 {油|あぶら} を {売|う}り {歩|ある}く {人|ひと} も いた 。',
     en: 'Before kerosene, Japanese paper lamps (andon) burned rapeseed oil, and oil sellers went from town to town with it. (Real history; Rokusuke and the casks are the game\'s.)' };
   C.notes.lw_lf_notices = { title: T('Lanternfall\'s notices', '{灯落|ひおち} の {掲示|けいじ}'), fiction: true,
-    jp: '{灯落|ひおち} の {掲示|けいじ} は 、 「〜こと」 「〜ないこと」 で {終|お}わる 。 {誰|だれ} が {書|か}いた か は {書|か}かない 。',
-    en: 'Lanternfall\'s notices end in 〜こと ("is to be done") and 〜ないこと ("is not to be done"), and never say who wrote them. (Rules written with こと are real Japanese; the town is the game\'s.)' };
+    jp: '{灯落|ひおち} の {掲示|けいじ} は 、 {決|き}まり の {言|い}い{方|かた} で いっぱい だ 。 「〜こと」 「〜て は いけません」 「ご{遠慮|えんりょ} ください」 。',
+    en: 'Lanternfall\'s notices are full of ways to word a rule: 〜こと ("is to be done"), 〜てはいけません ("must not"), ご遠慮ください ("kindly refrain"). (The phrasings are real Japanese; the town is the game\'s.)' };
 
   C.challenges['lf.lw_oil'] = { title: J('{樽|たる} の {札|ふだ}', 'The cask\'s card'), tiers: {
-    F: [ch({ item: 'v:栓', ctx: { jp: 'ふだ ： 「あぶら が もれたら 、 まず せん を しめる 。 つぎ に 、 たる を たてる 。」', en: '' }, prompt: { en: 'Oil is leaking. What does the card say to do first?' },
+    F: [ch({ item: 'v:栓', ctx: { jp: 'ふだ ： 「あぶら が もれたら 、 まず せん@栓 を しめる 。 つぎ に 、 たる を たてる 。」', en: '' }, prompt: { en: 'Oil is leaking. What does the card say to do first?' },
       options: [o('せん を しめる', 1), o('たる を たてる', 0, 'つぎに: that comes second.'), o('ひ を つける', 0, 'Nowhere on the card, and never near oil.')] })],
     E: [ch({ item: 'g:v_te_kudasai', ctx: { jp: '{札|ふだ} ： 「{油|あぶら} が {漏|も}れたら 、 まず {栓|せん} を {締|し}めて ください 。 それでも {止|と}まらない とき は 、 {樽|たる} を {立|た}てて ください 。」', en: '' }, prompt: { en: 'The plug is tight, but oil is still dripping. What next?' },
       options: [o('{樽|たる} を {立|た}てる', 1), o('{栓|せん} を {抜|ぬ}く', 0, 'That would let it all out.'), o('{油|あぶら} を {拭|ふ}く', 0, 'それでも止まらないときは: when it still won\'t stop, stand the cask up.')] })],
@@ -146,7 +147,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     E: [ch({ item: 'g:prt_kara_made', ctx: { jp: '{札|ふだ} ： 「{風|かぜ} が {止|や}む まで 、 {火|ひ} を {入|い}れないで ください 。 {灯落|ひおち} {灯|あか}り {番|ばん}」', en: '' }, prompt: { en: 'When may you light it again?' },
       options: [o('{風|かぜ} が {止|や}んで から', 1), o('{風|かぜ} が {強|つよ}い うち に', 0, 'まで: not until it stops.'), o('{灯|あか}り {番|ばん} が {来|き}て から', 0, 'The card asks only that the wind has dropped.')] })],
     I: [ch({ item: 'g:temo', ctx: { jp: '{札|ふだ} ： 「{風|かぜ} が {止|や}んで も 、 {芯|しん} が {濡|ぬ}れて いたら 、 {先|さき} に {芯|しん} を {切|き}る こと 。」 {芯|しん} は {雨|あめ} で {濡|ぬ}れて いる 。', en: '' }, prompt: { en: 'The wind has dropped. What first?' },
-      options: [o('{濡|ぬ}れた {芯|しん} を {切|き}って から 、 {火|ひ} を {入|い}れる', 1), o('すぐ {火|ひ} を {入|い}れる', 0, '風が止んでも: even once it has dropped, a wet wick is cut first.'), o('{芯|しん} が {乾|かわ}く まで {帰|かえ}る', 0, 'The card says to cut it, not wait.')] })],
+      options: [o('{濡|ぬ}れた {芯|しん} を {切|き}って から 、 {火|ひ} を {入|い}れる', 1), o('すぐ {火|ひ} を {入|い}れる', 0, '風が止んでも: even once it has dropped, a wet wick is cut first.'), o('{芯|しん} が {乾|かわ}く まで {待|ま}つ', 0, 'The card says to cut it, not wait.')] })],
     A: [ch({ item: 'g:kagiri', ctx: { jp: '{札|ふだ} ： 「{風|かぜ} の ある {限|かぎ}り 、 {火|ひ} を {入|い}れる べからず 。 ── ナギ」 （{昔|むかし} の {言|い}い{方|かた} を まねた {札|ふだ}）', en: '' }, prompt: { en: 'What does Nagi\'s card (in mock-old style) say?' },
       options: [o('{風|かぜ} が ある {間|あいだ} は 、 {火|ひ} を {入|い}れて は いけない 。', 1), o('{風|かぜ} が あれば 、 {必|かなら}ず {火|ひ} を {入|い}れる 。', 0, 'べからず is the old "must not".'), o('{火|ひ} を {入|い}れる と 、 {風|かぜ} が {止|や}む 。', 0, '限り: "as long as" there is wind.')] })],
   } };
@@ -163,20 +164,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
     openedLabel: ['{町|まち} の {約定|やくじょう}', 'The town\'s charter'], after: { p: 'chest', o: { open: true }, scene: 'yn.lw_lf_charter_after' } });
   C.notes.lw_lf_lower_town = { title: T('The Lower Town', '{下町|したまち}'), fiction: true,
     jp: '{湖|みずうみ} の {浅瀬|あさせ} に は 、 {昔|むかし} の {下町|したまち} の {灯籠|とうろう} が {沈|しず}んで いる 。 {一丁目|いっちょうめ} から {五丁目|ごちょうめ} まで 。 {通|とお}り の {名前|なまえ} は 「{下町|したまち}{通|どお}り」 。',
-    en: 'In the lake\'s shallows lie the lamps of the old Lower Town, block by block, from the 1st to the 5th. The street was called Lower Town Street. Nagi has a shade for it now.' };
+    en: 'In the lake\'s shallows lie the lamps of the old Lower Town, block by block, from the 1st to the 5th. The street was called Lower Town Street.' };
   C.notes.lw_lf_objections = { title: T('The box of objections', '{反対|はんたい} の {箱|はこ}'), fiction: true,
     jp: '{記録館|きろくかん} が 「{受理|じゅり}」 も 「{却下|きゃっか}」 も せず に 、 {判子|はんこ} で {閉|と}じ{込|こ}めた {紙|かみ} 。 {小|ちい}さな 「いいえ」 が 、 {何百|なんびゃく} も 。',
-    en: 'Slips the Records Hall neither accepted nor rejected, but stamped shut in a box: hundreds of small "no"s from the quiet years. They are all on Tadashi\'s desk now, to be heard.' };
+    en: 'Slips the Records Hall neither accepted nor rejected, but shut away under its stamps: hundreds of small "no"s.' };
   C.notes.lw_lf_charter = { title: T('Lanternfall\'s charter', '{灯落|ひおち} の {約定|やくじょう}'), fiction: true,
     jp: '「{灯落|ひおち} の {者|もの} は 、 {誰|だれ} でも 、 {反対|はんたい} して よい 。 {反対|はんたい} は 、 {最後|さいご} まで {聞|き}く こと 。」',
-    en: 'The first lines of the town\'s founding charter: "Anyone in Lanternfall may object. An objection is to be heard to the end."' };
+    en: 'From the town\'s founding charter: "Anyone in Lanternfall may object. An objection is to be heard to the end."' };
 
   L.scenes(`
 @scene lf.lw_shrine_lamp
 narr: {祠|ほこら} の {横|よこ} の {灯籠|とうろう} 。 {湖|みずうみ} の {方|ほう} を {向|む}いて {灯|とも}って いる 。 || A lamp beside the shrine, lit and turned towards the lake.
 
 @scene ko.lw_lf_minutes
-narr: {額|がく} に {入|い}った {古|ふる}い {議事録|ぎじろく} 。 {一行|いちぎょう} だけ 、 {字|じ} が {新|あたら}しく {見|み}える 。 「はんたい」 。 || Old minutes in a frame. One word looks newer than the rest: はんたい, "against".
+narr: {額|がく} に {入|い}った {古|ふる}い {議事録|ぎじろく} 。 {一行|いちぎょう} だけ 、 {字|じ} が {新|あたら}しく {見|み}える 。 「はんたい」 。 || Old minutes in a frame. Only one line looks newly written: はんたい, "against".
 narr: {下|した} に 、 タミ の {字|じ} 。 「{昔|むかし} の {誰|だれ} か へ 。 {聞|き}こえました 。」 || Beneath, in Tami's hand: "To whoever it was, long ago: we heard you."
 
 @scene yn.lw_lf_guest
@@ -200,7 +201,7 @@ lw_lf_carter: {灯落|ひおち} の {灯|あか}り の {油|あぶら} だ 。
 !if var._res=0 -> later
 narr: {札|ふだ} の {通|とお}り に {栓|せん} を {締|し}め 、 {二人|ふたり} で {樽|たる} を {立|た}てた 。 {油|あぶら} は もう {一滴|いってき} も {漏|も}れない 。 || You tighten the plug as the card says, and the two of you stand the cask upright. Not another drop leaks out.
 lw_lf_carter[laugh]: {助|たす}かった ！ {礼|れい} を {言|い}う よ 。 || That's saved me! Thank you.
-?(!lf_bell_rung) lw_lf_carter: …… {灯落|ひおち} は {毎月|まいつき} {油|あぶら} を {倍|ばい} {頼|たの}む くせ に 、 「もう {要|い}らない」 と は {一度|いちど} も {言|い}わない 。 {変|へん} な {町|まち} だ よ 。 || …Lanternfall orders twice the oil every month, and never once says "that's enough". Strange town.
+?(!lf_bell_rung) lw_lf_carter: …… {灯落|ひおち} は {毎月|まいつき} {油|あぶら} を {倍|ばい} {頼|たの}む 。 「もう {要|い}らない」 と は {一度|いちど} も {言|い}わない 。 {変|へん} な {町|まち} だ よ 。 || …Lanternfall orders twice the oil every month, and never once says "that's enough". Strange town.
 ?(lf_bell_rung) lw_lf_carter: …… {灯落|ひおち} は {近|ちか}ごろ 、 「{今月|こんげつ} は {半分|はんぶん} で いい」 と {言|い}う よう に なった 。 {売|う}り{上|あ}げ は {減|へ}った が 、 {話|はなし} が {通|つう}じる 。 || …Lately Lanternfall's started saying "half will do this month". I sell less, but you can talk to them.
 !set lw_lf_oil_done
 !note lw_lf_oil
@@ -256,7 +257,7 @@ narr: {浅瀬|あさせ} の {灯籠|とうろう} が 、 {丁目|ちょうめ}
 
 @scene ko.lw_lf_box_open
 !gesture pc observe prop:chest
-narr: {承認|しょうにん} 、 {受理|じゅり} 、 {保留|ほりゅう} 、 {確認|かくにん} …… どの {種類|しゅるい} の {判子|はんこ} に も {効|き}く {言葉|ことば} が 、 {一|ひと}つ ある 。 あらゆる {封|ふう} を 、 {一度|いちど} に ほどく 。 || Approved, received, pending, checked… there is one word that answers a stamp of any kind. Every kind of seal comes undone at once.
+narr: {承認|しょうにん} 、 {受理|じゅり} 、 {保留|ほりゅう} 、 {確認|かくにん} …… どの {種類|しゅるい} の {判子|はんこ} に も {効|き}く {言葉|ことば} が 、 {一|ひと}つ ある 。 あらゆる {封|ふう} を 、 {一度|いちど} に {切|き}る 。 || Approved, received, pending, checked… there is one word that answers a stamp of any kind. You break every kind of seal at once.
 narr: {箱|はこ} の {中|なか} は 、 {小|ちい}さな {紙|かみ} で いっぱい だ 。 「{丸|まる} に {反対|はんたい}」 「{四角|しかく} に {反対|はんたい}」 「{休|やす}み が ほしい 。 シュウ」 。 || The box is full of little slips. "Against round." "Against square." "I would like a day off. —Shū."
 narr: {記録館|きろくかん} が 、 {受|う}け{取|と}り も {断|ことわ}り も せず に 、 {閉|と}じ{込|こ}めた 「いいえ」 だ 。 || The "no"s the Hall would neither take nor turn down, and so shut away.
 !look lf_tadashi pc

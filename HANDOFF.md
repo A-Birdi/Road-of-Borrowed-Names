@@ -235,9 +235,16 @@
     playable page's `index.html` is updated (nothing merged or deployed before). Register and status:
     `docs/future/work/LW1_ROLLOUT.md`; the region brief: `docs/future/work/LW1_AUTHORING.md`; content in
     `src/content/zzz_living/` (helpers `05_author.js`; the work assignments `00_work.js`; Reedwake `10_rw.js`,
-    `11_rw_world.js`; the other regions' files). Done: the work performances in ordinary play (LW-01/02, 47
-    people), sightings only in view (LW-08), a moved same-id placement walks (LW-09), Reedwake's routines, askers,
-    beats, road events and return keys; tests `tests/unit/living_world.test.mjs`, `tests/e2e/living_world.mjs`.
+    `11_rw_world.js`; the other regions' files; the exploration actions in `src/content/zzz_verbs/`). Done: the work
+    performances in ordinary play (LW-01/02, 47 people), sightings only in view (LW-08), a moved same-id placement
+    walks (LW-09), every region's routines, askers, change beats, road events and return keys (LW-03…06: 16 towns),
+    the exploration actions at every place the plan names (LW-07: 19 instances), the language self-review of every new
+    line by region and the word-help fixes it called for (`src/lang/20_jp.js`), the eight browser suites the complete
+    run had failing (title_ledger, pages_ending/atlas_board, dialect_kansai, long_quests, practice_a_desk/layout,
+    fishing, harmony_appearance, pets: two were real bugs, the Atlas board hiding Nao's wall card and Kōji's boat
+    hiding the long road's fare). Tests `tests/unit/living_world.test.mjs`, `tests/e2e/living_world.mjs`,
+    `tests/e2e/verbs_journey.mjs`, `tests/unit/word_help.test.mjs`. Next: the ledger entries and the font subsets for
+    the new lines, the complete browser run on the final build, the chain redone, then P17's closure.
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse

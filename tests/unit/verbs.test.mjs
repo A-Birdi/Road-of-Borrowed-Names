@@ -139,6 +139,15 @@ export default async (t) => {
     // saved and loaded
     const s2 = JSON.parse(JSON.stringify(s));
     t.eq(FW.stateOf(s2, 'vb_network'), st(), 'a map reload keeps the water where it was');
+    // the words follow the medium: water exactly as it always was, steam (or air) for pipes and dampers
+    const one = (medium) => ({ medium, basins: { a: { map: 'rw.road', en: 'pond', jp: '{池|いけ}' }, b: { map: 'sg.road', en: 'pipe', jp: '{管|くだ}' } } });
+    RB.game.s = s; s.map = 'rw.road';
+    let w = V.moved(one(undefined), { b_a: 0, b_b: 3 }, { b_a: 3, b_b: 1 }, { en: 'You open it.', jp: '{開|あ}けた 。' });
+    t.eq([w.en, w.jp], ['You open it. The pond fills (full). Somewhere off in the pipe drains (low).', '{開|あ}けた 。 {池|いけ} の {水|みず} が {増|ふ}えた 。 {遠|とお}く で 、 {管|くだ} の {水|みず} が {減|へ}った 。'], 'water: the words as they always were');
+    w = V.moved(one('steam'), { b_a: 0, b_b: 3 }, { b_a: 3, b_b: 1 }, { en: 'You open it.', jp: '{開|あ}けた 。' });
+    t.eq([w.en, w.jp], ['You open it. The pond fills with steam (full of steam). Somewhere off in the pipe clears (a little steam).', '{開|あ}けた 。 {池|いけ} の {湯気|ゆげ} が {増|ふ}えた 。 {遠|とお}く で 、 {管|くだ} の {湯気|ゆげ} が {減|へ}った 。'], 'steam: its own words, near and far');
+    t.ok(V.mediumOf(one('air')) === V.MEDIUM.steam && V.mediumOf(one('water')) === V.MEDIUM.water && V.mediumOf({}) === V.MEDIUM.water, 'air reads as steam; no medium is water');
+    t.eq([V.levelWord(one(), 2), V.levelWord(one('steam'), 3), V.LEVEL_EN[1]], ['half full', 'full of steam', 'low'], 'a level named in its medium\'s words');
   }
 
   // ---- W14 · observation-first mechanisms; instructions to follow ------------------------------------------------------
@@ -281,6 +290,9 @@ export default async (t) => {
     walk(RB.town.LINES.uncertain({ en: 'Tomo' }, null), 'town uncertain, nowhere');
     walk(RB.town.LINES.refusal(), 'town refusal');
     walk(RB.town.LINES.unknown(), 'town unknown');
+    // the network's words for each medium, and what moved() makes of them, near and far
+    walk(V.MEDIUM, 'network media');
+    for (const medium of ['water', 'steam', 'air']) walk(V.moved({ medium, basins: { a: { map: 'rw.road', en: 'pond', jp: '{池|いけ}' }, b: { map: 'sg.road', en: 'pipe', jp: '{管|くだ}' } } }, { b_a: 0, b_b: 2 }, { b_a: 3, b_b: 1 }, { en: 'X', jp: '{開|あ}けた 。' }), 'moved (' + medium + ')');
     t.eq(errs, [], 'every Japanese string of the templates and fixtures has furigana on every kanji, and English beside it');
     t.eq([...unknown.entries()].map(([k, w]) => k + ' (' + w + ')'), [], 'every token has a dictionary entry');
   }

@@ -308,7 +308,6 @@ RB.lex.add(RB.lex.parseTable(`
 織る|おる|v5r|I|to weave
 考え事|かんがえごと|n|I|thinking something over
 杼|ひ|n|A|(weaving) shuttle
-ひ||n|F|(weaving) shuttle, in kana (杼)
 小刀|こがたな|n|I|small knife
 暗がり|くらがり|n|I|darkness, a dark place
 埃|ほこり|n|E|dust
@@ -356,7 +355,7 @@ RB.lex.add(RB.lex.parseTable(`
 空腹|くうふく|n|I|hunger, empty stomach
 避ける|さける|v1|E|to avoid
 勧める|すすめる|v1|E|to recommend
-かねる||aux|A|cannot (do), hesitate to (formal)|勧めかねる = can't recommend.
+かねる||v1|A|(after a verb stem) cannot (do), hesitate to (formal)|勧めかねる = can't recommend.
 子さま|こさま|n|I|(お子さま) child (honorific)
 使用|しよう|n|I|use|ご使用 = your use (honorific).
 控える|ひかえる|v1|I|to refrain from|お控えください = please refrain.

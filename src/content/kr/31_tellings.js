@@ -75,10 +75,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { gloss: T('{油|あぶら} は {下|くだ}り{道|みち} の {灯籠|とうろう} の {下|した} に {置|お}かなければ ならない 。', 'In today\'s Japanese') }),
   };
   const KUMAZO = {
-    F: T('クマゾウ さん が いった 。 「むかし 、 ひもり が 、 おね の ちいさい みち を おりて いった 。 かめ を もって 。 その さき は …… しらない 。」', 'Kumazō said: "Long ago, keepers went down the little path off the ridge, carrying jars. Where to… I don\'t know."'),
-    E: T('クマゾウ さん は 「{子供|こども} の とき 、 {灯守|ひもり} が {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}た 。 かめ を {持|も}って いた 。 {小屋|こや} が あった と {思|おも}う が 、 よく {分|わ}からない 。」 と {言|い}いました 。', 'Kumazō said: "When I was a boy I saw keepers go down the little path off the ridge. They were carrying jars. I think there was a hut, but I\'m not sure."'),
-    I: T('クマゾウ さん に よると 、 {子供|こども} の ころ 、 {灯守|ひもり} が かめ を {持|も}って {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}た そう だ 。 {小屋|こや} が あった か どう か は 、 はっきり しない と いう 。', 'According to Kumazō, as a boy he saw keepers carrying jars down the little path off the ridge. Whether there was a hut, he says he isn\'t clear.'),
-    A: T('クマゾウ さん が {自分|じぶん} の {目|め} で {見|み}た の は 、 {灯守|ひもり} が かめ を {抱|かか}えて {小道|こみち} を {下|お}りる {姿|すがた} だけ だ 。 「{小屋|こや}」 は 、 {後|あと} で {誰|だれ} か から {聞|き}いた {話|はなし} かも しれない と 、 {本人|ほんにん} も {認|みと}めて いる 。', 'What Kumazō saw with his own eyes was only keepers carrying jars down the little path. The "hut", he admits himself, may be something he heard from someone later.'),
+    F: T('クマゾウ さん が いった 。 「むかし 、 ひもり が 、 おね の ちいさい みち を おりて いった 。 かめ@甕 を もって 。 その さき は …… しらない 。」', 'Kumazō said: "Long ago, keepers went down the little path off the ridge, carrying jars. Where to… I don\'t know."'),
+    E: T('クマゾウ さん は 「{子供|こども} の とき 、 {灯守|ひもり} が {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}た 。 かめ@甕 を {持|も}って いた 。 {小屋|こや} が あった と {思|おも}う が 、 よく {分|わ}からない 。」 と {言|い}いました 。', 'Kumazō said: "When I was a boy I saw keepers go down the little path off the ridge. They were carrying jars. I think there was a hut, but I\'m not sure."'),
+    I: T('クマゾウ さん に よると 、 {子供|こども} の ころ 、 {灯守|ひもり} が かめ@甕 を {持|も}って {尾根|おね} の {小道|こみち} を {下|お}りて いく の を {見|み}た そう だ 。 {小屋|こや} が あった か どう か は 、 はっきり しない と いう 。', 'According to Kumazō, as a boy he saw keepers carrying jars down the little path off the ridge. Whether there was a hut, he says he isn\'t clear.'),
+    A: T('クマゾウ さん が {自分|じぶん} の {目|め} で {見|み}た の は 、 {灯守|ひもり} が かめ@甕 を {抱|かか}えて {小道|こみち} を {下|お}りる {姿|すがた} だけ だ 。 「{小屋|こや}」 は 、 {後|あと} で {誰|だれ} か から {聞|き}いた {話|はなし} かも しれない と 、 {本人|ほんにん} も {認|みと}めて いる 。', 'What Kumazō saw with his own eyes was only keepers carrying jars down the little path. The "hut", he admits himself, may be something he heard from someone later.'),
   };
   // the Fox Bridge
   const KAME = {
@@ -155,7 +155,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   readTask('kr.read_kumazo', T('クマゾウ の {話|はなし}', 'What Kumazō saw'), KUMAZO, 'v:小道', {
     items: { F: 'v:持つ', E: 'v:小道', I: 'g:sou_hear', A: 'v:認める' },
     F: ['What did the keepers carry?', [o('かめ', 'jars', 1), o('とうろう', 'lanterns', 0, 'かめ を もって.'), o('き', 'wood', 0, 'かめ を もって: carrying jars.')]],
-    E: ['What is Kumazō not sure of?', [o('', 'Whether there was a hut', 1), o('', 'That keepers went down the little path', 0, 'He saw that: 見ました.'), o('', 'That they carried jars', 0, 'He saw that too: かめ を 持って いました.')]],
+    E: ['What is Kumazō not sure of?', [o('', 'Whether there was a hut', 1), o('', 'That keepers went down the little path', 0, 'He saw that: 見ました.'), o('', 'That they carried jars', 0, 'He saw that too: かめ@甕 を 持って いました.')]],
     I: ['How does the writer know what Kumazō saw?', [o('', 'Kumazō said so (見たそうだ)', 1), o('', 'The writer saw it too', 0, 'そう だ reports what Kumazō said.'), o('', 'It is carved on the stele', 0, 'It comes from Kumazō: クマゾウ さん に よると.')]],
     A: ['What does Kumazō admit?', [o('', 'The hut may be something he was told later', 1), o('', 'He never saw the keepers', 0, '自分 の 目 で 見た: he did see them.'), o('', 'The jars were empty', 0, 'He says nothing of what was in them.')]],
   });

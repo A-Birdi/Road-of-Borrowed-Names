@@ -6,7 +6,8 @@
  *   notice    the pieces, the notice as it reads, Post it, and what people understood
  *   courier   who is where on each leg (the information to plan with), a stop for each leg, Check, Set out
  *   repair    Look, Instructions, a tool and a part, Test; the steps done so far
- *   network   every basin's water (near and far), the gates you can reach from here, the ways that must stay open
+ *   network   every basin's water or steam (near and far), the gates you can reach from here, the ways that must
+ *             stay open (the words follow the network's medium: src/engine/55b_verbs.js MEDIUM)
  *   observe   the machine's parts in the phase shown, its pattern, Pause / Play / Step, notes, adjustments
  *   follow    the step to follow, its actions, why a wrong one does not fit
  *   route     where the creature is, this object, and Weave a word here (the Weave sheet, with its language step)
@@ -79,7 +80,7 @@ RB.verbSheets = (function () {
   // ---- the frame -----------------------------------------------------------------------------------------------
   function title(spec) {
     const t = spec.title || spec.name || (spec.plan && spec.plan.title);
-    return t ? '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>' : esc(TITLE[spec.kind]);
+    return t ? '<span class="vb-jp">' + J(t) + '</span><span class="en">' + esc(t.en) + '</span>' : esc(spec.kind === 'network' ? V().mediumOf(spec).title.en : TITLE[spec.kind]);
   }
   function doneLine() {
     const def = FW().get(cur.id), s = S();
@@ -155,19 +156,19 @@ RB.verbSheets = (function () {
   // ---- W13 · network -------------------------------------------------------------------------------------------------
   const mapName = (m) => { const d = RB.content.maps[m]; return d && d.name ? d.name.en : m; };
   BODY.network = (spec) => {
-    const st = FW().stateOf(S(), spec.id), here = S().map, L = spec.levels || 3;
+    const st = FW().stateOf(S(), spec.id), here = S().map, L = spec.levels || 3, M = V().mediumOf(spec);
     const lv = (k) => +st['b_' + k] || 0;
-    let h = '<div class="wv-lab">The water</div><ul class="vb-basins">' + Object.keys(spec.basins).map((k) => {
+    let h = '<div class="wv-lab">' + esc(M.name.en) + '</div><ul class="vb-basins">' + Object.keys(spec.basins).map((k) => {
       const b = spec.basins[k];
       return '<li><span class="vb-n">' + both(b) + '<span class="vb-where">' + esc(b.map === here ? 'here' : mapName(b.map)) + '</span></span>' +
-        '<span class="vb-meter" role="img" aria-label="' + esc(V().LEVEL_EN[lv(k)]) + '">' + Array.from({ length: L }, (x, i) => '<i class="' + (i < lv(k) ? 'on' : '') + '"></i>').join('') + '</span><span class="vb-lv">' + esc(V().LEVEL_EN[lv(k)]) + '</span></li>';
+        '<span class="vb-meter" role="img" aria-label="' + esc(V().levelWord(spec, lv(k))) + '">' + Array.from({ length: L }, (x, i) => '<i class="' + (i < lv(k) ? 'on' : '') + '"></i>').join('') + '</span><span class="vb-lv">' + esc(V().levelWord(spec, lv(k))) + '</span></li>';
     }).join('') + '</ul>';
-    h += '<div class="wv-lab">The sluices</div><ul class="vb-gates">' + Object.keys(spec.gates).map((g) => {
+    h += '<div class="wv-lab">' + esc(M.gates.en) + '</div><ul class="vb-gates">' + Object.keys(spec.gates).map((g) => {
       const G = spec.gates[g], open = st['g_' + g] === 'open', reach = G.map === here;
       return '<li><span class="vb-n">' + both(G) + '<span class="vb-where">' + esc(reach ? 'here' : mapName(G.map)) + '</span></span><span class="vb-state">' + (open ? 'Open' : 'Shut') + '</span>' +
         (reach ? btn((open ? 'shut:' : 'open:') + g, open ? 'Close it' : 'Open it', open ? 'none' : 'key', ' data-gate="' + esc(g) + '"') : '<span class="vb-far">Out of reach from here</span>') + '</li>';
     }).join('') + '</ul>';
-    if ((spec.required || []).length) h += '<div class="wv-lab">Ways that must stay open</div><ul class="ar-list">' + spec.required.map((r) => { const ok = V().passable(spec, st, r); return '<li class="' + (ok ? 'ok' : 'no') + '">' + both(r) + ' — ' + (ok ? 'passable' : 'under water') + '</li>'; }).join('') + '</ul>';
+    if ((spec.required || []).length) h += '<div class="wv-lab">Ways that must stay open</div><ul class="ar-list">' + spec.required.map((r) => { const ok = V().passable(spec, st, r); return '<li class="' + (ok ? 'ok' : 'no') + '">' + both(r) + ' — ' + (ok ? 'passable' : esc(M.shut.en)) + '</li>'; }).join('') + '</ul>';
     return h;
   };
 

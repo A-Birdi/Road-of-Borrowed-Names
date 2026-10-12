@@ -632,13 +632,16 @@ RB.jp = (function () {
   function pick(cands, prefer, readingH, ctx) {
     const score = (c) => {
       let s = 0;
-      if (prefer && (c.e.w === prefer || hira(c.e.r) === hira(prefer))) s -= 1000;
+      if (prefer && (c.e.w === prefer || hira(c.e.r) === hira(prefer))) s -= c.e.w === prefer ? 1100 : 1000; // the hint's own word first
       if (c.readOk) s -= 100;
       if (ctx && ctx.teAux && TE_AUX_LEMMAS.has(c.e.w)) s -= 60;
       const n = c.rules ? c.rules.length : 0;
       if (!n) s -= c.surf ? 50 : 20;
       else s += n * 3 - (c.surf ? 30 : 10);
       if (c.rules && c.rules.some((r) => r.stem)) s += 20;
+      // a name written in katakana (トキ, トモ, カネ) is not what a word in hiragana means (とき, とも, かね): reached by
+      // its reading only, it comes after every other reading of the word (and still stands when there is none)
+      if (c.e.pos === 'name' && !c.surf && c.e.w !== prefer && /^[\u30a0-\u30ff]+$/.test(c.e.w)) s += 150;
       s += lvRank(c.e);
       return s;
     };

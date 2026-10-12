@@ -64,7 +64,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.asks('el_gonsuke');
   L.knows('el_gonsuke', { el_genroku: 'routine', sg_matsuzo: 'routine', cs_seto: 'loose', cs_hama: 'loose', daigo: 'loose', tetsu: 'loose' });
   L.asks('el_genroku');
-  L.cold('el_genroku', ['{人|ひと} の {噂|うわさ} は せん 。 {掃|は}く の で {忙|いそが}しい 。', 'I don\'t gossip. I\'m busy sweeping.']);
+  L.cold('el_genroku', ['{人|ひと} の {噂|うわさ} は せん@する 。 {掃|は}く の で {忙|いそが}しい 。', 'I don\'t gossip. I\'m busy sweeping.']);
   L.usual('el_genroku', ['ゲンロク さん なら 、 {東|ひがし} の {渡|わた}し{場|ば} から {動|うご}きません よ 。 {掃|は}いて いる か 、 {舟|ふね} を {直|なお}して いる か 。', 'Genroku never leaves East Landing. Sweeping, or mending a boat.']);
   L.usual('el_gonsuke', ['ゴンスケ さん は 、 {東|ひがし} の {渡|わた}し{場|ば} に {船|ふね} を {着|つ}けて います よ 。', 'Gonsuke? At East Landing, with the boat tied up.']);
   L.usual('cs_seto', ['セト さん は 、 {丘|おか} の {上|うえ} の {家|いえ} の {前|まえ} に いる でしょう 。', 'Seto will be outside the house on the hill.']);

@@ -30,6 +30,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
 摘む|つむ|v5m|I|to pick (flowers, herbs, leaves)
 干す|ほす|v5s|I|to dry, to hang out to dry
 書き置き|かきおき|n|I|a note left for someone
+書き付け|かきつけ|n|A|a written note, a memo
+立ち止まる|たちどまる|v5r|I|to stop (walking), to stand still
+見つめる|みつめる|v1|I|to gaze at, to stare at
 `));
   // a guest of the Upper House, in its yukata (a road's own face)
   C.chars.lw_genpachi = { name: T('Genpachi', 'ゲンパチ'), voice: { pitch: 0.9 },
@@ -42,12 +45,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     stamp: { title: ['{北|きた} の {道|みち}', 'the North Road'], motif: 'path', ink: '#5a6070' } });
   C.notes.lw_inn_yukata = { title: T('The inn\'s yukata', '{宿|やど} の {浴衣|ゆかた}'), fiction: false,
     jp: '{温泉|おんせん} の {宿|やど} で は 、 {客|きゃく} に {浴衣|ゆかた} を {貸|か}す 。 {宿|やど} の {名前|なまえ} や {印|しるし} が {染|そ}めて ある こと も {多|おお}い 。 {客|きゃく} は {浴衣|ゆかた} の まま 、 {町|まち} の {湯|ゆ} を {巡|めぐ}って {歩|ある}く 。',
-    en: 'Japanese hot-spring inns lend their guests yukata, often dyed with the inn\'s name or crest; guests stroll the town from bath to bath in them, the room key on a wooden tag.' };
+    en: 'Japanese hot-spring inns lend their guests yukata, often dyed with the inn\'s name or crest; guests stroll the town from bath to bath in them.' };
 
   const ch = (o) => Object.assign({ kind: 'choose' }, o);
   const o = (jp, ok, why) => Object.assign({ jp, ok: !!ok }, why ? { why: { en: why } } : {});
   C.challenges['yn.lw_guest'] = { title: T('The key tag', '{鍵|かぎ} の {札|ふだ}'), tiers: {
-    F: [ch({ item: 'v:宿', ctx: { jp: 'かぎ の ふだ ： 「かみのゆ ・ うめ の ま」', en: '' }, prompt: { en: 'Which inn is he staying at?' }, options: [o('かみのゆ', 1), o('しものゆ', 0, 'かみ is the upper one: the Upper House.')] })],
+    F: [ch({ item: 'v:宿', ctx: { jp: 'かぎ の ふだ ： 「かみのゆ ・ うめのま」', en: '' }, prompt: { en: 'Which inn is he staying at?' }, options: [o('かみのゆ', 1), o('しものゆ', 0, 'かみ is the upper one: the Upper House.')] })],
     E: [ch({ item: 'g:prt_kara_made', ctx: { jp: '{鍵|かぎ} の {札|ふだ} ： 「{上|かみ}の{湯|ゆ} ・ {梅|うめ}の{間|ま} 。 {夕食|ゆうしょく} は {六時|ろくじ} から です 。」', en: '' }, prompt: { en: 'Where is he staying, and when does dinner start?' }, options: [o('{上|かみ}の{湯|ゆ} 。 {六時|ろくじ} から', 1), o('{上|かみ}の{湯|ゆ} 。 {六時|ろくじ} まで', 0, 'から: dinner starts at six.'), o('{下|しも}の{湯|ゆ} 。 {六時|ろくじ} から', 0, '上の湯 is the Upper House.')] })],
     I: [ch({ item: 'g:cond_tara', ctx: { jp: '{鍵|かぎ} の {札|ふだ} の {裏|うら} ： 「{上|かみ}の{湯|ゆ} 。 {門限|もんげん} は {十時|じゅうじ} です 。 {過|す}ぎたら 、 {裏口|うらぐち} の {鈴|すず} を {鳴|な}らして ください 。」 （もう {十時|じゅうじ} を {過|す}ぎて いる 。）', en: '' }, prompt: { en: 'It is past ten. How does he get back into the Upper House?' }, options: [o('{裏口|うらぐち} の {鈴|すず} を {鳴|な}らす', 1), o('{表|おもて} の {戸|と} を {叩|たた}く', 0, '過ぎたら: after ten, ring the bell at the back door.'), o('{朝|あさ} まで {待|ま}つ', 0, 'The tag says how to get in after ten.')] })],
     A: [ch({ item: 'g:keigo_sonkei', ctx: { jp: '{鍵|かぎ} の {札|ふだ} ： 「{上|かみ}の{湯|ゆ} ・ {梅|うめ}の{間|ま} 。 お{出|で}かけ の {際|さい} は 、 {鍵|かぎ} を {帳場|ちょうば} に お{預|あず}け ください 。」', en: '' }, prompt: { en: 'Where is his inn, and what does the tag ask of guests going out?' }, options: [o('{上|かみ}の{湯|ゆ} 。 {鍵|かぎ} を {帳場|ちょうば} に {預|あず}ける', 1), o('{上|かみ}の{湯|ゆ} 。 {鍵|かぎ} を {持|も}って {出|で}かける', 0, 'お預けください: leave it at the front desk.'), o('{梅|うめ}の{湯|ゆ} 。 {鍵|かぎ} を {帳場|ちょうば} に {預|あず}ける', 0, '梅の間 is his room; 上の湯 is the inn.')] })],
@@ -55,14 +58,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.challenges['yn.lw_rocks'] = { title: T('Under the cliff', '{崖|がけ} の {下|した}'), tiers: {
     F: [ch({ item: 'v:止まる', ctx: { jp: 'たてふだ ： 「この さき 、 いし が おちて きます 。 とまらないで ください 。」', en: '' }, prompt: { en: 'What does the sign ask?' }, options: [o('とまらないで あるく', 1), o('ここ で やすむ', 0, 'とまらないで: don\'t stop.')] })],
     E: [ch({ item: 'g:v_naide_kudasai', ctx: { jp: '{立|た}て{札|ふだ} ： 「この {先|さき} 、 {落石|らくせき} に {注意|ちゅうい} 。 {崖|がけ} の {下|した} で は 、 {立|た}ち{止|ど}まらないで ください 。」', en: '' }, prompt: { en: 'Where should you not stop?' }, options: [o('{崖|がけ} の {下|した}', 1), o('{道|みち} の {入|い}り{口|ぐち}', 0, 'The sign is about the foot of the cliff.')] })],
-    I: [ch({ item: 'g:v_yasui_nikui', ctx: { jp: '{立|た}て{札|ふだ} ： 「{雨|あめ} の {翌日|よくじつ} は 、 {特|とく}に {石|いし} が {落|お}ち やすい 。」 （{昨日|きのう} は {一日中|いちにちじゅう} {雨|あめ} だった 。）', en: '' }, prompt: { en: 'It rained all day yesterday. What does that mean for today?' }, options: [o('{今日|きょう} は {特|とく}に {石|いし} が {落|お}ち やすい', 1), o('{今日|きょう} は {安全|あんぜん} だ', 0, '雨の翌日: the day after rain is the worst.')] })],
-    A: [ch({ item: 'g:temo', ctx: { jp: '{湯守|ゆもり} の {書|か}き{付|つ}け ： 「{石|いし} の {落|お}ちる {音|おと} が {聞|き}こえない から と いって 、 {安心|あんしん} して は いけない 。 この {山|やま} は 、 {音|おと} を {立|た}てず に {崩|くず}れる 。」', en: '' }, prompt: { en: 'What is the warning?' }, options: [o('{音|おと} が しなくて も 、 {石|いし} は {落|お}ちて くる', 1), o('{音|おと} が したら 、 {逃|に}げれば いい', 0, 'The mountain falls without a sound: you may hear nothing.'), o('この {山|やま} は {崩|くず}れない', 0, '音を立てずに崩れる: it does crumble, silently.')] })],
+    I: [ch({ item: 'g:v_yasui_nikui', ctx: { jp: '{立|た}て{札|ふだ} ： 「{雨|あめ} の {翌日|よくじつ} は 、 {特|とく}に {石|いし} が {落|お}ちやすい 。」 （{昨日|きのう} は {一日中|いちにちじゅう} {雨|あめ} だった 。）', en: '' }, prompt: { en: 'It rained all day yesterday. What does that mean for today?' }, options: [o('{今日|きょう} は {特|とく}に {石|いし} が {落|お}ちやすい', 1), o('{今日|きょう} は {安全|あんぜん} だ', 0, '雨の翌日: the day after rain is the worst.')] })],
+    A: [ch({ item: 'g:temo', ctx: { jp: '{湯守|ゆもり} の {書|か}き{付|つ}け ： 「{石|いし} の {落|お}ちる {音|おと} が {聞|き}こえない から と いって@言う 、 {安心|あんしん} して は いけない 。 この {山|やま} は 、 {音|おと} を {立|た}てず に {崩|くず}れる 。」', en: '' }, prompt: { en: 'What is the warning?' }, options: [o('{音|おと} が しなくて も 、 {石|いし} は {落|お}ちて くる', 1), o('{音|おと} が したら 、 {逃|に}げれば いい', 0, 'The mountain falls without a sound: you may hear nothing.'), o('この {山|やま} は {崩|くず}れない', 0, '音を立てずに崩れる: it does crumble, silently.')] })],
   } };
   C.challenges['yn.lw_herbs'] = { title: T('Kikue\'s list', 'キクエ の {書|か}き{付|つ}け'), tiers: {
     F: [ch({ item: 'g:counters', ctx: { jp: 'メモ ： 「ドクダミ ふたたば 。 センブリ みたば 。」 こども ： 「ドクダミ は ふたたば とった よ 。 センブリ は まだ ひとたば だけ 。」', en: '' }, prompt: { en: 'How many more bunches of senburi does the child need?' }, options: [o('ふたたば', 1), o('ひとたば', 0, 'They need three (みたば) and have one.'), o('みたば', 0, 'Three is the whole list; they have one already.')] })],
     E: [ch({ item: 'g:counters', ctx: { jp: 'メモ ： 「ドクダミ を {二束|ふたたば} 、 センブリ を {三束|みたば} 、 {摘|つ}んで きて ください 。 キクエ」', en: '' }, prompt: { en: 'What does Kikue want gathered?' }, options: [o('ドクダミ {二束|ふたたば} と センブリ {三束|みたば}', 1), o('ドクダミ {三束|みたば} と センブリ {二束|ふたたば}', 0, 'Read which number goes with which herb.'), o('センブリ だけ {五束|いつたば}', 0, 'Two herbs are on the list.')] })],
-    I: [ch({ item: 'g:uchi_ni', ctx: { jp: 'メモ ： 「センブリ は 、 {花|はな} が {咲|さ}いて いる うち に {摘|つ}む こと 。 {干|ほ}して から {使|つか}う 。」', en: '' }, prompt: { en: 'When should the senburi be picked?' }, options: [o('{花|はな} が {咲|さ}いて いる うち に', 1), o('{花|はな} が {散|ち}って から', 0, '咲いているうちに: while it is still in flower.'), o('{干|ほ}して から {摘|つ}む', 0, 'It is dried after picking, before it is used.')] })],
-    A: [ch({ item: 'g:v_nakereba', ctx: { jp: 'キクエ の {書|か}き{付|つ}け ： 「{無理|むり} に {全部|ぜんぶ} {集|あつ}め なくて も いい から 、 {暗|くら}く なる {前|まえ} に {帰|かえ}って くる こと 。」', en: '' }, prompt: { en: 'What matters most to Kikue?' }, options: [o('{暗|くら}く なる {前|まえ} に {帰|かえ}る こと', 1), o('{全部|ぜんぶ} {集|あつ}める こと', 0, '集めなくてもいい: they don\'t have to gather it all.')] })],
+    I: [ch({ item: 'g:uchi_ni', ctx: { jp: 'メモ ： 「センブリ は 、 {花|はな} が {咲|さ}いて いる うち@内 に {摘|つ}む こと 。 {干|ほ}して から {使|つか}う 。」', en: '' }, prompt: { en: 'When should the senburi be picked?' }, options: [o('{花|はな} が {咲|さ}いて いる うち@内 に', 1), o('{花|はな} が {散|ち}って から', 0, '咲いているうちに: while it is still in flower.'), o('{干|ほ}して から {摘|つ}む', 0, 'It is dried after picking, before it is used.')] })],
+    A: [ch({ item: 'g:v_nakereba', ctx: { jp: 'キクエ の {書|か}き{付|つ}け ： 「{無理|むり} に {全部|ぜんぶ} {集|あつ}めなくて も いい から 、 {暗|くら}く なる {前|まえ} に {帰|かえ}って くる こと 。」', en: '' }, prompt: { en: 'What matters most to Kikue?' }, options: [o('{暗|くら}く なる {前|まえ} に {帰|かえ}る こと', 1), o('{全部|ぜんぶ} {集|あつ}める こと', 0, '集めなくてもいい: they don\'t have to gather it all.')] })],
   } };
   C.challenges['yn.lw_note'] = { title: T('A note under the waystone', '{道標|みちしるべ} の {書|か}き{置|お}き'), tiers: {
     F: [ch({ item: 'v:待つ', ctx: { jp: 'かみ ： 「さき に いきます 。 かみのゆ で まって います 。 ハル」', en: '' }, prompt: { en: 'Where is Haru waiting?' }, options: [o('かみのゆ', 1), o('ここ', 0, 'さき に いきます: Haru has gone on ahead.')] })],
@@ -75,7 +78,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 @scene yn.lw_road_north_guest
 # Road event (W5): the North Road's own, a lost guest of the Upper House
 !look lw_genpachi pc
-lw_genpachi: やあ 、 {人|ひと} が いて よかった 。 {静|しず}か な {道|みち} で 、 つい {歩|ある}き すぎて しまって ね 。 || Ah, thank goodness, a person. Such a quiet road, I walked on further than I meant.
+lw_genpachi: やあ 、 {人|ひと} が いて よかった 。 {静|しず}か な {道|みち} で 、 つい {歩|ある}きすぎて しまって ね 。 || Ah, thank goodness, a person. Such a quiet road, I walked on further than I meant.
 lw_genpachi: {宿|やど} に {帰|かえ}りたい ん だ が 、 どこ の {宿|やど} だった か …… {鍵|かぎ} の {札|ふだ} を {読|よ}んで くれない か 。 {眼鏡|めがね} を {部屋|へや} に {置|お}いて きて しまって 。 || I'd like to get back to my inn, but which one was it… Would you read my key tag? I left my glasses in my room.
 !challenge yn.lw_guest
 !if var._res=0 -> later
@@ -97,7 +100,7 @@ narr: {立|た}ち{止|ど}まらず に 、 {崖|がけ} の {下|した} を {
 !hook road_done yn_north rocks
 !end
 :later
-narr: {崖|がけ} を {見上|みあ}げる と 、 {首|くび} の {後|うし}ろ が {寒|さむ}く なった 。 {今日|きょう} は {引|ひ}き{返|かえ}そう 。 || You look up at the cliff and the back of your neck goes cold. Not today.
+narr: {崖|がけ} を {見上|みあ}げる と 、 {首|くび} の {後|うし}ろ が {寒|さむ}く なった 。 {今日|きょう} は {引|ひ}き{返|かえ}そう 。 || You look up at the cliff and the back of your neck goes cold. Better turn back for today.
 
 @scene yn.lw_road_north_herbs
 narr: {道|みち} の {脇|わき} で 、 {子|こ}ども が {籠|かご} を {抱|かか}えて {草|くさ} を {摘|つ}んで いる 。 {紙|かみ} を {見|み}せて くる 。 || By the road a child with a basket is picking herbs, and holds out a sheet of paper.

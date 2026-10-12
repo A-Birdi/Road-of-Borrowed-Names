@@ -222,8 +222,8 @@ narr: {運河|うんが} の {向|む}こう の {小|ちい}さな {公園|こ�
 
 # ---- the lamplighter and her daughter ----------------------------------------------------------------------------------
 @scene lf.nagi
-# Staged: Nagi tends the lamp in his hand as he warns you about the oil; he points to a lamp post whose shade says
-# only "Lanternfall", turns back to you, and glances over at his daughter Kei, the one who can still say no; Ren
+# Staged: Nagi tends the lamp in her hand as she warns you about the oil; she points to a lamp post whose shade says
+# only "Lanternfall", turns back to you, and glances over at her daughter Kei, the one who can still say no; Ren
 # thinks it over with a hand to the chin.
 !faceplayer lf_nagi
 !gesture lf_nagi tendlamp

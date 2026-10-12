@@ -67,8 +67,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.knows('co_goro', { co_kotaro: 'routine', co_tamotsu: 'routine', co_heita: 'routine', co_ume: 'routine', co_isao: 'routine', co_fusa: 'routine', hiro: 'routine', co_tokiwa: 'loose', co_sayo: 'loose', co_shino: 'loose', co_nobu: 'loose', co_asa: 'loose' });
   L.asks('co_isao', ['co.glass']);
   L.cold('co_isao', ['{火|ひ} の {前|まえ} だ 。 {人|ひと} の {話|はなし} は {後|あと} に しろ 。', 'I\'m at the fire. Talk about people later.']);
-  L.usual('co_shino', ['シノ さん は {郵便所|ゆうびんじょ} か 、 {掲示板|けいじばん} の {前|まえ} か 、 フサ さん の {宿|やど} です ね 。', 'Shino? The post house, or the notice board, or Fusa\'s inn.']);
-  L.usual('co_goro', ['ゴロウ さん は {櫓|やぐら} の {下|した} か 、 フサ さん の {宿|やど} で お{茶|ちゃ} か 、 {段々畑|だんだんばたけ} の {一番|いちばん} {上|うえ} です よ 。', 'Gorō? Under the lookout, or at Fusa\'s with his tea, or right at the top of the terraces.']);
+  L.usual('co_shino', ['シノ さん は {郵便所|ゆうびんじょ} か 、 {掲示板|けいじばん} の {前|まえ} か 、 うち の {宿|やど} です ね 。', 'Shino? The post house, or the notice board, or here at the inn.']);
+  L.usual('co_goro', ['ゴロウ さん は {櫓|やぐら} の {下|した} か 、 うち の {宿|やど} で お{茶|ちゃ} か 、 {段々畑|だんだんばたけ} の {一番|いちばん} {上|うえ} です よ 。', 'Gorō? Under the lookout, or here at the inn with his tea, or right at the top of the terraces.']);
   L.usual('co_kotaro', ['コタロウ は {広場|ひろば} か 、 {段々畑|だんだんばたけ} で ヤギ と {走|はし}って いる か 、 ガラス {工房|こうぼう} を のぞいて いる か です 。', 'Kotarō? The square, or the terraces running about with the goat, or peering into the glass workshop.']);
   L.usual('co_tamotsu', ['タモツ さん なら 、 {水路|すいろ} の そば です よ 。 {小屋|こや} の {前|まえ} に いつも います 。', 'Tamotsu? By the channel. Always in front of his shed.']);
   L.usual('co_heita', ['ヘイタ さん は 、 {火除|ひよ}け{道|みち} で {草|くさ} を {束|たば}ねて います 。 {昼寝|ひるね} {中|ちゅう} で なければ ね 。', 'Heita\'s binding the cut grass on the firebreak. When he isn\'t napping.']);
@@ -110,12 +110,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
     stamp: { title: ['{灰実|はいみ} へ の {坂道|さかみち}', 'the Orchard Road'], motif: 'path', ink: '#a8502a' } });
   C.notes.lw_co_shibugaki = { title: T('Astringent persimmons', '{渋柿|しぶがき}'), fiction: false,
     jp: '{渋柿|しぶがき} は 、 そのまま で は {渋|しぶ}くて {食|た}べられない 。 {皮|かわ} を むいて {干|ほ}す と 、 {甘|あま}い {干|ほ}し{柿|がき} に なる 。 {甘柿|あまがき} は 、 {木|き} から {取|と}って すぐ {食|た}べられる 。',
-    en: 'Astringent persimmons (shibugaki) are too puckering to eat fresh; peeled and hung to dry for some weeks, they turn sweet: hoshigaki. Sweet kinds (amagaki) can be eaten straight from the tree.' };
+    en: 'Astringent persimmons (shibugaki) are too puckering to eat fresh; peeled and hung to dry, they turn sweet: hoshigaki. Sweet kinds (amagaki) can be eaten straight from the tree.' };
 
   C.challenges['co.lw_kaki'] = { title: TJ('{柿|かき} の {札|ふだ}', 'The persimmon tag'), tiers: {
     F: [ch({ item: 'v:柿', ctx: { jp: 'ふだ ： 「あまい かき は あかい かご 。 しぶい かき は しろい かご 。」', en: '' }, prompt: { en: 'This persimmon is the astringent kind (しぶい). Which basket?' }, options: [o('しろい かご', 1), o('あかい かご', 0, 'The red basket is for the sweet ones (あまい).')] })],
     E: [ch({ item: 'v:渋い', ctx: { jp: '{札|ふだ} ： 「{甘|あま}い {柿|かき} は {赤|あか}い {籠|かご} に 。 {渋|しぶ}い {柿|かき} は {白|しろ}い {籠|かご} に 。」', en: '' }, prompt: { en: 'You pick up an astringent one. Where does it go?' }, options: [o('{白|しろ}い {籠|かご}', 1), o('{赤|あか}い {籠|かご}', 0, '{赤|あか}い {籠|かご} is for the sweet ones.'), o('どちら でも いい', 0, 'The tag keeps them apart.')] })],
-    I: [ch({ item: 'g:v_te_kara', ctx: { jp: 'マタヘイ ： 「{渋柿|しぶがき} は 、 {干|ほ}して から {食|た}べる ん だ 。 {干|ほ}す {前|まえ} に {食|た}べたら 、 {口|くち} が {曲|ま}がる ぞ 。」', en: '' }, prompt: { en: 'When can the astringent ones be eaten?' }, options: [o('{干|ほ}して から', 1), o('{干|ほ}す {前|まえ} に', 0, 'Before drying they are too puckering: {口|くち} が {曲|ま}がる.'), o('{今|いま} すぐ', 0, '〜てから: only after drying.')] })],
+    I: [ch({ item: 'g:v_te_kara', ctx: { jp: 'マタヘイ ： 「{渋柿|しぶがき} は 、 {干|ほ}して から {食|た}べる ん だ 。 {干|ほ}す {前|まえ} は 、 {渋|しぶ}くて {食|た}べられない ぞ 。」', en: '' }, prompt: { en: 'When can the astringent ones be eaten?' }, options: [o('{干|ほ}して から', 1), o('{干|ほ}す {前|まえ} に', 0, 'Before drying they are too astringent: {渋|しぶ}くて {食|た}べられない.'), o('{今|いま} すぐ', 0, '〜てから: only after drying.')] })],
     A: [ch({ item: 'g:indirectness', ctx: { jp: 'マタヘイ ： 「{赤|あか}い {籠|かご} の {方|ほう} は 、 {祭|まつ}り {用|よう} で ね 。 …… {一|ひと}つ くらい {減|へ}って も 、 {誰|だれ} も {数|かぞ}えちゃ いない さ 。」', en: '' }, prompt: { en: 'What is Matahei hinting?' }, options: [o('{甘|あま}い {柿|かき} を {一|ひと}つ {食|た}べて いい', 1), o('{籠|かご} を {数|かぞ}えて ほしい', 0, 'He says nobody is counting.'), o('{祭|まつ}り に {来|こ}ないで ほしい', 0, 'He means one fewer won\'t be missed: help yourself.')] })],
   } };
   C.challenges['co.lw_embers'] = { title: TJ('{焚|た}き{火|び} の {跡|あと}', 'The smouldering campfire'), tiers: {
@@ -131,7 +131,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A: [ch({ item: 'g:relative_clause', ctx: { jp: '{札|ふだ} の {裏|うら} ： 「{起|お}こして くれた {方|かた} へ 。 カラス に {負|ま}けない {案山子|かかし} は 、 {柿|かき} の {番人|ばんにん} です 。 どうぞ よろしく 。」', en: '' }, prompt: { en: 'Who is the note on the back for?' }, options: [o('{案山子|かかし} を {起|お}こした {人|ひと}', 1), o('カラス', 0, '{起|お}こして くれた {方|かた}: whoever stood it up.'), o('{柿|かき} の {番人|ばんにん}', 0, 'That is the scarecrow itself.')] })],
   } };
   C.challenges['co.lw_way'] = { title: TJ('{宿|やど} へ の {道|みち}', 'The way to the inn'), tiers: {
-    F: [ch({ item: 'v:右', ctx: { jp: 'みちしるべ ： 「→ はいみ の さと 。 ← しおがらす 。」 たびびと ： 「やど は どっち ？」', en: '' }, prompt: { en: 'The inn is in the village. Which way?' }, options: [o('みぎ', 1), o('ひだり', 0, '← is しおがらす, back the way you came.')] })],
+    F: [ch({ item: 'v:右', ctx: { jp: 'みちしるべ ： 「→ はいみ の さと 。 ← しおがらす 。」 たびびと ： 「やど は どっち ？」', en: '' }, prompt: { en: 'The inn is in the village. Which way?' }, options: [o('みぎ', 1), o('ひだり', 0, '← points to しおがらす, Saltglass.')] })],
     E: [ch({ item: 'v:上る', ctx: { jp: '{旅人|たびびと} ： 「{灰実|はいみ} の {里|さと} の {宿|やど} へ {行|い}きたい ん です 。 この {坂|さか} を {上|のぼ}れば いい です か 。」', en: '' }, prompt: { en: 'The village is up the slope. What do you say?' }, options: [o('はい 、 この {坂|さか} を {上|のぼ}って ください', 1), o('いいえ 、 {下|くだ}って ください', 0, 'Down the slope is the way to Saltglass.'), o('{北|きた} へ {行|い}って ください', 0, 'North is the old road, not the village.')] })],
     I: [ch({ item: 'g:cond_ba', ctx: { jp: 'あなた ： 「{里|さと} に {入|はい}って 、 {左|ひだり} へ {行|い}けば 、 すぐ です 。」', en: '' }, prompt: { en: 'What did you tell the traveller?' }, options: [o('{里|さと} に {入|はい}って {左|ひだり} へ {行|い}く と 、 すぐ {着|つ}く', 1), o('{左|ひだり} へ {行|い}って は いけない', 0, '〜ば: if you go left, it is right there.'), o('{左|ひだり} へ {行|い}く と 、 {遠|とお}い', 0, 'すぐ です: it is close.')] })],
     A: [ch({ item: 'g:keigo_sonkei', ctx: { jp: '{旅人|たびびと} ： 「{宿|やど} の ご{主人|しゅじん} は 、 どんな {方|かた} で いらっしゃいます か 。」', en: '' }, prompt: { en: 'What is the traveller asking (respectful language)?' }, options: [o('{宿|やど} の {主人|しゅじん} は どんな {人|ひと} か', 1), o('{宿|やど} は どこ に ある か', 0, 'いらっしゃいます here is the respectful いる / です: what kind of person.'), o('{宿|やど} に {泊|と}まって いる か', 0, 'They ask about the innkeeper.')] })],
@@ -148,14 +148,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     hint: ['{見晴|みは}らし の {石|いし} 。 {下|した} に {畑|はたけ} と {道|みち} と {水路|すいろ} が {見|み}える が 、 どれ も ばらばら だ 。 {石|いし} に は 「{一|ひと}つ と して {見|み}よ 」 と ある 。', 'A viewing stone. Below lie the fields, the paths and the channel, all in pieces. Carved on the stone: "See them as one."'],
     openedLabel: ['{見晴|みは}らし の {石|いし}', 'The viewing stone'], after: { p: 'cs_viewstone', scene: 'yn.lw_co_view_after' } });
   C.notes.lw_co_water = { title: T('The sluice boards', '{堰板|せきいた}'), fiction: true,
-    jp: '{段々畑|だんだんばたけ} の {古|ふる}い {堰板|せきいた} は 、 すべて {一度|いちど} に {上|あ}がる よう に {作|つく}られて いた 。 どの {家|いえ} の {畑|はたけ} も 、 {同|おな}じ {時|とき} に {水|みず} を {飲|の}む 。',
-    en: 'The terraces\' old sluice boards were made to rise together, so that every family\'s field drank at the same moment and none first. The post says why: a year when one terrace alone is watered is a year the village splits.' };
+    jp: '{段々畑|だんだんばたけ} の {古|ふる}い {堰板|せきいた} は 、 すべて {一度|いちど} に {上|あ}がる よう に {作|つく}られて いた 。 どの {家|いえ} の {畑|はたけ} も 、 {同|おな}じ {時|とき} に {水|みず} を {飲|の}む 。 {柱|はしら} に は 、 「{一|ひと}つ の {段|だん} だけ が {潤|うるお}う {年|とし} は 、 {里|さと} が {割|わ}れる 」 と ある 。',
+    en: 'The terraces\' old sluice boards were made to rise all at once: every family\'s field drinks at the same moment. On the post: "A year when one terrace alone is watered, the village splits."' };
   C.notes.lw_co_tally = { title: T('The kiln-keepers\' tally', '{窯番|かまばん} の {板|いた}'), fiction: true,
     jp: '{窯番|かまばん} は 、 {大窯|おおがま} を {焚|た}く ごと に {一本|いっぽん} 、 {板|いた} に {線|せん} を {刻|きざ}んだ 。 {線|せん} は {二十年|にじゅうねん} {前|まえ} の {秋|あき} で {止|と}まって いる 。',
-    en: 'The kiln-keepers cut one stroke on the board for every firing of the Great Kiln. Year after year the rows run much the same, until the autumn twenty years ago, where they stop.' };
+    en: 'The kiln-keepers cut one stroke on the board for every firing of the Great Kiln. The strokes stop at the autumn twenty years ago.' };
   C.notes.lw_co_terraces_whole = { title: T('The terraces as one', '{段々畑|だんだんばたけ} の {全体|ぜんたい}'), fiction: true,
-    jp: '{上|うえ} の {段|だん} から {全体|ぜんたい} を {見|み}る と 、 {火除|ひよ}け{道|みち} は {葉|は} の {筋|すじ} の よう に {段|だん} の {間|あいだ} を {走|はし}り 、 どれ も {水路|すいろ} へ {続|つづ}いて いる 。',
-    en: 'Seen whole from the upper terraces, Cinder Orchard\'s firebreaks run between the fields like the veins of a leaf, and every one leads down to the wide channel: the founders laid out the hillside as a single way out of a fire.' };
+    jp: '{上|うえ} の {段|だん} から {全体|ぜんたい} を {見|み}る と 、 {火除|ひよ}け{道|みち} は {葉|は} の {筋|すじ} の よう に {段|だん} の {間|あいだ} を {走|はし}り 、 どれ も {水路|すいろ} へ {続|つづ}いて いる 。 {山|やま} {全体|ぜんたい} が 、 {一|ひと}つ の {逃|に}げ{道|みち} に なって いる 。',
+    en: 'Seen whole from the upper terraces, the firebreaks run between the terraces like the veins of a leaf, and every one leads to the channel. The whole hillside is one way out.' };
 
   L.scenes(`
 @scene sb.lw_co_northlight
@@ -166,11 +166,11 @@ co_kotaro: ねえ 、 {聞|き}いて よ 。 {北|きた} の {山|やま} に 
 co_kotaro: …… {天文台|てんもんだい} の {灯|あか}り だった 。 じいちゃん に {笑|わら}われた 。 でも 、 {鳴|な}らす {前|まえ} に {聞|き}いた から 、 {褒|ほ}められた よ 。 || …It was the observatory's lamp. Grandpa laughed at me. But I asked before I rang it, so he said well done.
 
 @scene kr.lw_co_jars
-narr: {焼|や}き{上|あ}がった ばかり の かめ が {並|なら}んで いる 。 {札|ふだ} に 「{灯守|ひもり} の {道|みち} ・ {麓|ふもと} の {茶屋|ちゃや} {行|ゆ}き 」 。 || Freshly fired jars in a row. The tag: "To the teahouse at the foot of the Keepers' Road."
+narr: {焼|や}き{上|あ}がった ばかり の かめ@甕 が {並|なら}んで いる 。 {札|ふだ} に 「{灯守|ひもり} の {道|みち} ・ {麓|ふもと} の {茶屋|ちゃや} {行|ゆ}き 」 。 || Freshly fired jars in a row. The tag: "To the teahouse at the foot of the Keepers' Road."
 
 @scene kr.lw_co_jars_nobu
-co_nobu: {山|やま} の {向|む}こう の {茶屋|ちゃや} から 、 {油|あぶら} の かめ の {注文|ちゅうもん} が {来|き}た 。 {三十|さんじゅう} {個|こ} だ 。 || An order came from a teahouse over the mountains: oil jars, thirty of them.
-co_nobu: {数|かず} に うるさい {女将|おかみ} で な 。 {注文書|ちゅうもんしょ} に 「{三十|さんじゅう} {個|こ} 」 と {三回|さんかい} {書|か}いて あった 。 …… {今度|こんど} は 、 とっくり じゃ ない ぞ 。 || A landlady who's fussy about numbers: "thirty jars", three times over on the slip. …No flasks this time.
+co_nobu: {山|やま} の {向|む}こう の {茶屋|ちゃや} から 、 {油|あぶら} の かめ@甕 の {注文|ちゅうもん} が {来|き}た 。 {三十個|さんじゅっこ} だ 。 || An order came from a teahouse over the mountains: oil jars, thirty of them.
+co_nobu: {数|かず} に うるさい {女将|おかみ} で な 。 {注文書|ちゅうもんしょ} に 「{三十個|さんじゅっこ} 」 と {三回|さんかい} {書|か}いて あった 。 …… {今度|こんど} は 、 とっくり じゃ ない ぞ 。 || A landlady who's fussy about numbers: "thirty jars", three times over on the slip. …No flasks this time.
 
 @scene co.lw_road_kaki
 # Road event (W5): the Orchard Road's own, the first time you walk it. A farmer's cart has tipped on the slope and

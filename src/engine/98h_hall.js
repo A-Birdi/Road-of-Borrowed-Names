@@ -11,6 +11,10 @@
  *                    stations, procedures }], trials: [{ id: 't1'…'t10', floor, kind, title, reprieve }] }
  *   manifest()       every trial of every wing: [{ id: 'w1.t1', wing, trial, floor, kind }]
  *   enter(s, w, { held }) / retreat(s, { keep }) / markTrial(s, w, t) / resetFloor(s, w, k)
+ *   mechanism(w, k, id)   a field puzzle (src/engine/55_fieldweave.js) that belongs to floor k of wing w: its state is
+ *                    the visit's, like the floor's machines (it starts afresh when a visit begins or ends and when the
+ *                    floor starts again, and is kept with a held floor); the scene that opens it counts its trial
+ *                    (floors may list them as `mechanisms` too)
  *   choice(s, w) / setChoice(s, w, { route, tactics })   the three choices (the profile is always the campaign's)
  *   tactics(s)       the tactical setting in force (a wing's own while in it, else the campaign's)
  *   trialDone / floorClear / wingDone / litCount / note(s, w)
@@ -48,7 +52,7 @@ RB.hall = (function () {
       floors: d.floors.map((f) => ({ id: f.id, map: f.map, entry: f.entry, name: f.name })),
       preview: { language: d.theme, size: { en: d.trials.length + ' trials of the tale.' } },
       rules: { persistent: true, restart: 'floor', ambush: false },
-      stations, procedures: [].concat(...d.floors.map((f) => f.procedures || [])),
+      stations, procedures: [].concat(...d.floors.map((f) => f.procedures || [])), mechanisms: [].concat(...d.floors.map((f) => f.mechanisms || [])),
       exit: d.hearth, resetFloor: (s, k) => resetFloor(s, id, k),
       // delvers (D8): rarer here, and their rest goes further (src/engine/98b_delvers.js)
       delvers: d.delvers || null, delverChance: 0.35,
@@ -64,6 +68,14 @@ RB.hall = (function () {
     return out;
   }
   const wingOfMap = (mapId) => ORDER.find((w) => W[w].floors.some((f) => f.map === mapId)) || null;
+  // a floor's field puzzle, the visit's own (the expedition clears its mechanisms when a visit begins or ends)
+  function mechanism(w, k, id) {
+    const f = W[w] && W[w].floors[k], e = X().get(xid(w));
+    if (!f || !e) throw new Error('hall mechanism: no floor ' + k + ' in wing ' + w);
+    f.mechanisms = f.mechanisms || [];
+    if (f.mechanisms.indexOf(id) < 0) f.mechanisms.push(id);
+    if (e.mechanisms.indexOf(id) < 0) e.mechanisms.push(id);
+  }
 
   // ---- the record ---------------------------------------------------------------------------------------------------
   const inEdition = (s) => !!(s && RB.edition && RB.edition.of(s) >= 2);
@@ -146,6 +158,8 @@ RB.hall = (function () {
     for (const key of Object.keys(s.flags)) if (key.indexOf(pre) === 0 || key.indexOf('foe:' + f.map + ':') === 0) delete s.flags[key];
     const pr = s.enc && s.enc.proc;
     if (pr) for (const id of f.procedures || []) delete pr[id];
+    const pz = s.discovery && s.discovery.puzzles;
+    if (pz) for (const id of f.mechanisms || []) delete pz[id];
     const e = X().of(s);
     if (e && e.id === xid(w)) for (const sid in f.stations || {}) { const st = f.stations[sid]; const u = st.uses != null ? st.uses : (X().KIND[st.kind] || {}).uses || 1; e.stations[sid] = u === Infinity ? -1 : u; }
   }
@@ -178,6 +192,7 @@ RB.hall = (function () {
     if (held) {
       for (const key in held.flags) s.flags[key] = held.flags[key];
       if (held.proc) { const E = s.enc || (s.enc = {}); E.proc = E.proc || {}; for (const id in held.proc) E.proc[id] = RB.util.deepClone(held.proc[id]); }
+      if (held.puzzles && RB.fieldweave) for (const id in held.puzzles) Object.assign(RB.fieldweave.rec(s, id), RB.util.deepClone(held.puzzles[id]));
       const e = X().of(s);
       if (e && held.stations) e.stations = RB.util.deepClone(held.stations);
       if (e && held.statuses) e.statuses = RB.util.deepClone(held.statuses);
@@ -202,9 +217,11 @@ RB.hall = (function () {
       const proc = {};
       const pr = s.enc && s.enc.proc;
       if (pr) for (const f of d.floors) for (const id of f.procedures || []) if (pr[id]) proc[id] = RB.util.deepClone(pr[id]);
+      const puzzles = {}, pz = s.discovery && s.discovery.puzzles;
+      if (pz) for (const f of d.floors) for (const id of f.mechanisms || []) if (pz[id]) puzzles[id] = RB.util.deepClone(pz[id]);
       const e = X().of(s), P = RB.world && RB.world.W && RB.world.W.player;
       r.held = {
-        floor: v.floor, map: RB.world.W.map.id, x: P ? P.x : 0, y: P ? P.y : 0, dir: P ? P.dir : 'down', flags, proc,
+        floor: v.floor, map: RB.world.W.map.id, x: P ? P.x : 0, y: P ? P.y : 0, dir: P ? P.dir : 'down', flags, proc, puzzles,
         stations: e ? RB.util.deepClone(e.stations) : null, statuses: e ? RB.util.deepClone(e.statuses) : null,
         resolve: s.resolve ? { pc: s.resolve.pc, comp: s.resolve.comp } : null,
         done: RB.util.deepClone(v.done), reprieve: v.reprieve - 1, practice: v.practice, help: RB.util.deepClone(v.help), started: v.started,
@@ -276,7 +293,7 @@ RB.hall = (function () {
 
   if (RB.bus) RB.bus.on('map:enter', (e) => { const s = RB.game && RB.game.s; if (s && e && e.id) { watchAnswers(); arrived(s, e.id); } });
   return {
-    wing, get, list, manifest, trialOf, wingOfMap, rec, wrec, peek, visitOf, inEdition, choice, setChoice, tactics,
+    wing, get, list, manifest, trialOf, wingOfMap, mechanism, rec, wrec, peek, visitOf, inEdition, choice, setChoice, tactics,
     trialDone, floorClear, floorTrials, wingDone, litCount, doneCount, markTrial, resetFloor, patternOf, enter, retreat,
     arrived, note, noteOf, watchAnswers, xid, ROUTES, TACTICS,
   };

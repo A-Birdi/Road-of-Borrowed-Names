@@ -68,11 +68,36 @@ the screen, fully there), checked a few times a second while the world is in pla
 walks to the new place (or is simply there while the map is appearing, or behind an illustrated sequence); a scene
 staging them keeps them where it put them.
 
-### LW-04 (part) · Something new to say comes first
-An asker (`asks: true`) offers Talk / Have you seen…? only once their current talk has been heard; a scene not yet
-heard (the story's next step, a quest's) is said at once, never behind the question.
+### LW-03 · LW-04 · LW-05 · LW-06 · every region — done (content internally reviewed)
+Authored to [`LW1_AUTHORING.md`](LW1_AUTHORING.md) in `src/content/zzz_living/` (one file per region, the helpers in
+`05_author.js`), for **16 towns**: Reedwake, Saltglass, East Landing, Sazanami, Manybridge, Blockprint/Playhouse Rows,
+Cinder Orchard, Snowbell, the Keepers' Road (foot and lodge), Lanternfall, Kotonoha, the Cloudroad's stations (Oiwake,
+Nakayama), Steamhollow and the Archive road; Ashihara Shinden keeps its own residents (§1).
+- **W2 routines:** 43 residents with 85 new places beyond their usual one, each with something to do there and a first
+  line said once, moving only on a return (`53_town.js`), never while you walk the town or mid-conversation.
+- **W3 "Have you seen…?":** 44 askers, 113 people with what they know of each other (314 links, routine or loose), cold
+  askers in character, usual-place lines for people without a routine; an asker's new talk is heard first (LW-04).
+- **W1 change beats:** 56 across the towns, every town at least two visible changes on a return, each set off by
+  progress elsewhere; the Journey's "changed" list names only towns you have been to.
+- **W5 road events:** 19 roads, each with a unique first event (a problem solved there by a four-tier challenge) and
+  three variants once it is solved, a road stamp, rewards that are scenes, notes or keepsakes (never consumables).
+  The roads the journey already had events on (the Keepers' Road, the Cloudroad, the sea) keep theirs and gain only
+  variants. Added late: the Mill Road (`12_rw_mill.js`; a road may carry `when`, here `departed`, so nothing interrupts
+  Chapter 1) and Steamhollow's North Road (`33_yn_north.js`). A map's own arrival story is that visit's event: a road's
+  event waits for the next walk (`storyOnArrival`).
+- **W6 return keys:** 39 sealed spots, about three a region, visible from the first visit with an in-world hint and
+  opened by something learned later (a concept, or later progress); the Shuttered Hall's door is registered as one and
+  says its hint only once (its own scene already describes it).
+- **Language:** every new line self-reviewed in context by region (2,000+ lines; the ledger,
+  `docs/review/language/`, covers the Living World now: its lines in the six-chapter regions under `lw.json`); fixes
+  included Rin's map colours (black walked, red heard, as her story has it), a playbill that would have put Ren's
+  private failure on a public banner, register and pronoun slips, and the word help (below).
+- **Word help:** the review found tapped words glossed wrongly game-wide (とき as the name Toki, かね as Kane, ひ as a
+  weaving shuttle, かねます as 鐘). Fixed in the lookup (`src/lang/20_jp.js`: a katakana name no longer captures the
+  same sound written as a word; an exact `word@lemma` hint wins) and the lexicon; every token in the game was compared
+  before and after; `tests/unit/word_help.test.mjs`.
 
-### LW-07 · The exploration actions (W9–W17): the register, before filling the gaps
+### LW-07 (before) · The exploration actions (W9–W17): the register, before filling the gaps
 A read of every place the plan names (2026-10-12). None of the journey's places used the templates of
 `src/engine/55b_verbs.js` (only the development fixtures did); each place had its own bespoke scenes, challenges or
 procedures. Status against the plan's description (Y done, P partly, N not):
@@ -92,12 +117,34 @@ procedures. Status against the plan's description (Y done, P partly, N not):
 | W16 layered sites | the Lost Contract / East Landing | one text question, no plan laid over the place; nothing at East Landing | P / N |
 | W17 stage-blocking | Playhouse Row rehearsals | one of three ready blockings with a preview | P |
 
-The gap-fill puts real instances of the templates at these places (production gates, real people, the
-places' own maps), beside what each place already has, and is recorded here when done.
+The gap-fill put real instances of the templates at these places (production gates, real people, the places' own
+maps), beside what each place already has: below.
+
+### LW-07 · the exploration actions in the journey — done
+Production instances of every template in `src/content/zzz_verbs/` (loads after every region), each gated on its
+place's own story, at the places the plan names (register below, now all **Y**). Tests: `tests/unit/verbs.test.mjs`
+(every spec valid, every Japanese string and token checked, the network's words by medium, creatures' rounds clear of
+every action), `tests/unit/hall_w3.test.mjs` (the wing's clock inside a run), `tests/e2e/verbs_journey.mjs` (each
+instance absent before its gate and opened from its own prop after; one of each kind played to its outcome with real
+clicks).
+
+| Verb | Place | Instance | Status |
+|---|---|---|---|
+| W9 notices change behaviour | Ashihara Shinden | the well and market notices (already there) | **Y** |
+| | Manybridge's noodle stalls | `mb_vb_queue`: where the queue goes; two valid notices place people differently, one followed literally makes it worse | **Y** |
+| | Manybridge's lock | `mb_vb_lock`: where boats wait; barges and boatmen move | **Y** |
+| | Steamhollow's house rules | `yn_vb_bath`: the Lower House lobby; guests queue at the desk or rest by the hearth | **Y** |
+| W10 the press | Blockprint Row | a printed page now acts in the world: readers claim the bank, queue at the playhouse, bring a lost cat, try a new soba shop | **Y** |
+| W11 courier planning | barges / relay / sea mailbag | `mb_vb_barges`, `cr_vb_relay`, `sea_vb_post`: recipients move by what the letters say; 3 valid plans each | **Y** |
+| W12 repair jobs | Steamhollow / East Landing / restored lamps | `yn_vent_pipe` (the steam stops), `el_bell_care`, `kr_hall_lamp` (the Shuttered Hall's lamp lit from then on) | **Y** |
+| W13 connected inkweaving | Undercroft Locks / Steam Vents / Root Hollows | `mb_under_sluices` (3 maps), `yn_vent_air` (steam: the template's words follow its medium), `ko_root_tide` (3 maps, a ring) | **Y** |
+| W14 observation-first | the Understage / Hall wing 3 | `mp_koseri` (the lift); `hall_w3_censer` (Jinbei's incense clock, part of a run: counts as the floor's puzzle trial) | **Y** |
+| W15 creature routing | Cloudroad / Kotonoha | `cr_cloud_ox` (the pack horses wait until it is moved), `ko_leafling` | **Y** |
+| W16 layered sites | the Lost Contract / East Landing | `mb_kura_plan`, `el_old_plan`: compared at the marks, three readings fit, one refused | **Y** |
+| W17 stage-blocking | Playhouse Row | `mp_vb_stage`: the matinée's ferry scene, two valid blockings | **Y** |
 
 ### Still to do in this rollout
-LW-03 routines for the main towns; LW-04 the relations table and askers; LW-05 change beats; LW-06 road events and
-return keys; LW-07 the verbs register; the production tests replacing the empty-registry expectations.
+The ledger entries and the font subsets for the new characters (P17); the complete browser run on the final build.
 
 ## 3. Tests
 
@@ -105,3 +152,10 @@ return keys; LW-07 the verbs register; the production tests replacing the empty-
   every entry carrying its work; every map passes `check()`; people at work in every region; each contract valid).
   The old expectation that only the gallery performs is replaced.
 - `tests/e2e/world.mjs`: Kiyo works on the ordinary page and with the light Off.
+- `tests/unit/living_world.test.mjs`: every region's routines, askers, beats, roads and seals well formed and reachable;
+  Reedwake's in detail; roads wait for a story's arrival and for their own `when`; unvisited towns have not changed.
+- `tests/e2e/living_world.mjs`: LW-01…LW-09 on the built game, and the quiet puzzle spaces.
+- `tests/e2e/verbs_journey.mjs`, `tests/unit/verbs.test.mjs`, `tests/unit/hall_w3.test.mjs`: the exploration actions.
+- `tests/unit/word_help.test.mjs`: the word-help fixes the language review called for.
+- `tests/unit/overworld_geometry.test.mjs`: re-recorded deliberately for the Living World's people and props on the
+  six-chapter maps (only people, props and their collision changed; no exit, door, trigger or spawn).

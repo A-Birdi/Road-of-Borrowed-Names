@@ -1672,6 +1672,9 @@ RB.lex = (function () {
 いいえ||int|F|no|Also a modest reply to thanks: "not at all".
 ええ||int|E|yes (softer)|With a rising tone: "eh?" (surprise).
 うん||int|F|yeah (casual yes)
+いや||int|E|no; well (disagreeing, or correcting yourself)|Another word from {嫌|いや} "unpleasant; I don't want to".
+かも||exp|I|maybe, might (short for 〜かもしれない)
+いけない||adj-i|E|must not, not allowed (〜てはいけない); no good
 ううん||int|E|no, nope (casual)
 いってきます||exp|E|"I'm off" (said when leaving home)
 いってらっしゃい||exp|E|"see you later" (to someone leaving)

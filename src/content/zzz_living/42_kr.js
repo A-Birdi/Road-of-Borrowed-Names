@@ -53,6 +53,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
 明らか|あきらか|adj-na|I|clear, bright
 散らす|ちらす|v5s|I|to scatter
 行き来|いきき|n|I|coming and going, traffic (between two places)
+尾|お|n|I|a tail; the 尾 (お) of 尾根, a ridge
+しめ縄|しめなわ|n|I|a sacred straw rope (hung to mark a holy place)
+ばつ||n|I|a cross (×), the mark for "no" or "wrong"
+合わせる|あわせる|v1|E|to put together (手を合わせる: to press the palms together in prayer)
+よし||int|E|right, good, all right (said when something is settled)
 `));
 
   // ---- the towns ----------------------------------------------------------------------------------------------------
@@ -61,7 +66,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   // ---- W2: routines ---------------------------------------------------------------------------------------------------
   L.routine('kr_foot', 'kr_aya', { base: 'kr.foot_inn:kr_aya', pin: 'quest.kr_inkstone&!quest.kr_inkstone=done', slots: [
-    { map: 'kr.foot', x: 10, y: 9, dir: 'down', perform: 'sweep', line: ['{表|おもて} を {掃|は}いて おかない と 、 {油|あぶら} を {運|はこ}ぶ {人|ひと} が {通|とお}る とき に {滑|すべ}る の よ 。', 'If I don\'t sweep the front, the oil carriers slip when they come through.'] },
+    { map: 'kr.foot', x: 10, y: 9, dir: 'down', perform: 'sweep', line: ['{表|おもて} を {掃|は}いて おかない と 、 {油|あぶら} を {運|はこ}ぶ {人|ひと} が {通|とお}る とき@時 に {滑|すべ}る の よ 。', 'If I don\'t sweep the front, the oil carriers slip when they come through.'] },
     { map: 'kr.foot', x: 8, y: 11, dir: 'up', line: ['{迎|むか}え の {灯|ひ} の {芯|しん} を {切|き}る の は 、 わたし の {仕事|しごと} に なった の 。 {数|かぞ}えたら 、 {今月|こんげつ} で {十二回目|じゅうにかいめ} 。', 'Trimming the Welcoming Light\'s wick is my job now. I counted: that\'s the twelfth time this month.'] },
   ] });
   L.away('kr_foot', 'kr_aya', { map: 'kr.foot_inn', x: 2, y: 3, p: 'fw_note', line: ['{帳場|ちょうば} の {横|よこ} に {書|か}き{置|お}き 。 「{表|おもて} に います 。 {大|おお}きな {声|こえ} で {呼|よ}んで ね 。 アヤ 」', 'A note by the counter: "Out front. Call loudly. —Aya"'] });
@@ -74,7 +79,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { map: 'kr.hisae', x: 5, y: 3, dir: 'up', perform: 'sort', line: ['ヒサエ さん の {帳面|ちょうめん} 、 {放|ほう}って おく と {机|つくえ} から {溢|あふ}れる の よ 。 {順番|じゅんばん} だけ は {変|か}えないで って {言|い}われて いる けど 。', 'Hisae\'s notebooks spill off the table if you leave them. I\'m told never to change their order, though.'] },
   ] });
   L.routine('kr_lodge', 'kr_sora', { base: 'kr.lodge:kr_sora', slots: [
-    { map: 'kr.lodge', x: 19, y: 8, dir: 'right', line: ['ヒサエ ばあちゃん の {灯|ひ} 、 {今|いま} は おれ が {油|あぶら} を {足|た}す ん だ 。 {半分|はんぶん} だけ 。 {多|おお}すぎる と 、 {怒|おこ}られる 。', 'I top up Granny Hisae\'s lamp now. Only halfway. Too much and I get told off.'] },
+    { map: 'kr.lodge', x: 19, y: 8, dir: 'right', line: ['ヒサエ ばあちゃん の {灯|ひ} 、 {今|いま} は おれ@俺 が {油|あぶら} を {足|た}す ん だ 。 {半分|はんぶん} だけ 。 {多|おお}すぎる と 、 {怒|おこ}られる 。', 'I top up Granny Hisae\'s lamp now. Only halfway. Too much and I get told off.'] },
     { map: 'kr.lodge', x: 16, y: 12, dir: 'up', perform: 'read', line: ['{石|いし} の {字|じ} を {写|うつ}して いる ん だ 。 {全部|ぜんぶ} {読|よ}めたら 、 {一人前|いちにんまえ} の {灯守|ひもり} だ って 。', 'I\'m copying the letters on the stone. When I can read them all, I\'ll be a proper keeper, she says.'] },
   ] });
 
@@ -86,7 +91,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.asks('kr_mokichi', ['kr.lodge', 'kr.lodge_in']);
   L.knows('kr_mokichi', { kr_fuyu: 'routine', kr_sora: 'routine', kr_hisae: 'routine', kr_juzo: 'routine', kr_kumazo: 'loose', kr_aya: 'loose' });
   L.asks('kr_hisae', ['kr.lodge']);
-  L.cold('kr_hisae', ['{人|ひと} に {聞|き}く より 、 {自分|じぶん} の {足|あし} で {探|さが}し な 。 {灯守|ひもり} は そう やって {道|みち} を {覚|おぼ}えた もん さ 。', 'Rather than ask after people, go and look on your own two feet. That\'s how keepers learned the road.']);
+  L.cold('kr_hisae', ['{人|ひと} に {聞|き}く より 、 {自分|じぶん} の {足|あし} で {探|さが}し な 。 {灯守|ひもり} は そう やって {道|みち} を {覚|おぼ}えた もの さ 。', 'Rather than ask after people, go and look on your own two feet. That\'s how keepers learned the road.']);
   L.usual('kr_aya', ['アヤ さん は {麓|ふもと} の {茶屋|ちゃや} か 、 その {表|おもて} です ね 。 {迎|むか}え の {灯|ひ} の そば に いる こと も あります 。', 'Aya? The teahouse at the foot, or out in front of it. Sometimes by the Welcoming Light.']);
   L.usual('kr_mokichi', ['モキチ さん は {宿坊|しゅくぼう} の {庭|にわ} で {板|いた} を {削|けず}って いる か 、 {運|はこ}んで いる か です 。', 'Mokichi\'s in the lodge yard, shaving shingles or carrying them.']);
   L.usual('kr_fuyu', ['フユ さん は {宿坊|しゅくぼう} の {奥|おく} の {部屋|へや} か 、 {庭|にわ} を {掃|は}いて いる か 、 ヒサエ さん の {小屋|こや} です 。', 'Fuyu? The room at the back of the lodge, or sweeping the yard, or at Hisae\'s hut.']);
@@ -136,7 +141,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     en: 'From a mountain, cloud filling the valleys below looks like a sea: unkai. It forms most often after a still, clear night, so a day that starts with a sea of clouds is usually fine.' };
 
   C.challenges['kr.lw_steps_rain'] = { title: TJ('{雨|あめ} の {石段|いしだん}', 'The steps in the rain'), tiers: {
-    F: [ch({ item: 'v:端', ctx: { jp: 'ふだ ： 「あめ の ひ は 、 はし を あるく 。 まんなか は すべる 。」', en: '' }, prompt: { en: 'Where do you walk on a rainy day?' }, options: [o('はし', 1), o('まんなか', 0, 'まんなか は すべる: the middle is slippery.')] })],
+    F: [ch({ item: 'v:端', ctx: { jp: 'ふだ ： 「あめ の ひ@日 は 、 はし@端 を あるく 。 まんなか は すべる 。」', en: '' }, prompt: { en: 'Where do you walk on a rainy day?' }, options: [o('はし@端', 1), o('まんなか', 0, 'まんなか は すべる: the middle is slippery.')] })],
     E: [ch({ item: 'v:苔', ctx: { jp: '{札|ふだ} ： 「{雨|あめ} の {日|ひ} は 、 {石段|いしだん} の {端|はし} を {歩|ある}いて ください 。 {真|ま}ん{中|なか} は {苔|こけ} で {滑|すべ}ります 。」', en: '' }, prompt: { en: 'Why not the middle?' }, options: [o('{苔|こけ} で {滑|すべ}る から', 1), o('{狭|せま}い から', 0, 'The sign gives the reason: {苔|こけ} で {滑|すべ}ります.'), o('{灯籠|とうろう} が ある から', 0, 'The sign gives the reason: the moss.')] })],
     I: [ch({ item: 'g:kr_ni_yoruto', ctx: { jp: 'クマゾウ ： 「{親父|おやじ} に よると 、 {昔|むかし} は {灯守|ひもり} が {毎朝|まいあさ} {苔|こけ} を {削|けず}って いた そう だ 。」', en: '' }, prompt: { en: 'Who says what?' }, options: [o('クマゾウ さん の お{父|とう}さん の {話|はなし} で は 、 {昔|むかし} {灯守|ひもり} が {苔|こけ} を {削|けず}って いた', 1), o('クマゾウ さん が {毎朝|まいあさ} {苔|こけ} を {削|けず}って いる', 0, '〜に よると: he is passing on his father\'s account of the old days.'), o('{灯守|ひもり} に よると 、 {苔|こけ} は {削|けず}らない', 0, 'The source is Kumazō\'s father.')] })],
     A: [ch({ item: 'g:kr_classical', ctx: { jp: '{古|ふる}い {札|ふだ} ： 「{雨|あめ} の {日|ひ} 、 {段|だん} の {真|ま}ん{中|なか} を {行|ゆ}く べからず 。」', en: '' }, prompt: { en: 'The old sign (classical; べからず is the negative of べし): what does it say?' }, options: [o('{雨|あめ} の {日|ひ} は 、 {真|ま}ん{中|なか} を {歩|ある}いて は いけない', 1), o('{雨|あめ} の {日|ひ} は 、 {真|ま}ん{中|なか} を {歩|ある}く べき だ', 0, 'べからず is "must not".'), o('{雨|あめ} の {日|ひ} は 、 {石段|いしだん} を {使|つか}えない', 0, 'Only the middle of the steps is forbidden.')] })],
@@ -166,7 +171,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A: [ch({ item: 'g:kr_tsutaerareru', ctx: { jp: '{記録|きろく} ： 「{天気雨|てんきあめ} の {日|ひ} 、 {狐橋|きつねばし} を {渡|わた}る {行列|ぎょうれつ} を {見|み}た {者|もの} が いる と {伝|つた}えられて いる 。」', en: '' }, prompt: { en: 'What has been handed down?' }, options: [o('{天気雨|てんきあめ} の {日|ひ} に 、 {橋|はし} を {渡|わた}る {行列|ぎょうれつ} を {見|み}た {人|ひと} が いる', 1), o('{行列|ぎょうれつ} を {見|み}る と 、 {雨|あめ} が {止|や}む', 0, 'The register says only that someone saw it.'), o('{誰|だれ} も {行列|ぎょうれつ} を {見|み}た こと が ない', 0, '{見|み}た {者|もの} が いる: someone did.')] })],
   } };
   C.challenges['kr.lw_fox_mist'] = { title: TJ('{霧|きり} の {橋|はし}', 'The bridge in the mist'), tiers: {
-    F: [ch({ item: 'v:霧', ctx: { jp: 'ふだ ： 「きり の ひ は 、 きつね の ひ が みえて から わたる 。」', en: '' }, prompt: { en: 'When do you cross in mist?' }, options: [o('きつね の ひ が みえて から', 1), o('きり が はれる まえ に', 0, 'みえて から: once you can see the Fox Light.')] })],
+    F: [ch({ item: 'v:霧', ctx: { jp: 'ふだ ： 「きり の ひ@日 は 、 きつね の ひ@灯 が みえて から わたる@渡る 。」', en: '' }, prompt: { en: 'When do you cross in mist?' }, options: [o('きつね の ひ@灯 が みえて から', 1), o('きり が はれる まえ に', 0, 'みえて から: once you can see the Fox Light.')] })],
     E: [ch({ item: 'g:prt_kara_made', ctx: { jp: '{札|ふだ} ： 「{霧|きり} の {日|ひ} は 、 {狐|きつね} の {灯|ひ} が {見|み}える まで {待|ま}つ こと 。 {見|み}えたら {渡|わた}って よい 。」', en: '' }, prompt: { en: 'What do you do?' }, options: [o('{灯|ひ} が {見|み}える まで {待|ま}って 、 それから {渡|わた}る', 1), o('すぐ {渡|わた}る', 0, '{見|み}える まで {待|ま}つ: wait until it shows.'), o('{灯|ひ} を {消|け}して から {渡|わた}る', 0, 'The light is what you wait for.')] })],
     I: [ch({ item: 'g:cond_tara', ctx: { jp: 'ショウゾウ ： 「{灯|ひ} が ぼやけて {見|み}えたら 、 まだ {霧|きり} が {濃|こ}い です 。 はっきり {見|み}えたら 、 {渡|わた}って ください 。」', en: '' }, prompt: { en: 'The lamp shows sharp and clear. What now?' }, options: [o('{渡|わた}る', 1), o('まだ {待|ま}つ', 0, 'はっきり {見|み}えたら 、 {渡|わた}って ください: clear means cross.'), o('{引|ひ}き{返|かえ}す', 0, 'Clear means cross.')] })],
     A: [ch({ item: 'g:kr_classical', ctx: { jp: '{古|ふる}い {碑|ひ} ： 「{霧|きり} {深|ふか}き {日|ひ} は 、 {灯|ひ} を {待|ま}つ べし 。」', en: '' }, prompt: { en: 'Classical: what must you do on a deep-mist day?' }, options: [o('{灯|ひ} を {待|ま}たなければ ならない', 1), o('{灯|ひ} を {待|ま}って は いけない', 0, 'べし: must.'), o('{灯|ひ} は {待|ま}たなくて いい', 0, 'べし is an obligation, not a permission.')] })],
@@ -178,13 +183,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A: [ch({ item: 'g:kr_ni_yoruto', ctx: { jp: 'ジュウゾウ ： 「{都|みやこ} の {本|ほん} に よると 、 ここ は 「{屋根|やね} の {道|みち} 」 だ 。 だが {石|いし} に は 「{尾根|おね} 」 と ある 。 …… {本|ほん} の {方|ほう} が {写|うつ}し {間違|まちが}い だった の か 。」', en: '' }, prompt: { en: 'What is Jūzō realising?' }, options: [o('{都|みやこ} の {本|ほん} が 、 {石|いし} を {写|うつ}し{間違|まちが}えて いた', 1), o('{石|いし} が {間違|まちが}って いる', 0, 'He trusts the stone over the book now.'), o('{本|ほん} と {石|いし} は {同|おな}じ こと を {言|い}って いる', 0, 'They disagree: {屋根|やね} and {尾根|おね}.')] })],
   } };
   C.challenges['kr.lw_ridge_fork'] = { title: TJ('{分|わ}かれ{道|みち}', 'The fork'), tiers: {
-    F: [ch({ item: 'v:東', ctx: { jp: 'みちしるべ ： 「きた ・ やかた 。 ひがし ・ しゅくぼう 。」 たびびと ： 「とまる ところ は どっち ？」', en: '' }, prompt: { en: 'The travellers need somewhere to sleep. Which way?' }, options: [o('ひがし', 1), o('きた', 0, 'やかた: the hall, which is shut.')] })],
+    F: [ch({ item: 'v:東', ctx: { jp: 'みちしるべ ： 「きた@北 ・ やかた 。 ひがし ・ しゅくぼう 。」 たびびと ： 「とまる@泊まる ところ は どっち ？」', en: '' }, prompt: { en: 'The travellers need somewhere to sleep. Which way?' }, options: [o('ひがし', 1), o('きた@北', 0, 'やかた: the hall, which is shut.')] })],
     E: [ch({ item: 'v:宿坊', ctx: { jp: '{道標|みちしるべ} ： 「{北|きた} ・ {館|やかた} 。 {東|ひがし} ・ {宿坊|しゅくぼう} 。」 {旅人|たびびと} ： 「{今夜|こんや} {泊|と}まれる ところ を {探|さが}して いる ん です 。」', en: '' }, prompt: { en: 'Where should they go?' }, options: [o('{東|ひがし} の {宿坊|しゅくぼう}', 1), o('{北|きた} の {館|やかた}', 0, 'The hall is shut.'), o('{西|にし} の {狐橋|きつねばし}', 0, 'Back the way they came.')] })],
     I: [ch({ item: 'g:sou_hear', ctx: { jp: '{旅人|たびびと} ： 「{館|やかた} の {戸|と} は 、 {開|あ}かない そう です ね 。」', en: '' }, prompt: { en: 'What have they heard about the hall?' }, options: [o('{館|やかた} の {戸|と} は {開|あ}かない', 1), o('{館|やかた} に {泊|と}まれる', 0, '{開|あ}かない そう: they hear it won\'t open.'), o('{館|やかた} は もう ない', 0, 'The door is shut, not gone.')] })],
     A: [ch({ item: 'g:keigo_kenjo', ctx: { jp: '{旅人|たびびと} ： 「{宿坊|しゅくぼう} の {方|かた} に 、 ご{挨拶|あいさつ} に {伺|うかが}って も よろしい でしょう か 。」', en: '' }, prompt: { en: 'What are they asking (humbly)?' }, options: [o('{宿坊|しゅくぼう} の {人|ひと} に {挨拶|あいさつ} に {行|い}って いい か', 1), o('{宿坊|しゅくぼう} の {人|ひと} が {来|く}る か', 0, '{伺|うかが}う is the humble {行|い}く: they would go.'), o('{挨拶|あいさつ} は {要|い}らない か', 0, 'They ask whether they may call.')] })],
   } };
   C.challenges['kr.lw_ridge_wind'] = { title: TJ('{散|ち}った {写|うつ}し', 'The scattered copies'), tiers: {
-    F: [{ kind: 'order', item: 'v:紅葉', prompt: { en: 'Put Jūzō\'s sheets back in the order of the stone: the ridge\'s, the maples, the lamps, guard.' }, tiles: ['おね の', 'もみじ は', 'ひ を', 'まもる'], answer: ['おね の', 'もみじ は', 'ひ を', 'まもる'] }],
+    F: [{ kind: 'order', item: 'v:紅葉', prompt: { en: 'Put Jūzō\'s sheets back in the order of the stone: the ridge\'s, the maples, the lamps, guard.' }, tiles: ['おね の', 'もみじ は', 'ひ@灯 を', 'まもる'], answer: ['おね の', 'もみじ は', 'ひ@灯 を', 'まもる'] }],
     E: [{ kind: 'order', item: 'g:prt_wo', prompt: { en: 'Put the sheets back in the stone\'s order: "The ridge\'s maples guard the lamps."' }, tiles: ['{尾根|おね} の', '{紅葉|もみじ} は', '{灯|ひ} を', '{守|まも}る'], answer: ['{尾根|おね} の', '{紅葉|もみじ} は', '{灯|ひ} を', '{守|まも}る'] }],
     I: [ch({ item: 'g:cond_to', ctx: { jp: 'ジュウゾウ ： 「{三枚目|さんまいめ} に は 、 「{紅葉|もみじ} が {散|ち}る と 、 {灯|ひ} が よく {見|み}える 」 と いう {一行|いちぎょう} が あった 。」', en: '' }, prompt: { en: 'What did the third sheet say?' }, options: [o('{紅葉|もみじ} が {散|ち}る と 、 {灯|ひ} が よく {見|み}える', 1), o('{紅葉|もみじ} が {灯|ひ} を {隠|かく}す', 0, 'The line says the opposite: once the leaves fall, the lamps show.'), o('{灯|ひ} が {紅葉|もみじ} を {燃|も}やす', 0, '〜と: when the leaves fall, the lamps are easy to see.')] })],
     A: [ch({ item: 'g:kr_classical', ctx: { jp: '{石|いし} ： 「{紅葉|もみじ} {散|ち}りて 、 {灯|ひ} {明|あき}らか なり 。」', en: '' }, prompt: { en: 'What does the classical line mean?' }, options: [o('{紅葉|もみじ} が {散|ち}って 、 {灯|ひ} が はっきり {見|み}える', 1), o('{紅葉|もみじ} が {散|ち}らない と 、 {灯|ひ} は {暗|くら}い', 0, 'なり here is "is": the lamps are bright, once the leaves have fallen.'), o('{灯|ひ} が {紅葉|もみじ} を {散|ち}らす', 0, 'The leaves fall; the lamps show.')] })],
@@ -193,16 +198,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
     F: [ch({ item: 'v:近い', ctx: { jp: 'みちしるべ ： 「しゅくぼう まで いちり 。 ひおち まで さんり 。」', en: '' }, prompt: { en: 'Which is nearer?' }, options: [o('しゅくぼう', 1), o('ひおち', 0, 'さんり is three times as far.')] })],
     E: [ch({ item: 'g:counters', ctx: { jp: '{道標|みちしるべ} ： 「{宿坊|しゅくぼう} まで {一里|いちり} 。 {灯落|ひおち} まで {三里|さんり} 。」 {旅人|たびびと} ： 「{日|ひ} が {暮|く}れる {前|まえ} に {着|つ}きたい ん です 。」', en: '' }, prompt: { en: 'With little daylight left, where should the traveller head?' }, options: [o('{近|ちか}い {宿坊|しゅくぼう}', 1), o('{遠|とお}い {灯落|ひおち}', 0, '{三里|さんり} is too far before dark.'), o('{峠|とうげ} で {寝|ね}る', 0, 'The lodge is only {一里|いちり} away.')] })],
     I: [ch({ item: 'g:hazu', ctx: { jp: '{旅人|たびびと} ： 「{一里|いちり} なら 、 {暗|くら}く なる {前|まえ} に {着|つ}く はず です ね 。」', en: '' }, prompt: { en: 'What does the traveller expect?' }, options: [o('{暗|くら}く なる {前|まえ} に {着|つ}く だろう', 1), o('{暗|くら}く なって から {着|つ}く', 0, '{前|まえ} に {着|つ}く はず: should arrive before dark.'), o('{着|つ}かない かも しれない', 0, 'はず: they expect to.')] })],
-    A: [ch({ item: 'g:adv_to_wa_ie', ctx: { jp: '{旅人|たびびと} ： 「{上|のぼ}り と は いえ 、 {一里|いちり} なら {何|なん} と か なる 。」', en: '' }, prompt: { en: 'What does the traveller conclude?' }, options: [o('{上|のぼ}り {坂|ざか} でも 、 {一里|いちり} なら {大丈夫|だいじょうぶ}', 1), o('{上|のぼ}り {坂|ざか} だ から 、 {無理|むり} だ', 0, '〜と は いえ: even though it is uphill.'), o('{一里|いちり} は {遠|とお}すぎる', 0, '{何|なん} と か なる: they can manage it.')] })],
+    A: [ch({ item: 'g:adv_to_wa_ie', ctx: { jp: '{旅人|たびびと} ： 「{上|のぼ}り とはいえ 、 {一里|いちり} なら {何|なん} と か なる 。」', en: '' }, prompt: { en: 'What does the traveller conclude?' }, options: [o('{上|のぼ}り {坂|ざか} でも 、 {一里|いちり} なら {大丈夫|だいじょうぶ}', 1), o('{上|のぼ}り {坂|ざか} だ から 、 {無理|むり} だ', 0, '〜とはいえ: even though it is uphill.'), o('{一里|いちり} は {遠|とお}すぎる', 0, '{何|なん} と か なる: they can manage it.')] })],
   } };
   C.challenges['kr.lw_descent_water'] = { title: TJ('セイジ の {書|か}き{置|お}き', 'Seiji\'s note'), tiers: {
-    F: [ch({ item: 'v:汲む', ctx: { jp: 'セイジ の かきおき ： 「この さき 、 みず は ありません 。 ここ で くんで ください 。」', en: '' }, prompt: { en: 'What should pilgrims do here?' }, options: [o('ここ で みず を くむ', 1), o('この さき で みず を くむ', 0, 'この さき 、 みず は ありません: there is none further on.')] })],
+    F: [ch({ item: 'v:汲む', ctx: { jp: 'セイジ の かきおき ： 「この さき@先 、 みず は ありません 。 ここ で くんで@汲む ください 。」', en: '' }, prompt: { en: 'What should pilgrims do here?' }, options: [o('ここ で みず を くむ@汲む', 1), o('この さき@先 で みず を くむ@汲む', 0, 'この さき 、 みず は ありません: there is none further on.')] })],
     E: [ch({ item: 'g:v_te_kudasai', ctx: { jp: 'セイジ の {書|か}き{置|お}き ： 「この {先|さき} 、 {水|みず} は ありません 。 ここ で {汲|く}んで ください 。」', en: '' }, prompt: { en: 'Why fill up here?' }, options: [o('この {先|さき} に {水|みず} が ない から', 1), o('ここ の {水|みず} が おいしい から', 0, 'The note gives the reason: no water further on.'), o('{宿坊|しゅくぼう} で {水|みず} を {売|う}って いる から', 0, 'The note gives the reason: no water further on.')] })],
     I: [ch({ item: 'g:register_polite_plain', ctx: { jp: 'セイジ ： 「「{汲|く}みなさい 」 だ と 、 {強|つよ}すぎます か ね 。 {巡礼|じゅんれい} の {方|かた} は 、 {年上|としうえ} の {人|ひと} が {多|おお}い ので 。」', en: '' }, prompt: { en: 'Why is Seiji unsure about 汲みなさい?' }, options: [o('{年上|としうえ} の {人|ひと} に は 、 {命令|めいれい} の よう に {聞|き}こえる から', 1), o('{字|じ} が {難|むずか}しい から', 0, 'He worries about how it sounds to his elders.'), o('{水|みず} が {少|すく}ない から', 0, 'He worries about the tone.')] })],
     A: [ch({ item: 'g:keigo_sonkei', ctx: { jp: 'セイジ ： 「「お{汲|く}み ください 」 に しましょう 。 {祖父|そふ} なら 、 そう {書|か}いた と {思|おも}います 。」', en: '' }, prompt: { en: 'Which wording does he settle on, as the most respectful?' }, options: [o('お{汲|く}み ください', 1), o('{汲|く}め', 0, 'A bare command: the opposite of what he wants.'), o('{汲|く}みなさい', 0, 'That was the one he thought too strong.')] })],
   } };
   C.challenges['kr.lw_descent_clouds'] = { title: TJ('{雲海|うんかい}', 'A sea of clouds'), tiers: {
-    F: [ch({ item: 'v:雲', ctx: { jp: 'たびびと ： 「みて 、 くも の うみ ！ あさ に くも の うみ が でる と 、 その ひ は はれる ん だ って 。」', en: '' }, prompt: { en: 'What will the weather be today?' }, options: [o('はれ', 1), o('あめ', 0, 'はれる: fine weather.')] })],
+    F: [ch({ item: 'v:雲', ctx: { jp: 'たびびと ： 「みて 、 くも の うみ ！ あさ に くも の うみ が でる と 、 その ひ@日 は はれる ん だ って 。」', en: '' }, prompt: { en: 'What will the weather be today?' }, options: [o('はれ', 1), o('あめ', 0, 'はれる: fine weather.')] })],
     E: [ch({ item: 'g:cond_to', ctx: { jp: '{旅人|たびびと} ： 「{朝|あさ} に {雲海|うんかい} が {出|で}る と 、 その {日|ひ} は {晴|は}れる ん です よ 。」', en: '' }, prompt: { en: 'What follows a morning sea of clouds?' }, options: [o('その {日|ひ} は {晴|は}れる', 1), o('{雨|あめ} が {降|ふ}る', 0, '〜と: whenever there is one, the day is fine.'), o('{雲|くも} が {山|やま} を {登|のぼ}る', 0, 'The traveller is talking about the weather.')] })],
     I: [ch({ item: 'g:you_mitai', ctx: { jp: '{旅人|たびびと} ： 「{下|した} の {灯落|ひおち} は 、 まだ {雲|くも} の {中|なか} みたい です ね 。」', en: '' }, prompt: { en: 'Where does Lanternfall seem to be?' }, options: [o('{雲|くも} の {中|なか}', 1), o('{雲|くも} の {上|うえ}', 0, '{雲|くも} の {中|なか} みたい: it seems to be inside the cloud.'), o('{山|やま} の {上|うえ}', 0, 'It lies below, under the cloud.')] })],
     A: [ch({ item: 'g:adv_koto_ka', ctx: { jp: '{旅人|たびびと} ： 「この {景色|けしき} を {見|み}る ため に 、 {何年|なんねん} {待|ま}った こと か 。」', en: '' }, prompt: { en: 'What is the traveller expressing?' }, options: [o('{長|なが}い {間|あいだ} 、 この {景色|けしき} を {待|ま}って いた', 1), o('{待|ま}つ の は {嫌|いや} だ', 0, '〜こと か is an exclamation: how many years I waited!'), o('{何年|なんねん} {待|ま}った か {分|わ}からない', 0, 'Not a question: how long I waited!')] })],
@@ -245,10 +250,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
 !call kr.hall_door
 
 @scene lf.lw_kr_oil_jars
-narr: {灰実|はいみ} の {焼|や}き{物|もの} の かめ に 、 {灯落|ひおち} の {油|あぶら} 。 {札|ふだ} に アヤ の {字|じ} で {数|かず} が {書|か}いて ある 。 「{三十|さんじゅう} 」 。 || Cinder Orchard jars, full of Lanternfall oil. A tag in Aya's hand gives the count: "Thirty."
+narr: {灰実|はいみ} の {焼|や}き{物|もの} の {壺|つぼ} に 、 {灯落|ひおち} の {油|あぶら} 。 {札|ふだ} に アヤ の {字|じ} で {数|かず} が {書|か}いて ある 。 「{三十|さんじゅう} 」 。 || Cinder Orchard jars, full of Lanternfall oil. A tag in Aya's hand gives the count: "Thirty."
 
 @scene lf.lw_kr_oil_aya
-kr_aya: {灯落|ひおち} の {油屋|あぶらや} さん が ね 、 {初|はじ}めて {値段|ねだん} に {文句|もんく} を {言|い}った の 。 「その {値|ね} で は {売|う}れません 」 って 。 || The oil merchant from Lanternfall argued over the price for the first time: "I can't sell at that price."
+kr_aya: {灯落|ひおち} の {油屋|あぶらや} さん が ね 、 {初|はじ}めて {値段|ねだん} に {文句|もんく} を {言|い}った の 。 「その {値段|ねだん} で は {売|う}れません 」 って 。 || The oil merchant from Lanternfall argued over the price for the first time: "I can't sell at that price."
 kr_aya[laugh]: …… {変|へん} な {話|はなし} だけど 、 {嬉|うれ}しかった わ 。 {前|まえ} は {何|なに} を {言|い}って も 「かしこまりました 」 だった から 。 || …Odd thing to be glad about, but I was. Before, whatever I said, it was always "Certainly."
 
 @scene lf.lw_kr_shingles
@@ -338,7 +343,7 @@ kr_juzo[laugh]: {尾根|おね} 、 か 。 …… {石|いし} は {正|ただ}
 !hook road_done kr_ridge copy
 !end
 :later
-kr_juzo: いや 、 {急|いそ}がない 。 {石|いし} は {逃|に}げない から ね 。 || No, no hurry. Stones don't run away.
+kr_juzo: {急|いそ}がなくて いい 。 {石|いし} は {逃|に}げない から ね 。 || No need to hurry. Stones don't run away.
 
 @scene kr.lw_road_ridge_fork
 narr: {分|わ}かれ{道|みち} で 、 {荷|に} を {背負|せお}った {旅人|たびびと} が {二人|ふたり} 、 {道標|みちしるべ} を {見上|みあ}げて いる 。 || At the fork, two travellers with packs are peering up at the waymarker.
@@ -393,8 +398,8 @@ narr: {日|ひ} が {昇|のぼ}る と 、 {雲|くも} の {海|うみ} は �
 narr: {雲|くも} は やがて {崩|くず}れて 、 {谷|たに} へ {沈|しず}んで いった 。 || In time the cloud breaks and sinks back into the valley.
 
 @scene cr.lw_kr_watch_open
-narr: 「{百歩|ひゃっぽ} ごと に {石|いし} 」 。 {百歩|ひゃっぽ} {歩|ある}く たび に 、 {石|いし} が {一|ひと}つ 。 || "A stone every hundred paces": one for each hundred steps.
-narr: {歩|ほ} を {数|かぞ}えて {紅葉|もみじ} の {中|なか} を {進|すす}む と 、 {百歩|ひゃっぽ} ごと に 、 {本当|ほんとう} に {小|ちい}さな {石|いし} が あった 。 {四|よっ}つ {目|め} の {石|いし} の {先|さき} で 、 {木|き} が {途切|とぎ}れた 。 || Counting your steps through the maples, you find them: a small stone at every hundred paces. Past the fourth, the trees open out.
+narr: 「{百歩|ひゃっぽ} ごと に {石|いし} 」 。 {百歩|ひゃっぽ} {歩|ある}く たび@度 に 、 {石|いし} が {一|ひと}つ 。 || "A stone every hundred paces": one for each hundred steps.
+narr: {一歩|いっぽ} ずつ {数|かぞ}えて {紅葉|もみじ} の {中|なか} を {進|すす}む と 、 {百歩|ひゃっぽ} ごと に 、 {本当|ほんとう} に {小|ちい}さな {石|いし} が あった 。 {四|よっ}つ {目|め} の {石|いし} の {先|さき} で 、 {木|き} が {途切|とぎ}れた 。 || Counting your steps through the maples, you find them: a small stone at every hundred paces. Past the fourth, the trees open out.
 narr: {尾根|おね} の {先|さき} の {岩|いわ} の {上|うえ} 。 {麓|ふもと} の {迎|むか}え の {灯|ひ} から {峠|とうげ} まで 、 {道|みち} の {灯|ひ} が {全部|ぜんぶ} {見|み}える 。 {灯守|ひもり} は ここ から 、 {消|き}えた {灯|ひ} を {数|かぞ}えた の だ 。 || A rock at the ridge's end. From the Welcoming Light at the foot to the pass, every lamp on the road is in sight. From here, the keepers counted the lamps that had gone out.
 ?(comp=ren) comp: …… {全部|ぜんぶ} 、 {点|つ}いて います 。 {数|かぞ}える {必要|ひつよう} が ない の は 、 いい こと です ね 。 || …Every one is lit. A good thing, not to need counting.
 !note lw_kr_watch

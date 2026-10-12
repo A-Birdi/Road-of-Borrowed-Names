@@ -345,7 +345,10 @@ RB.town = (function () {
     const s = RB.game && RB.game.s;
     if (!s) return;
     const r = examine(s, a[0]);
-    if (r && r.state === 'noticed' && r.hint) await RB.script.runInline([{ who: 'narr', jp: r.hint.jp, en: r.hint.en }]);
+    // a spot that wraps a scene of its own (`existing`: the Shuttered Hall's door) has just said what is there: noticed
+    // quietly, its hint kept for Known details
+    const own = ((C().sealed || {})[a[0]] || {}).existing;
+    if (r && r.state === 'noticed' && r.hint && !own) await RB.script.runInline([{ who: 'narr', jp: r.hint.jp, en: r.hint.en }]);
     else if (r && r.state === 'opened' && r.scene) await RB.script.run(r.scene);
   };
 

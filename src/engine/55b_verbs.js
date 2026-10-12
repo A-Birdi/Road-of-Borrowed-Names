@@ -296,7 +296,7 @@ RB.verbs = (function () {
   });
 
   // ---- W13 · connected mechanisms ------------------------------------------------------------------------------------
-  // spec: { id, name, medium: 'water' | 'air', levels: 3, basins: { key: { map, x, y, prop, jp, en, level } },
+  // spec: { id, name, medium: 'water' | 'air' | 'steam', levels: 3, basins: { key: { map, x, y, prop, jp, en, level } },
   //         gates: { key: { between: [a, b], map, x, y, prop, jp, en, open: bool } }, sources: [basins], drains: [basins],
   //         required: [{ id, basin, max | min, jp, en }], goal: { basin: level } }
   // Water settles in one pass (no iteration, so no cycle can run away): basins joined by open gates form a body; a
@@ -355,18 +355,35 @@ RB.verbs = (function () {
       for (const r of spec.required || []) for (const t of r.tiles || []) addProp(spec, { map: r.map, x: t[0], y: t[1], prop: r.prop || 'crate', part: r.id, if: 'puzzle.' + spec.id + '.b_' + r.basin + (r.max != null ? '>' + r.max : '<' + r.min) }, { scene: null, text: r.look || null, o: { vb: spec.id, part: r.id, barrier: true } });
     },
   });
-  // what the water did, in words: each basin whose level changed, near or far (the effect is traced, W13)
+  // what a network carries, in words: water (basins and sluices, as it always was) or steam (pipes and dampers;
+  // `medium: 'air'` reads the same). Each word in both languages; `levels` names a basin's level in English.
+  const MEDIUM = {
+    water: {
+      name: T('The water', '{水|みず}'), gates: T('The sluices', '{水門|すいもん}'), title: T('Water across the rooms', '{部屋|へや} を {渡|わた}る {水|みず}'),
+      more: T('fills', '{水|みず} が {増|ふ}えた'), less: T('drains', '{水|みず} が {減|へ}った'), shut: T('under water', '{水|みず} の {下|した}'),
+      levels: ['empty', 'low', 'half full', 'full', 'brimming'],
+    },
+    steam: {
+      name: T('The steam', '{湯気|ゆげ}'), gates: T('The dampers', '{風|かぜ} の {弁|べん}'), title: T('Steam across the rooms', '{部屋|へや} を {渡|わた}る {湯気|ゆげ}'),
+      more: T('fills with steam', '{湯気|ゆげ} が {増|ふ}えた'), less: T('clears', '{湯気|ゆげ} が {減|へ}った'), shut: T('full of steam', '{湯気|ゆげ} で いっぱい'),
+      levels: ['clear', 'a little steam', 'half full of steam', 'full of steam', 'thick with steam'],
+    },
+  };
+  MEDIUM.air = MEDIUM.steam;
+  const mediumOf = (spec) => MEDIUM[spec && spec.medium] || MEDIUM.water;
+  const levelWord = (spec, n) => mediumOf(spec).levels[n] || '';
+  // what moved, in words: each basin whose level changed, near or far (the effect is traced, W13)
   function moved(spec, b, a, first) {
-    const lines = [first];
+    const lines = [first], M = mediumOf(spec);
     for (const k in spec.basins) {
       const d = (+a['b_' + k] || 0) - (+b['b_' + k] || 0);
       if (!d) continue;
-      const n = spec.basins[k], far = n.map !== (RB.game && RB.game.s ? RB.game.s.map : n.map);
-      lines.push(T((far ? 'Somewhere off in the ' : 'The ') + n.en + (d > 0 ? ' fills' : ' drains') + ' (' + LEVEL_EN[a['b_' + k]] + ').', (far ? '{遠|とお}く で 、 ' : '') + n.jp + ' の {水|みず} が ' + (d > 0 ? '{増|ふ}えた' : '{減|へ}った') + ' 。'));
+      const n = spec.basins[k], far = n.map !== (RB.game && RB.game.s ? RB.game.s.map : n.map), w = d > 0 ? M.more : M.less;
+      lines.push(T((far ? 'Somewhere off in the ' : 'The ') + n.en + ' ' + w.en + ' (' + M.levels[a['b_' + k]] + ').', (far ? '{遠|とお}く で 、 ' : '') + n.jp + ' の ' + w.jp + ' 。'));
     }
     return { en: lines.map((l) => l.en).join(' '), jp: lines.map((l) => l.jp).join(' ') };
   }
-  const LEVEL_EN = ['empty', 'low', 'half full', 'full', 'brimming'];
+  const LEVEL_EN = MEDIUM.water.levels;
   // the network's soundness over every reachable state: levels agree within each open body; every required way can
   // always be opened again. { problems: [], states }
   function networkSafety(spec) {
@@ -632,7 +649,7 @@ RB.verbs = (function () {
     readingOf, noticeText, noticeSafety, composed,
     courierCheck,
     repairSay,
-    settle, passable, networkSafety, LEVEL_EN,
+    settle, passable, networkSafety, LEVEL_EN, MEDIUM, mediumOf, levelWord, moved,
     pattern, phaseAt,
     compareAt, conclude, clueId,
     blockingCheck, rehearsalPath, cellOf,

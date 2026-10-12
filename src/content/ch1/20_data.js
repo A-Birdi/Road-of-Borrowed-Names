@@ -238,10 +238,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
 
   X['rw.c_tools'] = { title: { jp: '{貸|か}し{借|か}り の {記録|きろく}', en: 'The tally of loans' },
     tiers: {
-      F: [{ kind: 'choose', item: 'c:rw_tally_f', ctx: { jp: 'かんな ： キク が かえした 。 ひ ： ブンタ が かりた まま 。', en: 'Plane: Kiku returned it. Shuttle: Bunta still has it (borrowed).' }, prompt: { en: 'The tally carved under the bench. What does it show?' },
+      F: [{ kind: 'choose', item: 'c:rw_tally_f', ctx: { jp: 'かんな ： キク が かえした 。 ひ@杼 ： ブンタ が かりた まま 。', en: 'Plane: Kiku returned it. Shuttle: Bunta still has it (borrowed).' }, prompt: { en: 'The tally carved under the bench. What does it show?' },
         options: [{ en: 'Kiku gave the plane back; Bunta still has Kiku\'s shuttle.', ok: true }, { en: 'Kiku still has the plane.', ok: false, why: { en: 'かえした means "returned".' } }, { en: 'Bunta returned the shuttle.', ok: false, why: { en: 'かりた まま means "still borrowed".' } }],
         explain: { en: 'かえす = to return (something); かりる = to borrow; 〜たまま = still in that state.' } }],
-      E: [{ kind: 'choose', item: 'v:貸す', ctx: { jp: '{三月|さんがつ} ： ブンタ が キク に かんな を かした 。 {四月|しがつ} ： キク が かんな を かえした 。 {四月|しがつ} ： ブンタ が キク に ひ を かりた 。', en: '' }, prompt: { en: 'Read the tally (かす = lend, かりる = borrow, かえす = return). Where are the tools now?' },
+      E: [{ kind: 'choose', item: 'v:貸す', ctx: { jp: '{三月|さんがつ} ： ブンタ が キク に かんな を かした 。 {四月|しがつ} ： キク が かんな を かえした 。 {四月|しがつ} ： ブンタ が キク に ひ@杼 を かりた 。', en: '' }, prompt: { en: 'Read the tally (かす = lend, かりる = borrow, かえす = return). Where are the tools now?' },
         options: [{ en: 'The plane is back with Bunta; Bunta also has Kiku\'s shuttle.', ok: true }, { en: 'Kiku has both tools.', ok: false, why: { en: 'キクがかんなをかえした: Kiku returned the plane.' } }, { en: 'Bunta lent the shuttle to Kiku.', ok: false, why: { en: 'ブンタがキクにひをかりた: Bunta borrowed the shuttle FROM Kiku.' } }],
         explain: { en: 'AがBにXをかす: A lends X to B. AがBにXをかりる: A borrows X from B.' } }],
       I: [{ kind: 'choose', item: 'g:te_giving', ctx: { jp: '{四月|しがつ} 、 キク に {杼|ひ} を {貸|か}して もらった 。 かんな は {返|かえ}して もらった はず だ が 、 どこ に {置|お}いた か {覚|おぼ}えて いない 。 ── ブンタ', en: '' }, prompt: { en: 'Bunta\'s own note, in his handwriting. What does it reveal?' },

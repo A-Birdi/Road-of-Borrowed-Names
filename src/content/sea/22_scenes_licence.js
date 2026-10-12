@@ -354,7 +354,7 @@ omi: {続|つづ}き を やる かい ？ || Shall we carry on?
 :form
 !challenge sea.licence_form
 !if var._res=1 -> formok
-omi: …… {惜|お}しい 。 もう {一度|いちど} {書|か}いて みな 。 || …Close. Write it again.
+omi: …… {惜|お}しい 。 もう {一度|いちど} {書|か}いて みな@見る 。 || …Close. Write it again.
 !choice
 * もう {一度|いちど} 。 || Again. -> form
 * {少|すこ}し {休|やす}みます 。 || I'll take a break. -> rest

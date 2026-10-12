@@ -20,6 +20,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
 足湯|あしゆ|n|I|a footbath
 刻み|きざみ|n|I|a notch, a cut mark
 押し葉|おしば|n|I|a pressed leaf
+おかん||exp|I|(casual, older) not do beforehand: 〜て おかん と = 〜て おかない と, must see to it
+陸|りく|n|E|land; the mainland (seen from an island or from the sea)
 `), 'living');
 
   // ---- the island --------------------------------------------------------------------------------------------------
@@ -122,7 +124,7 @@ narr: {足|あし} を {入|い}れる と 、 {海|うみ} の {風|かぜ} で
 
 @scene yn.lw_ko_mitsu_footbath
 !faceplayer
-ko_mitsu[happy]: {湯|ゆ}ノ{谷|たに} から {来|き}た お{客|きゃく} さん に {教|おし}わった の 。 {足湯|あしゆ} よ 。 || A guest from Steamhollow showed me. A footbath!
+ko_mitsu[happy]: {湯|ゆ}ノ{谷|たに} から {来|き}た お{客|きゃく} さん に {教|おそ}わった の 。 {足湯|あしゆ} よ 。 || A guest from Steamhollow showed me. A footbath!
 ko_mitsu[laugh]: {温泉|おんせん} は ない けど 、 {鍋|なべ} で {沸|わ}かせば {同|おな}じ ！ …… たぶん ね 。 || There's no hot spring here, but boil it in a pot and it's the same! …More or less.
 
 @scene cr.lw_ko_tide_open

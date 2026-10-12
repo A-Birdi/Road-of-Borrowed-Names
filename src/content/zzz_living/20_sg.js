@@ -40,6 +40,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
 魚売り|さかなうり|n|I|a fish-seller
 魚偏|うおへん|n|A|the fish radical (魚 on the left of a kanji)
 細長い|ほそながい|adj-i|I|long and thin
+おう||int|E|(rough, casual) oh!, hey! (a greeting or a cheer)
+もん||n|I|(casual) = もの, thing (楽なもんだ: it's easy, that's what)
+ついで||n|I|(ついでに) while one is at it, on the way
+空|から|n|E|empty (空の…: an empty …)
+銀色|ぎんいろ|n|E|silver (the colour)
+えっと||int|F|um, let me see (while thinking)
+恐れ入る|おそれいる|v5r|A|to be obliged; (恐れ入りますが) excuse me, but … (very polite)
+着ける|つける|v1|I|to bring (a boat) in, to moor
+付け直す|つけなおす|v5s|I|to put back on, to attach again
+度|たび|n|I|time, occasion (〜たびに: every time …)
 `));
 
   // ---- the town ------------------------------------------------------------------------------------------------------
@@ -62,7 +72,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     { map: 'sg.harbor', x: 5, y: 28, dir: 'down', line: ['ここ から だ と 、 {船|ふね} が {帰|かえ}って くる の が {一番|いちばん} {早|はや}く {見|み}える ん だ よ 。 {海|うみ} ガラス も 、 {時々|ときどき} {落|お}ちてる ！', 'From here you see the boats coming home first. And sometimes there\'s sea glass lying about!'] },
   ] });
   L.routine('saltglass', 'fuku', { base: 'sg.harbor:fuku', pin: '!quest.sg_seaglass=done|quest.sea_licence=0', slots: [
-    { map: 'sg.harbor', x: 48, y: 28, dir: 'down', line: ['{千鳥丸|ちどりまる} の {名札|なふだ} 、 {毎朝|まいあさ} {拭|ふ}いて いる の 。 「いってらっしゃい 」 も {一緒|いっしょ} に ね 。', 'I wipe the Chidori-maru\'s nameplate every morning. And say "take care" while I\'m at it.'] },
+    { map: 'sg.harbor', x: 48, y: 28, dir: 'down', line: ['{千鳥丸|ちどりまる} の {名札|なふだ} 、 {毎朝|まいあさ} {拭|ふ}いて いる の 。 「いってらっしゃい」 も {一緒|いっしょ} に ね 。', 'I wipe the Chidori-maru\'s nameplate every morning. And say "take care" while I\'m at it.'] },
     { map: 'sg.harbor', x: 40, y: 9, dir: 'up', line: ['{朝|あさ} の ベンチ は 、 {日|ひ} が {当|あ}たって {気持|きも}ち が いい の よ 。 {港|みなと} が {全部|ぜんぶ} {見|み}える わ 。', 'The bench in the morning sun is lovely. You can see the whole harbour from here.'] },
   ] });
   L.routine('saltglass', 'wataru', { base: 'sg.warehouse:wataru', slots: [
@@ -78,8 +88,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.knows('kiyo', { sota: 'routine', sz_isaku: 'routine', daigo: 'routine', tamae: 'routine', wataru: 'routine', tobi: 'loose', fuku: 'loose', asahi: 'loose', tetsu: 'loose', omi: 'loose', sg_matsuzo: 'loose' });
   L.asks('genzo', ['sg.lighthouse', 'sg.lighthouse_top']);
   L.cold('genzo', ['{灯台|とうだい} から は 、 {沖|おき} の {船|ふね} しか {見|み}えん 。 {人|ひと} の こと は 、 {他|ほか} を {当|あ}たれ 。', 'From the lighthouse I see boats out at sea, nothing else. Ask someone else about people.']);
-  L.usual('daigo', ['ダイゴ さん ？ {岸壁|がんぺき} で {荷|に} を {運|はこ}んで いる か 、 かもめ{亭|てい} で {昼飯|ひるめし} です よ 。', 'Daigo? Carrying cargo on the quay, or having lunch at the Gull.']);
-  L.usual('tobi', ['トビ なら 、 {浜|はま} か 、 {郵便|ゆうびん} {箱|ばこ} の ところ か 、 {岬|みさき} です ね 。', 'Tobi? The beach, or by the post box, or out on the point.']);
+  L.usual('daigo', ['ダイゴ さん ？ {岸壁|がんぺき} で {荷|に} を {運|はこ}んで いる か 、 かもめ{亭|てい} で {昼|ひる}ご{飯|はん} です よ 。', 'Daigo? Carrying cargo on the quay, or having lunch at the Gull.']);
+  L.usual('tobi', ['トビ なら 、 {浜|はま} か 、 {郵便|ゆうびん}{箱|ばこ} の ところ か 、 {岬|みさき} です ね 。', 'Tobi? The beach, or by the post box, or out on the point.']);
   L.usual('fuku', ['フク さん は 、 お{家|うち} の {前|まえ} か 、 ベンチ か 、 {浜|はま} の {祠|ほこら} です よ 。', 'Fuku? Outside her house, or at the bench, or at the little shrine on the beach.']);
   L.usual('wataru', ['ワタル さん は {倉庫|そうこ} か 、 {岸壁|がんぺき} で ラベル を {書|か}いて いる か 、 {港|みなと} の {事務所|じむしょ} です 。', 'Wataru? The warehouse, or writing labels on the quay, or the Harbour Office.']);
   L.usual('tetsu', ['テツ さん は 、 {渡|わた}し{船|ぶね} の {桟橋|さんばし} から {離|はな}れません よ 。', 'Tetsu never leaves the ferry pier.']);
@@ -140,7 +150,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   } };
   C.challenges['sg.lw_crab'] = { title: J('{餌|えさ} を {取|と}った カニ', 'The crab with the bait bag'), tiers: {
     F: [ch({ item: 'g:adj_te', ctx: { jp: 'りょうし ： 「あかい カニ だ 。 はさみ が ひとつ だけ おおきい 。 こうら に しろい てん が ある 。」', en: '' }, prompt: { en: 'The fisher describes the crab. Which one is it?' },
-      options: [o('あかくて 、 はさみ が かたほう だけ おおきい カニ', 1), o('あかくて 、 はさみ が ふたつ とも ちいさい カニ', 0, 'はさみ が ひとつ だけ おおきい: only one claw is big.'), o('くろくて 、 はさみ が ひとつ だけ おおきい カニ', 0, 'あかい: it is red.')] })],
+      options: [o('あかくて 、 はさみ が かたほう だけ おおきい カニ', 1), o('あかくて 、 はさみ が りょうほう ちいさい カニ', 0, 'はさみ が ひとつ だけ おおきい: only one claw is big.'), o('くろくて 、 はさみ が ひとつ だけ おおきい カニ', 0, 'あかい: it is red.')] })],
     E: [ch({ item: 'g:adj_te', ctx: { jp: '{漁師|りょうし} ： 「{赤|あか}い カニ だ 。 はさみ が {一|ひと}つ だけ {大|おお}きい 。 {甲羅|こうら} に {白|しろ}い {点|てん} が ある 。」', en: '' }, prompt: { en: 'Which crab is it?' },
       options: [o('{赤|あか}くて 、 {片方|かたほう} の はさみ が {大|おお}きくて 、 {甲羅|こうら} に {白|しろ}い {点|てん} が ある カニ', 1), o('{赤|あか}くて 、 はさみ が {両方|りょうほう} {大|おお}きい カニ', 0, '一つだけ: only one claw is big.'), o('{白|しろ}くて 、 {甲羅|こうら} に {赤|あか}い {点|てん} が ある カニ', 0, 'The crab is red, with white spots.')] })],
     I: [ch({ item: 'g:no_pronoun', ctx: { jp: '{漁師|りょうし} ： 「{一番|いちばん} {大|おお}きい カニ じゃ なくて 、 その {隣|となり} の 、 {小|ちい}さい {赤|あか}い の だ 。」', en: '' }, prompt: { en: 'Which crab does the fisher mean?' },
@@ -149,8 +159,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       options: [o('{岩|いわ} の かげ で 、 {大|おお}きい {方|ほう} の はさみ を {振|ふ}って いる カニ', 1), o('{岩|いわ} の {上|うえ} で {寝|ね}て いる {大|おお}きな カニ', 0, '振ってる (振っている): it is waving a claw, in the shadow (かげ) of the rock.'), o('はさみ が {両方|りょうほう} でっかい カニ', 0, '片っぽだけ: only one claw is huge.')] })],
   } };
   C.challenges['sg.lw_tags'] = { title: J('{籠|かご} の {札|ふだ}', 'The baskets\' tags'), tiers: {
-    F: [ch({ item: 'v:烏賊', ctx: { jp: 'かご は みっつ 。 ほそながくて 、 あし が たくさん ある の 。 あおくて 、 しま が ある の 。 ちいさくて 、 ぎんいろ の 。', en: '' }, prompt: { en: 'Which basket gets the tag イカ (squid)?' },
-      options: [o('ほそながくて 、 あし が たくさん ある の', 1), o('あおくて 、 しま が ある の', 0, 'Blue with stripes is the mackerel (さば). A squid has many legs.'), o('ちいさくて 、 ぎんいろ の', 0, 'Small and silver is the horse mackerel (あじ). A squid has many legs.')] })],
+    F: [ch({ item: 'v:烏賊', ctx: { jp: 'かご は みっつ 。 ほそながくて 、 あし が たくさん ある の 。 あおくて 、 しま@縞 が ある の 。 ちいさくて 、 ぎんいろ@銀色 の 。', en: '' }, prompt: { en: 'Which basket gets the tag イカ (squid)?' },
+      options: [o('ほそながくて 、 あし が たくさん ある の', 1), o('あおくて 、 しま@縞 が ある の', 0, 'Blue with stripes is the mackerel (さば). A squid has many legs.'), o('ちいさくて 、 ぎんいろ@銀色 の', 0, 'Small and silver is the horse mackerel (あじ). A squid has many legs.')] })],
     E: [ch({ item: 'v:烏賊', ctx: { jp: '{札|ふだ} ： 「{鯵|あじ}」 「{鯖|さば}」 「{烏賊|いか}」 。 {魚売|さかなう}り ： 「{足|あし} が {十本|じっぽん} ある の は 、 {烏賊|いか} だ よ 。」', en: '' }, prompt: { en: 'Which tag goes on the basket of creatures with ten legs?' },
       options: [o('{烏賊|いか}', 1), o('{鯖|さば}', 0, 'The fish-seller says: 足が十本あるのは烏賊.'), o('{鯵|あじ}', 0, 'The fish-seller says: 足が十本あるのは烏賊.')] })],
     I: [ch({ item: 'g:comp_yori_hou', ctx: { jp: '{魚売|さかなう}り ： 「{鯖|さば} の {方|ほう} が 、 {鯵|あじ} より ずっと {大|おお}きい よ 。」 {残|のこ}って いる {籠|かご} は {二|ふた}つ 。 {大|おお}きい {魚|さかな} の {籠|かご} と 、 {小|ちい}さい {魚|さかな} の {籠|かご} 。', en: '' }, prompt: { en: 'Which tag goes on the basket of big fish?' },
@@ -160,7 +170,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   } };
   C.challenges['sg.lw_fog'] = { title: J('{霧|きり} の {中|なか} の {道案内|みちあんない}', 'Directions in the fog'), tiers: {
     F: [ch({ item: 'g:v_te_kudasai', ctx: { jp: 'たびびと ： 「はいみ の さと へ は 、 どっち です か 。」 （わかれみち に とうろう 。 きた の みち は やま へ 、 さか は みなと へ 。）', en: '' }, prompt: { en: 'Tell the traveller the way to Cinder Orchard.' },
-      options: [o('とうろう の ところ で 、 きた の みち を のぼって ください 。', 1), o('とうろう の ところ で 、 さか を くだって ください 。', 0, 'Down the slope is the harbour; Cinder Orchard is inland, north.'), o('まっすぐ ひがし へ いって ください 。', 0, 'East is the way to Reedwake.')] })],
+      options: [o('とうろう の ところ で 、 きた の みち を のぼって ください 。', 1), o('とうろう の ところ で 、 さか を くだって ください 。', 0, 'Down the slope is the harbour; Cinder Orchard is inland, north.'), o('まっすぐ ひがし へ いって@行く ください 。', 0, 'East is the way to Reedwake.')] })],
     E: [ch({ item: 'g:v_te_kudasai', ctx: { jp: '{旅人|たびびと} ： 「{灰実|はいみ} の {里|さと} へ は 、 どっち です か 。」 （{分|わ}かれ{道|みち} に {灯籠|とうろう} 。 {北|きた} の {道|みち} は {山|やま} へ 、 {坂|さか} は {港|みなと} へ 。）', en: '' }, prompt: { en: 'Tell the traveller the way to Cinder Orchard.' },
       options: [o('{灯籠|とうろう} の ところ で 、 {北|きた} の {道|みち} を {登|のぼ}って ください 。', 1), o('{灯籠|とうろう} の ところ で 、 {坂|さか} を {下|くだ}って ください 。', 0, 'Down the slope is the harbour; Cinder Orchard is inland, north.'), o('まっすぐ {東|ひがし} へ {行|い}って ください 。', 0, 'East is the way to Reedwake.')] })],
     I: [ch({ item: 'g:cond_tara', ctx: { jp: '{旅人|たびびと} ： 「{霧|きり} で {何|なに} も {見|み}えません 。 {灰実|はいみ} の {里|さと} へ は 、 どう {行|い}けば いい です か 。」', en: '' }, prompt: { en: 'The fork lantern is the one thing that shows through the fog. Which directions work?' },
@@ -212,7 +222,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   L.scenes(`
 @scene sg.lw_shrine
 narr: {浜|はま} の {小|ちい}さな {祠|ほこら} 。 {海|うみ} の {方|ほう} を {向|む}いて いる 。 || A little shrine on the beach, facing the sea.
-?(quest.sg_seaglass=done) narr: {海|うみ} ガラス の {名札|なふだ} が {飾|かざ}って ある 。 「{千鳥丸|ちどりまる}」 。 {青|あお}い {字|じ} が 、 {朝|あさ} の {光|ひかり} で {光|ひか}って いる 。 || A sea-glass nameplate hangs there: "Chidori-maru". The blue letters catch the morning light.
+?(quest.sg_seaglass=done) narr: {海|うみ} ガラス の {名札|なふだ} が {飾|かざ}って ある 。 「{千鳥丸|ちどりまる}」 。 {青|あお}い {字|じ} が 、 {朝日|あさひ} に {光|ひか}って いる 。 || A sea-glass nameplate hangs there: "Chidori-maru". The blue letters catch the morning light.
 
 # ---- the city traders (after Playhouse Row's festival) ----------------------------------------------------------------
 @scene mp.lw_sg_prints
@@ -232,21 +242,21 @@ sg_matsuzo: {刷|す}り{物|もの} は {軽|かる}い から 、 {船|ふね}
 
 @scene mp.lw_sg_kiyo_traders
 !faceplayer
-kiyo: {岸壁|がんぺき} に {町|まち} の {人|ひと} が {店|みせ} を {出|だ}してる よ 。 {魚|さかな} じゃ なくて 、 {絵|え} を {売|う}ってる ん だ と さ 。 …… {絵|え} は {食|た}べられない のに ねぇ 。 || City folk have set up on the quay. Not fish: pictures, if you please. …You can't eat a picture, can you.
+kiyo: {岸壁|がんぺき} に {八百橋|やおばし} の {人|ひと} が {店|みせ} を {出|だ}してる よ 。 {魚|さかな} じゃ なくて 、 {絵|え} を {売|う}ってる ん だ と さ 。 …… {絵|え} は {食|た}べられない のに ねぇ 。 || Folk from Manybridge have set up on the quay. Not fish: pictures, if you please. …You can't eat a picture, can you.
 kiyo[smile]: でも 、 {絵|え} を {買|か}い に {来|く}る {客|きゃく} が 、 ついで に {鯵|あじ} も {買|か}って いく 。 {悪|わる}く ない よ 。 || Still, the folk who come for the pictures pick up some horse mackerel on the way. Not bad.
 
 # ---- the sea trial's gossip ----------------------------------------------------------------------------------------------
 @scene sea.lw_sg_trial_daigo
 !faceplayer
-daigo: おう ！ {見|み}た ぞ 、 {試|ため}し{乗|の}り ！ {岬|みさき} の {沖|おき} の ブイ を 、 きれい に {回|まわ}った な ！ {港|みなと} じゅう {見|み}てた ぜ ！ || Ho! I saw the sea trial! Round the buoy off the point, clean as you like! The whole harbour was watching!
+daigo: おう ！ {見|み}た ぞ 、 {試|ため}し{乗|の}り ！ {岬|みさき} の {沖|おき} の ブイ を 、 きれい に {回|まわ}った な ！ {港|みなと} {中|じゅう} {見|み}てた ぜ ！ || Ho! I saw the sea trial! Round the buoy off the point, clean as you like! The whole harbour was watching!
 
 @scene sea.lw_sg_trial_tobi
 !faceplayer
-tobi: {試|ため}し{乗|の}り 、 {岬|みさき} から {見|み}た よ ！ {帆|ほ} が ぱっと {開|ひら}いて 、 かっこよかった ！ {僕|ぼく} も {大|おお}きく なったら {乗|の}せて ね ！ || I watched the sea trial from the point! The sail opened all at once, it was so cool! Take me out when I'm bigger!
+tobi: {試|ため}し{乗|の}り 、 {岬|みさき} から {見|み}た よ ！ {帆|ほ} が ぱっと {広|ひろ}がって 、 かっこよかった ！ {僕|ぼく} も {大|おお}きく なったら {乗|の}せて ね ！ || I watched the sea trial from the point! The sail spread out all at once, it was so cool! Take me out when I'm bigger!
 
 @scene sea.lw_sg_trial_tamae
 !faceplayer
-tamae: {聞|き}いた よ 、 {試|ため}し{乗|の}り ！ うち の {客|きゃく} が 、 {朝|あさ} から その {話|はなし} ばかり さ 。 {免状|めんじょう} が {取|と}れたら 、 お{茶|ちゃ} を {一杯|いっぱい} {奢|おご}る よ 。 || Heard about the sea trial! My guests have talked of nothing else all morning. Once you've got your licence, the tea's on me.
+tamae: {聞|き}いた よ 、 {試|ため}し{乗|の}り ！ うち の {客|きゃく} が 、 {朝|あさ} から その {話|はなし} ばかり さ 。 {免状|めんじょう} の お{祝|いわ}い に 、 お{茶|ちゃ} を {一杯|いっぱい} {奢|おご}る よ 。 || Heard about the sea trial! My guests have talked of nothing else all morning. The tea's on me, for your licence.
 
 # ---- the coast road (W5) -------------------------------------------------------------------------------------------------
 @scene sg.lw_road_child
@@ -255,7 +265,7 @@ tamae: {聞|き}いた よ 、 {試|ため}し{乗|の}り ！ うち の {客|�
 !if lw_sg_child_met -> again
 !set lw_sg_child_met
 narr: {分|わ}かれ{道|みち} の {灯籠|とうろう} の {下|した} で 、 {小|ちい}さな {子|こ} が {泣|な}きそう な {顔|かお} で {立|た}って いる 。 || Under the lantern at the fork, a small child stands on the edge of tears.
-narr: 「{道|みち} が {分|わ}からなく なっちゃった 。 …… お{家|うち} の {名前|なまえ} ？ {分|わ}かんない 。 でも 、 お{家|うち} から {見|み}える もの なら {分|わ}かる よ 。」 || "I don't know the way any more. …The name of where I live? I don't know. But I know what you can see from home."
+narr: 「{道|みち} が {分|わ}からなく なっちゃった 。 …… {住所|じゅうしょ} ？ {分|わ}かんない 。 でも 、 お{家|うち} から {見|み}える もの なら {分|わ}かる よ 。」 || "I don't know the way any more. …My address? I don't know. But I know what you can see from home."
 !goto ask
 :again
 narr: {灯籠|とうろう} の {下|した} に 、 あの {子|こ} が また {座|すわ}って いる 。 {待|ま}って いた らしい 。 || The child is sitting under the lantern again. Waiting, by the look of it.
@@ -318,14 +328,14 @@ narr: 「ありがとう ございます ！」 {足音|あしおと} が 、 {�
 !hook road_done sg_road fog
 !end
 :miss
-narr: {声|こえ} は {迷|まよ}って いる よう だ 。 {霧|きり} が {晴|は}れる まで 、 {一緒|いっしょ} に {待|ま}つ こと に した 。 || The voice sounds lost. You decide to wait with them until the fog lifts.
+narr: {旅|たび} の {人|ひと} は まだ {迷|まよ}って いる よう だ 。 {霧|きり} が {晴|は}れる まで 、 {一緒|いっしょ} に {待|ま}つ こと に した 。 || The traveller still sounds lost. You decide to wait with them until the fog lifts.
 
 # ---- return keys (W6) ------------------------------------------------------------------------------------------------------
 @scene sea.lw_open_sg_seacave
 # Opened with the boat: round the point at low water and in. A beach of sea glass nobody knew.
 narr: {自分|じぶん} の {船|ふね} が ある 。 {潮|しお} が {引|ひ}いた {時|とき} に {岬|みさき} を {回|まわ}って 、 {洞窟|どうくつ} に {入|はい}った 。 || You have a boat of your own now. At low water you take her round the point and into the cave.
 narr: {奥|おく} に 、 {小|ちい}さな {浜|はま} が あった 。 {一面|いちめん} 、 {海|うみ} ガラス 。 {緑|みどり} 、 {白|しろ} 、 {茶色|ちゃいろ} …… {青|あお} も 、 たくさん ある 。 || At the back is a tiny beach covered in sea glass: green, white, brown… and blue, lots of blue.
-narr: {波|なみ} が {寄|よ}せる たび に 、 ガラス が {鳴|な}る 。 {潮|しお} と ガラス 。 {町|まち} の {名前|なまえ} の よう な {場所|ばしょ} だ 。 || Every wave that comes in sets the glass chiming. Tide and glass: a place like the town's own name.
+narr: {波|なみ} が {寄|よ}せる {度|たび} に 、 ガラス が {鳴|な}る 。 {潮|しお} と ガラス 。 {町|まち} の {名前|なまえ} の よう な {場所|ばしょ} だ 。 || Every wave that comes in sets the glass chiming. Tide and glass: a place like the town's own name.
 narr: {一|ひと}つ も {持|も}って {帰|かえ}らない 。 ここ の ガラス は 、 ここ の もの だ 。 || You don't take a single piece. The glass here belongs here.
 ?(comp=nao) comp: …… トビ に は {黙|だま}って おけ よ 。 {一人|ひとり} で {泳|およ}いで {来|き}かねない 。 || …Don't tell Tobi. That kid would try swimming here alone.
 ?(comp=mio) comp[smile]: {青|あお} が こんな に 。 {光|ひかり} が {水|みず} の {底|そこ} から {来|く}る みたい 。 || So much blue. As if the light came up from under the water.
@@ -350,7 +360,7 @@ narr: {古|ふる}い {係船柱|けいせんちゅう} 。 {縄|なわ} は ほ
 @scene lf.lw_open_sg_fogbell
 # Opened with 鈴 (the word learned in Lanternfall): a clear sound that breaks a hush.
 narr: {灯落|ひおち} で {覚|おぼ}えた {言葉|ことば} が ある 。 「{鈴|すず}」 。 {静|しず}けさ を {破|やぶ}る 、 {澄|す}んだ {音|おと} 。 || There is a word you learned in Lanternfall: 鈴, bell. A clear sound that breaks a hush.
-narr: {言葉|ことば} を {綱|つな} に {込|こ}めて 、 {引|ひ}く 。 {霧|きり} の {鐘|かね} が {鳴|な}った 。 {澄|す}んだ {音|おと} が 、 {港|みなと} じゅう に {響|ひび}いた 。 || You weave the word into the rope, and pull. The fog bell rings, and its clear note carries across the whole harbour.
+narr: {言葉|ことば} を {綱|つな} に {込|こ}めて 、 {引|ひ}く 。 {霧|きり} の {鐘|かね} が {鳴|な}った 。 {澄|す}んだ {音|おと} が 、 {港|みなと} {中|じゅう} に {響|ひび}いた 。 || You weave the word into the rope, and pull. The fog bell rings, and its clear note carries across the whole harbour.
 genzo: …… {鳴|な}った か 。 {何年|なんねん} も {黙|だま}った まま の {鐘|かね} だった 。 {霧|きり} の {夜|よる} に は 、 これ が {要|い}る ん だ 。 || …So it rings. That bell's been dumb for years. On foggy nights, it's needed.
 ?(comp=nao) comp: {霧|きり} の {日|ひ} の {配達|はいたつ} は 、 {音|おと} が {頼|たよ}り だ 。 これ で {船|ふね} も {迷|まよ}わない 。 || On foggy days a courier goes by sound. Now the boats won't lose their way either.
 ?(comp=mio) comp[smile]: いい {音|おと} 。 {胸|むね} の {奥|おく} まで {届|とど}く みたい 。 || What a sound. It reaches right inside you.
@@ -372,7 +382,7 @@ narr: {岬|みさき} の {霧|きり} の {鐘|かね} 。 {綱|つな} を {�
 > {迷子|まいご} の {役|やく} は 、 {家|いえ} に {帰|かえ}る {場面|ばめん} で {終|お}わり や 。 ええ {幕切|まくぎ}れ や な 。 || A lost child's part ends with the scene where they get home. A good curtain, that.
 @ zzz_living/20_sg [sea.lw_open_sg_seacave]
 = {舞台|ぶたい} の {照明|しょうめい} より きれい ね 。 {誰|だれ} も {見|み}て ない の が 、 もったいない わ 。 || Prettier than any stage lighting. A shame nobody's watching.
-> {舞台|ぶたい} の {照明|しょうめい} より きれい や な 。 {誰|だれ} も {見|み}て ない の が 、 もったいない わ 。 || Prettier than any stage lighting. A shame nobody's watching.
+> {舞台|ぶたい} の {照明|しょうめい} より きれい や な 。 {誰|だれ} も {見|み}て へん の が 、 もったいない わ 。 || Prettier than any stage lighting. A shame nobody's watching.
 @ zzz_living/20_sg [mp.lw_open_sg_knots]
 = {絡|から}まった {筋書|すじが}き も 、 {二|ふた}つ {同時|どうじ} に {引|ひ}けば {解|と}ける もの よ 。 || A tangled plot comes loose too, if you pull two threads at once.
 > {絡|から}まった {筋書|すじが}き も 、 {二|ふた}つ {同時|どうじ} に {引|ひ}いたら {解|と}ける もん や で 。 || A tangled plot comes loose too, if you pull two threads at once.

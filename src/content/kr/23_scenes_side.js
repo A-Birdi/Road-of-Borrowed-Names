@@ -133,8 +133,8 @@ narr: {歌|うた} と 、 {碑|ひ} と 、 クマゾウ の {話|はなし} �
 !hook tellings kr.t_cache
 !if var._tell=cancel -> later
 !if var._tell=no -> nothing
-?(var._tell=ok) narr: {尾根|おね} の {灯籠|とうろう} の {下|した} を 、 {一|ひと}つ ずつ {掘|ほ}り{返|かえ}した 。 {最後|さいご} に 、 {小道|こみち} の {先|さき} の {壊|こわ}れた {灯籠|とうろう} の {下|した} から 、 かめ が {出|で}て きた 。 || You dig under the ridge's lanterns one after another. Last of all, under the broken lantern down the little path, a jar.
-?(var._tell=best) narr: {壊|こわ}れた {灯籠|とうろう} の {下|した} を {掘|ほ}る と 、 すぐ に {蓋|ふた} の {付|つ}いた かめ が {出|で}て きた 。 || You dig under the broken lantern, and almost at once a lidded jar comes up.
+?(var._tell=ok) narr: {尾根|おね} の {灯籠|とうろう} の {下|した} を 、 {一|ひと}つ ずつ {掘|ほ}り{返|かえ}した 。 {最後|さいご} に 、 {小道|こみち} の {先|さき} の {壊|こわ}れた {灯籠|とうろう} の {下|した} から 、 かめ@甕 が {出|で}て きた 。 || You dig under the ridge's lanterns one after another. Last of all, under the broken lantern down the little path, a jar.
+?(var._tell=best) narr: {壊|こわ}れた {灯籠|とうろう} の {下|した} を {掘|ほ}る と 、 すぐ に {蓋|ふた} の {付|つ}いた かめ@甕 が {出|で}て きた 。 || You dig under the broken lantern, and almost at once a lidded jar comes up.
 !set kr_cache_found
 !give kr_oil
 !quest kr_cache done
@@ -154,5 +154,5 @@ narr: {狐橋|きつねばし} の {子供|こども} の {歌|うた} と 、 {
 narr: {掘|ほ}り{出|だ}した {穴|あな} が 、 {残|のこ}って いる 。 || The hole you dug is still there.
 
 @scene kr.cache_jar
-narr: {灯守|ひもり} の {油|あぶら} の かめ 。 もう {空|から} だ 。 || The keepers' oil jar, empty now.
+narr: {灯守|ひもり} の {油|あぶら} の かめ@甕 。 もう {空|から} だ 。 || The keepers' oil jar, empty now.
 `, 'kr/side');
