@@ -1,7 +1,7 @@
 # P17 · Closing the quality registers
 
 *Playbook P17 ("content, Japanese, accessibility and performance closure"; §15A's U07 and UI-A01–UI-A20); authorised by
-C-81. P18 (the final matrix, a release candidate and any publication) still waits for Robin. Status words follow AC-1
+C-81. P18 is Robin's Plan B (C-89): four continuous campaigns and targeted tests (VALIDATION.md "P18 — Plan B"); a release candidate and any publication still wait for Robin. Status words follow AC-1
 for art ("implemented provisionally", "internally reviewed"); nothing here is described as accepted by Robin unless
 Robin said so.*
 
@@ -65,7 +65,7 @@ Nothing is "deferred forever": each item says who closes it and when.
 | Playtime (R3.9) | Not measurable by automation; open until a person plays through |
 | A native speaker's review of the Japanese | None available (C-26); every new line is self-reviewed against references and recorded; nothing claims a native review |
 | Real handwriting samples | The recogniser is tested on synthetic and font-derived strokes only; open until real samples exist |
-| Firefox, Safari, real phones, Robin's foldable; speed and battery on them | Untested by automation here (Chromium only); P18's matrix and Robin's devices |
+| Firefox, Safari, real phones, Robin's foldable; speed and battery on them | Untested by automation here (Chromium only); Robin's devices. P18 (Plan B, C-89) runs in headless Chromium too and is not real-device validation |
 | The Kettle's Mother's hood on the painted Harmony bust | Drawn on the road sprite, the portrait, the battle figure and the code-drawn bust (`A.hood`, P16d). The painted kit has no file for it yet: the contract lists it among the worn things not shown in a painted bust, with that reason (`src/ui/88_harmony_contract.js`, `NOT_SHOWN`), so the painted bust is drawn without it. The painted file joins the next painted-asset batch (docs/harmony/ASSET_BRIEF.md) |
 | The phone tab row at 320 px with the largest text | It scrolls behind its arrows, as designed for that width (UI-A15); every tab stays reachable by arrow, swipe and keyboard |
 | VA-1, the voice audition (C-83) | **Queued after P17**; not started |
