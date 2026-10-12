@@ -3,7 +3,9 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import path from 'node:path';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { readManifest, runtimeCatalog } from './music/ensemble/manifest.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const src = path.join(root, 'src');
@@ -77,8 +79,32 @@ export function listSources() {
   return files;
 }
 
+// MT-1 (docs/MUSIC_PERFORMANCE.md): the optional Ensemble recordings a hosted copy may fetch, from
+// assets/music/ensemble/manifest.json. Only ready tracks recorded from the current build's own score, with their files
+// present and checked, are embedded (RB.audio.ensembleCatalog), and only then may the page connect to its own origin
+// (connect-src 'self'; otherwise 'none' as before). The recordings themselves are never embedded: the single file
+// plays Original without them. The scores are compiled here from src/core + src/audio, as the game compiles them.
+export function ensembleCatalog() {
+  const manifest = readManifest(root);
+  if (!manifest) return { catalog: null, report: [] };
+  const ctx = { console: { log() {}, warn() {}, error() {}, info() {} }, setTimeout, clearTimeout, performance, __RB_TEST__: true };
+  ctx.globalThis = ctx;
+  vm.createContext(ctx);
+  for (const f of listSources()) {
+    const rel = path.relative(src, f).split(path.sep).join('/');
+    if (/^(core|audio)\//.test(rel)) vm.runInContext(fs.readFileSync(f, 'utf8'), ctx, { filename: rel });
+  }
+  const getSong = (id) => { try { return ctx.RB.audio._.getSong(id); } catch (e) { return null; } };
+  return runtimeCatalog(manifest, getSong, root);
+}
+
 function build() {
-  const tpl = fs.readFileSync(path.join(src, 'index.template.html'), 'utf8');
+  let tpl = fs.readFileSync(path.join(src, 'index.template.html'), 'utf8');
+  const ens = ensembleCatalog();
+  if (ens.catalog) {
+    if (!tpl.includes("connect-src 'none'")) throw new Error("index.template.html: expected connect-src 'none'");
+    tpl = tpl.replace("connect-src 'none'", "connect-src 'self'");
+  }
   // styles: every src/styles/*.css in name order (tokens first, then areas)
   const styleDir = path.join(src, 'styles');
   const css = fs.readdirSync(styleDir).filter((f) => f.endsWith('.css')).sort()
@@ -90,6 +116,7 @@ function build() {
   let js = `var RB = (globalThis.RB = globalThis.RB || {});\nRB.NOTICE = ${JSON.stringify(licences0).replace(/</g, '\\u003c')};\n`;
   const ha = harmonyAssets();
   if (ha) js += ha.js;
+  if (ens.catalog) js += 'RB.audio = RB.audio || {};\nRB.audio.ensembleCatalog = ' + JSON.stringify(ens.catalog).replace(/</g, '\\u003c') + ';\n';
   for (const f of files) {
     const rel = path.relative(root, f).split(path.sep).join('/');
     const code = fs.readFileSync(f, 'utf8');
@@ -107,6 +134,8 @@ function build() {
   const kb = (Buffer.byteLength(html) / 1024).toFixed(1);
   console.log(`built ${path.relative(root, out)} — ${files.length} source files, ${kb} KiB`);
   if (ff) console.log(`  type: ${ff.faces} font subsets, ${(ff.bytes / 1024).toFixed(1)} KiB encoded, ${(ff.embedded / 1024).toFixed(1)} KiB embedded (base64) from data/fonts`);
+  for (const r of ens.report) console.log(`  ensemble ${r.songId || '(manifest)'}: ${r.eligible ? 'embedded' : 'left out (' + r.problems.slice(0, 3).join('; ') + (r.problems.length > 3 ? '; …' : '') + ')'}`);
+  if (ens.catalog) console.log(`  ensemble catalog: ${Object.keys(ens.catalog.songs).length} track(s); connect-src 'self'`);
   if (ha) console.log(`  painted Harmony art: ${ha.files} PNGs, ${(ha.png / 1024).toFixed(1)} KiB encoded, ${(ha.embedded / 1024).toFixed(1)} KiB embedded (base64) from ${path.relative(root, harmonyDir)}`);
 }
 

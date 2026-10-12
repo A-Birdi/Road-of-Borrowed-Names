@@ -767,7 +767,8 @@ await test('setting: "Harmony portrait flourish" is On by default (also for an o
   await waitSel(p, '.folio-settings [data-grp="learning"]', { timeout: 8000 });
   await p.click('.folio-settings [data-grp="learning"]');
   await waitSel(p, '[data-sw="harmonyFlourish"]', { timeout: 8000 });
-  const row = await p.evaluate(() => { const i = document.querySelector('[data-sw="harmonyFlourish"]'); const f = i.closest('.field'); const prev = f.previousElementSibling; return { label: f.textContent.replace(/\s+/g, ' ').trim(), checked: i.checked, afterBattles: !!(prev && /What creatures are about to do/.test(prev.textContent)) }; });
+  // (in the Battles group: the nearest heading above it is Battles; the group has grown other rows since)
+  const row = await p.evaluate(() => { const i = document.querySelector('[data-sw="harmonyFlourish"]'); const f = i.closest('.field'); let h = f.previousElementSibling; while (h && !/^H[1-6]$/.test(h.tagName)) h = h.previousElementSibling; return { label: f.textContent.replace(/\s+/g, ' ').trim(), checked: i.checked, afterBattles: !!(h && /Battles/.test(h.textContent)), heading: h && h.textContent.trim() }; });
   assert(/Harmony portrait flourish/.test(row.label) && row.checked && row.afterBattles, 'the switch, On, beside the Battles settings ' + JSON.stringify(row));
   await p.evaluate(() => document.querySelector('[data-sw="harmonyFlourish"]').scrollIntoView({ block: 'center' }));
   await p.click('[data-sw="harmonyFlourish"]', { force: true });

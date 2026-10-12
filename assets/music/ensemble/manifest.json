@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "runtimeEnabled": false,
+  "coverage": "Pilot: . Every other song plays its Original.",
+  "tracks": [
+    {
+      "songId": "snowbell",
+      "releaseStatus": "pending_production",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:d51d59d94bc7c565683a38f800c781d47a007ef30b54d4625626b3ef2cf1f614",
+      "referenceCommit": "cb8c497c73eaf025d9bc6e78adbe05a782707bb7",
+      "rendererRevision": "mt1-tools-sha256:522264f6ae4ab505",
+      "timeline": {
+        "durationSec": 94.5,
+        "loop": true,
+        "loopStartSec": 0
+      },
+      "assets": {
+        "layout": "split_firstpass_loop",
+        "firstPass": [
+          {
+            "relativeUrl": "./assets/music/ensemble/snowbell/snowbell.first.457f42da8cfdce60.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "457f42da8cfdce600de84ea45b8836a93486666870648eca65edc7ce65ec34f2",
+            "encodedBytes": 158392,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 316800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 292800
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/snowbell/snowbell.first.469b7328aeffa7d3.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "469b7328aeffa7d3066787f9fc9d017ecf70cb20df381c6a0633b496193c27a5",
+            "encodedBytes": 159572,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 316800,
+            "playableStartFrame": 4800,
+            "playableEndFrame": 292800
+          }
+        ],
+        "steadyLoop": [
+          {
+            "relativeUrl": "./assets/music/ensemble/snowbell/snowbell.loop.439a1e7907f50d98.opus",
+            "mimeType": "audio/ogg",
+            "sha256": "439a1e7907f50d9889d11c1d80d9b1a2a1106a8dad5630fdc7803a56c559e484",
+            "encodedBytes": 2315966,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 4584000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 4560000,
+            "loopStartFrame": 24000
+          },
+          {
+            "relativeUrl": "./assets/music/ensemble/snowbell/snowbell.loop.ba895c01765b46c0.mp3",
+            "mimeType": "audio/mpeg",
+            "sha256": "ba895c01765b46c0e739da2d91cf9e8f868424b1df1cc552d33ca84a2a594ce0",
+            "encodedBytes": 2293652,
+            "sampleRate": 48000,
+            "channels": 2,
+            "decodedFrames": 4584000,
+            "playableStartFrame": 24000,
+            "playableEndFrame": 4560000,
+            "loopStartFrame": 24000
+          }
+        ]
+      },
+      "mix": {
+        "profile": "pre_master_music_bus",
+        "gainDb": 2.969,
+        "roomBaked": true,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": false,
+        "decodedAlignmentVerified": false,
+        "firstPassSeamVerified": true,
+        "repeatedLoopVerified": true,
+        "gameMixCalibrated": true,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/snowbell.json"
+        ]
+      },
+      "notes": "SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to 6.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only (docs/music/ensemble/qa/snowbell.json); not yet listened to by Robin."
+    },
+    {
+      "songId": "battle_keepers",
+      "releaseStatus": "pending_production",
+      "fingerprintVersion": "mt1-score-v1",
+      "scoreFingerprint": "sha256:2c3ef95bf838cd64294c1bab45d507d587fc861b51adbaacd776ff2501b1d037",
+      "referenceCommit": "cb8c497c73eaf025d9bc6e78adbe05a782707bb7",
+      "rendererRevision": "mt1-tools-sha256:522264f6ae4ab505",
+      "timeline": {
+        "durationSec": 71.57894736842104,
+        "loop": true,
+        "loopStartSec": 4.2105263157894735
+      },
+      "assets": null,
+      "mix": {
+        "profile": "pending",
+        "gainDb": null,
+        "roomBaked": null,
+        "userVolumeBaked": false
+      },
+      "evidence": {
+        "scoreCompatibleWithCurrentBuild": true,
+        "scoreEventsPreserved": false,
+        "decodedAlignmentVerified": false,
+        "firstPassSeamVerified": false,
+        "repeatedLoopVerified": false,
+        "gameMixCalibrated": false,
+        "distributionProvenanceRecorded": true,
+        "reportPaths": [
+          "docs/music/ensemble/qa/battle_keepers.json"
+        ]
+      },
+      "notes": "SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to 9.711 s and one circular steady cycle, with guards. Machine-checked in Chromium only (docs/music/ensemble/qa/battle_keepers.json); not yet listened to by Robin."
+    }
+  ]
+}

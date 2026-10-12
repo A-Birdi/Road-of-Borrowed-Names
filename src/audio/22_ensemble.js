@@ -13,10 +13,15 @@
  *  - Original stays warm while Ensemble sounds: the same player goes on (its notes, its seeded humanisation, its loop
  *    count, its room), unheard behind its own output gain and the music room's return gate (g.revGate). Coming back
  *    reveals it mid-phrase: no restart, no cut chord, no new attacks. Only the current cue is kept warm.
- *  - Ensemble plays a short first-pass head (score zero at `zero` seconds into it, up to the join) and a steady loop
- *    cycle (one period whose tails wrap into its own start), started at the position the clock gives for the handover
- *    time. It enters the music bus before the user's music volume, the ducking and the master chain, as the Original
- *    does, with its own room baked in (it never reaches the game's music room), at a calibrated trim.
+ *  - Ensemble plays two files per format (assets/music/ensemble/<id>/, made by tools/music/ensemble/): a short first
+ *    pass from silence up to a join J, and one steady cycle of the repeat [L, D), circular (it holds the tails of the
+ *    cycle before), each with guard samples beyond its playable frames. Past J the first pass and the steady cycle are
+ *    the same music, so the cue goes over to the cycle there; each cycle is its own source, started on the audio clock
+ *    at the score's cycle boundary and crossfaded (XJ) with the one before over matching phases (the guard after a
+ *    cycle is the start of the next): the rhythm keeps the score's length, no cycle drifts from the Original's clock,
+ *    and a lossy codec's two renderings of the same instant are blended rather than butted. It enters the music bus
+ *    before the user's music volume, the ducking and the master chain, as the Original does, with its own room baked in
+ *    (it never reaches the game's music room), at a calibrated trim.
  *  - A handover is scheduled on the audio clock: at least LEAD ahead, on the next beat if one comes within BEAT_WAIT,
  *    then a complementary (linear) crossfade of XF seconds: the two performances are the same score and correlated.
  *  - Loading never holds up play: Original sounds at once; the recording replaces it when it is ready and still wanted
@@ -31,7 +36,9 @@ RB.audio = RB.audio || {};
   'use strict';
   const _ = (A._ = A._ || {});
   const st = _.st;
-  const XF = 0.2; // the crossfade (seconds)
+  const XF = 0.2; // the crossfade between performances (seconds)
+  const XJ = 0.05; // the crossfade at a join or a cycle boundary, over matching phases
+  const MAX_PPM = 50; // a steady cycle's length against the score's period
   const LEAD = 0.12; // the earliest handover (the scheduler's lookahead is 0.2 s)
   const BEAT_WAIT = 0.6; // a handover waits for the next beat if it comes this soon
   const TIMEOUT_MS = 15000; // per file
@@ -39,12 +46,12 @@ RB.audio = RB.audio || {};
   const RETAIN = 128 * 1024 * 1024; // decoded music kept in memory
   const COOLDOWN_MS = 5 * 60 * 1000; // after a file failed twice
   const DIR = '/assets/music/ensemble/';
-  const EXT = /\.(ogg|opus|mp3|m4a|webm)$/;
+  const EXT = /\.(ogg|opus|mp3|wav|flac)$/;
   const PERFS = ['original', 'ensemble'];
 
   const P = (_.perf = {
     pref: 'original',
-    cue: null, // { player, id, gen, entry, fmt, bufs, sources, gain, trim, active, want, state, retries, at }
+    cue: null, // { player, id, gen, entry, fmt, bufs, segs, horizon, timer, gain, trim, active, want, state, retries, at }
     gen: 0,
     cache: new Map(), // sha256 -> { buffer, bytes, used, refs }
     inflight: new Map(), // sha256 -> Promise<AudioBuffer>
@@ -60,10 +67,17 @@ RB.audio = RB.audio || {};
 
   // ---- the catalog ---------------------------------------------------------------------------------------------
   const catalog = () => A.ensembleCatalog || null;
+  // a ready entry whose files describe a playable layout for its song's timeline (the build checked this too)
+  const span = (r) => r && r.rate > 0 && r.end > r.start && r.start >= 0 && r.end <= r.frames ? (r.end - r.start) / r.rate : 0;
   function entryOf(id) {
     const c = catalog();
     const e = c && c.songs && c.songs[id];
-    return e && e.releaseStatus === 'ready' ? e : null;
+    if (!e || e.releaseStatus !== 'ready' || !Array.isArray(e.formats) || !e.formats.length) return null;
+    for (const f of e.formats) {
+      if (!span(f.first) || (e.loop && !span(f.loop))) return null;
+      if (e.loop && Math.abs(span(f.loop) / (e.durationSec - e.loopStartSec) - 1) * 1e6 > MAX_PPM) return null;
+    }
+    return e;
   }
   A.ensembleSongs = () => {
     const c = catalog();
@@ -141,10 +155,12 @@ RB.audio = RB.audio || {};
   }
 
   // ---- loading -----------------------------------------------------------------------------------------------------
-  // a catalog reference made into a URL: http(s), this page's origin, inside the music directory, a known extension
+  // a catalog reference made into a URL: relative to the page (./assets/music/ensemble/...), http(s), this page's
+  // origin, inside the music directory, a known extension; no traversal, encoded separators, query or fragment
   function assetUrl(ref) {
-    const raw = String(ref && ref.url || '');
-    if (!raw || /(^|\/)\.\.?(\/|$)|%2e|%2f|%5c|\\|[?#]|^\/|^[a-z][a-z0-9+.-]*:/i.test(raw)) throw new Error('rejected asset path');
+    let raw = String(ref && ref.url || '');
+    if (raw.slice(0, 2) === './') raw = raw.slice(2);
+    if (!raw || raw.slice(0, 22) !== 'assets/music/ensemble/' || /(^|\/)\.\.?(\/|$)|%|\\|[?#]|^\/|^[a-z][a-z0-9+.-]*:|\/\//i.test(raw)) throw new Error('rejected asset path');
     const u = new URL(raw, document.baseURI);
     if (!/^https?:$/.test(u.protocol) || u.origin !== location.origin) throw new Error('rejected asset origin');
     if (u.pathname.indexOf(DIR) < 0 || !EXT.test(u.pathname)) throw new Error('rejected asset location');
@@ -248,7 +264,7 @@ RB.audio = RB.audio || {};
   // the formats this browser says it can play, in the catalog's order of preference
   function formatsFor(entry) {
     const a = typeof Audio !== 'undefined' ? new Audio() : null;
-    return (entry.formats || []).filter((f) => !a || !f.mime || a.canPlayType(f.mime));
+    return (entry.formats || []).filter((f) => !a || !f.type || a.canPlayType(f.type));
   }
 
   // ---- the director ------------------------------------------------------------------------------------------------
@@ -303,10 +319,11 @@ RB.audio = RB.audio || {};
   A.refreshPerformance = () => refresh(false);
   function adopt(p) {
     if (P.cue) release(P.cue, 0);
-    P.cue = { player: p, id: p.song.id, gen: ++P.gen, entry: entryOf(p.song.id), fmt: null, bufs: null, sources: [], gain: null, trim: null, active: false, want: 'original', state: 'idle', retries: 0, abort: null };
+    P.cue = { player: p, id: p.song.id, gen: ++P.gen, entry: entryOf(p.song.id), fmt: null, bufs: null, segs: [], horizon: null, timer: null, gain: null, trim: null, active: false, want: 'original', state: 'idle', retries: 0, abort: null };
     return P.cue;
   }
   // a new cue (the sequencer's playSong): Original is sounding; the recording follows if wanted and possible
+  _.assetUrl = assetUrl; // (tests)
   _.hooks.cue.push((p, fade) => {
     const old = P.cue;
     if (old && old.player !== p) release(old, fade);
@@ -343,11 +360,11 @@ RB.audio = RB.audio || {};
       let last = null;
       for (const fmt of fmts) {
         try {
-          const [head, loop] = await Promise.all([loadAsset(fmt.head, ac.signal), c.entry.loop ? loadAsset(fmt.loop, ac.signal) : Promise.resolve(null)]);
+          const [first, loop] = await Promise.all([loadAsset(fmt.first, ac.signal), c.entry.loop ? loadAsset(fmt.loop, ac.signal) : Promise.resolve(null)]);
           if (!live()) return;
           c.fmt = fmt;
-          c.bufs = { head, loop };
-          for (const r of [fmt.head, fmt.loop]) { const h = r && P.cache.get(r.sha256); if (h) h.refs++; }
+          c.bufs = { first, loop };
+          for (const r of [fmt.first, fmt.loop]) { const h = r && P.cache.get(r.sha256); if (h) h.refs++; }
           handover(c, 'ensemble');
           return;
         } catch (e) {
@@ -375,35 +392,69 @@ RB.audio = RB.audio || {};
     c.gain.connect(c.trim);
     c.trim.connect(st.g.music); // before the music volume, the ducking and the master chain, as the Original
   }
-  // start the recording's sources so that the score position at audio time T sounds at T
-  function startSources(c, T) {
-    const ctx = st.ctx, e = c.entry, p = c.player;
-    const clk = clockAt(p, T);
-    const L = p.song.loopStart, zero = e.zero || 0;
-    const headEnd = c.fmt.head.frames / c.fmt.head.rate; // asset seconds: score time (headEnd - zero) is the join
-    const join = headEnd - zero; // score time of the join, first pass only
-    const srcs = [];
-    const mk = (buf, loop) => {
-      const s = ctx.createBufferSource();
-      s.buffer = buf;
-      if (loop) { s.loop = true; s.loopStart = 0; s.loopEnd = buf.duration; }
-      s.connect(c.gain);
-      srcs.push(s);
-      return s;
+  // one stretch of a file, on the audio clock: from `when`, at `offset` seconds into the buffer, faded in over XJ (a
+  // join or a cycle boundary) or not (the first stretch of a handover: the handover's own crossfade covers it), and
+  // faded out over XJ from `until` (the next stretch starts there, on the same phase)
+  function segment(c, buf, when, offset, fadeIn, until) {
+    const ctx = st.ctx, s = ctx.createBufferSource(), g = ctx.createGain();
+    s.buffer = buf;
+    s.connect(g);
+    g.connect(c.gain);
+    if (fadeIn) { g.gain.setValueAtTime(0, when); g.gain.linearRampToValueAtTime(1, when + XJ); }
+    if (until != null) { g.gain.setValueAtTime(1, until); g.gain.linearRampToValueAtTime(0, until + XJ); }
+    s.start(when, Math.max(0, offset));
+    if (until != null) s.stop(until + XJ + 0.01);
+    const rec = { s, g, when, until, offset: Math.max(0, offset), fadeIn: !!fadeIn, role: buf === c.bufs.first ? 'first' : 'loop' };
+    s.onended = () => {
+      const i = c.segs.indexOf(rec);
+      if (i >= 0) c.segs.splice(i, 1);
+      try { s.disconnect(); g.disconnect(); } catch (e) { /* ignore */ }
     };
-    if (!p.song.loop) {
-      if (clk.done) return [];
-      mk(c.bufs.head, false).start(T, Math.max(0, zero + clk.e));
-    } else if (clk.cycle === 0 && clk.e < join) {
-      // the first pass, before the join: the head, then the steady cycle from where the head leaves off
-      mk(c.bufs.head, false).start(T, Math.max(0, zero + clk.e));
-      mk(c.bufs.loop, true).start(T + (join - clk.e), join - L);
-    } else {
-      // in the steady cycle: its asset begins at the loop start
-      mk(c.bufs.loop, true).start(T, Math.max(0, clk.pos - L));
+    c.segs.push(rec);
+    return rec;
+  }
+  // the steady cycles, each from the score's cycle boundary (c.horizon), scheduled one cycle ahead of `until`
+  function cycles(c, until) {
+    const song = c.player.song, f = c.fmt.loop, Pd = song.length - song.loopStart;
+    while (c.horizon != null && c.horizon < until) {
+      segment(c, c.bufs.loop, c.horizon, f.start / f.rate, true, c.horizon + Pd);
+      c.horizon += Pd;
     }
+  }
+  function keepCycling(c) {
+    clearTimeout(c.timer);
+    if (!c.player.song.loop || !st.ctx || st.ctx.state === 'closed') return;
+    const Pd = c.player.song.length - c.player.song.loopStart;
+    cycles(c, st.ctx.currentTime + Pd + 2);
+    // (idempotent, so an early wake while the context is suspended does no harm; a throttled timer still has a cycle)
+    c.timer = setTimeout(() => { if (c.segs.length) keepCycling(c); }, Math.min(Pd / 2, 20) * 1000);
+  }
+  // start the recording so that the score position at audio time T sounds at T; false if there is nothing to play
+  function startSources(c, T, until) {
+    const p = c.player, song = p.song, clk = clockAt(p, T);
+    const fr = c.fmt.first, s0 = fr.start / fr.rate, J = (fr.end - fr.start) / fr.rate; // J: the join, score seconds
+    const L = song.loopStart, D = song.length, Pd = D - L;
+    c.segs = c.segs || [];
+    c.horizon = null;
+    if (!song.loop) {
+      if (clk.done || clk.e >= J) return false;
+      segment(c, c.bufs.first, T, s0 + clk.e, false, null);
+    } else if (clk.cycle === 0 && clk.e < J) {
+      // the first pass from silence, then the steady cycle from the join (the same music there)
+      const Tj = T + (J - clk.e), lf = c.fmt.loop;
+      segment(c, c.bufs.first, T, s0 + clk.e, false, Tj);
+      segment(c, c.bufs.loop, Tj, lf.start / lf.rate + (J - L), true, T + (D - clk.e));
+      c.horizon = T + (D - clk.e);
+    } else {
+      // in the steady cycle (or the first pass beyond the join, which is the same music)
+      const ph = clk.pos - L, lf = c.fmt.loop;
+      segment(c, c.bufs.loop, T, lf.start / lf.rate + ph, false, T + (Pd - ph));
+      c.horizon = T + (Pd - ph);
+    }
+    if (until != null) cycles(c, until);
+    else keepCycling(c);
     note('start', { song: c.id, at: +T.toFixed(4), e: +clk.e.toFixed(4), pos: +clk.pos.toFixed(4), cycle: clk.cycle });
-    return srcs;
+    return true;
   }
   // a gain moved from where it is now to `to` over [T, T + XF] (retargeting a fade under way holds its value)
   function rampAt(param, to, T) {
@@ -421,8 +472,9 @@ RB.audio = RB.audio || {};
     c.want = to;
     if (to === 'ensemble') {
       trimNode(c);
-      if (!c.sources.length) c.sources = startSources(c, T);
-      if (!c.sources.length) { c.state = 'idle'; return; }
+      if (!c.segs || !c.segs.length) {
+        if (!startSources(c, T)) { c.state = 'idle'; return; }
+      }
       rampAt(c.gain.gain, 1, T);
       rampAt(p.out.gain, 0, T);
       rampAt(st.g.revGate.gain, 0, T);
@@ -452,15 +504,17 @@ RB.audio = RB.audio || {};
     }, ms);
   }
   function retarget(c, to) {
-    if (to === 'ensemble' && !c.sources.length) {
+    if (to === 'ensemble' && !(c.segs && c.segs.length)) {
       // the recording's sources were let go after a return: start them again on the clock
       if (!c.bufs) { c.state = 'idle'; prepare(c); return; }
     }
     handover(c, to);
   }
   function stopSources(c) {
-    for (const s of c.sources) { try { s.stop(); } catch (e) { /* ignore */ } try { s.disconnect(); } catch (e) { /* ignore */ } }
-    c.sources = [];
+    clearTimeout(c.timer);
+    for (const r of c.segs || []) { try { r.s.stop(); } catch (e) { /* ignore */ } try { r.s.disconnect(); r.g.disconnect(); } catch (e) { /* ignore */ } }
+    c.segs = [];
+    c.horizon = null;
   }
   // a cue ends (a song change, a stop, a one-shot's end): its recording fades with it, its warm Original says nothing
   function release(c, fade) {
@@ -472,41 +526,74 @@ RB.audio = RB.audio || {};
       c.gain.gain.cancelScheduledValues(now);
       c.gain.gain.setValueAtTime(c.gain.gain.value, now);
       c.gain.gain.linearRampToValueAtTime(0, now + f);
-      for (const s of c.sources) { try { s.stop(now + f + 0.02); } catch (e) { /* ignore */ } }
-      const g = c.gain, t = c.trim, srcs = c.sources;
-      setTimeout(() => { for (const s of srcs) { try { s.disconnect(); } catch (e) { /* ignore */ } } try { g.disconnect(); t.disconnect(); } catch (e) { /* ignore */ } }, (f + 0.2) * 1000);
+      clearTimeout(c.timer);
+      for (const r of c.segs || []) { try { r.s.stop(now + f + 0.02); } catch (e) { /* ignore */ } }
+      const g = c.gain, t = c.trim, segs = (c.segs || []).slice();
+      setTimeout(() => { for (const r of segs) { try { r.s.disconnect(); r.g.disconnect(); } catch (e) { /* ignore */ } } try { g.disconnect(); t.disconnect(); } catch (e) { /* ignore */ } }, (f + 0.2) * 1000);
     }
     // the warm Original was unheard: its room sends stop now, so nothing of it comes back through the open return
     if (c.active && ctx) {
       try { c.player.wet.gain.cancelScheduledValues(ctx.currentTime); c.player.wet.gain.setTargetAtTime(0, ctx.currentTime, 0.01); } catch (e) { /* ignore */ }
       if (st.g) { st.g.revGate.gain.cancelScheduledValues(ctx.currentTime); st.g.revGate.gain.setTargetAtTime(1, ctx.currentTime + 0.05, 0.05); }
     }
-    for (const r of c.fmt ? [c.fmt.head, c.fmt.loop] : []) { const h = r && P.cache.get(r.sha256); if (h && h.refs > 0) h.refs--; }
-    c.sources = [];
+    for (const r of c.fmt ? [c.fmt.first, c.fmt.loop] : []) { const h = r && P.cache.get(r.sha256); if (h && h.refs > 0) h.refs--; }
+    c.segs = [];
+    c.horizon = null;
     c.active = false;
     c.state = 'released';
   }
   // ---- offline: a recording through the game's own graph (calibration and tests) -----------------------------------
-  // Renders `seconds` of a song's Ensemble recording from score time `from` (the given decoded buffers, at their own
-  // rate) through the same mix graph as live play; resolves the rendered AudioBuffer (channels 0-1: the output).
+  // Renders `seconds` of a song's Ensemble recording from elapsed cue time `from` (decoded buffers {first, loop} in
+  // `bufs`; the entry and format given or the catalog's), every cycle scheduled up front, through the same mix graph
+  // as live play. Options:
+  //   original: the warm Original too, in phase, as live: mix 0 sounds the recording (the Original behind its output
+  //     gain and the room's gate), mix 1 the Original (the recording silent); handovers: [{at, to}] crossfades as live
+  //     (XF, linear, all three gains) at render times `at`;
+  //   raw: the recording's own output only (no graph, no trim): the scheduler's placement, for tests;
+  //   vol, duck: the user's volumes and the speech ducking, as live.
+  // Resolves the rendered AudioBuffer (2 channels).
   A.renderEnsembleOffline = function (id, bufs, seconds, opts) {
     opts = opts || {};
     const O = _.OAC(), song = _.getSong(id), entry = opts.entry || entryOf(id);
     if (!O || !song || !entry) return Promise.reject(new Error('cannot render ' + id));
     const sr = opts.sampleRate || 48000;
     const ctx = new O({ numberOfChannels: 2, length: Math.ceil(sr * seconds), sampleRate: sr });
-    const g = _.buildGraph(ctx, Object.assign({}, _.DEFAULT_VOL, opts.vol || {}), false);
-    g.out.connect(ctx.destination);
-    const fake = { song, anchor0: 0.05 - (opts.from || 0) };
-    const c = { entry, fmt: opts.fmt || entry.formats[0], bufs, player: fake, gain: ctx.createGain(), id };
-    c.gain.gain.value = 1;
-    const tr = ctx.createGain();
-    tr.gain.value = entry.trim || 1;
-    c.gain.connect(tr);
-    tr.connect(g.music);
+    const T = opts.start != null ? opts.start : 0.05, from = opts.from || 0;
+    const fake = { song, anchor0: T - from };
+    const c = { entry, fmt: opts.fmt || entry.formats[0], bufs, player: fake, gain: ctx.createGain(), id, segs: [] };
     const keep = st.ctx;
-    st.ctx = ctx; // (startSources reads the context)
-    try { startSources(c, 0.05); } finally { st.ctx = keep; }
+    st.ctx = ctx; // (the scheduler reads the context)
+    try {
+      if (opts.raw) {
+        c.gain.connect(ctx.destination);
+        startSources(c, T, seconds + 1);
+        opts.segments = c.segs.map((r) => ({ when: r.when, until: r.until, offset: r.offset, fadeIn: r.fadeIn, role: r.role }));
+        return ctx.startRendering();
+      }
+      const g = _.buildGraph(ctx, Object.assign({}, _.DEFAULT_VOL, opts.vol || {}), false);
+      g.out.connect(ctx.destination);
+      if (opts.duck) g.duck.gain.value = 0.3; // (music under speech, as A.duck)
+      const tr = ctx.createGain();
+      tr.gain.value = opts.trim != null ? opts.trim : entry.trim || 1;
+      c.gain.connect(tr);
+      tr.connect(g.music);
+      const mix = opts.mix == null ? 0 : +opts.mix;
+      c.gain.gain.value = 1 - mix;
+      g.revGate.gain.value = mix;
+      startSources(c, T, seconds + 1);
+      if (opts.original) {
+        const p = new _.Player(g, song, T - from, false);
+        p.out.gain.value = mix;
+        for (const h of opts.handovers || []) {
+          const e = h.to === 'ensemble';
+          for (const [prm, v] of [[c.gain.gain, e ? 1 : 0], [p.out.gain, e ? 0 : 1], [g.revGate.gain, e ? 0 : 1]]) {
+            prm.setValueAtTime(1 - v, h.at);
+            prm.linearRampToValueAtTime(v, h.at + XF);
+          }
+        }
+        p.pump(seconds);
+      }
+    } finally { st.ctx = keep; }
     return ctx.startRendering();
   };
 })(RB.audio);
