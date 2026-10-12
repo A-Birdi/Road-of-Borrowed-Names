@@ -359,7 +359,8 @@ export function install() {
       await T.idle(60000);
       for (const f of held) if (!S().flags[f]) dropped.add(f);
       held = Object.keys(S().flags).filter((f) => S().flags[f]);
-      if (S().flags[target]) return { ok: true, steps: i, log: opts.fullLog ? log : log.slice(-25) };
+      // (opts.until: or a condition holds, `quest.sb_lamp>=2` say, for a test that must stop at a quest's stage)
+      if (S().flags[target] || (opts.until && RB.state.test(S(), opts.until))) return { ok: true, steps: i, log: opts.fullLog ? log : log.slice(-25) };
       const here = RB.world.W.map.id;
       const sig = sigOf();
       let best = null;

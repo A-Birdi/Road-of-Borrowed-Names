@@ -4408,9 +4408,44 @@ save made from the book takes its thumbnail from a world picture at most three f
 them by elapsed time would keep their speed but at 15 draws a second rain would jump 32 px between pictures (strobing
 dots, not streaks), arguably worse in the margin; drawing every frame when weather is on would bring the cost back.
 If Robin finds the slowed margin weather undesirable on the real device, the options are those two or drawing on
-one frame in two. Pre-existing and unchanged: the per-draw step makes weather speed follow the display's refresh rate
-(a 144 Hz screen draws rain 2.4 times as fast as a 60 Hz one; under the book it is then 36 draws a second at 0.6 of
-the 60 Hz speed).
+one frame in two (Robin, on the review: keep this documented compromise). **A separate, deferred presentation issue,
+older than LP-1 and unchanged:** the per-draw step makes weather speed follow the display's refresh rate (a 144 Hz
+screen draws rain 2.4 times as fast as a 60 Hz one; under the book it is then 36 draws a second at 0.6 of the 60 Hz
+speed); registered in `docs/future/work/P17_CLOSURE.md` (open items), not part of LP-1.
+
+*The rest of the checks on d26ce74 (the guide fix).* U whole suite **53,333 passed, 0 failed**; validator no errors (its
+one warning, a lexicon conflict for 上下, is older); B `quest_guide` all pass, `cases` all pass, `book` 15/0, `ledger`
+32/32. B `quest_guide_audit` (E/Nao, the six-chapter route, the whole game): 55 moves of the followed quest, 51 pointed
+at beforehand, 3 not marked by design, **1 miss: `sb_lamp` 2→3 by `wb.ask` at `sb.post`**. The same run on 13fd5d6 and on
+2debb3c lists the same miss: it is older than LP-1 and the guide fix. That shows when it began, not that it is
+harmless, so it was traced (below) before the audit was changed.
+
+*The audit's one miss, traced (Robin's review).* A first change to the audit (74e4252) put the move down to the
+conversation the wrapper had been handed (`ctx.talk`) without checking that it ran; it is replaced, and its whole-game
+run (made while it was in place) is recorded only as that. The sequence, confirmed in a focused reproduction (B, new
+`tests/e2e/quest_guide_wrapped.mjs`, about 30 s): from Cinder Orchard's end (`F-ren-ch3_done`, continued from the
+title) the driver plays Snowbell to `sb_lamp` 1 (Yae at the inn); the player talks to Sōsuke once (his greeting; from
+then on a person who can be asked after others, `L.asks('sousuke', ['sb.post'])`, answers through "Have you seen…?",
+because his own conversation has been seen); the driver on to `sb_lamp` 2 (Hoshino: "ask Sōsuke at the post hut").
+Then, each case in a fresh context from that state, the player put across the post hut's counter from Sōsuke by the
+test and the talk itself the Enter key:
+1. the guidance's target: `sb.post`, Sōsuke (an npc target; his conversations include `sb.sousuke`);
+2. the person talked to: Sōsuke (`npc: sousuke`), which started the wrapper `wb.ask`, handed `sb.sousuke`;
+3. the wrapper's menu: Talk / Have you seen…? / Never mind; Talk chosen;
+4. the conversation that ran inside it: `sb.sousuke` alone (its letters activity and the ordering of Akari's
+   letters, answered by the test's automatic player with the game's own checkers);
+5. the transition: `sb_lamp` 2→3, during that conversation (`!quest sb_lamp 3` at its end).
+So the guidance pointed at the right person, and the miss was the audit's attribution, not the guidance. **The audit
+now** (`tests/e2e/guide_audit_hook.mjs`, shared by the whole-game audit and the reproduction) follows every scene run
+inside the one started from the world, with the quest's stage before and after each, and puts a move down to the
+scene that was running when it happened (the innermost whose own run saw the stage rise, else the scene started);
+nothing is credited to a conversation that did not run. A hit needs that scene among those the guidance pointed at
+and, for a person's conversation, the guidance pointing at that same person on that map. The reproduction's checks:
+A, Talk: the move put down to `sb.sousuke` in `wb.ask`, a hit; **B, negative control: the guidance's answer replaced
+by a target elsewhere (Hoshino at his house), the same move a miss**; C, "Have you seen…?" chosen: Sōsuke's
+conversation does not run, the quest does not move, nothing credited; D (a logic check on made-up records): the right
+person's conversation a hit, the same scene from another person, a move inside the wrapper itself, and the right
+person on another map, misses. **15/15**. The whole-game audit with this hook: see below.
 
 *Firefox, retried (19:5x UTC).* Still refused: Playwright 1.56.1's Firefox 1495 from `cdn.playwright.dev` (both
 paths) and `playwright.download.prss.microsoft.com` gets "CONNECT tunnel failed, response 403" from the environment's
