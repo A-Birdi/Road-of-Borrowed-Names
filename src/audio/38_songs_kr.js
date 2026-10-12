@@ -3,11 +3,12 @@
  * the Hundredth Tale. Notation: see 30_songs.js.
  *
  * Biwa-led throughout (the instrument of the travelling storytellers), slow and narrative: the storyteller's biwa
- * (biwa_tale), its sawari held back and struck in full only on a written accent (Robin, 2026-10-12: "a storyteller's
- * instrument with a forceful accent available"; the Hundredth Tale keeps the full biwa's riff), with a single bell at the
- * waystations: a rin struck once in a while, never a peal. Every one quotes the road motif; the vigil also Ren's
- * (the lamplighter's fourths), the boss also the Hush's. In the twelve-chapter ladder (C-22) the battle and boss
- * themes sit a step above Snowbell's and below Lanternfall's (tests/unit/audio_zones.test.mjs). */
+ * (biwa_tale), its sawari held back, a written accent struck with the bachi on the skin (Robin, 2026-10-12: "a
+ * storyteller's instrument with a forceful accent available"; on a second hearing, a fifth softer, the bars told
+ * evenly, and no accent left where one rang as a wrong note; the Hundredth Tale keeps the full biwa's riff), with a
+ * single bell at the waystations: a rin struck once in a while, never a peal. Every one quotes the road motif; the
+ * vigil also Ren's (the lamplighter's fourths), the boss also the Hush's. In the twelve-chapter ladder (C-22) the
+ * battle and boss themes sit a step above Snowbell's and below Lanternfall's (tests/unit/audio_zones.test.mjs). */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.audio = RB.audio || {};
 
@@ -56,7 +57,7 @@ RB.audio = RB.audio || {};
   });
 
   // ======================================================= THE SCRIPTORIUM CAVE
-  const CV_A = "1 - - - 3 - 2 - | 1 - - - - - . . | 5, - - - 7, - 1 - | 2 - - - - - . . | 3! - - - 4 - 3 - | 2 - 1 - 7, - - - | 6, - - - 7, - 1 - | 5, - - - - - . .";
+  const CV_A = "1 - - - 3 - 2 - | 1 - - - - - . . | 5, - - - 7, - 1 - | 2 - - - - - . . | 3 - - - 4 - 3 - | 2 - 1 - 7, - - - | 6, - - - 7, - 1 - | 5, - - - - - . .";
   const CV_A_CH = '1 6 5 7 3 7 6 5';
   const CV_B = "5 - - - - - - - | 3 - - - - - - - | 4 - - - - - - - | 2 - - - - - - - | 3 - - - - - - - | 1 - - - - - - - | 2 - - - 7, - - - | 1 - - - - - - -";
   const CV_B_CH = '1 6 4 7 3 6 7 1';
@@ -120,7 +121,7 @@ RB.audio = RB.audio || {};
   });
 
   // ======================================================= THE SHUTTERED HALL
-  const HL_A = "1 - - - 5, - - - | 6, - - - 4, - - - | 5, - - - 7, - 1 - | 2 - - - - - . . | 3! - - - 2 - 1 - | 7, - - - 6, - - - | 5, - - - 6, - 7, - | 1 - - - - - . .";
+  const HL_A = "1 - - - 5, - - - | 6, - - - 4, - - - | 5, - - - 7, - 1 - | 2 - - - - - . . | 3 - - - 2 - 1 - | 7, - - - 6, - - - | 5, - - - 6, - 7, - | 1 - - - - - . .";
   const HL_A_CH = '1 4 5 2 3 7 5 1';
   const HL_B = "5 - - - - - - - | .:8 | 3 - - - - - - - | .:8 | 4 - - - - - - - | .:8 | 2 - - - - - - - | .:8";
   const HL_B_CH = '1 1 3 3 4 4 5 5';
@@ -150,7 +151,7 @@ RB.audio = RB.audio || {};
   });
 
   // ============================================================ THE ROAD'S BATTLE
-  const BK_A = "1! - 5, - 1 - 3 - | 2 - 1 - 7, - 6, - | 5, - - - - - . . | 5,! - 3 - - 2 1 - | 2 - 3 - 4 - 5 - | 6! - 5 - 4 - 3 - | 2 - - - 7, - 2 - | 1 - - - - - . .";
+  const BK_A = "1 - 5, - 1 - 3 - | 2 - 1 - 7, - 6, - | 5, - - - - - . . | 5, - 3 - - 2 1 - | 2 - 3 - 4 - 5 - | 6 - 5 - 4 - 3 - | 2 - - - 7, - 2 - | 1 - - - - - . .";
   const BK_A_CH = '1 7 3 1 7 6 7 1';
   const BK_B = "3 - - - 5 - 4 - | 3 - - - - - . . | 6 - - - 5 - 4 - | 5 - - - - - . . | 1' - - - 7 - 6 - | 5 - - - 4 - 3 - | 4 - - - 2 - 7, - | 1 - - - - - . .";
   const BK_B_CH = '3 6 4 5 6 3 7 1';
@@ -162,10 +163,10 @@ RB.audio = RB.audio || {};
     title: 'Inkweaving — Told Three Ways',
     kind: 'battle',
     motifs: ['road'],
-    notes: 'Chapter 7 battle (E aeolian, 114; Snowbell\'s is 112, Lanternfall\'s 116). The storyteller\'s biwa leads: the tune told plainly and struck hard only where it leans (the opening, the road motif\'s entry, the climb\'s top; the C section\'s motif entries), the road motif in its middle; the 3+3+2 pulse on ōdaiko with a busier shime-daiko and the noh drums calling; a shamisen ostinato and koto eighths. B gives a lyrical shakuhachi line over a falling bowed bass (the version someone else tells); C turns phrygian, the pad a close cluster, the biwa throwing the road motif out with hard accents while the rin rings once (the waystation bell); B2 hands the shakuhachi\'s line to the biwa.',
+    notes: 'Chapter 7 battle (E aeolian, 114; Snowbell\'s is 112, Lanternfall\'s 116). The storyteller\'s biwa leads: the tune told evenly, bar by bar, the bachi leaning only on the C section\'s motif entries, the road motif in its middle; the 3+3+2 pulse on ōdaiko with a busier shime-daiko and the noh drums calling; a shamisen ostinato and koto eighths. B gives a lyrical shakuhachi line over a falling bowed bass (the version someone else tells); C turns phrygian, the pad a close cluster, the biwa throwing the road motif out with the bachi on its entries while the rin rings once (the waystation bell); B2 hands the shakuhachi\'s line to the biwa.',
     key: 'E', mode: 'aeolian', bpm: 114, loopFrom: 1,
     tracks: {
-      lead: { i: 'biwa_tale', o: 3, v: 0.7, rv: 0.22 },
+      lead: { i: 'biwa_tale', o: 3, v: 0.76, rv: 0.22 },
       shaku: { i: 'shakuhachi', o: 4, v: 0.64, rv: 0.25, pan: 0.12 },
       low: { i: 'bowed', o: 3, v: 0.56, rv: 0.25, pan: -0.15 },
       ost: { i: 'shamisen', o: 3, pat: true, v: 0.38, rv: 0.12, pan: -0.25 },

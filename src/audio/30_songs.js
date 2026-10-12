@@ -23,7 +23,8 @@
  *   instruments: pluck harp bell celesta toll glass flute bowed bass pad keys
  *                mallet choir
  *   Japanese:    shamisen biwa biwa_tale (the storyteller's biwa: the sawari
- *                held back, the full strike on a written accent 5!) koto
+ *                held back; a written accent 5! is the bachi struck hard
+ *                on the skin, the string and its tuning unchanged) koto
  *                koto_oshi (plucked a whole tone low and pressed up to the
  *                written note) shakuhachi shinobue sho rin
  *   Kinds of track:

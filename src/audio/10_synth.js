@@ -688,14 +688,20 @@ RB.audio = RB.audio || {};
   // The storyteller's biwa (the Keepers' Road, where it carries every tale): the same lute with the sawari held back.
   // A rounder string, a softer, shorter and higher buzz that colours the note instead of sustaining under it like a
   // reed (the full biwa's buzz, rung long through a band at 1.8 kHz, read as an oboe in this region's slow themes:
-  // Robin, 2026-10-12), and the plectrum's stroke on the skin that marks a teller's phrasing. A written accent (5!)
-  // is the forceful strike: the full biwa, sawari and all, there when a tale leans on a word.
+  // Robin, 2026-10-12), and the plectrum's stroke on the skin that marks a teller's phrasing. Softened by about a
+  // fifth on Robin's second hearing: its strike, string, buzz and bachi peaked a little above the full biwa's.
+  // A written accent (5!) is the forceful stroke a teller leans on: the bachi struck hard on the skin, the string
+  // at its usual level, its buzz and tuning the same. (It used to switch to the full biwa, whose sharper pitch drop and
+  // two-second buzz rang over the next note: "that singular bad pitch" at bar 5 of the cave and the Hall, and in the
+  // battle a full strike that seemed to sound under most notes. Robin, 2026-10-12.)
   const BIWA_TALE = {
-    mix2: 0.7, drop: 1.025, dropT: 0.06, q: 0.9, strike: 0.5, settle: 3, floor: 450, close: 0.05,
-    dec: 0.85, pk: 0.26, drive: 2.0, buzz: 0.24, buzzQ: 0.7, buzzF: 2600, buzzLen: 1.3,
-    click: 0.3, clickF: 1100, clickT: 0.012, body: 140, thump: 0.2,
+    mix2: 0.7, drop: 1.025, dropT: 0.06, q: 0.9, strike: 0.42, settle: 3, floor: 450, close: 0.05,
+    dec: 0.85, pk: 0.21, drive: 1.8, buzz: 0.19, buzzQ: 0.7, buzzF: 2600, buzzLen: 1.3,
+    click: 0.24, clickF: 1100, clickT: 0.012, body: 140, thump: 0.15,
   };
-  I.biwa_tale = (g, o, t, f, d, v, ac) => (ac ? I.biwa(g, o, t, f, d, v) : lute(g, o, t, f, d, v, BIWA_TALE));
+  const BIWA_TALE_AC = Object.assign({}, BIWA_TALE, { click: 0.4, clickT: 0.014, thump: 0.25 });
+  // an accent is written at 1.25: the bachi takes it all, the string stays as written
+  I.biwa_tale = (g, o, t, f, d, v, ac) => lute(g, o, t, f, d, ac ? v * 0.8 : v, ac ? BIWA_TALE_AC : BIWA_TALE);
 
   // Koto: thirteen plucked silk strings over a long wooden body. A rounded
   // core (triangle + octave) that rings long, a saw that is loud only at the

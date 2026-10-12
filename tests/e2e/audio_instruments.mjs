@@ -54,6 +54,7 @@ await page.waitForFunction(() => globalThis.RB && RB.audio && RB.audio._ && RB.a
 const VOICES = [
   ['pluck', 'inst', 62, 0.6, 0.8], ['flute', 'inst', 74, 1.2, 0.8], ['harp', 'inst', 62, 0.8, 0.8],
   ['shamisen', 'inst', 62, 0.6, 0.8], ['biwa', 'inst', 50, 1.0, 0.8], ['biwa_tale', 'inst', 50, 1.0, 0.8],
+  ['biwa_tale!', 'inst', 50, 1.0, 1.0], // the same note written with an accent (5!: velocity 1.25, the accent flag)
   ['koto', 'inst', 62, 1.0, 0.8], ['koto_oshi', 'inst', 62, 1.0, 0.8],
   ['shakuhachi', 'inst', 74, 1.2, 0.8], ['shinobue', 'inst', 86, 1.0, 0.8],
   ['sho', 'inst', 69, 2.0, 0.8], ['rin', 'inst', 81, 0.5, 0.8],
@@ -157,8 +158,10 @@ const res = await page.evaluate(async ([VOICES, EARLY]) => {
     dest.connect(ctx.destination);
     const t0 = 0.05;
     const f = midi != null ? _.mtof(midi) : 0;
+    // 'name!' plays the instrument's accent (the sequencer's 7th argument)
+    const inst = (gg, dd, tt) => (name.endsWith('!') ? _.inst[name.slice(0, -1)](gg, dd, tt, f, dur, vel, 1) : _.inst[name](gg, dd, tt, f, dur, vel));
     if (kind === 'perc') _.perc[name](g, dest, t0, vel, 0.5);
-    else _.inst[name](g, dest, t0, f, dur, vel);
+    else inst(g, dest, t0);
     const firstNote = nodes;
     for (const k of names) ctx[k] = saved[k];
     // a second note on another track strip of a throwaway context: the nodes
@@ -167,7 +170,7 @@ const res = await page.evaluate(async ([VOICES, EARLY]) => {
     const g2 = _.buildGraph(ctx2, { master: 1, music: 1, sfx: 1, voice: 1 }, false);
     const d2 = ctx2.createGain();
     d2.connect(ctx2.destination);
-    const play2 = () => (kind === 'perc' ? _.perc[name](g2, d2, 0.05, vel, 0.5) : _.inst[name](g2, d2, 0.05, f, dur, vel));
+    const play2 = () => (kind === 'perc' ? _.perc[name](g2, d2, 0.05, vel, 0.5) : inst(g2, d2, 0.05));
     play2();
     let n2 = 0;
     for (const k of names) ctx2[k] = function () { n2++; return proto[k].apply(this, arguments); };
@@ -203,6 +206,7 @@ const res = await page.evaluate(async ([VOICES, EARLY]) => {
     const r = {
       name, kind, midi, f: Math.round(f * 10) / 10, perNote, sharedNodes, renderMs: Math.round(renderMs),
       peak, rms: Math.sqrt(sum / x.length), nan,
+      lateRms: (() => { let q = 0, n = 0; for (let i = s0 + Math.floor(0.15 * SR); i < s0 + Math.floor(0.45 * SR) && i < x.length; i++) { q += x[i] * x[i]; n++; } return n ? Math.sqrt(q / n) : 0; })(),
       attackMs: onset >= 0 && at90 >= 0 ? (at90 - onset) * 5 : null,
       decay20: after(-20), decay40: after(-40),
       centroidEarly: Math.round(centroid(early, N)), centroidLate: Math.round(centroid(late, N)),
@@ -240,7 +244,7 @@ const cpu = await page.evaluate(async (VOICES) => {
       for (let i = 0; i < n; i++) {
         const t = 0.05 + i * 0.25;
         if (kind === 'perc') _.perc[name](g, g.music, t, vel, (i * 0.37) % 1);
-        else _.inst[name](g, g.music, t, _.mtof(midi + [0, 2, 4, 7][i % 4]), 0.25, vel);
+        else _.inst[name.replace('!', '')](g, g.music, t, _.mtof(midi + [0, 2, 4, 7][i % 4]), 0.25, vel, name.endsWith('!') ? 1 : 0);
       }
       const t0 = performance.now();
       await ctx.startRendering();
@@ -292,10 +296,16 @@ ok(S.hiLate > 0.05 && S.hiLate > PL.hiLate * 10, `shamisen: the sawari buzz keep
 ok(S.decay20 < K.decay20, `shamisen: drier than the koto (-20 dB in ${S.decay20}s vs ${K.decay20}s)`);
 ok(B.hiLate > 0.05 && B.hiLate > PL.hiLate * 10 && B.decay20 > S.decay20, `biwa: buzzing and longer than the shamisen (hi ${B.hiLate.toFixed(3)}, -20 dB ${B.decay20}s vs ${S.decay20}s)`);
 ok(B.centroidLate < S.centroidLate, `biwa: darker than the shamisen (centroid ${B.centroidLate} vs ${S.centroidLate} Hz)`);
-// the storyteller's biwa (the Keepers' Road): the same plucked lute with the sawari held back (a written accent plays
-// the full biwa above), so its buzz is well under the biwa's, and it still rings longer than the shamisen
-const BT = by.biwa_tale;
+// the storyteller's biwa (the Keepers' Road): the same plucked lute with the sawari held back, so its buzz is well
+// under the biwa's, and it still rings longer than the shamisen. Softened on Robin's second hearing, it strikes no
+// harder than the full biwa.
+const BT = by.biwa_tale, BA = by['biwa_tale!'];
 ok(BT.attackMs <= 12 && BT.hiLate < B.hiLate * 0.6 && BT.decay20 > S.decay20, `biwa_tale: plucked, its buzz held back (hi ${BT.hiLate.toFixed(3)} vs the biwa's ${B.hiLate.toFixed(3)}), still longer than the shamisen (-20 dB ${BT.decay20}s vs ${S.decay20}s)`);
+ok(BT.peak < B.peak && BT.lateRms < B.lateRms, `biwa_tale: softer than the full biwa (peak ${BT.peak.toFixed(3)} vs ${B.peak.toFixed(3)}; level late in the note ${BT.lateRms.toFixed(4)} vs ${B.lateRms.toFixed(4)})`);
+// its written accent is the bachi struck hard on the skin: a stronger stroke, the string, its tuning and its buzz the
+// same (it used to switch to the full biwa, whose buzz rang over the next note: Robin heard "that singular bad pitch")
+ok(BA.peak > BT.peak * 1.1 && Math.abs(BA.lateRms / BT.lateRms - 1) < 0.1, `biwa_tale accent: a harder stroke (peak ${BA.peak.toFixed(3)} vs ${BT.peak.toFixed(3)}), the string as loud late in the note (${BA.lateRms.toFixed(4)} vs ${BT.lateRms.toFixed(4)})`);
+ok(Math.abs(BA.centsEarly - BT.centsEarly) <= 4 && Math.abs(BA.centsLate) <= 8 && Math.abs(BA.hiLate / BT.hiLate - 1) < 0.15, `biwa_tale accent: the same tuning and buzz (early ${BA.centsEarly} vs ${BT.centsEarly} cents, settled ${BA.centsLate}; buzz ${BA.hiLate.toFixed(3)} vs ${BT.hiLate.toFixed(3)})`);
 ok(K.attackMs <= 10 && K.decay20 > 0.5, `koto: plucked attack and a long ring (attack ${K.attackMs} ms, -20 dB ${K.decay20}s)`);
 ok(K.centroidEarly > K.centroidLate * 1.3, `koto: bright attack that mellows (centroid ${K.centroidEarly} -> ${K.centroidLate} Hz)`);
 ok(KO.centsEarly <= -150 && Math.abs(KO.centsLate) <= 10, `koto_oshi: plucked a whole tone low and pressed up (early ${KO.centsEarly}, settled ${KO.centsLate} cents)`);

@@ -153,7 +153,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const wb = Q.back(look('wataru'), Math.round(clamp(s(180), 120, 230)), { light: 'r' });
       if (wb) c.drawImage(wb.cv, Math.round((G.lay === 'narrow' ? w * 0.08 : w * 0.14) - wb.ax), Math.round(G.vb + s(40) - wb.ay));
     },
-    focus(w, h, vb) { const G = geomFaults(w, h, vb); return G.deskY > vb ? { x: G.ox - 30, y: G.oy - 88, w: 60, h: 56 } : { x: G.led.x, y: G.oy - 88, w: G.tg.x + G.s(24) - G.led.x, h: G.led.y + G.led.h - (G.oy - 88) }; },
+    // her face, with the ledger and his tags when they clear the sheet (a short band keeps only her face)
+    focus(w, h, vb) { const G = geomFaults(w, h, vb); return G.led.y + G.led.h > vb ? { x: G.ox - 30, y: G.oy - 88, w: 60, h: 56 } : { x: G.led.x, y: G.oy - 88, w: G.tg.x + G.s(24) - G.led.x, h: G.led.y + G.led.h - (G.oy - 88) }; },
   };
 
   // ---- notice · face: the reverse, close on Wataru ------------------------------------------------------------

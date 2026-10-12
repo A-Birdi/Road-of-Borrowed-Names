@@ -57,6 +57,18 @@
 }
 @media (max-height: 440px) {
   .seq-view .acts { gap: 6px; } /* the buttons keep the 44-px touch target (--tap) here too */
+  /* landscape phones: the picture keeps the top of the screen. The sheet stops at 60 % (a longer line scrolls and
+     Next reads More), and the scene controls sit behind the labelled Scene button, so the row stays one line */
+  .dlg.in-seq .dlg-sheet { max-height: calc(60 * var(--vh)); }
+  .seq-ctrl .seq-more { display: inline-flex; }
+  .seq-ctrl .seq-g {
+    display: none; position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 2; flex-direction: column; align-items: stretch;
+    min-width: 11em; padding: 4px; margin: 0; border: 1px solid var(--paper-edge); border-radius: 6px; background: var(--paper);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  }
+  .seq-ctrl.open .seq-g { display: flex; }
+  .seq-ctrl .seq-g .dbtn { justify-content: flex-start; font-size: 0.86em; }
+  .dlg.in-seq .aux .dbtn { white-space: nowrap; }
 }
 /* the dev viewer's synthetic preview (src/ui/43z_sequence_dev.js) hides the page it was opened over */
 body.seq-dev-play #ui > :not(.seq-view) { visibility: hidden; }
