@@ -87,7 +87,7 @@ export default async (t) => {
   let r = sync(['run', '--config', 'gemini', '--kind', 'smoke', '--cast', gcast, '--out', out]);
   t.ok(r.status === 2 && /--authorised/.test(r.stderr), 'no run without an authorisation record');
   r = sync(['run', '--config', 'gemini', '--kind', 'smoke', '--cast', gcast, '--out', out, '--authorised', 'unit test']);
-  t.ok(r.status === 2 && /--max-chars/.test(r.stderr), 'no hosted run without a character (spending) bound');
+  t.ok(r.status === 2 && /--max-chars/.test(r.stderr), "no hosted run without a cumulative character (spending) bound");
   r = sync(['run', '--config', 'gemini', '--kind', 'smoke', '--cast', gcast, '--out', out, '--authorised', 'unit test', '--max-chars', '1000']);
   t.ok(r.status === 2 && /missing GEMINI_API_KEY/.test(r.stderr), 'no hosted run without the credential in the environment');
   r = sync(['run', '--config', 'voicevox', '--kind', 'matrix', '--cast', cast('voicevox', { styleId: 1 }, 'ok_test'), '--out', out, '--authorised', 'unit test', '--engine-url', 'http://127.0.0.1:9']);
