@@ -4300,7 +4300,28 @@ entirely, and Word help wrapped out of its box. The fix (`dd29582`, B, code revi
 - the shot reports her face alone as its focus when the ledger falls under the sheet.
 
 `sequence_manual --quick` then passed 64/0 (844×390: sheet top 131 of 293), and the new still shows Ōmi's face and
-Wataru's back above the sheet. Part 2/8 on `5265d36`: 16/16. Parts 3–8 and `--extra` run on `dd29582`.
+Wataru's back above the sheet. Part 2/8 on `5265d36`: 16/16.
+
+Part 3/8 on `dd29582`: 16/20. During the part I was rendering audio offline on the same four cores, which loaded the
+machine. Each failure was rerun alone and traced:
+- `battle_overlap` failed at 390×844 in two ways, both races in the test, the game right both times (`0ac81c9`):
+  - a Z sent while the last opening line was open landed after the response cards were armed and picked one. The
+    helper now backs out with "Choose a different response".
+  - after a load the loop drew 10 frames in 500 ms against "more than 10". The same count is now asked over a
+    second.
+
+  Once alone it failed at the first race; with the fix it passes, alone and alongside the run.
+- `pets_greet` measured the Greet together button at 40–42 px during the folio's opening animation (scale 0.965);
+  its CSS min-height is 44 px. It now measures once the book has opened (`5cd3533`): 17/0.
+- `lighthouse_top` stopped at the run's 40 minutes. Instrumented, it hung in step 5's `loadCampaign(5)`: its
+  synthetic campaign was a six-chapter one, and since the twelve-chapter edition shipped such a save opens the New
+  Game+ offer and waits for the player, as it should. The test now starts in `RB.edition.forNew()` (`711cc9e`):
+  106/106.
+- `pets` (tanuki: not restored within 3 s after a scene; a 30 s selector timeout) failed while the heavy renders
+  ran. Alone: 20/0, unchanged.
+
+Parts 4–8 and `--extra` run on `711cc9e`, which carries the rewritten final boss theme. No other heavy work runs
+beside them.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:
