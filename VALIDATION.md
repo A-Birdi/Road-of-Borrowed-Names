@@ -4281,8 +4281,51 @@ what, and what is still to run:
   region's own content (seven review passes); fixes applied in place (grammar, register, readings, pronouns, story
   slips such as Rin's map colours and a playbill naming Ren's private failure). Word help: every token the game shows
   was glossed before and after the lookup change and the differences read one by one.
-- *Still to run on the final build:* the ledger entries, the font subsets (`book_type`), the full unit run, the
-  complete browser run (`--part=1/3…3/3`, `--extra`), the twelve-chapter chain, the speed checks, the night sweep.
+- *Since then (2026-10-12):* the ledger entries (19,968 lines, 0 without an entry), the font subsets (`book_type`
+  60/0) and the recognizer data are done; the full unit run on `ba8a03d` passed 54,681/0 (129 suites, one per
+  process); `verbs` 159/0 and `hall_w3` 123/0 inside it.
+- *Still to run on the final build:* the complete browser run (in progress, `--part=k/8`, then `--extra`), the
+  twelve-chapter chain, the speed checks, the night sweep.
+
+**The complete browser run (`node tests/e2e/run.mjs --part=k/8`, then `--extra`), in progress.** Part 1/8 (on the
+built `index.html` of the time, before the music change; the log ended 03:42 UTC): 14/16. `world_view` failed at phone width because the camera
+was measured before it settled. The test now waits for it to rest (`f17dd27`) and passes alone. `sequence_manual
+--quick` failed at 844×390 (`ch2.notice/faults`, focal area to y 107 against a sheet top of 95). The same failure
+reproduced on the `83eb055` and `30d70cc` builds, so it predates this work. Its stills showed the real fault:
+with a long line on a landscape phone the dialogue sheet covered about 80 % of the screen, Ōmi was hidden
+entirely, and Word help wrapped out of its box. The fix (`dd29582`, B, code review of the stills):
+- in a sequence, on a landscape phone, the sheet stops at 60 % of the height (a longer line scrolls; Next reads
+  More);
+- the scene controls sit behind the Scene button there, as on phones;
+- the shot reports her face alone as its focus when the ledger falls under the sheet.
+
+`sequence_manual --quick` then passed 64/0 (844×390: sheet top 131 of 293), and the new still shows Ōmi's face and
+Wataru's back above the sheet. Part 2/8 on `5265d36`: 16/16. Parts 3–8 and `--extra` run on `dd29582`.
+
+**The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
+biwa:
+- the battle's full strikes sounded under most notes;
+- "that singular bad pitch" at 14 s in the cave and the Hall themes;
+- the opening notes of the Hall theme sounded off;
+- the voice could be "a 20% soften at most" because it reached too high.
+
+What was measured (scratch probe: each song's biwa part rendered alone through the game's graph, before dynamics;
+per note: peak in the first 120 ms, level over 150 ms, pitch drop at onset):
+- bar 5 is exactly 14.1 s at the cave's 68 bpm and 14.5 s at the Hall's 66: the one accent added there. It switched
+  to the full biwa, whose two-second buzz ran over the next note (in the Hall, F over E);
+- the version Robin heard peaked about 10 % above the old full biwa, which matches "reached too high";
+- the Hall's opening notes were in tune (their onset drop is about 20 cents and settles).
+
+The change:
+- an accent is now the bachi struck hard on the skin, with the string, tuning and buzz unchanged;
+- the voice is about a fifth softer;
+- the accents added in the cave, the Hall and the battle's A section are removed.
+
+After the change: area peaks are 22–24 % under the version heard, the battle's 22 % (its lead raised from 0.7 to
+0.76 so the cut stays near a fifth), and no accented note rises above 1.25× its neighbours' 150-ms level.
+`audio_instruments --standalone` passes with new claims: softer than the full biwa; the accent a harder stroke
+(peak 1.21×) with the same late level (within 10 %), tuning (within 4 cents) and buzz (within 15 %). `audio_songs`
+3233/0 and `audio_zones` 1020/0 (U). Robin has the third version on the listening page; Robin's ear decides.
 
 
 **The chapters chained from a new journey (XP79).** `PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve` on a

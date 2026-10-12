@@ -243,8 +243,13 @@
     run had failing (title_ledger, pages_ending/atlas_board, dialect_kansai, long_quests, practice_a_desk/layout,
     fishing, harmony_appearance, pets: two were real bugs, the Atlas board hiding Nao's wall card and Kōji's boat
     hiding the long road's fare). Tests `tests/unit/living_world.test.mjs`, `tests/e2e/living_world.mjs`,
-    `tests/e2e/verbs_journey.mjs`, `tests/unit/word_help.test.mjs`. Next: the ledger entries and the font subsets for
-    the new lines, the complete browser run on the final build, the chain redone, then P17's closure.
+    `tests/e2e/verbs_journey.mjs`, `tests/unit/word_help.test.mjs`. Since then: the ledger entries, the font subsets
+    and the recognizer done; the full unit run 54,681/0; the Keepers' Road's biwa reworked twice on Robin's ear (the
+    storyteller's biwa, `I.biwa_tale` in `src/audio/10_synth.js`: an accent is a harder bachi stroke, the voice a
+    fifth softer; third version on Robin's listening page, awaiting their ear; precedes VA-1, not a ship blocker);
+    sequences on landscape phones keep their picture (`src/styles/51_sequence.css`). Next: the complete browser run
+    (parts 1–2 of 8 done, 3–8 and `--extra` on `dd29582`: `node tests/e2e/run.mjs --part=k/8`), the chain redone, then P17's
+    closure.
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
