@@ -243,6 +243,49 @@ const faceNpc = (p) => p.evaluate(() => {
   await ctx.close();
 }
 
+// the New Game+ offer itself, raised by the game when a scene ends in a finished story (src/ui/66d_ngplus.js), answered
+// with real keys: Back is its safe answer (no New Game+, no Ledger), and the focused first button is the safe one
+// too; and a journey that is no longer the one being played is never offered (one begun within the offer's delay)
+{
+  const { p, ctx, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
+  const finished = (offered) => p.evaluate((offered) => {
+    const m = RB.content.maps['rw.road'], sp = m.spawn.default;
+    const s = RB.game.debugStart('rw.road', sp[0], sp[1], { comp: 'mio', edition: RB.edition.forNew(), flags: { departed: true, ch6_done: true, post: true, postgame: true, ngp_offered: offered } });
+    RB.game.settings.textSpeed = 'instant';
+    window.__journey = s;
+  }, offered);
+  // a scene of the road, played to its end with real keys: the story settles in the world
+  const playScene = async () => {
+    await p.evaluate(() => { RB.script.run('rw.road_marker'); });
+    for (let i = 0; i < 40 && await p.evaluate(() => RB.ui.dialogue.isOpen() || RB.game.mode() !== 'world'); i++) { await p.keyboard.press('Enter'); await p.waitForTimeout(150); }
+  };
+  await finished(false);
+  await p.waitForTimeout(500);
+  await playScene();
+  await p.waitForSelector('.csheet', { timeout: 4000 });
+  const text = await p.evaluate(() => document.querySelector('.csheet').textContent);
+  const focus = await p.evaluate(() => (document.activeElement || {}).textContent || '');
+  assert(/story is complete/i.test(text) && /Not now/.test(focus), 'when the story ends the game offers New Game+, its safe answer focused first: ' + text.slice(0, 120) + ' | focus: ' + focus);
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(400);
+  const back = await p.evaluate(() => ({ sheet: !!document.querySelector('.csheet'), mode: RB.game.mode(), ledger: RB.ui.menu.isOpen(), same: RB.game.s === window.__journey, offered: !!RB.game.s.flags.ngp_offered, ngplus: RB.game.s.ngplus || 0 }));
+  assert(!back.sheet && back.mode === 'world' && !back.ledger && back.same && back.offered && !back.ngplus, 'Back answers "Not now": the same journey goes on, no New Game+, no Ledger, and it is not asked again: ' + JSON.stringify(back));
+  await playScene();
+  await p.waitForTimeout(700);
+  assert(!(await p.evaluate(() => !!document.querySelector('.csheet'))), 'once answered, the offer is not made again');
+  // the offer pending for one journey (the scene just ended) while another journey begins: no offer over it
+  await finished(false);
+  await p.waitForTimeout(500);
+  await p.evaluate(() => { RB.script.run('rw.road_marker'); });
+  for (let i = 0; i < 40 && await p.evaluate(() => RB.ui.dialogue.isOpen()); i++) { await p.keyboard.press('Enter'); await p.waitForTimeout(60); }
+  await p.evaluate(() => { const m = RB.content.maps['rw.village'], sp = m.spawn.default; RB.game.debugStart('rw.village', sp[0], sp[1], { comp: 'mio', edition: RB.edition.forNew() }); });
+  await p.waitForTimeout(900);
+  const stale = await p.evaluate(() => ({ sheet: !!document.querySelector('.csheet'), text: (document.querySelector('.csheet') || {}).textContent || '' }));
+  assert(!stale.sheet, 'a journey begun while another\'s offer was pending is not offered that journey\'s New Game+: ' + stale.text.slice(0, 80));
+  assert(!errors.length, 'no page errors (New Game+ offer) ' + errors.join('; '));
+  await ctx.close();
+}
+
 await b.close(); srv.close();
 console.log(fail ? fail + ' failed' : 'all ok');
 process.exit(fail ? 1 : 0);

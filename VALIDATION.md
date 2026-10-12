@@ -4232,7 +4232,7 @@ scene is marked `!speakerless` on purpose (voices heard from a memory, nobody se
 mark. Thirteen walk-ins, all meant (Ren into the baths; the epilogue gatherings in four towns).
 
 **Not done.** The chapters' routes chained from a new journey in one run (each chapter's route has run from the fixture
-before it; the chain from the title screen has not). A person playing Chapter 12 and the endings.
+before it; the chain from a new journey has not). A person playing Chapter 12 and the endings.
 
 ## The expansion, P15 — phase end (P15h)
 
@@ -4257,6 +4257,88 @@ waited for ever in Manybridge at the boat-naming sheet of A Licence for the Open
 automated path (every other sheet of its kind has one). The hook now names the boat at once in an automated run (the
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
+
+## P18 — Plan B (Robin's C-89, 2026-10-12): four continuous campaigns and targeted coverage (in progress)
+
+Robin replaced the sixteen continuous campaigns of this validation milestone with four (F/Ren, E/Nao, I/Mio, A/Suzu)
+plus targeted tests (C-89 in `docs/future/plan/11_CONTRADICTIONS.md`). Evidence types are marked U (unit, node), B
+(browser, headless Chromium on a built `index.html`), R (code review).
+
+**How the continuous campaigns start (a correction).** `tests/e2e/pursue.mjs` starts every journey with
+`RB.game.debugStart` on the road at the prologue's end (`rw.road`), with the profile, companion wish and edition set
+there; it never plays the title screen, the creation wizard or the prologue. Five older entries above said "from the
+title screen's new journey"; they now say what was run (marked "corrected wording"). Those three parts have their own
+suites, played through the real interface: `title_ledger.mjs` (the title and the six-slot Ledger), `create.mjs` (the
+four creation steps, Back, phones and text sizes), `prologue.mjs` (the six shots, Next to the creation folio), with
+`sequence_manual.mjs` (manual advance in the prologue's sequences) and `ui.mjs` (journeys saved and reloaded). Inside a
+campaign the driver also bypasses things a player does: it stands next to its target (`RB.test.place`) and calls
+`RB.world.interact()`; it answers every language step with that step's own accepted answers (`RB.test.solveStep`, which
+checks them with the real checker for the run's profile only); battles are simulated with the real rules
+(`RB.combatSim`); activities are opened and cancelled; nothing is saved or loaded; nothing on screen is judged.
+
+**The launcher (B, on scratch builds of 5ded08e plus this change).** `node tests/e2e/matrix.mjs --twelve --pairs
+F/ren,E/nao,I/mio,A/suzu [parallel]` plays the twelve-chapter route: each run gets `PURSUE_EDITION=new` and the route
+`twelve` explicitly; `pursue.mjs` prints and asserts the edition (the journey's, `RB.edition.forNew()` and
+`RB.edition.TWELVE` must all be the twelve-chapter edition), refuses a fixture start for that route, and fails a run if
+a later milestone is already set when an earlier one is reached; `matrix.mjs` passes a run only when it reached exactly
+the seventeen milestones in order (ch1_done, ch2_done, mb1_done, mb2_done, ch3_done, ch4_done, kr_done, ch5_done,
+ko_done, cr_called, cr_passed, cr_done, yn_called, yn_vents_open, yn_kettle_settled, yn_done, ch6_done). `--fixtures`
+writes each milestone's state (`PURSUE_FIXTURES=1`). The full product (`--twelve` with no `--pairs`: FEIA × four
+companions, sixteen campaigns) and the old six-chapter matrix stay available; nothing runs them by itself. Negative
+controls, each run: without `PURSUE_EDITION=new` the route reports "journey 1, a new journey gets 2" and stops with
+NOT THE SHIPPED TWELVE-CHAPTER EDITION (exit 1, 0/17); with `PURSUE_FROM` it stops with NOT A WHOLE CAMPAIGN (exit 1);
+a run whose later milestone (ko_done) was set before Chapter 1 ended reports OUT OF ORDER and exits 1 (Chapter 1 itself
+was reached in 153 visits). Two earlier attempts at that last control stalled in Chapter 1 instead (presetting
+ch2_done changes Reedwake; any preset flag also makes the runner place the companion, so Ren's recruitment scene had no
+Ren): harness set-up, not the check.
+
+**Every tier of every task (U: `tests/unit/answer_sweep.test.mjs`, new).** The registries are enumerated from the
+content, not counted by hand: every object keyed by learning profile anywhere in `RB.content` is found (1,010 today, in
+20 registries) and must be a task judged here, a task another suite already sweeps at every tier, or text that varies
+by profile; anything else fails the test. Judged here, at each of F/E/I/A with the tier that profile actually gets
+(`RB.tasks.stepsOf`, `RB.activities.tier`, `RB.relay.optsAt`) and the game's own checkers (`RB.challenge.check` typed
+and handwritten, `RB.challenge.orderOk`, `RB.challenge.choicesFor`, `RB.forge`, `RB.relay.judge`):
+
+| Registry | Profile-keyed objects | Tier resolutions | Steps (by kind) | Accepted | Refused (negative controls) |
+|---|---|---|---|---|---|
+| challenges | 405 | 1,620 | 1,839 (choose 1,441, write 147, forge 124, order 123, listen 4) | 2,729 | 3,893 |
+| encounters (tasks) | 230 | 920 | 920 (choose 918, write 2) | 926 | 1,323 |
+| creatures' answer moves | 22 | 88 | 88 (choose 82, write 6) | 118 | 184 |
+| creatures' false promises (truth) | 30 | 120 | 120 (choose 116, write 4) | 142 | 229 |
+| activities (history questions) | 6 | 24 | 24 (choose) | 24 | 48 |
+| the Atlas's unmoored names | 10 | 40 | 40 (choose 30, write 10) | 90 | 110 |
+| the relay (both branches of conditional parts) | 16 | 40 | per part | 40 | 108 |
+| drills (one form for all) | — | 357 | 357 (choose 208, write 113, order 36) | 925 | 1,007 |
+| Foundations, a taught kana blanked | — | 13 | 13 (write) | 13 | 13 |
+
+Accepted: the answer and every accepted form, typed and handwritten; every accepted order; every accepted forged
+reply; a relay said faithfully. Refused: an empty reply; another task's answer in the same mode; every option the
+choice mode marks wrong, typed; a wrong arrangement; every forged reply that is not accepted; a relay with any one part
+overstated or understated. No profile fell back to another tier; no control was skipped. Swept at every tier elsewhere
+(named, not repeated): the letters, the Proofreader's Tray and the comparisons (`practice_b.test.mjs`, 37 objects), the
+fishing situations (`fishing.test.mjs`). Profile text (254 objects: creatures' telegraphs and slips, activity lines and
+hints, tellings, the Hall's plaques and cards, shells, the Atlas's door clues by `RB.atlas.doorClue`): every profile
+selects a line (1,048 selections; selection only). The test first proves on synthetic steps that it reports a broken
+accept list, an accept-everything judge, a choice marked wrong but accepted typed, a choose step with no wrong or no
+right option, an order step that accepts every order, and a listening step with no transcript; and with the real
+checker replaced by one that accepts everything it fails (1,411 problems), as it does with an order judge that accepts
+every order (159). `RB.challenge.orderOk` is the order step's judgement taken out of the sheet unchanged so the test
+uses the game's own (`src/ui/65_challenge.js`). Not covered by this test: whether the Japanese is natural (C-26
+review), layout, and learning records (`lang_answers`, `evidence`, `learn_prepare`, `practice_core` keep those). Whole
+unit suite with it: **53,267 passed, 0 failed**; validator no errors.
+
+**Found and fixed: a New Game+ offer for a journey no longer being played (B).** `verbs_journey.mjs` had failed its
+first test since before C-87's rollout (on 900efc5 and on the older scratch build alike): a confirmation covered a verb
+sheet's close button. It was the New Game+ offer, scheduled 400 ms after a scene settled in the previous test journey
+(a finished story, `kr_hall_lamp`'s gate), and raised over the next journey, which had begun within those 400 ms. In
+play the same would follow loading another journey within 400 ms of a story ending, and "Begin" would have started New
+Game+ from the earlier journey into the current slot. The delayed offer now checks that its journey is still the one
+being played (`src/ui/66d_ngplus.js`); `verbs_journey.mjs` also marks its synthetic finished stories as already offered,
+as `postgame`, `records` and `pages_ending` do. `play_ui.mjs` gained the real offer with real keys: a scene played to its
+end with Enter in a finished story raises "Your story is complete…" with "Not now" focused; Escape answers it (same
+journey, no New Game+, no Ledger) and it is not asked again; a journey begun while another's offer is pending is not
+offered it. That last check **failed on the build before the fix** (the old journey's offer appeared) and passes after:
+`play_ui` all ok, `verbs_journey` **5/5**.
 
 ## MT-1, the music performance: Original or Ensemble (Robin's MT-1, 2026-10-12)
 
@@ -4492,7 +4574,7 @@ After the change: area peaks are 22–24 % under the version heard, the battle's
 
 
 **The chapters chained from a new journey (XP79).** `PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve` on a
-copy of the working tree taken during P16 (its own `index.html`), profile F with Ren, from the title screen's new journey. One run
+copy of the working tree taken during P16 (its own `index.html`), profile F with Ren, from a new journey that `RB.game.debugStart` places on the road at the prologue's end (corrected wording: not through the title screen, see P18). One run
 reached **16 of the 17 legs**: Chapter 1 in 159 site visits, Chapter 2 in 51, Manybridge's first part (mb1_done) 194, its
 second (mb2_done) 239, Chapter 3 696, Chapter 4 93, the Keepers' Road (kr_done) 349, Chapter 5 100, Kotonoha (ko_done) 274,
 the Cloudroad's call 25, the pass 74, its end 4, Steamhollow's call 0 (already given), the vents 73, the Kettle 56, its end
@@ -4507,7 +4589,7 @@ journey has been driven from a new game to the ending through the game's own pla
 from that run's own state.
 
 **XP79 done: the twelve chapters in one uninterrupted run.** The same command on a clean export of 5a51943 (its own
-`index.html`, built to the same SHA-256 as the repository's), profile F with Ren, from the title screen's new journey
+`index.html`, built to the same SHA-256 as the repository's), profile F with Ren, from a new journey that `RB.game.debugStart` places on the road at the prologue's end (corrected wording: not through the title screen, see P18)
 to the ending without a break: all **17 legs**, **2,433 site visits in 65 minutes** (Chapter 1 159, Chapter 2 51,
 Manybridge 194 and 239, Chapter 3 696, Chapter 4 93, the Keepers' Road 349, Chapter 5 100, Kotonoha 274, the Cloudroad
 25, 74 and 4, Steamhollow 0, 73, 56 and 11, the Archive 35); flags post, postgame and ch6_done; **0 problems, 0 page
@@ -4602,8 +4684,7 @@ Scripts that only make captures, videos or contact sheets, the drivers and libra
 
 **The twelve chapters on the shipped build's own default (C-84, C-85).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs
 F ren twelve` (the journey takes the edition the build itself gives a new journey, `RB.edition.forNew()`, as the
-creation wizard does) on a clean export of 75875c6 with its own `index.html`, profile F with Ren, from the title
-screen's new journey: **all 17 legs, 2,433 site visits in 64 minutes (3,862 s), to the ending** (flags post, postgame,
+creation wizard does) on a clean export of 75875c6 with its own `index.html`, profile F with Ren, from a new journey that `RB.game.debugStart` places on the road at the prologue's end (corrected wording: not through the title screen, see P18): **all 17 legs, 2,433 site visits in 64 minutes (3,862 s), to the ending** (flags post, postgame,
 ch6_done); **0 problems, 0 page errors, nothing lost**; 293 interactions met (write 50, choose 219, order 12, forge 7,
 relay 5); every chapter's main quest done. The same legs and visit counts as XP79's run. It ran before light and
 shadow came in (below), so it is redone on the lit build.
@@ -4647,7 +4728,7 @@ overshot: "Cannot fast-forward to the past" in two of its tests, a harness margi
 
 **The twelve chapters on the lit build.** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on a clean export of
 38928f5 (light and shadow everywhere, the leak and shrub fixes; its own `index.html`, the repository's SHA-256), profile
-F with Ren, from the title screen's new journey: **all 17 legs, 2,433 site visits in 78 minutes (4,668 s; part of the
+F with Ren, from a new journey that `RB.game.debugStart` places on the road at the prologue's end (corrected wording: not through the title screen, see P18): **all 17 legs, 2,433 site visits in 78 minutes (4,668 s; part of the
 complete run shared the machine), to the ending; 0 problems, 0 page errors**; 293 interactions met; the same legs and
 visit counts as before the light. The only change after 38928f5 is when the renderer resizes (c14725e above).
 - Browser `world.mjs` (rewritten for the shipped light: the flag no longer needed, Off pixel-identical to every layer

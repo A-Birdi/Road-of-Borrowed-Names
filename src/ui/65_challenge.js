@@ -39,6 +39,11 @@ RB.challenge = (function () {
   // English with {漢字|かな} groups: the groups get their readings (plain English is unchanged)
   const enRuby = (t) => RB.learnUi.mixed(t);
 
+  // An order step's arrangement is right when its pieces read as the authored order or one of its alternatives.
+  function orderOk(step, arr) {
+    const norm = (a) => a.map(plain).join('');
+    return [step.answer].concat(step.alts || []).some((a) => norm(a) === norm(arr));
+  }
   // opts.handwritten: the text came from the writing pad, so characters that
   // are written with one shape (ロ/口, へ/ヘ…) count as one (RB.answers).
   function check(input, step, opts) {
@@ -517,10 +522,8 @@ RB.challenge = (function () {
         if (opts.onMistake) opts.onMistake({});
       }
       function evaluateOrder(arr) {
-        const norm = (a) => a.map(plain).join('');
-        const alts = [step.answer].concat(step.alts || []);
         if (PH) PH.submit('order');
-        if (alts.some((a) => norm(a) === norm(arr))) { res.given = { order: arr.slice(), mode: 'choice' }; success('choice'); return; }
+        if (orderOk(step, arr)) { res.given = { order: arr.slice(), mode: 'choice' }; success('choice'); return; }
         res.mistakes++;
         if (res.firstTry == null) res.firstTry = false;
         if (PH) PH.outcome('wrong');
@@ -737,5 +740,5 @@ RB.challenge = (function () {
     }
   }
 
-  return { run, runStep, practice, active: isActive, noteHelp, teachCard, check, choicesFor };
+  return { run, runStep, practice, active: isActive, noteHelp, teachCard, check, orderOk, choicesFor };
 })();

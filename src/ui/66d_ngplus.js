@@ -88,7 +88,9 @@ RB.ui.ngplus = (function () {
   }
   if (RB.bus) RB.bus.on('story:settled', (e) => {
     const s = RB.game && RB.game.s;
-    if (s && s.flags && s.flags.postgame && !s.flags.ngp_offered && RB.recordsUI.inCampaign(s) && e && e.mode === 'world') setTimeout(() => { if (RB.game.mode() === 'world') offer(s); }, 400);
+    // (only while that journey is still the one being played: one loaded or begun in the meantime is not offered
+    // another journey's New Game+)
+    if (s && s.flags && s.flags.postgame && !s.flags.ngp_offered && RB.recordsUI.inCampaign(s) && e && e.mode === 'world') setTimeout(() => { if (RB.game.mode() === 'world' && RB.game.s === s) offer(s); }, 400);
   });
   return { farewell, chooseSlot, begin, offer, fromOld };
 })();

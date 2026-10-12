@@ -6,7 +6,10 @@
 //   legs: "ch1_done@rw.@rw_mill>ch2_done@sg.@sg_main>…" (flag@mapPrefix@mainQuest)
 // The twelve chapters chained from a new journey (expansion P14, XP79): PURSUE_EDITION=2 with the legs of
 // LEGS12 below, e.g.  PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve; since the edition shipped (C-84),
-// PURSUE_EDITION=new takes the edition the build gives a new journey instead of naming one
+// PURSUE_EDITION=new takes the edition the build gives a new journey instead of naming one. 'twelve' with
+// PURSUE_EDITION=new is P18's launcher (matrix.mjs --twelve): it asserts the edition and the milestone order.
+// Every run starts from RB.game.debugStart, not from the title screen: the title, creation and prologue have their
+// own suites (title_ledger.mjs, create.mjs, prologue.mjs)
 // From a campaign fixture instead of a new campaign (expansion P08): PURSUE_FROM=<fixture.json> starts there, as the
 // save would load (RB.save.migrate), and PURSUE_EDITION=2 plays it in the twelve-chapter edition, e.g.
 //   PURSUE_FROM=tests/fixtures/campaign/F-ren-ch2_done.json PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren 'mb1_done@sg.|mb.@mb_main'
@@ -27,7 +30,10 @@ const LEGS12 = ['ch1_done@rw.@rw_mill', 'ch2_done@sg.@sg_main', 'mb1_done@sg.|mb
   // (repeatable scenes it counts as unseen) and never left; from yn_done the Archive's sites alone reach the end
   'ch6_done@sa.@sa_main'].join('>');
 const argv = process.argv.slice(2);
-if (argv[2] === 'twelve') argv[2] = LEGS12;
+// the twelve-chapter route (P18's launcher, matrix.mjs --twelve): its edition must be the twelve-chapter one, the one
+// the shipped build gives a new journey, and its milestones must come in this order (checked below)
+const TWELVE_ROUTE = argv[2] === 'twelve';
+if (TWELVE_ROUTE) argv[2] = LEGS12;
 const [profile = 'E', comp = 'none', legsArg = ALL, startMap = 'rw.road', sx = '3', sy = '9', flagList = '', wordList = ''] = argv;
 const fromFixture = process.env.PURSUE_FROM ? JSON.parse(fs.readFileSync(path.resolve(root, process.env.PURSUE_FROM), 'utf8')) : null;
 // PURSUE_EDITION=new: the edition this build gives a new journey (RB.edition.forNew(), as the creation wizard does)
@@ -56,7 +62,9 @@ await p.evaluate(async (a) => {
   } });
   const flags = {};
   for (const f of a.flagList.split(',').filter(Boolean)) flags[f] = true;
-  // (PURSUE_EDITION=2 with no fixture: a new journey of the twelve-chapter edition, from the title screen's start)
+  // (with no fixture: a new journey placed by RB.game.debugStart on the road at the prologue's end, with the edition
+  // asked for; the title screen, the creation wizard and the prologue are not played here: title_ledger.mjs,
+  // create.mjs and prologue.mjs play those through the real interface)
   const s = a.fixture ? RB.game.debugStart(a.fixture.map, a.fixture.x, a.fixture.y, {}) : RB.game.debugStart(a.startMap, +a.sx, +a.sy, Object.assign({ comp: fresh || a.comp === 'none' ? null : a.comp, profile: a.profile, flags }, a.edition ? { edition: a.edition === 'new' ? RB.edition.forNew() : a.edition } : {}));
   if (a.fixture) {
     // the fixture's campaign, loaded as its save would be, in place of the session's new one
@@ -74,13 +82,32 @@ await p.evaluate(async (a) => {
 }, { startMap, sx, sy, comp, profile, flagList, wordList, fixture: fromFixture, edition });
 const out = [];
 let ok = true;
-for (const leg of legs) {
+// the edition this journey actually got (asserted for the twelve-chapter route: PURSUE_EDITION=new must resolve to
+// the twelve-chapter edition the shipped build gives a new journey, and the journey must carry it)
+const ed = await p.evaluate(() => ({ journey: RB.game.s.edition, forNew: RB.edition.forNew(), twelve: RB.edition.TWELVE }));
+console.log('edition: journey ' + ed.journey + ', a new journey gets ' + ed.forNew + ' (twelve-chapter = ' + ed.twelve + ')');
+if (TWELVE_ROUTE && !(ed.journey === ed.twelve && ed.forNew === ed.twelve && edition === 'new')) {
+  console.log('NOT THE SHIPPED TWELVE-CHAPTER EDITION: the twelve-chapter route needs PURSUE_EDITION=new on a build that gives new journeys the twelve-chapter edition');
+  ok = false;
+}
+// the route is a whole campaign from its start: a fixture would begin it part-way through
+if (TWELVE_ROUTE && fromFixture) { console.log('NOT A WHOLE CAMPAIGN: the twelve-chapter route starts a new journey, not PURSUE_FROM'); ok = false; }
+const order = [];
+for (const leg of ok ? legs : []) {
   const t1 = Date.now();
   const r = await p.evaluate((leg) => RBDrive.pursue(leg.flag, { prefix: leg.prefix, main: leg.main, max: 900, fullLog: !!leg.fullLog }), leg).catch(async (e) => ({ ok: false, fail: String(e), map: await p.evaluate(() => RB.world.W.map.id).catch(() => null),
     // what was running when the driver stopped: the last scenes and any open activity
     last: await p.evaluate(() => ({ ran: RBDrive.ran.slice(-15), mode: RB.game.mode(), activity: RB.activity && RB.activity.active() ? RB.activity.active().kind : null })).catch(() => null) }));
   out.push({ leg: leg.flag, ok: r.ok, steps: r.steps, seconds: Math.round((Date.now() - t1) / 1000), fail: r.fail, map: r.map, last: r.ok ? undefined : r.log });
   console.log((r.ok ? 'reached ' : 'STUCK   ') + leg.flag + ' in ' + r.steps + ' site visits (' + Math.round((Date.now() - t1) / 1000) + ' s)');
+  // the milestone sequence: on reaching a leg, no later leg's milestone may already be set (nothing reached out of
+  // order or skipped ahead)
+  if (r.ok) {
+    const later = legs.slice(legs.indexOf(leg) + 1).map((l) => l.flag);
+    const early = await p.evaluate((fl) => fl.filter((f) => RB.game.s.flags[f]), later);
+    order.push(leg.flag);
+    if (early.length) { ok = false; console.log('OUT OF ORDER: on reaching ' + leg.flag + ', later milestones already set: ' + early.join(', ')); }
+  }
   // S7 (expansion): with PURSUE_FIXTURES=1, the campaign as it stands at each milestone becomes a state fixture
   // (tests/fixtures/campaign/), the real state a player would have there, for tests that start mid-story
   if (r.ok && process.env.PURSUE_FIXTURES) {
@@ -127,6 +154,8 @@ console.log('companion actions taken: ' + JSON.stringify(fin.compActs));
 console.log('interactions met: ' + JSON.stringify(await p.evaluate(() => RB.meter.report(RB.game.s))));
 const lost = fin.battles.filter((x) => !x.endsWith(':win'));
 if (comp !== 'none' && fin.comp !== comp) { ok = false; console.log('companion ' + fin.comp + ' is not the requested ' + comp); }
+if (order.length !== legs.length) ok = false;
+console.log('milestones reached in order: ' + order.length + '/' + legs.length + (order.length ? ' (' + order.join(' > ') + ')' : ''));
 console.log(JSON.stringify({ profile, comp: fin.comp, seconds: Math.round((Date.now() - t0) / 1000), map: fin.map, flags: fin.flags, battles: fin.battles.length, lost, problems: fin.problems, pageErrors: errors.slice(0, 5), quests: fin.quests }, null, 1));
 await b.close(); srv.close();
 process.exit(ok && !fin.problems.length && !errors.length && !lost.length ? 0 : 1);

@@ -629,6 +629,31 @@ matrix, when this is implemented".
   (`tools/music/ensemble/verify.mjs`), and the existing audio suites as regressions.
 - **Status:** applied; `tests/e2e/matrix.mjs` says so in its header.
 
+### C-89 · P18: four continuous campaigns and targeted coverage (Plan B)
+**Decided** (2026-10-12). Robin: "Adopt Plan B for P18: four continuous twelve-chapter campaigns—F/Ren, E/Nao, I/Mio
+and A/Suzu—plus the targeted coverage you described. This replaces the requirement for sixteen continuous campaigns
+for this validation milestone."
+- The four campaigns run through `tests/e2e/matrix.mjs --twelve --pairs …`, which passes the shipped edition and the
+  twelve-chapter route explicitly and asserts the edition and the seventeen milestones in order. The sixteen-run
+  product stays available and is not run automatically.
+- The sixteen companion × profile naming combinations (`sa2.name_<companion>`, Chapter 12) are focused tests: each
+  starts from a fresh copy of that companion's own genuinely captured pre-Archive state, its Japanese profile changed
+  with the real Settings control or the production handler it calls (and checked before the interaction); the naming
+  scene entered through its normal trigger and answered through the real interface; the result and what follows
+  checked. No success flags or prerequisites set by hand, no change of companion, no fixture reused after another case
+  has completed the scene. They are described as focused tests at the selected profile, not as proof that the
+  campaign before them was played at that profile.
+- Also: every tier of every answer-bearing registry swept with the game's checkers and negative controls (the content
+  is enumerated, not counted by hand); the profile-dependent narration's selection and rendering checked directly; the
+  existing focused suites kept (wrong answers, help, learning records, the Living World, separations and reunions,
+  persistence, optional content, input, presentation, audio).
+- Evidence names its build and test revisions and fixture provenance; runs use fixed builds; a later fix reruns what
+  it affects and says what older evidence still holds. Not to be called "sixteen full campaigns passed",
+  native-reviewed Japanese, or real-device validation. A stalled or incomplete campaign stays incomplete until
+  resolved; no assertion is weakened to pass.
+- C-88 stands (Original only); the voice-work order and other authorisations are unchanged.
+- **Status:** in progress (VALIDATION.md "P18 — Plan B").
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first

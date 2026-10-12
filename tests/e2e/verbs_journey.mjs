@@ -52,6 +52,8 @@ async function journey(p, id, o) {
       else if (/^[A-Za-z_]\w*$/.test(t)) flags[t] = true;
     }
     for (const mid of Object.keys(RB.content.maps)) for (const ev of RB.content.maps[mid].onEnter || []) flags['enter:' + mid + ':' + ev.scene] = true;
+    // a journey after the story has had its one New Game+ offer, made when the story ended (src/ui/66d_ngplus.js)
+    if (flags.postgame) flags.ngp_offered = true;
     const m = RB.maps.compile(at.map);
     let f = null;
     for (const [dx, dy, dir] of [[0, 1, 'up'], [-1, 0, 'right'], [1, 0, 'left'], [0, -1, 'down']]) {
