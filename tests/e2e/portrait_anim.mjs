@@ -446,11 +446,13 @@ for (const v of [
   { name: 'desktop 1280×800 @1.5', viewport: { width: 1280, height: 800 }, dpr: 1.5, want: 128 },
   { name: 'desktop 1280×800 @1.25 (kept)', viewport: { width: 1280, height: 800 }, dpr: 1.25, want: 116 },
   { name: 'short landscape 844×390 @3', viewport: { width: 844, height: 390 }, dpr: 3, want: 96 },
-  { name: 'phone 390×844 @3', viewport: { width: 390, height: 844 }, dpr: 3, want: 64 },
-  { name: 'phone 390×844 @2 (kept)', viewport: { width: 390, height: 844 }, dpr: 2, want: 64 },
-  { name: 'phone 390×844 @1 (the phone layout never grows: kept)', viewport: { width: 390, height: 844 }, dpr: 1, want: 64 },
-  { name: 'phone 412×915 @2.625 (kept)', viewport: { width: 412, height: 915 }, dpr: 2.625, want: 64 },
-  { name: 'narrow window 560×800 @1 (kept)', viewport: { width: 560, height: 800 }, dpr: 1, want: 64 },
+  // (below 600 px the book's dialogue sheet runs the full width and the portrait is a small picture pinned on the
+  // paper beside the name: 48 CSS px, src/styles/90_book.css, U05/U06)
+  { name: 'phone 390×844 @3 (the pinned portrait)', viewport: { width: 390, height: 844 }, dpr: 3, want: 48 },
+  { name: 'phone 390×844 @2 (kept)', viewport: { width: 390, height: 844 }, dpr: 2, want: 48 },
+  { name: 'phone 390×844 @1 (the phone layout never grows: kept)', viewport: { width: 390, height: 844 }, dpr: 1, want: 48 },
+  { name: 'phone 412×915 @2.625 (kept)', viewport: { width: 412, height: 915 }, dpr: 2.625, want: 48 },
+  { name: 'narrow window 560×800 @1 (kept)', viewport: { width: 560, height: 800 }, dpr: 1, want: 48 },
 ]) {
   const { p, errors } = await page(b, url, { viewport: v.viewport, dpr: v.dpr });
   await setup(p, 'mio');

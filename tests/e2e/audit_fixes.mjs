@@ -40,12 +40,23 @@ await test('letters: Translate on the first letter does not mark the next one as
   await spy(p);
   await p.evaluate(() => { RB.activities.run('co.a_letters'); }); // (not awaited: it resolves when the activity ends)
   await p.waitForSelector('.lsheet.activity [data-tr]');
-  const tos = await p.evaluate(() => RB.content.activities['co.a_letters'].letters.map((l) => l.to));
+  // the letters come dealt (RB.learnUi.deal, task #205): the recipient is the shown letter's, found by its text
+  const shownTo = () => p.evaluate(() => {
+    const flat = (el) => el.textContent.replace(/\s+/g, '');
+    const shown = flat(document.querySelector('.lsheet.activity .letter-jp'));
+    const txt = (jp) => { const d = document.createElement('div'); d.innerHTML = RB.ui.jhtml(jp); return flat(d); };
+    const cands = (t) => (t.jp ? [t.jp] : Object.values(t).filter((v) => v && v.jp).map((v) => v.jp));
+    const L = RB.content.activities['co.a_letters'].letters.find((x) => cands(x.text).some((jp) => txt(jp) === shown));
+    return L && L.to;
+  });
+  const first = await shownTo();
+  assert(first, 'the shown letter is one of the activity\'s letters');
   await p.click('.lsheet.activity [data-tr]');
-  await p.click('.lsheet.activity [data-to="' + tos[0] + '"]');
+  await p.click('.lsheet.activity [data-to="' + first + '"]');
   await p.click('.lsheet.activity [data-next]');
   await p.waitForSelector('.lsheet.activity [data-tr]');
-  await p.click('.lsheet.activity [data-to="' + tos[1] + '"]');
+  const second = await shownTo();
+  await p.click('.lsheet.activity [data-to="' + second + '"]');
   const recs = await p.evaluate(() => window.__recs.filter((r) => r.ids.some((i) => i.startsWith('c:co_letter'))));
   assert(recs.length === 2, 'two letters recorded: ' + JSON.stringify(recs));
   assert(recs[0].assisted === true && recs[1].assisted === false, 'only the translated letter is assisted: ' + JSON.stringify(recs));
