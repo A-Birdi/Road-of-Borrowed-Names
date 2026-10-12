@@ -4022,7 +4022,7 @@ canvas.cm-art.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 /* a kept history line: pressed, with a vermilion mark (not colour alone: the label reads Kept) */
 .pbtn.hkeep[aria-pressed="true"] { background: var(--paper-2); border-color: var(--vermilion); box-shadow: inset 0 -3px 0 var(--vermilion); font-weight: 600; }
 .pbtn.hkeep[aria-pressed="true"] svg { color: var(--vermilion); fill: rgba(168, 62, 39, 0.28); }
-.pbtn.hkeep { align-self: start; }
+.pbtn.hkeep { align-self: start; min-height: var(--tap, 44px); min-width: var(--tap, 44px); } /* a full touch target, in the book's history too */
 /* Mastery and What I can do (src/ui/66b_mastery.js): stars side by side, none above another; never red */
 .ms-note { font-size: 0.92em; }
 .ms-stars { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0; }
@@ -5667,6 +5667,9 @@ body.book-ui .dlg-keep {
 body.book-ui .dlg-keep:hover { background: rgba(193, 138, 42, 0.12); }
 body.book-ui .dlg-keep.kept { background: none; box-shadow: inset 0 -3px 0 var(--vermilion); }
 body.book-ui .dlg.has-keep:not(.narration):not(.noname) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 18px), 50px); }
+/* a narrator's line (or one with no name shown) has no speaker's row above it: it starts below Keep too, or a long
+   line would run under it (at 200 % text on a phone it did) */
+body.book-ui .dlg.has-keep.narration .txt, body.book-ui .dlg.has-keep.noname .txt { padding-top: calc(var(--tap, 44px) + 8px); }
 body.book-ui .dlg .who .nm { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.06em; }
 body.book-ui .dlg:not(.narration):not(.noname) .txt { padding-top: calc(var(--who-h, 1.5em) + 18px); }
 body.book-ui .dlg .txt { font-family: var(--type-latin-reading); }
@@ -5689,6 +5692,12 @@ body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; backgrou
   body.book-ui .dlg.has-keep:not(.narration):not(.noname) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 14px), 50px); }
   body.book-ui .dlg:not(.noportrait):not(.narration) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 14px), 68px); }
   body.book-ui .dlg-keep { margin-right: 2px; }
+  /* the speaker's name, beside the pinned portrait, leaves Keep its room (it starts 70 px in, not at the edge) */
+  body.book-ui .dlg.has-keep:not(.noportrait):not(.narration) .dlg-tab { max-width: calc(100% - 70px - 6.4em); }
+  /* at large text there is no room for Keep's word on a phone: its mark alone, still a 44 px button with its name */
+  html.text-large body.book-ui .dlg-keep { padding: 0; }
+  html.text-large body.book-ui .dlg-keep .kl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  html.text-large body.book-ui .dlg.has-keep:not(.noportrait):not(.narration) .dlg-tab { max-width: calc(100% - 70px - var(--tap, 44px) - 14px); }
 }
 
 /* ---- flat: the same type and pages, without texture, depth or motion ----------------------------------------- */
@@ -47274,9 +47283,10 @@ RB.worldLook = (function () {
       c.fillStyle = st.night ? 'rgba(70,84,150,0.14)' : 'rgba(255,214,170,0.1)';
       c.fillRect(0, 0, bw, bh);
     } else if (st.sun) {
-      const sun = st.sun, k = st.k;
+      // from a height (a deck over the ground far below) the grade is half: the far ground keeps its own colours
+      const sun = st.sun, k = st.k * (m.def && m.def.surround ? 0.5 : 1);
       c.globalCompositeOperation = 'overlay';
-      c.fillStyle = 'rgba(' + sun.key + ',' + (sun.grade * (0.4 + 0.6 * k)).toFixed(3) + ')';
+      c.fillStyle = 'rgba(' + sun.key + ',' + (sun.grade * (0.4 + 0.6 * k) * (m.def && m.def.surround ? 0.5 : 1)).toFixed(3) + ')';
       c.fillRect(0, 0, bw, bh);
       c.globalCompositeOperation = 'source-over';
       const g = c.createLinearGradient(0, 0, bw, bh);
@@ -47432,6 +47442,9 @@ RB.worldLook = (function () {
   }
   function haze(c, m, env, st) {
     if (!st || !st.sun) return;
+    // not from a height (a deck over the ground far below, src/engine/61_below.js): the ground below already has its
+    // own distance, and a sunlit haze there washes the sea out
+    if (m.def && m.def.surround) return;
     const sun = st.sun, k = st.k, bw = env.bw, bh = env.bh, R = Math.hypot(bw, bh) * 0.55;
     c.save();
     c.globalCompositeOperation = 'screen';
@@ -47677,7 +47690,8 @@ RB.worldKit = (function () {
     // the tone field on a 2-px grid: broad sunlit and shaded patches, a finer clumping inside them (the same values
     // as vnoise, from lattices computed once for the layer, and only where there is grass)
     const N52 = lattice(52, 501, W, H), N16 = lattice(16, 502, W, H), N11 = lattice(11, 78, W, H), N4 = lattice(4, 79, W, H);
-    const PAVE = B.pave ? rgb(B.pave) : null, RIM = [34, 30, 44];
+    // (a deck high over the ground, such as the lighthouse's top, keeps its own stone)
+    const PAVE = B.pave && !(m.def && m.def.surround) ? rgb(B.pave) : null, RIM = [34, 30, 44];
     const isRoad = (tx, ty) => tileAt(tx, ty).id === 'road';
     // grass that is a lawn, not a lone planter or a tree's square set in the paving (the creep would smear it)
     const lawn = (tx, ty) => {

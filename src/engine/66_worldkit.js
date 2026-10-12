@@ -106,7 +106,8 @@ RB.worldKit = (function () {
     // the tone field on a 2-px grid: broad sunlit and shaded patches, a finer clumping inside them (the same values
     // as vnoise, from lattices computed once for the layer, and only where there is grass)
     const N52 = lattice(52, 501, W, H), N16 = lattice(16, 502, W, H), N11 = lattice(11, 78, W, H), N4 = lattice(4, 79, W, H);
-    const PAVE = B.pave ? rgb(B.pave) : null, RIM = [34, 30, 44];
+    // (a deck high over the ground, such as the lighthouse's top, keeps its own stone)
+    const PAVE = B.pave && !(m.def && m.def.surround) ? rgb(B.pave) : null, RIM = [34, 30, 44];
     const isRoad = (tx, ty) => tileAt(tx, ty).id === 'road';
     // grass that is a lawn, not a lone planter or a tree's square set in the paving (the creep would smear it)
     const lawn = (tx, ty) => {

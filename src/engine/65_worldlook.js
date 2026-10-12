@@ -668,9 +668,10 @@ RB.worldLook = (function () {
       c.fillStyle = st.night ? 'rgba(70,84,150,0.14)' : 'rgba(255,214,170,0.1)';
       c.fillRect(0, 0, bw, bh);
     } else if (st.sun) {
-      const sun = st.sun, k = st.k;
+      // from a height (a deck over the ground far below) the grade is half: the far ground keeps its own colours
+      const sun = st.sun, k = st.k * (m.def && m.def.surround ? 0.5 : 1);
       c.globalCompositeOperation = 'overlay';
-      c.fillStyle = 'rgba(' + sun.key + ',' + (sun.grade * (0.4 + 0.6 * k)).toFixed(3) + ')';
+      c.fillStyle = 'rgba(' + sun.key + ',' + (sun.grade * (0.4 + 0.6 * k) * (m.def && m.def.surround ? 0.5 : 1)).toFixed(3) + ')';
       c.fillRect(0, 0, bw, bh);
       c.globalCompositeOperation = 'source-over';
       const g = c.createLinearGradient(0, 0, bw, bh);
@@ -826,6 +827,9 @@ RB.worldLook = (function () {
   }
   function haze(c, m, env, st) {
     if (!st || !st.sun) return;
+    // not from a height (a deck over the ground far below, src/engine/61_below.js): the ground below already has its
+    // own distance, and a sunlit haze there washes the sea out
+    if (m.def && m.def.surround) return;
     const sun = st.sun, k = st.k, bw = env.bw, bh = env.bh, R = Math.hypot(bw, bh) * 0.55;
     c.save();
     c.globalCompositeOperation = 'screen';

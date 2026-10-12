@@ -398,6 +398,9 @@ body.book-ui .dlg-keep {
 body.book-ui .dlg-keep:hover { background: rgba(193, 138, 42, 0.12); }
 body.book-ui .dlg-keep.kept { background: none; box-shadow: inset 0 -3px 0 var(--vermilion); }
 body.book-ui .dlg.has-keep:not(.narration):not(.noname) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 18px), 50px); }
+/* a narrator's line (or one with no name shown) has no speaker's row above it: it starts below Keep too, or a long
+   line would run under it (at 200 % text on a phone it did) */
+body.book-ui .dlg.has-keep.narration .txt, body.book-ui .dlg.has-keep.noname .txt { padding-top: calc(var(--tap, 44px) + 8px); }
 body.book-ui .dlg .who .nm { font-family: var(--type-latin-display); font-variant: small-caps; letter-spacing: 0.06em; }
 body.book-ui .dlg:not(.narration):not(.noname) .txt { padding-top: calc(var(--who-h, 1.5em) + 18px); }
 body.book-ui .dlg .txt { font-family: var(--type-latin-reading); }
@@ -420,6 +423,12 @@ body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; backgrou
   body.book-ui .dlg.has-keep:not(.narration):not(.noname) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 14px), 50px); }
   body.book-ui .dlg:not(.noportrait):not(.narration) .txt { padding-top: max(calc(var(--who-h, 1.5em) + 14px), 68px); }
   body.book-ui .dlg-keep { margin-right: 2px; }
+  /* the speaker's name, beside the pinned portrait, leaves Keep its room (it starts 70 px in, not at the edge) */
+  body.book-ui .dlg.has-keep:not(.noportrait):not(.narration) .dlg-tab { max-width: calc(100% - 70px - 6.4em); }
+  /* at large text there is no room for Keep's word on a phone: its mark alone, still a 44 px button with its name */
+  html.text-large body.book-ui .dlg-keep { padding: 0; }
+  html.text-large body.book-ui .dlg-keep .kl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  html.text-large body.book-ui .dlg.has-keep:not(.noportrait):not(.narration) .dlg-tab { max-width: calc(100% - 70px - var(--tap, 44px) - 14px); }
 }
 
 /* ---- flat: the same type and pages, without texture, depth or motion ----------------------------------------- */

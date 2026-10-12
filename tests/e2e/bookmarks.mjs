@@ -79,6 +79,13 @@ async function startScene(p, o) {
 const lineNow = (p) => p.evaluate(() => (document.querySelector('.dlg .main') || {}).textContent || '');
 const R = (p, sel) => p.evaluate((q) => { const e = document.querySelector(q); if (!e || !e.offsetParent) return null; const r = e.getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, sel);
 const meet = (a, c) => a && c && a.l < c.r - 0.5 && c.l < a.r - 0.5 && a.t < c.b - 0.5 && c.t < a.b - 0.5;
+// the dialogue's words as drawn (each line of each text run): what Keep must never lie over. (Since the book's
+// dialogue (U06) Keep sits on the paper at the sheet's top right, inside the text's box, so the box itself is not it.)
+const LINES = `(() => { const out = []; const w = document.createTreeWalker(document.querySelector('.dlg .txt'), NodeFilter.SHOW_TEXT); let n;
+  while ((n = w.nextNode())) { if (!n.textContent.trim() || !n.parentElement.offsetParent) continue; const r = document.createRange(); r.selectNodeContents(n);
+    for (const q of r.getClientRects()) if (q.width > 0.5 && q.height > 0.5) out.push({ l: q.left, t: q.top, r: q.right, b: q.bottom }); }
+  return out; })()`;
+const coversText = (tab, lines) => lines.some((l) => meet(tab, l));
 const topAt = (p, x, y, sel) => p.evaluate(([x, y, q]) => { const e = document.elementFromPoint(x, y); return !!(e && e.closest(q)); }, [x, y, sel]);
 async function press(p, sel, touch) {
   // a real press on the first point of the element that is on screen and not covered
@@ -153,13 +160,14 @@ await test('the Keep tab: in the tab row, clear of the text and Next; Next does 
   const l0 = await lineNow(p);
   assert(/Aki looks at the old sign|アキ/.test(l0), 'the first line is on screen: ' + l0);
   // geometry
-  const g = await p.evaluate(() => {
+  const g = await p.evaluate((LINES) => {
     const q = (s) => { const r = document.querySelector(s).getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
-    return { tab: q('.dlg-keep'), next: q('.dlg .b-next'), txt: q('.dlg .txt'), sheet: q('.dlg-sheet'), ctrl: q('.dlg .ctrl'), top: document.querySelector('.dlg').classList.contains('top'), label: document.querySelector('.dlg-keep').textContent.trim() };
-  });
+    return { tab: q('.dlg-keep'), next: q('.dlg .b-next'), txt: q('.dlg .txt'), sheet: q('.dlg-sheet'), ctrl: q('.dlg .ctrl'), top: document.querySelector('.dlg').classList.contains('top'), label: document.querySelector('.dlg-keep').textContent.trim(), lines: eval(LINES) };
+  }, LINES);
   assert(g.label === 'Keep', 'the tab says Keep: ' + g.label);
-  assert(g.tab.b <= g.sheet.t + 1.5 && g.tab.b >= g.sheet.t - 2, 'the tab stands on the sheet\'s top edge ' + JSON.stringify([g.tab, g.sheet.t]));
-  assert(!meet(g.tab, g.txt) && !meet(g.tab, g.next) && !meet(g.tab, g.ctrl), 'the tab covers neither the text, the controls nor Next');
+  // the book's dialogue (U06): Keep is a quiet mark on the paper at the sheet's top right, not a tab above it
+  assert(g.tab.t >= g.sheet.t - 1 && g.tab.t <= g.sheet.t + 10 && g.tab.r <= g.sheet.r + 1 && g.tab.r >= g.sheet.r - 30, 'Keep sits on the paper at the sheet\'s top right ' + JSON.stringify([g.tab, g.sheet]));
+  assert(g.lines.length && !coversText(g.tab, g.lines) && !meet(g.tab, g.next) && !meet(g.tab, g.ctrl), 'Keep covers neither a word of the text, the controls nor Next ' + JSON.stringify([g.tab, g.lines.slice(0, 3)]));
   assert(g.tab.w >= 44 && g.tab.h >= 44, 'the tab is a 44 px target ' + g.tab.w + 'x' + g.tab.h);
   assert(await topAt(p, g.tab.x, g.tab.y, '.dlg-keep') && await topAt(p, g.next.x, g.next.y, '.dlg .b-next'), 'nothing lies over the tab or over Next');
   // Next is exactly where it would be without the tab
@@ -206,6 +214,8 @@ await test('the Keep tab: in the tab row, clear of the text and Next; Next does 
   // Journey › Dialogue history: Keep the reply (a real 44 px button); again un-keeps it; again keeps it
   await p.evaluate(() => RB.ui.menu.open('log'));
   await p.waitForSelector('.history .hkeep');
+  // measured at rest: the book opens with a little scale, so mid-opening a 44 px button measures smaller
+  await p.evaluate(() => Promise.all(document.getAnimations().filter((x) => x.effect && x.effect.getComputedTiming().iterations !== Infinity).map((x) => x.finished.catch(() => null))));
   const hk = await p.evaluate(() => {
     const li = [...document.querySelectorAll('.history .entry')].find((x) => /Go on with Nao/.test(x.textContent));
     const bt = li && li.querySelector('.hkeep');
@@ -319,7 +329,8 @@ await test('Kept sentences: your own words stay plain text; keyboard; practice r
   await p.waitForSelector('.bm-row');
   const after = await p.evaluate(() => {
     const s = RB.game.s;
-    const txt = document.querySelector('#folio-page').textContent;
+    // the kept sentences themselves (the book's header line names the traveller and companion as they are now, by design)
+    const txt = [...document.querySelectorAll('.bm-row')].map((r) => r.textContent).join(' ');
     const bare = (el) => { const c = el.cloneNode(true); c.querySelectorAll('rt').forEach((x) => x.remove()); return c.textContent.replace(/\s+/g, ''); }; // the text without its readings
     return { name: s.player.name, comp: s.comp, n: s.bookmarks.length, rows: [...document.querySelectorAll('.bm-row')].map((r) => ({ jp: bare(r.querySelector('.bm-jp')), en: r.querySelector('.bm-en').textContent, kind: r.querySelector('.kind').textContent.replace(/\s+/g, ' ') })), beni: /Beni|ベニ/.test(txt), excerpts: document.querySelectorAll('.bm-excerpt').length };
   });
@@ -553,11 +564,11 @@ for (const [w, h] of [[390, 844], [320, 640]]) {
     const { p, errors, ctx } = await page(b, url, PHONE(w, h));
     await helpers(p);
     await startScene(p, { text: 2 });
-    const g = await p.evaluate(() => {
+    const g = await p.evaluate((LINES) => {
       const q = (s) => { const r = document.querySelector(s).getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: r.width, h: r.height, x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
-      return { tab: q('.dlg-keep'), next: q('.dlg .b-next'), txt: q('.dlg .txt'), ctrl: q('.dlg .ctrl'), who: document.querySelector('.dlg-tab').offsetParent ? q('.dlg-tab') : null, vw: innerWidth };
-    });
-    assert(!meet(g.tab, g.txt) && !meet(g.tab, g.next) && !meet(g.tab, g.ctrl) && !(g.who && meet(g.tab, g.who)), 'the tab covers nothing ' + JSON.stringify(g));
+      return { tab: q('.dlg-keep'), next: q('.dlg .b-next'), txt: q('.dlg .txt'), ctrl: q('.dlg .ctrl'), who: document.querySelector('.dlg-tab').offsetParent ? q('.dlg-tab') : null, vw: innerWidth, lines: eval(LINES) };
+    }, LINES);
+    assert(g.lines.length && !coversText(g.tab, g.lines) && !meet(g.tab, g.next) && !meet(g.tab, g.ctrl) && !(g.who && meet(g.tab, g.who)), 'the tab covers nothing ' + JSON.stringify(g));
     assert(g.tab.r <= g.vw && g.tab.w >= 44 && g.tab.h >= 44, 'the tab fits and is a 44 px target');
     const without = await p.evaluate(() => { const t = document.querySelector('.dlg-keep'); t.style.display = 'none'; const r = document.querySelector('.dlg .b-next').getBoundingClientRect(); t.style.display = ''; return { l: r.left, t: r.top }; });
     assert(Math.abs(without.l - g.next.l) < 0.5 && Math.abs(without.t - g.next.t) < 0.5, 'Next does not move for the tab');
