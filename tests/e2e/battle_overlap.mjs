@@ -115,6 +115,9 @@ async function toChoice(p) {
     const s = await p.evaluate(() => ({ dlg: RB.ui.dialogue.isOpen(), ph: RB.combat.phase(), cards: !!document.querySelector('.rcard[data-i]:not([disabled])'), coach: !!document.querySelector('[data-coach-ok]') }));
     if (s.coach) { await clickEl(p, '[data-coach-ok]'); await p.waitForTimeout(120); continue; }
     if (s.ph === 'choose' && s.cards && !s.dlg) { await p.waitForTimeout(350); return true; }
+    // a Z sent while the last opening line was open can land after the cards are armed and pick one (on a busy
+    // machine): back out with "Choose a different response", as a player would
+    if (s.ph === 'challenge' && !s.dlg && (await clickEl(p, '[data-a="leave"]'))) { await p.waitForTimeout(400); continue; }
     if (s.dlg) await p.keyboard.press('z');
     await p.waitForTimeout(120);
   }
@@ -259,7 +262,8 @@ for (const v of VIEWS) {
       await new Promise((r) => setTimeout(r, 300));
       const f1 = window.__T.frames;
       const ok = await RB.game.loadCampaign(1, 'manual');
-      await new Promise((r) => setTimeout(r, 500));
+      // (a second: the loop must be running, at 10 frames a second or better, on a busy machine too)
+      await new Promise((r) => setTimeout(r, 1000));
       return { ok, alive: f1 - f0, after: window.__T.frames - f1 };
     });
     assert(l.alive > 5, v.tag + ' save/load: the frame loop keeps running through a drawing error (' + l.alive + ' frames in 300 ms)');

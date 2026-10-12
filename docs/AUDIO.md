@@ -695,4 +695,5 @@ What was checked:
   The CPU table above predates the rewrite. The sixteenths are kept to C–E because they are the costliest part (the
   strings, then the shime).
 
-Robin has the recording to judge by ear.
+Robin approved it by ear the same day: "The new Hush theme is great, the intense higher bpm drum section fleshed it
+out amazingly."
