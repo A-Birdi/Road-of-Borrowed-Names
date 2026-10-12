@@ -4260,6 +4260,31 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 
 ## The expansion, P17 — closure (in progress)
 
+**The Living World across the journey (C-87; XP107; register `docs/future/work/LW1_ROLLOUT.md`).** What was run, on
+what, and what is still to run:
+- *Content checks (code):* `node tools/validate.mjs` clean, now also over the Living World's asked-after and refusal
+  lines, seal hints and change beats (that extension found five words with no lexicon entry; added). The living
+  content check (a scratch script over `C.living`): 16 towns, 43 routines with 85 places, 44 askers over 113 people
+  (314 links), 56 beats, 19 roads, 39 return keys, no problems; no tile shared by an addition and anything else
+  (a scratch check against a copy without the Living World and the exploration actions).
+- *Unit (U):* `living_world` 110/0, `town` 87/0, `perform` 137/0, `verbs` 145/0 (before the last instances),
+  `word_help` 8/0, `lang_lexicon` 43/0, `ko_ch9` 182/0, `mp_ch4` 120/0, `cr_ch10` 146/0, `yn_ch11` 183/0,
+  `overworld_geometry` 3/0 after a deliberate re-record (only the Living World's people, props and their collision
+  changed on the six-chapter maps; no exit, door, trigger or spawn), `scene_manifest` 1023/0 after regeneration.
+- *Browser (B), on builds of the working tree:* `living_world` 7/0, `world_living` 4/0, `verbs_journey` 5/0 (new:
+  each production exploration action absent before its gate and opened from its own prop after, in journey states;
+  one of each kind played to its outcome with real clicks, including networks worked across three maps); the ten
+  suites the complete run had failing, after the triage's fixes: title_ledger 18/0, pages_ending all ok, atlas_board
+  4/0, dialect_kansai all passed, long_quests (fixtures) all passed, practice_a_desk 45/45, fishing 11/0,
+  harmony_appearance 87/0, pets 20/0, practice_a_layout 350/350.
+- *Language (code review, C-26: self-review only):* every new Japanese line read in its scene by region against the
+  region's own content (seven review passes); fixes applied in place (grammar, register, readings, pronouns, story
+  slips such as Rin's map colours and a playbill naming Ren's private failure). Word help: every token the game shows
+  was glossed before and after the lookup change and the differences read one by one.
+- *Still to run on the final build:* the ledger entries, the font subsets (`book_type`), the full unit run, the
+  complete browser run (`--part=1/3…3/3`, `--extra`), the twelve-chapter chain, the speed checks, the night sweep.
+
+
 **The chapters chained from a new journey (XP79).** `PURSUE_EDITION=2 node tests/e2e/pursue.mjs F ren twelve` on a
 copy of the working tree taken during P16 (its own `index.html`), profile F with Ren, from the title screen's new journey. One run
 reached **16 of the 17 legs**: Chapter 1 in 159 site visits, Chapter 2 in 51, Manybridge's first part (mb1_done) 194, its

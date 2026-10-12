@@ -119,7 +119,7 @@ RB.living = (function (C) {
     if (o.stamp) {
       const sid = 'road.' + id;
       C.stamps = C.stamps || {};
-      C.stamps[sid] = { id: sid, family: 'road', title: T(o.stamp.title[1], o.stamp.title[0]), criteria: T('Every event on ' + o.stamp.title[1] + ' seen through.', o.stamp.title[0] + ' の {出来事|できごと} を すべて'), hidden: true,
+      C.stamps[sid] = { id: sid, family: 'road', title: T(o.stamp.title[1], o.stamp.title[0]), criteria: T('Every event on ' + o.stamp.title[1] + ' seen through.', o.stamp.title[0] + ' の {出来事|できごと} を すべて {見|み}た'), hidden: true,
         when: (s) => { const r = s.world && s.world.roads && s.world.roads[id]; return !!(r && [D.unique].concat(D.variants || []).filter(Boolean).every((e) => r.solved[e.id])); },
         design: { shape: 'round', motif: o.stamp.motif || 'path', ink: o.stamp.ink || '#5a4a2a' } };
       D.stamp = sid;

@@ -121,15 +121,17 @@ RB.verbSheets = (function () {
       spec.legs.map((l) => '<th scope="col">' + both(l) + '</th>').join('') + '</tr></thead><tbody>' +
       spec.parcels.map((pc) => { const r = spec.recipients[pc.to]; return '<tr><th scope="row">' + both(r.name) + '<span class="vb-small">' + both({ jp: pc.jp, en: pc.en }) + '</span></th>' + r.at.map((k) => '<td>' + both(stop(k)) + '</td>').join('') + '</tr>'; }).join('') +
       '</tbody></table></div>';
-    h += spec.legs.map((l, i) => '<div class="ar-item"><div class="wv-lab">' + both(l) + '</div><div class="ar-slots" role="radiogroup" aria-label="' + esc(l.en) + ' stop">' +
+    h += spec.legs.map((l, i) => '<div class="ar-item"><div class="wv-lab">' + both(l) + '</div><div class="ar-slots" role="radiogroup" aria-label="Where to stop: ' + esc(l.en) + '">' +
       Object.keys(spec.stops).map((k) => radio('leg' + i, k, st['leg' + i] === k, '<span class="vb-jp">' + J(stop(k)) + '</span><span class="en">' + esc(stop(k).en) + '</span>')).join('') + '</div></div>').join('');
     const plan = spec.legs.map((l, i) => st['leg' + i]);
     h += '<div class="wv-foot">' + btn('check', 'Check the round', 'look', plan.every(Boolean) ? '' : ' disabled') + btn('go', 'Set out', 'journey', plan.every(Boolean) ? '' : ' disabled', 'primary') + '</div>';
     if (cur.view.check) {
+      // a leg's and a stop's English are whole phrases ("The first run", "below Kawaya, the inn"), used as written
+      const legLow = (i) => { const e = spec.legs[i].en; return e[0].toLowerCase() + e.slice(1); };
       const c = V().courierCheck(spec, plan);
       h += '<ul class="ar-list">' + c.parcels.map((p) => {
         const pc = spec.parcels.find((x) => x.id === p.parcel), r = spec.recipients[pc.to];
-        return '<li class="' + (p.ok ? 'ok' : 'no') + '">' + esc(pc.en[0].toUpperCase() + pc.en.slice(1)) + ' for ' + esc(r.name.en) + ': ' + (p.ok ? 'delivered on the ' + esc(spec.legs[p.leg].en.toLowerCase()) + ' leg' : 'missed — ' + esc(r.name.en) + ' is ' + r.at.map((k, i) => 'at ' + stop(k).en + ' (' + spec.legs[i].en.toLowerCase() + ')').join(', ')) + '</li>';
+        return '<li class="' + (p.ok ? 'ok' : 'no') + '">' + esc(pc.en[0].toUpperCase() + pc.en.slice(1)) + ' for ' + esc(r.name.en) + ': ' + (p.ok ? 'delivered on ' + esc(legLow(p.leg)) : 'missed — ' + esc(r.name.en) + ' will be: ' + r.at.map((k, i) => esc(stop(k).en) + ' (' + esc(legLow(i)) + ')').join(', ')) + '</li>';
       }).join('') + '</ul>';
     }
     return h;

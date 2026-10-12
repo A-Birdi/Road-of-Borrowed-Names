@@ -10,7 +10,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const T = L.T;
   RB.lex.add(RB.lex.parseTable(`
 ゲンパチ|ゲンパチ|name|F|Genpachi, a guest at the Upper House (fictional)
-ハル|ハル|name|F|Haru, a traveller who left a note on the North Road (fictional)
+チエ|チエ|name|F|Chie, a traveller who left a note on the North Road (fictional)
 梅の間|うめのま|n|I|the Plum Room (an inn room's name)
 門限|もんげん|n|A|curfew, the hour the doors close
 裏口|うらぐち|n|I|the back door, the back entrance
@@ -21,7 +21,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 翌日|よくじつ|n|I|the next day, the day after
 ドクダミ|ドクダミ|n|A|dokudami, fish mint (Houttuynia cordata), a folk-medicine herb
 センブリ|センブリ|n|A|senburi (Swertia japonica), a very bitter folk-medicine herb
-束|たば|ctr|I|counter for bunches, bundles (一束 ひとたば, 二束 ふたたば, 三束 みたば)
+束|たば|n|I|also a counter for bunches, bundles (一束 ひとたば, 二束 ふたたば, 三束 みたば)
 一束|ひとたば|n|I|one bunch, one bundle
 二束|ふたたば|n|I|two bunches
 三束|みたば|n|I|three bunches
@@ -68,10 +68,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     A: [ch({ item: 'g:v_nakereba', ctx: { jp: 'キクエ の {書|か}き{付|つ}け ： 「{無理|むり} に {全部|ぜんぶ} {集|あつ}めなくて も いい から 、 {暗|くら}く なる {前|まえ} に {帰|かえ}って くる こと 。」', en: '' }, prompt: { en: 'What matters most to Kikue?' }, options: [o('{暗|くら}く なる {前|まえ} に {帰|かえ}る こと', 1), o('{全部|ぜんぶ} {集|あつ}める こと', 0, '集めなくてもいい: they don\'t have to gather it all.')] })],
   } };
   C.challenges['yn.lw_note'] = { title: T('A note under the waystone', '{道標|みちしるべ} の {書|か}き{置|お}き'), tiers: {
-    F: [ch({ item: 'v:待つ', ctx: { jp: 'かみ ： 「さき に いきます 。 かみのゆ で まって います 。 ハル」', en: '' }, prompt: { en: 'Where is Haru waiting?' }, options: [o('かみのゆ', 1), o('ここ', 0, 'さき に いきます: Haru has gone on ahead.')] })],
-    E: [ch({ item: 'g:v_te_iru', ctx: { jp: '{紙|かみ} ： 「{先|さき} に {谷|たに} へ {下|お}ります 。 {上|かみ}の{湯|ゆ} で {待|ま}って います 。 ハル」', en: '' }, prompt: { en: 'Where will Haru be?' }, options: [o('{上|かみ}の{湯|ゆ}', 1), o('{道標|みちしるべ} の {所|ところ}', 0, '先に下ります: Haru has gone down to the valley.'), o('{下|しも}の{湯|ゆ}', 0, '上の湯 is the Upper House.')] })],
-    I: [ch({ item: 'g:cond_tara', ctx: { jp: '{紙|かみ} ： 「{待|ま}って いた けれど 、 {来|こ}なかった ので 、 {先|さき} に {下|お}ります 。 {夕方|ゆうがた} まで に {来|こ}なかったら 、 {迎|むか}え に {来|き}ます 。 ハル」', en: '' }, prompt: { en: 'What will Haru do if their friend has not come down by evening?' }, options: [o('{迎|むか}え に {来|く}る', 1), o('{一人|ひとり} で {帰|かえ}る', 0, '来なかったら、迎えに来ます: Haru will come back for them.'), o('ここ で {待|ま}ち{続|つづ}ける', 0, '先に下ります: Haru has already gone down.')] })],
-    A: [ch({ item: 'g:rashii', ctx: { jp: '{紙|かみ} ： 「この {道|みち} は {声|こえ} が {届|とど}かない らしい ので 、 {書|か}き{置|お}き に します 。 {上|かみ}の{湯|ゆ} に いる はず です 。 ハル」', en: '' }, prompt: { en: 'Why did Haru leave a note?' }, options: [o('この {道|みち} は {声|こえ} が {届|とど}かない らしい から', 1), o('{字|じ} を {書|か}く の が {好|す}き だ から', 0, 'The note gives its reason: ので.'), o('{上|かみ}の{湯|ゆ} が {見|み}えない から', 0, 'It is voices that do not carry here.')] })],
+    F: [ch({ item: 'v:待つ', ctx: { jp: 'かみ ： 「さき に いきます 。 かみのゆ で まって います 。 チエ」', en: '' }, prompt: { en: 'Where is Chie waiting?' }, options: [o('かみのゆ', 1), o('ここ', 0, 'さき に いきます: Chie has gone on ahead.')] })],
+    E: [ch({ item: 'g:v_te_iru', ctx: { jp: '{紙|かみ} ： 「{先|さき} に {谷|たに} へ {下|お}ります 。 {上|かみ}の{湯|ゆ} で {待|ま}って います 。 チエ」', en: '' }, prompt: { en: 'Where will Chie be?' }, options: [o('{上|かみ}の{湯|ゆ}', 1), o('{道標|みちしるべ} の {所|ところ}', 0, '先に下ります: Chie has gone down to the valley.'), o('{下|しも}の{湯|ゆ}', 0, '上の湯 is the Upper House.')] })],
+    I: [ch({ item: 'g:cond_tara', ctx: { jp: '{紙|かみ} ： 「{待|ま}って いた けれど 、 {来|こ}なかった ので 、 {先|さき} に {下|お}ります 。 {夕方|ゆうがた} まで に {来|こ}なかったら 、 {迎|むか}え に {来|き}ます 。 チエ」', en: '' }, prompt: { en: 'What will Chie do if their friend has not come down by evening?' }, options: [o('{迎|むか}え に {来|く}る', 1), o('{一人|ひとり} で {帰|かえ}る', 0, '来なかったら、迎えに来ます: Chie will come back for them.'), o('ここ で {待|ま}ち{続|つづ}ける', 0, '先に下ります: Chie has already gone down.')] })],
+    A: [ch({ item: 'g:rashii', ctx: { jp: '{紙|かみ} ： 「この {道|みち} は {声|こえ} が {届|とど}かない らしい ので 、 {書|か}き{置|お}き に します 。 {上|かみ}の{湯|ゆ} に いる はず です 。 チエ」', en: '' }, prompt: { en: 'Why did Chie leave a note?' }, options: [o('この {道|みち} は {声|こえ} が {届|とど}かない らしい から', 1), o('{字|じ} を {書|か}く の が {好|す}き だ から', 0, 'The note gives its reason: ので.'), o('{上|かみ}の{湯|ゆ} が {見|み}えない から', 0, 'It is voices that do not carry here.')] })],
   } };
 
   L.scenes(`

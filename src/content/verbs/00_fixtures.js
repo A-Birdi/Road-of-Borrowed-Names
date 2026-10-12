@@ -45,7 +45,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   V.define('courier', {
     id: 'vb_courier', fixture: true, map: 'rw.road', x: 3, y: 3,
     title: T('The courier\'s round', '{配達|はいたつ} の {順番|じゅんばん}'),
-    legs: [T('First', '{最初|さいしょ}'), T('Next', '{次|つぎ}'), T('Last', '{最後|さいご}')],
+    legs: [T('The first leg', '{最初|さいしょ}'), T('The next leg', '{次|つぎ}'), T('The last leg', '{最後|さいご}')],
     stops: {
       square: T('the village square', '{村|むら} の {広場|ひろば}'),
       tea: T('the teahouse', '{茶屋|ちゃや}'),
