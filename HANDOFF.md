@@ -227,7 +227,18 @@
     allows; Settings → Display → "Light and shadow" for the flat picture): `src/engine/65_worldlook.js`,
     `66_worldkit.js`; tests `tests/e2e/world.mjs`, `tests/e2e/world_light.mjs`; captures for Robin
     `docs/screenshots/light/` (`tests/e2e/light_captures.mjs`). Done before VA-1, as Robin asked; after it, the
-    twelve-chapter chain and the complete browser run are redone on the lit build. **P02 (foundations), P03 (learning evidence, task families,
+    twelve-chapter chain and the complete browser run are redone on the lit build. **C-87 (Robin, 2026-10-12): the
+    Living World across the journey, then "shipped live"** (Astra's LW-1 audit confirmed: the engines were built but
+    the journey hardly used them). Order: the Living World rollout and the test-suite reconciliation; the complete
+    browser run; P17's closure (speed, the final review set, the night sweep); VA-1; then, with everything in the
+    plan accounted for, the full matrix (P18) as a last sweep for holes; only when all of it passes, the hosted
+    playable page's `index.html` is updated (nothing merged or deployed before). Register and status:
+    `docs/future/work/LW1_ROLLOUT.md`; the region brief: `docs/future/work/LW1_AUTHORING.md`; content in
+    `src/content/zzz_living/` (helpers `05_author.js`; the work assignments `00_work.js`; Reedwake `10_rw.js`,
+    `11_rw_world.js`; the other regions' files). Done: the work performances in ordinary play (LW-01/02, 47
+    people), sightings only in view (LW-08), a moved same-id placement walks (LW-09), Reedwake's routines, askers,
+    beats, road events and return keys; tests `tests/unit/living_world.test.mjs`, `tests/e2e/living_world.mjs`.
+    Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse
     (a hatch there, twelve-chapter journeys after Chapter 2), are done, as are the Atlas's commissions (a board in the Lantern Hall), delvers (people from the journey

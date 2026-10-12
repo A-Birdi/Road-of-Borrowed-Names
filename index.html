@@ -211830,7 +211830,7 @@ RB.living = (function (C) {
     C.living.seals.push(id);
   }
   // the scene script gathered by the region files, added once they have all run (zzz_living/99_end.js)
-  function flush() { if (script.trim()) RB.script.add(script, 'zzz_living'); script = ''; }
+  function flush() { if (script.trim()) RB.script.add(script, 'src/content/zzz_living/05_author.js'); script = ''; } // (scenes written out by these helpers: their source is this file)
   return { T, and, town, routine, away, knows, cold, usual, asks, beat, road, seal, talk, scenes, flush };
 })(RB.content);
 
