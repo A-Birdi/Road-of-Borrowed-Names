@@ -4394,7 +4394,9 @@ time, each fixed and rerun alone:
 - `festival_games` (word lottery): the slip was compared with its furigana in the text (お祭まつり), so it failed
   whenever the draw had a kanji; read without the readings: 5/0 three times.
 
-Part 8 and `--extra` run next.
+Part 8/8 on `8ffa64a`: **11/11**, the six new chapters' suites, the Archive in twelve chapters, and a whole-game run
+(`pursue.mjs E mio`, 1047 s). With parts 1–8 done, `staging_chapters` is split by chapter in `run.mjs` (`--ch=showcase`,
+`1`…`6`, `misc`: whole, it outgrew one script's 40 minutes); `--extra` and those pieces run next.
 
 **The Keepers' Road's biwa, second hearing (Robin, 2026-10-12; `dd29582`).** Robin's notes on the storyteller's
 biwa:
