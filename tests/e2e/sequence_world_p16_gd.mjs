@@ -64,10 +64,11 @@ const PLACES = {
   // (lf_boss_done: no trigger) and rang the bell (lf_bell_rung) before the council that ends it
   lf: { at: ['lf.bellhall', 13, 10, 'down'], flags: { lf_gate_c: true, lf_boss_done: true, lf_bell_rung: true },
     reach: [{ to: 'lf.tower_low', why: 'the stair up to the tower\'s lower floor' }] },
-  // Manybridge, the First Bridge (mb.firstbridge): the stele at (20,14) on the bank south of the oldest canal. The
-  // bridge was named (mb_bridge_named: the spirit and the flood gone). The map has no exit: the way back is the old
-  // door at (13,15) (mb.firstbridge_back, to mb.under3)
-  mb: { at: ['mb.firstbridge', 19, 14, 'right'], flags: { mb_firstbridge_seen: true, mb_bridge_named: true },
+  // Manybridge, the First Bridge (mb.firstbridge): the stele at (15,12), at the bridge's south foot (the bridge is
+  // x 12–14; its name plaque on the other side at (11,12)), where the page has it: by the oldest pile. The bridge was
+  // named (mb_bridge_named: the spirit and the flood gone). The map has no exit: the way back is the old door at
+  // (13,15) (mb.firstbridge_back, to mb.under3)
+  mb: { at: ['mb.firstbridge', 15, 13, 'up'], flags: { mb_firstbridge_seen: true, mb_bridge_named: true },
     reach: [{ prop: 'door', why: 'the old door back under the city' }] },
   // the Cloudroad Pass (cr.summit): the stele at (28,13), the summit cairn. Steamhollow's call was answered (yn_called):
   // Jinpachi is gone from (5,12), the trigger at the east edge (cr.summit_east) is off and the way down east is open

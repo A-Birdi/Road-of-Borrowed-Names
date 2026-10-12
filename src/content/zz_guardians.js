@@ -7,7 +7,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   'use strict';
   const SHRINES = [
     ['rw', 'rw.mill1', 9, 4, 'kr_stele'], ['sg', 'sg.office', 2, 4, 'chest'], ['co', 'co.kiln_core', 7, 4, 'kr_stele'],
-    ['sb', 'sb.obs_dome', 3, 6, 'kr_stele'], ['lf', 'lf.bellhall', 13, 11, 'kr_stele'], ['mb', 'mb.firstbridge', 20, 14, 'kr_stele'],
+    ['sb', 'sb.obs_dome', 3, 6, 'kr_stele'], ['lf', 'lf.bellhall', 13, 11, 'kr_stele'], ['mb', 'mb.firstbridge', 15, 12, 'kr_stele'],
     ['cr', 'cr.summit', 28, 13, 'kr_stele'], ['yn', 'yn.kettle', 16, 12, 'kr_stele'], ['ko', 'ko.garden', 20, 16, 'kr_stele'],
   ];
   C.guardianShrines = SHRINES;
