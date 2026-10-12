@@ -69,6 +69,7 @@ body.high-contrast rt { color: #fff; }
 body.bulb-on .jline .jt { cursor: help; text-decoration: underline dotted rgba(231, 196, 110, 0.55); text-underline-offset: 0.35em; }
 body.bulb-on .jline .jt:hover, .jline .jt.active { background: rgba(231, 196, 110, 0.18); }
 .jline .sp { display: inline-block; width: 0.45em; }
+.jline .jblank { white-space: nowrap; }
 .enline { font-family: var(--en-font); line-height: 1.45; }
 
 /* ---- dialogue ---- */

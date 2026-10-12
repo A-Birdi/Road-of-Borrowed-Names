@@ -150,7 +150,10 @@ RB.ui = (function () {
     // a Kansai line of Suzu's: word help reads it with the Kansai lexicon first (src/lang/85_dialect.js)
     const ctx = RB.dialect && RB.dialect.isKansai(line) ? Object.assign({}, opts.ctx || {}, { dia: 'kansai' }) : opts.ctx;
     const id = RB.ui.help.register(r.tokens, line, ctx);
-    return '<span class="jline" lang="ja" data-src="' + id + '">' + r.html + '</span>';
+    // a blank to fill (［　］) is one thing on the page: never broken across two lines (it would leave ［ and its
+    // space hanging at one line's end and ］ starting the next)
+    const html = r.html.replace(/(<span class="jt"[^>]*>［<\/span>)([^<]*)(<span class="jt"[^>]*>］<\/span>)/g, '<span class="jblank">$1$2$3</span>');
+    return '<span class="jline" lang="ja" data-src="' + id + '">' + html + '</span>';
   }
   function ehtml(text) {
     return '<span class="enline">' + esc(RB.game.s ? RB.script.enVars(text) : text) + '</span>';

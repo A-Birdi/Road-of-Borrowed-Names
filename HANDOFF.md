@@ -265,8 +265,17 @@
     rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
     `tests/e2e/music_performance.mjs`; the chain and the full matrix run at Original only, never again with Ensemble
     (Robin's C-88). A new recording: the five steps in that doc, then rebuild.
-    Next: the twelve-chapter chain redone on the final build, then P17's closure (speed, the final review set,
-    the night sweep), VA-1, P18, and only then the hosted page (its deploy must also copy `assets/music/ensemble/`).
+    **P18 is Plan B (Robin's C-89, 2026-10-12)**: four continuous twelve-chapter campaigns (F/Ren, E/Nao, I/Mio,
+    A/Suzu) through `node tests/e2e/matrix.mjs --twelve --fixtures --pairs …` on one fixed export (28cb216), plus
+    targeted tests: `tests/unit/answer_sweep.test.mjs` (every tier of every task, negative controls),
+    `tests/e2e/naming_combos.mjs` (the sixteen companion × level namings at the gate, from each companion's own
+    pre-Archive fixture in `tests/fixtures/p18/`), `tests/unit/profile_narration.test.mjs` and
+    `tests/e2e/profile_narration.mjs` (the level-dependent narration's selection and rendering). The sixteen-run
+    product stays in matrix.mjs, not run. Found and fixed on the way: the New Game+ offer could be made over a
+    journey other than its own; a fill-in blank (［　］) could break across lines. Not to be reported as "sixteen
+    full campaigns", native-reviewed Japanese or real-device validation. Then (C-87's order, unchanged): P17's
+    speed checks on a quiet machine, VA-1 as Robin ordered it, and only when all of it passes the hosted page (its
+    deploy must also copy `assets/music/ensemble/`). State and results: VALIDATION.md "P18 — Plan B".
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse

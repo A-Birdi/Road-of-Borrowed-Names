@@ -4340,6 +4340,50 @@ journey, no New Game+, no Ledger) and it is not asked again; a journey begun whi
 offered it. That last check **failed on the build before the fix** (the old journey's offer appeared) and passes after:
 `play_ui` all ok, `verbs_journey` **5/5**.
 
+**F/Ren, on a clean export of 900efc5 (B).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on `git
+archive 900efc5` (its own `index.html`, sha256 1963d027…) with one test file replaced, `tests/e2e/drive.mjs` as in
+5ded08e (the driver leaves the optional exploration sheets, `vb.*`, alone; the run before it stalled waiting on one at
+mb1_done). This is the build before the launcher's checks, the modal-input fix (5ded08e) and the fixes below, and its
+pursue.mjs did not yet assert the edition or the order; it is recorded as that, not as a run of a later build: **all
+17 milestones in order, to the ending, 2,714 site visits in 5,181 s (86 min, the machine shared), 0 problems, 0 page
+errors, nothing lost**, 8 battles, 462 interactions met (choose 384, write 50, order 16, forge 7, relay 5), Ren's
+actions taken 36 times. More visits than the 2,433 of the earlier runs: the Living World's additions (C-87) are sites
+the driver visits.
+
+**The narration that depends on the Japanese level.** The census Robin was given (27 lines) counted the places in the
+source that write such lines; the compiled scenes hold **1,150** of them, in **155** scenes (the Hall's wings 1,135,
+the Archive's slip 4, the Atlas's ways 6, Keepers' Road 3, Kotonoha 1, the Hall's rules 1). Selection (U, new
+`tests/unit/profile_narration.test.mjs` with `tests/lib/narration.mjs`): each line's variants (the level-conditioned
+lines next to it with the same speaker and the same other terms) evaluated with the game's own condition test
+(`RB.state.test`, the Hall's pattern and Grow route set through `RB.hall`) at every level, Grow off and on: **361 sets
+(1,145 lines) seen exactly once at every level and Grow setting**; five lines are one-end extras, named: the Hall's
+rules at Foundations, and four at Advanced (Kotonoha's 古今集 preface, three Keepers' Road lines in older written
+style); no line seen twice at a level, none seen at no level. Its self-test shows it reports two variants shown
+together, a level that sees none, and a line nobody sees. Rendering (B, new `tests/e2e/profile_narration.mjs`, the
+game's dialogue, `RB.ui.dialogue.say`, as the scene runner calls it, at the level each line is shown at): every line at
+320×640 and 844×390 with 200 % text (2,300 renders), and the 24 longest (six per level) at the eight §22.2 sizes, 100 %
+and 200 % text, English- and Japanese-led (768 renders): the page never scrolls sideways, the dialogue and its Next
+(≥ 44 px) are on screen, no line runs past its box, text taller than its box can be scrolled, every furigana group has
+its reading. **3,068 renders, all ok**, after one fix below.
+
+**Found and fixed: a blank to fill split across two lines (B).** The first rendering run failed three lines of the
+Hall's wing 10 at 320×640 and 200 % text: `［ 　 ］`, the blank its fill-in tasks show, broke after its full-width
+space, leaving `［` and the space hanging past the box's edge (337 px in a 320 px box) and `］` starting the next line.
+`RB.ui.jhtml` now keeps a blank together (`.jblank`, `white-space: nowrap`; `src/ui/10_ui.js`,
+`src/styles/10_legacy.css`), and the rendering test checks that every blank stays on one line: all ok.
+
+**The sixteen naming combinations (B, new `tests/e2e/naming_combos.mjs`; in progress).** Each case, in its own fresh
+browser profile: that companion's pre-Archive fixture written to a slot, the page reloaded and Continue pressed on the
+title; Back to the Ledger, Settings › Learning, the Japanese level's radio clicked, then checked on the radio and in the
+journey; the driver (`RB.test` auto) only as far as the Archive road's arrival; then, the driver off, real arrow keys
+into the camp and into the gate (each line advanced with Enter), where the gate's first sight and then the naming scene
+start from the map's own entry events; the sheet's options checked against that level's tier; on half the cases a
+look-alike clicked first (refused, "Not that one", the button spent); the name clicked, Continue with Enter; then the
+voice back (`sa2_voice_back`), the companion's own reply, the journal line, the record of `c:sa2_name_<companion>`
+(right first time, or a miss), the same companion and level, the world on the gate, and no second asking on walking
+out and back in; the fixture file's hash unchanged. Developed on the older F/Ren fixture: Ren at F, E, I and A **4/4**
+(two right first time, two a look-alike first). The sixteen run once the four campaigns' fixtures exist.
+
 ## MT-1, the music performance: Original or Ensemble (Robin's MT-1, 2026-10-12)
 
 What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. Evidence, kept apart by kind:
