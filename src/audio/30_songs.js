@@ -22,8 +22,10 @@
  *                 rv: reverb send, dl: echo send, u: beats per step (0.5) }
  *   instruments: pluck harp bell celesta toll glass flute bowed bass pad keys
  *                mallet choir
- *   Japanese:    shamisen biwa koto koto_oshi (plucked a whole tone low and
- *                pressed up to the written note) shakuhachi shinobue sho rin
+ *   Japanese:    shamisen biwa biwa_tale (the storyteller's biwa: the sawari
+ *                held back, the full strike on a written accent 5!) koto
+ *                koto_oshi (plucked a whole tone low and pressed up to the
+ *                written note) shakuhachi shinobue sho rin
  *   Kinds of track:
  *   - melody (default): scale DEGREES.
  *   - pat: true   — chord-tone PATTERN that follows the section's chords.

@@ -685,6 +685,18 @@ RB.audio = RB.audio || {};
     click: 0.28, clickF: 1200, clickT: 0.012, body: 140, thump: 0.16,
   });
 
+  // The storyteller's biwa (the Keepers' Road, where it carries every tale): the same lute with the sawari held back.
+  // A rounder string, a softer, shorter and higher buzz that colours the note instead of sustaining under it like a
+  // reed (the full biwa's buzz, rung long through a band at 1.8 kHz, read as an oboe in this region's slow themes:
+  // Robin, 2026-10-12), and the plectrum's stroke on the skin that marks a teller's phrasing. A written accent (5!)
+  // is the forceful strike: the full biwa, sawari and all, there when a tale leans on a word.
+  const BIWA_TALE = {
+    mix2: 0.7, drop: 1.025, dropT: 0.06, q: 0.9, strike: 0.5, settle: 3, floor: 450, close: 0.05,
+    dec: 0.85, pk: 0.26, drive: 2.0, buzz: 0.24, buzzQ: 0.7, buzzF: 2600, buzzLen: 1.3,
+    click: 0.3, clickF: 1100, clickT: 0.012, body: 140, thump: 0.2,
+  };
+  I.biwa_tale = (g, o, t, f, d, v, ac) => (ac ? I.biwa(g, o, t, f, d, v) : lute(g, o, t, f, d, v, BIWA_TALE));
+
   // Koto: thirteen plucked silk strings over a long wooden body. A rounded
   // core (triangle + octave) that rings long, a saw that is loud only at the
   // strike (the ivory pick's brightness), an inharmonic "ting" from the pick

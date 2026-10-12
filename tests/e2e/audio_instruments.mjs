@@ -53,7 +53,7 @@ await page.waitForFunction(() => globalThis.RB && RB.audio && RB.audio._ && RB.a
 // [name, kind, midi or null, duration (s), velocity]
 const VOICES = [
   ['pluck', 'inst', 62, 0.6, 0.8], ['flute', 'inst', 74, 1.2, 0.8], ['harp', 'inst', 62, 0.8, 0.8],
-  ['shamisen', 'inst', 62, 0.6, 0.8], ['biwa', 'inst', 50, 1.0, 0.8],
+  ['shamisen', 'inst', 62, 0.6, 0.8], ['biwa', 'inst', 50, 1.0, 0.8], ['biwa_tale', 'inst', 50, 1.0, 0.8],
   ['koto', 'inst', 62, 1.0, 0.8], ['koto_oshi', 'inst', 62, 1.0, 0.8],
   ['shakuhachi', 'inst', 74, 1.2, 0.8], ['shinobue', 'inst', 86, 1.0, 0.8],
   ['sho', 'inst', 69, 2.0, 0.8], ['rin', 'inst', 81, 0.5, 0.8],
@@ -292,6 +292,10 @@ ok(S.hiLate > 0.05 && S.hiLate > PL.hiLate * 10, `shamisen: the sawari buzz keep
 ok(S.decay20 < K.decay20, `shamisen: drier than the koto (-20 dB in ${S.decay20}s vs ${K.decay20}s)`);
 ok(B.hiLate > 0.05 && B.hiLate > PL.hiLate * 10 && B.decay20 > S.decay20, `biwa: buzzing and longer than the shamisen (hi ${B.hiLate.toFixed(3)}, -20 dB ${B.decay20}s vs ${S.decay20}s)`);
 ok(B.centroidLate < S.centroidLate, `biwa: darker than the shamisen (centroid ${B.centroidLate} vs ${S.centroidLate} Hz)`);
+// the storyteller's biwa (the Keepers' Road): the same plucked lute with the sawari held back (a written accent plays
+// the full biwa above), so its buzz is well under the biwa's, and it still rings longer than the shamisen
+const BT = by.biwa_tale;
+ok(BT.attackMs <= 12 && BT.hiLate < B.hiLate * 0.6 && BT.decay20 > S.decay20, `biwa_tale: plucked, its buzz held back (hi ${BT.hiLate.toFixed(3)} vs the biwa's ${B.hiLate.toFixed(3)}), still longer than the shamisen (-20 dB ${BT.decay20}s vs ${S.decay20}s)`);
 ok(K.attackMs <= 10 && K.decay20 > 0.5, `koto: plucked attack and a long ring (attack ${K.attackMs} ms, -20 dB ${K.decay20}s)`);
 ok(K.centroidEarly > K.centroidLate * 1.3, `koto: bright attack that mellows (centroid ${K.centroidEarly} -> ${K.centroidLate} Hz)`);
 ok(KO.centsEarly <= -150 && Math.abs(KO.centsLate) <= 10, `koto_oshi: plucked a whole tone low and pressed up (early ${KO.centsEarly}, settled ${KO.centsLate} cents)`);

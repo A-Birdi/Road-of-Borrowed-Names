@@ -319,6 +319,7 @@ RB.audio = RB.audio || {};
                 events.push({
                   t: tSec + (s0 + beatShift(s0)) * spb, d: (s1 - s0) * spb, m: midi,
                   v: 0.8 * vel * vScale * accent(s0) * (s0 > b0 + 1e-9 && !first ? 0.85 : 1),
+                  ac: vel > 1 && first ? 1 : 0,
                   tr: tri, i: inst, sd: null,
                 });
               }
@@ -372,6 +373,7 @@ RB.audio = RB.audio || {};
                 d: n.len * unit * spb * (tdef.leg || 1),
                 m: degMidi(keyPc, mode, oct, d0, mb.acc) + tr,
                 v: 0.8 * n.vel * vScale * accent(b),
+                ac: n.vel > 1 ? 1 : 0, // a written accent (5!), for instruments that play one differently
                 tr: tri, i: inst,
                 sd: single ? oct * 7 + d0 : null,
               });
@@ -526,7 +528,7 @@ RB.audio = RB.audio || {};
       } else {
         const jit = (r() - 0.5) * 0.012;
         const t = Math.max(at + jit, this.g.ctx.currentTime);
-        _.inst[e.i](this.g, out, t, _.mtof(e.m), e.d, e.v * (0.94 + r() * 0.1));
+        _.inst[e.i](this.g, out, t, _.mtof(e.m), e.d, e.v * (0.94 + r() * 0.1), e.ac);
       }
     } catch (err) {
       st.lastError = String(err && err.message);
