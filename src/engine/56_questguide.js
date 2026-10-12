@@ -235,12 +235,28 @@ RB.questGuide = (function () {
   }
 
   // ---- the scene interpreter -------------------------------------------------------------
+  // A branch's copy of the journey. Flags and seen scenes run to a thousand each late in a journey and a branch writes
+  // only a few, so they are layered (LP-1: copying them at every branch made the first look at a quest take half a
+  // second): at a branch point what the source holds so far becomes a shared base nobody writes to, and the source
+  // and the copy each write on their own layer above it (reads fall through to the base; unsetting writes false,
+  // which reads as unset). The live journey's objects are never layered: a copy of them is taken first. A deep chain
+  // is flattened again.
+  const own = new WeakMap(); // a layer this guide made → its depth
+  function flat(o) { const f = {}; for (const k in o) f[k] = o[k]; own.set(f, 0); return f; }
+  function above(base) { const l = Object.create(base); own.set(l, own.get(base) + 1); return l; }
+  function branch(st, key) {
+    const o = st[key] || {};
+    if (!own.has(o)) return above(flat(o)); // the live journey (or anything not ours): copied, never touched
+    const base = own.get(o) < 24 ? o : flat(o);
+    st[key] = above(base);
+    return above(base);
+  }
   function cloneSt(st) {
     const quests = {};
     for (const k in st.quests) quests[k] = Object.assign({}, st.quests[k]);
     return Object.assign({}, st, {
-      flags: Object.assign({}, st.flags), vars: Object.assign({}, st.vars), inv: Object.assign({}, st.inv),
-      quests, seen: Object.assign({}, st.seen), words: (st.words || []).slice(), touched: new Set(st.touched || []),
+      flags: branch(st, 'flags'), vars: Object.assign({}, st.vars), inv: Object.assign({}, st.inv),
+      quests, seen: branch(st, 'seen'), words: (st.words || []).slice(), touched: new Set(st.touched || []),
     });
   }
   function qval(st, id) { const q = st.quests[id]; return q ? (q.done ? 999 : q.stage) : -1; }
@@ -310,7 +326,7 @@ RB.questGuide = (function () {
         p.forceNext = false;
         switch (op) {
           case 'set': a.forEach((x) => { st.flags[x] = true; touch(st, 'flag:' + x); }); break;
-          case 'unset': a.forEach((x) => { delete st.flags[x]; touch(st, 'flag:' + x); }); break;
+          case 'unset': a.forEach((x) => { st.flags[x] = false; touch(st, 'flag:' + x); }); break;
           case 'var': {
             const [name, o, val] = a, v = +val;
             if (st.vars[name] === UNK) st.vars[name] = 0;

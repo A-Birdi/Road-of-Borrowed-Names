@@ -26,7 +26,13 @@ export function serve(port = 0) {
   });
 }
 
+// RB_BROWSER=firefox (or webkit) runs a suite in another engine; Chromium is the default. Each engine needs its own
+// Playwright browser build installed (a Chromium-only machine reports the missing build when it launches).
+export const engine = (process.env.RB_BROWSER || 'chromium').toLowerCase();
 export async function launch(opts = {}) {
+  // sound may start without a gesture, as in the Chromium runs (each engine has its own switch for it)
+  if (engine === 'firefox') return pw.firefox.launch({ firefoxUserPrefs: { 'media.autoplay.default': 0, 'media.autoplay.blocking_policy': 0 } });
+  if (engine === 'webkit') return pw.webkit.launch();
   const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
   return browser;
 }
@@ -34,7 +40,8 @@ export async function launch(opts = {}) {
 // New page with error + request capture. Any request that is not to the test
 // origin (or data:/blob:) is recorded as an unexpected network request.
 export async function page(browser, url, opts = {}) {
-  const ctx = opts.context || await browser.newContext({ viewport: opts.viewport || { width: 1280, height: 800 }, hasTouch: !!opts.touch, isMobile: !!opts.mobile, deviceScaleFactor: opts.dpr || 1 });
+  // (Firefox has no mobile emulation: a phone there is its viewport and touch only)
+  const ctx = opts.context || await browser.newContext(Object.assign({ viewport: opts.viewport || { width: 1280, height: 800 }, hasTouch: !!opts.touch, deviceScaleFactor: opts.dpr || 1 }, engine === 'firefox' ? {} : { isMobile: !!opts.mobile }));
   const p = await ctx.newPage();
   const errors = [], requests = [], logs = [];
   p.on('pageerror', (e) => errors.push('pageerror: ' + e.message));

@@ -22,8 +22,7 @@
   --type-ui: var(--ui-font);
   --type-jp-heading: var(--jp-font);
   --type-jp-body: var(--jp-font);
-  /* paper tooth: a quiet, tiled grain (code-drawn) */
-  --bk-tooth: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .24 0 0 0 0 .12 0 0 0 .085 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* paper tooth: a quiet, tiled grain; --bk-tooth is the baked tile in src/styles/91_book_grain.css (tools/book_grain.mjs) */
   --bk-slip: #f8f1df;            /* an inserted slip: lighter than the page */
   --bk-gutter: rgba(70, 48, 18, 0.30);
   --bk-corner: #5a4630;          /* the portrait's mounting corners */
@@ -92,11 +91,14 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
 @keyframes bk-turn { from { opacity: 0.25; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
 @keyframes bk-fade { from { opacity: 0; } to { opacity: 1; } }
 .folio.book .leafbox { animation: bk-leaves 360ms var(--ease) backwards; }
-.folio.book .spread.turn > .leaf { animation: bk-turn 190ms var(--ease); }
+.folio.book .spread.turn > .leaf, .folio.book .spread.turn::before { animation: bk-turn 190ms var(--ease); }
+/* (the spread stays from page to page: a second turn names the same motion afresh, so it plays again) */
+@keyframes bk-turn-b { from { opacity: 0.25; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.folio.book .spread.turn.tb > .leaf, .folio.book .spread.turn.tb::before { animation-name: bk-turn-b; }
 .folio-scrim.book-scrim.closing { pointer-events: none; animation: bk-fade 210ms reverse both; }
 .folio.book.closing { animation: bk-close 210ms ease-in both; }
 /* the closing book is the open one re-attached: its leaves must not replay their arrival (a blank cover) */
-.folio.book.closing .leafbox, .folio.book.closing .spread.turn > .leaf { animation: none; }
+.folio.book.closing .leafbox, .folio.book.closing .spread.turn > .leaf, .folio.book.closing .spread.turn::before { animation: none; }
 
 /* ---- head: only Close shows, on the cover's corner; the title is read from the pages' running heads -------- */
 .folio.book .folio-head { position: absolute; top: 10px; right: 12px; z-index: 6; padding: 0; min-height: 0; }
@@ -122,7 +124,15 @@ body.book-ui .dlg, body.book-ui .choices { font-family: var(--type-ui); }
   padding: 20px clamp(16px, 3vw, 38px) 28px; line-height: 1.62;
   font-family: var(--type-latin-reading);
 }
-.folio.book .spread { position: relative; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35)); }
+.folio.book .spread { position: relative; isolation: isolate; }
+/* the book's shadow on what it rests on: its own layer under the leaves, the shape of the page block with its stack
+ * (it was a drop-shadow filter over the whole spread, so every repaint of a page, a scroll or a turn, drew the filter
+ * again: LP-1). It turns with the pages. */
+.folio.book .spread::before {
+  content: ""; position: absolute; inset: 0 -7px -4px -7px; z-index: -1; pointer-events: none;
+  border-radius: 5px; box-shadow: 0 8px 10px rgba(0, 0, 0, 0.35);
+}
+.folio.book .spread:not(.two)::before { inset: 0 -7px -4px 0; border-radius: 2px 5px 5px 2px; }
 /* one leaf (phones, narrow windows): the binding on the left, the fore-edge and its stack on the right */
 .folio.book .spread:not(.two) > .leaf {
   border-radius: 2px 5px 5px 2px;
@@ -434,8 +444,8 @@ body.book-ui .dlg .portrait { border-width: 5px; border-color: #fbf6ea; backgrou
 /* ---- flat: the same type and pages, without texture, depth or motion ----------------------------------------- */
 .folio.book.book-flat { animation: bk-fade 140ms backwards; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); background-image: var(--cloth-weave); transform: none; }
 .folio.book.book-flat::before { display: none; }
-.folio.book.book-flat .leafbox, .folio.book.book-flat .spread.turn > .leaf { animation: none; }
-.folio.book.book-flat .spread { filter: none; }
+.folio.book.book-flat .leafbox, .folio.book.book-flat .spread.turn > .leaf, .folio.book.book-flat .spread.turn::before { animation: none; }
+.folio.book.book-flat .spread::before { display: none; }
 .folio.book.book-flat .leaf { background-image: none !important; box-shadow: none !important; }
 @media (min-width: 720px) { .folio.book.book-flat .spread.two > .leaf:first-child { border-right: 1px solid var(--paper-edge); } }
 .folio.book.book-flat .co-mount { transform: none; }
@@ -445,11 +455,11 @@ body.book-flat .dlg-sheet { background-image: none; }
 body.book-flat .dlg-sheet::before { display: none; }
 
 /* ---- reduced motion and high contrast --------------------------------------------------------------------- */
-body.reduced-motion .folio.book, body.reduced-motion .folio.book .leafbox, body.reduced-motion .folio.book .spread.turn > .leaf,
+body.reduced-motion .folio.book, body.reduced-motion .folio.book .leafbox, body.reduced-motion .folio.book .spread.turn > .leaf, body.reduced-motion .folio.book .spread.turn::before,
 body.reduced-motion .folio-scrim.book-scrim.closing { animation: none; }
 body.high-contrast .folio.book .leaf, body.high-contrast .folio.book .nudge-slip, body.high-contrast .folio.book .co-pending,
 body.high-contrast.book-ui .dlg-sheet { background-image: none !important; }
-body.high-contrast .folio.book .spread { filter: none; }
+body.high-contrast .folio.book .spread::before { display: none; }
 body.high-contrast .folio.book .co-thought::before { color: var(--ink); }
 
 /* The Satchel as an equipment folio (U04, UI-07): slots are ruled entries with their names in small capitals, not

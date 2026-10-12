@@ -97,6 +97,9 @@
 .ptab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .ptab.lift { animation: tab-lift 170ms var(--ease); }
 @keyframes tab-lift { 0% { transform: translateY(7px); } 60% { transform: translateY(-2px); } 100% { transform: translateY(1px); } }
+/* the same lift under another name, so a second select plays it again without a forced layout (LP-1) */
+.ptab.lift2 { animation: tab-lift2 170ms var(--ease); }
+@keyframes tab-lift2 { 0% { transform: translateY(7px); } 60% { transform: translateY(-2px); } 100% { transform: translateY(1px); } }
 /* the ribbon: one marker that moves to the selected tab */
 .tabrail .ribbon {
   position: absolute; top: 0; left: 0; width: 14px; height: 22px; z-index: 5; pointer-events: none;
@@ -131,7 +134,7 @@ body.reduced-motion .ptab, body.reduced-motion .tabrail .ribbon { transition: no
   .ptab svg { width: 1.35em; height: 1.35em; }
   .tabrail .ribbon { width: 12px; height: 18px; }
 }
-body.reduced-motion .ptab.lift { animation: none; }
+body.reduced-motion .ptab.lift, body.reduced-motion .ptab.lift2 { animation: none; }
 
 /* ---- paper leaves ---------------------------------------------------------- */
 .leafbox { position: relative; z-index: 2; min-height: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); }

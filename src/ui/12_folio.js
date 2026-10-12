@@ -144,16 +144,22 @@ RB.ui.folio = (function () {
       if (instant && rail.scrollTo) rail.scrollTo({ left: rail.scrollLeft + d, behavior: 'instant' });
       else rail.scrollLeft += d;
     }
-    function place(instant) {
-      const b = btns.find((x) => x.dataset.id === cur);
-      if (!b) return;
-      // natural width of the tabs, measured with growth switched off: phone
-      // tabs stretch to fill the rail, and the arrows' padding would otherwise
-      // feed back into the answer (the rail flickered between the two states)
+    // natural width of the tabs, measured with growth switched off: phone
+    // tabs stretch to fill the rail, and the arrows' padding would otherwise
+    // feed back into the answer (the rail flickered between the two states).
+    // Measured on the first placement and again only when the rail's size or the type changes (LP-1: not on every
+    // select, which forced two layouts of the whole page each time).
+    let need = null;
+    function measure() {
       const first = btns[0], last = btns[btns.length - 1];
       wrap.classList.add('measure');
-      const need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 16;
+      need = last.offsetLeft + last.offsetWidth - first.offsetLeft + 16;
       wrap.classList.remove('measure');
+    }
+    function place(instant, fresh) {
+      const b = btns.find((x) => x.dataset.id === cur);
+      if (!b) return;
+      if (need == null || fresh) measure();
       wrap.classList.toggle('overflowing', need > rail.clientWidth + 1);
       ribbon.style.transform = 'translateX(' + (b.offsetLeft + b.offsetWidth - 28) + 'px)';
       reveal(b, instant);
@@ -166,7 +172,8 @@ RB.ui.folio = (function () {
         b.setAttribute('aria-selected', on ? 'true' : 'false');
         b.tabIndex = on ? 0 : -1;
         b.classList.toggle('autofocus', on); // the folio opens with focus on its selected tab
-        if (on && changed && how) { b.classList.remove('lift'); void b.offsetWidth; b.classList.add('lift'); }
+        // the lift plays again by its other name (no forced layout to restart it)
+        if (on && changed && how) { const again = b.classList.contains('lift'); b.classList.remove('lift', 'lift2'); b.classList.add(again ? 'lift2' : 'lift'); }
       }
       const b = btns.find((x) => x.dataset.id === id);
       if (b && focus) b.focus({ preventScroll: true });
@@ -199,10 +206,14 @@ RB.ui.folio = (function () {
     });
     wrap.querySelector('.rail-arrow.l').onclick = () => { rail.scrollLeft -= rail.clientWidth * 0.6; };
     wrap.querySelector('.rail-arrow.r').onclick = () => { rail.scrollLeft += rail.clientWidth * 0.6; };
-    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => place()) : null;
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => place(false, true)) : null;
     if (ro) ro.observe(rail, { box: 'border-box' }); // not the padding the arrows add
+    // the book's type arriving changes the labels' widths
+    const fonts = typeof document !== 'undefined' && document.fonts && document.fonts.addEventListener ? document.fonts : null;
+    const onFonts = () => { if (rail.isConnected) place(false, true); };
+    if (fonts) fonts.addEventListener('loadingdone', onFonts);
     select(selected, null, false);
-    return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); } };
+    return { el: wrap, select: (id) => select(id, null, false), current: () => cur, destroy() { if (ro) ro.disconnect(); if (fonts) fonts.removeEventListener('loadingdone', onFonts); } };
   }
 
   // Two-page spread available at this width (matches the CSS breakpoint in

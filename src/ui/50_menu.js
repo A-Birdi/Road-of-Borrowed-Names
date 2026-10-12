@@ -185,9 +185,15 @@ RB.ui.menu = (function () {
     const two = F().wide();
     const turn = lastSec && lastSec !== view.section;
     lastSec = view.section;
-    fr.box.innerHTML = '<div class="spread' + (two ? ' two' : '') + (turn ? ' turn' : '') + '" id="folio-page" role="tabpanel" aria-labelledby="tab-' + view.section + '">' +
-      '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div></div>';
-    const [A, B] = fr.box.querySelectorAll('.leaf');
+    // the spread stays from page to page (its shadow is drawn once); the two leaves are new each time, so what a page
+    // put on them (listeners, scroll) never carries over. A turn after a turn names its motion afresh (tb), so it plays.
+    let sp = fr.box.querySelector(':scope > .spread');
+    if (!sp) { fr.box.innerHTML = '<div class="spread" id="folio-page" role="tabpanel"></div>'; sp = fr.box.firstChild; }
+    const tb = turn && sp.classList.contains('turn') && !sp.classList.contains('tb');
+    sp.className = 'spread' + (two ? ' two' : '') + (turn ? ' turn' + (tb ? ' tb' : '') : '');
+    sp.setAttribute('aria-labelledby', 'tab-' + view.section);
+    sp.innerHTML = '<div class="leaf" tabindex="0" aria-label="' + esc(sec.en) + ' page"></div><div class="leaf leaf-b" tabindex="0" aria-label="' + esc(sec.en) + ' detail page"></div>';
+    const [A, B] = sp.querySelectorAll(':scope > .leaf');
     const builtIn = { journey, words, satchel, map, company }[view.section];
     if (builtIn) builtIn(A, B, two); else xsec(view.section).render(A, B, two, api(view.section));
     runningHeads(A, B, two, sec, s, comp);

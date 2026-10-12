@@ -116,7 +116,12 @@ RB.game = (function () {
         }
       } catch (err) { loopErr('world', err); }
       try { RB.ui.tick && RB.ui.tick(dt, t); } catch (err) { loopErr('ui', err); }
-      try { RB.render.frame(t); } catch (err) { loopErr('render', err); }
+      // under the Ledger the world is only glimpsed, dimmed, round the book's edges: it is drawn on one frame in four
+      // there (LP-1: drawing it every frame competed with the book for the main thread); it goes on living all the
+      // same (above), and every frame is drawn again the moment the Ledger closes
+      const under = mode() === 'menu';
+      G.underN = under ? (G.underN || 0) + 1 : 0;
+      if (!under || G.underN % 4 === 1) { try { RB.render.frame(t); } catch (err) { loopErr('render', err); } }
     } finally {
       requestAnimationFrame(loop);
     }

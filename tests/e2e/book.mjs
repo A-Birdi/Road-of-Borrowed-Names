@@ -194,8 +194,8 @@ await test('reduced motion runs no animation; flat draws no texture or depth', a
   await p.evaluate(() => { RB.game.settings.reducedMotion = false; RB.game.settings.ledgerStyle = 'flat'; RB.game.applySettings(); });
   await open(p, 'journal');
   await p.waitForTimeout(300);
-  const flat = await p.evaluate(() => { const l = document.querySelector('.folio.book.book-flat .leaf'); const cs = getComputedStyle(l); return { bg: cs.backgroundImage, shadow: cs.boxShadow, filter: getComputedStyle(document.querySelector('.folio.book .spread')).filter }; });
-  assert(flat.bg === 'none' && flat.shadow === 'none' && flat.filter === 'none', 'flat: ' + JSON.stringify(flat));
+  const flat = await p.evaluate(() => { const l = document.querySelector('.folio.book.book-flat .leaf'); const cs = getComputedStyle(l); return { bg: cs.backgroundImage, shadow: cs.boxShadow, filter: getComputedStyle(document.querySelector('.folio.book .spread')).filter, cast: getComputedStyle(document.querySelector('.folio.book .spread'), '::before').display }; });
+  assert(flat.bg === 'none' && flat.shadow === 'none' && flat.filter === 'none' && flat.cast === 'none', 'flat: ' + JSON.stringify(flat));
   assert(!errors.length, errors.join('; '));
   await ctx.close();
 });
