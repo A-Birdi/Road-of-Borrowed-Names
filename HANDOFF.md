@@ -261,7 +261,7 @@
     `assets/music/ensemble/` beside the page, made from the current score by `tools/music/ensemble/` and admitted by
     the build only while their score fingerprint matches; the director in `src/audio/22_ensemble.js` keeps the
     Original warm and hands over on the audio clock both ways. Design, results and limits: `docs/MUSIC_PERFORMANCE.md`;
-    decision F-145; captures for Robin's listening: `docs/music/ensemble/listen.html` (nobody has listened yet); the
+    decision F-145; captures: `docs/music/ensemble/listen.html` (Robin listened, 2026-10-12: "It sounds great, nice job"; not yet heard in the game on a device); the
     rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
     `tests/e2e/music_performance.mjs`. A new recording: the five steps in that doc, then rebuild.
     Next: the remaining `staging_chapters` pieces, the chain redone, then P17's closure (speed, the final review set,

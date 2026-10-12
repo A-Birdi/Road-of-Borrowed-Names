@@ -172,9 +172,10 @@ and a start between frames is honoured by interpolation. The runtime therefore s
 
 ## What this is not
 
-- **Not listened to.** No human has heard these recordings in the game. The checks are measurements: lengths,
-  placement, levels, onsets and seam statistics. They cannot say the result sounds right. Robin's listening is the
-  missing judgement; `docs/music/ensemble/listen.html` holds the captures for it.
+- **Listened to on the captures, not yet in the game.** Robin heard the excerpts on the captures page (the
+  game's own code rendering both performances through its graph; `docs/music/ensemble/listen.html`) on 2026-10-12:
+  "It sounds great, nice job". That covers how the recordings and the switches sound in those excerpts. Hearing them
+  in the game itself, on Robin's own device, is still to come.
 - **Not device-tested.** Only Chromium on Linux was used. Opus decoding in Safari, MP3 gapless handling elsewhere, and
   phones are untested. A browser that decodes a file to another length is refused by the length check and falls to the
   next format or to Original.

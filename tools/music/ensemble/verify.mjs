@@ -237,7 +237,7 @@ for (const id of IDS) {
     assets: good.length ? { layout: 'split_firstpass_loop', firstPass: good.map((i) => asset(pkg.assets.first[i], 'first', res.formats[i].codec)), steadyLoop: good.map((i) => asset(pkg.assets.loop[i], 'loop', res.formats[i].codec)) } : null,
     mix: res.calibration ? { profile: 'pre_master_music_bus', gainDb: +res.calibration.gainDb.toFixed(3), roomBaked: true, userVolumeBaked: false } : { profile: 'pending', gainDb: null, roomBaked: null, userVolumeBaked: false },
     evidence: ev,
-    notes: 'SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to ' + rep.head.joinSec.toFixed(3) + ' s and one circular steady cycle, with guards. Machine-checked in Chromium only (' + qa + '); not yet listened to by Robin.',
+    notes: 'SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to ' + rep.head.joinSec.toFixed(3) + ' s and one circular steady cycle, with guards. Machine-checked in Chromium only (' + qa + '); listened to by Robin on the captures (2026-10-12), not yet in the game on a device.',
   };
   const i = manifest.tracks.findIndex((t) => t.songId === id);
   if (i >= 0) manifest.tracks[i] = track; else manifest.tracks.push(track);

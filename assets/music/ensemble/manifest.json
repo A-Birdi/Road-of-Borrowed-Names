@@ -86,7 +86,7 @@
           "docs/music/ensemble/qa/snowbell.json"
         ]
       },
-      "notes": "SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to 6.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only (docs/music/ensemble/qa/snowbell.json); not yet listened to by Robin."
+      "notes": "SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to 6.000 s and one circular steady cycle, with guards. Machine-checked in Chromium only (docs/music/ensemble/qa/snowbell.json); listened to by Robin on the captures (2026-10-12), not yet in the game on a device."
     },
     {
       "songId": "battle_keepers",
@@ -171,7 +171,7 @@
           "docs/music/ensemble/qa/battle_keepers.json"
         ]
       },
-      "notes": "SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to 9.711 s and one circular steady cycle, with guards. Machine-checked in Chromium only (docs/music/ensemble/qa/battle_keepers.json); not yet listened to by Robin."
+      "notes": "SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to 9.711 s and one circular steady cycle, with guards. Machine-checked in Chromium only (docs/music/ensemble/qa/battle_keepers.json); listened to by Robin on the captures (2026-10-12), not yet in the game on a device."
     }
   ]
 }

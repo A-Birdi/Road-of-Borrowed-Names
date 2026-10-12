@@ -1,7 +1,7 @@
 {
  "generatedBy": "tools/music/ensemble/capture.mjs",
  "renderedIn": "Chromium (Playwright headless), offline, through the game's own audio graph at default volumes",
- "listenedTo": false,
+ "listenedTo": "Robin, 2026-10-12, on the captures page: \"It sounds great, nice job\"",
  "clips": [
   {
    "song": "snowbell",
@@ -24,7 +24,7 @@
   {
    "song": "snowbell",
    "file": "listen/snowbell.switch_mid_phrase.opus",
-   "title": "Original → Ensemble → Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)",
+   "title": "Original \u2192 Ensemble \u2192 Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)",
    "cueFrom": 30,
    "seconds": 24,
    "performance": "both",
@@ -81,7 +81,7 @@
   {
    "song": "battle_keepers",
    "file": "listen/battle_keepers.switch_mid_phrase.opus",
-   "title": "Original → Ensemble → Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)",
+   "title": "Original \u2192 Ensemble \u2192 Original, mid-phrase (200 ms crossfades at 8.0 s and 16.0 s)",
    "cueFrom": 30,
    "seconds": 24,
    "performance": "both",

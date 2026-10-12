@@ -4297,8 +4297,10 @@ What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. 
   music volume and ducking (T34/T36/T37), the warm Original's cost (T39: ×1.05 and ×0.97 offline), Snowbell in
   ordinary play through the real menu (T41), a Keepers' Road battle through the battle's own sheet both ways and out
   of it (T05/T42), a project sub-path with the built CSP (T43).
-- **Listened to: no.** Captures for Robin in docs/music/ensemble/listen.html (twelve excerpts rendered by the game's
-  code through its graph; the first and third repeats came out byte-identical). **H**: Robin's listening.
+- **Listened to: yes, the captures (Robin, 2026-10-12).** Twelve excerpts rendered by the game's code through its
+  graph (docs/music/ensemble/listen.html; the first and third repeats came out byte-identical): the introductions
+  in both performances, both switches mid-phrase, the join and the first repeat beside the Original's. Robin: "It
+  sounds great, nice job". **H**, still open: hearing it in the game on Robin's own device.
 - **Device-tested: no** (Chromium on Linux only; Safari's Opus, other browsers' MP3 lengths and phones untested; a
   browser decoding another length is refused by the check and falls back). **Deployed: no** (C-87's gate; the deploy
   must copy `assets/music/ensemble/`). **Rights:** the TimGM6mb (GPL-2) question is open for Robin (NOTICE.md).

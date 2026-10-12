@@ -6,7 +6,7 @@
 // the game's own code (RB.audio.renderEnsembleOffline: the Original player warm, the recording through the same
 // music bus and master chain, the handover gains as live) and encoded to Ogg Opus 128 kbit/s in
 // docs/music/ensemble/listen/, with docs/music/ensemble/listen.json describing them. The page
-// docs/music/ensemble/listen.html plays them. Nobody has listened to them yet; the page says so.
+// docs/music/ensemble/listen.html plays them. Robin listened to them on 2026-10-12; the page says so.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -70,7 +70,7 @@ for (const id of songs) {
     console.log(id, c.key, fs.statSync(path.join(OUT, name)).size, 'bytes');
   }
 }
-fs.writeFileSync(path.join(root, 'docs/music/ensemble/listen.json'), JSON.stringify({ generatedBy: 'tools/music/ensemble/capture.mjs', renderedIn: 'Chromium (Playwright headless), offline, through the game\'s own audio graph at default volumes', listenedTo: false, clips: list }, null, 1) + '\n');
+fs.writeFileSync(path.join(root, 'docs/music/ensemble/listen.json'), JSON.stringify({ generatedBy: 'tools/music/ensemble/capture.mjs', renderedIn: 'Chromium (Playwright headless), offline, through the game\'s own audio graph at default volumes', listenedTo: 'Robin, 2026-10-12, on the captures page: "It sounds great, nice job"', clips: list }, null, 1) + '\n');
 // the page that plays them (static, no script needed; opened from the checkout or beside the hosted docs)
 const esc = (x) => String(x).replace(/[&<>"]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[m]);
 const qa = (id) => { try { return JSON.parse(fs.readFileSync(path.join(root, 'docs/music/ensemble/qa', id + '.json'), 'utf8')); } catch (e) { return null; } };
@@ -90,9 +90,8 @@ h1 { font-size: 1.6rem; margin: 0 0 .3rem; } h2 { font-size: 1.2rem; margin: 2re
 audio { width: 100%; }
 </style></head><body><main>
 <h1>Ensemble pilot captures</h1>
-<p class="note"><b>Not listened to yet.</b> These excerpts were rendered by the game's own code, offline in Chromium, through its own
-audio graph at the default volumes. They are for Robin's listening review. Nobody has judged them by ear, and no
-statement here says they sound right.</p>
+<p class="note"><b>Listened to by Robin, 2026-10-12: “It sounds great, nice job.”</b> These excerpts were rendered by the game's own code, offline in Chromium, through its own
+audio graph at the default volumes. That listening covers these excerpts; hearing the recordings in the game itself, on Robin's own device, is still to come.</p>
 <p class="muted">The measurements behind them (lengths, placement, levels, onsets, seams) are in qa/&lt;song&gt;.json and VALIDATION.md (MT-1).
 Each excerpt starting mid-cue was rendered with a few seconds of pre-roll, so notes already sounding are heard ringing as in play.
 Not here: a change of song while Ensemble plays (the offline renderer plays one cue at a time); that is heard only in the game.</p>`;
