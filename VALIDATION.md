@@ -4340,6 +4340,22 @@ journey, no New Game+, no Ledger) and it is not asked again; a journey begun whi
 offered it. That last check **failed on the build before the fix** (the old journey's offer appeared) and passes after:
 `play_ui` all ok, `verbs_journey` **5/5**.
 
+**What the continuous campaigns do with the naming at the gate (a clarification).** The assessment said the full
+matrix would miss the sixteen naming combinations; more exactly: a continuous campaign meets the naming once, with its
+own companion at its own level, and meets it through automation, `RB.test.solveStep`, which checks that the tier has a
+right option and records it, without the sheet, a click or a key; the run then asserts only that later milestones are
+reached. The sixteen-run product would have *encountered* all sixteen that way, none of them through the real
+interface or with the result and what follows checked; Plan B's four campaigns encounter four (F/Ren, E/Nao, I/Mio,
+A/Suzu) the same way and never meet the other twelve. `naming_combos.mjs` (below) is what tests all sixteen through
+the interface, with outcome assertions, as focused tests at the selected level.
+
+**Closure item: keys go to a sheet raised over the walking world (B, real keys).** The modal-input regression
+`book_final` found (Back went to the Ledger behind a confirmation; OK went to the world) is closed by real keyboard
+input, not by a campaign passing: `play_ui.mjs` presses Escape and Enter over a confirmation raised in the world and
+over the game's own New Game+ offer, raised when a scene ends in a finished story. On a build without the fix (the
+scratch build before 5ded08e) those checks **fail** (Back opened the Ledger behind the sheet; Enter did not press the
+focused button; "Begin New Game+…" was focused first; the stale offer appeared); on the fixed build they all pass.
+
 **F/Ren, on a clean export of 900efc5 (B).** `PURSUE_EDITION=new node tests/e2e/pursue.mjs F ren twelve` on `git
 archive 900efc5` (its own `index.html`, sha256 1963d027…) with one test file replaced, `tests/e2e/drive.mjs` as in
 5ded08e (the driver leaves the optional exploration sheets, `vb.*`, alone; the run before it stalled waiting on one at
