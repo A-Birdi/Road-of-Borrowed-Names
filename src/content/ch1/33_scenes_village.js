@@ -144,7 +144,7 @@ narr: よく {使|つか}い{込|こ}まれた {作業台|さぎょうだい} �
 # holds out Kiku's shuttle for you to take to her.
 !faceplayer bunta
 !if !item.rw_plane -> gone
-!walkto pc 4 4 right
+!walkto pc 4 5 right
 !look bunta pc
 !prop pc plane
 !gesture pc present bunta hold

@@ -4686,7 +4686,7 @@ body.reduced-motion .pace-line .ln { transition: none; }
 .pace-opt .d { color: var(--ink-2); font-size: 0.92em; }
 .pace-custom { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
 .pace-custom .pbtn { min-width: var(--tap); padding: 0; font-size: 1.15em; }
-.pace-seclab { display: inline-flex; align-items: center; gap: 0.4em; }
+.pace-seclab { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4em; min-width: 0; } /* (at 320 px and 200 % text "seconds" goes under the field) */
 .pace-seclab input { width: 4.2em; min-height: var(--tap); font: inherit; padding: 0 0.4em; border: 1px solid var(--ink-3); border-radius: var(--r-1); background: var(--pad-paper, #fffaf0); color: var(--ink); }
 .pace-seclab input:focus-visible, .pace-opt input:focus-visible, .pace-check input:focus-visible, .pace-repr input:focus-visible { outline: 3px solid var(--focus-paper); outline-offset: 2px; }
 .pace-buckets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 0.92em; }
@@ -128224,7 +128224,7 @@ narr: よく {使|つか}い{込|こ}まれた {作業台|さぎょうだい} �
 # holds out Kiku's shuttle for you to take to her.
 !faceplayer bunta
 !if !item.rw_plane -> gone
-!walkto pc 4 4 right
+!walkto pc 4 5 right
 !look bunta pc
 !prop pc plane
 !gesture pc present bunta hold

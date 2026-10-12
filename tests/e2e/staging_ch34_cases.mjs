@@ -101,7 +101,7 @@ const CH3 = [
       { name: 'the fence key', flags: COR, quests: Q(5), expect: { co_tamotsu: ['point'] } }, { name: 'rope for Gorō', quests: F(Q(1), { co_bell: 0 }), expect: { co_tamotsu: ['nod', 'handover'], pc: ['receive'] } }] },
   { ch: 3, scene: 'co.heita', map: 'co.village', at: [20, 11, 'up'], talk: 'co_heita', flags: CO1, quests: Q(1),
     variants: [{ name: 'grass duty', comps: ALL4, expect: { co_heita: ['stretch', 'shrug', 'point'] } }, { name: 'researchers', flags: COC, quests: Q(3), expect: { co_heita: ['aside'] } }] },
-  { ch: 3, scene: 'co.heita_after', map: 'co.village', at: [15, 9, 'right'], talk: 'co_heita', flags: CO9, quests: { co_main: 'done' }, comps: ['mio', 'nao'], expect: { co_heita: ['brow', 'lowered'] } },
+  { ch: 3, scene: 'co.heita_after', map: 'co.village', at: [15, 10, 'up'], talk: 'co_heita', flags: CO9, quests: { co_main: 'done' }, comps: ['mio', 'nao'], expect: { co_heita: ['brow', 'lowered'] } },
   { ch: 3, scene: 'co.seat', map: 'co.village', at: [26, 19, 'up'], flags: CO1, quests: Q(1),
     variants: [{ name: 'the empty seat', comps: ALL4, expect: { pc: ['observe', 'lookbetween'] } }, { name: 'named', flags: COD, quests: Q(9) }] },
   { ch: 3, scene: 'co.buckets', map: 'co.village', at: [38, 7, 'up'], flags: CO1, quests: Q(1),

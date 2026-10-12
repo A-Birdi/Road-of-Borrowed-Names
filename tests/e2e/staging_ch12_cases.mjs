@@ -57,7 +57,7 @@ const CH1 = [
   { ch: 1, scene: 'rw.oto_sign', map: 'rw.house1', at: [3, 5, 'up'], talk: 'oto', flags: F(R1, { rw_sign_read: true }), quests: { rw_boots: 1 }, expect: { oto: ['observe', 'handover'] } },
   { ch: 1, scene: 'rw.bench_tools', map: 'rw.carpenter', at: [1, 4, 'up'], flags: R1, quests: { rw_tools: 1 },
     variants: [{ name: 'the record', expect: { pc: ['kneel', 'receive'] } }, { name: 'read already', flags: F(R1, { rw_tally_read: true }) }, { name: 'no quest', quests: {} }] },
-  { ch: 1, scene: 'rw.bunta_tally', map: 'rw.carpenter', at: [5, 5, 'up'], talk: 'bunta', flags: F(R1, { rw_tally_read: true }), quests: { rw_tools: 2 },
+  { ch: 1, scene: 'rw.bunta_tally', map: 'rw.carpenter', at: [5, 6, 'up'], talk: 'bunta', flags: F(R1, { rw_tally_read: true }), quests: { rw_tools: 2 },
     variants: [{ name: 'with the plane', items: { rw_plane: 1 }, expect: { bunta: ['forehead', 'receive', 'handover'], pc: ['present'] } }, { name: 'the shuttle not yet taken' }] },
   { ch: 1, scene: 'rw.kiku_tally', map: 'rw.house2', at: [3, 6, 'up'], talk: 'kiku', flags: F(R1, { rw_tally_read: true }), quests: { rw_tools: 2 },
     variants: [{ name: 'with the shuttle', items: { rw_shuttle: 1 }, expect: { kiku: ['receive', 'handover'], pc: ['handover'] } }, { name: 'waiting' }] },
