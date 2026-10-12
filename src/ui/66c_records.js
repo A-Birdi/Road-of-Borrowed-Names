@@ -25,7 +25,7 @@ RB.ui.records = (function () {
   const FAMILY = [
     ['chapter', 'Chapters', '{章|しょう}'], ['region', 'People helped', '{頼|たの}み'], ['dungeon', 'Places explored', '{探索|たんさく}'],
     ['pastime', 'Pastimes', '{遊|あそ}び'], ['guardian', 'Old guardians', '{古|ふる}い {守|まも}り{手|て}'], ['milestone', 'Along the way', '{道|みち}すがら'],
-    ['language', 'What I can do', 'できる こと'],
+    ['language', 'What I can do', 'できる こと'], ['road', 'On the roads', '{道中|どうちゅう}'],
   ];
 
   // ---- a stamp's design (SVG: a shape, a motif, an ink; pictures, never characters) ---------------------------------

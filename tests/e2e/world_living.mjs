@@ -1,6 +1,6 @@
 // The living world on screen (expansion P05; src/engine/53_town.js, src/ui/53w_whereabouts.js, the Journey's Places
 // and Known details' People), in Chromium on the built game, with no journey saved. Synthetic towns on real maps are
-// put into a throwaway session (the shipped tables are empty until the new chapters fill them):
+// put into a throwaway session, the journey's own tables set aside (they have their own suite, living_world.mjs):
 //  - with nobody to ask about, talking to someone who can be asked is plain talking;
 //  - "Have you seen…?": Talk / Have you seen…? / Never mind, the people you know of, the question and the answer in
 //    both languages; a note in Known details that says who said it and that it was then;
@@ -26,6 +26,9 @@ const noOverflow = (p) => p.evaluate(() => document.documentElement.scrollWidth 
 async function begin(p, o = {}) {
   await p.evaluate((o) => {
     const C = RB.content;
+    // the journey's own tables are set aside: this suite drives the engine on synthetic towns (the real ones are
+    // tested in tests/e2e/living_world.mjs and tests/unit/living_world.test.mjs, C-87)
+    C.towns = {}; C.relations = {}; C.roadEvents = {}; C.sealed = {};
     const place = (map, char, cond, x, y, talk) => { const m = C.maps[map]; m.npcs = (m.npcs || []).filter((n) => (n.char || n.id) !== char); m.npcs.push({ id: char, char, x, y, if: cond, talk: talk || 'rw.tomo' }); };
     if (!o.plain) {
       place('rw.tea', 'tomo', 'slot.tomo=2', 4, 4);
@@ -141,6 +144,10 @@ await test('routines move only on coming back: never while walking the town, nev
   // walking about, in and out of the teahouse, talking: nothing moves
   await drive(p, async () => { for (const d of ['left', 'left', 'up', 'right']) await RB.test.step(d); });
   await drive(p, async () => { await RB.test.go('rw.tea', 4, 7, 'up'); await RB.test.go('rw.village', 22, 18, 'down'); });
+  // (someone to ask about; and Mame's greeting heard once, so the question is offered: new talk comes first, LW-04)
+  await p.evaluate(() => RB.town.seen(RB.game.s, 'kiyo', 'sg.harbor'));
+  await talkMame(p);
+  await lines(p);
   await talkMame(p);
   const menu = await untilChoice(p);
   assert(menu && await tick() === 0, 'no tick while walking the town, nor in the middle of a conversation');

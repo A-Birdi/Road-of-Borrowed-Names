@@ -1,5 +1,5 @@
 // The living world (expansion P05; src/engine/53_town.js, src/ui/53w_whereabouts.js). Synthetic towns on real maps,
-// in a throwaway context: routines tick only on coming back (three transitions away, a story flag the town cares
+// in a throwaway context, with the journey's own tables set aside (they are tested in living_world.test.mjs): routines tick only on coming back (three transitions away, a story flag the town cares
 // about, a rest), never within the town and never on loading; one person is in one place; pins hold; change beats are
 // remembered until seen; "Have you seen…?" gives its four kinds of answer without omniscience and leaves notes, not
 // markers; a road's first event is deferred, never lost, and once-only; sealed places are noticed, then opened.
@@ -12,14 +12,15 @@ export default async (t) => {
   const camp = (id) => { const s = RB.state.newCampaign({ edition: 2 }); s.id = id || 'town-test'; s.map = 'rw.village'; return s; };
   const go = (s, map) => { const why = T.beforeEnter(s, map); s.map = map; T.visited(s, map); return why; };
 
-  // ---- a six-chapter journey meets none of it ---------------------------------------------------------------------
+  // ---- the engine on its own: the journey's tables set aside ------------------------------------------------------
+  // (The journey's real towns, people, roads and return keys are tested in living_world.test.mjs, C-87. Here the
+  // engine's rules are driven on synthetic towns, so the shipped tables are put aside first.)
   {
-    t.eq([Object.keys(C.towns), Object.keys(C.relations).length, Object.keys(C.roadEvents).length, Object.keys(C.sealed).length], [['ashihara'], 0, 0, 0],
-      'the shipped tables are empty until the new chapters fill them, but for the postgame settlement (P15f), whose maps a six-chapter journey never reaches');
-    t.ok(C.towns.ashihara.maps.every((m) => C.maps[m].edition === 2), 'and its maps are the twelve-chapter edition\'s');
+    t.ok(Object.keys(C.towns).length > 1 && Object.keys(C.roadEvents).length > 0 && Object.keys(C.sealed).length > 0, 'the journey has its towns, roads and return keys (C-87)');
+    C.towns = {}; C.relations = {}; C.roadEvents = {}; C.sealed = {};
     const s = RB.state.newCampaign(); s.map = 'rw.village';
     for (const m of ['rw.road', 'sg.road', 'sg.harbor', 'sg.road', 'rw.road', 'rw.village']) t.eq(go(s, m), null, 'no town, no tick: ' + m);
-    t.eq([T.changed(s), T.unfinished(s), T.noticed(s), T.roadEventAt(s, 'rw.road')], [[], [], [], null], 'and nothing to show in the Journey or Known details');
+    t.eq([T.changed(s), T.unfinished(s), T.noticed(s), T.roadEventAt(s, 'rw.road')], [[], [], [], null], 'with no tables: nothing to show in the Journey or Known details');
     const old = RB.state.newCampaign(); delete old.world;
     T.rec(old);
     t.eq(Object.keys(old.world).sort(), ['beats', 'lastSeen', 'moves', 'notes', 'rests', 'roads', 'sealed', 'towns'], 'an older save gains the empty record');

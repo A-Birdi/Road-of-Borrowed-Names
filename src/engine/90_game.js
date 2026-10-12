@@ -338,7 +338,7 @@ RB.game = (function () {
         if (nightHere && !nightThere) (RB.test.nightLeaks = RB.test.nightLeaks || []).push(RB.world.W.map.id + ' -> ' + mapId);
       }
       // the living world (src/engine/53_town.js): a town's routine may move on as you come back to it; never on a load
-      if (RB.town) RB.town.beforeEnter(G.s, mapId);
+      if (RB.town) RB.town.beforeEnter(G.s, mapId, { inScript: !!opts.inScript });
       RB.world.enter(mapId, x, y, dir, { sp: opts.sp });
       if (RB.town) RB.town.visited(G.s, mapId);
       RB.render.prewarm(); // build the new map's art while the screen is still dark

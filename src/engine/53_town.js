@@ -79,11 +79,15 @@ RB.town = (function () {
     t.why = why || null;
     return t;
   }
+  // the last arrival on foot (this session only, never saved): a road's event waits for someone who walked onto the
+  // road from another map, not a load, a test's start or a scene that moved the party
+  let arrival = null;
   // Before a transition enters mapId: count it, and tick the town it belongs to if one is due.
-  function beforeEnter(s, mapId) {
+  function beforeEnter(s, mapId, opts) {
     if (!s) return null;
     const R = rec(s);
     R.moves++;
+    arrival = !(opts && opts.inScript) && s.map && s.map !== mapId ? { to: mapId, from: s.map, moves: R.moves } : null;
     const id = townOf(mapId);
     const from = s.map ? townOf(s.map) : null;
     // leaving a town: remember when, and what it cares about as it was
@@ -244,6 +248,7 @@ RB.town = (function () {
     if (!id) return null;
     const D = C().roadEvents[id];
     const R = rec(s);
+    if (!arrival || arrival.to !== mapId || arrival.moves !== R.moves) return null; // walked here, this visit
     const r = R.roads[id] || (R.roads[id] = { unique: null, solved: {}, offered: 0 });
     // An event is offered once per visit. The game asks again after every scene on the map (90_game.js afterScene
     // runs the enter events), so a second ask on the same transition is no new visit; nor is walking on to the
@@ -319,6 +324,15 @@ RB.town = (function () {
   }
   // the scene hooks
   RB.hooks = RB.hooks || {};
+  // A routine's place says its own first line once (src/content/zzz_living/10_towns.js), then what the person would
+  // say anywhere: their talk, resolved as usual without that line, so the story's next step is never held back.
+  RB.hooks.usual_talk = async (a, ctx) => {
+    const s = RB.game && RB.game.s, W = RB.world && RB.world.W;
+    const n = W && ctx && (W.npcs || []).find((x) => x.id === ctx.npc);
+    if (!s || !n || !n.def) return;
+    const list = typeof n.def.talk === 'string' ? [{ scene: n.def.talk }] : n.def.talk || [];
+    for (const o of list) if (!o.if || RB.state.test(s, o.if)) { await RB.script.run(o.scene, { npc: n.id }); return; }
+  };
   RB.hooks.road_done = async (a) => { if (RB.game && RB.game.s) roadDone(RB.game.s, a[0], a[1]); };
   RB.hooks.sealed = async (a) => {
     const s = RB.game && RB.game.s;
