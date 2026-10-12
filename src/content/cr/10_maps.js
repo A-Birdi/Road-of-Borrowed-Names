@@ -359,8 +359,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       { id: 'cr_koma', x: 18, y: 15, dir: 'left', talk: [{ if: 'cr_done', scene: 'cr.koma_after' }, { scene: 'cr.koma' }] },
     ],
     west: { x: 0, y: 12, w: 1, h: 2, to: 'cr.above', sp: 'from_east', dir: 'left' },
-    east: { x: 35, y: 12, w: 1, h: 2, to: 'cr.pass1', sp: 'from_west', dir: 'right', if: 'cr_passed' },
-    triggers: [{ x: 34, y: 12, w: 1, h: 2, scene: 'cr.kumoi_east', if: '!cr_passed' }],
+    // the way up to the High Pass: through the Barrier, and in Nao's journey not before the night at Kirishita (Nao ran
+    // the relay's last leg down there and asked you to come after: "Tomorrow, the pass")
+    east: { x: 35, y: 12, w: 1, h: 2, to: 'cr.pass1', sp: 'from_west', dir: 'right', if: 'cr_passed&!cr_nao_night' },
+    triggers: [{ x: 34, y: 12, w: 1, h: 2, scene: 'cr.kumoi_east', if: '!cr_passed|cr_nao_night' }],
   });
 
   // ---- interiors ---------------------------------------------------------------------------------------------------

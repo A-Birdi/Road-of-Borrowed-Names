@@ -6,10 +6,10 @@
 // flags, quests and items the callers of each carrying scene leave at that moment, no more than the story guarantees.
 // Companions: on the Cloudroad and in Steamhollow the companion is on the map while the region's apart flag is off (the
 // maps' noCompanion '!cr_apart' / '!yn_apart', read by RB.world.placeCompanion). The surety stretch (cr_apart) ends at
-// the Barrier as the gate opens for both (cr_passed), so the pass and the stations after it have the companion back,
-// with one exception: in Nao's journey Nao runs the relay's last leg down to Kirishita alone (cr.nao_decides,
-// comp_away) and nothing keeps you at Kirishita until you find them on the porch: you can climb to the pass, take the
-// letter and carry it down to Sakashita with no companion (the palanquin from Kirishita, cr.ride, skips the porch). In
+// the Barrier as the gate opens for both (cr_passed), so the pass and the stations after it have the companion back.
+// In Nao's journey Nao runs the relay's last leg down to Kirishita alone (cr.nao_decides, comp_away) and asks you to
+// come after; the way up from Kumoi to the High Pass waits for that night on the porch (cr_nao_night: cr.kumoi_east),
+// so the pass, the letter and its delivery always have Nao back (they once could be reached with Nao away). In
 // Steamhollow the nights apart and the quarrels come after the Kettle and are over before the mediation can begin
 // (Rokubei waits for yn_eve_done), so the Kettle and the vow always have the companion.
 // Pets: by Chapter 10 all four can have been met (the cat at Reedwake, the bird at Saltglass, the dog and the tanuki at
@@ -58,7 +58,6 @@ export const SPECS = {
       { name: 'Mio', comp: 'mio', shots: ['clouds', 'steam'] },
       { name: 'Nao · the bird with you', comp: 'nao', pet: 'bird', shots: ['clouds', 'steam'] },
       // Nao away for the night: they ran the relay's last leg down to Kirishita, and the porch is not yet visited
-      { name: 'no companion: Nao away on the relay\'s last leg (the porch at Kirishita not yet visited)', comp: null, flags: { cr_nao_night: true }, shots: ['clouds', 'steam'] },
     ],
   },
   'cr.letter': {
@@ -79,7 +78,6 @@ export const SPECS = {
       { name: 'Ren · the bird met, hidden by the setting', comp: 'ren', pet: 'bird', petHidden: true, shots: ['letter'] },
       { name: 'Nao', comp: 'nao', shots: ['letter'] },
       { name: 'Suzu · the tanuki with you', comp: 'suzu', pet: 'tanuki', shots: ['letter'] },
-      { name: 'no companion: Nao still away after the relay\'s last leg (the palanquin from Kirishita, the porch skipped)', comp: null, flags: { cr_nao_night: true }, shots: ['letter'] },
       // Kumoi's lamp is the one lamp nothing makes you name (no departure scene at station 7; the way to the pass needs
       // only cr_passed), so the relay can reach the chapter's end with Kumoi's dark (the campaign fixture F-ren-cr_done
       // is one): the relay page reads each lamp (cr_lamp<n>, recorded as it is read) and draws Kumoi's station dark

@@ -283,8 +283,9 @@ cr_koma: {飛脚|ひきゃく} の お{兄|にい}さん が 、 {毎日|まい�
 narr: {雲居|くもい} の {石|いし} 。 「{峠|とうげ} {越|ご}え の {飛脚|ひきゃく} 、 {此処|ここ} に て {息|いき} を {継|つ}ぐ 。」 || Kumoi's stone: "Couriers crossing the pass catch their breath here."
 
 @scene cr.kumoi_east
+?(cr_nao_night) narr: {峠|とうげ} へ の {道|みち} 。 …… でも 、 {先|さき} に {霧下|きりした} の {宿|やど} で ナオ が {待|ま}って いる 。 || The road to the pass. …But first, Nao is waiting at the inn at Kirishita.
 ?(cr_fetching) narr: {峠|とうげ} へ の {道|みち} は 、 {先|さき} へ {続|つづ}いて いる 。 でも 、 {関所|せきしょ} で {待|ま}って いる {人|ひと} が いる 。 {先|さき} に {戻|もど}ろう 。 || The road to the pass goes on ahead. But someone is waiting at the Barrier. Go back first.
-?(!cr_fetching) narr: {峠|とうげ} へ の {道|みち} 。 {関所|せきしょ} を {抜|ぬ}けて から だ 。 || The road to the pass. Not until you're through the Barrier.
+?(!cr_fetching&!cr_nao_night) narr: {峠|とうげ} へ の {道|みち} 。 {関所|せきしょ} を {抜|ぬ}けて から だ 。 || The road to the pass. Not until you're through the Barrier.
 !move pc left 1
 
 @scene cr.barrier_back

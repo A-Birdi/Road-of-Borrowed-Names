@@ -184,6 +184,21 @@ export default async (t) => {
     t.ok(['F', 'E', 'I', 'A'].every((P) => acts.every((a) => a.task[P] && a.task[P].options.filter((o) => o.ok).length === 1)), 'one right answer to each, at every profile');
   }
 
+  // ---- Nao's night apart: the way up from Kumoi to the pass waits for the porch at Kirishita ------------------------
+  {
+    const s = fresh({ comp: 'nao', main: 6, map: 'cr.kumoi', flags: ['cr_passed', 'cr_nao_night'] });
+    const km = C.maps['cr.kumoi'], ex = (km.exits || []).concat(km.east ? [km.east] : []).find((x) => x.to === 'cr.pass1');
+    const tr = (km.triggers || []).find((x) => x.scene === 'cr.kumoi_east');
+    t.ok(ex && tr && !test(s, ex.if) && test(s, tr.if), 'while Nao waits at Kirishita, the way east to the pass is shut and the edge says so');
+    await run('cr.kumoi_east');
+    t.ok(has(/Nao is waiting at the inn at Kirishita/) && !has(/Not until you're through/), 'the reason given is Nao, not the Barrier');
+    delete s.flags.cr_nao_night; s.flags.cr_nao_back = true;
+    t.ok(test(s, ex.if) && !test(s, tr.if), 'after the night on the porch, the way is open');
+    delete s.flags.cr_passed; delete s.flags.cr_nao_back;
+    await run('cr.kumoi_east');
+    t.ok(!test(s, ex.if) && has(/Not until you're through/) && !has(/Nao is waiting/), 'before the Barrier: the Barrier is the reason');
+  }
+
   // ---- the High Pass -------------------------------------------------------------------------------------------------
   {
     const s = fresh({ main: 6, flags: ['cr_passed'], map: 'cr.pass1' });
