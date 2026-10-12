@@ -4258,6 +4258,100 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
+## LP-1 — the Ledger slow in Firefox (Robin's report, 2026-10-12)
+
+Robin: Firefox shows serious lag opening and navigating the Ledger, Edge does not; a targeted cross-browser
+performance defect, not a reason to replace the book or rerun the campaigns. Evidence types: B (browser, headless
+Chromium here), U (unit), R (code review). **Nothing here was measured in Firefox, and headless Chromium is not
+Robin's Windows GPU environment; the device review is Robin's.**
+
+**The build, and Firefox here.** The Ledger's code (`src/ui/50_menu.js`, `src/ui/12_folio.js`, `src/styles/20_folio.css`,
+`src/styles/90_book.css`, `src/ui/13_booktype.js`) last changed in e17e7f2 (2026-10-12); every build from it through
+13fd5d6 has the same Ledger. Which file Robin opened is not known here; the reproduction uses 13fd5d6's `index.html`
+(sha256 1d6c7c9c…), the branch's build at the report. `tests/e2e/lib.mjs` now picks the engine (`RB_BROWSER=firefox`
+or `webkit`, each with its own launch options; Firefox has no mobile emulation). **Firefox cannot run in this
+environment:** Playwright 1.56.1 needs its Firefox build 1495, fetched from `cdn.playwright.dev` and
+`playwright.download.prss.microsoft.com`, and the environment's network policy refuses both hosts ("no rule or
+allowlist entry allows host"); Mozilla's own archives are unreachable and Ubuntu's `firefox` package is a snap stub
+that cannot run here. Launching it fails with "Executable doesn't exist at /opt/pw-browsers/firefox-1495". Allowing
+`cdn.playwright.dev` in the environment's network settings would let `RB_BROWSER=firefox node tests/e2e/ledger.mjs`
+run.
+
+**Reproduction (B, Chromium as a proxy).** 1536×730 at 125 % (a 1920×1080 Windows screen at 125 % scaling, less the
+browser's chrome), default settings (book style, light on), journeys from campaign fixtures continued from the title:
+a populated late one (`F-ren-yn_done`, 986 flags, 1,066 scenes seen) and an early one (`F-ren-mb1_done`). **First open
+against a repeated open:** late 352–553 ms of synchronous script on the first open against 15–97 ms after; early 116
+against 10. A trace and a CPU profile put the first open's time in the Quest Guide, not the book: opening shows the
+selected quest, the guide works out the way there, and its route search copied the journey's flags and seen scenes
+at every branch (`cloneSt`, 419 of 553 ms). Each candidate Robin named, turned off on its own (test-only overrides,
+the late journey; a scenario of opening, four turns, scrolling, closing and reopening; two interleaved rounds while
+the machine was busy, so compared with each other, not taken as absolute):
+
+| Turned off | What changed (Chromium) |
+|---|---|
+| the drop-shadow filter over the spread | scrolling's frame p95 67 → 33 ms; raster unchanged |
+| the SVG feTurbulence grain | raster 815 → ~305 ms (−63 %); the grain is most of the pages' raster |
+| the opening and turn motion | raster 815 → ~520 ms; the opening's frames smoother |
+| the world drawn under the book | script 2.8 → 0.86 s for the scenario; scrolling's work 840 → 87 ms |
+| all four | scrolling and reopening at the 60 fps cap |
+| (subtree rebuild and the tab rail's forced layouts) | layout ~80–145 ms and style ~45–70 ms for the whole scenario: small here |
+
+There was no evidence that Chromium re-runs the SVG filter every frame: it rasterizes the grain image once and tiles
+it, which is why baking it (below) leaves Chromium's raster where it was. Firefox rasterizes vector backgrounds again
+as their scale changes (the book's opening scales it); that is the reason to bake it there, and it is not measured here.
+
+**What changed (no change to the look, the type, the furigana, the keys, focus, scroll positions or the journey).**
+- The grain: baked once, in Chromium, from its own SVG (`tools/book_grain.mjs`) into an indexed PNG embedded in
+  `src/styles/91_book_grain.css` (82 KiB, drawn at 2x, declared with `-webkit-image-set`, which Chromium, Safari and
+  Firefox 90+ read); the browser no longer runs an SVG filter for the pages.
+- The shadow: the spread's `drop-shadow` filter became its own layer under the leaves (`.spread::before`, the page
+  block's shape with its stack; it turns with the pages; off in the flat style and in high contrast, as before).
+- Stable page containers: the spread stays from page to page and only its two leaves are new (a page's listeners and
+  scroll never carry over); a turn after a turn plays by its other name instead of a forced reflow.
+- The tab rail measures its tabs' natural width on the first placement, on a resize and when the type arrives, not on
+  every select (two forced layouts of the whole page each time); the tab's lift replays by its other name.
+- Under the book the world is drawn on one frame in four; it goes on living (every frame updates it) and is drawn on
+  every frame again the moment the book closes. The loop never stops; a sheet over the book is unaffected.
+- The Quest Guide's branch copies layer flags and seen scenes over a shared base (copy-on-write; the live journey is
+  copied once per look and never touched). Its answers, every open quest's targets, nudges and way, compared with the
+  old guide's on eight fixtures from early to the ending (66 quests): **identical**; the journey left as the old guide
+  leaves it; all quests of a late journey 2,657 → 282 ms. Unit `quest_guide` 92/0.
+- The opening and turn motion are kept as designed (Robin: no change to the book's design); their cost fell with the
+  filter and the grain gone from under them.
+
+**Looks the same (B, pixels).** The book open on Journey and on Words, the old build against the new, at 1536×730
+@125 %, 1920×1080 @100 %, 1280×800 @200 % and 390×844 @300 % (world canvas, notices and the play time hidden in both):
+mean difference 1.6–3.1 of 255 per channel; at most 0.64 % of pixels differ by more than 8, none by more than 32 but
+two single pixels (33, 45); otherwise at most 22 (the shadow's edge, the grain's resampling). A pair for Robin:
+`docs/screenshots/ledger_lp1/`.
+
+**Functional (B, new `tests/e2e/ledger.mjs`, early and late journeys and a phone): 30/30 on the fixed build.** Back
+opens the book with its tab focused; furigana on the running head; the shadow its own layer and the grain the baked
+tile; every tab with real arrow keys (page drawn, selection, focus and ribbon follow, no measuring state left); every
+turn plays, a turn after a turn by its other name; a page's scroll position kept across another tab; Settings over
+the book closes back to it and Back then closes the book; the world updated every frame and drawn on one in four
+under the book, on every frame after; browsing every tab changes nothing of the journey; reduced motion: no motion on
+opening or turning (the tabs' colour fade stays, as before); a phone's single leaf with its shadow on the fore-edge
+side and nothing wider than the screen; no page errors. On the old build the same suite fails exactly the new
+assertions (filter, SVG grain, the world drawn every frame, the second turn's name, the phone's shadow layer) and
+passes the rest. On the final code: `book` 15/0 (its flat-style check now includes the shadow layer), `folio`,
+`play_ui`, `quest_guide`, `bookmarks` all pass; the whole unit suite **53,277 passed, 0 failed**; validator no errors.
+
+**Measured (B, Chromium, recorded, not thresholds).** Quiet machine, three interleaved runs, medians, old → new:
+
+| | late journey | early journey |
+|---|---|---|
+| first open (synchronous) | 352 → 229 ms, then with one snapshot per look 76–83 ms (`ledger.mjs`) | 116 → 64–69 ms |
+| repeated open | 15–79 → 17–24 ms | 10–74 → 11–35 ms |
+| world drawn during the scenario | 323 → 121 frames | 318 → 119 |
+| script for the scenario | 2.27 → 1.16 s | 2.14 → 1.01 s |
+| frame p95 opening / turning / scrolling | 33 / 50 / 33 → 17 / 33 / 17 ms | 50 / 50 / 33 → 17 / 33 / 17 ms |
+| raster for the scenario | 892 → 867 ms | 882 → 876 ms |
+
+**Open.** Firefox itself (blocked here, above) and Robin's machine: whether the lag is gone there is Robin's to see.
+If it is not, the next suspects are the opening's 3D perspective motion over the whole book and the grain's tiling
+cost, both kept here because the design asked for them and Chromium shows no problem with them.
+
 ## P18 — Plan B (Robin's C-89, 2026-10-12): four continuous campaigns and targeted coverage (in progress)
 
 Robin replaced the sixteen continuous campaigns of this validation milestone with four (F/Ren, E/Nao, I/Mio, A/Suzu)

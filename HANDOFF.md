@@ -265,6 +265,12 @@
     rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
     `tests/e2e/music_performance.mjs`; the chain and the full matrix run at Original only, never again with Ensemble
     (Robin's C-88). A new recording: the five steps in that doc, then rebuild.
+    **LP-1 (Robin, 2026-10-12): the Ledger lagged in Firefox.** Fixed without changing its look (VALIDATION.md "LP-1"):
+    the Quest Guide's state copies (the first open's half second), the grain baked (`tools/book_grain.mjs`), the
+    spread's filter replaced by a shadow layer, the spread kept between pages, the tab rail's layouts consolidated,
+    the world drawn on one frame in four under the book. `tests/e2e/ledger.mjs` (early and late journeys). Firefox
+    cannot be fetched here (network policy); `RB_BROWSER=firefox` runs a suite where it is installed. Robin's device
+    review is the open part.
     **P18 is Plan B (Robin's C-89, 2026-10-12)**: four continuous twelve-chapter campaigns (F/Ren, E/Nao, I/Mio,
     A/Suzu) through `node tests/e2e/matrix.mjs --twelve --fixtures --pairs …` on one fixed export (28cb216), plus
     targeted tests: `tests/unit/answer_sweep.test.mjs` (every tier of every task, negative controls),

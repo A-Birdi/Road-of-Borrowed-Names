@@ -42719,14 +42719,25 @@ RB.questGuide = (function () {
   // only a few, so they are layered (LP-1: copying them at every branch made the first look at a quest take half a
   // second): at a branch point what the source holds so far becomes a shared base nobody writes to, and the source
   // and the copy each write on their own layer above it (reads fall through to the base; unsetting writes false,
-  // which reads as unset). The live journey's objects are never layered: a copy of them is taken first. A deep chain
-  // is flattened again.
+  // which reads as unset). The live journey's objects are never layered: a copy of them is taken first (one per look).
+  // A deep chain is flattened again.
   const own = new WeakMap(); // a layer this guide made → its depth
   function flat(o) { const f = {}; for (const k in o) f[k] = o[k]; own.set(f, 0); return f; }
   function above(base) { const l = Object.create(base); own.set(l, own.get(base) + 1); return l; }
+  // the live journey's flags and seen scenes, copied once per look (one synchronous task: nothing changes them in
+  // between) and shared as the base of every branch taken from them; dropped as soon as the task ends
+  const snaps = new Map();
+  function snapshot(o) {
+    let f = snaps.get(o);
+    if (!f) {
+      if (!snaps.size) Promise.resolve().then(() => snaps.clear());
+      f = flat(o); snaps.set(o, f);
+    }
+    return f;
+  }
   function branch(st, key) {
     const o = st[key] || {};
-    if (!own.has(o)) return above(flat(o)); // the live journey (or anything not ours): copied, never touched
+    if (!own.has(o)) return above(snapshot(o)); // the live journey (or anything not ours): copied once, never touched
     const base = own.get(o) < 24 ? o : flat(o);
     st[key] = above(base);
     return above(base);
