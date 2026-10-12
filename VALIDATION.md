@@ -4377,7 +4377,8 @@ at 1280×720 (internally reviewed under AC-1):
 - Checked: U `pets` 378/0, `guardians` 66/0, `cr_ch10` 150/0, `yn_ch11` 193/0, `sequence_p16` 363/0, Hall units,
   `review_ledger` 2/0, `scene_manifest` 1023/0; B `departures` all ok, `postgame` guardian case, `cloudroad` 4/0,
   `steamhollow` 5/0, `sequence_p16` for each repainted page at three viewports. The whole `sequence_world` (every
-  branch of every spec) is being run again on `abeb52a`.
+  branch of every spec: the first chapters' sequences, the prologue and the 34) on a scratch build of `abeb52a`:
+  **2524 passed, 0 failed**.
 
 Parts 7–8 and `--extra` run next.
 
