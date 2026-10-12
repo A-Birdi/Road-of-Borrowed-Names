@@ -4445,7 +4445,12 @@ A, Talk: the move put down to `sb.sousuke` in `wb.ask`, a hit; **B, negative con
 by a target elsewhere (Hoshino at his house), the same move a miss**; C, "Have you seen…?" chosen: Sōsuke's
 conversation does not run, the quest does not move, nothing credited; D (a logic check on made-up records): the right
 person's conversation a hit, the same scene from another person, a move inside the wrapper itself, and the right
-person on another map, misses. **15/15**. The whole-game audit with this hook: see below.
+person on another map, misses. **15/15**. The whole-game audit with this hook (B, `quest_guide_audit.mjs`, E/Nao,
+test code 3ee9b15, `index.html` e456645a…): 900 scenes started while a quest was followed (analysis median 13 ms, 95th
+22 ms, max 45 ms); 55 moves, **52 pointed at, 3 not marked by design (the same three as before), 0 misses**; the one
+move put down to a scene inside another is `sb_lamp` 2→3, `sb.sousuke (in wb.ask)`, so following scenes inside scenes
+changed no other result. (The run of 74e4252's replaced attribution also showed 0 misses; it is recorded only as a run
+of that version.)
 
 *Firefox, retried (19:5x UTC).* Still refused: Playwright 1.56.1's Firefox 1495 from `cdn.playwright.dev` (both
 paths) and `playwright.download.prss.microsoft.com` gets "CONNECT tunnel failed, response 403" from the environment's
