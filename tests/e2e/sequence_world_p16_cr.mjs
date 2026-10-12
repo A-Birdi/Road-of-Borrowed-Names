@@ -67,9 +67,9 @@ export const SPECS = {
     // Heisuke's talk at Sakashita once the courier's letter is yours (cr_message_taken&!cr_done): he stands at the
     // relay office's door (18,11), you in the street before him. cr.deliver calls cr.end, so the chapter's end (cr.relay)
     // follows in the same scene. The pictures: Heisuke with the letter open in his hands from the first shot, reading,
-    // then the long silence; he stays at his door. The letter leaves your keeping on the inventory step after the
-    // pictures (the take follows the sequence's end), which shows nothing new, as ch6.toya's folio; your hands are empty
-    stay: ['cr_heisuke'], held: { pc: null }, invAfter: { cr_message: -1 },
+    // then the long silence; he stays at his door. The letter leaves your keeping with the picture's first line ("You
+    // hand him the box"), the one that shows it in his hands; your hands are empty
+    stay: ['cr_heisuke'], held: { pc: null }, inv: [{ item: 'cr_message', n: -1, shot: 'letter', phase: 'open' }],
     // the ways the scene leaves open: Sono's inn, where Heisuke asks you to come with him later (cr.family), and the
     // road up the mountain, where the relay runs again
     reach: [{ to: 'cr.saka_inn', why: 'Sono\'s inn, where Heisuke asks you to come with him' }, { to: 'cr.leg3', why: 'the road on up the mountain, the relay\'s road' }],
@@ -81,18 +81,19 @@ export const SPECS = {
       { name: 'Suzu · the tanuki with you', comp: 'suzu', pet: 'tanuki', shots: ['letter'] },
       { name: 'no companion: Nao still away after the relay\'s last leg (the palanquin from Kirishita, the porch skipped)', comp: null, flags: { cr_nao_night: true }, shots: ['letter'] },
       // Kumoi's lamp is the one lamp nothing makes you name (no departure scene at station 7; the way to the pass needs
-      // only cr_passed), so the relay's seven lamps can reach the chapter's end with Kumoi's dark (the campaign fixture
-      // F-ren-cr_done is one): this run holds the pictures to that world, and fails while it can differ
+      // only cr_passed), so the relay can reach the chapter's end with Kumoi's dark (the campaign fixture F-ren-cr_done
+      // is one): the relay page reads each lamp (cr_lamp<n>, recorded as it is read) and draws Kumoi's station dark
       { name: 'Ren · Kumoi\'s lamp never named (nothing needs it)', comp: 'ren', flags: { cr_lamp7: false }, shots: ['letter'] },
     ],
   },
   'cr.relay': {
     // only ever played from cr.deliver (the summit's own onEnter for cr.end, 11_pass.js, is replaced by
-    // 23_scenes_pass.js's), so it is checked in every cr.letter run. Night on the mountain: the seven stations' lamps lit
-    // from the foot to the pass, a courier's lantern on the move between the third and the fourth; nobody drawn
+    // 23_scenes_pass.js's), so it is checked in every cr.letter run. Night on the mountain: the stations' lamps lit
+    // from the foot to the pass (each as the world has it: Kumoi's may be dark), a courier's lantern on the move between
+    // the third and the fourth; nobody drawn
     chained: 'cr.letter', scene: 'cr.end', stay: [],
     facts: [
-      { shot: 'relay', cond: 'cr_lamp1&cr_lamp2&cr_lamp3&cr_lamp4&cr_lamp5&cr_lamp6&cr_lamp7', why: 'the seven stations\' lamps lit, as the stations\' everlasting lamps stand in the world' },
+      { shot: 'relay', cond: 'cr_lamp1&cr_lamp2&cr_lamp3&cr_lamp4&cr_lamp5&cr_lamp6', why: 'the six lamps the story has you name before the chapter can end are lit, as the stations\' everlasting lamps stand in the world (the seventh, Kumoi\'s, is drawn as the world has it)' },
       { shot: 'relay', cond: 'cr_done&cr_bridge_mended&cr_ledge_cleared', when: 'scene', why: 'the relay running again, the bridge mended and the ledge cleared, as its lines tell' },
     ],
   },

@@ -40,7 +40,7 @@ export default async (t) => {
   const ALL = Object.keys(C.words);
   const fresh = (o = {}) => {
     const s = S.newCampaign({ edition: o.edition || 2 });
-    s.id = 'guardians-test'; s.map = 'rw.mill0'; s.comp = o.comp === undefined ? 'mio' : o.comp;
+    s.id = 'guardians-test'; s.map = 'rw.mill1'; s.comp = o.comp === undefined ? 'mio' : o.comp;
     s.player.name = 'Haru'; s.player.nameJp = 'ハル';
     s.learn.profile = o.profile || 'E';
     s.learn.difficulty = o.diff || 'normal';

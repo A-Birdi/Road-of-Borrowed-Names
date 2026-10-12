@@ -42,6 +42,7 @@ async function start(p, map, x, y, o) {
   await p.evaluate(([map, x, y, o]) => {
     const done = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_done: true, cr_done: true, yn_done: true, ch6_done: true, postgame: true, ngp_offered: true, as_arrived: !!o.arrived };
     if (o.story) for (const k of ['ch6_done', 'postgame']) delete done[k];
+    Object.assign(done, o.flags || {});
     const s = RB.game.debugStart(map, x, y, { comp: o.comp === undefined ? 'mio' : o.comp, flags: done });
     s.edition = 2; s.player.nameJp = 'ハル'; s.learn.kanaKnown = 'both'; s.learn.profile = o.profile || 'E';
     RB.game.settings.textSpeed = 'instant'; RB.game.settings.input = 'choice'; RB.game.settings.lightbulb = false;
@@ -97,10 +98,12 @@ const propsAt = (p, kind) => p.evaluate((kind) => RB.world.W.map.props.filter((q
 
 await test('a guardian: the shrine after the story; waking, not now, facing it and stepping back; the stamp book\'s honest record', async () => {
   const { p, errors } = await page(b, url, { viewport: { width: 1180, height: 820 } });
-  await start(p, 'rw.mill0', 12, 8, { story: true });
-  assert(!(await propsAt(p, 'kr_stele')).includes('13,7'), 'during the story there is no shrine in the mill');
-  await start(p, 'rw.mill0', 12, 8);
-  assert((await propsAt(p, 'kr_stele')).includes('13,7'), 'after the story the founder\'s shrine stands by the mill\'s old post');
+  // the mill as Chapter 1 left it: its way in seen, the loft lit, the gears freed, the echo quieted
+  const MILL = { 'enter:rw.mill1:rw.m1_enter': true, rw_loft_done: true, rw_gears: true, rw_echo_done: true };
+  await start(p, 'rw.mill1', 9, 5, { story: true, flags: MILL });
+  assert(!(await propsAt(p, 'kr_stele')).includes('9,4'), 'during the story there is no shrine in the mill');
+  await start(p, 'rw.mill1', 9, 5, { flags: MILL });
+  assert((await propsAt(p, 'kr_stele')).includes('9,4'), 'after the story the founder\'s shrine stands by the mill\'s old post, beside the millstones');
   if (shots) await p.screenshot({ path: shots + '/guardian_shrine.png' });
   await scene(p, 'gd.rw', { choice: 'Not now' });
   const a = await p.evaluate(() => ({ met: !!RB.game.s.flags.gd_rw_met, n: RB.game.s.vars.gd_rw_n || 0, won: !!RB.game.s.flags['gd.rw'] }));

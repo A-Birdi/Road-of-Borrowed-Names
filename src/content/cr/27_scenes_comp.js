@@ -25,7 +25,8 @@ comp[smile]: …… {大丈夫|だいじょうぶ} です 。 {返事|へんじ}
 !set cr_ren_lit
 cr_jinpachi: レン さん に 、 {灯落|ひおち} の {方|ほう} から {継|つ}いで {来|き}た {伝言|でんごん} です 。 ヒサエ さん から 。 「{灯守|ひもり} の {道|みち} 、 {全|すべ}て の {灯|ひ} 、 {点|つ}く 。」 || A message for Ren, passed up the relay from Lanternfall's way. From Hisae: "The Keepers' Road: every lamp lit."
 comp[surprise]: …… {全|すべ}て の {灯|ひ} 。 ヒサエ さん が 、 {一|ひと}つ ずつ {名前|なまえ} を {呼|よ}んだ ん です ね 。 || …Every lamp. Hisae called them by name, one by one.
-comp[smile]: こちら の {灯|ひ} も 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {同|おな}じ {言葉|ことば} で 。 || Please pass back a reply that all seven lamps here are lit too. In the same words.
+?(cr_lamp7) comp[smile]: こちら の {灯|ひ} も 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {同|おな}じ {言葉|ことば} で 。 || Please pass back a reply that all seven lamps here are lit too. In the same words.
+?(!cr_lamp7) comp[smile]: こちら は {灯|ひ} が {六|むっ}つ {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {七|なな}つ {目|め} 、 {雲居|くもい} の {灯|ひ} の {名前|なまえ} は 、 {私|わたし} たち が {呼|よ}びます 。 || Please pass back a reply that six lamps are lit here. The seventh, Kumoi's, we'll call by name ourselves.
 !hook co_bond cr:beat
 :end
 

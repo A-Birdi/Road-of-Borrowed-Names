@@ -40,11 +40,11 @@ const POST = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, m
 // checked against the compiled map with RB.maps.blockedStatic), the region's flags the map reads (its people, props,
 // triggers and enter events) as the story left them, and the ways on from there.
 const PLACES = {
-  // Reedwake, the Wheel Pit under the mill (rw.mill0): the stele by the mill's oldest post at (13,7), east of the
-  // millrace; down the stairs at (2,8), over the plank bridge, and you stand west of it. The Mill Echo was quieted in
-  // Chapter 1. (The chest at (13,3) is optional: left unopened.)
-  rw: { at: ['rw.mill0', 12, 7, 'right'], flags: { rw_echo_done: true },
-    reach: [{ to: 'rw.mill1', why: 'the stairs up to the mill floor' }] },
+  // Reedwake, the Old Mill's milling floor (rw.mill1), as the page paints it: the stele by the mill's oldest post at
+  // (9,4), east of the millstones (6–7,4–5), under the loft's rafters; you stand south of it. The Mill Echo was quieted
+  // in Chapter 1 and the gears freed (the dust moth that drifts west of the stones is out of the frame).
+  rw: { at: ['rw.mill1', 9, 5, 'up'], flags: { rw_echo_done: true, rw_loft_done: true, rw_gears: true },
+    reach: [{ to: 'rw.millroad', why: 'the door out to the mill road' }, { tile: [12, 9], why: 'the stairs down to the wheel pit (a prop with its scene, not an exit)' }] },
   // Saltglass, the Harbour Office (sg.office): the old filing chest at (2,4), approached from the door at (5,8). Since
   // Chapter 2's office scene Wataru no longer works at (7,5) (wataru_office: confessed and resolved); Omi is at her
   // desk at (5,3) throughout, out of the frame (the shot is the chest's top drawer)
@@ -105,9 +105,8 @@ function page(k, runs) {
 const face = (k, o) => F({ choose: [/Face it/], shots: ['won'], flagsAfter: { ['gd.' + k]: true, ['gd_' + k + '_met']: true } }, o);
 
 export const SPECS = {
-  // the cap between the millstones under a high window, the great wheel behind, the hopper over them. (A milling
-  // floor: the scene plays in the Wheel Pit, which has the millrace and no millstone; the mill's millstone is a floor
-  // up, rw.mill1 (6,4). Nothing here can check where a picture is set.)
+  // the cap between the millstones under a high window, the great wheel behind, the hopper over them: the milling
+  // floor the shrine stands on (rw.mill1; the stones at (6,4))
   'gd.rw': page('rw', [
     face('rw', { name: 'face it, the first meeting · Mio · the cat with you', comp: 'mio', pet: 'cat', quick: true }),
     face('rw', { name: 'face it, met before and stepped back · Nao', comp: 'nao', flags: { gd_rw_met: true } }),

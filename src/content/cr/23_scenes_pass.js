@@ -242,7 +242,8 @@ narr: {北東|ほくとう} の {遥|はる}か {下|した} に 、 {雲|くも
 
 @scene cr.summit_view
 narr: {腰掛|こしか}け から 、 {雲|くも} の {海|うみ} が {見|み}える 。 {風|かぜ} が {雲|くも} を {動|うご}かす と 、 {下|した} の {宿場|しゅくば} の {灯|ひ} が 、 {一瞬|いっしゅん} だけ {見|み}えた 。 || From the bench you can see the cloud sea. When the wind moves the cloud, the lamps of the stations below show for a moment.
-?(cr_done) narr: {宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {上|うえ} まで 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いて いる 。 || All seven of the stations' lamps are lit, from the bottom of the road to the top.
+?(cr_done&cr_lamp7) narr: {宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {上|うえ} まで 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いて いる 。 || All seven of the stations' lamps are lit, from the bottom of the road to the top.
+?(cr_done&!cr_lamp7) narr: {宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {六|むっ}つ {点|つ}いて いる 。 {一番|いちばん} {上|うえ} の {雲居|くもい} の {灯|ひ} だけ が 、 まだ {暗|くら}い 。 || Six of the stations' lamps are lit, from the bottom of the road up. Only the top one, Kumoi's, is still dark.
 
 @scene cr.summit_stone
 narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。 {此処|ここ} より {北東|ほくとう} 、 {湯|ゆ} の {谷|たに} 。」 || The stone on the pass: "The Cloudroad Pass. From here, north-east: the valley of hot springs."
@@ -258,8 +259,9 @@ narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。
 # chapter's end follows (cr.end).
 !faceplayer
 cr_heisuke: …… {何|なん} だ 、 その {箱|はこ} は 。 {継|つ}ぎ{飛脚|びきゃく} の {封|ふう} …… ？ || …What's that box? The relay's seal…?
-# Illustrated (src/ui/43l_seq_cr.js): the letter in Heisuke's hands.
+# Illustrated (src/ui/43l_seq_cr.js): the letter in Heisuke's hands, handed over with the picture's first line.
 !sequence cr.letter begin
+!take cr_message
 !shot letter
 narr: {状箱|じょうばこ} を {渡|わた}す と 、 ヘイスケ は {手紙|てがみ} を {開|ひら}いて 、 {長|なが}い {間|あいだ} {黙|だま}って いた 。 || You hand him the box. Heisuke opens the letter, and for a long time says nothing.
 cr_heisuke: 「{弟|おとうと} へ 。 {母|かあ}さん の {薬代|くすりだい} を 、 {飛脚|ひきゃく} に {託|たく}す 。 {春|はる} に は {帰|かえ}る 。 {兄|あに} 」 …… || "To my younger brother. I'm sending Mother's medicine money by the courier. I'll be home in spring. Your brother." …
@@ -272,7 +274,6 @@ cr_heisuke: {親父|おやじ} は 、 {死|し}ぬ まで ゲンタ を {恨|�
 ?(comp=suzu) comp: {五十年|ごじゅうねん} がかり の {幕切|まくぎ}れ ね 。 …… {台本|だいほん} どおり じゃ なかった けど 、 いい {芝居|しばい} だった わ 。 || A final curtain fifty years in the making. …Not as the script had it, but a good play.
 cr_heisuke: ソノ の {宿|やど} へ {行|い}って 、 {頭|あたま} を {下|さ}げて {来|こ}なければ 。 {財布|さいふ} の {金|かね} を どう する か も 、 ソノ と {決|き}める 。 …… {後|あと} で 、 {一緒|いっしょ} に {来|き}て くれる か 。 || I must go to Sono's inn and bow my head. And decide with Sono what to do with the money in the purse. …Will you come with me, later?
 !sequence cr.letter end
-!take cr_message
 !set cr_delivered
 !call cr.end
 

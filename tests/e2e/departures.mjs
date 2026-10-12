@@ -14,7 +14,9 @@
 //   village; the conversation that follows is still there;
 // - one person, one figure: in the bridge scene after the Mill, Tsuru is
 //   there once for every line and walks to the Hall at nightfall; a person
-//   whose place on the map changes walks there (no second figure).
+//   whose place on the map changes walks there (no second figure); someone
+//   who walked in to speak and whose place here a scene began (Jinpachi when
+//   the Cloudroad is done) walks from where they spoke to that place.
 // Usage: node tests/e2e/departures.mjs
 import { serve, launch, page } from './lib.mjs';
 
@@ -25,15 +27,15 @@ const assert = (c, m) => { if (!c) { fail++; console.log('FAIL ' + m); } else co
 let { p, errors } = await page(b, url, { viewport: { width: 1280, height: 800 } });
 
 const ALL = { rw_arrived: true, rw_road_lit: true, rw_met_tsuru: true, rw_met_ren: true, rw_letters_done: true, rw_bottles_done: true, rw_lanterns_done: true, rw_suzu_told: true, rw_hana_cups: true };
-async function start(map, x, y, flags, dir) {
-  await p.evaluate(async ([map, x, y, flags, dir]) => {
+async function start(map, x, y, flags, dir, comp) {
+  await p.evaluate(async ([map, x, y, flags, dir, comp]) => {
     // the journey takes the edition a new one has in this build (it is saved and loaded below; a six-chapter save
     // would be offered New Game+ instead, as tests/e2e/old_saves.mjs checks)
-    const s = RB.game.debugStart(map, x, y, { dir: dir || 'up', flags, edition: RB.edition.forNew() });
+    const s = RB.game.debugStart(map, x, y, Object.assign({ dir: dir || 'up', flags, edition: RB.edition.forNew() }, comp ? { comp } : {}));
     RB.game.settings.textSpeed = 'instant';
     s.quests.rw_labels = { stage: 1, done: false, t: Date.now() };
     { const W = RB.world.W, t0 = performance.now(); while (W.time - W.enteredAt < 1100 && performance.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 50)); } // past the map's settling-in moment (game time: a big map's first frame, which builds its light, or a loaded machine, puts it behind the clock)
-  }, [map, x, y, flags, dir]);
+  }, [map, x, y, flags, dir, comp]);
 }
 async function drain() {
   await p.evaluate(async () => {
@@ -214,6 +216,51 @@ const shift = await p.evaluate(async () => {
   return { from, n0, start, most, end, dep: W.departures.filter((d) => d.id === 'tsuru').pop() };
 });
 assert(shift.most === 1 && shift.start[0] === shift.from.join(',') && /^tsuru_out@27,17 a1$/.test(shift.end[0]), 'one Tsuru walks from her old place (' + shift.from + ') to her new one, fully visible (' + JSON.stringify(shift) + ')');
+
+// ---- 7. one figure from speaking to its place: the Cloudroad's last post delivered (twelve-chapter edition) ----
+// Heisuke reads the letter at his door in Sakashita, the chapter ends, and Jinpachi brings Mio Kikue's message: he
+// walks in to speak, and since the chapter's end his place is this station's (5,14). At the scene's end that same
+// figure walks there (it used to vanish beside you while a second Jinpachi walked in from the road), and Heisuke,
+// whose place is now Sono's inn until the coins are decided, walks off to the inn's door (no longer at his door too).
+const CR = { departed: true, ch1_done: true, ch2_done: true, mb1_done: true, mb2_done: true, ch3_done: true, ch4_done: true, kr_done: true, ch5_done: true, ko_done: true,
+  cr_called: true, cr_kanbe_met: true, cr_passed: true, cr_courier_done: true, cr_message_taken: true };
+for (let n = 1; n <= 7; n++) Object.assign(CR, { ['cr_st' + n]: true, ['cr_lamp' + n]: true }, n <= 5 ? { ['cr_given' + n]: true, ['cr_plan' + n]: true } : {});
+({ p } = await page(b, url, { viewport: { width: 1280, height: 800 } }));
+await start('cr.sakashita', 18, 12, CR, 'up', 'mio');
+const relay = await p.evaluate(async () => {
+  const W = RB.world.W, s = RB.game.s, seen = { most: 0, near: null };
+  const who = (a) => (a.def && (a.def.char || a.def.id)) || a.id;
+  s.inv.cr_message = 1; s.quests.cr_main = { stage: 8, done: false, t: Date.now() };
+  let done = false;
+  RB.script.run('cr.deliver').then(() => { done = true; });
+  for (let i = 0; i < 1600 && !done; i++) {
+    const figs = W.npcs.concat(W.extras, W.leavers).filter((a) => who(a) === 'cr_jinpachi');
+    seen.most = Math.max(seen.most, figs.length);
+    if (RB.ui.dialogue.isOpen()) {
+      const d = document.querySelector('.dlg .who .nm');
+      if (d && /Jinpachi/.test(d.textContent) && figs.length) seen.near = figs.map((a) => a.x + ',' + a.y).join('|');
+      RB.ui.dialogue.advance(true);
+    }
+    const c = document.querySelector('.choices:not(.hidden) .choice'); if (c) c.click();
+    await new Promise((r) => setTimeout(r, 40));
+  }
+  const after = [];
+  for (let i = 0; i < 160; i++) {
+    const figs = W.npcs.concat(W.extras, W.leavers).filter((a) => who(a) === 'cr_jinpachi');
+    seen.most = Math.max(seen.most, figs.length);
+    after.push(figs.map((a) => a.x + ',' + a.y + (a.alpha < 1 ? '~' : '')).join('|'));
+    if (figs.length === 1 && !figs[0].route && !figs[0].mv && !W.leavers.some((a) => who(a) === 'cr_heisuke')) break;
+    await new Promise((r) => setTimeout(r, 50));
+  }
+  const jin = W.npcs.filter((a) => who(a) === 'cr_jinpachi');
+  return { done, flags: { cr_done: !!s.flags.cr_done, kikue: !!s.flags.cr_mio_kikue }, most: seen.most, near: seen.near, first: after[0], end: jin.map((a) => a.x + ',' + a.y + ' a' + a.alpha),
+    jdep: W.departures.filter((d) => d.id === 'cr_jinpachi').map((d) => ({ arriving: d.arriving, reason: d.reason })),
+    heisuke: W.npcs.filter((a) => who(a) === 'cr_heisuke').length, hdep: W.departures.filter((d) => d.id === 'cr_heisuke').map((d) => ({ to: d.to, exit: d.exit, arriving: d.arriving })) };
+});
+assert(relay.done && relay.flags.cr_done && relay.flags.kikue, 'the last post delivered, the chapter ended and Jinpachi brought Mio Kikue\'s message (' + JSON.stringify(relay.flags) + ')');
+assert(relay.most === 1 && relay.end.length === 1 && /^5,14 a1$/.test(relay.end[0]), 'one Jinpachi, from where he spoke (' + relay.near + ') to his place at (5,14), fully visible (' + JSON.stringify(relay) + ')');
+assert(relay.jdep.filter((d) => d.arriving).length === 1 && /new place here/.test((relay.jdep[relay.jdep.length - 1] || {}).reason), 'he walks in once, to speak, and from there to his place: never in again from the road (' + JSON.stringify(relay.jdep) + ')');
+assert(relay.heisuke === 0 && relay.hdep.some((d) => !d.arriving && d.to === 'cr.saka_inn'), 'Heisuke goes to Sono\'s inn and is no longer at his door (' + JSON.stringify(relay.hdep) + ')');
 
 assert(!errors.length, 'no page errors ' + errors.slice(0, 3).join(' | '));
 await b.close(); srv.close();

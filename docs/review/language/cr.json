@@ -3131,6 +3131,12 @@
   "jp": "{宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {上|うえ} まで 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いて いる 。",
   "en": "All seven of the stations' lamps are lit, from the bottom of the road to the top."
  },
+ "scene:cr.summit_view#111nbe8": {
+  "status": "self-reviewed",
+  "ref": "Self-review 2026-10-12, the relay's lamps as the world has them: the summit view's and Ren's reply's lines for Kumoi's lamp left unnamed (counters 六つ/七つ目 and their readings, 雲居 as the station table reads it, Ren's polite register, the game's 名前を呼ぶ idiom for naming a lamp; English matched line by line)",
+  "jp": "{宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {六|むっ}つ {点|つ}いて いる 。 {一番|いちばん} {上|うえ} の {雲居|くもい} の {灯|ひ} だけ が 、 まだ {暗|くら}い 。",
+  "en": "Six of the stations' lamps are lit, from the bottom of the road up. Only the top one, Kumoi's, is still dark."
+ },
  "scene:cr.summit_stone#16admwr": {
   "status": "self-reviewed",
   "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
@@ -4126,6 +4132,12 @@
   "ref": "P12 self-review: the Cloudroad, Chapter 10 (the call, the seven stations and their lamps, the relay's messages and the route plans, the Mist Barrier and its papers, the surety and the solo stretch, Nao's crossroads and night apart, the High Pass, the Courier's Hut and the Courier Who Never Arrived, the delivery and the end), its side stories (the Seven Seals, the guest book, Rin's map, the pilgrim, the courier's family and its three ends, Ginji's favour), the companions on the restored relay, the creatures and the stamps; checked against the lexicon and grammar notes, with the Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the barrier keeper Ujie is he/him (Master Ujie, not Lady); the chapter's end says the bridge was mended and the rock cleared (not both 直した); contractions joined (慣れてる, 揃ってる, 行ってらっしゃい, 言ってた)",
   "jp": "こちら の {灯|ひ} も 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {同|おな}じ {言葉|ことば} で 。",
   "en": "Please pass back a reply that all seven lamps here are lit too. In the same words."
+ },
+ "scene:cr.ren_lit#m165f9": {
+  "status": "self-reviewed",
+  "ref": "Self-review 2026-10-12, the relay's lamps as the world has them: the summit view's and Ren's reply's lines for Kumoi's lamp left unnamed (counters 六つ/七つ目 and their readings, 雲居 as the station table reads it, Ren's polite register, the game's 名前を呼ぶ idiom for naming a lamp; English matched line by line)",
+  "jp": "こちら は {灯|ひ} が {六|むっ}つ {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {七|なな}つ {目|め} 、 {雲居|くもい} の {灯|ひ} の {名前|なまえ} は 、 {私|わたし} たち が {呼|よ}びます 。",
+  "en": "Please pass back a reply that six lamps are lit here. The seventh, Kumoi's, we'll call by name ourselves."
  },
  "scene:cr.suzu_reply#5hhxd3": {
   "status": "self-reviewed",

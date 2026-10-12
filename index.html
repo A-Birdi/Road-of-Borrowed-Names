@@ -37987,6 +37987,8 @@ RB.world = (function () {
       const route = routeRound(a, 160, new Set([a.home[0] + ',' + a.home[1]]));
       if (route && route.length) { a.route = route; a.routeT = 0; } else snap();
     }
+    // (a figure dismissExtras kept for its new place and nothing here took: as before, it is simply gone)
+    if (W.extras.some((e) => e.adopt)) W.extras = W.extras.filter((e) => !e.adopt);
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
     // Where you last saw people (W3, kept with the twelve-chapter game's save) is no longer every person on a map
     // that was loaded (LW-08): sighted() below records someone when they are actually in view in the world.
@@ -38355,13 +38357,17 @@ RB.world = (function () {
     return null;
   }
   // The scene is over: those who walked in walk off (unless they live here now).
+  // At a scene's end. Someone who walked in to speak and now has a place here that the world has not placed yet (the
+  // scene began it: Jinpachi once the Cloudroad is done) is kept for refreshActors, which follows: that same figure
+  // walks to the new place (one person is never on screen twice, nor vanishes beside you to walk in again).
   function dismissExtras() {
-    const st = s();
+    const st = s(), adopt = [];
     for (const a of W.extras) {
       const lives = (W.map.def.npcs || []).some((n) => (n.char || n.id) === personOf(a) && (!n.if || RB.state.test(st, n.if)));
       if (!lives) leave(a);
+      else if (!W.npcs.some((n) => personOf(n) === personOf(a))) { a.adopt = true; adopt.push(a); }
     }
-    W.extras = [];
+    W.extras = adopt;
   }
 
   // ---- collision -----------------------------------------------------------
@@ -76854,7 +76860,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *   letter  Heisuke at Sakashita with the oiled-paper letter open in his hands, reading; then the long silence
  * cr.relay — the relay running again (`cr.end`).
  *   relay   night on the mountain: the seven stations' lamps lit from the foot to the pass, and between two of them a
- *           courier's lantern on the move
+ *           courier's lantern on the move. Each lamp burns only if its station's name is back on it (cr_lamp<n>): the
+ *           story names six before the chapter can end, and Kumoi's, the seventh, can stay dark
  * No letters, kana or kanji are drawn: the letter's lines are brush marks. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -77030,14 +77037,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
         return { cv };
       });
       c.drawImage(B.cv, 0, 0);
-      // the seven stations from the foot (lower left) to the pass (the summit), each lamp lit in turn on this line
+      // the seven stations from the foot (lower left) to the pass (the summit), each lamp lit in turn on this line;
+      // a station whose lamp was never named again stays dark, its roof against the snow
       const kl = st.at('light');
+      const named = [1, 2, 3, 4, 5, 6, 7].map((n) => st.test('cr_lamp' + n));
       const pts = [];
       for (let i = 0; i < 7; i++) { const u = i / 6; pts.push([lerp(w * 0.14, w * 0.55, u) + Math.sin(u * 9) * s(26), lerp(vb * 0.82, vb * 0.2, Math.pow(u, 0.9))]); }
       c.fillStyle = 'rgba(160,150,140,0.35)';
       for (let i = 1; i < 7; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.round(Math.hypot(b[0] - a[0], b[1] - a[1])); for (let j = 0; j < n; j += 3) c.fillRect(Math.round(lerp(a[0], b[0], j / n)), Math.round(lerp(a[1], b[1], j / n)), 1, 1); }
       pts.forEach(([x, y], i) => {
-        const on = still ? 1 : clamp(kl * 7 - i, 0, 1);
+        const on = !named[i] ? 0 : still ? 1 : clamp(kl * 7 - i, 0, 1);
+        if (!named[i] && (still || kl * 7 - i > 0)) { R(c, x - s(3), y - s(2), s(6), s(4), '#2a2420'); R(c, x - 1, y, Math.max(2, s(2)), Math.max(2, s(2)), '#3a3a44'); return; }
         if (on <= 0) { R(c, x - 1, y - 1, 3, 3, '#3a3a44'); return; }
         R(c, x - s(3), y - s(2), s(6), s(4), '#3a2e26'); // the station's roof
         R(c, x - 1, y, Math.max(2, s(2)), Math.max(2, s(2)), '#ffd080');
@@ -157041,7 +157051,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [{ p: 'bench', x: 15, y: 15 }, { p: 'well', x: 27, y: 15 }],
     npcs: [
-      { id: 'cr_heisuke', x: 18, y: 11, dir: 'down', talk: [{ if: 'cr_done', scene: 'cr.heisuke_after' }, { scene: 'cr.heisuke' }] },
+      // (from the letter's delivery until the coins are decided he is at Sono's inn: src/content/cr/25_side.js)
+      { id: 'cr_heisuke', x: 18, y: 11, dir: 'down', if: '!cr_delivered|quest.cr_family=done', talk: [{ if: 'cr_done', scene: 'cr.heisuke_after' }, { scene: 'cr.heisuke' }] },
       { id: 'cr_yahei', x: 25, y: 16, dir: 'left', if: 'var.cr_phase=3&!cr_st4', talk: 'cr.yahei' },
     ],
     west: { x: 0, y: 12, w: 1, h: 2, to: 'cr.leg2', sp: 'from_east', dir: 'left' },
@@ -158763,7 +158774,8 @@ narr: {北東|ほくとう} の {遥|はる}か {下|した} に 、 {雲|くも
 
 @scene cr.summit_view
 narr: {腰掛|こしか}け から 、 {雲|くも} の {海|うみ} が {見|み}える 。 {風|かぜ} が {雲|くも} を {動|うご}かす と 、 {下|した} の {宿場|しゅくば} の {灯|ひ} が 、 {一瞬|いっしゅん} だけ {見|み}えた 。 || From the bench you can see the cloud sea. When the wind moves the cloud, the lamps of the stations below show for a moment.
-?(cr_done) narr: {宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {上|うえ} まで 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いて いる 。 || All seven of the stations' lamps are lit, from the bottom of the road to the top.
+?(cr_done&cr_lamp7) narr: {宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {上|うえ} まで 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いて いる 。 || All seven of the stations' lamps are lit, from the bottom of the road to the top.
+?(cr_done&!cr_lamp7) narr: {宿場|しゅくば} の {灯|ひ} が 、 {下|した} から {六|むっ}つ {点|つ}いて いる 。 {一番|いちばん} {上|うえ} の {雲居|くもい} の {灯|ひ} だけ が 、 まだ {暗|くら}い 。 || Six of the stations' lamps are lit, from the bottom of the road up. Only the top one, Kumoi's, is still dark.
 
 @scene cr.summit_stone
 narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。 {此処|ここ} より {北東|ほくとう} 、 {湯|ゆ} の {谷|たに} 。」 || The stone on the pass: "The Cloudroad Pass. From here, north-east: the valley of hot springs."
@@ -158779,8 +158791,9 @@ narr: {峠|とうげ} の {石|いし} 。 「{雲路峠|くもじとうげ} 。
 # chapter's end follows (cr.end).
 !faceplayer
 cr_heisuke: …… {何|なん} だ 、 その {箱|はこ} は 。 {継|つ}ぎ{飛脚|びきゃく} の {封|ふう} …… ？ || …What's that box? The relay's seal…?
-# Illustrated (src/ui/43l_seq_cr.js): the letter in Heisuke's hands.
+# Illustrated (src/ui/43l_seq_cr.js): the letter in Heisuke's hands, handed over with the picture's first line.
 !sequence cr.letter begin
+!take cr_message
 !shot letter
 narr: {状箱|じょうばこ} を {渡|わた}す と 、 ヘイスケ は {手紙|てがみ} を {開|ひら}いて 、 {長|なが}い {間|あいだ} {黙|だま}って いた 。 || You hand him the box. Heisuke opens the letter, and for a long time says nothing.
 cr_heisuke: 「{弟|おとうと} へ 。 {母|かあ}さん の {薬代|くすりだい} を 、 {飛脚|ひきゃく} に {託|たく}す 。 {春|はる} に は {帰|かえ}る 。 {兄|あに} 」 …… || "To my younger brother. I'm sending Mother's medicine money by the courier. I'll be home in spring. Your brother." …
@@ -158793,7 +158806,6 @@ cr_heisuke: {親父|おやじ} は 、 {死|し}ぬ まで ゲンタ を {恨|�
 ?(comp=suzu) comp: {五十年|ごじゅうねん} がかり の {幕切|まくぎ}れ ね 。 …… {台本|だいほん} どおり じゃ なかった けど 、 いい {芝居|しばい} だった わ 。 || A final curtain fifty years in the making. …Not as the script had it, but a good play.
 cr_heisuke: ソノ の {宿|やど} へ {行|い}って 、 {頭|あたま} を {下|さ}げて {来|こ}なければ 。 {財布|さいふ} の {金|かね} を どう する か も 、 ソノ と {決|き}める 。 …… {後|あと} で 、 {一緒|いっしょ} に {来|き}て くれる か 。 || I must go to Sono's inn and bow my head. And decide with Sono what to do with the money in the purse. …Will you come with me, later?
 !sequence cr.letter end
-!take cr_message
 !set cr_delivered
 !call cr.end
 
@@ -159249,7 +159261,8 @@ comp[smile]: …… {大丈夫|だいじょうぶ} です 。 {返事|へんじ}
 !set cr_ren_lit
 cr_jinpachi: レン さん に 、 {灯落|ひおち} の {方|ほう} から {継|つ}いで {来|き}た {伝言|でんごん} です 。 ヒサエ さん から 。 「{灯守|ひもり} の {道|みち} 、 {全|すべ}て の {灯|ひ} 、 {点|つ}く 。」 || A message for Ren, passed up the relay from Lanternfall's way. From Hisae: "The Keepers' Road: every lamp lit."
 comp[surprise]: …… {全|すべ}て の {灯|ひ} 。 ヒサエ さん が 、 {一|ひと}つ ずつ {名前|なまえ} を {呼|よ}んだ ん です ね 。 || …Every lamp. Hisae called them by name, one by one.
-comp[smile]: こちら の {灯|ひ} も 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {同|おな}じ {言葉|ことば} で 。 || Please pass back a reply that all seven lamps here are lit too. In the same words.
+?(cr_lamp7) comp[smile]: こちら の {灯|ひ} も 、 {七|なな}つ {全部|ぜんぶ} {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {同|おな}じ {言葉|ことば} で 。 || Please pass back a reply that all seven lamps here are lit too. In the same words.
+?(!cr_lamp7) comp[smile]: こちら は {灯|ひ} が {六|むっ}つ {点|つ}いた と 、 {返事|へんじ} を {継|つ}いで ください 。 {七|なな}つ {目|め} 、 {雲居|くもい} の {灯|ひ} の {名前|なまえ} は 、 {私|わたし} たち が {呼|よ}びます 。 || Please pass back a reply that six lamps are lit here. The seventh, Kumoi's, we'll call by name ourselves.
 !hook co_bond cr:beat
 :end
 
@@ -211703,7 +211716,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 (function (C) {
   'use strict';
   const SHRINES = [
-    ['rw', 'rw.mill0', 13, 7, 'kr_stele'], ['sg', 'sg.office', 2, 4, 'chest'], ['co', 'co.kiln_core', 7, 4, 'kr_stele'],
+    ['rw', 'rw.mill1', 9, 4, 'kr_stele'], ['sg', 'sg.office', 2, 4, 'chest'], ['co', 'co.kiln_core', 7, 4, 'kr_stele'],
     ['sb', 'sb.obs_dome', 3, 6, 'kr_stele'], ['lf', 'lf.bellhall', 13, 11, 'kr_stele'], ['mb', 'mb.firstbridge', 20, 14, 'kr_stele'],
     ['cr', 'cr.summit', 28, 13, 'kr_stele'], ['yn', 'yn.kettle', 16, 12, 'kr_stele'], ['ko', 'ko.garden', 20, 16, 'kr_stele'],
   ];

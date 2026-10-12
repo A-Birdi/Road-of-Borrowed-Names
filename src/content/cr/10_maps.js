@@ -173,7 +173,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ],
     props: [{ p: 'bench', x: 15, y: 15 }, { p: 'well', x: 27, y: 15 }],
     npcs: [
-      { id: 'cr_heisuke', x: 18, y: 11, dir: 'down', talk: [{ if: 'cr_done', scene: 'cr.heisuke_after' }, { scene: 'cr.heisuke' }] },
+      // (from the letter's delivery until the coins are decided he is at Sono's inn: src/content/cr/25_side.js)
+      { id: 'cr_heisuke', x: 18, y: 11, dir: 'down', if: '!cr_delivered|quest.cr_family=done', talk: [{ if: 'cr_done', scene: 'cr.heisuke_after' }, { scene: 'cr.heisuke' }] },
       { id: 'cr_yahei', x: 25, y: 16, dir: 'left', if: 'var.cr_phase=3&!cr_st4', talk: 'cr.yahei' },
     ],
     west: { x: 0, y: 12, w: 1, h: 2, to: 'cr.leg2', sp: 'from_east', dir: 'left' },

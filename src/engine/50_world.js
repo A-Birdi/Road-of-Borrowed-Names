@@ -176,6 +176,8 @@ RB.world = (function () {
       const route = routeRound(a, 160, new Set([a.home[0] + ',' + a.home[1]]));
       if (route && route.length) { a.route = route; a.routeT = 0; } else snap();
     }
+    // (a figure dismissExtras kept for its new place and nothing here took: as before, it is simply gone)
+    if (W.extras.some((e) => e.adopt)) W.extras = W.extras.filter((e) => !e.adopt);
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
     // Where you last saw people (W3, kept with the twelve-chapter game's save) is no longer every person on a map
     // that was loaded (LW-08): sighted() below records someone when they are actually in view in the world.
@@ -544,13 +546,17 @@ RB.world = (function () {
     return null;
   }
   // The scene is over: those who walked in walk off (unless they live here now).
+  // At a scene's end. Someone who walked in to speak and now has a place here that the world has not placed yet (the
+  // scene began it: Jinpachi once the Cloudroad is done) is kept for refreshActors, which follows: that same figure
+  // walks to the new place (one person is never on screen twice, nor vanishes beside you to walk in again).
   function dismissExtras() {
-    const st = s();
+    const st = s(), adopt = [];
     for (const a of W.extras) {
       const lives = (W.map.def.npcs || []).some((n) => (n.char || n.id) === personOf(a) && (!n.if || RB.state.test(st, n.if)));
       if (!lives) leave(a);
+      else if (!W.npcs.some((n) => personOf(n) === personOf(a))) { a.adopt = true; adopt.push(a); }
     }
-    W.extras = [];
+    W.extras = adopt;
   }
 
   // ---- collision -----------------------------------------------------------

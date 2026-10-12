@@ -8,7 +8,8 @@
  *   letter  Heisuke at Sakashita with the oiled-paper letter open in his hands, reading; then the long silence
  * cr.relay — the relay running again (`cr.end`).
  *   relay   night on the mountain: the seven stations' lamps lit from the foot to the pass, and between two of them a
- *           courier's lantern on the move
+ *           courier's lantern on the move. Each lamp burns only if its station's name is back on it (cr_lamp<n>): the
+ *           story names six before the chapter can end, and Kumoi's, the seventh, can stay dark
  * No letters, kana or kanji are drawn: the letter's lines are brush marks. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -184,14 +185,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
         return { cv };
       });
       c.drawImage(B.cv, 0, 0);
-      // the seven stations from the foot (lower left) to the pass (the summit), each lamp lit in turn on this line
+      // the seven stations from the foot (lower left) to the pass (the summit), each lamp lit in turn on this line;
+      // a station whose lamp was never named again stays dark, its roof against the snow
       const kl = st.at('light');
+      const named = [1, 2, 3, 4, 5, 6, 7].map((n) => st.test('cr_lamp' + n));
       const pts = [];
       for (let i = 0; i < 7; i++) { const u = i / 6; pts.push([lerp(w * 0.14, w * 0.55, u) + Math.sin(u * 9) * s(26), lerp(vb * 0.82, vb * 0.2, Math.pow(u, 0.9))]); }
       c.fillStyle = 'rgba(160,150,140,0.35)';
       for (let i = 1; i < 7; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.round(Math.hypot(b[0] - a[0], b[1] - a[1])); for (let j = 0; j < n; j += 3) c.fillRect(Math.round(lerp(a[0], b[0], j / n)), Math.round(lerp(a[1], b[1], j / n)), 1, 1); }
       pts.forEach(([x, y], i) => {
-        const on = still ? 1 : clamp(kl * 7 - i, 0, 1);
+        const on = !named[i] ? 0 : still ? 1 : clamp(kl * 7 - i, 0, 1);
+        if (!named[i] && (still || kl * 7 - i > 0)) { R(c, x - s(3), y - s(2), s(6), s(4), '#2a2420'); R(c, x - 1, y, Math.max(2, s(2)), Math.max(2, s(2)), '#3a3a44'); return; }
         if (on <= 0) { R(c, x - 1, y - 1, 3, 3, '#3a3a44'); return; }
         R(c, x - s(3), y - s(2), s(6), s(4), '#3a2e26'); // the station's roof
         R(c, x - 1, y, Math.max(2, s(2)), Math.max(2, s(2)), '#ffd080');
