@@ -115,7 +115,7 @@ export default async (t) => {
     let r = FW.act(s, 'vb_network', 'open:g1');
     t.eq([st().b_ditch, st().b_ford, st().b_outflow], [3, 3, 3], 'opening the pond sluice with the rest open: the water runs through to the ford');
     t.ok(changes.some((e) => e.map === 'sg.road' && e.prop === 'vb_network.b_ford') && changes.some((e) => e.map === 'rw.road' && e.prop === 'vb_network.b_ditch'), 'the change reaches both maps');
-    t.ok(/Somewhere off in the ford fills/.test(r.say[0].en) || /ford fills/.test(r.say[0].en), 'and is traced in words: ' + r.say[0].en);
+    t.ok(/Somewhere off, the ford fills/.test(r.say[0].en) || /ford fills/.test(r.say[0].en), 'and is traced in words: ' + r.say[0].en);
     t.eq(barrier(s), 2, 'the ford floods: the way across is shut');
     t.eq(r.completed, false, 'the channel is full but the ford is flooded: not the outcome');
     FW.act(s, 'vb_network', 'shut:g2');
@@ -143,9 +143,9 @@ export default async (t) => {
     const one = (medium) => ({ medium, basins: { a: { map: 'rw.road', en: 'pond', jp: '{池|いけ}' }, b: { map: 'sg.road', en: 'pipe', jp: '{管|くだ}' } } });
     RB.game.s = s; s.map = 'rw.road';
     let w = V.moved(one(undefined), { b_a: 0, b_b: 3 }, { b_a: 3, b_b: 1 }, { en: 'You open it.', jp: '{開|あ}けた 。' });
-    t.eq([w.en, w.jp], ['You open it. The pond fills (full). Somewhere off in the pipe drains (low).', '{開|あ}けた 。 {池|いけ} の {水|みず} が {増|ふ}えた 。 {遠|とお}く で 、 {管|くだ} の {水|みず} が {減|へ}った 。'], 'water: the words as they always were');
+    t.eq([w.en, w.jp], ['You open it. The pond fills (full). Somewhere off, the pipe drains (low).', '{開|あ}けた 。 {池|いけ} の {水|みず} が {増|ふ}えた 。 {遠|とお}く で 、 {管|くだ} の {水|みず} が {減|へ}った 。'], 'water: the words as they always were');
     w = V.moved(one('steam'), { b_a: 0, b_b: 3 }, { b_a: 3, b_b: 1 }, { en: 'You open it.', jp: '{開|あ}けた 。' });
-    t.eq([w.en, w.jp], ['You open it. The pond fills with steam (full of steam). Somewhere off in the pipe clears (a little steam).', '{開|あ}けた 。 {池|いけ} の {湯気|ゆげ} が {増|ふ}えた 。 {遠|とお}く で 、 {管|くだ} の {湯気|ゆげ} が {減|へ}った 。'], 'steam: its own words, near and far');
+    t.eq([w.en, w.jp], ['You open it. The pond fills with steam (full of steam). Somewhere off, the pipe loses steam (a little steam).', '{開|あ}けた 。 {池|いけ} の {湯気|ゆげ} が {増|ふ}えた 。 {遠|とお}く で 、 {管|くだ} の {湯気|ゆげ} が {減|へ}った 。'], 'steam: its own words, near and far');
     t.ok(V.mediumOf(one('air')) === V.MEDIUM.steam && V.mediumOf(one('water')) === V.MEDIUM.water && V.mediumOf({}) === V.MEDIUM.water, 'air reads as steam; no medium is water');
     t.eq([V.levelWord(one(), 2), V.levelWord(one('steam'), 3), V.LEVEL_EN[1]], ['half full', 'full of steam', 'low'], 'a level named in its medium\'s words');
   }

@@ -99,7 +99,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     R('f6', 'ren', 'lit', 'smile', '{光|ひかり} で {押|お}し{印|いん} を {浮|う}かせる 。 {灯|ひ} の {仕事|しごと} に は 、 こういう {使|つか}い{方|かた} も ある ん です ね 。', 'Raising a stamp with light. So a lamp-keeper\'s work has uses like this too.'),
     R('f6', 'ren', null, 'smile', '{上|のぼ}り と {下|くだ}り 。 {道|みち} の {記録|きろく} が {揃|そろ}いました 。', 'Going up and coming down. The road\'s records are in order.'),
     R('f6', 'suzu', 'rubbed', 'smile', '{手袋|てぶくろ} は 「 {預|あず}かり{物|もの} 」 。 {持|も}ち{主|ぬし} が {来|く}る まで 、 {帳面|ちょうめん} に {載|の}って いる 。 {好|す}き よ 、 こういう の 。', 'The glove goes under Held for collection — on the books until its owner comes. I like that sort of thing.'),
-    R('f6', 'suzu', 'lit', 'laugh', '{光|ひかり} を {当|あ}てたら 、 {札|ふだ} が {自己紹介|じこしょうかい} を {始|はじ}めた わ ね 。 {上|のぼ}り 、 {下|くだ}り 、 {預|あず}かり 。', 'Shine a light and the slips introduce themselves: going up, coming down, held.'),
+    R('f6', 'suzu', 'lit', 'laugh', '{光|ひかり} を {当|あ}てたら 、 {札|ふだ} が {自|じ}{己|こ}{紹介|しょうかい} を {始|はじ}めた わ ね 。 {上|のぼ}り 、 {下|くだ}り 、 {預|あず}かり 。', 'Shine a light and the slips introduce themselves: going up, coming down, held.'),
     R('f6', 'suzu', null, 'smile', '{帳尻|ちょうじり} が {合|あ}った わ 。', 'The books balance.'),
   ]);
 })();

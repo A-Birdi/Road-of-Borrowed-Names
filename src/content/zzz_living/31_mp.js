@@ -111,7 +111,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     jp: '「いろは {歌|うた}」 は 、 かな を {一|ひと}つ ずつ 、 {一度|いちど} だけ {使|つか}った {古|ふる}い {歌|うた} 。 {昔|むかし} は 、 {字|じ} を {習|なら}う {子供|こども} の {手本|てほん} だった 。 かな の {順番|じゅんばん} と して も {使|つか}われた 。',
     en: 'The iroha (いろは歌) is a real poem, close to a thousand years old, that uses each of the old kana exactly once. Children learning to write copied it, and its order was long used like an alphabet to number things in sequence.' };
   C.notes.lw_mp_curtain = { title: T('The house curtain', '{定式幕|じょうしきまく}'), fiction: true,
-    jp: '{歌舞伎|かぶき} の {芝居小屋|しばいごや} の {定式幕|じょうしきまく} は 、 {黒|くろ} 、 {柿色|かきいろ} 、 {萌葱|もえぎ} の {縦縞|たてじま} 。 {芝居|しばい} の {通|とお}り の {幕|まく} の {裏|うら} に は 、 {昔|むかし} の {役者|やくしゃ} たち の {名前|なまえ} が {書|か}いて ある 。',
+    jp: '{歌舞伎|かぶき} の {芝居小屋|しばいごや} の {定式幕|じょうしきまく} は 、 {黒|くろ} 、 {柿色|かきいろ} 、 {萌|もえ}{葱|ぎ} の {縦縞|たてじま} 。 {芝居|しばい} の {通|とお}り の {幕|まく} の {裏|うら} に は 、 {昔|むかし} の {役者|やくしゃ} たち の {名前|なまえ} が {書|か}いて ある 。',
     en: 'The jōshiki-maku (定式幕), the kabuki theatre\'s striped house curtain of black, persimmon and leek green, is real. The old actors\' names on the back of Playhouse Row\'s curtain are the game\'s.' };
   C.notes.lw_mp_relaymap = { title: T('The couriers\' route map', '{飛脚|ひきゃく} の {道中図|どうちゅうず}'), fiction: true,
     jp: '{昔|むかし} の {継|つ}ぎ{飛脚|びきゃく} は 、 {宿場|しゅくば} ごと に {走|はし}る {人|ひと} を {替|か}えて 、 {遠|とお}く まで {手紙|てがみ} を {運|はこ}んだ 。 {版木|はんぎ} の {通|とお}り の {組合|くみあい} の {道中図|どうちゅうず} は 、 {雲路|くもじ} の {峠|とうげ} まで {続|つづ}いて いる 。',
@@ -160,7 +160,7 @@ narr: いろは の {版|はん} 。 {刷|す}れば 、 どの {種類|しゅ�
 
 @scene yn.lw_mp_curtain_open
 narr: {一人|ひとり} ずつ で は なく 、 {一座|いちざ} {全体|ぜんたい} で 。 {谷|たに} で {覚|おぼ}えた {言葉|ことば} を {綱|つな} に {込|こ}めて 、 {引|ひ}いた 。 || Not one by one: the company as a whole. You put the word you learned in the valley into the rope, and pull.
-narr: {古|ふる}い {幕|まく} が 、 {重|おも}い {音|おと} を {立|た}てて {動|うご}いた 。 {黒|くろ} 、 {柿色|かきいろ} 、 {萌葱|もえぎ} の {縦縞|たてじま} 。 {裏|うら} に は 、 {昔|むかし} の {役者|やくしゃ} たち の {名前|なまえ} が {墨|すみ} で {書|か}いて あった 。 || The old curtain moves with a heavy sound: stripes of black, persimmon and leek green. On its back, in ink, the names of the actors of long ago.
+narr: {古|ふる}い {幕|まく} が 、 {重|おも}い {音|おと} を {立|た}てて {動|うご}いた 。 {黒|くろ} 、 {柿色|かきいろ} 、 {萌|もえ}{葱|ぎ} の {縦縞|たてじま} 。 {裏|うら} に は 、 {昔|むかし} の {役者|やくしゃ} たち の {名前|なまえ} が {墨|すみ} で {書|か}いて あった 。 || The old curtain moves with a heavy sound: stripes of black, persimmon and leek green. On its back, in ink, the names of the actors of long ago.
 mp_manbe: {定式幕|じょうしきまく} が {動|うご}いた ！ {先代|せんだい} の {頃|ころ} から 、 {誰|だれ} も {引|ひ}けなかった のに 。 || The house curtain moved! Nobody's been able to draw it since the last manager's day.
 mp_manbe: {裏|うら} の {名前|なまえ} 、 {見|み}て ください 。 {一番|いちばん} {下|した} の {小|ちい}さい {字|じ} まで 、 {全部|ぜんぶ} {残|のこ}って います 。 || Look at the names on the back. Down to the smallest at the very bottom, every one is still there.
 ?(comp=suzu) comp[smile]: {一座|いちざ} {全体|ぜんたい} で {一|ひと}つ の {幕|まく} 。 …… {谷|たに} で {言|い}った とおり でしょ 。 || The whole company, one curtain. …Just as I said in the valley.

@@ -8,7 +8,8 @@
  *                el_bell_care      East Landing: the bell hangs again but hardly swings on the old post's rusted
  *                                  hanger; Genroku's old card and the things for it are in a box at the bell post (el_done)
  *                kr_hall_lamp      the Keepers' Road, the Shuttered Hall (kr.hall): one of its dark stone lanterns,
- *                                  mended and lit by hand from Hisae's box; once it burns, it stays lit (kr_done)
+ *                                  mended and lit by hand from Hisae's box; once it burns, it stays lit (postgame:
+ *                                  the Hall's lanterns stay dark until the Hall is opened, kr/10_maps.js)
  *   W13 network  mb_under_sluices  the Undercroft Locks, across the Upper Basin, the Channels and the Great Lock
  *                                  (mb.under1–3): the keeper's small sluices; a fourth tablet by the middle gate says
  *                                  what to aim for (both channel basins at half, the shallows below the Great Lock
@@ -151,7 +152,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   });
 
   // The Keepers' Road, the Shuttered Hall: the dark stone lantern at 23,16, mended by hand from Hisae's box beside it.
-  const HALL_GATE = 'ed>=2&kr_done';
+  const HALL_GATE = 'ed>=2&postgame'; // (the Hall's lanterns stay dark until the postgame opens it: kr/10_maps.js)
   V.define('repair', {
     id: 'kr_hall_lamp', map: 'kr.hall', region: 'keepers', if: HALL_GATE, x: 24, y: 16, prop: 'chest',
     name: T('A dark stone lantern', '{灯|ひ} の {消|き}えた {灯籠|とうろう}'),
@@ -475,8 +476,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     },
     hypotheses: [
       { id: 'wall', label: T('The breakwater fell into the sea, and the waves have carried sand in over it ever since.', '{石|いし} の {波除|なみよ}け が {崩|くず}れて 、 それ から ずっと 、 {波|なみ} が {砂|すな} を {運|はこ}んで {来|き}た 。'), from: ['wall'], correct: true },
-      { id: 'nobody', label: T('When the bell workshop moved to the stone quay, nobody was left to keep up the breakwater, and the sand came in.', '{鐘|かね} の {工房|こうぼう} が {石|いし} の {岸壁|がんぺき} へ {移|うつ}って 、 {波除|なみよ}け を {直|なお}す {人|ひと} が いなく なった 。 だから {砂|すな} が {入|はい}って {来|き}た 。'), from: ['workshop'], correct: true },
-      { id: 'channel', label: T('Once the boats stopped coming in, nobody dug the channel out any more, and it filled up.', '{船|ふね} が {来|こ}なく なって 、 {水路|すいろ} を {掘|ほ}る {人|ひと} も いなく なった 。 それ で {埋|う}まった 。'), from: ['stakes'], correct: true },
+      { id: 'nobody', label: T('Once the sand began to come in, the bell workshop moved to the stone quay, and with nobody left to mend the breakwater, the landing silted up.', '{砂|すな} が {入|はい}り{始|はじ}める と 、 {鐘|かね} の {工房|こうぼう} は {石|いし} の {岸壁|がんぺき} へ {移|うつ}った 。 {波除|なみよ}け を {直|なお}す {人|ひと} が いなく なって 、 {渡|わた}し{場|ば} は {埋|う}まった 。'), from: ['workshop'], correct: true },
+      { id: 'channel', label: T('The sand came in and the boats stopped coming; with no boats, nobody dug the channel out any more, and it filled up.', '{砂|すな} が {入|はい}って 、 {船|ふね} が {来|こ}なく なった 。 {水路|すいろ} を {掘|ほ}る {人|ひと} も いなく なって 、 {埋|う}まって しまった 。'), from: ['stakes'], correct: true },
       { id: 'never', label: T('The landing was always shallow: the plan is wrong.', '{渡|わた}し{場|ば} は {最初|さいしょ} から {浅|あさ}かった 。 {図|ず} が {間違|まちが}って いる 。'), from: ['stakes'],
         mismatch: T('The old stakes stand along the edge of a deep channel: boats did come in here once.', '{古|ふる}い {杭|くい} が 、 {深|ふか}い {水路|すいろ} の {縁|ふち} に {並|なら}んで いる 。 {昔|むかし} は {船|ふね} が {入|はい}って {来|き}た の だ 。') },
     ],

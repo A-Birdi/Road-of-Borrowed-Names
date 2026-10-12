@@ -118,7 +118,7 @@ await test('water across two maps; a machine watched and adjusted; a paper boat'
   assert(await p.evaluate(() => /Out of reach from here/.test(document.querySelector('.vb-gates').textContent)), 'the sluices on the other road are out of reach from here');
   await click(p, '[data-a="open:g1"]');
   const t1 = await said(p);
-  assert(/Somewhere off in the ford fills/.test(t1), 'the effect, traced to the other road: ' + t1);
+  assert(/Somewhere off, the ford fills/.test(t1), 'the effect, traced to the other road: ' + t1);
   assert(await p.evaluate(() => /under water/.test(document.querySelector('.verb-sheet').textContent)), 'the way across the ford is under water');
   await closeSheet(p);
   // to the Saltglass road: the ford is barred; close its sluice there

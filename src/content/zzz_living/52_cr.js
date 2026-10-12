@@ -27,7 +27,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   RB.lex.add(RB.lex.parseTable(`
 総出|そうで|n|A|everyone turning out together
 カジカ||n|I|kajika, a mountain-stream frog famous for its song (カジカガエル)
-狩人|かりゅうど|n|I|a hunter
+猟師|りょうし|n|I|a hunter
 十歩|じっぽ|n|E|ten paces
 二十歩|にじっぽ|n|E|twenty paces
 三十歩|さんじっぽ|n|E|thirty paces
@@ -132,7 +132,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   C.chars.lw_cr_child = { name: T('A child from Sakashita', '{坂下|さかした} の {子|こ}'), voice: { pitch: 1.3 }, size: 'child',
     look: { skin: 3, hair: 'spiky', hairColor: 1, cloth: ['#6a8a5a', '#546e46', '#f0e8d0'], shape: 'tunic', acc: [] },
     portrait: { eyes: 'round', style: 'spiky', blush: true, bg: '#26301e' } };
-  C.chars.lw_cr_hunter = { name: T('A hunter', '{狩人|かりゅうど}'), voice: { pitch: 0.78 },
+  C.chars.lw_cr_hunter = { name: T('A hunter', '{猟師|りょうし}'), voice: { pitch: 0.78 },
     look: { skin: 4, hair: 'short', hairColor: 0, cloth: ['#5a4a3a', '#46382c', '#c8b890'], shape: 'coat', acc: ['hat'], hatCol: '#6a5a44' },
     portrait: { eyes: 'sharp', style: 'short', acc: ['hat'], hatCol: '#6a5a44', beard: true, bg: '#241e18' } };
   const V = (id) => ({ id, scene: 'cr.lw_' + id });
@@ -294,11 +294,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       options: [o('{霧|きり} の {坂|さか} の {道標|みちしるべ} の {前|まえ} に {違|ちが}いない', 1), o('{関所|せきしょ} の {前|まえ} に {違|ちが}いない', 0, 'That carving is the fog slope\'s waystone.'), o('どこ か {分|わ}からない', 0, 'The words on the stone tell you exactly.')] })],
   } };
   C.challenges['cr.lw_tracks'] = { title: J('{大|おお}きな {足跡|あしあと}', 'Huge tracks'), tiers: {
-    F: [ch({ item: 'v:牛', ctx: { jp: 'かりゅうど ： 「くも の うし は ひと を たべる 、 と きいた 。」', en: '' }, prompt: { en: 'Did the hunter see it eat anyone?' },
+    F: [ch({ item: 'v:牛', ctx: { jp: 'りょうし ： 「くも の うし は ひと を たべる 、 と きいた 。」', en: '' }, prompt: { en: 'Did the hunter see it eat anyone?' },
       options: [o('みて いない 。 きいた だけ 。', 1), o('みた', 0, 'ときいた: they heard it.')] })],
-    E: [ch({ item: 'g:cr_to_itte', ctx: { jp: '{狩人|かりゅうど} ： 「{麓|ふもと} の {人|ひと} が 、 『{雲|くも} の {牛|うし} は {人|ひと} を {食|た}べる』 と {言|い}って いました 。」', en: '' }, prompt: { en: 'Whose story is it?' },
-      options: [o('{麓|ふもと} の {人|ひと} の {話|はなし}', 1), o('{狩人|かりゅうど} が {見|み}た {話|はなし}', 0, 'と言っていました: someone else said it.')] })],
-    I: [ch({ item: 'g:rashii', ctx: { jp: '{狩人|かりゅうど} ： 「{雲|くも} の {牛|うし} は {人|ひと} を {食|く}う らしい 。 だから {鉄砲|てっぽう} を {持|も}って きた 。」 あなた は {霧|きり} の {坂|さか} で 、 その {牛|うし} に {会|あ}った 。 {大|おお}きかった が 、 {霧|きり} で できて いた 。', en: '' }, prompt: { en: 'What do you tell them?' },
+    E: [ch({ item: 'g:cr_to_itte', ctx: { jp: '{猟師|りょうし} ： 「{麓|ふもと} の {人|ひと} が 、 『{雲|くも} の {牛|うし} は {人|ひと} を {食|た}べる』 と {言|い}って いました 。」', en: '' }, prompt: { en: 'Whose story is it?' },
+      options: [o('{麓|ふもと} の {人|ひと} の {話|はなし}', 1), o('{猟師|りょうし} が {見|み}た {話|はなし}', 0, 'と言っていました: someone else said it.')] })],
+    I: [ch({ item: 'g:rashii', ctx: { jp: '{猟師|りょうし} ： 「{雲|くも} の {牛|うし} は {人|ひと} を {食|く}う らしい 。 だから {鉄砲|てっぽう} を {持|も}って きた 。」 あなた は {霧|きり} の {坂|さか} で 、 その {牛|うし} に {会|あ}った 。 {大|おお}きかった が 、 {霧|きり} で できて いた 。', en: '' }, prompt: { en: 'What do you tell them?' },
       options: [o('それ は {噂|うわさ} です 。 わたし が {会|あ}った {牛|うし} は 、 {霧|きり} で できて いました 。', 1), o('{本当|ほんとう} です 。 {気|き} を つけて ください 。', 0, 'You met it: it was mist, not a man-eater.'), o('{牛|うし} は いません 。', 0, 'You did meet it.')] })],
     A: [ch({ item: 'g:adv_ni_suginai', ctx: { jp: '{馬子|まご} の ゲンジ ： 「{雲|くも} の {牛|うし} は 、 {霧|きり} が {牛|うし} の {形|かたち} を して いる に すぎん 。 {人|ひと} を {食|く}う など 、 {噂|うわさ} だ 。」', en: '' }, prompt: { en: 'What does Genji hold the Cloud Ox to be?' },
       options: [o('{牛|うし} の {形|かたち} を した {霧|きり} に すぎない', 1), o('{人|ひと} を {食|く}う {本物|ほんもの} の {牛|うし}', 0, '噂だ: just talk.'), o('{霧|きり} を {食|く}べる {牛|うし}', 0, 'It is the mist that takes an ox\'s shape.')] })],
@@ -448,7 +448,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     ['narr', '{声|こえ} を {頼|たよ}り に {近|ちか}づく と 、 {旅人|たびびと} の {影|かげ} が {見|み}えた 。 {一緒|いっしょ} に {道|みち} へ {戻|もど}った 。', 'Following the voice, you make out the traveller\'s shape, and bring them back to the road.'],
   ], [['narr', '{霧|きり} が {晴|は}れる と 、 {声|こえ} の {主|ぬし} は 、 {自分|じぶん} で {道|みち} に {戻|もど}って いた 。', 'When the fog lifts, whoever it was has found the road on their own.']]);
   ev('cr_leg5', 'tracks', [
-    ['narr', '{泥|どろ} の {上|うえ} に 、 {大|おお}きな {足跡|あしあと} が {続|つづ}いて いる 。 {鉄砲|てっぽう} を {担|かつ}いだ {狩人|かりゅうど} が 、 {足跡|あしあと} を {睨|にら}んで いる 。', 'Huge tracks run across the mud. A hunter, a gun on their shoulder, is glaring at them.'],
+    ['narr', '{泥|どろ} の {上|うえ} に 、 {大|おお}きな {足跡|あしあと} が {続|つづ}いて いる 。 {鉄砲|てっぽう} を {担|かつ}いだ {猟師|りょうし} が 、 {足跡|あしあと} を {睨|にら}んで いる 。', 'Huge tracks run across the mud. A hunter, a gun on their shoulder, is glaring at them.'],
   ], [
     ['lw_cr_hunter', '…… {噂|うわさ} か 。 {確|たし}か に 、 {人|ひと} の {骨|ほね} {一本|いっぽん} {見|み}た こと が ない 。 {帰|かえ}る と しよう 。', '…Just talk, eh. True enough, I never saw so much as a bone. I\'ll be off home.'],
   ], [['lw_cr_hunter', 'ふん 。 {見|み}つけたら 、 {仕留|しと}めて やる 。', 'Hmph. If I find it, I\'ll have it.']], 'lw_cr_cloud_ox');

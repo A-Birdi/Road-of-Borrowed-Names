@@ -365,7 +365,7 @@ RB.verbs = (function () {
     },
     steam: {
       name: T('The steam', '{湯気|ゆげ}'), gates: T('The dampers', '{弁|べん}'), title: T('Steam across the rooms', '{部屋|へや} を {渡|わた}る {湯気|ゆげ}'),
-      more: T('fills with steam', '{湯気|ゆげ} が {増|ふ}えた'), less: T('clears', '{湯気|ゆげ} が {減|へ}った'), shut: T('full of steam', '{湯気|ゆげ} で いっぱい'),
+      more: T('fills with steam', '{湯気|ゆげ} が {増|ふ}えた'), less: T('loses steam', '{湯気|ゆげ} が {減|へ}った'), shut: T('full of steam', '{湯気|ゆげ} で いっぱい'),
       levels: ['clear', 'a little steam', 'half full of steam', 'full of steam', 'thick with steam'],
     },
   };
@@ -379,7 +379,7 @@ RB.verbs = (function () {
       const d = (+a['b_' + k] || 0) - (+b['b_' + k] || 0);
       if (!d) continue;
       const n = spec.basins[k], far = n.map !== (RB.game && RB.game.s ? RB.game.s.map : n.map), w = d > 0 ? M.more : M.less;
-      lines.push(T((far ? 'Somewhere off in the ' : 'The ') + n.en + ' ' + w.en + ' (' + M.levels[a['b_' + k]] + ').', (far ? '{遠|とお}く で 、 ' : '') + n.jp + ' の ' + w.jp + ' 。'));
+      lines.push(T((far ? 'Somewhere off, the ' : 'The ') + n.en + ' ' + w.en + ' (' + M.levels[a['b_' + k]] + ').', (far ? '{遠|とお}く で 、 ' : '') + n.jp + ' の ' + w.jp + ' 。'));
     }
     return { en: lines.map((l) => l.en).join(' '), jp: lines.map((l) => l.jp).join(' ') };
   }

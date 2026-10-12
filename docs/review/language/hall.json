@@ -14303,10 +14303,10 @@
   "jp": "{小屋|こや} の {壁|かべ} に 、 {絵巻|えまき} が {掛|か}けて ある 。",
   "en": "A picture scroll hangs on the wall of the hut."
  },
- "scene:hall.w9.t1#1aso793": {
+ "scene:hall.w9.t1#wcu7ej": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "「 ゆき の ひ 、 おじいさん は わな の つる を たすけた 。 」",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "「 ゆき の ひ 、 おじいさん は わな の つる@鶴 を たすけた 。 」",
   "en": "\"One snowy day, an old man freed a crane caught in a trap.\""
  },
  "scene:hall.w9.t1#1owzlcq": {
@@ -14339,10 +14339,10 @@
   "jp": "「 {娘|むすめ} は 『 {機|はた} を {織|お}る {間|あいだ} は 、 {決|けっ}して {覗|のぞ}かないで ください 』 と {言|い}って 、 {見事|みごと} な {布|ぬの} を {織|お}った 。 」",
   "en": "\"She said, \"While I weave, please never look in,\" and wove wonderful cloth.\""
  },
- "scene:hall.w9.t1#16ok4ah": {
+ "scene:hall.w9.t1#1q4e6px": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "「 へや を のぞく と 、 つる が じぶん の はね で ぬの を おって いた 。 」",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "「 へや を のぞく と 、 つる@鶴 が じぶん の はね で ぬの を おって いた 。 」",
   "en": "\"Breaking the promise, they looked: a crane was plucking her own feathers to weave the cloth.\""
  },
  "scene:hall.w9.t1#y7yjor": {
@@ -14597,10 +14597,10 @@
   "jp": "{雪|ゆき} の {上|うえ} に 、 ヨサク の {言葉|ことば} が {一|ひと}つ {落|お}ちて いる 。",
   "en": "One of Yosaku's sayings lies on the snow."
  },
- "scene:hall.w9.s5#kgnjug": {
+ "scene:hall.w9.s5#1pxvg10": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "「 ばあさん 、 きょう 、 わな の つる を にがして やった よ 。 」",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "「 ばあさん 、 きょう 、 わな の つる@鶴 を にがして やった よ 。 」",
   "en": "\"Listen, love: today I let a crane go that was caught in a trap.\""
  },
  "scene:hall.w9.s5#gbr4m3": {
@@ -18370,6 +18370,24 @@
   "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
   "jp": "{百|ひゃく} の {灯|ひ} が {点|とも}って いる と 、 {館|やかた} も {若|わか}く {見|み}える ね 。",
   "en": "With a hundred lights lit, even the Hall looks young again."
+ },
+ "scene:hall.w3.vb_censer#1cmxzm2": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "ジンベエ の {古|ふる}い {香時計|こうどけい} 。 {台|だい} に 、 {字|じ} が {彫|ほ}って ある 。",
+  "en": "Jinbei's old incense clock. Words are cut into its stand."
+ },
+ "scene:hall.w3.vb_censer#1w7vnxr": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "「{夜更|よふ}け に {一度|いちど} 、 {月|つき} の {入|い}り に {二度|にど} 、 {明|あ}け{方|がた} に {三度|さんど} 、 {鈴|すず} が {鳴|な}る 。」",
+  "en": "\"At late night the bell rings once, at moonset twice, in the hour before dawn three times.\""
+ },
+ "scene:hall.w3.vb_censer#b9l8se": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{鈴|すず} が 、 {一度|いちど} 、 {二度|にど} 、 {三度|さんど} と {順番|じゅんばん} に {鳴|な}った 。 {石|いし} の {横|よこ} の {灯籠|とうろう} に 、 {灯|ひ} が {入|はい}る 。",
+  "en": "The bell rings once, twice, three times, in order. The lantern by the stone lights."
  },
  "challenges:hall.w1.story#zwwfj0": {
   "status": "self-reviewed",
@@ -22949,16 +22967,16 @@
   "jp": "むすめ は 「 みないで ください 」 と いって 、 ぬの を おった",
   "en": ""
  },
- "challenges:hall.w9.story#111dm4q": {
+ "challenges:hall.w9.story#1hyjvny": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "ゆき の ひ 、 おじいさん は わな の つる を たすけた",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "ゆき の ひ 、 おじいさん は わな の つる@鶴 を たすけた",
   "en": ""
  },
- "challenges:hall.w9.story#1wkbkeg": {
+ "challenges:hall.w9.story#99cxmc": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "へや を のぞく と 、 つる が じぶん の はね で ぬの を おって いた",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "へや を のぞく と 、 つる@鶴 が じぶん の はね で ぬの を おって いた",
   "en": ""
  },
  "challenges:hall.w9.story#sw0sou": {
@@ -23003,10 +23021,10 @@
   "jp": "{話|はなし} の {後|あと} で",
   "en": "After the tale"
  },
- "challenges:hall.w9.story_q#7ub710": {
+ "challenges:hall.w9.story_q#ws2e9k": {
   "status": "self-reviewed",
-  "ref": "P15 Hall of a Hundred Tales, wing 9 (The Crane's Return): self-reviewed register and relationship (plain and polite speech, address terms and own-family words, respectful and humble verbs, ～てくださる／～ていただく, ～させていただく), the old man's sayings by listener, the hearth seats (横座・客座・かか座・木尻, labelled as a real custom), the young woman's request, the lord's order passed down three ways, the old couple's quarrel and the farewell; review fixes: kana おれ (read as 'I') replaced by おってこい, the own-mother card set before a teacher, split て る tokens joined. Self-review, not native review.",
-  "jp": "ゆき の ひ 、 おじいさん は わな の つる を たすけた 。",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "ゆき の ひ 、 おじいさん は わな の つる@鶴 を たすけた 。",
   "en": ""
  },
  "challenges:hall.w9.story_q#w2pv1": {
@@ -24310,6 +24328,156 @@
   "ref": "P15 Hall of a Hundred Tales, wing 10 (The Hundredth Tale) and the all-ten rewards: self-reviewed the player's journey in four pictures, the road record and waystones (the twelve chapters' place names as the game writes them), the keepers' slates (one rule from each tale), the sayings sorted by tale, the keepers' note, the pages' particles and connectives (one grammatical answer each; wrong options ungrammatical or illogical), Sōan and Kohaku, the hundredth tale, and Keeper Tsuru's last conversation in her canon voice (plain, だね/かい, no じゃ); Suzu's Kansai lines. Review fixes: kanji 顔 without ruby, ruby on kana ずっと, split て る tokens joined, うちら joined. Self-review, not native review.",
   "jp": "{百|ひゃく} の {灯|ひ} の {提灯|ちょうちん}",
   "en": "Lantern of the Hundred"
+ },
+ "verb:hall_w3_censer#1b86xqt": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "ジンベエ の {古|ふる}い {香時計|こうどけい}",
+  "en": "Jinbei's old incense clock"
+ },
+ "verb:hall_w3_censer#1s5sueo": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{火|ひ}",
+  "en": "glowing tip"
+ },
+ "verb:hall_w3_censer#1s07k7c": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{線|せん} を {進|すす}んで いる",
+  "en": "moving along the line"
+ },
+ "verb:hall_w3_censer#m2ia61": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{消|き}えた",
+  "en": "gone out"
+ },
+ "verb:hall_w3_censer#pi3gwk": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{鈴|すず}",
+  "en": "bells"
+ },
+ "verb:hall_w3_censer#iwl7cu": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{静|しず}か",
+  "en": "quiet"
+ },
+ "verb:hall_w3_censer#hgfacu": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{一度|いちど} {鳴|な}る",
+  "en": "rings once"
+ },
+ "verb:hall_w3_censer#t89b2s": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{二度|にど} {鳴|な}る",
+  "en": "rings twice"
+ },
+ "verb:hall_w3_censer#1rx95s6": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{三度|さんど} {鳴|な}る",
+  "en": "rings three times"
+ },
+ "verb:hall_w3_censer#dtq66t": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{香|こう} の {線|せん}",
+  "en": "line of incense"
+ },
+ "verb:hall_w3_censer#1cdyved": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{続|つづ}いて いる",
+  "en": "unbroken"
+ },
+ "verb:hall_w3_censer#en4cle": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{切|き}れて いる",
+  "en": "broken"
+ },
+ "verb:hall_w3_censer#uonp2w": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{高|たか}く {盛|も}られて 、 {燃|も}え{上|あ}がって いる",
+  "en": "heaped high and flaring"
+ },
+ "verb:hall_w3_censer#u97pv2": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{線香|せんこう} の {先|さき} が {赤|あか}く {光|ひか}る",
+  "en": "the tip of the incense glows red"
+ },
+ "verb:hall_w3_censer#na9ck9": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{鈴|すず} が {一度|いちど} {鳴|な}る",
+  "en": "a bell rings once"
+ },
+ "verb:hall_w3_censer#1ih8ort": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{鈴|すず} が {二度|にど} {鳴|な}る",
+  "en": "a bell rings twice"
+ },
+ "verb:hall_w3_censer#6baf21": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{鈴|すず} が {三度|さんど} {鳴|な}る",
+  "en": "a bell rings three times"
+ },
+ "verb:hall_w3_censer#1ntfxnm": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{火|ひ} が {途中|とちゅう} で {消|き}える",
+  "en": "the fire goes out partway"
+ },
+ "verb:hall_w3_censer#y1ez3q": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{香|こう} が {一度|いちど} に {燃|も}え{上|あ}がる",
+  "en": "the incense flares up all at once"
+ },
+ "verb:hall_w3_censer#corfn0": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{一|ひと}つ{目|め} と {二|ふた}つ{目|め} の {糸|いと} の {鈴|すず} を {掛|か}け{替|か}える",
+  "en": "swap the bells on the first and second threads"
+ },
+ "verb:hall_w3_censer#18ttahm": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{切|き}れた {所|ところ} に {香|こう} の {粉|こな} を {足|た}す",
+  "en": "fill the break in the line with incense powder"
+ },
+ "verb:hall_w3_censer#100oolk": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{香|こう} の {粉|こな} を {高|たか}く {盛|も}る",
+  "en": "heap the powder higher"
+ },
+ "verb:hall_w3_censer#3bvynh": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{火|ひ} は ゆっくり 、 {同|おな}じ {速|はや}さ で {進|すす}んで いる 。",
+  "en": "The fire moves slowly, at an even pace."
+ },
+ "verb:hall_w3_censer#cx2pq3": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{最初|さいしょ} の {糸|いと} に 、 {二度|にど} {鳴|な}る {鈴|すず} が {下|さ}がって いる 。",
+  "en": "The first thread carries the bell that rings twice."
+ },
+ "verb:hall_w3_censer#13i1dv6": {
+  "status": "self-reviewed",
+  "ref": "C-87 self-review: the Living World across the journey (src/content/zzz_living/: every region's routines and first lines, asked-after, usual and refusal lines, change beats, road events and their four-tier challenges, return keys and notes; the Mill Road and the North Road) and the exploration actions (src/content/zzz_verbs/: notices and every composed combination, the press in the world, courier rounds, repairs, networks of water and steam, the Understage's lift, Hall wing 3's clock, creature routing, layered sites, stage-blocking), each line read in its scene against the region's own content, the lexicon (every token looked up for word help) and grammar notes, Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections included: Rin's map colours (black walked, red heard); a playbill naming Ren's private failure; Nagi she/her; register and pronoun slips; readings (三十個 さんじゅっこ, 三足 さんぞく, 教わった おそわった); the stream stone's inscription made classical in both places (水出づれば、上の浅瀬); kana homophones given word@lemma hints; East Landing's readings keep the region's order of events (the sand first)",
+  "jp": "{香|こう} の {線|せん} が {途中|とちゅう} で {切|き}れて いて 、 {三|みっ}つ{目|め} の {糸|いと} まで {火|ひ} が {届|とど}かない 。",
+  "en": "The line of incense is broken partway: the fire never reaches the third thread."
  },
  "encounter:hall.w1.lanterns#61b12s": {
   "status": "self-reviewed",
