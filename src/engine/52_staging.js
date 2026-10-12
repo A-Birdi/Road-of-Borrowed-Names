@@ -707,7 +707,7 @@ RB.staging = (function () {
     for (const a of w.npcs) {
       if (a.foe || a.alpha === 0 || (a.look && a.look.pet) || !onScreen(a)) continue;
       profileOf(a);
-      if (RB.worldActs && RB.worldActs.working && RB.worldActs.working(a)) continue; // the world proof's action is their habit (dev only)
+      if (RB.worldActs && RB.worldActs.working && RB.worldActs.working(a)) continue; // their work (67_worldacts.js) is their habit
       if (RB.perform && RB.perform.working(a)) continue; // a complete action from the performance library is their habit
       people.push(a);
     }

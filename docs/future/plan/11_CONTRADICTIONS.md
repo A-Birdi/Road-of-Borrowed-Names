@@ -584,6 +584,39 @@ interiors to allow. Light sources can come from windows, candles or other light 
 - **Status:** implemented provisionally, internally reviewed (AC-1). Robin's review at completion, from the
   captures in `docs/screenshots/light/`.
 
+### C-87 · The Living World rolled out to the whole journey; what "shipped live" means
+**Decided** (2026-10-12). Robin sent Astra's LW-1 audit of the public branch ("Take these into consideration,
+especially since it brought up testing suite inconsistencies"), then: "So long as the non-voice work is reconciled and
+meets the full scope of the expansion plan across the board, then shipped live, I'll be happy. The voice work I expect
+to require much more time as it will be curated line by line". Then: "I suppose by "Shipped live" I meant that
+everything within the expansion plan is created, curated, tested and verified in full. Regular per-feature testing
+should still follow the F/Ren single pass, but when everything is all done and accounted for, run the full matrix
+testing. This should double-check every single point in the expansion plan and look for holes in development, where
+something might have been overlooked. When all passes, including the full matrix, it pushes to the hosted, playable
+page's Index.html".
+- **The audit's findings are confirmed** against the checkout (a read-only census of `5312368` in the unit tests'
+  loader, before any of the rollout): one town registered (Ashihara Shinden), no relations, road events or return keys, the seven
+  performers the gallery's only. The rollout and its register are in
+  [`docs/future/work/LW1_ROLLOUT.md`](../work/LW1_ROLLOUT.md): W1–W6, W9–W17 and the work performances, each
+  region's existing story content mapped first (it counts where it already does the job), the gaps then authored.
+- **Order:** the Living World rollout and the test-suite reconciliation; the complete browser run; P17's closure
+  (speed checks, the final review set, the night sweep); then VA-1 (bounded, as C-83); then, with everything in the
+  plan accounted for, the full matrix (P18), which also hunts for anything overlooked.
+- **Shipping:** only when everything above passes, the full matrix included, the playable page's `index.html` is
+  updated on the hosting Robin uses. This is Robin's instruction for that one step at that point; until then nothing
+  is merged into `main` or deployed, and every other standing constraint holds.
+- **The work performances are the journey's own** (LW-01, LW-02): the World Proof's three (Yasu, Tomo, Kiyo) and the
+  library's actions given to curated townspeople across every region, with the light on or off; a person works only
+  on their own placement and tile and not on a story's evening (unless the work is the night's). People left still
+  on purpose are listed with the reason.
+- **Two engine faults the audit named are fixed:** "where you last saw someone" records only someone actually in
+  view in the world (LW-08), and a person whose placement keeps its id but moves on the map walks to the new place
+  (LW-09).
+- **Robin, the same day, on the light:** the soft shadow round a room overlapped at its corners (each side's band
+  laid over the next), and a shadow round the lighthouse's deck "doesn't really make sense". The room's shadow is
+  now one falloff with rounded corners, dropped a little as if lit from above the page; the deck has none.
+- **Status:** implemented provisionally, internally reviewed (AC-1 for the art); Robin's review at completion.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first
@@ -710,6 +743,7 @@ resolution in the row. Robin answered C-04 to C-11 on 2026-10-07 and the rest on
 | The twelve-chapter edition | Shipped in the build: new journeys are twelve-chapter; an old six-chapter save explains its fresh start first and begins New Game+ only if accepted ("Not now" leaves it byte for byte); P18's matrix and any publication still wait | C-84 |
 | The last steps | The twelve-chapter campaign shown playable in the shipped build, then VA-1, then the full test matrix (not before) | C-85 |
 | Light and shadow everywhere | The World Proof's light, shadows, atmosphere and ground dressing on every outdoor map under each region's own sun; rooms lit by their windows, lamps, candles, hearths and stoves; the camera a little wider only where a screen allows; a Settings switch for the flat picture | C-86 |
+| The Living World everywhere | Astra's LW-1 audit confirmed; W1–W6, W9–W17 and the work performances rolled out across the journey (existing story content mapped first); "where you last saw" only on a real sighting; a moved placement walks to its new place; shipping to the playable page only after everything, the full matrix included, passes | C-87 |
 | Persistent health | Only in dungeons that specify it | C-04 |
 | NPC deaths | Avoidable, never blocking the story; never to NPCs who matter; failure never turns on the player | C-11 |
 | Romance | With the chosen companion, at high Bond; holding hands and/or a kiss; the story's ending, very rarely elsewhere; nothing explicit | C-63 |

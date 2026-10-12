@@ -1,7 +1,10 @@
 /* The world proof's purposeful actions (expansion P01, W03; docs/future/work/P01_WORLD.md "W03"; playbook V5):
  * complete actions with anticipation, the purposeful motion, contact, follow-through and a return, performed by
- * people who already stand where the work is. Drawn only by the proof (src/engine/65_worldlook.js, ?dev=world),
- * only on the slice's maps; nothing moves anyone from their tile, nothing is saved, nothing changes the story.
+ * people who already stand where the work is. First drawn by the World Proof (?dev=world); since C-87 (LW-01) they
+ * are the journey's own: whoever stands at their work in an ordinary journey does it, with the light on or off. A
+ * person works only on their own placement and tile (a story that moves them elsewhere, or a placement of the same
+ * person somewhere else, ends it: no rod without the pier), and not at night (the story's evenings: the stall is
+ * shut, the rod is put away). Nothing moves anyone from their tile, nothing is saved, nothing changes the story.
  *
  *   fish     Yasu on the pier: ready, the rod drawn back, the cast, the line flying out and the float landing
  *            with a ring, the wait (the float bobbing), a nibble, the bite, the strike (the rod bending), the
@@ -31,6 +34,8 @@ RB.worldActs = (function () {
   const { R, ell, line, ramp } = K;
   const hh = (x, y, k) => RB.tiles.hh(x, y, k);
   const CAST = { 'rw.village': { yasu: 'fish', tomo: 'fold' }, 'sg.harbor': { kiyo: 'sell' } };
+  // the tile each one's work needs them on (their own placement there: the pier's end, the basket, the stall)
+  const AT = { yasu: [34, 25], tomo: [7, 24], kiyo: [31, 17] };
 
   // the pose layer's keys the actions use (added to POSES only when the proof first draws an action)
   const NEW_POSES = {
@@ -112,16 +117,25 @@ RB.worldActs = (function () {
     if (a.stg && a.stg.run && !a.stg.run.done) return false;
     return true;
   }
+  // the work this person does now, if any: on their map, on their own placement at their work's tile, standing
+  // there (a wanderer back at their place), and not on a story's evening
   function kindOf(a, m) {
     const c = m && CAST[m.id];
-    return c && a && a.id ? c[a.id] || null : null;
+    const kind = c && a && a.id ? c[a.id] || null : null;
+    if (!kind) return null;
+    const at = AT[a.id];
+    if (at && (!a.home || a.home[0] !== at[0] || a.home[1] !== at[1] || a.mv || a.x !== at[0] || a.y !== at[1])) return null;
+    const amb = RB.render && RB.render.ambientNow ? RB.render.ambientNow() : null;
+    if (amb && amb.night) return null;
+    return kind;
   }
-  // the proof's action is this person's idle life: the game's own habits (src/engine/52_staging.js) leave them
-  // to it, or every habit would interrupt the round and start it again. Scenes and conversations still take over.
+  // the action is this person's idle life: the game's own habits (src/engine/52_staging.js) leave them to it, or
+  // every habit would interrupt the round and start it again, and a wanderer stays at their work (50_world.js).
+  // Scenes and conversations still take over. The light and its kit play no part (C-87: Light and shadow Off
+  // does not decide who has an occupation).
   function working(a) {
     const m = RB.world && RB.world.W && RB.world.W.map;
-    if (!kindOf(a, m) || !a.look || a.look.custom) return false;
-    return !!(RB.worldLook && RB.worldLook.allowed() && RB.worldLook.active(m) && RB.worldLook.opts.kit);
+    return !!(kindOf(a, m) && a.look && !a.look.custom);
   }
 
   // ---- the person's frame: a pose key and a drawn facing (the renderer's artFor asks this first) -------------
@@ -244,8 +258,8 @@ RB.worldActs = (function () {
     if (!cast) return;
     const A = RB.sprites.ANCHOR;
     for (const a of W.npcs) {
-      const kind = cast[a.id];
-      if (!kind) continue;
+      const kind = kindOf(a, m);
+      if (!kind || !a.look || a.look.custom) continue;
       const fx = env.ax(a.fx * 16) + 16, fy = env.ay(a.fy * 16) + 30, z = a.fy * 16 + 16;
       if (fx < -80 || fy < -80 || fx > env.bw + 120 || fy > env.bh + 80) continue;
       const working = free(a), still = env.still;
@@ -372,5 +386,5 @@ RB.worldActs = (function () {
       }
     }
   }
-  return { frameOf, push, where, free, working, CAST, NEW_POSES, stackCount, parcelCount, fishRound, foldRound, sellRound };
+  return { frameOf, push, where, free, working, kindOf, CAST, AT, NEW_POSES, stackCount, parcelCount, fishRound, foldRound, sellRound };
 })();

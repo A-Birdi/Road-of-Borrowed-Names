@@ -117,7 +117,7 @@ RB.render = (function () {
   }
   // A map that brings its own surround (map.surround: the ground far below an
   // elevated deck, src/engine/61_below.js) is framed like a room: no apron, no
-  // fade, the soft edge shadow round its deck (it reads as the drop). It is
+  // fade (the tower and the ground far below read as the drop). It is
   // not indoors.
   const framed = (m) => enclosed(m) || !!(m.def && m.def.surround);
   const fromHeight = (m) => !!(RB.below && RB.below.active(m));
@@ -265,8 +265,8 @@ RB.render = (function () {
 
   // Outside a small map: a quiet surround in the region's darkest colour —
   // timber for interiors, a faint weave outdoors, or, round an elevated deck,
-  // the ground far below (src/engine/61_below.js) — and a soft edge shadow, so
-  // the map reads as a lit room, a stage or a height rather than an empty band.
+  // the ground far below (src/engine/61_below.js) — and, round a room, a soft
+  // shadow, so the map reads as a lit room, a stage or a height rather than an empty band.
   // Nothing here looks walkable. Patterns are cached per palette.
   const surroundCache = new Map();
   function mix(hex, to, a) {
@@ -306,28 +306,28 @@ RB.render = (function () {
     surroundCache.set(key, pat);
     return pat;
   }
-  // soft shadow just outside a rectangle's edges (a room's walls, a deck's edge)
+  // A room's soft shadow on its surround, like a sheet lying on the table: the room's own box dropped a little
+  // (light from above the page), its four sides falling off outwards and its four corners rounded from the same
+  // falloff, so a corner never shows one side's band laid over the other's (Robin, 12 October: the corner squares).
   function edgeShadow(c, mx, my, mw, mh) {
-    const sh = 20;
-    const edge = (x0, y0, x1, y1, x, y, w, h) => {
-      const gr = c.createLinearGradient(x0, y0, x1, y1);
-      gr.addColorStop(0, 'rgba(0,0,0,0.55)');
-      gr.addColorStop(1, 'rgba(0,0,0,0)');
-      c.fillStyle = gr;
-      c.fillRect(x, y, w, h);
-    };
-    edge(0, my, 0, my - sh, mx - sh, my - sh, mw + 2 * sh, sh);
-    edge(0, my + mh, 0, my + mh + sh, mx - sh, my + mh, mw + 2 * sh, sh);
-    edge(mx, 0, mx - sh, 0, mx - sh, my, sh, mh);
-    edge(mx + mw, 0, mx + mw + sh, 0, mx + mw, my, sh, mh);
+    const sh = 20, drop = 4, A = 0.5;
+    const y0 = my + drop, y1 = my + mh + drop;
+    const fall = (gr) => { gr.addColorStop(0, 'rgba(0,0,0,' + A + ')'); gr.addColorStop(0.45, 'rgba(0,0,0,' + (A * 0.38).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(0,0,0,0)'); return gr; };
+    const side = (x0, yA, x1, yB, x, y, w, h) => { c.fillStyle = fall(c.createLinearGradient(x0, yA, x1, yB)); c.fillRect(x, y, w, h); };
+    side(0, y0, 0, y0 - sh, mx, y0 - sh, mw, sh);
+    side(0, y1, 0, y1 + sh, mx, y1, mw, sh);
+    side(mx, 0, mx - sh, 0, mx - sh, y0, sh, mh);
+    side(mx + mw, 0, mx + mw + sh, 0, mx + mw, y0, sh, mh);
+    const corner = (cx, cy, x, y) => { c.fillStyle = fall(c.createRadialGradient(cx, cy, 0, cx, cy, sh)); c.fillRect(x, y, sh, sh); };
+    corner(mx, y0, mx - sh, y0 - sh); corner(mx + mw, y0, mx + mw, y0 - sh);
+    corner(mx, y1, mx - sh, y1); corner(mx + mw, y1, mx + mw, y1);
   }
   const belowEnv = (m, t) => ({ ax, ay, bw, bh, cam, t: t || 0, still: RB.game.reducedMotion(), player: RB.world.W.player, amb: ambientOf(m).ambient || {} });
   function drawSurround(c, m, pal, t) {
     if (fromHeight(m)) {
-      // the ground far below, round the deck, with the deck's edge shadow
+      // the ground far below, round the deck. (No shadow round the deck: a deck high above the ground casts none
+      // at its own edge, Robin, 12 October; the tower and the distance below say the height.)
       RB.below.draw(c, m, belowEnv(m, t));
-      const D = RB.below.deckOf(m);
-      edgeShadow(c, ax(D.x0 * TS), ay(D.y0 * TS), (D.x1 - D.x0) * ATS, (D.y1 - D.y0) * ATS);
       return;
     }
     const g = m.margin || { x: 0, y: 0 };
@@ -391,8 +391,8 @@ RB.render = (function () {
       const pf = RB.perform.frameOf(a, t, still);
       if (pf) sf = pf;
     }
-    // the world proof's purposeful actions (development only, src/engine/67_worldacts.js): a pose and a facing
-    if (!isFoe && RB.worldActs && RB.worldLook && RB.worldLook.allowed() && RB.worldLook.kitOn(RB.world.W.map)) {
+    // the world proof's purposeful actions, the journey's own since C-87 (src/engine/67_worldacts.js): a pose and a facing
+    if (!isFoe && RB.worldActs) {
       const af = RB.worldActs.frameOf(a, t, still);
       if (af) sf = af;
     }
@@ -607,7 +607,7 @@ RB.render = (function () {
     if (RB.petWorld) RB.petWorld.push(list, c, ax, ay, t); // the cosmetic pet (src/engine/57_petworld.js)
     if (RB.perform) RB.perform.push(list, c, ax, ay, t); // what a person's action puts beside them (67a_perform.js)
     if (KIT) KIT.pushDecor(list, c, m, env, t); // the kit's low growth, birds and rails, where nobody walks
-    if (KIT && RB.worldActs && L.allowed()) RB.worldActs.push(list, c, m, env, t); // the proof's rod and float, the baskets (development only)
+    if (RB.worldActs) RB.worldActs.push(list, c, m, env || { ax, ay, bw, bh, still }, t); // the rod and float, the baskets, the parcels (67_worldacts.js; light on or off)
     list.sort((a, b) => a.z - b.z);
     for (const d of list) d.draw();
     if (L) L.illuminate(c, m, W, t, env);

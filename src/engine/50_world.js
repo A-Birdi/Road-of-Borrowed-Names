@@ -110,6 +110,7 @@ RB.world = (function () {
     const before = new Set(W.npcs.map((n) => n.id));
     const renamed = new Set();
     W.npcs = [];
+    const moved = []; // the same placement id, now at a new place on this map (LW-09)
     for (const n of m.def.npcs || []) {
       if (n.if && !RB.state.test(st, n.if)) continue;
       if (st.comp && n.id === st.comp && !n.alwaysShow) continue; // companion travels with the player
@@ -118,6 +119,9 @@ RB.world = (function () {
       let old = keep.get(n.id);
       if (!old && n.was && keep.has(n.was)) { old = keep.get(n.was); renamed.add(n.was); before.add(n.id); }
       const a = old && old.map === m.id ? old : makeActor(n.x, n.y, n.dir || 'down', n.look || ch.look || RB.sprites.randomLook(RB.util.hashStr(n.id)));
+      // a figure kept under the same id whose placement now stands elsewhere (one condition ended as another, with
+      // the same id, began): it goes to its new place, below, rather than staying where the old one stood
+      if (a === old && old.home && (old.home[0] !== n.x || old.home[1] !== n.y)) moved.push(a);
       a.id = n.id; a.def = n; a.map = m.id; a.home = [n.x, n.y];
       a.look = n.look || ch.look || a.look;
       W.npcs.push(a);
@@ -155,9 +159,21 @@ RB.world = (function () {
         else arriveOnFoot(b);
       }
     }
+    // LW-09: a person whose placement moved on this map. While the map is appearing (or behind an illustrated
+    // sequence) they are simply at the new place; otherwise they walk there, as anyone the story moves does (a
+    // scene that is staging them keeps them: it puts them where it wants). Nobody else is touched.
+    for (const a of moved) {
+      if (a.x === a.home[0] && a.y === a.home[1]) continue;
+      if (a.stg && a.stg.run && !a.stg.run.done && a.stg.run.owner !== 'idle') continue;
+      const snap = () => { a.x = a.home[0]; a.y = a.home[1]; a.fx = a.x; a.fy = a.y; a.mv = null; a.route = null; a.dir = a.def.dir || a.dir; };
+      if (behind || W.time - W.enteredAt <= 900) { snap(); continue; }
+      a.mv = null; a.fx = a.x; a.fy = a.y;
+      const route = routeRound(a, 160, new Set([a.home[0] + ',' + a.home[1]]));
+      if (route && route.length) { a.route = route; a.routeT = 0; } else snap();
+    }
     for (const a of W.npcs) W.seenOn[personOf(a)] = m.id;
-    // where you last saw people, kept with the twelve-chapter game's save (W3)
-    if (RB.town && RB.edition && RB.edition.of(st) >= 2) for (const a of W.npcs) RB.town.seen(st, personOf(a), m.id);
+    // Where you last saw people (W3, kept with the twelve-chapter game's save) is no longer every person on a map
+    // that was loaded (LW-08): sighted() below records someone when they are actually in view in the world.
     // Creatures still here stay where they are (a scene ending, a battle won nearby): they used
     // to jump back to their places, onto or right beside you. A map entered places them afresh.
     const keepFoes = new Map(W.foes.filter((f) => f.map === m.id).map((f) => [f.id, f]));
@@ -358,6 +374,26 @@ RB.world = (function () {
       const tick = () => ((!a.route && !a.mv) || performance.now() - t0 > (ms || 3000) || !W.map ? res() : setTimeout(tick, 60));
       tick();
     });
+  }
+  // LW-08: an eyewitness record only for someone actually in view (inside the screen, fully there, not mid-fade),
+  // checked a few times a second while the world is in play: a big map's far side is not "seen" on arrival, a
+  // menu or a reload records nothing by itself, and what someone told you stays a note (src/engine/53_town.js).
+  let sightT = 0;
+  function sighted(dt) {
+    sightT -= dt;
+    if (sightT > 0) return;
+    sightT = 400;
+    const st = s();
+    if (!st || !RB.town || !RB.edition || RB.edition.of(st) < 2 || RB.game.mode() !== 'world' || !W.map) return;
+    const v = RB.render.viewSize(), c = RB.render.cam;
+    for (const a of W.npcs) {
+      if (a.alpha != null && a.alpha < 0.9) continue;
+      const x = a.fx * 16 - c.x, y = a.fy * 16 - c.y;
+      if (x < -4 || y < -8 || x > v.w - 12 || y > v.h - 12) continue;
+      const who = personOf(a), was = RB.town.rec(st).lastSeen[who];
+      if (was && was.map === W.map.id && Date.now() - was.t < 30000) continue; // (seen here a moment ago)
+      RB.town.seen(st, who, W.map.id);
+    }
   }
   function onScreen(a) {
     const v = RB.render.viewSize(), c = RB.render.cam;
@@ -688,6 +724,7 @@ RB.world = (function () {
       }
     }
     updateWalkers(dt);
+    sighted(dt);
     // NPC routines
     for (const n of W.npcs) {
       stepActor(n, dt);
@@ -700,6 +737,8 @@ RB.world = (function () {
       if (n.glanceFrom) { n.dir = n.glanceFrom; n.glanceFrom = null; }
       const wander = n.def.wander;
       if (!wander || n.mv || RB.game.mode() !== 'world') continue;
+      // someone at their work stays at it (67_worldacts.js, 67a_perform.js); the round resumes when it ends
+      if ((RB.worldActs && RB.worldActs.working(n)) || (RB.perform && RB.perform.working(n))) continue;
       // a wanderer pauses on their round (a route habit playing, or a scene that owns them)
       if (RB.staging && RB.staging.wanderPause(n)) continue;
       const rnd = (k) => (RB.staging ? RB.staging.rand(n, k) : wrand());
@@ -773,8 +812,9 @@ RB.world = (function () {
     }
     if (!scene) return false;
     if (!def.noFace) faceTo(n, W.player.x, W.player.y);
-    // someone who can be asked after others (W3): talk, or "Have you seen…?"
-    if (def.asks && RB.town && RB.whereabouts) { RB.whereabouts.ask(n, scene); return true; }
+    // someone who can be asked after others (W3): talk, or "Have you seen…?". Something new to say (a scene not yet
+    // heard: the story's next step, a quest's) is said at once, never behind the question (LW-04)
+    if (def.asks && RB.town && RB.whereabouts && RB.state.test(st, 'seen.' + scene)) { RB.whereabouts.ask(n, scene); return true; }
     RB.script.run(scene, { npc: n.id });
     return true;
   }

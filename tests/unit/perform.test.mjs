@@ -62,7 +62,9 @@ export default async (t) => {
   }
   {
     // neighbours out of step; personality
-    const a = person({ id: 'pf_a', home: [3, 4] }), b = person({ id: 'pf_bb', home: [9, 2] });
+    const a = person({ id: 'pf_a', x: 3, y: 4, home: [3, 4] }), b = person({ id: 'pf_bb', x: 9, y: 2, home: [9, 2] });
+    // (C-87) a person works only on their own tile: a wanderer away from their place is not at work
+    t.eq(F.frameOf(person({ id: 'pf_away', x: 4, y: 4, home: [3, 4] }), 200000, false), null, 'away from their place: no work');
     const pa = [], pb = [];
     for (let k = 0; k < 20; k++) { pa.push(F.frameOf(a, 200000 + k * 300, false).phase); pb.push(F.frameOf(b, 200000 + k * 300, false).phase); }
     t.ok(pa.join() !== pb.join(), 'two people at the same work never move in step');
@@ -103,8 +105,28 @@ export default async (t) => {
   t.ok(probs.some((p) => /one-shot gesture is cued by a scene/.test(p)), 'a gesture placed as work is caught');
   m.npcs = m.npcs.filter((n) => !/^pf_bad/.test(n.id));
   RB.maps.forget('rw.road');
-  // nothing in a journey uses it yet: the only performers are the gallery's, behind its flag
+  // The journey's people at their work (C-87, LW-02: src/content/zzz_living/00_work.js), checked against the real
+  // placements, never a fixture: every one named in the manifest carries its work, every performer outside the
+  // gallery is in the manifest, every map with a performer passes check() (the work's place in front, reachable to
+  // talk to), every region of the journey has people at work, and the gallery stays behind its flag.
+  const manifest = C.work || [];
   const performers = [];
-  for (const id in C.maps) for (const n of C.maps[id].npcs || []) if (n.perform) performers.push(id + ':' + n.id + ':' + n.if);
-  t.ok(performers.length === 7 && performers.every((p) => /:dev_perform$/.test(p)), 'no journey\'s people perform yet; the gallery only with its flag');
+  for (const id in C.maps) for (const n of C.maps[id].npcs || []) if (n.perform) performers.push({ map: id, id: n.id, act: typeof n.perform === 'string' ? n.perform : n.perform.act, if: n.if || '' });
+  const gallery = performers.filter((p) => /dev_perform/.test(p.if));
+  const journey = performers.filter((p) => !/dev_perform/.test(p.if));
+  t.eq(gallery.length, 7, 'the gallery\'s seven, behind their flag');
+  t.ok(journey.length >= 40, 'the journey\'s people at work: ' + journey.length);
+  const listed = new Set(manifest.map((w) => w.map + ':' + w.id + ':' + w.act));
+  t.eq(journey.filter((p) => !listed.has(p.map + ':' + p.id + ':' + p.act)).map((p) => p.map + ':' + p.id), [], 'every performer in a journey is in the manifest');
+  const ext = new Set(['fish', 'fold', 'sell']);
+  t.eq(manifest.filter((w) => !ext.has(w.act) && !journey.some((p) => p.map === w.map && p.id === w.id && p.act === w.act)).map((w) => w.map + ':' + w.id), [], 'every manifest entry carries its work');
+  t.eq(manifest.filter((w) => ext.has(w.act) && !(RB.worldActs && RB.worldActs.CAST[w.map] && RB.worldActs.CAST[w.map][w.id] === w.act)).map((w) => w.id), [], 'the World Proof\'s three are the World Proof\'s cast');
+  const misplaced = [];
+  for (const id of new Set(journey.map((p) => p.map))) for (const e of F.check(id)) misplaced.push(id + ': ' + e);
+  t.eq(misplaced, [], 'every working person\'s place: their work in front of them, reachable to talk to');
+  const regions = new Set(manifest.map((w) => w.map.split('.')[0]));
+  for (const r of ['rw', 'sg', 'mb', 'mp', 'co', 'sb', 'kr', 'lf', 'ko', 'sz', 'cr', 'yn', 'el', 'as']) t.ok(regions.has(r), 'people at work in ' + r);
+  for (const c of F.list('work')) t.eq(F.validate(c), [], 'the contract ' + c.id);
+  t.ok(manifest.every((w) => w.why && w.why.length > 8), 'each assignment says why it is theirs');
+  t.ok((C.stillOnPurpose || []).every((w) => w.why), 'the people left still say why');
 };

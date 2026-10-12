@@ -21,8 +21,12 @@
  * from the person, so neighbours never move in step.
  * Checks: validate(contract) (poses and objects exist, every phase drawn, deterministic rounds, lengths in range,
  * contact phases hold something); check(mapId) (every performer's anchor is where the contract says, and the person
- * can be reached to talk to: findable and interruptible). No current content uses it: a six-chapter journey looks as
- * it always has. */
+ * can be reached to talk to: findable and interruptible).
+ * The journey's people (C-87, LW-02): content gives curated placements their work (src/content/world/20_work.js),
+ * never everyone, and never someone a story has moved from it. A person works only on their own tile (a wanderer
+ * back at their place, and a wanderer at work stays there), and not on a story's evening unless the work belongs to
+ * the night (a lamplighter, a reader by the lamp: the contract's or placement's `night`). The light and its kit
+ * play no part. */
 var RB = (globalThis.RB = globalThis.RB || {});
 RB.hooks = RB.hooks || {};
 
@@ -38,6 +42,8 @@ RB.perform = (function () {
     rope(b, x, y) { b.rect(x - 2, y - 2, 4, 3, '#c8a868'); b.px(x - 1, y - 1, '#a88848'); b.px(x + 1, y - 2, '#e0c888'); b.line(x + 1, y + 1, x + 3, y + 5, '#c8a868'); },
     mortar(b, x, y) { b.rect(x - 3, y - 2, 6, 3, '#9a9aa2'); b.rect(x - 3, y - 2, 6, 1, '#c0c0c8'); b.rect(x - 2, y + 1, 4, 1, '#6a6a72'); b.line(x, y - 2, x + 2, y - 6, '#7a6a5a'); },
     scissors(b, x, y) { b.line(x, y, x + 3, y - 3, '#a8acb8'); b.line(x + 1, y, x + 3, y - 2, '#7a808c'); b.px(x - 1, y + 1, '#3a3440'); b.px(x, y + 1, '#3a3440'); },
+    hammer(b, x, y) { b.line(x, y + 1, x + 2, y - 4, '#8a6a44'); b.rect(x, y - 7, 5, 3, '#5a5a62'); b.rect(x, y - 7, 5, 1, '#8a8a94'); },
+    ladle(b, x, y) { b.line(x, y, x + 2, y - 6, '#a88a5a'); b.rect(x + 1, y + 1, 4, 2, '#6a5a4a'); b.rect(x + 1, y + 1, 4, 1, '#8a7a6a'); },
   };
   let ready = false;
   function readyProps() {
@@ -107,13 +113,25 @@ RB.perform = (function () {
   }
 
   // ---- who performs what --------------------------------------------------------------------------------------------
+  // a story's evening (the map's or a scene's ambience: src/engine/60_render.js)
+  function nightNow() {
+    try { const amb = RB.render && RB.render.ambientNow ? RB.render.ambientNow() : null; return !!(amb && amb.night); } catch (e) { return false; }
+  }
   function actOf(a) {
     if (a && a._pfOnce) return { act: a._pfOnce.act, once: true, traits: traitsOf(a, null) };
     const d = a && a.def && a.def.perform;
     if (!d) return null;
     const o = typeof d === 'string' ? { act: d } : d;
-    return LIB[o.act] ? { act: o.act, traits: traitsOf(a, o.traits) } : null;
+    const c = LIB[o.act];
+    if (!c) return null;
+    // on their own tile (a wanderer away from their place is not at work), and not on an evening unless the work is
+    if (a.home && (a.x !== a.home[0] || a.y !== a.home[1])) return null;
+    if (!(o.night != null ? o.night : c.night) && nightNow()) return null;
+    return { act: o.act, traits: traitsOf(a, o.traits) };
   }
+  // the way a person faces for their work: the contract's, else their placement's (not wherever a conversation
+  // turned them)
+  const facingOf = (c, a) => c.facing || (a.def && a.def.dir) || a.dir || 'down';
   function traitsOf(a, given) {
     if (given) return [].concat(given).filter((t) => TRAITS[t]);
     try {
@@ -161,6 +179,7 @@ RB.perform = (function () {
   // is this person busy with an action (so the idle habits leave them to it)?
   function working(a) { const p = actOf(a); return !!(p && !p.once && free(a)); }
 
+  const LEAN = 8; // art px toward the work, seen from the side
   // ---- the frame: a pose key and a facing (src/engine/60_render.js artFor asks after the idle habits) --------------
   function frameOf(a, t, still) {
     const p = actOf(a);
@@ -170,7 +189,7 @@ RB.perform = (function () {
     readyProps();
     if (!free(a, p.once)) { if (a._pf) a._pf.held = true; return null; } // yields at once
     if (a._pf && a._pf.held) { a._pf.held = false; a._pf.t0 = t; a._pf.n = 0; } // and begins again from the anticipation
-    const dir0 = c.facing || a.dir || 'down';
+    const dir0 = facingOf(c, a);
     if (still) return { dir: dir0, key: P().key(c.still.pose, { prop: c.still.prop || null }), ox: 0, oy: 0 };
     const w = where(a, p.act, t, p.traits);
     if (w.ended) { delete a._pfOnce; a._pf = null; return null; }
@@ -183,9 +202,12 @@ RB.perform = (function () {
     }
     if (Array.isArray(pose)) pose = pose[Math.floor(w.into / pose[2]) % 2];
     const dir = (c.dir && c.dir[w.phase]) || dir0;
+    // seen from the side, someone working at the bench, block or stall in front steps up to it (a side view's hands
+    // reach a few pixels: from the tile's middle they would work at the air short of it); at rest they stand back
+    const ox = c.anchor && c.anchor.at !== 'any' && pose && (dir === 'left' || dir === 'right') ? (dir === 'left' ? -LEAN : LEAN) : 0;
     if (!pose) return { dir, key: null, ox: 0, oy: 0, phase: w.phase };
     const prop = c.prop ? c.prop[w.phase] || null : null;
-    return { dir, key: P().key(pose, { prop, gaze: w.phase === 'rest' ? gaze : null }), ox: 0, oy: 0, phase: w.phase };
+    return { dir, key: P().key(pose, { prop, gaze: w.phase === 'rest' ? gaze : null }), ox, oy: 0, phase: w.phase };
   }
   // what the actions put beside the person (a stack, dust), in the y-sorted draw list
   function push(list, cx, ax, ay, t) {
@@ -195,11 +217,11 @@ RB.perform = (function () {
     for (const a of W.npcs) {
       const p = actOf(a);
       const c = p && LIB[p.act];
-      if (!c || !c.world) continue;
+      if (!c || !c.world || a.mv) continue;
       const working0 = free(a, p.once);
       const w = working0 && !still ? where(a, p.act, t, p.traits) : null;
       const fx = ax(a.fx * 16) + 16, fy = ay(a.fy * 16) + 30;
-      list.push({ z: a.fy * 16 + 16 + (c.worldZ || -0.3), draw: () => c.world({ c: cx, x: fx, y: fy, w, t, still, working: working0, dir: c.facing || a.dir }) });
+      list.push({ z: a.fy * 16 + 16 + (c.worldZ || -0.3), draw: () => c.world({ c: cx, x: fx, y: fy, w, t, still, working: working0, dir: facingOf(c, a) }) });
     }
   }
 
@@ -223,8 +245,14 @@ RB.perform = (function () {
       const who = (n.char || n.id) + ' (' + o.act + ')';
       if (!c) { out.push(who + ': no such action'); continue; }
       if (c.once) out.push(who + ': a one-shot gesture is cued by a scene, not placed');
-      // findable: someone can stand beside them to talk
-      if (!Object.values(DIRV).some(([dx, dy]) => seen.has((n.x + dx) + ',' + (n.y + dy)))) out.push(who + ': nobody can reach them to talk');
+      // findable: someone can stand beside them to talk, or across a counter from them (50_world.js talks across one)
+      const acrossAt = (x, y) => (def.props || []).some((pr) => {
+        if (pr.p !== 'counter' && !pr.across) return false;
+        const pd = RB.props.P[pr.p] || {}, w = pr.w || pd.w || (pr.across ? 3 : 1), h = pr.h || pd.h || 1;
+        return x >= pr.x && x < pr.x + w && y >= pr.y && y < pr.y + h;
+      });
+      const reach = Object.values(DIRV).some(([dx, dy]) => seen.has((n.x + dx) + ',' + (n.y + dy)) || (acrossAt(n.x + dx, n.y + dy) && seen.has((n.x + 2 * dx) + ',' + (n.y + 2 * dy))));
+      if (!reach) out.push(who + ': nobody can reach them to talk');
       if (c.anchor && c.anchor.at !== 'any') {
         const d = DIRV[c.facing || n.dir || 'down'];
         const fx = n.x + d[0], fy = n.y + d[1];
@@ -307,7 +335,7 @@ RB.perform = (function () {
   });
   // tie a line to a post: bend, loop it, pull it tight, test it, rest
   F.define('tie', {
-    label: 'Tie a line', anchor: { kinds: ['lamppost', 'sign', 'signblank', 'fw_clamppost', 'fw_pulleypost', 'pet_post'], at: 'front' },
+    label: 'Tie a line', anchor: { kinds: ['lamppost', 'sign', 'signblank', 'fw_clamppost', 'fw_pulleypost', 'pet_post', 'co_sheaf', 'sg_bollard'], at: 'front' },
     round: (n, h) => [['bend', 460], ['loop', 1200 + (h(1, 926) % 300)], ['pull', 520], ['test', 600], ['rest', 2200 + (h(2, 927) % 1600)]],
     pose: { bend: 'bend', loop: ['jiggle1', 'jiggle2', 220], pull: 'fist', test: 'check', rest: null },
     prop: { loop: 'rope', pull: 'rope' },
@@ -316,7 +344,7 @@ RB.perform = (function () {
   });
   // tend a lantern: reach up, open it, trim the wick, close it, step back and look, rest; it burns brighter after
   F.define('tend', {
-    label: 'Tend a lantern', anchor: { kinds: ['lantern', 'lamppost', 'deadlantern', 'sa_lamp'], at: 'front' },
+    label: 'Tend a lantern', night: true, anchor: { kinds: ['lantern', 'lamppost', 'deadlantern', 'sa_lamp'], at: 'front' },
     round: (n, h) => [['reach', 420], ['open', 380], ['trim', 1000 + (h(1, 928) % 300)], ['close', 380], ['look', 700], ['rest', 2400 + (h(2, 929) % 1800)]],
     pose: { reach: 'tend1', open: 'tend2', trim: ['trim', 'tend2', 240], close: 'tend1', look: 'observe', rest: null },
     prop: { trim: 'scissors' },
@@ -325,7 +353,7 @@ RB.perform = (function () {
   });
   // read and turn a page: read, turn (the free hand crosses), read on, a glance up, rest
   F.define('read', {
-    label: 'Read, turning the pages',
+    label: 'Read, turning the pages', night: true,
     round: (n, h) => [['read', 1800 + (h(1, 930) % 900)], ['turn', 420], ['read2', 1600 + (h(2, 931) % 900)], ['glance', 600], ['rest', 1400 + (h(3, 932) % 1400)]],
     pose: { read: 'read', turn: 'trace', read2: 'read', glance: 'listen', rest: null },
     prop: { read: 'book', turn: 'book', read2: 'book', glance: 'book' },
@@ -334,12 +362,139 @@ RB.perform = (function () {
   });
   // grind and inspect a remedy: pour, grind, hold the vial to the light, rest
   F.define('grind', {
-    label: 'Grind and inspect a remedy', anchor: { kinds: ['table', 'smalltable', 'desk', 'counter'], at: 'front' },
+    label: 'Grind and inspect a remedy', anchor: { kinds: ['table', 'smalltable', 'desk', 'counter', 'sg_stall'], at: 'front' },
     round: (n, h) => [['pour', 640], ['grind', 1400 + (h(1, 933) % 500)], ['inspect', 900], ['rest', 2000 + (h(2, 934) % 1600)]],
     pose: { pour: 'pour', grind: ['stir1', 'stir2', 240], inspect: 'hold', rest: null },
     prop: { pour: 'bottle', grind: 'mortar', inspect: 'bottle' },
     contact: { pour: 'the mortar', grind: 'the mortar' },
     still: { pose: 'hold', prop: 'bottle' },
+  });
+
+  // the work of the journey's towns (C-87, LW-02): each a complete action at its own place, with what it touches
+  // the tile in front of a person facing dir, from their feet (for what the work leaves there)
+  const FRONT = { down: [0, 9], up: [0, -15], left: [-14, -5], right: [14, -5] };
+  const front = (x, y, dir) => { const d = FRONT[dir] || FRONT.down; return [x + d[0], y + d[1]]; };
+  // plane a board on a block: set it, the strokes (shavings curl off at the touch), sight along it, brush it clean
+  F.define('plane', {
+    label: 'Plane a board', anchor: { kinds: ['stump', 'table', 'cs_workbench', 'sb_woodpile', 'anvil', 'smalltable'], at: 'front' },
+    round: (n, h) => [['set', 500], ['stroke', 1500 + (h(1, 941) % 500)], ['sight', 800], ['brush', 520], ['rest', 1800 + (h(2, 942) % 1600)]],
+    pose: { set: 'bend', stroke: ['knead1', 'knead2', 300], sight: 'check', brush: 'tidy2', rest: null },
+    prop: { stroke: 'plane', sight: 'plane' },
+    contact: { stroke: 'the board on the block', brush: 'the shavings' },
+    still: { pose: 'knead2', prop: 'plane' },
+    // the board lies across the block, its near end at the hands; shavings curl off it as the plane goes
+    world: ({ c, x, y, w, dir }) => {
+      const sgn = dir === 'left' ? -1 : 1;
+      if (dir === 'left' || dir === 'right') {
+        const x0 = x + sgn * 13, x1 = x + sgn * 42, lo = Math.min(x0, x1), len = Math.abs(x1 - x0);
+        R(c, lo, y - 17, len, 3, '#b08a58'); R(c, lo, y - 17, len, 1, '#d8b47c'); R(c, lo, y - 14, len, 1, '#6a4a2c');
+      }
+      if (!w || (w.phase !== 'stroke' && w.phase !== 'sight')) return;
+      const [fx, fy] = front(x, y, dir), k = w.phase === 'stroke' ? Math.min(4, Math.floor(w.into / 300)) : 4;
+      for (let i = 0; i < k; i++) { R(c, fx - 5 + i * 3, fy - 1 - (i % 2), 2, 1, '#e8cf9a'); R(c, fx - 4 + i * 3, fy - 2 - (i % 2), 1, 1, '#f4e2b8'); }
+    },
+  });
+  // work iron at an anvil: take up the hammer, the strikes (sparks at the touch), turn the piece, strike again, look
+  F.define('hammer', {
+    label: 'Work iron at an anvil', anchor: { kinds: ['anvil', 'cs_workbench'], at: 'front' },
+    round: (n, h) => [['grip', 420], ['strike', 1300 + (h(1, 943) % 400)], ['turn', 520], ['strike2', 900 + (h(2, 944) % 300)], ['look', 700], ['rest', 2000 + (h(3, 945) % 1600)]],
+    pose: { grip: 'hammer2', strike: ['hammer1', 'hammer2', 260], turn: 'tidy1', strike2: ['hammer1', 'hammer2', 240], look: 'check', rest: null },
+    prop: { grip: 'hammer', strike: 'hammer', strike2: 'hammer', look: 'hammer' },
+    contact: { strike: 'the iron on the anvil', turn: 'the iron', strike2: 'the iron on the anvil' },
+    still: { pose: 'hammer2', prop: 'hammer' },
+    world: ({ c, x, y, w, dir }) => {
+      if (!w || (w.phase !== 'strike' && w.phase !== 'strike2')) return;
+      const per = w.phase === 'strike' ? 260 : 240, k = Math.floor(w.into / per);
+      if (k % 2 !== 1 || (w.into % per) > 120) return; // a spray of sparks as the hammer comes down
+      const [fx, fy] = front(x, y, dir);
+      for (let i = 0; i < 5; i++) R(c, fx - 4 + ((k * 7 + i * 5) % 9), fy - 6 - ((k * 3 + i * 4) % 6), 1, 1, i % 2 ? '#ffd27a' : '#fff0c0');
+    },
+  });
+  // cook at a pot: stir, taste from the ladle, a small nod, the lid, rest; steam rises from the pot while they work
+  F.define('stir', {
+    label: 'Cook at a pot', anchor: { kinds: ['pot', 'stove', 'campfire', 'sb_irori', 'mb_noodle', 'yn_steambox'], at: 'front' },
+    round: (n, h) => [['stir', 1600 + (h(1, 946) % 500)], ['taste', 700], ['nod', 380], ['lid', 520], ['rest', 1800 + (h(2, 947) % 1500)]],
+    pose: { stir: ['stir1', 'stir2', 320], taste: 'sip', nod: 'nod1', lid: 'tidy2', rest: null },
+    prop: { stir: 'ladle', taste: 'ladle' },
+    contact: { stir: 'the pot', lid: 'the pot\'s lid' },
+    still: { pose: 'stir1', prop: 'ladle' },
+    world: ({ c, x, y, w, t, dir, working }) => {
+      if (!working) return;
+      const [fx, fy] = front(x, y, dir);
+      for (let i = 0; i < 3; i++) { const u = ((t / 1400) + i / 3) % 1; R(c, fx - 3 + i * 3 + Math.round(Math.sin(u * 6 + i) * 1.5), fy - 10 - Math.round(u * 12), 2, 1, 'rgba(240,240,236,' + (0.45 * (1 - u)).toFixed(2) + ')'); }
+    },
+  });
+  // serve tea at a counter: set out the cups, pour, offer one across, wipe the counter, rest
+  F.define('serve', {
+    label: 'Serve tea at a counter', anchor: { kinds: ['counter', 'teaset', 'table', 'smalltable', 'lq_teastall'], at: 'front' },
+    round: (n, h) => [['set', 1000 + (h(1, 948) % 300)], ['pour', 1100], ['offer', 800], ['wipe', 900 + (h(2, 949) % 300)], ['rest', 2000 + (h(3, 950) % 1600)]],
+    pose: { set: ['tidy1', 'tidy2', 360], pour: 'pour', offer: 'present', wipe: ['polish1', 'polish2', 280], rest: null },
+    prop: { set: 'cup', pour: 'teapot', offer: 'cup', wipe: 'cloth' },
+    contact: { set: 'the counter', pour: 'the cups', wipe: 'the counter' },
+    still: { pose: 'pour', prop: 'teapot' },
+  });
+  // polish glass or ware: rub it, hold it up to the light, set it down, take the next, rest
+  F.define('polish', {
+    label: 'Polish glass', anchor: { kinds: ['table', 'smalltable', 'counter', 'glassware', 'sg_stall', 'desk'], at: 'front' },
+    round: (n, h) => [['take', 420], ['rub', 1400 + (h(1, 951) % 400)], ['light', 800], ['set', 460], ['rest', 1900 + (h(2, 952) % 1500)]],
+    pose: { take: 'take', rub: ['polish1', 'polish2', 280], light: 'hold', set: 'tidy1', rest: null },
+    prop: { take: 'seaglass', rub: 'seaglass', light: 'seaglass' },
+    contact: { rub: 'the glass', set: 'the table' },
+    still: { pose: 'polish2', prop: 'seaglass' },
+  });
+  // knead dough at a bench: knead, fold it over, shape it, dust it with flour (a puff at the touch), rest
+  F.define('knead', {
+    label: 'Knead dough', anchor: { kinds: ['lf_kneadbench', 'table', 'counter', 'smalltable', 'co_wheel'], at: 'front' },
+    round: (n, h) => [['knead', 1500 + (h(1, 953) % 500)], ['fold', 600], ['knead2', 900], ['shape', 700], ['dust', 520], ['rest', 1800 + (h(2, 954) % 1500)]],
+    pose: { knead: ['knead1', 'knead2', 340], fold: 'fold', knead2: ['knead1', 'knead2', 300], shape: 'tidy2', dust: 'rub', rest: null },
+    contact: { knead: 'the dough on the bench', fold: 'the dough', knead2: 'the dough on the bench', shape: 'the dough' },
+    still: { pose: 'knead2' },
+    world: ({ c, x, y, w, dir }) => {
+      if (!w || w.phase !== 'dust') return;
+      const [fx, fy] = front(x, y, dir), a = (0.6 * (1 - w.u)).toFixed(2);
+      for (let i = 0; i < 4; i++) R(c, fx - 4 + i * 3, fy - 4 - Math.round(w.u * 5) - (i % 2), 1, 1, 'rgba(248,244,232,' + a + ')');
+    },
+  });
+  // mend a net: draw it across, knot (the shuttle in and out), pull the knot tight, look along it, rest
+  F.define('mend', {
+    label: 'Mend a net', anchor: { kinds: ['net', 'ko_netrack', 'pier', 'boat'], at: 'any' },
+    round: (n, h) => [['draw', 500], ['knot', 1300 + (h(1, 955) % 500)], ['pull', 480], ['look', 700], ['rest', 2000 + (h(2, 956) % 1600)]],
+    pose: { draw: 'hold', knot: ['jiggle1', 'jiggle2', 220], pull: 'fist', look: 'check', rest: null },
+    prop: { draw: 'nets', knot: 'nets', pull: 'nets', look: 'nets' },
+    contact: { knot: 'the net', pull: 'the knot' },
+    still: { pose: 'jiggle1', prop: 'nets' },
+  });
+  // keep a tally: look over what is there, count it off on the fingers, note it in the book, check the page, rest
+  F.define('tally', {
+    label: 'Keep a tally',
+    round: (n, h) => [['look', 700], ['count', 1300 + (h(1, 957) % 400)], ['note', 1100 + (h(2, 958) % 300)], ['check', 700], ['rest', 1800 + (h(3, 959) % 1600)]],
+    pose: { look: 'observe', count: ['count1', 'count2', 430], note: ['write1', 'write2', 260], check: 'read', rest: null },
+    prop: { note: 'brush', check: 'ledger' },
+    contact: { note: 'the page' },
+    still: { pose: 'read', prop: 'ledger' },
+  });
+  // keep a stall: set out the goods, call to the street, beckon, hand a parcel across, rest
+  F.define('hawk', {
+    label: 'Keep a stall', anchor: { kinds: ['counter', 'sg_stall', 'mb_noodle', 'lq_teastall', 'table', 'crate', 'yn_steambox', 'smalltable'], at: 'front' },
+    round: (n, h) => [['arrange', 1000 + (h(1, 960) % 300)], ['call', 800], ['beckon', 700], ['offer', 800], ['rest', 2200 + (h(2, 961) % 1800)]],
+    pose: { arrange: ['tidy1', 'tidy2', 380], call: 'palm', beckon: 'wave', offer: 'present', rest: null },
+    prop: { offer: 'parcel' },
+    contact: { arrange: 'the goods on the stall', offer: 'a customer\'s hands' },
+    still: { pose: 'palm' },
+  });
+  // prune a tree or shrub: look it over, reach in with the shears, snip (a leaf falls at the touch), gather, rest
+  F.define('prune', {
+    label: 'Prune a tree', anchor: { kinds: ['bush', 'tree', 'orchard', 'pine', 'flowerpot', 'lq_kaki', 'lq_kaki_young', 'ko_camphor'], at: 'front' },
+    round: (n, h) => [['look', 800], ['reach', 420], ['snip', 1100 + (h(1, 962) % 400)], ['gather', 600], ['rest', 2000 + (h(2, 963) % 1600)]],
+    pose: { look: 'observe', reach: 'reach', snip: ['reach', 'take', 240], gather: 'bend', rest: null },
+    prop: { reach: 'shears', snip: 'shears' },
+    contact: { snip: 'a branch', gather: 'the clippings' },
+    still: { pose: 'reach', prop: 'shears' },
+    world: ({ c, x, y, w, dir }) => {
+      if (!w || w.phase !== 'snip') return;
+      const [fx, fy] = front(x, y, dir), u = (w.into % 480) / 480;
+      R(c, fx - 2 + Math.round(Math.sin(u * 5) * 2), fy - 12 + Math.round(u * 12), 2, 1, '#5a8a3a');
+    },
   });
 
   // ---- one-shot social gestures (cued by scenes: !hook perform <npc> <act>) -----------------------------------------

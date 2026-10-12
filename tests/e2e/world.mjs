@@ -465,7 +465,7 @@ await test('W05 Kiyo sells fish at her stall: every step\'s pose, nobody moves, 
   await ctx.close();
 });
 
-await test('the game\'s habits leave the working people to their actions (a habit would restart the round); everyone else keeps theirs; without the flag nobody is left out', async () => {
+await test('the game\'s habits leave the working people to their actions (a habit would restart the round); everyone else keeps theirs; the journey\'s own without the flag and with the light Off (C-87)', async () => {
   const { p, ctx, errors } = await page(b, url + '?dev=world', { viewport: { width: 1440, height: 900 } });
   for (const [go, who] of [[harbour, ['kiyo']], [square, ['yasu', 'tomo']]]) {
     await go(p);
@@ -487,7 +487,9 @@ await test('the game\'s habits leave the working people to their actions (a habi
   await ctx.close();
   const plain = await page(b, url, { viewport: { width: 1440, height: 900 } });
   await harbour(plain.p);
-  assert(await plain.p.evaluate(() => !RB.worldActs.working(RB.world.W.npcs.find((n) => n.id === 'kiyo'))), 'without the flag the game\'s idle life is untouched');
+  assert(await plain.p.evaluate(() => RB.worldActs.working(RB.world.W.npcs.find((n) => n.id === 'kiyo'))), 'Kiyo sells fish in an ordinary journey (C-87, LW-01)');
+  const off = await plain.p.evaluate(() => { RB.game.settings.worldLight = false; RB.game.applySettings(); const ok = RB.worldActs.working(RB.world.W.npcs.find((n) => n.id === 'kiyo')); RB.game.settings.worldLight = true; RB.game.applySettings(); return ok; });
+  assert(off, 'Light and shadow Off does not decide who has an occupation');
   await plain.ctx.close();
 });
 
