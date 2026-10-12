@@ -88,9 +88,14 @@ RB.world = (function () {
     const st = s();
     return st.comp || null;
   }
+  // Whether the companion walks with you on a map: noCompanion: true never; a string is the condition under which
+  // they ARE there ('!cr_apart': with you unless you are apart). The pet follows the same rule (57_petworld.js).
+  function companionHere(st, def) {
+    return !def || !def.noCompanion || (def.noCompanion !== true && RB.state.test(st, def.noCompanion));
+  }
   function placeCompanion() {
     const cid = partyCompanion();
-    if (!cid || (W.map.def.noCompanion && !RB.state.test(s(), W.map.def.noCompanion === true ? 'false' : W.map.def.noCompanion))) {
+    if (!cid || !companionHere(s(), W.map.def)) {
       W.comp = null;
       return;
     }
@@ -1168,7 +1173,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)

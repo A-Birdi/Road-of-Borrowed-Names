@@ -6,6 +6,7 @@
 // once; vignette state machines accept the ordinary and the field route; the battle observer's
 // reaction table covers every family for every species; and the rules give exactly the same results,
 // target choices and answer-option order with a pet selected, hidden, or none.
+import fs from 'node:fs';
 import { load } from '../lib/load.mjs';
 
 export default async (t) => {
@@ -286,4 +287,24 @@ export default async (t) => {
   }
   for (const id in PETS.vignettes) { const V = PETS.vignettes[id]; for (const o of [V.title, V.met, V.cause && V.cause.label].concat(Object.values(V.fieldSay || {}), Object.values(V.fieldNeutral || {}))) if (o && o.jp) for (const pr of RB.jp.validate(o.jp)) jpProblems.push(id + ': ' + (pr.msg || JSON.stringify(pr))); }
   t.eq(jpProblems, [], 'memory and vignette Japanese carries furigana on every kanji');
+
+  // ---- the animal walks where your companion walks (57_petworld.js shown() uses RB.world.companionHere) ------------
+  // A string noCompanion is the condition under which the companion IS there ('!cr_apart'). It was once read the other
+  // way round for the animal: hidden on the Cloudroad, Steamhollow, Kotonoha and the Keepers' Road while your
+  // companion was with you, seen only while apart.
+  const here = RB.world.companionHere;
+  t.ok(here(fresh(), { }) && !here(fresh(), { noCompanion: true }), 'no noCompanion: with you; noCompanion: true: never');
+  let conds = 0;
+  for (const [id, d] of Object.entries(C.maps)) {
+    if (typeof d.noCompanion !== 'string') continue;
+    conds++;
+    const flags = (d.noCompanion.match(/[a-z_][a-z0-9_]*/g) || []);
+    const together = fresh(), apart = fresh();
+    for (const f of flags) apart.flags[f] = true;
+    t.ok(here(together, d) === RB.state.test(together, d.noCompanion) && here(together, d), id + ': with no apart flag set, your companion (and so the animal) is with you');
+    t.ok(!here(apart, d), id + ': while apart (' + flags.join(', ') + '), neither is');
+  }
+  t.ok(conds >= 10, 'the maps whose companion depends on a condition are all checked (' + conds + ')');
+  const pwSrc = fs.readFileSync(new URL('../../src/engine/57_petworld.js', import.meta.url), 'utf8');
+  t.ok(/if \(!RB\.world\.companionHere\(st, d\)\) return false;/.test(pwSrc), 'the animal in the world asks the companion\'s own rule (57_petworld.js shown())');
 };

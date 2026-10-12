@@ -252,9 +252,11 @@ function install() {
   };
   H.snap = snap;
   RB.bus.on('sequence:begin', (e) => { H.ev.push(['begin', e.id]); if (!H.entry) H.entry = {}; H.entry[e.id] = snap(); H.pcKey = J(RB.equip.look(RB.game.s)); });
-  RB.bus.on('sequence:end', (e) => {
+  RB.bus.on('sequence:end', async (e) => {
     H.ev.push(['end', e.id, e.why || null]);
     if (!H.exit) H.exit = {};
+    // a sequence that ended in the dark (begun after a !fade out): the world returns when the dark lifts
+    if (e.dark) for (let i = 0; i < 400 && (document.querySelector('#overlay > .fade.on') || RB.game.mode() === 'transition'); i++) await new Promise((r) => setTimeout(r, 25));
     H.exit[e.id] = snap();
     // the first world frames after the picture: who is visible on the map (standing, walking in or out)
     const id = e.id, seen = new Set(), t1 = performance.now();
@@ -299,6 +301,15 @@ async function start(p, S, R, o) {
     if (!R.comp) { s.comp = null; RB.world.placeCompanion(); }
     for (const it of (S.give || []).concat(R.bell ? ['lf_toya_bell'] : [])) RB.state.give(s, it, 1);
     for (const [k, v] of Object.entries(S.quests || {})) RB.state.setQuest(s, k, v);
+    // a wing of the Hall of a Hundred Tales (S.hall: 'w4'): in a visit there, every trial done as the last one leaves
+    // it, on the last floor (its floor flags kept: a visit holds them), so the tale's end folds you back to the hearth
+    if (S.hall) {
+      const d = RB.hall.get(S.hall);
+      RB.hall.enter(s, S.hall);
+      for (const t of d.trials) RB.hall.markTrial(s, S.hall, t.id);
+      s.hall.visit.floor = d.floors.length - 1;
+      Object.assign(s.flags, S.flags, R.flags || {});
+    }
     // a pet met (and selected) earlier in this campaign; "Show pet in exploration" off for a hidden one
     RB.game.settings.petWorld = !R.petHidden;
     if (R.pet) { RB.pets.meet(s, R.pet, s.map); RB.pets.select(s, R.pet); }
@@ -311,9 +322,27 @@ async function start(p, S, R, o) {
     RB.game.settings.reducedMotion = !!o.reduce; RB.game.applySettings();
     // stand-ins (not under test here): the challenges pass, lessons and cards are read, saves are not written
     RB.challenge.run = async () => ({ ok: true });
+    // (a battle inside the scene, `!encounter` — the guardians, the Kettle, the Hundredth Tale, the Gardener — is won,
+    // or ends as S.encounter says: { result, outcome, flags } — the conclusion's own flags, as the encounter sets them)
+    RB.game.startEncounter = async () => {
+      const E = S.encounter || {};
+      Object.assign(RB.game.s.flags, E.flags || {});
+      return { result: E.result || 'win', outcome: E.outcome || null };
+    };
     RB.lessons.run = async () => {}; RB.lessons.grammarCard = async () => {};
     RB.ui.card = async () => {}; RB.save.autosave = async () => {};
     if (RB.hooks) RB.hooks.suzu_speech = async () => {};
+    // the campaign conditions at each shot's first line, and by each sequence's end (the facts)
+    if (o.facts) {
+      const facts = o.facts, s0 = RB.ui.dialogue.say;
+      H.cond = {};
+      RB.ui.dialogue.say = function (line) {
+        const q = RB.sequence.state();
+        if (q) for (const f of Object.values(facts)) if (!f.end && f.sq === q.id && f.shot === q.shot && !((f.sq + '|' + f.shot + '|' + f.cond) in H.cond)) H.cond[f.sq + '|' + f.shot + '|' + f.cond] = RB.state.test(RB.game.s, f.cond);
+        return s0.apply(this, arguments);
+      };
+      RB.bus.on('sequence:end', (e) => { for (const f of Object.values(facts)) if (f.end && f.sq === e.id) H.cond[f.sq + '|end|' + f.cond] = RB.state.test(RB.game.s, f.cond); });
+    }
     await new Promise((r) => setTimeout(r, 1100)); // (the map has been entered a while: comings and goings walk, as in play)
     Object.assign(H, { k: new Map(), pets: [], tests: [], lines: [], inv: [], ev: [], entry: null, exit: null, after: [], live: true, wantStart: H.snap() });
     window.__done = false; window.__err = null;
@@ -470,19 +499,10 @@ for (const [id, D] of Object.entries(SEQ)) {
   for (const R of D.runs.filter((x) => !QUICK || x.quick)) {
     const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
     // the campaign conditions at each shot's first line (and by the end of each sequence) for the facts
-    await start(p, D, R, {});
     const facts = {};
     for (const sq of [id].concat(D.chain || [])) for (const f of (SEQ[sq].facts || []).concat(sq === id ? R.facts || [] : [])) facts[sq + '|' + f.shot + '|' + f.cond] = { sq, shot: f.shot, cond: f.cond, end: f.when === 'end' };
-    await p.evaluate((facts) => {
-      const H = window.__HX, s0 = RB.ui.dialogue.say;
-      H.cond = {};
-      RB.ui.dialogue.say = function (line) {
-        const q = RB.sequence.state();
-        if (q) for (const f of Object.values(facts)) if (!f.end && f.sq === q.id && f.shot === q.shot && !((f.sq + '|' + f.shot + '|' + f.cond) in H.cond)) H.cond[f.sq + '|' + f.shot + '|' + f.cond] = RB.state.test(RB.game.s, f.cond);
-        return s0.apply(this, arguments);
-      };
-      RB.bus.on('sequence:end', (e) => { for (const f of Object.values(facts)) if (f.end && f.sq === e.id) H.cond[f.sq + '|end|' + f.cond] = RB.state.test(RB.game.s, f.cond); });
-    }, facts);
+    // (the recorder goes in before the scene starts: a sequence that opens on its first line would say it first)
+    await start(p, D, R, { facts });
     const pl = await play(p, R);
     const r = await after(p, D.settle || 6000);
     r.stuck = pl.stuck || null;

@@ -355,6 +355,7 @@ narr: {灯籠|とうろう} は 、 {待|ま}って くれる 。 || The lamp wi
 
 # ---- the tale's end ------------------------------------------------------------------------------------------------
 @scene hall.w1.end
+!fade out
 !sequence hall.w1 begin
 !shot tale
 narr: {最後|さいご} の {旅人|たびびと} が 、 {北|きた} の {道|みち} に {消|き}えた 。 {灯籠|とうろう} の {火|ひ} が 、 {一度|いちど} 、 {大|おお}きく {揺|ゆ}れる 。 || The last traveller disappears up the north road. The lamp's flame sways once, high.
@@ -368,6 +369,7 @@ hall_lamp: もう {一度|いちど} 、 {言|い}って ください 。 ……
 narr: {灯|ひ} の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The lamplight folds small, and when you look up you are by the hall's hearth.
 !set hall_w1_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);

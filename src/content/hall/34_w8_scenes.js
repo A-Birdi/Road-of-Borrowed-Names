@@ -393,6 +393,7 @@ narr: オマツ が 、 {筆|ふで} を {持|も}った まま {待|ま}って 
 narr: {帳面|ちょうめん} の {墨|すみ} は 、 もう {乾|かわ}いて いる 。 || The ink in the ledger is already dry.
 
 @scene hall.w8.end
+!fade out
 !sequence hall.w8 begin
 !shot tale
 narr: {朝日|あさひ} の {中|なか} を 、 ヒサ が {帰|かえ}って きた 。 {隣|となり} に は 、 {箱|はこ} を {抱|かか}えた {年寄|としよ}り の {旅人|たびびと} が いる 。 || Hisa comes back through the morning sun. Beside them is an old traveller with the box in his arms.
@@ -406,6 +407,7 @@ hall_hisa: {誰|だれ} も {聞|き}かなかった から 、 {言|い}わな�
 narr: {朝|あさ} の {雪|ゆき} {明|あ}かり が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning snowlight folds away, and when you look up you are by the hall's hearth.
 !set hall_w8_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);

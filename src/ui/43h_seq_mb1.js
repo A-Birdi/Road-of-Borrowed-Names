@@ -533,8 +533,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Sanpei\'s face and the block above the sheet', narrow: 'his face and the block in the upper half', land: 'his face' },
     draw(c, w, h, t, st) {
       const S = stage(w, h, st.vb), { s, lay } = S, narrow = lay === 'narrow', still = st.still;
-      // the crowd at dusk behind: people of the city, backlit by the last of the sky, under a string of lanterns
-      const B = cached('mb1.crowd|' + w + 'x' + h + '|' + st.vb, () => {
+      // the crowd at dusk behind: the people of the Exchange, backlit by the last of the sky, under a string of
+      // lanterns — each once, and only those the world has there (Matsu is at home, Sōbē upriver and not yet met;
+      // Haru is out looking while Ichi is lost; Sen comes running with the news). sequence_world.mjs checks it.
+      const haru = st.test('!mb_ichi_lost|mb_ichi_found'), ichi = st.test('mb_ichi_found');
+      const B = cached('mb1.crowd|' + w + 'x' + h + '|' + st.vb + '|' + haru + ichi, () => {
         const cv = mk(w, h), g = cv.getContext('2d');
         g.imageSmoothingEnabled = false;
         Q.bandsIn(g, 0, 0, w, h, ['#3e3462', '#5e406a', '#8a4e66', '#b8645e', '#cf7a5e'], 0.45);
@@ -552,7 +555,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.outline();
         g.drawImage(L.canvas(), 0, 0);
         const BACK = { mul: [0.3, 0.26, 0.36], add: [8, 2, 12], rim: { side: 't', col: '#ffb070', k: [0.45, 0.2] } };
-        const who = ['mb_gonta', 'mb_matsu', 'mb_ichi', 'mp_sobe', 'mb_sen', 'mb_gonta', 'mb_matsu', 'mp_sobe', 'mb_sen', 'mb_ichi', 'mb_gonta', 'mp_sobe'];
+        const who = ['mb_take', 'mb_gonta', haru ? 'mb_haru' : null, 'mb_masa', ichi ? 'mb_ichi' : null, 'mb_masu', 'mb_sen'].filter(Boolean);
         const rnd = p.rnd(73);
         who.forEach((id, i) => {
           const row = i % 3, sc = [1, 0.82, 0.66][row] * (0.92 + rnd() * 0.12), dir = ['left', 'right', 'down', 'up'][Math.floor(rnd() * 4)];

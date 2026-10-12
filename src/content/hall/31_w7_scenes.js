@@ -376,6 +376,7 @@ narr: オワン が 、 {門|もん} の {側|そば} で {待|ま}って いる
 narr: {門|もん} の {向|む}こう は 、 {霧|きり} と {雪|ゆき} だけ だ 。 || Beyond the gate there is only mist and snow.
 
 @scene hall.w7.end
+!fade out
 !sequence hall.w7 begin
 !shot tale
 narr: それ から 、 マゴロク の {家|いえ} の {米|こめ} は 、 {何年|なんねん} {経|た}って も {減|へ}らなかった と いう 。 || And after that, they say, the rice in Magoroku's house never ran low, however many years went by.
@@ -388,6 +389,7 @@ hall_owan: {誰|だれ} か が {来|く}る と 、 {家|いえ} は {思|お�
 narr: {雪|ゆき} が {畳|たた}まれる よう に {止|や}んで 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The snow folds away into stillness, and when you look up you are by the hall's hearth.
 !set hall_w7_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);

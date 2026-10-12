@@ -1650,7 +1650,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w1.t9` | src/content/hall/21_w1_scenes.js:314 | ambient | 3 | hall_genza×3 | 1 if | npc hall.w1f3 hall_genza [!hall.w1.t9] |  | Quiet (H) | one speaker, 3 lines, no turn in feeling: a remark |
 | `hall.w1.genza_after` | src/content/hall/21_w1_scenes.js:327 | ambient | 2 | hall_genza×2 | 1 if | npc hall.w1f3 hall_genza [hall.w1.t9] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w1.t10` | src/content/hall/21_w1_scenes.js:336 | ambient | 3 | narr×3 | 4 if | prop hall.w1f3 sb_greatlamp [!hall.w1.t10] | prop sb_greatlamp | Quiet (H) | a frame around 1 called scene; its own narration only (3 lines): stillness and the place carry it |
-| `hall.w1.end` | src/content/hall/21_w1_scenes.js:357 | ambient | 8 | comp×4 narr×2 hall_lamp hall_genza | 5 cond, comp:mio/nao/ren/suzu | call← hall.w1.t10 |  | Performed (H) | 8 lines, 3 speakers |
+| `hall.w1.end` | src/content/hall/21_w1_scenes.js:357 | ambient | 8 | comp×4 narr×2 hall_lamp hall_genza | 5 cond, comp:mio/nao/ren/suzu | call← hall.w1.t10 |  | Performed (H) | 8 lines, 3 speakers, part in the dark |
 | `hall.w2.f1_first` | src/content/hall/22_w2_scenes.js:15 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w2f1 [!hall_w2_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w2.f2_first` | src/content/hall/22_w2_scenes.js:24 | ambient | 2 | narr comp | 1 cond | enter hall.w2f2 [!hall_w2_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w2.f3_first` | src/content/hall/22_w2_scenes.js:29 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w2f3 [!hall_w2_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1693,7 +1693,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w2.t9` | src/content/hall/22_w2_scenes.js:310 | ambient | 3 | hall_konta×3 | 1 if | npc hall.w2f3 hall_konta [!hall.w2.t9] |  | Quiet (H) | one speaker, 3 lines, no turn in feeling: a remark |
 | `hall.w2.konta_after` | src/content/hall/22_w2_scenes.js:321 | ambient | 2 | hall_konta×2 | 1 if | npc hall.w2f3 hall_konta [hall.w2.t9] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w2.t10` | src/content/hall/22_w2_scenes.js:330 | ambient | 3 | narr×3 | 4 if | prop hall.w2f3 table [!hall.w2.t10] | prop table | Quiet (H) | a frame around 1 called scene; its own narration only (3 lines): stillness and the place carry it |
-| `hall.w2.end` | src/content/hall/22_w2_scenes.js:351 | ambient | 8 | comp×4 narr×3 hall_kozue | 4 cond, comp:mio/nao/ren/suzu | call← hall.w2.t10 |  | Performed (H) | 8 lines, 2 speakers |
+| `hall.w2.end` | src/content/hall/22_w2_scenes.js:351 | ambient | 8 | comp×4 narr×3 hall_kozue | 4 cond, comp:mio/nao/ren/suzu | call← hall.w2.t10 |  | Performed (H) | 8 lines, 2 speakers, part in the dark |
 | `hall.w3.f1_first` | src/content/hall/23_w3_scenes.js:16 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w3f1 [!hall_w3_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w3.f2_first` | src/content/hall/23_w3_scenes.js:25 | ambient | 3 | narr hall_shino comp | 1 cond | enter hall.w3f2 [!hall_w3_f2_seen] |  | Performed (H) | 3 lines, 2 speakers |
 | `hall.w3.f3_first` | src/content/hall/23_w3_scenes.js:31 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w3f3 [!hall_w3_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1736,7 +1736,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w3.mame_after` | src/content/hall/23_w3_scenes.js:423 | ambient | 2 | hall_mame×2 | 1 if | npc hall.w3f3 hall_mame [hall.w3.t9] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w3.kobu` | src/content/hall/23_w3_scenes.js:431 | ambient | 1 | hall_kobu |  | npc hall.w3f3 hall_kobu [hall.w3.t8] |  | Quiet (H) | short (1 line): a greeting or repeat remark |
 | `hall.w3.t10` | src/content/hall/23_w3_scenes.js:438 | ambient | 5 | narr×5 | 5 if, 2 cond | prop hall.w3f3 lf_bigbell | prop lf_bigbell | Quiet (H) | a frame around 1 called scene; its own narration only (5 lines): stillness and the place carry it |
-| `hall.w3.end` | src/content/hall/23_w3_scenes.js:466 | ambient | 9 | comp×4 narr×3 hall_shino hall_mame | 4 cond, comp:mio/nao/ren/suzu | call← hall.w3.t10 |  | Performed (H) | 9 lines, 3 speakers |
+| `hall.w3.end` | src/content/hall/23_w3_scenes.js:466 | ambient | 9 | comp×4 narr×3 hall_shino hall_mame | 4 cond, comp:mio/nao/ren/suzu | call← hall.w3.t10 |  | Performed (H) | 9 lines, 3 speakers, part in the dark |
 | `hall.w4.f1_first` | src/content/hall/24_w4_scenes.js:16 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w4f1 [!hall_w4_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w4.f2_first` | src/content/hall/24_w4_scenes.js:25 | ambient | 2 | narr comp | 1 cond | enter hall.w4f2 [!hall_w4_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w4.f3_first` | src/content/hall/24_w4_scenes.js:30 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w4f3 [!hall_w4_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1781,7 +1781,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w4.t9` | src/content/hall/24_w4_scenes.js:400 | ambient | 3 | hall_karakasa×3 | 1 if | npc hall.w4f3 hall_karakasa [!hall.w4.t9] |  | Quiet (H) | one speaker, 3 lines, no turn in feeling: a remark |
 | `hall.w4.kasa_after` | src/content/hall/24_w4_scenes.js:411 | ambient | 2 | hall_karakasa×2 | 1 if | npc hall.w4f3 hall_karakasa [hall.w4.t9] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w4.t10` | src/content/hall/24_w4_scenes.js:422 | ambient | 6 | narr×4 hall_myoshin×2 | 5 if, 2 cond | npc hall.w4f3 hall_myoshin |  | Performed (H) | 6 lines, 1 speaker |
-| `hall.w4.end` | src/content/hall/24_w4_scenes.js:450 | ambient | 7 | comp×4 narr×2 hall_myoshin | 4 cond, comp:mio/nao/ren/suzu | call← hall.w4.t10 |  | Performed (H) | 7 lines, 2 speakers |
+| `hall.w4.end` | src/content/hall/24_w4_scenes.js:450 | ambient | 7 | comp×4 narr×2 hall_myoshin | 4 cond, comp:mio/nao/ren/suzu | call← hall.w4.t10 |  | Performed (H) | 7 lines, 2 speakers, part in the dark |
 | `hall.w5.f1_first` | src/content/hall/25_w5_scenes.js:17 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w5f1 [!hall_w5_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w5.f2_first` | src/content/hall/25_w5_scenes.js:26 | ambient | 2 | narr comp | 1 cond | enter hall.w5f2 [!hall_w5_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w5.f3_first` | src/content/hall/25_w5_scenes.js:31 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w5f3 [!hall_w5_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1829,7 +1829,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w5.t8_board` | src/content/hall/25_w5_scenes.js:313 | ambient | 2 | narr comp | 1 cond | prop hall.w5f3 sign | prop sign | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w5.t9` | src/content/hall/25_w5_scenes.js:371 | ambient | 4 | hall_osugi×3 narr | 2 if | npc hall.w5f3 hall_osugi |  | Quiet (H) | one speaker, 4 lines, no turn in feeling: a remark |
 | `hall.w5.t10` | src/content/hall/25_w5_scenes.js:389 | ambient | 6 | narr×6 | 5 if, 2 cond | prop hall.w5f3 well | prop well | Quiet (H) | a frame around 1 called scene; its own narration only (6 lines): stillness and the place carry it |
-| `hall.w5.end` | src/content/hall/25_w5_scenes.js:415 | ambient | 7 | comp×4 narr×2 hall_kero | 4 cond, comp:mio/nao/ren/suzu | call← hall.w5.t10 |  | Performed (H) | 7 lines, 2 speakers |
+| `hall.w5.end` | src/content/hall/25_w5_scenes.js:415 | ambient | 7 | comp×4 narr×2 hall_kero | 4 cond, comp:mio/nao/ren/suzu | call← hall.w5.t10 |  | Performed (H) | 7 lines, 2 speakers, part in the dark |
 | `hall.w6.f1_first` | src/content/hall/28_w6_scenes.js:19 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w6f1 [!hall_w6_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w6.f2_first` | src/content/hall/28_w6_scenes.js:28 | ambient | 2 | narr comp | 1 cond | enter hall.w6f2 [!hall_w6_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w6.f3_first` | src/content/hall/28_w6_scenes.js:33 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w6f3 [!hall_w6_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1880,7 +1880,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w6.otsuta` | src/content/hall/28_w6_scenes.js:385 | ambient | 2 | hall_otsuta comp | 1 cond | npc hall.w6f3 hall_otsuta [!hall.w6.t9] |  | Performed (H) | 2 lines, 2 speakers |
 | `hall.w6.t9` | src/content/hall/28_w6_scenes.js:390 | ambient | 5 | hall_ibuki×3 narr×2 | 2 if | npc hall.w6f3 hall_ibuki |  | Performed (H) | 5 lines, 1 speaker |
 | `hall.w6.t10` | src/content/hall/28_w6_scenes.js:409 | ambient | 6 | narr×6 | 5 if, 2 cond | prop hall.w6f3 cr_gate | prop cr_gate | Quiet (H) | a frame around 1 called scene; its own narration only (6 lines): stillness and the place carry it |
-| `hall.w6.end` | src/content/hall/28_w6_scenes.js:435 | ambient | 7 | comp×4 narr×2 hall_kihei | 4 cond, comp:mio/nao/ren/suzu | call← hall.w6.t10 |  | Performed (H) | 7 lines, 2 speakers |
+| `hall.w6.end` | src/content/hall/28_w6_scenes.js:435 | ambient | 7 | comp×4 narr×2 hall_kihei | 4 cond, comp:mio/nao/ren/suzu | call← hall.w6.t10 |  | Performed (H) | 7 lines, 2 speakers, part in the dark |
 | `hall.w7.f1_first` | src/content/hall/31_w7_scenes.js:17 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w7f1 [!hall_w7_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w7.f2_first` | src/content/hall/31_w7_scenes.js:26 | ambient | 2 | narr comp | 1 cond | enter hall.w7f2 [!hall_w7_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w7.f3_first` | src/content/hall/31_w7_scenes.js:31 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w7f3 [!hall_w7_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1927,7 +1927,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w7.owan3` | src/content/hall/31_w7_scenes.js:303 | ambient | 20 | hall_owan×20 | 1 if, 18 cond | npc hall.w7f3 hall_owan |  | Performed (H) | 20 lines, 1 speaker |
 | `hall.w7.t9` | src/content/hall/31_w7_scenes.js:334 | ambient | 4 | hall_magoroku×2 narr hall_owan | 2 if | npc hall.w7f3 hall_magoroku |  | Performed (H) | 4 lines, 2 speakers |
 | `hall.w7.t10` | src/content/hall/31_w7_scenes.js:352 | ambient | 6 | narr×6 | 5 if, 2 cond | prop hall.w7f3 cr_gate | prop cr_gate | Quiet (H) | a frame around 1 called scene; its own narration only (6 lines): stillness and the place carry it |
-| `hall.w7.end` | src/content/hall/31_w7_scenes.js:378 | ambient | 7 | comp×4 narr×2 hall_owan | 4 cond, comp:mio/nao/ren/suzu | call← hall.w7.t10 |  | Performed (H) | 7 lines, 2 speakers |
+| `hall.w7.end` | src/content/hall/31_w7_scenes.js:378 | ambient | 7 | comp×4 narr×2 hall_owan | 4 cond, comp:mio/nao/ren/suzu | call← hall.w7.t10 |  | Performed (H) | 7 lines, 2 speakers, part in the dark |
 | `hall.w8.f1_first` | src/content/hall/34_w8_scenes.js:19 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w8f1 [!hall_w8_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w8.f2_first` | src/content/hall/34_w8_scenes.js:28 | ambient | 2 | narr comp | 1 cond | enter hall.w8f2 [!hall_w8_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w8.f3_first` | src/content/hall/34_w8_scenes.js:33 | ambient | 5 | comp×4 narr | 4 cond, comp:mio/nao/ren/suzu | enter hall.w8f3 [!hall_w8_f3_seen] |  | Performed (H) | 5 lines, 1 speaker |
@@ -1973,7 +1973,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w8.t8_board` | src/content/hall/34_w8_scenes.js:301 | ambient | 14 | narr×13 comp | 4 cond | prop hall.w8f3 noticeboard | prop noticeboard | Performed (H) | 14 lines, 1 speaker |
 | `hall.w8.t9` | src/content/hall/34_w8_scenes.js:350 | ambient | 6 | hall_saki×3 hall_gonroku×2 narr | 2 if | npc hall.w8f3 hall_saki; npc hall.w8f3 hall_gonroku |  | Performed (H) | 6 lines, 2 speakers |
 | `hall.w8.t10` | src/content/hall/34_w8_scenes.js:369 | ambient | 6 | narr×6 | 5 if, 2 cond | prop hall.w8f3 desk | prop desk | Quiet (H) | a frame around 1 called scene; its own narration only (6 lines): stillness and the place carry it |
-| `hall.w8.end` | src/content/hall/34_w8_scenes.js:395 | ambient | 8 | comp×4 narr×2 hall_kichibei hall_hisa | 4 cond, comp:mio/nao/ren/suzu | call← hall.w8.t10 |  | Performed (H) | 8 lines, 3 speakers |
+| `hall.w8.end` | src/content/hall/34_w8_scenes.js:395 | ambient | 8 | comp×4 narr×2 hall_kichibei hall_hisa | 4 cond, comp:mio/nao/ren/suzu | call← hall.w8.t10 |  | Performed (H) | 8 lines, 3 speakers, part in the dark |
 | `hall.w9.f1_first` | src/content/hall/37_w9_scenes.js:21 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w9f1 [!hall_w9_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w9.f2_first` | src/content/hall/37_w9_scenes.js:30 | ambient | 2 | narr comp | 1 cond | enter hall.w9f2 [!hall_w9_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w9.f3_first` | src/content/hall/37_w9_scenes.js:35 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w9f3 [!hall_w9_f3_seen] |  | Performed (H) | 6 lines, 1 speaker |
@@ -2022,7 +2022,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w9.post_hearth` | src/content/hall/37_w9_scenes.js:440 | ambient | 8 | narr×7 comp | 2 if, 1 choice, 7 cond | prop hall.w9f3 sb_irori | prop sb_irori | Performed (H) | 8 lines, 1 speaker, 1 choice |
 | `hall.w9.t9` | src/content/hall/37_w9_scenes.js:472 | ambient | 7 | hall_otoku×3 hall_yosaku×2 narr×2 | 3 if | npc hall.w9f3 hall_yosaku; npc hall.w9f3 hall_otoku |  | Performed (H) | 7 lines, 2 speakers |
 | `hall.w9.t10` | src/content/hall/37_w9_scenes.js:495 | ambient | 8 | narr×8 | 5 if, 2 cond | npc hall.w9f3 hall_musume; prop hall.w9f3 loom | prop loom | Quiet (H) | a frame around 1 called scene; its own narration only (8 lines): stillness and the place carry it |
-| `hall.w9.end` | src/content/hall/37_w9_scenes.js:523 | ambient | 10 | narr×4 comp×4 hall_sabu hall_otoku | 5 cond, comp:mio/nao/ren/suzu | call← hall.w9.t10 |  | Performed (H) | 10 lines, 3 speakers |
+| `hall.w9.end` | src/content/hall/37_w9_scenes.js:523 | ambient | 10 | narr×4 comp×4 hall_sabu hall_otoku | 5 cond, comp:mio/nao/ren/suzu | call← hall.w9.t10 |  | Performed (H) | 10 lines, 3 speakers, part in the dark |
 | `hall.w10.f1_first` | src/content/hall/39a_w10_scenes.js:21 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w10f1 [!hall_w10_f1_seen] |  | Performed (H) | 6 lines, 1 speaker |
 | `hall.w10.f2_first` | src/content/hall/39a_w10_scenes.js:30 | ambient | 2 | narr comp | 1 cond | enter hall.w10f2 [!hall_w10_f2_seen] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `hall.w10.f3_first` | src/content/hall/39a_w10_scenes.js:35 | ambient | 6 | comp×4 narr×2 | 5 cond, comp:mio/nao/ren/suzu | enter hall.w10f3 [!hall_w10_f3_seen] |  | Performed (H) | 6 lines, 1 speaker |
@@ -2083,8 +2083,8 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `hall.w10.t7` | src/content/hall/39a_w10_scenes.js:299 | ambient | 4 | narr×4 | 2 if | prop hall.w10f2 kr_stele | prop kr_stele | Quiet (H) | narration only (4 lines): stillness and the place carry it |
 | `hall.w10.t9` | src/content/hall/39a_w10_scenes.js:367 | ambient | 7 | hall_kohaku×3 hall_soan×2 narr×2 | 3 if | npc hall.w10f3 hall_soan; npc hall.w10f3 hall_kohaku |  | Performed (H) | 7 lines, 2 speakers |
 | `hall.w10.t10` | src/content/hall/39a_w10_scenes.js:387 | ambient | 7 | narr×6 hall_soan | 5 if, 2 cond | prop hall.w10f3 sb_greatlamp | prop sb_greatlamp | Performed (H) | 7 lines, 1 speaker |
-| `hall.w10.end` | src/content/hall/39a_w10_scenes.js:414 | ambient | 10 | narr×4 comp×4 hall_soan hall_kohaku | 5 cond, comp:mio/nao/ren/suzu | call← hall.w10.t10 |  | Performed (H) | 10 lines, 3 speakers |
-| `hall.tsuru_final` | src/content/hall/39a_w10_scenes.js:432 | ambient | 16 | tsuru×10 comp×4 narr×2 | 1 if, 1 choice, 4 cond, comp:mio/nao/ren/suzu | npc hall.foyer tsuru [hall.w10]; call← hall.w10.end | give:hall_lantern (Lantern of the Hundred) | Performed (H) | 16 lines, 2 speakers, 1 choice, object handled (1) |
+| `hall.w10.end` | src/content/hall/39a_w10_scenes.js:414 | ambient | 10 | narr×4 comp×4 hall_soan hall_kohaku | 5 cond, comp:mio/nao/ren/suzu | call← hall.w10.t10 |  | Performed (H) | 10 lines, 3 speakers, part in the dark |
+| `hall.tsuru_final` | src/content/hall/39a_w10_scenes.js:434 | ambient | 16 | tsuru×10 comp×4 narr×2 | 1 if, 1 choice, 4 cond, comp:mio/nao/ren/suzu | npc hall.foyer tsuru [hall.w10]; call← hall.w10.end | give:hall_lantern (Lantern of the Hundred) | Performed (H) | 16 lines, 2 speakers, 1 choice, object handled (1) |
 
 ### ko (152)
 
@@ -2554,7 +2554,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `mb.firstbridge_shrine` | src/content/mb/23_scenes_under.js:141 | ambient | 1 | narr |  | prop mb.firstbridge shrine | prop shrine | Quiet (H) | narration only (1 line): stillness and the place carry it |
 | `mb.boss_go` | src/content/mb/23_scenes_under.js:144 | ambient | 2 | mb_bridgespirit pc | 1 cond | npc mb.firstbridge mb_bridgespirit [!mb_bridge_named] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `mb.bridge_named` | src/content/mb/23_scenes_under.js:151 | side:mb_main | 6 | comp×4 narr×2 | 4 cond, comp:mio/nao/ren/suzu | call← mb.boss_go; code src/ui/43h_seq_mb1.js:326 |  | Performed (H) | 6 lines, 1 speaker, expressions laugh |
-| `mb.chapter_end` | src/content/mb/23_scenes_under.js:173 | side:mb_main | 12 | comp×4 narr×3 mb_matsu×2 mb_sen×2 pc | 6 cond, comp:mio/nao/ren/suzu | call← mb.bridge_named; code src/ui/43h_seq_mb1.js:601 |  | Performed (H) | 12 lines, 4 speakers, expressions surprise |
+| `mb.chapter_end` | src/content/mb/23_scenes_under.js:173 | side:mb_main | 12 | comp×4 narr×3 mb_matsu×2 mb_sen×2 pc | 6 cond, comp:mio/nao/ren/suzu | call← mb.bridge_named; code src/ui/43h_seq_mb1.js:604 |  | Performed (H) | 12 lines, 4 speakers, expressions surprise |
 
 ### mp (118)
 
@@ -2872,7 +2872,7 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | `as.noise_talk` | src/content/settle/20_scenes.js:170 | ambient | 9 | narr×5 as_sho×3 as_natsu | 2 if, 4 cond | call← as.natsu, as.sho |  | Performed (H) | 9 lines, 2 speakers |
 | `as.quarrels_done` | src/content/settle/20_scenes.js:192 | side:as_main | 3 | narr×2 as_mitsue | 1 if | call← as.noise_talk, as.water_talk |  | Quiet (H) | one speaker, 3 lines, no turn in feeling: a remark |
 | `as.fest_prep` | src/content/settle/20_scenes.js:205 | ambient | 7 | as_mitsue×7 | 8 if, 1 choice, 6 cond | call← as.mitsue |  | Performed (H) | 7 lines, 1 speaker, 1 choice |
-| `as.festival` | src/content/settle/20_scenes.js:245 | side:as_main | 17 | narr×8 comp×4 as_mitsue×3 as_kotoe as_mohei | 9 cond, comp:mio/nao/ren/suzu | call← as.fest_prep; code src/ui/43n_seq_post.js:895 | give:as_kasa (Planting hat) | Performed (H) | 17 lines, 4 speakers, object handled (1), part in the dark |
+| `as.festival` | src/content/settle/20_scenes.js:245 | side:as_main | 17 | narr×8 comp×4 as_mitsue×3 as_kotoe as_mohei | 9 cond, comp:mio/nao/ren/suzu | call← as.fest_prep; code src/ui/43n_seq_post.js:897 | give:as_kasa (Planting hat) | Performed (H) | 17 lines, 4 speakers, object handled (1), part in the dark |
 | `as.mitsue` | src/content/settle/20_scenes.js:282 | ambient | 6 | as_mitsue×6 | 4 if, 4 cond | npc as.village as_mitsue [slot.as_mitsue=1]; npc as.village as_mitsue [slot.as_mitsue=2&!as_hall]; +1 more |  | Performed (H) | 6 lines, 1 speaker |
 | `as.yoshizo` | src/content/settle/20_scenes.js:303 | ambient | 2 | as_yoshizo×2 | 2 if, 1 cond | npc as.village as_yoshizo [slot.as_yoshizo=1]; npc as.village as_yoshizo [slot.as_yoshizo=2] |  | Quiet (H) | short (2 lines): a greeting or repeat remark |
 | `as.taki` | src/content/settle/20_scenes.js:315 | ambient | 3 | as_taki×3 | 2 if, 2 cond | npc as.village as_taki [slot.as_taki=1]; npc as.village as_taki [slot.as_taki=2&!as_nt_water]; +2 more |  | Quiet (H) | one speaker, 3 lines, no turn in feeling: a remark |
@@ -3164,8 +3164,8 @@ Columns: id · real source file:line · storyline (main, side:<quest>, personal:
 | id | source | storyline | lines | speakers | branches | entry points | objects | class | reason |
 |---|---|---|---:|---|---|---|---|---|---|
 | `wb.ask` | src/content/world/00_system.js:14 | ambient | 0 |  |  | code src/ui/53w_whereabouts.js:15 |  | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
-| `vb.open` | src/content/world/00_system.js:17 | ambient | 0 |  |  | prop rw.road noticeboard [dev_verbs]; prop rw.road desk [dev_verbs]; +40 more; code src/engine/50_world.js:952 | prop noticeboard; prop desk; prop cs_workbench | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
-| `vb.mark` | src/content/world/00_system.js:20 | ambient | 0 |  |  | trigger rw.road [dev_verbs&case.vb_layers&!clue.vb_layers.well]; trigger rw.road [dev_verbs&case.vb_layers&!clue.vb_layers.stone]; +7 more; code src/engine/50_world.js:952 |  | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
+| `vb.open` | src/content/world/00_system.js:17 | ambient | 0 |  |  | prop rw.road noticeboard [dev_verbs]; prop rw.road desk [dev_verbs]; +40 more; code src/engine/50_world.js:957 | prop noticeboard; prop desk; prop cs_workbench | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
+| `vb.mark` | src/content/world/00_system.js:20 | ambient | 0 |  |  | trigger rw.road [dev_verbs&case.vb_layers&!clue.vb_layers.well]; trigger rw.road [dev_verbs&case.vb_layers&!clue.vb_layers.stone]; +7 more; code src/engine/50_world.js:957 |  | System (H) | no spoken lines: routing, state or a hook/menu (hook) |
 | `pf.hello` | src/content/world/10_perform_gallery.js:27 | ambient | 1 | narr |  | npc sg.road tobi [dev_perform]; npc sg.road tetsu [dev_perform]; +5 more |  | Quiet (H) | narration only (1 line): stillness and the place carry it |
 
 ### yn (154)

@@ -361,11 +361,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (const dx of [-0.1 * u, 0.08 * u]) { const xx = Math.round(x + dx), yy = Math.round(y - 0.04 * u), tw = st.still ? 1 : 0.6 + 0.4 * Math.abs(Math.sin(t / 500 + dx)); R(c, xx, yy - 2, 1, 5, '#e8f0ff'); R(c, xx - 2, yy, 5, 1, '#e8f0ff'); R(c, xx, yy, 1, 1, '#ffffff'); SP.glow(c, xx, yy, G.s(7), '220,232,255', 0.35 * tw); }
       } },
 
-    // the Bell's Maker: the drowned tower's chamber, the great bell green on its beam over the dark water; the little
-    // bronze bell on the edge of the stone stand beneath it
+    // the Bell's Maker: the drowned tower's chamber, the great bell on its beam over the dark water; the little bronze
+    // bell on the edge of the stone stand beneath it. By now the great bell has been rung (lf_bell_rung, before the
+    // chapter's end), and the world draws it bright bronze: so it is bronze here too, green left only in its bands'
+    // recesses (it was painted green with patina, as before it rang)
     lf: { title: T('The Bell\'s Maker', '{鐘|かね} の {鋳物師|いもじ}'), tint: '236,216,176', form: 'figure', seed: 13,
       build(G, C, g, p) {
-        const { w, h, vb, s } = G, wall = p.mat('#4a524e', { n: 8, at: 4, step: 0.06 }), bronze = p.mat('#7a6236', { n: 8, at: 4, step: 0.07 }), patina = p.mat('#4a7a68', { n: 6, at: 3, step: 0.07 }),
+        const { w, h, vb, s } = G, wall = p.mat('#4a524e', { n: 8, at: 4, step: 0.06 }), bronze = p.mat('#94743a', { n: 8, at: 4, step: 0.07 }), patina = p.mat('#4a7a68', { n: 6, at: 3, step: 0.07 }),
           water = p.mat('#1a3236', { n: 7, at: 3, step: 0.07 }), beamM = p.mat('#2e2420', { n: 6, at: 3, step: 0.08 }), slab = p.mat('#6a6a62', { n: 7, at: 3, step: 0.06 }), sky = p.mat('#c8d8d8', { n: 3, at: 2 });
         const L = SP.layer(w, h), Lo = SP.layer(w, h), cx = Math.round(w * 0.48), top = Math.round(vb * 0.16), bh = Math.round(vb * 0.42), wl = Math.round(vb * 0.64), py = Math.round(vb * 0.58);
         // the chamber's wall: big blocks in courses, damp lower down; the high window at the right
@@ -381,7 +383,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const half = (v) => (v < 0.08 ? 0.38 : v < 0.2 ? 0.38 + Math.sin(((v - 0.08) / 0.12) * Math.PI / 2) * 0.24 : 0.62 + (v - 0.2) * 0.12 + (v > 0.9 ? (v - 0.9) * 1.2 : 0)) * bh * 0.62;
         const side = P().cyl(cx - bh * 0.05, bh * 0.4, { amb: 0.2, rim: 0.12 });
         Lo.fill(cx - bh, top, cx + bh, top + bh, (x, y) => Math.abs(x - cx) <= half((y - top) / bh), bronze, (x, y) => { const v = (y - top) / bh, band = [0.22, 0.6, 0.86].some((b) => Math.abs(v - b) < 0.015) ? 0.2 : [0.22, 0.6, 0.86].some((b) => Math.abs(v - b - 0.025) < 0.01) ? -0.15 : 0; const u = (x - cx) / half(v); const boss = v > 0.25 && v < 0.55 && frac(v * 14) < 0.4 && frac(u * 3.5 + 0.5) < 0.3 ? 0.18 : 0; return cl(side(cx + u * bh * 0.4, y) * 0.9 + band + boss + dz(x, y, 0.05)); });
-        Lo.fill(cx - bh, top, cx + bh, top + bh, (x, y) => { const v = (y - top) / bh; const c0 = Math.floor(x / Math.max(1, s(2))); return Math.abs(x - cx) <= half(v) - 1 && ((hash(c0 * 7.3) < 0.5 && v < 0.12 + hash(c0 * 13.1) * 0.75) || ([0.22, 0.6, 0.86].some((b) => v > b && v < b + 0.05) && hash(c0 * 3.7) < 0.75)); }, patina, (x, y) => cl(0.45 - (x - cx) / bh * 0.3 + dz(x, y, 0.08)));
+        Lo.fill(cx - bh, top, cx + bh, top + bh, (x, y) => { const v = (y - top) / bh; const c0 = Math.floor(x / Math.max(1, s(2))); return Math.abs(x - cx) <= half(v) - 1 && [0.22, 0.6, 0.86].some((b) => v > b && v < b + 0.03) && hash(c0 * 3.7) < 0.35; }, patina, (x, y) => cl(0.45 - (x - cx) / bh * 0.3 + dz(x, y, 0.08)));
         Lo.ell(cx, top + bh, half(1), Math.max(2, s(4)), bronze, 0.2);
         // the little bell on the stand's front edge, right of the great one
         const kx = Math.round(w * 0.64), ky = py + s(1), kr = Math.max(3, s(6));

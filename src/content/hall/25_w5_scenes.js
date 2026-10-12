@@ -413,6 +413,7 @@ narr: {井戸|いど} の {周|まわ}り で 、 {皆|みな} が {次|つぎ} 
 narr: {井戸|いど} の {水|みず} が 、 {空|そら} を {映|うつ}して いる 。 || The water in the well reflects the sky.
 
 @scene hall.w5.end
+!fade out
 !sequence hall.w5 begin
 !shot tale
 narr: {夕方|ゆうがた} 、 {東|ひがし} の {家|いえ} と {西|にし} の {家|いえ} が 、 {同|おな}じ {鍋|なべ} で {夕飯|ゆうはん} を {作|つく}った 。 {水|みず} は 、 {二|ふた}つ の {井戸|いど} から {半分|はんぶん} ずつ 。 || In the evening the east house and the west house cook supper in one pot, with water from both wells, half and half.
@@ -425,6 +426,7 @@ hall_kero: {井|い} の {中|なか} の {蛙|かわず} 、 {大海|たいか�
 narr: {夕餉|ゆうげ} の {湯気|ゆげ} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The steam of supper folds small, and when you look up you are by the hall's hearth.
 !set hall_w5_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);

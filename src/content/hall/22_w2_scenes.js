@@ -349,6 +349,7 @@ narr: {盃|さかずき} は 、 {台|だい} の {上|うえ} で {待|ま}っ�
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w2.end
+!fade out
 !sequence hall.w2 begin
 !shot tale
 narr: {雨|あめ} が {止|や}んだ 。 {行列|ぎょうれつ} の {提灯|ちょうちん} が 、 {鳥居|とりい} の {奥|おく} へ {一|ひと}つ ずつ {消|き}えて いく 。 || The rain stops. One by one the procession's lanterns vanish beyond the torii.
@@ -362,6 +363,7 @@ narr: {次|つぎ} の {朝|あさ} 、 サヨ の {家|いえ} の {前|まえ}
 narr: {雨上|あまあ}がり の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The after-rain light folds small, and when you look up you are by the hall's hearth.
 !set hall_w2_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);

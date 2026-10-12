@@ -37899,9 +37899,14 @@ RB.world = (function () {
     const st = s();
     return st.comp || null;
   }
+  // Whether the companion walks with you on a map: noCompanion: true never; a string is the condition under which
+  // they ARE there ('!cr_apart': with you unless you are apart). The pet follows the same rule (57_petworld.js).
+  function companionHere(st, def) {
+    return !def || !def.noCompanion || (def.noCompanion !== true && RB.state.test(st, def.noCompanion));
+  }
   function placeCompanion() {
     const cid = partyCompanion();
-    if (!cid || (W.map.def.noCompanion && !RB.state.test(s(), W.map.def.noCompanion === true ? 'false' : W.map.def.noCompanion))) {
+    if (!cid || !companionHere(s(), W.map.def)) {
       W.comp = null;
       return;
     }
@@ -38979,7 +38984,7 @@ RB.world = (function () {
   }
 
   return {
-    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
+    W, DIRS, enter, update, interact, tapTile, refreshActors, placeCompanion, companionHere, emote, actorById, scriptMove, ensureSpeaker, whenArrived, dismissExtras,
     frontTile, frontAction, checkFoeContact, hush, faceTo, unstick, blocked, _tryMove: tryMovePlayer,
     towards, linksOf, mapsWith, // map-link search (also used by quest guidance, 56_questguide.js)
     musicFor, // the map's song now (also used to restore it after a battle, 80_combat.js)
@@ -42820,7 +42825,10 @@ RB.petWorld = (function () {
     const d = w.map.def;
     // maps that hide your companion (a dream, a room that cannot hold you both) hide the animal too
     if (d.noPet && RB.state.test(st, d.noPet === true ? 'true' : d.noPet)) return false;
-    if (d.noCompanion && RB.state.test(st, d.noCompanion === true ? 'true' : d.noCompanion)) return false;
+    // (the companion's own rule, RB.world.companionHere: a string noCompanion is the condition under which they ARE
+    // there. Read the other way round, the animal was hidden on the Cloudroad, Steamhollow, Kotonoha and the Keepers'
+    // Road while your companion walked with you, and seen only while apart.)
+    if (!RB.world.companionHere(st, d)) return false;
     return true;
   }
   // ---- what counts as a free tile for it to stand on (cosmetic: nothing is blocked by it) ----------
@@ -69677,7 +69685,8 @@ RB.sequence = (function () {
     inst.p.dispose();
     if (RB.seqKit) RB.seqKit.release();
     S.ended++; S.disposed++;
-    if (RB.bus) RB.bus.emit('sequence:end', { id: inst.id, tok: inst.tok, skipped: !!inst.skip });
+    // (dark: begun after a !fade out, it ended back in the dark; the world shows again at the scene's own fade in)
+    if (RB.bus) RB.bus.emit('sequence:end', { id: inst.id, tok: inst.tok, skipped: !!inst.skip, dark: !!inst.lifted });
     return true;
   }
   // scene end (a sequence left open), an error, a campaign change: everything this sequence owns goes
@@ -75865,8 +75874,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Sanpei\'s face and the block above the sheet', narrow: 'his face and the block in the upper half', land: 'his face' },
     draw(c, w, h, t, st) {
       const S = stage(w, h, st.vb), { s, lay } = S, narrow = lay === 'narrow', still = st.still;
-      // the crowd at dusk behind: people of the city, backlit by the last of the sky, under a string of lanterns
-      const B = cached('mb1.crowd|' + w + 'x' + h + '|' + st.vb, () => {
+      // the crowd at dusk behind: the people of the Exchange, backlit by the last of the sky, under a string of
+      // lanterns — each once, and only those the world has there (Matsu is at home, Sōbē upriver and not yet met;
+      // Haru is out looking while Ichi is lost; Sen comes running with the news). sequence_world.mjs checks it.
+      const haru = st.test('!mb_ichi_lost|mb_ichi_found'), ichi = st.test('mb_ichi_found');
+      const B = cached('mb1.crowd|' + w + 'x' + h + '|' + st.vb + '|' + haru + ichi, () => {
         const cv = mk(w, h), g = cv.getContext('2d');
         g.imageSmoothingEnabled = false;
         Q.bandsIn(g, 0, 0, w, h, ['#3e3462', '#5e406a', '#8a4e66', '#b8645e', '#cf7a5e'], 0.45);
@@ -75884,7 +75896,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.outline();
         g.drawImage(L.canvas(), 0, 0);
         const BACK = { mul: [0.3, 0.26, 0.36], add: [8, 2, 12], rim: { side: 't', col: '#ffb070', k: [0.45, 0.2] } };
-        const who = ['mb_gonta', 'mb_matsu', 'mb_ichi', 'mp_sobe', 'mb_sen', 'mb_gonta', 'mb_matsu', 'mp_sobe', 'mb_sen', 'mb_ichi', 'mb_gonta', 'mp_sobe'];
+        const who = ['mb_take', 'mb_gonta', haru ? 'mb_haru' : null, 'mb_masa', ichi ? 'mb_ichi' : null, 'mb_masu', 'mb_sen'].filter(Boolean);
         const rnd = p.rnd(73);
         who.forEach((id, i) => {
           const row = i % 3, sc = [1, 0.82, 0.66][row] * (0.92 + rnd() * 0.12), dir = ['left', 'right', 'down', 'up'][Math.floor(rnd() * 4)];
@@ -77623,11 +77635,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (const dx of [-0.1 * u, 0.08 * u]) { const xx = Math.round(x + dx), yy = Math.round(y - 0.04 * u), tw = st.still ? 1 : 0.6 + 0.4 * Math.abs(Math.sin(t / 500 + dx)); R(c, xx, yy - 2, 1, 5, '#e8f0ff'); R(c, xx - 2, yy, 5, 1, '#e8f0ff'); R(c, xx, yy, 1, 1, '#ffffff'); SP.glow(c, xx, yy, G.s(7), '220,232,255', 0.35 * tw); }
       } },
 
-    // the Bell's Maker: the drowned tower's chamber, the great bell green on its beam over the dark water; the little
-    // bronze bell on the edge of the stone stand beneath it
+    // the Bell's Maker: the drowned tower's chamber, the great bell on its beam over the dark water; the little bronze
+    // bell on the edge of the stone stand beneath it. By now the great bell has been rung (lf_bell_rung, before the
+    // chapter's end), and the world draws it bright bronze: so it is bronze here too, green left only in its bands'
+    // recesses (it was painted green with patina, as before it rang)
     lf: { title: T('The Bell\'s Maker', '{鐘|かね} の {鋳物師|いもじ}'), tint: '236,216,176', form: 'figure', seed: 13,
       build(G, C, g, p) {
-        const { w, h, vb, s } = G, wall = p.mat('#4a524e', { n: 8, at: 4, step: 0.06 }), bronze = p.mat('#7a6236', { n: 8, at: 4, step: 0.07 }), patina = p.mat('#4a7a68', { n: 6, at: 3, step: 0.07 }),
+        const { w, h, vb, s } = G, wall = p.mat('#4a524e', { n: 8, at: 4, step: 0.06 }), bronze = p.mat('#94743a', { n: 8, at: 4, step: 0.07 }), patina = p.mat('#4a7a68', { n: 6, at: 3, step: 0.07 }),
           water = p.mat('#1a3236', { n: 7, at: 3, step: 0.07 }), beamM = p.mat('#2e2420', { n: 6, at: 3, step: 0.08 }), slab = p.mat('#6a6a62', { n: 7, at: 3, step: 0.06 }), sky = p.mat('#c8d8d8', { n: 3, at: 2 });
         const L = SP.layer(w, h), Lo = SP.layer(w, h), cx = Math.round(w * 0.48), top = Math.round(vb * 0.16), bh = Math.round(vb * 0.42), wl = Math.round(vb * 0.64), py = Math.round(vb * 0.58);
         // the chamber's wall: big blocks in courses, damp lower down; the high window at the right
@@ -77643,7 +77657,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const half = (v) => (v < 0.08 ? 0.38 : v < 0.2 ? 0.38 + Math.sin(((v - 0.08) / 0.12) * Math.PI / 2) * 0.24 : 0.62 + (v - 0.2) * 0.12 + (v > 0.9 ? (v - 0.9) * 1.2 : 0)) * bh * 0.62;
         const side = P().cyl(cx - bh * 0.05, bh * 0.4, { amb: 0.2, rim: 0.12 });
         Lo.fill(cx - bh, top, cx + bh, top + bh, (x, y) => Math.abs(x - cx) <= half((y - top) / bh), bronze, (x, y) => { const v = (y - top) / bh, band = [0.22, 0.6, 0.86].some((b) => Math.abs(v - b) < 0.015) ? 0.2 : [0.22, 0.6, 0.86].some((b) => Math.abs(v - b - 0.025) < 0.01) ? -0.15 : 0; const u = (x - cx) / half(v); const boss = v > 0.25 && v < 0.55 && frac(v * 14) < 0.4 && frac(u * 3.5 + 0.5) < 0.3 ? 0.18 : 0; return cl(side(cx + u * bh * 0.4, y) * 0.9 + band + boss + dz(x, y, 0.05)); });
-        Lo.fill(cx - bh, top, cx + bh, top + bh, (x, y) => { const v = (y - top) / bh; const c0 = Math.floor(x / Math.max(1, s(2))); return Math.abs(x - cx) <= half(v) - 1 && ((hash(c0 * 7.3) < 0.5 && v < 0.12 + hash(c0 * 13.1) * 0.75) || ([0.22, 0.6, 0.86].some((b) => v > b && v < b + 0.05) && hash(c0 * 3.7) < 0.75)); }, patina, (x, y) => cl(0.45 - (x - cx) / bh * 0.3 + dz(x, y, 0.08)));
+        Lo.fill(cx - bh, top, cx + bh, top + bh, (x, y) => { const v = (y - top) / bh; const c0 = Math.floor(x / Math.max(1, s(2))); return Math.abs(x - cx) <= half(v) - 1 && [0.22, 0.6, 0.86].some((b) => v > b && v < b + 0.03) && hash(c0 * 3.7) < 0.35; }, patina, (x, y) => cl(0.45 - (x - cx) / bh * 0.3 + dz(x, y, 0.08)));
         Lo.ell(cx, top + bh, half(1), Math.max(2, s(4)), bronze, 0.2);
         // the little bell on the stand's front edge, right of the great one
         const kx = Math.round(w * 0.64), ky = py + s(1), kr = Math.max(3, s(6));
@@ -174494,6 +174508,7 @@ narr: {灯籠|とうろう} は 、 {待|ま}って くれる 。 || The lamp wi
 
 # ---- the tale's end ------------------------------------------------------------------------------------------------
 @scene hall.w1.end
+!fade out
 !sequence hall.w1 begin
 !shot tale
 narr: {最後|さいご} の {旅人|たびびと} が 、 {北|きた} の {道|みち} に {消|き}えた 。 {灯籠|とうろう} の {火|ひ} が 、 {一度|いちど} 、 {大|おお}きく {揺|ゆ}れる 。 || The last traveller disappears up the north road. The lamp's flame sways once, high.
@@ -174507,6 +174522,7 @@ hall_lamp: もう {一度|いちど} 、 {言|い}って ください 。 ……
 narr: {灯|ひ} の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The lamplight folds small, and when you look up you are by the hall's hearth.
 !set hall_w1_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);
@@ -174864,6 +174880,7 @@ narr: {盃|さかずき} は 、 {台|だい} の {上|うえ} で {待|ま}っ�
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w2.end
+!fade out
 !sequence hall.w2 begin
 !shot tale
 narr: {雨|あめ} が {止|や}んだ 。 {行列|ぎょうれつ} の {提灯|ちょうちん} が 、 {鳥居|とりい} の {奥|おく} へ {一|ひと}つ ずつ {消|き}えて いく 。 || The rain stops. One by one the procession's lanterns vanish beyond the torii.
@@ -174877,6 +174894,7 @@ narr: {次|つぎ} の {朝|あさ} 、 サヨ の {家|いえ} の {前|まえ}
 narr: {雨上|あまあ}がり の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The after-rain light folds small, and when you look up you are by the hall's hearth.
 !set hall_w2_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);
@@ -175349,6 +175367,7 @@ narr: シノ は 、 {綱|つな} を {握|にぎ}った まま {待|ま}って 
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w3.end
+!fade out
 !sequence hall.w3 begin
 !shot tale
 narr: {鐘|かね} の {声|こえ} が 、 {谷|たに} を {下|くだ}って いく 。 {村|むら} の {戸|と} が 、 {一|ひと}つ 、 また {一|ひと}つ と {開|ひら}いた 。 || The bell's voice rolls down the valley. In the village, the doors open, one, then another.
@@ -175363,6 +175382,7 @@ hall_mame: {夜|よる} は {終|お}わった 。 でも 、 また {来|く}�
 narr: {朝|あさ} の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning light folds small, and when you look up you are by the hall's hearth.
 !set hall_w3_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);
@@ -175819,6 +175839,7 @@ hall_myoshin: {来年|らいねん} も 、 {返|かえ}しに {来|き}て く�
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w4.end
+!fade out
 !sequence hall.w4 begin
 !shot tale
 narr: {雨|あめ} の {中|なか} を 、 ゴサク が {帰|かえ}って いく 。 {頭|あたま} の {上|うえ} で 、 {赤|あか}い {傘|かさ} が {誇|ほこ}らしげ に {開|ひら}いて いる 。 || Gosaku goes home through the rain, the red umbrella open proudly over his head.
@@ -175831,6 +175852,7 @@ hall_myoshin: {貸|か}した {物|もの} は 、 {返|かえ}って くる と
 narr: {雨|あめ} の {音|おと} が {畳|たた}まれる よう に {遠|とお}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The sound of the rain folds away into the distance, and when you look up you are by the hall's hearth.
 !set hall_w4_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);
@@ -176252,6 +176274,7 @@ narr: {井戸|いど} の {周|まわ}り で 、 {皆|みな} が {次|つぎ} 
 narr: {井戸|いど} の {水|みず} が 、 {空|そら} を {映|うつ}して いる 。 || The water in the well reflects the sky.
 
 @scene hall.w5.end
+!fade out
 !sequence hall.w5 begin
 !shot tale
 narr: {夕方|ゆうがた} 、 {東|ひがし} の {家|いえ} と {西|にし} の {家|いえ} が 、 {同|おな}じ {鍋|なべ} で {夕飯|ゆうはん} を {作|つく}った 。 {水|みず} は 、 {二|ふた}つ の {井戸|いど} から {半分|はんぶん} ずつ 。 || In the evening the east house and the west house cook supper in one pot, with water from both wells, half and half.
@@ -176264,6 +176287,7 @@ hall_kero: {井|い} の {中|なか} の {蛙|かわず} 、 {大海|たいか�
 narr: {夕餉|ゆうげ} の {湯気|ゆげ} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The steam of supper folds small, and when you look up you are by the hall's hearth.
 !set hall_w5_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);
@@ -177135,6 +177159,7 @@ narr: イブキ が 、 {門|もん} の {横|よこ} で {次|つぎ} の {合�
 narr: {門|もん} の {提灯|ちょうちん} が 、 {朝|あさ} の {光|ひかり} に {薄|うす}れて いく 。 || The gate's lantern pales in the morning light.
 
 @scene hall.w6.end
+!fade out
 !sequence hall.w6 begin
 !shot tale
 narr: {朝|あさ} 、 オツタ が {峠|とうげ} を {上|のぼ}って {戻|もど}って きた 。 {赤|あか}ん{坊|ぼう} は 、 {腕|うで} の {中|なか} で {眠|ねむ}って いる 。 {熱|ねつ} は {下|さ}がった 。 || In the morning Otsuta comes back up the pass. The baby is asleep in her arms; the fever has broken.
@@ -177147,6 +177172,7 @@ hall_kihei: {札|ふだ} の {一番|いちばん} {下|した} の {一行|い�
 narr: {朝|あさ} の {霧|きり} が {畳|たた}まれる よう に {薄|うす}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning mist folds thin, and when you look up you are by the hall's hearth.
 !set hall_w6_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);
@@ -177959,6 +177985,7 @@ narr: オワン が 、 {門|もん} の {側|そば} で {待|ま}って いる
 narr: {門|もん} の {向|む}こう は 、 {霧|きり} と {雪|ゆき} だけ だ 。 || Beyond the gate there is only mist and snow.
 
 @scene hall.w7.end
+!fade out
 !sequence hall.w7 begin
 !shot tale
 narr: それ から 、 マゴロク の {家|いえ} の {米|こめ} は 、 {何年|なんねん} {経|た}って も {減|へ}らなかった と いう 。 || And after that, they say, the rice in Magoroku's house never ran low, however many years went by.
@@ -177971,6 +177998,7 @@ hall_owan: {誰|だれ} か が {来|く}る と 、 {家|いえ} は {思|お�
 narr: {雪|ゆき} が {畳|たた}まれる よう に {止|や}んで 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The snow folds away into stillness, and when you look up you are by the hall's hearth.
 !set hall_w7_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);
@@ -178793,6 +178821,7 @@ narr: オマツ が 、 {筆|ふで} を {持|も}った まま {待|ま}って 
 narr: {帳面|ちょうめん} の {墨|すみ} は 、 もう {乾|かわ}いて いる 。 || The ink in the ledger is already dry.
 
 @scene hall.w8.end
+!fade out
 !sequence hall.w8 begin
 !shot tale
 narr: {朝日|あさひ} の {中|なか} を 、 ヒサ が {帰|かえ}って きた 。 {隣|となり} に は 、 {箱|はこ} を {抱|かか}えた {年寄|としよ}り の {旅人|たびびと} が いる 。 || Hisa comes back through the morning sun. Beside them is an old traveller with the box in his arms.
@@ -178806,6 +178835,7 @@ hall_hisa: {誰|だれ} も {聞|き}かなかった から 、 {言|い}わな�
 narr: {朝|あさ} の {雪|ゆき} {明|あ}かり が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning snowlight folds away, and when you look up you are by the hall's hearth.
 !set hall_w8_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);
@@ -179771,6 +179801,7 @@ narr: {娘|むすめ} は 、 {手|て} を {突|つ}いた まま {待|ま}っ�
 narr: {機|はた} は 、 もう {鳴|な}らない 。 || The loom is silent now.
 
 @scene hall.w9.end
+!fade out
 !sequence hall.w9 begin
 !shot tale
 narr: {鶴|つる} は 、 {最後|さいご} の {一反|いったん} を {二人|ふたり} の {前|まえ} に {置|お}いて 、 {朝|あさ} の {空|そら} へ {飛|と}び{立|た}った 。 || The crane lays the last bolt before the old couple and rises into the morning sky.
@@ -179786,6 +179817,7 @@ hall_otoku: …… {達者|たっしゃ} で ね 。 || …Take care of yourself
 narr: {朝|あさ} の {雪|ゆき} {明|あ}かり が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning snowlight folds away, and when you look up you are by the hall's hearth.
 !set hall_w9_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);
@@ -180618,6 +180650,7 @@ narr: {二人|ふたり} は 、 {話|はなし} の {続|つづ}き を {待|�
 narr: {百番目|ひゃくばんめ} の {灯|ひ} が 、 {静|しず}か に {燃|も}えて いる 。 || The hundredth lantern burns quietly.
 
 @scene hall.w10.end
+!fade out
 !sequence hall.w10 begin
 !shot tale
 narr: {百番目|ひゃくばんめ} の {灯|ひ} が 、 {静|しず}か に {燃|も}え{上|あ}がった 。 {館|やかた} じゅう の {灯|ひ} が 、 {一斉|いっせい} に {明|あか}るく なる 。 || The hundredth lantern flames up quietly. Every light in the Hall brightens at once.
@@ -180633,6 +180666,7 @@ hall_kohaku: {師匠|ししょう} 、 {一緒|いっしょ} に {帰|かえ}り
 narr: {灯|ひ} の {光|ひかり} が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The lantern light folds away, and when you look up you are by the hall's hearth.
 !set hall_w10_done
 !hook hall_finish
+!fade in
 !call hall.tsuru_final
 
 @scene hall.tsuru_final

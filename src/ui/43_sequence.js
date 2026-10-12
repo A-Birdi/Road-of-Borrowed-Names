@@ -656,7 +656,8 @@ RB.sequence = (function () {
     inst.p.dispose();
     if (RB.seqKit) RB.seqKit.release();
     S.ended++; S.disposed++;
-    if (RB.bus) RB.bus.emit('sequence:end', { id: inst.id, tok: inst.tok, skipped: !!inst.skip });
+    // (dark: begun after a !fade out, it ended back in the dark; the world shows again at the scene's own fade in)
+    if (RB.bus) RB.bus.emit('sequence:end', { id: inst.id, tok: inst.tok, skipped: !!inst.skip, dark: !!inst.lifted });
     return true;
   }
   // scene end (a sequence left open), an error, a campaign change: everything this sequence owns goes

@@ -433,6 +433,7 @@ narr: イブキ が 、 {門|もん} の {横|よこ} で {次|つぎ} の {合�
 narr: {門|もん} の {提灯|ちょうちん} が 、 {朝|あさ} の {光|ひかり} に {薄|うす}れて いく 。 || The gate's lantern pales in the morning light.
 
 @scene hall.w6.end
+!fade out
 !sequence hall.w6 begin
 !shot tale
 narr: {朝|あさ} 、 オツタ が {峠|とうげ} を {上|のぼ}って {戻|もど}って きた 。 {赤|あか}ん{坊|ぼう} は 、 {腕|うで} の {中|なか} で {眠|ねむ}って いる 。 {熱|ねつ} は {下|さ}がった 。 || In the morning Otsuta comes back up the pass. The baby is asleep in her arms; the fever has broken.
@@ -445,6 +446,7 @@ hall_kihei: {札|ふだ} の {一番|いちばん} {下|した} の {一行|い�
 narr: {朝|あさ} の {霧|きり} が {畳|たた}まれる よう に {薄|うす}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning mist folds thin, and when you look up you are by the hall's hearth.
 !set hall_w6_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);

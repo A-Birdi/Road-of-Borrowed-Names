@@ -448,6 +448,7 @@ hall_myoshin: {来年|らいねん} も 、 {返|かえ}しに {来|き}て く�
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w4.end
+!fade out
 !sequence hall.w4 begin
 !shot tale
 narr: {雨|あめ} の {中|なか} を 、 ゴサク が {帰|かえ}って いく 。 {頭|あたま} の {上|うえ} で 、 {赤|あか}い {傘|かさ} が {誇|ほこ}らしげ に {開|ひら}いて いる 。 || Gosaku goes home through the rain, the red umbrella open proudly over his head.
@@ -460,6 +461,7 @@ hall_myoshin: {貸|か}した {物|もの} は 、 {返|かえ}って くる と
 narr: {雨|あめ} の {音|おと} が {畳|たた}まれる よう に {遠|とお}く なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The sound of the rain folds away into the distance, and when you look up you are by the hall's hearth.
 !set hall_w4_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);

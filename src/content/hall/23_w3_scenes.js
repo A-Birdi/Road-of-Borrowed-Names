@@ -464,6 +464,7 @@ narr: シノ は 、 {綱|つな} を {握|にぎ}った まま {待|ま}って 
 
 # ---- the tale's end ----------------------------------------------------------------------------------------------------
 @scene hall.w3.end
+!fade out
 !sequence hall.w3 begin
 !shot tale
 narr: {鐘|かね} の {声|こえ} が 、 {谷|たに} を {下|くだ}って いく 。 {村|むら} の {戸|と} が 、 {一|ひと}つ 、 また {一|ひと}つ と {開|ひら}いた 。 || The bell's voice rolls down the valley. In the village, the doors open, one, then another.
@@ -478,6 +479,7 @@ hall_mame: {夜|よる} は {終|お}わった 。 でも 、 また {来|く}�
 narr: {朝|あさ} の {光|ひかり} が {畳|たた}まれる よう に {小|ちい}さく なって 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning light folds small, and when you look up you are by the hall's hearth.
 !set hall_w3_done
 !hook hall_finish
+!fade in
 `;
   RB.script.add(out);
 })(RB.content);

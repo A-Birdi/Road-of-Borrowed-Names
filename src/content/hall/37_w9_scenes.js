@@ -521,6 +521,7 @@ narr: {娘|むすめ} は 、 {手|て} を {突|つ}いた まま {待|ま}っ�
 narr: {機|はた} は 、 もう {鳴|な}らない 。 || The loom is silent now.
 
 @scene hall.w9.end
+!fade out
 !sequence hall.w9 begin
 !shot tale
 narr: {鶴|つる} は 、 {最後|さいご} の {一反|いったん} を {二人|ふたり} の {前|まえ} に {置|お}いて 、 {朝|あさ} の {空|そら} へ {飛|と}び{立|た}った 。 || The crane lays the last bolt before the old couple and rises into the morning sky.
@@ -536,6 +537,7 @@ hall_otoku: …… {達者|たっしゃ} で ね 。 || …Take care of yourself
 narr: {朝|あさ} の {雪|ゆき} {明|あ}かり が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The morning snowlight folds away, and when you look up you are by the hall's hearth.
 !set hall_w9_done
 !hook hall_finish
+!fade in
 `;
 
   RB.script.add(out);

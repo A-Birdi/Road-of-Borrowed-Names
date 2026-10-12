@@ -48,7 +48,10 @@ RB.petWorld = (function () {
     const d = w.map.def;
     // maps that hide your companion (a dream, a room that cannot hold you both) hide the animal too
     if (d.noPet && RB.state.test(st, d.noPet === true ? 'true' : d.noPet)) return false;
-    if (d.noCompanion && RB.state.test(st, d.noCompanion === true ? 'true' : d.noCompanion)) return false;
+    // (the companion's own rule, RB.world.companionHere: a string noCompanion is the condition under which they ARE
+    // there. Read the other way round, the animal was hidden on the Cloudroad, Steamhollow, Kotonoha and the Keepers'
+    // Road while your companion walked with you, and seen only while apart.)
+    if (!RB.world.companionHere(st, d)) return false;
     return true;
   }
   // ---- what counts as a free tile for it to stand on (cosmetic: nothing is blocked by it) ----------

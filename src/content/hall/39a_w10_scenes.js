@@ -412,6 +412,7 @@ narr: {二人|ふたり} は 、 {話|はなし} の {続|つづ}き を {待|�
 narr: {百番目|ひゃくばんめ} の {灯|ひ} が 、 {静|しず}か に {燃|も}えて いる 。 || The hundredth lantern burns quietly.
 
 @scene hall.w10.end
+!fade out
 !sequence hall.w10 begin
 !shot tale
 narr: {百番目|ひゃくばんめ} の {灯|ひ} が 、 {静|しず}か に {燃|も}え{上|あ}がった 。 {館|やかた} じゅう の {灯|ひ} が 、 {一斉|いっせい} に {明|あか}るく なる 。 || The hundredth lantern flames up quietly. Every light in the Hall brightens at once.
@@ -427,6 +428,7 @@ hall_kohaku: {師匠|ししょう} 、 {一緒|いっしょ} に {帰|かえ}り
 narr: {灯|ひ} の {光|ひかり} が {畳|たた}まれる よう に {薄|うす}れて 、 {気|き}が {付|つ}く と 、 {館|やかた} の {囲炉裏|いろり} の {前|まえ} に いた 。 || The lantern light folds away, and when you look up you are by the hall's hearth.
 !set hall_w10_done
 !hook hall_finish
+!fade in
 !call hall.tsuru_final
 
 @scene hall.tsuru_final
