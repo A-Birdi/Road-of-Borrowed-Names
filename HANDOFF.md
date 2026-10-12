@@ -289,9 +289,20 @@
     journey other than its own; a fill-in blank (［　］) could break across lines. Not to be reported as "sixteen
     full campaigns", native-reviewed Japanese or real-device validation. Next (C-87's order, unchanged): VA-1 as
     Robin ordered it, and only when all of it passes the hosted page (its deploy must also copy
-    `assets/music/ensemble/`). Open for Robin: the weather's refresh-rate dependence (deferred, P17_CLOSURE); VA-1's
-    access request (docs/future/voice/VS00_INTAKE.md). State and results: VALIDATION.md
-    "P18 — Plan B" and "LP-1".
+    `assets/music/ensemble/`). Open for Robin: the weather's refresh-rate dependence (deferred, P17_CLOSURE).
+    **VA-1 now:**
+    - VS00 (the intake) and VS01 (the frozen corpus: 83 cases, 14 neutral controls) are done.
+    - VS02's preparation that costs nothing is done: adapters, the gated runner, the gallery, the Qwen local job and
+      casting templates (tools/voice/, docs/future/voice/).
+    - No audio yet. All seven configurations are blocked from this environment or unauthorised (untested, not
+      inferior). The Google Cloud token stays unused: its purpose and project can't be established.
+    - Next: Robin's answers to `docs/future/voice/VS02_SETUP_REQUEST.md` (keys, budgets, allowed hosts, local jobs).
+      Then smoke → casting screen → matrix for each authorised configuration, and the gallery for listening.
+    - No casting decision and no whole-game synthesis before Robin has listened.
+
+    LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
+    C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
+    "P18 — Plan B", "LP-1" and "VA-1".
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
     done**; P07 (expeditions) is under way: the engine and the pilot, the Flood Cellars under Reedwake's warehouse

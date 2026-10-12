@@ -1,4 +1,4 @@
-# VA-1 · The end-of-project Japanese voice audition (started 2026-10-12: VS00 done, VS01 next)
+# VA-1 · The end-of-project Japanese voice audition (started 2026-10-12: VS00 and VS01 done; VS02 prepared, waiting for access)
 
 Robin sent this package on 2026-10-11 as a future end-stage instruction. **It is the last queued task:** it starts
 only after the currently authorised expansion, art and closure work (P02–P17), and it does not interrupt them. Robin's
@@ -8,6 +8,34 @@ decision and the lead's reconciliations with the standing rules are in
 [../plan/11_CONTRADICTIONS.md](../plan/11_CONTRADICTIONS.md) C-83.
 
 - [VS00_INTAKE.md](VS00_INTAKE.md): the intake (where the project stands, the speech code and its callers, the lines, the unknowns).
+- [corpus/CORPUS.md](corpus/CORPUS.md): VS01's frozen corpus (83 cases bound to game lines or labelled fixtures, 14
+  neutral controls), built and checked by `tools/voice/corpus.mjs`.
+- [VS02_SETUP_REQUEST.md](VS02_SETUP_REQUEST.md): **the consolidated setup request**, per configuration:
+  - the exact configuration;
+  - the hosts it needs;
+  - its secret and header;
+  - the permissions and cost it needs, with retries bounded;
+  - its size;
+  - whether it can run here.
+
+  It also records why the Google Cloud token stays unused, and the whole-game planning count. No audio has been
+  generated.
+- [inventory/provider_inventory.json](inventory/provider_inventory.json): each configuration's recorded access (all
+  `blocked_access` from the development environment on 2026-10-12: untested, not inferior).
+- `casting/<config>.json`: uncast templates (19 roles each; candidates, rights and selection to fill).
+- The tooling in `tools/voice/`:
+
+  | Tool | Purpose |
+  | --- | --- |
+  | `providers.mjs` | Request builders. |
+  | `audition.mjs` | The gated runner. |
+  | `audio_check.mjs` | Measurement only. |
+  | `gallery.mjs` | Writes `review.html`. |
+  | `qwen_local_job.py` | The Qwen job for a GPU machine. |
+  | `fullgame_count.mjs` | The whole-game planning count. |
+
+  Everything the runner writes, audio and gallery included, goes under `voice-audition/`, which git ignores. Test
+  clips are never committed or published.
 - [VA1_ADDENDUM.md](VA1_ADDENDUM.md): the addendum (sections 01–18, §16 the packets VS00–VS07). The copy's only
   change is noted at its head.
 - `templates/`: the package's templates, unchanged: the audition matrix (83 directed cases and 14 neutral controls per

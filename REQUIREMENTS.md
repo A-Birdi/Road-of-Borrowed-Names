@@ -698,6 +698,19 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
 - [v] XP112 The narration that depends on the Japanese level: selection (U `profile_narration`: 1,150 lines in 155 scenes, 361 complete sets seen once at every level with Grow on and off, five one-end extras named, no overlap, a self-test) and rendering (B `profile_narration`: every line at 320×640 and 844×390 at 200 % text, the 24 longest at the eight §22.2 sizes, 100 % and 200 %, English- and Japanese-led: on screen, nothing cut off sideways, furigana on every group).
 - [v] XP113 Found by P18's targeted tests and fixed: the New Game+ offer is made only while its journey is the one being played (B `play_ui`, failing before the fix; `verbs_journey` 5/5); a blank to fill (［　］) is never broken across two lines (B `profile_narration`; it left ［ and its space hanging past the box at 320 px and 200 % text).
 - [v] XP114 LP-1, the Ledger in Firefox (Robin's report): **Robin's report resolved after a browser configuration change** (Robin, on their Windows Firefox: restoring the recommended performance settings, hardware acceleration, removed the lag; it had been off, software WebRender); not a general Firefox certification, not attributed to LP-1 alone; a troubleshooting note in README.md; software rendering kept as a separate compatibility consideration. The work: reproduced in Chromium as a proxy (Firefox cannot be fetched here: the network policy refuses Playwright's Firefox hosts; `RB_BROWSER` selects an engine where it is installed); the first open's half-second traced to the Quest Guide's state copies (now copy-on-write, answers identical on eight fixtures), the grain baked from its own SVG, the spread's filter replaced by its own shadow layer, the spread kept between pages, the tab rail's forced layouts consolidated, the world drawn on one frame in four under the book; the look unchanged (pixel comparison at four sizes); B `ledger` 30/30 functional, measurements recorded separately. Review checks (Robin): the guide's per-look copy was stale when asked, changed and asked again in one callback (and the cached targets kept it); now one copy per outside question, U `quest_guide_live` 56/0 (fails 22 on 2debb3c), answers identical to 13fd5d6's on twelve fixtures, B `ledger` 32/32, opening time as 2debb3c's; weather under the book moves at a quarter speed as well as a quarter rate, recorded with measurements, no correctness problem, not changed (its refresh-rate dependence, older, deferred apart in P17_CLOSURE); the guide audit's one miss (older than LP-1) traced to the audit's attribution around "Have you seen…?": B `quest_guide_wrapped` 15/15 with a negative control, whole-game audit 0 misses. Firefox automation here: not possible (hosts refused) and no longer needed for this report; the grain's effect in Firefox unmeasured. VALIDATION.md "LP-1".
+- [~] XP115 VA-1, the voice audition (Robin's VA-1; C-83):
+  - Done:
+    - VS00, the intake (R; the Firefox item updated for C-90);
+    - VS01, the frozen corpus of 83 cases and 14 neutral controls (U `voice_corpus`);
+    - VS02's preparation that costs nothing:
+      - adapters for all seven configurations, voicing only the spoken Japanese (U `voice_audition`: 1,328 requests);
+      - a runner that refuses without an authorisation, a cumulative character cap and the credential;
+      - the technical check (measurement only);
+      - the gallery (B `voice_gallery`, mock takes);
+      - the Qwen local job and the casting templates;
+      - the consolidated setup request (docs/future/voice/VS02_SETUP_REQUEST.md).
+  - Open: every configuration is blocked here or awaits Robin's authorisation (untested, not inferior); no audio,
+    listening, casting or whole-game synthesis yet. VALIDATION.md "VA-1".
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

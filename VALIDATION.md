@@ -4258,6 +4258,52 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
+## VA-1 — the voice audition (Robin's VA-1, queued last; in progress, 2026-10-12)
+
+**No audio has been generated, and nobody has listened to anything.** All seven configurations are blocked from this
+environment or wait for Robin's authorisation (docs/future/voice/VS02_SETUP_REQUEST.md,
+docs/future/voice/inventory/provider_inventory.json). Each is untested, not inferior.
+
+| Packet | Evidence | Kind |
+| --- | --- | --- |
+| VS00, the intake | `docs/future/voice/VS00_INTAKE.md`: the speech module unchanged since the addendum's baseline; 11 speaking and 7 cancelling callers; 13,820 lines counted from the compiled scenes; provider hosts probed. The Firefox item now records Robin's report as resolved after restoring hardware acceleration (C-90). P18's campaigns are not reopened. | R + script |
+| VS01, the frozen corpus | 83 cases bound to game lines or labelled fixtures, plus 14 neutral controls. U `voice_corpus`: `tools/voice/corpus.mjs --check` rebuilds every case from the current scenes and compares the hashes. | U |
+| VS02 preparation | U `voice_audition`, 26/0 (see below). | U |
+| The listening gallery | B `tests/e2e/voice_gallery.mjs`, 21/0 in headless Chromium against mock takes (sine tones from a mock VOICEVOX engine on localhost, not voices; see below). | B |
+| Provider access | Probed with curl through the environment's proxy; facts labelled [O]/[K]/[T] in VS02_SETUP_REQUEST.md. | probe + R |
+| Google Cloud token | Non-secret configuration only: no project, account, gcloud installation or recorded purpose. Left unused: not displayed, introspected or sent. | R |
+| Whole-game count | `tools/voice/fullgame_count.mjs`: 16,251 recordings, 461,207 characters; a planning figure. | script |
+
+**U `voice_audition` (26/0) checks:**
+
+- 1,328 requests (8 routes × 83 cases × 2 take kinds) voice exactly the case's spoken Japanese. The direction appears
+  only in the provider's non-spoken field, and in no neutral control. No English, context or speaker identity is in
+  any request.
+- The runner refuses without `--authorised`, without a cumulative `--max-chars` for a hosted route, without the
+  credential in the environment, and before the smoke check. A voice whose terms weren't read stays `blocked_rights`.
+- Against a mock VOICEVOX engine on localhost:
+  - the smoke check and a six-case matrix slice;
+  - the engine received only the spoken texts;
+  - user-dictionary words are removed after the run;
+  - a misread 灯 is flagged while 灯台 is found;
+  - one repair is allowed and a second refused, with the first take kept;
+  - every record reads `generated_unreviewed`, not listened, with no lexical check claimed;
+  - the gallery embeds the takes.
+
+**B `voice_gallery` (21/0) checks, at 1100 and 400 px:**
+
+- one recording at a time, and nothing plays until asked;
+- the narrator reel stops at N04 and says why;
+- the sealed N11 stays hidden until revealed;
+- filters work;
+- blind labels hide every configuration name, host and reason;
+- no score total until all five dimensions are filled (then 71.3), and the reviewer is exported;
+- the score sheet survives a reload;
+- no page errors, no network requests, no sideways scrolling.
+
+**Not done, and not claimed:** any real provider call, any audio, any listening or Japanese review, any casting, any
+Firefox or device check of the gallery.
+
 ## LP-1 — the Ledger slow in Firefox (Robin's report, 2026-10-12)
 
 Robin: Firefox shows serious lag opening and navigating the Ledger, Edge does not; a targeted cross-browser

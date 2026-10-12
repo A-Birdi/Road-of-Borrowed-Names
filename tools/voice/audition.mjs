@@ -288,7 +288,10 @@ async function main() {
     }
     const planned = todo.reduce((n, p) => n + p.characters, 0);
     if (Pv.kind !== 'local') {
-      if (!args['max-chars'] || +args['max-chars'] < planned) { console.error('refused: hosted runs need --max-chars at least ' + planned + ' (the characters this run would send); it is the spending bound'); process.exit(2); }
+      // --max-chars is the configuration's cumulative bound in this output: characters already sent (generated or
+      // failed, counted conservatively as billable) plus this run's must fit under it
+      const spent = res.records.filter((r) => r.configurationId === P.config && r.cost && r.cost.characters).reduce((n, r) => n + r.cost.characters, 0);
+      if (!args['max-chars'] || +args['max-chars'] < spent + planned) { console.error('refused: hosted runs need --max-chars, the cumulative character bound for ' + P.config + ' (already sent ' + spent + ', this run ' + planned + ', so at least ' + (spent + planned) + ')'); process.exit(2); }
       const need = [...new Set(todo.flatMap((p) => envNames(p.plan.request || p.plan.hosted)))];
       const missing = need.filter((n) => !process.env[n]);
       if (missing.length) { console.error('refused: missing ' + missing.join(', ') + ' in the environment (credentials are read from the environment only)'); process.exit(2); }
@@ -306,7 +309,7 @@ async function main() {
       let out, err;
       try { out = Pv.kind === 'local' ? await sendLocal(dir, p, args['engine-url']) : await sendHosted(dir, p); } catch (e) { err = e; }
       if (err) {
-        upsert(res, record(p, P.cast, { attempt, status: err.status === 401 || err.status === 403 ? 'blocked_access' : 'qa_failed', blockedReason: String(err.message).slice(0, 300), technicalCheck: { status: 'failed', failures: ['generation failed: ' + String(err.message).slice(0, 200)] }, repairOf: cmd === 'repair' ? args.take : null, repairReason: cmd === 'repair' ? args.reason : null }));
+        upsert(res, record(p, P.cast, { attempt, status: err.status === 401 || err.status === 403 ? 'blocked_access' : 'qa_failed', blockedReason: String(err.message).slice(0, 300), cost: Pv.kind === 'local' ? null : { characters: p.characters, note: 'a failed request, counted against the bound in case it is billed' }, technicalCheck: { status: 'failed', failures: ['generation failed: ' + String(err.message).slice(0, 200)] }, repairOf: cmd === 'repair' ? args.take : null, repairReason: cmd === 'repair' ? args.reason : null }));
         writeResults(dir, res);
         console.log(p.takeId + '  failed: ' + String(err.message).slice(0, 160));
         if (err.status === 401 || err.status === 403) break;

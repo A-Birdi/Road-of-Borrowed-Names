@@ -15,7 +15,17 @@ VA-1 began.
   device checks, a native speaker's review (none available, C-26).
 - **P18:** Plan B (Robin's C-89) done: four continuous twelve-chapter campaigns pass on one build, the sixteen
   namings 16/16, every task tier swept, the level-dependent narration checked (VALIDATION.md "P18 — Plan B").
-- **LP-1** (the Ledger slow in Firefox): fixed and checked in headless Chromium; Firefox and Robin's machine open.
+- **LP-1** (the Ledger slow in Firefox): Robin's Windows Firefox report is **resolved after a browser configuration
+  change**. Restoring Firefox's recommended performance settings (hardware acceleration) ended the lag. Acceleration
+  had been turned off for Discord video streaming, and the earlier troubleshooting report showed software WebRender
+  with `layers.acceleration.disabled=true`.
+  - This records that report only. It is neither a general Firefox certification nor a fix attributed to LP-1 alone
+    (C-90).
+  - The LP-1 improvements and the Quest Guide snapshot correction stay as they are; headless Chromium checked them.
+  - The README now tells players with similar lag to check hardware acceleration.
+  - Software rendering is a separate compatibility consideration, not a release blocker.
+  - Weather that depends on the refresh rate stays a separate, deferred presentation issue.
+  - Nothing here reopens the completed P18 campaigns.
 - **The order** (C-87, unchanged by VA-1): VA-1 now; the hosted page only when everything passes.
 
 ## The policy amendment (C-83, recorded)
@@ -64,6 +74,11 @@ speakers); bodiless voices 9. 292 characters carry a `voice.pitch` for device sp
 variant (level, companion, dialect), which is why they exceed what one journey hears.
 
 ## Exact unknowns, carried into VS01–VS02
+
+VS01 (the frozen corpus) is done. The VS02 preparation that costs nothing is done too: the adapters, the gated runner,
+the gallery and the local jobs. Its consolidated request for access, credentials and budget is in
+`VS02_SETUP_REQUEST.md`, and the per-configuration record is in `inventory/provider_inventory.json`. The probe below
+is the intake's original receipt.
 
 - **Provider access (VS02).** Probed from this environment on 2026-10-12: Google's Generative Language API host is
   reachable and a Google Cloud access token is present in the environment, but whether it is approved for VA-1 and
