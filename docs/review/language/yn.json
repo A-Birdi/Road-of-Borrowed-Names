@@ -2051,6 +2051,18 @@
   "jp": "{騒|さわ}いで も {黙|だま}って も 、 だめ 。 …… {話|はな}せ と いう こと でしょう か 。",
   "en": "Not clamour, and not silence. …Is it telling us to talk?"
  },
+ "scene:yn.aki_kettle#yiu09k": {
+  "status": "self-reviewed",
+  "ref": "Self-review 2026-10-12, Aki by the Kettle's pool (yn.aki_kettle): her own idiom 湯の顔色 as in her earlier lines, 湯元 (ゆもと) as the town's word for the source, her plain register with わ; English matched line by line",
+  "jp": "{釜|かま} が {震|ふる}えて いる 。 {湯|ゆ} の {顔色|かおいろ} が 、 {一番|いちばん} {悪|わる}い 。 …… {私|わたし} は ここ で {見|み}て いる わ 。",
+  "en": "The Kettle is shaking. The water's colour is at its worst. …I'll watch from here."
+ },
+ "scene:yn.aki_kettle#7klk6e": {
+  "status": "self-reviewed",
+  "ref": "Self-review 2026-10-12, Aki by the Kettle's pool (yn.aki_kettle): her own idiom 湯の顔色 as in her earlier lines, 湯元 (ゆもと) as the town's word for the source, her plain register with わ; English matched line by line",
+  "jp": "{湯|ゆ} の {顔色|かおいろ} が 、 {戻|もど}った 。 {湯元|ゆもと} は 、 {私|わたし} が {見|み}て おく 。",
+  "en": "The water's colour has come back. I'll keep an eye on the source."
+ },
  "scene:yn.kettle#anraj7": {
   "status": "self-reviewed",
   "ref": "P13 self-review: Steamhollow, Chapter 11 (the call and the way down, the newcomers from the silent ridge, the two inns and their house rules, the front desk's reservations, the baths and the bath talk for all four companions, the tonic seller and the complaint, the bridge quarrel, the Steam Vents and the float, the Kettle Below, the mediation and the written agreement, 全体, the evening with each companion's crossroads, night apart or quarrel, the walk and the vow), its side stories (the masseur's song, the double-booked wedding, the retired actor, the spring eggs, the footbath poet's story), the creatures, the procedures' cards and the memories; checked against the lexicon and grammar notes, with Suzu's Kansai versions against docs/dialect/suzu_kansai.md. Corrections: the yukata custom said plainly (左側を上に重ねて着る, not 左の前); Nao warns that sleeping in the bath is dangerous (not 'the most common'); Toki lights the lanterns early on steamy days (the English said so, the Japanese now does); Heikichi's sign joke no longer counts characters that are the same number in both names; Suzu stands on a stage before any audience (not 'in any seats'); the Lost Guest's English 'but I can't read it'; Kansai さかい and a third おおきに replaced",

@@ -35637,7 +35637,7 @@ RB.portraits = (function () {
       return { key: 'pc|' + JSON.stringify(lk), p, who: 'pc' };
     }
     const p = paramsFor(who);
-    return p ? { key: who + (fest && gs && who === gs.comp ? '|yukata' : ''), p, who } : null;
+    return p ? { key: who + (fest && gs && who === gs.comp ? '|yukata' + (RB.festDress.kind(gs) === 'yn' ? '|yn' : '') : ''), p, who } : null;
   }
   // the frame of a subject (a canvas without background) and painted with its background
   function frame(sj, expr, fr) { return sj ? build(sj.p, expr, sj.key, fr) : null; }
@@ -44265,7 +44265,11 @@ RB.seal = (function () {
  * portrait only: no battle figure or Harmony bust (the festival has no fight), and nothing is kept: the next morning,
  * or anywhere else, everyone is dressed as before. The cut (P16d, implemented provisionally under AC-1): on the road
  * sprite a print of small morning-glory florets in the obi's colour, a wide obi, and at the back its bow
- * (src/engine/32_spriteart.js, garmentFB). */
+ * (src/engine/32_spriteart.js, garmentFB).
+ * Steamhollow's evening (P13; plan 06_WORLD.md W4, "Steamhollow's evening yukata walk"): from the mediation's end until
+ * the vow (yn_mediated, until yn_done: yn.walk and yn.end, one scene with no fight), on the town's two streets, the
+ * whole valley is out in yukata and so are the two of you, in the inns' lent indigo (yn_yukata), each with an obi of
+ * their own. The same limits: road sprite and portrait only, nothing kept. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
 RB.festDress = (function () {
@@ -44278,21 +44282,32 @@ RB.festDress = (function () {
     ren: ['#e4ead8', '#c4ccb6', '#4a6a5a'],
     suzu: ['#f2e2b8', '#d6c494', '#a8462e'],
   };
+  // Steamhollow: the inns' indigo, and an obi light enough to read on it
+  const INN = ['#2e3a5e', '#222c48'], INN_OBI = { pc: '#d8c8a0', nao: '#d8a838', mio: '#c87a9a', ren: '#8ab89a', suzu: '#d8743e' };
   // drop what does not go with a yukata (a satchel, a coat's things); keep the face's own (glasses, flowers, ribbons)
   const DROP = new Set(['bag', 'strap', 'satchel', 'book', 'pencil', 'scarf', 'cape', 'hood', 'hat', 'cap']);
-  function on(s) {
-    const W = RB.world && RB.world.W;
-    return !!(s && s.flags && s.flags.mp_yukata && s.flags.mp_fest_night && !s.flags.mb2_done && W && W.map && /^mp\./.test(W.map.id));
+  // which evening it is here, if any: 'mp' (Manybridge's festival night) or 'yn' (Steamhollow's evening)
+  function kind(s) {
+    const W = RB.world && RB.world.W, m = W && W.map && W.map.id;
+    if (!s || !s.flags || !m) return null;
+    if (s.flags.mp_yukata && s.flags.mp_fest_night && !s.flags.mb2_done && /^mp\./.test(m)) return 'mp';
+    if (s.flags.yn_mediated && !s.flags.yn_done && /^yn\.(upper|lower)$/.test(m)) return 'yn';
+    return null;
   }
-  function look(base, who) {
-    const col = YUKATA[who] || YUKATA.pc;
-    return Object.assign({}, base, { shape: 'robe', cloth: col.slice(), yukata: true, acc: (base.acc || []).filter((a) => !DROP.has(a)) });
+  function on(s) { return !!kind(s); }
+  // k: the evening ('yn' for Steamhollow's; anything else, Manybridge's), by default the one here now
+  function colours(who, k) {
+    if (k === undefined) k = kind(RB.game && RB.game.s);
+    const own = YUKATA[who] || YUKATA.pc;
+    return k === 'yn' ? [INN[0], INN[1], INN_OBI[who] || INN_OBI.pc] : own.slice();
   }
-  function portrait(p, who) {
-    const col = YUKATA[who] || YUKATA.pc;
-    return Object.assign({}, p, { cloth: col.slice(), collar: 'robe', acc: (p.acc || []).filter((a) => !DROP.has(a)) });
+  function look(base, who, k) {
+    return Object.assign({}, base, { shape: 'robe', cloth: colours(who, k), yukata: true, acc: (base.acc || []).filter((a) => !DROP.has(a)) });
   }
-  return { on, look, portrait, YUKATA };
+  function portrait(p, who, k) {
+    return Object.assign({}, p, { cloth: colours(who, k), collar: 'robe', acc: (p.acc || []).filter((a) => !DROP.has(a)) });
+  }
+  return { on, kind, look, portrait, YUKATA };
 })();
 
 
@@ -68871,13 +68886,14 @@ RB.seqKit = (function () {
   // optionally mirrored (only for people whose drawing is symmetric enough: the caller decides).
   // ext: rows to continue the bust below its frame (its bottom row repeated, so a torso cut by a shorter
   // sheet never shows a hard edge); the anchor stays at the portrait's own bottom.
-  // (who may also be { id, fest: true }: that person in the festival night's yukata, whenever the picture is shown)
+  // (who may also be { id, fest: true }: that person in the festival night's yukata, whenever the picture is shown;
+  // fest: 'yn', in Steamhollow's evening yukata)
   function bust(who, expr, fr, g, flip, ext) {
-    const id = typeof who === 'string' ? who : who.id ? who.id + (who.fest ? '|fest' : '') : 'pc|' + JSON.stringify(who.look);
+    const id = typeof who === 'string' ? who : who.id ? who.id + (who.fest ? '|fest' + (who.fest === 'yn' ? '|yn' : '') : '') : 'pc|' + JSON.stringify(who.look);
     ext = Math.max(0, Math.round(ext || 0));
     return small('bust|' + id + '|' + (expr || 'neutral') + '|' + (fr ? JSON.stringify(fr) : '') + '|' + gkey(g) + '|' + (flip ? 1 : 0) + '|' + ext, () => {
       let sj = typeof who === 'string' ? RB.portraits.subject(who) : who.id ? RB.portraits.subject(who.id) : RB.portraits.subject('pc', who.look);
-      if (sj && who && who.id && who.fest && RB.festDress && !/\|yukata$/.test(sj.key)) sj = Object.assign({}, sj, { key: sj.key + '|yukata', p: RB.festDress.portrait(sj.p, who.id) });
+      if (sj && who && who.id && who.fest && RB.festDress && !/\|yukata/.test(sj.key)) { const k = who.fest === 'yn' ? 'yn' : 'mp'; sj = Object.assign({}, sj, { key: sj.key + '|yukata' + (k === 'yn' ? '|yn' : ''), p: RB.festDress.portrait(sj.p, who.id, k) }); }
       const f = sj && RB.portraits.frame(sj, expr || 'neutral', fr || null);
       if (!f) return null;
       let cv = mk(f.width, f.height);
@@ -76272,7 +76288,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       crowds(c, G, 0, t, still);
       // you from behind at the rail (in yukata), your companion turned to you
-      const pcLook = st.cast.pc && RB.festDress ? RB.festDress.look(st.cast.pc, 'pc') : st.cast.pc || {};
+      const pcLook = st.cast.pc && RB.festDress ? RB.festDress.look(st.cast.pc, 'pc', 'mp') : st.cast.pc || {};
       const W = Math.round(clamp(s(118), 80, 160));
       const pb = Q.back(pcLook, W, { light: 'r' });
       const bx = Math.round(w * (G.narrow ? 0.24 : 0.24)), by = Math.round(st.vb + s(G.narrow ? 90 : 80));
@@ -77246,7 +77262,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { cv, bx0, bx1, by, rise };
     });
   }
-  const PEOPLE = ['yn_oritsu', 'yn_tahei', 'yn_aki', 'yn_rokubei'];
+  // the guests are nobody in particular: looks drawn from fixed seeds, as the world gives people with no name
+  const GUESTS = [8101, 8202, 8303, 8404].map((n) => (RB.sprites && RB.sprites.randomLook ? RB.sprites.randomLook(n) : {}));
   const valley = {
     phases: [['light', 1500]],
     safe: { wide: 'the lit valley and the bridge above the sheet', narrow: 'the bridge in the upper half', land: 'the bridge' },
@@ -77265,8 +77282,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         SP.lantern(c, Math.round(x), Math.round(y), Math.max(2, s(3)), Math.max(3, s(6)), on > 0.5, t, still);
       });
       // guests of both inns crossing the bridge in yukata (in the inns' own colours)
-      PEOPLE.forEach((id, i) => {
-        const lk = Object.assign({}, look(id), { shape: 'robe', cloth: i % 2 ? ['#e8e0d0', '#c8bea8', '#3a4e8a'] : ['#2e3a5e', '#222c48', '#d8a838'] });
+      GUESTS.forEach((g0, i) => {
+        const lk = Object.assign({}, g0, { shape: 'robe', cloth: i % 2 ? ['#e8e0d0', '#c8bea8', '#3a4e8a'] : ['#2e3a5e', '#222c48', '#d8a838'] });
         const u = still ? 0.2 + i * 0.2 : (((t / 9000) + i * 0.25) % 1), x = lerp(B.bx0 + s(10), B.bx1 - s(10), i % 2 ? 1 - u : u);
         const top = B.by - Math.sin(Math.PI * ((x - B.bx0) / (B.bx1 - B.bx0))) * B.rise;
         const f = Q.figure(lk, i % 2 ? 'left' : 'right', still ? 'i0' : 'w' + (Math.floor(t / 200 + i) % 4), 0.42, FEST);
@@ -77302,7 +77319,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.drawImage(B.cv, 0, 0);
       const comp = st.cast.comp, kc = st.at('comp');
       if (comp && kc > 0) {
-        const b = Q.bust(comp.id, 'closed', null, NIGHT, false, 200);
+        const b = Q.bust({ id: comp.id, fest: 'yn' }, 'closed', null, NIGHT, false, 200); // in the evening's yukata, as the walk has it
         const cx = Math.round(w * (G.narrow ? 0.66 : 0.64) + (1 - ease(kc)) * s(8)), cy = Math.max(Math.round(st.vb + s(10)), 98);
         if (b) c.drawImage(b.cv, cx - b.ax, cy - b.ay);
       }
@@ -208833,7 +208850,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [steam(7, 3), steam(12, 2), steam(10, 5), steam(4, 9), steam(15, 10),
       { p: 'stone_marker', x: 3, y: 3, scene: 'yn.kettle_stone' }],
-    npcs: [],
+    // Aki, once you have met her in the vents ("I'll be waiting by the Kettle"): at the pool's edge, and after the
+    // Kettle settles she stays to keep an eye on the source
+    npcs: [{ id: 'yn_aki', x: 15, y: 8, dir: 'left', if: 'yn_aki_met', talk: 'yn.aki_kettle' }],
     exits: [{ x: 9, y: 15, w: 2, h: 1, to: 'yn.vents3', sp: 'from_below', dir: 'down' }],
     triggers: [{ x: 6, y: 9, w: 8, h: 1, scene: 'yn.kettle', if: '!yn_kettle_settled' }],
     onEnter: [{ scene: 'yn.kettle_after', if: 'yn_kettle_settled&!yn_kettle_seen_after' }],
@@ -209808,6 +209827,12 @@ narr: {奥|おく} の {抜|ぬ}け{穴|あな} 。 {地面|じめん} が 、 {
 @scene yn.vents3_stone
 narr: {岩|いわ} に {彫|ほ}った {古|ふる}い {字|じ} 。 「{釜|かま}の{主|ぬし} 、 {静|しず}か なる を {好|この}む 。 {騒|さわ}げば {沸|わ}き 、 {黙|だま}れば {冷|ひ}ゆ 。」 || Old characters cut into the rock: "The Kettle Below loves calm. Clamour, and it boils; silence, and it chills."
 ?(comp=ren) comp[think]: {騒|さわ}いで も {黙|だま}って も 、 だめ 。 …… {話|はな}せ と いう こと でしょう か 。 || Not clamour, and not silence. …Is it telling us to talk?
+
+@scene yn.aki_kettle
+# Aki by the Kettle's pool (11_vents.js), waiting as she said she would; afterwards keeping an eye on the source.
+!faceplayer
+?(!yn_kettle_settled) yn_aki: {釜|かま} が {震|ふる}えて いる 。 {湯|ゆ} の {顔色|かおいろ} が 、 {一番|いちばん} {悪|わる}い 。 …… {私|わたし} は ここ で {見|み}て いる わ 。 || The Kettle is shaking. The water's colour is at its worst. …I'll watch from here.
+?(yn_kettle_settled) yn_aki: {湯|ゆ} の {顔色|かおいろ} が 、 {戻|もど}った 。 {湯元|ゆもと} は 、 {私|わたし} が {見|み}て おく 。 || The water's colour has come back. I'll keep an eye on the source.
 
 @scene yn.kettle
 # The Kettle Below: a great iron-dark shape in the boiling pool, the size of a house, shaking. More frightened than

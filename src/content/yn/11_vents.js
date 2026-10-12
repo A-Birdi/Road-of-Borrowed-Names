@@ -137,7 +137,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }),
     props: [steam(7, 3), steam(12, 2), steam(10, 5), steam(4, 9), steam(15, 10),
       { p: 'stone_marker', x: 3, y: 3, scene: 'yn.kettle_stone' }],
-    npcs: [],
+    // Aki, once you have met her in the vents ("I'll be waiting by the Kettle"): at the pool's edge, and after the
+    // Kettle settles she stays to keep an eye on the source
+    npcs: [{ id: 'yn_aki', x: 15, y: 8, dir: 'left', if: 'yn_aki_met', talk: 'yn.aki_kettle' }],
     exits: [{ x: 9, y: 15, w: 2, h: 1, to: 'yn.vents3', sp: 'from_below', dir: 'down' }],
     triggers: [{ x: 6, y: 9, w: 8, h: 1, scene: 'yn.kettle', if: '!yn_kettle_settled' }],
     onEnter: [{ scene: 'yn.kettle_after', if: 'yn_kettle_settled&!yn_kettle_seen_after' }],

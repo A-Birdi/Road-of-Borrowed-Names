@@ -132,6 +132,12 @@ narr: {奥|おく} の {抜|ぬ}け{穴|あな} 。 {地面|じめん} が 、 {
 narr: {岩|いわ} に {彫|ほ}った {古|ふる}い {字|じ} 。 「{釜|かま}の{主|ぬし} 、 {静|しず}か なる を {好|この}む 。 {騒|さわ}げば {沸|わ}き 、 {黙|だま}れば {冷|ひ}ゆ 。」 || Old characters cut into the rock: "The Kettle Below loves calm. Clamour, and it boils; silence, and it chills."
 ?(comp=ren) comp[think]: {騒|さわ}いで も {黙|だま}って も 、 だめ 。 …… {話|はな}せ と いう こと でしょう か 。 || Not clamour, and not silence. …Is it telling us to talk?
 
+@scene yn.aki_kettle
+# Aki by the Kettle's pool (11_vents.js), waiting as she said she would; afterwards keeping an eye on the source.
+!faceplayer
+?(!yn_kettle_settled) yn_aki: {釜|かま} が {震|ふる}えて いる 。 {湯|ゆ} の {顔色|かおいろ} が 、 {一番|いちばん} {悪|わる}い 。 …… {私|わたし} は ここ で {見|み}て いる わ 。 || The Kettle is shaking. The water's colour is at its worst. …I'll watch from here.
+?(yn_kettle_settled) yn_aki: {湯|ゆ} の {顔色|かおいろ} が 、 {戻|もど}った 。 {湯元|ゆもと} は 、 {私|わたし} が {見|み}て おく 。 || The water's colour has come back. I'll keep an eye on the source.
+
 @scene yn.kettle
 # The Kettle Below: a great iron-dark shape in the boiling pool, the size of a house, shaking. More frightened than
 # angry. The encounter (yn.kettle, 33_creatures.js) settles it; nothing here defeats it.

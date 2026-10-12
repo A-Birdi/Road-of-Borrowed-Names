@@ -313,7 +313,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       crowds(c, G, 0, t, still);
       // you from behind at the rail (in yukata), your companion turned to you
-      const pcLook = st.cast.pc && RB.festDress ? RB.festDress.look(st.cast.pc, 'pc') : st.cast.pc || {};
+      const pcLook = st.cast.pc && RB.festDress ? RB.festDress.look(st.cast.pc, 'pc', 'mp') : st.cast.pc || {};
       const W = Math.round(clamp(s(118), 80, 160));
       const pb = Q.back(pcLook, W, { light: 'r' });
       const bx = Math.round(w * (G.narrow ? 0.24 : 0.24)), by = Math.round(st.vb + s(G.narrow ? 90 : 80));

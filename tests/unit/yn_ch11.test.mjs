@@ -369,6 +369,23 @@ export default async (t) => {
     t.ok(qs(s, 'yn_poet') === 'done' && asked.includes('yn.story_order') && has(/The Spring That Went Cold/), 'the footbath poet\'s story room, read and put in order');
   }
 
+  // ---- the evening in yukata (58f_festdress.js): the walk and the vow, on the town's streets, nowhere else -------------
+  {
+    const s = fresh({ flags: ['yn_mediated'] }), W0 = RB.world.W.map;
+    RB.game.s = s;
+    RB.world.W.map = { id: 'yn.upper' };
+    const lk = RB.festDress.look({ shape: 'tunic', cloth: ['#000', '#111', '#222'], acc: ['bag', 'glasses'] }, 'ren');
+    t.ok(RB.festDress.on(s) && RB.festDress.kind(s) === 'yn' && lk.shape === 'robe' && lk.cloth[0] === '#2e3a5e' && lk.acc.join() === 'glasses',
+      'after the mediation, on the upper street: the inns\' indigo yukata, the satchel left behind (' + JSON.stringify(lk) + ')');
+    t.ok(RB.festDress.look({ cloth: [] }, 'ren', 'mp').cloth[0] === RB.festDress.YUKATA.ren[0], 'Manybridge\'s festival keeps each one\'s own colours');
+    RB.world.W.map = { id: 'yn.lower' }; t.ok(RB.festDress.on(s), 'and on the lower street');
+    for (const m of ['yn.guild', 'yn.vents1', 'yn.terraces', 'yn.north', 'yn.kettle']) { RB.world.W.map = { id: m }; t.ok(!RB.festDress.on(s), 'not in ' + m + ' (indoors, below or out of town: as before)'); }
+    RB.world.W.map = { id: 'yn.upper' };
+    s.flags.yn_done = true; t.ok(!RB.festDress.on(s), 'after the vow: everyone as before');
+    delete s.flags.yn_done; delete s.flags.yn_mediated; t.ok(!RB.festDress.on(s), 'before the mediation: as before');
+    RB.world.W.map = W0;
+  }
+
   // ---- creatures and records ---------------------------------------------------------------------------------------------
   {
     const ids = ['yn.steamwisp', 'yn.pebbles', 'yn.toad', 'yn.lostguest', 'yn.towelthief', 'yn.chochin', 'yn.kettle'];

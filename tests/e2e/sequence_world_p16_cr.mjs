@@ -102,9 +102,10 @@ export const SPECS = {
     // the chamber's trigger row (y 9, x 6–13, while the Kettle is unsettled), walked into straight up from the stair
     // (spawn 9,13). The encounter settles the Kettle (yn_kettle_settled) before the pictures; they show the Kettle
     // sinking in its pool, the bubbles going out, the steam rising quietly: nobody drawn. Aki speaks one line under them
-    // when you have met her in the deep vents ("I'll be waiting by the Kettle"), but the world places her nowhere here
+    // when you have met her in the deep vents ("I'll be waiting by the Kettle"), and the world has her there, at the
+    // pool's edge (15,8), out of the pictures
     stay: [], reach: [{ to: 'yn.vents3', why: 'back up through the vents to the town (the evening, then the meeting)' }],
-    hidden: [{ who: 'yn_aki', why: 'a voice in the chamber: the pictures show only the Kettle and its pool' }],
+    hidden: [{ who: 'yn_aki', why: 'at the pool\'s edge, out of the pictures: they show only the Kettle and its pool' }],
     facts: [{ shot: 'pool', cond: 'yn_kettle_settled', why: 'settled in the encounter just before: the chamber\'s settled light and music' }],
     runs: [
       { name: 'Aki met, her voice in the chamber · Nao · the cat with you', comp: 'nao', pet: 'cat', flags: { yn_aki_met: true }, shots: ['pool'], quick: true },

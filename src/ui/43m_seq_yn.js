@@ -138,7 +138,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { cv, bx0, bx1, by, rise };
     });
   }
-  const PEOPLE = ['yn_oritsu', 'yn_tahei', 'yn_aki', 'yn_rokubei'];
+  // the guests are nobody in particular: looks drawn from fixed seeds, as the world gives people with no name
+  const GUESTS = [8101, 8202, 8303, 8404].map((n) => (RB.sprites && RB.sprites.randomLook ? RB.sprites.randomLook(n) : {}));
   const valley = {
     phases: [['light', 1500]],
     safe: { wide: 'the lit valley and the bridge above the sheet', narrow: 'the bridge in the upper half', land: 'the bridge' },
@@ -157,8 +158,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
         SP.lantern(c, Math.round(x), Math.round(y), Math.max(2, s(3)), Math.max(3, s(6)), on > 0.5, t, still);
       });
       // guests of both inns crossing the bridge in yukata (in the inns' own colours)
-      PEOPLE.forEach((id, i) => {
-        const lk = Object.assign({}, look(id), { shape: 'robe', cloth: i % 2 ? ['#e8e0d0', '#c8bea8', '#3a4e8a'] : ['#2e3a5e', '#222c48', '#d8a838'] });
+      GUESTS.forEach((g0, i) => {
+        const lk = Object.assign({}, g0, { shape: 'robe', cloth: i % 2 ? ['#e8e0d0', '#c8bea8', '#3a4e8a'] : ['#2e3a5e', '#222c48', '#d8a838'] });
         const u = still ? 0.2 + i * 0.2 : (((t / 9000) + i * 0.25) % 1), x = lerp(B.bx0 + s(10), B.bx1 - s(10), i % 2 ? 1 - u : u);
         const top = B.by - Math.sin(Math.PI * ((x - B.bx0) / (B.bx1 - B.bx0))) * B.rise;
         const f = Q.figure(lk, i % 2 ? 'left' : 'right', still ? 'i0' : 'w' + (Math.floor(t / 200 + i) % 4), 0.42, FEST);
@@ -194,7 +195,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.drawImage(B.cv, 0, 0);
       const comp = st.cast.comp, kc = st.at('comp');
       if (comp && kc > 0) {
-        const b = Q.bust(comp.id, 'closed', null, NIGHT, false, 200);
+        const b = Q.bust({ id: comp.id, fest: 'yn' }, 'closed', null, NIGHT, false, 200); // in the evening's yukata, as the walk has it
         const cx = Math.round(w * (G.narrow ? 0.66 : 0.64) + (1 - ease(kc)) * s(8)), cy = Math.max(Math.round(st.vb + s(10)), 98);
         if (b) c.drawImage(b.cv, cx - b.ax, cy - b.ay);
       }

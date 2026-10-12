@@ -887,7 +887,7 @@ RB.portraits = (function () {
       return { key: 'pc|' + JSON.stringify(lk), p, who: 'pc' };
     }
     const p = paramsFor(who);
-    return p ? { key: who + (fest && gs && who === gs.comp ? '|yukata' : ''), p, who } : null;
+    return p ? { key: who + (fest && gs && who === gs.comp ? '|yukata' + (RB.festDress.kind(gs) === 'yn' ? '|yn' : '') : ''), p, who } : null;
   }
   // the frame of a subject (a canvas without background) and painted with its background
   function frame(sj, expr, fr) { return sj ? build(sj.p, expr, sj.key, fr) : null; }
