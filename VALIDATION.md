@@ -4469,6 +4469,20 @@ this build, 2debb3c and 13fd5d6; 7244e48 by its code). A journey is
 stored by the browser for the address it was played at, so it is there only when this build is opened at that same
 address (the same `index.html` path in the same local folder, for instance).
 
+**Robin's report: resolved after a browser configuration change (Robin, 2026-10-12).** On Robin's Windows Firefox,
+restoring *Use recommended performance settings* (hardware acceleration) resolved the Ledger lag. Acceleration had
+been turned off earlier for streaming video over Discord; Robin's earlier troubleshooting report showed software
+WebRender and `layers.acceleration.disabled=true`, so Firefox was drawing everything on the processor. This specific
+report is recorded as resolved after that change. It is not a certification of Firefox performance in general, and the
+resolution is not attributed to LP-1 alone: LP-1's reductions were measured in headless Chromium, and their effect in
+Firefox, with or without acceleration, was not measured separately. Kept: LP-1's improvements and the Quest Guide's
+snapshot correction (both validated above). Not done, on Robin's word: further visual reductions or campaign reruns for
+this report; Firefox automation here is no longer needed for it (its download hosts stay refused; the selection in
+`tests/e2e/lib.mjs` remains for whenever Firefox can be installed). Added: a short troubleshooting note for players in
+`README.md` ("If the game feels slow": check the browser's hardware acceleration). How the game performs under
+software rendering is a separate compatibility consideration (`docs/future/work/P17_CLOSURE.md`, open items), not a
+release blocker arising from this report.
+
 ## P18 — Plan B (Robin's C-89, 2026-10-12): four continuous campaigns and targeted coverage (in progress)
 
 Robin replaced the sixteen continuous campaigns of this validation milestone with four (F/Ren, E/Nao, I/Mio, A/Suzu)

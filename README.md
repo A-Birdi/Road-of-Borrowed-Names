@@ -46,6 +46,17 @@ a "repair" — any of those can hide or overwrite existing saves.
 Keys can be remapped in Settings › Controls, where you can also move the
 touch Action/Run buttons to the left and make the touch controls larger.
 
+### If the game feels slow
+If walking, battles or the Ledger stutter, check that your browser's hardware
+acceleration is on. In Firefox: Settings › General › Performance, tick "Use
+recommended performance settings" (or "Use hardware acceleration when
+available"); `about:support` showing *WebRender (Software)* means it is off.
+In Chrome or Edge: Settings › System (System and performance in Edge), "Use
+graphics acceleration when available". Restart the browser after changing it.
+The game still runs with acceleration off, but the browser then draws
+everything on the processor, which can be much slower, especially on large or
+high-resolution screens.
+
 ### Learning
 - **Profiles**: Foundations (kana from zero), Elementary, Intermediate and
   Advanced. The same story adapts every challenge to your profile; combat

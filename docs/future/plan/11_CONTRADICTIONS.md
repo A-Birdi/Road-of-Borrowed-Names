@@ -652,7 +652,19 @@ for this validation milestone."
   native-reviewed Japanese, or real-device validation. A stalled or incomplete campaign stays incomplete until
   resolved; no assertion is weakened to pass.
 - C-88 stands (Original only); the voice-work order and other authorisations are unchanged.
-- **Status:** in progress (VALIDATION.md "P18 — Plan B").
+- **Status:** done: the four campaigns pass on one build (2debb3c), the sixteen namings 16/16, the targeted coverage
+  run (VALIDATION.md "P18 — Plan B").
+
+### C-90 · LP-1's report resolved by the browser's setting; software rendering is a compatibility consideration
+**Decided** (2026-10-12). Robin: "Confirmed on my Windows Firefox: restoring Recommended performance settings /
+Hardware Acceleration resolved the Ledger lag. … Record this specific user-reported issue as resolved after the
+browser configuration change. Do not describe it as universal Firefox performance certification or attribute the
+resolution solely to LP-1."
+- LP-1's improvements and the Quest Guide's snapshot correction stay; no further visual reductions or campaign reruns
+  for this report.
+- A short troubleshooting note for players: `README.md`, "If the game feels slow" (check hardware acceleration).
+- Performance under software rendering is a separate compatibility consideration, not a release blocker arising
+  from this report (P17_CLOSURE open items). The authorised work continues (VA-1).
 
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a

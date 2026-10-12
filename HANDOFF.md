@@ -272,8 +272,10 @@
     cannot be fetched here (network policy; retried after Robin's review, still refused); `RB_BROWSER=firefox` runs a
     suite where it is installed. Robin's review checks: the guide's shared copy of the journey was stale when asked,
     changed and asked again in one callback; now one copy per outside question (`tests/unit/quest_guide_live.test.mjs`);
-    weather under the book moves at a quarter speed, recorded, not changed. Which build has LP-1 and how to tell an
-    open page's build: VALIDATION.md "LP-1", "Which build has LP-1". Robin's device review is the open part.
+    weather under the book moves at a quarter speed, recorded, not changed. **Robin's report is resolved after a
+    browser configuration change** (hardware acceleration restored on their Windows Firefox; it had been off); not a
+    general Firefox certification, not attributed to LP-1 alone; README.md "If the game feels slow" tells players to
+    check the setting; software rendering is a separate compatibility consideration, not a blocker.
     **P18 is Plan B (Robin's C-89, 2026-10-12), done:** the four continuous twelve-chapter campaigns (F/Ren, E/Nao,
     I/Mio, A/Suzu) all PASS on one clean export of 2debb3c (17/17 milestones in order, to the ending, 0 problems; the
     batch on 28cb216 failed by the launcher's own order check and is not counted), through
@@ -287,8 +289,8 @@
     journey other than its own; a fill-in blank (［　］) could break across lines. Not to be reported as "sixteen
     full campaigns", native-reviewed Japanese or real-device validation. Next (C-87's order, unchanged): VA-1 as
     Robin ordered it, and only when all of it passes the hosted page (its deploy must also copy
-    `assets/music/ensemble/`). Open for Robin: LP-1 in Firefox and on the device (the corrected build untested
-    there), the weather's refresh-rate dependence (deferred, P17_CLOSURE). State and results: VALIDATION.md
+    `assets/music/ensemble/`). Open for Robin: the weather's refresh-rate dependence (deferred, P17_CLOSURE); VA-1's
+    access request (docs/future/voice/VS00_INTAKE.md). State and results: VALIDATION.md
     "P18 — Plan B" and "LP-1".
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,
     Mastery, What I can do), P04 (encounters), P05 (the living world) and P06 (records, pastimes, the book) are
