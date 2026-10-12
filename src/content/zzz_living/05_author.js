@@ -7,7 +7,7 @@
  *     A town: its maps (moving among them is being in the town: no routine moves while you are there), the story
  *     flags it cares about (one set elsewhere since your last visit moves its routine on), and `after`, the flag from
  *     which its routines run (the region's own story first: before it, everyone is where the story puts them).
- *   L.routine(town, person, { base: 'map:id', pin, slots: [{ map, x, y, dir, perform, line: [jp, en] }] })
+ *   L.routine(town, person, { base: 'map:id' (or 'map:id@x,y'), pin, slots: [{ map, x, y, dir, perform, line: [jp, en] }] })
  *     A resident's places. Slot 1 is their placement `base` (it gains "slot 1, or before `after`"); each further slot
  *     is a new placement with the same condition, "slot k and after `after`", the same talk list, and a first line
  *     of its own said once (then what they always say: the usual_talk hook, so the story's next step is never held
@@ -53,9 +53,12 @@ RB.living = (function (C) {
   let script = '';
   const esc = (s) => String(s).replace(/\n/g, ' ');
   function scenes(text) { script += '\n' + text + '\n'; }
+  // 'map:id', or 'map:id@x,y' for one of several placements sharing an id on that map (before and after a story beat)
   function placement(ref) {
-    const [map, id] = ref.split(':');
-    const n = mapOf(map).npcs.find((x) => x.id === id);
+    const [map, rest] = ref.split(':');
+    const [id, at] = rest.split('@');
+    const xy = at ? at.split(',').map(Number) : null;
+    const n = mapOf(map).npcs.find((x) => x.id === id && (!xy || (x.x === xy[0] && x.y === xy[1])));
     if (!n) throw new Error('living: no placement ' + ref);
     return { map, n };
   }
@@ -76,7 +79,12 @@ RB.living = (function (C) {
       // the same talk list as the usual place (one list: anything later content puts at its head is here too); the
       // place's own first line is said once before it (src/engine/50_world.js talkTo, the usual_talk hook)
       const n2 = { id, char: person, x: sl.x, y: sl.y, dir: sl.dir || 'down', if: and(o.when || null, cond), talk: base.n.talk, slotScene: sc };
-      if (sl.perform) n2.perform = sl.perform;
+      if (sl.perform) {
+        n2.perform = sl.perform;
+        // the work manifest (00_work.js) lists every performer in a journey
+        C.work = C.work || [];
+        if (!C.work.some((w) => w.map === sl.map && w.id === id)) C.work.push({ map: sl.map, id, char: person, act: typeof sl.perform === 'string' ? sl.perform : sl.perform.act, why: 'routine: ' + sl.line[1] });
+      }
       if (sl.wander) n2.wander = sl.wander;
       mapOf(sl.map).npcs.push(n2);
       scenes('@scene ' + sc + '\n' + person + ': ' + esc(sl.line[0]) + ' || ' + esc(sl.line[1]) + '\n!hook usual_talk');

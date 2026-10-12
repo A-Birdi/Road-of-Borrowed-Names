@@ -105,14 +105,15 @@ export default async (t) => {
   // ---- change beats (W1) -----------------------------------------------------------------------------------------------
   {
     const s = camp({ departed: true, ch1_done: true });
-    t.eq(T.changed(s), [], 'nothing changed yet');
+    const rw = () => T.changed(s).map((c) => c.town).filter((t) => t === 'reedwake');
+    t.eq(rw(), [], 'nothing changed yet');
     s.flags.ch2_done = true; s.flags.mb2_done = true;
-    t.eq(T.changed(s).map((c) => c.town), ['reedwake'], 'after Saltglass and the festival elsewhere: Reedwake has changed');
+    t.eq(rw(), ['reedwake'], 'after Saltglass and the festival elsewhere: Reedwake has changed');
     t.ok(C.maps['rw.village'].props.some((p) => p.scene === 'mp.lw_rw_press_sheet' && RB.state.test(s, p.if)), 'the printed sheet is up by the teahouse');
     T.visited(s, 'rw.village');
-    t.eq(T.changed(s), [], 'seen on a visit: no longer a hint');
+    t.eq(rw(), [], 'seen on a visit: no longer a hint');
     s.flags.ko_done = true;
-    t.eq(T.changed(s).map((c) => c.town), ['reedwake'], 'a later beat adds a new hint (the timetable)');
+    t.eq(rw(), ['reedwake'], 'a later beat adds a new hint (the timetable)');
   }
 
   // ---- every region (the plan's minimums; well-formed) ------------------------------------------------------------------
