@@ -19,6 +19,9 @@ const start = (p, m, x, y) => p.evaluate(async ([m, x, y, F]) => {
   await new Promise((r) => setTimeout(r, 300));
   while (RB.ui.dialogue.isOpen()) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 30)); }
   await new Promise((r) => setTimeout(r, 300));
+  // the camera eases into place after a start (most of a second, longer while frames come late): measured from rest
+  let last = '', same = 0;
+  for (let i = 0; i < 40 && same < 3; i++) { await new Promise((r) => setTimeout(r, 100)); const c = RB.render.cam.x + ',' + RB.render.cam.y; same = c === last ? same + 1 : 0; last = c; }
 }, [m, x, y, FLAGS]);
 const camAt = (p) => p.evaluate(() => [RB.render.cam.x, RB.render.cam.y].join());
 // whether the sheet covers the player or the companion (the speaker below)
