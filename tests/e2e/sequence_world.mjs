@@ -34,6 +34,8 @@
 // animal drawn, no campaign written.
 // Usage: node tests/e2e/sequence_world.mjs [--quick] [--only ch2.notice,ch5.bell]
 //   --quick: one run per sequence (the default suite); without it every branch and every companion listed
+import fs from 'node:fs';
+import path from 'node:path';
 import { serve, launch, page } from './lib.mjs';
 
 const args = process.argv.slice(2);
@@ -185,6 +187,12 @@ const SEQ = {
   },
 };
 
+// the twelve-chapter edition's sequences (the travel volume's pages played in the world, P16): their specs in their
+// own files, one per group of regions, same format
+for (const f of ['sequence_world_p16_mb.mjs', 'sequence_world_p16_cr.mjs', 'sequence_world_p16_gd.mjs', 'sequence_world_p16_hall.mjs']) {
+  if (fs.existsSync(path.join(path.dirname(new URL(import.meta.url).pathname), f))) Object.assign(SEQ, (await import('./' + f)).SPECS);
+}
+
 // ---- in the page: the recorders ---------------------------------------------------------------------------------
 function install() {
   if (window.__HX) return;
@@ -286,7 +294,8 @@ async function start(p, S, R, o) {
   await p.evaluate(install);
   await p.evaluate(async ([S, R, o]) => {
     const H = window.__HX;
-    const s = RB.game.debugStart(S.at[0], S.at[1], S.at[2], { comp: R.comp || undefined, flags: Object.assign({}, S.flags, R.flags || {}), dir: S.at[3] || 'up' });
+    // (S.edition: the twelve-chapter edition's own scenes start in it, as a new journey does)
+    const s = RB.game.debugStart(S.at[0], S.at[1], S.at[2], { comp: R.comp || undefined, flags: Object.assign({}, S.flags, R.flags || {}), dir: S.at[3] || 'up', edition: S.edition || undefined });
     if (!R.comp) { s.comp = null; RB.world.placeCompanion(); }
     for (const it of (S.give || []).concat(R.bell ? ['lf_toya_bell'] : [])) RB.state.give(s, it, 1);
     for (const [k, v] of Object.entries(S.quests || {})) RB.state.setQuest(s, k, v);
