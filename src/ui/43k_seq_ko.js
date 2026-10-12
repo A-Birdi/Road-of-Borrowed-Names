@@ -6,10 +6,11 @@
  *           like paper lanterns, each faintly lit; the tall shape of the roots sinking back into the weave, the wind
  *           stopping and the leaves in the air coming down one by one onto their threads
  *   leaves  the two of you under the hanging leaves: you from behind, your companion turned to you in their light
- * ko.end — the chapter's end at the Wind Stone (`ko.end`).
- *   stone   Otoha by the Wind Stone on the island's crown, the great tree behind her breathing, leaves falling slowly
- *   north   she looks north: over the strait the far mountains, and high up among them a pale point; a few leaves
- *           like torn pages drifting from that way
+ * ko.end — the chapter's end at the Wind Stone (`ko.end`), in the Keepers' Village (ko.village).
+ *   stone   Otoha by the Wind Stone on its paving, the village's thatched roofs across the green, and up the hill
+ *           behind them, on the island's crown, the great tree breathing, leaves falling slowly
+ *   north   she looks north: over the island's shoulder and the strait the far mountains, and high up among them a
+ *           pale point; a few leaves like torn pages drifting from that way
  * No letters, kana or kanji are drawn: the leaves carry a stroke or two of ink, never characters. */
 var RB = (globalThis.RB = globalThis.RB || {});
 
@@ -140,7 +141,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   // ==== ko.end · the Wind Stone, and the way north ===================================================================
   function geomCrown(w, h, vb) { const S = stage(w, h, vb); return Object.assign(S, { narrow: S.lay === 'narrow' }); }
   function crownStatic(G, north) {
-    return cached('ko.crown|' + G.w + 'x' + G.h + '|' + G.vb + '|' + (north ? 1 : 0), () => {
+    return cached('ko.village|' + G.w + 'x' + G.h + '|' + G.vb + '|' + (north ? 1 : 0), () => {
       const { w, h, s } = G, p = P();
       const cv = mk(w, h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
@@ -164,17 +165,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
         SP.crown(L, px - s(22), py - s(56), s(34), s(14), pine, { n: 6, seed: 3 });
         SP.crown(L, px - s(4), py - s(36), s(24), s(10), pine, { n: 5, seed: 4 });
       } else {
-        // the sea along the horizon at the left; the crown's grass rising to the tree; the Wind Stone on a worn path
+        // the Keepers' Village round the Wind Stone's paving (ko.village): the sea far off at the left, thatched roofs
+        // across the green, and up the hill behind them, on the island's crown, the great tree, breathing
         const sea = p.mat('#4a82aa', { n: 7, at: 3, step: 0.07 }), trunk = p.mat('#6a5038', { n: 7, at: 3, step: 0.08 }), leafM = p.mat('#4a7a3a', { n: 7, at: 3, step: 0.08 });
-        const grassM = p.mat('#6a8a48', { n: 7, at: 3, step: 0.08 }), stoneM = p.mat('#8a8a84', { n: 7, at: 3, step: 0.07 }), path = p.mat('#a89a78', { n: 6, at: 3, step: 0.08 }), flowers = p.mat('#f0e8a8', { n: 4, at: 2 });
-        SP.water(L, 0, Math.round(G.vb * 0.62), Math.round(w * 0.5), Math.round(G.vb * 0.7), sea, { band: Math.max(2, s(3)), deep: 0.2, seed: 21 });
-        const tx = Math.round(w * (G.narrow ? 0.66 : 0.7)), ty = Math.round(G.vb * 0.66);
-        // the trunk with its buttress roots spreading into the grass, bark in long vertical clusters
-        L.fill(tx - s(50), s(10), tx + s(50), ty + s(10), (x, y) => Math.abs(x - tx) < s(20) + Math.max(0, y - ty + s(40)) ** 2 / s(60), trunk, (x, y) => clamp(0.62 - (x - tx + s(20)) / s(60) * 0.55 + (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0) + (((Math.round(y) + Math.round(x) * 3) % 17) === 0 ? -0.1 : 0), 0.02, 0.999));
-        SP.crown(L, tx, Math.round(G.vb * 0.14), Math.round(w * 0.42), Math.round(G.vb * 0.26), leafM, { n: 40, seed: 11 });
-        SP.grass(L, (x) => G.vb * 0.66 + Math.sin(x / (w * 0.2)) * s(6) - (x > tx - s(60) ? s(4) : 0), h, grassM, { seed: 7, flowers, density: 80 });
-        const sx = Math.round(w * (G.narrow ? 0.16 : 0.16)), sy = Math.round(G.vb * 0.74);
-        L.fill(0, sy - s(4), w, h, (x, y) => Math.abs(x - lerp(sx, w * 0.45, (y - sy) / (h - sy))) < s(8) + (y - sy) * 0.25 && y > sy, path, (x, y) => clamp(0.55 + (p.bayer(x, y) - 0.5) * 0.12, 0.02, 0.999));
+        const grassM = p.mat('#6a8a48', { n: 7, at: 3, step: 0.08 }), hillM = p.mat('#5a7a46', { n: 7, at: 3, step: 0.08 }), stoneM = p.mat('#8a8a84', { n: 7, at: 3, step: 0.07 });
+        const pave = p.mat('#a49c8a', { n: 6, at: 3, step: 0.07 }), thatch = p.mat('#9a8458', { n: 7, at: 3, step: 0.08 }), wall = p.mat('#7a5e44', { n: 6, at: 3, step: 0.08 }), flowers = p.mat('#f0e8a8', { n: 4, at: 2 });
+        const vb = G.vb;
+        SP.water(L, 0, Math.round(vb * 0.5), Math.round(w * 0.42), Math.round(vb * 0.58), sea, { band: Math.max(2, s(3)), deep: 0.2, seed: 21 });
+        // the hill rising to the crown at the right, terraced
+        const hill = (x) => vb * 0.52 - clamp((x - w * 0.28) / (w * 0.5), 0, 1) * vb * 0.16 + Math.sin(x / (w * 0.09)) * s(2);
+        L.fill(0, 0, w, h, (x, y) => y > hill(x), hillM, (x, y) => clamp(0.5 - (y - hill(x)) / h * 0.3 + (((Math.round(y - hill(x)) % Math.max(4, s(7))) === 0) ? -0.12 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        // the great tree on the crown: its trunk flaring into the hill, its crown wide against the sky
+        const tx = Math.round(w * (G.narrow ? 0.7 : 0.74)), ty = Math.round(hill(tx) + s(3));
+        L.fill(tx - s(30), Math.round(vb * 0.14), tx + s(30), ty, (x, y) => Math.abs(x - tx) < s(9) + Math.max(0, y - ty + s(16)) ** 2 / s(12), trunk, (x, y) => clamp(0.62 - (x - tx + s(9)) / s(22) * 0.5 + (((Math.round(x * 0.7) * 5) % 7) === 0 ? -0.12 : 0), 0.02, 0.999));
+        SP.crown(L, tx, Math.round(vb * 0.12), Math.round(w * 0.24), Math.round(vb * 0.15), leafM, { n: 30, seed: 11 });
+        // the village's houses across the green: thatched roofs (hipped, the left slope in the light) over dark walls
+        const house = (x0, x1, y, ht) => {
+          L.fill(x0, y, x1, y + ht, (xx, yy) => yy >= y && xx >= x0 + (y + ht - yy) * 0.7 && xx <= x1 - (y + ht - yy) * 0.7, thatch, (xx, yy) => clamp((xx < x0 + (x1 - x0) * 0.35 ? 0.66 : 0.46) - (yy - y) / ht * 0.1 + (((Math.round(xx) * 3 + Math.round(yy)) % 5) === 0 ? -0.1 : 0), 0.02, 0.999));
+          L.rect(x0, y + ht - Math.max(1, s(2)), x1 - x0, Math.max(1, s(2)), thatch, 0.3);
+          L.rect(x0 + s(3), y + ht, x1 - x0 - s(6), Math.round(ht * 0.7), wall, (xx) => (xx < x0 + s(6) ? 0.5 : 0.36));
+          L.rect(Math.round((x0 + x1) / 2) - s(3), y + ht + s(2), s(6), Math.round(ht * 0.7) - s(2), p.mat('#2a2220', { n: 3, at: 1 }), 0.4);
+        };
+        const ry = Math.round(vb * 0.53);
+        house(Math.round(w * 0.02), Math.round(w * 0.2), ry, s(14));
+        house(Math.round(w * 0.36), Math.round(w * 0.56), ry + s(3), s(13));
+        house(Math.round(w * 0.82), Math.round(w * 0.99), ry + s(2), s(12));
+        // the green, then the Wind Stone's paving in front: flat stones laid in courses
+        SP.grass(L, (x) => vb * 0.68 + Math.sin(x / (w * 0.2)) * s(3), h, grassM, { seed: 7, flowers, density: 60 });
+        // (in perspective: each course a quarter deeper than the one beyond it, its stones as wide as three of its depth)
+        const py = Math.round(vb * 0.8), rows = [];
+        for (let y = py, d = Math.max(3, s(4)), r = 0; y < h; y += Math.round(d), d *= 1.25, r++) rows.push([y, Math.max(3, Math.round(d)), r]);
+        L.rect(0, py, w, h - py, pave, (x, y) => {
+          let q = rows[0]; for (const row of rows) { if (row[0] > y) break; q = row; }
+          const [y0, d, r] = q, cw = d * 3, xo = Math.round(x) + (r % 2) * Math.round(cw / 2), j = ((xo % cw) + cw) % cw, k = Math.floor(xo / cw);
+          const tone = (((k * 7 + r * 13) % 5) - 2) * 0.03; // each stone a little lighter or darker than its neighbours
+          return clamp((j === 0 || y === y0 ? 0.36 : y === y0 + 1 ? 0.6 : 0.52 + tone) - (y - py) / h * 0.1, 0.02, 0.999);
+        });
+        // the Wind Stone on its paving at the left
+        const sx = Math.round(w * 0.16), sy = Math.round(vb * 0.85);
         L.stone([[sx - s(14), sy], [sx - s(10), sy - s(44)], [sx + s(2), sy - s(52)], [sx + s(12), sy - s(38)], [sx + s(15), sy]], stoneM, { face: 4, bevel: Math.max(2, s(3)), seam: true });
       }
       L.outline();

@@ -1,11 +1,12 @@
 /* Manybridge, Chapter 4 of the twelve: the travel volume's pages (expansion P16; F-48: the press, the rehearsal, the
  * fireworks; AC-1).
  *
- * mb2.press — the first print that holds (`mp.sobe_printed`, src/content/mp/20_scenes_print.js).
- *   sheet   close: the fresh sheet lifted into the light of the press room's paper window, Sōbē's hands at its top
- *           corners; the brush marks stay sharp (beside it on the drying line, an older print gone faint)
- *   sobe    Sōbē at the window with the press room behind him (the rack of blocks, the press bed, the ink pot): he
- *           breathes out; on Ren's branch he holds out a lantern's name-slip block
+ * mb2.press — the first print that holds (`mp.sobe_printed`, src/content/mp/20_scenes_print.js), in Sōbē's workshop
+ *   (mp.workshop: printed next door in the press room, brought to him here).
+ *   sheet   close: the fresh sheet lifted into the light of the workshop's paper window, Sōbē's hands at its top
+ *           corners; the brush marks stay sharp (beside it, pinned to the wall, older prints, one gone faint)
+ *   sobe    Sōbē at the window with his workshop behind him (the rack of blocks, his cutting desk with the ink pot
+ *           and a block face-up): he breathes out; on Ren's branch he holds out a lantern's name-slip block
  * mb2.fireworks — the Opening of the River (`mp.fireworks`, src/content/mp/22_scenes_fest.js), in yukata.
  *   bloom   from the foot of the Curtain Bridge across the river: the far bank's storehouses and the bridges going off
  *           with their lanterns and their crowds; the first flower climbs and opens, its reflection broken on the
@@ -31,7 +32,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const WINDOW = { mul: [0.92, 0.9, 0.88], add: [8, 6, 2], rim: { side: 'l', col: '#fff0d0', k: [0.42, 0.2], below: 0.85 } };
   const NIGHT = { mul: [0.8, 0.78, 0.9], add: [6, 4, 16], rim: { side: 't', col: '#ffd8a0', k: [0.45, 0.22] } };
 
-  // ==== mb2.press · the press room, its paper window and the racks of blocks =====================================
+  // ==== mb2.press · Sōbē's workshop, its paper window and the racks of blocks ======================================
   function geomPress(w, h, vb) {
     const S = stage(w, h, vb), narrow = S.lay === 'narrow';
     const wx = Math.round(w * (narrow ? 0.08 : 0.06)), ww = Math.round(w * (narrow ? 0.6 : 0.4)), wy = Math.round(vb * 0.06), wh = Math.round(vb * 0.7);
@@ -54,14 +55,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const rx = wx + ww + s(26), rw = w - rx - s(4), cherry = p.mat('#a8805a', { n: 6, at: 3, step: 0.08 });
       if (rw > s(30)) {
         for (let r = 0; r < 5; r++) {
-          const y = wy + r * s(26);
+          const y = wy + s(30) + r * s(26); // (below the prints pinned on the wall above it)
           L.rect(rx, y + s(22), rw, s(3), timber, 0.6);
           for (let x = rx + s(2); x < rx + rw - s(5); x += s(6) + ((x * 7 + r) % 3)) L.rect(x, y + s(6) + ((x + r) % 4), s(5), s(16) - ((x + r) % 4), cherry, (xx, yy) => clamp(0.55 - (xx - x) / s(5) * 0.3 + ((r + x) % 5 === 0 ? 0.1 : 0), 0.02, 0.999));
         }
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
-      // the window's light in the room: a dithered pool on the floor and the press bed
+      // the window's light in the room: a dithered pool on the floor and the desk
       SP.glow(g, wx + ww / 2, wy + wh, Math.round(ww * 0.7), '255,240,210', 0.35);
       return { cv };
     });
@@ -96,10 +97,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
     draw(c, w, h, t, st) {
       const G = geomPress(w, h, st.vb), { s, wx, ww, wy, wh } = G;
       c.drawImage(roomStatic(G).cv, 0, 0);
-      // the drying line across the top with older prints, one gone faint
+      // older prints pinned to the wall above the rack, one gone faint (a dark pin at each top corner)
       const ly = wy + s(4);
-      c.fillStyle = '#2a2024'; for (let x = 0; x < w; x++) c.fillRect(x, ly + Math.round(Math.sin(x / w * Math.PI) * s(4)), 1, 1);
-      for (let i = 0; i < 4; i++) { const x = Math.round(w * (0.62 + i * 0.1)); if (x > w - s(10)) continue; const a = sheetArt(s(18), s(24), i === 1, 30 + i); c.drawImage(a.cv, x, ly + Math.round(Math.sin(x / w * Math.PI) * s(4)) + 1); }
+      for (let i = 0; i < 4; i++) {
+        const x = Math.round(w * (0.62 + i * 0.1)); if (x > w - s(10)) continue;
+        const a = sheetArt(s(18), s(24), i === 1, 30 + i), y = ly + (i % 2) * s(3);
+        c.drawImage(a.cv, x, y);
+        c.fillStyle = '#2a2024'; c.fillRect(x + 1, y + 1, 1, 1); c.fillRect(x + s(18) - 2, y + 1, 1, 1);
+      }
       // the fresh sheet lifted into the window's light, Sōbē's hands at its top corners
       const k = ease(st.at('lift'));
       const SW = Math.round(clamp(ww * 0.62, s(56), s(120))), SH = Math.round(SW * 1.25);
@@ -121,7 +126,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     draw(c, w, h, t, st) {
       const G = geomPress(w, h, st.vb), { s } = G;
       c.drawImage(roomStatic(G).cv, 0, 0);
-      // the press bed in front of him: a heavy table, the ink pot, a block face-up on it
+      // his cutting desk in front of him: a heavy table, the ink pot, a block face-up on it
       const p = P();
       const BED = Q.small('mb2.bed|' + w + 'x' + h + '|' + st.vb, () => {
         const L = SP.layer(w, h), wood = p.mat('#5a4030', { n: 7, at: 3, step: 0.07 }), ink = p.mat('#1e1820', { n: 4, at: 1 }), cherry = p.mat('#b48a5e', { n: 6, at: 3, step: 0.08 });
