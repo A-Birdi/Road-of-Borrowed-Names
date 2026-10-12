@@ -137,6 +137,10 @@ library, the TimGM6mb sound bank, FFmpeg (libopus, libmp3lame), and the repo's P
 
 A future track is added the same way. Its song id needs no change to any story script.
 
+**Testing scope (Robin's C-88).** Both performances are tested by MT-1's own suite, its unit test, the recordings'
+measurements and the audio suites. The twelve-chapter chain and the full matrix run at the default, Original, and
+are not repeated with Ensemble.
+
 ## Results
 
 See the table in VALIDATION.md (MT-1) and the reports. In summary, from Chromium (Playwright's headless shell) on the

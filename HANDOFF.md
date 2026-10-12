@@ -263,7 +263,8 @@
     Original warm and hands over on the audio clock both ways. Design, results and limits: `docs/MUSIC_PERFORMANCE.md`;
     decision F-145; captures: `docs/music/ensemble/listen.html` (Robin listened, 2026-10-12: "It sounds great, nice job"; not yet heard in the game on a device); the
     rights question (TimGM6mb, GPL-2) is Robin's. Tests: `tests/unit/music_performance.test.mjs`,
-    `tests/e2e/music_performance.mjs`. A new recording: the five steps in that doc, then rebuild.
+    `tests/e2e/music_performance.mjs`; the chain and the full matrix run at Original only, never again with Ensemble
+    (Robin's C-88). A new recording: the five steps in that doc, then rebuild.
     Next: the remaining `staging_chapters` pieces, the chain redone, then P17's closure (speed, the final review set,
     the night sweep), VA-1, P18, and only then the hosted page (its deploy must also copy `assets/music/ensemble/`).
     Also Robin's two light notes: the room's shadow has rounded corners; the lighthouse deck has none. **P02 (foundations), P03 (learning evidence, task families,

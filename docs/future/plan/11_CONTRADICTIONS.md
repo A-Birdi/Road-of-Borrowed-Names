@@ -617,6 +617,18 @@ page's Index.html".
   now one falloff with rounded corners, dropped a little as if lit from above the page; the deck has none.
 - **Status:** implemented provisionally, internally reviewed (AC-1 for the art); Robin's review at completion.
 
+### C-88 · The music performance is not a dimension of the chain or the matrix
+**Decided** (2026-10-12). Robin, on MT-1: "Since this is directly user-facing and not playable content in the
+traditional sense, do not include verbose testing for content with both music settings either on F/ren or full
+matrix, when this is implemented".
+- The twelve-chapter chain (the F/Ren single pass) and the full matrix (P18) run at the default setting, Original,
+  as every new journey starts. Neither is run a second time with Ensemble, and Ensemble is not added to the matrix's
+  profiles × companions.
+- Both performances stay covered where they matter: MT-1's own suite (`tests/e2e/music_performance.mjs`, the
+  register MT-T01…T46, including the two pilots in ordinary play), its unit test, the recordings' measurements
+  (`tools/music/ensemble/verify.mjs`), and the existing audio suites as regressions.
+- **Status:** applied; `tests/e2e/matrix.mjs` says so in its header.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first

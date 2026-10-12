@@ -2,6 +2,8 @@
 // (tests/e2e/pursue.mjs) for every learning profile × companion, a few runs
 // at a time, and prints a table. Usage: node tests/e2e/matrix.mjs [profiles] [comps] [parallel]
 //   e.g. node tests/e2e/matrix.mjs FEIA nao,mio,ren,suzu 3
+// Every run is at the default settings, so the music plays its Original: the music performance (MT-1) is not a
+// dimension here, nor of the F/Ren chain (Robin's C-88); tests/e2e/music_performance.mjs covers both performances.
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
