@@ -4,7 +4,10 @@
 // Before every scene that starts in the world, the guidance is asked where
 // the followed quest's next step is (fresh, from the live state); when that
 // scene moves the quest on, the audit records whether the scene was one the
-// guidance pointed at (a hit), or not (a miss, listed for review).
+// guidance pointed at (a hit), or not (a miss, listed for review). A person
+// who can be asked after others answers through "Have you seen…?" (wb.ask),
+// which runs their own conversation inside it: that conversation is the scene
+// judged (logged "… (in wb.ask)").
 // Usage: node tests/e2e/quest_guide_audit.mjs [profile] [comp]
 // Not part of run.mjs (it takes as long as a whole-game run).
 import fs from 'node:fs';
@@ -50,7 +53,11 @@ await p.evaluate(async (a) => {
         const scenes = new Set();
         for (const t of r.targets) for (const o of t.opts || []) scenes.add(o.scene);
         const way = r.targets.map((t) => t.map + ':' + (t.id || t.p || t.kind));
-        pend = { q, before: s.quests[q].done ? 999 : s.quests[q].stage, how: r.how, scenes, way, map: s.map, id, ms: Math.round(ms) };
+        // talking to someone who can be asked after others runs "Have you seen…?" (wb.ask, src/ui/53w_whereabouts.js)
+        // around their own conversation, which it runs from inside (and which alone can move a quest on): that
+        // conversation is the scene the guidance had to point at
+        const via = id === 'wb.ask' && ctx && ctx.talk ? id : null;
+        pend = { q, before: s.quests[q].done ? 999 : s.quests[q].stage, how: r.how, scenes, way, map: s.map, id: via ? ctx.talk : id, via, ms: Math.round(ms) };
       }
     }
     const pr = orig.call(this, id, ctx);
@@ -59,7 +66,7 @@ await p.evaluate(async (a) => {
       const now = q ? (q.done ? 999 : q.stage) : -1;
       // a quiet (bookkeeping) update: the scene raised the stage only with `!quest … quiet`
       const quiet = (RB.content.scenes[pend.id] ? [pend.id] : []).some((sid) => RB.content.scenes[sid].cmds.some((c) => c.op === 'quest' && c.args[0] === pend.q && c.args.includes('quiet')) && !RB.content.scenes[sid].cmds.some((c) => c.op === 'quest' && c.args[0] === pend.q && !c.args.includes('quiet')));
-      if (now > pend.before) log.push({ q: pend.q, from: pend.before, to: now, scene: pend.id, map: pend.map, how: pend.how, hit: pend.scenes.has(pend.id), quiet, way: pend.way, ms: pend.ms });
+      if (now > pend.before) log.push({ q: pend.q, from: pend.before, to: now, scene: pend.id + (pend.via ? ' (in ' + pend.via + ')' : ''), map: pend.map, how: pend.how, hit: pend.scenes.has(pend.id), quiet, way: pend.way, ms: pend.ms });
       else log.push({ q: pend.q, none: true, ms: pend.ms });
     });
     return pr;
