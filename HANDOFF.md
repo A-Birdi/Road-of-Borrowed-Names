@@ -305,8 +305,15 @@
       casting templates (tools/voice/, docs/future/voice/).
     - No audio yet. All seven configurations are blocked from this environment or unauthorised (untested, not
       inferior). The Google Cloud token stays unused: its purpose and project can't be established.
-    - Next: Robin's answers to `docs/future/voice/VS02_SETUP_REQUEST.md` (keys, budgets, allowed hosts, local jobs).
-      Then smoke → casting screen → matrix for each authorised configuration, and the gallery for listening.
+    - Robin's corrections before the first paid request are done (2026-10-13): proxy-auth mode, the usage ledger
+      with a dollar allowance, per-attempt listening identity, control markup kept apart, separate evidence, the
+      Windows local-engine kit.
+    - **Gemini is the first runnable configuration.** Next: Robin adds the project-specific key as a network
+      secret (`generativelanguage.googleapis.com`, header `x-goog-api-key`) and approves
+      `docs/future/voice/authorizations/gemini-va1-1.json` (allowance, terms).
+    - Then: `node tools/voice/audition.mjs run --config gemini --kind smoke --auth proxy --authorization
+      docs/future/voice/authorizations/gemini-va1-1.json`, then `--kind screen`. The audio and gallery go to
+      Robin, and the ledger is committed. The matrix waits for Robin to listen and lock the candidates.
     - No casting decision and no whole-game synthesis before Robin has listened.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,

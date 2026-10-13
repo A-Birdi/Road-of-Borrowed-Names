@@ -709,6 +709,15 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
       - the gallery (B `voice_gallery`, mock takes);
       - the Qwen local job and the casting templates;
       - the consolidated setup request (docs/future/voice/VS02_SETUP_REQUEST.md).
+  - Robin's corrections before the first paid request (2026-10-13; U `voice_audition` 42/0, U `voice_local_kit` 7/0,
+    B `voice_gallery` 23/0):
+    - proxy or env credential mode;
+    - an append-only usage ledger with a US-dollar allowance at Gemini 3.8 Flash TTS's official prices;
+    - per-attempt, per-audio listening identity;
+    - markup kept apart from the canonical Japanese, with an ElevenLabs model and tag review gate;
+    - separate evidence fields;
+    - Gemini prepared as the first runnable configuration;
+    - the Windows local-engine kit.
   - Open: every configuration is blocked here or awaits Robin's authorisation (untested, not inferior); no audio,
     listening, casting or whole-game synthesis yet. VALIDATION.md "VA-1".
 

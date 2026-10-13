@@ -3,7 +3,8 @@
 // recording at a time and nothing until asked; a role reel stops at the first case without audio and says why; later
 // and sealed lines stay hidden until revealed; filters; blind labels hide which configuration is which; the score sheet
 // totals only fully assessed takes, survives a reload and exports CSV; no page errors, no network requests, no
-// sideways scrolling at 1100 or 400 px. Usage: node tests/e2e/voice_gallery.mjs
+// sideways scrolling at 1100 or 400 px; a first take and its repair are scored and marked listened separately (keyed
+// by attempt and audio hash), and the reel says which it plays. Usage: node tests/e2e/voice_gallery.mjs
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -45,9 +46,10 @@ fs.writeFileSync(castF, JSON.stringify({ configurationId: 'voicevox', pinned: { 
 const run = (args) => new Promise((r) => { const p = spawn(process.execPath, ['tools/voice/audition.mjs', ...args, '--config', 'voicevox', '--cast', castF, '--out', out, '--authorised', 'e2e mock engine', '--engine-url', 'http://127.0.0.1:' + srv.address().port], { cwd: root, stdio: 'ignore' }); p.on('close', r); });
 await run(['run', '--kind', 'smoke']);
 await run(['run', '--kind', 'matrix', '--cases', 'N01,N02,N03,N11,SUZU01,SUZU_K01,NAO03']);
+await run(['repair', '--take', 'N01.d.C01', '--reason', 'e2e: a documented cause', '--cases', 'N01']);
 srv.close();
 const g = writeGallery({ out });
-ok(g.withAudio === 12, 'gallery written with 12 mock takes (' + g.withAudio + ')');
+ok(g.withAudio === 13, 'gallery written with 13 mock takes, a repair among them (' + g.withAudio + ')');
 
 const browser = await launch();
 try {
@@ -75,10 +77,21 @@ try {
       await p.locator('.reelgo[data-role="narrator_female"][data-group="narrator"]').click();
       await p.waitForFunction(() => /Reel stopped|Reel finished/.test(document.querySelector('#now').textContent), null, { timeout: 30000 });
       ok(/^Reel stopped at N04: no audio for VOICEVOX/.test(await p.locator('#now').textContent()), 'the narrator reel plays N01–N03 and stops at N04, saying why');
+      const sel = '[data-role="narrator_female"][data-group="narrator"]';
+      await p.locator('.reelgo' + sel).click();
+      await p.waitForFunction(() => /^Reel 1\//.test(document.querySelector('#now').textContent), null, { timeout: 10000 });
+      const firstTake = await p.locator('#now').textContent();
+      await p.keyboard.press('Escape');
+      await p.selectOption('.reeltake' + sel, 'repair');
+      await p.locator('.reelgo' + sel).click();
+      await p.waitForFunction(() => /^Reel 1\//.test(document.querySelector('#now').textContent), null, { timeout: 10000 });
+      const repairTake = await p.locator('#now').textContent();
+      await p.keyboard.press('Escape');
+      ok(/N01 · first take/.test(firstTake) && /N01 · repair/.test(repairTake), 'the reel names the attempt it plays: first takes, or repairs where made (' + firstTake + ' / ' + repairTake + ')');
       await p.locator('#case-N11 button.reveal').click();
       ok(await p.locator('#case-N11 .jp').count() === 1 && await p.locator('#case-N11 button.play').count() === 2, 'revealing the sealed N11 shows its text and takes');
       await p.selectOption('#filter', 'audio');
-      ok(await p.locator('.cell').count() === 12, 'the "with audio" filter leaves the 12 takes');
+      ok(await p.locator('.cell').count() === 13, 'the "with audio" filter leaves the 13 takes');
       await p.selectOption('#filter', 'all');
       await p.locator('#blind').check();
       const blind = await p.locator('#configs').textContent() + await p.locator('#sections').textContent();
@@ -95,9 +108,19 @@ try {
       await d.locator('select').nth(4).selectOption('3');
       await p.locator('#copy').click();
       const full = (await p.locator('#csvOut').inputValue()).split('\n')[1].split(',');
-      ok(partial[12] === '' && full[12] === '71.3' && full[4] === 'Test listener' && full[5] === 'yes', 'no total until all five are scored; then 71.3; reviewer and listened exported');
+      ok(partial[14] === '' && full[14] === '71.3' && full[6] === 'Test listener' && full[7] === 'yes' && full[4] === '1' && /^[0-9a-f]{64}$/.test(full[5]), 'no total until all five are scored; then 71.3; reviewer, listened, the attempt and its audio hash exported');
+      // the repair of N01 is its own take: marking the first take listened leaves the repair unheard
+      const n01 = p.locator('#case-N01 .cell');
+      const states = await n01.evaluateAll((cells) => cells.map((c) => [c.querySelector('.who').textContent, (c.querySelector('[data-heard]') || {}).textContent || '']));
+      await d.locator('summary').click();
+      const n01d = p.locator('#case-N01 details.score').first();
+      await n01d.locator('summary').click();
+      await n01d.locator('input[data-f="listened"]').check();
+      const after = await n01.evaluateAll((cells) => cells.map((c) => [c.querySelector('.who').textContent, (c.querySelector('[data-heard]') || {}).textContent || '']));
+      const firstRow = after.find((x) => /directed$/.test(x[0])), repairRow = after.find((x) => /repair/.test(x[0]));
+      ok(firstRow && repairRow && firstRow[1] === 'Listened' && repairRow[1] === 'Not listened' && states.length === after.length, 'marking N01\'s first take listened leaves its repair "Not listened"');
       await p.reload();
-      ok(await p.locator('[data-heard].ok').count() === 1 && await p.locator('#reviewer').inputValue() === 'Test listener', 'the score sheet survives a reload');
+      ok(await p.locator('[data-heard].ok').count() === 2 && await p.locator('#reviewer').inputValue() === 'Test listener', 'the score sheet survives a reload');
     }
     ok(!errors.length, name + ': no page errors ' + errors.join(' | '));
     ok(!requests.length, name + ': no network requests ' + requests.join(' '));

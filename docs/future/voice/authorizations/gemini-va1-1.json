@@ -1,0 +1,64 @@
+{
+ "schemaVersion": "rbn-voice-authorization-1",
+ "id": "gemini-va1-1",
+ "configurationId": "gemini",
+ "status": "awaiting Robin: not approved, nothing may be sent",
+ "approvedBy": null,
+ "approvedOn": null,
+ "approval": null,
+ "kinds": [
+  "smoke",
+  "screen"
+ ],
+ "allowanceUsd": null,
+ "model": "gemini-3.8-flash-tts",
+ "credential": {
+  "mode": "proxy",
+  "host": "generativelanguage.googleapis.com",
+  "header": "x-goog-api-key",
+  "note": "a project-specific Gemini API key that Robin adds as a network secret for that host; the proxy injects the header, the runner never sees, prints or stores it. The environment's unidentified Google Cloud token stays unused."
+ },
+ "pricing": {
+  "unit": "tokens",
+  "inputUsdPerMTok": 0.5,
+  "outputAudioUsdPerMTok": 9.0,
+  "validUntil": "2026-12-31",
+  "audioTokensPerSecondBudget": 32,
+  "source": "Gemini Developer API pricing (https://ai.google.dev/gemini-api/docs/pricing) and Google Cloud Text-to-Speech pricing (https://cloud.google.com/text-to-speech/pricing): gemini-3.8-flash-tts, standard tier, $0.50 per 1M text input tokens, $9.00 per 1M audio output tokens until 2026-12-31 and $18.00 from 2027-01-01; audio billed at 25 tokens per second. Read through a web search's quotation of those official pages on 2026-10-13; the pages themselves cannot be opened from this environment.",
+  "retrievedOn": "2026-10-13",
+  "confirmedBy": null,
+  "budgetingNote": "32 audio tokens per second is budgeted, above the published 25, because developers report about 32 in practice (discuss.ai.google.dev thread 'How many tokens are actually used per second for Flash 3.8 TTS?'); each request is also capped with max_output_tokens. The ledger records the usage the API reports."
+ },
+ "termsReviewed": null,
+ "estimates": {
+  "method": "tools/voice/audition.mjs planning with this file's prices (2026-10-13). bound = every request at its max_output_tokens cap (the slowest plausible reading x 32 tokens/s x 1.25) plus its input; typical = about 7 morae a second at 32 audio tokens/s. Before retries, which the ledger counts as they happen.",
+  "smoke": {
+   "takes": 2,
+   "characters": 68,
+   "typicalUsd": 0.0041,
+   "boundUsd": 0.0092
+  },
+  "screen": {
+   "takes": 90,
+   "roles": 19,
+   "candidates": "3 for each main role and the two player voices, 2 for each NPC profile",
+   "characters": 2812,
+   "typicalUsd": 0.1784,
+   "boundUsd": 0.395
+  },
+  "laterNotCovered": {
+   "matrix": {
+    "takes": 97,
+    "typicalUsd": 0.2061,
+    "boundUsd": 0.4566
+   },
+   "repairsAtMost": {
+    "takes": 83,
+    "typicalUsd": 0.1776,
+    "boundUsd": 0.3929
+   },
+   "note": "needs a further approval after Robin has listened and the candidates are locked"
+  },
+  "suggestedAllowanceUsd": 1.0
+ }
+}

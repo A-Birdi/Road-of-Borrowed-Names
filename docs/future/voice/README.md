@@ -22,7 +22,9 @@ decision and the lead's reconciliations with the standing rules are in
   generated.
 - [inventory/provider_inventory.json](inventory/provider_inventory.json): each configuration's recorded access (all
   `blocked_access` from the development environment on 2026-10-12: untested, not inferior).
-- `casting/<config>.json`: uncast templates (19 roles each; candidates, rights and selection to fill).
+- `casting/<config>.json`: casting files (19 roles each). Gemini's list unheard candidates; the others are templates.
+- `authorizations/<id>.json`: what a paid run may spend, approved by Robin (Gemini's awaits approval).
+- `usage/<id>.jsonl`: each authorization's append-only usage ledger.
 - The tooling in `tools/voice/`:
 
   | Tool | Purpose |
@@ -31,6 +33,8 @@ decision and the lead's reconciliations with the standing rules are in
   | `audition.mjs` | The gated runner. |
   | `audio_check.mjs` | Measurement only. |
   | `gallery.mjs` | Writes `review.html`. |
+  | `ledger.mjs` | The append-only usage ledger and the dollar allowance. |
+  | `pack_local_kit.mjs`, `windows/` | The Windows kit for the local engines. |
   | `qwen_local_job.py` | The Qwen job for a GPU machine. |
   | `fullgame_count.mjs` | The whole-game planning count. |
 

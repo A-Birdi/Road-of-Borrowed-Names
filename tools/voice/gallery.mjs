@@ -32,11 +32,28 @@ export function galleryData(opts = {}) {
     spoiler: c.spoilerLevel, kind: c.sourceKind, situation: c.speechLine.context.situation, listener: c.speechLine.context.listener, identity: c.speakerIdentity, anchor: c.screeningCandidate,
   }));
   const rel = (p) => (p ? path.relative(dir, path.join(dir, p)).split(path.sep).join('/') : null);
-  const takes = results.map((r) => ({
-    config: r.configurationId, take: r.takeId, case: r.caseId, takeKind: r.takeKind, kind: r.kind, voice: r.voiceId, attempt: r.attempt, status: r.status, blocked: r.blockedReason,
-    audio: rel(r.audioOriginalPath), seconds: r.actualDurationSeconds, tech: r.technicalCheck && { status: r.technicalCheck.status, flags: r.technicalCheck.flags || [], failures: r.technicalCheck.failures || [], readings: r.technicalCheck.readings || [] },
-    direction: r.directionChannel, reading: r.readingChannel, notApplied: r.readingsNotApplied || [], unsupported: r.unsupportedControls || [], listened: r.listeningReview, repairOf: r.repairOf, repairReason: r.repairReason,
-  }));
+  // results are append-only: per take attempt, the latest record with audio (else the latest record) is shown, with
+  // how many tries it took; a first take and its repair are two attempts, each with its own audio hash and its own key
+  // for scores, the listened mark and a pick, so a repair never inherits the first take's approval
+  const byAttempt = new Map();
+  for (const r of results) {
+    const k = r.configurationId + '|' + r.takeId + '|' + r.attempt;
+    const list = byAttempt.get(k) || [];
+    list.push(r);
+    byAttempt.set(k, list);
+  }
+  const takes = [...byAttempt.values()].map((list) => {
+    const r = list.filter((x) => x.audioOriginalPath).pop() || list[list.length - 1];
+    return {
+      config: r.configurationId, take: r.takeId, case: r.caseId, takeKind: r.takeKind, kind: r.kind, voice: r.voiceId, attempt: r.attempt, status: r.status, blocked: r.blockedReason,
+      key: r.configurationId + '|' + r.takeId + '|a' + r.attempt + '|' + (r.audioSha256 ? r.audioSha256.slice(0, 16) : 'no-audio'), sha: r.audioSha256 || null,
+      tries: list.length, model: r.modelId || null, usd: r.usage && r.usage.countedUsd != null ? r.usage.countedUsd : null,
+      audio: rel(r.audioOriginalPath), seconds: r.actualDurationSeconds,
+      validation: r.requestValidation ? r.requestValidation.status : 'not_run', acceptance: r.providerAcceptance ? r.providerAcceptance.status : 'not_sent',
+      tech: r.technicalCheck && { status: r.technicalCheck.status, flags: r.technicalCheck.flags || [], failures: r.technicalCheck.failures || [], readings: r.technicalCheck.readings || [] },
+      direction: r.directionChannel, reading: r.readingChannel, notApplied: r.readingsNotApplied || [], unsupported: r.unsupportedControls || [], listened: r.listeningReview, repairOf: r.repairOf, repairReason: r.repairReason,
+    };
+  });
   const screen = [...new Set(corpus.cases.map((c) => c.castingProfile))].map((r) => ({ role: r, anchors: anchorsOf(corpus, r).map((c) => c.caseId) }));
   return { dir, data: { revision, built: new Date().toISOString(), corpusStatus: corpus.status, accounting: corpus.accounting, configs, cases, takes, screen } };
 }
@@ -147,22 +164,25 @@ function cfgName(id){return $('#blind').checked?cfgBy[id].blind:cfgBy[id].label;
 function stateChips(t,cfg){var h='';
   var access=t?(/^blocked/.test(t.status)?['bad','Blocked: '+(t.status==='blocked_rights'?'rights':'access')]:['ok','Access']):(cfg.availability==='available'?['off','Not run']:['bad','Blocked: access']);
   h+='<span class="st '+access[0]+'">'+access[1]+'</span>';
-  var gen=t&&t.audio?['ok','Generated']:['off','Not generated'];h+='<span class="st '+gen[0]+'">'+gen[1]+'</span>';
-  var ts=t&&t.tech?t.tech.status:'not_checked';var tc={passed:['ok','Technical check passed'],flagged:['warn','Technical check flagged'],failed:['bad','Technical check failed'],not_checked:['off','Technical check not run']}[ts]||['off',ts];
-  h+='<span class="st '+tc[0]+'">'+tc[1]+'</span>';
-  var key=t?cfg.id+'|'+t.take:null, sc=key?scores[key]:null;
-  var heard=(t&&t.listened&&t.listened.status!=='not_listened')||(sc&&sc.listened);h+='<span class="st '+(heard?'ok':'off')+'"'+(key?' data-heard="'+esc(key)+'"':'')+'>'+(heard?'Listened':'Not listened')+'</span>';
+  // four kinds of evidence, never merged: the request checked, the provider's answer, measurements, a person listening
+  var rv=t?({passed:['ok','Request valid'],failed:['bad','Request invalid']}[t.validation]||['off','Request not checked']):['off','Request not built'];h+='<span class="st '+rv[0]+'">'+rv[1]+'</span>';
+  var pa=t?({accepted:['ok','Provider accepted'],rejected:['bad','Provider rejected'],no_audio:['bad','No audio returned'],transport_error:['bad','Transport error'],not_sent:['off','Not sent']}[t.acceptance]||['off',t.acceptance]):['off','Not sent'];h+='<span class="st '+pa[0]+'">'+pa[1]+'</span>';
+  var ts=t&&t.tech?t.tech.status:'not_checked';var tc={no_anomaly_found:['ok','Measured: no anomaly'],anomaly_flagged:['warn','Measured: anomaly flagged'],unusable:['bad','Measured: unusable'],not_checked:['off','Not measured']}[ts]||['off',ts];
+  h+='<span class="st '+tc[0]+'" title="Measurements can flag anomalies; they cannot show the words are right">'+tc[1]+'</span>';
+  h+='<span class="st off" title="No speech recogniser: the words are checked only by listening">Words not checked</span>';
+  var key=t&&t.audio?t.key:null, sc=key?scores[key]:null;
+  var heard=(t&&t.audio&&t.listened&&t.listened.status!=='not_listened')||(sc&&sc.listened);h+='<span class="st '+(heard?'ok':'off')+'"'+(key?' data-heard="'+esc(key)+'"':'')+'>'+(heard?'Listened':'Not listened')+'</span>';
   return '<div class="states">'+h+'</div>';}
 function cellHtml(c,cfg,t,label){var h='<div class="who">'+esc(cfgName(cfg.id))+(label?' · '+esc(label):'')+'</div><div class="what">'+stateChips(t,cfg);
   if(t&&t.audio){h+='<button class="play" data-src="'+esc(t.audio)+'" data-label="'+esc(c.id+' · '+(label||'')+' · ')+'" data-cfg="'+cfg.id+'">▶ Play'+(t.seconds?' ('+t.seconds.toFixed(1)+' s)':'')+'</button> ';}
   var blind=$('#blind').checked;
   if(t&&t.blocked)h+='<div class="note">'+(blind?'(reason hidden in blind mode)':esc(t.blocked))+'</div>';else if(!t)h+='<div class="note">'+(blind?'Not generated.':esc(cfg.reason||'Not generated.'))+'</div>';
-  if(t&&t.audio&&!$('#blind').checked){h+='<div class="note">Direction channel: '+esc(t.direction||'—')+(t.reading?' · Readings: '+esc(t.reading):'')+(t.unsupported&&t.unsupported.length?' · Not supported: '+esc(t.unsupported.join('; ')):'')+(t.repairOf?' · Repair of '+esc(t.repairOf)+': '+esc(t.repairReason):'')+'</div>';}
+  if(t&&t.audio&&!$('#blind').checked){h+='<div class="note">Direction channel: '+esc(t.direction||'—')+(t.reading?' · Readings: '+esc(t.reading):'')+(t.unsupported&&t.unsupported.length?' · Not supported: '+esc(t.unsupported.join('; ')):'')+(t.repairOf?' · Repair of '+esc(t.repairOf)+': '+esc(t.repairReason):'')+' · Attempt '+t.attempt+(t.tries>1?' ('+t.tries+' tries)':'')+' · audio '+esc((t.sha||'').slice(0,12))+(t.model?' · '+esc(t.model):'')+(t.usd!=null?' · US$'+t.usd.toFixed(5):'')+'</div>';}
   if(t&&t.tech&&(t.tech.flags.length||t.tech.failures.length))h+='<ul class="flags">'+t.tech.failures.concat(t.tech.flags).map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>';
   if(t&&t.audio)h+=scoreHtml(c,cfg,t);
   return h+'</div>';}
-function scoreHtml(c,cfg,t){var key=cfg.id+'|'+t.take,s=scores[key]||{};var sel=function(n){var o='<option value="">—</option>';for(var i=1;i<=5;i++)o+='<option'+(String(s[n])===String(i)?' selected':'')+'>'+i+'</option>';return '<select data-k="'+key+'" data-f="'+n+'">'+o+'</select>';};
-  return '<details class="score"><summary>Score this take</summary><div class="grid5">'+
+function scoreHtml(c,cfg,t){var key=t.key,s=scores[key]||{};var sel=function(n){var o='<option value="">—</option>';for(var i=1;i<=5;i++)o+='<option'+(String(s[n])===String(i)?' selected':'')+'>'+i+'</option>';return '<select data-k="'+key+'" data-f="'+n+'">'+o+'</select>';};
+  return '<details class="score"><summary>Score this take (attempt '+t.attempt+(t.attempt>1?', the repair':'')+'; audio '+esc((t.sha||'').slice(0,8))+')</summary><div class="grid5">'+
   '<label>Pronunciation (30%)'+sel('pronunciation')+'</label><label>Phrasing (25%)'+sel('prosody')+'</label><label>Voice and role fit (20%)'+sel('identityFit')+'</label><label>Delivery (15%)'+sel('delivery')+'</label><label>Cleanliness (10%)'+sel('cleanliness')+'</label>'+
   '<label><span><input type="checkbox" data-k="'+key+'" data-f="listened"'+(s.listened?' checked':'')+'> I listened</span></label><label><span><input type="checkbox" data-k="'+key+'" data-f="hard"'+(s.hard?' checked':'')+'> Hard failure</span></label><label><span><input type="checkbox" data-k="'+key+'" data-f="pick"'+(s.pick?' checked':'')+'> Robin\'s pick</span></label></div>'+
   '<textarea data-k="'+key+'" data-f="notes" placeholder="Notes (what you heard)">'+esc(s.notes||'')+'</textarea></details>';}
@@ -177,7 +197,7 @@ function caseCard(c,opt){var card=el('section',{class:'card',tabindex:'-1',id:'c
     if(!ts.length){if(f==='audio'||f==='flagged')return;h+='<div class="cell">'+cellHtml(c,cfg,null,kinds.map(function(k){return k.replace('_',' ');}).join(' + '))+'</div>';return;}
     kinds.forEach(function(k){var list=k?ts.filter(function(t){return t.takeKind===k;}):ts;if(!list.length)list=[null];
       list.forEach(function(t){
-        if(f==='audio'&&!(t&&t.audio))return;if(f==='incomplete'&&t&&t.audio&&t.tech&&t.tech.status==='passed')return;if(f==='flagged'&&!(t&&t.tech&&(t.tech.status==='flagged'||t.tech.status==='failed')))return;
+        if(f==='audio'&&!(t&&t.audio))return;if(f==='incomplete'&&t&&t.audio&&t.tech&&t.tech.status==='no_anomaly_found')return;if(f==='flagged'&&!(t&&t.tech&&(t.tech.status==='anomaly_flagged'||t.tech.status==='unusable')))return;
         var label=(t?t.voice+' · ':'')+(k==='neutral_control'?'neutral control':k==='directed'?'directed':(t?t.take.split('.')[2]:''))+(t&&t.attempt>1?' · repair':'');
         h+='<div class="cell">'+cellHtml(c,cfg,t,label)+'</div>';});});});
   card.innerHTML=h+'</div>';return card;}
@@ -190,21 +210,21 @@ function render(){var S=$('#sections');S.innerHTML='';
   Object.keys(groups).forEach(function(g){if(!GROUPS.some(function(x){return x[0]===g;}))GROUPS.push([g,g]);});
   GROUPS.forEach(function(G){var list=groups[G[0]];if(!list)return;S.appendChild(el('h2',{id:'h-'+G[0]},esc(G[1])));
     var roles=[];list.forEach(function(c){if(roles.indexOf(c.role)<0)roles.push(c.role);});
-    roles.forEach(function(r){var bar=el('div',{class:'reel'});var rg=esc(r)+'" data-group="'+esc(G[0]);bar.innerHTML='<strong>'+esc(r.replace('_',' '))+'</strong> <label>Reel: <select class="reelcfg" data-role="'+rg+'">'+D.configs.map(function(c){return '<option value="'+c.id+'">'+esc(cfgName(c.id))+'</option>';}).join('')+'</select></label> <button class="reelgo" data-role="'+rg+'">▶ Play reel</button>';S.appendChild(bar);
+    roles.forEach(function(r){var bar=el('div',{class:'reel'});var rg=esc(r)+'" data-group="'+esc(G[0]);bar.innerHTML='<strong>'+esc(r.replace('_',' '))+'</strong> <label>Reel: <select class="reelcfg" data-role="'+rg+'">'+D.configs.map(function(c){return '<option value="'+c.id+'">'+esc(cfgName(c.id))+'</option>';}).join('')+'</select></label> <label>Takes: <select class="reeltake" data-role="'+rg+'"><option value="first">first takes</option><option value="repair">repairs where made</option></select></label> <button class="reelgo" data-role="'+rg+'">▶ Play reel</button>';S.appendChild(bar);
       list.filter(function(c){return c.role===r;}).forEach(function(c){S.appendChild(caseCard(c,{kind:'matrix'}));});});});
   S.appendChild(el('h2',{id:'h-screen'},'Casting screen (up to three voices per role, two anchor lines)'));
   D.screen.forEach(function(s){var p=el('div',{class:'card'});var h='<div class="head"><span class="id">'+esc(s.role)+'</span><span class="note">anchors '+esc(s.anchors.join(', '))+'</span></div>';
     D.configs.forEach(function(cfg){var cand=(cfg.cast[s.role]||{}).candidates||[];var ts=D.takes.filter(function(t){return t.config===cfg.id&&t.kind==='screen'&&t.take.indexOf('screen.'+s.role+'.')===0;});
       if(!cand.length&&!ts.length){if($('#filter').value==='audio'||$('#filter').value==='flagged')return;h+='<div class="cell"><div class="who">'+esc(cfgName(cfg.id))+'</div><div class="what">'+stateChips(null,cfg)+'<div class="note">No candidates listed yet'+(cfg.reason&&!$('#blind').checked?' · '+esc(cfg.reason):'')+'</div></div></div>';return;}
       cand.forEach(function(v){s.anchors.forEach(function(a){var t=ts.find(function(x){return x.take==='screen.'+s.role+'.'+v.label+'.'+a;});var c=D.cases.find(function(x){return x.id===a;});
-        var f=$('#filter').value;if(f==='audio'&&!(t&&t.audio))return;if(f==='flagged'&&!(t&&t.tech&&(t.tech.status==='flagged'||t.tech.status==='failed')))return;if(f==='incomplete'&&t&&t.audio&&t.tech&&t.tech.status==='passed')return;
+        var f=$('#filter').value;if(f==='audio'&&!(t&&t.audio))return;if(f==='flagged'&&!(t&&t.tech&&(t.tech.status==='anomaly_flagged'||t.tech.status==='unusable')))return;if(f==='incomplete'&&t&&t.audio&&t.tech&&t.tech.status==='no_anomaly_found')return;
         if((c.spoiler==='later'||c.spoiler==='sealed')&&!revealed[c.id]){h+='<div class="cell"><div class="who">'+esc(cfgName(cfg.id))+' · '+esc(v.label+' · '+a)+'</div><div class="what"><div class="note">A '+esc(c.spoiler)+' line: reveal '+esc(a)+' in its section to play it here.</div></div></div>';return;}
         h+='<div class="cell">'+cellHtml(c,cfg,t||null,v.label+' · '+a)+'</div>';});});});
     p.innerHTML=h;$('#sections').appendChild(p);});
   // the summary
-  var gen=D.takes.filter(function(t){return t.audio;}).length,passed=D.takes.filter(function(t){return t.tech&&t.tech.status==='passed';}).length,flag=D.takes.filter(function(t){return t.tech&&(t.tech.status==='flagged'||t.tech.status==='failed');}).length;
+  var gen=D.takes.filter(function(t){return t.audio;}).length,passed=D.takes.filter(function(t){return t.tech&&t.tech.status==='no_anomaly_found';}).length,flag=D.takes.filter(function(t){return t.tech&&(t.tech.status==='anomaly_flagged'||t.tech.status==='unusable');}).length;
   var heard=Object.keys(scores).filter(function(k){return scores[k].listened;}).length;
-  $('#summary').innerHTML=[[D.cases.length,'cases'],[D.accounting.plannedTakesPerConfiguration*D.configs.length,'planned takes (7 configurations)'],[gen,'takes generated'],[passed,'technical checks passed'],[flag,'flagged or failed'],[heard,'marked listened here']].map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');
+  $('#summary').innerHTML=[[D.cases.length,'cases'],[D.accounting.plannedTakesPerConfiguration*D.configs.length,'planned takes (7 configurations)'],[gen,'takes generated'],[passed,'measured without anomaly (not a word check)'],[flag,'anomaly flagged or unusable'],[heard,'marked listened here']].map(function(x){return '<div><b>'+x[0]+'</b><span>'+x[1]+'</span></div>';}).join('');
   var blind=$('#blind').checked;
   $('#configs').innerHTML=D.configs.map(function(c){var made=D.takes.filter(function(t){return t.config===c.id&&t.audio;}).length;return '<li><strong>'+esc(cfgName(c.id))+'</strong> · '+made+' takes with audio'+(blind?'':' · '+esc(c.model||'model not pinned yet')+' · access from the development environment: '+esc(c.availability.replace(/_/g,' '))+(c.reason?'<div class="note">'+esc(c.reason)+'</div>':''))+'</li>';}).join('')+(blind?'<li class="note">Blind mode: configurations are lettered and their details hidden until you turn it off.</li>':'');}
 // one recording at a time; nothing plays until the listener acts
@@ -216,13 +236,15 @@ audio.addEventListener('ended',function(){if(reel){reel.i++;nextReel();}else $('
 audio.addEventListener('error',function(){$('#now').textContent='This recording could not be played (missing or unsupported file).';reel=null;});
 function nextReel(){if(!reel)return;if(reel.i>=reel.items.length){$('#now').textContent='Reel finished ('+reel.items.length+' takes).';reel=null;return;}
   var it=reel.items[reel.i];if(!it.t||!it.t.audio){var why=$('#blind').checked?'':(it.t&&it.t.blocked?' ('+it.t.blocked+')':(cfgBy[reel.cfg].reason?' ('+cfgBy[reel.cfg].reason+')':''));$('#now').textContent='Reel stopped at '+it.c.id+': no audio for '+cfgName(reel.cfg)+why+'.';reel=null;return;}
-  last=null;audio.src=it.t.audio;$('#now').textContent='Reel '+(reel.i+1)+'/'+reel.items.length+': '+it.c.id+' · '+cfgName(reel.cfg);var p=audio.play();if(p&&p.catch)p.catch(function(){$('#now').textContent='The browser did not start playback; press the reel again.';reel=null;});}
+  last=null;audio.src=it.t.audio;$('#now').textContent='Reel '+(reel.i+1)+'/'+reel.items.length+': '+it.c.id+' · '+(it.t.attempt>1?'repair':'first take')+' · '+cfgName(reel.cfg);var p=audio.play();if(p&&p.catch)p.catch(function(){$('#now').textContent='The browser did not start playback; press the reel again.';reel=null;});}
 document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
   if(b.classList.contains('play'))play(b);
   else if(b.classList.contains('reveal')){revealed[b.getAttribute('data-case')]=1;var id=b.getAttribute('data-case');render();var c=document.getElementById('case-'+id);if(c)c.focus();}
-  else if(b.classList.contains('reelgo')){var r=b.getAttribute('data-role'),g=b.getAttribute('data-group'),cfg=$('.reelcfg[data-role="'+r+'"][data-group="'+g+'"]').value;var items=[];
-    D.cases.filter(function(c){return c.role===r&&c.group===g&&!((c.spoiler==='later'||c.spoiler==='sealed')&&!revealed[c.id]);}).forEach(function(c){var t=D.takes.find(function(x){return x.config===cfg&&x.case===c.id&&x.takeKind==='directed'&&x.kind!=='screen'&&x.kind!=='smoke';});items.push({c:c,t:t});});
-    stopAll();reel={items:items,i:0,cfg:cfg};nextReel();}
+  else if(b.classList.contains('reelgo')){var r=b.getAttribute('data-role'),g=b.getAttribute('data-group'),sel='[data-role="'+r+'"][data-group="'+g+'"]',cfg=$('.reelcfg'+sel).value,which=$('.reeltake'+sel).value;var items=[];
+    // the reel names which attempt it plays: first takes only, or each case's repair where one was made
+    D.cases.filter(function(c){return c.role===r&&c.group===g&&!((c.spoiler==='later'||c.spoiler==='sealed')&&!revealed[c.id]);}).forEach(function(c){var mine=D.takes.filter(function(x){return x.config===cfg&&x.case===c.id&&x.takeKind==='directed'&&x.kind!=='screen'&&x.kind!=='smoke';});
+      var first=mine.find(function(x){return x.attempt===1;}),rep=mine.find(function(x){return x.attempt===2&&x.audio;});items.push({c:c,t:which==='repair'&&rep?rep:first});});
+    stopAll();reel={items:items,i:0,cfg:cfg,which:which};nextReel();}
   else if(b.id==='stop')stopAll();else if(b.id==='replay'){if(last)play(last);}
   else if(b.id==='next'||b.id==='prev')move(b.id==='next'?1:-1);
   else if(b.id==='export'||b.id==='copy')exportCsv(b.id==='copy');});
@@ -235,16 +257,16 @@ document.addEventListener('input',function(e){if(e.target.tagName==='TEXTAREA'&&
 function heardChanged(k){var on=!!(scores[k]&&scores[k].listened);[].forEach.call(document.querySelectorAll('[data-heard]'),function(e){if(e.getAttribute('data-heard')!==k)return;e.className='st '+(on?'ok':'off');e.textContent=on?'Listened':'Not listened';});
   var tiles=document.querySelectorAll('#summary b');if(tiles.length)tiles[tiles.length-1].textContent=Object.keys(scores).filter(function(x){return scores[x].listened;}).length;}
 function total(s){var dims=Object.keys(WEIGHTS);if(dims.some(function(d){return !s[d];}))return '';return (dims.reduce(function(n,d){return n+WEIGHTS[d]*(+s[d]-1)/4;},0)*100).toFixed(1);}
-function exportCsv(copy){var head='caseId,configurationId,takeKind,takeId,reviewer,listened,japanese_review_level,pronunciation_1to5,prosody_1to5,identity_fit_1to5,delivery_1to5,cleanliness_1to5,weighted_total,hard_failure,notes,robin_pick';
+function exportCsv(copy){var head='caseId,configurationId,takeKind,takeId,attempt,audioSha256,reviewer,listened,japanese_review_level,pronunciation_1to5,prosody_1to5,identity_fit_1to5,delivery_1to5,cleanliness_1to5,weighted_total,hard_failure,notes,robin_pick';
   var q=function(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-  var rows=Object.keys(scores).map(function(k){var s=scores[k],cfg=k.split('|')[0],take=k.split('|').slice(1).join('|'),t=D.takes.find(function(x){return x.config===cfg&&x.take===take;})||{};
-    return [t.case,cfg,t.takeKind,take,meta.reviewer||'',s.listened?'yes':'no',meta.level||'unassessed',s.pronunciation||'',s.prosody||'',s.identityFit||'',s.delivery||'',s.cleanliness||'',total(s),s.hard?'yes':'',s.notes||'',s.pick?'yes':''].map(q).join(',');});
+  var rows=Object.keys(scores).map(function(k){var s=scores[k],t=D.takes.find(function(x){return x.key===k;})||{},parts=k.split('|');
+    return [t.case,parts[0],t.takeKind,parts[1],t.attempt,t.sha||'',meta.reviewer||'',s.listened?'yes':'no',meta.level||'unassessed',s.pronunciation||'',s.prosody||'',s.identityFit||'',s.delivery||'',s.cleanliness||'',total(s),s.hard?'yes':'',s.notes||'',s.pick?'yes':''].map(q).join(',');});
   var csv=head+'\n'+rows.join('\n')+'\n';var ta=$('#csvOut');ta.value=csv;ta.classList.remove('hidden');
   if(copy){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(csv).then(function(){$('#scoreNote').textContent='Copied.';},function(){ta.select();$('#scoreNote').textContent='Select the text below and copy it.';});else{ta.select();}return;}
   try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='scores_'+D.revision+'.csv';document.body.appendChild(a);a.click();a.remove();$('#scoreNote').textContent='Saved (or copy from the box below).';}catch(e){ta.select();$('#scoreNote').textContent='Copy from the box below.';}}
 $('#reviewer').value=meta.reviewer||'';$('#level').value=meta.level||'unassessed';
 $('#reviewer').addEventListener('input',function(){meta.reviewer=this.value;save();});$('#level').addEventListener('change',function(){meta.level=this.value;save();});
-$('#lede').textContent='Corpus '+D.revision+' ('+D.corpusStatus.replace(/_/g,' ')+'), built '+D.built.slice(0,16).replace('T',' ')+' UTC. Each case shows the exact Japanese, its meaning, the intended delivery and every configuration’s cell in its real state. Generated, technically checked and listened are separate: a technical check measures the file and does not hear it. Comparison labels C01/C02 are candidate voices, not the player’s Voice A/B.';
+$('#lede').textContent='Corpus '+D.revision+' ('+D.corpusStatus.replace(/_/g,' ')+'), built '+D.built.slice(0,16).replace('T',' ')+' UTC. Each case shows the exact Japanese, its meaning, the intended delivery and every configuration’s cell in its real state. Generated, technically checked and listened are separate: a technical check measures the file and does not hear it. Comparison labels C01/C02 are candidate voices, not the player’s Voice A/B. Scores, the listened mark and picks belong to one attempt and its audio: a repair starts unscored.';
 render();
 })();
 </script>

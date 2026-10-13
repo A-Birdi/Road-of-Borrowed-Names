@@ -4319,8 +4319,36 @@ docs/future/voice/inventory/provider_inventory.json). Each is untested, not infe
 - the score sheet survives a reload;
 - no page errors, no network requests, no sideways scrolling.
 
+**Robin's corrections before the first paid request (2026-10-13).** Tooling only; the game and its speech system
+untouched.
+
+| Correction | What changed | Evidence |
+| --- | --- | --- |
+| Authentication | `--auth proxy` sends no credential and routes through the environment's proxy, which injects the network secret. `--auth env` reads the variable. Neither writes nor prints a credential. | U `voice_audition`: proxy mode, no key header at a mock endpoint; env mode, the key sent and found in no output, ledger, result or stored request |
+| Cumulative usage | An append-only ledger per authorization: every attempt is written before it is sent and again with its outcome. A US-dollar allowance is checked before each attempt. Reported usage is priced; failed or unfinished attempts count at their bound; only clear refusals and unsent requests count as nothing. | U `voice_audition` (see below) |
+| Gemini pricing | Gemini 3.8 Flash TTS: $0.50 per 1M input tokens, $9.00 per 1M audio output tokens until 2026-12-31 ($18.00 after), 25 tokens/s published, 32 budgeted. From the official pricing pages via a web search; the pages can't be opened here. The authorization stops at its `validUntil` date. | U `voice_audition`: past-date refusal |
+| Listening identity | Gallery scores, the listened mark and picks are keyed by attempt and audio hash. Results are append-only. The reel offers "first takes" or "repairs where made" and names which it plays. | U `voice_audition` (keys); B `voice_gallery` 23/0 (marking a first take listened leaves its repair "Not listened"; the reel names the attempt) |
+| Provider controls | Documented non-spoken markup is stripped before the canonical-Japanese check. ElevenLabs v3 tags are allowed only from a recorded `modelReview`; a model change is recorded; neutral controls carry none. | U `voice_audition` (validation of every request; the tag gate; a forged text fails) |
+| Evidence | Request validation, provider acceptance, measurements (`no_anomaly_found` / `anomaly_flagged` / `unusable`, never "passed"), words (not checked) and listening are separate fields and badges. | U and B as above |
+| Windows kit | `tools/voice/pack_local_kit.mjs` packs the local-engine runner, corpus, casting templates, a PowerShell wrapper and README into a stored zip with a hash manifest. | U `voice_local_kit` 7/0: read back with an independent reader, unpacked outside the repository, planned, smoke-run against a mock engine and gallery built from the kit alone. The PowerShell wrapper is **not run** (no PowerShell here); the README gives the plain `node` commands too. |
+
+**U `voice_audition` (42/0) usage checks:**
+
+- a 503 retried, both tries counted;
+- a take failing all three tries and then rerun: four attempts kept and counted, the failed record kept beside the
+  successful one;
+- a new output folder uses the same ledger, and a run stops before the allowance could be exceeded;
+- a 403 stops the run after one attempt, recorded as not billed;
+- unapproved authorizations, kinds they don't cover, incomplete prices and a character-only price for a
+  token-priced model are refused.
+
+**Gemini prepared:**
+- 19 roles' candidates from Google's voice descriptions, unheard (`docs/future/voice/casting/gemini.json`).
+- The authorization `docs/future/voice/authorizations/gemini-va1-1.json` awaits Robin's approval. Smoke and screen
+  bound: US$0.009 and US$0.40; typical about US$0.18.
+
 **Not done, and not claimed:** any real provider call, any audio, any listening or Japanese review, any casting, any
-Firefox or device check of the gallery.
+Firefox or device check of the gallery, any run of the PowerShell wrapper.
 
 ## LP-1 — the Ledger slow in Firefox (Robin's report, 2026-10-12)
 

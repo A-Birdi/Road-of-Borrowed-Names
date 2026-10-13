@@ -1,6 +1,7 @@
-// VA-1: the technical check on one generated take. It measures; it does not listen. A pass here means the file
-// decodes, is not silent or clipped, does not start or end in long silence, and lasts about as long as the words
-// should take; a flag names what to listen for. It never certifies pronunciation, accent or acting (§12).
+// VA-1: the technical check on one generated take. It measures; it does not listen, and it cannot show that the
+// right words were said. Its outcomes: `unusable` (empty, undecodable or silent), `anomaly_flagged` (clipping, long
+// edge silence, a duration far from what the words need or from the matched take: each names what to listen for) or
+// `no_anomaly_found` (none of those: not a pass, not a transcript check, never pronunciation, accent or acting, §12).
 //  - WAV (PCM 16-bit) is measured from its samples; MP3 by walking its frames (duration only).
 //  - Expected duration comes from the line's morae (its kana with the corpus's readings for the kanji) at 4–11
 //    morae a second, widened for pauses; a much longer take is the sign of an instruction read aloud.
@@ -101,5 +102,5 @@ export function checkTake(buf, mime, c, pair) {
       if (r > 1.8 || r < 0.55) flags.push('duration differs from the matched take by ×' + r.toFixed(2));
     }
   }
-  return { status: fails.length ? 'failed' : flags.length ? 'flagged' : 'passed', method: 'measurement only (decode, level, silence, clipping, duration against morae); not listening', measurements: m, flags, failures: fails };
+  return { status: fails.length ? 'unusable' : flags.length ? 'anomaly_flagged' : 'no_anomaly_found', method: 'measurement only (decode, level, silence, clipping, duration against morae and the matched take): it can flag anomalies, it cannot show the words are right', measurements: m, flags, failures: fails };
 }

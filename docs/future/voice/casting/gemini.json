@@ -1,10 +1,11 @@
 {
  "schemaVersion": "rbn-voice-casting-1",
  "configurationId": "gemini",
- "status": "uncast (TO-CHOOSE at VS02/VS03; nothing here has been heard)",
+ "status": "candidates listed for the smoke check and the casting screen; none heard; nothing selected",
  "pinned": {
   "engineVersion": null,
-  "modelId": "gemini-3.8-flash-tts"
+  "modelId": "gemini-3.8-flash-tts",
+  "route": "gemini_api"
  },
  "howToFill": [
   "1. Pin the exact engine/model above for the whole pass; a different version is a different candidate label.",
@@ -22,117 +23,768 @@
  "roles": {
   "narrator_female": {
    "target": "One adult female storyteller across every tone (§06): not a screen reader, not a new character; an emotion change never replaces her voice.",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Sulafat",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Sulafat: “Warm” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Vindemiatrix",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Vindemiatrix: “Gentle” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Gacrux",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Gacrux: “Mature” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "suzu": {
    "target": "Suzu: a travelling comedian and performer seeking company and a double act, not a would-be celebrity; the same identity for her standard and Kansai lines (§07).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Laomedeia",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Laomedeia: “Upbeat” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Autonoe",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Autonoe: “Bright” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Zephyr",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Zephyr: “Bright” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "nao": {
    "target": "Nao (they/them): cast by character fit, never by a pitch rule attached to pronouns (§07).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Achird",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Achird: “Friendly” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Callirrhoe",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Callirrhoe: “Easy-going” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Umbriel",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Umbriel: “Easy-going” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "mio": {
    "target": "Mio: capable, confident care; not permanently shy (§07).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Kore",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Kore: “Firm” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Despina",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Despina: “Smooth” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Erinome",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Erinome: “Clear” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "ren": {
    "target": "Ren (they/them): cast by character fit, never by a pitch rule attached to pronouns (§07).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Iapetus",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Iapetus: “Clear” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Leda",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Leda: “Youthful” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Schedar",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Schedar: “Even” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "player_a": {
    "target": "The player’s Voice A: a lighter, brighter natural adult voice; a stable casting identity, not a pitch preset, and no rule tying it to sex or pronouns (§03).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Aoede",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Aoede: “Breezy” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Puck",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Puck: “Upbeat” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Zubenelgenubi",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Zubenelgenubi: “Casual” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "player_b": {
    "target": "The player’s Voice B: a lower, warmer natural adult voice; a stable casting identity, not a pitch preset, and no rule tying it to sex or pronouns (§03).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Algieba",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Algieba: “Smooth” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Charon",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Charon: “Informative” in Google’s list; unheard"
+    },
+    {
+     "label": "C03",
+     "voice": {
+      "voiceName": "Achernar",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Achernar: “Soft” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc01": {
    "target": "Child girl; village child (§08 casting target). Bound to: Chiyo: a child (look.size child), a girl (\"her win\", Rokuta of Chiyo), the snow-sculpture contest at Snowbell. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Leda",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Leda: “Youthful” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Zephyr",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Zephyr: “Bright” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc02": {
    "target": "Child boy; village child on an errand (§08 casting target). Bound to: Ao: a child (look.size child; \"the only big child\", Nana three years younger), a boy (\"Ao takes a leaf from his basket\", narration), Kotonoha's leaf-picker. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Puck",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Puck: “Upbeat” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Fenrir",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Fenrir: “Excitable” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc03": {
    "target": "Adolescent girl; trainee messenger or apprentice (§08 casting target). Bound to: Audition persona, not a game character: the game has no adolescent girl whose age is established. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Laomedeia",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Laomedeia: “Upbeat” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Leda",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Leda: “Youthful” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc04": {
    "target": "Adolescent boy; workshop apprentice (§08 casting target). Bound to: Audition persona, not a game character: the game has no adolescent boy apprentice whose age is established. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Fenrir",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Fenrir: “Excitable” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Zubenelgenubi",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Zubenelgenubi: “Casual” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc05": {
    "target": "Young adult woman; stallholder (§08 casting target). Bound to: Audition persona, not a game character: no young woman stallholder's age is established in the game. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Autonoe",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Autonoe: “Bright” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Callirrhoe",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Callirrhoe: “Easy-going” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc06": {
    "target": "Young adult man; courier or dock worker (§08 casting target). Bound to: Sōta: a fisher, Kiyo's son, \"worried about his nets\" (he/him); a young adult by family role (lives with his mother, who keeps him ashore), not by a stated age. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Achird",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Achird: “Friendly” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Sadachbia",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Sadachbia: “Lively” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc07": {
    "target": "Middle-aged woman; innkeeper or craftsperson (§08 casting target). Bound to: Kiyo: the fishmonger, Sōta's mother (she/her); middle-aged by family role, not by a stated age; a market stall rather than the profile's inn or craft. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Kore",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Kore: “Firm” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Gacrux",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Gacrux: “Mature” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc08": {
    "target": "Middle-aged man; harbour official or clerk (§08 casting target). Bound to: Tokiwa: Cinder Orchard's recorder, keeper of the chronicle (a records clerk), he/him (\"Tokiwa says he's calling everyone\", Sayo); the chronicle's year in \"a different hand\" is his from his apprentice days twenty years before, so not young: middle age by role, not by a stated age. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Rasalgethi",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Rasalgethi: “Informative” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Alnilam",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Alnilam: “Firm” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc09": {
    "target": "Older woman; retired teacher or keeper (§08 casting target). Bound to: Tsuru: Reedwake's lantern keeper, \"an old woman leaning on a cane\" (narration; look.age old). Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Gacrux",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Gacrux: “Mature” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Vindemiatrix",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Vindemiatrix: “Gentle” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc10": {
    "target": "Older man; fisher or boatwright (§08 casting target). Bound to: Tetsu: the ferryman (look.age old), \"this old man\" (Nao). Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Algenib",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Algenib: “Gravelly” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Sadaltager",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Sadaltager: “Knowledgeable” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc11": {
    "target": "Adult nonbinary person; scholar, keeper or archivist (§08 casting target). Bound to: Kohaku: the Hall's last keeper's apprentice (they/them, documented in src/content/hall/01_region.js); an adult apprentice, age not stated. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Iapetus",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Iapetus: “Clear” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Erinome",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Erinome: “Clear” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   },
   "npc12": {
    "target": "Adult nonbinary person; artisan, host or traveller (§08 casting target). Bound to: Ibuki: the young keeper of the toll gate (they/them, documented in src/content/hall/01_region.js); a keeper rather than the profile's artisan, host or traveller, the nearest documented nonbinary adult with these two deliveries. Similar NPC profiles may share a candidate only with the reuse disclosed (§04).",
-   "candidates": [],
+   "candidates": [
+    {
+     "label": "C01",
+     "voice": {
+      "voiceName": "Umbriel",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Umbriel: “Easy-going” in Google’s list; unheard"
+    },
+    {
+     "label": "C02",
+     "voice": {
+      "voiceName": "Pulcherrima",
+      "route": "gemini_api",
+      "model": "gemini-3.8-flash-tts"
+     },
+     "rights": {
+      "status": "covered_by_authorization",
+      "terms": "Gemini API terms (read with the authorization)",
+      "credit": null
+     },
+     "pickedBecause": "Pulcherrima: “Forward” in Google’s list; unheard"
+    }
+   ],
    "selected": null,
    "discarded": []
   }
- }
+ },
+ "modelChanges": [],
+ "candidatesNote": "Picked from the one-word descriptions Google gives its 30 prebuilt voices (speech-generation documentation, as returned by search on 2026-10-13), to match each role’s casting target; not heard by anyone. Google’s pages tag voices by gender inconsistently, so no presentation is assumed: the screen is where they are heard. Voices recur across NPC roles (allowed on the screen, disclosed); the main roles’ lists do not share a voice. Rights: the prebuilt voices are Google’s; their use is governed by the Gemini API terms, recorded in the authorization (covered_by_authorization) once read."
 }

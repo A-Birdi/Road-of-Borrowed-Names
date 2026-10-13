@@ -8,10 +8,16 @@
 //    not at all. A neutral control drops the direction and keeps everything else (voice, readings).
 //  - Reading overrides (the corpus's pronunciationOverrides) go through the provider's own documented route, or are
 //    recorded as not applied; an unsupported route is never counted as a corrected reading (§11).
-//  - Secrets are never in the request built here: headers carry `<env NAME>` placeholders, filled only by the runner
-//    at send time from the environment, never written to any file or log.
+//  - Credentials are never in the request built here. The credential header sits apart in `authHeaders` as an
+//    `<env NAME>` placeholder. In env mode the runner fills it from the environment at send time; in proxy mode it
+//    leaves it out and the environment's proxy injects the header (network secrets). Neither value is ever written.
+//  - Some providers document control markup inside the text field that is not spoken (ElevenLabs v3 audio tags).
+//    Such markup is allowed only from a reviewed list, never in a neutral control, and `validateRequest` checks that
+//    the text with that markup removed is the canonical Japanese, character for character.
 //  - `verify` marks details not confirmed from an official source readable here; check them before the first
 //    authorised request (VS02_SETUP_REQUEST.md lists the source of every fact).
+
+import { expectedSeconds } from './audio_check.mjs';
 
 // a delivery label's broad energy, for engines whose only control is a speed/intonation scale (conservative ranges)
 const ENERGY = {
@@ -120,6 +126,7 @@ export const PROVIDERS = {
     hosts: ['local: pypi.org / files.pythonhosted.org (qwen-tts, torch); weights from huggingface.co (+ cdn-lfs*.huggingface.co, *.hf.co, cas-bridge.xethub.hf.co) or modelscope.cn', 'hosted: dashscope-intl.aliyuncs.com (verify)'],
     download: { weights: '1.7B parameters in bf16 ≈ 3.5–4 GB + tokenizer (verify on the model card)', python: 'torch + transformers + qwen-tts; a CUDA build of torch from PyPI is several GB', peakDisk: '≈8–10 GB with torch and caches', ram: '≈8 GB+; a GPU with ≥8 GB recommended (the README loads it on cuda in bf16)', here: 'not sensible: 5.5 GB free, weight hosts refused, no GPU' },
     secret: { env: 'DASHSCOPE_API_KEY', header: 'Authorization: Bearer <env DASHSCOPE_API_KEY>' },
+    auth: { host: 'dashscope-intl.aliyuncs.com (verify)', header: 'Authorization', env: ['DASHSCOPE_API_KEY'] },
     controls: ['speaker (nine presets)', 'language', 'instruct (natural-language style, separate from text)'],
     build(c, voice, take) {
       if (!voice || !voice.speaker) return { blocked: 'no cast speaker for ' + c.castingProfile };
@@ -127,7 +134,7 @@ export const PROVIDERS = {
       const ov = c.pronunciationOverrides || [];
       return {
         local: { text: c.spokenText, language: 'Japanese', speaker: voice.speaker, instruct: neutral ? '' : c.direction },
-        hosted: { method: 'POST', url: 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation (verify)', headers: { Authorization: 'Bearer <env DASHSCOPE_API_KEY>', 'Content-Type': 'application/json' }, body: { model: '<hosted model id: verify>', input: { text: c.spokenText, voice: voice.speaker, language_type: 'Japanese', instructions: neutral ? undefined : c.direction } } },
+        hosted: { method: 'POST', url: 'https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation (verify)', headers: { 'Content-Type': 'application/json' }, authHeaders: { Authorization: 'Bearer <env DASHSCOPE_API_KEY>' }, body: { model: '<hosted model id: verify>', input: { text: c.spokenText, voice: voice.speaker, language_type: 'Japanese', instructions: neutral ? undefined : c.direction } } },
         sentText: c.spokenText, directionChannel: neutral ? 'none (neutral control)' : 'the instruct field (separate from the text)',
         readingChannel: ov.length ? 'none documented' : 'none needed', readingsApplied: [], readingsNotApplied: ov.map((o) => o.surface),
         unsupported: ['context (not sent)'].concat(ov.length ? ['reading overrides (no documented field)'] : []),
@@ -143,9 +150,18 @@ export const PROVIDERS = {
     },
     hosts: ['generativelanguage.googleapis.com (Gemini API route)', 'texttospeech.googleapis.com (Cloud Text-to-Speech route)'],
     secret: { env: 'GEMINI_API_KEY', header: 'x-goog-api-key: <env GEMINI_API_KEY>' },
+    auth: { host: 'generativelanguage.googleapis.com', header: 'x-goog-api-key', env: ['GEMINI_API_KEY'] },
+    // token-priced: the runner bounds each request's cost with these (and max_output_tokens) before sending it
+    pricingUnit: 'tokens',
     controls: ['voice (prebuilt name or designed voice id)', 'speech_metadata.style (persona, emotion, pacing, accent; separate from the text)', 'inline vocal tags in the text (<laugh>, <sigh>, <short pause>…: not used, so nothing but the words is in the text)', 'Cloud TTS route: input.prompt (style instruction, "we pass the unedited text"), voice.model_name, audio_config.speaking_rate'],
-    build(c, voice, take) {
+    build(c, voice, take, opts = {}) {
       if (!voice || !voice.voiceName) return { blocked: 'no cast voice for ' + c.castingProfile };
+      // a per-request bound: the slowest plausible reading of the line (audio_check's maximum) at a budgeting rate of
+      // audio tokens per second, plus a quarter; the style and the text bound the input tokens
+      const tps = opts.audioTokensPerSecond || 32;
+      const maxOut = Math.ceil(expectedSeconds(c).max * tps * 1.25);
+      const styleChars = take === 'neutral_control' ? 0 : [...c.direction].length;
+      const costBound = { inputTokens: [...c.spokenText].length + Math.ceil(styleChars / 2) + 64, outputTokens: maxOut };
       const neutral = take === 'neutral_control';
       const ov = c.pronunciationOverrides || [];
       const common = { sentText: c.spokenText, readingChannel: ov.length ? 'none documented for Japanese (Cloud TTS custom_pronunciations is en-US only per its API definition)' : 'none needed', readingsApplied: [], readingsNotApplied: ov.map((o) => o.surface), unsupported: ['context (not sent)'].concat(ov.length ? ['reading overrides'] : []) };
@@ -153,24 +169,24 @@ export const PROVIDERS = {
         return Object.assign({
           request: {
             method: 'POST', url: 'https://texttospeech.googleapis.com/v1/text:synthesize',
-            headers: { Authorization: 'Bearer <env GOOGLE_OAUTH_TOKEN>', 'x-goog-user-project': '<env GOOGLE_CLOUD_PROJECT>', 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' }, authHeaders: { Authorization: 'Bearer <env GOOGLE_OAUTH_TOKEN>', 'x-goog-user-project': '<env GOOGLE_CLOUD_PROJECT>' },
             body: { input: neutral ? { text: c.spokenText } : { text: c.spokenText, prompt: c.direction }, voice: { languageCode: 'ja-JP', name: voice.voiceName, modelName: voice.modelName || '<Cloud TTS Gemini model name: verify>' }, audioConfig: { audioEncoding: 'LINEAR16', sampleRateHertz: 24000 } },
           },
-          response: 'cloud_tts',
+          response: 'cloud_tts', costBound,
           directionChannel: neutral ? 'none (neutral control)' : 'input.prompt (Cloud TTS style instruction; the text is passed unedited)',
         }, common);
       }
       return Object.assign({
         request: {
           method: 'POST', url: 'https://generativelanguage.googleapis.com/v1beta/interactions',
-          headers: { 'x-goog-api-key': '<env GEMINI_API_KEY>', 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json' }, authHeaders: { 'x-goog-api-key': '<env GEMINI_API_KEY>' },
           body: {
             model: voice.model || 'gemini-3.8-flash-tts',
             input: [neutral ? { type: 'text', text: c.spokenText } : { type: 'text', text: c.spokenText, annotations: [{ type: 'speech_metadata', style: c.direction }] }],
-            response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice: voice.voiceName }] }, store: false,
+            response_format: { type: 'audio' }, generation_config: { speech_config: [{ voice: voice.voiceName }], max_output_tokens: maxOut }, store: false,
           },
         },
-        response: 'gemini_interaction',
+        response: 'gemini_interaction', costBound,
         directionChannel: neutral ? 'none (neutral control)' : 'speech_metadata.style (the text is spoken verbatim; the style is not)',
       }, common);
     },
@@ -180,20 +196,32 @@ export const PROVIDERS = {
     model: { model: 'eleven_v3 or eleven_multilingual_v2: one pinned per pass, never mixed (S08); verify Japanese support for the chosen one', voices: 'a voice id from the account\'s library (no cloning of real people)', output: 'mp3_44100_128' },
     hosts: ['api.elevenlabs.io (refused here)'],
     secret: { env: 'ELEVENLABS_API_KEY', header: 'xi-api-key: <env ELEVENLABS_API_KEY>' },
-    controls: ['voice id', 'model id', 'voice_settings (stability, similarity_boost, style, speed)', 'language_code', 'v3 audio tags inline in the text (not used)', 'pronunciation dictionaries (alias/phoneme rules; not configured here: verify for Japanese)'],
-    build(c, voice, take) {
+    auth: { host: 'api.elevenlabs.io', header: 'xi-api-key', env: ['ELEVENLABS_API_KEY'] },
+    pricingUnit: 'characters',
+    controls: ['voice id', 'model id', 'voice_settings (stability, similarity_boost, style, speed)', 'language_code', 'v3 audio tags inline in the text: [tag] markup that is performed, not spoken (only from the reviewed list)', 'pronunciation dictionaries (alias/phoneme rules; not configured here: verify for Japanese)'],
+    // Before the audition the selected model and its supported audio tags and settings are reviewed and recorded in the
+    // casting file's `modelReview` ({ model, reviewedOn, source, tags: ['[curious]', …], tagFor: { <delivery>: [...] },
+    // settingsFor }); a different model is a recorded model change, never a silent swap.
+    build(c, voice, take, opts = {}) {
       if (!voice || !voice.voiceId) return { blocked: 'no cast voice for ' + c.castingProfile };
+      const review = opts.modelReview;
+      if (!review || !review.model || !review.reviewedOn) return { blocked: 'the ElevenLabs model and its audio tags and settings are not reviewed yet (casting modelReview)' };
+      const model = voice.modelId || review.model;
+      if (model !== review.model) return { blocked: 'model ' + model + ' is not the reviewed model ' + review.model + ' (a model change needs its own review)' };
       const neutral = take === 'neutral_control';
       const ov = c.pronunciationOverrides || [];
       const lively = energyOf(c) === 'high';
+      const allowed = review.tags || [];
+      const tags = neutral ? [] : ((review.tagFor || {})[c.deliveryLabel] || []).filter((t) => allowed.includes(t));
+      const settings = neutral ? { stability: 0.5, style: 0 } : ((review.settingsFor || {})[c.deliveryLabel] || { stability: lively ? 0.35 : 0.45, style: lively ? 0.4 : 0.25 });
       return {
         request: {
           method: 'POST', url: 'https://api.elevenlabs.io/v1/text-to-speech/' + voice.voiceId + '?output_format=mp3_44100_128',
-          headers: { 'xi-api-key': '<env ELEVENLABS_API_KEY>', 'Content-Type': 'application/json' },
-          body: { text: c.spokenText, model_id: voice.modelId || 'eleven_v3', language_code: 'ja', voice_settings: neutral ? { stability: 0.5, style: 0 } : { stability: lively ? 0.35 : 0.45, style: lively ? 0.4 : 0.25 } },
+          headers: { 'Content-Type': 'application/json' }, authHeaders: { 'xi-api-key': '<env ELEVENLABS_API_KEY>' },
+          body: { text: (tags.length ? tags.join(' ') + ' ' : '') + c.spokenText, model_id: model, language_code: 'ja', voice_settings: settings },
         },
-        response: 'audio_bytes',
-        sentText: c.spokenText, directionChannel: neutral ? 'none (neutral control)' : 'voice settings only (stability/style by broad energy); no tags or prose in the text',
+        response: 'audio_bytes', allowedMarkup: allowed, costBound: { characters: [...c.spokenText].length + tags.join(' ').length },
+        sentText: c.spokenText, directionChannel: neutral ? 'none (neutral control)' : 'voice settings' + (tags.length ? ' and the reviewed audio tags ' + tags.join(' ') + ' (performed, not spoken)' : ' only (no reviewed tag for this delivery)'),
         readingChannel: ov.length ? 'a pronunciation dictionary could carry aliases; not configured for the audition' : 'none needed', readingsApplied: [], readingsNotApplied: ov.map((o) => o.surface),
         unsupported: ['free-text direction', 'context (previous_text/next_text exist but are left out: they could colour the take)'].concat(ov.length ? ['reading overrides (not configured)'] : []),
       };
@@ -204,6 +232,8 @@ export const PROVIDERS = {
     model: { api: 'Speech REST v1 with SSML', voices: 'a ja-JP neural voice (its styles and roles listed by the voices/list endpoint; only listed ones are used, S09/S15)', output: 'riff-24khz-16bit-mono-pcm' },
     hosts: ['<region>.tts.speech.microsoft.com (refused here)'],
     secret: { env: 'AZURE_SPEECH_KEY + AZURE_SPEECH_REGION', header: 'Ocp-Apim-Subscription-Key: <env AZURE_SPEECH_KEY>' },
+    auth: { host: '<region>.tts.speech.microsoft.com', header: 'Ocp-Apim-Subscription-Key', env: ['AZURE_SPEECH_KEY'] },
+    pricingUnit: 'characters',
     controls: ['voice name', 'mstts:express-as style/styledegree/role (only where the voice lists them)', 'prosody rate/pitch', 'sub alias / phoneme (readings)'],
     build(c, voice, take) {
       if (!voice || !voice.name) return { blocked: 'no cast voice for ' + c.castingProfile };
@@ -220,11 +250,12 @@ export const PROVIDERS = {
         (style ? '<mstts:express-as style="' + esc(style) + '">' + inner + '</mstts:express-as>' : inner) + '</voice></speak>';
       return {
         request: {
-          method: 'POST', url: 'https://<env AZURE_SPEECH_REGION>.tts.speech.microsoft.com/cognitiveservices/v1',
-          headers: { 'Ocp-Apim-Subscription-Key': '<env AZURE_SPEECH_KEY>', 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'riff-24khz-16bit-mono-pcm', 'User-Agent': 'rbn-va1-audition' },
+          method: 'POST', url: 'https://' + (voice.region || '<env AZURE_SPEECH_REGION>') + '.tts.speech.microsoft.com/cognitiveservices/v1',
+          authHeaders: { 'Ocp-Apim-Subscription-Key': '<env AZURE_SPEECH_KEY>' },
+          headers: { 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'riff-24khz-16bit-mono-pcm', 'User-Agent': 'rbn-va1-audition' },
           body: ssml,
         },
-        response: 'audio_bytes',
+        response: 'audio_bytes', costBound: { characters: [...ssml].length },
         sentText: c.spokenText, directionChannel: neutral ? 'none (neutral control)' : (style ? 'SSML express-as style "' + style + '"' : 'none: no listed style for this delivery'),
         readingChannel: ov.length ? 'SSML <sub alias> (verify that the voice honours it)' : 'none needed', readingsApplied: ov.map((o) => o.surface), readingsNotApplied: [],
         unsupported: ['free-text direction', 'context (not sent)'].concat(style || neutral ? [] : ['a style for "' + c.deliveryLabel + '" (text-conditioned delivery only)']),
@@ -243,4 +274,41 @@ export function spokenChannelOf(id, plan) {
   if (id === 'elevenlabs') return plan.request.body.text;
   if (id === 'azure') return plan.request.body.replace(/<sub alias="[^"]*">/g, '').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
   return null;
+}
+
+// Documented non-spoken control markup inside a text field, per provider: what it looks like and how to remove it.
+// Only ElevenLabs' v3 audio tags are used; any other markup in a spoken channel is a validation failure.
+export const MARKUP = { elevenlabs: /\[[^\[\]\n]{1,40}\]\s*/g };
+export const markupIn = (id, text) => (MARKUP[id] ? (String(text).match(MARKUP[id]) || []).map((m) => m.trim()) : []);
+export const stripMarkup = (id, text) => (MARKUP[id] ? String(text).replace(MARKUP[id], '') : String(text));
+
+// Request validation (before anything is sent): what the provider would voice is the canonical Japanese once its
+// documented markup is removed; markup only from the reviewed list and none in a neutral control; the direction
+// only in the provider's non-spoken fields (and nowhere in a control); no English, context or credential value.
+// It validates the request, not the audio: a provider accepting it, the words heard and a listener's judgement are
+// separate evidence.
+const CONTROL_KEYS = ['instruct', 'instructions', 'style', 'prompt', 'annotations'];
+export function validateRequest(id, plan, c, take) {
+  const checks = [];
+  const add = (name, ok, detail) => checks.push({ name, ok: !!ok, detail: detail || null });
+  const neutral = take === 'neutral_control';
+  const channels = [].concat(spokenChannelOf(id, plan));
+  const marks = channels.flatMap((t) => markupIn(id, t));
+  add('spoken text is the canonical Japanese (documented markup removed)', channels.length && channels.every((t) => stripMarkup(id, t) === c.spokenText));
+  add('markup only from the reviewed list', marks.every((m) => (plan.allowedMarkup || []).includes(m)), marks.join(' ') || null);
+  add('no markup in a neutral control', !neutral || !marks.length);
+  const built = plan.request || plan.engine || [plan.local, plan.hosted];
+  const all = JSON.stringify(built);
+  const dir = JSON.stringify(c.direction).slice(1, -1);
+  const outside = JSON.stringify(JSON.parse(JSON.stringify(built), (k, v) => (CONTROL_KEYS.includes(k) ? undefined : v)));
+  add('direction only in non-spoken control fields', !outside.includes(dir));
+  add('no direction in a neutral control', !neutral || !all.includes(dir));
+  const ctx = c.speechLine.context;
+  const leaks = [['English', c.translationEn], ['previous line', ctx.previousLine], ['next line', ctx.nextLine], ['situation', ctx.situation]]
+    .filter(([, t]) => t && t.length > 3 && !(take === 'directed' && c.direction.includes(t)) && all.includes(JSON.stringify(t).slice(1, -1))).map(([n]) => n);
+  add('no English or context in the request', !leaks.length, leaks.join(', ') || null);
+  const auth = (plan.request && plan.request.authHeaders) || (plan.hosted && plan.hosted.authHeaders) || {};
+  const heads = (plan.request && plan.request.headers) || (plan.hosted && plan.hosted.headers) || {};
+  add('credentials only as placeholders, apart from the other headers', Object.values(auth).every((v) => /<env [A-Z_]+>/.test(v)) && !Object.keys(heads).some((h) => /key|authorization|user-project/i.test(h)));
+  return { status: checks.every((x) => x.ok) ? 'passed' : 'failed', method: 'the built request compared with the corpus case (no provider involved)', checks };
 }

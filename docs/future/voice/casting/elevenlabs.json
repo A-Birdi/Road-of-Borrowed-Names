@@ -132,5 +132,8 @@
    "selected": null,
    "discarded": []
   }
- }
+ },
+ "modelReview": null,
+ "modelReviewHowTo": "Before any ElevenLabs take: record the selected model and what it supports, from the provider's current documentation: { \"model\": \"eleven_v3\", \"reviewedOn\": \"<date>\", \"source\": \"<documentation pages read>\", \"tags\": [\"[curious]\", …] (the audio tags this model documents, used only as performed markup), \"tagFor\": { \"<delivery label>\": [\"[…]\"] }, \"settingsFor\": { \"<delivery label>\": { \"stability\": …, \"style\": … } } }. Without it every ElevenLabs cell stays blocked. Neutral controls never get a tag. A different model is a recorded change in modelChanges ({from, to, reason, date}) with its own review, never a silent swap.",
+ "modelChanges": []
 }
