@@ -322,6 +322,10 @@
         separate: this one cannot see or message it, and nothing from it is recorded until its results come back
         (`RUN_SUMMARY.md`, `results.json`, the review ZIPs).
       - Leave `tools/voice/` and the corpus unchanged on the branch while that run uses them.
+    - **Robin's direction (C-91, 2026-10-13):** the curated review will take a long time and found no single winner;
+      the prepared set may mix models for different roles or kinds of line. The game keeps the device voice (Windows
+      voice packs, as today) and adds the vetted prepared voices once the review is done. Nothing moves ahead of
+      Robin's picks: no final casting, whole-game generation or change to the game's speech until then.
     - **Only if the free results fall short:** propose the Gemini samples in
       `docs/future/voice/authorizations/gemini-samples-1.json`. That is 9 takes, at most US$0.04, and needs a
       network secret for `generativelanguage.googleapis.com` (`x-goog-api-key`) plus Robin's approval. It is not the

@@ -105,4 +105,7 @@ priced separately from generation. The game itself stays complete without any of
 - the script's measured change rate;
 - the chosen audio format.
 
+A mixed cast (C-91: Robin found no single winner, so models may differ by role or kind of line) is estimated the
+same way: each role's share uses its own provider's measurements and price, and the totals add.
+
 Until those exist, the figures above are ranges and nothing is requested.

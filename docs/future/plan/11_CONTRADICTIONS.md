@@ -666,6 +666,26 @@ resolution solely to LP-1."
 - Performance under software rendering is a separate compatibility consideration, not a release blocker arising
   from this report (P17_CLOSURE open items). The authorised work continues (VA-1).
 
+### C-91 · Two ways to hear the game: the device's voices and a vetted prepared set, which may mix models
+**Decided** (2026-10-13). Robin: "The curated voice review will take a lot of time, as I couldn't pick one clear
+winner. It may need to be a mix of models for different things. Ultimately, the game should support having both the
+Windows' TTS voice packs as it currently does, along with whatever officially vetted model-voiced setup we do here,
+once the full review is done."
+- **Both stay.** The device voice keeps working as it does today: the system's installed Japanese voices, Windows
+  voice packs included, through the browser's speech synthesis (`src/audio/50_voice.js`). The prepared voices are
+  added once the review is done. This is C-83's runtime rule (None, Device voice, Prepared voices with local
+  fallback), unchanged.
+- **The prepared set may mix models.** A voice is chosen per role, and where it helps per kind of line, from any
+  vetted provider. Each clip keeps its provider, model, voice and terms, so credits and regeneration follow it.
+  `PRODUCTION_ESTIMATE.md` already prices each role by its own chosen voice.
+- **The review is Robin's and takes the time it takes.** Nothing waits on it, and nothing moves ahead of it: no final
+  casting, whole-game generation or change to the game's speech until Robin's picks and a separate production
+  approval.
+- **To settle when the picks exist** (the lead's reading, not decided):
+  - one casting record across providers, in place of today's one file per configuration;
+  - what a line with a run-time name does in Prepared mode (115 lines; device voice or silent, per the estimate);
+  - how a scene sounds when its speakers come from different models.
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first

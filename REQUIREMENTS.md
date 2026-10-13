@@ -725,6 +725,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     prepared a handoff in the kit (`LOCAL_RUN_HANDOFF.md`, review ZIP packer, provisional lead labels, resume by
     request identity). Robin then started a Remote Control session on the PC to run it; nothing from that session is
     recorded until its results come back.
+  - Robin's direction (C-91, 2026-10-13): the curated review takes time and found no single winner, so the prepared
+    set may mix models by role or kind of line. The game keeps the device voice (Windows voice packs, as today) and
+    adds the vetted prepared voices once the review is done (C-83's None / Device / Prepared rule).
   - Open: every configuration is blocked here or awaits Robin's authorisation (untested, not inferior); no audio,
     listening, casting or whole-game synthesis yet. VALIDATION.md "VA-1".
 
