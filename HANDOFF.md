@@ -290,6 +290,15 @@
     full campaigns", native-reviewed Japanese or real-device validation. Next (C-87's order, unchanged): VA-1 as
     Robin ordered it, and only when all of it passes the hosted page (its deploy must also copy
     `assets/music/ensemble/`). Open for Robin: the weather's refresh-rate dependence (deferred, P17_CLOSURE).
+    **Closure status (2026-10-13, Robin asked):**
+    - P14–P16 are done.
+    - P17's automated closure is done, but its complete browser run ran on earlier builds.
+    - The same complete run on the final build (`index.html` e456645a…) is running on a clean export; VA-1 is paused
+      until it finishes (VALIDATION.md "P17 — the complete run on the final build").
+    - The twelve-chapter edition is shipped in the build (C-84). Deploying the hosted page comes last, after VA-1 and
+      the full matrix (C-87).
+    - Robin's own items stay Robin's: review at completion, human playtests, real devices.
+
     **VA-1 now:**
     - VS00 (the intake) and VS01 (the frozen corpus: 83 cases, 14 neutral controls) are done.
     - VS02's preparation that costs nothing is done: adapters, the gated runner, the gallery, the Qwen local job and

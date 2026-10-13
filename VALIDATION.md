@@ -4258,6 +4258,24 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
+## P17 — the complete run on the final build (2026-10-13; in progress)
+
+**Why this run.** Robin asked whether P14–P17's closure and the shipped edition were fully resolved before VA-1.
+
+- P17's complete browser run had finished, but its parts ran on builds up to cb8c497.
+- The final build's later changes were each tested by their own suites, and the four Plan B campaigns ran on 2debb3c.
+- No single complete run covered the final build, so this one does. VA-1 is paused until it finishes.
+
+**Build and method**
+
+| | |
+| --- | --- |
+| Build | A clean `git archive` of 0f7ce8d, rebuilt to the same `index.html` (sha256 `e456645a9e303d850d15f864a9721156f6a27b0db1ba41c7a1ef0438e49525d4`, unchanged since d26ce74). |
+| Command | `node tests/e2e/run.mjs --part=k/12` for k = 1…12 (130 scripts, each part under the job's two-hour limit), then `--extra` (10 scripts). |
+| Conditions | One part at a time, nothing else running. |
+
+**Results:** to be added part by part, with failures traced.
+
 ## VA-1 — the voice audition (Robin's VA-1, queued last; in progress, 2026-10-12)
 
 **No audio has been generated, and nobody has listened to anything.** All seven configurations are blocked from this
@@ -4529,7 +4547,7 @@ this report; Firefox automation here is no longer needed for it (its download ho
 software rendering is a separate compatibility consideration (`docs/future/work/P17_CLOSURE.md`, open items), not a
 release blocker arising from this report.
 
-## P18 — Plan B (Robin's C-89, 2026-10-12): four continuous campaigns and targeted coverage (in progress)
+## P18 — Plan B (Robin's C-89, 2026-10-12): four continuous campaigns and targeted coverage (done)
 
 Robin replaced the sixteen continuous campaigns of this validation milestone with four (F/Ren, E/Nao, I/Mio, A/Suzu)
 plus targeted tests (C-89 in `docs/future/plan/11_CONTRADICTIONS.md`). Evidence types are marked U (unit, node), B
@@ -4789,7 +4807,7 @@ What was built, how, and its limits: docs/MUSIC_PERFORMANCE.md; decision F-145. 
   `audio_instruments` all passed, `settings` all ok, `battle_settings` 10/0, `title_ledger` 18/0.
 - Not covered by a test: a live capture of a cue transition with Ensemble (the offline renderer plays one cue).
 
-## The expansion, P17 — closure (in progress)
+## The expansion, P17 — closure (automated closure done; Robin's items at completion; the final-build rerun below)
 
 **The Living World across the journey (C-87; XP107; register `docs/future/work/LW1_ROLLOUT.md`).** What was run, on
 what, and what is still to run:
