@@ -4258,7 +4258,7 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
-## P17 — the complete run on the final build (2026-10-13; in progress)
+## P17 — the complete run on the final build (2026-10-13; done)
 
 **Why this run.** Robin asked whether P14–P17's closure and the shipped edition were fully resolved before VA-1.
 
@@ -4274,7 +4274,19 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | Command | `node tests/e2e/run.mjs --part=k/12` for k = 1…12 (130 scripts, each part under the job's two-hour limit), then `--extra` (10 scripts). |
 | Conditions | One part at a time. While parts 3 and 5–7 ran, single scripts being traced (below) ran alongside, so those parts ran on a busier machine than the others. |
 
-**Results so far:**
+**Outcome.** The complete run on the final build is done: the 12 default parts (130 scripts) and `--extra` (10
+scripts), 140 in all.
+
+- 136 passed at their first run on this build.
+- 4 failed: `learning_ui`, `pets`, `company` and `actor_life`. Each failure was the test's own, measuring too early or
+  the wrong thing, and each is traced below to its mechanism.
+- Each was fixed in the test, with its assertions unchanged, and the fixed script then passed in full on this build:
+  `learning_ui` 15/15 (twice), `pets` 20/20, `company` 61/61, `actor_life` 39/39. Those four were rerun alone, not
+  inside a second complete run.
+- Nothing in the game changed: `src/`, the build, `data/` and `assets/` are untouched since 0f7ce8d, and
+  `index.html` at the branch head still has sha256 `e456645a…`.
+
+**Results:**
 
 | Part | Result | Note |
 | --- | --- | --- |
@@ -4290,7 +4302,7 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | 10/12 | 11/11 | |
 | 11/12 | 11/11 | |
 | 12/12 | 9/9 | The last slice holds the remaining 9 of the 130 scripts. |
-| `--extra` | running | 10 scripts |
+| `--extra` | 10/10 | `creatures_a`, `battle_geometry`, `battle_invariance`, `harmony_cutin`, `sequence_chapters`, `sequence_chapters_56`, `sequence_dev`, `portrait_anim`, `overworld_figures`, `audit_fixes` (05:37–06:42) |
 
 **The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
 Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.

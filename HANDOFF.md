@@ -292,10 +292,12 @@
     `assets/music/ensemble/`). Open for Robin: the weather's refresh-rate dependence (deferred, P17_CLOSURE).
     **Closure status (2026-10-13, Robin asked):**
     - P14–P16 are done.
-    - P17's automated closure is done, but its complete browser run ran on earlier builds.
-    - The same complete run on the final build (`index.html` e456645a…) is running on a clean export (VALIDATION.md
-      "P17 — the complete run on the final build"). Every failure so far was a test measuring too early or the wrong
-      thing, traced and fixed in the test: `learning_ui`, `pets`, `company`, `actor_life`.
+    - P17's closure is done, now on the final build too. The complete browser run (12 parts and `--extra`, 140
+      scripts) ran on a clean export of the final build (`index.html` e456645a…, unchanged since). 136 passed at
+      their first run.
+    - The 4 failures were all test faults (measuring too early or the wrong thing), traced and fixed in the tests,
+      each then passing in full on that build: `learning_ui`, `pets`, `company`, `actor_life` (VALIDATION.md "P17 —
+      the complete run on the final build").
     - The twelve-chapter edition is shipped in the build (C-84). Deploying the hosted page comes last, after VA-1 and
       the full matrix (C-87).
     - Robin's own items stay Robin's: review at completion, human playtests, real devices.
