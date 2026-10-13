@@ -219,8 +219,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     draw(c, w, h, t, st) {
       const G = geomRoom(w, h, st.vb), still = st.still, { v, C } = camOf(w, st.vb, 'wide', G.narrow);
       const k = st.at('name'), lightK = ease(sub(k, 0.72, 1));
+      // (the room's own light comes up with the light along the rails: it switched on in one frame as the action ended; AR-2)
       const room = roomStatic(G, 'wide', lightK >= 1);
       c.drawImage(room.cv, 0, 0);
+      if (lightK > 0 && lightK < 1) { c.globalAlpha = lightK; c.drawImage(roomStatic(G, 'wide', true).cv, 0, 0); c.globalAlpha = 1; }
       // the shape sinks (0 … 0.42) where the middle span will lie, rings spreading round it
       const mid = bridgeAt(v, 0.5, 0, 0), mp = C.p(mid[0], 0, mid[2]);
       const sink = ease(sub(k, 0, 0.42));
@@ -234,7 +236,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < 3; i++) {
         const d = ease(sub(k, 0.3 + i * 0.13, 0.48 + i * 0.13));
         if (d <= 0) continue;
+        // (each comes out of the dark as it starts down: it appeared whole in mid-air; AR-2)
+        c.globalAlpha = Math.min(1, d * 4);
         c.drawImage(spanArt(G, 'wide', i).cv, 0, Math.round((1 - d) * -C.p(...bridgeAt(v, (i + 0.5) / 3, 0, 0))[2] * 1.6));
+        c.globalAlpha = 1;
       }
       drawLight(c, C, v, lightK, t, still);
       if (lightK > 0) SP.glints(c, 0, room.wallFoot + 2, w, Math.max(4, st.vb - room.wallFoot), t, 22, 41, '255,214,150', still);
@@ -491,7 +496,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     SP.marks(c, x - Math.round(W / 4), y + 4, Math.round(H * 0.55), 4, 1, '#2a2024', 5);
     SP.marks(c, x + Math.round(W / 4), y + 4, Math.round(H * 0.4 * clamp(k, 0.3, 1)), 3, 1, '#2a2024', 6);
     const hl = Q.hand({ size: Math.max(8, Math.round(W * 0.16)), pose: 'grip', side: 'R', angle: -1.25, skin: skinC, sleeve: sleeveC });
-    const hr = Q.hand({ size: Math.max(8, Math.round(W * 0.16)), pose: 'grip', side: 'L', angle: -1.9, skin: skinC, sleeve: sleeveC });
+    const hr = Q.hand({ size: Math.max(8, Math.round(W * 0.16)), pose: 'grip', side: 'L', angle: 1.9, skin: skinC, sleeve: sleeveC });
     if (hl) c.drawImage(hl.cv, Math.round(x - W / 2 - hl.ax + W * 0.04), Math.round(y + H * 0.75 - hl.ay));
     if (hr) c.drawImage(hr.cv, Math.round(x + W / 2 - hr.ax - W * 0.04), Math.round(y + H * 0.75 - hr.ay));
   }
@@ -500,7 +505,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Sen\'s face and the register above the sheet', narrow: 'her face in the upper half', land: 'her face' },
     draw(c, w, h, t, st) {
       const S = stage(w, h, st.vb), { s, lay } = S, narrow = lay === 'narrow';
-      const by0 = Math.round(Math.max(st.vb + s(16), 100)), feet0 = by0 + Math.round(h * 0.25);
+      // (her body its full length, as everyone's: it was a quarter of the picture's height, so on a desktop her legs were
+      // under half as long as anyone else's; AR-2)
+      const by0 = Math.round(Math.max(st.vb + s(16), 100)), feet0 = by0 + 200;
       c.drawImage(boardsBack(w, h, st.vb, 'sen', [Math.round(feet0 - 0.22 * (feet0 - (by0 - 60))), by0 - 60]).cv, 0, 0);
       SP.lantern(c, Math.round(w * (narrow ? 0.86 : 0.8)), Math.round(st.vb * 0.06), Math.max(3, s(6)), Math.max(5, s(12)), true, t, st.still);
       const ko = st.at('odd');
@@ -509,7 +516,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the register held open in front of her (she lifts it a little on her first line); her forearms to its two sides
       const kr = ease(st.at('register'));
       const rw = Math.round(clamp(s(64), 40, 90)), rh = Math.round(rw * 0.6), rx = bx + Math.round(s(2)), ry = Math.round(by - s(6) - kr * s(6));
-      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, Math.round(h * 0.25), Q.holdArms(bx, by, [rx - rw / 2 + rw * 0.04, ry + rh * 0.75], [rx + rw / 2 - rw * 0.04, ry + rh * 0.75]));
+      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, 200, Q.holdArms(bx, by, [rx - rw / 2 + rw * 0.04, ry + rh * 0.75], [rx + rw / 2 - rw * 0.04, ry + rh * 0.75]));
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       register(c, rx, ry, rw, rh, skin('mb_sen'), (look('mb_sen').cloth || ['#2e3a5e'])[0], kr);
     },
@@ -588,13 +595,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the block held up in both inky hands (his forearms up to them)
       const BW = Math.round(clamp(s(36), 24, 54)), BH = Math.round(BW * 0.64), lift = Math.round(kc * s(5));
       const yy = by - 20 - lift; // at his chest, below the chin (the portrait's chin sits about 30 px above its foot)
-      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, Math.round(h * 0.25), Q.holdArms(bx, by, [bx - BW / 2 + 2, yy + BH * 0.7], [bx + BW / 2 - 2, yy + BH * 0.7]));
+      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, 200, Q.holdArms(bx, by, [bx - BW / 2 + 2, yy + BH * 0.7], [bx + BW / 2 - 2, yy + BH * 0.7]));
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       woodblock(c, bx, yy, BW, BH);
       const sk = skin('mp_sanpei'), ink = ['#3a3440', '#2a2430'];
       const inky = [sk[0], sk[1]];
       const hl = Q.hand({ size: Math.max(7, Math.round(BW * 0.22)), pose: 'grip', side: 'R', angle: -1.4, skin: inky, sleeve: (look('mp_sanpei').cloth || ['#4a5a7a'])[0] });
-      const hr = Q.hand({ size: Math.max(7, Math.round(BW * 0.22)), pose: 'grip', side: 'L', angle: -1.75, skin: inky, sleeve: (look('mp_sanpei').cloth || ['#4a5a7a'])[0] });
+      const hr = Q.hand({ size: Math.max(7, Math.round(BW * 0.22)), pose: 'grip', side: 'L', angle: 1.75, skin: inky, sleeve: (look('mp_sanpei').cloth || ['#4a5a7a'])[0] });
       if (hl) c.drawImage(hl.cv, Math.round(bx - BW / 2 - hl.ax + 2), Math.round(yy + BH * 0.7 - hl.ay));
       if (hr) c.drawImage(hr.cv, Math.round(bx + BW / 2 - hr.ax - 2), Math.round(yy + BH * 0.7 - hr.ay));
       // ink on his hands: dark blots over the knuckles
@@ -603,7 +610,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const comp = st.cast.comp;
       if (comp && kp > 0) {
         const expr = st.test('comp=mio') || st.test('comp=ren') ? 'surprise' : st.test('comp=suzu') ? 'smirk' : 'think2';
-        const cb = Q.bust(comp.id, expr, { look: [1, 0], head: [1, 0] }, DUSK_R, false, Math.round(h * 0.25));
+        const cb = Q.bust(comp.id, expr, { look: [1, 0], head: [1, 0] }, DUSK_R, false, 200); // (full length, as Sanpei; AR-2)
         if (cb) c.drawImage(cb.cv, Math.round(lerp(-s(40), w * (narrow ? 0.16 : 0.18), kp) - cb.ax), Math.round(by + s(8) - cb.ay));
       }
     },

@@ -468,9 +468,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else {
         const sp = SPEAK[p.id];
         if (sp) {
-          const k = st.at(sp[0]), cur = st.phase === sp[0] || (p.id === 'co_goro' && st.phase === 'bell');
+          const own = p.id === 'co_goro' ? ['goro', 'bell'] : [sp[0]];
+          const k = st.at(sp[0]), cur = own.includes(st.phase);
           if (k > 0 && cur) { key = k < 0.35 ? 'p:listen' : sp[1]; if (p.id === 'co_goro' && st.phase === 'bell' && kb > 0.3) key = 'p:palmout'; y += Math.round(ease(Math.min(1, k * 2)) * s(3)); }
-          else if (k >= 1) key = sp[2];
+          else if (k >= 1) {
+            // a speaker steps back over the first part of the next line, not all at once as it begins (AR-2)
+            const jn = st.sd ? st.sd.phases.findIndex((q) => q.id === own[own.length - 1]) + 1 : 0;
+            const kn = jn > 0 && st.pi === jn ? st.at(jn) : 1;
+            key = kn < 0.35 ? (p.id === 'co_goro' && kb > 0.3 ? 'p:palmout' : sp[1]) : sp[2];
+            y += Math.round((1 - ease(Math.min(1, kn * 2))) * s(3));
+          }
         }
         // every face turns to the travellers, a wave outward from them
         if (p.id !== 'pc' && p.id !== 'comp' && ke > 0) {
@@ -837,7 +844,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         c.fillStyle = 'rgba(60,36,30,' + (0.18 * (1 - ks)).toFixed(3) + ')';
         c.fillRect(x0 - r, y0 - Math.round(r / 2), r * 2, len + r);
       }
-      if (ks >= 1 || (still && ks > 0)) { c.fillStyle = 'rgba(60,36,30,0.08)'; c.fillRect(x0 - Math.round(3 * k), y0 - 1, Math.round(6 * k), len + 2); }
+      // (the settled stain comes in over the ripple's second half: it appeared at once as the action ended; AR-2)
+      const stain = still ? (ks > 0 ? 1 : 0) : ease(clamp((ks - 0.5) / 0.5, 0, 1));
+      if (stain > 0) { c.fillStyle = 'rgba(60,36,30,' + (0.08 * stain).toFixed(3) + ')'; c.fillRect(x0 - Math.round(3 * k), y0 - 1, Math.round(6 * k), len + 2); }
       // trembling as it writes; lifted clear of the page when the line is done
       const writing = kw < 1;
       const jit = writing && !still ? Math.round(Math.sin(t / 47) * 0.9 + Math.sin(t / 113) * 0.6) : 0;

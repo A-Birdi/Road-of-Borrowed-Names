@@ -44,13 +44,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const WARM_L = { mul: [0.92, 0.84, 0.78], add: [12, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.42, 0.18], below: 0.85 } };
   const BACKLIT = { mul: [0.62, 0.58, 0.66], add: [10, 6, 12], rim: { side: 't', col: '#ffc070', k: [0.4, 0.16] } };
   // the flame's colour as it turns: blue → yellow → orange (u 0..1)
+  // the flame's, the paper's and the glow's colours from blue (u 0) through yellow (0.5) to warm (1), continuously (they
+  // went in two steps, the whole shade changing colour from one frame to the next; AR-2)
+  const mix3 = (A, u) => { const t = clamp(u, 0, 1) * 2, i = Math.min(1, Math.floor(t)), f = t - i; return A[i].map((v, j) => Math.round(v + (A[i + 1][j] - v) * f)); };
+  const FLAME = [[[58, 90, 216], [122, 160, 255], [216, 232, 255]], [[200, 176, 48], [255, 224, 96], [255, 250, 216]], [[224, 104, 24], [255, 160, 64], [255, 240, 184]]];
   function flameCols(u) {
-    const blue = [['#3a5ad8', '#7aa0ff', '#d8e8ff'], ['#c8b030', '#ffe060', '#fffad8'], ['#e06818', '#ffa040', '#fff0b8']];
-    const i = u < 0.5 ? 0 : 1, f = u < 0.5 ? u * 2 : (u - 0.5) * 2;
-    const a = blue[i], b = blue[i + 1];
-    return f < 0.5 ? a : b;
+    return [0, 1, 2].map((j) => 'rgb(' + mix3(FLAME.map((set) => set[j]), u).join(',') + ')');
   }
-  const glowRGB = (u) => (u < 0.25 ? '150,190,255' : u < 0.75 ? '255,226,140' : '255,180,100');
+  const glowRGB = (u) => mix3([[150, 190, 255], [255, 226, 140], [255, 180, 100]], u).join(',');
   // a flame: a teardrop of three tones, flickering a little (still: no flicker)
   function flame(c, x, y, hh, u, t, still, k) {
     const cols = flameCols(u), fl = still ? 0 : Math.sin(t / 130) * 0.08 + Math.sin(t / 53) * 0.05;
@@ -159,7 +160,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     });
     // the paper: lit from inside, blue-white while the flame is blue, warm as it turns
     const warm = clamp(u, 0, 1), bright = 0.55 + 0.45 * lit;
-    const pc = warm < 0.25 ? [200, 220, 245] : warm < 0.75 ? [250, 236, 190] : [252, 220, 160];
+    const pc = mix3([[200, 220, 245], [250, 236, 190], [252, 220, 160]], warm);
     for (let yy = 0; yy < H; yy++) {
       const f = 1 - Math.abs((yy - H * 0.62) / H) * 0.6;
       c.fillStyle = 'rgb(' + pc.map((v) => Math.round(v * (0.62 + 0.38 * f * bright))).join(',') + ')';
@@ -214,6 +215,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const hx = Lg.x0 + Lg.W + Math.round(lerp(4, 22, back) * k), hy = Lg.y0 + Math.round(lerp(0.92, 1.1, back) * Lg.H);
       const hd = Q.hand({ size: Math.round(6 * k), pose: 'pinch', side: 'L', angle: Math.PI - 0.5, skin: pcSkin(st), sleeve: pcSleeve(st) });
       if (hd) {
+        // (your forearm from the frame's lower right: the hand hung in the air beside the lamp; AR-2)
+        Q.forearm(c, Math.round(hx + 4 * k), Math.round(hy - 6 * k), { angle: Math.PI - 0.5, side: 'L', size: Math.round(6 * k), sleeve: pcSleeve(st), grow: 3.4 });
         R(c, hx - Math.round(2 * k), hy - Math.round(14 * k), Math.max(1, Math.round(1.6 * k)), Math.round(14 * k), '#8a6a44');
         R(c, hx - Math.round(2 * k), hy - Math.round(16 * k), Math.max(1, Math.round(1.6 * k)), Math.round(3 * k), '#1e1418');
         c.drawImage(hd.cv, Math.round(hx + 4 * k - hd.ax), Math.round(hy - 6 * k - hd.ay));
@@ -409,18 +412,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(c, slipX - Math.round(8 * k), slipY - Math.round(3 * k), Math.round(16 * k), Math.round(6 * k), '#ece2c8');
       R(c, slipX - Math.round(6 * k), slipY - Math.round(1 * k), Math.round(10 * k), Math.max(1, Math.round(k)), '#2a2024');
       if (sp > 0.5) { c.fillStyle = 'rgba(255,200,110,' + (0.5 * (1 - rise)).toFixed(2) + ')'; c.fillRect(slipX + Math.round(6 * k), slipY - Math.round(3 * k), Math.round(3 * k), Math.round(6 * k)); }
+      // (every hand here with its forearm to the frame's edge, yours close from the lower left, his from across: the
+      // cuffs ended in mid-air; AR-2)
       const ph = Q.hand({ size: Math.round(14 * k), pose: 'pinch', side: 'R', angle: -0.35, skin: pk, sleeve: ps });
-      if (ph) c.drawImage(ph.cv, Math.round(slipX - 24 * k - ph.ax), Math.round(slipY + 8 * k - ph.ay));
+      if (ph) { Q.forearm(c, Math.round(slipX - 24 * k), Math.round(slipY + 8 * k), { angle: -0.35, side: 'R', size: Math.round(14 * k), sleeve: ps, grow: 3.2 }); c.drawImage(ph.cv, Math.round(slipX - 24 * k - ph.ax), Math.round(slipY + 8 * k - ph.ay)); }
       // Hoshino's hands from the upper right: the flint in one, the steel striker in the other
       const strike = ks > 0.2 && ks < 0.35 ? 1 : 0;
       const fx = Math.round(wx + 30 * k), fy = Math.round(wy - 40 * k + strike * 6 * k);
       R(c, fx - Math.round(6 * k), fy - Math.round(4 * k), Math.round(10 * k), Math.round(7 * k), '#8a8a92'); R(c, fx - Math.round(6 * k), fy - Math.round(4 * k), Math.round(10 * k), 1, '#b8b8c0');
       const h1 = Q.hand({ size: Math.round(14 * k), pose: 'grip', side: 'L', angle: Math.PI + 0.6, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h1) c.drawImage(h1.cv, Math.round(fx + 10 * k - h1.ax), Math.round(fy - 4 * k - h1.ay));
+      if (h1) { Q.forearm(c, Math.round(fx + 10 * k), Math.round(fy - 4 * k), { angle: Math.PI + 0.6, side: 'L', size: Math.round(14 * k), sleeve: sleeve('hoshino'), grow: 1.2 }); c.drawImage(h1.cv, Math.round(fx + 10 * k - h1.ax), Math.round(fy - 4 * k - h1.ay)); }
       const sx = Math.round(wx + 16 * k - (ks > 0.15 && ks < 0.3 ? 4 * k : 0)), sy = Math.round(wy - 20 * k);
       R(c, sx - Math.round(8 * k), sy, Math.round(14 * k), Math.max(2, Math.round(2.4 * k)), '#3a3a42'); R(c, sx - Math.round(8 * k), sy, Math.round(14 * k), 1, '#7a7a86');
       const h2 = Q.hand({ size: Math.round(14 * k), pose: 'grip', side: 'R', angle: Math.PI - 0.3, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h2) c.drawImage(h2.cv, Math.round(sx + 14 * k - h2.ax), Math.round(sy + 4 * k - h2.ay));
+      if (h2) { Q.forearm(c, Math.round(sx + 14 * k), Math.round(sy + 4 * k), { angle: Math.PI - 0.3, side: 'R', size: Math.round(14 * k), sleeve: sleeve('hoshino'), grow: 1.2 }); c.drawImage(h2.cv, Math.round(sx + 14 * k - h2.ax), Math.round(sy + 4 * k - h2.ay)); }
     },
     focus(w, h, vb) { const G = geomFlint(w, h, vb), k = G.k; return { x: Math.round(G.wx - 40 * k), y: Math.round(G.wy - 48 * k), w: Math.round(80 * k), h: Math.round(Math.min(vb - 2, G.wy + 8 * k) - (G.wy - 48 * k)) }; },
   };
@@ -551,8 +556,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (hd) {
         const hx = turn > 0 ? ex + Math.round(24 * k * Math.max(0.1, flip)) : lerp(ex + Math.round(40 * k), ex + Math.round(6 * k), press < 1 ? Math.sin(Math.PI * press) : 0);
         const hy = turn > 0 ? ey : ey - Math.round(12 * k);
-        if (!(turn >= 1)) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay));
-        else { const h2 = Q.hand({ size: hk, pose: 'rest', side: 'L', angle: Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') }); if (h2) c.drawImage(h2.cv, Math.round(ex + 34 * k - h2.ax), Math.round(ey + 14 * k - h2.ay)); }
+        // (with his forearm from the frame's right edge: the cuff ended in mid-air; AR-2)
+        if (!(turn >= 1)) { Q.forearm(c, Math.round(hx), Math.round(hy), { angle: Math.PI + (turn > 0 ? 0.2 : 0.9), side: 'L', size: hk, sleeve: sleeve('hoshino'), grow: 1.5 }); c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay)); }
+        else { const h2 = Q.hand({ size: hk, pose: 'rest', side: 'L', angle: Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') }); if (h2) { Q.forearm(c, Math.round(ex + 34 * k), Math.round(ey + 14 * k), { angle: Math.PI + 0.2, side: 'L', size: hk, sleeve: sleeve('hoshino'), grow: 1.5 }); c.drawImage(h2.cv, Math.round(ex + 34 * k - h2.ax), Math.round(ey + 14 * k - h2.ay)); } }
       }
     },
     focus(w, h, vb) { const G = geomSeal(w, h, vb), k = G.k; return { x: Math.round(G.ex - 22 * k), y: Math.round(G.ey - 34 * k), w: Math.round(44 * k), h: Math.round(Math.min(vb - 2, G.ey + 34 * k) - (G.ey - 34 * k)) }; },

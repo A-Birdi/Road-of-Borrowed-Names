@@ -113,12 +113,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const k = ease(st.at('lift'));
       const SW = Math.round(clamp(ww * 0.62, s(56), s(120))), SH = Math.round(SW * 1.25);
       const sx = Math.round(wx + ww / 2 - SW / 2), sy = Math.round(lerp(st.vb, wy + wh * 0.18, k));
+      // (his forearms behind the sheet, from below it: the hands hung at its corners from nothing, the right one upside
+      // down; AR-2)
+      const hs = Math.round(clamp(s(13), 9, 22)), sl0 = (look('mp_sobe').cloth || ['#3a3a44'])[0];
+      Q.forearm(c, sx + s(2), sy + s(10), { angle: -1.35, side: 'R', size: hs, sleeve: sl0, grow: 3.4 });
+      Q.forearm(c, sx + SW - s(2), sy + s(10), { angle: 1.8, side: 'L', size: hs, sleeve: sl0, grow: 3.4 });
       c.drawImage(sheetArt(SW, SH, false, 7).cv, sx, sy);
       // the light through the paper: the window glows round the sheet's edge
       c.fillStyle = 'rgba(255,248,226,0.28)'; c.fillRect(sx - 1, sy - 1, SW + 2, 1); c.fillRect(sx - 1, sy, 1, SH);
       const sk = skin('mp_sobe'), sl = (look('mp_sobe').cloth || ['#3a3a44'])[0];
       const hl = Q.hand({ size: Math.round(clamp(s(13), 9, 22)), pose: 'pinch', side: 'R', angle: -1.35, skin: sk, sleeve: sl });
-      const hr = Q.hand({ size: Math.round(clamp(s(13), 9, 22)), pose: 'pinch', side: 'L', angle: -1.8, skin: sk, sleeve: sl });
+      const hr = Q.hand({ size: Math.round(clamp(s(13), 9, 22)), pose: 'pinch', side: 'L', angle: 1.8, skin: sk, sleeve: sl });
       if (hl) c.drawImage(hl.cv, Math.round(sx + s(2) - hl.ax), Math.round(sy + s(10) - hl.ay));
       if (hr) c.drawImage(hr.cv, Math.round(sx + SW - s(2) - hr.ax), Math.round(sy + s(10) - hr.ay));
     },

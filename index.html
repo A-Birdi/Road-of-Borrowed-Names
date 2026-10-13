@@ -3645,7 +3645,7 @@ body.reduced-motion .cb-badges .cb-ib { transition: none; }
 .rb-seal-form { display: grid; gap: 8px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: var(--r-1); margin-bottom: 10px; }
 .rb-seal-form fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .rb-seal-form legend { font-weight: 600; font-size: 0.9em; margin-bottom: 2px; }
-.rb-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.rb-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
 .rb-pg { display: flex; flex-direction: column; gap: 6px; }
 .rb-frame { position: relative; border: 6px solid #f6efdc; box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 4px rgba(0,0,0,0.15); background: #e8dcc0; line-height: 0; }
 .rb-thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; display: block; max-width: 100%; }
@@ -70358,7 +70358,9 @@ RB.seqKit = (function () {
   const clothOf = (look) => RB.sprites.colorsOf(look || {}).cloth;
 
   // A hand close to us, drawn with the pixel kit. Local frame: the wrist at (0, 0), the hand reaching
-  // along +x; side 'R' (the person's right hand seen from the back) or 'L' (mirrored); angle in radians.
+  // along +x; side 'R' (the person's right hand seen from the back) or 'L' (mirrored); angle in radians. An 'L' hand is
+  // mirrored in its own frame before it turns, so it points along (cos a, −sin a): the left-for-right mirror of an 'R'
+  // hand at angle a is an 'L' hand at a + π (−a or π − a turns it upside down: six such hands were; AR-2).
   //   pose  'rest'  lying flat, back of the hand up, fingers together
   //         'grip'  closed round something upright (a cup, a scroll, a chisel's handle)
   //         'offer' palm up and open, holding something out flat (an envelope, a card)
@@ -70464,21 +70466,42 @@ RB.seqKit = (function () {
   // (they stood on nothing once their bodies were drawn; AR-1). o: { col, vx, eye, n (joints across), cross (rows),
   // kind: 'boards' | 'flags', s }
   // A sleeved forearm from off the frame (x0, y0) to a wrist at (x1, y1) (where a hand() is drawn), wd wide at the wrist,
-  // wider toward the elbow, the cuff at the wrist: for a hand reaching into a shot that had none (AR-1)
-  function sleeveTo(c, x0, y0, x1, y1, wd, col) {
-    // (close to us at the frame's edge, so much wider there than at the wrist)
-    const p = RB.pxkit, m = Math.ceil(wd * 2.2) + 2, ox = Math.floor(Math.min(x0, x1)) - m, oy = Math.floor(Math.min(y0, y1)) - m;
+  // wider toward the elbow, the cuff at the wrist: for a hand reaching into a shot that had none (AR-1). grow: the far
+  // end's width over the wrist's (3.4: an arm close to us, from the frame's edge; about 1.3: one reaching in from across)
+  function sleeveTo(c, x0, y0, x1, y1, wd, col, grow, bare) {
+    grow = grow == null ? 3.4 : grow;
+    const p = RB.pxkit, m = Math.ceil(wd * (grow / 2 + 0.5)) + 2, ox = Math.floor(Math.min(x0, x1)) - m, oy = Math.floor(Math.min(y0, y1)) - m;
     const L = p.layer(Math.ceil(Math.abs(x1 - x0)) + 2 * m + 2, Math.ceil(Math.abs(y1 - y0)) + 2 * m + 2), M = p.mat(col || '#4a5a7a', { n: 6, at: 3, step: 0.08 });
     const dx = x1 - x0, dy = y1 - y0, d = Math.hypot(dx, dy) || 1, ex = x1 - dx / d * wd * 0.6, ey = y1 - dy / d * wd * 0.6;
     const pts = [];
-    for (let i = 0; i <= 8; i++) { const u = i / 8; pts.push([lerp(x0, ex, u) - ox, lerp(y0, ey, u) - oy, Math.round(wd * lerp(3.4, 1, Math.pow(u, 0.7)))]); }
+    for (let i = 0; i <= 8; i++) { const u = i / 8; pts.push([lerp(x0, ex, u) - ox, lerp(y0, ey, u) - oy, Math.round(wd * lerp(grow, 1, Math.pow(u, 0.7)))]); }
     L.path(pts, wd, M, 3);
     for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], q = pts[i]; L.seg(a[0] - dy / d * a[2] * 0.3, a[1] + dx / d * a[2] * 0.3, q[0] - dy / d * q[2] * 0.3, q[1] + dx / d * q[2] * 0.3, Math.max(1, q[2] * 0.22), M, 5); }
-    L.seg(x1 - ox - dx / d * wd * 0.7, y1 - oy - dy / d * wd * 0.7, x1 - ox - dx / d * wd * 0.35, y1 - oy - dy / d * wd * 0.35, wd * 1.05, M, 1);
+    if (!bare) L.seg(x1 - ox - dx / d * wd * 0.7, y1 - oy - dy / d * wd * 0.7, x1 - ox - dx / d * wd * 0.35, y1 - oy - dy / d * wd * 0.35, wd * 1.05, M, 1);
     L.outline();
     c.drawImage(L.canvas(), ox, oy);
   }
-  const hash2 = (i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+  // The forearm of a hand drawn on its own (an insert: a hand and what it holds, close), from under the hand's cuff back
+  // along the hand's own line to past the frame's edge: without it the cuff ended in mid-air and the hand floated (AR-2,
+  // at the game's real picture sizes). Drawn before the hand. (wx, wy): the wrist, where the hand is drawn;
+  // o: the hand's { angle, side, size, sleeve }, grow (as sleeveTo; default 1.4), to: [x, y] (the arm's far end, when it
+  // comes from elsewhere than straight back). Returns the far end.
+  function forearm(c, wx, wy, o) {
+    const S = Math.max(5, Math.round(o.size || 10)), a = o.angle || 0;
+    const dx = -Math.cos(a), dy = o.side === 'L' ? Math.sin(a) : -Math.sin(a);
+    let to = o.to;
+    if (!to) {
+      const W = c.canvas.width, H = c.canvas.height, pad = S * 3;
+      let t = 1e9;
+      if (dx > 1e-3) t = Math.min(t, (W + pad - wx) / dx); else if (dx < -1e-3) t = Math.min(t, (-pad - wx) / dx);
+      if (dy > 1e-3) t = Math.min(t, (H + pad - wy) / dy); else if (dy < -1e-3) t = Math.min(t, (-pad - wy) / dy);
+      to = [wx + dx * t, wy + dy * t];
+    }
+    // (it ends under the cuff: the hand's own sleeve is the cuff and covers the join)
+    sleeveTo(c, to[0], to[1], wx + dx * S * 0.55, wy + dy * S * 0.55, Math.max(3, Math.round(S * 0.86)), o.sleeve, o.grow == null ? 1.4 : o.grow, true);
+    return to;
+  }
+  const hash2 =(i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
   function floor(g, w, h, y0, o) {
     o = o || {};
     y0 = Math.round(y0);
@@ -70524,7 +70547,7 @@ RB.seqKit = (function () {
   }
 
   return {
-    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo,
+    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo, forearm,
     figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),
@@ -72076,12 +72099,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return Q.bust('hana', expr, fr, { mul: [0.97, 0.93, 0.89], add: [4, 2, 0], rim: { side: 'l', col: '#ffd8a8', k: [0.4, 0.18], below: 0.85 } }, false, 200, o);
   }
   // a teacup held in a hand (the cup's sprite from the prologue's teahouse)
-  function cupInHand(c, x, y, Z, skin, sleeve, angle) {
+  // (arm: { to, grow } draws the forearm too, for a hand with no figure to hang from; AR-2)
+  function cupInHand(c, x, y, Z, skin, sleeve, angle, arm) {
     const kit = RB.prologueArt.kit;
     const cup = kit.scaled(kit.cupSprite(), clamp(Z, 0.5, 1));
+    const a = angle == null ? -0.2 : angle, S = Math.round(11 * Z), wx = Math.round(x - cup.w * 0.4), wy = Math.round(y - cup.h * 0.22);
+    if (arm) Q.forearm(c, wx, wy, Object.assign({ angle: a, side: 'R', size: S, sleeve }, arm));
     c.drawImage(cup.cv, Math.round(x - cup.ax), Math.round(y - cup.ay));
-    const hd = Q.hand({ size: Math.round(11 * Z), pose: 'grip', side: 'R', angle: angle == null ? -0.2 : angle, skin, sleeve });
-    if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax - cup.w * 0.4), Math.round(y - hd.ay - cup.h * 0.22));
+    const hd = Q.hand({ size: S, pose: 'grip', side: 'R', angle: a, skin, sleeve });
+    if (hd) c.drawImage(hd.cv, wx - hd.ax, wy - hd.ay);
     return cup;
   }
   // Kōji from behind, close to us (RB.seqBack, AR-1): his straw hat, his hair at the nape, his shoulders and back; the
@@ -72157,8 +72183,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const hd = Q.hand({ size: 11, pose: 'offer', side: 'R', angle: -0.2, skin: Q.skinOf(look('hana')), sleeve: '#a86a5a' });
         if (hd) c.drawImage(hd.cv, rx - hd.ax, ry - hd.ay);
       }
-      // Kōji's hand and cup at the frame's edge, close to us
-      cupInHand(c, Math.round(dX + dW - s(30)), Math.round(G.vb + s(2)), 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4);
+      // Kōji's hand and cup at the frame's edge, close to us (his arm from the frame's lower edge: the hand floated; AR-2)
+      const kx0 = Math.round(dX + dW - s(30)), ky0 = Math.round(G.vb + s(2));
+      cupInHand(c, kx0, ky0, 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4, { to: [kx0 + s(16), h + s(30)], grow: 3.2 });
     },
     focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + 80 + 24; return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
   };
@@ -72397,11 +72424,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // her hand: to the company's ledger on the company's fault, across to his tags on his
       const skin = Q.skinOf(look('omi'));
       const hx = lerp(lerp(ox + s(10), led.x + led.w * 0.62, ease(kc)), tg.x + s(10), ease(ky)), hy = lerp(lerp(deskY + s(2), led.y + s(6), ease(kc)), tg.y - s(4), ease(ky)) - Math.sin(Math.PI * ky) * s(6);
-      const hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: Math.PI * 0.42, skin, sleeve: look('omi').cloth[0], cuff: '#c8a050' });
-      if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay));
+      // (each with her forearm from her side across the desk: the cuffs ended in mid-air; AR-2)
+      const osl = look('omi').cloth[0];
+      const hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: Math.PI * 0.42, skin, sleeve: osl, cuff: '#c8a050' });
+      if (hd) { Q.forearm(c, Math.round(hx), Math.round(hy), { angle: Math.PI * 0.42, side: 'R', size: 12, sleeve: osl, grow: 1.15, to: [ox + s(14), deskY - s(3)] }); c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay)); }
       // the other hand rests flat at the desk's edge
-      const h2 = Q.hand({ size: 12, pose: 'rest', side: 'L', angle: Math.PI * 0.55, skin, sleeve: look('omi').cloth[0], cuff: '#c8a050' });
-      if (h2) c.drawImage(h2.cv, Math.round(ox - s(36) - h2.ax), Math.round(deskY + s(4) - h2.ay));
+      const h2 = Q.hand({ size: 12, pose: 'rest', side: 'L', angle: -Math.PI * 0.55, skin, sleeve: osl, cuff: '#c8a050' });
+      if (h2) { Q.forearm(c, ox - s(36), deskY + s(4), { angle: -Math.PI * 0.55, side: 'L', size: 12, sleeve: osl, grow: 1.15, to: [ox - s(18), deskY - s(3)] }); c.drawImage(h2.cv, Math.round(ox - s(36) - h2.ax), Math.round(deskY + s(4) - h2.ay)); }
       // Wataru from behind at the left edge, close
       const wb = Q.back(look('wataru'), Math.round(clamp(s(180), 120, 230)), { light: 'r' });
       if (wb) c.drawImage(wb.cv, Math.round((G.lay === 'narrow' ? w * 0.08 : w * 0.14) - wb.ax), Math.round(G.vb + s(40) - wb.ay));
@@ -72633,8 +72662,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     R(c, x0, y0, W, H, '#e6dcc4'); R(c, x0, y0, W, 1, '#f6f0e0'); R(c, x0, y0 + H - 1, W, 1, '#b8aa8a'); R(c, x0 + W - 1, y0, 1, H, '#c4b696');
     // the flap: closed, a triangle down to the seal; open, folded up behind
-    c.fillStyle = open > 0 ? '#d4c8aa' : '#ddd2b6';
-    const fy = open > 0 ? y0 - Math.round(H * 0.45 * ease(open)) : y0 + Math.round(H * 0.55);
+    // (it swings up from closed through flat to open: it jumped from closed to flat as the seal began to break; AR-2)
+    const fy = Math.round(lerp(y0 + H * 0.55, y0 - H * 0.45, ease(open)));
+    c.fillStyle = fy < y0 ? '#d4c8aa' : '#ddd2b6';
     c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + W, y0); c.lineTo(x0 + W / 2, fy); c.closePath(); c.fill();
     c.fillStyle = '#a89a7a'; c.fillRect(x0, y0, W, 1);
     // the seal: whole, or two halves pulled apart
@@ -72663,15 +72693,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const sz = Math.round(24 * k);
       // your hand, holding it out, then letting go and drawing back
       const back = ease(clamp((kh - 0.55) / 0.45, 0, 1));
+      // (each hand with its forearm back to the frame's edge, yours from the lower left and his from across the desk: the
+      // cuffs ended in mid-air; AR-2. Drawn back, your hand goes out of the picture, not to its edge)
       const ph = Q.hand({ size: sz, pose: back > 0.1 ? 'rest' : 'pinch', side: 'R', angle: -0.5, skin: pskin, sleeve: psleeve });
-      if (ph) c.drawImage(ph.cv, Math.round(lerp(x - 34 * k, -30 * k, back) - ph.ax), Math.round(lerp(y + 12 * k, G.vb + 40 * k, back) - ph.ay));
+      const px = Math.round(lerp(x - 34 * k, -sz * 2.2, back)), py = Math.round(lerp(y + 12 * k, G.vb + 40 * k, back));
+      if (ph) { Q.forearm(c, px, py, { angle: -0.5, side: 'R', size: sz, sleeve: psleeve, grow: 3.2 }); c.drawImage(ph.cv, px - ph.ax, py - ph.ay); }
       const env = envelope(c, x + tremble, y, k, ksl, s);
       // his two hands taking it, from the upper right
       const reach = ease(clamp(kh / 0.6, 0, 1));
       const hA = Q.hand({ size: sz, pose: kh > 0.5 ? 'pinch' : 'offer', side: 'L', angle: Math.PI + 0.55, skin: wskin, sleeve: wsleeve });
       const hB = Q.hand({ size: sz, pose: kh > 0.5 ? 'pinch' : 'offer', side: 'R', angle: Math.PI - 0.35, skin: wskin, sleeve: wsleeve });
-      if (hA) c.drawImage(hA.cv, Math.round(lerp(w + 30 * k, env.x0 + env.W + 6 * k, reach) + tremble - hA.ax), Math.round(env.y0 + env.H * 0.35 - hA.ay));
-      if (hB && reach > 0.5) c.drawImage(hB.cv, Math.round(lerp(w + 40 * k, env.x0 + env.W * 0.66, reach) + tremble - hB.ax), Math.round(env.y0 - 5 * k - hB.ay));
+      const ax = Math.round(lerp(w + 30 * k, env.x0 + env.W + 6 * k, reach) + tremble), ay = Math.round(env.y0 + env.H * 0.35);
+      const bx = Math.round(lerp(w + 40 * k, env.x0 + env.W * 0.66, reach) + tremble), by = Math.round(env.y0 - 5 * k);
+      if (hB && reach > 0.5) Q.forearm(c, bx, by, { angle: Math.PI - 0.35, side: 'R', size: sz, sleeve: wsleeve, grow: 1.2 });
+      if (hA) { Q.forearm(c, ax, ay, { angle: Math.PI + 0.55, side: 'L', size: sz, sleeve: wsleeve, grow: 1.2 }); c.drawImage(hA.cv, ax - hA.ax, ay - hA.ay); }
+      if (hB && reach > 0.5) c.drawImage(hB.cv, bx - hB.ax, by - hB.ay);
     },
     focus(w, h, vb) { const G = geomNotice(w, h, vb), k = G.k; return { x: Math.round(G.ex - 66 * k), y: Math.round(G.ey - 24 * k), w: Math.round(108 * k), h: Math.round(52 * k) }; },
   };
@@ -72767,19 +72803,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const g2 = lit ? { mul: [1, 0.94, 0.86], add: [10, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.45, 0.2], below: 0.85 } } : { mul: [0.95, 0.94, 0.96], add: [2, 2, 6] };
       const ab = Q.bust('asahi', expr, fr, g2);
       if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
-      // the counter in front of her (it covers her below the chest)
-      c.drawImage(S0.cv, 0, back, w, h - back, 0, back, w, h - back);
       // the card: slid onto the counter by your hand; then Asahi takes it up
       const pc = st.cast.pc || {}, k = clamp(G.Z * 0.9, 0.7, 1.1);
       const cx0 = ax - s(30), cy0 = back + s(5);
       const cxs = lerp(s(30), cx0, ease(ks)), cys = lerp(G.vb + s(20), cy0, ease(ks));
       const take = ease(kt);
       const cx = lerp(cxs, ax + s(44), take), cy = lerp(cys, ay - s(22), take);
+      // (her forearm rises from behind the counter, drawn before it; AR-2)
+      const asz = Math.round(11 * k), awx = Math.round(cx + s(14) * k), awy = Math.round(cy);
+      if (take > 0) Q.forearm(c, awx, awy, { angle: Math.PI * 0.62, side: 'L', size: asz, sleeve: look('asahi').cloth[0], grow: 1.2 });
+      // the counter in front of her (it covers her below the chest)
+      c.drawImage(S0.cv, 0, back, w, h - back, 0, back, w, h - back);
       regCard(c, cx, cy, k, lerp(-0.1, 0.05, take));
       const out = ease(clamp((ks - 0.6) / 0.4, 0, 1));
-      const ph = Q.hand({ size: Math.round(13 * k), pose: 'rest', side: 'R', angle: -0.3, skin: Q.skinOf(pc), sleeve: Q.clothOf(pc)[0] });
-      if (ph && out < 1) c.drawImage(ph.cv, Math.round(lerp(cxs - s(16) * k, s(-20), out) - ph.ax), Math.round(lerp(cys + s(8), G.vb + s(30), out) - ph.ay));
-      if (take > 0) { const hd = Q.hand({ size: Math.round(11 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.62, skin: Q.skinOf(look('asahi')), sleeve: look('asahi').cloth[0] }); if (hd) c.drawImage(hd.cv, Math.round(cx + s(14) * k - hd.ax), Math.round(cy - hd.ay)); }
+      const psz = Math.round(13 * k), ph = Q.hand({ size: psz, pose: 'rest', side: 'R', angle: -0.3, skin: Q.skinOf(pc), sleeve: Q.clothOf(pc)[0] });
+      const pwx = Math.round(lerp(cxs - s(16) * k, -psz * 2.2, out)), pwy = Math.round(lerp(cys + s(8), G.vb + s(30), out));
+      if (ph && out < 1) { Q.forearm(c, pwx, pwy, { angle: -0.3, side: 'R', size: psz, sleeve: Q.clothOf(pc)[0], grow: 3.2 }); c.drawImage(ph.cv, pwx - ph.ax, pwy - ph.ay); }
+      if (take > 0) { const hd = Q.hand({ size: asz, pose: 'pinch', side: 'L', angle: Math.PI * 0.62, skin: Q.skinOf(look('asahi')), sleeve: look('asahi').cloth[0] }); if (hd) c.drawImage(hd.cv, awx - hd.ax, awy - hd.ay); }
     },
     focus(w, h, vb) { const G = geomShop(w, h, vb, false); return G.band ? { x: G.ax - 30, y: G.ay - 88, w: 60, h: 56 } : { x: G.ax - G.s(70), y: G.ay - 88, w: G.s(70) + 48, h: G.back + G.s(12) - (G.ay - 88) }; },
   };
@@ -72859,8 +72899,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < Math.round(carve * 12); i++) { const x = pl.x0 + rnd() * pl.W, y = pl.y0 + pl.H + s(4) + rnd() * s(14); c.fillStyle = '#e8cc98'; P().ring(c, x, y, Math.max(1, Math.round(2 * k)), 1); }
       // her left hand steadying the plate; her right with the chisel at the line's end (laid down at the end)
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
-      const hl = Q.hand({ size: Math.round(22 * k), pose: 'rest', side: 'L', angle: 0.25, skin, sleeve });
-      if (hl) c.drawImage(hl.cv, Math.round(pl.x0 - s(8) * k - hl.ax), Math.round(pl.y0 + pl.H * 0.7 - hl.ay));
+      // (each with its forearm to the frame's edge: the cuffs ended in mid-air; AR-2)
+      const hsz = Math.round(22 * k), hl = Q.hand({ size: hsz, pose: 'rest', side: 'L', angle: 0.25, skin, sleeve });
+      const lwx = Math.round(pl.x0 - s(8) * k), lwy = Math.round(pl.y0 + pl.H * 0.7);
+      if (hl) { Q.forearm(c, lwx, lwy, { angle: 0.25, side: 'L', size: hsz, sleeve, grow: 1.6 }); c.drawImage(hl.cv, lwx - hl.ax, lwy - hl.ay); }
       const done = kc >= 1 || still;
       const tip = done ? [pl.x0 + pl.W + s(26) * k, pl.y0 + pl.H * 0.8] : pl.tip;
       const jit = still || done ? 0 : Math.sin(t / 60) * 0.6;
@@ -72869,8 +72911,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ex = tip[0] + Math.cos(ang + Math.PI) * cl * -1, ey = tip[1] + Math.sin(ang + Math.PI) * cl * -1;
       c.strokeStyle = '#b8bcc4'; c.lineWidth = Math.max(1, Math.round(2 * k)); c.beginPath(); c.moveTo(Math.round(tip[0]), Math.round(tip[1] + jit)); c.lineTo(Math.round((tip[0] + ex) / 2), Math.round((tip[1] + ey) / 2 + jit)); c.stroke();
       c.strokeStyle = '#7a4a2a'; c.lineWidth = Math.max(2, Math.round(4 * k)); c.beginPath(); c.moveTo(Math.round((tip[0] + ex) / 2), Math.round((tip[1] + ey) / 2 + jit)); c.lineTo(Math.round(ex), Math.round(ey + jit)); c.stroke();
-      const hr = Q.hand({ size: Math.round(22 * k), pose: 'grip', side: 'R', angle: ang + Math.PI, skin, sleeve });
-      if (hr) c.drawImage(hr.cv, Math.round(ex - hr.ax), Math.round(ey + jit - hr.ay));
+      const hr = Q.hand({ size: hsz, pose: 'grip', side: 'R', angle: ang + Math.PI, skin, sleeve });
+      if (hr) { Q.forearm(c, Math.round(ex), Math.round(ey + jit), { angle: ang + Math.PI, side: 'R', size: hsz, sleeve, grow: 1.6 }); c.drawImage(hr.cv, Math.round(ex - hr.ax), Math.round(ey + jit - hr.ay)); }
       // the polishing cloth folded beside the plate at the end
       if (sheen > 0) { c.fillStyle = '#d8d2c4'; c.fillRect(Math.round(pl.x0 + pl.W * 0.2), Math.round(pl.y0 + pl.H + s(8)), Math.round(26 * k), Math.round(10 * k)); c.fillStyle = '#b8b2a4'; c.fillRect(Math.round(pl.x0 + pl.W * 0.2), Math.round(pl.y0 + pl.H + s(8) + 8 * k), Math.round(26 * k), Math.round(2 * k)); }
       Q.dust(c, 0, G.yW, w, G.vb, s(30), t, 18, '255,240,210', still, 17);
@@ -72894,15 +72936,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const k = clamp(G.Z * 0.9, 0.7, 1.2), e = ease(kl);
       // (in a band above the sheet she holds it up beside her face instead)
       const py = Math.round(lerp(G.vb + s(40), G.band ? ay - 58 : ay - s(12), e)), pxx = G.band ? Math.round(ax + 48 + 58 * k) : ax;
-      // her forearms up to the plate's two ends (plate(): W = 110 k, H = 48 k about its centre)
-      const PW = Math.round(110 * k), PH = Math.round(48 * k), px0 = Math.round(pxx - PW / 2), hy0 = Math.round(py - PH / 2 + PH * 0.6);
-      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200, Q.holdArms(ax, ay, [px0 + s(2), hy0], [px0 + PW - s(2), hy0]));
+      // her hands under the plate's lower edge, a third of the way in from each end (plate(): W = 110 k, H = 48 k about its
+      // centre): held at its two ends, her elbows splayed out past them and her forearms showed as two logs; AR-2
+      const PW = Math.round(110 * k), PH = Math.round(48 * k), hy0 = Math.round(py + PH / 2 - 2), hxs = [Math.round(pxx - PW * 0.3), Math.round(pxx + PW * 0.3)];
+      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200, Q.holdArms(ax, ay, [hxs[0], hy0], [hxs[1], hy0]));
       if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
-      const pl = plate(c, pxx, py, k, 1, 1, s, true);
+      plate(c, pxx, py, k, 1, 1, s, true);
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
-      for (const [hx, side, ang] of [[pl.x0 + s(2), 'L', -0.4], [pl.x0 + pl.W - s(2), 'R', Math.PI + 0.4]]) {
-        const hd = Q.hand({ size: Math.round(13 * k), pose: 'pinch', side, angle: ang - Math.PI / 2, skin, sleeve });
-        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(pl.y0 + pl.H * 0.6 - hd.ay));
+      // (fingers up over the edge: the right hand at −π/2 + 0.3, the left its mirror, + π)
+      for (const [hx, side, ang] of [[hxs[0], 'L', Math.PI / 2 + 0.3], [hxs[1], 'R', -Math.PI / 2 + 0.3]]) {
+        const hd = Q.hand({ size: Math.round(13 * k), pose: 'grip', side, angle: ang, skin, sleeve });
+        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy0 - hd.ay));
       }
       if (!still) Q.dust(c, 0, 0, w, G.vb, s(20), t, 12, lit ? '255,200,140' : '240,236,226', still, 23);
     },
@@ -73388,9 +73432,16 @@ var RB = (globalThis.RB = globalThis.RB || {});
       else {
         const sp = SPEAK[p.id];
         if (sp) {
-          const k = st.at(sp[0]), cur = st.phase === sp[0] || (p.id === 'co_goro' && st.phase === 'bell');
+          const own = p.id === 'co_goro' ? ['goro', 'bell'] : [sp[0]];
+          const k = st.at(sp[0]), cur = own.includes(st.phase);
           if (k > 0 && cur) { key = k < 0.35 ? 'p:listen' : sp[1]; if (p.id === 'co_goro' && st.phase === 'bell' && kb > 0.3) key = 'p:palmout'; y += Math.round(ease(Math.min(1, k * 2)) * s(3)); }
-          else if (k >= 1) key = sp[2];
+          else if (k >= 1) {
+            // a speaker steps back over the first part of the next line, not all at once as it begins (AR-2)
+            const jn = st.sd ? st.sd.phases.findIndex((q) => q.id === own[own.length - 1]) + 1 : 0;
+            const kn = jn > 0 && st.pi === jn ? st.at(jn) : 1;
+            key = kn < 0.35 ? (p.id === 'co_goro' && kb > 0.3 ? 'p:palmout' : sp[1]) : sp[2];
+            y += Math.round((1 - ease(Math.min(1, kn * 2))) * s(3));
+          }
         }
         // every face turns to the travellers, a wave outward from them
         if (p.id !== 'pc' && p.id !== 'comp' && ke > 0) {
@@ -73757,7 +73808,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         c.fillStyle = 'rgba(60,36,30,' + (0.18 * (1 - ks)).toFixed(3) + ')';
         c.fillRect(x0 - r, y0 - Math.round(r / 2), r * 2, len + r);
       }
-      if (ks >= 1 || (still && ks > 0)) { c.fillStyle = 'rgba(60,36,30,0.08)'; c.fillRect(x0 - Math.round(3 * k), y0 - 1, Math.round(6 * k), len + 2); }
+      // (the settled stain comes in over the ripple's second half: it appeared at once as the action ended; AR-2)
+      const stain = still ? (ks > 0 ? 1 : 0) : ease(clamp((ks - 0.5) / 0.5, 0, 1));
+      if (stain > 0) { c.fillStyle = 'rgba(60,36,30,' + (0.08 * stain).toFixed(3) + ')'; c.fillRect(x0 - Math.round(3 * k), y0 - 1, Math.round(6 * k), len + 2); }
       // trembling as it writes; lifted clear of the page when the line is done
       const writing = kw < 1;
       const jit = writing && !still ? Math.round(Math.sin(t / 47) * 0.9 + Math.sin(t / 113) * 0.6) : 0;
@@ -74246,13 +74299,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const WARM_L = { mul: [0.92, 0.84, 0.78], add: [12, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.42, 0.18], below: 0.85 } };
   const BACKLIT = { mul: [0.62, 0.58, 0.66], add: [10, 6, 12], rim: { side: 't', col: '#ffc070', k: [0.4, 0.16] } };
   // the flame's colour as it turns: blue → yellow → orange (u 0..1)
+  // the flame's, the paper's and the glow's colours from blue (u 0) through yellow (0.5) to warm (1), continuously (they
+  // went in two steps, the whole shade changing colour from one frame to the next; AR-2)
+  const mix3 = (A, u) => { const t = clamp(u, 0, 1) * 2, i = Math.min(1, Math.floor(t)), f = t - i; return A[i].map((v, j) => Math.round(v + (A[i + 1][j] - v) * f)); };
+  const FLAME = [[[58, 90, 216], [122, 160, 255], [216, 232, 255]], [[200, 176, 48], [255, 224, 96], [255, 250, 216]], [[224, 104, 24], [255, 160, 64], [255, 240, 184]]];
   function flameCols(u) {
-    const blue = [['#3a5ad8', '#7aa0ff', '#d8e8ff'], ['#c8b030', '#ffe060', '#fffad8'], ['#e06818', '#ffa040', '#fff0b8']];
-    const i = u < 0.5 ? 0 : 1, f = u < 0.5 ? u * 2 : (u - 0.5) * 2;
-    const a = blue[i], b = blue[i + 1];
-    return f < 0.5 ? a : b;
+    return [0, 1, 2].map((j) => 'rgb(' + mix3(FLAME.map((set) => set[j]), u).join(',') + ')');
   }
-  const glowRGB = (u) => (u < 0.25 ? '150,190,255' : u < 0.75 ? '255,226,140' : '255,180,100');
+  const glowRGB = (u) => mix3([[150, 190, 255], [255, 226, 140], [255, 180, 100]], u).join(',');
   // a flame: a teardrop of three tones, flickering a little (still: no flicker)
   function flame(c, x, y, hh, u, t, still, k) {
     const cols = flameCols(u), fl = still ? 0 : Math.sin(t / 130) * 0.08 + Math.sin(t / 53) * 0.05;
@@ -74361,7 +74415,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     });
     // the paper: lit from inside, blue-white while the flame is blue, warm as it turns
     const warm = clamp(u, 0, 1), bright = 0.55 + 0.45 * lit;
-    const pc = warm < 0.25 ? [200, 220, 245] : warm < 0.75 ? [250, 236, 190] : [252, 220, 160];
+    const pc = mix3([[200, 220, 245], [250, 236, 190], [252, 220, 160]], warm);
     for (let yy = 0; yy < H; yy++) {
       const f = 1 - Math.abs((yy - H * 0.62) / H) * 0.6;
       c.fillStyle = 'rgb(' + pc.map((v) => Math.round(v * (0.62 + 0.38 * f * bright))).join(',') + ')';
@@ -74416,6 +74470,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const hx = Lg.x0 + Lg.W + Math.round(lerp(4, 22, back) * k), hy = Lg.y0 + Math.round(lerp(0.92, 1.1, back) * Lg.H);
       const hd = Q.hand({ size: Math.round(6 * k), pose: 'pinch', side: 'L', angle: Math.PI - 0.5, skin: pcSkin(st), sleeve: pcSleeve(st) });
       if (hd) {
+        // (your forearm from the frame's lower right: the hand hung in the air beside the lamp; AR-2)
+        Q.forearm(c, Math.round(hx + 4 * k), Math.round(hy - 6 * k), { angle: Math.PI - 0.5, side: 'L', size: Math.round(6 * k), sleeve: pcSleeve(st), grow: 3.4 });
         R(c, hx - Math.round(2 * k), hy - Math.round(14 * k), Math.max(1, Math.round(1.6 * k)), Math.round(14 * k), '#8a6a44');
         R(c, hx - Math.round(2 * k), hy - Math.round(16 * k), Math.max(1, Math.round(1.6 * k)), Math.round(3 * k), '#1e1418');
         c.drawImage(hd.cv, Math.round(hx + 4 * k - hd.ax), Math.round(hy - 6 * k - hd.ay));
@@ -74611,18 +74667,20 @@ var RB = (globalThis.RB = globalThis.RB || {});
       R(c, slipX - Math.round(8 * k), slipY - Math.round(3 * k), Math.round(16 * k), Math.round(6 * k), '#ece2c8');
       R(c, slipX - Math.round(6 * k), slipY - Math.round(1 * k), Math.round(10 * k), Math.max(1, Math.round(k)), '#2a2024');
       if (sp > 0.5) { c.fillStyle = 'rgba(255,200,110,' + (0.5 * (1 - rise)).toFixed(2) + ')'; c.fillRect(slipX + Math.round(6 * k), slipY - Math.round(3 * k), Math.round(3 * k), Math.round(6 * k)); }
+      // (every hand here with its forearm to the frame's edge, yours close from the lower left, his from across: the
+      // cuffs ended in mid-air; AR-2)
       const ph = Q.hand({ size: Math.round(14 * k), pose: 'pinch', side: 'R', angle: -0.35, skin: pk, sleeve: ps });
-      if (ph) c.drawImage(ph.cv, Math.round(slipX - 24 * k - ph.ax), Math.round(slipY + 8 * k - ph.ay));
+      if (ph) { Q.forearm(c, Math.round(slipX - 24 * k), Math.round(slipY + 8 * k), { angle: -0.35, side: 'R', size: Math.round(14 * k), sleeve: ps, grow: 3.2 }); c.drawImage(ph.cv, Math.round(slipX - 24 * k - ph.ax), Math.round(slipY + 8 * k - ph.ay)); }
       // Hoshino's hands from the upper right: the flint in one, the steel striker in the other
       const strike = ks > 0.2 && ks < 0.35 ? 1 : 0;
       const fx = Math.round(wx + 30 * k), fy = Math.round(wy - 40 * k + strike * 6 * k);
       R(c, fx - Math.round(6 * k), fy - Math.round(4 * k), Math.round(10 * k), Math.round(7 * k), '#8a8a92'); R(c, fx - Math.round(6 * k), fy - Math.round(4 * k), Math.round(10 * k), 1, '#b8b8c0');
       const h1 = Q.hand({ size: Math.round(14 * k), pose: 'grip', side: 'L', angle: Math.PI + 0.6, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h1) c.drawImage(h1.cv, Math.round(fx + 10 * k - h1.ax), Math.round(fy - 4 * k - h1.ay));
+      if (h1) { Q.forearm(c, Math.round(fx + 10 * k), Math.round(fy - 4 * k), { angle: Math.PI + 0.6, side: 'L', size: Math.round(14 * k), sleeve: sleeve('hoshino'), grow: 1.2 }); c.drawImage(h1.cv, Math.round(fx + 10 * k - h1.ax), Math.round(fy - 4 * k - h1.ay)); }
       const sx = Math.round(wx + 16 * k - (ks > 0.15 && ks < 0.3 ? 4 * k : 0)), sy = Math.round(wy - 20 * k);
       R(c, sx - Math.round(8 * k), sy, Math.round(14 * k), Math.max(2, Math.round(2.4 * k)), '#3a3a42'); R(c, sx - Math.round(8 * k), sy, Math.round(14 * k), 1, '#7a7a86');
       const h2 = Q.hand({ size: Math.round(14 * k), pose: 'grip', side: 'R', angle: Math.PI - 0.3, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h2) c.drawImage(h2.cv, Math.round(sx + 14 * k - h2.ax), Math.round(sy + 4 * k - h2.ay));
+      if (h2) { Q.forearm(c, Math.round(sx + 14 * k), Math.round(sy + 4 * k), { angle: Math.PI - 0.3, side: 'R', size: Math.round(14 * k), sleeve: sleeve('hoshino'), grow: 1.2 }); c.drawImage(h2.cv, Math.round(sx + 14 * k - h2.ax), Math.round(sy + 4 * k - h2.ay)); }
     },
     focus(w, h, vb) { const G = geomFlint(w, h, vb), k = G.k; return { x: Math.round(G.wx - 40 * k), y: Math.round(G.wy - 48 * k), w: Math.round(80 * k), h: Math.round(Math.min(vb - 2, G.wy + 8 * k) - (G.wy - 48 * k)) }; },
   };
@@ -74753,8 +74811,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (hd) {
         const hx = turn > 0 ? ex + Math.round(24 * k * Math.max(0.1, flip)) : lerp(ex + Math.round(40 * k), ex + Math.round(6 * k), press < 1 ? Math.sin(Math.PI * press) : 0);
         const hy = turn > 0 ? ey : ey - Math.round(12 * k);
-        if (!(turn >= 1)) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay));
-        else { const h2 = Q.hand({ size: hk, pose: 'rest', side: 'L', angle: Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') }); if (h2) c.drawImage(h2.cv, Math.round(ex + 34 * k - h2.ax), Math.round(ey + 14 * k - h2.ay)); }
+        // (with his forearm from the frame's right edge: the cuff ended in mid-air; AR-2)
+        if (!(turn >= 1)) { Q.forearm(c, Math.round(hx), Math.round(hy), { angle: Math.PI + (turn > 0 ? 0.2 : 0.9), side: 'L', size: hk, sleeve: sleeve('hoshino'), grow: 1.5 }); c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay)); }
+        else { const h2 = Q.hand({ size: hk, pose: 'rest', side: 'L', angle: Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') }); if (h2) { Q.forearm(c, Math.round(ex + 34 * k), Math.round(ey + 14 * k), { angle: Math.PI + 0.2, side: 'L', size: hk, sleeve: sleeve('hoshino'), grow: 1.5 }); c.drawImage(h2.cv, Math.round(ex + 34 * k - h2.ax), Math.round(ey + 14 * k - h2.ay)); } }
       }
     },
     focus(w, h, vb) { const G = geomSeal(w, h, vb), k = G.k; return { x: Math.round(G.ex - 22 * k), y: Math.round(G.ey - 34 * k), w: Math.round(44 * k), h: Math.round(Math.min(vb - 2, G.ey + 34 * k) - (G.ey - 34 * k)) }; },
@@ -75343,6 +75402,27 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     void t;
   }
+  // the gong's bell part way from green to struck: the struck bell's chips and lip band shown where a dithered front
+  // spreading from the strike (the lip's middle) has reached (f 0 … 1, in tenths)
+  function shedBell(H, f) {
+    const q = Math.round(clamp(f, 0, 1) * 10) / 10;
+    const bP = bellArt(H, 'patina', 0.07, true), bS = bellArt(H, 'struck', 0.07, true);
+    if (q <= 0) return bP;
+    if (q >= 1) return bS;
+    return Q.small('ch5.shed|' + H + '|' + q, () => {
+      const cv = mk(bP.w, bP.h), g = cv.getContext('2d', { willReadFrequently: true });
+      g.drawImage(bP.cv, 0, 0);
+      const a = g.getImageData(0, 0, bP.w, bP.h), sd = bS.cv.getContext('2d').getImageData(0, 0, bP.w, bP.h).data, d = a.data, bay = P().bayer;
+      for (let y = 0; y < bP.h; y++) for (let x = 0; x < bP.w; x++) {
+        const o = (y * bP.w + x) * 4;
+        if (d[o] === sd[o] && d[o + 1] === sd[o + 1] && d[o + 2] === sd[o + 2] && d[o + 3] === sd[o + 3]) continue;
+        const r = Math.hypot((x - bP.ax) / bP.lipR * 0.8, Math.max(0, bP.lipY - y) / (bP.H * 0.26) * 0.7);
+        if (r + bay(x, y) * 0.45 < q * 1.45) for (let i = 0; i < 4; i++) d[o + i] = sd[o + i];
+      }
+      g.putImageData(a, 0, 0);
+      return Object.assign({}, bP, { cv });
+    });
+  }
   const gong = {
     phases: [['swing', 1400], ['climb', 1000]],
     safe: { wide: 'the lip and the rings in the band above the sheet', narrow: 'the lip over the water, the pipe at the side', land: 'the lip and the first rings' },
@@ -75357,8 +75437,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (ks >= 1 && !still) { rings(c, cx, yW + s(10), ((t / 2800) % 1), 2, w * 0.6, 0.14, '200,226,236', 0.2, yW); rings(c, cx, yW + s(10), ((t / 2800 + 0.5) % 1), 1, w * 0.4, 0.14, '200,226,236', 0.14, yW); }
       // the bell: one swing on its beam (the shake of the stone, shown as the bell's own movement), the clapper
       // lagging behind it and striking the lip
-      const struck = ks > 0.2;
-      const b = bellArt(H, struck ? 'struck' : 'patina', 0.07, true);
+      // (the green comes off from where the clapper struck, spreading round the lip as the flakes fall: it was one frame,
+      // the whole close-up turning from green to bronze at once, like a flash; AR-2)
+      const b = shedBell(H, clamp((ks - 0.2) / 0.45, 0, 1));
       const ang = still ? 0 : 0.03 * Math.sin(Math.PI * 2 * 1.25 * ks) * (1 - ks) ** 1.3;
       const pivY = lipY - b.lipY;
       const bobOff = still || ks >= 1 ? 0 : Math.round(-Math.sin(Math.PI * 2 * 1.25 * ks - 0.9) * (1 - ks) * b.lipR * 0.22);
@@ -75378,7 +75459,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (kc > 0) {
         const lx = px - Math.round(pr * 0.35);
         pulse(c, [[lx, yW + s(6)], [lx, -s(10)]], clamp(kc * 1.1, 0, 1), 0.55, 0.95, Math.max(2, Math.round(pr * 0.35)));
-        if (kc >= 1) { c.fillStyle = 'rgba(214,224,255,0.2)'; c.fillRect(lx - Math.round(pr * 0.17), 0, Math.max(2, Math.round(pr * 0.35)), yW + s(6)); motesUp(c, lx, 0, yW, t, still, 4, 9); }
+        // (the line's light stays once it has risen, coming up as the pulse climbs: it appeared at once at the end; AR-2)
+        const ln = still ? (kc >= 1 ? 1 : 0) : ease(clamp((kc - 0.6) / 0.4, 0, 1));
+        if (ln > 0) { c.fillStyle = 'rgba(214,224,255,' + (0.2 * ln).toFixed(3) + ')'; c.fillRect(lx - Math.round(pr * 0.17), 0, Math.max(2, Math.round(pr * 0.35)), yW + s(6)); }
+        if (kc >= 1) motesUp(c, lx, 0, yW, t, still, 4, 9);
         // where the rings touch the stone, a pale edge
         c.fillStyle = 'rgba(200,226,236,' + (0.35 * ease(clamp(kc * 2, 0, 1))).toFixed(2) + ')'; c.fillRect(0, yW - 1, w, 1);
       }
@@ -75521,7 +75605,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (kt >= 1 && !still) pulse(c, S0.pts, (t / 3600) % 1, 0.16, 0.45, Math.max(1, s(2)));
         c.restore();
       }
-      if (kt >= 1) for (const x of pipes) { c.fillStyle = 'rgba(214,224,255,0.1)'; c.fillRect(x - Math.max(1, s(2)), 0, Math.max(2, s(4)), h); }
+      // (the pipes' pale light comes up as the pulse reaches the town: it appeared at once as the action ended; AR-2)
+      const pl = still ? (kt >= 1 ? 1 : 0) : ease(clamp((kt - 0.7) / 0.3, 0, 1));
+      if (pl > 0) for (const x of pipes) { c.fillStyle = 'rgba(214,224,255,' + (0.1 * pl).toFixed(3) + ')'; c.fillRect(x - Math.max(1, s(2)), 0, Math.max(2, s(4)), h); }
       vignette(c, w, h, 0.4, 0.5);
     },
     focus(w, h, vb) { const G = geomTown(w, h, vb); const x0 = Math.max(0, G.pipes[0] - G.s(14)); const y0 = Math.max(0, G.yH - G.s(70)); return { x: x0, y: y0, w: Math.round(G.win.x + G.win.w - x0), h: Math.min(vb, G.yH + G.s(14)) - y0 }; },
@@ -76125,13 +76211,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const hd = Q.hand({ size: Math.round(9 * k / 0.8), pose: reach > 0.6 ? 'pinch' : 'offer', side, angle: dx < 0 ? Math.PI * 0.08 : Math.PI * 0.92, skin: kskin, sleeve: ksl });
         if (hd && reach > 0) c.drawImage(hd.cv, Math.round(lerp(kx + dx * s(28), fx + dx * s(16) * k, reach) - hd.ax), Math.round(lerp(ky + s(30), fy + s(4), reach) - hd.ay));
       }
-      // your hand under it, then letting go and drawing back
+      // you, from behind, at the left, kneeling across from them: your right arm out with your hand under the folio, then
+      // letting go and drawing back to your lap (the hand floated in front of you while both arms hung; AR-2)
       const back = ease(clamp((kh - 0.6) / 0.4, 0, 1));
-      const ph = Q.hand({ size: Math.round(11 * k / 0.8), pose: back > 0.2 ? 'rest' : 'offer', side: 'R', angle: -0.4, skin: pskin, sleeve: psl });
-      if (ph) c.drawImage(ph.cv, Math.round(lerp(fx - s(14) * k, fx0 - s(24), back) - ph.ax), Math.round(lerp(fy + s(14) * k, G.vb + s(24), back) - ph.ay));
-      // you, from behind, at the left, kneeling across from them
-      const yb = Q.back(pc, G.bw, { light: 'r', pose: 'kneel' });
-      if (yb) c.drawImage(yb.cv, G.bx - yb.ax, G.by - yb.ay);
+      const out = back < 1 && kh < 1;
+      const yb = Q.back(pc, G.bw, out ? { light: 'r', pose: 'kneel', raise: 'r' } : { light: 'r', pose: 'kneel' });
+      if (yb) {
+        c.drawImage(yb.cv, G.bx - yb.ax, G.by - yb.ay);
+        if (out) {
+          const W = G.bw, shx = G.bx - yb.ax + yb.shoulders.r[0], shy = G.by - yb.ay + yb.shoulders.r[1];
+          const q2 = (v) => 2 * Math.round(v / 2);
+          const wx = q2(lerp(fx - s(14) * k - shx, W * 0.02, back)), wy = q2(lerp(fy + s(14) * k - shy, W * 0.36, back));
+          const arm = Q.small('ch6.folioarm|' + W + '|' + wx + ',' + wy + '|' + JSON.stringify(pc), () => RB.seqBack.arm(pc, W, wx, wy));
+          if (arm) c.drawImage(arm.cv, shx - arm.ox, shy - arm.oy);
+          const ph = Q.hand({ size: Math.round(W * 0.085), pose: back > 0.2 ? 'rest' : 'offer', side: 'R', angle: Math.atan2(wy, wx), skin: pskin, sleeve: psl });
+          if (ph) c.drawImage(ph.cv, shx + wx - ph.ax, shy + wy - ph.ay);
+        }
+      }
     },
     focus(w, h, vb) { const G = geomFolio(w, h, vb); if (G.land) return { x: G.kx - 30, y: G.ky - 82, w: 60, h: Math.min(50, vb + 2 - (G.ky - 82)) }; return { x: G.kx - G.s(36), y: G.ky - 88, w: G.s(36) + 34, h: Math.min(vb, G.ky + G.s(36)) - (G.ky - 88) }; },
   };
@@ -76181,7 +76277,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const pc = st.cast.pc || {};
       const out = ease(clamp((kl - 0.78) / 0.22, 0, 1));
       const hd = Q.hand({ size: Math.round(15 * k), pose: kl < 0.9 ? 'pinch' : 'rest', side: 'R', angle: -Math.PI / 2 - 0.25, skin: Q.skinOf(pc), sleeve: Q.clothOf(pc)[0] });
-      if (hd && out < 1) c.drawImage(hd.cv, Math.round(at.notice[0] + 8 * k - hd.ax), Math.round(lerp(at.notice[1] + off, at.notice[1] + 24 * k, e2) + out * off - hd.ay));
+      // (with your forearm from the frame's lower edge: the cuff ended on the floor in mid-picture; AR-2)
+      const hwx = Math.round(at.notice[0] + 8 * k), hwy = Math.round(lerp(at.notice[1] + off, at.notice[1] + 24 * k, e2) + out * off);
+      if (hd && out < 1) { Q.forearm(c, hwx, hwy, { angle: -Math.PI / 2 - 0.25, side: 'R', size: Math.round(15 * k), sleeve: Q.clothOf(pc)[0], grow: 3 }); c.drawImage(hd.cv, hwx - hd.ax, hwy - hd.ay); }
       airLife(c, w, h, t, still, 14, 71, 0);
       void s;
     },
@@ -76524,9 +76622,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ko = st.at('open');
       // the folio at their chest (beside the face in a phone's band), the cover swinging open; their forearms up to the
       // hands on its spine and on the cover's edge
-      const fx = G.land ? kx + 70 : kx + Math.round(6 * k), fy = G.land ? Math.round(clamp(G.vb * 0.5, 30, G.vb - 16)) : ky - Math.round(2 * k);
+      // (on a phone on its side the folio is beside the face, low enough in the band for their hands to hold it: at the
+      // face's height it was past their reach; AR-2)
+      const fx = G.land ? kx + 58 : kx + Math.round(6 * k), fy = G.land ? Math.round(clamp(G.vb * 0.5 + 18, 30, G.vb - 12)) : ky - Math.round(2 * k);
       const W = Math.round(36 * k), cw0 = W * Math.cos(Math.PI * ease(ko));
-      const hlp = [Math.round(fx - W / 2 - 4 * k), Math.round(fy + 10 * k)], hrp = [Math.round(fx - W / 2 + Math.max(cw0, W * 0.9 * (ko >= 1 ? 1 : 0)) + 4 * k), Math.round(fy + 8 * k)];
+      // (the right hand follows the cover's edge to the spine, then goes over to rest on the page: it jumped there when
+      // the action ended; AR-2)
+      const rx = ko < 0.5 ? cw0 : W * 0.9 * ease((ko - 0.5) / 0.5);
+      const hlp = [Math.round(fx - W / 2 - 4 * k), Math.round(fy + 10 * k)], hrp = [Math.round(fx - W / 2 + rx + 4 * k), Math.round(fy + 8 * k)];
       const rb = Q.bust('ren', 'neutral', { look: [0, 1] }, RLIGHT, false, 220, Q.holdArms(kx, ky, hlp, hrp));
       if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
       ushioFolio(c, fx, fy, k, ease(ko));
@@ -76534,12 +76637,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const hl = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.08, skin, sleeve: sl });
       const hr = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'R', angle: Math.PI * 0.92, skin, sleeve: sl });
       // the left hand holds the spine; the right turns the cover (it follows the cover's edge, then rests on the page)
-      const cw = W * Math.cos(Math.PI * ease(ko));
       if (hl) c.drawImage(hl.cv, Math.round(fx - W / 2 - 4 * k - hl.ax), Math.round(fy + 10 * k - hl.ay));
-      if (hr) c.drawImage(hr.cv, Math.round(fx - W / 2 + Math.max(cw, W * 0.9 * (ko >= 1 ? 1 : 0)) + 4 * k - hr.ax), Math.round(fy + 8 * k - hr.ay));
+      if (hr) c.drawImage(hr.cv, hrp[0] - hr.ax, hrp[1] - hr.ay);
       void s;
     },
-    focus(w, h, vb) { const G = geomRen(w, h, vb, false), k = G.k; if (G.land) return { x: G.kx - 30, y: G.ky - 82, w: Math.round(G.kx + 70 + 20 * k - (G.kx - 30)), h: Math.min(vb + 2, G.ky - 30) - (G.ky - 82) }; const y0 = G.ky - 88; return { x: Math.round(G.kx - 34), y: y0, w: 68, h: Math.round(Math.min(vb, G.ky + 22 * k) - y0) }; },
+    focus(w, h, vb) { const G = geomRen(w, h, vb, false), k = G.k; if (G.land) return { x: G.kx - 30, y: G.ky - 82, w: Math.round(G.kx + 58 + 20 * k - (G.kx - 30)), h: Math.min(vb + 2, G.ky - 30) - (G.ky - 82) }; const y0 = G.ky - 88; return { x: Math.round(G.kx - 34), y: y0, w: 68, h: Math.round(Math.min(vb, G.ky + 22 * k) - y0) }; },
   };
 
   // ---- ren · face: the open folio, close; the face surfacing on the paper -------------------------------------------
@@ -76598,9 +76700,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Ren's hands at the spread's lower corners, holding it open
       const skin = RSKIN(), sl = RSLEEVE();
       const x0 = cx - pw, y1 = cy + Math.round(ph / 2);
-      const hl = Q.hand({ size: 16, pose: 'grip', side: 'L', angle: -Math.PI * 0.42, skin, sleeve: sl }), hr = Q.hand({ size: 16, pose: 'grip', side: 'R', angle: -Math.PI * 0.58, skin, sleeve: sl });
-      if (hl) c.drawImage(hl.cv, Math.round(x0 + 10 - hl.ax), Math.round(y1 + 6 - hl.ay));
-      if (hr) c.drawImage(hr.cv, Math.round(cx + pw - 10 - hr.ax), Math.round(y1 + 6 - hr.ay));
+      // (fingers up round the spread's edge, the forearms down to the frame's edge: the left hand hung upside down and
+      // both cuffs ended in mid-air; AR-2)
+      const hl = Q.hand({ size: 16, pose: 'grip', side: 'L', angle: Math.PI * 0.42, skin, sleeve: sl }), hr = Q.hand({ size: 16, pose: 'grip', side: 'R', angle: -Math.PI * 0.58, skin, sleeve: sl });
+      if (hl) { Q.forearm(c, x0 + 10, y1 + 6, { angle: Math.PI * 0.42, side: 'L', size: 16, sleeve: sl, grow: 3 }); c.drawImage(hl.cv, Math.round(x0 + 10 - hl.ax), Math.round(y1 + 6 - hl.ay)); }
+      if (hr) { Q.forearm(c, cx + pw - 10, y1 + 6, { angle: -Math.PI * 0.58, side: 'R', size: 16, sleeve: sl, grow: 3 }); c.drawImage(hr.cv, Math.round(cx + pw - 10 - hr.ax), Math.round(y1 + 6 - hr.ay)); }
       airLife(c, w, h, t, still, 12, 64, 0);
     },
     focus(w, h, vb) { const G = geomPage(w, h, vb); const fx = G.cx + Math.round((G.pw - 96) / 2), fy = G.cy - Math.round(G.ph / 2) + Math.round((G.ph - 96) * 0.3); return { x: fx + 14, y: fy + 10, w: 68, h: Math.min(66, vb + 2 - (fy + 10)) }; },
@@ -76633,7 +76737,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the glasses lifted off the face and brought down to the hands; then the cloth going round a lens, slowly (their
       // forearms to both hands; the rubbing moves the hand, not the arm)
       const eg = ease(clamp((kg - 0.25) / 0.75, 0, 1));
-      const gx0 = Math.round(lerp(kx, G.land ? kx + 64 : kx, eg)), gy0 = Math.round(lerp(ky - 96 + 47, G.land ? Math.round(clamp(G.vb * 0.55, 30, G.vb - 12)) : ky - Math.round(4 * k), eg));
+      // (on a phone on its side the glasses come down beside the face, within reach; AR-2)
+      const gx0 = Math.round(lerp(kx, G.land ? kx + 52 : kx, eg)), gy0 = Math.round(lerp(ky - 96 + 47, G.land ? Math.round(clamp(G.vb * 0.55 + 18, 30, G.vb - 10)) : ky - Math.round(4 * k), eg));
       const ho = kg > 0 ? Q.holdArms(kx, ky, [gx0 - 11 * k, gy0 + 2 * k], kg >= 1 || eg > 0.8 ? [gx0 + 14 * k, gy0 + 1 * k] : null) : null;
       const rb = off ? renBare(expr, fr, RLIGHT, ho) : Q.bust('ren', expr, fr, RLIGHT, false, 220, ho);
       if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
@@ -76653,7 +76758,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         }
       }
     },
-    focus(w, h, vb) { const G = geomRen(w, h, vb, true), k = G.k; if (G.land) return { x: G.kx - 30, y: G.ky - 82, w: Math.round(G.kx + 64 + 26 * k - (G.kx - 30)), h: Math.min(vb + 2, G.ky - 30) - (G.ky - 82) }; const y0 = G.ky - 88; return { x: G.kx - 34, y: y0, w: 68, h: Math.round(Math.min(vb, G.ky + 6 * k) - y0) }; },
+    focus(w, h, vb) { const G = geomRen(w, h, vb, true), k = G.k; if (G.land) return { x: G.kx - 30, y: G.ky - 82, w: Math.round(G.kx + 52 + 26 * k - (G.kx - 30)), h: Math.min(vb + 2, G.ky - 30) - (G.ky - 82) }; const y0 = G.ky - 88; return { x: G.kx - 34, y: y0, w: 68, h: Math.round(Math.min(vb, G.ky + 6 * k) - y0) }; },
   };
 
   RB.sequence.define('ch6.ren', {
@@ -77151,8 +77256,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     draw(c, w, h, t, st) {
       const G = geomRoom(w, h, st.vb), still = st.still, { v, C } = camOf(w, st.vb, 'wide', G.narrow);
       const k = st.at('name'), lightK = ease(sub(k, 0.72, 1));
+      // (the room's own light comes up with the light along the rails: it switched on in one frame as the action ended; AR-2)
       const room = roomStatic(G, 'wide', lightK >= 1);
       c.drawImage(room.cv, 0, 0);
+      if (lightK > 0 && lightK < 1) { c.globalAlpha = lightK; c.drawImage(roomStatic(G, 'wide', true).cv, 0, 0); c.globalAlpha = 1; }
       // the shape sinks (0 … 0.42) where the middle span will lie, rings spreading round it
       const mid = bridgeAt(v, 0.5, 0, 0), mp = C.p(mid[0], 0, mid[2]);
       const sink = ease(sub(k, 0, 0.42));
@@ -77166,7 +77273,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < 3; i++) {
         const d = ease(sub(k, 0.3 + i * 0.13, 0.48 + i * 0.13));
         if (d <= 0) continue;
+        // (each comes out of the dark as it starts down: it appeared whole in mid-air; AR-2)
+        c.globalAlpha = Math.min(1, d * 4);
         c.drawImage(spanArt(G, 'wide', i).cv, 0, Math.round((1 - d) * -C.p(...bridgeAt(v, (i + 0.5) / 3, 0, 0))[2] * 1.6));
+        c.globalAlpha = 1;
       }
       drawLight(c, C, v, lightK, t, still);
       if (lightK > 0) SP.glints(c, 0, room.wallFoot + 2, w, Math.max(4, st.vb - room.wallFoot), t, 22, 41, '255,214,150', still);
@@ -77423,7 +77533,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     SP.marks(c, x - Math.round(W / 4), y + 4, Math.round(H * 0.55), 4, 1, '#2a2024', 5);
     SP.marks(c, x + Math.round(W / 4), y + 4, Math.round(H * 0.4 * clamp(k, 0.3, 1)), 3, 1, '#2a2024', 6);
     const hl = Q.hand({ size: Math.max(8, Math.round(W * 0.16)), pose: 'grip', side: 'R', angle: -1.25, skin: skinC, sleeve: sleeveC });
-    const hr = Q.hand({ size: Math.max(8, Math.round(W * 0.16)), pose: 'grip', side: 'L', angle: -1.9, skin: skinC, sleeve: sleeveC });
+    const hr = Q.hand({ size: Math.max(8, Math.round(W * 0.16)), pose: 'grip', side: 'L', angle: 1.9, skin: skinC, sleeve: sleeveC });
     if (hl) c.drawImage(hl.cv, Math.round(x - W / 2 - hl.ax + W * 0.04), Math.round(y + H * 0.75 - hl.ay));
     if (hr) c.drawImage(hr.cv, Math.round(x + W / 2 - hr.ax - W * 0.04), Math.round(y + H * 0.75 - hr.ay));
   }
@@ -77432,7 +77542,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Sen\'s face and the register above the sheet', narrow: 'her face in the upper half', land: 'her face' },
     draw(c, w, h, t, st) {
       const S = stage(w, h, st.vb), { s, lay } = S, narrow = lay === 'narrow';
-      const by0 = Math.round(Math.max(st.vb + s(16), 100)), feet0 = by0 + Math.round(h * 0.25);
+      // (her body its full length, as everyone's: it was a quarter of the picture's height, so on a desktop her legs were
+      // under half as long as anyone else's; AR-2)
+      const by0 = Math.round(Math.max(st.vb + s(16), 100)), feet0 = by0 + 200;
       c.drawImage(boardsBack(w, h, st.vb, 'sen', [Math.round(feet0 - 0.22 * (feet0 - (by0 - 60))), by0 - 60]).cv, 0, 0);
       SP.lantern(c, Math.round(w * (narrow ? 0.86 : 0.8)), Math.round(st.vb * 0.06), Math.max(3, s(6)), Math.max(5, s(12)), true, t, st.still);
       const ko = st.at('odd');
@@ -77441,7 +77553,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the register held open in front of her (she lifts it a little on her first line); her forearms to its two sides
       const kr = ease(st.at('register'));
       const rw = Math.round(clamp(s(64), 40, 90)), rh = Math.round(rw * 0.6), rx = bx + Math.round(s(2)), ry = Math.round(by - s(6) - kr * s(6));
-      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, Math.round(h * 0.25), Q.holdArms(bx, by, [rx - rw / 2 + rw * 0.04, ry + rh * 0.75], [rx + rw / 2 - rw * 0.04, ry + rh * 0.75]));
+      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, 200, Q.holdArms(bx, by, [rx - rw / 2 + rw * 0.04, ry + rh * 0.75], [rx + rw / 2 - rw * 0.04, ry + rh * 0.75]));
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       register(c, rx, ry, rw, rh, skin('mb_sen'), (look('mb_sen').cloth || ['#2e3a5e'])[0], kr);
     },
@@ -77520,13 +77632,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the block held up in both inky hands (his forearms up to them)
       const BW = Math.round(clamp(s(36), 24, 54)), BH = Math.round(BW * 0.64), lift = Math.round(kc * s(5));
       const yy = by - 20 - lift; // at his chest, below the chin (the portrait's chin sits about 30 px above its foot)
-      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, Math.round(h * 0.25), Q.holdArms(bx, by, [bx - BW / 2 + 2, yy + BH * 0.7], [bx + BW / 2 - 2, yy + BH * 0.7]));
+      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, 200, Q.holdArms(bx, by, [bx - BW / 2 + 2, yy + BH * 0.7], [bx + BW / 2 - 2, yy + BH * 0.7]));
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       woodblock(c, bx, yy, BW, BH);
       const sk = skin('mp_sanpei'), ink = ['#3a3440', '#2a2430'];
       const inky = [sk[0], sk[1]];
       const hl = Q.hand({ size: Math.max(7, Math.round(BW * 0.22)), pose: 'grip', side: 'R', angle: -1.4, skin: inky, sleeve: (look('mp_sanpei').cloth || ['#4a5a7a'])[0] });
-      const hr = Q.hand({ size: Math.max(7, Math.round(BW * 0.22)), pose: 'grip', side: 'L', angle: -1.75, skin: inky, sleeve: (look('mp_sanpei').cloth || ['#4a5a7a'])[0] });
+      const hr = Q.hand({ size: Math.max(7, Math.round(BW * 0.22)), pose: 'grip', side: 'L', angle: 1.75, skin: inky, sleeve: (look('mp_sanpei').cloth || ['#4a5a7a'])[0] });
       if (hl) c.drawImage(hl.cv, Math.round(bx - BW / 2 - hl.ax + 2), Math.round(yy + BH * 0.7 - hl.ay));
       if (hr) c.drawImage(hr.cv, Math.round(bx + BW / 2 - hr.ax - 2), Math.round(yy + BH * 0.7 - hr.ay));
       // ink on his hands: dark blots over the knuckles
@@ -77535,7 +77647,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const comp = st.cast.comp;
       if (comp && kp > 0) {
         const expr = st.test('comp=mio') || st.test('comp=ren') ? 'surprise' : st.test('comp=suzu') ? 'smirk' : 'think2';
-        const cb = Q.bust(comp.id, expr, { look: [1, 0], head: [1, 0] }, DUSK_R, false, Math.round(h * 0.25));
+        const cb = Q.bust(comp.id, expr, { look: [1, 0], head: [1, 0] }, DUSK_R, false, 200); // (full length, as Sanpei; AR-2)
         if (cb) c.drawImage(cb.cv, Math.round(lerp(-s(40), w * (narrow ? 0.16 : 0.18), kp) - cb.ax), Math.round(by + s(8) - cb.ay));
       }
     },
@@ -77665,12 +77777,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const k = ease(st.at('lift'));
       const SW = Math.round(clamp(ww * 0.62, s(56), s(120))), SH = Math.round(SW * 1.25);
       const sx = Math.round(wx + ww / 2 - SW / 2), sy = Math.round(lerp(st.vb, wy + wh * 0.18, k));
+      // (his forearms behind the sheet, from below it: the hands hung at its corners from nothing, the right one upside
+      // down; AR-2)
+      const hs = Math.round(clamp(s(13), 9, 22)), sl0 = (look('mp_sobe').cloth || ['#3a3a44'])[0];
+      Q.forearm(c, sx + s(2), sy + s(10), { angle: -1.35, side: 'R', size: hs, sleeve: sl0, grow: 3.4 });
+      Q.forearm(c, sx + SW - s(2), sy + s(10), { angle: 1.8, side: 'L', size: hs, sleeve: sl0, grow: 3.4 });
       c.drawImage(sheetArt(SW, SH, false, 7).cv, sx, sy);
       // the light through the paper: the window glows round the sheet's edge
       c.fillStyle = 'rgba(255,248,226,0.28)'; c.fillRect(sx - 1, sy - 1, SW + 2, 1); c.fillRect(sx - 1, sy, 1, SH);
       const sk = skin('mp_sobe'), sl = (look('mp_sobe').cloth || ['#3a3a44'])[0];
       const hl = Q.hand({ size: Math.round(clamp(s(13), 9, 22)), pose: 'pinch', side: 'R', angle: -1.35, skin: sk, sleeve: sl });
-      const hr = Q.hand({ size: Math.round(clamp(s(13), 9, 22)), pose: 'pinch', side: 'L', angle: -1.8, skin: sk, sleeve: sl });
+      const hr = Q.hand({ size: Math.round(clamp(s(13), 9, 22)), pose: 'pinch', side: 'L', angle: 1.8, skin: sk, sleeve: sl });
       if (hl) c.drawImage(hl.cv, Math.round(sx + s(2) - hl.ax), Math.round(sy + s(10) - hl.ay));
       if (hr) c.drawImage(hr.cv, Math.round(sx + SW - s(2) - hr.ax), Math.round(sy + s(10) - hr.ay));
     },
@@ -78647,7 +78764,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < Math.max(1, Math.round(LW / 7)); i++) SP.marks(c, lx + LW - 4 - i * 7, ly + 3, LH - 6, 4, 1, i < 2 ? '#3a2e2a' : 'rgba(58,46,42,0.5)', 30 + i);
       const sk = skin('cr_heisuke'), sl = (look('cr_heisuke').cloth || ['#5a4a3a'])[0];
       const hl = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'R', angle: -1.1, skin: sk, sleeve: sl });
-      const hr = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'L', angle: -2.0, skin: sk, sleeve: sl });
+      const hr = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'L', angle: 2.0, skin: sk, sleeve: sl });
       if (hl) c.drawImage(hl.cv, Math.round(lx + 1 - hl.ax), Math.round(ly + LH * 0.7 - hl.ay));
       if (hr) c.drawImage(hr.cv, Math.round(lx + LW - 1 - hr.ax), Math.round(ly + LH * 0.7 - hr.ay));
     },
@@ -79266,8 +79383,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.fill(0, 0, w, base, (x, y) => Math.abs(x - cx) > slit, dome, (x, y) => { const a = Math.atan2(x - cx, Math.max(1, base + vb * 0.4 - y)), r = (base + vb * 0.4 - y) / vb; return cl(0.2 + (frac(a * 3.2) < 0.1 ? 0.22 : 0) + (frac(r * 9) < 0.08 ? -0.1 : 0) + (1 - Math.abs(x - cx) / (w / 2)) * 0.12 + dz(x, y, 0.06)); });
         // the slit's frames and its shutter rolled back
         L.rect(cx - slit - G.s(4), 0, G.s(4), base, lac, 0.4); L.rect(cx + slit, 0, G.s(4), base, lac, 0.3);
-        // the drum wall below the dome, a rail along it
-        L.rect(0, base - G.s(16), w, G.s(16), stoneM, (x, y) => cl(0.3 + (frac((x - cx) / G.s(26)) < 0.04 ? -0.15 : 0) + dz(x, y, 0.05)));
+        // the drum wall below the dome, a rail along it (down to the frame's foot, under the floor: on a phone on its side
+        // the floor's far edge falls below the wall's and a band between them was left unpainted; AR-2)
+        L.rect(0, base - G.s(16), w, h - base + G.s(16), stoneM, (x, y) => cl(0.3 + (frac((x - cx) / G.s(26)) < 0.04 ? -0.15 : 0) + dz(x, y, 0.05) - (y > base ? 0.12 : 0)));
         L.rect(0, base - G.s(17), w, G.s(2), brass, 0.55);
         // the floor: boards, and the pool where the starlight lands
         const geo = room(L, C, { W: 16, D: 7.5, H: 9, floor: [floorM, (X, Z, x, y) => 0.22 + boards(X, 0.3) + ease(clamp(1 - Math.hypot(X / 1.2, (Z - 6.2) / 1.0), 0, 1)) * 0.5 + dz(x, y, 0.06)] });
@@ -79510,6 +79628,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const D = GUARD[key], p = P(), cv = mk(G.w, G.h), g = cv.getContext('2d', { willReadFrequently: true });
       g.imageSmoothingEnabled = false;
       const C = D.cam ? camOf(G, D.cam) : null;
+      // (a dark ground under every scene: where two of a room's faces meet, a pixel could be left unpainted at some sizes,
+      // showing the picture before through it; AR-2)
+      g.fillStyle = '#100e14'; g.fillRect(0, 0, G.w, G.h);
       const info = D.build(G, C, g, p);
       return { cv, info };
     });
@@ -87683,13 +87804,15 @@ RB.ui.records = (function () {
     const shot = Object.keys(def.shots)[0];
     const ph = def.shots[shot].phases;
     const phase = Array.isArray(ph) ? (ph[ph.length - 1] || [])[0] || (ph[ph.length - 1] || {}).id : Object.keys(ph || {}).pop();
-    return '<canvas class="rb-thumb" width="160" height="90" data-seq="' + esc(p.seq) + '" data-shot="' + esc(shot) + '" data-phase="' + esc(phase || '') + '" aria-hidden="true"></canvas>';
+    // (320 × 180 with the sheet's line where the game has it, so a page shows the picture as it was seen: at 160 × 90 the
+    // portraits, drawn at one pixel per art pixel, filled the frame and lost the tops of their heads; AR-2)
+    return '<canvas class="rb-thumb" width="320" height="180" data-seq="' + esc(p.seq) + '" data-shot="' + esc(shot) + '" data-phase="' + esc(phase || '') + '" aria-hidden="true"></canvas>';
   }
   function paintThumbs(root, cast, test) {
     for (const c of root.querySelectorAll('canvas.rb-thumb')) {
       try {
         const g = c.getContext('2d');
-        RB.sequence.drawAt(g, c.width, c.height, { seq: c.dataset.seq, shot: c.dataset.shot, phase: c.dataset.phase || undefined, k: 1, vb: c.height, t: 4000, cast, test });
+        RB.sequence.drawAt(g, c.width, c.height, { seq: c.dataset.seq, shot: c.dataset.shot, phase: c.dataset.phase || undefined, k: 1, vb: Math.round(c.height * 0.64), t: 4000, cast, test });
       } catch (e) { /* a picture that cannot be drawn small stays blank paper */ }
     }
   }

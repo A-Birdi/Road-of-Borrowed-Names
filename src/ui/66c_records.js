@@ -120,13 +120,15 @@ RB.ui.records = (function () {
     const shot = Object.keys(def.shots)[0];
     const ph = def.shots[shot].phases;
     const phase = Array.isArray(ph) ? (ph[ph.length - 1] || [])[0] || (ph[ph.length - 1] || {}).id : Object.keys(ph || {}).pop();
-    return '<canvas class="rb-thumb" width="160" height="90" data-seq="' + esc(p.seq) + '" data-shot="' + esc(shot) + '" data-phase="' + esc(phase || '') + '" aria-hidden="true"></canvas>';
+    // (320 × 180 with the sheet's line where the game has it, so a page shows the picture as it was seen: at 160 × 90 the
+    // portraits, drawn at one pixel per art pixel, filled the frame and lost the tops of their heads; AR-2)
+    return '<canvas class="rb-thumb" width="320" height="180" data-seq="' + esc(p.seq) + '" data-shot="' + esc(shot) + '" data-phase="' + esc(phase || '') + '" aria-hidden="true"></canvas>';
   }
   function paintThumbs(root, cast, test) {
     for (const c of root.querySelectorAll('canvas.rb-thumb')) {
       try {
         const g = c.getContext('2d');
-        RB.sequence.drawAt(g, c.width, c.height, { seq: c.dataset.seq, shot: c.dataset.shot, phase: c.dataset.phase || undefined, k: 1, vb: c.height, t: 4000, cast, test });
+        RB.sequence.drawAt(g, c.width, c.height, { seq: c.dataset.seq, shot: c.dataset.shot, phase: c.dataset.phase || undefined, k: 1, vb: Math.round(c.height * 0.64), t: 4000, cast, test });
       } catch (e) { /* a picture that cannot be drawn small stays blank paper */ }
     }
   }

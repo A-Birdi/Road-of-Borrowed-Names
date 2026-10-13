@@ -334,8 +334,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.fill(0, 0, w, base, (x, y) => Math.abs(x - cx) > slit, dome, (x, y) => { const a = Math.atan2(x - cx, Math.max(1, base + vb * 0.4 - y)), r = (base + vb * 0.4 - y) / vb; return cl(0.2 + (frac(a * 3.2) < 0.1 ? 0.22 : 0) + (frac(r * 9) < 0.08 ? -0.1 : 0) + (1 - Math.abs(x - cx) / (w / 2)) * 0.12 + dz(x, y, 0.06)); });
         // the slit's frames and its shutter rolled back
         L.rect(cx - slit - G.s(4), 0, G.s(4), base, lac, 0.4); L.rect(cx + slit, 0, G.s(4), base, lac, 0.3);
-        // the drum wall below the dome, a rail along it
-        L.rect(0, base - G.s(16), w, G.s(16), stoneM, (x, y) => cl(0.3 + (frac((x - cx) / G.s(26)) < 0.04 ? -0.15 : 0) + dz(x, y, 0.05)));
+        // the drum wall below the dome, a rail along it (down to the frame's foot, under the floor: on a phone on its side
+        // the floor's far edge falls below the wall's and a band between them was left unpainted; AR-2)
+        L.rect(0, base - G.s(16), w, h - base + G.s(16), stoneM, (x, y) => cl(0.3 + (frac((x - cx) / G.s(26)) < 0.04 ? -0.15 : 0) + dz(x, y, 0.05) - (y > base ? 0.12 : 0)));
         L.rect(0, base - G.s(17), w, G.s(2), brass, 0.55);
         // the floor: boards, and the pool where the starlight lands
         const geo = room(L, C, { W: 16, D: 7.5, H: 9, floor: [floorM, (X, Z, x, y) => 0.22 + boards(X, 0.3) + ease(clamp(1 - Math.hypot(X / 1.2, (Z - 6.2) / 1.0), 0, 1)) * 0.5 + dz(x, y, 0.06)] });
@@ -578,6 +579,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const D = GUARD[key], p = P(), cv = mk(G.w, G.h), g = cv.getContext('2d', { willReadFrequently: true });
       g.imageSmoothingEnabled = false;
       const C = D.cam ? camOf(G, D.cam) : null;
+      // (a dark ground under every scene: where two of a room's faces meet, a pixel could be left unpainted at some sizes,
+      // showing the picture before through it; AR-2)
+      g.fillStyle = '#100e14'; g.fillRect(0, 0, G.w, G.h);
       const info = D.build(G, C, g, p);
       return { cv, info };
     });

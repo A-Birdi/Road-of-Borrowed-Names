@@ -192,7 +192,9 @@ RB.seqKit = (function () {
   const clothOf = (look) => RB.sprites.colorsOf(look || {}).cloth;
 
   // A hand close to us, drawn with the pixel kit. Local frame: the wrist at (0, 0), the hand reaching
-  // along +x; side 'R' (the person's right hand seen from the back) or 'L' (mirrored); angle in radians.
+  // along +x; side 'R' (the person's right hand seen from the back) or 'L' (mirrored); angle in radians. An 'L' hand is
+  // mirrored in its own frame before it turns, so it points along (cos a, −sin a): the left-for-right mirror of an 'R'
+  // hand at angle a is an 'L' hand at a + π (−a or π − a turns it upside down: six such hands were; AR-2).
   //   pose  'rest'  lying flat, back of the hand up, fingers together
   //         'grip'  closed round something upright (a cup, a scroll, a chisel's handle)
   //         'offer' palm up and open, holding something out flat (an envelope, a card)
@@ -298,21 +300,42 @@ RB.seqKit = (function () {
   // (they stood on nothing once their bodies were drawn; AR-1). o: { col, vx, eye, n (joints across), cross (rows),
   // kind: 'boards' | 'flags', s }
   // A sleeved forearm from off the frame (x0, y0) to a wrist at (x1, y1) (where a hand() is drawn), wd wide at the wrist,
-  // wider toward the elbow, the cuff at the wrist: for a hand reaching into a shot that had none (AR-1)
-  function sleeveTo(c, x0, y0, x1, y1, wd, col) {
-    // (close to us at the frame's edge, so much wider there than at the wrist)
-    const p = RB.pxkit, m = Math.ceil(wd * 2.2) + 2, ox = Math.floor(Math.min(x0, x1)) - m, oy = Math.floor(Math.min(y0, y1)) - m;
+  // wider toward the elbow, the cuff at the wrist: for a hand reaching into a shot that had none (AR-1). grow: the far
+  // end's width over the wrist's (3.4: an arm close to us, from the frame's edge; about 1.3: one reaching in from across)
+  function sleeveTo(c, x0, y0, x1, y1, wd, col, grow, bare) {
+    grow = grow == null ? 3.4 : grow;
+    const p = RB.pxkit, m = Math.ceil(wd * (grow / 2 + 0.5)) + 2, ox = Math.floor(Math.min(x0, x1)) - m, oy = Math.floor(Math.min(y0, y1)) - m;
     const L = p.layer(Math.ceil(Math.abs(x1 - x0)) + 2 * m + 2, Math.ceil(Math.abs(y1 - y0)) + 2 * m + 2), M = p.mat(col || '#4a5a7a', { n: 6, at: 3, step: 0.08 });
     const dx = x1 - x0, dy = y1 - y0, d = Math.hypot(dx, dy) || 1, ex = x1 - dx / d * wd * 0.6, ey = y1 - dy / d * wd * 0.6;
     const pts = [];
-    for (let i = 0; i <= 8; i++) { const u = i / 8; pts.push([lerp(x0, ex, u) - ox, lerp(y0, ey, u) - oy, Math.round(wd * lerp(3.4, 1, Math.pow(u, 0.7)))]); }
+    for (let i = 0; i <= 8; i++) { const u = i / 8; pts.push([lerp(x0, ex, u) - ox, lerp(y0, ey, u) - oy, Math.round(wd * lerp(grow, 1, Math.pow(u, 0.7)))]); }
     L.path(pts, wd, M, 3);
     for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], q = pts[i]; L.seg(a[0] - dy / d * a[2] * 0.3, a[1] + dx / d * a[2] * 0.3, q[0] - dy / d * q[2] * 0.3, q[1] + dx / d * q[2] * 0.3, Math.max(1, q[2] * 0.22), M, 5); }
-    L.seg(x1 - ox - dx / d * wd * 0.7, y1 - oy - dy / d * wd * 0.7, x1 - ox - dx / d * wd * 0.35, y1 - oy - dy / d * wd * 0.35, wd * 1.05, M, 1);
+    if (!bare) L.seg(x1 - ox - dx / d * wd * 0.7, y1 - oy - dy / d * wd * 0.7, x1 - ox - dx / d * wd * 0.35, y1 - oy - dy / d * wd * 0.35, wd * 1.05, M, 1);
     L.outline();
     c.drawImage(L.canvas(), ox, oy);
   }
-  const hash2 = (i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+  // The forearm of a hand drawn on its own (an insert: a hand and what it holds, close), from under the hand's cuff back
+  // along the hand's own line to past the frame's edge: without it the cuff ended in mid-air and the hand floated (AR-2,
+  // at the game's real picture sizes). Drawn before the hand. (wx, wy): the wrist, where the hand is drawn;
+  // o: the hand's { angle, side, size, sleeve }, grow (as sleeveTo; default 1.4), to: [x, y] (the arm's far end, when it
+  // comes from elsewhere than straight back). Returns the far end.
+  function forearm(c, wx, wy, o) {
+    const S = Math.max(5, Math.round(o.size || 10)), a = o.angle || 0;
+    const dx = -Math.cos(a), dy = o.side === 'L' ? Math.sin(a) : -Math.sin(a);
+    let to = o.to;
+    if (!to) {
+      const W = c.canvas.width, H = c.canvas.height, pad = S * 3;
+      let t = 1e9;
+      if (dx > 1e-3) t = Math.min(t, (W + pad - wx) / dx); else if (dx < -1e-3) t = Math.min(t, (-pad - wx) / dx);
+      if (dy > 1e-3) t = Math.min(t, (H + pad - wy) / dy); else if (dy < -1e-3) t = Math.min(t, (-pad - wy) / dy);
+      to = [wx + dx * t, wy + dy * t];
+    }
+    // (it ends under the cuff: the hand's own sleeve is the cuff and covers the join)
+    sleeveTo(c, to[0], to[1], wx + dx * S * 0.55, wy + dy * S * 0.55, Math.max(3, Math.round(S * 0.86)), o.sleeve, o.grow == null ? 1.4 : o.grow, true);
+    return to;
+  }
+  const hash2 =(i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
   function floor(g, w, h, y0, o) {
     o = o || {};
     y0 = Math.round(y0);
@@ -358,7 +381,7 @@ RB.seqKit = (function () {
   }
 
   return {
-    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo,
+    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo, forearm,
     figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),

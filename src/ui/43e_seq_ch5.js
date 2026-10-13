@@ -427,6 +427,27 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     void t;
   }
+  // the gong's bell part way from green to struck: the struck bell's chips and lip band shown where a dithered front
+  // spreading from the strike (the lip's middle) has reached (f 0 … 1, in tenths)
+  function shedBell(H, f) {
+    const q = Math.round(clamp(f, 0, 1) * 10) / 10;
+    const bP = bellArt(H, 'patina', 0.07, true), bS = bellArt(H, 'struck', 0.07, true);
+    if (q <= 0) return bP;
+    if (q >= 1) return bS;
+    return Q.small('ch5.shed|' + H + '|' + q, () => {
+      const cv = mk(bP.w, bP.h), g = cv.getContext('2d', { willReadFrequently: true });
+      g.drawImage(bP.cv, 0, 0);
+      const a = g.getImageData(0, 0, bP.w, bP.h), sd = bS.cv.getContext('2d').getImageData(0, 0, bP.w, bP.h).data, d = a.data, bay = P().bayer;
+      for (let y = 0; y < bP.h; y++) for (let x = 0; x < bP.w; x++) {
+        const o = (y * bP.w + x) * 4;
+        if (d[o] === sd[o] && d[o + 1] === sd[o + 1] && d[o + 2] === sd[o + 2] && d[o + 3] === sd[o + 3]) continue;
+        const r = Math.hypot((x - bP.ax) / bP.lipR * 0.8, Math.max(0, bP.lipY - y) / (bP.H * 0.26) * 0.7);
+        if (r + bay(x, y) * 0.45 < q * 1.45) for (let i = 0; i < 4; i++) d[o + i] = sd[o + i];
+      }
+      g.putImageData(a, 0, 0);
+      return Object.assign({}, bP, { cv });
+    });
+  }
   const gong = {
     phases: [['swing', 1400], ['climb', 1000]],
     safe: { wide: 'the lip and the rings in the band above the sheet', narrow: 'the lip over the water, the pipe at the side', land: 'the lip and the first rings' },
@@ -441,8 +462,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (ks >= 1 && !still) { rings(c, cx, yW + s(10), ((t / 2800) % 1), 2, w * 0.6, 0.14, '200,226,236', 0.2, yW); rings(c, cx, yW + s(10), ((t / 2800 + 0.5) % 1), 1, w * 0.4, 0.14, '200,226,236', 0.14, yW); }
       // the bell: one swing on its beam (the shake of the stone, shown as the bell's own movement), the clapper
       // lagging behind it and striking the lip
-      const struck = ks > 0.2;
-      const b = bellArt(H, struck ? 'struck' : 'patina', 0.07, true);
+      // (the green comes off from where the clapper struck, spreading round the lip as the flakes fall: it was one frame,
+      // the whole close-up turning from green to bronze at once, like a flash; AR-2)
+      const b = shedBell(H, clamp((ks - 0.2) / 0.45, 0, 1));
       const ang = still ? 0 : 0.03 * Math.sin(Math.PI * 2 * 1.25 * ks) * (1 - ks) ** 1.3;
       const pivY = lipY - b.lipY;
       const bobOff = still || ks >= 1 ? 0 : Math.round(-Math.sin(Math.PI * 2 * 1.25 * ks - 0.9) * (1 - ks) * b.lipR * 0.22);
@@ -462,7 +484,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (kc > 0) {
         const lx = px - Math.round(pr * 0.35);
         pulse(c, [[lx, yW + s(6)], [lx, -s(10)]], clamp(kc * 1.1, 0, 1), 0.55, 0.95, Math.max(2, Math.round(pr * 0.35)));
-        if (kc >= 1) { c.fillStyle = 'rgba(214,224,255,0.2)'; c.fillRect(lx - Math.round(pr * 0.17), 0, Math.max(2, Math.round(pr * 0.35)), yW + s(6)); motesUp(c, lx, 0, yW, t, still, 4, 9); }
+        // (the line's light stays once it has risen, coming up as the pulse climbs: it appeared at once at the end; AR-2)
+        const ln = still ? (kc >= 1 ? 1 : 0) : ease(clamp((kc - 0.6) / 0.4, 0, 1));
+        if (ln > 0) { c.fillStyle = 'rgba(214,224,255,' + (0.2 * ln).toFixed(3) + ')'; c.fillRect(lx - Math.round(pr * 0.17), 0, Math.max(2, Math.round(pr * 0.35)), yW + s(6)); }
+        if (kc >= 1) motesUp(c, lx, 0, yW, t, still, 4, 9);
         // where the rings touch the stone, a pale edge
         c.fillStyle = 'rgba(200,226,236,' + (0.35 * ease(clamp(kc * 2, 0, 1))).toFixed(2) + ')'; c.fillRect(0, yW - 1, w, 1);
       }
@@ -605,7 +630,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         if (kt >= 1 && !still) pulse(c, S0.pts, (t / 3600) % 1, 0.16, 0.45, Math.max(1, s(2)));
         c.restore();
       }
-      if (kt >= 1) for (const x of pipes) { c.fillStyle = 'rgba(214,224,255,0.1)'; c.fillRect(x - Math.max(1, s(2)), 0, Math.max(2, s(4)), h); }
+      // (the pipes' pale light comes up as the pulse reaches the town: it appeared at once as the action ended; AR-2)
+      const pl = still ? (kt >= 1 ? 1 : 0) : ease(clamp((kt - 0.7) / 0.3, 0, 1));
+      if (pl > 0) for (const x of pipes) { c.fillStyle = 'rgba(214,224,255,' + (0.1 * pl).toFixed(3) + ')'; c.fillRect(x - Math.max(1, s(2)), 0, Math.max(2, s(4)), h); }
       vignette(c, w, h, 0.4, 0.5);
     },
     focus(w, h, vb) { const G = geomTown(w, h, vb); const x0 = Math.max(0, G.pipes[0] - G.s(14)); const y0 = Math.max(0, G.yH - G.s(70)); return { x: x0, y: y0, w: Math.round(G.win.x + G.win.w - x0), h: Math.min(vb, G.yH + G.s(14)) - y0 }; },

@@ -747,6 +747,21 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     under the Exchange crowd, the stage's edge over Tokiwa, shadows at every standing figure's feet, your own arm taking
     Hoshino's envelope. VALIDATION.md "AR-1", round 2.
   - Open: Robin's review of the illustrations.
+- [~] XP117 AR-2, animation, framing and staging at the game's real picture sizes (Robin, 2026-10-13: "any other
+  illustration oddities … animations, framing"). Under AC-1: implemented provisionally, internally reviewed; not
+  Robin-approved.
+  - Found first: AR-1 had been judged at 1280 × 720, which the game never draws; the game draws sequences at its art
+    buffer's size (640 × 360 on a 16:9 desktop, 683 × 349 at 2048 × 1046, 390 × 844 upright phone, 563 × 260 or 507 × 234
+    on its side) and the travel volume at 160 × 90.
+  - Done: forearms for a dozen hands that floated in close-ups (`RB.seqKit.forearm`); six upside-down left hands
+    corrected (the mirroring convention written at `hand()`); your arm for the folio handed to Kasane; Asahi's nameplate
+    held from below; Sen, Sanpei and the companion at full length; the bell's green, the lamp's colours, the assembly's
+    speakers and six end-of-action switches eased instead of jumping; the volume's pages at 320 × 180 with the sheet's
+    line, whole heads; two unpainted places at the new sizes; Ren's folio and glasses within reach sideways.
+  - Evidence: VALIDATION.md "AR-2"; pairs `docs/screenshots/ar2/` (16, lossless, at 640 × 360 and the volume's size);
+    `tests/e2e/sequence_art_integrity.mjs` now at the real sizes and the volume's, with three more checks (hands held,
+    faces in view, no jump between phases).
+  - Open: Robin's review.
 
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.

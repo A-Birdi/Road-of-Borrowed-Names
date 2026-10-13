@@ -345,6 +345,14 @@
     Round 2 (Robin: "Ren appears to be floating in a library"): people who stood on a wall's face now stand on a floor
     (`RB.seqKit.floor`), the Exchange street, the stage's edge seen from below, shadows at the feet, your own arm for
     Hoshino's envelope.
+    **AR-2 (Robin, 2026-10-13: "any other illustration oddities … animations, framing"):** sequences draw at the
+    world's art buffer, not the window (640 × 360 for a 1280 × 720 window, 683 × 349 for Robin's 2048 × 1046, 390 × 844
+    and 563 × 260 on phones), and AR-1 had been judged at 1280 × 720: judge illustrations at those sizes (the guard test
+    now does). Fixed: floating hands in close-ups (`RB.seqKit.forearm`), six upside-down left hands (an 'L' hand mirrors
+    an 'R' one at a + π), the folio handover's arm, the nameplate's splayed elbows, short-legged Sen and Sanpei, the
+    bell's one-frame green-to-bronze, the lamp's colour jumps, the assembly speakers' snap back, six end-of-action
+    switches, the volume's 160 × 90 pages (now 320 × 180 with the sheet's line), two unpainted places. VALIDATION.md
+    "AR-2", REQUIREMENTS.md XP117, pairs in `docs/screenshots/ar2/`. Robin's review open.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md

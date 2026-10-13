@@ -144,11 +144,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // her hand: to the company's ledger on the company's fault, across to his tags on his
       const skin = Q.skinOf(look('omi'));
       const hx = lerp(lerp(ox + s(10), led.x + led.w * 0.62, ease(kc)), tg.x + s(10), ease(ky)), hy = lerp(lerp(deskY + s(2), led.y + s(6), ease(kc)), tg.y - s(4), ease(ky)) - Math.sin(Math.PI * ky) * s(6);
-      const hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: Math.PI * 0.42, skin, sleeve: look('omi').cloth[0], cuff: '#c8a050' });
-      if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay));
+      // (each with her forearm from her side across the desk: the cuffs ended in mid-air; AR-2)
+      const osl = look('omi').cloth[0];
+      const hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: Math.PI * 0.42, skin, sleeve: osl, cuff: '#c8a050' });
+      if (hd) { Q.forearm(c, Math.round(hx), Math.round(hy), { angle: Math.PI * 0.42, side: 'R', size: 12, sleeve: osl, grow: 1.15, to: [ox + s(14), deskY - s(3)] }); c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - hd.ay)); }
       // the other hand rests flat at the desk's edge
-      const h2 = Q.hand({ size: 12, pose: 'rest', side: 'L', angle: Math.PI * 0.55, skin, sleeve: look('omi').cloth[0], cuff: '#c8a050' });
-      if (h2) c.drawImage(h2.cv, Math.round(ox - s(36) - h2.ax), Math.round(deskY + s(4) - h2.ay));
+      const h2 = Q.hand({ size: 12, pose: 'rest', side: 'L', angle: -Math.PI * 0.55, skin, sleeve: osl, cuff: '#c8a050' });
+      if (h2) { Q.forearm(c, ox - s(36), deskY + s(4), { angle: -Math.PI * 0.55, side: 'L', size: 12, sleeve: osl, grow: 1.15, to: [ox - s(18), deskY - s(3)] }); c.drawImage(h2.cv, Math.round(ox - s(36) - h2.ax), Math.round(deskY + s(4) - h2.ay)); }
       // Wataru from behind at the left edge, close
       const wb = Q.back(look('wataru'), Math.round(clamp(s(180), 120, 230)), { light: 'r' });
       if (wb) c.drawImage(wb.cv, Math.round((G.lay === 'narrow' ? w * 0.08 : w * 0.14) - wb.ax), Math.round(G.vb + s(40) - wb.ay));
@@ -380,8 +382,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     }
     R(c, x0, y0, W, H, '#e6dcc4'); R(c, x0, y0, W, 1, '#f6f0e0'); R(c, x0, y0 + H - 1, W, 1, '#b8aa8a'); R(c, x0 + W - 1, y0, 1, H, '#c4b696');
     // the flap: closed, a triangle down to the seal; open, folded up behind
-    c.fillStyle = open > 0 ? '#d4c8aa' : '#ddd2b6';
-    const fy = open > 0 ? y0 - Math.round(H * 0.45 * ease(open)) : y0 + Math.round(H * 0.55);
+    // (it swings up from closed through flat to open: it jumped from closed to flat as the seal began to break; AR-2)
+    const fy = Math.round(lerp(y0 + H * 0.55, y0 - H * 0.45, ease(open)));
+    c.fillStyle = fy < y0 ? '#d4c8aa' : '#ddd2b6';
     c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + W, y0); c.lineTo(x0 + W / 2, fy); c.closePath(); c.fill();
     c.fillStyle = '#a89a7a'; c.fillRect(x0, y0, W, 1);
     // the seal: whole, or two halves pulled apart
@@ -410,15 +413,21 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const sz = Math.round(24 * k);
       // your hand, holding it out, then letting go and drawing back
       const back = ease(clamp((kh - 0.55) / 0.45, 0, 1));
+      // (each hand with its forearm back to the frame's edge, yours from the lower left and his from across the desk: the
+      // cuffs ended in mid-air; AR-2. Drawn back, your hand goes out of the picture, not to its edge)
       const ph = Q.hand({ size: sz, pose: back > 0.1 ? 'rest' : 'pinch', side: 'R', angle: -0.5, skin: pskin, sleeve: psleeve });
-      if (ph) c.drawImage(ph.cv, Math.round(lerp(x - 34 * k, -30 * k, back) - ph.ax), Math.round(lerp(y + 12 * k, G.vb + 40 * k, back) - ph.ay));
+      const px = Math.round(lerp(x - 34 * k, -sz * 2.2, back)), py = Math.round(lerp(y + 12 * k, G.vb + 40 * k, back));
+      if (ph) { Q.forearm(c, px, py, { angle: -0.5, side: 'R', size: sz, sleeve: psleeve, grow: 3.2 }); c.drawImage(ph.cv, px - ph.ax, py - ph.ay); }
       const env = envelope(c, x + tremble, y, k, ksl, s);
       // his two hands taking it, from the upper right
       const reach = ease(clamp(kh / 0.6, 0, 1));
       const hA = Q.hand({ size: sz, pose: kh > 0.5 ? 'pinch' : 'offer', side: 'L', angle: Math.PI + 0.55, skin: wskin, sleeve: wsleeve });
       const hB = Q.hand({ size: sz, pose: kh > 0.5 ? 'pinch' : 'offer', side: 'R', angle: Math.PI - 0.35, skin: wskin, sleeve: wsleeve });
-      if (hA) c.drawImage(hA.cv, Math.round(lerp(w + 30 * k, env.x0 + env.W + 6 * k, reach) + tremble - hA.ax), Math.round(env.y0 + env.H * 0.35 - hA.ay));
-      if (hB && reach > 0.5) c.drawImage(hB.cv, Math.round(lerp(w + 40 * k, env.x0 + env.W * 0.66, reach) + tremble - hB.ax), Math.round(env.y0 - 5 * k - hB.ay));
+      const ax = Math.round(lerp(w + 30 * k, env.x0 + env.W + 6 * k, reach) + tremble), ay = Math.round(env.y0 + env.H * 0.35);
+      const bx = Math.round(lerp(w + 40 * k, env.x0 + env.W * 0.66, reach) + tremble), by = Math.round(env.y0 - 5 * k);
+      if (hB && reach > 0.5) Q.forearm(c, bx, by, { angle: Math.PI - 0.35, side: 'R', size: sz, sleeve: wsleeve, grow: 1.2 });
+      if (hA) { Q.forearm(c, ax, ay, { angle: Math.PI + 0.55, side: 'L', size: sz, sleeve: wsleeve, grow: 1.2 }); c.drawImage(hA.cv, ax - hA.ax, ay - hA.ay); }
+      if (hB && reach > 0.5) c.drawImage(hB.cv, bx - hB.ax, by - hB.ay);
     },
     focus(w, h, vb) { const G = geomNotice(w, h, vb), k = G.k; return { x: Math.round(G.ex - 66 * k), y: Math.round(G.ey - 24 * k), w: Math.round(108 * k), h: Math.round(52 * k) }; },
   };
@@ -514,19 +523,23 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const g2 = lit ? { mul: [1, 0.94, 0.86], add: [10, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.45, 0.2], below: 0.85 } } : { mul: [0.95, 0.94, 0.96], add: [2, 2, 6] };
       const ab = Q.bust('asahi', expr, fr, g2);
       if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
-      // the counter in front of her (it covers her below the chest)
-      c.drawImage(S0.cv, 0, back, w, h - back, 0, back, w, h - back);
       // the card: slid onto the counter by your hand; then Asahi takes it up
       const pc = st.cast.pc || {}, k = clamp(G.Z * 0.9, 0.7, 1.1);
       const cx0 = ax - s(30), cy0 = back + s(5);
       const cxs = lerp(s(30), cx0, ease(ks)), cys = lerp(G.vb + s(20), cy0, ease(ks));
       const take = ease(kt);
       const cx = lerp(cxs, ax + s(44), take), cy = lerp(cys, ay - s(22), take);
+      // (her forearm rises from behind the counter, drawn before it; AR-2)
+      const asz = Math.round(11 * k), awx = Math.round(cx + s(14) * k), awy = Math.round(cy);
+      if (take > 0) Q.forearm(c, awx, awy, { angle: Math.PI * 0.62, side: 'L', size: asz, sleeve: look('asahi').cloth[0], grow: 1.2 });
+      // the counter in front of her (it covers her below the chest)
+      c.drawImage(S0.cv, 0, back, w, h - back, 0, back, w, h - back);
       regCard(c, cx, cy, k, lerp(-0.1, 0.05, take));
       const out = ease(clamp((ks - 0.6) / 0.4, 0, 1));
-      const ph = Q.hand({ size: Math.round(13 * k), pose: 'rest', side: 'R', angle: -0.3, skin: Q.skinOf(pc), sleeve: Q.clothOf(pc)[0] });
-      if (ph && out < 1) c.drawImage(ph.cv, Math.round(lerp(cxs - s(16) * k, s(-20), out) - ph.ax), Math.round(lerp(cys + s(8), G.vb + s(30), out) - ph.ay));
-      if (take > 0) { const hd = Q.hand({ size: Math.round(11 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.62, skin: Q.skinOf(look('asahi')), sleeve: look('asahi').cloth[0] }); if (hd) c.drawImage(hd.cv, Math.round(cx + s(14) * k - hd.ax), Math.round(cy - hd.ay)); }
+      const psz = Math.round(13 * k), ph = Q.hand({ size: psz, pose: 'rest', side: 'R', angle: -0.3, skin: Q.skinOf(pc), sleeve: Q.clothOf(pc)[0] });
+      const pwx = Math.round(lerp(cxs - s(16) * k, -psz * 2.2, out)), pwy = Math.round(lerp(cys + s(8), G.vb + s(30), out));
+      if (ph && out < 1) { Q.forearm(c, pwx, pwy, { angle: -0.3, side: 'R', size: psz, sleeve: Q.clothOf(pc)[0], grow: 3.2 }); c.drawImage(ph.cv, pwx - ph.ax, pwy - ph.ay); }
+      if (take > 0) { const hd = Q.hand({ size: asz, pose: 'pinch', side: 'L', angle: Math.PI * 0.62, skin: Q.skinOf(look('asahi')), sleeve: look('asahi').cloth[0] }); if (hd) c.drawImage(hd.cv, awx - hd.ax, awy - hd.ay); }
     },
     focus(w, h, vb) { const G = geomShop(w, h, vb, false); return G.band ? { x: G.ax - 30, y: G.ay - 88, w: 60, h: 56 } : { x: G.ax - G.s(70), y: G.ay - 88, w: G.s(70) + 48, h: G.back + G.s(12) - (G.ay - 88) }; },
   };
@@ -606,8 +619,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < Math.round(carve * 12); i++) { const x = pl.x0 + rnd() * pl.W, y = pl.y0 + pl.H + s(4) + rnd() * s(14); c.fillStyle = '#e8cc98'; P().ring(c, x, y, Math.max(1, Math.round(2 * k)), 1); }
       // her left hand steadying the plate; her right with the chisel at the line's end (laid down at the end)
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
-      const hl = Q.hand({ size: Math.round(22 * k), pose: 'rest', side: 'L', angle: 0.25, skin, sleeve });
-      if (hl) c.drawImage(hl.cv, Math.round(pl.x0 - s(8) * k - hl.ax), Math.round(pl.y0 + pl.H * 0.7 - hl.ay));
+      // (each with its forearm to the frame's edge: the cuffs ended in mid-air; AR-2)
+      const hsz = Math.round(22 * k), hl = Q.hand({ size: hsz, pose: 'rest', side: 'L', angle: 0.25, skin, sleeve });
+      const lwx = Math.round(pl.x0 - s(8) * k), lwy = Math.round(pl.y0 + pl.H * 0.7);
+      if (hl) { Q.forearm(c, lwx, lwy, { angle: 0.25, side: 'L', size: hsz, sleeve, grow: 1.6 }); c.drawImage(hl.cv, lwx - hl.ax, lwy - hl.ay); }
       const done = kc >= 1 || still;
       const tip = done ? [pl.x0 + pl.W + s(26) * k, pl.y0 + pl.H * 0.8] : pl.tip;
       const jit = still || done ? 0 : Math.sin(t / 60) * 0.6;
@@ -616,8 +631,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ex = tip[0] + Math.cos(ang + Math.PI) * cl * -1, ey = tip[1] + Math.sin(ang + Math.PI) * cl * -1;
       c.strokeStyle = '#b8bcc4'; c.lineWidth = Math.max(1, Math.round(2 * k)); c.beginPath(); c.moveTo(Math.round(tip[0]), Math.round(tip[1] + jit)); c.lineTo(Math.round((tip[0] + ex) / 2), Math.round((tip[1] + ey) / 2 + jit)); c.stroke();
       c.strokeStyle = '#7a4a2a'; c.lineWidth = Math.max(2, Math.round(4 * k)); c.beginPath(); c.moveTo(Math.round((tip[0] + ex) / 2), Math.round((tip[1] + ey) / 2 + jit)); c.lineTo(Math.round(ex), Math.round(ey + jit)); c.stroke();
-      const hr = Q.hand({ size: Math.round(22 * k), pose: 'grip', side: 'R', angle: ang + Math.PI, skin, sleeve });
-      if (hr) c.drawImage(hr.cv, Math.round(ex - hr.ax), Math.round(ey + jit - hr.ay));
+      const hr = Q.hand({ size: hsz, pose: 'grip', side: 'R', angle: ang + Math.PI, skin, sleeve });
+      if (hr) { Q.forearm(c, Math.round(ex), Math.round(ey + jit), { angle: ang + Math.PI, side: 'R', size: hsz, sleeve, grow: 1.6 }); c.drawImage(hr.cv, Math.round(ex - hr.ax), Math.round(ey + jit - hr.ay)); }
       // the polishing cloth folded beside the plate at the end
       if (sheen > 0) { c.fillStyle = '#d8d2c4'; c.fillRect(Math.round(pl.x0 + pl.W * 0.2), Math.round(pl.y0 + pl.H + s(8)), Math.round(26 * k), Math.round(10 * k)); c.fillStyle = '#b8b2a4'; c.fillRect(Math.round(pl.x0 + pl.W * 0.2), Math.round(pl.y0 + pl.H + s(8) + 8 * k), Math.round(26 * k), Math.round(2 * k)); }
       Q.dust(c, 0, G.yW, w, G.vb, s(30), t, 18, '255,240,210', still, 17);
@@ -641,15 +656,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const k = clamp(G.Z * 0.9, 0.7, 1.2), e = ease(kl);
       // (in a band above the sheet she holds it up beside her face instead)
       const py = Math.round(lerp(G.vb + s(40), G.band ? ay - 58 : ay - s(12), e)), pxx = G.band ? Math.round(ax + 48 + 58 * k) : ax;
-      // her forearms up to the plate's two ends (plate(): W = 110 k, H = 48 k about its centre)
-      const PW = Math.round(110 * k), PH = Math.round(48 * k), px0 = Math.round(pxx - PW / 2), hy0 = Math.round(py - PH / 2 + PH * 0.6);
-      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200, Q.holdArms(ax, ay, [px0 + s(2), hy0], [px0 + PW - s(2), hy0]));
+      // her hands under the plate's lower edge, a third of the way in from each end (plate(): W = 110 k, H = 48 k about its
+      // centre): held at its two ends, her elbows splayed out past them and her forearms showed as two logs; AR-2
+      const PW = Math.round(110 * k), PH = Math.round(48 * k), hy0 = Math.round(py + PH / 2 - 2), hxs = [Math.round(pxx - PW * 0.3), Math.round(pxx + PW * 0.3)];
+      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200, Q.holdArms(ax, ay, [hxs[0], hy0], [hxs[1], hy0]));
       if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
-      const pl = plate(c, pxx, py, k, 1, 1, s, true);
+      plate(c, pxx, py, k, 1, 1, s, true);
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
-      for (const [hx, side, ang] of [[pl.x0 + s(2), 'L', -0.4], [pl.x0 + pl.W - s(2), 'R', Math.PI + 0.4]]) {
-        const hd = Q.hand({ size: Math.round(13 * k), pose: 'pinch', side, angle: ang - Math.PI / 2, skin, sleeve });
-        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(pl.y0 + pl.H * 0.6 - hd.ay));
+      // (fingers up over the edge: the right hand at −π/2 + 0.3, the left its mirror, + π)
+      for (const [hx, side, ang] of [[hxs[0], 'L', Math.PI / 2 + 0.3], [hxs[1], 'R', -Math.PI / 2 + 0.3]]) {
+        const hd = Q.hand({ size: Math.round(13 * k), pose: 'grip', side, angle: ang, skin, sleeve });
+        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy0 - hd.ay));
       }
       if (!still) Q.dust(c, 0, 0, w, G.vb, s(20), t, 12, lit ? '255,200,140' : '240,236,226', still, 23);
     },

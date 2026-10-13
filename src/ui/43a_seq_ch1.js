@@ -539,12 +539,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return Q.bust('hana', expr, fr, { mul: [0.97, 0.93, 0.89], add: [4, 2, 0], rim: { side: 'l', col: '#ffd8a8', k: [0.4, 0.18], below: 0.85 } }, false, 200, o);
   }
   // a teacup held in a hand (the cup's sprite from the prologue's teahouse)
-  function cupInHand(c, x, y, Z, skin, sleeve, angle) {
+  // (arm: { to, grow } draws the forearm too, for a hand with no figure to hang from; AR-2)
+  function cupInHand(c, x, y, Z, skin, sleeve, angle, arm) {
     const kit = RB.prologueArt.kit;
     const cup = kit.scaled(kit.cupSprite(), clamp(Z, 0.5, 1));
+    const a = angle == null ? -0.2 : angle, S = Math.round(11 * Z), wx = Math.round(x - cup.w * 0.4), wy = Math.round(y - cup.h * 0.22);
+    if (arm) Q.forearm(c, wx, wy, Object.assign({ angle: a, side: 'R', size: S, sleeve }, arm));
     c.drawImage(cup.cv, Math.round(x - cup.ax), Math.round(y - cup.ay));
-    const hd = Q.hand({ size: Math.round(11 * Z), pose: 'grip', side: 'R', angle: angle == null ? -0.2 : angle, skin, sleeve });
-    if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax - cup.w * 0.4), Math.round(y - hd.ay - cup.h * 0.22));
+    const hd = Q.hand({ size: S, pose: 'grip', side: 'R', angle: a, skin, sleeve });
+    if (hd) c.drawImage(hd.cv, wx - hd.ax, wy - hd.ay);
     return cup;
   }
   // Kōji from behind, close to us (RB.seqBack, AR-1): his straw hat, his hair at the nape, his shoulders and back; the
@@ -620,8 +623,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const hd = Q.hand({ size: 11, pose: 'offer', side: 'R', angle: -0.2, skin: Q.skinOf(look('hana')), sleeve: '#a86a5a' });
         if (hd) c.drawImage(hd.cv, rx - hd.ax, ry - hd.ay);
       }
-      // Kōji's hand and cup at the frame's edge, close to us
-      cupInHand(c, Math.round(dX + dW - s(30)), Math.round(G.vb + s(2)), 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4);
+      // Kōji's hand and cup at the frame's edge, close to us (his arm from the frame's lower edge: the hand floated; AR-2)
+      const kx0 = Math.round(dX + dW - s(30)), ky0 = Math.round(G.vb + s(2));
+      cupInHand(c, kx0, ky0, 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4, { to: [kx0 + s(16), h + s(30)], grow: 3.2 });
     },
     focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + 80 + 24; return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
   };

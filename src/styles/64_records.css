@@ -16,7 +16,7 @@
 .rb-seal-form { display: grid; gap: 8px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: var(--r-1); margin-bottom: 10px; }
 .rb-seal-form fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .rb-seal-form legend { font-weight: 600; font-size: 0.9em; margin-bottom: 2px; }
-.rb-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 12px; }
+.rb-pages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
 .rb-pg { display: flex; flex-direction: column; gap: 6px; }
 .rb-frame { position: relative; border: 6px solid #f6efdc; box-shadow: 0 0 0 1px var(--paper-edge), 0 2px 4px rgba(0,0,0,0.15); background: #e8dcc0; line-height: 0; }
 .rb-thumb { width: 100%; height: auto; aspect-ratio: 16 / 9; image-rendering: pixelated; display: block; max-width: 100%; }

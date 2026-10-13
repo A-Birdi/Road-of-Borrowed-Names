@@ -4336,6 +4336,57 @@ between clicks, so a slow poll could miss it. The check now also watches every f
 holding at k = 1 is caught; with motion on, the same watcher reports the morning shot as presenting at k < 1, as it
 should): 3/3 passes alone; the full suite on this build **121/0**.
 
+## AR-2 — animation, framing and staging at the game's real picture sizes (Robin, 2026-10-13; implemented provisionally, internally reviewed)
+
+Robin: "Any other illustration odditiea that might have made it in? Animations, framing etc". Worked under AC-1
+(docs/future/plan/AC1_ART.md). **Status: implemented provisionally, internally reviewed. Not Robin-approved.**
+
+**First finding: AR-1 and its round 2 were judged at a size the game never draws.** A sequence draws into the world's
+art buffer (`RB.render`, `fn.art`), not the window: measured in the built game, a 1280 × 720 window (and 1536 × 864 at
+1.25×, 1920 × 1080 at 1×) draws at **640 × 360**, Robin's 2048 × 1046 at **683 × 349**, 1440 × 900 at 2× at 720 × 450,
+1024 × 768 at 512 × 384; an upright phone at 390 × 844 (361 × 801 at 2.625×); a phone on its side at 563 × 260 (2×),
+507 × 234 (3×) or 601 × 271. AR-1's census, its evidence pairs `docs/screenshots/ar1/01`–`26` and its guard test drew
+at 1280 × 720, where the stage scale is capped (1.4) and the portraits (one pixel per art pixel) are half as large in
+the frame as in play. Those pairs still show what changed, but not the picture as played; this round's census, pairs
+and test use the real sizes. The travel volume drew each page at **160 × 90** with the whole frame as "above the
+sheet", so its portraits (96 px) filled the page and lost the tops of their heads.
+
+**How it was looked at.** Every shot at every phase's end at 640 × 360, 683 × 349, 512 × 384, 720 × 450, 390 × 844,
+361 × 801, 563 × 260, 507 × 234 and the volume's page, read on contact sheets (640 × 360 at full size, the phones at
+half) with the sheet's line marked; and measured by instrumenting the built game's drawing (scratch tooling): where
+every portrait's face lands against the frame and the sheet; every hand the shots draw and what holds it up (a
+portrait's arm, a back figure's arm, a drawn forearm, the frame's edge); for every phase, the change between 31 steps
+of its action, the change where one phase hands over to the next, 12 s of the hold at 50 ms, reduced motion, and a
+clock an hour on. Flagged steps were read as filmstrips.
+
+| Observed | Cause | Change | Decision |
+| --- | --- | --- | --- |
+| Hands floating in close-ups, their cuffs ending in mid-air: the notice taken (your hand and Wataru's two), the plate carved (Asahi's two), the lamp lit with flint and steel (yours and Hoshino's two), your brush hand by the lamp, the reply sealed (Hoshino's), Kōji's cup hand inside the teahouse, the folio held open in the archive (Ren's two), the printed sheet held to the window (Sōbē's two), the slip laid on the floor (yours), the card slid across the counter (yours, Asahi's), Omi's hands on the desk | insert shots draw a hand with only its cuff; at 1280 × 720 most sat nearer an edge | `RB.seqKit.forearm`: the forearm from under the cuff back along the hand's line to past the frame's edge (wider toward the edge for arms that reach from us; nearly even for arms from across a desk; Omi's to her sides; Asahi's from behind the counter, drawn before it) | kept |
+| Six hands upside down: Omi's on the desk, Ren's left on the folio, Sen's and Sanpei's right (the register, the woodblock), Sōbē's right on the sheet, Heisuke's right on the letter | a left hand mirrored as −a or π − a: `hand()` mirrors an 'L' hand in its own frame, so the mirror of an 'R' hand at a is a + π | the six angles corrected; the convention written at `hand()` | kept |
+| Your hand handing Kasane the folio floated between you while both your arms hung | the hand was drawn on its own | your right arm from the shoulder under the folio and back to your side (`RB.seqBack.arm`, as for Hoshino's envelope) | kept |
+| Asahi holding up the nameplate: her forearms stuck out past its ends like two logs | hands at the plate's ends, wider than her shoulders: the elbows splayed | her hands under its lower edge, a third in from each end, elbows at her sides | kept |
+| Sen, Sanpei and the companion on the Exchange street had legs under half anyone else's on a desktop | body length written as a quarter of the picture's height (90 px at 640 × 360, 211 on a phone) | full length (200), as everyone else | kept |
+| The bell's close-up turned from green to bronze in one frame as the clapper struck (the spec allows no flash) | the struck bell swapped in at k > 0.2 | the green comes off from where the clapper struck, spreading round the lip in ten dithered steps as the flakes fall | kept |
+| The lamp's shade and flame changed colour in two jumps as the room warmed | three fixed colours chosen by thresholds | colours mixed continuously from blue through yellow to warm | kept |
+| At the assembly, each speaker snapped back (pose and step) the instant the next line began | the speaker's step was tied to their own phase only | they step back over the first part of the next line | kept |
+| Ren's hand jumped onto the page as the folio's action ended; the bridge room's light switched on at the end of "spans"; the spans appeared whole in mid-air; the settled ink, the bell pipe's line of light and the town pipes' light appeared at the end of their actions; the envelope's flap jumped from closed to flat | end states drawn only at k ≥ 1 or on a boolean | each eased in over its action (the flap swings up through flat) | kept |
+| The travel volume's pages: faces filling the page, tops of heads cut (Wataru's hat, Ren, Otoha, Kasane) | pages drawn at 160 × 90 with no sheet | pages drawn at 320 × 180 with the sheet's line where the game has it, so the page shows the picture as seen; the page grid's columns at least 260 px wide, so a page is not shrunk | kept |
+| Unpainted pixels at the new sizes: a band under the observatory's wall on a phone on its side, two pixels in the mill at 683 × 349 | a room's faces not meeting at some sizes | the wall runs down under the floor; every guardian scene starts from a dark ground | kept |
+| Ren's folio and glasses past their reach on a phone on its side | placed beside the face, at its height | lower and nearer, within reach | kept |
+| Looked at and left: the phases with no change of their own (Hisae's "speak", the ridge's "up", the fire's "dance": their line plays over the hold); spikes in the hold from pixel-steps of drift (the cloud sea, the boat's bob, fireworks); 26 holds with no ambient motion (still interiors, the Hall's paintings); the prologue's road shots moving under `drawAt`'s `still` (the title backdrop reads the game's reduced-motion setting, so in play they stop); the companion as a small road figure beside Hoshino in the dome (ch4 "stay", "go", "both"), a mix of the two drawing scales that reads as further back; figure sizes on the terraces | intended, or not seen in play | none | left as is (the dome's small companion noted for Robin) |
+
+**Regression checks.**
+- Browser, the guard rewritten (`tests/e2e/sequence_art_integrity.mjs`): the real sizes (640 × 360, 683 × 349, 390 × 844,
+  563 × 260) and the volume's page (320 × 180), every shot, phase (start, quarter points, end) and companion; besides
+  unpainted pixels, reach and errors it now checks that every hand is held up (a figure's arm, a drawn forearm, or its
+  cuff off the frame; five shots whose own drawing holds a hand are listed with the reason), that every face is wholly in
+  the frame and above the sheet once the action is over, and that no phase's end differs from the next phase's start.
+  On the build before the nameplate change: full **32/0** (3,420 drawings per size). Its first run at the real sizes
+  failed 11 checks, which led to the body lengths, the two unpainted places, Ren's reach on its side and Nao's strap
+  hand (looked at: held, the forearm in front of them; listed).
+- Unit: `node tests/run-unit.mjs sequence` 499/0, `portrait` 70/0, `records` 261/0.
+- Further results: below, as they are run.
+
 ## P17 — the complete run on the final build (2026-10-13; done)
 
 **Why this run.** Robin asked whether P14–P17's closure and the shipped edition were fully resolved before VA-1.

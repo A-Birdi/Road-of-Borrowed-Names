@@ -156,7 +156,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let i = 0; i < Math.max(1, Math.round(LW / 7)); i++) SP.marks(c, lx + LW - 4 - i * 7, ly + 3, LH - 6, 4, 1, i < 2 ? '#3a2e2a' : 'rgba(58,46,42,0.5)', 30 + i);
       const sk = skin('cr_heisuke'), sl = (look('cr_heisuke').cloth || ['#5a4a3a'])[0];
       const hl = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'R', angle: -1.1, skin: sk, sleeve: sl });
-      const hr = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'L', angle: -2.0, skin: sk, sleeve: sl });
+      const hr = Q.hand({ size: Math.round(clamp(s(11), 8, 18)), pose: 'pinch', side: 'L', angle: 2.0, skin: sk, sleeve: sl });
       if (hl) c.drawImage(hl.cv, Math.round(lx + 1 - hl.ax), Math.round(ly + LH * 0.7 - hl.ay));
       if (hr) c.drawImage(hr.cv, Math.round(lx + LW - 1 - hr.ax), Math.round(ly + LH * 0.7 - hr.ay));
     },
