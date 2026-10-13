@@ -364,7 +364,10 @@ await test('the typing field stays above the software keyboard; pinch-zoom is ig
     Object.defineProperty(vv, 'offsetTop', { configurable: true, get: () => 0 });
     Object.defineProperty(vv, 'scale', { configurable: true, get: () => 1 });
     vv.dispatchEvent(new Event('resize'));
+    // the overlay keeps the field and Submit in view on the next animation frame; under load that frame can come
+    // after a fixed wait, so wait for two frames too (measuring before it ran failed once in a busy run)
     await __wait(120);
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
     const inp = document.getElementById('ime-in').getBoundingClientRect(), sub = document.querySelector('[data-a=submit]').getBoundingClientRect(), fr = document.querySelector('.chal').getBoundingClientRect();
     return { visible: innerHeight - 330, inputBottom: inp.bottom, inputTop: inp.top, submitBottom: sub.bottom, chal: fr.height };
   });

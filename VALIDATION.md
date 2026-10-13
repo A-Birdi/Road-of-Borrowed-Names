@@ -4274,7 +4274,25 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | Command | `node tests/e2e/run.mjs --part=k/12` for k = 1…12 (130 scripts, each part under the job's two-hour limit), then `--extra` (10 scripts). |
 | Conditions | One part at a time, nothing else running. |
 
-**Results:** to be added part by part, with failures traced.
+**Results so far:**
+
+| Part | Result | Note |
+| --- | --- | --- |
+| 1/12 | 11/11 | |
+| 2/12 | 11/11 | |
+| 3/12 | 10/11 | `learning_ui` failed once: traced below |
+| 4–12 | running | |
+
+**The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
+Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.
+
+- The overlay had already shrunk to the visible height and the field was in view. The game scrolls Submit into
+  view on the next animation frame (`keepFocusVisible`, `src/ui/65_challenge.js`).
+- The test measured after a fixed 120 ms. In a busy run (another browser test was running alongside), that frame
+  came later.
+- The game behaves correctly; the test was measuring too early. Alone on the same build the test passed 15/15.
+- The test now also waits for two animation frames, with its assertions unchanged. It then passed 15/15 twice
+  while the suite was running.
 
 ## VA-1 — the voice audition (Robin's VA-1, queued last; in progress, 2026-10-12)
 
