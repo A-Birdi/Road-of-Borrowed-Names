@@ -138,12 +138,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       });
       c.drawImage(B.cv, 0, 0);
       const ko = st.at('open'), kq = st.at('quiet');
-      const b = Q.bust('cr_heisuke', kq > 0.4 ? 'sad2' : 'neutral', kq > 0.4 ? null : { look: [0, 1], head: [0, 1] }, ROOM, false, 200);
       const bx = Math.round(w * (narrow ? 0.56 : 0.62)), by = Math.max(Math.round(st.vb + s(12)), 100);
-      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
-      // the letter opened out in his hands: a long sheet of oiled paper, columns of fading brush marks
+      // the letter opened out in his hands: a long sheet of oiled paper, columns of fading brush marks (his forearms to
+      // the hands at its two edges)
       const e = ease(ko), LW = Math.round(clamp(s(54), 34, 80) * (0.4 + 0.6 * e)), LH = Math.round(clamp(s(40), 26, 60));
       const lx = bx - Math.round(LW / 2), ly = by - 18;
+      const b = Q.bust('cr_heisuke', kq > 0.4 ? 'sad2' : 'neutral', kq > 0.4 ? null : { look: [0, 1], head: [0, 1] }, ROOM, false, 200, Q.holdArms(bx, by, [lx + 1, ly + LH * 0.7], [lx + LW - 1, ly + LH * 0.7]));
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       R(c, lx, ly, LW, LH, '#e2d4b0'); R(c, lx, ly + LH - 1, LW, 1, '#b8a682'); R(c, lx + LW - 1, ly, 1, LH, '#c8b690');
       for (let i = 0; i < Math.max(1, Math.round(LW / 7)); i++) SP.marks(c, lx + LW - 4 - i * 7, ly + 3, LH - 6, 4, 1, i < 2 ? '#3a2e2a' : 'rgba(58,46,42,0.5)', 30 + i);
       const sk = skin('cr_heisuke'), sl = (look('cr_heisuke').cloth || ['#5a4a3a'])[0];

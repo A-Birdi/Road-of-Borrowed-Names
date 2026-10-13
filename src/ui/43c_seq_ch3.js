@@ -378,10 +378,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const down = Math.round(ease(kl) * 2 * (1 - ease(ka)));
       const expr = ka > 0.3 ? 'neutral' : kl > 0.2 ? 'worry' : 'neutral';
       const fr = down ? { head: [0, down], look: [0, 1] } : ka > 0.3 ? null : { look: [0, 1] };
-      const tb = Q.bust('co_tokiwa', expr, fr, FACE_L, false, 200);
+      // the chronicle held to his chest in both hands (his fingers over its top edge; his forearms behind it, to its
+      // lower corners: chronicle() is 30 × 38 at k about its centre)
+      const bx = tx + 2, by = ty - s(6) + down, cW = Math.round(30 * 1.2), cH = Math.round(38 * 1.2);
+      const tb = Q.bust('co_tokiwa', expr, fr, FACE_L, false, 200, Q.holdArms(tx, ty, [bx - cW * 0.3, by + cH * 0.3], [bx + cW * 0.3, by + cH * 0.3]));
       if (tb) c.drawImage(tb.cv, tx - tb.ax, ty - tb.ay);
-      // the chronicle held to his chest in both hands (his fingers over its top edge)
-      const bx = tx + 2, by = ty - s(6) + down;
       const bk = chronicle(c, bx, by, 1.2, 0);
       fingers(c, bx - Math.round(bk.W * 0.38), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, 1);
       fingers(c, bx + Math.round(bk.W * 0.16), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, -1);
@@ -506,10 +507,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const kn = st.at('names'), xs = [];
       for (let i = 0; i < 5; i++) xs.push(Math.round(lerp(B.bx0 + s(36), B.bx1 - s(26), i / 4)));
       lanterns(c, xs, B.by + s(4), s, kn * 5, t, still, 1.6);
-      const tb = Q.bust('co_tokiwa', 'think2', { look: [0, 1], head: [0, 1] }, FACE_L, false, 200);
+      // the chronicle open in his hands, low at the frame's edge (his forearms to the sleeves at its sides: openBook()
+      // is 34 k each side of the spine, 22 k tall)
+      const k = 1.1, bx = tx + s(2), by = ty - s(2), oW = Math.round(34 * k), oH = Math.round(22 * k);
+      const tb = Q.bust('co_tokiwa', 'think2', { look: [0, 1], head: [0, 1] }, FACE_L, false, 200, Q.holdArms(tx, ty, [bx - oW - 3, by + oH / 2], [bx + oW + 3, by + oH / 2]));
       if (tb) c.drawImage(tb.cv, tx - tb.ax, ty - tb.ay);
-      // the chronicle open in his hands, low at the frame's edge
-      const k = 1.1, bx = tx + s(2), by = ty - s(2);
       const ob = openBook(c, bx, by, k, s, 'rgba(255,220,160,0.12)');
       // his thumbs on the pages' lower corners, the fingers under the book; the sleeves at its sides
       const sk = skin('co_tokiwa');
@@ -571,13 +573,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the crowd behind him, small, facing the stage
       crowdRev(c, GR, st, { skip: ['co_heita', 'co_tamotsu', 'co_nobu', 'co_fusa', 'co_ume', 'co_goro'], pose: (p) => (p.id === 'pc' || p.id === 'comp' ? ['down', 'i0'] : null) });
       const kt = st.at('tamotsu'), ks = st.at('sickle');
-      const hb = Q.bust('co_heita', ks > 0.4 ? 'think2' : 'neutral', ks > 0.4 ? { look: [-1, 0] } : { look: [1, -1] }, FACE_R, false, 200);
+      // the sickle: up from his side to the height of his shoulder, no higher (his arm with it)
+      const es = ease(ks), sy = Math.round(lerp(G.vb + 40, hy - 40, es));
+      const hb = Q.bust('co_heita', ks > 0.4 ? 'think2' : 'neutral', ks > 0.4 ? { look: [-1, 0] } : { look: [1, -1] }, FACE_R, false, 200, ks > 0 ? Q.holdArms(hx, hy, null, [hx + 58, sy + 4]) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
-      // the sickle: up from his side to the height of his shoulder, no higher
-      if (ks > 0) {
-        const e = ease(ks);
-        sickle(c, hx + 58, lerp(G.vb + 40, hy - 40, e), 1.6, lerp(0.6, 0.15, e), skin('co_heita'), sleeve('co_heita'));
-      }
+      if (ks > 0) sickle(c, hx + 58, sy, 1.6, lerp(0.6, 0.15, es), skin('co_heita'), sleeve('co_heita'));
       // Tamotsu at the right edge from behind, facing the crowd; his arm comes up, pointing at the hill
       const tb = Q.back(look('co_tamotsu'), Math.round(clamp(s(150), 100, 200)), { light: 'r' });
       const tx = Math.round(w - s(G.lay === 'narrow' ? 30 : 60)), tyb = Math.round(G.vb + s(70));
@@ -667,7 +667,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomUme(w, h, st.vb), { s, ux, uy } = G, still = st.still;
       c.drawImage(eavesStatic(G).cv, 0, 0);
       const ku = st.at('up');
-      const ub = Q.bust('co_ume', ku > 0.4 ? 'sad' : 'closed', ku > 0.4 ? { look: [1, -1], head: [0, -1] } : { head: [0, 1] }, FACE_L, false, 200);
+      const ub = Q.bust('co_ume', ku > 0.4 ? 'sad' : 'closed', ku > 0.4 ? { look: [1, -1], head: [0, -1] } : { head: [0, 1] }, FACE_L, false, 200, { arms: { l: 'clasp', r: 'clasp' } });
       if (ub) c.drawImage(ub.cv, ux - ub.ax, uy - ub.ay);
       if (!still) Q.dust(c, 0, 0, w, G.vb, s(14), t, 6, '255,214,180', still, 3);
     },
@@ -699,11 +699,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
         },
       });
       // Fusa close in front, her hand up for her sister
-      const fb = Q.bust('co_fusa', kf > 0.3 ? 'sad' : 'worry', kf > 0.3 ? { look: [-1, -1] } : { look: [0, 1] }, FACE_R, false, 200);
+      const ef = ease(kf), hfx = Math.round(fx - s(44)), hfy = Math.round(lerp(G.vb + s(30), fy - 96 + s(10), ef));
+      const fb = Q.bust('co_fusa', kf > 0.3 ? 'sad' : 'worry', kf > 0.3 ? { look: [-1, -1] } : { look: [0, 1] }, FACE_R, false, 200, kf > 0 ? Q.holdArms(fx, fy, [hfx, hfy + 6], null) : null);
       if (fb) c.drawImage(fb.cv, fx - fb.ax, fy - fb.ay);
       if (kf > 0) {
-        const e = ease(kf), hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: -Math.PI / 2 - 0.15, skin: skin('co_fusa'), sleeve: sleeve('co_fusa') });
-        if (hd) c.drawImage(hd.cv, Math.round(fx - s(44) - hd.ax), Math.round(lerp(G.vb + s(30), fy - 96 + s(10), e) - hd.ay));
+        const hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: -Math.PI / 2 - 0.15, skin: skin('co_fusa'), sleeve: sleeve('co_fusa') });
+        if (hd) c.drawImage(hd.cv, hfx - hd.ax, hfy - hd.ay);
       }
       if (!still) Q.dust(c, 0, G.y0 - s(40), w, G.vb, -s(10), t, 8, '255,214,180', still, 21);
     },

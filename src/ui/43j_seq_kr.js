@@ -118,7 +118,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const S0 = roomStatic(G, 0.3 * ko);
       c.drawImage(S0.cv, 0, 0);
       drawWicks(c, S0.C, 0.97 * ease(ko), t, st.still, 0.16);
-      const b = Q.bust('kr_hisae', ko > 0.2 ? 'closed' : 'neutral', ko > 0.2 ? null : { look: [1, 0] }, ko > 0.5 ? DARK : LAMP, false, 200);
+      const b = Q.bust('kr_hisae', ko > 0.2 ? 'closed' : 'neutral', ko > 0.2 ? null : { look: [1, 0] }, ko > 0.5 ? DARK : LAMP, false, 200, { arms: { l: 'clasp', r: 'clasp' } });
       const bx = Math.round(w * (G.narrow ? 0.3 : 0.24)), by = Math.max(Math.round(st.vb + s(10)), 98);
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
     },

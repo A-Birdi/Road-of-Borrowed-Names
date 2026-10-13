@@ -529,9 +529,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { cv };
     });
   }
-  function hanaBust(expr, fr) {
+  function hanaBust(expr, fr, o) {
     // Hana in the doorway: the sun from outside on her face (our left), the room's dimness behind
-    return Q.bust('hana', expr, fr, { mul: [0.97, 0.93, 0.89], add: [4, 2, 0], rim: { side: 'l', col: '#ffd8a8', k: [0.4, 0.18], below: 0.85 } }, false, 200);
+    return Q.bust('hana', expr, fr, { mul: [0.97, 0.93, 0.89], add: [4, 2, 0], rim: { side: 'l', col: '#ffd8a8', k: [0.4, 0.18], below: 0.85 } }, false, 200, o);
   }
   // a teacup held in a hand (the cup's sprite from the prologue's teahouse)
   function cupInHand(c, x, y, Z, skin, sleeve, angle) {
@@ -585,12 +585,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Hana in the doorway: surprise on her line; then she takes it in as he speaks
       const ks = st.at('stop'), kl = st.at('lift');
       const expr = kl > 0.2 ? 'think2' : ks > 0.15 ? 'surprise' : 'neutral';
-      const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null);
+      // her hand on the doorframe: it slides down the post and stops there (her arm raised to it)
+      const fx = Math.round(dX - s(3)), fy = Math.round(lerp(hy - 96 + s(6), hy - 96 + s(30), ease(ks)));
+      const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null, Q.holdArms(hx, hy, [fx, fy], null));
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
-      // her hand on the doorframe: it slides down the post and stops there
       const skin = Q.skinOf(look('hana'));
       const hd = Q.hand({ size: 10, pose: 'rest', side: 'L', angle: Math.PI * 0.5, skin, sleeve: '#a86a5a' });
-      if (hd) c.drawImage(hd.cv, Math.round(dX - s(3) - hd.ax), Math.round(lerp(hy - 96 + s(6), hy - 96 + s(30), ease(ks)) - hd.ay));
+      if (hd) c.drawImage(hd.cv, fx - hd.ax, fy - hd.ay);
       // Kōji in front of us, from behind, over the doorway's left edge; his cup held level in front of
       // him, Hana looking at it; it lifts a little on the rule
       const kb = kojiBack(lay === 'narrow' ? 0.9 : 1);
@@ -626,13 +627,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const down = Math.round(ease(klo) * 2 * (1 - ease(ksm)));
       const expr = ksm > 0.3 ? 'smile' : klo > 0.2 ? 'sad' : 'neutral';
       const fr = down ? { head: [0, down], look: [0, 1] } : ksm > 0.3 ? null : klo > 0 ? { look: [0, 1] } : null;
-      const hb = hanaBust(expr, fr);
-      if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
-      // her hand reaches toward the cups as she smiles
+      // her hand reaches toward the cups as she smiles (her arm raised to it)
       const reach = ease(ksm);
+      const rx = Math.round(lerp(hx + s(34), cups[0][0] - s(14), reach)), ry = Math.round(lerp(hy - s(10), counterY + s(2), reach));
+      const hb = hanaBust(expr, fr, reach > 0 ? Q.holdArms(hx, hy, null, [rx, ry]) : null);
+      if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       if (reach > 0) {
         const hd = Q.hand({ size: 11, pose: 'offer', side: 'R', angle: -0.2, skin: Q.skinOf(look('hana')), sleeve: '#a86a5a' });
-        if (hd) c.drawImage(hd.cv, Math.round(lerp(hx + s(34), cups[0][0] - s(14), reach) - hd.ax), Math.round(lerp(hy - s(10), counterY + s(2), reach) - hd.ay));
+        if (hd) c.drawImage(hd.cv, rx - hd.ax, ry - hd.ay);
       }
       // Kōji's hand and cup at the frame's edge, close to us
       cupInHand(c, Math.round(dX + dW - s(30)), Math.round(G.vb + s(2)), 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4);

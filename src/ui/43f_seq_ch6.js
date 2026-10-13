@@ -547,21 +547,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const RLIGHT = { mul: [0.98, 0.95, 0.9], add: [8, 5, 0], rim: { side: 'l', col: '#ffe2b0', k: [0.42, 0.18], below: 0.85 } };
   const RSKIN = () => Q.skinOf(look('ren')), RSLEEVE = () => (look('ren').cloth || ['#3a3e6a'])[0];
   // Ren's portrait without the glasses (their own portrait with that one accessory left off), graded like Q.bust
-  function renBare(expr, fr, g) {
-    return Q.small('ch6.renbare|' + expr + '|' + JSON.stringify(fr || null) + '|' + JSON.stringify(g || null), () => {
+  function renBare(expr, fr, g, o) {
+    return Q.small('ch6.renbare|' + expr + '|' + JSON.stringify(fr || null) + '|' + JSON.stringify(g || null) + '|' + JSON.stringify(o || null), () => {
       const sj = RB.portraits.subject('ren');
       if (!sj) return null;
       const sj2 = { key: 'ren|noglasses', who: 'ren', p: Object.assign({}, sj.p, { acc: (sj.p.acc || []).filter((a) => a !== 'glasses') }) };
       const f = RB.portraits.frame(sj2, expr, fr || null);
       if (!f) return null;
-      let cv = mk(f.width, f.height); cv.getContext('2d').drawImage(f, 0, 0);
+      // standing, as Q.bust draws them (the body below the portrait, RB.portraitBody)
+      const H0 = f.height;
+      let cv = Q.standing(sj2.p, f, Q.lookOf('ren'), 220, o, fr);
+      if (!cv) { cv = mk(f.width, f.height); cv.getContext('2d').drawImage(f, 0, 0); }
       cv = Q.grade(cv, g);
-      // continued down (its lowest row repeated), as Q.bust does, so a shorter sheet never shows an edge
-      const H0 = cv.height, ext = 220, tall = mk(cv.width, H0 + ext), tg = tall.getContext('2d');
-      tg.drawImage(cv, 0, 0);
-      const d = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, H0 - 3, cv.width, 1).data;
-      for (let x = 0; x < cv.width; x++) { const o = x * 4; if (d[o + 3] < 200) continue; tg.fillStyle = 'rgb(' + d[o] + ',' + d[o + 1] + ',' + d[o + 2] + ')'; tg.fillRect(x, H0 - 2, 1, ext + 2); }
-      return { cv: tall, ax: cv.width >> 1, ay: H0 };
+      return { cv, ax: cv.width >> 1, ay: H0 };
     });
   }
   // the shelves of the Room of Set-Down Memories filling the background: dark wood, rows of folios with pale labels
@@ -666,13 +664,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.drawImage(roomBack(G, 'renroom', 0.32).cv, 0, 0);
       airLife(c, w, h, t, still, 18, 63, 0);
       const ko = st.at('open');
-      const rb = Q.bust('ren', 'neutral', { look: [0, 1] }, RLIGHT, false, 220);
-      if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
-      // the folio at their chest (beside the face in a phone's band), the cover swinging open
+      // the folio at their chest (beside the face in a phone's band), the cover swinging open; their forearms up to the
+      // hands on its spine and on the cover's edge
       const fx = G.land ? kx + 70 : kx + Math.round(6 * k), fy = G.land ? Math.round(clamp(G.vb * 0.5, 30, G.vb - 16)) : ky - Math.round(2 * k);
+      const W = Math.round(36 * k), cw0 = W * Math.cos(Math.PI * ease(ko));
+      const hlp = [Math.round(fx - W / 2 - 4 * k), Math.round(fy + 10 * k)], hrp = [Math.round(fx - W / 2 + Math.max(cw0, W * 0.9 * (ko >= 1 ? 1 : 0)) + 4 * k), Math.round(fy + 8 * k)];
+      const rb = Q.bust('ren', 'neutral', { look: [0, 1] }, RLIGHT, false, 220, Q.holdArms(kx, ky, hlp, hrp));
+      if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
       ushioFolio(c, fx, fy, k, ease(ko));
       const skin = RSKIN(), sl = RSLEEVE();
-      const W = Math.round(36 * k);
       const hl = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.08, skin, sleeve: sl });
       const hr = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'R', angle: Math.PI * 0.92, skin, sleeve: sl });
       // the left hand holds the spine; the right turns the cover (it follows the cover's edge, then rests on the page)
@@ -772,14 +772,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (off) { expr = 'neutral'; fr = { look: [0, 1], lids: 'half' }; }
       else if (ksm > 0.3) { expr = 'smirk'; fr = null; }
       else if (ksd > 0.1) { expr = 'sad'; fr = { head: [0, Math.round(ease(ksd))] }; }
-      const rb = off ? renBare(expr, fr, RLIGHT) : Q.bust('ren', expr, fr, RLIGHT, false, 220);
+      // the glasses lifted off the face and brought down to the hands; then the cloth going round a lens, slowly (their
+      // forearms to both hands; the rubbing moves the hand, not the arm)
+      const eg = ease(clamp((kg - 0.25) / 0.75, 0, 1));
+      const gx0 = Math.round(lerp(kx, G.land ? kx + 64 : kx, eg)), gy0 = Math.round(lerp(ky - 96 + 47, G.land ? Math.round(clamp(G.vb * 0.55, 30, G.vb - 12)) : ky - Math.round(4 * k), eg));
+      const ho = kg > 0 ? Q.holdArms(kx, ky, [gx0 - 11 * k, gy0 + 2 * k], kg >= 1 || eg > 0.8 ? [gx0 + 14 * k, gy0 + 1 * k] : null) : null;
+      const rb = off ? renBare(expr, fr, RLIGHT, ho) : Q.bust('ren', expr, fr, RLIGHT, false, 220, ho);
       if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
-      // the glasses lifted off the face and brought down to the hands; then the cloth going round a lens, slowly
       if (kg > 0) {
-        const e = ease(clamp((kg - 0.25) / 0.75, 0, 1));
-        const ex = kx, ey = ky - 96 + 47;                                              // where the glasses sat
-        const hx = G.land ? kx + 64 : kx, hy = G.land ? Math.round(clamp(G.vb * 0.55, 30, G.vb - 12)) : ky - Math.round(4 * k);
-        const gx = Math.round(lerp(ex, hx, e)), gy = Math.round(lerp(ey, hy, e));
+        const e = eg, gx = gx0, gy = gy0;
         if (off) specs(c, gx, gy, Math.max(3, Math.round(4 * k)), e < 0.6);
         const skin = RSKIN(), sl = RSLEEVE();
         const h1 = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.05, skin, sleeve: sl });

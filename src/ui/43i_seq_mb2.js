@@ -140,8 +140,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       });
       const kb = st.at('breathe'), ks = st.at('slips');
       const fr = kb > 0.4 && kb < 0.9 ? { lids: 'closed' } : { look: [-1, 0] };
-      const b = Q.bust('mp_sobe', kb > 0.4 ? 'smile' : 'neutral', fr, WINDOW, false, 200);
       const bx = Math.round(w * (G.narrow ? 0.52 : 0.58)), by = Math.max(Math.round(st.vb + s(10)), 98);
+      // (on Ren's branch his hand holds out the block below: his arm with it)
+      const es = ease(ks), sbx = Math.round(lerp(bx + s(10), bx - s(34), es)), sby = Math.round(by - s(30));
+      const BH0 = Math.round(Math.round(clamp(s(22), 14, 34)) * 1.6), sh = ks > 0 ? [sbx + s(4), sby + BH0] : null;
+      const b = Q.bust('mp_sobe', kb > 0.4 ? 'smile' : 'neutral', fr, WINDOW, false, 200, sh ? Q.holdArms(bx, by, sh[0] < bx ? sh : null, sh[0] < bx ? null : sh) : null);
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       c.drawImage(BED.cv, 0, 0);
       // on Ren's branch: he holds out a lantern's name-slip block (a small block, the slip's shape cut in it)

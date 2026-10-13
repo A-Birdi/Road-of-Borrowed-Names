@@ -206,15 +206,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       let expr = 'neutral', fr = null;
       if (ke > 0) { expr = ke < 0.55 ? 'closed' : 'neutral'; fr = { body: [0, 1], head: [0, 1], look: ke < 0.55 ? null : [0, 1] }; if (!fr.look) delete fr.look; }
       else if (kl > 0) { expr = 'surprise'; fr = kl < 0.5 ? { look: [0, -1], head: [0, -1] } : { head: [0, -1] }; }
-      const wb = Q.bust('wataru', expr, fr, FACE, false, 200);
+      // his notebook held at his chest, below his chin; it lowers a little as he breathes out (his forearms up to it).
+      // In the portrait's own pixels, as the portrait is drawn (the chin sits about 27 px above its foot): placed in the
+      // shot's scale, it rose over his mouth on a large screen.
+      const skin = Q.skinOf(look('wataru')), drop = Math.round(ease(ke) * 3);
+      const nb = { x: wx - 20, y: wy - 22 + drop };
+      const wb = Q.bust('wataru', expr, fr, FACE, false, 200, Q.holdArms(wx, wy, [nb.x - 2, nb.y + 12], [nb.x + 36, nb.y + 12]));
       if (wb) c.drawImage(wb.cv, wx - wb.ax, wy - wb.ay);
-      // his notebook held at his chest; it lowers a little as he breathes out
-      const skin = Q.skinOf(look('wataru')), drop = Math.round(ease(ke) * s(3));
-      const nb = { x: Math.round(wx - s(26)), y: Math.round(wy - s(30) + drop) };
-      R(c, nb.x, nb.y, s(34), s(26), '#5a3a2a'); R(c, nb.x + 1, nb.y + 1, s(34) - 2, 1, '#7a5a42'); R(c, nb.x + s(30), nb.y, s(4), s(26), '#e8e0cc');
-      for (const [hx, side, ang] of [[nb.x - s(2), 'L', 0.9], [nb.x + s(36), 'R', Math.PI - 0.9]]) {
+      R(c, nb.x, nb.y, 34, 26, '#5a3a2a'); R(c, nb.x + 1, nb.y + 1, 32, 1, '#7a5a42'); R(c, nb.x + 30, nb.y, 4, 26, '#e8e0cc');
+      for (const [hx, side, ang] of [[nb.x - 2, 'L', 0.9], [nb.x + 36, 'R', Math.PI - 0.9]]) {
         const hd = Q.hand({ size: 10, pose: 'pinch', side, angle: -ang, skin, sleeve: look('wataru').cloth[0] });
-        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(nb.y + s(12) - hd.ay));
+        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(nb.y + 12 - hd.ay));
       }
       // Ōmi's shoulder and hat at the right edge; on his own route she turns a little toward him
       const turn = ease(ks);
@@ -625,12 +627,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (lit && !still) { const fl = 0.8 + 0.2 * Math.sin(t / 230); c.globalAlpha = fl; P().halo(c, S0.f.fx, S0.f.fy - Math.round(S0.f.fr * 0.45), Math.round(S0.f.fr * 0.6), '255,210,120', 0.25, 3); c.globalAlpha = 1; }
       const kl = st.at('lift');
       const g2 = lit ? { mul: [1, 0.94, 0.86], add: [10, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.45, 0.2], below: 0.85 } } : { mul: [0.97, 0.95, 0.95], add: [4, 3, 4] };
-      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200);
-      if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
       // the finished plate rises into her hands, held out toward you
       const k = clamp(G.Z * 0.9, 0.7, 1.2), e = ease(kl);
       // (in a band above the sheet she holds it up beside her face instead)
       const py = Math.round(lerp(G.vb + s(40), G.band ? ay - 58 : ay - s(12), e)), pxx = G.band ? Math.round(ax + 48 + 58 * k) : ax;
+      // her forearms up to the plate's two ends (plate(): W = 110 k, H = 48 k about its centre)
+      const PW = Math.round(110 * k), PH = Math.round(48 * k), px0 = Math.round(pxx - PW / 2), hy0 = Math.round(py - PH / 2 + PH * 0.6);
+      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200, Q.holdArms(ax, ay, [px0 + s(2), hy0], [px0 + PW - s(2), hy0]));
+      if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
       const pl = plate(c, pxx, py, k, 1, 1, s, true);
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
       for (const [hx, side, ang] of [[pl.x0 + s(2), 'L', -0.4], [pl.x0 + pl.W - s(2), 'R', Math.PI + 0.4]]) {

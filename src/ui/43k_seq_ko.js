@@ -231,7 +231,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.drawImage(crownStatic(G, false).cv, 0, 0);
       falling(c, G, t, st.still, 18, 7, 'tree');
       const kb = st.at('breathe');
-      const b = Q.bust('ko_otoha', kb > 0.3 ? 'smile' : 'neutral', kb > 0.3 ? { look: [1, -1] } : null, DAY, false, 200);
+      const b = Q.bust('ko_otoha', kb > 0.3 ? 'smile' : 'neutral', kb > 0.3 ? { look: [1, -1] } : null, DAY, false, 200, { arms: { l: 'clasp', r: 'clasp' } });
       const bx = Math.round(w * (G.narrow ? 0.4 : 0.38)), by = Math.max(Math.round(st.vb + s(10)), 98);
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
     },

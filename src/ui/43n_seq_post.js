@@ -896,11 +896,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the gift: Mitsue holds out the planting hat
       const kg = st.at('gift');
       if (kg > 0) {
-        const b = Q.bust('as_mitsue', 'smile', null, { mul: [0.9, 0.78, 0.66], add: [16, 6, 0], rim: { side: 'l', col: '#ffb060', k: [0.42, 0.2] } }, true, 200);
-        const bx = Math.round(w * (G.narrow ? 0.7 : 0.76)), by = Math.max(Math.round(vb + s(10)), 98);
-        if (b) c.drawImage(b.cv, Math.round(bx + (1 - ease(kg)) * s(10) - b.ax), by - b.ay);
-        // the hat, held up beside her: a wide shallow cone of woven sedge, its cord hanging
+        const bx = Math.round(w * (G.narrow ? 0.7 : 0.76)), by = Math.max(Math.round(vb + s(10)), 98), bx1 = Math.round(bx + (1 - ease(kg)) * s(10));
+        // the hat, held up beside her: a wide shallow cone of woven sedge, its cord hanging (her arm up to its brim)
         const hx = bx - s(G.narrow ? 30 : 42), hy = by - s(44) + Math.round((1 - ease(kg)) * s(6)), hw = s(G.narrow ? 20 : 26), hh = s(10);
+        const b = Q.bust('as_mitsue', 'smile', null, { mul: [0.9, 0.78, 0.66], add: [16, 6, 0], rim: { side: 'l', col: '#ffb060', k: [0.42, 0.2] } }, true, 200, Q.holdArms(bx1, by, [hx + Math.round(hw * 0.4), hy + hh + 2], null, true));
+        if (b) c.drawImage(b.cv, bx1 - b.ax, by - b.ay);
         for (let j = 0; j < hh; j++) { const half = Math.round(hw * (0.12 + (j / hh) * 0.88)); for (let x = -half; x <= half; x++) R(c, hx + x, hy + j, 1, 1, (x + j * 2) % 5 === 0 ? '#a8884a' : x < 0 ? '#e0c078' : '#c8a860'); }
         R(c, hx - hw, hy + hh, hw * 2, 1, '#8a6a3a');
         for (let j = 0; j < s(10); j++) R(c, hx + Math.round(Math.sin(j / 3) * 2), hy + hh + j, 1, 1, '#6a4a2a');

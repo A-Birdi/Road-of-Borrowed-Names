@@ -913,7 +913,7 @@ RB.portraits = (function () {
   return {
     draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background,
     // animation (src/ui/21_portrait_anim.js) and tests
-    subject, frame, paintFrame, frameKey, exprInfo, exprName, paramsFor, renderBuf: (p, expr, fr, subj) => finish(renderBuf(p, expr, fr, subj), p, expr, fr),
+    subject, frame, paintFrame, frameKey, exprInfo, exprName, paramsFor, palette, renderBuf: (p, expr, fr, subj) => finish(renderBuf(p, expr, fr, subj), p, expr, fr),
     cacheStats: () => Object.assign({ entries: lru.size }, stat), setCacheCap: (bytes) => { stat.cap = bytes; }, clearCache,
     debug: { EYE_T, EYE_CX, EYE_CY, EYE_TOP, browPixels: (p, kind) => browPixels(p, palette(p), kind), layerList },
   };

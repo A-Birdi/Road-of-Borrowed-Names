@@ -36321,10 +36321,323 @@ RB.portraits = (function () {
   return {
     draw, drawPlayer, image, playerImage, fromLook, S, EXPRESSIONS, background,
     // animation (src/ui/21_portrait_anim.js) and tests
-    subject, frame, paintFrame, frameKey, exprInfo, exprName, paramsFor, renderBuf: (p, expr, fr, subj) => finish(renderBuf(p, expr, fr, subj), p, expr, fr),
+    subject, frame, paintFrame, frameKey, exprInfo, exprName, paramsFor, palette, renderBuf: (p, expr, fr, subj) => finish(renderBuf(p, expr, fr, subj), p, expr, fr),
     cacheStats: () => Object.assign({ entries: lru.size }, stat), setCacheCap: (bytes) => { stat.cap = bytes; }, clearCache,
     debug: { EYE_T, EYE_CX, EYE_CY, EYE_TOP, browPixels: (p, kind) => browPixels(p, palette(p), kind), layerList },
   };
+})();
+
+
+/* ==== src/engine/35b_portraitbody.js ==== */
+/* The rest of a person below their portrait, for the illustrated scenes (AR-1; Robin, 2026-10-13: "The bodies look a
+ * bit odd in a lot of the illustrations, seemingly being painted downwards"). A shot that shows someone standing used
+ * to continue the 96-px portrait by repeating its bottom row down to where the feet would be
+ * (src/ui/43_sequence_kit.js, bust's ext): every seam and fold became a long stripe, with no arms, hands, waist or
+ * feet, and a hard edge where the column stopped. This draws the rest of the person in the portrait's own manner and
+ * colours (hard-edged clusters, light from the upper left, the selective outline): the arms in their sleeves and the
+ * hands, the garment by its kind (tunic and trousers, a coat, a robe or yukata with its obi, an apron, a dress), what
+ * they carry that the bust begins (a satchel's strap and bag, a sash, a scarf's tail, a cloak, a held book, basket or
+ * lantern), and the feet, len rows below the portrait's frame. The portraits themselves are unchanged: every other
+ * screen shows the same 96 × 96.
+ *
+ *   RB.portraitBody.below(p, look, len, o) → { back, front, pad, w, h }
+ *     p      the portrait's parameters (RB.portraits.subject(...).p), look the road look (shape, pants, boots, yukata)
+ *     len    rows from the frame's bottom to the soles
+ *     o.arms { l, r }, l the arm on our left: 'side' (hanging, the hand by the thigh), 'clasp' (both hands together in
+ *            front at the waist; give it to both), { hold: [x, y] } (the forearm raised to a hand the shot draws at
+ *            x, y in frame coordinates), 'none' (the shot draws that arm itself)
+ *     back   a P.Buf (w × h, frame x + pad, frame y) drawn under the portrait: rows from the frame's bottom down;
+ *     front  a P.Buf drawn over it, or null: raised forearms and clasped hands
+ * Frame coordinates are the portrait's own (0..96 across, the chin near y 69, the frame's bottom at 96). */
+var RB = (globalThis.RB = globalThis.RB || {});
+
+RB.portraitBody = (function () {
+  'use strict';
+  const P = RB.pix, S = 96, PAD = 10;
+  const shade = P.shade;
+  const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const r = Math.round;
+  const IVORY = ['#b8ab94', '#d8ccb4', '#ece4d4', '#f8f2e6'];
+  const TABI = ['#c8c0b0', '#e4ded2', '#f6f2ea'];
+
+  function kindOf(p, look) {
+    const sh = look && look.shape;
+    if ((look && look.yukata) || p.collar === 'robe' || sh === 'robe') return 'robe';
+    if (sh === 'dress' || p.collar === 'dress') return 'dress';
+    if (sh === 'coat' || p.collar === 'coat') return 'coat';
+    if (sh === 'apron' || p.collar === 'apron') return 'apron';
+    return 'tunic';
+  }
+
+  // a drawing surface in frame coordinates over a P.Buf (x shifted by PAD)
+  function surface(w, h, pad) {
+    const b = new P.Buf(w, h), m = new P.Buf(w, h);
+    const X = (x) => x + pad;
+    const map = (pts) => pts.map((v, i) => (i % 2 ? v : X(v)));
+    return {
+      b,
+      // a polygon whose pixels take ramp[f(x, y)] (frame coordinates), or one colour
+      poly(pts, ramp, f) {
+        const q = map(pts);
+        if (typeof ramp === 'string') { b.poly(q, ramp); return; }
+        // only the polygon's own box is cleared and visited
+        let x0 = w, y0 = h, x1 = 0, y1 = 0;
+        for (let i = 0; i < q.length; i += 2) { x0 = Math.min(x0, Math.floor(q[i])); x1 = Math.max(x1, Math.ceil(q[i])); y0 = Math.min(y0, Math.floor(q[i + 1])); y1 = Math.max(y1, Math.ceil(q[i + 1])); }
+        x0 = Math.max(0, x0 - 1); y0 = Math.max(0, y0 - 1); x1 = Math.min(w - 1, x1 + 1); y1 = Math.min(h - 1, y1 + 1);
+        for (let y = y0; y <= y1; y++) m.d.fill(0, (y * w + x0) * 4, (y * w + x1 + 1) * 4);
+        m.poly(q, '#fff');
+        for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+          if (!m.d[(y * w + x) * 4 + 3]) continue;
+          b.px(x, y, ramp[clamp(f(x - pad, y), 0, ramp.length - 1)]);
+        }
+      },
+      rect(x, y, ww, hh, c) { b.rect(X(r(x)), r(y), r(ww), r(hh), c); },
+      line(x0, y0, x1, y1, c, t) { b.line(X(r(x0)), r(y0), X(r(x1)), r(y1), c, t); },
+      px(x, y, c) { b.px(X(r(x)), r(y), c); },
+      oval(x0, y0, x1, y1, c) { b.oval(X(r(x0)), r(y0), X(r(x1)), r(y1), c); },
+      // a thick straight limb from a to b (width wd), shaded across its width: lit on its upper-left edge
+      limb(ax, ay, bx, by, wd, ramp, lit) {
+        const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L, hw = wd / 2;
+        const pts = [ax + nx * hw, ay + ny * hw, bx + nx * hw, by + ny * hw, bx - nx * hw, by - ny * hw, ax - nx * hw, ay - ny * hw];
+        // which side of the limb faces the light (up-left in the frame)
+        const s = nx * -0.62 + ny * -0.78 > 0 ? 1 : -1;
+        this.poly(pts, ramp, (x, y) => {
+          const t = ((x - ax) * nx + (y - ay) * ny) / hw * s; // +1 on the lit edge, -1 on the far one
+          return lit + (t > 0.45 ? 1 : t < -0.55 ? -1 : 0);
+        });
+      },
+    };
+  }
+
+  // A hand hanging (fingers down), seen from the front: palm toward the thigh, the thumb toward us. side -1: on our
+  // left (lit), +1 on our right. (x, y): the wrist's centre; L the hand's length.
+  function handDown(g, x, y, L, C, side) {
+    const W = Math.max(7, r(L * 0.68)), x0 = r(x - W / 2), lit = side < 0 ? 3 : 2;
+    const sk = C.sk;
+    g.poly([x0 + 1, y, x0 + W - 1, y, x0 + W, y + r(L * 0.55), x0 + W - 1, y + L - 1, x0 + 2, y + L, x0, y + r(L * 0.5)], sk, (xx) => (xx < x0 + W * 0.35 ? lit : lit - 1));
+    // the thumb on the side toward the body's middle, the finger gaps below the knuckles
+    const tx = side < 0 ? x0 + W - 1 : x0 - 1;
+    g.poly([tx - 1, y + 2, tx + 2, y + 3, tx + 2, y + r(L * 0.55), tx, y + r(L * 0.6)], sk, () => lit - 1);
+    for (let i = 1; i <= 2; i++) g.line(x0 + r(W * i / 3), y + r(L * 0.5), x0 + r(W * i / 3), y + L - 2, sk[Math.max(0, lit - 2)]);
+  }
+
+  function below(p, look, len, o) {
+    o = o || {};
+    look = look || {};
+    const C = RB.portraits.palette(p);
+    const L = C.cl, ac = C.ac;
+    const kind = kindOf(p, look);
+    const pantsR = P.ramp(look.pants || shade(p.cloth[1] || p.cloth[0], -1));
+    const bootR = P.ramp(look.boots || '#3a2a22');
+    len = Math.max(40, r(len));
+    const arms0 = Object.assign({ l: 'side', r: 'side' }, o.arms || {});
+    // room at the sides for a hand held out (the canvas stays centred on the portrait)
+    let pad = PAD;
+    for (const a of [arms0.l, arms0.r]) if (a && a.hold) pad = Math.max(pad, Math.ceil(Math.abs(a.hold[0] - 48) - 48 + 16));
+    const F = S + len, W = S + pad * 2, H = F + 1;
+    // landmarks (the chin at 69): a figure of about five heads, as the shots stage them
+    const chin = 69, B = F - chin;
+    const yW = r(chin + 0.31 * B), yC = r(chin + 0.43 * B), yWr = r(chin + 0.41 * B), yK = r(chin + 0.7 * B);
+    const yE = yW - 3, hand = clamp(r(0.07 * B), 9, 16), yA = F - Math.max(5, r(0.035 * B));
+    const arms = arms0;
+    const acc = p.acc || [];
+    if (acc.includes('book') && arms.l === 'side') arms.l = { hold: [12, 97] };
+    if ((acc.includes('basket') || acc.includes('lamp') || acc.includes('atlas_lamplet')) && arms.r === 'side') arms.r = { hold: [86, 97] };
+
+    const g = surface(W, H, pad);
+    // the bust's own shading, carried down: the lit arm (ours left), the torso, the arm in shade
+    const tone = (x) => (x < 14 ? 4 : x < 22 ? 3 : x > 84 ? 0 : x > 70 ? 1 : 2);
+    const tl = (y) => (y <= 100 ? 20 : y <= yW ? lerp(20, 26, (y - 100) / (yW - 100)) : lerp(26, 24, clamp((y - yW) / (yC - yW), 0, 1)));
+    const tr = (y) => S - tl(y);
+
+    // ---- behind everything: a cloak hanging from the shoulders ------------------------------------------------
+    if (acc.includes('cape')) {
+      const R4 = P.ramp(p.capeCol || '#6a3a4a');
+      g.poly([-4, 94, 100, 94, 104, yK, -8, yK], R4, (x, y) => (x < 10 ? 3 : x > 86 ? 0 : 1) - (y > yK - 4 ? 1 : 0));
+    }
+
+    // ---- legs and feet (under the garment) --------------------------------------------------------------------
+    const legsFrom = kind === 'robe' ? null : kind === 'dress' ? yK : kind === 'coat' ? yK - 8 : yC;
+    if (legsFrom != null) {
+      const narrow = kind === 'dress';
+      const lo = narrow ? [33, 45] : [26, 47], ro = narrow ? [51, 63] : [49, 70];
+      const leg = (a, b2, c2, d2, lit) => g.poly([a, legsFrom - 2, b2, legsFrom - 2, d2, yA, c2, yA], narrow ? pantsR : pantsR, (x) => lit + (x < (a + b2) / 2 ? 0 : -1));
+      leg(lo[0], lo[1], narrow ? 34 : 30, narrow ? 44 : 45, 3);
+      leg(ro[0], ro[1], narrow ? 52 : 51, narrow ? 62 : 66, 2);
+      if (!narrow) { g.line(36, legsFrom + 6, 37, yA - 2, pantsR[1]); g.line(60, legsFrom + 6, 59, yA - 2, pantsR[0]); } // creases
+      // shoes: a little wider than the ankle, the toes toward us, the sole dark
+      for (const [x0, x1, lit] of [[narrow ? 32 : 28, narrow ? 45 : 46, 3], [narrow ? 51 : 50, narrow ? 64 : 68, 2]]) {
+        g.poly([x0 + 1, yA - 1, x1 - 1, yA - 1, x1, F - 2, x1, F, x0, F, x0, F - 2], bootR, (x, y) => (y >= F - 1 ? 0 : x < (x0 + x1) / 2 ? lit : lit - 1));
+        g.line(x0 + 2, yA, x1 - 3, yA, bootR[Math.min(4, lit + 1)]);
+      }
+    }
+
+    // ---- the garment ------------------------------------------------------------------------------------------------
+    const cloth = (x, y) => tone(x) - (y > yK ? 1 : 0);
+    if (kind === 'robe') {
+      // shoulders to the ankles: the torso narrows to the obi, then the robe falls straight and a little in
+      const hemY = F - 4;
+      const hl = (y) => (y <= yW ? tl(y) : lerp(25, 28, clamp((y - yW) / (hemY - yW), 0, 1)));
+      const pts = [];
+      for (let y = 94; y <= hemY; y += 4) pts.push(hl(y), y);
+      pts.push(hl(hemY), hemY);
+      for (let y = hemY; y >= 94; y -= 4) pts.push(S - hl(y), y);
+      pts.push(S - hl(94), 94);
+      g.poly(pts, L, (x, y) => (x < 30 ? 3 : x > 66 ? 1 : 2) - (y > yK + 10 && x > 60 ? 1 : 0));
+      // the overlap: the front edge continues from the collar's crossing to the obi, then down to the hem
+      g.line(39, 96, 35, yW - 6, L[0]);
+      g.line(36, 96, 33, yW - 6, L[3]);
+      g.line(39, yW + 7, 43, hemY, L[0]);
+      g.line(38, yW + 7, 42, hemY, L[3]);
+      // folds falling from the obi
+      g.line(55, yW + 10, 58, hemY - 2, L[1]); g.line(30, yW + 14, 31, hemY - 6, L[1]);
+      // the obi: a wide band, its top and bottom edges, the cord across it
+      const obi = [shade(ac[0], -1), ac[0], ac[1], ac[2], shade(ac[2], 1)];
+      g.poly([tl(yW - 6) - 1, yW - 6, tr(yW - 6) + 1, yW - 6, tr(yW + 6) + 1, yW + 6, tl(yW + 6) - 1, yW + 6], obi, (x) => (x < 32 ? 3 : x > 66 ? 1 : 2));
+      g.line(tl(yW - 6), yW - 6, tr(yW - 6), yW - 6, obi[4]);
+      g.line(tl(yW + 6), yW + 6, tr(yW + 6), yW + 6, obi[0]);
+      g.line(tl(yW), yW, tr(yW), yW, look.yukata ? obi[4] : obi[1]);
+      // the hem, then the feet: tabi and the thongs of sandals
+      g.line(hl(hemY), hemY, S - hl(hemY), hemY, L[1]);
+      for (const [x0, x1] of [[32, 44], [52, 64]]) {
+        g.poly([x0 + 1, hemY + 1, x1 - 1, hemY + 1, x1, F - 1, x0, F - 1], TABI, (x) => (x < (x0 + x1) / 2 ? 2 : 1));
+        g.rect(x0, F - 1, x1 - x0 + 1, 2, bootR[1]);
+        g.px((x0 + x1) / 2, hemY + 2, bootR[0]);
+      }
+    } else {
+      // tunic, apron and coat share a torso; the coat runs on to the knees, the dress opens into a skirt
+      const hemY = kind === 'coat' ? yK - 6 : kind === 'dress' ? yW + 1 : yC + 8;
+      const hemX = kind === 'coat' ? 18 : kind === 'dress' ? 26 : 23;
+      const hl = (y) => (y <= yW ? tl(y) : lerp(tl(yW), hemX, clamp((y - yW) / Math.max(1, hemY - yW), 0, 1)));
+      const pts = [];
+      for (let y = 94; y <= hemY; y += 4) pts.push(hl(y), y);
+      pts.push(hl(hemY), hemY);
+      for (let y = hemY; y >= 94; y -= 4) pts.push(S - hl(y), y);
+      pts.push(S - hl(94), 94);
+      g.poly(pts, L, cloth);
+      // the cloth drawn in from the armpits toward the waist
+      g.line(23, 102, 29, yW - 5, L[2]); g.line(24, 103, 30, yW - 4, L[1]);
+      g.line(73, 102, 67, yW - 5, L[1]); g.line(72, 103, 66, yW - 4, L[0]);
+      if (kind === 'dress') {
+        const skirtY = r(yK + (F - yK) * 0.38);
+        g.poly([26, yW, 70, yW, 82, skirtY, 14, skirtY], L, (x, y) => (x < 28 ? 3 : x > 64 ? 1 : 2) - (y > skirtY - 3 ? 1 : 0));
+        for (const x of [34, 48, 62]) g.line(x, yW + 4, x + (x - 48) * 0.35, skirtY - 2, L[1]);
+        g.rect(14, skirtY - 2, 69, 2, ac[1]);
+        g.line(26, yW, 70, yW, ac[1]); g.line(27, yW + 1, 69, yW + 1, ac[0]);
+      } else {
+        // the hem (and the coat's opening) a shade darker; the belt at the waist
+        g.line(hl(hemY), hemY, S - hl(hemY), hemY, L[1]);
+        if (kind === 'coat') {
+          g.line(48, 92, 48, hemY, L[0]); g.line(49, 92, 49, hemY, L[3]);
+          for (let y = 100; y <= yW + 14; y += 12) { g.rect(44, y, 2, 2, ac[2]); g.px(44, y + 1, ac[1]); }
+          g.line(26, yC - 2, 36, yC - 2, L[1]); g.line(60, yC - 2, 70, yC - 2, L[0]); // pocket flaps
+        } else {
+          g.rect(tl(yW) - 1, yW - 1, tr(yW) - tl(yW) + 3, 3, ac[1]);
+          g.line(tl(yW), yW - 1, tr(yW), yW - 1, ac[2]);
+          g.rect(40, yW - 2, 5, 5, ac[2]); g.rect(41, yW - 1, 3, 3, ac[0]);
+          // the shirt's opening below the collar, and a fold at each side
+          if (p.collar === 'high') { g.line(48, 92, 48, yW - 2, ac[1]); for (let y = 100; y < yW - 4; y += 9) g.rect(47, y, 3, 2, ac[2]); }
+          g.line(30, yW + 3, 28, hemY - 2, L[1]); g.line(64, yW + 3, 67, hemY - 2, L[0]);
+        }
+      }
+      if (kind === 'apron') {
+        // the bib down to the waist, the ties, the apron to the knee with its folds
+        g.poly([33, 94, 63, 94, 65, yW, 31, yW], IVORY, (x) => (x < 40 ? 3 : x > 58 ? 1 : 2));
+        g.rect(tl(yW), yW, tr(yW) - tl(yW) + 1, 2, IVORY[1]);
+        g.poly([29, yW + 2, 67, yW + 2, 70, yK - 2, 26, yK - 2], IVORY, (x) => (x < 36 ? 3 : x > 60 ? 1 : 2));
+        for (const x of [38, 48, 58]) g.line(x, yW + 6, x + (x - 48) * 0.2, yK - 4, IVORY[1]);
+        g.line(26, yK - 2, 70, yK - 2, IVORY[0]);
+      }
+    }
+
+    // ---- things the bust begins ------------------------------------------------------------------------------------
+    if (acc.includes('satchel')) {
+      // the strap from the shoulder down across the chest to the bag at the hip on our right
+      g.line(62, 94, 76, yW - 4, '#6a4a2a', 5); g.line(62, 94, 76, yW - 4, '#8a6a3a', 3);
+      const bag = ['#4a321e', '#6a4a2a', '#8a6a3a', '#a8865a', '#c8a870'];
+      g.poly([66, yW - 6, 90, yW - 6, 91, yW + 14, 65, yW + 14], bag, (x) => (x < 72 ? 3 : x > 84 ? 1 : 2));
+      g.poly([65, yW - 7, 91, yW - 7, 90, yW + 3, 66, yW + 3], bag, (x) => (x < 72 ? 4 : 2));
+      g.rect(76, yW + 1, 4, 3, '#c8a050');
+    }
+    if (acc.includes('atlas_sash')) { const c = p.sashCol || '#d8c89a'; g.line(64, 94, 74, yW, c, 5); g.line(64, 98, 73, yW + 2, shade(c, -1)); }
+    if (acc.includes('scarf') && kind !== 'robe') {
+      const R = P.ramp(p.scarfCol || '#c8962e');
+      g.poly([60, 94, 74, 94, 75, 116, 61, 116], R, (x) => (x < 63 ? 3 : x > 70 ? 1 : 2));
+      for (let x = 61; x < 75; x += 3) g.rect(x, 116, 1, 3, R[1]);
+    }
+    if (acc.includes('book')) { g.rect(4, 94, 16, 4, '#6a3a3a'); g.rect(18, 94, 2, 3, '#e8e0c8'); g.line(4, 97, 19, 97, '#4a2a2a'); }
+    if (acc.includes('basket')) { g.rect(76, 94, 20, 6, '#b08a4a'); for (let x = 77; x < 96; x += 3) g.rect(x, 94, 1, 5, '#7a5a2e'); g.line(76, 99, 95, 99, '#7a5a2e'); }
+
+    // ---- arms: hanging ones behind the hands that hold or clasp --------------------------------------------------------
+    const fg = surface(W, H, pad), front = fg.b;
+    const sleeveR = L;
+    const wide = kind === 'robe';
+    const drawArm = (side, pose) => {
+      const m = side < 0 ? (x) => x : (x) => S - x; // mirror for the arm on our right
+      const lit = side < 0 ? 3 : 1;
+      if (pose === 'none') return;
+      if (pose === 'side') {
+        // the upper arm narrowing under the shoulder to the elbow, the forearm to the wrist; a robe's wide sleeve
+        // hangs below the wrist instead. Shaded round its width, as a cylinder: a lit edge, the core, the shaded edge.
+        const pts = wide
+          ? [-1, 94, -2, 104, -3, yE, -3, yWr + 6, 0, yWr + 10, 14, yWr + 10, 21, yWr + 4, 20, 104, 21, 94]
+          : [-1, 94, 0, 102, 2, yE, 4, yWr, 14, yWr, 16, yE, 18, 104, 20, 96, 21, 94];
+        const ax = (y) => (y < yE ? lerp(9, 9.5, (y - 94) / (yE - 94)) : lerp(9.5, 9, (y - yE) / Math.max(1, yWr - yE)));
+        g.poly(pts.map((v, i) => (i % 2 ? v : m(v))), sleeveR, (x, y) => {
+          const u = (side < 0 ? x : S - x) - ax(y); // across the arm: negative toward its outer edge
+          return lit + (u < -5 ? (side < 0 ? 1 : -1) : u > 5 ? (side < 0 ? -1 : 0) : 0);
+        });
+        g.line(m(4), yE - 1, m(11), yE + 1, sleeveR[Math.max(0, lit - 2)]); // the crease inside the elbow
+        if (!wide) g.rect(Math.min(m(4), m(14)), yWr - 2, 11, 2, ac[side < 0 ? 1 : 0]);
+        handDown(g, m(wide ? 13 : 9), wide ? yWr + 3 : yWr, hand, C, side);
+      } else if (pose === 'clasp') {
+        // the upper arm down to the elbow, the forearm across to the middle of the waist; the hands drawn once, over both
+        g.poly([-1, 94, -2, 104, -1, yE, 15, yE, 20, 104, 21, 94].map((v, i) => (i % 2 ? v : m(v))), sleeveR, (x, y) => lit + (y > yE - 8 ? 0 : 1));
+        fg.limb(m(6), yE - 4, m(40), yW + 6, wide ? 15 : 12, sleeveR, side < 0 ? 2 : 1);
+      } else if (pose && pose.hold) {
+        // shoulder → elbow → the wrist of the hand the shot draws: the elbow from the two lengths; a hand further than the arm can reach stretches the forearm rather than float free of it
+        const tx = pose.hold[0], ty = Math.max(2, pose.hold[1]);
+        const sx = m(10), sy = 97, Lu = yE - 96 + 4, Lf = yWr - yE + 10;
+        const d = Math.hypot(tx - sx, ty - sy) || 1;
+        let E;
+        if (d <= (Lu + Lf) * 0.75) {
+          // a hand near the body (something held at the chest or the waist): the elbow comes forward, so from the front
+          // the upper arm looks shorter; the elbow sits by the ribs, under the hand and a little outside it
+          E = [lerp(sx, tx, 0.3) + (side < 0 ? -2 : 2), Math.min(sy + Lu, Math.max(ty, sy) + Lf * 0.8)];
+        } else {
+          // a hand held out: the elbow from the two lengths, the one under the line of the reach
+          const dd = clamp(d, Math.abs(Lu - Lf) + 1, Lu + Lf - 1);
+          const a = Math.acos(clamp((Lu * Lu + dd * dd - Lf * Lf) / (2 * Lu * dd), -1, 1)), base = Math.atan2(ty - sy, tx - sx);
+          const e1 = [sx + Lu * Math.cos(base + a), sy + Lu * Math.sin(base + a)], e2 = [sx + Lu * Math.cos(base - a), sy + Lu * Math.sin(base - a)];
+          E = e1[1] >= e2[1] ? e1 : e2;
+        }
+        fg.limb(sx, sy, E[0], E[1], wide ? 16 : 14, sleeveR, side < 0 ? 3 : 1);
+        if (wide) fg.poly([E[0] - 6, E[1], (E[0] + tx) / 2, (E[1] + ty) / 2, (E[0] + tx) / 2, (E[1] + ty) / 2 + 14, E[0] - 4, E[1] + 16], sleeveR, () => (side < 0 ? 2 : 0)); // the sleeve hanging from the forearm
+        fg.limb(E[0], E[1], tx, ty, wide ? 13 : 11, sleeveR, side < 0 ? 3 : 1);
+        fg.oval(E[0] - 6, E[1] - 6, E[0] + 6, E[1] + 6, sleeveR[side < 0 ? 2 : 1]);
+      }
+    };
+    drawArm(-1, arms.l);
+    drawArm(1, arms.r);
+    if (arms.l === 'clasp' || arms.r === 'clasp') {
+      // the hands one over the other at the middle of the waist
+      const sk = C.sk, cy = yW + 4;
+      fg.poly([37, cy, 52, cy - 1, 55, cy + 6, 50, cy + 11, 38, cy + 10, 35, cy + 5], sk, (x) => (x < 44 ? 3 : 2));
+      fg.poly([45, cy + 2, 59, cy + 1, 61, cy + 7, 57, cy + 12, 46, cy + 11], sk, (x) => (x < 52 ? 2 : 1));
+      fg.line(47, cy + 5, 57, cy + 5, sk[1]); fg.line(47, cy + 8, 56, cy + 8, sk[1]);
+    }
+
+    // the portrait sits over everything above its bottom edge; outlines as the portrait's own (finish)
+    g.b.threshold(110); g.b.outline('#1a141c', { minA: 1 });
+    for (let y = 0; y < S && y < H; y++) for (let x = 0; x < W; x++) g.b.clear(x, y);
+    let any = false;
+    for (let i = 3; i < front.d.length; i += 4) if (front.d[i]) { any = true; break; }
+    if (any) { front.threshold(110); front.outline('#1a141c', { minA: 1 }); }
+    return { back: g.b, front: any ? front : null, pad, w: W, h: H };
+  }
+
+  return { below, kindOf, PAD };
 })();
 
 
@@ -69494,7 +69807,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
  *   RB.seqKit.stage(w, h, vb)                  { lay: 'wide'|'narrow'|'land', Z, s(n), cx, top, vb, w, h }
  *   RB.seqKit.cached(key, build)               a static layer (bounded; released with the sequence)
  *   RB.seqKit.figure(look, dir, key, scale, grade)   a graded road figure { cv, ax, ay, w, h }
- *   RB.seqKit.bust(who|{look}, expr, fr, grade, flip) a graded portrait (96 × 96, transparent)
+ *   RB.seqKit.bust(who|{look}, expr, fr, grade, flip, ext, o) a graded portrait (96 × 96, transparent), or the person
+ *                                              standing, ext rows to their feet (RB.portraitBody)
  *   RB.seqKit.hand(o)                          a hand { cv, ax, ay } (o: skin, size, pose, side, angle, sleeve)
  *   RB.seqKit.release() / stats()
  * Nothing here writes game state; everything built is cached and dropped on release(). */
@@ -69608,33 +69922,59 @@ RB.seqKit = (function () {
   // A portrait (96 × 96, transparent) of a character id or { look } (the player), with an expression and
   // a frame descriptor (fr: { head: [dx, dy], body: [dx, dy], look: [gx, gy], lids, mouth, … }), graded,
   // optionally mirrored (only for people whose drawing is symmetric enough: the caller decides).
-  // ext: rows to continue the bust below its frame (its bottom row repeated, so a torso cut by a shorter
-  // sheet never shows a hard edge); the anchor stays at the portrait's own bottom.
+  // ext: the person standing, their feet ext rows below the frame: the rest of them drawn below the portrait in its
+  // own manner (RB.portraitBody: arms, hands, the garment, the feet; AR-1 replaced repeating the bust's bottom row,
+  // which painted every seam down as a stripe). o.arms: { l, r } ('side', 'clasp', { hold: [x, y] } to a hand the
+  // shot draws, 'none'), in the portrait's frame coordinates. The anchor stays at the portrait's own bottom centre.
   // (who may also be { id, fest: true }: that person in the festival night's yukata, whenever the picture is shown;
   // fest: 'yn', in Steamhollow's evening yukata)
-  function bust(who, expr, fr, g, flip, ext) {
+  function lookOf(who) {
+    if (typeof who === 'string') return (RB.content.chars[who] || {}).look || {};
+    if (who.id) {
+      const lk = (RB.content.chars[who.id] || {}).look || {};
+      return who.fest && RB.festDress ? RB.festDress.look(lk, who.id, who.fest === 'yn' ? 'yn' : 'mp') : lk;
+    }
+    return who.look || {};
+  }
+  // A portrait frame f (of parameters p) standing: the body below it, the frame, then the forearms that come in front
+  // of it, all moved with the frame's body offset. Ungraded; the frame's bottom centre is (w / 2, 96).
+  function standing(p, f, look, ext, o, fr) {
+    if (!RB.portraitBody) return null;
+    const bd = RB.portraitBody.below(p, look, ext, o);
+    const off = (fr && fr.body) || [0, 0];
+    const cv = mk(bd.w, bd.h), c = cv.getContext('2d');
+    c.drawImage(bd.back.toCanvas(), off[0], off[1]);
+    c.drawImage(f, bd.pad, 0);
+    if (bd.front) c.drawImage(bd.front.toCanvas(), off[0], off[1]);
+    return cv;
+  }
+  function bust(who, expr, fr, g, flip, ext, o) {
     const id = typeof who === 'string' ? who : who.id ? who.id + (who.fest ? '|fest' + (who.fest === 'yn' ? '|yn' : '') : '') : 'pc|' + JSON.stringify(who.look);
     ext = Math.max(0, Math.round(ext || 0));
-    return small('bust|' + id + '|' + (expr || 'neutral') + '|' + (fr ? JSON.stringify(fr) : '') + '|' + gkey(g) + '|' + (flip ? 1 : 0) + '|' + ext, () => {
+    return small('bust|' + id + '|' + (expr || 'neutral') + '|' + (fr ? JSON.stringify(fr) : '') + '|' + gkey(g) + '|' + (flip ? 1 : 0) + '|' + ext + '|' + (o ? JSON.stringify(o) : ''), () => {
       let sj = typeof who === 'string' ? RB.portraits.subject(who) : who.id ? RB.portraits.subject(who.id) : RB.portraits.subject('pc', who.look);
       if (sj && who && who.id && who.fest && RB.festDress && !/\|yukata/.test(sj.key)) { const k = who.fest === 'yn' ? 'yn' : 'mp'; sj = Object.assign({}, sj, { key: sj.key + '|yukata' + (k === 'yn' ? '|yn' : ''), p: RB.festDress.portrait(sj.p, who.id, k) }); }
       const f = sj && RB.portraits.frame(sj, expr || 'neutral', fr || null);
       if (!f) return null;
-      let cv = mk(f.width, f.height);
-      cv.getContext('2d').drawImage(f, 0, 0);
+      const H0 = f.height;
+      let cv = ext ? standing(sj.p, f, lookOf(who), ext, o, fr) : null;
+      if (!cv) { cv = mk(f.width, f.height); cv.getContext('2d').drawImage(f, 0, 0); }
       cv = grade(cv, g);
       if (flip) cv = flipX(cv);
-      const H0 = cv.height;
-      if (ext) {
-        const tall = mk(cv.width, H0 + ext), tg = tall.getContext('2d');
-        tg.drawImage(cv, 0, 0);
-        // each column's lowest opaque pixel, repeated down (the outline row is skipped so no line runs down)
-        const d = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, H0 - 3, cv.width, 1).data;
-        for (let x = 0; x < cv.width; x++) { const o = x * 4; if (d[o + 3] < 200) continue; tg.fillStyle = 'rgb(' + d[o] + ',' + d[o + 1] + ',' + d[o + 2] + ')'; tg.fillRect(x, H0 - 2, 1, ext + 2); }
-        cv = tall;
-      }
       return { cv, ax: cv.width >> 1, ay: H0, w: cv.width, h: cv.height };
     });
+  }
+  // A standing person's arms for bust(…, ext, o): l and r are the screen points of the wrists of hands the shot draws
+  // ([x, y], or null for an arm that hangs: rest, 'side' unless given), (bx, by) the bust's anchor; flip: the bust is
+  // mirrored. Returns o with arms in the portrait's own frame (its bottom centre at 48, 96).
+  function holdArms(bx, by, l, r, flip, rest) {
+    const arms = { l: rest || 'side', r: rest || 'side' };
+    // (to the nearest 2 px: a hand that moves a pixel does not rebuild the figure every frame)
+    const q2 = (v) => 2 * Math.round(v / 2);
+    const to = (pt) => { let x = 48 + q2(pt[0] - bx); if (flip) x = 96 - x; return { hold: [x, 96 + q2(pt[1] - by)] }; };
+    if (l) arms[flip ? 'r' : 'l'] = to(l);
+    if (r) arms[flip ? 'l' : 'r'] = to(r);
+    return { arms };
   }
   const skinOf = (look) => RB.sprites.colorsOf(look || {}).skin;
   const clothOf = (look) => RB.sprites.colorsOf(look || {}).cloth;
@@ -69767,7 +70107,7 @@ RB.seqKit = (function () {
 
   return {
     R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX,
-    figure, bust, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
+    figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),
   };
@@ -71308,9 +71648,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       return { cv };
     });
   }
-  function hanaBust(expr, fr) {
+  function hanaBust(expr, fr, o) {
     // Hana in the doorway: the sun from outside on her face (our left), the room's dimness behind
-    return Q.bust('hana', expr, fr, { mul: [0.97, 0.93, 0.89], add: [4, 2, 0], rim: { side: 'l', col: '#ffd8a8', k: [0.4, 0.18], below: 0.85 } }, false, 200);
+    return Q.bust('hana', expr, fr, { mul: [0.97, 0.93, 0.89], add: [4, 2, 0], rim: { side: 'l', col: '#ffd8a8', k: [0.4, 0.18], below: 0.85 } }, false, 200, o);
   }
   // a teacup held in a hand (the cup's sprite from the prologue's teahouse)
   function cupInHand(c, x, y, Z, skin, sleeve, angle) {
@@ -71364,12 +71704,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Hana in the doorway: surprise on her line; then she takes it in as he speaks
       const ks = st.at('stop'), kl = st.at('lift');
       const expr = kl > 0.2 ? 'think2' : ks > 0.15 ? 'surprise' : 'neutral';
-      const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null);
+      // her hand on the doorframe: it slides down the post and stops there (her arm raised to it)
+      const fx = Math.round(dX - s(3)), fy = Math.round(lerp(hy - 96 + s(6), hy - 96 + s(30), ease(ks)));
+      const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null, Q.holdArms(hx, hy, [fx, fy], null));
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
-      // her hand on the doorframe: it slides down the post and stops there
       const skin = Q.skinOf(look('hana'));
       const hd = Q.hand({ size: 10, pose: 'rest', side: 'L', angle: Math.PI * 0.5, skin, sleeve: '#a86a5a' });
-      if (hd) c.drawImage(hd.cv, Math.round(dX - s(3) - hd.ax), Math.round(lerp(hy - 96 + s(6), hy - 96 + s(30), ease(ks)) - hd.ay));
+      if (hd) c.drawImage(hd.cv, fx - hd.ax, fy - hd.ay);
       // Kōji in front of us, from behind, over the doorway's left edge; his cup held level in front of
       // him, Hana looking at it; it lifts a little on the rule
       const kb = kojiBack(lay === 'narrow' ? 0.9 : 1);
@@ -71405,13 +71746,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const down = Math.round(ease(klo) * 2 * (1 - ease(ksm)));
       const expr = ksm > 0.3 ? 'smile' : klo > 0.2 ? 'sad' : 'neutral';
       const fr = down ? { head: [0, down], look: [0, 1] } : ksm > 0.3 ? null : klo > 0 ? { look: [0, 1] } : null;
-      const hb = hanaBust(expr, fr);
-      if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
-      // her hand reaches toward the cups as she smiles
+      // her hand reaches toward the cups as she smiles (her arm raised to it)
       const reach = ease(ksm);
+      const rx = Math.round(lerp(hx + s(34), cups[0][0] - s(14), reach)), ry = Math.round(lerp(hy - s(10), counterY + s(2), reach));
+      const hb = hanaBust(expr, fr, reach > 0 ? Q.holdArms(hx, hy, null, [rx, ry]) : null);
+      if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       if (reach > 0) {
         const hd = Q.hand({ size: 11, pose: 'offer', side: 'R', angle: -0.2, skin: Q.skinOf(look('hana')), sleeve: '#a86a5a' });
-        if (hd) c.drawImage(hd.cv, Math.round(lerp(hx + s(34), cups[0][0] - s(14), reach) - hd.ax), Math.round(lerp(hy - s(10), counterY + s(2), reach) - hd.ay));
+        if (hd) c.drawImage(hd.cv, rx - hd.ax, ry - hd.ay);
       }
       // Kōji's hand and cup at the frame's edge, close to us
       cupInHand(c, Math.round(dX + dW - s(30)), Math.round(G.vb + s(2)), 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4);
@@ -71715,15 +72057,17 @@ var RB = (globalThis.RB = globalThis.RB || {});
       let expr = 'neutral', fr = null;
       if (ke > 0) { expr = ke < 0.55 ? 'closed' : 'neutral'; fr = { body: [0, 1], head: [0, 1], look: ke < 0.55 ? null : [0, 1] }; if (!fr.look) delete fr.look; }
       else if (kl > 0) { expr = 'surprise'; fr = kl < 0.5 ? { look: [0, -1], head: [0, -1] } : { head: [0, -1] }; }
-      const wb = Q.bust('wataru', expr, fr, FACE, false, 200);
+      // his notebook held at his chest, below his chin; it lowers a little as he breathes out (his forearms up to it).
+      // In the portrait's own pixels, as the portrait is drawn (the chin sits about 27 px above its foot): placed in the
+      // shot's scale, it rose over his mouth on a large screen.
+      const skin = Q.skinOf(look('wataru')), drop = Math.round(ease(ke) * 3);
+      const nb = { x: wx - 20, y: wy - 22 + drop };
+      const wb = Q.bust('wataru', expr, fr, FACE, false, 200, Q.holdArms(wx, wy, [nb.x - 2, nb.y + 12], [nb.x + 36, nb.y + 12]));
       if (wb) c.drawImage(wb.cv, wx - wb.ax, wy - wb.ay);
-      // his notebook held at his chest; it lowers a little as he breathes out
-      const skin = Q.skinOf(look('wataru')), drop = Math.round(ease(ke) * s(3));
-      const nb = { x: Math.round(wx - s(26)), y: Math.round(wy - s(30) + drop) };
-      R(c, nb.x, nb.y, s(34), s(26), '#5a3a2a'); R(c, nb.x + 1, nb.y + 1, s(34) - 2, 1, '#7a5a42'); R(c, nb.x + s(30), nb.y, s(4), s(26), '#e8e0cc');
-      for (const [hx, side, ang] of [[nb.x - s(2), 'L', 0.9], [nb.x + s(36), 'R', Math.PI - 0.9]]) {
+      R(c, nb.x, nb.y, 34, 26, '#5a3a2a'); R(c, nb.x + 1, nb.y + 1, 32, 1, '#7a5a42'); R(c, nb.x + 30, nb.y, 4, 26, '#e8e0cc');
+      for (const [hx, side, ang] of [[nb.x - 2, 'L', 0.9], [nb.x + 36, 'R', Math.PI - 0.9]]) {
         const hd = Q.hand({ size: 10, pose: 'pinch', side, angle: -ang, skin, sleeve: look('wataru').cloth[0] });
-        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(nb.y + s(12) - hd.ay));
+        if (hd) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(nb.y + 12 - hd.ay));
       }
       // Ōmi's shoulder and hat at the right edge; on his own route she turns a little toward him
       const turn = ease(ks);
@@ -72134,12 +72478,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (lit && !still) { const fl = 0.8 + 0.2 * Math.sin(t / 230); c.globalAlpha = fl; P().halo(c, S0.f.fx, S0.f.fy - Math.round(S0.f.fr * 0.45), Math.round(S0.f.fr * 0.6), '255,210,120', 0.25, 3); c.globalAlpha = 1; }
       const kl = st.at('lift');
       const g2 = lit ? { mul: [1, 0.94, 0.86], add: [10, 4, 0], rim: { side: 'l', col: '#ffc070', k: [0.45, 0.2], below: 0.85 } } : { mul: [0.97, 0.95, 0.95], add: [4, 3, 4] };
-      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200);
-      if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
       // the finished plate rises into her hands, held out toward you
       const k = clamp(G.Z * 0.9, 0.7, 1.2), e = ease(kl);
       // (in a band above the sheet she holds it up beside her face instead)
       const py = Math.round(lerp(G.vb + s(40), G.band ? ay - 58 : ay - s(12), e)), pxx = G.band ? Math.round(ax + 48 + 58 * k) : ax;
+      // her forearms up to the plate's two ends (plate(): W = 110 k, H = 48 k about its centre)
+      const PW = Math.round(110 * k), PH = Math.round(48 * k), px0 = Math.round(pxx - PW / 2), hy0 = Math.round(py - PH / 2 + PH * 0.6);
+      const ab = Q.bust('asahi', kl > 0.4 ? 'smile' : 'think2', kl > 0.4 ? null : { look: [0, 1] }, g2, false, 200, Q.holdArms(ax, ay, [px0 + s(2), hy0], [px0 + PW - s(2), hy0]));
+      if (ab) c.drawImage(ab.cv, ax - ab.ax, ay - ab.ay);
       const pl = plate(c, pxx, py, k, 1, 1, s, true);
       const skin = Q.skinOf(look('asahi')), sleeve = look('asahi').cloth[0];
       for (const [hx, side, ang] of [[pl.x0 + s(2), 'L', -0.4], [pl.x0 + pl.W - s(2), 'R', Math.PI + 0.4]]) {
@@ -72540,10 +72886,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const down = Math.round(ease(kl) * 2 * (1 - ease(ka)));
       const expr = ka > 0.3 ? 'neutral' : kl > 0.2 ? 'worry' : 'neutral';
       const fr = down ? { head: [0, down], look: [0, 1] } : ka > 0.3 ? null : { look: [0, 1] };
-      const tb = Q.bust('co_tokiwa', expr, fr, FACE_L, false, 200);
+      // the chronicle held to his chest in both hands (his fingers over its top edge; his forearms behind it, to its
+      // lower corners: chronicle() is 30 × 38 at k about its centre)
+      const bx = tx + 2, by = ty - s(6) + down, cW = Math.round(30 * 1.2), cH = Math.round(38 * 1.2);
+      const tb = Q.bust('co_tokiwa', expr, fr, FACE_L, false, 200, Q.holdArms(tx, ty, [bx - cW * 0.3, by + cH * 0.3], [bx + cW * 0.3, by + cH * 0.3]));
       if (tb) c.drawImage(tb.cv, tx - tb.ax, ty - tb.ay);
-      // the chronicle held to his chest in both hands (his fingers over its top edge)
-      const bx = tx + 2, by = ty - s(6) + down;
       const bk = chronicle(c, bx, by, 1.2, 0);
       fingers(c, bx - Math.round(bk.W * 0.38), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, 1);
       fingers(c, bx + Math.round(bk.W * 0.16), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, -1);
@@ -72668,10 +73015,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const kn = st.at('names'), xs = [];
       for (let i = 0; i < 5; i++) xs.push(Math.round(lerp(B.bx0 + s(36), B.bx1 - s(26), i / 4)));
       lanterns(c, xs, B.by + s(4), s, kn * 5, t, still, 1.6);
-      const tb = Q.bust('co_tokiwa', 'think2', { look: [0, 1], head: [0, 1] }, FACE_L, false, 200);
+      // the chronicle open in his hands, low at the frame's edge (his forearms to the sleeves at its sides: openBook()
+      // is 34 k each side of the spine, 22 k tall)
+      const k = 1.1, bx = tx + s(2), by = ty - s(2), oW = Math.round(34 * k), oH = Math.round(22 * k);
+      const tb = Q.bust('co_tokiwa', 'think2', { look: [0, 1], head: [0, 1] }, FACE_L, false, 200, Q.holdArms(tx, ty, [bx - oW - 3, by + oH / 2], [bx + oW + 3, by + oH / 2]));
       if (tb) c.drawImage(tb.cv, tx - tb.ax, ty - tb.ay);
-      // the chronicle open in his hands, low at the frame's edge
-      const k = 1.1, bx = tx + s(2), by = ty - s(2);
       const ob = openBook(c, bx, by, k, s, 'rgba(255,220,160,0.12)');
       // his thumbs on the pages' lower corners, the fingers under the book; the sleeves at its sides
       const sk = skin('co_tokiwa');
@@ -72733,13 +73081,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the crowd behind him, small, facing the stage
       crowdRev(c, GR, st, { skip: ['co_heita', 'co_tamotsu', 'co_nobu', 'co_fusa', 'co_ume', 'co_goro'], pose: (p) => (p.id === 'pc' || p.id === 'comp' ? ['down', 'i0'] : null) });
       const kt = st.at('tamotsu'), ks = st.at('sickle');
-      const hb = Q.bust('co_heita', ks > 0.4 ? 'think2' : 'neutral', ks > 0.4 ? { look: [-1, 0] } : { look: [1, -1] }, FACE_R, false, 200);
+      // the sickle: up from his side to the height of his shoulder, no higher (his arm with it)
+      const es = ease(ks), sy = Math.round(lerp(G.vb + 40, hy - 40, es));
+      const hb = Q.bust('co_heita', ks > 0.4 ? 'think2' : 'neutral', ks > 0.4 ? { look: [-1, 0] } : { look: [1, -1] }, FACE_R, false, 200, ks > 0 ? Q.holdArms(hx, hy, null, [hx + 58, sy + 4]) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
-      // the sickle: up from his side to the height of his shoulder, no higher
-      if (ks > 0) {
-        const e = ease(ks);
-        sickle(c, hx + 58, lerp(G.vb + 40, hy - 40, e), 1.6, lerp(0.6, 0.15, e), skin('co_heita'), sleeve('co_heita'));
-      }
+      if (ks > 0) sickle(c, hx + 58, sy, 1.6, lerp(0.6, 0.15, es), skin('co_heita'), sleeve('co_heita'));
       // Tamotsu at the right edge from behind, facing the crowd; his arm comes up, pointing at the hill
       const tb = Q.back(look('co_tamotsu'), Math.round(clamp(s(150), 100, 200)), { light: 'r' });
       const tx = Math.round(w - s(G.lay === 'narrow' ? 30 : 60)), tyb = Math.round(G.vb + s(70));
@@ -72829,7 +73175,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomUme(w, h, st.vb), { s, ux, uy } = G, still = st.still;
       c.drawImage(eavesStatic(G).cv, 0, 0);
       const ku = st.at('up');
-      const ub = Q.bust('co_ume', ku > 0.4 ? 'sad' : 'closed', ku > 0.4 ? { look: [1, -1], head: [0, -1] } : { head: [0, 1] }, FACE_L, false, 200);
+      const ub = Q.bust('co_ume', ku > 0.4 ? 'sad' : 'closed', ku > 0.4 ? { look: [1, -1], head: [0, -1] } : { head: [0, 1] }, FACE_L, false, 200, { arms: { l: 'clasp', r: 'clasp' } });
       if (ub) c.drawImage(ub.cv, ux - ub.ax, uy - ub.ay);
       if (!still) Q.dust(c, 0, 0, w, G.vb, s(14), t, 6, '255,214,180', still, 3);
     },
@@ -72861,11 +73207,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
         },
       });
       // Fusa close in front, her hand up for her sister
-      const fb = Q.bust('co_fusa', kf > 0.3 ? 'sad' : 'worry', kf > 0.3 ? { look: [-1, -1] } : { look: [0, 1] }, FACE_R, false, 200);
+      const ef = ease(kf), hfx = Math.round(fx - s(44)), hfy = Math.round(lerp(G.vb + s(30), fy - 96 + s(10), ef));
+      const fb = Q.bust('co_fusa', kf > 0.3 ? 'sad' : 'worry', kf > 0.3 ? { look: [-1, -1] } : { look: [0, 1] }, FACE_R, false, 200, kf > 0 ? Q.holdArms(fx, fy, [hfx, hfy + 6], null) : null);
       if (fb) c.drawImage(fb.cv, fx - fb.ax, fy - fb.ay);
       if (kf > 0) {
-        const e = ease(kf), hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: -Math.PI / 2 - 0.15, skin: skin('co_fusa'), sleeve: sleeve('co_fusa') });
-        if (hd) c.drawImage(hd.cv, Math.round(fx - s(44) - hd.ax), Math.round(lerp(G.vb + s(30), fy - 96 + s(10), e) - hd.ay));
+        const hd = Q.hand({ size: 12, pose: 'rest', side: 'R', angle: -Math.PI / 2 - 0.15, skin: skin('co_fusa'), sleeve: sleeve('co_fusa') });
+        if (hd) c.drawImage(hd.cv, hfx - hd.ax, hfy - hd.ay);
       }
       if (!still) Q.dust(c, 0, G.y0 - s(40), w, G.vb, -s(10), t, 8, '255,214,180', still, 21);
     },
@@ -73654,8 +74001,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return Object.assign(S, { hx, hy, lk, Lg: lampGeom(lampX, lampY, lk), floor: Math.round(hy - 96 * 0.15), narrow, close: !!close });
   }
   const COMP_ASIDE = { nao: 'p:strap', mio: 'p:palm', ren: 'p:clasp', suzu: 'p:size_out' };
-  function hoshinoBust(c, G, expr, fr, warmL) {
-    const b = Q.bust('hoshino', expr, fr, warmL ? WARM_L : WARM, false, 200);
+  // o: his arms (Q.holdArms) when a shot draws his hands; otherwise they hang
+  function hoshinoBust(c, G, expr, fr, warmL, o) {
+    const b = Q.bust('hoshino', expr, fr, warmL ? WARM_L : WARM, false, 200, o);
     if (b) c.drawImage(b.cv, G.hx - b.ax, G.hy - b.ay);
     return b;
   }
@@ -73704,11 +74052,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s, Lg } = G;
       roomWithLamp(c, G, st, t, 'close', { slit: [w * 0.02, w * 0.02 + Math.max(s(30), w * 0.08)], seed: 31, lit: 0.45 });
       const kh = st.at('hand'), ks = st.at('settle');
-      hoshinoBust(c, G, ks > 0.4 ? 'smile' : 'think2', ks > 0.4 ? { body: [0, 1] } : { look: [1, 0], head: [1, 0] });
-      // his hand comes to rest on the lamp's frame
-      const e = ease(kh);
+      // his hand comes to rest on the lamp's frame (his arm reaching to it)
+      const e = ease(kh), lx = Math.round(lerp(G.hx + s(40), Lg.x0 - s(10), e)), ly = Math.round(lerp(G.vb + s(20), Lg.y0 + Lg.H * 0.5, e));
+      hoshinoBust(c, G, ks > 0.4 ? 'smile' : 'think2', ks > 0.4 ? { body: [0, 1] } : { look: [1, 0], head: [1, 0] }, false, Q.holdArms(G.hx, G.hy, null, [lx, ly]));
       const hd = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: lerp(0.9, 0.15, e), skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (hd) c.drawImage(hd.cv, Math.round(lerp(G.hx + s(40), Lg.x0 - s(10), e) - hd.ax), Math.round(lerp(G.vb + s(20), Lg.y0 + Lg.H * 0.5, e) - hd.ay));
+      if (hd) c.drawImage(hd.cv, lx - hd.ax, ly - hd.ay);
       compAside(c, G, st, st.at('comp'), -1);
     },
     focus(w, h, vb) { const G = geomAsk(w, h, vb, true); return { x: G.hx - 34, y: G.hy - 92, w: 68, h: 60 }; },
@@ -73762,13 +74110,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s, Lg } = G, still = st.still;
       roomWithLamp(c, G, st, t, 'both', { slit: [Math.max(s(4), G.hx - s(150)), Math.max(s(4), G.hx - s(150)) + Math.max(s(40), w * 0.12)], seed: 51, lit: 0.45 });
       const kt = st.at('think'), km = st.at('smile');
-      hoshinoBust(c, G, km > 0.3 ? 'smile' : kt > 0.2 ? 'think' : 'neutral', km > 0.3 ? null : { look: [-1, -1] });
-      // one hand on the lamp, the other open toward the window (and the valley) on our left
-      const h1 = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h1) c.drawImage(h1.cv, Math.round(Lg.x0 - s(12) - h1.ax), Math.round(Lg.y0 + Lg.H * 0.5 - h1.ay));
+      // one hand on the lamp, the other open toward the window (and the valley) on our left; his arms to both
       const e = ease(Math.max(kt, km));
+      const p1 = [Math.round(Lg.x0 - s(12)), Math.round(Lg.y0 + Lg.H * 0.5)], p2 = [Math.round(lerp(G.hx - s(20), G.hx - s(70), e)), Math.round(lerp(G.vb + s(30), G.hy - s(40), e))];
+      hoshinoBust(c, G, km > 0.3 ? 'smile' : kt > 0.2 ? 'think' : 'neutral', km > 0.3 ? null : { look: [-1, -1] }, false, Q.holdArms(G.hx, G.hy, p2, p1));
+      const h1 = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
+      if (h1) c.drawImage(h1.cv, p1[0] - h1.ax, p1[1] - h1.ay);
       const h2 = Q.hand({ size: 13, pose: 'offer', side: 'L', angle: Math.PI - lerp(0.9, 0.35, e), skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h2) c.drawImage(h2.cv, Math.round(lerp(G.hx - s(20), G.hx - s(70), e) - h2.ax), Math.round(lerp(G.vb + s(30), G.hy - s(40), e) - h2.ay));
+      if (h2) c.drawImage(h2.cv, p2[0] - h2.ax, p2[1] - h2.ay);
       compAside(c, G, st, st.at('comp'), 1);
       void still;
     },
@@ -73979,10 +74328,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s } = G, still = st.still;
       roomWithLamp(c, G, st, t, 'give', { slit: [w * 0.04, w * 0.04 + Math.max(s(30), w * 0.08)], seed: 61, lit: 1 });
       const ko = st.at('offer'), kt = st.at('take');
-      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null);
       // the envelope held out toward you in both his hands; on the giving, your hand takes it and it is yours
       const e = ease(ko), tk = ease(kt);
       const ex = Math.round(lerp(G.hx, G.hx - s(46), e) - tk * s(40)), ey = Math.round(lerp(G.vb + s(20), G.hy - s(30), e) + tk * s(50));
+      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, tk < 0.5 ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
       const k = clamp(G.Z * 0.8, 0.6, 1.1);
       c.save(); c.translate(ex, ey); c.rotate(-0.25); c.translate(-ex, -ey); envelope(c, ex, ey, k, 'front', 1); c.restore();
       if (tk < 0.5) {
@@ -75563,21 +75912,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const RLIGHT = { mul: [0.98, 0.95, 0.9], add: [8, 5, 0], rim: { side: 'l', col: '#ffe2b0', k: [0.42, 0.18], below: 0.85 } };
   const RSKIN = () => Q.skinOf(look('ren')), RSLEEVE = () => (look('ren').cloth || ['#3a3e6a'])[0];
   // Ren's portrait without the glasses (their own portrait with that one accessory left off), graded like Q.bust
-  function renBare(expr, fr, g) {
-    return Q.small('ch6.renbare|' + expr + '|' + JSON.stringify(fr || null) + '|' + JSON.stringify(g || null), () => {
+  function renBare(expr, fr, g, o) {
+    return Q.small('ch6.renbare|' + expr + '|' + JSON.stringify(fr || null) + '|' + JSON.stringify(g || null) + '|' + JSON.stringify(o || null), () => {
       const sj = RB.portraits.subject('ren');
       if (!sj) return null;
       const sj2 = { key: 'ren|noglasses', who: 'ren', p: Object.assign({}, sj.p, { acc: (sj.p.acc || []).filter((a) => a !== 'glasses') }) };
       const f = RB.portraits.frame(sj2, expr, fr || null);
       if (!f) return null;
-      let cv = mk(f.width, f.height); cv.getContext('2d').drawImage(f, 0, 0);
+      // standing, as Q.bust draws them (the body below the portrait, RB.portraitBody)
+      const H0 = f.height;
+      let cv = Q.standing(sj2.p, f, Q.lookOf('ren'), 220, o, fr);
+      if (!cv) { cv = mk(f.width, f.height); cv.getContext('2d').drawImage(f, 0, 0); }
       cv = Q.grade(cv, g);
-      // continued down (its lowest row repeated), as Q.bust does, so a shorter sheet never shows an edge
-      const H0 = cv.height, ext = 220, tall = mk(cv.width, H0 + ext), tg = tall.getContext('2d');
-      tg.drawImage(cv, 0, 0);
-      const d = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, H0 - 3, cv.width, 1).data;
-      for (let x = 0; x < cv.width; x++) { const o = x * 4; if (d[o + 3] < 200) continue; tg.fillStyle = 'rgb(' + d[o] + ',' + d[o + 1] + ',' + d[o + 2] + ')'; tg.fillRect(x, H0 - 2, 1, ext + 2); }
-      return { cv: tall, ax: cv.width >> 1, ay: H0 };
+      return { cv, ax: cv.width >> 1, ay: H0 };
     });
   }
   // the shelves of the Room of Set-Down Memories filling the background: dark wood, rows of folios with pale labels
@@ -75682,13 +76029,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.drawImage(roomBack(G, 'renroom', 0.32).cv, 0, 0);
       airLife(c, w, h, t, still, 18, 63, 0);
       const ko = st.at('open');
-      const rb = Q.bust('ren', 'neutral', { look: [0, 1] }, RLIGHT, false, 220);
-      if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
-      // the folio at their chest (beside the face in a phone's band), the cover swinging open
+      // the folio at their chest (beside the face in a phone's band), the cover swinging open; their forearms up to the
+      // hands on its spine and on the cover's edge
       const fx = G.land ? kx + 70 : kx + Math.round(6 * k), fy = G.land ? Math.round(clamp(G.vb * 0.5, 30, G.vb - 16)) : ky - Math.round(2 * k);
+      const W = Math.round(36 * k), cw0 = W * Math.cos(Math.PI * ease(ko));
+      const hlp = [Math.round(fx - W / 2 - 4 * k), Math.round(fy + 10 * k)], hrp = [Math.round(fx - W / 2 + Math.max(cw0, W * 0.9 * (ko >= 1 ? 1 : 0)) + 4 * k), Math.round(fy + 8 * k)];
+      const rb = Q.bust('ren', 'neutral', { look: [0, 1] }, RLIGHT, false, 220, Q.holdArms(kx, ky, hlp, hrp));
+      if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
       ushioFolio(c, fx, fy, k, ease(ko));
       const skin = RSKIN(), sl = RSLEEVE();
-      const W = Math.round(36 * k);
       const hl = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.08, skin, sleeve: sl });
       const hr = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'R', angle: Math.PI * 0.92, skin, sleeve: sl });
       // the left hand holds the spine; the right turns the cover (it follows the cover's edge, then rests on the page)
@@ -75788,14 +76137,15 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (off) { expr = 'neutral'; fr = { look: [0, 1], lids: 'half' }; }
       else if (ksm > 0.3) { expr = 'smirk'; fr = null; }
       else if (ksd > 0.1) { expr = 'sad'; fr = { head: [0, Math.round(ease(ksd))] }; }
-      const rb = off ? renBare(expr, fr, RLIGHT) : Q.bust('ren', expr, fr, RLIGHT, false, 220);
+      // the glasses lifted off the face and brought down to the hands; then the cloth going round a lens, slowly (their
+      // forearms to both hands; the rubbing moves the hand, not the arm)
+      const eg = ease(clamp((kg - 0.25) / 0.75, 0, 1));
+      const gx0 = Math.round(lerp(kx, G.land ? kx + 64 : kx, eg)), gy0 = Math.round(lerp(ky - 96 + 47, G.land ? Math.round(clamp(G.vb * 0.55, 30, G.vb - 12)) : ky - Math.round(4 * k), eg));
+      const ho = kg > 0 ? Q.holdArms(kx, ky, [gx0 - 11 * k, gy0 + 2 * k], kg >= 1 || eg > 0.8 ? [gx0 + 14 * k, gy0 + 1 * k] : null) : null;
+      const rb = off ? renBare(expr, fr, RLIGHT, ho) : Q.bust('ren', expr, fr, RLIGHT, false, 220, ho);
       if (rb) c.drawImage(rb.cv, kx - rb.ax, ky - rb.ay);
-      // the glasses lifted off the face and brought down to the hands; then the cloth going round a lens, slowly
       if (kg > 0) {
-        const e = ease(clamp((kg - 0.25) / 0.75, 0, 1));
-        const ex = kx, ey = ky - 96 + 47;                                              // where the glasses sat
-        const hx = G.land ? kx + 64 : kx, hy = G.land ? Math.round(clamp(G.vb * 0.55, 30, G.vb - 12)) : ky - Math.round(4 * k);
-        const gx = Math.round(lerp(ex, hx, e)), gy = Math.round(lerp(ey, hy, e));
+        const e = eg, gx = gx0, gy = gy0;
         if (off) specs(c, gx, gy, Math.max(3, Math.round(4 * k)), e < 0.6);
         const skin = RSKIN(), sl = RSLEEVE();
         const h1 = Q.hand({ size: Math.round(10 * k), pose: 'pinch', side: 'L', angle: Math.PI * 0.05, skin, sleeve: sl });
@@ -76590,13 +76940,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       SP.lantern(c, Math.round(w * (narrow ? 0.86 : 0.8)), Math.round(st.vb * 0.06), Math.max(3, s(6)), Math.max(5, s(12)), true, t, st.still);
       const ko = st.at('odd');
       const fr = ko > 0.3 ? { look: [0, 1], head: [0, 1] } : { look: [0, 0] };
-      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, Math.round(h * 0.25));
       const bx = Math.round(w * (narrow ? 0.5 : 0.42)), by = Math.round(Math.max(st.vb + s(16), 100));
-      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
-      // the register held open in front of her (she lifts it a little on her first line)
+      // the register held open in front of her (she lifts it a little on her first line); her forearms to its two sides
       const kr = ease(st.at('register'));
-      const rw = Math.round(clamp(s(64), 40, 90)), rh = Math.round(rw * 0.6);
-      register(c, bx + Math.round(s(2)), Math.round(by - s(6) - kr * s(6)), rw, rh, skin('mb_sen'), (look('mb_sen').cloth || ['#2e3a5e'])[0], kr);
+      const rw = Math.round(clamp(s(64), 40, 90)), rh = Math.round(rw * 0.6), rx = bx + Math.round(s(2)), ry = Math.round(by - s(6) - kr * s(6));
+      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, Math.round(h * 0.25), Q.holdArms(bx, by, [rx - rw / 2 + rw * 0.04, ry + rh * 0.75], [rx + rw / 2 - rw * 0.04, ry + rh * 0.75]));
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
+      register(c, rx, ry, rw, rh, skin('mb_sen'), (look('mb_sen').cloth || ['#2e3a5e'])[0], kr);
     },
     focus(w, h, vb) { const S = stage(w, h, vb), narrow = S.lay === 'narrow'; const x = Math.round(w * (narrow ? 0.5 : 0.42)), y = Math.round(Math.max(vb + S.s(16), 100)); return { x: x - 32, y: y - 92, w: 64, h: Math.min(vb - 2, y - 40) - (y - 92) }; },
   };
@@ -76664,11 +77014,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Sanpei runs in from the right and stops; on his cry he lifts the block higher
       const kr = ease(st.at('run')), kc = ease(st.at('cry')), kp = ease(st.at('comp'));
       const bx = Math.round(lerp(w * 1.1, w * (narrow ? 0.5 : 0.46), kr) - kp * s(18)), by = Math.round(Math.max(st.vb + s(18), 104));
-      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, Math.round(h * 0.25));
-      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
-      // the block held up in both inky hands
+      // the block held up in both inky hands (his forearms up to them)
       const BW = Math.round(clamp(s(36), 24, 54)), BH = Math.round(BW * 0.64), lift = Math.round(kc * s(5));
       const yy = by - 20 - lift; // at his chest, below the chin (the portrait's chin sits about 30 px above its foot)
+      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, Math.round(h * 0.25), Q.holdArms(bx, by, [bx - BW / 2 + 2, yy + BH * 0.7], [bx + BW / 2 - 2, yy + BH * 0.7]));
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       woodblock(c, bx, yy, BW, BH);
       const sk = skin('mp_sanpei'), ink = ['#3a3440', '#2a2430'];
       const inky = [sk[0], sk[1]];
@@ -76839,8 +77189,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       });
       const kb = st.at('breathe'), ks = st.at('slips');
       const fr = kb > 0.4 && kb < 0.9 ? { lids: 'closed' } : { look: [-1, 0] };
-      const b = Q.bust('mp_sobe', kb > 0.4 ? 'smile' : 'neutral', fr, WINDOW, false, 200);
       const bx = Math.round(w * (G.narrow ? 0.52 : 0.58)), by = Math.max(Math.round(st.vb + s(10)), 98);
+      // (on Ren's branch his hand holds out the block below: his arm with it)
+      const es = ease(ks), sbx = Math.round(lerp(bx + s(10), bx - s(34), es)), sby = Math.round(by - s(30));
+      const BH0 = Math.round(Math.round(clamp(s(22), 14, 34)) * 1.6), sh = ks > 0 ? [sbx + s(4), sby + BH0] : null;
+      const b = Q.bust('mp_sobe', kb > 0.4 ? 'smile' : 'neutral', fr, WINDOW, false, 200, sh ? Q.holdArms(bx, by, sh[0] < bx ? sh : null, sh[0] < bx ? null : sh) : null);
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       c.drawImage(BED.cv, 0, 0);
       // on Ren's branch: he holds out a lantern's name-slip block (a small block, the slip's shape cut in it)
@@ -77176,7 +77529,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const S0 = roomStatic(G, 0.3 * ko);
       c.drawImage(S0.cv, 0, 0);
       drawWicks(c, S0.C, 0.97 * ease(ko), t, st.still, 0.16);
-      const b = Q.bust('kr_hisae', ko > 0.2 ? 'closed' : 'neutral', ko > 0.2 ? null : { look: [1, 0] }, ko > 0.5 ? DARK : LAMP, false, 200);
+      const b = Q.bust('kr_hisae', ko > 0.2 ? 'closed' : 'neutral', ko > 0.2 ? null : { look: [1, 0] }, ko > 0.5 ? DARK : LAMP, false, 200, { arms: { l: 'clasp', r: 'clasp' } });
       const bx = Math.round(w * (G.narrow ? 0.3 : 0.24)), by = Math.max(Math.round(st.vb + s(10)), 98);
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
     },
@@ -77593,7 +77946,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       c.drawImage(crownStatic(G, false).cv, 0, 0);
       falling(c, G, t, st.still, 18, 7, 'tree');
       const kb = st.at('breathe');
-      const b = Q.bust('ko_otoha', kb > 0.3 ? 'smile' : 'neutral', kb > 0.3 ? { look: [1, -1] } : null, DAY, false, 200);
+      const b = Q.bust('ko_otoha', kb > 0.3 ? 'smile' : 'neutral', kb > 0.3 ? { look: [1, -1] } : null, DAY, false, 200, { arms: { l: 'clasp', r: 'clasp' } });
       const bx = Math.round(w * (G.narrow ? 0.4 : 0.38)), by = Math.max(Math.round(st.vb + s(10)), 98);
       if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
     },
@@ -77765,12 +78118,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       });
       c.drawImage(B.cv, 0, 0);
       const ko = st.at('open'), kq = st.at('quiet');
-      const b = Q.bust('cr_heisuke', kq > 0.4 ? 'sad2' : 'neutral', kq > 0.4 ? null : { look: [0, 1], head: [0, 1] }, ROOM, false, 200);
       const bx = Math.round(w * (narrow ? 0.56 : 0.62)), by = Math.max(Math.round(st.vb + s(12)), 100);
-      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
-      // the letter opened out in his hands: a long sheet of oiled paper, columns of fading brush marks
+      // the letter opened out in his hands: a long sheet of oiled paper, columns of fading brush marks (his forearms to
+      // the hands at its two edges)
       const e = ease(ko), LW = Math.round(clamp(s(54), 34, 80) * (0.4 + 0.6 * e)), LH = Math.round(clamp(s(40), 26, 60));
       const lx = bx - Math.round(LW / 2), ly = by - 18;
+      const b = Q.bust('cr_heisuke', kq > 0.4 ? 'sad2' : 'neutral', kq > 0.4 ? null : { look: [0, 1], head: [0, 1] }, ROOM, false, 200, Q.holdArms(bx, by, [lx + 1, ly + LH * 0.7], [lx + LW - 1, ly + LH * 0.7]));
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       R(c, lx, ly, LW, LH, '#e2d4b0'); R(c, lx, ly + LH - 1, LW, 1, '#b8a682'); R(c, lx + LW - 1, ly, 1, LH, '#c8b690');
       for (let i = 0; i < Math.max(1, Math.round(LW / 7)); i++) SP.marks(c, lx + LW - 4 - i * 7, ly + 3, LH - 6, 4, 1, i < 2 ? '#3a2e2a' : 'rgba(58,46,42,0.5)', 30 + i);
       const sk = skin('cr_heisuke'), sl = (look('cr_heisuke').cloth || ['#5a4a3a'])[0];
@@ -78956,11 +79310,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the gift: Mitsue holds out the planting hat
       const kg = st.at('gift');
       if (kg > 0) {
-        const b = Q.bust('as_mitsue', 'smile', null, { mul: [0.9, 0.78, 0.66], add: [16, 6, 0], rim: { side: 'l', col: '#ffb060', k: [0.42, 0.2] } }, true, 200);
-        const bx = Math.round(w * (G.narrow ? 0.7 : 0.76)), by = Math.max(Math.round(vb + s(10)), 98);
-        if (b) c.drawImage(b.cv, Math.round(bx + (1 - ease(kg)) * s(10) - b.ax), by - b.ay);
-        // the hat, held up beside her: a wide shallow cone of woven sedge, its cord hanging
+        const bx = Math.round(w * (G.narrow ? 0.7 : 0.76)), by = Math.max(Math.round(vb + s(10)), 98), bx1 = Math.round(bx + (1 - ease(kg)) * s(10));
+        // the hat, held up beside her: a wide shallow cone of woven sedge, its cord hanging (her arm up to its brim)
         const hx = bx - s(G.narrow ? 30 : 42), hy = by - s(44) + Math.round((1 - ease(kg)) * s(6)), hw = s(G.narrow ? 20 : 26), hh = s(10);
+        const b = Q.bust('as_mitsue', 'smile', null, { mul: [0.9, 0.78, 0.66], add: [16, 6, 0], rim: { side: 'l', col: '#ffb060', k: [0.42, 0.2] } }, true, 200, Q.holdArms(bx1, by, [hx + Math.round(hw * 0.4), hy + hh + 2], null, true));
+        if (b) c.drawImage(b.cv, bx1 - b.ax, by - b.ay);
         for (let j = 0; j < hh; j++) { const half = Math.round(hw * (0.12 + (j / hh) * 0.88)); for (let x = -half; x <= half; x++) R(c, hx + x, hy + j, 1, 1, (x + j * 2) % 5 === 0 ? '#a8884a' : x < 0 ? '#e0c078' : '#c8a860'); }
         R(c, hx - hw, hy + hh, hw * 2, 1, '#8a6a3a');
         for (let j = 0; j < s(10); j++) R(c, hx + Math.round(Math.sin(j / 3) * 2), hy + hh + j, 1, 1, '#6a4a2a');

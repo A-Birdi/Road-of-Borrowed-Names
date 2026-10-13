@@ -13,7 +13,8 @@
  *   RB.seqKit.stage(w, h, vb)                  { lay: 'wide'|'narrow'|'land', Z, s(n), cx, top, vb, w, h }
  *   RB.seqKit.cached(key, build)               a static layer (bounded; released with the sequence)
  *   RB.seqKit.figure(look, dir, key, scale, grade)   a graded road figure { cv, ax, ay, w, h }
- *   RB.seqKit.bust(who|{look}, expr, fr, grade, flip) a graded portrait (96 × 96, transparent)
+ *   RB.seqKit.bust(who|{look}, expr, fr, grade, flip, ext, o) a graded portrait (96 × 96, transparent), or the person
+ *                                              standing, ext rows to their feet (RB.portraitBody)
  *   RB.seqKit.hand(o)                          a hand { cv, ax, ay } (o: skin, size, pose, side, angle, sleeve)
  *   RB.seqKit.release() / stats()
  * Nothing here writes game state; everything built is cached and dropped on release(). */
@@ -127,33 +128,59 @@ RB.seqKit = (function () {
   // A portrait (96 × 96, transparent) of a character id or { look } (the player), with an expression and
   // a frame descriptor (fr: { head: [dx, dy], body: [dx, dy], look: [gx, gy], lids, mouth, … }), graded,
   // optionally mirrored (only for people whose drawing is symmetric enough: the caller decides).
-  // ext: rows to continue the bust below its frame (its bottom row repeated, so a torso cut by a shorter
-  // sheet never shows a hard edge); the anchor stays at the portrait's own bottom.
+  // ext: the person standing, their feet ext rows below the frame: the rest of them drawn below the portrait in its
+  // own manner (RB.portraitBody: arms, hands, the garment, the feet; AR-1 replaced repeating the bust's bottom row,
+  // which painted every seam down as a stripe). o.arms: { l, r } ('side', 'clasp', { hold: [x, y] } to a hand the
+  // shot draws, 'none'), in the portrait's frame coordinates. The anchor stays at the portrait's own bottom centre.
   // (who may also be { id, fest: true }: that person in the festival night's yukata, whenever the picture is shown;
   // fest: 'yn', in Steamhollow's evening yukata)
-  function bust(who, expr, fr, g, flip, ext) {
+  function lookOf(who) {
+    if (typeof who === 'string') return (RB.content.chars[who] || {}).look || {};
+    if (who.id) {
+      const lk = (RB.content.chars[who.id] || {}).look || {};
+      return who.fest && RB.festDress ? RB.festDress.look(lk, who.id, who.fest === 'yn' ? 'yn' : 'mp') : lk;
+    }
+    return who.look || {};
+  }
+  // A portrait frame f (of parameters p) standing: the body below it, the frame, then the forearms that come in front
+  // of it, all moved with the frame's body offset. Ungraded; the frame's bottom centre is (w / 2, 96).
+  function standing(p, f, look, ext, o, fr) {
+    if (!RB.portraitBody) return null;
+    const bd = RB.portraitBody.below(p, look, ext, o);
+    const off = (fr && fr.body) || [0, 0];
+    const cv = mk(bd.w, bd.h), c = cv.getContext('2d');
+    c.drawImage(bd.back.toCanvas(), off[0], off[1]);
+    c.drawImage(f, bd.pad, 0);
+    if (bd.front) c.drawImage(bd.front.toCanvas(), off[0], off[1]);
+    return cv;
+  }
+  function bust(who, expr, fr, g, flip, ext, o) {
     const id = typeof who === 'string' ? who : who.id ? who.id + (who.fest ? '|fest' + (who.fest === 'yn' ? '|yn' : '') : '') : 'pc|' + JSON.stringify(who.look);
     ext = Math.max(0, Math.round(ext || 0));
-    return small('bust|' + id + '|' + (expr || 'neutral') + '|' + (fr ? JSON.stringify(fr) : '') + '|' + gkey(g) + '|' + (flip ? 1 : 0) + '|' + ext, () => {
+    return small('bust|' + id + '|' + (expr || 'neutral') + '|' + (fr ? JSON.stringify(fr) : '') + '|' + gkey(g) + '|' + (flip ? 1 : 0) + '|' + ext + '|' + (o ? JSON.stringify(o) : ''), () => {
       let sj = typeof who === 'string' ? RB.portraits.subject(who) : who.id ? RB.portraits.subject(who.id) : RB.portraits.subject('pc', who.look);
       if (sj && who && who.id && who.fest && RB.festDress && !/\|yukata/.test(sj.key)) { const k = who.fest === 'yn' ? 'yn' : 'mp'; sj = Object.assign({}, sj, { key: sj.key + '|yukata' + (k === 'yn' ? '|yn' : ''), p: RB.festDress.portrait(sj.p, who.id, k) }); }
       const f = sj && RB.portraits.frame(sj, expr || 'neutral', fr || null);
       if (!f) return null;
-      let cv = mk(f.width, f.height);
-      cv.getContext('2d').drawImage(f, 0, 0);
+      const H0 = f.height;
+      let cv = ext ? standing(sj.p, f, lookOf(who), ext, o, fr) : null;
+      if (!cv) { cv = mk(f.width, f.height); cv.getContext('2d').drawImage(f, 0, 0); }
       cv = grade(cv, g);
       if (flip) cv = flipX(cv);
-      const H0 = cv.height;
-      if (ext) {
-        const tall = mk(cv.width, H0 + ext), tg = tall.getContext('2d');
-        tg.drawImage(cv, 0, 0);
-        // each column's lowest opaque pixel, repeated down (the outline row is skipped so no line runs down)
-        const d = cv.getContext('2d', { willReadFrequently: true }).getImageData(0, H0 - 3, cv.width, 1).data;
-        for (let x = 0; x < cv.width; x++) { const o = x * 4; if (d[o + 3] < 200) continue; tg.fillStyle = 'rgb(' + d[o] + ',' + d[o + 1] + ',' + d[o + 2] + ')'; tg.fillRect(x, H0 - 2, 1, ext + 2); }
-        cv = tall;
-      }
       return { cv, ax: cv.width >> 1, ay: H0, w: cv.width, h: cv.height };
     });
+  }
+  // A standing person's arms for bust(…, ext, o): l and r are the screen points of the wrists of hands the shot draws
+  // ([x, y], or null for an arm that hangs: rest, 'side' unless given), (bx, by) the bust's anchor; flip: the bust is
+  // mirrored. Returns o with arms in the portrait's own frame (its bottom centre at 48, 96).
+  function holdArms(bx, by, l, r, flip, rest) {
+    const arms = { l: rest || 'side', r: rest || 'side' };
+    // (to the nearest 2 px: a hand that moves a pixel does not rebuild the figure every frame)
+    const q2 = (v) => 2 * Math.round(v / 2);
+    const to = (pt) => { let x = 48 + q2(pt[0] - bx); if (flip) x = 96 - x; return { hold: [x, 96 + q2(pt[1] - by)] }; };
+    if (l) arms[flip ? 'r' : 'l'] = to(l);
+    if (r) arms[flip ? 'l' : 'r'] = to(r);
+    return { arms };
   }
   const skinOf = (look) => RB.sprites.colorsOf(look || {}).skin;
   const clothOf = (look) => RB.sprites.colorsOf(look || {}).cloth;
@@ -286,7 +313,7 @@ RB.seqKit = (function () {
 
   return {
     R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX,
-    figure, bust, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
+    figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),
   };

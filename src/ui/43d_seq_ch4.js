@@ -234,8 +234,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     return Object.assign(S, { hx, hy, lk, Lg: lampGeom(lampX, lampY, lk), floor: Math.round(hy - 96 * 0.15), narrow, close: !!close });
   }
   const COMP_ASIDE = { nao: 'p:strap', mio: 'p:palm', ren: 'p:clasp', suzu: 'p:size_out' };
-  function hoshinoBust(c, G, expr, fr, warmL) {
-    const b = Q.bust('hoshino', expr, fr, warmL ? WARM_L : WARM, false, 200);
+  // o: his arms (Q.holdArms) when a shot draws his hands; otherwise they hang
+  function hoshinoBust(c, G, expr, fr, warmL, o) {
+    const b = Q.bust('hoshino', expr, fr, warmL ? WARM_L : WARM, false, 200, o);
     if (b) c.drawImage(b.cv, G.hx - b.ax, G.hy - b.ay);
     return b;
   }
@@ -284,11 +285,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s, Lg } = G;
       roomWithLamp(c, G, st, t, 'close', { slit: [w * 0.02, w * 0.02 + Math.max(s(30), w * 0.08)], seed: 31, lit: 0.45 });
       const kh = st.at('hand'), ks = st.at('settle');
-      hoshinoBust(c, G, ks > 0.4 ? 'smile' : 'think2', ks > 0.4 ? { body: [0, 1] } : { look: [1, 0], head: [1, 0] });
-      // his hand comes to rest on the lamp's frame
-      const e = ease(kh);
+      // his hand comes to rest on the lamp's frame (his arm reaching to it)
+      const e = ease(kh), lx = Math.round(lerp(G.hx + s(40), Lg.x0 - s(10), e)), ly = Math.round(lerp(G.vb + s(20), Lg.y0 + Lg.H * 0.5, e));
+      hoshinoBust(c, G, ks > 0.4 ? 'smile' : 'think2', ks > 0.4 ? { body: [0, 1] } : { look: [1, 0], head: [1, 0] }, false, Q.holdArms(G.hx, G.hy, null, [lx, ly]));
       const hd = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: lerp(0.9, 0.15, e), skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (hd) c.drawImage(hd.cv, Math.round(lerp(G.hx + s(40), Lg.x0 - s(10), e) - hd.ax), Math.round(lerp(G.vb + s(20), Lg.y0 + Lg.H * 0.5, e) - hd.ay));
+      if (hd) c.drawImage(hd.cv, lx - hd.ax, ly - hd.ay);
       compAside(c, G, st, st.at('comp'), -1);
     },
     focus(w, h, vb) { const G = geomAsk(w, h, vb, true); return { x: G.hx - 34, y: G.hy - 92, w: 68, h: 60 }; },
@@ -342,13 +343,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s, Lg } = G, still = st.still;
       roomWithLamp(c, G, st, t, 'both', { slit: [Math.max(s(4), G.hx - s(150)), Math.max(s(4), G.hx - s(150)) + Math.max(s(40), w * 0.12)], seed: 51, lit: 0.45 });
       const kt = st.at('think'), km = st.at('smile');
-      hoshinoBust(c, G, km > 0.3 ? 'smile' : kt > 0.2 ? 'think' : 'neutral', km > 0.3 ? null : { look: [-1, -1] });
-      // one hand on the lamp, the other open toward the window (and the valley) on our left
-      const h1 = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h1) c.drawImage(h1.cv, Math.round(Lg.x0 - s(12) - h1.ax), Math.round(Lg.y0 + Lg.H * 0.5 - h1.ay));
+      // one hand on the lamp, the other open toward the window (and the valley) on our left; his arms to both
       const e = ease(Math.max(kt, km));
+      const p1 = [Math.round(Lg.x0 - s(12)), Math.round(Lg.y0 + Lg.H * 0.5)], p2 = [Math.round(lerp(G.hx - s(20), G.hx - s(70), e)), Math.round(lerp(G.vb + s(30), G.hy - s(40), e))];
+      hoshinoBust(c, G, km > 0.3 ? 'smile' : kt > 0.2 ? 'think' : 'neutral', km > 0.3 ? null : { look: [-1, -1] }, false, Q.holdArms(G.hx, G.hy, p2, p1));
+      const h1 = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
+      if (h1) c.drawImage(h1.cv, p1[0] - h1.ax, p1[1] - h1.ay);
       const h2 = Q.hand({ size: 13, pose: 'offer', side: 'L', angle: Math.PI - lerp(0.9, 0.35, e), skin: skin('hoshino'), sleeve: sleeve('hoshino') });
-      if (h2) c.drawImage(h2.cv, Math.round(lerp(G.hx - s(20), G.hx - s(70), e) - h2.ax), Math.round(lerp(G.vb + s(30), G.hy - s(40), e) - h2.ay));
+      if (h2) c.drawImage(h2.cv, p2[0] - h2.ax, p2[1] - h2.ay);
       compAside(c, G, st, st.at('comp'), 1);
       void still;
     },
@@ -559,10 +561,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s } = G, still = st.still;
       roomWithLamp(c, G, st, t, 'give', { slit: [w * 0.04, w * 0.04 + Math.max(s(30), w * 0.08)], seed: 61, lit: 1 });
       const ko = st.at('offer'), kt = st.at('take');
-      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null);
       // the envelope held out toward you in both his hands; on the giving, your hand takes it and it is yours
       const e = ease(ko), tk = ease(kt);
       const ex = Math.round(lerp(G.hx, G.hx - s(46), e) - tk * s(40)), ey = Math.round(lerp(G.vb + s(20), G.hy - s(30), e) + tk * s(50));
+      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, tk < 0.5 ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
       const k = clamp(G.Z * 0.8, 0.6, 1.1);
       c.save(); c.translate(ex, ey); c.rotate(-0.25); c.translate(-ex, -ey); envelope(c, ex, ey, k, 'front', 1); c.restore();
       if (tk < 0.5) {

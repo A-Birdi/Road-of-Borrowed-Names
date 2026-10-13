@@ -501,13 +501,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
       SP.lantern(c, Math.round(w * (narrow ? 0.86 : 0.8)), Math.round(st.vb * 0.06), Math.max(3, s(6)), Math.max(5, s(12)), true, t, st.still);
       const ko = st.at('odd');
       const fr = ko > 0.3 ? { look: [0, 1], head: [0, 1] } : { look: [0, 0] };
-      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, Math.round(h * 0.25));
       const bx = Math.round(w * (narrow ? 0.5 : 0.42)), by = Math.round(Math.max(st.vb + s(16), 100));
-      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
-      // the register held open in front of her (she lifts it a little on her first line)
+      // the register held open in front of her (she lifts it a little on her first line); her forearms to its two sides
       const kr = ease(st.at('register'));
-      const rw = Math.round(clamp(s(64), 40, 90)), rh = Math.round(rw * 0.6);
-      register(c, bx + Math.round(s(2)), Math.round(by - s(6) - kr * s(6)), rw, rh, skin('mb_sen'), (look('mb_sen').cloth || ['#2e3a5e'])[0], kr);
+      const rw = Math.round(clamp(s(64), 40, 90)), rh = Math.round(rw * 0.6), rx = bx + Math.round(s(2)), ry = Math.round(by - s(6) - kr * s(6));
+      const b = Q.bust('mb_sen', ko > 0.3 ? 'worry' : 'smile', fr, DUSK_R, false, Math.round(h * 0.25), Q.holdArms(bx, by, [rx - rw / 2 + rw * 0.04, ry + rh * 0.75], [rx + rw / 2 - rw * 0.04, ry + rh * 0.75]));
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
+      register(c, rx, ry, rw, rh, skin('mb_sen'), (look('mb_sen').cloth || ['#2e3a5e'])[0], kr);
     },
     focus(w, h, vb) { const S = stage(w, h, vb), narrow = S.lay === 'narrow'; const x = Math.round(w * (narrow ? 0.5 : 0.42)), y = Math.round(Math.max(vb + S.s(16), 100)); return { x: x - 32, y: y - 92, w: 64, h: Math.min(vb - 2, y - 40) - (y - 92) }; },
   };
@@ -575,11 +575,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Sanpei runs in from the right and stops; on his cry he lifts the block higher
       const kr = ease(st.at('run')), kc = ease(st.at('cry')), kp = ease(st.at('comp'));
       const bx = Math.round(lerp(w * 1.1, w * (narrow ? 0.5 : 0.46), kr) - kp * s(18)), by = Math.round(Math.max(st.vb + s(18), 104));
-      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, Math.round(h * 0.25));
-      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
-      // the block held up in both inky hands
+      // the block held up in both inky hands (his forearms up to them)
       const BW = Math.round(clamp(s(36), 24, 54)), BH = Math.round(BW * 0.64), lift = Math.round(kc * s(5));
       const yy = by - 20 - lift; // at his chest, below the chin (the portrait's chin sits about 30 px above its foot)
+      const b = Q.bust('mp_sanpei', kc > 0.3 ? 'worry' : 'surprise', kc > 0.3 ? { look: [0, -1] } : null, DUSK, false, Math.round(h * 0.25), Q.holdArms(bx, by, [bx - BW / 2 + 2, yy + BH * 0.7], [bx + BW / 2 - 2, yy + BH * 0.7]));
+      if (b) c.drawImage(b.cv, bx - b.ax, by - b.ay);
       woodblock(c, bx, yy, BW, BH);
       const sk = skin('mp_sanpei'), ink = ['#3a3440', '#2a2430'];
       const inky = [sk[0], sk[1]];
