@@ -4289,7 +4289,8 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | 9/12 | 11/11 | |
 | 10/12 | 11/11 | |
 | 11/12 | 11/11 | |
-| 12/12 | running | |
+| 12/12 | 9/9 | The last slice holds the remaining 9 of the 130 scripts. |
+| `--extra` | running | 10 scripts |
 
 **The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
 Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.
