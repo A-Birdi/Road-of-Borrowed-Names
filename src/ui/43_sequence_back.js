@@ -331,5 +331,26 @@ RB.seqBack = (function () {
       shoulders: { l: [Math.round(cx - SH + W * 0.05), Math.round(sh + W * 0.06)], r: [Math.round(cx + SH - W * 0.05), Math.round(sh + W * 0.06)] },
     };
   }
-  return { draw };
+  // A raised arm for a figure drawn with o.raise: shoulder to wrist in the figure's sleeve (a robe's hangs under the
+  // forearm), as wide as its arms, bent a little at the elbow, the cuff at the wrist. (wx, wy): the wrist from the
+  // shoulder point the figure returns. → { cv, ox, oy }: the shoulder's place in cv. The shot draws the hand.
+  function arm(lk, W, wx, wy) {
+    lk = lk || {};
+    const p = K(), col = RB.sprites.colorsOf(lk), wide = !!(lk.yukata || lk.shape === 'robe');
+    const step = 0.075, cloth = p.mat(col.cloth[0], { n: 7, at: 4, step }), accent = p.mat(col.cloth[2] || col.cloth[1], { n: 6, at: 3, step: 0.08 });
+    const m = W * 0.2, x0 = Math.min(0, wx) - m, y0 = Math.min(0, wy) - m, x1 = Math.max(0, wx) + m, y1 = Math.max(0, wy) + m + (wide ? W * 0.2 : 0);
+    const L = p.layer(Math.ceil(x1 - x0), Math.ceil(y1 - y0)), ox = Math.round(-x0), oy = Math.round(-y0);
+    const len = Math.hypot(wx, wy) || 1, nx = -wy / len, ny = wx / len, bend = W * 0.05 * (ny > 0 ? 1 : -1);
+    const ex = ox + wx * 0.5 + nx * bend, ey = oy + wy * 0.5 + ny * bend;
+    const tx = ox + wx, ty = oy + wy;
+    if (wide) L.poly([[ex - W * 0.05, ey], [tx, ty], [tx, ty + W * 0.16], [ex - W * 0.03, ey + W * 0.16]], cloth, 2); // the sleeve hanging
+    L.seg(ox, oy, ex, ey, W * 0.125, cloth, 3);
+    L.seg(ex, ey, tx, ty, W * 0.1, cloth, 4);
+    L.seg(ox + (ex - ox) * 0.2, oy + (ey - oy) * 0.2 - W * 0.02, ex, ey - W * 0.02, W * 0.03, cloth, 5);   // the lit top of the sleeve
+    const kx = tx - ex, ky = ty - ey, kl = Math.hypot(kx, ky) || 1;
+    if (!wide) L.seg(tx - kx / kl * W * 0.03, ty - ky / kl * W * 0.03, tx, ty, W * 0.1, accent, 2);
+    L.outline();
+    return { cv: L.canvas(), ox, oy };
+  }
+  return { draw, arm };
 })();

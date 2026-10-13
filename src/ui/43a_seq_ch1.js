@@ -512,7 +512,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const post = p.mat(POST, { n: 5, at: 2, step: 0.08 }), pw = s(close ? 12 : 8);
       L.rect(dX - pw, top - s(6), pw, h - top + s(6), post, (x) => (x < dX - pw + 2 ? 0.9 : 0.5));
       L.rect(dX + dW, top - s(6), pw, h - top + s(6), post, (x) => (x < dX + dW + 2 ? 0.7 : 0.35));
-      L.rect(dX - pw, top - s(12), dW + pw * 2, s(9), post, (x, y) => (y < top - s(11) ? 0.92 : 0.45));
+      // (close, no board front: the lintel comes down to the interior, or a line of nothing showed between; AR-1)
+      L.rect(dX - pw, top - s(12), dW + pw * 2, close ? s(12) : s(9), post, (x, y) => (y < top - s(11) ? 0.92 : 0.45));
       if (close) { L.rect(0, 0, dX - pw, h, post, 0.2); L.rect(dX + dW + pw, 0, w, h, post, 0.15); L.rect(0, 0, w, Math.max(0, top - s(12)), post, 0.18); }
       L.outline();
       g.drawImage(I.canvas(), 0, 0);

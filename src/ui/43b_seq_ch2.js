@@ -471,6 +471,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const ctr = p.mat('#7a5a3e', { n: 6, at: 3, step: 0.08 });
         L.rect(0, back, w, s(10), ctr, (x, y) => (y < back + 1 ? 0.98 : y < back + s(7) ? 0.75 : 0.55));
         L.rect(0, back + s(10), w, h - back, p.mat('#4e3828', { n: 5, at: 3 }), (x, y) => ((Math.round(x) % s(30)) < 1 ? 0.15 : 0.45));
+      } else {
+        // close, past the counter: the workshop's floorboards to the frame's bottom, their seams widening toward us,
+        // a shadow along the wall's foot (it was left unpainted; AR-1)
+        const fl = p.mat('#5a4434', { n: 6, at: 3, step: 0.08 }), span = Math.max(1, h - back);
+        const row = (y) => Math.floor(Math.sqrt((y - back) / span) * 9);
+        L.rect(0, back, w, h - back, fl, (x, y) => clamp(0.56 - (y - back) / span * 0.22 + (row(y) !== row(y + 1) ? -0.2 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        L.rect(0, back, w, Math.max(2, s(3)), fl, 0.18);
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);

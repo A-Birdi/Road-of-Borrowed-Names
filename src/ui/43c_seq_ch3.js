@@ -59,7 +59,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const DUSK = ['#262650', '#33305c', '#463864', '#644268', '#8c4e66', '#b45e5e', '#d47a52', '#eaa058'];
   const NIGHT = ['#0e1028', '#141634', '#1a1c3e', '#222246', '#2c284c', '#3a3050'];
   function sky(g, w, yH, s, rnd, night, cols) {
-    Q.bandsIn(g, 0, 0, w, yH, cols || (night ? NIGHT : DUSK), 0.45);
+    // (a little past the horizon: where the hills' edge dips below it at the frame's edge, sky, not nothing; AR-1)
+    Q.bandsIn(g, 0, 0, w, yH + Math.max(2, s(6)), cols || (night ? NIGHT : DUSK), 0.45);
     const p = P();
     // long clouds, their undersides catching the gone sun (at night: dark shapes on the dark)
     const CL = p.layer(w, Math.max(4, yH));
@@ -564,21 +565,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const hd = Q.hand({ size: Math.round(9 * k), pose: 'grip', side: 'R', angle: ang - Math.PI / 2, skin: sk, sleeve: sl });
     if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay));
   }
-  // Tamotsu's arm raised to point at the hill, from behind: shoulder to wrist in his coat's sleeve, the cuff; e from
-  // hanging (0) to raised (1). Local origin at the shoulder; wx, wy where the wrist is.
+  // Tamotsu's arm raised to point at the hill, from behind: e from hanging (0) to raised (1); wx, wy: the wrist from
+  // his shoulder
   function tamotsuArm(W, e) {
-    const p = RB.pxkit, cl = RB.sprites.colorsOf(look('co_tamotsu')).cloth;
-    const ox = Math.round(W * 0.5), oy = Math.round(W * 0.45), L = p.layer(Math.round(W * 0.66), Math.round(W * 0.78));
     const wx = Math.round(lerp(-W * 0.05, -W * 0.4, e)), wy = Math.round(lerp(W * 0.3, -W * 0.36, e));
-    const ex = ox + wx * 0.5 - W * 0.02, ey = oy + wy * 0.5 + W * 0.03;
-    const sl = p.mat(cl[0], { n: 7, at: 4, step: 0.075 }), cuff = p.mat(cl[2] || cl[1], { n: 6, at: 3, step: 0.08 });
-    L.seg(ox, oy, ex, ey, W * 0.125, sl, 3);
-    L.seg(ex, ey, ox + wx, oy + wy, W * 0.1, sl, 4);
-    L.seg(ex, ey, ox + wx, oy + wy, W * 0.035, sl, 5);   // the lit top of the sleeve
-    const kx = (ox + wx - ex), ky = (oy + wy - ey), kl = Math.hypot(kx, ky) || 1;
-    L.seg(ox + wx - kx / kl * W * 0.03, oy + wy - ky / kl * W * 0.03, ox + wx, oy + wy, W * 0.1, cuff, 2);
-    L.outline();
-    return { cv: L.canvas(), ox, oy, wx, wy };
+    return Object.assign(RB.seqBack.arm(look('co_tamotsu'), W, wx, wy), { wx, wy });
   }
   const living = {
     phases: [['tamotsu', 700], ['sickle', 900]],
@@ -1054,7 +1045,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const top = rows[i - 1].foot(cx), bot = r.lip(cx), a = rw[i - 1], b = rw[i];
         L.fill(cx - b - s(4), top, cx + b + s(4), bot + 1, (x, y) => { const f = (y - top) / Math.max(1, bot - top), hw = lerp(a, b, f); return Math.abs(x - cx) <= hw + Math.max(1, s(2)); }, lining, (x, y) => { const f = (y - top) / Math.max(1, bot - top), hw = lerp(a, b, f); return Math.abs(x - cx) > hw ? 0.85 : 0.18; });
       });
-      // the notch in each riser: a smooth stone sill (the water falls over it)
+      // the notch in each riser: its chute of dark wet stone (left unpainted, the dry channel showed through; AR-1), a
+      // smooth stone sill at the top (the water falls over it)
+      rows.forEach((r, i) => L.rect(cx - rw[i], r.lip(cx), rw[i] * 2, r.foot(cx) - r.lip(cx) + 1, lining, (x, y) => ((Math.round(y) % Math.max(3, s(5))) === 0 ? 0.24 : 0.1)));
       rows.forEach((r, i) => L.rect(cx - rw[i], r.lip(cx), rw[i] * 2, Math.max(2, Math.round(r.rh * 0.25)), lining, 0.6));
       // the channel from the hill to the gate, and the gate's stone posts and beam
       const ch = p.mat('#5a6e86', { n: 5, at: 2 });

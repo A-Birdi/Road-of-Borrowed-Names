@@ -491,14 +491,29 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const gap = Math.round(bw * (narrow ? 0.5 : 0.56));
     return Object.assign(S, { land, narrow, kx, ky, horizon, bw, yb, lx: kx - gap, rx: kx + gap });
   }
-  // the companion's own small gesture as they answer (a hand at their shoulder; the lamp's light for Ren)
-  function aside(c, G, comp, b, k) {
+  // the companion's own small gesture as they answer: Nao's hand to the strap at the shoulder; Mio's reaching toward
+  // you, Suzu's pointing up, Ren raising the lamp, each with their arm (AR-1: the hand used to float with none). The
+  // figure is drawn with that arm left out (aside.raises); sh: their shoulder on our left.
+  const RAISES = { mio: 1, suzu: 1, ren: 1 };
+  function aside(c, G, comp, b, k, sh) {
     const sk = Q.skinOf(comp.look), sl = Q.clothOf(comp.look)[0], e = ease(k), Zs = clamp(G.Z, 0.6, 1.3);
-    const hx = b.x - b.w * 0.3, hy = b.y - b.h * 0.42;
+    const hx = b.x - b.w * 0.3, hy = b.y - b.h * 0.42, W = b.w;
+    const withArm = (from, to, draw) => {
+      const e8 = Math.round(e * 8) / 8, wx = Math.round(lerp(from[0], to[0], e8) * W), wy = Math.round(lerp(from[1], to[1], e8) * W);
+      const a = Q.small('ch6.asideArm|' + comp.id + '|' + W + '|' + e8, () => RB.seqBack.arm(comp.look, W, wx, wy));
+      if (a) c.drawImage(a.cv, sh[0] - a.ox, sh[1] - a.oy);
+      draw(sh[0] + wx, sh[1] + wy, e8);
+    };
     if (comp.id === 'nao') { const hd = Q.hand({ size: Math.round(10 * Zs), pose: 'grip', side: 'L', angle: -Math.PI / 2, skin: sk, sleeve: sl }); if (hd && k > 0.2) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy + (1 - e) * 12 - hd.ay)); }
-    else if (comp.id === 'mio') { const hd = Q.hand({ size: Math.round(11 * Zs), pose: 'offer', side: 'R', angle: Math.PI + 0.35, skin: sk, sleeve: sl }); if (hd && k > 0.1) c.drawImage(hd.cv, Math.round(lerp(hx, b.x - b.w * 0.62, e) - hd.ax), Math.round(hy + b.h * 0.06 - hd.ay)); }
-    else if (comp.id === 'suzu') { const hd = Q.hand({ size: Math.round(10 * Zs), pose: 'point', side: 'R', angle: -Math.PI / 2 - 0.15, skin: sk, sleeve: sl }); if (hd && k > 0.15) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - e * b.h * 0.2 - hd.ay)); }
-    else if (comp.id === 'ren') { const lx = Math.round(hx - b.w * 0.05), ly = Math.round(hy - e * b.h * 0.22); c.globalAlpha = 0.9; P().halo(c, lx, ly, Math.round(G.s(56) * (0.6 + e * 0.4)), '255,214,140', 0.24, 4); c.globalAlpha = 1; R(c, lx - 2, ly - 3, 5, 6, '#ffd890'); R(c, lx - 3, ly - 4, 7, 1, '#3a2c20'); R(c, lx - 3, ly + 3, 7, 1, '#3a2c20'); R(c, lx, ly - 8, 1, 4, '#3a2c20'); }
+    else if (comp.id === 'mio') withArm([-0.04, 0.3], [-0.34, 0.02], (x, y) => { const hd = Q.hand({ size: Math.round(W * 0.085), pose: 'offer', side: 'R', angle: Math.PI + 0.35, skin: sk, sleeve: sl }); if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay)); });
+    else if (comp.id === 'suzu') withArm([-0.04, 0.3], [0, -0.32], (x, y) => { const hd = Q.hand({ size: Math.round(W * 0.08), pose: 'point', side: 'R', angle: -Math.PI / 2 - 0.15, skin: sk, sleeve: sl }); if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay)); });
+    else if (comp.id === 'ren') withArm([-0.04, 0.3], [-0.12, -0.3], (x, y, e8) => {
+      // the lamp hangs from the hand: its light, the body, the cap and the ring the hand holds
+      const lx = Math.round(x), ly = Math.round(y + 10);
+      c.globalAlpha = 0.9; P().halo(c, lx, ly, Math.round(G.s(56) * (0.6 + e8 * 0.4)), '255,214,140', 0.24, 4); c.globalAlpha = 1;
+      R(c, lx - 2, ly - 3, 5, 6, '#ffd890'); R(c, lx - 3, ly - 4, 7, 1, '#3a2c20'); R(c, lx - 3, ly + 3, 7, 1, '#3a2c20'); R(c, lx, ly - 9, 1, 5, '#3a2c20');
+      const hd = Q.hand({ size: Math.round(W * 0.075), pose: 'grip', side: 'L', angle: -Math.PI / 2, skin: sk, sleeve: sl }); if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay));
+    });
   }
   const decide = {
     phases: [['tired', 700], ['lift', 700], ['aside', 900]],
@@ -518,11 +533,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const yb = Q.back(st.cast.pc || {}, G.bw, { light: 'r', pose: 'kneel' });
       if (yb) c.drawImage(yb.cv, G.lx - yb.ax, G.yb - yb.ay);
       if (comp) {
-        const cb = Q.back(comp.look, Math.round(G.bw * 0.95), { light: 'l', pose: 'kneel' });
+        const raise = ka > 0 && RAISES[comp.id];
+        const cb = Q.back(comp.look, Math.round(G.bw * 0.95), raise ? { light: 'l', pose: 'kneel', raise: 'l' } : { light: 'l', pose: 'kneel' });
         const nod = comp.id === 'nao' && ka > 0 && ka < 1 && !still ? Math.round(Math.sin(Math.PI * ka) * 2) : 0;
         const box = { x: G.rx, y: G.yb, w: cb ? cb.w : G.bw, h: cb ? cb.h : G.bw };
         if (cb) c.drawImage(cb.cv, G.rx - cb.ax, G.yb - cb.ay + nod);
-        if (ka > 0) aside(c, G, comp, box, ka);
+        if (ka > 0 && cb) aside(c, G, comp, box, ka, [G.rx - cb.ax + cb.shoulders.l[0], G.yb - cb.ay + nod + cb.shoulders.l[1]]);
       }
     },
     focus(w, h, vb) { const G = geomDecide(w, h, vb); return { x: G.kx - 32, y: G.ky - 88, w: 64, h: Math.min(G.land ? 48 : 58, vb - (G.ky - 88)) }; },

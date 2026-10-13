@@ -425,7 +425,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const geo = room(L, C, { W: 5, D, H: Hd,
           floor: [water, (X, Z, x, y) => { const Xw = X + Math.sin(Z * 5) * 0.04, gap = frac(Xw / 0.42) < 0.05 && hash(Math.floor(Z * 2.5) * 7 + Math.floor(Xw / 0.42) * 3) > 0.6; return 0.2 + Math.max(0, 1 - Math.abs(X) / 1.4) * Math.min(0.42, Z * 0.024) + (frac(Z * 1.6 + Math.sin(X * 2.4) * 0.3) < 0.16 ? 0.08 * Math.min(1, Z / 7) : 0) + (gap ? 0.22 : 0) + dz(x, y, 0.06); }],
           ceil: [deck, (X, Z, x, y) => 0.18 + (frac(X / 0.42) < 0.06 ? -0.12 : 0) + (frac(Z / 2.5) < 0.12 ? 0.2 : 0) + dz(x, y, 0.05)],
-          back: [far, (X, Y, x, y) => (Y < 0.6 ? 0.5 + (Y < 0.25 ? -0.25 : 0) : 0.85) + dz(x, y, 0.04)] });
+          back: [far, (X, Y, x, y) => (Y < 0.6 ? 0.5 + (Y < 0.25 ? -0.25 : 0) : 0.85) + dz(x, y, 0.04)],
+          // the open sides between the outer piles: the misty day outside, the far bank low along the water (they were
+          // left unpainted; AR-1)
+          left: [far, (Z, Y, x, y) => (Y < 0.35 ? 0.3 + (Y < 0.12 ? -0.12 : 0) : 0.62 + Math.min(0.2, Z * 0.012)) + dz(x, y, 0.04)],
+          right: [far, (Z, Y, x, y) => (Y < 0.35 ? 0.3 + (Y < 0.12 ? -0.12 : 0) : 0.66 + Math.min(0.2, Z * 0.012)) + dz(x, y, 0.04)] });
         void geo;
         // the piles in two rows going away, the cross-beams on them
         for (let Z = 2.5; Z < D; Z += 2.5) for (const X of [-2.0, 2.0]) drum(L, C, X, Z, 0.16, 0, Hd, pile, { amb: 0.2, top: false, k: clamp(0.5 + Z / D * 0.4, 0, 1) });

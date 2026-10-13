@@ -538,6 +538,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = win.x; x < win.x + win.w; x++) { const v = Math.sin(x / (w * 0.09) + 1.2) * 0.6 + Math.sin(x / (w * 0.031)) * 0.4; const t1 = Math.round(yH - s(36) - s(10) * (0.5 + v * 0.5)); R(g, x, t1, 1, yH - t1, '#3a3458'); R(g, x, t1, 1, 1, '#5a4a6e'); }
       // the lake: the sky's colours in it, darker toward us
       Q.bandsIn(g, win.x, yH + s(8), win.w, win.y + win.h - yH - s(8), ['#8a6a86', '#6a5680', '#4e4674', '#3a3864', '#2c2c54', '#22244a'], 0.4);
+      R(g, win.x, yH, win.w, s(8), '#34304e');   // the shore under the town (a line of nothing showed at its foot; AR-1)
       const T = townLayer(G);
       g.drawImage(T.cv, 0, 0);
       // the town in the water, broken

@@ -70138,7 +70138,28 @@ RB.seqBack = (function () {
       shoulders: { l: [Math.round(cx - SH + W * 0.05), Math.round(sh + W * 0.06)], r: [Math.round(cx + SH - W * 0.05), Math.round(sh + W * 0.06)] },
     };
   }
-  return { draw };
+  // A raised arm for a figure drawn with o.raise: shoulder to wrist in the figure's sleeve (a robe's hangs under the
+  // forearm), as wide as its arms, bent a little at the elbow, the cuff at the wrist. (wx, wy): the wrist from the
+  // shoulder point the figure returns. → { cv, ox, oy }: the shoulder's place in cv. The shot draws the hand.
+  function arm(lk, W, wx, wy) {
+    lk = lk || {};
+    const p = K(), col = RB.sprites.colorsOf(lk), wide = !!(lk.yukata || lk.shape === 'robe');
+    const step = 0.075, cloth = p.mat(col.cloth[0], { n: 7, at: 4, step }), accent = p.mat(col.cloth[2] || col.cloth[1], { n: 6, at: 3, step: 0.08 });
+    const m = W * 0.2, x0 = Math.min(0, wx) - m, y0 = Math.min(0, wy) - m, x1 = Math.max(0, wx) + m, y1 = Math.max(0, wy) + m + (wide ? W * 0.2 : 0);
+    const L = p.layer(Math.ceil(x1 - x0), Math.ceil(y1 - y0)), ox = Math.round(-x0), oy = Math.round(-y0);
+    const len = Math.hypot(wx, wy) || 1, nx = -wy / len, ny = wx / len, bend = W * 0.05 * (ny > 0 ? 1 : -1);
+    const ex = ox + wx * 0.5 + nx * bend, ey = oy + wy * 0.5 + ny * bend;
+    const tx = ox + wx, ty = oy + wy;
+    if (wide) L.poly([[ex - W * 0.05, ey], [tx, ty], [tx, ty + W * 0.16], [ex - W * 0.03, ey + W * 0.16]], cloth, 2); // the sleeve hanging
+    L.seg(ox, oy, ex, ey, W * 0.125, cloth, 3);
+    L.seg(ex, ey, tx, ty, W * 0.1, cloth, 4);
+    L.seg(ox + (ex - ox) * 0.2, oy + (ey - oy) * 0.2 - W * 0.02, ex, ey - W * 0.02, W * 0.03, cloth, 5);   // the lit top of the sleeve
+    const kx = tx - ex, ky = ty - ey, kl = Math.hypot(kx, ky) || 1;
+    if (!wide) L.seg(tx - kx / kl * W * 0.03, ty - ky / kl * W * 0.03, tx, ty, W * 0.1, accent, 2);
+    L.outline();
+    return { cv: L.canvas(), ox, oy };
+  }
+  return { draw, arm };
 })();
 
 
@@ -71957,7 +71978,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const post = p.mat(POST, { n: 5, at: 2, step: 0.08 }), pw = s(close ? 12 : 8);
       L.rect(dX - pw, top - s(6), pw, h - top + s(6), post, (x) => (x < dX - pw + 2 ? 0.9 : 0.5));
       L.rect(dX + dW, top - s(6), pw, h - top + s(6), post, (x) => (x < dX + dW + 2 ? 0.7 : 0.35));
-      L.rect(dX - pw, top - s(12), dW + pw * 2, s(9), post, (x, y) => (y < top - s(11) ? 0.92 : 0.45));
+      // (close, no board front: the lintel comes down to the interior, or a line of nothing showed between; AR-1)
+      L.rect(dX - pw, top - s(12), dW + pw * 2, close ? s(12) : s(9), post, (x, y) => (y < top - s(11) ? 0.92 : 0.45));
       if (close) { L.rect(0, 0, dX - pw, h, post, 0.2); L.rect(dX + dW + pw, 0, w, h, post, 0.15); L.rect(0, 0, w, Math.max(0, top - s(12)), post, 0.18); }
       L.outline();
       g.drawImage(I.canvas(), 0, 0);
@@ -72627,6 +72649,13 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const ctr = p.mat('#7a5a3e', { n: 6, at: 3, step: 0.08 });
         L.rect(0, back, w, s(10), ctr, (x, y) => (y < back + 1 ? 0.98 : y < back + s(7) ? 0.75 : 0.55));
         L.rect(0, back + s(10), w, h - back, p.mat('#4e3828', { n: 5, at: 3 }), (x, y) => ((Math.round(x) % s(30)) < 1 ? 0.15 : 0.45));
+      } else {
+        // close, past the counter: the workshop's floorboards to the frame's bottom, their seams widening toward us,
+        // a shadow along the wall's foot (it was left unpainted; AR-1)
+        const fl = p.mat('#5a4434', { n: 6, at: 3, step: 0.08 }), span = Math.max(1, h - back);
+        const row = (y) => Math.floor(Math.sqrt((y - back) / span) * 9);
+        L.rect(0, back, w, h - back, fl, (x, y) => clamp(0.56 - (y - back) / span * 0.22 + (row(y) !== row(y + 1) ? -0.2 : 0) + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
+        L.rect(0, back, w, Math.max(2, s(3)), fl, 0.18);
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
@@ -72872,7 +72901,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   const DUSK = ['#262650', '#33305c', '#463864', '#644268', '#8c4e66', '#b45e5e', '#d47a52', '#eaa058'];
   const NIGHT = ['#0e1028', '#141634', '#1a1c3e', '#222246', '#2c284c', '#3a3050'];
   function sky(g, w, yH, s, rnd, night, cols) {
-    Q.bandsIn(g, 0, 0, w, yH, cols || (night ? NIGHT : DUSK), 0.45);
+    // (a little past the horizon: where the hills' edge dips below it at the frame's edge, sky, not nothing; AR-1)
+    Q.bandsIn(g, 0, 0, w, yH + Math.max(2, s(6)), cols || (night ? NIGHT : DUSK), 0.45);
     const p = P();
     // long clouds, their undersides catching the gone sun (at night: dark shapes on the dark)
     const CL = p.layer(w, Math.max(4, yH));
@@ -73377,21 +73407,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const hd = Q.hand({ size: Math.round(9 * k), pose: 'grip', side: 'R', angle: ang - Math.PI / 2, skin: sk, sleeve: sl });
     if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay));
   }
-  // Tamotsu's arm raised to point at the hill, from behind: shoulder to wrist in his coat's sleeve, the cuff; e from
-  // hanging (0) to raised (1). Local origin at the shoulder; wx, wy where the wrist is.
+  // Tamotsu's arm raised to point at the hill, from behind: e from hanging (0) to raised (1); wx, wy: the wrist from
+  // his shoulder
   function tamotsuArm(W, e) {
-    const p = RB.pxkit, cl = RB.sprites.colorsOf(look('co_tamotsu')).cloth;
-    const ox = Math.round(W * 0.5), oy = Math.round(W * 0.45), L = p.layer(Math.round(W * 0.66), Math.round(W * 0.78));
     const wx = Math.round(lerp(-W * 0.05, -W * 0.4, e)), wy = Math.round(lerp(W * 0.3, -W * 0.36, e));
-    const ex = ox + wx * 0.5 - W * 0.02, ey = oy + wy * 0.5 + W * 0.03;
-    const sl = p.mat(cl[0], { n: 7, at: 4, step: 0.075 }), cuff = p.mat(cl[2] || cl[1], { n: 6, at: 3, step: 0.08 });
-    L.seg(ox, oy, ex, ey, W * 0.125, sl, 3);
-    L.seg(ex, ey, ox + wx, oy + wy, W * 0.1, sl, 4);
-    L.seg(ex, ey, ox + wx, oy + wy, W * 0.035, sl, 5);   // the lit top of the sleeve
-    const kx = (ox + wx - ex), ky = (oy + wy - ey), kl = Math.hypot(kx, ky) || 1;
-    L.seg(ox + wx - kx / kl * W * 0.03, oy + wy - ky / kl * W * 0.03, ox + wx, oy + wy, W * 0.1, cuff, 2);
-    L.outline();
-    return { cv: L.canvas(), ox, oy, wx, wy };
+    return Object.assign(RB.seqBack.arm(look('co_tamotsu'), W, wx, wy), { wx, wy });
   }
   const living = {
     phases: [['tamotsu', 700], ['sickle', 900]],
@@ -73867,7 +73887,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const top = rows[i - 1].foot(cx), bot = r.lip(cx), a = rw[i - 1], b = rw[i];
         L.fill(cx - b - s(4), top, cx + b + s(4), bot + 1, (x, y) => { const f = (y - top) / Math.max(1, bot - top), hw = lerp(a, b, f); return Math.abs(x - cx) <= hw + Math.max(1, s(2)); }, lining, (x, y) => { const f = (y - top) / Math.max(1, bot - top), hw = lerp(a, b, f); return Math.abs(x - cx) > hw ? 0.85 : 0.18; });
       });
-      // the notch in each riser: a smooth stone sill (the water falls over it)
+      // the notch in each riser: its chute of dark wet stone (left unpainted, the dry channel showed through; AR-1), a
+      // smooth stone sill at the top (the water falls over it)
+      rows.forEach((r, i) => L.rect(cx - rw[i], r.lip(cx), rw[i] * 2, r.foot(cx) - r.lip(cx) + 1, lining, (x, y) => ((Math.round(y) % Math.max(3, s(5))) === 0 ? 0.24 : 0.1)));
       rows.forEach((r, i) => L.rect(cx - rw[i], r.lip(cx), rw[i] * 2, Math.max(2, Math.round(r.rh * 0.25)), lining, 0.6));
       // the channel from the hill to the gate, and the gate's stone posts and beam
       const ch = p.mat('#5a6e86', { n: 5, at: 2 });
@@ -75323,6 +75345,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let x = win.x; x < win.x + win.w; x++) { const v = Math.sin(x / (w * 0.09) + 1.2) * 0.6 + Math.sin(x / (w * 0.031)) * 0.4; const t1 = Math.round(yH - s(36) - s(10) * (0.5 + v * 0.5)); R(g, x, t1, 1, yH - t1, '#3a3458'); R(g, x, t1, 1, 1, '#5a4a6e'); }
       // the lake: the sky's colours in it, darker toward us
       Q.bandsIn(g, win.x, yH + s(8), win.w, win.y + win.h - yH - s(8), ['#8a6a86', '#6a5680', '#4e4674', '#3a3864', '#2c2c54', '#22244a'], 0.4);
+      R(g, win.x, yH, win.w, s(8), '#34304e');   // the shore under the town (a line of nothing showed at its foot; AR-1)
       const T = townLayer(G);
       g.drawImage(T.cv, 0, 0);
       // the town in the water, broken
@@ -76187,14 +76210,29 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const gap = Math.round(bw * (narrow ? 0.5 : 0.56));
     return Object.assign(S, { land, narrow, kx, ky, horizon, bw, yb, lx: kx - gap, rx: kx + gap });
   }
-  // the companion's own small gesture as they answer (a hand at their shoulder; the lamp's light for Ren)
-  function aside(c, G, comp, b, k) {
+  // the companion's own small gesture as they answer: Nao's hand to the strap at the shoulder; Mio's reaching toward
+  // you, Suzu's pointing up, Ren raising the lamp, each with their arm (AR-1: the hand used to float with none). The
+  // figure is drawn with that arm left out (aside.raises); sh: their shoulder on our left.
+  const RAISES = { mio: 1, suzu: 1, ren: 1 };
+  function aside(c, G, comp, b, k, sh) {
     const sk = Q.skinOf(comp.look), sl = Q.clothOf(comp.look)[0], e = ease(k), Zs = clamp(G.Z, 0.6, 1.3);
-    const hx = b.x - b.w * 0.3, hy = b.y - b.h * 0.42;
+    const hx = b.x - b.w * 0.3, hy = b.y - b.h * 0.42, W = b.w;
+    const withArm = (from, to, draw) => {
+      const e8 = Math.round(e * 8) / 8, wx = Math.round(lerp(from[0], to[0], e8) * W), wy = Math.round(lerp(from[1], to[1], e8) * W);
+      const a = Q.small('ch6.asideArm|' + comp.id + '|' + W + '|' + e8, () => RB.seqBack.arm(comp.look, W, wx, wy));
+      if (a) c.drawImage(a.cv, sh[0] - a.ox, sh[1] - a.oy);
+      draw(sh[0] + wx, sh[1] + wy, e8);
+    };
     if (comp.id === 'nao') { const hd = Q.hand({ size: Math.round(10 * Zs), pose: 'grip', side: 'L', angle: -Math.PI / 2, skin: sk, sleeve: sl }); if (hd && k > 0.2) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy + (1 - e) * 12 - hd.ay)); }
-    else if (comp.id === 'mio') { const hd = Q.hand({ size: Math.round(11 * Zs), pose: 'offer', side: 'R', angle: Math.PI + 0.35, skin: sk, sleeve: sl }); if (hd && k > 0.1) c.drawImage(hd.cv, Math.round(lerp(hx, b.x - b.w * 0.62, e) - hd.ax), Math.round(hy + b.h * 0.06 - hd.ay)); }
-    else if (comp.id === 'suzu') { const hd = Q.hand({ size: Math.round(10 * Zs), pose: 'point', side: 'R', angle: -Math.PI / 2 - 0.15, skin: sk, sleeve: sl }); if (hd && k > 0.15) c.drawImage(hd.cv, Math.round(hx - hd.ax), Math.round(hy - e * b.h * 0.2 - hd.ay)); }
-    else if (comp.id === 'ren') { const lx = Math.round(hx - b.w * 0.05), ly = Math.round(hy - e * b.h * 0.22); c.globalAlpha = 0.9; P().halo(c, lx, ly, Math.round(G.s(56) * (0.6 + e * 0.4)), '255,214,140', 0.24, 4); c.globalAlpha = 1; R(c, lx - 2, ly - 3, 5, 6, '#ffd890'); R(c, lx - 3, ly - 4, 7, 1, '#3a2c20'); R(c, lx - 3, ly + 3, 7, 1, '#3a2c20'); R(c, lx, ly - 8, 1, 4, '#3a2c20'); }
+    else if (comp.id === 'mio') withArm([-0.04, 0.3], [-0.34, 0.02], (x, y) => { const hd = Q.hand({ size: Math.round(W * 0.085), pose: 'offer', side: 'R', angle: Math.PI + 0.35, skin: sk, sleeve: sl }); if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay)); });
+    else if (comp.id === 'suzu') withArm([-0.04, 0.3], [0, -0.32], (x, y) => { const hd = Q.hand({ size: Math.round(W * 0.08), pose: 'point', side: 'R', angle: -Math.PI / 2 - 0.15, skin: sk, sleeve: sl }); if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay)); });
+    else if (comp.id === 'ren') withArm([-0.04, 0.3], [-0.12, -0.3], (x, y, e8) => {
+      // the lamp hangs from the hand: its light, the body, the cap and the ring the hand holds
+      const lx = Math.round(x), ly = Math.round(y + 10);
+      c.globalAlpha = 0.9; P().halo(c, lx, ly, Math.round(G.s(56) * (0.6 + e8 * 0.4)), '255,214,140', 0.24, 4); c.globalAlpha = 1;
+      R(c, lx - 2, ly - 3, 5, 6, '#ffd890'); R(c, lx - 3, ly - 4, 7, 1, '#3a2c20'); R(c, lx - 3, ly + 3, 7, 1, '#3a2c20'); R(c, lx, ly - 9, 1, 5, '#3a2c20');
+      const hd = Q.hand({ size: Math.round(W * 0.075), pose: 'grip', side: 'L', angle: -Math.PI / 2, skin: sk, sleeve: sl }); if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay));
+    });
   }
   const decide = {
     phases: [['tired', 700], ['lift', 700], ['aside', 900]],
@@ -76214,11 +76252,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const yb = Q.back(st.cast.pc || {}, G.bw, { light: 'r', pose: 'kneel' });
       if (yb) c.drawImage(yb.cv, G.lx - yb.ax, G.yb - yb.ay);
       if (comp) {
-        const cb = Q.back(comp.look, Math.round(G.bw * 0.95), { light: 'l', pose: 'kneel' });
+        const raise = ka > 0 && RAISES[comp.id];
+        const cb = Q.back(comp.look, Math.round(G.bw * 0.95), raise ? { light: 'l', pose: 'kneel', raise: 'l' } : { light: 'l', pose: 'kneel' });
         const nod = comp.id === 'nao' && ka > 0 && ka < 1 && !still ? Math.round(Math.sin(Math.PI * ka) * 2) : 0;
         const box = { x: G.rx, y: G.yb, w: cb ? cb.w : G.bw, h: cb ? cb.h : G.bw };
         if (cb) c.drawImage(cb.cv, G.rx - cb.ax, G.yb - cb.ay + nod);
-        if (ka > 0) aside(c, G, comp, box, ka);
+        if (ka > 0 && cb) aside(c, G, comp, box, ka, [G.rx - cb.ax + cb.shoulders.l[0], G.yb - cb.ay + nod + cb.shoulders.l[1]]);
       }
     },
     focus(w, h, vb) { const G = geomDecide(w, h, vb); return { x: G.kx - 32, y: G.ky - 88, w: 64, h: Math.min(G.land ? 48 : 58, vb - (G.ky - 88)) }; },
@@ -78343,6 +78382,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const cv = mk(w, h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
       Q.bandsIn(g, 0, 0, w, sea + s(10), ['#3a6ab0', '#4a7ab8', '#5e8cc4', '#7aa2d0', '#98b8dc', '#b8cce4'], 0.45);
+      // the cloud sea's body, on toward us under its rows and the near ground (the rows stop short of the ground on
+      // most sizes, and the gap was left unpainted; AR-1)
+      Q.bandsIn(g, 0, sea + s(10), w, h - sea - s(10), ['#d4dcea', '#ccd5e5', '#c2cce0', '#b8c4da'], 0.45);
       const L = SP.layer(w, h), rnd = p.rnd(east ? 83 : 81);
       // far peaks standing out of the cloud, snow on their upper faces
       const rock = p.mat('#5a6478', { n: 7, at: 3, step: 0.07 }), snow = p.mat('#e8eef6', { n: 6, at: 4, step: 0.05 });
@@ -79170,7 +79212,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
         const geo = room(L, C, { W: 5, D, H: Hd,
           floor: [water, (X, Z, x, y) => { const Xw = X + Math.sin(Z * 5) * 0.04, gap = frac(Xw / 0.42) < 0.05 && hash(Math.floor(Z * 2.5) * 7 + Math.floor(Xw / 0.42) * 3) > 0.6; return 0.2 + Math.max(0, 1 - Math.abs(X) / 1.4) * Math.min(0.42, Z * 0.024) + (frac(Z * 1.6 + Math.sin(X * 2.4) * 0.3) < 0.16 ? 0.08 * Math.min(1, Z / 7) : 0) + (gap ? 0.22 : 0) + dz(x, y, 0.06); }],
           ceil: [deck, (X, Z, x, y) => 0.18 + (frac(X / 0.42) < 0.06 ? -0.12 : 0) + (frac(Z / 2.5) < 0.12 ? 0.2 : 0) + dz(x, y, 0.05)],
-          back: [far, (X, Y, x, y) => (Y < 0.6 ? 0.5 + (Y < 0.25 ? -0.25 : 0) : 0.85) + dz(x, y, 0.04)] });
+          back: [far, (X, Y, x, y) => (Y < 0.6 ? 0.5 + (Y < 0.25 ? -0.25 : 0) : 0.85) + dz(x, y, 0.04)],
+          // the open sides between the outer piles: the misty day outside, the far bank low along the water (they were
+          // left unpainted; AR-1)
+          left: [far, (Z, Y, x, y) => (Y < 0.35 ? 0.3 + (Y < 0.12 ? -0.12 : 0) : 0.62 + Math.min(0.2, Z * 0.012)) + dz(x, y, 0.04)],
+          right: [far, (Z, Y, x, y) => (Y < 0.35 ? 0.3 + (Y < 0.12 ? -0.12 : 0) : 0.66 + Math.min(0.2, Z * 0.012)) + dz(x, y, 0.04)] });
         void geo;
         // the piles in two rows going away, the cross-beams on them
         for (let Z = 2.5; Z < D; Z += 2.5) for (const X of [-2.0, 2.0]) drum(L, C, X, Z, 0.16, 0, Hd, pile, { amb: 0.2, top: false, k: clamp(0.5 + Z / D * 0.4, 0, 1) });

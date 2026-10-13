@@ -32,6 +32,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const cv = mk(w, h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
       Q.bandsIn(g, 0, 0, w, sea + s(10), ['#3a6ab0', '#4a7ab8', '#5e8cc4', '#7aa2d0', '#98b8dc', '#b8cce4'], 0.45);
+      // the cloud sea's body, on toward us under its rows and the near ground (the rows stop short of the ground on
+      // most sizes, and the gap was left unpainted; AR-1)
+      Q.bandsIn(g, 0, sea + s(10), w, h - sea - s(10), ['#d4dcea', '#ccd5e5', '#c2cce0', '#b8c4da'], 0.45);
       const L = SP.layer(w, h), rnd = p.rnd(east ? 83 : 81);
       // far peaks standing out of the cloud, snow on their upper faces
       const rock = p.mat('#5a6478', { n: 7, at: 3, step: 0.07 }), snow = p.mat('#e8eef6', { n: 6, at: 4, step: 0.05 });
