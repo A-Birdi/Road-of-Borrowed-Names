@@ -739,8 +739,10 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     the back, the garment from behind, legs and feet, seiza, raised and forward arms); every held thing within reach;
     every shot paints its whole frame (eight places had gaps); the prologue counter's black front; smaller placements.
   - Evidence: unit `sequence` 499/0, `portrait` 70/0; browser `sequence_art_integrity.mjs` 13/0 (full; negative
-    control fails as it should; `--quick` in the default run). Still running at this commit: the existing sequence
-    suites on the final build; still to make: the before/after pairs (`docs/screenshots/ar1/`). VALIDATION.md "AR-1".
+    control fails as it should; `--quick` in the default run); the existing sequence suites on the final build
+    (`sequence_p16` 101/0, `sequence_chapters` 121/0, `sequence_chapters_56` 196/0, `sequence_dev` 9/0,
+    `sequence_manual --quick` 64/0, `sequence_world --quick` 892/0, `prologue` 100/0, `portrait_anim` 77/0);
+    before/after pairs `docs/screenshots/ar1/` (14, lossless). VALIDATION.md "AR-1".
   - Open: Robin's review of the illustrations.
 
 ## Evidence index (see VALIDATION.md for commands and dates)

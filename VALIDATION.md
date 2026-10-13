@@ -4271,7 +4271,12 @@ decision. **Status: implemented provisionally, internally reviewed. Not Robin-ap
 `RB.sequence.drawAt` at 1280×720, 390×844 and 844×390, lossless PNG, read shot by shot on contact sheets and in crops;
 the same before the pass (commit 393654f, built from a `git archive` copy) for the comparisons. Robin's three captures
 are the volume's pages of `ko.end` and `ch6.ren`. Evidence pairs (before | after, full frame over magenta, so an
-unpainted pixel shows): to be added in `docs/screenshots/ar1/` (lossless WebP).
+unpainted pixel shows): `docs/screenshots/ar1/`, 14 lossless WebP files, 1.8 MB, drawn by `RB.sequence.drawAt`
+with the dev fixture traveller and companion (before: 393654f built from a `git archive` copy; after: this branch):
+Robin's three subjects (`01` Otoha from the front, `02` Otoha from behind, `03` Ren), then `04` two travellers from
+behind, `05` kneeling, `06` Hana's reach, `07` Tamotsu's raised arm, `08` the prologue counter, `09`–`11` unpainted
+areas (the workshop floor, under the bridge, the cloud sea on a phone), `12` the gesture with an arm, `13` the sleeve
+off the frame (phone), `14` Kōji and Hana with the phone on its side.
 
 | Observed | Cause | Change | Decision |
 | --- | --- | --- | --- |
@@ -4292,10 +4297,11 @@ unpainted pixel shows): to be added in `docs/screenshots/ar1/` (lossless WebP).
   reach. **13/0** (full, 5 min 20 s; 3,420 drawings per size). Negative control: with the cloud sea's fill and the
   close lamp's placement put back as they were, the quick mode failed 5 checks, naming `cr.summit.clouds`/`steam` and
   `ch4.lamp.stay`/`both`; restored and rebuilt, the tree matched the commit. Added to the default run as `--quick`.
-- Browser, existing (on the final build): `sequence_p16`, `sequence_chapters`, `sequence_chapters_56`, `sequence_dev`,
-  `sequence_manual --quick`, `sequence_world --quick`, `prologue`, `portrait_anim` — running at the time of this entry;
-  results to be added here.
-- Review (R): every shot read at the three sizes after the last change.
+- Browser, existing, one after another on the build of 71c017d (the last art change; the later commits change tests
+  and records only): `sequence_p16` **101/0**, `sequence_chapters` **121/0**, `sequence_chapters_56` **196/0**,
+  `sequence_dev` **9/0**, `sequence_manual --quick` **64/0**, `sequence_world --quick` **892/0** (HX52: the pictures
+  and the world agree), `prologue` **100/0**, `portrait_anim` **77/0**. Headless Chromium only.
+- Review (R): every shot read at the three sizes after the last change, and the 14 pairs. Internal review only.
 
 ## P17 — the complete run on the final build (2026-10-13; done)
 
