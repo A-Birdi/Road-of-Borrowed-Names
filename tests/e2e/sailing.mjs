@@ -200,7 +200,9 @@ await test('by touch on a phone: the chart and the sail tapped, the boat steered
   await toChoice(p);
   await pick(p, /Open the chart/);
   await p.waitForSelector('.sea-dest[data-to=manybridge]');
-  const tap = async (sel) => { const r = await p.locator(sel).first().boundingBox(); await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2); };
+  // (waits for the element to be laid out: once, in a long chain of suites, the chart was re-rendered between the wait
+  // and the measure and its box came back null)
+  const tap = async (sel) => { const el = p.locator(sel).first(); await el.waitFor({ state: 'visible' }); const r = await el.boundingBox(); await p.touchscreen.tap(r.x + r.width / 2, r.y + r.height / 2); };
   await tap('.sea-dest[data-to=manybridge]');
   await p.waitForSelector('.sea-mode[data-mode=self]');
   await tap('.sea-mode[data-mode=self]');

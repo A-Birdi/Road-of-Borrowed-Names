@@ -760,7 +760,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     line, whole heads; two unpainted places at the new sizes; Ren's folio and glasses within reach sideways.
   - Evidence: VALIDATION.md "AR-2"; pairs `docs/screenshots/ar2/` (16, lossless, at 640 × 360 and the volume's size);
     `tests/e2e/sequence_art_integrity.mjs` now at the real sizes and the volume's, with three more checks (hands held,
-    faces in view, no jump between phases).
+    faces in view, no jump between phases): full 32/0 on the final build, negative control fails as it should; the
+    sequence, volume and book suites pass on the final build (sailing's touch tap hardened after one timing failure).
   - Open: Robin's review.
 
 ## Evidence index (see VALIDATION.md for commands and dates)

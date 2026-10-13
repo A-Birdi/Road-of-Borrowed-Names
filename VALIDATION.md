@@ -4381,11 +4381,23 @@ clock an hour on. Flagged steps were read as filmstrips.
   unpainted pixels, reach and errors it now checks that every hand is held up (a figure's arm, a drawn forearm, or its
   cuff off the frame; five shots whose own drawing holds a hand are listed with the reason), that every face is wholly in
   the frame and above the sheet once the action is over, and that no phase's end differs from the next phase's start.
-  On the build before the nameplate change: full **32/0** (3,420 drawings per size). Its first run at the real sizes
-  failed 11 checks, which led to the body lengths, the two unpainted places, Ren's reach on its side and Nao's strap
-  hand (looked at: held, the forearm in front of them; listed).
+  Its first run at the real sizes failed 11 checks, which led to the body lengths, the two unpainted places, Ren's reach
+  on its side and Nao's strap hand (looked at: held, the forearm in front of them; listed). On the final build (1d23b37):
+  full **32/0** (3,420 drawings per size). Negative control (a scratch copy with three faults put back: Kōji's cup hand
+  without its arm, Omi's hand without its forearm, the assembly's speakers stepping back at once): `--quick` failed 6
+  checks, naming exactly `ch1.bridge.close` and `ch2.notice.faults` at all five sizes and `ch3.assembly.voices` at its
+  four handovers; the working tree was not touched.
+- Browser, the existing suites, one after another on the final build (headless Chromium): `sequence_p16` **101/0**,
+  `sequence_chapters` **121/0**, `sequence_chapters_56` **196/0**, `sequence_dev` **9/0**, `sequence_manual --quick`
+  **64/0**, `sequence_world --quick` **892/0**, `prologue` **100/0**, `portrait_anim` all 77 passed, `records` **7/0**
+  (the volume), `hall` **4/0** (the tales' pages), `book_final` no problems (nothing wider than the screen, no errors).
+  `sailing` failed one check at the end of the chain ("by touch on a phone": a tap measured the chart's destination as
+  it was re-rendered and got no box); alone it passed **3/0** three times, and on e8b254c 3/0. The test's tap now waits
+  for the element to be visible (test only); then **3/0**.
 - Unit: `node tests/run-unit.mjs sequence` 499/0, `portrait` 70/0, `records` 261/0.
-- Further results: below, as they are run.
+- Review (R): every shot read at 640 × 360 (full size) and the phones (half size) before the changes; each changed shot
+  read after, at the sizes it changed at; the 16 pairs `docs/screenshots/ar2/` (lossless WebP: before e8b254c | after).
+  Internal review only; Robin's review open. Not verified: Firefox; a real phone.
 
 ## P17 — the complete run on the final build (2026-10-13; done)
 
