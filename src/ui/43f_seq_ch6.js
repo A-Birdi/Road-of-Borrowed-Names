@@ -616,8 +616,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       g.imageSmoothingEnabled = false;
       shelfWall(g, G.w, G.h, G.s, 5, dim);
       if (fl && fl[0] < G.h) {
-        Q.floor(g, G.w, G.h, fl[0], { col: '#4a3a34', vx: fl[1], eye: fl[2], s: G.s, n: 16 });
-        g.fillStyle = 'rgba(16,12,22,' + (dim || 0.35).toFixed(2) + ')'; g.fillRect(0, fl[0], G.w, G.h - fl[0]);
+        Q.floor(g, G.w, G.h, fl[0], { col: '#5a4840', vx: fl[1], eye: fl[2], s: G.s, n: 16 });
+        g.fillStyle = 'rgba(16,12,22,' + ((dim || 0.35) * 0.5).toFixed(2) + ')'; g.fillRect(0, fl[0], G.w, G.h - fl[0]);
       }
       // the warm light of the room's crystal lamp from the left, two flat steps
       g.fillStyle = 'rgba(255,226,180,0.06)'; g.fillRect(0, 0, Math.round(G.w * 0.6), G.h); g.fillRect(0, 0, Math.round(G.w * 0.3), G.h);
