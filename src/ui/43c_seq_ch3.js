@@ -325,16 +325,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.rect(bx0, by, pw, deck - by, wood, (xx) => (xx < bx0 + pw * 0.4 ? 0.85 : 0.4));
       L.rect(bx1, by, pw, deck - by, wood, (xx) => (xx < bx1 + pw * 0.4 ? 0.75 : 0.35));
       L.rect(bx0 - s(12), by - s(7), bx1 - bx0 + pw + s(24), s(7), wood, (xx, yy) => (yy < by - s(6) ? 0.92 : 0.45));
-      // the deck's front edge from below: a dark fascia, the planks' ends
-      L.rect(0, deck, w, h - deck, p.mat('#4e3624', { n: 5, at: 2 }), (x, y) => ((Math.round(x) % s(12)) < 1 ? 0.12 : y < deck + 1 ? 0.75 : 0.36));
+      // the deck's front edge from below: a dark fascia, the planks' ends (down to the square where someone stands in
+      // front of the stage)
+      const yGr = o.ground ? Math.round(o.ground) : h;
+      L.rect(0, deck, w, yGr - deck, p.mat('#4e3624', { n: 5, at: 2 }), (x, y) => ((Math.round(x) % s(12)) < 1 ? 0.12 : y < deck + 1 ? 0.75 : 0.36));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      if (o.ground) Q.floor(g, w, h, yGr, { kind: 'earth', col: '#5e4c3a', s, eye: o.eye });
       fruit(g, w, yH, s, hl.top, rnd);
       windows(g, wins, s, 0.5);
       bunting(g, bx0 + pw, by + s(2), bx1, by + s(2), s(14), s, 12);
-      return { cv, bx0, bx1, by };
+      return { cv, bx0, bx1, by, deck, ground: yGr };
     });
   }
+  // the stage's front over whoever stands on its deck: seen from below, its edge hides their legs (they hung down
+  // the fascia once bodies were drawn; AR-1)
+  function deckOver(c, B) { if (B.ground > B.deck) c.drawImage(B.cv, 0, B.deck, B.cv.width, B.ground - B.deck, 0, B.deck, B.cv.width, B.ground - B.deck); }
   // fingers curled over an edge (a hand holding a book or a board): n fingertips side by side hanging over the
   // edge at (x, y), and the thumb's tip on the near side; side ±1 puts the thumb left or right
   function fingers(c, x, y, k, sk, n, side) {
@@ -387,6 +393,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const bk = chronicle(c, bx, by, 1.2, 0);
       fingers(c, bx - Math.round(bk.W * 0.38), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, 1);
       fingers(c, bx + Math.round(bk.W * 0.16), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, -1);
+      deckOver(c, B);
       // Tamotsu below the stage, from behind, his hat at the lower right
       const tb2 = Q.back(look('co_tamotsu'), Math.round(clamp(s(120), 80, 160)), { light: 'l' });
       if (tb2) c.drawImage(tb2.cv, Math.round(Math.min(w - s(20), tx + s(190)) - tb2.ax), Math.round(G.vb + s(64) - tb2.ay));
@@ -503,7 +510,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Tokiwa\'s face top centre-right, Gorō\'s lower left, the lanterns above', narrow: 'the lanterns, Tokiwa, Gorō stacked', land: 'Tokiwa\'s face (and Gorō\'s beside it)' },
     draw(c, w, h, t, st) {
       const G = geomNames(w, h, st.vb), { s, tx, ty, gx, gy } = G, still = st.still;
-      const B = backStatic(G, 'names', { yH: ty - s(50), roof: ty - s(20), deck: ty + s(26), bx0: s(16), bx1: w - s(30), beam: Math.max(s(6), ty - 96 - s(24)), seed: 23 });
+      // (Gorō stands on the square in front of the stage: its front ends at the ground a little behind his feet)
+      const B = backStatic(G, 'names', { yH: ty - s(50), roof: ty - s(20), deck: ty + s(26), bx0: s(16), bx1: w - s(30), beam: Math.max(s(6), ty - 96 - s(24)), seed: 23, ground: Math.round(gy + 200 - 0.22 * 260), eye: gy - 60 });
       c.drawImage(B.cv, 0, 0);
       // five lanterns along the beam, one lit for each name as it is read
       const kn = st.at('names'), xs = [];
@@ -522,6 +530,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         R(c, sx < 0 ? ex - 1 : ex - 2, ey, 3, 5, sk[1]); R(c, sx < 0 ? ex - 1 : ex - 2, ey, 2, 4, sk[0]);
         R(c, sx < 0 ? bx - ob.W - 5 : bx + ob.W, by - 2, 5, Math.round(ob.H / 2) + 6, sleeve('co_tokiwa'));
       }
+      deckOver(c, B);
       // Gorō in the crowd below, looking up at the stage; at "Mitsu" his head lowers
       const kg = st.at('goro');
       const gb = Q.bust('co_goro', kg > 0.3 ? 'sad2' : 'neutral', kg > 0.3 ? { head: [0, 2] } : { look: [1, -1], head: [0, -1] }, FACE_L, false, 200);

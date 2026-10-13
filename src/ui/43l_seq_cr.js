@@ -136,6 +136,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (const x of [Math.round(w * 0.42), Math.round(w * 0.96)]) L.rect(x, 0, s(7), h, beam, (xx) => (xx < x + s(2) ? 0.6 : 0.28));
         L.outline();
         g.drawImage(L.canvas(), 0, 0);
+        // the room's boards: the wall's foot a little behind where Heisuke stands (the wall ran to the frame's bottom,
+        // and he stood on it once his body was drawn; AR-1)
+        const hy0 = Math.max(Math.round(st.vb + s(12)), 100);
+        Q.floor(g, w, h, Math.round(hy0 + 200 - 0.22 * 260), { col: '#5a4434', vx: Math.round(w * 0.5), eye: hy0 - 60, s, n: 16 });
         SP.glow(g, Math.round(w * 0.22), Math.round(st.vb * 0.4), Math.round(w * 0.3), '255,210,150', 0.3);
         return { cv };
       });

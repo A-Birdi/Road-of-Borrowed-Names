@@ -148,7 +148,13 @@ RB.seqKit = (function () {
     if (!RB.portraitBody) return null;
     const bd = RB.portraitBody.below(p, look, ext, o);
     const off = (fr && fr.body) || [0, 0];
-    const cv = mk(bd.w, bd.h), c = cv.getContext('2d');
+    // (a few rows below the feet for their shadow on the ground: without it a figure looked stood on nothing; AR-1)
+    const cv = mk(bd.w, bd.h + 5), c = cv.getContext('2d');
+    const fx = bd.w / 2 + off[0], fy = bd.h - 1 + off[1];
+    for (const [rx, ry, a] of [[24, 4, 0.16], [17, 3, 0.2]]) {
+      c.fillStyle = 'rgba(14,8,20,' + a + ')';
+      for (let y = -ry; y <= ry; y++) { const hw = Math.round(rx * Math.sqrt(1 - (y / (ry + 0.5)) ** 2)); c.fillRect(Math.round(fx - hw), fy + y, hw * 2, 1); }
+    }
     c.drawImage(bd.back.toCanvas(), off[0], off[1]);
     c.drawImage(f, bd.pad, 0);
     if (bd.front) c.drawImage(bd.front.toCanvas(), off[0], off[1]);
@@ -286,8 +292,73 @@ RB.seqKit = (function () {
     L.rect(x, y, Math.max(1, s(2)), h, woodM, 2); L.rect(x + w - Math.max(1, s(2)), y, Math.max(1, s(2)), h, woodM, 1);
   }
 
+  // A floor from a wall's foot (y0) to the frame's bottom, in perspective: boards (or flags) running toward us,
+  // their joints converging on (vx, the eye's height above), cross joints spaced wider as they come nearer, a shadow
+  // along the wall's foot. For pictures whose people stand in front of a wall that used to run to the frame's bottom
+  // (they stood on nothing once their bodies were drawn; AR-1). o: { col, vx, eye, n (joints across), cross (rows),
+  // kind: 'boards' | 'flags', s }
+  // A sleeved forearm from off the frame (x0, y0) to a wrist at (x1, y1) (where a hand() is drawn), wd wide at the wrist,
+  // wider toward the elbow, the cuff at the wrist: for a hand reaching into a shot that had none (AR-1)
+  function sleeveTo(c, x0, y0, x1, y1, wd, col) {
+    // (close to us at the frame's edge, so much wider there than at the wrist)
+    const p = RB.pxkit, m = Math.ceil(wd * 2.2) + 2, ox = Math.floor(Math.min(x0, x1)) - m, oy = Math.floor(Math.min(y0, y1)) - m;
+    const L = p.layer(Math.ceil(Math.abs(x1 - x0)) + 2 * m + 2, Math.ceil(Math.abs(y1 - y0)) + 2 * m + 2), M = p.mat(col || '#4a5a7a', { n: 6, at: 3, step: 0.08 });
+    const dx = x1 - x0, dy = y1 - y0, d = Math.hypot(dx, dy) || 1, ex = x1 - dx / d * wd * 0.6, ey = y1 - dy / d * wd * 0.6;
+    const pts = [];
+    for (let i = 0; i <= 8; i++) { const u = i / 8; pts.push([lerp(x0, ex, u) - ox, lerp(y0, ey, u) - oy, Math.round(wd * lerp(3.4, 1, Math.pow(u, 0.7)))]); }
+    L.path(pts, wd, M, 3);
+    for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], q = pts[i]; L.seg(a[0] - dy / d * a[2] * 0.3, a[1] + dx / d * a[2] * 0.3, q[0] - dy / d * q[2] * 0.3, q[1] + dx / d * q[2] * 0.3, Math.max(1, q[2] * 0.22), M, 5); }
+    L.seg(x1 - ox - dx / d * wd * 0.7, y1 - oy - dy / d * wd * 0.7, x1 - ox - dx / d * wd * 0.35, y1 - oy - dy / d * wd * 0.35, wd * 1.05, M, 1);
+    L.outline();
+    c.drawImage(L.canvas(), ox, oy);
+  }
+  const hash2 = (i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+  function floor(g, w, h, y0, o) {
+    o = o || {};
+    y0 = Math.round(y0);
+    if (y0 >= h) return;
+    const s = o.s || ((n) => n), base = hex3(o.col || '#5a4434'), kind = o.kind || 'boards';
+    const tone = (k) => 'rgb(' + base.map((v) => clamp(Math.round(v * k), 0, 255)).join(',') + ')';
+    const vx = o.vx == null ? w / 2 : o.vx, eye = o.eye == null ? y0 - (h - y0) * 1.4 : o.eye;
+    const depth = (y) => (y - eye) / (h - eye);            // 0 at the eye's height, 1 at the frame's bottom
+    // the floor: a little lighter toward us, in two flat steps
+    R(g, 0, y0, w, h - y0, tone(0.92));
+    R(g, 0, Math.round(y0 + (h - y0) * 0.35), w, h, tone(1));
+    R(g, 0, Math.round(y0 + (h - y0) * 0.72), w, h, tone(1.06));
+    if (kind === 'earth') {
+      // packed earth: pebbles and dark grit, larger toward us
+      for (let i = 0; i < w * (h - y0) * 0.004; i++) {
+        const x = Math.floor(hash2(i, 3) * w), y = y0 + Math.floor(hash2(i, 7) * (h - y0)), z = Math.max(1, Math.round(depth(y) * 2.2));
+        R(g, x, y, z, Math.max(1, z - 1), tone(hash2(i, 11) < 0.5 ? 0.78 : 1.18));
+      }
+      R(g, 0, y0, w, Math.max(1, s(2)), tone(0.6));
+      return;
+    }
+    // the joints toward us (each board's edge), converging on the eye's point
+    const n = o.n || 14, span = w * 1.6;
+    for (let i = 0; i <= n; i++) {
+      const xb = vx - span / 2 + (span * i) / n;
+      for (let y = y0; y < h; y++) { const x = Math.round(vx + (xb - vx) * depth(y)); if (x >= 0 && x < w) R(g, x, y, 1, 1, tone(0.72)); }
+    }
+    // the cross joints: board ends staggered (boards), or a grid of flags
+    const rows = o.cross || 7;
+    for (let r = 1; r <= rows; r++) {
+      const y = Math.round(eye + (h - eye) * Math.pow((y0 - eye) / (h - eye), 1 - r / (rows + 1)));
+      if (y <= y0 || y >= h) continue;
+      if (kind === 'flags') { R(g, 0, y, w, 1, tone(0.7)); continue; }
+      for (let i = 0; i < n; i++) {
+        if ((i + r) % 3) continue;
+        const xa = vx + (vx - span / 2 + (span * i) / n - vx) * depth(y), xb2 = vx + (vx - span / 2 + (span * (i + 1)) / n - vx) * depth(y);
+        R(g, Math.round(xa), y, Math.round(xb2 - xa), 1, tone(0.74));
+      }
+    }
+    // the wall's foot: a skirting edge and its shadow on the floor
+    R(g, 0, y0, w, Math.max(1, s(2)), tone(0.55));
+    g.fillStyle = 'rgba(10,6,14,0.22)'; g.fillRect(0, y0 + Math.max(1, s(2)), w, Math.max(2, s(5)));
+  }
+
   return {
-    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX,
+    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo,
     figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),

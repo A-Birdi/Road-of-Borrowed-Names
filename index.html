@@ -70314,7 +70314,13 @@ RB.seqKit = (function () {
     if (!RB.portraitBody) return null;
     const bd = RB.portraitBody.below(p, look, ext, o);
     const off = (fr && fr.body) || [0, 0];
-    const cv = mk(bd.w, bd.h), c = cv.getContext('2d');
+    // (a few rows below the feet for their shadow on the ground: without it a figure looked stood on nothing; AR-1)
+    const cv = mk(bd.w, bd.h + 5), c = cv.getContext('2d');
+    const fx = bd.w / 2 + off[0], fy = bd.h - 1 + off[1];
+    for (const [rx, ry, a] of [[24, 4, 0.16], [17, 3, 0.2]]) {
+      c.fillStyle = 'rgba(14,8,20,' + a + ')';
+      for (let y = -ry; y <= ry; y++) { const hw = Math.round(rx * Math.sqrt(1 - (y / (ry + 0.5)) ** 2)); c.fillRect(Math.round(fx - hw), fy + y, hw * 2, 1); }
+    }
     c.drawImage(bd.back.toCanvas(), off[0], off[1]);
     c.drawImage(f, bd.pad, 0);
     if (bd.front) c.drawImage(bd.front.toCanvas(), off[0], off[1]);
@@ -70452,8 +70458,73 @@ RB.seqKit = (function () {
     L.rect(x, y, Math.max(1, s(2)), h, woodM, 2); L.rect(x + w - Math.max(1, s(2)), y, Math.max(1, s(2)), h, woodM, 1);
   }
 
+  // A floor from a wall's foot (y0) to the frame's bottom, in perspective: boards (or flags) running toward us,
+  // their joints converging on (vx, the eye's height above), cross joints spaced wider as they come nearer, a shadow
+  // along the wall's foot. For pictures whose people stand in front of a wall that used to run to the frame's bottom
+  // (they stood on nothing once their bodies were drawn; AR-1). o: { col, vx, eye, n (joints across), cross (rows),
+  // kind: 'boards' | 'flags', s }
+  // A sleeved forearm from off the frame (x0, y0) to a wrist at (x1, y1) (where a hand() is drawn), wd wide at the wrist,
+  // wider toward the elbow, the cuff at the wrist: for a hand reaching into a shot that had none (AR-1)
+  function sleeveTo(c, x0, y0, x1, y1, wd, col) {
+    // (close to us at the frame's edge, so much wider there than at the wrist)
+    const p = RB.pxkit, m = Math.ceil(wd * 2.2) + 2, ox = Math.floor(Math.min(x0, x1)) - m, oy = Math.floor(Math.min(y0, y1)) - m;
+    const L = p.layer(Math.ceil(Math.abs(x1 - x0)) + 2 * m + 2, Math.ceil(Math.abs(y1 - y0)) + 2 * m + 2), M = p.mat(col || '#4a5a7a', { n: 6, at: 3, step: 0.08 });
+    const dx = x1 - x0, dy = y1 - y0, d = Math.hypot(dx, dy) || 1, ex = x1 - dx / d * wd * 0.6, ey = y1 - dy / d * wd * 0.6;
+    const pts = [];
+    for (let i = 0; i <= 8; i++) { const u = i / 8; pts.push([lerp(x0, ex, u) - ox, lerp(y0, ey, u) - oy, Math.round(wd * lerp(3.4, 1, Math.pow(u, 0.7)))]); }
+    L.path(pts, wd, M, 3);
+    for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], q = pts[i]; L.seg(a[0] - dy / d * a[2] * 0.3, a[1] + dx / d * a[2] * 0.3, q[0] - dy / d * q[2] * 0.3, q[1] + dx / d * q[2] * 0.3, Math.max(1, q[2] * 0.22), M, 5); }
+    L.seg(x1 - ox - dx / d * wd * 0.7, y1 - oy - dy / d * wd * 0.7, x1 - ox - dx / d * wd * 0.35, y1 - oy - dy / d * wd * 0.35, wd * 1.05, M, 1);
+    L.outline();
+    c.drawImage(L.canvas(), ox, oy);
+  }
+  const hash2 = (i, k) => { const v = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+  function floor(g, w, h, y0, o) {
+    o = o || {};
+    y0 = Math.round(y0);
+    if (y0 >= h) return;
+    const s = o.s || ((n) => n), base = hex3(o.col || '#5a4434'), kind = o.kind || 'boards';
+    const tone = (k) => 'rgb(' + base.map((v) => clamp(Math.round(v * k), 0, 255)).join(',') + ')';
+    const vx = o.vx == null ? w / 2 : o.vx, eye = o.eye == null ? y0 - (h - y0) * 1.4 : o.eye;
+    const depth = (y) => (y - eye) / (h - eye);            // 0 at the eye's height, 1 at the frame's bottom
+    // the floor: a little lighter toward us, in two flat steps
+    R(g, 0, y0, w, h - y0, tone(0.92));
+    R(g, 0, Math.round(y0 + (h - y0) * 0.35), w, h, tone(1));
+    R(g, 0, Math.round(y0 + (h - y0) * 0.72), w, h, tone(1.06));
+    if (kind === 'earth') {
+      // packed earth: pebbles and dark grit, larger toward us
+      for (let i = 0; i < w * (h - y0) * 0.004; i++) {
+        const x = Math.floor(hash2(i, 3) * w), y = y0 + Math.floor(hash2(i, 7) * (h - y0)), z = Math.max(1, Math.round(depth(y) * 2.2));
+        R(g, x, y, z, Math.max(1, z - 1), tone(hash2(i, 11) < 0.5 ? 0.78 : 1.18));
+      }
+      R(g, 0, y0, w, Math.max(1, s(2)), tone(0.6));
+      return;
+    }
+    // the joints toward us (each board's edge), converging on the eye's point
+    const n = o.n || 14, span = w * 1.6;
+    for (let i = 0; i <= n; i++) {
+      const xb = vx - span / 2 + (span * i) / n;
+      for (let y = y0; y < h; y++) { const x = Math.round(vx + (xb - vx) * depth(y)); if (x >= 0 && x < w) R(g, x, y, 1, 1, tone(0.72)); }
+    }
+    // the cross joints: board ends staggered (boards), or a grid of flags
+    const rows = o.cross || 7;
+    for (let r = 1; r <= rows; r++) {
+      const y = Math.round(eye + (h - eye) * Math.pow((y0 - eye) / (h - eye), 1 - r / (rows + 1)));
+      if (y <= y0 || y >= h) continue;
+      if (kind === 'flags') { R(g, 0, y, w, 1, tone(0.7)); continue; }
+      for (let i = 0; i < n; i++) {
+        if ((i + r) % 3) continue;
+        const xa = vx + (vx - span / 2 + (span * i) / n - vx) * depth(y), xb2 = vx + (vx - span / 2 + (span * (i + 1)) / n - vx) * depth(y);
+        R(g, Math.round(xa), y, Math.round(xb2 - xa), 1, tone(0.74));
+      }
+    }
+    // the wall's foot: a skirting edge and its shadow on the floor
+    R(g, 0, y0, w, Math.max(1, s(2)), tone(0.55));
+    g.fillStyle = 'rgba(10,6,14,0.22)'; g.fillRect(0, y0 + Math.max(1, s(2)), w, Math.max(2, s(5)));
+  }
+
   return {
-    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX,
+    R, mk, clamp, ease, lerp, hex3, rampC, cached, small, release, stats, stage, grade, flipX, floor, sleeveTo,
     figure, bust, standing, lookOf, holdArms, back, hand, skinOf, clothOf, gull, dust, steam, shoji,
     bandsIn: (...a) => RB.prologueArt.kit.bandsIn(...a),
     chochin: (...a) => RB.prologueArt.kit.chochin(...a),
@@ -71956,7 +72027,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const p = P();
       const L = p.layer(w, h);
       const I = p.layer(w, h);
-      interior(I, g, { x0: dX, x1: dX + dW, top, bot: h, counterY, s, deep: close });
+      // close, she stands in front of the counter: its front ends a little behind her feet and the floor comes toward us
+      // (it ran to the frame's bottom, and she stood on its boards once her body was drawn; AR-1)
+      const yFl = close ? Math.round(G.hy + 200 - 0.22 * 260) : h;
+      interior(I, g, { x0: dX, x1: dX + dW, top, bot: Math.min(h, yFl), counterY, s, deep: close });
       I.outline();
       if (!close) {
         // the board front either side of the doorway, in the low sun; a lattice window to the right
@@ -71983,6 +72057,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (close) { L.rect(0, 0, dX - pw, h, post, 0.2); L.rect(dX + dW + pw, 0, w, h, post, 0.15); L.rect(0, 0, w, Math.max(0, top - s(12)), post, 0.18); }
       L.outline();
       g.drawImage(I.canvas(), 0, 0);
+      if (yFl < h) Q.floor(g, w, h, yFl, { col: '#4a3226', vx: Math.round(w / 2), eye: G.hy - 60, s, n: 18 });
       g.drawImage(L.canvas(), 0, 0);
       // the shōji slid back against the right post
       const S2 = p.layer(w, h);
@@ -72368,6 +72443,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.rect(w - s(60), by + s(10), s(3), s(24), fr, 2); L.ell(w - s(58), by + s(36), s(7), s(9), p.mat('#c8b890', { n: 4, at: 2 }), (x) => (x < w - s(60) ? 0.85 : 0.5));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      // the office floor: the wall's foot a little behind him (the panelling ran to the frame's bottom, and he stood on
+      // it once his body was drawn; AR-1)
+      Q.floor(g, w, h, Math.round(wy + 200 - 0.22 * 260), { col: '#5e4c3c', vx: Math.round(w / 2), eye: wy - 60, s, n: 16 });
       // the window's light falls on him from our left
       g.fillStyle = 'rgba(255,246,220,0.08)'; g.fillRect(0, 0, Math.round(wx), h);
       return { cv };
@@ -73167,16 +73245,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.rect(bx0, by, pw, deck - by, wood, (xx) => (xx < bx0 + pw * 0.4 ? 0.85 : 0.4));
       L.rect(bx1, by, pw, deck - by, wood, (xx) => (xx < bx1 + pw * 0.4 ? 0.75 : 0.35));
       L.rect(bx0 - s(12), by - s(7), bx1 - bx0 + pw + s(24), s(7), wood, (xx, yy) => (yy < by - s(6) ? 0.92 : 0.45));
-      // the deck's front edge from below: a dark fascia, the planks' ends
-      L.rect(0, deck, w, h - deck, p.mat('#4e3624', { n: 5, at: 2 }), (x, y) => ((Math.round(x) % s(12)) < 1 ? 0.12 : y < deck + 1 ? 0.75 : 0.36));
+      // the deck's front edge from below: a dark fascia, the planks' ends (down to the square where someone stands in
+      // front of the stage)
+      const yGr = o.ground ? Math.round(o.ground) : h;
+      L.rect(0, deck, w, yGr - deck, p.mat('#4e3624', { n: 5, at: 2 }), (x, y) => ((Math.round(x) % s(12)) < 1 ? 0.12 : y < deck + 1 ? 0.75 : 0.36));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      if (o.ground) Q.floor(g, w, h, yGr, { kind: 'earth', col: '#5e4c3a', s, eye: o.eye });
       fruit(g, w, yH, s, hl.top, rnd);
       windows(g, wins, s, 0.5);
       bunting(g, bx0 + pw, by + s(2), bx1, by + s(2), s(14), s, 12);
-      return { cv, bx0, bx1, by };
+      return { cv, bx0, bx1, by, deck, ground: yGr };
     });
   }
+  // the stage's front over whoever stands on its deck: seen from below, its edge hides their legs (they hung down
+  // the fascia once bodies were drawn; AR-1)
+  function deckOver(c, B) { if (B.ground > B.deck) c.drawImage(B.cv, 0, B.deck, B.cv.width, B.ground - B.deck, 0, B.deck, B.cv.width, B.ground - B.deck); }
   // fingers curled over an edge (a hand holding a book or a board): n fingertips side by side hanging over the
   // edge at (x, y), and the thumb's tip on the near side; side ±1 puts the thumb left or right
   function fingers(c, x, y, k, sk, n, side) {
@@ -73229,6 +73313,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const bk = chronicle(c, bx, by, 1.2, 0);
       fingers(c, bx - Math.round(bk.W * 0.38), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, 1);
       fingers(c, bx + Math.round(bk.W * 0.16), by - Math.round(bk.H / 2), 1.2, skin('co_tokiwa'), 4, -1);
+      deckOver(c, B);
       // Tamotsu below the stage, from behind, his hat at the lower right
       const tb2 = Q.back(look('co_tamotsu'), Math.round(clamp(s(120), 80, 160)), { light: 'l' });
       if (tb2) c.drawImage(tb2.cv, Math.round(Math.min(w - s(20), tx + s(190)) - tb2.ax), Math.round(G.vb + s(64) - tb2.ay));
@@ -73345,7 +73430,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Tokiwa\'s face top centre-right, Gorō\'s lower left, the lanterns above', narrow: 'the lanterns, Tokiwa, Gorō stacked', land: 'Tokiwa\'s face (and Gorō\'s beside it)' },
     draw(c, w, h, t, st) {
       const G = geomNames(w, h, st.vb), { s, tx, ty, gx, gy } = G, still = st.still;
-      const B = backStatic(G, 'names', { yH: ty - s(50), roof: ty - s(20), deck: ty + s(26), bx0: s(16), bx1: w - s(30), beam: Math.max(s(6), ty - 96 - s(24)), seed: 23 });
+      // (Gorō stands on the square in front of the stage: its front ends at the ground a little behind his feet)
+      const B = backStatic(G, 'names', { yH: ty - s(50), roof: ty - s(20), deck: ty + s(26), bx0: s(16), bx1: w - s(30), beam: Math.max(s(6), ty - 96 - s(24)), seed: 23, ground: Math.round(gy + 200 - 0.22 * 260), eye: gy - 60 });
       c.drawImage(B.cv, 0, 0);
       // five lanterns along the beam, one lit for each name as it is read
       const kn = st.at('names'), xs = [];
@@ -73364,6 +73450,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         R(c, sx < 0 ? ex - 1 : ex - 2, ey, 3, 5, sk[1]); R(c, sx < 0 ? ex - 1 : ex - 2, ey, 2, 4, sk[0]);
         R(c, sx < 0 ? bx - ob.W - 5 : bx + ob.W, by - 2, 5, Math.round(ob.H / 2) + 6, sleeve('co_tokiwa'));
       }
+      deckOver(c, B);
       // Gorō in the crowd below, looking up at the stage; at "Mitsu" his head lowers
       const kg = st.at('goro');
       const gb = Q.bust('co_goro', kg > 0.3 ? 'sad2' : 'neutral', kg > 0.3 ? { head: [0, 2] } : { look: [1, -1], head: [0, -1] }, FACE_L, false, 200);
@@ -74680,22 +74767,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s } = G, still = st.still;
       roomWithLamp(c, G, st, t, 'give', { slit: [w * 0.04, w * 0.04 + Math.max(s(30), w * 0.08)], seed: 61, lit: 1 });
       const ko = st.at('offer'), kt = st.at('take');
-      // the envelope held out toward you in both his hands; on the giving, your hand takes it and it is yours
-      const e = ease(ko), tk = ease(kt);
-      // (it comes up from his waist, and his hands let it go as yours takes it; AR-1)
-      const ex = Math.round(lerp(G.hx, G.hx - s(46), e) - tk * s(40)), ey = Math.round(lerp(G.hy + 44, G.hy - s(30), e) + tk * s(50));
-      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, tk < 0.15 ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
+      // The envelope held out toward you in both his hands; on the giving it changes hands where both of you can reach,
+      // and you bring it back to you (AR-1: your hand used to come in from below the frame with no arm, and the
+      // envelope floated between his letting go and your taking it). You stand from behind at the lower left, as when
+      // you asked, moved nearer him only if his reach and yours would not meet.
+      const W = Math.round(clamp(s(118), 80, 160)), ARM = W * 0.84, DH = 45;
+      let bx = Math.round(G.narrow ? w * 0.26 : w * 0.16), by = Math.round(G.vb + s(G.narrow ? 90 : 80));
+      const Ch = [G.hx, G.hy + 10];
+      let Sp = [bx + W * 0.34, by - W * 0.4], dd = Math.hypot(Sp[0] - Ch[0], Sp[1] - Ch[1]);
+      const need = DH + ARM * 0.8;
+      if (dd > need) { const f = (dd - need) / dd; bx = Math.round(bx + (Ch[0] - Sp[0]) * f); by = Math.round(by + (Ch[1] - Sp[1]) * f); Sp = [bx + W * 0.34, by - W * 0.4]; dd = need; }
+      const dir = [(Sp[0] - Ch[0]) / dd, (Sp[1] - Ch[1]) / dd];
+      const O = [Ch[0] + dir[0] * DH * 0.45, Ch[1] + dir[1] * DH * 0.45 - 12], Hp = [Ch[0] + dir[0] * DH, Ch[1] + dir[1] * DH];
+      const Bk = [Hp[0] + (Sp[0] - Hp[0]) * 0.3, Hp[1] + (Sp[1] - Hp[1]) * 0.3];
+      const e = ease(ko), k1 = ease(clamp(kt / 0.5, 0, 1)), k2 = ease(clamp((kt - 0.5) / 0.5, 0, 1)), holds = kt < 0.5;
+      const P0 = kt > 0 ? (k2 > 0 ? [lerp(Hp[0], Bk[0], k2), lerp(Hp[1], Bk[1], k2)] : [lerp(O[0], Hp[0], k1), lerp(O[1], Hp[1], k1)]) : [lerp(G.hx, O[0], e), lerp(G.hy + 44, O[1], e)];
+      const ex = Math.round(P0[0]), ey = Math.round(P0[1]);
+      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, holds ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
       const k = clamp(G.Z * 0.8, 0.6, 1.1);
       c.save(); c.translate(ex, ey); c.rotate(-0.25); c.translate(-ex, -ey); envelope(c, ex, ey, k, 'front', 1); c.restore();
-      if (tk < 0.15) {
+      if (holds) {
         for (const [dx, side] of [[-s(16), 'R'], [s(16), 'L']]) {
           const hd = Q.hand({ size: 11, pose: 'pinch', side, angle: side === 'R' ? -0.2 : Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
           if (hd) c.drawImage(hd.cv, Math.round(ex + dx - hd.ax), Math.round(ey + s(6) - hd.ay));
         }
       }
-      if (kt > 0) {
-        const ph = Q.hand({ size: 13, pose: 'pinch', side: 'R', angle: -0.5, skin: pcSkin(st), sleeve: pcSleeve(st) });
-        if (ph) c.drawImage(ph.cv, Math.round(lerp(-s(20), ex - s(22), Math.min(1, kt * 1.6)) - ph.ax), Math.round(lerp(G.vb + s(30), ey + s(8), Math.min(1, kt * 1.6)) - ph.ay));
+      const pb = Q.back(st.cast.pc || {}, W, kt > 0 ? { light: 'r', raise: 'r' } : { light: 'r' });
+      if (pb) {
+        c.drawImage(pb.cv, bx - pb.ax, by - pb.ay);
+        if (kt > 0) {
+          // your hand comes up under the envelope's lower edge, then holds it as it comes to you
+          const shx = bx - pb.ax + pb.shoulders.r[0], shy = by - pb.ay + pb.shoulders.r[1];
+          const q2 = (v) => 2 * Math.round(v / 2);
+          const wx = q2(lerp(W * 0.04, ex - shx, k1)), wy = q2(lerp(W * 0.3, ey + s(12) - shy, k1));
+          const arm = Q.small('ch4.givearm|' + W + '|' + wx + ',' + wy + '|' + JSON.stringify(st.cast.pc || {}), () => RB.seqBack.arm(st.cast.pc || {}, W, wx, wy));
+          if (arm) c.drawImage(arm.cv, shx - arm.ox, shy - arm.oy);
+          const ph = Q.hand({ size: Math.round(W * 0.09), pose: 'pinch', side: 'R', angle: Math.atan2(wy, wx), skin: pcSkin(st), sleeve: pcSleeve(st) });
+          if (ph) c.drawImage(ph.cv, shx + wx - ph.ax, shy + wy - ph.ay);
+        }
       }
       void still;
     },
@@ -76325,11 +76434,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     g.drawImage(L.canvas(), 0, 0);
     g.fillStyle = 'rgba(16,12,22,' + (dim || 0.35).toFixed(2) + ')'; g.fillRect(0, 0, w, h);
   }
-  function roomBack(G, key, dim) {
-    return cached('ch6.' + key + '|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+  // the floor in front of the shelves, under someone standing at x with their feet at y (their eyes about 60 px under
+  // the portrait's top): the shelves' foot a little behind them (Ren stood on the shelves' face once their body was
+  // drawn; AR-1)
+  const floorBehind = (feet, eye) => Math.round(feet - 0.22 * (feet - eye));
+  function roomBack(G, key, dim, fl) {
+    return cached('ch6.' + key + '|' + G.w + 'x' + G.h + '|' + G.vb + '|' + (fl ? fl.join(',') : ''), () => {
       const cv = mk(G.w, G.h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
       shelfWall(g, G.w, G.h, G.s, 5, dim);
+      if (fl && fl[0] < G.h) {
+        Q.floor(g, G.w, G.h, fl[0], { col: '#4a3a34', vx: fl[1], eye: fl[2], s: G.s, n: 16 });
+        g.fillStyle = 'rgba(16,12,22,' + (dim || 0.35).toFixed(2) + ')'; g.fillRect(0, fl[0], G.w, G.h - fl[0]);
+      }
       // the warm light of the room's crystal lamp from the left, two flat steps
       g.fillStyle = 'rgba(255,226,180,0.06)'; g.fillRect(0, 0, Math.round(G.w * 0.6), G.h); g.fillRect(0, 0, Math.round(G.w * 0.3), G.h);
       return { cv };
@@ -76402,7 +76519,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Ren\'s face and the folio in the top 60 %', narrow: 'Ren above the folio', land: 'Ren\'s face' },
     draw(c, w, h, t, st) {
       const G = geomRen(w, h, st.vb, false), { s, kx, ky, k } = G, still = st.still;
-      c.drawImage(roomBack(G, 'renroom', 0.32).cv, 0, 0);
+      c.drawImage(roomBack(G, 'renroom', 0.32, [floorBehind(ky + 220, ky - 60), kx, ky - 60]).cv, 0, 0);
       airLife(c, w, h, t, still, 18, 63, 0);
       const ko = st.at('open');
       // the folio at their chest (beside the face in a phone's band), the cover swinging open; their forearms up to the
@@ -76503,7 +76620,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Ren\'s face and hands in the top 60 %', narrow: 'Ren\'s face above their hands', land: 'Ren\'s face' },
     draw(c, w, h, t, st) {
       const G = geomRen(w, h, st.vb, true), { kx, ky, k } = G, still = st.still;
-      c.drawImage(roomBack(G, 'renclose', 0.62).cv, 0, 0);
+      c.drawImage(roomBack(G, 'renclose', 0.62, [floorBehind(ky + 220, ky - 60), kx, ky - 60]).cv, 0, 0);
       c.globalAlpha = 0.9; P().halo(c, kx, ky - 44, Math.round(G.s(100)), '255,226,180', 0.12, 4); c.globalAlpha = 1;
       airLife(c, w, h, t, still, 14, 65, 0);
       const ksd = st.at('sad'), ksm = st.at('smirk'), kg = st.at('glasses');
@@ -77271,8 +77388,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // ==== mb1.dusk · sen: the register at the boards ===========================================================
-  function boardsBack(w, h, vb, key) {
-    return cached('mb1.boards|' + key + '|' + w + 'x' + h + '|' + vb, () => {
+  function boardsBack(w, h, vb, key, fl) {
+    return cached('mb1.boards|' + key + '|' + w + 'x' + h + '|' + vb + '|' + (fl ? fl.join(',') : ''), () => {
       const S = stage(w, h, vb), { s } = S, p = P();
       const cv = mk(w, h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
@@ -77283,9 +77400,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let b = 0; b < 4; b++) SP.planks(L, Math.round(b * bw * 1.05 - bw * 0.3), Math.round(vb * 0.08), bw, h, wood, { vertical: true, board: Math.max(3, s(7)), base: 0.32, seed: 20 + b });
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      // the quay's stones at the boards' foot, a little behind whoever stands before them (the boards ran to the
+      // frame's bottom, and Sen stood on them once her body was drawn; AR-1)
+      if (fl && fl[0] < h) Q.floor(g, w, h, fl[0], { kind: 'flags', col: '#5a5054', eye: fl[1], s, n: 12, cross: 6 });
       for (let b = 0; b < 4; b++) for (let r = 0; r < 5; r++) for (let i = 0; i < 6; i++) {
         const x = Math.round(b * bw * 1.05 - bw * 0.3 + s(6) + i * (bw - s(12)) / 6), y = Math.round(vb * 0.12 + r * s(28));
-        if ((b * 31 + r * 7 + i * 3) % 5 === 0) continue;
+        if ((b * 31 + r * 7 + i * 3) % 5 === 0 || (fl && y + s(16) > fl[0])) continue;
         SP.slip(g, x, y, s(7), s(16), { seed: b * 100 + r * 10 + i, n: 3 });
       }
       // a dimming over all of it, so the person in front stands out
@@ -77312,7 +77432,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Sen\'s face and the register above the sheet', narrow: 'her face in the upper half', land: 'her face' },
     draw(c, w, h, t, st) {
       const S = stage(w, h, st.vb), { s, lay } = S, narrow = lay === 'narrow';
-      c.drawImage(boardsBack(w, h, st.vb, 'sen').cv, 0, 0);
+      const by0 = Math.round(Math.max(st.vb + s(16), 100)), feet0 = by0 + Math.round(h * 0.25);
+      c.drawImage(boardsBack(w, h, st.vb, 'sen', [Math.round(feet0 - 0.22 * (feet0 - (by0 - 60))), by0 - 60]).cv, 0, 0);
       SP.lantern(c, Math.round(w * (narrow ? 0.86 : 0.8)), Math.round(st.vb * 0.06), Math.max(3, s(6)), Math.max(5, s(12)), true, t, st.still);
       const ko = st.at('odd');
       const fr = ko > 0.3 ? { look: [0, 1], head: [0, 1] } : { look: [0, 0] };
@@ -77362,13 +77483,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.rect(0, ry + s(14), w, h, plaster, (x, y) => clamp(0.4 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
         SP.roof(L, -s(4), w + s(4), ry, s(14), tile, { course: Math.max(2, s(4)) });
         const post = p.mat('#3a2a22', { n: 5, at: 2 }), noren = p.mat('#2e3a62', { n: 5, at: 2, step: 0.1 }), base2 = p.mat('#3a3a46', { n: 5, at: 2 });
-        L.rect(0, Math.round(st.vb * 0.55), w, h, base2, 0.4);
+        // the storehouses' stone plinth, then the street toward us (the plinth ran to the frame's bottom, and the people
+        // stood on its face once bodies were drawn; AR-1)
+        const yF = Math.round(st.vb * 0.56);
+        L.rect(0, Math.round(st.vb * 0.5), w, yF - Math.round(st.vb * 0.5), base2, 0.4);
         for (let x = 0, i = 0; x < w; x += s(64), i++) {
           L.rect(x, ry + s(14), s(5), h, post, (xx) => (xx < x + s(2) ? 0.7 : 0.3));
           if (i % 2 === 0) { L.rect(x + s(14), ry + s(24), s(18), s(16), p.mat('#ffcf86', { n: 4, at: 2 }), 0.8); for (let k2 = 0; k2 < 3; k2++) L.rect(x + s(14) + k2 * s(6), ry + s(18), s(5), s(14), noren, (xx, yy) => clamp(0.6 - (yy - ry) / s(40), 0.05, 0.999)); }
         }
         L.outline();
         g.drawImage(L.canvas(), 0, 0);
+        R(g, 0, yF, w, h - yF, '#2a2228');
+        Q.floor(g, w, h, yF, { kind: 'flags', col: '#4e4248', eye: Math.round(st.vb * 0.3), s, n: 14, cross: 7 });
         const BACK = { mul: [0.3, 0.26, 0.36], add: [8, 2, 12], rim: { side: 't', col: '#ffb070', k: [0.45, 0.2] } };
         const who = ['mb_take', 'mb_gonta', haru ? 'mb_haru' : null, 'mb_masa', ichi ? 'mb_ichi' : null, 'mb_masu', 'mb_sen'].filter(Boolean);
         const rnd = p.rnd(73);
@@ -77377,6 +77503,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           const f = Q.figure(look(id), dir, 'i0', sc, BACK);
           if (!f) return;
           const x = Math.round((i + 0.5) * w / who.length + (rnd() - 0.5) * s(22)), y = Math.round(st.vb * [0.86, 0.72, 0.6][row] + s(row ? 0 : 6));
+          g.fillStyle = 'rgba(14,8,20,0.28)'; const sw = Math.round(9 * sc * 1.4); g.fillRect(x - sw, y - 1, sw * 2, Math.max(2, Math.round(3 * sc)));
           g.drawImage(f.cv, x - f.ax, y - f.ay);
         });
         return { cv };
@@ -77487,6 +77614,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      // the workshop floor: the wall's foot a little behind where Sōbē stands (the wall ran to the frame's bottom, and he
+      // stood on it once his body was drawn; AR-1)
+      const sy0 = Math.max(Math.round(G.vb + s(10)), 98);
+      Q.floor(g, w, h, Math.round(sy0 + 200 - 0.22 * 260), { col: '#54443a', vx: Math.round(w * 0.5), eye: sy0 - 60, s, n: 16 });
       // the window's light in the room: a dithered pool on the floor and the desk
       SP.glow(g, wx + ww / 2, wy + wh, Math.round(ww * 0.7), '255,240,210', 0.35);
       return { cv };
@@ -77676,10 +77807,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the rail of the Curtain Bridge at the bottom, close: dark posts and the rail across
       const rail = p.mat('#2e2220', { n: 5, at: 2, step: 0.1 });
       const ry = Math.round(G.vb + s(G.narrow ? 6 : 2));
+      // the bridge's deck you stand on, the rail's posts down to it (the posts and the water ran to the frame's bottom,
+      // and you both stood on the river once bodies were drawn; AR-1)
+      const cy0 = Math.max(Math.round(G.vb + s(10)), 98), yD = Math.round(cy0 + 200 - 0.22 * 260);
       L.rect(0, ry, w, s(5), rail, (x, y) => (y < ry + s(2) ? 0.7 : 0.35));
-      for (let x = s(12); x < w; x += s(70)) L.rect(x, ry - s(6), s(7), h, rail, (xx) => (xx < x + s(3) ? 0.6 : 0.25));
+      for (let x = s(12); x < w; x += s(70)) L.rect(x, ry - s(6), s(7), Math.max(s(6), yD - (ry - s(6))), rail, (xx) => (xx < x + s(3) ? 0.6 : 0.25));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      if (yD < h) Q.floor(g, w, h, yD, { col: '#3a2c2c', vx: Math.round(w * 0.5), eye: cy0 - 60, s, n: 16 });
       return { cv };
     });
   }
@@ -78492,6 +78627,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (const x of [Math.round(w * 0.42), Math.round(w * 0.96)]) L.rect(x, 0, s(7), h, beam, (xx) => (xx < x + s(2) ? 0.6 : 0.28));
         L.outline();
         g.drawImage(L.canvas(), 0, 0);
+        // the room's boards: the wall's foot a little behind where Heisuke stands (the wall ran to the frame's bottom,
+        // and he stood on it once his body was drawn; AR-1)
+        const hy0 = Math.max(Math.round(st.vb + s(12)), 100);
+        Q.floor(g, w, h, Math.round(hy0 + 200 - 0.22 * 260), { col: '#5a4434', vx: Math.round(w * 0.5), eye: hy0 - 60, s, n: 16 });
         SP.glow(g, Math.round(w * 0.22), Math.round(st.vb * 0.4), Math.round(w * 0.3), '255,210,150', 0.3);
         return { cv };
       });

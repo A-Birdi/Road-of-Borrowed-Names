@@ -62,6 +62,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      // the workshop floor: the wall's foot a little behind where Sōbē stands (the wall ran to the frame's bottom, and he
+      // stood on it once his body was drawn; AR-1)
+      const sy0 = Math.max(Math.round(G.vb + s(10)), 98);
+      Q.floor(g, w, h, Math.round(sy0 + 200 - 0.22 * 260), { col: '#54443a', vx: Math.round(w * 0.5), eye: sy0 - 60, s, n: 16 });
       // the window's light in the room: a dithered pool on the floor and the desk
       SP.glow(g, wx + ww / 2, wy + wh, Math.round(ww * 0.7), '255,240,210', 0.35);
       return { cv };
@@ -251,10 +255,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the rail of the Curtain Bridge at the bottom, close: dark posts and the rail across
       const rail = p.mat('#2e2220', { n: 5, at: 2, step: 0.1 });
       const ry = Math.round(G.vb + s(G.narrow ? 6 : 2));
+      // the bridge's deck you stand on, the rail's posts down to it (the posts and the water ran to the frame's bottom,
+      // and you both stood on the river once bodies were drawn; AR-1)
+      const cy0 = Math.max(Math.round(G.vb + s(10)), 98), yD = Math.round(cy0 + 200 - 0.22 * 260);
       L.rect(0, ry, w, s(5), rail, (x, y) => (y < ry + s(2) ? 0.7 : 0.35));
-      for (let x = s(12); x < w; x += s(70)) L.rect(x, ry - s(6), s(7), h, rail, (xx) => (xx < x + s(3) ? 0.6 : 0.25));
+      for (let x = s(12); x < w; x += s(70)) L.rect(x, ry - s(6), s(7), Math.max(s(6), yD - (ry - s(6))), rail, (xx) => (xx < x + s(3) ? 0.6 : 0.25));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      if (yD < h) Q.floor(g, w, h, yD, { col: '#3a2c2c', vx: Math.round(w * 0.5), eye: cy0 - 60, s, n: 16 });
       return { cv };
     });
   }

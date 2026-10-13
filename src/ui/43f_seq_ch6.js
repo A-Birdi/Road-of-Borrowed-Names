@@ -606,11 +606,19 @@ var RB = (globalThis.RB = globalThis.RB || {});
     g.drawImage(L.canvas(), 0, 0);
     g.fillStyle = 'rgba(16,12,22,' + (dim || 0.35).toFixed(2) + ')'; g.fillRect(0, 0, w, h);
   }
-  function roomBack(G, key, dim) {
-    return cached('ch6.' + key + '|' + G.w + 'x' + G.h + '|' + G.vb, () => {
+  // the floor in front of the shelves, under someone standing at x with their feet at y (their eyes about 60 px under
+  // the portrait's top): the shelves' foot a little behind them (Ren stood on the shelves' face once their body was
+  // drawn; AR-1)
+  const floorBehind = (feet, eye) => Math.round(feet - 0.22 * (feet - eye));
+  function roomBack(G, key, dim, fl) {
+    return cached('ch6.' + key + '|' + G.w + 'x' + G.h + '|' + G.vb + '|' + (fl ? fl.join(',') : ''), () => {
       const cv = mk(G.w, G.h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
       shelfWall(g, G.w, G.h, G.s, 5, dim);
+      if (fl && fl[0] < G.h) {
+        Q.floor(g, G.w, G.h, fl[0], { col: '#4a3a34', vx: fl[1], eye: fl[2], s: G.s, n: 16 });
+        g.fillStyle = 'rgba(16,12,22,' + (dim || 0.35).toFixed(2) + ')'; g.fillRect(0, fl[0], G.w, G.h - fl[0]);
+      }
       // the warm light of the room's crystal lamp from the left, two flat steps
       g.fillStyle = 'rgba(255,226,180,0.06)'; g.fillRect(0, 0, Math.round(G.w * 0.6), G.h); g.fillRect(0, 0, Math.round(G.w * 0.3), G.h);
       return { cv };
@@ -683,7 +691,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Ren\'s face and the folio in the top 60 %', narrow: 'Ren above the folio', land: 'Ren\'s face' },
     draw(c, w, h, t, st) {
       const G = geomRen(w, h, st.vb, false), { s, kx, ky, k } = G, still = st.still;
-      c.drawImage(roomBack(G, 'renroom', 0.32).cv, 0, 0);
+      c.drawImage(roomBack(G, 'renroom', 0.32, [floorBehind(ky + 220, ky - 60), kx, ky - 60]).cv, 0, 0);
       airLife(c, w, h, t, still, 18, 63, 0);
       const ko = st.at('open');
       // the folio at their chest (beside the face in a phone's band), the cover swinging open; their forearms up to the
@@ -784,7 +792,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Ren\'s face and hands in the top 60 %', narrow: 'Ren\'s face above their hands', land: 'Ren\'s face' },
     draw(c, w, h, t, st) {
       const G = geomRen(w, h, st.vb, true), { kx, ky, k } = G, still = st.still;
-      c.drawImage(roomBack(G, 'renclose', 0.62).cv, 0, 0);
+      c.drawImage(roomBack(G, 'renclose', 0.62, [floorBehind(ky + 220, ky - 60), kx, ky - 60]).cv, 0, 0);
       c.globalAlpha = 0.9; P().halo(c, kx, ky - 44, Math.round(G.s(100)), '255,226,180', 0.12, 4); c.globalAlpha = 1;
       airLife(c, w, h, t, still, 14, 65, 0);
       const ksd = st.at('sad'), ksm = st.at('smirk'), kg = st.at('glasses');

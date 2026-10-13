@@ -565,22 +565,44 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const G = geomAsk(w, h, st.vb, true), { s } = G, still = st.still;
       roomWithLamp(c, G, st, t, 'give', { slit: [w * 0.04, w * 0.04 + Math.max(s(30), w * 0.08)], seed: 61, lit: 1 });
       const ko = st.at('offer'), kt = st.at('take');
-      // the envelope held out toward you in both his hands; on the giving, your hand takes it and it is yours
-      const e = ease(ko), tk = ease(kt);
-      // (it comes up from his waist, and his hands let it go as yours takes it; AR-1)
-      const ex = Math.round(lerp(G.hx, G.hx - s(46), e) - tk * s(40)), ey = Math.round(lerp(G.hy + 44, G.hy - s(30), e) + tk * s(50));
-      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, tk < 0.15 ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
+      // The envelope held out toward you in both his hands; on the giving it changes hands where both of you can reach,
+      // and you bring it back to you (AR-1: your hand used to come in from below the frame with no arm, and the
+      // envelope floated between his letting go and your taking it). You stand from behind at the lower left, as when
+      // you asked, moved nearer him only if his reach and yours would not meet.
+      const W = Math.round(clamp(s(118), 80, 160)), ARM = W * 0.84, DH = 45;
+      let bx = Math.round(G.narrow ? w * 0.26 : w * 0.16), by = Math.round(G.vb + s(G.narrow ? 90 : 80));
+      const Ch = [G.hx, G.hy + 10];
+      let Sp = [bx + W * 0.34, by - W * 0.4], dd = Math.hypot(Sp[0] - Ch[0], Sp[1] - Ch[1]);
+      const need = DH + ARM * 0.8;
+      if (dd > need) { const f = (dd - need) / dd; bx = Math.round(bx + (Ch[0] - Sp[0]) * f); by = Math.round(by + (Ch[1] - Sp[1]) * f); Sp = [bx + W * 0.34, by - W * 0.4]; dd = need; }
+      const dir = [(Sp[0] - Ch[0]) / dd, (Sp[1] - Ch[1]) / dd];
+      const O = [Ch[0] + dir[0] * DH * 0.45, Ch[1] + dir[1] * DH * 0.45 - 12], Hp = [Ch[0] + dir[0] * DH, Ch[1] + dir[1] * DH];
+      const Bk = [Hp[0] + (Sp[0] - Hp[0]) * 0.3, Hp[1] + (Sp[1] - Hp[1]) * 0.3];
+      const e = ease(ko), k1 = ease(clamp(kt / 0.5, 0, 1)), k2 = ease(clamp((kt - 0.5) / 0.5, 0, 1)), holds = kt < 0.5;
+      const P0 = kt > 0 ? (k2 > 0 ? [lerp(Hp[0], Bk[0], k2), lerp(Hp[1], Bk[1], k2)] : [lerp(O[0], Hp[0], k1), lerp(O[1], Hp[1], k1)]) : [lerp(G.hx, O[0], e), lerp(G.hy + 44, O[1], e)];
+      const ex = Math.round(P0[0]), ey = Math.round(P0[1]);
+      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, holds ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
       const k = clamp(G.Z * 0.8, 0.6, 1.1);
       c.save(); c.translate(ex, ey); c.rotate(-0.25); c.translate(-ex, -ey); envelope(c, ex, ey, k, 'front', 1); c.restore();
-      if (tk < 0.15) {
+      if (holds) {
         for (const [dx, side] of [[-s(16), 'R'], [s(16), 'L']]) {
           const hd = Q.hand({ size: 11, pose: 'pinch', side, angle: side === 'R' ? -0.2 : Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
           if (hd) c.drawImage(hd.cv, Math.round(ex + dx - hd.ax), Math.round(ey + s(6) - hd.ay));
         }
       }
-      if (kt > 0) {
-        const ph = Q.hand({ size: 13, pose: 'pinch', side: 'R', angle: -0.5, skin: pcSkin(st), sleeve: pcSleeve(st) });
-        if (ph) c.drawImage(ph.cv, Math.round(lerp(-s(20), ex - s(22), Math.min(1, kt * 1.6)) - ph.ax), Math.round(lerp(G.vb + s(30), ey + s(8), Math.min(1, kt * 1.6)) - ph.ay));
+      const pb = Q.back(st.cast.pc || {}, W, kt > 0 ? { light: 'r', raise: 'r' } : { light: 'r' });
+      if (pb) {
+        c.drawImage(pb.cv, bx - pb.ax, by - pb.ay);
+        if (kt > 0) {
+          // your hand comes up under the envelope's lower edge, then holds it as it comes to you
+          const shx = bx - pb.ax + pb.shoulders.r[0], shy = by - pb.ay + pb.shoulders.r[1];
+          const q2 = (v) => 2 * Math.round(v / 2);
+          const wx = q2(lerp(W * 0.04, ex - shx, k1)), wy = q2(lerp(W * 0.3, ey + s(12) - shy, k1));
+          const arm = Q.small('ch4.givearm|' + W + '|' + wx + ',' + wy + '|' + JSON.stringify(st.cast.pc || {}), () => RB.seqBack.arm(st.cast.pc || {}, W, wx, wy));
+          if (arm) c.drawImage(arm.cv, shx - arm.ox, shy - arm.oy);
+          const ph = Q.hand({ size: Math.round(W * 0.09), pose: 'pinch', side: 'R', angle: Math.atan2(wy, wx), skin: pcSkin(st), sleeve: pcSleeve(st) });
+          if (ph) c.drawImage(ph.cv, shx + wx - ph.ax, shy + wy - ph.ay);
+        }
       }
       void still;
     },

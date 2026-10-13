@@ -190,6 +190,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
       L.rect(w - s(60), by + s(10), s(3), s(24), fr, 2); L.ell(w - s(58), by + s(36), s(7), s(9), p.mat('#c8b890', { n: 4, at: 2 }), (x) => (x < w - s(60) ? 0.85 : 0.5));
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      // the office floor: the wall's foot a little behind him (the panelling ran to the frame's bottom, and he stood on
+      // it once his body was drawn; AR-1)
+      Q.floor(g, w, h, Math.round(wy + 200 - 0.22 * 260), { col: '#5e4c3c', vx: Math.round(w / 2), eye: wy - 60, s, n: 16 });
       // the window's light falls on him from our left
       g.fillStyle = 'rgba(255,246,220,0.08)'; g.fillRect(0, 0, Math.round(wx), h);
       return { cv };

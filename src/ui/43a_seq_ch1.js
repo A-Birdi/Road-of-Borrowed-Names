@@ -490,7 +490,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const p = P();
       const L = p.layer(w, h);
       const I = p.layer(w, h);
-      interior(I, g, { x0: dX, x1: dX + dW, top, bot: h, counterY, s, deep: close });
+      // close, she stands in front of the counter: its front ends a little behind her feet and the floor comes toward us
+      // (it ran to the frame's bottom, and she stood on its boards once her body was drawn; AR-1)
+      const yFl = close ? Math.round(G.hy + 200 - 0.22 * 260) : h;
+      interior(I, g, { x0: dX, x1: dX + dW, top, bot: Math.min(h, yFl), counterY, s, deep: close });
       I.outline();
       if (!close) {
         // the board front either side of the doorway, in the low sun; a lattice window to the right
@@ -517,6 +520,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       if (close) { L.rect(0, 0, dX - pw, h, post, 0.2); L.rect(dX + dW + pw, 0, w, h, post, 0.15); L.rect(0, 0, w, Math.max(0, top - s(12)), post, 0.18); }
       L.outline();
       g.drawImage(I.canvas(), 0, 0);
+      if (yFl < h) Q.floor(g, w, h, yFl, { col: '#4a3226', vx: Math.round(w / 2), eye: G.hy - 60, s, n: 18 });
       g.drawImage(L.canvas(), 0, 0);
       // the shōji slid back against the right post
       const S2 = p.layer(w, h);

@@ -456,8 +456,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // ==== mb1.dusk · sen: the register at the boards ===========================================================
-  function boardsBack(w, h, vb, key) {
-    return cached('mb1.boards|' + key + '|' + w + 'x' + h + '|' + vb, () => {
+  function boardsBack(w, h, vb, key, fl) {
+    return cached('mb1.boards|' + key + '|' + w + 'x' + h + '|' + vb + '|' + (fl ? fl.join(',') : ''), () => {
       const S = stage(w, h, vb), { s } = S, p = P();
       const cv = mk(w, h), g = cv.getContext('2d');
       g.imageSmoothingEnabled = false;
@@ -468,9 +468,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       for (let b = 0; b < 4; b++) SP.planks(L, Math.round(b * bw * 1.05 - bw * 0.3), Math.round(vb * 0.08), bw, h, wood, { vertical: true, board: Math.max(3, s(7)), base: 0.32, seed: 20 + b });
       L.outline();
       g.drawImage(L.canvas(), 0, 0);
+      // the quay's stones at the boards' foot, a little behind whoever stands before them (the boards ran to the
+      // frame's bottom, and Sen stood on them once her body was drawn; AR-1)
+      if (fl && fl[0] < h) Q.floor(g, w, h, fl[0], { kind: 'flags', col: '#5a5054', eye: fl[1], s, n: 12, cross: 6 });
       for (let b = 0; b < 4; b++) for (let r = 0; r < 5; r++) for (let i = 0; i < 6; i++) {
         const x = Math.round(b * bw * 1.05 - bw * 0.3 + s(6) + i * (bw - s(12)) / 6), y = Math.round(vb * 0.12 + r * s(28));
-        if ((b * 31 + r * 7 + i * 3) % 5 === 0) continue;
+        if ((b * 31 + r * 7 + i * 3) % 5 === 0 || (fl && y + s(16) > fl[0])) continue;
         SP.slip(g, x, y, s(7), s(16), { seed: b * 100 + r * 10 + i, n: 3 });
       }
       // a dimming over all of it, so the person in front stands out
@@ -497,7 +500,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
     safe: { wide: 'Sen\'s face and the register above the sheet', narrow: 'her face in the upper half', land: 'her face' },
     draw(c, w, h, t, st) {
       const S = stage(w, h, st.vb), { s, lay } = S, narrow = lay === 'narrow';
-      c.drawImage(boardsBack(w, h, st.vb, 'sen').cv, 0, 0);
+      const by0 = Math.round(Math.max(st.vb + s(16), 100)), feet0 = by0 + Math.round(h * 0.25);
+      c.drawImage(boardsBack(w, h, st.vb, 'sen', [Math.round(feet0 - 0.22 * (feet0 - (by0 - 60))), by0 - 60]).cv, 0, 0);
       SP.lantern(c, Math.round(w * (narrow ? 0.86 : 0.8)), Math.round(st.vb * 0.06), Math.max(3, s(6)), Math.max(5, s(12)), true, t, st.still);
       const ko = st.at('odd');
       const fr = ko > 0.3 ? { look: [0, 1], head: [0, 1] } : { look: [0, 0] };
@@ -547,13 +551,18 @@ var RB = (globalThis.RB = globalThis.RB || {});
         L.rect(0, ry + s(14), w, h, plaster, (x, y) => clamp(0.4 + (p.bayer(x, y) - 0.5) * 0.06, 0.02, 0.999));
         SP.roof(L, -s(4), w + s(4), ry, s(14), tile, { course: Math.max(2, s(4)) });
         const post = p.mat('#3a2a22', { n: 5, at: 2 }), noren = p.mat('#2e3a62', { n: 5, at: 2, step: 0.1 }), base2 = p.mat('#3a3a46', { n: 5, at: 2 });
-        L.rect(0, Math.round(st.vb * 0.55), w, h, base2, 0.4);
+        // the storehouses' stone plinth, then the street toward us (the plinth ran to the frame's bottom, and the people
+        // stood on its face once bodies were drawn; AR-1)
+        const yF = Math.round(st.vb * 0.56);
+        L.rect(0, Math.round(st.vb * 0.5), w, yF - Math.round(st.vb * 0.5), base2, 0.4);
         for (let x = 0, i = 0; x < w; x += s(64), i++) {
           L.rect(x, ry + s(14), s(5), h, post, (xx) => (xx < x + s(2) ? 0.7 : 0.3));
           if (i % 2 === 0) { L.rect(x + s(14), ry + s(24), s(18), s(16), p.mat('#ffcf86', { n: 4, at: 2 }), 0.8); for (let k2 = 0; k2 < 3; k2++) L.rect(x + s(14) + k2 * s(6), ry + s(18), s(5), s(14), noren, (xx, yy) => clamp(0.6 - (yy - ry) / s(40), 0.05, 0.999)); }
         }
         L.outline();
         g.drawImage(L.canvas(), 0, 0);
+        R(g, 0, yF, w, h - yF, '#2a2228');
+        Q.floor(g, w, h, yF, { kind: 'flags', col: '#4e4248', eye: Math.round(st.vb * 0.3), s, n: 14, cross: 7 });
         const BACK = { mul: [0.3, 0.26, 0.36], add: [8, 2, 12], rim: { side: 't', col: '#ffb070', k: [0.45, 0.2] } };
         const who = ['mb_take', 'mb_gonta', haru ? 'mb_haru' : null, 'mb_masa', ichi ? 'mb_ichi' : null, 'mb_masu', 'mb_sen'].filter(Boolean);
         const rnd = p.rnd(73);
@@ -562,6 +571,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
           const f = Q.figure(look(id), dir, 'i0', sc, BACK);
           if (!f) return;
           const x = Math.round((i + 0.5) * w / who.length + (rnd() - 0.5) * s(22)), y = Math.round(st.vb * [0.86, 0.72, 0.6][row] + s(row ? 0 : 6));
+          g.fillStyle = 'rgba(14,8,20,0.28)'; const sw = Math.round(9 * sc * 1.4); g.fillRect(x - sw, y - 1, sw * 2, Math.max(2, Math.round(3 * sc)));
           g.drawImage(f.cv, x - f.ax, y - f.ay);
         });
         return { cv };
