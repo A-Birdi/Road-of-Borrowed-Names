@@ -743,6 +743,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     (`sequence_p16` 101/0, `sequence_chapters` 121/0, `sequence_chapters_56` 196/0, `sequence_dev` 9/0,
     `sequence_manual --quick` 64/0, `sequence_world --quick` 892/0, `prologue` 100/0, `portrait_anim` 77/0);
     before/after pairs `docs/screenshots/ar1/` (14, lossless). VALIDATION.md "AR-1".
+  - Round 2 (Robin: "Ren appears to be floating in a library"): floors under the people who stood on walls, the street
+    under the Exchange crowd, the stage's edge over Tokiwa, shadows at every standing figure's feet, your own arm taking
+    Hoshino's envelope. VALIDATION.md "AR-1", round 2.
   - Open: Robin's review of the illustrations.
 
 ## Evidence index (see VALIDATION.md for commands and dates)

@@ -216,6 +216,20 @@ if (want('assembly') || want('morning')) {
   for (const R of [RUNS.find((x) => x.key === 'assembly'), RUNS.find((x) => x.key === 'morning')]) {
     const { p, errors, ctx } = await page(b, url, { viewport: { width: 1280, height: 720 } });
     await start(p, R, { reduce: true });
+    // (every frame is watched in the page as well: a shot shown for only a few hundred milliseconds, as the morning's
+    // is, could fall between two of the polls below and go unchecked, failing the run with "0 shots" now and then)
+    await p.evaluate(() => {
+      window.__holds = {};
+      const tick = () => {
+        const s = RB.sequence.state();
+        if (s && (s.state === 'presenting' || s.state === 'holding')) {
+          const key = s.seq + ':' + s.shot, r = window.__holds[key] || (window.__holds[key] = { bad: null });
+          if (!(s.state === 'holding' && s.k === 1) && !r.bad) r.bad = s.shot + '/' + s.state + '/' + s.k;
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
     let checked = 0, bad = [];
     await playThrough(p, R, async () => {
       await settled(p); await wait(p, 120);
@@ -223,6 +237,9 @@ if (want('assembly') || want('morning')) {
       checked++;
       if (!(s && s.state === 'holding' && s.k === 1)) bad.push(s && s.shot + '/' + s.state + '/' + s.k);
     });
+    const holds = await p.evaluate(() => window.__holds);
+    checked = Math.max(checked, Object.keys(holds).length);
+    for (const r of Object.values(holds)) if (r.bad) bad.push(r.bad);
     ok(checked > 0 && !bad.length, R.name + ', reduced motion: every shot holds at its end state once its dissolve is over (' + checked + ' shots) ' + JSON.stringify(bad));
     ok(!(await p.evaluate(() => window.__shook)), R.name + ', reduced motion: nothing shook the screen');
     ok(!errors.length, 'reduced motion: no page errors ' + errors.slice(0, 2).join(' | '));

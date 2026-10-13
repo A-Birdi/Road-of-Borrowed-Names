@@ -4303,6 +4303,39 @@ off the frame (phone), `14` Kōji and Hana with the phone on its side.
   and the world agree), `prologue` **100/0**, `portrait_anim` **77/0**. Headless Chromium only.
 - Review (R): every shot read at the three sizes after the last change, and the 14 pairs. Internal review only.
 
+**Round 2 — where people stand (Robin, 2026-10-13: "Go over them and make sure it looks correct in the sense of where
+people are placed and perspective - Ren appears to be floating in a library").** Cause: before the bodies were drawn,
+everything below the dialogue sheet was hidden, so where a standing figure's feet fell never mattered; with full bodies
+(Hide text, the travel volume's pages) several people stood on the face of a wall that ran to the frame's bottom. Every
+shot with a standing person was looked at, at the three sizes, for where the feet land, what is under them, and whether
+size agrees with depth. Changed:
+- a floor in perspective (`RB.seqKit.floor`: boards, flags or earth; the wall's foot a little behind the figure; a
+  shadow along it) under Ren in the archive, Hana in front of the counter, Wataru in the office, Sen at the tally boards
+  (the quay), Sōbē in the press room, Heisuke at the station, and the Curtain Bridge's deck at the fireworks;
+- the Exchange street at dusk: the storehouses stop at a plinth, a flagstone street runs toward us, the crowd stands on
+  it with small shadows;
+- the assembly seen from below the stage: the deck's edge hides Tokiwa's legs, as it would from there; the stage front
+  ends at the square where Gorō stands, on its earth;
+- every standing figure casts a soft shadow at its feet;
+- taking the envelope: you stand from behind before Hoshino (as when you asked) and your own arm takes it where both
+  reaches meet; he holds it until your hand is on it (the hand used to come in from below the frame with no arm, and the
+  envelope floated between hands).
+
+Looked at and left: in the shots not changed, nearer people stand lower and larger than farther ones (ch4 "ask", the
+dawn valley, the bank under the bridges, the assembly's square, the vigil room), consistent with a camera a little above
+head height; the outdoor scenes and the kneeling shots were already grounded. Pairs `docs/screenshots/ar1/15`–`26`
+(before 442033d | after).
+
+Checks on the build of e8f11b7 (headless Chromium): `sequence_art_integrity` (full) **13/0**, `sequence_p16` **101/0**,
+`sequence_chapters_56` **196/0**, `sequence_manual --quick` **64/0**, `sequence_world --quick` **892/0**; unit `sequence`
+499/0, `portrait` 70/0. `sequence_dev` crashed once at page load (15 s) while another browser run shared the machine;
+alone, **9/0**. `sequence_chapters` failed one check, "the morning after the storm (Mio), reduced motion … (0 shots)",
+in the chain and once more alongside another run; alone it passed three times, and the build before (442033d) passed it
+four times. Cause: the morning's single shot lasts about 300 ms in reduced motion and the check sampled it by polling
+between clicks, so a slow poll could miss it. The check now also watches every frame in the page (a shot that is not
+holding at k = 1 is caught; with motion on, the same watcher reports the morning shot as presenting at k < 1, as it
+should): 3/3 passes alone; the full suite on this build **121/0**.
+
 ## P17 — the complete run on the final build (2026-10-13; done)
 
 **Why this run.** Robin asked whether P14–P17's closure and the shipped edition were fully resolved before VA-1.

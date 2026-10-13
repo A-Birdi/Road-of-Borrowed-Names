@@ -342,6 +342,9 @@
     `tests/e2e/sequence_art_integrity.mjs` (every shot, phase, companion and size). Status under AC-1: implemented
     provisionally, internally reviewed; Robin's review open. VALIDATION.md "AR-1", REQUIREMENTS.md XP116, pairs in
     `docs/screenshots/ar1/`.
+    Round 2 (Robin: "Ren appears to be floating in a library"): people who stood on a wall's face now stand on a floor
+    (`RB.seqKit.floor`), the Exchange street, the stage's edge seen from below, shadows at the feet, your own arm for
+    Hoshino's envelope.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
