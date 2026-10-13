@@ -721,6 +721,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Robin's order (2026-10-13): free and local engines first, with the Windows kit; Gemini only as 9 representative
     samples if they fall short; whole-game generation approved separately after the complete estimate
     (`PRODUCTION_ESTIMATE.md`; the audition runner refuses any authorization not for the audition).
+  - The unattended local run (Robin's directive, 2026-10-13) is blocked: this cloud session has no access to
+    Robin's PC. A handoff for a local session is in the kit (`LOCAL_RUN_HANDOFF.md`, review ZIP packer, provisional
+    lead labels, resume by request identity).
   - Open: every configuration is blocked here or awaits Robin's authorisation (untested, not inferior); no audio,
     listening, casting or whole-game synthesis yet. VALIDATION.md "VA-1".
 

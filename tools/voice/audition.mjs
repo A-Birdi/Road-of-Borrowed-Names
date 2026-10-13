@@ -119,7 +119,10 @@ export function planCell(config, cell, ctx = {}) {
   const validation = validateRequest(config, plan, c, cell.take);
   if (validation.status !== 'passed') return Object.assign(base, { blocked: 'request validation failed: ' + validation.checks.filter((x) => !x.ok).map((x) => x.name).join('; '), plan, validation });
   const built = plan.request || plan.engine || plan.local;
-  return Object.assign(base, { plan, validation, model: model || pinned || null, requestSha256: sha(canon(built)) });
+  // the request's identity: what is sent, and the engine and model it goes to, so a resumed run reuses a take only
+  // when all of them still match (a changed voice, style, parameter, engine or model makes a new take)
+  const identity = { request: built, model: model || pinned || null, engineVersion: (cast.pinned && cast.pinned.engineVersion) || null };
+  return Object.assign(base, { plan, validation, model: model || pinned || null, requestSha256: sha(canon(identity)) });
 }
 
 const outDir = (args, revision) => path.resolve(args.out || path.join(ROOT, 'voice-audition', 'VA1', revision));
@@ -155,6 +158,9 @@ function record(p, ctx, extra) {
     listeningReview: { status: 'not_listened', reviewer: null, languageQualification: null, note: 'per attempt and audio hash; set only by a person' },
     scores: { pronunciation: null, prosody: null, identityFit: null, delivery: null, cleanliness: null, weightedTotal: null },
     rightsStatus: p.rightsStatus || 'not_checked', repairOf: null, repairReason: null, robinSelection: null,
+    // how this voice came to voice the take: a screen candidate, the first candidate (smoke/samples), or the role's
+    // `selected` lead, whose `selectionStatus` says whose choice it is (an agent's provisional lead is not Robin's)
+    castingSelection: p.kind === 'matrix' ? { label: p.voiceLabel, status: (ctx.cast && ctx.cast.roles && ctx.cast.roles[p.c && p.c.castingProfile] && ctx.cast.roles[p.c.castingProfile].selectionStatus) || 'selected' } : { label: p.voiceLabel, status: p.kind === 'screen' ? 'candidate' : 'first_candidate' },
   }, extra || {});
 }
 function writeRequest(dir, p, submitted) {
@@ -401,7 +407,8 @@ async function main() {
       if (!/\.d\./.test(args.take)) refuse('repairs are for directed takes');
       todo = todo.filter((p) => p.takeId === args.take);
     } else {
-      todo = todo.filter((p) => !generated(res, P.config, p.takeId, 1).length);
+      // resumable: a take is done when a record with audio exists for the same request identity
+      todo = todo.filter((p) => !generated(res, P.config, p.takeId, 1).some((r) => r.requestSha256 === p.requestSha256));
       if (P.kind !== 'smoke' && P.kind !== 'samples' && !res.records.some((r) => r.configurationId === P.config && r.kind === 'smoke' && r.audioOriginalPath && r.technicalCheck.status !== 'unusable')) refuse('run the smoke check for ' + P.config + ' first (--kind smoke)');
     }
     if (!todo.length) {

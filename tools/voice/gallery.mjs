@@ -23,7 +23,7 @@ export function galleryData(opts = {}) {
     const cast = loadCast(id, opts.castDir ? path.join(opts.castDir, id + '.json') : null);
     return {
       id, label: PROVIDERS[id].label, availability: i.availability || 'not_checked', reason: i.reason || null, model: (cast && cast.pinned && cast.pinned.modelId) || null,
-      cast: cast ? Object.fromEntries(Object.entries(cast.roles).map(([r, v]) => [r, { selected: v.selected, candidates: (v.candidates || []).map((x) => ({ label: x.label, why: x.pickedBecause || null })), discarded: v.discarded || [] }])) : {},
+      cast: cast ? Object.fromEntries(Object.entries(cast.roles).map(([r, v]) => [r, { selected: v.selected, selectionStatus: v.selectionStatus || null, candidates: (v.candidates || []).map((x) => ({ label: x.label, why: x.pickedBecause || null })), discarded: v.discarded || [] }])) : {},
     };
   });
   const cases = corpus.cases.map((c) => ({
@@ -198,7 +198,8 @@ function caseCard(c,opt){var card=el('section',{class:'card',tabindex:'-1',id:'c
     kinds.forEach(function(k){var list=k?ts.filter(function(t){return t.takeKind===k;}):ts;if(!list.length)list=[null];
       list.forEach(function(t){
         if(f==='audio'&&!(t&&t.audio))return;if(f==='incomplete'&&t&&t.audio&&t.tech&&t.tech.status==='no_anomaly_found')return;if(f==='flagged'&&!(t&&t.tech&&(t.tech.status==='anomaly_flagged'||t.tech.status==='unusable')))return;
-        var label=(t?t.voice+' · ':'')+(k==='neutral_control'?'neutral control':k==='directed'?'directed':(t?t.take.split('.')[2]:''))+(t&&t.attempt>1?' · repair':'');
+        var prov=t&&t.kind==='matrix'&&cfg.cast[c.role]&&cfg.cast[c.role].selectionStatus==='agent_provisional';
+        var label=(t?t.voice+(prov?' (provisional lead, not Robin\u2019s choice)':'')+' · ':'')+(k==='neutral_control'?'neutral control':k==='directed'?'directed':(t?t.take.split('.')[2]:''))+(t&&t.attempt>1?' · repair':'');
         h+='<div class="cell">'+cellHtml(c,cfg,t,label)+'</div>';});});});
   card.innerHTML=h+'</div>';return card;}
 var GROUPS=[['narrator','Narrator (female storyteller)'],['companion','Companions'],['dialect','Suzu in Kansai (same voice, matched to SUZU01\u201305)'],['player','Player Voice A and Voice B'],['npc','NPC profiles'],['stress','Language and prosody stress tests']];
@@ -279,7 +280,10 @@ export function writeGallery(opts = {}) {
   const json = JSON.stringify(data).replace(/</g, '\\u003c');
   fs.mkdirSync(dir, { recursive: true });
   const f = path.join(dir, 'review.html');
-  fs.writeFileSync(f, PAGE.replace('__DATA__', () => json));
+  const page = PAGE.replace('__DATA__', () => json);
+  fs.writeFileSync(f, page);
+  // the review's entry point by its agreed name; the same page, so either file opens it
+  fs.writeFileSync(path.join(dir, 'START_REVIEW.html'), page);
   return { file: f, takes: data.takes.length, withAudio: data.takes.filter((t) => t.audio).length };
 }
 

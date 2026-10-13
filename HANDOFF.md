@@ -313,6 +313,12 @@
         can run in this environment.
       - If Robin sends `voice-audition/speakers_<engine>.json` (the kit saves it), propose candidates and record
         each voice's terms from it.
+    - **Robin's unattended local-run directive (2026-10-13) is BLOCKED: no execution access to Robin's PC** from
+      this cloud session.
+      - The work is ready for a local session: `docs/future/voice/LOCAL_RUN_HANDOFF.md` and the directive, both in
+        the kit `rbn-va1-local-kit.zip`.
+      - One step needs Robin: start a Claude session on the PC (the desktop app's local session, or
+        `claude remote-control` in a folder there) and point it at that handoff.
     - **Only if the free results fall short:** propose the Gemini samples in
       `docs/future/voice/authorizations/gemini-samples-1.json`. That is 9 takes, at most US$0.04, and needs a
       network secret for `generativelanguage.googleapis.com` (`x-goog-api-key`) plus Robin's approval. It is not the

@@ -241,6 +241,17 @@ export default async (t) => {
     const ren = vres.find((x) => x.takeId === 'REN03.d.C01');
     t.ok(ren.technicalCheck.status === 'anomaly_flagged' && ren.technicalCheck.readings.some((x) => x.surface === '灯' && x.status === 'not_found'), 'the engine\'s misreading of 灯 is flagged as an anomaly, not a failure of the words (which are unchecked)');
     t.ok(vres.filter((x) => x.audioOriginalPath).every((x) => x.status === 'generated_unreviewed' && x.listeningReview.status === 'not_listened' && x.requestValidation.status === 'passed'), 'every local take generated and unreviewed, its request validated');
+    // resuming: an unchanged request is not sent again; a changed voice (style) makes a new take beside the old
+    const before = JSON.parse(fs.readFileSync(path.join(vout, 'results.json'), 'utf8')).records.length;
+    r = await runAsync(['run', '--kind', 'matrix', '--cases', only, '--authorised', 'unit test (mock engine)', ...base]);
+    const sameRun = JSON.parse(fs.readFileSync(path.join(vout, 'results.json'), 'utf8')).records.length;
+    const vc = JSON.parse(fs.readFileSync(vcast, 'utf8')); vc.roles.npc01 = vc.roles.npc01 || {}; for (const role of Object.values(vc.roles)) if (role.candidates) role.candidates[0].voice.styleId = 9;
+    fs.writeFileSync(vcast, JSON.stringify(vc));
+    r = await runAsync(['run', '--kind', 'matrix', '--cases', 'N05', '--authorised', 'unit test (mock engine)', ...base]);
+    const n05 = JSON.parse(fs.readFileSync(path.join(vout, 'results.json'), 'utf8')).records.filter((x) => x.takeId === 'N05.d.C01' && x.audioOriginalPath);
+    t.ok(sameRun === before && n05.length === 2 && n05[0].requestSha256 !== n05[1].requestSha256, 'a resumed run skips unchanged requests; a changed voice makes a new take and keeps the old one');
+    for (const role of Object.values(vc.roles)) if (role.candidates) role.candidates[0].voice.styleId = 1;
+    fs.writeFileSync(vcast, JSON.stringify(vc));
     r = await runAsync(['repair', '--take', 'N05.d.C01', '--reason', 'unit test: documented cause', '--cases', 'N05', '--authorised', 'unit test', ...base]);
     t.ok(r.status === 0, 'one repair of a directed take');
     r = await runAsync(['repair', '--take', 'N05.d.C01', '--reason', 'again', '--cases', 'N05', '--authorised', 'unit test', ...base]);

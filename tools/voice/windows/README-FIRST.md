@@ -1,5 +1,9 @@
 # VA-1 local audition kit (Windows)
 
+> **A Claude session asked to run this unattended on Robin's PC:** read `docs/future/voice/LOCAL_RUN_HANDOFF.md`
+> and Robin's directive (`docs/future/voice/directives/VA1_LOCAL_UNATTENDED_2026-10-13.md`) first. They cover what
+> to install, how to cast provisionally, the run and the review package.
+
 This kit runs the voice audition's **local engines** on your own PC: VOICEVOX, VOICEVOX Nemo and AivisSpeech. It is
 the same runner, corpus and result format the cloud environment uses, packed so nothing has to be rebuilt by hand. It
 needs no account, key or payment, and it uploads nothing. Audio stays in this folder.

@@ -4354,6 +4354,26 @@ untouched.
 - U `voice_audition` 46/0 (the purpose refusal; samples from the authorization's cases, with no smoke step and a
   refusal to stretch to the screen; `voices --save`); U `voice_local_kit` 7/0.
 
+**Robin's unattended local-run directive (2026-10-13): BLOCKED, no execution access to Robin's PC.** What was
+checked:
+- the account's environments: cloud only, no self-hosted runner;
+- its sessions: only this cloud session (opened from the desktop app);
+- reachable agents: none, so no Remote Control or local session;
+- no connected-device tools.
+
+Nothing was installed or generated, here or there. Prepared for a local session to finish unattended:
+- `docs/future/voice/LOCAL_RUN_HANDOFF.md`, with the directive kept verbatim in
+  `docs/future/voice/directives/`;
+- `START_REVIEW.html` written by the gallery;
+- an agent's provisional lead labelled as such (`selectionStatus: agent_provisional`, `castingSelection` in each
+  record);
+- resuming by request identity (voice, style, parameters, engine, model);
+- `tools/voice/pack_review.mjs`, review ZIPs each under 30 MB;
+- all of these in the kit.
+
+Tests: U `voice_audition` 47/0 (a resumed run skips unchanged requests, and a changed voice makes a new take);
+U `voice_review_pack` 8/0; U `voice_local_kit` 7/0; B `voice_gallery` 23/0.
+
 **Not done, and not claimed:** any real provider call, any audio, any listening or Japanese review, any casting, any
 Firefox or device check of the gallery, any run of the PowerShell wrapper.
 

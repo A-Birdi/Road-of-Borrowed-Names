@@ -13,7 +13,8 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const KIT_FILES = [
   'tools/voice/audition.mjs', 'tools/voice/providers.mjs', 'tools/voice/audio_check.mjs', 'tools/voice/gallery.mjs', 'tools/voice/ledger.mjs',
-  'tools/voice/qwen_local_job.py', 'tools/voice/windows/run-local-audition.ps1', 'tools/voice/windows/run-local-audition.cmd',
+  'tools/voice/qwen_local_job.py', 'tools/voice/pack_review.mjs', 'tools/voice/windows/run-local-audition.ps1', 'tools/voice/windows/run-local-audition.cmd',
+  'docs/future/voice/LOCAL_RUN_HANDOFF.md', 'docs/future/voice/directives/VA1_LOCAL_UNATTENDED_2026-10-13.md',
   'docs/future/voice/corpus/audition_corpus.json', 'docs/future/voice/inventory/provider_inventory.json',
   'docs/future/voice/casting/voicevox.json', 'docs/future/voice/casting/voicevox_nemo.json', 'docs/future/voice/casting/aivis.json', 'docs/future/voice/casting/qwen.json',
 ];
