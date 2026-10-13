@@ -4284,7 +4284,8 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | 4/12 | 11/11 | |
 | 5/12 | 10/11 | `pets` failed one check once: traced below |
 | 6/12 | 10/11 | `company` failed two phone checks every time: traced below |
-| 7–12 | running | |
+| 7/12 | running again | The first attempt was stopped by the background job's two-hour limit after 5 of its 11 scripts (kept as `part7_partial.log`); `actor_life` failed one check there and again in the rerun: traced below |
+| 8–12 | to run | Each part now runs as its own job, so none meets that limit |
 
 **The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
 Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.
@@ -4330,6 +4331,21 @@ failed: `{"hscroll":true,"over":[],"small":0}`. It failed the same way alone, so
 - Elsewhere at 320 px with 200 % text, the folio's tab strip scrolls sideways, by design (hidden scrollbar and arrow
   buttons when its tabs overflow). It is outside this page check.
 - The whole fixed `company` script then passed 61/61 on the final build, both phone checks with `"out":[]`.
+
+**The `actor_life` failure.** "A wanderer pauses on their round" failed in both part 7 attempts, the second on an
+otherwise quiet machine: no pause came within 30 s. It last passed on 2026-10-04.
+
+- The wanderer the check picks is Mame in Reedwake. Instrumented in a scratch copy, she stepped 6 times in 30 s,
+  always on screen. One step came while the area was at its busy cap; the other five reached the 1-in-3 roll
+  (`stepped`, `src/engine/52_staging.js`).
+- Those rolls are a fixed sequence per seed and person. With the test's seed 7, Mame's rolls 1–6 all miss and roll
+  7 pauses; over 1,000 rolls the rate is 0.344, as designed.
+- One roll came before the window, so the window held rolls 2–7. Roll 7 landed at 32 s, 2 s past the limit.
+  Watching longer, the same run paused at 32 s (`mame@rw.village:bounce`).
+- The game pauses wanderers as designed. The test's fixed 30 s ended just before this seed's first pause, so a
+  small shift in what happened earlier tipped it from pass to fail.
+- The check now waits up to 90 s and stops at the first pause; its assertion is unchanged.
+- The whole fixed `actor_life` script then passed 39/39 on the final build, while part 7 ran alongside.
 
 ## VA-1 — the voice audition (Robin's VA-1, queued last; in progress, 2026-10-12)
 

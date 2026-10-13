@@ -188,8 +188,11 @@ console.log('     profiles met: ' + JSON.stringify(tiers));
     if (!w) return null;
     RB.world.enter(W.map.id, w.home[0] + 3 > W.map.w - 2 ? w.home[0] - 3 : w.home[0] + 3, w.home[1], 'down');
     RB.world.unstick(W.player);
+    // a step pauses one time in three (52_staging.js stepped), from the person's own seeded rolls, and a wanderer steps
+    // every 1.8–5.3 s: 30 s held about six steps, which this seed's rolls can all miss (Mame's first pause is roll 7,
+    // 32 s in); the wait ends at the first pause
     const t0 = performance.now();
-    while (performance.now() - t0 < 30000) {
+    while (performance.now() - t0 < 90000) {
       if (RB.staging.trace().some((e) => e.why === 'route')) break;
       await new Promise((r) => setTimeout(r, 100));
     }
