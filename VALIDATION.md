@@ -4286,8 +4286,9 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | 6/12 | 10/11 | `company` failed two phone checks every time: traced below |
 | 7/12 | 10/11 | Rerun in full (02:27–03:47). The first attempt was stopped by the background job's two-hour limit after 5 of its 11 scripts (kept as `part7_partial.log`). `actor_life` failed one check in both attempts: traced below. `staging_chapters` passed for the showcase and Chapters 1–6. |
 | 8/12 | 11/11 | `staging_chapters --ch=misc`, `staging_wataru`, `staging_variants --quick`, `sequence_world --quick` among them. From part 8 on, each part runs as its own job, started when the one before finishes, so none meets that limit (part 8's first start was stopped after half a minute and restarted fresh for that reason). |
-| 9/12 | running | |
-| 10–12 | to run | |
+| 9/12 | 11/11 | |
+| 10/12 | running | |
+| 11–12 | to run | |
 
 **The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
 Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.
