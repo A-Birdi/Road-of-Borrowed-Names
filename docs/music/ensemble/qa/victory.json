@@ -1,0 +1,679 @@
+{
+ "songId": "victory",
+ "generatedBy": "tools/music/ensemble/verify.mjs",
+ "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+ "fingerprint": "sha256:52db3ee9275a1197b767b58f32ce22fcf318b1c0a3dc3a387cef247e2b355dc2",
+ "renderFingerprint": "sha256:52db3ee9275a1197b767b58f32ce22fcf318b1c0a3dc3a387cef247e2b355dc2",
+ "formats": [
+  {
+   "codec": "opus",
+   "decode": {
+    "first": {
+     "url": "./assets/music/ensemble/victory/victory.first.85568aa18ec709a4.opus",
+     "bytes": 200903,
+     "rates": {
+      "44100": {
+       "frames": 555660,
+       "channels": 2,
+       "sampleRate": 44100,
+       "finite": true,
+       "peak": 0.8910614252090454
+      },
+      "48000": {
+       "frames": 604800,
+       "channels": 2,
+       "sampleRate": 48000,
+       "finite": true,
+       "peak": 0.8911099433898926
+      }
+     }
+    }
+   },
+   "alignment": {
+    "first": {
+     "frames48k": 604800,
+     "masterFrames": 604800,
+     "frames44k": 555660,
+     "ok48": true,
+     "ok441": true,
+     "windows": [
+      {
+       "at": 4800,
+       "lag": 0,
+       "snrDb": 25.86,
+       "bestSnrDb": 25.86
+      },
+      {
+       "at": 8896,
+       "lag": 0,
+       "snrDb": 26.72,
+       "bestSnrDb": 26.72
+      },
+      {
+       "at": 56896,
+       "lag": 0,
+       "snrDb": 25.44,
+       "bestSnrDb": 25.44
+      },
+      {
+       "at": 104896,
+       "lag": 0,
+       "snrDb": 25.21,
+       "bestSnrDb": 25.21
+      },
+      {
+       "at": 152896,
+       "lag": 0,
+       "snrDb": 26.14,
+       "bestSnrDb": 26.14
+      },
+      {
+       "at": 200896,
+       "lag": -1,
+       "snrDb": 25.26,
+       "bestSnrDb": 25.35
+      },
+      {
+       "at": 248896,
+       "lag": 0,
+       "snrDb": 27.11,
+       "bestSnrDb": 27.11
+      },
+      {
+       "at": 296896,
+       "lag": 0,
+       "snrDb": 27.22,
+       "bestSnrDb": 27.22
+      },
+      {
+       "at": 344896,
+       "lag": 0,
+       "snrDb": 28.97,
+       "bestSnrDb": 28.97
+      }
+     ],
+     "aligned": true,
+     "minSnrDb": 25.21
+    }
+   },
+   "decodeOk": true,
+   "placement": [
+    {
+     "seconds": 13,
+     "from": 0,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": null,
+       "offset": 0.1,
+       "fadeIn": false,
+       "role": "first"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 340.76,
+     "snrByModel": {
+      "linear": 241.58,
+      "nearest": 340.76,
+      "chromium": 340.76
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 1.234567,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": null,
+       "offset": 1.334567,
+       "fadeIn": false,
+       "role": "first"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 338.19,
+     "snrByModel": {
+      "linear": 34.43,
+      "nearest": 338.19,
+      "chromium": 338.19
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 3.7081799999999996,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": null,
+       "offset": 3.8081799999999997,
+       "fadeIn": false,
+       "role": "first"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 334.51,
+     "snrByModel": {
+      "linear": 36.99,
+      "nearest": 334.51,
+      "chromium": 334.51
+     },
+     "maxErr": 0,
+     "seams": []
+    }
+   ],
+   "placementOk": true,
+   "joins": [],
+   "boundaries": [],
+   "seamOk": true,
+   "boundariesSeen": 0,
+   "models": [
+    "nearest"
+   ],
+   "loudness": {
+    "lufs": -19.45956719051439,
+    "diffLu": -0.009605173622897922
+   },
+   "ok": true
+  },
+  {
+   "codec": "mp3",
+   "decode": {
+    "first": {
+     "url": "./assets/music/ensemble/victory/victory.first.dc652d3bc3a998fc.mp3",
+     "bytes": 303572,
+     "rates": {
+      "44100": {
+       "frames": 555660,
+       "channels": 2,
+       "sampleRate": 44100,
+       "finite": true,
+       "peak": 0.8647741079330444
+      },
+      "48000": {
+       "frames": 604800,
+       "channels": 2,
+       "sampleRate": 48000,
+       "finite": true,
+       "peak": 0.8647724986076355
+      }
+     }
+    }
+   },
+   "alignment": {
+    "first": {
+     "frames48k": 604800,
+     "masterFrames": 604800,
+     "frames44k": 555660,
+     "ok48": true,
+     "ok441": true,
+     "windows": [
+      {
+       "at": 4800,
+       "lag": 0,
+       "snrDb": 30.34,
+       "bestSnrDb": 30.34
+      },
+      {
+       "at": 8896,
+       "lag": 0,
+       "snrDb": 30.37,
+       "bestSnrDb": 30.37
+      },
+      {
+       "at": 56896,
+       "lag": 0,
+       "snrDb": 30.12,
+       "bestSnrDb": 30.12
+      },
+      {
+       "at": 104896,
+       "lag": 0,
+       "snrDb": 30.33,
+       "bestSnrDb": 30.33
+      },
+      {
+       "at": 152896,
+       "lag": 0,
+       "snrDb": 30.03,
+       "bestSnrDb": 30.03
+      },
+      {
+       "at": 200896,
+       "lag": 0,
+       "snrDb": 30.46,
+       "bestSnrDb": 30.46
+      },
+      {
+       "at": 248896,
+       "lag": 0,
+       "snrDb": 30.02,
+       "bestSnrDb": 30.02
+      },
+      {
+       "at": 296896,
+       "lag": 0,
+       "snrDb": 29.73,
+       "bestSnrDb": 29.73
+      },
+      {
+       "at": 344896,
+       "lag": 0,
+       "snrDb": 27.98,
+       "bestSnrDb": 27.98
+      }
+     ],
+     "aligned": true,
+     "minSnrDb": 27.98
+    }
+   },
+   "decodeOk": true,
+   "placement": [
+    {
+     "seconds": 13,
+     "from": 0,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": null,
+       "offset": 0.1,
+       "fadeIn": false,
+       "role": "first"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 340.49,
+     "snrByModel": {
+      "linear": 241.57,
+      "nearest": 340.49,
+      "chromium": 340.49
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 1.234567,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": null,
+       "offset": 1.334567,
+       "fadeIn": false,
+       "role": "first"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 337.92,
+     "snrByModel": {
+      "linear": 34.43,
+      "nearest": 337.92,
+      "chromium": 337.92
+     },
+     "maxErr": 0,
+     "seams": []
+    },
+    {
+     "seconds": 3,
+     "from": 3.7081799999999996,
+     "segments": [
+      {
+       "when": 0.05,
+       "until": null,
+       "offset": 3.8081799999999997,
+       "fadeIn": false,
+       "role": "first"
+      }
+     ],
+     "model": "nearest",
+     "modelSnrDb": 334.29,
+     "snrByModel": {
+      "linear": 37.03,
+      "nearest": 334.29,
+      "chromium": 334.29
+     },
+     "maxErr": 0,
+     "seams": []
+    }
+   ],
+   "placementOk": true,
+   "joins": [],
+   "boundaries": [],
+   "seamOk": true,
+   "boundariesSeen": 0,
+   "models": [
+    "nearest"
+   ],
+   "loudness": {
+    "lufs": -19.690133309694012,
+    "diffLu": 0.22096094555672252,
+    "peak": 0.5275566577911377,
+    "nan": false
+   },
+   "ok": true
+  }
+ ],
+ "originalMeasuredBy": "tools/music/ensemble/stems.mjs: the Original's first pass through the game graph, measured as verify.mjs's __mtGraph(mix 1, until D)",
+ "calibration": {
+  "window": "the first pass, 0 to 6 s, 48 kHz, default volumes, no ducking",
+  "originalLufs": -19.46917236413729,
+  "originalPeak": 0.48627954721450806,
+  "iterations": [
+   {
+    "trim": 1,
+    "ensembleLufs": -19.45956719051439,
+    "diffLu": -0.009605173622897922
+   }
+  ],
+  "trim": 1,
+  "gainDb": 0,
+  "ensembleLufs": -19.45956719051439,
+  "diffLu": -0.009605173622897922,
+  "ensemblePeak": 0.5341771841049194,
+  "nan": false,
+  "clippedSamples": 0
+ },
+ "calibrationOk": true,
+ "onsets": {
+  "lagMs": 5,
+  "r": 0.222,
+  "rAt40": 0.024,
+  "zFar": 10,
+  "farMean": 0.0062,
+  "farSd": 0.0216,
+  "curve": [
+   [
+    -50,
+    -0.014
+   ],
+   [
+    -40,
+    -0.004
+   ],
+   [
+    -30,
+    0.04
+   ],
+   [
+    -20,
+    -0.003
+   ],
+   [
+    -10,
+    -0.028
+   ],
+   [
+    -5,
+    -0.003
+   ],
+   [
+    0,
+    0.015
+   ],
+   [
+    5,
+    0.222
+   ],
+   [
+    10,
+    -0.009
+   ],
+   [
+    20,
+    -0.004
+   ],
+   [
+    30,
+    -0.002
+   ],
+   [
+    40,
+    0.024
+   ],
+   [
+    50,
+    -0.029
+   ]
+  ]
+ },
+ "onsetControl": {
+  "shiftMs": 100,
+  "lagMs": -47,
+  "r": 0.072,
+  "rAt40": 0.003,
+  "zFar": 2.11,
+  "passes": false
+ },
+ "onsetOk": true,
+ "onsetCriterion": "MT-1: peak at least 3x the correlation 40 ms away",
+ "handoverTimes": "steadiest moments of a short cue (1.45 s, 4.6 s)",
+ "handovers": [
+  {
+   "at": 1.45,
+   "blocks": 5,
+   "bumpLu": -0.38,
+   "dipLu": 0.57,
+   "rows": [
+    {
+     "t": 1.5,
+     "handover": -18.46,
+     "original": -18.31,
+     "ensemble": -17.75,
+     "above": -0.71,
+     "below": 0.15
+    },
+    {
+     "t": 1.6,
+     "handover": -19.2,
+     "original": -18.63,
+     "ensemble": -18.19,
+     "above": -1.01,
+     "below": 0.57
+    },
+    {
+     "t": 1.7,
+     "handover": -19.47,
+     "original": -19.04,
+     "ensemble": -18.57,
+     "above": -0.9,
+     "below": 0.43
+    },
+    {
+     "t": 1.8,
+     "handover": -19.72,
+     "original": -19.36,
+     "ensemble": -18.99,
+     "above": -0.72,
+     "below": 0.36
+    },
+    {
+     "t": 1.9,
+     "handover": -19.41,
+     "original": -19.34,
+     "ensemble": -19.03,
+     "above": -0.38,
+     "below": 0.07
+    }
+   ]
+  },
+  {
+   "at": 4.6,
+   "blocks": 6,
+   "bumpLu": -0.04,
+   "dipLu": 0.37,
+   "rows": [
+    {
+     "t": 4.6,
+     "handover": -20.12,
+     "original": -21.34,
+     "ensemble": -20.08,
+     "above": -0.04,
+     "below": -1.22
+    },
+    {
+     "t": 4.7,
+     "handover": -21.48,
+     "original": -21.61,
+     "ensemble": -21.07,
+     "above": -0.41,
+     "below": -0.13
+    },
+    {
+     "t": 4.8,
+     "handover": -22,
+     "original": -21.83,
+     "ensemble": -21.46,
+     "above": -0.54,
+     "below": 0.17
+    },
+    {
+     "t": 4.9,
+     "handover": -22.34,
+     "original": -21.94,
+     "ensemble": -21.97,
+     "above": -0.4,
+     "below": 0.37
+    },
+    {
+     "t": 5,
+     "handover": -22.52,
+     "original": -21.94,
+     "ensemble": -22.78,
+     "above": -0.58,
+     "below": -0.25
+    },
+    {
+     "t": 5.1,
+     "handover": -22.14,
+     "original": -21.96,
+     "ensemble": -23.68,
+     "above": -0.17,
+     "below": -1.54
+    }
+   ]
+  }
+ ],
+ "handoverOk": true,
+ "render": {
+  "songId": "victory",
+  "fingerprint": "sha256:52db3ee9275a1197b767b58f32ce22fcf318b1c0a3dc3a387cef247e2b355dc2",
+  "sourceHead": "3790e5b487d6557b0550efe51d6a6b9420f2d8b4",
+  "sampleRate": 48000,
+  "score": {
+   "durationSec": 6,
+   "loop": false,
+   "loopStartSec": 0,
+   "loopIdx": 0,
+   "events": 38,
+   "periodSec": null
+  },
+  "head": {
+   "file": "head.wav",
+   "frames": 604800,
+   "playableStartFrame": 4800,
+   "playableEndFrame": 580800,
+   "endSec": 12,
+   "tailSec": 6,
+   "leadSec": 0.1,
+   "guardSec": 0.5,
+   "eventsPlaced": 38
+  },
+  "loop": null,
+  "join": null,
+  "master": {
+   "peakBeforeScale": 0.5625495314598083,
+   "scale": 1.5843066046485925,
+   "format": "WAV float32, its guard faded to silence"
+  },
+  "parts": {
+   "lead": {
+    "gain": 31.956431447345906,
+    "measured": {
+     "originalKmsDb": -25.17568271798959,
+     "ensembleUnitKmsDb": -55.26684823767752,
+     "gain": 31.956431447345906,
+     "gainDb": 30.09116551968793
+    }
+   },
+   "pad": {
+    "gain": 3.97430085989699,
+    "measured": {
+     "originalKmsDb": -28.21649137596092,
+     "ensembleUnitKmsDb": -40.20170618980287,
+     "gain": 3.97430085989699,
+     "gainDb": 11.985214813841942
+    }
+   },
+   "bass": {
+    "gain": 9.291498560607858,
+    "measured": {
+     "originalKmsDb": -21.86985916084813,
+     "ensembleUnitKmsDb": -41.23157443989675,
+     "gain": 9.291498560607858,
+     "gainDb": 19.361715279048607
+    }
+   },
+   "perc": {
+    "gain": 4.396053124924107,
+    "measured": {
+     "originalKmsDb": -37.66097474252598,
+     "ensembleUnitKmsDb": -50.52223338444304,
+     "gain": 4.396053124924107,
+     "gainDb": 12.86125864191706
+    }
+   },
+   "lead2": {
+    "gain": 4.216827358553942,
+    "measured": {
+     "originalKmsDb": -29.13818329289324,
+     "ensembleUnitKmsDb": -41.637899710808846,
+     "gain": 4.216827358553942,
+     "gainDb": 12.499716417915606
+    }
+   },
+   "run": {
+    "gain": 4.680626146176098,
+    "measured": {
+     "originalKmsDb": -29.12305726784219,
+     "ensembleUnitKmsDb": -42.52913635342564,
+     "gain": 4.680626146176098,
+     "gainDb": 13.406079085583446
+    }
+   }
+  },
+  "balanceCheckAgainstSc1": null,
+  "treatment": {
+   "voices": "SC-1 (rs1.py fork) and MT-2's additions",
+   "instruments": {
+    "celesta": "celesta",
+    "pad": "slow_strings",
+    "bass": "acoustic_bass",
+    "pluck": "guitar",
+    "harp": "harp"
+   },
+   "percussion": {
+    "k": "kit_kick",
+    "w": "kit_wood_low"
+   },
+   "gains": "measured: each part at the Original part's K-weighted level over the first pass (stems.mjs)",
+   "room": {
+    "seconds": 1.7,
+    "wet": 0.17
+   },
+   "echo": null,
+   "filters": "HP 32 Hz, LP 11 kHz (2nd-order Butterworth)"
+  },
+  "tools": {
+   "fluidsynth": "2.3.4",
+   "soundFont": "TimGM6mb.sf2",
+   "soundFontSha256": "c5378b62028c920cb11e4803327983fee2f2cdff5dc89c708e39da417e51c854",
+   "numpy": "2.4.6",
+   "soundfile": "0.14.0"
+  },
+  "elapsedSec": 1.583177089691162
+ },
+ "renderer": "mt1-tools-sha256:96ee0c13f319e39e"
+}
