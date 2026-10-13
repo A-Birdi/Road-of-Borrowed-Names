@@ -81,7 +81,7 @@ export default async (t) => {
     return f;
   };
   const authFile = (name, over) => {
-    const a = Object.assign({ schemaVersion: 'rbn-voice-authorization-1', id: name, configurationId: 'gemini', approvedBy: 'unit test', approvedOn: '2026-10-13', kinds: ['smoke', 'screen', 'matrix'], allowanceUsd: 0.05, model: 'gemini-3.8-flash-tts', termsReviewed: { by: 'unit test' },
+    const a = Object.assign({ schemaVersion: 'rbn-voice-authorization-1', id: name, purpose: 'audition', configurationId: 'gemini', approvedBy: 'unit test', approvedOn: '2026-10-13', kinds: ['smoke', 'screen', 'matrix'], allowanceUsd: 0.05, model: 'gemini-3.8-flash-tts', termsReviewed: { by: 'unit test' },
       pricing: { unit: 'tokens', inputUsdPerMTok: 0.5, outputAudioUsdPerMTok: 9, audioTokensPerSecondBudget: 32, validUntil: '2099-12-31', source: 'unit test', retrievedOn: '2026-10-13' } }, over || {});
     const f = path.join(tmp, name + '.auth.json'); fs.writeFileSync(f, JSON.stringify(a)); return f;
   };
@@ -97,10 +97,12 @@ export default async (t) => {
   t.ok(r.status === 2 && /no --authorization/.test(r.stderr), 'no hosted run without an authorization file');
   r = sync(['run', '--kind', 'smoke', '--auth', 'env', '--authorization', authFile('unapproved', { approvedBy: null }), ...G]);
   t.ok(r.status === 2 && /not approved/.test(r.stderr), 'an unapproved authorization is refused');
+  r = sync(['run', '--kind', 'smoke', '--auth', 'env', '--authorization', authFile('production', { purpose: 'production' }), ...G]);
+  t.ok(r.status === 2 && /only audition authorizations/.test(r.stderr), 'an authorization for anything but the audition (whole-game production) is refused');
   r = sync(['run', '--kind', 'matrix', '--auth', 'env', '--authorization', authFile('smokeonly', { kinds: ['smoke'] }), ...G]);
   t.ok(r.status === 2 && /does not cover matrix/.test(r.stderr), 'a kind the authorization does not cover is refused');
-  t.ok(/valid until 2026-12-31/.test(authorizationProblem({ configurationId: 'gemini', approvedBy: 'x', approvedOn: 'x', allowanceUsd: 1, kinds: ['smoke'], pricing: { unit: 'tokens', inputUsdPerMTok: 0.5, outputAudioUsdPerMTok: 9, audioTokensPerSecondBudget: 32, validUntil: '2026-12-31', source: 's', retrievedOn: 'd' } }, 'gemini', 'smoke', null, '2027-01-01') || ''), 'prices past their date (Gemini doubles on 2027-01-01) stop spending until they are updated');
-  t.ok(/pricing is incomplete/.test(authorizationProblem({ configurationId: 'gemini', approvedBy: 'x', approvedOn: 'x', allowanceUsd: 1, kinds: ['smoke'], pricing: { unit: 'characters' } }, 'gemini', 'smoke', null) || ''), 'a character count alone is not accepted as the price of a token-priced model');
+  t.ok(/valid until 2026-12-31/.test(authorizationProblem({ purpose: 'audition', configurationId: 'gemini', approvedBy: 'x', approvedOn: 'x', allowanceUsd: 1, kinds: ['smoke'], pricing: { unit: 'tokens', inputUsdPerMTok: 0.5, outputAudioUsdPerMTok: 9, audioTokensPerSecondBudget: 32, validUntil: '2026-12-31', source: 's', retrievedOn: 'd' } }, 'gemini', 'smoke', null, '2027-01-01') || ''), 'prices past their date (Gemini doubles on 2027-01-01) stop spending until they are updated');
+  t.ok(/pricing is incomplete/.test(authorizationProblem({ purpose: 'audition', configurationId: 'gemini', approvedBy: 'x', approvedOn: 'x', allowanceUsd: 1, kinds: ['smoke'], pricing: { unit: 'characters' } }, 'gemini', 'smoke', null) || ''), 'a character count alone is not accepted as the price of a token-priced model');
   const auth1 = authFile('gemini-test-1');
   r = sync(['run', '--kind', 'smoke', '--auth', 'env', '--authorization', auth1, ...G]);
   t.ok(r.status === 2 && /needs GEMINI_API_KEY/.test(r.stderr), 'env mode refuses without the variable');
@@ -166,6 +168,16 @@ export default async (t) => {
     const everything = [r.stdout, r.stderr, fs.readFileSync(ledger1, 'utf8'), fs.readFileSync(path.join(out, 'results.json'), 'utf8')].concat(fs.readdirSync(path.join(out, 'requests/gemini'), { recursive: true }).filter((f) => f.endsWith('.json')).map((f) => fs.readFileSync(path.join(out, 'requests/gemini', f), 'utf8'))).join('\n');
     t.ok(!everything.includes(KEY), 'the key appears in no output, ledger, result or stored request');
 
+    // a handful of named samples (Robin, 2026-10-13): the cases come from the authorization, no smoke step first,
+    // and the direction-check pair (N02 with its control) is among them
+    const sampleAuth = authFile('gemini-samples-test', { kinds: ['samples'], cases: ['N02', 'SUZU01', 'SUZU_K01'] });
+    const sout = path.join(tmp, 'sout');
+    r = await runAsync(['run', '--kind', 'samples', '--auth', 'proxy', '--config', 'gemini', '--cast', gcast, '--out', sout, '--ledger', ledgerDir, '--authorization', sampleAuth, '--endpoint', gurl], env);
+    const srec = fs.existsSync(path.join(sout, 'results.json')) ? JSON.parse(fs.readFileSync(path.join(sout, 'results.json'), 'utf8')).records.filter((x) => x.audioOriginalPath).map((x) => x.takeId).sort() : [];
+    t.eq(srec, ['sample.N02.d.C01', 'sample.N02.n.C01', 'sample.SUZU01.d.C01', 'sample.SUZU_K01.d.C01'], 'samples: exactly the authorised cases, with N02\'s neutral control, no smoke step first');
+    r = await runAsync(['run', '--kind', 'screen', '--auth', 'proxy', '--config', 'gemini', '--cast', gcast, '--out', sout, '--ledger', ledgerDir, '--authorization', sampleAuth, '--endpoint', gurl], env);
+    t.ok(r.status === 2 && /does not cover screen/.test(r.stderr), 'a samples authorization does not stretch to the casting screen');
+
     // the allowance: counted across output folders, and a run stops before it could be exceeded
     const { spentOf, readLedger } = await tool('ledger.mjs');
     const before = spentOf(readLedger(ledger1)).usd;
@@ -198,6 +210,8 @@ export default async (t) => {
     req.on('data', (d) => (body += d));
     req.on('end', () => {
       if (u.pathname === '/version') return res.end('"mock"');
+      if (u.pathname === '/speakers') return res.end(JSON.stringify([{ name: 'テスト', speaker_uuid: 'uuid-a', styles: [{ id: 1, name: 'ノーマル' }, { id: 2, name: 'あまあま' }], version: '1.0' }]));
+      if (u.pathname === '/speaker_info') return res.end(JSON.stringify({ policy: '# 利用規約\nクレジット表記: テスト', portrait: 'BASE64PORTRAIT', style_infos: [{ id: 1, icon: 'BASE64ICON', voice_samples: ['BASE64WAV'] }] }));
       if (u.pathname === '/audio_query') { const text = u.searchParams.get('text'); vseen.texts.push(text); const c = byText.get(text); res.setHeader('Content-Type', 'application/json'); return res.end(JSON.stringify({ accent_phrases: [], speedScale: 1, intonationScale: 1, kana: c ? kanaOf(c) : '' })); }
       if (u.pathname === '/synthesis') { const q = JSON.parse(body); const c = corpus.cases.find((x) => kanaOf(x) === q.kana); res.setHeader('Content-Type', 'audio/wav'); return res.end(wav(c ? moraeOf(c).morae / 8 + 0.2 : 1)); }
       if (u.pathname === '/user_dict_word' && req.method === 'POST') { vseen.dict++; return res.end('"uuid-1"'); }
@@ -210,6 +224,10 @@ export default async (t) => {
   try {
     const vcast = cast('voicevox', { styleId: 1, styleFor: { 'Warm welcome': 2 }, userDict: [{ surface: '灯', pronunciation: 'アカ', accent_type: 0 }] }, 'ok_test');
     const base = ['--config', 'voicevox', '--cast', vcast, '--out', vout, '--engine-url', vurl];
+    const saved = path.join(tmp, 'speakers.json');
+    r = await runAsync(['voices', '--config', 'voicevox', '--engine-url', vurl, '--save', saved]);
+    const sv = r.status === 0 ? JSON.parse(fs.readFileSync(saved, 'utf8')) : { speakers: [] };
+    t.ok(sv.speakers.length === 1 && /クレジット表記/.test(sv.speakers[0].policy) && sv.speakers[0].styles.length === 2 && !/BASE64/.test(fs.readFileSync(saved, 'utf8')), 'voices --save keeps each voice\'s styles and its own terms from the engine, without its pictures or sample audio');
     r = await runAsync(['run', '--kind', 'smoke', ...base]);
     t.ok(r.status === 2 && /--authorised/.test(r.stderr), 'no local run without naming who authorised it');
     r = await runAsync(['run', '--kind', 'smoke', '--authorised', 'unit test (mock engine)', ...base]);

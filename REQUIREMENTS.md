@@ -718,6 +718,9 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     - separate evidence fields;
     - Gemini prepared as the first runnable configuration;
     - the Windows local-engine kit.
+  - Robin's order (2026-10-13): free and local engines first, with the Windows kit; Gemini only as 9 representative
+    samples if they fall short; whole-game generation approved separately after the complete estimate
+    (`PRODUCTION_ESTIMATE.md`; the audition runner refuses any authorization not for the audition).
   - Open: every configuration is blocked here or awaits Robin's authorisation (untested, not inferior); no audio,
     listening, casting or whole-game synthesis yet. VALIDATION.md "VA-1".
 

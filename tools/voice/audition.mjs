@@ -11,8 +11,9 @@
 // the ledger past the allowance.
 //
 //   node tools/voice/audition.mjs plan   --config <id> [--kind smoke|screen|matrix] [--cast <file>] [--authorization <file>]
-//   node tools/voice/audition.mjs voices --config <local id> [--engine-url <url>]
-//   node tools/voice/audition.mjs run    --config <id> --kind smoke|screen|matrix [--cases N01,N02]
+//   node tools/voice/audition.mjs voices --config <local id> [--engine-url <url>] [--save <file.json>]
+//                                        (--save keeps each voice's styles and its own terms, as the engine bundles them)
+//   node tools/voice/audition.mjs run    --config <id> --kind smoke|screen|matrix|samples [--cases N01,N02]
 //                                        (local) --authorised "<who, when, scope>" [--engine-url <url>]
 //                                        (hosted) --authorization <file> --auth proxy|env
 //   node tools/voice/audition.mjs repair --config <id> --take <takeId> --reason "<documented cause>" (+ the run's access)
@@ -74,17 +75,22 @@ export function cellsOf(corpus, cast, kind, only) {
       for (const v of cands) for (const c of anchorsOf(corpus, p)) if (!only || only.includes(c.caseId)) out.push({ c, take: 'directed', kind, voice: v, voiceLabel: v.label, takeId: 'screen.' + p + '.' + v.label + '.' + c.caseId });
     }
   } else {
+    // `samples`: a handful of named cases (a paid provider's first look, Robin 2026-10-13), each directed, with the
+    // smoke pair's neutral control so a direction read aloud still shows; it uses each role's first candidate
+    if (kind === 'samples' && !only) return [];
     const cases = kind === 'smoke' ? corpus.cases.filter((x) => (only ? only.includes(x.caseId) : x.caseId === 'N02')) : corpus.cases.filter((x) => !only || only.includes(x.caseId));
     for (const c of cases) {
       const r = roleOf(c.castingProfile);
       // the smoke check comes before casting (§04), so it uses the role's first candidate when none is selected yet
-      const v = r && r.selected ? pick(c.castingProfile, r.selected) : (kind === 'smoke' && r && (r.candidates || [])[0]) || null;
+      const v = r && r.selected ? pick(c.castingProfile, r.selected) : ((kind === 'smoke' || kind === 'samples') && r && (r.candidates || [])[0]) || null;
       const label = v ? v.label : 'C?';
-      const why = v ? null : (r ? (kind === 'smoke' ? 'no candidate listed for ' : 'no voice selected for ') + c.castingProfile + (kind === 'smoke' ? '' : ' (the casting screen comes first)') : 'no casting file entry for ' + c.castingProfile);
+      const early = kind === 'smoke' || kind === 'samples';
+      const why = v ? null : (r ? (early ? 'no candidate listed for ' : 'no voice selected for ') + c.castingProfile + (early ? '' : ' (the casting screen comes first)') : 'no casting file entry for ' + c.castingProfile);
       // the smoke check is one line twice, with and without its direction, so a direction read aloud shows as a
       // duration difference before anything else is generated
-      const takes = kind === 'smoke' ? ['directed', 'neutral_control'] : ['directed'].concat(c.neutralControl ? ['neutral_control'] : []);
-      for (const t of takes) out.push({ c, take: t, kind, voice: v, voiceLabel: label, takeId: (kind === 'smoke' ? 'smoke.' : '') + c.caseId + '.' + (t === 'directed' ? 'd' : 'n') + '.' + label, why });
+      const takes = kind === 'smoke' || (kind === 'samples' && c.caseId === 'N02') ? ['directed', 'neutral_control'] : kind === 'samples' ? ['directed'] : ['directed'].concat(c.neutralControl ? ['neutral_control'] : []);
+      const prefix = kind === 'smoke' ? 'smoke.' : kind === 'samples' ? 'sample.' : '';
+      for (const t of takes) out.push({ c, take: t, kind, voice: v, voiceLabel: label, takeId: prefix + c.caseId + '.' + (t === 'directed' ? 'd' : 'n') + '.' + label, why });
     }
   }
   return out;
@@ -168,6 +174,9 @@ export function loadAuthorization(file) {
 export function authorizationProblem(a, config, kind, cast, today = new Date().toISOString().slice(0, 10)) {
   if (!a) return 'no --authorization file';
   if (a.configurationId !== config) return 'the authorization is for ' + a.configurationId + ', not ' + config;
+  // audition approval never covers whole-game production (Robin, 2026-10-13): that needs its own authorization,
+  // made after the complete production estimate, and this runner does not take one
+  if (a.purpose !== 'audition') return 'this runner takes only audition authorizations (purpose "audition"); whole-game production is approved separately';
   if (!a.approvedBy || !a.approvedOn) return 'the authorization is not approved (approvedBy and approvedOn are empty)';
   if (!(a.allowanceUsd > 0)) return 'the authorization has no US-dollar allowance';
   if (!(a.kinds || []).includes(kind)) return 'the authorization does not cover ' + kind + ' (it covers ' + (a.kinds || []).join(', ') + ')';
@@ -287,7 +296,7 @@ function planAll(args) {
   const cast = loadCast(config, args.cast);
   const auth = args.authorization && args.authorization !== true ? loadAuthorization(args.authorization) : null;
   const kind = args.kind || 'matrix';
-  const only = args.cases ? String(args.cases).split(',') : null;
+  const only = args.cases ? String(args.cases).split(',') : (kind === 'samples' && auth && auth.cases ? auth.cases : null);
   const ctx = { cast, auth };
   const cells = cellsOf(corpus, cast, kind, only).map((cell) => planCell(config, cell, ctx));
   return { corpus, revision, config, cast, auth, kind, cells };
@@ -345,6 +354,21 @@ async function main() {
     const base = (args['engine-url'] || 'http://127.0.0.1:' + Pv.port).replace(/\/$/, '');
     const sp = JSON.parse((await http('GET', base + '/speakers', {})).toString('utf8'));
     for (const s of sp) console.log(s.name + '  (' + (s.speaker_uuid || '') + ')\n' + s.styles.map((st) => '    ' + st.id + '  ' + st.name).join('\n'));
+    if (args.save && args.save !== true) {
+      // each voice's own terms as the engine bundles them (VOICEVOX-compatible /speaker_info), without its pictures
+      // and sample audio, so candidates and their rights can be chosen from one file
+      let version = null;
+      try { version = JSON.parse((await http('GET', base + '/version', {})).toString('utf8')); } catch (e) { void e; }
+      const speakers = [];
+      for (const s of sp) {
+        let policy = null;
+        try { policy = JSON.parse((await http('GET', base + '/speaker_info?' + new URLSearchParams({ speaker_uuid: s.speaker_uuid }), {})).toString('utf8')).policy || null; } catch (e) { policy = 'not available from the engine (' + e.message.slice(0, 80) + ')'; }
+        speakers.push({ name: s.name, uuid: s.speaker_uuid, version: s.version || null, styles: s.styles.map((st) => ({ id: st.id, name: st.name, type: st.type || null })), policy });
+      }
+      fs.mkdirSync(path.dirname(path.resolve(args.save)), { recursive: true });
+      fs.writeFileSync(path.resolve(args.save), JSON.stringify({ schemaVersion: 'rbn-voice-speakers-1', configurationId: args.config, engineVersion: version, fetchedAt: new Date().toISOString(), speakers }, null, 1) + '\n');
+      console.log('saved ' + speakers.length + ' voices with their terms to ' + args.save);
+    }
     return;
   }
   if (cmd === 'run' || cmd === 'repair') {
@@ -378,7 +402,7 @@ async function main() {
       todo = todo.filter((p) => p.takeId === args.take);
     } else {
       todo = todo.filter((p) => !generated(res, P.config, p.takeId, 1).length);
-      if (P.kind !== 'smoke' && !res.records.some((r) => r.configurationId === P.config && r.kind === 'smoke' && r.audioOriginalPath && r.technicalCheck.status !== 'unusable')) refuse('run the smoke check for ' + P.config + ' first (--kind smoke)');
+      if (P.kind !== 'smoke' && P.kind !== 'samples' && !res.records.some((r) => r.configurationId === P.config && r.kind === 'smoke' && r.audioOriginalPath && r.technicalCheck.status !== 'unusable')) refuse('run the smoke check for ' + P.config + ' first (--kind smoke)');
     }
     if (!todo.length) {
       if (cmd === 'run' && P.cells.some((p) => !p.blocked)) { console.log('nothing left: every runnable ' + P.kind + ' take of ' + P.config + ' is already generated'); return; }

@@ -23,7 +23,10 @@ decision and the lead's reconciliations with the standing rules are in
 - [inventory/provider_inventory.json](inventory/provider_inventory.json): each configuration's recorded access (all
   `blocked_access` from the development environment on 2026-10-12: untested, not inferior).
 - `casting/<config>.json`: casting files (19 roles each). Gemini's list unheard candidates; the others are templates.
-- `authorizations/<id>.json`: what a paid run may spend, approved by Robin (Gemini's awaits approval).
+- `authorizations/<id>.json`: what a paid audition run may spend, approved by Robin. Gemini's samples are kept
+  ready but not proposed: free and local engines come first.
+- [PRODUCTION_ESTIMATE.md](PRODUCTION_ESTIMATE.md): how a whole-game estimate is built (variants, measured
+  duration, corrections, regeneration). Production is a separate approval.
 - `usage/<id>.jsonl`: each authorization's append-only usage ledger.
 - The tooling in `tools/voice/`:
 

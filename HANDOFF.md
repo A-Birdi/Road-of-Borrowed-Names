@@ -308,12 +308,18 @@
     - Robin's corrections before the first paid request are done (2026-10-13): proxy-auth mode, the usage ledger
       with a dollar allowance, per-attempt listening identity, control markup kept apart, separate evidence, the
       Windows local-engine kit.
-    - **Gemini is the first runnable configuration.** Next: Robin adds the project-specific key as a network
-      secret (`generativelanguage.googleapis.com`, header `x-goog-api-key`) and approves
-      `docs/future/voice/authorizations/gemini-va1-1.json` (allowance, terms).
-    - Then: `node tools/voice/audition.mjs run --config gemini --kind smoke --auth proxy --authorization
-      docs/future/voice/authorizations/gemini-va1-1.json`, then `--kind screen`. The audio and gallery go to
-      Robin, and the ledger is committed. The matrix waits for Robin to listen and lock the candidates.
+    - **Order (Robin, 2026-10-13): free and local engines first.**
+      - VOICEVOX, Nemo and AivisSpeech (and Qwen on a GPU machine) run on Robin's machine with the Windows kit; none
+        can run in this environment.
+      - If Robin sends `voice-audition/speakers_<engine>.json` (the kit saves it), propose candidates and record
+        each voice's terms from it.
+    - **Only if the free results fall short:** propose the Gemini samples in
+      `docs/future/voice/authorizations/gemini-samples-1.json`. That is 9 takes, at most US$0.04, and needs a
+      network secret for `generativelanguage.googleapis.com` (`x-goog-api-key`) plus Robin's approval. It is not the
+      casting screen or the matrix, each of which would be a later, separate proposal.
+    - **Whole-game generation is a separate approval**, after the complete estimate in
+      `docs/future/voice/PRODUCTION_ESTIMATE.md` (variants, measured duration, corrections, regeneration). The
+      audition runner refuses any authorization not marked `audition`.
     - No casting decision and no whole-game synthesis before Robin has listened.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,

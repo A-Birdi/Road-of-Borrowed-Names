@@ -20,7 +20,10 @@ to audition:
 2. Start the engine app and leave it open.
 3. List its voices and styles:
    `.\tools\voice\windows\run-local-audition.cmd -Config voicevox -Step voices`
-4. Open `docs\future\voice\casting\voicevox.json` in a text editor. For each role, list up to three candidates:
+   This also saves `voice-audition\speakers_voicevox.json`: every voice with its styles and **its own terms, as the
+   engine bundles them**. If you would rather not pick candidates yourself, send that file back. Claude proposes
+   up to three candidates per role from it and records each voice's terms, and you check the proposal.
+4. Or pick them yourself: open `docs\future\voice\casting\voicevox.json` in a text editor. For each role, list up to three candidates:
    `{ "label": "C01", "voice": { "styleId": 3 }, "rights": { "status": "ok_private_audition", "terms": "…", "credit": "VOICEVOX:…" }, "pickedBecause": "…" }`.
    Set `rights.status` to something beginning with `ok` only after reading that voice's own terms (each VOICEVOX
    character has its own); until then its takes stay blocked.
@@ -34,7 +37,7 @@ to audition:
 If PowerShell refuses the script, every step is one `node` command run from the same folder:
 
 ```
-node tools/voice/audition.mjs voices --config voicevox
+node tools/voice/audition.mjs voices --config voicevox --save voice-audition/speakers_voicevox.json
 node tools/voice/audition.mjs run --config voicevox --kind smoke --authorised "Robin, <date>, VOICEVOX local"
 node tools/voice/audition.mjs run --config voicevox --kind screen --authorised "…"
 node tools/voice/gallery.mjs

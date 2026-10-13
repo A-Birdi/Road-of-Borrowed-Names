@@ -1,5 +1,16 @@
 # VA-1 · VS02 · Consolidated setup request (2026-10-12; corrected 2026-10-13)
 
+> **Order (Robin, 2026-10-13): free and local engines first.**
+> - VOICEVOX, VOICEVOX Nemo and AivisSpeech (and Qwen on a GPU machine) are auditioned first, on Robin's machine
+>   with the Windows kit. None of them can run in the cloud environment: Docker Hub's shared anonymous limit is
+>   used up; GitHub, ghcr.io's download host, Hugging Face and AivisHub are refused; and the disk cannot hold them.
+> - Only if their results fall short is a paid provider proposed. Even then it is a handful of representative
+>   Gemini samples with their own small budget (`authorizations/gemini-samples-1.json`: 9 takes, about US$0.02, at
+>   most US$0.04), not its casting screen or matrix.
+> - Audition approval never covers whole-game generation. Production needs its own authorization after the
+>   complete estimate in `PRODUCTION_ESTIMATE.md` (recording variants, measured duration, correction allowances,
+>   regeneration), and the audition runner refuses any authorization not marked `audition`.
+
 > **2026-10-13: Robin's corrections before the first paid request are in.**
 > - **Credentials:** network secrets are injected by the environment's proxy, so the runner has an explicit
 >   `--auth proxy` mode that sends no credential and routes through the proxy. `--auth env` remains for a machine
@@ -28,7 +39,8 @@ can go straight to a smoke check, then the casting screen, then its 97 takes:
 | `tools/voice/providers.mjs` | Builds each configuration's request. It voices only the spoken Japanese, and nothing is sent. |
 | `tools/voice/audition.mjs` | Runs `plan`, `run`, `repair`, `usage`, `export-job`, `ingest` and `status`. A local run needs `--authorised "<who, when, scope>"`. A hosted run needs an approved authorization file (allowance in US dollars, prices with their source and date) and `--auth proxy` or `--auth env`. |
 | `tools/voice/ledger.mjs` | The append-only usage ledger and the allowance check. |
-| `docs/future/voice/authorizations/gemini-va1-1.json` | Gemini's authorization, waiting for your approval. |
+| `docs/future/voice/authorizations/gemini-samples-1.json` | Gemini's samples authorization: not proposed unless the free engines fall short. |
+| `docs/future/voice/PRODUCTION_ESTIMATE.md` | The whole-game estimate's method and inputs (separate approval). |
 | `tools/voice/pack_local_kit.mjs`, `tools/voice/windows/` | The Windows kit for the local engines. |
 | `tools/voice/audio_check.mjs` | Technical check (measurement only, see below). |
 | `tools/voice/gallery.mjs` | Builds `review.html`, the listening gallery. |
@@ -63,22 +75,27 @@ measures the file; it never hears it.
 
 Each line is independent. Anything you leave unanswered stays untested, with its cells marked `blocked_access`.
 
-1. **Gemini-TTS: the first runnable configuration.** Its host is reachable from here.
+0. **First, the free and local engines** (item 2 below): the Windows kit. Items 1, 3, 4 and the hosted half of 5
+   are not proposed until those results are heard. Item 1 is kept ready, and narrowed to samples.
+1. **Gemini-TTS: ready, not proposed.** Its host is reachable from here.
    - **Credential:** a **project-specific Gemini API key** added as a *network secret*: the cloud environment menu
      in the session's title bar → *Edit* → *Network secrets*, for the host `generativelanguage.googleapis.com` with
      the header `x-goog-api-key`. Don't paste it into the chat. A new session picks it up. The runner uses `--auth
      proxy`, sends no credential of its own, and stops at the first refusal (a 403 means the secret is not reaching
      the request).
-   - **Approval:** in `docs/future/voice/authorizations/gemini-va1-1.json` (or by telling me, and I record your
-     words there):
+   - **Approval, if it comes to that:** in `docs/future/voice/authorizations/gemini-samples-1.json` (or by telling
+     me, and I record your words there):
      - who approves and when;
-     - the allowance in US dollars (I suggest **US$1.00** for the smoke check and the casting screen; their bound
-       is US$0.40);
+     - the allowance in US dollars (suggested **US$0.10**; the samples' bound is US$0.037);
      - that the Gemini API terms allow this use of generated audio (`termsReviewed`). I cannot open those terms
        from here.
-   - **Then:** the smoke check (2 takes), and the casting screen (90 takes: 3 candidates for each main role and
-     player voice, 2 for each NPC profile) returned to you for listening. The matrix waits until you have heard
-     them and locked the candidates, and needs its own approval.
+   - **Then, only if the free engines fall short:** a handful of representative samples under
+     `authorizations/gemini-samples-1.json`:
+     - the cases: the narrator twice, one of them with its neutral control; Suzu standard and Kansai; player Voice A
+       and B; an older NPC; a reading stress test;
+     - 9 takes, typical US$0.017, at most US$0.037, suggested allowance US$0.10.
+
+     The casting screen and the matrix would each be a later, separate proposal.
 2. **The local engines: VOICEVOX, VOICEVOX Nemo, AivisSpeech.** No account, key or cost, but they cannot run here
    (below). Run them on your machine with the Windows kit `rbn-va1-local-kit.zip`: unzip it, install Node.js, start
    the engine app, then follow its `README-FIRST.md`. Or leave them untested.

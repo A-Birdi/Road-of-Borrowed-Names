@@ -1,16 +1,38 @@
 {
  "schemaVersion": "rbn-voice-authorization-1",
- "id": "gemini-va1-1",
+ "id": "gemini-samples-1",
+ "purpose": "audition",
  "configurationId": "gemini",
- "status": "awaiting Robin: not approved, nothing may be sent",
+ "status": "not proposed: the free and local engines are auditioned first (Robin, 2026-10-13). Proposed only if their results fall short; nothing may be sent until Robin approves it.",
  "approvedBy": null,
  "approvedOn": null,
  "approval": null,
  "kinds": [
-  "smoke",
-  "screen"
+  "samples"
  ],
+ "cases": [
+  "N02",
+  "N03",
+  "SUZU01",
+  "SUZU_K01",
+  "PCA01",
+  "PCB01",
+  "NPC10_1",
+  "J01"
+ ],
+ "casesWhy": {
+  "N02": "narrator, plain observation, with its neutral control (shows whether a direction is ever read aloud)",
+  "N03": "narrator, wonder",
+  "SUZU01": "Suzu, warm invitation",
+  "SUZU_K01": "the same line in Suzu’s Kansai, same voice",
+  "PCA01": "the player’s Voice A",
+  "PCB01": "the player’s Voice B, same text",
+  "NPC10_1": "an older man, steady technical explanation",
+  "J01": "names and unusual readings (葦ノ瀬, 灯守)"
+ },
+ "voices": "each role’s first candidate in docs/future/voice/casting/gemini.json (unheard): Sulafat (narrator), Laomedeia (Suzu), Aoede (Voice A), Algieba (Voice B), Algenib (older man)",
  "allowanceUsd": null,
+ "suggestedAllowanceUsd": 0.1,
  "model": "gemini-3.8-flash-tts",
  "credential": {
   "mode": "proxy",
@@ -21,7 +43,7 @@
  "pricing": {
   "unit": "tokens",
   "inputUsdPerMTok": 0.5,
-  "outputAudioUsdPerMTok": 9.0,
+  "outputAudioUsdPerMTok": 9,
   "validUntil": "2026-12-31",
   "audioTokensPerSecondBudget": 32,
   "source": "Gemini Developer API pricing (https://ai.google.dev/gemini-api/docs/pricing) and Google Cloud Text-to-Speech pricing (https://cloud.google.com/text-to-speech/pricing): gemini-3.8-flash-tts, standard tier, $0.50 per 1M text input tokens, $9.00 per 1M audio output tokens until 2026-12-31 and $18.00 from 2027-01-01; audio billed at 25 tokens per second. Read through a web search's quotation of those official pages on 2026-10-13; the pages themselves cannot be opened from this environment.",
@@ -32,33 +54,12 @@
  "termsReviewed": null,
  "estimates": {
   "method": "tools/voice/audition.mjs planning with this file's prices (2026-10-13). bound = every request at its max_output_tokens cap (the slowest plausible reading x 32 tokens/s x 1.25) plus its input; typical = about 7 morae a second at 32 audio tokens/s. Before retries, which the ledger counts as they happen.",
-  "smoke": {
-   "takes": 2,
-   "characters": 68,
-   "typicalUsd": 0.0041,
-   "boundUsd": 0.0092
-  },
-  "screen": {
-   "takes": 90,
-   "roles": 19,
-   "candidates": "3 for each main role and the two player voices, 2 for each NPC profile",
-   "characters": 2812,
-   "typicalUsd": 0.1784,
-   "boundUsd": 0.395
-  },
-  "laterNotCovered": {
-   "matrix": {
-    "takes": 97,
-    "typicalUsd": 0.2061,
-    "boundUsd": 0.4566
-   },
-   "repairsAtMost": {
-    "takes": 83,
-    "typicalUsd": 0.1776,
-    "boundUsd": 0.3929
-   },
-   "note": "needs a further approval after Robin has listened and the candidates are locked"
-  },
-  "suggestedAllowanceUsd": 1.0
- }
+  "samples": {
+   "takes": 9,
+   "characters": 249,
+   "typicalUsd": 0.0165,
+   "boundUsd": 0.0368
+  }
+ },
+ "notCovered": "the casting screen, the audition matrix and any whole-game production: each needs its own approval; production also needs the complete production estimate (docs/future/voice/PRODUCTION_ESTIMATE.md)"
 }

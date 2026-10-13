@@ -4344,8 +4344,15 @@ untouched.
 
 **Gemini prepared:**
 - 19 roles' candidates from Google's voice descriptions, unheard (`docs/future/voice/casting/gemini.json`).
-- The authorization `docs/future/voice/authorizations/gemini-va1-1.json` awaits Robin's approval. Smoke and screen
-  bound: US$0.009 and US$0.40; typical about US$0.18.
+- Then, on Robin's order of the same day (free and local engines first), Gemini's authorization was narrowed to
+  `docs/future/voice/authorizations/gemini-samples-1.json`: 9 representative takes, typical US$0.017, at most
+  US$0.037. It is proposed only if the free engines fall short.
+- The runner refuses any authorization whose purpose is not `audition`.
+- `voices --save` keeps each local voice with the terms its engine bundles.
+- The whole-game estimate's method and inputs (morae and pauses now counted) are in
+  `docs/future/voice/PRODUCTION_ESTIMATE.md`.
+- U `voice_audition` 46/0 (the purpose refusal; samples from the authorization's cases, with no smoke step and a
+  refusal to stretch to the screen; `voices --save`); U `voice_local_kit` 7/0.
 
 **Not done, and not claimed:** any real provider call, any audio, any listening or Japanese review, any casting, any
 Firefox or device check of the gallery, any run of the PowerShell wrapper.

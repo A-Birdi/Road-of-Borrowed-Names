@@ -21,7 +21,10 @@ if ($major -lt 18) { Write-Host "Node.js 18 or newer is needed (found $(& node -
 $engine = @()
 if ($EngineUrl) { $engine = @('--engine-url', $EngineUrl) }
 switch ($Step) {
-  'voices' { & node tools/voice/audition.mjs voices --config $Config @engine }
+  'voices' {
+    # also saves the list with each voice's own terms, to send back for candidates and the rights record
+    & node tools/voice/audition.mjs voices --config $Config @engine --save "voice-audition/speakers_$Config.json"
+  }
   'status' { & node tools/voice/audition.mjs status }
   'gallery' {
     & node tools/voice/gallery.mjs
