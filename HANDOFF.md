@@ -293,8 +293,9 @@
     **Closure status (2026-10-13, Robin asked):**
     - P14–P16 are done.
     - P17's automated closure is done, but its complete browser run ran on earlier builds.
-    - The same complete run on the final build (`index.html` e456645a…) is running on a clean export; VA-1 is paused
-      until it finishes (VALIDATION.md "P17 — the complete run on the final build").
+    - The same complete run on the final build (`index.html` e456645a…) is running on a clean export (VALIDATION.md
+      "P17 — the complete run on the final build"). Every failure so far was a test measuring too early or the wrong
+      thing, traced and fixed in the test: `learning_ui`, `pets`, `company`.
     - The twelve-chapter edition is shipped in the build (C-84). Deploying the hosted page comes last, after VA-1 and
       the full matrix (C-87).
     - Robin's own items stay Robin's: review at completion, human playtests, real devices.
@@ -313,12 +314,12 @@
         can run in this environment.
       - If Robin sends `voice-audition/speakers_<engine>.json` (the kit saves it), propose candidates and record
         each voice's terms from it.
-    - **Robin's unattended local-run directive (2026-10-13) is BLOCKED: no execution access to Robin's PC** from
-      this cloud session.
-      - The work is ready for a local session: `docs/future/voice/LOCAL_RUN_HANDOFF.md` and the directive, both in
-        the kit `rbn-va1-local-kit.zip`.
-      - One step needs Robin: start a Claude session on the PC (the desktop app's local session, or
-        `claude remote-control` in a folder there) and point it at that handoff.
+    - **Robin's unattended local-run directive (2026-10-13):** this cloud session had no execution access to Robin's
+      PC, so it prepared `docs/future/voice/LOCAL_RUN_HANDOFF.md` and the kit `rbn-va1-local-kit.zip`.
+      - Robin then started a Remote Control session on the PC to run the audition (2026-10-13). That session is
+        separate: this one cannot see or message it, and nothing from it is recorded until its results come back
+        (`RUN_SUMMARY.md`, `results.json`, the review ZIPs).
+      - Leave `tools/voice/` and the corpus unchanged on the branch while that run uses them.
     - **Only if the free results fall short:** propose the Gemini samples in
       `docs/future/voice/authorizations/gemini-samples-1.json`. That is 9 takes, at most US$0.04, and needs a
       network secret for `generativelanguage.googleapis.com` (`x-goog-api-key`) plus Robin's approval. It is not the

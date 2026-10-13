@@ -412,7 +412,11 @@ for (const vp of [{ width: 320, height: 640, scale: 2 }, { width: 390, height: 8
     const pg = document.getElementById('folio-page');
     const over = Array.from(document.querySelectorAll('#folio-page .leaf, .co-page, .co-page *')).filter((e) => e.scrollWidth > e.clientWidth + 2 && getComputedStyle(e).overflowX !== 'visible').map((e) => e.className).slice(0, 5);
     const small = Array.from(document.querySelectorAll('.co-act, .chip, .co-page .pbtn')).filter((x) => x.offsetParent).filter((x) => { const r = x.getBoundingClientRect(); return r.height < 43.5; }).length;
-    return { hscroll: document.documentElement.scrollWidth > innerWidth + 1 || pg.scrollWidth > pg.clientWidth + 2, over, small };
+    // nothing on the page reaches past its edges (measured element by element: the page's own scrollWidth also counts
+    // the book's shadow layer, .spread::before, which sits 7 px beyond the fore-edge by design and scrolls nothing)
+    const pr = pg.getBoundingClientRect();
+    const out = Array.from(pg.querySelectorAll('*')).filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.right > pr.right + 2 || r.left < pr.left - 2); }).map((e) => e.className || e.tagName).slice(0, 5);
+    return { hscroll: document.documentElement.scrollWidth > innerWidth + 1 || out.length > 0, out, over, small };
   });
   assert(!lay.hscroll && !lay.over.length && lay.small === 0, tag + ': Companion page fits with no horizontal scroll, comfortable targets (' + JSON.stringify(lay) + ')');
   await shot(p, 'companion_' + tag);

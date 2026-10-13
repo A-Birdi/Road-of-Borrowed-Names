@@ -141,7 +141,17 @@ for (const sp of SPECIES) {
       const run = RB.script.run('pets.test.hide');
       await new Promise((r) => setTimeout(r, 300));
       const inScene = RB.petWorld.state().shown;
-      for (let i = 0; i < 20 && RB.ui.dialogue.isOpen(); i++) { RB.ui.dialogue.advance(true); await new Promise((r) => setTimeout(r, 50)); }
+      // through this scene and the ones the game runs after it on this map (its arrival scenes start on the next
+      // tick after a scene ends, 90_game.js afterScene): advance until no scene has run for a while. Stopping when
+      // the dialogue is first seen closed could fall in the gap between two scenes on a busy machine, and the next
+      // one would wait for input with the animal still hidden.
+      const t0 = Date.now();
+      for (let quiet = 0; quiet < 8 && Date.now() - t0 < 20000; ) {
+        const busy = RB.script.isRunning() || RB.ui.dialogue.isOpen();
+        if (RB.ui.dialogue.isOpen()) RB.ui.dialogue.advance(true);
+        quiet = busy ? 0 : quiet + 1;
+        await new Promise((r) => setTimeout(r, 50));
+      }
       await run;
       // restored on the next world frame after the scene (a busy machine may take a moment to draw one)
       for (let i = 0; i < 60 && !RB.petWorld.state().shown; i++) await new Promise((r) => setTimeout(r, 50));

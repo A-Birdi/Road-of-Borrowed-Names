@@ -4272,7 +4272,7 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | --- | --- |
 | Build | A clean `git archive` of 0f7ce8d, rebuilt to the same `index.html` (sha256 `e456645a9e303d850d15f864a9721156f6a27b0db1ba41c7a1ef0438e49525d4`, unchanged since d26ce74). |
 | Command | `node tests/e2e/run.mjs --part=k/12` for k = 1…12 (130 scripts, each part under the job's two-hour limit), then `--extra` (10 scripts). |
-| Conditions | One part at a time, nothing else running. |
+| Conditions | One part at a time. While parts 3 and 5–7 ran, single scripts being traced (below) ran alongside, so those parts ran on a busier machine than the others. |
 
 **Results so far:**
 
@@ -4281,7 +4281,10 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | 1/12 | 11/11 | |
 | 2/12 | 11/11 | |
 | 3/12 | 10/11 | `learning_ui` failed once: traced below |
-| 4–12 | running | |
+| 4/12 | 11/11 | |
+| 5/12 | 10/11 | `pets` failed one check once: traced below |
+| 6/12 | 10/11 | `company` failed two phone checks every time: traced below |
+| 7–12 | running | |
 
 **The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
 Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.
@@ -4293,6 +4296,40 @@ Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":5
 - The game behaves correctly; the test was measuring too early. Alone on the same build the test passed 15/15.
 - The test now also waits for two animation frames, with its assertions unchanged. It then passed 15/15 twice
   while the suite was running.
+
+**The `pets` failure.** In the bird's world test, the scene that hides the pet ended, but the pet did not come back
+within 3 s: `{"inScene":false,"after":false}`. Alone, the script passed 20/20.
+
+- After any scene ends, the game runs the map's pending arrival scenes on the next tick (`afterScene` in
+  `src/engine/90_game.js`). Here that was `rw.village_first`, then `pets.cat.notice` when the cat hasn't been met,
+  which is why the cat's run never meets it.
+- The pet stays hidden while any scene runs (`src/engine/57_petworld.js`), so it returns once those scenes end. That
+  is the game working as intended.
+- The test pressed through dialogue only while a box was open. On a busy machine, its check could fall between two
+  scenes, see nothing open and stop. The arrival scene then waited for input, with the pet still hidden.
+- Shown, not assumed: a scratch script checked at exactly that moment. Nothing was open or running, and stopping
+  there gave the same `{"inScene":false,"after":false}`, with `rw.village_first`'s first line waiting. CPU throttling
+  alone (4× and 8×) did not reproduce it.
+- The test now presses on until no scene has run for 400 ms (20 s at most). Its assertions are unchanged. The same
+  script then restored the pet after all three scenes.
+- The whole fixed `pets` script then passed 20/20 on the final build, while part 7 ran alongside.
+
+**The `company` failure.** At 320×640 (200 % text) and 390×844, "Companion page fits with no horizontal scroll"
+failed: `{"hscroll":true,"over":[],"small":0}`. It failed the same way alone, so it is deterministic.
+
+- The measure counted the page box's own `scrollWidth`: 309 against 302, and 379 against 372. Hiding only the book's
+  shadow layer (`.folio.book .spread::before`, LP-1, `src/styles/90_book.css`) made them equal.
+- That layer sits 7 px past the fore-edge by design: LP-1 replaced the old drop-shadow filter with it, keeping the
+  look. A filter shadow never counted in `scrollWidth`; a positioned box does.
+- No player can scroll anything sideways. The document stays exactly 320 and 390 px wide, and the only boxes that
+  grow (the page and its leaf box) don't scroll.
+- LP-1's own checks (the Ledger suite and `book`) did not run this phone measure, so it first showed up here.
+- The test now checks that no element on the page reaches past the page's edges, plus the document's width and the
+  scrolling containers as before. Negative controls in a scratch script, at 320, 390 and 1280 px: an unbreakable line
+  wider than the page and an element pushed past the edge were both caught. The real page was clean at all three.
+- Elsewhere at 320 px with 200 % text, the folio's tab strip scrolls sideways, by design (hidden scrollbar and arrow
+  buttons when its tabs overflow). It is outside this page check.
+- The whole fixed `company` script then passed 61/61 on the final build, both phone checks with `"out":[]`.
 
 ## VA-1 — the voice audition (Robin's VA-1, queued last; in progress, 2026-10-12)
 
@@ -4388,6 +4425,9 @@ Nothing was installed or generated, here or there. Prepared for a local session 
 - resuming by request identity (voice, style, parameters, engine, model);
 - `tools/voice/pack_review.mjs`, review ZIPs each under 30 MB;
 - all of these in the kit.
+
+Since then, Robin started a Remote Control session on the PC to run the audition (2026-10-13). It runs separately
+from this cloud session, which cannot see its progress. Nothing from it is recorded here until its results come back.
 
 Tests: U `voice_audition` 47/0 (a resumed run skips unchanged requests, and a changed voice makes a new take);
 U `voice_review_pack` 8/0; U `voice_local_kit` 7/0; B `voice_gallery` 23/0.
