@@ -67,6 +67,12 @@ export default async (t) => {
   t.eq(A.ensembleSongs(), [], 'a steady cycle 100 ppm off the score\'s period is not (limit 50)');
   A.ensembleCatalog = { version: 1, songs: { snowbell: entry(fmt({ first: Object.assign({}, fmt().first, { end: 2000 }) })) } };
   t.eq(A.ensembleSongs(), [], 'playable frames beyond the decoded length are not');
+  // (MT-2) a cue that does not loop: one file, no steady cycle needed
+  const once = (o) => entry(fmt({ loop: null, first: Object.assign({}, fmt().first, { frames: 48000 * 13, end: 100 + 48000 * 12 }) }), Object.assign({ durationSec: 6, loop: false, loopStartSec: 0 }, o || {}));
+  A.ensembleCatalog = { version: 1, songs: { victory: once() } };
+  t.eq(A.ensembleSongs(), ['victory'], 'a one-shot cue with its single file is offered');
+  A.ensembleCatalog = { version: 1, songs: { victory: once({ loop: true }) } };
+  t.eq(A.ensembleSongs(), [], 'a looping cue without its steady cycle is not');
   A.ensembleCatalog = null;
   t.eq(A.ensembleSongs(), [], 'no catalog, no Ensemble songs');
 
@@ -95,6 +101,18 @@ export default async (t) => {
       unproven.evidence.repeatedLoopVerified = false;
       t.ok(trackProblems(unproven, getSong(unproven.songId), root).some((q) => /repeatedLoopVerified/.test(q)), 'manifest: a track without its evidence is left out');
     }
+    // (MT-2) a ready cue that does not loop: one file covering the score, its own evidence
+    const oneShot = man.tracks.find((x) => x.releaseStatus === 'ready' && x.timeline && x.timeline.loop === false);
+    if (oneShot) {
+      const c = () => JSON.parse(JSON.stringify(oneShot));
+      t.ok(oneShot.assets.layout === 'single_pass' && !oneShot.assets.steadyLoop, 'manifest: ' + oneShot.songId + ' (no loop) is one file per encoding');
+      const a = c(); a.evidence.oneShotPlacementVerified = false;
+      t.ok(trackProblems(a, getSong(a.songId), root).some((q) => /oneShotPlacementVerified/.test(q)), 'manifest: a one-shot without its placement evidence is left out');
+      const b = c(); b.assets.layout = 'split_firstpass_loop';
+      t.ok(trackProblems(b, getSong(b.songId), root).some((q) => /single_pass/.test(q)), 'manifest: a one-shot described as a loop is left out');
+      const d = c(); d.assets.firstPass[0].playableEndFrame = d.assets.firstPass[0].playableStartFrame + 48000;
+      t.ok(trackProblems(d, getSong(d.songId), root).some((q) => /ends before the score/.test(q)), 'manifest: a one-shot file shorter than its score is left out');
+    }
     const { catalog } = runtimeCatalog(man, getSong, root);
     const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
     const csp = (html.match(/connect-src '([a-z]+)'/) || [])[1];
@@ -103,7 +121,8 @@ export default async (t) => {
       const m = html.match(/RB\.audio\.ensembleCatalog = (\{.*?\});\n/);
       t.ok(m && JSON.stringify(JSON.parse(m[1])) === JSON.stringify(catalog), 'index.html: its catalog is the manifest\'s eligible tracks, as they are now (rebuild after a manifest change)');
       t.ok(!/assets\/music\/ensemble\/[^"']+\.(opus|mp3)["'][^]*base64/.test(html.slice(0, 2000)), 'index.html: the recordings are referenced, not embedded');
-      for (const id of Object.keys(catalog.songs)) for (const f of catalog.songs[id].formats) t.ok(f.type && f.first.url.startsWith('./assets/music/ensemble/') && f.loop.url.startsWith('./assets/music/ensemble/'), 'catalog: ' + id + ' ' + f.codec + ' has a type to ask the browser about and files in the music directory');
+      // (a cue that does not loop has no steady-cycle file: MT-2)
+      for (const id of Object.keys(catalog.songs)) for (const f of catalog.songs[id].formats) t.ok(f.type && f.first.url.startsWith('./assets/music/ensemble/') && (catalog.songs[id].loop ? f.loop && f.loop.url.startsWith('./assets/music/ensemble/') : f.loop === null), 'catalog: ' + id + ' ' + f.codec + ' has a type to ask the browser about and files in the music directory');
     } else t.ok(csp === 'none' && !html.includes('RB.audio.ensembleCatalog = '), 'index.html: no eligible recording, no catalog, connect-src \'none\'');
   } else t.ok(!fs.readFileSync(path.join(root, 'index.html'), 'utf8').includes('ensembleCatalog = '), 'no manifest, no catalog');
 };

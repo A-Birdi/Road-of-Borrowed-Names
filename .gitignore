@@ -15,3 +15,5 @@ tools/kanjivg/.cache/
 art/harmony/incoming/
 # VA-1 audition output (requests, audio, results): never committed; delivered for listening, not published (C-83)
 voice-audition/
+# Python bytecode caches (tools/music/ensemble imports rs1.py)
+__pycache__/

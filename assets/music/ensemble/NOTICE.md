@@ -1,16 +1,15 @@
 # Ensemble recordings: provenance
 
-These files are the optional **Ensemble** performances of two pieces of the game's own music, for the hosted copy of
+These files are the optional **Ensemble** performances of the game's own music, for the hosted copy of
 *The Road of Borrowed Names* (Settings › Audio › Music performance; docs/MUSIC_PERFORMANCE.md). The game never needs
 them: the single downloaded file plays the Original music without them, and so does any copy that cannot fetch them.
 
-| Song | Where it plays | Files |
-|---|---|---|
-| `snowbell` | the Snowbell area | `snowbell/` |
-| `battle_keepers` | the Keepers' Road battle | `battle_keepers/` |
+The two pilots (MT-1) are `snowbell` (the Snowbell area) and `battle_keepers` (the Keepers' Road battle); MT-2
+(2026-10-13, C-92) adds every other song the game plays, each in its own folder named by its song id. `manifest.json`
+lists which are ready, with their measurements and the evidence for each.
 
-Each song has a first-pass file and a steady-cycle file in two encodings (Ogg Opus, and MP3 for browsers without
-Opus), named by their content. `manifest.json` lists them with their measurements and the evidence for each.
+Each looping song has a first-pass file and a steady-cycle file; a cue that does not loop (the prologue, the victory
+sting) has one file. Each comes in two encodings (Ogg Opus, and MP3 for browsers without Opus), named by its content.
 
 ## What they are made of
 
@@ -18,17 +17,26 @@ Opus), named by their content. `manifest.json` lists them with their measurement
   score fingerprint in the manifest), and the first-pass realisation the Original player gives it (its seeded timing
   and velocities). Nothing was recomposed.
 - **The instrumental realisation** is the SC-1 treatment Robin auditioned: its voice assignment, part balance, room
-  and filters, re-rendered from the current score by `tools/music/ensemble/` at 48 kHz.
-- **Sampled voices** (koto, shakuhachi, shamisen, strings, cello, acoustic bass) come from the **TimGM6mb** sound bank,
-  © 2004 Tim Brechbill, © 2010 David Bolton, distributed under the GNU General Public License version 2: its
-  copyright file and the licence text are in `notes/` unchanged. The sound bank itself is not distributed here.
-- **Modelled voices** (the biwa-like lute, rin, taiko, shime and the small strokes) are SC-1's own synthesis code
-  (`tools/music/ensemble/rs1.py`). The biwa is a modelled lute, not a recording of a biwa.
+  and filters, re-rendered from the current score by `tools/music/ensemble/` at 48 kHz. For the MT-2 songs the same
+  treatment is carried over: SC-1's voices where it had one, the lead's choice for the rest (below), each part's
+  balance measured against the Original's, the room chosen by kind of cue, and the game's own echo where the score
+  has one (each song's report, `docs/music/ensemble/qa/<song>.json`, `render.treatment`, says which).
+- **Sampled voices** come from the **TimGM6mb** sound bank, © 2004 Tim Brechbill, © 2010 David Bolton, distributed
+  under the GNU General Public License version 2: its copyright file and the licence text are in `notes/` unchanged.
+  The sound bank itself is not distributed here. The pilots use its koto, shakuhachi, shamisen, strings, cello and
+  acoustic bass; MT-2 adds its flute, piccolo (for the shinobue's colour), celesta, harp, nylon guitar, tubular bells,
+  marimba, electric piano and choir, and strokes from its drum kit (kick, congas, bongo, maracas, wood blocks, side
+  stick, claves, splash cymbal).
+- **Modelled voices** (the biwa-like lute, the sho, glass, rin, taiko, shime and the small strokes) are SC-1's own
+  synthesis code (`tools/music/ensemble/rs1.py`). The biwa is a modelled lute, not a recording of a biwa. Five strokes
+  are the game's own synthesis ported to the renderer (a clock's tick, the glass tick, a water drop, a wooden creak,
+  the atarigane).
 - **Software** used to make them, not distributed: FluidSynth (system library), NumPy, SciPy, soundfile, FFmpeg
   (libopus, libmp3lame).
 
 ## Open question for the project owner
 
 Whether distributing recordings rendered with a GPL-2 sound bank carries obligations for these files is a rights
-question this note does not settle. No licence is chosen or declared for these recordings here; the bank's terms and
+question this note does not settle. Robin let MT-2 go on with the same bank while deciding ("Yes, carry on",
+2026-10-13); the decision is to be made before any hosted release. No licence is chosen or declared for these recordings here; the bank's terms and
 attribution are recorded so the question can be reviewed before the files are published.

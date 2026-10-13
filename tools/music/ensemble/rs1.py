@@ -6,6 +6,11 @@ Forked from SC-1's ensemble_rs1.py (the instrument treatment Robin auditioned) w
  - SC-1's three supplied percussion strokes (native_percussion, from its render_conversion.py) live here too.
 Sampled voices: TimGM6mb through the system libfluidsynth. Modal voices: SC-1's own. Not authentic instrument models;
 the biwa is a modelled lute, not a recording.
+MT-2 adds, for the instruments and strokes the pilots never used (none of it changes a pilot's sound): more TimGM6mb
+programs (nylon guitar, tubular bells, marimba, electric piano, choir), strokes from TimGM6mb's drum kit (bank 128),
+five strokes ported from the game's own synthesis (ported_percussion: the clock tick, the glass tick, the water drop,
+the wooden creak, the atarigane), a pitch bend for the koto's pressed notes (ato-oshi), and modal notes longer than
+SC-1's 12 s cap (the sho's held chords).
 """
 from __future__ import annotations
 import ctypes as C, ctypes.util, hashlib, math, json, os
@@ -49,6 +54,24 @@ VOICES={
  'acoustic_bass':dict(gm=32,trim=.88,pan=0),
  'double_bass':dict(gm=43,trim=.67,pan=0),
  'horn':dict(gm=60,trim=.32,pan=.12),
+ # MT-2 (lead's choice, unheard before Robin): the game's "pluck" (a guitar-ish plucked string), "bell" and "toll"
+ # (FM bells), "mallet" (marimba-ish), "keys" (an FM electric piano) and "choir"
+ 'guitar':dict(gm=24,trim=.72,pan=.10),
+ 'tubular_bells':dict(gm=14,trim=.62,pan=.18),
+ 'marimba':dict(gm=12,trim=.72,pan=.12),
+ 'epiano':dict(gm=4,trim=.70,pan=.08),
+ 'choir':dict(gm=52,trim=.66,pan=0),
+ # MT-2: strokes from TimGM6mb's drum kit (bank 128; `drum` is the GM key)
+ 'kit_kick':dict(drum=35,trim=.80,pan=0),
+ 'kit_conga_low':dict(drum=64,trim=.80,pan=-.10),
+ 'kit_bongo_high':dict(drum=60,trim=.80,pan=.10),
+ 'kit_maracas':dict(drum=70,trim=.70,pan=.22),
+ 'kit_wood_low':dict(drum=77,trim=.78,pan=.14),
+ 'kit_wood_high':dict(drum=76,trim=.78,pan=.16),
+ 'kit_side_stick':dict(drum=37,trim=.78,pan=-.06),
+ 'kit_conga_mute':dict(drum=62,trim=.78,pan=-.08),
+ 'kit_claves':dict(drum=75,trim=.78,pan=.12),
+ 'kit_splash':dict(drum=55,trim=.66,pan=.18),
  'biwa':dict(model='lute',trim=.40,pan=-.13),
  'koto_harmonic':dict(model='harmonic',trim=.32,pan=.20),
  'sho':dict(model='sho',trim=.15,pan=.20),
@@ -70,7 +93,7 @@ def pan_gain(p):
 def modal_note(kind,pitch,duration,velocity,salt):
  """Damped resonators / modal strings with smooth starts and releases."""
  rng=np.random.default_rng(seed(salt)); f=440*2**((pitch-69)/12)
- dur=min(duration+2.2,12); dur=max(.18,dur)
+ dur=min(duration+2.2,max(12,duration+1.8)); dur=max(.18,dur)  # (MT-2: a note held past 10.2 s keeps 1.8 s of release)
  if kind in ['odaiko','shime','clap','geta','brush','cymbal']:dur={'odaiko':1.6,'shime':.36,'clap':.16,'geta':.12,'brush':.24,'cymbal':2.2}[kind]
  n=int(dur*SR);t=np.arange(n,dtype=np.float64)/SR; x=np.zeros(n)
  if kind=='lute':
@@ -229,33 +252,108 @@ class NoteSynth:
  """One sampled note at a time, from silence, on a 64-frame block boundary: the same event always renders to the same
  samples wherever it is placed (SC-1 shared one synth per part, so its onsets fell on that synth's block grid)."""
  BLOCK=64
- def __init__(self):
-  self.f=Fluid();self.ch={}
+ def __init__(self,cache=False):
+  # (cache, MT-2: FluidSynth renders a repeated note within about -128 dBFS of its first rendering, not bit for bit;
+  # with the cache a repeated note is its first rendering exactly, and a song renders several times faster. The
+  # pilots render without it, so they stay identical to the recordings MT-1 shipped.)
+  self.f=Fluid();self.ch={};self.kit=False;self.cache={} if cache else None
  def run(self,n):
   a=np.zeros((n,2),np.float32);p=a.ctypes.data_as(ptr);writefloat(self.f.s,n,p,0,2,p,1,2);return a
  def channel(self,voice):
   # one channel per voice, set up once; its first note after the set-up renders slightly differently (measured),
   # so a throwaway note settles it before any note is kept
+  if 'drum' in VOICES[voice]:
+   # (MT-2) the drum kit: channel 10 (index 9), bank 128, set up once for every kit voice
+   if not self.kit:
+    program(self.f.s,9,self.f.id,128,0);cc(self.f.s,9,7,100);cc(self.f.s,9,11,110);cc(self.f.s,9,10,64);cc(self.f.s,9,91,0);cc(self.f.s,9,93,0)
+    self.kit=True;self._play(9,60,self.BLOCK*4,64,12.)
+   return 9
   if voice not in self.ch:
    ch=[c for c in range(16) if c!=9][len(self.ch)]
    self.f.setup(ch,voice);cc(self.f.s,ch,10,64);self.ch[voice]=ch
    self._play(ch,60,self.BLOCK*4,64,12.)
   return self.ch[voice]
- def note(self,voice,pitch,frames,velocity,max_tail=12.):
+ def note(self,voice,pitch,frames,velocity,max_tail=12.,press=0):
+  """One note from silence. `press` (MT-2): ato-oshi, as the game's koto_oshi: the note starts `press` semitones low,
+  holds 60 ms, then rises to pitch on an exponential frequency ramp of 130 ms (FluidSynth's bend range, 2 semitones).
+  With the cache on, a note (voice, pitch, length in blocks, MIDI velocity, press) is rendered once and reused."""
   ch=self.channel(voice)
+  if 'drum' in VOICES[voice]:pitch=VOICES[voice]['drum']
   vel=int(np.clip(velocity*VOICES[voice]['trim']*112,1,127))
-  return self._play(ch,pitch,frames,vel,max_tail)
- def _play(self,ch,pitch,frames,vel,max_tail):
+  B=self.BLOCK;key=(voice,pitch,-(-max(4,frames)//B),vel,press,max_tail)
+  x=self.cache.get(key) if self.cache is not None else None
+  if x is None:
+   x=self._play(ch,pitch,frames,vel,max_tail,press)
+   if self.cache is not None:self.cache[key]=x
+  return x
+ def _play(self,ch,pitch,frames,vel,max_tail,press=0):
   B=self.BLOCK;held=-(-max(4,frames)//B)*B;chunks=[];run=self.run
-  noteon(self.f.s,ch,pitch,vel);chunks.append(run(held));noteoff(self.f.s,ch,pitch)
+  if press:
+   # the bend, block by block: -press semitones for 60 ms, then a ramp in log frequency (= in semitones) over 130 ms
+   bv=lambda st:int(np.clip(round(8192+st/2*8192),0,16383))
+   bend(self.f.s,ch,bv(-press));noteon(self.f.s,ch,pitch,vel);k=0
+   while k<held:
+    t=k/SR;st=-press if t<.06 else (0. if t>=.19 else -press*(1-(t-.06)/.13))
+    bend(self.f.s,ch,bv(st));chunks.append(run(B));k+=B
+   noteoff(self.f.s,ch,pitch)
+  else:
+   noteon(self.f.s,ch,pitch,vel);chunks.append(run(held));noteoff(self.f.s,ch,pitch)
   tail=0;step=B*64
   while tail<max_tail*SR:
    a=run(step);chunks.append(a);tail+=step
    if active_voices(self.f.s)==0:break
   if active_voices(self.f.s):
    alloff(self.f.s,ch);run(B*16)  # (a cut tail: faded below, and flushed)
+   if press:bend(self.f.s,ch,8192)
    x=np.concatenate(chunks);m=int(.05*SR);x[-m:]*=np.linspace(1,0,m)[:,None];return x
   x=np.concatenate(chunks)
+  if press:bend(self.f.s,ch,8192)
   nz=np.nonzero(np.abs(x).max(axis=1)>1e-9)[0];end=(nz[-1]+1) if len(nz) else 1
   return x[:end]
  def close(self):self.f.close()
+
+# ---- MT-2: five strokes ported from the game's own synthesis (src/audio/10_synth.js, _.perc x, g, d, c, a) ----------
+# Each is the Original's recipe, sample for sample in intent: WebAudio's linear attack and setTargetAtTime decay (time
+# constant tau), its biquads (RBJ, as the Web Audio spec defines them: bandpass Q linear, low/highpass Q in dB), white
+# noise from a seeded stream. Where the Original stops a voice at 4.5 or 7 time constants, the port lets it decay.
+def _biquad(kind,f,q):
+ w=2*math.pi*min(f,SR*.45)/SR;cw=math.cos(w);sw=math.sin(w)
+ if kind=='bandpass':
+  al=sw/(2*q);b=[al,0,-al]
+ else:
+  al=sw/(2*10**(q/20))
+  b=[(1-cw)/2,1-cw,(1-cw)/2] if kind=='lowpass' else [(1+cw)/2,-(1+cw)/2,(1+cw)/2]
+ a=[1+al,-2*cw,1-al]
+ return np.array(b)/a[0],np.array(a)/a[0]
+def _env(t,att,pk,tau,t0=0.):
+ """0 -> pk linearly over att from t0, then setTargetAtTime(0, t0 + att, tau)."""
+ e=np.where(t<t0,0.,np.where(t<t0+att,(t-t0)/max(att,1e-9)*pk,pk*np.exp(-(t-t0-att)/tau)))
+ return e
+def _ping(t,f,tau,pk,v):return np.sin(2*math.pi*f*t)*_env(t,.001,pk*v,tau)
+def _hiss(t,rng,kind,f,q,att,tau,pk,v):
+ b,a=_biquad(kind,f,q);n=signal.lfilter(b,a,rng.uniform(-1,1,len(t)))
+ return n*_env(t,att,pk*v,tau)
+def ported_percussion(kind,vel,seedval,salt):
+ rng=np.random.default_rng(seed(salt));sd=.5 if seedval is None else float(seedval)
+ dur={'clock':.12,'glasstick':1.2,'drop':.3,'creak':.9,'atarigane':1.6}[kind]
+ n=int(dur*SR);t=np.arange(n)/SR
+ if kind=='clock':    # P.x, a clock tick
+  x=_ping(t,2000,.012,.1,vel)+_hiss(t,rng,'bandpass',3500,2,.001,.008,.08,vel)
+ elif kind=='glasstick':  # P.g, the glass tick (the Hush's metronome)
+  x=_ping(t,1760,.16,.06,vel)+_ping(t,3537,.05,.006,vel)
+ elif kind=='drop':   # P.d, a water drop: a sine rising 1.8x in 50 ms (exponential ramp), then held
+  f0=800+sd*700;fr=np.where(t<.05,f0*1.8**(t/.05),f0*1.8)
+  x=np.sin(2*math.pi*np.cumsum(fr)/SR)*_env(t,.002,.16*vel,.035)
+ elif kind=='creak':  # P.c, the waterwheel's wooden creak: a low saw, vibrato, two formants
+  f0=30+sd*8;fr=f0*(1+.45*np.minimum(t/.5,1))+f0*.3*np.sin(2*math.pi*8.5*t)
+  ph=np.cumsum(fr)/SR;saw=2*(ph-np.floor(ph+.5))
+  b1,a1=_biquad('bandpass',850,5);b2,a2=_biquad('bandpass',1500,6)
+  y=signal.lfilter(b1,a1,saw)+signal.lfilter(b2,a2,saw)
+  e=np.where(t<.12,t/.12*.35*vel,np.where(t<.4,.35*vel,.35*vel*np.exp(-(t-.4)/.08)))
+  x=y*e
+ else:                # P.a, the atarigane: a small hand gong's plate modes
+  f=1150*(1+(sd-.5)*.02)
+  x=sum(_ping(t,f*r,tau,pk,vel) for r,tau,pk in [(1,.22,.07),(2.72,.12,.05),(4.98,.06,.035),(7.6,.035,.02)])
+  x=x+_hiss(t,rng,'bandpass',6000,1,.001,.004,.1,vel)
+ m=int(.02*SR);x[-m:]*=np.linspace(1,0,m)
+ return x.astype(np.float32)

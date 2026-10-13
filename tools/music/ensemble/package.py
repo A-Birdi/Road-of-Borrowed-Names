@@ -62,7 +62,8 @@ def package(id):
     dest = OUT / id
     dest.mkdir(parents=True, exist_ok=True)
     out = {'songId': id, 'fingerprint': rep['fingerprint'], 'sampleRate': sr, 'assets': {}}
-    for role, key in (('first', 'head'), ('loop', 'loop')):
+    # (MT-2: a cue that does not loop has its first file only)
+    for role, key in (('first', 'head'), ('loop', 'loop')) if rep.get('loop') else (('first', 'head'),):
         master, rate = sf.read(d / rep[key]['file'], dtype='float32')
         assert rate == sr
         ps, pe = rep[key]['playableStartFrame'], rep[key]['playableEndFrame']

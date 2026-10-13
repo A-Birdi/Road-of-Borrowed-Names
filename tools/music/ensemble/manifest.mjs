@@ -7,6 +7,8 @@
 // evidence flag is true and names a report; the mix profile is the pre-master music bus with its gain and room stated;
 // each media file exists inside assets/music/ensemble/, at the stated size and SHA-256, with sane playable frames; the
 // first-pass and steady-loop alternatives pair up by type; and each steady cycle is the score's period within 50 ppm.
+// (MT-2) A cue that does not loop has one file per alternative (layout single_pass) covering the whole score, and its
+// own evidence list (no seam, no repeat).
 // Anything else is reported and left out: the song plays its Original.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -19,6 +21,8 @@ const URL_RE = /^\.\/assets\/music\/ensemble\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_.-
 const TYPES = { opus: 'audio/ogg; codecs="opus"', ogg: 'audio/ogg', mp3: 'audio/mpeg', flac: 'audio/flac', wav: 'audio/wav' };
 const MIMES = ['audio/mpeg', 'audio/ogg', 'audio/opus', 'audio/wav', 'audio/flac'];
 const EVIDENCE = ['scoreCompatibleWithCurrentBuild', 'scoreEventsPreserved', 'decodedAlignmentVerified', 'firstPassSeamVerified', 'repeatedLoopVerified', 'gameMixCalibrated', 'distributionProvenanceRecorded'];
+// (MT-2) a cue that does not loop is one file, the whole score with its decay (layout single_pass): no seam, no repeat
+const EVIDENCE_ONCE = ['scoreCompatibleWithCurrentBuild', 'scoreEventsPreserved', 'decodedAlignmentVerified', 'oneShotPlacementVerified', 'gameMixCalibrated', 'distributionProvenanceRecorded'];
 
 export function readManifest(root) {
   const f = path.join(root, MANIFEST);
@@ -68,11 +72,18 @@ export function trackProblems(t, score, root) {
   if (m.roomBaked !== true) p.push('roomBaked (the game adds no room to a recording)');
   if (m.userVolumeBaked !== false) p.push('userVolumeBaked');
   const ev = t.evidence || {};
-  for (const k of EVIDENCE) if (ev[k] !== true) p.push('evidence ' + k);
+  for (const k of score.loop ? EVIDENCE : EVIDENCE_ONCE) if (ev[k] !== true) p.push('evidence ' + k);
   if (!Array.isArray(ev.reportPaths) || !ev.reportPaths.length) p.push('evidence reportPaths');
   else for (const r of ev.reportPaths) if (!fs.existsSync(path.join(root, r))) p.push('report missing: ' + r);
   const as = t.assets;
-  if (!as || as.layout !== 'split_firstpass_loop' || !Array.isArray(as.firstPass) || !Array.isArray(as.steadyLoop)) p.push('assets layout (split_firstpass_loop)');
+  if (!score.loop) {
+    // (MT-2) one file per alternative: the whole cue; its playable span covers the score
+    if (!as || as.layout !== 'single_pass' || !Array.isArray(as.firstPass) || !as.firstPass.length || as.steadyLoop) p.push('assets layout (single_pass, for a cue that does not loop)');
+    else as.firstPass.forEach((a, i) => {
+      for (const q of assetProblems(a, root)) p.push('firstPass[' + i + '] ' + q);
+      if (a && isInt(a.playableEndFrame) && a.sampleRate && (a.playableEndFrame - a.playableStartFrame) / a.sampleRate < score.length) p.push('firstPass[' + i + '] ends before the score does');
+    });
+  } else if (!as || as.layout !== 'split_firstpass_loop' || !Array.isArray(as.firstPass) || !Array.isArray(as.steadyLoop)) p.push('assets layout (split_firstpass_loop)');
   else {
     if (as.firstPass.length !== as.steadyLoop.length || !as.firstPass.length) p.push('first-pass and steady-loop alternatives do not pair');
     as.firstPass.forEach((a, i) => {
@@ -103,7 +114,7 @@ export function runtimeCatalog(manifest, getSong, root) {
       songs[t.songId] = {
         releaseStatus: 'ready', fingerprint: t.scoreFingerprint, durationSec: t.timeline.durationSec, loop: t.timeline.loop, loopStartSec: t.timeline.loopStartSec,
         trim: Math.pow(10, t.mix.gainDb / 20),
-        formats: t.assets.firstPass.map((a, i) => ({ codec: path.extname(a.relativeUrl).slice(1), type: TYPES[path.extname(a.relativeUrl).slice(1)], first: ref(a), loop: ref(t.assets.steadyLoop[i]) })),
+        formats: t.assets.firstPass.map((a, i) => ({ codec: path.extname(a.relativeUrl).slice(1), type: TYPES[path.extname(a.relativeUrl).slice(1)], first: ref(a), loop: t.assets.steadyLoop ? ref(t.assets.steadyLoop[i]) : null })),
       };
     }
   } else if (manifest) report.push({ songId: null, eligible: false, problems: ['manifest not runtimeEnabled (or not schema 1)'] });

@@ -686,6 +686,29 @@ once the full review is done."
   - what a line with a run-time name does in Prepared mode (115 lines; device voice or silent, per the estimate);
   - how a scene sounds when its speakers come from different models.
 
+### C-92 · MT-2: the Ensemble for every track, now
+**Decided** (2026-10-13). Robin asked why Settings said the Ensemble covered two tracks ("Did we not deploy every
+ensemble track?") and recalled that the full plan was to be finished before any voice work. The lead's answer: MT-1
+authorised two pilots only and said not to infer permission to convert every track; C-84, C-85 and C-87 put the
+playable campaign, then VA-1, then the matrix in order and named no music step before VA-1. Robin: "It's fine if we
+get it done now". Asked how to go on, Robin chose: **all 115 remaining tracks now**; **Ogg Opus and MP3** (as the
+pilots); and, on the open TimGM6mb (GPL-2) question, **"Yes, carry on"**: the same sound bank for these recordings
+while Robin decides distribution, before any hosted release.
+- **What it is:** every song the game plays gets an Ensemble recording made the pilots' way (SC-1's treatment, the
+  current score's first-pass realisation, a first pass to a join and one circular steady cycle; a one-shot cue a
+  single file), measured and calibrated in the game's own graph, admitted only when every MT-1 check passes. A track
+  that fails a check plays its Original and the report says why.
+- **What differs from the pilots, disclosed:** the pilots' per-part balance was SC-1's, refined by ear in SC-1; the
+  other tracks' balance is set by measurement against the Original's own parts (the method checked against the
+  pilots' SC-1 balance), with no one listening before Robin. The instruments and percussion the pilots did not use
+  get voices chosen by the lead (listed in docs/MUSIC_PERFORMANCE.md). Robin listens; anything Robin hears wrong is
+  a later round.
+- **Unchanged:** MT-1's constraints (optional same-origin static files beside the hosted page; the single file plays
+  Original with no request; no purchases, paid jobs or second implementation owner; the Hush's composition and the
+  voice casting untouched); C-88 (no second run of the chain or the matrix with Ensemble); C-87 (no deployment before
+  VA-1 and the matrix). The rights question stays Robin's and must be settled before the hosted release.
+- **Status:** in progress (MT-2).
+
 ### C-75 · How a wrong first answer counts towards a star
 **Decided.** Robin: "Sounds good." As proposed: Your rule is a star when fewer than 30% of an exam's questions were assisted. The plan never said how a
 *wrong* first answer counts (the playbook's D07). Proposed ([05_LANGUAGE.md](05_LANGUAGE.md) L3): a wrong first

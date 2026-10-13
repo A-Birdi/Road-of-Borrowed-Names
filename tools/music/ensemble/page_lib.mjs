@@ -25,7 +25,7 @@ window.__mtWindows = function (url, starts, win, search) {
 };
 // the scheduler's raw render against its model (the decoded files read where the segments say, the same gains)
 window.__mtPlace = async function (id, entry, fi, from, seconds) {
-  const fmt = entry.formats[fi], bufs = { first: window.__mt.bufs[fmt.first.url], loop: window.__mt.bufs[fmt.loop.url] };
+  const fmt = entry.formats[fi], bufs = { first: window.__mt.bufs[fmt.first.url], loop: fmt.loop ? window.__mt.bufs[fmt.loop.url] : null };
   const opts = { entry, fmt, raw: true, from, sampleRate: 48000 };
   const out = await RB.audio.renderEnsembleOffline(id, bufs, seconds, opts);
   const segs = opts.segments.map((s) => Object.assign({}, s, { b: bufs[s.role], stopAt: s.until == null ? Infinity : s.until + ${XJ} + 0.01 }));
@@ -87,7 +87,7 @@ window.__mtPlace = async function (id, entry, fi, from, seconds) {
 };
 // the game graph: Original (mix 1) or Ensemble (mix 0), loudness and the 1 ms onset envelope
 window.__mtGraph = async function (id, entry, fi, seconds, opts) {
-  const fmt = entry.formats[fi], bufs = { first: window.__mt.bufs[fmt.first.url], loop: window.__mt.bufs[fmt.loop.url] };
+  const fmt = entry.formats[fi], bufs = { first: window.__mt.bufs[fmt.first.url], loop: fmt.loop ? window.__mt.bufs[fmt.loop.url] : null };
   const out = await RB.audio.renderEnsembleOffline(id, bufs, seconds, Object.assign({ entry, fmt, original: true, sampleRate: 48000 }, opts));
   const L = out.getChannelData(0), R = out.getChannelData(1);
   let nan = false, clipped = 0;
@@ -106,9 +106,56 @@ window.__mtGraph = async function (id, entry, fi, seconds, opts) {
   }
   return { integrated: lu.integrated, peak: lu.peak, nan, clipped, momentary: opts.momentary ? lu.momentary : undefined };
 };
+// (MT-2) the Original's parts, each on its own, and the whole Original through the game graph, from one render of its
+// first pass: the game's own player (as __mtGraph plays it: default volumes, the cue at 0.05 s, rendered to D + 0.05)
+// with every track's strip (after the track's gain, before its pan, room and echo) tapped to its own channel, mono
+// ((L + R) / 2), and the graph's output on the last two. Per part: the K-weighted mean square (BS.1770's filter,
+// ungated) and the RMS, for render.py's part balance. The whole: exactly what __mtGraph(mix 1, until D, onsets 'O',
+// momentary) reports, for verify.mjs's calibration (so the Original's first pass is rendered once per song).
+window.__mtStems = async function (id, seconds) {
+  const _ = RB.audio._, song = _.getSong(id), O = _.OAC(), sr = 48000, n = song.tracks.length;
+  // (seconds: the render's length, D + 0.05 for the first pass, as __mtGraph's calibration render)
+  const ctx = new O({ numberOfChannels: n + 2, length: Math.ceil(sr * seconds), sampleRate: sr });
+  const g = _.buildGraph(ctx, Object.assign({}, _.DEFAULT_VOL), false);
+  const p = new _.Player(g, song, 0.05, false);
+  const merger = ctx.createChannelMerger(n + 2);
+  try { ctx.destination.channelInterpretation = 'discrete'; } catch (e) { /* ignore */ }
+  p.strips.forEach((s, i) => { const m = ctx.createGain(); m.channelCount = 1; m.channelCountMode = 'explicit'; m.channelInterpretation = 'speakers'; s.connect(m); m.connect(merger, 0, i); });
+  const split = ctx.createChannelSplitter(2);
+  g.out.connect(split); split.connect(merger, 0, n); split.connect(merger, 1, n + 1);
+  merger.connect(ctx.destination);
+  p.pump(seconds);
+  const buf = await ctx.startRendering(), t0 = Math.round(0.05 * sr);
+  const parts = song.tracks.map((tk, i) => {
+    const x = buf.getChannelData(i).subarray(t0), k = window.__kWeight(x, sr);
+    let ms = 0, ks = 0, pk = 0;
+    for (let j = 0; j < x.length; j++) { ms += x[j] * x[j]; ks += k[j] * k[j]; if (Math.abs(x[j]) > pk) pk = Math.abs(x[j]); }
+    return { track: tk.name, i: tk.i || null, perc: !!tk.perc, kms: ks / x.length, rms: Math.sqrt(ms / x.length), peak: pk, frames: x.length };
+  });
+  // the whole, as __mtGraph measures it (render window [0.05, D), the 1 ms onset envelope)
+  const L = buf.getChannelData(n), R = buf.getChannelData(n + 1);
+  let nan = false, clipped = 0;
+  for (let i = 0; i < L.length; i++) { if (L[i] !== L[i] || R[i] !== R[i]) nan = true; if (Math.abs(L[i]) >= 0.999 || Math.abs(R[i]) >= 0.999) clipped++; }
+  const t1 = Math.min(L.length, Math.round((seconds - 0.05) * sr));
+  const lu = window.__lufs(L.subarray(t0, t1), R.subarray(t0, t1), sr);
+  const hop = 48, nf = Math.floor((t1 - t0) / hop), e = new Float64Array(nf);
+  let pp = 0, y = 0;
+  for (let f = 0; f < nf; f++) { let s = 0; for (let k = 0; k < hop; k++) { const i = t0 + f * hop + k, m = (L[i] + R[i]) * 0.5; y = 0.96 * (y + m - pp); pp = m; s += y * y; } e[f] = 10 * Math.log10(s / hop + 1e-10); }
+  const env = new Float64Array(nf); for (let f = 5; f < nf; f++) env[f] = Math.max(0, e[f] - e[f - 5]);
+  const whole = { integrated: lu.integrated, peak: lu.peak, nan, clipped, momentary: lu.momentary, envO: b64(env) };
+  return { parts, whole };
+};
+// (MT-2) the Original's measurement from stems.mjs, for verify.mjs: its onset envelope back in place
+window.__mtSetOriginal = function (envB64) {
+  const s = atob(envB64), u = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
+  window.__mt.envO = new Float64Array(u.buffer);
+};
 // normalized cross-correlation of the two onset envelopes, lag in ms (positive: the Ensemble later)
-window.__mtOnsetLag = function (maxLag) {
-  const a = window.__mt.envO, b = window.__mt.envE, n = Math.min(a.length, b.length);
+// (shift, MT-2: a negative control: the Ensemble's envelope read shift ms late, as if the recording were misplaced)
+window.__mtOnsetLag = function (maxLag, shift) {
+  const a = window.__mt.envO, b0 = window.__mt.envE, k0 = shift || 0;
+  const b = k0 ? b0.subarray(k0) : b0, n = Math.min(a.length, b.length);
   const mean = (x) => { let s = 0; for (let i = 0; i < n; i++) s += x[i]; return s / n; };
   const ma = mean(a), mb = mean(b);
   let va = 0, vb = 0; for (let i = 0; i < n; i++) { va += (a[i] - ma) ** 2; vb += (b[i] - mb) ** 2; }
@@ -119,7 +166,10 @@ window.__mtOnsetLag = function (maxLag) {
     r[lag] = s / Math.sqrt(va * vb);
     if (!best || r[lag] > best.r) best = { lag, r: r[lag] };
   }
-  return { lagMs: best.lag, r: +best.r.toFixed(3), rAt40: +Math.max(r[-40], r[40]).toFixed(3), curve: [-50, -40, -30, -20, -10, -5, 0, 5, 10, 20, 30, 40, 50].map((k) => [k, +r[k].toFixed(3)]) };
+  // (MT-2) how far the peak stands above the misaligned lags as a whole: its z-score against every lag 25-50 ms away
+  const far = []; for (let k = 25; k <= maxLag; k++) far.push(r[k], r[-k]);
+  const fm = far.reduce((a, b) => a + b, 0) / far.length, fs = Math.sqrt(far.reduce((a, b) => a + (b - fm) ** 2, 0) / far.length);
+  return { lagMs: best.lag, r: +best.r.toFixed(3), rAt40: +Math.max(r[-40], r[40]).toFixed(3), zFar: +((best.r - fm) / Math.max(1e-12, fs)).toFixed(2), farMean: +fm.toFixed(4), farSd: +fs.toFixed(4), curve: [-50, -40, -30, -20, -10, -5, 0, 5, 10, 20, 30, 40, 50].map((k) => [k, +r[k].toFixed(3)]) };
 };
 `;
 

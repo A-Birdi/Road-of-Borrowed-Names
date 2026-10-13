@@ -21,6 +21,12 @@
 //              fade against the levels either side.
 // Writes docs/music/ensemble/qa/<id>.json and assets/music/ensemble/manifest.json. A format that fails is left out
 // of the manifest; a track is `ready` only if a format passes everything and the provenance notice is in place.
+// MT-2 (every other song): the Original's first pass comes from stems.mjs's render (original.json, measured the same
+// way; --fresh-original renders it here instead), and the Ensemble's loudness renders leave out the muted Original
+// (--with-muted-original keeps it: it adds exact zeros). A cue that does not loop is one file: placed from its start
+// and from odd times, with no seam allowed. A cue under 32 s has its two handovers at its steadiest moments. The onset
+// test also passes a peak within 15 ms that stands 4 SD above every lag 25-50 ms away, and its negative control (the
+// Ensemble's envelope 100 ms late) must fail. The manifest is changed under a lock, so several songs can run at once.
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -28,8 +34,12 @@ import { serve, launch, page, root } from '../../../tests/e2e/lib.mjs';
 import { compile, workDir, PILOTS } from './export_events.mjs';
 import { MANIFEST } from './manifest.mjs';
 import { PAGE_LIB, XJ } from './page_lib.mjs';
+import { load } from '../../../tests/lib/load.mjs';
 
 const ids = process.argv.slice(2).filter((a) => !a.startsWith('--'));
+// --fresh-original: render the Original's first pass here even when stems.mjs measured it; --with-muted-original: keep
+// the Original's (muted) player in the Ensemble's loudness renders, as MT-1 did
+const FRESH = process.argv.includes('--fresh-original'), SKIP_MUTED = !process.argv.includes('--with-muted-original');
 const IDS = ids.length ? ids : PILOTS;
 const QA = 'docs/music/ensemble/qa';
 const NOTICE = 'assets/music/ensemble/NOTICE.md';
@@ -76,14 +86,14 @@ async function verifySong(p, id, cur) {
   const work = path.join(workDir(), id);
   const rep = JSON.parse(fs.readFileSync(path.join(work, 'render.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(work, 'package.json'), 'utf8'));
-  const masters = { first: readWav(path.join(work, rep.head.file)), loop: readWav(path.join(work, rep.loop.file)) };
+  const masters = { first: readWav(path.join(work, rep.head.file)), loop: rep.loop ? readWav(path.join(work, rep.loop.file)) : null };
   const song = cur.score, D = song.length, L0 = song.loopStart, Pd = D - L0;
   const out = { songId: id, generatedBy: 'tools/music/ensemble/verify.mjs', browser: await p.evaluate(() => navigator.userAgent), fingerprint: cur.fingerprint, renderFingerprint: rep.fingerprint, formats: [] };
-  const fmts = pkg.assets.first.map((a, i) => ({ codec: a.codec, first: a, loop: pkg.assets.loop[i] }));
+  const fmts = pkg.assets.first.map((a, i) => ({ codec: a.codec, first: a, loop: pkg.assets.loop ? pkg.assets.loop[i] : null }));
   // 1. decode
   for (const f of fmts) {
     const r = { codec: f.codec, decode: {}, alignment: {} };
-    for (const role of ['first', 'loop']) {
+    for (const role of f.loop ? ['first', 'loop'] : ['first']) {
       const a = f[role], url = './assets/music/ensemble/' + a.file;
       const d = await p.evaluate(([u]) => window.__mtDecode(u, [48000, 44100]), [url]);
       r.decode[role] = d;
@@ -100,12 +110,12 @@ async function verifySong(p, id, cur) {
       r.alignment[role] = { frames48k: d.rates[48000].frames, masterFrames: m.frames, frames44k: d.rates[44100].frames, ok48, ok441, windows: al, aligned, minSnrDb: Math.min(...al.map((x) => x.snrDb)) };
       console.log(id, f.codec, role, 'frames', d.rates[48000].frames, '/', m.frames, '44.1k', d.rates[44100].frames, 'aligned', aligned, 'min SNR', r.alignment[role].minSnrDb);
     }
-    r.decodeOk = ['first', 'loop'].every((k) => r.alignment[k].ok48 && r.alignment[k].ok441 && r.alignment[k].aligned);
+    r.decodeOk = (f.loop ? ['first', 'loop'] : ['first']).every((k) => r.alignment[k].ok48 && r.alignment[k].ok441 && r.alignment[k].aligned);
     out.formats.push(r);
   }
   const entryFor = (trim) => ({
     releaseStatus: 'ready', fingerprint: cur.fingerprint, durationSec: D, loop: song.loop, loopStartSec: L0, trim,
-    formats: fmts.map((f) => ({ codec: f.codec, first: ref(f.first, out, f.codec, 'first'), loop: ref(f.loop, out, f.codec, 'loop') })),
+    formats: fmts.map((f) => ({ codec: f.codec, first: ref(f.first, out, f.codec, 'first'), loop: f.loop ? ref(f.loop, out, f.codec, 'loop') : null })),
   });
   function ref(a, o, codec, role) {
     const fr = o.formats.find((x) => x.codec === codec).alignment[role].frames48k;
@@ -117,18 +127,26 @@ async function verifySong(p, id, cur) {
     const r = out.formats[fi];
     if (!r.decodeOk) continue;
     r.placement = [];
-    r.placement.push(await p.evaluate(([i, e, k, fr, s]) => window.__mtPlace(i, e, k, fr, s), [id, entry, fi, 0, D + Pd + 1.5]));
-    for (let k = 3; k <= 10; k++) {
-      const from = D + (k - 1) * Pd - 1;
-      r.placement.push(await p.evaluate(([i, e, kk, fr, s]) => window.__mtPlace(i, e, kk, fr, s), [id, entry, fi, from, 2.5]));
+    if (!song.loop) {
+      // (MT-2) a one-shot cue: the whole file from the cue's start, and mid-way starts at odd times
+      const E = rep.head.endSec;
+      r.placement.push(await p.evaluate(([i, e, k, fr, s]) => window.__mtPlace(i, e, k, fr, s), [id, entry, fi, 0, E + 1]));
+      for (const from of [1.234567, D * 0.61803]) r.placement.push(await p.evaluate(([i, e, kk, fr, s]) => window.__mtPlace(i, e, kk, fr, s), [id, entry, fi, from, Math.min(3, E - from + 0.5)]));
+    } else {
+      r.placement.push(await p.evaluate(([i, e, k, fr, s]) => window.__mtPlace(i, e, k, fr, s), [id, entry, fi, 0, D + Pd + 1.5]));
+      for (let k = 3; k <= 10; k++) {
+        const from = D + (k - 1) * Pd - 1;
+        r.placement.push(await p.evaluate(([i, e, kk, fr, s]) => window.__mtPlace(i, e, kk, fr, s), [id, entry, fi, from, 2.5]));
+      }
+      // mid-way starts: in the first pass before the join, after it, and deep in a later cycle at an odd phase
+      for (const from of [1.234567, rep.head.joinSec + 3.21, D + 6 * Pd + Pd * 0.61803]) r.placement.push(await p.evaluate(([i, e, kk, fr, s]) => window.__mtPlace(i, e, kk, fr, s), [id, entry, fi, from, 3]));
     }
-    // mid-way starts: in the first pass before the join, after it, and deep in a later cycle at an odd phase
-    for (const from of [1.234567, rep.head.joinSec + 3.21, D + 6 * Pd + Pd * 0.61803]) r.placement.push(await p.evaluate(([i, e, kk, fr, s]) => window.__mtPlace(i, e, kk, fr, s), [id, entry, fi, from, 3]));
     const all = r.placement, seams = all.flatMap((x) => x.seams);
     r.placementOk = all.every((x) => x.modelSnrDb >= 60);
     r.joins = seams.filter((s) => s.kind === 'join');
     r.boundaries = seams.filter((s) => s.kind === 'boundary');
-    r.seamOk = r.joins.length >= 1 && seams.every((s) => s.agreementDb >= 12 && s.stepRatio <= 1.05);
+    // (a one-shot has no seam: none may appear)
+    r.seamOk = song.loop ? r.joins.length >= 1 && seams.every((s) => s.agreementDb >= 12 && s.stepRatio <= 1.05) : seams.length === 0;
     r.boundariesSeen = r.boundaries.length;
     r.models = [...new Set(all.map((x) => x.model))];
     console.log(id, r.codec, 'placement SNR min', Math.min(...all.map((x) => x.modelSnrDb)), 'read model', r.models.join('/'), 'joins', r.joins.map((s) => [s.agreementDb, s.stepRatio]), 'boundaries', r.boundaries.length, 'agreement min', Math.min(...r.boundaries.map((s) => s.agreementDb)), 'step max', Math.max(...seams.map((s) => s.stepRatio)));
@@ -136,11 +154,26 @@ async function verifySong(p, id, cur) {
   // 3. calibration (first passing format), then the others at its trim
   const fi0 = out.formats.findIndex((r) => r.decodeOk && r.placementOk && r.seamOk);
   if (fi0 < 0) { out.ready = false; out.reason = 'no format passed decode/placement/seams'; return out; }
-  const orig = await p.evaluate(([i, e, k, s]) => window.__mtGraph(i, e, k, s, { mix: 1, until: s - 0.05, onsets: 'O', momentary: true }), [id, entry, fi0, D + 0.05]);
+  // (MT-2) the Original's first pass through the game graph as stems.mjs measured it, from the same render it took the
+  // parts from (original.json: the same graph, length, window and measures as the call below); rendered here only if
+  // absent or stale. The Ensemble's own renders leave out the Original's player: muted (mix 0: its output and the room's
+  // return closed), it adds exact zeros, so leaving it out changes nothing but the time.
+  let orig;
+  const ofile = path.join(work, 'original.json');
+  const oj = !FRESH && fs.existsSync(ofile) ? JSON.parse(fs.readFileSync(ofile, 'utf8')) : null;
+  if (oj && oj.fingerprint === cur.fingerprint) {
+    orig = { integrated: oj.integrated, peak: oj.peak, momentary: oj.momentary };
+    await p.evaluate((b) => window.__mtSetOriginal(b), oj.envO);
+    out.originalMeasuredBy = oj.measuredBy;
+  } else {
+    orig = await p.evaluate(([i, e, k, s]) => window.__mtGraph(i, e, k, s, { mix: 1, until: s - 0.05, onsets: 'O', momentary: true }), [id, entry, fi0, D + 0.05]);
+    out.originalMeasuredBy = 'verify.mjs __mtGraph(mix 1, until D)';
+  }
+  const ensOpts = SKIP_MUTED ? { original: false } : {};
   let trim = Math.pow(10, -0 / 20), ens = null;
   const iters = [];
   for (let it = 0; it < 4; it++) {
-    ens = await p.evaluate(([i, e, k, s, t]) => window.__mtGraph(i, e, k, s, { mix: 0, trim: t, until: s - 0.05, onsets: 'E', momentary: true }), [id, entry, fi0, D + 0.05, trim]);
+    ens = await p.evaluate(([i, e, k, s, t, o]) => window.__mtGraph(i, e, k, s, Object.assign({ mix: 0, trim: t, until: s - 0.05, onsets: 'E', momentary: true }, o)), [id, entry, fi0, D + 0.05, trim, ensOpts]);
     const diff = orig.integrated - ens.integrated;
     iters.push({ trim, ensembleLufs: ens.integrated, diffLu: diff });
     if (Math.abs(diff) <= 0.1) break;
@@ -148,6 +181,7 @@ async function verifySong(p, id, cur) {
   }
   const final = iters[iters.length - 1];
   const onset = await p.evaluate(() => window.__mtOnsetLag(50));
+  const control = await p.evaluate(() => window.__mtOnsetLag(50, 100));
   out.calibration = { window: 'the first pass, 0 to ' + D + ' s, 48 kHz, default volumes, no ducking', originalLufs: orig.integrated, originalPeak: orig.peak, iterations: iters, trim: final.trim, gainDb: db(final.trim), ensembleLufs: final.ensembleLufs, diffLu: final.diffLu, ensemblePeak: ens.peak, nan: ens.nan, clippedSamples: ens.clipped };
   // (the momentary series of each performance alone, for the handover check; the last Ensemble render is at the final trim)
   const momO = orig.momentary, momE = ens.momentary;
@@ -156,19 +190,48 @@ async function verifySong(p, id, cur) {
   // the two performances' attacks line up: the peak within 15 ms (a sampled instrument's own attack is part of it),
   // and at least three times the correlation 40 ms away (a beat or a frame out would not be)
   // (two different instrumentations correlate weakly in absolute terms; what matters is a clear peak near zero)
-  out.onsetOk = Math.abs(onset.lagMs) <= 15 && onset.r >= 0.03 && onset.r >= 3 * Math.max(0, onset.rAt40);
-  console.log(id, 'Original', orig.integrated.toFixed(2), 'LUFS; Ensemble', final.ensembleLufs.toFixed(2), 'at', db(final.trim).toFixed(2), 'dB; onset lag', onset.lagMs, 'ms (r', onset.r, 'r at 40 ms', onset.rAt40 + ')');
+  // (MT-2: MT-1's sharpness test was set on the two pilots; on a slow cue with soft attacks one far lag can pass a third
+  // of the peak while the peak still stands well clear of the misaligned lags as a whole. A peak within 15 ms passes
+  // with MT-1's test or, failing it, at least 4 standard deviations above every lag 25-50 ms away.)
+  const sharp = onset.r >= 3 * Math.max(0, onset.rAt40), clear = onset.zFar >= 4;
+  const passes = (o) => Math.abs(o.lagMs) <= 15 && o.r >= 0.03 && (o.r >= 3 * Math.max(0, o.rAt40) || o.zFar >= 4);
+  // the negative control must fail: the same test on the Ensemble's envelope shifted 100 ms
+  out.onsetControl = { shiftMs: 100, lagMs: control.lagMs, r: control.r, rAt40: control.rAt40, zFar: control.zFar, passes: passes(control) };
+  out.onsetOk = passes(onset) && !out.onsetControl.passes;
+  out.onsetCriterion = !out.onsetOk ? 'failed' : sharp ? 'MT-1: peak at least 3x the correlation 40 ms away' : 'MT-2: peak at least 4 SD above every lag 25-50 ms away (MT-1\'s 3x test not met)';
+  console.log(id, 'Original', orig.integrated.toFixed(2), 'LUFS; Ensemble', final.ensembleLufs.toFixed(2), 'at', db(final.trim).toFixed(2), 'dB; onset lag', onset.lagMs, 'ms (r', onset.r, 'r at 40 ms', onset.rAt40, 'z far', onset.zFar + ')');
   for (let fi = 0; fi < fmts.length; fi++) {
     const r = out.formats[fi];
     if (!r.decodeOk || !r.placementOk || !r.seamOk) { r.ok = false; continue; }
     if (fi === fi0) { r.loudness = { lufs: final.ensembleLufs, diffLu: final.diffLu }; r.ok = out.calibrationOk; continue; }
-    const e2 = await p.evaluate(([i, e, k, s, t]) => window.__mtGraph(i, e, k, s, { mix: 0, trim: t, until: s - 0.05 }), [id, entry, fi, D + 0.05, final.trim]);
+    const e2 = await p.evaluate(([i, e, k, s, t, o]) => window.__mtGraph(i, e, k, s, Object.assign({ mix: 0, trim: t, until: s - 0.05 }, o)), [id, entry, fi, D + 0.05, final.trim, ensOpts]);
     r.loudness = { lufs: e2.integrated, diffLu: orig.integrated - e2.integrated, peak: e2.peak, nan: e2.nan };
     r.ok = Math.abs(r.loudness.diffLu) <= 0.5 && !e2.nan && e2.peak <= 1;
     console.log(id, r.codec, 'at the same trim', e2.integrated.toFixed(2), 'LUFS (', r.loudness.diffLu.toFixed(2), 'LU)');
   }
   // 5. handovers mid-phrase: Original -> Ensemble at H1, back at H2 (render times)
-  const H1 = Math.min(D - 12, 20.3), H2 = H1 + 6.1;
+  // (MT-2: a cue shorter than 32 s, the victory sting is 6 s, has no room for MT-1's fixed times; its handovers go
+  // where the two performances, each alone, are steadiest and closest in level over the blocks a fade touches (one in
+  // each half), so the check measures the fade and not two different envelopes passing a fixed time)
+  let H1 = 20.3, H2 = 26.4, placed = 'MT-1 fixed times (20.3 s, 26.4 s)';
+  if (D < 32.3) {
+    const at = (arr, t) => { const m = arr.find((x) => Math.abs(x.t - t) < 1e-6); return m ? m.lufs : null; };
+    const cost = (h) => {
+      const rows = momO.filter((m) => m.t + 0.05 > h && m.t + 0.05 - 0.4 < h + 0.2);
+      let c = 0, prev = null;
+      for (const m of rows) {
+        const o = m.lufs, e = at(momE, m.t);
+        if (!isFinite(o) || e == null || !isFinite(e)) return Infinity;
+        c += Math.abs(o - e) + (prev ? Math.abs(o - prev[0]) + Math.abs(e - prev[1]) : 0);
+        prev = [o, e];
+      }
+      return rows.length >= 4 ? c : Infinity;
+    };
+    const best = (a, b) => { let h = null, c = Infinity; for (let x = a; x <= b + 1e-9; x += 0.05) { const k = cost(x); if (k < c) { c = k; h = +x.toFixed(3); } } return h; };
+    H1 = best(0.6, D / 2 - 0.5); H2 = best(Math.max(D / 2, H1 + 1), D - 0.8);
+    placed = 'steadiest moments of a short cue (' + H1 + ' s, ' + H2 + ' s)';
+  }
+  out.handoverTimes = placed;
   const ho = await p.evaluate(([i, e, k, s, t, a, b]) => window.__mtGraph(i, e, k, s, { mix: 1, trim: t, momentary: true, handovers: [{ at: a, to: 'ensemble' }, { at: b, to: 'original' }] }), [id, entry, fi0, H2 + 4, final.trim, H1, H2]);
   // each 400 ms block touching a fade, against the same block of each performance alone (same render clock): a fade
   // that summed badly would rise above both or sink below both
@@ -203,11 +266,35 @@ await p.addScriptTag({ content: fs.readFileSync(path.join(root, 'tools/music/ens
 await p.addScriptTag({ content: PAGE_LIB });
 fs.mkdirSync(path.join(root, QA), { recursive: true });
 const manPath = path.join(root, MANIFEST);
-const manifest = fs.existsSync(manPath) ? JSON.parse(fs.readFileSync(manPath, 'utf8')) : { schemaVersion: 1, runtimeEnabled: false, coverage: '', tracks: [] };
+const SONGS = load(['core', 'audio'], { __RB_TEST__: true }).audio.songList().map((s) => s.id || s);
+const PILOT_IDS = ['snowbell', 'battle_keepers'];
+// (MT-2: several verify runs may go at once, one song each; the manifest is read, changed and written under a lock)
+async function withManifest(fn) {
+  const lock = manPath + '.lock';
+  for (let i = 0; ; i++) {
+    try { fs.mkdirSync(lock); break; } catch (e) {
+      if (e.code !== 'EEXIST') throw e;
+      if (i > 3000) throw new Error('manifest lock held too long: ' + lock);
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  }
+  try {
+    const manifest = fs.existsSync(manPath) ? JSON.parse(fs.readFileSync(manPath, 'utf8')) : { schemaVersion: 1, runtimeEnabled: false, coverage: '', tracks: [] };
+    fn(manifest);
+    manifest.runtimeEnabled = manifest.tracks.some((t) => t.releaseStatus === 'ready');
+    const ready = manifest.tracks.filter((t) => t.releaseStatus === 'ready').map((t) => t.songId);
+    manifest.coverage = ready.length >= SONGS.length && SONGS.every((id) => ready.includes(id)) ? 'Every song (' + SONGS.length + ').'
+      : ready.length + ' of ' + SONGS.length + ' songs: ' + ready.join(', ') + '. Every other song plays its Original.';
+    const tmp = manPath + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(manifest, null, 2) + '\n');
+    fs.renameSync(tmp, manPath);
+  } finally { fs.rmdirSync(lock); }
+}
 for (const id of IDS) {
   const res = await verifySong(p, id, cur[id]);
   const rep = JSON.parse(fs.readFileSync(path.join(workDir(), id, 'render.json'), 'utf8'));
   const pkg = JSON.parse(fs.readFileSync(path.join(workDir(), id, 'package.json'), 'utf8'));
+  const once = !cur[id].score.loop;
   res.render = rep;
   res.renderer = rendererRevision();
   const qa = path.join(QA, id + '.json');
@@ -219,7 +306,16 @@ for (const id of IDS) {
     ...(role === 'loop' ? { loopStartFrame: a.playableStartFrame } : {}),
   });
   const src = JSON.parse(fs.readFileSync(path.join(workDir(), id, 'source.json'), 'utf8'));
-  const ev = {
+  const ev = once ? {
+    // (MT-2) a one-shot cue: one file, the whole score; no seam and no repeat to verify
+    scoreCompatibleWithCurrentBuild: res.fingerprint === res.renderFingerprint,
+    scoreEventsPreserved: rep.head.eventsPlaced === rep.score.events && !!res.onsetOk,
+    decodedAlignmentVerified: good.length > 0 && !!res.onsetOk,
+    oneShotPlacementVerified: good.length > 0 && good.every((i) => res.formats[i].placementOk && res.formats[i].seamOk),
+    gameMixCalibrated: !!res.calibrationOk && !!res.handoverOk,
+    distributionProvenanceRecorded: fs.existsSync(path.join(root, NOTICE)),
+    reportPaths: [qa],
+  } : {
     scoreCompatibleWithCurrentBuild: res.fingerprint === res.renderFingerprint,
     scoreEventsPreserved: rep.loop.eventsPlaced === rep.loop.eventsInRepeat && rep.head.eventsPlaced > 0 && !!res.onsetOk,
     decodedAlignmentVerified: good.length > 0 && !!res.onsetOk,
@@ -230,22 +326,28 @@ for (const id of IDS) {
     reportPaths: [qa],
   };
   const ready = Object.entries(ev).every(([k, v]) => k === 'reportPaths' || v === true);
+  const assets = !good.length ? null : once
+    ? { layout: 'single_pass', firstPass: good.map((i) => asset(pkg.assets.first[i], 'first', res.formats[i].codec)) }
+    : { layout: 'split_firstpass_loop', firstPass: good.map((i) => asset(pkg.assets.first[i], 'first', res.formats[i].codec)), steadyLoop: good.map((i) => asset(pkg.assets.loop[i], 'loop', res.formats[i].codec)) };
+  const shape = once ? 'one file, the whole cue to ' + rep.head.endSec.toFixed(3) + ' s with its decay' : 'a first pass to ' + rep.head.joinSec.toFixed(3) + ' s and one circular steady cycle, with guards';
+  const notes = PILOT_IDS.includes(id)
+    ? 'SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: ' + shape + '. Machine-checked in Chromium only (' + qa + '); listened to by Robin on the captures (2026-10-12), not yet in the game on a device.'
+    : 'MT-2: the SC-1 treatment carried to this score (first-pass realisation; voices, measured part balance, room and echo in ' + qa + ' render.treatment), rendered by tools/music/ensemble at 48 kHz: ' + shape + '. Machine-checked in Chromium only; not yet listened to by anyone.';
   const track = {
     songId: id, releaseStatus: ready ? 'ready' : 'pending_production', fingerprintVersion: 'mt1-score-v1', scoreFingerprint: res.fingerprint,
     referenceCommit: src.head, rendererRevision: res.renderer,
     timeline: { durationSec: cur[id].score.length, loop: cur[id].score.loop, loopStartSec: cur[id].score.loopStart },
-    assets: good.length ? { layout: 'split_firstpass_loop', firstPass: good.map((i) => asset(pkg.assets.first[i], 'first', res.formats[i].codec)), steadyLoop: good.map((i) => asset(pkg.assets.loop[i], 'loop', res.formats[i].codec)) } : null,
+    assets,
     mix: res.calibration ? { profile: 'pre_master_music_bus', gainDb: +res.calibration.gainDb.toFixed(3), roomBaked: true, userVolumeBaked: false } : { profile: 'pending', gainDb: null, roomBaked: null, userVolumeBaked: false },
     evidence: ev,
-    notes: 'SC-1 instrumental treatment of the current score (first-pass realisation), rendered by tools/music/ensemble at 48 kHz: a first pass to ' + rep.head.joinSec.toFixed(3) + ' s and one circular steady cycle, with guards. Machine-checked in Chromium only (' + qa + '); listened to by Robin on the captures (2026-10-12), not yet in the game on a device.',
+    notes,
   };
-  const i = manifest.tracks.findIndex((t) => t.songId === id);
-  if (i >= 0) manifest.tracks[i] = track; else manifest.tracks.push(track);
+  await withManifest((manifest) => {
+    const i = manifest.tracks.findIndex((t) => t.songId === id);
+    if (i >= 0) manifest.tracks[i] = track; else manifest.tracks.push(track);
+  });
   console.log(id, ready ? 'READY' : 'pending', JSON.stringify(ev));
 }
-manifest.runtimeEnabled = manifest.tracks.some((t) => t.releaseStatus === 'ready');
-manifest.coverage = 'Pilot: ' + manifest.tracks.filter((t) => t.releaseStatus === 'ready').map((t) => t.songId).join(', ') + '. Every other song plays its Original.';
-fs.writeFileSync(manPath, JSON.stringify(manifest, null, 2) + '\n');
 if (errors.length) console.log('page errors:', errors.slice(0, 5));
 await browser.close();
 srv.close();
