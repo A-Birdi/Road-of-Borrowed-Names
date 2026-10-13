@@ -230,7 +230,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
     // him, nearer)
     const hx = Math.round(w * (narrow ? 0.48 : close ? 0.44 : 0.5)), hy = narrow ? Math.round(vb - s(close ? 110 : 130)) : Math.max(Math.round(vb + s(close ? 6 : 10)), 98);
     const lk = clamp(S.Z * (close ? 1.25 : 0.9), 0.6, 1.4);
-    const lampX = Math.round(hx + (narrow ? s(110) : s(close ? 120 : 132))), lampY = Math.round(Math.min(vb + s(30), hy + s(20)));
+    // (closer, the lamp's frame stands within his reach: his figure is drawn at one pixel per art pixel, so the gap is
+    // in his units, not the stage's; AR-1)
+    const lampX = Math.round(hx + (narrow ? s(110) : close ? 104 + Math.round(20 * lk) : s(132))), lampY = Math.round(Math.min(vb + s(30), hy + s(20)));
     return Object.assign(S, { hx, hy, lk, Lg: lampGeom(lampX, lampY, lk), floor: Math.round(hy - 96 * 0.15), narrow, close: !!close });
   }
   const COMP_ASIDE = { nao: 'p:strap', mio: 'p:palm', ren: 'p:clasp', suzu: 'p:size_out' };
@@ -286,7 +288,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       roomWithLamp(c, G, st, t, 'close', { slit: [w * 0.02, w * 0.02 + Math.max(s(30), w * 0.08)], seed: 31, lit: 0.45 });
       const kh = st.at('hand'), ks = st.at('settle');
       // his hand comes to rest on the lamp's frame (his arm reaching to it)
-      const e = ease(kh), lx = Math.round(lerp(G.hx + s(40), Lg.x0 - s(10), e)), ly = Math.round(lerp(G.vb + s(20), Lg.y0 + Lg.H * 0.5, e));
+      // (from his side to the frame's edge, within his reach; AR-1)
+      const e = ease(kh), lx = Math.round(lerp(G.hx + 40, Lg.x0 - s(3), e)), ly = Math.round(lerp(G.hy + 60, Lg.y0 + Lg.H * 0.5, e));
       hoshinoBust(c, G, ks > 0.4 ? 'smile' : 'think2', ks > 0.4 ? { body: [0, 1] } : { look: [1, 0], head: [1, 0] }, false, Q.holdArms(G.hx, G.hy, null, [lx, ly]));
       const hd = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: lerp(0.9, 0.15, e), skin: skin('hoshino'), sleeve: sleeve('hoshino') });
       if (hd) c.drawImage(hd.cv, lx - hd.ax, ly - hd.ay);
@@ -345,7 +348,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const kt = st.at('think'), km = st.at('smile');
       // one hand on the lamp, the other open toward the window (and the valley) on our left; his arms to both
       const e = ease(Math.max(kt, km));
-      const p1 = [Math.round(Lg.x0 - s(12)), Math.round(Lg.y0 + Lg.H * 0.5)], p2 = [Math.round(lerp(G.hx - s(20), G.hx - s(70), e)), Math.round(lerp(G.vb + s(30), G.hy - s(40), e))];
+      // (the open hand rises from his side; both within his reach; AR-1)
+      const p1 = [Math.round(Lg.x0 - s(3)), Math.round(Lg.y0 + Lg.H * 0.5)], p2 = [Math.round(lerp(G.hx - 40, G.hx - 78, e)), Math.round(lerp(G.hy + 60, G.hy - 36, e))];
       hoshinoBust(c, G, km > 0.3 ? 'smile' : kt > 0.2 ? 'think' : 'neutral', km > 0.3 ? null : { look: [-1, -1] }, false, Q.holdArms(G.hx, G.hy, p2, p1));
       const h1 = Q.hand({ size: 13, pose: 'rest', side: 'R', angle: 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
       if (h1) c.drawImage(h1.cv, p1[0] - h1.ax, p1[1] - h1.ay);
@@ -563,11 +567,12 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ko = st.at('offer'), kt = st.at('take');
       // the envelope held out toward you in both his hands; on the giving, your hand takes it and it is yours
       const e = ease(ko), tk = ease(kt);
-      const ex = Math.round(lerp(G.hx, G.hx - s(46), e) - tk * s(40)), ey = Math.round(lerp(G.vb + s(20), G.hy - s(30), e) + tk * s(50));
-      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, tk < 0.5 ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
+      // (it comes up from his waist, and his hands let it go as yours takes it; AR-1)
+      const ex = Math.round(lerp(G.hx, G.hx - s(46), e) - tk * s(40)), ey = Math.round(lerp(G.hy + 44, G.hy - s(30), e) + tk * s(50));
+      hoshinoBust(c, G, 'smile', ko < 0.5 ? { look: [0, 1] } : null, false, tk < 0.15 ? Q.holdArms(G.hx, G.hy, [ex - s(16), ey + s(6)], [ex + s(16), ey + s(6)]) : null);
       const k = clamp(G.Z * 0.8, 0.6, 1.1);
       c.save(); c.translate(ex, ey); c.rotate(-0.25); c.translate(-ex, -ey); envelope(c, ex, ey, k, 'front', 1); c.restore();
-      if (tk < 0.5) {
+      if (tk < 0.15) {
         for (const [dx, side] of [[-s(16), 'R'], [s(16), 'L']]) {
           const hd = Q.hand({ size: 11, pose: 'pinch', side, angle: side === 'R' ? -0.2 : Math.PI + 0.2, skin: skin('hoshino'), sleeve: sleeve('hoshino') });
           if (hd) c.drawImage(hd.cv, Math.round(ex + dx - hd.ax), Math.round(ey + s(6) - hd.ay));

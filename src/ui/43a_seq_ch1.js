@@ -561,12 +561,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Hana in the doorway: surprise on her line; then she takes it in as he speaks
       const ks = st.at('stop'), kl = st.at('lift');
       const expr = kl > 0.2 ? 'think2' : ks > 0.15 ? 'surprise' : 'neutral';
-      // her hand on the doorframe: it slides down the post and stops there (her arm raised to it)
-      const fx = Math.round(dX - s(3)), fy = Math.round(lerp(hy - 96 + s(6), hy - 96 + s(30), ease(ks)));
-      const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null, Q.holdArms(hx, hy, [fx, fy], null));
+      // her hand comes up to her chest at his words and stays there (AR-1: it went to the doorframe's post, which the
+      // drawn arm cannot reach from the middle of the doorway, and which Kōji's hat hides)
+      const kh = ease(clamp(ks * 1.6, 0, 1));
+      const fx = Math.round(hx - 48 + lerp(16, 42, kh)), fy = Math.round(hy - 96 + lerp(150, 106, kh));
+      const hb = hanaBust(expr, ks > 0.15 && kl < 0.2 ? { head: [0, -1] } : null, kh > 0 ? Q.holdArms(hx, hy, [fx, fy], null) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       const skin = Q.skinOf(look('hana'));
-      const hd = Q.hand({ size: 10, pose: 'rest', side: 'L', angle: Math.PI * 0.5, skin, sleeve: '#a86a5a' });
+      const hd = kh > 0 ? Q.hand({ size: 10, pose: 'rest', side: 'L', angle: lerp(Math.PI * 0.5, -0.5, kh), skin, sleeve: '#a86a5a' }) : null;
       if (hd) c.drawImage(hd.cv, fx - hd.ax, fy - hd.ay);
       // Kōji in front of us, from behind, over the doorway's left edge; his cup held level in front of
       // him, Hana looking at it; it lifts a little on the rule
@@ -592,7 +594,8 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // the tray, the pot and the two cups on the counter behind her (poured this morning)
       const kit = RB.prologueArt.kit;
       const tray = kit.traySprite(), cup = kit.cupSprite(), pot = kit.potSprite();
-      const cx0 = Math.round(hx + Math.max(s(84), dW * 0.24)), cups = [[cx0 - s(14), counterY + s(1)], [cx0 + s(14), counterY + s(2)]];
+      // (within her reach: the tray sits by her shoulder, the near cup where her hand can take it; AR-1)
+      const cx0 = Math.round(hx + 80), cups = [[cx0 - 14, counterY + s(1)], [cx0 + 14, counterY + s(2)]];
       const put = (sp, x, y) => { c.fillStyle = 'rgba(30,14,10,0.4)'; P().disc(c, x + Math.round(sp.w * 0.12), y, Math.round(sp.w * 0.36), Math.max(1, s(2))); c.drawImage(sp.cv, x - sp.ax, y - sp.ay); };
       put(tray, cx0, counterY + s(4));
       put(pot, Math.round(hx - Math.max(s(84), dW * 0.22)), counterY + s(4));
@@ -605,7 +608,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const fr = down ? { head: [0, down], look: [0, 1] } : ksm > 0.3 ? null : klo > 0 ? { look: [0, 1] } : null;
       // her hand reaches toward the cups as she smiles (her arm raised to it)
       const reach = ease(ksm);
-      const rx = Math.round(lerp(hx + s(34), cups[0][0] - s(14), reach)), ry = Math.round(lerp(hy - s(10), counterY + s(2), reach));
+      const rx = Math.round(lerp(hx + 34, cups[0][0] - 10, reach)), ry = Math.round(lerp(hy - 10, counterY + s(2), reach));
       const hb = hanaBust(expr, fr, reach > 0 ? Q.holdArms(hx, hy, null, [rx, ry]) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       if (reach > 0) {
@@ -615,7 +618,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // Kōji's hand and cup at the frame's edge, close to us
       cupInHand(c, Math.round(dX + dW - s(30)), Math.round(G.vb + s(2)), 1, Q.skinOf(look('koji')), '#5a6a7a', -0.4);
     },
-    focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + Math.max(G.s(84), G.dW * 0.24) + G.s(24); return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
+    focus(w, h, vb) { const G = geomDoor(w, h, vb, true); const x1 = G.hx + 80 + 24; return { x: G.hx - 30, y: G.hy - 88, w: Math.round(x1 - (G.hx - 30)), h: 56 }; }, // her face and the cups
   };
 
   // ---- shot 5: before the door closes, from the square ---------------------------------------------------

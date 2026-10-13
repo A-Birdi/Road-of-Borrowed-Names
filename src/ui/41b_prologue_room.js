@@ -271,8 +271,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       }
       R(g, 0, yC - top, w, 1, PALE[1]); R(g, 0, yC - 2, w, 1, PALE[4]); R(g, 0, yC - 1, w, 1, PALE[5]);
       // the counter's front: a rail under the nosing, then upright boards in shadow
-      const FRONT = rampC('#5a3622', 5, { at: 3, step: 0.08 });
-      bandsIn(g, 0, yC, w, h - yC, [FRONT[3], FRONT[2], FRONT[1]], 0.4);
+      // (the bands take the ramp's raw colours: the kit's parser reads '#hex' or arrays, and the css strings it was
+      // given came out black, AR-1)
+      const FRONT = rampC('#5a3622', 5, { at: 3, step: 0.08 }), FRONTA = K().ramp('#5a3622', 5, { at: 3, step: 0.08 });
+      bandsIn(g, 0, yC, w, h - yC, [FRONTA[3], FRONTA[2], FRONTA[1]], 0.4);
       R(g, 0, yC, w, s(4), FRONT[4]); R(g, 0, yC + s(4), w, 1, FRONT[0]); R(g, 0, yC + s(5), w, 2, 'rgba(10,4,4,0.45)');
       for (let x = (w % s(30)) >> 1; x < w; x += s(30)) { R(g, x, yC + s(5), 1, h - yC, FRONT[0]); R(g, x + 1, yC + s(5), 1, h - yC, FRONT[4]); }
       // the tray, the pot and the cups on the counter, each with a contact shadow away from the window

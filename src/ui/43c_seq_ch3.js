@@ -453,6 +453,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const pcx = G.col(PAIR_AT[0] + 0.07, PAIR_AT[1]);
     list.forEach((p, i) => {
       let x = G.col(p.u, p.r), y = G.row(p.r);
+      if (o.avoid && x >= o.avoid[0] && x <= o.avoid[2] && y >= o.avoid[1] && y <= o.avoid[3]) return;
       const sc = G.sc(p.r);
       let dir = 'down', key = 'i0';
       if (o.pose) { const r = o.pose(p, i); if (r) { dir = r[0]; key = r[1]; } }
@@ -563,6 +564,22 @@ var RB = (globalThis.RB = globalThis.RB || {});
     const hd = Q.hand({ size: Math.round(9 * k), pose: 'grip', side: 'R', angle: ang - Math.PI / 2, skin: sk, sleeve: sl });
     if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax), Math.round(y - hd.ay));
   }
+  // Tamotsu's arm raised to point at the hill, from behind: shoulder to wrist in his coat's sleeve, the cuff; e from
+  // hanging (0) to raised (1). Local origin at the shoulder; wx, wy where the wrist is.
+  function tamotsuArm(W, e) {
+    const p = RB.pxkit, cl = RB.sprites.colorsOf(look('co_tamotsu')).cloth;
+    const ox = Math.round(W * 0.5), oy = Math.round(W * 0.45), L = p.layer(Math.round(W * 0.66), Math.round(W * 0.78));
+    const wx = Math.round(lerp(-W * 0.05, -W * 0.4, e)), wy = Math.round(lerp(W * 0.3, -W * 0.36, e));
+    const ex = ox + wx * 0.5 - W * 0.02, ey = oy + wy * 0.5 + W * 0.03;
+    const sl = p.mat(cl[0], { n: 7, at: 4, step: 0.075 }), cuff = p.mat(cl[2] || cl[1], { n: 6, at: 3, step: 0.08 });
+    L.seg(ox, oy, ex, ey, W * 0.125, sl, 3);
+    L.seg(ex, ey, ox + wx, oy + wy, W * 0.1, sl, 4);
+    L.seg(ex, ey, ox + wx, oy + wy, W * 0.035, sl, 5);   // the lit top of the sleeve
+    const kx = (ox + wx - ex), ky = (oy + wy - ey), kl = Math.hypot(kx, ky) || 1;
+    L.seg(ox + wx - kx / kl * W * 0.03, oy + wy - ky / kl * W * 0.03, ox + wx, oy + wy, W * 0.1, cuff, 2);
+    L.outline();
+    return { cv: L.canvas(), ox, oy, wx, wy };
+  }
   const living = {
     phases: [['tamotsu', 700], ['sickle', 900]],
     safe: { wide: 'Heita\'s face and the sickle in the top 55 %', narrow: 'Heita\'s face in the upper half', land: 'his face' },
@@ -571,24 +588,28 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const GR = geomRev(w, h, st.vb);
       c.drawImage(revStatic(GR).cv, 0, 0);
       // the crowd behind him, small, facing the stage
-      crowdRev(c, GR, st, { skip: ['co_heita', 'co_tamotsu', 'co_nobu', 'co_fusa', 'co_ume', 'co_goro'], pose: (p) => (p.id === 'pc' || p.id === 'comp' ? ['down', 'i0'] : null) });
+      // (nobody stands where they would show over his head: on a phone the travellers did, AR-1)
+      crowdRev(c, GR, st, { skip: ['co_heita', 'co_tamotsu', 'co_nobu', 'co_fusa', 'co_ume', 'co_goro'], pose: (p) => (p.id === 'pc' || p.id === 'comp' ? ['down', 'i0'] : null), avoid: [hx - 44, hy - 110, hx + 44, hy + 6] });
       const kt = st.at('tamotsu'), ks = st.at('sickle');
       // the sickle: up from his side to the height of his shoulder, no higher (his arm with it)
-      const es = ease(ks), sy = Math.round(lerp(G.vb + 40, hy - 40, es));
+      // (from where his hand hangs at his side, so his arm carries it the whole way; AR-1)
+      const es = ease(ks), sy = Math.round(lerp(hy + 62, hy - 40, es));
       const hb = Q.bust('co_heita', ks > 0.4 ? 'think2' : 'neutral', ks > 0.4 ? { look: [-1, 0] } : { look: [1, -1] }, FACE_R, false, 200, ks > 0 ? Q.holdArms(hx, hy, null, [hx + 58, sy + 4]) : null);
       if (hb) c.drawImage(hb.cv, hx - hb.ax, hy - hb.ay);
       if (ks > 0) sickle(c, hx + 58, sy, 1.6, lerp(0.6, 0.15, es), skin('co_heita'), sleeve('co_heita'));
       // Tamotsu at the right edge from behind, facing the crowd; his arm comes up, pointing at the hill
-      const tb = Q.back(look('co_tamotsu'), Math.round(clamp(s(150), 100, 200)), { light: 'r' });
+      // (AR-1: his raised arm is his own, as wide as his arms are, going away from us past his shoulder; the arm that
+      // hung at his side is not drawn while it is up)
+      const TW = Math.round(clamp(s(150), 100, 200));
+      const tb = Q.back(look('co_tamotsu'), TW, kt > 0 ? { light: 'r', raise: 'l' } : { light: 'r' });
       const tx = Math.round(w - s(G.lay === 'narrow' ? 30 : 60)), tyb = Math.round(G.vb + s(70));
       if (tb) {
         if (kt > 0) {
-          const e = ease(kt), shx = tx - tb.ax + tb.shoulders.l[0], shy = tyb - tb.ay + tb.shoulders.l[1];
-          const hx2 = lerp(shx - s(10), shx - s(56), e), hy2 = lerp(shy + s(30), shy - s(50), e);
-          c.strokeStyle = '#1e2a30'; c.lineWidth = s(11); c.lineCap = 'round'; c.beginPath(); c.moveTo(shx, shy); c.lineTo(hx2, hy2); c.stroke();
-          c.strokeStyle = sleeve('co_tamotsu'); c.lineWidth = s(9); c.beginPath(); c.moveTo(shx, shy); c.lineTo(hx2, hy2); c.stroke(); c.lineCap = 'butt';
-          const hd = Q.hand({ size: 12, pose: 'point', side: 'R', angle: Math.atan2(hy2 - shy, hx2 - shx), skin: skin('co_tamotsu') });
-          if (hd) c.drawImage(hd.cv, Math.round(hx2 - hd.ax), Math.round(hy2 - hd.ay));
+          const e8 = Math.round(ease(kt) * 8) / 8, shx = tx - tb.ax + tb.shoulders.l[0], shy = tyb - tb.ay + tb.shoulders.l[1];
+          const arm = Q.small('ch3.tamotsuArm|' + TW + '|' + e8, () => tamotsuArm(TW, e8));
+          c.drawImage(arm.cv, shx - arm.ox, shy - arm.oy);
+          const hd = Q.hand({ size: Math.round(TW * 0.09), pose: 'point', side: 'R', angle: Math.atan2(arm.wy, arm.wx), skin: skin('co_tamotsu') });
+          if (hd) c.drawImage(hd.cv, Math.round(shx + arm.wx - hd.ax), Math.round(shy + arm.wy - hd.ay));
         }
         c.drawImage(tb.cv, tx - tb.ax, tyb - tb.ay);
       }

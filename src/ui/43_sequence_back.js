@@ -10,7 +10,8 @@
  *
  *   RB.seqBack.draw(look, W, o) → { cv, ax, ay, w, h, head: { x, y, r }, shoulders: { l: [x, y], r: [x, y] } }
  *     W: the shoulders' width; o: { light: 'l' | 'r', pose: 'stand' | 'kneel', ext: rows below the anchor (× W),
- *     forward: 'l' | 'r' (that arm bent forward, holding something in front: seen to the elbow) }
+ *     forward: 'l' | 'r' (that arm bent forward, holding something in front: seen to the elbow), raise: 'l' | 'r' (that
+ *     arm raised: only its shoulder is drawn; the shot draws the arm from `shoulders`) }
  *     The anchor (ax, ay) is where the old drawing's bottom centre was, so a shot places it as before; w and h are that
  *     old drawing's size (W, 1.05 W); the canvas runs on below it. Points are in the canvas's pixels. */
 var RB = (globalThis.RB = globalThis.RB || {});
@@ -28,7 +29,7 @@ RB.seqBack = (function () {
     const kind = lk.yukata || lk.shape === 'robe' ? 'robe' : lk.shape === 'coat' ? 'coat' : lk.shape === 'dress' ? 'dress' : lk.shape === 'apron' ? 'apron' : 'tunic';
     const kneel = o.pose === 'kneel';
     const lit = o.light === 'r' ? -1 : 1;                 // +1: the light from our left
-    const H0 = Math.round(W * 1.05), ext = Math.round(W * (o.ext != null ? o.ext : kneel ? 0.42 : 0.95));
+    const H0 = Math.round(W * 1.05), ext = Math.round(W * (o.ext != null ? o.ext : kneel ? 0.58 : 1.25));
     const Wc = Math.round(W * 1.2), Hc = H0 + ext, cx = Wc / 2;
     const L = p.layer(Wc, Hc);
     const step = 0.075;
@@ -44,18 +45,23 @@ RB.seqBack = (function () {
     const sh = H0 * 0.56;                                 // the shoulders' line, as before
     const hr = W * 0.16, hy = sh - H0 * 0.2, hx = cx;     // the head, as before (callers read it)
     const yNeck = sh - W * 0.02, yArm = sh + W * 0.17, yWaist = sh + W * 0.6, yHip = sh + W * 0.86;
-    const yWrist = sh + W * 0.84, yHand = yWrist + W * 0.12;
+    const yWrist = sh + W * 0.84, yHand = yWrist + W * 0.11, yElb = yWaist - W * 0.03;
     // half-widths: the shoulders round off from the neck; the arms hang outside the torso
     const neckHW = W * 0.085;
-    // the shoulders slope from the neck (the trapezius) and round over the joint; the arms hang a little in from there
-    const SH = W * 0.43;
+    // the shoulders slope from the neck (the trapezius) and round over the joint (narrower than the old drawing, which
+    // read as a box); below it each arm is its own tapering shape, hanging a little apart from the waist so the back's
+    // outline shows between them, the hand reaching the thigh
+    const SH = W * 0.39;
+    const armOut = (y) => (y < yElb ? lerp(SH, SH + W * 0.018, (y - yArm) / (yElb - yArm)) : lerp(SH + W * 0.018, SH - W * 0.02, clamp((y - yElb) / (yWrist - yElb), 0, 1)));
+    const armW = (y) => (y < yElb ? lerp(W * 0.135, W * 0.1, clamp((y - yArm) / (yElb - yArm), 0, 1)) : lerp(W * 0.1, W * 0.08, clamp((y - yElb) / (yWrist - yElb), 0, 1)));
+    const armIn = (y) => armOut(y) - armW(y);
     const outer = (y) => {
       if (y < yNeck) return 0;
       const k = clamp((y - yNeck) / (W * 0.17), 0, 1);
       const cap = neckHW + (SH - neckHW) * Math.sin(k * Math.PI / 2) * (0.55 + 0.45 * k);
-      return y < yArm ? cap : lerp(SH, SH - W * 0.035, clamp((y - yArm) / (yWrist - yArm), 0, 1));
+      return y < yArm ? cap : armOut(y);
     };
-    const torso = (y) => (y < yArm ? outer(y) : y < yWaist ? lerp(W * 0.3, W * 0.24, (y - yArm) / (yWaist - yArm)) : lerp(W * 0.24, W * 0.28, clamp((y - yWaist) / (yHip - yWaist), 0, 1)));
+    const torso = (y) => (y < yArm ? outer(y) : y < yWaist ? lerp(W * 0.3, W * 0.225, (y - yArm) / (yWaist - yArm)) : lerp(W * 0.225, W * 0.27, clamp((y - yWaist) / (yHip - yWaist), 0, 1)));
     // cloth shaded round the body: the lit side, the far side, the shoulder blades
     const shadeAt = (x, y, half, base) => {
       // round the body's sides only: over the shoulders the edge is the top, which faces the light
@@ -72,17 +78,26 @@ RB.seqBack = (function () {
     const shadowM = p.mat(null, { cols: ['#10081866'], at: 0, line: false });
     L.ell(cx, bottom - W * 0.01, kneel ? W * 0.5 : W * 0.3, W * (kneel ? 0.05 : 0.04), shadowM, 0);
     if (kneel) {
-      // sitting on the heels: the hips spread, the garment over the folded legs, the soles at the bottom
-      const yS = yHip - W * 0.04, half = (y) => lerp(W * 0.33, W * 0.44, clamp((y - yS) / (bottom - yS), 0, 1));
+      // sitting on the heels (seiza): below the waist the seat rounds out over the heels and the folded legs spread a
+      // little on the floor each side, the garment over them; the soles show under the seat, toes turned in
+      const yS = yWaist + W * 0.04;
+      const half = (y) => { const k = clamp((y - yS) / (bottom - yS), 0, 1); return W * (0.25 + 0.06 * Math.sin(k * Math.PI * 0.62) + 0.06 * k * k); };
       const M = kind === 'tunic' || kind === 'apron' ? pants : cloth;
-      // rounded where the folded legs meet the floor at the sides
-      const inK = (x, y) => { const d = Math.abs(x - cx), hb = half(y), r0 = W * 0.08; if (d > hb) return false; if (y > bottom - r0 && d > hb - r0) { const ex = d - (hb - r0), ey = y - (bottom - r0); return ex * ex + ey * ey <= r0 * r0; } return y <= bottom; };
-      L.fill(cx - W * 0.5, yS, cx + W * 0.5, bottom, inK, M, (x, y) => shadeAt(x, y, half(y), 0.55));
+      const r0 = W * 0.09;
+      const inK = (x, y) => { const d = Math.abs(x - cx), hb = half(y); if (d > hb) return false; if (y > bottom - r0 && d > hb - r0) { const ex = d - (hb - r0), ey = y - (bottom - r0); return ex * ex + ey * ey <= r0 * r0; } return y <= bottom; };
+      L.fill(cx - W * 0.5, yS, cx + W * 0.5, bottom, inK, M, (x, y) => shadeAt(x, y, half(y), 0.56) + (y > bottom - W * 0.12 ? -0.05 : 0));
+      // the seat's two rounds over the heels, a fold each side where the thigh turns down to the floor
+      const ySeat = bottom - W * 0.17;
+      L.line(cx, yHip - W * 0.04, cx, bottom - W * 0.1, M, 1);
       for (const s of [-1, 1]) {
-        const fx = cx + s * W * 0.12, fy = bottom - W * 0.07;
-        L.ell(fx, fy, W * 0.085, W * 0.05, kind === 'robe' ? ivory : boots, (x) => clamp(0.6 - lit * (x - fx) / (W * 0.1) * 0.3, 0, 0.999));
+        L.line(cx + s * W * 0.2, ySeat - W * 0.02, cx + s * W * 0.26, bottom - W * 0.04, M, 1);
+        L.line(cx + s * W * 0.03, ySeat + W * 0.05, cx + s * W * 0.16, ySeat + W * 0.075, M, s === -lit ? 4 : 3);
       }
-      L.line(cx, yS + W * 0.05, cx, bottom - W * 0.12, M, 1);
+      const sole = kind === 'robe' ? ivory : p.mat(lk.sockCol || '#3a3036', { n: 5, at: 2, step: 0.09 });
+      for (const s of [-1, 1]) {
+        const fx = cx + s * W * 0.075, fy = bottom - W * 0.045;
+        L.fill(fx - W * 0.1, fy - W * 0.05, fx + W * 0.1, fy + W * 0.05, (x, y) => { const a = (x - fx) / (W * 0.085), b = (y - fy - (x - fx) * s * 0.25) / (W * 0.042); return a * a + b * b <= 1; }, sole, (x, y) => clamp(0.62 - lit * (x - fx) / (W * 0.1) * 0.3 - (y - fy) / (W * 0.05) * 0.12, 0.02, 0.999));
+      }
     } else if (kind === 'tunic' || kind === 'apron') {
       for (const s of [-1, 1]) {
         const x0 = cx + s * W * 0.015, x1 = cx + s * W * 0.27, x2 = cx + s * W * 0.05, x3 = cx + s * W * 0.2;
@@ -119,47 +134,57 @@ RB.seqBack = (function () {
     // ---- the torso: shoulders to the waist (the hem lower for a tunic) ------------------------------------------------
     const tEnd = kind === 'tunic' || kind === 'apron' ? Math.min(bottom, yHip + W * 0.02) : kneel ? yHip : yWaist + W * 0.02;
     L.fill(cx - W * 0.5, yNeck, cx + W * 0.5, tEnd, (x, y) => Math.abs(x - cx) <= torso(y), cloth, (x, y) => shadeAt(x, y, torso(y)));
-    // the spine's seam (robes and coats) or a shallow fold (a tunic), a coat's vent
-    if (kind === 'robe' || kind === 'coat') L.line(cx, yNeck + W * 0.06, cx, kneel ? yHip : bottom, cloth, 1);
+    // the spine's seam (robes and coats) or a shallow fold (a tunic), a coat's vent: both stop at the hem
+    const hemY = kneel ? yHip : kind === 'coat' ? bottom - W * 0.25 : bottom - W * 0.06;
+    if (kind === 'robe' || kind === 'coat') L.line(cx, yNeck + W * 0.06, cx, hemY - 1, cloth, 1);
     else L.line(cx, sh + W * 0.12, cx, yWaist - W * 0.04, cloth, 2);
-    if (kind === 'coat' && !kneel) { L.line(cx + 1, yHip, cx + 1, bottom, clothD, 0); L.line(cx - W * 0.29, yHip - W * 0.02, cx + W * 0.29, yHip - W * 0.02, cloth, 2); }
+    if (kind === 'coat' && !kneel) { L.line(cx + 1, yHip, cx + 1, hemY - 1, clothD, 0); L.line(cx - W * 0.29, yHip - W * 0.02, cx + W * 0.29, yHip - W * 0.02, cloth, 2); }
 
-    // ---- the arms: outside the torso, a crease against it, the cuff and the hand (a robe's sleeve hangs wide) ----------
+    // ---- the arms: each its own tapering shape beside the back (a robe's sleeve hangs wide over the side), the cuff and
+    // the hand; kneeling, the hands rest in the lap, so the arms show to the elbow --------------------------------------
+    const cane = acc.includes('cane');
     for (const s of [-1, 1]) {
-      const inner = (y) => torso(y) - (y < yArm ? 0 : W * 0.005);
       const wide = kind === 'robe';
-      // an arm bent forward (holding something in front of them) shows only to the elbow, its sleeve going away from us
-      const fwd = o.forward === (s < 0 ? 'l' : 'r');
-      const bot = fwd ? yWaist - W * 0.06 : wide ? yWrist + W * 0.08 : yWrist;
+      // an arm bent forward (holding something in front of them, or the hands in the lap) shows only to the elbow, its
+      // sleeve going away from us
+      const fwd = kneel || o.forward === (s < 0 ? 'l' : 'r'), raised = o.raise === (s < 0 ? 'l' : 'r');
+      const bot = raised ? yArm : fwd ? (kneel ? (wide ? yWaist + W * 0.2 : yWaist + W * 0.03) : yWaist - W * 0.06) : wide ? yWrist + W * 0.08 : yWrist;
+      const wIn = (y) => torso(y) - W * 0.025;     // a robe's sleeve: its inner edge over the back
       const isArm = (x, y) => {
         const d = (x - cx) * s;
         if (y < yNeck || y > bot) return false;
         if (y < yArm) return d >= Math.min(torso(y), outer(y)) - W * 0.12 && d <= outer(y);
-        const o2 = wide && y > yWaist ? outer(y) + W * 0.02 : outer(y);
-        return d >= inner(y) - W * 0.02 && d <= o2 && !(wide && y > yWrist && d < inner(y) + W * 0.06 && y > bot - (bot - yWrist) * (d - inner(y)) / (W * 0.18));
+        if (!wide) return d >= armIn(y) && d <= armOut(y);
+        const o2 = y > yWaist ? outer(y) + W * 0.02 : outer(y);
+        return d >= wIn(y) && d <= o2 && !(y > yWrist && d < wIn(y) + W * 0.08 && y > bot - (bot - yWrist) * (d - wIn(y)) / (W * 0.18));
       };
+      const inE = (y) => (y < yArm ? torso(y) : wide ? wIn(y) : armIn(y));
       L.fill(cx - W * 0.6, yNeck, cx + W * 0.6, bot, (x, y) => (x - cx) * s >= 0 && isArm(x, y), cloth, (x, y) => {
-        const d = (x - cx) * s, mid = (outer(y) + torso(y)) / 2, u = y < yArm ? 0 : (d - mid) / Math.max(1, (outer(y) - torso(y)) / 2);
+        const d = (x - cx) * s, mid = (outer(y) + inE(y)) / 2, u = y < yArm ? 0 : (d - mid) / Math.max(1, (outer(y) - inE(y)) / 2);
         return clamp(0.6 - lit * s * 0.18 + (s === -lit ? 0.06 : -0.06) - u * u * 0.18 - clamp((y - sh) / W, 0, 1) * 0.08 + (y < yArm ? 0.05 : 0), 0.02, 0.999);
       });
-      // the crease where the arm meets the back, and the shoulder's seam
-      for (let y = yArm; y < bot - 2; y += 1) L.dot(cx + s * (torso(y) + W * 0.004), y, cloth, 0);
-      for (let y = yNeck + 2; y < yArm - W * 0.04; y += 1) { const xo = outer(y) - W * 0.025; if (xo > neckHW + W * 0.04) L.dot(cx + s * xo, y, cloth, s === -lit ? 5 : 3); } // light along the shoulder's top
+      // the crease where the arm lies over the back (where it hangs apart, the outline draws the gap), the elbow's fold,
+      // light along the shoulder's top
+      for (let y = yArm; y < bot - 2; y += 1) if (wide || armIn(y) < torso(y) - 1) L.dot(cx + s * Math.ceil(inE(y)), y, cloth, 0);
+      if (!wide && !fwd && !raised) L.line(cx + s * (armIn(yElb) + W * 0.02), yElb, cx + s * (armIn(yElb) + W * 0.05), yElb + W * 0.012, cloth, 1);
+      for (let y = yNeck + 2; y < yArm - W * 0.04; y += 1) { const xo = outer(y) - W * 0.025; if (xo > neckHW + W * 0.04) L.dot(cx + s * xo, y, cloth, s === -lit ? 5 : 3); }
+      if (raised) continue;
       if (fwd) {
         // the elbow's round end, a fold where the sleeve turns away
-        const ex = cx + s * (torso(bot) + outer(bot)) / 2;
-        L.ell(ex, bot, (outer(bot) - torso(bot)) / 2 + 1, W * 0.035, cloth, s === -lit ? 3 : 1);
+        const i0 = wide ? wIn(bot) : armIn(bot), ex = cx + s * (i0 + outer(bot)) / 2;
+        L.ell(ex, bot, (outer(bot) - i0) / 2 + 1, W * 0.035, cloth, s === -lit ? 3 : 1);
         L.line(ex - W * 0.04, bot - W * 0.02, ex + W * 0.04, bot - W * 0.02, cloth, 1);
-      } else if (!wide) {
-        L.rect(Math.min(cx + s * torso(yWrist), cx + s * outer(yWrist)), yWrist - W * 0.03, Math.abs(outer(yWrist) - torso(yWrist)), W * 0.03, accent, 2);
-        // the hand below the cuff, the fingers toward the thigh (seen from behind: the back of the hand)
-        const hxm = cx + s * (torso(yWrist) + outer(yWrist)) / 2;
-        L.fill(hxm - W * 0.07, yWrist, hxm + W * 0.07, yHand, (x, y) => { const a = (x - hxm) / (W * 0.065), b = (y - yWrist) / (yHand - yWrist); return Math.abs(a) <= 1 - b * 0.35 && b <= 1; }, skin, (x) => clamp(0.55 - lit * (x - hxm) / (W * 0.07) * 0.25, 0.02, 0.999));
-      } else {
-        // a robe's sleeve: the hand shows only at its opening, toward the front
-        const hxm = cx + s * (torso(yWrist) + W * 0.04);
-        L.ell(hxm, yWrist + W * 0.03, W * 0.04, W * 0.035, skin, 2);
+        continue;
       }
+      // the hand: seen from behind, the back of it, the fingers down toward the thigh (a robe's: only at its sleeve)
+      const hxm = wide ? cx + s * (torso(yWrist) + W * 0.04) : cx + s * (armIn(yWrist) + armOut(yWrist)) / 2;
+      const hym = wide ? yWrist + W * 0.03 : yWrist;
+      // a cane, held on the light's side, from the hand to the floor (drawn under the hand that grips it)
+      if (cane && s === lit) L.seg(hxm + s * W * 0.01, hym, hxm + s * W * 0.08, bottom - W * 0.01, Math.max(2, W * 0.022), p.mat('#6a4a2a', { n: 4, at: 2 }), 2);
+      if (!wide) {
+        L.rect(cx + s * (s < 0 ? armOut(yWrist) : armIn(yWrist)), yWrist - W * 0.03, armW(yWrist), W * 0.03, accent, 2);
+        L.fill(hxm - W * 0.06, yWrist, hxm + W * 0.06, yHand, (x, y) => { const a = (x - hxm) / (W * 0.047), b = (y - yWrist) / (yHand - yWrist); return Math.abs(a) <= 1 - b * b * 0.45 && b <= 1; }, skin, (x, y) => clamp(0.56 - lit * (x - hxm) / (W * 0.05) * 0.25 - (y - yWrist) / W * 0.4, 0.02, 0.999));
+      } else L.ell(hxm, hym, W * 0.04, W * 0.035, skin, 2);
     }
 
     // ---- the waist: obi and its bow or knot, a belt, the apron's ties --------------------------------------------------
@@ -227,8 +252,12 @@ RB.seqBack = (function () {
     // the hair over the head, its locks drawn from the crown, the nape's edge in points
     const crown = [hx + lit * hr * 0.12, hy - hr * 0.42];
     const lockShade = (x, y) => {
-      const a = Math.atan2(y - crown[1], x - crown[0]), r = Math.hypot(x - hx, y - hy) / hr;
-      const band = Math.cos(a * 9) > 0.55 ? -0.11 : Math.cos(a * 9) < -0.85 ? 0.05 : 0; // the gaps between locks
+      const a = Math.atan2(y - crown[1], x - crown[0]), r = Math.hypot(x - hx, y - hy) / hr, rc = Math.hypot(x - crown[0], y - crown[1]) / hr;
+      // the gaps between locks: thin, unevenly spaced, curving as the hair falls, fading out toward the crown (wide even
+      // wedges read as a segmented ball)
+      const aw = a + Math.sin(rc * 2.4) * 0.22 * Math.sign(x - crown[0]), ph = Math.cos(aw * 11 + Math.sin(aw * 4) * 1.3);
+      const fade = clamp((rc - 0.22) / 0.35, 0, 1);
+      const band = (ph > 0.84 ? -0.1 : ph < -0.92 ? 0.045 : 0) * fade;
       const shine = r > 0.35 && r < 0.62 && Math.abs(a + Math.PI / 2 + lit * 0.5) < 0.55 ? 0.14 : 0; // the broken highlight band
       return clamp(0.56 - lit * (x - hx) / hr * 0.2 - (y - hy) / hr * 0.12 + band + shine, 0.02, 0.999);
     };
@@ -294,13 +323,12 @@ RB.seqBack = (function () {
       L.ell(hx, by, W * 0.4, H0 * 0.06, hm, (x, y) => clamp((y < by ? 0.78 : 0.42) - lit * (x - hx) / W * 0.4 - ((Math.round(x * 0.6 + y * 1.3) % 4) === 0 ? 0.08 : 0), 0.02, 0.999)); // the brim, its weave
       L.line(hx - hr * 1.0, by - hr * 0.1, hx + hr * 1.0, by - hr * 0.1, hm, 1);  // the band
     }
-    if (acc.includes('cane')) L.seg(cx + lit * W * 0.52, yWaist, cx + lit * W * 0.6, bottom, Math.max(2, W * 0.02), p.mat('#6a4a2a', { n: 4, at: 2 }), 2);
     L.outline();
     const cv = L.canvas();
     return {
       cv, ax: Math.round(cx), ay: H0, w: W, h: H0,
       head: { x: Math.round(hx), y: Math.round(hy), r: Math.round(hr) },
-      shoulders: { l: [Math.round(cx - W * 0.4), Math.round(sh + W * 0.06)], r: [Math.round(cx + W * 0.4), Math.round(sh + W * 0.06)] },
+      shoulders: { l: [Math.round(cx - SH + W * 0.05), Math.round(sh + W * 0.06)], r: [Math.round(cx + SH - W * 0.05), Math.round(sh + W * 0.06)] },
     };
   }
   return { draw };

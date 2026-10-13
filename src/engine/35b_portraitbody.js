@@ -23,6 +23,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
 RB.portraitBody = (function () {
   'use strict';
   const P = RB.pix, S = 96, PAD = 10;
+  const over = [];   // holds reaching past the arm (the census reads and clears it; never more than 64)
   const shade = P.shade;
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
   const lerp = (a, b, k) => a + (b - a) * k;
@@ -100,19 +101,41 @@ RB.portraitBody = (function () {
     const pantsR = P.ramp(look.pants || shade(p.cloth[1] || p.cloth[0], -1));
     const bootR = P.ramp(look.boots || '#3a2a22');
     len = Math.max(40, r(len));
-    const arms0 = Object.assign({ l: 'side', r: 'side' }, o.arms || {});
-    // room at the sides for a hand held out (the canvas stays centred on the portrait)
-    let pad = PAD;
-    for (const a of [arms0.l, arms0.r]) if (a && a.hold) pad = Math.max(pad, Math.ceil(Math.abs(a.hold[0] - 48) - 48 + 16));
-    const F = S + len, W = S + pad * 2, H = F + 1;
+    const arms = Object.assign({ l: 'side', r: 'side' }, o.arms || {});
+    const F = S + len, H = F + 1;
     // landmarks (the chin at 69): a figure of about five heads, as the shots stage them
     const chin = 69, B = F - chin;
     const yW = r(chin + 0.31 * B), yC = r(chin + 0.43 * B), yWr = r(chin + 0.41 * B), yK = r(chin + 0.7 * B);
     const yE = yW - 3, hand = clamp(r(0.07 * B), 9, 16), yA = F - Math.max(5, r(0.035 * B));
-    const arms = arms0;
     const acc = p.acc || [];
     if (acc.includes('book') && arms.l === 'side') arms.l = { hold: [12, 97] };
     if ((acc.includes('basket') || acc.includes('lamp') || acc.includes('atlas_lamplet')) && arms.r === 'side') arms.r = { hold: [86, 97] };
+    // a held hand's arm: shoulder → elbow → the wrist of the hand the shot draws
+    const Lu = yE - 96 + 4, Lf = yWr - yE + 10;
+    const elbowOf = (side, tx, ty, note) => {
+      const sx = side < 0 ? 10 : S - 10, sy = 97;
+      const d = Math.hypot(tx - sx, ty - sy) || 1;
+      // a reach past the arm's length is the shot's mistake (the hand would sit off the arm's end): noted for the census
+      if (note && d > (Lu + Lf) * 1.1 && over.length < 64) over.push({ ratio: Math.round(d / (Lu + Lf) * 100) / 100, hold: [tx, ty], len });
+      if (d <= (Lu + Lf) * 0.75 && ty >= sy - 6) {
+        // a hand near the body, at the chest or the waist (something held there): the elbow comes forward, so from the
+        // front the upper arm looks shorter; the elbow sits by the ribs, under the hand and a little outside it
+        return [lerp(sx, tx, 0.3) + (side < 0 ? -2 : 2), Math.min(sy + Lu, Math.max(ty, sy) + Lf * 0.8)];
+      }
+      // a hand held out or raised: the elbow from the two lengths, the one under the line of the reach (raised, that
+      // puts the elbow out at the side, the forearm up from it)
+      const dd = clamp(d, Math.abs(Lu - Lf) + 1, Lu + Lf - 1);
+      const a = Math.acos(clamp((Lu * Lu + dd * dd - Lf * Lf) / (2 * Lu * dd), -1, 1)), base = Math.atan2(ty - sy, tx - sx);
+      const e1 = [sx + Lu * Math.cos(base + a), sy + Lu * Math.sin(base + a)], e2 = [sx + Lu * Math.cos(base - a), sy + Lu * Math.sin(base - a)];
+      return e1[1] >= e2[1] ? e1 : e2;
+    };
+    // room at the sides for a hand held out and its elbow (the canvas stays centred on the portrait)
+    let pad = PAD;
+    for (const [side, a] of [[-1, arms.l], [1, arms.r]]) if (a && a.hold) {
+      const E = elbowOf(side, a.hold[0], Math.max(2, a.hold[1]));
+      pad = Math.max(pad, Math.ceil(Math.max(Math.abs(a.hold[0] - 48), Math.abs(E[0] - 48) + 4) - 48 + 16));
+    }
+    const W = S + pad * 2;
 
     const g = surface(W, H, pad);
     // the bust's own shading, carried down: the lit arm (ours left), the torso, the arm in shade
@@ -265,22 +288,10 @@ RB.portraitBody = (function () {
         g.poly([-1, 94, -2, 104, -1, yE, 15, yE, 20, 104, 21, 94].map((v, i) => (i % 2 ? v : m(v))), sleeveR, (x, y) => lit + (y > yE - 8 ? 0 : 1));
         fg.limb(m(6), yE - 4, m(40), yW + 6, wide ? 15 : 12, sleeveR, side < 0 ? 2 : 1);
       } else if (pose && pose.hold) {
-        // shoulder → elbow → the wrist of the hand the shot draws: the elbow from the two lengths; a hand further than the arm can reach stretches the forearm rather than float free of it
-        const tx = pose.hold[0], ty = Math.max(2, pose.hold[1]);
-        const sx = m(10), sy = 97, Lu = yE - 96 + 4, Lf = yWr - yE + 10;
-        const d = Math.hypot(tx - sx, ty - sy) || 1;
-        let E;
-        if (d <= (Lu + Lf) * 0.75) {
-          // a hand near the body (something held at the chest or the waist): the elbow comes forward, so from the front
-          // the upper arm looks shorter; the elbow sits by the ribs, under the hand and a little outside it
-          E = [lerp(sx, tx, 0.3) + (side < 0 ? -2 : 2), Math.min(sy + Lu, Math.max(ty, sy) + Lf * 0.8)];
-        } else {
-          // a hand held out: the elbow from the two lengths, the one under the line of the reach
-          const dd = clamp(d, Math.abs(Lu - Lf) + 1, Lu + Lf - 1);
-          const a = Math.acos(clamp((Lu * Lu + dd * dd - Lf * Lf) / (2 * Lu * dd), -1, 1)), base = Math.atan2(ty - sy, tx - sx);
-          const e1 = [sx + Lu * Math.cos(base + a), sy + Lu * Math.sin(base + a)], e2 = [sx + Lu * Math.cos(base - a), sy + Lu * Math.sin(base - a)];
-          E = e1[1] >= e2[1] ? e1 : e2;
-        }
+        // shoulder → elbow → the wrist of the hand the shot draws (a hand further than the arm can reach stretches the
+        // forearm rather than float free of it; the census reports it, and the shot keeps its things within reach)
+        const tx = pose.hold[0], ty = Math.max(2, pose.hold[1]), sx = m(10), sy = 97;
+        const E = elbowOf(side, tx, ty, true);
         fg.limb(sx, sy, E[0], E[1], wide ? 16 : 14, sleeveR, side < 0 ? 3 : 1);
         if (wide) fg.poly([E[0] - 6, E[1], (E[0] + tx) / 2, (E[1] + ty) / 2, (E[0] + tx) / 2, (E[1] + ty) / 2 + 14, E[0] - 4, E[1] + 16], sleeveR, () => (side < 0 ? 2 : 0)); // the sleeve hanging from the forearm
         fg.limb(E[0], E[1], tx, ty, wide ? 13 : 11, sleeveR, side < 0 ? 3 : 1);
@@ -306,5 +317,5 @@ RB.portraitBody = (function () {
     return { back: g.b, front: any ? front : null, pad, w: W, h: H };
   }
 
-  return { below, kindOf, PAD };
+  return { below, kindOf, PAD, over };
 })();
