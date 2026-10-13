@@ -85,6 +85,25 @@ window.__mtPlace = async function (id, entry, fi, from, seconds) {
   }).filter(Boolean);
   return { seconds, from, segments: opts.segments, model, modelSnrDb: snr[model], snrByModel: snr, maxErr: Math.sqrt(maxM[model]), seams };
 };
+// (MT-2) a second onset envelope, band-wise energy flux: MT-1's 1 ms frames of broadband energy also follow the ripple
+// of sustained low notes (a 100 Hz tone's energy rises and falls within a frame's reach), which correlates between two
+// performances of the same pitches at lags that are not onsets. Here: three bands above the low notes (400-1600,
+// 1600-6400 and 6400-16000 Hz, 2nd-order band-passes), each band's energy over a 10 ms window every 1 ms, in dB, its
+// rise over 5 ms (half-wave), summed over the bands.
+window.__mtFlux = function (L, R, t0, t1, sr) {
+  const hop = Math.round(sr / 1000), win = Math.round(sr / 100), nf = Math.floor((t1 - t0) / hop), out = new Float64Array(nf);
+  for (const [lo, hi] of [[400, 1600], [1600, 6400], [6400, 16000]]) {
+    const f0 = Math.sqrt(lo * hi), q = f0 / (hi - lo), w = 2 * Math.PI * f0 / sr, al = Math.sin(w) / (2 * q), a0 = 1 + al;
+    const b0 = al / a0, b2 = -al / a0, a1 = -2 * Math.cos(w) / a0, a2 = (1 - al) / a0;
+    const n = t1 - t0, sq = new Float64Array(n + 1);
+    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    for (let i = 0; i < n; i++) { const x = (L[t0 + i] + R[t0 + i]) * 0.5, y = b0 * x + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; sq[i + 1] = sq[i] + y * y; }
+    const e = new Float64Array(nf);
+    for (let f = 0; f < nf; f++) { const c = f * hop, a = Math.max(0, c - (win >> 1)), b = Math.min(n, c + (win >> 1)); e[f] = 10 * Math.log10((sq[b] - sq[a]) / Math.max(1, b - a) + 1e-12); }
+    for (let f = 5; f < nf; f++) out[f] += Math.max(0, e[f] - e[f - 5]);
+  }
+  return out;
+};
 // the game graph: Original (mix 1) or Ensemble (mix 0), loudness and the 1 ms onset envelope
 window.__mtGraph = async function (id, entry, fi, seconds, opts) {
   const fmt = entry.formats[fi], bufs = { first: window.__mt.bufs[fmt.first.url], loop: fmt.loop ? window.__mt.bufs[fmt.loop.url] : null };
@@ -103,6 +122,7 @@ window.__mtGraph = async function (id, entry, fi, seconds, opts) {
     for (let f = 0; f < nf; f++) { let s = 0; for (let k = 0; k < hop; k++) { const i = t0 + f * hop + k, m = (L[i] + R[i]) * 0.5; y = 0.96 * (y + m - p); p = m; s += y * y; } e[f] = 10 * Math.log10(s / hop + 1e-10); }
     env = new Float64Array(nf); for (let f = 5; f < nf; f++) env[f] = Math.max(0, e[f] - e[f - 5]);
     window.__mt['env' + opts.onsets] = env;
+    window.__mt['flux' + opts.onsets] = window.__mtFlux(L, R, t0, t1, 48000);
   }
   return { integrated: lu.integrated, peak: lu.peak, nan, clipped, momentary: opts.momentary ? lu.momentary : undefined };
 };
@@ -142,19 +162,19 @@ window.__mtStems = async function (id, seconds) {
   let pp = 0, y = 0;
   for (let f = 0; f < nf; f++) { let s = 0; for (let k = 0; k < hop; k++) { const i = t0 + f * hop + k, m = (L[i] + R[i]) * 0.5; y = 0.96 * (y + m - pp); pp = m; s += y * y; } e[f] = 10 * Math.log10(s / hop + 1e-10); }
   const env = new Float64Array(nf); for (let f = 5; f < nf; f++) env[f] = Math.max(0, e[f] - e[f - 5]);
-  const whole = { integrated: lu.integrated, peak: lu.peak, nan, clipped, momentary: lu.momentary, envO: b64(env) };
+  const whole = { integrated: lu.integrated, peak: lu.peak, nan, clipped, momentary: lu.momentary, envO: b64(env), fluxO: b64(window.__mtFlux(L, R, t0, t1, sr)) };
   return { parts, whole };
 };
 // (MT-2) the Original's measurement from stems.mjs, for verify.mjs: its onset envelope back in place
-window.__mtSetOriginal = function (envB64) {
-  const s = atob(envB64), u = new Uint8Array(s.length);
-  for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i);
-  window.__mt.envO = new Float64Array(u.buffer);
+window.__mtSetOriginal = function (envB64, fluxB64) {
+  const f64 = (b) => { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return new Float64Array(u.buffer); };
+  window.__mt.envO = f64(envB64);
+  if (fluxB64) window.__mt.fluxO = f64(fluxB64);
 };
 // normalized cross-correlation of the two onset envelopes, lag in ms (positive: the Ensemble later)
 // (shift, MT-2: a negative control: the Ensemble's envelope read shift ms late, as if the recording were misplaced)
-window.__mtOnsetLag = function (maxLag, shift) {
-  const a = window.__mt.envO, b0 = window.__mt.envE, k0 = shift || 0;
+window.__mtOnsetLag = function (maxLag, shift, kind) {
+  const a = window.__mt[(kind || 'env') + 'O'], b0 = window.__mt[(kind || 'env') + 'E'], k0 = shift || 0;
   const b = k0 ? b0.subarray(k0) : b0, n = Math.min(a.length, b.length);
   const mean = (x) => { let s = 0; for (let i = 0; i < n; i++) s += x[i]; return s / n; };
   const ma = mean(a), mb = mean(b);

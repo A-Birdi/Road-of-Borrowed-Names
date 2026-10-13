@@ -50,6 +50,9 @@ async function open(o = {}) {
   return Object.assign(pg, { music, context });
 }
 const cue = (p) => p.evaluate(() => window.__cue());
+// (MT-2: every song has a recording; a song without one is made by taking it out of the page's catalog, as a build
+// whose manifest left it out would have it)
+const noRecording = (p, id) => p.evaluate((id) => { const c = RB.audio.ensembleCatalog; if (c && c.songs && c.songs[id]) delete c.songs[id]; return !RB.audio.ensembleSongs().includes(id); }, id);
 const until = (p, fn, arg, ms = 20000) => p.waitForFunction(fn, arg, { timeout: ms, polling: 100 });
 const ensembleOn = (p, id, ms) => until(p, (id) => { const c = window.__cue(); return c.cue && c.cue.id === id && c.cue.active && c.cue.state === 'sounding'; }, id, ms);
 // the game's settings, as the player's choice (applied and saved by the game's own path)
@@ -106,7 +109,9 @@ await test('MT-T04/T06/T45 the control: real clicks and keys, exclusive, kept on
   await p.click('label.opt:has(input[data-set="musicPerformance"][value="ensemble"])');
   await p.waitForFunction(() => RB.game.settings.musicPerformance === 'ensemble');
   const line = await p.evaluate(() => document.querySelector('[data-mp-status]').textContent);
-  assert(/Ensemble selected|No music|Ensemble playing|Ensemble loads/.test(line) && /two tracks so far/.test(line), 'the line says what is chosen and how far Ensemble reaches: ' + line);
+  const [nr, ns] = await p.evaluate(() => [RB.audio.ensembleSongs().length, Object.keys(RB.audio._.songDefs).length]);
+  const reach = nr >= ns ? /Ensemble is available for every track\./ : new RegExp((nr === 2 ? 'two tracks' : nr + ' tracks') + ' so far');
+  assert(/Ensemble selected|No music|Ensemble playing|Ensemble loads/.test(line) && reach.test(line), 'the line says what is chosen and how far Ensemble reaches (' + nr + ' of ' + ns + '): ' + line);
   // (the choice is stored before the page is reloaded: the write is asynchronous)
   await p.waitForFunction(async () => { const s = await RB.save.loadSettings(); return !!s && s.musicPerformance === 'ensemble'; }, null, { timeout: 5000, polling: 100 });
   await p.reload(); await p.waitForFunction(() => window.__RB_READY__ === true);
@@ -144,6 +149,7 @@ await test('MT-T07/T12 Original fetches nothing; Ensemble on a song without a re
   let c = await cue(p);
   assert(c.status.state === 'original' && c.player && c.player.id === 'snowbell' && music.length === 0, 'Original, no request: ' + JSON.stringify({ s: c.status, n: music.length }));
   await choose(p, 'ensemble');
+  assert(await noRecording(p, 'road'), 'road taken out of the catalog');
   await p.evaluate(() => RB.audio.playSong('road', { fade: 0 }));
   await p.waitForTimeout(1500);
   c = await cue(p);
@@ -223,6 +229,7 @@ await test('MT-T11/T14/T15/T35 cold cache: Original at once, the recording takes
 await test('MT-T13/T21/T25/T38 cue changes: same song twice, a change while loading, re-entry from the cache, memory bounded', async () => {
   const { p, music } = await open();
   await choose(p, 'ensemble');
+  assert(await noRecording(p, 'road'), 'road taken out of the catalog');
   await p.evaluate(async () => { await RB.audio.init(); RB.audio.playSong('snowbell', { fade: 0 }); });
   await p.waitForTimeout(30);
   await p.evaluate(() => RB.audio.playSong('snowbell', { fade: 0 }));
@@ -573,6 +580,48 @@ await test('MT-T43 hosted under a project sub-path: the files resolve beside the
   assert(!errors.length, 'page errors (a CSP refusal would show): ' + errors.join(' | '));
   await p.context().close();
   sub.close();
+});
+
+// ---- MT-2: every song ------------------------------------------------------------------------------------------
+await test('MT2-T01 coverage: the build offers exactly the manifest\'s ready recordings, every song if all are ready', async () => {
+  const { p, errors } = await open();
+  const man = JSON.parse(fs.readFileSync(path.join(root, 'assets/music/ensemble/manifest.json'), 'utf8'));
+  const ready = man.tracks.filter((t) => t.releaseStatus === 'ready').map((t) => t.songId).sort();
+  const r = await p.evaluate(() => ({ offered: RB.audio.ensembleSongs().slice().sort(), all: Object.keys(RB.audio._.songDefs).sort() }));
+  assert(JSON.stringify(r.offered) === JSON.stringify(ready), 'offered = ready: ' + r.offered.length + ' vs ' + ready.length);
+  const missing = r.all.filter((id) => !r.offered.includes(id));
+  console.log('   coverage', r.offered.length, 'of', r.all.length, missing.length ? '(Original only: ' + missing.join(', ') + ')' : '(every song)');
+  assert(!errors.length, 'page errors: ' + errors.join(' | '));
+  await p.context().close();
+});
+
+await test('MT2-T02 the main menu theme (title) plays its recording, and the line says so', async () => {
+  const { p, music, errors } = await open();
+  await choose(p, 'ensemble');
+  await p.evaluate(async () => { await RB.audio.init(); RB.audio.playSong('title', { fade: 0 }); });
+  await ensembleOn(p, 'title', 20000);
+  const c = await cue(p);
+  assert(c.status.state === 'ensemble' && c.status.actual === 'ensemble' && c.player.id === 'title' && c.player.out === 0, 'Ensemble playing over the warm Original: ' + JSON.stringify(c.status));
+  assert(music.length >= 1 && music.every((u) => /\/assets\/music\/ensemble\/title\//.test(u)), 'only the title\'s files were fetched: ' + JSON.stringify(music));
+  assert(!errors.length && !c.err, 'no page or engine error: ' + errors.join(' | '));
+  await p.context().close();
+});
+
+await test('MT2-T03 a cue that does not loop (the victory sting): one file, no steady cycle, it plays out and ends', async () => {
+  const { p, music, errors } = await open();
+  await choose(p, 'ensemble');
+  const e = await p.evaluate(() => { const e = RB.audio.ensembleCatalog && RB.audio.ensembleCatalog.songs.victory; return e && { loop: e.loop, D: e.durationSec, f: e.formats.map((f) => ({ loop: f.loop, span: (f.first.end - f.first.start) / f.first.rate })) }; });
+  assert(e && e.loop === false && e.f.every((f) => f.loop === null && f.span >= e.D), 'the catalog entry is one file covering the cue: ' + JSON.stringify(e));
+  await p.evaluate(async () => { await RB.audio.init(); RB.audio.playSong('victory', { fade: 0 }); });
+  await ensembleOn(p, 'victory', 15000);
+  let c = await cue(p);
+  assert(c.cue.segs === 1 && c.cue.segments[0].role === 'first' && c.cue.segments[0].until == null && c.cue.horizon == null, 'one segment, no cycle scheduled: ' + JSON.stringify(c.cue.segments));
+  assert(music.length >= 1 && music.every((u) => /victory\.first\./.test(u)), 'only the single file was fetched: ' + JSON.stringify(music));
+  // it plays out: past the score and its decay the segment has ended and nothing else was scheduled
+  await until(p, () => { const c = window.__cue(); return c.cue && c.cue.segs === 0; }, null, 20000);
+  c = await cue(p);
+  assert(!errors.length && !c.err, 'no page or engine error: ' + errors.join(' | '));
+  await p.context().close();
 });
 
 await b.close();

@@ -236,7 +236,9 @@ RB.ui.settings = (function () {
       failed: 'Ensemble selected · Original playing; recording unavailable',
       'original-only': 'Ensemble selected · Original playing',
     }[s.state] || '';
-    const n = s.available;
+    const n = s.available, defs = RB.audio._ && RB.audio._.songDefs, all = defs ? Object.keys(defs).length : 0;
+    // (MT-2: once every song has its recording the line says so instead of counting)
+    if (s.pref === 'ensemble' && n && all && n >= all) return line + ' — Ensemble is available for every track.';
     return line + (s.pref === 'ensemble' && n ? ' — Ensemble is available for ' + (n === 1 ? 'one track' : n === 2 ? 'two tracks' : n + ' tracks') + ' so far.' : '');
   }
   if (RB.bus) RB.bus.on('audio:performance', () => {

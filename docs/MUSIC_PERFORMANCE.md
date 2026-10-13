@@ -1,8 +1,12 @@
-# Music performance: Original and Ensemble (MT-1)
+# Music performance: Original and Ensemble (MT-1, MT-2)
 
 Robin's MT-1 asks for a permanent choice of how the music sounds, **Original** (the game's own procedural score, the
 default) or **Ensemble** (a recorded performance of the same score in the SC-1 instrumental treatment), with switching
 in either direction that keeps the music's place, blends rather than cuts, and never makes the game wait.
+
+MT-1 built the choice and two pilot recordings. **MT-2** (2026-10-13, C-92: Robin chose "All 115 now", Ogg Opus and MP3,
+and to carry on with the TimGM6mb sound bank while deciding its rights) recorded every other song the same way; how it
+differs from the pilots is under "MT-2" below.
 
 This page describes what was built, how a recording is made and admitted, and what has and has not been checked.
 The measured results are in `docs/music/ensemble/qa/<song>.json`; the record of what was tested is VALIDATION.md.
@@ -15,9 +19,11 @@ The measured results are in `docs/music/ensemble/qa/<song>.json`; the record of 
 - **A status line under it says what is actually playing**, which can differ from what is chosen: "Original playing",
   "Ensemble playing", "Original playing while Ensemble loads", "Ensemble selected · Original playing for this track",
   "… in this standalone copy", "… recording unavailable", "Music off · Ensemble remembered". With Ensemble chosen it adds
-  how far Ensemble reaches: "Ensemble is available for two tracks so far."
-- **Two tracks have recordings:** `snowbell` (the Snowbell area) and `battle_keepers` (the Keepers' Road battle).
-  Every other piece plays its Original whatever is chosen.
+  how far Ensemble reaches: "Ensemble is available for every track." once every song has one (until then, "… for N
+  tracks so far.").
+- **Which songs have recordings:** the manifest's ready tracks (`assets/music/ensemble/manifest.json`). MT-1's pilots
+  were `snowbell` (the Snowbell area) and `battle_keepers` (the Keepers' Road battle); MT-2 adds the rest. A song
+  without a ready recording plays its Original whatever is chosen.
 - **The downloaded single file never needs them.** It plays Original, fetches nothing, and says so. Only a hosted copy,
   with the files beside it, plays Ensemble.
 
@@ -111,15 +117,18 @@ Only when at least one track is embedded does the page's CSP change, from `conne
 Development tools only; none of them ships. They need Python with NumPy, SciPy and soundfile, the system FluidSynth
 library, the TimGM6mb sound bank, FFmpeg (libopus, libmp3lame), and the repo's Playwright Chromium.
 
+(MT-2: `tools/music/ensemble/produce.sh <song>` runs steps 1 to 4 for one song, with `stems.mjs` between 1 and 2.)
+
 1. `node tools/music/ensemble/export_events.mjs` compiles the current score and fingerprints it. It also realises the
    first pass exactly as the Original player does: one seeded stream per song, in event order. For both pilots this
    is identical, event for event, to the performance SC-1 converted.
+   (MT-2) `node tools/music/ensemble/stems.mjs` measures the Original's parts and its whole first pass in Chromium.
 2. `python3 tools/music/ensemble/render.py` renders the SC-1 treatment at 48 kHz:
-   - its voices (`rs1.py`, forked from SC-1's), its per-part gains (copied from SC-1's conversion logs), pans, sends,
-     room and filters;
+   - its voices (`rs1.py`, forked from SC-1's), its per-part gains (copied from SC-1's conversion logs for the pilots;
+     measured against the Original's parts for MT-2), pans, sends, room, the game's echo (MT-2) and filters;
    - every note rendered once, from silence, and placed at its exact sample;
    - the steady cycle by circular placement, circular convolution and filters in steady state;
-   - outputs `head.wav` and `loop.wav` (float, unfaded) and `render.json`.
+   - outputs `head.wav` and `loop.wav` (float, unfaded; a one-shot only `head.wav`, its guard faded) and `render.json`.
 3. `python3 tools/music/ensemble/package.py` encodes Ogg Opus (about 160 kbit/s) and MP3 (192 kbit/s), byte for byte
    reproducibly. It names each file by its content and checks it locally against the master with FFmpeg's decoder.
 4. `node tools/music/ensemble/verify.mjs` (built page via `RB_PAGE`) measures in Chromium:
@@ -136,6 +145,54 @@ library, the TimGM6mb sound bank, FFmpeg (libopus, libmp3lame), and the repo's P
 5. `node tools/build.mjs`, then the unit and browser tests.
 
 A future track is added the same way. Its song id needs no change to any story script.
+
+## MT-2: every other song (2026-10-13)
+
+The same pipeline, generalised; the pilots render exactly as before (the generalised renderer gives the same samples
+as MT-1's, bit for bit, run in the same session; both differ from the shipped pilot masters by −118 to −127 dB, which
+is FluidSynth's run-to-run variation, not a change). `tools/music/ensemble/produce.sh <song>` runs one song through
+every step; several run at once.
+
+**Voices for what the pilots never used** (the lead's choice; nobody has heard them yet):
+
+| The game's instrument or stroke | Ensemble voice |
+|---|---|
+| sho, glass, rin | SC-1's modelled sho, glass and rin |
+| shinobue, flute, celesta, harp | TimGM6mb piccolo (a colour, not a shinobue), flute, celesta, harp |
+| pluck (a guitar-ish plucked string) | TimGM6mb nylon guitar |
+| bell, toll (FM bells) | TimGM6mb tubular bells |
+| mallet (marimba-ish), keys (FM electric piano), choir | TimGM6mb marimba, electric piano, choir |
+| koto_oshi (ato-oshi: plucked a tone low, pressed up) | the koto with the game's own bend (a tone, held 60 ms, risen over 130 ms) |
+| low drum, big drum | SC-1's modelled ōdaiko (a little lower for the low drum) |
+| taiko rim (fuchi), brush | SC-1's modelled wood click and brush |
+| soft kick, hand tom, frame-drum snap, hand pat | TimGM6mb kick, low conga, high bongo, muted conga |
+| shaker, woodblock, high woodblock, rim click, hyōshigi, chappa | TimGM6mb maracas, low and high wood block, side stick, claves, splash cymbal |
+| clock tick, glass tick (the Hush's metronome), water drop, wooden creak, atarigane | the game's own synthesis, ported to the renderer |
+
+**Part balance by measurement.** SC-1 balanced the pilots by measurement and then by ear. For MT-2 each part is set to
+the Original part's level: `stems.mjs` renders the Original's first pass in Chromium with every track's strip tapped
+before its pan, room and echo, and `render.py` gives the Ensemble part the same K-weighted level (BS.1770's filter,
+over the same first pass). Checked on the pilots: the measured balance is within ±2.3 dB of SC-1's, part by part,
+most parts within ±1 dB (the rest is SC-1's ear). The same render gives the whole Original through the game graph,
+which the calibration then uses instead of rendering it again.
+
+**Room and echo.** Battles and bosses take SC-1's battle room (1.35 s, 0.14 wet), the Snowbell songs its Snowbell room
+(1.85 s, 0.19), the rest rs1's default (1.7 s, 0.17). A score with an echo (`echo`, the tracks' `dl` sends) gets the
+game's own: the same delay, feedback, 2.6 kHz low-pass in the loop and mix, applied exactly (circularly for the cycle).
+
+**One-shot cues** (the prologue, the victory sting) are one file: the whole score and its decay, its guard faded to
+silence (manifest layout `single_pass`, evidence `oneShotPlacementVerified` in place of the seam and repeat flags).
+The runtime already played a non-looping entry's first file only.
+
+**What verify.mjs adds for MT-2.**
+- A cue under 32 s has its two handovers at its steadiest moments (MT-1's fixed 20.3 s and 26.4 s do not fit a 6 s
+  sting; at a fixed time the check measured two different envelopes rather than the fade).
+- The onset check has a negative control (the Ensemble's envelope read 100 ms late must fail) and a second detector.
+  MT-1's 1 ms broadband frames also follow the ripple of sustained low notes, so on a slow cue its curve oscillates and
+  its peak, though at the right lag, can stand out too little (the prologue: +1 ms, z 3.7). The band-flux envelope
+  (energy above 400 Hz in three bands over 10 ms windows) finds the same lag clearly (the prologue: +1 ms, r 0.53,
+  z 50). A song passes with either detector at a lag within 15 ms (MT-1's 3× rule, or 4 SD above every lag 25–50 ms
+  away), and that detector's control must fail.
 
 **Testing scope (Robin's C-88).** Both performances are tested by MT-1's own suite, its unit test, the recordings'
 measurements and the audio suites. The twelve-chapter chain and the full matrix run at the default, Original, and
@@ -176,7 +233,10 @@ and a start between frames is honoured by interpolation. The runtime therefore s
 
 ## What this is not
 
-- **Listened to on the captures, not yet in the game.** Robin heard the excerpts on the captures page (the
+- **MT-2's recordings have not been heard by anyone.** Their voices for the new instruments and their balance were
+  chosen and measured, not judged by ear. `docs/music/ensemble/listen_all.html` plays every recording from the
+  checkout, with Original/Ensemble comparisons for ten songs; anything Robin hears wrong is a later round.
+- **The pilots were listened to on the captures, not yet in the game.** Robin heard the excerpts on the captures page (the
   game's own code rendering both performances through its graph; `docs/music/ensemble/listen.html`) on 2026-10-12:
   "It sounds great, nice job". That covers how the recordings and the switches sound in those excerpts. Hearing them
   in the game itself, on Robin's own device, is still to come.

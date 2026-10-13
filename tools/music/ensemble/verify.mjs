@@ -161,9 +161,9 @@ async function verifySong(p, id, cur) {
   let orig;
   const ofile = path.join(work, 'original.json');
   const oj = !FRESH && fs.existsSync(ofile) ? JSON.parse(fs.readFileSync(ofile, 'utf8')) : null;
-  if (oj && oj.fingerprint === cur.fingerprint) {
+  if (oj && oj.fingerprint === cur.fingerprint && oj.fluxO) {
     orig = { integrated: oj.integrated, peak: oj.peak, momentary: oj.momentary };
-    await p.evaluate((b) => window.__mtSetOriginal(b), oj.envO);
+    await p.evaluate(([b, f]) => window.__mtSetOriginal(b, f), [oj.envO, oj.fluxO]);
     out.originalMeasuredBy = oj.measuredBy;
   } else {
     orig = await p.evaluate(([i, e, k, s]) => window.__mtGraph(i, e, k, s, { mix: 1, until: s - 0.05, onsets: 'O', momentary: true }), [id, entry, fi0, D + 0.05]);
@@ -182,6 +182,8 @@ async function verifySong(p, id, cur) {
   const final = iters[iters.length - 1];
   const onset = await p.evaluate(() => window.__mtOnsetLag(50));
   const control = await p.evaluate(() => window.__mtOnsetLag(50, 100));
+  const flux = await p.evaluate(() => window.__mtOnsetLag(50, 0, 'flux'));
+  const fluxControl = await p.evaluate(() => window.__mtOnsetLag(50, 100, 'flux'));
   out.calibration = { window: 'the first pass, 0 to ' + D + ' s, 48 kHz, default volumes, no ducking', originalLufs: orig.integrated, originalPeak: orig.peak, iterations: iters, trim: final.trim, gainDb: db(final.trim), ensembleLufs: final.ensembleLufs, diffLu: final.diffLu, ensemblePeak: ens.peak, nan: ens.nan, clippedSamples: ens.clipped };
   // (the momentary series of each performance alone, for the handover check; the last Ensemble render is at the final trim)
   const momO = orig.momentary, momE = ens.momentary;
@@ -193,13 +195,17 @@ async function verifySong(p, id, cur) {
   // (MT-2: MT-1's sharpness test was set on the two pilots; on a slow cue with soft attacks one far lag can pass a third
   // of the peak while the peak still stands well clear of the misaligned lags as a whole. A peak within 15 ms passes
   // with MT-1's test or, failing it, at least 4 standard deviations above every lag 25-50 ms away.)
+  // (and a second detector, band-wise energy flux above the low notes: page_lib.mjs __mtFlux; the same rule)
   const sharp = onset.r >= 3 * Math.max(0, onset.rAt40), clear = onset.zFar >= 4;
   const passes = (o) => Math.abs(o.lagMs) <= 15 && o.r >= 0.03 && (o.r >= 3 * Math.max(0, o.rAt40) || o.zFar >= 4);
   // the negative control must fail: the same test on the Ensemble's envelope shifted 100 ms
   out.onsetControl = { shiftMs: 100, lagMs: control.lagMs, r: control.r, rAt40: control.rAt40, zFar: control.zFar, passes: passes(control) };
-  out.onsetOk = passes(onset) && !out.onsetControl.passes;
-  out.onsetCriterion = !out.onsetOk ? 'failed' : sharp ? 'MT-1: peak at least 3x the correlation 40 ms away' : 'MT-2: peak at least 4 SD above every lag 25-50 ms away (MT-1\'s 3x test not met)';
-  console.log(id, 'Original', orig.integrated.toFixed(2), 'LUFS; Ensemble', final.ensembleLufs.toFixed(2), 'at', db(final.trim).toFixed(2), 'dB; onset lag', onset.lagMs, 'ms (r', onset.r, 'r at 40 ms', onset.rAt40, 'z far', onset.zFar + ')');
+  out.onsetFlux = Object.assign({}, flux, { control: { shiftMs: 100, lagMs: fluxControl.lagMs, r: fluxControl.r, rAt40: fluxControl.rAt40, zFar: fluxControl.zFar, passes: passes(fluxControl) } });
+  const envOk = passes(onset) && !out.onsetControl.passes, fluxOk = passes(flux) && !out.onsetFlux.control.passes;
+  out.onsetOk = envOk || fluxOk;
+  out.onsetCriterion = envOk ? (sharp ? 'MT-1 envelope: peak at least 3x the correlation 40 ms away' : 'MT-1 envelope: peak at least 4 SD above every lag 25-50 ms away (the 3x test not met)')
+    : fluxOk ? 'band flux: ' + (flux.r >= 3 * Math.max(0, flux.rAt40) ? 'peak at least 3x the correlation 40 ms away' : 'peak at least 4 SD above every lag 25-50 ms away') + ' (the MT-1 envelope did not pass)' : 'failed';
+  console.log(id, 'Original', orig.integrated.toFixed(2), 'LUFS; Ensemble', final.ensembleLufs.toFixed(2), 'at', db(final.trim).toFixed(2), 'dB; onset lag', onset.lagMs, 'ms (r', onset.r, 'r at 40 ms', onset.rAt40, 'z far', onset.zFar + '); flux lag', flux.lagMs, 'ms (r', flux.r, 'z far', flux.zFar + ')', out.onsetCriterion);
   for (let fi = 0; fi < fmts.length; fi++) {
     const r = out.formats[fi];
     if (!r.decodeOk || !r.placementOk || !r.seamOk) { r.ok = false; continue; }
