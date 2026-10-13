@@ -4284,8 +4284,9 @@ old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0.
 | 4/12 | 11/11 | |
 | 5/12 | 10/11 | `pets` failed one check once: traced below |
 | 6/12 | 10/11 | `company` failed two phone checks every time: traced below |
-| 7/12 | running again | The first attempt was stopped by the background job's two-hour limit after 5 of its 11 scripts (kept as `part7_partial.log`); `actor_life` failed one check there and again in the rerun: traced below |
-| 8–12 | to run | Each part now runs as its own job, so none meets that limit |
+| 7/12 | 10/11 | Rerun in full (02:27–03:47). The first attempt was stopped by the background job's two-hour limit after 5 of its 11 scripts (kept as `part7_partial.log`). `actor_life` failed one check in both attempts: traced below. `staging_chapters` passed for the showcase and Chapters 1–6. |
+| 8/12 | running | Each part now runs as its own job, so none meets that limit |
+| 9–12 | to run | |
 
 **The `learning_ui` failure.** The check that keeps the typing field above a phone's software keyboard measured
 Submit 40 px below the visible area: `{"visible":514,"submitBottom":554,"chal":514}`.
