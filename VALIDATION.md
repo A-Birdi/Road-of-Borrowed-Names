@@ -4258,6 +4258,45 @@ automated path (every other sheet of its kind has one). The hook now names the b
 old name when offered, else はやて) and logs it; `tests/e2e/sailing.mjs` 3/0. The later attempts are recorded under
 "The expansion, P17".
 
+## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)
+
+Robin, with three captures of the hosted page's travel volume (Otoha from the front, Otoha from behind, Ren): "The
+bodies look a bit odd in a lot of the illustrations, seemingly being painted downwards. The back-facing sprites are
+also remarkably simple for what they're meant to convey. While I'm away, reconcile the art issues across all the
+illustrations - scrutinize what looks off." Worked under AC-1 (docs/future/plan/AC1_ART.md): each item below went
+from the observed problem to a cause, a change, an in-game comparison on lossless captures, a regression check and a
+decision. **Status: implemented provisionally, internally reviewed. Not Robin-approved; Robin's review is open.**
+
+**How it was looked at.** Every one of the 103 illustrated shots (47 sequences) drawn by the built game with
+`RB.sequence.drawAt` at 1280×720, 390×844 and 844×390, lossless PNG, read shot by shot on contact sheets and in crops;
+the same before the pass (commit 393654f, built from a `git archive` copy) for the comparisons. Robin's three captures
+are the volume's pages of `ko.end` and `ch6.ren`. Evidence pairs (before | after, full frame over magenta, so an
+unpainted pixel shows): to be added in `docs/screenshots/ar1/` (lossless WebP).
+
+| Observed | Cause | Change | Decision |
+| --- | --- | --- | --- |
+| Bodies "painted downwards" (every standing figure below its bust) | the bust's third-from-bottom row repeated down to the frame's edge, as stripes | `src/engine/35b_portraitbody.js`: a drawn body under the portrait (legs, shoes; a robe with its obi, overlaps, hem, tabi and zori; a coat, an apron, a dress, a tunic; cape, satchel, scarf), the arms hanging, clasped, or holding what the shot draws, by a two-bone arm | kept |
+| Back figures "remarkably simple" | a ball of hair on a trapezoid, cut flat across the floor | `src/ui/43_sequence_back.js`: the back of the head in its own hair (locks from the crown, the nape, buns, tails, braids, bobs, long hair, wraps, hats), the collar, sloped shoulders, a shaped back, each arm its own tapering shape apart from the waist, the garment from behind (obi and bow, coat vent and half belt, apron ties, satchel, cape), legs and feet on the ground with a contact shadow; kneeling as seiza (the seat over the heels, soles showing, hands in the lap); an arm bent forward or raised | kept |
+| Back figures (first redraw) boxy and short-legged; a coat's seam and vent ran down between the legs to the floor; Otoha's cane stood apart from her hand; kneeling was the standing figure cut at the hips | proportions and the seam's end point; the cane drawn at a fixed offset | narrower shoulders, longer legs, the seam and vent stop at the hem, the cane drawn from the hand, a real seiza | kept |
+| Hands placed past the arm's reach (Hana's tray across the counter, the doorframe post; Hoshino's lamp in the close shots; hands rising from under the sheet on a phone) | positions written for a floating hand, and in stage units (`s()`) while the figure is drawn at one pixel per art pixel | each placed within reach (Hana's tray by her, her surprised hand to her chest; the lamp nearer in Hoshino's close shots; hands rise from the hand's place at the side); a raised hand near the body uses the two-bone elbow; the body module notes any hand past reach | kept |
+| Tamotsu pointing had three arms; companions' gestures at Toya floated with no arm (Mio's hand, Suzu's point, Ren's lamp) | the hanging arm was still drawn; the gesture drew only a hand | `raise` leaves the hanging arm out; `RB.seqBack.arm` draws the raised arm in the figure's sleeve | kept |
+| Unpainted areas (the player draws a shot over the last frame without clearing, so they show the previous picture) | rows of cloud stopping short of the ground; floors, sides, chutes and seams no layer covered | painted: the cloud sea at the pass, Asahi's workshop floor close up, the open sides under the bridge (the Bridge Founder), the terrace chutes before the water runs, a line under the teahouse lintel, a line at Lanternfall's shore, slivers under the assembly's sky | kept |
+| The prologue teahouse's counter front black | `bandsIn` given css `rgb()` strings; the pixel kit's parser reads only `#hex` or arrays, so black | the raw ramp colours: the dark boards it was written to draw | kept |
+| Smaller: the crowd standing on Heita's head on a phone; Kasane's sleeve ending in mid-air on a phone; the kiln's mouth ending in a hard cut; two Hall tales' dawn washes as hard-edged hatched bands | placement and fixed lengths | crowd keeps clear of his head; sleeves run off the frame's edge; the sill lit; the washes feathered | kept |
+| Looked at and left: the inn's blank wall under the window (ch4.inn/morning); the Hall tales' blank paper below the painting; the companion turning to you on the bank (mb1.named) | intentional framing (under the sheet; the scroll's paper; the scene's staging) | none | left as is |
+
+**Regression checks.**
+- Unit (on the final build): `node tests/run-unit.mjs sequence` 499/0, `node tests/run-unit.mjs portrait` 70/0.
+- Browser, new: `node tests/e2e/sequence_art_integrity.mjs` — every shot, every phase (start, quarter points, end),
+  every companion, at the three sizes: no drawing error, no unpainted pixel at a phase's start or end, no hand past its
+  reach. **13/0** (full, 5 min 20 s; 3,420 drawings per size). Negative control: with the cloud sea's fill and the
+  close lamp's placement put back as they were, the quick mode failed 5 checks, naming `cr.summit.clouds`/`steam` and
+  `ch4.lamp.stay`/`both`; restored and rebuilt, the tree matched the commit. Added to the default run as `--quick`.
+- Browser, existing (on the final build): `sequence_p16`, `sequence_chapters`, `sequence_chapters_56`, `sequence_dev`,
+  `sequence_manual --quick`, `sequence_world --quick`, `prologue`, `portrait_anim` — running at the time of this entry;
+  results to be added here.
+- Review (R): every shot read at the three sizes after the last change.
+
 ## P17 — the complete run on the final build (2026-10-13; done)
 
 **Why this run.** Robin asked whether P14–P17's closure and the shipped edition were fully resolved before VA-1.

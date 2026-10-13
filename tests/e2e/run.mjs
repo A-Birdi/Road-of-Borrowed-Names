@@ -24,6 +24,8 @@ let suites = [
   ['hall.mjs'], ['postgame.mjs'],
   // the travel volume's pages painted in the art pass (P16): every page through the volume's viewer at three sizes
   ['sequence_p16.mjs'],
+  // AR-1: every illustrated shot at three sizes paints its whole frame, keeps held things within reach, draws cleanly
+  ['sequence_art_integrity.mjs', '--quick'],
   // the companion ending extensions and The Pages We Keep (all four companions; captures to tests/e2e/out/pages)
   ['pages_ending.mjs'],
   // companionship: Company › Companion and Shared memories, invitations, reflections, rest (addendum §6–9, §19)

@@ -335,6 +335,14 @@
       audition runner refuses any authorization not marked `audition`.
     - No casting decision and no whole-game synthesis before Robin has listened.
 
+    **AR-1 (Robin, 2026-10-13), the illustrations' art pass:** bodies were the bust's bottom row painted downwards
+    and back figures a ball on a trapezoid. Now a drawn body under every bust (arms that hang, clasp or hold), back
+    figures drawn from the character's look (hair, collar, arms, garment, legs; seiza; raised and forward arms),
+    holds within reach, and every shot fully painted (eight gaps; the prologue counter's black front). Guard:
+    `tests/e2e/sequence_art_integrity.mjs` (every shot, phase, companion and size). Status under AC-1: implemented
+    provisionally, internally reviewed; Robin's review open. VALIDATION.md "AR-1", REQUIREMENTS.md XP116, pairs in
+    `docs/screenshots/ar1/`.
+
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,
     C-90). The improvements are kept, and the README has a troubleshooting note. State and results: VALIDATION.md
     "P18 — Plan B", "LP-1" and "VA-1".

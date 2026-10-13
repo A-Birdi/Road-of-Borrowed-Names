@@ -731,6 +731,18 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
   - Open: every configuration is blocked here or awaits Robin's authorisation (untested, not inferior); no audio,
     listening, casting or whole-game synthesis yet. VALIDATION.md "VA-1".
 
+- [~] XP116 AR-1, the illustrations' art pass (Robin, 2026-10-13: bodies "painted downwards", back figures "remarkably
+  simple", "reconcile the art issues across all the illustrations"). Under AC-1: implemented provisionally, internally
+  reviewed; not Robin-approved.
+  - Done: a drawn body under every standing bust (`src/engine/35b_portraitbody.js`) with arms that hang, clasp or hold
+    what the shot draws; back figures redrawn (`src/ui/43_sequence_back.js`: hair, collar, shoulders, arms apart from
+    the back, the garment from behind, legs and feet, seiza, raised and forward arms); every held thing within reach;
+    every shot paints its whole frame (eight places had gaps); the prologue counter's black front; smaller placements.
+  - Evidence: unit `sequence` 499/0, `portrait` 70/0; browser `sequence_art_integrity.mjs` 13/0 (full; negative
+    control fails as it should; `--quick` in the default run). Still running at this commit: the existing sequence
+    suites on the final build; still to make: the before/after pairs (`docs/screenshots/ar1/`). VALIDATION.md "AR-1".
+  - Open: Robin's review of the illustrations.
+
 ## Evidence index (see VALIDATION.md for commands and dates)
 - R1.1/R1.2: CSP forbids network; all browser tests record zero external requests.
 - R1.3/R14.x: tests/e2e/ui.mjs (IndexedDB probe, session-only banner under refusal, reload persistence, copy independence, delete, overwrite confirm, cross-tab read-only, pre-departure recovery, file:// mode).
