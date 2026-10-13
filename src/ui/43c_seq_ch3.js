@@ -583,7 +583,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const tx = Math.round(w - s(G.lay === 'narrow' ? 30 : 60)), tyb = Math.round(G.vb + s(70));
       if (tb) {
         if (kt > 0) {
-          const e = ease(kt), shx = tx - tb.ax + tb.w * 0.2, shy = tyb - tb.h * 0.4;
+          const e = ease(kt), shx = tx - tb.ax + tb.shoulders.l[0], shy = tyb - tb.ay + tb.shoulders.l[1];
           const hx2 = lerp(shx - s(10), shx - s(56), e), hy2 = lerp(shy + s(30), shy - s(50), e);
           c.strokeStyle = '#1e2a30'; c.lineWidth = s(11); c.lineCap = 'round'; c.beginPath(); c.moveTo(shx, shy); c.lineTo(hx2, hy2); c.stroke();
           c.strokeStyle = sleeve('co_tamotsu'); c.lineWidth = s(9); c.beginPath(); c.moveTo(shx, shy); c.lineTo(hx2, hy2); c.stroke(); c.lineCap = 'butt';

@@ -542,34 +542,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
     if (hd) c.drawImage(hd.cv, Math.round(x - hd.ax - cup.w * 0.4), Math.round(y - hd.ay - cup.h * 0.22));
     return cup;
   }
-  // Kōji from behind, close to us: the back of his straw hat, his hair at the nape, his shoulders and back
+  // Kōji from behind, close to us (RB.seqBack, AR-1): his straw hat, his hair at the nape, his shoulders and back; the
+  // arm on our right bent forward (the hand with the cup is in front of him, drawn by the shot)
   function kojiBack(Z) {
-    return Q.small('kojiback|' + Z, () => {
-      const p = P(), W = Math.round(150 * Z), H = Math.round(170 * Z), L = p.layer(W, H);
-      const lk = look('koji'), col = RB.sprites.colorsOf(lk);
-      const coat = p.mat(col.cloth[0], { n: 6, at: 3, step: 0.08 }), hair = p.mat(col.hair[0], { n: 5, at: 2 }), straw = p.mat(lk.hatCol || '#a8884a', { n: 6, at: 3, step: 0.08 });
-      const skin = p.mat(col.skin[0], { n: 5, at: 2 }), band = p.mat('#4a2e22', { n: 3, at: 1 }), belt = p.mat(col.cloth[2] || '#c8a070', { n: 4, at: 2 });
-      const cx = W * 0.5, sh = H * 0.5;
-      // the back: rounded shoulders falling to the arms, the light from the left; the arm on our right
-      // bent forward (the hand with the cup is in front of him)
-      const half = (y) => { if (y < sh) return 0; const k = clamp((y - sh) / (H * 0.12), 0, 1); return W * (0.16 + 0.3 * Math.sqrt(k)); };
-      L.fill(0, sh, W, H, (x, y) => Math.abs(x - cx) <= half(y), coat, (x, y) => clamp(0.82 - (x - cx + W * 0.25) / W * 0.6 - (y - sh) / H * 0.3 + (Math.abs(x - cx) > half(y) - 2 ? -0.15 : 0), 0, 0.999));
-      L.line(cx + 1, sh + H * 0.06, cx, H, coat, 1);                                    // the back seam
-      L.line(cx - W * 0.3, sh + H * 0.16, cx - W * 0.33, H, coat, 1);                  // the near arm against the body
-      L.line(cx + W * 0.3, sh + H * 0.16, cx + W * 0.36, H * 0.86, coat, 0);           // the far arm, bent forward
-      L.rect(cx - W * 0.3, H * 0.9, W * 0.6, H * 0.04, belt, (x) => (x < cx ? 0.8 : 0.45));
-      // the collar, the nape in shadow under the brim
-      L.ell(cx, sh + 1, W * 0.17, H * 0.03, coat, 4);
-      L.rect(cx - W * 0.1, sh - H * 0.07, W * 0.2, H * 0.08, skin, (x) => (x < cx - W * 0.02 ? 0.55 : 0.3));
-      L.ell(cx, sh - H * 0.09, W * 0.14, H * 0.06, hair, (x) => (x < cx ? 0.6 : 0.3));
-      // the hat from behind and a little above: a wide woven brim, the crown with its dark band
-      const by = sh - H * 0.13;
-      L.ell(cx, by, W * 0.44, H * 0.075, straw, (x, y) => clamp((y < by - 1 ? 0.86 : y < by + H * 0.03 ? 0.64 : 0.3) - (x - cx) / W * 0.4 - ((Math.round(x * 0.6 + y * 1.3) % 4) === 0 ? 0.1 : 0), 0, 0.999));
-      L.ell(cx, by - H * 0.06, W * 0.19, H * 0.09, straw, (x, y) => clamp(0.92 - (x - cx) / W * 0.9 - ((Math.round(y) % 3) === 0 ? 0.12 : 0), 0, 0.999));
-      L.rect(cx - W * 0.19, by - H * 0.03, W * 0.38, Math.max(2, H * 0.025), band, (x) => (x < cx ? 1 : 0));
-      L.outline();
-      return { cv: L.canvas(), ax: Math.round(cx), ay: H, w: W, h: H, handX: Math.round(cx + W * 0.36), handY: Math.round(H * 0.8) };
-    });
+    return Q.small('kojiback|' + Z, () => RB.seqBack.draw(look('koji'), Math.round(150 * Z), { light: 'l', forward: 'r' }));
   }
   const hanaShot = {
     phases: [['stop', 700], ['lift', 600]],

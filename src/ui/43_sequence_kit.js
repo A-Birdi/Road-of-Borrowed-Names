@@ -245,37 +245,12 @@ RB.seqKit = (function () {
     });
   }
 
-  // A person seen from behind and close to us (an over-the-shoulder shot): shoulders and back, the nape, the
-  // back of the head in their hair (short, bun, braid or long), a hat if they wear one, the arm of their
-  // glasses at the temple. From their look; W is the shoulders' width in art px. Anchor: bottom centre.
+  // A person seen from behind and close to us (an over-the-shoulder shot), from their look: RB.seqBack (AR-1: the back
+  // of the head in its hair, the collar, the shoulders and arms, the garment's back, continuing down past the old
+  // drawing's bottom, or kneeling). W is the shoulders' width in art px; o: { light: 'l' | 'r', pose: 'kneel' }. Anchor:
+  // the old drawing's bottom centre; w, h its size; head and shoulders are points on the canvas.
   function back(lk, W, o) {
-    o = o || {};
-    return small('back|' + JSON.stringify(lk) + '|' + W + '|' + JSON.stringify(o), () => {
-      const p = K(), col = RB.sprites.colorsOf(lk || {}), acc = (lk && lk.acc) || [];
-      const H = Math.round(W * 1.05), L = p.layer(W, H), cx = W / 2;
-      const coat = p.mat(col.cloth[0], { n: 6, at: 3, step: 0.08 }), hair = p.mat(col.hair[0], { n: 6, at: 3, step: 0.08 }), skin = p.mat(col.skin[1] || col.skin[0], { n: 5, at: 2 });
-      const lit = o.light === 'r' ? -1 : 1;
-      const sh = H * 0.56, half = (y) => (y < sh ? 0 : W * (0.18 + 0.3 * Math.sqrt(clamp((y - sh) / (H * 0.14), 0, 1))));
-      L.fill(0, sh, W, H, (x, y) => Math.abs(x - cx) <= half(y), coat, (x, y) => clamp(0.66 - lit * (x - cx) / W * 0.6 - (y - sh) / H * 0.3, 0.02, 0.999));
-      L.line(cx, sh + H * 0.08, cx, H, coat, 1);
-      if (lk && (lk.shape === 'coat' || lk.shape === 'robe')) L.ell(cx, sh + 1, W * 0.2, H * 0.04, coat, 4); // a high collar
-      // the nape and the head
-      L.rect(cx - W * 0.08, sh - H * 0.08, W * 0.16, H * 0.1, skin, (x) => clamp(0.5 - lit * (x - cx) / W, 0, 0.999));
-      const hy = sh - H * 0.2, hr = W * 0.16;
-      L.ell(cx, hy, hr, hr * 1.1, hair, (x, y) => clamp(0.62 - lit * (x - cx) / hr * 0.3 - (y - hy) / hr * 0.15 + (((Math.round(x * 2 + y)) % 5) === 0 ? 0.12 : 0), 0, 0.999));
-      const style = (lk && lk.hair) || 'short';
-      if (style === 'bun') L.ell(cx, hy - hr * 0.9, hr * 0.55, hr * 0.5, hair, (x, y) => clamp(0.7 - lit * (x - cx) / hr * 0.4, 0, 0.999));
-      if (style === 'long' || style === 'braid' || style === 'ponytail') L.rect(cx - hr * 0.5, hy, hr, H * 0.24, hair, (x) => clamp(0.6 - lit * (x - cx) / hr * 0.3, 0, 0.999));
-      // ears' edges at the sides of the head
-      if (acc.includes('glasses')) { const g2 = p.solid('#2a2430'); L.line(cx - hr - 1, hy - hr * 0.1, cx - hr * 0.6, hy - hr * 0.15, g2); L.line(cx + hr * 0.6, hy - hr * 0.15, cx + hr + 1, hy - hr * 0.1, g2); }
-      if (acc.includes('hat')) {
-        const hm = p.mat(lk.hatCol || '#3a3a44', { n: 6, at: 3, step: 0.08 }), by = hy - hr * 0.35;
-        L.ell(cx, by, W * 0.4, H * 0.06, hm, (x, y) => clamp((y < by ? 0.8 : 0.45) - lit * (x - cx) / W * 0.4, 0, 0.999));
-        L.ell(cx, by - hr * 0.55, hr * 1.05, hr * 0.7, hm, (x, y) => clamp(0.82 - lit * (x - cx) / W * 0.9 - (y - by) / hr * 0.1, 0, 0.999));
-      }
-      L.outline();
-      return { cv: L.canvas(), ax: Math.round(cx), ay: H, w: W, h: H, head: { x: Math.round(cx), y: Math.round(hy), r: Math.round(hr) } };
-    });
+    return small('back|' + JSON.stringify(lk) + '|' + W + '|' + JSON.stringify(o || {}), () => RB.seqBack.draw(lk, W, o));
   }
 
   // ---- small live things -----------------------------------------------------------------------------------

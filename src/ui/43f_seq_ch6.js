@@ -302,7 +302,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const ph = Q.hand({ size: Math.round(11 * k / 0.8), pose: back > 0.2 ? 'rest' : 'offer', side: 'R', angle: -0.4, skin: pskin, sleeve: psl });
       if (ph) c.drawImage(ph.cv, Math.round(lerp(fx - s(14) * k, fx0 - s(24), back) - ph.ax), Math.round(lerp(fy + s(14) * k, G.vb + s(24), back) - ph.ay));
       // you, from behind, at the left, kneeling across from them
-      const yb = Q.back(pc, G.bw, { light: 'r' });
+      const yb = Q.back(pc, G.bw, { light: 'r', pose: 'kneel' });
       if (yb) c.drawImage(yb.cv, G.bx - yb.ax, G.by - yb.ay);
     },
     focus(w, h, vb) { const G = geomFolio(w, h, vb); if (G.land) return { x: G.kx - 30, y: G.ky - 82, w: 60, h: Math.min(50, vb + 2 - (G.ky - 82)) }; return { x: G.kx - G.s(36), y: G.ky - 88, w: G.s(36) + 34, h: Math.min(vb, G.ky + G.s(36)) - (G.ky - 88) }; },
@@ -515,10 +515,10 @@ var RB = (globalThis.RB = globalThis.RB || {});
       const lamp = comp && comp.id === 'ren' && ka > 0.5;
       kasaneKneeling(c, kx, ky, expr, fr, lamp ? { mul: [1, 0.95, 0.86], add: [16, 9, 0], rim: { side: 'r', col: '#ffd890', k: [0.5, 0.22], below: 0.85 } } : WARM);
       // you at the left and your companion at the right, from behind (only a companion who is here)
-      const yb = Q.back(st.cast.pc || {}, G.bw, { light: 'r' });
+      const yb = Q.back(st.cast.pc || {}, G.bw, { light: 'r', pose: 'kneel' });
       if (yb) c.drawImage(yb.cv, G.lx - yb.ax, G.yb - yb.ay);
       if (comp) {
-        const cb = Q.back(comp.look, Math.round(G.bw * 0.95), { light: 'l' });
+        const cb = Q.back(comp.look, Math.round(G.bw * 0.95), { light: 'l', pose: 'kneel' });
         const nod = comp.id === 'nao' && ka > 0 && ka < 1 && !still ? Math.round(Math.sin(Math.PI * ka) * 2) : 0;
         const box = { x: G.rx, y: G.yb, w: cb ? cb.w : G.bw, h: cb ? cb.h : G.bw };
         if (cb) c.drawImage(cb.cv, G.rx - cb.ax, G.yb - cb.ay + nod);
