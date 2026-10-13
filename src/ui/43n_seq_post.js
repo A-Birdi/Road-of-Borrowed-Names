@@ -305,9 +305,9 @@ var RB = (globalThis.RB = globalThis.RB || {});
         for (let i = 0; i < 4; i++) Lo.rect(Math.round(sx1 + 0.01 * bu + i * 0.03 * bu), Math.round(sy + 0.18 * bu), 1, Math.max(2, Math.round(0.03 * bu)), stripe, 1);
         Lo.outline();
         g.drawImage(L.canvas(), 0, 0); g.drawImage(Lo.canvas(), 0, 0);
-        // the kiln's mouth round us: dark brick framing the view, its inner edge lit warm
+        // the kiln's mouth round us: dark brick framing the view, its inner edge lit warm (the sill under it too; AR-1)
         const aw = w * (G.narrow ? 0.46 : 0.4), ay = G.vb * 0.4, ah = G.vb * 0.34, fr = (x, y) => !(Math.abs(x - w / 2) < aw && (y > ay ? y < G.vb * 0.97 : ((x - w / 2) / aw) ** 2 + ((y - ay) / ah) ** 2 < 1));
-        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (fr(x, y)) { const edge = !fr(x + 1, y + 1) || !fr(x - 1, y + 1); g.fillStyle = edge ? '#7a3a22' : ((Math.floor(y / G.s(6)) + Math.floor((x + (Math.floor(y / G.s(6)) % 2) * G.s(6)) / G.s(12))) % 2 ? '#1e100c' : '#24140e'); g.fillRect(x, y, 1, 1); }
+        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (fr(x, y)) { const edge = !fr(x + 1, y + 1) || !fr(x - 1, y + 1) || !fr(x, y - 1) || !fr(x, y - Math.max(2, G.s(2))); g.fillStyle = edge ? '#7a3a22' : ((Math.floor(y / G.s(6)) + Math.floor((x + (Math.floor(y / G.s(6)) % 2) * G.s(6)) / G.s(12))) % 2 ? '#1e100c' : '#24140e'); g.fillRect(x, y, 1, 1); }
         vignette(g, w, h, bq[0], bq[1] - G.vb * 0.1, w * 0.6, G.vb * 0.8, 0.35, [20, 8, 4]);
         const eq = C.p(E[0], 0.05, E[2]);
         return { keep: [bq[0] + 0.1 * bu, sy + 0.06 * bu, 0.4 * bu], pres: [eq[0], eq[1], 1.5 * eq[2]], ember: eq };
@@ -674,7 +674,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     3: { title: ['The Bell Before Dawn', '{夜明|よあ}け {前|まえ} の {鐘|かね}'], paint(Pn, vb) { const { w } = Pn;
       Pn.hills(vb * 0.5, vb * 0.12, 0.45, 4, 0.1); Pn.hills(vb * 0.62, vb * 0.05, 0.25, 5);
       const bx = w * 0.32, by = vb * 0.5; Pn.fill(bx - vb * 0.14, by - vb * 0.36, bx + vb * 0.14, by - vb * 0.3, (x, y) => y >= by - vb * 0.36 + Math.abs(x - bx) * 0.3, 0.85); for (const dx of [-vb * 0.1, vb * 0.1]) Pn.fill(bx + dx - 3, by - vb * 0.3, bx + dx + 3, by, () => true, 0.8); Pn.fill(bx - vb * 0.05, by - vb * 0.28, bx + vb * 0.05, by - vb * 0.14, (x, y) => Math.abs(x - bx) < vb * (0.035 + (y - (by - vb * 0.28)) / vb * 0.12), 0.7);
-      Pn.accent(w * 0.6, vb * 0.1, w * 1, vb * 0.16, (x, y) => ((x * 3 + y * 5) % 4) < 2, PINK); for (let i = 0; i < 6; i++) Pn.house(w * (0.5 + i * 0.08), w * (0.55 + i * 0.08), vb * 0.78 + (i % 2) * 6, vb * 0.08, 0.6, true); }, glow: [0.32, 0.4] },
+      Pn.accent(w * 0.5, vb * 0.08, w * 1, vb * 0.18, (x, y) => ((x * 3 + y * 5) % 4) < 2 && feather(x, y, w * 0.5, w, vb * 0.08, vb * 0.18), PINK); for (let i = 0; i < 6; i++) Pn.house(w * (0.5 + i * 0.08), w * (0.55 + i * 0.08), vb * 0.78 + (i % 2) * 6, vb * 0.08, 0.6, true); }, glow: [0.32, 0.4] },
     4: { title: ['The Borrowed Umbrella', '{借|か}りた {傘|かさ}'], paint(Pn, vb) { const { w } = Pn;
       Pn.hills(vb * 0.26, vb * 0.03, 0.18, 41);
       // the far roofs pale through the rain
@@ -704,7 +704,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
     6: { title: ['The Toll That Changed', '{変|か}わった {通行料|つうこうりょう}'], paint(Pn, vb) { const { w } = Pn;
       Pn.hills(vb * 0.3, vb * 0.14, 0.4, 7, 0.08); Pn.stroke([[w * 0.5, vb * 0.9], [w * 0.55, vb * 0.6], [w * 0.62, vb * 0.36], [w * 0.7, vb * 0.22]], vb * 0.02, 0.3);
       const gx = w * 0.5, gy = vb * 0.66; for (const dx of [-vb * 0.16, vb * 0.16]) Pn.fill(gx + dx - 3, gy - vb * 0.34, gx + dx + 3, gy, () => true, 0.85); Pn.fill(gx - vb * 0.2, gy - vb * 0.36, gx + vb * 0.2, gy - vb * 0.32, () => true, 0.9); Pn.fill(gx - vb * 0.12, gy - vb * 0.24, gx - vb * 0.04, gy - vb * 0.14, () => true, 0.4);
-      Pn.accent(gx + vb * 0.18, gy - vb * 0.3, gx + vb * 0.22, gy - vb * 0.24, () => true, GOLD); Pn.accent(w * 0.6, vb * 0.04, w, vb * 0.1, (x, y) => ((x + y) % 3) === 0, PINK);
+      Pn.accent(gx + vb * 0.18, gy - vb * 0.3, gx + vb * 0.22, gy - vb * 0.24, () => true, GOLD); Pn.accent(w * 0.5, vb * 0.03, w, vb * 0.11, (x, y) => ((x + y) % 3) === 0 && feather(x, y, w * 0.5, w, vb * 0.03, vb * 0.11), PINK);
       Pn.figure(w * 0.64, vb * 0.44, vb * 0.03, 0.7); Pn.figure(w * 0.3, vb * 0.8, vb * 0.05, 0.75); }, glow: [0.6, 0.4] },
     7: { title: ['The House That Remembers', '{覚|おぼ}えて いる {家|いえ}'], paint(Pn, vb) { const { w } = Pn;
       Pn.hills(vb * 0.26, vb * 0.06, 0.2, 8); Pn.house(w * 0.2, w * 0.62, vb * 0.66, vb * 0.46, 0.75, true);
@@ -751,6 +751,11 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // and what appears after the hundredth tale: the teller's shadow, cast by it, tall and faint on the right
       Pn.figure(cx + w * 0.3, vb * 0.98, vb * 0.26, 0.48); }, glow: [0.38, 0.72] },
   };
+  // a wash of dawn colour feathered out at its left end and its top and bottom (it was a hard-edged band; AR-1)
+  function feather(x, y, x0, x1, y0, y1) {
+    const u = (x - x0) / (x1 - x0), v = Math.abs((y - y0) / (y1 - y0) - 0.5) * 2;
+    return P().bayer(x, y) < Math.min(1, u * 1.6) * (1 - v * v);
+  }
   // the seal in the corner: a red square of shapes (never a letter)
   function seal(Pn, x, y, sz) { Pn.accent(x, y, x + sz, y + sz, (X, Y) => X === Math.floor(x) || Y === Math.floor(y) || X === Math.floor(x + sz - 1) || Y === Math.floor(y + sz - 1) || (((X - x) * 3 + (Y - y) * 5) % 7 === 0 && X > x + 2 && Y > y + 2 && X < x + sz - 3 && Y < y + sz - 3), VERMILION); }
   // a tale's picture at four stages of inking in (k → the nearest stage), cached

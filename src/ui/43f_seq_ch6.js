@@ -403,8 +403,14 @@ var RB = (globalThis.RB = globalThis.RB || {});
   };
 
   // a sleeved forearm reaching in from off the frame to a wrist at (wx, wy): ang is the direction the hand points
-  // (the arm runs back the other way), len its visible length, wd its width at the wrist (wider at the elbow)
-  function arm(c, wx, wy, ang, len, wd, col) {
+  // (the arm runs back the other way), len its visible length, wd its width at the wrist (wider at the elbow). edge
+  // [w, h]: long enough to leave the frame (on a phone a fixed length ended in mid-air; AR-1)
+  function arm(c, wx, wy, ang, len, wd, col, edge) {
+    if (edge) {
+      const bx = -Math.cos(ang), by = -Math.sin(ang);
+      const tx = bx < -1e-3 ? wx / -bx : bx > 1e-3 ? (edge[0] - wx) / bx : 1e9, ty = by < -1e-3 ? wy / -by : by > 1e-3 ? (edge[1] - wy) / by : 1e9;
+      len = Math.max(len, 8 * Math.ceil((Math.min(tx, ty) + wd * 2) / 8));
+    }
     const key = 'ch6.arm|' + [Math.round(ang * 50), len, wd, col].join('|');
     const A = Q.small(key, () => {
       const p = P(), W = Math.ceil(len + wd * 3), L = p.layer(W * 2, W * 2), cx = W, cy = W;
@@ -457,7 +463,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
       // your open hand rising into the picture with the bell lying in it (your sleeve from the lower left)
       const palm = [cx - Math.round(20 * k), Math.round(lerp(G.vb + 30 * k, cy + 20 * k, ease(ks)))];
       const pang = -0.3, psz = Math.round(17 * k);
-      arm(c, palm[0] - Math.round(psz * 0.1), palm[1], pang, Math.round(70 * k), Math.round(psz * 0.95), psl);
+      arm(c, palm[0] - Math.round(psz * 0.1), palm[1], pang, Math.round(70 * k), Math.round(psz * 0.95), psl, [w, h]);
       const ph = Q.hand({ size: psz, pose: 'offer', side: 'R', angle: pang, skin: pskin });
       // Kasane's hand: down from the upper right to take it up by its cord; it rings once; then held out to you
       const up = ease(clamp(kr / 0.3, 0, 1)), back = ease(ko);
@@ -471,7 +477,7 @@ var RB = (globalThis.RB = globalThis.RB || {});
         suzu(c, tp[0], tp[1], r, swing, glint);
         const ksz = Math.round(13 * k), kang = Math.PI / 2 + 0.55;
         const wx = tp[0] - Math.cos(kang) * ksz * 1.25, wy = tp[1] - Math.sin(kang) * ksz * 1.25;
-        arm(c, wx, wy, kang, Math.round(110 * k), Math.round(ksz * 1.05), '#cfcabd');
+        arm(c, wx, wy, kang, Math.round(110 * k), Math.round(ksz * 1.05), '#cfcabd', [w, h]);
         const kh = Q.hand({ size: ksz, pose: 'pinch', side: 'R', angle: kang, skin: kskin }); // (side R: the angle as given; an L hand is mirrored)
         if (kh) c.drawImage(kh.cv, Math.round(wx - kh.ax), Math.round(wy - kh.ay));
       }
