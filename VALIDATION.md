@@ -4313,7 +4313,10 @@ Robin's PC: `docs/future/voice/va2/HANDOFF_VA2.md`. **No voice was generated or 
   treatments stand; Mochi's two lines (ニャー) become a sourced CC0 or public-domain cat meow rather than a voice
   (`engine: "sound"`; sourced on the PC with its page, author, licence and SHA-256 recorded; skipped, and shown as
   such, if no recording's terms can be confirmed: every sound archive is refused from the cloud environment); no live
-  generation; one loudness for every line. Self-test of the sound path (`--mock`): Mochi's take made, 0.8 s, clean.
+  generation; one loudness for every line. Then: "If you cannot source a proper Nya for Mochi, generate it using a female
+  model, any one is fine. Just keep it playful": without a confirmed recording, the AV-bright AivisSpeech voice says it
+  in its upbeat style, labelled as generated in the gallery. Self-test (`--mock`): the sourced path (0.8 s, clean) and
+  the fallback path (`--mock-unsourced`: the AivisSpeech take, 0.65 s, −20.0 LUFS, the gallery's label) both made.
 - **Not done:** the recordings, on Robin's PC; Robin's picks; anything in the game's speech.
 
 ## AR-1 — the illustrations' art pass (Robin's report, 2026-10-13; implemented provisionally, internally reviewed)

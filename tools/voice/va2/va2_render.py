@@ -242,6 +242,8 @@ def make(take, plan, voices, eng, out, mock, cache):
     rel = os.path.join('clips', take['id'] + '.opus')
     sf.write(os.path.join(out, rel), y.astype(np.float32), A.SR, format='OGG', subtype='OPUS', compression_level=0.8)  # about 58 kbit/s: transparent for speech, keeps the gallery near 12 MB
     final = A.clean_measure(y)
+    if spec.get('fallbackFor'):
+        voice = dict(voice, fallbackFor=spec['fallbackFor'])
     return {'id': take['id'], 'section': take['section'], 'engine': e, 'mock': bool(mock), 'request': sha(req), 'textSent': text,
             'voice': voice, 'tries': tries, 'kept': tries[-1] if e != 'qwen_design' else next((t for t in tries if t.get('seed') == voice.get('seed')), None),
             'pitchSemitones': take.get('semitones', 0), 'fx': spec.get('fx'), 'level': lev, 'seconds': round(len(y) / A.SR, 2),
@@ -324,13 +326,17 @@ def cmd_render(a):
             break
         prev = res['takes'].get(t['id'])
         req = sha({'engine': t['voiceSpec']['engine'], 'text': plan['lines'][t['line']]['textNamesKana'], 'spec': t['voiceSpec'], 'pitch': t.get('semitones', 0)})
-        if prev and prev.get('request') == req and os.path.exists(os.path.join(a.out, prev['file'])) and prev.get('mock') == bool(a.mock):
+        if prev and prev.get('file') and prev.get('request') == req and os.path.exists(os.path.join(a.out, prev['file'])) and prev.get('mock') == bool(a.mock):
             continue
         spec = t['voiceSpec']
-        if spec['engine'] == 'sound' and not a.mock and not ((voices.get('sounds') or {}).get(spec['sound']) or {}).get('file'):
-            res['takes'][t['id']] = {'id': t['id'], 'section': t['section'], 'engine': 'sound', 'skipped': 'no verified CC0 or public-domain recording of ' + spec['sound'] + ' was found'}
-            print('%-28s skipped: no sourced %s' % (t['id'], spec['sound']))
-            continue
+        unsourced = spec['engine'] == 'sound' and not ((voices.get('sounds') or {}).get(spec['sound']) or {}).get('file')
+        if unsourced and (not a.mock or a.mock_unsourced):
+            if not spec.get('fallback'):
+                res['takes'][t['id']] = {'id': t['id'], 'section': t['section'], 'engine': 'sound', 'skipped': 'no verified CC0 or public-domain recording of ' + spec['sound'] + ' was found'}
+                print('%-28s skipped: no sourced %s' % (t['id'], spec['sound']))
+                continue
+            # Robin: no proper recording → a female voice says it, playfully
+            t = dict(t, voiceSpec=dict(spec['fallback'], fallbackFor=spec['sound']))
         try:
             res['takes'][t['id']] = make(t, plan, voices, eng, a.out, a.mock, cache)
             done += 1
@@ -367,6 +373,7 @@ def main():
     r.add_argument('--ids')
     r.add_argument('--limit', type=int, default=0)
     r.add_argument('--mock', action='store_true')
+    r.add_argument('--mock-unsourced', action='store_true', help='self-test: treat the sourced sounds as not found')
     a = ap.parse_args()
     {'voices': cmd_voices, 'render': cmd_render}[a.cmd](a)
 

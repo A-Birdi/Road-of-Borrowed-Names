@@ -806,7 +806,8 @@ Development only: drawn only with `?dev=world`, only on the slice's maps. B `tes
     table with evidence per NPC, the renderer for the free local engines (clean-ending check, formant-kept High/Low,
     treatments, −20 LUFS), the one-file gallery, the handoff for Robin's PC.
   - Robin's later answers (C-93): no voice for the Hush; the supernatural treatments stand; Mochi's ニャー a sourced
-    CC0 or public-domain meow, not a voice (sourced on the PC); no live generation; one loudness for every line.
+    CC0 or public-domain meow, not a voice (sourced on the PC), or, if none can be confirmed, a playful female
+    AivisSpeech voice saying it; no live generation; one loudness for every line.
   - Not done: the recordings themselves (the engines cannot run in the cloud environment; the job runs on Robin's
     PC); Robin's picks; anything in the game's speech (C-93: only after Robin's decisions).
 

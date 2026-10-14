@@ -70,6 +70,9 @@ def main():
             return ''
         if r['engine'] == 'sound':
             return 'A sourced recording, not a voice · ' + ' · '.join(str(x) for x in [v.get('title') or v.get('file'), v.get('author'), v.get('licence'), v.get('url')] if x)
+        if v.get('fallbackFor'):
+            s = 'Generated, as Robin asked when no recording could be confirmed: AivisSpeech · ' + ' / '.join(str(x) for x in [v.get('modelName'), v.get('speakerName')] if x) + ' · style ' + str(v.get('styleWanted', '')) + ' (playful)'
+            return s
         if r['engine'] == 'qwen_design':
             s = 'Qwen3-TTS VoiceDesign · seed ' + str(v.get('seed'))
         else:

@@ -798,6 +798,10 @@ and implementation."
   best." (The lead's reading: no voice generated live in the game, for the player's name or anything else; the
   recordings with a neutral word stand, and the device voice keeps reading the name.) "The equalized loudness is
   best. Good decision." (Every prepared line levelled to one loudness and trimmed alike.)
+- **Robin, the same evening:** "You're correct on the last note." (no live generation). "If you cannot source a proper
+  Nya for Mochi, generate it using a female model, any one is fine. Just keep it playful". Mochi's ニャー is a sourced
+  CC0 or public-domain meow when one's terms can be confirmed; otherwise the AV-bright AivisSpeech voice says it in its
+  upbeat style, labelled as generated.
 
 ### C-94 · Roadside Keepsakes on the whole twelve-chapter road
 **Decided** (2026-10-14). Robin: "Side note, there are only 6 Keepsakes still? We've added much more content to allow

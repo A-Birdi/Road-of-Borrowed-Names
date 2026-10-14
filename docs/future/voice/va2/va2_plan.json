@@ -3,7 +3,7 @@
  "purpose": "casting samples for Robin's choices (C-93): not a final cast, not game audio, not whole-game generation",
  "builtFrom": {
   "branch": "claude/stoic-sagan-n3jvgk",
-  "commit": "fee0a85e4d4e7cd75765620296fd642500aaac6a",
+  "commit": "b990e1ed23a24016f843efb96d89bcb960c24621",
   "by": "tools/voice/va2/plan.mjs"
  },
  "counts": {
@@ -5427,7 +5427,7 @@
      "delivery": "neutral",
      "fx": null,
      "fxWhy": null,
-     "why": "Robin, 2026-10-14: \"You can source a basic cat meow for Mochi and other animals who may use it.\" A real recorded meow (CC0 or public domain, sourced on the PC), not a voice."
+     "why": "Robin, 2026-10-14: \"You can source a basic cat meow for Mochi and other animals who may use it.\" A real recorded meow (CC0 or public domain, sourced on the PC), not a voice. If no recording's terms can be confirmed, a female AivisSpeech voice says it, playfully (Robin)."
     },
     {
      "id": "echo",
@@ -12694,7 +12694,17 @@
      "delivery": "neutral",
      "voiceSpec": {
       "engine": "sound",
-      "sound": "cat_meow"
+      "sound": "cat_meow",
+      "fallback": {
+       "engine": "aivis",
+       "aivisSlot": "AV-bright",
+       "style": "upbeat",
+       "params": {
+        "speedScale": 1,
+        "intonationScale": 1.4,
+        "tempoDynamicsScale": 1.2
+       }
+      }
      }
     },
     {

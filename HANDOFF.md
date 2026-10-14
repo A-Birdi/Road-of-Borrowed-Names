@@ -380,7 +380,8 @@
     Ready to run on Robin's PC (the engines cannot run in the cloud): `docs/future/voice/va2/HANDOFF_VA2.md`,
     `tools/voice/va2/`. Robin's unticked NPC choices stand (C-93). **No implementation in the game's speech until
     Robin's decisions on the samples.** Robin's later answers (C-93): the Hush needs no voice; the supernatural
-    treatments are right; Mochi's ニャー is a sourced CC0 or public-domain meow (sourced on the PC); no voice is
+    treatments are right; Mochi's ニャー is a sourced CC0 or public-domain meow (sourced on the PC), else a playful
+    female AivisSpeech voice; no voice is
     generated live; one loudness for every line. VALIDATION.md "VA-2", REQUIREMENTS.md XP120.
 
     LP-1: Robin's Firefox report is resolved after a browser configuration change (hardware acceleration restored,

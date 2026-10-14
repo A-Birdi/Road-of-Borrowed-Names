@@ -61,7 +61,8 @@ the rest and say exactly what and why in the summary.
      recording's own page** (a Wikimedia Commons file page states it; other sources only if their page states CC0 or
      public domain for that file). Download it into `_va2_samples\sounds\`, and record `file` (relative to
      va2_voices.json), `title`, `url`, `author`, `licence` and `sha256`. If no recording's terms can be confirmed,
-     leave it null: Mochi's take is then skipped and the gallery says so. Never record a cat, a voice or anything else
+     leave it null: Mochi's ニャー is then said by the AV-bright AivisSpeech voice in its upbeat style, playfully, as
+     Robin asked ("generate it using a female model, any one is fine. Just keep it playful"), and the gallery says so. Never record a cat, a voice or anything else
      yourself, and never use a recording with attribution, share-alike or non-commercial terms here.
    - Re-run `voices` until it prints "va2_voices.json: ready".
 5. **Smoke test:** `python tools\voice\va2\va2_render.py render --plan docs\future\voice\va2\va2_plan.json --voices

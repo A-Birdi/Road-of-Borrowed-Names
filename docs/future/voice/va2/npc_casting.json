@@ -450,9 +450,20 @@
     "plain": "ニャー。",
     "en": "Meow."
    },
-   "why": "Robin, 2026-10-14: \"You can source a basic cat meow for Mochi and other animals who may use it.\" A real recorded meow (CC0 or public domain, sourced on the PC), not a voice.",
+   "why": "Robin, 2026-10-14: \"You can source a basic cat meow for Mochi and other animals who may use it.\" A real recorded meow (CC0 or public domain, sourced on the PC), not a voice. If no recording's terms can be confirmed, a female AivisSpeech voice says it, playfully (Robin).",
    "homeRegion": "rw",
-   "sound": "cat_meow"
+   "sound": "cat_meow",
+   "fallback": {
+    "engine": "aivis",
+    "aivisSlot": "AV-bright",
+    "style": "upbeat",
+    "params": {
+     "speedScale": 1.0,
+     "intonationScale": 1.4,
+     "tempoDynamicsScale": 1.2
+    },
+    "why": "Robin, 2026-10-14: \"If you cannot source a proper Nya for Mochi, generate it using a female model, any one is fine. Just keep it playful\"."
+   }
   },
   {
    "id": "echo",

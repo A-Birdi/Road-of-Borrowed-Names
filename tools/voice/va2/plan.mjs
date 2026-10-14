@@ -160,6 +160,12 @@ function npcSection() {
       // an animal that only makes its sound (Robin: "source a basic cat meow for Mochi"): a real recording, not a voice
       if (!SOUNDS[n.sound]) fail('NPC ' + n.id + ': unknown sound ' + n.sound);
       spec.sound = n.sound;
+      // Robin: "If you cannot source a proper Nya for Mochi, generate it using a female model, any one is fine. Just
+      // keep it playful": a voice used only when no recording's terms can be confirmed
+      if (n.fallback) {
+        if (n.fallback.engine !== 'aivis' || !n.fallback.aivisSlot) fail('NPC ' + n.id + ': the fallback is an AivisSpeech slot');
+        spec.fallback = { engine: 'aivis', aivisSlot: n.fallback.aivisSlot, style: n.fallback.style || 'upbeat', params: n.fallback.params || {} };
+      }
     } else fail('NPC ' + n.id + ': unknown engine ' + n.engine);
     if (n.fx) spec.fx = n.fx;
     npcs.push({ id: n.id, name: n.name, lines: n.lines, regions: n.regions, profile: n.profile, delivery: n.delivery || 'neutral', fx: n.fx || null, fxWhy: n.fxWhy || null, why: n.why });
